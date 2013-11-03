@@ -1,0 +1,26 @@
+﻿<meta>
+    <info author="Heaven, Doneasty" type="gamemode" name="GTA Online" />
+    <file src="Radar.jpg" />
+    <file src="gtafont.ttf" />
+    <!-- Accountsystem -->
+    <script src="accountsystem/c_account.lua" type="client" />
+    <script src="accountsystem/s_account.lua" type="server" />
+    
+    <!-- Colors -->
+    <file src="colors/db.png" />
+    <file src="colors/hb.png" />
+    <file src="colors/s.png" />
+    <file src="colors/w.png" />
+    
+    <!-- Hauptordner -->
+    
+    <file src="avatar-default.png" />
+    <file src="test.png" />
+    <file src="left.png" />
+    <file src="world.png" />
+    <file src="cross.png" />
+    <script src="HUDRadar.lua" type="client" cache="false" />
+    
+    
+    <min_mta_version server="1.3.4-0.00000" client="1.3.4-0.00000"></min_mta_version>
+</meta>
