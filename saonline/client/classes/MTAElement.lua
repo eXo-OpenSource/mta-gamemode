@@ -1,0 +1,1 @@
+MTAElement = inherit(Object)
