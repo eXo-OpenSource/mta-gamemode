@@ -26,6 +26,7 @@
 	<script src="client/classes/Player.lua" type="client"/>
 	<script src="client/classes/LocalPlayer.lua" type="client"/>
 	
+	<script src="client/tempLogin.lua" type="client"/>
 	<script src="client/Main.lua" type="client"/>
 	
 	<!-- Files -->

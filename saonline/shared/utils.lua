@@ -1,3 +1,11 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     GTA:SA Online
+-- *  FILE:        shared/utils.lua
+-- *  PURPOSE:     Useful stuff
+-- *
+-- *****************************************************************************
+
 local __enums = {}
 function enum(targetVar, name)
 	if __enums[name] then
