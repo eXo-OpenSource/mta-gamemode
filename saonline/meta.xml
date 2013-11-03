@@ -7,6 +7,7 @@
 	<script src="shared/classes/Object.lua" type="shared"/>
 	<script src="shared/classes/Singleton.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
+	<script src="shared/version.lua" type="shared"/>
 	
 	<!-- Server -->
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
@@ -21,10 +22,12 @@
 	<script src="server/Main.lua" type="server"/>
 	
 	<!-- Client -->
+	<script src="client/globals.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
 	<script src="client/classes/MTAElement.lua" type="client"/>
 	<script src="client/classes/Player.lua" type="client"/>
 	<script src="client/classes/LocalPlayer.lua" type="client"/>
+	<script src="client/classes/Version.lua" type="client"/>
 	
 	<script src="client/tempLogin.lua" type="client"/>
 	<script src="client/Main.lua" type="client"/>

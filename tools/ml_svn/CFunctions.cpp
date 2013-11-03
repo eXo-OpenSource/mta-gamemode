@@ -31,13 +31,20 @@ int CFunctions::updateFromSVN ( lua_State* pLuaVM )
     {
         std::string svnPath = lua_tostring(pLuaVM, 1);
         std::string systemCommand = "cd " + svnPath + " && svn update";
-
+        
         if (system(systemCommand.c_str()) != 0)
         {
             // System command error
             pModuleManager->ErrorPrintf("Failed to update the svn");
             lua_pushboolean(pLuaVM, false);
             return 1;
+        }
+
+        // Create the logfile
+        if (lua_type(pLuaVM, 2) == LUA_TSTRING)
+        {
+            std::string logPath = lua_tostring(pLuaVM, 2);
+            system(("cd " + svnPath + " && svn log --xml > " + logPath).c_str());
         }
 
         // Call event

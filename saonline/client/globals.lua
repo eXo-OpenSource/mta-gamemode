@@ -1,0 +1,1 @@
+screenWidth, screenHeight = guiGetScreenSize()

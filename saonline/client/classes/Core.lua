@@ -7,6 +7,7 @@ function Core:constructor()
 	-- Instantiate the localPlayer instance right now
 	enew(localPlayer, LocalPlayer)
 	
+	Version:new()
 end
 
 function Core:destructor()
