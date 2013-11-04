@@ -68,6 +68,7 @@ function WhiteList:addPlayer(name, serial)
 	local playerNode = xmlCreateChild(self.m_XmlFile, "player")
 	xmlNodeSetAttribute(playerNode, "name", name)
 	xmlNodeSetAttribute(playerNode, "serial", serial)
+	xmlSaveFile(self.m_XmlFile)
 end
 
 function WhiteList:checkSerial(serial)

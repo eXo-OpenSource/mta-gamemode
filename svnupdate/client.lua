@@ -45,7 +45,7 @@ addEvent("onClientSVNRevisionSet", true)
 addEventHandler("onClientSVNRevisionSet", root,
 	function(rev)
 		revision = rev
-		outputChatBox("Current revision: "..rev, 255, 255, 0)
+		--outputChatBox("Current revision: "..rev, 255, 255, 0)
 	end
 )
 triggerServerEvent("onClientSVNRevisionRequest", root)

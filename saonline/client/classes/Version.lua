@@ -14,10 +14,15 @@ function Version:constructor()
 	guiSetAlpha(self.m_VersionLabel, 0.8)
 	guiLabelSetHorizontalAlign(self.m_VersionLabel, "right")
 	
-	local resource = getResourceFromName("svnupdate")
-	if resource then
-		self:setRevision(call(resource, "getRevision"))
-	end
+	-- Wait till svnupdate has been started
+	setTimer(
+		function()
+			local resource = getResourceFromName("svnupdate")
+			if resource then
+				self:setRevision(call(resource, "getRevision"))
+			end
+		end, 2000, 1
+	)
 end
 
 function Version:getVersion()

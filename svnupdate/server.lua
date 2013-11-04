@@ -17,7 +17,7 @@ addEventHandler("onSVNUpdate", root,
 addEvent("onClientSVNRevisionRequest", true)
 addEventHandler("onClientSVNRevisionRequest", root,
 	function()
-		triggerClientEvent(source, "onClientSVNRevisionSet", root, revision)
+		triggerClientEvent(client, "onClientSVNRevisionSet", root, revision)
 	end
 )
 
