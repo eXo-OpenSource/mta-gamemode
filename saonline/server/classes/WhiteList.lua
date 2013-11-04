@@ -31,6 +31,18 @@ function WhiteList:constructor()
 			end
 		end
 	)
+	
+	addCommandHandler("addserial",
+		function(player, cmd, nick, serial)
+			if not nick or not serial then
+				outputChatBox("Syntax: /addserial nick serial", player, 255, 0, 0)
+				return
+			end
+			if hasObjectPermissionTo(player, "function.banPlayer") then
+				self:addPlayer(nick, serial)
+			end
+		end
+	)
 end
 
 function WhiteList:destructor()
