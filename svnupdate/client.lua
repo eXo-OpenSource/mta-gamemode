@@ -49,6 +49,13 @@ addEventHandler("onClientSVNRevisionSet", root,
 	end
 )
 triggerServerEvent("onClientSVNRevisionRequest", root)
+addEventHandler("onClientResourceStart", root,
+	function(startedResource)
+		if getResourceName(startedResource) == "saonline" then
+			triggerServerEvent("onClientSVNRevisionRequest", root)
+		end
+	end
+)
 
 function getRevision()
 	return revision
