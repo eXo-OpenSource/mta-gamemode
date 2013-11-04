@@ -10,6 +10,9 @@ function Core:constructor()
 	sql = SQLite:new("database.db")
 	sql:setPrefix("base")
 	
+	-- Instantiate classes (Create objects)
+	WhiteList:new()
+	
 end
 
 function Core:destructor()

@@ -17,6 +17,7 @@
 	<script src="server/classes/MTAElement.lua" type="server"/>
 	<script src="server/classes/Player.lua" type="server"/>
 	<script src="server/classes/Root.lua" type="server"/>
+	<script src="server/classes/WhiteList.lua" type="server"/>
 	
 	<script src="shared/utils.lua" type="server"/>
 	<script src="server/Main.lua" type="server"/>
