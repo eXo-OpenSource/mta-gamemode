@@ -27,7 +27,7 @@ gtaonlinefont1 = dxCreateFont("gtafont.ttf", 30)
 function DXLabel:constructor(text, x, y, width, height)
 	DXElement.constructor(self, x, y, width, height)
 
-	self.m_Text = text or ""
+	self.m_Text = text
 	self.m_Color = tocolor(255, 255, 255, 255)
 	self.m_Font = "default-bold"
 	self.m_AlignX = "left"
