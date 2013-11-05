@@ -3,6 +3,7 @@
 	
 	<file src="gtafont.ttf" />
 	<file src="avatar-default.png" />
+	<file src="world.png" />
     
 	<script src="Object.lua" type="shared" cache="false"/>
 	
@@ -14,5 +15,7 @@
 	<script src="neu/DXImage.lua" type="client" cache="false" />
 	<script src="neu/FormCharSel.lua" type="client" cache="false" />
 	<script src="neu/FormInfo.lua" type="client" cache="false" />
+	<script src="neu/ShowLevel.lua" type="client" cache="false" />
+	<script src="neu/EXPFunc.lua" type="server" />
     <min_mta_version server="1.3.0-9.03739" client="1.3.2"></min_mta_version>
 </meta>
