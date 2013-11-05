@@ -1,52 +1,4 @@
-﻿-- function testtable()
-	-- for k, v in pairs(server.Environment) do
-		-- outputChatBox("Spieler: "..k.." | Status:"..v)
-	-- end
--- end
--- addCommandHandler("testtable", testtable)
-
-
--- -- Eigener Spieler
--- function dropmein()
-	-- local spielername = getPlayerName(getLocalPlayer())
-	-- local status = "Nicht bereit"
-	-- server.Environment[spielername] = status
--- end
--- addCommandHandler("testdrop", dropmein)
-
--- function dropmeinok()
-	-- local spielername = getPlayerName(getLocalPlayer())
-	-- local status = "Bereit"
-	-- server.Environment[spielername] = status
--- end
--- addCommandHandler("testdropok", dropmeinok)
--- -- Eigener Spieler
-
--- -- Fremder Spieler
--- function newdropmein()
-	-- local spielername = "Hannes"
-	-- local status = "Nicht bereit"
-	-- server.Environment[spielername] = status
--- end
--- addCommandHandler("newtestdrop", newdropmein)
-
--- function newdropmeinok()
-	-- local spielername = "Hannes"
-	-- local status = "Bereit"
-	-- server.Environment[spielername] = status
--- end
--- addCommandHandler("newtestdropok", newdropmeinok)
--- -- Fremder Spieler
-
-
--- server = {}
--- server.Environment = {}
-
--- server.Infos = {}
-
------------------------------------------
---- MySQL basierte Accountspeicherung ---
------------------------------------------
+﻿
 exports.woltlab:woltlab_connect ( "vweb20.nitrado.net", "ni258461_1sql1", "gtasaonlinedbpw", "ni258461_1sql1" )
 
 
@@ -57,36 +9,6 @@ function onStart ()
 end
 addEventHandler( "onResourceStart", getResourceRootElement(), onStart )
 
--- function onStop ()
-	-- for _, player in ipairs( getElementsByType( "player" ) ) do
-		-- if PlayerData[player] and PlayerData[player]["LoggedIn"] then
-			-- local db_chars_update = dbExec( MySQLConnection, "UPDATE users SET administrator='"..(PlayerData[player]["Admin"] and "1" or "0").."', hours='"..PlayerData[player]["Hours"].."', minutes='"..PlayerData[player]["Minutes"].."'  WHERE username ='"..username.."';" )
-			-- local result = dbPoll ( db_chars_update, -1 )
-			-- if result then
-				-- dbFree( db_chars_update )
-			-- else
-				-- outputDebugString( "Try to save '"..PlayerData[player]["Username"].."' Error!" )
-				-- return
-			-- end
-		-- end
-	-- end
--- end
--- addEventHandler( "onResourceStop", getResourceRootElement(), onStop )
-
--- function onQuit ()
-	-- if PlayerData[source] and PlayerData[source]["LoggedIn"] then
-		-- local db_chars_update = dbQuery( MySQLConnection, "UPDATE users SET administrator='"..(PlayerData[source]["Admin"] and "1" or "0").."', hours='"..PlayerData[source]["Hours"].."', minutes='"..PlayerData[source]["Minutes"].."' WHERE username ='"..username.."';" )
-		-- local result = dbPoll ( db_chars_update, -1 )
-		-- if result then
-			-- dbFree( db_chars_update )
-		-- else
-			-- outputDebugString( "Try to save '"..PlayerData[source]["Username"].."' Error!" )
-			-- return
-		-- end
-		-- PlayerData[source] = nil
-	-- end
--- end
--- addEventHandler( "onPlayerQuit", getRootElement(), onQuit )
 
 function establishMySQLCon ()
 	MySQLConnection = dbConnect( "mysql", "dbname=account;host=127.0.0.1", "root", "", "share=1" )
@@ -97,13 +19,6 @@ function establishMySQLCon ()
 	end
 end
 
--- function checkMySQLCon ()
-	-- if MySQLConnection == false then
-		-- outputDebugString( "Die Verbindung zum MySQL Server wurde verloren, versuche erneuten Verbindungsvorgang." )
-		-- destroyElement( MySQLConnection )
-		-- establishMySQLCon()
-	-- end
--- end
 
 function onReadyClient ()
 	--checkMySQLCon()
@@ -115,42 +30,7 @@ end
 addEvent( "onPlayerReadyToPlay", true )
 addEventHandler( "onPlayerReadyToPlay", getRootElement(), onReadyClient )
 
--- function registerPlayer ( thePlayer, commandName, username, password )
-	-- if not username or not password or not type( username ) == "string" or string.len( username ) < 5 or string.len( username ) > 20 or not type( password ) == "string" or string.len( password ) < 5 or string.len( password ) > 20 then
-		-- --Überprüfung ob gültiger Benutzername und ein gültiges Passwort angegeben wurde
-		-- outputChatBox( "BENUTZUNG: /registerMySQL [Username (5-20)] [Password (5-20)]", thePlayer )
-		-- return
-	-- end
-	-- username = mysql_escape_string( MySQLConnection, username ) --Der String wird hier escaped um sich vor Hacker zu schützen, Stichwort SQL Injections
-	-- --Überprüfung ob der Benutzername frei ist
-	-- local result = dbQuery( MySQLConnection, "SELECT * FROM users WHERE username='"..username.."';" ) --Das eigentliche ausführen einer Query, die Funktionsweisen können im MySQL Handbuch nachgelesen werden, in dem Fall SELECT: http://dev.mysql.com/doc/refman/5.1/de/select.html
-	-- if result then
-		-- if mysql_num_rows( result ) ~= 0 then
-			-- outputChatBox( "Benutzername ist schon vergeben.", thePlayer )
-			-- return
-		-- end
-		-- dbFree( result ) --Nach einer ausgeführten Query muss dieses daraus resultierende Ergebnis "befreit" werden. NIE VERGESSEN!
-	-- else
-		-- outputChatBox( "Ein unerwarteter Fehler ist aufgetreten.", thePlayer )
-		-- outputDebugString( "Try to find '"..username.."' Error: "..mysql_error( MySQLConnection ) )
-		-- return
-	-- end
-	
-	-- --Ab hier beginnt die eigentliche Registrierung
-	-- local password_md5 = md5( password )
-	-- local result = dbQuery( MySQLConnection, "INSERT INTO users (username, password, administrator, hours, minutes) VALUES ('"..username.."', '"..password_md5.."','0','0','0');" ) --Das eigentliche ausführen einer Query, die Funktionsweisen können im MySQL Handbuch nachgelesen werden, in dem Fall INSERT: http://dev.mysql.com/doc/refman/5.1/de/insert.html
-	-- if result then
-		-- outputChatBox( "Dein Benutzername wurde erfolgreich registriert. Versuche dich nun damit einzuloggen.", thePlayer )
-		-- dbFree( result ) --Nach einer ausgeführten Query muss dieses daraus resultierende Ergebnis "befreit" werden. NIE VERGESSEN!
-	-- else
-		-- outputChatBox( "Ein unerwarteter Fehler ist aufgetreten.", thePlayer )
-		-- outputDebugString( "Try to register '"..username.."' Error: "..mysql_error( MySQLConnection ) ) --Ausgabe des Fehlers
-		-- return
-	-- end
--- end
--- addEvent("registerMySQL", true)
--- addEventHandler("registerMySQL", root, registerPlayer)
---addCommandHandler( "registerMySQL", registerPlayer, false, false )
+
 
 function loginPlayer ( thePlayer, username, password )
 	
@@ -247,11 +127,8 @@ function loginPlayer ( thePlayer, username, password )
 end
 addEvent("loginMySQL", true)
 addEventHandler("loginMySQL", root, loginPlayer)
---addCommandHandler( "loginMySQL", loginPlayer, false, false )
 
---Ein Befehl, der einen Spieler Adminrechte geben kann
---Achtung, hier wird nur gespeichert, on der Spieler Admin ist, oder nicht
---Es gibt nur true oder false
+
 function makeadmin ( thePlayer, command, targetPlayer )
 	if not targetPlayer then
 		outputChatBos( "BENUTZUNG: /makeadmin [Spielername]", thePlayer )
