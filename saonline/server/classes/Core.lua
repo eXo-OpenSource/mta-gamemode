@@ -7,7 +7,7 @@ function Core:constructor()
 	core = self
 	
 	-- Establish database connection
-	sql = SQLite:new("database.db")
+	sql = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, MYSQL_DB, "")
 	sql:setPrefix("base")
 	
 	-- Instantiate classes (Create objects)

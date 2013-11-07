@@ -1,10 +1,3 @@
--- ****************************************************************************
--- *
--- *  PROJECT:     Open MTA:DayZ
--- *  FILE:        server/classes/SQL.lua
--- *  PURPOSE:     Base class for SQL database connections
--- *
--- ****************************************************************************
 SQL = inherit(Object)
 
 function SQL:destructor()
