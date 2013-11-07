@@ -8,7 +8,7 @@ function Core:constructor()
 	
 	-- Establish database connection
 	sql = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, MYSQL_DB, "")
-	sql:setPrefix("base")
+	sql:setPrefix("saonline")
 	
 	-- Instantiate classes (Create objects)
 	WhiteList:new()

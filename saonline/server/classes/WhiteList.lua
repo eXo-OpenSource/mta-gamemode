@@ -43,6 +43,8 @@ function WhiteList:constructor()
 			end
 		end
 	)
+	
+	xmlSaveFile(self.m_XmlFile)
 end
 
 function WhiteList:destructor()

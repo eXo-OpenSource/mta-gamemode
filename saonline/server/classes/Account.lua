@@ -22,7 +22,7 @@ function Account.login(player, username, password)
 		return false
 	end
 	
-	return Account:new(self.m_Id, username, player)
+	return Account:new(row.Id, username, player)
 end
 
 function Account.register(player, username, password)
@@ -38,10 +38,16 @@ function Account.register(player, username, password)
 	end
 	
 	-- Create an account
-	sql:queryExec("INSERT INTO ??_account(Name) VALUES (?);", sql:getPrefix(), username)
 	
-	return Account:new(self.m_Id, username, player)
+	-- todo: get a better salt
+	local salt = md5(math.random())
+	sql:queryExec("INSERT INTO ??_account(Name, Password, Salt) VALUES (?, ?, ?);", sql:getPrefix(), username, sha256(salt..password), salt)
+	
+	return Account:new(sql:lastInsertId(), username, player)
 end
+addCommandHandler("logfoo", function(c, _, u, p) outputDebugString(tostring(Async.create(Account.login)(c, u, p) or "nothing")) end)
+addCommandHandler("regfoo", function(c, _, u, p) outputDebugString(tostring(Async.create(Account.register)(c, u, p) or "nothing")) end)
+	
 
 function Account:constructor(id, username, player)
 	-- Account Information
@@ -50,7 +56,7 @@ function Account:constructor(id, username, player)
 	self.m_Player = player
 	self.m_Character = {}
 	
-	sql:queryFetch(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount FROM ??_account WHERE Account = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetch(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_Rank = row.Rank;

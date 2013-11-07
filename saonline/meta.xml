@@ -3,7 +3,9 @@
 	<min_mta_version server="1.3.3" client="1.3.3"/>
 
 	<!-- Shared -->
+	<script src="shared/constants.lua" type="shared"/>
 	<script src="shared/classlib.lua" type="shared"/>
+	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/classes/Object.lua" type="shared"/>
 	<script src="shared/classes/Singleton.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -11,15 +13,14 @@
 	
 	<!-- Server -->
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
-	<script src="server/classes/Storage/SQLite.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>
 	<script src="server/classes/Core.lua" type="server"/>
 	<script src="server/classes/MTAElement.lua" type="server"/>
+	<script src="server/classes/Account.lua" type="server"/>
+	<script src="server/classes/Character.lua" type="server"/>
 	<script src="server/classes/Player.lua" type="server"/>
 	<script src="server/classes/Root.lua" type="server"/>
 	<script src="server/classes/WhiteList.lua" type="server"/>
-	
-	<script src="shared/utils.lua" type="server"/>
 	<script src="server/Main.lua" type="server"/>
 	
 	<!-- Client -->
