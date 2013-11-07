@@ -1,0 +1,1 @@
+MAX_CHARACTERS = 5
