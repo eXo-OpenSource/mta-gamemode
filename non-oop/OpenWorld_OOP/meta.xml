@@ -1,21 +1,21 @@
 <meta>
-    <script src="classlib.lua" type="shared" cache="false" />
+    <script src="classlib.lua" type="shared" />
 	
 	<file src="gtafont.ttf" />
 	<file src="avatar-default.png" />
 	<file src="world.png" />
     
-	<script src="Object.lua" type="shared" cache="false"/>
+	<script src="Object.lua" type="shared" />
 	
-	<script src="neu/DXBox.lua" type="client" cache="false" />
+	<script src="neu/DXBox.lua" type="client"  />
 	
-    <script src="neu/DXElement.lua" type="client" cache="false" />
-	<script src="neu/DXLabel.lua" type="client" cache="false" />
-	<script src="neu/DXWindow.lua" type="client" cache="false" />
-	<script src="neu/DXImage.lua" type="client" cache="false" />
-	<script src="neu/FormCharSel.lua" type="client" cache="false" />
-	<script src="neu/FormInfo.lua" type="client" cache="false" />
-	<script src="neu/ShowLevel.lua" type="client" cache="false" />
+    <script src="neu/DXElement.lua" type="client"  />
+	<script src="neu/DXLabel.lua" type="client"  />
+	<script src="neu/DXWindow.lua" type="client"  />
+	<script src="neu/DXImage.lua" type="client"  />
+	<script src="neu/FormCharSel.lua" type="client"  />
+	<script src="neu/FormInfo.lua" type="client"  />
+	<script src="neu/ShowLevel.lua" type="client"  />
 	<script src="neu/EXPFunc.lua" type="server" />
     <min_mta_version server="1.3.0-9.03739" client="1.3.2"></min_mta_version>
 </meta>
