@@ -63,7 +63,7 @@ function testad()
 	self.m_Label6:setAlignX("left")
 	self.m_Label6:setAlignY("top")
 	
-	self.m_Box9 = DXBox:new(346, 234, 225, 34) tocolor(4, 78, 153, 255), false)
+	self.m_Box9 = DXBox:new(346, 234, 225, 34)
 	self.m_Box9:setColor(4, 78, 153, 255)
 	
 	self.m_Label7 = DXLabel:new(playerusername, 346, 234, 571, 268) 
