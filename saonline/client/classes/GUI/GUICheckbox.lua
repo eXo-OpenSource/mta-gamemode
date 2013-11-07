@@ -1,20 +1,49 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     Open MTA:DayZ
 -- *  FILE:        client/classes/GUI/GUICheckbox.lua
--- *  PURPOSE:     GUI checkbox wrapper
+-- *  PURPOSE:     GUI checkbox class
 -- *
 -- ****************************************************************************
+
 GUICheckbox = inherit(GUIElement)
+inherit(GUIFontContainer, GUICheckbox)
+inherit(GUIColorable, GUICheckbox)
 
-function GUICheckbox:constructor(posX, posY, width, height, text, relative, parent)
-	self.m_Element = guiCreateCheckbox(posX, posY, width, height, text, relative, parent)
+local GUI_CHECKBOX_TEXT_MARGIN = 5
+
+function GUICheckbox:constructor(posX, posY, width, height, text, parent)
+	checkArgs("GUICheckbox:constructor", "number", "number", "number", "number", "string")
+	
+	GUIElement.constructor(self, posX, posY, width, height, parent)
+	GUIFontContainer.constructor(self, text, 1.5)
+	GUIColorable.constructor(self)
+
+	self.m_Checked  = false
 end
 
-function GUICheckbox:setSelected(selected)
-	return guiCheckBoxSetSelected(self.m_Element, selected)
+function GUICheckbox:drawThis()
+	dxSetBlendMode("modulate_add")
+	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Checkbox.png")
+	dxDrawText(self:getText(), self.m_AbsoluteX + self.m_Height + GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - GUI_CHECKBOX_TEXT_MARGIN, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "left", "center", false, true)
+	
+	if self.m_Checked then
+		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Checkbox_checked.png")
+	end	
+	dxSetBlendMode("blend")
 end
 
-function GUICheckbox:getSelected()
-	return guiCheckBoxGetSelected(self.m_Element)
+function GUICheckbox:onInternalLeftClick()
+	self:setChecked(not self:isChecked())	
+end
+
+function GUICheckbox:isChecked()
+	return self.m_Checked
+end
+
+function GUICheckbox:setChecked(checked)
+	assert(checked == true or checked == false, "Bad argument @ GUICheckbox.setChecked")
+	self.m_Checked = checked
+	
+	self:anyChange()
 end
