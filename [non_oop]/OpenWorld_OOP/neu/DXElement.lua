@@ -1,4 +1,4 @@
-DXElement = {}
+DXElement = inherit(Object)
 
 
 function DXElement:constructor(x, y, width, height)
