@@ -2,14 +2,14 @@ FormInfo = inherit(DXElement)
 
 screenW, screenH = guiGetScreenSize()
 
-function FormInfo:constructor()
+function FormInfo:constructor(playerusername)
 	showCursor(true)
 	DXElement.constructor(self, (screenW - screenW) / 2, (screenH - screenH) / 2, screenW, screenH)
 	self.m_Background = new(DXWindow, self.m_X, self.m_Y, self.m_Width, self.m_Height)
 	self.m_LeisteOben = new(DXBox, 125, 37, 1350, 187)
 	self.m_Servername = new(DXLabel,"GTA:SA Online", 148, 74, 387, 106)
 	self.m_Avatar = new(DXImage, "avatar-default.png", 1380, 47, 85, 85)
-	self.m_Nickname = new(DXLabel, getPlayerName(localPlayer), 1131, 47, 1370, 75)
+	self.m_Nickname = new(DXLabel, playerusername, 1131, 47, 1370, 75)
 	self.m_Status = new(DXLabel, "Inhaber", 1131, 75, 1370, 103)
 	self.m_Geld = new(DXLabel, "BANK $10000    CASH $500", 1131, 103, 1370, 131)
 
