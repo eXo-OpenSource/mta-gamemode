@@ -1,15 +1,14 @@
 <meta>
     <script src="classlib.lua" type="shared" />
+	<script src="Object.lua" type="shared" />
+	<script src="neu/DXElement.lua" type="client"  />
 	
 	<file src="gtafont.ttf" />
 	<file src="avatar-default.png" />
 	<file src="world.png" />
-    
-	<script src="Object.lua" type="shared" />
 	
 	<script src="neu/DXBox.lua" type="client"  />
 	
-    <script src="neu/DXElement.lua" type="client"  />
 	<script src="neu/DXLabel.lua" type="client"  />
 	<script src="neu/DXWindow.lua" type="client"  />
 	<script src="neu/DXImage.lua" type="client"  />
