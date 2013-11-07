@@ -1,5 +1,5 @@
 function testad()
-	playername = "Heaven"
+	playerusername = "Heaven"
 	new(FormInfo, playerusername)
 	
 	self.m_Box1 = DXBox:new(125, 174, 450, 5)
