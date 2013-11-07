@@ -47,7 +47,7 @@ function DXLabel:render()
 	dxDrawText(self.m_Text, self.m_X, self.m_Y, self.m_Width, self.m_Height, self.m_Color, 1.00, self.m_Font, self.m_AlignX, self.m_AlignY, false, false, true, false, false)
 end
 
-function DXLabel:setText(cmd, text)
+function DXLabel:setText(text)
 	self.m_Text = text
 end
 
