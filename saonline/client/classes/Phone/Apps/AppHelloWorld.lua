@@ -19,4 +19,3 @@ end
 function AppHelloWorld:onClose()
 
 end
-

@@ -11,6 +11,19 @@ function Core:constructor()
 	
 	-- HUD
 	HUDRadar:new()
+	
+	-- Phone
+	Phone:new()
+	Phone:getSingleton():close()
+	bindKey("k", "down",
+		function()
+			if not Phone:getSingleton():isVisible() then
+				Phone:getSingleton():open()
+			else
+				Phone:getSingleton():close()
+			end
+		end
+	)
 end
 
 function Core:destructor()

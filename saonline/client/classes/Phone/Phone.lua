@@ -5,8 +5,8 @@
 -- *  PURPOSE:     Phone class
 -- *
 -- ****************************************************************************
-Phone = inherit(GUIForm)
-inherit(Singleton, Phone)
+Phone = inherit(Singleton)
+inherit(GUIForm, Phone)
 
 function Phone:constructor()
 	GUIForm.constructor(self, screenWidth-270, screenHeight-500, 250, 490)
@@ -53,9 +53,6 @@ function Phone:constructor()
 	self.m_RecentButton.onLeftClick = function() outputChatBox("Not implemented") end
 end
 
-function Phone:destructor()
-end
-
 function Phone:registerApp(appClasst)
 	local app = appClasst:new()
 	table.insert(self.m_Apps, app)
@@ -63,7 +60,12 @@ function Phone:registerApp(appClasst)
 end
 
 function Phone:open()
-	
+	self:setVisible(true)
+end
+
+function Phone:close()
+	self:closeAllApps()
+	self:setVisible(false)
 end
 
 function Phone:closeAllApps()
@@ -73,10 +75,3 @@ function Phone:closeAllApps()
 		end
 	end
 end
-
-addCommandHandler("phone",
-	function()
-		local p = Phone:new()
-		p:open()
-	end
-)

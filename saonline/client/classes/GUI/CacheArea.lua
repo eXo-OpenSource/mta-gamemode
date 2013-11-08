@@ -84,7 +84,7 @@ end
 
 function CacheArea:draw(incache)
 	-- Do not waste time in drawing invisible elements
-	if self.m_Visible == false then
+	if not self.m_Visible then
 		return
 	end
 
