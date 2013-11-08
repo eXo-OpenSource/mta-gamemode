@@ -17,6 +17,11 @@ function Phone:constructor()
 	self:registerApp(AppHelloWorld)
 	self:registerApp(AppCall)
 	
+	-- Add event handlers
+	addEvent("voiceCallIncoming", true)
+	addEventHandler("voiceCallIncoming", root, bind(self.Event_voiceCallIncoming, self))
+	
+	
 	-- Add GUI elements
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/Phone.png", self)
 	
@@ -65,4 +70,21 @@ function Phone:closeAllApps()
 			app:close()
 		end
 	end
+end
+
+function Phone:getAppByClass(classt)
+	for k, app in ipairs(self.m_Apps) do
+		if instanceof(app, classt, true) then
+			return app
+		end
+	end
+	return false
+end
+
+function Phone:Event_voiceCallIncoming(caller)
+	if not caller then return end
+	self:open()
+	self.m_IconSurface:setVisible(false)
+	self:getAppByClass(AppCall):open()
+	self:getAppByClass(AppCall):incomingCall(caller)
 end

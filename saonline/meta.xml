@@ -23,6 +23,7 @@
 	<script src="server/classes/Player.lua" type="server"/>
 	<script src="server/classes/Root.lua" type="server"/>
 	<script src="server/classes/WhiteList.lua" type="server"/>
+	<script src="server/classes/PhoneInteraction.lua" type="server"/>
 	
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -110,5 +111,8 @@
 	<file src="files/images/world.png"/>
 	<file src="files/images/Radar.jpg"/>
 	<file src="files/images/Blips/LocalPlayer.png"/>
+	
+	<!-- Audio -->
+	<file src="files/audio/Ringtone.mp3"/>
 	
 </meta>

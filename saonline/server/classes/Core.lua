@@ -16,6 +16,7 @@ function Core:constructor()
 	
 	-- Instantiate classes (Create objects)
 	WhiteList:new()
+	PhoneInteraction:new()
 	
 	-- Create jobs
 	JobLogistician:new()

@@ -33,8 +33,26 @@ function AppCall:ButtonCall_Click()
 	end
 
 	if self.m_CheckVoice:isChecked() then
-		localPlayer:rpc("voiceCallStart", player)
+		triggerServerEvent("voiceCallStart", root, player)
 	else
-		localPlayer:rpc("chatCallStart", player)
+		triggerServerEvent("chatCallStart", root, player)
 	end
+end
+
+function AppCall:incomingCall(caller)
+	-- Todo: Optimize this; Use something like Android's activities
+	self.m_Label:setVisible(false)
+	self.m_Edit:setVisible(false)
+	self.m_ButtonCall:setVisible(false)
+	self.m_CheckVoice:setVisible(false)
+	
+	-- Create call elements
+	self.m_CallLabel = GUILabel:new(8, 10, 200, 20, "Incoming call from "..getPlayerName(caller), 3, self:getForm())
+	self.m_ButtonAnswer = GUIButton:new(8, 200, 100, 40, "Answer", self:getForm())
+	self.m_ButtonAnswer.m_BackgroundColor = Color.Green
+	self.m_ButtonBusy = GUIButton:new(113, 200, 100, 40, "Busy", self:getForm())
+	self.m_ButtonBusy.m_BackgroundColor = Color.Red
+	
+	-- Play ring sound
+	playSound("files/audio/Ringtone.mp3", true)
 end
