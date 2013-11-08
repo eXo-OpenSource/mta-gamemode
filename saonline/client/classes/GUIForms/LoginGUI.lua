@@ -145,3 +145,4 @@ end
 
 lgi = LoginGUI:new()
 lgi:showHome()
+addCommandHandler("remk", function() lgi:hide() lgi:show() end)
