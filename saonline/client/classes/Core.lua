@@ -8,6 +8,9 @@ function Core:constructor()
 	enew(localPlayer, LocalPlayer)
 	
 	Version:new()
+	
+	-- HUD
+	HUDRadar:new()
 end
 
 function Core:destructor()
