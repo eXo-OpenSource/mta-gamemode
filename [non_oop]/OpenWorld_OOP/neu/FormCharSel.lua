@@ -75,7 +75,7 @@ function testad()
 	-- LEVEL
 	m_Image1 = DXImage:new("world.png", 415, 278, 95, 95)
 	
-	m_Label8 = DXLabel:new(char1_level1, 415, 278, 505, 373) 
+	m_Label8 = DXLabel:new("Level", 415, 278, 505, 373) 
 	m_Label8:setColor(255, 255, 255, 255)
 	m_Label8:setFont(gtaonlinefont[50])
 	m_Label8:setAlignX("center")
@@ -134,26 +134,26 @@ function testad()
 	m_Box14 = DXBox:new(356, 689, 205, 15)
 	m_Box14:setColor(12, 25, 42, 255)
 	
-	local prozent = (205/100)
-	local fahrenwert = prozent*char1_fahren1  -- Höchste = 252
-	local schiessenwert = prozent*char1_schiessen1
-	local fliegenwert = prozent*char1_fliegen1
-	local schleichenwert = prozent*char1_schleichen1
-	local ausdauerwert = prozent*char1_ausdauer1
+	-- local prozent = (205/100)
+	-- local fahrenwert = prozent*char1_fahren1  -- Höchste = 252
+	-- local schiessenwert = prozent*char1_schiessen1
+	-- local fliegenwert = prozent*char1_fliegen1
+	-- local schleichenwert = prozent*char1_schleichen1
+	-- local ausdauerwert = prozent*char1_ausdauer1
 	
-	m_Box15 = DXBox:new(356, 434, fahrenwert, 15)
+	m_Box15 = DXBox:new(356, 434, "fahrenwert", 15)
 	m_Box15:setColor(23, 76, 133, 255)
 	
-	m_Box16 = DXBox:new(356, 497, schiessenwert, 15)
+	m_Box16 = DXBox:new(356, 497, "schiessenwert", 15)
 	m_Box16:setColor(23, 76, 133, 255)
 	
-	m_Box17 = DXBox:new(356, 560, fliegenwert, 15)
+	m_Box17 = DXBox:new(356, 560, "fliegenwert", 15)
 	m_Box17:setColor(23, 76, 133, 255)
 	
-	m_Box18 = DXBox:new(356, 624, schleichenwert, 15)
+	m_Box18 = DXBox:new(356, 624, "schleichenwert", 15)
 	m_Box18:setColor(23, 76, 133, 255)
 	
-	m_Box19 = DXBox:new(356, 689, ausdauerwert, 15)
+	m_Box19 = DXBox:new(356, 689, "ausdauerwert", 15)
 	m_Box19:setColor(23, 76, 133, 255)
 	
 	
