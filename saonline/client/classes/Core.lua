@@ -7,6 +7,10 @@ function Core:constructor()
 	-- Instantiate the localPlayer instance right now
 	enew(localPlayer, LocalPlayer)
 	
+	if DEBUG then
+		Debugging:new()
+	end
+	
 	Version:new()
 	
 	-- HUD

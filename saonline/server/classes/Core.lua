@@ -6,6 +6,10 @@ function Core:constructor()
 	-- Small hack to get the global core immediately
 	core = self
 	
+	if DEBUG then
+		Debugging:new()
+	end
+	
 	-- Establish database connection
 	sql = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, MYSQL_DB, "")
 	sql:setPrefix("saonline")
