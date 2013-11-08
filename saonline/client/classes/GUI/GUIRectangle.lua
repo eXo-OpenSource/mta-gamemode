@@ -13,6 +13,7 @@ function GUIRectangle:constructor(posX, posY, width, height, color, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self)
 
+	outputDebug(type(color))
 	self:setColor(color or Color.Black)
 end
 

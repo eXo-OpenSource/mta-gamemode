@@ -24,6 +24,8 @@ function Account.login(player, username, password)
 	
 	return Account:new(row.Id, username, player)
 end
+addEvent("accountlogin", true)
+addEventHandler("accountlogin", root, function(u, p) Async.create(Account.login)(client, u, p) end)
 
 function Account.register(player, username, password)
 	if player:getAccount() then return false end
@@ -45,9 +47,8 @@ function Account.register(player, username, password)
 	
 	return Account:new(sql:lastInsertId(), username, player)
 end
-addCommandHandler("logfoo", function(c, _, u, p) outputDebugString(tostring(Async.create(Account.login)(c, u, p) or "nothing")) end)
-addCommandHandler("regfoo", function(c, _, u, p) outputDebugString(tostring(Async.create(Account.register)(c, u, p) or "nothing")) end)
-	
+addEvent("accountregister", true)
+addEventHandler("accountregister", root, function(u, p) Async.create(Account.register)(client, u, p) end)
 
 function Account:constructor(id, username, player)
 	-- Account Information
