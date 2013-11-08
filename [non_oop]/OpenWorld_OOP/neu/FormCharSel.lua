@@ -141,19 +141,19 @@ function testad()
 	-- local schleichenwert = prozent*char1_schleichen1
 	-- local ausdauerwert = prozent*char1_ausdauer1
 	
-	m_Box15 = DXBox:new(356, 434, "fahrenwert", 15)
+	m_Box15 = DXBox:new(356, 434, 10, 15)
 	m_Box15:setColor(23, 76, 133, 255)
 	
-	m_Box16 = DXBox:new(356, 497, "schiessenwert", 15)
+	m_Box16 = DXBox:new(356, 497, 11, 15)
 	m_Box16:setColor(23, 76, 133, 255)
 	
-	m_Box17 = DXBox:new(356, 560, "fliegenwert", 15)
+	m_Box17 = DXBox:new(356, 560, 12, 15)
 	m_Box17:setColor(23, 76, 133, 255)
 	
-	m_Box18 = DXBox:new(356, 624, "schleichenwert", 15)
+	m_Box18 = DXBox:new(356, 624, 13, 15)
 	m_Box18:setColor(23, 76, 133, 255)
 	
-	m_Box19 = DXBox:new(356, 689, "ausdauerwert", 15)
+	m_Box19 = DXBox:new(356, 689, 14, 15)
 	m_Box19:setColor(23, 76, 133, 255)
 	
 	
