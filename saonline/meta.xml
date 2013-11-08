@@ -44,8 +44,58 @@
 	<script src="client/tempLogin.lua" type="client"/>
 	<script src="client/Main.lua" type="client"/>
 	
+	<!-- GUI system -->
+	<script src="client/classes/Color.lua" type="client"/>
+	<script src="client/classes/GUI/DxElement.lua" type="client"/>
+	<script src="client/classes/GUI/CacheArea.lua" type="client"/>
+	<script src="client/classes/GUI/GUIElement.lua" type="client"/>
+	<script src="client/classes/GUI/abstract/GUIColorable.lua" type="client"/>
+	<script src="client/classes/GUI/abstract/GUIFontContainer.lua" type="client"/>
+	<script src="client/classes/GUI/abstract/GUIScrollableArea.lua" type="client"/>
+	<script src="client/classes/GUI/GUIButton.lua" type="client"/>
+	<script src="client/classes/GUI/GUICheckbox.lua" type="client"/>
+	<script src="client/classes/GUI/GUIDebugging.lua" type="client"/>
+	<script src="client/classes/GUI/GUIInputControl.lua" type="client"/>
+	<script src="client/classes/GUI/GUIEdit.lua" type="client"/>
+	<script src="client/classes/GUI/GUIForm.lua" type="client"/>
+	<script src="client/classes/GUI/GUILabel.lua" type="client"/>
+	<script src="client/classes/GUI/GUIRenderer.lua" type="client"/>
+	<script src="client/classes/GUI/GUIWindow.lua" type="client"/>
+	<script src="client/classes/GUI/GUICursor.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMouseMenu.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMouseMenuItem.lua" type="client"/>
+	<script src="client/classes/GUI/GUIGridList.lua" type="client"/>
+	<script src="client/classes/GUI/GUIGridListItem.lua" type="client"/>
+	<script src="client/classes/GUI/GUIRectangle.lua" type="client"/>
+	<script src="client/classes/GUI/GUIScrollbar.lua" type="client"/>
+	<script src="client/classes/GUI/GUIVerticalScrollbar.lua" type="client"/>
+	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
+		
+	<!-- Special GUI elements -->
+	<script src="client/classes/GUI/MessageBoxes/MessageBox.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/InfoBox.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/WarningBox.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/ErrorBox.lua" type="client"/>
+	<script src="client/classes/GUI/MessageBoxes/SuccessBox.lua" type="client"/>
+		
 	<!-- Files -->
+	<file src="files/images/MessageBoxes/Info.png" onDemand="false"/>
+	<file src="files/images/MessageBoxes/Warning.png" onDemand="false"/>
+	<file src="files/images/MessageBoxes/Error.png" onDemand="false"/>
+	<file src="files/images/MessageBoxes/Success.png" onDemand="false"/>
 	<file src="files/images/Phone/Phone.png"/>
 	<file src="files/images/Phone/Apps/IconHelloWorld.png"/>
+	
+	<file src="files/images/GUI/Button.png" onDemand="false"/>
+	<file src="files/images/GUI/Button_hover.png" onDemand="false"/>
+	<file src="files/images/GUI/Checkbox.png" onDemand="false"/>
+	<file src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
+	<file src="files/images/GUI/Cursor.png" onDemand="false"/>
+	<file src="files/images/GUI/Editbox.png" onDemand="false"/>
+	<file src="files/images/GUI/Window.png" onDemand="false"/>
+	
+	<file src="files/fonts/gtafont.ttf"/>
+	<file src="files/images/avatar_default.png"/>
+	<file src="files/images/world.png"/>
 	
 </meta>

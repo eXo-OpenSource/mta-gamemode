@@ -8,6 +8,8 @@
 
 Main = {}
 
+function checkArgs() end
+
 function Main.resourceStart()
 	-- Instantiate Core
 	core = Core:new()

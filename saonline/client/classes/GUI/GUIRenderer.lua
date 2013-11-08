@@ -6,7 +6,8 @@
 -- *
 -- ****************************************************************************
 
-GUIRenderer = {cache = {}}
+GUIRenderer = inherit(Object)
+GUIRenderer.cache = {}
 
 function GUIRenderer.constructor()	
 	-- Create a default cache area
@@ -55,3 +56,5 @@ function GUIRenderer.removeRef(ref)
 	table.remove(GUIRenderer.cache, idx)
 	return true
 end
+
+GUIRenderer:new()
