@@ -13,8 +13,11 @@ function Core:constructor()
 	-- Instantiate classes (Create objects)
 	WhiteList:new()
 	
+	-- Create jobs
+	JobLogistician:new()
+	
 end
 
 function Core:destructor()
-
+	delete(sql)
 end
