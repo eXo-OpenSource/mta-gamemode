@@ -13,8 +13,8 @@ function JobLogistician:constructor()
 	-- Create crans
 	local cran = Cran:new(10, 0, 9, 60, 80, 9)
 	addCommandHandler("drop",
-		function()
-			cran:dropContainer(getPedOccupiedVehicle(getRandomPlayer()))
+		function(player)
+			cran:dropContainer(getPedOccupiedVehicle(player))
 		end
 	)
 	addCommandHandler("logistic",

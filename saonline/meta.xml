@@ -81,6 +81,7 @@
 	<script src="client/classes/Phone/Phone.lua" type="client"/>
 	<script src="client/classes/Phone/PhoneApp.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppHelloWorld.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppCall.lua" type="client"/>
 	
 	<script src="client/tempLogin.lua" type="client"/>
 	<script src="client/Main.lua" type="client"/>
@@ -93,6 +94,8 @@
 	<file src="files/images/MessageBoxes/Success.png" onDemand="false"/>
 	<file src="files/images/Phone/Phone.png"/>
 	<file src="files/images/Phone/Apps/IconHelloWorld.png"/>
+	<file src="files/images/Phone/Apps/IconCall.png"/>
+	<file src="files/images/Phone/Apps/IconMessage.png"/>
 	
 	<file src="files/images/GUI/Button.png" onDemand="false"/>
 	<file src="files/images/GUI/Button_hover.png" onDemand="false"/>

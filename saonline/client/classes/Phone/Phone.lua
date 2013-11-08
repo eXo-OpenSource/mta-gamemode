@@ -15,16 +15,7 @@ function Phone:constructor()
 	
 	-- Register apps
 	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
-	self:registerApp(AppHelloWorld)
+	self:registerApp(AppCall)
 	
 	-- Add GUI elements
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/Phone.png", self)

@@ -20,8 +20,8 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	GUIColorable.constructor(self)
 
 	self.m_Path = "files/images/GUI/Button.png"
-	self.m_BackgroundColor = tocolor(255, 255, 255, 200)
-	self:setColor(Color.Black)
+	self.m_BackgroundColor = tocolor(0, 32, 63,	255)
+	self:setColor(Color.White)
 end
 
 function GUIButton:drawThis()
@@ -37,12 +37,14 @@ end
 
 function GUIButton:onInternalHover()
 	self.m_Path = "files/images/GUI/Button_hover.png"
-	self.m_BackgroundColor = tocolor(255, 255, 255, 170)
+	self.m_BackgroundColor = Color.White
+	self:setColor(Color.Black)
 	self:anyChange()
 end
 
 function GUIButton:onInternalUnhover()
 	self.m_Path = "files/images/GUI/Button.png"
-	self.m_BackgroundColor = tocolor(255, 255, 255, 200)
+	self.m_BackgroundColor = tocolor(0, 32, 63,	255)
+	self:setColor(Color.White)
 	self:anyChange()
 end
