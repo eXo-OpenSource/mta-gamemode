@@ -1,12 +1,13 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     GTA:SA Online
 -- *  FILE:        client/classes/Color.lua
 -- *  PURPOSE:     Static color "pseudo-class"
 -- *
 -- ****************************************************************************
 
 Color = {
+	Clear     = {0, 0, 0, 0   },
 	Black     = {0,     0,   0},
 	White     = {255, 255, 255},
 	Red       = {255,   0,   0},

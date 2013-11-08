@@ -30,3 +30,4 @@ function GUICursor.draw()
 end
 
 GUICursor:new()
+addEventHandler("onClientResourceStop", resourceRoot, function() delete(GUICursor:getSingleton()) end)

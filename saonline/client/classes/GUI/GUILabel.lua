@@ -18,11 +18,13 @@ function GUILabel:constructor(posX, posY, width, height, text, size, parent)
 
 	self.m_LineSpacing = 10
 	self.m_Multiline = false
+	self.m_AlignX = "left"
+	self.m_AlignY = "top"
 end
 
 function GUILabel:drawThis(incache)
 	if not self.m_Multiline then
-		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), "left", "top", false, true, incache ~= true)
+		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true)
 	else
 
 		-- Split the text into lines (\n)
@@ -42,4 +44,12 @@ end
 
 function GUILabel:setMultiline(multilineEnabled)
 	self.m_Multiline = multilineEnabled
+end
+
+function GUILabel:setAlignX(alignX)
+	self.m_AlignX = alignX
+end
+
+function GUILabel:setAlignY(alignY)
+	self.m_AlignY = alignY
 end

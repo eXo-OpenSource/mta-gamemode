@@ -5,9 +5,11 @@
 -- *  PURPOSE:     PhoneApp class
 -- *
 -- ****************************************************************************
-PhoneApp = inherit(Singleton)
+PhoneApp = inherit(Object)
 
-function PhoneApp:constructor()
+function PhoneApp:constructor(appName, iconPath)
+	self.m_Name = appName
+	self.m_IconPath = iconPath
 	self.m_IsOpen = false
 end
 
@@ -18,6 +20,32 @@ function PhoneApp:isOpen()
 	return self.m_IsOpen
 end
 
-PhoneApp.open = pure_virtual
-PhoneApp.close = pure_virtual
-PhoneApp.getIconPath = pure_virtual
+function PhoneApp:getName()
+	return self.m_Name
+end
+
+function PhoneApp:getIconPath()
+	return self.m_IconPath
+end
+
+function PhoneApp:getForm()
+	return self.m_Form
+end
+
+function PhoneApp:open()
+	self.m_IsOpen = true
+
+	self.m_Form = GUIRectangle:new(14, 41, 222, 365, tocolor(255, 255, 255, 150), Phone:getSingleton())
+	self:onOpen(self.m_Form)
+end
+
+function PhoneApp:close()
+	if self.onClose then
+		self.onClose(self.m_Form)
+	end
+	delete(self.m_Form)
+	self.m_Form = nil
+	self.m_IsOpen = false
+end
+
+PhoneApp.onOpen = pure_virtual

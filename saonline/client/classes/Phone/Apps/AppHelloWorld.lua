@@ -8,17 +8,15 @@
 AppHelloWorld = inherit(PhoneApp)
 
 function AppHelloWorld:constructor()
-	
+	PhoneApp.constructor(self, "FirstApp", "files/images/Phone/Apps/IconHelloWorld.png")
 end
 
-function AppHelloWorld:open()
-	
+function AppHelloWorld:onOpen(form)
+	self.m_Label = GUILabel:new(10, 10, 200, 20, "Hello world!", 3, form)
+	self.m_Label:setColor(Color.Black)
 end
 
-function AppHelloWorld:render()
+function AppHelloWorld:onClose()
 
 end
 
-function AppHelloWorld:getIconPath()
-	return "files/images/Phone/Apps/IconHelloWorld.png"
-end
