@@ -105,16 +105,6 @@ function GUIElement.getHoveredElement()
 	return GUIElement.HoveredElement
 end
 
-function GUIElement:show()
-	self.m_Visible = true
-	self:anyChange()
-end
-
-function GUIElement:hide()
-	self.m_Visible = false
-	self:anyChange()
-end
-
 -- Static mouse wheel event checking
 addEventHandler("onClientResourceStart", resourceRoot,
 	function()
