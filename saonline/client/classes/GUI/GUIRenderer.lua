@@ -5,7 +5,6 @@
 -- *  PURPOSE:     GUI renderer class
 -- *
 -- ****************************************************************************
-
 GUIRenderer = inherit(Object)
 GUIRenderer.cache = {}
 
@@ -23,8 +22,11 @@ function GUIRenderer.destructor()
 	removeEventHandler("onClientRender", root, GUIRenderer.drawAll)
 end
 
-function GUIRenderer.updateAll()
+function GUIRenderer.updateAll(elapsedTime)
 	for k, v in ipairs(GUIRenderer.cache) do
+		if v.update then
+			v:update(elapsedTime)
+		end
 		if v.m_ContainsGUIElements and v.m_Visible then
 			v:performChecks()
 		end

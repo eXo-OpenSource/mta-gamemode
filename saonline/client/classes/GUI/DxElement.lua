@@ -95,6 +95,14 @@ function DxElement:draw(incache)
 	end
 end
 
+function DxElement:update(elapsedTime)
+	for k, v in ipairs(self.m_Children) do
+		if v.update then
+			v:update(elapsedTime)
+		end
+	end
+end
+
 function DxElement:isVisible()
 	return self.m_Visible
 end
