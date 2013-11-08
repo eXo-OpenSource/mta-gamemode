@@ -101,6 +101,11 @@ end
 
 function DxElement:setVisible(visible)
 	self.m_Visible = visible
+	
+	for k, v in ipairs(self.m_Children) do
+		v:setVisible(visible)
+	end
+	
 	self:anyChange()
 end
 

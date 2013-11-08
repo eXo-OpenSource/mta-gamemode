@@ -25,7 +25,7 @@ end
 
 function GUIRenderer.updateAll()
 	for k, v in ipairs(GUIRenderer.cache) do
-		if v.m_ContainsGUIElements then
+		if v.m_ContainsGUIElements and v.m_Visible then
 			v:performChecks()
 		end
 	end

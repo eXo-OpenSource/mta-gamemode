@@ -5,7 +5,6 @@
 -- *  PURPOSE:     GUI image class
 -- *
 -- ****************************************************************************
-
 GUIImage = inherit(GUIElement)
 
 function GUIImage:constructor(posX, posY, width, height, path, parent)

@@ -67,12 +67,6 @@ function table.findAll(tab, value)
 	return result
 end
 
-function outputDebug(errmsg)
-	if DEBUG then
-		outputDebugString((triggerServerEvent and "CLIENT " or "SERVER ")..tostring(errmsg))
-	end
-end
-
 _coroutine_resume = coroutine.resume
 function coroutine.resume(...)
 	local state,result = _coroutine_resume(...)

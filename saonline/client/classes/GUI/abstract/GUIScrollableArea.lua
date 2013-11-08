@@ -7,7 +7,9 @@
 -- ****************************************************************************
 GUIScrollableArea = inherit(GUIElement)
 
-function GUIScrollableArea:constructor(documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar)
+function GUIScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent)
+	GUIElement.constructor(self, posX, posY, width, height, parent)
+
 	self.m_PageTarget = dxCreateRenderTarget(documentWidth, documentHeight, true)
 	
 	self.m_ScrollX = 0
@@ -26,43 +28,31 @@ function GUIScrollableArea:draw(incache)
 		return
 	end
 	
-	if self.m_ChangedSinceLastFrame then
-	
-		-- Absolute X = Real X for drawing on the render target
-		for k, v in ipairs(self.m_Children) do
-			v.m_AbsoluteX = v.m_PosX - self.m_ScrollX
-			v.m_AbsoluteY = v.m_PosY - self.m_ScrollY
-		end
-		self.m_AbsoluteX = self.m_AbsoluteX - self.m_ScrollX
-		self.m_AbsoluteY = self.m_AbsoluteY - self.m_ScrollY
-		
-		-- Draw Children to render Target
-		dxSetRenderTarget(self.m_PageTarget, true)
-		
-		-- Draw Self
-		if self.drawThis then self:drawThis(incache) end
-		
-		-- Draw children
-		for k, v in ipairs(self.m_Children) do
-			if v.draw then v:draw(incache) end
-		end
-		dxSetRenderTarget(self.m_CacheArea.m_RenderTarget or nil)
-
-		-- Recreate AbsoluteX for the update() method to allow mouse actions
-		for k, v in pairs(self.m_Children) do
-			v.m_AbsoluteX = self.m_AbsoluteX + v.m_PosX - self.m_ScrollX
-			v.m_AbsoluteY = self.m_AbsoluteY + v.m_PosY - self.m_ScrollY
-		end
-		self.m_AbsoluteX = self.m_AbsoluteX + self.m_ScrollX
-		self.m_AbsoluteY = self.m_AbsoluteY + self.m_ScrollY
-		
-		self.m_ChangedSinceLastFrame = false
+	-- Absolute X = Real X for drawing on the render target
+	for k, v in ipairs(self.m_Children) do
+		v.m_AbsoluteX = v.m_PosX - self.m_ScrollX
+		v.m_AbsoluteY = v.m_PosY + self.m_ScrollY
 	end
-	dxDrawImageSection(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_ScrollX, self.m_ScrollY, self.m_Width, self.m_Height, self.m_PageTarget)
-end
-
-function GUIScrollableArea:anyChange()
-	self.m_ChangedSinceLastFrame = true
+	
+	-- Draw Children to render Target
+	dxSetRenderTarget(self.m_PageTarget, true)
+	
+	-- Draw Self
+	if self.drawThis then self:drawThis(incache) end
+	
+	-- Draw children
+	for k, v in ipairs(self.m_Children) do
+		if v.draw then v:draw(incache) end
+	end
+	dxSetRenderTarget(self.m_CacheArea.m_RenderTarget or nil)
+	
+	-- Recreate AbsoluteX for the update() method to allow mouse actions
+	for k, v in pairs(self.m_Children) do
+		v.m_AbsoluteX = self.m_AbsoluteX + v.m_PosX - self.m_ScrollX
+		v.m_AbsoluteY = self.m_AbsoluteY + v.m_PosY + self.m_ScrollY
+	end
+	
+	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_DocumentWidth, self.m_DocumentHeight, self.m_PageTarget)
 end
 
 function GUIScrollableArea:setScrollPosition(x, y)
@@ -98,11 +88,13 @@ function GUIScrollableArea:createScrollbars(verticalScrollbar, horizontalScrollb
 end
 
 function GUIScrollableArea:onInternalMouseWheelUp()
-	outputDebug("GUIScrollableArea:onInternalMouseWheelUp()")
-	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 5)
+	if (self.m_ScrollY) >= 0 then
+		self.m_ScrollY = 0
+	else
+		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY + 8)
+	end
 end
 
 function GUIScrollableArea:onInternalMouseWheelDown()
-	outputDebug("GUIScrollableArea:onInternalMouseWheelDown()")
-	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY + 5)
+	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 8)
 end

@@ -258,7 +258,11 @@ end
 --||	@return:table - The now inheriting class
 --\\
 function utils.class.inherit(from, what)
-	if not from then return {} end
+	if not from then
+		outputDebug("Attempt to inherit a nil table value")
+		outputConsole(debug.traceback())
+		return {}
+	end
 	
 	if not what then
 		local classt = setmetatable({}, { __index = utils.class._inheritIndex, __super = { from } })

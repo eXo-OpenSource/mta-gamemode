@@ -62,5 +62,9 @@ function f()
 	1000, 1)
 end			
 
-lgi = LoginGUI:new()
-f()
+addCommandHandler("logingui",
+	function()
+		lgi = LoginGUI:new()
+		f()
+	end
+)
