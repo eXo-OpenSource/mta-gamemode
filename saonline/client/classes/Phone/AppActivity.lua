@@ -7,8 +7,8 @@
 -- ****************************************************************************
 AppActivity = inherit(GUIElement)
 
-function AppActivity:constructor(app, form)
-	GUIElement.constructor(self, 0, 0, 222, 365, form)
+function AppActivity:constructor(app)
+	GUIElement.constructor(self, 0, 0, 222, 365, app:getForm())
 	
 	-- Close all current activities
 	app:closeActivities()
@@ -17,4 +17,8 @@ function AppActivity:constructor(app, form)
 	app:addActivity(self)
 	
 	
+end
+
+function AppActivity:isOpen()
+	return self:isVisible()
 end

@@ -105,6 +105,10 @@ function GUIElement.getHoveredElement()
 	return GUIElement.HoveredElement
 end
 
+function GUIElement:isHovered()
+	return self.m_Hover
+end
+
 -- Static mouse wheel event checking
 addEventHandler("onClientResourceStart", resourceRoot,
 	function()

@@ -34,6 +34,10 @@ function PhoneApp:getForm()
 end
 
 function PhoneApp:open()
+	if self.m_IsOpen then
+		-- App is already open
+		return
+	end
 	self.m_IsOpen = true
 
 	self.m_Form = GUIRectangle:new(14, 41, 222, 365, tocolor(255, 255, 255, 150), Phone:getSingleton())
@@ -42,8 +46,9 @@ end
 
 function PhoneApp:close()
 	if self.onClose then
-		self.onClose(self.m_Form)
+		self:onClose(self.m_Form)
 	end
+	self:closeActivities()
 	delete(self.m_Form)
 	self.m_Form = nil
 	self.m_IsOpen = false
@@ -57,6 +62,10 @@ function PhoneApp:closeActivities()
 	for k, activity in ipairs(self.m_Activities) do
 		delete(activity)
 	end
+end
+
+function PhoneApp:getActivities()
+	return self.m_Activities
 end
 
 PhoneApp.onOpen = pure_virtual
