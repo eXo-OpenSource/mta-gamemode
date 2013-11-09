@@ -11,6 +11,7 @@ function PhoneApp:constructor(appName, iconPath)
 	self.m_Name = appName
 	self.m_IconPath = iconPath
 	self.m_IsOpen = false
+	self.m_Activities = {}
 end
 
 function PhoneApp:destructor()
@@ -46,6 +47,16 @@ function PhoneApp:close()
 	delete(self.m_Form)
 	self.m_Form = nil
 	self.m_IsOpen = false
+end
+
+function PhoneApp:addActivity(activity)
+	table.insert(self.m_Activities, activity)
+end
+
+function PhoneApp:closeActivities()
+	for k, activity in ipairs(self.m_Activities) do
+		delete(activity)
+	end
 end
 
 PhoneApp.onOpen = pure_virtual

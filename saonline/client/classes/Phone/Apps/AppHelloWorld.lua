@@ -17,5 +17,5 @@ function AppHelloWorld:onOpen(form)
 end
 
 function AppHelloWorld:onClose()
-
+	outputChatBox("Bye!", 255, 255, 0)
 end

@@ -17,11 +17,6 @@ function Phone:constructor()
 	self:registerApp(AppHelloWorld)
 	self:registerApp(AppCall)
 	
-	-- Add event handlers
-	addEvent("voiceCallIncoming", true)
-	addEventHandler("voiceCallIncoming", root, bind(self.Event_voiceCallIncoming, self))
-	
-	
 	-- Add GUI elements
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/Phone.png", self)
 	
@@ -81,10 +76,29 @@ function Phone:getAppByClass(classt)
 	return false
 end
 
-function Phone:Event_voiceCallIncoming(caller)
-	if not caller then return end
-	self:open()
+function Phone:isOpen()
+	return self:isVisible()
+end
+
+function Phone:openApp(app)
+	-- Show phone if not shown already
+	if not self:isVisible() then
+		self:open()
+	end
+	
+	-- Hide app icon surface/activity
 	self.m_IconSurface:setVisible(false)
-	self:getAppByClass(AppCall):open()
-	self:getAppByClass(AppCall):incomingCall(caller)
+	app:open()
+	
+	return true
+end
+
+function Phone:openAppByClass(appClass)
+	local app = self:getAppByClass(appClass)
+	if not app then
+		error("Attempt to open a non-existing app")
+		return false
+	end
+	
+	return self:openApp(app)
 end
