@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     GTA:SA Online
 -- *  FILE:        server/classes/PhoneInteraction.lua
 -- *  PURPOSE:     Phone interaction class
 -- *

@@ -12,6 +12,7 @@ function Core:constructor()
 	end
 	
 	Version:new()
+	TranslationManager:new()
 	
 	-- HUD
 	HUDRadar:new()

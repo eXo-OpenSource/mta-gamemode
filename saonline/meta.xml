@@ -6,11 +6,18 @@
 	<script src="shared/constants.lua" type="shared"/>
 	<script src="shared/classlib.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
-	<script src="shared/classes/Object.lua" type="shared"/>
-	<script src="shared/classes/Singleton.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
 	<script src="shared/version.lua" type="shared"/>
 	<script src="shared/debug.lua" type="shared"/>
+	<script src="shared/classes/Object.lua" type="shared"/>
+	<script src="shared/classes/Singleton.lua" type="shared"/>
+	<script src="shared/classes/File.lua" type="shared"/>
+	<script src="shared/classes/Log.lua" type="shared"/>
+	<script src="shared/classes/POParser.lua" type="shared"/>
+	<script src="shared/classes/Queue.lua" type="shared"/>
+	<script src="shared/classes/TimedPulse.lua" type="shared"/>
+	<script src="shared/classes/Vector.lua" type="shared"/>
+	<script src="shared/classes/TranslationManager.lua" type="shared"/>
 	
 	<!-- Server -->
 	<script src="server/classes/Debugging.lua" type="server"/>

@@ -15,6 +15,7 @@ function Core:constructor()
 	sql:setPrefix("saonline")
 	
 	-- Instantiate classes (Create objects)
+	TranslationManager:new()
 	WhiteList:new()
 	PhoneInteraction:new()
 	

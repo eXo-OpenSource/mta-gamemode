@@ -15,6 +15,8 @@ function GUIInputControl.constructor()
 	error("Cannot create a new GUIInputControl")
 end
 
+addEventHandler("onClientResourceStop", resourceRoot, function() guiSetInputEnabled(false) end)
+
 function GUIInputControl.setFocus(edit)
 	GUIInputControl.ms_CurrentInputFocus = edit
 
