@@ -1,5 +1,5 @@
 LoginGUI = inherit(Singleton)
-LoginGUI = inherit(DxElement)
+inherit(DxElement, LoginGUI)
 
 function LoginGUI:constructor()	
 	local font = dxCreateFont("files/fonts/gtafont.ttf", 120)

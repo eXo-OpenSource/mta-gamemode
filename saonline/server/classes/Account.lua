@@ -57,11 +57,11 @@ function Account:constructor(id, username, player)
 	self.m_Player = player
 	self.m_Character = {}
 	
-	sql:queryFetch(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_Rank = row.Rank;
-	self.m_AvailableCharacterCount = row.AvailableCharacterCount;
+	self.m_MaxCharacters = row.AvailableCharacterCount;
 	
 	-- Load Characters
 	sql:queryFetch(Async.waitFor(self), "SELECT Id FROM ??_character WHERE Account = ?;", sql:getPrefix(), row.Id)
@@ -71,6 +71,23 @@ function Account:constructor(id, username, player)
 	end
 	
 	Account.Map[self.m_Id] = self
+	
+	local accsyncinfo = 
+	{
+		Rank = self.m_Rank;
+		MaxCharacters = self.m_MaxCharacters;
+	}
+	local charsyncinfo = {}
+	for i, char in pairs(self.m_Character) do
+		charsyncinfo[i] = 
+		{
+			Level = char.m_Level;
+			XP 	 = char.m_XP;
+			Karma = char.m_Karma;
+			Skills = char.m_Skills	
+		}
+	end
+	triggerClientEvent(player, "loginsuccess", root, accsyncinfo, charsyncinfo)
 end
 
 function Account:destructor()

@@ -219,13 +219,23 @@ end
 --// utils.class.bind(func, self)
 --||	@desc:	Wraps the function(...) return function(self, ...) end idiom
 --||	@param:	table 'func' 			  -	The function to bind
---||	@param:	table 'self' 			  -	The instance to bind to
+--||	@param:	vararg ... 		 		  -	The parameters to bind
 --||	@return:function - the bound function
 --\\
-function utils.class.bind(func, self)
-	return function(...) return func(self, ...) end 
+function utils.class.bind(func, ...)
+	local boundParams = {...}
+	return 
+		function(...) 
+			local params = {}
+			for k, v in pairs(boundParams) do
+				params[#params+1] = v
+			end
+			for k, v in pairs({...}) do
+				params[#params+1] = v
+			end
+			return func(unpack(params)) 
+		end 
 end
-
 --// utils.class.load(class, ...)
 --||	@desc:	Creates an instance of 'class' and call the 'load' method
 --||	@param:	table 'class' -	The class which should be instanciated

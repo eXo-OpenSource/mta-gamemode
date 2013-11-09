@@ -157,6 +157,13 @@ function DxElement:getPosition(isAbsolute)
 end
 
 function DxElement:setPosition(posX, posY)
+	if posX == nil then
+		posX = self.m_PosX
+	end
+	if posY == nil then
+		posY = self.m_PosY
+	end
+	
 	local diffX, diffY = posX-self.m_PosX, posY-self.m_PosY
 	self.m_PosX, self.m_PosY = posX, posY
 	self.m_AbsoluteX, self.m_AbsoluteY = self.m_AbsoluteX + diffX, self.m_AbsoluteY + diffY
