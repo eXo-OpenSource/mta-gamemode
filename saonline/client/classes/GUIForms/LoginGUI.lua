@@ -4,50 +4,53 @@ inherit(DxElement, LoginGUI)
 function LoginGUI:constructor()	
 	local font = dxCreateFont("files/fonts/gtafont.ttf", 120)
 	local sw, sh = guiGetScreenSize()
+	local bw, bh = math.floor(sw / 12), math.floor(sh / 15)
+	
 	DxElement.constructor(self, 0, 0, sw, sh, false, false)
 	self.m_Background = GUIRectangle:new(0, 0, sw, sh, tocolor(2, 17, 39, 255), self)
-	self.m_TopBar = GUIRectangle:new(125, 37, 1350, 187, tocolor(0, 0, 0, 170), self)
+	self.m_TopBar = GUIRectangle:new(bw, bh, sw-2*bw, 200, tocolor(0, 0, 0, 170), self)
 	local servername = GUILabel:new(30, 40, sw, sh, "GTA:SA Online", 1, self.m_TopBar)
 	servername:setFont(font)
 	servername:setFontSize(0.4)
 	
-	self.m_HomeButton = GUIRectangle:new(0, 200, (sw-300)/3, 50, tocolor(255, 255, 255), self.m_TopBar)
-	self.m_HomeButton2 = GUIRectangle:new(0, 200, (sw-300)/3, 4, tocolor(19, 64, 121), self.m_TopBar)
+	self.m_HomeButton = GUIRectangle:new(0, 150, (sw-2*bw)/3, 50, tocolor(255, 255, 255), self.m_TopBar)
+	self.m_HomeButton2 = GUIRectangle:new(0, 150, (sw-2*bw)/3, 4, tocolor(19, 64, 121), self.m_TopBar)
 	self.m_HomeButton.onLeftClick = bind(LoginGUI.showHome, self)
 	
-	self.m_HomeButtonText = GUILabel:new(0, 0, (sw-300)/3, 50, "Home", 0.2, self.m_HomeButton)
+	self.m_HomeButtonText = GUILabel:new(0, 0, (sw-2*bw)/3, 50, "Home", 0.2, self.m_HomeButton)
 	self.m_HomeButtonText:setFont(font)
 	self.m_HomeButtonText:setColor(tocolor(0, 0, 0, 255))
 	self.m_HomeButtonText:setAlignX("center")
 	self.m_HomeButtonText:setAlignY("center")
 
-	self.m_LoginButton = GUIRectangle:new((sw-300)/3, 200, (sw-300)/3, 50, tocolor(255, 255, 255), self.m_TopBar)
-	self.m_LoginButton2 = GUIRectangle:new((sw-300)/3, 200, (sw-300)/3, 4, tocolor(19, 64, 121), self.m_TopBar)
+	self.m_LoginButton = GUIRectangle:new((sw-2*bw)/3, 150, (sw-2*bw)/3, 50, tocolor(255, 255, 255), self.m_TopBar)
+	self.m_LoginButton2 = GUIRectangle:new((sw-2*bw)/3, 150, (sw-2*bw)/3, 4, tocolor(19, 64, 121), self.m_TopBar)
 	self.m_LoginButton.onLeftClick = bind(LoginGUI.showLogin, self)
 	
-	self.m_LoginButtonText = GUILabel:new((sw-300)/3, 200, (sw-300)/3, 50, "Login", 0.2, self.m_TopBar)
+	self.m_LoginButtonText = GUILabel:new((sw-2*bw)/3, 150, (sw-2*bw)/3, 50, "Login", 0.2, self.m_TopBar)
 	self.m_LoginButtonText:setFont(font)
 	self.m_LoginButtonText:setColor(tocolor(0, 0, 0, 255))
 	self.m_LoginButtonText:setAlignY("center")
 	self.m_LoginButtonText:setAlignX("center")
 	
-	self.m_RegisterButton = GUIRectangle:new((sw-300)/3*2, 200, (sw-300)/3, 50, tocolor(255, 255, 255), self.m_TopBar)
-	self.m_RegisterButton2 = GUIRectangle:new((sw-300)/3*2, 200, (sw-300)/3, 4, tocolor(19, 64, 121), self.m_TopBar)
+	self.m_RegisterButton = GUIRectangle:new((sw-2*bw)/3*2, 150, (sw-2*bw)/3, 50, tocolor(255, 255, 255), self.m_TopBar)
+	self.m_RegisterButton2 = GUIRectangle:new((sw-2*bw)/3*2, 150, (sw-2*bw)/3, 4, tocolor(19, 64, 121), self.m_TopBar)
 	self.m_RegisterButton.onLeftClick = bind(LoginGUI.showRegister, self)
 	
-	self.m_RegisterButtonText = GUILabel:new((sw-300)/3*2, 200, (sw-300)/3, 50, "Register", 0.2, self.m_TopBar)
+	self.m_RegisterButtonText = GUILabel:new((sw-2*bw)/3*2, 150, (sw-2*bw)/3, 50, "Register", 0.2, self.m_TopBar)
 	self.m_RegisterButtonText:setFont(font)
 	self.m_RegisterButtonText:setColor(tocolor(0, 0, 0, 255))
 	self.m_RegisterButtonText:setAlignX("center")
 	self.m_RegisterButtonText:setAlignY("center")
+		
+	local tabw = (sw-2*bw)/3*2
+	local tabh = sh-2*bh-210
 	
-	self.m_SideBar 		= GUIRectangle:new(sw-150-(sw-300)/3, 310, (sw-300)/3, sh-360, tocolor(0, 0, 0, 100), self)
-	self.m_LoginTab 	= GUIRectangle:new(150, 310, (sw-300)/3*2, sh-360, tocolor(0, 0, 0, 170), self)
-	self.m_HomeTab 		= GUIRectangle:new(150, 310, (sw-300)/3*2, sh-360, tocolor(0, 0, 0, 170), self)
-	self.m_RegisterTab 	= GUIRectangle:new(150, 310, (sw-300)/3*2, sh-360, tocolor(0, 0, 0, 170), self)
+	self.m_SideBar 		= GUIRectangle:new(sw-bw-(sw-2*bw)/3, bh+210, tabw/2, tabh, tocolor(0, 0, 0, 100), self)
+	self.m_LoginTab 	= GUIRectangle:new(bw, bh+210, tabw, tabh, tocolor(0, 0, 0, 170), self)
+	self.m_HomeTab 		= GUIRectangle:new(bw, bh+210, tabw, tabh, tocolor(0, 0, 0, 170), self)
+	self.m_RegisterTab 	= GUIRectangle:new(bw, bh+210, tabw, tabh, tocolor(0, 0, 0, 170), self)
 	
-	local tabw = (sw-300)/3*2
-	local tabh = sh-360
 	-- Login Tab
 	GUIRectangle:new(0, 35, tabw, 5, tocolor(255, 255, 255, 255), self.m_LoginTab)
 	local lbl = GUILabel:new(0, 10, tabw, tabh, "Falls du schon einen Account besitzt,  kannst du dich hier mit deinen Accountdaten einloggen.", 1, self.m_LoginTab)
@@ -145,4 +148,3 @@ end
 
 lgi = LoginGUI:new()
 lgi:showHome()
-addCommandHandler("remk", function() lgi:hide() lgi:show() end)
