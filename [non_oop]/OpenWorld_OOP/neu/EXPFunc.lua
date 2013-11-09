@@ -19,7 +19,6 @@ function setexp()
 end
 addCommandHandler("setexp", setexp)
 
-
 setTimer(function()
 	local currentEXP = nowexp
 	local level
