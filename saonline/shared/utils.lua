@@ -108,3 +108,62 @@ function table.append(table1, table2)
 	end
 	return table1
 end
+
+function getPositionFromElementOffset(element, offX, offY, offZ)
+	local m = getElementMatrix(element)
+	
+	local x = offX * m[1][1] + offY * m[2][1] + offZ * m[3][1] + m[4][1]
+	local y = offX * m[1][2] + offY * m[2][2] + offZ * m[3][2] + m[4][2]
+	local z = offX * m[1][3] + offY * m[2][3] + offZ * m[3][3] + m[4][3]
+	return x, y, z
+end
+
+function getPositionFromCoordinatesOffset(x, y, z, rx, ry, rz, offX, offY, offZ)
+	local m = getMatrix(x, y, z, rx, ry, rz)
+	
+	local x = offX * m[1][1] + offY * m[2][1] + offZ * m[3][1] + m[4][1]
+	local y = offX * m[1][2] + offY * m[2][2] + offZ * m[3][2] + m[4][2]
+	local z = offX * m[1][3] + offY * m[2][3] + offZ * m[3][3] + m[4][3]
+	return x, y, z
+end
+
+function rotationMatrix(x, y, z, alpha)
+	alpha = math.rad(alpha)
+	local m = matrix{
+		{math.cos(alpha), -math.sin(alpha), 0},
+		{math.sin(alpha), math.cos(alpha), 0},
+		{0, 0, 1}
+	}
+	
+	local vec = m*matrix{x, y, z}
+	return vec[1][1], vec[2][1], vec[3][1]
+end
+
+function getMatrix(x, y, z, rrx, rry, rrz)
+	local rx, ry, rz = rrx, rry, rrz
+	rx, ry, rz = math.rad(rx), math.rad(ry), math.rad(rz)
+	local matrix = {}
+	matrix[1] = {}
+	matrix[1][1] = math.cos(rz)*math.cos(ry) - math.sin(rz)*math.sin(rx)*math.sin(ry)
+	matrix[1][2] = math.cos(ry)*math.sin(rz) + math.cos(rz)*math.sin(rx)*math.sin(ry)
+	matrix[1][3] = -math.cos(rx)*math.sin(ry)
+	matrix[1][4] = 1
+ 
+	matrix[2] = {}
+	matrix[2][1] = -math.cos(rx)*math.sin(rz)
+	matrix[2][2] = math.cos(rz)*math.cos(rx)
+	matrix[2][3] = math.sin(rx)
+	matrix[2][4] = 1
+ 
+	matrix[3] = {}
+	matrix[3][1] = math.cos(rz)*math.sin(ry) + math.cos(ry)*math.sin(rz)*math.sin(rx)
+	matrix[3][2] = math.sin(rz)*math.sin(ry) - math.cos(rz)*math.cos(ry)*math.sin(rx)
+	matrix[3][3] = math.cos(rx)*math.cos(ry)
+	matrix[3][4] = 1
+ 
+	matrix[4] = {}
+	matrix[4][1], matrix[4][2], matrix[4][3] = x, y, z
+	matrix[4][4] = 1
+ 
+	return matrix
+end
