@@ -5,6 +5,7 @@ function LoginGUI:constructor()
 	local font = dxCreateFont("files/fonts/gtafont.ttf", 120)
 	local sw, sh = guiGetScreenSize()
 	local bw, bh = math.floor(sw * 0.08), math.floor(sh * 0.04)
+	self.usePasswordHash = false
 	
 	DxElement.constructor(self, 0, 0, sw, sh, false, false)
 	self.m_Background = GUIRectangle:new(0, 0, sw, sh, tocolor(2, 17, 39, 255), self)
@@ -70,12 +71,19 @@ function LoginGUI:constructor()
 	self.m_SaveLoginCheckbox = GUICheckbox:new(tabw/6*2, 220, 20, 20, "", self.m_LoginTab)
 	
 	self.m_LoginErrorBox = GUIRectangle:new(tabw/6, 300, tabw/1.5, 70, tocolor(173, 14, 22, 255), self.m_LoginTab)
-	local btnlbl = GUILabel:new(0, 0, tabw/1.5, 70, "Fehler: Ungültiger Nutzername / Passwort!", 1, self.m_LoginErrorBox)
-	btnlbl:setAlignX("center")
-	btnlbl:setAlignY("center")
+	self.m_LoginErrorBox:hide()
+	self.m_LoginErrorText = GUILabel:new(0, 0, tabw/1.5, 70, "", 1, self.m_LoginErrorBox)
+	self.m_LoginErrorText:setAlignX("center")
+	self.m_LoginErrorText:setAlignY("center")
 	
 	self.m_SubmitLoginButton.onLeftClick = bind(function(self)
-		triggerServerEvent("accountlogin", root, self.m_LoginEditUsername:getText(), self.m_LoginEditPassword:getText())
+		local pw = self.m_LoginEditPassword:getText()
+		outputDebug(self.usePasswordHash == pw)
+		if self.usePasswordHash and self.usePasswordHash == pw then -- User has not changed the password
+			triggerServerEvent("accountlogin", root, self.m_LoginEditUsername:getText(), "", pw)
+		else
+			triggerServerEvent("accountlogin", root, self.m_LoginEditUsername:getText(), pw)
+		end
 	end, self)
 
 	-- Register Tab
@@ -87,6 +95,12 @@ function LoginGUI:constructor()
 	GUILabel:new(tabw/6, 170, tabw/3, 35, "Passwort:", 1, self.m_RegisterTab):setAlignY("center")
 	self.m_RegisterEditUsername = GUIEdit:new(tabw/6*2, 120, tabw/2, 35, self.m_RegisterTab)
 	self.m_RegisterEditPassword = GUIEdit:new(tabw/6*2, 170, tabw/2, 35, self.m_RegisterTab)
+	
+	self.m_RegisterErrorBox = GUIRectangle:new(tabw/6, 300, tabw/1.5, 70, tocolor(173, 14, 22, 255), self.m_RegisterTab)
+	self.m_RegisterErrorBox:hide()
+	self.m_RegisterErrorText = GUILabel:new(0, 0, tabw/1.5, 70, "", 1, self.m_RegisterErrorBox)
+	self.m_RegisterErrorText:setAlignX("center")
+	self.m_RegisterErrorText:setAlignY("center")
 	
 	self.m_SubmitRegisterButton = GUIRectangle:new(tabw/4, tabh-80, tabw/2, 70, tocolor(0, 32, 63,	255), self.m_RegisterTab)
 	local btnlbl = GUILabel:new(tabw/4, tabh-80, tabw/2, 70, "Registrieren", 1, self.m_RegisterTab)
@@ -152,7 +166,62 @@ function LoginGUI:showRegister()
 	self:anyChange()
 end
 
+addEvent("loginfailed", true)
+addEventHandler("loginfailed", root, 
+	function(text)
+		LoginGUI:getSingleton().m_LoginErrorBox:show()
+		LoginGUI:getSingleton().m_LoginErrorText:setText(text)
+	end
+)
+addEvent("registerfailed", true)
+addEventHandler("registerfailed", root, 
+	function(text)
+		LoginGUI:getSingleton().m_RegisterErrorBox:show()
+		LoginGUI:getSingleton().m_RegisterErrorText:setText(text)
+	end
+)
 
+
+addEvent("loginsuccess", true)
+addEventHandler("loginsuccess", root, 
+	function(accountinfo, charinfo, pwhash)
+		local lgi = LoginGUI:getSingleton()
+	
+		if lgi.m_SaveLoginCheckbox:isChecked() then
+			if not lgi.usePasswordHash then
+				if fileExists("logininfo.vrp") then
+					fileDelete("logininfo.vrp")
+				end
+				local fh = fileCreate("logininfo.vrp")
+				fileWrite(fh, pwhash)
+				fileWrite(fh, accountinfo.Username)
+				fileClose(fh)
+			end
+		end
+	
+		lgi:delete()
+		CharacterSelectionGUI:new(accountinfo, charinfo)
+	end
+)
 
 lgi = LoginGUI:new()
 lgi:showHome()
+
+if fileExists("logininfo.vrp") then
+	local fh = fileOpen("logininfo.vrp")
+	local len = fileGetSize(fh)
+	if len > 64 then
+		local pwhash = fileRead(fh, 64)
+		local username = fileRead(fh, len-64)
+		lgi.m_LoginEditUsername:setText(username)
+		lgi.m_LoginEditPassword:setText(pwhash)
+		lgi.usePasswordHash = pwhash;
+		lgi.m_SaveLoginCheckbox:setChecked(true)
+		lgi:anyChange()
+		fileClose(fh)
+	else
+		-- Invalid
+		fileClose(fh)
+		fileDelete("logininfo.vrp")
+	end
+end

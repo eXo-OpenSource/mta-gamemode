@@ -96,11 +96,3 @@ function CharacterSelectionGUI:openCharacter(i)
 	self.m_ActiveCharacter = i
 	self:anyChange()
 end
-
-addEvent("loginsuccess", true)
-addEventHandler("loginsuccess", root, 
-	function(accountinfo, charinfo)
-		LoginGUI:getSingleton():delete()
-		CharacterSelectionGUI:new(accountinfo, charinfo)
-	end
-)

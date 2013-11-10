@@ -1,31 +1,35 @@
 Account = inherit(Object)
 Account.Map = {}
 
-function Account.login(player, username, password)
+function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
-	if not username or not password then return false end
-	
-	-- Ask SQL to fetch the salt
+	if (not username or not password) and not pwhash then return false end
+
+	-- Ask SQL to fetch the salt and id
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id, Salt FROM ??_account WHERE Name = ? ", sql:getPrefix(), username)
 	local row = Async.wait()
-	
+		
 	if not row or not row.Id then
-		player:triggerEvent("loginfailed")
+		player:triggerEvent("loginfailed", "Error: Invalid username or password")
 		return false
+	end
+	
+	if not pwhash then
+		pwhash = sha256(row.Salt..password)
 	end
 	
 	-- Ask SQL to attempt a Login
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Id = ? AND Password = ?;", sql:getPrefix(), row.Id, sha256(row.Salt..password))
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Id = ? AND Password = ?;", sql:getPrefix(), row.Id, pwhash)
 	local row = Async.wait()
 	if not row or not row.Id then
-		player:triggerEvent("loginfailed")
+		player:triggerEvent("loginfailed", "Error: Invalid username or password")
 		return false
 	end
 	
-	return Account:new(row.Id, username, player)
+	return Account:new(row.Id, username, player, pwhash)
 end
 addEvent("accountlogin", true)
-addEventHandler("accountlogin", root, function(u, p) Async.create(Account.login)(client, u, p) end)
+addEventHandler("accountlogin", root, function(u, p, h) outputDebug(h) Async.create(Account.login)(client, u, p, h) end)
 
 function Account.register(player, username, password)
 	if player:getAccount() then return false end
@@ -35,7 +39,7 @@ function Account.register(player, username, password)
 	if false then
 		-- Require at least 1 letter and a length of 3
 		if not username:match("[a-zA-Z]") or #username < 3 then 
-			player:triggerEvent("registerfailedinvalidnick")
+			player:triggerEvent("registerfailed", "Error: Invalid Nickname")
 			return false
 		end
 	end
@@ -43,7 +47,7 @@ function Account.register(player, username, password)
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Name = ? ", sql:getPrefix(), username)
 	local row = Async.wait()
 	if row then
-		player:triggerEvent("registerfailed")
+		player:triggerEvent("registerfailed", "Error: Username is already in use")
 		return false
 	end
 	
@@ -58,7 +62,7 @@ end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(u, p) Async.create(Account.register)(client, u, p) end)
 
-function Account:constructor(id, username, player)
+function Account:constructor(id, username, player, pwhash)
 	-- Account Information
 	self.m_Id = id
 	self.m_Username = username
@@ -82,6 +86,7 @@ function Account:constructor(id, username, player)
 	
 	local accsyncinfo = 
 	{
+		Username = username;
 		Rank = self.m_Rank;
 		MaxCharacters = self.m_MaxCharacters;
 	}
@@ -95,7 +100,7 @@ function Account:constructor(id, username, player)
 			Skills = char.m_Skills	
 		}
 	end
-	triggerClientEvent(player, "loginsuccess", root, accsyncinfo, charsyncinfo)
+	triggerClientEvent(player, "loginsuccess", root, accsyncinfo, charsyncinfo, pwhash)
 end
 
 function Account:destructor()

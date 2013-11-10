@@ -19,7 +19,6 @@ end
 
 function GUIFontContainer:setText(text)
 	assert(type(text) == "string", "Bad argument @ GUIFontContainer.setText")
-
 	self.m_Text = text
 	self:anyChange()
 end

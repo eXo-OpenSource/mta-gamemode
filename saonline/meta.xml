@@ -80,10 +80,6 @@
 	<script src="client/classes/GUI/GUIRectangle.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollbar.lua" type="client"/>
 	<script src="client/classes/GUI/GUIVerticalScrollbar.lua" type="client"/>
-	
-	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CharacterSelectionGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 		
 	<!-- Special GUI elements -->
 	<script src="client/classes/GUI/MessageBoxes/MessageBox.lua" type="client"/>
@@ -98,6 +94,7 @@
 	<!-- Forms -->
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CharacterSelectionGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	
 	<!-- Phone -->
 	<script src="client/classes/Phone/Phone.lua" type="client"/>
