@@ -23,6 +23,9 @@ function GUILabel:constructor(posX, posY, width, height, text, size, parent)
 end
 
 function GUILabel:drawThis(incache)
+	-- Uncomment this to debug the size
+	-- dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(255, 255, 0, 150))
+
 	if not self.m_Multiline then
 		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true)
 	else
@@ -30,11 +33,8 @@ function GUILabel:drawThis(incache)
 		-- Split the text into lines (\n)
 		local parts = split(self.m_Text, '\n')
 		for lineNum, part in ipairs(parts) do
-			
 			dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY + lineNum * self.m_LineSpacing, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height)
-
 		end
-
 	end
 end
 

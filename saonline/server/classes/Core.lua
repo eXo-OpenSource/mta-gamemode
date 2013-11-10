@@ -18,6 +18,7 @@ function Core:constructor()
 	TranslationManager:new()
 	WhiteList:new()
 	PhoneInteraction:new()
+	PlayerManager:new()
 	
 	-- Create jobs
 	JobLogistician:new()

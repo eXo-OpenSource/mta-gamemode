@@ -30,6 +30,7 @@
 	<script src="server/classes/Account.lua" type="server"/>
 	<script src="server/classes/Character.lua" type="server"/>
 	<script src="server/classes/Player.lua" type="server"/>
+	<script src="server/classes/PlayerManager.lua" type="server"/>
 	<script src="server/classes/Root.lua" type="server"/>
 	<script src="server/classes/WhiteList.lua" type="server"/>
 	<script src="server/classes/PhoneInteraction.lua" type="server"/>
@@ -75,8 +76,10 @@
 	<script src="client/classes/GUI/GUIRectangle.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollbar.lua" type="client"/>
 	<script src="client/classes/GUI/GUIVerticalScrollbar.lua" type="client"/>
+	
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CharacterSelectionGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 		
 	<!-- Special GUI elements -->
 	<script src="client/classes/GUI/MessageBoxes/MessageBox.lua" type="client"/>
@@ -109,19 +112,18 @@
 	<file src="files/images/Phone/Apps/IconCall.png"/>
 	<file src="files/images/Phone/Apps/IconMessage.png"/>
 	
-	<file src="files/images/GUI/Button.png" onDemand="false"/>
-	<file src="files/images/GUI/Button_hover.png" onDemand="false"/>
 	<file src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<file src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
 	<file src="files/images/GUI/Cursor.png" onDemand="false"/>
 	<file src="files/images/GUI/Editbox.png" onDemand="false"/>
-	<file src="files/images/GUI/Window.png" onDemand="false"/>
 	
 	<file src="files/fonts/gtafont.ttf"/>
 	<file src="files/images/avatar_default.png"/>
 	<file src="files/images/world.png"/>
 	<file src="files/images/Radar.jpg"/>
 	<file src="files/images/Blips/LocalPlayer.png"/>
+	
+	<file src="files/images/Jobs/HeaderTrashman.png"/>
 	
 	<!-- Audio -->
 	<file src="files/audio/Ringtone.mp3"/>

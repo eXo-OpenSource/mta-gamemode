@@ -133,6 +133,7 @@ CallResultActivity = inherit(AppActivity)
 
 function CallResultActivity:constructor(app, callee, answer, voiceCall)
 	AppActivity.constructor(self, app)
+	self.m_Callee = callee
 	
 	self.m_ResultLabel = GUILabel:new(8, 10, 200, 20, "", 3, self)
 	if answer then
@@ -141,6 +142,9 @@ function CallResultActivity:constructor(app, callee, answer, voiceCall)
 		if voiceCall then
 			GUILabel:new(8, 80, 200, 20, "", 1, "Press z to speak", self)
 		end
+		self.m_ButtonReplace = GUIButton:new(8, 222, 205, 40, "Replace", self)
+		self.m_ButtonReplace:setBackgroundColor(Color.Red)
+		self.m_ButtonReplace.onLeftClick = bind(self.ButtonReplace_Click, self)
 	else
 		self.m_ResultLabel:setText("Busy")
 		self.m_ResultLabel:setColor(Color.Red)
@@ -152,4 +156,11 @@ function CallResultActivity:constructor(app, callee, answer, voiceCall)
 			end, 2000, 1
 		)
 	end
+end
+
+function CallResultActivity:ButtonReplace_Click()
+	if self.m_Callee and isElement(self.m_Callee) then
+		triggerServerEvent("callReplace", root, self.m_Callee)
+	end
+	MainActivity:new(self:getApp())
 end

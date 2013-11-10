@@ -36,3 +36,11 @@ end
 function Player:sendMessage(text, r, g, b, ...)
 	outputChatBox(text:format(...), self, r, g, b, true)
 end
+
+function Player:getPhonePartner()
+	return self.m_PhonePartner
+end
+
+function Player:setPhonePartner(partner)
+	self.m_PhonePartner = partner
+end

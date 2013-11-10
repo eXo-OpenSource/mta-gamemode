@@ -16,9 +16,13 @@ function AppActivity:constructor(app)
 	-- Add the new activity
 	app:addActivity(self)
 	
-	
+	self.m_App = app
 end
 
 function AppActivity:isOpen()
 	return self:isVisible()
+end
+
+function AppActivity:getApp()
+	return self.m_App
 end
