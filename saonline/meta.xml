@@ -5,6 +5,7 @@
 
 	<!-- Shared -->
 	<script src="shared/constants.lua" type="shared"/>
+	<script src="server/constants.lua" type="server"/>
 	<script src="shared/classlib.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
