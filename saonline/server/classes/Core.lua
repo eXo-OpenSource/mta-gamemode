@@ -12,7 +12,7 @@ function Core:constructor()
 	
 	-- Establish database connection
 	sql = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, MYSQL_DB, "")
-	sql:setPrefix("saonline")
+	sql:setPrefix("vrp")
 	
 	-- Instantiate classes (Create objects)
 	TranslationManager:new()
