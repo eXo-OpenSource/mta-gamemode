@@ -29,7 +29,7 @@ function Account.login(player, username, password, pwhash)
 	return Account:new(row.Id, username, player, pwhash)
 end
 addEvent("accountlogin", true)
-addEventHandler("accountlogin", root, function(u, p, h) outputDebug(h) Async.create(Account.login)(client, u, p, h) end)
+addEventHandler("accountlogin", root, function(u, p, h) Async.create(Account.login)(client, u, p, h) end)
 
 function Account.register(player, username, password)
 	if player:getAccount() then return false end
@@ -69,11 +69,13 @@ function Account:constructor(id, username, player, pwhash)
 	self.m_Player = player
 	self.m_Character = {}
 	
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount, Money, Bank FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_Rank = row.Rank;
 	self.m_MaxCharacters = row.AvailableCharacterCount;
+	self.m_Money = row.Money;
+	self.m_Bank = row.Bank
 	
 	-- Load Characters
 	sql:queryFetch(Async.waitFor(self), "SELECT Id FROM ??_character WHERE Account = ?;", sql:getPrefix(), row.Id)
@@ -89,6 +91,8 @@ function Account:constructor(id, username, player, pwhash)
 		Username = username;
 		Rank = self.m_Rank;
 		MaxCharacters = self.m_MaxCharacters;
+		Money = self.m_Money;
+		Bank = self.m_Bank;
 	}
 	local charsyncinfo = {}
 	for i, char in pairs(self.m_Character) do

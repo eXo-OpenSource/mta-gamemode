@@ -78,7 +78,6 @@ function LoginGUI:constructor()
 	
 	self.m_SubmitLoginButton.onLeftClick = bind(function(self)
 		local pw = self.m_LoginEditPassword:getText()
-		outputDebug(self.usePasswordHash == pw)
 		if self.usePasswordHash and self.usePasswordHash == pw then -- User has not changed the password
 			triggerServerEvent("accountlogin", root, self.m_LoginEditUsername:getText(), "", pw)
 		else
