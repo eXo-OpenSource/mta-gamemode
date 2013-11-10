@@ -14,6 +14,7 @@ function Core:constructor()
 	Version:new()
 	TranslationManager:new()
 	JobManager:new()
+	MTAFixes:new()
 	
 	-- HUD
 	HUDRadar:new()
