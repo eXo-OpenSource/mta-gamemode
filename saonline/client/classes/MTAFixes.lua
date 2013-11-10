@@ -17,7 +17,7 @@ function MTAFixes:dft_pathnode_teleport()
 		This collides (for whatever reason) with our attached container object.
 		
 		GTA Code:
-		if (!isLineOfSightClear(vecVehiclePosition, vecPedPosition, true, 0, 0, 1, 0, 0)) // Checks the line of sight for buildings and objects
+		if (!isLineOfSightClear(vecVehiclePosition, vecPedPosition, true, false, false, true, false, false)) // Checks the line of sight for buildings and objects
 			WarpPedToClosestPathNode(pPed, posZ, pVehicle, 1.0f);
 			
 		Address (gta_sa.exe): 0x647CD6
