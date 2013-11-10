@@ -17,8 +17,10 @@ function JobGUI:constructor()
 	
 	self.m_AcceptButton = GUIButton:new(50, 400, 210, 35, "Accept", self)
 	self.m_AcceptButton:setBackgroundColor(Color.Green)
+	self.m_AcceptButton.onLeftClick = bind(self.AcceptButton_Click, self)
 	self.m_DeclineButton = GUIButton:new(340, 400, 210, 35, "Decline", self)
 	self.m_DeclineButton:setBackgroundColor(Color.Red)
+	self.m_DeclineButton.onLeftClick = bind(self.DeclineButton_Click, self)
 end
 
 function JobGUI:setDescription(text)
@@ -29,4 +31,17 @@ function JobGUI:setHeaderImage(imgPath)
 	self.m_Header:setImage(imgPath)
 end
 
-JobGUI:new()
+function JobGUI:setAcceptCallback(func)
+	self.m_AcceptCallback = func
+end
+
+function JobGUI:AcceptButton_Click()
+	if self.m_AcceptCallback then
+		self.m_AcceptCallback()
+	end
+	self:close()
+end
+
+function JobGUI:DeclineButton_Click()
+	self:close()
+end

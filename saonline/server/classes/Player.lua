@@ -44,3 +44,12 @@ end
 function Player:setPhonePartner(partner)
 	self.m_PhonePartner = partner
 end
+
+-- Moving to character class?
+function Player:getJob()
+	return self.m_Job
+end
+
+function Player:setJob(job)
+	self.m_Job = job
+end

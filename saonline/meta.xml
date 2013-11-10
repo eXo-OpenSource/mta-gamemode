@@ -1,6 +1,7 @@
 <meta>
 	<info name="Base gamemode"/>
 	<min_mta_version server="1.3.3" client="1.3.3"/>
+	<include resource="customblips"/>
 
 	<!-- Shared -->
 	<script src="shared/constants.lua" type="shared"/>
@@ -37,6 +38,7 @@
 	
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
+	<script src="server/classes/Jobs/JobManager.lua" type="server"/>
 	<script src="server/classes/Jobs/JobLogistician.lua" type="server"/>
 	
 	<script src="server/Main.lua" type="server"/>
@@ -98,6 +100,11 @@
 	<script src="client/classes/Phone/Apps/AppHelloWorld.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppCall.lua" type="client"/>
 	
+	<!-- Jobs -->
+	<script src="client/classes/Jobs/Job.lua" type="client"/>
+	<script src="client/classes/Jobs/JobManager.lua" type="client"/>
+	<script src="client/classes/Jobs/JobLogistician.lua" type="client"/>
+	
 	<script src="client/tempLogin.lua" type="client"/>
 	<script src="client/Main.lua" type="client"/>
 	
@@ -121,7 +128,10 @@
 	<file src="files/images/avatar_default.png"/>
 	<file src="files/images/world.png"/>
 	<file src="files/images/Radar.jpg"/>
+	
+	<!-- Blips -->
 	<file src="files/images/Blips/LocalPlayer.png"/>
+	<file src="files/images/Blips/Logistician.png"/>
 	
 	<file src="files/images/Jobs/HeaderTrashman.png"/>
 	

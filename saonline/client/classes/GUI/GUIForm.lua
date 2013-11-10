@@ -19,6 +19,13 @@ function GUIForm:destructor()
 	CacheArea.destructor(self)
 end
 
+function GUIForm:open(showTheCursor)
+	if showTheCursor then
+		showCursor(true)
+	end
+	return self:setVisible(true)
+end
+
 function GUIForm:close(hideCursor)
 	if hideCursor then
 		showCursor(false)

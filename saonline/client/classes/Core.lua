@@ -13,6 +13,7 @@ function Core:constructor()
 	
 	Version:new()
 	TranslationManager:new()
+	JobManager:new()
 	
 	-- HUD
 	HUDRadar:new()

@@ -19,9 +19,7 @@ function Core:constructor()
 	WhiteList:new()
 	PhoneInteraction:new()
 	PlayerManager:new()
-	
-	-- Create jobs
-	JobLogistician:new()
+	JobManager:new()
 	
 end
 

@@ -6,10 +6,17 @@
 -- *
 -- ****************************************************************************
 Job = inherit(Object)
-Job.Map = {}
 
 function Job:constructor()
-	table.insert(Job.Map, self)
+	
+end
+
+function Job:getId()
+	return self.m_Id
+end
+
+function Job:setId(Id)
+	self.m_Id = Id
 end
 
 Job.start = pure_virtual

@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 JobLogistician = inherit(Job)
+local MONEY_PER_TRANSPORT = 500
 
 function JobLogistician:constructor()
 	Job.constructor(self)
@@ -14,17 +15,20 @@ function JobLogistician:constructor()
 	local cran = Cran:new(5, -100, 8, 36, 15, 8)
 	addCommandHandler("drop",
 		function(player)
-			cran:dropContainer(getPedOccupiedVehicle(player))
+			if player:getJob() == self then
+				cran:dropContainer(getPedOccupiedVehicle(player), function() givePlayerMoney(player, MONEY_PER_TRANSPORT) end)
+			else
+				player:sendMessage("You are not employed as logistician", 255, 0, 0)
+			end
 		end
 	)
 	addCommandHandler("load",
 		function(player)
-			cran:loadContainer(getPedOccupiedVehicle(player))
-		end
-	)
-	addCommandHandler("logistic",
-		function(player)
-			self:start(player)
+			if player:getJob() == self then
+				cran:loadContainer(getPedOccupiedVehicle(player))
+			else
+				player:sendMessage("You are not employed as logistician", 255, 0, 0)
+			end
 		end
 	)
 	addCommandHandler("down", function() cran:rollTowDown() end)
@@ -75,7 +79,7 @@ function Cran:destructor()
 	end
 end
 
-function Cran:dropContainer(vehicle)
+function Cran:dropContainer(vehicle, callback)
 	if self.m_Busy then
 		return false
 	end
@@ -109,6 +113,7 @@ function Cran:dropContainer(vehicle)
 									self:rollTowUp(
 										function()
 											moveObject(self.m_Object, 10000, self.m_StartX, self.m_StartY, self.m_StartZ)
+											if callback then callback() end
 											
 											setTimer(function() self.m_Busy = false end, 10000, 1)
 										end
@@ -124,7 +129,7 @@ function Cran:dropContainer(vehicle)
 	return true
 end
 
-function Cran:loadContainer(vehicle)
+function Cran:loadContainer(vehicle, callback)
 	if self.m_Busy then
 		return false
 	end
@@ -161,7 +166,7 @@ function Cran:loadContainer(vehicle)
 											-- Roll up the tow a last time
 											self:rollTowUp(
 												function()
-													-- Todo: Call back
+													if callback then callback() end
 													self.m_Busy = false
 												end
 											)
