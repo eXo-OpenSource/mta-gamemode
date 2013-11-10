@@ -4,17 +4,17 @@ inherit(DxElement, CharacterSelectionGUI)
 function CharacterSelectionGUI:constructor(accountinfo, charinfo)
 	local font = dxCreateFont("files/fonts/gtafont.ttf", 120)
 	local sw, sh = guiGetScreenSize()
-	local bw, bh = math.floor(sw / 12), math.floor(sh / 15)
+	local bw, bh = math.floor(sw * 0.08), math.floor(sh * 0.04)
 	
 	DxElement.constructor(self, 0, 0, sw, sh, false, false)
 	self.m_Background = GUIRectangle:new(0, 0, sw, sh, tocolor(2, 17, 39, 255), self)
-	self.m_TopBar = GUIRectangle:new(bw, bh, sw-2*bw, 200, tocolor(0, 0, 0, 170), self)
-	local servername = GUILabel:new(30, 40, sw, sh, "GTA:SA Online", 1, self.m_TopBar)
+	self.m_TopBar = GUIRectangle:new(bw, bh, sw-2*bw, sh*0.2, tocolor(0, 0, 0, 170), self)
+	local servername = GUILabel:new(30, 40, sw, sh, "V Roleplay", 0.5, self.m_TopBar)
 	servername:setFont(font)
-	servername:setFontSize(0.4)
+	servername:setFontSize(0.25)
 	
-	local asize = sw / 12
-	self.m_Avatar = GUIRectangle:new(sw-2*bw-asize-10, 10, asize, asize, tocolor(255, 0, 0, 255), self.m_TopBar)
+	local asize = sw * 0.05
+	self.m_Avatar = GUIImage:new(sw-2*bw-asize-10, 10, asize, asize, "files/images/avatar_default.png", self.m_TopBar)
 	
 	local tabw = (sw-2*bw)/(MAX_CHARACTERS+1)
 	local tabh = sh-200-2*bh
@@ -29,8 +29,7 @@ function CharacterSelectionGUI:constructor(accountinfo, charinfo)
 		
 		self.m_Character[i] = {}
 		local cc = self.m_Character[i]
-		
-		cc.button = GUIRectangle:new(tabw*(i-1), 150, tabw, 50, tocolor(0, 0, 0, 0), self.m_TopBar)
+		cc.button = GUIRectangle:new(tabw*(i-1), sh*0.2-sh*0.05, tabw, sh*0.05, tocolor(0, 0, 0, 0), self.m_TopBar)
 		cc.button.onLeftClick = bind(CharacterSelectionGUI.openCharacter, self, i)
 		
 		cc.buttonBar = GUIRectangle:new(0, 0, tabw, 5, tocolor(19, 64, 121), cc.button)
@@ -42,11 +41,11 @@ function CharacterSelectionGUI:constructor(accountinfo, charinfo)
 		cc.buttonText:setAlignX("center")
 		cc.buttonText:setAlignY("center")
 		
-		cc.tab = GUIRectangle:new(bw+tabw*(i-1), 20+bh+200, tabw-5, tabh, tocolor(0, 0, 0, 170), self)
+		cc.tab = GUIRectangle:new(bw+tabw*(i-1), bh+sh*0.2+10, tabw-5, tabh, tocolor(0, 0, 0, 170), self)
 		local lbl = GUILabel:new(5, 20, tabw-5, tabh-20, tostring(i), 1, cc.tab)
 		lbl:setFont(font)
 		lbl:setFontSize(1)
-		cc.info = GUIRectangle:new(bw+tabw*i, 20+bh+200, tabw-5, tabh, tocolor(0, 0, 0, 170), self)
+		cc.info = GUIRectangle:new(bw+tabw*i, bh+sh*0.2+10, tabw-5, tabh, tocolor(0, 0, 0, 170), self)
 		cc.info:hide()
 	end
 	
@@ -58,7 +57,7 @@ function CharacterSelectionGUI:openCharacter(i)
 	if i == self.m_ActiveCharacter then return end
 	
 	local sw, sh = guiGetScreenSize()
-	local bw, bh = math.floor(sw / 12), math.floor(sh / 15)
+	local bw, bh = math.floor(sw * 0.08), math.floor(sh * 0.04)
 	local tabw = (sw-2*bw)/(MAX_CHARACTERS+1)
 	
 	local cc = self.m_Character[i]

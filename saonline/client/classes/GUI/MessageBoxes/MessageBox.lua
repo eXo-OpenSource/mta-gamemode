@@ -17,7 +17,6 @@ function MessageBox:constructor(text, timeout)
 end
 
 function MessageBox:derived_constructor(text, timeout)
-	-- @sbx320: Why are we using rawget(class, "contructor") @ classlib:55
 	MessageBox.constructor(self, text, timeout)
 end
 

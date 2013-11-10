@@ -93,6 +93,10 @@
 	<script src="client/classes/HUD/RadarBlip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	
+	<!-- Forms -->
+	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/CharacterSelectionGUI.lua" type="client"/>
+	
 	<!-- Phone -->
 	<script src="client/classes/Phone/Phone.lua" type="client"/>
 	<script src="client/classes/Phone/PhoneApp.lua" type="client"/>

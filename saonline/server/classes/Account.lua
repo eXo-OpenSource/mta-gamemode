@@ -31,6 +31,14 @@ function Account.register(player, username, password)
 	if player:getAccount() then return false end
 	if not username or not password then return false end
 	
+	-- Some sanity checks on the username (enable later)
+	if false then
+		-- Require at least 1 letter and a length of 3
+		if not username:match("[a-zA-Z]") or #username < 3 then 
+			player:triggerEvent("registerfailedinvalidnick")
+			return false
+		end
+	end
 	-- Check if someone uses this username already
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Name = ? ", sql:getPrefix(), username)
 	local row = Async.wait()
