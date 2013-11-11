@@ -12,7 +12,7 @@ function GUIGridList:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	
 	self.m_Columns = {}
-	self.m_ScrollArea = GUIScrollableArea:new(0, 6, self.m_Width, self.m_Height - 40, self.m_Width, 1, true, false, self)
+	self.m_ScrollArea = GUIScrollableArea:new(0, 0, self.m_Width, self.m_Height, self.m_Width, 1, true, false, self)
 	self.m_SelectedItem = nil
 end
 
@@ -62,7 +62,7 @@ function GUIGridList:onInternalSelectItem(item)
 	self.m_SelectedItem = item
 
 	for k, v in ipairs(self:getItems()) do
-		v.m_Color = Color.Black
+		v.m_Color = Color.Clear
 	end
 	
 	item:setColor(Color.DarkBlue)
@@ -72,7 +72,7 @@ end
 function GUIGridList:draw() -- Swap render order
 	if self.m_Visible then
 		-- Draw background
-		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.Black)
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 240))
 		
 		-- Draw items
 		for k, v in ipairs(self.m_Children) do
@@ -93,8 +93,18 @@ function GUIGridList:drawThis()
 	-- Draw column header
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do
-		dxDrawText(column.text, self.m_AbsoluteX + currentXPos, self.m_AbsoluteY + 2, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, 1.5, "default-bold")
+		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, 1, VRPFont(28))
 		currentXPos = currentXPos + column.width*self.m_Width + 5
 	end
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + ITEM_HEIGHT - 2, self.m_Width, 2, Color.White)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + ITEM_HEIGHT - 2, self.m_Width, 2, tocolor(255, 255, 255, 150))
 end
+
+addCommandHandler("gridlist",
+	function()
+		g = GUIGridList:new(500, 300, 500, 400)
+		g:addColumn("MyFirstColumn", 0.9)
+		for i=1, 20 do
+			g:addItem("Test: "..i)
+		end
+	end
+)

@@ -52,7 +52,8 @@ function GUIScrollableArea:draw(incache)
 		v.m_AbsoluteY = self.m_AbsoluteY + v.m_PosY + self.m_ScrollY
 	end
 	
-	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_DocumentWidth, self.m_DocumentHeight, self.m_PageTarget)
+	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_DocumentWidth, self.m_DocumentHeight, self.m_PageTarget)
+	dxDrawImageSection(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, 0, 0, self.m_Width, self.m_Height, self.m_PageTarget)
 end
 
 function GUIScrollableArea:setScrollPosition(x, y)
@@ -92,10 +93,10 @@ function GUIScrollableArea:onInternalMouseWheelUp()
 	if (self.m_ScrollY) >= 0 then
 		self.m_ScrollY = 0
 	else
-		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY + 10)
+		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY + 14)
 	end
 end
 
 function GUIScrollableArea:onInternalMouseWheelDown()
-	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 10)
+	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 14)
 end

@@ -10,7 +10,7 @@ inherit(GUIColorable, GUIGridListItem)
 
 function GUIGridListItem:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIColorable.constructor(self, Color.Black)
+	GUIColorable.constructor(self, tocolor(0, 0, 0, 0))
 	
 	self.m_Columns = {}
 end
@@ -31,7 +31,7 @@ function GUIGridListItem:drawThis()
 	local currentXPos = 0
 	for columnIndex, columnValue in ipairs(self.m_Columns) do
 		local columnWidth = self:getGridList():getColumnWidth(columnIndex)
-		dxDrawText(self.m_Columns[columnIndex], self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY+3, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, Color.White, 1.6, "arial")
+		dxDrawText(self.m_Columns[columnIndex], self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, Color.White, 1, VRPFont(28))
 		currentXPos = currentXPos + columnWidth*self.m_Width + 5
 	end
 end
