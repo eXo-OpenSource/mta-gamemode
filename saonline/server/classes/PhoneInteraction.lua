@@ -49,6 +49,9 @@ function PhoneInteraction:callReplace(callee)
 	
 	client:setPhonePartner(nil)
 	callee:setPhonePartner(nil)
+	setPlayerVoiceBroadcastTo(client, nil) -- Todo: Check if a voice call was active
+	setPlayerVoiceBroadcastTo(callee, nil)
 	
 	-- Todo: Notify the callee
+	callee:triggerEvent("callReplace", client)
 end

@@ -8,7 +8,7 @@
 SuccessBox = inherit(MessageBox)
 
 function SuccessBox:getImagePath()
-	return "files/images/MessageBoxs/Success.png"
+	return "files/images/MessageBoxes/Success.png"
 end
 
 function SuccessBox:getSoundPath()

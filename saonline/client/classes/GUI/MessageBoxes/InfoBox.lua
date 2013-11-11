@@ -8,7 +8,7 @@
 InfoBox = inherit(MessageBox)
 
 function InfoBox:getImagePath()
-	return "files/images/MessageBoxs/Info.png"
+	return "files/images/MessageBoxes/Info.png"
 end
 
 function InfoBox:getSoundPath()

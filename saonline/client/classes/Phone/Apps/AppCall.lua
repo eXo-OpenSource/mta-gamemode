@@ -6,6 +6,9 @@
 -- *
 -- ****************************************************************************
 AppCall = inherit(PhoneApp)
+local CALL_RESULT_BUSY = 0
+local CALL_RESULT_REPLACE = 1
+local CALL_RESULT_ANSWER = 2
 
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Phone", "files/images/Phone/Apps/IconCall.png")
@@ -14,9 +17,11 @@ function AppCall:constructor()
 	addEvent("callIncoming", true)
 	addEvent("callBusy", true)
 	addEvent("callAnswer", true)
+	addEvent("callReplace", true)
 	addEventHandler("callIncoming", root, bind(self.Event_callIncoming, self))
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
+	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
 end
 
 function AppCall:onOpen(form)
@@ -45,13 +50,17 @@ end
 function PhoneApp:Event_callBusy(callee)
 	-- Create busy activity
 	Phone:getSingleton():openApp(self)
-	CallResultActivity:new(self, callee, false)
+	CallResultActivity:new(self, callee, CALL_RESULT_BUSY)
 end
 
 function PhoneApp:Event_callAnswer(callee, voiceCall)
 	-- Create answer activity
 	Phone:getSingleton():openApp(self)
-	CallResultActivity:new(self, callee, true, voiceCall)
+	CallResultActivity:new(self, callee, CALL_RESULT_ANSWER, voiceCall)
+end
+
+function PhoneApp:Event_callReplace(responsiblePlayer)
+	CallResultActivity:new(self, callee, CALL_RESULT_REPLACE)
 end
 
 
@@ -73,7 +82,11 @@ end
 function MainActivity:ButtonCall_Click()
 	local player = getPlayerFromName(self.m_Edit:getText())
 	if not player then
-		outputChatBox("This player is not online", 255, 0, 0)
+		localPlayer:sendMessage("This player is not online", 255, 0, 0)
+		return
+	end
+	if player == localPlayer then
+		localPlayer:sendMessage("You cannot call yourself", 255, 0, 0)
 		return
 	end
 
@@ -106,6 +119,9 @@ function IncomingCallActivity:ButtonAnswer_Click()
 	end
 	if isElement(self.m_Caller) then -- He might have quit meanwhile
 		triggerServerEvent("callAnswer", root, self.m_Caller)
+		
+		-- Show active call activity
+		CallResultActivity:new(self:getApp(), self.m_Caller, CALL_RESULT_ANSWER)
 	end
 end
 
@@ -115,13 +131,13 @@ function IncomingCallActivity:ButtonBusy_Click()
 end
 
 function IncomingCallActivity:busy()
-	self.m_Caller = nil
 	if self.m_RingSound and isElement(self.m_RingSound) then
 		destroyElement(self.m_RingSound)
 	end
 	if isElement(self.m_Caller) then -- He might have quit meanwhile
 		triggerServerEvent("callBusy", root, self.m_Caller)
 	end
+	self.m_Caller = nil
 end
 
 function IncomingCallActivity:getCaller()
@@ -131,12 +147,12 @@ end
 
 CallResultActivity = inherit(AppActivity)
 
-function CallResultActivity:constructor(app, callee, answer, voiceCall)
+function CallResultActivity:constructor(app, callee, resultType, voiceCall)
 	AppActivity.constructor(self, app)
 	self.m_Callee = callee
 	
 	self.m_ResultLabel = GUILabel:new(8, 10, 200, 20, "", 3, self)
-	if answer then
+	if resultType == CALL_RESULT_ANSWER then
 		self.m_ResultLabel:setText("Answered")
 		self.m_ResultLabel:setColor(Color.Green)
 		if voiceCall then
@@ -145,7 +161,7 @@ function CallResultActivity:constructor(app, callee, answer, voiceCall)
 		self.m_ButtonReplace = GUIButton:new(8, 222, 205, 40, "Replace", self)
 		self.m_ButtonReplace:setBackgroundColor(Color.Red)
 		self.m_ButtonReplace.onLeftClick = bind(self.ButtonReplace_Click, self)
-	else
+	elseif resultType == CALL_RESULT_BUSY then
 		self.m_ResultLabel:setText("Busy")
 		self.m_ResultLabel:setColor(Color.Red)
 		setTimer(
@@ -153,7 +169,17 @@ function CallResultActivity:constructor(app, callee, answer, voiceCall)
 				if self:isOpen() then
 					MainActivity:new(app)
 				end 
-			end, 2000, 1
+			end, 3000, 1
+		)
+	elseif resultType == CALL_RESULT_REPLACE then
+		self.m_ResultLabel:setText("Replaced")
+		self.m_ResultLabel:setColor(Color.Red)
+		setTimer(
+			function()
+				if self:isOpen() then
+					MainActivity:new(app)
+				end 
+			end, 3000, 1
 		)
 	end
 end

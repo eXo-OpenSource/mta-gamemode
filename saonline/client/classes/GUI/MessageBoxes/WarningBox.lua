@@ -8,7 +8,7 @@
 WarningBox = inherit(MessageBox)
 
 function WarningBox:getImagePath()
-	return "files/images/MessageBoxs/Warning.png"
+	return "files/images/MessageBoxes/Warning.png"
 end
 
 function WarningBox:getSoundPath()
