@@ -28,6 +28,8 @@ function GUIImage:setRotation(rotation, rotationCenterOffsetX, rotationCenterOff
 	self.m_Rotation = rotation
 	self.m_RotationCenterOffsetX = rotationCenterOffsetX
 	self.m_RotationCenterOffsetY = rotationCenterOffsetY
+	
+	return self
 end
 
 function GUIImage:setImage(path)
@@ -35,10 +37,12 @@ function GUIImage:setImage(path)
 
 	self.m_Image = path
 	self:anyChange()
+	return self
 end
 
 function GUIImage:setColor(color)
 	assert(type(color) == "number", "Bad argument @ GUIImage.setColor")
 
 	self.m_Color = color
+	return self
 end

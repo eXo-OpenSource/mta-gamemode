@@ -25,6 +25,7 @@ end
 
 function GUIScrollbar:setScrollHandler(handler)
 	self.m_ScrollHandler = handler
+	return self
 end
 
 function GUIScrollbar:getScrollPosition()
@@ -39,7 +40,7 @@ function GUIScrollbar:setScrollPosition(scrollPos)
 	if scrollPos >= 0 and scrollPos <= 1 then
 		self.m_ScrollPosition = scrollPos
 		self:anyChange()
-		return true
+		return self
 	end
-	return false
+	return self
 end

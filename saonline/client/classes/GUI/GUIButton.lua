@@ -49,8 +49,10 @@ end
 
 function GUIButton:setBackgroundHoverColor(color)
 	self.m_BackgroundHoverColor = color
+	return self
 end
 
 function GUIButton:setBackgroundColor(color)
 	self.m_BackgroundColor = color
+	return self
 end

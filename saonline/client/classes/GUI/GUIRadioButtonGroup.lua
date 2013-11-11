@@ -27,4 +27,5 @@ function GUIRadioButtonGroup:setCheckedRadioButton(radio)
 			v:setChecked(false)
 		end
 	end	
+	return self
 end

@@ -18,6 +18,7 @@ end
 function GUIBar:setColor(color1, color2)
 	self.m_ForegroundColor = color1
 	self.m_BackgroundColor = color2
+	return self
 end
 
 function GUIBar:drawThis()

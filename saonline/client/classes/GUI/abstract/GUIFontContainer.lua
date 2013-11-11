@@ -21,6 +21,7 @@ function GUIFontContainer:setText(text)
 	assert(type(text) == "string", "Bad argument @ GUIFontContainer.setText")
 	self.m_Text = text
 	self:anyChange()
+	return self
 end
 
 function GUIFontContainer:isEmpty()
@@ -31,11 +32,16 @@ function GUIFontContainer:getFont()
 	return self.m_Font
 end
 
-function GUIFontContainer:setFont(font)
+function GUIFontContainer:setFont(font, size)
 	assert(type(font) == "string" or (type(font) == "userdata" and getElementType(font) == "dx-font"), "Bad argument @ GUIFontContainer.setFont")
 
 	self.m_Font = font
+	if size then
+		assert(type(size) == "number", "Bad argument @ GUIFontContainer.setFont")
+		self.m_FontSize = size
+	end
 	self:anyChange()
+	return self
 end
 
 function GUIFontContainer:getFontSize()
@@ -47,6 +53,7 @@ function GUIFontContainer:setFontSize(size)
 
 	self.m_FontSize = size
 	self:anyChange()
+	return self
 end
 
 function GUIFontContainer:getFontHeight()

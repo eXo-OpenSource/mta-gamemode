@@ -43,6 +43,7 @@ end
 function GUIEdit:setCaretPosition(pos)
 	self.m_Caret = math.min(math.max(pos, 1), #self.m_Text+1)
 	self:anyChange()
+	return self
 end
 
 function GUIEdit:getSelectionRange()
@@ -58,6 +59,7 @@ function GUIEdit:setCaption(caption)
 
 	self.m_Caption = caption
 	self:anyChange()
+	return self
 end
 
 function GUIEdit:onInternalLeftClick()

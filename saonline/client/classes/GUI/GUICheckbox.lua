@@ -46,4 +46,5 @@ function GUICheckbox:setChecked(checked)
 	self.m_Checked = checked
 	
 	self:anyChange()
+	return self
 end

@@ -68,6 +68,7 @@ function GUIScrollableArea:setScrollPosition(x, y)
 	end
 	
 	self:anyChange()
+	return self
 end
 
 function GUIScrollableArea:getScrollPosition()

@@ -18,6 +18,7 @@ end
 function GUIGridListItem:setColumnText(columnIndex, value)
 	self.m_Columns[columnIndex] = value
 	self:anyChange()
+	return self
 end
 
 function GUIGridListItem:getColumnText(columnIndex)

@@ -46,6 +46,7 @@ end
 
 function GUIGridList:setColumnText(columnIndex, text)
 	self.m_Columns[columnIndex].text = text
+	return self
 end
 
 function GUIGridList:addColumn(text, width)

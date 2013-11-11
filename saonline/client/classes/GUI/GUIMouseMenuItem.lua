@@ -35,4 +35,6 @@ end
 function GUIMouseMenuItem:setTextColor(color)
 	self.m_TextColor = color
 	self:anyChange()
+	
+	return self
 end

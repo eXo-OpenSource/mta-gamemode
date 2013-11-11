@@ -146,4 +146,5 @@ function CacheArea:setCachingEnabled(state)
 	end
 	self.m_CachingEnabled = state
 	self:anyChange()
+	return self
 end

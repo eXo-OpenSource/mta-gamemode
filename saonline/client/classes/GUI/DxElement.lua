@@ -123,6 +123,7 @@ function DxElement:setVisible(visible)
 	end
 	
 	self:anyChange()
+	return self
 end
 
 function DxElement:getChildren()
@@ -142,6 +143,7 @@ function DxElement:setParent(parent)
 	parent.m_Children[#self.m_Parent.m_Children+1] = self
 	
 	self:anyChange()
+	return self
 end
 
 function DxElement:getPosition(isAbsolute)
@@ -178,6 +180,7 @@ function DxElement:setPosition(posX, posY)
 	end
 
 	self:anyChange()
+	return self
 end
 
 function DxElement:isCursorWithinBox(x1, y1, x2, y2)
@@ -197,6 +200,7 @@ end
 function DxElement:setAlpha(alpha)
 	self.m_Alpha = alpha
 	self:anyChange()
+	return self
 end
 
 function DxElement:getAlpha()

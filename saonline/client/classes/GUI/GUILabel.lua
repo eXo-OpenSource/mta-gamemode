@@ -40,16 +40,26 @@ end
 
 function GUILabel:setLineSpacing(lineSpacing)
 	self.m_LineSpacing = lineSpacing
+	return self
 end
 
 function GUILabel:setMultiline(multilineEnabled)
 	self.m_Multiline = multilineEnabled
+	return self
 end
 
 function GUILabel:setAlignX(alignX)
 	self.m_AlignX = alignX
+	return self
 end
 
 function GUILabel:setAlignY(alignY)
 	self.m_AlignY = alignY
+	return self
+end
+
+function GUILabel:setAlign(x, y)
+	self.m_AlignX = x or self.m_AlignX
+	self.m_AlignY = y or self.m_AlignY
+	return self
 end

@@ -43,6 +43,7 @@ function GUIRadioButton:setChecked(bChecked)
 
 	self.m_Checked = bChecked
 	self:anyChange()
+	return self
 end
 
 function GUIRadioButton:isChecked()
