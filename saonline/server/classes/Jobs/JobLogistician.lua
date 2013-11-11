@@ -44,6 +44,22 @@ function JobLogistician:start(player)
 	warpPedIntoVehicle(player, vehicle)
 end
 
+function JobLogistician:setNewDestination(player)
+	-- Get random cran
+	local cran = self.m_Crans[math.random(1, #self.m_Crans)]
+	local x, y, z = cran:getPosition()
+	
+	-- Destroy the old waypoint blip and create a new one
+	if player:getData("LogisticianBlip") then
+		destroyElement(player:getData("LogisticianBlip"))
+	end
+	local blip = createBlip(x, y, z, 41)
+	player:setData("Logistician:Blip", blip)
+	
+	--todo
+	player:setData("Logistician:Cran", cran)
+end
+
 
 -- Cran class
 Cran = inherit(Object)
@@ -55,6 +71,7 @@ function Cran:constructor(startX, startY, startZ, endX, endY, endZ, createContai
 	
 	self.m_Object = createObject(3474, self.m_StartX, self.m_StartY, self.m_StartZ, 0, 0, self.m_Rotation)
 	self.m_Tow = createObject(2917, self.m_StartX+0.5, self.m_StartY-0.7, self.m_StartZ+5, 0, 0, self.m_Rotation)
+	--self.m_ColShape = createColSphere(self.m_StartX, self.m_StartY, self.m_StartZ, 10)
 	self.m_Busy = false
 	
 	-- Create container (decoration)
@@ -212,6 +229,10 @@ function Cran:isBusy()
 	return self.m_Busy
 end
 
+function Cran:getPosition()
+	return self.m_StartX, self.m_StartY, self.m_StartZ
+end
+
 Cran.ContainerData = {
 	{2932, 7.100, 6.200, -5.400, 0.0},
 	{2934, 0.300, 7.300, -5.400, -270.0},
@@ -228,20 +249,4 @@ Cran.ContainerData = {
 	{2935, 7.000, -8.100, -5.400, -180.0},
 	{2932, -6.400, 9.500, -5.400, 0.0},
 	{2934, -6.400, 5.600, -2.500, -180.0}
-
-	--[[{2932, 6.200, -7.100, -5.400, 0.0},
-	{2934, 7.300, -0.300, -5.400, 90.0},
-	{2935, 10.400, -0.300, -5.400, 90.0},
-	{2932, 9.200, -0.300, -2.500, 90.0},
-	{2932, -5.100, 6.400, -5.400, 0.0},
-	{2935, -1.000, -7.100, -5.400, 180.0},
-	{2935, 2.300, 6.400, -5.400, 180.0},
-	{2935, -1.600, 6.400, -2.500, 180.0},
-	{2934, 4.600, -7.100, -2.500, 180.0},
-	{2932, -8.100, -0.100, -5.500, 90.0},
-	{2934, -8.100, -0.100, -2.600, 90.0},
-	{2932, -2.600, -7.100, -2.500, 0.0},
-	{2935, -8.100, -7.000, -5.400, 180.0},
-	{2932, 9.500, 6.400, -5.400, 0.0},
-	{2934, 5.600, 6.400, -2.500, 180.0}]]
 }

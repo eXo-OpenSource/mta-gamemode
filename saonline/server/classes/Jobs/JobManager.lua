@@ -10,7 +10,8 @@ JobManager = inherit(Singleton)
 function JobManager:constructor()
 	-- ATTENTION: Please use the same order server and clientside
 	self.m_Jobs = {
-		JobLogistician:new()
+		JobLogistician:new();
+		JobTrashman:new();
 	}
 	for k, v in ipairs(self.m_Jobs) do
 		v:setId(k)
@@ -35,4 +36,7 @@ function JobManager:Event_jobAccepted(jobId)
 	-- We're ready to start the job :)
 	client:setJob(job)
 	job:start(client)
+	
+	-- Tell the client that we started the job
+	client:triggerEvent("jobStart", jobId)
 end
