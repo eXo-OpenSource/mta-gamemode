@@ -7,11 +7,9 @@ function VRPButton:constructor(posX, posY, width, height, text, parent)
 	GUIRectangle.constructor(self, posX, posY, width, height, tocolor(255, 255, 255), parent)
 	
 	self.m_Bar = GUIRectangle:new(0, 0, width, height*0.1, tocolor(19, 64, 121), self)
-	local fontsize = 1
-	local font = dxCreateFont("files/fonts/gtafont.ttf", math.floor(height/1.65))
-	self.m_Label = GUILabel:new(0, height*0.05, width, height*0.9, text, fontsize, self)
+	self.m_Label = GUILabel:new(0, height*0.05, width, height*0.9, text, 1, self)
 		:setAlign("center", "center")
-		:setFont(font)
+		:setFont(VRPFont(height))
 		:setColor(tocolor(0, 0, 0, 255))
 end
 
@@ -32,4 +30,16 @@ function VRPButton:light()
 	self.m_Bar:show()
 	self.m_Label:setColor(tocolor(0, 0, 0, 255))
 	return self
+end
+
+function VRPButton:anyChange()
+	if self.m_Label then
+		self.m_Label.m_Width = self.m_Width
+		self.m_Bar.m_Width = self.m_Width
+		self.m_Label.m_Height = self.m_Height
+		self.m_Bar.m_Height = self.m_Height * 0.1
+	end
+	
+	-- Propagate
+	DxElement.anyChange(self)
 end
