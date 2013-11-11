@@ -144,6 +144,7 @@
 	<file src="files/images/Blips/Logistician.png"/>
 	<file src="files/images/Blips/Trashman.png"/>
 	
+	<file src="files/images/Jobs/HeaderLogistician.png"/>
 	<file src="files/images/Jobs/HeaderTrashman.png"/>
 	
 	<!-- Audio -->
