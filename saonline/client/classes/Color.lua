@@ -13,9 +13,8 @@ Color = {
 	Red       = {178,  35,  33}, --{255,   0,   0},
 	Yellow    = {255, 255,   0},
 	Green     = {11,  102,   8}, --{0,   255,   0},
-	Blue      = {0,     0, 255}
-
-
+	Blue      = {0,     0, 255},
+	DarkBlue   = {0,    32,  63},
 }
 
 for k, v in pairs(Color) do

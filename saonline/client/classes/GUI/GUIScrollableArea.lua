@@ -92,10 +92,10 @@ function GUIScrollableArea:onInternalMouseWheelUp()
 	if (self.m_ScrollY) >= 0 then
 		self.m_ScrollY = 0
 	else
-		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY + 8)
+		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY + 10)
 	end
 end
 
 function GUIScrollableArea:onInternalMouseWheelDown()
-	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 8)
+	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 10)
 end
