@@ -1,0 +1,25 @@
+<def name="vRPEditorTools">
+	<element name="cranStart" friendlyname="Start cran position">
+		<data name="position" type="coord3d" default="0,0,0" required="true"/>
+		<object editorOnly="true" model="3474"/>
+	</element>
+	<element name="cranEnd" friendlyname="End cran position">
+		<data name="position" type="coord3d" default="0,0,0" required="true"/>
+		<object editorOnly="true" model="3474"/>
+		<object editorOnly="true" model="2932" posX="7.100" posY="6.200" posZ="-5.400" rotZ="0.0"/>
+		<object editorOnly="true" model="2934" posX="0.300" posY="7.300" posZ="-5.400" rotZ="-270.0"/>
+		<object editorOnly="true" model="2935" posX="0.300" posY="10.400" posZ="-5.400" rotZ="-270.0"/>
+		<object editorOnly="true" model="2932" posX="0.300" posY="9.200" posZ="-2.500" rotZ="-270.0"/>
+		<object editorOnly="true" model="2932" posX="-6.400" posY="-5.100" posZ="-5.400" rotZ="0.0"/>
+		<object editorOnly="true" model="2935" posX="7.100" posY="-1.000" posZ="-5.400" rotZ="-180.0"/>
+		<object editorOnly="true" model="2935" posX="-6.400" posY="2.300" posZ="-5.400" rotZ="-180.0"/>
+		<object editorOnly="true" model="2935" posX="-6.400" posY="-1.600" posZ="-2.500" rotZ="-180.0"/>
+		<object editorOnly="true" model="2934" posX="7.100" posY="4.600" posZ="-2.500" rotZ="-180.0"/>
+		<object editorOnly="true" model="2932" posX="0.100" posY="-8.100" posZ="-5.500" rotZ="-270.0"/>
+		<object editorOnly="true" model="2934" posX="0.100" posY="-8.100" posZ="-2.600" rotZ="-270.0"/>
+		<object editorOnly="true" model="2932" posX="7.100" posY="-2.600" posZ="-2.500" rotZ="0.0"/>
+		<object editorOnly="true" model="2935" posX="7.000" posY="-8.100" posZ="-5.400" rotZ="-180.0"/>
+		<object editorOnly="true" model="2932" posX="-6.400" posY="9.500" posZ="-5.400" rotZ="0.0"/>
+		<object editorOnly="true" model="2934" posX="-6.400" posY="5.600" posZ="-2.500" rotZ="-180.0"/>
+	</element>
+</def>
