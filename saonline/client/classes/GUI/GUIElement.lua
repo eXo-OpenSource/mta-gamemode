@@ -34,13 +34,13 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	local inside = (absoluteX <= cx and absoluteY <= cy and absoluteX + self.m_Width > cx and absoluteY + self.m_Height > cy)
 	
 	if self.m_LActive and not mouse1 then
-		if self.onLeftClickUp			then self:onLeftClickUp()			end
-		if self.onInternalLeftClickUp	then self:onInternalLeftClickUp()	end
+		if self.onLeftClick			then self:onLeftClick()			end
+		if self.onInternalLeftClick	then self:onInternalLeftClick()	end
 		self.m_LActive = false
 	end
 	if self.m_RActive and not mouse2 then
-		if self.onRightClickUp			then self:onRightClickUp()			end
-		if self.onInternalRightClickUp	then self:onInternalRightClickUp()	end
+		if self.onRightClick			then self:onRightClick()			end
+		if self.onInternalRightClick	then self:onInternalRightClick()	end
 		self.m_RActive = false
 	end
 	
@@ -63,16 +63,16 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		GUIElement.HoveredElement = self
 	end
 	if mouse1 and not self.m_LActive then
-		if self.onLeftClick			then self:onLeftClick()			end
-		if self.onInternalLeftClick then self:onInternalLeftClick() end
+		if self.onLeftClickDown			then self:onLeftClickDown()			end
+		if self.onInternalLeftClickDown then self:onInternalLeftClickDown() end
 		self.m_LActive = true
 
 		-- Check whether the focus changed
 		GUIInputControl.checkFocus(self)
 	end
 	if mouse2 and not self.m_RActive then
-		if self.onRightClick			then self:onRightClick()			end
-		if self.onInternalRightClick	then self:onInternalRightClick()	end
+		if self.onRightClickDown			then self:onRightClickDown()			end
+		if self.onInternalRightClickDown	then self:onInternalRightClickDown()	end
 		self.m_RActive = true
 	end
 

@@ -18,10 +18,10 @@ function PhoneInteraction:constructor()
 	addEventHandler("callReplace", root, bind(self.callReplace, self))
 end
 
-function PhoneInteraction:callStart(player)
+function PhoneInteraction:callStart(player, voiceEnabled)
 	if not player then return end
 	
-	player:triggerEvent("callIncoming", client)
+	player:triggerEvent("callIncoming", client, voiceEnabled)
 end
 
 function PhoneInteraction:callBusy(caller)
@@ -40,6 +40,7 @@ function PhoneInteraction:callAnswer(caller, voiceCall)
 	-- Start voice broadcasting
 	if voiceCall and isVoiceEnabled() then
 		setPlayerVoiceBroadcastTo(caller, client)
+		setPlayerVoiceBroadcastTo(client, caller)
 	end
 end
 

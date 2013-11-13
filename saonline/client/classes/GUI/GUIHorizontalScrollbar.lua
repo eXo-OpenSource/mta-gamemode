@@ -13,7 +13,7 @@ function GUIHorizontalScrollbar:constructor(posX, posY, width, height, parent)
 	self.m_CursorMoveHandler = bind(GUIHorizontalScrollbar.Event_onClientCursorMove, self)
 end
 
-function GUIHorizontalScrollbar:onInternalLeftClick()
+function GUIHorizontalScrollbar:onInternalLeftClickDown()
 	local scrollerX = self.m_AbsoluteX + CGUI_SCROLLBAR_ELEMENT_MARGIN + self.m_ScrollPosition * self.m_Width
 	local scrollerY = self.m_AbsoluteY + CGUI_SCROLLBAR_ELEMENT_MARGIN
 
@@ -25,7 +25,7 @@ function GUIHorizontalScrollbar:onInternalLeftClick()
 	end
 end
 
-function GUIHorizontalScrollbar:onInternalLeftClickUp()
+function GUIHorizontalScrollbar:onInternalLeftClick()
 	if self.m_Scrolling then
 		self.m_Scrolling = false
 		

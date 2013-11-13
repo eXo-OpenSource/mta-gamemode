@@ -11,7 +11,7 @@ function GUIVerticalScrollbar:constructor(posX, posY, width, height, parent)
 	self.m_CursorMoveHandler = bind(GUIVerticalScrollbar.Event_onClientCursorMove, self)
 end
 
-function GUIVerticalScrollbar:onInternalLeftClick()
+function GUIVerticalScrollbar:onInternalLeftClickDown()
 	local scrollerX = self.m_AbsoluteX + GUI_SCROLLBAR_ELEMENT_MARGIN
 	local scrollerY = self.m_AbsoluteY + GUI_SCROLLBAR_ELEMENT_MARGIN + self.m_ScrollPosition * self.m_Height
 
@@ -23,7 +23,7 @@ function GUIVerticalScrollbar:onInternalLeftClick()
 	end
 end
 
-function GUIVerticalScrollbar:onInternalLeftClickUp()
+function GUIVerticalScrollbar:onInternalLeftClick()
 	if self.m_Scrolling then
 		self.m_Scrolling = false
 		

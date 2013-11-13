@@ -9,6 +9,7 @@ AppCall = inherit(PhoneApp)
 local CALL_RESULT_BUSY = 0
 local CALL_RESULT_REPLACE = 1
 local CALL_RESULT_ANSWER = 2
+local CALL_RESULT_CALLING = 3
 
 function AppCall:constructor()
 	PhoneApp.constructor(self, "Phone", "files/images/Phone/Apps/IconCall.png")
@@ -40,11 +41,11 @@ function AppCall:onClose()
 end
 
 -- Events
-function PhoneApp:Event_callIncoming(caller, isVoiceCall)
+function PhoneApp:Event_callIncoming(caller, voiceEnabled)
 	if not caller then return end
 	
 	Phone:getSingleton():openApp(self)
-	IncomingCallActivity:new(self, caller)
+	IncomingCallActivity:new(self, caller, voiceEnabled)
 end
 
 function PhoneApp:Event_callBusy(callee)
@@ -90,15 +91,17 @@ function MainActivity:ButtonCall_Click()
 		return
 	end
 
+	CallResultActivity:new(self:getApp(), player, CALL_RESULT_CALLING, self.m_CheckVoice:isChecked())
 	triggerServerEvent("callStart", root, player, self.m_CheckVoice:isChecked())
 end
 
 
 IncomingCallActivity = inherit(AppActivity)
 
-function IncomingCallActivity:constructor(app, caller)
+function IncomingCallActivity:constructor(app, caller, voiceEnabled)
 	AppActivity.constructor(self, app)
 	self.m_Caller = caller
+	self.m_VoiceEnabled = voiceEnabled
 
 	self.m_CallLabel = GUILabel:new(8, 10, 200, 20, "Incoming call from "..getPlayerName(caller), 3, self)
 	self.m_CallLabel:setColor(Color.Black)
@@ -118,10 +121,10 @@ function IncomingCallActivity:ButtonAnswer_Click()
 		destroyElement(self.m_RingSound)
 	end
 	if isElement(self.m_Caller) then -- He might have quit meanwhile
-		triggerServerEvent("callAnswer", root, self.m_Caller)
+		triggerServerEvent("callAnswer", root, self.m_Caller, self.m_VoiceEnabled)
 		
 		-- Show active call activity
-		CallResultActivity:new(self:getApp(), self.m_Caller, CALL_RESULT_ANSWER)
+		CallResultActivity:new(self:getApp(), self.m_Caller, CALL_RESULT_ANSWER, self.m_VoiceEnabled)
 	end
 end
 
@@ -156,7 +159,7 @@ function CallResultActivity:constructor(app, callee, resultType, voiceCall)
 		self.m_ResultLabel:setText("Answered")
 		self.m_ResultLabel:setColor(Color.Green)
 		if voiceCall then
-			GUILabel:new(8, 80, 200, 20, "", 1, "Press z to speak", self)
+			GUILabel:new(8, 80, 200, 20, "Press z to speak", 1.3, self):setColor(Color.Black)
 		end
 		self.m_ButtonReplace = GUIButton:new(8, 222, 205, 40, "Replace", self)
 		self.m_ButtonReplace:setBackgroundColor(Color.Red)
@@ -181,6 +184,9 @@ function CallResultActivity:constructor(app, callee, resultType, voiceCall)
 				end 
 			end, 3000, 1
 		)
+	elseif resultType == CALL_RESULT_CALLING then
+		self.m_ResultLabel:setText("Calling")
+		self.m_ResultLabel:setColor(Color.Black)
 	end
 end
 
