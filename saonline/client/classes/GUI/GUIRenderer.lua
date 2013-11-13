@@ -24,9 +24,9 @@ end
 
 function GUIRenderer.updateAll(elapsedTime)
 	for k, v in ipairs(GUIRenderer.cache) do
-		--[[if v.update then
+		if v.m_Visible and v.update then
 			v:update(elapsedTime)
-		end]]
+		end
 		if v.m_ContainsGUIElements and v.m_Visible then
 			v:performChecks()
 		end

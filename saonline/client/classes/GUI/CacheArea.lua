@@ -101,8 +101,8 @@ end
 function CacheArea:performChecks()
 	-- Update GUI children
 	for k, v in ipairs(self.m_Children) do
-		if v.m_Visible and v.update then
-			v:update()
+		if v.m_Visible and v.updateInput then
+			v:updateInput()
 		end
 	end
 end

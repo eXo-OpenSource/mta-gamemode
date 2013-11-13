@@ -91,7 +91,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	end
 end
 
-function GUIElement:update()
+function GUIElement:updateInput()
 	-- Check for hovers, clicks, ...
 	local relCursorX, relCursorY = getCursorPosition()
 	if relCursorX then

@@ -1,12 +1,12 @@
 LoginGUI = inherit(Singleton)
-inherit(DxElement, LoginGUI)
+inherit(GUIForm, LoginGUI)
 
 function LoginGUI:constructor()	
 	local sw, sh = guiGetScreenSize()
 	local bw, bh = math.floor(sw * 0.08), math.floor(sh * 0.04)
 	self.usePasswordHash = false
 	
-	DxElement.constructor(self, 0, 0, sw, sh, false, false)
+	GUIForm.constructor(self, 0, 0, sw, sh)
 	self.m_Background = GUIRectangle:new(0, 0, sw, sh, tocolor(2, 17, 39, 255), self)
 	self.m_TopBar = GUIRectangle:new(bw, bh, sw-2*bw, sh*0.2, tocolor(0, 0, 0, 170), self)
 	GUILabel:new(30, 40, sw, sh, "V Roleplay", 1, self.m_TopBar)
