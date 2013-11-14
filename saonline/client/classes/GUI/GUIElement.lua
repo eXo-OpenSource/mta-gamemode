@@ -34,13 +34,13 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	local inside = (absoluteX <= cx and absoluteY <= cy and absoluteX + self.m_Width > cx and absoluteY + self.m_Height > cy)
 	
 	if self.m_LActive and not mouse1 then
-		if self.onLeftClick			then self:onLeftClick()			end
-		if self.onInternalLeftClick	then self:onInternalLeftClick()	end
+		if self.onLeftClick			then self:onLeftClick(cx, cy)			end
+		if self.onInternalLeftClick	then self:onInternalLeftClick(cx, cy)	end
 		self.m_LActive = false
 	end
 	if self.m_RActive and not mouse2 then
-		if self.onRightClick			then self:onRightClick()			end
-		if self.onInternalRightClick	then self:onInternalRightClick()	end
+		if self.onRightClick			then self:onRightClick(cx, cy)			end
+		if self.onInternalRightClick	then self:onInternalRightClick(cx, cy)	end
 		self.m_RActive = false
 	end
 	

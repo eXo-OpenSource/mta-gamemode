@@ -17,14 +17,31 @@ end
 
 addEventHandler("onClientResourceStop", resourceRoot, function() guiSetInputEnabled(false) end)
 
-function GUIInputControl.setFocus(edit)
+function GUIInputControl.setFocus(edit, caret)
+	if GUIInputControl.ms_CurrentInputFocus and not edit then
+		local e = GUIInputControl.ms_CurrentInputFocus
+		e:onInternalLooseFocus()
+		if e.onLooseFocus then
+			e:onLooseFocus()
+		end
+	end
+
 	GUIInputControl.ms_CurrentInputFocus = edit
 
 	if edit then
 		guiBringToFront(GUIInputControl.ms_Edit)
-		guiEditSetCaretIndex(GUIInputControl.ms_Edit, #edit:getText())
+		if caret then
+			guiEditSetCaretIndex(GUIInputControl.ms_Edit, caret)
+		else
+			guiEditSetCaretIndex(GUIInputControl.ms_Edit, #edit:getText())
+		end
 		guiSetInputEnabled(true)
 		guiSetText(GUIInputControl.ms_Edit, edit:getText())
+		
+		edit:onInternalFocus()
+		if edit.onFocus then
+			edit:onFocus()
+		end
 	else
 		guiSetInputEnabled(false)
 	end
@@ -42,10 +59,10 @@ addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 			GUIInputControl.ms_CurrentInputFocus:setText(guiGetText(source))
 			
 			if GUIInputControl.ms_CurrentInputFocus.onInternalEditInput then
-				GUIInputControl.ms_CurrentInputFocus:onInternalEditInput()
+				GUIInputControl.ms_CurrentInputFocus:onInternalEditInput(guiEditGetCaretIndex and guiEditGetCaretIndex(GUIInputControl.ms_Edit))
 			end
 			if GUIInputControl.ms_CurrentInputFocus.onEditInput then
-				GUIInputControl.ms_CurrentInputFocus:onEditInput()
+				GUIInputControl.ms_CurrentInputFocus:onEditInput(guiEditGetCaretIndex and guiEditGetCaretIndex(GUIInputControl.ms_Edit))
 			end
 		end
 	end
