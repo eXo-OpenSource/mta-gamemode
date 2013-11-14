@@ -71,6 +71,9 @@ MainActivity = inherit(AppActivity)
 function MainActivity:constructor(app)
 	AppActivity.constructor(self, app)
 	
+	if self == nil then
+		outputConsole(debug.traceback())
+	end
 	self.m_Label = GUILabel:new(8, 10, 200, 20, "Call", 3, self)
 	self.m_Label:setColor(Color.Black)
 	self.m_Edit = GUIEdit:new(8, 70, 206, 25, self)
