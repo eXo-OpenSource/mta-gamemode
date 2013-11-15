@@ -47,7 +47,7 @@ function JobTrashman:reset()
 end
 
 function JobTrashman:Trashcan_Hit(hitElement, matchingDimension)
-	if hitElement == localPlayer and matchingDimension then
+	if hitElement == localPlayer and getPedOccupiedVehicleSeat(localPlayer) == 0 and matchingDimension then
 		local vehicle = getPedOccupiedVehicle(localPlayer)
 		if not vehicle or getElementModel(vehicle) ~= 408 then
 			localPlayer:sendMessage("You have to drive a Trashmaster", 255, 0, 0)

@@ -21,7 +21,11 @@ function AppSettings:onOpen(form)
 		if self.m_Sound and isElement(self.m_Sound) then
 			destroyElement(self.m_Sound)
 		end
-		self.m_Sound = playSound("files/audio/Ringtones/"..text:gsub(" ", "")..".mp3")
+		local path = "files/audio/Ringtones/"..text:gsub(" ", "")..".mp3"
+		self.m_Sound = playSound(path)
+		
+		-- Save it
+		core:getConfig():set("Phone", "Ringtone", path)
 	end
 	for i=1, 4 do
 		self.m_RingtoneChanger:addItem("Ringtone "..i)

@@ -11,6 +11,7 @@ function Core:constructor()
 		Debugging:new()
 	end
 	
+	self.m_Config = ConfigXML:new("config.xml")
 	Version:new()
 	TranslationManager:new()
 	JobManager:new()
@@ -35,4 +36,8 @@ end
 
 function Core:destructor()
 
+end
+
+function Core:getConfig()
+	return self.m_Config
 end
