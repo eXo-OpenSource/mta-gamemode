@@ -17,43 +17,39 @@ local car_radio_plays = {}
 local playRadioThing = nil
 
 VRP_RADIO = {"Radio aus",
-	"Lied1",
-	"Lied2",
-	-- "Di.fm Dubstep",
-	-- "Di.fm Electro House",
-	-- "RMF Dance",
-	-- "Sky.fm Alternative",
-	-- "Sky.fm Roots Reggae",
-	-- "Sky.fm Classic Rap",
-	-- "Sky.fm Top Hits",
-	-- "89.0 RTL",
-	-- "Technobase.fm",
-	-- "N-Joy",
-	-- "Hardbase.fm",
-	-- "Housetime.fm",
-	-- "Techno4Ever",
-	-- "ClubTime.fm",
-	-- "CoreTime.fm",
+	"Di.fm Dubstep",
+	"Di.fm Electro House",
+	"RMF Dance",
+	"Sky.fm Alternative",
+	"Sky.fm Roots Reggae",
+	"Sky.fm Classic Rap",
+	"Sky.fm Top Hits",
+	"89.0 RTL",
+	"Technobase.fm",
+	"N-Joy",
+	"Hardbase.fm",
+	"Housetime.fm",
+	"Techno4Ever",
+	"ClubTime.fm",
+	"CoreTime.fm",
 }
 
 VRP_RADIO_PATHS = {0,--1,2,3,4,5,6,7,8,9,10,11,12,
-	"client/classes/GUIForms/lied1.mp3",
-	"client/classes/GUIForms/lied2.mp3"
-	-- "http://80.94.69.106:6374/",
-	-- "http://scfire-ntc-aa02.stream.aol.com:80/stream/1025",
-	-- "http://files.kusmierz.be/rmf/rmfdance-3.mp3",
-	-- "http://u12.sky.fm:80/sky_altrock_aacplus",
-	-- "http://u16b.sky.fm:80/sky_rootsreggae_aacplus",
-	-- "http://u17.sky.fm:80/sky_classicrap_aacplus",
-	-- "http://u12b.sky.fm:80/sky_tophits_aacplus",
-	-- "http://80.237.156.45/890rtl-128.mp3",
-	-- "http://listen.technobase.fm/dsl.asx",
-	-- "http://ndrstream.ic.llnwd.net/stream/ndrstream_n-joy_hi_mp3.m3u",
-	-- "http://listen.hardbase.fm/tunein-dsl-asx",
-	-- "http://listen.housetime.fm/tunein-dsl-asx",
-	-- "http://www.techno4ever.net/t4e/stream/dsl_listen.asx",
-	-- "http://listen.ClubTime.fm/dsl.pls",
-	-- "http://listen.CoreTime.fm/dsl.pls"
+	"http://80.94.69.106:6374/",
+	"http://scfire-ntc-aa02.stream.aol.com:80/stream/1025",
+	"http://files.kusmierz.be/rmf/rmfdance-3.mp3",
+	"http://u12.sky.fm:80/sky_altrock_aacplus",
+	"http://u16b.sky.fm:80/sky_rootsreggae_aacplus",
+	"http://u17.sky.fm:80/sky_classicrap_aacplus",
+	"http://u12b.sky.fm:80/sky_tophits_aacplus",
+	"http://80.237.156.45/890rtl-128.mp3",
+	"http://listen.technobase.fm/dsl.asx",
+	"http://ndrstream.ic.llnwd.net/stream/ndrstream_n-joy_hi_mp3.m3u",
+	"http://listen.hardbase.fm/tunein-dsl-asx",
+	"http://listen.housetime.fm/tunein-dsl-asx",
+	"http://www.techno4ever.net/t4e/stream/dsl_listen.asx",
+	"http://listen.ClubTime.fm/dsl.pls",
+	"http://listen.CoreTime.fm/dsl.pls"
 }
 
 addEventHandler("onClientResourceStart",root, function()
@@ -68,14 +64,6 @@ addEventHandler("onClientResourceStart",root, function()
 			currentIndex = nextIndex
 			local radio = VRP_RADIO_PATHS[nextIndex]
 			curRadioName = VRP_RADIO[nextIndex]
-			-- if loltimer and isTimer (loltimer) then
-				-- killTimer (loltimer)
-			-- end
-			-- loltimer = setTimer (function()
-				-- if isTimer (loltimer) then
-					-- resetTimer()
-				-- end
-			-- end, 1000,1)
 			if type (radio) == "number" then
 				setRadioChannel (radio)
 				if playRadioThing then
@@ -106,14 +94,6 @@ addEventHandler("onClientResourceStart",root, function()
 			currentIndex = nextIndex
 			local radio = VRP_RADIO_PATHS[nextIndex]
 			curRadioName = VRP_RADIO[nextIndex]
-			-- if loltimer and isTimer (loltimer) then
-				-- killTimer (loltimer)
-			-- end
-			-- loltimer = setTimer (function()
-				-- if isTimer (loltimer) then
-					-- resetTimer()
-				-- end
-			-- end, 1000,1)
 			if type (radio) == "number" then
 				setRadioChannel (radio)
 				if playRadioThing then
