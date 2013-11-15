@@ -37,6 +37,8 @@
 	<script src="server/classes/Root.lua" type="server"/>
 	<script src="server/classes/WhiteList.lua" type="server"/>
 	<script src="server/classes/PhoneInteraction.lua" type="server"/>
+	<script src="server/classes/Vehicle.lua" type="server"/>
+	<script src="server/classes/VehicleManager.lua" type="server"/>
 	
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -54,6 +56,7 @@
 	<script src="client/classes/LocalPlayer.lua" type="client"/>
 	<script src="client/classes/Version.lua" type="client"/>
 	<script src="client/classes/MTAFixes.lua" type="client"/>
+	<script src="client/classes/ClickHandler.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -106,6 +109,7 @@
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI_S.lua" type="server"/>
+	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu.lua" type="client"/>
 	
 	<!-- Phone -->
 	<script src="client/classes/Phone/Phone.lua" type="client"/>

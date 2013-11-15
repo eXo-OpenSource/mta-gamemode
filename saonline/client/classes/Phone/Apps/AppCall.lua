@@ -38,6 +38,7 @@ function AppCall:onClose()
 			end
 		end
 	end
+	-- Todo: Tell the callee that we closed the app
 end
 
 -- Events

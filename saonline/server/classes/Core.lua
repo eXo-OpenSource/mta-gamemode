@@ -20,9 +20,12 @@ function Core:constructor()
 	PhoneInteraction:new()
 	PlayerManager:new()
 	JobManager:new()
+	VehicleManager:new()
 	
 end
 
 function Core:destructor()
 	delete(sql)
+	delete(VehicleManager)
+	delete(PlayerManager)
 end

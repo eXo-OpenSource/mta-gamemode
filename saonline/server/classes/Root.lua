@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Root element class
 -- *
 -- ****************************************************************************
-Root = inherit(Object)
+Root = inherit(MTAElement)
 registerElementClass("root", Root)
 
 function Root:constructor()

@@ -12,7 +12,8 @@ function GUIMouseMenu:constructor(posX, posY, width, height, parent)
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	
-	self.m_Items = {}
+	self.m_Items   = {}
+	self.m_Element = nil
 end
 
 function GUIMouseMenu:drawThis()
@@ -24,10 +25,14 @@ function GUIMouseMenu:addItem(text, callback)
 	checkArgs("GUIMouseMenu:addItem", "string", "function")
 
 	self.m_Height = (#self.m_Items+1)*30
-	local item = GUIMouseMenuItem:new(0, 0 + #self.m_Items*30, self.m_Width, 30, text, self)
-	item.onLeftClick = callback
+	local item = GUIMouseMenuItem:new(0, 0 + #self.m_Items*35, self.m_Width, 35, text, self)
+	item.onLeftClickDown = function(item) callback(item, self.m_Element) end
 	
 	table.insert(self.m_Items, item)
 	
 	return item
+end
+
+function GUIMouseMenu:setElement(element)
+	self.m_Element = element
 end

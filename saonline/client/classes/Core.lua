@@ -16,6 +16,7 @@ function Core:constructor()
 	TranslationManager:new()
 	JobManager:new()
 	MTAFixes:new()
+	ClickHandler:new()
 	
 	-- HUD
 	HUDRadar:new()

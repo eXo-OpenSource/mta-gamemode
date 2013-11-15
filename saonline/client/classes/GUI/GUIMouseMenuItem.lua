@@ -13,11 +13,11 @@ function GUIMouseMenuItem:constructor(posX, posY, width, height, text, parent)
 	checkArgs("GUIMouseMenuItem:constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, text, 1.5, "arial")
-	GUIColorable.constructor(self, Color.Black)
+	GUIFontContainer.constructor(self, text, 1, VRPFont(self.m_Height-6))
+	GUIColorable.constructor(self, Color.DarkBlue)
 	
 	self.onInternalHover = function() self:setColor(Color.White) self:setTextColor(Color.Black) end
-	self.onInternalUnhover = function() self:setColor(Color.Black) self:setTextColor(Color.White) end
+	self.onInternalUnhover = function() self:setColor(Color.DarkBlue) self:setTextColor(Color.White) end
 end
 
 function GUIMouseMenuItem:drawThis()
