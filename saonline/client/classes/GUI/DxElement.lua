@@ -18,17 +18,12 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 		self.m_Parent.m_Children[#self.m_Parent.m_Children+1] = self
 	end
 	
-	if isRelative then
-		self.m_PosX   = screenW*posX
-		self.m_PosY   = screenH*posY
-		self.m_Width  = screenW*width
-		self.m_Height = screenH*height
-	else
-		self.m_PosX   = posX
-		self.m_PosY   = posY
-		self.m_Width  = width
-		self.m_Height = height
-	end
+
+	self.m_PosX   = posX
+	self.m_PosY   = posY
+	self.m_Width  = width
+	self.m_Height = height
+
 	self.m_Children = {}
 	self.m_Visible = true
 	self.m_Alpha = 255
