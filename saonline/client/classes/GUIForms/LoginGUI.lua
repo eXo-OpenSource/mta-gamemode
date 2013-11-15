@@ -87,6 +87,27 @@ function LoginGUI:constructor()
 	self.m_SubmitRegisterButton.onLeftClick = bind(function(self)
 		triggerServerEvent("accountregister", root, self.m_RegisterEditUsername:getText(), self.m_RegisterEditPassword:getText())
 	end, self)
+	
+	
+	self:bind("arrow_l", 
+		function(self)
+			if self.m_LoginTab:isVisible() then
+				self:showHome()
+			elseif self.m_RegisterTab:isVisible() then
+				self:showLogin()
+			end
+		end
+	)	
+	
+	self:bind("arrow_r", 
+		function(self)
+			if self.m_HomeTab:isVisible() then
+				self:showLogin()
+			elseif self.m_LoginTab:isVisible() then
+				self:showRegister()
+			end
+		end
+	)
 end
 
 function LoginGUI:showHome()
@@ -109,6 +130,12 @@ function LoginGUI:showLogin()
 	self.m_RegisterTab:hide()
 	self.m_HomeTab:hide()
 	self:anyChange()
+	
+	self:bind("enter",
+		function(self)
+			self.m_SubmitLoginButton.onLeftClick(self)
+		end
+	)
 end
 
 function LoginGUI:showRegister()
@@ -119,6 +146,13 @@ function LoginGUI:showRegister()
 	self.m_LoginTab:hide()
 	self.m_RegisterTab:show()
 	self.m_HomeTab:hide()
+	
+	self:bind("enter",
+		function(self)
+			self.m_SubmitRegisterButton.onLeftClick(self)
+		end
+	)
+	
 	self:anyChange()
 end
 
