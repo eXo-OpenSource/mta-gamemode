@@ -103,6 +103,8 @@
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CharacterSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/RadioGUI_S.lua" type="server"/>
 	
 	<!-- Phone -->
 	<script src="client/classes/Phone/Phone.lua" type="client"/>
