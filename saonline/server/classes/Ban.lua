@@ -44,9 +44,9 @@ function Ban.checkBan(player)
 	if row then
 		local duration = row.expires
 		if duration > 0 then
-			reasonstr = ("You are banned for %s (Reason: %s"):format(string.duration(duration - getRealTime().timestamp), reason)
+			reasonstr = ("You are banned for %s (Reason: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
 		else
-			reasonstr = ("You are permanently banned (Reason: %s"):format(reason)
+			reasonstr = ("You are permanently banned (Reason: %s"):format(row.reason)
 		end
 		kickPlayer(player, reasonstr)
 		return false
