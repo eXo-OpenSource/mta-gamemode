@@ -174,8 +174,10 @@ function string.duration(seconds)
 	
 	if hours > 0 then
 		return string.format("%02dh:%02dm", hours)
+	elseif minutes > 0 then
+		return string.format("%dmin", minutes)
 	else
-		return string.format("%02dmin", minutes)
+		return string.format("%dsec", seconds)
 	end
 end
 	
