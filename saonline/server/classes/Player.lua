@@ -10,7 +10,7 @@ registerElementClass("player", Player)
 addEventHandler("onPlayerConnect", root, 
 	function(name)
 		local player = getPlayerFromName(name)
-		Async.Create(Player.connect)(player)
+		Async.create(Player.connect)(player)
 	end
 )
 
