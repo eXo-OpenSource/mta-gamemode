@@ -10,8 +10,8 @@ function Ban.addBan(who, author, reason, duration)
 	
 	local player = false
 	if type(who) == "userdata" and getElementType(who) == "player" then
-		who = getPlayerSerial(who)
 		player = who
+		who = getPlayerSerial(who)
 	end
 	
 	sql:queryExec("INSERT INTO ??_bans(serial, author, reason, expires) VALUES (?, ?, ?, ?)", sql:getPrefix(), serial, author, reason, duration + getRealTime().timestamp)
