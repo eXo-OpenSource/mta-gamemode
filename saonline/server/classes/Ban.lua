@@ -14,7 +14,7 @@ function Ban.addBan(who, author, reason, duration)
 		player = who
 	end
 	
-	sql:queryExec("INSERT INTO ??_bans(serial, author, reason, expires)", sql:getPrefix(), serial, author, reason, duration + getRealTime().timestamp)
+	sql:queryExec("INSERT INTO ??_bans(serial, author, reason, expires) VALUES (?, ?, ?, ?)", sql:getPrefix(), serial, author, reason, duration + getRealTime().timestamp)
 	
 	if not player then
 		for k, v in pairs(getElementsByType("player")) do
@@ -32,6 +32,7 @@ function Ban.addBan(who, author, reason, duration)
 		else
 			reasonstr = ("You were permanently banned by %s (Reason: %s"):format(author, reason)
 		end
+		outputDebug(player)
 		kickPlayer(player, reasonstr)
 	end
 end
