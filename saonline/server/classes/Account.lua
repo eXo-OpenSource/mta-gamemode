@@ -67,6 +67,7 @@ function Account:constructor(id, username, player, pwhash)
 	self.m_Id = id
 	self.m_Username = username
 	self.m_Player = player
+	player.m_Account = self
 	self.m_Character = {}
 	
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount, Money, Bank FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
@@ -76,6 +77,11 @@ function Account:constructor(id, username, player, pwhash)
 	self.m_MaxCharacters = row.AvailableCharacterCount;
 	self.m_Money = row.Money;
 	self.m_Bank = row.Bank
+	
+	if self.m_Rank == RANK.Banned then
+		Ban:new(player)
+		return
+	end
 	
 	-- Load Characters
 	sql:queryFetch(Async.waitFor(self), "SELECT Id FROM ??_character WHERE Account = ?;", sql:getPrefix(), row.Id)

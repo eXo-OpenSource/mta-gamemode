@@ -7,11 +7,21 @@
 -- ****************************************************************************
 Player = inherit(MTAElement)
 registerElementClass("player", Player)
+addEventHandler("onPlayerConnect", root, 
+	function(name)
+		local player = getPlayerFromName(name)
+		Async.Create(Player.connect)(player)
+	end
+)
 
 function Player:constructor()
 	self.m_Character = false
 	self.m_Account = false
 	self.m_Locale = "en"
+end
+
+function Player:connect()
+	if not Ban.checkBan(self) then return end
 end
 
 function Player:destructor()

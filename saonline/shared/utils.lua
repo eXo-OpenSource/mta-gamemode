@@ -167,3 +167,16 @@ function getMatrix(x, y, z, rrx, rry, rrz)
  
 	return matrix
 end
+
+function string.duration(seconds)
+	local hours = math.floor(seconds / 3600)
+	local minutes = math.floor(seconds / 60)
+	
+	if hours > 0 then
+		return string.format("%02dh:%02dm", hours)
+	else
+		return string.format("%02dmin", minutes)
+	end
+end
+	
+	
