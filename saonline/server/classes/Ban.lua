@@ -46,13 +46,13 @@ function Ban.checkBan(player)
 	local row = Async.wait()
 	if row then
 		local duration = row.expires
-		if duration > 0 then
-			reasonstr = ("You are banned for %s (Reason: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
-		elseif duration == 0 then
+		if duration == 0 then
 			reasonstr = ("You are permanently banned (Reason: %s"):format(row.reason)
-		else
+		elseif duration - getRealTime().timestamp < 0 then
 			sql:queryExec("DELETE FROM ??_bans WHERE serial = ?;", sql:getPrefix(), serial)
 			return true
+		elseif duration > 0 then
+			reasonstr = ("You are banned for %s (Reason: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
 		end
 			
 		kickPlayer(player, reasonstr)
