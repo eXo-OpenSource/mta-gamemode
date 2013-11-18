@@ -1,6 +1,6 @@
 -- Developer: sbx320
 -- License: MIT
--- Download URL: http://www.sbx320.net/
+-- Download URL: http://www.sbx320.net/release/classlib.lua
 
 --// shared.utils.class
 --||	@type:	Shared
