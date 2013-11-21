@@ -132,3 +132,18 @@ addEventHandler("onClientResourceStart", resourceRoot,
 		)
 	end
 )
+
+addEventHandler("onClientDoubleClick", root,
+	function(button, absoluteX, absoluteY)
+		--local guiElement = self:getElementAt(absoluteX, absoluteY)
+		local guiElement = GUIElement.getHoveredElement()
+		if guiElement then
+			if button == "left" and guiElement.onLeftDoubleClick then
+				guiElement:onLeftDoubleClick(absoluteX, absoluteY)
+			end
+			if button == "right" and guiElement.onRightDoubleClick then
+				guiElement:onRightDoubleClick(absoluteX, absoluteY)
+			end
+		end
+	end
+)

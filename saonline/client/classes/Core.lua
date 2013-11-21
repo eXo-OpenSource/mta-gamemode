@@ -33,6 +33,9 @@ function Core:constructor()
 			end
 		end
 	)
+	
+	-- Vehicle shops
+	VehicleShop.createShops()
 end
 
 function Core:destructor()

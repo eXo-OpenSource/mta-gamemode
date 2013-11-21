@@ -5,7 +5,6 @@
 
 	<!-- Shared -->
 	<script src="shared/constants.lua" type="shared"/>
-	<script src="server/constants.lua" type="server"/>
 	<script src="shared/classlib.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -22,8 +21,10 @@
 	<script src="shared/classes/Vector.lua" type="shared"/>
 	<script src="shared/classes/TranslationManager.lua" type="shared"/>
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
+	<scritp src="shared/classes/Vector.lua" type="shared"/>
 	
 	<!-- Server -->
+	<script src="server/constants.lua" type="server"/>
 	<script src="server/utils.lua" type="server"/>
 	<script src="server/classes/Debugging.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
@@ -58,6 +59,7 @@
 	<script src="client/classes/Version.lua" type="client"/>
 	<script src="client/classes/MTAFixes.lua" type="client"/>
 	<script src="client/classes/ClickHandler.lua" type="client"/>
+	<script src="client/classes/VehicleShop.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -110,6 +112,7 @@
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI_S.lua" type="server"/>
+	<script src="client/classes/GUIForms/VehicleShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu.lua" type="client"/>
 	
 	<!-- Phone -->
@@ -150,6 +153,7 @@
 	<file src="files/images/avatar_default.png"/>
 	<file src="files/images/world.png"/>
 	<file src="files/images/Radar.jpg"/>
+	<file src="files/images/CouttSchutz.png"/>
 	
 	<!-- Blips -->
 	<file src="files/images/Blips/LocalPlayer.png"/>

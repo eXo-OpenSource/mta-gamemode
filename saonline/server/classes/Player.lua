@@ -27,6 +27,10 @@ end
 function Player:destructor()
 end
 
+function Player:getCharacterId()
+	return self.m_Character and self.m_Character:getId()
+end
+
 function Player:triggerEvent(ev, ...)
 	triggerClientEvent(self, ev, self, ...)
 end

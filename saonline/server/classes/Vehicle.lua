@@ -42,7 +42,7 @@ function Vehicle:save()
 	local posX, posY, posZ = getElementPosition(self)
 	local rotX, rotY, rotZ = getElementRotation(self)
 	
-	return sql:queryExec("UPDATE ??_vehicles SET PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Keys = ? WHERE Id = ?", sql:getPrefix(), posX, posY, posZ, rotZ, toJSON(self.m_Keys), self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, `Keys` = ? WHERE Id = ?", sql:getPrefix(), posX, posY, posZ, rotZ, toJSON(self.m_Keys), self.m_Id)
 end
 
 function Vehicle:getId()
@@ -51,7 +51,7 @@ end
 
 function Vehicle:setOwner(owner)
 	if type(owner) == "userdata" then
-		self.m_Owner = owner:getId()
+		self.m_Owner = owner:getCharacterId()
 	elseif type(owner) == "number" then
 		self.m_Owner = owner
 	else
@@ -67,14 +67,14 @@ end
 
 function Vehicle:addKey(player)
 	if type(player) == "userdata" then
-		player = player:getId()
+		player = player:getCharacterId()
 	end
 	table.insert(self.m_Keys, player)
 end
 
 function Vehicle:removeKey(player)
 	if type(player) == "userdata" then
-		player = player:getId()
+		player = player:getCharacterId()
 	end
 	local index = table.find(self.m_Keys, player)
 	if not index then
@@ -86,7 +86,7 @@ end
 
 function Vehicle:hasKey(player)
 	if type(player) == "userdata" then
-		player = player:getId()
+		player = player:getCharacterId()
 	end
 	if self.m_Owner == player then
 		return true

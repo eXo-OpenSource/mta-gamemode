@@ -25,7 +25,8 @@ function Core:constructor()
 end
 
 function Core:destructor()
+	delete(VehicleManager:getSingleton())
+	delete(PlayerManager:getSingleton())
+	
 	delete(sql)
-	delete(VehicleManager)
-	delete(PlayerManager)
 end
