@@ -12,5 +12,8 @@ function SuccessBox:getImagePath()
 end
 
 function SuccessBox:getSoundPath()
-	return "files/audio/Message.mp3"
+	return "files/audio/Success.mp3"
 end
+
+addEvent("successBox", true)
+addEventHandler("successBox", root, function(...) SuccessBox:new(...) end)

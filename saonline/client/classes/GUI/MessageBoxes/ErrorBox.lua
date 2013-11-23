@@ -14,3 +14,6 @@ end
 function ErrorBox:getSoundPath()
 	return "files/audio/Message.mp3"
 end
+
+addEvent("errorBox", true)
+addEventHandler("errorBox", root, function(...) ErrorBox:new(...) end)

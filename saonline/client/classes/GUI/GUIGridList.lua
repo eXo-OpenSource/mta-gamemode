@@ -58,6 +58,11 @@ function GUIGridList:getSelectedItem()
 	return self.m_SelectedItem
 end
 
+function GUIGridList:clear()
+	self.m_ScrollArea.m_Children = {}
+	self.m_ScrollArea:resize(self.m_Width, 1)
+end
+
 function GUIGridList:onInternalSelectItem(item)
 	self.m_SelectedItem = item
 

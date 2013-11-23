@@ -5,7 +5,7 @@ function SQL:destructor()
 end
 
 function SQL:queryExec(query, ...)
-	dbExec(self.m_DBHandle, query, ...)
+	return dbExec(self.m_DBHandle, query, ...)
 end
 
 -- The prefix is to be used in all table names 

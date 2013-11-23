@@ -14,3 +14,6 @@ end
 function InfoBox:getSoundPath()
 	return "files/audio/Message.mp3"
 end
+
+addEvent("infoBox", true)
+addEventHandler("infoBox", root, function(...) InfoBox:new(...) end)

@@ -57,9 +57,10 @@ end
 
 function DxElement:destructor()
 	if self.m_Parent then
-		for k, v in pairs(self.m_Parent.m_Children) do
+		for k, v in ipairs(self.m_Parent.m_Children) do
 			if v == self then
 				table.remove(self.m_Parent.m_Children, k)
+				break
 			end
 		end
 	end

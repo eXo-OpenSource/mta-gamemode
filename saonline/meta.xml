@@ -1,5 +1,5 @@
 <meta>
-	<info name="Base gamemode"/>
+	<info name="vRoleplay"/>
 	<min_mta_version server="1.3.3" client="1.3.3"/>
 	<include resource="customblips"/>
 
@@ -168,5 +168,7 @@
 	<file src="files/audio/Ringtones/Ringtone2.mp3"/>
 	<file src="files/audio/Ringtones/Ringtone3.mp3"/>
 	<file src="files/audio/Ringtones/Ringtone4.mp3"/>
+	
+	<file src="files/audio/Success.mp3"/>
 	
 </meta>

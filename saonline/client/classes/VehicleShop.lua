@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 VehicleShop = inherit(Object)
-outputDebug(Object)
 
 function VehicleShop:constructor(name, imagePath, position, vehicles)
 	self.m_Name = name
@@ -18,11 +17,16 @@ end
 
 function VehicleShop:markerHit(hitElement, matchingDimension)
 	if hitElement == localPlayer and matchingDimension then
-		VehicleShopGUI:new(self.m_Name, self.m_ImagePath, self.m_Vehicles)
+		local shopGUI = VehicleShopGUI:getSingleton()
+		shopGUI:setShopLogoPath(self.m_ImagePath)
+		shopGUI:setVehicleList(self.m_Vehicles)
+		VehicleShopGUI:getSingleton():setVisible(true)
 	end
 end
 
 function VehicleShop.createShops()
-	VehicleShop:new("Coutt and Schutz", "files/images/CouttSchutz.png", Vector(2132, -1150.3, 23), {["Infernus"] = 10210, ["Banshee"] = 112300, ["Bullet"] = 100, ["Tampa"] = 10041, ["Super GT"] = 1010, ["Turismo"] = 100, ["Sabre"] = 11100, ["NRG-500"] = 97300, ["FCR-600"] = 10,
-		["Alpha"] = 123123, ["Jester"] = 12312323, ["Uranus"] = 123123, ["ZR-350"] = 69999, ["Blade"] = 123123123})
+	for shopName, info in pairs(VEHICLESHOPS) do
+		local x, y, z = unpack(info.Position)
+		VehicleShop:new(shopName, info.ImgPath, Vector(x, y, z), info.Vehicles)
+	end
 end

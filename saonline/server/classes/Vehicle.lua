@@ -19,8 +19,9 @@ function Vehicle:destructor()
 end
 
 function Vehicle.create(owner, model, posX, posY, posZ, rotation)
+	rotation = tonumber(rotation) or 0
 	if type(owner) == "userdata" then
-		owner = owner:getId()
+		owner = owner:getCharacterId()
 	end
 	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation) VALUES(?, ?, ?, ?, ?, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)

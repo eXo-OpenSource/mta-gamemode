@@ -28,7 +28,7 @@ function Player:destructor()
 end
 
 function Player:getCharacterId()
-	return self.m_Character and self.m_Character:getId()
+	return 1 --self.m_Character and self.m_Character:getId()
 end
 
 function Player:triggerEvent(ev, ...)
@@ -49,6 +49,22 @@ end
 
 function Player:sendMessage(text, r, g, b, ...)
 	outputChatBox(text:format(...), self, r, g, b, true)
+end
+
+function Player:sendError(text, ...)
+	self:triggerEvent("errorBox", text:format(...))
+end
+
+function Player:sendWarning(text, ...)
+	self:triggerEvent("warningBox", text:format(...))
+end
+
+function Player:sendInfo(text, ...)
+	self:triggerEvent("infoBox", text:format(...))
+end
+
+function Player:sendSuccess(text, ...)
+	self:triggerEvent("successBox", text:format(...))
 end
 
 function Player:getPhonePartner()
