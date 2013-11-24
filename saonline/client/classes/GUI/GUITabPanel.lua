@@ -36,5 +36,5 @@ end
 
 function GUITabPanel:addTab()
 	self[#self+1] = GUIElement:new(0, 0, self.m_Width, self.m_Height, self)
-	return self[#self.m_Tabs]
+	return #self
 end
