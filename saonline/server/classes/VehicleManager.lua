@@ -18,7 +18,7 @@ function VehicleManager:constructor()
 	outputServerLog(("Loading %d vehicles"):format(#result))
 	for i, rowData in ipairs(result) do
 		local vehicle = createVehicle(rowData.Model, rowData.PosX, rowData.PosY, rowData.PosZ, 0, 0, rowData.Rotation)
-		enew(vehicle, Vehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys))
+		enew(vehicle, Vehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys), rowData.Color, rowData.Health)
 		table.insert(self.m_Vehicles, vehicle)
 	end
 end
@@ -27,6 +27,10 @@ function VehicleManager:destructor()
 	for k, vehicle in ipairs(self.m_Vehicles) do
 		vehicle:save()
 	end
+end
+
+function VehicleManager:addRef(vehicle)
+	table.insert(self.m_Vehicles, vehicle)
 end
 
 function VehicleManager:Event_vehicleBuy(vehicleModel, shop)

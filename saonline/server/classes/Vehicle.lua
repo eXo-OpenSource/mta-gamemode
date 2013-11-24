@@ -6,12 +6,18 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
-registerElementClass("vehicle", Vehicle)
+--registerElementClass("vehicle", Vehicle)
 
-function Vehicle:constructor(Id, owner, keys)
+function Vehicle:constructor(Id, owner, keys, color, health)
 	self.m_Id = Id
 	self.m_Owner = owner
 	self.m_Keys = keys or {}
+	
+	setElementHealth(self, health)
+	if color then
+		local a, r, g, b = getBytesInInt32(color)
+		setVehicleColor(self, r, g, b)
+	end
 end
 
 function Vehicle:destructor()
@@ -23,9 +29,10 @@ function Vehicle.create(owner, model, posX, posY, posZ, rotation)
 	if type(owner) == "userdata" then
 		owner = owner:getCharacterId()
 	end
-	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation) VALUES(?, ?, ?, ?, ?, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation) then
+	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-		enew(vehicle, Vehicle, sql:lastInsertId(), owner)
+		enew(vehicle, Vehicle, sql:lastInsertId(), owner, nil, nil, 1000)
+		VehicleManager:getSingleton():addRef(vehicle)
 		return vehicle
 	end
 	return false
@@ -42,8 +49,11 @@ end
 function Vehicle:save()
 	local posX, posY, posZ = getElementPosition(self)
 	local rotX, rotY, rotZ = getElementRotation(self)
+	local health = getElementHealth(self)
+	local r, g, b = getVehicleColor(self, true)
+	local color = setBytesInInt32(255, r, g, b) -- Format: argb
 	
-	return sql:queryExec("UPDATE ??_vehicles SET PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, `Keys` = ? WHERE Id = ?", sql:getPrefix(), posX, posY, posZ, rotZ, toJSON(self.m_Keys), self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ? WHERE Id = ?", sql:getPrefix(), self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_Id)
 end
 
 function Vehicle:getId()
@@ -58,7 +68,7 @@ function Vehicle:setOwner(owner)
 	else
 		return false
 	end
-	-- Todo: Save
+	self:save()
 	return true
 end
 

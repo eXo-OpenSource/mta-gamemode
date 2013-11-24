@@ -180,5 +180,26 @@ function string.duration(seconds)
 		return string.format("%dsec", seconds)
 	end
 end
+
+function setBytesInInt32(byte1, byte2, byte3, byte4)
+	assert(byte1 >= 0 and byte1 <= 255)
+	assert(byte2 >= 0 and byte2 <= 255)
+	assert(byte3 >= 0 and byte3 <= 255)
+	assert(byte4 >= 0 and byte4 <= 255)
 	
+	local var = byte1
+	var = bitOr(bitLShift(var, 8), byte2)
+	var = bitOr(bitLShift(var, 8), byte3)
+	var = bitOr(bitLShift(var, 8), byte4)
+	return var
+end
+
+function getBytesInInt32(int32)
+	local byte1 = bitRShift(int32, 24)
+	local byte2 = bitAnd(bitRShift(int32, 16), 0x000000FF)
+	local byte3 = bitAnd(bitRShift(int32, 8), 0x000000FF)
+	local byte4 = bitAnd(int32, 0x000000FF)
+	return byte1, byte2, byte3, byte4
+end
+
 	
