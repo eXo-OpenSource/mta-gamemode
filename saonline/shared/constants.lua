@@ -37,3 +37,9 @@ VEHICLESHOPS = {
 		};
 	};
 }
+
+BankStat = {
+	Transfer = 0,
+	Job = 1,
+	
+}

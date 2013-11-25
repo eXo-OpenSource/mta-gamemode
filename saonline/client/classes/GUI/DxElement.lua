@@ -154,6 +154,10 @@ function DxElement:getPosition(isAbsolute)
 	return absoluteX, absoluteY
 end
 
+function DxElement:getSize()
+	return self.m_Width, self.m_Height
+end
+
 function DxElement:setSize(width, height)
 	if width == nil then width = self.m_Width end
 	if height == nil then height = self.m_Height end

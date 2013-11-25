@@ -1,40 +1,33 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
--- *  FILE:        client/classes/GUI/GUITabPanel.lua
--- *  PURPOSE:     GUI Tab Panel
--- *  NOTE:		   You can access individual tabs by using Tabpanel[Tabid]
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUITabPanel.lua
+-- *  PURPOSE:     GUITabPanel class
 -- *
 -- ****************************************************************************
-
-GUITabPanel = inherit(GUIElement)
+GUITabPanel = inherit(GUITabControl)
 
 function GUITabPanel:constructor(posX, posY, width, height, parent)
-	checkArgs("GUITabPanel:constructor", "number", "number", "number", "number")
-	self.m_CurrentTab = false
-	
-	GUIElement.constructor(self, posX, posY, width, height, parent)
+	checkArgs("GUITabControl:constructor", "number", "number", "number", "number")
+	GUITabControl.constructor(self, posX, posY, width, height, parent)
+
 end
 
-function GUITabPanel:setTab(id)
-	if self.m_CurrentTab then
-		self[self.m_CurrentTab]:hide()
+function GUITabPanel:addTab(tabName)
+	local tabButton = VRPButton:new(#self * 100, 0, 100, 30, tabName or "", self)
+	local id = #self+1
+	tabButton.onLeftClick = function() self:setTab(id) end
+
+	self[id] = GUIElement:new(0, 30, self.m_Width, self.m_Height-30, self)
+	if id ~= 1 then
+		self[id]:setVisible(false)
+	else
+		self.m_CurrentTab = 1
 	end
-	self[id]:show()
-	self.m_CurrentTab = id
 	
-	return self
-end
-
-function GUITabPanel:setTabCallback(id)
-	return bind(GUITabPanel.setTab, self, id)
-end
-
-function GUITabPanel:getCurrentTab()
-	return self.m_CurrentTab
-end
-
-function GUITabPanel:addTab()
-	self[#self+1] = GUIElement:new(0, 0, self.m_Width, self.m_Height, self)
 	return self[#self]
+end
+
+function GUITabPanel:drawThis()
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(255, 255, 255, 40))
 end

@@ -27,8 +27,8 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	self.m_HasTitlebar = hasTitlebar
 	self.m_HasCloseButton = hasCloseButton
 
-	if false then --if self.m_HasCloseButton then -- Todo: Since we haven't got a close button, disable that
-		self.m_CloseButton = GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
+	if self.m_HasCloseButton then
+		self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", 1, self):setFont(VRPFont(28)) --GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
 		self.m_CloseButton.onLeftClick = bind(GUIWindow.CloseButton_Click, self)
 	end
 end
@@ -49,7 +49,7 @@ function GUIWindow:drawThis()
 	if false then -- Should the logo be optional? | Todo: Since we haven't got a logo, disable that
 		dxDrawImage(self.m_AbsoluteX + 10, self.m_AbsoluteY + self.m_Height - 29 - 10, 62, 29, "files/images/GUI/logo.png")
 	end
-
+	
 	if self.m_HasTitlebar then
 		-- Draw line under title bar
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 2, Color.White)

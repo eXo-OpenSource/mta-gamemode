@@ -33,6 +33,9 @@ function Character:getPlayer()
 end
 
 function Character:getId()
-	return self.m_Id;
+	return self.m_Id
 end
 
+function Character:addBankStatement(logType, amount)
+	return sql:queryExec("INSERT INTO ??_bank_statements (CharacterId, Type, Amount) VALUES(?, ?, ?)", self.m_Id, logType, amount)
+end
