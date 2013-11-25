@@ -21,7 +21,7 @@ function Core:constructor()
 	PlayerManager:new()
 	JobManager:new()
 	VehicleManager:new()
-	
+	BankManager:new()
 end
 
 function Core:destructor()

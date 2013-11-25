@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Account.lua
+-- *  PURPOSE:     Account class
+-- *
+-- ****************************************************************************
 Account = inherit(Object)
 Account.Map = {}
 
@@ -75,8 +82,6 @@ function Account:constructor(id, username, player, pwhash)
 	
 	self.m_Rank = row.Rank;
 	self.m_MaxCharacters = row.AvailableCharacterCount;
-	self.m_Money = row.Money;
-	self.m_Bank = row.Bank
 	
 	if self.m_Rank == RANK.Banned then
 		Ban:new(player)
@@ -97,8 +102,6 @@ function Account:constructor(id, username, player, pwhash)
 		Username = username;
 		Rank = self.m_Rank;
 		MaxCharacters = self.m_MaxCharacters;
-		Money = self.m_Money;
-		Bank = self.m_Bank;
 	}
 	local charsyncinfo = {}
 	for i, char in pairs(self.m_Character) do

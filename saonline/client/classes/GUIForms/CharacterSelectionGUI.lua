@@ -18,8 +18,8 @@ function CharacterSelectionGUI:constructor(accountinfo, charinfo)
 	GUILabel:new(sw-2*bw-asize-25-dxGetTextWidth(accountinfo.Username, 1, smallfont), 10 + asize/3*0, dxGetTextWidth(accountinfo.Username, 1, smallfont), 25, accountinfo.Username, 1, self.m_TopBar):setFont(smallfont)	
 	GUILabel:new(sw-2*bw-asize-25-dxGetTextWidth(RANK[accountinfo.Rank], 1, smallfont), 10 + asize/3*1, dxGetTextWidth(RANK[accountinfo.Rank], 1, smallfont), 25, RANK[accountinfo.Rank], 1, self.m_TopBar):setFont(smallfont)
 	
-	local text = ("BANK $%d   CASH $%d"):format(accountinfo.Money, accountinfo.Bank)
-	GUILabel:new(sw-2*bw-asize-25-dxGetTextWidth(text, 1, smallfont), 10 + asize/3*2, dxGetTextWidth(text, 1, smallfont), 25, text, 1, self.m_TopBar):setFont(smallfont)
+	--local text = ("BANK $%d   CASH $%d"):format(accountinfo.Money, accountinfo.Bank)
+	--GUILabel:new(sw-2*bw-asize-25-dxGetTextWidth(text, 1, smallfont), 10 + asize/3*2, dxGetTextWidth(text, 1, smallfont), 25, text, 1, self.m_TopBar):setFont(smallfont)
 	
 	
 	local tabw = (sw-2*bw)/(MAX_CHARACTERS+1)

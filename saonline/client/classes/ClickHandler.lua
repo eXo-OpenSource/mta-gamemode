@@ -34,6 +34,15 @@ function ClickHandler:dispatchClick(button, state, absoluteX, absoluteY, worldX,
 				mouseMenu:setElement(element)
 				table.insert(self.m_OpenMenus, mouseMenu)
 			end
+		elseif button == "left" and element and isElement(element) then
+			local model = getElementModel(element)
+			local playerX, playerY, playerZ = getElementPosition(localPlayer)
+			local x, y, z = getElementPosition(element)
+			local range = getDistanceBetweenPoints3D(playerX, playerY, playerZ, x, y, z)
+			
+			if model == 2942 and range <= 8 then -- Bank ATM
+				BankGUI:new()
+			end
 		end
 	end
 end

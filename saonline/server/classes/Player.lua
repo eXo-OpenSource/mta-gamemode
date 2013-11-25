@@ -27,6 +27,10 @@ end
 function Player:destructor()
 end
 
+function Player:getCharacter()
+	return self.m_Character
+end
+
 function Player:getCharacterId()
 	return 1 --self.m_Character and self.m_Character:getId()
 end

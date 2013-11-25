@@ -40,6 +40,10 @@ VEHICLESHOPS = {
 
 BankStat = {
 	Transfer = 0,
-	Job = 1,
+	Income = 1,
+	Payment = 2,
+	Withdrawal = 3,
+	Deposit = 4,
+	Job = 5,
 	
 }
