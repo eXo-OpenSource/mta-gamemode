@@ -334,6 +334,15 @@ function utils.class.getElementMembers(userdata)
 	return false
 end
 
+--// utils.class.getTypeName(object)
+--||	@desc:   Returns the type name of the specified object (for debug purpose only)
+--||	@param:  object - the object
+--||	@return: The type name
+--\\
+function utils.class.getTypeName(object)
+	return table.find(_G, getmetatable(object).__index)
+end
+
 --// utils.class.fetchRemote_s(url, cb, ...)
 --||	@desc:	fetchRemote with safe handling of metatables
 --||	@param:	See mta wiki

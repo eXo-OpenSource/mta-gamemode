@@ -218,13 +218,10 @@ function DxElement:getAlpha()
 	return self.m_Alpha
 end
 
-
 function DxElement:show()
-	self.m_Visible = true
-	self:anyChange()
+	return self:setVisible(true)
 end
 
 function DxElement:hide()
-	self.m_Visible = false
-	self:anyChange()
+	return self:setVisible(false)
 end

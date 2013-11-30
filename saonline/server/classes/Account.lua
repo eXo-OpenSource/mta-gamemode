@@ -77,7 +77,7 @@ function Account:constructor(id, username, player, pwhash)
 	player.m_Account = self
 	self.m_Character = {}
 	
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount, Money, Bank FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_Rank = row.Rank;

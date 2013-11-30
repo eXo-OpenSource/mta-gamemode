@@ -33,15 +33,25 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	
 	local inside = (absoluteX <= cx and absoluteY <= cy and absoluteX + self.m_Width > cx and absoluteY + self.m_Height > cy)
 	
-	if self.m_LActive and not mouse1 then
+	if self.m_LActive and not mouse1 --[[and not GUIElement.ms_ClickProcessed]] then
 		if self.onLeftClick			then self:onLeftClick(cx, cy)			end
 		if self.onInternalLeftClick	then self:onInternalLeftClick(cx, cy)	end
 		self.m_LActive = false
+		
+		GUIElement.ms_ClickDownProcessed = false
+		if #self.m_Children == 0 then
+			GUIElement.ms_ClickProcessed = true
+		end
 	end
 	if self.m_RActive and not mouse2 then
 		if self.onRightClick			then self:onRightClick(cx, cy)			end
 		if self.onInternalRightClick	then self:onInternalRightClick(cx, cy)	end
 		self.m_RActive = false
+		
+		GUIElement.ms_ClickDownProcessed = false
+		if #self.m_Children == 0 then
+			GUIElement.ms_ClickProcessed = true
+		end
 	end
 	
 	if not inside then
@@ -52,7 +62,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			self.m_Hover = false
 		end
 		
-		return 
+		return
 	end
 
 	-- Call on*Events (enabling)
@@ -62,18 +72,28 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		self.m_Hover = true
 		GUIElement.HoveredElement = self
 	end
-	if mouse1 and not self.m_LActive then
+	if mouse1 and not self.m_LActive --[[and not GUIElement.ms_ClickDownProcessed]] then
 		if self.onLeftClickDown			then self:onLeftClickDown()			end
 		if self.onInternalLeftClickDown then self:onInternalLeftClickDown() end
 		self.m_LActive = true
+		
+		GUIElement.ms_ClickProcessed = false
+		if #self.m_Children == 0 then
+			GUIElement.ms_ClickDownProcessed = true
+		end
 
 		-- Check whether the focus changed
 		GUIInputControl.checkFocus(self)
 	end
-	if mouse2 and not self.m_RActive then
+	if mouse2 and not self.m_RActive and not GUIElement.ms_ClickDownProcessed then
 		if self.onRightClickDown			then self:onRightClickDown()			end
 		if self.onInternalRightClickDown	then self:onInternalRightClickDown()	end
 		self.m_RActive = true
+		
+		GUIElement.ms_ClickProcessed = false
+		if #self.m_Children == 0 then
+			GUIElement.ms_ClickDownProcessed = true
+		end
 	end
 
 
@@ -86,7 +106,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	end
 	
 	-- Check on children
-	for k, v in pairs(self.m_Children) do
+	for k, v in ipairs(self.m_Children) do
 		v:performChecks(mouse1, mouse2, cx, cy)
 	end
 end

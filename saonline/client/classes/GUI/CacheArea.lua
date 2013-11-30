@@ -10,7 +10,7 @@ CacheArea = inherit(DxElement)
 function CacheArea:constructor(posX, posY, width, height, containsGUIElements, cachingEnabled)
 	DxElement.constructor(self, posX, posY, width, height)
 
-	GUIRenderer.addRef(self)
+	GUIRenderer.addToDrawList(self)
 	
 	self.m_TimeoutCounter = 0
 	self.m_ContainsGUIElements = containsGUIElements
@@ -22,7 +22,7 @@ function CacheArea:destructor()
 		destroyElement(self.m_RenderTarget)
 	end
 	DxElement.destructor(self)
-	GUIRenderer.removeRef(self)
+	GUIRenderer.removeFromDrawList(self)
 end
 
 function CacheArea:updateArea()
@@ -147,4 +147,20 @@ function CacheArea:setCachingEnabled(state)
 	self.m_CachingEnabled = state
 	self:anyChange()
 	return self
+end
+
+function CacheArea:bringToFront()
+	-- Remove us from the draw list
+	GUIRenderer.removeFromDrawList(self)
+	
+	-- Reattach ourselves to the draw list --> moves us the the front
+	GUIRenderer.addToDrawList(self)
+end
+
+function CacheArea:moveToBack()
+	-- Remove us from the draw list
+	GUIRenderer.removeFromDrawList(self)
+	
+	-- Reattach ourselves at the end of the draw list --> moves us the the front
+	GUIRenderer.addToDrawList(self, 1)
 end

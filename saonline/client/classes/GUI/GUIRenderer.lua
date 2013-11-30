@@ -23,7 +23,8 @@ function GUIRenderer.destructor()
 end
 
 function GUIRenderer.updateAll(elapsedTime)
-	for k, v in ipairs(GUIRenderer.cache) do
+	for k = #GUIRenderer.cache, 1, -1 do
+		local v = GUIRenderer.cache[k]
 		if v.m_Visible and v.update then
 			v:update(elapsedTime)
 		end
@@ -46,11 +47,11 @@ function GUIRenderer.restore(clearedRenderTargets)
 	end
 end
 
-function GUIRenderer.addRef(ref)
-	table.insert(GUIRenderer.cache, ref)
+function GUIRenderer.addToDrawList(ref, position)
+	table.insert(GUIRenderer.cache, position or #GUIRenderer.cache+1, ref)
 end
 
-function GUIRenderer.removeRef(ref)
+function GUIRenderer.removeFromDrawList(ref)
 	local idx = table.find(GUIRenderer.cache, ref)
 	if not idx then
 		return false

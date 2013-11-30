@@ -13,8 +13,8 @@ function BankGUI:constructor()
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Bank ATM", true, true, self)
 	self.m_HeaderImage = GUIImage:new(self.m_Width*0.01, self.m_Height*0.11, self.m_Width*0.98, self.m_Height*0.25, "files/images/BankHeader.png", self.m_Window)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.15, _"Account balance:", 1, self.m_Window):setFont(VRPFont(20)):setColor(Color.Green)
-	self.m_AccountBalanceLabel = GUILabel:new(self.m_Width*0.26, self.m_Height*0.37, self.m_Width*0.34, self.m_Height*0.15, "Loading...", 1, self.m_Window):setFont(VRPFont(20)):setColor(Color.Red)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Account balance:", 1, self.m_Window):setFont(VRPFont(20)):setColor(Color.Green)
+	self.m_AccountBalanceLabel = GUILabel:new(self.m_Width*0.28, self.m_Height*0.37, self.m_Width*0.34, self.m_Height*0.07, "Loading...", 1, self.m_Window):setFont(VRPFont(20)):setColor(Color.Red)
 	triggerServerEvent("bankMoneyBalanceRequest", root)
 	addEventHandler("bankMoneyBalanceRetrieve", root, function(amount) self.m_AccountBalanceLabel:setText(tostring(amount)) end)
 	

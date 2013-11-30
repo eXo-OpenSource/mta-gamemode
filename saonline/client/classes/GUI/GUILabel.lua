@@ -23,8 +23,9 @@ function GUILabel:constructor(posX, posY, width, height, text, size, parent)
 end
 
 function GUILabel:drawThis(incache)
-	-- Uncomment this to debug the size
-	-- dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(255, 255, 0, 150))
+	if GUI_DEBUG then
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
+	end
 
 	if not self.m_Multiline then
 		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true)
