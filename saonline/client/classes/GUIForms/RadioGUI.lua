@@ -1,202 +1,162 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIForms/RadioGUI.lua
+-- *  PURPOSE:     Radio UI class
+-- *
+-- ****************************************************************************
 RadioGUI = inherit(Singleton)
 inherit(GUIForm, RadioGUI)
 
-local textRadio = ""
-local currentRadio = ""
-local currentIndex = 1
-local localPlayer = getLocalPlayer()
-local sx,sy = guiGetScreenSize ()
-local loltimer = nil
-local templol = false
-volume = 0.5
-
-curRadioName = "KEINS"
-
-local car_radio_plays = {}
-
-local playRadioThing = nil
-
-VRP_RADIO = {"Radio aus",
-	"Di.fm Dubstep",
-	"Di.fm Electro House",
-	"RMF Dance",
-	"Sky.fm Alternative",
-	"Sky.fm Roots Reggae",
-	"Sky.fm Classic Rap",
-	"Sky.fm Top Hits",
-	"89.0 RTL",
-	"Technobase.fm",
-	"N-Joy",
-	"Hardbase.fm",
-	"Housetime.fm",
-	"Techno4Ever",
-	"ClubTime.fm",
-	"CoreTime.fm",
+VRP_RADIO = {
+	{"Di.fm Dubstep", "http://80.94.69.106:6374/"},
+	{"Di.fm Electro House", "http://scfire-ntc-aa02.stream.aol.com:80/stream/1025"},
+	{"RMF Dance", "http://files.kusmierz.be/rmf/rmfdance-3.mp3"},
+	{"Sky.fm Alternative", "http://u12.sky.fm:80/sky_altrock_aacplus"},
+	{"Sky.fm Roots Reggae", "http://u16b.sky.fm:80/sky_rootsreggae_aacplus"},
+	{"Sky.fm Classic Rap", "http://u17.sky.fm:80/sky_classicrap_aacplus"},
+	{"Sky.fm Top Hits", "http://u12b.sky.fm:80/sky_tophits_aacplus"},
+	{"89.0 RTL", "http://80.237.156.45/890rtl-128.mp3"},
+	{"Technobase.fm", "http://listen.technobase.fm/dsl.asx"},
+	{"N-Joy", "http://ndrstream.ic.llnwd.net/stream/ndrstream_n-joy_hi_mp3.m3u"},
+	{"Hardbase.fm", "http://listen.hardbase.fm/tunein-dsl-asx"},
+	{"Housetime.fm", "http://listen.housetime.fm/tunein-dsl-asx"},
+	{"Techno4Ever", "http://www.techno4ever.net/t4e/stream/dsl_listen.asx"},
+	{"ClubTime.fm", "http://listen.ClubTime.fm/dsl.pls"},
+	{"CoreTime.fm", "http://listen.CoreTime.fm/dsl.pls"}
 }
-
-VRP_RADIO_PATHS = {0,--1,2,3,4,5,6,7,8,9,10,11,12,
-	"http://80.94.69.106:6374/",
-	"http://scfire-ntc-aa02.stream.aol.com:80/stream/1025",
-	"http://files.kusmierz.be/rmf/rmfdance-3.mp3",
-	"http://u12.sky.fm:80/sky_altrock_aacplus",
-	"http://u16b.sky.fm:80/sky_rootsreggae_aacplus",
-	"http://u17.sky.fm:80/sky_classicrap_aacplus",
-	"http://u12b.sky.fm:80/sky_tophits_aacplus",
-	"http://80.237.156.45/890rtl-128.mp3",
-	"http://listen.technobase.fm/dsl.asx",
-	"http://ndrstream.ic.llnwd.net/stream/ndrstream_n-joy_hi_mp3.m3u",
-	"http://listen.hardbase.fm/tunein-dsl-asx",
-	"http://listen.housetime.fm/tunein-dsl-asx",
-	"http://www.techno4ever.net/t4e/stream/dsl_listen.asx",
-	"http://listen.ClubTime.fm/dsl.pls",
-	"http://listen.CoreTime.fm/dsl.pls"
-}
-
-addEventHandler("onClientResourceStart",root, function()
-	triggerServerEvent("radio_load_success", getRootElement())
-
-	showPlayerHudComponent ("radio", false)
-	setRadioChannel (0)
-
-	bindKey ("radio_next", "down", function(key,state)
-		if getVehicleOccupant ( getPlayerOccupiedVehicle(getLocalPlayer()), 0 ) then
-			local nextIndex = ((currentIndex)%(#VRP_RADIO_PATHS)) +1
-			currentIndex = nextIndex
-			local radio = VRP_RADIO_PATHS[nextIndex]
-			curRadioName = VRP_RADIO[nextIndex]
-			if type (radio) == "number" then
-				setRadioChannel (radio)
-				if playRadioThing then
-					stopSound (playRadioThing)
-					playRadioThing = nil
-				end
-			else
-				setRadioChannel (0)
-				if playRadioThing then 
-					stopSound (playRadioThing)
-					playRadioThing = nil
-				end
-				playRadioThing = playSound (radio)
-				setSoundVolume(playRadioThing, volume)
-				if getPedOccupiedVehicle(getLocalPlayer()) then
-					setElementData(getPedOccupiedVehicle(getLocalPlayer()), "now_radio_played", radio)
-					triggerServerEvent("car_radio_changed", getRootElement(), getPedOccupiedVehicle(getLocalPlayer()))
-				end
-			end
-		else
-			outputChatBox("Darfst du nicht!", 255, 0, 0)
-		end
-	end)
-
-	bindKey ("radio_previous","down", function(key,state)
-		if getVehicleOccupant ( getPlayerOccupiedVehicle(getLocalPlayer()), 0 ) then
-			local nextIndex = ((currentIndex -2)%(#VRP_RADIO_PATHS)) +1
-			currentIndex = nextIndex
-			local radio = VRP_RADIO_PATHS[nextIndex]
-			curRadioName = VRP_RADIO[nextIndex]
-			if type (radio) == "number" then
-				setRadioChannel (radio)
-				if playRadioThing then
-					stopSound (playRadioThing)
-					playRadioThing = nil
-				end
-			else
-				setRadioChannel (0)
-				if playRadioThing then 
-					stopSound (playRadioThing)
-					playRadioThing = nil
-				end
-				playRadioThing = playSound (radio)
-				setSoundVolume(playRadioThing, volume)
-				if getPedOccupiedVehicle(getLocalPlayer()) then
-					setElementData(getPedOccupiedVehicle(getLocalPlayer()), "now_radio_played", radio)
-					triggerServerEvent("car_radio_changed", getRootElement(), getPedOccupiedVehicle(getLocalPlayer()))
-				end
-			end
-		else
-			outputChatBox("Darfst du nicht!", 255, 0, 0)
-		end
-	end)
-end)
 
 function RadioGUI:constructor()
-	sW, sH = guiGetScreenSize()
-	x, y = 1600, 900
-	
-	local currentIndex = 1
-	
-	GUIForm.constructor(self, sW*(461/x), sH*(753/y), sW*(678/x), sH*(137/y))
-	self.m_Background = GUIRectangle:new(sW*(461/x), sH*(753/y), sW*(678/x), sH*(137/y), tocolor(0, 0, 0, 200))
-	self.m_SliderBack = GUIRectangle:new(sW*(426/x), sH*(753/y), sW*(25/x), sH*(25/y), tocolor(4, 78, 153, 255))
-	--self.m_SliderText = GUILabel:new(sW*(426/x), sH*(753/y), sW*(451/x), sH*(778/y), ">", 1)
-	
-	self.m_SliderText = GUILabel:new(sW*(426/x), sH*(753/y), sW*(25/x), sH*(25/y), ">", 1)
-		:setFont(VRPFont(sH*0.025))
-	self.m_SliderText:setAlign("center", "center")
-	--tocolor(255, 255, 255, 255), 1.00, "default-bold", "center", "center", false, false, true, false, false)
-	
-	self.m_SliderText.onLeftClick = bind(function(self)
-		outputChatBox("Hallo")
-	end, self)
-	
-	
-	self.m_Strich1 = GUIRectangle:new(sW*(461/x), sH*(753/y), sW*(678/x), sH*(5/y), tocolor(2, 17, 39, 255))
+	GUIForm.constructor(self, screenWidth/2-450/2, 0, 450, 175)
 
-	self.m_CurRadio = GUILabel:new(sW*(461/x), sH*(753/y), sW*(678/x), sH*(67/y), "Keins", 1)
-		:setFont(VRPFont(sH*0.05))
-	self.m_CurRadio:setAlign("center", "center")
+	self.m_CurrentStation = 0
+	showPlayerHudComponent("radio", false)
+	setRadioChannel(0)
+	addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
 	
+	local x, y = 1600, 900
+	self.m_Hintergrund = GUIImage:new(screenWidth*(575/x), screenHeight*(725/y), screenWidth*(450/x), screenHeight*(175/y), "files/images/Radio/radio_bg.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), false)
+	self.m_Last = GUIImage:new(screenWidth*(585/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_back.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
+	self.m_Next = GUIImage:new(screenWidth*(965/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_next.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
+	self.m_VolumeUp = GUIImage:new(screenWidth*(645/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_normal.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
+	self.m_VolumeDown = GUIImage:new(screenWidth*(909/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_down.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
+	self.m_ToggleSound = GUIImage:new(screenWidth*(743/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_play.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
+	--self.m_StopSound = GUIImage:new(screenWidth*(803/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_stop.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
+	self.m_Radioname = GUILabel:new(screenWidth*(601/x), screenHeight*(772/y), screenWidth*(398/x), screenHeight*(38/y), "", 1)
+		:setFont(VRPFont(screenHeight*0.03))
+		:setAlign("center", "center")
 	
-	setTimer(function()
-		self.m_CurRadio:setText(curRadioName)
-	end, 50, 0)
+	-- Add click events
+	self.m_Last.onLeftClick = function() self:previousStation() end
+	self.m_Next.onLeftClick = function() self:nextStation() end
+	self.m_VolumeUp.onLeftClick = function() if self:getVolume() < 1.0 then self:setVolume(self:getVolume() + 0.1) end end
+	self.m_VolumeDown.onLeftClick = function() outputDebug(self:getVolume()) if self:getVolume() >= 0.0 then self:setVolume(self:getVolume() - 0.1) end end
+	self.m_ToggleSound.onLeftClick = function() self:toggle() end
 	
+	-- First of all, set radio off
+	self:setRadioStation(0)
 	
-	--tocolor(255, 255, 255, 255), 1.00, "pricedown", "center", "center", false, false, true, false, false)
-	
-	self.m_Strich2 = GUIRectangle:new(sW*(461/x), sH*(820/y), sW*(678/x), sH*(5/y), tocolor(2, 17, 39, 255))
-	self.m_BackLautHoch = GUIRectangle:new(sW*(471/x), sH*(835/y), sW*(177/x), sH*(23/y), tocolor(4, 78, 153, 255))
-	self.m_BackLautRunter = GUIRectangle:new(sW*(952/x), sH*(835/y), sW*(177/x), sH*(23/y), tocolor(4, 78, 153, 255))
-	self.m_LautHoch = GUILabel:new(sW*(471/x), sH*(835/y), sW*(177/x), sH*(23/y), "Lautstärke: +", 1)
-		:setFont(VRPFont(sH*0.025))
-	self.m_LautHoch:setAlign("center", "center")
-	
-	self.m_LautHoch.onLeftClick = bind(function(self)
-		if playRadioThing then
-			if volume < 1 then
-				volume = volume+0.1
-				setSoundVolume(playRadioThing, volume)
-			else
-				outputChatBox("Lauter gehts nicht!", 255, 0, 0)
-			end
-		end
-	end, self)
-	
-	
-	--tocolor(255, 255, 255, 255), 1.00, "default-bold", "center", "center", false, false, true, false, false)
-	
-	self.m_LautRunter = GUILabel:new(sW*(952/x), sH*(835/y), sW*(177/x), sH*(23/y), "Lautstärke: -", 1)
-		:setFont(VRPFont(sH*0.025))
-	self.m_LautRunter:setAlign("center", "center")
-	
-	self.m_LautRunter.onLeftClick = bind(function(self)
-		if playRadioThing then
-			if volume > 0 then
-				volume = volume-0.1
-				setSoundVolume(playRadioThing, volume)
-			else
-				outputChatBox("Leiser gehts nicht!", 255, 0, 0)
-			end
-		end
-	end, self)
-	
-	
-	
-	
-	--tocolor(255, 255, 255, 255), 1.00, "default-bold", "center", "center", false, false, true, false, false)
+	-- Bind controls
+	bindKey("radio_next", "down", function() self:nextStation() end)
+	bindKey("radio_previous", "down", function() self:previousStation() end)
 end
 
-function loadRadio()
-	RadioGUI:new()
+function RadioGUI:destructor()
+	self:stopSound()
 end
-addCommandHandler("testr", loadRadio)
+
+function RadioGUI:setRadioStation(station)
+	assert(VRP_RADIO[station] or station == 0, "Bad argument @ RadioGUI.setRadioStation")
+	outputDebug(station)
+	
+	self.m_CurrentStation = station
+
+	if self.m_CurrentStation == 0 then
+		if self.m_Sound and isElement(self.m_Sound) then
+			stopSound(self.m_Sound)
+			self.m_Sound = nil
+		end
+		self.m_Radioname:setText(_"Radio off")
+		return true
+	end
+	
+	if self.m_Sound and isElement(self.m_Sound) then
+		stopSound(self.m_Sound)
+		self.m_Sound = nil
+	end
+	
+	local radioName, radioUrl = unpack(VRP_RADIO[self.m_CurrentStation])
+
+	self.m_Sound = playSound(radioUrl)
+	if self.m_Sound then
+		self.m_Radioname:setText(radioName)
+	else
+		self.m_Radioname:setText(_("Unable to play the radio stream. Please try again later."))
+	end
+	
+	return true
+end
+
+function RadioGUI:setVolume(volume)
+	assert(type(volume) == "number", "Bad argument @ RadioGUI.setVolume (Volume is not a number)")
+	assert(volume >= 0 and volume <= 1, "Bad argument @ RadioGUI.setVolume (Volume is out of range, range 0-1)")
+	
+	self.m_Volume = volume
+	
+	if self.m_Sound then
+		setSoundVolume(self.m_Sound, self.m_Volume)
+	end
+end
+
+function RadioGUI:getVolume()
+	if self.m_Sound then
+		return getSoundVolume(self.m_Sound)
+	end
+	return self.m_Volume
+end
+
+function RadioGUI:nextStation()
+	self.m_CurrentStation = self.m_CurrentStation + 1
+	if self.m_CurrentStation > #VRP_RADIO then
+		self.m_CurrentStation = 0
+	end
+	self:setRadioStation(self.m_CurrentStation)
+end
+
+function RadioGUI:previousStation()
+	self.m_CurrentStation = self.m_CurrentStation - 1
+	if self.m_CurrentStation < 0 then
+		self.m_CurrentStation = #VRP_RADIO
+	end
+	self:setRadioStation(self.m_CurrentStation)
+end
+
+function RadioGUI:getStation()
+	-- Returns: ID von der Station, Name der Station, URL der Station
+	return self.m_CurrentStation, VRP_RADIO[self.m_CurrentStation][1], VRP_RADIO[self.m_CurrentStation][2]
+end
+
+function RadioGUI:toggle()
+	if self.m_Sound then
+		self:stopSound()
+	else
+		self:setRadioStation(self.m_CurrentStation)
+	end
+end
+
+function RadioGUI:stopSound()
+	if self.m_Sound and isElement(self.m_Sound) then
+		destroyElement(self.m_Sound)
+		self.m_Sound = nil
+	end
+end
+
+addCommandHandler("testr",
+	function()
+		local radio = RadioGUI:new()
+		radio:setVolume(0.5)
+		--radio:nextStation()
+		
+		localPlayer:sendMessage("Lautstaerke: "..radio:getVolume())
+	end
+)
