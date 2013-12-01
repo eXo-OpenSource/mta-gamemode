@@ -7,6 +7,7 @@
 -- ****************************************************************************
 RadioGUI = inherit(Singleton)
 inherit(GUIForm, RadioGUI)
+local ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/1.8
 
 VRP_RADIO = {
 	{"Di.fm Dubstep", "http://80.94.69.106:6374/"},
@@ -27,41 +28,56 @@ VRP_RADIO = {
 }
 
 function RadioGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-450/2, 0, 450, 175)
+	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.28)/2 / ASPECT_RATIO_MULTIPLIER, 0, screenWidth*0.28 / ASPECT_RATIO_MULTIPLIER, screenHeight*0.19)
 
 	self.m_CurrentStation = 0
 	showPlayerHudComponent("radio", false)
 	setRadioChannel(0)
 	addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
 	
-	local x, y = 1600, 900
-	self.m_Hintergrund = GUIImage:new(screenWidth*(575/x), screenHeight*(725/y), screenWidth*(450/x), screenHeight*(175/y), "files/images/Radio/radio_bg.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), false)
-	self.m_Last = GUIImage:new(screenWidth*(585/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_back.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
-	self.m_Next = GUIImage:new(screenWidth*(965/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_next.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
-	self.m_VolumeUp = GUIImage:new(screenWidth*(645/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_normal.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
-	self.m_VolumeDown = GUIImage:new(screenWidth*(909/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_down.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
-	self.m_ToggleSound = GUIImage:new(screenWidth*(743/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_play.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
-	--self.m_StopSound = GUIImage:new(screenWidth*(803/x), screenHeight*(836/y), screenWidth*(50/x), screenHeight*(50/y), "files/images/Radio/sound_stop.png")--, 0, 0, 0, tocolor(255, 255, 255, 255), true)
-	self.m_Radioname = GUILabel:new(screenWidth*(601/x), screenHeight*(772/y), screenWidth*(398/x), screenHeight*(38/y), "", 1)
-		:setFont(VRPFont(screenHeight*0.03))
+	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Radio/radio_bg.png", self)
+	self.m_Last = GUIImage:new(self.m_Width*0.02, self.m_Height*0.10, self.m_Width*0.11, self.m_Height*0.29, "files/images/Radio/sound_back.png", self.m_Background)
+	self.m_Next = GUIImage:new(self.m_Width*0.87, self.m_Height*0.10, self.m_Width*0.11, self.m_Height*0.29, "files/images/Radio/sound_next.png", self.m_Background)
+	self.m_VolumeUp = GUIImage:new(self.m_Width*0.76, self.m_Height*0.24, self.m_Width*0.09, self.m_Height*0.23, "files/images/Radio/sound_normal.png", self.m_Background)
+	self.m_VolumeDown = GUIImage:new(self.m_Width*0.16, self.m_Height*0.24, self.m_Width*0.09, self.m_Height*0.23, "files/images/Radio/sound_down.png", self.m_Background)
+	self.m_ToggleSound = GUIImage:new(self.m_Width*0.44, self.m_Height*0.06, self.m_Width*0.12, self.m_Height*0.31, "files/images/Radio/sound_stop.png", self.m_Background)
+	self.m_Radioname = GUILabel:new(self.m_Width*0.06, self.m_Height*0.53, self.m_Width*0.88, self.m_Height*0.20, "", 1, self.m_Background)
+		:setFont(VRPFont(self.m_Height*0.2))
 		:setAlign("center", "center")
 	
 	-- Add click events
 	self.m_Last.onLeftClick = function() self:previousStation() end
 	self.m_Next.onLeftClick = function() self:nextStation() end
-	self.m_VolumeUp.onLeftClick = function() if self:getVolume() < 1.0 then self:setVolume(self:getVolume() + 0.1) end end
-	self.m_VolumeDown.onLeftClick = function() outputDebug(self:getVolume()) if self:getVolume() >= 0.0 then self:setVolume(self:getVolume() - 0.1) end end
+	self.m_VolumeUp.onLeftClick = function() self:setVolume(self:getVolume() + 0.1) end
+	self.m_VolumeDown.onLeftClick = function() self:setVolume(self:getVolume() - 0.1) end
 	self.m_ToggleSound.onLeftClick = function() self:toggle() end
 	
 	-- First of all, set radio off
 	self:setRadioStation(0)
+	if not isPedInVehicle(localPlayer) then
+		self:setVisible(false)
+	end
 	
 	-- Bind controls
 	bindKey("radio_next", "down", function() self:nextStation() end)
 	bindKey("radio_previous", "down", function() self:previousStation() end)
+	
+	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
+		function()
+			self:setVisible(true)
+			self:setRadioStation(self.m_CurrentStation)
+		end
+	)
+	addEventHandler("onClientPlayerVehicleExit", localPlayer, 
+		function()
+			self:setVisible(false)
+			self:stopSound()
+		end
+	)
 end
 
 function RadioGUI:destructor()
+	GUIForm.destructor(self)
 	self:stopSound()
 end
 
@@ -77,6 +93,7 @@ function RadioGUI:setRadioStation(station)
 			self.m_Sound = nil
 		end
 		self.m_Radioname:setText(_"Radio off")
+		self.m_ToggleSound:setImage("files/images/Radio/sound_play.png")
 		return true
 	end
 	
@@ -90,6 +107,7 @@ function RadioGUI:setRadioStation(station)
 	self.m_Sound = playSound(radioUrl)
 	if self.m_Sound then
 		self.m_Radioname:setText(radioName)
+		self.m_ToggleSound:setImage("files/images/Radio/sound_stop.png")
 	else
 		self.m_Radioname:setText(_("Unable to play the radio stream. Please try again later."))
 	end
@@ -99,7 +117,13 @@ end
 
 function RadioGUI:setVolume(volume)
 	assert(type(volume) == "number", "Bad argument @ RadioGUI.setVolume (Volume is not a number)")
-	assert(volume >= 0 and volume <= 1, "Bad argument @ RadioGUI.setVolume (Volume is out of range, range 0-1)")
+	if volume < 0.1 then
+		volume = 0
+	end
+	
+	if volume > 0.9 then
+		volume = 1
+	end
 	
 	self.m_Volume = volume
 	
@@ -138,9 +162,11 @@ end
 
 function RadioGUI:toggle()
 	if self.m_Sound then
-		self:stopSound()
+		self:setRadioStation(0)
+		self.m_ToggleSound:setImage("files/images/Radio/sound_play.png")
 	else
-		self:setRadioStation(self.m_CurrentStation)
+		self:setRadioStation(1)
+		self.m_ToggleSound:setImage("files/images/Radio/sound_stop.png")
 	end
 end
 
@@ -150,13 +176,3 @@ function RadioGUI:stopSound()
 		self.m_Sound = nil
 	end
 end
-
-addCommandHandler("testr",
-	function()
-		local radio = RadioGUI:new()
-		radio:setVolume(0.5)
-		--radio:nextStation()
-		
-		localPlayer:sendMessage("Lautstaerke: "..radio:getVolume())
-	end
-)

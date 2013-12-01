@@ -17,6 +17,7 @@ function Core:constructor()
 	JobManager:new()
 	MTAFixes:new()
 	ClickHandler:new()
+	RadioGUI:new()
 	
 	-- HUD
 	HUDRadar:new()
