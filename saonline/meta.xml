@@ -188,4 +188,7 @@
 	
 	<file src="files/audio/Success.mp3"/>
 	
+	<!-- Maps -->
+	<map src="files/maps/ATM.map"/>
+	
 </meta>

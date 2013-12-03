@@ -71,5 +71,3 @@ function BankGUI:TransferButton_Click()
 		ErrorBox:new(_"Please insert a valid value")
 	end
 end
-
-addCommandHandler("bank", function() BankGUI:new() end)

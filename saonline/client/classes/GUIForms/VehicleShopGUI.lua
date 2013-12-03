@@ -7,7 +7,6 @@
 -- ****************************************************************************
 VehicleShopGUI = inherit(Singleton)
 inherit(GUIForm, VehicleShopGUI)
-local ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/1.8
 
 function VehicleShopGUI:constructor()
 	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)

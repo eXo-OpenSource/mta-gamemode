@@ -7,7 +7,6 @@
 -- ****************************************************************************
 RadioGUI = inherit(Singleton)
 inherit(GUIForm, RadioGUI)
-local ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/1.8
 
 VRP_RADIO = {
 	{"Di.fm Dubstep", "http://80.94.69.106:6374/"},
