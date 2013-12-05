@@ -73,6 +73,14 @@ function RadioGUI:constructor()
 			self:stopSound()
 		end
 	)
+	addEventHandler("onClientVehicleExplode", root,
+		function()
+			if table.find(getVehicleOccupants(source), localPlayer) then
+				self:setVisible(false)
+				self:stopSound()
+			end
+		end
+	)
 end
 
 function RadioGUI:destructor()

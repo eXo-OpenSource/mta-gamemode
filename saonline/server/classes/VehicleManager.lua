@@ -12,7 +12,9 @@ function VehicleManager:constructor()
 
 	-- Add events
 	addEvent("vehicleBuy", true)
+	addEvent("vehicleLock", true)
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
+	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	outputServerLog(("Loading %d vehicles"):format(#result))
@@ -54,4 +56,19 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	else
 		client:sendMessage(_("Failed to create the vehicle. Please notify an admin!", client), 255, 0, 0)
 	end
+end
+
+function VehicleManager:Event_vehicleLock(vehicle)
+	if not vehicle or not isElement(vehicle) then return end
+	
+	if not instanceof(vehicle, Vehicle, true) then
+		return
+	end
+	
+	--[[if not vehicle:hasKey(client) then
+		client:sendError(_"You do not own a key for this vehicle")
+		return
+	end]]
+	
+	vehicle:setLocked(not vehicle:isLocked())
 end

@@ -17,7 +17,7 @@ function GUIEdit:constructor(posX, posY, width, height, parent)
 	
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1)
-	GUIColorable.constructor(self, tocolor(0, 0, 0, 127))
+	GUIColorable.constructor(self, Color.DarkBlue)
 
 	self.m_Caret = 1
 	self.m_DrawCursor = false
@@ -26,8 +26,8 @@ end
 function GUIEdit:drawThis()
 	dxSetBlendMode("modulate_add")
 
-	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 100))
-	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/Editbox.png")
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.White)
+	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/Editbox.png")
 
 	local text = #self.m_Text > 0 and self.m_Text or self.m_Caption or ""
 	if text ~= self.m_Caption and self.m_MaskChar then
@@ -47,7 +47,11 @@ function GUIEdit:drawThis()
 end
 
 function GUIEdit:onInternalEditInput(caret)
-	if not caret then return end -- Todo: Remove this as soon as guiGetCaretIndex is backported
+	-- Todo: Remove the following condition as soon as guiGetCaretIndex is backported
+	if not caret then
+		self.m_Caret = #self.m_Text
+		return
+	end 
 	self.m_Caret = caret
 end
 

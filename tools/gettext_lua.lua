@@ -48,9 +48,8 @@ function processDirectory(dir, pothandle)
 end
 
 function writePotHeader(pothandle)
-	pothandle:write("# Open MTA:DayZ Translation File\n")
-	pothandle:write("# Licensed under the GPLv3\n")
-	pothandle:write("# https://github.com/OpenMTADayZ/open_dayz\n")
+	pothandle:write("# vRoleplay Translation File\n")
+	pothandle:write("# http://www.v-roleplay.net\n")
 	pothandle:write("msgid \"\"\n")
 	pothandle:write("msgstr \"\"\n")
 	pothandle:write("\"Project-Id-Version: PACKAGE VERSION\\n\"\n",
@@ -69,7 +68,7 @@ function genpot(name)
 	writePotHeader(pot)
 	
 	-- change to main directory
-	lfs.chdir("../open_dayz")
+	lfs.chdir("../saonline")
 	processDirectory(name, pot)
 	
 	-- go back to tools

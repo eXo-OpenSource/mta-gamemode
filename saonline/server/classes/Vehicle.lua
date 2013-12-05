@@ -104,3 +104,13 @@ function Vehicle:hasKey(player)
 	end
 	return table.find(self.m_Keys, player)
 end
+
+function Vehicle:setLocked(state)
+	-- Todo: Play lock animation (flashing lights)
+
+	return setVehicleLocked(self, state)
+end
+
+function Vehicle:isLocked()
+	return isVehicleLocked(self)
+end

@@ -185,6 +185,9 @@ end
 --||	@return:table<table> - The superclasses
 --\\
 function utils.class.super(self)
+	if isElement(self) then
+		self = utils.class.elementIndex[self]
+	end
 	local metatable = getmetatable(self)
 	if metatable then return metatable.__super 
 	else return {}
