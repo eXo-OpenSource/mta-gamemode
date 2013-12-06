@@ -13,14 +13,15 @@ function VehicleMouseMenu:constructor(posX, posY)
 	self:addItem("Lock/Unlock",
 		function()
 			if self:getElement() then
-				localPlayer:sendMessage(_("Locking your %s"):format(getVehicleName(self:getElement())), 255, 0, 0)
-				triggerServerEvent("vehicleLock", root, self:getElement())
+				triggerServerEvent("vehicleLock", self:getElement())
 			end
 		end
 	)
 	self:addItem("Keys",
 		function()
-			VehicleKeyGUI:new()
+			if self:getElement() then
+				VehicleKeyGUI:new(self:getElement())
+			end
 		end
 	)
 end
