@@ -104,6 +104,7 @@
 	
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPButton.lua" type="client"/>
+	<script src="client/classes/GUIElements/VRPCharmaBar.lua" type="client"/>
 	
 	<script src="client/classes/HUD/RadarBlip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
@@ -172,6 +173,8 @@
 	<file src="files/images/Radar.jpg"/>
 	<file src="files/images/CouttSchutz.png"/>
 	<file src="files/images/BankHeader.png"/>
+	<file src="files/images/Bar.png"/>
+	<file src="files/images/Bar_hover.png"/>
 	
 	<!-- Blips -->
 	<file src="files/images/Blips/LocalPlayer.png"/>
