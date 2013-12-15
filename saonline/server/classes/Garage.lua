@@ -15,8 +15,8 @@ function Garage:constructor(px, py, pz, rx, ry, rz)
 	local gy = py+4.3*math.sin(math.rad(rz+90))
 	
 	self.m_State = false
-	self.m_Positions = { garage = { px, py, pz }, gate = { gx, gy, pz-0.4 } }
-	self.m_Rotations = { garage = { rx, ry, rz }, gate = { rx, ry, rz+90 } }
+	self.m_Positions = {garage = {px, py, pz}, gate = {gx, gy, pz-0.4}}
+	self.m_Rotations = {garage = {rx, ry, rz}, gate = {rx, ry, rz+90}}
 	self.m_Garage = createObject( 17950, px, py, pz, rx, ry, rz )
 	self.m_Gate = createObject( 17951, gx, gy, pz-0.4, rx, ry, rz+90 )
 	setObjectScale( self.m_Gate, 1.02 )
@@ -33,6 +33,9 @@ function Garage:isOpen()
 end
 
 function Garage:setOpen(state)
+	local x, y, z = unpack( self.m_Positions.gate )
+	local rz = self.m_Rotations.gate[3]
+		
 	if state then
 		moveObject( self.m_Gate, 2500, x, y, z, 0, 90, 0 )
 	else
