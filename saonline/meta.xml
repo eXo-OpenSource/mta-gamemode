@@ -195,5 +195,6 @@
 	
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
+	<map src="files/maps/Carhouse.map"/>
 	
 </meta>

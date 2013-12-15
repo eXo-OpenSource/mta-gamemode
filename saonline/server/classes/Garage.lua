@@ -1,7 +1,6 @@
 Garage = inherit(Object)
 
 function Garage:constructor(px, py, pz, rx, ry, rz)
-
 	-- Check whether the data are valid
 	assert((type(px) == 'number'), 'Bad argument @ \'Garage.constructor\' [Expected table at argument 1, got '..type(px)..']')
 	assert((type(py) == 'number'), 'Bad argument @ \'Garage.constructor\' [Expected table at argument 2, got '..type(py)..']')
@@ -17,9 +16,9 @@ function Garage:constructor(px, py, pz, rx, ry, rz)
 	self.m_State = false
 	self.m_Positions = {garage = {px, py, pz}, gate = {gx, gy, pz-0.4}}
 	self.m_Rotations = {garage = {rx, ry, rz}, gate = {rx, ry, rz+90}}
-	self.m_Garage = createObject( 17950, px, py, pz, rx, ry, rz )
-	self.m_Gate = createObject( 17951, gx, gy, pz-0.4, rx, ry, rz+90 )
-	setObjectScale( self.m_Gate, 1.02 )
+	self.m_Garage = createObject(17950, px, py, pz, rx, ry, rz)
+	self.m_Gate = createObject(17951, gx, gy, pz-0.4, rx, ry, rz+90)
+	setObjectScale(self.m_Gate, 1.02)
 	
 end
 
@@ -33,14 +32,19 @@ function Garage:isOpen()
 end
 
 function Garage:setOpen(state)
-	local x, y, z = unpack( self.m_Positions.gate )
+	if state == self.m_State then
+		return false
+	end
+	
+	local x, y, z = unpack(self.m_Positions.gate)
 	local rz = self.m_Rotations.gate[3]
+	self.m_State = state
 		
-	if state then
-		moveObject( self.m_Gate, 2500, x, y, z, 0, 90, 0 )
+	if not state then
+		moveObject(self.m_Gate, 2500, x, y, z, 0, 90, 0)
 	else
-		local x = x - 1 * math.cos( math.rad( rz ) )
-		local y = y - 1 * math.sin( math.rad( rz ) )
-		moveObject( self.m_Gate, 2500, x, y, z+1.8, 0, -90, 0 )
+		local x = x - 1 * math.cos(math.rad(rz))
+		local y = y - 1 * math.sin(math.rad(rz))
+		moveObject(self.m_Gate, 2500, x, y, z+1.8, 0, -90, 0)
 	end
 end
