@@ -105,7 +105,7 @@
 	
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPButton.lua" type="client"/>
-	<script src="client/classes/GUIElements/VRPCharmaBar.lua" type="client"/>
+	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
 	
 	<script src="client/classes/HUD/RadarBlip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>

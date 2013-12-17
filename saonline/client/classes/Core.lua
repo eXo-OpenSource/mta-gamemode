@@ -18,6 +18,7 @@ function Core:constructor()
 	MTAFixes:new()
 	ClickHandler:new()
 	RadioGUI:new()
+	KarmaBar:new()
 	
 	-- HUD
 	HUDRadar:new()

@@ -27,16 +27,22 @@ end
 function Character:destructor()
 end
 
-function Character:getAccount()
-	return self.m_Account
+-- Short getters
+function Character:getId()			return self.m_Id		end
+function Character:getAccount()		return self.m_Account 	end
+function Character:getPlayer()		return self.m_Player	end
+function Character:getXP()			return self.m_XP		end
+function Character:getKarma()		return self.m_Karma		end
+function Character:getBankMoney()	return self.m_BankMoney	end
+
+function Character:addKarma(points)
+	self.m_Karma = self.m_Karma + points
+	self.m_Player:triggerEvent("karmaChange", self.m_Karma)
 end
 
-function Character:getPlayer()
-	return self.m_Player
-end
-
-function Character:getId()
-	return self.m_Id
+function Character:takeKarma(points)
+	self.m_Karma = self.m_Karma - points
+	self.m_Player:triggerEvent("karmaChange", self.m_Karma)
 end
 
 function Character:addBankMoney(amount, logType)
@@ -55,8 +61,4 @@ function Character:takeBankMoney(amount, logType)
 		return true
 	end
 	return false
-end
-
-function Character:getBankMoney()
-	return self.m_BankMoney
 end
