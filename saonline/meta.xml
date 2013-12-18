@@ -21,7 +21,7 @@
 	<script src="shared/classes/Vector.lua" type="shared"/>
 	<script src="shared/classes/TranslationManager.lua" type="shared"/>
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
-	<scritp src="shared/classes/Vector.lua" type="shared"/>
+	<script src="shared/classes/Rect.lua" type="shared"/>
 	
 	<!-- Server -->
 	<script src="server/constants.lua" type="server"/>

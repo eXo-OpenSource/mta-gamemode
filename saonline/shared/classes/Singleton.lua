@@ -20,3 +20,7 @@ function Singleton:new(...)
 	self.ms_Instance = inst
 	return inst
 end
+
+function Singleton:derived_destructor()
+	self.ms_Instance = nil
+end

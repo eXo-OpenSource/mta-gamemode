@@ -26,6 +26,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	self:setAlpha(200)
 	self.m_HasTitlebar = hasTitlebar
 	self.m_HasCloseButton = hasCloseButton
+	self.m_CloseOnClose = true
 
 	if self.m_HasCloseButton then
 		self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", 1, self):setFont(VRPFont(28)) --GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
@@ -62,7 +63,11 @@ function GUIWindow:drawThis()
 end
 
 function GUIWindow:CloseButton_Click()
-	self:close()
+	if self.m_CloseOnClose then
+		self:close()
+	else
+		self:setVisible(false)
+	end
 end
 
 --- Closes the window
@@ -73,4 +78,9 @@ function GUIWindow:close()
 	else
 		delete(self)
 	end
+end
+
+function GUIWindow:setCloseOnClose(close) -- Todo: Find a better name
+	self.m_CloseOnClose = close
+	return self
 end

@@ -13,11 +13,9 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 		self.m_Parent = GUIRenderer.cacheroot
 	end
 	
-	
 	if self.m_Parent then
 		self.m_Parent.m_Children[#self.m_Parent.m_Children+1] = self
 	end
-	
 
 	self.m_PosX   = posX
 	self.m_PosY   = posY
@@ -56,6 +54,7 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 end
 
 function DxElement:destructor()
+	if self.onHide then self:onHide() end
 	if self.m_Parent then
 		for k, v in ipairs(self.m_Parent.m_Children) do
 			if v == self then
@@ -113,6 +112,11 @@ end
 
 function DxElement:setVisible(visible)
 	self.m_Visible = visible
+	if visible then
+		if self.onShow then self:onShow() end
+	else
+		if self.onHide then self:onHide() end
+	end
 	
 	for k, v in ipairs(self.m_Children) do
 		v:setVisible(visible)
