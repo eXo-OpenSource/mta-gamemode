@@ -66,18 +66,14 @@ function GUIWindow:CloseButton_Click()
 	if self.m_CloseOnClose then
 		self:close()
 	else
-		self:setVisible(false)
+		(self.m_Parent or self):setVisible(false) -- Todo: if self.m_Parent == cacheroot then problem() end
 	end
 end
 
 --- Closes the window
 function GUIWindow:close()
 	-- Jusonex: Destroy or close, I dunno what's better
-	if self.m_Parent then
-		delete(self.m_Parent)
-	else
-		delete(self)
-	end
+	delete(self.m_Parent or self)
 end
 
 function GUIWindow:setCloseOnClose(close) -- Todo: Find a better name
