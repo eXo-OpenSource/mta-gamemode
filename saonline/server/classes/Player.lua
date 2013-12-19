@@ -87,3 +87,11 @@ end
 function Player:setJob(job)
 	self.m_Job = job
 end
+
+function Player:startNavigationTo(x, y, z)
+	self:triggerEvent("navigationStart", x, y, z)
+end
+
+function Player:stopNavigation()
+	self:triggerEvent("navigationStop")
+end

@@ -44,6 +44,11 @@
 	<script src="server/classes/BankManager.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
 	
+	<!-- Events -->
+	<script src="server/classes/Events/Event.lua" type="server"/>
+	<script src="server/classes/Events/EventManager.lua" type="server"/>
+	<script src="server/classes/Events/StreetRaceEvent.lua" type="server"/>
+	
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
 	<script src="server/classes/Jobs/JobManager.lua" type="server"/>
@@ -62,6 +67,7 @@
 	<script src="client/classes/MTAFixes.lua" type="client"/>
 	<script src="client/classes/ClickHandler.lua" type="client"/>
 	<script src="client/classes/VehicleShop.lua" type="client"/>
+	<script src="client/classes/GPS.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>

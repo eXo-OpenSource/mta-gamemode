@@ -168,6 +168,24 @@ function getMatrix(x, y, z, rrx, rry, rrz)
 	return matrix
 end
 
+function findRotation(x1, y1, x2, y2)
+	--[[local x, y = math.abs(x2-x1), math.abs(y2-y1)
+	local rot = math.deg(math.atan2(y, x))
+	if x1 <= x2 and y1 < y2 then
+		rot = 90 - rot
+	elseif x2 <= x1 and y1 < y2 then
+		rot = 270 + rot
+	elseif x1 <= x2 and y2 <= y1 then
+		rot = 90 + rot
+	elseif x2 < x1 and y2 < y1 then
+		rot = 270 - rot
+	end
+	return 630 - rot]]
+	local t = -math.deg(math.atan2(x2-x1,y2-y1))
+	if t < 0 then t = t + 360 end
+	return t
+end
+
 function string.duration(seconds)
 	local hours = math.floor(seconds / 3600)
 	local minutes = math.floor(seconds / 60)

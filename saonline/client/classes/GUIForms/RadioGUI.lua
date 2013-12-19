@@ -90,7 +90,6 @@ end
 
 function RadioGUI:setRadioStation(station)
 	assert(VRP_RADIO[station] or station == 0, "Bad argument @ RadioGUI.setRadioStation")
-	outputDebug(station)
 	
 	self.m_CurrentStation = station
 
