@@ -10,6 +10,7 @@ GPS = inherit(Singleton)
 function GPS:constructor()
 	self.m_Destination = nil
 	self.m_Arrow = nil
+	self.m_ColShape = nil
 	self.m_UpdateFunc = bind(GPS.update, self)
 end
 
@@ -17,8 +18,10 @@ function GPS:startNavigationTo(x, y, z)
 	self.m_Destination = Vector(x, y, z)
 	self.m_Arrow = createObject(1318, 0, 0, 0)
 	setElementCollisionsEnabled(self.m_Arrow, false)
+	self.m_ColShape = createColSphere(x, y, z, 20)
 	
 	addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+	addEventHandler("onClientColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
 end
 addEvent("navigationStart", true)
 addEventHandler("navigationStart", root, function(x, y, z) GPS:getSingleton():startNavigationTo(x, y, z) end)
@@ -27,6 +30,9 @@ function GPS:stopNavigation()
 	if self.m_Arrow and isElement(self.m_Arrow) then
 		destroyElement(self.m_Arrow)
 		self.m_Arrow = nil
+	end
+	if self.m_ColShape and isElement(self.m_ColShape) then
+		destroyElement(self.m_ColShape)
 	end
 	self.m_Destination = nil
 	removeEventHandler("onClientPreRender", root, self.m_UpdateFunc)
@@ -47,4 +53,11 @@ function GPS:update()
 	
 	setElementPosition(self.m_Arrow, x, y, z + 1)
 	setElementRotation(self.m_Arrow, 0, 90, arrowRotation)
+end
+
+function GPS:colShapeHit(hitElement, matchingDimension)
+	if hitElement == localPlayer and matchingDimension then
+		self:stopNavigation()
+		localPlayer:sendMessage(_"You have reached your destination!", 0, 255, 0)
+	end
 end
