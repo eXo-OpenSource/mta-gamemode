@@ -25,8 +25,13 @@ function GUIMouseMenu:addItem(text, callback)
 	checkArgs("GUIMouseMenu:addItem", "string", "function")
 
 	self.m_Height = (#self.m_Items+1)*30
-	local item = GUIMouseMenuItem:new(0, 0 + #self.m_Items*35, self.m_Width, 35, text, self)
-	item.onLeftClickDown = function(item) callback(item, self.m_Element) end
+	local item
+	if callback then
+		item = GUIMouseMenuItem:new(0, 0 + #self.m_Items*35, self.m_Width, 35, text, self)
+		item.onLeftClickDown = function(item) callback(item, self.m_Element) end
+	else
+		item = GUIMouseMenuNoClickItem:new(0, 0 + #self.m_Items*35, self.m_Width, 35, text, self)
+	end
 	
 	table.insert(self.m_Items, item)
 	

@@ -14,6 +14,7 @@ function Vehicle:constructor(Id, owner, keys, color, health)
 	self.m_Keys = keys or {}
 	
 	setElementHealth(self, health)
+	setVehicleLocked(self, true)
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
 		setVehicleColor(self, r, g, b)

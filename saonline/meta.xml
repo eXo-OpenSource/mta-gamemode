@@ -86,8 +86,10 @@
 	<script src="client/classes/GUI/GUICursor.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMouseMenuItem.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMouseMenuNoClickItem.lua" type="client"/>
 	<script src="client/classes/GUI/GUIGridList.lua" type="client"/>
 	<script src="client/classes/GUI/GUIGridListItem.lua" type="client"/>
+	<script src="client/classes/GUI/GUIGridListNoClickItem.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRectangle.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollbar.lua" type="client"/>
 	<script src="client/classes/GUI/GUITabControl.lua" type="client"/>
