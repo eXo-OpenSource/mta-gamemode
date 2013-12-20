@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/Phone/AppActivity.lua
 -- *  PURPOSE:     Phone app activity class (similar to Android's activities)
 -- *

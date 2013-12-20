@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUI/GUIDebugging.lua
 -- *  PURPOSE:     GUI debugging class
 -- *

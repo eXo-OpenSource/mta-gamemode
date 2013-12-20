@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     	Open MTA:DayZ
+-- *  PROJECT:     	vRoleplay
 -- *  FILE:        	shared/classes/ConfigXML.lua
 -- *  PURPOSE:     	XML config class and parser
 -- *

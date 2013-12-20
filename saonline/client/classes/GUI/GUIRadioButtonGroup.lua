@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUI/GUIRadioButtonGroup.lua
 -- *  PURPOSE:     GUI image class
 -- *

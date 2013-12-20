@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUI/GUIWindow.lua
 -- *  PURPOSE:     GUI window class
 -- *

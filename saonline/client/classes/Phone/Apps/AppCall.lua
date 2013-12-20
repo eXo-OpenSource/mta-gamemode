@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/Phone/AppCall.lua
 -- *  PURPOSE:     Phone call app class
 -- *

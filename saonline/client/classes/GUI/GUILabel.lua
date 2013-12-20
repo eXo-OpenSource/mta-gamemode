@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUI/GUILabel.lua
 -- *  PURPOSE:     GUI label class
 -- *

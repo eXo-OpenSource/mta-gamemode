@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUI/GUIHorizontalScrollbar.lua
 -- *  PURPOSE:     GUI form class (base class)
 -- *  NOTE:		   I decided to use an extra horizontal image, because otherwise we've to swap width and height (-> mess)

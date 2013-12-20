@@ -1,14 +1,11 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/Main.lua
 -- *  PURPOSE:     Entry script
 -- *
 -- *****************************************************************************
-
 Main = {}
-
-function checkArgs() end
 
 function Main.resourceStart()
 	-- Instantiate Core

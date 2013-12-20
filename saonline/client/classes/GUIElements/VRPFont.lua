@@ -1,4 +1,10 @@
--- Not actually a GUI Element but useful for proper font sizes
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIElements/VRPFont.lua
+-- *  PURPOSE:     Not actually a GUI Element but useful for proper font sizes
+-- *
+-- ****************************************************************************
 
 -- This rescales our font to look good on a certain pixel height
 local VRPFonts = {}

@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     	Open MTA:DayZ
+-- *  PROJECT:     	vRoleplay
 -- *  FILE:        	shared/Vector.lua
 -- *  PURPOSE:     	Vector class
 -- *

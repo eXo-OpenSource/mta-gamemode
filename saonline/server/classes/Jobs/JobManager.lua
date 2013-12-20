@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Jobs/JobManager.lua
 -- *  PURPOSE:     Job manager class
 -- *

@@ -1,3 +1,11 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIElements/VRPButton.lua
+-- *  PURPOSE:     Special button class
+-- *
+-- ****************************************************************************
+
 -- Button with blue bar on top
 VRPButton = inherit(GUIRectangle)
 

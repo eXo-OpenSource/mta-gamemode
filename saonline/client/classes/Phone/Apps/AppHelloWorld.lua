@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/Phone/AppHelloWorld.lua
 -- *  PURPOSE:     Hello world phone app class
 -- *

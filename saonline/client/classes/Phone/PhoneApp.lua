@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/Phone/PhoneApp.lua
 -- *  PURPOSE:     PhoneApp class
 -- *

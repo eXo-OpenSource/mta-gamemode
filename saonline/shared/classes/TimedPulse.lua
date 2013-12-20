@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:	 Open MTA:DayZ
+-- *  PROJECT:	 vRoleplay
 -- *  FILE:      shared/classes/TimedPulse.lua
 -- *  PURPOSE:	 Timed pulse class
 -- *

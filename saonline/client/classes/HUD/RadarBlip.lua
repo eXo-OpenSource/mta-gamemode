@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/HUD/RadarBlip.lua
 -- *  PURPOSE:     HUD radar blip class
 -- *

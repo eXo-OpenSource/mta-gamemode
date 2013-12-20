@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Jobs/Job.lua
 -- *  PURPOSE:     Abstract job class
 -- *

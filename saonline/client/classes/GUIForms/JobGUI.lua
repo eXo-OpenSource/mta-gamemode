@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUIForms/JobGUI.lua
 -- *  PURPOSE:     Job GUI class
 -- *

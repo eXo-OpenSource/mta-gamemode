@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/Jobs/JobTrashman.lua
 -- *  PURPOSE:     Trashman job
 -- *

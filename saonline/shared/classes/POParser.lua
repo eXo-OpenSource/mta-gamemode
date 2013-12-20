@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     	Open MTA:DayZ
+-- *  PROJECT:     	vRoleplay
 -- *  FILE:        	shared/classes/POParser.lua
 -- *  PURPOSE:     	Gettext .po parser
 -- *

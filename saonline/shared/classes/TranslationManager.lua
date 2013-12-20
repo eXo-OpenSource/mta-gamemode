@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     	GTA:SA Online
+-- *  PROJECT:     	vRoleplay
 -- *  FILE:        	shared/classes/TranslationManager.lua
 -- *  PURPOSE:     	Class to manage translations
 -- *

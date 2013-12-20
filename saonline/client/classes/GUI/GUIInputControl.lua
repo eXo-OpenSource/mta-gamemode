@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUI/GUIInputControl.lua
 -- *  PURPOSE:     Static Class for handling text input for CGUIEdit ( + maybe later more )
 -- *

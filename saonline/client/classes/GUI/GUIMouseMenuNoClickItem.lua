@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUI/GUIMouseMenuNoClickItem.lua
 -- *  PURPOSE:     GUI mouse menu item class
 -- *

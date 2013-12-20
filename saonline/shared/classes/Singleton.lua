@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        shared/classes/Singleton.lua
 -- *  PURPOSE:     Singleton class
 -- *

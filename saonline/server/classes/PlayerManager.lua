@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/PlayerManager.lua
 -- *  PURPOSE:     Player manager class
 -- *

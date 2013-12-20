@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Debugging.lua
 -- *  PURPOSE:     Debugging class
 -- *

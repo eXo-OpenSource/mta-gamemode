@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        shared/classes/Object.lua
 -- *  PURPOSE:     Base class of everything
 -- *

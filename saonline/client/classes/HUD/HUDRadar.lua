@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/HUD/HUDRadar.lua
 -- *  PURPOSE:     HUD radar class
 -- *

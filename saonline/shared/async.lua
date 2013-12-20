@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     	Open MTA:DayZ
+-- *  PROJECT:     	vRoleplay
 -- *  FILE:        	shared/Async.lua
 -- *  PURPOSE:     	Helper library for asyncronous data processing
 -- *

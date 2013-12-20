@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     Open MTA:DayZ
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/GUI/GUITabControl.lua
 -- *  PURPOSE:     GUI Tab Control
 -- *  NOTE:		   You can access individual tabs by using Tabpanel[Tabid]

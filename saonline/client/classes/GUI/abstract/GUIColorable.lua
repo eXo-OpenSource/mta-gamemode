@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUI/abstract/GUIColorable.lua
+-- *  PURPOSE:     GUI colorable abstract super class
+-- *
+-- ****************************************************************************
 GUIColorable = inherit(Object)
 
 function GUIColorable:constructor(color)

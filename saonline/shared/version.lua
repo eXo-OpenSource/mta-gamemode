@@ -1,6 +1,6 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     GTA:SA Online
+-- *  PROJECT:     vRoleplay
 -- *  FILE:        shared/version.lua
 -- *  PURPOSE:     Version
 -- *
@@ -10,7 +10,7 @@ BUILD = "development"
 --BUILD = "stable"
 --BUILD = "unstable"
 REVISION = 0
-PROJECT_NAME = "GTA:SA Online"
+PROJECT_NAME = "vRoleplay"
 
 if BUILD == "development" then
 	VERSION_LABEL = ("%s %sdev r%d"):format(PROJECT_NAME, VERSION, REVISION)
