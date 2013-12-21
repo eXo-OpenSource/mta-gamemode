@@ -69,7 +69,24 @@ function CharacterSelectionGUI:constructor(accountinfo, charinfo)
 		
 		GUILabel:new(10, tabh*0.80, tabw-25, 100, "Device Access", 1, cc.info):setFont(VRPFont(tabh*0.035))
 		
+		
+		if accountinfo.MaxCharacters >= i then
+			cc.playButton = GUIRectangle:new(bw+tabw*i, bh+sh*0.2+10+tabh-tabh*0.07, tabw-5, tabh*0.07, tocolor(11, 140, 11), self)
+		
+			if charinfo[i] then
+				cc.playButton.onLeftClick = bind(CharacterSelectionGUI.playCharacter, self, charinfo[i].Id)
+				GUILabel:new(0, 0, tabw-5, tabh*0.07, "Play!", 1.75, cc.playButton):setAlign("center", "center")
+			else
+				cc.playButton.onLeftClick = bind(CharacterSelectionGUI.createCharacter, self, i)
+				GUILabel:new(0, 0, tabw-5, tabh*0.07, "Create!", 1.75, cc.playButton):setAlign("center", "center")
+			end
+		else
+			-- Dummy GUI Element for locked characters
+			cc.playButton= GUIElement:new(0, 0, 0, 0, self)
+		end
+		
 		cc.info:hide()
+		cc.playButton:hide()
 	end
 	
 	self.m_ActiveCharacter = false
@@ -88,12 +105,14 @@ function CharacterSelectionGUI:openCharacter(i)
 	cc.button:light()
 	cc.tab:show()
 	cc.info:show()
+	cc.playButton:show()
 	
 	if self.m_ActiveCharacter then
 		local cold = self.m_Character[self.m_ActiveCharacter]
 		cold.button:dark()
 		cold.button:setSize(tabw)
 		cold.info:hide()
+		cold.playButton:hide()
 		
 		for index = self.m_ActiveCharacter, MAX_CHARACTERS do
 			local cafter = self.m_Character[index]
@@ -110,4 +129,14 @@ function CharacterSelectionGUI:openCharacter(i)
 	
 	self.m_ActiveCharacter = i
 	self:anyChange()
+end
+
+function CharacterSelectionGUI:playCharacter(id)
+	triggerServerEvent("selectcharacter", root, id)
+	delete(self)
+end
+
+function CharacterSelectionGUI:createCharacter(index)
+	triggerServerEvent("createcharacter", root, index)
+	delete(self)
 end

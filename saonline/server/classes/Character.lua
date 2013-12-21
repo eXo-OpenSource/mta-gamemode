@@ -27,6 +27,52 @@ end
 function Character:destructor()
 end
 
+function Character.select(player, id)
+	-- Verify the player has no selected character
+	if player.m_Character then return end
+	-- Verify that the player has access to the character
+	if not player.m_Account then return end
+	
+	local index = false
+	for k, v in pairs(player.m_Account.m_Character) do
+		if v.m_Id == id then 
+			index = k
+			break
+		end
+	end
+	
+	if not index then return end
+	
+	-- Go!
+	local char = player.m_Account.m_Character[index]
+	player.m_Character = char
+	char:spawn()
+end
+addEvent("selectcharacter", true)
+addEventHandler("selectcharacter", root, function(...) Async.create(Character.select)(client, ...) end)
+
+function Character:firstspawn()
+	spawnPlayer(self.m_Player, 0, 10, 10)
+end
+
+function Character.create(player, index)
+	-- Verify the player has no selected character
+	if player.m_Character then return end
+	-- Verify that the player has access to the character
+	if not player.m_Account then return end
+	
+	sql:queryExec("INSERT INTO ??_character(Account) VALUES(?);", sql:getPrefix(), player.m_Account.m_Id)
+	
+	player.m_Account.m_Character[index] = Character:new(id, player.m_Account, player, index)
+	player.m_Account.m_Character[index]:firstspawn()
+end
+addEvent("createcharacter", true)
+addEventHandler("createcharacter", root, function(...) Async.create(Character.create)(client, ...) end)
+
+function Character:spawn()
+	spawnPlayer(self.m_Player, 0, 0, 10)
+end
+
 -- Short getters
 function Character:getId()			return self.m_Id		end
 function Character:getAccount()		return self.m_Account 	end

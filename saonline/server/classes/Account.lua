@@ -89,7 +89,7 @@ function Account:constructor(id, username, player, pwhash)
 	end
 	
 	-- Load Characters
-	sql:queryFetch(Async.waitFor(self), "SELECT Id FROM ??_character WHERE Account = ?;", sql:getPrefix(), row.Id)
+	sql:queryFetch(Async.waitFor(self), "SELECT Id FROM ??_character WHERE Account = ?;", sql:getPrefix(), self.m_Id)
 	local characters = Async.wait()
 	for charnum, charid in pairs(characters) do
 		self.m_Character[charnum] = Character:new(charid, self, player, charnum)
@@ -107,6 +107,7 @@ function Account:constructor(id, username, player, pwhash)
 	for i, char in pairs(self.m_Character) do
 		charsyncinfo[i] = 
 		{
+			Id	 = char.m_Id;
 			Level = char.m_Level;
 			XP 	 = char.m_XP;
 			Karma = char.m_Karma;
