@@ -11,6 +11,10 @@ function JobTrashman:constructor()
 	Job.constructor(self, 2090.5, -2097.4, 12.5, "files/images/Blips/Trashman.png", "files/images/Jobs/HeaderTrashman.png", LOREM_IPSUM)
 	
 	self.m_ColShapes = {}
+	addEventHandler("onClientPreRender", root, bind(JobTrashman.renderArea, self)) -- Todo: Replace by 3d image class
+	
+	addEvent("trashcanReset", true)
+	addEventHandler("trashcanReset", root, bind(JobTrashman.reset, self))
 end
 
 function JobTrashman:start()
@@ -25,8 +29,12 @@ function JobTrashman:start()
 		table.insert(self.m_ColShapes, colShape)
 	end
 	
+	-- Create trash can display
+	self.m_TrashImage = GUIImage:new(screenWidth - 205, screenHeight - 80, 200, 50, "files/images/Jobs/Trashdisplay.png")
+	self.m_CanLabel = GUILabel:new(55, 4, 55, 40, "0", 1, self.m_TrashImage):setFont(VRPFont(40))
+	self.m_ContainerLabel = GUILabel:new(150, 4, 50, 40, "0", 1, self.m_TrashImage):setFont(VRPFont(40))
+	
 	self:reset()
-	-- Todo: Add a can "display" someday
 end
 
 function JobTrashman:stop()
@@ -44,11 +52,17 @@ end
 function JobTrashman:reset()
 	self.m_CollectedCans = 0
 	self.m_CollectedContainer = 0
+	self.m_CanLabel:setText("0")
+	self.m_ContainerLabel:setText("0")
 end
 
 function JobTrashman:Trashcan_Hit(hitElement, matchingDimension)
-	if hitElement == localPlayer and getPedOccupiedVehicleSeat(localPlayer) == 0 and matchingDimension then
+	if hitElement == localPlayer and matchingDimension then
 		local vehicle = getPedOccupiedVehicle(localPlayer)
+		if not (vehicle and getVehicleOccupant(vehicle) == localPlayer) then
+			return
+		end
+		
 		if not vehicle or getElementModel(vehicle) ~= 408 then
 			localPlayer:sendMessage("You have to drive a Trashmaster", 255, 0, 0)
 			return
@@ -58,9 +72,11 @@ function JobTrashman:Trashcan_Hit(hitElement, matchingDimension)
 		if can then
 			if getElementModel(can) == 1337 then
 				self.m_CollectedCans = self.m_CollectedCans + 1
+				self.m_CanLabel:setText(tostring(self.m_CollectedCans))
 			end
 			if getElementModel(can) == 1334 then
 				self.m_CollectedContainer = self.m_CollectedContainer + 1
+				self.m_ContainerLabel:setText(tostring(self.m_CollectedContainer))
 			end
 			
 			-- Notify the server
@@ -73,6 +89,11 @@ function JobTrashman:Trashcan_Hit(hitElement, matchingDimension)
 			setTimer(setElementFrozen, 3000, 1, vehicle, false)
 		end
 	end
+end
+
+local dumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")
+function JobTrashman:renderArea()
+	dxDrawMaterialLine3D(2102, -2071, 12.56, 2102, -2082, 12.56, dumpAreaTexture, 11, Color.White, 2102, -2072, 14)
 end
 
 JobTrashman.Trashcans = {

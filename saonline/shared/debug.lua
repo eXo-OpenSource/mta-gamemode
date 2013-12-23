@@ -8,6 +8,7 @@
 
 DEBUG = true
 GUI_DEBUG = false
+addCommandHandler("gui_debug", function() GUI_DEBUG = not GUI_DEBUG end)
 
 --- Validates the parameters of a function
 -- @param funcName The name of the function

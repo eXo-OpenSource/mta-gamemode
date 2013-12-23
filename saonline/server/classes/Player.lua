@@ -17,7 +17,7 @@ addEventHandler("onPlayerConnect", root,
 function Player:constructor()
 	self.m_Character = false
 	self.m_Account = false
-	self.m_Locale = "en"
+	self.m_Locale = "de"
 end
 
 function Player:connect()
@@ -79,7 +79,6 @@ function Player:setPhonePartner(partner)
 	self.m_PhonePartner = partner
 end
 
--- Moving to character class?
 function Player:getJob()
 	return self.m_Job
 end

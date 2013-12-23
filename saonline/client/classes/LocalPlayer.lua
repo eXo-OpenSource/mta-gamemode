@@ -8,7 +8,7 @@
 LocalPlayer = inherit(Player)
 
 function LocalPlayer:constructor()
-	self.m_Locale = "en"
+	self.m_Locale = "de"
 	self.m_Karma = 0
 	
 	-- Since the local player exist only once, we can add the events here

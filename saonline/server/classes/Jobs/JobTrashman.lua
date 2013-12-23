@@ -11,6 +11,9 @@ local MONEY_PER_CAN = 5
 function JobTrashman:constructor()
 	Job.constructor(self)
 	
+	self.m_DumpArea = createColRectangle(2096.9, -2081.6, 9.8, 10.5) -- 2096.9, -2071.1, 9.8, -10.5
+	addEventHandler("onColShapeHit", self.m_DumpArea, bind(JobTrashman.dumpCans, self))
+	
 	addEvent("trashcanCollect", true)
 	addEventHandler("trashcanCollect", root, bind(self.Event_trashcanCollect, self))
 end
@@ -18,6 +21,8 @@ end
 function JobTrashman:start(player)
 	local vehicle = createVehicle(408, 2118, -2080, 14.1, 0, 0, 135)
 	warpPedIntoVehicle(player, vehicle)
+	
+	client:setData("Trashman:Cans", 0)
 end
 
 function JobTrashman:Event_trashcanCollect(containerNum)
@@ -27,7 +32,26 @@ function JobTrashman:Event_trashcanCollect(containerNum)
 		return
 	end
 	
-	-- Todo: Prevent the player from calling this event too often per specified interval -> Anticheat
+	-- Prevent the player from calling this event too often per specified interval -> Anticheat
 	-- Note: It's bad to create the huge amount of trashcans on the server - but...we should do it probably?
-	givePlayerMoney(client, containerNum * MONEY_PER_CAN)
+	local lastTime = client:getData("Trashman:LastCan") or -math.huge
+	if getTickCount() - lastTime < 2500 then
+		-- Todo: Report possible cheat attempt
+		outputChatBox("Possible cheat attempt!")
+	end
+	client:setData("Trashman:LastCan", getTickCount())
+	
+	-- Increment the can counter now
+	client:setData("Trashman:Cans", client:getData("Trashman:Cans") + containerNum)
+end
+
+function JobTrashman:dumpCans(hitElement, matchingDimension)
+	if getElementType(hitElement) == "player" and matchingDimension and hitElement:getJob() == self then
+		local moneyAmount = hitElement:getData("Trashman:Cans") * MONEY_PER_CAN
+		givePlayerMoney(hitElement, moneyAmount)
+		hitElement:sendMessage(_("You got %d$", hitElement), 0, 255, 0, moneyAmount)
+		
+		hitElement:setData("Trashman:Cans", 0)
+		hitElement:triggerEvent("trashcanReset")
+	end
 end

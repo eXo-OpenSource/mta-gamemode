@@ -49,7 +49,7 @@ function TranslationManager:translate(message, locale)
 	end
 	
 	if not self.m_Translations[locale] and not self.m_AddonTranslations[locale] then
-		outputDebugString("The translation is not loaded yet")
+		outputDebugString("The translation has not been loaded yet")
 		return message
 	end
 	
