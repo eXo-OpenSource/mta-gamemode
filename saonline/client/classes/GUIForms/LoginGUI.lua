@@ -174,7 +174,7 @@ addEventHandler("registerfailed", root,
 
 addEvent("loginsuccess", true)
 addEventHandler("loginsuccess", root, 
-	function(accountinfo, charinfo, pwhash)
+	function(pwhash)
 		local lgi = LoginGUI:getSingleton()
 	
 		if lgi.m_SaveLoginCheckbox:isChecked() then
@@ -190,7 +190,6 @@ addEventHandler("loginsuccess", root,
 		end
 	
 		lgi:delete()
-		CharacterSelectionGUI:new(accountinfo, charinfo)
 	end
 )
 

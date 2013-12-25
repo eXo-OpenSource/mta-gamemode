@@ -11,12 +11,12 @@ local MONEY_PER_TRANSPORT = 500
 function JobLogistician:constructor()
 	Job.constructor(self)
 	
-	-- Create crans
-	local cran = Cran:new(5, -100, 8, 36, 15, 8)
+	-- Create Cranes
+	local Crane = Crane:new(5, -100, 8, 36, 15, 8)
 	addCommandHandler("drop",
 		function(player)
 			if player:getJob() == self then
-				cran:dropContainer(getPedOccupiedVehicle(player), function() givePlayerMoney(player, MONEY_PER_TRANSPORT) end)
+				Crane:dropContainer(getPedOccupiedVehicle(player), function() givePlayerMoney(player, MONEY_PER_TRANSPORT) end)
 			else
 				player:sendMessage("You are not employed as logistician", 255, 0, 0)
 			end
@@ -25,14 +25,14 @@ function JobLogistician:constructor()
 	addCommandHandler("load",
 		function(player)
 			if player:getJob() == self then
-				cran:loadContainer(getPedOccupiedVehicle(player))
+				Crane:loadContainer(getPedOccupiedVehicle(player))
 			else
 				player:sendMessage("You are not employed as logistician", 255, 0, 0)
 			end
 		end
 	)
-	addCommandHandler("down", function() cran:rollTowDown() end)
-	addCommandHandler("up", function() cran:rollTowUp() end)
+	addCommandHandler("down", function() Crane:rollTowDown() end)
+	addCommandHandler("up", function() Crane:rollTowUp() end)
 	
 	-- Initialize map, create markers etc.
 end
@@ -45,9 +45,9 @@ function JobLogistician:start(player)
 end
 
 function JobLogistician:setNewDestination(player)
-	-- Get random cran
-	local cran = self.m_Crans[math.random(1, #self.m_Crans)]
-	local x, y, z = cran:getPosition()
+	-- Get random Crane
+	local Crane = self.m_Cranes[math.random(1, #self.m_Cranes)]
+	local x, y, z = Crane:getPosition()
 	
 	-- Destroy the old waypoint blip and create a new one
 	if player:getData("LogisticianBlip") then
@@ -57,14 +57,14 @@ function JobLogistician:setNewDestination(player)
 	player:setData("Logistician:Blip", blip)
 	
 	--todo
-	player:setData("Logistician:Cran", cran)
+	player:setData("Logistician:Crane", Crane)
 end
 
 
--- Cran class
-Cran = inherit(Object)
+-- Crane class
+Crane = inherit(Object)
 
-function Cran:constructor(startX, startY, startZ, endX, endY, endZ, createContainers)
+function Crane:constructor(startX, startY, startZ, endX, endY, endZ, createContainers)
 	self.m_StartX, self.m_StartY, self.m_StartZ = startX, startY, startZ -- position near truck
 	self.m_EndX, self.m_EndY, self.m_EndZ = endX, endY, endZ -- position far away from truck
 	self.m_Rotation = -math.deg(math.atan2(self.m_EndX-self.m_StartX, self.m_EndY-self.m_StartY))
@@ -77,7 +77,7 @@ function Cran:constructor(startX, startY, startZ, endX, endY, endZ, createContai
 	-- Create container (decoration)
 	self.m_Containers = {}
 	if createContainers or createContainers == nil then
-		for k, v in ipairs(Cran.ContainerData) do
+		for k, v in ipairs(Crane.ContainerData) do
 			local model, x, y, z, rotation = unpack(v)
 			x, y, z = getPositionFromCoordinatesOffset(self.m_EndX, self.m_EndY, self.m_EndZ, 0, 0, self.m_Rotation, x, y, z)
 			local object = createObject(model, x, y, z, 0, 0, self.m_Rotation+rotation)
@@ -87,7 +87,7 @@ function Cran:constructor(startX, startY, startZ, endX, endY, endZ, createContai
 	end
 end
 
-function Cran:destructor()
+function Crane:destructor()
 	destroyElement(self.m_Object)
 	destroyElement(self.m_Tow)
 	
@@ -96,7 +96,7 @@ function Cran:destructor()
 	end
 end
 
-function Cran:dropContainer(vehicle, callback)
+function Crane:dropContainer(vehicle, callback)
 	if self.m_Busy then
 		return false
 	end
@@ -115,7 +115,7 @@ function Cran:dropContainer(vehicle, callback)
 			-- Roll up the tow
 			self:rollTowUp(
 				function()
-					-- Move cran to the "roll down platform"
+					-- Move Crane to the "roll down platform"
 					moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
 					
 					-- Wait till we're at the target position
@@ -146,7 +146,7 @@ function Cran:dropContainer(vehicle, callback)
 	return true
 end
 
-function Cran:loadContainer(vehicle, callback)
+function Crane:loadContainer(vehicle, callback)
 	if self.m_Busy then
 		return false
 	end
@@ -154,7 +154,7 @@ function Cran:loadContainer(vehicle, callback)
 	
 	local container = createObject(math.random(2934, 2935), self.m_EndX, self.m_EndY-0.5, self.m_EndZ-4, 0, 0, self.m_Rotation)
 	
-	-- Move cran to the "container platform"
+	-- Move Crane to the "container platform"
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
 	
 	-- Wait till we're at the target position
@@ -168,7 +168,7 @@ function Cran:loadContainer(vehicle, callback)
 					
 					self:rollTowUp(
 						function()
-							-- Move cran to the start position
+							-- Move Crane to the start position
 							moveObject(self.m_Object, 10000, self.m_StartX, self.m_StartY, self.m_EndZ)
 							
 							-- Wait till we're there
@@ -200,8 +200,8 @@ function Cran:loadContainer(vehicle, callback)
 	return true
 end
 
-function Cran:rollTowDown(callback)
-	-- Detach from cran
+function Crane:rollTowDown(callback)
+	-- Detach from Crane
 	local x, y, z = getElementPosition(self.m_Tow)
 	detachElements(self.m_Tow, self.m_Object)
 	setElementPosition(self.m_Tow, x, y, z)
@@ -213,8 +213,8 @@ function Cran:rollTowDown(callback)
 	end
 end
 
-function Cran:rollTowUp(callback)
-	-- Detach from cran
+function Crane:rollTowUp(callback)
+	-- Detach from Crane
 	local x, y, z = getElementPosition(self.m_Tow)
 	detachElements(self.m_Tow, self.m_Object)
 	
@@ -225,15 +225,15 @@ function Cran:rollTowUp(callback)
 	end
 end
 
-function Cran:isBusy()
+function Crane:isBusy()
 	return self.m_Busy
 end
 
-function Cran:getPosition()
+function Crane:getPosition()
 	return self.m_StartX, self.m_StartY, self.m_StartZ
 end
 
-Cran.ContainerData = {
+Crane.ContainerData = {
 	{2932, 7.100, 6.200, -5.400, 0.0},
 	{2934, 0.300, 7.300, -5.400, -270.0},
 	{2935, 0.300, 10.400, -5.400, -270.0},

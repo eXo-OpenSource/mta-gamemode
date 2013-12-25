@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 Account = inherit(Object)
-Account.Map = {}
 
 function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
@@ -75,64 +74,20 @@ function Account:constructor(id, username, player, pwhash)
 	self.m_Username = username
 	self.m_Player = player
 	player.m_Account = self
-	self.m_Character = {}
 	
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, AvailableCharacterCount FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, CharacterId FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_Rank = row.Rank;
-	self.m_MaxCharacters = row.AvailableCharacterCount;
 	
 	if self.m_Rank == RANK.Banned then
 		Ban:new(player)
 		return
 	end
+	-- Load Character
+	player:loadCharacter(row.CharacterId)
 	
-	-- Load Characters
-	sql:queryFetch(Async.waitFor(self), "SELECT Id FROM ??_character WHERE Account = ?;", sql:getPrefix(), self.m_Id)
-	local characters = Async.wait()
-	for charnum, charid in pairs(characters) do
-		self.m_Character[charnum] = Character:new(charid, self, player, charnum)
-	end
-	
-	Account.Map[self.m_Id] = self
-	
-	local accsyncinfo = 
-	{
-		Username = username;
-		Rank = self.m_Rank;
-		MaxCharacters = self.m_MaxCharacters;
-	}
-	local charsyncinfo = {}
-	for i, char in pairs(self.m_Character) do
-		charsyncinfo[i] = 
-		{
-			Id	 = char.m_Id;
-			Level = char.m_Level;
-			XP 	 = char.m_XP;
-			Karma = char.m_Karma;
-			Skills = char.m_Skills	
-		}
-	end
-	triggerClientEvent(player, "loginsuccess", root, accsyncinfo, charsyncinfo, pwhash)
-end
-
-function Account:destructor()
-	Account.Map[self.m_Id] = nil
-end
-
-function Account:createCharacter(slot)
-	if self.m_Character[slot] then return false end
-	if slot > MAX_CHARACTERS then return false end
-	
-	sql:queryExec("INSERT INTO ??_character(Account) VALUES (?);", sql:getPrefix(), self.m_Id)
-	local id = sql:queryFetchSingle("SELECT LAST_INSERT_ID() AS CharId;").CharId
-	
-	self.m_Character[slot] = Character:new(charid, self, self:getPlayer(), slot)
-end
-
-function Account:getCharacters()
-	return self.m_Character
+	triggerClientEvent(player, "loginsuccess", root, pwhash)
 end
 
 function Account:getPlayer()
