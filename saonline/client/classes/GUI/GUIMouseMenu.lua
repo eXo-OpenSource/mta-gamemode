@@ -22,8 +22,6 @@ function GUIMouseMenu:drawThis()
 end
 
 function GUIMouseMenu:addItem(text, callback)
-	checkArgs("GUIMouseMenu:addItem", "string", "function")
-
 	self.m_Height = (#self.m_Items+1)*30
 	local item
 	if callback then

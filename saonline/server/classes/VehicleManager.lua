@@ -55,7 +55,7 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	end
 	
 	local spawnX, spawnY, spawnZ, rotation = unpack(VEHICLESHOPS[shop].Spawn)
-	local vehicle = Vehicle.create(client:getCharacterId(), vehicleModel, spawnX, spawnY, spawnZ, rotation)
+	local vehicle = Vehicle.create(client:getId(), vehicleModel, spawnX, spawnY, spawnZ, rotation)
 	if vehicle then
 		takePlayerMoney(client, price)
 		warpPedIntoVehicle(client, vehicle)

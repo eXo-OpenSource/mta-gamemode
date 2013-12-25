@@ -28,7 +28,7 @@ end
 function Vehicle.create(owner, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
 	if type(owner) == "userdata" then
-		owner = owner:getCharacterId()
+		owner = owner:getId()
 	end
 	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
@@ -63,7 +63,7 @@ end
 
 function Vehicle:setOwner(owner)
 	if type(owner) == "userdata" then
-		self.m_Owner = owner:getCharacterId()
+		self.m_Owner = owner:getId()
 	elseif type(owner) == "number" then
 		self.m_Owner = owner
 	else
@@ -79,14 +79,14 @@ end
 
 function Vehicle:addKey(player)
 	if type(player) == "userdata" then
-		player = player:getCharacterId()
+		player = player:getId()
 	end
 	table.insert(self.m_Keys, player)
 end
 
 function Vehicle:removeKey(player)
 	if type(player) == "userdata" then
-		player = player:getCharacterId()
+		player = player:getId()
 	end
 	local index = table.find(self.m_Keys, player)
 	if not index then
@@ -98,7 +98,7 @@ end
 
 function Vehicle:hasKey(player)
 	if type(player) == "userdata" then
-		player = player:getCharacterId()
+		player = player:getId()
 	end
 	if self.m_Owner == player then
 		return true

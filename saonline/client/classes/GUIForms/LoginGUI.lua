@@ -64,7 +64,7 @@ function LoginGUI:constructor()
 
 	-- Register Tab
 	GUIRectangle:new(0, 35, tabw, 5, tocolor(255, 255, 255, 255), self.m_RegisterTab)
-	GUILabel:new(0, 10, tabw, tabh, "Du kannst dir hier einen Account registreieren.", 1, self.m_RegisterTab)
+	GUILabel:new(0, 10, tabw, tabh, "Du kannst dir hier einen Account registrieren.", 1, self.m_RegisterTab)
 		:setAlignX("center")
 	
 	GUILabel:new(tabw/6, 120, tabw/3, 35, "Username:", 1, self.m_RegisterTab)
