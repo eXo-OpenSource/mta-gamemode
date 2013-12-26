@@ -13,6 +13,8 @@ function Action.create(data)
 	action.duration = data.duration
 	if data.duration then
 		action.stoptick = data.starttick + data.duration
+	else
+		action.stoptick = data.stoptick
 	end
 	return action
 end
