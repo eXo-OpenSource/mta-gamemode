@@ -17,7 +17,6 @@ Action.Camera.set.constructor = function(self, data)
 end
 
 Action.Camera.set.trigger = function(self)
-	outputDebugString("TRIGGER!")
 	updateCameraMatrix(self.x, self.y, self.z, 
 						self.lx, self.ly, self.lz,
 						self.r, self.fov)

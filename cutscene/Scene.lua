@@ -11,6 +11,13 @@ function Scene:constructor(data)
 	for k, v in ipairs(data) do
 		self.m_Actions[k] = Action.create(v)
 	end
+	
+	-- Not exactly 21/9, but looks better this way
+	local sw, sh = guiGetScreenSize()
+	Scene.LetterboxHeight = ( 9 / 21 * (sh/sw) * sh ) / 3 * 2
+	
+	Scene.LetterboxWidth = sw
+	Scene.LetterboxY = sh - Scene.LetterboxHeight
 end
 
 function Scene:start()
@@ -64,5 +71,10 @@ end
 function Scene:render()
 	for k, v in pairs(self.m_ActiveAction) do
 		if v.render then v:render() end
+	end
+	
+	if self.m_Letterbox then
+		dxDrawRectangle(0, 0, Scene.LetterboxWidth, Scene.LetterboxHeight, tocolor(0, 0, 0), false)
+		dxDrawRectangle(0, Scene.LetterboxY, Scene.LetterboxWidth, Scene.LetterboxHeight, tocolor(0, 0, 0), false)
 	end
 end
