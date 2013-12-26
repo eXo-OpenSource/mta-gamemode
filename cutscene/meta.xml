@@ -1,0 +1,13 @@
+<meta>
+    <script src="utils.lua" type="client" />
+    <script src="classlib.lua" type="client" />
+    <script src="Object.lua" type="client" />
+    <script src="sample.cutscene.lua" type="client" />
+    <script src="Scene.lua" type="client" />
+    <script src="Action.lua" type="client" />
+    <script src="CameraAction.lua" type="client" />
+    <script src="Cutscene.lua" type="client" />
+    
+    <script src="runthis.lua" type="client" />
+    <min_mta_version client="1.3.2"></min_mta_version>
+</meta>
