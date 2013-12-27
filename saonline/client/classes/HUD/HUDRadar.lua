@@ -9,7 +9,6 @@ HUDRadar = inherit(Object)
 local screenWidth, screenHeight = guiGetScreenSize()
 
 function HUDRadar:constructor()
-	if true then return end
 	self.m_ImageWidth, self.m_ImageHeight = 1024, 1024
 	self.m_Texture = dxCreateRenderTarget(self.m_ImageWidth, self.m_ImageHeight)
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900

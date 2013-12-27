@@ -21,7 +21,7 @@ function Core:constructor()
 	KarmaBar:new()
 	
 	-- HUD
-	HUDRadar:new()
+	--HUDRadar:new()
 	
 	-- Phone
 	Phone:new()
