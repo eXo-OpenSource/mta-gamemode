@@ -118,9 +118,9 @@ function DxElement:setVisible(visible)
 		if self.onHide then self:onHide() end
 	end
 	
-	for k, v in ipairs(self.m_Children) do
-		v:setVisible(visible)
-	end
+--	for k, v in ipairs(self.m_Children) do
+--		v:setVisible(visible)
+--	end
 	
 	self:anyChange()
 	return self

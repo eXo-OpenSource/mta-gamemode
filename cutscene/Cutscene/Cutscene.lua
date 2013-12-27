@@ -3,16 +3,23 @@ Cutscene = inherit(Object)
 function Cutscene:constructor(data)
 	self.m_Name = data.name
 	self.m_Startscene = data.startscene
+	self.m_Elements = {}
 	
 	self.m_Scene = {}
 	self.m_ActiveScene = false
 	for k, v in ipairs(data) do
-		local scene = Scene:new(v)
+		local scene = Scene:new(v, self)
 		self.m_Scene[scene.m_Uid] = scene
 	end
 	
 	self.m_fnRender = bind(Cutscene.render, self)
 	self.m_fnPreRender = bind(Cutscene.preRender, self)
+end
+
+function Cutscene:setScene(uid)
+	assert(self.m_Scene[uid], "Invalid Scene")
+	self.m_ActiveScene = self.m_Scene[uid]
+	self.m_Scene[uid]:start()
 end
 
 function Cutscene:play()

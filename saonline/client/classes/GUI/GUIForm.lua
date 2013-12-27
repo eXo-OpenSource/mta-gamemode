@@ -9,8 +9,6 @@
 GUIForm = inherit(CacheArea)
 
 function GUIForm:constructor(posX, posY, width, height)
-	checkArgs("GUIForm:constructor", "number", "number", "number", "number")
-	
 	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true)
 	self.m_KeyBinds = {}
 end

@@ -1,15 +1,15 @@
 Scene = inherit(Object)
 
-function Scene:constructor(data)
+function Scene:constructor(data, cut)
 	self.m_Actions = {}
 	self.m_ActiveAction = {}
-	self.m_Elements = {}
+	self.m_Cutscene = cut
 	
 	self.m_Uid = data.uid or false
 	self.m_Letterbox = data.letterbox == true
 	
 	for k, v in ipairs(data) do
-		self.m_Actions[k] = Action.create(v)
+		self.m_Actions[k] = Action.create(v, self)
 	end
 	
 	-- Not exactly 21/9, but looks better this way
@@ -32,6 +32,10 @@ function Scene:stop()
 	for k, v in pairs(self.m_Elements) do
 		destroyElement(v)
 	end
+end
+
+function Scene:getCutscene()
+	return self.m_Cutscene
 end
 
 function Scene:preRender()

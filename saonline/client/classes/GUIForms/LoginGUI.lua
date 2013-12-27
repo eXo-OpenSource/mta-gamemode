@@ -38,6 +38,7 @@ function LoginGUI:constructor()
 	GUILabel:new(tabw/6, 170, tabw/3, 35, "Passwort:", 1, self.m_LoginTab):setAlignY("center")
 	self.m_LoginEditUsername = GUIEdit:new(tabw/6*2, 120, tabw/2, 35, self.m_LoginTab)
 	self.m_LoginEditPassword = GUIEdit:new(tabw/6*2, 170, tabw/2, 35, self.m_LoginTab)
+	self.m_LoginEditPassword:setMasked()
 	
 	self.m_SubmitLoginButton = GUIRectangle:new(tabw/4, tabh-80, tabw/2, 70, tocolor(0, 32, 63,	255), self.m_LoginTab)
 	local btnlbl = GUILabel:new(tabw/4, tabh-80, tabw/2, 70, "Einloggen", 1, self.m_LoginTab)
@@ -48,10 +49,9 @@ function LoginGUI:constructor()
 	self.m_SaveLoginCheckbox = GUICheckbox:new(tabw/6*2, 220, 20, 20, "", self.m_LoginTab)
 	
 	self.m_LoginErrorBox = GUIRectangle:new(tabw/6, 300, tabw/1.5, 70, tocolor(173, 14, 22, 255), self.m_LoginTab)
-	self.m_LoginErrorBox:hide()
 	self.m_LoginErrorText = GUILabel:new(0, 0, tabw/1.5, 70, "", 1, self.m_LoginErrorBox)
-	self.m_LoginErrorText:setAlignX("center")
-	self.m_LoginErrorText:setAlignY("center")
+	self.m_LoginErrorText:setAlignX("center"):setAlignY("center")
+	self.m_LoginErrorBox:hide()
 	
 	self.m_SubmitLoginButton.onLeftClick = bind(function(self)
 		local pw = self.m_LoginEditPassword:getText()
@@ -74,6 +74,7 @@ function LoginGUI:constructor()
 	
 	self.m_RegisterEditUsername = GUIEdit:new(tabw/6*2, 120, tabw/2, 35, self.m_RegisterTab)
 	self.m_RegisterEditPassword = GUIEdit:new(tabw/6*2, 170, tabw/2, 35, self.m_RegisterTab)
+	self.m_RegisterEditPassword:setMasked()
 	
 	self.m_RegisterErrorBox = GUIRectangle:new(tabw/6, 300, tabw/1.5, 70, tocolor(173, 14, 22, 255), self.m_RegisterTab)
 	self.m_RegisterErrorBox:hide()
@@ -184,7 +185,7 @@ addEventHandler("loginsuccess", root,
 				end
 				local fh = fileCreate("logininfo.vrp")
 				fileWrite(fh, pwhash)
-				fileWrite(fh, accountinfo.Username)
+				fileWrite(fh, lgi.m_LoginEditUsername:getText())
 				fileClose(fh)
 			end
 		end

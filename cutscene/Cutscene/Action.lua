@@ -1,12 +1,12 @@
 Action = inherit(Object)
 
-function Action.create(data)
+function Action.create(data, scene)
 	local type = data.type
 	local action = data.action
 	assert(Action[type], "Invalid Type")
 	assert(Action[type][action], "Invalid Action")
 	
-	local action = Action[type][action]:new(data)
+	local action = Action[type][action]:new(data, scene)
 	action.type = data.type
 	action.action = data.action
 	action.starttick = data.starttick

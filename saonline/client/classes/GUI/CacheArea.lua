@@ -76,7 +76,7 @@ function CacheArea:drawCached()
 	
 	-- Render! :>
 	dxSetBlendMode("add")
-	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_RenderTarget)
+	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
 	dxSetBlendMode("blend")
 	
 	return true
