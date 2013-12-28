@@ -44,5 +44,5 @@ function Log:log(line, ...)
 	-- Note: "year - 100" is used as getRealTime() returns the number of years passed since 1900. 
 	--		 For 2013 this would be 113. To achieve a nice year indicator we subtract 100 from this
 	--		 value. This should be faster than string manipulation. Someone will need to fix this in 2100.
-	fileWrite(self.m_FileHandle, ("[%02d.%02d.%02d - %02d:%02d:%02d] %s"):format(time.day, time.month, time.year-100, time.hour, time.minute, time.second, line))
+	fileWrite(self.m_FileHandle, ("[%02d.%02d.%02d - %02d:%02d:%02d] %s\n"):format(time.day, time.month, time.year-100, time.hour, time.minute, time.second, line))
 end

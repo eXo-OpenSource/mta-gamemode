@@ -29,6 +29,45 @@ function LoginGUI:constructor()
 	self.m_HomeTab 		= GUIRectangle:new(bw, bh+sh*0.2+10, tabw, tabh, tocolor(0, 0, 0, 170), self)
 	self.m_RegisterTab 	= GUIRectangle:new(bw, bh+sh*0.2+10, tabw, tabh, tocolor(0, 0, 0, 170), self)
 	
+	-- Side Bar
+	GUILabel:new(0, 20, tabw/2, tabh, "News", 2.5, self.m_SideBar):setAlignX("center")
+	
+	-- News
+	-- Get this from the Forum
+	local news = {
+		{ 
+			title = "Start der Betaphase";
+			date = "01.01.2015";
+			text = [[Die geschlossene Betaphase hat begonnen! Bugs bitte im Forum oder durch /bug melden. Hier kann noch ganz viel mehr stehen 123456!!
+			Die geschlossene Betaphase hat begonnen! Bugs bitte im Forum oder durch /bug melden. Hier kann noch ganz viel mehr stehen 123456!!
+			Die geschlossene Betaphase hat begonnen! Bugs bitte im Forum oder durch /bug melden. Hier kann noch ganz viel mehr stehen 123456!!]]
+		}
+	}
+	news[2] = news[1]
+	news[3] = news[1]
+	news[4] = news[1]
+	
+	local newsyoff = 65
+	
+	for k, v in ipairs(news) do
+		GUILabel:new(0, newsyoff, tabw/2, tabh, v.title, 1.75, self.m_SideBar):setAlignX("center")
+		GUILabel:new(tabw/2-80, newsyoff+2, tabw/2, tabh, v.date, 1, self.m_SideBar)
+		GUILabel:new(15, newsyoff+30, tabw/2-30, tabh, v.text, 1, self.m_SideBar)
+		
+		local lines = math.ceil(dxGetTextWidth(v.text) / (tabw/2-30)) + 1
+		
+		newsyoff = newsyoff+ 30 + dxGetFontHeight ( 1, "default") *1.75 * lines * 1.2
+	end
+	
+	-- Home Tab
+	GUILabel:new(35, 35, tabw, tabh, "Willkommen auf V Roleplay!", 2.5, self.m_HomeTab)
+	GUILabel:new(35, 80, tabw, tabh, [[
+		   Hier sollte irgendwann mal ein toller Text stehen.
+		   - Infos wie Homepageadresse, TS3 und Ingamesupportmöglichkeit
+		   - Rechts News
+		   - Irgendwer muss sich mal was ausdenken :D
+		]], 1, self.m_HomeTab)
+	
 	-- Login Tab
 	GUIRectangle:new(0, 35, tabw, 5, tocolor(255, 255, 255, 255), self.m_LoginTab)
 	local lbl = GUILabel:new(0, 10, tabw, tabh, "Falls du schon einen Account besitzt,  kannst du dich hier mit deinen Accountdaten einloggen.", 1, self.m_LoginTab)
@@ -111,10 +150,10 @@ function LoginGUI:constructor()
 	)
 end
 
-function LoginGUI:showHome()
-	self.m_RegisterButton:dark()
-	self.m_LoginButton:dark()
-	self.m_HomeButton:light()
+function LoginGUI:showHome(quick)
+	self.m_RegisterButton:dark(quick)
+	self.m_LoginButton:dark(quick)
+	self.m_HomeButton:light(quick)
 	
 	self.m_LoginTab:hide()
 	self.m_RegisterTab:hide()
@@ -195,7 +234,7 @@ addEventHandler("loginsuccess", root,
 )
 
 lgi = LoginGUI:new()
-lgi:showHome()
+lgi:showHome(true)
 
 if fileExists("logininfo.vrp") then
 	local fh = fileOpen("logininfo.vrp")

@@ -109,6 +109,7 @@
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeOut.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeIn.lua" type="client"/>
+	<script src="client/classes/GUI/Animations/FadeColor.lua" type="client"/>
 	
 	<!-- Special GUI elements -->
 	<script src="client/classes/GUI/MessageBoxes/MessageBox.lua" type="client"/>
