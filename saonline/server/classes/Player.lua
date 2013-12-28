@@ -15,6 +15,12 @@ addEventHandler("onPlayerConnect", root,
 	end
 )
 
+addEventHandler("onPlayerJoin", root, 
+	function()
+		source:join()
+	end
+)
+
 function Player:constructor()
 	self.m_Account = false
 	self.m_Locale = "de"
@@ -34,10 +40,21 @@ function Player:constructor()
 	4 - Done
 	]]
 	self.m_TutorialStage = 0 
+	
+	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	setElementFrozen(self, true)
 end
 
 function Player:connect()
 	if not Ban.checkBan(self) then return end
+end
+
+function Player:join()
+	outputDebug("trigger")
+	local f = Forum:getSingleton()
+	outputDebug(f)
+	outputDebug(self)
+	self:triggerEvent("ingamenews", root, f:getNews())
 end
 
 function Player:triggerEvent(ev, ...)

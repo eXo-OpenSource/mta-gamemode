@@ -22,6 +22,15 @@ function Core:constructor()
 	JobManager:new()
 	VehicleManager:new()
 	BankManager:new()
+	Async.create(function() Forum:new() end)()
+	
+	-- Refresh all players
+	for k, v in pairs(getElementsByType("player")) do
+		Async.create(Player.connect)(v)
+	end	
+	for k, v in pairs(getElementsByType("player")) do
+		Async.create(Player.join)(v)
+	end
 end
 
 function Core:destructor()

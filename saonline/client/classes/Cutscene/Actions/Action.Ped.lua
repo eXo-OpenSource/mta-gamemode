@@ -17,6 +17,8 @@ Action.Ped.create.trigger = function(self)
 		self.model,
 		self.x, self.y, self.z,
 		0)
+		
+	setElementDimension(self.cutscene.m_Elements[self.id], PRIVATE_DIMENSION_CLIENT)
 end
 
 -- Warp ped into vehicle

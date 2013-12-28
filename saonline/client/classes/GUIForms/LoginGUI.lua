@@ -32,33 +32,6 @@ function LoginGUI:constructor()
 	-- Side Bar
 	GUILabel:new(0, 20, tabw/2, tabh, "News", 2.5, self.m_SideBar):setAlignX("center")
 	
-	-- News
-	-- Get this from the Forum
-	local news = {
-		{ 
-			title = "Start der Betaphase";
-			date = "01.01.2015";
-			text = [[Die geschlossene Betaphase hat begonnen! Bugs bitte im Forum oder durch /bug melden. Hier kann noch ganz viel mehr stehen 123456!!
-			Die geschlossene Betaphase hat begonnen! Bugs bitte im Forum oder durch /bug melden. Hier kann noch ganz viel mehr stehen 123456!!
-			Die geschlossene Betaphase hat begonnen! Bugs bitte im Forum oder durch /bug melden. Hier kann noch ganz viel mehr stehen 123456!!]]
-		}
-	}
-	news[2] = news[1]
-	news[3] = news[1]
-	news[4] = news[1]
-	
-	local newsyoff = 65
-	
-	for k, v in ipairs(news) do
-		GUILabel:new(0, newsyoff, tabw/2, tabh, v.title, 1.75, self.m_SideBar):setAlignX("center")
-		GUILabel:new(tabw/2-80, newsyoff+2, tabw/2, tabh, v.date, 1, self.m_SideBar)
-		GUILabel:new(15, newsyoff+30, tabw/2-30, tabh, v.text, 1, self.m_SideBar)
-		
-		local lines = math.ceil(dxGetTextWidth(v.text) / (tabw/2-30)) + 1
-		
-		newsyoff = newsyoff+ 30 + dxGetFontHeight ( 1, "default") *1.75 * lines * 1.2
-	end
-	
 	-- Home Tab
 	GUILabel:new(35, 35, tabw, tabh, "Willkommen auf V Roleplay!", 2.5, self.m_HomeTab)
 	GUILabel:new(35, 80, tabw, tabh, [[
@@ -196,6 +169,27 @@ function LoginGUI:showRegister()
 	self:anyChange()
 end
 
+addEvent("ingamenews", true)
+addEventHandler("ingamenews", root,	
+	function(news)
+		local newsyoff = 65
+		local self = LoginGUI:getSingleton()
+		outputDebug("pls")
+		for k, v in ipairs(news) do
+			outputDebug("NEWS!")
+			GUILabel:new(0, newsyoff, tabw/2, tabh, v.title, 1.75, self.m_SideBar):setAlignX("center")
+			GUILabel:new(tabw/2-80, newsyoff+2, tabw/2, tabh, v.date or "NO DATE", 1, self.m_SideBar)
+			GUILabel:new(15, newsyoff+30, tabw/2-30, tabh, v.text, 1, self.m_SideBar)
+			
+			local lines = math.ceil(dxGetTextWidth(v.text) / (tabw/2-30)) + 1
+			
+			newsyoff = newsyoff+ 30 + dxGetFontHeight ( 1, "default") *1.75 * lines * 1.2
+		end
+	
+	end
+)
+
+
 addEvent("loginfailed", true)
 addEventHandler("loginfailed", root, 
 	function(text)
@@ -228,7 +222,6 @@ addEventHandler("loginsuccess", root,
 				fileClose(fh)
 			end
 		end
-	
 		lgi:delete()
 		
 		outputDebug(tutorialstage)

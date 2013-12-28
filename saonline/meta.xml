@@ -42,6 +42,7 @@
 	<script src="server/classes/Ban.lua" type="server"/>
 	<script src="server/classes/BankManager.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
+	<script src="server/classes/Forum.lua" type="server"/>
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
