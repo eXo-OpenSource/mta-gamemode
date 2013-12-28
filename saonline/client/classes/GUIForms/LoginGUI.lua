@@ -173,12 +173,14 @@ addEvent("ingamenews", true)
 addEventHandler("ingamenews", root,	
 	function(news)
 		local newsyoff = 65
+		local sw, sh = guiGetScreenSize()
+		local bw, bh = math.floor(sw * 0.08), math.floor(sh * 0.04)
+		local tabw = (sw-2*bw)/3*2
+		local tabh = sh-2*bh-sh*0.2-20
 		local self = LoginGUI:getSingleton()
-		outputDebug("pls")
 		for k, v in ipairs(news) do
-			outputDebug("NEWS!")
 			GUILabel:new(0, newsyoff, tabw/2, tabh, v.title, 1.75, self.m_SideBar):setAlignX("center")
-			GUILabel:new(tabw/2-80, newsyoff+2, tabw/2, tabh, v.date or "NO DATE", 1, self.m_SideBar)
+			GUILabel:new(tabw/2-80, newsyoff+2, tabw/2, tabh, v.date, 1, self.m_SideBar)
 			GUILabel:new(15, newsyoff+30, tabw/2-30, tabh, v.text, 1, self.m_SideBar)
 			
 			local lines = math.ceil(dxGetTextWidth(v.text) / (tabw/2-30)) + 1

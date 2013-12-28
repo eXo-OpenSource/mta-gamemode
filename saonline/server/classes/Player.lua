@@ -50,11 +50,13 @@ function Player:connect()
 end
 
 function Player:join()
-	outputDebug("trigger")
-	local f = Forum:getSingleton()
-	outputDebug(f)
-	outputDebug(self)
-	self:triggerEvent("ingamenews", root, f:getNews())
+	if Forum:getSingleton() and #Forum:getSingleton():getNews() > 0 then
+		self:sendNews()
+	end
+end
+
+function Player:sendNews()
+	self:triggerEvent("ingamenews", Forum:getSingleton():getNews())
 end
 
 function Player:triggerEvent(ev, ...)
