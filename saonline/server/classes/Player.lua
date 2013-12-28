@@ -25,6 +25,15 @@ function Player:constructor()
 	self.m_Karma = 0
 	self.m_Money = 0
 	self.m_BankMoney = 0
+	--[[
+	Tutorial Stages:
+	0 - Just created an account
+	1 - Watched the intro
+	2 - Created his character
+	3 - Played the tutorial
+	4 - Done
+	]]
+	self.m_TutorialStage = 0 
 end
 
 function Player:connect()
@@ -48,7 +57,7 @@ function Player:stopNavigation()
 end
 
 function Player:loadCharacter(charid)
-	if not charid then
+	if not charid or charid == -1 then
 		self:createCharacter()
 	else
 		self.m_Id = charid
@@ -58,12 +67,13 @@ function Player:loadCharacter(charid)
 end
 
 function Player:createCharacter()
-	sql:queryExec("INSERT INTO ??_character(Account) VALUES(?);", sql:getPrefix(), player.m_Account.m_Id)
+	sql:queryExec("INSERT INTO ??_character(Account) VALUES(?);", sql:getPrefix(), self.m_Account.m_Id)
 	self.m_Id = sql:lastInsertId()
+	sql:queryExec("UPDATE ??_account SET CharacterId = ? WHERE Id = ?;", sql:getPrefix(), self.m_Id, self.m_Account.m_Id)
 end
 
 function Player:loadCharacterInfo()
-	sql:queryFetch(Async.waitFor(self), "SELECT Level, XP, Karma, Money, BankMoney, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT Level, XP, Karma, Money, BankMoney, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_Level = row.Level
@@ -71,6 +81,10 @@ function Player:loadCharacterInfo()
 	self.m_Karma = row.Karma
 	self.m_Money = row.Money
 	self.m_BankMoney = row.BankMoney
+	self.m_TutorialStage = row.TutorialStage
+	
+	outputDebug(row.Level)
+	outputDebug(row.TutorialStage)
 	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -96,11 +110,13 @@ function Player:getJob()   		return self.m_Job		end
 function Player:getAccount()	return self.m_Account	end
 function Player:getLocale()		return self.m_Locale	end
 function Player:getPhonePartner() return self.m_PhonePartner end
+function Player:getTutorialStage() return self.m_TutorialStage end
 
 -- Short setters
 function Player:setJob(job)	 	self.m_Job = job 		end
 function Player:setLocale(locale)	self.m_Locale = locale	end
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
+function Player:setTutorialStage(stage) self.m_TutorialStage = stage end
 
 function Player:addKarma(points)
 	self.m_Karma = self.m_Karma + points

@@ -87,7 +87,7 @@ function Account:constructor(id, username, player, pwhash)
 	-- Load Character
 	player:loadCharacter(row.CharacterId)
 	
-	triggerClientEvent(player, "loginsuccess", root, pwhash)
+	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
 
 function Account:getPlayer()

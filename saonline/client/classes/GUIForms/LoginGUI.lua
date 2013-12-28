@@ -214,7 +214,7 @@ addEventHandler("registerfailed", root,
 
 addEvent("loginsuccess", true)
 addEventHandler("loginsuccess", root, 
-	function(pwhash)
+	function(pwhash, tutorialstage)
 		local lgi = LoginGUI:getSingleton()
 	
 		if lgi.m_SaveLoginCheckbox:isChecked() then
@@ -230,6 +230,21 @@ addEventHandler("loginsuccess", root,
 		end
 	
 		lgi:delete()
+		
+		outputDebug(tutorialstage)
+		-- Maybe start tutorial
+		if tutorialstage == 0 then
+			-- Play Intro
+			CutscenePlayer:getSingleton():playCutscene("Intro")
+		elseif tutorialstage == 1 then
+			-- Create Character
+		elseif tutorialstage == 2 then
+			-- Play Tutorial Mission
+		else
+			-- If the tutorial is done the server will do the job of spawning etc.
+		end
+
+		
 	end
 )
 
