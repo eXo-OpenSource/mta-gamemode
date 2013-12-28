@@ -7,6 +7,7 @@ function Cutscene:constructor(data)
 	
 	self.m_Scene = {}
 	self.m_ActiveScene = false
+	self.m_Debug = data.debug
 	for k, v in ipairs(data) do
 		local scene = Scene:new(v, self)
 		self.m_Scene[scene.m_Uid] = scene
@@ -14,6 +15,12 @@ function Cutscene:constructor(data)
 	
 	self.m_fnRender = bind(Cutscene.render, self)
 	self.m_fnPreRender = bind(Cutscene.preRender, self)
+end
+
+function Cutscene:destructor()
+	if self.m_ActiveScene then
+		self:stop()
+	end
 end
 
 function Cutscene:setScene(uid)
@@ -35,6 +42,10 @@ function Cutscene:stop()
 	
 	removeEventHandler("onClientRender", root, self.m_fnRender)
 	removeEventHandler("onClientPreRender", root, self.m_fnPreRender)
+	
+	for k, v in pairs(self.m_Elements) do
+		destroyElement(v)
+	end
 end
 
 function Cutscene:render()

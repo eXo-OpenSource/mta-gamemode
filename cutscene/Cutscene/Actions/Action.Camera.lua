@@ -54,6 +54,8 @@ Action.Camera.move.preRender = function(self)
 		x, y, z = interpolateBetween(self.x, self.y, self.z,
 										self.tx, self.ty, self.tz, 
 										progress, "Linear")
+	else
+		x, y, z = self.x, self.y, self.z
 	end
 	
 	if self.tlx then

@@ -81,4 +81,11 @@ function Scene:render()
 		dxDrawRectangle(0, 0, Scene.LetterboxWidth, Scene.LetterboxHeight, tocolor(0, 0, 0), false)
 		dxDrawRectangle(0, Scene.LetterboxY, Scene.LetterboxWidth, Scene.LetterboxHeight, tocolor(0, 0, 0), false)
 	end
+	
+	if self.m_Cutscene.m_Debug then
+		local now = getTickCount() - self.m_Begin
+		local sw, sh = guiGetScreenSize()
+		dxDrawText(tostring(now), sw - 100, 50, sw, sh)
+	end
+	
 end

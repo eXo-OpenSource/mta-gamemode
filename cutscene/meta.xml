@@ -10,6 +10,9 @@
     <script src="Cutscene/Action.lua" type="client" />
     <script src="Cutscene/Actions/Action.Camera.lua" type="client" />
     <script src="Cutscene/Actions/Action.General.lua" type="client" />
+    <script src="Cutscene/Actions/Action.Vehicle.lua" type="client" />
+    <script src="Cutscene/Actions/Action.Ped.lua" type="client" />
+    <script src="Cutscene/Actions/Action.Element.lua" type="client" />
     
     <script src="runthis.lua" type="client" />
     <min_mta_version client="1.3.2"></min_mta_version>

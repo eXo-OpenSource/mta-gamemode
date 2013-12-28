@@ -1,8 +1,9 @@
 Action = inherit(Object)
 
 function Action.create(data, scene)
-	local type = data.type
-	local action = data.action
+	local type = split(data.action, ".")[1]
+	local action = split(data.action, ".")[2]
+	
 	assert(Action[type], "Invalid Type")
 	assert(Action[type][action], "Invalid Action")
 	
