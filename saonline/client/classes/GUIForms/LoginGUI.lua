@@ -214,15 +214,13 @@ addEventHandler("loginsuccess", root,
 		local lgi = LoginGUI:getSingleton()
 	
 		if lgi.m_SaveLoginCheckbox:isChecked() then
-			if not lgi.usePasswordHash then
-				if fileExists("logininfo.vrp") then
-					fileDelete("logininfo.vrp")
-				end
-				local fh = fileCreate("logininfo.vrp")
-				fileWrite(fh, pwhash)
-				fileWrite(fh, lgi.m_LoginEditUsername:getText())
-				fileClose(fh)
+			if fileExists("logininfo.vrp") then
+				fileDelete("logininfo.vrp")
 			end
+			local fh = fileCreate("logininfo.vrp")
+			fileWrite(fh, pwhash)
+			fileWrite(fh, lgi.m_LoginEditUsername:getText())
+			fileClose(fh)
 		end
 		lgi:delete()
 		
@@ -230,7 +228,13 @@ addEventHandler("loginsuccess", root,
 		-- Maybe start tutorial
 		if tutorialstage == 0 then
 			-- Play Intro
-			CutscenePlayer:getSingleton():playCutscene("Intro")
+			CutscenePlayer:getSingleton():playCutscene("Intro",
+				function()
+					setCameraTarget(localPlayer)
+					setElementPosition(localPlayer, 0, 0, 5)
+					setElementFrozen(localPlayer, false)
+				end
+			)
 		elseif tutorialstage == 1 then
 			-- Create Character
 		elseif tutorialstage == 2 then

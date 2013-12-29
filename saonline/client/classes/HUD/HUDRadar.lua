@@ -36,8 +36,9 @@ function HUDRadar:constructor()
 end
 
 function HUDRadar:update()
-	if getControlState("forwards") then
-		local _, _, rotation = getElementRotation(localPlayer)
+	if getControlState("forwards") or isPedInVehicle(localPlayer)  then
+		local element = getPedOccupiedVehicle(localPlayer) or localPlayer
+		local _, _, rotation = getElementRotation(element)
 		self.m_Rotation = rotation
 	end
 end

@@ -148,6 +148,7 @@
 	<script src="client/classes/Cutscene/Actions/Action.Element.lua" type="client"/>
 	<script src="client/classes/Cutscene/Actions/Action.Ped.lua" type="client"/>
 	<script src="client/classes/Cutscene/Actions/Action.Vehicle.lua" type="client"/>
+	<script src="client/classes/Cutscene/Actions/Action.Graphic.lua" type="client"/>
 	
 	<!-- Cutscenes -->
 	<script src="client/classes/Cutscene/Cutscenes/Intro.lua" type="client"/>

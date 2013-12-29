@@ -28,10 +28,6 @@ function Scene:stop()
 	for k, v in pairs(self.m_ActiveAction) do
 		v:stop(true)
 	end
-	
-	for k, v in pairs(self.m_Elements) do
-		destroyElement(v)
-	end
 end
 
 function Scene:getCutscene()
