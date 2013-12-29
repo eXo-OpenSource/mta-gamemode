@@ -20,7 +20,7 @@ function Event:join(player)
 end
 
 function Event:quit(player)
-	local idx = table.find(self.m_Players)
+	local idx = table.find(self.m_Players, player)
 	if not idx then
 		return false
 	end

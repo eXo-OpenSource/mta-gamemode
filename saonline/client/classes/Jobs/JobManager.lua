@@ -13,6 +13,7 @@ function JobManager:constructor()
 		JobLogistician:new();
 		JobTrashman:new();
 		JobRoadSweeper:new();
+		JobLumberjack:new()
 	}
 	for k, v in ipairs(self.m_Jobs) do
 		v:setId(k)
