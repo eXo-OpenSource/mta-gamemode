@@ -129,6 +129,7 @@
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	
 	<!-- Forms -->
+	<script src="client/classes/GUIForms/InventoryGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
