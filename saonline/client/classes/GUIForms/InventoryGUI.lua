@@ -6,30 +6,15 @@ function InventoryGUI:constructor()
 
 	GUIForm.constructor(self, sw/5*1, sh/5*1, w, h)
 	self.m_Background = GUIRectangle:new(0, 0, w, h, tocolor(2, 17, 39, 255), self)
-	
-	local items = { 
-		{ id = 5; stack = math.random(1, 255) };
-		{ id = 6; stack = math.random(1, 255) };
-		{ id = 7; stack = math.random(1, 255) };
-		{ id = 7; stack = math.random(1, 255) };
-		{ id = 7; stack = math.random(1, 255) };
-		{ id = 7; stack = math.random(1, 255) };
-	}
+	self.m_Items = { Item:new(ITEM_CRACK); Item:new(ITEM_LSD); }
 	-- todo: make dependand on h instead
 	local ENTRYHEIGHT = sh/100*7
 	local ENTRYWIDTH = w/3*2-50
 	local ENTRYSPACE = sh/100
 	
-	-- Scrollable Area is bugged
 	self.m_Scrollable = GUIScrollableArea:new(w/3, 50, ENTRYWIDTH, sh, ENTRYWIDTH, sh, false, false, self)
-	--self.m_Scrollable = GUIElement:new(w/3, 50, ENTRYWIDTH, sh, self)
-	for i, item in ipairs(items) do
-		local entry = GUIRectangle:new(0, (ENTRYHEIGHT+ENTRYSPACE)*(i-1), ENTRYWIDTH, ENTRYHEIGHT, tocolor(12, 26, 47, 255), self.m_Scrollable)
-		-- Icon here
-		entry.icon = GUIRectangle:new(5, 5, ENTRYHEIGHT-15, ENTRYHEIGHT-15, tocolor(255, 255, 0), entry)
-		entry.name = GUILabel:new(ENTRYHEIGHT, 5, ENTRYWIDTH, ENTRYHEIGHT, "Gelbes Dreieck", 2.5, entry)
-		entry.description = GUILabel:new(ENTRYHEIGHT+15, ENTRYHEIGHT-20, ENTRYWIDTH, ENTRYHEIGHT, "Ein pflegeleichtes gelbes Dreieck", 1, entry)
-		entry.count = GUILabel:new(ENTRYWIDTH-fontWidth(tostring(item.stack), "default", 3)-10, 0, fontWidth(tostring(item.stack), "default", 3)+10, ENTRYHEIGHT, tostring(item.stack), 3, entry):setAlignY("center")
+	for i, item in ipairs(self.m_Items) do
+		VRPItem:new(0, (ENTRYHEIGHT+ENTRYSPACE)*(i-1), ENTRYWIDTH, ENTRYHEIGHT, item, self.m_Scrollable)
 	end
 	
 	-- Buttons

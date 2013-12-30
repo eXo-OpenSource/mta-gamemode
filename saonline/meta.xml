@@ -11,6 +11,7 @@
 	<script src="shared/version.lua" type="shared"/>
 	<script src="shared/debug.lua" type="shared"/>
 	<script src="shared/matrix.lua" type="shared"/>
+	<script src="shared/items.lua" type="shared"/>
 	<script src="shared/classes/Object.lua" type="shared"/>
 	<script src="shared/classes/Singleton.lua" type="shared"/>
 	<script src="shared/classes/File.lua" type="shared"/>
@@ -22,6 +23,7 @@
 	<script src="shared/classes/TranslationManager.lua" type="shared"/>
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
 	<script src="shared/classes/Rect.lua" type="shared"/>
+	<script src="shared/classes/Item.lua" type="shared"/>
 	
 	<!-- Server -->
 	<script src="server/constants.lua" type="server"/>
@@ -123,6 +125,7 @@
 	
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPButton.lua" type="client"/>
+	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
 	
 	<script src="client/classes/HUD/RadarBlip.lua" type="client"/>
@@ -171,7 +174,6 @@
 	<script src="client/classes/Jobs/JobRoadSweeper.lua" type="client"/>
 	<script src="client/classes/Jobs/JobLumberjack.lua" type="client"/>
 	
-	<script src="client/tempLogin.lua" type="client"/>
 	<script src="client/Main.lua" type="client"/>
 	
 		
