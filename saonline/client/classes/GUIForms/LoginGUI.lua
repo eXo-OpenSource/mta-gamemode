@@ -213,7 +213,7 @@ addEventHandler("loginsuccess", root,
 	function(pwhash, tutorialstage)
 		local lgi = LoginGUI:getSingleton()
 	
-		if lgi.m_SaveLoginCheckbox:isChecked() then
+		if lgi.m_SaveLoginCheckbox:isChecked() and pwhash then
 			if fileExists("logininfo.vrp") then
 				fileDelete("logininfo.vrp")
 			end

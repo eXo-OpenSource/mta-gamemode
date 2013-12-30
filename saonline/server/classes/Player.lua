@@ -71,19 +71,12 @@ function Player:stopNavigation()
 end
 
 function Player:loadCharacter(charid)
-	if not charid or charid == -1 then
-		self:createCharacter()
-	else
-		self.m_Id = charid
-	end
-	
+	self.m_Id = charid
 	self:loadCharacterInfo()
 end
 
-function Player:createCharacter()
-	sql:queryExec("INSERT INTO ??_character(Account) VALUES(?);", sql:getPrefix(), self.m_Account.m_Id)
-	self.m_Id = sql:lastInsertId()
-	sql:queryExec("UPDATE ??_account SET CharacterId = ? WHERE Id = ?;", sql:getPrefix(), self.m_Id, self.m_Account.m_Id)
+function Player:createCharacter(id)
+	sql:queryExec("INSERT INTO ??_character(Id) VALUES(?);", sql:getPrefix(), id)
 end
 
 function Player:loadCharacterInfo()

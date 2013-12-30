@@ -63,19 +63,19 @@ function Account.register(player, username, password)
 	local salt = md5(math.random())
 	sql:queryExec("INSERT INTO ??_account(Name, Password, Salt) VALUES (?, ?, ?);", sql:getPrefix(), username, sha256(salt..password), salt)
 	
-	return Account:new(sql:lastInsertId(), username, player)
+	return Account:new(sql:lastInsertId(), username, player, nil, true)
 end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(u, p) Async.create(Account.register)(client, u, p) end)
 
-function Account:constructor(id, username, player, pwhash)
+function Account:constructor(id, username, player, pwhash, justRegistered)
 	-- Account Information
 	self.m_Id = id
 	self.m_Username = username
 	self.m_Player = player
 	player.m_Account = self
 	
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, CharacterId FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_Rank = row.Rank;
@@ -84,8 +84,13 @@ function Account:constructor(id, username, player, pwhash)
 		Ban:new(player)
 		return
 	end
+	
+	if justRegistered then
+		player:createCharacter(self.m_Id)
+	end
+	
 	-- Load Character
-	player:loadCharacter(row.CharacterId)
+	player:loadCharacter(self.m_Id)
 	
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
@@ -98,3 +103,8 @@ function Account:getId()
 	return self.m_Id;
 end
 
+function Account.getNameFromId(id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
+	local row = Async.wait()
+	return row.Name
+end
