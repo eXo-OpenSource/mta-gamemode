@@ -75,7 +75,7 @@ function CacheArea:drawCached()
 	end
 	
 	-- Render! :>
-	dxSetBlendMode("add")
+	dxSetBlendMode(self.m_BlendMode or "add")
 	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
 	dxSetBlendMode("blend")
 	
@@ -163,4 +163,12 @@ function CacheArea:moveToBack()
 	
 	-- Reattach ourselves at the end of the draw list --> moves us the the front
 	GUIRenderer.addToDrawList(self, 1)
+end
+
+function CacheArea:setBlendMode(blend)
+	self.m_BlendMode = blend
+end
+
+function CacheArea:getBlendMode()
+	return self.m_BlendMode
 end

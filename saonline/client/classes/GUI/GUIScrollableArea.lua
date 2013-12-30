@@ -27,12 +27,18 @@ function GUIScrollableArea:draw(incache)
 	if self.m_Visible == false then
 		return
 	end
-	
 	-- Absolute X = Real X for drawing on the render target
-	for k, v in ipairs(self.m_Children) do
-		v.m_AbsoluteX = v.m_PosX - self.m_ScrollX
-		v.m_AbsoluteY = v.m_PosY + self.m_ScrollY
+	local refreshAbsolutePosition;
+	refreshAbsolutePosition = function(element)
+		for k, v in ipairs(element.m_Children) do
+			v.m_AbsoluteX = element.m_AbsoluteX + v.m_PosX
+			v.m_AbsoluteY = element.m_AbsoluteY + v.m_PosY
+			refreshAbsolutePosition(v)
+		end
 	end
+	local absx, absy = self.m_AbsoluteX, self.m_AbsoluteY
+	self.m_AbsoluteX, self.m_AbsoluteY = -self.m_ScrollX, -self.m_ScrollY
+	refreshAbsolutePosition(self)
 	
 	-- Draw Children to render Target
 	dxSetRenderTarget(self.m_PageTarget, true)
@@ -47,10 +53,8 @@ function GUIScrollableArea:draw(incache)
 	dxSetRenderTarget(self.m_CacheArea.m_RenderTarget or nil)
 	
 	-- Recreate AbsoluteX for the update() method to allow mouse actions
-	for k, v in pairs(self.m_Children) do
-		v.m_AbsoluteX = self.m_AbsoluteX + v.m_PosX - self.m_ScrollX
-		v.m_AbsoluteY = self.m_AbsoluteY + v.m_PosY + self.m_ScrollY
-	end
+	self.m_AbsoluteX, self.m_AbsoluteY = absx, absy 
+	refreshAbsolutePosition(self)
 	
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_DocumentWidth, self.m_DocumentHeight, self.m_PageTarget)
 	dxDrawImageSection(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, 0, 0, self.m_Width, self.m_Height, self.m_PageTarget)
