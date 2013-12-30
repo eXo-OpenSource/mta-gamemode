@@ -37,7 +37,7 @@ function GUIScrollableArea:draw(incache)
 		end
 	end
 	local absx, absy = self.m_AbsoluteX, self.m_AbsoluteY
-	self.m_AbsoluteX, self.m_AbsoluteY = -self.m_ScrollX, -self.m_ScrollY
+	self.m_AbsoluteX, self.m_AbsoluteY = -self.m_ScrollX, self.m_ScrollY
 	refreshAbsolutePosition(self)
 	
 	-- Draw Children to render Target

@@ -16,7 +16,7 @@ function BankGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Account balance:", 1, self.m_Window):setFont(VRPFont(20)):setColor(Color.Green)
 	self.m_AccountBalanceLabel = GUILabel:new(self.m_Width*0.28, self.m_Height*0.37, self.m_Width*0.34, self.m_Height*0.07, "Loading...", 1, self.m_Window):setFont(VRPFont(20)):setColor(Color.Red)
 	triggerServerEvent("bankMoneyBalanceRequest", root)
-	addEventHandler("bankMoneyBalanceRetrieve", root, function(amount) self.m_AccountBalanceLabel:setText(tostring(amount)) end)
+	addEventHandler("bankMoneyBalanceRetrieve", root, function(amount) self.m_AccountBalanceLabel:setText(tostring(amount).."$") end)
 	
 	self.m_TabPanel = GUITabPanel:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width-2*self.m_Width*0.02, self.m_Height*0.52, self.m_Window)
 	local tabWidth, tabHeight = self.m_TabPanel:getSize()

@@ -74,7 +74,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 			return
 		end
 		
-		givePlayerMoney(hitElement, numTrees * 50)
+		hitElement:giveMoney(numTrees * 50)
 		
 		for k, v in ipairs(getAttachedElements(vehicle)) do
 			destroyElement(v)

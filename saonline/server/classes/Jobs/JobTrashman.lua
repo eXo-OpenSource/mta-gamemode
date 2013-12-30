@@ -48,7 +48,7 @@ end
 function JobTrashman:dumpCans(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension and hitElement:getJob() == self then
 		local moneyAmount = hitElement:getData("Trashman:Cans") * MONEY_PER_CAN
-		givePlayerMoney(hitElement, moneyAmount)
+		hitElement:giveMoney(moneyAmount)
 		hitElement:sendMessage(_("You got %d$", hitElement), 0, 255, 0, moneyAmount)
 		
 		hitElement:setData("Trashman:Cans", 0)

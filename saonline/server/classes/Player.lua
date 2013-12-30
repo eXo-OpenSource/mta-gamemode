@@ -14,19 +14,14 @@ addEventHandler("onPlayerConnect", root,
 		Async.create(Player.connect)(player)
 	end
 )
-
-addEventHandler("onPlayerJoin", root, 
-	function()
-		source:join()
-	end
-)
+addEventHandler("onPlayerJoin", root, function() source:join() end)
+addEventHandler("onPlayerQuit", root, function() source:save() end)
 
 function Player:constructor()
 	self.m_Account = false
 	self.m_Locale = "de"
 	self.m_Id = -1
 	self.m_Skills = {}
-	self.m_Level = 0
 	self.m_XP 	 = 0
 	self.m_Karma = 0
 	self.m_Money = 0
@@ -92,24 +87,25 @@ function Player:createCharacter()
 end
 
 function Player:loadCharacterInfo()
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Level, XP, Karma, Money, BankMoney, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT XP, Karma, Money, BankMoney, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
-	self.m_Level = row.Level
 	self.m_XP 	 = row.XP
 	self.m_Karma = row.Karma
 	self.m_Money = row.Money
+	setPlayerMoney(self, self.m_Money) -- Todo: Remove this line later
 	self.m_BankMoney = row.BankMoney
 	self.m_TutorialStage = row.TutorialStage
-	
-	outputDebug(row.Level)
-	outputDebug(row.TutorialStage)
 	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
 	self.m_Skills["Flying"] 	= row.FlyingSkill
 	self.m_Skills["Sneaking"] 	= row.SneakingSkill
 	self.m_Skills["Endurance"] 	= row.EnduranceSkill
+end
+
+function Player:save()
+	return sql:queryExec("UPDATE ??_character SET XP = ?, Karma = ?, Money = ?, BankMoney = ?, TutorialStage = ? WHERE Id = ?;", sql:getPrefix(), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_TutorialStage, self.m_Id)
 end
 
 -- Message Boxes
@@ -122,6 +118,7 @@ function Player:sendSuccess(text, ...)	self:triggerEvent("successBox", text:form
 function Player:getId()			return self.m_Id		end
 function Player:getAccount()	return self.m_Account 	end
 function Player:getPlayer()		return self.m_Player	end
+function Player:getMoney()		return getPlayerMoney(self)	end
 function Player:getXP()			return self.m_XP		end
 function Player:getKarma()		return self.m_Karma		end
 function Player:getBankMoney()	return self.m_BankMoney	end
@@ -132,10 +129,24 @@ function Player:getPhonePartner() return self.m_PhonePartner end
 function Player:getTutorialStage() return self.m_TutorialStage end
 
 -- Short setters
+function Player:setMoney(money) self.m_Money = money setPlayerMoney(self, money) end
 function Player:setJob(job)	 	self.m_Job = job 		end
 function Player:setLocale(locale)	self.m_Locale = locale	end
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
 function Player:setTutorialStage(stage) self.m_TutorialStage = stage end
+
+function Player:giveMoney(money)
+	self:setMoney(self:getMoney() + money)
+end
+
+function Player:takeMoney(money)
+	self:setMoney(self:getMoney() - money)
+end
+
+function Player:getLevel()
+	-- XP(level) = 0.5*x^2 --> level(XP) = sqrt(2*xp)
+	return (2 * self.m_XP)^0.5
+end
 
 function Player:addKarma(points)
 	self.m_Karma = self.m_Karma + points
@@ -149,7 +160,7 @@ end
 
 function Player:addBankMoney(amount, logType)
 	logType = logType or BankStat.Income
-	if sql:queryExec("INSERT INTO ??_bank_statements (CharacterId, Type, Amount) VALUES(?, ?, ?)", self.m_Id, logType, amount) then
+	if sql:queryExec("INSERT INTO ??_bank_statements (CharacterId, Type, Amount) VALUES(?, ?, ?)", sql:getPrefix(), self.m_Id, logType, amount) then
 		self.m_BankMoney = self.m_BankMoney + amount
 		return true
 	end
@@ -158,7 +169,7 @@ end
 
 function Player:takeBankMoney(amount, logType)
 	logType = logType or BankStat.Payment
-	if sql:queryExec("INSERT INTO ??_bank_statements (CharacterId, Type, Amount) VALUES(?, ?, ?)", self.m_Id, logType, amount) then
+	if sql:queryExec("INSERT INTO ??_bank_statements (CharacterId, Type, Amount) VALUES(?, ?, ?)", sql:getPrefix(), self.m_Id, logType, amount) then
 		self.m_BankMoney = self.m_BankMoney - amount
 		return true
 	end

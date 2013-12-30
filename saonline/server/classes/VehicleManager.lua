@@ -49,7 +49,7 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	local price = VEHICLESHOPS[shop].Vehicles[vehicleModel]
 	if not price then return end
 	
-	if getPlayerMoney(client) < price then
+	if client:getMoney() < price then
 		client:sendMessage(_("You do not have enough money to buy this vehicle!", client), 255, 0, 0)
 		return
 	end
@@ -57,7 +57,7 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	local spawnX, spawnY, spawnZ, rotation = unpack(VEHICLESHOPS[shop].Spawn)
 	local vehicle = Vehicle.create(client:getId(), vehicleModel, spawnX, spawnY, spawnZ, rotation)
 	if vehicle then
-		takePlayerMoney(client, price)
+		client:takeMoney(price)
 		warpPedIntoVehicle(client, vehicle)
 		client:triggerEvent("vehicleBought")
 	else

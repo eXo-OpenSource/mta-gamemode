@@ -23,13 +23,14 @@ function BankManager:Event_Withdraw(amount)
 	amount = tonumber(amount)
 	if not amount or amount <= 0 then return end
 	
-	if client:getCharacter():getBankMoney() < amount then
+	if client:getBankMoney() < amount then
 		client:sendError(_("You cannot withdraw more money than you have", client))
 		return
 	end
 	
-	if client:getCharacter():takeBankMoney(amount, BankStat.Withdrawal) then
-		givePlayerMoney(client, amount)
+	if client:takeBankMoney(amount, BankStat.Withdrawal) then
+		client:giveMoney(amount)
+		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
 
@@ -37,20 +38,23 @@ function BankManager:Event_Deposit(amount)
 	amount = tonumber(amount)
 	if not amount or amount <= 0 then return end
 	
-	if getPlayerMoney(client) < amount then
+	if client:getMoney() < amount then
 		client:sendError(_("You cannot deposit more money than you have", client))
 		return
 	end
 	
-	if client:getCharacter():addBankMoney(amount, BankStat.Deposit) then
-		takePlayerMoney(client, amount)
+	if client:addBankMoney(amount, BankStat.Deposit) then
+		client:takeMoney(amount)
+		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
 
 function BankManager:Event_Transfer(amount, toPlayerName)
 	-- Todo (getCharacterByName or something is missing yet)
+	
+	client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 end
 
 function BankManager:Event_bankMoneyBalanceRequest()
-	client:triggerEvent("bankMoneyBalanceRetrieve", client:getCharacter():getBankMoney())
+	client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 end

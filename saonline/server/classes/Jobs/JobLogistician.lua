@@ -16,7 +16,7 @@ function JobLogistician:constructor()
 	addCommandHandler("drop",
 		function(player)
 			if player:getJob() == self then
-				Crane:dropContainer(getPedOccupiedVehicle(player), function() givePlayerMoney(player, MONEY_PER_TRANSPORT) end)
+				Crane:dropContainer(getPedOccupiedVehicle(player), function() player:giveMoney(MONEY_PER_TRANSPORT) end)
 			else
 				player:sendMessage("You are not employed as logistician", 255, 0, 0)
 			end
