@@ -8,7 +8,13 @@
 JobLumberjack = inherit(Job)
 
 function JobLumberjack:constructor()
-	Job.constructor(self, 1870.84, -1244.95, 12.9, "files/images/Blips/Lumberjack.png", "files/images/Jobs/HeaderTrashman.png", LOREM_IPSUM)
+	Job.constructor(self, 1870.84, -1244.95, 12.9, "files/images/Blips/Lumberjack.png", "files/images/Jobs/HeaderTrashman.png", [[
+		Als Holzfäller ist es deine Aufgabe für genügend Holz in Los Santos zu sorgen.
+		Als ersten Schritt musst du die Bäume dieses Waldstücks sägen. Wie du sehen wirst, werden die Stämme für dich für den Transport aufgestapelt.
+		Wenn du genug Bäume gesägt hast, ist es Zeit die aufgestapelten Stämme mit dem - dir zur Verfügung gestellten - Feltbed zu einer Sammelstation zu bringen.
+		Diese Sammelstation wurde auf deiner Karte entsprechend markiert.
+		Sobald du in das Fahrzeug einsteigst, wird außerdem das Navigationssystem automatisch gestartet.
+	]])
 	
 	self.m_Trees = {}
 	self.m_StackedTrees = {}
@@ -70,6 +76,8 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 			source.broken = true
 			local x, y, z = getElementPosition(source)
 			moveObject(source, 4000, x, y, z + 0.5, 88, math.random(0, 88), 0, "InQuad")
+			setElementCollisionsEnabled(source, false)
+			
 			setTimer(
 				function(object)
 					moveObject(object, 8000, x, y, z - 10)
@@ -85,6 +93,7 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 							-- Reset rotation and move up again
 							setElementRotation(object, 0, 0, 0)
 							moveObject(object, 8000, x, y, z)
+							setElementCollisionsEnabled(object, true)
 							object.broken = nil
 						end, 20000, 1
 					)

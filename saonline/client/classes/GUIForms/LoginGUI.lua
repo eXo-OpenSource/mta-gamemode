@@ -233,6 +233,9 @@ addEventHandler("loginsuccess", root,
 					setCameraTarget(localPlayer)
 					setElementPosition(localPlayer, 0, 0, 5)
 					setElementFrozen(localPlayer, false)
+					
+					-- Temp fix?
+					triggerServerEvent("introFinished", root)
 				end
 			)
 		elseif tutorialstage == 1 then

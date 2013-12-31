@@ -71,7 +71,7 @@ function InventoryGUI:constructor()
 		
 		local item = self.m_GUIItems[self.m_SelectedItem]
 		assert(item)
-		if item.m_Count > 1then
+		if item.m_Count > 1 then
 			item.m_Count = item.m_Count -1
 			self.m_SelectedItem:updateFromItem()
 		else

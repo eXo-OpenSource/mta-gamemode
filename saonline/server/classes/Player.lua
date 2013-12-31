@@ -16,6 +16,8 @@ addEventHandler("onPlayerConnect", root,
 )
 addEventHandler("onPlayerJoin", root, function() source:join() end)
 addEventHandler("onPlayerQuit", root, function() source:save() end)
+addEvent("introFinished", true)
+addEventHandler("introFinished", root, function() client:spawn() end)
 
 function Player:constructor()
 	self.m_Account = false
@@ -99,6 +101,10 @@ end
 
 function Player:save()
 	return sql:queryExec("UPDATE ??_character SET XP = ?, Karma = ?, Money = ?, BankMoney = ?, TutorialStage = ? WHERE Id = ?;", sql:getPrefix(), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_TutorialStage, self.m_Id)
+end
+
+function Player:spawn()
+	setElementDimension(self, 0)
 end
 
 -- Message Boxes
