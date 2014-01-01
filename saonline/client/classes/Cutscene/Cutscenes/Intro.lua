@@ -22,7 +22,7 @@ debug = true;
 		{
 			action = "Graphic.drawText";
 			color = tocolor(255, 255, 255);
-			duration = 20000;
+			duration = 15000;
 			text = "V Roleplay";
 			starttick = 0;
 			scale = 5;
@@ -31,7 +31,7 @@ debug = true;
 		{
 			action = "Graphic.drawText";
 			color = tocolor(255, 255, 255);
-			duration = 20000;
+			duration = 15000;
 			starttick = 0;
 			text = "Hier kommt noch ein längeres Intro";
 			scale = 2;
@@ -45,7 +45,7 @@ debug = true;
 		};
 		{
 			action = "General.finish";
-			starttick = 20000;
+			starttick = 15000;
 		}
 	};
 })

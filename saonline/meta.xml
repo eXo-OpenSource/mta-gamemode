@@ -41,6 +41,7 @@
 	<script src="server/classes/PhoneInteraction.lua" type="server"/>
 	<script src="server/classes/Vehicle.lua" type="server"/>
 	<script src="server/classes/VehicleManager.lua" type="server"/>
+	<script src="server/classes/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Ban.lua" type="server"/>
 	<script src="server/classes/BankManager.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
@@ -138,6 +139,7 @@
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleKeyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu.lua" type="client"/>
 	
