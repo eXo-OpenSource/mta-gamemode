@@ -10,7 +10,7 @@ JobManager = inherit(Singleton)
 function JobManager:constructor()
 	-- ATTENTION: Please use the same order server and clientside
 	self.m_Jobs = {
-		JobLogistician:new();
+		--JobLogistician:new();
 		JobTrashman:new();
 		JobRoadSweeper:new();
 		JobLumberjack:new();
@@ -34,6 +34,13 @@ function JobManager:Event_jobAccepted(jobId)
 	-- Get the job
 	local job = self:getFromId(jobId)
 	if not job then return end
+	
+	-- Stop old job if exists
+	if client:getJob() then
+		if client:getJob().stop then
+			client:getJob():stop()
+		end
+	end
 	
 	-- We're ready to start the job :)
 	client:setJob(job)

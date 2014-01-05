@@ -48,11 +48,11 @@ function GPS:update()
 	end
 	
 	local x, y, z = getElementPosition(vehicle)
-	--local arrowRotation = findRotation(x, y, self.m_Destination.X, self.m_Destination.Y)
-	local arrowRotation = findRotation(x, y, self.m_Destination.X, self.m_Destination.Y) - 90
+	local horizontalRotation = findRotation(x, y, self.m_Destination.X, self.m_Destination.Y) - 90
+	local verticalRotation = math.deg(math.asin((self.m_Destination.Z - z) / getDistanceBetweenPoints3D(self.m_Destination.X, self.m_Destination.Y, self.m_Destination.Z, x, y, z)))
 	
 	setElementPosition(self.m_Arrow, x, y, z + 1)
-	setElementRotation(self.m_Arrow, 0, 90, arrowRotation)
+	setElementRotation(self.m_Arrow, 0, 90 + verticalRotation, horizontalRotation)
 end
 
 function GPS:colShapeHit(hitElement, matchingDimension)

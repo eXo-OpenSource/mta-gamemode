@@ -36,7 +36,8 @@ function Player:constructor()
 	3 - Played the tutorial
 	4 - Done
 	]]
-	self.m_TutorialStage = 0 
+	self.m_TutorialStage = 0
+	self.m_JobVehicle = false
 	
 	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	setElementFrozen(self, true)
@@ -126,6 +127,7 @@ function Player:getAccount()	return self.m_Account	end
 function Player:getLocale()		return self.m_Locale	end
 function Player:getPhonePartner() return self.m_PhonePartner end
 function Player:getTutorialStage() return self.m_TutorialStage end
+function Player:getJobVehicle() return self.m_JobVehicle end
 
 -- Short setters
 function Player:setMoney(money) self.m_Money = money setPlayerMoney(self, money) end
@@ -133,6 +135,7 @@ function Player:setJob(job)	 	self.m_Job = job 		end
 function Player:setLocale(locale)	self.m_Locale = locale	end
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
 function Player:setTutorialStage(stage) self.m_TutorialStage = stage end
+function Player:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
 
 function Player:giveMoney(money)
 	self:setMoney(self:getMoney() + money)

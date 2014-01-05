@@ -41,10 +41,14 @@ function GUIRenderer.drawAll()
 end
 
 function GUIRenderer.restore(clearedRenderTargets)
-	if clearedRenderTargets then
+	--if clearedRenderTargets then
 		-- Redraw render target(s)
 		GUIRenderer.cacheroot:updateArea()
-	end
+		
+		for k, v in ipairs(GUIRenderer.cache) do
+			v:updateArea()
+		end
+	--end
 end
 
 function GUIRenderer.addToDrawList(ref, position)

@@ -10,6 +10,7 @@ LocalPlayer = inherit(Player)
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
 	self.m_Karma = 0
+	self.m_Job = false
 	
 	-- Since the local player exist only once, we can add the events here
 	addEvent("karmaSet", true)
@@ -17,16 +18,16 @@ function LocalPlayer:constructor()
 end
 
 function LocalPlayer:destructor()
-
 end
 
-function LocalPlayer:getLocale()
-	return self.m_Locale
-end
+-- Short getters
+function LocalPlayer:getLocale()	return self.m_Locale 	end
+function LocalPlayer:getJob()		return self.m_Job 		end
 
-function LocalPlayer:setLocale(locale)
-	self.m_Locale = locale
-end
+-- Short setters
+function LocalPlayer:setLocale(locale)	self.m_Locale = locale 	end
+function LocalPlayer:setJob(job)		self.m_Job = job		end
+
 
 function LocalPlayer:sendMessage(text, r, g, b, ...)
 	outputChatBox(text:format(...), r, g, b, true)

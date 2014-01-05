@@ -1,0 +1,11 @@
+<map edf:definitions="editor_main">
+    <object id="object (fenceshit2) (1)" breakable="true" interior="0" alpha="255" model="984" doublesided="false" scale="1" dimension="0" posX="202.8" posY="-1456.90002" posZ="12.6" rotX="0" rotY="0" rotZ="320"></object>
+    <object id="object (fenceshit2) (2)" breakable="true" interior="0" alpha="255" model="984" doublesided="false" scale="1" dimension="0" posX="194.5" posY="-1456.90002" posZ="12.6" rotX="0" rotY="0" rotZ="219.999"></object>
+    <object id="object (fenceshit2) (3)" breakable="true" interior="0" alpha="255" model="984" doublesided="false" scale="1" dimension="0" posX="189.39999" posY="-1450.80005" posZ="12.6" rotX="0" rotY="0" rotZ="219.996"></object>
+    <object id="object (fenceshit2) (4)" breakable="true" interior="0" alpha="255" model="984" doublesided="false" scale="1" dimension="0" posX="228.2" posY="-1430.69995" posZ="13" rotX="0" rotY="0" rotZ="313.999"></object>
+    <object id="object (fenceshit2) (5)" breakable="true" interior="0" alpha="255" model="984" doublesided="false" scale="1" dimension="0" posX="228.89999" posY="-1421.19995" posZ="13" rotX="0" rotY="0" rotZ="217.995"></object>
+    <object id="object (fenceshit2) (6)" breakable="true" interior="0" alpha="255" model="984" doublesided="false" scale="1" dimension="0" posX="223" posY="-1413.59998" posZ="13" rotX="0" rotY="0" rotZ="217.991"></object>
+    <object id="object (fenceshit2) (7)" breakable="true" interior="0" alpha="255" model="984" doublesided="false" scale="1" dimension="0" posX="222.39999" posY="-1436.19995" posZ="12.9" rotX="0" rotY="0" rotZ="313.995"></object>
+    <object id="object (gatehouse1_SFSe) (1)" breakable="true" interior="0" alpha="255" model="10829" doublesided="false" scale="1" dimension="0" posX="197.39999" posY="-1452" posZ="12" rotX="0" rotY="0" rotZ="228"></object>
+    <removeWorldObject id="removeWorldObject (sm_bevhiltree) (1)" radius="8.8485546112061" interior="0" model="673" lodModel="0" posX="193.14844" posY="-1449.23437" posZ="11.07031" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+</map>

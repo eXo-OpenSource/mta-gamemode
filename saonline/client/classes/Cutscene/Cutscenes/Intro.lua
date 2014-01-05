@@ -37,7 +37,16 @@ debug = true;
 			scale = 2;
 			pos = { 0.5, 0.5 };
 		};
-		{ 
+		{
+			action = "Graphic.drawText";
+			color = tocolor(255, 255, 0);
+			duration = 15000;
+			starttick = 0;
+			text = "Wer hat an der Uhr gedreht?";
+			scale = 3;
+			pos = { 0.5, 0.6 };
+		};
+		{
 			action = "Camera.set";
 			starttick = 0;
 			pos = { 1441, -1410, 80 };

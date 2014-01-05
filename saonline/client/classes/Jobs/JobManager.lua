@@ -10,7 +10,7 @@ JobManager = inherit(Singleton)
 function JobManager:constructor()
 	-- ATTENTION: Please use the same order server and clientside
 	self.m_Jobs = {
-		JobLogistician:new();
+		--JobLogistician:new();
 		JobTrashman:new();
 		JobRoadSweeper:new();
 		JobLumberjack:new()
@@ -31,7 +31,14 @@ function JobManager:Event_jobStart(jobId)
 	local job = self:getFromId(jobId)
 	if not job then return end
 	
-	if job.start then
-		job:start()
+	-- Stop old job if exists
+	if localPlayer:getJob() then
+		if localPlayer:getJob().stop then
+			localPlayer:getJob():stop()
+		end
 	end
+	
+	-- We're ready to start the job :)
+	localPlayer:setJob(job)
+	job:start()
 end

@@ -38,6 +38,7 @@ function JobTrashman:Event_trashcanCollect(containerNum)
 	if getTickCount() - lastTime < 2500 then
 		-- Todo: Report possible cheat attempt
 		outputChatBox("Possible cheat attempt!")
+		return
 	end
 	client:setData("Trashman:LastCan", getTickCount())
 	

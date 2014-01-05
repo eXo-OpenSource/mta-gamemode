@@ -28,6 +28,7 @@
 	<!-- Server -->
 	<script src="server/constants.lua" type="server"/>
 	<script src="server/utils.lua" type="server"/>
+	<script src="server/mapEditorScriptingExtension_s.lua" type="server"/>
 	<script src="server/classes/Debugging.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>
@@ -65,6 +66,7 @@
 	<!-- Client -->
 	<script src="client/globals.lua" type="client"/>
 	<script src="client/utils.lua" type="client"/>
+	<script src="client/mapEditorScriptingExtension_c.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
 	<script src="client/classes/MTAElement.lua" type="client"/>
 	<script src="client/classes/Player.lua" type="client"/>
@@ -241,5 +243,6 @@
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Carhouse.map"/>
+	<map src="files/maps/Roadsweeper.map"/>
 	
 </meta>
