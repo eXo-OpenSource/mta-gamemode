@@ -49,8 +49,6 @@ function JobLumberjack:start()
 		local model, radius, x, y, z = unpack(v)
 		removeWorldModel(model, radius, x, y, z)
 	end
-	
-	playSound("http://www.jusonex.net/Lumberjack.mp3")
 end
 
 function JobLumberjack:stop()

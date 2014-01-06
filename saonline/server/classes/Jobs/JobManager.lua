@@ -35,10 +35,15 @@ function JobManager:Event_jobAccepted(jobId)
 	local job = self:getFromId(jobId)
 	if not job then return end
 	
+	-- Check requirements
+	if job.checkRequirements and not job:checkRequirements(client) then
+		return
+	end
+	
 	-- Stop old job if exists
 	if client:getJob() then
 		if client:getJob().stop then
-			client:getJob():stop()
+			client:getJob():stop(client)
 		end
 	end
 	

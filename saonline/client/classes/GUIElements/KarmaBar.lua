@@ -7,11 +7,18 @@
 -- ****************************************************************************
 KarmaBar = inherit(Singleton)
 inherit(DxElement, KarmaBar)
+addEvent("karmaChange", true)
 
 function KarmaBar:constructor()
 	GUIElement.constructor(self, screenWidth/2-(screenWidth*0.31)/2 / ASPECT_RATIO_MULTIPLIER, screenHeight*0.01, screenWidth*0.31 / ASPECT_RATIO_MULTIPLIER, screenHeight*0.03)
 	
 	self.m_Progress = 0
+	
+	addEventHandler("karmaChange", root,
+		function(karma)
+			self:setKarma(karma)
+		end
+	)
 end
 
 function KarmaBar:setKarma(progress)

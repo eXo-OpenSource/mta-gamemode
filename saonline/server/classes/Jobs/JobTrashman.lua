@@ -1,4 +1,4 @@
--- ****************************************************************************
+﻿-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Jobs/JobTrashman.lua
@@ -25,6 +25,14 @@ function JobTrashman:start(player)
 	client:setData("Trashman:Cans", 0)
 end
 
+function JobTrashman:checkRequirements(player)
+	if not (player:getXP() > 50 and self:getKarma() >= 0) then
+		player:sendMessage(_("Für diesen Job benötigst du mindestens 50 Erfahrungspunkte und ein positives Karma", player), 255, 0, 0)
+		return false
+	end
+	return true
+end
+
 function JobTrashman:Event_trashcanCollect(containerNum)
 	if not containerNum then return end
 	if containerNum > 2 or containerNum < 1 then
@@ -48,8 +56,13 @@ end
 
 function JobTrashman:dumpCans(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension and hitElement:getJob() == self then
-		local moneyAmount = hitElement:getData("Trashman:Cans") * MONEY_PER_CAN
+		local numCans = hitElement:getData("Trashman:Cans")
+		local moneyAmount = numCans * MONEY_PER_CAN
+		
 		hitElement:giveMoney(moneyAmount)
+		hitElement:giveXP(numCans * 0.01)
+		hitElement:giveKarma(numCans * 0.01)
+		
 		hitElement:sendMessage(_("You got %d$", hitElement), 0, 255, 0, moneyAmount)
 		
 		hitElement:setData("Trashman:Cans", 0)

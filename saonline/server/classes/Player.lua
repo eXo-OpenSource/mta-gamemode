@@ -145,12 +145,23 @@ function Player:takeMoney(money)
 	self:setMoney(self:getMoney() - money)
 end
 
+function Player:giveXP(xp)
+	local oldLevel = self:getLevel()
+	self.m_XP = self.m_XP + math.floor(xp)
+	
+	-- Check if the player needs a level up
+	if self:getLevel() > oldLevel then
+		--self:triggerEvent("levelUp", self:getLevel())
+		self:sendInfo(_("Du bist zu Level %d aufgestiegen", self), self:getLevel())
+	end
+end
+
 function Player:getLevel()
 	-- XP(level) = 0.5*x^2 --> level(XP) = sqrt(2*xp)
 	return (2 * self.m_XP)^0.5
 end
 
-function Player:addKarma(points)
+function Player:giveKarma(points)
 	self.m_Karma = self.m_Karma + points
 	self:triggerEvent("karmaChange", self.m_Karma)
 end

@@ -1,4 +1,4 @@
--- ****************************************************************************
+﻿-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Jobs/JobLumberjack.lua
@@ -31,10 +31,18 @@ function JobLumberjack:stop(player)
 	takeWeapon(player, 9)
 end
 
+function JobLumberjack:checkRequirements(player)
+	if not (player:getXP() > 300 and player:getKarma() > -20) then
+		player:sendMessage(_("Für diesen Job benötigst du mindestens ein neutrales Karma!", player), 255, 0, 0)
+		return false
+	end
+	return true
+end
+
 function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		if hitElement:getJob() ~= self then
-			hitElement:sendMessage(_("You have to be a lumberjack to perform this action", hitElement), 255, 0, 0)
+			hitElement:sendMessage(_("Du musst Holzfäller sein, um Bäume aufladen zu können", hitElement), 255, 0, 0)
 			return
 		end
 		
@@ -64,17 +72,19 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
-			hitElement:sendMessage(_("Please enter a Flatbed", hitElement))
+			hitElement:sendMessage(_("Bitte steige in einen Flatbed ein", hitElement))
 			return
 		end
 	
 		local numTrees = hitElement:getData("lumberjack:Trees")
 		if not numTrees or numTrees == 0 then
-			hitElement:sendMessage(_("Please saw and load up some trees first", hitElement), 255, 0, 0)
+			hitElement:sendMessage(_("Säge und lade zuerst einige Bäume auf!", hitElement), 255, 0, 0)
 			return
 		end
 		
-		hitElement:giveMoney(numTrees * 50)
+		-- Give money and experience points
+		hitElement:giveMoney(numTrees * 40)
+		hitElement:giveXP(numTrees * 0.2)
 		
 		for k, v in ipairs(getAttachedElements(vehicle)) do
 			destroyElement(v)
