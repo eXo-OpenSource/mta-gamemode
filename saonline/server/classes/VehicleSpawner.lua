@@ -55,5 +55,3 @@ addEventHandler("vehicleSpawn", root,
 		client:setJobVehicle(vehicle)
 	end
 )
-
-VehicleSpawner:new(0, 40, 3, {"Infernus", "Banshee", "Bullet", "BMX", "Bike", "Caddy"})

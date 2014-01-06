@@ -11,6 +11,7 @@ Vehicle = inherit(MTAElement)
 function Vehicle:constructor(Id, owner, keys, color, health)
 	self.m_Id = Id
 	self.m_Owner = owner
+	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- *hide*
 	self.m_Keys = keys or {}
 	
 	setElementHealth(self, health)
@@ -109,13 +110,10 @@ end
 function Vehicle:getKeyNameList()
 	local names = {}
 	for k, v in ipairs(self.m_Keys) do
-		--[[local character = Character.getById(v)
-		if character then
-			table.insert(names, character:getName())
-		end]]
-		
-		-- Todo: Uncomment the code above as soon as it works (characters should have their own name)
-		table.insert(names, "me")
+		local name = Account.getNameFromId(v)
+		if name then
+			table.insert(names, name)
+		end
 	end
 	return names
 end

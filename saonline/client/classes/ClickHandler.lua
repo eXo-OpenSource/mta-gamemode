@@ -30,7 +30,7 @@ function ClickHandler:dispatchClick(button, state, absoluteX, absoluteY, worldX,
 		
 			local elementType = getElementType(element)
 			if self.m_Menu[elementType] --[[and not element == localPlayer]] then
-				local mouseMenu = self.m_Menu[elementType]:new(absoluteX, absoluteY)
+				local mouseMenu = self.m_Menu[elementType]:new(absoluteX, absoluteY, element)
 				mouseMenu:setElement(element)
 				table.insert(self.m_OpenMenus, mouseMenu)
 			end

@@ -23,7 +23,8 @@ VRP_RADIO = {
 	{"Housetime.fm", "http://listen.housetime.fm/tunein-dsl-asx"},
 	{"Techno4Ever", "http://www.techno4ever.net/t4e/stream/dsl_listen.asx"},
 	{"ClubTime.fm", "http://listen.ClubTime.fm/dsl.pls"},
-	{"CoreTime.fm", "http://listen.CoreTime.fm/dsl.pls"}
+	{"CoreTime.fm", "http://listen.CoreTime.fm/dsl.pls"},
+	{"RADIO METAL ON", "http://62.210.125.50:8000/mp3"}
 }
 
 function RadioGUI:constructor()
@@ -63,7 +64,6 @@ function RadioGUI:constructor()
 	
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
 		function()
-			self:setVisible(true)
 			self:setRadioStation(self.m_CurrentStation)
 		end
 	)
@@ -81,6 +81,8 @@ function RadioGUI:constructor()
 			end
 		end
 	)
+	
+	self:hide()
 end
 
 function RadioGUI:destructor()
@@ -151,6 +153,11 @@ function RadioGUI:nextStation()
 		self.m_CurrentStation = 0
 	end
 	self:setRadioStation(self.m_CurrentStation)
+	
+	if not self:isVisible() then
+		Animation.FadeIn:new(self, 1000)
+		setTimer(function() Animation.FadeOut:new(self, 1000) end, 5000, 1)
+	end
 end
 
 function RadioGUI:previousStation()
@@ -159,6 +166,11 @@ function RadioGUI:previousStation()
 		self.m_CurrentStation = #VRP_RADIO
 	end
 	self:setRadioStation(self.m_CurrentStation)
+	
+	if not self:isVisible() then
+		Animation.FadeIn:new(self, 1000)
+		setTimer(function() Animation.FadeOut:new(self, 1000) end, 5000, 1)
+	end
 end
 
 function RadioGUI:getStation()

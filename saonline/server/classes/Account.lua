@@ -104,7 +104,9 @@ function Account:getId()
 end
 
 function Account.getNameFromId(id)
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
-	local row = Async.wait()
+	--[[sql:queryFetchSingle(Async.waitFor(self), "SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
+	local row = Async.wait()]]
+	
+	local row = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
 	return row.Name
 end

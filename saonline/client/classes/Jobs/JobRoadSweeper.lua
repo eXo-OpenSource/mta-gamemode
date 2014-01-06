@@ -43,7 +43,7 @@ function JobRoadSweeper:stop()
 end
 
 function JobRoadSweeper:Rubbish_Hit(hitElement, matchingDimension)
-	if hitElement == localPlayer and matchingDimension then
+	if hitElement == localPlayer and matchingDimension and not self.m_Busy then
 		destroyElement(source)
 		triggerServerEvent("sweeperGarbageCollect", root)
 		
@@ -54,7 +54,8 @@ function JobRoadSweeper:Rubbish_Hit(hitElement, matchingDimension)
 		end
 		
 		setElementFrozen(vehicle, true)
-		setTimer(setElementFrozen, 500, 1, vehicle, false)
+		self.m_Busy = true
+		setTimer(function() setElementFrozen(vehicle, false) self.m_Busy = nil end, 500, 1)
 	end
 end
 
