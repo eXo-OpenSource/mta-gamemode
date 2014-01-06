@@ -15,7 +15,6 @@ addEventHandler("onPlayerConnect", root,
 	end
 )
 addEventHandler("onPlayerJoin", root, function() source:join() end)
-addEventHandler("onPlayerQuit", root, function() source:save() end)
 addEvent("introFinished", true)
 addEventHandler("introFinished", root, function() client:spawn() end)
 
@@ -41,6 +40,14 @@ function Player:constructor()
 	
 	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	setElementFrozen(self, true)
+end
+
+function Player:destructor()
+	if self.m_JobVehicle and isElement(self.m_JobVehicle) then
+		destroyElement(self.m_JobVehicle)
+	end
+	
+	self:save()
 end
 
 function Player:connect()
@@ -147,7 +154,7 @@ end
 
 function Player:giveXP(xp)
 	local oldLevel = self:getLevel()
-	self.m_XP = self.m_XP + math.floor(xp)
+	self.m_XP = self.m_XP + xp
 	
 	-- Check if the player needs a level up
 	if self:getLevel() > oldLevel then
@@ -158,7 +165,7 @@ end
 
 function Player:getLevel()
 	-- XP(level) = 0.5*x^2 --> level(XP) = sqrt(2*xp)
-	return (2 * self.m_XP)^0.5
+	return (2 * math.floor(self.m_XP))^0.5
 end
 
 function Player:giveKarma(points)

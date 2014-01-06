@@ -16,13 +16,13 @@ debug = true;
 		{
 			action = "General.fade";
 			fadein = true;
-			time = 10000;
+			time = 2000;
 			starttick = 50;
 		};
 		{
 			action = "Graphic.drawText";
 			color = tocolor(255, 255, 255);
-			duration = 15000;
+			duration = 6000;
 			text = "V Roleplay";
 			starttick = 0;
 			scale = 5;
@@ -31,7 +31,7 @@ debug = true;
 		{
 			action = "Graphic.drawText";
 			color = tocolor(255, 255, 255);
-			duration = 15000;
+			duration = 6000;
 			starttick = 0;
 			text = "Hier kommt noch ein längeres Intro";
 			scale = 2;
@@ -40,7 +40,7 @@ debug = true;
 		{
 			action = "Graphic.drawText";
 			color = tocolor(255, 255, 0);
-			duration = 15000;
+			duration = 6000;
 			starttick = 0;
 			text = "Wer hat an der Uhr gedreht?";
 			scale = 3;
@@ -54,7 +54,7 @@ debug = true;
 		};
 		{
 			action = "General.finish";
-			starttick = 15000;
+			starttick = 6000;
 		}
 	};
 })

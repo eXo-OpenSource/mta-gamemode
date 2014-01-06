@@ -17,7 +17,7 @@ function JobRoadSweeper:constructor()
 end
 
 function JobRoadSweeper:start(player)
-	player:setData("Sweeper:Collected", 0)
+	
 end
 
 function JobRoadSweeper:Event_sweeperGarbageCollect()
@@ -34,11 +34,7 @@ function JobRoadSweeper:Event_sweeperGarbageCollect()
 		return
 	end
 	client:setData("Sweeper:Last", getTickCount())
-	client:setData("Sweeper:Collected", (client:getData("Sweeper:Collected") or 0) + 1)
 	
 	client:giveMoney(3)
-	
-	if client:getData("Sweeper:Collected") % 20 == 0 then
-		client:giveXP(1)
-	end
+	client:giveXP(0.02)
 end

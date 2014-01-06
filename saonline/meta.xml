@@ -60,6 +60,7 @@
 	<script src="server/classes/Jobs/JobTrashman.lua" type="server"/>
 	<script src="server/classes/Jobs/JobRoadSweeper.lua" type="server"/>
 	<script src="server/classes/Jobs/JobLumberjack.lua" type="server"/>
+	<script src="server/classes/Jobs/JobPickpocket.lua" type="server"/>
 	
 	<script src="server/Main.lua" type="server"/>
 	
@@ -177,6 +178,7 @@
 	<script src="client/classes/Jobs/JobTrashman.lua" type="client"/>
 	<script src="client/classes/Jobs/JobRoadSweeper.lua" type="client"/>
 	<script src="client/classes/Jobs/JobLumberjack.lua" type="client"/>
+	<script src="client/classes/Jobs/JobPickpocket.lua" type="client"/>
 	
 	<script src="client/Main.lua" type="client"/>
 	
@@ -226,6 +228,7 @@
 	<file src="files/images/Blips/Trashman.png"/>
 	<file src="files/images/Blips/RoadSweeper.png"/>
 	<file src="files/images/Blips/Lumberjack.png"/>
+	<file src="files/images/Blips/Pickpocket.png"/>
 	
 	<file src="files/images/Jobs/HeaderLogistician.png"/>
 	<file src="files/images/Jobs/HeaderTrashman.png"/>

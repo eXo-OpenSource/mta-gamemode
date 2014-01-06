@@ -25,7 +25,7 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 end
 
 function VehicleSpawner:markerHit(hitElement, matchingDimension)
-	if getElementType(hitElement) == "player" and matchingDimension then
+	if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
 		if self.m_ConditionFunc and not self.m_ConditionFunc(hitElement) then
 			hitElement:sendMessage(_("Du bist nicht berechtigt dieses Fahrzeug zu erstellen!", hitElement), 255, 0, 0)
 			return
