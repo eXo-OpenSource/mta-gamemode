@@ -19,4 +19,8 @@ function Job:setId(Id)
 	self.m_Id = Id
 end
 
+function Job:requireVehicle(player)
+	return player:getJob() == self
+end
+
 Job.start = pure_virtual

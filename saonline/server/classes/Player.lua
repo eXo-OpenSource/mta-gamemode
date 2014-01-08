@@ -90,9 +90,10 @@ function Player:createCharacter(id)
 end
 
 function Player:loadCharacterInfo()
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT XP, Karma, Money, BankMoney, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, XP, Karma, Money, BankMoney, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
+	self.m_SavedPosition = Vector(row.PosX, row.PosY, row.PosZ)
 	self.m_XP 	 = row.XP
 	self.m_Karma = row.Karma
 	self.m_Money = row.Money
@@ -108,11 +109,14 @@ function Player:loadCharacterInfo()
 end
 
 function Player:save()
-	return sql:queryExec("UPDATE ??_character SET XP = ?, Karma = ?, Money = ?, BankMoney = ?, TutorialStage = ? WHERE Id = ?;", sql:getPrefix(), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_TutorialStage, self.m_Id)
+	local x, y, z = getElementPosition(self)
+	
+	return sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, TutorialStage = ? WHERE Id = ?;", sql:getPrefix(), 
+		x, y, z, self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_TutorialStage, self.m_Id)
 end
 
 function Player:spawn()
-	setElementDimension(self, 0)
+	spawnPlayer(self, self.m_SavedPosition.X, self.m_SavedPosition.Y, self.m_SavedPosition.Z, 0, 0, 0, 0)
 end
 
 -- Message Boxes

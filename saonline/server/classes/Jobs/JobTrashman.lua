@@ -26,7 +26,7 @@ function JobTrashman:start(player)
 end
 
 function JobTrashman:checkRequirements(player)
-	if not (player:getXP() > 50 and self:getKarma() >= 0) then
+	if not (player:getXP() > 50) then
 		player:sendMessage(_("Für diesen Job benötigst du mindestens 50 Erfahrungspunkte und ein positives Karma", player), 255, 0, 0)
 		return false
 	end

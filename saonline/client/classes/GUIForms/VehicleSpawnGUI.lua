@@ -8,7 +8,7 @@
 VehicleSpawnGUI = inherit(GUIForm)
 
 function VehicleSpawnGUI:constructor(spawnerId, vehicleList)
-	GUIForm.constructor(self, screenWidth/2 - screenWidth/4, screenHeight/2 - screenHeight/2.5, screenWidth/4, screenHeight/2.5)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth/4/2, screenHeight/2 - screenHeight/2.5/2, screenWidth/4, screenHeight/2.5)
 	self.m_SpawnerId = spawnerId
 	
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug erstellen", true, true, self)

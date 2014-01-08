@@ -11,6 +11,12 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 end
 
+function PlayerManager:destructor()
+	for k, v in ipairs(getElementsByType("player")) do
+		delete(v)
+	end
+end
+
 function PlayerManager:playerChat(message, messageType)
 	if messageType == 0 then
 		local phonePartner = source:getPhonePartner()

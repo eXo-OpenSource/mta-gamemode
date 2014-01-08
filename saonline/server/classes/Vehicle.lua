@@ -23,10 +23,10 @@ function Vehicle:constructor(Id, owner, keys, color, health)
 end
 
 function Vehicle:destructor()
-	destroyElement(self)
+	
 end
 
-function Vehicle.create(owner, model, posX, posY, posZ, rotation)
+function Vehicle.createPermanent(owner, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
 	if type(owner) == "userdata" then
 		owner = owner:getId()
@@ -40,7 +40,23 @@ function Vehicle.create(owner, model, posX, posY, posZ, rotation)
 	return false
 end
 
+function Vehicle.create(owner, model, posX, posY, posZ, rotation)
+	rotation = tonumber(rotation) or 0
+	if type(owner) == "userdata" then
+		owner = owner:getId()
+	end
+	
+	local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
+	enew(vehicle, Vehicle, false, owner, nil, nil, 1000)
+	--VehicleManager:getSingleton():addRef(vehicle)
+	return vehicle
+end
+
 function Vehicle:purge()
+	if not self:isPermanent() then
+		return false
+	end
+
 	if sql:queryExec("DELETE FROM ??_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
 		destroyElement(self)
 		return true
@@ -49,6 +65,10 @@ function Vehicle:purge()
 end
 
 function Vehicle:save()
+	if not self:isPermanent() then
+		return false
+	end
+
 	local posX, posY, posZ = getElementPosition(self)
 	local rotX, rotY, rotZ = getElementRotation(self)
 	local health = getElementHealth(self)
@@ -60,6 +80,10 @@ end
 
 function Vehicle:getId()
 	return self.m_Id
+end
+
+function Vehicle:isPermanent()
+	return self.m_Id ~= false
 end
 
 function Vehicle:setOwner(owner)

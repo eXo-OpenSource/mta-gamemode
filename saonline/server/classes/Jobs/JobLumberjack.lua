@@ -16,8 +16,10 @@ function JobLumberjack:constructor()
 	self.m_DumpMarker = createMarker(672.95, -1239.7, 14.8, "corona", 4)
 	addEventHandler("onMarkerHit", self.m_DumpMarker, bind(JobLumberjack.dumpHit, self))
 	
-	createVehicle(455, 1868.5, -1253.8, 14.6, 0, 0, 90, "Lumber", false, 255, 255)
-	createVehicle(455, 1893.5, -1253.8, 14.6, 0, 0, 90, "Lumber", false, 255, 255)
+	--createVehicle(455, 1868.5, -1253.8, 14.6, 0, 0, 90, "Lumber", false, 255, 255)
+	--createVehicle(455, 1893.5, -1253.8, 14.6, 0, 0, 90, "Lumber", false, 255, 255)
+	VehicleSpawner:new(1897.65, -1253.3, 12.7, {"Flatbed"}, 90, bind(Job.requireVehicle, self), function(v) setVehicleVariant(v, 255, 255) end)
+	VehicleSpawner:new(1878.28, -1253.3, 12.7, {"Flatbed"}, 90, bind(Job.requireVehicle, self), function(v) setVehicleVariant(v, 255, 255) end)
 	
 	addEvent("lumberjackTreeCut", true)
 	addEventHandler("lumberjackTreeCut", root, bind(JobLumberjack.Event_lumberjackTreeCut, self))
@@ -32,8 +34,8 @@ function JobLumberjack:stop(player)
 end
 
 function JobLumberjack:checkRequirements(player)
-	if not (player:getXP() > 300 and player:getKarma() > -20) then
-		player:sendMessage(_("Für diesen Job benötigst du mindestens ein neutrales Karma!", player), 255, 0, 0)
+	if not (player:getXP() >= 300) then
+		player:sendMessage(_("Für diesen Job benötigst du mindestens ein 300 XP!", player), 255, 0, 0)
 		return false
 	end
 	return true

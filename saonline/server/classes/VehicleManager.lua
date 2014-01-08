@@ -55,7 +55,7 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	end
 	
 	local spawnX, spawnY, spawnZ, rotation = unpack(VEHICLESHOPS[shop].Spawn)
-	local vehicle = Vehicle.create(client:getId(), vehicleModel, spawnX, spawnY, spawnZ, rotation)
+	local vehicle = Vehicle.createPermanent(client:getId(), vehicleModel, spawnX, spawnY, spawnZ, rotation)
 	if vehicle then
 		client:takeMoney(price)
 		warpPedIntoVehicle(client, vehicle)
