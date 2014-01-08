@@ -24,7 +24,7 @@ function ClickHandler:dispatchClick(button, state, absoluteX, absoluteY, worldX,
 		end
 	
 		if button == "right" then
-			if not element or not isElement(element) or not instanceof(element, Vehicle) then
+			if not element or not isElement(element) or not getElementData(element, "OwnerName") then -- Elementdata: temp fix (Todo)
 				return
 			end
 		
