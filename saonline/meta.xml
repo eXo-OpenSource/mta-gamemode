@@ -47,6 +47,7 @@
 	<script src="server/classes/BankManager.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
 	<script src="server/classes/Forum.lua" type="server"/>
+	<script src="server/classes/WantedSystem.lua" type="server"/>
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -77,6 +78,7 @@
 	<script src="client/classes/ClickHandler.lua" type="client"/>
 	<script src="client/classes/VehicleShop.lua" type="client"/>
 	<script src="client/classes/GPS.lua" type="client"/>
+	<script src="client/classes/CustomModelManager.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -242,6 +244,9 @@
 	<file src="files/audio/Ringtones/Ringtone4.mp3"/>
 	
 	<file src="files/audio/Success.mp3"/>
+	
+	<!-- Models -->
+	<file src="files/models/dead_tree_18.dff"/>
 	
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>

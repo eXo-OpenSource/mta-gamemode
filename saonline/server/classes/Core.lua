@@ -23,6 +23,7 @@ function Core:constructor()
 	VehicleManager:new()
 	BankManager:new()
 	Async.create(function() Forum:new() end)()
+	WantedSystem:new()
 	
 	-- Refresh all players
 	for k, v in pairs(getElementsByType("player")) do

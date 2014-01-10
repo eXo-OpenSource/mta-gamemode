@@ -53,6 +53,11 @@ function JobPickpocket:Vending_Hit(hitElement, matchingDimension)
 		hitElement:giveXP(0.1)
 		hitElement:takeKarma(0.01)
 		
+		-- Give wanted level
+		if hitElement:getWantedLevel() < 1 then
+			hitElement:giveWantedLevel(1)
+		end
+		
 		-- Set vending machine busy for 2min
 		source.isBusy = true
 		setTimer(function(c) c.isBusy = nil end, 120000, 1, source)

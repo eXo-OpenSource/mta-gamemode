@@ -73,7 +73,7 @@ function VehicleManager:Event_vehicleLock()
 	end
 	
 	if not source:hasKey(client) then
-		client:sendError(_"You do not own a key for this vehicle")
+		client:sendError(_("You do not own a key for this vehicle", client))
 		return
 	end
 	
@@ -91,14 +91,14 @@ end
 
 function VehicleManager:Event_vehicleAddKey(player)
 	if not player or not isElement(player) then return end
+	if not player:isLoggedIn() then return end
 	
 	if not instanceof(source, Vehicle, true) then
 		return
 	end
 	
-	if source:getOwner() ~= player:getId() then
+	if source:getOwner() ~= client:getId() then
 		client:sendWarning(_("You are not the owner of this vehicle!", client))
-		-- Todo: Tell the anticheat that we found a possible cheat attempt
 		return
 	end
 	
@@ -111,6 +111,11 @@ end
 function VehicleManager:Event_vehicleRemoveKey(characterId)
 	if not source:hasKey(characterId) then
 		client:sendWarning(_("The specified player is not in percession of a key", client))
+		return
+	end
+	
+	if source:getOwner() ~= client:getId() then
+		client:sendWarning(_("You are not the owner of this vehicle!", client))
 		return
 	end
 	

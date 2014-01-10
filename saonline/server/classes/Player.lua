@@ -27,6 +27,7 @@ function Player:constructor()
 	self.m_Karma = 0
 	self.m_Money = 0
 	self.m_BankMoney = 0
+	self.m_WantedLevel = 0
 	--[[
 	Tutorial Stages:
 	0 - Just created an account
@@ -90,7 +91,7 @@ function Player:createCharacter(id)
 end
 
 function Player:loadCharacterInfo()
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_SavedPosition = Vector(row.PosX, row.PosY, row.PosZ)
@@ -100,6 +101,8 @@ function Player:loadCharacterInfo()
 	self.m_Karma = row.Karma
 	self.m_Money = row.Money
 	setPlayerMoney(self, self.m_Money) -- Todo: Remove this line later
+	self.m_WantedLevel = row.WantedLevel
+	setPlayerWantedLevel(self, self.m_WantedLevel)
 	self.m_BankMoney = row.BankMoney
 	self.m_TutorialStage = row.TutorialStage
 	
@@ -114,8 +117,8 @@ function Player:save()
 	local x, y, z = getElementPosition(self)
 	local interior = getElementInterior(self)
 	
-	return sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, TutorialStage = ? WHERE Id = ?;", sql:getPrefix(), 
-		x, y, z, interior, getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_TutorialStage, self.m_Id)
+	return sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ? WHERE Id = ?;", sql:getPrefix(), 
+		x, y, z, interior, getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Id)
 end
 
 function Player:spawn()
@@ -130,12 +133,14 @@ function Player:sendSuccess(text, ...)	self:triggerEvent("successBox", text:form
 
 -- Short getters
 function Player:getId()			return self.m_Id		end
+function Player:isLoggedIn()	return self.m_Id ~= -1	end
 function Player:getAccount()	return self.m_Account 	end
 function Player:getPlayer()		return self.m_Player	end
 function Player:getMoney()		return getPlayerMoney(self)	end
 function Player:getXP()			return self.m_XP		end
 function Player:getKarma()		return self.m_Karma		end
 function Player:getBankMoney()	return self.m_BankMoney	end
+function Player:getWantedLevel()return self.m_WantedLevel end
 function Player:getJob()   		return self.m_Job		end
 function Player:getAccount()	return self.m_Account	end
 function Player:getLocale()		return self.m_Locale	end
@@ -145,6 +150,7 @@ function Player:getJobVehicle() return self.m_JobVehicle end
 
 -- Short setters
 function Player:setMoney(money) self.m_Money = money setPlayerMoney(self, money) end
+function Player:setWantedLevel(level) self.m_WantedLevel = level setPlayerWantedLevel(self, level) end
 function Player:setJob(job)	 	self.m_Job = job 		end
 function Player:setLocale(locale)	self.m_Locale = locale	end
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
@@ -201,4 +207,12 @@ function Player:takeBankMoney(amount, logType)
 		return true
 	end
 	return false
+end
+
+function Player:giveWantedLevel(level)
+	self:setWantedLevel(self.m_WantedLevel + level)
+end
+
+function Player:takeWantedLevel(level)
+	self:setWantedLevel(self.m_WantedLevel - level)
 end

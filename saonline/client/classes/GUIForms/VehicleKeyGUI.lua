@@ -34,8 +34,8 @@ function VehicleKeyGUI:constructor(vehicleElement)
 			self.m_KeysGrid:clear()
 			
 			-- Insert new items
-			for k, name in ipairs(keyList) do
-				self.m_KeysGrid:addItem(name)
+			for id, name in pairs(keyList) do
+				self.m_KeysGrid:addItem(name).CharacterId = id
 			end
 		end
 	)

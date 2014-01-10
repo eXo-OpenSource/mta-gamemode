@@ -19,6 +19,7 @@ function Core:constructor()
 	ClickHandler:new()
 	RadioGUI:new()
 	KarmaBar:new()
+	CustomModelManager:new()
 	
 	-- HUD
 	--HUDRadar:new()

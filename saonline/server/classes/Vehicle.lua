@@ -136,7 +136,7 @@ function Vehicle:getKeyNameList()
 	for k, v in ipairs(self.m_Keys) do
 		local name = Account.getNameFromId(v)
 		if name then
-			table.insert(names, name)
+			names[v] = name
 		end
 	end
 	return names
