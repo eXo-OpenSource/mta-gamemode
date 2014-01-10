@@ -84,6 +84,12 @@ end
 function Player:loadCharacter(charid)
 	self.m_Id = charid
 	self:loadCharacterInfo()
+	
+	-- Send infos to client
+	local info = {
+		Rank = self:getRank();
+	}
+	self:triggerEvent("retrieveInfo", info)
 end
 
 function Player:createCharacter(id)
@@ -135,7 +141,7 @@ function Player:sendSuccess(text, ...)	self:triggerEvent("successBox", text:form
 function Player:getId()			return self.m_Id		end
 function Player:isLoggedIn()	return self.m_Id ~= -1	end
 function Player:getAccount()	return self.m_Account 	end
-function Player:getPlayer()		return self.m_Player	end
+function Player:getRank()		return self.m_Account:getRank() end
 function Player:getMoney()		return getPlayerMoney(self)	end
 function Player:getXP()			return self.m_XP		end
 function Player:getKarma()		return self.m_Karma		end

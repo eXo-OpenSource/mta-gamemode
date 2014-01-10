@@ -6,14 +6,17 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
+addEvent("karmaSet", true)
+addEvent("retrieveInfo", true)
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
 	self.m_Karma = 0
 	self.m_Job = false
+	self.m_Rank = 0
 	
 	-- Since the local player exist only once, we can add the events here
-	addEvent("karmaSet", true)
+	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
 	addEventHandler("karmaSet", root, bind(self.Event_karmaSet, self))
 end
 
@@ -33,8 +36,15 @@ function LocalPlayer:sendMessage(text, r, g, b, ...)
 	outputChatBox(text:format(...), r, g, b, true)
 end
 
+function LocalPlayer:getRank()
+	return self.m_Rank
+end
 
 -- Events
+function LocalPlayer:Event_retrieveInfo(info)
+	self.m_Rank = info.Rank
+end
+
 function LocalPlayer:Event_karmaSet(karma)
 	self.m_Karma = karma
 	KarmaBar:getSingleton():setKarma(karma)

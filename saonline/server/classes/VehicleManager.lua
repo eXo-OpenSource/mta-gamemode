@@ -16,11 +16,13 @@ function VehicleManager:constructor()
 	addEvent("vehicleRequestKeys", true)
 	addEvent("vehicleAddKey", true)
 	addEvent("vehicleRemoveKey", true)
+	addEvent("vehicleRepair", true)
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
 	addEventHandler("vehicleRemoveKey", root, bind(self.Event_vehicleRemoveKey, self))
+	addEventHandler("vehicleRepair", root, bind(self.Event_vehicleRepair, self))
 	
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	outputServerLog(("Loading %d vehicles"):format(#result))
@@ -122,4 +124,13 @@ function VehicleManager:Event_vehicleRemoveKey(characterId)
 	source:removeKey(characterId)
 	
 	-- Todo: Tell the client that we removed the key
+end
+
+function VehicleManager:Event_vehicleRepair()
+	if client:getRank() < RANK.Moderator then
+		-- Report cheat attempt
+		return
+	end
+	
+	fixVehicle(source)
 end

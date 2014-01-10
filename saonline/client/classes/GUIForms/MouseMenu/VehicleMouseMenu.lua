@@ -26,4 +26,14 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
+	
+	if localPlayer:getRank() >= RANK.Moderator then
+		self:addItem("Repair",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleRepair", self:getElement())
+				end
+			end
+		)
+	end
 end

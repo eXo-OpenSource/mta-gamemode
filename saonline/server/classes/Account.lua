@@ -78,7 +78,7 @@ function Account:constructor(id, username, player, pwhash, justRegistered)
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
-	self.m_Rank = row.Rank;
+	self.m_Rank = row.Rank
 	
 	if self.m_Rank == RANK.Banned then
 		Ban:new(player)
@@ -101,6 +101,10 @@ end
 
 function Account:getId()
 	return self.m_Id;
+end
+
+function Account:getRank()
+	return self.m_Rank
 end
 
 function Account.getNameFromId(id)
