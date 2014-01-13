@@ -230,10 +230,10 @@ function utils.class.bind(func, ...)
 	return 
 		function(...) 
 			local params = {}
-			for k, v in pairs(boundParams) do
+			for k, v in ipairs(boundParams) do
 				params[#params+1] = v
 			end
-			for k, v in pairs({...}) do
+			for k, v in ipairs({...}) do
 				params[#params+1] = v
 			end
 			return func(unpack(params)) 

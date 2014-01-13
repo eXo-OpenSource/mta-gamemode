@@ -1,7 +1,7 @@
 ﻿-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Jobs/JobPickpocket.lua
+-- *  FILE:        client/classes/Jobs/JobPickpocket.lua
 -- *  PURPOSE:     Pickpocket job class
 -- *
 -- ****************************************************************************
