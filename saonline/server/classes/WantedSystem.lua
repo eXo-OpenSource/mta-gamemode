@@ -21,7 +21,7 @@ function WantedSystem:playerDamage(attacker, attackerWeapon, bodypart, loss)
 end
 
 function WantedSystem:playerWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
-	if killer and killer ~= source and getElementType(killer) == "player" then
+	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
 		if killer:getWantedLevel() < 4 then
 			killer:giveWantedLevel(1)
 		end

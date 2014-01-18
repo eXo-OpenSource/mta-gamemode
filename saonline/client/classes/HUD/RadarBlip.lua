@@ -7,12 +7,12 @@
 -- ****************************************************************************
 RadarBlip = inherit(Object)
 
-function RadarBlip:constructor(worldX, worldY, imagePath)
+function RadarBlip:constructor(imagePath, worldX, worldY)
 	self.m_ImagePath = imagePath
 	self.m_WorldX = worldX
 	self.m_WorldY = worldY
 	self.m_Alpha = 255
-	self.m_Size = 16
+	self.m_Size = 24
 end
 
 function RadarBlip:destructor()

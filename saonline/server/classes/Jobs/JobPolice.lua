@@ -10,8 +10,8 @@ JobPolice = inherit(Job)
 function JobPolice:constructor()
 	Job.constructor(self)
 
-	VehicleSpawner:new(1555.3, -1605.5, 12.3, {"Police LS"}, 180, bind(Job.requireVehicle, self))
-	VehicleSpawner:new(1566.3, -1605.5, 12.3, {"Police LS"}, 180, bind(Job.requireVehicle, self))
+	VehicleSpawner:new(1555.3, -1605.5, 12.5, {"Police LS"}, 180, bind(Job.requireVehicle, self))
+	VehicleSpawner:new(1566.3, -1605.5, 12.5, {"Police LS"}, 180, bind(Job.requireVehicle, self))
 	
 	addEventHandler("onPlayerDamage", root, bind(self.playerDamage, self))
 end
@@ -39,8 +39,8 @@ end
 
 function JobPolice:playerDamage(attacker, attackerWeapon, bodypart, loss)
 	if source:getWantedLevel() > 0 then
-		attacker = source
-		if attacker and getElementType(attacker) == "player" --[[and weapon == 3 and attacker:getJob() == self]] then
+		
+		if attacker and attacker ~= source and getElementType(attacker) == "player" and weapon == 3 and attacker:getJob() == self then
 			-- Teleport to jail
 			setElementPosition(source, 264, 77.6, 1001.1)
 			setElementRotation(source, 0, 0, 270)

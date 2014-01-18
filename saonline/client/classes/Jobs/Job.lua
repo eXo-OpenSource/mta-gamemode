@@ -10,6 +10,7 @@ Job = inherit(Object)
 function Job:constructor(posX, posY, posZ, blipPath, headerImage, description)
 	-- Create the customblip
 	exports.customblips:createCustomBlip(posX, posY, 20, 20, blipPath)
+	HUDRadar:getSingleton():addBlip(blipPath, posX, posY)
 	
 	-- Create a job marker
 	self.m_Marker = createMarker(posX, posY, posZ, "cylinder", 1.5, 255, 255, 0, 200)

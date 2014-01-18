@@ -53,8 +53,15 @@ debug = true;
 			lookat = { 1440, -1410, 80 };
 		};
 		{
+			action = "Audio.playSound";
+			starttick = 0;
+			path = "http://www.jusonex.net/public/saonline/intro.mp3";
+			looped = false;
+			duration = 14000;
+		};
+		{
 			action = "General.finish";
-			starttick = 6000;
+			starttick = 14000;
 		}
 	};
 })
