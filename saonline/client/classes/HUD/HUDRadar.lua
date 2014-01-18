@@ -5,8 +5,7 @@
 -- *  PURPOSE:     HUD radar class
 -- *
 -- ****************************************************************************
-HUDRadar = inherit(Object)
-local screenWidth, screenHeight = guiGetScreenSize()
+HUDRadar = inherit(Singleton)
 
 function HUDRadar:constructor()
 	self.m_ImageWidth, self.m_ImageHeight = 1024, 1024
@@ -18,7 +17,7 @@ function HUDRadar:constructor()
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_Blips = {}
 	
-	-- Set texture edge to border (no-repeat) | Not yet available in current 1.3.4 build (probably 1.3.5 upwards)
+	-- Set texture edge to border (no-repeat) | Not yet available in current 1.3.4 build (probably 1.3.5 onwards)
 	if dxSetTextureEdge then
 		dxSetTextureEdge(self.m_Texture, "border", tocolor(51, 70, 77))
 	end

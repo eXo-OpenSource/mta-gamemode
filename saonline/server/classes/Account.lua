@@ -61,7 +61,7 @@ function Account.register(player, username, password)
 	
 	-- todo: get a better salt
 	local salt = md5(math.random())
-	sql:queryExec("INSERT INTO ??_account(Name, Password, Salt) VALUES (?, ?, ?);", sql:getPrefix(), username, sha256(salt..password), salt)
+	sql:queryExec("INSERT INTO ??_account(Name, Password, Salt, Rank) VALUES (?, ?, ?, ?);", sql:getPrefix(), username, sha256(salt..password), salt, 0)
 	
 	return Account:new(sql:lastInsertId(), username, player, nil, true)
 end

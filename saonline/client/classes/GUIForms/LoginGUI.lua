@@ -236,6 +236,7 @@ addEventHandler("loginsuccess", root,
 					
 					-- Temp fix?
 					triggerServerEvent("introFinished", root)
+					HUDRadar:new()
 				end
 			)
 		elseif tutorialstage == 1 then

@@ -154,7 +154,7 @@ end
 --||	@param: vararg        - Parameters passed to the destructor and derived_destructors
 --\\
 function delete(self, ...)
-	if rawget(self, "destructor") then
+	if self.destructor then --if rawget(self, "destructor") then
 		self:destructor(...)
 	end
 
