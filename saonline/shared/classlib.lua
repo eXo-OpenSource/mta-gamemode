@@ -1,28 +1,26 @@
 -- Developer: sbx320
 -- License: MIT
--- Download URL: http://www.sbx320.net/release/classlib.lua
+-- Github Repos: https://github.com/sbx320/lua_utils
 
---// shared.utils.class
+--// classlib
 --||	@type:	Shared
 --||	@desc:	A library providing several tools to enhance OOP with Lua
 --||	@info:  Registers itself into the global namespace
 --\\
-utils = utils or {}
-utils.class = {}
-utils.class.elementClasses = {}
-utils.class.elementIndex = {}
+local elementClasses = {}
+local elementIndex = {}
 
 -- Set DEBUG to true to enable some additional checks
 DEBUG = DEBUG or nil
 
---// utils.class.new(class, ...)
+--// new(class, ...)
 --||	@desc:	Creates an instance of 'class' and calls the constructor
 --||			and all derived_constructors
 --||	@param:	table 'class' -	The class which should be instanciated
 --||	@param: vararg        - Parameters passed to the constructor and derived_constructors
 --||	@return:table 		  - The newly created instance 
 --\\
-function utils.class.new(class, ...)
+function new(class, ...)
 	assert(type(class) == "table", "first argument provided to new is not a table")
 	
 	-- DEBUG: Validate that we are not instanciating a class with pure virtual methods
@@ -64,20 +62,20 @@ function utils.class.new(class, ...)
 	-- Add a change handler for all ._changeVARIABLE methods
 	for k, v in pairs(class) do
 		if k:sub(1, 7) == "_change" then
-			utils.class.addChangeHandler(instance, k:sub(8), v)
+			addChangeHandler(instance, k:sub(8), v)
 		end
 	end
 
 	return instance
 end
 
---// utils.class.enew(element, class, ...)
+--// enew(element, class, ...)
 --||	@desc:	Makes an element an instance of 'class' and calls the constructor
 --||	@param:	table 'class' -	The class which should be instanciated
 --||	@param: vararg        - Parameters passed to the constructor and derived_constructors
 --||	@return:element 	  - The element passed
 --\\
-function utils.class.enew(element, class, ...)
+function enew(element, class, ...)
 	-- DEBUG: Validate that we are not instanciating a class with pure virtual methods
 	if DEBUG then
 		for k, v in pairs(class) do
@@ -93,7 +91,7 @@ function utils.class.enew(element, class, ...)
 			__call = class.__call;
 		})
 		
-	utils.class.elementIndex[element] = instance
+	elementIndex[element] = instance
 	
 	-- Weird Lua behaviour requires forwarding of recursive local functions...?
 	local callDerivedConstructor;
@@ -118,7 +116,7 @@ function utils.class.enew(element, class, ...)
 	-- Add a change handler for all ._changeVARIABLE methods
 	for k, v in pairs(class) do
 		if k:sub(1, 7) == "_change" then
-			utils.class.addChangeHandler(instance, k:sub(8), v)
+			addChangeHandler(instance, k:sub(8), v)
 		end
 	end
 	
@@ -126,38 +124,38 @@ function utils.class.enew(element, class, ...)
 	addEventHandler(
 		triggerClientEvent ~= nil and 
 		"onElementDestroy" or
-		"onClientElementDestroy", element, utils.class.__removeElementIndex, false, "low-999999")
+		"onClientElementDestroy", element, __removeElementIndex, false, "low-999999")
 
 	return element
 end
 
---// utils.class.registerElementClass(elementType, class)
+--// registerElementClass(elementType, class)
 --||	@desc:	Registers a class to be used upon element index operations like e.g.
 --||			getPlayerFromName("MrX"):hello() would search in the class assigned to "player"
 --||	@param:	string 'elementType'- The element type the class is supposed to be assigned to
 --||	@param: table 'class'       - The class which is assigned
 --\\
-function utils.class.registerElementClass(elementType, class)
-	utils.class.elementClasses[elementType] = class
+function registerElementClass(elementType, class)
+	elementClasses[elementType] = class
 end
 
---// utils.class.__removeElementIndex()
+--// __removeElementIndex()
 --||	@desc:	This function calls delete on the hidden source parameter to invoke the destructor
 --||			!!! Avoid calling this function manually unless you know what you're doing! !!!
 --\\
-function utils.class.__removeElementIndex()
-	utils.class.delete(source)
+function __removeElementIndex()
+	delete(source)
 end
 
---// utils.class.delete(self, ...)
+--// delete(self, ...)
 --||	@desc:	Deletes an instance and calls the destructor
 --||			and all derived_destructors
 --||	@param:	table 'self' -	The instance to be deleted
 --||	@param: vararg        - Parameters passed to the destructor and derived_destructors
 --\\
-function utils.class.delete(self, ...)
-	if self.destructor then
-		self.destructor(self, ...)
+function delete(self, ...)
+	if rawget(self, "destructor") then
+		self:destructor(...)
 	end
 
 	-- Prevent the destructor to be called twice 
@@ -176,17 +174,17 @@ function utils.class.delete(self, ...)
 	end
 	
 	-- Cleanup
-	utils.class.elementIndex[self] = nil
+	elementIndex[self] = nil
 end
 
---// utils.class.super(self)
+--// super(self)
 --||	@desc:	Gets the superclasses of an instance or class
 --||	@param:	table 'self' -	The instance / class to get the parent class of
 --||	@return:table<table> - The superclasses
 --\\
-function utils.class.super(self)
+function super(self)
 	if isElement(self) then
-		self = utils.class.elementIndex[self]
+		self = elementIndex[self]
 	end
 	local metatable = getmetatable(self)
 	if metatable then return metatable.__super 
@@ -194,7 +192,7 @@ function utils.class.super(self)
 	end
 end
 
---// utils.class.instanceof(self, class, direct = false)
+--// instanceof(self, class, direct = false)
 --||	@desc:	Returns if 'self' is an instance of 'class'. If 'direct' is set to true it enforces 'self'
 --||			to be a direct descendant of 'class' (new(self, class)). If 'direct' is set to false 
 --||			(default) 'self' is allowed to be a instance with any kind of link to 'class' even with 
@@ -204,7 +202,7 @@ end
 --||	@optparam:	bool 'direct' (false) -	Whether to check for direct inheritance
 --||	@return:bool - the result of the check
 --\\
-function utils.class.instanceof(self, class, direct)
+function instanceof(self, class, direct)
 	for k, v in pairs(super(self)) do
 		if v == class then return true end
 	end
@@ -214,18 +212,18 @@ function utils.class.instanceof(self, class, direct)
 	local check = false
 	-- Check if any of 'self's base classes is inheriting from 'class'
 	for k, v in pairs(super(self)) do
-		check = utils.class.instanceof(v, class, false)
+		check = instanceof(v, class, false)
 	end	
 	return check
 end
 
---// utils.class.bind(func, self)
+--// bind(func, self)
 --||	@desc:	Wraps the function(...) return function(self, ...) end idiom
 --||	@param:	table 'func' 			  -	The function to bind
 --||	@param:	vararg ... 		 		  -	The parameters to bind
 --||	@return:function - the bound function
 --\\
-function utils.class.bind(func, ...)
+function bind(func, ...)
 	local boundParams = {...}
 	return 
 		function(...) 
@@ -239,13 +237,13 @@ function utils.class.bind(func, ...)
 			return func(unpack(params)) 
 		end 
 end
---// utils.class.load(class, ...)
+--// load(class, ...)
 --||	@desc:	Creates an instance of 'class' and call the 'load' method
 --||	@param:	table 'class' -	The class which should be instanciated
 --||	@param: vararg        - Parameters passed to the 'load' method
 --||	@return:table 		  - The newly created instance 
 --\\
-function utils.class.load(class, ...)
+function load(class, ...)
 	assert(type(class) == "table", "first argument provided to load is not a table")
 	local instance = setmetatable( { },
 		{
@@ -264,21 +262,22 @@ function utils.class.load(class, ...)
 	return instance
 end
 
---// utils.class.inherit(from, what)
+--// inherit(from, what)
 --||	@desc:	Creates a new class inheriting from 'from' or sets 'what' to inherit from 'from'
 --||	@param:	table 'from' 		-	The class to inherit from
 --||	@optparam:	table 'what' 	-	The class which should inherit, optional
 --||	@return:table - The now inheriting class
 --\\
-function utils.class.inherit(from, what)
+function inherit(from, what)
 	if not from then
 		outputDebug("Attempt to inherit a nil table value")
 		outputConsole(debug.traceback())
 		return {}
 	end
+	print("inherit", from == Object, what)
 	
 	if not what then
-		local classt = setmetatable({}, { __index = utils.class._inheritIndex, __super = { from } })
+		local classt = setmetatable({}, { __index = _inheritIndex, __super = { from } })
 		if from.onInherit then
 			from.onInherit(classt)
 		end
@@ -289,86 +288,37 @@ function utils.class.inherit(from, what)
 	local oldsuper = metatable and metatable.__super or {}
 	oldsuper[#oldsuper+1] = from
 	metatable.__super = oldsuper
-	metatable.__index = utils.class._inheritIndex
+	metatable.__index = _inheritIndex
 	
 	return setmetatable(what, metatable)
 end
 
-function utils.class._inheritIndex(self, key)
-	for k, v in pairs(utils.class.super(self) or {}) do
+function _inheritIndex(self, key)
+	print("inherit index")
+	for k, v in pairs(super(self) or {}) do
 		if v[key] then return v[key] end
 	end
 	return nil
 end
 
---// utils.class.pure_virtual()
+--// pure_virtual()
 --||	@desc:	Yields an error on call. Use like: class.memberfunction = pure_virtual to enforce 
 --||			implementation in derived classes
 --\\
-function utils.class.pure_virtual()
+function pure_virtual()
 	error("Function implementation missing")
 end
 
---// utils.class.upairs(userdata)
---||	@desc:	Returns an iterator which allows you to iterate through each (light)userdata member
---||	@param:	userdata - the userdata which you want to iterate
---||	@return:iterator - The Lua iterator (similar to pairs)
---\\
-function utils.class.upairs(userdata)
-	assert(type(userdata) == "userdata", "Bad argument @ upairs")
-	
-	if utils.class.elementIndex[userdata] then
-		return pairs(utils.class.elementIndex[userdata] or {})
-	end
-	return false
-end
-
---// utils.class.getElementMembers(userdata)
---||	@desc:	Returns a table containing every (light)userdata member
---||	@param:	userdata - the userdata you want the members from
---||	@return:members - The table
---\\
-function utils.class.getElementMembers(userdata)
-	assert(type(userdata) == "userdata", "Bad argument @ getElementMembers")
-	
-	if utils.class.elementIndex[userdata] then
-		return utils.class.elementIndex[userdata]
-	end
-	return false
-end
-
---// utils.class.getTypeName(object)
+--// getTypeName(object)
 --||	@desc:   Returns the type name of the specified object (for debug purpose only)
 --||	@param:  object - the object
 --||	@return: The type name
 --\\
-function utils.class.getTypeName(object)
+function getTypeName(object)
 	return table.find(_G, getmetatable(object).__index)
 end
 
---// utils.class.fetchRemote_s(url, cb, ...)
---||	@desc:	fetchRemote with safe handling of metatables
---||	@param:	See mta wiki
---\\
-utils.class.fetchRemoteList = {}
-function utils.class.fetchRemote_s(url, cb, ...)
-	local index = #utils.class.fetchRemoteList+1
-	utils.class.fetchRemoteList[index] = { cb, ... }
-	return callRemote(url, utils.class._fetchRemote_Callback, index)
-end
-
-function utils.class.fetchRemote_Callback(response, err, index)
-	if not utils.class.fetchRemoteList[index] then return end
-	
-	assert(err == 0, "fetchRemote Error "..tostring(err))
-	
-	local callback = utils.class.fetchRemoteList[index][1]
-	table.remove(utils.class.fetchRemoteList[index], 1)
-	callback(response, unpack(utils.class.fetchRemoteList[index]))
-	utils.class.fetchRemoteList[index] = nil
-end
-
---// Syntax 1: utils.class.addChangeHandler(instance, key, func)
+--// Syntax 1: addChangeHandler(instance, key, func)
 --||	@desc:	addChangeHandler calls 'func' whenever 'key' is changed on 'instance'
 --||	@param:	table instance  - any table to watch for changes
 --||	@param: string key		- the key to watch
@@ -380,7 +330,7 @@ end
 --||
 --|| 	Parameters for func: 	  function (table/element instance, any value)
 --||
---|| Syntax 2: utils.class.addChangeHandler(instance, func, func)
+--|| Syntax 2: addChangeHandler(instance, func, func)
 --||	@desc:	addChangeHandler calls 'func' whenever any key is changed on 'instance'
 --||	@param:	table instance  - any table to watch for changes
 --||	@param:	function func	- the function to call when the value of any index in instance is changed
@@ -391,7 +341,10 @@ end
 --||
 --|| 	Parameters for func: 	  function (table/element instance, any key, any value)
 --\\
-function utils.class.addChangeHandler(instance, key, func)
+function addChangeHandler(instance, key, func)
+	if isElement(instance) then
+		instance = elementIndex[instance]
+	end
 	local metatable = getmetatable(instance) or {}
 	if not metatable.__changeHandler then
 		metatable.__changeHandler = {}
@@ -406,8 +359,8 @@ function utils.class.addChangeHandler(instance, key, func)
 			metatable.__realIndexFunction = metatable.__index
 		end
 
-		metatable.__index = utils.class.__changeHandlerIndex
-		metatable.__newindex = utils.class.__changeHandlerNewindex
+		metatable.__index = __changeHandlerIndex
+		metatable.__newindex = __changeHandlerNewindex
 	end
 	
 	if type(key) == "function" then
@@ -419,7 +372,7 @@ function utils.class.addChangeHandler(instance, key, func)
 	return setmetatable(instance, metatable)
 end
 
-function utils.class.__changeHandlerIndex(self, key)
+function __changeHandlerIndex(self, key)
 	local metatable = getmetatable(self)
 	if metatable.__changeData[key] then return metatable.__changeData[key] end
 	
@@ -437,17 +390,17 @@ function utils.class.__changeHandlerIndex(self, key)
 	)
 end
 
-
-function utils.class.__changeHandlerNewindex(self, key, value)
+function __changeHandlerNewindex(self, key, value)
 	local metatable = getmetatable(self)
 	if type(metatable.__changeHandler) == "table" then
-		if  metatable.__changeHandler[key] then 
+		if metatable.__changeHandler[key] then 
 			local ret = metatable.__changeHandler[key](rawget(self, "element") or self, value)
 			if ret ~= nil then
 				value = ret
 			end
 			metatable.__changeData[key] = value
 			setmetatable(self, metatable)
+			return
 		end
 	elseif type(metatable.__changeHandler) == "function" then
 		local ret = metatable.__changeHandler(rawget(self, "element") or self, key, value)
@@ -456,6 +409,7 @@ function utils.class.__changeHandlerNewindex(self, key, value)
 		end
 		metatable.__changeData[key] = value
 		setmetatable(self, metatable)		
+		return
 	end
 	
 	return (
@@ -480,23 +434,18 @@ end
 debug.setmetatable(root,
 	{
 		__index = function(self, key)
-			if utils.class.elementIndex[self] then 	
-				return utils.class.elementIndex[self][key]
-			elseif utils.class.elementClasses[getElementType(self)] then
-				utils.class.enew(self, utils.class.elementClasses[getElementType(self)])
+			if elementIndex[self] then 	
+				return elementIndex[self][key]
+			elseif elementClasses[getElementType(self)] then
+				enew(self, elementClasses[getElementType(self)])
 				return self[key]
 			end
 		end,
 		__newindex = function(self, key, value) 
-			if not utils.class.elementIndex[self] then
-				utils.class.enew(self, utils.class.elementClasses[getElementType(self)] or {})
+			if not elementIndex[self] then
+				enew(self, elementClasses[getElementType(self)] or {})
 			end
-			utils.class.elementIndex[self][key] = value
+			elementIndex[self][key] = value
 		end,
 	}
 )
-
--- Load into global namespace
-for k, v in pairs(utils.class) do
-	_G[k] = v
-end
