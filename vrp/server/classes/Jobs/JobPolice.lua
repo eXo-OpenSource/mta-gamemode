@@ -40,7 +40,7 @@ end
 function JobPolice:playerDamage(attacker, attackerWeapon, bodypart, loss)
 	if source:getWantedLevel() > 0 then
 		
-		if attacker and attacker ~= source and getElementType(attacker) == "player" and weapon == 3 and attacker:getJob() == self then
+		if attacker and attacker ~= source and getElementType(attacker) == "player" and attackerWeapon == 3 and attacker:getJob() == self then
 			-- Teleport to jail
 			setElementPosition(source, 264, 77.6, 1001.1)
 			setElementRotation(source, 0, 0, 270)

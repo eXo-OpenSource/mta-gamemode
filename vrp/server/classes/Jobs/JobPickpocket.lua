@@ -40,6 +40,10 @@ end
 
 function JobPickpocket:Vending_Hit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
+		if hitElement:getJob() ~= self then
+			return
+		end
+	
 		if source.isBusy then
 			hitElement:sendMessage(_("Dieser Automat kann zurzeit nicht ausgeraubt werden!", hitElement), 255, 0, 0)
 			return
