@@ -8,7 +8,7 @@
 JobPickpocket = inherit(Job)
 
 function JobPickpocket:constructor()
-	Job.constructor(self, 1990.09961, -1778, 16.3, "files/images/Blips/Pickpocket.png", "files/images/Jobs/HeaderTrashman.png", [[
+	Job.constructor(self, 1990.09961, -1778, 16.3, "files/images/Blips/Pickpocket.png", "files/images/Jobs/HeaderPickpocket.png", [[
 		Als Taschendieb kannst du Getränkeautomaten ausrauben
 	]])
 	

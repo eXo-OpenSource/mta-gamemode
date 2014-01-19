@@ -31,6 +31,21 @@ function JobManager:getFromId(jobId)
 	return self.m_Jobs[jobId]
 end
 
+function JobManager:startJobForPlayer(job, player)
+	-- Stop old job if exists
+	if player:getJob() then
+		if player:getJob().stop then
+			player:getJob():stop(player)
+		end
+	end
+	
+	-- We're ready to start the job :)
+	job:start(player)
+	
+	-- Tell the client that we started the job
+	player:triggerEvent("jobStart", jobId)
+end
+
 function JobManager:Event_jobAccepted(jobId)
 	if not jobId then return end
 	
@@ -43,17 +58,6 @@ function JobManager:Event_jobAccepted(jobId)
 		return
 	end
 	
-	-- Stop old job if exists
-	if client:getJob() then
-		if client:getJob().stop then
-			client:getJob():stop(client)
-		end
-	end
-	
-	-- We're ready to start the job :)
+	-- Start the job
 	client:setJob(job)
-	job:start(client)
-	
-	-- Tell the client that we started the job
-	client:triggerEvent("jobStart", jobId)
 end

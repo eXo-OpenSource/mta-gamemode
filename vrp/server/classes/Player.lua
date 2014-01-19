@@ -97,7 +97,7 @@ function Player:createCharacter(id)
 end
 
 function Player:loadCharacterInfo()
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_SavedPosition = Vector(row.PosX, row.PosY, row.PosZ)
@@ -111,6 +111,9 @@ function Player:loadCharacterInfo()
 	setPlayerWantedLevel(self, self.m_WantedLevel)
 	self.m_BankMoney = row.BankMoney
 	self.m_TutorialStage = row.TutorialStage
+	if row.Job > 0 then
+		self:setJob(JobManager:getSingleton():getFromId(row.Job))
+	end
 	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -123,8 +126,8 @@ function Player:save()
 	local x, y, z = getElementPosition(self)
 	local interior = getElementInterior(self)
 	
-	return sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ? WHERE Id = ?;", sql:getPrefix(), 
-		x, y, z, interior, getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Id)
+	return sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ? WHERE Id = ?;", sql:getPrefix(), 
+		x, y, z, interior, getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_Id)
 end
 
 function Player:spawn()
@@ -157,7 +160,6 @@ function Player:getJobVehicle() return self.m_JobVehicle end
 -- Short setters
 function Player:setMoney(money) self.m_Money = money setPlayerMoney(self, money) end
 function Player:setWantedLevel(level) self.m_WantedLevel = level setPlayerWantedLevel(self, level) end
-function Player:setJob(job)	 	self.m_Job = job 		end
 function Player:setLocale(locale)	self.m_Locale = locale	end
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
 function Player:setTutorialStage(stage) self.m_TutorialStage = stage end
@@ -221,4 +223,9 @@ end
 
 function Player:takeWantedLevel(level)
 	self:setWantedLevel(self.m_WantedLevel - level)
+end
+
+function Player:setJob(job)
+	JobManager:getSingleton():startJobForPlayer(job, self)
+	self.m_Job = job
 end
