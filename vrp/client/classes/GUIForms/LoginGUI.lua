@@ -214,17 +214,11 @@ addEventHandler("loginsuccess", root,
 		local lgi = LoginGUI:getSingleton()
 	
 		if lgi.m_SaveLoginCheckbox:isChecked() and pwhash then
-			if fileExists("logininfo.vrp") then
-				fileDelete("logininfo.vrp")
-			end
-			local fh = fileCreate("logininfo.vrp")
-			fileWrite(fh, pwhash)
-			fileWrite(fh, lgi.m_LoginEditUsername:getText())
-			fileClose(fh)
+			core:set("login", "username", lgi.m_LoginEditUsername:getText())
+			core:set("login", "password", pwhash)
 		end
 		lgi:delete()
 		
-		outputDebug(tutorialstage)
 		-- Maybe start tutorial
 		if tutorialstage == 0 then
 			-- Play Intro
@@ -250,25 +244,17 @@ addEventHandler("loginsuccess", root,
 		
 	end
 )
-
 lgi = LoginGUI:new()
 lgi:showHome(true)
 
-if fileExists("logininfo.vrp") then
-	local fh = fileOpen("logininfo.vrp")
-	local len = fileGetSize(fh)
-	if len > 64 then
-		local pwhash = fileRead(fh, 64)
-		local username = fileRead(fh, len-64)
+addEventHandler("onClientResourceStart", resourceRoot, 
+	function()
+		local pwhash = core:get("login", "password") or ""
+		local username = core:get("login", "username") or ""
 		lgi.m_LoginEditUsername:setText(username)
 		lgi.m_LoginEditPassword:setText(pwhash)
-		lgi.usePasswordHash = pwhash;
-		lgi.m_SaveLoginCheckbox:setChecked(true)
+		lgi.usePasswordHash = pwhash
+		lgi.m_SaveLoginCheckbox:setChecked(pwhash ~= "")
 		lgi:anyChange()
-		fileClose(fh)
-	else
-		-- Invalid
-		fileClose(fh)
-		fileDelete("logininfo.vrp")
 	end
-end
+)

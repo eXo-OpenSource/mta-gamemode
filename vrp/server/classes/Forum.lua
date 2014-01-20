@@ -10,6 +10,8 @@ Forum = inherit(Singleton)
 function Forum:constructor()
 	-- Get News
 	self.m_News = {}
+		-- ToDo: Change to API
+	if true then return end
 	sql:queryFetch(Async.waitFor(self), "SELECT firstPostID FROM wbb4.wbb1_thread WHERE boardID = 2 LIMIT 3;")
 	local row = Async.wait()
 	

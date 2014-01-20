@@ -48,3 +48,11 @@ end
 function Core:getConfig()
 	return self.m_Config
 end
+
+function Core:get(...)
+	return self.m_Config:get(...)
+end
+
+function Core:set(...)
+	return self.m_Config:set(...)
+end

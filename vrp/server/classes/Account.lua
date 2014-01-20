@@ -21,14 +21,14 @@ function Account.login(player, username, password, pwhash)
 	end
 	
 	if not pwhash then
-		pwhash = sha256(row.Salt..password)
+		pwhash = sha256(row.Salt..password..getPlayerSerial(player))
 	end
 	
 	-- Ask SQL to attempt a Login
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Id = ? AND Password = ?;", sql:getPrefix(), row.Id, pwhash)
 	local row = Async.wait()
 	if not row or not row.Id then
-		player:triggerEvent("loginfailed", "Error: Invalid username or password")
+		player:triggerEvent("loginfailed", "Error: Invalid username or password2")
 		return false
 	end
 	
@@ -61,7 +61,7 @@ function Account.register(player, username, password)
 	
 	-- todo: get a better salt
 	local salt = md5(math.random())
-	sql:queryExec("INSERT INTO ??_account(Name, Password, Salt, Rank) VALUES (?, ?, ?, ?);", sql:getPrefix(), username, sha256(salt..password), salt, 0)
+	sql:queryExec("INSERT INTO ??_account(Name, Password, Salt, Rank) VALUES (?, ?, ?, ?);", sql:getPrefix(), username, sha256(salt..password..getPlayerSerial(player)), salt, 0)
 	
 	return Account:new(sql:lastInsertId(), username, player, nil, true)
 end
