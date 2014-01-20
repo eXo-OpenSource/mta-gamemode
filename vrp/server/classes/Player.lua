@@ -139,6 +139,7 @@ function Player:sendError(text, ...) 	self:triggerEvent("errorBox", text:format(
 function Player:sendWarning(text, ...)	self:triggerEvent("warningBox", text:format(...)) 	end
 function Player:sendInfo(text, ...)		self:triggerEvent("infoBox", text:format(...))		end
 function Player:sendSuccess(text, ...)	self:triggerEvent("successBox", text:format(...))	end
+function Player:sendShortMessage(text, ...) self:triggerEvent("shortMessageBox", text:format(...))	end
 
 -- Short getters
 function Player:getId()			return self.m_Id		end

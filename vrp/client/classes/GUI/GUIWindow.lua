@@ -27,6 +27,8 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	self.m_HasTitlebar = hasTitlebar
 	self.m_HasCloseButton = hasCloseButton
 	self.m_CloseOnClose = true
+	
+	self:setFont(VRPFont(24))
 
 	if self.m_HasCloseButton then
 		self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", 1, self):setFont(VRPFont(28)) --GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
@@ -56,7 +58,7 @@ function GUIWindow:drawThis()
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 2, Color.White)
 
 		-- Draw title
-		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY+7, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + 25, Color.White, 1.4, "tahoma", "center", "center")
+		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY+7, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + 25, self.m_Color, self.m_FontSize, self.m_Font, "center", "center")
 	end
 	
 	dxSetBlendMode("blend")
