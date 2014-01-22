@@ -75,6 +75,7 @@
 	<script src="client/classes/MTAElement.lua" type="client"/>
 	<script src="client/classes/Player.lua" type="client"/>
 	<script src="client/classes/LocalPlayer.lua" type="client"/>
+	<script src="client/classes/Vehicle.lua" type="client"/>
 	<script src="client/classes/Version.lua" type="client"/>
 	<script src="client/classes/MTAFixes.lua" type="client"/>
 	<script src="client/classes/ClickHandler.lua" type="client"/>
@@ -140,6 +141,7 @@
 	
 	<script src="client/classes/HUD/RadarBlip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
+	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
 	
 	<!-- Forms -->
 	<script src="client/classes/GUIForms/InventoryGUI.lua" type="client"/>
@@ -221,6 +223,10 @@
 	<file src="files/images/Radio/sound_play_hover.png"/>
 	<file src="files/images/Radio/sound_stop.png"/>
 	<file src="files/images/Radio/sound_stop_hover.png"/>
+	
+	<file src="files/images/Speedo/main.png"/>
+	<file src="files/images/Speedo/main_needle.png"/>
+	<file src="files/images/Speedo/engine.png"/>
 	
 	<file src="files/fonts/gtafont.ttf"/>
 	<file src="files/images/avatar_default.png"/>

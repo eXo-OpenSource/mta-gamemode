@@ -23,6 +23,7 @@ function Core:constructor()
 	
 	-- HUD
 	--HUDRadar:new()
+	HUDSpeedo:new()
 	
 	-- Phone
 	Phone:new()

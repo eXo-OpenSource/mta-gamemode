@@ -57,11 +57,11 @@ debug = true;
 			starttick = 0;
 			path = "http://www.jusonex.net/public/saonline/intro.mp3";
 			looped = false;
-			duration = 14000;
+			duration = 6000;
 		};
 		{
 			action = "General.finish";
-			starttick = 14000;
+			starttick = 6000;
 		}
 	};
 })
