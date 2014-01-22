@@ -16,6 +16,7 @@ function HUDRadar:constructor()
 	self.m_Rotation = 0
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_Blips = {}
+	self.m_Visible = false;
 	
 	-- Set texture edge to border (no-repeat) | Not yet available in current 1.3.4 build (probably 1.3.5 onwards)
 	if dxSetTextureEdge then
@@ -34,6 +35,14 @@ function HUDRadar:constructor()
 	showPlayerHudComponent("radar", false)
 end
 
+function HUDRadar:hide()
+	self.m_Visible = false
+end
+
+function HUDRadar:show()
+	self.m_Visible = true
+end
+
 function HUDRadar:update()
 	if getControlState("forwards") or isPedInVehicle(localPlayer)  then
 		local element = getPedOccupiedVehicle(localPlayer) or localPlayer
@@ -43,6 +52,7 @@ function HUDRadar:update()
 end
 
 function HUDRadar:draw()
+	if not self.m_Visible then return end
 	-- Draw the rectangle (the border)
 	dxDrawRectangle(self.m_PosX, self.m_PosY, self.m_Width+6, self.m_Height+self.m_Height/20+9, tocolor(0, 0, 0))
 	

@@ -11,6 +11,7 @@ function VRPItem:constructor(posX, posY, width, height, item, parent)
 	checkArgs("VRPItem:constructor", "number", "number", "number", "number")
 	GUIRectangle.constructor(self, posX, posY, width, height, tocolor(12, 26, 47, 255), parent)
 	
+	self.m_Item = item
 	local id = item:getItemId()
 	
 	if Items[id].icon then
@@ -20,18 +21,58 @@ function VRPItem:constructor(posX, posY, width, height, item, parent)
 	end
 	
 	-- Name
-	GUILabel:new(height, 5, width, height, Items[id].name, 2.5, self)
+	GUILabel:new(height, 0, width, height/5*3, Items[id].name, 1, self):setFont(VRPFont(height/5*4))
 	-- Description
-	GUILabel:new(height+15, height-20, width, height, Items[id].description, 1, self)
+	GUILabel:new(height+15, height-height/5-5, width, height/5, Items[id].description, 1, self)
 	local counttext = tostring(item:getCount())
 	local fw = fontWidth(counttext, "default", 3)
 	self.m_Count = GUILabel:new(width-fw-10, 0, fw+10, height, counttext, 3, self):setAlignY("center")
 end
 
 function VRPItem:select()
-	self:setColor(tocolor(26, 62, 80, 255))
+	self:setColor(tocolor(26, 42, 80, 255))
 end
 
 function VRPItem:deselect()
 	self:setColor(tocolor(12, 26, 47, 255))
 end
+
+function VRPItem:updateFromItem()
+	-- If we are just removing the item we do not want to change it anymore
+	if self.m_AnimRemove then return end
+	
+	-- Update Count
+	local oldcount = tonumber(self.m_Count:getText())
+	if oldcount ~= self.m_Item.m_Count then
+		local count = self.m_Item:getCount()
+		local counttext = tostring(count)
+		local fw = fontWidth(counttext, "default", 3)
+		self.m_Count:setText(counttext)
+		self.m_Count.m_Width = fw+10
+		self.m_Count:setPosition(self.m_Width-fw-10)
+		self.m_Count:anyChange()
+	end
+	self:playRemoveAnimation()
+end
+
+function VRPItem:playRemoveAnimation()
+	if self.m_AnimRemove then return end
+	
+	local tx = self.m_PosX + self.m_Width + 15
+	self.m_AnimRemove = Animation.Move:new(self, 1500, tx, self.m_PosY)
+	self.m_AnimRemove.onFinish = function()
+		if self.onItemRemove then
+			self:onItemRemove(self)
+		end
+		delete(self)
+	end
+end
+
+function VRPItem:move(x, y)
+	if self.m_AnimRemove then return end
+	if self.m_AnimMove then 
+		delete(self.m_AnimMove)
+	end
+	self.m_AnimMove = Animation.Move:new(self, 500, x, y)
+end
+--item.m_Count = item.m_Count -1
