@@ -14,6 +14,23 @@ function JobPolice:constructor()
 	VehicleSpawner:new(1566.3, -1605.5, 12.5, {"Police LS"}, 180, bind(Job.requireVehicle, self))
 	
 	addEventHandler("onPlayerDamage", root, bind(self.playerDamage, self))
+	
+	addEvent("policePanelListRequest", true)
+	addEventHandler("policePanelListRequest", root,
+		function()
+			--[[if client:getJob() ~= self then
+				return
+			end]]
+		
+			local data = {}
+			for k, v in ipairs(getElementsByType("player")) do
+				if v:getWantedLevel() > 0 then
+					data[v] = getPlayerWantedLevel(v)
+				end
+			end
+			client:triggerEvent("policePanelListRetrieve", data)
+		end
+	)
 end
 
 function JobPolice:start(player)

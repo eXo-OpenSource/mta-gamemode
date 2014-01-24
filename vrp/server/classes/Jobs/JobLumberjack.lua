@@ -18,8 +18,7 @@ function JobLumberjack:constructor()
 	
 	--createVehicle(455, 1868.5, -1253.8, 14.6, 0, 0, 90, "Lumber", false, 255, 255)
 	--createVehicle(455, 1893.5, -1253.8, 14.6, 0, 0, 90, "Lumber", false, 255, 255)
-	VehicleSpawner:new(1897.65, -1253.3, 12.7, {"Flatbed"}, 90, bind(Job.requireVehicle, self), function(v) setVehicleVariant(v, 255, 255) end)
-	VehicleSpawner:new(1878.28, -1253.3, 12.7, {"Flatbed"}, 90, bind(Job.requireVehicle, self), function(v) setVehicleVariant(v, 255, 255) end)
+	VehicleSpawner:new(1069.6, -311, 73, {"Flatbed"}, 90, bind(Job.requireVehicle, self), function(v) setVehicleVariant(v, 255, 255) end)
 	
 	addEvent("lumberjackTreeCut", true)
 	addEventHandler("lumberjackTreeCut", root, bind(JobLumberjack.Event_lumberjackTreeCut, self))

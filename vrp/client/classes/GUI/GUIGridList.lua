@@ -59,8 +59,8 @@ function GUIGridList:getSelectedItem()
 end
 
 function GUIGridList:clear()
-	self.m_ScrollArea.m_Children = {}
-	self.m_ScrollArea:resize(self.m_Width, 1)
+	delete(self.m_ScrollArea)
+	self.m_ScrollArea = GUIScrollableArea:new(0, 0, self.m_Width, self.m_Height, self.m_Width, 1, true, false, self)
 end
 
 function GUIGridList:onInternalSelectItem(item)
@@ -103,13 +103,3 @@ function GUIGridList:drawThis()
 	end
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + ITEM_HEIGHT - 2, self.m_Width, 2, tocolor(255, 255, 255, 150))
 end
-
-addCommandHandler("gridlist",
-	function()
-		g = GUIGridList:new(500, 300, 500, 400)
-		g:addColumn("MyFirstColumn", 0.9)
-		for i=1, 20 do
-			g:addItem("Test: "..i)
-		end
-	end
-)

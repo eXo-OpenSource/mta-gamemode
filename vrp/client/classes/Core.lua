@@ -30,11 +30,14 @@ function Core:constructor()
 	Phone:getSingleton():close()
 	bindKey("k", "down",
 		function()
-			if not Phone:getSingleton():isVisible() then
-				Phone:getSingleton():open()
-			else
-				Phone:getSingleton():close()
-			end
+			Phone:getSingleton():setVisible(not Phone:getSingleton():isVisible())
+		end
+	)
+	
+	PolicePanel:getSingleton():close()
+	bindKey("f2", "down",
+		function()
+			PolicePanel:getSingleton():setVisible(not PolicePanel:getSingleton():isVisible())
 		end
 	)
 	
