@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 Player = inherit(MTAElement)
+Player.Map = {}
 registerElementClass("player", Player)
 
 addEventHandler("onPlayerConnect", root, 
@@ -49,6 +50,9 @@ function Player:destructor()
 	end
 	
 	self:save()
+	
+	-- Remove reference
+	Player.Map[self.m_Id] = nil
 end
 
 function Player:connect()
@@ -83,6 +87,7 @@ end
 
 function Player:loadCharacter(charid)
 	self.m_Id = charid
+	Player.Map[charid] = self
 	self:loadCharacterInfo()
 	
 	-- Send infos to client
@@ -94,6 +99,10 @@ end
 
 function Player:createCharacter(id)
 	sql:queryExec("INSERT INTO ??_character(Id) VALUES(?);", sql:getPrefix(), id)
+end
+
+function Player.getFromId(id)
+	return Player.Map[id]
 end
 
 function Player:loadCharacterInfo()
@@ -157,6 +166,7 @@ function Player:getLocale()		return self.m_Locale	end
 function Player:getPhonePartner() return self.m_PhonePartner end
 function Player:getTutorialStage() return self.m_TutorialStage end
 function Player:getJobVehicle() return self.m_JobVehicle end
+function Player:getGroup()		return self.m_Group		end
 
 -- Short setters
 function Player:setMoney(money) self.m_Money = money setPlayerMoney(self, money) end
@@ -165,6 +175,7 @@ function Player:setLocale(locale)	self.m_Locale = locale	end
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
 function Player:setTutorialStage(stage) self.m_TutorialStage = stage end
 function Player:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
+function Player:setGroup(group)	self.m_Group = group	end
 
 function Player:giveMoney(money)
 	self:setMoney(self:getMoney() + money)

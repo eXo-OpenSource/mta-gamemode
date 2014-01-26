@@ -52,3 +52,9 @@ BankStat = {
 	Job = 5,
 	
 }
+
+GroupRank = {
+	Normal = 0,
+	Manager = 1,
+	Leader = 2
+}

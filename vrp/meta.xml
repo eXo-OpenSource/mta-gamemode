@@ -49,6 +49,7 @@
 	<script src="server/classes/Garage.lua" type="server"/>
 	<script src="server/classes/Forum.lua" type="server"/>
 	<script src="server/classes/WantedSystem.lua" type="server"/>
+	<script src="server/classes/Group.lua" type="server"/>
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
