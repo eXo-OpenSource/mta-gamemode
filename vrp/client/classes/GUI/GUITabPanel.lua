@@ -14,20 +14,42 @@ function GUITabPanel:constructor(posX, posY, width, height, parent)
 end
 
 function GUITabPanel:addTab(tabName)
-	local tabButton = VRPButton:new(#self * 100, 0, 100, 30, tabName or "", self)
+	local tabButton = GUIButton:new(#self * 100, 0, 100, 30, tabName or "", self)
+	
+	tabButton:setColor(Color.White)
+	tabButton:setBackgroundColor(Color.Black)
+	
 	local id = #self+1
-	tabButton.onLeftClick = function() self:setTab(id) end
+	tabButton.onLeftClick = function()
+		self:setTab(id)
+		
+		for k, v in ipairs(self.m_Children) do
+			if instanceof(v, GUIButton) then
+				v:setColor(Color.White)
+				v:setBackgroundColor(Color.Black)
+			end
+		end
+		
+		tabButton:setColor(Color.Black)
+		tabButton:setBackgroundColor(Color.White)
+	end
 
 	self[id] = GUIElement:new(0, 30, self.m_Width, self.m_Height-30, self)
 	if id ~= 1 then
 		self[id]:setVisible(false)
 	else
 		self.m_CurrentTab = 1
+		tabButton:setColor(Color.Black)
+		tabButton:setBackgroundColor(Color.White)
 	end
 	
 	return self[#self]
 end
 
 function GUITabPanel:drawThis()
+	-- Draw the background
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(255, 255, 255, 40))
+	
+	-- Draw a seperator line
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 3, Color.White)
 end

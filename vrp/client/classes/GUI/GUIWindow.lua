@@ -46,7 +46,7 @@ function GUIWindow:drawThis()
 
 	-- Draw window
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/Window.png")
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, self.m_Alpha))
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.DarkBlue --[[tocolor(0, 0, 0, self.m_Alpha)]])
 
 	-- Draw logo
 	if false then -- Should the logo be optional? | Todo: Since we haven't got a logo, disable that
