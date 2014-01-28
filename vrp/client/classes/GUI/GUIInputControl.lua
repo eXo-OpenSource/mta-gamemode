@@ -35,6 +35,8 @@ function GUIInputControl.setFocus(edit, caret)
 		else
 			guiEditSetCaretIndex(GUIInputControl.ms_Edit, #edit:getText())
 		end
+		
+		oldCaretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
 		guiSetInputEnabled(true)
 		guiSetText(GUIInputControl.ms_Edit, edit:getText())
 		
@@ -68,3 +70,17 @@ addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 	end
 )
 
+local oldCaretIndex = 0
+addEventHandler("onClientPreRender", root,
+	function()
+		-- Check if caret index has changed
+		if GUIInputControl.ms_CurrentInputFocus then
+			local caretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
+			
+			if oldCaretIndex ~= caretIndex then
+				GUIInputControl.ms_CurrentInputFocus:setCaretPosition(caretIndex)
+				oldCaretIndex = caretIndex
+			end
+		end
+	end
+)

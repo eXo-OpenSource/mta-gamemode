@@ -19,7 +19,7 @@ function GUIEdit:constructor(posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1)
 	GUIColorable.constructor(self, Color.DarkBlue)
 
-	self.m_Caret = 1
+	self.m_Caret = 0
 	self.m_DrawCursor = false
 end
 
@@ -56,7 +56,8 @@ function GUIEdit:onInternalEditInput(caret)
 end
 
 function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)
-	local relativeX, relativeY = absoluteX - self.m_AbsoluteX, absoluteY - self.m_AbsoluteY
+	local posX, posY = self:getPosition(true) -- DxElement:getPosition is necessary as m_Absolute_ is dependent on the position of the cache area
+	local relativeX, relativeY = absoluteX - posX, absoluteY - posY
 	local index = self:getIndexFromPixel(relativeX, relativeY)
 	self:setCaretPosition(index)
 	
@@ -72,7 +73,7 @@ function GUIEdit:onInternalLooseFocus()
 end
 
 function GUIEdit:setCaretPosition(pos)
-	self.m_Caret = math.min(math.max(pos, 1), #self.m_Text+1)
+	self.m_Caret = math.min(math.max(pos, 0), #self.m_Text+1)
 	self:anyChange()
 	return self
 end
@@ -103,8 +104,6 @@ function GUIEdit:setCursorDrawingEnabled(state)
 end
 
 function GUIEdit:getIndexFromPixel(posX, posY)
-	outputDebug(("GUIEdit:getIndexFromPixel(%d, %d)"):format(posX, posY))
-
 	local text = self:getText()
 	local size = self:getFontSize()
 	local font = self:getFont()

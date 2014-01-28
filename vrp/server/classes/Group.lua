@@ -7,10 +7,11 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, money)
+function Group:constructor(Id, name, money)
 	self.m_Id = Id
 	
 	self.m_Players = {}
+	self.m_Name = name
 	self.m_Money = money
 end
 
@@ -19,7 +20,7 @@ end
 
 function Group.create(name)
 	if sql:queryExec("INSERT INTO ??_groups (Name) VALUES(?)", sql:getPrefix(), name) then
-		local group = Group:new(sql:lastInsertId(), 0)
+		local group = Group:new(sql:lastInsertId(), name, 0)
 		return group
 	end
 	return false
@@ -36,6 +37,14 @@ function Group:purge()
 	return false
 end
 
+function Group:getId()
+	return self.m_Id
+end
+
+function Group:getName()
+	return self.m_Name
+end
+
 function Group:getKarma()
 	local karmaSum = 0
 	
@@ -46,7 +55,7 @@ function Group:getKarma()
 		end
 	end
 	
-	return karmaSum / self:getOnlinePlayerCount()
+	return karmaSum / #self:getOnlinePlayers()
 end
 
 function Group:addPlayer(playerId, rank)
@@ -109,13 +118,19 @@ function Group:getPlayers()
 	return self.m_Players
 end
 
-function Group:getOnlinePlayerCount()
-	local i = 0
+function Group:getOnlinePlayers()
+	local players = {}
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
 		if player then
-			i = i + 1
+			table.insert(players, player)
 		end
 	end
-	return i
+	return players
+end
+
+function Group:sendMessage(text, r, g, b, ...)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b, ...)
+	end
 end

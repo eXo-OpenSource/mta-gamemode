@@ -29,7 +29,7 @@ function ClickHandler:dispatchClick(button, state, absoluteX, absoluteY, worldX,
 			end
 		
 			local elementType = getElementType(element)
-			if self.m_Menu[elementType] --[[and not element == localPlayer]] then
+			if self.m_Menu[elementType] and not element == localPlayer then
 				local mouseMenu = self.m_Menu[elementType]:new(absoluteX, absoluteY, element)
 				mouseMenu:setElement(element)
 				table.insert(self.m_OpenMenus, mouseMenu)
@@ -42,6 +42,10 @@ function ClickHandler:dispatchClick(button, state, absoluteX, absoluteY, worldX,
 			
 			if model == 2942 and range <= 8 then -- Bank ATM
 				BankGUI:new()
+			end
+			
+			if element == localPlayer then
+				SelfGUI:getSingleton():open()
 			end
 		end
 	end

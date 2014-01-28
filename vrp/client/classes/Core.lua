@@ -41,6 +41,9 @@ function Core:constructor()
 		end
 	)
 	
+	SelfGUI:new()
+	SelfGUI:getSingleton():close()
+	
 	-- Vehicle shops
 	VehicleShop.createShops()
 end
