@@ -244,17 +244,3 @@ addEventHandler("loginsuccess", root,
 		
 	end
 )
-lgi = LoginGUI:new()
-lgi:showHome(true)
-
-addEventHandler("onClientResourceStart", resourceRoot, 
-	function()
-		local pwhash = core:get("login", "password") or ""
-		local username = core:get("login", "username") or ""
-		lgi.m_LoginEditUsername:setText(username)
-		lgi.m_LoginEditPassword:setText(pwhash)
-		lgi.usePasswordHash = pwhash
-		lgi.m_SaveLoginCheckbox:setChecked(pwhash ~= "")
-		lgi:anyChange()
-	end
-)

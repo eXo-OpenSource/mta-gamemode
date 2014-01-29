@@ -1,7 +1,6 @@
 <meta>
 	<info name="vRoleplay"/>
 	<min_mta_version server="1.3.3" client="1.3.5"/>
-	<include resource="customblips"/>
 	<oop>false</oop>
 
 	<!-- Shared -->
@@ -25,6 +24,7 @@
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
 	<script src="shared/classes/Rect.lua" type="shared"/>
 	<script src="shared/classes/Item.lua" type="shared"/>
+	<script src="shared/classes/Package.lua" type="shared"/>
 	
 	<!-- Server -->
 	<script src="server/constants.lua" type="server"/>
@@ -50,6 +50,7 @@
 	<script src="server/classes/Forum.lua" type="server"/>
 	<script src="server/classes/WantedSystem.lua" type="server"/>
 	<script src="server/classes/Group.lua" type="server"/>
+	<script src="server/classes/Provider.lua" type="server"/>
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -83,6 +84,7 @@
 	<script src="client/classes/VehicleShop.lua" type="client"/>
 	<script src="client/classes/GPS.lua" type="client"/>
 	<script src="client/classes/CustomModelManager.lua" type="client"/>
+	<script src="client/classes/Provider.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -158,6 +160,7 @@
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
 	
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
@@ -199,76 +202,76 @@
 	
 		
 	<!-- Files -->
-	<file src="files/images/MessageBoxes/Info.png" onDemand="false"/>
-	<file src="files/images/MessageBoxes/Warning.png" onDemand="false"/>
-	<file src="files/images/MessageBoxes/Error.png" onDemand="false"/>
-	<file src="files/images/MessageBoxes/Success.png" onDemand="false"/>
-	<file src="files/images/Phone/Phone.png"/>
-	<file src="files/images/Phone/Apps/IconHelloWorld.png"/>
-	<file src="files/images/Phone/Apps/IconCall.png"/>
-	<file src="files/images/Phone/Apps/IconMessage.png"/>
-	<file src="files/images/Phone/Apps/IconSettings.png"/>
+	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>
+	<vrpfile src="files/images/MessageBoxes/Warning.png" onDemand="false"/>
+	<vrpfile src="files/images/MessageBoxes/Error.png" onDemand="false"/>
+	<vrpfile src="files/images/MessageBoxes/Success.png" onDemand="false"/>
+	<vrpfile src="files/images/Phone/Phone.png"/>
+	<vrpfile src="files/images/Phone/Apps/IconHelloWorld.png"/>
+	<vrpfile src="files/images/Phone/Apps/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps/IconMessage.png"/>
+	<vrpfile src="files/images/Phone/Apps/IconSettings.png"/>
 	
-	<file src="files/images/GUI/Checkbox.png" onDemand="false"/>
-	<file src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
+	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
+	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
 	<file src="files/images/GUI/Cursor.png" onDemand="false"/>
-	<file src="files/images/GUI/Editbox.png" onDemand="false"/>
+	<vrpfile src="files/images/GUI/Editbox.png" onDemand="false"/>
 	
-	<file src="files/images/Radio/radio_bg.png"/>
-	<file src="files/images/Radio/sound_back.png"/>
-	<file src="files/images/Radio/sound_back_hover.png"/>
-	<file src="files/images/Radio/sound_down.png"/>
-	<file src="files/images/Radio/sound_down_hover.png"/>
-	<file src="files/images/Radio/sound_high_hover.png"/>
-	<file src="files/images/Radio/sound_next.png"/>
-	<file src="files/images/Radio/sound_next_hover.png"/>
-	<file src="files/images/Radio/sound_normal.png"/>
-	<file src="files/images/Radio/sound_play.png"/>
-	<file src="files/images/Radio/sound_play_hover.png"/>
-	<file src="files/images/Radio/sound_stop.png"/>
-	<file src="files/images/Radio/sound_stop_hover.png"/>
+	<vrpfile src="files/images/Radio/radio_bg.png"/>
+	<vrpfile src="files/images/Radio/sound_back.png"/>
+	<vrpfile src="files/images/Radio/sound_back_hover.png"/>
+	<vrpfile src="files/images/Radio/sound_down.png"/>
+	<vrpfile src="files/images/Radio/sound_down_hover.png"/>
+	<vrpfile src="files/images/Radio/sound_high_hover.png"/>
+	<vrpfile src="files/images/Radio/sound_next.png"/>
+	<vrpfile src="files/images/Radio/sound_next_hover.png"/>
+	<vrpfile src="files/images/Radio/sound_normal.png"/>
+	<vrpfile src="files/images/Radio/sound_play.png"/>
+	<vrpfile src="files/images/Radio/sound_play_hover.png"/>
+	<vrpfile src="files/images/Radio/sound_stop.png"/>
+	<vrpfile src="files/images/Radio/sound_stop_hover.png"/>
 	
-	<file src="files/images/Speedo/main.png"/>
-	<file src="files/images/Speedo/main_needle.png"/>
-	<file src="files/images/Speedo/engine.png"/>
+	<vrpfile src="files/images/Speedo/main.png"/>
+	<vrpfile src="files/images/Speedo/main_needle.png"/>
+	<vrpfile src="files/images/Speedo/engine.png"/>
 	
-	<file src="files/fonts/gtafont.ttf"/>
-	<file src="files/images/avatar_default.png"/>
-	<file src="files/images/world.png"/>
-	<file src="files/images/Radar.jpg"/>
-	<file src="files/images/CouttSchutz.png"/>
-	<file src="files/images/BankHeader.png"/>
-	<file src="files/images/Bar.png"/>
-	<file src="files/images/Bar_hover.png"/>
+	<vrpfile src="files/fonts/gtafont.ttf"/>
+	<vrpfile src="files/images/avatar_default.png"/>
+	<vrpfile src="files/images/world.png"/>
+	<vrpfile src="files/images/Radar.jpg"/>
+	<vrpfile src="files/images/CouttSchutz.png"/>
+	<vrpfile src="files/images/BankHeader.png"/>
+	<vrpfile src="files/images/Bar.png"/>
+	<vrpfile src="files/images/Bar_hover.png"/>
 	
 	<!-- Blips -->
-	<file src="files/images/Blips/LocalPlayer.png"/>
-	<file src="files/images/Blips/Logistician.png"/>
-	<file src="files/images/Blips/Trashman.png"/>
-	<file src="files/images/Blips/RoadSweeper.png"/>
-	<file src="files/images/Blips/Lumberjack.png"/>
-	<file src="files/images/Blips/Pickpocket.png"/>
-	<file src="files/images/Blips/Police.png"/>
+	<vrpfile src="files/images/Blips/LocalPlayer.png"/>
+	<vrpfile src="files/images/Blips/Logistician.png"/>
+	<vrpfile src="files/images/Blips/Trashman.png"/>
+	<vrpfile src="files/images/Blips/RoadSweeper.png"/>
+	<vrpfile src="files/images/Blips/Lumberjack.png"/>
+	<vrpfile src="files/images/Blips/Pickpocket.png"/>
+	<vrpfile src="files/images/Blips/Police.png"/>
 	
-	<file src="files/images/Jobs/HeaderLogistician.png"/>
-	<file src="files/images/Jobs/HeaderTrashman.png"/>
-	<file src="files/images/Jobs/HeaderPolice.png"/>
-	<file src="files/images/Jobs/HeaderLumberjack.png"/>
-	<file src="files/images/Jobs/HeaderPickpocket.png"/>
-	<file src="files/images/Jobs/HeaderRoadSweeper.png"/>
-	<file src="files/images/Jobs/Trashdisplay.png"/>
-	<file src="files/images/Jobs/TrashDumpArea.png"/>
+	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
+	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
+	<vrpfile src="files/images/Jobs/HeaderPolice.png"/>
+	<vrpfile src="files/images/Jobs/HeaderLumberjack.png"/>
+	<vrpfile src="files/images/Jobs/HeaderPickpocket.png"/>
+	<vrpfile src="files/images/Jobs/HeaderRoadSweeper.png"/>
+	<vrpfile src="files/images/Jobs/Trashdisplay.png"/>
+	<vrpfile src="files/images/Jobs/TrashDumpArea.png"/>
 	
 	<!-- Audio -->
-	<file src="files/audio/Ringtones/Ringtone1.mp3"/>
-	<file src="files/audio/Ringtones/Ringtone2.mp3"/>
-	<file src="files/audio/Ringtones/Ringtone3.mp3"/>
-	<file src="files/audio/Ringtones/Ringtone4.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Ringtone3.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Ringtone4.mp3"/>
 	
-	<file src="files/audio/Success.mp3"/>
+	<vrpfile src="files/audio/Success.mp3"/>
 	
 	<!-- Models -->
-	<file src="files/models/dead_tree_18.dff"/>
+	<vrpfile src="files/models/dead_tree_18.dff"/>
 	
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
@@ -277,6 +280,6 @@
 	
 	<!-- temp -->
 	<script src="files/maps/tempTXDImport.lua" type="client"/>
-	<file src="files/maps/Carhouse_a51jdrx.txd"/>
+	<vrpfile src="files/maps/Carhouse_a51jdrx.txd"/>
 	
 </meta>

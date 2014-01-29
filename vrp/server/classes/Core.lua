@@ -24,6 +24,20 @@ function Core:constructor()
 	BankManager:new()
 	Async.create(function() Forum:new() end)()
 	WantedSystem:new()
+	Provider:new()
+	
+	-- Generate Package
+	local xml = xmlLoadFile("meta.xml")
+	local files = {}
+	for k, v in pairs(xmlNodeGetChildren(xml)) do
+		if xmlNodeGetName(v) == "vrpfile" then
+			files[#files+1] = xmlNodeGetAttribute(v, "src")
+		end
+	end
+	
+	Package.save("vrp.data", files)
+	
+	Provider:getSingleton():offerFile("vrp.data")
 	
 	-- Refresh all players
 	for k, v in pairs(getElementsByType("player")) do

@@ -9,7 +9,7 @@ JobTrashman = inherit(Job)
 
 function JobTrashman:constructor()
 	Job.constructor(self, 2090.5, -2097.4, 12.5, "files/images/Blips/Trashman.png", "files/images/Jobs/HeaderTrashman.png", LOREM_IPSUM)
-	
+	self.m_DumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")	
 	self.m_ColShapes = {}
 	addEventHandler("onClientPreRender", root, bind(JobTrashman.renderArea, self)) -- Todo: Replace by 3d image class
 	
@@ -91,9 +91,8 @@ function JobTrashman:Trashcan_Hit(hitElement, matchingDimension)
 	end
 end
 
-local dumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")
 function JobTrashman:renderArea()
-	dxDrawMaterialLine3D(2102, -2071, 12.56, 2102, -2082, 12.56, dumpAreaTexture, 11, Color.White, 2102, -2072, 14)
+	dxDrawMaterialLine3D(2102, -2071, 12.56, 2102, -2082, 12.56, self.m_DumpAreaTexture, 11, Color.White, 2102, -2072, 14)
 end
 
 JobTrashman.Trashcans = {

@@ -13,6 +13,14 @@ function Core:constructor()
 	
 	self.m_Config = ConfigXML:new("config.xml")
 	Version:new()
+	Provider:new()
+	
+	DownloadGUI:new()
+	local dgi = DownloadGUI:getSingleton()
+	Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
+end
+
+function Core:ready()
 	TranslationManager:new()
 	JobManager:new()
 	MTAFixes:new()
