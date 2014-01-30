@@ -21,6 +21,10 @@ end
 function Group.create(name)
 	if sql:queryExec("INSERT INTO ??_groups (Name) VALUES(?)", sql:getPrefix(), name) then
 		local group = Group:new(sql:lastInsertId(), name, 0)
+		
+		-- Add refernece
+		GroupManager:getSingleton():addRef(group)
+		
 		return group
 	end
 	return false
@@ -32,6 +36,10 @@ function Group:purge()
 		for playerId in pairs(self.m_Players) do
 			self:removePlayer(playerId)
 		end
+		
+		-- Remove reference
+		GroupManager:getSingleton():removeRef(self)
+		
 		return true
 	end
 	return false
@@ -86,7 +94,7 @@ function Group:removePlayer(playerId)
 	sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 end
 
-function Group:getPlayerRank(player)
+function Group:getPlayerRank(playerId)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
 	end
@@ -94,7 +102,7 @@ function Group:getPlayerRank(player)
 	return self.m_Players[playerId]
 end
 
-function Group:setPlayerRank(player, rank)
+function Group:setPlayerRank(playerId, rank)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
 	end

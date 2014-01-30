@@ -25,6 +25,7 @@ function Core:constructor()
 	Async.create(function() Forum:new() end)()
 	WantedSystem:new()
 	Provider:new()
+	GroupManager:new()
 	
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")
@@ -51,6 +52,7 @@ end
 function Core:destructor()
 	delete(VehicleManager:getSingleton())
 	delete(PlayerManager:getSingleton())
+	delete(GroupManager:getSingleton())
 	
 	delete(sql)
 end
