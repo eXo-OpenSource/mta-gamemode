@@ -4,7 +4,7 @@ function HouseManager:constructor ()
 
 	self.m_Houses = {}
 
-	local query = sql:queryFetch (dbConnection,'SELECT * FROM ??_houses', sql:getPrefix())
+	local query = sql:queryFetch ('SELECT * FROM ??_houses', sql:getPrefix())
 	
 	outputServerLog (string.format("Loading %d houses",table.getn(query)))
 	
@@ -15,8 +15,8 @@ function HouseManager:constructor ()
 end
 
 function HouseManager:newHouse ( x,y,z, interiorID, price )
-	local id = sql:queryFetch (dbConnection, 'SELECT * FROM ??_houses', sql:getPrefix())
-	local query = sql:queryFetch (dbConnection, 'INSERT INTO _houses VALUES (?,?,?,?,?,?,?,?,?,?)',
+	local id = sql:queryFetch ( 'SELECT * FROM ??_houses', sql:getPrefix())
+	local query = sql:queryFetch ( 'INSERT INTO _houses VALUES (?,?,?,?,?,?,?,?,?,?)',
 	sql:getPrefix(),
 	#id + 1,
 	x,
