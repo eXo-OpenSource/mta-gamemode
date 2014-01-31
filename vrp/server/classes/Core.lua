@@ -26,6 +26,7 @@ function Core:constructor()
 	WantedSystem:new()
 	Provider:new()
 	GroupManager:new()
+	HouseManager:new()
 	
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")
