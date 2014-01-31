@@ -137,7 +137,7 @@ function House:constructor (id,x,y,z,interiorID,keys,owner,price,lockStatus,rent
 	self.m_Id = id
 	self.m_Pickup = createPickup ( x,y,z, 3, 1239, 10, math.huge)
 	
-	self.m_Onplayerjoin = function () self:checkContractMonthly (getPlayerName(source)) end
+	-- self.m_Onplayerjoin = function () self:checkContractMonthly (getPlayerName(source)) end
 	self.m_Onplayerquit = function () self:onPlayerQuit (source) end
 	self.m_Onmarkerhit = function ( hitElement ) self:onPickupHit (hitElement) end
 	
