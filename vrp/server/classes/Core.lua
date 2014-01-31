@@ -54,6 +54,7 @@ function Core:destructor()
 	delete(VehicleManager:getSingleton())
 	delete(PlayerManager:getSingleton())
 	delete(GroupManager:getSingleton())
+	delete(HouseManager:getSingleton())
 	
 	delete(sql)
 end

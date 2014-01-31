@@ -4,8 +4,6 @@ function HouseManager:constructor ()
 
 	self.m_Houses = {}
 
-	self.m_OnResourceStop = function () self:destructor () end
-	
 	local query = sql:queryFetch (dbConnection,'SELECT * FROM ??_houses', sql:getPrefix())
 	
 	outputServerLog (string.format("Loading %d houses",table.getn(query)))
@@ -14,7 +12,6 @@ function HouseManager:constructor ()
 		table.insert ( self.m_Houses, new (House,value['id'],value['x'],value['y'],value['z'],value['interiorID'],value['keys'],value['owner'],value['price'],value['lockStatus'],value['rentPrice']))
 	end
 	
-	addEventHandler ('onResourceStop',resourceRoot,self.m_OnResourceStop)
 end
 
 function HouseManager:newHouse ( x,y,z, interiorID, price )
