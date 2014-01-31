@@ -52,6 +52,8 @@
 	<script src="server/classes/Group.lua" type="server"/>
 	<script src="server/classes/GroupManager.lua" type="server"/>
 	<script src="server/classes/Provider.lua" type="server"/>
+	<script src="server/classes/House.lua" type="server"/>
+	<script src="server/classes/HouseManager.lua" type="server"/>	
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
