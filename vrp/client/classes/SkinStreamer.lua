@@ -2,7 +2,7 @@ SkinStreamer = inherit(Singleton)
 
 function SkinStreamer:constructor()
 	addEventHandler("onClientElementStreamIn", root, bind(SkinStreamer.onStreamIn, self))
-	addEventHandler("onClientElementStreamIn", root, bind(SkinStreamer.onStreamOut, self))
+	addEventHandler("onClientElementStreamOut", root, bind(SkinStreamer.onStreamOut, self))
 end
 
 function SkinStreamer:onStreamIn()

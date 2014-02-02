@@ -10,10 +10,10 @@ JobLumberjack = inherit(Job)
 function JobLumberjack:constructor()
 	Job.constructor(self)
 	
-	self.m_LoadUpMarker = createMarker(1903.65, -1241.9, 15, "corona", 4)
+	self.m_LoadUpMarker = createMarker(1038.9, -354.2, 72.9, "corona", 4)
 	addEventHandler("onMarkerHit", self.m_LoadUpMarker, bind(JobLumberjack.loadUpHit, self))
 	
-	self.m_DumpMarker = createMarker(672.95, -1239.7, 14.8, "corona", 4)
+	self.m_DumpMarker = createMarker(-1969.8, -2432.6, 29.5, "corona", 4)
 	addEventHandler("onMarkerHit", self.m_DumpMarker, bind(JobLumberjack.dumpHit, self))
 	
 	--createVehicle(455, 1868.5, -1253.8, 14.6, 0, 0, 90, "Lumber", false, 255, 255)

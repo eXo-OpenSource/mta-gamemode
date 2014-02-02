@@ -223,4 +223,7 @@ end
 function nextframe(fn)
 	setTimer(fn, 50, 1)
 end
-	
+
+function toboolean(num)
+	return num ~= 0
+end

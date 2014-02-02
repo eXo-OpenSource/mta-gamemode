@@ -43,7 +43,7 @@ function JobManager:startJobForPlayer(job, player)
 	job:start(player)
 	
 	-- Tell the client that we started the job
-	player:triggerEvent("jobStart", jobId)
+	player:triggerEvent("jobStart", job:getId())
 end
 
 function JobManager:Event_jobAccepted(jobId)
