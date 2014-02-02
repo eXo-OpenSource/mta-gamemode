@@ -26,7 +26,9 @@ end
 
 function Scene:stop()
 	for k, v in pairs(self.m_ActiveAction) do
-		v:stop(true)
+		if v.stop then 
+			v:stop(true)
+		end
 	end
 end
 

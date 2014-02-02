@@ -75,6 +75,7 @@
 	<!-- Client -->
 	<script src="client/globals.lua" type="client"/>
 	<script src="client/utils.lua" type="client"/>
+	<script src="client/skindata.lua" type="client"/>
 	<script src="client/mapEditorScriptingExtension_c.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
 	<script src="client/classes/MTAElement.lua" type="client"/>
@@ -88,6 +89,8 @@
 	<script src="client/classes/GPS.lua" type="client"/>
 	<script src="client/classes/CustomModelManager.lua" type="client"/>
 	<script src="client/classes/Provider.lua" type="client"/>
+	<script src="client/classes/Skin.lua" type="client"/>
+	<script src="client/classes/SkinStreamer.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -164,6 +167,7 @@
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/CharacterCreationGUI.lua" type="client"/>
 	
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
@@ -275,6 +279,9 @@
 	
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
+
+	<!-- Shaders -->
+	<vrpfile src="files/shader/skin.fx"/>
 	
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>

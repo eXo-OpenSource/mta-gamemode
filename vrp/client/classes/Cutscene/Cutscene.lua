@@ -47,12 +47,9 @@ function Cutscene:stop()
 	for k, v in pairs(self.m_Elements) do
 		destroyElement(v)
 	end
-	outputDebug("pre on finish")
 	if self.onFinish then
-	outputDebug("in on finish")
 		self:onFinish()
 	end
-	outputDebug("post on finish")
 end
 
 function Cutscene:render()
