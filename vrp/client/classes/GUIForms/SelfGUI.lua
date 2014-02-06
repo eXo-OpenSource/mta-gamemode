@@ -15,7 +15,7 @@ function SelfGUI:constructor()
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", 1, self):setFont(VRPFont(28))
 	self.m_CloseButton.onHover = function(btn) btn:setColor(Color.Red) end
 	self.m_CloseButton.onUnhover = function(btn) btn:setColor(Color.White) end
-	self.m_CloseButton.onLeftClick = bind(GUIWindow.CloseButton_Click, self)
+	self.m_CloseButton.onLeftClick = function() self:hide() end
 	
 	-- Tab: Info
 	-- Todo

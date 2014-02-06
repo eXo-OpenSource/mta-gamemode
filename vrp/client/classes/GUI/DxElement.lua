@@ -121,6 +121,10 @@ function DxElement:setVisible(visible)
 --	for k, v in ipairs(self.m_Children) do
 --		v:setVisible(visible)
 --	end
+
+	if visible and self.m_CacheArea then
+		self.m_CacheArea:bringToFront()
+	end
 	
 	self:anyChange()
 	return self

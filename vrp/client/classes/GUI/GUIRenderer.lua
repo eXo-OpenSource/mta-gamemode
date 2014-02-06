@@ -23,6 +23,10 @@ function GUIRenderer.destructor()
 end
 
 function GUIRenderer.updateAll(elapsedTime)
+	GUIElement.ms_ClickProcessed = false
+	GUIElement.ms_ClickDownProcessed = false
+	GUIElement.ms_CacheAreaRetrievedClick = false
+
 	for k = #GUIRenderer.cache, 1, -1 do
 		local v = GUIRenderer.cache[k]
 		if v.m_Visible and v.update then
@@ -31,6 +35,12 @@ function GUIRenderer.updateAll(elapsedTime)
 		if v.m_ContainsGUIElements and v.m_Visible then
 			v:performChecks()
 		end
+	end
+	
+	if not GUIElement.ms_ClickProcessed then
+		ClickHandler:getSingleton():invokeClick()
+	else
+		ClickHandler:getSingleton():clearClickInfo()
 	end
 end
 
