@@ -95,6 +95,12 @@ function Player:loadCharacter(charid)
 		Rank = self:getRank();
 	}
 	self:triggerEvent("retrieveInfo", info)
+	
+	-- Add binds
+	bindKey(self, "z", "down", "chatbox", "Group")
+	
+	-- Add command and event handler
+	addCommandHandler("Group", Player.staticGroupChatHandler)
 end
 
 function Player:createCharacter(id)
@@ -106,7 +112,7 @@ function Player.getFromId(id)
 end
 
 function Player:loadCharacterInfo()
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_SavedPosition = Vector(row.PosX, row.PosY, row.PosZ)
@@ -122,6 +128,9 @@ function Player:loadCharacterInfo()
 	self.m_TutorialStage = row.TutorialStage
 	if row.Job > 0 then
 		self:setJob(JobManager:getSingleton():getFromId(row.Job))
+	end
+	if row.GroupId and row.GroupId ~= 0 then
+		self.m_Group = GroupManager:getSingleton():getFromId(row.GroupId)
 	end
 	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
@@ -240,4 +249,10 @@ end
 function Player:setJob(job)
 	JobManager:getSingleton():startJobForPlayer(job, self)
 	self.m_Job = job
+end
+
+function Player.staticGroupChatHandler(self, command, ...)
+	if self.m_Group then
+		self.m_Group:sendMessage(("[GROUP] %s: %s"):format(getPlayerName(self), table.concat({...}, " ")))
+	end
 end

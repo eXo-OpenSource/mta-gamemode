@@ -9,9 +9,16 @@ GroupManager = inherit(Singleton)
 GroupManager.Map = {}
 
 function GroupManager:constructor()
+	outputServerLog("Loading groups...")
 	local result = sql:queryFetch("SELECT Id, Name FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
-		local group = Group:new(row.Id, row.Name, row.Money)
+		local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
+		local players = {}
+		for i, groupRow in ipairs(result2) do
+			players[groupRow.Id] = groupRow.GroupRank
+		end
+		
+		local group = Group:new(row.Id, row.Name, row.Money, players)
 		GroupManager.Map[row.Id] = group
 	end
 end

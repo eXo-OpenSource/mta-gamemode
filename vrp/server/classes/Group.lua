@@ -7,10 +7,10 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, money)
+function Group:constructor(Id, name, money, players)
 	self.m_Id = Id
 	
-	self.m_Players = {}
+	self.m_Players = players or {}
 	self.m_Name = name
 	self.m_Money = money
 end

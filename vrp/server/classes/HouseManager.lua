@@ -1,12 +1,10 @@
 HouseManager = inherit(Singleton)
 
 function HouseManager:constructor()
-
 	self.m_Houses = {}
-
-	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 	
-	outputServerLog(string.format("Loading %d houses", table.getn(query)))
+	outputServerLog("Loading houses...")
+	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 	
 	for key, value in ipairs(query) do
 		self.m_Houses[value["Id"]] = House:new(value["Id"], value["x"], value["y"], value["z"], value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"])

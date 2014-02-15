@@ -9,25 +9,22 @@ HUDRadar = inherit(Singleton)
 
 function HUDRadar:constructor()
 	self.m_ImageWidth, self.m_ImageHeight = 1024, 1024
-	self.m_Texture = dxCreateRenderTarget(self.m_ImageWidth, self.m_ImageHeight)
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900
 	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-20
+	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
+	
+	self.m_Texture = dxCreateTexture("files/images/Radar.jpg")
 	self.m_Zoom = 1
 	self.m_Rotation = 0
-	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_Blips = {}
-	self.m_Visible = false;
+	self.m_Visible = false
 	
-	-- Set texture edge to border (no-repeat) | Not yet available in current 1.3.4 build (probably 1.3.5 onwards)
-	if dxSetTextureEdge then
-		dxSetTextureEdge(self.m_Texture, "border", tocolor(51, 70, 77))
-	end
-	
-	-- Render the map texture (incl. blips)
-	self:rerenderMapTexture()
+	-- Set texture edge to border (no-repeat)
+	dxSetTextureEdge(self.m_Texture, "border", tocolor(51, 70, 77))
+	self:setZoom(1)
 	
 	-- Create a renderTarget that has the size of the diagonal of the actual image
-	self.m_RenderTarget = dxCreateRenderTarget(self.m_ImageWidth, self.m_ImageHeight)
+	self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
 	
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.draw, self))
@@ -58,19 +55,16 @@ function HUDRadar:draw()
 	
 	-- Draw the map
 	local posX, posY, posZ = getElementPosition(localPlayer)
-	local mapX = posX / (6000 /self.m_ImageWidth)  + self.m_ImageWidth/2  - self.m_Diagonal / 2 / self.m_Zoom
-	local mapY = posY / (-6000/self.m_ImageHeight) + self.m_ImageHeight/2 - self.m_Diagonal / 2 / self.m_Zoom
-	local leftX, leftY = mapX+self.m_Diagonal/2, mapY+self.m_Diagonal/2
+	local mapX, mapY = self:worldToMapPosition(posX, posY)
 	
 	-- Render (rotated) image section to renderTarget
 	dxSetRenderTarget(self.m_RenderTarget, true)
-	--local rightEdge, bottomEdge = mapX + self.m_Diagonal/self.m_Zoom, mapY + self.m_Diagonal/self.m_Zoom
-	dxDrawRectangle(0, 0, self.m_Diagonal, self.m_Diagonal, tocolor(255,255,255))
-	dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX, mapY, self.m_Diagonal/self.m_Zoom, self.m_Diagonal/self.m_Zoom, self.m_Texture, self.m_Rotation)
+	dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_ImageWidth/2, mapY - self.m_ImageHeight/2, self.m_ImageWidth, self.m_ImageHeight, self.m_Texture, self.m_Rotation)
 	dxSetRenderTarget()
 	
 	-- Draw renderTarget
 	dxDrawImageSection(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)
+	--dxDrawImage(200, 300, self.m_Diagonal, self.m_Diagonal, self.m_RenderTarget) -- test
 	
 	-- Draw health bar (at the bottom)
 	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2, self.m_Height/20, tocolor(71, 86, 75))
@@ -87,6 +81,22 @@ function HUDRadar:draw()
 	-- Draw the player blip
 	dxDrawImage(self.m_PosX+self.m_Width/2-8, self.m_PosY+2+self.m_Height/2-8, 16, 16, "files/images/Blips/LocalPlayer.png", 0)
 	
+	local w = self.m_PosX + mapX - self.m_ImageWidth/2
+	local v = self.m_PosY + mapY - self.m_ImageHeight/2
+	dxDrawRectangle(w, v, 2, 2, Color.Red)
+	
+	--[[for k, blip in ipairs(self.m_Blips) do
+		local blipX, blipY = blip:getPosition()
+		if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < math.huge then
+			local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
+			local screenX = self.m_PosX + mapX * (self.m_Diagonal/self.m_ImageWidth)
+			local screenY = self.m_PosY + mapY * (self.m_Diagonal/self.m_ImageHeight)
+			outputDebug(("X: %d, Y: %d"):format(screenX, screenY))
+			
+			dxDrawImage(screenX, screenY, blip:getSize(), blip:getSize(), blip:getImagePath())
+		end
+	end
+	]]
 	-- Test
 	--[[local wX, wY = self.m_Blips[1]:getPosition()
 	wX, wY = self:worldToMapPosition(wX, wY)
@@ -97,13 +107,15 @@ function HUDRadar:draw()
 end
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
-	local mapX = worldX / (6000 /self.m_ImageWidth)  + self.m_ImageWidth/2
-	local mapY = worldY / (-6000/self.m_ImageHeight) + self.m_ImageHeight/2
+	local mapX = worldX / ( 6000/1024) + 1024/2
+	local mapY = worldY / (-6000/1024) + 1024/2
 	return mapX, mapY
 end
 
 function HUDRadar:setZoom(zoom)
 	self.m_Zoom = zoom
+	
+	self.m_ImageWidth, self.m_ImageHeight = self.m_ImageWidth / zoom, self.m_ImageHeight / zoom
 end
 
 function HUDRadar:getZoom()
@@ -111,10 +123,8 @@ function HUDRadar:getZoom()
 end
 
 function HUDRadar:addBlip(blipPath, worldX, worldY)
-	local blip = new(RadarBlip, blipPath, worldX, worldY)
+	local blip = RadarBlip:new(blipPath, worldX, worldY)
 	table.insert(self.m_Blips, blip)
-	
-	self:rerenderMapTexture()
 end
 
 function HUDRadar:removeBlip(blip)
@@ -125,31 +135,6 @@ function HUDRadar:removeBlip(blip)
 		end
 	end
 	return false
-end
-
-function HUDRadar:rerenderMapTexture()
-	-- Enter map render zone
-	dxSetRenderTarget(self.m_Texture, true)
-	
-	-- Draw the map
-	dxDrawImage(0, 0, self.m_ImageWidth, self.m_ImageHeight, "files/images/Radar.jpg")
-	
-	-- Draw the other, "normal" blips
-	for k, blip in ipairs(self.m_Blips) do
-		local blipX, blipY = blip:getPosition()
-		local mapX, mapY = self:worldToMapPosition(blipX, blipY)
-		local size = blip:getSize()
-		dxDrawImage(mapX-size/2, mapY-size/2, size, size, blip:getImagePath())
-	end
-	
-	-- Leave map render zone
-	dxSetRenderTarget()
-end
-
-function HUDRadar:restore(clearedRenderTargets)
-	if clearedRenderTargets then
-		self:rerenderMapTexture()
-	end
 end
 
 function HUDRadar:getBlipRenderPosition(blipX, blipY)

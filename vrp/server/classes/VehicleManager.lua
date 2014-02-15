@@ -24,8 +24,8 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleRemoveKey", root, bind(self.Event_vehicleRemoveKey, self))
 	addEventHandler("vehicleRepair", root, bind(self.Event_vehicleRepair, self))
 	
+	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
-	outputServerLog(("Loading %d vehicles"):format(#result))
 	for i, rowData in ipairs(result) do
 		local vehicle = createVehicle(rowData.Model, rowData.PosX, rowData.PosY, rowData.PosZ, 0, 0, rowData.Rotation)
 		enew(vehicle, Vehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys), rowData.Color, rowData.Health)
