@@ -227,3 +227,9 @@ end
 function toboolean(num)
 	return num ~= 0
 end
+
+function addRemoteEvents(eventList)
+	for k, v in ipairs(eventList) do
+		addEvent(v, true)
+	end
+end

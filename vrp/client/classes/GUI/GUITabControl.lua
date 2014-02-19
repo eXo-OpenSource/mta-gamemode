@@ -23,6 +23,10 @@ function GUITabControl:setTab(id)
 	self[id]:setVisible(true)
 	self.m_CurrentTab = id
 	
+	if self.onTabChanged then
+		self.onTabChanged(id)
+	end
+	
 	return self
 end
 

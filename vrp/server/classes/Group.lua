@@ -114,7 +114,7 @@ function Group:getMoney()
 	return self.m_Money
 end
 
-function Group:addMoney(amount)
+function Group:giveMoney(amount)
 	self.m_Money = self.m_Money + amount
 end
 

@@ -28,7 +28,7 @@ function HUDRadar:constructor()
 	
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.draw, self))
-	addEventHandler("onClientRestore", root, bind(self.restore, self))
+	--addEventHandler("onClientRestore", root, bind(self.restore, self))
 	showPlayerHudComponent("radar", false)
 end
 

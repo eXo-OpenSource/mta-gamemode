@@ -224,6 +224,11 @@ end
 --||	@return:function - the bound function
 --\\
 function bind(func, ...)
+	if not func then
+		outputConsole(debug.traceback())
+		error("Bad function pointer @ bind. See console for more details")
+	end
+	
 	local boundParams = {...}
 	return 
 		function(...) 
