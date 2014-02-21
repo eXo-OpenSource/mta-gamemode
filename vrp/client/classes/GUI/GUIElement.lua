@@ -157,7 +157,7 @@ addEventHandler("onClientDoubleClick", root,
 	function(button, absoluteX, absoluteY)
 		--local guiElement = self:getElementAt(absoluteX, absoluteY)
 		local guiElement = GUIElement.getHoveredElement()
-		if guiElement then
+		if guiElement and guiElement.m_Visible then
 			if button == "left" and guiElement.onLeftDoubleClick then
 				guiElement:onLeftDoubleClick(absoluteX, absoluteY)
 			end

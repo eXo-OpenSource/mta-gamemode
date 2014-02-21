@@ -18,7 +18,6 @@ function ClickHandler:constructor()
 	addEventHandler("onClientClick", root,
 		function(button, state, absoluteX, absoluteY, worldX, worldY, worldZ, element)
 			if state == "up" then
-				outputChatBox("onClientClick")
 				self.m_ClickInfo = {button = button, absoluteX = absoluteX, absoluteY = absoluteY, element = element}
 			end
 		end
@@ -42,16 +41,14 @@ function ClickHandler:dispatchClick(clickInfo)
 		delete(menu)
 	end
 	
-	outputChatBox("DispatchClick")
-	
 	local element, button = clickInfo.element, clickInfo.button
 	if button == "right" then
 		if not element or not isElement(element) or not getElementData(element, "OwnerName") then -- Elementdata: temp fix (Todo)
 			return
 		end
-	
+		
 		local elementType = getElementType(element)
-		if self.m_Menu[elementType] and not element == localPlayer then
+		if self.m_Menu[elementType] and element ~= localPlayer then
 			local mouseMenu = self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element)
 			mouseMenu:setElement(element)
 			table.insert(self.m_OpenMenus, mouseMenu)
