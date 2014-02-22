@@ -70,6 +70,11 @@
 	<script src="server/classes/Jobs/JobPickpocket.lua" type="server"/>
 	<script src="server/classes/Jobs/JobPolice.lua" type="server"/>
 	
+	<!-- NPCs and shops -->
+	<script src="server/classes/NPC.lua" type="server"/>
+	<script src="server/classes/ShopNPC.lua" type="server"/>
+	<script src="server/classes/RobableShop.lua" type="server"/>
+	
 	<script src="server/Main.lua" type="server"/>
 	
 	<!-- Client -->
@@ -166,6 +171,7 @@
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/GroupInviteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CharacterCreationGUI.lua" type="client"/>
 	

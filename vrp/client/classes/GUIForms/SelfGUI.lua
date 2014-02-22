@@ -77,6 +77,12 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsRankLabel:setText(tostring(rank))
 		self.m_GroupMoneyLabel:setText(tostring(money).."$")
+		
+		self.m_GroupPlayersGrid:clear()
+		for playerId, info in pairs(players) do
+			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank)
+			item.Id = playerId
+		end
 	end
 end
 
@@ -134,17 +140,28 @@ function SelfGUI:GroupMoneyWithdrawButton_Click()
 end
 
 function SelfGUI:GroupAddPlayerButton_Click()
-	-- todo
+	GroupInviteGUI:new()
 end
 
 function SelfGUI:GroupRemovePlayerButton_Click()
-	
+	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("groupDeleteMember", root, selectedItem.Id)
+	else
+		ErrorBox:new(_"Dieser Spieler ist nicht (mehr) online")
+	end
 end
 
 function SelfGUI:GroupRankUpButton_Click()
-
+	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("groupRankUp", root, selectedItem.Id)
+	end
 end
 
 function SelfGUI:GroupRankDownButton_Click()
-
+	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
+	if selectedItem and selectedItem.Id then
+		triggerServerEvent("groupRankDown", root, selectedItem.Id)
+	end
 end

@@ -94,6 +94,15 @@ function Group:removePlayer(playerId)
 	sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 end
 
+function Group:isPlayerMember(playerId)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+	
+	return self.m_Players[playerId] ~= nil
+end
+
+
 function Group:getPlayerRank(playerId)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
@@ -123,7 +132,11 @@ function Group:takeMoney(amount)
 end
 
 function Group:getPlayers()
-	return self.m_Players
+	local temp = {}
+	for playerId, rank in pairs(self.m_Players) do
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank}
+	end
+	return temp
 end
 
 function Group:getOnlinePlayers()
