@@ -1,24 +1,38 @@
 CharacterCreationGUI = inherit(Singleton)
 inherit(GUIForm, CharacterCreationGUI)
 
+local CHARACTER_SELECTION_PED_POSITIONS = {
+{1566.440918, -1374.292114, 190.789063, 273};
+{1566.781006, -1370.144531, 190.789063, 273};
+{1569.722046, -1365.911987, 190.783386, 245};
+{1571.086182, -1362.996094, 190.789063, 245};
+{1572.439697, -1360.476074, 190.789063, 245};
+{1572.527222, -1356.963135, 190.789063, 276};
+{1572.689819, -1354.394775, 190.789063, 276};
+}
+
+local CHARACTER_SELECTION_SKINS = {
+19, 19, 19, 19 -- fixme: add different skins
+}
+
 function CharacterCreationGUI:constructor()	
 	local sw, sh = guiGetScreenSize()
 	GUIForm.constructor(self, 0, 0, sw, sh)
-	
+	self.m_Selector = GUIRectangle:new(sw/3*2, sh/5, sw/4, sh/2, tocolor(2, 17, 39, 255), self)
+	GUILabel:new(0, 10, (sw/4), 10, "Aussehen", 1.5, self.m_Selector):setAlign("center", "top")	
 		
 	self:bind("arrow_l", bind(CharacterCreationGUI.left, self))
 	self:bind("arrow_r", bind(CharacterCreationGUI.right, self))
 	self:bind("arrow_d", bind(CharacterCreationGUI.down, self))
 	self:bind("arrow_u", bind(CharacterCreationGUI.up, self))
 	
-	local skins = {
-		19, 19, 19, 19 -- supported skins
-	}
+	local skins = CHARACTER_SELECTION_SKINS
 	
 	self.m_Peds = {}
 	for k, id in pairs(skins) do
-		self.m_Peds[#self.m_Peds+1] = createPed(id, 2058-#skins+k-1, 1462, 11)
-		setElementRotation(self.m_Peds[#self.m_Peds], 0, 0, 180)
+		local x, y, z, rz = unpack(CHARACTER_SELECTION_PED_POSITIONS[k])
+		self.m_Peds[#self.m_Peds+1] = createPed(id, x, y, z)
+		setElementRotation(self.m_Peds[#self.m_Peds], 0, 0, rz)
 		self.m_Peds[#self.m_Peds].m_ColorScheme = 1
 	end
 	
@@ -35,6 +49,17 @@ function CharacterCreationGUI:constructor()
 	
 	self.m_CurrentView = math.ceil(#skins/2)
 	self:updateView()
+end
+
+function CharacterCreationGUI:destructor()
+	for k, v in pairs(self.m_Peds) do
+		v.m_Skin:delete()
+		destroyElement(v)
+	end
+	
+	if self.m_Cutscene then
+		self.m_Cutscene:delete()
+	end
 end
 
 function CharacterCreationGUI:right()
@@ -102,6 +127,10 @@ function CharacterCreationGUI:updateView()
 	local id = self.m_CurrentView
 	local lv = self.m_CurrentLevel
 	
+	local xl, yl, zl, rz = unpack(CHARACTER_SELECTION_PED_POSITIONS[id])
+	local x, y = getPointFromDistanceRotation(xl, yl, 3.75, -rz)
+	local z = zl+0.5
+	
 	self.m_Cutscene = Cutscene:new(
 	{
 		name = "CharacterCreation";
@@ -114,12 +143,13 @@ function CharacterCreationGUI:updateView()
 			{
 				action = "Camera.move";
 				starttick = 0;
-				targetpos = { 2057.33-#self.m_Peds+id, 1458.67, 12.24-lv*0.3 };
-				targetlookat = { 2057.28-#self.m_Peds+id, 1459.62, 11.95-lv*0.3 };
+				targetpos = { x, y, z-lv*0.3 };
+				targetlookat = { xl, yl, zl-lv*0.3 };
 				duration = 500;
 			};
 		}
 	})
+	
 	self.m_Cutscene:play()
 	self.m_Cutscene.onFinish = function(self) self:delete() end
 end
