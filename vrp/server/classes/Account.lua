@@ -93,6 +93,9 @@ function Account:constructor(id, username, player, pwhash, justRegistered)
 	player:loadCharacter(self.m_Id)
 	
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
+	if player:getTutorialStage() > 2 then
+		player:spawn()
+	end
 end
 
 function Account:getPlayer()

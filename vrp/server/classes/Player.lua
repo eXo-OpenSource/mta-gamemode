@@ -17,7 +17,10 @@ addEventHandler("onPlayerConnect", root,
 )
 addEventHandler("onPlayerJoin", root, function() source:join() end)
 addEvent("introFinished", true)
-addEventHandler("introFinished", root, function() client:spawn() end)
+addEventHandler("introFinished", root, function()
+	client.m_TutorialStage = 3 -- todo: character creation and tutorial mission
+	client:spawn() 
+end)
 
 function Player:constructor()
 	self.m_Account = false
@@ -150,6 +153,9 @@ end
 
 function Player:spawn()
 	spawnPlayer(self, self.m_SavedPosition.X, self.m_SavedPosition.Y, self.m_SavedPosition.Z, 0, self.m_Skin, self.m_SavedInterior, 0)
+	setElementFrozen(self, false)
+	setElementDimension(self, 0)
+	setCameraTarget(self, self)
 end
 
 -- Message Boxes

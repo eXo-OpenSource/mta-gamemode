@@ -235,12 +235,38 @@ function addRemoteEvents(eventList)
 end
 
 function getPointFromDistanceRotation(x, y, dist, angle)
- 
     local a = math.rad(90 - angle);
- 
     local dx = math.cos(a) * dist;
     local dy = math.sin(a) * dist;
- 
     return x+dx, y+dy;
- 
+end
+
+function getPointFromDistanceRotation3D(x,y,z,rx,ry,rz,distance)
+	rx = math.rad(rx)
+	ry = math.rad(ry)
+	rz = math.rad(rz)
+	
+	local sin = math.sin
+	local cos = math.cos
+	
+	local dx,dy,dz =1,0,0
+	
+	local function rotateZY(x,y,z,r)
+		return 
+		( cos(r) * x - sin(r) * y + 0   * z),
+		( sin(r) * x + cos(r) * y + 0   * z),
+		( 0		 * x - 0 	  * y + 1 	* z )
+	end
+	
+	local function rotateX(x,y,z,r)
+		return
+		( 1		 * x - 0 	  * y + 0 		* z),
+		( 0		 * x + cos(r) * y - sin(r)	* z),
+		( 0		 * x + sin(r) * y + cos(r)	* z)
+	end
+
+	dx,dy,dz=rotateZY(dx,dy,dz,rz)
+	dx,dy,dz=rotateX(dx,dy,dz,rx)
+	dx,dy,dz=rotateZY(dx,dy,dz,ry)
+	return x+dx*distance,y+dy*distance,z+dz*distance
 end

@@ -224,9 +224,7 @@ addEventHandler("loginsuccess", root,
 			-- Play Intro
 			CutscenePlayer:getSingleton():playCutscene("Intro",
 				function()
-					setCameraTarget(localPlayer)
 					setElementPosition(localPlayer, 0, 0, 5)
-					setElementFrozen(localPlayer, false)
 					
 					-- Temp fix?
 					triggerServerEvent("introFinished", root)

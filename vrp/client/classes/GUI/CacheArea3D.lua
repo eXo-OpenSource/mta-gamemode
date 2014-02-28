@@ -2,7 +2,7 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/CacheArea3D.lua
--- *  PURPOSE:     Cached area class
+-- *  PURPOSE:     Cached area 3D class
 -- *
 -- ****************************************************************************
 CacheArea3D = inherit(CacheArea)
@@ -15,10 +15,10 @@ function CacheArea3D:constructor(posX, posY, posZ, rotX, rotY, rotZ, sawidth, sa
 	self.m_3DWidth = sawidth;
 	self.m_3DHeight= saheight;
 	
-	if rotX and rotX ~= 0 then outputDebug("Warning - CacheArea3D rotation X not implemented") end
-	if rotY and rotY ~= 0 then outputDebug("Warning - CacheArea3D rotation Y not implemented") end
+	self.m_RotY = rotY or 0
+	self.m_RotX = rotX or 0
+	self.m_RotZ = rotZ or 0
 	
-	self.m_RotZ = rotZ
 	
 	-- There shall be no 0 nor 180 in rz (else: bugs)
 	while self.m_RotZ > 360 do self.m_RotZ = self.m_RotZ-360 end
@@ -62,24 +62,10 @@ function CacheArea3D:drawCached()
 	end
 	
 	-- Render! :>
-	local sx, sy, sz = self.m_3DX, self.m_3DY, self.m_3DZ;
-	local ex, ey = getPointFromDistanceRotation(sx, sy, self.m_3DWidth, self.m_RotZ)
-	local ez = sz
+	local ex, ey, ez = getPointFromDistanceRotation3D(self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ, self.m_RotX, self.m_RotY, self.m_RotZ, self.m_3DWidth/2)
+	local sx, sy, sz = getPointFromDistanceRotation3D(self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ, self.m_RotX, self.m_RotY, self.m_RotZ, -self.m_3DWidth/2)
 	
-	-- face towards shall be the normal of the line
-	-- ax + by + cz = 0
-	-- c is always 0 since ez = sz
-	local a = ex - sx
-	local b = ey - sy
-	-- ax + by = 0
-	-- y shall be 1
-	-- thus:
-	-- ax + b = 0
-	-- x + b/a = 0
-	-- x = -b/a
-	local x = -b/a
-	
-	local fx, fy, fz = x, 1, 0
+	local fx, fy, fz = getPointFromDistanceRotation3D(self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ, self.m_RotX, 0, 0, 1)
 	
 	dxDrawMaterialLine3D(sx, sy, sz, ex, ey, ez, self.m_RenderTarget, self.m_3DHeight, tocolor(255,255,255,255), fx, fy, fz)
 	
