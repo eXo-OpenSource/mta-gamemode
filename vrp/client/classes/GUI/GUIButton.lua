@@ -12,7 +12,7 @@ inherit(GUIFontContainer, GUIButton)
 local GUI_BUTTON_BORDER_MARGIN = 5
 
 function GUIButton:constructor(posX, posY, width, height, text, parent)
-	checkArgs("CGUIButton:constructor", "number", "number", "number", "number", "string")
+	checkArgs("GUIButton:constructor", "number", "number", "number", "number", "string")
 	
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, text, 1.5)

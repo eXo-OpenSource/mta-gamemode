@@ -14,7 +14,7 @@ function GroupInviteGUI:constructor()
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.08, self.m_Width*0.96, self.m_Height*0.1, _"Bitte wähle einen Spieler aus!", 1, self.m_Window):setFont(VRPFont(self.m_Height*0.05))
 	self.m_PlayersGrid = GUIGridList:new(self.m_Width*0.01, self.m_Height*0.14, self.m_Width*0.98, self.m_Height*0.75, self.m_Window)
 	self.m_PlayersGrid:addColumn(_"Name", 1)
-	self.m_InviteButton = GUIButton:new(self.m_Width*0.01, self.m_Height*0.9, self.m_Width*0.98, self.m_Height*0.1, _"Erstellen", self.m_Window):setBackgroundColor(Color.Green)
+	self.m_InviteButton = GUIButton:new(self.m_Width*0.01, self.m_Height*0.9, self.m_Width*0.98, self.m_Height*0.1, _"Hinzufügen", self.m_Window):setBackgroundColor(Color.Green)
 	
 	self.m_InviteButton.onLeftClick = bind(self.InviteButton_Click, self)
 	

@@ -108,7 +108,6 @@
 	<script src="client/classes/GUI/abstract/GUIFontContainer.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollableArea.lua" type="client"/>
 	<script src="client/classes/GUI/GUIButton.lua" type="client"/>
-	<script src="client/classes/GUI/GUIBar.lua" type="client"/>
 	<script src="client/classes/GUI/GUICheckbox.lua" type="client"/>
 	<script src="client/classes/GUI/GUIDebugging.lua" type="client"/>
 	<script src="client/classes/GUI/GUIInputControl.lua" type="client"/>

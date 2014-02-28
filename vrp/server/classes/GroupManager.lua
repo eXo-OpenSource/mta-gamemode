@@ -173,6 +173,11 @@ function GroupManager:Event_groupDeleteMember(playerId)
 		return
 	end
 	
+	if group:getPlayerRank(playerId) == GroupRank.Leader then
+		client:sendError(_("Du kannst den Gruppenleiter nicht rauswerfen!", client))
+		return
+	end
+	
 	group:removePlayer(playerId)
 	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
 end
