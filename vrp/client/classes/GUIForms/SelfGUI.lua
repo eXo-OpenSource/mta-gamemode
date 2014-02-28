@@ -28,7 +28,7 @@ function SelfGUI:constructor()
 	-- Tab: Groups
 	local tabGroups = self.m_TabPanel:addTab(_"Gruppen")
 	self.m_TabGroups = tabGroups
-	local color = tocolor(209, 82, 227)
+	local color = Color.White
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.05, _"Gruppe:", 1, tabGroups):setFont(VRPFont(self.m_Height * 0.05))
 	self.m_GroupsNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.05, "", 1, tabGroups):setFont(VRPFont(self.m_Height * 0.05))
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.05, _"Gruppenrang:", 1, tabGroups):setFont(VRPFont(self.m_Height * 0.05))

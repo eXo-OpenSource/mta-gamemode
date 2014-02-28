@@ -117,6 +117,7 @@ function Group:setPlayerRank(playerId, rank)
 	end
 	
 	self.m_Players[playerId] = rank
+	sql:queryExec("UPDATE ??_character SET GroupRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
 end
 
 function Group:getMoney()
@@ -124,11 +125,17 @@ function Group:getMoney()
 end
 
 function Group:giveMoney(amount)
-	self.m_Money = self.m_Money + amount
+	self:setMoney(self.m_Money + amount)
 end
 
 function Group:takeMoney(amount)
-	self.m_Money = self.m_Money - amount
+	self:setMoney(self.m_Money - amount)
+end
+
+function Group:setMoney(amount)
+	self.m_Money = amount
+	
+	sql:queryExec("UPDATE ??_groups SET Money = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Id)
 end
 
 function Group:getPlayers()

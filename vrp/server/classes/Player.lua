@@ -156,6 +156,7 @@ function Player:spawn()
 	setElementFrozen(self, false)
 	setElementDimension(self, 0)
 	setCameraTarget(self, self)
+	fadeCamera(self, true)
 end
 
 -- Message Boxes

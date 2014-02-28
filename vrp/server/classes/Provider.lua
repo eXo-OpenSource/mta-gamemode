@@ -57,7 +57,7 @@ function Provider:onClientRequestFile(filename, hash)
 	end
 	
 	local id = #self.m_ActiveDL+1
-	triggerLatentClientEvent(client, "onDownloadStop", --[[ 10mb/s ]] 10 * 1024 * 1024, resourceRoot, id, self.m_Files[filename].data)
+	triggerLatentClientEvent(client, "onDownloadStop", --[[ 10mb/s 10]] 0.1 * 1024 * 1024, resourceRoot, id, self.m_Files[filename].data)
 	local evhandles = getLatentEventHandles(client)
 	self.m_ActiveDL[id] = { player = client, handle = evhandles[#evhandles] }
 	triggerClientEvent(client, "onDownloadStart", resourceRoot, id, filename, self.m_Files[filename].md5, self.m_Files[filename].size)
