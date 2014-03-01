@@ -62,10 +62,28 @@ function CacheArea3D:drawCached()
 	end
 	
 	-- Render! :>
-	local ex, ey, ez = getPointFromDistanceRotation3D(self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ, self.m_RotX, self.m_RotY, self.m_RotZ, self.m_3DWidth/2)
-	local sx, sy, sz = getPointFromDistanceRotation3D(self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ, self.m_RotX, self.m_RotY, self.m_RotZ, -self.m_3DWidth/2)
 	
-	local fx, fy, fz = getPointFromDistanceRotation3D(self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ, self.m_RotX, 0, 0, 1)
+	-- Kreisdefinition
+	local mx,my,mz = self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ
+	
+	-- Kreis im lokalen Raum mit r = 3DWidth / 2 um m
+	local sx,sy,sz = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX, self.m_RotY, self.m_RotZ, self.m_3DWidth/2)
+	local ex,ey,ez = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX, self.m_RotY, self.m_RotZ, -self.m_3DWidth/2)
+	
+	local px,py,pz = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX+90, self.m_RotY+90, self.m_RotZ, self.m_3DHeight/2)
+	
+	local fx = sy*pz - sz*py
+	local fy = sz*px - sx*pz
+	local fz = sx*py - sy*px
+	
+	
+	sx,sy,sz=mx+sx,my+sy,mz+sz
+	ex,ey,ez=mx+ex,my+ey,mz+ez
+	fx,fy,fz=mx+fz,my+fy,mz+fz
+
+	outputDebug(("s(%03f %03f %03f)"):format(sx,sy,sz))
+	outputDebug(("p(%03f %03f %03f)"):format(px,py,pz))
+	outputDebug(("f(%03f %03f %03f)"):format(fx,fy,fz))
 	
 	dxDrawMaterialLine3D(sx, sy, sz, ex, ey, ez, self.m_RenderTarget, self.m_3DHeight, tocolor(255,255,255,255), fx, fy, fz)
 	

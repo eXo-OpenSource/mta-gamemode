@@ -11,13 +11,19 @@ function DownloadGUI:constructor()
 	end
 	GUILabel:new(0, screenHeight - 30, screenWidth, 50, "Drücke 'm', um die Musik bei einer langsamen Internetverbindung zu stoppen!", 1, self):setAlignX("center"):setFont(VRPFont(20))
 	self.m_ProgressBar = GUIProgressBar:new(screenWidth/2 - 500/2, screenHeight/2 - 150/2 + 110, 500, 30, self)
+		
+	fadeCamera(false) -- freeroam hack | todo: Remove when freeroam is no longer required
 	
+	setTimer(bind(DownloadGUI.launchMusic, self), 150, 1)
+end
+
+function DownloadGUI:launchMusic()
+	if self ~= DownloadGUI:getSingleton() then return end
 	self.m_Music = playSound("http://www.jusonex.net/public/saonline/downloadmusic.mp3", true)
 	self.m_StopMusicFunc = function() if self.m_Music then destroyElement(self.m_Music) self.m_Music = nil end end
+	self.m_StartMusicFunc = function() if not self.m_Music then self.m_Music = playSound("http://www.jusonex.net/public/saonline/downloadmusic.mp3", true) end end
 	bindKey("m", "down", self.m_StopMusicFunc)
-	
-	fadeCamera(false) -- freeroam hack | todo: Remove when freeroam is no longer required
-	outputDebug("show some loading bar pls. -- np")
+	bindKey("m", "down", self.m_StartMusicFunc)
 end
 
 function DownloadGUI:destructor()
@@ -25,6 +31,7 @@ function DownloadGUI:destructor()
 		stopSound(self.m_Music)
 	end
 	unbindKey("m", "down", self.m_StopMusicFunc)
+	unbindKey("m", "down", self.m_StartMusicFunc)
 	
 	GUIForm.destructor(self)
 end
