@@ -18,7 +18,7 @@ function DownloadGUI:constructor()
 end
 
 function DownloadGUI:launchMusic()
-	if self ~= DownloadGUI:getSingleton() then return end
+	if not self:isVisible() then return end
 	self.m_Music = playSound("http://www.jusonex.net/public/saonline/downloadmusic.mp3", true)
 	self.m_StopMusicFunc = function() if self.m_Music then destroyElement(self.m_Music) self.m_Music = nil end end
 	self.m_StartMusicFunc = function() if not self.m_Music then self.m_Music = playSound("http://www.jusonex.net/public/saonline/downloadmusic.mp3", true) end end
