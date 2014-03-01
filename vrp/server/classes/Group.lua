@@ -13,6 +13,7 @@ function Group:constructor(Id, name, money, players)
 	self.m_Players = players or {}
 	self.m_Name = name
 	self.m_Money = money
+	self.m_Invitations = {}
 end
 
 function Group:destructor()
@@ -92,6 +93,20 @@ function Group:removePlayer(playerId)
 	end
 	
 	sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+end
+
+function Group:invitePlayer(player)
+	player:triggerEvent("groupInvitationRetrieve", group:getId(), group:getName())
+	
+	self.m_Invitations[player] = true
+end
+
+function Group:removeInvitation(player)
+	self.m_Invitations[player] = nil
+end
+
+function Group:hasInvitation(player)
+	return self.m_Invitations[player]
 end
 
 function Group:isPlayerMember(playerId)

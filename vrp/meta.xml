@@ -200,6 +200,7 @@
 	<script src="client/classes/Phone/Apps/AppHelloWorld.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppCall.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppSettings.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppDashboard.lua" type="client"/>
 	
 	<!-- Jobs -->
 	<script src="client/classes/Jobs/Job.lua" type="client"/>

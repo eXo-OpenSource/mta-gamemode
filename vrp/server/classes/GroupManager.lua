@@ -24,7 +24,8 @@ function GroupManager:constructor()
 	end
 	
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw", "groupAddPlayer", "groupDeleteMember", "groupRankUp", "groupRankDown"}
+	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
+		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_groupRequestInfo, self))
 	addEventHandler("groupCreate", root, bind(self.Event_groupCreate, self))
 	addEventHandler("groupQuit", root, bind(self.Event_groupQuit, self))
@@ -33,6 +34,8 @@ function GroupManager:constructor()
 	addEventHandler("groupWithdraw", root, bind(self.Event_groupWithdraw, self))
 	addEventHandler("groupAddPlayer", root, bind(self.Event_groupAddPlayer, self))
 	addEventHandler("groupDeleteMember", root, bind(self.Event_groupDeleteMember, self))
+	addEventHandler("groupInvitationAccept", root, bind(self.Event_groupInvitationAccept, self))
+	addEventHandler("groupInvitationDecline", root, bind(self.Event_groupInvitationDecline, self))
 	addEventHandler("groupRankUp", root, bind(self.Event_groupRankUp, self))
 	addEventHandler("groupRankDown", root, bind(self.Event_groupRankDown, self))
 end
@@ -155,8 +158,9 @@ function GroupManager:Event_groupAddPlayer(player)
 	end
 	
 	if not group:isPlayerMember(player) then
-		group:addPlayer(player)
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+		group:invitePlayer(player)
+		--group:addPlayer(player)
+		--client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
 	else
 		client:sendError(_("Dieser Spieler ist bereits in der Gruppe!", client))
 	end
@@ -180,6 +184,31 @@ function GroupManager:Event_groupDeleteMember(playerId)
 	
 	group:removePlayer(playerId)
 	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+end
+
+function GroupManager:Event_groupInvitationAccept(groupId)
+	local group = client:getGroup()
+	if not group then return end
+	
+	if group:hasInvitation(client) then
+		group:addPlayer(client)
+		group:removeInvitation(client)
+		group:sendMessage(_("%s ist soeben der Gruppe beigetreten", client, group:getName()))
+	else
+		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
+	end
+end
+
+function GroupManager:Event_groupInvitationDecline(groupId)
+	local group = client:getGroup()
+	if not group then return end
+	
+	if group:hasInvitation(client) then
+		group:removeInvitation(client)
+		group:sendMessage(_("%s hat die Gruppeneinladung abgelehnt", client, group:getName()))
+	else
+		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
+	end
 end
 
 function GroupManager:Event_groupRankUp(playerId)

@@ -9,13 +9,6 @@ Player = inherit(MTAElement)
 Player.Map = {}
 registerElementClass("player", Player)
 
-addEventHandler("onPlayerConnect", root, 
-	function(name)
-		local player = getPlayerFromName(name)
-		Async.create(Player.connect)(player)
-	end
-)
-addEventHandler("onPlayerJoin", root, function() source:join() end)
 addEvent("introFinished", true)
 addEventHandler("introFinished", root, function()
 	client.m_TutorialStage = 3 -- todo: character creation and tutorial mission

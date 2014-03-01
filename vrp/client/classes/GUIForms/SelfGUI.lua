@@ -61,7 +61,9 @@ function SelfGUI:constructor()
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
 	
 	addEvent("groupRetrieveInfo", true)
+	addEvent("groupInvitationRetrieve", true)
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
+	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 end
 
 function SelfGUI:TabPanel_TabChanged(tabId)
@@ -84,6 +86,19 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)
 			item.Id = playerId
 		end
 	end
+end
+
+function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
+	ShortMessage:new(_"Du wurdest in die Gruppe %s eingeladen. Öffne dein Handy, um die Einladung zu bestätigen")
+	Phone:getSingleton():getAppByClass(AppDashboard):addNotification(
+		_("Möchtest du die Einladung der Gruppe %s annehmen?", name),
+		function()
+			triggerServerEvent("groupInvitationAccept", root, groupId)
+		end,
+		function()
+			triggerServerEvent("groupInvitationDecline", root, groupId)
+		end
+	)
 end
 
 function SelfGUI:adjustGroupTab(rank)
