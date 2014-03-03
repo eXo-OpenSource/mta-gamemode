@@ -3,8 +3,10 @@
 JobFarmer = inherit(Job)
 
 local VEHICLE_SPAWN = {-1063.92468,-1226.01440,128.41875,90}
-local PLANT_DELIVERY = {0,0,2}
+local PLANT_DELIVERY = {-1108.28723,-1620.65833,75.36719}
 local MONEYPERPLANT = 25 -- Money per plant at the delivery point
+local PLANTSONWALTON = 50
+local STOREMARKERPOS = {-1073.52661,-1207.41882,128.21875}
 
 function JobFarmer:constructor()
 	Job.constructor(self)
@@ -16,12 +18,18 @@ function JobFarmer:constructor()
 	VehicleSpawner:new(x,y,z, {"Combine Harvester";"Tractor";"Walton"}, rotation, bind(Job.requireVehicle, self))
 	
 	self.m_JobElements = {}
-	self.m_Colshape = {}
-	self.m_CurrentPlantsHand = {}
 	self.m_CurrentPlants = {}
+	self.m_CurrentPlantsFarm = 0
+	
+	local x,y,z = unpack(STOREMARKERPOS)
+		
+	self.m_Storemarker = self:createJobElement ( createMarker (x,y,z,"cylinder",3,0,125,0,125) )
+	
+	addEventHandler("onMarkerHit",self.m_Storemarker,bind(self.storeHit,self))
+	
 	
 	-- // this the delivery BLIP
-	local x,y,z = unpack (PLANT_DELIVERY)
+	x,y,z = unpack (PLANT_DELIVERY)
 	
 	self.m_DeliveryMarker = self:createJobElement(createMarker(x,y,z,"cylinder",4))
 	self:createJobElement (createBlip(x,y,z))
@@ -31,7 +39,7 @@ function JobFarmer:constructor()
 	-- //
 	
 	for key, value in ipairs (JobFarmer.PlantPlaces) do
-		local x,y,z = unpack(value)
+		x,y,z = unpack(value)
 
 		addEventHandler("onColShapeHit",createColSphere (x,y,z,3),
 			function (hitElement)
@@ -51,6 +59,34 @@ function JobFarmer:constructor()
 	
 end
 
+function JobFarmer:storeHit(hitElement,matchingDimension)
+	if getElementType(hitElement) ~= "vehicle" then
+		return
+	end
+	local player = getVehicleOccupant(hitElement,0)
+	if player and player:getJob() ~= self then
+		return
+	end
+	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
+		if self.m_CurrentPlants[player] ~= 0 then
+			outputChatBox("Du hast schon "..PLANTSONWALTON.." Pflanzen auf deinem Walton !",player,255,0,0)
+			return
+		end
+		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then
+			self.m_CurrentPlants[player] = PLANTSONWALTON
+			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm - PLANTSONWALTON
+			setElementFrozen ( hitElement, true )
+			setTimer ( 
+				function(element) 
+					setElementFrozen(element,false)
+				end,3500,1,hitElement
+			)
+		else
+			outputChatBox("Es gibt momentan nicht genug Pflanzen auf der Farm. Momentane Pflanzen : "..self.m_CurrentPlantsFarm,player,255,0,0)
+		end
+	end	
+end
+
 function JobFarmer:createJobElement (element)
 	setElementVisibleTo (element,root,false)
 	table.insert (self.m_JobElements,element)	
@@ -60,7 +96,6 @@ end
 function JobFarmer:start(player)
 	self:setJobElementVisibility (player,true)
 	self.m_CurrentPlants[player] = 0
-	self.m_Plants[player] = {}
 end
 
 function JobFarmer:setJobElementVisibility (player,boolean)
@@ -70,16 +105,12 @@ function JobFarmer:setJobElementVisibility (player,boolean)
 end
 
 function JobFarmer:destroyPlants (player)
-	for key, field in ipairs(self.m_Plants[player]) do
-		if isElement (field) then
-			destroyElement (field)
-		end
-	end	
+
 end
 
 function JobFarmer:stop(player)
 	self.m_CurrentPlants[player] = nil
-	self:destroyPlants(player)
+	--self:destroyPlants(player)
 	self:setJobElementVisibility(player,false)
 	self.m_Plants[player] = nil
 end
@@ -109,17 +140,17 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 	
 	local vehicleID = getElementModel(vehicle)
 	
-	if self.m_Plants[hitElement][createColShape] and vehicleID == getVehicleModelFromName("Combine Harvester") and self.m_Plants[hitElement][createColShape].isFarmAble then
-		destroyElement (self.m_Plants[hitElement][createColShape])
-		self.m_Plants[hitElement][createColShape] = nil
+	if self.m_Plants[createColShape] and vehicleID == getVehicleModelFromName("Combine Harvester") and self.m_Plants[createColShape].isFarmAble then
+		destroyElement (self.m_Plants[createColShape])
+		self.m_Plants[createColShape] = nil
 		hitElement:giveMoney(math.random(5,8))
-		self.m_CurrentPlants[hitElement] = self.m_CurrentPlants[hitElement] + 1
+		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 	else
-		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[hitElement][createColShape] then
-			self.m_Plants[hitElement][createColShape] = self:createJobElement(createObject(3409,x,y,z-1.3123))
-			local object = self.m_Plants[hitElement][createColShape]
+		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[createColShape] then
+			self.m_Plants[createColShape] = createObject(818,x,y,z-1.5)
+			local object = self.m_Plants[createColShape]
 			object.isFarmAble = false
-			setTimer ( function (o) o.isFarmAble = true end, 30000, 1, object )
+			setTimer ( function (o) o.isFarmAble = true end, 1000*30, 1, object )
 			setElementVisibleTo (object,hitElement,true)
 			hitElement:giveMoney(math.random(2,4))
 		end
