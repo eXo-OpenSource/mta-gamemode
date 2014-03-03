@@ -26,7 +26,7 @@ function GUIMouseMenu:addItem(text, callback)
 	local item
 	if callback then
 		item = GUIMouseMenuItem:new(0, 0 + #self.m_Items*35, self.m_Width, 35, text, self)
-		item.onLeftClickDown = function(item) callback(item, self.m_Element) end
+		item.onLeftClickDown = function(item) callback(item, self.m_Element) delete(self) end
 	else
 		item = GUIMouseMenuNoClickItem:new(0, 0 + #self.m_Items*35, self.m_Width, 35, text, self)
 	end

@@ -1,7 +1,8 @@
  <meta>
-	<info name="vRoleplay"/>
+	<info name="vRoleplay" author="vRP team" type="gamemode"/>
 	<min_mta_version server="1.3.3" client="1.3.5"/>
 	<oop>false</oop>
+	<include resource="freeroam"/>
 
 	<!-- Shared -->
 	<script src="shared/constants.lua" type="shared"/>
@@ -53,7 +54,8 @@
 	<script src="server/classes/GroupManager.lua" type="server"/>
 	<script src="server/classes/Provider.lua" type="server"/>
 	<script src="server/classes/House.lua" type="server"/>
-	<script src="server/classes/HouseManager.lua" type="server"/>	
+	<script src="server/classes/HouseManager.lua" type="server"/>
+	<script src="server/classes/VendingMachine.lua" type="server"/>
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -67,7 +69,6 @@
 	<script src="server/classes/Jobs/JobTrashman.lua" type="server"/>
 	<script src="server/classes/Jobs/JobRoadSweeper.lua" type="server"/>
 	<script src="server/classes/Jobs/JobLumberjack.lua" type="server"/>
-	<script src="server/classes/Jobs/JobPickpocket.lua" type="server"/>
 	<script src="server/classes/Jobs/JobPolice.lua" type="server"/>
 	<script src="server/classes/Jobs/JobFarmer.lua" type="server"/>
 	
@@ -168,6 +169,7 @@
 	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/PromptBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
@@ -210,7 +212,6 @@
 	<script src="client/classes/Jobs/JobTrashman.lua" type="client"/>
 	<script src="client/classes/Jobs/JobRoadSweeper.lua" type="client"/>
 	<script src="client/classes/Jobs/JobLumberjack.lua" type="client"/>
-	<script src="client/classes/Jobs/JobPickpocket.lua" type="client"/>
 	<script src="client/classes/Jobs/JobPolice.lua" type="client"/>
 	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
 	

@@ -152,6 +152,10 @@ function Player:spawn()
 	fadeCamera(self, true)
 end
 
+function Player:respawnAfterDeath()
+	spawnPlayer(self, 2028+math.random(-4, 4), -1405+math.random(-2, 2), 18)
+end
+
 -- Message Boxes
 function Player:sendError(text, ...) 	self:triggerEvent("errorBox", text:format(...)) 	end
 function Player:sendWarning(text, ...)	self:triggerEvent("warningBox", text:format(...)) 	end

@@ -27,6 +27,7 @@ function Core:constructor()
 	Provider:new()
 	GroupManager:new()
 	HouseManager:new()
+	VendingMachine.initializeMachines()
 	
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")

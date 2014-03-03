@@ -16,8 +16,6 @@ function JobManager:constructor()
 		JobLumberjack:new();
 		JobPolice:new();
 		JobFarmer:new();
-		
-		JobPickpocket:new();
 	}
 	for k, v in ipairs(self.m_Jobs) do
 		v:setId(k)

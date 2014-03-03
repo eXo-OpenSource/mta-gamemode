@@ -18,6 +18,8 @@ function LocalPlayer:constructor()
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
 	addEventHandler("karmaSet", root, bind(self.Event_karmaSet, self))
+	
+	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.playerWasted, self))
 end
 
 function LocalPlayer:destructor()
@@ -38,6 +40,11 @@ end
 
 function LocalPlayer:getRank()
 	return self.m_Rank
+end
+
+function LocalPlayer:playerWasted()
+	setTimer(setCameraMatrix, 2000, 1, 1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
+	setTimer(function() setCameraTarget(localPlayer) end, 20000, 1)
 end
 
 -- Events

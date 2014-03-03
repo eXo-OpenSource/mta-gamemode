@@ -35,6 +35,15 @@ function ClickHandler:clearClickInfo()
 	self.m_ClickInfo = false
 end
 
+function ClickHandler:checkModels(model, ...)
+	for k, v in ipairs({...}) do
+		if v == model then
+			return true
+		end
+	end
+	return false
+end
+
 function ClickHandler:dispatchClick(clickInfo)
 	-- Close all currently opened menus
 	for k, menu in ipairs(self.m_OpenMenus) do
@@ -43,16 +52,27 @@ function ClickHandler:dispatchClick(clickInfo)
 	
 	local element, button = clickInfo.element, clickInfo.button
 	if button == "right" then
-		if not element or not isElement(element) or not getElementData(element, "OwnerName") then -- Elementdata: temp fix (Todo)
+		if not element or not isElement(element) then -- Elementdata: temp fix (Todo)
 			return
 		end
 		
 		local elementType = getElementType(element)
+		local model = getElementModel(element)
+		local mouseMenu
+		
 		if self.m_Menu[elementType] and element ~= localPlayer then
-			local mouseMenu = self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element)
-			mouseMenu:setElement(element)
-			table.insert(self.m_OpenMenus, mouseMenu)
+			if elementType ~= "vehicle" and getElementData(element, "OwnerName") then
+				mouseMenu = self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element)
+			end
 		end
+		
+		if self:checkModels(model, 1775, 1776, 1209) then
+			mouseMenu = VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element)
+		end
+		
+		mouseMenu:setElement(element)
+		table.insert(self.m_OpenMenus, mouseMenu)
+		
 	elseif button == "left" and element and isElement(element) then
 		local model = getElementModel(element)
 		local playerX, playerY, playerZ = getElementPosition(localPlayer)
