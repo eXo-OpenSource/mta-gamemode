@@ -89,7 +89,7 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)
 end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
-	ShortMessage:new(_"Du wurdest in die Gruppe %s eingeladen. Öffne dein Handy, um die Einladung zu bestätigen")
+	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne dein Handy, um die Einladung zu bestätigen", name))
 	Phone:getSingleton():getAppByClass(AppDashboard):addNotification(
 		_("Möchtest du die Einladung der Gruppe %s annehmen?", name),
 		function()

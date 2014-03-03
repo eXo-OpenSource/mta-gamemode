@@ -93,7 +93,7 @@ function Player:loadCharacter(charid)
 	self:triggerEvent("retrieveInfo", info)
 	
 	-- Add binds
-	bindKey(self, "z", "down", "chatbox", "Group")
+	bindKey(self, "u", "down", "chatbox", "Group")
 	
 	-- Add command and event handler
 	addCommandHandler("Group", Player.staticGroupChatHandler)

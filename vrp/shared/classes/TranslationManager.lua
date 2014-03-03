@@ -75,11 +75,11 @@ function TranslationManager:translate(message, locale)
 end
 
 if SERVER then
-	function _(message, player)
-		return TranslationManager:getSingleton():translate(message, player:getLocale())
+	function _(message, player, ...)
+		return TranslationManager:getSingleton():translate(message:format(...), player:getLocale())
 	end
 else
-	function _(message)
-		return TranslationManager:getSingleton():translate(message, localPlayer:getLocale())
+	function _(message, ...)
+		return TranslationManager:getSingleton():translate(message:format(...), localPlayer:getLocale())
 	end
 end

@@ -9,6 +9,8 @@ AppDashboard = inherit(PhoneApp)
 
 function AppDashboard:constructor()
 	PhoneApp.constructor(self, "Dashboard", "files/images/Phone/Apps/IconHelloWorld.png")
+	
+	self.m_Notifications = {}
 end
 
 function AppDashboard:onOpen(form)
@@ -16,16 +18,31 @@ function AppDashboard:onOpen(form)
 	self.m_Label:setColor(Color.Black)
 	
 	self.m_DashArea = GUIScrollableArea:new(0, 40, 222, 400, 222, 1, true, false, form)
+	self:refreshItems()
 end
 
 function AppDashboard:onClose()
 end
 
+function AppDashboard:refreshItems()
+	if self.m_DashArea then
+		self.m_DashArea:clearChildren()
+	end
+	
+	for i, v in pairs(self.m_Notifications) do
+		self.m_DashArea:resize(222, 70 + i * 72)
+		local dashItem = DashboardItem:new(0, i * 72 - 70, 222, 70, v.text, self.m_DashArea)
+		dashItem:setOnAcceptHandler(v.acceptHandler)
+		dashItem:setOnDeclineHandler(v.declineHandler)
+	end
+end
+
 function AppDashboard:addNotification(text, acceptHandler, declineHandler)
-	self.m_DashArea:resize(222, 70 + i * 72)
-	local dashItem = DashboardItem:new(0, i * 72 - 70, 222, 70, "Möchtest du die Gruppe 'Die_Hustler betreten?'", self.m_DashArea)
-	dashItem:setOnAcceptHandler(acceptHandler)
-	dashItem:setOnDeclineHandler(declineHandler)
+	table.insert(self.m_Notifications, {text = text, acceptHandler = acceptHandler, declineHandler = declineHandler})
+	
+	if self:isOpen() then
+		self:refreshItems()
+	end
 end
 
 DashboardItem = inherit(GUIRectangle)
@@ -38,11 +55,9 @@ function DashboardItem:constructor(x, y, width, height, text, parent)
 end
 
 function DashboardItem:setOnAcceptHandler(handler)
-	self.m_ButtonAccept.onLeftClick = handler
-	delete(self)
+	self.m_ButtonAccept.onLeftClick = function() handler() delete(self) end
 end
 
 function DashboardItem:setOnDeclineHandler(handler)
-	self.m_ButtonDecline.onLeftClick = handler
-	delete(self)
+	self.m_ButtonDecline.onLeftClick = function() handler() delete(self) end
 end

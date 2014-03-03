@@ -158,7 +158,11 @@ function GroupManager:Event_groupAddPlayer(player)
 	end
 	
 	if not group:isPlayerMember(player) then
-		group:invitePlayer(player)
+		if not group:hasInvitation(player) then
+			group:invitePlayer(player)
+		else
+			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!"), client)
+		end
 		--group:addPlayer(player)
 		--client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
 	else
@@ -187,25 +191,25 @@ function GroupManager:Event_groupDeleteMember(playerId)
 end
 
 function GroupManager:Event_groupInvitationAccept(groupId)
-	local group = client:getGroup()
+	local group = self:getFromId(groupId)
 	if not group then return end
 	
 	if group:hasInvitation(client) then
 		group:addPlayer(client)
 		group:removeInvitation(client)
-		group:sendMessage(_("%s ist soeben der Gruppe beigetreten", client, group:getName()))
+		group:sendMessage(_("%s ist soeben der Gruppe beigetreten", client, getPlayerName(client)))
 	else
 		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
 	end
 end
 
 function GroupManager:Event_groupInvitationDecline(groupId)
-	local group = client:getGroup()
+	local group = self:getFromId(groupId)
 	if not group then return end
 	
 	if group:hasInvitation(client) then
 		group:removeInvitation(client)
-		group:sendMessage(_("%s hat die Gruppeneinladung abgelehnt", client, group:getName()))
+		group:sendMessage(_("%s hat die Gruppeneinladung abgelehnt", client, getPlayerName(client)))
 	else
 		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
 	end

@@ -134,6 +134,13 @@ function DxElement:getChildren()
 	return self.m_Children
 end
 
+function DxElement:clearChildren()
+	for k, v in ipairs(self.m_Children) do
+		delete(v)
+	end
+	self.m_Children = {}
+end
+
 function DxElement:getParent()
 	return self.m_Parent
 end
