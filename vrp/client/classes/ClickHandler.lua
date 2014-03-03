@@ -70,8 +70,10 @@ function ClickHandler:dispatchClick(clickInfo)
 			mouseMenu = VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element)
 		end
 		
-		mouseMenu:setElement(element)
-		table.insert(self.m_OpenMenus, mouseMenu)
+		if mouseMenu then
+			mouseMenu:setElement(element)
+			table.insert(self.m_OpenMenus, mouseMenu)
+		end
 		
 	elseif button == "left" and element and isElement(element) then
 		local model = getElementModel(element)
