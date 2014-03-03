@@ -15,6 +15,7 @@ function JobManager:constructor()
 		JobRoadSweeper:new();
 		JobLumberjack:new();
 		JobPolice:new();
+		JobFarmer:new();
 		
 		JobPickpocket:new();
 	}

@@ -21,7 +21,7 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 	self.m_ConditionFunc = spawnConditionFunc
 	self.m_PostSpawnFunc = postSpawnFunc
 
-	self.m_Marker = createMarker(x, y, z, "cylinder", 1, 255, 0, 0)
+	self.m_Marker = createMarker(x, y, z, "cylinder", 1.2, 255, 0, 0)
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.markerHit, self))
 end
 

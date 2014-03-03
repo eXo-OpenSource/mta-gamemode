@@ -1,4 +1,4 @@
-<meta>
+ <meta>
 	<info name="vRoleplay"/>
 	<min_mta_version server="1.3.3" client="1.3.5"/>
 	<oop>false</oop>
@@ -69,6 +69,7 @@
 	<script src="server/classes/Jobs/JobLumberjack.lua" type="server"/>
 	<script src="server/classes/Jobs/JobPickpocket.lua" type="server"/>
 	<script src="server/classes/Jobs/JobPolice.lua" type="server"/>
+	<script src="server/classes/Jobs/JobFarmer.lua" type="server"/>
 	
 	<!-- NPCs and shops -->
 	<script src="server/classes/NPC.lua" type="server"/>
@@ -211,6 +212,7 @@
 	<script src="client/classes/Jobs/JobLumberjack.lua" type="client"/>
 	<script src="client/classes/Jobs/JobPickpocket.lua" type="client"/>
 	<script src="client/classes/Jobs/JobPolice.lua" type="client"/>
+	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
 	
 	<script src="client/Main.lua" type="client"/>
 	
@@ -277,6 +279,7 @@
 	<vrpfile src="files/images/Jobs/HeaderRoadSweeper.png"/>
 	<vrpfile src="files/images/Jobs/Trashdisplay.png"/>
 	<vrpfile src="files/images/Jobs/TrashDumpArea.png"/>
+	<vrpfile src="files/images/Jobs/HeaderFarmer.png"/>
 	
 	<!-- Audio -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
