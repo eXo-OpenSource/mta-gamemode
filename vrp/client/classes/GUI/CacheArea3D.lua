@@ -19,18 +19,65 @@ function CacheArea3D:constructor(posX, posY, posZ, rotX, rotY, rotZ, sawidth, sa
 	self.m_RotX = rotX or 0
 	self.m_RotZ = rotZ or 0
 	
-	
-	-- There shall be no 0 nor 180 in rz (else: bugs)
-	while self.m_RotZ > 360 do self.m_RotZ = self.m_RotZ-360 end
-	while self.m_RotZ < 0 do self.m_RotZ = self.m_RotZ+360 end
-	if self.m_RotZ == 0 then self.m_RotZ = 0.00001
-	elseif self.m_RotZ == 180 then self.m_RotZ = 180.00001 
-	end
-	
+	GUIRenderer.add3DGUI(self)
 end
 
 function CacheArea3D:destructor()
+	GUIRenderer.remove3DGUI(self)
 	CacheArea.destructor(self)
+end
+
+function CacheArea3D:setPosition(x, y, z)
+	self.m_3DX = x
+	self.m_3DY = y
+	self.m_3DZ = z
+	
+	self:anyChange()
+end
+
+function CacheArea3D:setRotation(rx, ry, rz)
+	self.m_RotX = rx
+	self.m_RotY = ry
+	self.m_RotZ = rz
+	
+	self:anyChange()
+end
+
+function CacheArea3D:getPosition()
+	return self.m_3DX, self.m_3DY, self.m_3DZ
+end
+
+function CacheArea3D:getRotation()
+	return self.m_RotX, self.m_RotY, self.m_RotZ
+end
+
+function CacheArea3D:anyChange()
+	-- Kreisdefinition
+	local mx,my,mz = self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ
+	
+	-- Kreis im lokalen Raum mit r = 3DWidth / 2 um m
+	local sx,sy,sz = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX, self.m_RotY, self.m_RotZ, self.m_3DWidth/2)
+	local ex,ey,ez = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX, self.m_RotY, self.m_RotZ, -self.m_3DWidth/2)
+	
+	local px,py,pz = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX+90, self.m_RotY+90, self.m_RotZ, self.m_3DHeight/2)
+	
+	local fx = sy*pz - sz*py
+	local fy = sz*px - sx*pz
+	local fz = sx*py - sy*px
+	
+	
+	sx,sy,sz=mx+sx,my+sy,mz+sz
+	ex,ey,ez=mx+ex,my+ey,mz+ez
+	fx,fy,fz=mx+fx,my+fy,mz+fz
+	px,py,pz=mx+px,my+py,mz+pz
+	
+	self.m_LineStartX, self.m_LineStartY, self.m_LineStartZ = sx,sy,sz
+	self.m_LineEndX, self.m_LineEndY, self.m_LineEndZ = ex, ey, ez
+	self.m_FaceToX, self.m_FaceToY, self.m_FaceToZ = fx, fy, fz
+	self.m_SecPosX, self.m_SecPosY, self.m_SecPosZ = px, py, pz
+	
+	-- propagate
+	DxElement.anyChange(self)
 end
 
 function CacheArea3D:drawCached()
@@ -62,35 +109,16 @@ function CacheArea3D:drawCached()
 	end
 	
 	-- Render! :>
-	
-	-- Kreisdefinition
-	local mx,my,mz = self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ
-	
-	-- Kreis im lokalen Raum mit r = 3DWidth / 2 um m
-	local sx,sy,sz = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX, self.m_RotY, self.m_RotZ, self.m_3DWidth/2)
-	local ex,ey,ez = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX, self.m_RotY, self.m_RotZ, -self.m_3DWidth/2)
-	
-	local px,py,pz = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX+90, self.m_RotY+90, self.m_RotZ, self.m_3DHeight/2)
-	
-	local fx = sy*pz - sz*py
-	local fy = sz*px - sx*pz
-	local fz = sx*py - sy*px
-	
-	
-	sx,sy,sz=mx+sx,my+sy,mz+sz
-	ex,ey,ez=mx+ex,my+ey,mz+ez
-	fx,fy,fz=mx+fz,my+fy,mz+fz
-
-	outputDebug(("s(%03f %03f %03f)"):format(sx,sy,sz))
-	outputDebug(("p(%03f %03f %03f)"):format(px,py,pz))
-	outputDebug(("f(%03f %03f %03f)"):format(fx,fy,fz))
-	
-	dxDrawMaterialLine3D(sx, sy, sz, ex, ey, ez, self.m_RenderTarget, self.m_3DHeight, tocolor(255,255,255,255), fx, fy, fz)
+	dxDrawMaterialLine3D(self.m_LineStartX, self.m_LineStartY, self.m_LineStartZ,
+						self.m_LineEndX, self.m_LineEndY, self.m_LineEndZ,
+						self.m_RenderTarget, self.m_3DHeight, tocolor(255,255,255,255), 
+						self.m_FaceToX, self.m_FaceToY, self.m_FaceToZ)
 	
 	return true
 end
 
-function CacheArea:draw()
+
+function CacheArea3D:draw()
 	-- Do not waste time in drawing invisible elements
 	if not self.m_Visible then
 		return
