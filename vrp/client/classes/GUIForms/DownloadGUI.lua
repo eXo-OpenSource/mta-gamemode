@@ -20,18 +20,27 @@ end
 function DownloadGUI:launchMusic()
 	if not self:isVisible() then return end
 	self.m_Music = playSound("http://www.jusonex.net/public/saonline/downloadmusic.mp3", true)
-	self.m_StopMusicFunc = function() if self.m_Music then destroyElement(self.m_Music) self.m_Music = nil end end
-	self.m_StartMusicFunc = function() if not self.m_Music then self.m_Music = playSound("http://www.jusonex.net/public/saonline/downloadmusic.mp3", true) end end
-	bindKey("m", "down", self.m_StopMusicFunc)
-	bindKey("m", "down", self.m_StartMusicFunc)
+	self.m_StopMusicFunc = function() 
+		if self.m_Music then 
+			destroyElement(self.m_Music) 
+			self.m_Music = nil 
+			self:bind("m", self.m_StartMusicFunc)
+		end 
+	end
+	self.m_StartMusicFunc = function() 
+		if not self.m_Music then 
+			self.m_Music = playSound("http://www.jusonex.net/public/saonline/downloadmusic.mp3", true) 
+			self:bind("m", self.m_StopMusicFunc)
+		end 
+	end
+	
+	self:bind("m", self.m_StopMusicFunc)
 end
 
 function DownloadGUI:destructor()
 	if self.m_Music and isElement(self.m_Music) then
 		stopSound(self.m_Music)
 	end
-	unbindKey("m", "down", self.m_StopMusicFunc)
-	unbindKey("m", "down", self.m_StartMusicFunc)
 	
 	GUIForm.destructor(self)
 end

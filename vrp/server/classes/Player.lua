@@ -81,9 +81,8 @@ function Player:stopNavigation()
 	self:triggerEvent("navigationStop")
 end
 
-function Player:loadCharacter(charid)
-	self.m_Id = charid
-	Player.Map[charid] = self
+function Player:loadCharacter()
+	Player.Map[self.m_Id] = self
 	self:loadCharacterInfo()
 	
 	-- Send infos to client
@@ -99,8 +98,8 @@ function Player:loadCharacter(charid)
 	addCommandHandler("Group", Player.staticGroupChatHandler)
 end
 
-function Player:createCharacter(id)
-	sql:queryExec("INSERT INTO ??_character(Id) VALUES(?);", sql:getPrefix(), id)
+function Player:createCharacter()
+	sql:queryExec("INSERT INTO ??_character(Id) VALUES(?);", sql:getPrefix(), self.m_Id)
 end
 
 function Player.getFromId(id)
@@ -137,6 +136,9 @@ function Player:loadCharacterInfo()
 end
 
 function Player:save()
+	if self.m_Account:isGuest() then	
+		return 
+	end
 	local x, y, z = getElementPosition(self)
 	local interior = getElementInterior(self)
 	

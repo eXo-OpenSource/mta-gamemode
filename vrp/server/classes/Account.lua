@@ -32,7 +32,15 @@ function Account.login(player, username, password, pwhash)
 		return false
 	end
 	
-	return Account:new(row.Id, username, player, pwhash)
+	player.m_Account = Account:new(row.Id, username, player, false)
+
+	if player:getTutorialStage() == 1 then
+		player:createCharacter()
+	end
+	player:loadCharacter()
+	player:spawn()
+	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
+	
 end
 addEvent("accountlogin", true)
 addEventHandler("accountlogin", root, function(u, p, h) Async.create(Account.login)(client, u, p, h) end)
@@ -49,6 +57,20 @@ function Account.register(player, username, password)
 			return false
 		end
 	end
+	
+	local response,errno = Forum:getSingleton():createAccount(player, username, password)
+	
+	if response == "ERROR" then 
+		player:triggerEvent("registerfailed", "Error: Interner Fehler. Bitte einen Administrator kontaktieren!")
+		return false
+	end
+	
+	if response == "0" then
+		player:triggerEvent("registerfailed", "Error: Invalid Nickname")
+		return false
+	end
+	local forumId = tonumber(response)
+
 	-- Check if someone uses this username already
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Name = ? ", sql:getPrefix(), username)
 	local row = Async.wait()
@@ -61,40 +83,48 @@ function Account.register(player, username, password)
 	
 	-- todo: get a better salt
 	local salt = md5(math.random())
-	sql:queryExec("INSERT INTO ??_account(Name, Password, Salt, Rank) VALUES (?, ?, ?, ?);", sql:getPrefix(), username, sha256(salt..password), salt, 0)
+
+	sql:queryExec("INSERT INTO ??_account(Id, Name, Password, Salt, Rank) VALUES (?, ?, ?, ?, ?);", sql:getPrefix(), forumId, username, sha256(salt..password), salt, 0)
 	
-	return Account:new(sql:lastInsertId(), username, player, nil, true)
+	player.m_Account = Account:new(forumId, username, player, false)
+	
+	player:createCharacter()
+	player:loadCharacter()
+	player:spawn()
+	triggerClientEvent(player, "loginsuccess", root, nil, player:getTutorialStage())
 end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(u, p) Async.create(Account.register)(client, u, p) end)
 
-function Account:constructor(id, username, player, pwhash, justRegistered)
+function Account.guest(player)
+	player.m_Account = Account:new(0, "Guest", player, true)
+	player:loadCharacter()
+	player:spawn()
+	triggerClientEvent(player, "loginsuccess", root, nil, 0)
+end
+addEvent("accountguest", true)
+addEventHandler("accountguest", root, function() Async.create(Account.guest)(client) end)
+
+function Account:constructor(id, username, player, guest)
 	-- Account Information
 	self.m_Id = id
 	self.m_Username = username
 	self.m_Player = player
-	player.m_Account = self
+	player.m_IsGuest = guest;
+	player.m_Id = self.m_Id
 	
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
-	local row = Async.wait()
-	
-	self.m_Rank = row.Rank
-	
-	if self.m_Rank == RANK.Banned then
-		Ban:new(player)
-		return
-	end
-	
-	if justRegistered then
-		player:createCharacter(self.m_Id)
-	end
-	
-	-- Load Character
-	player:loadCharacter(self.m_Id)
-	
-	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
-	if player:getTutorialStage() > 2 then
-		player:spawn()
+	if not guest then
+		sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+		local row = Async.wait()
+		
+		self.m_Rank = row.Rank
+		
+		if self.m_Rank == RANK.Banned then
+			Ban:new(player)
+			return
+		end
+	else
+		self.m_Rank = RANK.Guest
 	end
 end
 
@@ -106,6 +136,10 @@ function Account:getId()
 	return self.m_Id;
 end
 
+function Account:isGuest() 
+	return self.m_IsGuest
+end
+
 function Account:getRank()
 	return self.m_Rank
 end
@@ -115,5 +149,5 @@ function Account.getNameFromId(id)
 	local row = Async.wait()]]
 	
 	local row = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
-	return row.Name
+	return row and row.Name
 end

@@ -17,6 +17,7 @@ function GUIForm:destructor()
 	for k, v in pairs(self.m_KeyBinds) do
 		unbindKey(k, "down", v)
 	end
+	self:setVisible(false)
 	
 	-- Todo: Replace this by derived_destructor
 	CacheArea.destructor(self)

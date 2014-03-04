@@ -37,3 +37,8 @@ end
 function Forum:getNews()
 	return self.m_News
 end
+
+function Forum:createAccount(player, username, password)
+	fetchRemote(("http://www.v-roleplay.net/forum/vrp/api.php?action=CreateAccount&username=%s&password=%s"):format(username, password), Async.waitFor(player))
+	return Async.wait()
+end
