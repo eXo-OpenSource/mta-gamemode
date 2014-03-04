@@ -10,7 +10,7 @@ class API
 	public static function TS3_SendActivation($boardId, $ts3nick)
 	{
 		$sql = new mysqli(MYSQL_HOST, MYSQL_USER, MYSQL_PW, MYSQL_DB);
-		$data = dbQueryFetchSingle($sql, "SELECT boardId, authKey FROM ts3_auth WHERE boardId = ?;", "i", $boardId);
+		$data = dbQueryFetchSingle($sql, "SELECT boardId, authKey FROM forum_ts3auth WHERE boardId = ?;", "i", $boardId);
 		try
 		{
 			$ts3 = TeamSpeak3::factory(TS3_FACTORY);	
@@ -34,7 +34,7 @@ class API
 		else
 		{
 			$key = generateRandomString(5);
-			dbExec($sql, "INSERT INTO ts3_auth(boardId, authKey, ts3uid) VALUES(?, ?, ?);", "iss", $boardId, $key, $client->getInfo()["client_unique_identifier"]);
+			dbExec($sql, "INSERT INTO forum_ts3auth(boardId, authKey, ts3uid) VALUES(?, ?, ?);", "iss", $boardId, $key, $client->getInfo()["client_unique_identifier"]);
 		}
 		$sql->close();
 		
@@ -48,10 +48,10 @@ class API
 	public static function TS3_CheckActivation($boardId, $key)
 	{
 		$sql = new mysqli(MYSQL_HOST, MYSQL_USER, MYSQL_PW, MYSQL_DB);
-		$data = dbQueryFetchSingle($sql, "SELECT boardId FROM ts3_auth WHERE boardId = ? AND authKey = ?;", "is", $boardId, $key);
+		$data = dbQueryFetchSingle($sql, "SELECT boardId FROM forum_ts3auth WHERE boardId = ? AND authKey = ?;", "is", $boardId, $key);
 		$sql->close();
 		if($data)
-			return true;
+			return true; // ToDo: Save TS3 UID as Custom Variable for the user
 		else
 			return "Ungültiger Schlüssel";
 	}
