@@ -45,7 +45,7 @@ function ClickHandler:checkModels(model, ...)
 end
 
 function ClickHandler:dispatchClick(clickInfo)
-	-- Close all currently opened menus
+	-- Close all currently open menus
 	for k, menu in ipairs(self.m_OpenMenus) do
 		delete(menu)
 	end
