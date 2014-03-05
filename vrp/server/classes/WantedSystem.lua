@@ -25,5 +25,8 @@ function WantedSystem:playerWasted(totalAmmo, killer, killerWeapon, bodypart, st
 		if killer:getWantedLevel() < 4 then
 			killer:giveWantedLevel(1)
 		end
+		
+		-- Take karma
+		killer:takeKarma(0.15)
 	end
 end

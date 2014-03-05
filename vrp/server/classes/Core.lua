@@ -28,6 +28,7 @@ function Core:constructor()
 	GroupManager:new()
 	HouseManager:new()
 	VendingMachine.initializeMachines()
+	RobableShop.initalizeShops()
 	
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")

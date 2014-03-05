@@ -52,7 +52,7 @@ function ClickHandler:dispatchClick(clickInfo)
 	
 	local element, button = clickInfo.element, clickInfo.button
 	if button == "right" then
-		if not element or not isElement(element) then -- Elementdata: temp fix (Todo)
+		if not element or not isElement(element) then
 			return
 		end
 		
@@ -61,7 +61,7 @@ function ClickHandler:dispatchClick(clickInfo)
 		local mouseMenu
 		
 		if self.m_Menu[elementType] and element ~= localPlayer then
-			if elementType ~= "vehicle" and getElementData(element, "OwnerName") then
+			if elementType ~= "vehicle" or getElementData(element, "OwnerName") then -- Elementdata: temp fix (Todo)
 				mouseMenu = self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element)
 			end
 		end

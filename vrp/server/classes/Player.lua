@@ -136,7 +136,7 @@ function Player:loadCharacterInfo()
 end
 
 function Player:save()
-	if self.m_Account:isGuest() then	
+	if not self.m_Account or self.m_Account:isGuest() then	
 		return 
 	end
 	local x, y, z = getElementPosition(self)

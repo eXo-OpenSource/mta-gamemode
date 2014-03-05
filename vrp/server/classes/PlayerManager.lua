@@ -30,6 +30,7 @@ function PlayerManager:playerJoin()
 end
 
 function PlayerManager:playerWasted()
+	source:sendMessage("Pass lieber auf, was du machst!")
 	setTimer(function(player) player:respawnAfterDeath() end, 20*1000, 1, source)
 end
 

@@ -15,7 +15,7 @@ function ShopNPC:constructor(skinId, x, y, z, rotation)
 	
 	addEventHandler("onPlayerTarget", root,
 		function(targettedElement)
-			if targettedElement == self and not self.m_InTarget then
+			if targettedElement == self and not self.m_InTarget and getPedWeapon(source) ~= 0 then
 				setPedAnimation(self, "ped", "handsup", -1, false)
 				self.m_InTarget = true
 				
@@ -30,4 +30,7 @@ function ShopNPC:spawnMoney(threatingPlayer)
 	-- Todo: Replace by a money pickup
 	--> Give money immediately for now
 	threatingPlayer:giveMoney(math.random(10, 50))
+	
+	threatingPlayer:takeKarma(0.07)
+	threatingPlayer:giveXP(0.07)
 end

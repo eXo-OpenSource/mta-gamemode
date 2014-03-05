@@ -38,7 +38,7 @@ function GUIRenderer.updateAll(elapsedTime)
 	end
 	
 	if not GUIElement.ms_ClickProcessed then
-		self:process3DMouse()
+		--GUIRenderer.process3DMouse()
 	end
 	
 	if not GUIElement.ms_ClickProcessed then
@@ -48,14 +48,14 @@ function GUIRenderer.updateAll(elapsedTime)
 	end
 end
 
-function GUIRenderer:process3DMouse()
+function GUIRenderer.process3DMouse()
 	local cx, cy = getCursorPosition()
 	local wx1, wy1, wz1 = getWorldFromScreenPosition(cx, cy, 1)
 	local wx2, wy2, wz2 = getWorldFromScreenPosition(cx, cy, 2)
 	
 	local offx, offy, offz = wx2-wx1, wy1-wy2, wz1-wz2
 	
-	for k, ca in pairs(self.m_3DGUIs) do
+	for k, ca in pairs(GUIRenderer.ms_3DGUIs) do
 		if ca:isVisible() then
 			--[[
 				wx1 + a* offx = ca.StartX + b * ca.EndZ + c * ca.SecPosZ 
@@ -97,11 +97,11 @@ function GUIRenderer.removeFromDrawList(ref)
 end
 
 function GUIRenderer.add3DGUI(gui)
-	self.m_3DGUIs[gui] = gui
+	GUIRenderer.ms_3DGUIs[gui] = gui
 end
 
 function GUIRenderer.remove3DGUI(gui)
-	self.m_3DGUIs[gui] = nil
+	GUIRenderer.ms_3DGUIs[gui] = nil
 end
 
 GUIRenderer:new()

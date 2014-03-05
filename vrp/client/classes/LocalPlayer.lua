@@ -43,7 +43,12 @@ function LocalPlayer:getRank()
 end
 
 function LocalPlayer:playerWasted()
-	setTimer(setCameraMatrix, 2000, 1, 1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
+	setTimer(
+		function()
+			setCameraInterior(0)
+			setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
+		end, 2000, 1
+	)
 	setTimer(function() setCameraTarget(localPlayer) end, 20000, 1)
 end
 

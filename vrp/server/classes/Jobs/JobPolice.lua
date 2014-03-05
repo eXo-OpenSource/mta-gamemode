@@ -14,6 +14,7 @@ function JobPolice:constructor()
 	VehicleSpawner:new(1566.3, -1605.5, 12.5, {"Police LS"}, 180, bind(Job.requireVehicle, self))
 	
 	addEventHandler("onPlayerDamage", root, bind(self.playerDamage, self))
+	addEventHandler("onPlayerVehicleExit", root, bind(self.playerVehicleExit, self))
 	
 	addEvent("policePanelListRequest", true)
 	addEventHandler("policePanelListRequest", root,
@@ -54,32 +55,50 @@ function JobPolice:checkRequirements(player)
 	return true
 end
 
-function JobPolice:playerDamage(attacker, attackerWeapon, bodypart, loss)
-	if source:getWantedLevel() > 0 then
-		
-		if attacker and attacker ~= source and getElementType(attacker) == "player" and attackerWeapon == 3 and attacker:getJob() == self then
-			-- Teleport to jail
-			setElementPosition(source, 264, 77.6, 1001.1)
-			setElementRotation(source, 0, 0, 270)
-			setElementInterior(source, 6)
-			
-			-- Pay some money, karma and xp to the policeman
-			attacker:giveMoney(source:getWantedLevel() * 100)
-			attacker:giveXP(source:getWantedLevel() * 1)
-			attacker:giveKarma(source:getWantedLevel() * 0.01)
-			
-			-- Start freeing timer
-			local jailTime = source:getWantedLevel() * 20
-			source:sendInfo(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %ds verweilen!", source), jailTime)
-			setTimer(
-				function(player)
-					setElementInterior(player, 0, 1539.7, -1659.5 + math.random(-3, 3), 13.6)
-					setElementRotation(player, 0, 0, 90)
-					player:setWantedLevel(0)
-				end, jailTime * 1000, 1, source
-			)
+function JobPolice:sendMessage(message, ...)
+	for k, player in ipairs(getElementsByType("player")) do
+		if player:getJob() == self then
+			player:sendMessage(_("[POLIZEI]", player).._(message, player):format(...))
 		end
-		
 	end
 end
 
+function JobPolice:jailPlayer(player, policeman)
+	-- Teleport to jail
+	setElementPosition(player, 264, 77.6, 1001.1)
+	setElementRotation(player, 0, 0, 270)
+	setElementInterior(player, 6)
+	
+	-- Pay some money, karma and xp to the policeman
+	policeman:giveMoney(player:getWantedLevel() * 100)
+	policeman:giveXP(player:getWantedLevel() * 1)
+	policeman:giveKarma(player:getWantedLevel() * 0.01)
+	
+	-- Start freeing timer
+	local jailTime = player:getWantedLevel() * 20
+	player:sendInfo(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %ds verweilen!", player), jailTime)
+	setTimer(
+		function()
+			setElementInterior(player, 0, 1539.7, -1659.5 + math.random(-3, 3), 13.6)
+			setElementRotation(player, 0, 0, 90)
+			player:setWantedLevel(0)
+		end, jailTime * 1000, 1
+	)
+	
+	-- Tell the other policemen that we jailed someone
+	self:sendMessage("%s wurde soeben von %s verhaftet!", getPlayerName(player), getPlayerName(policeman))
+end
+
+function JobPolice:playerDamage(attacker, attackerWeapon, bodypart, loss)
+	if source:getWantedLevel() > 0 then
+		if attacker and attacker ~= source and getElementType(attacker) == "player" and attackerWeapon == 3 and attacker:getJob() == self then
+			self:jailPlayer(source, attacker)
+		end
+	end
+end
+
+function JobPolice:playerVehicleExit(vehicle, seat, jacker)
+	if seat == 0 and jacker and source:getWantedLevel() > 1 then
+		self:jailPlayer(source, jacker)
+	end
+end
