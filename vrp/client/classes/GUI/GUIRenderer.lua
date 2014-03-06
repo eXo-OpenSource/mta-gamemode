@@ -58,8 +58,8 @@ function GUIRenderer.process3DMouse()
 	for k, ca in pairs(GUIRenderer.ms_3DGUIs) do
 		if ca:isVisible() then
 			--[[
-				wx1 + a* offx = ca.StartX + b * ca.EndZ + c * ca.SecPosZ 
-				wy1 + a* offy = ca.StartY + b * ca.EndY + c * ca.SecPosZ
+				wx1 + a* offx = ca.StartX + b * ca.EndX + c * ca.SecPosX
+				wy1 + a* offy = ca.StartY + b * ca.EndY + c * ca.SecPosY
 				wz1 + a* offz = ca.StartZ + b * ca.EndZ + c * ca.SecPosZ
 			]]
 		end

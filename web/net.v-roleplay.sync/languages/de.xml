@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<language xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com/XSD/language.xsd" languagecode="de">	
+    <category name="wcf.user.option">
+		<item name="wcf.user.option.ts3uid"><![CDATA[Teamspeak Identität]]></item>
+	</category>
+</language>
