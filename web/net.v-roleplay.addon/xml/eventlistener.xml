@@ -6,14 +6,14 @@
 			<eventname>initializeAction</eventname>
 			<inherit>1</inherit>
 			<environment>admin</environment>
-			<listenerclassname>wcf\system\event\listener\TeamspeakSyncMainListener</listenerclassname>
+			<listenerclassname>wcf\system\event\listener\VRPUserChangeListener</listenerclassname>
 		</eventlistener>
         <eventlistener>
 			<eventclassname>wcf\data\user\UserAction</eventclassname>
 			<eventname>initializeAction</eventname>
 			<inherit>1</inherit>
 			<environment>user</environment>
-			<listenerclassname>wcf\system\event\listener\TeamspeakSyncMainListener</listenerclassname>
+			<listenerclassname>wcf\system\event\listener\VRPUserChangeListener</listenerclassname>
 		</eventlistener>
 		
         <eventlistener>
@@ -21,14 +21,14 @@
 			<eventname>finalizeAction</eventname>
 			<inherit>1</inherit>
 			<environment>admin</environment>
-			<listenerclassname>wcf\system\event\listener\TeamspeakSyncMainListener</listenerclassname>
+			<listenerclassname>wcf\system\event\listener\VRPUserChangeListener</listenerclassname>
 		</eventlistener>
         <eventlistener>
 			<eventclassname>wcf\data\user\UserAction</eventclassname>
 			<eventname>finalizeAction</eventname>
 			<inherit>1</inherit>
 			<environment>user</environment>
-			<listenerclassname>wcf\system\event\listener\TeamspeakSyncMainListener</listenerclassname>
+			<listenerclassname>wcf\system\event\listener\VRPUserChangeListener</listenerclassname>
 		</eventlistener>
     </import>
 </data>

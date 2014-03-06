@@ -9,7 +9,7 @@ use wcf\data\user\User;
 use wcf\data\user\UserEditor;
 
  
-class TeamspeakSyncMainListener implements IEventListener
+class VRPUserChangeListener implements IEventListener
 {
 	public $groupList = array();
 	
