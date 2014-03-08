@@ -56,6 +56,7 @@
 	<script src="server/classes/House.lua" type="server"/>
 	<script src="server/classes/HouseManager.lua" type="server"/>
 	<script src="server/classes/VendingMachine.lua" type="server"/>
+	<script src="server/classes/VehicleGarage.lua" type="server"/>
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -98,6 +99,7 @@
 	<script src="client/classes/Provider.lua" type="client"/>
 	<script src="client/classes/Skin.lua" type="client"/>
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
+	<script src="client/classes/VehicleGarage.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -303,6 +305,7 @@
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Carhouse.map"/>
 	<map src="files/maps/Roadsweeper.map"/>
+	<map src="files/maps/Garage1.map"/>
 	
 	<!-- temp -->
 	<script src="files/maps/tempTXDImport.lua" type="client"/>

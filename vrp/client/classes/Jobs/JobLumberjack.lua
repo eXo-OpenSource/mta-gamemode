@@ -34,6 +34,7 @@ function JobLumberjack:constructor()
 end
 
 function JobLumberjack:start()
+	outputDebug("JobLumberjack:start()")
 	self.m_NumTrees = 0
 	local func = bind(JobLumberjack.processTreeDamage, self)
 
