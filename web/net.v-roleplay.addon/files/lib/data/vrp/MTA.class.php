@@ -6,7 +6,6 @@ use wcf\system\exception\SystemException;
 class MTA
 {
 	private static $instance;
-	private $ts3 = null;
 	
 	public static function singleton()
 	{

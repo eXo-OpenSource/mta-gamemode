@@ -51,6 +51,18 @@
 				<defaultvalue>System</defaultvalue>
                 <validationpattern>[^0]</validationpattern>
 			</option>
+			<option name="vrp_forum_group_ts3_unverified">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>integer</optiontype>
+				<defaultvalue>6</defaultvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
+			<option name="vrp_forum_group_ts3_verified">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>integer</optiontype>
+				<defaultvalue>7</defaultvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
 		</options>
 	</import>
 </data>

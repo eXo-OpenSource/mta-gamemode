@@ -1,5 +1,5 @@
 <?php
-require("../../../../global.php");
+require("../../../../../global.php");
 use wcf\acp\form\UserAddForm;
 use wcf\data\user\avatar\Gravatar;
 use wcf\data\user\avatar\UserAvatarAction;
@@ -93,12 +93,12 @@ class API
 			$action = new UserAction(array(WCF::getUser()), 'update', 
 				array(
 					'options' => array(User::getUserOptionID('ts3uid') => $data["ts3uid"]),
-					'removeGroups' => array(6)
+					'removeGroups' => array(VRP_FORUM_GROUP_TS3_UNVERIFIED)
 				)
 			);
 			$action->executeAction();
 			$action = new UserAction(array(new UserEditor(WCF::getUser())), 'addToGroups', array(
-				'groups' => array(7),
+				'groups' => array(VRP_FORUM_GROUP_TS3_VERIFIED),
 				'addDefaultGroups' => false,
 				'deleteOldGroups' => false
 			));

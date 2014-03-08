@@ -38,7 +38,7 @@ function()
 	
 	$("#submit", stage1).click(function(){
 		var nick = $("#nick", stage1).val();
-		var qry = $.get( "http://www.v-roleplay.net/forum/wcf/lib/data/vrp/api.php?action=SendActivation&nick="+nick,
+		var qry = $.get( "http://www.v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?action=SendActivation&nick="+nick,
 		function(data)
 		{	
 			if(data != "1")
@@ -56,7 +56,7 @@ function()
 	
 	$("#submit", stage2).click(function(){
 		var key = $("#key", stage2).val();
-		var qry = $.get( "http://www.v-roleplay.net/forum/wcf/lib/data/vrp/api.php?action=CheckActivation&key="+key,
+		var qry = $.get( "http://www.v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?action=CheckActivation&key="+key,
 		function(data)
 		{	
 			alert(data);

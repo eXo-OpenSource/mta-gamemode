@@ -1,5 +1,5 @@
 <?php
-require_once("libraries/TeamSpeak3/TeamSpeak3.php");
+require_once("../libraries/TeamSpeak3/TeamSpeak3.php");
 
 function refValues($arr){
     $refs = array();

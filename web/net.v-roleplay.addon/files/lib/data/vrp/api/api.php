@@ -9,6 +9,7 @@
 */
 require_once("constants.php");
 require_once("utils.php");
+require_once("api_wbb.php");
 
 class APIHandler
 {
@@ -19,23 +20,20 @@ class APIHandler
 
 	public static function CreateAccount()
 	{
-		if(!API::IsGameserver()) die();
+		if(!APIHandler::IsGameserver()) die();
 		if(!isset($_GET["username"]) || !isset($_GET["password"])) die();
-		require("api_wbb.php");
 		return API::CreateAccount($_GET["username"], $_GET["password"]);
 	}
 	
 	public static function SendActivation()
 	{
 		if(!isset($_GET["nick"]) || !isset($_COOKIE["wcf_userID"])) die();
-		require("api_wbb.php");
 		return API::SendActivation($_COOKIE["wcf_userID"], $_GET["nick"]);
 	}
 
 	public static function CheckActivation()
 	{
 		if(!isset($_GET["key"]) || !isset($_COOKIE["wcf_userID"])) die();
-		require("api_wbb.php");
 		return API::CheckActivation($_COOKIE["wcf_userID"], $_GET["key"]);
 	}
 }
