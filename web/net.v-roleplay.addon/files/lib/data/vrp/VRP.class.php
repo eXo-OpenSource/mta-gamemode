@@ -70,8 +70,8 @@ class VRP
 	public static function OnUserTS3IdentityChange($user, $oldidentity, $newidentity)
 	{
 		VRP::OnUserDelete($user);
-		$editor = new UserEditor($userObject);
-		$editor->updateUserOptions(array(User::getUserOptionID("ts3uid") => $newValue));
+		$editor = new UserEditor($user);
+		$editor->updateUserOptions(array(User::getUserOptionID("ts3uid") => $newidentity));
 		VRP::OnUserGroupChange($user);
 	}
 }

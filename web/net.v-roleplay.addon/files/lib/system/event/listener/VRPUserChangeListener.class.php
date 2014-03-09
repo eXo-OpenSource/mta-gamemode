@@ -19,16 +19,17 @@ class VRPUserChangeListener implements IEventListener
 		
 		if($eventObj->getActionName() == "update" && $eventName == "initializeAction")
 		{	
+			$users = $eventObj->getObjectIDs();
 			foreach($users as $userid)
 			{
-				$user = User($userid);
+				$user = new User($userid);
 				if(isset($parameter["removeGroups"]))
 					VRP::OnUserGroupRemove($user, $parameter["removeGroups"]);
 				
 				if(isset($parameter["options"][User::getUserOptionID("ts3uid")]))
 				{
-					VRP::OnUserTSIdentityChange($user, 
-						$userObj->getUserOption("ts3uid"),
+					VRP::OnUserTS3IdentityChange($user, 
+						$user->getUserOption("ts3uid"),
 						$parameter["options"][User::getUserOptionID("ts3uid")]);
 				}
 			}
@@ -43,7 +44,7 @@ class VRPUserChangeListener implements IEventListener
 				
 				foreach($users as $userid)
 				{
-					$user = User($userid);
+					$user = new User($userid);
 					VRP::OnUserGroupAdd($user, $parameter["groups"]);
 				}
 			}
@@ -52,9 +53,7 @@ class VRPUserChangeListener implements IEventListener
 			if($eventObj->getActionName() == "create")
 			{
 				$user = $eventObj->getReturnValues()["returnValues"];
-				VRPUserChangeListener::$insideCreation = true;
 				VRP::OnUserCreate($user);
-				VRPUserChangeListener::$insideCreation = false;
 			}
 			
 			// Called when a user is deleted
@@ -64,7 +63,7 @@ class VRPUserChangeListener implements IEventListener
 				
 				foreach($users as $userid)
 				{
-					$user = User($userid);
+					$user = new User($userid);
 					VRP::OnUserDelete($user);
 				}
 			}

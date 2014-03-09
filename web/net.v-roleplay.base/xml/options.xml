@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data xmlns="http://www.woltlab.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.woltlab.com/XSD/options.xsd">
+	<import>    
+        <categories>
+			<category name="vrp">
+			</category>
+			<category name="vrp_settings">
+				<parent>vrp</parent>
+				<showorder>1</showorder>
+			</category>
+		</categories>
+        
+		<options>
+			<option name="vrp_ts3_serverip">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>text</optiontype>
+				<defaultvalue>jusonex.net</defaultvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
+			<option name="vrp_ts3_queryport">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>integer</optiontype>
+				<defaultvalue>10011</defaultvalue>
+				<minvalue>1</minvalue>
+				<maxvalue>65535</maxvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
+			<option name="vrp_ts3_serverport">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>integer</optiontype>
+				<defaultvalue>9987</defaultvalue>
+				<minvalue>1</minvalue>
+				<maxvalue>65535</maxvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
+			<option name="vrp_ts3_query_username">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>text</optiontype>
+				<defaultvalue></defaultvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
+			<option name="vrp_ts3_query_password">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>password</optiontype>
+				<defaultvalue></defaultvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
+			<option name="vrp_ts3_query_nickname">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>text</optiontype>
+				<defaultvalue>System</defaultvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
+			<option name="vrp_forum_group_ts3_unverified">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>integer</optiontype>
+				<defaultvalue>6</defaultvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
+			<option name="vrp_forum_group_ts3_verified">
+				<categoryname>vrp_settings</categoryname>
+				<optiontype>integer</optiontype>
+				<defaultvalue>7</defaultvalue>
+                <validationpattern>[^0]</validationpattern>
+			</option>
+		</options>
+	</import>
+</data>
