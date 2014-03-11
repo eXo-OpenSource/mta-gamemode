@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 GUIImage = inherit(GUIElement)
+inherit(GUIImage, GUIColorable)
 
 function GUIImage:constructor(posX, posY, width, height, path, parent)
 	checkArgs("GUIImage:constructor", "number", "number", "number", "number", "string")
@@ -44,5 +45,11 @@ function GUIImage:setColor(color)
 	assert(type(color) == "number", "Bad argument @ GUIImage.setColor")
 
 	self.m_Color = color
+	return self
+end
+
+function GUIImage:setAlpha(alpha)
+	-- This is wrong
+	self:setColor(tocolor(255, 255, 255, alpha))
 	return self
 end

@@ -19,6 +19,7 @@ function KarmaBar:constructor()
 			self:setKarma(karma)
 		end
 	)
+	self:setVisible(false)
 end
 
 function KarmaBar:setKarma(progress)

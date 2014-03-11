@@ -29,3 +29,10 @@ function GUIColorable:setColorRGB(r, g, b, a)
 	self:setColor(tocolor(r, g, b, a or 255))
 	return self
 end
+
+function GUIColorable:setAlpha(alpha)
+	-- This is wrong
+	outputDebug("setalpha")
+	self:setColor(tocolor(255, 255, 255, alpha))
+	return self
+end
