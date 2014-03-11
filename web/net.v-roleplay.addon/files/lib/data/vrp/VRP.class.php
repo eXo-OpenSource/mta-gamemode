@@ -6,6 +6,7 @@ use wcf\data\vrp\MTA;
 use wcf\data\user\User;
 use wcf\data\user\UserAction;
 use wcf\data\user\UserEditor;
+use wcf\data\user\group\UserGroup;
 
 class VRP
 {
@@ -19,27 +20,27 @@ class VRP
 		$action->executeAction();
 	}
 	
-	public static function OnUserGroupRemove($user, $grouplist)
+	public static function OnUserGroupRemove($user, $groupList)
 	{
 		// TS3
 		$uid = $user->ts3uid;
 		if ($uid == "") return;
 		
-		foreach($this->groupList as $group)
+		foreach($groupList as $group)
 		{
-			TS3::singleton()->setUidClientGroup($uid, $group->groupID, false);
+			TS3::singleton()->setUidClientGroup($uid, $group["groupID"], false);
 		}
 	}
 	
-	public static function OnUserGroupAdd($user, $grouplist)
+	public static function OnUserGroupAdd($user, $groupList)
 	{
 		// TS3
 		$uid = $user->ts3uid;
 		if ($uid == "") return;
 		
-		foreach($this->groupList as $group)
+		foreach($groupList as $group)
 		{
-			TS3::singleton()->setUidClientGroup($uid, $group->groupID, true);
+			TS3::singleton()->setUidClientGroup($uid, $group["groupID"], true);
 		}	
 	}
 	
@@ -61,7 +62,8 @@ class VRP
 		$uid = $user->ts3uid;
 		if ($uid == "") return;
 		
-		foreach(UserGroup::getGroupsByType() as $group)
+		$groups = UserGroup::getGroupsByType();
+		foreach($groups as $group)
 		{
 			TS3::singleton()->setUidClientGroup($uid, $group->groupID, false);
 		}
