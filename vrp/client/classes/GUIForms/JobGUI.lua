@@ -5,8 +5,8 @@
 -- *  PURPOSE:     Job GUI class
 -- *
 -- ****************************************************************************
-JobGUI = inherit(Singleton)
-inherit(GUIForm, JobGUI)
+JobGUI = inherit(GUIForm)
+inherit(Singleton, JobGUI)
 
 function JobGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)

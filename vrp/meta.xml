@@ -305,7 +305,6 @@
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Carhouse.map"/>
 	<map src="files/maps/Roadsweeper.map"/>
-	<map src="files/maps/Garage1.map"/>
 	
 	<!-- temp -->
 	<script src="files/maps/tempTXDImport.lua" type="client"/>

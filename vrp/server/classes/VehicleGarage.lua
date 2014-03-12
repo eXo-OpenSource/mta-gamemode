@@ -6,8 +6,10 @@
 -- *
 -- ****************************************************************************
 VehicleGarage = inherit(Object)
+VehicleGarage.Map = {}
 
 function VehicleGarage:constructor(slotData, entryPosition, interiorPosition, interiorExitPosition, exitPosition, interiorId)
+	self.m_Id = #VehicleGarage.Map + 1
 	self.m_Sessions = {}
 	self.m_SlotData = slotData
 	self.m_EnterColShape = createColSphere(entryPosition.X, entryPosition.Y, entryPosition.Z, 3)
@@ -40,7 +42,9 @@ function VehicleGarage:constructor(slotData, entryPosition, interiorPosition, in
 	addEventHandler("onColShapeHit", self.m_ExitColShape,
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" then
-				-- Todo: Close session
+				local session = self:getSessionByPlayer(hitElement)
+				if not session then return end
+				self:closeSession(session)
 				
 				fadeCamera(hitElement, false)
 				setTimer(
@@ -66,6 +70,9 @@ function VehicleGarage:openSessionForPlayer(player)
 	local session = VehicleGarageSession:new(sessionId, self, player)
 	self.m_Sessions[sessionId] = session
 	
+	-- Tell the player that we opened the garage session
+	player:triggerEvent("vehicleGarageSessionOpen", self.m_Id, sessionId)
+	
 	return session
 end
 
@@ -74,8 +81,20 @@ function VehicleGarage:closeSession(session)
 	if not idx then
 		return false
 	end
+	
+	-- Tell the player that we closed the garage session
+	session:getPlayer():triggerEvent("vehicleGarageSessionClose", self.m_Id)
+	
 	table.remove(self.m_Sessions, idx)
 	delete(session)
+end
+
+function VehicleGarage:getSessionByPlayer(player)
+	for k, v in ipairs(self.m_Sessions) do
+		if v.m_Player == player then
+			return v
+		end
+	end
 end
 
 function VehicleGarage:getSlotData(slotId)
@@ -86,21 +105,23 @@ function VehicleGarage:getMaxSlots()
 	return #self.m_SlotData
 end
 
+-- Managing stuff
 function VehicleGarage.initalizeGarages()
-	VehicleGarage:new(
-		{
-			{571.8, -2781.9, 705.2, 224},
-			{570.5, -2765.8, 705.4, 260},
-			{586.1, -2787.9, 705.2, 42},
-			{586, -2766.2, 705.4, 160}
-		},
-		Vector(1877.2, -2092, 13.4),
-		Vector(573.6, -2799.2, 705.5),
-		Vector(573.7, -2804.4, 705.4),
-		Vector(1877.7, -2102.8, 13.1),
-		0
-	)
-    
+	VehicleGarage.Map = {
+		VehicleGarage:new(
+			{
+				{571.8, -2781.9, 705.2, 224},
+				{570.5, -2765.8, 705.4, 260},
+				{586.1, -2787.9, 705.2, 42},
+				{586, -2766.2, 705.4, 160}
+			},
+			Vector(1877.2, -2092, 13.4),
+			Vector(573.6, -2799.2, 705.5),
+			Vector(573.7, -2804.4, 705.4),
+			Vector(1877.7, -2102.8, 13.1),
+			0
+		);
+	}
 end
 
 
@@ -122,6 +143,7 @@ function VehicleGarageSession:addVehicle(vehicle)
 	local x, y, z = unpack(self.m_Garage:getSlotData(slotId))
 	setElementInterior(vehicle, 0)
 	setElementPosition(vehicle, x, y, z)
+	setElementDimension(vehicle, self.m_Dimension)
 	
 	self.m_Slots[slotId] = vehicle
 	return slotId
@@ -129,4 +151,8 @@ end
 
 function VehicleGarageSession:getDimension()
 	return self.m_Dimension
+end
+
+function VehicleGarageSession:getPlayer()
+	return self.m_Player
 end

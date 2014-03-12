@@ -5,8 +5,8 @@
 -- *  PURPOSE:     VehicleShopGUI class
 -- *
 -- ****************************************************************************
-VehicleShopGUI = inherit(Singleton)
-inherit(GUIForm, VehicleShopGUI)
+VehicleShopGUI = inherit(GUIForm)
+inherit(Singleton, VehicleShopGUI)
 
 function VehicleShopGUI:constructor()
 	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)

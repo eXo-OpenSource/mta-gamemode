@@ -40,16 +40,3 @@ function GUIImage:setImage(path)
 	self:anyChange()
 	return self
 end
-
-function GUIImage:setColor(color)
-	assert(type(color) == "number", "Bad argument @ GUIImage.setColor")
-
-	self.m_Color = color
-	return self
-end
-
-function GUIImage:setAlpha(alpha)
-	-- This is wrong
-	self:setColor(tocolor(255, 255, 255, alpha))
-	return self
-end

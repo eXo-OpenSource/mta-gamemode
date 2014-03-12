@@ -1,5 +1,5 @@
-LoginGUI = inherit(Singleton)
-inherit(GUIForm, LoginGUI)
+LoginGUI = inherit(GUIForm)
+inherit(Singleton, LoginGUI)
 
 function LoginGUI:constructor()	
 	local sw, sh = guiGetScreenSize()

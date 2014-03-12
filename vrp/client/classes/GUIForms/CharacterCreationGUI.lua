@@ -1,5 +1,5 @@
-CharacterCreationGUI = inherit(Singleton)
-inherit(GUIForm, CharacterCreationGUI)
+CharacterCreationGUI = inherit(GUIForm)
+inherit(Singleton, CharacterCreationGUI)
 
 local CHARACTER_SELECTION_PED_POSITIONS = {
 {1566.440918, -1374.292114, 190.789063, 273};

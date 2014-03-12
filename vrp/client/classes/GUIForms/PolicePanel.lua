@@ -5,8 +5,8 @@
 -- *  PURPOSE:     Police panel GUI
 -- *
 -- ****************************************************************************
-PolicePanel = inherit(Singleton)
-inherit(GUIForm, PolicePanel)
+PolicePanel = inherit(GUIForm)
+inherit(Singleton, PolicePanel)
 
 addEvent("policePanelListRetrieve", true)
 

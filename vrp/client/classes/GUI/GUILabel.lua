@@ -64,10 +64,3 @@ function GUILabel:setAlign(x, y)
 	self.m_AlignY = y or self.m_AlignY
 	return self
 end
-
--- Why is GUIColorable:setAlpha not called?
-function GUILabel:setAlpha(alpha)
-	-- This is wrong	
-	self:setColor(tocolor(255, 255, 255, alpha))
-	return self
-end

@@ -54,6 +54,7 @@ function Core:ready()
 	
 	-- Vehicle shops
 	VehicleShop.createShops()
+	VehicleGarage.initializeGarages()
 end
 
 function Core:destructor()

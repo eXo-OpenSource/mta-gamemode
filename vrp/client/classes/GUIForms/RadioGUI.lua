@@ -5,8 +5,8 @@
 -- *  PURPOSE:     Radio UI class
 -- *
 -- ****************************************************************************
-RadioGUI = inherit(Singleton)
-inherit(GUIForm, RadioGUI)
+RadioGUI = inherit(GUIForm)
+inherit(Singleton, RadioGUI)
 
 VRP_RADIO = {
 	{"Di.fm Dubstep", "http://80.94.69.106:6374/"},

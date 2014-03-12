@@ -5,8 +5,8 @@
 -- *  PURPOSE:     Phone class
 -- *
 -- ****************************************************************************
-Phone = inherit(Singleton)
-inherit(GUIForm, Phone)
+Phone = inherit(GUIForm)
+inherit(Singleton, Phone)
 
 function Phone:constructor()
 	GUIForm.constructor(self, screenWidth-270, screenHeight-500, 250, 490)

@@ -1,5 +1,5 @@
-﻿DownloadGUI = inherit(Singleton)
-inherit(GUIForm, DownloadGUI)
+﻿DownloadGUI = inherit(GUIForm)
+inherit(Singleton, DownloadGUI)
 
 function DownloadGUI:constructor()
 	GUIForm.constructor(self, 0, 0, screenWidth, screenHeight)

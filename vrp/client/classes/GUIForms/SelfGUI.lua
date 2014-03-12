@@ -5,8 +5,8 @@
 -- *  PURPOSE:     Self menu GUI class
 -- *
 -- ****************************************************************************
-SelfGUI = inherit(Singleton)
-inherit(GUIForm, SelfGUI)
+SelfGUI = inherit(GUIForm)
+inherit(Singleton, SelfGUI)
 
 function SelfGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
