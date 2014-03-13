@@ -17,32 +17,51 @@ function VehicleManager:constructor()
 	addEvent("vehicleAddKey", true)
 	addEvent("vehicleRemoveKey", true)
 	addEvent("vehicleRepair", true)
+	addEvent("vehicleRespawn", true)
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
 	addEventHandler("vehicleRemoveKey", root, bind(self.Event_vehicleRemoveKey, self))
 	addEventHandler("vehicleRepair", root, bind(self.Event_vehicleRepair, self))
+	addEventHandler("vehicleRespawn", root, bind(self.Event_vehicleRespawn, self))
 	
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	for i, rowData in ipairs(result) do
 		local vehicle = createVehicle(rowData.Model, rowData.PosX, rowData.PosY, rowData.PosZ, 0, 0, rowData.Rotation)
-		enew(vehicle, Vehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys), rowData.Color, rowData.Health)
-		table.insert(self.m_Vehicles, vehicle)
+		enew(vehicle, Vehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys), rowData.Color, rowData.Health, toboolean(rowData.IsInGarage))
+		self:addRef(vehicle)
 	end
 end
 
 function VehicleManager:destructor()
-	for k, vehicle in ipairs(self.m_Vehicles) do
-		vehicle:save()
+	for ownerId, vehicles in pairs(self.m_Vehicles) do
+		for k, vehicle in ipairs(vehicles) do
+			vehicle:save()
+		end
 	end
-	outputServerLog("Saved "..#self.m_Vehicles.." vehicles")
+	outputServerLog("Saved vehicles")
 end
 
 function VehicleManager:addRef(vehicle)
-	table.insert(self.m_Vehicles, vehicle)
+	local ownerId = vehicle:getOwner()
+	assert(ownerId, "Bad owner specified")
+	
+	if not self.m_Vehicles[ownerId] then
+		self.m_Vehicles[ownerId] = {}
+	end
+	
+	table.insert(self.m_Vehicles[ownerId], vehicle)
 end
+
+function VehicleManager:getPlayerVehicles(player)
+	if type(player) == "userdata" then
+		player = player:getId()
+	end
+	return self.m_Vehicles[player]
+end
+
 
 function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	if not VEHICLESHOPS[shop] then return end
@@ -74,7 +93,7 @@ function VehicleManager:Event_vehicleLock()
 		return
 	end
 	
-	if not source:hasKey(client) then
+	if not source:hasKey(client) and client:getRank() <= RANK.User then
 		client:sendError(_("You do not own a key for this vehicle", client))
 		return
 	end
@@ -133,4 +152,29 @@ function VehicleManager:Event_vehicleRepair()
 	end
 	
 	fixVehicle(source)
+end
+
+function VehicleManager:Event_vehicleRespawn()
+	if source:getOwner() ~= client:getId() then
+		client:sendWarning(_("You are not the owner of this vehicle!", client))
+		return
+	end
+	if source:isInGarage() then
+		client:sendError(_("Dieses Fahrzeug ist bereits in der Garage!", client))
+		return
+	end
+	if client:getMoney() < 100 then
+		client:sendWarning(_("You do not have enough money!", client))
+		return
+	end
+	local occupants = getVehicleOccupants(source)
+	for seat, player in pairs(occupants) do
+		removePedFromVehicle(player)
+	end
+	
+	-- Todo: Check if slot limit is reached
+	source:respawn()
+	client:takeMoney(100)
+	fixVehicle(source)
+	client:sendShortMessage(_("Dein Fahrzeug wurde erfolgreich in der Garage respawnt!", client))
 end

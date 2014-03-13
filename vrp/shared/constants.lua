@@ -1,12 +1,12 @@
 MAX_CHARACTERS = 5
-PRIVATE_DIMENSION_SERVER = 1 -- This dimension should not be used for playing
+PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which 
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
 RANK = {}
 RANK[-1] = "Banned"
 RANK[0] = "User"
-RANK[1] = "UNUSED"
+RANK[1] = "Supporter"
 RANK[2] = "Moderator"
 RANK[3] = "Administrator"
 RANK[4] = "Developer"

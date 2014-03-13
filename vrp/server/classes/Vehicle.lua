@@ -8,17 +8,23 @@
 Vehicle = inherit(MTAElement)
 --registerElementClass("vehicle", Vehicle)
 
-function Vehicle:constructor(Id, owner, keys, color, health)
+function Vehicle:constructor(Id, owner, keys, color, health, inGarage)
 	self.m_Id = Id
 	self.m_Owner = owner
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- *hide*
 	self.m_Keys = keys or {}
+	self.m_InGarage = inGarage or false
 	
 	setElementHealth(self, health)
 	setVehicleLocked(self, true)
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
 		setVehicleColor(self, r, g, b)
+	end
+	
+	if self.m_InGarage then
+		-- Move to unused dimension | Todo: That's probably a bad solution
+		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	end
 end
 
@@ -75,7 +81,8 @@ function Vehicle:save()
 	local r, g, b = getVehicleColor(self, true)
 	local color = setBytesInInt32(255, r, g, b) -- Format: argb
 	
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ? WHERE Id = ?", sql:getPrefix(), self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, IsInGarage = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_InGarage and 1 or 0, self.m_Id)
 end
 
 function Vehicle:getId()
@@ -150,4 +157,20 @@ end
 
 function Vehicle:isLocked()
 	return isVehicleLocked(self)
+end
+
+function Vehicle:isInGarage()
+	return self.m_InGarage
+end
+
+function Vehicle:setInGarage(state)
+	self.m_InGarage = state
+end
+
+function Vehicle:respawn()
+	-- Todo: Check if slot limit is reached
+	-- Set inGarage flag and teleport to private dimension
+	self:setInGarage(true)
+	fixVehicle(self)
+	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 end

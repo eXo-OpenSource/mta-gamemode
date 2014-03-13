@@ -262,3 +262,7 @@ function Player.staticGroupChatHandler(self, command, ...)
 		self.m_Group:sendMessage(("[GROUP] %s: %s"):format(getPlayerName(self), table.concat({...}, " ")))
 	end
 end
+
+function Player:getVehicles()
+	return VehicleManager:getSingleton():getPlayerVehicles(self)
+end

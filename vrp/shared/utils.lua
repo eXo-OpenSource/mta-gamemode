@@ -225,7 +225,7 @@ function nextframe(fn)
 end
 
 function toboolean(num)
-	return num ~= 0
+	return num ~= 0 and num ~= "0"
 end
 
 function addRemoteEvents(eventList)
