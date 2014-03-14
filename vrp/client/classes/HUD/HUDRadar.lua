@@ -21,7 +21,6 @@ function HUDRadar:constructor()
 	
 	-- Set texture edge to border (no-repeat)
 	dxSetTextureEdge(self.m_Texture, "border", tocolor(51, 70, 77))
-	self:setZoom(1)
 	
 	-- Create a renderTarget that has the size of the diagonal of the actual image
 	self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
@@ -44,7 +43,7 @@ function HUDRadar:update()
 	if getControlState("forwards") or isPedInVehicle(localPlayer)  then
 		local element = getPedOccupiedVehicle(localPlayer) or localPlayer
 		local _, _, rotation = getElementRotation(element)
-		self.m_Rotation = rotation
+		--self.m_Rotation = rotation
 	end
 end
 
@@ -59,7 +58,7 @@ function HUDRadar:draw()
 	
 	-- Render (rotated) image section to renderTarget
 	dxSetRenderTarget(self.m_RenderTarget, true)
-	dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_ImageWidth/2, mapY - self.m_ImageHeight/2, self.m_ImageWidth, self.m_ImageHeight, self.m_Texture, self.m_Rotation)
+	dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
 	dxSetRenderTarget()
 	
 	-- Draw renderTarget
@@ -78,32 +77,32 @@ function HUDRadar:draw()
 	dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, self.m_Width/4-6, self.m_Height/20, tocolor(65, 56, 15))
 	dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, (self.m_Width/4-6) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
 	
-	-- Draw the player blip
-	dxDrawImage(self.m_PosX+self.m_Width/2-8, self.m_PosY+2+self.m_Height/2-8, 16, 16, "files/images/Blips/LocalPlayer.png", 0)
-	
-	local w = self.m_PosX + mapX - self.m_ImageWidth/2
-	local v = self.m_PosY + mapY - self.m_ImageHeight/2
-	dxDrawRectangle(w, v, 2, 2, Color.Red)
-	
-	--[[for k, blip in ipairs(self.m_Blips) do
+	for k, blip in ipairs(self.m_Blips) do
 		local blipX, blipY = blip:getPosition()
 		if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < math.huge then
 			local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
-			local screenX = self.m_PosX + mapX * (self.m_Diagonal/self.m_ImageWidth)
-			local screenY = self.m_PosY + mapY * (self.m_Diagonal/self.m_ImageHeight)
-			outputDebug(("X: %d, Y: %d"):format(screenX, screenY))
+			local screenX = self.m_PosX - mapX + blipMapX + self.m_Width/2
+			local screenY = self.m_PosY - mapY + blipMapY + self.m_Height/2
+			if screenX < self.m_PosX then
+				screenX = self.m_PosX
+			end
+			if screenY < self.m_PosY then
+				screenY = self.m_PosY
+			end
+			if screenX > self.m_PosX + self.m_Width then
+				screenX = self.m_PosX + self.m_Width
+			end
+			if screenY > self.m_PosY + self.m_Height then
+				screenY = self.m_PosY + self.m_Height
+			end
 			
-			dxDrawImage(screenX, screenY, blip:getSize(), blip:getSize(), blip:getImagePath())
+			local blipSize = blip:getSize()
+			dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath())
 		end
 	end
-	]]
-	-- Test
-	--[[local wX, wY = self.m_Blips[1]:getPosition()
-	wX, wY = self:worldToMapPosition(wX, wY)
-	outputDebugString(("%d %d"):format(leftX, leftY))
-	local x, y = self:getBlipRenderPosition(wX-leftX, wY-leftY)
-	dxDrawImage(self.m_PosX+x, self.m_PosY+y, 16, 16, self.m_Blips[1]:getImagePath())
-	dxDrawLine(self.m_PosX+self.m_Width/2, self.m_PosY+self.m_Height/2, x, y, tocolor(255,0,0))]]
+
+	-- Draw the player blip
+	dxDrawImage(self.m_PosX+self.m_Width/2-8, self.m_PosY+2+self.m_Height/2-8, 16, 16, "files/images/Blips/LocalPlayer.png", 0)
 end
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
@@ -114,8 +113,6 @@ end
 
 function HUDRadar:setZoom(zoom)
 	self.m_Zoom = zoom
-	
-	self.m_ImageWidth, self.m_ImageHeight = self.m_ImageWidth / zoom, self.m_ImageHeight / zoom
 end
 
 function HUDRadar:getZoom()
@@ -135,30 +132,4 @@ function HUDRadar:removeBlip(blip)
 		end
 	end
 	return false
-end
-
-function HUDRadar:getBlipRenderPosition(blipX, blipY)
-	-- Check if we're colliding with the border (the blip is outside of the radar box)
-	local borders = {
-		{position = {0, 0}, direction = {1, 0}}, -- top
-		{position = {0, 0}, direction = {0, -1}}, -- left
-		{position = {0, self.m_Height}, direction = {1, 0}}, -- bottom
-		{position = {self.m_Width, self.m_Height}, direction = {0, 1}} -- right
-	}
-	local w = {position = {self.m_Width/2, self.m_Height/2}, direction = {blipX - self.m_Width/2, blipY - self.m_Height/2}}
-	
-	-- Get point of intersection
-	for k, v in ipairs(borders) do
-		local d = v.direction[1] * w.direction[2] - v.direction[2] * w.direction[1]
-		if d ~= 0 then
-			local d1 = (w.position[1]-v.position[1])*w.direction[2] - (w.position[2]-v.position[2])*w.direction[1]
-			local d2 = (w.position[2]-v.position[2])*v.direction[1] - (w.position[1]-v.position[1])*v.direction[2]
-			local px = v.position[1] + d1/d * v.direction[1]
-			local py = v.position[2] + d1/d * v.direction[2]
-			
-			return px, py
-		end
-	end
-	
-	return 0, 0 --blipX, blipY
 end
