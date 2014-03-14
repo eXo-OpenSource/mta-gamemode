@@ -44,7 +44,13 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 		self:addItem(_"Löschen",
 			function()
-				outputChatBox("Not implemented yet")
+				if self:getElement() then
+					QuestionBox:new(_"Möchtest du dieses Auto wirklich löschen?",
+						function()
+							triggerServerEvent("vehicleDelete", self:getElement())
+						end
+					)
+				end
 			end
 		)
 	end

@@ -18,6 +18,7 @@ function VehicleManager:constructor()
 	addEvent("vehicleRemoveKey", true)
 	addEvent("vehicleRepair", true)
 	addEvent("vehicleRespawn", true)
+	addEvent("vehicleDelete", true)
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -25,6 +26,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleRemoveKey", root, bind(self.Event_vehicleRemoveKey, self))
 	addEventHandler("vehicleRepair", root, bind(self.Event_vehicleRepair, self))
 	addEventHandler("vehicleRespawn", root, bind(self.Event_vehicleRespawn, self))
+	addEventHandler("vehicleDelete", root, bind(self.Event_vehicleDelete, self))
 	
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
@@ -55,11 +57,23 @@ function VehicleManager:addRef(vehicle)
 	table.insert(self.m_Vehicles[ownerId], vehicle)
 end
 
+function VehicleManager:removeRef(vehicle)
+	local ownerId = vehicle:getOwner()
+	assert(ownerId, "Bad owner specified")
+	
+	if self.m_Vehicles[ownerId] then
+		local idx = table.find(self.m_Vehicles[ownerId], vehicle)
+		if idx then
+			table.remove(self.m_Vehicles[ownerId], idx)
+		end
+	end
+end
+
 function VehicleManager:getPlayerVehicles(player)
 	if type(player) == "userdata" then
 		player = player:getId()
 	end
-	return self.m_Vehicles[player]
+	return self.m_Vehicles[player] or {}
 end
 
 
@@ -147,7 +161,7 @@ end
 
 function VehicleManager:Event_vehicleRepair()
 	if client:getRank() < RANK.Moderator then
-		-- Report cheat attempt
+		-- Todo: Report cheat attempt
 		return
 	end
 	
@@ -177,4 +191,13 @@ function VehicleManager:Event_vehicleRespawn()
 	client:takeMoney(100)
 	fixVehicle(source)
 	client:sendShortMessage(_("Dein Fahrzeug wurde erfolgreich in der Garage respawnt!", client))
+end
+
+function VehicleManager:Event_vehicleDelete()
+	if client:getRank() < RANK.Moderator then
+		-- Todo: Report cheat attempt
+		return
+	end
+	
+	source:purge()
 end

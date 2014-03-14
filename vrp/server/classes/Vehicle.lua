@@ -64,6 +64,7 @@ function Vehicle:purge()
 	end
 
 	if sql:queryExec("DELETE FROM ??_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
+		VehicleManager:getSingleton():removeRef(self)
 		destroyElement(self)
 		return true
 	end

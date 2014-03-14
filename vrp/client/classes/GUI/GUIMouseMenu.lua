@@ -22,7 +22,7 @@ function GUIMouseMenu:drawThis()
 end
 
 function GUIMouseMenu:addItem(text, callback)
-	self.m_Height = (#self.m_Items+1)*30
+	self.m_Height = (#self.m_Items+1)*35
 	local item
 	if callback then
 		item = GUIMouseMenuItem:new(0, 0 + #self.m_Items*35, self.m_Width, 35, text, self)

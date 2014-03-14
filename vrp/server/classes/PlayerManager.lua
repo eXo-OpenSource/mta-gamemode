@@ -31,7 +31,7 @@ end
 
 function PlayerManager:playerWasted()
 	source:sendMessage("Pass lieber auf, was du machst!")
-	setTimer(function(player) player:respawnAfterDeath() end, 20*1000, 1, source)
+	setTimer(function(player) if player then player:respawnAfterDeath() end end, 20*1000, 1, source)
 end
 
 function PlayerManager:playerChat(message, messageType)

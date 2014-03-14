@@ -106,11 +106,14 @@ function DxElement:update(elapsedTime)
 	end
 end
 
-function DxElement:isVisible()
+function DxElement:isVisible(checkParents)
+	if checkParents and self.m_Parent then
+		return self.m_Parent:isVisible(true)
+	end
 	return self.m_Visible
 end
 
-function DxElement:setVisible(visible)
+function DxElement:setVisible(visible, getPropagated)
 	self.m_Visible = visible
 	if visible then
 		if self.onShow then self:onShow() end
@@ -118,9 +121,11 @@ function DxElement:setVisible(visible)
 		if self.onHide then self:onHide() end
 	end
 	
---	for k, v in ipairs(self.m_Children) do
---		v:setVisible(visible)
---	end
+	if getPropagated then
+		for k, v in ipairs(self.m_Children) do
+			v:setVisible(visible)
+		end
+	end
 
 	if visible and self.m_CacheArea then
 		self.m_CacheArea:bringToFront()
