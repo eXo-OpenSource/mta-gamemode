@@ -76,10 +76,10 @@ end
 
 if SERVER then
 	function _(message, player, ...)
-		return TranslationManager:getSingleton():translate(message:format(...), player:getLocale())
+		return TranslationManager:getSingleton():translate(message, player:getLocale()):format(...)
 	end
 else
 	function _(message, ...)
-		return TranslationManager:getSingleton():translate(message:format(...), localPlayer:getLocale())
+		return TranslationManager:getSingleton():translate(message, localPlayer:getLocale()):format(...)
 	end
 end

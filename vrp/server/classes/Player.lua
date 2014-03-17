@@ -107,7 +107,7 @@ function Player.getFromId(id)
 end
 
 function Player:loadCharacterInfo()
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, Weapons FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_SavedPosition = Vector(row.PosX, row.PosY, row.PosZ)
@@ -133,6 +133,20 @@ function Player:loadCharacterInfo()
 	self.m_Skills["Flying"] 	= row.FlyingSkill
 	self.m_Skills["Sneaking"] 	= row.SneakingSkill
 	self.m_Skills["Endurance"] 	= row.EnduranceSkill
+	
+	if row.Weapons ~= "" then
+		local weaponID = 0
+		for i = 1, 26 do
+			local value = gettok(row.Weapons, i, string.byte('|'))
+			if tonumber(value) ~= 0 then
+				if math.mod(i, 2) == 1 then
+					weaponID = value
+				else
+					giveWeapon(self, weaponID, value)
+				end
+			end
+		end
+	end
 end
 
 function Player:save()
@@ -141,9 +155,14 @@ function Player:save()
 	end
 	local x, y, z = getElementPosition(self)
 	local interior = getElementInterior(self)
+	local weapons = ""
+	for i = 0, 12 do
+		if i == 0 then weapons = getPedWeapon(self, i).."|"..getPedTotalAmmo(self, i)
+		else weapons = weapons.."|"..getPedWeapon(self, i).."|"..getPedTotalAmmo(self, i) end
+	end
 	
-	return sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ? WHERE Id = ?;", sql:getPrefix(), 
-		x, y, z, interior, getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_Id)
+	return sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ?, Weapons = ? WHERE Id = ?;", sql:getPrefix(), 
+		x, y, z, interior, getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, weapons, self.m_Id)
 end
 
 function Player:spawn()

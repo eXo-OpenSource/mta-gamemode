@@ -44,14 +44,14 @@ end
 
 function JobRoadSweeper:Rubbish_Hit(hitElement, matchingDimension)
 	if hitElement == localPlayer and matchingDimension and not self.m_Busy then
-		destroyElement(source)
-		triggerServerEvent("sweeperGarbageCollect", root)
-		
 		local vehicle = getPedOccupiedVehicle(localPlayer)
 		if not vehicle or getElementModel(vehicle) ~= 574 then -- Sweeper
 			localPlayer:sendMessage(_"Hierzu musst du einen Roadsweeper fahren!", 255, 0, 0)
 			return
 		end
+		
+		destroyElement(source)
+		triggerServerEvent("sweeperGarbageCollect", root)
 		
 		setElementFrozen(vehicle, true)
 		self.m_Busy = true

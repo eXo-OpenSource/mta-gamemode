@@ -30,7 +30,7 @@ function JobTrashman:start()
 	end
 	
 	-- Create trash can display
-	self.m_TrashImage = GUIImage:new(screenWidth - 205, screenHeight - 80, 200, 50, "files/images/Jobs/Trashdisplay.png")
+	self.m_TrashImage = GUIImage:new(screenWidth/2-200/2, 10, 200, 50, "files/images/Jobs/Trashdisplay.png")
 	self.m_CanLabel = GUILabel:new(55, 4, 55, 40, "0", 1, self.m_TrashImage):setFont(VRPFont(40))
 	self.m_ContainerLabel = GUILabel:new(150, 4, 50, 40, "0", 1, self.m_TrashImage):setFont(VRPFont(40))
 	
@@ -47,6 +47,10 @@ function JobTrashman:stop()
 	end
 	self.m_ColShapes = {}
 	self:reset()
+	
+	delete(self.m_TrashImage)
+	delete(self.m_CanLabel)
+	delete(self.m_ContainerLabel)
 end
 
 function JobTrashman:reset()
