@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Abstract job class
 -- *
 -- ****************************************************************************
-Job = inherit(Object)
+Job = inherit(Singleton)
 
 function Job:constructor()
 	
@@ -21,6 +21,14 @@ end
 
 function Job:requireVehicle(player)
 	return player:getJob() == self
+end
+
+function Job:sendMessage(message, ...)
+	for k, player in ipairs(getElementsByType("player")) do
+		if player:getJob() == self then
+			player:sendMessage(_("[JOB]", player).._(message, player):format(...))
+		end
+	end
 end
 
 Job.start = pure_virtual

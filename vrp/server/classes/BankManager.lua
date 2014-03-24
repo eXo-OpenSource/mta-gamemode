@@ -17,6 +17,12 @@ function BankManager:constructor()
 	addEventHandler("bankDeposit", root, bind(self.Event_Deposit, self))
 	addEventHandler("bankTransfer", root, bind(self.Event_Transfer, self))
 	addEventHandler("bankMoneyBalanceRequest", root, bind(self.Event_bankMoneyBalanceRequest, self))
+	
+	self:createInteriors()
+end
+
+function BankManager:createInteriors()
+	InteriorEnterExit:new(Vector(1660.4, -1272.8, 14.6), Vector(390, 173.8, 1008.4), 3)
 end
 
 function BankManager:Event_Withdraw(amount)

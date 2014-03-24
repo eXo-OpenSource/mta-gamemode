@@ -8,7 +8,7 @@ function VendingMachine:constructor(model, x, y, z, rotation)
 	VendingMachine.Map[object] = self
 end
 
-function VendingMachine.initializeMachines()
+function VendingMachine.initializeAll()
 	addEvent("vendingRob", true)
 	addEventHandler("vendingRob", root, VendingMachine.Event_vendingRob)
 	

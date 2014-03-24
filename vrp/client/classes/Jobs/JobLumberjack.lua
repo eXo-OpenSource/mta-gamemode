@@ -8,13 +8,13 @@
 JobLumberjack = inherit(Job)
 
 function JobLumberjack:constructor()
-	Job.constructor(self, 1105.6, -299.6, 73.5, "files/images/Blips/Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", [[
+	Job.constructor(self, 1105.6, -299.6, 73.5, "files/images/Blips/Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _"Holzfäller", _([[
 		Als Holzfäller ist es deine Aufgabe für genügend Holz in Los Santos zu sorgen.
 		Als ersten Schritt musst du die Bäume dieses Waldstücks sägen. Wie du sehen wirst, werden die Stämme für dich für den Transport aufgestapelt.
 		Wenn du genug Bäume gesägt hast, ist es Zeit die aufgestapelten Stämme mit dem - dir zur Verfügung gestellten - Feltbed zu einer Sammelstation zu bringen.
 		Diese Sammelstation wurde auf deiner Karte entsprechend markiert.
 		Sobald du in das Fahrzeug einsteigst, wird außerdem das Navigationssystem automatisch gestartet.
-	]])
+	]]))
 	
 	self.m_Trees = {}
 	self.m_StackedTrees = {}

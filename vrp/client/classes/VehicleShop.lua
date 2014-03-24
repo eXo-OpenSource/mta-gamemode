@@ -47,7 +47,7 @@ function VehicleShop:areaLeave(hitElement, matchingDimension)
 	end
 end
 
-function VehicleShop.createShops()
+function VehicleShop.initializeAll()
 	for shopName, info in pairs(VEHICLESHOPS) do
 		local x, y, z = unpack(info.Position)
 		VehicleShop:new(shopName, info.ImgPath, Vector(x, y, z), Rect:new(unpack(info.Rect)), info.Vehicles)

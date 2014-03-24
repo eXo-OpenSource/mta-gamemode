@@ -50,7 +50,7 @@ function VehicleGarage:destroyMap()
 	self.m_MapObjects = {}
 end
 
-function VehicleGarage.initializeGarages()
+function VehicleGarage.initializeAll()
 	VehicleGarage.Map = {
 		VehicleGarage:new({
 			{12814, 577.4, -2779.7, 704.4, 0, 0, 0},

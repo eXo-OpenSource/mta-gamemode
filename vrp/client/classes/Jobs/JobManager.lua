@@ -22,7 +22,9 @@ function JobManager:constructor()
 	end
 	
 	addEvent("jobStart", true)
+	addEvent("jobQuit", true)
 	addEventHandler("jobStart", root, bind(self.Event_jobStart, self))
+	addEventHandler("jobQuit", root, bind(self.Event_jobQuit, self))
 end
 
 function JobManager:getFromId(jobId)
@@ -43,4 +45,14 @@ function JobManager:Event_jobStart(jobId)
 	-- We're ready to start the job :)
 	localPlayer:setJob(job)
 	job:start()
+end
+
+function JobManager:Event_jobQuit()
+	local job = localPlayer:getJob()
+	if not job then return end
+	
+	if job.stop then
+		job:stop()
+	end
+	localPlayer:setJob(nil)
 end

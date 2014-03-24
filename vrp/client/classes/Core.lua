@@ -42,19 +42,23 @@ function Core:ready()
 		end
 	)
 	
+	PolicePanel:new()
 	PolicePanel:getSingleton():close()
 	bindKey("f2", "down",
 		function()
-			PolicePanel:getSingleton():setVisible(not PolicePanel:getSingleton():isVisible())
+			if localPlayer:getJob() == JobPolice:getSingleton() then
+				PolicePanel:getSingleton():setVisible(not PolicePanel:getSingleton():isVisible())
+			end
 		end
 	)
 	
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
+	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	
 	-- Vehicle shops
-	VehicleShop.createShops()
-	VehicleGarage.initializeGarages()
+	VehicleShop.initializeAll()
+	VehicleGarage.initializeAll()
 end
 
 function Core:destructor()

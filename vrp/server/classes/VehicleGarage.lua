@@ -131,7 +131,7 @@ function VehicleGarage:getMaxSlots()
 end
 
 -- Managing stuff
-function VehicleGarage.initalizeGarages()
+function VehicleGarage.initalizeAll()
 	VehicleGarage.Map = {
 		VehicleGarage:new(
 			{

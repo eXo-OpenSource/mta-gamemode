@@ -272,7 +272,11 @@ function Player:takeWantedLevel(level)
 end
 
 function Player:setJob(job)
-	JobManager:getSingleton():startJobForPlayer(job, self)
+	if job then
+		JobManager:getSingleton():startJobForPlayer(job, self)
+	else
+		JobManager:getSingleton():stopJobForPlayer(self)
+	end
 	self.m_Job = job
 end
 

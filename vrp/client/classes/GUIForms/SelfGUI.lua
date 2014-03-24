@@ -21,6 +21,16 @@ function SelfGUI:constructor()
 	-- Todo
 	local tabInfo = self.m_TabPanel:addTab(_"Info")
 	
+	-- Tab: Job
+	local tabJob = self.m_TabPanel:addTab(_"Job")
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.05, _"Aktueller Job:", 1, tabJob):setFont(VRPFont(self.m_Height * 0.05))
+	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.05, "", 1, tabJob):setFont(VRPFont(self.m_Height * 0.05))
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.05, _"Level:", 1, tabJob):setFont(VRPFont(self.m_Height * 0.05))
+	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.05, "1", 1, tabJob):setFont(VRPFont(self.m_Height * 0.05)) -- Todo
+	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.02, self.m_Height * 0.4, self.m_Width*0.35, self.m_Height*0.07, _"Job kündigen", tabJob):setBackgroundColor(Color.Red)
+	
+	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
+	
 	-- Tab: Achievements
 	-- Todo
 	local tabAchievements = self.m_TabPanel:addTab(_"Erfolge")
@@ -66,10 +76,27 @@ function SelfGUI:constructor()
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 end
 
+function SelfGUI:onShow()
+	-- Initialize all the stuff
+	if localPlayer:getJob() then
+		self.m_JobNameLabel:setText(localPlayer:getJob():getName())
+		self.m_JobLevelLabel:setText("1") -- Todo
+	else
+		self.m_JobNameLabel:setText("-")
+		self.m_JobLevelLabel:setText("-") -- Todo
+	end
+end
+
 function SelfGUI:TabPanel_TabChanged(tabId)
 	if tabId == 3 then
 		triggerServerEvent("groupRequestInfo", root)
 	end
+end
+
+function SelfGUI:JobQuitButton_Click()
+	triggerServerEvent("jobQuit", root)
+	self.m_JobNameLabel:setText("-")
+	self.m_JobLevelLabel:setText("-")
 end
 
 function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)

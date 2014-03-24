@@ -27,9 +27,10 @@ function Core:constructor()
 	Provider:new()
 	GroupManager:new()
 	HouseManager:new()
-	VendingMachine.initializeMachines()
-	RobableShop.initalizeShops()
-	VehicleGarage.initalizeGarages()
+	VendingMachine.initializeAll()
+	RobableShop.initalizeAll()
+	VehicleGarage.initalizeAll()
+	BankRobbery.initializeAll()
 	
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")

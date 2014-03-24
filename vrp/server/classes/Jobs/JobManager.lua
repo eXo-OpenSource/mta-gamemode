@@ -22,7 +22,9 @@ function JobManager:constructor()
 	end
 	
 	addEvent("jobAccepted", true)
+	addEvent("jobQuit", true)
 	addEventHandler("jobAccepted", root, bind(self.Event_jobAccepted, self))
+	addEventHandler("jobQuit", root, bind(self.Event_jobQuit, self))
 end
 
 function JobManager:getFromId(jobId)
@@ -44,6 +46,19 @@ function JobManager:startJobForPlayer(job, player)
 	player:triggerEvent("jobStart", job:getId())
 end
 
+function JobManager:stopJobForPlayer(player)
+	local job = player:getJob()
+	if not job then
+		return false
+	end
+	
+	if job.stop then
+		job:stop(player)
+	end
+	
+	player:triggerEvent("jobQuit")
+end
+
 function JobManager:Event_jobAccepted(jobId)
 	if not jobId then return end
 	
@@ -58,4 +73,11 @@ function JobManager:Event_jobAccepted(jobId)
 	
 	-- Start the job
 	client:setJob(job)
+end
+
+function JobManager:Event_jobQuit()
+	local job = client:getJob()
+	if not job then return end
+	
+	client:setJob(nil)
 end

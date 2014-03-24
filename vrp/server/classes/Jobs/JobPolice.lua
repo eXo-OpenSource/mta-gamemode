@@ -35,7 +35,7 @@ function JobPolice:constructor()
 end
 
 function JobPolice:start(player)
-	setElementModel(player, 280)
+	--setElementModel(player, 280)
 	giveWeapon(player, 3, 1, true)
 end
 
@@ -53,14 +53,6 @@ function JobPolice:checkRequirements(player)
 		return false
 	end
 	return true
-end
-
-function JobPolice:sendMessage(message, ...)
-	for k, player in ipairs(getElementsByType("player")) do
-		if player:getJob() == self then
-			player:sendMessage(_("[POLIZEI]", player).._(message, player):format(...))
-		end
-	end
 end
 
 function JobPolice:jailPlayer(player, policeman)
