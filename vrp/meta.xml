@@ -112,6 +112,7 @@
 	<script src="client/classes/GUI/CacheArea3D.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIColorable.lua" type="client"/>
 	<script src="client/classes/GUI/abstract/GUIFontContainer.lua" type="client"/>
+	<script src="client/classes/GUI/abstract/GUIMovable.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollableArea.lua" type="client"/>
 	<script src="client/classes/GUI/GUIButton.lua" type="client"/>
 	<script src="client/classes/GUI/GUICheckbox.lua" type="client"/>

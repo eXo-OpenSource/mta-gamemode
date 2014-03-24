@@ -214,6 +214,32 @@ function DxElement:setPosition(posX, posY)
 	return self
 end
 
+function DxElement:setAbsolutePosition(posX, posY)
+	if posX == nil then
+		posX = self.m_AbsoluteX
+	end
+	if posY == nil then
+		posY = self.m_AbsoluteY
+	end
+	
+	self.m_AbsoluteX = posX
+	self.m_AbsoluteY = posY
+	
+	local diffX, diffY = posX-self.m_AbsoluteX, posY-self.m_AbsoluteY
+	local children = self.m_Children
+	while children and #children > 0 do
+		for k, v in ipairs(children) do
+			v.m_AbsoluteX = v.m_AbsoluteX + diffX
+			v.m_AbsoluteY = v.m_AbsoluteY + diffY
+		end
+		children = children.m_Children
+	end
+	
+	-- Todo: Adjust m_PosX etc.
+	self:anyChange()
+	return self
+end
+
 function DxElement:isCursorWithinBox(x1, y1, x2, y2)
 	local relCursorX, relCursorY = getCursorPosition()
 	if not relCursorX then
