@@ -56,15 +56,17 @@ end
 
 function Group:getKarma()
 	local karmaSum = 0
+	local onlinePlayers = self:getOnlinePlayers()
 	
-	for playerId in pairs(self.m_Players) do
-		local player = Player.getFromId(playerId)
-		if player then
-			karmaSum = karmaSum + player:getKarma()
-		end
+	for k, player in pairs(onlinePlayers) do
+		karmaSum = karmaSum + player:getKarma()
 	end
 	
-	return karmaSum / #self:getOnlinePlayers()
+	return karmaSum / #onlinePlayers
+end
+
+function Group:isEvil()
+	return self:getKarma() < 0
 end
 
 function Group:addPlayer(playerId, rank)
@@ -164,7 +166,7 @@ end
 function Group:getOnlinePlayers()
 	local players = {}
 	for playerId in pairs(self.m_Players) do
-		local player = Player.getFromId(playerId)
+		local player = Player.getFromId(playerId) -- Todo: optimize this (a for loop through all players might be better)
 		if player then
 			table.insert(players, player)
 		end
