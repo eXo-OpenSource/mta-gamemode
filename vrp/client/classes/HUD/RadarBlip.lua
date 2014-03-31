@@ -7,12 +7,13 @@
 -- ****************************************************************************
 RadarBlip = inherit(Object)
 
-function RadarBlip:constructor(imagePath, worldX, worldY)
+function RadarBlip:constructor(imagePath, worldX, worldY, streamDistance)
 	self.m_ImagePath = imagePath
 	self.m_WorldX = worldX
 	self.m_WorldY = worldY
 	self.m_Alpha = 255
 	self.m_Size = 24
+	self.m_StreamDistance = streamDistance or math.huge
 end
 
 function RadarBlip:destructor()
@@ -48,4 +49,12 @@ end
 
 function RadarBlip:setSize(size)
 	self.m_Size = size
+end
+
+function RadarBlip:getStreamDistance()
+	return self.m_StreamDistance
+end
+
+function RadarBlip:setStreamDistance(distance)
+	self.m_StreamDistance = distance
 end

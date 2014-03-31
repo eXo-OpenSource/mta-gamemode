@@ -59,6 +59,8 @@
 	<script src="server/classes/VehicleGarage.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/BankRobbery.lua" type="server"/>
+	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
+	<script src="server/classes/Inventory/Item.lua" type="server"/>
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>

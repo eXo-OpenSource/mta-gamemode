@@ -155,8 +155,8 @@ function RadioGUI:nextStation()
 	self:setRadioStation(self.m_CurrentStation)
 	
 	if not self:isVisible() then
-		Animation.FadeIn:new(self, 1000)
-		setTimer(function() Animation.FadeOut:new(self, 1000) end, 5000, 1)
+		self:fadeIn(1000)
+		setTimer(function() self:fadeOut(1000) end, 5000, 1)
 	end
 end
 
@@ -168,8 +168,8 @@ function RadioGUI:previousStation()
 	self:setRadioStation(self.m_CurrentStation)
 	
 	if not self:isVisible() then
-		Animation.FadeIn:new(self, 1000)
-		setTimer(function() Animation.FadeOut:new(self, 1000) end, 5000, 1)
+		self:fadeIn(1000)
+		setTimer(function() self:fadeOut(1000) end, 5000, 1)
 	end
 end
 

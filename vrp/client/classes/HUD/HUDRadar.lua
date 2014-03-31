@@ -43,7 +43,7 @@ function HUDRadar:update()
 	if getControlState("forwards") or isPedInVehicle(localPlayer)  then
 		local element = getPedOccupiedVehicle(localPlayer) or localPlayer
 		local _, _, rotation = getElementRotation(element)
-		--self.m_Rotation = rotation
+		self.m_Rotation = rotation
 	end
 end
 
@@ -77,13 +77,24 @@ function HUDRadar:draw()
 	dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, self.m_Width/4-6, self.m_Height/20, tocolor(65, 56, 15))
 	dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, (self.m_Width/4-6) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
 	
+	local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
+	
 	for k, blip in ipairs(self.m_Blips) do
 		local blipX, blipY = blip:getPosition()
-		if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < math.huge then
+		if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < blip:getStreamDistance() then
+			
 			local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
-			local screenX = self.m_PosX - mapX + blipMapX + self.m_Width/2
-			local screenY = self.m_PosY - mapY + blipMapY + self.m_Height/2
-			if screenX < self.m_PosX then
+			local distanceX, distanceY = blipMapX - mapX, blipMapY - mapY
+			local rotation = findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY)
+			
+			local screenX =  mapCenterX - math.sin(math.rad(rotation + self.m_Rotation)) * distanceX
+			local screenY =  mapCenterY - math.cos(math.rad(rotation + self.m_Rotation)) * -distanceY
+			
+			dxDrawText("distanceX, distanceY = "..distanceX..", "..distanceY, 500, 200)
+			dxDrawText("rotation = "..rotation, 500, 300)
+			dxDrawText("self rotation = "..self.m_Rotation, 500, 400)
+			
+			--[[if screenX < self.m_PosX then
 				screenX = self.m_PosX
 			end
 			if screenY < self.m_PosY then
@@ -94,16 +105,19 @@ function HUDRadar:draw()
 			end
 			if screenY > self.m_PosY + self.m_Height then
 				screenY = self.m_PosY + self.m_Height
-			end
+			end]]
 			
 			local blipSize = blip:getSize()
 			dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath())
+			--break
 		end
 	end
 
 	-- Draw the player blip
 	dxDrawImage(self.m_PosX+self.m_Width/2-8, self.m_PosY+2+self.m_Height/2-8, 16, 16, "files/images/Blips/LocalPlayer.png", 0)
 end
+angle = 0
+addCommandHandler("angle", function(cmd, a) angle = tonumber(a) end)
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
 	local mapX = worldX / ( 6000/1024) + 1024/2

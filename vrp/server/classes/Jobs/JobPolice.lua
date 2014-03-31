@@ -68,7 +68,7 @@ function JobPolice:jailPlayer(player, policeman)
 	
 	-- Start freeing timer
 	local jailTime = player:getWantedLevel() * 20
-	player:sendInfo(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %ds verweilen!", player), jailTime)
+	player:sendInfo(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %ds verweilen!", player, jailTime))
 	setTimer(
 		function()
 			setElementInterior(player, 0, 1539.7, -1659.5 + math.random(-3, 3), 13.6)

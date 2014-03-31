@@ -104,7 +104,7 @@ function GUIEdit:setCursorDrawingEnabled(state)
 end
 
 function GUIEdit:getIndexFromPixel(posX, posY)
-	local text = self:getText()
+	local text = self.m_Caption or self:getText()
 	local size = self:getFontSize()
 	local font = self:getFont()
 	

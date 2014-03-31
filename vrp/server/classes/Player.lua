@@ -19,12 +19,14 @@ function Player:constructor()
 	self.m_Account = false
 	self.m_Locale = "de"
 	self.m_Id = -1
+	self.m_Inventory = false
 	self.m_Skills = {}
 	self.m_XP 	 = 0
 	self.m_Karma = 0
 	self.m_Money = 0
 	self.m_BankMoney = 0
 	self.m_WantedLevel = 0
+	
 	--[[
 	Tutorial Stages:
 	0 - Just created an account
@@ -46,6 +48,9 @@ function Player:destructor()
 	end
 	
 	self:save()
+	
+	-- Unload stuff
+	self.m_Inventory:unload()
 	
 	-- Remove reference
 	Player.Map[self.m_Id] = nil
@@ -100,6 +105,8 @@ end
 
 function Player:createCharacter()
 	sql:queryExec("INSERT INTO ??_character(Id) VALUES(?);", sql:getPrefix(), self.m_Id)
+	
+	self.m_Inventory = Inventory.create()
 end
 
 function Player.getFromId(id)
@@ -107,7 +114,7 @@ function Player.getFromId(id)
 end
 
 function Player:loadCharacterInfo()
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, Weapons FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, Weapons, InventoryId FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
 	self.m_SavedPosition = Vector(row.PosX, row.PosY, row.PosZ)
@@ -127,6 +134,7 @@ function Player:loadCharacterInfo()
 	if row.GroupId and row.GroupId ~= 0 then
 		self.m_Group = GroupManager:getSingleton():getFromId(row.GroupId)
 	end
+	self.m_Inventory = self.m_Inventory or Inventory.loadById(row.InventoryId) or Inventory.create()
 	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -161,8 +169,8 @@ function Player:save()
 		else weapons = weapons.."|"..getPedWeapon(self, i).."|"..getPedTotalAmmo(self, i) end
 	end
 	
-	return sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ?, Weapons = ? WHERE Id = ?;", sql:getPrefix(), 
-		x, y, z, interior, getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, weapons, self.m_Id)
+	return sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ?, Weapons = ?, InventoryId = ? WHERE Id = ?;", sql:getPrefix(), 
+		x, y, z, interior, getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, weapons, self.m_Inventory:getId(), self.m_Id)
 end
 
 function Player:spawn()
@@ -201,6 +209,7 @@ function Player:getPhonePartner() return self.m_PhonePartner end
 function Player:getTutorialStage() return self.m_TutorialStage end
 function Player:getJobVehicle() return self.m_JobVehicle end
 function Player:getGroup()		return self.m_Group		end
+function Player:getInventory()	return self.m_Inventory	end
 
 -- Short setters
 function Player:setMoney(money) self.m_Money = money setPlayerMoney(self, money) end
