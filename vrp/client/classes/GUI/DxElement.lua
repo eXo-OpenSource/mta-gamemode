@@ -139,6 +139,18 @@ function DxElement:getChildren()
 	return self.m_Children
 end
 
+function DxElement:getChildrenRecursive()
+	local list = {}
+	getSubelements = function(self)
+		for k, v in pairs(self:getChildren()) do
+			list[#list+1] = v
+			getSubelements(v)
+		end
+	end
+	getSubelements(self)
+	return list
+end
+
 function DxElement:clearChildren()
 	for k, v in ipairs(self.m_Children) do
 		delete(v)

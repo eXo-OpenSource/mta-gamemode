@@ -43,9 +43,9 @@ function Account.login(player, username, password, pwhash)
 	
 end
 addEvent("accountlogin", true)
-addEventHandler("accountlogin", root, function(u, p, h) Async.create(Account.login)(client, u, p, h) end)
+addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
 
-function Account.register(player, username, password)
+function Account.register(player, username, password, email)
 	if player:getAccount() then return false end
 	if not username or not password then return false end
 	
@@ -94,7 +94,7 @@ function Account.register(player, username, password)
 	triggerClientEvent(player, "loginsuccess", root, nil, player:getTutorialStage())
 end
 addEvent("accountregister", true)
-addEventHandler("accountregister", root, function(u, p) Async.create(Account.register)(client, u, p) end)
+addEventHandler("accountregister", root, function(...) Async.create(Account.register)(client, ...) end)
 
 function Account.guest(player)
 	player.m_Account = Account:new(0, "Guest", player, true)

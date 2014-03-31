@@ -275,10 +275,16 @@ end
 function fromcolor(color)
 	local str = string.format("%x", color)
 	local value = {}
+	if #str % 2 ~= 0 then
+		str = "0"..str
+	end
+	
 	for word in str:gmatch("%x%x") do
 		value[#value+1] = tonumber("0x"..word)
 	end
-	value[5] = value[1]
-	table.remove(value, 1)
+	if value[4] then
+		value[5] = value[1]
+		table.remove(value, 1)
+	end
 	return unpack(value)
 end

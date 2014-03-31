@@ -36,13 +36,14 @@ end
 
 function VRPButton:dark(quick)
 	if quick then
-		self.m_Bar:setColor(tocolor(0, 0, 0, 0))
+		self.m_Bar:hide()
 	else
 		if not self.m_IsDark then
 			if self.m_BarAnimation then
 				self.m_BarAnimation:delete()
 			end
 			self.m_BarAnimation = Animation.FadeColor:new(self.m_Bar, 150, { 0x3F, 0x7F, 0xBF, 255 }, { 0, 0, 0, 0 })
+			self.m_BarAnimation.onFinish = function() self.m_Bar:hide() end
 		end
 	end
 	self.m_IsDark = true
@@ -50,8 +51,8 @@ function VRPButton:dark(quick)
 end
 
 function VRPButton:light(quick)
+	self.m_Bar:show()
 	if quick then
-		self.m_Bar:setColor(tocolor(0x3F, 0x7F, 0xBF, 255))
 	else
 		if self.m_IsDark then
 			if self.m_BarAnimation then

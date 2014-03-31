@@ -37,6 +37,30 @@ function GUIForm:close(hideCursor)
 	return self:setVisible(false)
 end
 
+function GUIForm:fadeIn(time)
+	if not time then time = 1000 end
+	self:setVisible(true)		
+	for k, v in pairs(self:getChildrenRecursive()) do
+		if v:isVisible() then
+			if instanceof(v, GUIColorable) then
+				Animation.FadeAlpha:new(v, 750, 0, v:getAlpha() or 255)
+			end
+		end
+	end
+end
+
+function GUIForm:fadeOut(time)
+	if not time then time = 1000 end
+	for k, v in pairs(self:getChildrenRecursive()) do
+		if v:isVisible() then
+			if instanceof(v, GUIColorable) then
+				Animation.FadeAlpha:new(v, 750, v:getAlpha() or 255, 0)
+			end
+		end
+	end
+	setTimer(function() self:setVisible(false) end, time, 1)
+end
+
 function GUIForm:bind(key, fn)
 	if self.m_KeyBinds[key] then
 		unbindKey(key, "down", self.m_KeyBinds[key])

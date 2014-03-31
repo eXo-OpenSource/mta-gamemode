@@ -20,6 +20,7 @@ function LoginGUI:constructor()
 	self.m_LoginTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw, sh, "Passwort", 1.75, self.m_LoginTab)
 	self.m_LoginCheckbox	= GUICheckbox:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.575, sw*0.6*0.025, sw*0.6*0.025, "Passwort merken", self.m_LoginTab)
 	self.m_LoginErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_LoginTab)
+	self.m_LoginErrorBox:hide()
 	self.m_LoginErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", 1, self.m_LoginErrorBox):setAlign("center", "center")
 	
 	self.m_LoginLoginButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Einloggen", true, self.m_LoginTab)
@@ -45,7 +46,9 @@ function LoginGUI:constructor()
 	self.m_RegisterTextMail	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.57, sw, sh, "E-Mail", 1.75, self.m_RegisterTab)
 
 	self.m_RegisterErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_RegisterTab)
+	self.m_RegisterErrorBox:hide()
 	self.m_RegisterErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", 1, self.m_RegisterErrorBox):setAlign("center", "center")
+	
 	
 	self.m_RegisterRegisterButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Registrieren", true, self.m_RegisterTab)
 	self.m_RegisterLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_RegisterTab)
@@ -89,6 +92,11 @@ function LoginGUI:constructor()
 	
 	self.m_RegisterRegisterButton.onLeftClick = bind(function(self)
 		triggerServerEvent("accountregister", root, self.m_RegisterEditUser:getText(), self.m_RegisterEditPass:getText(), self.m_RegisterEditMail:getText())
+	end, self)	
+	
+	
+	self.m_GuestGuestButton.onLeftClick = bind(function(self)
+		triggerServerEvent("accountguest", root)
 	end, self)
 	
 	self:bind("arrow_l", 
@@ -145,7 +153,7 @@ function LoginGUI:showGuest()
 end
 
 function LoginGUI:fadeIn(quick)
-	if quick then
+--[[	if quick then
 		self.m_LoginButton:setAlpha(255)
 	else
 		self.m_LoginButton:fadeIn(750)
@@ -155,6 +163,8 @@ function LoginGUI:fadeIn(quick)
 		-- replace 750 with a high number to outline a bug
 		Animation.FadeAlpha:new(self.m_LoginTab, 500, 0, 128)
 	end
+]]
+	GUIForm.fadeIn(self, 750)
 end
 
 function LoginGUI:fadeOut(quick)

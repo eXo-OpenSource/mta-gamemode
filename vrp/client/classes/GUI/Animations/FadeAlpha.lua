@@ -18,13 +18,13 @@ end
 
 function Animation.FadeAlpha:preRender()
 	local progress = (getTickCount() - self.m_Start) / self.m_Time
+	if progress > 1 then progress = 1 end
+	local alpha = self.m_StartAlpha + ( self.m_EndAlpha - self.m_StartAlpha )*progress
+	self.m_Element:setAlpha(alpha)
 	if progress >= 1 then
 		if self.onFinish then
 			self.onFinish(self)
 		end
 		delete(self)
-	else
-		local alpha = self.m_StartAlpha + ( self.m_EndAlpha - self.m_StartAlpha )*progress
-		self.m_Element:setAlpha(alpha)
 	end
 end

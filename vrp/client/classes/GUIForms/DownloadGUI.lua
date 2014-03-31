@@ -55,17 +55,13 @@ function DownloadGUI:onComplete()
 	Package.load("vrp.data")
 	core:ready()
 	fadeCamera(true)
-
-	self.m_FadeOutAnim = Animation.FadeOut:new(self.m_Logo, 750)
-	Animation.FadeOut:new(self.m_Text, 750)
-	Animation.FadeOut:new(self.m_MusicText, 750)
-	if self.m_ResolutionWarning then
-		Animation.FadeOut:new(self.m_ResolutionWarning, 750)
-	end
-	self.m_FadeOutAnim.onFinish = function() 
+	self:fadeOut(750)
+	setTimer(
+	function() 
 		delete(self) 
 		lgi = LoginGUI:new()
-		lgi:fadeIn(false)
+		lgi:setVisible(false)
+		lgi:fadeIn(750)
 		
 		local pwhash = core:get("login", "password") or ""
 		local username = core:get("login", "username") or ""
@@ -74,5 +70,5 @@ function DownloadGUI:onComplete()
 		lgi.usePasswordHash = pwhash
 		lgi.m_LoginCheckbox:setChecked(pwhash ~= "")
 		lgi:anyChange()
-	end
+	end, 800, 1)
 end
