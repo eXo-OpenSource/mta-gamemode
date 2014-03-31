@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 GUIImage = inherit(GUIElement)
-inherit(GUIImage, GUIColorable)
+inherit(GUIColorable, GUIImage)
 
 function GUIImage:constructor(posX, posY, width, height, path, parent)
 	checkArgs("GUIImage:constructor", "number", "number", "number", "number", "string")

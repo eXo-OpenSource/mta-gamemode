@@ -36,7 +36,7 @@ end
 
 function GUIColorable:setAlpha(alpha)
 	local r,g,b,a = fromcolor(self.m_Color)
-	self.m_Alpha = a
+	self.m_Alpha = alpha
 	self:setColor(tocolor(r, g, b, alpha))
 	return self
 end
