@@ -27,16 +27,7 @@ function GUILabel:drawThis(incache)
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
 	end
 
-	if not self.m_Multiline then
-		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true)
-	else
-
-		-- Split the text into lines (\n)
-		local parts = split(self.m_Text, '\n')
-		for lineNum, part in ipairs(parts) do
-			dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY + lineNum * self.m_LineSpacing, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height)
-		end
-	end
+	dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height, self.m_Color, self:getFontSize(), self:getFont(), self.m_AlignX, self.m_AlignY, false, true, incache ~= true)
 end
 
 function GUILabel:setLineSpacing(lineSpacing)

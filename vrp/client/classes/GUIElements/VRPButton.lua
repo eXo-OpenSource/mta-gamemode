@@ -6,19 +6,22 @@
 -- *
 -- ****************************************************************************
 
--- Button with blue bar on top
+-- Button with blue bar
 VRPButton = inherit(GUIRectangle)
 
-function VRPButton:constructor(posX, posY, width, height, text, parent)
+function VRPButton:constructor(posX, posY, width, height, text, barOnTop, parent)
 	checkArgs("VRPButton:constructor", "number", "number", "number", "number", "string")
 	
-	GUIRectangle.constructor(self, posX, posY, width, height, tocolor(255, 255, 255), parent)
+	GUIRectangle.constructor(self, posX, posY, width, height, tocolor(0x23, 0x23, 0x23, 230), parent)
 	
-	self.m_Bar = GUIRectangle:new(0, 0, width, height*0.1, tocolor(19, 64, 121, 0), self)
+	if barOnTop then
+		self.m_Bar = GUIRectangle:new(0, 0, width, height*0.075, tocolor(0x3F, 0x7F, 0xBF, 255), self)
+	else
+		self.m_Bar = GUIRectangle:new(0, height-height*0.075, width, height*0.075, tocolor(0x3F, 0x7F, 0xBF, 255), self)
+	end
 	self.m_Label = GUILabel:new(0, height*0.05, width, height*0.9, text, 1, self)
 		:setAlign("center", "center")
 		:setFont(VRPFont(height))
-		:setColor(tocolor(0, 0, 0, 255))
 		
 	self.m_Animation = false
 	self.m_BarAnimation = false
@@ -33,40 +36,60 @@ end
 
 function VRPButton:dark(quick)
 	if quick then
-		self:setColor(tocolor(0, 0, 0, 0))
-		self.m_Label:setColor(tocolor(255, 255, 255, 255))
-		self.m_Bar:setColor(tocolor(19, 64, 121, 0))
+		self.m_Bar:setColor(tocolor(0, 0, 0, 0))
 	else
 		if not self.m_IsDark then
-			if self.m_Animation then
-				self.m_Animation:delete()
+			if self.m_BarAnimation then
+				self.m_BarAnimation:delete()
 			end
-			self.m_Animation = Animation.FadeColor:new(self, 300, { 255, 255, 255, 255 }, { 0, 0, 0, 0 })
-			self.m_BarAnimation = Animation.FadeColor:new(self.m_Bar, 150, { 19, 64, 121, 255 }, { 0, 0, 0, 0 })
-			self.m_TextAnimation = Animation.FadeColor:new(self.m_Label, 150, { 0, 0, 0, 255 }, { 255, 255, 255, 255 })
+			self.m_BarAnimation = Animation.FadeColor:new(self.m_Bar, 150, { 0x3F, 0x7F, 0xBF, 255 }, { 0, 0, 0, 0 })
 		end
 	end
 	self.m_IsDark = true
 	return self
 end
 
-function VRPButton:light()
+function VRPButton:light(quick)
 	if quick then
-		self:setColor(tocolor(255, 255, 255, 255))
-		self.m_Label:setColor(tocolor(0, 0, 0, 255))
-		self.m_Bar:setColor(tocolor(19, 64, 121, 255))
+		self.m_Bar:setColor(tocolor(0x3F, 0x7F, 0xBF, 255))
 	else
 		if self.m_IsDark then
-			if self.m_Animation then
-				self.m_Animation:delete()
+			if self.m_BarAnimation then
+				self.m_BarAnimation:delete()
 			end
-			self.m_Animation = Animation.FadeColor:new(self, 300, { 0, 0, 0, 0 }, { 255, 255, 255, 255 })
-			self.m_BarAnimation = Animation.FadeColor:new(self.m_Bar, 150, { 0, 0, 0, 0 }, { 19, 64, 121, 255 })
-			self.m_TextAnimation = Animation.FadeColor:new(self.m_Label, 150, { 255, 255, 255, 255 }, { 0, 0, 0, 255 })
+			self.m_BarAnimation = Animation.FadeColor:new(self.m_Bar, 150, { 0, 0, 0, 0 }, { 0x3F, 0x7F, 0xBF, 255 })
 		end
 	end
 	self.m_IsDark = false
 	return self
+end
+
+function VRPButton:fadeIn(time, quick)
+	if quick then
+		self:setColor(tocolor(0x23, 0x23, 0x23, 230))
+		self.m_Bar:setColor(tocolor(0x3F, 0x7F, 0xBF, 255))
+		self.m_Label:setColor(tocolor(255, 255, 255, 255))
+	else
+		Animation.FadeColor:new(self, time, { 0x23, 0x23, 0x23, 0 }, {0x23, 0x23, 0x23, 230})
+		if not self.m_IsDark then
+			Animation.FadeColor:new(self.m_Bar, time, { 0x3F, 0x7F, 0xBF, 0 }, {0x3F, 0x7F, 0xBF, 255})
+		end
+		Animation.FadeColor:new(self.m_Label, time, { 255, 255, 255, 0 }, {255, 255, 255, 255})
+	end
+end
+
+function VRPButton:fadeOut(time, quick)
+	if quick then
+		self:setColor(tocolor(0x23, 0x23, 0x23, 0))
+		self.m_Bar:setColor(tocolor(0x3F, 0x7F, 0xBF, 0))
+		self.m_Label:setColor(tocolor(255, 255, 255, 0))
+	else
+		Animation.FadeColor:new(self, time, { 0x23, 0x23, 0x23, 230 }, {0x23, 0x23, 0x23, 0})
+		if not self.m_IsDark then
+			Animation.FadeColor:new(self.m_Bar, time, { 0x3F, 0x7F, 0xBF, 255 }, {0x3F, 0x7F, 0xBF, 0})
+		end
+		Animation.FadeColor:new(self.m_Label, time, { 255, 255, 255, 255 }, {255, 255, 255, 0})
+	end
 end
 
 function VRPButton:anyChange()
@@ -74,7 +97,7 @@ function VRPButton:anyChange()
 		self.m_Label.m_Width = self.m_Width
 		self.m_Bar.m_Width = self.m_Width
 		self.m_Label.m_Height = self.m_Height
-		self.m_Bar.m_Height = self.m_Height * 0.1
+		self.m_Bar.m_Height = self.m_Height * 0.075
 	end
 	
 	-- Propagate

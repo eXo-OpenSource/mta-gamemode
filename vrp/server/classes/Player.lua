@@ -134,7 +134,7 @@ function Player:loadCharacterInfo()
 	self.m_Skills["Sneaking"] 	= row.SneakingSkill
 	self.m_Skills["Endurance"] 	= row.EnduranceSkill
 	
-	if row.Weapons ~= "" then
+	if row.Weapons and row.Weapons ~= "" then
 		local weaponID = 0
 		for i = 1, 26 do
 			local value = gettok(row.Weapons, i, string.byte('|'))

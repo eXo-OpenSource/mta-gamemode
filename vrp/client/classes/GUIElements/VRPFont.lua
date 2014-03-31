@@ -9,7 +9,7 @@
 -- This rescales our font to look good on a certain pixel height
 local VRPFonts = {}
 function VRPFont(height)
-	local fontsize = math.floor(height/1.65)
+	local fontsize = math.floor(height/2)
 	if not VRPFonts[fontsize] then
 		outputDebug("creating font "..tostring(fontsize) .. " px - ".. tostring(height))
 		VRPFonts[fontsize] = dxCreateFont("files/fonts/gtafont.ttf", fontsize)

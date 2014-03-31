@@ -3,194 +3,167 @@ inherit(Singleton, LoginGUI)
 
 function LoginGUI:constructor()	
 	local sw, sh = guiGetScreenSize()
-	local bw, bh = math.floor(sw * 0.08), math.floor(sh * 0.04)
 	self.usePasswordHash = false
-	
-	GUIForm.constructor(self, 0, 0, sw, sh)
-	self.m_Background = GUIRectangle:new(0, 0, sw, sh, tocolor(2, 17, 39, 255), self)
-	self.m_TopBar = GUIRectangle:new(bw, bh, sw-2*bw, sh*0.2, tocolor(0, 0, 0, 170), self)
-	GUILabel:new(30, 40, sw, sh, "V Roleplay", 1, self.m_TopBar)
-		:setFont(VRPFont(sh*0.05))
-		
-	self.m_HomeButton = VRPButton:new(0, sh*0.2-sh*0.05, (sw-2*bw)/3, sh*0.05, "Home", self.m_TopBar)
-	self.m_HomeButton.onLeftClick = bind(LoginGUI.showHome, self)
-	
-	self.m_LoginButton = VRPButton:new((sw-2*bw)/3, sh*0.2-sh*0.05, (sw-2*bw)/3, sh*0.05, "Login", self.m_TopBar)
-	self.m_LoginButton.onLeftClick = bind(LoginGUI.showLogin, self)
-	
-	self.m_RegisterButton = VRPButton:new((sw-2*bw)/3*2, sh*0.2-sh*0.05, (sw-2*bw)/3, sh*0.05, "Register", self.m_TopBar)
-	self.m_RegisterButton.onLeftClick = bind(LoginGUI.showRegister, self)
-	
-	local tabw = (sw-2*bw)/3*2
-	local tabh = sh-2*bh-sh*0.2-20
-	
-	self.m_SideBar 		= GUIRectangle:new(sw-bw-(sw-2*bw)/3, bh+sh*0.2+10, tabw/2, tabh, tocolor(0, 0, 0, 100), self)
-	self.m_LoginTab 	= GUIRectangle:new(bw, bh+sh*0.2+10, tabw, tabh, tocolor(0, 0, 0, 170), self)
-	self.m_HomeTab 		= GUIRectangle:new(bw, bh+sh*0.2+10, tabw, tabh, tocolor(0, 0, 0, 170), self)
-	self.m_RegisterTab 	= GUIRectangle:new(bw, bh+sh*0.2+10, tabw, tabh, tocolor(0, 0, 0, 170), self)
-	
-	-- Side Bar
-	GUILabel:new(0, 20, tabw/2, tabh, "News", 2.5, self.m_SideBar):setAlignX("center")
-	
-	-- Home Tab
-	GUILabel:new(35, 35, tabw, tabh, "Willkommen auf V Roleplay!", 2.5, self.m_HomeTab)
-	GUILabel:new(35, 80, tabw, tabh, [[
-		   Hier sollte irgendwann mal ein toller Text stehen.
-		   - Infos wie Homepageadresse, TS3 und Ingamesupportmöglichkeit
-		   - Rechts News
-		   - Irgendwer muss sich mal was ausdenken :D
-		]], 1, self.m_HomeTab)
-	
-	-- Login Tab
-	GUIRectangle:new(0, 35, tabw, 5, tocolor(255, 255, 255, 255), self.m_LoginTab)
-	local lbl = GUILabel:new(0, 10, tabw, tabh, "Falls du schon einen Account besitzt,  kannst du dich hier mit deinen Accountdaten einloggen.", 1, self.m_LoginTab)
-	lbl:setAlignX("center")
-	
-	GUILabel:new(tabw/6, 120, tabw/3, 35, "Username:", 1, self.m_LoginTab):setAlignY("center")
-	GUILabel:new(tabw/6, 170, tabw/3, 35, "Passwort:", 1, self.m_LoginTab):setAlignY("center")
-	self.m_LoginEditUsername = GUIEdit:new(tabw/6*2, 120, tabw/2, 35, self.m_LoginTab)
-	self.m_LoginEditPassword = GUIEdit:new(tabw/6*2, 170, tabw/2, 35, self.m_LoginTab)
-	self.m_LoginEditPassword:setMasked()
-	
-	self.m_SubmitLoginButton = GUIRectangle:new(tabw/4, tabh-80, tabw/2, 70, tocolor(0, 32, 63,	255), self.m_LoginTab)
-	local btnlbl = GUILabel:new(tabw/4, tabh-80, tabw/2, 70, "Einloggen", 1, self.m_LoginTab)
-	btnlbl:setAlignX("center")
-	btnlbl:setAlignY("center")
 
-	GUILabel:new(tabw/6, 220, tabw/3, 20, "Remember Login:", 1, self.m_LoginTab):setAlignY("center")
-	self.m_SaveLoginCheckbox = GUICheckbox:new(tabw/6*2, 220, 20, 20, "", self.m_LoginTab)
+	GUIForm.constructor(self, sw*0.2, sh*0.2, sw*0.6, sh*0.6)
+	self.m_LoginButton 		= VRPButton:new(0, 0, sw*0.6/3, sh*0.6*0.1, "Login", false, self)
+	self.m_RegisterButton 	= VRPButton:new(sw*0.6/3, 0, sw*0.6/3, sh*0.6*0.1, "Registrieren", false, self)
+	self.m_GuestButton 		= VRPButton:new(sw*0.6/3*2, 0, sw*0.6/3, sh*0.6*0.1, "Als Gast spielen", false, self)
 	
-	self.m_LoginErrorBox = GUIRectangle:new(tabw/6, 300, tabw/1.5, 70, tocolor(173, 14, 22, 255), self.m_LoginTab)
-	self.m_LoginErrorText = GUILabel:new(0, 0, tabw/1.5, 70, "", 1, self.m_LoginErrorBox)
-	self.m_LoginErrorText:setAlignX("center"):setAlignY("center")
-	self.m_LoginErrorBox:hide()
+	self.m_NewsTab 			= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.25, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
+	self.m_NewsTabBar		= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.010, sh*0.6-sh*0.6*0.01, tocolor(230, 230, 230, 200), self)
 	
-	self.m_SubmitLoginButton.onLeftClick = bind(function(self)
-		local pw = self.m_LoginEditPassword:getText()
+	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
+	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
+	self.m_LoginTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw, sh, "Benutzername", 1.75, self.m_LoginTab)
+	self.m_LoginEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
+	self.m_LoginTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw, sh, "Passwort", 1.75, self.m_LoginTab)
+	self.m_LoginCheckbox	= GUICheckbox:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.575, sw*0.6*0.025, sw*0.6*0.025, "Passwort merken", self.m_LoginTab)
+	self.m_LoginErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_LoginTab)
+	self.m_LoginErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", 1, self.m_LoginErrorBox):setAlign("center", "center")
+	
+	self.m_LoginLoginButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Einloggen", true, self.m_LoginTab)
+	self.m_LoginLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_LoginTab)
+	
+	self.m_LoginEditPass:setMasked("*")
+	self.m_LoginInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.04, 
+	
+	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf V-Roleplay!
+	
+	Wenn du bereits registriert bist, kannst du dich hier einloggen. Solltest du noch keinen Account besitzen so kannst du dich im "Registrieren"-Tab registerien. Du kannst den Server auch ersteinmal als Gast ausprobieren!	
+	]], sh*0.0017, self.m_LoginTab)
+	
+	self.m_RegisterTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
+	self.m_RegisterTab:setVisible(false)
+	
+	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw, sh, "Benutzername", 1.75, self.m_RegisterTab)
+	self.m_RegisterEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw, sh, "Passwort", 1.75, self.m_RegisterTab)
+
+	self.m_RegisterEditMail	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.57, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextMail	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.57, sw, sh, "E-Mail", 1.75, self.m_RegisterTab)
+
+	self.m_RegisterErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_RegisterTab)
+	self.m_RegisterErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", 1, self.m_RegisterErrorBox):setAlign("center", "center")
+	
+	self.m_RegisterRegisterButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Registrieren", true, self.m_RegisterTab)
+	self.m_RegisterLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_RegisterTab)
+	
+	self.m_RegisterEditPass:setMasked("*")
+	self.m_RegisterInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.04, 
+	
+	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf V-Roleplay!
+	
+	Bitte fülle die folgenden Informationen aus um dich zu registrieren!	
+	]], sh*0.0017, self.m_RegisterTab)
+	
+	self.m_GuestTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
+	self.m_GuestTab:setVisible(false)
+	
+	self.m_GuestErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_GuestTab)
+	self.m_GuestErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", 1, self.m_GuestErrorBox):setAlign("center", "center")
+	
+	self.m_GuestGuestButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Als Gast spielen", true, self.m_GuestTab)
+	self.m_GuestLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_GuestTab)
+	
+	self.m_GuestInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.04, 
+	
+	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf V-Roleplay!
+	
+	Bevor du dich registrierst, kannst du den Server natürlich auch ersteinmal als Gast unverbindlich testen. Du kannst dich während du testest jederzeit registrieren, ohne deinen bisherigen Fortschritt zu verlieren!	
+	]], sh*0.0017, self.m_GuestTab)
+
+	self.m_LoginButton:dark(true)
+	self.m_RegisterButton:dark(true)
+	self.m_GuestButton:dark(true)
+
+	self.m_LoginLoginButton.onLeftClick = bind(function(self)
+		local pw = self.m_LoginEditPass:getText()
 		if self.usePasswordHash and self.usePasswordHash == pw then -- User has not changed the password
-			triggerServerEvent("accountlogin", root, self.m_LoginEditUsername:getText(), "", pw)
+			triggerServerEvent("accountlogin", root, self.m_LoginEditUser:getText(), "", pw)
 		else
-			triggerServerEvent("accountlogin", root, self.m_LoginEditUsername:getText(), pw)
+			triggerServerEvent("accountlogin", root, self.m_LoginEditUser:getText(), pw)
 		end
+	end, self)	
+	
+	self.m_RegisterRegisterButton.onLeftClick = bind(function(self)
+		triggerServerEvent("accountregister", root, self.m_RegisterEditUser:getText(), self.m_RegisterEditPass:getText(), self.m_RegisterEditMail:getText())
 	end, self)
-
-	-- Register Tab
-	GUIRectangle:new(0, 35, tabw, 5, tocolor(255, 255, 255, 255), self.m_RegisterTab)
-	GUILabel:new(0, 10, tabw, tabh, "Du kannst dir hier einen Account registrieren.", 1, self.m_RegisterTab)
-		:setAlignX("center")
-	
-	GUILabel:new(tabw/6, 120, tabw/3, 35, "Username:", 1, self.m_RegisterTab)
-		:setAlignY("center")
-	GUILabel:new(tabw/6, 170, tabw/3, 35, "Passwort:", 1, self.m_RegisterTab)
-		:setAlignY("center")
-	
-	self.m_RegisterEditUsername = GUIEdit:new(tabw/6*2, 120, tabw/2, 35, self.m_RegisterTab)
-	self.m_RegisterEditPassword = GUIEdit:new(tabw/6*2, 170, tabw/2, 35, self.m_RegisterTab)
-	self.m_RegisterEditPassword:setMasked()
-	
-	self.m_RegisterErrorBox = GUIRectangle:new(tabw/6, 300, tabw/1.5, 70, tocolor(173, 14, 22, 255), self.m_RegisterTab)
-	self.m_RegisterErrorBox:hide()
-	self.m_RegisterErrorText = GUILabel:new(0, 0, tabw/1.5, 70, "", 1, self.m_RegisterErrorBox)
-		:setAlign("center", "center")
-	
-	self.m_SubmitRegisterButton = GUIRectangle:new(tabw/4, tabh-80, tabw/2, 70, tocolor(0, 32, 63,	255), self.m_RegisterTab)
-	GUILabel:new(tabw/4, tabh-80, tabw/2, 70, "Registrieren", 1, self.m_RegisterTab)
-		:setAlign("center", "center")
-	
-	self.m_SubmitRegisterButton.onLeftClick = bind(function(self)
-		triggerServerEvent("accountregister", root, self.m_RegisterEditUsername:getText(), self.m_RegisterEditPassword:getText())
-	end, self)
-	
 	
 	self:bind("arrow_l", 
 		function(self)
-			if self.m_LoginTab:isVisible() then
-				self:showHome()
-			elseif self.m_RegisterTab:isVisible() then
+			if self.m_RegisterTab:isVisible() then
 				self:showLogin()
+			elseif self.m_GuestTab:isVisible() then
+				self:showRegister()
 			end
 		end
 	)	
 	
 	self:bind("arrow_r", 
 		function(self)
-			if self.m_HomeTab:isVisible() then
-				self:showLogin()
-			elseif self.m_LoginTab:isVisible() then
+			if self.m_LoginTab:isVisible() then
 				self:showRegister()
+			elseif self.m_RegisterTab:isVisible() then
+				self:showGuest()
 			end
 		end
 	)
-end
-
-function LoginGUI:showHome(quick)
-	self.m_RegisterButton:dark(quick)
-	self.m_LoginButton:dark(quick)
-	self.m_HomeButton:light(quick)
 	
-	self.m_LoginTab:hide()
-	self.m_RegisterTab:hide()
-	self.m_HomeTab:show()
-	self:anyChange()
+	self:showLogin()
 end
 
 function LoginGUI:showLogin()
 	self.m_LoginButton:light()
 	self.m_RegisterButton:dark()
-	self.m_HomeButton:dark()
-		
-	self.m_LoginTab:show()
-	self.m_RegisterTab:hide()
-	self.m_HomeTab:hide()
-	self:anyChange()
+	self.m_GuestButton:dark()
 	
-	self:bind("enter",
-		function(self)
-			self.m_SubmitLoginButton.onLeftClick(self)
-		end
-	)
+	self.m_LoginTab:setVisible(true)
+	self.m_GuestTab:setVisible(false)
+	self.m_RegisterTab:setVisible(false)
 end
 
 function LoginGUI:showRegister()
 	self.m_RegisterButton:light()
 	self.m_LoginButton:dark()
-	self.m_HomeButton:dark()
+	self.m_GuestButton:dark()
 	
-	self.m_LoginTab:hide()
-	self.m_RegisterTab:show()
-	self.m_HomeTab:hide()
-	
-	self:bind("enter",
-		function(self)
-			self.m_SubmitRegisterButton.onLeftClick(self)
-		end
-	)
-	
-	self:anyChange()
+	self.m_LoginTab:setVisible(false)
+	self.m_GuestTab:setVisible(false)
+	self.m_RegisterTab:setVisible(true)
 end
 
-addEvent("ingamenews", true)
-addEventHandler("ingamenews", root,	
-	function(news)
-		local newsyoff = 65
-		local sw, sh = guiGetScreenSize()
-		local bw, bh = math.floor(sw * 0.08), math.floor(sh * 0.04)
-		local tabw = (sw-2*bw)/3*2
-		local tabh = sh-2*bh-sh*0.2-20
-		local self = LoginGUI:getSingleton()
-		for k, v in ipairs(news) do
-			GUILabel:new(0, newsyoff, tabw/2, tabh, v.title, 1.75, self.m_SideBar):setAlignX("center")
-			GUILabel:new(tabw/2-80, newsyoff+2, tabw/2, tabh, v.date, 1, self.m_SideBar)
-			GUILabel:new(15, newsyoff+30, tabw/2-30, tabh, v.text, 1, self.m_SideBar)
-			
-			local lines = math.ceil(dxGetTextWidth(v.text) / (tabw/2-30)) + 1
-			
-			newsyoff = newsyoff+ 30 + dxGetFontHeight ( 1, "default") *1.75 * lines * 1.2
-		end
+function LoginGUI:showGuest()
+	self.m_RegisterButton:dark()
+	self.m_LoginButton:dark()
+	self.m_GuestButton:light()
 	
-	end
-)
+	self.m_LoginTab:setVisible(false)
+	self.m_GuestTab:setVisible(true)
+	self.m_RegisterTab:setVisible(false)
+end
 
+function LoginGUI:fadeIn(quick)
+	if quick then
+		self.m_LoginButton:setAlpha(255)
+	else
+		self.m_LoginButton:fadeIn(750)
+		self.m_RegisterButton:fadeIn(750)
+		self.m_GuestButton:fadeIn(750)
+		
+		-- replace 750 with a high number to outline a bug
+		Animation.FadeAlpha:new(self.m_LoginTab, 500, 0, 128)
+	end
+end
+
+function LoginGUI:fadeOut(quick)
+	if quick then
+		self.m_LoginButton:setAlpha(0)
+	else
+		
+	end
+end
 
 addEvent("loginfailed", true)
 addEventHandler("loginfailed", root, 
@@ -213,8 +186,8 @@ addEventHandler("loginsuccess", root,
 	function(pwhash, tutorialstage)
 		local lgi = LoginGUI:getSingleton()
 	
-		if lgi.m_SaveLoginCheckbox:isChecked() and pwhash then
-			core:set("login", "username", lgi.m_LoginEditUsername:getText())
+		if lgi.m_LoginCheckbox:isChecked() and pwhash then
+			core:set("login", "username", lgi.m_LoginEditUser:getText())
 			core:set("login", "password", pwhash)
 		end
 		lgi:delete()

@@ -8,6 +8,7 @@ function Animation.FadeColor:constructor(guielement, time, startcolor, targetcol
 	self.m_fnPreRender = bind(Animation.FadeColor.preRender, self)
 	self.m_Startcolor = startcolor
 	self.m_Targetcolor = targetcolor
+	self:preRender()
 	addEventHandler("onClientPreRender", root, self.m_fnPreRender)
 end
 

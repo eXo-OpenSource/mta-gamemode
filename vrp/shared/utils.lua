@@ -270,3 +270,15 @@ function getPointFromDistanceRotation3D(x,y,z,rx,ry,rz,distance)
 	dx,dy,dz=rotateZY(dx,dy,dz,ry)
 	return x+dx*distance,y+dy*distance,z+dz*distance
 end
+
+-- returns 4 integers from a value created by tocolor (aka. inverse tocolor)
+function fromcolor(color)
+	local str = string.format("%x", color)
+	local value = {}
+	for word in str:gmatch("%x%x") do
+		value[#value+1] = tonumber("0x"..word)
+	end
+	value[5] = value[1]
+	table.remove(value, 1)
+	return unpack(value)
+end

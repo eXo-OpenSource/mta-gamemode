@@ -46,7 +46,6 @@ function DownloadGUI:destructor()
 end
 
 function DownloadGUI:onProgress(p)
-	outputDebug("Progress is now "..tostring(p))
 	self.m_ProgressBar:setProgress(tonumber(p) or 50)
 	
 	fadeCamera(false) -- freeroam hack | todo: Remove when freeroam is no longer required
@@ -55,22 +54,25 @@ end
 function DownloadGUI:onComplete()
 	Package.load("vrp.data")
 	core:ready()
-	
-	lgi = LoginGUI:new()
-	lgi:showHome(true)
-	local pwhash = core:get("login", "password") or ""
-	local username = core:get("login", "username") or ""
-	lgi.m_LoginEditUsername:setText(username)
-	lgi.m_LoginEditPassword:setText(pwhash)
-	lgi.usePasswordHash = pwhash
-	lgi.m_SaveLoginCheckbox:setChecked(pwhash ~= "")
-	lgi:anyChange()
-	
+	fadeCamera(true)
+
 	self.m_FadeOutAnim = Animation.FadeOut:new(self.m_Logo, 750)
 	Animation.FadeOut:new(self.m_Text, 750)
 	Animation.FadeOut:new(self.m_MusicText, 750)
 	if self.m_ResolutionWarning then
 		Animation.FadeOut:new(self.m_ResolutionWarning, 750)
 	end
-	self.m_FadeOutAnim.onFinish = function() delete(self) end
+	self.m_FadeOutAnim.onFinish = function() 
+		delete(self) 
+		lgi = LoginGUI:new()
+		lgi:fadeIn(false)
+		
+		local pwhash = core:get("login", "password") or ""
+		local username = core:get("login", "username") or ""
+		lgi.m_LoginEditUser:setText(username)
+		lgi.m_LoginEditPass:setText(pwhash)
+		lgi.usePasswordHash = pwhash
+		lgi.m_LoginCheckbox:setChecked(pwhash ~= "")
+		lgi:anyChange()
+	end
 end

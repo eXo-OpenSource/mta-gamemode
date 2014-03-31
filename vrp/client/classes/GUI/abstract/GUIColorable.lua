@@ -30,7 +30,12 @@ function GUIColorable:setColorRGB(r, g, b, a)
 	return self
 end
 
+function GUIColorable:getColorRGB()
+	return fromcolor(self.m_Color)
+end
+
 function GUIColorable:setAlpha(alpha)
-	self:setColor(tocolor(255, 255, 255, alpha))
+	local r,g,b,a = fromcolor(self.m_Color)
+	self:setColor(tocolor(r, g, b, alpha))
 	return self
 end
