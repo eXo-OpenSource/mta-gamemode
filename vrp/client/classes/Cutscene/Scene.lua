@@ -48,6 +48,9 @@ function Scene:preRender()
 	
 			if self.m_ActiveAction[v.index] then
 				if v.stoptick < now then
+					if self.m_ActiveAction[v.index].preRender then 
+						self.m_ActiveAction[v.index]:preRender() 
+					end
 					if self.m_ActiveAction[v.index].stop then
 						self.m_ActiveAction[v.index]:stop()
 					end

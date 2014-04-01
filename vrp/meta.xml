@@ -306,6 +306,7 @@
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
+	<vrpfile src="files/shader/mta-helper.fx"/>
 	
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->

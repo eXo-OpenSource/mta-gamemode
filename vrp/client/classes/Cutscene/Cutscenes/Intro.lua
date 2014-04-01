@@ -61,7 +61,7 @@ debug = true;
 		};
 		{
 			action = "General.finish";
-			starttick = 6000;
+			starttick = 1000;
 		}
 	};
 })

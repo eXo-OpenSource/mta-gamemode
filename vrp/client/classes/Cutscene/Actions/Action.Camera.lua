@@ -48,6 +48,8 @@ end
 
 Action.Camera.move.preRender = function(self)
 	local progress = (getTickCount() - self.m_Begin) / self.duration
+	if progress > 1 then progress = 1 end
+	
 	
 	local x, y, z, lx, ly, lz, r, fov = getCameraMatrix()
 	if self.tx then

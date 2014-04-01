@@ -1,7 +1,9 @@
 //
 // skin.fx
 //
-texture gTexture0           < string textureState="0,Texture"; >;
+#include "mta-helper.fx"
+
+
 int gAreaCount;
 float4 gArea1; 
 float4 gAreaColor1; 
@@ -9,17 +11,6 @@ float4 gArea2;
 float4 gAreaColor2; 
 float4 gArea3; 
 float4 gAreaColor3; 
-
-//
-// Strongest light influence
-//
-float4 gMaterialAmbient     < string materialState="Ambient"; >;
-float4 gMaterialDiffuse     < string materialState="Diffuse"; >;
-float4 gMaterialSpecular    < string materialState="Specular"; >;
-float4 gMaterialEmissive    < string materialState="Emissive"; >;
-float gMaterialSpecPower    < string materialState="Power"; >;
-
-float4 gGlobalAmbient              < string renderState="AMBIENT"; >;                    //  = 139,
 
 sampler TextureSampler = sampler_state
 {
@@ -29,8 +20,47 @@ sampler TextureSampler = sampler_state
 struct PS_INPUT
 {
     float4 Position   : POSITION;
+    float4 Diffuse 		: COLOR0;
     float2 Texture    : TEXCOORD0;
 };
+struct VSInput
+{
+    float3 Position : POSITION0;
+    float3 Normal : NORMAL0;
+    float4 Diffuse : COLOR0;
+    float2 Texture : TEXCOORD0;
+};
+ 
+ 
+//--------------------------------------------------------------------------------------------
+//-- VertexShaderFunction
+//--  1. Read from VS structure
+//--  2. Process
+//--  3. Write to PS structure
+//--------------------------------------------------------------------------------------------
+PS_INPUT VertexShaderFunction(VSInput VS)
+{
+    PS_INPUT PS = (PS_INPUT)0;
+ 
+    //-- Calculate screen pos of vertex
+    PS.Position = mul(float4(VS.Position, 1), gWorldViewProjection);
+ 
+    //-- Pass through tex coord
+    PS.Texture = VS.Texture;
+ 
+    //-- Calculate GTA lighting for buildings
+    //PS.Diffuse = MTACalcGTABuildingDiffuse( VS.Diffuse );
+    //--
+    //-- NOTE: The above line is for GTA buildings.
+    //-- If you are replacing a vehicle texture, do this instead:
+    //--
+    //--      // Calculate GTA lighting for vehicles
+    //--      float3 WorldNormal = MTACalcWorldNormal( VS.Normal );
+    //--      PS.Diffuse = MTACalcGTAVehicleDiffuse( WorldNormal, VS.Diffuse );
+	float3 WorldNormal = MTACalcWorldNormal( VS.Normal );
+    PS.Diffuse = MTACalcGTAVehicleDiffuse( WorldNormal, VS.Diffuse );
+    return PS;
+}
 
 float4 PixelShaderFunction(PS_INPUT In) : COLOR0
 {
@@ -63,13 +93,17 @@ float4 PixelShaderFunction(PS_INPUT In) : COLOR0
 			color.b = value * gAreaColor2[2];
 		}
 	}
-    return (color * gGlobalAmbient* gMaterialAmbient + color* gMaterialDiffuse/3) / 2;
+	   
+	//-- Apply diffuse lighting
+    float4 finalColor = color * In.Diffuse;
+    return finalColor;
 }
  
-technique BlackAndWhite
+technique SkinShader
 {
-    pass Pass1
+    pass P0
     {
+		VertexShader = compile vs_2_0 VertexShaderFunction();
         PixelShader = compile ps_2_0 PixelShaderFunction();
     }
 }

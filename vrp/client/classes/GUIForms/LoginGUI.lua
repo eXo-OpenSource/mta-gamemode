@@ -117,6 +117,18 @@ function LoginGUI:constructor()
 				self:showGuest()
 			end
 		end
+	)	
+	
+	self:bind("enter", 
+		function(self)
+			if self.m_LoginTab:isVisible() then
+				self.m_LoginLoginButton:onLeftClick()
+			elseif self.m_RegisterTab:isVisible() then
+				self.m_RegisterRegisterButton:onLeftClick()
+			else
+				self.m_GuestGuestButton:onLeftClick()
+			end
+		end
 	)
 	
 	self:showLogin()
