@@ -17,18 +17,20 @@ local CHARACTER_SELECTION_SKINS = {
 
 function CharacterCreationGUI:constructor()	
 	local sw, sh = guiGetScreenSize()
+	self.m_Options = {}
 	GUIForm.constructor(self, sw/3*2, sh/5, sw/4, sh/2)
 	self.m_Selector = GUIRectangle:new(0, sh*0.06, sw/4, sh/2-sh*0.06, tocolor(0, 0, 0, 128), self)
 	self.m_LoginButton 		= VRPButton:new(0, 0, sw/4, sh*0.06, "Erstelle deinen Charakter", true, self)
 	GUILabel:new(sw/4*0.05, sh/30*1, (sw/4), 10, "Dein Name", 1.5, self.m_Selector):setAlign("left", "top")	
 	GUILabel:new(sw/4*0.5,  sh/30*1, sw/4*0.5-sw/4*0.05, 10, "sbx320", 1.5, self.m_Selector):setAlign("right", "top")	
 	GUILabel:new(sw/4*0.05, sh/30*2, (sw/4), 10, "Grundskin", 1.5, self.m_Selector):setAlign("left", "top")		
-	self.m_SkinIdLabel = GUILabel:new(sw/4*0.5,  sh/30*2, sw/4*0.5-sw/4*0.05, 10, "19", 1.5, self.m_Selector):setAlign("right", "top")	
+	self.m_SkinIdLabel = GUILabel:new(sw/4*0.5,  sh/30*2, sw/4*0.5-sw/4*0.05, 10, "19", 1.5, self.m_Selector):setAlign("right", "top")
+	
 	
 	self:bind("arrow_l", CharacterCreationGUI.previousPed)
 	self:bind("arrow_r", CharacterCreationGUI.nextPed)
 	self:bind("arrow_d", CharacterCreationGUI.nextOption)
-	self:bind("arrow_d", CharacterCreationGUI.previousOption)
+	self:bind("arrow_u", CharacterCreationGUI.previousOption)
 	
 	self.m_CurrentLevel = 1;
 	
@@ -46,7 +48,9 @@ function CharacterCreationGUI:constructor()
 		v.m_Skin:enable()
 	end
 	self.m_CurrentView = math.ceil(#skins/2)
+	self.m_CurrentSkin = CHARACTER_SELECTION_SKINS[self.m_CurrentView]
 	self:updateView()
+	self:updatePed()
 end
 
 function CharacterCreationGUI:destructor()
@@ -65,8 +69,9 @@ function CharacterCreationGUI:nextPed()
 	if self.m_CurrentView > #self.m_Peds then
 		self.m_CurrentView = 1
 	end
-	self.m_SkinIdLabel:setText(tostring(CHARACTER_SELECTION_SKINS[self.m_CurrentView]))
+	self.m_CurrentSkin = CHARACTER_SELECTION_SKINS[self.m_CurrentView]
 	self:updateView()
+	self:updatePed()
 end
 
 function CharacterCreationGUI:previousPed()
@@ -74,19 +79,97 @@ function CharacterCreationGUI:previousPed()
 	if self.m_CurrentView <= 0 then
 		self.m_CurrentView = #self.m_Peds
 	end
-	self.m_SkinIdLabel:setText(tostring(CHARACTER_SELECTION_SKINS[self.m_CurrentView]))
+	self.m_CurrentSkin = CHARACTER_SELECTION_SKINS[self.m_CurrentView]
 	self:updateView()
+	self:updatePed()
+end
+
+function CharacterCreationGUI:updatePed()
+	self.m_SkinIdLabel:setText(tostring(self.m_CurrentSkin))
+	for k, v in pairs(self.m_Options) do
+		v:delete()
+	end
+	self.m_Options = {}
+	
+	if not skindata[self.m_CurrentSkin] then return end
+	
+	local sw, sh = guiGetScreenSize()
+	for k, v in ipairs(skindata[self.m_CurrentSkin]) do
+		self.m_Options[#self.m_Options+1] = GUILabel:new(sw/4*0.05, sh/30*(3+k), (sw/4), 10, v.name, 1.5, self.m_Selector):setAlign("left", "top")	
+		self.m_Options[#self.m_Options+1] = GUILabel:new(sw/4*0.5, sh/30*(3+k), sw/4*0.5-sw/4*0.05, 10, "1", 1.5, self.m_Selector):setAlign("right", "top")	
+	end
 end
 
 function CharacterCreationGUI:nextOption()
+	if self.m_CurrentLevel == 1 then
+		self:unbind("arrow_l", CharacterCreationGUI.previousPed)
+		self:unbind("arrow_r", CharacterCreationGUI.nextPed)
+	else
+		self:unbind("arrow_l", CharacterCreationGUI.previousDesign)
+		self:unbind("arrow_r", CharacterCreationGUI.nextDesign)
+	end
+	
 	self.m_CurrentLevel = self.m_CurrentLevel+1
+	
+	if self.m_CurrentLevel == 1 then
+		self:bind("arrow_l", CharacterCreationGUI.previousPed)
+		self:bind("arrow_r", CharacterCreationGUI.nextPed)
+	else
+		self:bind("arrow_l", CharacterCreationGUI.previousDesign)
+		self:bind("arrow_r", CharacterCreationGUI.nextDesign)
+	end
+	
 	self:updateView()
 end
 
 function CharacterCreationGUI:previousOption()
 	if self.m_CurrentLevel == 1 then return end
+	if self.m_CurrentLevel == 1 then
+		self:unbind("arrow_l", CharacterCreationGUI.previousPed)
+		self:unbind("arrow_r", CharacterCreationGUI.nextPed)
+	else
+		self:unbind("arrow_l", CharacterCreationGUI.previousDesign)
+		self:unbind("arrow_r", CharacterCreationGUI.nextDesign)
+	end
+
 	self.m_CurrentLevel = self.m_CurrentLevel-1
+	
+	if self.m_CurrentLevel == 1 then
+		self:bind("arrow_l", CharacterCreationGUI.previousPed)
+		self:bind("arrow_r", CharacterCreationGUI.nextPed)
+	else
+		self:bind("arrow_l", CharacterCreationGUI.previousDesign)
+		self:bind("arrow_r", CharacterCreationGUI.nextDesign)
+	end
 	self:updateView()
+end
+
+function CharacterCreationGUI:nextDesign()
+	local skin = self.m_Peds[self.m_CurrentView].m_Skin
+	local index = self.m_CurrentLevel -1
+	
+	local cs = skin:getColorScheme(index)
+	local css = skin:getColorSchemes(index)
+	cs = cs+1
+	if cs > #css then cs = 1 end
+	
+	skin:setColorScheme(index, cs)
+	
+	self.m_Options[index*2]:setText(tostring(cs))
+end
+
+function CharacterCreationGUI:previousDesign()
+	local skin = self.m_Peds[self.m_CurrentView].m_Skin
+	local index = self.m_CurrentLevel -1
+	
+	local cs = skin:getColorScheme(index)
+	local css = skin:getColorSchemes(index)
+	cs = cs-1
+	if cs < 1 then cs = #css end
+	
+	skin:setColorScheme(index, cs)
+	
+	self.m_Options[index*2]:setText(tostring(cs))
 end
 
 function CharacterCreationGUI:updateView()
@@ -95,7 +178,6 @@ function CharacterCreationGUI:updateView()
 		delete(self.m_Cutscene)
 	end
 	local id = self.m_CurrentView
-	local lv = self.m_CurrentLevel
 	
 	local xl, yl, zl, rz = unpack(CHARACTER_SELECTION_PED_POSITIONS[id])
 	local x, y = getPointFromDistanceRotation(xl, yl, 3.75, -rz)
@@ -113,8 +195,8 @@ function CharacterCreationGUI:updateView()
 			{
 				action = "Camera.move";
 				starttick = 0;
-				targetpos = { x, y, z-lv*0.3 };
-				targetlookat = { xl, yl, zl-lv*0.3 };
+				targetpos = { x, y, z };
+				targetlookat = { xl, yl, zl };
 				duration = 500;
 			};
 		}

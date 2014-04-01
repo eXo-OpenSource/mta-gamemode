@@ -17,6 +17,7 @@ function GUIForm:destructor()
 	for k, v in pairs(self.m_KeyBinds) do
 		unbindKey(k, "down", v)
 	end
+	self.m_KeyBinds = {}
 	self:setVisible(false)
 	
 	-- Todo: Replace this by derived_destructor
@@ -69,5 +70,13 @@ function GUIForm:bind(key, fn)
 	local handler = bind(fn, self)
 	self.m_KeyBinds[key] = handler
 	bindKey(key, "down", handler)
+end
+
+function GUIForm:unbind(key, fn)
+	if not self.m_KeyBinds[key] then
+		return
+	end
+	
+	unbindKey(key, "down", self.m_KeyBinds[key])
 end
 
