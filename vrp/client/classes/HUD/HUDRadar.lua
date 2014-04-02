@@ -40,10 +40,19 @@ function HUDRadar:show()
 end
 
 function HUDRadar:update()
-	if getControlState("forwards") or isPedInVehicle(localPlayer)  then
-		local element = getPedOccupiedVehicle(localPlayer) or localPlayer
+	local vehicle = getPedOccupiedVehicle(localPlayer)
+	if vehicle and (getControlState("vehicle_look_behind") or
+		(getControlState("vehicle_look_left") and getControlState("vehicle_look_right")) or
+		(getVehicleType(vehicle) ~= "Plane" and getVehicleType(vehicle) ~= "Helicopter" and (getControlState("vehicle_look_left") or getControlState("vehicle_look_right")))) then
+	
+		local element = vehicle or localPlayer
 		local _, _, rotation = getElementRotation(element)
 		self.m_Rotation = rotation
+	elseif getControlState("look_behind") then
+		self.m_Rotation = -math.rad(getPedRotation(localPlayer))
+	else
+		local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
+		self.m_Rotation = math.deg(6.2831853071796 - math.atan2 ( ( lookAtX - camX ), ( lookAtY - camY ) ) % 6.2831853071796)
 	end
 end
 
@@ -85,16 +94,13 @@ function HUDRadar:draw()
 			
 			local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
 			local distanceX, distanceY = blipMapX - mapX, blipMapY - mapY
+			local distance = getDistanceBetweenPoints2D(blipMapX, blipMapY, mapX, mapY) --blipMapX - mapX, blipMapY - mapY
 			local rotation = findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY)
 			
-			local screenX =  mapCenterX - math.sin(math.rad(rotation + self.m_Rotation)) * distanceX
-			local screenY =  mapCenterY - math.cos(math.rad(rotation + self.m_Rotation)) * -distanceY
+			local screenX =  mapCenterX - math.sin(math.rad(rotation + self.m_Rotation)) * distance
+			local screenY =  mapCenterY + math.cos(math.rad(rotation + self.m_Rotation)) * distance ---distanceY
 			
-			dxDrawText("distanceX, distanceY = "..distanceX..", "..distanceY, 500, 200)
-			dxDrawText("rotation = "..rotation, 500, 300)
-			dxDrawText("self rotation = "..self.m_Rotation, 500, 400)
-			
-			--[[if screenX < self.m_PosX then
+			if screenX < self.m_PosX then
 				screenX = self.m_PosX
 			end
 			if screenY < self.m_PosY then
@@ -105,11 +111,10 @@ function HUDRadar:draw()
 			end
 			if screenY > self.m_PosY + self.m_Height then
 				screenY = self.m_PosY + self.m_Height
-			end]]
+			end
 			
 			local blipSize = blip:getSize()
 			dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath())
-			--break
 		end
 	end
 
