@@ -6,8 +6,6 @@
 -- *
 -- ****************************************************************************
 GUIWindow = inherit(GUIElement)
-inherit(GUIFontContainer, GUIWindow)
-inherit(GUIColorable, GUIWindow)
 inherit(GUIMovable, GUIWindow)
 
 function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, hasCloseButton, parent)
@@ -19,26 +17,28 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 
 	-- Call base class ctors
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, title, 1)
-	GUIColorable.constructor(self, Color.White)
+	--GUIFontContainer.constructor(self, title, 1)
+	--GUIColorable.constructor(self, Color.White)
 	--GUIMoveable.constructor(self, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + 20) -- ToDo: Const for title bar height
 
-	self:setAlpha(200)
 	self.m_HasTitlebar = hasTitlebar
 	self.m_HasCloseButton = hasCloseButton
 	self.m_CloseOnClose = true
 	
-	self:setFont(VRPFont(24))
-	
 	-- Create dummy titlebar element (to be able to retrieve clicks)
 	if self.m_HasTitlebar and self.m_CacheArea then
-		self.m_TitlebarDummy = GUIElement:new(0, 0, self.m_Width, 30, self)
+		--self.m_TitlebarDummy = GUIElement:new(0, 0, self.m_Width, 30, self)
+		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, tocolor(0x23, 0x23, 0x23, 230), self)
 		self.m_TitlebarDummy.onLeftClickDown = function() self:startMoving() end
 		self.m_TitlebarDummy.onLeftClick = function() self:stopMoving() end
+		
+		self.m_TitleLabel = GUILabel:new(0, 0, self.m_Width, 30, title, self)
+			:setAlignX("center")
+			:setAlignY("center")
 	end
 
 	if self.m_HasCloseButton then
-		self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(28)) --GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
+		self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35)) --GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
 		self.m_CloseButton.onHover = function(btn) btn:setColor(Color.Red) end
 		self.m_CloseButton.onUnhover = function(btn) btn:setColor(Color.White) end
 		self.m_CloseButton.onLeftClick = bind(GUIWindow.CloseButton_Click, self)
@@ -55,14 +55,13 @@ function GUIWindow:drawThis()
 
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/Window.png")
 	-- Draw border (no longer a rectangle as causes issues with alpha)
-	dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY)
-	dxDrawLine(self.m_AbsoluteX + self.m_Width - 1, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - 1, self.m_AbsoluteY + self.m_Height - 1)
-	dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height - 1)
-	dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1)
-	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.White)
+	--dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY)
+	--dxDrawLine(self.m_AbsoluteX + self.m_Width - 1, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - 1, self.m_AbsoluteY + self.m_Height - 1)
+	--dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height - 1)
+	--dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1)
 	
 	-- Draw background
-	dxDrawRectangle(self.m_AbsoluteX+1, self.m_AbsoluteY+1, self.m_Width-2, self.m_Height-2, Color.BrownAlpha)
+	dxDrawRectangle(self.m_AbsoluteX+1, self.m_AbsoluteY+1, self.m_Width-2, self.m_Height-2, tocolor(0, 0, 0, 150))
 
 	-- Draw logo
 	if false then -- Should the logo be optional? | Todo: Since we haven't got a logo, disable that
@@ -74,7 +73,7 @@ function GUIWindow:drawThis()
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 1, Color.White)
 
 		-- Draw title
-		dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY+7, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + 25, self.m_Color, self.m_FontSize, self.m_Font, "center", "center")
+		--dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY+7, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + 25, self.m_Color, self.m_FontSize, self.m_Font, "center", "center")
 	end
 	
 	dxSetBlendMode("blend")

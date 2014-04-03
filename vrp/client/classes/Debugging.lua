@@ -12,6 +12,25 @@ if DEBUG then
 	function Debugging:constructor()
 		addCommandHandler("dcrun", bind(Debugging.runString, self))
 		addCommandHandler("dcreload", bind(Debugging.reloadClass, self))
+		
+		bindKey("lshift", "down",
+			function()
+				local vehicle = getPedOccupiedVehicle(localPlayer)
+				if vehicle then
+					local vx, vy, vz = getElementVelocity(vehicle)
+					setElementVelocity(vehicle, vx, vy, 0.3)
+				end
+			end
+		)
+		bindKey("lalt", "down",
+			function()
+				local vehicle = getPedOccupiedVehicle(localPlayer)
+				if vehicle then
+					local vx, vy, vz = getElementVelocity(vehicle)
+					setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
+				end
+			end
+		)
 	end
 
 	function Debugging:runString(cmd, ...)

@@ -25,7 +25,10 @@ function VRPButton:constructor(posX, posY, width, height, text, barOnTop, parent
 	self.m_Animation = false
 	self.m_BarAnimation = false
 	self.m_TextAnimation = false
-	self.m_IsDark = false;
+	self.m_IsDark = false
+	
+	self.onInternalHover = function() self.m_Bar:setColor(Color.White) --[[self:setColorRGB(0x3F, 0x7F, 0xBF, 255)]] end
+	self.onInternalUnhover = function() self.m_Bar:setColorRGB(0x3F, 0x7F, 0xBF, 255) --[[self:setColorRGB(0x23, 0x23, 0x23, 230)]] end
 end
 
 function VRPButton:setText(text)

@@ -5,7 +5,6 @@
 -- *  PURPOSE:     GUI button class
 -- *
 -- ****************************************************************************
-
 GUIButton = inherit(GUIElement)
 inherit(GUIFontContainer, GUIButton)
 

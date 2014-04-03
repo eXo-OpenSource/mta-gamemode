@@ -8,7 +8,7 @@
 JobPolice = inherit(Job)
 
 function JobPolice:constructor()
-	Job.constructor(self, 1554.8, -1675.67, 15.1, "files/images/Blips/Police.png", "files/images/Jobs/HeaderPolice.png", _"Polizist/-in", _([[
+	Job.constructor(self, 1549.5, -1681.6, 12.6, "files/images/Blips/Police.png", "files/images/Jobs/HeaderPolice.png", _"Polizist/-in", _([[
 		Als Polizist/-in ist es deine Aufgabe in San Andreas für Ordnung zu sorgen.
 		Sollte ein anderer Bürger sich nicht an Recht und Ordnung halten und dafür schon bei der Polizei bekannt ist, bist du in der Lage ihn dafür zu verhaften.
 		

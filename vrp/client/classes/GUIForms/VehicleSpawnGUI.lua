@@ -17,7 +17,7 @@ function VehicleSpawnGUI:constructor(spawnerId, vehicleList)
 	for k, v in pairs(vehicleList) do
 		self.m_VehicleGrid:addItem(getVehicleNameFromModel(k))
 	end
-	self.m_SpawnButton = GUIButton:new(5, self.m_Height - 45, self.m_Width - 10, 40, _"Spawn", self.m_Window)
+	self.m_SpawnButton = VRPButton:new(5, self.m_Height - 45, self.m_Width - 10, 40, _"Spawn", true, self.m_Window)
 	
 	self.m_SpawnButton.onLeftClick = bind(self.SpawnButton_Click, self)
 end

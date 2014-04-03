@@ -199,5 +199,9 @@ function VehicleManager:Event_vehicleDelete()
 		return
 	end
 	
-	source:purge()
+	if source:isPermanent() then
+		source:purge()
+	else
+		destroyElement(source)
+	end
 end
