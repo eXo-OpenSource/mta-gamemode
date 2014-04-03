@@ -21,12 +21,12 @@ function VRPItem:constructor(posX, posY, width, height, item, parent)
 	end
 	
 	-- Name
-	GUILabel:new(height, 0, width, height/5*3, Items[id].name, 1, self):setFont(VRPFont(height/5*4))
+	GUILabel:new(height, 0, width, height/5*3, Items[id].name, self):setFont(VRPFont(height/5*4))
 	-- Description
-	GUILabel:new(height+15, height-height/5-5, width, height/5, Items[id].description, 1, self)
+	GUILabel:new(height+15, height-height/5-5, width, height/5, Items[id].description, self)
 	local counttext = tostring(item:getCount())
 	local fw = fontWidth(counttext, "default", 3)
-	self.m_Count = GUILabel:new(width-fw-10, 0, fw+10, height, counttext, 3, self):setAlignY("center")
+	self.m_Count = GUILabel:new(width-fw-10, 0, fw+10, height, counttext, 1, self):setAlignY("center") -- note: 3
 end
 
 function VRPItem:select()

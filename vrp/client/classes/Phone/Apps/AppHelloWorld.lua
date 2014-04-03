@@ -12,7 +12,7 @@ function AppHelloWorld:constructor()
 end
 
 function AppHelloWorld:onOpen(form)
-	self.m_Label = GUILabel:new(10, 10, 200, 20, "Hello world!", 3, form)
+	self.m_Label = GUILabel:new(10, 10, 200, 20, "Hello world!", form)
 	self.m_Label:setColor(Color.Black)
 end
 

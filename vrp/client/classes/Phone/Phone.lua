@@ -31,7 +31,7 @@ function Phone:constructor()
 		local appIcon = GUIImage:new(5+54*column, 9+75*row, 52, 52, app:getIconPath(), self.m_IconSurface)
 		
 		-- Create app label
-		local appLabel = GUILabel:new(5+54*column, 62+75*row, 52, 20, app:getName(), 1, self.m_IconSurface)
+		local appLabel = GUILabel:new(5+54*column, 62+75*row, 52, 20, app:getName(), self.m_IconSurface)
 		appLabel:setAlignX("center")
 		
 		appIcon.onLeftClick = function() self.m_IconSurface:setVisible(false) app:open() end

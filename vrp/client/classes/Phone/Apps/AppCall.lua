@@ -75,7 +75,7 @@ function MainActivity:constructor(app)
 	if self == nil then
 		outputConsole(debug.traceback())
 	end
-	self.m_Label = GUILabel:new(8, 10, 200, 20, "Call", 3, self)
+	self.m_Label = GUILabel:new(8, 10, 200, 20, "Call", self) -- 3
 	self.m_Label:setColor(Color.Black)
 	self.m_Edit = GUIEdit:new(8, 70, 206, 25, self)
 	self.m_Edit:setCaption("Player name")
@@ -107,7 +107,7 @@ function IncomingCallActivity:constructor(app, caller, voiceEnabled)
 	self.m_Caller = caller
 	self.m_VoiceEnabled = voiceEnabled
 
-	self.m_CallLabel = GUILabel:new(8, 10, 200, 20, "Incoming call from "..getPlayerName(caller), 3, self)
+	self.m_CallLabel = GUILabel:new(8, 10, 200, 20, "Incoming call from "..getPlayerName(caller), self) -- 3
 	self.m_CallLabel:setColor(Color.Black)
 	self.m_ButtonAnswer = GUIButton:new(8, 200, 100, 40, "Answer", self)
 	self.m_ButtonAnswer:setBackgroundColor(Color.Green)
@@ -158,12 +158,12 @@ function CallResultActivity:constructor(app, callee, resultType, voiceCall)
 	AppActivity.constructor(self, app)
 	self.m_Callee = callee
 	
-	self.m_ResultLabel = GUILabel:new(8, 10, 200, 20, "", 3, self)
+	self.m_ResultLabel = GUILabel:new(8, 10, 200, 20, "", self) -- 3
 	if resultType == CALL_RESULT_ANSWER then
 		self.m_ResultLabel:setText("Answered")
 		self.m_ResultLabel:setColor(Color.Green)
 		if voiceCall then
-			GUILabel:new(8, 80, 200, 20, "Press z to speak", 1.3, self):setColor(Color.Black)
+			GUILabel:new(8, 80, 200, 20, "Press z to speak", self):setColor(Color.Black) -- 1.3
 		end
 		self.m_ButtonReplace = GUIButton:new(8, 222, 205, 40, "Replace", self)
 		self.m_ButtonReplace:setBackgroundColor(Color.Red)

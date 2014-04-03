@@ -13,7 +13,7 @@ function JobGUI:constructor()
 	
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "JobGUI", false, false, self)
 	self.m_Header = GUIImage:new(30, 30, 540, 135, "files/images/Jobs/HeaderTrashman.png", self)
-	self.m_InfoLabel = GUILabel:new(30, 180, 540, 200, LOREM_IPSUM, 1, self)
+	self.m_InfoLabel = GUILabel:new(30, 180, 540, 200, LOREM_IPSUM, self)
 	self.m_InfoLabel:setFont(VRPFont(24))
 	
 	self.m_AcceptButton = GUIButton:new(50, 400, 210, 35, "Accept", self)

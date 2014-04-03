@@ -14,7 +14,7 @@ function AppDashboard:constructor()
 end
 
 function AppDashboard:onOpen(form)
-	self.m_Label = GUILabel:new(10, 3, 200, 20, "Dashboard", 2, form)
+	self.m_Label = GUILabel:new(10, 3, 200, 20, "Dashboard", form) -- 2
 	self.m_Label:setColor(Color.Black)
 	
 	self.m_DashArea = GUIScrollableArea:new(0, 40, 222, 400, 222, 1, true, false, form)
@@ -49,7 +49,7 @@ DashboardItem = inherit(GUIRectangle)
 function DashboardItem:constructor(x, y, width, height, text, parent)
 	GUIRectangle.constructor(self, x, y, width, height, Color.DarkBlue, parent)
 	
-	self.m_Label = GUILabel:new(5, 5, width-10, 30, text, 1, self)
+	self.m_Label = GUILabel:new(5, 5, width-10, 30, text, self)
 	self.m_ButtonAccept = GUIButton:new(width-135, 40, 60, 20, "✓", self):setBackgroundColor(Color.Green)
 	self.m_ButtonDecline = GUIButton:new(width-70, 40, 60, 20, "✕", self):setBackgroundColor(Color.Red)
 end

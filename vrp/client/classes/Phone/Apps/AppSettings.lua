@@ -12,10 +12,10 @@ function AppSettings:constructor()
 end
 
 function AppSettings:onOpen(form)
-	self.m_Label = GUILabel:new(10, 10, 200, 20, "Settings", 3, form)
+	self.m_Label = GUILabel:new(10, 10, 200, 20, "Settings", form) -- 3
 	self.m_Label:setColor(Color.Black)
 	
-	GUILabel:new(10, 60, 200, 20, "Ringtones", 1.5, form):setColor(Color.Black)
+	GUILabel:new(10, 60, 200, 20, "Ringtones", form):setColor(Color.Black)
 	self.m_RingtoneChanger = GUIChanger:new(10, 85, 200, 30, form)
 	self.m_RingtoneChanger.onChange = function(text)
 		if self.m_Sound and isElement(self.m_Sound) then

@@ -9,17 +9,18 @@ GUILabel = inherit(GUIElement)
 inherit(GUIFontContainer, GUILabel)
 inherit(GUIColorable, GUILabel)
 
-function GUILabel:constructor(posX, posY, width, height, text, size, parent)
-	checkArgs("GUILabel:constructor", "number", "number", "number", "number")
+function GUILabel:constructor(posX, posY, width, height, text, parent)
+	checkArgs("GUILabel:constructor", "number", "number", "number")
 	
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, text, size)
+	GUIFontContainer.constructor(self, text, 1)
 	GUIColorable.constructor(self)
 
 	self.m_LineSpacing = 10
 	self.m_Multiline = false
 	self.m_AlignX = "left"
 	self.m_AlignY = "top"
+	self:setFont(VRPFont(height))
 end
 
 function GUILabel:drawThis(incache)

@@ -5,11 +5,11 @@ function DownloadGUI:constructor()
 	GUIForm.constructor(self, 0, 0, screenWidth, screenHeight)
 	
 	self.m_Logo = GUIImage:new(screenWidth/2 - 150/2, screenHeight/2 - 150/2 - 120, 150, 150, "files/images/Logo.png", self)
-	self.m_Text = GUILabel:new(0, screenHeight/2 - 150/2 + 50, screenWidth, 50, "Bitte warten, bis das Spielerlebnis geladen wurde...", 1, self):setAlignX("center"):setFont(VRPFont(40))
+	self.m_Text = GUILabel:new(0, screenHeight/2 - 150/2 + 50, screenWidth, 50, "Bitte warten, bis das Spielerlebnis geladen wurde...", self):setAlignX("center"):setFont(VRPFont(40))
 	if screenWidth < 1024 then
-		self.m_ResolutionWarning = GUILabel:new(0, screenHeight - 200, screenWidth, 20, "Bitte erhöhe deine Auflösung, um Darstellungsfehler zu vermeiden!", 1, self):setAlignX("center"):setFont(VRPFont(30)):setColor(Color.Red)
+		self.m_ResolutionWarning = GUILabel:new(0, screenHeight - 200, screenWidth, 20, "Bitte erhöhe deine Auflösung, um Darstellungsfehler zu vermeiden!", self):setAlignX("center"):setFont(VRPFont(30)):setColor(Color.Red)
 	end
-	self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 50, "Drücke 'm', um die Musik zu stoppen!", 1, self):setAlignX("center"):setFont(VRPFont(20))
+	self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 50, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center"):setFont(VRPFont(20))
 	self.m_ProgressBar = GUIProgressBar:new(screenWidth/2 - 500/2, screenHeight/2 - 150/2 + 110, 500, 30, self)
 		
 	fadeCamera(false) -- freeroam hack | todo: Remove when freeroam is no longer required

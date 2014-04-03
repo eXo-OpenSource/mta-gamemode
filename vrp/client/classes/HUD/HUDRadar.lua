@@ -27,7 +27,6 @@ function HUDRadar:constructor()
 	
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.draw, self))
-	--addEventHandler("onClientRestore", root, bind(self.restore, self))
 	showPlayerHudComponent("radar", false)
 end
 
@@ -40,6 +39,8 @@ function HUDRadar:show()
 end
 
 function HUDRadar:update()
+	if not self.m_Visible then return end
+
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if vehicle and (getControlState("vehicle_look_behind") or
 		(getControlState("vehicle_look_left") and getControlState("vehicle_look_right")) or
@@ -119,7 +120,8 @@ function HUDRadar:draw()
 	end
 
 	-- Draw the player blip
-	dxDrawImage(self.m_PosX+self.m_Width/2-8, self.m_PosY+2+self.m_Height/2-8, 16, 16, "files/images/Blips/LocalPlayer.png", 0)
+	local rotX, rotY, rotZ = getElementRotation(localPlayer)
+	dxDrawImage(self.m_PosX+self.m_Width/2-8, self.m_PosY+2+self.m_Height/2-8, 16, 16, "files/images/Blips/LocalPlayer.png", self.m_Rotation - rotZ)
 end
 angle = 0
 addCommandHandler("angle", function(cmd, a) angle = tonumber(a) end)
@@ -131,6 +133,7 @@ function HUDRadar:worldToMapPosition(worldX, worldY)
 end
 
 function HUDRadar:setZoom(zoom)
+	error("Not implemented yet")
 	self.m_Zoom = zoom
 end
 

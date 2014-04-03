@@ -38,7 +38,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	end
 
 	if self.m_HasCloseButton then
-		self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", 1, self):setFont(VRPFont(28)) --GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
+		self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(28)) --GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
 		self.m_CloseButton.onHover = function(btn) btn:setColor(Color.Red) end
 		self.m_CloseButton.onUnhover = function(btn) btn:setColor(Color.White) end
 		self.m_CloseButton.onLeftClick = bind(GUIWindow.CloseButton_Click, self)

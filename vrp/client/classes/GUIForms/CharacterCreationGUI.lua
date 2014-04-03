@@ -21,10 +21,10 @@ function CharacterCreationGUI:constructor()
 	GUIForm.constructor(self, sw/3*2, sh/5, sw/4, sh/2)
 	self.m_Selector = GUIRectangle:new(0, sh*0.06, sw/4, sh/2-sh*0.06, tocolor(0, 0, 0, 128), self)
 	self.m_LoginButton 		= VRPButton:new(0, 0, sw/4, sh*0.06, "Erstelle deinen Charakter", true, self)
-	GUILabel:new(sw/4*0.05, sh/30*1, (sw/4), 10, "Dein Name", 1.5, self.m_Selector):setAlign("left", "top")	
-	GUILabel:new(sw/4*0.5,  sh/30*1, sw/4*0.5-sw/4*0.05, 10, "sbx320", 1.5, self.m_Selector):setAlign("right", "top")	
-	GUILabel:new(sw/4*0.05, sh/30*2, (sw/4), 10, "Grundskin", 1.5, self.m_Selector):setAlign("left", "top")		
-	self.m_SkinIdLabel = GUILabel:new(sw/4*0.5,  sh/30*2, sw/4*0.5-sw/4*0.05, 10, "19", 1.5, self.m_Selector):setAlign("right", "top")
+	GUILabel:new(sw/4*0.05, sh/30*1, (sw/4), 10, "Dein Name", self.m_Selector):setAlign("left", "top")	-- 1.5
+	GUILabel:new(sw/4*0.5,  sh/30*1, sw/4*0.5-sw/4*0.05, 10, "sbx320", self.m_Selector):setAlign("right", "top") -- 1.5
+	GUILabel:new(sw/4*0.05, sh/30*2, (sw/4), 10, "Grundskin", self.m_Selector):setAlign("left", "top")	-- 1.5
+	self.m_SkinIdLabel = GUILabel:new(sw/4*0.5,  sh/30*2, sw/4*0.5-sw/4*0.05, 10, "19", 1, self.m_Selector):setAlign("right", "top") -- 1.5
 	
 	
 	self:bind("arrow_l", CharacterCreationGUI.previousPed)
@@ -96,7 +96,7 @@ function CharacterCreationGUI:updatePed()
 	local sw, sh = guiGetScreenSize()
 	for k, v in ipairs(skindata[self.m_CurrentSkin]) do
 		self.m_Options[#self.m_Options+1] = GUILabel:new(sw/4*0.05, sh/30*(3+k), (sw/4), 10, v.name, 1.5, self.m_Selector):setAlign("left", "top")	
-		self.m_Options[#self.m_Options+1] = GUILabel:new(sw/4*0.5, sh/30*(3+k), sw/4*0.5-sw/4*0.05, 10, "1", 1.5, self.m_Selector):setAlign("right", "top")	
+		self.m_Options[#self.m_Options+1] = GUILabel:new(sw/4*0.5, sh/30*(3+k), sw/4*0.5-sw/4*0.05, 10, "1", self.m_Selector):setAlign("right", "top")	-- 1.5
 	end
 end
 

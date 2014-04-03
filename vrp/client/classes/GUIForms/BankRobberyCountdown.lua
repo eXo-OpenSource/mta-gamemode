@@ -13,7 +13,7 @@ function BankRobberyCountdown:constructor()
 	self.m_Seconds = 0
 	
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/BankRobberyCountdown.png", self)
-	self.m_CountdownLabel = GUILabel:new(0, 0, self.m_Width, self.m_Height, tostring(self.m_Seconds), 1, self):setAlignX("center"):setAlignY("center"):setFont(VRPFont(self.m_Height*0.75))
+	self.m_CountdownLabel = GUILabel:new(0, 0, self.m_Width, self.m_Height, tostring(self.m_Seconds), self):setAlignX("center"):setAlignY("center"):setFont(VRPFont(self.m_Height*0.75))
 end
 
 function BankRobberyCountdown:startCountdown(seconds)

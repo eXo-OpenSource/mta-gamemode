@@ -24,7 +24,7 @@ function InventoryGUI:constructor()
 	
 	-- Error Box
 	self.m_ErrorBox = GUIRectangle:new(50, h/100*80, w/4, h/100*15, tocolor(173, 14, 22, 255), self)
-	self.m_ErrorText = GUILabel:new(0, 0, w/4, h/100*15, "", 1.5, self.m_ErrorBox)
+	self.m_ErrorText = GUILabel:new(0, 0, w/4, h/100*15, "", self.m_ErrorBox) -- 1.5
 	self.m_ErrorText:setAlign("center", "center")
 	self.m_ErrorBox:hide()
 	
@@ -32,17 +32,17 @@ function InventoryGUI:constructor()
 	local useText = _"Verwenden"
 	local fwUse = fontWidth(useText, "default", 1.75)
 	self.m_ButtonUse = GUIRectangle:new(w/3+w/3*2-50-fwUse*1.3, h-h/100*9, fwUse*1.3, h/100*6, tocolor(28, 101, 28), self)
-	GUILabel:new(0, 0, fwUse*1.3, h/100*5, useText, 2, self.m_ButtonUse):setAlign("center", "center")	-- Buttons
+	GUILabel:new(0, 0, fwUse*1.3, h/100*5, useText, self.m_ButtonUse):setAlign("center", "center")	-- Buttons -- 2
 	
 	local sortText = _"Sortieren"
 	local fwSort = fontWidth(sortText, "default", 1.75)
 	self.m_ButtonSort = GUIRectangle:new(w/3+w/3*2-50-fwSort*1.3-fwUse*1.3-20, h-h/100*9, fwSort*1.3, h/100*6, tocolor(26, 85, 163), self)
-	GUILabel:new(0, 0, fwSort*1.3, h/100*5, sortText, 2, self.m_ButtonSort):setAlign("center", "center")	
+	GUILabel:new(0, 0, fwSort*1.3, h/100*5, sortText, self.m_ButtonSort):setAlign("center", "center") -- 2
 	
 	local removeText = _"Wegwerfen"
 	local fwRemove = fontWidth(removeText, "default", 1.75)
 	self.m_ButtonDiscard = GUIRectangle:new(w/3+w/3*2-50-fwSort*1.3-fwUse*1.3-20-fwRemove*1.3-20, h-h/100*9, fwRemove*1.3, h/100*6, tocolor(143, 0, 0), self)
-	GUILabel:new(0, 0, fwRemove*1.3, h/100*5, removeText, 2, self.m_ButtonDiscard):setAlign("center", "center")
+	GUILabel:new(0, 0, fwRemove*1.3, h/100*5, removeText, self.m_ButtonDiscard):setAlign("center", "center") -- 2
 	
 	self.m_ButtonUse.onLeftClick = bind(function(self)
 		if not self.m_SelectedItem then

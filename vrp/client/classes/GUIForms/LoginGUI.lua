@@ -15,13 +15,13 @@ function LoginGUI:constructor()
 	
 	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
 	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
-	self.m_LoginTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw, sh, "Benutzername", 1.75, self.m_LoginTab)
+	self.m_LoginTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.1, sh*0.03, "Benutzername", self.m_LoginTab) -- 1.75
 	self.m_LoginEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
-	self.m_LoginTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw, sh, "Passwort", 1.75, self.m_LoginTab)
+	self.m_LoginTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.1, sh*0.03, "Passwort", self.m_LoginTab) -- 1.75
 	self.m_LoginCheckbox	= GUICheckbox:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.575, sw*0.6*0.025, sw*0.6*0.025, "Passwort merken", self.m_LoginTab)
 	self.m_LoginErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_LoginTab)
 	self.m_LoginErrorBox:hide()
-	self.m_LoginErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", 1, self.m_LoginErrorBox):setAlign("center", "center")
+	self.m_LoginErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", self.m_LoginErrorBox):setAlign("center", "center")
 	
 	self.m_LoginLoginButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Einloggen", true, self.m_LoginTab)
 	self.m_LoginLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_LoginTab)
@@ -32,22 +32,22 @@ function LoginGUI:constructor()
 	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf V-Roleplay!
 	
 	Wenn du bereits registriert bist, kannst du dich hier einloggen. Solltest du noch keinen Account besitzen so kannst du dich im "Registrieren"-Tab registerien. Du kannst den Server auch ersteinmal als Gast ausprobieren!	
-	]], sh*0.0017, self.m_LoginTab)
+	]], self.m_LoginTab):setFont(VRPFont(sh*0.035))
 	
 	self.m_RegisterTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
 	self.m_RegisterTab:setVisible(false)
 	
 	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw, sh, "Benutzername", 1.75, self.m_RegisterTab)
+	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.1, sh*0.03, "Benutzername", self.m_RegisterTab) -- 1.75
 	self.m_RegisterEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw, sh, "Passwort", 1.75, self.m_RegisterTab)
+	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.1, sh*0.03, "Passwort", self.m_RegisterTab) -- 1.75
 
 	self.m_RegisterEditMail	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.57, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextMail	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.57, sw, sh, "E-Mail", 1.75, self.m_RegisterTab)
+	self.m_RegisterTextMail	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.57, sw*0.1, sh*0.03, "E-Mail", self.m_RegisterTab) -- 1.75
 
 	self.m_RegisterErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_RegisterTab)
 	self.m_RegisterErrorBox:hide()
-	self.m_RegisterErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", 1, self.m_RegisterErrorBox):setAlign("center", "center")
+	self.m_RegisterErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", self.m_RegisterErrorBox):setAlign("center", "center")
 	
 	
 	self.m_RegisterRegisterButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Registrieren", true, self.m_RegisterTab)
@@ -59,13 +59,14 @@ function LoginGUI:constructor()
 	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf V-Roleplay!
 	
 	Bitte fülle die folgenden Informationen aus um dich zu registrieren!	
-	]], sh*0.0017, self.m_RegisterTab)
+	]], self.m_RegisterTab):setFont(VRPFont(sh*0.035))
 	
 	self.m_GuestTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
 	self.m_GuestTab:setVisible(false)
 	
 	self.m_GuestErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_GuestTab)
-	self.m_GuestErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", 1, self.m_GuestErrorBox):setAlign("center", "center")
+	self.m_GuestErrorBox:hide()
+	self.m_GuestErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, "Fehler: Irgendwas stimmt nicht!", self.m_GuestErrorBox):setAlign("center", "center")
 	
 	self.m_GuestGuestButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Als Gast spielen", true, self.m_GuestTab)
 	self.m_GuestLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_GuestTab)
@@ -75,7 +76,7 @@ function LoginGUI:constructor()
 	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf V-Roleplay!
 	
 	Bevor du dich registrierst, kannst du den Server natürlich auch ersteinmal als Gast unverbindlich testen. Du kannst dich während du testest jederzeit registrieren, ohne deinen bisherigen Fortschritt zu verlieren!	
-	]], sh*0.0017, self.m_GuestTab)
+	]], self.m_GuestTab):setFont(VRPFont(sh*0.035))
 
 	self.m_LoginButton:dark(true)
 	self.m_RegisterButton:dark(true)
@@ -223,7 +224,7 @@ addEventHandler("loginsuccess", root,
 					
 					-- Temp fix?
 					triggerServerEvent("introFinished", root)
-					HUDRadar:new()
+					HUDRadar:getSingleton():show()
 				end
 			)
 		elseif tutorialstage == 1 then
@@ -232,6 +233,7 @@ addEventHandler("loginsuccess", root,
 			-- Play Tutorial Mission
 		else
 			-- If the tutorial is done the server will do the job of spawning etc.
+			HUDRadar:getSingleton():show()
 		end
 
 		

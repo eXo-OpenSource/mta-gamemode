@@ -19,9 +19,8 @@ function VRPButton:constructor(posX, posY, width, height, text, barOnTop, parent
 	else
 		self.m_Bar = GUIRectangle:new(0, height-height*0.075, width, height*0.075, tocolor(0x3F, 0x7F, 0xBF, 255), self)
 	end
-	self.m_Label = GUILabel:new(0, height*0.05, width, height*0.9, text, 1, self)
+	self.m_Label = GUILabel:new(0, height*0.05, width, height*0.9, text, self)
 		:setAlign("center", "center")
-		:setFont(VRPFont(height))
 		
 	self.m_Animation = false
 	self.m_BarAnimation = false
