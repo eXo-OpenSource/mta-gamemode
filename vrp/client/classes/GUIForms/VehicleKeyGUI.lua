@@ -19,7 +19,7 @@ function VehicleKeyGUI:constructor(vehicleElement)
 	self.m_AddButton = GUIButton:new(self.m_Width*0.67, self.m_Height*0.12, self.m_Width*0.32, self.m_Height*0.1, _"Add key", self):setBackgroundColor(Color.Green)
 	self.m_AddButton.onLeftClick = bind(self.AddButton_Click, self)
 	
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.25, self.m_Width*0.5, self.m_Height*0.08, _"Current keys: ", 1, self):setFont(VRPFont(self.m_Height*0.07))
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.25, self.m_Width*0.5, self.m_Height*0.08, _"Current keys: ", self):setFont(VRPFont(self.m_Height*0.07))
 	self.m_KeysGrid = GUIGridList:new(self.m_Width*0.01, self.m_Height*0.33, self.m_Width*0.65, self.m_Height*0.65, self)
 	self.m_KeysGrid:addColumn("Name", 0.9)
 	self.m_KeysGrid:addItem("Loading...")

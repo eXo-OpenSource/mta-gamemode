@@ -157,6 +157,8 @@ function Player:loadCharacterInfo()
 			end
 		end
 	end
+	
+	Blip.sendAllToClient()
 end
 
 function Player:save()

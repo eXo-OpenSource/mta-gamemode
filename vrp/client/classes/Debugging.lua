@@ -10,6 +10,7 @@ if DEBUG then
 	Debugging = inherit(Singleton)
 
 	function Debugging:constructor()
+		setDevelopmentMode(true)
 		addCommandHandler("dcrun", bind(Debugging.runString, self))
 		addCommandHandler("dcreload", bind(Debugging.reloadClass, self))
 		

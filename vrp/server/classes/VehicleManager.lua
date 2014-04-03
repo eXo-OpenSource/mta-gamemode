@@ -132,6 +132,11 @@ function VehicleManager:Event_vehicleAddKey(player)
 		return
 	end
 	
+	if not source:isPermanent() then
+		client:sendError(_("Nur nicht-permanente Fahrzeuge können Schlüssel haben", client))
+		return
+	end
+	
 	if source:getOwner() ~= client:getId() then
 		client:sendWarning(_("You are not the owner of this vehicle!", client))
 		return

@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 RadarBlip = inherit(Object)
+RadarBlip.ServerBlips = {}
 
 function RadarBlip:constructor(imagePath, worldX, worldY, streamDistance)
 	self.m_ImagePath = imagePath
@@ -58,3 +59,28 @@ end
 function RadarBlip:setStreamDistance(distance)
 	self.m_StreamDistance = distance
 end
+
+addEvent("blipCreate", true)
+addEventHandler("blipCreate", root,
+	function(index, path, x, y)
+		RadarBlip.ServerBlips[index] = HUDRadar:getSingleton():addBlip(path, x, y)
+	end
+)
+
+addEvent("blipDestroy", true)
+addEventHandler("blipDestroy", root,
+	function(index)
+		if RadarBlip.ServerBlips[index] then
+			HUDRadar:getSingleton():removeBlip(RadarBlip.ServerBlips[index])
+		end
+	end
+)
+
+addEvent("blipsRetrieve", true)
+addEventHandler("blipsRetrieve", root,
+	function(data)
+		for k, v in ipairs(data) do
+			RadarBlip.ServerBlips[k] = HUDRadar:getSingleton():addBlip(unpack(v))
+		end
+	end
+)

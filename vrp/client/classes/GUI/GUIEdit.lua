@@ -56,9 +56,10 @@ function GUIEdit:onInternalEditInput(caret)
 end
 
 function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)
-	local posX, posY = self:getPosition(true) -- DxElement:getPosition is necessary as m_Absolute_ is dependent on the position of the cache area
+	local posX, posY = self:getPosition(true) -- DxElement:getPosition is necessary as m_Absolute_ depends on the position of the cache area
 	local relativeX, relativeY = absoluteX - posX, absoluteY - posY
 	local index = self:getIndexFromPixel(relativeX, relativeY)
+	outputDebug(relativeX..","..relativeY..","..index)
 	self:setCaretPosition(index)
 	
 	GUIInputControl.setFocus(self, index)

@@ -47,7 +47,7 @@ addEventHandler("vehicleSpawn", root,
 			return
 		end
 		
-		if client:getJobVehicle() then
+		if client:getJobVehicle() and isElement(client:getJobVehicle()) then
 			destroyElement(client:getJobVehicle())
 		end
 		
