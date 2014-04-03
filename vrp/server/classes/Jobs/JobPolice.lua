@@ -32,6 +32,21 @@ function JobPolice:constructor()
 			client:triggerEvent("policePanelListRetrieve", data)
 		end
 	)
+	
+	self.m_ClothesPickup = createPickup(248.8, 70.4, 1003.6, 3, 1275)
+	setElementInterior(self.m_ClothesPickup, 6)
+	addEventHandler("onPickupHit", self.m_ClothesPickup,
+		function(hitElement)
+			if getElementType(hitElement) == "player" and hitElement:getJob() == self then
+				setElementModel(hitElement, getElementModel(hitElement) ~= 280 and 280 or hitElement:getSkin())
+			end
+			cancelEvent()
+		end
+	)
+end
+
+function JobPolice:destructor()
+	destroyElement(self.m_ClothesPickup)
 end
 
 function JobPolice:start(player)

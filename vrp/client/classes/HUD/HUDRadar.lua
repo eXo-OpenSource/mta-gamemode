@@ -144,6 +144,7 @@ end
 function HUDRadar:addBlip(blipPath, worldX, worldY)
 	local blip = RadarBlip:new(blipPath, worldX, worldY)
 	table.insert(self.m_Blips, blip)
+	return blip
 end
 
 function HUDRadar:removeBlip(blip)

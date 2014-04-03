@@ -13,8 +13,6 @@ function SelfGUI:constructor()
 	
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
-	self.m_CloseButton.onHover = function(btn) btn:setColor(Color.Red) end
-	self.m_CloseButton.onUnhover = function(btn) btn:setColor(Color.White) end
 	self.m_CloseButton.onLeftClick = function() self:hide() end
 	
 	-- Tab: Info

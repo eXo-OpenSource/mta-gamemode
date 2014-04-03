@@ -60,3 +60,8 @@ addEventHandler("vehicleSpawn", root,
 		client:setJobVehicle(vehicle)
 	end
 )
+
+function VehicleSpawner:initializeAll()
+	-- Create 'general' vehicle spawners
+	VehicleSpawner:new(2004.63, -1449.6, 12.5, {"Bike", "BMX", "Faggio"}, 135)
+end

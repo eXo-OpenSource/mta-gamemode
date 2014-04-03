@@ -59,6 +59,8 @@ function Core:ready()
 	-- Vehicle shops
 	VehicleShop.initializeAll()
 	VehicleGarage.initializeAll()
+	
+	self:createBlips()
 end
 
 function Core:destructor()
@@ -76,3 +78,8 @@ end
 function Core:set(...)
 	return self.m_Config:set(...)
 end
+
+function Core:createBlips()
+	HUDRadar:getSingleton():addBlip("files/images/Blips/Bank.png", 1660.4, -1272.8)
+end
+

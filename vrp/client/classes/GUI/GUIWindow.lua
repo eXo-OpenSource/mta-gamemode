@@ -11,16 +11,9 @@ inherit(GUIMovable, GUIWindow)
 function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, hasCloseButton, parent)
 	checkArgs("GUIWindow:constructor", "number", "number", "number", "number", "string")
 
-	-- float -> int (prevent blurring)
-	width = math.floor(width)
-	height = math.floor(height)	
-
 	-- Call base class ctors
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	--GUIFontContainer.constructor(self, title, 1)
-	--GUIColorable.constructor(self, Color.White)
-	--GUIMoveable.constructor(self, self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + 20) -- ToDo: Const for title bar height
-
+	
 	self.m_HasTitlebar = hasTitlebar
 	self.m_HasCloseButton = hasCloseButton
 	self.m_CloseOnClose = true
@@ -39,8 +32,8 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 
 	if self.m_HasCloseButton then
 		self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35)) --GUIImage(self.m_Width - 40, 4, 35, 27, "files/images/GUI/close_button.png", self)
-		self.m_CloseButton.onHover = function(btn) btn:setColor(Color.Red) end
-		self.m_CloseButton.onUnhover = function(btn) btn:setColor(Color.White) end
+		--self.m_CloseButton.onHover = function(btn) btn:setColor(Color.Red) end
+		--self.m_CloseButton.onUnhover = function(btn) btn:setColor(Color.White) end
 		self.m_CloseButton.onLeftClick = bind(GUIWindow.CloseButton_Click, self)
 	end
 end
@@ -71,9 +64,6 @@ function GUIWindow:drawThis()
 	if self.m_HasTitlebar then
 		-- Draw line under title bar
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 1, Color.White)
-
-		-- Draw title
-		--dxDrawText(self.m_Text, self.m_AbsoluteX, self.m_AbsoluteY+7, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + 25, self.m_Color, self.m_FontSize, self.m_Font, "center", "center")
 	end
 	
 	dxSetBlendMode("blend")

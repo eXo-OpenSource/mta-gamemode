@@ -17,10 +17,10 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 		self.m_Parent.m_Children[#self.m_Parent.m_Children+1] = self
 	end
 
-	self.m_PosX   = posX
-	self.m_PosY   = posY
-	self.m_Width  = width
-	self.m_Height = height
+	self.m_PosX   = math.floor(posX)
+	self.m_PosY   = math.floor(posY)
+	self.m_Width  = math.floor(width)
+	self.m_Height = math.floor(height)
 
 	self.m_Children = {}
 	self.m_Visible = true

@@ -9,7 +9,7 @@ function DownloadGUI:constructor()
 	if screenWidth < 1024 then
 		self.m_ResolutionWarning = GUILabel:new(0, screenHeight - 200, screenWidth, 20, "Bitte erhöhe deine Auflösung, um Darstellungsfehler zu vermeiden!", self):setAlignX("center"):setFont(VRPFont(30)):setColor(Color.Red)
 	end
-	self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 50, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center"):setFont(VRPFont(20))
+	self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center")
 	self.m_ProgressBar = GUIProgressBar:new(screenWidth/2 - 500/2, screenHeight/2 - 150/2 + 110, 500, 30, self)
 		
 	fadeCamera(false) -- freeroam hack | todo: Remove when freeroam is no longer required

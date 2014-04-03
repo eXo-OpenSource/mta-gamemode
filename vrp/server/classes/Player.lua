@@ -50,7 +50,9 @@ function Player:destructor()
 	self:save()
 	
 	-- Unload stuff
-	self.m_Inventory:unload()
+	if self.m_Inventory then
+		self.m_Inventory:unload()
+	end
 	
 	-- Remove reference
 	Player.Map[self.m_Id] = nil
@@ -210,6 +212,7 @@ function Player:getTutorialStage() return self.m_TutorialStage end
 function Player:getJobVehicle() return self.m_JobVehicle end
 function Player:getGroup()		return self.m_Group		end
 function Player:getInventory()	return self.m_Inventory	end
+function Player:getSkin()		return self.m_Skin		end
 
 -- Short setters
 function Player:setMoney(money) self.m_Money = money setPlayerMoney(self, money) end
@@ -235,7 +238,7 @@ function Player:giveXP(xp)
 	-- Check if the player needs a level up
 	if self:getLevel() > oldLevel then
 		--self:triggerEvent("levelUp", self:getLevel())
-		self:sendInfo(_("Du bist zu Level %d aufgestiegen", self), self:getLevel())
+		self:sendInfo(_("Du bist zu Level %d aufgestiegen", self, self:getLevel()))
 	end
 end
 

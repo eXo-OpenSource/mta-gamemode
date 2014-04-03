@@ -44,3 +44,14 @@ end
 function InteriorEnterExit:getExitMarker()
 	return self.m_ExitMarker
 end
+
+function InteriorEnterExit:initializeAll()
+	-- Note: Some may not here
+	local data = {
+		{1554.8, -1675.7, 16, 246.7, 63, 1003.64, 6},
+	}
+	
+	for k, info in ipairs(data) do
+		InteriorEnterExit:new(Vector(info[1], info[2], info[3]), Vector(info[4], info[5], info[6]), info[7], info[8])
+	end
+end

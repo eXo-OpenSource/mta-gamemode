@@ -31,6 +31,8 @@ function Core:constructor()
 	RobableShop.initalizeAll()
 	VehicleGarage.initalizeAll()
 	BankRobbery.initializeAll()
+	InteriorEnterExit.initializeAll()
+	VehicleSpawner.initializeAll()
 	
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")

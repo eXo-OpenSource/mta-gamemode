@@ -281,6 +281,7 @@
 	<vrpfile src="files/images/Blips/Lumberjack.png"/>
 	<vrpfile src="files/images/Blips/Pickpocket.png"/>
 	<vrpfile src="files/images/Blips/Police.png"/>
+	<vrpfile src="files/images/Blips/Bank.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
