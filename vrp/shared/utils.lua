@@ -289,6 +289,8 @@ function fromcolor(color)
 	return unpack(value)
 end
 
+-- E: yrot = select(2,getElementRotation(example))
+
 function select (index,...)
 	local returns = {...}
 	return returns[index]
