@@ -288,3 +288,8 @@ function fromcolor(color)
 	end
 	return unpack(value)
 end
+
+function select (index,...)
+	local returns = {...}
+	return returns[index]
+end
