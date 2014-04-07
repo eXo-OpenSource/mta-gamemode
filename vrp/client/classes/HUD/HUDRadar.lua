@@ -8,7 +8,7 @@
 HUDRadar = inherit(Singleton)
 
 function HUDRadar:constructor()
-	self.m_ImageWidth, self.m_ImageHeight = 1024, 1024
+	self.m_ImageSize = 3072, 3072
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900
 	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-20
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
@@ -127,8 +127,8 @@ angle = 0
 addCommandHandler("angle", function(cmd, a) angle = tonumber(a) end)
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
-	local mapX = worldX / ( 6000/1024) + 1024/2
-	local mapY = worldY / (-6000/1024) + 1024/2
+	local mapX = worldX / ( 6000/self.m_ImageSize) + self.m_ImageSize/2
+	local mapY = worldY / (-6000/self.m_ImageSize) + self.m_ImageSize/2
 	return mapX, mapY
 end
 
