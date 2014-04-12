@@ -4,6 +4,7 @@ Inventory.Map = {}
 function Inventory:constructor(Id, items)
 	self.m_Id = Id
 	self.m_Items = items or {}
+	self.m_InteractingPlayer = false
 end
 
 function Inventory.create()
@@ -75,6 +76,9 @@ function Inventory:addItem(itemId, amount)
 	
 	local itemObject = (itemInfo.class or Item):new(itemId, amount)
 	table.insert(self.m_Items, itemObject)
+	local slot = #self.m_Items
+	
+	self:sync({slot, itemId, amount})
 	return itemObject
 end
 
@@ -121,4 +125,10 @@ end
 
 function Inventory:getItems()
 	return self.m_Items
+end
+
+function Inventory:sync(info)
+	if self.m_InteractingPlayer then
+		self.m_InteractingPlayer:triggerEvent("inventorySync", info)
+	end
 end

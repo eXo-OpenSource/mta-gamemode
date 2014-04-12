@@ -10,6 +10,9 @@ GUIElement = inherit(DxElement)
 
 function GUIElement:constructor(posX, posY, width, height, parent)
 	checkArgs("CGUIElement:constructor", "number", "number", "number", "number")
+	if not (type(parent) == "table" or parent == nil) then -- temp debug
+		outputConsole(debug.traceback())
+	end
 	assert(type(parent) == "table" or parent == nil, "Bad argument #5 @ GUIElement.constructor")
 
 	DxElement.constructor(self, posX, posY, width, height, parent)

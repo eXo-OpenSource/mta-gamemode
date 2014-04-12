@@ -38,6 +38,14 @@ function GUIForm:close(hideCursor)
 	return self:setVisible(false)
 end
 
+function GUIForm:toggle(cursor)
+	if self:isVisible() then
+		self:close(cursor)
+	else
+		self:open(cursor)
+	end
+end
+
 function GUIForm:fadeIn(time)
 	if not time then time = 1000 end
 	self:setVisible(true)		

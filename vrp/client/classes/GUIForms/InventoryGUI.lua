@@ -1,11 +1,12 @@
 InventoryGUI = inherit(GUIForm)
+inherit(Singleton, InventoryGUI)
 
 function InventoryGUI:constructor()
 	local sw, sh = guiGetScreenSize()
 	local w, h = sw/5*3, sh/5*3
 
 	GUIForm.constructor(self, sw/5*1, sh/5*1, w, h)
-	self.m_Background = GUIRectangle:new(0, 0, w, h, tocolor(2, 17, 39, 255), self)
+	self.m_Background = GUIRectangle:new(0, 0, w, h, tocolor(0, 0, 0, 150), self)
 	self.m_Items = { Item:new(ITEM_CRACK); Item:new(ITEM_LSD); }
 	self.m_GUIItems = {}
 	self.m_SelectedItem = false;
@@ -31,18 +32,15 @@ function InventoryGUI:constructor()
 	-- Buttons
 	local useText = _"Verwenden"
 	local fwUse = fontWidth(useText, "default", 1.75)
-	self.m_ButtonUse = GUIRectangle:new(w/3+w/3*2-50-fwUse*1.3, h-h/100*9, fwUse*1.3, h/100*6, tocolor(28, 101, 28), self)
-	GUILabel:new(0, 0, fwUse*1.3, h/100*5, useText, self.m_ButtonUse):setAlign("center", "center")	-- Buttons -- 2
+	self.m_ButtonUse = VRPButton:new(w/3+w/3*2-50-fwUse*1.3, h-h/100*9, fwUse*1.3, h/100*6, useText, true, self):setBarColor(tocolor(28, 101, 28))
 	
 	local sortText = _"Sortieren"
 	local fwSort = fontWidth(sortText, "default", 1.75)
-	self.m_ButtonSort = GUIRectangle:new(w/3+w/3*2-50-fwSort*1.3-fwUse*1.3-20, h-h/100*9, fwSort*1.3, h/100*6, tocolor(26, 85, 163), self)
-	GUILabel:new(0, 0, fwSort*1.3, h/100*5, sortText, self.m_ButtonSort):setAlign("center", "center") -- 2
+	self.m_ButtonSort = VRPButton:new(w/3+w/3*2-50-fwSort*1.3-fwUse*1.3-20, h-h/100*9, fwSort*1.3, h/100*6, sortText, true, self):setBarColor(tocolor(26, 85, 163))
 	
 	local removeText = _"Wegwerfen"
 	local fwRemove = fontWidth(removeText, "default", 1.75)
-	self.m_ButtonDiscard = GUIRectangle:new(w/3+w/3*2-50-fwSort*1.3-fwUse*1.3-20-fwRemove*1.3-20, h-h/100*9, fwRemove*1.3, h/100*6, tocolor(143, 0, 0), self)
-	GUILabel:new(0, 0, fwRemove*1.3, h/100*5, removeText, self.m_ButtonDiscard):setAlign("center", "center") -- 2
+	self.m_ButtonDiscard = VRPButton:new(w/3+w/3*2-50-fwSort*1.3-fwUse*1.3-20-fwRemove*1.3-20, h-h/100*9, fwRemove*1.3, h/100*6, removeText, true, self):setBarColor(tocolor(143, 0, 0))
 	
 	self.m_ButtonUse.onLeftClick = bind(function(self)
 		if not self.m_SelectedItem then
@@ -111,7 +109,7 @@ function InventoryGUI:onItemClick(vrpitem, item)
 	self.m_SelectedItem:select()
 end
 
-function InventoryGUI:open()
+function InventoryGUI:onShow()
 
 end
 

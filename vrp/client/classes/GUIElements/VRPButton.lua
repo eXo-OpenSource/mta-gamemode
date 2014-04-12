@@ -26,9 +26,10 @@ function VRPButton:constructor(posX, posY, width, height, text, barOnTop, parent
 	self.m_BarAnimation = false
 	self.m_TextAnimation = false
 	self.m_IsDark = false
+	self.m_BarColor = tocolor(0x3F, 0x7F, 0xBF, 255)
 	
-	self.onInternalHover = function() self.m_Bar:setColor(Color.White) --[[self:setColorRGB(0x3F, 0x7F, 0xBF, 255)]] end
-	self.onInternalUnhover = function() self.m_Bar:setColorRGB(0x3F, 0x7F, 0xBF, 255) --[[self:setColorRGB(0x23, 0x23, 0x23, 230)]] end
+	self.onInternalHover = function() self.m_Bar:setColor(Color.White) end
+	self.onInternalUnhover = function() self.m_Bar:setColor(self.m_BarColor) end
 end
 
 function VRPButton:setText(text)
@@ -93,6 +94,13 @@ function VRPButton:fadeOut(time, quick)
 		end
 		Animation.FadeColor:new(self.m_Label, time, { 255, 255, 255, 255 }, {255, 255, 255, 0})
 	end
+end
+
+function VRPButton:setBarColor(color)
+	self.m_BarColor = color
+	self.m_Bar:setColor(color)
+	self:anyChange()
+	return self
 end
 
 function VRPButton:anyChange()

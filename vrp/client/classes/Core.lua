@@ -38,7 +38,7 @@ function Core:ready()
 	Phone:getSingleton():close()
 	bindKey("k", "down",
 		function()
-			Phone:getSingleton():setVisible(not Phone:getSingleton():isVisible())
+			Phone:getSingleton():toggle(true)
 		end
 	)
 	
@@ -47,7 +47,7 @@ function Core:ready()
 	bindKey("f2", "down",
 		function()
 			if localPlayer:getJob() == JobPolice:getSingleton() then
-				PolicePanel:getSingleton():setVisible(not PolicePanel:getSingleton():isVisible())
+				PolicePanel:getSingleton():toggle(true)
 			end
 		end
 	)
@@ -55,6 +55,14 @@ function Core:ready()
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
+	
+	InventoryGUI:new()
+	InventoryGUI:getSingleton():close()
+	bindKey("i", "down",
+		function()
+			InventoryGUI:getSingleton():toggle(true)
+		end
+	)
 	
 	-- Vehicle shops
 	VehicleShop.initializeAll()

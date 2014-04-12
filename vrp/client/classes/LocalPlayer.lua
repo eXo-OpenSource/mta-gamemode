@@ -49,7 +49,25 @@ function LocalPlayer:playerWasted()
 			setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
 		end, 2000, 1
 	)
-	setTimer(function() setCameraTarget(localPlayer) end, 20000, 1)
+	setTimer(
+		function()
+			setCameraTarget(localPlayer)
+			playSound("files/audio/Halleluja.mp3")
+			local x, y, z = 2028, -1405, 110
+			
+			addEventHandler("onClientPreRender", root,
+				function(deltaTime)
+					z = z-0.005*deltaTime
+					setElementPosition(localPlayer, x, y, z)
+					setElementRotation(localPlayer, 0, 0, 225)
+					if z <= 18 then
+						removeEventHandler("onClientPreRender", root, debug.getinfo(1, "f").func)
+					end
+				end
+			)
+			
+		end, 5000, 1
+	)
 end
 
 -- Events
