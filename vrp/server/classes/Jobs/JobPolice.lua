@@ -109,3 +109,24 @@ function JobPolice:playerVehicleExit(vehicle, seat, jacker)
 		self:jailPlayer(source, jacker)
 	end
 end
+
+function JobPolice:reportCrime(player, crimeType)
+	-- Give him a higher wantedlevel if a cop is close
+	local playerX, playerY, playerZ = getElementPosition(player)
+	for k, cop in ipairs(getElementsByType("player")) do -- Todo: A table that stores the job players inside might be better generally
+		if cop:getJob() == self and cop ~= player then
+			local x, y, z = getElementPosition(cop)
+			
+			local copIsClose = false
+			if getDistanceBetweenPoints3D(playerX, playerY, playerZ, x, y, z) < (crimeType.maxdistance or 100) then
+				cop:sendMessage(_("%s hat folgende Straftat begangen: %s", cop, getPlayerName(player), _(crimeType.text, cop)))
+				copIsClose = true
+			end
+			
+			-- Give him a wanted level
+			if copIsClose and player:getWantedLevel() < crimeType.maxwanted then
+				player:giveWantedLevel(crimeType.maxwanted - player:getWantedLevel())
+			end
+		end
+	end
+end

@@ -303,3 +303,7 @@ end
 function Player:getVehicles()
 	return VehicleManager:getSingleton():getPlayerVehicles(self)
 end
+
+function Player:reportCrime(crimeType)
+	JobPolice:getSingleton():reportCrime(self, crimeType)
+end

@@ -14,17 +14,13 @@ end
 
 function WantedSystem:playerDamage(attacker, attackerWeapon, bodypart, loss)
 	if attacker and attacker ~= source and getElementType(attacker) == "player" then
-		if attacker:getWantedLevel() < 1 then
-			attacker:giveWantedLevel(1)
-		end
+		attacker:reportCrime(Crime.Damage)
 	end
 end
 
 function WantedSystem:playerWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
 	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
-		if killer:getWantedLevel() < 4 then
-			killer:giveWantedLevel(1)
-		end
+		killer:reportCrime(Crime.Kill)
 		
 		-- Take karma
 		killer:takeKarma(0.15)

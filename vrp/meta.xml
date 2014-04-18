@@ -24,7 +24,6 @@
 	<script src="shared/classes/TranslationManager.lua" type="shared"/>
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
 	<script src="shared/classes/Rect.lua" type="shared"/>
-	<script src="shared/classes/Item.lua" type="shared"/>
 	<script src="shared/classes/Package.lua" type="shared"/>
 	
 	<!-- Server -->
@@ -59,8 +58,6 @@
 	<script src="server/classes/VehicleGarage.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/BankRobbery.lua" type="server"/>
-	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
-	<script src="server/classes/Inventory/Item.lua" type="server"/>
 	<script src="server/classes/Blip.lua" type="server"/>
 	<script src="server/classes/PayNSpray.lua" type="server"/>
 	<script src="server/classes/AmmuNation.lua" type="server"/>
@@ -85,6 +82,11 @@
 	<script src="server/classes/NPC.lua" type="server"/>
 	<script src="server/classes/ShopNPC.lua" type="server"/>
 	<script src="server/classes/RobableShop.lua" type="server"/>
+	
+	<!-- Inventory -->
+	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
+	<script src="server/classes/Inventory/Item.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemHotwireKit.lua" type="server"/>
 	
 	<script src="server/Main.lua" type="server"/>
 	
@@ -227,6 +229,10 @@
 	<script src="client/classes/Jobs/JobLumberjack.lua" type="client"/>
 	<script src="client/classes/Jobs/JobPolice.lua" type="client"/>
 	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
+	
+	<!-- Inventory -->
+	<script src="client/classes/Inventory/Item.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemHotwireKit.lua" type="client"/>
 	
 	<script src="client/Main.lua" type="client"/>
 	

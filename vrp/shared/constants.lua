@@ -58,3 +58,9 @@ GroupRank = {
 	Manager = 1,
 	Leader = 2
 }
+
+Crime = {
+	Kill = {id = 1, text = "Mord", maxwanted = 4, maxdistance = 1000},
+	Damage = {id = 2, text = "Körperverletzung", maxwanted = 2, maxdistance = 80},
+	Hotwire = {id = 3, text = "Fahrzeug kurzgeschlossen", maxwanted = 2},
+}
