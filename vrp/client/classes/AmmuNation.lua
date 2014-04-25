@@ -39,10 +39,8 @@ function AmmuNationGUI:onKey(key,state)
 		elseif key == "arrow_r" then
 			self.m_Selection = self.m_Selection + 1
 		end
-		self.m_Selection = math.min(self.m_Selection,#AmmuNationGUI.INFO)
-		if self.m_Selection < 1 then
-			self.m_Selection = 1
-		end
+		self.m_Selection = math.max(math.min(self.m_Selection,#AmmuNationGUI.INFO),1)
+		
 		self:updateMatrix()
 	end
 end
