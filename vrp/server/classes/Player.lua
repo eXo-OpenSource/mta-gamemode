@@ -254,13 +254,17 @@ function Player:getLevel()
 	return (2 * math.floor(self.m_XP))^0.5
 end
 
-function Player:giveKarma(points)
-	self.m_Karma = self.m_Karma + points
+function Player:giveKarma(value, factor)
+	local changekarma = Karma.calcKarma(self.m_Karma, value, factor or 1)
+	self:giveXP(changekarma)
+	self.m_Karma = self.m_Karma + changekarma
 	self:triggerEvent("karmaChange", self.m_Karma)
 end
 
-function Player:takeKarma(points)
-	self.m_Karma = self.m_Karma - points
+function Player:takeKarma(value, factor)
+	local changekarma = Karma.calcKarma(self.m_Karma, value, factor or 1)
+	self:giveXP(changekarma)
+	self.m_Karma = self.m_Karma - changekarma
 	self:triggerEvent("karmaChange", self.m_Karma)
 end
 
