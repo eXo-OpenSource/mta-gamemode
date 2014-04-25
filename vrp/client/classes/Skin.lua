@@ -33,6 +33,12 @@ function Skin:enable()
 	end
 end
 
+-- this has to be called when a ped changes its model
+function Skin:refresh()
+	self:disable()
+	self:enable()
+end
+
 function Skin:setColorScheme(index, id)
 	local part = self.m_Parts[index]
 	part.colorScheme = id
@@ -54,8 +60,10 @@ function Skin:getParts()
 end
 
 function Skin:disable()
-	destroyElement(self.m_Shader)
-	self.m_Shader = false
+	if self.m_Shader then
+		destroyElement(self.m_Shader)
+		self.m_Shader = false
+	end
 end
 
 function Skin:setActive(active)
