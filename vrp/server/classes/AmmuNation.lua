@@ -11,7 +11,7 @@ function AmmuNation:constructor(name)
 end
 
 function AmmuNation:addEnter(x,y,z,dimension)
-	local instance = new(InteriorEnterExit,{X=x,Y=y,Z=z},{X=AmmuNation.ENTERPOS[1],Y=AmmuNation.ENTERPOS[2],Z=AmmuNation.ENTERPOS[3]},AmmuNation.INTERIORID,dimension)
+	local instance = InteriorEnterExit:new({X=x,Y=y,Z=z},{X=AmmuNation.ENTERPOS[1],Y=AmmuNation.ENTERPOS[2],Z=AmmuNation.ENTERPOS[3]},AmmuNation.INTERIORID,dimension)
 	
 	addEventHandler ("onMarkerHit",instance:getEnterMarker(),
 		function(hitElement,matchingDimension)
