@@ -11,7 +11,6 @@ local VRPFonts = {}
 function VRPFont(height)
 	local fontsize = math.floor(height/2)
 	if not VRPFonts[fontsize] then
-		outputDebug("creating font "..tostring(fontsize) .. " px - ".. tostring(height))
 		VRPFonts[fontsize] = dxCreateFont("files/fonts/gtafont.ttf", fontsize)
 	end
 	

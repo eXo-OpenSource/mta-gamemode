@@ -116,6 +116,10 @@ function Player.getFromId(id)
 end
 
 function Player:loadCharacterInfo()
+	if self:isGuest() then
+		return
+	end
+	
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, Weapons, InventoryId FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	local row = Async.wait()
 	
@@ -162,7 +166,7 @@ function Player:loadCharacterInfo()
 end
 
 function Player:save()
-	if not self.m_Account or self.m_Account:isGuest() then	
+	if not self.m_Account or self:isGuest() then	
 		return 
 	end
 	local x, y, z = getElementPosition(self)
@@ -199,6 +203,7 @@ function Player:sendShortMessage(text, ...) self:triggerEvent("shortMessageBox",
 -- Short getters
 function Player:getId()			return self.m_Id		end
 function Player:isLoggedIn()	return self.m_Id ~= -1	end
+function Player:isGuest()		return self.m_Account:isGuest() end
 function Player:getAccount()	return self.m_Account 	end
 function Player:getRank()		return self.m_Account:getRank() end
 function Player:getMoney()		return getPlayerMoney(self)	end
