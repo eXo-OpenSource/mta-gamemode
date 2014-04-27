@@ -1,97 +1,27 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Vehicle.lua
+-- *  FILE:        server/classes/PermanentVehicle.lua
 -- *  PURPOSE:     Vehicle class
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
---registerElementClass("vehicle", Vehicle)
 
-function Vehicle:constructor(Id, owner, keys, color, health, inGarage)
-	self.m_Id = Id
-	self.m_Owner = owner
-	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- *hide*
-	self.m_Keys = keys or {}
-	self.m_InGarage = inGarage or false
+Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
+function Vehicle:virtual_constructor()
+	addEventHandler("onVehicleExit", self, bind(self.onPlayerExit, self))
 	
-	setElementHealth(self, health)
-	setVehicleLocked(self, true)
-	if color then
-		local a, r, g, b = getBytesInInt32(color)
-		setVehicleColor(self, r, g, b)
-	end
+	self.m_LastUseTime = math.huge
 	
-	if self.m_InGarage then
-		-- Move to unused dimension | Todo: That's probably a bad solution
-		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	-- For vehicles loaded from the database the vehicle manager might not yet be created
+	local vehicleManager = VehicleManager:getSingleton()
+	if vehicleManager then
+		vehicleManager:addRef(self, not self:isPermanent())
 	end
 end
 
-function Vehicle:destructor()
-	
-end
-
-function Vehicle.createPermanent(owner, model, posX, posY, posZ, rotation)
-	rotation = tonumber(rotation) or 0
-	if type(owner) == "userdata" then
-		owner = owner:getId()
-	end
-	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation) then
-		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-		enew(vehicle, Vehicle, sql:lastInsertId(), owner, nil, nil, 1000)
-		VehicleManager:getSingleton():addRef(vehicle)
-		return vehicle
-	end
-	return false
-end
-
-function Vehicle.create(owner, model, posX, posY, posZ, rotation)
-	rotation = tonumber(rotation) or 0
-	if type(owner) == "userdata" then
-		owner = owner:getId()
-	end
-	
-	local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-	enew(vehicle, Vehicle, false, owner, nil, nil, 1000)
-	--VehicleManager:getSingleton():addRef(vehicle)
-	return vehicle
-end
-
-function Vehicle:purge()
-	if not self:isPermanent() then
-		return false
-	end
-
-	if sql:queryExec("DELETE FROM ??_vehicles WHERE Id = ?", sql:getPrefix(), self.m_Id) then
-		VehicleManager:getSingleton():removeRef(self)
-		destroyElement(self)
-		return true
-	end
-	return false
-end
-
-function Vehicle:save()
-	if not self:isPermanent() then
-		return false
-	end
-
-	local posX, posY, posZ = getElementPosition(self)
-	local rotX, rotY, rotZ = getElementRotation(self)
-	local health = getElementHealth(self)
-	local r, g, b = getVehicleColor(self, true)
-	local color = setBytesInInt32(255, r, g, b) -- Format: argb
-	
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, IsInGarage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_InGarage and 1 or 0, self.m_Id)
-end
-
-function Vehicle:getId()
-	return self.m_Id
-end
-
-function Vehicle:isPermanent()
-	return self.m_Id ~= false
+function Vehicle:virtual_destructor()
+	VehicleManager:getSingleton():removeRef(self, not self:isPermanent())
 end
 
 function Vehicle:setOwner(owner)
@@ -160,18 +90,20 @@ function Vehicle:isLocked()
 	return isVehicleLocked(self)
 end
 
-function Vehicle:isInGarage()
-	return self.m_InGarage
+function Vehicle:onPlayerExit(player)
+	self.m_LastUseTime = getTickCount()
 end
 
-function Vehicle:setInGarage(state)
-	self.m_InGarage = state
+function Vehicle:getLastUseTime()
+	return self:isBeingUsed() and getTickCount() or self.m_LastUseTime
 end
 
-function Vehicle:respawn()
-	-- Todo: Check if slot limit is reached
-	-- Set inGarage flag and teleport to private dimension
-	self:setInGarage(true)
-	fixVehicle(self)
-	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+function Vehicle:isBeingUsed()
+	for k, v in pairs(getVehicleOccupants(self)) do
+		return true 
+	end
+	return false
 end
+
+ Vehicle.isPermanent = pure_virtual
+ Vehicle.respawn = pure_virtual

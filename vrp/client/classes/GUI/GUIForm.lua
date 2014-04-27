@@ -20,7 +20,7 @@ function GUIForm:destructor()
 	self.m_KeyBinds = {}
 	self:setVisible(false)
 	
-	-- Todo: Replace this by derived_destructor
+	-- Todo: Replace this by virtual_destructor
 	CacheArea.destructor(self)
 end
 

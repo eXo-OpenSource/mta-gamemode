@@ -15,9 +15,9 @@ DEBUG = DEBUG or nil
 
 --// new(class, ...)
 --||	@desc:	Creates an instance of 'class' and calls the constructor
---||			and all derived_constructors
+--||			and all virtual_constructors
 --||	@param:	table 'class' -	The class which should be instanciated
---||	@param: vararg        - Parameters passed to the constructor and derived_constructors
+--||	@param: vararg        - Parameters passed to the constructor and virtual_constructors
 --||	@return:table 		  - The newly created instance 
 --\\
 function new(class, ...)
@@ -26,7 +26,7 @@ function new(class, ...)
 	-- DEBUG: Validate that we are not instanciating a class with pure virtual methods
 	if DEBUG then
 		for k, v in pairs(class) do
-			assert(v ~= pure_virtual, "Attempted to instaciate a class with an unimplemented pure virtual method ("..tostring(k)..")")
+			assert(v ~= pure_virtual, "Attempted to instanciate a class with an unimplemented pure virtual method ("..tostring(k)..")")
 		end
 	end
 	
@@ -43,8 +43,8 @@ function new(class, ...)
 	local callDerivedConstructor;
 	callDerivedConstructor = function(self, instance, ...)
 		for k, v in pairs(super(self)) do
-			if rawget(v, "derived_constructor") then
-				rawget(v, "derived_constructor")(instance, ...)
+			if rawget(v, "virtual_constructor") then
+				rawget(v, "virtual_constructor")(instance, ...)
 			end
 			local s = super(v)
 			if s then callDerivedConstructor(s, instance, ...) end
@@ -72,14 +72,14 @@ end
 --// enew(element, class, ...)
 --||	@desc:	Makes an element an instance of 'class' and calls the constructor
 --||	@param:	table 'class' -	The class which should be instanciated
---||	@param: vararg        - Parameters passed to the constructor and derived_constructors
+--||	@param: vararg        - Parameters passed to the constructor and virtual_constructors
 --||	@return:element 	  - The element passed
 --\\
 function enew(element, class, ...)
 	-- DEBUG: Validate that we are not instanciating a class with pure virtual methods
 	if DEBUG then
 		for k, v in pairs(class) do
-			assert(v ~= pure_virtual, "Attempted to instaciate a class with an unimplemented pure virtual method ("..tostring(k)..")")
+			assert(v ~= pure_virtual, "Attempted to instanciate a class with an unimplemented pure virtual method ("..tostring(k)..")")
 		end
 	end
 	
@@ -95,17 +95,17 @@ function enew(element, class, ...)
 	
 	-- Weird Lua behaviour requires forwarding of recursive local functions...?
 	local callDerivedConstructor;
-	callDerivedConstructor = function(self, instance, ...)
-		for k, v in pairs(super(self)) do
-			if rawget(v, "derived_constructor") then
-				rawget(v, "derived_constructor")(instance, ...)
+	callDerivedConstructor = function(parentClasses, instance, ...)
+		for k, v in pairs(parentClasses) do
+			if rawget(v, "virtual_constructor") then
+				rawget(v, "virtual_constructor")(instance, ...)
 			end
 			local s = super(v)
 			if s then callDerivedConstructor(s, instance, ...) end
 		end
 	end
 		
-	callDerivedConstructor(class, element, ...) 
+	callDerivedConstructor(super(instance), element, ...) 
 	
 	-- Call constructor
 	if rawget(class, "constructor") then
@@ -131,7 +131,7 @@ end
 
 --// registerElementClass(elementType, class)
 --||	@desc:	Registers a class to be used upon element index operations like e.g.
---||			getPlayerFromName("MrX"):hello() would search in the class assigned to "player"
+--||			getPlayerFromName("sbx320"):hello() would search in the class assigned to "player"
 --||	@param:	string 'elementType'- The element type the class is supposed to be assigned to
 --||	@param: table 'class'       - The class which is assigned
 --\\
@@ -149,9 +149,9 @@ end
 
 --// delete(self, ...)
 --||	@desc:	Deletes an instance and calls the destructor
---||			and all derived_destructors
+--||			and all virtual_destructors
 --||	@param:	table 'self' -	The instance to be deleted
---||	@param: vararg        - Parameters passed to the destructor and derived_destructors
+--||	@param: vararg        - Parameters passed to the destructor and virtual_destructors
 --\\
 function delete(self, ...)
 	if self.destructor then --if rawget(self, "destructor") then
@@ -161,17 +161,17 @@ function delete(self, ...)
 	-- Prevent the destructor to be called twice 
 	self.destructor = false
 	
-	-- Weird Lua behaviour requires forwarding of recursive local functions...?
 	local callDerivedDestructor;
-	callDerivedDestructor = function(self, instance, ...)
-		for k, v in pairs(super(self)) do
-			if rawget(v, "derived_destructor") then
-				rawget(v, "derived_destructor")(instance, ...)
+	callDerivedDestructor = function(parentClasses, instance, ...)
+		for k, v in pairs(parentClasses) do
+			if rawget(v, "virtual_destructor") then
+				rawget(v, "virtual_destructor")(instance, ...)
 			end
 			local s = super(v)
 			if s then callDerivedDestructor(s, instance, ...) end
 		end
 	end
+	callDerivedDestructor(super(self), self, ...)
 	
 	-- Cleanup
 	elementIndex[self] = nil

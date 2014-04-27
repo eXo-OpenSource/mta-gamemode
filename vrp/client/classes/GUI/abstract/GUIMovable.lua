@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GUIMovable = {}
 
-function GUIMovable:derived_constructor()
+function GUIMovable:virtual_constructor()
 	self.m_CursorMoveHandler = bind(GUIMovable.Event_CursorMove, self)
 end
 

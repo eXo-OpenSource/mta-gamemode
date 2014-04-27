@@ -13,8 +13,8 @@ function GUIScrollbar:constructor()
 	error "Please use CGUIHorizontalScrollbar or CGUIVerticalScrollbar"
 end
 
-function GUIScrollbar:derived_constructor(posX, posY, width, height, parent)
-	checkArgs("GUIScrollbar:derived_constructor", "number", "number", "number", "number")
+function GUIScrollbar:virtual_constructor(posX, posY, width, height, parent)
+	checkArgs("GUIScrollbar:virtual_constructor", "number", "number", "number", "number")
 	
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 

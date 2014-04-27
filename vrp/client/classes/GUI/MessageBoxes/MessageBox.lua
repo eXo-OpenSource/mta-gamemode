@@ -16,7 +16,7 @@ function MessageBox:constructor(text, timeout)
 	playSound(self:getSoundPath())
 end
 
-function MessageBox:derived_constructor(text, timeout)
+function MessageBox:virtual_constructor(text, timeout)
 	MessageBox.constructor(self, text, timeout)
 end
 

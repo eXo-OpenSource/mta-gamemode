@@ -9,7 +9,7 @@ function MTAElement:constructor()
 	self.m_Data = {}
 end
 
-function MTAElement:derived_constructor()
+function MTAElement:virtual_constructor()
 	MTAElement.constructor(self)
 end
 

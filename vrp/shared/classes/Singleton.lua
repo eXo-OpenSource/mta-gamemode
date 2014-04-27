@@ -21,6 +21,6 @@ function Singleton:new(...)
 	return inst
 end
 
-function Singleton:derived_destructor()
+function Singleton:virtual_destructor()
 	self.ms_Instance = nil
 end

@@ -6,9 +6,11 @@
 -- *
 -- ****************************************************************************
 VehicleManager = inherit(Singleton)
+VehicleManager.sPulse = TimedPulse:new(5*1000--[[*60*]])
 
 function VehicleManager:constructor()
 	self.m_Vehicles = {}
+	self.m_TemporaryVehicles = {}
 
 	-- Add events
 	addEvent("vehicleBuy", true)
@@ -32,9 +34,11 @@ function VehicleManager:constructor()
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	for i, rowData in ipairs(result) do
 		local vehicle = createVehicle(rowData.Model, rowData.PosX, rowData.PosY, rowData.PosZ, 0, 0, rowData.Rotation)
-		enew(vehicle, Vehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys), rowData.Color, rowData.Health, toboolean(rowData.IsInGarage))
+		enew(vehicle, PermanentVehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys), rowData.Color, rowData.Health, toboolean(rowData.IsInGarage))
 		self:addRef(vehicle)
 	end
+	
+	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
 end
 
 function VehicleManager:destructor()
@@ -46,7 +50,12 @@ function VehicleManager:destructor()
 	outputServerLog("Saved vehicles")
 end
 
-function VehicleManager:addRef(vehicle)
+function VehicleManager:addRef(vehicle, isTemp)
+	if isTemp then
+		self.m_TemporaryVehicles[#self.m_TemporaryVehicles+1] = vehicle
+		return
+	end
+
 	local ownerId = vehicle:getOwner()
 	assert(ownerId, "Bad owner specified")
 	
@@ -57,7 +66,15 @@ function VehicleManager:addRef(vehicle)
 	table.insert(self.m_Vehicles[ownerId], vehicle)
 end
 
-function VehicleManager:removeRef(vehicle)
+function VehicleManager:removeRef(vehicle, isTemp)
+	if isTemp then
+		local idx = table.find(self.m_TemporaryVehicles, vehicle)
+		if idx then
+			table.remove(self.m_TemporaryVehicles, idx)
+		end
+		return
+	end
+
 	local ownerId = vehicle:getOwner()
 	assert(ownerId, "Bad owner specified")
 	
@@ -66,6 +83,23 @@ function VehicleManager:removeRef(vehicle)
 		if idx then
 			table.remove(self.m_Vehicles[ownerId], idx)
 		end
+	end
+end
+
+function VehicleManager:removeUnusedVehicles()
+	-- ToDo: Lateron, do not loop through all vehicles
+	for ownerid, data in pairs(self.m_Vehicles) do 
+		for k, vehicle in pairs(data) do
+			if vehicle:getLastUseTime() < getTickCount() - 30*1000*60 then
+				vehicle:respawn()
+			end
+		end
+	end
+	
+	for k, vehicle in pairs(self.m_TemporaryVehicles) do
+		if vehicle:getLastUseTime() < getTickCount() - 5*1000 then
+			vehicle:respawn()
+		end	
 	end
 end
 
@@ -90,7 +124,7 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	end
 	
 	local spawnX, spawnY, spawnZ, rotation = unpack(VEHICLESHOPS[shop].Spawn)
-	local vehicle = Vehicle.createPermanent(client:getId(), vehicleModel, spawnX, spawnY, spawnZ, rotation)
+	local vehicle = PermanentVehicle.create(client:getId(), vehicleModel, spawnX, spawnY, spawnZ, rotation)
 	if vehicle then
 		client:takeMoney(price)
 		warpPedIntoVehicle(client, vehicle)
@@ -150,7 +184,7 @@ end
 
 function VehicleManager:Event_vehicleRemoveKey(characterId)
 	if not source:hasKey(characterId) then
-		client:sendWarning(_("The specified player is not in percession of a key", client))
+		client:sendWarning(_("The specified player is not in possession of a key", client))
 		return
 	end
 	

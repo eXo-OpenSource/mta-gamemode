@@ -42,6 +42,8 @@
 	<script src="server/classes/WhiteList.lua" type="server"/>
 	<script src="server/classes/PhoneInteraction.lua" type="server"/>
 	<script src="server/classes/Vehicle.lua" type="server"/>
+	<script src="server/classes/PermanentVehicle.lua" type="server"/>
+	<script src="server/classes/TemporaryVehicle.lua" type="server"/>
 	<script src="server/classes/VehicleManager.lua" type="server"/>
 	<script src="server/classes/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Ban.lua" type="server"/>
@@ -63,6 +65,8 @@
 	<script src="server/classes/AmmuNation.lua" type="server"/>
 	<script src="server/classes/AmmuNationManager.lua" type="server"/>
 	<script src="server/classes/Karma.lua" type="server"/>
+	<script src="server/classes/AutomaticVehicleSpawner.lua" type="server"/>
+	<script src="server/classes/Gameplay/Police.lua" type="server"/>
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
