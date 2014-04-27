@@ -51,7 +51,7 @@ addEventHandler("vehicleSpawn", root,
 			destroyElement(client:getJobVehicle())
 		end
 		
-		local vehicle = Vehicle.create(client, vehicleModel, shop.m_Position.X, shop.m_Position.Y, shop.m_Position.Z + 1.5, shop.m_Rotation)
+		local vehicle = TemporaryVehicle.create(vehicleModel, shop.m_Position.X, shop.m_Position.Y, shop.m_Position.Z + 1.5, shop.m_Rotation)
 		if shop.m_PostSpawnFunc then
 			shop.m_PostSpawnFunc(vehicle, client)
 		end

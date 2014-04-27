@@ -55,6 +55,13 @@ end
 
 function DxElement:destructor()
 	if self.onHide then self:onHide() end
+	
+	-- Delete the children (--> call their destructor)
+	for k, v in ipairs(self.m_Children) do
+		delete(v)
+	end
+	
+	-- Unlink from parent
 	if self.m_Parent then
 		for k, v in ipairs(self.m_Parent.m_Children) do
 			if v == self then
@@ -63,6 +70,7 @@ function DxElement:destructor()
 			end
 		end
 	end
+	
 	self:anyChange()
 end
 

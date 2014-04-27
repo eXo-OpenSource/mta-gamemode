@@ -11,7 +11,7 @@ local VRPFonts = {}
 function VRPFont(height)
 	local fontsize = math.floor(height/2)
 	if not VRPFonts[fontsize] then
-		VRPFonts[fontsize] = dxCreateFont("files/fonts/gtafont.ttf", fontsize)
+		VRPFonts[fontsize] = dxCreateFont("files/fonts/Segoe/segoeui.ttf", fontsize)
 	end
 	
 	return VRPFonts[fontsize]

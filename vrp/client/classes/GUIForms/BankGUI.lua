@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 BankGUI = inherit(GUIForm)
+inherit(Singleton, BankGUI)
 addEvent("bankMoneyBalanceRetrieve", true)
 
 function BankGUI:constructor()
@@ -15,8 +16,6 @@ function BankGUI:constructor()
 	self.m_HeaderImage = GUIImage:new(self.m_Width*0.01, self.m_Height*0.11, self.m_Width*0.98, self.m_Height*0.25, "files/images/BankHeader.png", self.m_Window)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Kontostand:", self.m_Window):setColor(Color.Green)
 	self.m_AccountBalanceLabel = GUILabel:new(self.m_Width*0.28, self.m_Height*0.37, self.m_Width*0.34, self.m_Height*0.07, "Loading...", self.m_Window)
-	triggerServerEvent("bankMoneyBalanceRequest", root)
-	addEventHandler("bankMoneyBalanceRetrieve", root, function(amount) self.m_AccountBalanceLabel:setText(tostring(amount).."$") end)
 	
 	self.m_TabPanel = GUITabPanel:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width-2*self.m_Width*0.02, self.m_Height*0.52, self.m_Window)
 	local tabWidth, tabHeight = self.m_TabPanel:getSize()
@@ -40,6 +39,11 @@ function BankGUI:constructor()
 	self.m_TransferAmountEdit = GUIEdit:new(tabWidth*0.2, tabHeight*0.28, tabWidth*0.5, tabHeight*0.15, self.m_TabTransfer)
 	self.m_TransferButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Überweisen", true, self.m_TabTransfer)
 	self.m_TransferButton.onLeftClick = bind(self.WithdrawButton_Click, self)
+end
+
+function BankGUI:onShow()
+	triggerServerEvent("bankMoneyBalanceRequest", root)
+	addEventHandler("bankMoneyBalanceRetrieve", root, function(amount) self.m_AccountBalanceLabel:setText(tostring(amount).."$") end)
 end
 
 function BankGUI:WithdrawButton_Click()

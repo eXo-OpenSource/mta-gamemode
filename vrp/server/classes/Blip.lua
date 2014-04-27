@@ -6,7 +6,11 @@ function Blip:constructor(imagePath, x, y)
 	self.m_PosX, self.m_PosY = x, y
 	
 	table.insert(Blip.Map, self)
-	triggerClientEvent("blipCreate", root, #Blip.Map, self.m_ImagePath, self.m_PosX, self.m_PosY)
+	for k, player in ipairs(getElementsByType("player")) do
+		if player:isLoggedIn() then
+			player:triggerEvent("blipCreate", #Blip.Map, self.m_ImagePath, self.m_PosX, self.m_PosY)
+		end
+	end
 end
 
 function Blip:destructor()

@@ -22,5 +22,8 @@ function Singleton:new(...)
 end
 
 function Singleton:virtual_destructor()
-	self.ms_Instance = nil
+	for k, v in pairs(super(self)) do
+		v.ms_Instance = nil
+		v.new = Singleton.new
+	end
 end

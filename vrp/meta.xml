@@ -1,6 +1,6 @@
  <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.3.3" client="1.3.5"/>
+	<min_mta_version server="1.3.4" client="1.3.5"/>
 	<oop>false</oop>
 	<include resource="freeroam"/>
 
@@ -327,6 +327,7 @@
 	
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/Segoe/segoeui.ttf"/>
 	
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
