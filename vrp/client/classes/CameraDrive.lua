@@ -11,11 +11,13 @@ function cameraDrive:construcotr ( startX,startY,startZ,startLookX,startLookY,st
 	self.m_StartTick = getTickCount ()
 	self.m_EndTick = self.startTick + needForFinish
 	
-	addEventHandler ('onClientRender', root, bind(self.onRender,self) )
+	self.m_RenderHandler = bind(self.onRender,self)
+	
+	addEventHandler ('onClientRender', root, self.m_RenderHandler )
 end
 
 function cameraDrive:destructor ()
-	removeEventHandler ('onClientRender', root, bind(self.onRender,self))
+	removeEventHandler ('onClientRender', root, self.m_RenderHandler)
 end
 
 function cameraDrive:onRender ()
