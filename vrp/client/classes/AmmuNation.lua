@@ -40,7 +40,6 @@ function AmmuNationGUI:onKey(key,state)
 			self.m_Selection = self.m_Selection + 1
 		end
 		self.m_Selection = math.max(math.min(self.m_Selection,#AmmuNationGUI.INFO),1)
-		
 		self:updateMatrix()
 	end
 end
@@ -50,7 +49,7 @@ function AmmuNationGUI:updateMatrix()
 	local fadeMatrix = AmmuNationGUI.INFO[self.m_Selection].MATRIX
 	
 	if self.m_CameraInstance then
-		self.m_CameraInstance:decon ()
+		self.m_CameraInstance:destructor ()
 	end
 	
 	self.m_CameraInstance = cameraDrive:new(self.m_CurrentMatrix[1],self.m_CurrentMatrix[2],self.m_CurrentMatrix[3],
