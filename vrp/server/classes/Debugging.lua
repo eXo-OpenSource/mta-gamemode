@@ -24,7 +24,7 @@ if DEBUG then
 	function Debugging:vehicle(player, cmd, model)
 		model = tonumber(model) or 411
 		local x, y, z = getElementPosition(player)
-		Vehicle.create(player, model, x+3, y, z)
+		TemporaryVehicle.create(model, x+3, y, z)
 	end
 	
 	function Debugging:xp(player, cmd, xp)

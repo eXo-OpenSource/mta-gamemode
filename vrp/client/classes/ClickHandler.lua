@@ -66,7 +66,7 @@ function ClickHandler:dispatchClick(clickInfo)
 	
 	-- Phase 2: Check models
 	if self:checkModels(model, 1775, 1776, 1209) then
-		self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element))
+		self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 		return
 	end
 	if model == 2942 and range <= 8 then
@@ -77,7 +77,7 @@ function ClickHandler:dispatchClick(clickInfo)
 	-- Phase 3: Check element types
 	if self.m_Menu[elementType] then
 		if elementType ~= "vehicle" or getElementData(element, "OwnerName") then -- Elementdata: temp fix (Todo)
-			self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element))
+			self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 			return
 		end
 	end

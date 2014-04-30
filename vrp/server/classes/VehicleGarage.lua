@@ -10,12 +10,18 @@
 VehicleGarage = inherit(Object)
 VehicleGarage.Map = {}
 
-function VehicleGarage:constructor(slotData, entryPosition, interiorPosition, interiorExitPosition, exitPosition, interiorId)
+function VehicleGarage:constructor(slotData, entryPosition, interiorPosition, interiorExitPosition, exitPosition, interiorId, garageId)
 	self.m_Id = #VehicleGarage.Map + 1
 	self.m_Sessions = {}
 	self.m_SlotData = slotData
 	self.m_EnterColShape = createColSphere(entryPosition.X, entryPosition.Y, entryPosition.Z, 3)
 	self.m_ExitColShape = createColSphere(interiorExitPosition.X, interiorExitPosition.Y, interiorExitPosition.Z, 2)
+	self.m_Blip = Blip:new("files/images/Blips/Garage.png", entryPosition.X, entryPosition.Y, entryPosition.Z)
+	self.m_GarageId = garageId
+	
+	if self.m_GarageId then
+		setGarageOpen(self.m_GarageId, true)
+	end
 	
 	addEventHandler("onColShapeHit", self.m_EnterColShape,
 		function(hitElement, matchingDimension)
@@ -63,6 +69,7 @@ function VehicleGarage:constructor(slotData, entryPosition, interiorPosition, in
 				local session = self:getSessionByPlayer(hitElement)
 				if not session then return end
 				self:closeSession(session)
+				setElementVelocity(getPedOccupiedVehicle(hitElement) or hitElement, 0, 0, 0)
 				
 				fadeCamera(hitElement, false)
 				setTimer(
@@ -135,16 +142,15 @@ function VehicleGarage.initalizeAll()
 	VehicleGarage.Map = {
 		VehicleGarage:new(
 			{
-				{571.8, -2781.9, 705.2, 224},
-				{570.5, -2765.8, 705.4, 260},
-				{586.1, -2787.9, 705.2, 42},
-				{586, -2766.2, 705.4, 160}
+				{1599.80005, 965.59998, 10.4, 272},
+				{1604.30005, 974.79999, 10.6, 178},
 			},
 			Vector(1877.2, -2092, 13.4),
-			Vector(573.6, -2799.2, 705.5),
-			Vector(573.7, -2804.4, 705.4),
+			Vector(1618, 965.8, 12),
+			Vector(1623.5, 965.8, 12),
 			Vector(1877.7, -2102.8, 13.1),
-			0
+			0,
+			2
 		);
 	}
 end

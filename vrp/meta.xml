@@ -298,10 +298,11 @@
 	<vrpfile src="files/images/Blips/Trashman.png"/>
 	<vrpfile src="files/images/Blips/RoadSweeper.png"/>
 	<vrpfile src="files/images/Blips/Lumberjack.png"/>
-	<vrpfile src="files/images/Blips/Pickpocket.png"/>
 	<vrpfile src="files/images/Blips/Police.png"/>
+	<vrpfile src="files/images/Blips/Farmer.png"/>
 	<vrpfile src="files/images/Blips/Bank.png"/>
 	<vrpfile src="files/images/Blips/PayNSpray.png"/>
+	<vrpfile src="files/images/Blips/Garage.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -335,11 +336,7 @@
 	
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
-	<map src="files/maps/Carhouse.map"/>
 	<map src="files/maps/Roadsweeper.map"/>
-	
-	<!-- temp -->
-	<script src="files/maps/tempTXDImport.lua" type="client"/>
-	<vrpfile src="files/maps/Carhouse_a51jdrx.txd"/>
+	<script src="files/maps/Garages.lua" type="client"/>
 	
 </meta>
