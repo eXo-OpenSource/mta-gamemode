@@ -8,37 +8,53 @@
 Forum = inherit(Singleton)
 
 function Forum:constructor()
-	-- Get News
-	self.m_News = {}
-		-- ToDo: Change to API
-	if true then return end
-	sql:queryFetch(Async.waitFor(self), "SELECT firstPostID FROM wbb4.wbb1_thread WHERE boardID = 2 LIMIT 3;")
-	local row = Async.wait()
-	
-	for index, data in pairs(row) do
-		local id = #self.m_News+1
-		self.m_News[id] = {}
-		sql:queryFetchSingle(Async.waitFor(self), "SELECT subject, message, time FROM wbb4.wbb1_post WHERE postID = ?;", data.firstPostID)
-		row = Async.wait()
-		
-		self.m_News[id].title = row.subject
-		self.m_News[id].text = row.message:match("%[ingamenews%](.+)%[/ingamenews%]")
-		local time = getRealTime(row.time)
-		self.m_News[id].date = string.format("[%02d.%02d.%04d]", time.monthday, time.month+1, time.year+1900)
-	end
-	
-	nextframe(function()
-		for k, v in pairs(getElementsByType("player")) do
-			v:sendNews()
-		end
-	end)
-end
-
-function Forum:getNews()
-	return self.m_News
 end
 
 function Forum:createAccount(player, username, password)
 	fetchRemote((API_URL.."action=CreateAccount&username=%s&password=%s"):format(username, password), Async.waitFor(player))
 	return Async.wait()
+end
+
+Forum.api = {}
+function Forum.api.call(user, hostname, form)
+	if not Forum.api.validate(user, hostname) then
+		return false
+	end
+	
+	for k, v in pairs(form) do
+		outputDebug(k)
+		outputDebug(v)
+	end
+end
+api_request = Forum.api.call
+
+
+function Forum.api.validate(user, hostname)
+	-- ToDo: Do something to find out if the request was made from a legit source (the forum)
+	return true
+end
+
+function Forum.api.sendMoney(userIdSource, userIdTarget, amount, reason)
+	local sourceAccount = DatabasePlayer.get(userIdSource)
+	if not sourceAccount or amount <= 0 then 
+		return false
+	end
+	
+	amount = math.ceil(amount)
+	
+	if sourceAccount:getBankMoney() < amount then
+		return false, "Not enough money"
+	end
+	
+	local targetAccount = DatabasePlayer.get(userIdSource)
+	if not targetAccount then 
+		return false
+	end
+	
+	sourceAccount:takeBankMoney(amount)
+	targetAccount:giveBankMoney(amount)
+	
+	-- ToDo: Maybe output a message if the target user is logged in / playing
+	
+	return true
 end

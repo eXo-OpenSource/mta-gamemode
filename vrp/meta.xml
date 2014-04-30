@@ -36,6 +36,7 @@
 	<script src="server/classes/Core.lua" type="server"/>
 	<script src="server/classes/MTAElement.lua" type="server"/>
 	<script src="server/classes/Account.lua" type="server"/>
+	<script src="server/classes/DatabasePlayer.lua" type="server"/>
 	<script src="server/classes/Player.lua" type="server"/>
 	<script src="server/classes/PlayerManager.lua" type="server"/>
 	<script src="server/classes/Root.lua" type="server"/>
@@ -241,6 +242,9 @@
 	
 	<script src="client/Main.lua" type="client"/>
 	
+	<!-- Web API -->
+	<html src="server/http/api.lua" />
+	<export function="api_request" type="server" http="true"/>
 		
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
