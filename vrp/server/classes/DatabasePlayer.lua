@@ -56,8 +56,10 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, Weapons, InventoryId FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
-	local row = Async.wait()
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, Weapons, InventoryId FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	if not row then
+		return false
+	end
 	
 	self.m_SavedPosition = Vector(row.PosX, row.PosY, row.PosZ)
 	self.m_SavedInterior = row.Interior
@@ -100,7 +102,7 @@ function DatabasePlayer:load()
 end
 
 function DatabasePlayer:save()
-	if not self.m_Account or self:isGuest() then	
+	if self:isActive() and self:isGuest() then	
 		return 
 	end
 	

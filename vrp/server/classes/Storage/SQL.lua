@@ -1,5 +1,9 @@
 SQL = inherit(Object)
 
+function SQL:virtual_constructor()
+	self.m_Async = true
+end
+
 function SQL:destructor()
 	destroyElement(self.m_DBHandle)
 end
@@ -72,6 +76,28 @@ function SQL:queryFetchSingle(...)
 			unpack(args)
 		)
 	end
+end
+
+function SQL:asyncQueryFetch(...)
+	if self.m_Async then
+		self:queryFetch(Async.waitFor(), ...)
+		return Async.wait()
+	else
+		return self:queryFetch(...)
+	end
+end
+
+function SQL:asyncQueryFetchSingle(...)
+	if self.m_Async then
+		self:queryFetchSingle(Async.waitFor(), ...)
+		return Async.wait()
+	else
+		return self:queryFetchSingle(...)
+	end
+end
+
+function SQL:setAsyncEnabled(enabled)
+	self.m_Async = enabled
 end
 
 -- The following method have to be implemented according to the underlying database type

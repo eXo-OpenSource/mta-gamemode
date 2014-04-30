@@ -89,4 +89,5 @@ outputDebug("Respawning...")
 	self:setInGarage(true)
 	fixVehicle(self)
 	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	self.m_LastUseTime = math.huge
 end

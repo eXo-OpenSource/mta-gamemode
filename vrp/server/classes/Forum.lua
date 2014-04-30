@@ -21,10 +21,16 @@ function Forum.api.call(user, hostname, form)
 		return false
 	end
 	
-	for k, v in pairs(form) do
-		outputDebug(k)
-		outputDebug(v)
+	sql:setAsyncEnabled(false)
+	
+	local result = {pcall(Forum.api[form.request], form)}
+	sql:setAsyncEnabled(true)
+	
+	if #result ~= 1 then
+		table.remove(result, 1)
 	end
+	
+	return unpack(result)
 end
 api_request = Forum.api.call
 
@@ -34,25 +40,33 @@ function Forum.api.validate(user, hostname)
 	return true
 end
 
-function Forum.api.sendMoney(userIdSource, userIdTarget, amount, reason)
+function Forum.api.sendMoney(form)
+	local userIdSource = tonumber(form.user)
+	local userIDTarget = tonumber(form.target)
+	local amount = tonumber(form.amount)
+	local reason = tostring(form.reason)
+	assert(userIdSource and userIDTarget and amount and reason, "Bad API Call")
+	
 	local sourceAccount = DatabasePlayer.get(userIdSource)
-	if not sourceAccount or amount <= 0 then 
+	if not sourceAccount or amount <= 0 or not sourceAccount:load() then 
 		return false
 	end
 	
 	amount = math.ceil(amount)
-	
 	if sourceAccount:getBankMoney() < amount then
 		return false, "Not enough money"
 	end
 	
-	local targetAccount = DatabasePlayer.get(userIdSource)
-	if not targetAccount then 
+	local targetAccount = DatabasePlayer.get(userIDTarget)
+	if not targetAccount or not targetAccount:load() then 
 		return false
 	end
 	
 	sourceAccount:takeBankMoney(amount)
 	targetAccount:giveBankMoney(amount)
+	
+	sourceAccount:save()
+	targetAccount:save()
 	
 	-- ToDo: Maybe output a message if the target user is logged in / playing
 	
