@@ -16,7 +16,7 @@ function GUIEdit:constructor(posX, posY, width, height, parent)
 	checkArgs("CGUIEdit:constructor", "number", "number", "number", "number")
 	
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, "", 1)
+	GUIFontContainer.constructor(self, "", 1, VRPFont(height))
 	GUIColorable.constructor(self, Color.DarkBlue)
 
 	self.m_Caret = 0

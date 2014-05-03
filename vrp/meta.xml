@@ -60,7 +60,7 @@
 	<script src="server/classes/VendingMachine.lua" type="server"/>
 	<script src="server/classes/VehicleGarage.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
-	<script src="server/classes/BankRobbery.lua" type="server"/>
+	<script src="server/classes/Gameplay/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Blip.lua" type="server"/>
 	<script src="server/classes/PayNSpray.lua" type="server"/>
 	<script src="server/classes/AmmuNation.lua" type="server"/>
@@ -86,8 +86,8 @@
 	
 	<!-- NPCs and shops -->
 	<script src="server/classes/NPC.lua" type="server"/>
-	<script src="server/classes/ShopNPC.lua" type="server"/>
-	<script src="server/classes/RobableShop.lua" type="server"/>
+	<script src="server/classes/Gameplay/ShopNPC.lua" type="server"/>
+	<script src="server/classes/Gameplay/RobableShop.lua" type="server"/>
 	
 	<!-- Inventory -->
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
