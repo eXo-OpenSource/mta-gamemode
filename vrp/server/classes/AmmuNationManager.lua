@@ -20,8 +20,8 @@ function AmmuNationManager:constructor()
 	for key, value in ipairs(AmmuNationManager.DATA) do
 		table.insert(self.m_AmmuNations,new(AmmuNation,value.NAME))
 		local instance = self.m_AmmuNations[#self.m_AmmuNations]
-		for k, coords in ipairs(v.ENTER) do
-			instance:addEnter(coords[1],coords[2],coods[3],value.DIMENSION)
+		for k, coords in ipairs(value.ENTER) do
+			instance:addEnter(coords[1],coords[2],coords[3],value.DIMENSION)
 		end
 	end
 	

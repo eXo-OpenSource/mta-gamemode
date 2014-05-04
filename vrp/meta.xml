@@ -116,6 +116,8 @@
 	<script src="client/classes/Skin.lua" type="client"/>
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
 	<script src="client/classes/VehicleGarage.lua" type="client"/>
+	<script src="client/classes/AmmuNation.lua" type="client"/>
+	<script src="client/classes/CameraDrive.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>

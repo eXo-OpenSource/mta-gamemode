@@ -67,7 +67,7 @@ end
 AmmuNationGUI.INFO = {
 	[1] = {
 		NAME = "AK-47",
-		WEAPON = createObject(1337,0,0,0)
+		WEAPON = createObject(1337,0,0,0),
 		MATRIX = {0,0,0,0,0,0},
 	},
 }

@@ -28,6 +28,7 @@ function Core:ready()
 	RadioGUI:new()
 	KarmaBar:new()
 	CustomModelManager:new()
+	AmmuNationGUI:new()
 	
 	-- HUD
 	--HUDRadar:new()

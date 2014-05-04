@@ -10,8 +10,17 @@ function AmmuNation:constructor(name)
 	addEventHandler("onPlayerMagazineBuy",root,bind(self.buyMagazine,self))
 end
 
+function AmmuNation:buyWeapon()
+
+end
+
+function AmmuNation:buyMagazine()
+	
+end
+
 function AmmuNation:addEnter(x,y,z,dimension)
-	local instance = InteriorEnterExit:new({X=x,Y=y,Z=z},{X=AmmuNation.ENTERPOS[1],Y=AmmuNation.ENTERPOS[2],Z=AmmuNation.ENTERPOS[3]}, 0, 0, AmmuNation.INTERIORID,dimension)
+
+	local instance = InteriorEnterExit:new({X=x,Y=y,Z=z},{X=AmmuNation.ENTERPOS.X,Y=AmmuNation.ENTERPOS.Y,Z=AmmuNation.ENTERPOS.Z}, 0, 0, AmmuNation.INTERIORID,dimension)
 	
 	addEventHandler ("onMarkerHit",instance:getEnterMarker(),
 		function(hitElement,matchingDimension)
