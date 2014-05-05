@@ -58,7 +58,7 @@ function Account.register(player, username, password, email)
 		end
 	end
 	
-	local response,errno = Forum:getSingleton():createAccount(player, username, password)
+	local response,errno = Forum:getSingleton():createAccount(player, username, password, email)
 	
 	if response == "ERROR" then 
 		player:triggerEvent("registerfailed", "Error: Interner Fehler. Bitte einen Administrator kontaktieren!")

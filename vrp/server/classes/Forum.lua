@@ -10,8 +10,8 @@ Forum = inherit(Singleton)
 function Forum:constructor()
 end
 
-function Forum:createAccount(player, username, password)
-	fetchRemote((API_URL.."action=CreateAccount&username=%s&password=%s"):format(username, password), Async.waitFor(player))
+function Forum:createAccount(player, username, password, email)
+	fetchRemote((API_URL.."action=CreateAccount&username=%s&password=%s&email=%s"):format(username, password, email), Async.waitFor(player))
 	return Async.wait()
 end
 
@@ -22,7 +22,6 @@ function Forum.api.call(user, hostname, form)
 	end
 	
 	sql:setAsyncEnabled(false)
-	
 	local result = {pcall(Forum.api[form.request], form)}
 	sql:setAsyncEnabled(true)
 	
