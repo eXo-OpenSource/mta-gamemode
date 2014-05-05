@@ -13,7 +13,9 @@ function CutscenePlayer:playCutscene(name, finishcallback)
 		function(cutscene)
 			CutscenePlayer:getSingleton():stopCutscene()
 			setElementDimension(localPlayer, 0)
-			finishcallback()
+			if finishcallback then 
+				finishcallback()
+			end
 		end;
 	
 	self.m_Cutscene:play()

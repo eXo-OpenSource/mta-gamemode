@@ -55,10 +55,12 @@ function Scene:preRender()
 						self.m_ActiveAction[v.index]:stop()
 					end
 					self.m_ActiveAction[v.index] = nil
+					v.index = nil
 				end
 			else
-				if v.starttick < now and v.stoptick > now then
+				if not v.index and v.starttick < now and v.stoptick > now then
 					v.index = #self.m_ActiveAction+1
+					outputDebug(v.index)
 					self.m_ActiveAction[v.index] = v
 					if self.m_ActiveAction[v.index].start then
 						self.m_ActiveAction[v.index]:start()

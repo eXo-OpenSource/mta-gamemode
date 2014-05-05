@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/CharacterCreationGUI.lua
+-- *  PURPOSE:     Character Creation GUI
+-- *
+-- ****************************************************************************
 CharacterCreationGUI = inherit(GUIForm)
 inherit(Singleton, CharacterCreationGUI)
 
@@ -27,8 +34,12 @@ function CharacterCreationGUI:constructor()
 		for k, v in pairs(self.m_Options) do
 			options[k] = v.id
 		end
-		triggerServerEvent("FinishedCharacterCreation", resourceRoot, tonumber(CHARACTER_SELECTION_SKINS[self.m_CurrentSkinIndex]), options)
+		triggerServerEvent("finishedCharacterCreation", resourceRoot, tonumber(CHARACTER_SELECTION_SKINS[self.m_CurrentSkinIndex]), options)
 		self:delete()
+		
+		setElementFrozen(localPlayer, false)
+		toggleAllControls(true)
+		setCameraTarget(localPlayer)
 	end
 	
 	self:bind("enter", self.m_PlayButton.onLeftClick)
