@@ -7,7 +7,8 @@
 -- ****************************************************************************
 Event = inherit(Object)
 
-function Event:constructor()
+function Event:virtual_constructor(Id)
+	self.m_Id = Id
 	self.m_Players = {}
 	self.m_Ranks = {}
 end
@@ -20,7 +21,7 @@ function Event:join(player)
 end
 
 function Event:quit(player)
-	local idx = table.find(self.m_Players, player)
+	local idx = table.ifind(self.m_Players, player)
 	if not idx then
 		return false
 	end
@@ -30,8 +31,17 @@ end
 
 function Event:sendMessage(text, r, g, b, ...)
 	for k, player in ipairs(self.m_Players) do
-		player:sendMessage("[EVENT] ".._(text, player), r, g, b, ...)
+		player:sendMessage("[EVENT] ".._(text, player, ...), r, g, b)
 	end
 end
 
+function Event:openGUI(player)
+	player:triggerEvent("eventGUI", self.m_Id)
+end
+
+function Event:isMember(player)
+	return table.ifind(self.m_Players, player) ~= nil
+end
+
 Event.start = pure_virtual
+Event.getName = pure_virtual

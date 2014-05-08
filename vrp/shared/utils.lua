@@ -67,6 +67,15 @@ function table.findAll(tab, value)
 	return result
 end
 
+function table.ifind(tab, value)
+	for k, v in ipairs(tab) do
+		if v == value then
+			return k
+		end
+	end
+	return nil
+end
+
 _coroutine_resume = coroutine.resume
 function coroutine.resume(...)
 	local state,result = _coroutine_resume(...)

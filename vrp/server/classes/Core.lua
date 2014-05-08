@@ -29,6 +29,8 @@ function Core:constructor()
 	HouseManager:new()
 	AmmuNationManager:new()
 	Police:new()
+	EventManager:new()
+	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()
 	VehicleGarage.initalizeAll()
