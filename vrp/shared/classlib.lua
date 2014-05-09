@@ -154,6 +154,11 @@ end
 --||	@param: vararg        - Parameters passed to the destructor and virtual_destructors
 --\\
 function delete(self, ...)
+	if not self then
+		outputConsole(debug.traceback())
+		error("Bad self @ delete. See console for more details")
+	end
+
 	if self.destructor then --if rawget(self, "destructor") then
 		self:destructor(...)
 	end

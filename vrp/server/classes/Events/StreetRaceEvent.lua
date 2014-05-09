@@ -22,7 +22,7 @@ function StreetRaceEvent:constructor()
 				if not self:isMember(hitElement) then
 					self:openGUI(hitElement)
 				else
-					hitElement:sendWarning(_("Du bist bereits Mitglied dieses Events!", hitElement))
+					hitElement:sendWarning(_("Du nimmst bereits an diesem Event Teil!", hitElement))
 				end
 			end
 		end
@@ -36,29 +36,42 @@ function StreetRaceEvent:start()
 		return false
 	end
 	
-	destroyElement(self.m_StartMarker)
-
-	-- Find random position which is not equal to the start position
-	local x, y, z, randomIndex
-	repeat
-		x, y, z, randomIndex = self.getRandomPosition()
-	until randomIndex ~= self.m_StartIndex
-	
-	self.m_DestinationBlip = Blip:new("files/images/Blips/Waypoint.png", x, y)
-	self.m_ColShape = createColSphere(x, y, z, 20)
-	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
-	
-	-- Start the GPS for each player
+	-- Start the countdown
 	for k, player in ipairs(self.m_Players) do
-		player:startNavigationTo(x, y, z)
+		player:triggerEvent("countdownStart", 3)
 	end
 	
-	-- Tell player that we started the event
-	self:sendMessage("Das Event wurde gestartet!", 255, 255, 0)
+	setTimer(
+		function()
+			destroyElement(self.m_StartMarker)
+
+			-- Find random position which is not equal to the start position
+			local x, y, z, randomIndex
+			repeat
+				x, y, z, randomIndex = self.getRandomPosition()
+			until randomIndex ~= self.m_StartIndex
+			
+			self.m_DestinationBlip = Blip:new("files/images/Blips/Waypoint.png", x, y)
+			self.m_ColShape = createColSphere(x, y, z, 20)
+			addEventHandler("onColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
+			
+			-- Start the GPS for each player
+			for k, player in ipairs(self.m_Players) do
+				player:startNavigationTo(x, y, z)
+			end
+			
+			-- Tell player that we started the event
+			self:sendMessage("Das Event wurde gestartet!", 255, 255, 0)
+		end,
+		3000,
+		1
+	)
 end
 
 function StreetRaceEvent:destructor()
-	delete(self.m_DestinationBlip)
+	if self.m_DestinationBlip then
+		delete(self.m_DestinationBlip)
+	end
 	destroyElement(self.m_ColShape)
 	if self.m_StartMarker and isElement(self.m_StartMarker) then
 		destroyElement(self.m_StartMarker)
