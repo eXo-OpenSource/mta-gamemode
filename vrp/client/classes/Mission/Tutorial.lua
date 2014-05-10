@@ -9,7 +9,7 @@ function Tutorial.stage1:constructor()
 	
 	addEventHandler("onClientMarkerHit", self.m_Marker,
 		function(hitElement, matchingDimension)
-			if getElementType(hitElement) == "player" and matchingDimension then
+			if hitElement == localPlayer and matchingDimension then
 				setElementInterior(hitElement, 0, 2244.67, -1665.30, 15.47)
 				setElementDimension(hitElement, 0)
 				setElementRotation(hitElement, 0, 0, 340)

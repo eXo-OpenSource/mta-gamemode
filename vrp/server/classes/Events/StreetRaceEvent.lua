@@ -72,7 +72,9 @@ function StreetRaceEvent:destructor()
 	if self.m_DestinationBlip then
 		delete(self.m_DestinationBlip)
 	end
-	destroyElement(self.m_ColShape)
+	if self.m_ColShape and isElement(self.m_ColShape) then
+		destroyElement(self.m_ColShape)
+	end
 	if self.m_StartMarker and isElement(self.m_StartMarker) then
 		destroyElement(self.m_StartMarker)
 	end
