@@ -13,10 +13,11 @@ function HUDRadar:constructor()
 	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-20
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	
-	self.m_Texture = dxCreateTexture("files/images/Radar.jpg")
+	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
 	self.m_Zoom = 1
 	self.m_Rotation = 0
 	self.m_Blips = {}
+	self.m_Areas = {}
 	self.m_Visible = false
 	
 	-- Set texture edge to border (no-repeat)
@@ -24,9 +25,11 @@ function HUDRadar:constructor()
 	
 	-- Create a renderTarget that has the size of the diagonal of the actual image
 	self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
+	self:updateMapTexture()
 	
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.draw, self))
+	addEventHandler("onclientRestore", root, bind(self.restore, self))
 	showPlayerHudComponent("radar", false)
 end
 
@@ -36,6 +39,29 @@ end
 
 function HUDRadar:show()
 	self.m_Visible = true
+end
+
+function HUDRadar:updateMapTexture()
+	dxSetRenderTarget(self.m_Texture)
+	
+	-- Draw actual map texture
+	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, "files/images/Radar.jpg")
+	
+	-- Draw radar areas
+	for k, rect in pairs(self.m_Areas) do
+		local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
+		
+		local width, height = rect.Width/2, rect.Height/2
+		dxDrawRectangle(mapX, mapY, width, height, Color.Yellow)
+	end
+	
+	dxSetRenderTarget(nil)
+end
+
+function HUDRadar:restore(clearedRenderTargets)
+	if clearedRenderTargets then
+		self:updateMapTexture()
+	end
 end
 
 function HUDRadar:update()
@@ -69,7 +95,7 @@ function HUDRadar:draw()
 	-- Render (rotated) image section to renderTarget
 	dxSetRenderTarget(self.m_RenderTarget, true)
 	dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
-	dxSetRenderTarget()
+	dxSetRenderTarget(nil)
 	
 	-- Draw renderTarget
 	dxDrawImageSection(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)
@@ -89,17 +115,17 @@ function HUDRadar:draw()
 	
 	local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
 	
-	for k, blip in ipairs(self.m_Blips) do
+	for k, blip in pairs(self.m_Blips) do
 		local blipX, blipY = blip:getPosition()
 		if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < blip:getStreamDistance() then
 			
 			local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
 			local distanceX, distanceY = blipMapX - mapX, blipMapY - mapY
-			local distance = getDistanceBetweenPoints2D(blipMapX, blipMapY, mapX, mapY) --blipMapX - mapX, blipMapY - mapY
+			local distance = getDistanceBetweenPoints2D(blipMapX, blipMapY, mapX, mapY)
 			local rotation = findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY)
 			
 			local screenX =  mapCenterX - math.sin(math.rad(rotation + self.m_Rotation)) * distance
-			local screenY =  mapCenterY + math.cos(math.rad(rotation + self.m_Rotation)) * distance ---distanceY
+			local screenY =  mapCenterY + math.cos(math.rad(rotation + self.m_Rotation)) * distance
 			
 			if screenX < self.m_PosX then
 				screenX = self.m_PosX
@@ -123,8 +149,6 @@ function HUDRadar:draw()
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
 	dxDrawImage(self.m_PosX+self.m_Width/2-8, self.m_PosY+2+self.m_Height/2-8, 16, 16, "files/images/Blips/LocalPlayer.png", self.m_Rotation - rotZ)
 end
-angle = 0
-addCommandHandler("angle", function(cmd, a) angle = tonumber(a) end)
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
 	local mapX = worldX / ( 6000/self.m_ImageSize) + self.m_ImageSize/2
@@ -148,11 +172,55 @@ function HUDRadar:addBlip(blipPath, worldX, worldY)
 end
 
 function HUDRadar:removeBlip(blip)
-	for k, v in ipairs(self.m_Blips) do
-		if blip == v then
-			table.remove(self.m_Blips, k)
-			return true
+	local idx = table.find(self.m_Blips)
+	if idx then
+		table.remove(self.m_Blips, idx)
+	end
+end
+
+function HUDRadar:addArea(worldX, worldY, width, height, color)
+	local area = Rect:new(worldX, worldY, width, height)
+	area.color = tocolor(color)
+	local r, g, b, a = getBytesInInt32(area.color)
+	area.mtaElement = createRadarArea(worldX, worldY-height, width, height, r, g, b, a)
+	table.insert(self.m_Areas, area)
+	self:updateMapTexture()
+	return area
+end
+
+function HUDRadar:removeArea(area)
+	local idx = table.find(self.m_Areas)
+	if idx then
+		destroyElement(self.m_Areas[idx].mtaElement)
+		table.remove(self.m_Areas, idx)
+		self:updateMapTexture()
+	end
+end
+
+
+-- Radar area RPCs
+HUDRadar.ServerAreas = {}
+addEvent("radarAreaCreate", true)
+addEventHandler("radarAreaCreate", root,
+	function(index, x, y, width, height)
+		HUDRadar.ServerAreas[index] = HUDRadar:getSingleton():addArea(x, y, width, height)
+	end
+)
+
+addEvent("radarAreaDestroy", true)
+addEventHandler("radarAreaDestroy", root,
+	function(index)
+		if HUDRadar.ServerAreas[index] then
+			HUDRadar:getSingleton():removeArea(HUDRadar.ServerAreas[index])
 		end
 	end
-	return false
-end
+)
+
+addEvent("radarAreasRetrieve", true)
+addEventHandler("radarAreasRetrieve", root,
+	function(data)
+		for k, v in ipairs(data) do
+			HUDRadar.ServerAreas[k] = HUDRadar:getSingleton():addArea(unpack(v))
+		end
+	end
+)

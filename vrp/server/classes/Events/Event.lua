@@ -21,7 +21,7 @@ function Event:join(player)
 end
 
 function Event:quit(player)
-	local idx = table.ifind(self.m_Players, player)
+	local idx = table.find(self.m_Players, player)
 	if not idx then
 		return false
 	end
@@ -40,7 +40,7 @@ function Event:openGUI(player)
 end
 
 function Event:isMember(player)
-	return table.ifind(self.m_Players, player) ~= nil
+	return table.find(self.m_Players, player) ~= nil
 end
 
 Event.start = pure_virtual

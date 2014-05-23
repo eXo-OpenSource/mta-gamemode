@@ -86,6 +86,7 @@ end
 function Player:loadCharacterInfo()
 	self:load()
 	Blip.sendAllToClient()
+	RadarArea.sendAllToClient()
 end
 
 function Player:save()

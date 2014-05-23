@@ -34,3 +34,7 @@ function getElementMatrix(element)
  
 	return matrix
 end
+
+function tocolor(r, g, b, a)
+	return setBytesInInt32(r, g, b, a or 255)
+end

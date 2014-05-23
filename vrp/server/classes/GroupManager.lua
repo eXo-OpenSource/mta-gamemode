@@ -77,7 +77,7 @@ function GroupManager:Event_groupCreate(name)
 	-- Create the group and the the client as leader (rank 2)
 	local group = Group.create(name)
 	group:addPlayer(client, GroupRank.Leader)
-	client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der Gruppe %s", client), name)
+	client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der Gruppe %s", client, name))
 	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
 end
 

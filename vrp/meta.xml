@@ -62,12 +62,15 @@
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/Gameplay/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Blip.lua" type="server"/>
+	<script src="server/classes/RadarArea.lua" type="server"/>
 	<script src="server/classes/PayNSpray.lua" type="server"/>
 	<script src="server/classes/AmmuNation.lua" type="server"/>
 	<script src="server/classes/AmmuNationManager.lua" type="server"/>
 	<script src="server/classes/Karma.lua" type="server"/>
 	<script src="server/classes/AutomaticVehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Gameplay/Police.lua" type="server"/>
+	<script src="server/classes/GangArea.lua" type="server"/>
+	<script src="server/classes/GangAreaManager.lua" type="server"/>
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>

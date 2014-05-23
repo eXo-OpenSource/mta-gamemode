@@ -30,6 +30,7 @@ function Core:constructor()
 	AmmuNationManager:new()
 	Police:new()
 	EventManager:new()
+	GangAreaManager:new()
 	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

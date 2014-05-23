@@ -77,7 +77,7 @@ end
 function GUIGridList:draw() -- Swap render order
 	if self.m_Visible then
 		-- Draw background
-		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 240))
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0x23, 0x23, 0x23, 230))
 		
 		-- Draw items
 		for k, v in ipairs(self.m_Children) do
@@ -93,7 +93,7 @@ end
 
 function GUIGridList:drawThis()
 	-- Draw header line
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, ITEM_HEIGHT, Color.Black)
+	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, ITEM_HEIGHT, Color.Black)
 	
 	-- Draw column header
 	local currentXPos = 0
