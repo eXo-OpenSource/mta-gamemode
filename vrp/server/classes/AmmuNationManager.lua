@@ -5,9 +5,9 @@ AmmuNationManager.DATA = {
 		NAME = "Los Santos Main",
 		ENTER = 
 		{
-			{0,0,0}
+			{10,15,3}
 		},
-		DIMENSION = 0,
+		DIMENSION = 1,
 	},
 }
 

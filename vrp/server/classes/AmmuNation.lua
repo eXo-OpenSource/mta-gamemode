@@ -1,7 +1,7 @@
 AmmuNation = inherit(Object)
 
-AmmuNation.INTERIORID = 0
-AmmuNation.ENTERPOS = { X = 0, Y = 0, Z = 0 }
+AmmuNation.INTERIORID = 7
+AmmuNation.ENTERPOS = { X = 315.15640, Y = -142.49582, Z = 999.60156 }
 
 function AmmuNation:constructor(name)
 	self.m_Name = name or "NO NAME"
@@ -25,7 +25,8 @@ function AmmuNation:addEnter(x,y,z,dimension)
 	addEventHandler ("onMarkerHit",instance:getEnterMarker(),
 		function(hitElement,matchingDimension)
 			if matchingDimension and not isPedInVehicle(hitElement) then
-				outputChatBox(("Welcome %s, in the Ammu Nation \"%s\""):format(getPlayerName(hitElement),self.m_Name),hitElement,255,255,255,false)
+				outputChatBox(("Welcome %s, in Ammu Nation \"%s\""):format(getPlayerName(hitElement),self.m_Name),hitElement,255,255,255,false)
+				hitElement:triggerEvent("AmmuNation:setDimension")
 			end
 		end
 	)
