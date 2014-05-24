@@ -1,5 +1,5 @@
 <meta>
 	<info edf:definition="edf.edf"/>
-	<script src="server.lua" type="server"/>
-	<script src="client.lua" type="client"/>
+	<file src="Bus.png"/>
+	<file src="Crane.png"/>
 </meta>
