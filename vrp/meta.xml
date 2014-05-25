@@ -86,6 +86,7 @@
 	<script src="server/classes/Jobs/JobLumberjack.lua" type="server"/>
 	<script src="server/classes/Jobs/JobPolice.lua" type="server"/>
 	<script src="server/classes/Jobs/JobFarmer.lua" type="server"/>
+	<script src="server/classes/Jobs/JobBusDriver.lua" type="server"/>
 	
 	<!-- NPCs and shops -->
 	<script src="server/classes/NPC.lua" type="server"/>
@@ -317,6 +318,7 @@
 	<vrpfile src="files/images/Blips/Garage.png"/>
 	<vrpfile src="files/images/Blips/Wheel.png"/>
 	<vrpfile src="files/images/Blips/Waypoint.png"/>
+	<vrpfile src="files/images/Blips/AmmuNation.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

@@ -29,7 +29,7 @@ function HUDSpeedo:constructor()
 end
 
 function HUDSpeedo:show()
-	addEventHandler("onClientRender", root, self.m_Draw)
+	addEventHandler("onClientRender", root, self.m_Draw, true, "high+10")
 end
 
 function HUDSpeedo:hide()

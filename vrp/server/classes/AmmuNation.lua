@@ -47,6 +47,7 @@ end
 function AmmuNation:addEnter(x,y,z,dimension)
 
 	local instance = InteriorEnterExit:new({X=x,Y=y,Z=z},{X=AmmuNation.ENTERPOS.X,Y=AmmuNation.ENTERPOS.Y,Z=AmmuNation.ENTERPOS.Z}, 0, 0, AmmuNation.INTERIORID,dimension)
+	Blip:new("files/images/Blips/AmmuNation.png", x, y, z)
 	
 	addEventHandler ("onMarkerHit",instance:getEnterMarker(),
 		function(hitElement,matchingDimension)

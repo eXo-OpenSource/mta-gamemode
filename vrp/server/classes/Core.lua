@@ -60,6 +60,8 @@ function Core:constructor()
 	for k, v in pairs(getElementsByType("player")) do
 		Async.create(Player.join)(v)
 	end
+	
+	setOcclusionsEnabled(false)
 end
 
 function Core:destructor()
