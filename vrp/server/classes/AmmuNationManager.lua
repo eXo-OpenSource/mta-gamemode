@@ -5,9 +5,17 @@ AmmuNationManager.DATA = {
 		NAME = "Los Santos Main",
 		ENTER = 
 		{
-			{10,15,3}
+			{1368.23376,-1279.83606,13.54688}
 		},
 		DIMENSION = 1,
+	},	
+	[2] = {
+		NAME = "Los Santos East",
+		ENTER = 
+		{
+			{2400.59106,-1981.68750,13.54688}
+		},
+		DIMENSION = 2,
 	},
 }
 
@@ -15,7 +23,7 @@ function AmmuNationManager:constructor()
 	self.m_AmmuNations = {}
 	
 	addEvent("onPlayerWeaponBuy",true)
-	addEvent("onPlayerMagazinBuy",true)
+	addEvent("onPlayerMagazineBuy",true)
 	
 	for key, value in ipairs(AmmuNationManager.DATA) do
 		table.insert(self.m_AmmuNations,new(AmmuNation,value.NAME))

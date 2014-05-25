@@ -64,3 +64,31 @@ Crime = {
 	Damage = {id = 2, text = "Körperverletzung", maxwanted = 2, maxdistance = 80},
 	Hotwire = {id = 3, text = "Fahrzeug kurzgeschlossen", maxwanted = 2},
 }
+
+AmmuNationInfo = {
+	
+	[30] = {
+		Magazine = {price=30,amount=30},
+		Weapon = 1850,
+	},	
+	[31] = {
+		Magazine = {price=60,amount=50},
+		Weapon = 2500,
+	},	
+	[29] = {
+		Magazine = {price=40,amount=30},
+		Weapon = 1000,
+	},
+	[25] = {
+		Magazine = {price=2,amount=1},
+		Weapon = 1500,
+	},
+	[22] = {
+		Magazine = {price=15,amount=17},
+		Weapon = 450,
+	},	
+	[23] = {
+		Magazine = {price=15,amount=17},
+		Weapon = 600,
+	},	
+}

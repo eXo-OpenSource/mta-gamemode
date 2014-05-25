@@ -34,6 +34,6 @@ function cameraDrive:onRender ()
 	setCameraMatrix (positionX, positionY, positionZ,lookAtX, lookAtY, lookAtZ)
 	
 	if getTickCount () >= self.m_EndTick then
-		self:destructor ()
+		delete(self)
 	end
 end

@@ -119,7 +119,6 @@
 	<script src="client/classes/Skin.lua" type="client"/>
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
 	<script src="client/classes/VehicleGarage.lua" type="client"/>
-	<script src="client/classes/AmmuNation.lua" type="client"/>
 	<script src="client/classes/CameraDrive.lua" type="client"/>
 	
 	<!-- GUI system -->
@@ -206,6 +205,7 @@
 	<script src="client/classes/GUIForms/FactionSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/EventJoinGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CountdownGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/AmmuNationGUI.lua" type="client"/>
 	
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>

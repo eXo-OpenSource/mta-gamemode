@@ -307,3 +307,17 @@ function isEventHandlerAdded( sEventName, pElementAttachedTo, func )
  
 	return false
 end
+
+function hasPedThisWeaponInSlots ( ped, id )
+	local occupied = false
+	for i = 1, 8 do
+		local weapon = getPedWeapon ( ped, i )
+		if weapon then
+			if weapon == id then
+				occupied = true
+				break
+			end
+		end
+	end
+	return occupied
+end
