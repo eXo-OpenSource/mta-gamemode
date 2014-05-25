@@ -53,7 +53,11 @@ function AmmuNation:addEnter(x,y,z,dimension)
 			if matchingDimension and not isPedInVehicle(hitElement) then
 				outputChatBox(("Welcome %s, in Ammu Nation \"%s\""):format(getPlayerName(hitElement),self.m_Name),hitElement,255,255,255,false)
 				hitElement:triggerEvent("AmmuNation:setDimension")
-				self.m_Players[hitElement] = true
+				if not self.m_Players[hitElement] then
+					self.m_Players[hitElement] = true
+				else
+					self.m_Players[hitElement] = nil
+				end
 			end
 		end
 	)
