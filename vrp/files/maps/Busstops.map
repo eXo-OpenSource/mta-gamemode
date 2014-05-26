@@ -1,0 +1,20 @@
+<map edf:definitions="vrp_editortools">
+    <bus_stop id="bus_stop (5)" markerdistance="4.5" lines="1,2" posX="1327.6" posY="-1134.2" posZ="24.4" rotX="0" rotY="0" rotZ="90"></bus_stop>
+    <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" posX="945.90002" posY="-1134.3" posZ="24.4" rotX="0" rotY="0" rotZ="90"></bus_stop>
+    <bus_stop id="bus_stop (8)" markerdistance="4.5" lines="1" posX="790.90002" posY="-1170.7" posZ="23.3" rotX="0" rotY="0" rotZ="182"></bus_stop>
+    <bus_stop id="bus_stop (9)" markerdistance="4.5" lines="1" posX="790.20001" posY="-1381.2" posZ="14.2" rotX="0" rotY="0" rotZ="180"></bus_stop>
+    <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" posX="1016.3" posY="-1472.7" posZ="-40.7" rotX="0" rotY="0" rotZ="0"></bus_stop>
+    <bus_stop id="bus_stop (11)" markerdistance="4.5" lines="1" posX="965.20001" posY="-1412.6" posZ="13.9" rotX="0" rotY="0" rotZ="272"></bus_stop>
+    <bus_stop id="bus_stop (12)" markerdistance="4.5" lines="1" posX="1364.1" posY="-1320.2" posZ="14.1" rotX="0" rotY="0" rotZ="0"></bus_stop>
+    <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="1" posX="1166.5" posY="-1412.5" posZ="14.1" rotX="0" rotY="0" rotZ="270"></bus_stop>
+    <bus_stop id="bus_stop (14)" markerdistance="4.5" lines="2" posX="1047.7" posY="-1167.5" posZ="24.4" rotX="0" rotY="0" rotZ="180"></bus_stop>
+    <bus_stop id="bus_stop (15)" markerdistance="4.5" lines="2" posX="1047.0996" posY="-1380.5" posZ="14.2" rotX="0" rotY="0" rotZ="179.995"></bus_stop>
+    <bus_stop id="bus_stop (16)" markerdistance="4" lines="2" posX="1031.2998" posY="-1556.2002" posZ="14.1" rotX="0" rotY="0" rotZ="175.995"></bus_stop>
+    <bus_stop id="bus_stop (17)" markerdistance="4.5" lines="2" posX="1284.2" posY="-1578.9" posZ="14.1" rotX="0" rotY="0" rotZ="270"></bus_stop>
+    <bus_stop id="bus_stop (18)" markerdistance="4.5" lines="2" posX="1363.8" posY="-1421.6" posZ="14.1" rotX="0" rotY="0" rotZ="356"></bus_stop>
+    <bus_stop id="bus_stop (19)" markerdistance="4.5" lines="2" posX="1501.3" posY="-1447.5" posZ="14.1" rotX="0" rotY="0" rotZ="270"></bus_stop>
+    <bus_stop id="bus_stop (20)" markerdistance="4.5" lines="2" posX="1701.5" posY="-1447.4" posZ="14.1" rotX="0" rotY="0" rotZ="272"></bus_stop>
+    <bus_stop id="bus_stop (21)" markerdistance="4.5" lines="2" posX="1721.1" posY="-1323.7" posZ="14.1" rotX="0" rotY="0" rotZ="0"></bus_stop>
+    <bus_stop id="bus_stop (22)" markerdistance="4.5" lines="2" posX="1859.3" posY="-1192.3" posZ="23.8" rotX="0" rotY="0" rotZ="358"></bus_stop>
+    <bus_stop id="bus_stop (23)" markerdistance="4.5" lines="2" posX="1593.7" posY="-1154.3" posZ="24.6" rotX="0" rotY="0" rotZ="88"></bus_stop>
+</map>

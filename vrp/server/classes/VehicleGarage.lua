@@ -16,7 +16,7 @@ function VehicleGarage:constructor(slotData, entryPosition, interiorPosition, in
 	self.m_SlotData = slotData
 	self.m_EnterColShape = createColSphere(entryPosition.X, entryPosition.Y, entryPosition.Z, 3)
 	self.m_ExitColShape = createColSphere(interiorExitPosition.X, interiorExitPosition.Y, interiorExitPosition.Z, 2)
-	self.m_Blip = Blip:new("files/images/Blips/Garage.png", entryPosition.X, entryPosition.Y, entryPosition.Z)
+	self.m_Blip = Blip:new("files/images/Blips/Garage.png", entryPosition.X, entryPosition.Y)
 	self.m_GarageId = garageId
 	
 	if self.m_GarageId then

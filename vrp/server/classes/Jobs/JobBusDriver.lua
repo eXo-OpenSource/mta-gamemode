@@ -10,6 +10,7 @@ JobBusDriver = inherit(Job)
 function JobBusDriver:constructor()
 	Job.constructor(self)
 	
+	-- Prepare job base
 	createObject(9254, 1777.7, -1758.9, 13.2)
 	removeWorldModel(4019, 77, 1777.8, -1773.9, 12.5)
 	removeWorldModel(4025, 77, 1777.8, -1773.9, 12.5)
@@ -17,8 +18,96 @@ function JobBusDriver:constructor()
 		AutomaticVehicleSpawner:new(437, 1799 - i * 6, -1766.2, 13.9, 0, 0, 0)
 	end
 	
+	-- Create bus stops
+	self.m_BusStops = {}
+	self.m_Lines = {}
+	self.m_FuncStopHit = bind(self.BusStop_Hit, self)
+	
+	for k, busStop in pairs(getElementsByType("bus_stop", resourceRoot)) do
+		local markerDistance = getElementData(busStop, "markerdistance")
+		local lines = split(getElementData(busStop, "lines"), ",")
+		local x, y, z = getElementData(busStop, "posX"), getElementData(busStop, "posY"), getElementData(busStop, "posZ")
+		local rx, ry, rz = getElementData(busStop, "rotX"), getElementData(busStop, "rotY"), getElementData(busStop, "rotZ")
+		
+		local object = createObject(1257, x, y, z, rx, ry, rz)
+		local markerX, markerY, markerZ = getPositionFromElementOffset(object, -1 * markerDistance, 0, -1)
+		local marker = createMarker(markerX, markerY, markerZ, "cylinder", 4)
+		local signX, signY, signZ = getPositionFromElementOffset(object, -1.5, 3.4, 0.2)
+		local signObject = createObject(1229, signX, signY, signZ)
+		
+		-- Push to the bus stop list and add the hit event
+		table.insert(self.m_BusStops, {object = object, marker = marker, sign = signObject})
+		addEventHandler("onMarkerHit", marker, self.m_FuncStopHit)
+		
+		-- Push bus stop id to the line lists
+		for i, lineString in pairs(lines) do
+			local line = tonumber(lineString)
+			if not line then
+				error("Error loading bus stops: Invalid line specified")
+			end
+			
+			if not self.m_Lines[line] then
+				self.m_Lines[line] = {}
+			end
+			
+			table.insert(self.m_Lines[line], k)
+		end
+	end
+end
+
+function JobBusDriver:destructor()
+	for k, info in pairs(self.m_BusStops) do
+		destroyElement(info.object)
+		destroyElement(info.marker)
+		destroyElement(info.sign)
+	end
 end
 
 function JobBusDriver:start(player)
+	local line = math.random(1, #self.m_Lines) -- Note: Lines have to be sequent (1, 2, 3, 4, ...)
 	
+	player.Bus_NextStop = 1
+	player.Bus_Line = line
+	
+	local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][1]].object)
+	player.Bus_Blip = Blip:new("files/images/Blips/Waypoint.png", x, y, player)
+end
+
+function JobBusDriver:stop(player)
+	player.Bus_NextStop = nil
+	player.Bus_Line = nil
+	delete(player.Bus_Blip)
+	player.Bus_Blip = nil
+end
+
+function JobBusDriver:BusStop_Hit(player, matchingDimension)
+	if getElementType(player) == "player" and matchingDimension then
+		local vehicle = getPedOccupiedVehicle(player)
+		if not vehicle or getElementModel(vehicle) ~= 437 then
+			return
+		end
+		
+		-- Check if this is really the destination bus stop
+		local destinationId = player.Bus_NextStop
+		local line = player.Bus_Line
+		if not destinationId or not line then
+			return
+		end
+		
+		local stopId = self.m_Lines[line][destinationId]
+		if not stopId or not self.m_BusStops[stopId] or self.m_BusStops[stopId].marker ~= source then
+			-- Show an error message maybe?
+			return
+		end
+		
+		-- Give the player some money and switch to the next bus stop
+		givePlayerMoney(player, 200)
+		local newDestination = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
+		player.Bus_NextStop = newDestination
+		
+		local stopId = self.m_Lines[line][newDestination]
+		local x, y, z = getElementPosition(self.m_BusStops[stopId].object)
+		delete(player.Bus_Blip)
+		player.Bus_Blip = Blip:new("files/images/Blips/Waypoint.png", x, y, player)
+	end
 end

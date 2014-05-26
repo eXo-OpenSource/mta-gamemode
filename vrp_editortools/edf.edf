@@ -27,6 +27,7 @@
 		<data name="position" type="coord3d" default="0,0,0" required="true"/>
 		<object editorOnly="true" model="1257"/>
 		<marker editorOnly="true" type="cylinder" size="4" color="#ff0000cc"/>
+		<object editorOnly="true" model="1229" posX="-1.5" posY="3.4" posZ="0.2"/>
 		<data name="markerdistance" type="number" default="4.5"/>
 		<data name="lines" type="string" default=""/>
 	</element>

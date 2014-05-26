@@ -172,7 +172,7 @@ function HUDRadar:addBlip(blipPath, worldX, worldY)
 end
 
 function HUDRadar:removeBlip(blip)
-	local idx = table.find(self.m_Blips)
+	local idx = table.find(self.m_Blips, blip)
 	if idx then
 		table.remove(self.m_Blips, idx)
 	end
@@ -219,7 +219,7 @@ addEventHandler("radarAreaDestroy", root,
 addEvent("radarAreasRetrieve", true)
 addEventHandler("radarAreasRetrieve", root,
 	function(data)
-		for k, v in ipairs(data) do
+		for k, v in pairs(data) do
 			HUDRadar.ServerAreas[k] = HUDRadar:getSingleton():addArea(unpack(v))
 		end
 	end

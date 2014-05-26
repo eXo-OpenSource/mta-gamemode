@@ -1,15 +1,21 @@
 Blip = inherit(Object)
 Blip.Map = {}
 
-function Blip:constructor(imagePath, x, y)
+function Blip:constructor(imagePath, x, y, visibleTo)
 	self.m_ImagePath = imagePath
 	self.m_PosX, self.m_PosY = x, y
+	self.m_VisibleTo = visibleTo or root
 	
 	table.insert(Blip.Map, self)
-	for k, player in ipairs(getElementsByType("player")) do
-		if player:isLoggedIn() then
-			player:triggerEvent("blipCreate", #Blip.Map, self.m_ImagePath, self.m_PosX, self.m_PosY)
+	
+	if self.m_VisibleTo == root then
+		for k, player in ipairs(getElementsByType("player")) do
+			if player:isLoggedIn() then
+				player:triggerEvent("blipCreate", #Blip.Map, self.m_ImagePath, self.m_PosX, self.m_PosY)
+			end
 		end
+	else
+		self.m_VisibleTo:triggerEvent("blipCreate", #Blip.Map, self.m_ImagePath, self.m_PosX, self.m_PosY)
 	end
 end
 
@@ -18,13 +24,19 @@ function Blip:destructor()
 	if not idx then return end
 	
 	table.remove(Blip.Map, idx)
-	triggerClientEvent("blipDestroy", root, idx)
+	if self.m_VisibleTo == root then
+		triggerClientEvent("blipDestroy", root, idx)
+	else
+		self.m_VisibleTo:triggerEvent("blipDestroy", idx)
+	end
 end
 
 function Blip.sendAllToClient()
 	local data = {}
 	for k, v in ipairs(Blip.Map) do
-		data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY}
+		if v.m_VisibleTo == root then
+			data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY}
+		end
 	end
 	triggerClientEvent("blipsRetrieve", root, data)
 end

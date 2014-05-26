@@ -79,7 +79,7 @@ addEventHandler("blipDestroy", root,
 addEvent("blipsRetrieve", true)
 addEventHandler("blipsRetrieve", root,
 	function(data)
-		for k, v in ipairs(data) do
+		for k, v in pairs(data) do
 			RadarBlip.ServerBlips[k] = HUDRadar:getSingleton():addBlip(unpack(v))
 		end
 	end

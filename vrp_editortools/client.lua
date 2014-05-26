@@ -6,12 +6,12 @@ addEventHandler("onClientElementPropertyChanged", root,
 				local object = getRepresentation(source, "object")
 				local marker = getRepresentation(source, "marker")
 				
-				if object and marker and markerDistance then
+				if object and object[1] and marker and markerDistance then
 					detachElements(marker)
-					local x, y, z = getPositionFromElementOffset(object, -1 * markerDistance, 0, -1)
+					local x, y, z = getPositionFromElementOffset(object[1], -1 * markerDistance, 0, -1)
 					setElementData(marker, "position", {x, y, z})
 					exports.edf:edfSetElementPosition(marker, x, y, z)
-					attachElements(marker, object, -1 * markerDistance, 0, -1)
+					attachElements(marker, object[1], -1 * markerDistance, 0, -1)
 				end
 			end
 		end
@@ -25,12 +25,12 @@ addEventHandler("onClientElementCreate", root,
 			local object = getRepresentation(source, "object")
 			local marker = getRepresentation(source, "marker")
 				
-			if object and marker and markerDistance then
+			if object and object[1] and marker and markerDistance then
 				detachElements(marker)
-				local x, y, z = getPositionFromElementOffset(object, -1 * markerDistance, 0, -1)
+				local x, y, z = getPositionFromElementOffset(object[1], -1 * markerDistance, 0, -1)
 				setElementData(marker, "position", {x, y, z})
 				exports.edf:edfSetElementPosition(marker, x, y, z)
-				attachElements(marker, object, -1 * markerDistance, 0, -1)
+				attachElements(marker, object[1], -1 * markerDistance, 0, -1)
 			end
 		end
 	end

@@ -245,6 +245,7 @@
 	<script src="client/classes/Jobs/JobLumberjack.lua" type="client"/>
 	<script src="client/classes/Jobs/JobPolice.lua" type="client"/>
 	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
+	<script src="client/classes/Jobs/JobBusDriver.lua" type="client"/>
 	
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Item.lua" type="client"/>
@@ -319,6 +320,7 @@
 	<vrpfile src="files/images/Blips/Wheel.png"/>
 	<vrpfile src="files/images/Blips/Waypoint.png"/>
 	<vrpfile src="files/images/Blips/AmmuNation.png"/>
+	<vrpfile src="files/images/Blips/Bus.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -356,4 +358,6 @@
 	<map src="files/maps/Roadsweeper.map"/>
 	<script src="files/maps/Garages.lua" type="client"/>
 	
+	<!-- Data maps (IMPORTANT) -->
+	<map src="files/maps/Busstops.map"/>
 </meta>
