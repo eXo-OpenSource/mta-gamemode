@@ -136,10 +136,6 @@ function Account:getId()
 	return self.m_Id;
 end
 
-function Account:isGuest() 
-	return self.m_IsGuest
-end
-
 function Account:getRank()
 	return self.m_Rank
 end

@@ -102,12 +102,12 @@ function DatabasePlayer:load()
 end
 
 function DatabasePlayer:save()
-	if self:isActive() and self:isGuest() then	
-		return 
+	if not self:isActive() or self:isGuest() then	
+		return false
 	end
 	
-	sql:queryExec("UPDATE ??_character SET Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ? WHERE Id = ?;", sql:getPrefix(),
-		self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ? WHERE Id = ?;", sql:getPrefix(),
+		getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -119,7 +119,7 @@ end
 function DatabasePlayer:isActive()		return false end
 function DatabasePlayer:getId()			return self.m_Id		end
 function DatabasePlayer:isLoggedIn()	return self.m_Id ~= -1	end
-function DatabasePlayer:isGuest()		return self.m_Account:isGuest() end
+function DatabasePlayer:isGuest()		return self.m_IsGuest   end
 function DatabasePlayer:getAccount()	return self.m_Account 	end
 function DatabasePlayer:getRank()		return self.m_Account:getRank() end
 function DatabasePlayer:getMoney()		return getPlayerMoney(self)	end

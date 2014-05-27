@@ -101,7 +101,7 @@ function Player:save()
 		else weapons = weapons.."|"..getPedWeapon(self, i).."|"..getPedTotalAmmo(self, i) end
 	end
 	
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Skin = ?, Weapons = ?, InventoryId = ? WHERE Id = ?;", sql:getPrefix(), x, y, z, interior, getElementModel(self), weapons, self.m_Inventory:getId(), self.m_Id)
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Weapons = ?, InventoryId = ? WHERE Id = ?;", sql:getPrefix(), x, y, z, interior, weapons, self.m_Inventory:getId(), self.m_Id)
 
 	DatabasePlayer.save(self)
 end
