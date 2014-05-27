@@ -16,10 +16,10 @@ function JobGUI:constructor()
 	self.m_InfoLabel = GUILabel:new(30, 180, 540, 200, LOREM_IPSUM, self)
 	self.m_InfoLabel:setFont(VRPFont(24))
 	
-	self.m_AcceptButton = GUIButton:new(50, 400, 210, 35, "Accept", self)
+	self.m_AcceptButton = GUIButton:new(50, 400, 210, 35, _"Akzeptieren", self)
 	self.m_AcceptButton:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_AcceptButton.onLeftClick = bind(self.AcceptButton_Click, self)
-	self.m_DeclineButton = GUIButton:new(340, 400, 210, 35, "Decline", self)
+	self.m_DeclineButton = GUIButton:new(340, 400, 210, 35, _"Ablehnen", self)
 	self.m_DeclineButton:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_DeclineButton.onLeftClick = bind(self.DeclineButton_Click, self)
 end

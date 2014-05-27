@@ -121,6 +121,7 @@
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
 	<script src="client/classes/VehicleGarage.lua" type="client"/>
 	<script src="client/classes/CameraDrive.lua" type="client"/>
+	<script src="client/classes/TextureReplace.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -305,6 +306,7 @@
 	<vrpfile src="files/images/Bar.png"/>
 	<vrpfile src="files/images/Bar_hover.png"/>
 	<vrpfile src="files/images/BankRobberyCountdown.png"/>
+	<vrpfile src="files/images/CoachTexture.png"/>
 	
 	<!-- Blips -->
 	<vrpfile src="files/images/Blips/LocalPlayer.png"/>
@@ -348,6 +350,7 @@
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
+	<vrpfile src="files/shader/texreplace.fx"/>
 	
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->

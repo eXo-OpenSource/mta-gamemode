@@ -15,7 +15,7 @@ function JobBusDriver:constructor()
 	removeWorldModel(4019, 77, 1777.8, -1773.9, 12.5)
 	removeWorldModel(4025, 77, 1777.8, -1773.9, 12.5)
 	for i = 0, 7 do
-		AutomaticVehicleSpawner:new(437, 1799 - i * 6, -1766.2, 13.9, 0, 0, 0)
+		AutomaticVehicleSpawner:new(437, 1799 - i * 6, -1766.2, 13.9, 0, 0, 0, function(vehicle) setVehicleVariant(vehicle, 1, 255) end)
 	end
 	
 	-- Create bus stops
@@ -28,16 +28,17 @@ function JobBusDriver:constructor()
 		local lines = split(getElementData(busStop, "lines"), ",")
 		local x, y, z = getElementData(busStop, "posX"), getElementData(busStop, "posY"), getElementData(busStop, "posZ")
 		local rx, ry, rz = getElementData(busStop, "rotX"), getElementData(busStop, "rotY"), getElementData(busStop, "rotZ")
+		local stationName = getElementData(busStop, "name")
 		
 		local object = createObject(1257, x, y, z, rx, ry, rz)
 		local markerX, markerY, markerZ = getPositionFromElementOffset(object, -1 * markerDistance, 0, -1)
-		local marker = createMarker(markerX, markerY, markerZ, "cylinder", 4)
+		local marker = createColSphere(markerX, markerY, markerZ, 5)
 		local signX, signY, signZ = getPositionFromElementOffset(object, -1.5, 3.4, 0.2)
 		local signObject = createObject(1229, signX, signY, signZ)
 		
 		-- Push to the bus stop list and add the hit event
-		table.insert(self.m_BusStops, {object = object, marker = marker, sign = signObject})
-		addEventHandler("onMarkerHit", marker, self.m_FuncStopHit)
+		table.insert(self.m_BusStops, {object = object, marker = marker, sign = signObject, name = stationName})
+		addEventHandler("onColShapeHit", marker, self.m_FuncStopHit)
 		
 		-- Push bus stop id to the line lists
 		for i, lineString in pairs(lines) do
@@ -101,13 +102,19 @@ function JobBusDriver:BusStop_Hit(player, matchingDimension)
 		end
 		
 		-- Give the player some money and switch to the next bus stop
-		givePlayerMoney(player, 200)
+		player:giveMoney(200)
 		local newDestination = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
 		player.Bus_NextStop = newDestination
+		
+		-- Pay extra money for extra occupants
+		player:giveMoney((table.size(getVehicleOccupants(vehicle)) - 1) * 50)
 		
 		local stopId = self.m_Lines[line][newDestination]
 		local x, y, z = getElementPosition(self.m_BusStops[stopId].object)
 		delete(player.Bus_Blip)
 		player.Bus_Blip = Blip:new("files/images/Blips/Waypoint.png", x, y, player)
+		
+		-- Tell other players that we reached a bus stop (to adjust the bus display labels)
+		triggerClientEvent("busReachNextStop", root, vehicle, self.m_BusStops[stopId].name)
 	end
 end
