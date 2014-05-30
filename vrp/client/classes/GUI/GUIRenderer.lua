@@ -39,7 +39,7 @@ function GUIRenderer.updateAll(elapsedTime)
 	end
 	
 	if not GUIElement.ms_ClickProcessed then
-		-- GUIRenderer.process3DMouse()
+		GUIRenderer.process3DMouse()
 	end
 	
 	if not GUIElement.ms_ClickProcessed then
@@ -59,7 +59,7 @@ function GUIRenderer.process3DMouse()
 	local wx2, wy2, wz2 = getWorldFromScreenPosition(cx, cy, 2)
 	
 	local cursorPos = Vector(wx1, wy1, wz1)
-	local cursorDir = Vector(wx2-wx1, wy1-wy2, wz1-wz2)
+	local cursorDir = Vector(wx2-wx1, wy2-wy1, wz2-wz1)
 	
 	outputConsole(string.format("pos %f, %f, %f", cursorPos.X, cursorPos.Y, cursorPos.Z))
 	outputConsole(string.format("dir %f, %f, %f", cursorDir.X, cursorDir.Y, cursorDir.Z))
