@@ -36,10 +36,16 @@ function new(class, ...)
 			__super = { class };
 			__newindex = class.__newindex;
 			__call = class.__call;
-		})
+			__len = class.__len;
+			__unm = class.__unm;
+			__add = class.__add;
+			__sub = class.__sub;
+			__mul = class.__mul;
+			__div = class.__div;
+			__pow = class.__pow;
+			__concat = class.__concat;		})
 	
 	-- Call derived constructors
-	-- Weird Lua behaviour requires forwarding of recursive local functions...?
 	local callDerivedConstructor;
 	callDerivedConstructor = function(self, instance, ...)
 		for k, v in pairs(super(self)) do
@@ -89,11 +95,17 @@ function enew(element, class, ...)
 			__super = { class };
 			__newindex = class.__newindex;
 			__call = class.__call;
-		})
+			__len = class.__len;
+			__unm = class.__unm;
+			__add = class.__add;
+			__sub = class.__sub;
+			__mul = class.__mul;
+			__div = class.__div;
+			__pow = class.__pow;
+			__concat = class.__concat;		})
 		
 	elementIndex[element] = instance
 	
-	-- Weird Lua behaviour requires forwarding of recursive local functions...?
 	local callDerivedConstructor;
 	callDerivedConstructor = function(parentClasses, instance, ...)
 		for k, v in pairs(parentClasses) do
@@ -230,7 +242,9 @@ end
 --\\
 function bind(func, ...)
 	if not func then
-		outputConsole(debug.traceback())
+		if DEBUG then
+			outputConsole(debug.traceback())
+		end
 		error("Bad function pointer @ bind. See console for more details")
 	end
 	
@@ -283,7 +297,7 @@ end
 --\\
 function inherit(from, what)
 	if not from then
-		outputDebug("Attempt to inherit a nil table value")
+		outputDebugStrin("Attempt to inherit a nil table value")
 		outputConsole(debug.traceback())
 		return {}
 	end
@@ -359,7 +373,6 @@ function addChangeHandler(instance, key, func)
 	local metatable = getmetatable(instance) or {}
 	if not metatable.__changeHandler then
 		metatable.__changeHandler = {}
-		metatable.__changeData = {}
 
 		metatable.__realNewindexFunction = metatable.__newindex
 
@@ -375,9 +388,17 @@ function addChangeHandler(instance, key, func)
 	end
 	
 	if type(key) == "function" then
+		if not metatable.__changeData then
+			metatable.__changeData = {}
+			for k, v in pairs(instance) do
+				metatable.__changeData[k] = v
+				instance[k] = nil
+			end
+		end
 		func = key
 		metatable.__changeHandler = func
 	else
+		metatable.__changeData[key] = rawget(instance, key)
 		metatable.__changeHandler[key] = func
 	end
 	return setmetatable(instance, metatable)
@@ -442,21 +463,23 @@ end
 -- The debug.setmetatable is applied to root as it will always be an existing element. It could be applied
 -- to any other element and have the same effect
 -- Note for 1.4: add "<oop>false</oop>" into the meta
-debug.setmetatable(root,
-	{
-		__index = function(self, key)
-			if elementIndex[self] then 	
-				return elementIndex[self][key]
-			elseif elementClasses[getElementType(self)] then
-				enew(self, elementClasses[getElementType(self)])
-				return self[key]
-			end
-		end,
-		__newindex = function(self, key, value) 
-			if not elementIndex[self] then
-				enew(self, elementClasses[getElementType(self)] or {})
-			end
-			elementIndex[self][key] = value
-		end,
-	}
-)
+if type(root) == "userdata" then
+	debug.setmetatable(root,
+		{
+			__index = function(self, key)
+				if elementIndex[self] then 	
+					return elementIndex[self][key]
+				elseif elementClasses[getElementType(self)] then
+					enew(self, elementClasses[getElementType(self)])
+					return self[key]
+				end
+			end,
+			__newindex = function(self, key, value) 
+				if not elementIndex[self] then
+					enew(self, elementClasses[getElementType(self)] or {})
+				end
+				elementIndex[self][key] = value
+			end,
+		}
+	)
+end

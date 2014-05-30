@@ -105,7 +105,11 @@ function Vector.__sub(vec1, vec2)
 end
  
 function Vector.__mul(vec1, vecOrScalar)
+	if type(vec1) == "table" then
 		return vec1:mul(vecOrScalar)
+	else
+		return vecOrScalar:mul(vec1)
+	end
 end
  
 function Vector.__div(vec1, vecOrScalar)

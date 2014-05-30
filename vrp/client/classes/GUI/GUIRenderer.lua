@@ -7,6 +7,7 @@
 -- ****************************************************************************
 GUIRenderer = inherit(Object)
 GUIRenderer.cache = {}
+GUIRenderer.ms_3DGUIs = {}
 
 function GUIRenderer.constructor()	
 	-- Create a default cache area
@@ -38,7 +39,7 @@ function GUIRenderer.updateAll(elapsedTime)
 	end
 	
 	if not GUIElement.ms_ClickProcessed then
-		--GUIRenderer.process3DMouse()
+		-- GUIRenderer.process3DMouse()
 	end
 	
 	if not GUIElement.ms_ClickProcessed then
@@ -50,18 +51,32 @@ end
 
 function GUIRenderer.process3DMouse()
 	local cx, cy = getCursorPosition()
+	if not cx then
+		return 
+	end
+	
 	local wx1, wy1, wz1 = getWorldFromScreenPosition(cx, cy, 1)
 	local wx2, wy2, wz2 = getWorldFromScreenPosition(cx, cy, 2)
 	
-	local offx, offy, offz = wx2-wx1, wy1-wy2, wz1-wz2
+	local cursorPos = Vector(wx1, wy1, wz1)
+	local cursorDir = Vector(wx2-wx1, wy1-wy2, wz1-wz2)
+	
+	outputConsole(string.format("pos %f, %f, %f", cursorPos.X, cursorPos.Y, cursorPos.Z))
+	outputConsole(string.format("dir %f, %f, %f", cursorDir.X, cursorDir.Y, cursorDir.Z))
 	
 	for k, ca in pairs(GUIRenderer.ms_3DGUIs) do
 		if ca:isVisible() then
-			--[[
-				wx1 + a* offx = ca.StartX + b * ca.EndX + c * ca.SecPosX
-				wy1 + a* offy = ca.StartY + b * ca.EndY + c * ca.SecPosY
-				wz1 + a* offz = ca.StartZ + b * ca.EndZ + c * ca.SecPosZ
-			]]
+			local caStart = Vector(ca.StartX, ca.StartY, ca.StartZ)
+			local caV1 = Vector(ca.EndX, ca.EndY, ca.EndZ)
+			local caV2 = Vector(ca.SecPosX, ca.SecPosY, ca.SecPosZ)
+			
+			local vecIntersection = math.line_plane_intersection(cursorPos, cursorDir, caStart, caV1, caV2)
+			if vecIntersection then
+				local distance = getDistanceBetweenPoints3D(vecIntersection.X, vecIntersection.Y, vecIntersection.Z,
+															ca.m_3DX, ca.m_3DY, ca.m_3DZ)
+
+				outputDebug("Click Distance "..tostring(distance))
+			end
 		end
 	end
 end

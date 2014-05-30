@@ -8,7 +8,6 @@
 CacheArea3D = inherit(CacheArea)
 
 function CacheArea3D:constructor(posX, posY, posZ, rotX, rotY, rotZ, sawidth, saheight, resx, resy, containsGUIElements)
-	CacheArea.constructor(self, 0, 0, resx, resy, containsGUIElements, true)
 	self.m_3DX = posX;
 	self.m_3DY = posY;
 	self.m_3DZ = posZ;
@@ -19,6 +18,7 @@ function CacheArea3D:constructor(posX, posY, posZ, rotX, rotY, rotZ, sawidth, sa
 	self.m_RotX = rotX or 0
 	self.m_RotZ = rotZ or 0
 	
+	CacheArea.constructor(self, 0, 0, resx, resy, containsGUIElements, true)	
 	GUIRenderer.add3DGUI(self)
 end
 

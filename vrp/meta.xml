@@ -13,6 +13,7 @@
 	<script src="shared/debug.lua" type="shared"/>
 	<script src="shared/matrix.lua" type="shared"/>
 	<script src="shared/items.lua" type="shared"/>
+	<script src="shared/math.lua" type="shared"/>
 	<script src="shared/classes/Object.lua" type="shared"/>
 	<script src="shared/classes/Singleton.lua" type="shared"/>
 	<script src="shared/classes/File.lua" type="shared"/>
