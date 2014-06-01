@@ -11,6 +11,8 @@ GUIForm = inherit(CacheArea)
 function GUIForm:constructor(posX, posY, width, height)
 	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true)
 	self.m_KeyBinds = {}
+	
+	Cursor:show()
 end
 
 function GUIForm:destructor()
@@ -24,16 +26,16 @@ function GUIForm:destructor()
 	CacheArea.destructor(self)
 end
 
-function GUIForm:open(showTheCursor)
-	if showTheCursor then
-		showCursor(true)
+function GUIForm:open(hiddenCursor)
+	if not hiddenCursor then
+		Cursor:show()
 	end
 	return self:setVisible(true)
 end
 
-function GUIForm:close(hideCursor)
-	if hideCursor then
-		showCursor(false)
+function GUIForm:close(decrementedCursorCounter)
+	if not decrementedCursorCounter then
+		Cursor:hide()
 	end
 	return self:setVisible(false)
 end

@@ -11,6 +11,8 @@ function Core:constructor()
 		Debugging:new()
 	end
 	
+	Cursor = GUICursor:new()
+	
 	self.m_Config = ConfigXML:new("config.xml")
 	Version:new()
 	Provider:new()
@@ -73,7 +75,7 @@ function Core:ready()
 end
 
 function Core:destructor()
-
+	delete(Cursor)
 end
 
 function Core:getConfig()

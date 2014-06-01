@@ -81,6 +81,10 @@ function LoginGUI:constructor()
 	self.m_LoginButton:dark(true)
 	self.m_RegisterButton:dark(true)
 	self.m_GuestButton:dark(true)
+	
+	self.m_LoginButton.onLeftClick = bind(self.showLogin, self)
+	self.m_RegisterButton.onLeftClick = bind(self.showRegister, self)
+	self.m_GuestButton.onLeftClick = bind(self.showGuest, self)
 
 	self.m_LoginLoginButton.onLeftClick = bind(function(self)
 		local pw = self.m_LoginEditPass:getText()

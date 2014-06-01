@@ -28,7 +28,8 @@ end
 
 function GangArea:Area_Enter(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
-		if not self.m_OwnerGroup then
+		-- Don't start turfing if another group is already in turfing mode
+		if self.m_TurfingGroup then
 			return
 		end
 	
@@ -38,29 +39,13 @@ function GangArea:Area_Enter(hitElement, matchingDimension)
 		end
 		
 		-- Check if it is not the same group and it is an evil group (= gang)
-		if group == self.m_OwnerGroup or group:isEvil() then
-			return
-		end
-		
-		-- Start turfing only if at least 2 players of the owner group are online
-		local onlinePlayers = self.m_OwnerGroup:getOnlinePlayers()
-		if #onlinePlayers < 2 then
+		if group == self.m_OwnerGroup or not group:isEvil() then
 			return
 		end
 		
 		table.insert(self.m_TurfingPlayers, hitElement)
-		self.m_TurfingGroup = group
-		
-		-- Is it the first player?
-		if not self.m_TurfingTimer then
-			self.m_TurfingTimer = setTimer(bind(self.updateTurfing, self), 4000, 0)
-			
-			-- Tell the client that we're turfing now
-			for k, player in pairs(onlinePlayers) do
-				player:triggerEvent("gangTurfStart", self.m_TurfingGroup:getName())
-			end
-			hitElement:triggerEvent("gangTurfStart", self.m_TurfingGroup:getName())
-		end
+		self:startTurfing(group)
+		hitElement:triggerEvent("gangTurfStart", self.m_TurfingGroup:getName())
 	end
 end
 
@@ -75,15 +60,28 @@ function GangArea:Area_Leave(hitElement, matchingDimension)
 		hitElement:triggerEvent("gangTurfStop", self.m_TurfingGroup:getName())
 		
 		if #self.m_TurfingPlayers == 0 then
+			if self.m_OwnerGroup then
+				for k, player in pairs(self.m_OwnerGroup:getOnlinePlayers()) do
+					player:triggerEvent("gangTurfStop", self.m_TurfingGroup:getName())
+				end
+			end
+			
+			-- Is there any other opponent group?
+			for k, opponent in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
+				local group = opponent:getGroup()
+				if group and group ~= self.m_TurfingGroup and group ~= self.m_OwnerGroup then
+					self:startTurfing(group)
+					opponent:triggerEvent("gangTurfStart", self.m_TurfingGroup:getName())
+					break
+				end
+			end
+			
 			-- Stop attacking mode
 			self.m_TurfingGroup = false
+			self.m_TurfingProgress = 100
 			
 			killTimer(self.m_TurfingTimer)
 			self.m_TurfingTimer = nil
-			
-			for k, player in pairs(self.m_OwnerGroup:getOnlinePlayers()) do
-				player:triggerEvent("gangTurfStop", self.m_TurfingGroup:getName())
-			end
 		end
 	end
 end
@@ -92,20 +90,43 @@ function GangArea:updateTurfing()
 	-- Using a timer interval of 4 seconds results in a overall turfing time of 400 seconds (4000ms * 100)
 	self.m_TurfingProgress = self.m_TurfingProgress - 1
 	
+	-- Tripple speed if the area has no owner group
+	if not self.m_OwnerGroup then
+		self.m_TurfingProgress = self.m_TurfingProgress - 2
+	end
+	
 	if self.m_TurfingProgress <= 0 then
 		-- it looks like the gang area has a new owner :)
 		self.m_OwnerGroup = self.m_TurfingGroup
+		self.m_TurfingProgress = 100
+	end
+end
+
+function GangArea:startTurfing(group)
+	if self.m_TurfingTimer then
+		return
+	end
+
+	self.m_TurfingGroup = group
+	self.m_TurfingTimer = setTimer(bind(self.updateTurfing, self), 4000, 0)
+	
+	-- Tell the client that we're turfing now
+	if self.m_OwnerGroup then
+		local onlinePlayers = self.m_OwnerGroup:getOnlinePlayers()
+		for k, player in pairs(onlinePlayers) do
+			player:triggerEvent("gangTurfStart", self.m_TurfingGroup:getName())
+		end
 	end
 end
 
 function GangArea:sendMessage(message, ...)
-	for k, player in pairs(self.m_OwnerGroup:getOnlinePlayers()) do
-		player:sendMessage(_(message, player, ...))
-	end
-	
-	if self.m_TurfingPlayers then
-		for k, player in pairs(self.m_TurfingPlayers) do
+	if self.m_OwnerGroup then
+		for k, player in pairs(self.m_OwnerGroup:getOnlinePlayers()) do
 			player:sendMessage(_(message, player, ...))
 		end
+	end
+	
+	for k, player in pairs(self.m_TurfingPlayers) do
+		player:sendMessage(_(message, player, ...))
 	end
 end
