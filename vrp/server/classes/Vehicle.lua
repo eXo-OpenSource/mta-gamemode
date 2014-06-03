@@ -12,12 +12,6 @@ function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleExit", self, bind(self.onPlayerExit, self))
 	
 	self.m_LastUseTime = math.huge
-	
-	-- For vehicles loaded from the database the vehicle manager might not yet be created
-	local vehicleManager = VehicleManager:getSingleton()
-	if vehicleManager then
-		vehicleManager:addRef(self, not self:isPermanent())
-	end
 end
 
 function Vehicle:virtual_destructor()

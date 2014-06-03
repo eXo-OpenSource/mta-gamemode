@@ -13,14 +13,7 @@ function VehicleManager:constructor()
 	self.m_TemporaryVehicles = {}
 
 	-- Add events
-	addEvent("vehicleBuy", true)
-	addEvent("vehicleLock", true)
-	addEvent("vehicleRequestKeys", true)
-	addEvent("vehicleAddKey", true)
-	addEvent("vehicleRemoveKey", true)
-	addEvent("vehicleRepair", true)
-	addEvent("vehicleRespawn", true)
-	addEvent("vehicleDelete", true)
+	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleRequestInfo"}
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -29,13 +22,14 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleRepair", root, bind(self.Event_vehicleRepair, self))
 	addEventHandler("vehicleRespawn", root, bind(self.Event_vehicleRespawn, self))
 	addEventHandler("vehicleDelete", root, bind(self.Event_vehicleDelete, self))
+	addEventHandler("vehicleRequestInfo", root, bind(self.Event_vehicleRequestInfo, self))
 	
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	for i, rowData in ipairs(result) do
 		local vehicle = createVehicle(rowData.Model, rowData.PosX, rowData.PosY, rowData.PosZ, 0, 0, rowData.Rotation)
 		enew(vehicle, PermanentVehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys), rowData.Color, rowData.Health, toboolean(rowData.IsInGarage))
-		self:addRef(vehicle)
+		self:addRef(vehicle, false)
 	end
 	
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
@@ -124,7 +118,7 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	end
 	
 	local spawnX, spawnY, spawnZ, rotation = unpack(VEHICLESHOPS[shop].Spawn)
-	local vehicle = PermanentVehicle.create(client:getId(), vehicleModel, spawnX, spawnY, spawnZ, rotation)
+	local vehicle = PermanentVehicle.create(client, vehicleModel, spawnX, spawnY, spawnZ, rotation)
 	if vehicle then
 		client:takeMoney(price)
 		warpPedIntoVehicle(client, vehicle)
@@ -230,6 +224,13 @@ function VehicleManager:Event_vehicleRespawn()
 	client:takeMoney(100)
 	fixVehicle(source)
 	client:sendShortMessage(_("Dein Fahrzeug wurde erfolgreich in der Garage respawnt!", client))
+	
+	-- Refresh location in the self menu
+	local vehicles = {}
+	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
+		vehicles[vehicle:getId()] = vehicle
+	end
+	client:triggerEvent("vehicleRetrieveInfo", vehicles)
 end
 
 function VehicleManager:Event_vehicleDelete()
@@ -243,4 +244,13 @@ function VehicleManager:Event_vehicleDelete()
 	else
 		destroyElement(source)
 	end
+end
+
+function VehicleManager:Event_vehicleRequestInfo()
+	local vehicles = {}
+	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
+		vehicles[vehicle:getId()] = vehicle
+	end
+	
+	client:triggerEvent("vehicleRetrieveInfo", vehicles)
 end

@@ -38,7 +38,7 @@ function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation)
 	end
 	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-		enew(vehicle, Vehicle, sql:lastInsertId(), owner, nil, nil, 1000)
+		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, nil, nil, 1000)
 		VehicleManager:getSingleton():addRef(vehicle)
 		return vehicle
 	end

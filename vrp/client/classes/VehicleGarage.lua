@@ -10,47 +10,30 @@ VehicleGarage.Map = {}
 addEvent("vehicleGarageSessionOpen", true)
 addEvent("vehicleGarageSessionClose", true)
 
-function VehicleGarage:constructor(mapData)
+function VehicleGarage:constructor()
 	self.m_Id = #VehicleGarage.Map + 1
-	self.m_MapData = mapData or {}
-	self.m_MapObjects = {}
-	self.m_CurrentDimension = 0
+	self.m_CurrentMapIndex = false
 	
-	-- Todo: Optimize the following
 	addEventHandler("vehicleGarageSessionOpen", root,
 		function(Id, dimension)
-			if self.m_Id == Id then
-				self.m_CurrentDimension = dimension
-				self:createMap()
+			if self.m_Id == Id and not self.m_CurrentMapIndex then
+				self.m_CurrentMapIndex = VehicleGarage.ms_MapParser:create(dimension)
 			end
 		end
 	)
 	addEventHandler("vehicleGarageSessionClose", root,
 		function(Id)
-			if self.m_Id == Id then
-				self:destroyMap()
+			if self.m_Id == Id and self.m_CurrentMapIndex then
+				VehicleGarage.ms_MapParser:destroy(self.m_CurrentMapIndex)
+				self.m_CurrentMapIndex = false
 			end
 		end
 	)
 end
 
-function VehicleGarage:createMap()
-	for k, objectInfo in ipairs(self.m_MapData) do
-		local model, x, y, z, rx, ry, rz = unpack(objectInfo)
-		local object = createObject(model, x, y, z, rx, ry, rz)
-		setElementDimension(object, self.m_CurrentDimension)
-		table.insert(self.m_MapObjects, object)
-	end
-end
-
-function VehicleGarage:destroyMap()
-	for k, object in ipairs(self.m_MapObjects) do
-		destroyElement(object)
-	end
-	self.m_MapObjects = {}
-end
-
 function VehicleGarage.initializeAll()
+	VehicleGarage.ms_MapParser = MapParser:new("files/maps/Garages.parsed_map")
+	
 	VehicleGarage.Map = {
 		VehicleGarage:new(GarageData);
 	}

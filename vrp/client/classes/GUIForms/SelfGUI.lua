@@ -36,7 +36,6 @@ function SelfGUI:constructor()
 	-- Tab: Groups
 	local tabGroups = self.m_TabPanel:addTab(_"Gruppen")
 	self.m_TabGroups = tabGroups
-	local color = Color.White
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Gruppe:", tabGroups)
 	self.m_GroupsNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.06, _"Gruppenrang:", tabGroups)
@@ -67,11 +66,32 @@ function SelfGUI:constructor()
 	self.m_GroupRemovePlayerButton.onLeftClick = bind(self.GroupRemovePlayerButton_Click, self)
 	self.m_GroupRankUpButton.onLeftClick = bind(self.GroupRankUpButton_Click, self)
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
-	
-	addEvent("groupRetrieveInfo", true)
-	addEvent("groupInvitationRetrieve", true)
+	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
+	
+	
+	-- Tab: Vehicles
+	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
+	self.m_TabVehicles = tabVehicles
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuge:", tabVehicles)
+	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.6, tabVehicles)
+	self.m_VehiclesGrid:addColumn(_"Name", 0.3)
+	self.m_VehiclesGrid:addColumn(_"Standort", 0.7)
+	self.m_VehicleGarages = GUILabel:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.5, self.m_Height*0.06, _"Garage: Luxus Garage (10 Slots)", tabVehicles)
+	self.m_VehicleGarageUpgradeButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.35, self.m_Height*0.07, _"Upgrade", true, tabVehicles)
+	self.m_VehicleHangarButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.84, self.m_Width*0.35, self.m_Height*0.07, _"Hangar kaufen", true, tabVehicles)
+	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
+	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles)
+	self.m_VehicleSellButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Verkaufen", true, tabVehicles)
+	
+	self.m_VehicleGarageUpgradeButton.onLeftClick = bind(self.VehicleGarageUpgradeButton_Click, self)
+	self.m_VehicleHangarButton.onLeftClick = bind(self.VehicleHangarButton_Click, self)
+	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
+	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
+	self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
+	addRemoteEvents{"vehicleRetrieveInfo"}
+	addEventHandler("vehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
 end
 
 function SelfGUI:onShow()
@@ -86,8 +106,10 @@ function SelfGUI:onShow()
 end
 
 function SelfGUI:TabPanel_TabChanged(tabId)
-	if tabId == 3 then
+	if tabId == self.m_TabGroups.TabIndex then
 		triggerServerEvent("groupRequestInfo", root)
+	elseif tabId == self.m_TabVehicles.TabIndex then
+		triggerServerEvent("vehicleRequestInfo", root)
 	end
 end
 
@@ -114,7 +136,7 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)
 end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
-	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne dein Handy, um die Einladung zu bestätigen", name))
+	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne dein Handy, um die Einladung anzunehmen", name))
 	Phone:getSingleton():getAppByClass(AppDashboard):addNotification(
 		_("Möchtest du die Einladung der Gruppe %s annehmen?", name),
 		function()
@@ -204,4 +226,54 @@ function SelfGUI:GroupRankDownButton_Click()
 	if selectedItem and selectedItem.Id then
 		triggerServerEvent("groupRankDown", root, selectedItem.Id)
 	end
+end
+
+function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
+	if vehiclesInfo then
+		self.m_VehiclesGrid:clear()
+		for vehicleId, vehicleElement in pairs(vehiclesInfo) do
+			local x, y, z = getElementPosition(vehicleElement)
+			local item = self.m_VehiclesGrid:addItem(getVehicleName(vehicleElement), getZoneName(x, y, z, false))
+			item.VehicleId = vehicleId
+			item.VehicleElement = vehicleElement
+		end
+	end
+end
+
+function SelfGUI:VehicleGarageUpgradeButton_Click()
+end
+
+function SelfGUI:VehicleHangarButton_Click()
+end
+
+function SelfGUI:VehicleLocateButton_Click()
+	local item = self.m_VehiclesGrid:getSelectedItem()
+	if not item then
+		WarnungBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		return
+	end
+	
+	local x, y = getElementPosition(item.VehicleElement)
+	local blip = HUDRadar:getSingleton():addBlip("files/images/Blips/Waypoint.png", x, y)
+	setTimer(function() HUDRadar:getSingleton():removeBlip(blip) end, 5000, 1)
+end
+
+function SelfGUI:VehicleRespawnButton_Click()
+	local item = self.m_VehiclesGrid:getSelectedItem()
+	if not item then
+		WarnungBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		return
+	end
+	
+	triggerServerEvent("vehicleRespawn", item.VehicleElement)
+end
+
+function SelfGUI:VehicleSellButton_Click()
+	local item = self.m_VehiclesGrid:getSelectedItem()
+	if not item then
+		WarnungBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		return
+	end
+	
+	triggerServerEvent("vehicleSell", item.VehicleElement)
 end

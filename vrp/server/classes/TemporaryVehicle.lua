@@ -8,6 +8,7 @@
 TemporaryVehicle = inherit(Vehicle)
 
 function TemporaryVehicle:constructor()
+	VehicleManager:getSingleton():addRef(self, true)
 end
 
 function TemporaryVehicle:destructor()
