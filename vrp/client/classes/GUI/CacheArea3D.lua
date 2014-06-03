@@ -7,16 +7,22 @@
 -- ****************************************************************************
 CacheArea3D = inherit(CacheArea)
 
-function CacheArea3D:constructor(posX, posY, posZ, rotX, rotY, rotZ, sawidth, saheight, resx, resy, containsGUIElements)
-	self.m_3DX = posX;
-	self.m_3DY = posY;
-	self.m_3DZ = posZ;
-	self.m_3DWidth = sawidth;
+function CacheArea3D:constructor(startX, startY, startZ, endX, endY, endZ, normX, normY, normZ, saheight, resx, resy, containsGUIElements)
+	self.m_3DStart = Vector(startX, startY, startZ)
+	self.m_3DEnd = Vector(endX, endY, endZ)
+
+	self.m_3DWidth = (self.m_3DStart - self.m_3DEnd):norm()
 	self.m_3DHeight= saheight;
+	self.m_Normal = Vector(normX, normY, normZ)
 	
-	self.m_RotY = rotY or 0
-	self.m_RotX = rotX or 0
-	self.m_RotZ = rotZ or 0
+	self.m_Middle = self.m_3DStart  + (self.m_3DEnd -self.m_3DStart) / 2
+	
+	local norm2 = (self.m_3DEnd - self.m_3DStart):crossP(self.m_Normal)
+	self.m_SecPos = self.m_Middle + norm2/norm2:norm() * saheight/2
+ 
+	
+	self.m_ResX = resx
+	self.m_ResY = resy
 	
 	CacheArea.constructor(self, 0, 0, resx, resy, containsGUIElements, true)	
 	GUIRenderer.add3DGUI(self)
@@ -27,57 +33,66 @@ function CacheArea3D:destructor()
 	CacheArea.destructor(self)
 end
 
-function CacheArea3D:setPosition(x, y, z)
-	self.m_3DX = x
-	self.m_3DY = y
-	self.m_3DZ = z
+function CacheArea3D:setPosition(startX, startY, startZ, endX, endY, endZ)
+	self.m_3DStart = Vector(startX, startY, startZ)
+	self.m_3DEnd = Vector(endX, endY, endZ)
+	self.m_3DWidth = (self.m_3DStart - self.m_3DEnd):norm()
+	self.m_Middle = self.m_3DStart  + (self.m_3DEnd -self.m_3DStart) / 2
+	local norm2 = (self.m_3DEnd - self.m_3DStart):crossP(self.m_Normal)
+	self.m_SecPos = self.m_Middle + norm2/norm2:norm() * saheight/2
 	
 	self:anyChange()
 end
 
-function CacheArea3D:setRotation(rx, ry, rz)
-	self.m_RotX = rx
-	self.m_RotY = ry
-	self.m_RotZ = rz
+function CacheArea3D:performMouse(vecMouse3D, mouse1, mouse2, A, B, C, D)
+	-- Eckpunkte berechnen
 	
-	self:anyChange()
+	-- Mittelpunkt berechnen
+	local mid = self.m_Middle
+	
+	local dirX = mid - self.m_3DStart 
+	local dirY = mid - self.m_SecPos 
+	
+	local A = mid - dirX - dirY
+	local B = mid - dirX + dirY
+	local C = mid + dirX - dirY
+	local D = mid + dirX + dirY
+	
+	local P = vecMouse3D
+	local AC = C - A
+	local AB = B - A
+	local AP = P - A
+	
+	local x = AP:dotP(AB / AB:norm())
+	local y = AP:dotP(AC / AC:norm())
+	
+	
+	local cx = y / self.m_3DWidth * self.m_ResX
+	local cy = x / self.m_3DHeight* self.m_ResY
+
+	if cx > self.m_ResX or cx < 0 then
+		self:unhoverChildren()
+		return 
+	end
+	if cy > self.m_ResY or cy < 0 then
+		self:unhoverChildren()
+		return 
+	end
+	
+	for k, v in pairs(self.m_Children) do
+		v:performChecks(mouse1, mouse2, cx, cy)
+	end
 end
 
-function CacheArea3D:getPosition()
-	return self.m_3DX, self.m_3DY, self.m_3DZ
-end
-
-function CacheArea3D:getRotation()
-	return self.m_RotX, self.m_RotY, self.m_RotZ
-end
-
-function CacheArea3D:anyChange()
-	-- Kreisdefinition
-	local mx,my,mz = self.m_3DX, self.m_3DY-self.m_3DWidth/2, self.m_3DZ
-	
-	-- Kreis im lokalen Raum mit r = 3DWidth / 2 um m
-	local sx,sy,sz = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX, self.m_RotY, self.m_RotZ, self.m_3DWidth/2)
-	local ex,ey,ez = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX, self.m_RotY, self.m_RotZ, -self.m_3DWidth/2)
-	
-	local px,py,pz = getPointFromDistanceRotation3D(0, 0, 0, self.m_RotX+90, self.m_RotY+90, self.m_RotZ, self.m_3DHeight/2)
-	
-	local fx = sy*pz - sz*py
-	local fy = sz*px - sx*pz
-	local fz = sx*py - sy*px
-	
-	
-	sx,sy,sz=mx+sx,my+sy,mz+sz
-	ex,ey,ez=mx+ex,my+ey,mz+ez
-	fx,fy,fz=mx+fx,my+fy,mz+fz
-	px,py,pz=mx+px,my+py,mz+pz
-	
-	self.m_LineStartX, self.m_LineStartY, self.m_LineStartZ = sx,sy,sz
-	self.m_LineEndX, self.m_LineEndY, self.m_LineEndZ = ex, ey, ez
-	self.m_FaceToX, self.m_FaceToY, self.m_FaceToZ = fx, fy, fz
-	self.m_SecPosX, self.m_SecPosY, self.m_SecPosZ = px, py, pz
-	
-	-- propagate
-	DxElement.anyChange(self)
+function CacheArea3D:unhoverChildren()
+	for k, v in pairs(self.m_Children) do
+		if v.m_Hover then
+			if v.onUnhover		  then v:onUnhover()         end
+			if v.onInternalUnhover then v:onInternalUnhover() end
+			v.m_Hover = false
+		end
+		CacheArea3D.unhoverChildren(v)
+	end
 end
 
 function CacheArea3D:drawCached()
@@ -109,10 +124,12 @@ function CacheArea3D:drawCached()
 	end
 	
 	-- Render! :>
-	dxDrawMaterialLine3D(self.m_LineStartX, self.m_LineStartY, self.m_LineStartZ,
-						self.m_LineEndX, self.m_LineEndY, self.m_LineEndZ,
+	face = self.m_Middle + self.m_Normal
+	
+	dxDrawMaterialLine3D(self.m_3DStart.X, self.m_3DStart.Y, self.m_3DStart.Z,
+						self.m_3DEnd.X, self.m_3DEnd.Y, self.m_3DEnd.Z,
 						self.m_RenderTarget, self.m_3DHeight, tocolor(255,255,255,255), 
-						self.m_FaceToX, self.m_FaceToY, self.m_FaceToZ)
+						face.X, face.Y, face.Z)
 	
 	return true
 end

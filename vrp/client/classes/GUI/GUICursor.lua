@@ -44,6 +44,7 @@ end
 function GUICursor:check()
 	if self.m_Counter == 0 then
 		showCursor(false)
+		GUIElement.unhoverAll()
 	else
 		showCursor(true)
 	end

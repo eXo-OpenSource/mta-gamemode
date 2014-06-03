@@ -114,6 +114,19 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	end
 end
 
+function GUIElement.unhoverAll()
+	local self = GUIElement.HoveredElement
+	while self do		
+		if self.m_Hover then
+			if self.onUnhover		  then self:onUnhover()         end
+			if self.onInternalUnhover then self:onInternalUnhover() end
+			self.m_Hover = false
+		end
+		self = self.m_Parent
+	end
+	GUIElement.HoveredElement = false
+end
+
 function GUIElement:updateInput()
 	-- Check for hovers, clicks, ...
 	local relCursorX, relCursorY = getCursorPosition()

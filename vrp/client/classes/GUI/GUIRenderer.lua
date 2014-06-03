@@ -55,27 +55,28 @@ function GUIRenderer.process3DMouse()
 		return 
 	end
 	
-	local wx1, wy1, wz1 = getWorldFromScreenPosition(cx, cy, 1)
-	local wx2, wy2, wz2 = getWorldFromScreenPosition(cx, cy, 2)
+	local sw, sh = guiGetScreenSize()
+	cx = cx*sw
+	cy = cy*sh
+	
+	local wx1, wy1, wz1 = getWorldFromScreenPosition(cx, cy, 3)
+	local wx2, wy2, wz2 = getWorldFromScreenPosition(cx, cy, 5)
 	
 	local cursorPos = Vector(wx1, wy1, wz1)
 	local cursorDir = Vector(wx2-wx1, wy2-wy1, wz2-wz1)
 	
-	outputConsole(string.format("pos %f, %f, %f", cursorPos.X, cursorPos.Y, cursorPos.Z))
-	outputConsole(string.format("dir %f, %f, %f", cursorDir.X, cursorDir.Y, cursorDir.Z))
-	
 	for k, ca in pairs(GUIRenderer.ms_3DGUIs) do
 		if ca:isVisible() then
-			local caStart = Vector(ca.StartX, ca.StartY, ca.StartZ)
-			local caV1 = Vector(ca.EndX, ca.EndY, ca.EndZ)
-			local caV2 = Vector(ca.SecPosX, ca.SecPosY, ca.SecPosZ)
+			local caStart = ca.m_3DStart
+			local caV1 = ca.m_3DEnd - ca.m_3DStart
+			local caV2 = ca.m_SecPos - ca.m_3DStart
 			
 			local vecIntersection = math.line_plane_intersection(cursorPos, cursorDir, caStart, caV1, caV2)
+			
 			if vecIntersection then
-				local distance = getDistanceBetweenPoints3D(vecIntersection.X, vecIntersection.Y, vecIntersection.Z,
-															ca.m_3DX, ca.m_3DY, ca.m_3DZ)
-
-				outputDebug("Click Distance "..tostring(distance))
+				ca:performMouse(vecIntersection, false, false)
+			else
+				ca:unhoverChildren()
 			end
 		end
 	end

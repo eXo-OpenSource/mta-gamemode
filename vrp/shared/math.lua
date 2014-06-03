@@ -22,11 +22,6 @@ function math.line_plane_intersection(linepos, linedir, planepos, planev1, plane
 	local posoffset = linepos - planepos
 	local n = planev1:crossP(planev2)
 	if math.abs(n:dotP(linedir)) < 1.0e-3 then
-		if math.abs(n:dotP(posoffset)) < 1.0e-3 then
-			outputChatBox("Paralel")
-		else
-			outputChatBox("Echt Paralel")
-		end
 		return false
 	end
 	
