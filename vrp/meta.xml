@@ -188,6 +188,7 @@
 	<script src="client/classes/HUD/RadarBlip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
+	<script src="client/classes/HUD/Nametag.lua" type="client"/>
 	
 	<!-- Forms -->
 	<script src="client/classes/GUIForms/InventoryGUI.lua" type="client"/>
