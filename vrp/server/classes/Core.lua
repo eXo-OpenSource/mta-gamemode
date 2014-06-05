@@ -34,7 +34,7 @@ function Core:constructor()
 	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()
-	VehicleGarage.initalizeAll()
+	VehicleGarages.initalizeAll()
 	BankRobbery.initializeAll()
 	InteriorEnterExit.initializeAll()
 	VehicleSpawner.initializeAll()

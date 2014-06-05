@@ -69,7 +69,7 @@ function Core:ready()
 	
 	-- Vehicle shops
 	VehicleShop.initializeAll()
-	VehicleGarage.initializeAll()
+	VehicleGarages:new()
 	
 	self:createBlips()
 end

@@ -46,11 +46,6 @@
 	<script src="server/classes/Root.lua" type="server"/>
 	<script src="server/classes/WhiteList.lua" type="server"/>
 	<script src="server/classes/PhoneInteraction.lua" type="server"/>
-	<script src="server/classes/Vehicle.lua" type="server"/>
-	<script src="server/classes/PermanentVehicle.lua" type="server"/>
-	<script src="server/classes/TemporaryVehicle.lua" type="server"/>
-	<script src="server/classes/VehicleManager.lua" type="server"/>
-	<script src="server/classes/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Ban.lua" type="server"/>
 	<script src="server/classes/BankManager.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
@@ -62,7 +57,6 @@
 	<script src="server/classes/House.lua" type="server"/>
 	<script src="server/classes/HouseManager.lua" type="server"/>
 	<script src="server/classes/VendingMachine.lua" type="server"/>
-	<script src="server/classes/VehicleGarage.lua" type="server"/>
 	<script src="server/classes/InteriorEnterExit.lua" type="server"/>
 	<script src="server/classes/Gameplay/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Blip.lua" type="server"/>
@@ -75,6 +69,15 @@
 	<script src="server/classes/Gameplay/Police.lua" type="server"/>
 	<script src="server/classes/GangArea.lua" type="server"/>
 	<script src="server/classes/GangAreaManager.lua" type="server"/>
+	
+	<!-- Vehicles -->
+	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/PermanentVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/TemporaryVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleManager.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleSpawner.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleGarage.lua" type="server"/>
+	
 	
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -113,17 +116,14 @@
 	<script src="client/classes/MTAElement.lua" type="client"/>
 	<script src="client/classes/Player.lua" type="client"/>
 	<script src="client/classes/LocalPlayer.lua" type="client"/>
-	<script src="client/classes/Vehicle.lua" type="client"/>
 	<script src="client/classes/Version.lua" type="client"/>
 	<script src="client/classes/MTAFixes.lua" type="client"/>
 	<script src="client/classes/ClickHandler.lua" type="client"/>
-	<script src="client/classes/VehicleShop.lua" type="client"/>
 	<script src="client/classes/GPS.lua" type="client"/>
 	<script src="client/classes/CustomModelManager.lua" type="client"/>
 	<script src="client/classes/Provider.lua" type="client"/>
 	<script src="client/classes/Skin.lua" type="client"/>
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
-	<script src="client/classes/VehicleGarage.lua" type="client"/>
 	<script src="client/classes/CameraDrive.lua" type="client"/>
 	<script src="client/classes/TextureReplace.lua" type="client"/>
 	
@@ -256,6 +256,12 @@
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Item.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemHotwireKit.lua" type="client"/>
+	
+	<!-- Vehicles -->
+	<script src="client/classes/Vehicles/VehicleGarage.lua" type="client"/>
+	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleShop.lua" type="client"/>
+	
 	
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
