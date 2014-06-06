@@ -8,8 +8,9 @@ RANK[-1] = "Banned"
 RANK[0] = "User"
 RANK[1] = "Supporter"
 RANK[2] = "Moderator"
-RANK[3] = "Administrator"
-RANK[4] = "Developer"
+RANK[3] = "SuperModerator"
+RANK[4] = "Administrator"
+RANK[5] = "Developer"
 
 local r2 = {}
 for k, v in pairs(RANK) do
