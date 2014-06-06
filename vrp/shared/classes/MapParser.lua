@@ -3,7 +3,11 @@ MapParser = inherit(Object)
 local readFuncs = {
 	object = function(attributes)
 		return {type = "object", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
-			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), doublesided = toboolean(attributes.doublesided)}
+			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), interior = tonumber(attributes.interior), doublesided = toboolean(attributes.doublesided)}
+	end;
+	removeWorldObject = function(attributes)
+		return {type = "removeWorldObject", radius = tonumber(attributes.radius), model = tonumber(attributes.model), lodModel = tonumber(attributes.lodModel),
+			posX = tonumber(attributes.posX), posY = tonumber(attributes.posY), posZ = tonumber(attributes.posZ), interior = tonumber(attributes.interior)}
 	end;
 }
 local createFuncs = {
@@ -11,6 +15,11 @@ local createFuncs = {
 		local o = createObject(info.model, info.x, info.y, info.z, info.rx, info.ry, info.rz)
 		setElementDoubleSided(o, info.doublesided or false)
 		return o
+	end;
+	removeWorldObject = function(info)
+		removeWorldModel(info.model, info.radius, info.posX, info.posY, info.posZ, info.interior)
+		removeWorldModel(info.lodModel, info.radius, info.posX, info.posY, info.posZ, info.interior)
+		return info
 	end;
 }
 
@@ -33,7 +42,9 @@ function MapParser:create(dimension)
 	local map = {}
 	for k, info in pairs(self.m_MapData) do
 		local element = createFuncs[info.type](info)
-		setElementDimension(element, dimension)
+		if isElement(element) then
+			setElementDimension(element, dimension)
+		end
 		table.insert(map, element)
 	end
 	
@@ -45,7 +56,13 @@ function MapParser:destroy(index)
 	assert(self.m_Maps[index])
 	
 	for k, element in pairs(self.m_Maps[index]) do
-		destroyElement(element)
+		if isElement(element) then
+			destroyElement(element)
+		elseif type(element) == "table" then -- that's a small hack
+			-- do not uncomment the following!!!
+			--restoreWorldModel(info.model, info.radius, info.posX, info.posY, info.posZ, info.interior)
+			--restoreWorldModel(info.lodModel, info.radius, info.posX, info.posY, info.posZ, info.interior)
+		end
 	end
 	table.remove(self.m_Maps, index)
 end

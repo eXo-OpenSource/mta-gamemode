@@ -131,7 +131,7 @@ end
 function VehicleManager:Event_vehicleLock()
 	if not source or not isElement(source) then return end
 	
-	if not instanceof(source, Vehicle, true) then
+	if not instanceof(source, Vehicle) then
 		return
 	end
 	
@@ -144,7 +144,7 @@ function VehicleManager:Event_vehicleLock()
 end
 
 function VehicleManager:Event_vehicleRequestKeys()
-	if not instanceof(source, Vehicle, true) then
+	if not instanceof(source, PermanentVehicle, true) then
 		return
 	end
 	
@@ -156,7 +156,7 @@ function VehicleManager:Event_vehicleAddKey(player)
 	if not player or not isElement(player) then return end
 	if not player:isLoggedIn() then return end
 	
-	if not instanceof(source, Vehicle, true) then
+	if not instanceof(source, PermanentVehicle, true) then
 		return
 	end
 	

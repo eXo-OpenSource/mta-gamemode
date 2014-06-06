@@ -106,7 +106,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				hitElement:sendError(_("Du kannst nur deine eigenen Fahrzeuge in der Garage abstellen!", hitElement))
 				return
 			end
-			if #session:getSlots() == self:getMaxSlots() then
+			if #session:getSlots() == self:getMaxSlots(hitElement:getGarageType()) then
 				hitElement:sendError(_("Diese Garage bietet keinen Platz für ein weiteres Fahrzeug! Steige aus!", hitElement))
 				return
 			end
@@ -121,10 +121,13 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				end
 				
 				local garageType = hitElement:getGarageType()
-				local interiorX, interiorY, interiorZ = unpack(self.m_Interiors[garageType].enter)
-				--setElementInterior(vehicle or hitElement, interiorId)
+				local interiorX, interiorY, interiorZ, rotation = unpack(self.m_Interiors[garageType].enter)
 				setElementPosition(vehicle or hitElement, interiorX, interiorY, interiorZ)
+				setElementRotation(vehicle or hitElement, 0, 0, rotation)
 				setElementDimension(hitElement, session:getDimension())
+				if vehicle then
+					setElementDimension(vehicle, session:getDimension())
+				end
 				fadeCamera(hitElement, true, 2)
 				
 				setTimer(function() session:furnish() end, 1000, 1)
@@ -155,7 +158,6 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 				end
 				
 				local exitX, exitY, exitZ = unpack(self.m_Entrances[entranceId].exit)
-				--setElementInterior(vehicle or hitElement, 0)
 				setElementPosition(vehicle or hitElement, exitX, exitY, exitZ)
 				setElementDimension(hitElement, 0)
 				setElementRotation(vehicle or hitElement, 0, 0, 0)
@@ -177,10 +179,12 @@ function VehicleGarages.initalizeAll()
 		},
 		{
 			[1] = {
-				enter = {1, 2, 3}; -- Innen-Spawn
-				exit = {1, 2, 3}; -- Innen-Ausgang
+				enter = {1615.9, 963.8, 11.5, 90}; -- Innen-Spawn
+				exit = {1623.6, 966.2, 10.5}; -- Innen-Ausgang
 				slots = {
-					{1, 2, 3}
+					{1599.8, 965.6, 11, 270}, -- 10.4
+					{1604.3, 974.8, 11, 180}, -- 10.6
+					{1609, 961.3, 11, 300},  -- 10.7
 				};
 				interior = 1;
 			}
