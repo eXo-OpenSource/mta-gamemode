@@ -1,0 +1,20 @@
+<map edf:definitions="editor_main">
+    <object id="object (cuntyeland04) (1)" breakable="true" interior="0" alpha="255" model="12814" doublesided="false" scale="1" dimension="1" posX="577.4" posY="-2779.7" posZ="704.4" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (csrsfence02_lvs) (1)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="562.8" posY="-2760" posZ="705.9" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (csrsfence02_lvs) (2)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="562.8" posY="-2770.4" posZ="705.9" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (csrsfence02_lvs) (3)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="562.8" posY="-2780.8" posZ="705.9" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (csrsfence02_lvs) (4)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="562.8" posY="-2791.2" posZ="705.9" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (csrsfence02_lvs) (5)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="562.7" posY="-2801.5" posZ="705.9" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (csrsfence02_lvs) (6)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="567.5" posY="-2755" posZ="705.9" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (csrsfence02_lvs) (7)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="577.5" posY="-2755" posZ="705.9" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (csrsfence02_lvs) (8)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="587" posY="-2755" posZ="705.9" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (csrsfence02_lvs) (9)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="592.2" posY="-2759.8" posZ="705.9" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (csrsfence02_lvs) (10)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="592.1" posY="-2770" posZ="705.9" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (csrsfence02_lvs) (11)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="592" posY="-2780.2" posZ="705.9" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (csrsfence02_lvs) (12)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="591.9" posY="-2789.7" posZ="705.9" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (csrsfence02_lvs) (13)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="591.8" posY="-2799.7" posZ="705.9" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (csrsfence02_lvs) (14)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="587.1" posY="-2804.5" posZ="705.9" rotX="0" rotY="0" rotZ="180"></object>
+    <object id="object (csrsfence02_lvs) (15)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="583.1" posY="-2804.3" posZ="705.9" rotX="0" rotY="0" rotZ="179.995"></object>
+    <object id="object (csrsfence02_lvs) (16)" breakable="true" interior="0" alpha="255" model="8674" doublesided="false" scale="1" dimension="1" posX="564.6" posY="-2804.6" posZ="705.9" rotX="0" rotY="0" rotZ="179.995"></object>
+    <object id="object (apbarriergate06_lvS) (1)" breakable="true" interior="0" alpha="255" model="8041" doublesided="false" scale="1" dimension="1" posX="578" posY="-2804.2" posZ="710.2" rotX="0" rotY="0" rotZ="90"></object>
+</map>

@@ -1,0 +1,1 @@
+ItemHotwireKit = inherit(Item)

@@ -1,0 +1,1 @@
+Player = inherit(MTAElement)
