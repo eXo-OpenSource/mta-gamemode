@@ -34,7 +34,9 @@ end
 function VehicleGarages:createEntrance(info, Id)
 	local enterX, enterY, enterZ = unpack(info.enter)
 	local entranceShape = createColSphere(enterX, enterY, enterZ, 3)
-	local blip = Blip:new("files/images/Blips/Garage.png", enterX, enterY)
+	if not info.hideblip then
+		local blip = Blip:new("files/images/Blips/Garage.png", enterX, enterY)
+	end
 	
 	addEventHandler("onColShapeHit", entranceShape, bind(self.EntranceShape_Hit, self))
 	entranceShape.EntranceId = Id
@@ -57,9 +59,6 @@ function VehicleGarages:openSessionForPlayer(player, entranceId)
 	local session = VehicleGarageSession:new(sessionId, player, entranceId)
 	self.m_Sessions[sessionId] = session
 	
-	-- Tell the player that we opened the garage session
-	player:triggerEvent("vehicleGarageSessionOpen", self.m_Id, sessionId)
-	
 	return session
 end
 
@@ -68,9 +67,6 @@ function VehicleGarages:closeSession(session)
 	if not idx then
 		return false
 	end
-	
-	-- Tell the player that we closed the garage session
-	session:getPlayer():triggerEvent("vehicleGarageSessionClose", self.m_Id)
 	
 	table.remove(self.m_Sessions, idx)
 	delete(session)
@@ -94,10 +90,16 @@ end
 
 function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
-		local session = self:openSessionForPlayer(hitElement, source.EntranceId)
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		
 		if vehicle then
+			if getPedOccupiedVehicleSeat(hitElement) ~= 0 then
+				return
+			end
+			if #getVehicleOccupants(vehicle) > 1 then
+				hitElement:sendError(_("Du kannst nur ohne Mitfahrer in deine Garage fahren!", hitElement))
+				return
+			end
 			if not instanceof(vehicle, Vehicle) or not vehicle:isPermanent() then
 				hitElement:sendError(_("Nicht-permanente Fahrzeuge können nicht in der Garage abgestellt werden!", hitElement))
 				return
@@ -106,6 +108,10 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				hitElement:sendError(_("Du kannst nur deine eigenen Fahrzeuge in der Garage abstellen!", hitElement))
 				return
 			end
+		end
+		
+		local session = self:openSessionForPlayer(hitElement, source.EntranceId)
+		if vehicle then
 			if #session:getSlots() == self:getMaxSlots(hitElement:getGarageType()) then
 				hitElement:sendError(_("Diese Garage bietet keinen Platz für ein weiteres Fahrzeug! Steige aus!", hitElement))
 				return
@@ -119,6 +125,8 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				if vehicle then
 					vehicle:setInGarage(true)
 				end
+				-- Tell the player that we opened the garage session
+				hitElement:triggerEvent("vehicleGarageSessionOpen", session:getDimension())
 				
 				local garageType = hitElement:getGarageType()
 				local interiorX, interiorY, interiorZ, rotation = unpack(self.m_Interiors[garageType].enter)
@@ -147,7 +155,7 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 		self:closeSession(session)
 		setElementVelocity(getPedOccupiedVehicle(hitElement) or hitElement, 0, 0, 0)
 		
-		fadeCamera(hitElement, false)
+		fadeCamera(hitElement, false, 1)
 		setTimer(
 			function()
 				local vehicle = getPedOccupiedVehicle(hitElement)
@@ -156,17 +164,19 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 				if vehicle then
 					vehicle:setInGarage(false)
 				end
+				-- Tell the player that we closed the garage session
+				hitElement:triggerEvent("vehicleGarageSessionClose")
 				
-				local exitX, exitY, exitZ = unpack(self.m_Entrances[entranceId].exit)
+				local exitX, exitY, exitZ, rotation = unpack(self.m_Entrances[entranceId].exit)
 				setElementPosition(vehicle or hitElement, exitX, exitY, exitZ)
 				setElementDimension(hitElement, 0)
-				setElementRotation(vehicle or hitElement, 0, 0, 0)
+				setElementRotation(vehicle or hitElement, 0, 0, rotation or 0)
 				fadeCamera(hitElement, true)
 				
 				if vehicle then
 					setElementDimension(vehicle, 0)
 				end
-			end, 1000, 1
+			end, 1500, 1
 		)
 	end
 end
@@ -176,6 +186,14 @@ function VehicleGarages.initalizeAll()
 	VehicleGarages:new(
 		{ -- Eingänge -- Ausgänge
 			{enter = {1877.2, -2092, 13.4}, exit = {1877.7, -2102.8, 13.1}, gtagarage = 2};
+			{enter = {1004, -1368, 14.6}, exit = {1003.2, -1353.8, 13}};
+			{enter = {1011.2, -1368, 14.6}, exit = {1010.4, -1353.8, 13}, hideblip = true};
+			{enter = {410.70001, -1321.5, 16.2}, exit = {415.4, -1328.2, 14.6, 212}, hideblip = true};
+			{enter = {2771.3, -1623.4, 12.2}, exit = {2770.6, -1614.6, 10.6}};
+			{enter = {2778.5, -1623.4, 12.2}, exit = {2778.1, -1615.4, 10.6}, hideblip = true};
+			{enter = {2785.6001, -1623.4, 12.2}, exit = {2784.7, -1614.3, 11}, hideblip = true};
+			{enter = {1827.3, -1074.8, 25.3}, exit = {1819.8, -1075.3, 23.8}};
+			{enter = {1827.4, -1082, 25.3}, exit = {1819.8, -1082.2, 23.8}, hideblip = true};
 		},
 		{
 			[1] = {
@@ -204,8 +222,9 @@ function VehicleGarageSession:constructor(dimension, player, entranceId)
 end
 
 function VehicleGarageSession:destructor()
+	local playerVehicle = getPedOccupiedVehicle(self.m_Player)
 	for k, vehicle in ipairs(self.m_Slots) do
-		if vehicle:isInGarage() then
+		if vehicle:isInGarage() and playerVehicle ~= vehicle then
 			setElementDimension(vehicle, PRIVATE_DIMENSION_SERVER)
 		end
 	end

@@ -21,7 +21,7 @@ function HUDRadar:constructor()
 	self.m_Visible = false
 	
 	-- Set texture edge to border (no-repeat)
-	dxSetTextureEdge(self.m_Texture, "border", tocolor(51, 70, 77))
+	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
 	
 	-- Create a renderTarget that has the size of the diagonal of the actual image
 	self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
@@ -29,7 +29,7 @@ function HUDRadar:constructor()
 	
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.draw, self))
-	addEventHandler("onclientRestore", root, bind(self.restore, self))
+	addEventHandler("onClientRestore", root, bind(self.restore, self))
 	showPlayerHudComponent("radar", false)
 end
 

@@ -126,6 +126,7 @@
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
 	<script src="client/classes/CameraDrive.lua" type="client"/>
 	<script src="client/classes/TextureReplace.lua" type="client"/>
+	<script src="client/classes/NonCollidingArea.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -371,6 +372,7 @@
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Roadsweeper.map"/>
 	<file src="files/maps/Garages.parsed_map"/>
+	<map src="files/maps/Garages_Outside.map"/>
 	
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
