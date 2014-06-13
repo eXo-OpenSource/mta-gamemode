@@ -13,7 +13,7 @@ function VehicleManager:constructor()
 	self.m_TemporaryVehicles = {}
 
 	-- Add events
-	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleRequestInfo"}
+	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleRequestInfo", "vehicleUpgradeGarage"}
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -23,6 +23,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleRespawn", root, bind(self.Event_vehicleRespawn, self))
 	addEventHandler("vehicleDelete", root, bind(self.Event_vehicleDelete, self))
 	addEventHandler("vehicleRequestInfo", root, bind(self.Event_vehicleRequestInfo, self))
+	addEventHandler("vehicleUpgradeGarage", root, bind(self.Event_vehicleUpgradeGarage, self))
 	
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
@@ -124,7 +125,7 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 		warpPedIntoVehicle(client, vehicle)
 		client:triggerEvent("vehicleBought")
 	else
-		client:sendMessage(_("Failed to create the vehicle. Please notify an admin!", client), 255, 0, 0)
+		client:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", client), 255, 0, 0)
 	end
 end
 
@@ -136,7 +137,7 @@ function VehicleManager:Event_vehicleLock()
 	end
 	
 	if not source:hasKey(client) and client:getRank() <= RANK.User then
-		client:sendError(_("You do not own a key for this vehicle", client))
+		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
 		return
 	end
 	
@@ -166,7 +167,7 @@ function VehicleManager:Event_vehicleAddKey(player)
 	end
 	
 	if source:getOwner() ~= client:getId() then
-		client:sendWarning(_("You are not the owner of this vehicle!", client))
+		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
 	
@@ -183,7 +184,7 @@ function VehicleManager:Event_vehicleRemoveKey(characterId)
 	end
 	
 	if source:getOwner() ~= client:getId() then
-		client:sendWarning(_("You are not the owner of this vehicle!", client))
+		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
 	
@@ -203,7 +204,7 @@ end
 
 function VehicleManager:Event_vehicleRespawn()
 	if source:getOwner() ~= client:getId() then
-		client:sendWarning(_("You are not the owner of this vehicle!", client))
+		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
 	if source:isInGarage() then
@@ -211,7 +212,7 @@ function VehicleManager:Event_vehicleRespawn()
 		return
 	end
 	if client:getMoney() < 100 then
-		client:sendWarning(_("You do not have enough money!", client))
+		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
 	end
 	local occupants = getVehicleOccupants(source)
@@ -252,5 +253,22 @@ function VehicleManager:Event_vehicleRequestInfo()
 		vehicles[vehicle:getId()] = vehicle
 	end
 	
-	client:triggerEvent("vehicleRetrieveInfo", vehicles)
+	client:triggerEvent("vehicleRetrieveInfo", vehicles, client:getGarageType())
+end
+
+function VehicleManager:Event_vehicleUpgradeGarage()
+	local UpgradeToPrices = {[2] = 100000, [3] = 500000}
+	local currentGarage = client:getGarageType()
+	local price = UpgradeToPrices[currentGarage + 1]
+	if price then
+		if client:getMoney() >= price then
+			client:takeMoney(price)
+			client:setGarageType(currentGarage + 1)
+			client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType())
+		else
+			client:sendError(_("Du hast nicht genügend Geld, um deine Garage zu upgraden", client))
+		end
+	else
+		client:sendError(_("Deine Garage ist bereits auf dem höchsten Level", client))
+	end
 end

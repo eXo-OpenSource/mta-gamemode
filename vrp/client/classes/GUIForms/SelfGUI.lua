@@ -228,7 +228,7 @@ function SelfGUI:GroupRankDownButton_Click()
 	end
 end
 
-function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
+function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType)
 	if vehiclesInfo then
 		self.m_VehiclesGrid:clear()
 		for vehicleId, vehicleElement in pairs(vehiclesInfo) do
@@ -238,12 +238,18 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
 			item.VehicleElement = vehicleElement
 		end
 	end
+	if garageType then
+		local texts = {[1] = _"Garage: Standard Garage (3 Slots)", [2] = _"Garage: Komfortable Garage (6 Slots)", [3] = _"Garage: Luxus Garage (10 Slots)"}
+		self.m_VehicleGarages:setText(texts[garageType])
+	end
 end
 
 function SelfGUI:VehicleGarageUpgradeButton_Click()
+	triggerServerEvent("vehicleUpgradeGarage", root)
 end
 
 function SelfGUI:VehicleHangarButton_Click()
+	outputChatBox("Not implemented!", 255, 0, 0)
 end
 
 function SelfGUI:VehicleLocateButton_Click()

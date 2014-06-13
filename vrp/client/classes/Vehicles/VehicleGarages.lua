@@ -29,5 +29,9 @@ function VehicleGarages:constructor()
 		end
 	)
 	
+	NonCollidingArea:new(1872.6, -2108, 10, 22)
 	NonCollidingArea:new(999.5, -1372.1, 24, 35)
+	NonCollidingArea:new(411.5, -1332.5, 8, 10)
+	NonCollidingArea:new(2794.7-27, -1603.3-25, 27, 25)
+	NonCollidingArea:new(1813, -1091, 17, 27)
 end

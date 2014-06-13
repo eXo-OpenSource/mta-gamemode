@@ -107,9 +107,15 @@ function Player:save()
 end
 
 function Player:spawn()
-	spawnPlayer(self, self.m_SavedPosition.X, self.m_SavedPosition.Y, self.m_SavedPosition.Z, 0, self.m_Skin, self.m_SavedInterior, 0)
+	if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
+		spawnPlayer(self, self.m_SavedPosition.X, self.m_SavedPosition.Y, self.m_SavedPosition.Z, 0, self.m_Skin, self.m_SavedInterior, 0)
+	elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
+		VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+	else
+		self:sendMessage("An error occurred", 255, 0, 0)
+	end
+	
 	setElementFrozen(self, false)
-	setElementDimension(self, 0)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 end

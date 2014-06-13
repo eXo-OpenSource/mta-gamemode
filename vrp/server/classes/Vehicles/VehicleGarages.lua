@@ -88,6 +88,18 @@ function VehicleGarages:getMaxSlots(garageType)
 	return #self.m_Interiors[garageType].slots
 end
 
+function VehicleGarages:spawnPlayerInGarage(player, entranceId)
+	local session = self:openSessionForPlayer(player, entranceId)
+	player:triggerEvent("vehicleGarageSessionOpen", session:getDimension())
+	
+	local garageType = player:getGarageType()
+	local interiorX, interiorY, interiorZ, rotation = unpack(self.m_Interiors[garageType].enter)
+	setElementPosition(player, interiorX, interiorY, interiorZ)
+	setElementRotation(player, 0, 0, rotation)
+	setElementDimension(player, session:getDimension())
+	session:furnish()
+end
+
 function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		local vehicle = getPedOccupiedVehicle(hitElement)
@@ -127,6 +139,8 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				end
 				-- Tell the player that we opened the garage session
 				hitElement:triggerEvent("vehicleGarageSessionOpen", session:getDimension())
+				hitElement:setSpawnLocation(SPAWN_LOCATION_GARAGE)
+				hitElement:setLastGarageEntrance(session:getEntranceId())
 				
 				local garageType = hitElement:getGarageType()
 				local interiorX, interiorY, interiorZ, rotation = unpack(self.m_Interiors[garageType].enter)
@@ -166,6 +180,7 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 				end
 				-- Tell the player that we closed the garage session
 				hitElement:triggerEvent("vehicleGarageSessionClose")
+				hitElement:setSpawnLocation(SPAWN_LOCATION_DEFAULT)
 				
 				local exitX, exitY, exitZ, rotation = unpack(self.m_Entrances[entranceId].exit)
 				setElementPosition(vehicle or hitElement, exitX, exitY, exitZ)
@@ -204,8 +219,35 @@ function VehicleGarages.initalizeAll()
 					{1604.3, 974.8, 11, 180}, -- 10.6
 					{1609, 961.3, 11, 300},  -- 10.7
 				};
-				interior = 1;
-			}
+			};
+			[2] = {
+				enter = {1609.3, 1024.5, 10.8, 90};
+				exit = {1619, 1025.5, 10.8};
+				slots = {
+					{1593.5, 1014.9, 10.8, 354},
+					{1600.9, 1015, 10.8, 354},
+					{1607.6, 1015.5, 10.8, 354},
+					{1600, 1033, 10.8, 204},
+					{1606.8, 1033.3, 10.8, 204},
+					{1613.8, 1034, 10.8, 204}
+				};
+			};
+			[3] = {
+				enter = {1639.5, 1088.8, 10.8};
+				exit = {1646.9, 1088.8, 10.8};
+				slots = {
+					{1598.6, 1084, 11.2, 326},
+					{1606, 1083.3, 11.2, 326},
+					{1613.4, 1083, 11.2, 326},
+					{1619.4, 1083.4, 11.2, 0},
+					{1623.9, 1083.6, 11.2, 0},
+					{1598, 1095.7, 11.2, 218},
+					{1606.6, 1095.5, 11.2, 218},
+					{1614, 1095, 11.2, 218},
+					{1619.2, 1095.2, 11.2, 180},
+					{1623.8, 1095.2, 11.2, 180}
+				};
+			};
 		}
 	);
 end
@@ -245,9 +287,7 @@ function VehicleGarageSession:addVehicle(vehicle)
 	if slotId > VehicleGarages:getSingleton():getMaxSlots(self.m_GarageType) then
 		return false
 	end
-	
 	local x, y, z, rotation = unpack(VehicleGarages:getSingleton():getSlotData(self.m_GarageType, slotId))
-	--setElementInterior(vehicle, 0)
 	setElementPosition(vehicle, x, y, z)
 	setElementDimension(vehicle, self.m_Dimension)
 	setElementRotation(vehicle, 0, 0, rotation or 0)
