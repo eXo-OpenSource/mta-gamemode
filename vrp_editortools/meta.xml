@@ -1,5 +1,7 @@
 <meta>
 	<info edf:definition="edf.edf"/>
+	
 	<file src="Bus.png"/>
 	<file src="Crane.png"/>
+	<file src="Group.png"/>
 </meta>

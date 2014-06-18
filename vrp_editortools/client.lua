@@ -14,6 +14,8 @@ addEventHandler("onClientElementPropertyChanged", root,
 					attachElements(marker, object[1], -1 * markerDistance, 0, -1)
 				end
 			end
+		elseif getElementType(source) == "gangarea" then
+			
 		end
 	end
 )
@@ -32,10 +34,31 @@ addEventHandler("onClientElementCreate", root,
 				exports.edf:edfSetElementPosition(marker, x, y, z)
 				attachElements(marker, object[1], -1 * markerDistance, 0, -1)
 			end
+		elseif getElementType(source) == "gangarea" then
+			local x, y, z = exports.edf:edfGetElementPosition(source)
+			exports.edf:edfSetElementProperty(source, "areaX", x)
+			exports.edf:edfSetElementProperty(source, "areaY", y)
 		end
 	end
 )
 
+addEventHandler("onClientRender", root,
+	function()
+		for k, gangarea in pairs(getElementsByType("gangarea")) do
+			local areaX, areaY = exports.edf:edfGetElementProperty(gangarea, "areaX"), exports.edf:edfGetElementProperty(gangarea, "areaY")
+			local width, height = exports.edf:edfGetElementProperty(gangarea, "width"), exports.edf:edfGetElementProperty(gangarea, "height")
+			if areaX and areaY and width and height then
+				local z = getGroundPosition(areaX, areaY, 50)
+				if z then
+					dxDrawRectangle3D(areaX, areaY, z+1, width, height, tocolor(255, 255, 0, 200), 0, areaX, areaY, z+2)
+				end
+			end
+		end
+	end
+)
+
+
+-- Utils
 function getPositionFromElementOffset(element, offX, offY, offZ)
 	local m = getElementMatrix(element)
 	local x = offX * m[1][1] + offY * m[2][1] + offZ * m[3][1] + m[4][1]
@@ -58,4 +81,13 @@ function getRepresentation(element,type)
 	else
 		return elemTable
 	end
+end
+
+local dot = dxCreateRenderTarget(1,1)
+dxSetRenderTarget(dot)
+dxDrawRectangle(0, 0, 1, 1, tocolor(255,255,255,255))
+dxSetRenderTarget()
+function dxDrawRectangle3D(x,y,z,w,h,c,r,normalX,normalY,normalZ)
+	local lx, ly, lz = x+w, y, (z+tonumber(r or 0)) or z
+	return dxDrawMaterialLine3D(x, y, z, lx, ly, lz, dot, h, c, normalX, normalY, normalZ)
 end

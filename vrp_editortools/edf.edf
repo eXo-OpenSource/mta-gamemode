@@ -1,4 +1,5 @@
 <def name="vRPEditorTools">
+	<!-- Crane -->
 	<element name="cranStart" friendlyname="Start cran position" icon="Crane.png">
 		<data name="position" type="coord3d" default="0,0,0" required="true"/>
 		<object editorOnly="true" model="3474"/>
@@ -23,6 +24,7 @@
 		<object editorOnly="true" model="2934" posX="-6.400" posY="5.600" posZ="-2.500" rotZ="-180.0"/>
 	</element>
 	
+	<!-- Bus job -->
 	<element name="bus_stop" friendlyname="Bus stop" icon="Bus.png">
 		<data name="position" type="coord3d" default="0,0,0" required="true"/>
 		<object editorOnly="true" model="1257"/>
@@ -30,6 +32,17 @@
 		<object editorOnly="true" model="1229" posX="-1.5" posY="3.4" posZ="0.2"/>
 		<data name="markerdistance" type="number" default="4.5"/>
 		<data name="lines" type="string" default=""/>
+	</element>
+	
+	<!-- Gangarea -->
+	<element name="gangarea" friendlyname="Gangarea" icon="Group.png">
+		<data name="position" type="coord3d" default="0,0,0" required="true"/>
+		<object editorOnly="true" model="7921"/>
+		<data name="areaX" type="number" default="0"/>
+		<data name="areaY" type="number" default="0"/>
+		<data name="maxZ" type="number" default="30"/>
+		<data name="width" type="number" default="10"/>
+		<data name="height" type="number" default="10"/>
 	</element>
 	
 	<script src="client.lua" type="client" />
