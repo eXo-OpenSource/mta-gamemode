@@ -31,6 +31,7 @@ function Core:ready()
 	KarmaBar:new()
 	CustomModelManager:new()
 	AmmuNationGUI:new()
+	GangAreaManager:new()
 	
 	-- HUD
 	--HUDRadar:new()

@@ -22,19 +22,19 @@ end
 function JobRoadSweeper:start()
 	local func = bind(self.Rubbish_Hit, self)
 
-	for k, v in ipairs(JobRoadSweeper.Rubbish) do
+	for k, v in pairs(JobRoadSweeper.Rubbish) do
 		local model, x, y, z, rot = unpack(v)
 		local object = createObject(model, x, y, z, 0, 0, rot)
 		local colShape = createColSphere(x, y, z, 5)
 		setElementParent(object, colShape)
 		addEventHandler("onClientColShapeHit", colShape, func)
 		
-		table.insert(self.m_Rubbish, object)
+		table.insert(self.m_Rubbish, colShape)
 	end
 end
 
 function JobRoadSweeper:stop()
-	for k, v in ipairs(self.m_Rubbish) do
+	for k, v in pairs(self.m_Rubbish) do
 		if v and isElement(v) then
 			destroyElement(v)
 		end

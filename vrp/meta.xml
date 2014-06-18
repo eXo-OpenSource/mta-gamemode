@@ -5,8 +5,12 @@
 	<include resource="freeroam"/>
 
 	<!-- Shared -->
-	<script src="shared/constants.lua" type="shared"/>
 	<script src="shared/classlib.lua" type="shared"/>
+	<script src="shared/classes/Object.lua" type="shared"/>
+	<script src="shared/classes/Singleton.lua" type="shared"/>
+	
+	<script src="shared/classes/Vector.lua" type="shared"/>
+	<script src="shared/constants.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
 	<script src="shared/version.lua" type="shared"/>
@@ -16,14 +20,11 @@
 	<script src="shared/math.lua" type="shared"/>
 	<script src="shared/crc32lua.lua" type="shared"/>
 	<script src="shared/deflatelua.lua" type="shared"/>
-	<script src="shared/classes/Object.lua" type="shared"/>
-	<script src="shared/classes/Singleton.lua" type="shared"/>
 	<script src="shared/classes/File.lua" type="shared"/>
 	<script src="shared/classes/Log.lua" type="shared"/>
 	<script src="shared/classes/POParser.lua" type="shared"/>
 	<script src="shared/classes/Queue.lua" type="shared"/>
 	<script src="shared/classes/TimedPulse.lua" type="shared"/>
-	<script src="shared/classes/Vector.lua" type="shared"/>
 	<script src="shared/classes/TranslationManager.lua" type="shared"/>
 	<script src="shared/classes/ConfigXML.lua" type="shared"/>
 	<script src="shared/classes/Rect.lua" type="shared"/>
@@ -127,6 +128,8 @@
 	<script src="client/classes/CameraDrive.lua" type="client"/>
 	<script src="client/classes/TextureReplace.lua" type="client"/>
 	<script src="client/classes/NonCollidingArea.lua" type="client"/>
+	<script src="client/classes/GangArea.lua" type="client"/>
+	<script src="client/classes/GangAreaManager.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -363,10 +366,12 @@
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
 	<vrpfile src="files/shader/texreplace.fx"/>
+	<vrpfile src="files/shader/cuttexture.fx"/>
 	
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/Segoe/segoeui.ttf"/>
+	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>

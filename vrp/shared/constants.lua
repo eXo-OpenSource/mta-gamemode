@@ -93,3 +93,12 @@ AmmuNationInfo = {
 		Weapon = 600,
 	},	
 }
+
+GangAreaData = {
+	{wallPosition = Vector(2526.3, -1665.1, 15.4), wallRotation = 180, areaPosition = Vector(2448.5, -1679.4, 25), width = 100, height = 100},
+	{wallPosition = Vector(2251, -1408.2002, 24.4), wallRotation = 270, areaPosition = Vector(2220.6563, -1443.9, 25), width = 115, height = 100},
+	{wallPosition = Vector(663.5, -1208.9004, 18.2), wallRotation = 127.9, areaPosition = Vector(647.29901, -1261.09, 30), width = 150, height = 100},
+}
+TURFING_STOPREASON_LEAVEAREA = 1
+TURFING_STOPREASON_NEWOWNER = 2
+TURFING_STOPREASON_DEFENDED = 3
