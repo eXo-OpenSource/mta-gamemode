@@ -71,7 +71,7 @@ function Player:loadCharacter()
 	self:triggerEvent("retrieveInfo", info)
 	
 	-- Add binds
-	bindKey(self, "u", "down", "chatbox", "Group")
+	self:initialiseBinds()
 	
 	-- Add command and event handler
 	addCommandHandler("Group", Player.staticGroupChatHandler)
@@ -87,6 +87,12 @@ function Player:loadCharacterInfo()
 	self:load()
 	Blip.sendAllToClient()
 	RadarArea.sendAllToClient()
+end
+
+function Player:initialiseBinds()
+	bindKey(self, "u", "down", "chatbox", "Group")
+	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleLight(player) end end)
+	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleEngine(player) end end)
 end
 
 function Player:save()

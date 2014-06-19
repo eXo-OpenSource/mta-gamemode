@@ -79,7 +79,7 @@ function DatabasePlayer:load()
 		self:setJob(JobManager:getSingleton():getFromId(row.Job))
 	end
 	if row.GroupId and row.GroupId ~= 0 then
-		self.m_Group = GroupManager:getSingleton():getFromId(row.GroupId)
+		self:setGroup(GroupManager:getSingleton():getFromId(row.GroupId))
 	end
 	self.m_Inventory = self.m_Inventory or Inventory.loadById(row.InventoryId) or Inventory.create()
 	self.m_GarageType = row.GarageType
@@ -151,7 +151,7 @@ function DatabasePlayer:setWantedLevel(level) self.m_WantedLevel = level setPlay
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
-function DatabasePlayer:setGroup(group)	self.m_Group = group	end
+function DatabasePlayer:setGroup(group)	self.m_Group = group if group then setElementData(self, "GroupName", group:getName()) end end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 

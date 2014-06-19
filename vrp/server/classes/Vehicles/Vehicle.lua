@@ -12,6 +12,9 @@ function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleExit", self, bind(self.onPlayerExit, self))
 	
 	self.m_LastUseTime = math.huge
+	setVehicleOverrideLights(self, 1)
+	setVehicleEngineState(self, false)
+	self.m_EngineState = false
 end
 
 function Vehicle:virtual_destructor()
@@ -34,25 +37,6 @@ function Vehicle:getOwner()
 	return self.m_Owner
 end
 
-function Vehicle:addKey(player)
-	if type(player) == "userdata" then
-		player = player:getId()
-	end
-	table.insert(self.m_Keys, player)
-end
-
-function Vehicle:removeKey(player)
-	if type(player) == "userdata" then
-		player = player:getId()
-	end
-	local index = table.find(self.m_Keys, player)
-	if not index then
-		return false
-	end
-	table.remove(self.m_Keys, index)
-	return true
-end
-
 function Vehicle:hasKey(player)
 	if type(player) == "userdata" then
 		player = player:getId()
@@ -60,18 +44,11 @@ function Vehicle:hasKey(player)
 	if self.m_Owner == player then
 		return true
 	end
-	return table.find(self.m_Keys, player)
-end
-
-function Vehicle:getKeyNameList()
-	local names = {}
-	for k, v in ipairs(self.m_Keys) do
-		local name = Account.getNameFromId(v)
-		if name then
-			names[v] = name
-		end
+	if self:isPermanent() then
+		return table.find(self.m_Keys, player)
+	else
+		return false
 	end
-	return names
 end
 
 function Vehicle:setLocked(state)
@@ -99,5 +76,29 @@ function Vehicle:isBeingUsed()
 	return false
 end
 
- Vehicle.isPermanent = pure_virtual
- Vehicle.respawn = pure_virtual
+function Vehicle:toggleLight()
+	if getVehicleOverrideLights(self) == 1 then
+		setVehicleOverrideLights(self, 2)
+	else
+		setVehicleOverrideLights(self, 1)
+	end
+end
+
+function Vehicle:toggleEngine(player)
+	if self:hasKey(player) or not self:isPermanent() then
+		local state = not getVehicleEngineState(self)
+		setVehicleEngineState(self, state)
+		self.m_EngineState = state
+		
+		if getVehicleEngineState(self) then
+			player:triggerEvent("vehicleEngineStart")
+		end
+	end
+end
+
+function Vehicle:getEngineState()
+	return self.m_EngineState
+end
+
+Vehicle.isPermanent = pure_virtual
+Vehicle.respawn = pure_virtual

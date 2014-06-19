@@ -70,6 +70,7 @@
 	<script src="server/classes/Gameplay/Police.lua" type="server"/>
 	<script src="server/classes/GangArea.lua" type="server"/>
 	<script src="server/classes/GangAreaManager.lua" type="server"/>
+	<script src="server/classes/AntiCheat.lua" type="server"/>
 	
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
@@ -358,6 +359,7 @@
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/Halleluja.mp3"/>
 	<vrpfile src="files/audio/Win.mp3"/>
+	<vrpfile src="files/audio/Enginestart.mp3"/>
 	
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>

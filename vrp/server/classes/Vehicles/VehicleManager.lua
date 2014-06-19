@@ -25,6 +25,15 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleRequestInfo", root, bind(self.Event_vehicleRequestInfo, self))
 	addEventHandler("vehicleUpgradeGarage", root, bind(self.Event_vehicleUpgradeGarage, self))
 	
+	-- Prevent the engine from being turned on
+	addEventHandler("onVehicleEnter", root,
+		function(player, seat, jackingPlayer)
+			if seat == 0 then
+				setVehicleEngineState(source, source:getEngineState())
+			end
+		end
+	)
+	
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	for i, rowData in ipairs(result) do
@@ -250,7 +259,7 @@ end
 function VehicleManager:Event_vehicleRequestInfo()
 	local vehicles = {}
 	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
-		vehicles[vehicle:getId()] = vehicle
+		vehicles[vehicle:getId()] = {vehicle, vehicle:isInGarage()}
 	end
 	
 	client:triggerEvent("vehicleRetrieveInfo", vehicles, client:getGarageType())

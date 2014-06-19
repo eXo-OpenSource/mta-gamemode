@@ -41,6 +41,8 @@ function Group:purge()
 		-- Remove reference
 		GroupManager:getSingleton():removeRef(self)
 		
+		-- Todo: Free owned gangareas
+		
 		return true
 	end
 	return false

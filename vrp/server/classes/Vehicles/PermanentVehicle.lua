@@ -73,6 +73,36 @@ function PermanentVehicle:isPermanent()
 	return true
 end
 
+function PermanentVehicle:getKeyNameList()
+	local names = {}
+	for k, v in ipairs(self.m_Keys) do
+		local name = Account.getNameFromId(v)
+		if name then
+			names[v] = name
+		end
+	end
+	return names
+end
+
+function PermanentVehicle:addKey(player)
+	if type(player) == "userdata" then
+		player = player:getId()
+	end
+	table.insert(self.m_Keys, player)
+end
+
+function PermanentVehicle:removeKey(player)
+	if type(player) == "userdata" then
+		player = player:getId()
+	end
+	local index = table.find(self.m_Keys, player)
+	if not index then
+		return false
+	end
+	table.remove(self.m_Keys, index)
+	return true
+end
+
 function PermanentVehicle:isInGarage()
 	return self.m_InGarage
 end

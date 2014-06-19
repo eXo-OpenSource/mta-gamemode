@@ -231,11 +231,13 @@ end
 function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType)
 	if vehiclesInfo then
 		self.m_VehiclesGrid:clear()
-		for vehicleId, vehicleElement in pairs(vehiclesInfo) do
-			local x, y, z = getElementPosition(vehicleElement)
-			local item = self.m_VehiclesGrid:addItem(getVehicleName(vehicleElement), getZoneName(x, y, z, false))
+		for vehicleId, vehicleInfo in pairs(vehiclesInfo) do
+			local element, inGarage = unpack(vehicleInfo)
+			local x, y, z = getElementPosition(element)
+			local item = self.m_VehiclesGrid:addItem(getVehicleName(element), inGarage and _"Garage" or getZoneName(x, y, z, false))
 			item.VehicleId = vehicleId
-			item.VehicleElement = vehicleElement
+			item.VehicleElement = element
+			item.VehicleInGarage = inGarage
 		end
 	end
 	if garageType then
@@ -259,9 +261,13 @@ function SelfGUI:VehicleLocateButton_Click()
 		return
 	end
 	
-	local x, y = getElementPosition(item.VehicleElement)
-	local blip = HUDRadar:getSingleton():addBlip("files/images/Blips/Waypoint.png", x, y)
-	setTimer(function() HUDRadar:getSingleton():removeBlip(blip) end, 5000, 1)
+	if not item.VehicleInGarage then
+		local x, y = getElementPosition(item.VehicleElement)
+		local blip = HUDRadar:getSingleton():addBlip("files/images/Blips/Waypoint.png", x, y)
+		setTimer(function() HUDRadar:getSingleton():removeBlip(blip) end, 5000, 1)
+	else
+		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!")
+	end
 end
 
 function SelfGUI:VehicleRespawnButton_Click()

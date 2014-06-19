@@ -25,21 +25,35 @@ function GangAreaManager:getFont()
 	return self.m_Font
 end
 
-function GangAreaManager:Event_gangAreaTurfStart()
+function GangAreaManager:Event_gangAreaTurfStart(Id, gangName, progress)
+	local gangArea = self.m_Map[Id]
+	if not gangArea then return end
+
 	local width, height = screenWidth*0.3, screenHeight*0.05
 	self.m_GUIBar = GUIProgressBar:new(screenWidth/2 - width/2, screenHeight*0.02, width, height)
-	self.m_GUIBar:setProgress(100)
+	self.m_GUIBar:setProgress(progress or 100)
+	
+	if gangName then
+		gangArea:setTagInstantly(gangName)
+	end
+	gangArea:setIsTurfingInProgress(true)
 end
 
 function GangAreaManager:Event_gangAreaTurfUpdate(progress)
 	self.m_GUIBar:setProgress(progress)
 end
 
-function GangAreaManager:Event_gangAreaTurfStop(reason, turfingGroupName)
+function GangAreaManager:Event_gangAreaTurfStop(Id, reason, turfingGroupName)
 	if self.m_GUIBar then
 		delete(self.m_GUIBar)
 		self.m_GUIBar = nil
 	end
+	
+	local gangArea = self.m_Map[Id]
+	if not gangArea then return end
+	
+	--gangArea:resetTag()
+	gangArea:setIsTurfingInProgress(false)
 	
 	if reason == TURFING_STOPREASON_LEAVEAREA then
 		ShortMessage:new(_"Du bist durch das Verlassen des Gebiets aus dem Gangwar ausgetreten. Du kannst jedoch jederzeit wieder eintreten!")
