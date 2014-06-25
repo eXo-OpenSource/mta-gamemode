@@ -8,10 +8,17 @@
 CustomModelManager = inherit(Singleton)
 
 function CustomModelManager:constructor()
-	--self:loadImport("files/models/dead_tree_18.dff", 846)
+	--self:loadImportDFF("files/models/dead_tree_18.dff", 846)
+	self:loadImportTXD("files/models/yoda.txd", 41)
+	self:loadImportDFF("files/models/yoda.dff", 41)
 end
 
-function CustomModelManager:loadImport(filePath, modelId)
+function CustomModelManager:loadImportDFF(filePath, modelId)
 	local dff = engineLoadDFF(filePath, 0)
 	return engineReplaceModel(dff, modelId)
+end
+
+function CustomModelManager:loadImportTXD(filePath, modelId)
+	local txd = engineLoadTXD(filePath)
+	return engineImportTXD(txd, modelId)
 end

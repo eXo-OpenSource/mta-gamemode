@@ -234,8 +234,19 @@ end
 
 function GangArea:setOwner(newOwner)
 	self.m_OwnerGroup = newOwner
-	setElementData(self.m_ColShape, "OwnerName", self.m_OwnerGroup:getName())
-	sql:queryExec("INSERT INTO ??_gangareas (Id, Owner) VALUES(?, ?) ON DUPLICATE KEY UPDATE Owner = ?", sql:getPrefix(), self.m_Id, self.m_OwnerGroup:getId(), self.m_OwnerGroup:getId())
+	setElementData(self.m_ColShape, "OwnerName", self.m_OwnerGroup and self.m_OwnerGroup:getName() or "")
+	
+	if self.m_OwnerGroup then
+		sql:queryExec("INSERT INTO ??_gangareas (Id, Owner) VALUES(?, ?) ON DUPLICATE KEY UPDATE Owner = ?", sql:getPrefix(), self.m_Id, self.m_OwnerGroup:getId(), self.m_OwnerGroup:getId())
+	else
+		sql:queryExec("DELETE FROM ??_gangareas WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	end
+	
+	if not self.m_OwnerGroup and self:isTurfingInProgress() then
+		killTimer(self.m_TurfingTimer)
+		self.m_TurfingTimer = nil
+		self.m_TurfingGroup = false
+	end
 end
 
 function GangArea:distributeResources()

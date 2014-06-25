@@ -30,6 +30,10 @@ function VehicleManager:constructor()
 		function(player, seat, jackingPlayer)
 			if seat == 0 then
 				setVehicleEngineState(source, source:getEngineState())
+				
+				if source.getFuel then -- "lightweight instanceof call"
+					player:triggerEvent("vehicleFuelSync", source:getFuel())
+				end
 			end
 		end
 	)
@@ -43,11 +47,14 @@ function VehicleManager:constructor()
 	end
 	
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
+	
+	-- Todo: Optimize the following code
+	setTimer(bind(self.updateFuelOfPermanentVehicles, self), 60*1000, 0)
 end
 
 function VehicleManager:destructor()
 	for ownerId, vehicles in pairs(self.m_Vehicles) do
-		for k, vehicle in ipairs(vehicles) do
+		for k, vehicle in pairs(vehicles) do
 			vehicle:save()
 		end
 	end
@@ -112,6 +119,16 @@ function VehicleManager:getPlayerVehicles(player)
 		player = player:getId()
 	end
 	return self.m_Vehicles[player] or {}
+end
+
+function VehicleManager:updateFuelOfPermanentVehicles()
+	for ownerId, vehicles in pairs(self.m_Vehicles) do
+		for k, vehicle in pairs(vehicles) do
+			if vehicle:getEngineState() then
+				vehicle:setFuel(vehicle:getFuel() - 0.5)
+			end
+		end
+	end
 end
 
 

@@ -39,6 +39,7 @@ function Core:constructor()
 	InteriorEnterExit.initializeAll()
 	VehicleSpawner.initializeAll()
 	PayNSpray.initializeAll()
+	GasStation.initializeAll()
 	
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")

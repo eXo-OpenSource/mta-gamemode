@@ -1,7 +1,7 @@
 ﻿-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/FactionSelectionGUI.lua
+-- *  FILE:        client/classes/GUIForms/FactionSelectionGUI.lua
 -- *  PURPOSE:     Faction selection GUI
 -- *
 -- ****************************************************************************

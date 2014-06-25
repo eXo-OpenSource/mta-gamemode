@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 GangAreaManager = inherit(Singleton)
-local RESOURCES_DISTRIBUTE_INTERVAL = 15*1000--*60
+local RESOURCES_DISTRIBUTE_INTERVAL = 15*60*1000
 
 function GangAreaManager:constructor()
 	self.m_Map = {}
@@ -35,6 +35,14 @@ end
 function GangAreaManager:distributeResources()
 	for k, gangArea in pairs(self.m_Map) do
 		gangArea:distributeResources()
+	end
+end
+
+function GangAreaManager:freeAreas(group)
+	for k, area in pairs(self.m_Map) do
+		if area:getOwnerGroup() == group then
+			area:setOwner(nil)
+		end
 	end
 end
 

@@ -9,23 +9,32 @@ HUDSpeedo = inherit(Singleton)
 
 function HUDSpeedo:constructor()
 	self.m_Size = 256
-	--self.m_FuelSize = 96
+	self.m_FuelSize = 128
 	self.m_Draw = bind(self.draw, self)
+	self.m_Fuel = 100
 
 	-- Add event handlers
-	addEventHandler("onClientPlayerVehicleEnter", localPlayer, function(vehicle, seat)
-		if seat == 0 then
-			--if vehicle.m_Fuel == nil then vehicle.m_Fuel = 100 end
-			self:show()
+	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
+		function(vehicle, seat)
+			if seat == 0 then
+				--if vehicle.m_Fuel == nil then vehicle.m_Fuel = 100 end
+				self:show()
+			end
 		end
-	end)
-
-	addEventHandler("onClientPlayerVehicleExit", localPlayer, function(vehicle, seat)
-		if seat == 0 then
-			self:hide()
+	)
+	addEventHandler("onClientPlayerVehicleExit", localPlayer,
+		function(vehicle, seat)
+			if seat == 0 then
+				self:hide()
+			end
 		end
-	end)
-
+	)
+	addEvent("vehicleFuelSync", true)
+	addEventHandler("vehicleFuelSync", root,
+		function(fuel)
+			self.m_Fuel = fuel
+		end
+	)
 end
 
 function HUDSpeedo:show()
@@ -62,7 +71,7 @@ function HUDSpeedo:draw()
 	end
 	
 	-- draw the fuel-o-meter
-	--dxDrawImage(drawX-86, drawY+136, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png")
-	--dxDrawImage(drawX-86, drawY+136, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", vehicle:getFuel() * 180/100)
+	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png")
+	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
 	--dxSetBlendMode("blend")
 end

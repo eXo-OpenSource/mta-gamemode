@@ -112,8 +112,6 @@ function PermanentVehicle:setInGarage(state)
 end
 
 function PermanentVehicle:respawn()
-outputDebug("Respawning...")
-	
 	-- Todo: Check if slot limit is reached
 	-- Set inGarage flag and teleport to private dimension
 	self:setInGarage(true)

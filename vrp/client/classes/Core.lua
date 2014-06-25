@@ -73,6 +73,7 @@ function Core:ready()
 	VehicleGarages:new()
 	
 	self:createBlips()
+	GasStationGUI:new()
 end
 
 function Core:destructor()

@@ -15,6 +15,7 @@ function Vehicle:virtual_constructor()
 	setVehicleOverrideLights(self, 1)
 	setVehicleEngineState(self, false)
 	self.m_EngineState = false
+	self.m_Fuel = 100
 end
 
 function Vehicle:virtual_destructor()
@@ -87,17 +88,43 @@ end
 function Vehicle:toggleEngine(player)
 	if self:hasKey(player) or not self:isPermanent() then
 		local state = not getVehicleEngineState(self)
+		if state == true and self.m_Fuel <= 0 then
+			player:sendError(_("Dein Tank ist leer!", player))
+			return false
+		end
+		
 		setVehicleEngineState(self, state)
 		self.m_EngineState = state
 		
 		if getVehicleEngineState(self) then
 			player:triggerEvent("vehicleEngineStart")
 		end
+		return true
 	end
+	return false
 end
 
 function Vehicle:getEngineState()
 	return self.m_EngineState
+end
+
+function Vehicle:setFuel(fuel)
+	self.m_Fuel = fuel
+	
+	-- Switch engine off in case of an empty fuel tank
+	if self.m_Fuel <= 0 then
+		setVehicleEngineState(self, false)
+		self.m_EngineState = false
+	else
+		local driver = getVehicleOccupant(self, 0)
+		if driver then
+			driver:triggerEvent("vehicleFuelSync", fuel)
+		end
+	end
+end
+
+function Vehicle:getFuel()
+	return self.m_Fuel
 end
 
 Vehicle.isPermanent = pure_virtual
