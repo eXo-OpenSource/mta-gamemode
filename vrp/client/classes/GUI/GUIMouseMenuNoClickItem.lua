@@ -11,8 +11,8 @@ function GUIMouseMenuNoClickItem:constructor(posX, posY, width, height, text, pa
 	checkArgs("GUIMouseMenuNoClickItem:constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIFontContainer.constructor(self, text, 1, VRPFont(self.m_Height-6))
-	GUIColorable.constructor(self, Color.DarkBlue)
+	GUIFontContainer.constructor(self, text, 1, VRPFont(self.m_Height))
+	GUIColorable.constructor(self, tocolor(0, 0, 0, 220))
 	
 	self.m_TextColor = Color.Red
 end

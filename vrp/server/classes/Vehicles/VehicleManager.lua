@@ -216,12 +216,14 @@ function VehicleManager:Event_vehicleRespawn()
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
-	if source:isInGarage() then
-		client:sendError(_("Dieses Fahrzeug ist bereits in der Garage!", client))
-		return
-	end
 	if client:getMoney() < 100 then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
+		return
+	end
+	if source:isInGarage() then
+		fixVehicle(source)
+		client:takeMoney(100)
+		client:sendShortMessage(_("Fahrzeug repariert!", client))
 		return
 	end
 	local occupants = getVehicleOccupants(source)
@@ -238,7 +240,7 @@ function VehicleManager:Event_vehicleRespawn()
 	-- Refresh location in the self menu
 	local vehicles = {}
 	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
-		vehicles[vehicle:getId()] = {vehicle, client:isInGarage()}
+		vehicles[vehicle:getId()] = {vehicle, vehicle:isInGarage()}
 	end
 	client:triggerEvent("vehicleRetrieveInfo", vehicles)
 end

@@ -340,6 +340,7 @@
 	<vrpfile src="files/images/Blips/Waypoint.png"/>
 	<vrpfile src="files/images/Blips/AmmuNation.png"/>
 	<vrpfile src="files/images/Blips/Bus.png"/>
+	<vrpfile src="files/images/Blips/CarShop.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

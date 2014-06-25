@@ -18,7 +18,7 @@ end
 
 function GUIMouseMenu:drawThis()
 	-- Draw background
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(255, 0, 0, 200))
+	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 220)) -- tocolor(255, 0, 0, 200)
 end
 
 function GUIMouseMenu:addItem(text, callback)
