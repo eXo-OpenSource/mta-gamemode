@@ -52,7 +52,6 @@ function GangAreaManager:Event_gangAreaTurfStop(Id, reason, turfingGroupName)
 	local gangArea = self.m_Map[Id]
 	if not gangArea then return end
 	
-	--gangArea:resetTag()
 	gangArea:setIsTurfingInProgress(false)
 	
 	if reason == TURFING_STOPREASON_LEAVEAREA then
@@ -61,5 +60,6 @@ function GangAreaManager:Event_gangAreaTurfStop(Id, reason, turfingGroupName)
 		ShortMessage:new(_("Gangwar beendet! Das Gebiet gehört nun %s", turfingGroupName))
 	elseif reason == TURFING_STOPREASON_DEFENDED then
 		ShortMessage:new(_("Gangwar beendet! Das Gebiet wurde erfolgreich vor %s verteidigt", turfingGroupName))
+		gangArea:resetTag(true) -- Reset the gang tag and restore the old one
 	end
 end

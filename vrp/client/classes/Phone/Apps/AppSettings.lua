@@ -12,7 +12,7 @@ function AppSettings:constructor()
 end
 
 function AppSettings:onOpen(form)
-	self.m_Label = GUILabel:new(10, 10, 200, 20, "Settings", form) -- 3
+	self.m_Label = GUILabel:new(10, 10, 200, 50, "Settings", form)
 	self.m_Label:setColor(Color.Black)
 	
 	GUILabel:new(10, 60, 200, 20, "Ringtones", form):setColor(Color.Black)

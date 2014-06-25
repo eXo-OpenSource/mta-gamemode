@@ -13,10 +13,10 @@ function GangArea:constructor(Id, wallPosition, rotation, areaPosition, width, h
 	self.m_Shape = createColSphere(wallPosition.X, wallPosition.Y, wallPosition.Z, 5)
 	self.m_TagTexture = false
 	self.m_TagSectionTexture = false
-	--dxSetTextureEdge(self.m_TagTexture, "border")
 	self.m_TagProgress = 128
-	self.m_TagSprayedEntirely = false
+	self.m_IsSpraying = false
 	self.m_TagText = ""
+	self.m_OldTagText = ""
 	self.m_RenderTagFunc = bind(self.renderTag, self)
 	self.m_TurfingInProgress = false
 	
@@ -24,7 +24,8 @@ function GangArea:constructor(Id, wallPosition, rotation, areaPosition, width, h
 	addEventHandler("onClientColShapeHit", self.m_Shape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				self:setTagText(getElementData(localPlayer, "GroupName"))
+				self.m_IsSpraying = false
+				self:setTagText(getElementData(localPlayer, "GroupName") or "")
 				addEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
 			end
 		end
@@ -33,6 +34,11 @@ function GangArea:constructor(Id, wallPosition, rotation, areaPosition, width, h
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
 				removeEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
+				self.m_IsSpraying = false
+				
+				if not self.m_TurfingInProgress then
+					self:resetTag(true)
+				end
 			end
 		end
 	)
@@ -42,9 +48,7 @@ function GangArea:constructor(Id, wallPosition, rotation, areaPosition, width, h
 	addEventHandler("onClientColShapeHit", gangAreaShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				if not self.m_TurfingInProgress then
-					self:setTagText(getElementData(gangAreaShape, "OwnerName"))
-				end
+				self:setTagText(getElementData(gangAreaShape, "OwnerName") or "")
 				
 				if not self.m_TagTexture and not self.m_TagSectionTexture then
 					self.m_TagTexture = dxCreateRenderTarget(128, 128, true)
@@ -80,25 +84,40 @@ function GangArea:destructor()
 end
 
 function GangArea:spray(hitX, hitY, hitZ, startX, startY, startZ)
+	if not self.m_TagTexture and not self.m_TagSectionTexture then
+		self.m_TagTexture = dxCreateRenderTarget(128, 128, true)
+		self.m_TagSectionTexture = dxCreateRenderTarget(128, 128, true)
+		self:renderTagTexture()
+	end
+
+	if not self.m_IsSpraying then
+		self.m_TagProgress = 0
+	end
+
 	if self.m_TagProgress < 128 then
 		self.m_TagProgress = self.m_TagProgress + 0.5
 		self:renderTagTexture()
+		self.m_IsSpraying = true
 	else
-		if not self.m_TagSprayedEntirely then
+		self.m_TagProgress = 128
+		if self.m_IsSpraying and not self.m_TurfingInProgress then
 			triggerServerEvent("gangAreaTagSprayed", root, self.m_Id)
-			self.m_TagSprayedEntirely = true
+			self.m_IsSpraying = false
 		end
 	end
 end
 
-function GangArea:resetTag()
+function GangArea:resetTag(restoreOld)
 	self.m_TagProgress = 0
-	self.m_TagSprayedEntirely = false
+	
+	if restoreOld then
+		self.m_TagText = self.m_OldTagText
+		self.m_OldTagText = ""
+	end
+	self:renderTagTexture()
 end
 
 function GangArea:renderTagTexture()
-	outputDebug("GangArea:renderTagTexture()")
-	
 	-- Render the text to the texture
 	dxSetRenderTarget(self.m_TagSectionTexture, true)
 	--dxDrawRectangle(0, 0, 128, 128, Color.Yellow)
@@ -107,18 +126,19 @@ function GangArea:renderTagTexture()
 
 	-- Next, render the text as section to the actual tag texture
 	dxSetRenderTarget(self.m_TagTexture, true)
+	dxDrawText(self.m_OldTagText, 5, 5, 128-5*2, 128-5*2, Color.White, 1, GangAreaManager:getSingleton():getFont(), "center", "center", false, true)
 	dxDrawImageSection(0, 0, 128, math.floor(self.m_TagProgress), 0, 0, 128, math.floor(self.m_TagProgress), self.m_TagSectionTexture)
 	dxSetRenderTarget(nil)
 end
 
 function GangArea:setTagText(text)
+	self.m_OldTagText = self.m_TagText
 	self.m_TagText = text
 end
 
 function GangArea:setTagInstantly(text)
 	self:setTagText(text)
 	self.m_TagProgress = 128
-	self.m_TagSprayedEntirely = true
 	
 	if self.m_TagSectionTexture and self.m_TagTexture then
 		self:renderTagTexture()

@@ -13,6 +13,7 @@ function Group:constructor(Id, name, money, players)
 	self.m_Players = players or {}
 	self.m_Name = name
 	self.m_Money = money
+	self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
 	self.m_Invitations = {}
 end
 
@@ -168,7 +169,7 @@ end
 function Group:getOnlinePlayers()
 	local players = {}
 	for playerId in pairs(self.m_Players) do
-		local player = Player.getFromId(playerId) -- Todo: optimize this (a for loop through all players might be better)
+		local player = Player.getFromId(playerId)
 		if player then
 			table.insert(players, player)
 		end
@@ -179,5 +180,18 @@ end
 function Group:sendMessage(text, r, g, b, ...)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, r, g, b, ...)
+	end
+end
+
+function Group:distributeMoney(amount)
+	local moneyForFund = amount * self.m_ProfitProportion
+	self:giveMoney(moneyForFund)
+	
+	local moneyForPlayers = amount - moneyForFund
+	local onlinePlayers = self:getOnlinePlayers()
+	local amountPerPlayer = moneyForPlayers / #onlinePlayers
+	
+	for k, player in pairs(onlinePlayers) do
+		player:giveMoney(amountPerPlayer)
 	end
 end

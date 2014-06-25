@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GangArea = inherit(Object)
 
-function GangArea:constructor(Id, areaPosition, width, height)
+function GangArea:constructor(Id, areaPosition, width, height, resourcesPerDistribution)
 	self.m_Id = Id
 	local result = sql:queryFetchSingle("SELECT Owner, State FROM ??_gangareas WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	
@@ -31,6 +31,8 @@ function GangArea:constructor(Id, areaPosition, width, height)
 	self.m_TurfingTimer = nil
 	self.m_TurfingProgress = 100
 	self.m_TurfingDirection = nil -- true: attacking; false: defending
+	
+	self.m_ResourcesPerDistribution = resourcesPerDistribution
 	
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Area_Enter, self))
 	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.Area_Leave, self))
@@ -88,9 +90,7 @@ function GangArea:Area_Leave(hitElement, matchingDimension)
 		-- Check if the gangarea was successfully defended
 		if #self.m_TurfingPlayers == 0 then
 			if self.m_OwnerGroup then
-				for k, player in pairs(self.m_TurfingPlayers) do
-					player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_DEFENDED, self.m_TurfingGroup:getName())
-				end
+				hitElement:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_DEFENDED, self.m_TurfingGroup:getName())
 				for k, player in pairs(self.m_DefendingPlayers) do
 					player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_DEFENDED, self.m_TurfingGroup:getName())
 				end
@@ -236,4 +236,14 @@ function GangArea:setOwner(newOwner)
 	self.m_OwnerGroup = newOwner
 	setElementData(self.m_ColShape, "OwnerName", self.m_OwnerGroup:getName())
 	sql:queryExec("INSERT INTO ??_gangareas (Id, Owner) VALUES(?, ?) ON DUPLICATE KEY UPDATE Owner = ?", sql:getPrefix(), self.m_Id, self.m_OwnerGroup:getId(), self.m_OwnerGroup:getId())
+end
+
+function GangArea:distributeResources()
+	-- Do we have an owner?
+	if not self.m_OwnerGroup then
+		return false
+	end
+	
+	self.m_OwnerGroup:distributeMoney(self.m_ResourcesPerDistribution)
+	return true
 end

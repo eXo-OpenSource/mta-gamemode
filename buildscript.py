@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 import shutil;
 from subprocess import call
 
-compiler = "tools/luac.exe"
+compiler = "tools/luac_mta.exe"
 rootdir = "vrp/"
 outdir = "vrp_build/"
 
@@ -59,4 +59,3 @@ call(serverCall)
 clientCall = [ compiler, "-o", outdir+"client.luac" ]
 clientCall.extend(files["client"])
 call(clientCall)
-

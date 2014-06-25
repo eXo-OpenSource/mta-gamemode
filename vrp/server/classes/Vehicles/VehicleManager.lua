@@ -238,7 +238,7 @@ function VehicleManager:Event_vehicleRespawn()
 	-- Refresh location in the self menu
 	local vehicles = {}
 	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
-		vehicles[vehicle:getId()] = vehicle
+		vehicles[vehicle:getId()] = {vehicle, client:isInGarage()}
 	end
 	client:triggerEvent("vehicleRetrieveInfo", vehicles)
 end

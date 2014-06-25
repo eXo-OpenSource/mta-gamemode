@@ -14,7 +14,7 @@ function AppDashboard:constructor()
 end
 
 function AppDashboard:onOpen(form)
-	self.m_Label = GUILabel:new(10, 3, 200, 20, "Dashboard", form) -- 2
+	self.m_Label = GUILabel:new(10, 3, 200, 50, "Dashboard", form)
 	self.m_Label:setColor(Color.Black)
 	
 	self.m_DashArea = GUIScrollableArea:new(0, 40, 222, 400, 222, 1, true, false, form)

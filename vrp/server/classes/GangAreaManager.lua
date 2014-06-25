@@ -6,13 +6,14 @@
 -- *
 -- ****************************************************************************
 GangAreaManager = inherit(Singleton)
+local RESOURCES_DISTRIBUTE_INTERVAL = 15*1000--*60
 
 function GangAreaManager:constructor()
 	self.m_Map = {}
 	
 	outputServerLog("Loading gangareas...")
 	for i, info in ipairs(GangAreaData) do
-		self.m_Map[i] = GangArea:new(i, info.areaPosition, info.width, info.height)
+		self.m_Map[i] = GangArea:new(i, info.areaPosition, info.width, info.height, info.resources)
 	end
 	
 	addRemoteEvents{"gangAreaTagSprayed"}
@@ -25,6 +26,16 @@ function GangAreaManager:constructor()
 			end
 		end
 	)
+	
+	-- Start the timer that produces and distributes the resources
+	setTimer(bind(self.distributeResources, self), RESOURCES_DISTRIBUTE_INTERVAL, 0)
+end
+
+
+function GangAreaManager:distributeResources()
+	for k, gangArea in pairs(self.m_Map) do
+		gangArea:distributeResources()
+	end
 end
 
 function GangAreaManager:Event_gangAreaTagSprayed(Id)
