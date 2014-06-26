@@ -1,8 +1,8 @@
 Nametag = inherit(Singleton)
 
-NAMETAG_COLSHAPE_SIZE = 20
-NAMETAG_SIZE_MAX = 1.5
-NAMETAG_SIZE_MIN = 0.75
+local NAMETAG_COLSHAPE_SIZE = 20
+local NAMETAG_SIZE_MAX = 1.5
+local NAMETAG_SIZE_MIN = 0.75
 
 function isCursorOverArea ( x,y,w,h )
 	if isCursorShowing () then

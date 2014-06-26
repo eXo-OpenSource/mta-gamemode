@@ -38,6 +38,9 @@ end
 
 function Package:addFile(fh, file)
 	local r = fileOpen(file)
+	if not r then
+		print("[PACKAGE] Cant open file : "..file)
+	end
 	local size = fileGetSize(r)
 	local data = fileRead(r, size)
 	fileClose(r)
