@@ -76,10 +76,8 @@ function ClickHandler:dispatchClick(clickInfo)
 	
 	-- Phase 3: Check element types
 	if self.m_Menu[elementType] then
-		if elementType ~= "vehicle" or getElementData(element, "OwnerName") then -- Elementdata: temp fix (Todo)
-			self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-			return
-		end
+		self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+		return
 	end
 end
 

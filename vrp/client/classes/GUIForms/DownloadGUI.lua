@@ -4,7 +4,7 @@ inherit(Singleton, DownloadGUI)
 function DownloadGUI:constructor()
 	GUIForm.constructor(self, 0, 0, screenWidth, screenHeight)
 	
-	self.m_Logo = GUIImage:new(screenWidth/2 - 150/2, screenHeight/2 - 150/2 - 120, 150, 150, "files/images/Logo.png", self)
+	self.m_Logo = GUIImage:new(screenWidth/2 - 250/2, screenHeight/2 - 250/2 - 120, 250, 250, "files/images/Logo.png", self)
 	self.m_Text = GUILabel:new(0, screenHeight/2 - 150/2 + 50, screenWidth, 50, "Bitte warten, bis das Spielerlebnis geladen wurde...", self):setAlignX("center"):setFont(VRPFont(40))
 	if screenWidth < 1024 then
 		self.m_ResolutionWarning = GUILabel:new(0, screenHeight - 200, screenWidth, 20, "Bitte erhöhe deine Auflösung, um Darstellungsfehler zu vermeiden!", self):setAlignX("center"):setFont(VRPFont(30)):setColor(Color.Red)

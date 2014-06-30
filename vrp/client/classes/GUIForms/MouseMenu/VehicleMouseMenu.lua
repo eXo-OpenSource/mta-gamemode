@@ -10,7 +10,9 @@ VehicleMouseMenu = inherit(GUIMouseMenu)
 function VehicleMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 	
-	self:addItem("Besitzer: "..getElementData(element, "OwnerName")):setTextColor(Color.Red)
+	if getElementData(element, "OwnerName") then
+		self:addItem("Besitzer: "..getElementData(element, "OwnerName")):setTextColor(Color.Red)
+	end
 	
 	self:addItem(_"Auf-/Zuschließen",
 		function()

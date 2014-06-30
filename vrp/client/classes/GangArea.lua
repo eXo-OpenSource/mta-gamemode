@@ -11,8 +11,8 @@ function GangArea:constructor(Id, wallPosition, rotation, areaPosition, width, h
 	self.m_Id = Id
 	self.m_Wall = createObject(7921, wallPosition.X, wallPosition.Y, wallPosition.Z, 0, 0, rotation)
 	self.m_Shape = createColSphere(wallPosition.X, wallPosition.Y, wallPosition.Z, 5)
-	self.m_TagTexture = false
-	self.m_TagSectionTexture = false
+	self.m_TagTexture = nil
+	self.m_TagSectionTexture = nil
 	self.m_TagProgress = 128
 	self.m_IsSpraying = false
 	self.m_TagText = ""
@@ -50,11 +50,7 @@ function GangArea:constructor(Id, wallPosition, rotation, areaPosition, width, h
 			if hitElement == localPlayer and matchingDimension then
 				self:setTagText(getElementData(gangAreaShape, "OwnerName") or "")
 				
-				if not self.m_TagTexture and not self.m_TagSectionTexture then
-					self.m_TagTexture = dxCreateRenderTarget(128, 128, true)
-					self.m_TagSectionTexture = dxCreateRenderTarget(128, 128, true)
-					self:renderTagTexture()
-				end
+				self:createTextures()
 				addEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
 		end
@@ -62,12 +58,7 @@ function GangArea:constructor(Id, wallPosition, rotation, areaPosition, width, h
 	addEventHandler("onClientColShapeLeave", gangAreaShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				if self.m_TagTexture and self.m_TagSectionTexture then
-					destroyElement(self.m_TagTexture)
-					destroyElement(self.m_TagSectionTexture)
-					self.m_TagTexture = nil
-					self.m_TagSectionTexture = nil
-				end
+				self:destroyTextures()
 				removeEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
 		end
@@ -77,18 +68,11 @@ end
 function GangArea:destructor()
 	destroyElement(self.m_Wall)
 	destroyElement(self.m_Shape)
-	if self.m_TagTexture and self.m_TagSectionTexture then
-		destroyElement(self.m_TagTexture)
-		destroyElement(self.m_TagSectionTexture)
-	end
+	self:destroyTextures()
 end
 
 function GangArea:spray(hitX, hitY, hitZ, startX, startY, startZ)
-	if not self.m_TagTexture and not self.m_TagSectionTexture then
-		self.m_TagTexture = dxCreateRenderTarget(128, 128, true)
-		self.m_TagSectionTexture = dxCreateRenderTarget(128, 128, true)
-		self:renderTagTexture()
-	end
+	self:createTextures()
 
 	if not self.m_IsSpraying then
 		self.m_TagProgress = 0
@@ -113,8 +97,11 @@ function GangArea:resetTag(restoreOld)
 	if restoreOld then
 		self.m_TagText = self.m_OldTagText
 		self.m_OldTagText = ""
+		self.m_TagProgress = 128
 	end
-	self:renderTagTexture()
+	if self.m_TagTexture then
+		self:renderTagTexture()
+	end
 end
 
 function GangArea:renderTagTexture()
@@ -150,6 +137,23 @@ function GangArea:renderTag()
 	local tagEndX, tagEndY, tagEndZ = getPositionFromElementOffset(self.m_Wall, 1.1, 0, 1.1-2)
 	local normalX, normalY, normalZ = getPositionFromElementOffset(self.m_Wall, 3, 0, 0)
 	dxDrawMaterialLine3D(tagStartX, tagStartY, tagStartZ, tagEndX, tagEndY, tagEndZ, self.m_TagTexture, 2, Color.White, normalX, normalY, normalZ)
+end
+
+function GangArea:createTextures()
+	if not self.m_TagTexture and not self.m_TagSectionTexture then
+		self.m_TagTexture = dxCreateRenderTarget(128, 128, true)
+		self.m_TagSectionTexture = dxCreateRenderTarget(128, 128, true)
+		self:renderTagTexture()
+	end
+end
+
+function GangArea:destroyTextures()
+	if self.m_TagTexture and self.m_TagSectionTexture then
+		destroyElement(self.m_TagTexture)
+		destroyElement(self.m_TagSectionTexture)
+		self.m_TagTexture = nil
+		self.m_TagSectionTexture = nil
+	end
 end
 
 function GangArea:isTurfingInProgress()

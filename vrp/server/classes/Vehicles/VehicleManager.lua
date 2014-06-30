@@ -29,11 +29,10 @@ function VehicleManager:constructor()
 	addEventHandler("onVehicleEnter", root,
 		function(player, seat, jackingPlayer)
 			if seat == 0 then
-				setVehicleEngineState(source, source:getEngineState())
+				self:checkVehicle(source)
 				
-				if source.getFuel then -- "lightweight instanceof call"
-					player:triggerEvent("vehicleFuelSync", source:getFuel())
-				end
+				setVehicleEngineState(source, source:getEngineState())
+				player:triggerEvent("vehicleFuelSync", source:getFuel())
 			end
 		end
 	)
@@ -131,6 +130,14 @@ function VehicleManager:updateFuelOfPermanentVehicles()
 	end
 end
 
+function VehicleManager:checkVehicle(vehicle)
+	-- Lightweight instanceof(vehicle, Vehicle)
+	if not vehicle.toggleLight then
+		-- Make a temporary vehicle if vehicle is not yet instance of any class
+		enew(vehicle, TemporaryVehicle)
+	end
+end
+
 
 function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	if not VEHICLESHOPS[shop] then return end
@@ -157,10 +164,7 @@ end
 
 function VehicleManager:Event_vehicleLock()
 	if not source or not isElement(source) then return end
-	
-	if not instanceof(source, Vehicle) then
-		return
-	end
+	self:checkVehicle(source)
 	
 	if not source:hasKey(client) and client:getRank() <= RANK.User then
 		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
@@ -182,10 +186,7 @@ end
 function VehicleManager:Event_vehicleAddKey(player)
 	if not player or not isElement(player) then return end
 	if not player:isLoggedIn() then return end
-	
-	if not instanceof(source, PermanentVehicle, true) then
-		return
-	end
+	if not instanceof(source, PermanentVehicle, true) then return end
 	
 	if not source:isPermanent() then
 		client:sendError(_("Nur nicht-permanente Fahrzeuge können Schlüssel haben", client))
@@ -221,7 +222,7 @@ end
 
 function VehicleManager:Event_vehicleRepair()
 	if client:getRank() < RANK.Moderator then
-		-- Todo: Report cheat attempt
+		AntiCheat:getSingleton():report("DisallowedEvent", CheatSeverity.High)
 		return
 	end
 	
@@ -229,6 +230,8 @@ function VehicleManager:Event_vehicleRepair()
 end
 
 function VehicleManager:Event_vehicleRespawn()
+	if not instanceof(source, PermanentVehicle, true) then return end
+
 	if source:getOwner() ~= client:getId() then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
@@ -263,6 +266,8 @@ function VehicleManager:Event_vehicleRespawn()
 end
 
 function VehicleManager:Event_vehicleDelete()
+	self:checkVehicle(source)
+	
 	if client:getRank() < RANK.Moderator then
 		-- Todo: Report cheat attempt
 		return

@@ -62,10 +62,10 @@ function GangAreaManager:Event_gangAreaTagSprayed(Id)
 					return
 				end]]
 				
-				if ownerGroup and #ownerGroup:getOnlinePlayers() < 3 then
+				--[[if ownerGroup and #ownerGroup:getOnlinePlayers() < 2 then -- Todo: Change this back to 3
 					client:sendError(_("Es müssen mindestens 3 Mitglieder der gegnerischen Gang online sein!", client))
 					return
-				end
+				end]]
 				
 				if gangArea:startTurfing(clientGroup) then
 					client:sendInfo(_("Der Gangwar wurde gestartet! Halte nun bis zur Neutralisierung im Gebiet durch!", client))

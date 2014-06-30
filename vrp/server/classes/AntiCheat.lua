@@ -20,3 +20,7 @@ function AntiCheat:constructor()
 		end
 	)
 end
+
+function AntiCheat:report(name, severity)
+	outputServerLog(("AntiCheat:report(%s, %i)"):format(name, severity))
+end

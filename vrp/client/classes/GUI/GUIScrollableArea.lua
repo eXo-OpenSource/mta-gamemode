@@ -86,9 +86,7 @@ end
 function GUIScrollableArea:resize(documentWidth, documentHeight)
 	destroyElement(self.m_PageTarget)
 	self.m_PageTarget = dxCreateRenderTarget(documentWidth, documentHeight, true)
-	if dxSetTextureEdge then
-		dxSetTextureEdge(self.m_PageTarget, "border", Color.Clear)
-	end
+	dxSetTextureEdge(self.m_PageTarget, "border", Color.Clear)
 	
 	self.m_DocumentWidth, self.m_DocumentHeight = documentWidth, documentHeight
 	self:anyChange()

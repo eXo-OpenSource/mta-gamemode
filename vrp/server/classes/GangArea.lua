@@ -109,17 +109,17 @@ end
 
 function GangArea:updateTurfing()
 	-- Using a timer interval of 4 seconds results in a overall turfing time of 400 seconds (4000ms * 100)
-	if self.m_SurfingDirection then
+	if self.m_TurfingDirection then
 		-- Attacking mode
 		self.m_TurfingProgress = self.m_TurfingProgress - 1
+		
+		-- Tripple speed if the area has no owner group
+		if not self.m_OwnerGroup then
+			self.m_TurfingProgress = self.m_TurfingProgress - 2 -- We don't need to take the turfing direction into account as defending is not possible if there isn't any owner group
+		end
 	else
 		-- Defending mode
 		self.m_TurfingProgress = self.m_TurfingProgress + 1
-	end
-	
-	-- Tripple speed if the area has no owner group
-	if not self.m_OwnerGroup then
-		self.m_TurfingProgress = self.m_TurfingProgress - 2 -- We don't need to take the turfing direction into account as defending is not possible if there isn't any owner group
 	end
 	
 	if self.m_TurfingProgress <= 0 then
@@ -182,7 +182,7 @@ function GangArea:startTurfing(group)
 	if self.m_OwnerGroup then
 		local onlinePlayers = self.m_OwnerGroup:getOnlinePlayers()
 		for k, player in pairs(onlinePlayers) do
-			local x, y, z = getElementPosition(self.m_Wall)
+			local x, y, z = getElementPosition(self.m_ColShape)
 			player:sendWarning(_("Achtung! Eines eurer Gebiete in %s wird angegriffen!", player, getZoneName(x, y, z, false)))
 		end
 	end
