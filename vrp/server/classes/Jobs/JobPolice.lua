@@ -19,9 +19,9 @@ function JobPolice:constructor()
 	addEvent("policePanelListRequest", true)
 	addEventHandler("policePanelListRequest", root,
 		function()
-			--[[if client:getJob() ~= self then
+			if client:getJob() ~= self then
 				return
-			end]]
+			end
 		
 			local data = {}
 			for k, v in ipairs(getElementsByType("player")) do
@@ -38,7 +38,11 @@ function JobPolice:constructor()
 	addEventHandler("onPickupHit", self.m_ClothesPickup,
 		function(hitElement)
 			if getElementType(hitElement) == "player" and hitElement:getJob() == self then
-				setElementModel(hitElement, getElementModel(hitElement) ~= 280 and 280 or hitElement:getSkin())
+				if getElementModel(hitElement) ~= 280 then
+					hitElement:setJobDutySkin(280)
+				else
+					hitElement:setJobDutySkin(nil)
+				end
 			end
 			cancelEvent()
 		end
@@ -50,7 +54,6 @@ function JobPolice:destructor()
 end
 
 function JobPolice:start(player)
-	--setElementModel(player, 280)
 	giveWeapon(player, 3, 1, true)
 end
 

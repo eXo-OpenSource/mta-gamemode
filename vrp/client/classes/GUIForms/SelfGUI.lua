@@ -263,7 +263,7 @@ function SelfGUI:VehicleLocateButton_Click()
 	
 	if not item.VehicleInGarage then
 		local x, y = getElementPosition(item.VehicleElement)
-		local blip = HUDRadar:getSingleton():addBlip("files/images/Blips/Waypoint.png", x, y)
+		local blip = Blip:new("files/images/Blips/Waypoint.png", x, y)
 		setTimer(function() HUDRadar:getSingleton():removeBlip(blip) end, 5000, 1)
 	else
 		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!")

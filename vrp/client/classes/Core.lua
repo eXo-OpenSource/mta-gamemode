@@ -93,6 +93,6 @@ function Core:set(...)
 end
 
 function Core:createBlips()
-	HUDRadar:getSingleton():addBlip("files/images/Blips/Bank.png", 1660.4, -1272.8)
+	Blip:new("files/images/Blips/Bank.png", 1660.4, -1272.8)
 end
 

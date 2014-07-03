@@ -1,8 +1,9 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.3.4" client="1.3.5"/>
+	<min_mta_version server="1.3.5" client="1.3.5"/>
 	<oop>false</oop>
 	<include resource="freeroam"/>
+	<include resource="customblips"/>
 
 	<!-- Shared -->
 	<script src="shared/classlib.lua" type="shared"/>
@@ -191,7 +192,7 @@
 	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
 	
-	<script src="client/classes/HUD/RadarBlip.lua" type="client"/>
+	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
@@ -345,6 +346,7 @@
 	<vrpfile src="files/images/Blips/AmmuNation.png"/>
 	<vrpfile src="files/images/Blips/Bus.png"/>
 	<vrpfile src="files/images/Blips/CarShop.png"/>
+	<vrpfile src="files/images/Blips/RedSaw.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

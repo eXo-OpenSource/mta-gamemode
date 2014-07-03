@@ -9,7 +9,7 @@ Job = inherit(Singleton)
 
 function Job:constructor(posX, posY, posZ, blipPath, headerImage, name, description)
 	-- Create the customblip
-	HUDRadar:getSingleton():addBlip(blipPath, posX, posY)
+	Blip:new(blipPath, posX, posY)
 	self.m_Name = name
 	
 	-- Create a job marker

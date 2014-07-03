@@ -16,9 +16,9 @@ function JobLumberjack:constructor()
 	self.m_DumpMarker = createMarker(-1969.8, -2432.6, 29.5, "corona", 4)
 	addEventHandler("onMarkerHit", self.m_DumpMarker, bind(JobLumberjack.dumpHit, self))
 	
-	--createVehicle(455, 1868.5, -1253.8, 14.6, 0, 0, 90, "Lumber", false, 255, 255)
-	--createVehicle(455, 1893.5, -1253.8, 14.6, 0, 0, 90, "Lumber", false, 255, 255)
-	VehicleSpawner:new(1069.6, -311, 73, {"Flatbed"}, 90, bind(Job.requireVehicle, self), function(v) setVehicleVariant(v, 255, 255) end)
+	for i = 0, 5 do
+		AutomaticVehicleSpawner:new(455, 1089 - i*6, -299.9, 74.5, 0, 0, 180, function(v) setVehicleVariant(v, 255, 255) end)
+	end
 	
 	addEvent("lumberjackTreeCut", true)
 	addEventHandler("lumberjackTreeCut", root, bind(JobLumberjack.Event_lumberjackTreeCut, self))
@@ -49,11 +49,11 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 		
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
-			hitElement:sendMessage(_("Please enter a Flatbed", hitElement), 255, 0, 0)
+			hitElement:sendMessage(_("Bitte benutze einen Flatbed", hitElement), 255, 0, 0)
 			return
 		end
 		
-		for k, v in ipairs(getAttachedElements(vehicle)) do
+		for k, v in pairs(getAttachedElements(vehicle)) do
 			destroyElement(v)
 		end
 		
@@ -62,6 +62,7 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 				local x, y, z = getElementPosition(vehicle)
 				local object = createObject(837, x, y, z)
 				attachElements(object, vehicle, -1 + j * 0.3, -1.5, i * 0.2, 0, 0, 90)
+				setElementParent(object, vehicle) -- Deletes the object automatically when the vehicle will be destroyed (e.g. by spawn system)
 			end
 		end
 		
@@ -87,7 +88,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		hitElement:giveMoney(numTrees * 40)
 		hitElement:giveXP(numTrees * 0.2)
 		
-		for k, v in ipairs(getAttachedElements(vehicle)) do
+		for k, v in pairs(getAttachedElements(vehicle)) do
 			destroyElement(v)
 		end
 	end

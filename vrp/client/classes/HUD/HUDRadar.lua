@@ -66,7 +66,7 @@ function HUDRadar:restore(clearedRenderTargets)
 end
 
 function HUDRadar:update()
-	if not self.m_Visible then return end
+	if not self.m_Visible or isPlayerMapVisible() then return end
 
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if vehicle and (getControlState("vehicle_look_behind") or
@@ -85,7 +85,7 @@ function HUDRadar:update()
 end
 
 function HUDRadar:draw()
-	if not self.m_Visible then return end
+	if not self.m_Visible or isPlayerMapVisible() then return end
 	-- Draw the rectangle (the border)
 	dxDrawRectangle(self.m_PosX, self.m_PosY, self.m_Width+6, self.m_Height+self.m_Height/20+9, tocolor(0, 0, 0))
 	
@@ -107,12 +107,20 @@ function HUDRadar:draw()
 	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2 * getElementHealth(localPlayer)/100, self.m_Height/20, tocolor(100, 121, 105))
 	
 	-- Draw armor bar
-	dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/4, self.m_Height/20, tocolor(63, 105, 202))
-	dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/4 * (getPedArmor(localPlayer)/100), self.m_Height/20, tocolor(77, 154, 202))
+	local isInWater = isElementInWater(localPlayer)
+	if isInWater then
+		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/4, self.m_Height/20, tocolor(63, 105, 202))
+		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/4 * (getPedArmor(localPlayer)/100), self.m_Height/20, tocolor(77, 154, 202))
+	else
+		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/2-3, self.m_Height/20, tocolor(63, 105, 202))
+		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, (self.m_Width/2-3) * (getPedArmor(localPlayer)/100), self.m_Height/20, tocolor(77, 154, 202))
+	end
 	
 	-- Draw oxygen bar
-	dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, self.m_Width/4-6, self.m_Height/20, tocolor(65, 56, 15))
-	dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, (self.m_Width/4-6) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
+	if isInWater then
+		dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, self.m_Width/4-6, self.m_Height/20, tocolor(65, 56, 15))
+		dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, (self.m_Width/4-6) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
+	end
 	
 	local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
 	
@@ -166,10 +174,8 @@ function HUDRadar:getZoom()
 	return self.m_Zoom
 end
 
-function HUDRadar:addBlip(blipPath, worldX, worldY)
-	local blip = RadarBlip:new(blipPath, worldX, worldY)
+function HUDRadar:addBlip(blip)
 	table.insert(self.m_Blips, blip)
-	return blip
 end
 
 function HUDRadar:removeBlip(blip)

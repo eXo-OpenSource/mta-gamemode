@@ -149,3 +149,17 @@ end
 function Player:reportCrime(crimeType)
 	JobPolice:getSingleton():reportCrime(self, crimeType)
 end
+
+function Player:setSkin(skin)
+	self.m_Skin = skin
+	setElementModel(self, skin)
+end
+
+function Player:setJobDutySkin(skin)
+	if skin ~= nil then
+		self.m_JobDutySkin = skin
+		setElementModel(self, skin)
+	else
+		setElementModel(self, self.m_Skin)
+	end
+end

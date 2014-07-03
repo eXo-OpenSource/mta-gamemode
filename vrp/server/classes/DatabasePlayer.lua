@@ -70,7 +70,7 @@ function DatabasePlayer:load()
 	self.m_XP 	 = row.XP
 	self.m_Karma = row.Karma
 	self.m_Money = row.Money
-	setPlayerMoney(self, self.m_Money) -- Todo: Remove this line later
+	setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
 	self.m_WantedLevel = row.WantedLevel
 	setPlayerWantedLevel(self, self.m_WantedLevel)
 	self.m_BankMoney = row.BankMoney
@@ -113,7 +113,7 @@ function DatabasePlayer:save()
 	end
 	
 	return sql:queryExec("UPDATE ??_character SET Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ?, SpawnLocation = ?, LastGarageEntrance = ? WHERE Id = ?;", sql:getPrefix(),
-		getElementModel(self), self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self:getId())
+		self.m_Skin, self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -146,7 +146,7 @@ function DatabasePlayer:getGarageType() return self.m_GarageType end
 function DatabasePlayer:getSpawnLocation() return self.m_SpawnLocation end
 
 -- Short setters
-function DatabasePlayer:setMoney(money) self.m_Money = money setPlayerMoney(self, money) end
+function DatabasePlayer:setMoney(money, instant) self.m_Money = money setPlayerMoney(self, money, instant) end
 function DatabasePlayer:setWantedLevel(level) self.m_WantedLevel = level setPlayerWantedLevel(self, level) end
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end

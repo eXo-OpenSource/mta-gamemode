@@ -11,9 +11,7 @@ function GUIScrollableArea:constructor(posX, posY, width, height, documentWidth,
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 
 	self.m_PageTarget = dxCreateRenderTarget(documentWidth, documentHeight, true)
-	if dxSetTextureEdge then
-		dxSetTextureEdge(self.m_PageTarget, "border", Color.Clear)
-	end
+	dxSetTextureEdge(self.m_PageTarget, "border", Color.Clear)
 	
 	self.m_ScrollX = 0
 	self.m_ScrollY = 0

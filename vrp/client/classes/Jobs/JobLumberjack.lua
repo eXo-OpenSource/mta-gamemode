@@ -34,7 +34,6 @@ function JobLumberjack:constructor()
 end
 
 function JobLumberjack:start()
-	outputDebug("JobLumberjack:start()")
 	self.m_NumTrees = 0
 	local func = bind(JobLumberjack.processTreeDamage, self)
 
@@ -50,6 +49,8 @@ function JobLumberjack:start()
 		local model, radius, x, y, z = unpack(v)
 		removeWorldModel(model, radius, x, y, z)
 	end
+	
+	self.m_SawMillBlip = Blip:new("files/images/Blips/RedSaw.png", -1969.8, -2432.6)
 end
 
 function JobLumberjack:stop()
@@ -63,6 +64,11 @@ function JobLumberjack:stop()
 	for k, v in ipairs(JobLumberjack.Removals) do
 		local model, radius, x, y, z = unpack(v)
 		restoreWorldModel(model, radius, x, y, z)
+	end
+	
+	if self.m_SawMillBlip then
+		delete(self.m_SawMillBlip)
+		self.m_SawMillBlip = nil
 	end
 end
 

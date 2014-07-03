@@ -1,77 +1,85 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/HUD/RadarBlip.lua
+-- *  FILE:        client/classes/HUD/Blip.lua
 -- *  PURPOSE:     HUD radar blip class
 -- *
 -- ****************************************************************************
-RadarBlip = inherit(Object)
-RadarBlip.ServerBlips = {}
+Blip = inherit(Object)
+Blip.ServerBlips = {}
 
-function RadarBlip:constructor(imagePath, worldX, worldY, streamDistance)
+function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	self.m_ImagePath = imagePath
 	self.m_WorldX = worldX
 	self.m_WorldY = worldY
 	self.m_Alpha = 255
 	self.m_Size = 24
 	self.m_StreamDistance = streamDistance or math.huge
+	
+	-- Temporary workaround (Todo: Replace this by an own implementation)
+	exports.customblips:createCustomBlip(worldX, worldY, 16, 16, imagePath, self.m_StreamDistance == math.huge and 99999 or self.m_StreamDistance)
+	
+	-- Add the blip to the radar
+	HUDRadar:getSingleton():addBlip(self)
 end
 
-function RadarBlip:destructor()
+function Blip:destructor()
+	-- Remove the blip from the radar
+	HUDRadar:getSingleton():removeBlip(self)
 end
 
-function RadarBlip:getImagePath()
+function Blip:getImagePath()
 	return self.m_ImagePath
 end
 
-function RadarBlip:setImagePath(path)
+function Blip:setImagePath(path)
 	return self.m_ImagePath
 end
 
-function RadarBlip:getPosition()
+function Blip:getPosition()
 	return self.m_WorldX, self.m_WorldY
 end
 
-function RadarBlip:setPosition(x, y)
+function Blip:setPosition(x, y)
 	self.m_WorldX, self.m_WorldY = x, y
 end
 
-function RadarBlip:getAlpha()
+function Blip:getAlpha()
 	return self.m_Alpha
 end
 
-function RadarBlip:setAlpha(alpha)
+function Blip:setAlpha(alpha)
 	self.m_Alpha = alpha
 end
 
-function RadarBlip:getSize()
+function Blip:getSize()
 	return self.m_Size
 end
 
-function RadarBlip:setSize(size)
+function Blip:setSize(size)
 	self.m_Size = size
 end
 
-function RadarBlip:getStreamDistance()
+function Blip:getStreamDistance()
 	return self.m_StreamDistance
 end
 
-function RadarBlip:setStreamDistance(distance)
+function Blip:setStreamDistance(distance)
 	self.m_StreamDistance = distance
 end
 
 addEvent("blipCreate", true)
 addEventHandler("blipCreate", root,
 	function(index, path, x, y)
-		RadarBlip.ServerBlips[index] = HUDRadar:getSingleton():addBlip(path, x, y)
+		Blip.ServerBlips[index] = Blip:new(path, x, y)
 	end
 )
 
 addEvent("blipDestroy", true)
 addEventHandler("blipDestroy", root,
 	function(index)
-		if RadarBlip.ServerBlips[index] then
-			HUDRadar:getSingleton():removeBlip(RadarBlip.ServerBlips[index])
+		if Blip.ServerBlips[index] then
+			delete(Blip.ServerBlips[index])
 		end
 	end
 )
@@ -80,7 +88,7 @@ addEvent("blipsRetrieve", true)
 addEventHandler("blipsRetrieve", root,
 	function(data)
 		for k, v in pairs(data) do
-			RadarBlip.ServerBlips[k] = HUDRadar:getSingleton():addBlip(unpack(v))
+			Blip.ServerBlips[k] = Blip:new(unpack(v))
 		end
 	end
 )
