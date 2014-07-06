@@ -251,10 +251,10 @@ addEventHandler("onClientRender",g_root,
 						else
 							setWidgetVisible(blip,false)
 						end
-					elseif	(	not infoTable.radius	) or
+					--[[elseif	(	not infoTable.radius	) or
 							(( 	getDistanceBetweenPoints2D ( x,y,bx,by )-radarRadius ) < infoTable.radius ) then
 						setWidgetVisible(blip,true)
-						renderBlip(blip,toF11Map,x,y,camRot,radarRadius,F11minX,F11minY,F11maxX,F11maxY,F11sizeX,F11sizeY)
+						renderBlip(blip,toF11Map,x,y,camRot,radarRadius,F11minX,F11minY,F11maxX,F11maxY,F11sizeX,F11sizeY)]]
 					else
 						setWidgetVisible(blip,false)
 					end

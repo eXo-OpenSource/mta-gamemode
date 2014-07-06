@@ -21,8 +21,13 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 end
 
 function BankRobbery:installBomb()
-	for k, player in ipairs(getElementsWithinColShape(self.m_ColShape, "player")) do
+	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
 		player:triggerEvent("bankRobberyCountdown", 4--[[*60]])
+		
+		local group = player:getGroup()
+		if group and group:isEvil() then
+			player:reportCrime(Crime.BankRobbery)
+		end
 	end
 	
 	setTimer(
@@ -32,11 +37,10 @@ function BankRobbery:installBomb()
 			setElementModel(self.m_Safe, 1829)
 		
 			-- Give all groups money who are within the colshape (amount depends on player count)
-			for k, player in ipairs(getElementsWithinColShape(self.m_ColShape, "player")) do
+			for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
 				local group = player:getGroup()
 				if group and group:isEvil() then
 					group:giveMoney(400)
-					player:setWantedLevel(6)
 				end
 			end
 		end,

@@ -86,6 +86,9 @@ end
 
 function HUDRadar:draw()
 	if not self.m_Visible or isPlayerMapVisible() then return end
+	local isNotInInterior = getElementInterior(localPlayer) == 0
+	local isInWater = isElementInWater(localPlayer)
+	
 	-- Draw the rectangle (the border)
 	dxDrawRectangle(self.m_PosX, self.m_PosY, self.m_Width+6, self.m_Height+self.m_Height/20+9, tocolor(0, 0, 0))
 	
@@ -94,20 +97,25 @@ function HUDRadar:draw()
 	local mapX, mapY = self:worldToMapPosition(posX, posY)
 	
 	-- Render (rotated) image section to renderTarget
-	dxSetRenderTarget(self.m_RenderTarget, true)
-	dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
-	dxSetRenderTarget(nil)
+	if isNotInInterior then
+		dxSetRenderTarget(self.m_RenderTarget, true)
+		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
+		dxSetRenderTarget(nil)
+	end
 	
 	-- Draw renderTarget
-	dxDrawImageSection(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)
-	--dxDrawImage(200, 300, self.m_Diagonal, self.m_Diagonal, self.m_RenderTarget) -- test
+	if isNotInInterior then
+		dxDrawImageSection(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)
+		--dxDrawImage(200, 300, self.m_Diagonal, self.m_Diagonal, self.m_RenderTarget) -- test
+	else
+		dxDrawRectangle(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, tocolor(125, 168, 210))
+	end
 	
 	-- Draw health bar (at the bottom)
 	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2, self.m_Height/20, tocolor(71, 86, 75))
 	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2 * getElementHealth(localPlayer)/100, self.m_Height/20, tocolor(100, 121, 105))
 	
 	-- Draw armor bar
-	local isInWater = isElementInWater(localPlayer)
 	if isInWater then
 		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/4, self.m_Height/20, tocolor(63, 105, 202))
 		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/4 * (getPedArmor(localPlayer)/100), self.m_Height/20, tocolor(77, 154, 202))
@@ -122,35 +130,36 @@ function HUDRadar:draw()
 		dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, (self.m_Width/4-6) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
 	end
 	
-	local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
-	
-	for k, blip in pairs(self.m_Blips) do
-		local blipX, blipY = blip:getPosition()
-		if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < blip:getStreamDistance() then
-			
-			local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
-			local distanceX, distanceY = blipMapX - mapX, blipMapY - mapY
-			local distance = getDistanceBetweenPoints2D(blipMapX, blipMapY, mapX, mapY)
-			local rotation = findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY)
-			
-			local screenX =  mapCenterX - math.sin(math.rad(rotation + self.m_Rotation)) * distance
-			local screenY =  mapCenterY + math.cos(math.rad(rotation + self.m_Rotation)) * distance
-			
-			if screenX < self.m_PosX then
-				screenX = self.m_PosX
+	if isNotInInterior then
+		local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
+		for k, blip in pairs(self.m_Blips) do
+			local blipX, blipY = blip:getPosition()
+			if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < blip:getStreamDistance() then
+				
+				local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
+				local distanceX, distanceY = blipMapX - mapX, blipMapY - mapY
+				local distance = getDistanceBetweenPoints2D(blipMapX, blipMapY, mapX, mapY)
+				local rotation = findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY)
+				
+				local screenX =  mapCenterX - math.sin(math.rad(rotation + self.m_Rotation)) * distance
+				local screenY =  mapCenterY + math.cos(math.rad(rotation + self.m_Rotation)) * distance
+				
+				if screenX < self.m_PosX then
+					screenX = self.m_PosX
+				end
+				if screenY < self.m_PosY then
+					screenY = self.m_PosY
+				end
+				if screenX > self.m_PosX + self.m_Width then
+					screenX = self.m_PosX + self.m_Width
+				end
+				if screenY > self.m_PosY + self.m_Height then
+					screenY = self.m_PosY + self.m_Height
+				end
+				
+				local blipSize = blip:getSize()
+				dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath())
 			end
-			if screenY < self.m_PosY then
-				screenY = self.m_PosY
-			end
-			if screenX > self.m_PosX + self.m_Width then
-				screenX = self.m_PosX + self.m_Width
-			end
-			if screenY > self.m_PosY + self.m_Height then
-				screenY = self.m_PosY + self.m_Height
-			end
-			
-			local blipSize = blip:getSize()
-			dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath())
 		end
 	end
 
