@@ -18,3 +18,22 @@ function QuestionBox:constructor(text, yesCallback, noCallback)
 	self.m_YesButton.onLeftClick = function() if yesCallback then yesCallback() end delete(self) end
 	self.m_NoButton.onLeftClick = function() if noCallback then noCallback() end delete(self) end
 end
+
+addEvent("questionBox", true)
+addEventHandler("questionBox", root,
+	function(text, yesEvent, noEvent, ...)
+		local additionalParameters = {...}
+		QuestionBox:new(text,
+			function()
+				if yesEvent then
+					triggerServerEvent(yesEvent, root, unpack(additionalParameters))
+				end
+			end,
+			function()
+				if noEvent then
+					triggerServerEvent(noEvent, root, unpack(additionalParameters))
+				end
+			end
+		)
+	end
+)

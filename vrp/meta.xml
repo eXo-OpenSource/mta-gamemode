@@ -97,6 +97,7 @@
 	<script src="server/classes/Jobs/JobPolice.lua" type="server"/>
 	<script src="server/classes/Jobs/JobFarmer.lua" type="server"/>
 	<script src="server/classes/Jobs/JobBusDriver.lua" type="server"/>
+	<script src="server/classes/Jobs/JobMechanic.lua" type="server"/>
 	
 	<!-- NPCs and shops -->
 	<script src="server/classes/NPC.lua" type="server"/>
@@ -261,6 +262,7 @@
 	<script src="client/classes/Jobs/JobPolice.lua" type="client"/>
 	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
 	<script src="client/classes/Jobs/JobBusDriver.lua" type="client"/>
+	<script src="client/classes/Jobs/JobMechanic.lua" type="client"/>
 	
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Item.lua" type="client"/>
@@ -347,6 +349,7 @@
 	<vrpfile src="files/images/Blips/Bus.png"/>
 	<vrpfile src="files/images/Blips/CarShop.png"/>
 	<vrpfile src="files/images/Blips/RedSaw.png"/>
+	<vrpfile src="files/images/Blips/Mechanic.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

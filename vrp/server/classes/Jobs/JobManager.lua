@@ -10,13 +10,14 @@ JobManager = inherit(Singleton)
 function JobManager:constructor()
 	-- ATTENTION: Please use the same order server and clientside
 	self.m_Jobs = {
-		--JobLogistician:new();
 		JobTrashman:new();
 		JobRoadSweeper:new();
 		JobLumberjack:new();
 		JobPolice:new();
 		JobFarmer:new();
 		JobBusDriver:new();
+		JobMechanic:new();
+		--JobLogistician:new();
 	}
 	for k, v in ipairs(self.m_Jobs) do
 		v:setId(k)

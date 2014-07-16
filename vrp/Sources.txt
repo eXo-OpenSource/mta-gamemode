@@ -24,6 +24,7 @@ http://icons8.com/icons/#!/1145/gun
 http://icons8.com/icons/#!/634/bank
 http://icons8.com/icons/#!/3309/bus
 http://icons8.com/icons/#!/3271/car
+http://icons8.com/icons/#!/527/support
 
 Music:
 http://www.jamendo.com/de/track/293904/you-are-a-mirror-instrumental
