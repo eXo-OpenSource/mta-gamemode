@@ -16,7 +16,7 @@ function GUIScrollbarHorizontal:constructor(posX,posY,width,height,parent)
 end
 
 function GUIScrollbarHorizontal:onInternalLeftClickDown()
-	if isCursorOverArea(self.m_Width*self.m_Position+self.m_PosX,self.m_PosY,40,self.m_Height) then
+	if isCursorOverArea(self.m_Width*self.m_Position+self.m_PosX,self.m_PosY,GUISCROLL_THICKNESS,self.m_Height) then
 		addEventHandler("onClientCursorMove",root,self.m_Movehandler) 
 		self.m_Scrolling = true
 	end
