@@ -238,6 +238,7 @@ addEventHandler("loginsuccess", root,
 		else
 			-- If the tutorial is done the server will do the job of spawning etc.
 			HUDRadar:getSingleton():show()
+			HUDUI:getSingleton():show()
 		end
 
 		

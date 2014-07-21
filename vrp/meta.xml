@@ -198,6 +198,7 @@
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
+	<script src="client/classes/HUD/HUDUI.lua" type="client"/>
 	
 	<!-- Forms -->
 	<script src="client/classes/GUIForms/InventoryGUI.lua" type="client"/>
@@ -324,6 +325,9 @@
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
 	
+	<vrpfile src="files/images/Weapons/gun.png"/>
+	<vrpfile src="files/images/Weapons/hand.png"/>
+	
 	<vrpfile src="files/images/avatar_default.png"/>
 	<vrpfile src="files/images/world.png"/>
 	<vrpfile src="files/images/Radar.jpg"/>
@@ -389,6 +393,7 @@
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/Segoe/segoeui.ttf"/>
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
+	<vrpfile src="files/fonts/Gasalt.ttf"/>
 	
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>

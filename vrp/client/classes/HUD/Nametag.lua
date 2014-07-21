@@ -1,9 +1,6 @@
 Nametag = inherit(Singleton)
 
 local NAMETAG_COLSHAPE_SIZE = 20
-local NAMETAG_SIZE_MAX = 1.5
-local NAMETAG_SIZE_MIN = 0.75
-
 
 Nametag.BUFF_IMG = {
 	["wanteds"] = "...";
@@ -25,8 +22,8 @@ function Nametag:constructor()
 	self.m_Players = {}
 	self.m_PlayerBuffs = {}
 	self.m_Colshape = createColSphere(0,0,0,NAMETAG_COLSHAPE_SIZE)
-	self.m_Size = 1
-	self.m_IsModifying = true
+	self.m_IsModifying = false
+	self.m_Bone = 8
 	
 	self:enter(localPlayer,true)
 	
@@ -34,13 +31,11 @@ function Nametag:constructor()
 	self.m_Enter = bind(self.enter,self)
 	self.m_Leave = bind(self.leave,self)
 	self.m_Quit = bind(self.quit,self)
-	self.m_Key = bind(self.key,self)
 	
 	addEventHandler("onClientColShapeHit",self.m_Colshape,self.m_Enter)
 	addEventHandler("onClientColShapeLeave",self.m_Colshape,self.m_Leave)
 	addEventHandler("onClientPlayerQuit",root,self.m_Quit)
 	addEventHandler("onClientRender",root,self.m_Draw)
-	addEventHandler("onClientKey",root,self.m_Key)
 	
 	-- test
 	
@@ -59,23 +54,6 @@ function Nametag:addBuff(player,buff,amount)
 	end
 	table.insert(self.m_PlayerBuffs[player], { BUFF = buff, AMOUNT = amount } )
 	return self.m_PlayerBuffs[player][#self.m_PlayerBuffs[player]]
-end
-
-function Nametag:key(key,press)
-	if getKeyState("lctrl") and self.m_LocalX and isCursorShowing() then
-		--[[if key == "mouse_wheel_up" or key == "mouse_wheel_down" then
-			if isCursorOverArea (x-(300*self.m_Size/2),y,300*self.m_Size,50*self.m_Size) and not isCursorOverArea(x-(300*self.m_Size/2)+20*self.m_Size,y-(self.m_Size-1*(17*self.m_Size)),(getElementHealth(localPlayer)*260/100)*self.m_Size,22.5*self.m_Size) then
-				
-				if key == "mouse_wheel_up" then
-					self.m_Size = self.m_Size + 0.05
-				else
-					self.m_Size = self.m_Size - 0.05
-				end
-				
-				self.m_Size = math.max(math.min(self.m_Size,NAMETAG_SIZE_MAX),NAMETAG_SIZE_MIN)
-			end
-		end]]
-	end
 end
 
 function Nametag:leave(hitElement,dim)
@@ -102,7 +80,7 @@ function Nametag:draw()
 	
 	for player in pairs(self.m_Players) do
 		if player ~= localPlayer or self.m_IsModifying then
-			local px,py,pz = getPedBonePosition(player,8)
+			local px,py,pz = getPedBonePosition(player,self.m_Bone)
 			pz = pz + 0.3
 			local x,y = getScreenFromWorldPosition(px,py,pz)
 			-- isLineOfSightClear (float,float,float,float,float,float,bool,bool,bool,bool,bool)
@@ -129,16 +107,24 @@ function Nametag:draw()
 			end
 			
 			if self.m_IsModifying and player == localPlayer then
-			--[[	for i = 1,54,1 do
+				for i = 1,54,1 do
 					local bonePosition = {getPedBonePosition(player,i)}
 					if bonePosition[2] then
 						local x,y = getScreenFromWorldPosition(unpack(bonePosition))
 						if x and y then
-							dxDrawText(i,x,y)
+							if i == self.m_Bone then
+								dxDrawRectangle(x,y,5,5,Color.Green)
+							else
+								dxDrawRectangle(x,y,5,5,Color.Red)
+								if isCursorOverArea(x,y,5,5) and getKeyState("mouse1") then
+									self.m_Bone = i
+								end
+							end
 						end
 					end
-				end]]
+				end
 			end
+			
 		end
 	end
 end
@@ -146,5 +132,3 @@ end
 function Nametag:destructor()
 
 end
-
-Nametag:new()

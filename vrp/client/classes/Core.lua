@@ -36,6 +36,8 @@ function Core:ready()
 	-- HUD
 	--HUDRadar:new()
 	HUDSpeedo:new()
+	Nametag:new()
+	HUDUI:new()
 	
 	-- Phone
 	Phone:new()
