@@ -338,6 +338,7 @@
 	<vrpfile src="files/images/Bar_hover.png"/>
 	<vrpfile src="files/images/BankRobberyCountdown.png"/>
 	<vrpfile src="files/images/CoachTexture.png"/>
+	<vrpfile src="files/images/wanted.png"/>
 	
 	<!-- Blips -->
 	<vrpfile src="files/images/Blips/LocalPlayer.png"/>
