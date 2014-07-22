@@ -1,6 +1,6 @@
 House = inherit(Object)
 
-function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStatus, rentPrice)
+function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStatus, rentPrice, elements)
 
 	if owner == 0 then
 		owner = false 
@@ -15,6 +15,7 @@ function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStat
 	self.m_InteriorID = interiorID
 	self.m_Owner = owner or false
 	self.m_Id = id
+	self.m_Elements = fromJSON(elements)
 	self.m_Pickup = createPickup(x, y, z, 3, 1273, 10, math.huge)
 	local ix, iy, iz, iint = unpack(House.interiorTable[self.m_InteriorID])
 	self.m_HouseMarker = createMarker(ix,iy,iz-1,"cylinder",1.2,255,255,255,125)
@@ -68,8 +69,8 @@ end
 function House:save ()
 	local houseID = self.m_Owner or 0
 	
-	return sql:queryExec("UPDATE ??_houses SET interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ? WHERE id = ?;", sql:getPrefix(),
-		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, self.m_Id)	
+	return sql:queryExec("UPDATE ??_houses SET interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ?, elements = ? WHERE id = ?;", sql:getPrefix(),
+		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Id)	
 end
 
 function House:sellHouse(player)
@@ -93,6 +94,7 @@ function House:enterHouse(player)
 		setElementInterior(player, int)
 		setElementDimension(player, self.m_Id)
 		self.m_PlayersInterior[player] = true
+		player:triggerEvent("houseEnter")
 	end
 end
 
@@ -107,6 +109,7 @@ function House:leaveHouse(player)
 	setElementPosition(player, unpack(self.m_Pos))
 	setElementInterior(player, 0)
 	setElementDimension(player, 0)
+	hitElement:triggerEvent("houseLeave")
 end
 
 function House:onPlayerQuit(player)

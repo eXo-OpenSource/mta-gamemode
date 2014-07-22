@@ -77,6 +77,7 @@ function Core:ready()
 	self:createBlips()
 	GasStationGUI:new()
 	HouseGUI:new()
+	Housing:new()
 end
 
 function Core:destructor()

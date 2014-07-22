@@ -1,8 +1,7 @@
 HouseGUI = inherit(GUIForm)
 inherit(Singleton, HouseGUI)
 
-addEvent("showHouseMenu",true)
-addEvent("hideHouseMenu",true)
+addRemoteEvents{"showHouseMenu","hideHouseMenu","houseEnter","houseLeave"}
 
 function HouseGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(500/2), 300, 500)
@@ -34,7 +33,7 @@ function HouseGUI:constructor()
 	self.m_RentPrice = "/"
 	self.m_Owner = "/"
 	self.m_Price = "/"
-	
+	self.m_InHouse = false
 	
 	self:houseChange()
 	
@@ -51,6 +50,22 @@ function HouseGUI:constructor()
 			self:hide()
 		end
 	)
+	
+	addEventHandler("houseEnter", root,
+		function()
+			self.m_InHouse = true
+		end
+	)
+	
+	addEventHandler("houseLeave", root,
+		function()
+			self.m_InHouse = false
+		end
+	)
+end
+
+function HouseGUI:InHouse()
+	return self.m_InHouse
 end
 
 function HouseGUI:enterHouse()

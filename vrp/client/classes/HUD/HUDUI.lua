@@ -40,7 +40,7 @@ function HUDUI:draw()
 		end
 		
 		-- Weapon-Window
-		local addX = interpolateBetween(0,0,0,300,0,0,self.m_MunitionProgress,"Linear")
+		local addX = interpolateBetween(0,0,0,300,0,0,self.m_MunitionProgress,"OutElastic")
 		dxDrawRectangle(screenWidth-(480+addX),50,100,100,tocolor(0,0,0,150))
 		-- images became changed later
 		if munitionWindowActive then

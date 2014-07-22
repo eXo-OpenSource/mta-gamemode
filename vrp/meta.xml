@@ -134,6 +134,7 @@
 	<script src="client/classes/NonCollidingArea.lua" type="client"/>
 	<script src="client/classes/GangArea.lua" type="client"/>
 	<script src="client/classes/GangAreaManager.lua" type="client"/>
+	<script src="client/classes/Housing.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>

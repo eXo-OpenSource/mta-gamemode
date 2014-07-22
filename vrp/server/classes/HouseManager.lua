@@ -1,10 +1,6 @@
 HouseManager = inherit(Singleton)
 
-addEvent("enterHouse",true)
-addEvent("leaveHouse",true)
-addEvent("buyHouse",true)
-addEvent("rentHouse",true)
-addEvent("unrentHouse",true)
+addRemoteEvents{"enterHouse","leaveHouse","buyHouse","rentHouse","unrentHouse"}
 
 function HouseManager:constructor()
 	self.m_Houses = {}
@@ -60,7 +56,7 @@ function HouseManager:newHouse(x, y, z, interiorID, price)
 		sql:getPrefix(), x, y, z, interiorID, toJSON({}), 0, price, 0, 25)
 	
 	local Id = sql:lastInsertId()
-	self.m_Houses[Id] = House:new(Id, x, y, z, interiorID, {}, 0, price, 0, 25) -- Jusonex: Schluessel-Wert Table benutzen, um spaeter leichter von der Id zum eigentlichen Haus Objekt zu kommen
+	self.m_Houses[Id] = House:new(Id, x, y, z, interiorID, {}, 0, price, 0, 25, {}) -- Jusonex: Schluessel-Wert Table benutzen, um spaeter leichter von der Id zum eigentlichen Haus Objekt zu kommen
 end
 
 function HouseManager:destructor ()
