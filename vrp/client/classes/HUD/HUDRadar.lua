@@ -8,10 +8,11 @@
 HUDRadar = inherit(Singleton)
 
 function HUDRadar:constructor()
-	self.m_ImageSize = 3072, 3072
+	self.m_ImageSize = 1536, 1536 --3072, 3072
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900
 	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-20
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
+	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
 	
 	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
 	self.m_Zoom = 1
@@ -28,7 +29,7 @@ function HUDRadar:constructor()
 	self:updateMapTexture()
 	
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
-	addEventHandler("onClientRender", root, bind(self.draw, self))
+	addEventHandler("onClientRender", root, bind(self.draw, self), true, "high+10")
 	addEventHandler("onClientRestore", root, bind(self.restore, self))
 	showPlayerHudComponent("radar", false)
 end
@@ -45,7 +46,7 @@ function HUDRadar:updateMapTexture()
 	dxSetRenderTarget(self.m_Texture)
 	
 	-- Draw actual map texture
-	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, "files/images/Radar.jpg")
+	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
 	
 	-- Draw radar areas
 	for k, rect in pairs(self.m_Areas) do
@@ -56,6 +57,36 @@ function HUDRadar:updateMapTexture()
 	end
 	
 	dxSetRenderTarget(nil)
+end
+
+function HUDRadar:makePath(fileName, isBlip)
+	if isBlip then
+		if self.m_DesignSet == RadarDesign.Monochrome then
+			return "files/images/Radar_Monochrome/Blips/"..fileName
+		elseif self.m_DesignSet == RadarDesign.GTA then
+			return "files/images/Radar_GTA/Blips/"..fileName
+		end
+	else
+		if self.m_DesignSet == RadarDesign.Monochrome then
+			return "files/images/Radar_Monochrome/"..fileName
+		elseif self.m_DesignSet == RadarDesign.GTA then
+			return "files/images/Radar_GTA/"..fileName
+		end
+	end
+end
+
+function HUDRadar:setDesignSet(design)
+	self.m_DesignSet = design
+	core:getConfig():set("HUD", "RadarDesign", design)
+	self:updateMapTexture()
+	
+	for k, blip in pairs(self.m_Blips) do
+		blip:updateDesignSet()
+	end
+end
+
+function HUDRadar:getDesignSet()
+	return self.m_DesignSet
 end
 
 function HUDRadar:restore(clearedRenderTargets)

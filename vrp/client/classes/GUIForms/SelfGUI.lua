@@ -16,8 +16,9 @@ function SelfGUI:constructor()
 	self.m_CloseButton.onLeftClick = function() self:hide() end
 	
 	-- Tab: Info
-	-- Todo
-	local tabInfo = self.m_TabPanel:addTab(_"Info")
+	local tabInfo = self.m_TabPanel:addTab(_"Allgemein")
+	-- Todo: Job
+	-- Todo: Achievements
 	
 	-- Tab: Job
 	local tabJob = self.m_TabPanel:addTab(_"Job")
@@ -28,10 +29,6 @@ function SelfGUI:constructor()
 	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.02, self.m_Height * 0.4, self.m_Width*0.35, self.m_Height*0.07, _"Job kündigen", tabJob):setBackgroundColor(Color.Red)
 	
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
-	
-	-- Tab: Achievements
-	-- Todo
-	local tabAchievements = self.m_TabPanel:addTab(_"Erfolge")
 	
 	-- Tab: Groups
 	local tabGroups = self.m_TabPanel:addTab(_"Gruppen")
@@ -92,6 +89,16 @@ function SelfGUI:constructor()
 	self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
 	addRemoteEvents{"vehicleRetrieveInfo"}
 	addEventHandler("vehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
+	
+	-- Tab: Settings
+	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
+	self.m_TabSettings = tabSettings
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD und Nametag", tabSettings)
+	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
+	self.m_RadarChange:addItem(_"Monochrom")
+	self.m_RadarChange:addItem(_"GTA:SA")
+	self.m_RadarChange.onChange = function(text, index) HUDRadar:getSingleton():setDesignSet(index) end
+	self.m_RadarChange:setIndex(core:getConfig():get("HUD", "RadarDesign") or 1, true)
 end
 
 function SelfGUI:onShow()
@@ -263,7 +270,7 @@ function SelfGUI:VehicleLocateButton_Click()
 	
 	if not item.VehicleInGarage then
 		local x, y = getElementPosition(item.VehicleElement)
-		local blip = Blip:new("files/images/Blips/Waypoint.png", x, y)
+		local blip = Blip:new("Waypoint.png", x, y)
 		setTimer(function() HUDRadar:getSingleton():removeBlip(blip) end, 5000, 1)
 	else
 		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!")

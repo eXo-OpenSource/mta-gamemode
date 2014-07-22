@@ -97,6 +97,6 @@ function Core:set(...)
 end
 
 function Core:createBlips()
-	Blip:new("files/images/Blips/Bank.png", 1660.4, -1272.8)
+	Blip:new("Bank.png", 1660.4, -1272.8)
 end
 

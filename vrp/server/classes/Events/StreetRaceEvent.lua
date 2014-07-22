@@ -12,7 +12,7 @@ function StreetRaceEvent:constructor()
 	local x, y, z, randomIndex = self.getRandomPosition()
 	self.m_StartIndex = randomIndex
 	
-	self.m_EventBlip = Blip:new("files/images/Blips/Wheel.png", x, y)
+	self.m_EventBlip = Blip:new("Wheel.png", x, y)
 	
 	-- Create the start marker
 	self.m_StartMarker = createMarker(x, y, z, "checkpoint", 10, 255, 0, 0, 100)
@@ -51,7 +51,7 @@ function StreetRaceEvent:start()
 				x, y, z, randomIndex = self.getRandomPosition()
 			until randomIndex ~= self.m_StartIndex
 			
-			self.m_DestinationBlip = Blip:new("files/images/Blips/Waypoint.png", x, y)
+			self.m_DestinationBlip = Blip:new("Waypoint.png", x, y)
 			self.m_ColShape = createColSphere(x, y, z, 20)
 			addEventHandler("onColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
 			

@@ -76,3 +76,6 @@ function VRPItem:move(x, y)
 	self.m_AnimMove = Animation.Move:new(self, 500, x, y)
 end
 --item.m_Count = item.m_Count -1
+
+function VRPItem:destory()
+end

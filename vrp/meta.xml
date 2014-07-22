@@ -113,8 +113,8 @@
 	<script src="server/Main.lua" type="server"/>
 	
 	<!-- Client -->
-	<script src="client/globals.lua" type="client"/>
 	<script src="client/utils.lua" type="client"/>
+	<script src="client/constants.lua" type="client"/>
 	<script src="client/skindata.lua" type="client"/>
 	<script src="client/mapEditorScriptingExtension_c.lua" type="client"/>
 	<script src="client/classes/Core.lua" type="client"/>
@@ -332,7 +332,6 @@
 	
 	<vrpfile src="files/images/avatar_default.png"/>
 	<vrpfile src="files/images/world.png"/>
-	<vrpfile src="files/images/Radar.jpg"/>
 	<vrpfile src="files/images/CouttSchutz.png"/>
 	<vrpfile src="files/images/BankHeader.png"/>
 	<vrpfile src="files/images/Bar.png"/>
@@ -341,24 +340,44 @@
 	<vrpfile src="files/images/CoachTexture.png"/>
 	<vrpfile src="files/images/wanted.png"/>
 	
-	<!-- Blips -->
-	<vrpfile src="files/images/Blips/LocalPlayer.png"/>
-	<vrpfile src="files/images/Blips/Logistician.png"/>
-	<vrpfile src="files/images/Blips/Trashman.png"/>
-	<vrpfile src="files/images/Blips/RoadSweeper.png"/>
-	<vrpfile src="files/images/Blips/Lumberjack.png"/>
-	<vrpfile src="files/images/Blips/Police.png"/>
-	<vrpfile src="files/images/Blips/Farmer.png"/>
-	<vrpfile src="files/images/Blips/Bank.png"/>
-	<vrpfile src="files/images/Blips/PayNSpray.png"/>
-	<vrpfile src="files/images/Blips/Garage.png"/>
-	<vrpfile src="files/images/Blips/Wheel.png"/>
-	<vrpfile src="files/images/Blips/Waypoint.png"/>
-	<vrpfile src="files/images/Blips/AmmuNation.png"/>
-	<vrpfile src="files/images/Blips/Bus.png"/>
-	<vrpfile src="files/images/Blips/CarShop.png"/>
-	<vrpfile src="files/images/Blips/RedSaw.png"/>
-	<vrpfile src="files/images/Blips/Mechanic.png"/>
+	<!-- Radar -->
+	<vrpfile src="files/images/Radar_Monochrome/Radar.jpg"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/LocalPlayer.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Logistician.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Trashman.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/RoadSweeper.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Lumberjack.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Police.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Farmer.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Bank.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/PayNSpray.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Garage.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Wheel.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Waypoint.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/AmmuNation.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Bus.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/CarShop.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/RedSaw.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Mechanic.png"/>
+	
+	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Logistician.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Trashman.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/RoadSweeper.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Lumberjack.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Police.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Farmer.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Bank.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/PayNSpray.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Garage.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Wheel.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Waypoint.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/AmmuNation.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Bus.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/CarShop.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/RedSaw.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Mechanic.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

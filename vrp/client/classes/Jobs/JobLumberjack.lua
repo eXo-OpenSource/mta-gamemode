@@ -8,7 +8,7 @@
 JobLumberjack = inherit(Job)
 
 function JobLumberjack:constructor()
-	Job.constructor(self, 1105.6, -299.6, 73.5, "files/images/Blips/Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _"Holzfäller", _([[
+	Job.constructor(self, 1105.6, -299.6, 73.5, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _"Holzfäller", _([[
 		Als Holzfäller ist es deine Aufgabe für genügend Holz in Los Santos zu sorgen.
 		Als ersten Schritt musst du die Bäume dieses Waldstücks sägen. Wie du sehen wirst, werden die Stämme für dich für den Transport aufgestapelt.
 		Wenn du genug Bäume gesägt hast, ist es Zeit die aufgestapelten Stämme mit dem - dir zur Verfügung gestellten - Feltbed zu einer Sammelstation zu bringen.
@@ -50,7 +50,7 @@ function JobLumberjack:start()
 		removeWorldModel(model, radius, x, y, z)
 	end
 	
-	self.m_SawMillBlip = Blip:new("files/images/Blips/RedSaw.png", -1969.8, -2432.6)
+	self.m_SawMillBlip = Blip:new("RedSaw.png", -1969.8, -2432.6)
 end
 
 function JobLumberjack:stop()

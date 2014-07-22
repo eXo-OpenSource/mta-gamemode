@@ -1,10 +1,3 @@
--- ****************************************************************************
--- *
--- *  PROJECT:     vRoleplay
--- *  FILE:        client/globals.lua
--- *  PURPOSE:     Collection of useful global variables
--- *
--- ****************************************************************************
 screenWidth, screenHeight = guiGetScreenSize()
 ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/1.8
 
@@ -27,3 +20,5 @@ NO_MUNITION_ITEMS = {
 	[45] = true;
 	[46] = true;
 }
+
+RadarDesign = {Monochrome = 1, GTA = 2}

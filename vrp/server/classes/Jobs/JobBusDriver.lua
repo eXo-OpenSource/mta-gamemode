@@ -72,7 +72,7 @@ function JobBusDriver:start(player)
 	player.Bus_Line = line
 	
 	local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][1]].object)
-	player.Bus_Blip = Blip:new("files/images/Blips/Waypoint.png", x, y, player)
+	player.Bus_Blip = Blip:new("Waypoint.png", x, y, player)
 end
 
 function JobBusDriver:stop(player)
@@ -113,7 +113,7 @@ function JobBusDriver:BusStop_Hit(player, matchingDimension)
 		local stopId = self.m_Lines[line][newDestination]
 		local x, y, z = getElementPosition(self.m_BusStops[stopId].object)
 		delete(player.Bus_Blip)
-		player.Bus_Blip = Blip:new("files/images/Blips/Waypoint.png", x, y, player)
+		player.Bus_Blip = Blip:new("Waypoint.png", x, y, player)
 		
 		-- Tell other players that we reached a bus stop (to adjust the bus display labels)
 		triggerClientEvent("busReachNextStop", root, vehicle, self.m_BusStops[stopId].name)

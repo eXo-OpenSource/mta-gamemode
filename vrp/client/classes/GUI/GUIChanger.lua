@@ -44,24 +44,14 @@ function GUIChanger:addItem(text)
 	table.insert(self.m_Items, text)
 end
 
-function GUIChanger:setIndex(index)
+function GUIChanger:setIndex(index, dontTriggerChangeEvent)
 	if index <= 0 or index > #self.m_Items then
 		return false
 	end
 	
 	self.m_CurrentItem = index
-	if self.onChange then
-		self.onChange(self.m_Items[index])
+	if not dontTriggerChangeEvent and self.onChange then
+		self.onChange(self.m_Items[index], index)
 	end
 	self:anyChange()
 end
-
-addCommandHandler("changer",
-	function()
-		local c = GUIChanger:new(500, 500, 250, 40)
-		c:addItem("Item 1")
-		c:addItem("Item 2")
-		c:addItem("Item 3")
-		c:addItem("Item 4")
-	end
-)

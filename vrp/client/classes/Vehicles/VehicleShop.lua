@@ -12,7 +12,7 @@ function VehicleShop:constructor(name, imagePath, position, rect, vehicles)
 	self.m_ImagePath = imagePath
 	self.m_Marker = createMarker(position.X, position.Y, position.Z, "cylinder", 1, 255, 255, 0, 150)
 	self.m_Area = NonCollidingArea:new(rect.X, rect.Y, rect.Width, rect.Height)
-	self.m_Blip = Blip:new("files/images/Blips/CarShop.png", position.X, position.Y)
+	self.m_Blip = Blip:new("CarShop.png", position.X, position.Y)
 	self.m_Vehicles = vehicles
 	
 	addEventHandler("onClientMarkerHit", self.m_Marker, bind(self.markerHit, self))

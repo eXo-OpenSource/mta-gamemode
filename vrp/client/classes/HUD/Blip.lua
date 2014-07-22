@@ -9,7 +9,8 @@ Blip = inherit(Object)
 Blip.ServerBlips = {}
 
 function Blip:constructor(imagePath, worldX, worldY, streamDistance)
-	self.m_ImagePath = imagePath
+	self.m_RawImagePath = imagePath
+	self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
 	self.m_WorldX = worldX
 	self.m_WorldY = worldY
 	self.m_Alpha = 255
@@ -17,7 +18,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	self.m_StreamDistance = streamDistance or math.huge
 	
 	-- Temporary workaround (Todo: Replace this by an own implementation)
-	exports.customblips:createCustomBlip(worldX, worldY, 16, 16, imagePath, self.m_StreamDistance == math.huge and 99999 or self.m_StreamDistance)
+	exports.customblips:createCustomBlip(worldX, worldY, 16, 16, self.m_ImagePath, self.m_StreamDistance == math.huge and 99999 or self.m_StreamDistance)
 	
 	-- Add the blip to the radar
 	HUDRadar:getSingleton():addBlip(self)
@@ -33,7 +34,8 @@ function Blip:getImagePath()
 end
 
 function Blip:setImagePath(path)
-	return self.m_ImagePath
+	self.m_RawImagePath = path
+	self:updateDesignSet()
 end
 
 function Blip:getPosition()
@@ -66,6 +68,10 @@ end
 
 function Blip:setStreamDistance(distance)
 	self.m_StreamDistance = distance
+end
+
+function Blip:updateDesignSet()
+	self.m_ImagePath = HUDRadar:getSingleton():makePath(self.m_RawImagePath, true)
 end
 
 addEvent("blipCreate", true)

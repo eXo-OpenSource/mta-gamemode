@@ -8,5 +8,5 @@
 JobLogistician = inherit(Job)
 
 function JobLogistician:constructor()
-	Job.constructor(self, 0, 0, 3, "files/images/Blips/Logistician.png", "files/images/Jobs/HeaderLogistician.png", "Foo", LOREM_IPSUM)
+	Job.constructor(self, 0, 0, 3, "Logistician.png", "files/images/Jobs/HeaderLogistician.png", "Foo", LOREM_IPSUM)
 end

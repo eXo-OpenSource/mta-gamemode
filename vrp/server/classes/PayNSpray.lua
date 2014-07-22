@@ -2,7 +2,7 @@
 
 function PayNSpray:constructor(x, y, z, garageId)
 	self.m_FixShape = createColSphere(x, y, z, 4)
-	self.m_Blip = Blip:new("files/images/Blips/PayNSpray.png", x, y)
+	self.m_Blip = Blip:new("PayNSpray.png", x, y)
 	setGarageOpen(garageId, true)
 	
 	addEventHandler("onColShapeHit", self.m_FixShape,

@@ -35,7 +35,7 @@ function VehicleGarages:createEntrance(info, Id)
 	local enterX, enterY, enterZ = unpack(info.enter)
 	local entranceShape = createColSphere(enterX, enterY, enterZ, 3)
 	if not info.hideblip then
-		local blip = Blip:new("files/images/Blips/Garage.png", enterX, enterY)
+		local blip = Blip:new("Garage.png", enterX, enterY)
 	end
 	
 	addEventHandler("onColShapeHit", entranceShape, bind(self.EntranceShape_Hit, self))
