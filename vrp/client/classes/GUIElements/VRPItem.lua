@@ -52,7 +52,10 @@ function VRPItem:updateFromItem()
 		self.m_Count:setPosition(self.m_Width-fw-10)
 		self.m_Count:anyChange()
 	end
-	self:playRemoveAnimation()
+	
+	if self.m_Item.m_Count == 0 then
+		self:playRemoveAnimation()
+	end
 end
 
 function VRPItem:playRemoveAnimation()

@@ -4,16 +4,17 @@ ItemItemCategoryNames = {[ItemCategory.All] = "Alle", [ItemCategory.Drugs] = "Dr
 
 Items = {
 -- Wer irgendwo mittendrin Items einfügt wird erschossen.
--- ID				  Name				Beschreibung			   																	Pfad zum Bild	Klasse			Maximale Stackanzahl 	Kategorie
-{ "ITEM_CRACK",		"Crack"; 			"Crack ist eine gefährliche Droge."; 														nil; 			ItemCrack,		5,						ItemCategory.Drugs};
-{ "ITEM_HEROIN",	"Heroin"; 			"Heroin ist eine gefährliche Droge."; 														nil; 			ItemHeroin,		5,						ItemCategory.Drugs};
-{ "ITEM_MARIHUANA",	"Marihuana"; 		"Marihuana ist eine Droge."; 																nil; 			ItemMaruhuana,	5,						ItemCategory.Drugs};
-{ "ITEM_LSD",		"LSD"; 				"LSD ist eine gefährliche Droge."; 															nil; 			ItemLSD,		5,						ItemCategory.Drugs};
-{ "ITEM_NEWSPAPER", "Zeitung"; 			"Lies die Zeitung, um alle Neuigkeiten zu erfahren!"; 										nil; 			ItemNewsPaper,	5,						ItemCategory.Other};
-{ "ITEM_KEY", 		"Schlüssel"; 		"Dies ist der Schlüssel für …"; 															nil; 			ItemKey,		0,						ItemCategory.Vehicle};
-{ "ITEM_PASSPORT", 	"Personalausweis";	"Der Personalausweis dient zur Identifizierung und ist eine gleichzeitige Arbeitserlaubnis";nil; 			ItemPassport,	5,						ItemCategory.Player};
-{ "ITEM_FLOWERS", 	"Blumen"; 			"Mache jemandem eine Freue und schenke ihm Blumen!"; 										nil; 			ItemFlowers,	5,						ItemCategory.Other};
-{ "ITEM_DILDO",		"Dildo"; 			"Der kleine Männerersatz."; 																nil; 			ItemDildo,		5,						ItemCategory.Other};
+-- ID				  Name				Beschreibung			   																	Pfad zum Bild	Klasse			Maximale Stackanzahl 	Kategorie			Nach Benutzung entfernen
+{ "ITEM_CRACK",		"Crack"; 			"Crack ist eine gefährliche Droge."; 														nil; 			ItemCrack,		5,						ItemCategory.Drugs,		true};
+{ "ITEM_HEROIN",	"Heroin"; 			"Heroin ist eine gefährliche Droge."; 														nil; 			ItemHeroin,		5,						ItemCategory.Drugs,		true};
+{ "ITEM_MARIHUANA",	"Marihuana"; 		"Marihuana ist eine Droge."; 																nil; 			ItemMaruhuana,	5,						ItemCategory.Drugs,		true};
+{ "ITEM_LSD",		"LSD"; 				"LSD ist eine gefährliche Droge."; 															nil; 			ItemLSD,		5,						ItemCategory.Drugs,		true};
+{ "ITEM_NEWSPAPER", "Zeitung"; 			"Lies die Zeitung, um alle Neuigkeiten zu erfahren!"; 										nil; 			ItemNewsPaper,	5,						ItemCategory.Other,		false};
+{ "ITEM_KEY", 		"Schlüssel"; 		"Dies ist der Schlüssel für …"; 															nil; 			ItemKey,		0,						ItemCategory.Vehicle,	false};
+{ "ITEM_PASSPORT", 	"Personalausweis";	"Der Personalausweis dient zur Identifizierung und ist eine gleichzeitige Arbeitserlaubnis";nil; 			ItemPassport,	5,						ItemCategory.Player,	false};
+{ "ITEM_FLOWERS", 	"Blumen"; 			"Mache jemandem eine Freue und schenke ihm Blumen!"; 										nil; 			ItemFlowers,	5,						ItemCategory.Other,		true};
+{ "ITEM_DILDO",		"Dildo"; 			"Der kleine Männerersatz."; 																nil; 			ItemDildo,		5,						ItemCategory.Other,		true};
+{ "ITEM_HOTWIREKIT", "Kurzschließkit";	"Autos abgeschlossen? Kein Problem!";														nil;			ItemHotwireKit,	1,						ItemCategory.Tools,		false};
 }
 
 local newitems = {}

@@ -62,14 +62,6 @@ function Core:ready()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	
-	InventoryGUI:new()
-	InventoryGUI:getSingleton():close()
-	bindKey("i", "down",
-		function()
-			InventoryGUI:getSingleton():toggle(true)
-		end
-	)
-	
 	-- Vehicle shops
 	VehicleShop.initializeAll()
 	VehicleGarages:new()

@@ -15,7 +15,7 @@ function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStat
 	self.m_InteriorID = interiorID
 	self.m_Owner = owner or false
 	self.m_Id = id
-	self.m_Elements = fromJSON(elements)
+	self.m_Elements = fromJSON(elements or "")
 	self.m_Pickup = createPickup(x, y, z, 3, 1273, 10, math.huge)
 	local ix, iy, iz, iint = unpack(House.interiorTable[self.m_InteriorID])
 	self.m_HouseMarker = createMarker(ix,iy,iz-1,"cylinder",1.2,255,255,255,125)

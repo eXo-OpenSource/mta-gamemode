@@ -199,6 +199,10 @@ function string.duration(seconds)
 	end
 end
 
+function string.sub(s, Start, End)
+	return utfSub(s, Start, End)
+end
+
 function setBytesInInt32(byte1, byte2, byte3, byte4)
 	assert(byte1 >= 0 and byte1 <= 255)
 	assert(byte2 >= 0 and byte2 <= 255)

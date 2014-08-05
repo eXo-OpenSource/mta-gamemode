@@ -17,5 +17,9 @@ function Item:getCount()
 	return self.m_Count
 end
 
+function Item:setCount(count)
+	self.m_Count = count
+end
+
 function Item:use()
 end

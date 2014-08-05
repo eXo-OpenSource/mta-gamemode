@@ -17,7 +17,6 @@
 	<script src="shared/version.lua" type="shared"/>
 	<script src="shared/debug.lua" type="shared"/>
 	<script src="shared/matrix.lua" type="shared"/>
-	<script src="shared/items.lua" type="shared"/>
 	<script src="shared/math.lua" type="shared"/>
 	<script src="shared/crc32lua.lua" type="shared"/>
 	<script src="shared/deflatelua.lua" type="shared"/>
@@ -283,6 +282,10 @@
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
 	
 	<script src="client/Main.lua" type="client"/>
+	
+	
+	<!-- Shared and dependent on server/client -->
+	<script src="shared/items.lua" type="shared"/>
 	
 	<!-- Web API -->
 	<html src="server/http/api.lua" />

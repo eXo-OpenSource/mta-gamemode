@@ -23,4 +23,5 @@ end
 
 function AntiCheat:report(name, severity)
 	outputServerLog(("AntiCheat:report(%s, %i)"):format(name, severity))
+	-- Todo: Log to database
 end

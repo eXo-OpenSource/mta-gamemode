@@ -108,7 +108,7 @@ function JobPolice:playerDamage(attacker, attackerWeapon, bodypart, loss)
 end
 
 function JobPolice:playerVehicleExit(vehicle, seat, jacker)
-	if seat == 0 and jacker and source:getWantedLevel() > 1 then
+	if seat == 0 and jacker and jacker:getJob() == self and source:getWantedLevel() > 1 then
 		self:jailPlayer(source, jacker)
 	end
 end

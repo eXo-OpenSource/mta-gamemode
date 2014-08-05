@@ -29,7 +29,7 @@ function Player:destructor()
 	
 	-- Unload stuff
 	if self.m_Inventory then
-		self.m_Inventory:unload()
+		delete(self.m_Inventory)
 	end
 end
 
@@ -93,6 +93,7 @@ function Player:initialiseBinds()
 	bindKey(self, "u", "down", "chatbox", "Group")
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleEngine(player) end end)
+	bindKey(self, "i", "down", function(player) if player:getInventory():getInteractingPlayer() then player:getInventory():closeFor(player) else player:getInventory():openFor(player) end end)
 end
 
 function Player:save()
@@ -109,6 +110,9 @@ function Player:save()
 	
 	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Weapons = ?, InventoryId = ? WHERE Id = ?;", sql:getPrefix(), x, y, z, interior, weapons, self.m_Inventory:getId(), self.m_Id)
 
+	if self:getInventory() then
+		self:getInventory():save()
+	end
 	DatabasePlayer.save(self)
 end
 

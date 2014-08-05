@@ -1,28 +1,36 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIForms/InventoryGUI.lua
+-- *  PURPOSE:     Inventory GUI class
+-- *
+-- ****************************************************************************
 InventoryGUI = inherit(GUIForm)
-inherit(Singleton, InventoryGUI)
+InventoryGUI.Map = {}
 
-function InventoryGUI:constructor()
-	local sw, sh = guiGetScreenSize()
-	local w, h = sw/5*3, sh/5*3
-
-	GUIForm.constructor(self, sw/5*1, sh/5*1, w, h)
-	self.m_Background = GUIRectangle:new(0, 0, w, h, tocolor(0, 0, 0, 150), self)
-	self.m_Items = { Item:new(ITEM_CRACK); Item:new(ITEM_LSD); Item:new(ITEM_NEWSPAPER); }
-	self.m_Items[1].m_Count = 3
+function InventoryGUI:constructor(inventoryId)
+	self.m_InventoryId = inventoryId
+	self.m_Items = {}
 	self.m_GUIItems = {}
 	self.m_SelectedItem = false
 	self.m_CurrentCategory = ItemCategory.All
-	-- todo: make dependand on h instead
-	local ENTRYHEIGHT = sh/100*7
-	local ENTRYWIDTH = w/3*2-50
-	local ENTRYSPACE = sh/100
+	InventoryGUI.Map[inventoryId] = self
+
+	local w, h = screenWidth/5*3, screenHeight/5*3
+	GUIForm.constructor(self, screenWidth/5*1, screenHeight/5*1, w, h)
+	self.m_Background = GUIRectangle:new(0, 0, w, h, tocolor(0, 0, 0, 150), self)
 	
-	self.m_Scrollable = GUIScrollableArea:new(w/3, 50, ENTRYWIDTH, sh, ENTRYWIDTH, sh, false, false, self)
+	-- todo: make dependand on h instead
+	local ENTRYHEIGHT = screenHeight/100*7
+	local ENTRYWIDTH = w/3*2-50
+	local ENTRYSPACE = screenHeight/100
+	
+	self.m_Scrollable = GUIScrollableArea:new(w/3, 50, ENTRYWIDTH, screenHeight, ENTRYWIDTH, screenHeight, false, false, self)
 	for i, item in ipairs(self.m_Items) do
 		local vrp = VRPItem:new(0, (ENTRYHEIGHT+ENTRYSPACE)*(i-1), ENTRYWIDTH, ENTRYHEIGHT, item, self.m_Scrollable)
 		self.m_GUIItems[vrp] = item
-		vrp.onLeftClick = bind(InventoryGUI.onItemClick, self, vrp, item)
-		vrp.onItemRemove = bind(InventoryGUI.onItemRemove, self)
+		vrp.onLeftClick = bind(InventoryGUI.Item_Click, self, vrp, item)
+		vrp.Item_Remove = bind(InventoryGUI.Item_Remove, self)
 	end
 	
 	self.m_CategoryRects = {}
@@ -64,7 +72,8 @@ function InventoryGUI:ButtonUse_Click()
 	local item = self.m_GUIItems[self.m_SelectedItem]
 	assert(item)
 	if item.use then
-		item:use()
+		--item:use()
+		triggerServerEvent("inventoryUseItem", root, self.m_InventoryId, item:getItemId(), item:getSlot())
 		self.m_SelectedItem:updateFromItem()
 	else
 		self.m_ErrorText:setText(_"Fehler: \nDieses Item ist nicht verwendbar!")
@@ -106,7 +115,7 @@ function InventoryGUI:Category_Click(categoryId, rect, cx, cy)
 end
 
 
-function InventoryGUI:onItemClick(vrpitem, item)
+function InventoryGUI:Item_Click(vrpitem, item)
 	if self.m_SelectedItem then
 		self.m_SelectedItem:deselect()
 	end
@@ -115,11 +124,7 @@ function InventoryGUI:onItemClick(vrpitem, item)
 	self.m_SelectedItem:select()
 end
 
-function InventoryGUI:onShow()
-
-end
-
-function InventoryGUI:onItemRemove(item)
+function InventoryGUI:Item_Remove(item)
 	self.m_GUIItems[item] = nil
 	self:resort(false)
 	if item == self.m_SelectedItem then
@@ -127,12 +132,23 @@ function InventoryGUI:onItemRemove(item)
 	end
 end
 
-function InventoryGUI:resort(useanim)
-	local sw, sh = guiGetScreenSize()
-	local w, h = sw/5*3, sh/5*3
-	local ENTRYHEIGHT = sh/100*7
+function InventoryGUI:addItem(item)
+	local w, h = screenWidth/5*3, screenHeight/5*3
+	local ENTRYHEIGHT = screenHeight/100*7
 	local ENTRYWIDTH = w/3*2-50
-	local ENTRYSPACE = sh/100
+	local ENTRYSPACE = screenHeight/100
+
+	local vrp = VRPItem:new(0, (ENTRYHEIGHT+ENTRYSPACE)*(table.size(self.m_GUIItems)-1), ENTRYWIDTH, ENTRYHEIGHT, item, self.m_Scrollable)
+	self.m_GUIItems[vrp] = item
+	vrp.onLeftClick = bind(InventoryGUI.Item_Click, self, vrp, item)
+	self:resort(false)
+end
+
+function InventoryGUI:resort(useanim)
+	local w, h = screenWidth/5*3, screenHeight/5*3
+	local ENTRYHEIGHT = screenHeight/100*7
+	local ENTRYWIDTH = w/3*2-50
+	local ENTRYSPACE = screenHeight/100
 	useanim = false -- Force anim being off
 	
 	-- Todo: Add resort methods (table.sort GUIItems table)
@@ -151,6 +167,81 @@ function InventoryGUI:resort(useanim)
 		end
 	end
 end
+
+function InventoryGUI:findItem(slot, itemId)
+	-- The following slot lookup is probably bad
+	for k, item in pairs(self.m_Items) do
+		if item:getSlot() == slot then
+			-- Check itemid to ensure we're not desynced
+			if item:getItemId() == itemId or not itemId then
+				local guiItem = table.find(self.m_GUIItems, item)
+				return item, guiItem
+			end
+			break
+		end
+	end
+end
+
+
+addRemoteEvents{"inventoryOpen", "inventoryClose", "inventoryAddItem", "inventoryRemoveItem", "inventoryUseItem"}
+addEventHandler("inventoryOpen", root,
+	function(inventoryId, items)
+		local inventory = InventoryGUI:new(inventoryId)
+	
+		for k, itemInfo in ipairs(items) do
+			local slot, itemId, amount = unpack(itemInfo)
+			
+			local itemClass = Items[itemId].class
+			table.insert(inventory.m_Items, (itemClass or Item):new(itemId, amount, slot))
+			inventory:addItem(inventory.m_Items[#inventory.m_Items])
+		end
+	end
+)
+addEventHandler("inventoryClose", root,
+	function(inventoryId)
+		local inventory = InventoryGUI.Map[inventoryId]
+		if not inventory then return end
+		delete(inventory)
+	end
+)
+
+addEventHandler("inventoryAddItem", root,
+	function(inventoryId, slot, itemId, amount)
+		local inventory = InventoryGUI.Map[inventoryId]
+		if not inventory then return end
+		
+		local itemClass = Items[itemId].class
+		table.insert(inventory.m_Items, (itemClass or Item):new(itemId, amount, slot))
+		inventory:addItem(inventory.m_Items[#inventory.m_Items])
+	end
+)
+addEventHandler("inventoryRemoveItem", root,
+	function(inventoryId, slot, itemId, amount)
+		local inventory = InventoryGUI.Map[inventoryId]
+		if not inventory then return end
+	
+		local item, guiItem = inventory:findItem(slot, itemId)
+		if item then
+			item.m_Count = self.m_Count - amount
+		end
+		if guiItem then
+			guiItem:updateFromItem()
+		end
+	end
+)
+addEventHandler("inventoryUseItem", root,
+	function(inventoryId, itemId, slot)
+		local inventory = InventoryGUI.Map[inventoryId]
+		if not inventory then return end
+	
+		local item, guiItem = inventory:findItem(slot, itemId)
+		if not item then return end
+		
+		if item.use then
+			item:use(inventory)
+		end
+	end
+)
 
 
 --[[
