@@ -94,13 +94,13 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 					
 					-- "Respawn" the tree after a while
 					setTimer(
-						function()
+						function(object)
 							-- Reset rotation and move up again
 							setElementRotation(object, 0, 0, 0)
 							moveObject(object, 8000, x, y, z)
 							setElementCollisionsEnabled(object, true)
 							object.broken = nil
-						end, 20000, 1
+						end, 20000, 1, object
 					)
 				end, 6000, 1, source
 			)

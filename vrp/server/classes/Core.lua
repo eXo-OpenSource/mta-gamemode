@@ -32,6 +32,7 @@ function Core:constructor()
 	EventManager:new()
 	GangAreaManager:new()
 	Weather:new()
+	JailBreak:new()
 	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

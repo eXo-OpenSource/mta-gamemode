@@ -53,7 +53,7 @@ function HUDRadar:updateMapTexture()
 		local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
 		
 		local width, height = rect.Width/2, rect.Height/2
-		dxDrawRectangle(mapX, mapY, width, height, Color.Yellow)
+		dxDrawRectangle(mapX, mapY, width, height, rect.color)
 	end
 	
 	dxSetRenderTarget(nil)
@@ -196,7 +196,7 @@ function HUDRadar:draw()
 
 	-- Draw the player blip
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
-	dxDrawImage(self.m_PosX+self.m_Width/2-6, self.m_PosY+2+self.m_Height/2-6, 16, 16, "files/images/Blips/LocalPlayer.png", self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
+	dxDrawImage(self.m_PosX+self.m_Width/2-6, self.m_PosY+2+self.m_Height/2-6, 16, 16, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
 end
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
@@ -249,8 +249,8 @@ end
 HUDRadar.ServerAreas = {}
 addEvent("radarAreaCreate", true)
 addEventHandler("radarAreaCreate", root,
-	function(index, x, y, width, height)
-		HUDRadar.ServerAreas[index] = HUDRadar:getSingleton():addArea(x, y, width, height)
+	function(index, x, y, width, height, color)
+		HUDRadar.ServerAreas[index] = HUDRadar:getSingleton():addArea(x, y, width, height, color)
 	end
 )
 
