@@ -52,11 +52,11 @@ end
 
 function GUIRadioButton:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/radiobutton.png")
+	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Radiobutton.png")
 	dxDrawText(self:getText(), self.m_AbsoluteX + self.m_Height + GUI_RADIO_TEXT_MARGIN, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - GUI_RADIO_TEXT_MARGIN, self.m_AbsoluteY + self.m_Height, self:getColor(), self:getFontSize(), self:getFont(), "left", "center", false, true)
 
 	if self.m_Checked then
-		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/radiobutton_check.png")
+		dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Height, self.m_Height, "files/images/GUI/Radiobutton_checked.png")
 	end
 	dxSetBlendMode("blend")
 end

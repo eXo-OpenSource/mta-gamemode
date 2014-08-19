@@ -73,6 +73,9 @@ function ClickHandler:dispatchClick(clickInfo)
 		BankGUI:getSingleton():show()
 		return
 	end
+	if model == 2886 then -- Keypad
+		triggerServerEvent("keypadClick", element)
+	end
 	
 	-- Phase 3: Check element types
 	if self.m_Menu[elementType] then

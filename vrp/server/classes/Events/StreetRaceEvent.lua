@@ -82,7 +82,7 @@ function StreetRaceEvent:destructor()
 end
 
 function StreetRaceEvent:colShapeHit(hitElement, matchingDimension)
-	if getElementType(hitElement) == "player" and matchingDimension then
+	if getElementType(hitElement) == "player" and matchingDimension and getPedOccupiedVehicleSeat(hitElement) == 0 then
 		-- Add player to the winner list
 		self.m_Ranks[#self.m_Ranks+1] = hitElement
 		

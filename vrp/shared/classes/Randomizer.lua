@@ -15,3 +15,22 @@ function Randomizer:get(min, max)
 	self:changeSeat()
 	return math.random(min, max)
 end
+
+function Randomizer:getRandomOf(n, opportunities)
+	if n > #opportunities then
+		return false
+	end
+	
+	local result = {}
+	for i = 1, n do
+		-- Todo: Try optimizing the following
+		local rand
+		repeat
+			rand = math.random(1, #opportunities)
+		until not table.find(result, opportunities[rand])
+		
+		table.insert(result, opportunities[rand])
+	end
+	
+	return result
+end

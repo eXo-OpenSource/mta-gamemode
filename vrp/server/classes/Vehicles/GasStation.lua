@@ -12,7 +12,7 @@ function GasStation:constructor(position)
 	
 	addEventHandler("onMarkerHit", self.m_Marker,
 		function(hitElement, matchingDimension)
-			if getElementType(hitElement) == "player" and matchingDimension then
+			if getElementType(hitElement) == "player" and matchingDimension and getPedOccupiedVehicleSeat(hitElement) == 0 then
 				hitElement:triggerEvent("gasStationGUIOpen")
 			end
 		end

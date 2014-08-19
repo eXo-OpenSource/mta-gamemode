@@ -69,7 +69,11 @@ function outputTable(tab)
 	if DEBUG then
 		outputDebugString("Begin: "..tostring(tab))
 		for k, v in pairs(tab) do
-			outputDebugString("key = "..tostring(k)..", value = "..tostring(v))
+			if type(v) == "table" then
+				outputTable(v)
+			else
+				outputDebugString("key = "..tostring(k)..", value = "..tostring(v))
+			end
 		end
 		outputDebugString("End")
 	end
