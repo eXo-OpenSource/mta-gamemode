@@ -1,10 +1,14 @@
-import os;
-import io;
+#!/bin/python
+import os
+import io
 import xml.etree.ElementTree as ET
-import shutil;
+import shutil
 from subprocess import call
+import platform
 
-compiler = "tools/luac_mta.exe"
+compiler = "tools/luac_mta"
+if platform.system() == "Windows":
+	compiler = "tools/luac_mta.exe"
 rootdir = "vrp/"
 outdir = "vrp_build/"
 

@@ -1,4 +1,4 @@
-﻿Inventory = inherit(Object)
+Inventory = inherit(Object)
 Inventory.Map = {}
 
 function Inventory:constructor(Id, items)

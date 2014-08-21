@@ -1,4 +1,4 @@
-﻿-- // Server
+-- // Server
 
 JobFarmer = inherit(Job)
 

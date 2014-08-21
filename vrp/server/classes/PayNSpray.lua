@@ -1,4 +1,4 @@
-﻿PayNSpray = inherit(Object)
+PayNSpray = inherit(Object)
 
 function PayNSpray:constructor(x, y, z, garageId)
 	self.m_FixShape = createColSphere(x, y, z, 4)
