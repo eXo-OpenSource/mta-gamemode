@@ -22,6 +22,9 @@ rm_r(outdir)
 os.mkdir(outdir)
 shutil.copytree(rootdir+"files", outdir+"files")
 shutil.copyfile(rootdir+"whitelist.xml", outdir+"whitelist.xml")
+os.mkdir(outdir+"server")
+os.mkdir(outdir+"server/http")
+shutil.copyfile(rootdir+"server/http/api.lua", outdir+"server/http/api.lua")
 
 # Get files
 files = {}
