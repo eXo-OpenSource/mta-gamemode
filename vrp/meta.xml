@@ -2,7 +2,6 @@
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
 	<min_mta_version server="1.3.5" client="1.3.5"/>
 	<oop>false</oop>
-	<include resource="freeroam"/>
 	<include resource="customblips"/>
 
 	<!-- Shared -->
@@ -233,6 +232,7 @@
 	<script src="client/classes/GUIForms/HouseGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JailBreakGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SendMoneyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/MapGUI.lua" type="client"/>
 	
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>

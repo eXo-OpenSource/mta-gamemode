@@ -8,6 +8,7 @@
 JailBreak = inherit(Singleton)
 addEvent("keypadClick", true)
 addEvent("jailAnswersRetrieve", true)
+local TIME_BETWEEN_JAILBREAKS = 30*60*1000
 
 function JailBreak:constructor()
 	self.m_MainGate = getElementByID("jail_maingate")
@@ -15,12 +16,18 @@ function JailBreak:constructor()
 	self.m_IntGateLeft = getElementByID("jail_intgate_left")
 	self.m_CellGates = {} -- Todo
 	self.m_MainGateState, self.m_InteriorGateState = true, true
+	self.m_LastJailBreakTime = 0
 	
 	self.m_MainGateKeypad = createObject(2886, 77.7, -234.5, 2.5, 0, 0, 180)
 	self.m_IntGateKeypad = createObject(2886, 98.3, -262.6, 6.2, 0, 0, 180)
 	
 	addEventHandler("keypadClick", root,
 		function()
+			if source == self.m_MainGateKeypad or source == self.m_IntGateKeypad and self.m_LastJailBreakTime + TIME_BETWEEN_JAILBREAKS > getTickCount() then
+				client:sendError(_("Du kannst den Gefängnisausbruch zurzeit nicht starten", client))
+				return
+			end
+		
 			if source == self.m_MainGateKeypad then
 				local questions = self:getQuestionSet(5)
 				client:triggerEvent("jailQuestionsRetrieve", 1, questions)
@@ -40,6 +47,7 @@ function JailBreak:constructor()
 					end
 				elseif gateId == 2 then
 					if self.m_InteriorGateState then
+						self.m_LastJailBreakTime = getTickCount()
 						self:toggleInteriorGate(false)
 						setTimer(function() self:toggleInteriorGate(true) end, 60000, 1)
 					end
@@ -94,6 +102,12 @@ function JailBreak:checkAnswers(answers)
 	end
 	return wrongQuestionCount <= 1
 end
+
+--[[
+Änderungsideen:
+- Gefängniszellen erst nach 1min Counter öffnen (damit Polizei genug Zeit hat das Ganze zu stoppen
+
+]]
 
 -- Todo: the first field is not necessary
 JailBreak.Questions = {

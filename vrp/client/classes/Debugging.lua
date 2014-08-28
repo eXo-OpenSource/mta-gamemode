@@ -32,6 +32,11 @@ if DEBUG then
 				end
 			end
 		)
+		bindKey("f1", "down",
+			function()
+				MapGUI:new(function(posX, posY) setElementPosition(localPlayer, posX, posY, 20) end)
+			end
+		)
 	end
 
 	function Debugging:runString(cmd, ...)
