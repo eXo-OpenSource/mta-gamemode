@@ -10,7 +10,7 @@ ClickHandler = inherit(Singleton)
 function ClickHandler:constructor()
 	self.m_OpenMenus = {}
 	self.m_Menu = {
-		--player = PlayerMouseMenu;
+		player = PlayerMouseMenu;
 		vehicle = VehicleMouseMenu;
 	}
 	self.m_ClickInfo = false
