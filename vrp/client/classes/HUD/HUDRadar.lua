@@ -227,7 +227,10 @@ end
 
 function HUDRadar:addArea(worldX, worldY, width, height, color)
 	local area = Rect:new(worldX, worldY, width, height)
-	area.color = tocolor(color)
+	if type(color) == "table" then
+		color = tocolor(unpack(color))
+	end
+	area.color = color
 	local r, g, b, a = getBytesInInt32(area.color)
 	area.mtaElement = createRadarArea(worldX, worldY-height, width, height, r, g, b, a)
 	table.insert(self.m_Areas, area)

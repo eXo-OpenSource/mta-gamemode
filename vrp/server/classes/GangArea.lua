@@ -12,7 +12,7 @@ function GangArea:constructor(Id, areaPosition, width, height, resourcesPerDistr
 	local result = sql:queryFetchSingle("SELECT Owner, State FROM ??_gangareas WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	
 	self.m_ColShape = createColRectangle(areaPosition.X, areaPosition.Y, width, height)
-	self.m_RadarArea = RadarArea:new(areaPosition.X, areaPosition.Y+height, width, height, tocolor(0, 255, 0, 200)) -- todo: Move to the client
+	self.m_RadarArea = RadarArea:new(areaPosition.X, areaPosition.Y+height, width, height, {0, 255, 0, 200}) -- todo: Move to the client
 	if not result then
 		self.m_OwnerGroup = false
 	else

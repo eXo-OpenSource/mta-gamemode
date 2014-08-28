@@ -10,6 +10,18 @@ GUICursor = inherit(Object)
 function GUICursor:constructor()
 	bindKey("b", "down",
 		function()
+			if isCursorShowing() then
+				self.m_Counter = 0
+				showCursor(false)
+			else
+				showCursor(true)
+			end
+		end
+	)
+	
+	-- Instant cursor
+	--[[bindKey("b", "down",
+		function()
 			showCursor(true)
 		end
 	)
@@ -20,7 +32,9 @@ function GUICursor:constructor()
 				showCursor(false)
 			end
 		end
-	)
+	)--]]
+	
+	
 	self.m_Counter = 0
 	
 	-- Hide the old cursor
@@ -45,7 +59,8 @@ function GUICursor:draw()
 end
 
 function GUICursor:check()
-	if self.m_Counter == 0 then
+	if self.m_Counter <= 0 then
+		self.m_Counter = 0
 		showCursor(false)
 		GUIElement.unhoverAll()
 	else
@@ -56,9 +71,11 @@ end
 function GUICursor:show()
 	self.m_Counter = self.m_Counter + 1
 	self:check()
+	outputDebug("Cursor counter incremented to: "..Cursor.m_Counter)
 end
 
 function GUICursor:hide()
 	self.m_Counter = self.m_Counter - 1
 	self:check()
+	outputDebug("Cursor counter decremented to: "..Cursor.m_Counter)
 end

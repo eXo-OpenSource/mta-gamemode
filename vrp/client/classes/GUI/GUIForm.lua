@@ -21,6 +21,7 @@ function GUIForm:destructor()
 	end
 	self.m_KeyBinds = {}
 	self:setVisible(false)
+	Cursor:hide()
 	
 	-- Todo: Replace this by virtual_destructor
 	CacheArea.destructor(self)
@@ -50,7 +51,7 @@ end
 
 function GUIForm:fadeIn(time)
 	if not time then time = 1000 end
-	self:setVisible(true)		
+	self:setVisible(true)
 	for k, v in pairs(self:getChildrenRecursive()) do
 		if v:isVisible() then
 			if instanceof(v, GUIColorable) then
