@@ -43,11 +43,13 @@ end
 
 function JobTrashman:stop()
 	for k, colShape in ipairs(self.m_ColShapes) do
-		local can = colShape:getData("Can")
-		if can then
-			destroyElement(can)
+		if isElement(colShape) then
+			local can = colShape:getData("Can")
+			if can then
+				destroyElement(can)
+			end
+			destroyElement(colShape)
 		end
-		destroyElement(colShape)
 	end
 	self.m_ColShapes = {}
 	self:reset()

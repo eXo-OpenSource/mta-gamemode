@@ -467,18 +467,22 @@ if type(root) == "userdata" then
 	debug.setmetatable(root,
 		{
 			__index = function(self, key)
-				if elementIndex[self] then 	
-					return elementIndex[self][key]
-				elseif elementClasses[getElementType(self)] then
-					enew(self, elementClasses[getElementType(self)])
-					return self[key]
+				if isElement(self) then
+					if elementIndex[self] then 	
+						return elementIndex[self][key]
+					elseif elementClasses[getElementType(self)] then
+						enew(self, elementClasses[getElementType(self)])
+						return self[key]
+					end
 				end
 			end,
-			__newindex = function(self, key, value) 
-				if not elementIndex[self] then
-					enew(self, elementClasses[getElementType(self)] or {})
+			__newindex = function(self, key, value)
+				if isElement(self) then
+					if not elementIndex[self] then
+						enew(self, elementClasses[getElementType(self)] or {})
+					end
+					elementIndex[self][key] = value
 				end
-				elementIndex[self][key] = value
 			end,
 		}
 	)
