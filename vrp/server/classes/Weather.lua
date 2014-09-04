@@ -17,6 +17,5 @@ end
 
 function Weather:changeWeatherRandomly()
 	self.m_CurrentWeather = (self.m_CurrentWeather + 1) % 44
-	outputChatBox("New weather: "..self.m_CurrentWeather )
 	setWeatherBlended(self.m_CurrentWeather)
 end

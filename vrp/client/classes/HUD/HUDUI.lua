@@ -10,7 +10,7 @@ function HUDUI:constructor()
 	
 	self.m_RenderHandler = bind(self.draw,self)
 	
-	addEventHandler("onClientRender",root,self.m_RenderHandler)
+	addEventHandler("onClientRender",root,self.m_RenderHandler, true, "high+999")
 end
 
 function HUDUI:show()

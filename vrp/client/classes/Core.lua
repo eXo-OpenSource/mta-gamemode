@@ -32,6 +32,7 @@ function Core:ready()
 	CustomModelManager:new()
 	AmmuNationGUI:new()
 	GangAreaManager:new()
+	HelpBar:new()
 	
 	-- HUD
 	--HUDRadar:new()

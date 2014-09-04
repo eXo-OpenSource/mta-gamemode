@@ -39,6 +39,17 @@ function JobTrashman:start()
 	self.m_ContainerLabel = GUILabel:new(150, 4, 50, 40, "0", self.m_TrashImage):setFont(VRPFont(40))
 	
 	self:reset()
+	
+	-- Show text in help menu
+	HelpBar:getSingleton():addText("Job: Müllmann", [[
+		Der Müllmann ist ein voll krasser Job. Ollum.
+		Diese Redensweise ist komisch und sollte nicht geduldet werden.
+		Ich schreibe eine Menge Scheiße? Warum?
+		Weil ich es kann!
+		Jetzt fällt mir nichts mehr ein, drum fang ich gleich an zu schrei'n!
+		Das war es auch schon.
+		Hiermit verabschiede ich mich!
+	]])
 end
 
 function JobTrashman:stop()

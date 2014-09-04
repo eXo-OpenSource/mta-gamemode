@@ -22,6 +22,7 @@ function Animation.Move:preRender()
 		if self.onFinish then
 			self.onFinish(self)
 		end
+		self.m_Element:setPosition(self.m_TX, self.m_TY)
 		delete(self)
 	else
 		local x = self.m_X + (self.m_TX - self.m_X) * progress
