@@ -10,16 +10,18 @@ InteriorEnterExit = inherit(Object)
 function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension)
 	self.m_EnterMarker = createMarker(entryPosition.X, entryPosition.Y, entryPosition.Z, "corona", 2, 255, 255, 255, 200)
 	self.m_ExitMarker = createMarker(interiorPosition.X, interiorPosition.Y, interiorPosition.Z, "corona", 2, 255, 255, 255, 200)
-	setElementInterior(self.m_ExitMarker, interiorId)
 	
+	interiorId = interiorId or 0
 	dimension = dimension or 0
+	setElementInterior(self.m_ExitMarker, interiorId)
 	setElementDimension(self.m_ExitMarker, dimension)
 	
 	addEventHandler("onMarkerHit", self.m_EnterMarker,
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) and not hitElement.m_DontTeleport then
 				hitElement.m_DontTeleport = true
-				setElementInterior(hitElement, interiorId, interiorPosition.X, interiorPosition.Y, interiorPosition.Z)
+				setElementInterior(hitElement, interiorId)
+				setElementPosition(hitElement, interiorPosition.X, interiorPosition.Y, interiorPosition.Z)
 				setElementDimension(hitElement, dimension)
 				setElementRotation(hitElement, 0, 0, enterRotation)
 				setCameraTarget(hitElement, hitElement)

@@ -83,7 +83,7 @@ function JobBusDriver:stop(player)
 end
 
 function JobBusDriver:BusStop_Hit(player, matchingDimension)
-	if getElementType(player) == "player" and matchingDimension then
+	if getElementType(player) == "player" and matchingDimension and getPedOccupiedVehicleSeat(player) == 0 then
 		local vehicle = getPedOccupiedVehicle(player)
 		if not vehicle or getElementModel(vehicle) ~= 437 then
 			return

@@ -58,6 +58,15 @@ function GroupManager:removeRef(ref)
 	GroupManager.Map[ref:getId()] = nil
 end
 
+function GroupManager:getByName(groupName)
+	for k, group in pairs(GroupManager.Map) do
+		if group:getName() == groupName then
+			return group
+		end
+	end
+	return false
+end
+
 function GroupManager:Event_groupRequestInfo()
 	local group = client:getGroup()
 	
@@ -74,11 +83,22 @@ function GroupManager:Event_groupCreate(name)
 		return
 	end
 	
+	-- Does the group already exist?
+	if self:getByName(name) then
+		client:sendError(_("Eine Gruppe mit diesem Namen existiert bereits!", client))
+		return
+	end
+	
 	-- Create the group and the the client as leader (rank 2)
 	local group = Group.create(name)
-	group:addPlayer(client, GroupRank.Leader)
-	client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der Gruppe %s", client, name))
-	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+	if group then
+		group:addPlayer(client, GroupRank.Leader)
+		client:takeMoney(GroupManager.GroupCosts)
+		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der Gruppe %s", client, name))
+		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+	else
+		client:sendError(_("Interner Fehler beim Erstellen der Gruppe", client))
+	end
 end
 
 function GroupManager:Event_groupQuit()

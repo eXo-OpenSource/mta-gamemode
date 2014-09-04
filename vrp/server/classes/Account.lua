@@ -32,6 +32,9 @@ function Account.login(player, username, password, pwhash)
 		return false
 	end
 	
+	-- Update last serial and last login
+	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), getPlayerSerial(player), row.Id)
+	
 	player.m_Account = Account:new(row.Id, username, player, false)
 
 	if player:getTutorialStage() == 1 then
@@ -84,7 +87,7 @@ function Account.register(player, username, password, email)
 	-- todo: get a better salt
 	local salt = md5(math.random())
 
-	sql:queryExec("INSERT INTO ??_account(Id, Name, Password, Salt, Rank) VALUES (?, ?, ?, ?, ?);", sql:getPrefix(), forumId, username, sha256(salt..password), salt, 0)
+	sql:queryExec("INSERT INTO ??_account(Id, Name, Password, Salt, Rank, Serial, LastLogin) VALUES (?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), forumId, username, sha256(salt..password), salt, 0, getPlayerSerial(player))
 	
 	player.m_Account = Account:new(forumId, username, player, false)
 	

@@ -22,8 +22,8 @@ function BankManager:constructor()
 end
 
 function BankManager:createInteriors()
-	InteriorEnterExit:new(Vector(1660.4, -1272.8, 14.6), Vector(390, 173.8, 1008.4), 0, 0, 3)
-	InteriorEnterExit:new(Vector(1667.1, -1269.3, 233.3), Vector(371.2, 161.3, 1025.8), 0, 0, 3)
+	InteriorEnterExit:new(Vector(1660.4, -1272.8, 14.6), Vector(802.9, 4225.1, 15.7), 270, 180, 1)
+	InteriorEnterExit:new(Vector(1667.1, -1269.3, 233.3), Vector(794.2, 4225.4, 18.4), 270, 0, 1)
 end
 
 function BankManager:Event_Withdraw(amount)

@@ -33,7 +33,7 @@ function PlayerManager:playerJoin()
 end
 
 function PlayerManager:playerWasted()
-	source:sendMessage("Pass lieber auf, was du machst!")
+	source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
 	setTimer(function(player) if player then player:respawnAfterDeath() end end, 5*1000, 1, source)
 end
 
