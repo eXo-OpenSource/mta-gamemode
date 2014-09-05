@@ -32,7 +32,9 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 							end
 						end
 					end
-					killTimer(self.m_Timer)
+					if self.m_Timer and isTimer(self.m_Timer) then
+						killTimer(self.m_Timer)
+					end
 				end
 			end
 		end
