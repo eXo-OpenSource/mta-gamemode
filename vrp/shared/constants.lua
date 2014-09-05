@@ -65,9 +65,10 @@ Crime = {
 	Damage = {id = 2, text = "Körperverletzung", maxwanted = 2, maxdistance = 80},
 	Hotwire = {id = 3, text = "Fahrzeug kurzgeschlossen", maxwanted = 2},
 	BankRobbery = {id = 4, text = "Banküberfall", maxwanted = 6, maxdistance = math.huge},
-	JailGateOpen = {id = 5, text = "Unberechtigtes Öffnen der Gefängnisschleuse", maxdistance = 2000},
-	JailCellsOpen = {id = 6, text = "Beihilfe zum Massengefängnisausbruch", maxdistance = 3000},
-	JailBreak = {id = 7, text = "Gefängnisausbruch", maxdistance = 3000},
+	JailGateOpen = {id = 5, text = "Unberechtigtes Öffnen der Gefängnisschleuse", maxwanted = 3, maxdistance = 2000},
+	JailCellsOpen = {id = 6, text = "Beihilfe zum Massengefängnisausbruch", maxwanted = 6, maxdistance = 3000},
+	JailBreak = {id = 7, text = "Gefängnisausbruch", maxwanted = 4, maxdistance = 3000},
+	PlacingBomb = {id = 8, text = "Legen einer Bombe", maxwanted = 6, maxdistance = 5000},
 }
 
 AmmuNationInfo = {

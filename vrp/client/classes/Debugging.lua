@@ -13,6 +13,7 @@ if DEBUG then
 		setDevelopmentMode(true)
 		addCommandHandler("dcrun", bind(Debugging.runString, self))
 		addCommandHandler("dcreload", bind(Debugging.reloadClass, self))
+		addCommandHandler("gp", bind(Debugging.getpos, self))
 		
 		bindKey("lshift", "down",
 			function()
@@ -64,5 +65,9 @@ if DEBUG then
 			end
 			outputChatBox("Successfully reloaded")
 		end
+	end
+	
+	function Debugging:getpos(cmd)
+		outputChatBox(("Position: %.2f, %.2f, %.2f"):format(getElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer)))
 	end
 end

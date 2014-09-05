@@ -109,6 +109,7 @@
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/Item.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemHotwireKit.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
 	
 	<script src="server/Main.lua" type="server"/>
 	
@@ -279,6 +280,7 @@
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Item.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemHotwireKit.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemBomb.lua" type="client"/>
 	
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>

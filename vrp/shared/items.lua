@@ -15,6 +15,7 @@ Items = {
 { "ITEM_FLOWERS", 	"Blumen"; 			"Mache jemandem eine Freue und schenke ihm Blumen!"; 										nil; 			ItemFlowers,	5,						ItemCategory.Other,		true};
 { "ITEM_DILDO",		"Dildo"; 			"Der kleine Männerersatz."; 																nil; 			ItemDildo,		5,						ItemCategory.Other,		true};
 { "ITEM_HOTWIREKIT", "Kurzschließkit";	"Autos abgeschlossen? Kein Problem!";														nil;			ItemHotwireKit,	1,						ItemCategory.Tools,		false};
+{ "ITEM_BOMB",		"Bombe";			"Erzeugt eine große Explosion und wird bei verschiedenen Events benötigt";					nil;			ItemBomb,		0,						ItemCategory.Other,		true};
 }
 
 local newitems = {}
