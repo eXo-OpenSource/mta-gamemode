@@ -59,7 +59,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, Weapons, InventoryId, GarageType, LastGarageEntrance, SpawnLocation FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -91,20 +91,6 @@ function DatabasePlayer:load()
 	self.m_Skills["Flying"] 	= row.FlyingSkill
 	self.m_Skills["Sneaking"] 	= row.SneakingSkill
 	self.m_Skills["Endurance"] 	= row.EnduranceSkill
-	
-	if row.Weapons and row.Weapons ~= "" then
-		local weaponID = 0
-		for i = 1, 26 do
-			local value = gettok(row.Weapons, i, string.byte('|'))
-			if tonumber(value) ~= 0 then
-				if math.mod(i, 2) == 1 then
-					weaponID = value
-				else
-					giveWeapon(self, weaponID, value)
-				end
-			end
-		end
-	end
 end
 
 function DatabasePlayer:save()
@@ -180,22 +166,22 @@ function DatabasePlayer:getLevel()
 end
 
 function DatabasePlayer:giveKarma(value, factor)
-	local changekarma = Karma.calcKarma(self.m_Karma, value, factor or 1)
-	self:giveXP(changekarma)
+	local changekarma = Karma.calcKarma(self.m_Karma, self.m_Karma+value, factor or 1)
+	self:giveXP(changekarma*10)
 	self.m_Karma = self.m_Karma + changekarma
 	self:triggerEvent("karmaChange", self.m_Karma)
 end
 
 function DatabasePlayer:takeKarma(value, factor)
-	local changekarma = Karma.calcKarma(self.m_Karma, value, factor or 1)
-	self:giveXP(changekarma)
+	local changekarma = Karma.calcKarma(self.m_Karma, self.m_Karma-value, factor or 1)
+	self:giveXP(changekarma*10)
 	self.m_Karma = self.m_Karma - changekarma
 	self:triggerEvent("karmaChange", self.m_Karma)
 end
 
 function DatabasePlayer:addBankMoney(amount, logType)
 	logType = logType or BankStat.Income
-	if sql:queryExec("INSERT INTO ??_bank_statements (CharacterId, Type, Amount) VALUES(?, ?, ?)", sql:getPrefix(), self.m_Id, logType, amount) then
+	if sql:queryExec("INSERT INTO ??_bank_statements (UserId, Type, Amount, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), self.m_Id, logType, amount) then
 		self.m_BankMoney = self.m_BankMoney + amount
 		return true
 	end
@@ -204,7 +190,7 @@ end
 
 function DatabasePlayer:takeBankMoney(amount, logType)
 	logType = logType or BankStat.Payment
-	if sql:queryExec("INSERT INTO ??_bank_statements (CharacterId, Type, Amount) VALUES(?, ?, ?)", sql:getPrefix(), self.m_Id, logType, amount) then
+	if sql:queryExec("INSERT INTO ??_bank_statements (UserId, Type, Amount, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), self.m_Id, logType, amount) then
 		self.m_BankMoney = self.m_BankMoney - amount
 		return true
 	end

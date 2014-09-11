@@ -33,9 +33,9 @@ if DEBUG then
 	end
 	
 	function Debugging:xp(player, cmd, xp)
-		if player:getRank() < RANK.Administrator then
+		--[[if player:getRank() < RANK.Administrator then
 			return
-		end
+		end]]
 		xp = tonumber(xp)
 		if xp then
 			player:giveXP(xp)
@@ -43,9 +43,9 @@ if DEBUG then
 	end
 	
 	function Debugging:karma(player, cmd, karma)
-		if player:getRank() < RANK.Administrator then
+		--[[if player:getRank() < RANK.Administrator then
 			return
-		end
+		end]]
 		karma = tonumber(karma)
 		if karma then
 			player:giveKarma(karma)

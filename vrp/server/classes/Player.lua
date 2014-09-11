@@ -84,7 +84,30 @@ function Player:createCharacter()
 end
 
 function Player:loadCharacterInfo()
+	local row = sql:asyncQueryFetchSingle("SELECT Weapons FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	if not row then
+		return false
+	end
+
+	-- Load non-element related data
 	self:load()
+	
+	-- Load weapons
+	if row.Weapons and row.Weapons ~= "" then
+		local weaponID = 0
+		for i = 1, 26 do
+			local value = gettok(row.Weapons, i, '|')
+			if tonumber(value) ~= 0 then
+				if math.mod(i, 2) == 1 then
+					weaponID = value
+				else
+					giveWeapon(self, weaponID, value)
+				end
+			end
+		end
+	end
+	
+	-- Sync server objects to client
 	Blip.sendAllToClient()
 	RadarArea.sendAllToClient()
 end

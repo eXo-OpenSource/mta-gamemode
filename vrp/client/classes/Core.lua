@@ -24,20 +24,29 @@ end
 
 function Core:ready()
 	TranslationManager:new()
-	JobManager:new()
 	MTAFixes:new()
 	ClickHandler:new()
-	RadioGUI:new()
-	KarmaBar:new()
 	CustomModelManager:new()
-	AmmuNationGUI:new()
 	GangAreaManager:new()
 	HelpBar:new()
+	JobManager:new()
+	AmmuNationGUI:new()
+	HouseGUI:new()
+	Housing:new()
 	
-	-- HUD
-	--HUDRadar:new()
+	VehicleShop.initializeAll()
+	VehicleGarages:new()
+	GasStationGUI:new()
+	
+	HelpTexts.translateAll()
+end
+
+function Core:afterLogin()
+	RadioGUI:new()
+	KarmaBar:new()
 	HUDSpeedo:new()
 	Nametag:new()
+	--HUDRadar:new()
 	HUDUI:new()
 	
 	-- Phone
@@ -63,18 +72,12 @@ function Core:ready()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	
-	-- Vehicle shops
-	VehicleShop.initializeAll()
-	VehicleGarages:new()
-	
 	self:createBlips()
-	GasStationGUI:new()
-	HouseGUI:new()
-	Housing:new()
 end
 
 function Core:destructor()
 	delete(Cursor)
+	delete(self.m_Config)
 end
 
 function Core:getConfig()

@@ -74,8 +74,12 @@ function GUICursor:show()
 	outputDebug("Cursor counter incremented to: "..Cursor.m_Counter)
 end
 
-function GUICursor:hide()
+function GUICursor:hide(force)
 	self.m_Counter = self.m_Counter - 1
+	if force then
+		self.m_Counter = 0
+	end
+	
 	self:check()
 	outputDebug("Cursor counter decremented to: "..Cursor.m_Counter)
 end

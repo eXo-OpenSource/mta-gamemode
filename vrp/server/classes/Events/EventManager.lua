@@ -52,4 +52,5 @@ function EventManager:Event_eventJoin(eventId)
 	end
 	
 	event:join(client)
+	client:sendShortMessage(_("Du hast dich erfolgreich für dieses Event eingetragen", client))
 end

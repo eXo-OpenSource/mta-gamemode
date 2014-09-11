@@ -48,11 +48,13 @@ function HelpBar:blink()
 	)
 end
 
-function HelpBar:addText(title, text)
+function HelpBar:addText(title, text, blink)
 	self.m_SubTitleLabel:setText(title)
 	self.m_TextLabel:setText(text)
 	
-	self:blink()
+	if blink ~= false then
+		self:blink()
+	end
 end
 
 function HelpBar:HelpIcon_Click()

@@ -137,6 +137,14 @@ function LoginGUI:constructor()
 	)
 	
 	self:showLogin()
+	
+	-- Show some help
+	HelpBar:getSingleton():addText("Login/Registration", HelpTexts.LoginRegister, false)
+end
+
+function LoginGUI:destructor()
+	Cursor:hide(true)
+	GUIForm.destructor(self)
 end
 
 function LoginGUI:showLogin()
@@ -218,6 +226,8 @@ addEventHandler("loginsuccess", root,
 			core:set("login", "password", pwhash)
 		end
 		lgi:delete()
+		
+		core:afterLogin(tutorialstage)
 		
 		-- Maybe start tutorial
 		if tutorialstage == 0 then

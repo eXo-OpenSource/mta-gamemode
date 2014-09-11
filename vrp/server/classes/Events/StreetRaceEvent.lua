@@ -62,6 +62,9 @@ function StreetRaceEvent:start()
 			
 			-- Tell player that we started the event
 			self:sendMessage("Das Event wurde gestartet!", 255, 255, 0)
+			
+			-- Set time out after 10min
+			self.m_TimeoutTimer = setTimer(function() delete(self) end, 10*60*1000, 1)
 		end,
 		3000,
 		1
@@ -77,6 +80,9 @@ function StreetRaceEvent:destructor()
 	end
 	if self.m_StartMarker and isElement(self.m_StartMarker) then
 		destroyElement(self.m_StartMarker)
+	end
+	if self.m_TimeoutTimer and isTimer(self.m_TimeoutTimer) then
+		killTimer(self.m_TimeoutTimer)
 	end
 	delete(self.m_EventBlip)
 end

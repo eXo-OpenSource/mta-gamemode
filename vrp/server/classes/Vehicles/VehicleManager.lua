@@ -41,7 +41,7 @@ function VehicleManager:constructor()
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	for i, rowData in ipairs(result) do
 		local vehicle = createVehicle(rowData.Model, rowData.PosX, rowData.PosY, rowData.PosZ, 0, 0, rowData.Rotation)
-		enew(vehicle, PermanentVehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys), rowData.Color, rowData.Health, toboolean(rowData.IsInGarage))
+		enew(vehicle, PermanentVehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys or "[]"), rowData.Color, rowData.Health, toboolean(rowData.IsInGarage))
 		self:addRef(vehicle, false)
 	end
 	
