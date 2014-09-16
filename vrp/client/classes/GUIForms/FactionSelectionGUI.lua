@@ -9,45 +9,25 @@ FactionSelectionGUI = inherit(GUIForm)
 inherit(Singleton, FactionSelectionGUI)
 
 function FactionSelectionGUI:constructor()	
-	local sw, sh = guiGetScreenSize()
-	GUIForm.constructor(self, 0, 0, sw, sh)
+	local screenWidth, screenHeight = guiGetScreenSize()
+	GUIForm.constructor(self, screenWidth*0.5-screenWidth/2*0.5, screenHeight/2-screenHeight*0.25, screenWidth/2, screenHeight*0.5)
 	
-	self.m_Center = GUIRectangle:new(sw*0.5-sw/2*0.5, sh*0.1, sw/2, sh/1.25, tocolor(0, 0, 0, 128), self)
-	self.m_LoginButton = VRPButton:new(0, 0, sw/2, sh*0.075, "Wähle deinen Pfad", false, self.m_Center)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Wähle deinen Pfad", true, false, self)
+	--self.m_LoginButton = VRPButton:new(0, 0, screenWidth/2, screenHeight*0.075, "Wähle deinen Pfad", false, self.m_Window)
 	
-	GUILabel:new(sw/4*0.05, sh/30*2.5, (sw/2-sw/4*0.1), sh*0.01, [[
-	Wähle nun zunächst hier den Pfad, den dein Charakter beschreiten wird. Du hast die Wahl zwischen dem Leben eines ehrlichen Staatsbürgers und dem Leben eines Kriminellens.
+	GUILabel:new(screenWidth/4*0.05, screenHeight/30*1.6, (screenWidth/2-screenWidth/4*0.1), screenHeight*0.01, [[
+	Wähle nun zunächst den Pfad, den dein Charakter beschreiten wird. Du hast die Wahl zwischen dem Leben eines ehrlichen Staatsbürgers und dem Leben eines Kriminellens.
 	
-	Hier evtl. später noch etwas mehr Text dazu schreiben...?
+	Solange du noch nicht viel negatives Karma gesammelt hast, kannst du noch relativ schnell zum ehrlichen Weg wechseln. Bei viel negativem Karma musst du viele gute Taten vollbringen.
 	
-	]], self.m_Center):setAlign("left", "top"):setFont(VRPFont(sh*0.04))
+	Als Alternative kannst du im Einstellungsmenü dein Karma für 1.000.000$ auf 0 setzen. Deine Erfahrungspunkte und Level behälst du jedoch.
 	
-	self.m_GoodButton = VRPButton:new(sw/4*0.05, sh/1.25*0.9, sw/4-sw/16, sh*0.06, "Ehrlich", true, self.m_Center)
-	self.m_BadButton = VRPButton:new(sw/4*0.05+sw/4, sh/1.25*0.9, sw/4-sw/16, sh*0.06, "Kriminell", true, self.m_Center)
+	]], self.m_Window):setAlign("left", "top"):setFont(VRPFont(screenHeight*0.04))
+	
+	self.m_GoodButton = VRPButton:new(self.m_Width*0.05, self.m_Height*0.85, self.m_Width*0.3, self.m_Height*0.1, "Ehrlich", true, self.m_Window):setBarColor(Color.Green)
+	self.m_BadButton = VRPButton:new(self.m_Width*0.65, self.m_Height*0.85, self.m_Width*0.3, self.m_Height*0.1, "Kriminell", true, self.m_Window):setBarColor(Color.Red)
 end
 
 function FactionSelectionGUI:destructor()
 	GUIForm.destructor(self)
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

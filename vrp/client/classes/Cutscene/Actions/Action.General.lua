@@ -58,13 +58,31 @@ end
 Action.General.weather = inherit(Object)
 Action.General.weather.duration = false;
 Action.General.weather.constructor = function(self, data, scene)
-	assert(data.weather)
 	self.weather = data.weather
 	self.parentScene = scene
+	self.fogdistance = data.fogdistance
+	self.farclipdistance = data.farclipdistance
+	self.timeHours = data.time[1]
+	self.timeMinutes = data.time[2]
+	self.clouds = data.clouds
 end
 
 Action.General.weather.trigger = function(self)
-	setWeather(self.weather)
+	if self.weather then
+		setWeather(self.weather)
+	end
+	if self.fogdistance then
+		setFogDistance(self.fogdistance)
+	end
+	if self.farclipdistance then
+		setFarClipDistance(self.farclipdistance)
+	end
+	if self.timeHours and self.timeMinutes then
+		setTime(self.timeHours, self.timeMinutes)
+	end
+	if self.clouds ~= nil then
+		setCloudsEnabled(self.clouds)
+	end
 end
 
 -- Time

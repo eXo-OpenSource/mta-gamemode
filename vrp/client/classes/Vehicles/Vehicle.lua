@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
-registerElementClass("vehicle", Vehicle)
+registerElementClass(Vehicle, "vehicle")
 
 function Vehicle:constructor()
 end

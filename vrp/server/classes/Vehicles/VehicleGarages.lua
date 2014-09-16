@@ -55,7 +55,7 @@ function VehicleGarages:createInteror(info)
 end
 
 function VehicleGarages:openSessionForPlayer(player, entranceId)
-	local sessionId = #self.m_Sessions + 1
+	local sessionId = self:getFreeSessionId() --#self.m_Sessions + 1
 	local session = VehicleGarageSession:new(sessionId, player, entranceId)
 	self.m_Sessions[sessionId] = session
 	
@@ -68,8 +68,17 @@ function VehicleGarages:closeSession(session)
 		return false
 	end
 	
-	table.remove(self.m_Sessions, idx)
+	--table.remove(self.m_Sessions, idx)
+	self.m_Sessions[idx] = nil
 	delete(session)
+end
+
+function VehicleGarages:getFreeSessionId()
+	local sessionId = 0
+	repeat
+		sessionId = sessionId + 1
+	until not self.m_Sessions[sessionId]
+	return sessionId
 end
 
 function VehicleGarages:getSessionByPlayer(player)

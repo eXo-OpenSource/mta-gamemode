@@ -9,6 +9,7 @@ Action.Ped.create.constructor = function(self, data, scene)
 	if data.pos then
 		self.x, self.y, self.z = unpack(data.pos)
 	end
+	self.rotation = data.rot or 0
 	self.cutscene = scene:getCutscene()
 end
 
@@ -16,8 +17,8 @@ Action.Ped.create.trigger = function(self)
 	self.cutscene.m_Elements[self.id] = createPed(
 		self.model,
 		self.x, self.y, self.z,
-		0)
-		
+		self.rotation)
+	
 	setElementDimension(self.cutscene.m_Elements[self.id], PRIVATE_DIMENSION_CLIENT)
 end
 
@@ -58,8 +59,9 @@ Action.Ped.setAnimation.constructor = function(self, data, scene)
 	self.anim = data.anim
 	self.duration = data.duration
 	self.looped = data.looped or false
+	self.cutscene = scene:getCutscene()
 end
-Action.Ped.setAnimation.start = function()
+Action.Ped.setAnimation.trigger = function(self)
 	local ped = self.cutscene.m_Elements[self.id]
 	setPedAnimation(ped, self.animBlock, self.anim, self.duration, self.looped)
 end

@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Root = inherit(MTAElement)
-registerElementClass("root", Root)
+registerElementClass(Root, "root")
 
 function Root:constructor()
 	

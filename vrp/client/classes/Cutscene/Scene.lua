@@ -60,7 +60,7 @@ function Scene:preRender()
 			else
 				if not v.index and v.starttick < now and v.stoptick > now then
 					v.index = #self.m_ActiveAction+1
-					outputDebug(v.index)
+--					outputDebug(v.index)
 					self.m_ActiveAction[v.index] = v
 					if self.m_ActiveAction[v.index].start then
 						self.m_ActiveAction[v.index]:start()
@@ -76,13 +76,13 @@ function Scene:preRender()
 end
 
 function Scene:render()
-	for k, v in pairs(self.m_ActiveAction) do
-		if v.render then v:render() end
-	end
-	
 	if self.m_Letterbox then
 		dxDrawRectangle(0, 0, Scene.LetterboxWidth, Scene.LetterboxHeight, tocolor(0, 0, 0), false)
 		dxDrawRectangle(0, Scene.LetterboxY, Scene.LetterboxWidth, Scene.LetterboxHeight, tocolor(0, 0, 0), false)
+	end
+
+	for k, v in pairs(self.m_ActiveAction) do
+		if v.render then v:render() end
 	end
 	
 	if self.m_Cutscene.m_Debug then
