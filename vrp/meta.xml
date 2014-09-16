@@ -1,7 +1,7 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.3.5" client="1.3.5"/>
-	<oop>false</oop>
+	<min_mta_version server="1.4" client="1.4"/>
+	<oop>true</oop>
 	<include resource="customblips"/>
 
 	<!-- Shared -->
