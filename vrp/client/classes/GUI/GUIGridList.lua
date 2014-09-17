@@ -74,7 +74,7 @@ function GUIGridList:onInternalSelectItem(item)
 	self:anyChange()
 end
 
-function GUIGridList:draw() -- Swap render order
+function GUIGridList:draw(incache) -- Swap render order
 	if self.m_Visible then
 		-- Draw background
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0x23, 0x23, 0x23, 230))
@@ -93,7 +93,7 @@ end
 
 function GUIGridList:drawThis()
 	-- Draw header line
-	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, ITEM_HEIGHT, Color.Black)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, ITEM_HEIGHT, Color.Black)
 	
 	-- Draw column header
 	local currentXPos = 0

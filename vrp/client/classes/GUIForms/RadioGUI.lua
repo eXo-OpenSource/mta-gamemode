@@ -8,7 +8,7 @@
 RadioGUI = inherit(GUIForm)
 inherit(Singleton, RadioGUI)
 
-VRP_RADIO = {
+local VRP_RADIO = {
 	{"Di.fm Dubstep", "http://80.94.69.106:6374/"},
 	{"Di.fm Electro House", "http://scfire-ntc-aa02.stream.aol.com:80/stream/1025"},
 	{"RMF Dance", "http://files.kusmierz.be/rmf/rmfdance-3.mp3"},

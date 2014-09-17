@@ -73,7 +73,7 @@ function Core:afterLogin()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	
 	ScoreboardGUI:new():close()
-	bindKey("tab", "down", function() ScoreboardGUI:getSingleton():setVisible(true) end)
+	bindKey("tab", "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
 	bindKey("tab", "up", function() ScoreboardGUI:getSingleton():setVisible(false) end)
 	
 	self:createBlips()

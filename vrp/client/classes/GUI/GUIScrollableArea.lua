@@ -20,7 +20,7 @@ function GUIScrollableArea:constructor(posX, posY, width, height, documentWidth,
 	self.m_ChangedSinceLastFrame = true
 	
 	if verticalScrollbar or horizontalScrollbar then
-		self:createScrollbars(verticalScrollbar, horizontalScrollbar)
+		--self:createScrollbars(verticalScrollbar, horizontalScrollbar)
 	end
 end
 
@@ -38,7 +38,7 @@ function GUIScrollableArea:draw(incache)
 		end
 	end
 	local absx, absy = self.m_AbsoluteX, self.m_AbsoluteY
-	self.m_AbsoluteX, self.m_AbsoluteY = -self.m_ScrollX, self.m_ScrollY
+	self.m_AbsoluteX, self.m_AbsoluteY = 0, 0---self.m_ScrollX*2, self.m_ScrollY*2
 	refreshAbsolutePosition(self)
 	
 	-- Draw Children to render Target
@@ -62,8 +62,8 @@ function GUIScrollableArea:draw(incache)
 end
 
 function GUIScrollableArea:setScrollPosition(x, y)
-	self.m_ScrollX = x
-	self.m_ScrollY = y
+	local oldScrollX, oldScrollY = self.m_ScrollX, self.m_ScrollY
+	self.m_ScrollX, self.m_ScrollY = x, y
 	
 	if self.m_VerticalScrollbar then
 		self.m_VerticalScrollbar:setScrollPosition(self.m_ScrollY / self.m_Height)
@@ -71,6 +71,22 @@ function GUIScrollableArea:setScrollPosition(x, y)
 	
 	if self.m_HorizontalScrollbar then
 		self.m_HorizontalScrollbar:setScrollPosition(self.m_ScrollX / self.m_Width)
+	end
+	
+	local refreshAbsolutePosition;
+	refreshAbsolutePosition = function(element)
+		for k, v in ipairs(element.m_Children) do
+			v.m_AbsoluteX = element.m_AbsoluteX + v.m_PosX
+			v.m_AbsoluteY = element.m_AbsoluteY + v.m_PosY
+			refreshAbsolutePosition(v)
+		end
+	end
+	
+	local diffX, diffY = x - oldScrollX, y - oldScrollY
+	for k, v in ipairs(self.m_Children) do
+		v.m_PosX = v.m_PosX - diffX
+		v.m_PosY = v.m_PosY + diffY
+		refreshAbsolutePosition(v)
 	end
 	
 	self:anyChange()
