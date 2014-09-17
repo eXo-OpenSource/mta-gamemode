@@ -1,9 +1,9 @@
 MTAElement = inherit(Object)
-registerElementClass(MTAElement, "ped")
-registerElementClass(MTAElement, "object")
-registerElementClass(MTAElement, "pickup")
-registerElementClass(MTAElement, "marker")
-registerElementClass(MTAElement, "colshape")
+registerElementClass("ped", MTAElement)
+registerElementClass("object", MTAElement)
+registerElementClass("pickup", MTAElement)
+registerElementClass("marker", MTAElement)
+registerElementClass("colshape", MTAElement)
 
 function MTAElement:constructor()
 	self.m_Data = {}

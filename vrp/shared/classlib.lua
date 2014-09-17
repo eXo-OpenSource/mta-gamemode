@@ -287,7 +287,9 @@ oop.prepareClass = function(name)
 	end
 end
 
-function registerElementClass(class, name) 
+function registerElementClass(name, class) 
+	assert(type(name) == "string", "Bad argument #1 for registerElementClass")
+	assert(type(name) == "table", "Bad argument #2 for registerElementClass")
 	oop.elementClasses[name] = class
 end
 

@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Player = inherit(MTAElement)
 inherit(DatabasePlayer, Player)
-registerElementClass(Player, "player")
+registerElementClass("player", Player)
 
 addEvent("introFinished", true)
 addEventHandler("introFinished", root, function()
