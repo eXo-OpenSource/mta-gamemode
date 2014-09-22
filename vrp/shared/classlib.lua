@@ -352,6 +352,7 @@ oop.initClasses = function()
 		oop.prepareClass("DxShader")
 		oop.prepareClass("DxScreenSource")
 		oop.prepareClass("DxRenderTarget")
+		oop.prepareClass("Weapon")
 	end
 	
 	oop.prepareClass("Object")
@@ -373,7 +374,6 @@ oop.initClasses = function()
 	oop.prepareClass("XML")
 	oop.prepareClass("Timer")
 	oop.prepareClass("Team")
-	oop.prepareClass("Weapon")
 	oop.prepareClass("Resource")
 end
 oop.initClasses()

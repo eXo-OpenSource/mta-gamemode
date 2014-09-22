@@ -116,7 +116,7 @@ function BankRobbery.onBombPlace(player)
 		return true
 	end
 	
-	local x, y, z = getElementPosition(bankRobbery.m_Safe)
+	local x, y, z = getElementPosition(bankRobbery.m_ColShape)
 	if getDistanceBetweenPoints3D(x, y, z, getElementPosition(player)) > 5 then
 		player:sendError(_("Du befindest dich nicht nah genug am Tresor", player))
 		return true
