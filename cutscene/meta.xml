@@ -4,16 +4,21 @@
     <script src="Object.lua" type="client" />
 	
     <script src="sample.cutscene.lua" type="client" />
+    <script src="vrpintro.lua" type="client" />
 	
     <script src="Cutscene/Scene.lua" type="client" />
     <script src="Cutscene/Cutscene.lua" type="client" />
     <script src="Cutscene/Action.lua" type="client" />
+    <script src="Cutscene/Actions/Action.Audio.lua" type="client" />
     <script src="Cutscene/Actions/Action.Camera.lua" type="client" />
     <script src="Cutscene/Actions/Action.General.lua" type="client" />
+    <script src="Cutscene/Actions/Action.Graphic.lua" type="client" />
     <script src="Cutscene/Actions/Action.Vehicle.lua" type="client" />
     <script src="Cutscene/Actions/Action.Ped.lua" type="client" />
     <script src="Cutscene/Actions/Action.Element.lua" type="client" />
     
     <script src="runthis.lua" type="client" />
     <min_mta_version client="1.3.2"></min_mta_version>
+	<file src="Logo.png"/>
+	<file src="Intro.mp3"/>
 </meta>

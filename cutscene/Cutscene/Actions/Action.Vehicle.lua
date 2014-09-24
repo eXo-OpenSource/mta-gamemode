@@ -21,6 +21,8 @@ Action.Vehicle.create.trigger = function(self)
 		self.model,
 		self.x, self.y, self.z,
 		self.rx, self.ry, self.rz)
+		
+	setElementDimension(self.cutscene.m_Elements[self.id], PRIVATE_DIMENSION_CLIENT)
 end
 
 -- Switch the engine

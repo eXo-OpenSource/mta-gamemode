@@ -47,7 +47,9 @@ function Core:afterLogin()
 	HUDSpeedo:new()
 	Nametag:new()
 	--HUDRadar:new()
-	HUDUI:new()
+	--HUDUI:new()
+	HUDRadar:getSingleton():show()
+	HUDUI:getSingleton():show()
 	
 	-- Phone
 	Phone:new()

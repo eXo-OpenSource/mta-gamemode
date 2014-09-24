@@ -20,7 +20,7 @@ function BankRobberyCountdown:startCountdown(seconds)
 	self.m_Seconds = seconds
 	self.m_CountdownLabel:setText(tostring(self.m_Seconds))
 	
-	setTimer(
+	self.m_Timer = setTimer(
 		function()
 			self.m_Seconds = self.m_Seconds - 1
 			self.m_CountdownLabel:setText(tostring(self.m_Seconds))
@@ -34,11 +34,24 @@ function BankRobberyCountdown:startCountdown(seconds)
 	)
 end
 
+function BankRobberyCountdown:stopCountdown()
+	if self.m_Timer and isTimer(self.m_Timer) then
+		killTimer(self.m_Timer)
+		self.m_Timer = nil
+		delete(self)
+	end
+end
+
 addEvent("bankRobberyCountdown", true)
 addEventHandler("bankRobberyCountdown", root,
 	function(seconds)
-		
 		BankRobberyCountdown:getSingleton():startCountdown(seconds)
-		
+	end
+)
+
+addEvent("bankRobberyCountdownStop", true)
+addEventHandler("bankRobberyCountdownStop", root,
+	function(seconds)
+		BankRobberyCountdown:getSingleton():stopCountdown()
 	end
 )

@@ -65,6 +65,7 @@ function Inventory:addItem(itemId, amount)
 		return false
 	end
 
+	amount = amount or 1
 	if itemInfo.maxstack > 0 then
 		local existingItem = self:findItem(itemId)
 		if existingItem and existingItem.m_Count+amount < itemInfo.maxstack then
@@ -98,8 +99,8 @@ function Inventory:removeItem(slot, amount)
 	end
 	
 	item:setCount(item:getCount() - amount)
-	if item:getCount() < 0 then
-		item:setCount(0)
+	if item:getCount() <= 0 then
+		table.remove(self.m_Items, slot)
 	end
 	return true
 end
@@ -162,6 +163,25 @@ function Inventory:closeFor(player)
 	player:triggerEvent("inventoryClose", self.m_Id)
 end
 
+function Inventory:useItem(item, player, slot)
+	local itemInfo = Items[item:getItemId()]
+	if not itemInfo then
+		return false
+	end
+	
+	-- Possible issue: If Item:use fails, the item will never get removed
+	if item.use then
+		item:use(self, client)
+	end
+	
+	-- Tell the client that we started using the item
+	player:triggerEvent("inventoryUseItem", self:getId(), itemId, slot)
+	
+	if itemInfo.removeAfterUsage then
+		self:removeItem(slot, 1)
+	end
+end
+
 addEvent("inventoryUseItem", true)
 addEventHandler("inventoryUseItem", root,
 	function(inventoryId, itemId, slot)
@@ -186,9 +206,6 @@ addEventHandler("inventoryUseItem", root,
 			return
 		end
 		
-		if item.use then
-			item:use(inventory, client)
-		end
-		client:triggerEvent("inventoryUseItem", inventory:getId(), itemId, slot)
+		inventory:useItem(item, client, slot)
 	end
 )

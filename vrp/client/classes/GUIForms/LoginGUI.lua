@@ -238,7 +238,6 @@ addEventHandler("loginsuccess", root,
 					
 					-- Temp fix?
 					triggerServerEvent("introFinished", root)
-					HUDRadar:getSingleton():show()
 				end
 			)
 		elseif tutorialstage == 1 then
@@ -247,8 +246,8 @@ addEventHandler("loginsuccess", root,
 			-- Play Tutorial Mission
 		else
 			-- If the tutorial is done the server will do the job of spawning etc.
-			HUDRadar:getSingleton():show()
-			HUDUI:getSingleton():show()
+			--HUDRadar:getSingleton():show()
+			--HUDUI:getSingleton():show()
 		end
 
 		

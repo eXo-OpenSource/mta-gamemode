@@ -20,7 +20,7 @@ Items = {
 
 local newitems = {}
 for id, info in ipairs(Items) do
-	newitems[id] = { id = id; name = info[2]; description = info[3]; imagepath = info[4]; class = info[5]; maxstack = info[6]; category = info[7] }
+	newitems[id] = { id = id; name = info[2]; description = info[3]; imagepath = info[4]; class = info[5]; maxstack = info[6]; category = info[7]; removeAfterUsage = info[8] }
 	_G[info[1]] = id
 end
 Items = newitems;

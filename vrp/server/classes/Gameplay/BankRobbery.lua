@@ -7,6 +7,8 @@
 -- ****************************************************************************
 BankRobbery = inherit(Object)
 BankRobbery.Map = {}
+local MIN_TIME_BETWEEN_ROBBS = 5000 --30*60*1000
+local HOLD_TIME = 20*1000 --4*60*1000
 
 function BankRobbery:constructor(position, rotation, interior, dimension)
 	--self.m_Safe = createObject(2332, position.X, position.Y, position.Z, 0, 0, rotation)
@@ -15,6 +17,7 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 	
 	table.insert(BankRobbery.Map, self)
 	
+	self.m_LastRobbery = 0
 	self.m_Timer = false
 	self.m_ColShape = createColSphere(position.X, position.Y, position.Z, 25)
 	setElementInterior(self.m_ColShape, interior)
@@ -30,6 +33,8 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 							if player:getJob() == JobPolice:getSingleton() then
 								player:giveMoney(700)
 							end
+							
+							player:triggerEvent("bankRobberyCountdownStop")
 						end
 					end
 					if self.m_Timer and isTimer(self.m_Timer) then
@@ -43,7 +48,7 @@ end
 
 function BankRobbery:installBomb()
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-		player:triggerEvent("bankRobberyCountdown", 4*60)
+		player:triggerEvent("bankRobberyCountdown", HOLD_TIME/1000)
 		
 		local group = player:getGroup()
 		if group and group:isEvil() then
@@ -51,9 +56,12 @@ function BankRobbery:installBomb()
 		end
 	end
 	
+	-- Update last tick
+	self.m_LastRobbery = getTickCount()
+	
 	self.m_Timer = setTimer(
 		function()
-			local x, y, z = getElementPosition(self.m_Safe)
+			local x, y, z = getElementPosition(self.m_ColShape)
 			createExplosion(x, y, z, 11) -- Type: Small
 			--setElementModel(self.m_Safe, 1829)
 		
@@ -62,10 +70,11 @@ function BankRobbery:installBomb()
 				local group = player:getGroup()
 				if group and group:isEvil() then
 					group:giveMoney(400)
+					player:giveMoney(400)
 				end
 			end
 		end,
-		4*60*1000,
+		HOLD_TIME,
 		1
 	)
 end
@@ -116,6 +125,11 @@ function BankRobbery.onBombPlace(player)
 		return true
 	end
 	
+	if getTickCount() < bankRobbery.m_LastRobbery+MIN_TIME_BETWEEN_ROBBS then
+		player:sendError(_("Banken können nur einmal innerhalb von 30min ausgeraubt werden!", player))
+		return true
+	end
+	
 	local x, y, z = getElementPosition(bankRobbery.m_ColShape)
 	if getDistanceBetweenPoints3D(x, y, z, getElementPosition(player)) > 5 then
 		player:sendError(_("Du befindest dich nicht nah genug am Tresor", player))
@@ -129,3 +143,11 @@ end
 function BankRobbery.initializeAll()
 	BankRobbery:new(Vector(827.3, 4227.6, 15.75), 0, 1)
 end
+
+--[[
+- nicht mehrmals starten [DONE]
+- Item muss aus Inventar entfernt werden [DONE]
+- beenden überprüfen
+
+
+]]

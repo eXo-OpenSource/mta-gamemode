@@ -39,12 +39,16 @@ end
 
 function Cutscene:stop()
 	self.m_ActiveScene:stop()
+	self.m_ActiveScene = false
 	
 	removeEventHandler("onClientRender", root, self.m_fnRender)
 	removeEventHandler("onClientPreRender", root, self.m_fnPreRender)
 	
 	for k, v in pairs(self.m_Elements) do
 		destroyElement(v)
+	end
+	if self.onFinish then
+		self:onFinish()
 	end
 end
 

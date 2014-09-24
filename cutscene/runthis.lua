@@ -4,7 +4,9 @@ function filePut(path, stuff)
 	fileWrite(fh, stuff)
 	fileClose(fh)
 end
-
-s = Cutscene:new(scene)
+PRIVATE_DIMENSION_CLIENT = 0
+showPlayerHudComponent("all", false)
+showChat(false)
+s = Cutscene:new(introScene)
 s:play()
 

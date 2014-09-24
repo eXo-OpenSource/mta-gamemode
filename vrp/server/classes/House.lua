@@ -109,7 +109,7 @@ function House:leaveHouse(player)
 	setElementPosition(player, unpack(self.m_Pos))
 	setElementInterior(player, 0)
 	setElementDimension(player, 0)
-	hitElement:triggerEvent("houseLeave")
+	player:triggerEvent("houseLeave")
 end
 
 function House:onPlayerQuit(player)
