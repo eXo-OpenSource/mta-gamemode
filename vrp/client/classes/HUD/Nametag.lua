@@ -1,6 +1,6 @@
 Nametag = inherit(Singleton)
 
-local NAMETAG_COLSHAPE_SIZE = 20
+addEvent("reciveNametagBuffs", true)
 
 Nametag.BUFF_IMG = {
 	["wanteds"] = "...";
@@ -21,64 +21,39 @@ function Nametag:constructor()
 	
 	self.m_Players = {}
 	self.m_PlayerBuffs = {}
-	self.m_Colshape = createColSphere(0,0,0,NAMETAG_COLSHAPE_SIZE)
 	self.m_IsModifying = false
 	self.m_Bone = 8
 	
-	self:enter(localPlayer,true)
-	
 	self.m_Draw = bind(self.draw,self)
-	self.m_Enter = bind(self.enter,self)
-	self.m_Leave = bind(self.leave,self)
-	self.m_Quit = bind(self.quit,self)
+	self.m_ReciveBuffs = bind(self.reciveBuffs,self)
 	
-	addEventHandler("onClientColShapeHit",self.m_Colshape,self.m_Enter)
-	addEventHandler("onClientColShapeLeave",self.m_Colshape,self.m_Leave)
-	addEventHandler("onClientPlayerQuit",root,self.m_Quit)
 	addEventHandler("onClientRender",root,self.m_Draw)
+	addEventHandler("reciveNametagBuffs",root,self.m_ReciveBuffs)
+
+end
+
+function Nametag:reciveBuffs(buffs)
+	self.m_PlayerBuffs = buffs
 	
-	-- test
-	
-	self:addBuff(localPlayer,"test",math.random(100))
-	
-	addCommandHandler("party",
-		function(cmd,arg)
-			self:addBuff(localPlayer,"test",math.random(100)) -- element, string, int
+	for key, value in pairs(self.m_PlayerBuffs) do
+		if not self.m_Players[getPlayerFromName(key)] then
+			self.m_Players[getPlayerFromName(key)] = true
 		end
-	)
-end
-
-function Nametag:addBuff(player,buff,amount)
-	if not self.m_PlayerBuffs[player] then
-		self.m_PlayerBuffs[player] = {}
-	end
-	table.insert(self.m_PlayerBuffs[player], { BUFF = buff, AMOUNT = amount } )
-	return self.m_PlayerBuffs[player][#self.m_PlayerBuffs[player]]
-end
-
-function Nametag:leave(hitElement,dim)
-	if dim and getElementType(hitElement) == "player" then
-		self.m_Players[hitElement] = nil
 	end
 end
 
-function Nametag:enter(hitElement,dim)
-	if dim and getElementType(hitElement) == "player" then
-		self.m_Players[hitElement] = true
-	end
-end
-
-function Nametag:quit()
-	if self.m_Players[source] then
-		self.m_Players[source] = nil
-	end
+function Nametag:onUnknownSpotted(player)
+	self.m_Players[player] = true
+	self.m_PlayerBuffs[getPlayerName(player)] = {}
+	triggerServerEvent("requestNametagBuffs",localPlayer)
 end
 
 function Nametag:draw()
-	local px,py,pz = getElementPosition(localPlayer)
-	setElementPosition(self.m_Colshape,px,py,pz)
-	
-	for player in pairs(self.m_Players) do
+
+	for _, player in ipairs(getElementsByType("player")) do
+		if not self.m_Players[player] then
+			self:onUnknownSpotted(player)
+		end
 		if player ~= localPlayer or self.m_IsModifying then
 			local px,py,pz = getPedBonePosition(player,self.m_Bone)
 			pz = pz + 0.3
@@ -94,8 +69,8 @@ function Nametag:draw()
 				
 				-- DRAW BUFFS
 				
-				if self.m_PlayerBuffs[player] then
-					for key, buff in ipairs(self.m_PlayerBuffs[player]) do
+				if self.m_PlayerBuffs[getPlayerName(player)] then
+					for key, buff in ipairs(self.m_PlayerBuffs[getPlayerName(player)]) do
 						local i = key-1
 						local row = math.floor(i/3)
 						local itemInRow = i-row*3
@@ -127,8 +102,4 @@ function Nametag:draw()
 			
 		end
 	end
-end
-
-function Nametag:destructor()
-
 end

@@ -73,6 +73,7 @@
 	<script src="server/classes/AntiCheat.lua" type="server"/>
 	<script src="server/classes/Weather.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
+	<script src="server/classes/Nametag.lua" type="server"/>
 	
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>

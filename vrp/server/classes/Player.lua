@@ -190,3 +190,11 @@ function Player:setJobDutySkin(skin)
 		setElementModel(self, self.m_Skin)
 	end
 end
+
+function Player:addBuff(buff,amount)
+	Nametag:getSingleton():addBuff(self,buff,amount)
+end
+
+function Player:removeBuff(buff)
+	Nametag:getSingleton():removeBuff(self,buff)
+end

@@ -28,11 +28,7 @@ function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStat
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
 	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave,self))
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit,self))
-	
-	addCommandHandler("bought", bind(self.commandBuyHouse, self))
-	addCommandHandler("rent", bind(self.commandRentHouse, self))
-	addCommandHandler("unrent", bind(self.commandUnrentHouse, self))
-	
+
 end
 
 function House:getKeys()

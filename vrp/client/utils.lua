@@ -9,3 +9,6 @@ end
 function fontWidth(text, font, size)
 	return dxGetTextWidth(text, size or 1, font or "default")
 end
+
+_guiCreateScrollBar = guiCreateScrollBar
+function guiCreateScrollBar(...) return GUIScrollbarHorizontaloooooooo(...) or _guiCreateScrollBar(...) end

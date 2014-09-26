@@ -9,7 +9,7 @@ function HouseManager:constructor()
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 	
 	for key, value in ipairs(query) do
-		self.m_Houses[value["Id"]] = House:new(value["Id"], value["x"], value["y"], value["z"], value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"])
+		self.m_Houses[value["Id"]] = House:new(value["Id"], value["x"], value["y"], value["z"], value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"])
 	end
 	
 	addEventHandler("rentHouse",root,bind(self.rentHouse,self))
@@ -52,8 +52,8 @@ function HouseManager:newHouse(x, y, z, interiorID, price)
 		- Fuer Id: AUTO_INCREMENT (um sql:lastInsertId benutzen zu koennen)
 	]]
 
-	sql:queryExec("INSERT INTO ??_houses VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-		sql:getPrefix(), x, y, z, interiorID, toJSON({}), 0, price, 0, 25)
+	sql:queryExec("INSERT INTO ??_houses VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
+		sql:getPrefix(), x, y, z, interiorID, toJSON({}), 0, price, 0, 25,toJSON({}))
 	
 	local Id = sql:lastInsertId()
 	self.m_Houses[Id] = House:new(Id, x, y, z, interiorID, {}, 0, price, 0, 25, {}) -- Jusonex: Schluessel-Wert Table benutzen, um spaeter leichter von der Id zum eigentlichen Haus Objekt zu kommen

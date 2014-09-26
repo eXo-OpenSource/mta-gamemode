@@ -33,6 +33,7 @@ function Core:constructor()
 	GangAreaManager:new()
 	Weather:new()
 	JailBreak:new()
+	Nametag:new()
 	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

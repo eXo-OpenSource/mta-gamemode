@@ -22,7 +22,7 @@ function HouseGUI:constructor()
 	self.m_Buy:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Buy.onLeftClick = bind(self.buyHouse,self)
 	
-	self.m_Enter = GUIButton:new(30, 325, self.m_Width-60, 35, _("Beitreten"), self)
+	self.m_Enter = GUIButton:new(30, 325, self.m_Width-60, 35, _("Betreten"), self)
 	self.m_Enter:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Enter.onLeftClick = bind(self.enterHouse,self)	
 	
