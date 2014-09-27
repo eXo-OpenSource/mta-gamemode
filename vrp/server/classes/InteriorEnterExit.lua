@@ -8,8 +8,8 @@
 InteriorEnterExit = inherit(Object)
 
 function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension)
-	self.m_EnterMarker = createMarker(entryPosition.X, entryPosition.Y, entryPosition.Z, "corona", 2, 255, 255, 255, 200)
-	self.m_ExitMarker = createMarker(interiorPosition.X, interiorPosition.Y, interiorPosition.Z, "corona", 2, 255, 255, 255, 200)
+	self.m_EnterMarker = createMarker(entryPosition, "corona", 2, 255, 255, 255, 200)
+	self.m_ExitMarker = createMarker(interiorPosition, "corona", 2, 255, 255, 255, 200)
 	
 	interiorId = interiorId or 0
 	dimension = dimension or 0
@@ -21,7 +21,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 			if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) and not hitElement.m_DontTeleport then
 				hitElement.m_DontTeleport = true
 				setElementInterior(hitElement, interiorId)
-				setElementPosition(hitElement, interiorPosition.X, interiorPosition.Y, interiorPosition.Z)
+				setElementPosition(hitElement, interiorPosition.x, interiorPosition.y, interiorPosition.z)
 				setElementDimension(hitElement, dimension)
 				setElementRotation(hitElement, 0, 0, enterRotation)
 				setCameraTarget(hitElement, hitElement)
@@ -33,7 +33,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension  and not hitElement.m_DontTeleport then
 				hitElement.m_DontTeleport = true
-				setElementInterior(hitElement, 0, entryPosition.X, entryPosition.Y, entryPosition.Z)
+				setElementInterior(hitElement, 0, entryPosition.x, entryPosition.y, entryPosition.z)
 				setElementDimension(hitElement, 0)
 				setElementRotation(hitElement, 0, 0, exitRotation)
 				setCameraTarget(hitElement, hitElement)
@@ -58,6 +58,6 @@ function InteriorEnterExit:initializeAll()
 	}
 	
 	for k, info in ipairs(data) do
-		InteriorEnterExit:new(Vector(info[1], info[2], info[3]), Vector(info[4], info[5], info[6]), info[7], info[8], info[9], info[10])
+		InteriorEnterExit:new(Vector3(info[1], info[2], info[3]), Vector3(info[4], info[5], info[6]), info[7], info[8], info[9], info[10])
 	end
 end

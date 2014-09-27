@@ -113,7 +113,7 @@ function GUIScrollableArea:createScrollbars(verticalScrollbar, horizontalScrollb
 end
 
 function GUIScrollableArea:onInternalMouseWheelUp()
-	if (self.m_ScrollY) >= 0 then
+	if self.m_ScrollY >= 0 then
 		self.m_ScrollY = 0
 	else
 		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY + 14)
@@ -121,5 +121,7 @@ function GUIScrollableArea:onInternalMouseWheelUp()
 end
 
 function GUIScrollableArea:onInternalMouseWheelDown()
-	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 14)
+	if self.m_ScrollY >= 14 then
+		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 14)
+	end
 end

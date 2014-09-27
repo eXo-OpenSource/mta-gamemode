@@ -102,3 +102,7 @@ function Core:createBlips()
 	Blip:new("Bank.png", 1660.4, -1272.8)
 end
 
+function Core:throwInternalError(message)
+	-- Todo: Send it to the server
+	outputChatBox("Internal error: "..message)
+end

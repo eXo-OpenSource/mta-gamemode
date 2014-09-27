@@ -34,6 +34,7 @@ function Core:constructor()
 	Weather:new()
 	JailBreak:new()
 	Nametag:new()
+	ItemShops:new()
 	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

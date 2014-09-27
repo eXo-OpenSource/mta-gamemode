@@ -19,7 +19,9 @@ end
 
 function GUIImage:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawImage(math.floor(self.m_AbsoluteX), math.floor(self.m_AbsoluteY), self.m_Width, self.m_Height, self.m_Image, self.m_Rotation or 0, self.m_RotationCenterOffsetX or 0, self.m_RotationCenterOffsetY or 0, self.m_Color or 0)
+	if self.m_Image then
+		dxDrawImage(math.floor(self.m_AbsoluteX), math.floor(self.m_AbsoluteY), self.m_Width, self.m_Height, self.m_Image, self.m_Rotation or 0, self.m_RotationCenterOffsetX or 0, self.m_RotationCenterOffsetY or 0, self.m_Color or 0)
+	end
 	dxSetBlendMode("blend")
 end
 
