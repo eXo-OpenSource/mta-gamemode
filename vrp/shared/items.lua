@@ -7,7 +7,7 @@ Items = {
 -- ID				  Name				Beschreibung			   																	Pfad zum Bild							Klasse			Maximale Stackanzahl 	Kategorie			Nach Benutzung entfernen
 { "ITEM_CRACK",		"Crack"; 			"Crack ist eine gefährliche Droge."; 														nil; 									ItemCrack,		5,						ItemCategory.Drugs,		true};
 { "ITEM_HEROIN",	"Heroin"; 			"Heroin ist eine gefährliche Droge."; 														nil; 									ItemHeroin,		5,						ItemCategory.Drugs,		true};
-{ "ITEM_MARIHUANA",	"Marihuana"; 		"Marihuana ist eine Droge."; 																nil; 									ItemMaruhuana,	5,						ItemCategory.Drugs,		true};
+{ "ITEM_HASH",		"Haschisch"; 		"Verschafft dir für 10min mehr Gesundheit";													nil; 									ItemHash,		5,						ItemCategory.Drugs,		true};
 { "ITEM_LSD",		"LSD"; 				"LSD ist eine gefährliche Droge."; 															nil; 									ItemLSD,		5,						ItemCategory.Drugs,		true};
 { "ITEM_NEWSPAPER", "Zeitung"; 			"Lies die Zeitung, um alle Neuigkeiten zu erfahren!"; 										nil; 									ItemNewsPaper,	5,						ItemCategory.Other,		false};
 { "ITEM_KEY", 		"Schlüssel"; 		"Dies ist der Schlüssel für …"; 															nil; 									ItemKey,		0,						ItemCategory.Vehicle,	false};

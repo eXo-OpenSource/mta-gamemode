@@ -7,10 +7,12 @@
 -- ****************************************************************************
 GUIGridListItem = inherit(GUIElement)
 inherit(GUIColorable, GUIGridListItem)
+inherit(GUIFontContainer, GUIGridListItem)
 
 function GUIGridListItem:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self, tocolor(0, 0, 0, 0))
+	GUIFontContainer.constructor(self, "", 1, VRPFont(28))
 	
 	self.m_Columns = {}
 end
@@ -38,7 +40,7 @@ function GUIGridListItem:drawThis()
 	local currentXPos = 0
 	for columnIndex, columnValue in ipairs(self.m_Columns) do
 		local columnWidth = self:getGridList():getColumnWidth(columnIndex)
-		dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, Color.White, 1, VRPFont(28), self.m_Columns[columnIndex].alignX)
+		dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, Color.White, self.m_FontSize, self.m_Font, self.m_Columns[columnIndex].alignX)
 		currentXPos = currentXPos + columnWidth*self.m_Width + 5
 	end
 	dxSetBlendMode("blend")

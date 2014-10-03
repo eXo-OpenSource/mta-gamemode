@@ -18,6 +18,7 @@ Color = {
 	DarkBlueAlpha = {0,32,  63, 200},
 	Brown     = {189, 109, 19},
 	BrownAlpha= {189, 109, 19, 180},
+	LightBlue = {6, 163, 212},
 }
 
 for k, v in pairs(Color) do

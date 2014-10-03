@@ -115,7 +115,7 @@ end
 function Player:initialiseBinds()
 	bindKey(self, "u", "down", "chatbox", "Group")
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleLight(player) end end)
-	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleEngine(player) end end)
+	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 	bindKey(self, "i", "down", function(player) if player:getInventory():getInteractingPlayer() then player:getInventory():closeFor(player) else player:getInventory():openFor(player) end end)
 end
 

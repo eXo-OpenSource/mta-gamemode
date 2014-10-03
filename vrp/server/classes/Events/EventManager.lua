@@ -33,7 +33,7 @@ function EventManager:openRandomEvent()
 	self.m_RunningEvents[self.m_EventIdCounter] = event
 	
 	for k, player in ipairs(getElementsByType("player")) do
-		player:sendMessage(_("In 5min startet das Event '%s'! Begebe dich zum Reifen-Blip, um daran teilzunehmen", player, event:getName()), 255, 255, 0)
+		player:sendMessage(_("In 5min startet das Event '%s'! Begib dich zum Reifen-Blip, um daran teilzunehmen", player, event:getName()), 255, 255, 0)
 	end
 	
 	-- Start the event in 5min

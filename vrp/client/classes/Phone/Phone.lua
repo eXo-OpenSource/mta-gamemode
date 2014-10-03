@@ -68,6 +68,7 @@ function Phone:closeAllApps()
 			app:close()
 		end
 	end
+	self.m_IconSurface:setVisible(true)
 end
 
 function Phone:getAppByClass(classt)

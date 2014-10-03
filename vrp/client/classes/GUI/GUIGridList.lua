@@ -6,10 +6,12 @@
 -- *
 -- ****************************************************************************
 GUIGridList = inherit(GUIElement)
+inherit(GUIColorable, GUIGridList)
 local ITEM_HEIGHT = 30
 
 function GUIGridList:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
+	GUIColorable.constructor(self, tocolor(0, 0, 0, 180))
 	
 	self.m_Columns = {}
 	self.m_ScrollArea = GUIScrollableArea:new(0, ITEM_HEIGHT, self.m_Width, self.m_Height-ITEM_HEIGHT, self.m_Width, 1, true, false, self)
@@ -17,7 +19,7 @@ function GUIGridList:constructor(posX, posY, width, height, parent)
 end
 
 function GUIGridList:addItem(...)
-	local listItem = GUIGridListItem:new(2, #self:getItems() * ITEM_HEIGHT, self.m_Width - 4, ITEM_HEIGHT, self.m_ScrollArea)
+	local listItem = GUIGridListItem:new(0, #self:getItems() * ITEM_HEIGHT, self.m_Width, ITEM_HEIGHT, self.m_ScrollArea)
 	for k, arg in ipairs({...}) do
 		listItem:setColumnText(k, arg)
 	end
@@ -70,14 +72,14 @@ function GUIGridList:onInternalSelectItem(item)
 		v.m_Color = Color.Clear
 	end
 	
-	item:setColor(Color.DarkBlue)
+	item:setColor(Color.LightBlue)
 	self:anyChange()
 end
 
 function GUIGridList:draw(incache) -- Swap render order
 	if self.m_Visible then
 		-- Draw background
-		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0x23, 0x23, 0x23, 230))
+		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_Color)
 		
 		-- Draw items
 		for k, v in ipairs(self.m_Children) do
@@ -93,7 +95,7 @@ end
 
 function GUIGridList:drawThis()
 	-- Draw header line
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, ITEM_HEIGHT, Color.Black)
+	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, ITEM_HEIGHT, Color.Black)
 	
 	-- Draw column header
 	local currentXPos = 0
@@ -101,5 +103,5 @@ function GUIGridList:drawThis()
 		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, 1, VRPFont(28))
 		currentXPos = currentXPos + column.width*self.m_Width + 5
 	end
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + ITEM_HEIGHT - 2, self.m_Width, 2, tocolor(255, 255, 255, 150))
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + ITEM_HEIGHT - 2, self.m_Width, 2, Color.LightBlue) -- tocolor(255, 255, 255, 150)
 end
