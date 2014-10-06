@@ -4,6 +4,9 @@ function HUDUI:constructor()
 	self.m_IsVisible = false
 	self.m_Font = dxCreateFont("files/fonts/Gasalt.ttf", 40, false)
 	self.m_MunitionProgress = 0
+	self.m_TestKarma = 50
+	
+	setTimer(function() self.m_TestKarma = math.random(-100,100) end,5000,0)
 	
 	showPlayerHudComponent("all",false)
 	showPlayerHudComponent("crosshair",true)
@@ -21,11 +24,11 @@ function HUDUI:hide()
 	self.m_IsVisible = false
 end
 
-function HUDUI:draw()	
+function HUDUI:draw(deltaTime)	
 	if self.m_IsVisible then
-		dxDrawRectangle(screenWidth-375,50,375,100,tocolor(0,0,0,150))
-		dxDrawText ("$",screenWidth-325,65,375,100,Color.White,1,self.m_Font)
-		dxDrawText (getPlayerMoney(localPlayer),screenWidth-275,65,375,100,Color.White,1,self.m_Font)
+		dxDrawRectangle(screenWidth-0.195*screenWidth,0.0425*screenHeight,0.195*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
+		dxDrawText ("$",screenWidth-0.169*screenWidth,0.0625*screenHeight,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
+		dxDrawText (getPlayerMoney(localPlayer),screenWidth-0.143*screenWidth,0.0625*screenHeight,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
 		
 		local munitionWindowActive = true
 		
@@ -40,32 +43,38 @@ function HUDUI:draw()
 		end
 		
 		-- Weapon-Window
-		local addX = math.floor(interpolateBetween(0,0,0,300,0,0,self.m_MunitionProgress,"OutElastic"))
-		dxDrawRectangle(screenWidth-(480+addX),50,100,100,tocolor(0,0,0,150))
+		local addX = math.floor(interpolateBetween(0,0,0,0.156*screenWidth,0,0,self.m_MunitionProgress,"OutElastic"))
+		dxDrawRectangle(screenWidth-(0.25*screenWidth+addX),0.0465*screenHeight,0.05*screenWidth,0.09*screenHeight,tocolor(0,0,0,150))
 		-- images became changed later
 		if munitionWindowActive then
-			dxDrawImage(screenWidth-(480+addX)+(100/2)-(64/2),50+(100/2)-(64/2),64,64,"files/images/Weapons/gun.png")
+			dxDrawImage(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2),0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2),0.033*screenWidth,0.059*screenHeight,"files/images/Weapons/gun.png")
 		else
-			dxDrawImage(screenWidth-(480+addX)+(100/2)-(64/2),50+(100/2)-(64/2),64,64,"files/images/Weapons/hand.png")
+			dxDrawImage(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2),0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2),0.033*screenWidth,0.059*screenHeight,"files/images/Weapons/hand.png")
 		end
 		
 		-- Munition-Window
-		local addY = interpolateBetween(0,0,0,150,0,0,self.m_MunitionProgress,"Linear")
-		dxDrawRectangle(screenWidth-675,-100+addY,295,100,tocolor(0,0,0,150))
+		local addY = interpolateBetween(0,0,0,0.134259*screenHeight,0,0,self.m_MunitionProgress,"Linear")
+		dxDrawRectangle(screenWidth-0.351*screenWidth,-0.09*screenHeight+addY,0.153*screenWidth,0.09*screenHeight,tocolor(0,0,0,150))
 		local inClip = getPedAmmoInClip(localPlayer)
 		local totalAmmo = getPedTotalAmmo(localPlayer)
 		local sMunition = ("%d - %d"):format(inClip,totalAmmo-inClip)
-		dxDrawText(sMunition,screenWidth-530-(dxGetTextWidth(sMunition,1,self.m_Font)/2),-85+addY,295,100,Color.White,1,self.m_Font)
+		dxDrawText(sMunition,screenWidth-0.276*screenWidth-(dxGetTextWidth(sMunition,1,self.m_Font)/2),-85+addY,0.153*screenWidth,0.09*screenHeight,Color.White,1,self.m_Font)
 		
 		-- Karmabar
 		
 		--dxDrawImage(screenWidth-480,170,480,35,"files/images/Bar.png")
-		dxDrawImage(screenWidth-480,170,480,35,"files/images/Bar_hover.png")
+		--dxDrawImage(screenWidth-0.25*screenWidth,0.157*screenHeight,0.25*screenWidth,0.03*screenHeight,"files/images/Bar_hover.png")
+		dxDrawRectangle(screenWidth-0.25*screenWidth,0.157*screenHeight,0.25*screenWidth,0.03*screenHeight,tocolor(0,0,0,150))
+		if self.m_TestKarma >= 0 then
+			dxDrawRectangle(screenWidth-0.25*screenWidth,0.157*screenHeight,(0.25*screenWidth)*self.m_TestKarma/100,0.03*screenHeight,tocolor(0,125,0,100))
+		else
+			dxDrawRectangle(screenWidth-0.25*screenWidth,0.157*screenHeight,(0.25*screenWidth)*-self.m_TestKarma/100,0.03*screenHeight,tocolor(125,0,0,100))
+		end
 		
 		-- Wantedlevel
 	
-		dxDrawRectangle(screenWidth-100,225,100,100,tocolor(0,0,0,150))
-		dxDrawImage    (screenWidth-100+(100/2)-(48/2),215+(100/2)-36,48,48,"files/images/wanted.png")
-		dxDrawText     (getPlayerWantedLevel(localPlayer),screenWidth-100+(100/2)-6,230+(100/2),0,0,Color.White,0.5,self.m_Font)
+		dxDrawRectangle(screenWidth-0.05*screenWidth,0.20*screenHeight,0.05*screenWidth,0.09*screenHeight,tocolor(0,0,0,150))
+		dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2),0.199*screenHeight+(0.09*screenHeight/2)-36,0.025*screenWidth,0.044*screenHeight,"files/images/wanted.png")
+		dxDrawText     (getPlayerWantedLevel(localPlayer),screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-6,0.21*screenHeight+(0.09*screenHeight/2),0,0,Color.White,0.5,self.m_Font)
 	end
 end
