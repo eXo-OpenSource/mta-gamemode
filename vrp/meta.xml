@@ -417,6 +417,8 @@
 	
 	<vrpfile src="files/images/Items/Passport.png"/>
 	
+	<vrpfile src="files/images/Nametag/default.png"/>
+	
 	<!-- Audio -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>

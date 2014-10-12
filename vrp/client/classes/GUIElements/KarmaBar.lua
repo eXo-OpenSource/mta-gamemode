@@ -16,6 +16,7 @@ function KarmaBar:constructor()
 	
 	addEventHandler("karmaChange", root,
 		function(karma)
+			setElementData(localPlayer,"karma",karma)
 			self:setKarma(karma)
 		end
 	)

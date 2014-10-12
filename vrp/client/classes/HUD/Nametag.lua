@@ -3,7 +3,7 @@ Nametag = inherit(Singleton)
 addEvent("reciveNametagBuffs", true)
 
 Nametag.BUFF_IMG = {
-	["wanteds"] = "...";
+	["default"] = "files/images/Nametag/default.png"
 }
 
 function isCursorOverArea ( x,y,w,h )
@@ -50,7 +50,7 @@ end
 
 function Nametag:draw()
 
-	for _, player in ipairs(getElementsByType("player")) do
+	for _, player in ipairs(getElementsByType("player",true)) do
 		if not self.m_Players[player] then
 			self:onUnknownSpotted(player)
 		end
@@ -58,23 +58,24 @@ function Nametag:draw()
 			local px,py,pz = getPedBonePosition(player,self.m_Bone)
 			pz = pz + 0.3
 			local x,y = getScreenFromWorldPosition(px,py,pz)
-			-- isLineOfSightClear (float,float,float,float,float,float,bool,bool,bool,bool,bool)
-			if x and y then
+			local lx,ly,lz = getElementPosition(localPlayer)
+			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,true,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < 30 or getPedTarget(localPlayer) == player) then
 				local name = getPlayerName(player):gsub("#%d%d%d%d%d%d%d%d","")
 				dxDrawText(name,x-(dxGetTextWidth(name,2.1,"default-bold")/2),y,0,0,Color.Black,2.1,"default-bold")
 				dxDrawText(name,x-(dxGetTextWidth(name,2,"default-bold")/2),y,0,0,Color.White,2,"default-bold")
-				dxDrawRectangle(x-(220/2),y-45,220,30,tocolor(0,0,0,125))
-				dxDrawRectangle(x-(200/2),y-40,getElementHealth(player)*2,20,tocolor(0,125,0,125))
-				dxDrawRectangle(x-(200/2),y-40,getPedArmor(player)*2,20,tocolor(0,0,125,125))
+				dxDrawRectangle(x-220*0.5,y-45,220,30,tocolor(0,0,0,125))
+				dxDrawRectangle(x-200*0.5,y-40,getElementHealth(player)*2,20,tocolor(0,125,0,125))
+				dxDrawRectangle(x-200*0.5,y-40,getPedArmor(player)*2,20,tocolor(0,0,125,125))
 				
 				-- DRAW BUFFS
 				
 				if self.m_PlayerBuffs[getPlayerName(player)] then
 					for key, buff in ipairs(self.m_PlayerBuffs[getPlayerName(player)]) do
 						local i = key-1
-						local row = math.floor(i/3)
+						local row = math.floor (i/3)
 						local itemInRow = i-row*3
-						dxDrawRectangle(x+(itemInRow*(220/3))-100,y-100-(row*40),40,30,Color.White)
+						--dxDrawRectangle(x+(itemInRow*(220/3))-100,y-100-(row*40),40,30,Color.White)
+						dxDrawImage    (x+(itemInRow*(220/3))-100,y-100-(row*40),40,30, Nametag.BUFF_IMG[buff.BUFF] or Nametag.BUFF_IMG["default"])
 						dxDrawText     (buff.AMOUNT,x+(itemInRow*(220/3))-75,y-85-(row*40),0,0,Color.Black)
 					end
 				end

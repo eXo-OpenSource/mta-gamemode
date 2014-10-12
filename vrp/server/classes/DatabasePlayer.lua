@@ -71,6 +71,8 @@ function DatabasePlayer:load()
 	self.m_Karma = row.Karma
 	self.m_Money = row.Money
 	setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
+	setElementData(self,"karma",self.m_Karma)  -- Todo: Remove this line later
+	setElementData(self,"xpoints",self.m_XP)  -- Todo: Remove this line later
 	self.m_WantedLevel = row.WantedLevel
 	setPlayerWantedLevel(self, self.m_WantedLevel)
 	self.m_BankMoney = row.BankMoney
@@ -152,6 +154,7 @@ end
 function DatabasePlayer:giveXP(xp)
 	local oldLevel = self:getLevel()
 	self.m_XP = self.m_XP + xp
+	setElementData(self,"xpoints",self.m_XP)
 	
 	-- Check if the player needs a level up
 	if self:getLevel() > oldLevel then
