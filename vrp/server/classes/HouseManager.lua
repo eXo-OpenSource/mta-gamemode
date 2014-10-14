@@ -1,6 +1,6 @@
 HouseManager = inherit(Singleton)
 
-addRemoteEvents{"enterHouse","leaveHouse","buyHouse","rentHouse","unrentHouse"}
+addRemoteEvents{"enterHouse","leaveHouse","buyHouse","rentHouse","unrentHouse","breakHouse"}
 
 function HouseManager:constructor()
 	self.m_Houses = {}
@@ -12,12 +12,18 @@ function HouseManager:constructor()
 		self.m_Houses[value["Id"]] = House:new(value["Id"], value["x"], value["y"], value["z"], value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"])
 	end
 	
+	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
 	addEventHandler("rentHouse",root,bind(self.rentHouse,self))
 	addEventHandler("unrentHouse",root,bind(self.unrentHouse,self))
 	addEventHandler("buyHouse",root,bind(self.buyHouse,self))
 	addEventHandler("enterHouse",root,bind(self.enterHouse,self))
 	addEventHandler("leaveHouse",root,bind(self.leaveHouse,self))
 	
+end
+
+function HouseManager:breakHouse()
+	if not client then return end
+	self.m_Houses[client.visitingHouse]:breakHouse(client)
 end
 
 function HouseManager:enterHouse()

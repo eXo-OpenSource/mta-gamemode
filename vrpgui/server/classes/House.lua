@@ -1,5 +1,7 @@
 House = inherit(Object)
 
+local BREAKIN_INTERVAL = 1000*60*30 -- 30 Minutes
+
 function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStatus, rentPrice)
 
 	if owner == 0 then
@@ -16,6 +18,7 @@ function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStat
 	self.m_Owner = owner
 	self.m_Id = id
 	self.m_Pickup = createPickup(x, y, z, 3, 1239, 10, math.huge)
+	self.m_LastBreakIn = false
 	
 	--addEventHandler ("onPlayerJoin",root, bind(self.checkContractMonthly, self))
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerQuit, self))
@@ -64,6 +67,13 @@ function House:unrentHouse(playerName)
 	end
 end
 
+function House:AbleToBreakin(player)
+	if not self.m_LastBreakIn or getTickCount() >= self.m_LastBreakIn+BREAKIN_INTERVAL and player.m_Group then
+		return true
+	end
+	return false
+end
+
 function House:enterHouse(player)
 	if self.m_Keys[getPlayerName(player)] or not self.m_LockStatus or player:getId() == self.m_Owner then
 		local houseData = House.interiorTable[self.m_InteriorID]
@@ -71,6 +81,12 @@ function House:enterHouse(player)
 		setElementPosition(player, x, y, z)
 		setElementInterior(player, int)
 		setElementDimension(player, dim)
+	end
+end
+
+function House:breakHouse(player)
+	if self:AbleToBreakin(player) and not self.m_Keys[getPlayerName(player)] or player:getId() == self.m_Owner then
+		player:sendMessage("Todo")
 	end
 end
 

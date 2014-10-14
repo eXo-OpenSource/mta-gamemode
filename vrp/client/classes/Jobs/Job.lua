@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Job = inherit(Singleton)
 
-function Job:constructor(posX, posY, posZ, blipPath, headerImage, name, description)
+function Job:constructor(posX, posY, posZ, blipPath, headerImage, name, description, infoFunc)
 	-- Create the customblip
 	Blip:new(blipPath, posX, posY)
 	self.m_Name = name
@@ -21,9 +21,19 @@ function Job:constructor(posX, posY, posZ, blipPath, headerImage, name, descript
 				jobGUI:setDescription(description)
 				jobGUI:setHeaderImage(headerImage)
 				jobGUI:setAcceptCallback(bind(Job.acceptHandler, self))
+				jobGUI:setInfoCallback(bind(infoFunc or Job.InfoMessage,self))
 				jobGUI:open()
 			end
 		end
+	)
+end
+
+function Job:InfoMessage()
+	HelpBar:getSingleton():fadeIn()
+	setTimer(
+		function()
+			HelpBar:getSingleton():fadeOut()
+		end, 10000,1
 	)
 end
 

@@ -22,11 +22,11 @@ function HouseGUI:constructor()
 	self.m_Buy:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Buy.onLeftClick = bind(self.buyHouse,self)
 	
-	self.m_Enter = GUIButton:new(30, 325, self.m_Width-60, 35, _("Betreten"), self)
+	self.m_Enter = GUIButton:new(30, 280, self.m_Width/2-35, 35, _("Betreten"), self)
 	self.m_Enter:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Enter.onLeftClick = bind(self.enterHouse,self)	
-	
-	self.m_Leave = GUIButton:new(30, 370, self.m_Width-60, 35, _("Verlassen"), self)
+
+	self.m_Leave = GUIButton:new(5+self.m_Width/2, 280, self.m_Width/2-35, 35, _("Verlassen"), self)
 	self.m_Leave:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Leave.onLeftClick = bind(self.leaveHouse,self)		
 	
@@ -76,7 +76,6 @@ function HouseGUI:leaveHouse()
 	triggerServerEvent("leaveHouse",root)
 end
 
-
 function HouseGUI:buyHouse()
 	triggerServerEvent("buyHouse",root)
 end
@@ -87,6 +86,10 @@ end
 
 function HouseGUI:onUnrent()
 	triggerServerEvent("unrentHouse",root)
+end
+
+function HouseGUI:breakHouse()
+
 end
 
 function HouseGUI:houseChange()
@@ -101,6 +104,14 @@ function HouseGUI:show(owner,price,rentprice)
 	self.m_Owner = owner
 	self:houseChange()
 	self:setVisible(true)
+	if getElementData(localPlayer,"GroupName") then
+		if self.m_Break then
+			self.m_Break:destructor()
+		end
+		self.m_Break = GUIButton:new(30, 325, self.m_Width-60, 35, _("Einbrechen"), self)
+		self.m_Break:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
+		self.m_Break.onLeftClick = bind(self.breakHouse,self)			
+	end
 end
 
 function HouseGUI:hide()

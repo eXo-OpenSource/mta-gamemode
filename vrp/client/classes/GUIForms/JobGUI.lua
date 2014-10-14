@@ -22,6 +22,9 @@ function JobGUI:constructor()
 	self.m_DeclineButton = GUIButton:new(340, 400, 210, 35, _"Ablehnen", self)
 	self.m_DeclineButton:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_DeclineButton.onLeftClick = bind(self.DeclineButton_Click, self)
+	self.m_InfoButton = GUIButton:new(300-(35/2), 400, 35, 35, _"i", self)
+	self.m_InfoButton:setBackgroundColor(Color.Blue):setFont(VRPFont(28)):setFontSize(1.5)
+	self.m_InfoButton.onLeftClick = bind(self.InfoButton_Click, self)
 end
 
 function JobGUI:setDescription(text)
@@ -36,6 +39,10 @@ function JobGUI:setAcceptCallback(func)
 	self.m_AcceptCallback = func
 end
 
+function JobGUI:setInfoCallback(func)
+	self.m_InfoCallback = func
+end
+
 function JobGUI:AcceptButton_Click()
 	if self.m_AcceptCallback then
 		self.m_AcceptCallback()
@@ -45,4 +52,11 @@ end
 
 function JobGUI:DeclineButton_Click()
 	self:close()
+end
+
+function JobGUI:InfoButton_Click()
+	if self.m_InfoCallback then
+		self.m_InfoCallback()
+	end
+	self:close()	
 end

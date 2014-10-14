@@ -12,7 +12,7 @@ function JobTrashman:constructor()
 		Als Müllmann ist es deine Aufgabe den Müll der Bewohner von Los Santos (San Andreas) zu beseitigen.
 		Dazu fährst du mit dem Müllwagen an die Mülltonne heran und wartest, bis sie eingeladen wurde.
 		Hast du, deiner Ansicht nach, genug Mülltonnen gesammelt oder ist das Fassungsvermögen des Wagens erreicht, ist es Zeit den Müll in der Basis abzuladen.
-	]]))
+	]]),self.onInfo)
 	self.m_DumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")	
 	self.m_ColShapes = {}
 	addEventHandler("onClientPreRender", root, bind(JobTrashman.renderArea, self)) -- Todo: Replace by 3d image class
@@ -50,6 +50,26 @@ function JobTrashman:start()
 		Das war es auch schon.
 		Hiermit verabschiede ich mich!
 	]])
+end
+
+function JobTrashman:onInfo()
+	setCameraMatrix(2107.7316894531,-2090.4301757813,15.306099891663,2107.4724121094,-2089.5229492188,14.974895477295,0,70)
+	outputChatBox(_"#0000FF[Trashman]#FFFFFF Während der Arbeit sammelst du Müll.",255,255,255,true)
+	outputChatBox(_"#0000FF[Trashman]#FFFFFF Bei dieser Stelle gibst du ihn ab.",255,255,255,true)
+	-- ### 1
+	setTimer(function()
+	setCameraMatrix(2110.6320800781,-2089.990234375,14.683099746704,2111.5622558594,-2089.6557617188,14.532037734985,0,70)
+	outputChatBox(_"#0000FF[Trashman]#FFFFFF Ein Fahrzeug bekommst du von hier.",255,255,255,true)
+	end, 5000, 1)
+	-- ### 2
+	setTimer(function()
+	setCameraMatrix(1961.2126464844,-2175.6647949219,14.784899711609,1962.0383300781,-2176.1984863281,14.60235786438,0,70)
+	outputChatBox(_"#0000FF[Trashman]#FFFFFF Diese Art von Mülltonen sind dein Gebiet.",255,255,255,true)
+	end, 12000, 1)	
+	-- ### LAST
+	setTimer(function()
+	setCameraTarget(localPlayer,localPlayer)
+	end, 15000,1)
 end
 
 function JobTrashman:stop()
