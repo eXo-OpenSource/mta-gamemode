@@ -255,7 +255,15 @@ function Player:updateSync()
 		end
 	end
 	
-	if table.size(pubSync) ~= 0 then
+	if table.size(publicSync) ~= 0 then
 		triggerClientEvent(root, "PlayerPublicSync", self, publicSync)
 	end
+end
+
+function Player:sendInitialSyncTo(target)
+	if target == self then
+		triggerClientEvent(self, "PlayerPrivateSync", self, self.m_PrivateSync)
+	end
+	
+	triggerClientEvent(target, "PlayerPublicSync", self, self.m_PublicSyncUpdate)
 end

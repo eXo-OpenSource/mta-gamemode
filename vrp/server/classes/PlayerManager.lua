@@ -15,6 +15,9 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	
 	addEventHandler("playerSendMoney", root, bind(self.playerSendMoney, self))
+	
+	self.m_SyncPulse = TimedPulse:new(500)
+	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 end
 
 function PlayerManager:destructor()
@@ -26,6 +29,10 @@ end
 function PlayerManager:playerConnect(name)
 	local player = getPlayerFromName(name)
 	Async.create(Player.connect)(player)
+	
+	for k, v in pairs(getElementsByType("player")) do
+		v:sendInitalSyncTo(source)
+	end
 end
 
 function PlayerManager:playerJoin()
