@@ -9,8 +9,12 @@ function Player:getPrivateSync(key)
 end
 
 function Player:onUpdateSync(private, public)
-	self.m_PrivateSync = private
-	self.m_PublicSync = public
+	for k, v in pairs(private or {}) do
+		self.m_PrivateSync[k] = v
+	end
+	for k, v in pairs(public or {}) do
+		self.m_PublicSync[k] = v
+	end
 end
 
 

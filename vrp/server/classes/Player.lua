@@ -248,9 +248,14 @@ function Player:updateSync()
 	end
 	self.m_PrivateSyncUpdate = {}
 	
-	triggerClientEvent(self, "PlayerPrivateSync", self, privateSync)
-	for k, v in pairs(self.m_SyncListener) do
-		triggerClientEvent(v, "PlayerPrivateSync", self, privateSync)
+	if table.size(privateSync) ~= 0 then
+		triggerClientEvent(self, "PlayerPrivateSync", self, privateSync)
+		for k, v in pairs(self.m_SyncListener) do
+			triggerClientEvent(v, "PlayerPrivateSync", self, privateSync)
+		end
 	end
-	triggerClientEvent(root, "PlayerPublicSync", self, publicSync)
+	
+	if table.size(pubSync) ~= 0 then
+		triggerClientEvent(root, "PlayerPublicSync", self, publicSync)
+	end
 end
