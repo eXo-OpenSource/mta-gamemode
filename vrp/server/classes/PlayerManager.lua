@@ -53,8 +53,16 @@ end
 
 function PlayerManager:playerSendMoney(amount)
 	if not client then return end
+	amount = math.floor(amount)
+	if amount <= 0 then return end
 	if client:getMoney() >= amount then
 		client:takeMoney(amount)
 		source:giveMoney(amount)
+	end
+end
+
+function PlayerManager:updatePlayerSync()
+	for k, v in pairs(getElementsByType("player")) do 
+		v:updateSync()
 	end
 end

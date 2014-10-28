@@ -18,6 +18,12 @@ end)
 function Player:constructor()		
 	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	setElementFrozen(self, true)
+	
+	self.m_PrivateSync = {}
+	self.m_PrivateSyncUpdate = {}
+	self.m_PublicSync = {}
+	self.m_PublicSyncUpdate = {}
+	self.m_SyncListener = {}
 end
 
 function Player:destructor()
@@ -197,4 +203,54 @@ end
 
 function Player:removeBuff(buff)
 	Nametag:getSingleton():removeBuff(self,buff)
+end
+
+function Player:setPrivateSync(key, value)
+	if self.m_PrivateSync[key] ~= value then
+		self.m_PrivateSync[key] = value
+		self.m_PrivateSyncUpdate[key] = key
+	end
+end
+
+function Player:setPublicSync(key, value)
+	if self.m_PublicSync[key] ~= value then
+		self.m_PublicSync[key] = value
+		self.m_PublicSyncUpdate[key] = true
+	end
+end
+
+function Player:getPublicSync(key)
+	return self.m_PublicSync[key]
+end
+
+function Player:getPrivateSync(key)
+	return self.m_PrivateSync[key]
+end
+
+function Player:addSyncListener(player)
+	self.m_SyncListener[player] = player
+end
+
+function Player:removeSyncListener(player)
+	self.m_SyncListener[player] = nil
+end
+
+function Player:updateSync()
+	local pubSync = {}
+	for k, v in pairs(self.m_PublicSyncUpdate) do
+		pubSync[k] = self.m_PublicSync[k]
+	end
+	self.m_PublicSyncUpdate = {}
+	
+	local privateSync = {}
+	for k, v in pairs(self.m_PrivateSyncUpdate) do
+		privateSync[k] = self.m_PrivateSync[k]
+	end
+	self.m_PrivateSyncUpdate = {}
+	
+	triggerClientEvent(self, "PlayerPrivateSync", self, privateSync)
+	for k, v in pairs(self.m_SyncListener) do
+		triggerClientEvent(v, "PlayerPrivateSync", self, privateSync)
+	end
+	triggerClientEvent(root, "PlayerPublicSync", self, publicSync)
 end
