@@ -59,7 +59,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -87,6 +87,7 @@ function DatabasePlayer:load()
 	self.m_GarageType = row.GarageType
 	self.m_LastGarageEntrance = row.LastGarageEntrance
 	self.m_SpawnLocation = row.SpawnLocation
+	self.m_Collectables = fromJSON(row.Collectables)
 	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -100,8 +101,8 @@ function DatabasePlayer:save()
 		return false
 	end
 	
-	return sql:queryExec("UPDATE ??_character SET Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ?, SpawnLocation = ?, LastGarageEntrance = ? WHERE Id = ?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ?, SpawnLocation = ?, LastGarageEntrance = ?, Collectables = ? WHERE Id = ?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -132,6 +133,7 @@ function DatabasePlayer:getInventory()	return self.m_Inventory	end
 function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
 function DatabasePlayer:getSpawnLocation() return self.m_SpawnLocation end
+function DatabasePlayer:getCollectables() return self.m_Collectables end
 
 -- Short setters
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money setPlayerMoney(self, money, instant) end
@@ -142,6 +144,7 @@ function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
 function DatabasePlayer:setGroup(group)	self.m_Group = group if group then setElementData(self, "GroupName", group:getName()) end end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
+function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 
 function DatabasePlayer:giveMoney(money)
 	self:setMoney(self:getMoney() + money)

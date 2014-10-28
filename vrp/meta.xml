@@ -74,6 +74,7 @@
 	<script src="server/classes/Weather.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Nametag.lua" type="server"/>
+	<script src="server/classes/Collectables.lua" type="server"/>
 	
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
@@ -140,6 +141,7 @@
 	<script src="client/classes/GangArea.lua" type="client"/>
 	<script src="client/classes/GangAreaManager.lua" type="client"/>
 	<script src="client/classes/Housing.lua" type="client"/>
+	<script src="client/classes/Collectables.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>

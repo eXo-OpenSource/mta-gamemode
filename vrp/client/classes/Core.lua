@@ -50,6 +50,7 @@ function Core:afterLogin()
 	--HUDUI:new()
 	HUDRadar:getSingleton():show()
 	HUDUI:getSingleton():show()
+	Collectables:new()
 	
 	-- Phone
 	Phone:new()

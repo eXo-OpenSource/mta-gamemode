@@ -35,6 +35,7 @@ function Core:constructor()
 	JailBreak:new()
 	Nametag:new()
 	ItemShops:new()
+	Collectables:new()
 	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

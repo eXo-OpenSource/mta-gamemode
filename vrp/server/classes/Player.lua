@@ -44,6 +44,7 @@ function Player:connect()
 end
 
 function Player:join()
+
 end
 
 function Player:sendNews()
