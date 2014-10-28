@@ -236,9 +236,9 @@ function Player:removeSyncListener(player)
 end
 
 function Player:updateSync()
-	local pubSync = {}
+	local publicSync = {}
 	for k, v in pairs(self.m_PublicSyncUpdate) do
-		pubSync[k] = self.m_PublicSync[k]
+		publicSync[k] = self.m_PublicSync[k]
 	end
 	self.m_PublicSyncUpdate = {}
 	
