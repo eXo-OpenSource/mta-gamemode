@@ -29,6 +29,7 @@ function ScoreboardGUI:refresh()
 	self.m_Grid:clear()
 	
 	for k, player in pairs(getElementsByType("player")) do
-		self.m_Grid:addItem(player:getName(), "99", "+150", "vRP Dev", "Busfahrer")
+		local karma = player:getKarma() or 0
+		self.m_Grid:addItem(player:getName(), "99", karma >= 0 and "+"..karma or tostring(karma), player:getGroupName(), player:getJobName())
 	end
 end

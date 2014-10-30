@@ -36,6 +36,12 @@ function MapParser:constructor(path)
 	end
 end
 
+function MapParser:destructor()
+	for k, map in pairs(self.m_Maps) do
+		self:destroy(k)
+	end
+end
+
 function MapParser:create(dimension)
 	dimension = dimension or 0
 	

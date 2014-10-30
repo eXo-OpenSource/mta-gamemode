@@ -11,25 +11,9 @@ function StreetRaceEvent:constructor()
 	-- Find a random start position
 	local x, y, z, randomIndex = self.getRandomPosition()
 	self.m_StartIndex = randomIndex
-	
-	self.m_EventBlip = Blip:new("Wheel.png", x, y)
-	
-	-- Create the start marker
-	self.m_StartMarker = createMarker(x, y, z, "checkpoint", 10, 255, 0, 0, 100)
-	addEventHandler("onMarkerHit", self.m_StartMarker,
-		function(hitElement, matchingDimension)
-			if getElementType(hitElement) == "player" and matchingDimension then
-				if not self:isMember(hitElement) then
-					self:openGUI(hitElement)
-				else
-					hitElement:sendWarning(_("Du nimmst bereits an diesem Event Teil!", hitElement))
-				end
-			end
-		end
-	)
 end
 
-function StreetRaceEvent:start()
+function StreetRaceEvent:onStart()
 	-- Jusonex: A better place for the following might be the Event class --> we have to write something like "onStart" or - as bad alternative - we can call Event.start here
 	if #self.m_Players == 0 then
 		delete(self)

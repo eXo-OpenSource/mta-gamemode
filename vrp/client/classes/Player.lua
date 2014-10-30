@@ -1,4 +1,16 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/Player.lua
+-- *  PURPOSE:     Player class
+-- *
+-- ****************************************************************************
 Player = inherit(MTAElement)
+
+function Player:virtual_constructor()
+	self.m_PublicSync = {}
+	self.m_PrivateSync = {}
+end
 
 function Player:getPublicSync(key)
 	return self.m_PublicSync[key]
@@ -17,6 +29,27 @@ function Player:onUpdateSync(private, public)
 	end
 end
 
+function Player:getXP()
+	return self:getPublicSync("XP")
+end
 
-addEventHandler("PlayerPrivateSync", root, function(private) source:onUpdateSync(private, nil) )
-addEventHandler("PlayerPublicSync", root, function(public) source:onUpdateSync(nil, public) )
+function Player:getKarma()
+	return self:getPublicSync("Karma")
+end
+
+function Player:getGroupName()
+	--return self:getPublicSync("GroupName")
+	return getElementData(self, "GroupName")
+end
+
+function Player:getJobName()
+	local job = JobManager:getSingleton():getFromId(self:getPublicSync("JobId"))
+	if job then
+		return job:getName()
+	else
+		return "-"
+	end
+end
+
+addEventHandler("PlayerPrivateSync", root, function(private) source:onUpdateSync(private, nil) end)
+addEventHandler("PlayerPublicSync", root, function(public) source:onUpdateSync(nil, public) end)

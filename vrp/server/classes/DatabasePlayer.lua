@@ -176,6 +176,10 @@ function DatabasePlayer:giveKarma(value, factor)
 	self:giveXP(changekarma*10)
 	self.m_Karma = self.m_Karma + changekarma
 	self:triggerEvent("karmaChange", self.m_Karma)
+	
+	if self.m_Active then
+		self:setPublicSync("Karma", self.m_Karma)
+	end
 end
 
 function DatabasePlayer:takeKarma(value, factor)
@@ -183,6 +187,10 @@ function DatabasePlayer:takeKarma(value, factor)
 	self:giveXP(changekarma*10)
 	self.m_Karma = self.m_Karma - changekarma
 	self:triggerEvent("karmaChange", self.m_Karma)
+	
+	if self.m_Active then
+		self:setPublicSync("Karma", self.m_Karma)
+	end
 end
 
 function DatabasePlayer:addBankMoney(amount, logType)
@@ -218,6 +226,7 @@ function DatabasePlayer:setJob(job)
 		else
 			JobManager:getSingleton():stopJobForPlayer(self)
 		end
+		self:setPublicSync("JobId", job:getId())
 	end
 	self.m_Job = job
 end
