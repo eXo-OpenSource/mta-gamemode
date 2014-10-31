@@ -104,7 +104,8 @@ function HouseGUI:show(owner,price,rentprice)
 	self.m_Owner = owner
 	self:houseChange()
 	self:setVisible(true)
-	if getElementData(localPlayer,"GroupName") then
+	
+	if localPlayer:getGroupName() then
 		if self.m_Break then
 			self.m_Break:destructor()
 		end

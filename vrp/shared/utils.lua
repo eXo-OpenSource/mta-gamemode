@@ -325,3 +325,8 @@ function hasPedThisWeaponInSlots ( ped, id )
 	end
 	return occupied
 end
+
+function calculatePlayerLevel(xp)
+	-- XP(level) = 0.5*x^2 --> level(XP) = sqrt(2*xp)
+	return (2 * math.floor(xp))^0.5
+end

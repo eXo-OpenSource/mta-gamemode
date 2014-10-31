@@ -76,7 +76,7 @@ function HUDUI:draw()
 	--dxDrawImage(screenWidth-480,170,480,35,"files/images/Bar.png")
 	--dxDrawImage(screenWidth-0.25*screenWidth,0.157*screenHeight,0.25*screenWidth,0.03*screenHeight,"files/images/Bar_hover.png")
 	dxDrawRectangle(screenWidth-0.12*screenWidth,0.157*screenHeight,0.12*screenWidth,0.045*screenHeight,self.m_Karma >= 0 and tocolor(0,50,0,255) or tocolor(50,0,0,255))
-	self.m_Karma = getElementData(localPlayer,"karma") or 0
+	self.m_Karma = localPlayer:getKarma() or 0
 	if self.m_Karma >= 0 then
 		dxDrawRectangle(screenWidth-0.12*screenWidth,0.157*screenHeight,(0.12*screenWidth)*self.m_Karma/MAX_KARMA,0.045*screenHeight,tocolor(75,160,75,255))
 	else
@@ -87,7 +87,7 @@ function HUDUI:draw()
 	
 	-- getLevelByXP(xp)
 	-- getXPForLevel(level)
-	local xpoints = getElementData(localPlayer, "xpoints")
+	local xpoints = localPlayer:getXP()
 	
 	--local neededXP = xpoints-getXPForLevel(getLevelByXP(xpoints)+1) or 0
 	

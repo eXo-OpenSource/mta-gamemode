@@ -8,6 +8,8 @@
 Player = inherit(MTAElement)
 
 function Player:virtual_constructor()
+	self.m_Karma = 0
+
 	self.m_PublicSync = {}
 	self.m_PrivateSync = {}
 end
@@ -30,16 +32,19 @@ function Player:onUpdateSync(private, public)
 end
 
 function Player:getXP()
-	return self:getPublicSync("XP")
+	return self:getPublicSync("XP") or 0
+end
+
+function Player:getLevel()
+	return calculatePlayerLevel(self:getXP())
 end
 
 function Player:getKarma()
-	return self:getPublicSync("Karma")
+	return self:getPublicSync("Karma") or 0
 end
 
 function Player:getGroupName()
-	--return self:getPublicSync("GroupName")
-	return getElementData(self, "GroupName")
+	return self:getPublicSync("GroupName") or ""
 end
 
 function Player:getJobName()
@@ -51,5 +56,6 @@ function Player:getJobName()
 	end
 end
 
+addRemoteEvents{"PlayerPrivateSync", "PlayerPublicSync"}
 addEventHandler("PlayerPrivateSync", root, function(private) source:onUpdateSync(private, nil) end)
 addEventHandler("PlayerPublicSync", root, function(public) source:onUpdateSync(nil, public) end)

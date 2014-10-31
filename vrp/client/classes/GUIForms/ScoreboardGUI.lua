@@ -30,6 +30,6 @@ function ScoreboardGUI:refresh()
 	
 	for k, player in pairs(getElementsByType("player")) do
 		local karma = player:getKarma() or 0
-		self.m_Grid:addItem(player:getName(), "99", karma >= 0 and "+"..karma or tostring(karma), player:getGroupName(), player:getJobName())
+		self.m_Grid:addItem(player:getName(), player:getXP() or "0", karma >= 0 and "+"..karma or tostring(karma), player:getGroupName(), player:getJobName())
 	end
 end

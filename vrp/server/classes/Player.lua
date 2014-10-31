@@ -198,6 +198,23 @@ function Player:setJobDutySkin(skin)
 	end
 end
 
+function Player:setKarma(karma)
+	DatabasePlayer.setKarma(self, karma)
+	self:setPublicSync("Karma", self.m_Karma)
+end
+
+function Player:setXP(xp)
+	DatabasePlayer.setXP(self, xp)
+	self:setPublicSync("XP", xp)
+	
+	-- Check if the player needs a level up
+	local oldLevel = self:getLevel()
+	if self:getLevel() > oldLevel then
+		--self:triggerEvent("levelUp", self:getLevel())
+		self:sendInfo(_("Du bist zu Level %d aufgestiegen", self, self:getLevel()))
+	end
+end
+
 function Player:addBuff(buff,amount)
 	Nametag:getSingleton():addBuff(self,buff,amount)
 end

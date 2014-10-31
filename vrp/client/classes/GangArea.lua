@@ -25,7 +25,7 @@ function GangArea:constructor(Id, wallPosition, rotation, areaPosition, width, h
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
 				self.m_IsSpraying = false
-				self:setTagText(getElementData(localPlayer, "GroupName") or "")
+				self:setTagText(localPlayer:getGroupName())
 				addEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
 			end
 		end

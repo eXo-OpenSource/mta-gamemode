@@ -67,12 +67,10 @@ function DatabasePlayer:load()
 	self.m_SavedPosition = Vector(row.PosX, row.PosY, row.PosZ)
 	self.m_SavedInterior = row.Interior
 	self.m_Skin = row.Skin
-	self.m_XP 	 = row.XP
-	self.m_Karma = row.Karma
+	self:setXP(row.XP)
+	self:setKarma(row.Karma)
 	self.m_Money = row.Money
 	setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
-	setElementData(self,"karma",self.m_Karma)  -- Todo: Remove this line later
-	setElementData(self,"xpoints",self.m_XP)  -- Todo: Remove this line later
 	self.m_WantedLevel = row.WantedLevel
 	setPlayerWantedLevel(self, self.m_WantedLevel)
 	self.m_BankMoney = row.BankMoney
@@ -141,7 +139,7 @@ function DatabasePlayer:setWantedLevel(level) self.m_WantedLevel = level setPlay
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
-function DatabasePlayer:setGroup(group)	self.m_Group = group if group then setElementData(self, "GroupName", group:getName()) end end
+function DatabasePlayer:setGroup(group)	self.m_Group = group if group then self:setPublicSync("GroupName", group:getName()) end end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
@@ -154,43 +152,32 @@ function DatabasePlayer:takeMoney(money)
 	self:setMoney(self:getMoney() - money)
 end
 
+function DatabasePlayer:setXP(xp)
+	self.m_XP = xp
+end
+
 function DatabasePlayer:giveXP(xp)
-	local oldLevel = self:getLevel()
-	self.m_XP = self.m_XP + xp
-	setElementData(self,"xpoints",self.m_XP)
-	
-	-- Check if the player needs a level up
-	if self:getLevel() > oldLevel then
-		--self:triggerEvent("levelUp", self:getLevel())
-		self:sendInfo(_("Du bist zu Level %d aufgestiegen", self, self:getLevel()))
-	end
+	self:setXP(self.m_XP + xp)
 end
 
 function DatabasePlayer:getLevel()
-	-- XP(level) = 0.5*x^2 --> level(XP) = sqrt(2*xp)
-	return (2 * math.floor(self.m_XP))^0.5
+	return calculatePlayerLevel(self.m_XP)
+end
+
+function DatabasePlayer:setKarma(karma)
+	self.m_Karma = karma
 end
 
 function DatabasePlayer:giveKarma(value, factor)
 	local changekarma = Karma.calcKarma(self.m_Karma, self.m_Karma+value, factor or 1)
 	self:giveXP(changekarma*10)
-	self.m_Karma = self.m_Karma + changekarma
-	self:triggerEvent("karmaChange", self.m_Karma)
-	
-	if self.m_Active then
-		self:setPublicSync("Karma", self.m_Karma)
-	end
+	self:setKarma(self.m_Karma + changekarma)
 end
 
 function DatabasePlayer:takeKarma(value, factor)
 	local changekarma = Karma.calcKarma(self.m_Karma, self.m_Karma-value, factor or 1)
 	self:giveXP(changekarma*10)
-	self.m_Karma = self.m_Karma - changekarma
-	self:triggerEvent("karmaChange", self.m_Karma)
-	
-	if self.m_Active then
-		self:setPublicSync("Karma", self.m_Karma)
-	end
+	self:setKarma(self.m_Karma - changekarma)
 end
 
 function DatabasePlayer:addBankMoney(amount, logType)
