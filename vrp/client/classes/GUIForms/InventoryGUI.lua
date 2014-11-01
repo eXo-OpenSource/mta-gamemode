@@ -35,13 +35,13 @@ function InventoryGUI:constructor(inventoryId)
 	
 	self.m_CategoryRects = {}
 	for categoryId, categoryName in ipairs(ItemItemCategoryNames) do
-		local rect = GUIRectangle:new(w*0.05, 50 + (ENTRYHEIGHT+ENTRYSPACE)*(categoryId-1), w*0.25, ENTRYHEIGHT, tocolor(12, 26, 47, 255), self)
+		local rect = GUIRectangle:new(w*0.05, 50 + (ENTRYHEIGHT+ENTRYSPACE)*(categoryId-1), w*0.25, ENTRYHEIGHT, Color.Grey, self)
 		local iw, ih = rect:getSize()
 		GUILabel:new(iw*0.05, ih*0.05, iw*0.9, ih*0.9, categoryName, rect)
 		rect.onLeftClick = bind(self.Category_Click, self, categoryId, rect)
 		table.insert(self.m_CategoryRects, rect)
 	end
-	self.m_CategoryRects[1]:setColorRGB(26, 42, 80)
+	self.m_CategoryRects[1]:setColor(Color.LightBlue)
 	
 	-- Error Box
 	self.m_ErrorBox = GUIRectangle:new(50, h/100*80, w/4, h/100*15, tocolor(173, 14, 22, 255), self)
@@ -107,9 +107,9 @@ end
 
 function InventoryGUI:Category_Click(categoryId, rect, cx, cy)
 	for k, v in pairs(self.m_CategoryRects) do
-		v:setColorRGB(12, 26, 47)
+		v:setColor(Color.Grey)
 	end
-	rect:setColorRGB(26, 42, 80)
+	rect:setColor(Color.LightBlue)
 	self.m_CurrentCategory = categoryId
 	self:resort(false)
 end

@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 Player = inherit(MTAElement)
+registerElementClass("player", Player)
 
 function Player:virtual_constructor()
 	self.m_Karma = 0

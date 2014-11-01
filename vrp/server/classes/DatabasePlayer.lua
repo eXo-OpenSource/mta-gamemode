@@ -9,15 +9,18 @@ DatabasePlayer = inherit(Object)
 DatabasePlayer.Map = setmetatable({}, { __mode = "v"  })
 
 function DatabasePlayer.get(id)
+	-- Second return determines whether the account is offline
 	if DatabasePlayer.Map[id] then
-		return DatabasePlayer.Map[id] 
+		return DatabasePlayer.Map[id], not isElement(DatabasePlayer.Map[id])
 	end
 	
-	return DatabasePlayer:new(id)
+	return DatabasePlayer:new(id), true
 end
 
 function DatabasePlayer:constructor(id)
 	assert(id)
+	DatabasePlayer.virtual_constructor(self)
+	
 	self.m_Id = id
 	DatabasePlayer.Map[id] = self
 end
@@ -70,9 +73,7 @@ function DatabasePlayer:load()
 	self:setXP(row.XP)
 	self:setKarma(row.Karma)
 	self.m_Money = row.Money
-	setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
 	self.m_WantedLevel = row.WantedLevel
-	setPlayerWantedLevel(self, self.m_WantedLevel)
 	self.m_BankMoney = row.BankMoney
 	self.m_TutorialStage = row.TutorialStage
 	if row.Job > 0 then
@@ -92,10 +93,15 @@ function DatabasePlayer:load()
 	self.m_Skills["Flying"] 	= row.FlyingSkill
 	self.m_Skills["Sneaking"] 	= row.SneakingSkill
 	self.m_Skills["Endurance"] 	= row.EnduranceSkill
+	
+	if self:isActive() then
+		setPlayerWantedLevel(self, self.m_WantedLevel)
+		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
+	end
 end
 
 function DatabasePlayer:save()
-	if not self:isActive() or self:isGuest() then	
+	if self:isGuest() then	
 		return false
 	end
 	
@@ -115,7 +121,7 @@ function DatabasePlayer:isLoggedIn()	return self.m_Id ~= -1	end
 function DatabasePlayer:isGuest()		return self.m_IsGuest   end
 function DatabasePlayer:getAccount()	return self.m_Account 	end
 function DatabasePlayer:getRank()		return self.m_Account:getRank() end
-function DatabasePlayer:getMoney()		return getPlayerMoney(self)	end
+function DatabasePlayer:getMoney()		return self.m_Money		end
 function DatabasePlayer:getXP()			return self.m_XP		end
 function DatabasePlayer:getKarma()		return self.m_Karma		end
 function DatabasePlayer:getBankMoney()	return self.m_BankMoney	end
@@ -139,7 +145,7 @@ function DatabasePlayer:setWantedLevel(level) self.m_WantedLevel = level setPlay
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
-function DatabasePlayer:setGroup(group)	self.m_Group = group if group then self:setPublicSync("GroupName", group:getName()) end end
+function DatabasePlayer:setGroup(group)	self.m_Group = group if group then if self:isActive() then self:setPublicSync("GroupName", group:getName()) end end end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
@@ -213,7 +219,7 @@ function DatabasePlayer:setJob(job)
 		else
 			JobManager:getSingleton():stopJobForPlayer(self)
 		end
-		self:setPublicSync("JobId", job:getId())
+		self:setPublicSync("JobId", job and job:getId() or 0)
 	end
 	self.m_Job = job
 end

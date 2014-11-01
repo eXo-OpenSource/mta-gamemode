@@ -18,6 +18,8 @@ end
 addEvent("vehicleEngineStart", true)
 addEventHandler("vehicleEngineStart", root,
 	function()
-		playSound("files/audio/Enginestart.mp3")
+		if chance(10) then
+			playSound("files/audio/Enginestart.mp3")
+		end
 	end
 )

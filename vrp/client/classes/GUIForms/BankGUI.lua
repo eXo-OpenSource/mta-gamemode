@@ -38,7 +38,7 @@ function BankGUI:constructor()
 	GUILabel:new(tabWidth*0.03, tabHeight*0.28, tabWidth*0.2, tabHeight*0.15, _"Betrag:", self.m_TabTransfer)
 	self.m_TransferAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.28, tabWidth*0.5, tabHeight*0.15, self.m_TabTransfer)
 	self.m_TransferButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Überweisen", true, self.m_TabTransfer)
-	self.m_TransferButton.onLeftClick = bind(self.WithdrawButton_Click, self)
+	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
 end
 
 function BankGUI:onShow()

@@ -8,10 +8,7 @@
 BankManager = inherit(Singleton)
 
 function BankManager:constructor()
-	addEvent("bankWithdraw", true)
-	addEvent("bankDeposit", true)
-	addEvent("bankTransfer", true)
-	addEvent("bankMoneyBalanceRequest", true)
+	addRemoteEvents{"bankWithdraw", "bankDeposit", "bankTransfer", "bankMoneyBalanceRequest"}
 	
 	addEventHandler("bankWithdraw", root, bind(self.Event_Withdraw, self))
 	addEventHandler("bankDeposit", root, bind(self.Event_Deposit, self))
@@ -56,10 +53,43 @@ function BankManager:Event_Deposit(amount)
 	end
 end
 
-function BankManager:Event_Transfer(amount, toPlayerName)
-	-- Todo (getCharacterByName or something is missing yet)
-	
-	client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
+function BankManager:Event_Transfer(toPlayerName, amount)
+	if tonumber(amount) and amount > 0 then
+		if client:getBankMoney() < amount then
+			client:sendError(_("Nicht genügend Geld!", client))
+			return
+		end
+		
+		Async.create(function(player)
+			local id = Account.getIdFromName(toPlayerName)
+			if not id then
+				player:sendError(_("Dieser Spieler existiert nicht!", player))
+				return
+			end
+		
+			local toPlayer, offline = DatabasePlayer.get(id)
+			-- TODO: ATTENTION: THE OFFLINE FEATURE REQUIRES MAJOR RE-WORK
+			if offline then
+				client:sendError(_("Du kannst derzeit noch kein Geld an Spieler versenden, die nicht online sind!"))
+				return
+			end
+			
+			if offline then
+				--toPlayer:load()
+			end
+			
+			toPlayer:addBankMoney(amount)
+			player:takeBankMoney(amount)
+			
+			if offline then
+				--toPlayer:save()
+			else
+				toPlayer:triggerEvent("bankMoneyBalanceRetrieve", toPlayer:getBankMoney())
+			end
+			
+			player:triggerEvent("bankMoneyBalanceRetrieve", player:getBankMoney())
+		end)(client)
+	end
 end
 
 function BankManager:Event_bankMoneyBalanceRequest()

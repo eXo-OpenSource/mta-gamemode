@@ -16,6 +16,6 @@ function Weather:constructor()
 end
 
 function Weather:changeWeatherRandomly()
-	self.m_CurrentWeather = (self.m_CurrentWeather + 1) % 20
+	self.m_CurrentWeather = (self.m_CurrentWeather + 1) % 19
 	setWeatherBlended(self.m_CurrentWeather)
 end

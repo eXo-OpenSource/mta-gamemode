@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addEvent("playerSendMoney", true)
+addRemoteEvents{"playerReady", "playerSendMoney"}
 
 function PlayerManager:constructor()
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
@@ -14,6 +14,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	
+	addEventHandler("playerReady", root, bind(self.playerReady, self))
 	addEventHandler("playerSendMoney", root, bind(self.playerSendMoney, self))
 	
 	self.m_SyncPulse = TimedPulse:new(500)
@@ -29,14 +30,21 @@ end
 function PlayerManager:playerConnect(name)
 	local player = getPlayerFromName(name)
 	Async.create(Player.connect)(player)
-	
-	for k, v in pairs(getElementsByType("player")) do
-		v:sendInitalSyncTo(source)
-	end
 end
 
 function PlayerManager:playerJoin()
 	source:join()
+end
+
+function PlayerManager:playerReady()
+	local player = client
+	
+	-- Send sync
+	for k, v in pairs(getElementsByType("player")) do
+		if isElement(v) and v.sendInitalSyncTo then
+			v:sendInitalSyncTo(player)
+		end
+	end
 end
 
 function PlayerManager:playerWasted()

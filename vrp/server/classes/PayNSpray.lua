@@ -9,7 +9,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension then
 				local vehicle = getPedOccupiedVehicle(hitElement)
-				if not vehicle or getPedOccupiedVehicleSeat(hitElement) == 0 then
+				if not vehicle or getPedOccupiedVehicleSeat(hitElement) ~= 0 then
 					return
 				end
 				

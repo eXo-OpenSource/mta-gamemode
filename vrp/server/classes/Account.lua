@@ -150,3 +150,8 @@ function Account.getNameFromId(id)
 	local row = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
 	return row and row.Name
 end
+
+function Account.getIdFromName(name)
+	local row = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
+	return row and row.Id
+end

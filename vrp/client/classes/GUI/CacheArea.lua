@@ -53,6 +53,7 @@ function CacheArea:drawCached()
 				self:setCachingEnabled(false)
 				self.m_TimeoutCounter = 0
 				outputDebugString("Caching has been disabled due to low video memory")
+				outputChatBox("ACHTUNG! Der Videospeicher könnte voll sein. Verbleibend (in MB): "..tostring(dxGetStatus().VideoMemoryFreeForMTA))
 			end
 			
 			return false

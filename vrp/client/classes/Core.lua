@@ -23,6 +23,9 @@ function Core:constructor()
 end
 
 function Core:ready()
+	-- Tell the server that we're ready to accept additional data
+	triggerServerEvent("playerReady", root)
+
 	TranslationManager:new()
 	MTAFixes:new()
 	ClickHandler:new()

@@ -1,7 +1,7 @@
 ItemHotwireKit = inherit(Item)
 
-function ItemHotwireKit:constructor() outputChatBox("HotwireKit has been added to a inventory") end
-function ItemHotwireKit:destructor() outputChatBox("HotwireKit has been removed from a inventory") end
+function ItemHotwireKit:constructor() end
+function ItemHotwireKit:destructor() end
 
 function ItemHotwireKit:use(player)
 	outputChatBox("Hi from client")

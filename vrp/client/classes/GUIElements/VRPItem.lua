@@ -9,7 +9,7 @@ VRPItem = inherit(GUIRectangle)
 
 function VRPItem:constructor(posX, posY, width, height, item, parent)
 	checkArgs("VRPItem:constructor", "number", "number", "number", "number")
-	GUIRectangle.constructor(self, posX, posY, width, height, tocolor(12, 26, 47, 255), parent)
+	GUIRectangle.constructor(self, posX, posY, width, height, Color.Grey, parent)
 	
 	self.m_Item = item
 	local id = item:getItemId()
@@ -30,11 +30,11 @@ function VRPItem:constructor(posX, posY, width, height, item, parent)
 end
 
 function VRPItem:select()
-	self:setColor(tocolor(26, 42, 80, 255))
+	self:setColor(Color.LightBlue)
 end
 
 function VRPItem:deselect()
-	self:setColor(tocolor(12, 26, 47, 255))
+	self:setColor(Color.Grey)
 end
 
 function VRPItem:updateFromItem()
