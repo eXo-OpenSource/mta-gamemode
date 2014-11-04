@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 MapGUI = inherit(GUIForm)
+inherit(Singleton, MapGUI)
 
 function MapGUI:constructor(func)
 	local size = screenHeight*0.7

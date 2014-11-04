@@ -35,7 +35,7 @@ if DEBUG then
 		)
 		bindKey("f1", "down",
 			function()
-				MapGUI:new(function(posX, posY) setElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer, posX, posY, 20) end)
+				MapGUI:getSingleton(function(posX, posY) setElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer, posX, posY, 20) end)
 			end
 		)
 	end
