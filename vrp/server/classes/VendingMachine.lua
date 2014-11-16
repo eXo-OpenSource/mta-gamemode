@@ -33,8 +33,7 @@ function VendingMachine.Event_vendingRob()
 	
 	-- Give wage
 	client:giveMoney(math.random(10, 100))
-	client:giveXP(0.1)
-	client:takeKarma(0.05)
+	client:giveKarma(-0.05)
 	
 	-- Update rob time
 	vendingMachine.m_LastRobTime = getTickCount()

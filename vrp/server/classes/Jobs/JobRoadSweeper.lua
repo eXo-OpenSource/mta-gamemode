@@ -36,5 +36,5 @@ function JobRoadSweeper:Event_sweeperGarbageCollect()
 	client:setData("Sweeper:Last", getTickCount())
 	
 	client:giveMoney(3)
-	client:giveXP(0.02)
+	client:givePoints(1)
 end

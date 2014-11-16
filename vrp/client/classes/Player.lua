@@ -13,6 +13,7 @@ function Player:virtual_constructor()
 
 	self.m_PublicSync = {}
 	self.m_PrivateSync = {}
+	self.m_PrivateSyncChangeHandler = {}
 end
 
 function Player:getPublicSync(key)
@@ -26,10 +27,17 @@ end
 function Player:onUpdateSync(private, public)
 	for k, v in pairs(private or {}) do
 		self.m_PrivateSync[k] = v
+		
+		local f = self.m_PrivateSyncChangeHandler[k]
+		if f then f(v) end
 	end
 	for k, v in pairs(public or {}) do
 		self.m_PublicSync[k] = v
 	end
+end
+
+function Player:setPrivateSyncChangeHandler(key, handler)
+	self.m_PrivateSyncChangeHandler[key] = handler
 end
 
 function Player:getXP()

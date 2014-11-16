@@ -330,3 +330,8 @@ function calculatePlayerLevel(xp)
 	-- XP(level) = 0.5*x^2 --> level(XP) = sqrt(2*xp)
 	return (2 * math.floor(xp))^0.5
 end
+
+function calculatePointsToNextLevel(currentLevel)
+	-- p(l)=10l
+	return currentLevel * 10
+end

@@ -31,6 +31,5 @@ function ShopNPC:spawnMoney(threatingPlayer)
 	--> Give money immediately for now
 	threatingPlayer:giveMoney(math.random(10, 50))
 	
-	threatingPlayer:takeKarma(0.07)
-	threatingPlayer:giveXP(0.07)
+	threatingPlayer:giveKarma(-0.07)
 end

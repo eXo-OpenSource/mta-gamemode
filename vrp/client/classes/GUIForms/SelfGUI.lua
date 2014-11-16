@@ -16,7 +16,7 @@ function SelfGUI:constructor()
 	self.m_CloseButton.onLeftClick = function() self:close() end
 	
 	-- Tab: Info
-	local tabInfo = self.m_TabPanel:addTab(_"Allgemein")
+	--local tabInfo = self.m_TabPanel:addTab(_"Allgemein")
 	-- Todo: Job
 	-- Todo: Achievements
 	
@@ -89,6 +89,33 @@ function SelfGUI:constructor()
 	self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
 	addRemoteEvents{"vehicleRetrieveInfo"}
 	addEventHandler("vehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
+	
+	-- Tab: Points
+	local tabPoints = self.m_TabPanel:addTab(_"Punkte")
+	self.m_TabPoints = tabPoints
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Punkte:", tabPoints):setColor(Color.Yellow)
+	self.m_PointsLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "500", tabPoints):setColor(Color.Yellow)
+	localPlayer:setPrivateSyncChangeHandler("Points", function(value) self.m_PointsLabel:setText(tostring(value)) end)
+	
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabPoints)
+	self.m_KarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.1, self.m_Width*0.4, self.m_Height*0.06, "+50", tabPoints)
+	self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.1, self.m_Width*0.3, self.m_Height*0.06, "+ (Kosten: 400P)", tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot) end
+	
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.06, _"Waffenlevel:", tabPoints)
+	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.4, self.m_Height*0.06, "1", tabPoints)
+	self.m_WeaponLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.06, "+ (Kosten: 500P)", tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_WeaponLevelButton.onLeftClick = function() triggerServerEvent("requestWeaponLevelUp", resourceRoot) end
+	
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuglevel:", tabPoints)
+	self.m_VehicleLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.26, self.m_Width*0.4, self.m_Height*0.06, "1", tabPoints)
+	self.m_VehicleLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.26, self.m_Width*0.3, self.m_Height*0.06, "+ (Kosten: 500P)", tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_VehicleLevelButton.onLeftClick = function() triggerServerEvent("requestVehicleLevelUp", resourceRoot) end
+	
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.34, self.m_Width*0.25, self.m_Height*0.06, _"Skinlevel:", tabPoints)
+	self.m_SkinLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, "1", tabPoints)
+	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, "+ (Kosten: 500P)", tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_SkinLevelButton.onLeftClick = function() triggerServerEvent("requestSkinLevelUp", resourceRoot) end
 	
 	-- Tab: Settings
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")

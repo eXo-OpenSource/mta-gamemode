@@ -12,7 +12,6 @@ if DEBUG then
 	function Debugging:constructor()
 		addCommandHandler("drun", bind(Debugging.runString, self))
 		addCommandHandler("vehicle", bind(Debugging.vehicle, self))
-		addCommandHandler("xp", bind(Debugging.xp, self))
 		addCommandHandler("karma", bind(Debugging.karma, self))
 	end
 
@@ -30,16 +29,6 @@ if DEBUG then
 		model = tonumber(model) or 411
 		local x, y, z = getElementPosition(player)
 		TemporaryVehicle.create(model, x+3, y, z)
-	end
-	
-	function Debugging:xp(player, cmd, xp)
-		--[[if player:getRank() < RANK.Administrator then
-			return
-		end]]
-		xp = tonumber(xp)
-		if xp then
-			player:giveXP(xp)
-		end
 	end
 	
 	function Debugging:karma(player, cmd, karma)

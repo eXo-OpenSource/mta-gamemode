@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney"}
+addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp"}
 
 function PlayerManager:constructor()
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
@@ -14,8 +14,12 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	
-	addEventHandler("playerReady", root, bind(self.playerReady, self))
-	addEventHandler("playerSendMoney", root, bind(self.playerSendMoney, self))
+	addEventHandler("playerReady", root, bind(self.Event_playerReady, self))
+	addEventHandler("playerSendMoney", root, bind(self.Event_playerSendMoney, self))
+	addEventHandler("requestPointsToKarma", root, bind(self.Event_requestPointsToKarma, self))
+	addEventHandler("requestWeaponLevelUp", root, bind(self.Event_requestWeaponLevelUp, self))
+	addEventHandler("requestVehicleLevelUp", root, bind(self.Event_requestVehicleLevelUp, self))
+	addEventHandler("requestSkinLevelUp", root, bind(self.Event_requestSkinLevelUp, self))
 	
 	self.m_SyncPulse = TimedPulse:new(500)
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
@@ -27,6 +31,16 @@ function PlayerManager:destructor()
 	end
 end
 
+function PlayerManager:updatePlayerSync()
+	for k, v in pairs(getElementsByType("player")) do 
+		v:updateSync()
+	end
+end
+
+
+-----------------------------------------
+--------       Event zone       ---------
+-----------------------------------------
 function PlayerManager:playerConnect(name)
 	local player = getPlayerFromName(name)
 	Async.create(Player.connect)(player)
@@ -36,7 +50,7 @@ function PlayerManager:playerJoin()
 	source:join()
 end
 
-function PlayerManager:playerReady()
+function PlayerManager:Event_playerReady()
 	local player = client
 	
 	-- Send sync
@@ -66,7 +80,7 @@ function PlayerManager:playerChat(message, messageType)
 	end
 end
 
-function PlayerManager:playerSendMoney(amount)
+function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
 	amount = math.floor(amount)
 	if amount <= 0 then return end
@@ -76,8 +90,45 @@ function PlayerManager:playerSendMoney(amount)
 	end
 end
 
-function PlayerManager:updatePlayerSync()
-	for k, v in pairs(getElementsByType("player")) do 
-		v:updateSync()
+function PlayerManager:Event_requestPointsToKarma()
+	if client:getPoints() >= 400 then
+		client:giveKarma(1)
+		client:givePoints(-400)
+		client:sendInfo(_("Punkte eingetauscht!", client))
+	else
+		client:sendError(_("Du hast nicht genügend Punkte!", client))
+	end
+end
+
+function PlayerManager:Event_requestWeaponLevelUp()
+	local requiredPoints = calculatePointsToNextLevel(client:getWeaponLevel())
+	if client:getPoints() >= requiredPoints then
+		client:incrementWeaponLevel()
+		client:givePoints(-requiredPoints)
+		client:sendInfo(_("Punkte eingetauscht!", client))
+	else
+		client:sendError(_("Du hast nicht genügend Punkte!", client))
+	end
+end
+
+function PlayerManager:Event_requestVehicleLevelUp()
+	local requiredPoints = calculatePointsToNextLevel(client:getVehicleLevel())
+	if client:getPoints() >= requiredPoints then
+		client:incrementVehicleLevel()
+		client:givePoints(-requiredPoints)
+		client:sendInfo(_("Punkte eingetauscht!", client))
+	else
+		client:sendError(_("Du hast nicht genügend Punkte!", client))
+	end
+end
+
+function PlayerManager:Event_requestSkinLevelUp()
+	local requiredPoints = calculatePointsToNextLevel(client:getSkinLevel())
+	if client:getPoints() >= requiredPoints then
+		client:incrementSkinLevel()
+		client:givePoints(-requiredPoints)
+		client:sendInfo(_("Punkte eingetauscht!", client))
+	else
+		client:sendError(_("Du hast nicht genügend Punkte!", client))
 	end
 end

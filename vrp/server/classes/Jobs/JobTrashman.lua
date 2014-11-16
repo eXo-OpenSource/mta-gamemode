@@ -62,8 +62,7 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 		local moneyAmount = numCans * MONEY_PER_CAN
 		
 		hitElement:giveMoney(moneyAmount)
-		hitElement:giveXP(numCans * 0.01)
-		hitElement:giveKarma(numCans * 0.01)
+		hitElement:givePoints(numCans)
 		
 		hitElement:sendMessage(_("You got %d$", hitElement, moneyAmount), 0, 255, 0)
 		

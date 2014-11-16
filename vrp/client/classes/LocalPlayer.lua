@@ -39,6 +39,10 @@ function LocalPlayer:getRank()
 	return self.m_Rank
 end
 
+function LocalPlayer:getPoints()
+	return self:getPrivateSync("Points")
+end
+
 function LocalPlayer:playerWasted()
 	setTimer(
 		function()

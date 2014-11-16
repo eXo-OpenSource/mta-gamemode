@@ -37,9 +37,15 @@ function DatabasePlayer:virtual_constructor()
 	self.m_Skills = {}
 	self.m_XP 	 = 0
 	self.m_Karma = 0
+	self.m_Points = 0
 	self.m_Money = 0
 	self.m_BankMoney = 0
 	self.m_WantedLevel = 0
+	
+	self.m_WeaponLevel = 0
+	self.m_VehicleLevel = 0
+	self.m_SkinLevel = 0
+	
 	--[[
 	Tutorial Stages:
 	0 - Just created an account
@@ -53,6 +59,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_GarageType = 0
 	self.m_LastGarageEntrance = 0
 	self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
+	self.m_Collectables = {}
 end
 
 function DatabasePlayer:virtual_destructor()
@@ -86,7 +93,7 @@ function DatabasePlayer:load()
 	self.m_GarageType = row.GarageType
 	self.m_LastGarageEntrance = row.LastGarageEntrance
 	self.m_SpawnLocation = row.SpawnLocation
-	self.m_Collectables = fromJSON(row.Collectables)
+	self.m_Collectables = fromJSON(row.Collectables or "")
 	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -105,8 +112,8 @@ function DatabasePlayer:save()
 		return false
 	end
 	
-	return sql:queryExec("UPDATE ??_character SET Skin = ?, XP = ?, Karma = ?, Money = ?, BankMoney = ?, WantedLevel = ?, TutorialStage = ?, Job = ?, SpawnLocation = ?, LastGarageEntrance = ?, Collectables = ? WHERE Id = ?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -124,6 +131,10 @@ function DatabasePlayer:getRank()		return self.m_Account:getRank() end
 function DatabasePlayer:getMoney()		return self.m_Money		end
 function DatabasePlayer:getXP()			return self.m_XP		end
 function DatabasePlayer:getKarma()		return self.m_Karma		end
+function DatabasePlayer:getPoints()		return self.m_Points 	end
+function DatabasePlayer:getWeaponLevel()return self.m_WeaponLevel end
+function DatabasePlayer:getVehicleLevel() return self.m_VehicleLevel end
+function DatabasePlayer:getSkinLevel()	return self.m_SkinLevel	end
 function DatabasePlayer:getBankMoney()	return self.m_BankMoney	end
 function DatabasePlayer:getWantedLevel()return self.m_WantedLevel end
 function DatabasePlayer:getJob()   		return self.m_Job		end
@@ -162,10 +173,6 @@ function DatabasePlayer:setXP(xp)
 	self.m_XP = xp
 end
 
-function DatabasePlayer:giveXP(xp)
-	self:setXP(self.m_XP + xp)
-end
-
 function DatabasePlayer:getLevel()
 	return calculatePlayerLevel(self.m_XP)
 end
@@ -176,14 +183,28 @@ end
 
 function DatabasePlayer:giveKarma(value, factor)
 	local changekarma = Karma.calcKarma(self.m_Karma, self.m_Karma+value, factor or 1)
-	self:giveXP(changekarma*10)
+	self:setXP(self.m_XP + changekarma * 10)
 	self:setKarma(self.m_Karma + changekarma)
 end
 
-function DatabasePlayer:takeKarma(value, factor)
-	local changekarma = Karma.calcKarma(self.m_Karma, self.m_Karma-value, factor or 1)
-	self:giveXP(changekarma*10)
-	self:setKarma(self.m_Karma - changekarma)
+function DatabasePlayer:givePoints(p)
+	self.m_Points = self.m_Points + math.floor(p)
+	if self:isActive() then self:setPrivateSync("Points", self.m_Points) end
+end
+
+function DatabasePlayer:incrementWeaponLevel()
+	self.m_WeaponLevel = self.m_WeaponLevel + 1
+	if self:isActive() then self:setPrivateSync("WeaponLevel", self.m_WeaponLevel) end
+end
+
+function DatabasePlayer:incrementVehicleLevel()
+	self.m_VehicleLevel = self.m_VehicleLevel + 1
+	if self:isActive() then self:setPrivateSync("VehicleLevel", self.m_VehicleLevel) end
+end
+
+function DatabasePlayer:incrementSkinLevel()
+	self.m_SkinLevel = self.m_SkinLevel + 1
+	if self:isActive() then self:setPrivateSync("SkinLevel", self.m_SkinLevel) end
 end
 
 function DatabasePlayer:addBankMoney(amount, logType)

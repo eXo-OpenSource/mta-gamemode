@@ -15,7 +15,7 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 	self.m_Items = {}
 	self.m_CurrentItem = 1
 	
-	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, "<", self)
+	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, "<", self):setBackgroundColor(Color.Black)
 	self.m_LeftButton.onLeftClick = function()
 		self.m_CurrentItem = self.m_CurrentItem - 1
 		if self.m_CurrentItem <= 0 then
@@ -23,7 +23,7 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 		end
 		self:setIndex(self.m_CurrentItem)
 	end
-	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, ">", self)
+	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, ">", self):setBackgroundColor(Color.Black)
 	self.m_RightButton.onLeftClick = function()
 		self.m_CurrentItem = self.m_CurrentItem + 1
 		if self.m_CurrentItem > #self.m_Items then
@@ -35,7 +35,7 @@ end
 
 function GUIChanger:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.DarkBlue)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.LightBlue)
 	dxDrawText(self.m_Items[self.m_CurrentItem], self.m_AbsoluteX + self.m_Height, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - self.m_Height, self.m_AbsoluteY + self.m_Height, self:getColor(), 1, VRPFont(self.m_Height-8), "center", "center")
 	dxSetBlendMode("blend")
 end

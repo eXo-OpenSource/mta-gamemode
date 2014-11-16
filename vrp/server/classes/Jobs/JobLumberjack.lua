@@ -86,7 +86,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		
 		-- Give money and experience points
 		hitElement:giveMoney(numTrees * 40)
-		hitElement:giveXP(numTrees * 0.2)
+		hitElement:givePoints(numTrees)
 		
 		for k, v in pairs(getAttachedElements(vehicle)) do
 			destroyElement(v)
