@@ -43,6 +43,18 @@ function LocalPlayer:getPoints()
 	return self:getPrivateSync("Points")
 end
 
+function Player:getWeaponLevel()
+	return self:getPrivateSync("WeaponLevel") or 0
+end
+
+function Player:getVehicleLevel()
+	return self:getPrivateSync("VehicleLevel") or 0
+end
+
+function Player:getSkinLevel()
+	return self:getPrivateSync("SkinLevel") or 0
+end
+
 function LocalPlayer:playerWasted()
 	setTimer(
 		function()

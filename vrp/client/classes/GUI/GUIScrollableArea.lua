@@ -24,6 +24,11 @@ function GUIScrollableArea:constructor(posX, posY, width, height, documentWidth,
 	end
 end
 
+function GUIScrollableArea:destructor()
+	destroyElement(self.m_PageTarget)
+	GUIElement.destructor(self)
+end
+
 function GUIScrollableArea:draw(incache)
 	if self.m_Visible == false then
 		return

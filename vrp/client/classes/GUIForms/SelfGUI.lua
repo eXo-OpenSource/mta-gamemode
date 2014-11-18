@@ -103,19 +103,22 @@ function SelfGUI:constructor()
 	self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot) end
 	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.06, _"Waffenlevel:", tabPoints)
-	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.4, self.m_Height*0.06, "1", tabPoints)
+	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
 	self.m_WeaponLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.06, "+ (Kosten: 500P)", tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_WeaponLevelButton.onLeftClick = function() triggerServerEvent("requestWeaponLevelUp", resourceRoot) end
+	localPlayer:setPrivateSyncChangeHandler("WeaponLevel", function(value) self.m_WeaponLevelLabel:setText(tostring(value)) end)
 	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuglevel:", tabPoints)
-	self.m_VehicleLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.26, self.m_Width*0.4, self.m_Height*0.06, "1", tabPoints)
+	self.m_VehicleLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.26, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getVehicleLevel(), tabPoints)
 	self.m_VehicleLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.26, self.m_Width*0.3, self.m_Height*0.06, "+ (Kosten: 500P)", tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_VehicleLevelButton.onLeftClick = function() triggerServerEvent("requestVehicleLevelUp", resourceRoot) end
+	localPlayer:setPrivateSyncChangeHandler("VehicleLevel", function(value) self.m_VehicleLevelLabel:setText(tostring(value)) end)
 	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.34, self.m_Width*0.25, self.m_Height*0.06, _"Skinlevel:", tabPoints)
-	self.m_SkinLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, "1", tabPoints)
+	self.m_SkinLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getSkinLevel(), tabPoints)
 	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, "+ (Kosten: 500P)", tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_SkinLevelButton.onLeftClick = function() triggerServerEvent("requestSkinLevelUp", resourceRoot) end
+	localPlayer:setPrivateSyncChangeHandler("SkinLevel", function(value) self.m_SkinLevelLabel:setText(tostring(value)) end)
 	
 	-- Tab: Settings
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")

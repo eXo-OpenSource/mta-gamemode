@@ -69,7 +69,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -79,6 +79,7 @@ function DatabasePlayer:load()
 	self.m_Skin = row.Skin
 	self:setXP(row.XP)
 	self:setKarma(row.Karma)
+	self:givePoints(row.Points)
 	self.m_Money = row.Money
 	self.m_WantedLevel = row.WantedLevel
 	self.m_BankMoney = row.BankMoney
@@ -105,6 +106,10 @@ function DatabasePlayer:load()
 		setPlayerWantedLevel(self, self.m_WantedLevel)
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
 	end
+	
+	self.m_WeaponLevel = row.WeaponLevel
+	self.m_VehicleLevel = row.VehicleLevel
+	self.m_SkinLevel = row.SkinLevel
 end
 
 function DatabasePlayer:save()
@@ -112,8 +117,8 @@ function DatabasePlayer:save()
 		return false
 	end
 	
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self:getId())
 end
 
 function DatabasePlayer.getFromId(id)

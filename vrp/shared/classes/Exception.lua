@@ -23,10 +23,12 @@ end
 
 function try(t)
 	local tryFunc = t[1]
-	local catchFunc = t[2]()
+	local catchFunc = t[2]
 	local info = {tryFunc, catchFunc}
 	
 	Exception.Stack:push(info)
+	
+	pcall(tryFunc)
 end
 
 function catch(t)
@@ -37,17 +39,37 @@ function throw(exception)
 	local exInfo = Exception.Stack:pop()
 	
 	-- Call catch handler and pass our exception
+	error(exInfo[2](exception)())
 	return exInfo[2](exception)
 end
 
 -- Test
+print("Main:Enter")
 try
 {
 	function()
-		throw(Exception:new("Bla"))
+		print("Try1:Enter")
+		
+		try
+		{
+			function()
+				print("Try2:Enter")
+				throw(Exception:new("InvalidFunctionException2"))
+			end;
+			catch
+			{	function()
+				print("Try2:Caught")
+				end
+			};
+		}
+		
+		throw(Exception:new("InvalidFunctionException"))
+		print("Try2:Exit")
 	end;
 	catch
-	{
-		function(e) outputDebugString(e.getMessage()..debug.traceback()) end
+	{	function(e)
+		print("Try1:Caught")
+		end
 	}
 }
+print("Main:Exit")
