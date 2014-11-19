@@ -69,6 +69,10 @@ function Event:isMember(player)
 	return table.find(self.m_Players, player) ~= nil
 end
 
+function Event:getPlayers()
+	return self.m_Players
+end
+
 Event.getName = pure_virtual
 Event.onStart = pure_virtual
 Event.getPositions = pure_virtual

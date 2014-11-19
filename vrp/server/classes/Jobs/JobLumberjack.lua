@@ -77,12 +77,17 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 			hitElement:sendMessage(_("Bitte steige in einen Flatbed ein", hitElement))
 			return
 		end
+		if player:getJob() ~= self then
+			return
+		end
 	
 		local numTrees = hitElement:getData("lumberjack:Trees")
 		if not numTrees or numTrees == 0 then
 			hitElement:sendMessage(_("Säge und lade zuerst einige Bäume auf!", hitElement), 255, 0, 0)
 			return
 		end
+		
+		hitElement:setData("lumberjack:Trees", 0)
 		
 		-- Give money and experience points
 		hitElement:giveMoney(numTrees * 40)

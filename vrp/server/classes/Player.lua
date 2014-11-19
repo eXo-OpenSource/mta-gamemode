@@ -99,6 +99,8 @@ function Player:loadCharacterInfo()
 	-- Load non-element related data
 	self:load()
 	
+	self:setName(self:getAccount():getName())
+	
 	-- Load weapons
 	if row.Weapons and row.Weapons ~= "" then
 		local weaponID = 0

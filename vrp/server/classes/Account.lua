@@ -143,6 +143,10 @@ function Account:getRank()
 	return self.m_Rank
 end
 
+function Account:getName()
+	return self.m_Username
+end
+
 function Account.getNameFromId(id)
 	--[[sql:queryFetchSingle(Async.waitFor(self), "SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
 	local row = Async.wait()]]

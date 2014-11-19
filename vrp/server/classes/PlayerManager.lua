@@ -14,6 +14,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	
+	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
 	addEventHandler("playerReady", root, bind(self.Event_playerReady, self))
 	addEventHandler("playerSendMoney", root, bind(self.Event_playerSendMoney, self))
 	addEventHandler("requestPointsToKarma", root, bind(self.Event_requestPointsToKarma, self))

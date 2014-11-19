@@ -24,7 +24,21 @@ local VRP_RADIO = {
 	{"Techno4Ever", "http://www.techno4ever.net/t4e/stream/dsl_listen.asx"},
 	{"ClubTime.fm", "http://listen.ClubTime.fm/dsl.pls"},
 	{"CoreTime.fm", "http://listen.CoreTime.fm/dsl.pls"},
-	{"RADIO METAL ON", "http://62.210.125.50:8000/mp3"}
+	{"RADIO METAL ON", "http://62.210.125.50:8000/mp3"},
+	
+	-- GTA channels
+	{"Playback FM", 1},
+	{"K-Rose", 2},
+	{"K-DST", 3},
+	{"Bounce FM", 4},
+	{"SF-UR", 5},
+	{"Radio Los Santops", 6},
+	{"Radio X", 7},
+	{"CSR 103.9", 8},
+	{"K-Jah West", 9},
+	{"Master Sounds 98.3", 10},
+	{"WCTR", 11},
+	{"User Track Player", 12}
 }
 
 function RadioGUI:constructor()
@@ -96,6 +110,9 @@ function RadioGUI:setRadioStation(station)
 	self.m_CurrentStation = station
 
 	if self.m_CurrentStation == 0 then
+		removeEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
+		setRadioChannel(0)
+		addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
 		if self.m_Sound and isElement(self.m_Sound) then
 			stopSound(self.m_Sound)
 			self.m_Sound = nil
@@ -111,13 +128,23 @@ function RadioGUI:setRadioStation(station)
 	end
 	
 	local radioName, radioUrl = unpack(VRP_RADIO[self.m_CurrentStation])
-
-	self.m_Sound = playSound(radioUrl)
-	if self.m_Sound then
+	if type(radioUrl) == "string" then
+		removeEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
+		setRadioChannel(0)
+		addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
+		self.m_Sound = playSound(radioUrl)
+		if self.m_Sound then
+			self.m_Radioname:setText(radioName)
+			self.m_ToggleSound:setImage("files/images/Radio/sound_stop.png")
+		else
+			self.m_Radioname:setText(_("Unable to play the radio stream. Please try again later."))
+		end
+	else
+		removeEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
+		setRadioChannel(radioUrl)
+		addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
 		self.m_Radioname:setText(radioName)
 		self.m_ToggleSound:setImage("files/images/Radio/sound_stop.png")
-	else
-		self.m_Radioname:setText(_("Unable to play the radio stream. Please try again later."))
 	end
 	
 	return true
