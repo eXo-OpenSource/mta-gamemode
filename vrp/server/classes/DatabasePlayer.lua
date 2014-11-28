@@ -232,6 +232,10 @@ end
 
 function DatabasePlayer:giveWantedLevel(level)
 	self:setWantedLevel(self.m_WantedLevel + level)
+	
+	if self:isActive() then
+		self.m_LastGotWantedLevelTime = getTickCount()
+	end
 end
 
 function DatabasePlayer:takeWantedLevel(level)

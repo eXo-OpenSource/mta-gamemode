@@ -6,11 +6,11 @@
 -- *
 -- ****************************************************************************
 InventoryGUI = inherit(GUIForm)
+inherit(Singleton, InventoryGUI)
 InventoryGUI.Map = {}
 
-function InventoryGUI:constructor(inventoryId)
-	self.m_InventoryId = inventoryId
-	self.m_Items = {}
+function InventoryGUI:constructor()
+	self.m_Inventory = false
 	self.m_GUIItems = {}
 	self.m_SelectedItem = false
 	self.m_CurrentCategory = ItemCategory.All
@@ -26,12 +26,6 @@ function InventoryGUI:constructor(inventoryId)
 	local ENTRYSPACE = screenHeight/100
 	
 	self.m_Scrollable = GUIScrollableArea:new(w/3, 50, ENTRYWIDTH, screenHeight, ENTRYWIDTH, screenHeight, false, false, self)
-	for i, item in ipairs(self.m_Items) do
-		local vrp = VRPItem:new(0, (ENTRYHEIGHT+ENTRYSPACE)*(i-1), ENTRYWIDTH, ENTRYHEIGHT, item, self.m_Scrollable)
-		self.m_GUIItems[vrp] = item
-		vrp.onLeftClick = bind(InventoryGUI.Item_Click, self, vrp, item)
-		vrp.Item_Remove = bind(InventoryGUI.Item_Remove, self)
-	end
 	
 	self.m_CategoryRects = {}
 	for categoryId, categoryName in ipairs(ItemItemCategoryNames) do
@@ -62,6 +56,26 @@ function InventoryGUI:constructor(inventoryId)
 	self.m_ButtonDiscard.onLeftClick = bind(self.ButtonDiscard_Click, self)
 end
 
+function InventoryGUI:setInventory(inv, loadContent)
+	self.m_Inventory = inv
+	
+	if loadContent then
+		for k, item in ipairs(inv:getItems()) do
+			item:addItem(item)
+		end
+	end
+end
+
+function InventoryGUI:getInventory()
+	return self.m_Inventory
+end
+
+function InventoryGUI:clear()
+	-- TODO: Call destructors
+	self.m_Items = {}
+	self.m_GUIItems = {}
+end
+
 function InventoryGUI:ButtonUse_Click()
 	if not self.m_SelectedItem then
 		self.m_ErrorBox:show()
@@ -90,17 +104,8 @@ function InventoryGUI:ButtonDiscard_Click()
 	end
 	
 	local item = self.m_GUIItems[self.m_SelectedItem]
-	outputChatBox(tostring(item))
-	if item.m_Count > 1 then
-		item.m_Count = item.m_Count -1
-		self.m_SelectedItem:updateFromItem()
-	else
-		delete(item)
-		self.m_SelectedItem:updateFromItem()
-		--[[self.m_SelectedItem:destroy(bind(
-			function(self)
-				self:resort()
-			end, self))]]
+	self.m_Inventory:removeItem(item, 1)
+	if not item or item:getCount() == 0 then
 		self.m_SelectedItem = false
 	end
 end
@@ -144,6 +149,10 @@ function InventoryGUI:addItem(item)
 	self:resort(false)
 end
 
+function InventoryGUI:getGUIItemByItem(item)
+	return table.find(self.m_GUIItems, item)
+end
+
 function InventoryGUI:resort(useanim)
 	local w, h = screenWidth/5*3, screenHeight/5*3
 	local ENTRYHEIGHT = screenHeight/100*7
@@ -168,80 +177,7 @@ function InventoryGUI:resort(useanim)
 	end
 end
 
-function InventoryGUI:findItem(slot, itemId)
-	-- The following slot lookup is probably bad
-	for k, item in pairs(self.m_Items) do
-		if item:getSlot() == slot then
-			-- Check itemid to ensure we're not desynced
-			if item:getItemId() == itemId or not itemId then
-				local guiItem = table.find(self.m_GUIItems, item)
-				return item, guiItem
-			end
-			break
-		end
-	end
-end
 
-
-addRemoteEvents{"inventoryOpen", "inventoryClose", "inventoryAddItem", "inventoryRemoveItem", "inventoryUseItem"}
-addEventHandler("inventoryOpen", root,
-	function(inventoryId, items)
-		local inventory = InventoryGUI:new(inventoryId)
-	
-		for k, itemInfo in ipairs(items) do
-			local slot, itemId, amount = unpack(itemInfo)
-			
-			local itemClass = Items[itemId].class
-			table.insert(inventory.m_Items, (itemClass or Item):new(itemId, amount, slot))
-			inventory:addItem(inventory.m_Items[#inventory.m_Items])
-		end
-	end
-)
-addEventHandler("inventoryClose", root,
-	function(inventoryId)
-		local inventory = InventoryGUI.Map[inventoryId]
-		if not inventory then return end
-		delete(inventory)
-	end
-)
-
-addEventHandler("inventoryAddItem", root,
-	function(inventoryId, slot, itemId, amount)
-		local inventory = InventoryGUI.Map[inventoryId]
-		if not inventory then return end
-		
-		local itemClass = Items[itemId].class
-		table.insert(inventory.m_Items, (itemClass or Item):new(itemId, amount, slot))
-		inventory:addItem(inventory.m_Items[#inventory.m_Items])
-	end
-)
-addEventHandler("inventoryRemoveItem", root,
-	function(inventoryId, slot, itemId, amount)
-		local inventory = InventoryGUI.Map[inventoryId]
-		if not inventory then return end
-	
-		local item, guiItem = inventory:findItem(slot, itemId)
-		if item then
-			item.m_Count = self.m_Count - amount
-		end
-		if guiItem then
-			guiItem:updateFromItem()
-		end
-	end
-)
-addEventHandler("inventoryUseItem", root,
-	function(inventoryId, itemId, slot)
-		local inventory = InventoryGUI.Map[inventoryId]
-		if not inventory then return end
-	
-		local item, guiItem = inventory:findItem(slot, itemId)
-		if not item then return end
-		
-		if item.use then
-			item:use(inventory)
-		end
-	end
-)
 
 
 --[[

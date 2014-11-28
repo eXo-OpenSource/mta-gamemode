@@ -220,7 +220,7 @@ end
 
 function VehicleManager:Event_vehicleRepair()
 	if client:getRank() < RANK.Moderator then
-		AntiCheat:getSingleton():report("DisallowedEvent", CheatSeverity.High)
+		AntiCheat:getSingleton():report(client, "DisallowedEvent", CheatSeverity.High)
 		return
 	end
 	

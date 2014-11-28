@@ -21,7 +21,9 @@ function AntiCheat:constructor()
 	)
 end
 
-function AntiCheat:report(name, severity)
-	outputServerLog(("AntiCheat:report(%s, %i)"):format(name, severity))
-	-- Todo: Log to database
+function AntiCheat:report(player, name, severity)
+	assert(type(player) == "userdata" and type(name) == "string" and type(severity) == "number", "Bad argument @ AntiCheat.report")
+	outputServerLog(("AntiCheat:report(%s, %s, %i)"):format(player:getName(), name, severity))
+	
+	sql:queryExec("INSERT INTO ??_cheatlog (UserId, Name, Severity) VALUES(?, ?, ?)", sql:getPrefix(), player:getId(), name, severity)
 end

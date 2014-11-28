@@ -111,6 +111,11 @@ end
 
 function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
+		-- Do not open garage sessions twice
+		if self:getSessionByPlayer(hitElement) then
+			return
+		end
+	
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		
 		if vehicle then

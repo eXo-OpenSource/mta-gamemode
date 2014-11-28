@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIForms/InventoryGUI.lua
+-- *  PURPOSE:     Inventory GUI class
+-- *
+-- ****************************************************************************
 Inventory = inherit(Object)
 Inventory.Map = {}
 
@@ -93,6 +100,7 @@ function Inventory:removeItem(slot, amount)
 		return false
 	end
 	
+	-- Todo: Call destructor
 	if not amount then
 		table.remove(self.m_Items, slot)
 		return true
@@ -132,12 +140,6 @@ function Inventory:getItems()
 	return self.m_Items
 end
 
---[[function Inventory:sync(info)
-	if self.m_InteractingPlayer then
-		self.m_InteractingPlayer:triggerEvent("inventorySync", info)
-	end
-end]]
-
 function Inventory:setInteractingPlayer(player)
 	self.m_InteractingPlayer = player
 end
@@ -152,7 +154,7 @@ function Inventory:openFor(player)
 	-- Todo (Priority: HIGH): Don't send all items always
 	local data = {}
 	for slot, item in ipairs(self.m_Items) do
-		data[#data + 1] = {slot, item.m_ItemId, self.m_Count}
+		data[#data + 1] = {slot, item.m_ItemId, item.m_Count}
 	end
 	player:triggerEvent("inventoryOpen", self.m_Id, data)
 end
@@ -190,7 +192,7 @@ addEventHandler("inventoryUseItem", root,
 			inventory = Inventory.Map[inventoryId]
 			
 			if inventory.m_InteractingPlayer ~= client then
-				AntiCheat:getSingleton():report("Not allowed inventory change", CheatSeverity.Middle)
+				AntiCheat:getSingleton():report(client, "Not allowed inventory change", CheatSeverity.Middle)
 				return
 			end
 		end
@@ -202,10 +204,25 @@ addEventHandler("inventoryUseItem", root,
 		local item = inventory.m_Items[slot]
 		if not item then return end
 		if item:getItemId() ~= itemId then
-			AntiCheat:getSingleton():report("Inventory desync", CheatSeverity.Low)
+			AntiCheat:getSingleton():report(client, "Inventory desync", CheatSeverity.Low)
 			return
 		end
 		
 		inventory:useItem(item, client, slot)
+	end
+)
+
+addEvent("inventoryRequestFullSync", true)
+addEventHandler("inventoryRequestFullSync", root,
+	function()
+		local inv = client:getInventory()
+		if not inv then return end
+		
+		local data = {}
+		for slot, item in ipairs(inv.m_Items) do
+			data[#data + 1] = {slot, item.m_ItemId, item.m_Count}
+		end
+		
+		client:triggerEvent("inventoryReceiveFullSync", inv:getId(), data)
 	end
 )

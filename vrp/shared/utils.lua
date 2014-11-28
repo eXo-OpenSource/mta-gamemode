@@ -67,6 +67,13 @@ function table.findAll(tab, value)
 	return result
 end
 
+function table.removevalue(tab, value)
+	local idx = table.find(tab, value)
+	if idx then
+		table.remove(tab, idx)
+	end
+end
+
 _coroutine_resume = coroutine.resume
 function coroutine.resume(...)
 	local state,result = _coroutine_resume(...)

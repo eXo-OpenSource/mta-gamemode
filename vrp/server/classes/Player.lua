@@ -24,6 +24,7 @@ function Player:constructor()
 	self.m_PublicSync = {}
 	self.m_PublicSyncUpdate = {}
 	self.m_SyncListener = {}
+	self.m_LastGotWantedLevelTime = 0
 end
 
 function Player:destructor()
@@ -286,4 +287,8 @@ function Player:sendInitialSyncTo(target)
 	end
 	
 	triggerClientEvent(target, "PlayerPublicSync", self, self.m_PublicSyncUpdate)
+end
+
+function Player:getLastGotWantedLevelTime()
+	return self.m_LastGotWantedLevelTime
 end
