@@ -7,14 +7,12 @@
 -- ****************************************************************************
 InventoryGUI = inherit(GUIForm)
 inherit(Singleton, InventoryGUI)
-InventoryGUI.Map = {}
 
 function InventoryGUI:constructor()
 	self.m_Inventory = false
 	self.m_GUIItems = {}
 	self.m_SelectedItem = false
 	self.m_CurrentCategory = ItemCategory.All
-	InventoryGUI.Map[inventoryId] = self
 
 	local w, h = screenWidth/5*3, screenHeight/5*3
 	GUIForm.constructor(self, screenWidth/5*1, screenHeight/5*1, w, h)
@@ -60,8 +58,9 @@ function InventoryGUI:setInventory(inv, loadContent)
 	self.m_Inventory = inv
 	
 	if loadContent then
+		self:clear()
 		for k, item in ipairs(inv:getItems()) do
-			item:addItem(item)
+			self:addItem(item)
 		end
 	end
 end
@@ -71,8 +70,9 @@ function InventoryGUI:getInventory()
 end
 
 function InventoryGUI:clear()
-	-- TODO: Call destructors
-	self.m_Items = {}
+	for k, v in pairs(self.m_GUIItems) do
+		delete(v)
+	end
 	self.m_GUIItems = {}
 end
 

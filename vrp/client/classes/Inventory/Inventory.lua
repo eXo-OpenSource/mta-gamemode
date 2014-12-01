@@ -7,16 +7,21 @@
 -- ****************************************************************************
 Inventory = inherit(Object)
 Inventory.Map = {}
-addRemoteEvents{"inventoryUnload", "inventoryAddItem", "inventoryRemoveItem", "inventoryUseItem"}
+addRemoteEvents{"inventoryUnload", "inventoryAddItem", "inventoryRemoveItem", "inventoryUseItem", "inventoryReceiveFullSync"}
 
 local function getInvGUI() return InventoryGUI:getSingleton() end
 
-function Inventory:constructor()
+function Inventory:constructor(Id)
+	self.m_Id = Id
 	self.m_Items = {}
 end
 
 function Inventory:destructor()
 	Inventory.Map[self.m_Id] = nil
+end
+
+function Inventory:requestFullSync()
+	triggerServerEvent("inventoryRequestFullSync", resourceRoot, self.m_Id)
 end
 
 function Inventory:addItem(item)
@@ -59,7 +64,7 @@ function Inventory:applyItemsFromFullsync(items)
 		
 		local itemClass = Items[itemId].class
 		table.insert(self.m_Items, (itemClass or Item):new(itemId, amount, slot))
-		self:addItem(inventory.m_Items[#inventory.m_Items])
+		self:addItem(self.m_Items[#self.m_Items])
 	end
 end
 
@@ -117,11 +122,13 @@ addEventHandler("inventoryUseItem", root,
 )
 addEventHandler("inventoryReceiveFullSync", root,
 	function(inventoryId, data)
-		if not InventoryMap[inventoryId] then
+		if not Inventory.Map[inventoryId] then
 			Inventory.Map[inventoryId] = Inventory:new(inventoryId)
 		end
 		
 		local inventory = Inventory.Map[inventoryId]
 		inventory:applyItemsFromFullsync(data)
+		
+		InventoryGUI:getSingleton():setInventory(inventory, true)
 	end
 )

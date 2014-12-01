@@ -141,6 +141,9 @@ function Inventory:getItems()
 end
 
 function Inventory:setInteractingPlayer(player)
+	if self.m_InteractingPlayer and self.m_InteractingPlayer ~= player then
+		self:unloadOnClient()
+	end
 	self.m_InteractingPlayer = player
 end
 
@@ -151,12 +154,7 @@ end
 function Inventory:openFor(player)
 	self:setInteractingPlayer(player)
 	
-	-- Todo (Priority: HIGH): Don't send all items always
-	local data = {}
-	for slot, item in ipairs(self.m_Items) do
-		data[#data + 1] = {slot, item.m_ItemId, item.m_Count}
-	end
-	player:triggerEvent("inventoryOpen", self.m_Id, data)
+	player:triggerEvent("inventoryOpen", self.m_Id)
 end
 
 function Inventory:closeFor(player)
@@ -181,6 +179,23 @@ function Inventory:useItem(item, player, slot)
 	
 	if itemInfo.removeAfterUsage then
 		self:removeItem(slot, 1)
+	end
+end
+
+function Inventory:sendFullSync()
+	if not self.m_InteractingPlayer then return end
+
+	local data = {}
+	for slot, item in ipairs(self.m_Items) do
+		data[#data + 1] = {slot, item.m_ItemId, item.m_Count}
+	end
+	
+	self.m_InteractingPlayer:triggerEvent("inventoryReceiveFullSync", self.m_Id, data)
+end
+
+function Inventory:unloadOnClient()
+	if self.m_InteractingPlayer then
+		self.m_InteractingPlayer:triggerEvent("inventoryUnload")
 	end
 end
 
@@ -214,15 +229,16 @@ addEventHandler("inventoryUseItem", root,
 
 addEvent("inventoryRequestFullSync", true)
 addEventHandler("inventoryRequestFullSync", root,
-	function()
-		local inv = client:getInventory()
-		if not inv then return end
-		
-		local data = {}
-		for slot, item in ipairs(inv.m_Items) do
-			data[#data + 1] = {slot, item.m_ItemId, item.m_Count}
+	function(inventoryId)
+		local inv
+		if inventoryId then
+			inv = Inventory.Map[inventoryId]
+		end
+		if not inv or inv:getInteractingPlayer() ~= client then
+			-- Todo: Report @ AC
+			return
 		end
 		
-		client:triggerEvent("inventoryReceiveFullSync", inv:getId(), data)
+		inv:sendFullSync()
 	end
 )

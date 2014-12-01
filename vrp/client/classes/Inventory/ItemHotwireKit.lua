@@ -1,6 +1,6 @@
 ItemHotwireKit = inherit(Item)
 
-function ItemHotwireKit:constructor() end
+function ItemHotwireKit:constructor() outputDebugString("Hi from client!") end
 function ItemHotwireKit:destructor() end
 
 function ItemHotwireKit:use(player)
