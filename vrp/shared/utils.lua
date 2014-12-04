@@ -340,5 +340,5 @@ end
 
 function calculatePointsToNextLevel(currentLevel)
 	-- p(l)=10l
-	return currentLevel * 10
+	return (currentLevel+1) * 10
 end

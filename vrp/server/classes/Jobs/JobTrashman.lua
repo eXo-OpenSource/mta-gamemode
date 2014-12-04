@@ -28,8 +28,8 @@ function JobTrashman:start(player)
 end
 
 function JobTrashman:checkRequirements(player)
-	if not (player:getXP() > 50) then
-		player:sendMessage(_("Für diesen Job benötigst du mindestens 50 Erfahrungspunkte", player), 255, 0, 0)
+	if not (player:getJobLevel() >= 1) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 1", player), 255, 0, 0)
 		return false
 	end
 	return true
@@ -46,8 +46,7 @@ function JobTrashman:Event_trashcanCollect(containerNum)
 	-- Note: It's bad to create the huge amount of trashcans on the server - but...we should do it probably?
 	local lastTime = client:getData("Trashman:LastCan") or -math.huge
 	if getTickCount() - lastTime < 2500 then
-		-- Todo: Report possible cheat attempt
-		outputChatBox("Possible cheat attempt!")
+		AntiCheat:getSingleton():report("Trashman:TooMuchTrash", CheatSeverity.Low)
 		return
 	end
 	client:setData("Trashman:LastCan", getTickCount())

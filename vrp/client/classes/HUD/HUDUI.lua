@@ -114,11 +114,15 @@ function HUDUI:drawLevelRect()
 	local f = math.floor
 
 	-- Background
-	dxDrawRectangle(screenWidth*0.85, 0, screenWidth*0.15, screenHeight*0.03, Color.LightBlue)
+	dxDrawRectangle(screenWidth*0.8, 0, screenWidth*0.2, screenHeight*0.03, Color.LightBlue)
+	
+	-- Joblevel
+	dxDrawImage(f(screenWidth*0.81), f(screenHeight*0.0045), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/WeaponLevel.png")
+	dxDrawText(localPlayer:getWeaponLevel(), screenWidth*0.835, screenHeight*0.0028, nil, nil, Color.White, 1.5, "arial")
 	
 	-- Weaponlevel
-	dxDrawImage(f(screenWidth*0.855), f(screenHeight*0.0045), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/WeaponLevel.png")
-	dxDrawText(localPlayer:getWeaponLevel(), screenWidth*0.88, screenHeight*0.0028, nil, nil, Color.White, 1.5, "arial")
+	dxDrawImage(f(screenWidth*0.86), f(screenHeight*0.0045), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/WeaponLevel.png")
+	dxDrawText(localPlayer:getWeaponLevel(), screenWidth*0.885, screenHeight*0.0028, nil, nil, Color.White, 1.5, "arial")
 	
 	-- Vehiclelevel
 	dxDrawImage(f(screenWidth*0.91), f(screenHeight*0.0045), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/VehicleLevel.png")

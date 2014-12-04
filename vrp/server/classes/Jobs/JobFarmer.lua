@@ -115,6 +115,14 @@ function JobFarmer:stop(player)
 	self.m_Plants[player] = nil
 end
 
+function JobFarmer:checkRequirements(player)
+	if not (player:getJobLevel() >= 4) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 4", player), 255, 0, 0)
+		return false
+	end
+	return true
+end
+
 function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	if getElementType(hitElement) ~= "vehicle" then
 		return

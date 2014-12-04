@@ -66,10 +66,6 @@ function JobPolice:checkRequirements(player)
 		player:sendMessage(_("Du hast nicht genügend Karma gesammelt, um als Polizist/-in zu arbeiten!", player), 255, 0, 0)
 		return false
 	end
-	if player:getXP() < 150 then
-		player:sendMessage(_("Du hast nicht genügend Erfahrungspunkte, um als Polizist/-in zu arbeiten!", player), 255, 0, 0)
-		return false
-	end
 	return true
 end
 

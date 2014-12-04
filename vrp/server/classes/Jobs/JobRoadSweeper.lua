@@ -29,8 +29,7 @@ function JobRoadSweeper:Event_sweeperGarbageCollect()
 	-- Note: It's bad to create the huge amount of trashcans on the server - but...we should do it probably?
 	local lastTime = client:getData("Sweeper:Last") or -math.huge
 	if getTickCount() - lastTime < 400 then
-		-- Todo: Report possible cheat attempt
-		outputChatBox("Possible cheat attempt!")
+		AntiCheat:getSingleton():report(client, "RoadSweeper:TooMuchTrashCollected", CheatSeverity.Low)
 		return
 	end
 	client:setData("Sweeper:Last", getTickCount())

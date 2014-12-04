@@ -69,7 +69,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -110,6 +110,7 @@ function DatabasePlayer:load()
 	self.m_WeaponLevel = row.WeaponLevel
 	self.m_VehicleLevel = row.VehicleLevel
 	self.m_SkinLevel = row.SkinLevel
+	self.m_JobLevel = row.JobLevel
 end
 
 function DatabasePlayer:save()
@@ -140,6 +141,7 @@ function DatabasePlayer:getPoints()		return self.m_Points 	end
 function DatabasePlayer:getWeaponLevel()return self.m_WeaponLevel end
 function DatabasePlayer:getVehicleLevel() return self.m_VehicleLevel end
 function DatabasePlayer:getSkinLevel()	return self.m_SkinLevel	end
+function DatabasePlayer:getJobLevel()	return self.m_JobLevel	end
 function DatabasePlayer:getBankMoney()	return self.m_BankMoney	end
 function DatabasePlayer:getWantedLevel()return self.m_WantedLevel end
 function DatabasePlayer:getJob()   		return self.m_Job		end
@@ -210,6 +212,11 @@ end
 function DatabasePlayer:incrementSkinLevel()
 	self.m_SkinLevel = self.m_SkinLevel + 1
 	if self:isActive() then self:setPrivateSync("SkinLevel", self.m_SkinLevel) end
+end
+
+function DatabasePlayer:incrementJobLevel()
+	self.m_JobLevel = self.m_JobLevel + 1
+	if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
 end
 
 function DatabasePlayer:addBankMoney(amount, logType)

@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp"}
+addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp"}
 
 function PlayerManager:constructor()
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
@@ -21,6 +21,7 @@ function PlayerManager:constructor()
 	addEventHandler("requestWeaponLevelUp", root, bind(self.Event_requestWeaponLevelUp, self))
 	addEventHandler("requestVehicleLevelUp", root, bind(self.Event_requestVehicleLevelUp, self))
 	addEventHandler("requestSkinLevelUp", root, bind(self.Event_requestSkinLevelUp, self))
+	addEventHandler("requestJobLevelUp", root, bind(self.Event_requestJobLevelUp, self))
 	
 	self.m_SyncPulse = TimedPulse:new(500)
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
@@ -127,6 +128,17 @@ function PlayerManager:Event_requestSkinLevelUp()
 	local requiredPoints = calculatePointsToNextLevel(client:getSkinLevel())
 	if client:getPoints() >= requiredPoints then
 		client:incrementSkinLevel()
+		client:givePoints(-requiredPoints)
+		client:sendInfo(_("Punkte eingetauscht!", client))
+	else
+		client:sendError(_("Du hast nicht genügend Punkte!", client))
+	end
+end
+
+function PlayerManager:Event_requestJobLevelUp()
+	local requiredPoints = calculatePointsToNextLevel(client:getJobLevel())
+	if client:getPoints() >= requiredPoints then
+		client:incrementJobLevel()
 		client:givePoints(-requiredPoints)
 		client:sendInfo(_("Punkte eingetauscht!", client))
 	else

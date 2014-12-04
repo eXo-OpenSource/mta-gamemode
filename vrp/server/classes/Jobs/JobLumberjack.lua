@@ -33,8 +33,8 @@ function JobLumberjack:stop(player)
 end
 
 function JobLumberjack:checkRequirements(player)
-	if not (player:getXP() >= 300) then
-		player:sendMessage(_("Für diesen Job benötigst du mindestens ein 300 XP!", player), 255, 0, 0)
+	if not (player:getJobLevel() >= 2) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 2", player), 255, 0, 0)
 		return false
 	end
 	return true

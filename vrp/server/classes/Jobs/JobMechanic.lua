@@ -27,8 +27,8 @@ function JobMechanic:start(player)
 end
 
 function JobMechanic:checkRequirements(player)
-	if not (player:getXP() > 20) then
-		player:sendMessage(_("Für diesen Job benötigst du mindestens 20 Erfahrungspunkte", player), 255, 0, 0)
+	if not (player:getJobLevel() >= 3) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 3", player), 255, 0, 0)
 		return false
 	end
 	return true

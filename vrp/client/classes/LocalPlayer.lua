@@ -55,6 +55,10 @@ function Player:getSkinLevel()
 	return self:getPrivateSync("SkinLevel") or 0
 end
 
+function Player:getJobLevel()
+	return self:getPrivateSync("JobLevel") or 0
+end
+
 function LocalPlayer:playerWasted()
 	setTimer(
 		function()
