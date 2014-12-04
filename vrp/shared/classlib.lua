@@ -203,6 +203,7 @@ function instanceof(self, class, direct)
 end
 
 function pure_virtual()
+	outputDebug(debug.traceback())
 	error("Function implementation missing")
 end
 

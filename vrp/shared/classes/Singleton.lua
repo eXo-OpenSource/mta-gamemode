@@ -7,9 +7,9 @@
 -- ****************************************************************************
 Singleton = {}
 
-function Singleton:getSingleton()
+function Singleton:getSingleton(...)
 	if not self.ms_Instance then
-		self.ms_Instance = self:new()
+		self.ms_Instance = self:new(...)
 	end
 	return self.ms_Instance
 end

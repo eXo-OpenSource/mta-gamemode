@@ -32,7 +32,7 @@ function Inventory:addItem(item)
 end
 
 function Inventory:removeItem(item, amount)
-	item.m_Count = self.m_Count - amount
+	item.m_Count = item.m_Count - amount
 		
 	local inv = getInvGUI()
 	if inv then
@@ -48,7 +48,7 @@ function Inventory:removeItem(item, amount)
 	end
 end
 
-function Inventory:useItem()
+function Inventory:useItem(item)
 	if item.use then
 		item:use(inventory)
 	end

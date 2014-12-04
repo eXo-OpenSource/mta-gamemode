@@ -231,7 +231,11 @@ function DatabasePlayer:takeBankMoney(amount, logType)
 end
 
 function DatabasePlayer:giveWantedLevel(level)
-	self:setWantedLevel(self.m_WantedLevel + level)
+	local newLevel = self.m_WantedLevel + level
+	if newLevel > 6 then
+		newLevel = 6
+	end
+	self:setWantedLevel(newLevel)
 	
 	if self:isActive() then
 		self.m_LastGotWantedLevelTime = getTickCount()
@@ -239,7 +243,11 @@ function DatabasePlayer:giveWantedLevel(level)
 end
 
 function DatabasePlayer:takeWantedLevel(level)
-	self:setWantedLevel(self.m_WantedLevel - level)
+	local newLevel = self.m_WantedLevel - level
+	if newLevel < 0 then
+		newLevel = 0
+	end
+	self:setWantedLevel(newLevel)
 end
 
 function DatabasePlayer:setJob(job)

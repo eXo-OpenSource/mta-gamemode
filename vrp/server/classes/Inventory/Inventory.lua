@@ -110,6 +110,12 @@ function Inventory:removeItem(slot, amount)
 	if item:getCount() <= 0 then
 		table.remove(self.m_Items, slot)
 	end
+	
+	if self.m_InteractingPlayer then
+		self.m_InteractingPlayer:triggerEvent("inventoryRemoveItem", self.m_Id, slot, item:getId(), amount)
+	end
+	
+	delete(item)
 	return true
 end
 

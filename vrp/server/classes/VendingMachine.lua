@@ -10,7 +10,9 @@ end
 
 function VendingMachine.initializeAll()
 	addEvent("vendingRob", true)
+	addEvent("vendingBuySnack", true)
 	addEventHandler("vendingRob", root, VendingMachine.Event_vendingRob)
+	addEventHandler("vendingBuySnack", root, VendingMachine.Event_vendingBuySnack)
 	
 	-- Create machines
 	for k, data in ipairs(VendingMachine.MachineData) do
@@ -29,7 +31,7 @@ function VendingMachine.Event_vendingRob()
 	end
 	
 	-- Play animation
-	setPedAnimation(client, "BOMBER", "BOM_Plant", -1, false, true, false, false)
+	client:setAnimation("BOMBER", "BOM_Plant", -1, false, true, false, false)
 	
 	-- Give wage
 	client:giveMoney(math.random(10, 100))
@@ -37,6 +39,16 @@ function VendingMachine.Event_vendingRob()
 	
 	-- Update rob time
 	vendingMachine.m_LastRobTime = getTickCount()
+end
+
+function VendingMachine.Event_vendingBuySnack()
+	if client:getMoney() >= 20 then
+		client:setAnimation("VENDING", "vend_eat1_P", -1, false, true, false, false)
+		client:setHealth(client:getHealth() + 10)
+		client:takeMoney(20)
+	else
+		client:sendError(_("Du hast nicht genügend Geld!", client))
+	end
 end
 
 VendingMachine.MachineData = { -- Note: If you add more models to the list, you'll have to add a model id to the clickhandler

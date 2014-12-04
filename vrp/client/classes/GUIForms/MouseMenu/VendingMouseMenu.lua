@@ -13,7 +13,7 @@ function VendingMouseMenu:constructor(posX, posY, element)
 	self:addItem(_"Snack kaufen",
 		function()
 			if self:getElement() then
-				outputChatBox("Nicht implementiert!")
+				triggerServerEvent("vendingBuySnack", self:getElement())
 			end
 		end
 	)

@@ -11,7 +11,8 @@ addEvent("itemBuy", true)
 function ItemShops:constructor()
 	self:addShop(Vector3(1352.4, -1758.7, 13.5), Vector3(-30.98, -91.9, 1003.5), 0, 0, Vector3(-28, -89.9, 1002.7), 18, 
 		{
-			[ITEM_PASSPORT] = 1000
+			[ITEM_PASSPORT] = 1000,
+			--[ITEM_RADIO] = 2000
 		})
 end
 

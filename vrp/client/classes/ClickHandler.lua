@@ -76,6 +76,9 @@ function ClickHandler:dispatchClick(clickInfo)
 	if model == 2886 then -- Keypad
 		triggerServerEvent("keypadClick", element)
 	end
+	if model == 2226 then -- Radio
+		self:addMouseMenu(RadioMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+	end
 	
 	-- Phase 3: Check element types
 	if self.m_Menu[elementType] then

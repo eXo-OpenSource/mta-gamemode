@@ -115,6 +115,7 @@
 	<script src="server/classes/Inventory/ItemHotwireKit.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemHash.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
 	
 	<script src="server/Main.lua" type="server"/>
 	
@@ -224,6 +225,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
@@ -245,6 +247,7 @@
 	<script src="client/classes/GUIForms/HelpBar.lua" type="client"/>
 	<script src="client/classes/GUIForms/ScoreboardGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemShopGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/InputBox.lua" type="client"/>
 	
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
@@ -293,6 +296,7 @@
 	<script src="client/classes/Inventory/ItemHotwireKit.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemBomb.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemHash.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
 	
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>

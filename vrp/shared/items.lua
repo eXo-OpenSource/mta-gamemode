@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Inventory/ItemRadio.lua
+-- *  PURPOSE:     Item definition file
+-- *
+-- ****************************************************************************
 ItemCategory = {All = 1, Drugs = 2, Player = 3, Vehicle = 4, Tools = 5, Other = 6}
 ItemItemCategoryNames = {[ItemCategory.All] = "Alle", [ItemCategory.Drugs] = "Drogen", [ItemCategory.Player] = "Spieler", [ItemCategory.Vehicle] = "Fahrzeug",
 	[ItemCategory.Tools] = "Werkzeuge", [ItemCategory.Other] = "Sonstiges"}
@@ -16,6 +23,7 @@ Items = {
 { "ITEM_DILDO",		"Dildo"; 			"Der kleine Männerersatz."; 																nil; 									ItemDildo,		5,						ItemCategory.Other,		true};
 { "ITEM_HOTWIREKIT", "Kurzschließkit";	"Autos abgeschlossen? Kein Problem!";														nil;									ItemHotwireKit,	1,						ItemCategory.Tools,		false};
 { "ITEM_BOMB",		"Bombe";			"Erzeugt eine große Explosion und wird bei verschiedenen Events benötigt";					nil;									ItemBomb,		0,						ItemCategory.Other,		true};
+{ "ITEM_RADIO",		"Radio";			"Ein Radio, das Musik für alle abspielt";													nil;									ItemRadio,		1,						ItemCategory.Other,		true};
 }
 
 local newitems = {}
