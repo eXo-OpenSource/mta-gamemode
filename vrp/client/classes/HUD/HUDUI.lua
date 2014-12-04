@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/HUD/HUIUI.lua
+-- *  PURPOSE:     HUD UI class
+-- *
+-- ****************************************************************************
 HUDUI = inherit(Singleton)
 
 local MAX_KARMA = 150
@@ -13,14 +20,6 @@ function HUDUI:constructor()
 	self.m_RenderHandler = bind(self.draw,self)
 	
 	addEventHandler("onClientRender",root,self.m_RenderHandler, true, "high+999")
-end
-
-function getXPForLevel(level)
-	return 0.5*level^2
-end
-
-function getLevelByXP(xp)
-	return (2 * math.floor(xp))^0.5
 end
 
 function HUDUI:show()
@@ -71,38 +70,17 @@ function HUDUI:draw()
 	dxDrawText(sMunition,screenWidth-0.276*screenWidth-(dxGetTextWidth(sMunition,1,self.m_Font)/2),-85+addY,0.153*screenWidth,0.09*screenHeight,Color.White,1,self.m_Font)
 	
 	-- Karmabar
-	
-	--dxDrawImage(screenWidth-480,170,480,35,"files/images/Bar.png")
-	--dxDrawImage(screenWidth-0.25*screenWidth,0.157*screenHeight,0.25*screenWidth,0.03*screenHeight,"files/images/Bar_hover.png")
 	local karma = localPlayer:getKarma() or 0
-	dxDrawRectangle(screenWidth-0.12*screenWidth,0.157*screenHeight,0.12*screenWidth,0.045*screenHeight,karma >= 0 and tocolor(0,50,0,255) or tocolor(50,0,0,255))
+	dxDrawRectangle(screenWidth-0.25*screenWidth,0.157*screenHeight,0.25*screenWidth,0.045*screenHeight,karma >= 0 and tocolor(0,50,0,255) or tocolor(50,0,0,255))
 	if karma >= 0 then
-		dxDrawRectangle(screenWidth-0.12*screenWidth,0.157*screenHeight,(0.12*screenWidth)*karma/MAX_KARMA,0.045*screenHeight,tocolor(75,160,75,255))
+		dxDrawRectangle(screenWidth-0.25*screenWidth,0.157*screenHeight,(0.25*screenWidth)*karma/MAX_KARMA,0.045*screenHeight,tocolor(75,160,75,255))
 	else
-		dxDrawRectangle(screenWidth-0.12*screenWidth,0.157*screenHeight,(0.12*screenWidth)*-karma/MAX_KARMA,0.045*screenHeight,tocolor(160,75,75,255))
+		dxDrawRectangle(screenWidth-0.25*screenWidth,0.157*screenHeight,(0.25*screenWidth)*-karma/MAX_KARMA,0.045*screenHeight,tocolor(160,75,75,255))
 	end
-	local karma = (karma >= 0 and "+" or "")..karma
-	dxDrawText(karma,screenWidth-0.12*(screenWidth/2)-(dxGetTextWidth(karma,0.5,self.m_Font)/2),0.166*screenHeight,0,0,Color.White,0.5,self.m_Font)
-	
-	-- getLevelByXP(xp)
-	-- getXPForLevel(level)
-	local xpoints = localPlayer:getXP()
-	
-	--local neededXP = xpoints-getXPForLevel(getLevelByXP(xpoints)+1) or 0
-	
-	--dxDrawText(math.floor(neededXP*-1),screenWidth-0.25*screenWidth-(dxGetTextWidth(neededXP,0.5,self.m_Font)/2),0.166*screenHeight,0,0,Color.White,0.5,self.m_Font)
-	
-	dxDrawRectangle(screenWidth-0.25*screenWidth,0.157*screenHeight,0.12*screenWidth,0.045*screenHeight,tocolor(0,50,0,255))
-
-	local levelXP  = getXPForLevel(getLevelByXP(xpoints)+1)-getXPForLevel(getLevelByXP(xpoints))
-	local pw = xpoints-getXPForLevel(getLevelByXP(xpoints))
-	
-	local percentage = pw/levelXP
-	
-	dxDrawRectangle(screenWidth-0.25*screenWidth,0.157*screenHeight,0.12*screenWidth*percentage,0.045*screenHeight,tocolor(75,160,75,255))
+	local karma = (karma >= 0 and "+" or "")..math.floor(karma)
+	dxDrawText(karma,screenWidth-0.25*(screenWidth/2)-(dxGetTextWidth(karma,0.5,self.m_Font)/2),0.166*screenHeight,0,0,Color.White,0.5,self.m_Font)
 	
 	-- Wantedlevel
-	
 	dxDrawRectangle(screenWidth-0.05*screenWidth,0.23*screenHeight,0.05*screenWidth,0.09*screenHeight,tocolor(0,0,0,150))
 	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.229*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/wanted.png", 0, 0, 0, getPlayerWantedLevel() > 0 and Color.Yellow or Color.White)
 	dxDrawText     (getPlayerWantedLevel(),screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-6,0.24*screenHeight+(0.09*screenHeight/2),0,0,Color.White,0.5,self.m_Font)
@@ -117,7 +95,7 @@ function HUDUI:drawLevelRect()
 	dxDrawRectangle(screenWidth*0.8, 0, screenWidth*0.2, screenHeight*0.03, Color.LightBlue)
 	
 	-- Joblevel
-	dxDrawImage(f(screenWidth*0.81), f(screenHeight*0.0045), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/WeaponLevel.png")
+	dxDrawImage(f(screenWidth*0.81), f(screenHeight*0.0045), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/JobLevel.png")
 	dxDrawText(localPlayer:getWeaponLevel(), screenWidth*0.835, screenHeight*0.0028, nil, nil, Color.White, 1.5, "arial")
 	
 	-- Weaponlevel

@@ -33,7 +33,7 @@ function Provider:onDownloadFinish(id, data)
 	if type(id) == "string" then
 		if data == true then
 			-- md5 was already correct
-			self.m_RequestedFiles[id].onProgress(100)
+			self.m_RequestedFiles[id].onProgress(100, self.m_Files[id] and self.m_Files[id].size or 0)
 			self.m_RequestedFiles[id].onComplete(id)
 			self.m_RequestedFiles[id] = nil
 			return
@@ -72,14 +72,7 @@ function Provider:onDownloadProgressUpdate(id, progress)
 		return 
 	end
 	
-	if type(self.m_RequestedFiles[file.path]) == "table" and self.m_RequestedFiles[file.path].onProgress then 
-		self.m_RequestedFiles[file.path].onProgress(progress)
+	if type(self.m_RequestedFiles[file.path]) == "table" and self.m_RequestedFiles[file.path].onProgress then
+		self.m_RequestedFiles[file.path].onProgress(progress, file.size)
 	end
 end
-
-
-
-
-
-
-

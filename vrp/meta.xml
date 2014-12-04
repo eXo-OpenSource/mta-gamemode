@@ -433,6 +433,7 @@
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>
+	<vrpfile src="files/images/HUD/JobLevel.png"/>
 	
 	<!-- Audio -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
