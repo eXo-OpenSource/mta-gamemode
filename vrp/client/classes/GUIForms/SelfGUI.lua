@@ -121,10 +121,10 @@ function SelfGUI:constructor()
 	localPlayer:setPrivateSyncChangeHandler("SkinLevel", function(value) self.m_SkinLevelLabel:setText(tostring(value)) end)
 	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Joblevel:", tabPoints)
-	self.m_SkinLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getJobLevel(), tabPoints)
-	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.42, self.m_Width*0.3, self.m_Height*0.06, ("+ (Kosten: %sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
-	self.m_SkinLevelButton.onLeftClick = function() triggerServerEvent("requestJobLevelUp", resourceRoot) end
-	localPlayer:setPrivateSyncChangeHandler("SkinLevel", function(value) self.m_SkinLevelLabel:setText(tostring(value)) end)
+	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getJobLevel(), tabPoints)
+	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.42, self.m_Width*0.3, self.m_Height*0.06, ("+ (Kosten: %sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_JobLevelButton.onLeftClick = function() triggerServerEvent("requestJobLevelUp", resourceRoot) end
+	localPlayer:setPrivateSyncChangeHandler("JobLevel", function(value) self.m_JobLevelLabel:setText(tostring(value)) end)
 	
 	-- Tab: Settings
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")

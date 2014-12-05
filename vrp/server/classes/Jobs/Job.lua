@@ -26,7 +26,7 @@ end
 function Job:sendMessage(message, ...)
 	for k, player in ipairs(getElementsByType("player")) do
 		if player:getJob() == self then
-			player:sendMessage(_("[JOB]", player).._(message, player):format(...))
+			player:sendMessage(_("[JOB] ", player).._(message, player, ...), 0, 0, 255)
 		end
 	end
 end

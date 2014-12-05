@@ -24,8 +24,8 @@ function ItemRadio:use(inventory, player, slot)
 	
 	addEventHandler("itemRadioChangeURL", worldItem:getObject(),
 		function(url)
-			setElementData(self.m_Radio, "url", url)
-			triggerClientEvent("itemRadioChangeURL", self.m_Radio, url) -- send url twice so that we do not get in trouble with packet ordering
+			setElementData(source, "url", url)
+			triggerClientEvent("itemRadioChangeURL", source, url) -- send url twice so that we do not get in trouble with packet ordering
 		end
 	)
 end
@@ -38,7 +38,7 @@ function ItemRadio:onClick(player, worldItem)
 	if worldItem:getOwner() == player then
 		-- TODO: It might be better to do this clientside to avoid the relay
 		-- TODO: Also it might be better to generalise this API a bit (there are probably lots of items which use item mouse menus)
-		triggerClientEvent("itemRadioMenu", worldItem:getObject())
+		triggerClientEvent(player, "itemRadioMenu", worldItem:getObject())
 	else
 		player:sendError(_("Du hast keine Befugnisse dieses Item zu nutzen!", player))
 	end

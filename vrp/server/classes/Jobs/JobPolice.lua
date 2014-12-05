@@ -71,9 +71,8 @@ end
 
 function JobPolice:jailPlayer(player, policeman)
 	-- Teleport to jail
-	setElementPosition(player, 264, 77.6, 1001.1)
-	setElementRotation(player, 0, 0, 270)
-	setElementInterior(player, 6)
+	setElementPosition(player, 2739+math.random(-10, 10), -2806, 18)
+	setElementRotation(player, 0, 0, 180)
 	
 	-- Pay some money, karma and xp to the policeman
 	policeman:giveMoney(player:getWantedLevel() * 100)
@@ -84,7 +83,7 @@ function JobPolice:jailPlayer(player, policeman)
 	player:sendInfo(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %ds verweilen!", player, jailTime))
 	setTimer(
 		function()
-			setElementInterior(player, 0, 1539.7, -1659.5 + math.random(-3, 3), 13.6)
+			setElementPosition(player, 1539.7, -1659.5 + math.random(-3, 3), 13.6)
 			setElementRotation(player, 0, 0, 90)
 			player:setWantedLevel(0)
 		end, jailTime * 1000, 1
