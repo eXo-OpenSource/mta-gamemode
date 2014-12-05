@@ -111,6 +111,8 @@
 	<!-- Inventory -->
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/Item.lua" type="server"/>
+	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
+	<script src="server/classes/Inventory/DroppableItem.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemShops.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemHotwireKit.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
@@ -449,7 +451,9 @@
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/yoda.dff"/>
-	<vrpfile src="files/models/yoda.txd"/>
+	<vrpfile src="files/models/vrp_logo.col"/>
+	<vrpfile src="files/models/vrp_logo.dff"/>
+	<vrpfile src="files/models/vrp_logo.txd"/>
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>

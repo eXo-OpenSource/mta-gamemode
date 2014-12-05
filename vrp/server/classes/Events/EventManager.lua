@@ -52,7 +52,7 @@ function EventManager:openEvent(eventClass)
 	end
 	
 	-- Start the event in 5min
-	setTimer(function() event:start() end, 0.5*60*1000, 1)
+	setTimer(function(event) event:start() end, 0.5*60*1000, 1, event)
 end
 
 function EventManager:Event_eventJoin(eventId)

@@ -33,3 +33,11 @@ addEventHandler("itemRadioChangeURL", root,
 		end
 	end
 )
+
+addEvent("itemRadioMenu", true)
+addEventHandler("itemRadioMenu", root,
+	function()
+		local cx, cy = getCursorPosition()
+		ClickHandler:getSingleton():addMouseMenu(RadioMouseMenu:new(cx*screenWidth, cy*screenHeight, source), source)
+	end
+)

@@ -104,6 +104,10 @@ function StreetRaceEvent:getName()
 	return "Straßenrennen"
 end
 
+function StreetRaceEvent:getPositions()
+	return StreetRaceEvent.Positions
+end
+
 StreetRaceEvent.Positions = {
 	{0, 0, 4},
 	{-1656.3, -539.8, 10.8}

@@ -92,7 +92,7 @@ function new(class, ...)
 	-- Call derived constructors
 	local callDerivedConstructor;
 	callDerivedConstructor = function(self, instance, ...)
-		for k, v in pairs(super(self)) do
+		for k, v in pairs(self) do
 			if rawget(v, "virtual_constructor") then
 				rawget(v, "virtual_constructor")(instance, ...)
 			end
@@ -101,7 +101,7 @@ function new(class, ...)
 		end
 	end
 		
-	callDerivedConstructor(class, instance, ...) 
+	callDerivedConstructor(super(class), instance, ...) 
 	
 	-- Call constructor
 	if rawget(class, "constructor") then

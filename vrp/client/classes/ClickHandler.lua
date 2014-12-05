@@ -64,7 +64,13 @@ function ClickHandler:dispatchClick(clickInfo)
 		return
 	end
 	
-	-- Phase 2: Check models
+	-- Phase 2: Check for world items
+	if getElementData(element, "worlditem") then
+		triggerServerEvent("worldItemClick", element)
+		return
+	end
+	
+	-- Phase 3: Check models
 	if self:checkModels(model, 1775, 1776, 1209) then
 		self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 		return
@@ -75,12 +81,10 @@ function ClickHandler:dispatchClick(clickInfo)
 	end
 	if model == 2886 then -- Keypad
 		triggerServerEvent("keypadClick", element)
-	end
-	if model == 2226 then -- Radio
-		self:addMouseMenu(RadioMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+		return
 	end
 	
-	-- Phase 3: Check element types
+	-- Phase 4: Check element types
 	if self.m_Menu[elementType] then
 		self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 		return

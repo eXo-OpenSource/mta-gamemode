@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/GUIForms/InventoryGUI.lua
+-- *  FILE:        server/classes/Inventory.lua
 -- *  PURPOSE:     Inventory GUI class
 -- *
 -- ****************************************************************************
@@ -81,17 +81,18 @@ function Inventory:addItem(itemId, amount)
 		end
 	end
 	
-	outputDebug("Itemclass: "..tostring(itemInfo.class))
 	local itemObject = (itemInfo.class or Item):new(itemId, amount)
-	table.insert(self.m_Items, itemObject)
+	self:addItemByItem(itemObject)
+	return itemObject
+end
+
+function Inventory:addItemByItem(item)
+	table.insert(self.m_Items, item)
 	local slot = #self.m_Items
 	
 	if self.m_InteractingPlayer then
-		self.m_InteractingPlayer:triggerEvent("inventoryAddItem", self.m_Id, slot, itemId, amount)
+		self.m_InteractingPlayer:triggerEvent("inventoryAddItem", self.m_Id, slot, item:getItemId(), item:getCount())
 	end
-	
-	--self:sync({slot, itemId, amount})
-	return itemObject
 end
 
 function Inventory:removeItem(slot, amount)
@@ -117,6 +118,16 @@ function Inventory:removeItem(slot, amount)
 	
 	delete(item)
 	return true
+end
+
+function Inventory:removeItemByItem(item, slot)
+	return self:removeItem(slot, item:getCount())
+end
+
+function Inventory:dropItem(item, slot, owner, pos)
+	local worldItem = WorldItem:new(item, owner, pos)
+	self:removeItemByItem(item, slot)
+	return worldItem
 end
 
 function Inventory:findItem(itemId)
@@ -177,7 +188,7 @@ function Inventory:useItem(item, player, slot)
 	
 	-- Possible issue: If Item:use fails, the item will never get removed
 	if item.use then
-		item:use(self, client)
+		item:use(self, client, slot)
 	end
 	
 	-- Tell the client that we started using the item
