@@ -56,9 +56,9 @@ function HUDUI:draw()
 	dxDrawRectangle(screenWidth-(0.25*screenWidth+addX),0.0465*screenHeight,0.05*screenWidth,0.09*screenHeight,tocolor(0,0,0,150))
 	-- images became changed later
 	if munitionWindowActive then
-		dxDrawImage(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2),0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2),0.033*screenWidth,0.059*screenHeight,"files/images/Weapons/gun.png")
+		dxDrawImage(math.floor(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2)),math.floor(0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2)),math.floor(0.033*screenWidth),math.floor(0.059*screenHeight),"files/images/Weapons/gun.png")
 	else
-		dxDrawImage(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2),0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2),0.033*screenWidth,0.059*screenHeight,"files/images/Weapons/hand.png")
+		dxDrawImage(math.floor(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2)),math.floor(0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2)),math.floor(0.033*screenWidth),math.floor(0.059*screenHeight),"files/images/Weapons/hand.png")
 	end
 	
 	-- Munition-Window

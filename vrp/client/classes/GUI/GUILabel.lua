@@ -11,6 +11,8 @@ inherit(GUIColorable, GUILabel)
 
 function GUILabel:constructor(posX, posY, width, height, text, parent)
 	checkArgs("GUILabel:constructor", "number", "number", "number")
+	posX, posY = math.floor(posX), math.floor(posY)
+	width, height = math.floor(width), math.floor(height)
 	
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, text, 1)

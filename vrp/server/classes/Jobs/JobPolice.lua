@@ -91,6 +91,9 @@ function JobPolice:jailPlayer(player, policeman)
 	
 	-- Tell the other policemen that we jailed someone
 	self:sendMessage("%s wurde soeben von %s verhaftet!", getPlayerName(player), getPlayerName(policeman))
+
+	-- Show the countdown GUI
+	player:triggerEvent("jailCountdownStart", jailTime)
 end
 
 function JobPolice:playerDamage(attacker, attackerWeapon, bodypart, loss)
