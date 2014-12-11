@@ -39,7 +39,7 @@ function GUIEdit:drawThis()
 				self:getColor(), self:getFontSize(), self:getFont(), "left", "center", true, false, false, false)
 	
 	if self.m_DrawCursor then
-		local textBeforeCursor = text:sub(0, self.m_Caret)
+		local textBeforeCursor = utfSub(text, 0, self.m_Caret)
 		dxDrawRectangle(self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN + dxGetTextWidth(textBeforeCursor, self:getFontSize(), self:getFont()), self.m_AbsoluteY + 6, 2, self.m_Height - 12, Color.Black)
 	end
 
@@ -49,7 +49,7 @@ end
 function GUIEdit:onInternalEditInput(caret)
 	-- Todo: Remove the following condition as soon as guiGetCaretIndex is backported
 	if not caret then
-		self.m_Caret = #self.m_Text
+		self.m_Caret = utfLen(self.m_Text)
 		return
 	end 
 	self.m_Caret = caret
@@ -74,7 +74,7 @@ function GUIEdit:onInternalLooseFocus()
 end
 
 function GUIEdit:setCaretPosition(pos)
-	self.m_Caret = math.min(math.max(pos, 0), #self.m_Text+1)
+	self.m_Caret = math.min(math.max(pos, 0), utfLen(self.m_Text)+1)
 	self:anyChange()
 	return self
 end
@@ -109,11 +109,11 @@ function GUIEdit:getIndexFromPixel(posX, posY)
 	local size = self:getFontSize()
 	local font = self:getFont()
 	
-	for i = 0, #text do
-		local extent = dxGetTextWidth(text:sub(0, i), size, font)
+	for i = 0, utfLen(text) do
+		local extent = dxGetTextWidth(utfSub(text, 0, i), size, font)
 		if extent > posX then
 			return i-1
 		end
 	end
-	return #text
+	return utfLen(text)
 end

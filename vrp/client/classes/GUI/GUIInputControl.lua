@@ -18,7 +18,7 @@ end
 addEventHandler("onClientResourceStop", resourceRoot, function() guiSetInputEnabled(false) end)
 
 function GUIInputControl.setFocus(edit, caret)
-	if GUIInputControl.ms_CurrentInputFocus and not edit then
+	if GUIInputControl.ms_CurrentInputFocus and edit ~= GUIInputControl.ms_CurrentInputFocus then
 		local e = GUIInputControl.ms_CurrentInputFocus
 		e:onInternalLooseFocus()
 		if e.onLooseFocus then
@@ -33,7 +33,7 @@ function GUIInputControl.setFocus(edit, caret)
 		if caret then
 			guiEditSetCaretIndex(GUIInputControl.ms_Edit, caret)
 		else
-			guiEditSetCaretIndex(GUIInputControl.ms_Edit, #edit:getText())
+			guiEditSetCaretIndex(GUIInputControl.ms_Edit, utfLen(edit:getText()))
 		end
 		
 		oldCaretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
@@ -80,6 +80,38 @@ addEventHandler("onClientPreRender", root,
 			if oldCaretIndex ~= caretIndex then
 				GUIInputControl.ms_CurrentInputFocus:setCaretPosition(caretIndex)
 				oldCaretIndex = caretIndex
+			end
+		end
+	end
+)
+
+local function getNextEditbox(baseElement, startElement)
+	local children = baseElement:getChildren()
+	local idx = table.find(children, startElement)
+	
+	for i = idx+1, #children do
+		if instanceof(children[i], GUIEdit, true) then
+			return children[i]
+		end
+	end
+	for i = 0, idx-1 do
+		if instanceof(children[i], GUIEdit, true) then
+			return children[i]
+		end
+	end
+	
+	return false
+end
+
+addEventHandler("onClientKey", root,
+	function(button, pressed)
+		if button == "tab" and pressed then
+			local current = GUIInputControl.ms_CurrentInputFocus
+			if current then
+				local element = getNextEditbox(current:getParent(), current)
+				if element then
+					GUIInputControl.setFocus(element, 0)
+				end
 			end
 		end
 	end
