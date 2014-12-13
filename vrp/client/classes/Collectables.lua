@@ -4,7 +4,7 @@
 -- *  FILE:        client/classes/Collectables.lua
 -- *  PURPOSE:     Collectables client-side class
 -- *
--- ****************************************************************************Collectables = {}
+-- ****************************************************************************
 Collectables = inherit(Singleton)
 
 addEvent("reciveCollectables", true)

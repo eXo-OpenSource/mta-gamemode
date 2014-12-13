@@ -21,13 +21,15 @@ end
 
 function AmmuNation:buyWeapon(id)
 	if self.m_Players[client] then
-		if client:getMoney() >= AmmuNationInfo[id].Weapon then
-			giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
-			client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
-			client:sendMessage(_("Waffe erhalten.",client),0,125,0)
-			return
+		if AmmuNationInfo[id].MinLevel <= player:getWeaponLevel() then
+			if client:getMoney() >= AmmuNationInfo[id].Weapon then
+				giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
+				client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
+				client:sendMessage(_("Waffe erhalten.",client),0,125,0)
+				return
+			end
+			client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
 		end
-		client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
 	end
 end
 
@@ -52,7 +54,7 @@ function AmmuNation:addEnter(x,y,z,dimension)
 	addEventHandler ("onMarkerHit",instance:getEnterMarker(),
 		function(hitElement,matchingDimension)
 			if matchingDimension and not isPedInVehicle(hitElement) then
-				outputChatBox(("Welcome %s, in Ammu Nation \"%s\""):format(getPlayerName(hitElement),self.m_Name),hitElement,255,255,255,false)
+				outputChatBox(("Willkommen %s, im Ammu Nation \"%s\""):format(getPlayerName(hitElement),self.m_Name),hitElement,255,255,255,false)
 				hitElement:triggerEvent("AmmuNation:setDimension")
 				if not self.m_Players[hitElement] then
 					self.m_Players[hitElement] = true

@@ -29,7 +29,7 @@ function Nametag:constructor()
 	
 	addEventHandler("onClientRender",root,self.m_Draw)
 	addEventHandler("reciveNametagBuffs",root,self.m_ReciveBuffs)
-
+	
 end
 
 function Nametag:reciveBuffs(buffs)
@@ -55,6 +55,7 @@ function Nametag:draw()
 			self:onUnknownSpotted(player)
 		end
 		if player ~= localPlayer or self.m_IsModifying then
+			setPlayerNametagShowing(player,false)
 			local px,py,pz = getPedBonePosition(player,self.m_Bone)
 			pz = pz + 0.3
 			local x,y = getScreenFromWorldPosition(px,py,pz)

@@ -73,29 +73,35 @@ Crime = {
 
 AmmuNationInfo = {
 	
-	[30] = {
+	[30] = { -- AK-47
 		Magazine = {price=30,amount=30},
 		Weapon = 1850,
+		MinLevel = 7,
 	},	
-	[31] = {
+	[31] = { -- M4A1
 		Magazine = {price=60,amount=50},
 		Weapon = 2500,
+		MinLevel = 7,
 	},	
-	[29] = {
+	[29] = { -- MP5
 		Magazine = {price=40,amount=30},
 		Weapon = 1000,
+		MinLevel = 6,
 	},
-	[25] = {
+	[25] = { -- Shotgun
 		Magazine = {price=2,amount=1},
 		Weapon = 1500,
+		MinLevel = 5,
 	},
-	[22] = {
+	[22] = { -- Pistol
 		Magazine = {price=15,amount=17},
 		Weapon = 450,
+		MinLevel = 3,
 	},	
-	[23] = {
+	[23] = { -- Silenced Pistol
 		Magazine = {price=15,amount=17},
 		Weapon = 600,
+		MinLevel = 3,
 	},	
 }
 

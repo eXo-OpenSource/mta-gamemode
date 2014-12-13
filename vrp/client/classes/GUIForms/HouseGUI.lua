@@ -30,6 +30,10 @@ function HouseGUI:constructor()
 	self.m_Leave:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Leave.onLeftClick = bind(self.leaveHouse,self)		
 	
+	self.m_Break = GUIButton:new(30, 325, self.m_Width-60, 35, _("Einbrechen"), self)
+	self.m_Break:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
+	self.m_Break.onLeftClick = bind(self.breakHouse,self)	
+	
 	self.m_RentPrice = "/"
 	self.m_Owner = "/"
 	self.m_Price = "/"
@@ -89,7 +93,7 @@ function HouseGUI:onUnrent()
 end
 
 function HouseGUI:breakHouse()
-
+	
 end
 
 function HouseGUI:houseChange()
@@ -98,21 +102,14 @@ function HouseGUI:houseChange()
 	self.m_LabelRentPrice:setText(_("Mietpreis: $ %s",self.m_RentPrice))
 end
 
-function HouseGUI:show(owner,price,rentprice)
+function HouseGUI:show(owner,price,rentprice,isValidRob)
 	self.m_RentPrice = rentprice
 	self.m_Price = price
 	self.m_Owner = owner
 	self:houseChange()
 	self:setVisible(true)
+	self.m_Break:setVisible(isValidRob)
 	
-	if localPlayer:getGroupName() then
-		if self.m_Break then
-			self.m_Break:destructor()
-		end
-		self.m_Break = GUIButton:new(30, 325, self.m_Width-60, 35, _("Einbrechen"), self)
-		self.m_Break:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
-		self.m_Break.onLeftClick = bind(self.breakHouse,self)			
-	end
 end
 
 function HouseGUI:hide()

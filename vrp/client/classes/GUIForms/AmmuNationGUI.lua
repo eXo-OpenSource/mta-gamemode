@@ -13,7 +13,7 @@ function AmmuNationGUI:constructor()
 	GUIForm.constructor(self,150,200,400,200)
 	
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Ammu-Nation", true, false, self)
-	self.m_Label = GUILabel:new(30, 45, 300, 300, _("Waffe : %s",AmmuNationGUI.INFO[self.m_Selection].NAME), self)
+	self.m_Label = GUILabel:new(30, 45, 300, 300, _("Waffe : %s\nBenoetigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel), self)
 	self.m_Label:setFont(VRPFont(24))
 	self.m_BuyMagazine = GUIButton:new(30, 90, self.m_Width-60, 35, _("Magazin kaufen ( $ %i )",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Magazine.price), self)
 	self.m_BuyMagazine:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)	
@@ -86,7 +86,7 @@ function AmmuNationGUI:onKey(key,state)
 			return
 		end
 		self.m_Selection = math.max(math.min(self.m_Selection,#AmmuNationGUI.INFO),1)
-		self.m_Label:setText(_("Waffe : %s",AmmuNationGUI.INFO[self.m_Selection].NAME))
+		self.m_Label:setText(_("Waffe : %s\nBenoetigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel))
 		self.m_BuyMagazine:setText(_("Magazin kaufen ( $ %i )",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Magazine.price))
 		self.m_BuyWeapon:setText(_("Waffe kaufen ( $ %i )",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Weapon))
 		self:updateMatrix()
@@ -121,7 +121,7 @@ AmmuNationGUI.INFO = {
 		ID = 30
 	},
 	[2] = {
-		NAME = "M4A1(--S)",
+		NAME = "M4A1",
 		WEAPON = createObject(356,308.299,-144.6,1000.7),
 		MATRIX = {308.141602,-143.443695,1000.868408,311.496613,-242.906876,991.079712},
 		ID = 31

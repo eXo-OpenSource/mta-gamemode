@@ -31,14 +31,17 @@ function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStat
 
 end
 
-function House:getKeys()
-	return self.m_Keys
-end
-
 function House:onMarkerHit(hitElement,matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		hitElement:triggerEvent("showHouseMenu",self.m_Owner,self.m_Price,self.m_RentPrice)
 	end
+end
+
+function House:isValidRob(player)
+	if self.m_Keys[player:getId()] or self.m_Owner == player:getId() then
+		return false
+	end
+	return true
 end
 
 function House:onColShapeLeave(hitElement,matchingDimension)
@@ -52,9 +55,9 @@ function House:isValidToEnter(playerName)
 end
 
 function House:rentHouse(player)
-	if not self.m_Keys[getPlayerName(player)] then
+	if not self.m_Keys[player.m_Id] then
 		if self.m_Owner then
-			self.m_Keys[getPlayerName(player)] = getRealTime().timestamp
+			self.m_Keys[player.m_Id] = getRealTime().timestamp
 			player:sendMessage("Sie wurden erfolgreich eingemietet.",0,255,0)
 		else
 			player:sendMessage("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentuemer!",255,0,0)
@@ -73,10 +76,9 @@ function House:sellHouse(player)
 	self.m_Owner = false
 end
 
-function House:unrentHouse(playerName)
-	if self.m_Keys[playerName] then
-		self.m_Keys[playerName] = nil
-		local player = getPlayerFromName(playerName)
+function House:unrentHouse(player)
+	if self.m_Keys[player:getId()] then
+		self.m_Keys[player:getId()] = nil
 		if player and isElement(player) then -- Jusonex: Andersherum, da sonst Bad argument @ isElement
 			player:sendMessage("Sie wurden ausgemietet!",255,0,0)
 		end
@@ -84,7 +86,7 @@ function House:unrentHouse(playerName)
 end
 
 function House:enterHouse(player)
-	if self.m_Keys[getPlayerName(player)] or not self.m_LockStatus or player:getId() == self.m_Owner then
+	if self.m_Keys[player:getId()] or not self.m_LockStatus or player:getId() == self.m_Owner then
 		local x, y, z, int = unpack(House.interiorTable[self.m_InteriorID])
 		setElementPosition(player, x, y, z)
 		setElementInterior(player, int)
@@ -139,7 +141,7 @@ function House:onPickupHit(hitElement)
 	if getElementType(hitElement) == "player" and (getElementDimension(hitElement) == getElementDimension(source)) then
 		hitElement.visitingHouse = self.m_Id
 		--self:enterHouse(hitElement)
-		hitElement:triggerEvent("showHouseMenu",self.m_Owner,self.m_Price,self.m_RentPrice)
+		hitElement:triggerEvent("showHouseMenu",self.m_Owner,self.m_Price,self.m_RentPrice,self:isValidRob(hitElement))
 	end
 end
 
@@ -160,7 +162,7 @@ end
 function House:commandUnrentHouse(player)
 	local x, y, z = getElementPosition(player)
 	if getDistanceBetweenPoints3D(self.m_Pos[1], self.m_Pos[2], self.m_Pos[3], x, y, z) < 2 then
-		self:unrentHouse(getPlayerName(player))
+		self:unrentHouse(player)
 	end		
 end
 

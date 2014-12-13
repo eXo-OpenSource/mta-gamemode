@@ -35,9 +35,9 @@ function HUDUI:draw()
 		return
 	end
 	
-	dxDrawRectangle(screenWidth-0.195*screenWidth,0.0425*screenHeight,0.195*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
-	dxDrawText ("$",screenWidth-0.169*screenWidth,0.0625*screenHeight,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
-	dxDrawText (getPlayerMoney(localPlayer),screenWidth-0.143*screenWidth,0.0625*screenHeight,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
+	dxDrawRectangle(screenWidth-0.195*screenWidth,0.04*screenHeight,0.195*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
+	dxDrawText ("$",screenWidth-0.169*screenWidth,0.06*screenHeight,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
+	dxDrawText (getPlayerMoney(localPlayer),screenWidth-0.14*screenWidth,0.0625*screenHeight,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
 	
 	local munitionWindowActive = true
 	
@@ -53,7 +53,7 @@ function HUDUI:draw()
 	
 	-- Weapon-Window
 	local addX = math.floor(interpolateBetween(0,0,0,0.156*screenWidth,0,0,self.m_MunitionProgress,"OutElastic"))
-	dxDrawRectangle(screenWidth-(0.25*screenWidth+addX),0.0465*screenHeight,0.05*screenWidth,0.09*screenHeight,tocolor(0,0,0,150))
+	dxDrawRectangle(screenWidth-(0.25*screenWidth+addX),0.04*screenHeight,0.05*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
 	-- images became changed later
 	if munitionWindowActive then
 		dxDrawImage(math.floor(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2)),math.floor(0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2)),math.floor(0.033*screenWidth),math.floor(0.059*screenHeight),"files/images/Weapons/gun.png")
@@ -62,12 +62,12 @@ function HUDUI:draw()
 	end
 	
 	-- Munition-Window
-	local addY = interpolateBetween(0,0,0,0.134259*screenHeight,0,0,self.m_MunitionProgress,"Linear")
-	dxDrawRectangle(screenWidth-0.351*screenWidth,-0.09*screenHeight+addY,0.153*screenWidth,0.09*screenHeight,tocolor(0,0,0,150))
+	local addY = interpolateBetween(0,0,0,0.13*screenHeight,0,0,self.m_MunitionProgress,"Linear")
+	dxDrawRectangle(screenWidth-0.351*screenWidth,-0.09*screenHeight+addY,0.153*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
 	local inClip = getPedAmmoInClip(localPlayer)
 	local totalAmmo = getPedTotalAmmo(localPlayer)
 	local sMunition = ("%d - %d"):format(inClip,totalAmmo-inClip)
-	dxDrawText(sMunition,screenWidth-0.276*screenWidth-(dxGetTextWidth(sMunition,1,self.m_Font)/2),-85+addY,0.153*screenWidth,0.09*screenHeight,Color.White,1,self.m_Font)
+	dxDrawText(sMunition,screenWidth-0.276*screenWidth-(dxGetTextWidth(sMunition,1,self.m_Font)/2),-85+addY,0.153*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
 	
 	-- Karmabar
 	local karma = localPlayer:getKarma() or 0
