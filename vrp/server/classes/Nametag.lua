@@ -6,22 +6,9 @@ function Nametag:constructor()
 	self.m_PlayerBuffs = {}
 	
 	addEventHandler("requestNametagBuffs", root, bind(self.sendPlayerBuffs,self))
-	
-	addCommandHandler("party",
-		function(player,cmd,arg)
-			player:addBuff("test",math.random(100)) -- element, string, int
-		end
-	)
-	
-	addCommandHandler("stopparty",
-		function(player)
-			player:removeBuff("test")
-		end
-	)
 end
 
 function Nametag:addBuff(player,buff,amount)
-	
 	if not self.m_PlayerBuffs[getPlayerName(player)] then
 		self.m_PlayerBuffs[getPlayerName(player)] = {}
 	end
@@ -59,8 +46,4 @@ function Nametag:sendPlayerBuffs(player)
 		client = player
 	end
 	triggerClientEvent(client,"reciveNametagBuffs",client,self.m_PlayerBuffs)
-end
-
-function Nametag:destructor()
-
 end

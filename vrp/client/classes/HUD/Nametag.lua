@@ -60,7 +60,7 @@ function Nametag:draw()
 			pz = pz + 0.3
 			local x,y = getScreenFromWorldPosition(px,py,pz)
 			local lx,ly,lz = getElementPosition(localPlayer)
-			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,true,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < 30 or getPedTarget(localPlayer) == player) then
+			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,false,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < 30 or getPedTarget(localPlayer) == player) then
 				local name = getPlayerName(player):gsub("#%d%d%d%d%d%d%d%d","")
 				dxDrawText(name,x-(dxGetTextWidth(name,2.1,"default-bold")/2),y,0,0,Color.Black,2.1,"default-bold")
 				dxDrawText(name,x-(dxGetTextWidth(name,2,"default-bold")/2),y,0,0,Color.White,2,"default-bold")

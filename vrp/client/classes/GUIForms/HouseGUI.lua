@@ -34,6 +34,10 @@ function HouseGUI:constructor()
 	self.m_Break:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Break.onLeftClick = bind(self.breakHouse,self)	
 	
+	self.m_Close = GUIButton:new(30, 450, self.m_Width-60, 35, _("Schliessen"), self)
+	self.m_Close:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
+	self.m_Close.onLeftClick = function () self:hide() end		
+	
 	self.m_RentPrice = "/"
 	self.m_Owner = "/"
 	self.m_Price = "/"
@@ -58,6 +62,7 @@ function HouseGUI:constructor()
 	addEventHandler("houseEnter", root,
 		function()
 			self.m_InHouse = true
+			self:hide()
 		end
 	)
 	
@@ -93,7 +98,7 @@ function HouseGUI:onUnrent()
 end
 
 function HouseGUI:breakHouse()
-	
+	triggerServerEvent("breakHouse",root)
 end
 
 function HouseGUI:houseChange()

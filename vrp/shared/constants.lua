@@ -69,6 +69,7 @@ Crime = {
 	JailCellsOpen = {id = 6, text = "Beihilfe zum Massengefängnisausbruch", maxwanted = 6, maxdistance = 3000},
 	JailBreak = {id = 7, text = "Gefängnisausbruch", maxwanted = 4, maxdistance = 3000},
 	PlacingBomb = {id = 8, text = "Legen einer Bombe", maxwanted = 6, maxdistance = 5000},
+	HouseRob = {id = 9, text = "Einbruch", maxwanted = 3, maxdistance = math.huge},
 }
 
 AmmuNationInfo = {

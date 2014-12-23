@@ -1,11 +1,16 @@
 House = inherit(Object)
 
+local ROB_DELAY = 3600
+local ROB_NEEDED_TIME = 1000*60*4
+
 function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStatus, rentPrice, elements)
 
 	if owner == 0 then
 		owner = false 
 	end
 	
+	self.m_CurrentRobber = false
+	self.m_LastRobbed = 0
 	self.m_PlayersInterior = {}
 	self.m_Price = price
 	self.m_RentPrice = rentPrice
@@ -13,22 +18,58 @@ function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStat
 	self.m_Pos = {x, y, z}
 	self.m_Keys = fromJSON(keys)
 	self.m_InteriorID = interiorID
-	self.m_Owner = owner or false
+	self.m_Owner = owner
 	self.m_Id = id
 	self.m_Elements = fromJSON(elements or "")
 	self.m_Pickup = createPickup(x, y, z, 3, 1273, 10, math.huge)
-	local ix, iy, iz, iint = unpack(House.interiorTable[self.m_InteriorID])
+	local ix, iy, iz, int = unpack(House.interiorTable[self.m_InteriorID])
 	self.m_HouseMarker = createMarker(ix,iy,iz-1,"cylinder",1.2,255,255,255,125)
 	setElementDimension(self.m_HouseMarker,self.m_Id)
-	setElementInterior(self.m_HouseMarker,iint)
+	setElementInterior(self.m_HouseMarker,int)
 	self.m_ColShape = createColSphere(x,y,z,1)
 	
 	--addEventHandler ("onPlayerJoin",root, bind(self.checkContractMonthly, self))
-	addEventHandler("onPlayerQuit", root, bind(self.onPlayerQuit, self))
+	addEventHandler("onPlayerQuit", root, bind(self.onPlayerFade, self))
+	addEventHandler("onPlayerWasted", root, bind(self.onPlayerFade, self))
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
 	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave,self))
 	addEventHandler("onMarkerHit", self.m_HouseMarker, bind(self.onMarkerHit,self))
 
+end
+
+function House:breakHouse(player)
+	if getRealTime().timestamp >= self.m_LastRobbed + ROB_DELAY then
+		if not HouseManager:getSingleton():isCharacterAllowedToRob(player) then
+			player:sendMessage("Sie haben vor kurzem schon ein Haus ausgeraubt!",125,0,0)
+			return
+		end
+		self.m_CurrentRobber = player
+		self.m_LastRobbed = getRealTime().timestamp
+		HouseManager:getSingleton():addCharacterToRoblist(player)
+		self:enterHouse(player)
+		player:reportCrime(Crime.HouseRob)
+		player:sendMessage("Halte die Stellung fuer %d Minuten!", 125, 0, 0, ROB_NEEDED_TIME/1000/60)
+		
+		setTimer(
+			function(unit)
+				local isRobSuccessfully = false 
+				
+				if unit and isElement(unit) and self.m_PlayersInterior[unit] then
+					isRobSuccessfully = true
+				end
+				if isRobSuccessfully then
+					local loot = math.floor(self.m_Price/20*(math.random(75,100)/100))
+					unit:giveMoney(loot)
+					unit:sendMessage("Du hast den Raub erfolgreich abgeschlossen! Dafuer erhaelst du $ %s.",0,125,0,loot)
+					self:leaveHouse(unit)
+				end
+				
+				self.m_CurrentRobber = false
+			end,
+			ROB_NEEDED_TIME,1,player)
+		return
+	end
+	player:sendMessage("Dieses Haus wurde erst vor kurzem ausgeraubt!",125,0,0)
 end
 
 function House:onMarkerHit(hitElement,matchingDimension)
@@ -38,7 +79,7 @@ function House:onMarkerHit(hitElement,matchingDimension)
 end
 
 function House:isValidRob(player)
-	if self.m_Keys[player:getId()] or self.m_Owner == player:getId() then
+	if self.m_Keys[player:getId()] or self.m_Owner == player:getId() or not player:getGroup() --[[ or not self.m_Owner]] then
 		return false
 	end
 	return true
@@ -55,9 +96,9 @@ function House:isValidToEnter(playerName)
 end
 
 function House:rentHouse(player)
-	if not self.m_Keys[player.m_Id] then
-		if self.m_Owner then
-			self.m_Keys[player.m_Id] = getRealTime().timestamp
+	if not self.m_Keys[player:getId()] then
+		if self.m_Owner and player:getId() ~= self.m_Owner then
+			self.m_Keys[player:getId()] = getRealTime().timestamp
 			player:sendMessage("Sie wurden erfolgreich eingemietet.",0,255,0)
 		else
 			player:sendMessage("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentuemer!",255,0,0)
@@ -76,6 +117,13 @@ function House:sellHouse(player)
 	self.m_Owner = false
 end
 
+function House:onPickupHit(hitElement)
+	if getElementType(hitElement) == "player" and (getElementDimension(hitElement) == getElementDimension(source)) then
+		hitElement.visitingHouse = self.m_Id
+		hitElement:triggerEvent("showHouseMenu",self.m_Owner,self.m_Price,self.m_RentPrice,self:isValidRob(hitElement))
+	end
+end
+
 function House:unrentHouse(player)
 	if self.m_Keys[player:getId()] then
 		self.m_Keys[player:getId()] = nil
@@ -85,24 +133,34 @@ function House:unrentHouse(player)
 	end
 end
 
-function House:enterHouse(player)
-	if self.m_Keys[player:getId()] or not self.m_LockStatus or player:getId() == self.m_Owner then
-		local x, y, z, int = unpack(House.interiorTable[self.m_InteriorID])
-		setElementPosition(player, x, y, z)
-		setElementInterior(player, int)
-		setElementDimension(player, self.m_Id)
-		self.m_PlayersInterior[player] = true
-		player:triggerEvent("houseEnter")
+function House:enterHouseTry(player)
+	if self.m_Keys[player:getId()] or not self.m_LockStatus or player:getId() == self.m_Owner or ( self.m_CurrentRobber and player:getJob() == 4 ) then
+		self:enterHouse(player)
 	end
+end
+
+function House:enterHouse(player)
+	local x, y, z, int = unpack(House.interiorTable[self.m_InteriorID])
+	setElementPosition(player, x, y, z)
+	setElementInterior(player, int)
+	setElementDimension(player, self.m_Id)
+	self.m_PlayersInterior[player] = true
+	player:triggerEvent("houseEnter")
 end
 
 function House:removePlayerFromList(player)
 	if self.m_PlayersInterior[player] then
 		self.m_PlayersInterior[player] = nil
+		if player == self.m_CurrentRobber then
+			self.m_CurrentRobber = false
+		end
 	end
 end
 
 function House:leaveHouse(player)
+	if not self.m_PlayersInterior[player] then
+		return
+	end
 	self:removePlayerFromList(player)
 	setElementPosition(player, unpack(self.m_Pos))
 	setElementInterior(player, 0)
@@ -110,12 +168,8 @@ function House:leaveHouse(player)
 	player:triggerEvent("houseLeave")
 end
 
-function House:onPlayerQuit(player)
-	self:removePlayerFromList(player)
-	
-	--[[
-		...
-	]]
+function House:onPlayerFade()
+	self:removePlayerFromList(source)
 end
 
 function House:buyHouse(player)
@@ -123,47 +177,6 @@ function House:buyHouse(player)
 		takePlayerMoney(player, self.m_Price)
 		self.m_Owner = player:getId()
 	end
-end
-
--- // unimplemented features
---[[function House:getSecondsForNewContract () return 60*60*24*30 end
-
-function House:checkContractMonthly (playerName)
-	localplayer= getPlayerFromName(playerName) or false
-	if self.m_Keys[playerName] then
-		if getRealTime().timestamp >= self.m_Keys[playerName] + self:getSecondsForNewContract() then
-			outputChatBox ("Vertrag abgelaufen !")
-		end
-	end
-end]]
-
-function House:onPickupHit(hitElement)
-	if getElementType(hitElement) == "player" and (getElementDimension(hitElement) == getElementDimension(source)) then
-		hitElement.visitingHouse = self.m_Id
-		--self:enterHouse(hitElement)
-		hitElement:triggerEvent("showHouseMenu",self.m_Owner,self.m_Price,self.m_RentPrice,self:isValidRob(hitElement))
-	end
-end
-
-function House:commandBuyHouse(player)
-	local x, y, z = getElementPosition(player)
-	if getDistanceBetweenPoints3D(self.m_Pos[1], self.m_Pos[2], self.m_Pos[3], x, y, z) < 2 then
-		self:buyHouse(player)
-	end	
-end
-
-function House:commandRentHouse(player)
-	local x, y, z = getElementPosition(player)
-	if getDistanceBetweenPoints3D(self.m_Pos[1], self.m_Pos[2], self.m_Pos[3], x, y, z) < 2 then
-		self:rentHouse(player)
-	end	
-end
-
-function House:commandUnrentHouse(player)
-	local x, y, z = getElementPosition(player)
-	if getDistanceBetweenPoints3D(self.m_Pos[1], self.m_Pos[2], self.m_Pos[3], x, y, z) < 2 then
-		self:unrentHouse(player)
-	end		
 end
 
 House.interiorTable = {

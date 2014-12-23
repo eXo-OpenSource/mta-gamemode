@@ -2,7 +2,11 @@ HouseManager = inherit(Singleton)
 
 addRemoteEvents{"enterHouse","leaveHouse","buyHouse","rentHouse","unrentHouse","breakHouse"}
 
+local ROB_DELAY = 1000*60*15
+
 function HouseManager:constructor()
+	
+	self.m_RobPlayers = {}
 	self.m_Houses = {}
 	
 	outputServerLog("Loading houses...")
@@ -21,6 +25,15 @@ function HouseManager:constructor()
 	
 end
 
+function HouseManager:addCharacterToRoblist(player)
+	self.m_RobPlayers[player:getId()] = true
+	setTimer ( function (id) self.m_RobPlayers[id] = nil end, ROB_DELAY, 1, player:getId() )
+end
+
+function HouseManager:isCharacterAllowedToRob (player)
+	return self.m_RobPlayers[player:getId()] == nil and true or false
+end
+
 function HouseManager:breakHouse()
 	if not client then return end
 	self.m_Houses[client.visitingHouse]:breakHouse(client)
@@ -28,7 +41,7 @@ end
 
 function HouseManager:enterHouse()
 	if not client then return end
-	self.m_Houses[client.visitingHouse]:enterHouse(client)
+	self.m_Houses[client.visitingHouse]:enterHouseTry(client)
 end
 
 function HouseManager:leaveHouse()
@@ -48,7 +61,7 @@ end
 
 function HouseManager:unrentHouse()
 	if not client then return end
-	self.m_Houses[client.visitingHouse]:unrentHouse(getPlayerName(client))
+	self.m_Houses[client.visitingHouse]:unrentHouse(client)
 end
 
 function HouseManager:newHouse(x, y, z, interiorID, price)
