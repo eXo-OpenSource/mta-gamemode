@@ -19,6 +19,8 @@ function JobTrashman:constructor()
 	
 	addEvent("trashcanReset", true)
 	addEventHandler("trashcanReset", root, bind(JobTrashman.reset, self))
+
+	HelpTextManager:getSingleton():addText("Jobs", _"Müllmann", HelpTexts.Jobs.Trashman)
 end
 
 function JobTrashman:start()
@@ -41,15 +43,7 @@ function JobTrashman:start()
 	self:reset()
 	
 	-- Show text in help menu
-	HelpBar:getSingleton():addText("Job: Müllmann", [[
-		Der Müllmann ist ein voll krasser Job. Ollum.
-		Diese Redensweise ist komisch und sollte nicht geduldet werden.
-		Ich schreibe eine Menge Scheiße? Warum?
-		Weil ich es kann!
-		Jetzt fällt mir nichts mehr ein, drum fang ich gleich an zu schrei'n!
-		Das war es auch schon.
-		Hiermit verabschiede ich mich!
-	]])
+	HelpBar:getSingleton():addText("Job: Müllmann", HelpTexts.Jobs.Trashman)
 end
 
 function JobTrashman:onInfo()
@@ -58,7 +52,7 @@ function JobTrashman:onInfo()
 	outputChatBox(_"#0000FF[Trashman]#FFFFFF Bei dieser Stelle gibst du ihn ab.",255,255,255,true)
 	-- ### 1
 	setTimer(function()
-	setCameraMatrix(2110.6320800781,-2089.990234375,14.683099746704,2111.5622558594,-2089.6557617188,14.532037734985,0,70)
+	setCameraMatrix(2110.6320800781,-2089.9690234375,14.683099746704,2111.5622558594,-2089.6557617188,14.532037734985,0,70)
 	outputChatBox(_"#0000FF[Trashman]#FFFFFF Ein Fahrzeug bekommst du von hier.",255,255,255,true)
 	end, 5000, 1)
 	-- ### 2

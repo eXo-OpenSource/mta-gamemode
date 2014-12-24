@@ -133,7 +133,7 @@ function DatabasePlayer:getId()			return self.m_Id		end
 function DatabasePlayer:isLoggedIn()	return self.m_Id ~= -1	end
 function DatabasePlayer:isGuest()		return self.m_IsGuest   end
 function DatabasePlayer:getAccount()	return self.m_Account 	end
-function DatabasePlayer:getRank()		return self.m_Account:getRank() end
+function DatabasePlayer:getRank()		return self.m_Account and self.m_Account:getRank() or RANK.User end
 function DatabasePlayer:getMoney()		return self.m_Money		end
 function DatabasePlayer:getXP()			return self.m_XP		end
 function DatabasePlayer:getKarma()		return self.m_Karma		end

@@ -139,7 +139,7 @@ function LoginGUI:constructor()
 	self:showLogin()
 	
 	-- Show some help
-	HelpBar:getSingleton():addText("Login/Registration", HelpTexts.LoginRegister, false)
+	HelpBar:getSingleton():addText("Login/Registration", HelpTexts.General.LoginRegister, false)
 end
 
 function LoginGUI:destructor()

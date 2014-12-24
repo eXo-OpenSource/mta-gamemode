@@ -21,6 +21,10 @@ function Singleton:new(...)
 	return inst
 end
 
+function Singleton:isInstantiated()
+	return self.ms_Instance ~= nil
+end
+
 function Singleton:virtual_destructor()
 	for k, v in pairs(super(self)) do
 		v.ms_Instance = nil

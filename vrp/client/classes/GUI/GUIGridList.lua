@@ -30,6 +30,18 @@ function GUIGridList:addItem(...)
 	return listItem
 end
 
+function GUIGridList:addItemNoClick(...)
+	local listItem = GUIGridListNoClickItem:new(0, #self:getItems() * ITEM_HEIGHT, self.m_Width, ITEM_HEIGHT, self.m_ScrollArea)
+	for k, arg in ipairs({...}) do
+		listItem:setColumnText(k, arg)
+	end
+	
+	-- Resize the document
+	self.m_ScrollArea:resize(self.m_Width, 60 + #self:getItems() * ITEM_HEIGHT)
+	
+	return listItem
+end
+
 function GUIGridList:removeItem(columnIndex)
 	delete(self.m_ScrollArea.m_Children[columnIndex])
 	self:anyChange()

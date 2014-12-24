@@ -8,6 +8,10 @@
 GUIGridListNoClickItem = inherit(GUIGridListItem)
 inherit(GUIColorable, GUIGridListNoClickItem)
 
+function GUIGridListNoClickItem:constructor(...)
+	GUIGridListItem.constructor(self, ...)
+end
+
 function GUIGridListNoClickItem:drawThis()
 	dxSetBlendMode("modulate_add")
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_Color)

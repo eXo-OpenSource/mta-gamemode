@@ -27,6 +27,7 @@ function Core:ready()
 	triggerServerEvent("playerReady", root)
 
 	TranslationManager:new()
+	HelpTextManager:new()
 	MTAFixes:new()
 	ClickHandler:new()
 	CustomModelManager:new()
@@ -40,8 +41,6 @@ function Core:ready()
 	VehicleShop.initializeAll()
 	VehicleGarages:new()
 	GasStationGUI:new()
-	
-	HelpTexts.translateAll()
 end
 
 function Core:afterLogin()
@@ -78,7 +77,7 @@ function Core:afterLogin()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	
-	ScoreboardGUI:new():close()
+	ScoreboardGUI:getSingleton():close()
 	bindKey("tab", "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
 	bindKey("tab", "up", function() ScoreboardGUI:getSingleton():setVisible(false) end)
 	
