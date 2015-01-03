@@ -14,6 +14,7 @@ function ClickHandler:constructor()
 		vehicle = VehicleMouseMenu;
 	}
 	self.m_ClickInfo = false
+	self.m_DrawCursor = false
 	
 	addEventHandler("onClientClick", root,
 		function(button, state, absoluteX, absoluteY, worldX, worldY, worldZ, element)
@@ -22,11 +23,41 @@ function ClickHandler:constructor()
 			end
 		end
 	)
+
+	addEventHandler("onClientCursorMove", root,
+		function(cursorX, cursorY, absX, absY, worldX, worldY, worldZ)
+			local element = getElementBehindCursor(worldX, worldY, worldZ)
+			if not element then
+				self.m_DrawCursor = false
+				return
+			end
+
+			local clickInfo = {button == "left", absoluteX = absX, absoluteY = absY, element = element}
+
+			-- ClickHandler:dispatchClick returns true if there is a special mouse event available, false otherwise
+			self.m_DrawCursor = self:dispatchClick(clickInfo)
+		end
+	)
+
+	addEventHandler("onClientRender", root,
+		function()
+			if self.m_DrawCursor then
+				local cx, cy = getCursorPosition()
+				
+				if cx then
+					-- Convert relative coordinates to absolute ones
+					cx, cy = cx * screenWidth, cy * screenHeight
+					
+					dxDrawImage(cx-18/2, cy-32/2, 18, 32, "files/images/Mouse.png", 0, 0, 0, Color.White, true)
+				end
+			end
+		end
+	)
 end
 
 function ClickHandler:invokeClick()
 	if self.m_ClickInfo then
-		self:dispatchClick(self.m_ClickInfo)
+		self:dispatchClick(self.m_ClickInfo, true)
 	end
 	self.m_ClickInfo = false
 end
@@ -36,7 +67,7 @@ function ClickHandler:clearClickInfo()
 end
 
 function ClickHandler:checkModels(model, ...)
-	for k, v in ipairs({...}) do
+	for k, v in pairs({...}) do
 		if v == model then
 			return true
 		end
@@ -44,13 +75,13 @@ function ClickHandler:checkModels(model, ...)
 	return false
 end
 
-function ClickHandler:dispatchClick(clickInfo)
+function ClickHandler:dispatchClick(clickInfo, trigger)
 	-- Close all currently open menus
-	self:clearMouseMenus()
+	if trigger then self:clearMouseMenus() end
 	
 	local element, button = clickInfo.element, clickInfo.button
 	if not element or not isElement(element) then
-		return
+		return false
 	end
 	local elementType = getElementType(element)
 	local model = getElementModel(element)
@@ -60,35 +91,37 @@ function ClickHandler:dispatchClick(clickInfo)
 	
 	-- Phase 1: Check per-element handlers
 	if element == localPlayer then
-		SelfGUI:getSingleton():open()
-		return
+		if trigger then SelfGUI:getSingleton():open() end
+		return true
 	end
 	
 	-- Phase 2: Check for world items
 	if getElementData(element, "worlditem") then
-		triggerServerEvent("worldItemClick", element)
-		return
+		if trigger then triggerServerEvent("worldItemClick", element) end
+		return true
 	end
 	
 	-- Phase 3: Check models
 	if self:checkModels(model, 1775, 1776, 1209) then
-		self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-		return
+		if trigger then self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end
+		return true
 	end
 	if model == 2942 and range <= 8 then
-		BankGUI:getSingleton():show()
-		return
+		if trigger then BankGUI:getSingleton():show() end
+		return true
 	end
 	if model == 2886 then -- Keypad
-		triggerServerEvent("keypadClick", element)
-		return
+		if trigger then triggerServerEvent("keypadClick", element) end
+		return true
 	end
 	
 	-- Phase 4: Check element types
 	if self.m_Menu[elementType] then
-		self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-		return
+		if trigger then self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end
+		return true
 	end
+
+	return false
 end
 
 function ClickHandler:addMouseMenu(menu, element)

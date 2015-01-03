@@ -344,7 +344,8 @@
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Radiobutton.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Radiobutton_checked.png" onDemand="false"/>
-	<file src="files/images/GUI/Cursor.png" onDemand="false"/>
+	<file src="files/images/GUI/Cursor.png"/>
+	<file src="files/images/Mouse.png"/>
 	<vrpfile src="files/images/GUI/Editbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/RoundedCorner.png" onDemand="false"/>
 	
