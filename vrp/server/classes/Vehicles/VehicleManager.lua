@@ -13,7 +13,7 @@ function VehicleManager:constructor()
 	self.m_TemporaryVehicles = {}
 
 	-- Add events
-	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo", "vehicleUpgradeGarage"}
+	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire"}
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -25,6 +25,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleSell", root, bind(self.Event_vehicleSell, self))
 	addEventHandler("vehicleRequestInfo", root, bind(self.Event_vehicleRequestInfo, self))
 	addEventHandler("vehicleUpgradeGarage", root, bind(self.Event_vehicleUpgradeGarage, self))
+	addEventHandler("vehicleHotwire", root, bind(self.Event_vehicleHotwire, self))
 	
 	-- Prevent the engine from being turned on
 	addEventHandler("onVehicleEnter", root,
@@ -324,5 +325,23 @@ function VehicleManager:Event_vehicleUpgradeGarage()
 		end
 	else
 		client:sendError(_("Deine Garage ist bereits auf dem höchsten Level", client))
+	end
+end
+
+function VehicleManager:Event_vehicleHotwire()
+	if client:getInventory():hasItem(ITEM_HOTWIREKIT) then
+		client:sendInfoTimeout(_("Schließe kurz...", client), 20000)
+		client:reportCrime(Crime.Hotwire)
+		client:giveKarma(-0.1)
+		
+		setTimer(
+			function(source)
+				if isElement(source) then
+					source:setEngineState(true)
+				end
+			end, 20000, 1, source
+		)
+	else
+		client:sendWarning(_("Hierfür brauchst du ein Kurzschließkit!", client))
 	end
 end

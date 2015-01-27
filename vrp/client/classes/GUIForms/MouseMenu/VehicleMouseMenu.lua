@@ -46,6 +46,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 	end
 	
+	if localPlayer:isInVehicle() then
+		self:addItem(_"Kurzschließen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleHotwire", self:getElement())
+				end
+			end
+		)
+	end
+	
 	if localPlayer:getRank() >= RANK.Moderator then
 		self:addItem(_"Admin: Reparieren",
 			function()

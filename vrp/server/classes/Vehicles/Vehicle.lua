@@ -93,15 +93,20 @@ function Vehicle:toggleEngine(player)
 			return false
 		end
 		
-		setVehicleEngineState(self, state)
-		self.m_EngineState = state
-		
-		if getVehicleEngineState(self) then
-			player:triggerEvent("vehicleEngineStart")
-		end
+		self:setEngineState(state)
 		return true
 	end
 	return false
+end
+
+function Vehicle:setEngineState(state)
+	setVehicleEngineState(self, state)
+	self.m_EngineState = state
+	
+	local player = getVehicleOccupant(self, 0)
+	if player and getVehicleEngineState(self) then
+		player:triggerEvent("vehicleEngineStart")
+	end
 end
 
 function Vehicle:getEngineState()

@@ -97,7 +97,7 @@ GroupRank = {
 Crime = {
 	Kill = {id = 1, text = "Mord", maxwanted = 4, maxdistance = 1500},
 	Damage = {id = 2, text = "Körperverletzung", maxwanted = 2, maxdistance = 80},
-	Hotwire = {id = 3, text = "Fahrzeug kurzgeschlossen", maxwanted = 2},
+	Hotwire = {id = 3, text = "Fahrzeug kurzgeschlossen", maxwanted = 2, maxdistance = 400},
 	BankRobbery = {id = 4, text = "Banküberfall", maxwanted = 6, maxdistance = math.huge},
 	JailGateOpen = {id = 5, text = "Unberechtigtes Öffnen der Gefängnisschleuse", maxwanted = 3, maxdistance = 2000},
 	JailCellsOpen = {id = 6, text = "Beihilfe zum Massengefängnisausbruch", maxwanted = 6, maxdistance = 3000},
