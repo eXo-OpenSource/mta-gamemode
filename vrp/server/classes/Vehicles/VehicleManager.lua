@@ -13,7 +13,7 @@ function VehicleManager:constructor()
 	self.m_TemporaryVehicles = {}
 
 	-- Add events
-	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleRequestInfo", "vehicleUpgradeGarage"}
+	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo", "vehicleUpgradeGarage"}
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -22,6 +22,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleRepair", root, bind(self.Event_vehicleRepair, self))
 	addEventHandler("vehicleRespawn", root, bind(self.Event_vehicleRespawn, self))
 	addEventHandler("vehicleDelete", root, bind(self.Event_vehicleDelete, self))
+	addEventHandler("vehicleSell", root, bind(self.Event_vehicleSell, self))
 	addEventHandler("vehicleRequestInfo", root, bind(self.Event_vehicleRequestInfo, self))
 	addEventHandler("vehicleUpgradeGarage", root, bind(self.Event_vehicleUpgradeGarage, self))
 	
@@ -145,7 +146,7 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	if not price then return end
 	
 	if client:getMoney() < price then
-		client:sendMessage(_("You do not have enough money to buy this vehicle!", client), 255, 0, 0)
+		client:sendError(_("Du hast nicht genügend Geld!", client), 255, 0, 0)
 		return
 	end
 	
@@ -275,6 +276,28 @@ function VehicleManager:Event_vehicleDelete()
 		source:purge()
 	else
 		destroyElement(source)
+	end
+end
+
+function VehicleManager:Event_vehicleSell()
+	if not instanceof(source, PermanentVehicle, true) then return end
+	if source:getOwner() ~= client:getId() then	return end
+	
+	-- Search for price in vehicle shops table
+	local getPrice = function(model)
+		for shopName, shopInfo in pairs(VEHICLESHOPS) do
+			local price = shopInfo.Vehicles[model]
+			if price then
+				return price
+			end
+		end
+		return false
+	end
+	
+	local price = getPrice(source:getModel())
+	if price then
+		source:purge()
+		client:giveMoney(math.floor(price * 0.75))
 	end
 end
 

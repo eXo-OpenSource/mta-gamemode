@@ -47,6 +47,7 @@ HelpTexts = {
 
 			Administration:
 			Doneasty <doneasty@v-roleplay.net> (außerdem verantwortlich für Grafik und Design)
+			Sarcasm <sarcasm@v-roleplay.net> (außerdem verantwortlich für den Webauftritt)
 
 			Moderation:
 			Alex <alex@v-roleplay.net> (außerdem verantwortlich für Maps)

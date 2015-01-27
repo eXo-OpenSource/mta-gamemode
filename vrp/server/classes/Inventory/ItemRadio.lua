@@ -5,7 +5,7 @@
 -- *  PURPOSE:     3dRadio item class
 -- *
 -- ****************************************************************************
-ItemRadio = inherit(DroppableItem)
+ItemRadio = inherit(PlaceableItem)
 addEvent("itemRadioChangeURL", true)
 
 function ItemRadio:constructor()
@@ -20,7 +20,8 @@ function ItemRadio:use(inventory, player, slot)
 	local pos = player:getPosition()
 	--self.m_Radio = createObject(2226, pos.x+1, pos.y, pos.z, 0, 0, 0)
 	--setElementData(self.m_Radio, "Owner", player:getId())
-	local worldItem = inventory:dropItem(self, slot, player, player.position + Vector3(2, 0, 0))
+	
+	local worldItem = inventory:placeItem(self, slot, player, player.position + Vector3(2, 0, 0))
 	
 	addEventHandler("itemRadioChangeURL", worldItem:getObject(),
 		function(url)
@@ -28,10 +29,6 @@ function ItemRadio:use(inventory, player, slot)
 			triggerClientEvent("itemRadioChangeURL", source, url) -- send url twice so that we do not get in trouble with packet ordering
 		end
 	)
-end
-
-function ItemRadio:getModelId()
-	return 2226
 end
 
 function ItemRadio:onClick(player, worldItem)

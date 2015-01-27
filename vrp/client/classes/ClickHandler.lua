@@ -35,7 +35,7 @@ function ClickHandler:constructor()
 			local clickInfo = {button == "left", absoluteX = absX, absoluteY = absY, element = element}
 
 			-- ClickHandler:dispatchClick returns true if there is a special mouse event available, false otherwise
-			self.m_DrawCursor = self:dispatchClick(clickInfo)
+			--self.m_DrawCursor = self:dispatchClick(clickInfo) -- disable as long as it does not work properly
 		end
 	)
 

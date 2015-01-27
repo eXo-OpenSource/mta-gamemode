@@ -74,6 +74,22 @@ function table.removevalue(tab, value)
 	end
 end
 
+function table.copy(tab)
+	local temp = {}
+	for k, v in pairs(tab) do
+		temp[k] = type(v) == "table" and table.copy(tab) or v
+	end
+	return temp
+end
+
+function table.copyobject(tab)
+	local temp = {}
+	for k, v in pairs(tab) do
+		temp[k] = type(v) == "table" and table.copyobject(v) or v
+	end
+	return setmetatable(temp, table.copy(getmetatable(tab)))
+end
+
 _coroutine_resume = coroutine.resume
 function coroutine.resume(...)
 	local state,result = _coroutine_resume(...)

@@ -112,7 +112,7 @@
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/Item.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
-	<script src="server/classes/Inventory/DroppableItem.lua" type="server"/>
+	<script src="server/classes/Inventory/PlaceableItem.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemShops.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemHotwireKit.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
@@ -374,6 +374,8 @@
 	
 	<vrpfile src="files/images/avatar_default.png"/>
 	<vrpfile src="files/images/world.png"/>
+	<vrpfile src="files/images/Bertrams.png"/>
+	<vrpfile src="files/images/HarrysBikes.png"/>
 	<vrpfile src="files/images/CouttSchutz.png"/>
 	<vrpfile src="files/images/BankHeader.png"/>
 	<vrpfile src="files/images/Bar.png"/>

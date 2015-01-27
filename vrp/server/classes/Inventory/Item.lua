@@ -23,3 +23,7 @@ end
 
 function Item:use()
 end
+
+function Item:getModelId()
+	return Items[self.m_ItemId].modelId ~= 0 and Items[self.m_ItemId].modelId or 2969
+end

@@ -107,9 +107,11 @@ function Inventory:removeItem(slot, amount)
 		return true
 	end
 	
-	item:setCount(item:getCount() - amount)
-	if item:getCount() <= 0 then
+	local newCount = item:getCount() - amount
+	if newCount <= 0 then
 		table.remove(self.m_Items, slot)
+	else
+		item:setCount(newCount)
 	end
 	
 	if self.m_InteractingPlayer then
@@ -120,14 +122,22 @@ function Inventory:removeItem(slot, amount)
 	return true
 end
 
-function Inventory:removeItemByItem(item, slot)
-	return self:removeItem(slot, item:getCount())
+function Inventory:removeItemByItem(item, slot, amount)
+	return self:removeItem(slot, amount or item:getCount())
 end
 
-function Inventory:dropItem(item, slot, owner, pos)
+function Inventory:dropItem(item, slot, owner, pos, amount)
+	--local copiedItem = table.copyobject(item)
+	--copiedItem:setCount(amount)
+	-- TODO: Implement dropping single items
+	
 	local worldItem = WorldItem:new(item, owner, pos)
-	self:removeItemByItem(item, slot)
+	self:removeItemByItem(item, slot, amount)
 	return worldItem
+end
+
+function Inventory:placeItem(item, slot, owner, pos, amount)
+	return self:dropItem(item, slot, owner, pos, amount)
 end
 
 function Inventory:findItem(itemId)
@@ -241,6 +251,39 @@ addEventHandler("inventoryUseItem", root,
 		end
 		
 		inventory:useItem(item, client, slot)
+	end
+)
+
+addEvent("inventoryDropItem", true)
+addEventHandler("inventoryDropItem", root,
+	function(inventoryId, itemId, slot, amount)
+		local inventory = client:getInventory()
+		if inventoryId then
+			inventory = Inventory.Map[inventoryId]
+			
+			if inventory.m_InteractingPlayer ~= client then
+				AntiCheat:getSingleton():report(client, "Not allowed inventory change", CheatSeverity.Middle)
+				return
+			end
+		end
+		
+		if not inventory then
+			return
+		end
+		
+		local item = inventory.m_Items[slot]
+		if not item then return end
+		if item:getItemId() ~= itemId then
+			AntiCheat:getSingleton():report(client, "Inventory desync", CheatSeverity.Low)
+			return
+		end
+		
+		if amount <= item:getCount() then
+			AntiCheat:getSingleton():report(client, "Tried to drop not existing items", CheatSeverity.Low)
+			return
+		end
+		
+		inventory:dropItem(item, slot, nil, client:getPosition(), amount)
 	end
 )
 

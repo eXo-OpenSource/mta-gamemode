@@ -90,7 +90,6 @@ function HUDRadar:getDesignSet()
 end
 
 function HUDRadar:restore(clearedRenderTargets)
-	outputDebug(("HUDRadar:restore(%s)"):format(tostring(clearedRenderTargets)))
 	if clearedRenderTargets then
 		self:updateMapTexture()
 	end

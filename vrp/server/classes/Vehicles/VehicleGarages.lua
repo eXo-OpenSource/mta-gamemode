@@ -280,7 +280,7 @@ end
 function VehicleGarageSession:destructor()
 	local playerVehicle = getPedOccupiedVehicle(self.m_Player)
 	for k, vehicle in ipairs(self.m_Slots) do
-		if vehicle:isInGarage() and playerVehicle ~= vehicle then
+		if vehicle and isElement(vehicle) and vehicle:isInGarage() and playerVehicle ~= vehicle then
 			setElementDimension(vehicle, PRIVATE_DIMENSION_SERVER)
 		end
 	end

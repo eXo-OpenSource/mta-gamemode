@@ -65,7 +65,7 @@ function Core:afterLogin()
 	
 	PolicePanel:new()
 	PolicePanel:getSingleton():close()
-	bindKey("f2", "down",
+	bindKey("f4", "down",
 		function()
 			if localPlayer:getJob() == JobPolice:getSingleton() then
 				PolicePanel:getSingleton():toggle(true)
@@ -76,6 +76,7 @@ function Core:afterLogin()
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
+	bindKey("f2", "down", function() SelfGUI:getSingleton():toggle(true) end)
 	
 	ScoreboardGUI:getSingleton():close()
 	bindKey("tab", "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
