@@ -22,6 +22,7 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	self.m_BackgroundColor = tocolor(0, 32, 63, 255)
 	self.m_BackgroundHoverColor = Color.White
 	self.m_Color = self.m_NormalColor
+	self.m_Enabled = true
 end
 
 function GUIButton:drawThis()
@@ -33,6 +34,13 @@ function GUIButton:drawThis()
 		self.m_AbsoluteX + self.m_Width - GUI_BUTTON_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height - GUI_BUTTON_BORDER_MARGIN, self.m_Color, self:getFontSize(), self:getFont(), "center", "center", false, true)
 
 	dxSetBlendMode("blend")
+end
+
+function GUIButton:performChecks(...)
+	-- Only perform checks if enabled
+	if self.m_Enabled then
+		GUIElement.performChecks(...)
+	end
 end
 
 function GUIButton:onInternalHover()
@@ -72,4 +80,13 @@ function GUIButton:setBackgroundColor(color)
 	self.m_BackgroundColor = color
 	self:anyChange()
 	return self
+end
+
+function GUIButton:setEnabled(state)
+	self.m_Enabled = state
+	self:anyChange()
+end
+
+function GUIButton:isEnabled()
+	return self.m_Enabled
 end

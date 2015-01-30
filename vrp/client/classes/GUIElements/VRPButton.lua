@@ -27,6 +27,7 @@ function VRPButton:constructor(posX, posY, width, height, text, barOnTop, parent
 	self.m_TextAnimation = false
 	self.m_IsDark = false
 	self.m_BarColor = tocolor(0x3F, 0x7F, 0xBF, 255)
+	self.m_Enabled = true
 	
 	self.onInternalHover = function() self.m_Bar:setColor(Color.White) end
 	self.onInternalUnhover = function() self.m_Bar:setColor(self.m_BarColor) end
@@ -113,4 +114,27 @@ function VRPButton:anyChange()
 	
 	-- Propagate
 	DxElement.anyChange(self)
+end
+
+
+function VRPButton:setEnabled(state)
+	self.m_Enabled = state
+	if state then
+		self.m_Label:setColor(Color.White)
+	else
+		self.m_Label:setColor(tocolor(100, 100, 100))
+	end
+	
+	--self:anyChange()
+end
+
+function VRPButton:isEnabled()
+	return self.m_Enabled
+end
+
+function VRPButton:performChecks(...)
+	-- Only perform checks if enabled
+	if self.m_Enabled then
+		GUIElement.performChecks(self, ...)
+	end
 end

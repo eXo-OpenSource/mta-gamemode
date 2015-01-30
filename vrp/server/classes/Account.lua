@@ -16,7 +16,7 @@ function Account.login(player, username, password, pwhash)
 	local row = Async.wait()
 		
 	if not row or not row.Id then
-		player:triggerEvent("loginfailed", "Error: Invalid username or password")
+		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- "Error: Invalid username or password"
 		return false
 	end
 	
@@ -28,7 +28,12 @@ function Account.login(player, username, password, pwhash)
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Id = ? AND Password = ?;", sql:getPrefix(), row.Id, pwhash)
 	local row = Async.wait()
 	if not row or not row.Id then
-		player:triggerEvent("loginfailed", "Error: Invalid username or password2")
+		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort 2") -- Error: Invalid username or password2
+		return false
+	end
+	
+	if DatabasePlayer.getFromId(row.Id) then
+		player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
 		return false
 	end
 	

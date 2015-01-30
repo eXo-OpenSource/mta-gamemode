@@ -93,6 +93,9 @@ function LoginGUI:constructor()
 		else
 			triggerServerEvent("accountlogin", root, self.m_LoginEditUser:getText(), pw)
 		end
+		
+		-- Disable login button field to avoid several events
+		self.m_LoginLoginButton:setEnabled(false)
 	end, self)	
 	
 	self.m_RegisterRegisterButton.onLeftClick = bind(function(self)
@@ -205,6 +208,7 @@ addEventHandler("loginfailed", root,
 	function(text)
 		LoginGUI:getSingleton().m_LoginErrorBox:show()
 		LoginGUI:getSingleton().m_LoginErrorText:setText(text)
+		LoginGUI:getSingleton().m_LoginLoginButton:setEnabled(true)
 	end
 )
 addEvent("registerfailed", true)
@@ -220,6 +224,7 @@ addEvent("loginsuccess", true)
 addEventHandler("loginsuccess", root, 
 	function(pwhash, tutorialstage)
 		local lgi = LoginGUI:getSingleton()
+		lgi.m_LoginLoginButton:setEnabled(true)
 	
 		if lgi.m_LoginCheckbox:isChecked() and pwhash then
 			core:set("login", "username", lgi.m_LoginEditUser:getText())
