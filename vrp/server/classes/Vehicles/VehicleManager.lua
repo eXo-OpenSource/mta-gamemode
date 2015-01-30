@@ -35,6 +35,13 @@ function VehicleManager:constructor()
 				
 				setVehicleEngineState(source, source:getEngineState())
 				player:triggerEvent("vehicleFuelSync", source:getFuel())
+				
+				local vehicleType = source:getVehicleType()
+				if (vehicleType == "Plane" or vehicleType == "Helicopter") and not player:hasPilotsLicense() then
+					player:removeFromVehicle(source)
+					player:setPosition(source.matrix:transformPosition(-1.5, 5, 0))
+					player:sendShortMessage(_("Du hast keinen Flugschein!", player))
+				end
 			end
 		end
 	)

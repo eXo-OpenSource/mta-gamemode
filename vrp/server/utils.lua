@@ -34,3 +34,7 @@ function getElementMatrix(element)
  
 	return matrix
 end
+
+function resetCameraRotation(hitElement)
+	hitElement:triggerEvent("resetCameraRot")
+end

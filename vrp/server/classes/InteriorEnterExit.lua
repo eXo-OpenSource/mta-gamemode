@@ -24,7 +24,6 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				setElementPosition(hitElement, interiorPosition.x, interiorPosition.y, interiorPosition.z)
 				setElementDimension(hitElement, dimension)
 				setElementRotation(hitElement, 0, 0, enterRotation)
-				setCameraTarget(hitElement, hitElement)
 				setTimer(function() hitElement.m_DontTeleport = false end, 500, 1) -- Todo: this is a temp fix
 			end
 		end
@@ -36,7 +35,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				setElementInterior(hitElement, 0, entryPosition.x, entryPosition.y, entryPosition.z)
 				setElementDimension(hitElement, 0)
 				setElementRotation(hitElement, 0, 0, exitRotation)
-				setCameraTarget(hitElement, hitElement)
+				resetCameraRotation(hitElement)
 				setTimer(function() hitElement.m_DontTeleport = false end, 500, 1) -- Todo: this is a temp fix
 			end
 		end

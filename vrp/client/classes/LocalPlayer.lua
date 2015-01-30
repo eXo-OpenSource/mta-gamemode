@@ -12,6 +12,7 @@ function LocalPlayer:constructor()
 	self.m_Locale = "de"
 	self.m_Job = false
 	self.m_Rank = 0
+	self.m_LoggedIn = false
 	
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
@@ -37,6 +38,10 @@ end
 
 function LocalPlayer:getRank()
 	return self.m_Rank
+end
+
+function LocalPlayer:isLoggedIn()
+	return self.m_LoggedIn
 end
 
 function LocalPlayer:getPoints()
@@ -90,4 +95,5 @@ end
 -- Events
 function LocalPlayer:Event_retrieveInfo(info)
 	self.m_Rank = info.Rank
+	self.m_LoggedIn = true
 end

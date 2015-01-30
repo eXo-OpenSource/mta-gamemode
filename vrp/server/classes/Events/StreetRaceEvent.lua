@@ -109,6 +109,6 @@ function StreetRaceEvent:getPositions()
 end
 
 StreetRaceEvent.Positions = {
-	{0, 0, 4},
-	{-1656.3, -539.8, 10.8}
+	Vector(0, 0, 4),
+	Vector(-1656.3, -539.8, 10.8)
 }

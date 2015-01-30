@@ -39,7 +39,7 @@ end
 function GUIButton:performChecks(...)
 	-- Only perform checks if enabled
 	if self.m_Enabled then
-		GUIElement.performChecks(...)
+		GUIElement.performChecks(self, ...)
 	end
 end
 

@@ -75,6 +75,7 @@
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Nametag.lua" type="server"/>
 	<script src="server/classes/Collectables.lua" type="server"/>
+	<script src="server/classes/DrivingSchool.lua" type="server"/>
 	
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
@@ -147,6 +148,7 @@
 	<script src="client/classes/Housing.lua" type="client"/>
 	<script src="client/classes/Collectables.lua" type="client"/>
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
+	<script src="client/classes/DrivingSchool.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -253,6 +255,7 @@
 	<script src="client/classes/GUIForms/ItemShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/InputBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/JailCountdownGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DrivingSchoolGUI.lua" type="client"/>
 	
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
@@ -384,6 +387,7 @@
 	<vrpfile src="files/images/CoachTexture.png"/>
 	<vrpfile src="files/images/wanted.png"/>
 	<vrpfile src="files/images/HelpIcon.png"/>
+	<vrpfile src="files/images/DrivingSchool.png"/>
 	
 	<!-- Radar -->
 	<vrpfile src="files/images/Radar_Monochrome/Radar.jpg"/>
@@ -404,6 +408,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/CarShop.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/RedSaw.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Mechanic.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/DrivingSchool.png"/>
 	
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -423,6 +428,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/CarShop.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/RedSaw.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Mechanic.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/DrivingSchool.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

@@ -37,6 +37,7 @@ function Core:ready()
 	AmmuNationGUI:new()
 	HouseGUI:new()
 	Housing:new()
+	DrivingSchool:new()
 	
 	VehicleShop.initializeAll()
 	VehicleGarages:new()

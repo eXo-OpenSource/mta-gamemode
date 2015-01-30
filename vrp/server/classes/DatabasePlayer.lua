@@ -69,7 +69,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables, HasPilotsLicense FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -95,6 +95,7 @@ function DatabasePlayer:load()
 	self.m_LastGarageEntrance = row.LastGarageEntrance
 	self.m_SpawnLocation = row.SpawnLocation
 	self.m_Collectables = fromJSON(row.Collectables or "")
+	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
 	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -118,8 +119,8 @@ function DatabasePlayer:save()
 		return false
 	end
 	
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=?, HasPilotsLicense=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self.m_HasPilotsLicense, self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -156,6 +157,7 @@ function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
 function DatabasePlayer:getSpawnLocation() return self.m_SpawnLocation end
 function DatabasePlayer:getCollectables() return self.m_Collectables end
+function DatabasePlayer:hasPilotsLicense() return self.m_HasPilotsLicense end
 
 -- Short setters
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money setPlayerMoney(self, money, instant) end
@@ -167,6 +169,7 @@ function DatabasePlayer:setGroup(group)	self.m_Group = group if group then if se
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
+function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
 
 function DatabasePlayer:giveMoney(money)
 	self:setMoney(self:getMoney() + money)
