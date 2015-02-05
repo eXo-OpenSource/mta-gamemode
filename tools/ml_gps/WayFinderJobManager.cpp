@@ -38,25 +38,45 @@ void WayFinderJobManager::runThread()
         // Do heavy stuff now
         auto startTime = std::chrono::system_clock::now();
         {
+            // Get start and end nodes from points
             auto startNode = m_WayFinder.findNodeClosestToPoint(job.positionFrom);
             auto endNode = m_WayFinder.findNodeClosestToPoint(job.positionTo);
 
-            m_WayFinder.calculatePath(startNode, endNode);
+            // Calculate the path and save the result as a list
+            std::forward_list<Vector3> result;
+            m_WayFinder.calculatePath(startNode, endNode, result);
+
+            // Move calculated path to result cache (will be passed to Lua via the next processGPSEvents call)
+            std::lock_guard<std::mutex> l(m_ResultCacheMutex);
+            m_ResultCache.push_back(std::make_pair(job.id, std::move(result)));
         }
         std::cout << "Route has been calculated within " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()-startTime).count() << "ms" << std::endl;
 
         // Mark the element as processed --> remove it from the queue
         m_JobMutex.lock();
-        m_JobQueue.pop();
+        m_JobQueue.pop_back();
         m_JobMutex.unlock();
 
+        // Do not block the CPU and wait a bit
         std::this_thread::yield();
     }
 }
 
-void WayFinderJobManager::addJob(const WayFinderJob& job)
+JobId WayFinderJobManager::addJob(WayFinderJob& job)
 {
     std::lock_guard<std::mutex> lock(m_JobMutex);
 
-    m_JobQueue.push(job);
+    m_JobQueue.push_back(job);
+    job.id = m_JobQueue.size();
+    return job.id;
+}
+
+const std::list<std::pair<JobId, std::forward_list<Vector3>>>& WayFinderJobManager::getResultCache()
+{
+    return m_ResultCache;
+}
+
+void WayFinderJobManager::clearResultCache()
+{
+    m_ResultCache.clear();
 }

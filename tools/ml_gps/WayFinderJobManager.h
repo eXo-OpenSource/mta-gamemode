@@ -1,14 +1,18 @@
 #pragma once
 #include <thread>
 #include <mutex>
-#include <queue>
+#include <list>
+#include <forward_list>
 #include "Vector3.h"
 #include "WayFinder.h"
+
+typedef unsigned int JobId;
 
 struct WayFinderJob
 {
     typedef std::function<void()> Callback;
 
+    JobId id;
     Vector3 positionFrom;
     Vector3 positionTo;
     Callback callback;
@@ -24,13 +28,20 @@ public:
     void stop();
     void runThread();
 
-    void addJob(const WayFinderJob& job);
+    JobId addJob(WayFinderJob& job);
+    
+    const std::list<std::pair<JobId, std::forward_list<Vector3>>>& getResultCache();
+    void clearResultCache();
 
 private:
     bool m_IsRunning;
     std::thread m_CalculationThread;
+
     std::mutex m_JobMutex;
-    std::queue<WayFinderJob> m_JobQueue;
+    std::list<WayFinderJob> m_JobQueue;
+
+    std::mutex m_ResultCacheMutex;
+    std::list<std::pair<JobId, std::forward_list<Vector3>>> m_ResultCache;
 
     WayFinder m_WayFinder;
 

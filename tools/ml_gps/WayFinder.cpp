@@ -39,7 +39,7 @@ const WayNode& WayFinder::findNodeClosestToPoint(const Vector3& position)
     return minNode;
 }
 
-void WayFinder::calculatePath(const WayNode& nodeFrom, const WayNode& nodeTo)
+void WayFinder::calculatePath(const WayNode& nodeFrom, const WayNode& nodeTo, std::forward_list<Vector3> result)
 {
     
     WayNode currentNode = nodeFrom;
