@@ -9,6 +9,13 @@ Blip = inherit(Object)
 Blip.ServerBlips = {}
 
 function Blip:constructor(imagePath, worldX, worldY, streamDistance)
+	if type(worldX) ~= "number" or type(worldY) ~= "number" then
+		outputDebug(debug.traceback())
+		
+		-- Hack: Prevent error messages (for debugging purposes)
+		worldX, worldY = 0, 0
+	end
+
 	self.m_RawImagePath = imagePath
 	self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
 	self.m_WorldX = worldX

@@ -9,7 +9,7 @@ function Blip:constructor(imagePath, x, y, visibleTo)
 	table.insert(Blip.Map, self)
 	
 	if self.m_VisibleTo == root then
-		for k, player in ipairs(getElementsByType("player")) do
+		for k, player in pairs(getElementsByType("player")) do
 			if player:isLoggedIn() then
 				player:triggerEvent("blipCreate", #Blip.Map, self.m_ImagePath, self.m_PosX, self.m_PosY)
 			end

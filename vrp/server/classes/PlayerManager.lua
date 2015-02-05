@@ -103,6 +103,11 @@ function PlayerManager:Event_requestPointsToKarma(positive)
 end
 
 function PlayerManager:Event_requestWeaponLevelUp()
+	if client:getWeaponLevel() >= MAX_WEAPON_LEVEL then
+		client:sendError(_("Du hast das zurzeit mögliche Maximallevel erreicht!", client))
+		return
+	end
+
 	local requiredPoints = calculatePointsToNextLevel(client:getWeaponLevel())
 	if client:getPoints() >= requiredPoints then
 		client:incrementWeaponLevel()
@@ -114,6 +119,11 @@ function PlayerManager:Event_requestWeaponLevelUp()
 end
 
 function PlayerManager:Event_requestVehicleLevelUp()
+	if client:getWeaponLevel() >= MAX_VEHICLE_LEVEL then
+		client:sendError(_("Du hast das zurzeit mögliche Maximallevel erreicht!", client))
+		return
+	end
+
 	local requiredPoints = calculatePointsToNextLevel(client:getVehicleLevel())
 	if client:getPoints() >= requiredPoints then
 		client:incrementVehicleLevel()
@@ -125,6 +135,11 @@ function PlayerManager:Event_requestVehicleLevelUp()
 end
 
 function PlayerManager:Event_requestSkinLevelUp()
+	if client:getWeaponLevel() >= MAX_SKIN_LEVEL then
+		client:sendError(_("Du hast das zurzeit mögliche Maximallevel erreicht!", client))
+		return
+	end
+
 	local requiredPoints = calculatePointsToNextLevel(client:getSkinLevel())
 	if client:getPoints() >= requiredPoints then
 		client:incrementSkinLevel()
@@ -136,6 +151,11 @@ function PlayerManager:Event_requestSkinLevelUp()
 end
 
 function PlayerManager:Event_requestJobLevelUp()
+	if client:getWeaponLevel() >= MAX_JOB_LEVEL then
+		client:sendError(_("Du hast das zurzeit mögliche Maximallevel erreicht!", client))
+		return
+	end
+
 	local requiredPoints = calculatePointsToNextLevel(client:getJobLevel())
 	if client:getPoints() >= requiredPoints then
 		client:incrementJobLevel()
