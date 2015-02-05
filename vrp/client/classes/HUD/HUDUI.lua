@@ -96,7 +96,7 @@ function HUDUI:drawLevelRect()
 	
 	-- Joblevel
 	dxDrawImage(f(screenWidth*0.81), f(screenHeight*0.0045), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/JobLevel.png")
-	dxDrawText(localPlayer:getWeaponLevel(), screenWidth*0.835, screenHeight*0.0028, nil, nil, Color.White, 1.5, "arial")
+	dxDrawText(localPlayer:getJobLevel(), screenWidth*0.835, screenHeight*0.0028, nil, nil, Color.White, 1.5, "arial")
 	
 	-- Weaponlevel
 	dxDrawImage(f(screenWidth*0.86), f(screenHeight*0.0045), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/WeaponLevel.png")
