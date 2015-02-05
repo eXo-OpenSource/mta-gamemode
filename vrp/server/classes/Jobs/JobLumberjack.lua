@@ -77,7 +77,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 			hitElement:sendMessage(_("Bitte steige in einen Flatbed ein", hitElement))
 			return
 		end
-		if player:getJob() ~= self then
+		if hitElement:getJob() ~= self then
 			return
 		end
 	

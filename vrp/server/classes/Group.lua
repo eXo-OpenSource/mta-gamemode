@@ -78,7 +78,8 @@ function Group:addPlayer(playerId, rank)
 		playerId = playerId:getId()
 	end
 	
-	self.m_Players[playerId] = rank or 0
+	rank = rank or 0
+	self.m_Players[playerId] = rank
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setGroup(self)
