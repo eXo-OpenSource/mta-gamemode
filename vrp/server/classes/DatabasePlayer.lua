@@ -188,6 +188,7 @@ end
 
 function DatabasePlayer:setKarma(karma)
 	self.m_Karma = karma
+    if self:isActive() then self:setPrivateSync("KarmaLevel", self.m_Karma) end
 end
 
 function DatabasePlayer:giveKarma(value, factor)

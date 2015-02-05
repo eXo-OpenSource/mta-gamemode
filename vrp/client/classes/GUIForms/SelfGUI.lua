@@ -99,6 +99,7 @@ function SelfGUI:constructor()
 	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabPoints)
 	self.m_KarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.1, self.m_Width*0.4, self.m_Height*0.06, "+50", tabPoints)
+    localPlayer:setPrivateSyncChangeHandler("KarmaLevel", function(value) self.m_KarmaLabel:setText(tostring(math.floor(value))) end)
 	self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.1, self.m_Width*0.15, self.m_Height*0.06, "+ (400P)", tabPoints):setBackgroundColor(Color.Green)
 	self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot, true) end
 	self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.55, self.m_Height*0.1, self.m_Width*0.15, self.m_Height*0.06, "- (400P)", tabPoints):setBackgroundColor(Color.Red)
