@@ -38,10 +38,9 @@ function DatabasePlayer:virtual_constructor()
 	self.m_XP 	 = 0
 	self.m_Karma = 0
 	self.m_Points = 0
-	self.m_Money = 0
+    self.m_Money = 0
 	self.m_BankMoney = 0
 	self.m_WantedLevel = 0
-	
 	self.m_WeaponLevel = 0
 	self.m_VehicleLevel = 0
 	self.m_SkinLevel = 0
@@ -107,11 +106,11 @@ function DatabasePlayer:load()
 		setPlayerWantedLevel(self, self.m_WantedLevel)
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
 	end
-	
-	self.m_WeaponLevel = row.WeaponLevel
-	self.m_VehicleLevel = row.VehicleLevel
-	self.m_SkinLevel = row.SkinLevel
-	self.m_JobLevel = row.JobLevel
+
+    self:setWeaponLevel(row.WeaponLevel)
+    self:setVehicleLevel(row.VehicleLevel)
+    self:setSkinLevel(row.SkinLevel)
+    self:setJobLevel(row.JobLevel)
 end
 
 function DatabasePlayer:save()
@@ -119,8 +118,8 @@ function DatabasePlayer:save()
 		return false
 	end
 	
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=?, HasPilotsLicense=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self.m_HasPilotsLicense, self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self.m_HasPilotsLicense, self:getJobLevel(), self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -220,6 +219,26 @@ end
 function DatabasePlayer:incrementJobLevel()
 	self.m_JobLevel = self.m_JobLevel + 1
 	if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
+end
+
+function DatabasePlayer:setWeaponLevel (level)
+    self.m_WeaponLevel = level
+    if self:isActive() then self:setPrivateSync("WeaponLevel", self.m_WeaponLevel) end
+end
+
+function DatabasePlayer:setVehicleLevel (level)
+    self.m_VehicleLevel = level
+    if self:isActive() then self:setPrivateSync("VehicleLevel", self.m_VehicleLevel) end
+end
+
+function DatabasePlayer:setSkinLevel (level)
+    self.m_SkinLevel = level
+    if self:isActive() then self:setPrivateSync("SkinLevel", self.m_SkinLevel) end
+end
+
+function DatabasePlayer:setJobLevel (level)
+    self.m_JobLevel = level
+    if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
 end
 
 function DatabasePlayer:addBankMoney(amount, logType)

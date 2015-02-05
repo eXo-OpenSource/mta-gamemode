@@ -106,7 +106,6 @@ addEventHandler("accountregister", root, function(...) Async.create(Account.regi
 
 function Account.guest(player)
 	player.m_Account = Account:new(0, "Guest", player, true)
-	player:loadCharacter()
 	player:spawn()
 	triggerClientEvent(player, "loginsuccess", root, nil, 0)
 end
@@ -133,6 +132,12 @@ function Account:constructor(id, username, player, guest)
 		end
 	else
 		self.m_Rank = RANK.Guest
+        player:setMoney(0)
+        player:setWeaponLevel(0)
+        player:setVehicleLevel(0)
+        player:setSkinLevel(0)
+        player:setJobLevel(0)
+        player:loadCharacter()
 	end
 end
 
