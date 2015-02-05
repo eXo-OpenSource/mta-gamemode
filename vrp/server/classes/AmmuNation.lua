@@ -21,7 +21,7 @@ end
 
 function AmmuNation:buyWeapon(id)
 	if self.m_Players[client] then
-		if AmmuNationInfo[id].MinLevel <= player:getWeaponLevel() then
+		if AmmuNationInfo[id].MinLevel <= client:getWeaponLevel() then
 			if client:getMoney() >= AmmuNationInfo[id].Weapon then
 				giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
 				client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
