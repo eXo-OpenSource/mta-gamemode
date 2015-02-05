@@ -25,6 +25,12 @@ function Player:constructor()
 	self.m_PublicSyncUpdate = {}
 	self.m_SyncListener = {}
 	self.m_LastGotWantedLevelTime = 0
+
+    self:setMoney(0)
+    self:setWeaponLevel(0)
+    self:setVehicleLevel(0)
+    self:setSkinLevel(0)
+    self:setJobLevel(0)
 end
 
 function Player:destructor()

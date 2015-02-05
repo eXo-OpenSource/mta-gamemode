@@ -132,11 +132,6 @@ function Account:constructor(id, username, player, guest)
 		end
 	else
 		self.m_Rank = RANK.Guest
-        player:setMoney(0)
-        player:setWeaponLevel(0)
-        player:setVehicleLevel(0)
-        player:setSkinLevel(0)
-        player:setJobLevel(0)
         player:loadCharacter()
 	end
 end
