@@ -109,25 +109,37 @@ function SelfGUI:constructor()
 	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
 	self.m_WeaponLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_WeaponLevelButton.onLeftClick = function() triggerServerEvent("requestWeaponLevelUp", resourceRoot) end
-	localPlayer:setPrivateSyncChangeHandler("WeaponLevel", function(value) self.m_WeaponLevelLabel:setText(tostring(value)) end)
+	localPlayer:setPrivateSyncChangeHandler("WeaponLevel", function(value)
+        self.m_WeaponLevelLabel:setText(tostring(value))
+        self.m_WeaponLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())))
+    end)
 	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuglevel:", tabPoints)
 	self.m_VehicleLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.26, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getVehicleLevel(), tabPoints)
 	self.m_VehicleLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.26, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_VehicleLevelButton.onLeftClick = function() triggerServerEvent("requestVehicleLevelUp", resourceRoot) end
-	localPlayer:setPrivateSyncChangeHandler("VehicleLevel", function(value) self.m_VehicleLevelLabel:setText(tostring(value)) end)
+	localPlayer:setPrivateSyncChangeHandler("VehicleLevel", function(value)
+        self.m_VehicleLevelLabel:setText(tostring(value))
+        self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
+    end)
 	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.34, self.m_Width*0.25, self.m_Height*0.06, _"Skinlevel:", tabPoints)
 	self.m_SkinLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getSkinLevel(), tabPoints)
 	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_SkinLevelButton.onLeftClick = function() triggerServerEvent("requestSkinLevelUp", resourceRoot) end
-	localPlayer:setPrivateSyncChangeHandler("SkinLevel", function(value) self.m_SkinLevelLabel:setText(tostring(value)) end)
+	localPlayer:setPrivateSyncChangeHandler("SkinLevel", function(value)
+        self.m_SkinLevelLabel:setText(tostring(value))
+        self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())))
+    end)
 	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Joblevel:", tabPoints)
 	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getJobLevel(), tabPoints)
 	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.42, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_JobLevelButton.onLeftClick = function() triggerServerEvent("requestJobLevelUp", resourceRoot) end
-	localPlayer:setPrivateSyncChangeHandler("JobLevel", function(value) self.m_JobLevelLabel:setText(tostring(value)) end)
+	localPlayer:setPrivateSyncChangeHandler("JobLevel", function(value)
+        self.m_JobLevelLabel:setText(tostring(value))
+        self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
+    end)
 	
 	-- Tab: Settings
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
@@ -142,13 +154,23 @@ end
 
 function SelfGUI:onShow()
 	-- Initialize all the stuff
+    self.m_WeaponLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())))
+    self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
+    self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())))
+    self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
+
 	if localPlayer:getJob() then
 		self.m_JobNameLabel:setText(localPlayer:getJob():getName())
-		self.m_JobLevelLabel:setText("1") -- Todo
 	else
 		self.m_JobNameLabel:setText("-")
-		self.m_JobLevelLabel:setText("-") -- Todo
-	end
+
+    end
+
+    if localPlayer:getJobLevel() then
+        self.m_JobLevelLabel:setText(tostring(localPlayer:getJobLevel()))
+    else
+        self.m_JobLevelLabel:setText("-")
+    end
 end
 
 function SelfGUI:TabPanel_TabChanged(tabId)
