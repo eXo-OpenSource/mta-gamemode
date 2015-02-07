@@ -119,7 +119,7 @@ function PlayerManager:Event_requestWeaponLevelUp()
 end
 
 function PlayerManager:Event_requestVehicleLevelUp()
-	if client:getWeaponLevel() >= MAX_VEHICLE_LEVEL then
+	if client:getVehicleLevel() >= MAX_VEHICLE_LEVEL then
 		client:sendError(_("Du hast das zurzeit mögliche Maximallevel erreicht!", client))
 		return
 	end
@@ -135,7 +135,7 @@ function PlayerManager:Event_requestVehicleLevelUp()
 end
 
 function PlayerManager:Event_requestSkinLevelUp()
-	if client:getWeaponLevel() >= MAX_SKIN_LEVEL then
+	if client:getSkinLevel() >= MAX_SKIN_LEVEL then
 		client:sendError(_("Du hast das zurzeit mögliche Maximallevel erreicht!", client))
 		return
 	end
@@ -151,7 +151,7 @@ function PlayerManager:Event_requestSkinLevelUp()
 end
 
 function PlayerManager:Event_requestJobLevelUp()
-	if client:getWeaponLevel() >= MAX_JOB_LEVEL then
+	if client:getJobLevel() >= MAX_JOB_LEVEL then
 		client:sendError(_("Du hast das zurzeit mögliche Maximallevel erreicht!", client))
 		return
 	end

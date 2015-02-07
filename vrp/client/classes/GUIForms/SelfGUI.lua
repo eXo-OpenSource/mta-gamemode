@@ -341,7 +341,7 @@ end
 function SelfGUI:VehicleRespawnButton_Click()
 	local item = self.m_VehiclesGrid:getSelectedItem()
 	if not item then
-		WarnungBox:new(_"Bitte wähle ein Fahrzeug aus!")
+        WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
 	
@@ -351,7 +351,7 @@ end
 function SelfGUI:VehicleSellButton_Click()
 	local item = self.m_VehiclesGrid:getSelectedItem()
 	if not item then
-		WarnungBox:new(_"Bitte wähle ein Fahrzeug aus!")
+        WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
 	
