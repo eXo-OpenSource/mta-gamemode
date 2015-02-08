@@ -31,6 +31,7 @@ function Player:constructor()
     self:setVehicleLevel(0)
     self:setSkinLevel(0)
     self:setJobLevel(0)
+    self:setWantedLevel(0)
 end
 
 function Player:destructor()
