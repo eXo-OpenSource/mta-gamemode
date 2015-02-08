@@ -309,7 +309,9 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType)
 		end
 	end
 	if garageType then
-		local texts = {[1] = _"Garage: Standard Garage (3 Slots)", [2] = _"Garage: Komfortable Garage (6 Slots)", [3] = _"Garage: Luxus Garage (10 Slots)"}
+        localPlayer.m_GarageType = garageType
+
+		local texts = {[0] = _"Garage: keine Garage (0 Slots)", [1] = _"Garage: Standard Garage (3 Slots)", [2] = _"Garage: Komfortable Garage (6 Slots)", [3] = _"Garage: Luxus Garage (10 Slots)"}
 		self.m_VehicleGarages:setText(texts[garageType])
 	end
 end
@@ -328,7 +330,7 @@ function SelfGUI:VehicleLocateButton_Click()
 		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
-	
+
 	if not item.VehicleInGarage then
 		local x, y = getElementPosition(item.VehicleElement)
 		local blip = Blip:new("Waypoint.png", x, y)
@@ -343,7 +345,12 @@ function SelfGUI:VehicleRespawnButton_Click()
 	if not item then
         WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
-	end
+    end
+    
+    if localPlayer:getGarageType() == 0 then
+        ErrorBox:new(_"Du besitzt keine gültige Garage!")
+        return
+    end
 	
 	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end
