@@ -122,10 +122,32 @@ function GroupManager:Event_groupDelete()
 		client:sendError(_("Du bist nicht berechtigt die Gruppe zu löschen!", client))
 		-- Todo: Report possible cheat attempt
 		return
-	end
-	
+    end
+
+    local leaderAmount = group.m_Money/2
+    group.m_Money = group.m_Money - leaderAmount
+
+    local memberAmount = 0
+    local groupSize = table.size(group.m_Players)
+    if groupSize == 1 then
+        leaderAmount = leaderAmount + group.m_Money
+    else
+        memberAmount = group.m_Money/(#groupSize-1)
+    end
+
 	-- Distribute group's money
-	-- Todo
+    for playerId, playerRank in pairs(group.m_Players) do
+        local player, isOffline = DatabasePlayer.get(playerId)
+        if playerRank == GroupRank.Leader then
+            player:giveMoney(leaderAmount)
+        else
+            player:giveMoney(memberAmount)
+        end
+
+        if isOffline then
+            delete(player)
+        end
+    end
 	
 	group:purge()
 	client:sendShortMessage(_("Deine Gruppe wurde soeben gelöscht", client))
