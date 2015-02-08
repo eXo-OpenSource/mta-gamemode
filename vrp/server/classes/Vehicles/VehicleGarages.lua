@@ -134,7 +134,12 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				hitElement:sendError(_("Du kannst nur deine eigenen Fahrzeuge in der Garage abstellen!", hitElement))
 				return
 			end
-		end
+        end
+
+        if hitElement:getGarageType() == 0 then
+            hitElement:sendError(_("Du besitzt keine gültige Garage!", hitElement))
+            return
+        end
 		
 		local session = self:openSessionForPlayer(hitElement, source.EntranceId)
 		if vehicle then
@@ -143,7 +148,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				return
 			end
 		end
-		
+
 		fadeCamera(hitElement, false)
 		setTimer(
 			function()
@@ -155,7 +160,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				hitElement:triggerEvent("vehicleGarageSessionOpen", session:getDimension())
 				hitElement:setSpawnLocation(SPAWN_LOCATION_GARAGE)
 				hitElement:setLastGarageEntrance(session:getEntranceId())
-				
+
 				local garageType = hitElement:getGarageType()
 				local interiorX, interiorY, interiorZ, rotation = unpack(self.m_Interiors[garageType].enter)
 				setElementPosition(vehicle or hitElement, interiorX, interiorY, interiorZ)
@@ -165,7 +170,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 					setElementDimension(vehicle, session:getDimension())
 				end
 				fadeCamera(hitElement, true, 2)
-				
+
 				setTimer(function() session:furnish() end, 1000, 1)
 			end, 2000, 1
 		)

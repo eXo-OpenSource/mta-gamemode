@@ -10,6 +10,7 @@ registerElementClass("player", Player)
 
 function Player:virtual_constructor()
 	self.m_Karma = 0
+    self.m_GarageType = 0
 
 	self.m_PublicSync = {}
 	self.m_PrivateSync = {}
@@ -63,6 +64,10 @@ function Player:getJobName()
 	else
 		return "-"
 	end
+end
+
+function Player:getGarageType ()
+    return self.m_GarageType
 end
 
 addRemoteEvents{"PlayerPrivateSync", "PlayerPublicSync"}
