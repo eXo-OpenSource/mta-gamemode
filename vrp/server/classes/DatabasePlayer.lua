@@ -193,7 +193,10 @@ end
 
 function DatabasePlayer:giveKarma(value, factor)
 	local changekarma = Karma.calcKarma(self.m_Karma, self.m_Karma+value, factor or 1)
-	self:setXP(self.m_XP + changekarma * 10)
+	if value < 0 then
+		changekarma = -changekarma
+	end
+	self:setXP(self.m_XP + math.abs(changekarma) * 10)
 	self:setKarma(self.m_Karma + changekarma)
 end
 
