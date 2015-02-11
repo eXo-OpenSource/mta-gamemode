@@ -148,3 +148,10 @@ GangAreaData = {
 TURFING_STOPREASON_LEAVEAREA = 1
 TURFING_STOPREASON_NEWOWNER = 2
 TURFING_STOPREASON_DEFENDED = 3
+
+SkinInfo = {
+	-- skinId -- skinName -- skinPrice
+	[0] = {"CJ", 5000},
+	[130] = {"Native Ugly", 100},
+	[157] = {"Farmer Girl", 500},
+}
