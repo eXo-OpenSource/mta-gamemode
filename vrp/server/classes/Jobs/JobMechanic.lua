@@ -11,7 +11,7 @@ function JobMechanic:constructor()
 	Job.constructor(self)
 	
 	for i = 0, 3 do
-		AutomaticVehicleSpawner:new(getVehicleModelFromName("Towtruck"), 686.9 + i*4.8, -1571.9, 14.1, 0, 0, 180)
+		AutomaticVehicleSpawner:new(getVehicleModelFromName("Towtruck"), 686.9 + i*4.8, -1571.9, 14.1, 0, 0, 180, nil, self)
 	end
 	
 	addEvent("mechanicRepair", true)

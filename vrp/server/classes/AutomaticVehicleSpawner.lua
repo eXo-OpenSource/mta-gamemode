@@ -8,12 +8,13 @@
 AutomaticVehicleSpawner = inherit(Object)
 AutomaticVehicleSpawner.sPulse = TimedPulse:new(6000)
 
-function AutomaticVehicleSpawner:constructor(model, x, y, z, rx, ry, rz, createfunc)
+function AutomaticVehicleSpawner:constructor(model, x, y, z, rx, ry, rz, createfunc, forjob)
 	self.m_Model = model
 	self.m_X, self.m_Y, self.m_Z = x,y,z
 	self.m_RX, self.m_RY, self.m_RZ = rx,ry,rz
 	self.m_Createfunc = createfunc
 	self.m_LastVehicle = false
+	self.m_ForJob = forjob
 	
 	local w, h = 3.5, 8
 	
@@ -54,6 +55,13 @@ function AutomaticVehicleSpawner:maybeSpawnVehicle()
 end
 
 function AutomaticVehicleSpawner:VehicleEnterHandler(player)
+	-- Cancel if the player does not have the correct job
+	if self.m_ForJob and player:getJob() ~= self.m_ForJob then
+		player:sendWarning(_("Du kannst dieses Fahrzeug nicht fahren!", player))
+		cancelEvent()
+		return
+	end
+
 	local vehicle = source
 	setElementFrozen(vehicle, false)
 	setVehicleDamageProof(vehicle, false)
