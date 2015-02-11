@@ -43,6 +43,7 @@ function Core:ready()
 	VehicleShop.initializeAll()
 	VehicleGarages:new()
 	GasStationGUI:new()
+	SkinShopGUI.initialise()
 end
 
 function Core:afterLogin()

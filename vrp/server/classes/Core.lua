@@ -38,6 +38,7 @@ function Core:constructor()
 	Collectables:new()
 	DrivingSchool:new()
     Achievement:new()
+	SkinShops:new()
 	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

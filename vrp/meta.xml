@@ -76,6 +76,7 @@
 	<script src="server/classes/Nametag.lua" type="server"/>
 	<script src="server/classes/Collectables.lua" type="server"/>
 	<script src="server/classes/DrivingSchool.lua" type="server"/>
+	<script src="server/classes/SkinShops.lua" type="server"/>
     <script src="server/classes/Achievement.lua" type="server"/>
 	
 	<!-- Vehicles -->
@@ -258,6 +259,7 @@
 	<script src="client/classes/GUIForms/InputBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/JailCountdownGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
@@ -390,6 +392,7 @@
 	<vrpfile src="files/images/wanted.png"/>
 	<vrpfile src="files/images/HelpIcon.png"/>
 	<vrpfile src="files/images/DrivingSchool.png"/>
+	<vrpfile src="files/images/ClothesHeader.png"/>
 	
 	<!-- Radar -->
 	<vrpfile src="files/images/Radar_Monochrome/Radar.jpg"/>
@@ -411,6 +414,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/RedSaw.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Mechanic.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/DrivingSchool.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Skinshop.png"/>
 	
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -431,6 +435,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/RedSaw.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Mechanic.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/DrivingSchool.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Skinshop.png"/>
 	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
