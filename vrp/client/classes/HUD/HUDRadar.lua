@@ -52,7 +52,7 @@ function HUDRadar:updateMapTexture()
 	for k, rect in pairs(self.m_Areas) do
 		local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
 		
-		local width, height = rect.Width/2, rect.Height/2
+		local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
 		dxDrawRectangle(mapX, mapY, width, height, rect.color)
 	end
 	

@@ -48,19 +48,19 @@ function LocalPlayer:getPoints()
 	return self:getPrivateSync("Points")
 end
 
-function Player:getWeaponLevel()
+function LocalPlayer:getWeaponLevel()
 	return self:getPrivateSync("WeaponLevel") or 0
 end
 
-function Player:getVehicleLevel()
+function LocalPlayer:getVehicleLevel()
 	return self:getPrivateSync("VehicleLevel") or 0
 end
 
-function Player:getSkinLevel()
+function LocalPlayer:getSkinLevel()
 	return self:getPrivateSync("SkinLevel") or 0
 end
 
-function Player:getJobLevel()
+function LocalPlayer:getJobLevel()
 	return self:getPrivateSync("JobLevel") or 0
 end
 
