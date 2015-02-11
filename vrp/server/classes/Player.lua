@@ -24,6 +24,7 @@ function Player:constructor()
 	self.m_PublicSync = {}
 	self.m_PublicSyncUpdate = {}
 	self.m_SyncListener = {}
+	self.m_Achievements = {}
 	self.m_LastGotWantedLevelTime = 0
 
     self:setMoney(0)

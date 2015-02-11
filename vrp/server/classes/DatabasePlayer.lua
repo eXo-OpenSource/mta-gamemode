@@ -59,6 +59,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_LastGarageEntrance = 0
 	self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
 	self.m_Collectables = {}
+	self.m_Achievements = {[0] = false} -- Dummy element, otherwise the JSON string is built wrong
 end
 
 function DatabasePlayer:virtual_destructor()
@@ -68,7 +69,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables, HasPilotsLicense FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -83,6 +84,13 @@ function DatabasePlayer:load()
 	self.m_WantedLevel = row.WantedLevel
 	self.m_BankMoney = row.BankMoney
 	self.m_TutorialStage = row.TutorialStage
+
+    if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
+        self:updateAchievements(fromJSON(row.Achievements))
+    else
+        self:updateAchievements({[0] = false}) -- Dummy element, otherwise the JSON string is built wrong
+    end
+
 	if row.Job > 0 then
 		self:setJob(JobManager:getSingleton():getFromId(row.Job))
 	end
@@ -118,8 +126,8 @@ function DatabasePlayer:save()
 		return false
 	end
 	
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self.m_HasPilotsLicense, self:getJobLevel(), self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements()), self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -302,4 +310,47 @@ end
 function DatabasePlayer:setGarageType(garageType)
 	self.m_GarageType = garageType
 	sql:queryExec("UPDATE ??_character SET GarageType = ? WHERE Id = ?", sql:getPrefix(), garageType, self.m_Id)
+end
+
+function DatabasePlayer:updateAchievements (tbl)
+    if tbl ~= nil then
+        self.m_Achievements = tbl
+    end
+    if self:isActive() then self:setPrivateSync("Achievements", table.copy(self.m_Achievements)) end
+end
+
+function DatabasePlayer:getAchievements ()
+    return self:getPrivateSync("Achievements")
+end
+
+function DatabasePlayer:giveAchievement (...)
+    if Achievement:isInstantiated() then
+        Achievement:getSingleton():giveAchievement(self, ...)
+    else
+        outputDebug("Achievement hasn't been instantiated yet!")
+    end
+end
+
+function DatabasePlayer:getAchievementStatus (id)
+    local id = tostring(id)
+    if Achievement:isInstantiated() then
+        if self.m_Achievements[id] ~= nil then
+            return self.m_Achievements[id]
+        else
+            return false
+        end
+    else
+        outputDebug("Achievement hasn't been instantiated yet!")
+        return false
+    end
+end
+
+function DatabasePlayer:setAchievementStatus (id, status)
+    local id = tostring(id)
+    if Achievement:isInstantiated() then
+        self.m_Achievements[id] = status
+        self:updateAchievements()
+    else
+        outputDebug("Achievement hasn't been instantiated yet!")
+    end
 end

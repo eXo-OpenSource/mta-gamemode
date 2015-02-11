@@ -76,6 +76,7 @@
 	<script src="server/classes/Nametag.lua" type="server"/>
 	<script src="server/classes/Collectables.lua" type="server"/>
 	<script src="server/classes/DrivingSchool.lua" type="server"/>
+    <script src="server/classes/Achievement.lua" type="server"/>
 	
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
@@ -149,6 +150,7 @@
 	<script src="client/classes/Collectables.lua" type="client"/>
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
 	<script src="client/classes/DrivingSchool.lua" type="client"/>
+    <script src="client/classes/Achievement.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>

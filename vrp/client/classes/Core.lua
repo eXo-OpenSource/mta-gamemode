@@ -38,6 +38,7 @@ function Core:ready()
 	HouseGUI:new()
 	Housing:new()
 	DrivingSchool:new()
+    Achievement:new()
 	
 	VehicleShop.initializeAll()
 	VehicleGarages:new()

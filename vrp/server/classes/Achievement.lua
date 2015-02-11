@@ -1,0 +1,77 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Achievement.lua
+-- *  PURPOSE:     Class for Achievments
+-- *
+-- ****************************************************************************
+
+Achievement = inherit(Singleton)
+
+function Achievement:constructor ()
+    local row = sql:queryFetch("SELECT * FROM ??_achievements;", sql:getPrefix())
+    if not row then
+        delete(Achievement)
+        return false;
+    end
+
+    self.ms_Achievements = {}
+    for i, v in ipairs(row) do
+        self.ms_Achievements[i] = v;
+    end
+
+    addRemoteEvents{"Achievement.onAchievementRequest", "Achievement.onPlayerReceiveAchievement"}
+    addEventHandler("Achievement.onAchievementRequest", root, bind(self.Event_onRequestAchievements, self))
+    addEventHandler("Achievement.onPlayerReceiveAchievement", root, bind(self.Event_onPlayerReceiveAchievement, self))
+end
+
+function Achievement:giveAchievement (player, id)
+    if self.ms_Achievements[id] ~= nil then
+        if not player:getAchievementStatus(id) then
+            player:setAchievementStatus(id, true)
+            player:setXP(player.m_XP + self.ms_Achievements[id]["exp"])
+
+            player:triggerEvent("Achievement.onPlayerReceiveAchievement", id)
+        end
+    else
+        outputDebug("Missing Achievement in Database. ID: "..id)
+        return false
+    end
+end
+
+function Achievement:Event_onRequestAchievements ()
+    client:triggerEvent("Achievement.sendAchievements", self.ms_Achievements)
+end
+
+function Achievement:Event_onPlayerReceiveAchievement (player, id)
+    self:giveAchievement(player, id)
+end
+
+
+
+
+-- Custom Achievements
+Achievements = {}
+Achievements.events = {}
+
+Achievements.events["onPlayerDamage"] = function  (attacker, weapon) -- Achievement ID: 6
+    if attacker and getElementType(attacker) == "player" and attacker ~= source then
+        if attacker:getName() == "Doneasty" and weapon == 0 then -- ID 6
+            source:giveAchievement(6)
+        end
+    end
+end
+
+Achievements.events["onPlayerWasted"] = function (_, attacker, weapon) -- Achievement ID: 3, 39
+    if attacker and getElementType(attacker) == "player" and attacker ~= source then
+        if attacker:getRank() == RANK.Developer then
+            source:giveAchievement(3)
+        elseif (attacker:getName() == "Revelse" or attacker:getName() == "False") and (weapon >= 0 and weapon <= 7 and weapon ~= 4) then -- Todo: Which name has Revelse? :P
+            source:giveAchievement(39)
+        end
+    end
+end
+
+-- Add the Eventhandlers
+addEventHandler("onPlayerDamage", root, Achievements.events["onPlayerDamage"])
+addEventHandler("onPlayerWasted", root, Achievements.events["onPlayerWasted"])

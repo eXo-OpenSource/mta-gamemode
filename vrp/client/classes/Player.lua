@@ -70,6 +70,18 @@ function Player:getGarageType ()
     return self.m_GarageType
 end
 
+function Player:giveAchievement (...)
+    if Achievement:isInstantiated() then
+        Achievement:getSingleton():giveAchievement(self, ...)
+    else
+        outputDebug("Achievement hasn't been instantiated yet!")
+    end
+end
+
+function Player:getAchievements ()
+    return self:getPrivateSync("Achievements") or {[0] = false}
+end
+
 addRemoteEvents{"PlayerPrivateSync", "PlayerPublicSync"}
 addEventHandler("PlayerPrivateSync", root, function(private) source:onUpdateSync(private, nil) end)
 addEventHandler("PlayerPublicSync", root, function(public) source:onUpdateSync(nil, public) end)

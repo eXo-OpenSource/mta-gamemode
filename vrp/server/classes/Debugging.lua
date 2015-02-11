@@ -21,7 +21,7 @@ if DEBUG then
 			runString(codeString, root, player)
 		end
 	end
-	
+
 	function Debugging:vehicle(player, cmd, model)
 		if player:getRank() < RANK.Moderator then
 			return
@@ -30,7 +30,7 @@ if DEBUG then
 		local x, y, z = getElementPosition(player)
 		TemporaryVehicle.create(model, x+3, y, z)
 	end
-	
+
 	function Debugging:karma(player, cmd, karma)
 		--[[if player:getRank() < RANK.Administrator then
 			return
