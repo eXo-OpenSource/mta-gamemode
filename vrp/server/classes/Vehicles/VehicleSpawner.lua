@@ -16,7 +16,7 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 		self.m_Vehicles[type(v) == "number" and v or getVehicleModelFromName(v)] = true
 	end
 	
-	self.m_Position = Vector(x, y, z)
+	self.m_Position = Vector3(x, y, z)
 	self.m_Rotation = rotation or 0
 	self.m_ConditionFunc = spawnConditionFunc
 	self.m_PostSpawnFunc = postSpawnFunc
@@ -51,7 +51,7 @@ addEventHandler("vehicleSpawn", root,
 			destroyElement(client:getJobVehicle())
 		end
 		
-		local vehicle = TemporaryVehicle.create(vehicleModel, shop.m_Position.X, shop.m_Position.Y, shop.m_Position.Z + 1.5, shop.m_Rotation)
+		local vehicle = TemporaryVehicle.create(vehicleModel, shop.m_Position.x, shop.m_Position.y, shop.m_Position.z + 1.5, shop.m_Rotation)
 		if shop.m_PostSpawnFunc then
 			shop.m_PostSpawnFunc(vehicle, client)
 		end

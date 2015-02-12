@@ -8,7 +8,7 @@
 GasStation = inherit(Object)
 
 function GasStation:constructor(position)
-	self.m_Marker = createMarker(position.X, position.Y, position.Z, "cylinder", 5, 255, 255, 0, 100)
+	self.m_Marker = createMarker(position, "cylinder", 5, 255, 255, 0, 100)
 	
 	addEventHandler("onMarkerHit", self.m_Marker,
 		function(hitElement, matchingDimension)
@@ -27,7 +27,7 @@ function GasStation:constructor(position)
 end
 
 function GasStation.initializeAll()
-	GasStation:new(Vector(1937.5, -1773, 12.5))
+	GasStation:new(Vector3(1937.5, -1773, 12.5))
 end
 
 addEvent("gasStationFill", true)

@@ -62,8 +62,8 @@ function GUIRenderer.process3DMouse()
 	local wx1, wy1, wz1 = getWorldFromScreenPosition(cx, cy, 3)
 	local wx2, wy2, wz2 = getWorldFromScreenPosition(cx, cy, 5)
 	
-	local cursorPos = Vector(wx1, wy1, wz1)
-	local cursorDir = Vector(wx2-wx1, wy2-wy1, wz2-wz1)
+	local cursorPos = Vector3(wx1, wy1, wz1)
+	local cursorDir = Vector3(wx2-wx1, wy2-wy1, wz2-wz1)
 	
 	for k, ca in pairs(GUIRenderer.ms_3DGUIs) do
 		if ca:isVisible() then

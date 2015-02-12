@@ -74,7 +74,7 @@ function DatabasePlayer:load()
 		return false
 	end
 	
-	self.m_SavedPosition = Vector(row.PosX, row.PosY, row.PosZ)
+	self.m_SavedPosition = Vector3(row.PosX, row.PosY, row.PosZ)
 	self.m_SavedInterior = row.Interior
 	self.m_Skin = row.Skin
 	self:setXP(row.XP)

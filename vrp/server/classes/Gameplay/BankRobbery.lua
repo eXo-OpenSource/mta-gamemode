@@ -11,7 +11,7 @@ local MIN_TIME_BETWEEN_ROBBS = 5000 --30*60*1000
 local HOLD_TIME = 20*1000 --4*60*1000
 
 function BankRobbery:constructor(position, rotation, interior, dimension)
-	--self.m_Safe = createObject(2332, position.X, position.Y, position.Z, 0, 0, rotation)
+	--self.m_Safe = createObject(2332, position.x, position.y, position.z, 0, 0, rotation)
 	--setElementInterior(self.m_Safe, interior)
 	--setElementDimension(self.m_Safe, dimension or 0)
 	
@@ -19,7 +19,7 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 	
 	self.m_LastRobbery = 0
 	self.m_Timer = false
-	self.m_ColShape = createColSphere(position.X, position.Y, position.Z, 25)
+	self.m_ColShape = createColSphere(position, 25)
 	setElementInterior(self.m_ColShape, interior)
 	
 	addEventHandler("onColShapeLeave", self.m_ColShape,
@@ -141,7 +141,7 @@ function BankRobbery.onBombPlace(player)
 end
 
 function BankRobbery.initializeAll()
-	BankRobbery:new(Vector(827.3, 4227.6, 15.75), 0, 1)
+	BankRobbery:new(Vector3(827.3, 4227.6, 15.75), 0, 1)
 end
 
 --[[

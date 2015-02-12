@@ -9,7 +9,6 @@
 	<script src="shared/classes/Object.lua" type="shared"/>
 	<script src="shared/classes/Singleton.lua" type="shared"/>
 	
-	<script src="shared/classes/Vector.lua" type="shared"/>
 	<script src="shared/constants.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>

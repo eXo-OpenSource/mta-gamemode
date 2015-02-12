@@ -30,18 +30,18 @@ function StreetRaceEvent:onStart()
 			destroyElement(self.m_StartMarker)
 
 			-- Find random position which is not equal to the start position
-			local x, y, z, randomIndex
+			local pos, randomIndex
 			repeat
-				x, y, z, randomIndex = self.getRandomPosition()
+				pos, randomIndex = self.getRandomPosition()
 			until randomIndex ~= self.m_StartIndex
 			
-			self.m_DestinationBlip = Blip:new("Waypoint.png", x, y)
-			self.m_ColShape = createColSphere(x, y, z, 20)
+			self.m_DestinationBlip = Blip:new("Waypoint.png", pos.x, pos.y)
+			self.m_ColShape = createColSphere(pos, 20)
 			addEventHandler("onColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
 			
 			-- Start the GPS for each player
 			for k, player in ipairs(self.m_Players) do
-				player:startNavigationTo(x, y, z)
+				player:startNavigationTo(pos)
 			end
 			
 			-- Tell player that we started the event
@@ -96,8 +96,8 @@ end
 
 function StreetRaceEvent.getRandomPosition()
 	local randomIndex = math.random(1, #StreetRaceEvent.Positions)
-	local x, y, z = unpack(StreetRaceEvent.Positions[randomIndex])
-	return x, y, z, randomIndex
+	local pos = StreetRaceEvent.Positions[randomIndex]
+	return pos, randomIndex
 end
 
 function StreetRaceEvent:getName()
@@ -109,6 +109,6 @@ function StreetRaceEvent:getPositions()
 end
 
 StreetRaceEvent.Positions = {
-	Vector(0, 0, 4),
-	Vector(-1656.3, -539.8, 10.8)
+	Vector3(0, 0, 4),
+	Vector3(-1656.3, -539.8, 10.8)
 }

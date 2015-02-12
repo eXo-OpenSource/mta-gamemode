@@ -10,9 +10,9 @@ VehicleShop = inherit(Object)
 function VehicleShop:constructor(name, imagePath, position, rect, vehicles)
 	self.m_Name = name
 	self.m_ImagePath = imagePath
-	self.m_Marker = createMarker(position.X, position.Y, position.Z, "cylinder", 1, 255, 255, 0, 150)
-	self.m_Area = NonCollidingArea:new(rect.X, rect.Y, rect.Width, rect.Height)
-	self.m_Blip = Blip:new("CarShop.png", position.X, position.Y)
+	self.m_Marker = createMarker(position.x, position.y, position.z, "cylinder", 1, 255, 255, 0, 150)
+	self.m_Area = NonCollidingArea:new(rect.x, rect.y, rect.Width, rect.Height)
+	self.m_Blip = Blip:new("CarShop.png", position.x, position.y)
 	self.m_Vehicles = vehicles
 	
 	addEventHandler("onClientMarkerHit", self.m_Marker, bind(self.markerHit, self))
@@ -37,6 +37,6 @@ end
 function VehicleShop.initializeAll()
 	for shopName, info in pairs(VEHICLESHOPS) do
 		local x, y, z = unpack(info.Position)
-		VehicleShop:new(shopName, info.ImgPath, Vector(x, y, z), Rect:new(unpack(info.Rect)), info.Vehicles)
+		VehicleShop:new(shopName, info.ImgPath, Vector3(x, y, z), Rect:new(unpack(info.Rect)), info.Vehicles)
 	end
 end

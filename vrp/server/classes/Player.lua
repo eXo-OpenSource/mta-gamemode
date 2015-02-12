@@ -68,8 +68,8 @@ function Player:sendMessage(text, r, g, b, ...)
 	outputChatBox(text:format(...), self, r, g, b, true)
 end
 
-function Player:startNavigationTo(x, y, z)
-	self:triggerEvent("navigationStart", x, y, z)
+function Player:startNavigationTo(pos)
+	self:triggerEvent("navigationStart", pos.x, pos.y, pos.z)
 end
 
 function Player:stopNavigation()

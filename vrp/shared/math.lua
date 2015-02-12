@@ -20,8 +20,8 @@ Plane:
 -- Returns a Vector
 function math.line_plane_intersection(linepos, linedir, planepos, planev1, planev2)
 	local posoffset = linepos - planepos
-	local n = planev1:crossP(planev2)
-	if math.abs(n:dotP(linedir)) < 1.0e-3 then
+	local n = planev1:cross(planev2)
+	if math.abs(n:dot(linedir)) < 1.0e-3 then
 		return false
 	end
 	
@@ -32,5 +32,5 @@ end
 
 -- 3 Vectors only... no matrices please
 function math.determinante(a, b, c)
-	return a:crossP(b):dotP(c)
+	return a:cross(b):dot(c)
 end

@@ -8,17 +8,17 @@
 CacheArea3D = inherit(CacheArea)
 
 function CacheArea3D:constructor(startX, startY, startZ, endX, endY, endZ, normX, normY, normZ, saheight, resx, resy, containsGUIElements)
-	self.m_3DStart = Vector(startX, startY, startZ)
-	self.m_3DEnd = Vector(endX, endY, endZ)
+	self.m_3DStart = Vector3(startX, startY, startZ)
+	self.m_3DEnd = Vector3(endX, endY, endZ)
 
-	self.m_3DWidth = (self.m_3DStart - self.m_3DEnd):norm()
+	self.m_3DWidth = (self.m_3DStart - self.m_3DEnd).length
 	self.m_3DHeight= saheight;
-	self.m_Normal = Vector(normX, normY, normZ)
+	self.m_Normal = Vector3(normX, normY, normZ)
 	
 	self.m_Middle = self.m_3DStart  + (self.m_3DEnd -self.m_3DStart) / 2
 	
-	local norm2 = (self.m_3DEnd - self.m_3DStart):crossP(self.m_Normal)
-	self.m_SecPos = self.m_Middle + norm2/norm2:norm() * saheight/2
+	local norm2 = (self.m_3DEnd - self.m_3DStart):cross(self.m_Normal)
+	self.m_SecPos = self.m_Middle + norm2/norm2.length * saheight/2
  
 	
 	self.m_ResX = resx
@@ -34,12 +34,12 @@ function CacheArea3D:destructor()
 end
 
 function CacheArea3D:setPosition(startX, startY, startZ, endX, endY, endZ)
-	self.m_3DStart = Vector(startX, startY, startZ)
-	self.m_3DEnd = Vector(endX, endY, endZ)
-	self.m_3DWidth = (self.m_3DStart - self.m_3DEnd):norm()
+	self.m_3DStart = Vector3(startX, startY, startZ)
+	self.m_3DEnd = Vector3(endX, endY, endZ)
+	self.m_3DWidth = (self.m_3DStart - self.m_3DEnd).length
 	self.m_Middle = self.m_3DStart  + (self.m_3DEnd -self.m_3DStart) / 2
-	local norm2 = (self.m_3DEnd - self.m_3DStart):crossP(self.m_Normal)
-	self.m_SecPos = self.m_Middle + norm2/norm2:norm() * saheight/2
+	local norm2 = (self.m_3DEnd - self.m_3DStart):cross(self.m_Normal)
+	self.m_SecPos = self.m_Middle + norm2/norm2.length * saheight/2
 	
 	self:anyChange()
 end
@@ -63,8 +63,8 @@ function CacheArea3D:performMouse(vecMouse3D, mouse1, mouse2, A, B, C, D)
 	local AB = B - A
 	local AP = P - A
 	
-	local x = AP:dotP(AB / AB:norm())
-	local y = AP:dotP(AC / AC:norm())
+	local x = AP:dot(AB / AB.length)
+	local y = AP:dot(AC / AC.length)
 	
 	
 	local cx = y / self.m_3DWidth * self.m_ResX
@@ -126,10 +126,10 @@ function CacheArea3D:drawCached()
 	-- Render! :>
 	face = self.m_Middle + self.m_Normal
 	
-	dxDrawMaterialLine3D(self.m_3DStart.X, self.m_3DStart.Y, self.m_3DStart.Z,
-						self.m_3DEnd.X, self.m_3DEnd.Y, self.m_3DEnd.Z,
+	dxDrawMaterialLine3D(self.m_3DStart.x, self.m_3DStart.y, self.m_3DStart.z,
+						self.m_3DEnd.x, self.m_3DEnd.y, self.m_3DEnd.z,
 						self.m_RenderTarget, self.m_3DHeight, tocolor(255,255,255,255), 
-						face.X, face.Y, face.Z)
+						face.x, face.y, face.z)
 	
 	return true
 end

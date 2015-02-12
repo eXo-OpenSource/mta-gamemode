@@ -14,17 +14,17 @@ function GPS:constructor()
 	self.m_UpdateFunc = bind(GPS.update, self)
 end
 
-function GPS:startNavigationTo(x, y, z)
-	self.m_Destination = Vector(x, y, z)
+function GPS:startNavigationTo(pos)
+	self.m_Destination = pos
 	self.m_Arrow = createObject(1318, 0, 0, 0)
 	setElementCollisionsEnabled(self.m_Arrow, false)
-	self.m_ColShape = createColSphere(x, y, z, 20)
+	self.m_ColShape = createColSphere(pos, 20)
 	
 	addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
 	addEventHandler("onClientColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
 end
 addEvent("navigationStart", true)
-addEventHandler("navigationStart", root, function(x, y, z) GPS:getSingleton():startNavigationTo(x, y, z) end)
+addEventHandler("navigationStart", root, function(x, y, z) GPS:getSingleton():startNavigationTo(Vector3(x, y,z)) end)
 
 function GPS:stopNavigation()
 	if self.m_Arrow and isElement(self.m_Arrow) then
