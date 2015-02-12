@@ -167,7 +167,7 @@ function Player:spawn()
         if self:isGuest() then
             spawnPlayer(self, 638, -1542, 15, self.m_Skin, self.m_SavedInterior, 0)
         else
-		    spawnPlayer(self, self.m_SavedPosition.X, self.m_SavedPosition.Y, self.m_SavedPosition.Z, 0, self.m_Skin, self.m_SavedInterior, 0)
+		    spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin, self.m_SavedInterior, 0)
         end
 	elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
 		VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
