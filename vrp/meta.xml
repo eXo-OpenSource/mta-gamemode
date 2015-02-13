@@ -75,6 +75,9 @@
 	<script src="server/classes/Nametag.lua" type="server"/>
 	<script src="server/classes/Collectables.lua" type="server"/>
 	<script src="server/classes/DrivingSchool.lua" type="server"/>
+	<script src="server/classes/Gameplay/AmmuTeam.lua" type="server"/>
+	<script src="server/classes/Gameplay/AmmuArena.lua" type="server"/>
+	<script src="server/classes/Gameplay/AmmuLadder.lua" type="server"/>
 	<script src="server/classes/SkinShops.lua" type="server"/>
     <script src="server/classes/Achievement.lua" type="server"/>
 	

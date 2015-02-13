@@ -59,6 +59,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_LastGarageEntrance = 0
 	self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
 	self.m_Collectables = {}
+	self.m_LadderTeam = {}
 	self.m_Achievements = {[0] = false} -- Dummy element, otherwise the JSON string is built wrong
 end
 
@@ -103,6 +104,7 @@ function DatabasePlayer:load()
 	self.m_SpawnLocation = row.SpawnLocation
 	self.m_Collectables = fromJSON(row.Collectables or "")
 	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
+	self.m_LadderTeam = fromJSON(row.Ladder or "[[]]")
 	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -126,8 +128,8 @@ function DatabasePlayer:save()
 		return false
 	end
 	
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements()), self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements()), self.m_LadderTeam, self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -310,6 +312,18 @@ end
 function DatabasePlayer:setGarageType(garageType)
 	self.m_GarageType = garageType
 	sql:queryExec("UPDATE ??_character SET GarageType = ? WHERE Id = ?", sql:getPrefix(), garageType, self.m_Id)
+end
+
+function DatabasePlayer:getTeamId(kind)
+	return self.m_LadderTeam[kind]
+end
+
+function DatabasePlayer:setTeamId(kind,id)
+	if self.m_LadderTeam[kind] then
+		return false
+	end
+	self.m_LadderTeam[kind] = id
+	return true
 end
 
 function DatabasePlayer:updateAchievements (tbl)

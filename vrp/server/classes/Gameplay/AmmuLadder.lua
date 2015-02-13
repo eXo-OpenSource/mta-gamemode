@@ -1,80 +1,111 @@
 AmmuLadder = inherit(Singleton)
 
-local DUEL_TIME  = 1000*60*30 -- 30 sec
-local MAX_POINTS = 48 
+local MAX_POINTS      = 48 
+local START_RATING    = 0
+local MIN_NAME_LENGHT = 6
 
-addRemoteEvents{"onAmmuLadderQuit"}
+addRemoteEvents{"onAmmuLadderQuit","foundNewTeam"}
+
+AmmuLadder.Settings = {
+	["2vs2"] = 
+	{
+		TIME = 1000*60*3,
+		WEAPONS = {
+			31,24,29
+		}
+	},
+	["3vs3"] = 
+	{
+		TIME = 1000*60*5,
+		WEAPONS = {
+			31,24,29
+		}
+	},
+	["5vs5"] = 
+	{
+		TIME = 1000*60*7,
+		WEAPONS = {
+			31,24,29
+		}
+	},	
+}
 
 function AmmuLadder:constructor()
 	self.m_Timer = {}
-
+	self.m_Teams = {}
 	-- DEBUG
-	addCommandHandler("requestduel", bind(self.duellRequest,self))
+	addCommandHandler("resetwhole", bind(self.whipeTeams,self))
 	--
-	addEventHandler("onPlayerQuit", root, bind(self.onEvent,self))
-	addEventHandler("onPlayerWasted", root, bind(self.onEvent,self))
 	addEventHandler("onAmmuLadderQuit", root, bind(self.onEvent,self))
+	addEventHandler("foundNewTeam"    , root, bind(self.foundTeam,self))
+	
+	self:loadTeams()
+end
+
+function AmmuLadder:whipeTeams()
+	-- Todo ( only debug ) 
+end
+
+function AmmuLadder:getTeam(id)
+	return self.m_Teams[id]
+end
+
+function AmmuLadder:foundTeam(founder,name,kind)
+	if not AmmuLadder.Settings[kind] then return end
+	if name:len() == MIN_NAME_LENGHT then return end
+	if founder:getTeamId(kind) then return end
+	
+	sql:queryExec("INSERT INTO ??_ladder (Name,Rating,Type,Members,Founder) VALUES (?,?,?,?,?)",
+		sql:getPrefix(), name, START_RATING, kind, toJSON({founder:getId()}), founder:getId())
+	
+	local id = sql:lastInsertId()	
+	
+	self.m_Teams[id] = AmmuTeam:new(id,name,START_RATING,kind,{},founder:getId()):addMember(founder)
+end
+
+addCommandHandler("kasdf",
+	function(player)
+		AmmuLadder:getSingleton():foundTeam(player,"testTeam"..math.random(9999),"2vs2")
+	end
+)
+
+function AmmuLadder:queueTeam(kind)
+	if not AmmuLadder.Settings[kind] then return end -- suppress wrong kinds
+	local team = self:getTeam(client:getTeamId(kind))
+	if team and #team:getMembers() then
+		-- Todo
+	end
+end
+
+function AmmuLadder:loadTeams()
+	outputServerLog("Loading ladder-teams...")
+	local query = sql:queryFetch("SELECT * FROM ??_ladder", sql:getPrefix())
+	
+	for key, value in pairs(query) do
+		self.m_Teams[tonumber(value["Id"])] = AmmuTeam:new(value["id"],value["Name"],value["Rating"],value["Type"],fromJSON(value["Members"]),value["Founder"])
+	end
+end
+
+function AmmuLadder:destructor()
+	for key, value in pairs (self.m_Teams) do
+		sql:queryExec("UPDATE ??_ladder SET Rating = ? WHERE id = ?;", sql:getPrefix(), value:getRating(), self.m_Id)			
+	end
 end
 
 function AmmuLadder:onEvent(...)
 	if event == "onPlayerQuit" then
-		if not self.m_IsDuelling then return end
-		self:AbandonDuel(source)
-	elseif event == "onPlayerWasted" then
-		if not self.m_IsDuelling then return end
-		self:AbandonDuel(source)
-	elseif event == "onAmmuLadderQuit" then
-		if not self.m_IsDuelling then return end
-		self:AbandonDuel(select(1,...))
+		-- Todo: move this to the AmmuArena-class
 	end
 end
 
-function AmmuLadder:duellRequest(player,_,target)
-	local targetUnit = getPlayerFromName(target) or nil
-	if not targetUnit then
-		return
-	end
-	local duelStatusPlayer = player.IsDuelling
-	local duelStatusTarget = targetUnit.IsDuelling
-	
-	if not duelStatusPlayer and not duelStatusTarget then
-		AmmuLadder:startDuel(player,targetUnit)
-	end
-		
+function AmmuLadder:getSettings(kind)
+	return self.Settings[kind]
 end
 
-function AmmuLadder:AbandonDuel(player)
-	local playerPartner = player.DuelPartner
-	killTimer(self.m_Timer[player])
-	
-	AmmuLadder:PortPlayerOut(player)
-	AmmuLadder:PortPlayerOut(playerPartner)
-end
+--[[
 
-function AmmuLadder:PortPlayerOut(player)
-	player.IsDuelling = false
-	player.DuelPartner = false
-end
+	Calculation for rating ( elo-system from chess ): 
 
-function AmmuLadder:startDuel(player,targetUnit)
-	player.IsDuelling 			= true
-	player.DuelPartner 			= targetUnit
-	targetUnit.IsDuelling 		= true
-	targetUnit.DuelPartner 		= player
-	player.Rating 	= player.Rating 		 or 0
-	targetUnit.Rating = targetUnit.Rating	 or 0
-	
-	self.m_Timer[player] = setTimer(bind(self.finishDuel,self),DUEL_TIME,1,player,targetUnit)
-	self.m_Timer[targetUnit] = self.m_Timer[player]
-end
-
-function AmmuLadder:reportFlew(player)
-	if not isElement(player) then
-		return
-	end
-end
-
-function AmmuLadder:finishDuel(playerA,playerB)
 	local playerAChance = 1/(1+10(playerB.Rating - playerA.Rating)/400)
 	local playerBChance = 1/(1+10(playerA.Rating - playerB.Rating)/400)
 	
@@ -86,7 +117,4 @@ function AmmuLadder:finishDuel(playerA,playerB)
 		playerA.Rating = playerA.Rating + MAX_POINTS*(0 - playerAChance)	
 	end
 	
-	AmmuLadder:PortPlayerOut(playerA)
-	AmmuLadder:PortPlayerOut(playerB)	
-	
-end
+]]
