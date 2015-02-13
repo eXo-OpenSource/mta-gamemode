@@ -170,6 +170,7 @@
 	<script src="client/classes/GUI/GUIImage.lua" type="client"/>
 	<script src="client/classes/GUI/GUIEdit.lua" type="client"/>
 	<script src="client/classes/GUI/GUIForm.lua" type="client"/>
+	<script src="client/classes/GUI/GUIForm3D.lua" type="client"/>
 	<script src="client/classes/GUI/GUILabel.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRenderer.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWindow.lua" type="client"/>

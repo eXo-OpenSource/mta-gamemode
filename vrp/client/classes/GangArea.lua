@@ -9,8 +9,8 @@ GangArea = inherit(Object)
 
 function GangArea:constructor(Id, wallPosition, rotation, areaPosition, width, height)
 	self.m_Id = Id
-	self.m_Wall = createObject(7921, wallPosition.X, wallPosition.Y, wallPosition.Z, 0, 0, rotation)
-	self.m_Shape = createColSphere(wallPosition.X, wallPosition.Y, wallPosition.Z, 5)
+	self.m_Wall = createObject(7921, wallPosition.x, wallPosition.y, wallPosition.z, 0, 0, rotation)
+	self.m_Shape = createColSphere(wallPosition.x, wallPosition.y, wallPosition.z, 5)
 	self.m_TagTexture = nil
 	self.m_TagSectionTexture = nil
 	self.m_TagProgress = 128

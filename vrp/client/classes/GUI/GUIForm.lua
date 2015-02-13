@@ -5,7 +5,6 @@
 -- *  PURPOSE:     GUI form class (base class)
 -- *
 -- ****************************************************************************
-
 GUIForm = inherit(CacheArea)
 
 function GUIForm:constructor(posX, posY, width, height)

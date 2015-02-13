@@ -7,13 +7,13 @@
 -- ****************************************************************************
 CacheArea3D = inherit(CacheArea)
 
-function CacheArea3D:constructor(startX, startY, startZ, endX, endY, endZ, normX, normY, normZ, saheight, resx, resy, containsGUIElements)
-	self.m_3DStart = Vector3(startX, startY, startZ)
-	self.m_3DEnd = Vector3(endX, endY, endZ)
+function CacheArea3D:constructor(startPos, endPos, normal, saheight, resx, resy, containsGUIElements)
+	self.m_3DStart = startPos
+	self.m_3DEnd = endPos
 
 	self.m_3DWidth = (self.m_3DStart - self.m_3DEnd).length
 	self.m_3DHeight= saheight;
-	self.m_Normal = Vector3(normX, normY, normZ)
+	self.m_Normal = normal
 	
 	self.m_Middle = self.m_3DStart  + (self.m_3DEnd -self.m_3DStart) / 2
 	

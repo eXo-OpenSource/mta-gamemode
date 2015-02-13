@@ -34,3 +34,18 @@ end
 function math.determinante(a, b, c)
 	return a:cross(b):dot(c)
 end
+
+function math.getAngle(vec1, vec2)
+	return math.acos(vec1:dot(vec2)/(vec1.length * vec2.length))
+end
+
+function math.getPlainInfoFromEuler(position, rotation, size)
+	-- Build entity matrix and calculate the normal
+	local mat = Matrix(position, rotation)
+	local normal = mat.forward
+	
+	local startpos = position
+	local endpos = mat:transformPosition(Vector3(size.x, 0, 0))
+	
+	return startpos, endpos, normal
+end

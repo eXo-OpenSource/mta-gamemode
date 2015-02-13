@@ -11,7 +11,7 @@ function VehicleShop:constructor(name, imagePath, position, rect, vehicles)
 	self.m_Name = name
 	self.m_ImagePath = imagePath
 	self.m_Marker = createMarker(position.x, position.y, position.z, "cylinder", 1, 255, 255, 0, 150)
-	self.m_Area = NonCollidingArea:new(rect.x, rect.y, rect.Width, rect.Height)
+	self.m_Area = NonCollidingArea:new(rect.X, rect.Y, rect.Width, rect.Height)
 	self.m_Blip = Blip:new("CarShop.png", position.x, position.y)
 	self.m_Vehicles = vehicles
 	
