@@ -29,6 +29,5 @@ function Achievement:Event_onReceiveAchievements (arg)
 end
 
 function Achievement:Event_onPlayerReceiveAchievement (id)
-    local text = utf8.escape(_(self.ms_Achievements[id]["name"]))
-    outputChatBox("Achivement got: "..text)
+    local instance = AchievementBox:new(utf8.escape(_(self.ms_Achievements[id]["name"])), self.ms_Achievements[id]["exp"])
 end

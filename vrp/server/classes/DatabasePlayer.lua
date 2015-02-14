@@ -331,10 +331,11 @@ function DatabasePlayer:updateAchievements (tbl)
         self.m_Achievements = tbl
     end
     if self:isActive() then self:setPrivateSync("Achievements", table.copy(self.m_Achievements)) end
+    -- Todo: In my tests, the table must be copied, otherwise the client didn't received it. --> Find out why (Jusonex can't reproduce it)
 end
 
 function DatabasePlayer:getAchievements ()
-    return self:getPrivateSync("Achievements")
+    return self:getPrivateSync("Achievements") or {[0] = false}
 end
 
 function DatabasePlayer:giveAchievement (...)

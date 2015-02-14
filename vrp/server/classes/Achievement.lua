@@ -66,7 +66,7 @@ Achievements.events["onPlayerWasted"] = function (_, attacker, weapon) -- Achiev
     if attacker and getElementType(attacker) == "player" and attacker ~= source then
         if attacker:getRank() == RANK.Developer then
             source:giveAchievement(3)
-        elseif (attacker:getName() == "Revelse" or attacker:getName() == "False") and (weapon >= 0 and weapon <= 7 and weapon ~= 4) then -- Todo: Which name has Revelse? :P
+        elseif (attacker:getName() == "Revelse") and (weapon >= 0 and weapon <= 7 and weapon ~= 4) then
             source:giveAchievement(39)
         end
     end

@@ -154,6 +154,7 @@
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
 	<script src="client/classes/DrivingSchool.lua" type="client"/>
     <script src="client/classes/Achievement.lua" type="client"/>
+	<script src="client/classes/AchievementBox.lua" type="client"/>
 	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
