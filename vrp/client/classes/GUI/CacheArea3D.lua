@@ -124,7 +124,7 @@ function CacheArea3D:drawCached()
 	end
 	
 	-- Render! :>
-	face = self.m_Middle + self.m_Normal
+	local face = self.m_Middle + self.m_Normal
 	
 	dxDrawMaterialLine3D(self.m_3DStart.x, self.m_3DStart.y, self.m_3DStart.z,
 						self.m_3DEnd.x, self.m_3DEnd.y, self.m_3DEnd.z,

@@ -27,6 +27,7 @@ function Core:ready()
 	triggerServerEvent("playerReady", root)
 
 	TranslationManager:new()
+	WebUIManager:new()
 	HelpTextManager:new()
 	MTAFixes:new()
 	ClickHandler:new()
