@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link href="mtalocal://files/html/PolicePanel/main.css" type="text/css" rel="stylesheet" />
+		<script type="text/javascript" src="mtalocal://files/html/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="mtalocal://files/html/PolicePanel/main.js"></script>
+	</head>
+	<body>
+		<div id="main-wrapper">
+			<div id="top"><label id="back" class="hidden">Zurück</label><label class="title">SAN ANDREAS POLICE DEPARTMENT</label></div>
+			<div id="content">
+				<div id="main-menu" class="">
+					<span class="title">HAUPTMENÜ</span>
+					<label class="info">Wählen Sie eine Aktion aus</label>
+					<ul>
+						<li><a href="" rel="current-crime">Aktuelle Verbrechen anzeigen</a></li>
+						<li><a href="" rel="records">Strafregister anzeigen</a></li>
+						<li><a href="" rel="most-wanted">Meistgesuchte Verbrecher anzeigen</a></li>
+					</ul>
+				</div>
+				
+				<!-- Menus -->
+				<div id="current-crime" class="menu hidden">
+					<table>
+						<tr>
+							<td>Name</td>
+							<td>Verbrechen</td>
+						</tr>
+					</table>
+					<table id="crime">
+						<tr>
+							<td>Spieler 1</td>
+							<td>Mord</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
