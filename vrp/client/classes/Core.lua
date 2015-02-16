@@ -27,7 +27,7 @@ function Core:ready()
 	triggerServerEvent("playerReady", root)
 
 	TranslationManager:new()
-	WebUIManager:new()
+	WebUIManager:new():setProperty("UseInternalClickMechanism", false)
 	HelpTextManager:new()
 	MTAFixes:new()
 	ClickHandler:new()

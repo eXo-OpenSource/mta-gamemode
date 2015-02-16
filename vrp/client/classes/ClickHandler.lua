@@ -82,6 +82,11 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	-- Close all currently open menus
 	if trigger then self:clearMouseMenus() end
 	
+	-- Process CEF clicks
+	if WebUIManager:getInstance():invokeClick(self.m_ClickInfo.button, "up", self.m_ClickInfo.absoluteX, self.m_ClickInfo.absoluteY) then
+		return true
+	end
+	
 	local element, button = clickInfo.element, clickInfo.button
 	if not element or not isElement(element) then
 		return false
