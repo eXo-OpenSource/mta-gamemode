@@ -17,7 +17,7 @@ end
 
 function SkinShops:Event_skinBuy(skinId)
 	if not SkinInfo[skinId] then return end
-	local _, price = unpack(SkinInfo[skinId])
+	local name, price = unpack(SkinInfo[skinId])
 	
 	if client:getMoney() >= price then
 		client:setSkin(skinId)
