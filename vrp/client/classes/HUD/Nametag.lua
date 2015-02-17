@@ -27,7 +27,7 @@ function Nametag:constructor()
 	self.m_Draw = bind(self.draw,self)
 	self.m_ReciveBuffs = bind(self.reciveBuffs,self)
 	
-	addEventHandler("onClientRender", root, self.m_Draw, "high+999")
+	addEventHandler("onClientRender", root, self.m_Draw, true, "high+999")
 	addEventHandler("reciveNametagBuffs",root,self.m_ReciveBuffs)
 	
 end

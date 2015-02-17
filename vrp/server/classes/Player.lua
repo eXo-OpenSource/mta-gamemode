@@ -126,8 +126,8 @@ function Player:loadCharacterInfo()
 	end
 	
 	-- Sync server objects to client
-	Blip.sendAllToClient()
-	RadarArea.sendAllToClient()
+	Blip.sendAllToClient(self)
+	RadarArea.sendAllToClient(self)
 	if self.m_Inventory then
 		self.m_Inventory:setInteractingPlayer(self)
 		self.m_Inventory:sendFullSync()

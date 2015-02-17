@@ -15,6 +15,7 @@ function Blip:constructor(imagePath, x, y, visibleTo)
 			end
 		end
 	else
+		outputDebug("Creating blip for "..getPlayerName(self.m_VisibleTo))
 		self.m_VisibleTo:triggerEvent("blipCreate", #Blip.Map, self.m_ImagePath, self.m_PosX, self.m_PosY)
 	end
 end
@@ -31,12 +32,12 @@ function Blip:destructor()
 	end
 end
 
-function Blip.sendAllToClient()
+function Blip.sendAllToClient(player)
 	local data = {}
 	for k, v in ipairs(Blip.Map) do
 		if v.m_VisibleTo == root then
 			data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY}
 		end
 	end
-	triggerClientEvent("blipsRetrieve", root, data)
+	player:triggerEvent("blipsRetrieve", data)
 end

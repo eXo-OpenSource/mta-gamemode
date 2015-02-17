@@ -22,10 +22,10 @@ function RadarArea:destructor()
 	triggerClientEvent("radarAreaDestroy", root, idx)
 end
 
-function RadarArea.sendAllToClient()
+function RadarArea.sendAllToClient(player)
 	local data = {}
 	for k, v in ipairs(RadarArea.Map) do
 		data[k] = {v.m_PosX, v.m_PosY, v.m_Width, v.m_Height, v.m_Color}
 	end
-	triggerClientEvent("radarAreasRetrieve", root, data)
+	player:triggerEvent("radarAreasRetrieve", data)
 end
