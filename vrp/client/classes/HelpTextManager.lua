@@ -50,11 +50,13 @@ HelpTexts = {
 			Sarcasm <sarcasm@v-roleplay.net> (außerdem verantwortlich für den Webauftritt)
 
 			Moderation:
-			Alex <alex@v-roleplay.net> (außerdem verantwortlich für Maps)
+			Toxsi <toxsi@v-roleplay.net> (außerdem verantwortlich für Mapping)
 
 			Vielen Dank an:
+			thlefleshpound (für seine Zeit als Grafiker)
 			Schlumpf (für seine kurze Zeit als Mapper)
 			ReZ (für seine kurze Zeit als Mapper)
+			Alex (für seine Zeit als Mapper)
 		]];
 	};
 	Jobs = {

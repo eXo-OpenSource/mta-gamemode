@@ -132,7 +132,7 @@ function GroupManager:Event_groupDelete()
     if groupSize == 1 then
         leaderAmount = leaderAmount + group.m_Money
     else
-        memberAmount = group.m_Money/(#groupSize-1)
+        memberAmount = group.m_Money/(groupSize-1)
     end
 
 	-- Distribute group's money

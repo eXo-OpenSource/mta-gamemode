@@ -47,12 +47,12 @@ function EventManager:openEvent(eventClass)
 	local event = eventClass:new(self.m_EventIdCounter)
 	self.m_RunningEvents[self.m_EventIdCounter] = event
 	
-	for k, player in ipairs(getElementsByType("player")) do
+	for k, player in pairs(getElementsByType("player")) do
 		player:sendMessage(_("In 5min startet das Event '%s'! Begib dich zum Reifen-Blip, um daran teilzunehmen", player, event:getName()), 255, 255, 0)
 	end
 	
 	-- Start the event in 5min
-	setTimer(function() event:start() end, 0.5*60*1000, 1)
+	setTimer(event.start, 0.5*60*1000, 1, event)
 end
 
 function EventManager:Event_eventJoin(eventId)
