@@ -61,7 +61,10 @@ function CustomF11Map:draw()
 	dxDrawImage(mapPosX + mapX - 8, mapPosY + mapY - 8, 16, 16, "files/images/Radar_Monochrome/Blips/LocalPlayer.png", -rotZ)
 	
 	-- Draw blips
-	-- TODO
+    for i, v in ipairs(Blip.Blips) do
+        local mapX, mapY = CustomF11Map.worldToMapPosition(v.m_WorldX, v.m_WorldY)
+        dxDrawImage(mapPosX + mapX - 8, mapPosY + mapY - 8, 16, 16, v.m_ImagePath, 0)
+    end
 end
 
 function CustomF11Map.worldToMapPosition(worldX, worldY)
