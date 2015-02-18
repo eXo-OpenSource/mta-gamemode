@@ -49,3 +49,7 @@ function math.getPlainInfoFromEuler(position, rotation, size)
 	
 	return startpos, endpos, normal
 end
+
+function math.lerp(min, max, pos)
+	return max + pos * (max - min)
+end

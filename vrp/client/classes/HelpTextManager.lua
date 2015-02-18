@@ -44,6 +44,7 @@ HelpTexts = {
 			Jusonex <jusonex@v-roleplay.net>
 			sbx320 <sbx320@v-roleplay.net>
 			Revelse <revelse@v-roleplay.net>
+			StiviK <stivik@v-roleplay.net>
 
 			Administration:
 			Doneasty <doneasty@v-roleplay.net> (außerdem verantwortlich für Grafik und Design)

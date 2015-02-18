@@ -6,18 +6,20 @@
 -- *
 -- ****************************************************************************
 Karma = {}
+local MAX_KARMA = 150 -- both directions
 
 function Karma.calcKarma(currentKarma, modifyKarma, factor)
+	if modifyKarma >= MAX_KARMA then
+		return MAX_KARMA
+	end
+
 	local offsetkarma = math.abs(currentKarma - modifyKarma)
 	
-	-- http://www.wolframalpha.com/input/?i=-1%2F20x^2%2B1
-	local changekarma = -1/20*(offsetkarma^2)+1
+	-- http://www.wolframalpha.com/input/?i=-x^2%2B1 (f(0) = 1; f(1) = 0)
+	local changekarma = -(math.abs(currentKarma/MAX_KARMA)^2) + 1 -- changekarma is always between 0 and 1
 	
-	if changekarma < 0 then 
-		changekarma = 0
-	end
-	
-	return changekarma * factor
+	-- Apply new value change factor on 
+	return offsetkarma * changekarma * (factor or 1)
 end
 
 -- Below: Karma values from -50 to 50 indicating what you're able to do 

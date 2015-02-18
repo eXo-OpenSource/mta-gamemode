@@ -1,4 +1,3 @@
-MAX_CHARACTERS = 5
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which 
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
