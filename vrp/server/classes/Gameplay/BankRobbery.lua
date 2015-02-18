@@ -130,6 +130,10 @@ function BankRobbery.onBombPlace(player)
 		return true
 	end
 	
+	if JobPolice:getSingleton():countPlayers() < 5 then
+		player:sendError(_("Um den Überfall starten zu können, müssen mindestens 5 Polizisten online sein!", player))
+	end
+	
 	local x, y, z = getElementPosition(bankRobbery.m_ColShape)
 	if getDistanceBetweenPoints3D(x, y, z, getElementPosition(player)) > 5 then
 		player:sendError(_("Du befindest dich nicht nah genug am Tresor", player))
@@ -143,11 +147,3 @@ end
 function BankRobbery.initializeAll()
 	BankRobbery:new(Vector3(827.3, 4227.6, 15.75), 0, 1)
 end
-
---[[
-- nicht mehrmals starten [DONE]
-- Item muss aus Inventar entfernt werden [DONE]
-- beenden überprüfen
-
-
-]]

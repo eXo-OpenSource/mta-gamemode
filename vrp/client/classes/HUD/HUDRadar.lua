@@ -13,6 +13,9 @@ function HUDRadar:constructor()
 	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-20
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
+	if self.m_DesignSet == RadarDesign.Monochrome then
+		CustomF11Map:getSingleton():enable()
+	end
 	
 	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
 	self.m_Zoom = 1
@@ -76,6 +79,12 @@ function HUDRadar:makePath(fileName, isBlip)
 end
 
 function HUDRadar:setDesignSet(design)
+	if design == RadarDesign.Monochrome then
+		CustomF11Map:getSingleton():enable()
+	else
+		CustomF11Map:getSingleton():disable()
+	end
+
 	self.m_DesignSet = design
 	core:getConfig():set("HUD", "RadarDesign", design)
 	self:updateMapTexture()

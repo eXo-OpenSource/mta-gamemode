@@ -31,4 +31,15 @@ function Job:sendMessage(message, ...)
 	end
 end
 
+function Job:countPlayers()
+	local count = 0
+	for k, player in pairs(getElementsByType("player")) do
+		if player:getJob() == self then
+			count = count + 1
+		end
+	end
+	
+	return count
+end
+
 Job.start = pure_virtual

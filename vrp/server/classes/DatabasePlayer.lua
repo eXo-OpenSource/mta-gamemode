@@ -201,11 +201,10 @@ function DatabasePlayer:setKarma(karma)
     if self:isActive() then self:setPrivateSync("KarmaLevel", self.m_Karma) end
 end
 
-function DatabasePlayer:giveKarma(value, factor)
-	local changekarma = Karma.calcKarma(self.m_Karma, self.m_Karma+value, factor or 1)
-	if value < 0 then
-		changekarma = -changekarma
-	end
+function DatabasePlayer:giveKarma(value, factor, addDirectly)
+	factor = factor or 1
+	local changekarma = addDirectly and value*factor or Karma.calcKarma(self.m_Karma, self.m_Karma+value, factor)
+	
 	self:setXP(self.m_XP + math.abs(changekarma) * 10)
 	self:setKarma(self.m_Karma + changekarma)
 end
