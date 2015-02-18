@@ -50,7 +50,7 @@ end
 function Event:start()
 	triggerClientEvent(self.m_Players, "eventStart", root, self.m_Id, self.m_Players)
 
-	if self.onStart() then
+	if self.onStart then
 		self:onStart()
 	end
 end
