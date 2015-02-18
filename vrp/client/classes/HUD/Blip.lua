@@ -7,7 +7,6 @@
 -- ****************************************************************************
 Blip = inherit(Object)
 Blip.ServerBlips = {}
-Blip.Blips = {}
 
 function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	if type(worldX) ~= "number" or type(worldY) ~= "number" then
@@ -30,9 +29,6 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	
 	-- Add the blip to the radar
 	HUDRadar:getSingleton():addBlip(self)
-
-    -- Insert the blip into the blip table
-    table.insert(self.Blips, self)
 end
 
 function Blip:destructor()

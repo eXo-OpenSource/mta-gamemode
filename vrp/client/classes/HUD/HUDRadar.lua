@@ -23,6 +23,9 @@ function HUDRadar:constructor()
 	self.m_Blips = {}
 	self.m_Areas = {}
 	self.m_Visible = false
+
+    -- Link Blip.Blips to the HUDRadar.m_Blips
+    Blip.Blips = self.m_Blips
 	
 	-- Set texture edge to border (no-repeat)
 	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
