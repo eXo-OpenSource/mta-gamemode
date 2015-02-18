@@ -48,8 +48,8 @@ function GPS:update()
 	end
 	
 	local x, y, z = getElementPosition(vehicle)
-	local horizontalRotation = findRotation(x, y, self.m_Destination.X, self.m_Destination.Y) - 90
-	local verticalRotation = math.deg(math.asin((self.m_Destination.Z - z) / getDistanceBetweenPoints3D(self.m_Destination.X, self.m_Destination.Y, self.m_Destination.Z, x, y, z)))
+	local horizontalRotation = findRotation(x, y, self.m_Destination.x, self.m_Destination.y) - 90
+	local verticalRotation = math.deg(math.asin((self.m_Destination.z - z) / getDistanceBetweenPoints3D(self.m_Destination.x, self.m_Destination.y, self.m_Destination.z, x, y, z)))
 	
 	setElementPosition(self.m_Arrow, x, y, z + 1)
 	setElementRotation(self.m_Arrow, 0, 90 + verticalRotation, horizontalRotation)
