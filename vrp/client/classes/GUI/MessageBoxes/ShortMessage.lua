@@ -50,10 +50,10 @@ function ShortMessage:drawThis()
     w = w - 10
 
     -- Draw the text bounding box (DEBUG)
-    dxDrawLine(x, y, x + w, y, Color.White, 1)
+    --[[dxDrawLine(x, y, x + w, y, Color.White, 1)
     dxDrawLine(x, y, x, y + h, Color.White, 1)
     dxDrawLine(x, y + h, x + w, y + h, Color.White, 1)
-    dxDrawLine(x + w, y, x + w, y + h, Color.White, 1)
+    dxDrawLine(x + w, y, x + w, y + h, Color.White, 1)]]
 
 	-- Draw message text
 	dxDrawText(self.m_Text, x, y, x + w, y + h, Color.White, self.m_FontSize, self.m_Font, "left", "center", false, true)

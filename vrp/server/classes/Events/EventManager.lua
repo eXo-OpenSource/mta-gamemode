@@ -34,6 +34,10 @@ function EventManager:constructor()
 	end
 end
 
+function EventManager:unlinkEvent(event)
+	self.m_RunningEvents[event:getId()] = nil
+end
+
 function EventManager:openRandomEvent()
 	-- Get a random event
 	local eventClass = self.m_RegisteredEvents[math.random(1, #self.m_RegisteredEvents)]

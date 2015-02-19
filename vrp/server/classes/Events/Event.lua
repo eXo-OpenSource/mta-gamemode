@@ -31,6 +31,20 @@ function Event:virtual_constructor(Id)
 	)
 end
 
+function Event:virtual_destructor()
+	-- Unlink from event manager
+	EventManager:getSingleton():unlinkEvent(self)
+	
+	delete(self.m_EventBlip)
+	if isElement(self.m_StartMarker) then
+		destroyElement(self.m_StartMarker)
+	end
+end
+
+function Event:getId()
+	return self.m_Id
+end
+
 function Event:join(player)
 	self:sendMessage("%s ist dem Event beigetreten!", 255, 255, 0, getPlayerName(player))
 	table.insert(self.m_Players, player)
@@ -48,11 +62,13 @@ function Event:quit(player)
 end
 
 function Event:start()
-	triggerClientEvent(self.m_Players, "eventStart", root, self.m_Id, self.m_Players)
-
-	if self.onStart then
-		self:onStart()
+	if #self.m_Players == 0 then
+		delete(self)
+		return
 	end
+
+	triggerClientEvent(self.m_Players, "eventStart", root, self.m_Id, self.m_Players)
+	self:onStart()
 end
 
 function Event:sendMessage(text, r, g, b, ...)

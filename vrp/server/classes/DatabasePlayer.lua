@@ -169,7 +169,7 @@ function DatabasePlayer:getCollectables() return self.m_Collectables end
 function DatabasePlayer:hasPilotsLicense() return self.m_HasPilotsLicense end
 
 -- Short setters
-function DatabasePlayer:setMoney(money, instant) self.m_Money = money setPlayerMoney(self, money, instant) end
+function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) end end
 function DatabasePlayer:setWantedLevel(level) self.m_WantedLevel = level setPlayerWantedLevel(self, level) end
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end

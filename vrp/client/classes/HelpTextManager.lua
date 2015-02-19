@@ -54,7 +54,8 @@ HelpTexts = {
 			Toxsi <toxsi@v-roleplay.net> (außerdem verantwortlich für Mapping)
 
 			Vielen Dank an:
-			thlefleshpound (für seine Zeit als Grafiker)
+			Sam@ke (für seine wunderschönen Shader)
+			thefleshpound (für seine Zeit als Grafiker)
 			Schlumpf (für seine kurze Zeit als Mapper)
 			ReZ (für seine kurze Zeit als Mapper)
 			Alex (für seine Zeit als Mapper)
