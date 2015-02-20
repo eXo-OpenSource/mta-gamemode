@@ -334,7 +334,7 @@ function DatabasePlayer:updateAchievements (tbl)
 end
 
 function DatabasePlayer:getAchievements ()
-    return self:getPrivateSync("Achievements") or {[0] = false}
+    return (self.m_Achievements ~= nil and self.m_Achievements) or {[0] = false}
 end
 
 function DatabasePlayer:giveAchievement (...)
