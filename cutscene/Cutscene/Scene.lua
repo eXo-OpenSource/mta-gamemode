@@ -20,6 +20,10 @@ function Scene:constructor(data, cut)
 	Scene.LetterboxY = sh - Scene.LetterboxHeight
 end
 
+function Scene:destructor()
+	self:stop()
+end
+
 function Scene:start()
 	self.m_Begin = getTickCount()
 end
@@ -29,6 +33,9 @@ function Scene:stop()
 		if v.stop then 
 			v:stop(true)
 		end
+	end
+	for k, v in pairs(self.m_Actions) do
+		delete(v)
 	end
 end
 

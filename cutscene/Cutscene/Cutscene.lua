@@ -25,6 +25,9 @@ end
 
 function Cutscene:setScene(uid)
 	assert(self.m_Scene[uid], "Invalid Scene")
+	if self.m_ActiveScene then
+		self.m_ActiveScene:stop()
+	end
 	self.m_ActiveScene = self.m_Scene[uid]
 	self.m_Scene[uid]:start()
 end

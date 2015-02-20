@@ -7,6 +7,6 @@ end
 PRIVATE_DIMENSION_CLIENT = 0
 showPlayerHudComponent("all", false)
 showChat(false)
-s = Cutscene:new(introScene)
+s = Cutscene:new(arrestScene)
 s:play()
 

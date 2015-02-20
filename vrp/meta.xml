@@ -289,6 +289,7 @@
 	<!-- Cutscenes -->
 	<script src="client/classes/Cutscene/Cutscenes/Intro.lua" type="client"/>
 	<script src="client/classes/Cutscene/Cutscenes/TutorialStage1.lua" type="client"/>
+	<script src="client/classes/Cutscene/Cutscenes/Arrest.lua" type="client"/>
 	
 	<!-- Phone -->
 	<script src="client/classes/Phone/Phone.lua" type="client"/>
@@ -515,6 +516,7 @@
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Jail.map"/>
 	<map src="files/maps/Bank.map"/>
+	<map src="files/maps/Court.map"/>
 	
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>

@@ -61,6 +61,12 @@ Action.Ped.setAnimation.constructor = function(self, data, scene)
 	self.looped = data.looped or false
 	self.cutscene = scene:getCutscene()
 end
+Action.Ped.setAnimation.destructor = function(self)
+	local ped = self.cutscene.m_Elements[self.id]
+	if ped then
+		setPedAnimation(ped, nil, nil)
+	end
+end
 Action.Ped.setAnimation.trigger = function(self)
 	local ped = self.cutscene.m_Elements[self.id]
 	setPedAnimation(ped, self.animBlock, self.anim, self.duration, self.looped)
