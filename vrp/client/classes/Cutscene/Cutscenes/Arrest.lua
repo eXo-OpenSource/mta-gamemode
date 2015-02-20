@@ -141,5 +141,9 @@ CutscenePlayer:getSingleton():registerCutscene("Arrest", {
 			starttick = 0;
 			text = "Der Richter wird das Urteil jetzt sprechen";
 		};
+		{
+			action = "General.finish";
+			starttick = 4000;
+		};
 	};
 })

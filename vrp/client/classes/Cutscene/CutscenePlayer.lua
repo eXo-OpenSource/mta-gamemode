@@ -16,9 +16,19 @@ function CutscenePlayer:playCutscene(name, finishcallback)
 			if finishcallback then 
 				finishcallback()
 			end
+			
+			-- Show HUD
+			HUDRadar:getSingleton():show()
+			HUDUI:getSingleton():show()
+			showChat(true)
 		end;
 	
 	self.m_Cutscene:play()
+	
+	-- Hide HUD
+	HUDRadar:getSingleton():hide()
+	HUDUI:getSingleton():hide()
+	showChat(false)
 end
 
 function CutscenePlayer:stopCutscene()
