@@ -57,7 +57,7 @@ function AchievementBox:constructor (text, xp)
 
     setTimer(function ()
         self:runBackwards()
-    end, 4000, 1) -- 3s visible
+    end, 7000, 1) -- 6s visible
 
     --[[
     self.m_boxSize = Vector2(400, 120)
@@ -102,8 +102,6 @@ function AchievementBox:render ()
             self.m_Position = Vector3(interpolateBetween(self.ms_endPosition, self.ms_startPosition, self.m_Progress, self.ms_outEasing))
             self.m_Size = Vector3(interpolateBetween(self.ms_endSize, self.ms_startSize, self.m_Progress, self.ms_outEasing))
         end
-
-        outputChatBox("interpolate")
     end
 
     dxDrawImage(self.m_Position, self.m_Size, self.ms_renderTarget)
