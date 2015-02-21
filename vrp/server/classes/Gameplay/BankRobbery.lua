@@ -111,7 +111,7 @@ end
 function BankRobbery.onBombPlace(player)
 	local bankRobbery = BankRobbery.getRobableBankAtElement(player)
 	if not bankRobbery then
-		--player:sendError(_("Du bist nicht in der Nähe einer ausraubbaren Bank", player))
+		player:sendError(_("Du bist nicht in der Nähe einer ausraubbaren Bank", player))
 		return false
 	end
 	
@@ -130,8 +130,9 @@ function BankRobbery.onBombPlace(player)
 		return true
 	end
 	
-	if JobPolice:getSingleton():countPlayers() < 5 then
+	if not DEBUG and JobPolice:getSingleton():countPlayers() < 5 then
 		player:sendError(_("Um den Überfall starten zu können, müssen mindestens 5 Polizisten online sein!", player))
+		return
 	end
 	
 	local x, y, z = getElementPosition(bankRobbery.m_ColShape)

@@ -53,8 +53,6 @@ function Player:connect()
 end
 
 function Player:join()
-	-- Send initial sync
-	self:sendInitialSync()
 end
 
 function Player:sendNews()
@@ -86,6 +84,9 @@ function Player:loadCharacter()
 		Rank = self:getRank();
 	}
 	self:triggerEvent("retrieveInfo", info)
+	
+	-- Send initial sync
+	self:sendInitialSync()
 	
 	-- Add binds
 	self:initialiseBinds()

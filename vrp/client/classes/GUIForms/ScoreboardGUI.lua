@@ -16,10 +16,9 @@ function ScoreboardGUI:constructor()
 	
 	self.m_Grid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.27, self.m_Width*0.9, self.m_Height*0.75, self.m_Rect)
 	self.m_Grid:setColor(Color.Clear)
-	self.m_Grid:addColumn(_"Name", 0.3)
-	self.m_Grid:addColumn(_"Level", 0.1)
+	self.m_Grid:addColumn(_"Name", 0.35)
 	self.m_Grid:addColumn(_"Karma", 0.1)
-	self.m_Grid:addColumn(_"Gang", 0.3)
+	self.m_Grid:addColumn(_"Gang", 0.35)
 	self.m_Grid:addColumn(_"Job", 0.2)
 	
 	setTimer(bind(self.refresh, self), 1000, 0)
