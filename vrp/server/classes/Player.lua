@@ -53,7 +53,8 @@ function Player:connect()
 end
 
 function Player:join()
-
+	-- Send initial sync
+	self:sendInitialSync()
 end
 
 function Player:sendNews()
@@ -299,12 +300,13 @@ function Player:updateSync()
 	end
 end
 
-function Player:sendInitialSyncTo(target)
-	if target == self then
-		triggerClientEvent(self, "PlayerPrivateSync", self, self.m_PrivateSync)
-	end
+function Player:sendInitialSync()
+	triggerClientEvent(self, "PlayerPrivateSync", self, self.m_PrivateSync)
 	
-	triggerClientEvent(target, "PlayerPublicSync", self, self.m_PublicSyncUpdate)
+	-- Todo: Pack data and send only 1 event
+	for k, player in pairs(getElementsByType("player")) do
+		triggerClientEvent(self, "PlayerPublicSync", player, player.m_PublicSync)
+	end
 end
 
 function Player:getLastGotWantedLevelTime()

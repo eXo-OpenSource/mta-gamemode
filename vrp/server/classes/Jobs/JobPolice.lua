@@ -101,7 +101,11 @@ function JobPolice:playerDamage(attacker, attackerWeapon, bodypart, loss)
 
 	if criminal:getWantedLevel() > 0 then
 		if attacker and attacker ~= criminal and getElementType(attacker) == "player" and attackerWeapon == 3 and attacker:getJob() == self then
-			if not criminal.policeHits or criminal.policeHits < 2 then
+			if not criminal.policeHits then
+				criminal.policeHits = 1
+				return
+			end
+			if criminal.policeHits < 2 then
 				criminal.policeHits = criminal.policeHits + 1
 				-- Give him 30 seconds to run away
 				setTimer(function() if isElement(criminal) then criminal.policeHits = criminal.policeHits > 0 and criminal.policeHits - 1 or 0 end end, 30000, 1)

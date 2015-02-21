@@ -52,7 +52,7 @@ function CustomF11Map:draw()
 	local mapPosX, mapPosY = screenWidth/2-height/2, 0
 
 	-- Draw map
-	dxDrawImage(mapPosX, mapPosY, height, height, "files/images/Radar_Monochrome/Radar.jpg")
+	dxDrawImage(mapPosX, mapPosY, height, height, "files/images/Radar_Monochrome/Radar.jpg", 0, 0, 0, tocolor(255, 255, 255, 200))
 
     -- Draw blips
     for i, v in ipairs(Blip.Blips) do

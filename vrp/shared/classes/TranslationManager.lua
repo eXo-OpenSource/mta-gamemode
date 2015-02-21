@@ -76,6 +76,7 @@ end
 
 if SERVER then
 	function _(message, player, ...)
+		if not player then outputDebug(debug.traceback()) end
 		return TranslationManager:getSingleton():translate(message, player:getLocale()):format(...)
 	end
 else
