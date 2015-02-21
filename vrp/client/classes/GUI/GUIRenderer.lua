@@ -27,7 +27,8 @@ function GUIRenderer.updateAll(elapsedTime)
 	GUIElement.ms_ClickProcessed = false
 	GUIElement.ms_ClickDownProcessed = false
 	GUIElement.ms_CacheAreaRetrievedClick = false
-
+	GUIElement.ms_HoveredElement = false
+	
 	for k = #GUIRenderer.cache, 1, -1 do
 		local v = GUIRenderer.cache[k]
 		if v.m_Visible and v.update then

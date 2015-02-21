@@ -26,6 +26,12 @@ function ClickHandler:constructor()
 
 	addEventHandler("onClientCursorMove", root,
 		function(cursorX, cursorY, absX, absY, worldX, worldY, worldZ)
+			-- Do not draw if cursor is not visible and is not on top of any GUI element
+			if not isCursorShowing() or GUIElement.getHoveredElement() then
+				self.m_DrawCursor = false
+				return
+			end
+		
 			local element = getElementBehindCursor(worldX, worldY, worldZ)
 			if not element then
 				self.m_DrawCursor = false
@@ -35,7 +41,7 @@ function ClickHandler:constructor()
 			local clickInfo = {button == "left", absoluteX = absX, absoluteY = absY, element = element}
 
 			-- ClickHandler:dispatchClick returns true if there is a special mouse event available, false otherwise
-			--self.m_DrawCursor = self:dispatchClick(clickInfo) -- disable as long as it does not work properly
+			self.m_DrawCursor = self:dispatchClick(clickInfo)
 		end
 	)
 
@@ -83,7 +89,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	if trigger then self:clearMouseMenus() end
 	
 	-- Process CEF clicks
-	if WebUIManager:getInstance():invokeClick(self.m_ClickInfo.button, "up", self.m_ClickInfo.absoluteX, self.m_ClickInfo.absoluteY) then
+	if trigger and WebUIManager:getInstance():invokeClick(clickInfo.button, "up", clickInfo.absoluteX, clickInfo.absoluteY) then
 		return true
 	end
 	

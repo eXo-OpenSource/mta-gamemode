@@ -67,13 +67,15 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		
 		return
 	end
+	
+	-- Set hovered element (do it every time because it gets reset before each processing iteration)
+	GUIElement.ms_HoveredElement = self
 
 	-- Call on*Events (enabling)
 	if not self.m_Hover then
 		if self.onHover			then self:onHover()			end
 		if self.onInternalHover then self:onInternalHover() end
 		self.m_Hover = true
-		GUIElement.HoveredElement = self
 	end
 	if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
 		if self.onLeftClickDown			then self:onLeftClickDown()			end
@@ -115,7 +117,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 end
 
 function GUIElement.unhoverAll()
-	local self = GUIElement.HoveredElement
+	local self = GUIElement.ms_HoveredElement
 	while self do		
 		if self.m_Hover then
 			if self.onUnhover		  then self:onUnhover()         end
@@ -124,7 +126,7 @@ function GUIElement.unhoverAll()
 		end
 		self = self.m_Parent
 	end
-	GUIElement.HoveredElement = false
+	GUIElement.ms_HoveredElement = false
 end
 
 function GUIElement:updateInput()
@@ -138,7 +140,7 @@ function GUIElement:updateInput()
 end
 
 function GUIElement.getHoveredElement()
-	return GUIElement.HoveredElement
+	return GUIElement.ms_HoveredElement
 end
 
 function GUIElement:isHovered()
