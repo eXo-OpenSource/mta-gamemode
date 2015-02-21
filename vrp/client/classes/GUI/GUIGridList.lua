@@ -88,6 +88,14 @@ function GUIGridList:onInternalSelectItem(item)
 	self:anyChange()
 end
 
+function GUIGridList:onInternalMouseWheelUp()
+	self.m_ScrollArea:onInternalMouseWheelUp()
+end
+
+function GUIGridList:onInternalMouseWheelDown()
+	self.m_ScrollArea:onInternalMouseWheelDown()
+end
+
 function GUIGridList:draw(incache) -- Swap render order
 	if self.m_Visible then
 		-- Draw background

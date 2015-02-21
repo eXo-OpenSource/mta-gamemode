@@ -5,12 +5,12 @@
 -- *  PURPOSE:     Fade out shader class (originally created by Sam@ake)
 -- *
 -- ****************************************************************************
-FadeOutShader = inherit(Singleton)
+FadeOutShader = inherit(Object)
 
 function FadeOutShader:constructor()
 	self.m_FadeOutShader = dxCreateShader("files/shader/fadeOut.fx")
 	self.m_ScreenSource = dxCreateScreenSource(screenWidth, screenHeight)
-	self.m_Animation = AnimateOutInBack:new(4000)
+	self.m_Animation = AnimateOutInBack:new(5000)
 	
 	self.m_Update = bind(self.update, self)
 	addEventHandler("onClientPreRender", root, self.m_Update)

@@ -65,11 +65,14 @@ function LocalPlayer:getJobLevel()
 end
 
 function LocalPlayer:playerWasted()
+	-- Play knock out effect
+	FadeOutShader:new()
+
 	setTimer(
 		function()
 			setCameraInterior(0)
 			setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
-		end, 2000, 1
+		end, 5000, 1
 	)
 	setTimer(
 		function()
@@ -88,7 +91,7 @@ function LocalPlayer:playerWasted()
 				end
 			)
 			
-		end, 5000, 1
+		end, 8000, 1
 	)
 end
 

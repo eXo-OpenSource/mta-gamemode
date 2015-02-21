@@ -65,7 +65,7 @@ end
 
 function PlayerManager:playerWasted()
 	source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
-	setTimer(function(player) if player then player:respawnAfterDeath() end end, 5*1000, 1, source)
+	setTimer(function(player) if player then player:respawnAfterDeath() end end, 8000, 1, source)
 end
 
 function PlayerManager:playerChat(message, messageType)
