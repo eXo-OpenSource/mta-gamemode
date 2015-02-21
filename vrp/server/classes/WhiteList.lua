@@ -21,16 +21,8 @@ function WhiteList:constructor()
 	self:parseXML()
 	
 	-- Add connection handler
-	addEventHandler("onPlayerConnect", root,
-		function(playerNick, playerIP, playerUsername, playerSerial, playerVersionNumber, playerVersionString)
-			local whiteNick = self:checkSerial(playerSerial)
-			if not whiteNick then
-				cancelEvent(true, "Sorry, you're not whitelisted")
-			else
-				outputServerLog("[WHITELIST] Whitelisted player joined. Whitelist-Nick: "..whiteNick)
-			end
-		end
-	)
+    self.ms_ConnectFunction = bind(self.onPlayerConnect, self)
+	addEventHandler("onPlayerConnect", root, self.ms_ConnectFunction)
 	
 	addCommandHandler("addserial",
 		function(player, cmd, nick, serial)
@@ -49,7 +41,16 @@ end
 
 function WhiteList:destructor()
 	xmlUnloadFile(self.m_XmlFile)
-	-- Todo: Remove the event handler
+    removeEventHandler("onPlayerConnect", root, self.ms_ConnectFunction)
+end
+
+function WhiteList:onPlayerConnect (playerNick, playerIP, playerUsername, playerSerial, playerVersionNumber, playerVersionString)
+    local whiteNick = self:checkSerial(playerSerial)
+    if not whiteNick then
+        cancelEvent(true, "Sorry, you're not whitelisted")
+    else
+        outputServerLog("[WHITELIST] Whitelisted player joined. Whitelist-Nick: "..whiteNick)
+    end
 end
 
 function WhiteList:parseXML()
