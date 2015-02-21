@@ -103,6 +103,8 @@ function Group:removePlayer(playerId)
 end
 
 function Group:invitePlayer(player)
+    client:sendShortMessage(("Du hast %s erfolgreich in deine Gruppe eingeladen."):format(getPlayerName(player)))
+
 	player:triggerEvent("groupInvitationRetrieve", self:getId(), self:getName())
 	
 	self.m_Invitations[player] = true
