@@ -126,7 +126,7 @@ function GUIScrollableArea:onInternalMouseWheelUp()
 end
 
 function GUIScrollableArea:onInternalMouseWheelDown()
-	if self.m_ScrollY >= -self.m_DocumentHeight+self.m_Height+60 then
+	if self.m_ScrollY >= -self.m_DocumentHeight+self.m_Height+60+14 then
 		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 14)
 	end
 end
