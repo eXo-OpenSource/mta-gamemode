@@ -43,7 +43,7 @@ function GUITabPanel:addTab(tabName)
 	else
 		self.m_CurrentTab = 1
 		tabButton:setColor(Color.Grey)
-		tabButton:setBackgroundColor(Color.White)
+		tabButton:setBackgroundColor(Color.LightBlue)
 	end
 	
 	return self[#self]

@@ -13,7 +13,7 @@ function VehicleManager:constructor()
 	self.m_TemporaryVehicles = {}
 
 	-- Add events
-	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire"}
+	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty"}
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -26,6 +26,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleRequestInfo", root, bind(self.Event_vehicleRequestInfo, self))
 	addEventHandler("vehicleUpgradeGarage", root, bind(self.Event_vehicleUpgradeGarage, self))
 	addEventHandler("vehicleHotwire", root, bind(self.Event_vehicleHotwire, self))
+	addEventHandler("vehicleEmpty", root, bind(self.Event_vehicleEmpty, self))
 	
 	-- Prevent the engine from being turned on
 	addEventHandler("onVehicleEnter", root,
@@ -354,5 +355,18 @@ function VehicleManager:Event_vehicleHotwire()
 		)
 	else
 		client:sendWarning(_("Hierfür brauchst du ein Kurzschließkit!", client))
+	end
+end
+
+function VehicleManager:Event_vehicleEmpty()
+	if source:hasKey(client) or client:getRank() >= RANK.Moderator then
+		for seat, occupant in pairs(getVehicleOccupants(source) or {}) do
+			if seat ~= 0 then
+				removePedFromVehicle(occupant)
+			end
+		end
+		client:sendShortMessage(_("Mitfahrer wurden herausgeworfen!", client))
+	else
+		client:sendError(_("Hierzu hast du keine Berechtigungen!", client))
 	end
 end

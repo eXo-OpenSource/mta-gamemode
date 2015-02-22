@@ -46,6 +46,14 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 	end
 	
+	self:addItem(_"Fahrzeug leeren",
+		function()
+			if self:getElement() then
+				triggerServerEvent("vehicleEmpty", self:getElement())
+			end
+		end
+	)
+	
 	if localPlayer:isInVehicle() then
 		self:addItem(_"Kurzschließen",
 			function()
