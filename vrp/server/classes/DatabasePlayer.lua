@@ -203,6 +203,10 @@ end
 
 function DatabasePlayer:giveKarma(value, factor, addDirectly)
 	factor = factor or 1
+	if not addDirectly and value < 0 then
+		factor = -factor
+	end
+	
 	local changekarma = addDirectly and value*factor or Karma.calcKarma(self.m_Karma, self.m_Karma+value, factor)
 	
 	self:setXP(self.m_XP + math.abs(changekarma) * 10)

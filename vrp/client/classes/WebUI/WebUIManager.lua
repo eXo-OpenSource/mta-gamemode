@@ -34,6 +34,10 @@ function WebUIManager:constructor()
 	
 	addEventHandler("onClientCursorMove", root,
 		function(relX, relY, absX, absY)
+			if not isCursorShowing() then
+				return
+			end
+		
 			for k, ui in pairs(self.m_Stack) do
 				local browser = ui:getUnderlyingBrowser()
 				local pos = ui:getBrowserPosition()
@@ -184,9 +188,7 @@ function WebUIManager:invokeClick(button, state, absX, absY)
 		end
 		
 		-- Are we within the browser rect?
-		outputDebugString("Click")
 		if absX >= pos.x and absY >= pos.y and absX < pos.x + size.x and absY < pos.y + size.y then
-			outputDebugString("Collision")
 			if ui:getType() == WebWindow.WindowType.Frame and state == "down" then
 				local diff = Vector2(absX-pos.x, absY-pos.y)
 				ui.movefunc = function(relX, relY, absX, absY) ui:setPosition(Vector2(absX, absY) - diff) end
@@ -223,5 +225,26 @@ function WebUIManager:invokeClick(button, state, absX, absY)
 	-- Unfocus and disable input
 	Browser.focus(nil)
 	guiSetInputEnabled(false)
+	return false
+end
+
+--
+-- Checks whether a specified position is within any window
+-- Parameters:
+--    x: The x coordinate
+--    y: The y coordinate
+-- Returns:
+--    true if within any window, false otherwise
+--
+function WebUIManager:isPositionWithinWindow(x, y)
+	for i = #self.m_Stack, 1, -1 do
+		local ui = self.m_Stack[i]
+		local pos, size = ui:getPosition(), ui:getSize()
+		
+		if x >= pos.x and y >= pos.y and x < pos.x + size.x and y < pos.y + size.y then
+			return true
+		end
+	end
+	
 	return false
 end
