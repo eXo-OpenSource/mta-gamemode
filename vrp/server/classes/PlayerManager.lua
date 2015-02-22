@@ -49,6 +49,9 @@ function PlayerManager:playerConnect(name)
 end
 
 function PlayerManager:playerJoin()
+	-- Set a random nick to prevent blocking nicknames
+	source:setName(getRandomUniqueNick())
+
 	source:join()
 end
 

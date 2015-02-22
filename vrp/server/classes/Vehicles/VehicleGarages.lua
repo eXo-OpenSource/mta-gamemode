@@ -122,7 +122,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 			if getPedOccupiedVehicleSeat(hitElement) ~= 0 then
 				return
 			end
-			if #getVehicleOccupants(vehicle) > 1 then
+			if table.size(getVehicleOccupants(vehicle)) > 1 then
 				hitElement:sendError(_("Du kannst nur ohne Mitfahrer in deine Garage fahren!", hitElement))
 				return
 			end

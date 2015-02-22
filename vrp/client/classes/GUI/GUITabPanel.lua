@@ -14,10 +14,10 @@ function GUITabPanel:constructor(posX, posY, width, height, parent)
 end
 
 function GUITabPanel:addTab(tabName)
-	local tabButton = GUIButton:new(#self * 100, 0, 110, 30, tabName or "", self)
+	local tabButton = GUIButton:new(#self * 110, 0, 110, 30, tabName or "", self)
 	
 	tabButton:setColor(Color.White)
-	tabButton:setBackgroundColor(Color.Black)
+	tabButton:setBackgroundColor(Color.Grey)
 	tabButton:setFontSize(1)
 	tabButton:setFont(VRPFont(26))
 	
@@ -28,12 +28,12 @@ function GUITabPanel:addTab(tabName)
 		for k, v in ipairs(self.m_Children) do
 			if instanceof(v, GUIButton) then
 				v:setColor(Color.White)
-				v:setBackgroundColor(Color.Black)
+				v:setBackgroundColor(Color.Grey)
 			end
 		end
 		
-		tabButton:setColor(Color.Black)
-		tabButton:setBackgroundColor(Color.White)
+		tabButton:setColor(Color.Grey)
+		tabButton:setBackgroundColor(Color.LightBlue)
 	end
 
 	self[id] = GUIElement:new(0, 30, self.m_Width, self.m_Height-30, self)
@@ -42,7 +42,7 @@ function GUITabPanel:addTab(tabName)
 		self[id]:setVisible(false)
 	else
 		self.m_CurrentTab = 1
-		tabButton:setColor(Color.Black)
+		tabButton:setColor(Color.Grey)
 		tabButton:setBackgroundColor(Color.White)
 	end
 	

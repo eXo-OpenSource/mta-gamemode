@@ -14,7 +14,7 @@ function HelpBar:constructor()
 	self.m_Icon = GUIImage:new(screenWidth-screenWidth*0.03, screenHeight*0.4, screenWidth*0.03, screenHeight*0.1, "files/images/HelpIcon.png")
 	self.m_Icon.onLeftClick = bind(self.fadeIn, self)
 	
-	self.m_Rectangle = GUIRectangle:new(self.m_Width, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 220), self)
+	self.m_Rectangle = GUIRectangle:new(self.m_Width, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150), self)
 	self.m_TitleLabel = GUILabel:new(self.m_Width*0.05, self.m_Height*0.01, self.m_Width*0.9, self.m_Height*0.1, _"Hilfe", self.m_Rectangle)
 	self.m_SubTitleLabel = GUILabel:new(self.m_Width*0.05, self.m_Height*0.09, self.m_Width*0.9, self.m_Height*0.04, "Kein Text", self.m_Rectangle)
 	self.m_TextLabel = GUILabel:new(self.m_Width*0.05, self.m_Height*0.15, self.m_Width*0.9, self.m_Height*0.8, "", self.m_Rectangle):setFont(VRPFont(self.m_Height*0.03))

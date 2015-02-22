@@ -11,30 +11,29 @@ inherit(Singleton, VehicleShopGUI)
 function VehicleShopGUI:constructor()
 	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
 	
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Vehicle shop", false, true, self):setCloseOnClose(false)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Vehicle shop", false, true, self)
 	self.m_VehicleList = GUIGridList:new(0, self.m_Height/7, self.m_Width, self.m_Height-self.m_Height/7-self.m_Height/14, self.m_Window)
 	self.m_VehicleList:addColumn("", 0.57)
 	self.m_VehicleList:addColumn("", 0.4)
 	self.m_ShopImage = GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/CouttSchutz.png", self.m_Window)
 	GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
 	GUILabel:new(6, self.m_Height-self.m_Height/14, self.m_Width*0.5, self.m_Height/14, _"Doppelklick zum Kaufen", self.m_Window):setFont(VRPFont(self.m_Height*0.045)):setAlignY("center"):setColor(Color.Red)
-	self:setVisible(false)
 	
 	addEvent("vehicleBought", true)
 	addEventHandler("vehicleBought", root, 
 		function()
-			self:close()
-			SuccessBox:new(_"Congratulations! You are now owner of a brand new vehicle", 0, 255, 0)
+			delete(self)
+			SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!", 0, 255, 0)
 		end
 	)
-end
-
-function VehicleShopGUI:onShow()
+	
 	showChat(false)
 end
 
-function VehicleShopGUI:onHide()
+function VehicleShopGUI:destructor()
 	showChat(true)
+	
+	GUIForm.destructor(self)
 end
 
 function VehicleShopGUI:buyVehicle(item)

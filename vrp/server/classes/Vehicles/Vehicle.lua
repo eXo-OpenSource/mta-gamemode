@@ -71,7 +71,7 @@ function Vehicle:getLastUseTime()
 end
 
 function Vehicle:isBeingUsed()
-	for k, v in pairs(getVehicleOccupants(self)) do
+	for k, v in pairs(getVehicleOccupants(self) or {}) do
 		return true 
 	end
 	return false

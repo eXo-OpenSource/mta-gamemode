@@ -88,7 +88,7 @@ function Core:afterLogin()
 	bindKey("tab", "up", function() ScoreboardGUI:getSingleton():setVisible(false) end)
 	
 	InventoryGUI:new()
-	InventoryGUI:getSingleton():setVisible(false)
+	InventoryGUI:getSingleton():close()
 	bindKey("i", "down", function() InventoryGUI:getSingleton():toggle() end)
 	
 	self:createBlips()

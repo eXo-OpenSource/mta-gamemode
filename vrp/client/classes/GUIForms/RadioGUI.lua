@@ -69,7 +69,7 @@ function RadioGUI:constructor()
 	-- First of all, set radio off
 	self:setRadioStation(0)
 	if not isPedInVehicle(localPlayer) then
-		self:setVisible(false)
+		self:close()
 	end
 	
 	-- Bind controls
@@ -96,7 +96,7 @@ function RadioGUI:constructor()
 		end
 	)
 	
-	self:hide()
+	self:close()
 end
 
 function RadioGUI:destructor()

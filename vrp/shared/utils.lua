@@ -358,3 +358,12 @@ function calculatePointsToNextLevel(currentLevel)
 	-- p(l)=10l
 	return (currentLevel+1) * 10
 end
+
+function getRandomUniqueNick()
+	local randomNick
+	repeat
+		randomNick = "Gast_"..math.random(1, 99999)
+	until (not getPlayerFromName(randomNick))
+	
+	return randomNick
+end
