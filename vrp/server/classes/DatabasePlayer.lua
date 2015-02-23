@@ -61,6 +61,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_Collectables = {}
 	self.m_LadderTeam = {}
 	self.m_Achievements = {[0] = false} -- Dummy element, otherwise the JSON string is built wrong
+    self.m_DMMatchID = 0
 end
 
 function DatabasePlayer:virtual_destructor()
@@ -367,4 +368,12 @@ function DatabasePlayer:setAchievementStatus (id, status)
     else
         outputDebug("Achievement hasn't been instantiated yet!")
     end
+end
+
+function DatabasePlayer:setMatchID (id)
+    if self:isActive() then self:setPublicSync("DMMatchID", id) end
+end
+
+function DatabasePlayer:getMatchID ()
+    if self:isActive() then return self:getPublicSync("DMMatchID") end
 end

@@ -40,6 +40,7 @@ function Core:constructor()
 	AmmuLadder:new()
     Achievement:new()
 	SkinShops:new()
+    Deathmatch:new()
 	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()
@@ -72,6 +73,14 @@ function Core:constructor()
 	end
 	
 	setOcclusionsEnabled(false)
+
+    addEvent("Core.onClientInternalError", true)
+    addEventHandler("Core.onClientInternalError", root, bind(self.onClientInternalError, self))
+end
+
+function Core:onClientInternalError (msg)
+    outputDebug(("[%s] Internal Client Error occurred: %s"):format(getPlayerName(client), msg))
+    kickPlayer(client, "Server - Error Handler", ("Internal Error occurred: %s"):format(msg))
 end
 
 function Core:destructor()

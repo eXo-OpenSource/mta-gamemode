@@ -55,3 +55,7 @@ function GUIChanger:setIndex(index, dontTriggerChangeEvent)
 	end
 	self:anyChange()
 end
+
+function GUIChanger:getIndex ()
+    return self.m_Items[self.m_CurrentItem], self.m_CurrentItem;
+end

@@ -82,6 +82,27 @@ function Player:getAchievements ()
     return self:getPrivateSync("Achievements") or {[0] = false}
 end
 
+function Player:setTempMatchID (id)
+    self.m_tempMatchID = id
+    setTimer(function ()
+        self.m_tempMatchID = 0
+    end, 1000, 1)
+end
+
+function Player:getMatchID ()
+    return (
+		(
+			self:getPublicSync("DMMatchID") and
+			self:getPublicSync("DMMatchID") > 0 and
+			self:getPublicSync("DMMatchID")
+		) or (
+            self.m_tempMatchID and
+			self.m_tempMatchID > 0 and
+            self.m_tempMatchID
+        ) or (0)
+	)
+end
+
 addRemoteEvents{"PlayerPrivateSync", "PlayerPublicSync"}
 addEventHandler("PlayerPrivateSync", root, function(private) source:onUpdateSync(private, nil) end)
 addEventHandler("PlayerPublicSync", root, function(public) source:onUpdateSync(nil, public) end)

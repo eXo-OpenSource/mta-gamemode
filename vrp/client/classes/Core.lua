@@ -40,6 +40,7 @@ function Core:ready()
 	Housing:new()
 	DrivingSchool:new()
     Achievement:new()
+    DeathmatchEvent:new()
 	
 	VehicleShop.initializeAll()
 	VehicleGarages:new()
@@ -116,6 +117,5 @@ function Core:createBlips()
 end
 
 function Core:throwInternalError(message)
-	-- Todo: Send it to the server
-	outputChatBox("Internal error: "..message)
+    triggerServerEvent("Core.onClientInternalError", root, message)
 end
