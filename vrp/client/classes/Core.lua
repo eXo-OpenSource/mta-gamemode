@@ -69,7 +69,7 @@ function Core:afterLogin()
 		end
 	)
 	
-	PolicePanel:new()
+	--[[PolicePanel:new()
 	PolicePanel:getSingleton():close()
 	bindKey("f4", "down",
 		function()
@@ -77,7 +77,7 @@ function Core:afterLogin()
 				PolicePanel:getSingleton():toggle(true)
 			end
 		end
-	)
+	)]]
 	
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()

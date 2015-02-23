@@ -1,4 +1,13 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/constants.lua
+-- *  PURPOSE:     Global clientside constants
+-- *
+-- ****************************************************************************
+
 screenWidth, screenHeight = guiGetScreenSize()
+screenSize = Vector2(screenWidth, screenHeight)
 ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/1.8
 
 NO_MUNITION_ITEMS = {
