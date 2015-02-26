@@ -1,4 +1,5 @@
 #include "WayFinder.h"
+#include <limits>
 
 WayFinder::WayFinder()
 {
@@ -19,42 +20,42 @@ const WayNode& WayFinder::getNodeById(int nodeId)
     return m_Nodes[areaId][nodeId];
 }
 
-const WayNode& WayFinder::findNodeClosestToPoint(const Vector3& position)
+WayNode* WayFinder::findNodeClosestToPoint(const Vector3& position)
 {
     int areaId = getAreaId(position.x, position.y);
-    float minDist = 9999999.9f;
-    WayNode minNode;
+    float minDist = std::numeric_limits<float>().infinity();
+    WayNode* minNode = nullptr;
 
     for (auto& node : m_Nodes[areaId])
     {
-        float dist = (position.x - node.position.x)*(position.x - node.position.x) + (position.y - node.position.y)*(position.y - node.position.y);
+        float distSquared = (position.x - node.position.x)*(position.x - node.position.x) + (position.y - node.position.y)*(position.y - node.position.y);
 
-        if (dist < minDist)
+        if (distSquared < minDist)
         {
-            minDist = dist;
-            minNode = node;
+            minDist = distSquared;
+            minNode = &node;
         }
     }
 
     return minNode;
 }
 
-void WayFinder::calculatePath(const WayNode& nodeFrom, const WayNode& nodeTo, std::forward_list<Vector3> result)
+void WayFinder::calculatePath(const WayNode& nodeFrom, const WayNode& nodeTo, std::list<Vector3> result)
 {
-    
-    WayNode currentNode = nodeFrom;
-    /*while (currentNode != nodeTo)
+    // Add start point to result list
+    result.push_back(nodeFrom.position);
+
+    const WayNode* currentNode = &nodeFrom;
+
+    // Iterate until we reach the destination node
+    while (currentNode != &nodeTo)
     {
-        
-        for (auto iter = currentNode.neighbours.begin(); iter != currentNode.neighbours.end(); ++iter)
+        // Find the successor that matches best
+        for (auto& neighbour : currentNode->neighbours)
         {
-            auto successor = getNodeById(iter->first);
-            //auto successor_g = 
-
-
+        
         }
 
-    }*/
-
-
+    }
+    
 }

@@ -29,10 +29,6 @@ function Player:constructor()
 	self.m_JoinTime = getTickCount()
 
     self:setMoney(0)
-    self:setWeaponLevel(0)
-    self:setVehicleLevel(0)
-    self:setSkinLevel(0)
-    self:setJobLevel(0)
     self:setWantedLevel(0)
 end
 

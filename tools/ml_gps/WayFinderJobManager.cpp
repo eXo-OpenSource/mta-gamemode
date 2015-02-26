@@ -42,13 +42,16 @@ void WayFinderJobManager::runThread()
             auto startNode = m_WayFinder.findNodeClosestToPoint(job.positionFrom);
             auto endNode = m_WayFinder.findNodeClosestToPoint(job.positionTo);
 
-            // Calculate the path and save the result as a list
-            std::forward_list<Vector3> result;
-            m_WayFinder.calculatePath(startNode, endNode, result);
+            if (startNode && endNode)
+            {
+                // Calculate the path and save the result as a list
+                std::forward_list<Vector3> result;
+                m_WayFinder.calculatePath(*startNode, *endNode, result);
 
-            // Move calculated path to result cache (will be passed to Lua via the next processGPSEvents call)
-            std::lock_guard<std::mutex> l(m_ResultCacheMutex);
-            m_ResultCache.push_back(std::make_pair(job.id, std::move(result)));
+                // Move calculated path to result cache (will be passed to Lua via the next processGPSEvents call)
+                std::lock_guard<std::mutex> l(m_ResultCacheMutex);
+                m_ResultCache.push_back(std::make_pair(job.id, std::move(result)));
+            }
         }
         std::cout << "Route has been calculated within " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now()-startTime).count() << "ms" << std::endl;
 

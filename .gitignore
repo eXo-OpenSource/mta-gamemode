@@ -1,2 +1,4 @@
 vrp_build
 /vrp/vrp.data
+/tools/ml_gps/*.sdf
+/tools/ml_gps/*.suo
