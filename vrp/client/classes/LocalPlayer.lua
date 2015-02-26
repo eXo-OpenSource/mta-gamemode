@@ -13,6 +13,7 @@ function LocalPlayer:constructor()
 	self.m_Job = false
 	self.m_Rank = 0
 	self.m_LoggedIn = false
+	self.m_JoinTime = getTickCount()
 
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
@@ -45,7 +46,7 @@ function LocalPlayer:isLoggedIn()
 end
 
 function LocalPlayer:getPlayTime()
-	return math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self:getPrivateSync("JoinTime"))/1000/60)
+	return math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self.m_JoinTime)/1000/60)
 end
 
 function LocalPlayer:getPoints()

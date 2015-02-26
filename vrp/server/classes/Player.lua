@@ -138,7 +138,6 @@ function Player:loadCharacterInfo()
 		outputDebugString("Inventory has not been instantiated successfully!")
 	end
 
-	self:setPrivateSync("JoinTime", self.m_JoinTime)
 	self:setPrivateSync("LastPlayTime", self.m_LastPlayTime)
 end
 

@@ -11,11 +11,11 @@ inherit(GUIColorable, GUIChanger)
 function GUIChanger:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self, Color.White)
-	
+
 	self.m_Items = {}
 	self.m_CurrentItem = 1
-	
-	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, "<", self):setBackgroundColor(Color.Black)
+
+	self.m_LeftButton = GUIButton:new(0, 0, self.m_Height, self.m_Height, "<", self):setBackgroundColor(Color.Grey)
 	self.m_LeftButton.onLeftClick = function()
 		self.m_CurrentItem = self.m_CurrentItem - 1
 		if self.m_CurrentItem <= 0 then
@@ -23,7 +23,7 @@ function GUIChanger:constructor(posX, posY, width, height, parent)
 		end
 		self:setIndex(self.m_CurrentItem)
 	end
-	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, ">", self):setBackgroundColor(Color.Black)
+	self.m_RightButton = GUIButton:new(self.m_Width - self.m_Height, 0, self.m_Height, self.m_Height, ">", self):setBackgroundColor(Color.Grey)
 	self.m_RightButton.onLeftClick = function()
 		self.m_CurrentItem = self.m_CurrentItem + 1
 		if self.m_CurrentItem > #self.m_Items then
@@ -48,7 +48,7 @@ function GUIChanger:setIndex(index, dontTriggerChangeEvent)
 	if index <= 0 or index > #self.m_Items then
 		return false
 	end
-	
+
 	self.m_CurrentItem = index
 	if not dontTriggerChangeEvent and self.onChange then
 		self.onChange(self.m_Items[index], index)
