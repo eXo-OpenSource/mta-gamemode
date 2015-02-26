@@ -12,13 +12,13 @@ registerElementClass("player", Player)
 addEvent("introFinished", true)
 addEventHandler("introFinished", root, function()
 	client.m_TutorialStage = 3 -- todo: character creation and tutorial mission
-	client:spawn() 
+	client:spawn()
 end)
 
 function Player:constructor()
     setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	setElementFrozen(self, true)
-	
+
 	self.m_PrivateSync = {}
 	self.m_PrivateSyncUpdate = {}
 	self.m_PublicSync = {}
@@ -26,6 +26,7 @@ function Player:constructor()
 	self.m_SyncListener = {}
 	self.m_Achievements = {}
 	self.m_LastGotWantedLevelTime = 0
+	self.m_JoinTime = getTickCount()
 
     self:setMoney(0)
     self:setWeaponLevel(0)
@@ -39,9 +40,9 @@ function Player:destructor()
 	if self.m_JobVehicle and isElement(self.m_JobVehicle) then
 		destroyElement(self.m_JobVehicle)
 	end
-	
+
 	self:save()
-	
+
 	-- Unload stuff
 	if self.m_Inventory then
 		delete(self.m_Inventory)
@@ -78,26 +79,26 @@ end
 function Player:loadCharacter()
 	DatabasePlayer.Map[self.m_Id] = self
 	self:loadCharacterInfo()
-	
+
 	-- Send infos to client
 	local info = {
 		Rank = self:getRank();
 	}
 	self:triggerEvent("retrieveInfo", info)
-	
+
 	-- Send initial sync
 	self:sendInitialSync()
-	
+
 	-- Add binds
 	self:initialiseBinds()
-	
+
 	-- Add command and event handler
 	addCommandHandler("Group", Player.staticGroupChatHandler)
 end
 
 function Player:createCharacter()
 	sql:queryExec("INSERT INTO ??_character(Id) VALUES(?);", sql:getPrefix(), self.m_Id)
-	
+
 	self.m_Inventory = Inventory.create()
 end
 
@@ -109,9 +110,9 @@ function Player:loadCharacterInfo()
 
 	-- Load non-element related data
 	self:load()
-	
-	self:setName(self:getAccount():getName())
-	
+
+	self:setName(self:getAccount():getName()) -- TODO: Does not work for some reason???
+
 	-- Load weapons
 	if row.Weapons and row.Weapons ~= "" then
 		local weaponID = 0
@@ -126,7 +127,7 @@ function Player:loadCharacterInfo()
 			end
 		end
 	end
-	
+
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
@@ -136,6 +137,9 @@ function Player:loadCharacterInfo()
 	else
 		outputDebugString("Inventory has not been instantiated successfully!")
 	end
+
+	self:setPrivateSync("JoinTime", self.m_JoinTime)
+	self:setPrivateSync("LastPlayTime", self.m_LastPlayTime)
 end
 
 function Player:initialiseBinds()
@@ -145,8 +149,8 @@ function Player:initialiseBinds()
 end
 
 function Player:save()
-	if not self.m_Account or self:isGuest() then	
-		return 
+	if not self.m_Account or self:isGuest() then
+		return
 	end
 	local x, y, z = getElementPosition(self)
 	local interior = getElementInterior(self)
@@ -155,8 +159,9 @@ function Player:save()
 		if i == 0 then weapons = getPedWeapon(self, i).."|"..getPedTotalAmmo(self, i)
 		else weapons = weapons.."|"..getPedWeapon(self, i).."|"..getPedTotalAmmo(self, i) end
 	end
-	
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Weapons = ?, InventoryId = ? WHERE Id = ?;", sql:getPrefix(), x, y, z, interior, weapons, self.m_Inventory:getId(), self.m_Id)
+
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Weapons = ?, InventoryId = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
+		x, y, z, interior, weapons, self.m_Inventory:getId(), self:getPlayTime(), self.m_Id)
 
 	if self:getInventory() then
 		self:getInventory():save()
@@ -176,7 +181,7 @@ function Player:spawn()
 	else
 		self:sendMessage("An error occurred", 255, 0, 0)
 	end
-	
+
 	setElementFrozen(self, false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
@@ -229,7 +234,7 @@ end
 function Player:setXP(xp)
 	DatabasePlayer.setXP(self, xp)
 	self:setPublicSync("XP", xp)
-	
+
 	-- Check if the player needs a level up
 	local oldLevel = self:getLevel()
 	if self:getLevel() > oldLevel then
@@ -282,20 +287,20 @@ function Player:updateSync()
 		publicSync[k] = self.m_PublicSync[k]
 	end
 	self.m_PublicSyncUpdate = {}
-	
+
 	local privateSync = {}
 	for k, v in pairs(self.m_PrivateSyncUpdate) do
 		privateSync[k] = self.m_PrivateSync[k]
 	end
 	self.m_PrivateSyncUpdate = {}
-	
+
 	if table.size(privateSync) ~= 0 then
 		triggerClientEvent(self, "PlayerPrivateSync", self, privateSync)
 		for k, v in pairs(self.m_SyncListener) do
 			triggerClientEvent(v, "PlayerPrivateSync", self, privateSync)
 		end
 	end
-	
+
 	if table.size(publicSync) ~= 0 then
 		triggerClientEvent(root, "PlayerPublicSync", self, publicSync)
 	end
@@ -303,7 +308,7 @@ end
 
 function Player:sendInitialSync()
 	triggerClientEvent(self, "PlayerPrivateSync", self, self.m_PrivateSync)
-	
+
 	-- Todo: Pack data and send only 1 event
 	for k, player in pairs(getElementsByType("player")) do
 		triggerClientEvent(self, "PlayerPublicSync", player, player.m_PublicSync)
@@ -312,4 +317,12 @@ end
 
 function Player:getLastGotWantedLevelTime()
 	return self.m_LastGotWantedLevelTime
+end
+
+function Player:getJoinTime()
+	return self.m_JoinTime
+end
+
+function Player:getPlayTime()
+	return math.floor(self.m_LastPlayTime + (getTickCount() - self.m_JoinTime)/1000/60)
 end

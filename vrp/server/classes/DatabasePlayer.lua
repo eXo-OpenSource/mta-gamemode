@@ -13,14 +13,14 @@ function DatabasePlayer.get(id)
 	if DatabasePlayer.Map[id] then
 		return DatabasePlayer.Map[id], not isElement(DatabasePlayer.Map[id])
 	end
-	
+
 	return DatabasePlayer:new(id), true
 end
 
 function DatabasePlayer:constructor(id)
 	assert(id)
 	DatabasePlayer.virtual_constructor(self)
-	
+
 	self.m_Id = id
 	DatabasePlayer.Map[id] = self
 end
@@ -44,7 +44,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_WeaponLevel = 0
 	self.m_VehicleLevel = 0
 	self.m_SkinLevel = 0
-	
+
 	--[[
 	Tutorial Stages:
 	0 - Just created an account
@@ -71,11 +71,11 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
-	
+
 	self.m_SavedPosition = Vector3(row.PosX, row.PosY, row.PosZ)
 	self.m_SavedInterior = row.Interior
 	self.m_Skin = row.Skin
@@ -106,13 +106,14 @@ function DatabasePlayer:load()
 	self.m_Collectables = fromJSON(row.Collectables or "")
 	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
 	self.m_LadderTeam = fromJSON(row.Ladder or "[[]]")
-	
+	self.m_LastPlayTime = row.PlayTime
+
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
 	self.m_Skills["Flying"] 	= row.FlyingSkill
 	self.m_Skills["Sneaking"] 	= row.SneakingSkill
 	self.m_Skills["Endurance"] 	= row.EnduranceSkill
-	
+
 	if self:isActive() then
 		setPlayerWantedLevel(self, self.m_WantedLevel)
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
@@ -125,10 +126,10 @@ function DatabasePlayer:load()
 end
 
 function DatabasePlayer:save()
-	if self:isGuest() then	
+	if self:isGuest() then
 		return false
 	end
-	
+
 	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=? WHERE Id=?;", sql:getPrefix(),
 		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements()), self.m_LadderTeam, self:getId())
 end
@@ -207,9 +208,9 @@ function DatabasePlayer:giveKarma(value, factor, addDirectly)
 	if not addDirectly and value < 0 then
 		factor = -factor
 	end
-	
+
 	local changekarma = addDirectly and value*factor or Karma.calcKarma(self.m_Karma, self.m_Karma+value, factor)
-	
+
 	self:setXP(self.m_XP + math.abs(changekarma) * 10)
 	self:setKarma(self.m_Karma + changekarma)
 end
@@ -283,7 +284,7 @@ function DatabasePlayer:giveWantedLevel(level)
 		newLevel = 6
 	end
 	self:setWantedLevel(newLevel)
-	
+
 	if self:isActive() then
 		self.m_LastGotWantedLevelTime = getTickCount()
 	end
@@ -380,4 +381,8 @@ end
 
 function DatabasePlayer:getMatchID ()
     if self:isActive() then return self:getPublicSync("DMMatchID") end
+end
+
+function DatabasePlayer:getPlayTime() -- This function is overriden by Player:getPlayTime (to provide a live playtime)
+	return self.m_LastPlayTime
 end

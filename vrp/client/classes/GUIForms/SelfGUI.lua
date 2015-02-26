@@ -10,26 +10,24 @@ inherit(Singleton, SelfGUI)
 
 function SelfGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
-	
+
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
 	self.m_CloseButton.onLeftClick = function() self:close() end
-	
-	-- Tab: Info
-	--local tabInfo = self.m_TabPanel:addTab(_"Allgemein")
-	-- Todo: Job
-	-- Todo: Achievements
-	
+
 	-- Tab: Job
-	local tabJob = self.m_TabPanel:addTab(_"Job")
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabJob)
-	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabJob)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.06, _"Level:", tabJob)
-	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.06, "1", tabJob) -- Todo
-	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.02, self.m_Height * 0.4, self.m_Width*0.35, self.m_Height*0.07, _"Job kündigen", tabJob):setBackgroundColor(Color.Red)
-	
+	local tabGeneral = self.m_TabPanel:addTab(_"Allgemein")
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.016, self.m_Width*0.3, self.m_Height*0.12, _"Allgemein", tabGeneral)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.13, self.m_Width*0.25, self.m_Height*0.06, _"Spielzeit:", tabGeneral)
+	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.13, self.m_Width*0.4, self.m_Height*0.06, "0", tabGeneral)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.216, self.m_Width*0.25, self.m_Height*0.12, _"Job", tabGeneral)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
+	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.33, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.5, self.m_Height*0.3, self.m_Width*0.35, self.m_Height*0.07, _"Job kündigen", tabGeneral):setBackgroundColor(Color.Red)
+
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
-	
+
 	-- Tab: Groups
 	local tabGroups = self.m_TabPanel:addTab(_"Gruppen")
 	self.m_TabGroups = tabGroups
@@ -52,7 +50,7 @@ function SelfGUI:constructor()
 	self.m_GroupRemovePlayerButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabGroups):setBarColor(Color.Red)
 	self.m_GroupRankUpButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabGroups)
 	self.m_GroupRankDownButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabGroups)
-	
+
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 	self.m_GroupCreateButton.onLeftClick = bind(self.GroupCreateButton_Click, self)
 	self.m_GroupQuitButton.onLeftClick = bind(self.GroupQuitButton_Click, self)
@@ -66,8 +64,8 @@ function SelfGUI:constructor()
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
-	
-	
+
+
 	-- Tab: Vehicles
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
 	self.m_TabVehicles = tabVehicles
@@ -81,7 +79,7 @@ function SelfGUI:constructor()
 	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
 	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles)
 	self.m_VehicleSellButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Verkaufen", true, tabVehicles)
-	
+
 	self.m_VehicleGarageUpgradeButton.onLeftClick = bind(self.VehicleGarageUpgradeButton_Click, self)
 	self.m_VehicleHangarButton.onLeftClick = bind(self.VehicleHangarButton_Click, self)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
@@ -89,14 +87,14 @@ function SelfGUI:constructor()
 	self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
 	addRemoteEvents{"vehicleRetrieveInfo"}
 	addEventHandler("vehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
-	
+
 	-- Tab: Points
 	local tabPoints = self.m_TabPanel:addTab(_"Punkte")
 	self.m_TabPoints = tabPoints
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Punkte:", tabPoints):setColor(Color.Yellow)
 	self.m_PointsLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "0", tabPoints):setColor(Color.Yellow)
 	localPlayer:setPrivateSyncChangeHandler("Points", function(value) self.m_PointsLabel:setText(tostring(value)) end)
-	
+
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabPoints)
 	self.m_KarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.1, self.m_Width*0.4, self.m_Height*0.06, "+0", tabPoints)
     localPlayer:setPrivateSyncChangeHandler("KarmaLevel", function(value) self.m_KarmaLabel:setText(tostring(math.floor(value))) end)
@@ -104,7 +102,7 @@ function SelfGUI:constructor()
 	self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot, true) end
 	self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.55, self.m_Height*0.1, self.m_Width*0.15, self.m_Height*0.06, "- (400P)", tabPoints):setBackgroundColor(Color.Red)
 	self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot, false) end
-	
+
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.06, _"Waffenlevel:", tabPoints)
 	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
 	self.m_WeaponLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
@@ -113,7 +111,7 @@ function SelfGUI:constructor()
         self.m_WeaponLevelLabel:setText(tostring(value))
         self.m_WeaponLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())))
     end)
-	
+
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuglevel:", tabPoints)
 	self.m_VehicleLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.26, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getVehicleLevel(), tabPoints)
 	self.m_VehicleLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.26, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
@@ -122,7 +120,7 @@ function SelfGUI:constructor()
         self.m_VehicleLevelLabel:setText(tostring(value))
         self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
     end)
-	
+
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.34, self.m_Width*0.25, self.m_Height*0.06, _"Skinlevel:", tabPoints)
 	self.m_SkinLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getSkinLevel(), tabPoints)
 	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
@@ -131,7 +129,7 @@ function SelfGUI:constructor()
         self.m_SkinLevelLabel:setText(tostring(value))
         self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())))
     end)
-	
+
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Joblevel:", tabPoints)
 	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getJobLevel(), tabPoints)
 	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.42, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
@@ -140,7 +138,7 @@ function SelfGUI:constructor()
         self.m_JobLevelLabel:setText(tostring(value))
         self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
     end)
-	
+
 	-- Tab: Settings
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
 	self.m_TabSettings = tabSettings
@@ -158,6 +156,8 @@ function SelfGUI:onShow()
     self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
     self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())))
     self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
+
+	self.m_PlayTimeLabel:setText(tostring(localPlayer:getPlayTime() or "").."min")
 
 	if localPlayer:getJob() then
 		self.m_JobNameLabel:setText(localPlayer:getJob():getName())
@@ -189,12 +189,12 @@ end
 
 function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)
 	self:adjustGroupTab(rank or false)
-	
+
 	if name then
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsRankLabel:setText(tostring(rank))
 		self.m_GroupMoneyLabel:setText(tostring(money).."$")
-		
+
 		self.m_GroupPlayersGrid:clear()
 		for playerId, info in pairs(players) do
 			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank)
@@ -218,13 +218,13 @@ end
 
 function SelfGUI:adjustGroupTab(rank)
 	local isInGroup = rank ~= false
-	
+
 	for k, element in ipairs(self.m_TabGroups:getChildren()) do
 		if element ~= self.m_GroupCreateButton then
 			element:setVisible(isInGroup)
 		end
 	end
-	
+
 	if rank then
 		if rank ~= GroupRank.Leader then
 			self.m_GroupDeleteButton:setVisible(false)
@@ -346,12 +346,12 @@ function SelfGUI:VehicleRespawnButton_Click()
         WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
     end
-    
+
     if localPlayer:getGarageType() == 0 then
         ErrorBox:new(_"Du besitzt keine gültige Garage!")
         return
     end
-	
+
 	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end
 
@@ -361,6 +361,6 @@ function SelfGUI:VehicleSellButton_Click()
         WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
-	
+
 	triggerServerEvent("vehicleSell", item.VehicleElement)
 end

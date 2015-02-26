@@ -13,10 +13,10 @@ function LocalPlayer:constructor()
 	self.m_Job = false
 	self.m_Rank = 0
 	self.m_LoggedIn = false
-	
+
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
-	
+
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.playerWasted, self))
 end
 
@@ -42,6 +42,10 @@ end
 
 function LocalPlayer:isLoggedIn()
 	return self.m_LoggedIn
+end
+
+function LocalPlayer:getPlayTime()
+	return math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self:getPrivateSync("JoinTime"))/1000/60)
 end
 
 function LocalPlayer:getPoints()
@@ -79,7 +83,7 @@ function LocalPlayer:playerWasted()
 			setCameraTarget(localPlayer)
 			playSound("files/audio/Halleluja.mp3")
 			local x, y, z = 2028, -1405, 110
-			
+
 			addEventHandler("onClientPreRender", root,
 				function(deltaTime)
 					z = z-0.005*deltaTime
@@ -90,7 +94,7 @@ function LocalPlayer:playerWasted()
 					end
 				end
 			)
-			
+
 		end, 8000, 1
 	)
 end
