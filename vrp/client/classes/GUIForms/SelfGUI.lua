@@ -24,7 +24,7 @@ function SelfGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.216, self.m_Width*0.25, self.m_Height*0.12, _"Job", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
 	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.33, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.06, _"Job kündigen", tabGeneral):setBackgroundColor(Color.Red):setFontSize(1.35)
+	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.06, _"Job kündigen", tabGeneral):setBackgroundColor(Color.Red):setFontSize(1.3)
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
 
 	-- Tab: Groups
