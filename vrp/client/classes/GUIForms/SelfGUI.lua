@@ -19,12 +19,12 @@ function SelfGUI:constructor()
 	local tabGeneral = self.m_TabPanel:addTab(_"Allgemein")
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.016, self.m_Width*0.3, self.m_Height*0.12, _"Allgemein", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.13, self.m_Width*0.25, self.m_Height*0.06, _"Spielzeit:", tabGeneral)
-	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.13, self.m_Width*0.4, self.m_Height*0.06, "0 hour(s) 0 min", tabGeneral)
+	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.13, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", tabGeneral)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.216, self.m_Width*0.25, self.m_Height*0.12, _"Job", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
 	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.33, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.06, _"Job kündigen", tabGeneral):setBackgroundColor(Color.Red):setFontSize(1.3)
+	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.06, _"Job kündigen", tabGeneral):setBackgroundColor(Color.Red)
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
 
 	-- Tab: Groups
@@ -158,7 +158,7 @@ function SelfGUI:onShow()
 
     local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
 	--self.m_PlayTimeLabel:setText(tostring(localPlayer:getPlayTime() or "").."min")
-    self.m_PlayTimeLabel:setText(_("%s hour(s) %s min", hours, minutes))
+    self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
 
 	if localPlayer:getJob() then
 		self.m_JobNameLabel:setText(localPlayer:getJob():getName())
@@ -180,7 +180,7 @@ end
 function SelfGUI:JobQuitButton_Click()
 	triggerServerEvent("jobQuit", root)
 	self.m_JobNameLabel:setText("-")
-	self.m_JobLevelLabel:setText("-")
+    self.m_JobQuitButton:setVisible(false)
 end
 
 function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)
