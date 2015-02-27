@@ -78,7 +78,7 @@ function HUDUI:draw()
 		dxDrawRectangle(screenWidth-0.25*screenWidth,0.14*screenHeight,(0.195*screenWidth)*-karma/MAX_KARMA,0.0425*screenHeight,tocolor(160,75,75,220))
 	end
 	local karma = (karma >= 0 and "+" or "")..math.floor(karma)
-	dxDrawText(karma,screenWidth-((0.195*screenWidth) - dxGetTextWidth(karma, 0.5, self.m_Font)),0.145*screenHeight,0,0,Color.White,0.5,self.m_Font)
+	dxDrawText(karma,(screenWidth-0.25*screenWidth)+((0.195*screenWidth)/2-(dxGetTextWidth(karma, 0.5, self.m_Font)/2)),0.145*screenHeight,0,0,Color.White,0.5,self.m_Font)
 
     --[[
     -- Levelbar
