@@ -6,17 +6,16 @@
 -- *
 -- ****************************************************************************
 Karma = {}
-local MAX_KARMA = 150 -- both directions
 
 function Karma.calcKarma(currentKarma, modifyKarma, factor)
-	if modifyKarma >= MAX_KARMA then
-		return MAX_KARMA
+	if modifyKarma >= MAX_KARMA_LEVEL then
+		return MAX_KARMA_LEVEL
 	end
 
 	local offsetkarma = math.abs(currentKarma - modifyKarma)
 	
 	-- http://www.wolframalpha.com/input/?i=-x^2%2B1 (f(0) = 1; f(1) = 0)
-	local changekarma = -(math.abs(currentKarma/MAX_KARMA)^2) + 1 -- changekarma is always between 0 and 1
+	local changekarma = -(math.abs(currentKarma/MAX_KARMA_LEVEL)^2) + 1 -- changekarma is always between 0 and 1
 	
 	-- Apply new value change factor on 
 	return offsetkarma * changekarma * (factor or 1)

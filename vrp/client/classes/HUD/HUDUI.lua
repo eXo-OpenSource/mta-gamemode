@@ -7,8 +7,6 @@
 -- ****************************************************************************
 HUDUI = inherit(Singleton)
 
-local MAX_KARMA = 150
-
 function HUDUI:constructor()
 	self.m_IsVisible = false
 	self.m_Font = dxCreateFont("files/fonts/Gasalt.ttf", 40, false)
@@ -73,9 +71,9 @@ function HUDUI:draw()
 	local karma = localPlayer:getKarma() or 0
 	dxDrawRectangle(screenWidth-0.25*screenWidth, 0.14*screenHeight, 0.195*screenWidth, 0.0425*screenHeight,karma >= 0 and tocolor(0,50,0,220) or tocolor(50,0,0,220))
 	if karma >= 0 then
-		dxDrawRectangle(screenWidth-0.25*screenWidth,0.14*screenHeight,(0.195*screenWidth)*karma/MAX_KARMA,0.0425*screenHeight,tocolor(75,160,75,220))
+		dxDrawRectangle(screenWidth-0.25*screenWidth,0.14*screenHeight,(0.195*screenWidth)*karma/MAX_KARMA_LEVEL,0.0425*screenHeight,tocolor(75,160,75,220))
 	else
-		dxDrawRectangle(screenWidth-0.25*screenWidth,0.14*screenHeight,(0.195*screenWidth)*-karma/MAX_KARMA,0.0425*screenHeight,tocolor(160,75,75,220))
+		dxDrawRectangle(screenWidth-0.25*screenWidth,0.14*screenHeight,(0.195*screenWidth)*-karma/MAX_KARMA_LEVEL,0.0425*screenHeight,tocolor(160,75,75,220))
 	end
 	local karma = (karma >= 0 and "+" or "")..math.floor(karma)
 	dxDrawText(karma,(screenWidth-0.25*screenWidth)+((0.195*screenWidth)/2-(dxGetTextWidth(karma, 0.5, self.m_Font)/2)),0.145*screenHeight,0,0,Color.White,0.5,self.m_Font)

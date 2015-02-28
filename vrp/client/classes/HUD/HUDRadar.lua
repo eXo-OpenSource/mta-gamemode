@@ -130,6 +130,10 @@ function HUDRadar:draw()
 	if not self.m_Visible or isPlayerMapVisible() then return end
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
+
+    if (not isNotInInterior) or localPlayer:getPrivateSync("isInGarage") then
+       return
+    end
 	
 	-- Draw the rectangle (the border)
 	dxDrawRectangle(self.m_PosX, self.m_PosY, self.m_Width+6, self.m_Height+self.m_Height/20+9, tocolor(0, 0, 0))
@@ -144,7 +148,7 @@ function HUDRadar:draw()
 		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
 		dxSetRenderTarget(nil)
 	end
-	
+
 	-- Draw renderTarget
 	if isNotInInterior then
 		dxDrawImageSection(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)

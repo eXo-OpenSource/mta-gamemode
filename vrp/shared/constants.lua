@@ -181,3 +181,5 @@ SkinInfo = {
 	[163] = {"FBI", 1000},
 	[164] = {"FBI 2", 1000},
 }
+
+MAX_KARMA_LEVEL = 150

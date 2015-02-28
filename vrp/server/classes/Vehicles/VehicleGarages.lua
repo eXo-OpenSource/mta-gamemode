@@ -58,7 +58,9 @@ function VehicleGarages:openSessionForPlayer(player, entranceId)
 	local sessionId = self:getFreeSessionId() --#self.m_Sessions + 1
 	local session = VehicleGarageSession:new(sessionId, player, entranceId)
 	self.m_Sessions[sessionId] = session
-	
+
+    player:setPrivateSync("isInGarage", true)
+
 	return session
 end
 
@@ -67,8 +69,8 @@ function VehicleGarages:closeSession(session)
 	if not idx then
 		return false
 	end
-	
-	--table.remove(self.m_Sessions, idx)
+
+    self.m_Sessions[idx].m_Player:setPrivateSync("isInGarage", false)
 	self.m_Sessions[idx] = nil
 	delete(session)
 end
