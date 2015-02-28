@@ -9,7 +9,8 @@ HUDUI = inherit(Singleton)
 
 function HUDUI:constructor()
 	self.m_IsVisible = false
-	self.m_Font = dxCreateFont("files/fonts/Gasalt.ttf", 40, false)
+	self.m_Font = VRPFont(70)
+
 	self.m_MunitionProgress = 0
 	
 	showPlayerHudComponent("all",false)
@@ -98,22 +99,23 @@ end
 function HUDUI:drawLevelRect()
 	local f = math.floor
 
-	-- Background screenWidth-0.195*screenWidth,0.04*screenHeight,0.195*screenWidth,0.092*screenHeight
-	dxDrawRectangle(screenWidth - screenWidth*0.195, 0, screenWidth*0.2, screenHeight*0.03, tocolor(77, 154, 202, 220))
-	
+	-- Background
+    dxDrawRectangle(screenWidth - screenWidth*0.195, 0, screenWidth*0.2, screenHeight*0.035, tocolor(0, 0, 0, 120))
+    dxDrawRectangle(screenWidth - screenWidth*0.195, 0, screenWidth*0.2, 5, Color.DarkLightBlue)
+
 	-- Joblevel
-	dxDrawImage(f(screenWidth*0.81), f(screenHeight*0.0045), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/JobLevel.png")
-	dxDrawText(localPlayer:getJobLevel(), screenWidth*0.83, screenHeight*0.002, nil, nil, Color.White, 1.5, "arial")
+	dxDrawImage(f(screenWidth*0.81), f(screenHeight*0.0095), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/JobLevel.png")
+	dxDrawText(localPlayer:getJobLevel(), screenWidth*0.83, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
 	
 	-- Weaponlevel
-	dxDrawImage(f(screenWidth*0.85), f(screenHeight*0.0055), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/WeaponLevel.png")
-	dxDrawText(localPlayer:getWeaponLevel(), screenWidth*0.87, screenHeight*0.002, nil, nil, Color.White, 1.5, "arial")
+	dxDrawImage(f(screenWidth*0.855), f(screenHeight*0.0105), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/WeaponLevel.png")
+	dxDrawText(localPlayer:getWeaponLevel(), screenWidth*0.875, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
 	
 	-- Vehiclelevel
-	dxDrawImage(f(screenWidth*0.90), f(screenHeight*0.0055), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/VehicleLevel.png")
-	dxDrawText(localPlayer:getVehicleLevel(), screenWidth*0.92, screenHeight*0.002, nil, nil, Color.White, 1.5, "arial")
+	dxDrawImage(f(screenWidth*0.905), f(screenHeight*0.0105), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/VehicleLevel.png")
+	dxDrawText(localPlayer:getVehicleLevel(), screenWidth*0.925, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
 	
 	-- Skinlevel
-	dxDrawImage(f(screenWidth*0.95), f(screenHeight*0.0055), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/SkinLevel.png")
-	dxDrawText(localPlayer:getSkinLevel(), screenWidth*0.97, screenHeight*0.002, nil, nil, Color.White, 1.5, "arial")
+	dxDrawImage(f(screenWidth*0.955), f(screenHeight*0.0105), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/SkinLevel.png")
+	dxDrawText(localPlayer:getSkinLevel(), screenWidth*0.975, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
 end

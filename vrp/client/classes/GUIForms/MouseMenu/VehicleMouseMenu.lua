@@ -35,17 +35,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
-	
-	if localPlayer:getJob() == JobMechanic:getSingleton() then
-		self:addItem(_"Reparieren",
-			function()
-				if self:getElement() then
-					triggerServerEvent("mechanicRepair", self:getElement())
-				end
-			end
-		)
-	end
-	
+
 	self:addItem(_"Fahrzeug leeren",
 		function()
 			if self:getElement() then
@@ -53,7 +43,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
-	
+
 	if localPlayer:isInVehicle() then
 		self:addItem(_"Kurzschließen",
 			function()
@@ -62,7 +52,17 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		)
-	end
+    end
+
+    if localPlayer:getJob() == JobMechanic:getSingleton() then
+        self:addItem(_"Mechaniker: Reparieren",
+            function()
+                if self:getElement() then
+                    triggerServerEvent("mechanicRepair", self:getElement())
+                end
+            end
+        )
+    end
 	
 	if localPlayer:getRank() >= RANK.Moderator then
 		self:addItem(_"Admin: Reparieren",
