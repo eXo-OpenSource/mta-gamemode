@@ -34,6 +34,8 @@ function MapParser:constructor(path)
 			table.insert(self.m_MapData, readFuncs[nodeName](xmlNodeGetAttributes(node)))
 		end
 	end
+	
+	xmlUnloadFile(xmlRoot)
 end
 
 function MapParser:destructor()
