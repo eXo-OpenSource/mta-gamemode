@@ -201,6 +201,10 @@ function WebUIManager:invokeClick(button, state, absX, absY)
 						self:moveWindowToFrontByIndex(i)
 					end
 					
+					if ui.processTitleBarClick then
+						ui:processTitleBarClick(diff)
+					end
+					
 					break
 				end
 			end

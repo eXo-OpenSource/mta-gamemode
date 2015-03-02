@@ -8,7 +8,7 @@
 	<script src="shared/classlib.lua" type="shared"/>
 	<script src="shared/classes/Object.lua" type="shared"/>
 	<script src="shared/classes/Singleton.lua" type="shared"/>
-	
+
 	<script src="shared/constants.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
@@ -29,7 +29,7 @@
 	<script src="shared/classes/Package.lua" type="shared"/>
 	<script src="shared/classes/MapParser.lua" type="shared"/>
 	<script src="shared/classes/Randomizer.lua" type="shared"/>
-	
+
 	<!-- Server -->
 	<script src="server/constants.lua" type="server"/>
 	<script src="server/utils.lua" type="server"/>
@@ -80,7 +80,7 @@
 	<script src="server/classes/Gameplay/AmmuLadder.lua" type="server"/>
 	<script src="server/classes/SkinShops.lua" type="server"/>
     <script src="server/classes/Achievement.lua" type="server"/>
-	
+
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/PermanentVehicle.lua" type="server"/>
@@ -89,7 +89,7 @@
 	<script src="server/classes/Vehicles/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleGarages.lua" type="server"/>
 	<script src="server/classes/Vehicles/GasStation.lua" type="server"/>
-	
+
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
 	<script src="server/classes/Events/EventManager.lua" type="server"/>
@@ -97,7 +97,7 @@
 	<script src="server/classes/Events/LasertagEvent.lua" type="server"/>
     <script src="server/classes/Events/Deathmatch/DMEvent.lua" type="server"/>
     <script src="server/classes/Events/Deathmatch/DMMatch.lua" type="server"/>
-	
+
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
 	<script src="server/classes/Jobs/JobManager.lua" type="server"/>
@@ -109,12 +109,12 @@
 	<script src="server/classes/Jobs/JobFarmer.lua" type="server"/>
 	<script src="server/classes/Jobs/JobBusDriver.lua" type="server"/>
 	<script src="server/classes/Jobs/JobMechanic.lua" type="server"/>
-	
+
 	<!-- NPCs and shops -->
 	<script src="server/classes/NPC.lua" type="server"/>
 	<script src="server/classes/Gameplay/ShopNPC.lua" type="server"/>
 	<script src="server/classes/Gameplay/RobableShop.lua" type="server"/>
-	
+
 	<!-- Inventory -->
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/Item.lua" type="server"/>
@@ -125,9 +125,9 @@
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemHash.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
-	
+
 	<script src="server/Main.lua" type="server"/>
-	
+
 	<!-- Client -->
 	<script src="client/utils.lua" type="client"/>
 	<script src="client/constants.lua" type="client"/>
@@ -159,7 +159,7 @@
 	<script src="client/classes/AchievementBox.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
     <script src="client/classes/Events/Deathmatch/DMEvent.lua" type="client"/>
-	
+
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
 	<script src="client/classes/Color.lua" type="client"/>
@@ -201,15 +201,15 @@
 	<script src="client/classes/GUI/GUIRadioButton.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRadioButtonGroup.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
-	
-	<!-- Animations -->	
+
+	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeOut.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeIn.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeColor.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/Move.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeAlpha.lua" type="client"/>
-	
+
 	<!-- Special GUI elements -->
 	<script src="client/classes/GUI/MessageBoxes/MessageBox.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/InfoBox.lua" type="client"/>
@@ -217,23 +217,23 @@
 	<script src="client/classes/GUI/MessageBoxes/ErrorBox.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/SuccessBox.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/ShortMessage.lua" type="client"/>
-	
+
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPButton.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
-	
+
 	<script src="client/classes/WebUI/WebWindow.lua" type="client"/>
 	<script src="client/classes/WebUI/FrameWebWindow.lua" type="client"/>
 	<script src="client/classes/WebUI/WebUIManager.lua" type="client"/>
 	<script src="client/classes/WebUI/VRPWebWindow.lua" type="client"/>
-	
+
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
 	<script src="client/classes/HUD/HUDUI.lua" type="client"/>
-	
+
 	<!-- Forms -->
 	<script src="client/classes/GUIForms/InventoryGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
@@ -273,15 +273,15 @@
 	<script src="client/classes/GUIForms/DrivingSchoolGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
     <script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
-	
+
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
-	
+
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
 	<script src="client/classes/Cutscene/Scene.lua" type="client"/>
 	<script src="client/classes/Cutscene/CutscenePlayer.lua" type="client"/>
-	
+
 	<!-- Cutscene Actions -->
 	<script src="client/classes/Cutscene/Action.lua" type="client"/>
 	<script src="client/classes/Cutscene/Actions/Action.Camera.lua" type="client"/>
@@ -291,12 +291,12 @@
 	<script src="client/classes/Cutscene/Actions/Action.Vehicle.lua" type="client"/>
 	<script src="client/classes/Cutscene/Actions/Action.Graphic.lua" type="client"/>
 	<script src="client/classes/Cutscene/Actions/Action.Audio.lua" type="client"/>
-	
+
 	<!-- Cutscenes -->
 	<script src="client/classes/Cutscene/Cutscenes/Intro.lua" type="client"/>
 	<script src="client/classes/Cutscene/Cutscenes/TutorialStage1.lua" type="client"/>
 	<script src="client/classes/Cutscene/Cutscenes/Arrest.lua" type="client"/>
-	
+
 	<!-- Phone -->
 	<script src="client/classes/Phone/Phone.lua" type="client"/>
 	<script src="client/classes/Phone/PhoneApp.lua" type="client"/>
@@ -306,7 +306,7 @@
 	<script src="client/classes/Phone/Apps/AppSettings.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppDashboard.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNametag.lua" type="client"/>
-	
+
 	<!-- Jobs -->
 	<script src="client/classes/Jobs/Job.lua" type="client"/>
 	<script src="client/classes/Jobs/JobManager.lua" type="client"/>
@@ -318,7 +318,7 @@
 	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
 	<script src="client/classes/Jobs/JobBusDriver.lua" type="client"/>
 	<script src="client/classes/Jobs/JobMechanic.lua" type="client"/>
-	
+
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/Inventory/Item.lua" type="client"/>
@@ -326,39 +326,40 @@
 	<script src="client/classes/Inventory/ItemBomb.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemHash.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
-	
+
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleShop.lua" type="client"/>
-	
+
 	<!-- Events -->
-	<script src="client/classes/Events/Event.lua" type="client"/>	
-	<script src="client/classes/Events/EventManager.lua" type="client"/>	
+	<script src="client/classes/Events/Event.lua" type="client"/>
+	<script src="client/classes/Events/EventManager.lua" type="client"/>
 	<script src="client/classes/Events/LasertagEvent.lua" type="client"/>
-	
+
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
-	
+
 	<!-- Effects -->
 	<script src="client/classes/Effects/FadeOutShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
-	
+
 	<script src="client/Main.lua" type="client"/>
-	
-	
+
+
 	<!-- Shared and dependent on server/client -->
 	<script src="shared/items.lua" type="shared"/>
-	
+
 	<!-- Web API -->
 	<html src="server/http/api.lua" />
 	<export function="api_request" type="server" http="true"/>
-		
+
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>
 	<file src="files/html/jquery-1.11.2.min.js"/>
-	
+	<file src="files/html/mtaevents.js"/>
+
 	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Warning.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Error.png" onDemand="false"/>
@@ -368,7 +369,7 @@
 	<vrpfile src="files/images/Phone/Apps/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps/IconMessage.png"/>
 	<vrpfile src="files/images/Phone/Apps/IconSettings.png"/>
-	
+
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Radiobutton.png" onDemand="false"/>
@@ -377,7 +378,7 @@
 	<file src="files/images/Mouse.png"/>
 	<vrpfile src="files/images/GUI/Editbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/RoundedCorner.png" onDemand="false"/>
-	
+
 	<vrpfile src="files/images/Radio/radio_bg.png"/>
 	<vrpfile src="files/images/Radio/sound_back.png"/>
 	<vrpfile src="files/images/Radio/sound_back_hover.png"/>
@@ -391,16 +392,16 @@
 	<vrpfile src="files/images/Radio/sound_play_hover.png"/>
 	<vrpfile src="files/images/Radio/sound_stop.png"/>
 	<vrpfile src="files/images/Radio/sound_stop_hover.png"/>
-	
+
 	<vrpfile src="files/images/Speedo/main.png"/>
 	<vrpfile src="files/images/Speedo/main_needle.png"/>
 	<vrpfile src="files/images/Speedo/engine.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
-	
+
 	<vrpfile src="files/images/Weapons/gun.png"/>
 	<vrpfile src="files/images/Weapons/hand.png"/>
-	
+
 	<vrpfile src="files/images/avatar_default.png"/>
 	<vrpfile src="files/images/world.png"/>
 	<vrpfile src="files/images/Bertrams.png"/>
@@ -415,7 +416,7 @@
 	<vrpfile src="files/images/HelpIcon.png"/>
 	<vrpfile src="files/images/DrivingSchool.png"/>
 	<vrpfile src="files/images/ClothesHeader.png"/>
-	
+
 	<!-- Radar -->
 	<vrpfile src="files/images/Radar_Monochrome/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/LocalPlayer.png"/>
@@ -438,7 +439,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/DrivingSchool.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Skinshop.png"/>
     <vrpfile src="files/images/Radar_Monochrome/Blips/1vs1.png"/>
-	
+
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Logistician.png"/>
@@ -460,7 +461,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/DrivingSchool.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Skinshop.png"/>
     <vrpfile src="files/images/Radar_GTA/Blips/1vs1.png"/>
-	
+
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
 	<vrpfile src="files/images/Jobs/HeaderPolice.png"/>
@@ -471,26 +472,26 @@
 	<vrpfile src="files/images/Jobs/TrashDumpArea.png"/>
 	<vrpfile src="files/images/Jobs/HeaderFarmer.png"/>
 	<vrpfile src="files/images/Jobs/HeaderMechanic.png"/>
-	
+
 	<vrpfile src="files/images/Items/Passport.png"/>
-	
+
 	<vrpfile src="files/images/Nametag/default.png"/>
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>
 	<vrpfile src="files/images/HUD/JobLevel.png"/>
-	
+
 	<!-- Audio -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Ringtone3.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Ringtone4.mp3"/>
-	
+
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/Halleluja.mp3"/>
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/Enginestart.mp3"/>
-	
+
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/yoda.dff"/>
@@ -505,18 +506,18 @@
 	<vrpfile src="files/shader/texreplace.fx"/>
 	<vrpfile src="files/shader/cuttexture.fx"/>
 	<vrpfile src="files/shader/fadeOut.fx"/>
-	
+
 	<!-- HTML -->
 	<vrpfile src="files/html/PolicePanel/PolicePanel.html"/>
 	<vrpfile src="files/html/PolicePanel/main.css"/>
 	<vrpfile src="files/html/PolicePanel/main.js"/>
-	
+
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/Segoe/segoeui.ttf"/>
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
-	
+
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Roadsweeper.map"/>
@@ -525,7 +526,7 @@
 	<map src="files/maps/Jail.map"/>
 	<map src="files/maps/Bank.map"/>
 	<map src="files/maps/Court.map"/>
-	
+
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
 </meta>

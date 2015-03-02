@@ -31,7 +31,7 @@ function WebWindow:constructor(pos, size, initialPage, transparent, browserPos, 
 
 	-- Create the CEF browser in local mode
 	self.m_Browser = Browser.create(self.m_BrowserSize, self.m_IsLocal, transparent)
-	
+
 	-- Use asynchronous API (onClientBrowserCreated is triggered right after the CEF webview has been created)
 	addEventHandler("onClientBrowserCreated", self.m_Browser,
 		function()
@@ -39,7 +39,7 @@ function WebWindow:constructor(pos, size, initialPage, transparent, browserPos, 
 			self.m_Browser:loadURL(initialPage)
 		end
 	)
-	
+
 	-- Register the window
 	WebUIManager:getInstance():registerWindow(self)
 end
@@ -50,7 +50,7 @@ end
 function WebWindow:destroy()
 	-- Unlink from manager
 	WebUIManager:getInstance():unregisterWindow(self)
-	
+
 	self.m_Browser:destroy()
 end
 
@@ -171,4 +171,16 @@ end
 function WebWindow:addEvent(eventName, func)
 	addEvent(eventName)
 	addEventHandler(eventName, self.m_Browser, function(...) func(self, ...) end)
+end
+
+--
+-- Calls a javascript event (this function should not be called to frequently as it is very inefficient (might be better to implement an event system in C++)
+-- This method supports only numbers and strings
+-- Parameters:
+--    eventName: The event name
+--    ...: The parameters you want to pass to the Javascript event handler
+--
+function WebWindow:callEvent(eventName, ...)
+	local code = ("mtatools._callEvent('%s', '%s')"):format(eventName, toJSON({...}))
+	return self.m_Browser:executeJavascript(code)
 end

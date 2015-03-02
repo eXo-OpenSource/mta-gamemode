@@ -12,5 +12,9 @@ function PolicePanel:constructor()
 	local size = Vector2(screenWidth*0.6, screenHeight*0.6)
 	VRPWebWindow.constructor(self, screenSize/2-size/2, size, "files/html/PolicePanel/PolicePanel.html", false)
 	self:setTitle(_"Polizeicomputer")
-	
+
+end
+
+function PolicePanel:addCrimeToList(playerName, crimeName)
+	return self:callEvent("addCrimeToList", playerName, crimeName)
 end

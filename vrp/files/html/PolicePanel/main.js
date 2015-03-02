@@ -9,7 +9,7 @@ $(function(){
 		$("#top #back").show();
 		return false;
 	});
-	
+
 	$("#top #back").click(function(){
 		$("#main-menu").show(function() {
 			$(this).removeAttr("class");
@@ -20,3 +20,10 @@ $(function(){
 		return false;
 	});
 });
+
+function addCrime(playerName, crimeName) {
+	$("#crime tr:last").after("<tr><td>" + playerName + "</td><td>" + crimeName + "</td>"+ "</tr>");
+}
+
+// Register MTA event handler
+mtatools.registerEvent("addCrimeToList", addCrime);
