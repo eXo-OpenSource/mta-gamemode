@@ -52,15 +52,28 @@ function VehicleGarages:createInteror(info)
 	addEventHandler("onColShapeHit", exitShape, bind(self.ExitShape_Hit, self))
 	
 	self.m_Interiors[#self.m_Interiors+1] = {enter = info.enter, slots = info.slots, shape = exitShape}
+	
+	-- Hack to ensure garage sessions are destroyed
+	local garageZone = createColSphere(exitX, exitY, exitZ, 40)
+	addEventHandler("onColShapeLeave", garageZone,
+		function(player)
+			if getElementType(player) == "player" then
+				local session = self:getSessionByPlayer(player)
+				if session then
+					self:closeSession(session)
+				end
+			end
+		end
+	)
 end
 
 function VehicleGarages:openSessionForPlayer(player, entranceId)
-	local sessionId = self:getFreeSessionId() --#self.m_Sessions + 1
+	local sessionId = self:getFreeSessionId()
 	local session = VehicleGarageSession:new(sessionId, player, entranceId)
 	self.m_Sessions[sessionId] = session
 
     player:setPrivateSync("isInGarage", true)
-
+	player.m_GarageSession = session
 	return session
 end
 
@@ -70,7 +83,11 @@ function VehicleGarages:closeSession(session)
 		return false
 	end
 
-    self.m_Sessions[idx].m_Player:setPrivateSync("isInGarage", false)
+	local session = self.m_Sessions[idx]
+	local sessionOwner = session.m_Player
+	sessionOwner:setPrivateSync("isInGarage", false)
+	sessionOwner.m_GarageSession = nil
+
 	self.m_Sessions[idx] = nil
 	delete(session)
 end
@@ -84,11 +101,12 @@ function VehicleGarages:getFreeSessionId()
 end
 
 function VehicleGarages:getSessionByPlayer(player)
-	for k, v in pairs(self.m_Sessions) do
+	--[[for k, v in pairs(self.m_Sessions) do
 		if v.m_Player == player then
 			return v
 		end
-	end
+	end]]
+	return player.m_GarageSession
 end
 
 function VehicleGarages:getSlotData(garageType, slotId)

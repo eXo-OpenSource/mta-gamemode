@@ -40,4 +40,18 @@ if DEBUG then
 			player:giveKarma(karma)
 		end
 	end
+	
+	
+	-- Temporray debug overrides
+	local _xmlCreateFile = xmlCreateFile
+	function xmlCreateFile(...)
+		outputServerLog(debug.traceback())
+		return _xmlCreateFile(...)
+	end
+	
+	local _xmlLoadFile = xmlLoadFile
+	function xmlLoadFile(...)
+		outputServerLog(debug.traceback())
+		return _xmlLoadFile(...)
+	end
 end
