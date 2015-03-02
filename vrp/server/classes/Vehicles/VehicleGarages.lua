@@ -72,7 +72,7 @@ function VehicleGarages:openSessionForPlayer(player, entranceId)
 	local session = VehicleGarageSession:new(sessionId, player, entranceId)
 	self.m_Sessions[sessionId] = session
 
-    player:setPrivateSync("isInGarage", true)
+	player:setPrivateSync("isInGarage", true)
 	player.m_GarageSession = session
 	return session
 end
@@ -154,12 +154,12 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				hitElement:sendError(_("Du kannst nur deine eigenen Fahrzeuge in der Garage abstellen!", hitElement))
 				return
 			end
-        end
+		end
 
-        if hitElement:getGarageType() == 0 then
-            hitElement:sendError(_("Du besitzt keine gültige Garage!", hitElement))
-            return
-        end
+		if hitElement:getGarageType() == 0 then
+			hitElement:sendError(_("Du besitzt keine gültige Garage!", hitElement))
+			return
+		end
 		
 		local session = self:openSessionForPlayer(hitElement, source.EntranceId)
 		if vehicle then

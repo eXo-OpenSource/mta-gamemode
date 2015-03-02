@@ -11,12 +11,12 @@ function PayNSpray:constructor(x, y, z, garageId)
 				local vehicle = getPedOccupiedVehicle(hitElement)
 				if not vehicle or getPedOccupiedVehicleSeat(hitElement) ~= 0 then
 					return
-                end
+				end
 
-                if getElementHealth(vehicle) > 950 then
-                    hitElement:sendError(_("Dein Fahrzeug hat keinen erheblichen Schaden!", hitElement))
-				    return
-                end
+				if getElementHealth(vehicle) > 950 then
+					hitElement:sendError(_("Dein Fahrzeug hat keinen erheblichen Schaden!", hitElement))
+					return
+				end
 
 				local costs = math.floor((1000-getElementHealth(vehicle))*0.5) + math.floor((1000-getElementHealth(vehicle))*0.5)*0.33
 				if hitElement:getMoney() < costs then

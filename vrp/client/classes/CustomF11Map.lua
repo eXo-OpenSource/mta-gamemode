@@ -54,11 +54,11 @@ function CustomF11Map:draw()
 	-- Draw map
 	dxDrawImage(mapPosX, mapPosY, height, height, "files/images/Radar_Monochrome/Radar.jpg", 0, 0, 0, tocolor(255, 255, 255, 200))
 
-    -- Draw blips
-    for i, v in ipairs(Blip.Blips) do
-        local mapX, mapY = CustomF11Map.worldToMapPosition(v.m_WorldX, v.m_WorldY)
-        dxDrawImage(mapPosX + mapX - 8, mapPosY + mapY - 8, 16, 16, v.m_ImagePath, 0)
-    end
+	-- Draw blips
+	for i, v in ipairs(Blip.Blips) do
+		local mapX, mapY = CustomF11Map.worldToMapPosition(v.m_WorldX, v.m_WorldY)
+		dxDrawImage(mapPosX + mapX - 8, mapPosY + mapY - 8, 16, 16, v.m_ImagePath, 0)
+	end
 
 	-- Draw local player blip
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)

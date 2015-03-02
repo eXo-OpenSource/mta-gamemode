@@ -10,7 +10,7 @@ registerElementClass("player", Player)
 
 function Player:virtual_constructor()
 	self.m_Karma = 0
-    self.m_GarageType = 0
+	self.m_GarageType = 0
 
 	self.m_PublicSync = {}
 	self.m_PrivateSync = {}
@@ -67,39 +67,39 @@ function Player:getJobName()
 end
 
 function Player:getGarageType ()
-    return self.m_GarageType
+	return self.m_GarageType
 end
 
 function Player:giveAchievement (...)
-    if Achievement:isInstantiated() then
-        Achievement:getSingleton():giveAchievement(self, ...)
-    else
-        outputDebug("Achievement hasn't been instantiated yet!")
-    end
+	if Achievement:isInstantiated() then
+		Achievement:getSingleton():giveAchievement(self, ...)
+	else
+		outputDebug("Achievement hasn't been instantiated yet!")
+	end
 end
 
 function Player:getAchievements ()
-    return self:getPrivateSync("Achievements") or {[0] = false}
+	return self:getPrivateSync("Achievements") or {[0] = false}
 end
 
 function Player:setTempMatchID (id)
-    self.m_tempMatchID = id
-    setTimer(function ()
-        self.m_tempMatchID = 0
-    end, 1000, 1)
+	self.m_tempMatchID = id
+	setTimer(function ()
+		self.m_tempMatchID = 0
+	end, 1000, 1)
 end
 
 function Player:getMatchID ()
-    return (
+	return (
 		(
 			self:getPublicSync("DMMatchID") and
 			self:getPublicSync("DMMatchID") > 0 and
 			self:getPublicSync("DMMatchID")
 		) or (
-            self.m_tempMatchID and
+			self.m_tempMatchID and
 			self.m_tempMatchID > 0 and
-            self.m_tempMatchID
-        ) or (0)
+			self.m_tempMatchID
+		) or (0)
 	)
 end
 

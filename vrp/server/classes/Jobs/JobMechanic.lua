@@ -55,7 +55,7 @@ function JobMechanic:Event_mechanicRepair()
 	
 	source.PendingMechanic = client
 	local price = math.floor((1000 - getElementHealth(source))*0.5)
-	driver:triggerEvent("questionBox", _("Darf %s dein Fahrzeug reparieren? Dies kostet dich zurzeit %d$!\nBeim nächsten Pay'n'Spray zahlst du einen Aufschlag von +30%%!", client, getPlayerName(client), price), "mechanicRepairConfirm", "mechanicRepairCancel", source)
+	driver:triggerEvent("questionBox", _("Darf %s dein Fahrzeug reparieren? Dies kostet dich zurzeit %d$!\nBeim nächsten Pay'n'Spray zahlst du einen Aufschlag von +33%%!", client, getPlayerName(client), price), "mechanicRepairConfirm", "mechanicRepairCancel", source)
 end
 
 function JobMechanic:Event_mechanicRepairConfirm(vehicle)
@@ -64,14 +64,14 @@ function JobMechanic:Event_mechanicRepairConfirm(vehicle)
 		fixVehicle(vehicle)
 		client:takeMoney(price)
 		if vehicle.PendingMechanic then
-            if client ~= vehicle.PendingMechanic then
-			    vehicle.PendingMechanic:giveMoney(price)
-                vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
-                client:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", client, getPlayerName(vehicle.PendingMechanic)))
-            else
-                client:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", client))
-            end
-            vehicle.PendingMechanic = nil
+			if client ~= vehicle.PendingMechanic then
+				vehicle.PendingMechanic:giveMoney(price)
+				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
+				client:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", client, getPlayerName(vehicle.PendingMechanic)))
+			else
+				client:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", client))
+			end
+			vehicle.PendingMechanic = nil
 		end
 	else
 		client:sendError(_("Du hast nicht genügend Geld! Benötigt werden %d$!", client, price))
@@ -80,7 +80,7 @@ end
 
 function JobMechanic:Event_mechanicRepairCancel(vehicle)
 	if vehicle.PendingMechanic then
-        vehicle.PendingMechanic:sendWarning(_("Der Reperaturvorgang wurde von der Gegenseite abgebrochen!", vehicle.PendingMechanic))
-        vehicle.PendingMechanic = nil
+		vehicle.PendingMechanic:sendWarning(_("Der Reperaturvorgang wurde von der Gegenseite abgebrochen!", vehicle.PendingMechanic))
+		vehicle.PendingMechanic = nil
 	end
 end
