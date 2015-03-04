@@ -14,12 +14,6 @@ function StreetRaceEvent:constructor()
 end
 
 function StreetRaceEvent:onStart()
-	-- Jusonex: A better place for the following might be the Event class --> we have to write something like "onStart" or - as bad alternative - we can call Event.start here
-	if #self.m_Players == 0 then
-		delete(self)
-		return false
-	end
-	
 	-- Start the countdown
 	for k, player in ipairs(self.m_Players) do
 		player:triggerEvent("countdownStart", 3)

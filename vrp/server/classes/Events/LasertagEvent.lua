@@ -21,14 +21,14 @@ function LasertagEvent:onStart()
 	-- Spawn all participating player at the spawnpoint
 	for k, player in pairs(self:getPlayers()) do
 		player:setPosition(x, y, z)
-		
+
 		player:giveWeapon(22, 100, true)
 	end
-	
-	
+
+
 end
 
-function LasertagEvent:onPlayerLeave(player)
+function LasertagEvent:onQuit(player)
 	player:takeWeapon(player, 22, 100)
 end
 

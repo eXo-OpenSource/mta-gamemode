@@ -6,18 +6,19 @@
 -- *
 -- ****************************************************************************
 EventManager = inherit(Singleton)
+local MAX_PLAYERS_PER_EVENT = 32
 
 function EventManager:constructor()
 	self.m_RunningEvents = {}
-	self.m_RegisteredEvents = {StreetRaceEvent, LasertagEvent} -- Add it on the client as well
+	self.m_RegisteredEvents = {StreetRaceEvent, LasertagEvent, DMRaceEvent} -- Add it on the client as well
 	self.m_EventIdCounter = 0 -- We need a unique id which works a long time (to avoid collisions if somebody forgets to close the GUI)
-	
+
 	-- Start timer that opens every 30min a random event
 	setTimer(bind(self.openRandomEvent, self), 30*60*1000, 0)
-	
+
 	addEvent("eventJoin", true)
 	addEventHandler("eventJoin", root, bind(EventManager.Event_eventJoin, self))
-	
+
 	if DEBUG then
 		addCommandHandler("startevent",
 			function(player, cmd, event)
@@ -41,7 +42,7 @@ end
 function EventManager:openRandomEvent()
 	-- Get a random event
 	local eventClass = self.m_RegisteredEvents[math.random(1, #self.m_RegisteredEvents)]
-	
+
 	self:openEvent(eventClass)
 end
 
@@ -50,11 +51,11 @@ function EventManager:openEvent(eventClass)
 	self.m_EventIdCounter = self.m_EventIdCounter + 1
 	local event = eventClass:new(self.m_EventIdCounter)
 	self.m_RunningEvents[self.m_EventIdCounter] = event
-	
+
 	for k, player in pairs(getElementsByType("player")) do
 		player:sendMessage(_("In 5min startet das Event '%s'! Begib dich zum Reifen-Blip, um daran teilzunehmen", player, event:getName()), 255, 255, 0)
 	end
-	
+
 	-- Start the event in 5min
 	setTimer(bind(event.start, event), 0.5*60*1000, 1)
 end
@@ -69,7 +70,12 @@ function EventManager:Event_eventJoin(eventId)
 		client:sendError(_"Dieses Event existiert nicht mehr!")
 		return
 	end
-	
+
+	if #event:getPlayers() >= MAX_PLAYERS_PER_EVENT then
+		client:sendError(_("Dieses Event ist schon voll!", client))
+		return
+	end
+
 	event:join(client)
 	client:sendShortMessage(_("Du hast dich erfolgreich für dieses Event eingetragen", client))
 end

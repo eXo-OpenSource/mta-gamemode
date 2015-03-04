@@ -11,11 +11,11 @@ function Event:virtual_constructor(Id)
 	self.m_Id = Id
 	self.m_Players = {}
 	self.m_Ranks = {}
-	
+
 	local positions = self:getPositions()
 	local position = positions[math.random(1, #positions)]
 	self.m_EventBlip = Blip:new("Wheel.png", position.x, position.y)
-	
+
 	-- Create the start marker
 	self.m_StartMarker = Marker(position, "checkpoint", 10, 255, 0, 0, 100)
 	addEventHandler("onMarkerHit", self.m_StartMarker,
@@ -34,7 +34,7 @@ end
 function Event:virtual_destructor()
 	-- Unlink from event manager
 	EventManager:getSingleton():unlinkEvent(self)
-	
+
 	delete(self.m_EventBlip)
 	if isElement(self.m_StartMarker) then
 		destroyElement(self.m_StartMarker)
@@ -48,7 +48,7 @@ end
 function Event:join(player)
 	self:sendMessage("%s ist dem Event beigetreten!", 255, 255, 0, getPlayerName(player))
 	table.insert(self.m_Players, player)
-	
+
 	if self.onJoin then self:onJoin(player) end
 end
 
@@ -57,8 +57,10 @@ function Event:quit(player)
 	if not idx then
 		return false
 	end
-	
+
 	table.remove(self.m_Players, idx)
+
+	if self.onQuit then	self:onQuit(player) end
 end
 
 function Event:start()
@@ -72,7 +74,7 @@ function Event:start()
 end
 
 function Event:sendMessage(text, r, g, b, ...)
-	for k, player in ipairs(self.m_Players) do
+	for k, player in pairs(self.m_Players) do
 		player:sendMessage("[EVENT] ".._(text, player, ...), r, g, b)
 	end
 end

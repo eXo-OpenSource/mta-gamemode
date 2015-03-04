@@ -184,7 +184,8 @@ function Player:spawn()
 end
 
 function Player:respawnAfterDeath()
-	spawnPlayer(self, 2028--[[+math.random(-4, 4)--]], -1405--[[+math.random(-2, 2)]], 18)
+	spawnPlayer(self, 2028--[[+math.random(-4, 4)--]], -1405--[[+math.random(-2, 2)]], 18, 0, self.m_Skin)
+	setCameraTarget(self, self)
 end
 
 -- Message Boxes
