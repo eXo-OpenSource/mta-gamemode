@@ -8,10 +8,10 @@
 HelpTextManager = inherit(Singleton)
 
 function HelpTextManager:constructor()
-	self.m_texts = {}
+	self.m_Texts = {}
 
-	-- general purpose texts here
-	self:addtext(_"allgemein", "team", helptexts.general.team)
+	-- General purpose texts here
+	self:addText(_"Allgemein", "Team", HelpTexts.General.Team)
 end
 
 function HelpTextManager:addText(category, title, text)

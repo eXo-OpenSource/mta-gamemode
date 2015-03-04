@@ -19,9 +19,45 @@ $(function(){
 		$("#top #back").hide();
 		return false;
 	});
+
+	$("#recordSearchButton").click(function() {
+		// Clear list
+		$("#recordList").empty();
+
+		if (!crimeData)
+			return;
+
+		var playerName = $("#recordPlayerName").val();
+
+		for (playerInfo of crimeData) {
+			if (playerInfo.player == playerName) {
+
+				// Add crimes to the list
+				for (crime of playerInfo.crimes) {
+					$("#recordList").append("<li>" + crime + "</li>");
+				}
+
+				// Exit func
+				return;
+			}
+		}
+
+		// Add default entry
+		$("#recordList").append("<li>Keine Einträge vorhanden</li>");
+	});
+
+	// Trigger click when the player presses enter
+	$("#recordPlayerName").keyup(function(event) {
+		if (event.keyCode == 13)
+			$("#recordSearchButton").click();
+	});
 });
 
+var crimeData = null;
+
 function setCrimes(info) {
+	crimeData = info;
+
 	// Add crimes to current crime list
 	for (playerInfo of info) {
 		for (crime of playerInfo.crimes) {
@@ -41,6 +77,8 @@ function setCrimes(info) {
 
 // Register MTA event handler
 mtatools.registerEvent("setCrimes", setCrimes);
+
+
 
 
 /*$(document).ready(function() {

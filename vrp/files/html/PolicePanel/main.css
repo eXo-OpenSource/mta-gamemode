@@ -75,7 +75,8 @@ body {
 
 #main-wrapper #content .menu table{
 	width: 100%;
-	color: #F8BD25; font-size: 22pt;
+	color: #F8BD25;
+	font-size: 22pt;
 	padding: 0;
 }
 
@@ -86,10 +87,40 @@ body {
 #crime tr td, #most-wanted-list tr td{
 	background-color: #F8BD25;
 	padding: 5px;
-	color: rgba( 180, 10, 0, 1 ); font-size: 16pt; font-weight: normal; text-shadow: 0 0 1px rgba( 0, 0, 0, 0.1 );
+	color: rgba( 180, 10, 0, 1 );
+	font-size: 16pt;
+	font-weight: normal;
+	text-shadow: 0 0 1px rgba( 0, 0, 0, 0.1 );
 	-webkit-box-shadow: 0 0 1px 1px rgba(0,0,0,0.8); box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
 }
 
 #crime tr:hover td, #most-wanted-list tr:hover td{
 	background-color: rgba( 10, 180, 200, 1 );
+}
+
+#records label {
+	color: white;
+	font-family: Arial, sans-serif;
+	font-size: 16pt;
+	margin-right: 5px;
+}
+
+#records input[type=text] {
+	border: 3px white solid;
+}
+
+#records input[type=button] {
+	background-color: white;
+	border: 2px solid white;
+}
+
+#records li {
+	color: white;
+	font-size: 16pt;
+	font-weight: normal;
+}
+
+h2 {
+	color: #F8BD25;
+	font-size: 22pt;
 }
