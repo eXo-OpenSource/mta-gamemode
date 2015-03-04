@@ -12,27 +12,36 @@ function JobPolice:constructor()
 
 	VehicleSpawner:new(1555.3, -1605.5, 12.5, {"Police LS"}, 180, bind(Job.requireVehicle, self))
 	VehicleSpawner:new(1566.3, -1605.5, 12.5, {"Police LS"}, 180, bind(Job.requireVehicle, self))
-	
+
 	addEventHandler("onPlayerDamage", root, bind(self.playerDamage, self))
 	addEventHandler("onPlayerVehicleExit", root, bind(self.playerVehicleExit, self))
-	
+
 	addEvent("policePanelListRequest", true)
 	addEventHandler("policePanelListRequest", root,
 		function()
 			if client:getJob() ~= self then
 				return
 			end
-		
+
 			local data = {}
-			for k, v in ipairs(getElementsByType("player")) do
-				if v:getWantedLevel() > 0 then
-					data[v] = getPlayerWantedLevel(v)
+			for k, player in pairs(getElementsByType("player")) do
+				if player:getWantedLevel() > 0 then
+					local info = {
+						player = player:getName(),
+						wanted = player:getWantedLevel()
+					}
+
+					info.crimes = {}
+					for k, crime in pairs(player:getCrimes()) do
+						info.crimes[k] = crime.id
+					end
+					data[#data + 1] = info
 				end
 			end
 			client:triggerEvent("policePanelListRetrieve", data)
 		end
 	)
-	
+
 	self.m_ClothesPickup = createPickup(248.8, 70.4, 1003.6, 3, 1275)
 	setElementInterior(self.m_ClothesPickup, 6)
 	addEventHandler("onPickupHit", self.m_ClothesPickup,
@@ -73,11 +82,11 @@ function JobPolice:jailPlayer(player, policeman)
 	-- Teleport to jail
 	setElementPosition(player, 2739+math.random(-10, 10), -2806, 18)
 	setElementRotation(player, 0, 0, 180)
-	
+
 	-- Pay some money, karma and xp to the policeman
 	policeman:giveMoney(player:getWantedLevel() * 100)
 	policeman:giveKarma(player:getWantedLevel() * 0.01)
-	
+
 	-- Start freeing timer
 	local jailTime = player:getWantedLevel() * 20
 	player:sendInfo(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %ds verweilen!", player, jailTime))
@@ -88,7 +97,10 @@ function JobPolice:jailPlayer(player, policeman)
 			player:setWantedLevel(0)
 		end, jailTime * 1000, 1
 	)
-	
+
+	-- Clear crimes
+	player:clearCrimes()
+
 	-- Tell the other policemen that we jailed someone
 	self:sendMessage("%s wurde soeben von %s verhaftet!", getPlayerName(player), getPlayerName(policeman))
 
@@ -111,7 +123,7 @@ function JobPolice:playerDamage(attacker, attackerWeapon, bodypart, loss)
 				setTimer(function() if isElement(criminal) then criminal.policeHits = criminal.policeHits > 0 and criminal.policeHits - 1 or 0 end end, 30000, 1)
 				return
 			end
-			
+
 			-- Jail if being hit more than twice and reset hit counter
 			self:jailPlayer(criminal, attacker)
 			criminal.policeHits = nil
@@ -128,19 +140,20 @@ end
 function JobPolice:reportCrime(player, crimeType)
 	-- Give him a higher wantedlevel if a cop is close
 	local playerX, playerY, playerZ = getElementPosition(player)
-	for k, cop in ipairs(getElementsByType("player")) do -- Todo: A table that stores the job players inside might be better generally
+	for k, cop in pairs(getElementsByType("player")) do -- Todo: A table that stores the job players inside might be better generally
 		if cop:getJob() == self and cop ~= player then
 			local x, y, z = getElementPosition(cop)
-			
-			local copIsClose = false
+
 			if getDistanceBetweenPoints3D(playerX, playerY, playerZ, x, y, z) < (crimeType.maxdistance or 100) then
 				cop:sendMessage(_("%s hat folgende Straftat begangen: %s", cop, getPlayerName(player), _(crimeType.text, cop)))
-				copIsClose = true
-			end
-			
-			-- Give him a wanted level
-			if copIsClose and player:getWantedLevel() < crimeType.maxwanted then
-				player:giveWantedLevel(crimeType.maxwanted - player:getWantedLevel())
+
+				-- Give him a wanted level
+				if player:getWantedLevel() < crimeType.maxwanted then
+					player:giveWantedLevel(crimeType.maxwanted - player:getWantedLevel())
+				end
+
+				-- Store crimes
+				player:addCrime(crimeType)
 			end
 		end
 	end

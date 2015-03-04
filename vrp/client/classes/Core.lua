@@ -3,20 +3,20 @@ Core = inherit(Object)
 function Core:constructor()
 	-- Small hack to get the global core immediately
 	core = self
-	
+
 	-- Instantiate the localPlayer instance right now
 	enew(localPlayer, LocalPlayer)
-	
+
 	if DEBUG then
 		Debugging:new()
 	end
-	
+
 	Cursor = GUICursor:new()
-	
+
 	self.m_Config = ConfigXML:new("config.xml")
 	Version:new()
 	Provider:new()
-	
+
 	DownloadGUI:new()
 	local dgi = DownloadGUI:getSingleton()
 	Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
@@ -41,7 +41,7 @@ function Core:ready()
 	DrivingSchool:new()
     Achievement:new()
     DeathmatchEvent:new()
-	
+
 	VehicleShop.initializeAll()
 	VehicleGarages:new()
 	GasStationGUI:new()
@@ -59,7 +59,7 @@ function Core:afterLogin()
 	HUDUI:getSingleton():show()
 	Collectables:new()
 	AmmuNationGUI:getSingleton():setDimension()
-	
+
 	-- Phone
 	Phone:new()
 	Phone:getSingleton():close()
@@ -68,30 +68,32 @@ function Core:afterLogin()
 			Phone:getSingleton():toggle(true)
 		end
 	)
-	
-	--[[PolicePanel:new()
-	PolicePanel:getSingleton():close()
+
 	bindKey("f4", "down",
 		function()
 			if localPlayer:getJob() == JobPolice:getSingleton() then
-				PolicePanel:getSingleton():toggle(true)
+				if PolicePanel:isInstantiated() then
+					delete(PolicePanel:getSingleton())
+				else
+					PolicePanel:new()
+				end
 			end
 		end
-	)]]
-	
+	)
+
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	bindKey("f2", "down", function() SelfGUI:getSingleton():toggle(true) end)
-	
+
 	ScoreboardGUI:getSingleton():close()
 	bindKey("tab", "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
 	bindKey("tab", "up", function() ScoreboardGUI:getSingleton():setVisible(false) end)
-	
+
 	InventoryGUI:new()
 	InventoryGUI:getSingleton():close()
 	bindKey("i", "down", function() InventoryGUI:getSingleton():toggle() end)
-	
+
 	self:createBlips()
 end
 

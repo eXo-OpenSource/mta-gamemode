@@ -27,6 +27,7 @@ function Player:constructor()
 	self.m_Achievements = {}
 	self.m_LastGotWantedLevelTime = 0
 	self.m_JoinTime = getTickCount()
+	self.m_Crimes = {}
 
     self:setMoney(0)
     self:setWantedLevel(0)
@@ -320,4 +321,16 @@ end
 
 function Player:getPlayTime()
 	return math.floor(self.m_LastPlayTime + (getTickCount() - self.m_JoinTime)/1000/60)
+end
+
+function Player:getCrimes()
+	return self.m_Crimes
+end
+
+function Player:clearCrimes()
+	self.m_Crimes = {}
+end
+
+function Player:addCrime(crimeType)
+	self.m_Crimes[#self.m_Crimes + 1] = crimeType
 end

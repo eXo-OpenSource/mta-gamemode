@@ -37,7 +37,7 @@ function VehicleGarages:createEntrance(info, Id)
 	if not info.hideblip then
 		local blip = Blip:new("Garage.png", enterX, enterY)
 	end
-	
+
 	addEventHandler("onColShapeHit", entranceShape, bind(self.EntranceShape_Hit, self))
 	entranceShape.EntranceId = Id
 	self.m_Entrances[#self.m_Entrances+1] = {exit = info.exit, shape = entranceShape, blip = blip}
@@ -50,9 +50,9 @@ function VehicleGarages:createInteror(info)
 	local exitX, exitY, exitZ = unpack(info.exit)
 	local exitShape = createColSphere(exitX, exitY, exitZ, 2)
 	addEventHandler("onColShapeHit", exitShape, bind(self.ExitShape_Hit, self))
-	
+
 	self.m_Interiors[#self.m_Interiors+1] = {enter = info.enter, slots = info.slots, shape = exitShape}
-	
+
 	-- Hack to ensure garage sessions are destroyed
 	local garageZone = createColSphere(exitX, exitY, exitZ, 40)
 	addEventHandler("onColShapeLeave", garageZone,
@@ -74,6 +74,10 @@ function VehicleGarages:openSessionForPlayer(player, entranceId)
 
     player:setPrivateSync("isInGarage", true)
 	player.m_GarageSession = session
+
+	player:setSpawnLocation(SPAWN_LOCATION_GARAGE)
+	player:setLastGarageEntrance(session:getEntranceId())
+
 	return session
 end
 
@@ -120,7 +124,7 @@ end
 function VehicleGarages:spawnPlayerInGarage(player, entranceId)
 	local session = self:openSessionForPlayer(player, entranceId)
 	player:triggerEvent("vehicleGarageSessionOpen", session:getDimension())
-	
+
 	local garageType = player:getGarageType()
 	local interiorX, interiorY, interiorZ, rotation = unpack(self.m_Interiors[garageType].enter)
 	setElementPosition(player, interiorX, interiorY, interiorZ)
@@ -135,9 +139,9 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 		if self:getSessionByPlayer(hitElement) then
 			return
 		end
-	
+
 		local vehicle = getPedOccupiedVehicle(hitElement)
-		
+
 		if vehicle then
 			if getPedOccupiedVehicleSeat(hitElement) ~= 0 then
 				return
@@ -160,7 +164,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
             hitElement:sendError(_("Du besitzt keine gültige Garage!", hitElement))
             return
         end
-		
+
 		local session = self:openSessionForPlayer(hitElement, source.EntranceId)
 		if vehicle then
 			if #session:getSlots() == self:getMaxSlots(hitElement:getGarageType()) then
@@ -178,8 +182,6 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				end
 				-- Tell the player that we opened the garage session
 				hitElement:triggerEvent("vehicleGarageSessionOpen", session:getDimension())
-				hitElement:setSpawnLocation(SPAWN_LOCATION_GARAGE)
-				hitElement:setLastGarageEntrance(session:getEntranceId())
 
 				local garageType = hitElement:getGarageType()
 				local interiorX, interiorY, interiorZ, rotation = unpack(self.m_Interiors[garageType].enter)
@@ -203,16 +205,16 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 		if not session then
 			return
 		end
-		
+
 		local entranceId = session:getEntranceId()
 		self:closeSession(session)
 		setElementVelocity(getPedOccupiedVehicle(hitElement) or hitElement, 0, 0, 0)
-		
+
 		fadeCamera(hitElement, false, 1)
 		setTimer(
 			function()
 				local vehicle = getPedOccupiedVehicle(hitElement)
-				
+
 				-- Remove the vehicle from the garage if exists
 				if vehicle then
 					vehicle:setInGarage(false)
@@ -220,13 +222,13 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 				-- Tell the player that we closed the garage session
 				hitElement:triggerEvent("vehicleGarageSessionClose")
 				hitElement:setSpawnLocation(SPAWN_LOCATION_DEFAULT)
-				
+
 				local exitX, exitY, exitZ, rotation = unpack(self.m_Entrances[entranceId].exit)
 				setElementPosition(vehicle or hitElement, exitX, exitY, exitZ)
 				setElementDimension(hitElement, 0)
 				setElementRotation(vehicle or hitElement, 0, 0, rotation or 0)
 				fadeCamera(hitElement, true)
-				
+
 				if vehicle then
 					setElementDimension(vehicle, 0)
 				end
@@ -318,7 +320,7 @@ function VehicleGarageSession:furnish()
 			self:addVehicle(vehicle)
 		end
 	end
-	
+
 end
 
 function VehicleGarageSession:addVehicle(vehicle)
@@ -331,7 +333,7 @@ function VehicleGarageSession:addVehicle(vehicle)
 	setElementDimension(vehicle, self.m_Dimension)
 	setElementRotation(vehicle, 0, 0, rotation or 0)
 	setVehicleLocked(vehicle, false)
-	
+
 	self.m_Slots[slotId] = vehicle
 	return slotId
 end

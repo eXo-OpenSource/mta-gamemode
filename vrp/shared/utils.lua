@@ -13,13 +13,13 @@ function enum(targetVar, name)
 	else
 		__enums[name] = {maxNum = 1}
 	end
-	
+
 	-- Register in global namespace
 	_G[targetVar] = __enums[name].maxNum
-	
+
 	-- Register mainly for addons
 	__enums[name][__enums[name].maxNum] = targetVar
-	
+
 	return __enums[name]
 end
 
@@ -106,8 +106,8 @@ function kspairs(t, f)
 		table.insert(a, n)
 	end
 	table.sort(a, f)
- 
-	local i = 0 
+
+	local i = 0
 	local iter = function ()
 		i = i + 1
 		if a[i] == nil then
@@ -116,13 +116,13 @@ function kspairs(t, f)
 			return a[i], t[a[i]]
 		end
 	end
- 
+
 	return iter
 end
 
 function chance(chance)
 	assert(chance >= 0 and chance <= 100, "Bad Chance (Range 0-100)")
-	return math.random(0, 100) <= chance 
+	return math.random(0, 100) <= chance
 end
 
 function table.append(table1, table2)
@@ -134,7 +134,7 @@ end
 
 function getPositionFromElementOffset(element, offX, offY, offZ)
 	local m = getElementMatrix(element)
-	
+
 	local x = offX * m[1][1] + offY * m[2][1] + offZ * m[3][1] + m[4][1]
 	local y = offX * m[1][2] + offY * m[2][2] + offZ * m[3][2] + m[4][2]
 	local z = offX * m[1][3] + offY * m[2][3] + offZ * m[3][3] + m[4][3]
@@ -143,7 +143,7 @@ end
 
 function getPositionFromCoordinatesOffset(x, y, z, rx, ry, rz, offX, offY, offZ)
 	local m = getMatrix(x, y, z, rx, ry, rz)
-	
+
 	local x = offX * m[1][1] + offY * m[2][1] + offZ * m[3][1] + m[4][1]
 	local y = offX * m[1][2] + offY * m[2][2] + offZ * m[3][2] + m[4][2]
 	local z = offX * m[1][3] + offY * m[2][3] + offZ * m[3][3] + m[4][3]
@@ -157,7 +157,7 @@ function rotationMatrix(x, y, z, alpha)
 		{math.sin(alpha), math.cos(alpha), 0},
 		{0, 0, 1}
 	}
-	
+
 	local vec = m*matrix{x, y, z}
 	return vec[1][1], vec[2][1], vec[3][1]
 end
@@ -171,23 +171,23 @@ function getMatrix(x, y, z, rrx, rry, rrz)
 	matrix[1][2] = math.cos(ry)*math.sin(rz) + math.cos(rz)*math.sin(rx)*math.sin(ry)
 	matrix[1][3] = -math.cos(rx)*math.sin(ry)
 	matrix[1][4] = 1
- 
+
 	matrix[2] = {}
 	matrix[2][1] = -math.cos(rx)*math.sin(rz)
 	matrix[2][2] = math.cos(rz)*math.cos(rx)
 	matrix[2][3] = math.sin(rx)
 	matrix[2][4] = 1
- 
+
 	matrix[3] = {}
 	matrix[3][1] = math.cos(rz)*math.sin(ry) + math.cos(ry)*math.sin(rz)*math.sin(rx)
 	matrix[3][2] = math.sin(rz)*math.sin(ry) - math.cos(rz)*math.cos(ry)*math.sin(rx)
 	matrix[3][3] = math.cos(rx)*math.cos(ry)
 	matrix[3][4] = 1
- 
+
 	matrix[4] = {}
 	matrix[4][1], matrix[4][2], matrix[4][3] = x, y, z
 	matrix[4][4] = 1
- 
+
 	return matrix
 end
 
@@ -212,7 +212,7 @@ end
 function string.duration(seconds)
 	local hours = math.floor(seconds / 3600)
 	local minutes = math.floor(seconds / 60)
-	
+
 	if hours > 0 then
 		return string.format("%02dh:%02dm", hours)
 	elseif minutes > 0 then
@@ -231,7 +231,7 @@ function setBytesInInt32(byte1, byte2, byte3, byte4)
 	assert(byte2 >= 0 and byte2 <= 255)
 	assert(byte3 >= 0 and byte3 <= 255)
 	assert(byte4 >= 0 and byte4 <= 255)
-	
+
 	local var = byte1
 	var = bitOr(bitLShift(var, 8), byte2)
 	var = bitOr(bitLShift(var, 8), byte3)
@@ -272,19 +272,19 @@ function getPointFromDistanceRotation3D(x,y,z,rx,ry,rz,distance)
 	rx = math.rad(rx)
 	ry = math.rad(ry)
 	rz = math.rad(rz)
-	
+
 	local sin = math.sin
 	local cos = math.cos
-	
+
 	local dx,dy,dz =1,0,0
-	
+
 	local function rotateZY(x,y,z,r)
-		return 
+		return
 		( cos(r) * x - sin(r) * y + 0   * z),
 		( sin(r) * x + cos(r) * y + 0   * z),
 		( 0		 * x - 0 	  * y + 1 	* z )
 	end
-	
+
 	local function rotateX(x,y,z,r)
 		return
 		( 1		 * x - 0 	  * y + 0 		* z),
@@ -305,7 +305,7 @@ function fromcolor(color)
 	if #str % 2 ~= 0 then
 		str = "0"..str
 	end
-	
+
 	for word in str:gmatch("%x%x") do
 		value[#value+1] = tonumber("0x"..word)
 	end
@@ -317,10 +317,10 @@ function fromcolor(color)
 end
 
 function isEventHandlerAdded( sEventName, pElementAttachedTo, func )
-	if 
-		type( sEventName ) == 'string' and 
-		isElement( pElementAttachedTo ) and 
-		type( func ) == 'function' 
+	if
+		type( sEventName ) == 'string' and
+		isElement( pElementAttachedTo ) and
+		type( func ) == 'function'
 	then
 		local aAttachedFunctions = getEventHandlers( sEventName, pElementAttachedTo )
 		if type( aAttachedFunctions ) == 'table' and #aAttachedFunctions > 0 then
@@ -331,7 +331,7 @@ function isEventHandlerAdded( sEventName, pElementAttachedTo, func )
 			end
 		end
 	end
- 
+
 	return false
 end
 
@@ -364,6 +364,15 @@ function getRandomUniqueNick()
 	repeat
 		randomNick = "Gast_"..math.random(1, 99999)
 	until (not getPlayerFromName(randomNick))
-	
+
 	return randomNick
+end
+
+function getCrimeById(crimeId)
+	for k, crime in pairs(Crime) do
+		if crime.id == crimeId then
+			return crime
+		end
+	end
+	return false
 end

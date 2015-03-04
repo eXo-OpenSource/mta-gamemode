@@ -40,6 +40,9 @@ function WebWindow:constructor(pos, size, initialPage, transparent, browserPos, 
 		end
 	)
 
+	-- Add callback method to wrap low-level onClientBrowserDocumentReady event
+	addEventHandler("onClientBrowserDocumentReady", self.m_Browser, function(...) if self.onDocumentReady then self:onDocumentReady(...) end end)
+
 	-- Register the window
 	WebUIManager:getInstance():registerWindow(self)
 end

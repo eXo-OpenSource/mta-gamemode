@@ -13,17 +13,17 @@ body {
 	position: absolute; left: 0; top: 0;
 }
 
-#main-wrapper #top{ 
+#main-wrapper #top{
 	height: 40px;
 	padding: 10px;
 	color: #20587D; font-size: 25pt; font-weight: bold; text-shadow: 0 0 1px #000000;
 }
 
-#main-wrapper #top #back{ 
+#main-wrapper #top #back{
 	cursor: pointer;
 }
 
-#main-wrapper #top .title{ 
+#main-wrapper #top .title{
 	float: right;
 }
 
@@ -53,7 +53,7 @@ body {
 #main-wrapper #content #main-menu ul{
 	font-size: 25pt;
 	padding: 0;
-	list-style: none; 
+	list-style: none;
 	margin-top: 25px;
 }
 
@@ -67,29 +67,29 @@ body {
 	color: #FCFFFF;
 }
 
-#main-wrapper #content .menu{ 
+#main-wrapper #content .menu{
 	width: 80%; height: 425px;
 	position: relative; margin: 0 auto; margin-top: 35px;
 	overflow: auto;
 }
 
-#main-wrapper #content .menu table{ 
+#main-wrapper #content .menu table{
 	width: 100%;
 	color: #F8BD25; font-size: 22pt;
 	padding: 0;
 }
 
-#main-wrapper #content .menu tr td{ 
+#main-wrapper #content .menu tr td{
 	width: 50%;
 }
 
-#main-wrapper #content .menu #crime tr td{
-	background-color: #F8BD25; 
+#crime tr td, #most-wanted-list tr td{
+	background-color: #F8BD25;
 	padding: 5px;
 	color: rgba( 180, 10, 0, 1 ); font-size: 16pt; font-weight: normal; text-shadow: 0 0 1px rgba( 0, 0, 0, 0.1 );
 	-webkit-box-shadow: 0 0 1px 1px rgba(0,0,0,0.8); box-shadow: 0 0 1px 1px rgba(0,0,0,0.8);
 }
 
-#main-wrapper #content .menu #crime tr:hover td{
+#crime tr:hover td, #most-wanted-list tr:hover td{
 	background-color: rgba( 10, 180, 200, 1 );
 }
