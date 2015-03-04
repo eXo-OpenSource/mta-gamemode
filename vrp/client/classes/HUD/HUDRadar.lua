@@ -13,19 +13,16 @@ function HUDRadar:constructor()
 	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-20
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
-	if self.m_DesignSet == RadarDesign.Monochrome then
+	if self.m_DesignSet == RadarDesign.Monochrome or self.m_DesignSet == RadarDesign.GTA then
 		CustomF11Map:getSingleton():enable()
 	end
 	
 	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
 	self.m_Zoom = 1
 	self.m_Rotation = 0
-	self.m_Blips = {}
+	self.m_Blips = Blip.Blips
 	self.m_Areas = {}
 	self.m_Visible = false
-
-    -- Link Blip.Blips to the HUDRadar.m_Blips
-    Blip.Blips = self.m_Blips
 	
 	-- Set texture edge to border (no-repeat)
 	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
@@ -66,23 +63,15 @@ function HUDRadar:updateMapTexture()
 end
 
 function HUDRadar:makePath(fileName, isBlip)
-	if isBlip then
-		if self.m_DesignSet == RadarDesign.Monochrome then
-			return "files/images/Radar_Monochrome/Blips/"..fileName
-		elseif self.m_DesignSet == RadarDesign.GTA then
-			return "files/images/Radar_GTA/Blips/"..fileName
-		end
-	else
-		if self.m_DesignSet == RadarDesign.Monochrome then
-			return "files/images/Radar_Monochrome/"..fileName
-		elseif self.m_DesignSet == RadarDesign.GTA then
-			return "files/images/Radar_GTA/"..fileName
-		end
+	if self.m_DesignSet == RadarDesign.Monochrome then
+		return (isBlip and "files/images/Radar_Monochrome/Blips/"..fileName) or "files/images/Radar_Monochrome/"..fileName
+	elseif self.m_DesignSet == RadarDesign.GTA then
+		return (isBlip and "files/images/Radar_GTA/Blips/"..fileName) or "files/images/Radar_GTA/"..fileName
 	end
 end
 
 function HUDRadar:setDesignSet(design)
-	if design == RadarDesign.Monochrome then
+	if design == RadarDesign.Monochrome or design == RadarDesign.GTA then
 		CustomF11Map:getSingleton():enable()
 	else
 		CustomF11Map:getSingleton():disable()
@@ -230,13 +219,19 @@ function HUDRadar:getZoom()
 end
 
 function HUDRadar:addBlip(blip)
-	table.insert(self.m_Blips, blip)
+	table.insert(Blip.Blips, blip)
 end
 
 function HUDRadar:removeBlip(blip)
-	local idx = table.find(self.m_Blips, blip)
-	if idx then
-		table.remove(self.m_Blips, idx)
+	if blip.m_ID then
+		if self.m_Blip[blip.m_ID] then
+			table.remove(self.m_Blip, blip.m_ID)
+		end
+	else
+		local idx = table.find(self.m_Blip, blip)
+		if idx then
+			table.remove(self.m_Blip, idx)
+		end
 	end
 end
 

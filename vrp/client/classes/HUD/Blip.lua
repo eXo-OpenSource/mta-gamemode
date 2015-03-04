@@ -7,6 +7,7 @@
 -- ****************************************************************************
 Blip = inherit(Object)
 Blip.ServerBlips = {}
+Blip.Blips = {}
 
 function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	if type(worldX) ~= "number" or type(worldY) ~= "number" then
@@ -16,6 +17,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 		worldX, worldY = 0, 0
 	end
 
+	self.m_ID = #Blip.Blips + 1
 	self.m_RawImagePath = imagePath
 	self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
 	self.m_WorldX = worldX
@@ -23,17 +25,21 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	self.m_Alpha = 255
 	self.m_Size = 24
 	self.m_StreamDistance = streamDistance or math.huge
-	
-	-- Temporary workaround (Todo: Replace this by an own implementation)
-	exports.customblips:createCustomBlip(worldX, worldY, 16, 16, self.m_ImagePath, self.m_StreamDistance == math.huge and 99999 or self.m_StreamDistance)
-	
-	-- Add the blip to the radar
-	HUDRadar:getSingleton():addBlip(self)
+
+	Blip.Blips[self.m_ID] = self
 end
 
 function Blip:destructor()
-	-- Remove the blip from the radar
-	HUDRadar:getSingleton():removeBlip(self)
+	if self.m_ID then
+		if Blip.Blips[self.m_ID] then
+			table.remove(Blip.Blips, self.m_ID)
+		end
+	else
+		local idx = table.find(Blip.Blips, self)
+		if idx then
+			table.remove(Blip.Blips, idx)
+		end
+	end
 end
 
 function Blip:getImagePath()

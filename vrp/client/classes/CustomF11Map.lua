@@ -52,7 +52,7 @@ function CustomF11Map:draw()
 	local mapPosX, mapPosY = screenWidth/2-height/2, 0
 
 	-- Draw map
-	dxDrawImage(mapPosX, mapPosY, height, height, "files/images/Radar_Monochrome/Radar.jpg", 0, 0, 0, tocolor(255, 255, 255, 200))
+	dxDrawImage(mapPosX, mapPosY, height, height, HUDRadar:getSingleton():makePath("Radar.jpg"), 0, 0, 0, tocolor(255, 255, 255, 200))
 
 	-- Draw blips
 	for i, v in ipairs(Blip.Blips) do
@@ -64,7 +64,7 @@ function CustomF11Map:draw()
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
 	local posX, posY = getElementPosition(localPlayer)
 	local mapX, mapY = CustomF11Map.worldToMapPosition(posX, posY)
-	dxDrawImage(mapPosX + mapX - 8, mapPosY + mapY - 8, 16, 16, "files/images/Radar_Monochrome/Blips/LocalPlayer.png", -rotZ)
+	dxDrawImage(mapPosX + mapX - 8, mapPosY + mapY - 8, 16, 16, HUDRadar:getSingleton():makePath("LocalPlayer.png", true), -rotZ)
 end
 
 function CustomF11Map.worldToMapPosition(worldX, worldY)
