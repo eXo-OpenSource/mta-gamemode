@@ -38,7 +38,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_XP 	 = 0
 	self.m_Karma = 0
 	self.m_Points = 0
-    self.m_Money = 0
+	self.m_Money = 0
 	self.m_BankMoney = 0
 	self.m_WantedLevel = 0
 	self.m_WeaponLevel = 0
@@ -61,7 +61,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_Collectables = {}
 	self.m_LadderTeam = {}
 	self.m_Achievements = {[0] = false} -- Dummy element, otherwise the JSON string is built wrong
-    self.m_DMMatchID = 0
+	self.m_DMMatchID = 0
 end
 
 function DatabasePlayer:virtual_destructor()
@@ -87,11 +87,11 @@ function DatabasePlayer:load()
 	self.m_BankMoney = row.BankMoney
 	self.m_TutorialStage = row.TutorialStage
 
-    if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
-        self:updateAchievements(fromJSON(row.Achievements))
-    else
-        self:updateAchievements({[0] = false}) -- Dummy element, otherwise the JSON string is built wrong
-    end
+	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
+		self:updateAchievements(fromJSON(row.Achievements))
+	else
+		self:updateAchievements({[0] = false}) -- Dummy element, otherwise the JSON string is built wrong
+	end
 
 	if row.Job > 0 then
 		self:setJob(JobManager:getSingleton():getFromId(row.Job))
@@ -119,10 +119,10 @@ function DatabasePlayer:load()
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
 	end
 
-    self:setWeaponLevel(row.WeaponLevel)
-    self:setVehicleLevel(row.VehicleLevel)
-    self:setSkinLevel(row.SkinLevel)
-    self:setJobLevel(row.JobLevel)
+	self:setWeaponLevel(row.WeaponLevel)
+	self:setVehicleLevel(row.VehicleLevel)
+	self:setSkinLevel(row.SkinLevel)
+	self:setJobLevel(row.JobLevel)
 end
 
 function DatabasePlayer:save()
@@ -200,7 +200,7 @@ end
 
 function DatabasePlayer:setKarma(karma)
 	self.m_Karma = karma
-    if self:isActive() then self:setPrivateSync("KarmaLevel", self.m_Karma) end
+	if self:isActive() then self:setPrivateSync("KarmaLevel", self.m_Karma) end
 end
 
 function DatabasePlayer:giveKarma(value, factor, addDirectly)
@@ -241,23 +241,23 @@ function DatabasePlayer:incrementJobLevel()
 end
 
 function DatabasePlayer:setWeaponLevel (level)
-    self.m_WeaponLevel = level
-    if self:isActive() then self:setPrivateSync("WeaponLevel", self.m_WeaponLevel) end
+	self.m_WeaponLevel = level
+	if self:isActive() then self:setPrivateSync("WeaponLevel", self.m_WeaponLevel) end
 end
 
 function DatabasePlayer:setVehicleLevel (level)
-    self.m_VehicleLevel = level
-    if self:isActive() then self:setPrivateSync("VehicleLevel", self.m_VehicleLevel) end
+	self.m_VehicleLevel = level
+	if self:isActive() then self:setPrivateSync("VehicleLevel", self.m_VehicleLevel) end
 end
 
 function DatabasePlayer:setSkinLevel (level)
-    self.m_SkinLevel = level
-    if self:isActive() then self:setPrivateSync("SkinLevel", self.m_SkinLevel) end
+	self.m_SkinLevel = level
+	if self:isActive() then self:setPrivateSync("SkinLevel", self.m_SkinLevel) end
 end
 
 function DatabasePlayer:setJobLevel (level)
-    self.m_JobLevel = level
-    if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
+	self.m_JobLevel = level
+	if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
 end
 
 function DatabasePlayer:addBankMoney(amount, logType)
@@ -332,55 +332,65 @@ function DatabasePlayer:setTeamId(kind,id)
 end
 
 function DatabasePlayer:updateAchievements (tbl)
-    if tbl ~= nil then
-        self.m_Achievements = tbl
-    end
-    if self:isActive() then self:setPrivateSync("Achievements", table.copy(self.m_Achievements)) end
-    -- Todo: In my tests, the table must be copied, otherwise the client didn't received it. --> Find out why (Jusonex can't reproduce it)
+	if tbl ~= nil then
+		self.m_Achievements = tbl
+	end
+	if self:isActive() then self:setPrivateSync("Achievements", table.copy(self.m_Achievements)) end
+	-- Todo: In my tests, the table must be copied, otherwise the client didn't received it. --> Find out why (Jusonex can't reproduce it)
 end
 
 function DatabasePlayer:getAchievements ()
-    return (self.m_Achievements ~= nil and self.m_Achievements) or {[0] = false}
+	return (self.m_Achievements ~= nil and self.m_Achievements) or {[0] = false}
 end
 
 function DatabasePlayer:giveAchievement (...)
-    if Achievement:isInstantiated() then
-        Achievement:getSingleton():giveAchievement(self, ...)
-    else
-        outputDebug("Achievement hasn't been instantiated yet!")
-    end
+	if Achievement:isInstantiated() then
+		Achievement:getSingleton():giveAchievement(self, ...)
+	else
+		outputDebug("Achievement hasn't been instantiated yet!")
+	end
 end
 
 function DatabasePlayer:getAchievementStatus (id)
-    local id = tostring(id)
-    if Achievement:isInstantiated() then
-        if self.m_Achievements[id] ~= nil then
-            return self.m_Achievements[id]
-        else
-            return false
-        end
-    else
-        outputDebug("Achievement hasn't been instantiated yet!")
-        return false
-    end
+	local id = tostring(id)
+	if Achievement:isInstantiated() then
+		if self.m_Achievements[id] ~= nil then
+			return self.m_Achievements[id]
+		else
+			return false
+		end
+	else
+		outputDebug("Achievement hasn't been instantiated yet!")
+		return false
+	end
 end
 
 function DatabasePlayer:setAchievementStatus (id, status)
-    local id = tostring(id)
-    if Achievement:isInstantiated() then
-        self.m_Achievements[id] = status
-        self:updateAchievements()
-    else
-        outputDebug("Achievement hasn't been instantiated yet!")
-    end
+	local id = tostring(id)
+	if Achievement:isInstantiated() then
+		self.m_Achievements[id] = status
+		self:updateAchievements()
+	else
+		outputDebug("Achievement hasn't been instantiated yet!")
+	end
 end
 
 function DatabasePlayer:setMatchID (id)
-    if self:isActive() then self:setPublicSync("DMMatchID", id) end
+	if self:isActive() then self:setPublicSync("DMMatchID", id) end
 end
 
 function DatabasePlayer:getMatchID ()
-    if self:isActive() then return self:getPublicSync("DMMatchID") end
+	if self:isActive() then
+		return (
+			(
+				self:getPublicSync("DMMatchID") and
+				self:getPublicSync("DMMatchID") > 0 and
+				self:getPublicSync("DMMatchID")
+			) or (0)
+		)
+	else
+		return (0)
+	end
 end
 
 function DatabasePlayer:getPlayTime() -- This function is overriden by Player:getPlayTime (to provide a live playtime)

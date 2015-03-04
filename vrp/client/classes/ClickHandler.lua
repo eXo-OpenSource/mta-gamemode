@@ -35,7 +35,7 @@ function ClickHandler:constructor()
 		
 			local element = getElementBehindCursor(worldX, worldY, worldZ)
 			if not element then
-                self.m_DrawCursor = false
+				self.m_DrawCursor = false
 				setCursorAlpha(255)
 				return
 			end
@@ -61,7 +61,7 @@ function ClickHandler:constructor()
 					-- Convert relative coordinates to absolute ones
 					cx, cy = cx * screenWidth, cy * screenHeight
 
-                    dxDrawImage(cx-18/2, cy-32/2, 24, 24, "files/images/Mouse.png", 0, 0, 0, Color.White, true)
+					dxDrawImage(cx-18/2, cy-32/2, 24, 24, "files/images/Mouse.png", 0, 0, 0, Color.White, true)
 				end
 			end	
 		end
@@ -115,60 +115,60 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	
 	-- Phase 1: Check per-element handlers
 	if element == localPlayer then
-        if trigger then
-            if button == "left" then
-                SelfGUI:getSingleton():open()
-            elseif button == "right" then
-            end
-        end
+		if trigger then
+			if button == "left" then
+				SelfGUI:getSingleton():open()
+			elseif button == "right" then
+			end
+		end
 		return true
 	end
 	
 	-- Phase 2: Check for world items
 	if getElementData(element, "worlditem") then
-        if trigger then
-            if button == "left" then
-                triggerServerEvent("worldItemClick", element)
-            elseif button == "right" then
-            end
-        end
+		if trigger then
+			if button == "left" then
+				triggerServerEvent("worldItemClick", element)
+			elseif button == "right" then
+			end
+		end
 		return true
 	end
 	
 	-- Phase 3: Check models
 	if self:checkModels(model, 1775, 1776, 1209) then
 		if trigger then
-            if button == "left" then
-                self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-            end
-        end
-        return true
-    end
+			if button == "left" then
+				self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+			end
+		end
+		return true
+	end
 	if model == 2942 and range <= 8 then
-        if trigger then
-            if button == "left" then
-                BankGUI:getSingleton():show()
-            elseif button == "right" then
-            end
-        end
+		if trigger then
+			if button == "left" then
+				BankGUI:getSingleton():show()
+			elseif button == "right" then
+			end
+		end
 		return true
 	end
 	if model == 2886 then -- Keypad
-        if trigger then
-            if button == "left" then
-                triggerServerEvent("keypadClick", element)
-            end
-        end
+		if trigger then
+			if button == "left" then
+				triggerServerEvent("keypadClick", element)
+			end
+		end
 		return true
 	end
 	
 	-- Phase 4: Check element types
 	if self.m_Menu[elementType] then
-        if trigger then
-            if button == "left" then
-                self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-            end
-        end
+		if trigger then
+			if button == "left" then
+				self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+			end
+		end
 		return true
 	end
 

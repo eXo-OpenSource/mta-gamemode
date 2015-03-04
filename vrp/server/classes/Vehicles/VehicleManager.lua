@@ -322,22 +322,22 @@ end
 function VehicleManager:Event_vehicleUpgradeGarage()
 	local UpgradeToPrices = {[2] = 100000, [3] = 500000}
 	local currentGarage = client:getGarageType()
-    if currentGarage > 0 then
-        local price = UpgradeToPrices[currentGarage + 1]
-        if price then
-            if client:getMoney() >= price then
-                client:takeMoney(price)
-                client:setGarageType(currentGarage + 1)
-                client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType())
-            else
-                client:sendError(_("Du hast nicht genügend Geld, um deine Garage zu upgraden", client))
-            end
-        else
-            client:sendError(_("Deine Garage ist bereits auf dem höchsten Level", client))
-        end
-    else
-        client:sendError(_("Du besitzt keine gültige Garage!", client))
-    end
+	if currentGarage > 0 then
+		local price = UpgradeToPrices[currentGarage + 1]
+		if price then
+			if client:getMoney() >= price then
+				client:takeMoney(price)
+				client:setGarageType(currentGarage + 1)
+				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType())
+			else
+				client:sendError(_("Du hast nicht genügend Geld, um deine Garage zu upgraden", client))
+			end
+		else
+			client:sendError(_("Deine Garage ist bereits auf dem höchsten Level", client))
+		end
+	else
+		client:sendError(_("Du besitzt keine gültige Garage!", client))
+	end
 end
 
 function VehicleManager:Event_vehicleHotwire()

@@ -16,7 +16,7 @@ addEventHandler("introFinished", root, function()
 end)
 
 function Player:constructor()
-    setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	setElementFrozen(self, true)
 
 	self.m_PrivateSync = {}
@@ -29,8 +29,8 @@ function Player:constructor()
 	self.m_JoinTime = getTickCount()
 	self.m_Crimes = {}
 
-    self:setMoney(0)
-    self:setWantedLevel(0)
+	self:setMoney(0)
+	self:setWantedLevel(0)
 end
 
 function Player:destructor()
@@ -167,11 +167,11 @@ end
 
 function Player:spawn()
 	if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
-        if self:isGuest() then
-            spawnPlayer(self, 638, -1542, 15, self.m_Skin, self.m_SavedInterior, 0)
-        else
-		    spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin, self.m_SavedInterior, 0)
-        end
+		if self:isGuest() then
+			spawnPlayer(self, 638, -1542, 15, self.m_Skin, self.m_SavedInterior, 0)
+		else
+			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin, self.m_SavedInterior, 0)
+		end
 	elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
 		VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 	else

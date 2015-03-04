@@ -96,7 +96,7 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabPoints)
 	self.m_KarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.1, self.m_Width*0.4, self.m_Height*0.06, "+0", tabPoints)
-    localPlayer:setPrivateSyncChangeHandler("KarmaLevel", function(value) self.m_KarmaLabel:setText(tostring(math.floor(value))) end)
+	localPlayer:setPrivateSyncChangeHandler("KarmaLevel", function(value) self.m_KarmaLabel:setText(tostring(math.floor(value))) end)
 	self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.1, self.m_Width*0.15, self.m_Height*0.06, "+ (400P)", tabPoints):setBackgroundColor(Color.Green)
 	self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot, true) end
 	self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.55, self.m_Height*0.1, self.m_Width*0.15, self.m_Height*0.06, "- (400P)", tabPoints):setBackgroundColor(Color.Red)
@@ -107,36 +107,36 @@ function SelfGUI:constructor()
 	self.m_WeaponLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_WeaponLevelButton.onLeftClick = function() triggerServerEvent("requestWeaponLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("WeaponLevel", function(value)
-        self.m_WeaponLevelLabel:setText(tostring(value))
-        self.m_WeaponLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())))
-    end)
+		self.m_WeaponLevelLabel:setText(tostring(value))
+		self.m_WeaponLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())))
+	end)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuglevel:", tabPoints)
 	self.m_VehicleLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.26, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getVehicleLevel(), tabPoints)
 	self.m_VehicleLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.26, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_VehicleLevelButton.onLeftClick = function() triggerServerEvent("requestVehicleLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("VehicleLevel", function(value)
-        self.m_VehicleLevelLabel:setText(tostring(value))
-        self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
-    end)
+		self.m_VehicleLevelLabel:setText(tostring(value))
+		self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
+	end)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.34, self.m_Width*0.25, self.m_Height*0.06, _"Skinlevel:", tabPoints)
 	self.m_SkinLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getSkinLevel(), tabPoints)
 	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_SkinLevelButton.onLeftClick = function() triggerServerEvent("requestSkinLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("SkinLevel", function(value)
-        self.m_SkinLevelLabel:setText(tostring(value))
-        self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())))
-    end)
+		self.m_SkinLevelLabel:setText(tostring(value))
+		self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())))
+	end)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Joblevel:", tabPoints)
 	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getJobLevel(), tabPoints)
 	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.42, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_JobLevelButton.onLeftClick = function() triggerServerEvent("requestJobLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("JobLevel", function(value)
-        self.m_JobLevelLabel:setText(tostring(value))
-        self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
-    end)
+		self.m_JobLevelLabel:setText(tostring(value))
+		self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
+	end)
 
 	-- Tab: Settings
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
@@ -151,22 +151,22 @@ end
 
 function SelfGUI:onShow()
 	-- Initialize all the stuff
-    self.m_WeaponLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())))
-    self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
-    self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())))
-    self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
+	self.m_WeaponLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())))
+	self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
+	self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())))
+	self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
 
-    local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
+	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
 	--self.m_PlayTimeLabel:setText(tostring(localPlayer:getPlayTime() or "").."min")
-    self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
+	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
 
 	if localPlayer:getJob() then
 		self.m_JobNameLabel:setText(localPlayer:getJob():getName())
-        self.m_JobQuitButton:setVisible(true)
+		self.m_JobQuitButton:setVisible(true)
 	else
 		self.m_JobNameLabel:setText("-")
-        self.m_JobQuitButton:setVisible(false)
-    end
+		self.m_JobQuitButton:setVisible(false)
+	end
 end
 
 function SelfGUI:TabPanel_TabChanged(tabId)
@@ -180,7 +180,7 @@ end
 function SelfGUI:JobQuitButton_Click()
 	triggerServerEvent("jobQuit", root)
 	self.m_JobNameLabel:setText("-")
-    self.m_JobQuitButton:setVisible(false)
+	self.m_JobQuitButton:setVisible(false)
 end
 
 function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)
@@ -305,7 +305,7 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType)
 		end
 	end
 	if garageType then
-        localPlayer.m_GarageType = garageType
+		localPlayer.m_GarageType = garageType
 
 		local texts = {[0] = _"Garage: keine Garage (0 Slots)", [1] = _"Garage: Standard Garage (3 Slots)", [2] = _"Garage: Komfortable Garage (6 Slots)", [3] = _"Garage: Luxus Garage (10 Slots)"}
 		self.m_VehicleGarages:setText(texts[garageType])
@@ -339,14 +339,14 @@ end
 function SelfGUI:VehicleRespawnButton_Click()
 	local item = self.m_VehiclesGrid:getSelectedItem()
 	if not item then
-        WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
-    end
+	end
 
-    if localPlayer:getGarageType() == 0 then
-        ErrorBox:new(_"Du besitzt keine gültige Garage!")
-        return
-    end
+	if localPlayer:getGarageType() == 0 then
+		ErrorBox:new(_"Du besitzt keine gültige Garage!")
+		return
+	end
 
 	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end
@@ -354,7 +354,7 @@ end
 function SelfGUI:VehicleSellButton_Click()
 	local item = self.m_VehiclesGrid:getSelectedItem()
 	if not item then
-        WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
 
