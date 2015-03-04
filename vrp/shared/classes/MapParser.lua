@@ -13,6 +13,10 @@ local readFuncs = {
 		return {type = "spawnpoint", model = tonumber(attributes.vehicle), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
 			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ)}
 	end;
+	racepickup = function(attr)
+		return {type = "racepickup", pickuptype = attr.type, x = tonumber(attr.posX), y = tonumber(attr.posY), z = tonumber(attr.posZ),
+			rx = tonumber(attr.rotX), ry = tonumber(attr.rotY), rz = tonumber(attr.rotZ), model = tonumber(attr.vehicle)}
+	end;
 }
 local createFuncs = {
 	object = function(info)
@@ -25,9 +29,27 @@ local createFuncs = {
 		removeWorldModel(info.lodModel, info.radius, info.posX, info.posY, info.posZ, info.interior)
 		return info
 	end;
-	spawnpoint = function(info)
-		return info
-	end
+	spawnpoint = function(info) return info end;
+	racepickup = function(info)
+		local model, func
+		if info.pickuptype == "nitro" then
+			model = 2221
+			func = function(vehicle) addVehicleUpgrade(vehicle, 1010) end
+		elseif info.pickuptype == "vehiclechange" then
+			model = 2223
+			func = function(vehicle) setElementModel(vehicle, info.model) end
+		else
+			model = 2222
+			func = function(vehicle) fixVehicle(vehicle) end
+		end
+		local pickup = createPickup(info.x, info.y, info.z, 3, model, 0)
+		addEventHandler("onPickupHit", pickup, function(player)
+			local vehicle = getPedOccupiedVehicle(player)
+			if vehicle then func(vehicle) end
+		end)
+		if info.pickuptype == "vehiclechange" then pickup.targetModel = info.model end
+		return pickup
+	end;
 }
 
 function MapParser:constructor(path)

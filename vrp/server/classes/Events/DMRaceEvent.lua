@@ -28,7 +28,9 @@ function DMRaceEvent:onStart()
 	local spawnpoints = {}
 	for k, element in pairs(self.m_Map:getElements()) do
 		if not isElement(element) and element.type == "spawnpoint" then
-			spawnpoints[#spawnpoints + 1] = {model = element.model, position = Vector3(element.x, element.y, element.z), rotation = Vector3(element.rx, element.ry, element.rz)}
+			spawnpoints[#spawnpoints + 1] = {model = element.model, position = Vector3(element.x, element.y, element.z), rotation = element.rz}
+		elseif isElement(element) and element:getType() == "pickup" and element.targetModel == 425 then -- is Hunter?
+			addEventHandler("onPickupHit", element, bind(self.Event_PlayerReachedHunter, self))
 		end
 	end
 
@@ -40,14 +42,14 @@ function DMRaceEvent:onStart()
 		player:setPosition(spawnInfo.position)
 		player:setDimension(EVENT_DIMENSION)
 
-		local vehicle = TemporaryVehicle.create(spawnInfo.model, spawnInfo.position.x, spawnInfo.position.y, spawnInfo.position.z, spawnInfo.rotation.rz)
+		local vehicle = TemporaryVehicle.create(spawnInfo.model, spawnInfo.position.x, spawnInfo.position.y, spawnInfo.position.z, spawnInfo.rotation)
 		vehicle:setDimension(EVENT_DIMENSION)
 		warpPedIntoVehicle(player, vehicle)
 		vehicle:setEngineState(true)
 
 		-- Add event handlers
 		addEventHandler("onPlayerWasted", player, self.m_WastedFunc)
-		bindKey(player, "enter", "down", self.m_EnterHandler)
+		bindKey(player, "enter_exit", "down", self.m_EnterHandler)
 
 		-- Increment spawn index
 		spawnIndex = spawnIndex + 1
@@ -59,7 +61,7 @@ function DMRaceEvent:Event_PlayerWasted()
 	self:quit(source)
 
 	-- Output the winner if he was the last player
-	if #self:getPlayers() == 0 then
+	if #self:getPlayers() <= 1 then
 		source:sendSuccess(_("Du hast gewonnen!", source))
 
 		-- Stop event
@@ -71,10 +73,21 @@ function DMRaceEvent:Event_PressedEnter(player)
 	killPed(player)
 end
 
+function DMRaceEvent:Event_PlayerReachedHunter(hitElement, matchingDimension)
+	if getElementType(hitElement) == "player" and matchingDimension then
+		-- Kill all players [except us]
+		for k, player in pairs(self:getPlayers()) do
+			--if hitElement ~= player then
+				killPed(player)
+			--end
+		end
+	end
+end
+
 function DMRaceEvent:onQuit(player)
 	-- Remove event handlers and binds
 	removeEventHandler("onPlayerWasted", player, self.m_WastedFunc)
-	unbindKey(player, "enter", "down", self.m_EnterHandler)
+	unbindKey(player, "enter_exit", "down", self.m_EnterHandler)
 end
 
 function DMRaceEvent.getRandomMap()
@@ -95,8 +108,8 @@ end
 
 
 --[[
-Things we've to talk about:
+Things we've to think about:
 - What happens when the player quits? (where does he respawn?) - respawn at hospital?
 - Do we want to use our own maps or convert/load public maps
-- How to end the event (shall we use the standard way (=Hunter?))
+- How to prevent camping? (AFK "system" or something?)
 ]]
