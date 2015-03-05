@@ -183,8 +183,11 @@ function Player:spawn()
 	fadeCamera(self, true)
 end
 
-function Player:respawn()
-	spawnPlayer(self, 2028--[[+math.random(-4, 4)--]], -1405--[[+math.random(-2, 2)]], 18, 0, self.m_Skin)
+function Player:respawn(position, rotation)
+	position = position or Vector3(2028, -1405, 18)
+	rotation = rotation or 0
+
+	spawnPlayer(self, position, rotation, self.m_Skin)
 	setCameraTarget(self, self)
 end
 

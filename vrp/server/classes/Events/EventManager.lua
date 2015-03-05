@@ -21,7 +21,7 @@ function EventManager:constructor()
 	addEventHandler("onPlayerQuit", root, bind(self.Event_playerQuit, self))
 
 	-- Register hooks
-	PlayerManager:getSingleton():registerWastedHook(
+	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
 			local event = self:getPlayerEvent(player)
 			if not event or not event:hasStarted() then
@@ -31,8 +31,7 @@ function EventManager:constructor()
 			if event.onPlayerWasted then event:onPlayerWasted(player) end
 
 			if event:hasExit() then
-				player:respawn()
-				event:teleportToExit(player)
+				player:respawn(event:getExitPosition())
 				return true
 			end
 		end

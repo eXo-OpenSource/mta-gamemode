@@ -28,6 +28,7 @@
 	<script src="shared/classes/Package.lua" type="shared"/>
 	<script src="shared/classes/MapParser.lua" type="shared"/>
 	<script src="shared/classes/Randomizer.lua" type="shared"/>
+	<script src="shared/classes/Hook.lua" type="shared"/>
 
 	<!-- Server -->
 	<script src="server/constants.lua" type="server"/>

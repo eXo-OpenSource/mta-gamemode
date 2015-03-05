@@ -9,7 +9,7 @@ PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp"}
 
 function PlayerManager:constructor()
-	self.m_WastedHooks = {}
+	self.m_WastedHook = Hook:new()
 
 	-- Register events
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
@@ -42,8 +42,8 @@ function PlayerManager:updatePlayerSync()
 	end
 end
 
-function PlayerManager:registerWastedHook(hookFunc)
-	self.m_WastedHooks[#self.m_WastedHooks + 1] = hookFunc
+function PlayerManager:getWastedHook()
+	return self.m_WastedHook
 end
 
 
@@ -74,12 +74,9 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted()
-	-- Call wasted hooks
-	for k, hookFunc in pairs(self.m_WastedHooks) do
-		-- Cancel if hook function returned false
-		if hookFunc(source) then
-			return
-		end
+	-- Call wasted hook
+	if self.m_WastedHook:call(source) then
+		return
 	end
 
 	source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))

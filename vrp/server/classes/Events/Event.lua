@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 Event = inherit(Object)
+local EVENT_RANGE = 40 -- Radius
 
 function Event:virtual_constructor(Id)
 	self.m_Id = Id
@@ -30,6 +31,20 @@ function Event:virtual_constructor(Id)
 			end
 		end
 	)
+
+	self.m_EventRangeShape = createColSphere(position, EVENT_RANGE)
+	addEventHandler("onColShapeLeave", self.m_EventRangeShape,
+		function(hitElement, matchingDimension)
+			if getElementType(hitElement) == "player" and matchingDimension then
+				if self:isMember(hitElement) then
+					-- Quit the player if he leaves the zone
+					self:quit(hitElement)
+
+					hitElement:sendWarning(_("Du hast die Eventzone verlassen und nimmst deshalb nicht mehr am Event teil!", hitElement))
+				end
+			end
+		end
+	)
 end
 
 function Event:virtual_destructor()
@@ -41,6 +56,9 @@ function Event:virtual_destructor()
 	end
 	if isElement(self.m_StartMarker) then
 		self.m_StartMarker:destroy()
+	end
+	if isElement(self.m_EventRangeShape) then
+		self.m_EventRangeShape:destroy()
 	end
 end
 
@@ -72,6 +90,7 @@ function Event:start()
 		return
 	end
 	self.m_StartMarker:destroy()
+	self.m_EventRangeShape:destroy()
 	delete(self.m_EventBlip)
 	self.m_EventBlip = nil
 
