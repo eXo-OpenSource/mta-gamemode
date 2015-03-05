@@ -5,15 +5,15 @@ function Core:constructor()
 
 	-- Small hack to get the global core immediately
 	core = self
-	
+
 	if DEBUG then
 		Debugging:new()
 	end
-	
+
 	-- Establish database connection
 	sql = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, MYSQL_DB, "")
 	sql:setPrefix("vrp")
-	
+
 	-- Instantiate classes (Create objects)
 	TranslationManager:new()
 	WhiteList:new()
@@ -38,10 +38,10 @@ function Core:constructor()
 	Collectables:new()
 	DrivingSchool:new()
 	AmmuLadder:new()
-    Achievement:new()
+	Achievement:new()
 	SkinShops:new()
-    Deathmatch:new()
-	
+	Deathmatch:new()
+
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()
 	VehicleGarages.initalizeAll()
@@ -50,7 +50,7 @@ function Core:constructor()
 	VehicleSpawner.initializeAll()
 	PayNSpray.initializeAll()
 	GasStation.initializeAll()
-	
+
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")
 	local files = {}
@@ -59,28 +59,28 @@ function Core:constructor()
 			files[#files+1] = xmlNodeGetAttribute(v, "src")
 		end
 	end
-	
+
 	Package.save("vrp.data", files)
-	
+
 	Provider:getSingleton():offerFile("vrp.data")
-	
+
 	-- Refresh all players
 	for k, v in pairs(getElementsByType("player")) do
 		Async.create(Player.connect)(v)
-	end	
+	end
 	for k, v in pairs(getElementsByType("player")) do
 		Async.create(Player.join)(v)
 	end
-	
+
 	setOcclusionsEnabled(false)
 
-    addEvent("Core.onClientInternalError", true)
-    addEventHandler("Core.onClientInternalError", root, bind(self.onClientInternalError, self))
+	addEvent("Core.onClientInternalError", true)
+	addEventHandler("Core.onClientInternalError", root, bind(self.onClientInternalError, self))
 end
 
 function Core:onClientInternalError (msg)
-    outputDebug(("[%s] Internal Client Error occurred: %s"):format(getPlayerName(client), msg))
-    kickPlayer(client, "Server - Error Handler", ("Internal Error occurred: %s"):format(msg))
+	outputDebug(("[%s] Internal Client Error occurred: %s"):format(getPlayerName(client), msg))
+	kickPlayer(client, "Server - Error Handler", ("Internal Error occurred: %s"):format(msg))
 end
 
 function Core:destructor()
@@ -88,6 +88,6 @@ function Core:destructor()
 	delete(PlayerManager:getSingleton())
 	delete(GroupManager:getSingleton())
 	delete(HouseManager:getSingleton())
-	
+
 	delete(sql)
 end

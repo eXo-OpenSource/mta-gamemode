@@ -39,8 +39,8 @@ function Core:ready()
 	HouseGUI:new()
 	Housing:new()
 	DrivingSchool:new()
-    Achievement:new()
-    DeathmatchEvent:new()
+	Achievement:new()
+	DeathmatchEvent:new()
 
 	VehicleShop.initializeAll()
 	VehicleGarages:new()
@@ -119,5 +119,5 @@ function Core:createBlips()
 end
 
 function Core:throwInternalError(message)
-    triggerServerEvent("Core.onClientInternalError", root, message)
+	triggerServerEvent("Core.onClientInternalError", root, message)
 end

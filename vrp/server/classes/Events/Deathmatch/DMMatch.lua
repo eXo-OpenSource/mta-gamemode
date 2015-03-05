@@ -40,6 +40,7 @@ function DeathmatchMatch:getMatchData ()
 		map = self.m_Data["Map"];
 		weapon = self.m_Data["Weapon"];
 		passworded = self.m_Data["Passworded"];
+		password = self.m_Data["Password"];
 		players = self.m_Players;
 		host = self.m_Host;
 	}
@@ -72,7 +73,7 @@ end
 
 -- DEBUG
 addCommandHandler("testf", function ()
-	local instance = Deathmatch:getSingleton():newMatch(getPlayerFromName("StiviK"), math.random(3), {false, ""}, 1, 3)
+	local instance = Deathmatch:getSingleton():newMatch(getPlayerFromName("StiviK"), math.random(3), {true, "hallo"}, 1, 3)
 	addCommandHandler("testf2", function ()
 		instance:setStatus(math.random(3))
 	end)

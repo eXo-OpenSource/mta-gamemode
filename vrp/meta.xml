@@ -274,6 +274,7 @@
 	<script src="client/classes/GUIForms/DrivingSchoolGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
     <script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
+    <script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>

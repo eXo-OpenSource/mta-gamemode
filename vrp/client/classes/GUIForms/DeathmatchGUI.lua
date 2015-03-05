@@ -29,11 +29,13 @@ function DeathmatchGUI:constructor ()
 
 			if item.status == DeathmatchEvent.Status[1] then -- waiting
 				if item.passworded then
-					ErrorBox:new("Passworded!")
-
 					local instance = DeathmatchEvent:getSingleton()
-					instance:closeGUIForm()
-					--instance:openGUIForm(4)
+					local onPasswordRight = function (instance, item)
+						instance:addPlayertoMatch(item.id)
+						instance:closeGUIForm()
+						instance:openGUIForm(3)
+					end
+					PasswordBox:new(item.password, bind(onPasswordRight, instance, item), nil)
 				else
 					local instance = DeathmatchEvent:getSingleton()
 					instance:addPlayertoMatch(item.id)
@@ -71,6 +73,7 @@ function DeathmatchGUI:updateData ()
 		item.status = instance.Status[v.status]
 		item.id = v.id
 		item.passworded = v.passworded
+		item.password = v.password
 		item.onLeftDoubleClick = function () self.m_ButtonJoin.onLeftClick()  end
 	end
 end
