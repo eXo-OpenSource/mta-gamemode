@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        shared/classes/File.lua
+-- *  FILE:        shared/classes/Hook.lua
 -- *  PURPOSE:     Hook class (helps us to handle things from other position in the code)
 -- *
 -- ****************************************************************************

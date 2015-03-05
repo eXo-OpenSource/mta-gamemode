@@ -302,7 +302,6 @@
 	<script src="client/classes/Phone/Phone.lua" type="client"/>
 	<script src="client/classes/Phone/PhoneApp.lua" type="client"/>
 	<script src="client/classes/Phone/AppActivity.lua" type="client"/>
-	<script src="client/classes/Phone/Apps/AppHelloWorld.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppCall.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppSettings.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppDashboard.lua" type="client"/>

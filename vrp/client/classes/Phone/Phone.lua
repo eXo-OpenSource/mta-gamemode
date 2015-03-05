@@ -10,34 +10,33 @@ inherit(Singleton, Phone)
 
 function Phone:constructor()
 	GUIForm.constructor(self, screenWidth-270, screenHeight-500, 250, 490)
-	
+
 	self.m_Apps = {}
-	
+
 	-- Register apps
-	self:registerApp(AppHelloWorld)
 	self:registerApp(AppCall)
 	self:registerApp(AppSettings)
 	self:registerApp(AppDashboard)
 	self:registerApp(AppNametag)
-	
+
 	-- Add GUI elements
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/Phone.png", self)
-	
+
 	-- Create app icons
 	self.m_IconSurface = GUIElement:new(14, 41, 222, 391, self)
 	for k, app in ipairs(self.m_Apps) do
 		local column, row = (k-1)%4, math.floor((k-1)/4)
-		
+
 		-- Create app icon
 		local appIcon = GUIImage:new(5+54*column, 9+75*row, 52, 52, app:getIconPath(), self.m_IconSurface)
-		
+
 		-- Create app label
 		local appLabel = GUILabel:new(5+54*column, 62+75*row, 52, 20, app:getName(), self.m_IconSurface)
 		appLabel:setAlignX("center")
-		
+
 		appIcon.onLeftClick = function() self.m_IconSurface:setVisible(false) app:open() end
 	end
-	
+
 	-- Create elements at the bottom
 	self.m_BackButton = GUIRectangle:new(14, 410, 80, 25, Color.Clear, self)
 	self.m_BackButton.onLeftClick = function() self:closeAllApps() self.m_IconSurface:setVisible(true) end -- Todo: In-App back
@@ -89,11 +88,11 @@ function Phone:openApp(app)
 	if not self:isVisible() then
 		self:open()
 	end
-	
+
 	-- Hide app icon surface/activity
 	self.m_IconSurface:setVisible(false)
 	app:open()
-	
+
 	return true
 end
 
@@ -103,6 +102,6 @@ function Phone:openAppByClass(appClass)
 		error("Attempt to open a non-existing app")
 		return false
 	end
-	
+
 	return self:openApp(app)
 end
