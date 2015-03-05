@@ -7,17 +7,36 @@
 -- ****************************************************************************
 EventManager = inherit(Singleton)
 local MAX_PLAYERS_PER_EVENT = 32
+addEvent("eventJoin", true)
 
 function EventManager:constructor()
 	self.m_RunningEvents = {}
 	self.m_RegisteredEvents = {StreetRaceEvent, LasertagEvent, DMRaceEvent} -- Add it on the client as well
-	self.m_EventIdCounter = 0 -- We need a unique id which works a long time (to avoid collisions if somebody forgets to close the GUI)
+	self.m_EventIdCounter = 0 -- We need a unique id which works for a long time (to avoid collisions if somebody forgets to close the GUI)
 
 	-- Start timer that opens every 30min a random event
 	setTimer(bind(self.openRandomEvent, self), 30*60*1000, 0)
 
-	addEvent("eventJoin", true)
-	addEventHandler("eventJoin", root, bind(EventManager.Event_eventJoin, self))
+	addEventHandler("eventJoin", root, bind(self.Event_eventJoin, self))
+	addEventHandler("onPlayerQuit", root, bind(self.Event_playerQuit, self))
+
+	-- Register hooks
+	PlayerManager:getSingleton():registerWastedHook(
+		function(player)
+			local event = self:getPlayerEvent(player)
+			if not event or not event:hasStarted() then
+				return
+			end
+
+			if event.onPlayerWasted then event:onPlayerWasted(player) end
+
+			if event:hasExit() then
+				player:respawn()
+				event:teleportToExit(player)
+				return true
+			end
+		end
+	)
 
 	if DEBUG then
 		addCommandHandler("startevent",
@@ -60,6 +79,29 @@ function EventManager:openEvent(eventClass)
 	setTimer(bind(event.start, event), 0.5*60*1000, 1)
 end
 
+function EventManager:isPlayerInEvent(player, eventClass)
+	for k, event in pairs(self.m_RunningEvents) do
+		if event:hasStarted() then
+			if event:isMember(player) then
+				if instanceof(event, eventClass) then
+					return true
+				end
+				return false
+			end
+		end
+	end
+	return false
+end
+
+function EventManager:getPlayerEvent(player)
+	for k, event in pairs(self.m_RunningEvents) do
+		if event:isMember(player) then
+			return event
+		end
+	end
+	return nil
+end
+
 function EventManager:Event_eventJoin(eventId)
 	if not eventId then
 		return
@@ -78,4 +120,14 @@ function EventManager:Event_eventJoin(eventId)
 
 	event:join(client)
 	client:sendShortMessage(_("Du hast dich erfolgreich für dieses Event eingetragen", client))
+end
+
+function EventManager:Event_playerQuit()
+	-- onPlayerQuit triggers __before__ Player:destructor (which is called by onElementDestroy @ classlib)
+	local event = self:getPlayerEvent(source)
+	if not event or not event:hasStarted() or not event:hasExit() then
+		return
+	end
+
+	self:teleportToExit(source)
 end

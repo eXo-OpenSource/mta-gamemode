@@ -9,11 +9,14 @@ PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp"}
 
 function PlayerManager:constructor()
+	self.m_WastedHooks = {}
+
+	-- Register events
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
 	addEventHandler("onPlayerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
-	
+
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
 	addEventHandler("playerReady", root, bind(self.Event_playerReady, self))
 	addEventHandler("playerSendMoney", root, bind(self.Event_playerSendMoney, self))
@@ -22,7 +25,7 @@ function PlayerManager:constructor()
 	addEventHandler("requestVehicleLevelUp", root, bind(self.Event_requestVehicleLevelUp, self))
 	addEventHandler("requestSkinLevelUp", root, bind(self.Event_requestSkinLevelUp, self))
 	addEventHandler("requestJobLevelUp", root, bind(self.Event_requestJobLevelUp, self))
-	
+
 	self.m_SyncPulse = TimedPulse:new(500)
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 end
@@ -34,9 +37,13 @@ function PlayerManager:destructor()
 end
 
 function PlayerManager:updatePlayerSync()
-	for k, v in pairs(getElementsByType("player")) do 
+	for k, v in pairs(getElementsByType("player")) do
 		v:updateSync()
 	end
+end
+
+function PlayerManager:registerWastedHook(hookFunc)
+	self.m_WastedHooks[#self.m_WastedHooks + 1] = hookFunc
 end
 
 
@@ -57,7 +64,7 @@ end
 
 function PlayerManager:Event_playerReady()
 	local player = client
-	
+
 	-- Send sync
 	for k, v in pairs(getElementsByType("player")) do
 		if isElement(v) and v.sendInitalSyncTo then
@@ -67,8 +74,17 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted()
+	-- Call wasted hooks
+	for k, hookFunc in pairs(self.m_WastedHooks) do
+		-- Cancel if hook function returned false
+		if hookFunc(source) then
+			return
+		end
+	end
+
 	source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
-	setTimer(function(player) if player then player:respawnAfterDeath() end end, 8000, 1, source)
+	source:triggerEvent("playerWasted")
+	setTimer(function(player) if player and isElement(player) then player:respawn() end end, 8000, 1, source)
 end
 
 function PlayerManager:playerChat(message, messageType)

@@ -7,6 +7,7 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addEvent("retrieveInfo", true)
+addEvent("playerWasted", true)
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -18,7 +19,7 @@ function LocalPlayer:constructor()
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
 
-	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.playerWasted, self))
+	addEventHandler("playerWasted", root, bind(self.playerWasted, self))
 end
 
 function LocalPlayer:destructor()

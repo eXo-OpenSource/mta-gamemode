@@ -12,17 +12,24 @@ function DMRaceEvent:constructor()
 	-- Initialise map
 	self.m_Map = MapParser:new(self.getRandomMap())
 
-	self.m_WastedFunc = bind(self.Event_PlayerWasted, self)
 	self.m_EnterHandler = bind(self.Event_PressedEnter, self)
 end
 
 function DMRaceEvent:destructor()
 	delete(self.m_Map)
+	self.m_Map = nil -- make sure the reference is removed so that the GC can collect it
+
+	if self.m_AFKTimer then
+		killTimer(self.m_AFKTimer)
+		self.m_AFKTimer = nil
+	end
 end
 
 function DMRaceEvent:onStart()
 	-- Create map objects
 	self.m_Map:create(EVENT_DIMENSION) -- TODO: Create the map only for contributing players
+
+	self.m_AFKTimer = setTimer(bind(self.AFKTimer_Tick, self), 3000, 0)
 
 	-- Get a list of spawnpoints
 	local spawnpoints = {}
@@ -47,8 +54,7 @@ function DMRaceEvent:onStart()
 		warpPedIntoVehicle(player, vehicle)
 		vehicle:setEngineState(true)
 
-		-- Add event handlers
-		addEventHandler("onPlayerWasted", player, self.m_WastedFunc)
+		-- Add binds
 		bindKey(player, "enter_exit", "down", self.m_EnterHandler)
 
 		-- Increment spawn index
@@ -56,13 +62,14 @@ function DMRaceEvent:onStart()
 	end
 end
 
-function DMRaceEvent:Event_PlayerWasted()
+function DMRaceEvent:onPlayerWasted(player)
 	-- Quit the player
-	self:quit(source)
+	self:quit(player)
 
 	-- Output the winner if he was the last player
-	if #self:getPlayers() <= 1 then
-		source:sendSuccess(_("Du hast gewonnen!", source))
+	if #self:getPlayers() == 1 then
+		local winningPlayer = self:getPlayers()[1]
+		winningPlayer:sendSuccess(_("Du hast gewonnen!", winningPlayer))
 
 		-- Stop event
 		delete(self)
@@ -84,9 +91,18 @@ function DMRaceEvent:Event_PlayerReachedHunter(hitElement, matchingDimension)
 	end
 end
 
+function DMRaceEvent:AFKTimer_Tick()
+	for k, player in pairs(self:getPlayers()) do
+		-- Kick if position has not changed since 3000 seconds
+		if player:getIdleTime() >= 3000 then
+			killPed(player)
+			outputDebug("Player is afk")
+		end
+	end
+end
+
 function DMRaceEvent:onQuit(player)
 	-- Remove event handlers and binds
-	removeEventHandler("onPlayerWasted", player, self.m_WastedFunc)
 	unbindKey(player, "enter_exit", "down", self.m_EnterHandler)
 end
 
@@ -102,14 +118,10 @@ function DMRaceEvent:getPositions()
 	return {Vector3(2669.9, -1757.5, 10.8)}
 end
 
+function DMRaceEvent:getExitPosition()
+	return Vector3(2669.9, -1760, 12)
+end
+
 function DMRaceEvent:getName()
 	return "DM Race"
 end
-
-
---[[
-Things we've to think about:
-- What happens when the player quits? (where does he respawn?) - respawn at hospital?
-- Do we want to use our own maps or convert/load public maps
-- How to prevent camping? (AFK "system" or something?)
-]]

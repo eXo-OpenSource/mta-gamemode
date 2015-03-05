@@ -183,7 +183,7 @@ function Player:spawn()
 	fadeCamera(self, true)
 end
 
-function Player:respawnAfterDeath()
+function Player:respawn()
 	spawnPlayer(self, 2028--[[+math.random(-4, 4)--]], -1405--[[+math.random(-2, 2)]], 18, 0, self.m_Skin)
 	setCameraTarget(self, self)
 end

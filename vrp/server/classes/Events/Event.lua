@@ -11,6 +11,7 @@ function Event:virtual_constructor(Id)
 	self.m_Id = Id
 	self.m_Players = {}
 	self.m_Ranks = {}
+	self.m_Started = false
 
 	local positions = self:getPositions()
 	local position = positions[math.random(1, #positions)]
@@ -35,9 +36,11 @@ function Event:virtual_destructor()
 	-- Unlink from event manager
 	EventManager:getSingleton():unlinkEvent(self)
 
-	delete(self.m_EventBlip)
+	if self.m_EventBlip then
+		delete(self.m_EventBlip)
+	end
 	if isElement(self.m_StartMarker) then
-		destroyElement(self.m_StartMarker)
+		self.m_StartMarker:destroy()
 	end
 end
 
@@ -68,7 +71,11 @@ function Event:start()
 		delete(self)
 		return
 	end
+	self.m_StartMarker:destroy()
+	delete(self.m_EventBlip)
+	self.m_EventBlip = nil
 
+	self.m_Started = true
 	triggerClientEvent(self.m_Players, "eventStart", root, self.m_Id, self.m_Players)
 	self:onStart()
 end
@@ -89,6 +96,23 @@ end
 
 function Event:getPlayers()
 	return self.m_Players
+end
+
+function Event:hasExit()
+	return self.getExitPosition ~= nil
+end
+
+function Event:teleportToExit(player)
+	if not self:hasExit() then
+		return false
+	end
+
+	player:setPosition(self:getExitPosition() + Vector3(math.random(-5, 5), math.random(-5, 5), 0))
+	return true
+end
+
+function Event:hasStarted()
+	return self.m_Started
 end
 
 Event.getName = pure_virtual
