@@ -155,9 +155,9 @@ function SelfGUI:constructor()
 	self.m_RadarChange:addItem("Instant")
 	self.m_RadarChange.onChange = function(text, index)
 		core:getConfig():set("HUD", "CursorMode", index - 1)
-		Cursor:setCursorMode(toboolean(index))
+		Cursor:setCursorMode(toboolean(index - 1))
 	end
-	self.m_RadarChange:setIndex(core:getConfig():get("HUD", "CursorMode") == 0 and 1 or 2, true)
+	self.m_RadarChange:setIndex(core:getConfig():get("HUD", "CursorMode") + 1, true)
 end
 
 function SelfGUI:onShow()
