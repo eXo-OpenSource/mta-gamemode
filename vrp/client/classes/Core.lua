@@ -11,11 +11,11 @@ function Core:constructor()
 		Debugging:new()
 	end
 
-	Cursor = GUICursor:new()
-
 	self.m_Config = ConfigXML:new("config.xml")
 	Version:new()
 	Provider:new()
+
+	Cursor = GUICursor:new()
 
 	DownloadGUI:new()
 	local dgi = DownloadGUI:getSingleton()

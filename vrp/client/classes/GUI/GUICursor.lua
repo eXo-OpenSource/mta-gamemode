@@ -8,41 +8,21 @@
 GUICursor = inherit(Object)
 
 function GUICursor:constructor()
-	bindKey("b", "down",
-		function()
-			if isCursorShowing() then
-				self.m_Counter = 0
-				showCursor(false)
-			else
-				showCursor(true)
-			end
-		end
-	)
-	
-	-- Instant cursor
-	--[[bindKey("b", "down",
-		function()
+	self.m_Counter = 0
+	self.m_CursorFunc = function()
+		if isCursorShowing() then
+			self.m_Counter = 0
+			showCursor(false)
+		else
 			showCursor(true)
 		end
-	)
-	bindKey("b", "up",
-		function()
-			if isCursorShowing() then
-				self.m_Counter = 0
-				showCursor(false)
-			end
-		end
-	)--]]
-	
-	
-	self.m_Counter = 0
-	
-	-- Hide the old cursor
-	--setCursorAlpha(0)
+	end
 
-	-- Draw a new
-	--self.m_FuncDraw = bind(GUICursor.draw, self)
-	--addEventHandler("onClientRender", root, self.m_FuncDraw)
+	if not core:get("HUD", "CursorMode", false) then
+		core:set("HUD", "CursorMode", 1)
+	end
+
+	self:setCursorMode(toboolean(core:get("HUD", "CursorMode", false)))
 end
 
 function GUICursor:destructor()
@@ -71,7 +51,7 @@ end
 function GUICursor:show()
 	self.m_Counter = self.m_Counter + 1
 	self:check()
-	outputDebug("Cursor counter incremented to: "..Cursor.m_Counter)
+	outputDebug("Cursor counter incremented to: "..self.m_Counter)
 end
 
 function GUICursor:hide(force)
@@ -81,5 +61,17 @@ function GUICursor:hide(force)
 	end
 	
 	self:check()
-	outputDebug("Cursor counter decremented to: "..Cursor.m_Counter)
+	outputDebug("Cursor counter decremented to: "..self.m_Counter)
+end
+
+function GUICursor:setCursorMode (instant)
+	if instant then
+		self:hide()
+
+		unbindKey("b", "down", self.m_CursorFunc)
+		bindKey("b", "both", self.m_CursorFunc)
+	else
+		unbindKey("b", "both", self.m_CursorFunc)
+		bindKey("b", "down", self.m_CursorFunc)
+	end
 end

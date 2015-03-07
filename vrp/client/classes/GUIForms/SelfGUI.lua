@@ -148,6 +148,16 @@ function SelfGUI:constructor()
 	self.m_RadarChange:addItem("GTA:SA")
 	self.m_RadarChange.onChange = function(text, index) HUDRadar:getSingleton():setDesignSet(index) end
 	self.m_RadarChange:setIndex(core:getConfig():get("HUD", "RadarDesign") or 1, true)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
+	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.27, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
+	self.m_RadarChange:addItem("Normal")
+	self.m_RadarChange:addItem("Instant")
+	self.m_RadarChange.onChange = function(text, index)
+		core:getConfig():set("HUD", "CursorMode", index - 1)
+		Cursor:setCursorMode(toboolean(index))
+	end
+	self.m_RadarChange:setIndex(core:getConfig():get("HUD", "CursorMode") == 0 and 1 or 2, true)
 end
 
 function SelfGUI:onShow()

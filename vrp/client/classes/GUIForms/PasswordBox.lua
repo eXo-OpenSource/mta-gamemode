@@ -36,9 +36,9 @@ end
 
 addEvent("passwordBox", true)
 addEventHandler("passwordBox", root,
-	function(text, yesEvent, noEvent, ...)
+	function(password, yesEvent, noEvent, ...)
 		local additionalParameters = {...}
-		PasswordBox:new(text,
+		PasswordBox:new(password,
 			function()
 				if yesEvent then
 					triggerServerEvent(yesEvent, root, unpack(additionalParameters))
