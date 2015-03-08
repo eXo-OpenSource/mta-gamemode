@@ -67,6 +67,32 @@ function table.findAll(tab, value)
 	return result
 end
 
+function table.compare(tab1, tab2)
+	-- Check if tab2 is subset of tab2
+	for k, v in pairs(tab1) do
+		if type(v) == "table" and type(tab2[k]) == "table" then
+			if not table.compare(v, tab2[k]) then
+				return false
+			end
+		elseif v ~= tab2[k] then
+			return false
+		end
+	end
+
+	-- Check if tab1 is subset of tab2
+	for k, v in pairs(tab2) do
+		if type(v) == "table" and type(tab1[k]) == "table" then
+			if not table.compare(v, tab1[k]) then
+				return false
+			end
+		elseif v ~= tab1[k] then
+			return false
+		end
+	end
+
+	return true
+end
+
 function table.removevalue(tab, value)
 	local idx = table.find(tab, value)
 	if idx then

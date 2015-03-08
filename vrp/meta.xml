@@ -29,6 +29,7 @@
 	<script src="shared/classes/MapParser.lua" type="shared"/>
 	<script src="shared/classes/Randomizer.lua" type="shared"/>
 	<script src="shared/classes/Hook.lua" type="shared"/>
+	<script src="shared/classes/UnitTest.lua" type="shared"/>
 
 	<!-- Server -->
 	<script src="server/constants.lua" type="server"/>
@@ -125,6 +126,9 @@
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemHash.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
+
+	<!-- Tests -->
+	<script src="server/tests/UtilsTest.lua" type="server"/>
 
 	<script src="server/Main.lua" type="server"/>
 
@@ -343,6 +347,9 @@
 	<!-- Effects -->
 	<script src="client/classes/Effects/FadeOutShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
+
+	<!-- Tests -->
+	<!-- Todo -->
 
 	<script src="client/Main.lua" type="client"/>
 

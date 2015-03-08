@@ -1,4 +1,6 @@
 Core = inherit(Object)
+addEvent("Core.onClientInternalError", true)
+local RUN_UNIT_TESTS = DEBUG and true
 
 function Core:constructor()
 	outputServerLog("Initializing core...")
@@ -74,8 +76,12 @@ function Core:constructor()
 
 	setOcclusionsEnabled(false)
 
-	addEvent("Core.onClientInternalError", true)
 	addEventHandler("Core.onClientInternalError", root, bind(self.onClientInternalError, self))
+
+	-- Execute tests
+	if RUN_UNIT_TESTS then
+		self:runTests()
+	end
 end
 
 function Core:onClientInternalError (msg)
@@ -90,4 +96,14 @@ function Core:destructor()
 	delete(HouseManager:getSingleton())
 
 	delete(sql)
+end
+
+function Core:runTests()
+	-- Add some space
+	outputServerLog("")
+
+	-- Instantiates tests here
+	UtilsTest:new("UtilsTest")
+
+	outputServerLog("")
 end
