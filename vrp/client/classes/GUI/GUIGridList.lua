@@ -12,7 +12,7 @@ local ITEM_HEIGHT = 30
 function GUIGridList:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self, tocolor(0, 0, 0, 180))
-	
+
 	self.m_Columns = {}
 	self.m_ScrollArea = GUIScrollableArea:new(0, ITEM_HEIGHT, self.m_Width, self.m_Height-ITEM_HEIGHT, self.m_Width, 1, true, false, self)
 	self.m_SelectedItem = nil
@@ -23,10 +23,10 @@ function GUIGridList:addItem(...)
 	for k, arg in ipairs({...}) do
 		listItem:setColumnText(k, arg)
 	end
-	
+
 	-- Resize the document
 	self.m_ScrollArea:resize(self.m_Width, 60 + #self:getItems() * ITEM_HEIGHT)
-	
+
 	return listItem
 end
 
@@ -35,16 +35,25 @@ function GUIGridList:addItemNoClick(...)
 	for k, arg in ipairs({...}) do
 		listItem:setColumnText(k, arg)
 	end
-	
+
 	-- Resize the document
 	self.m_ScrollArea:resize(self.m_Width, 60 + #self:getItems() * ITEM_HEIGHT)
-	
+
 	return listItem
 end
 
-function GUIGridList:removeItem(columnIndex)
-	delete(self.m_ScrollArea.m_Children[columnIndex])
+function GUIGridList:removeItem(itemIndex)
+	delete(self.m_ScrollArea.m_Children[itemIndex])
 	self:anyChange()
+end
+
+function GUIGridList:removeItemByItem(item)
+	local itemIndex = table.find(self.m_ScrollArea.m_Children, item)
+	if itemIndex then
+		self:removeItem(itemIndex)
+	else
+		delete(item)
+	end
 end
 
 function GUIGridList:getItems()
@@ -83,7 +92,7 @@ function GUIGridList:onInternalSelectItem(item)
 	for k, v in ipairs(self:getItems()) do
 		v.m_Color = Color.Clear
 	end
-	
+
 	item:setColor(Color.LightBlue)
 	self:anyChange()
 end
@@ -100,14 +109,14 @@ function GUIGridList:draw(incache) -- Swap render order
 	if self.m_Visible then
 		-- Draw background
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_Color)
-		
+
 		-- Draw items
 		for k, v in ipairs(self.m_Children) do
 			if v.m_Visible and v.draw then
 				v:draw(incache)
 			end
 		end
-		
+
 		-- Draw i.a. the header line
 		self:drawThis()
 	end
@@ -116,7 +125,7 @@ end
 function GUIGridList:drawThis()
 	-- Draw header line
 	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, ITEM_HEIGHT, Color.Black)
-	
+
 	-- Draw column header
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do

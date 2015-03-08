@@ -68,7 +68,7 @@ function table.findAll(tab, value)
 end
 
 function table.compare(tab1, tab2)
-	-- Check if tab2 is subset of tab2
+	-- Check if tab2 is subset of tab1
 	for k, v in pairs(tab1) do
 		if type(v) == "table" and type(tab2[k]) == "table" then
 			if not table.compare(v, tab2[k]) then

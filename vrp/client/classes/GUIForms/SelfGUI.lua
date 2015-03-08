@@ -51,6 +51,12 @@ function SelfGUI:constructor()
 	self.m_GroupRankUpButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabGroups)
 	self.m_GroupRankDownButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabGroups)
 
+	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabGroups)
+	self.m_GroupInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabGroups)
+	self.m_GroupInvitationsGrid:addColumn(_"Name", 1)
+	self.m_GroupInvitationsAcceptButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.195, self.m_Height*0.06, "✓", tabGroups):setBackgroundColor(Color.Green)
+	self.m_GroupInvitationsDeclineButton = GUIButton:new(self.m_Width*0.225, self.m_Height*0.7, self.m_Width*0.195, self.m_Height*0.06, "✕", tabGroups):setBackgroundColor(Color.Red)
+
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 	self.m_GroupCreateButton.onLeftClick = bind(self.GroupCreateButton_Click, self)
 	self.m_GroupQuitButton.onLeftClick = bind(self.GroupQuitButton_Click, self)
@@ -61,6 +67,8 @@ function SelfGUI:constructor()
 	self.m_GroupRemovePlayerButton.onLeftClick = bind(self.GroupRemovePlayerButton_Click, self)
 	self.m_GroupRankUpButton.onLeftClick = bind(self.GroupRankUpButton_Click, self)
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
+	self.m_GroupInvitationsAcceptButton.onLeftClick = bind(self.GroupInvitationsAcceptButton_Click, self)
+	self.m_GroupInvitationsDeclineButton.onLeftClick = bind(self.GroupInvitationsDeclineButton_Click, self)
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
@@ -211,16 +219,10 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)
 end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
-	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne dein Handy, um die Einladung anzunehmen", name))
-	Phone:getSingleton():getAppByClass(AppDashboard):addNotification(
-		_("Möchtest du die Einladung der Gruppe %s annehmen?", name),
-		function()
-			triggerServerEvent("groupInvitationAccept", root, groupId)
-		end,
-		function()
-			triggerServerEvent("groupInvitationDecline", root, groupId)
-		end
-	)
+	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+
+	local item = self.m_GroupInvitationsGrid:addItem(name)
+	item.GroupId = groupId
 end
 
 function SelfGUI:adjustGroupTab(rank)
@@ -231,6 +233,10 @@ function SelfGUI:adjustGroupTab(rank)
 			element:setVisible(isInGroup)
 		end
 	end
+	self.m_GroupInvitationsLabel:setVisible(false)
+	self.m_GroupInvitationsGrid:setVisible(false)
+	self.m_GroupInvitationsAcceptButton:setVisible(false)
+	self.m_GroupInvitationsDeclineButton:setVisible(false)
 
 	if rank then
 		if rank ~= GroupRank.Leader then
@@ -243,6 +249,12 @@ function SelfGUI:adjustGroupTab(rank)
 			self.m_GroupRankUpButton:setVisible(false)
 			self.m_GroupRankDownButton:setVisible(false)
 		end
+	else
+		-- We're not in a group, so show the invitation stuff
+		self.m_GroupInvitationsLabel:setVisible(true)
+		self.m_GroupInvitationsGrid:setVisible(true)
+		self.m_GroupInvitationsAcceptButton:setVisible(true)
+		self.m_GroupInvitationsDeclineButton:setVisible(true)
 	end
 end
 
@@ -300,6 +312,26 @@ function SelfGUI:GroupRankDownButton_Click()
 	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
 		triggerServerEvent("groupRankDown", root, selectedItem.Id)
+	end
+end
+
+function SelfGUI:GroupInvitationsAcceptButton_Click()
+	local selectedItem = self.m_GroupInvitationsGrid:getSelectedItem()
+	if selectedItem then
+		if selectedItem.GroupId then
+			triggerServerEvent("groupInvitationAccept", resourceRoot, selectedItem.GroupId)
+		end
+		self.m_GroupInvitationsGrid:removeItemByItem(selectedItem)
+	end
+end
+
+function SelfGUI:GroupInvitationsDeclineButton_Click()
+	local selectedItem = self.m_GroupInvitationsGrid:getSelectedItem()
+	if selectedItem then
+		if selectedItem.GroupId then
+			triggerServerEvent("groupInvitationDecline", resourceRoot, selectedItem.GroupId)
+		end
+		self.m_GroupInvitationsGrid:removeItemByItem(selectedItem)
 	end
 end
 

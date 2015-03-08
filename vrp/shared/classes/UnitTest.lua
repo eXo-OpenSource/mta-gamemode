@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     	vRoleplay
--- *  FILE:        	shared/classes/UnitTest.lua
--- *  PURPOSE:     	Simple unit test class
+-- *  PROJECT:      vRoleplay
+-- *  FILE:         shared/classes/UnitTest.lua
+-- *  PURPOSE:      Simple unit test class
 -- *  NOTE:         DO NOT CREATE AN INSTANCE OF THIS CLASS
 -- *
 -- ****************************************************************************
@@ -29,7 +29,7 @@ function UnitTest:outputLog(message)
 end
 
 function UnitTest:getTestMethodName()
-    -- debug.getinfo does not work as we'll get 'method' as name then (@line 16)
+    -- debug.getinfo does not work as we'll get 'method' as name then (@line 17)
     local t, name = debug.getlocal(4, 5)
     return tostring(name)
 end

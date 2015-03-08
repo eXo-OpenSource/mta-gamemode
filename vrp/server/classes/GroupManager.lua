@@ -18,11 +18,11 @@ function GroupManager:constructor()
 		for i, groupRow in ipairs(result2) do
 			players[groupRow.Id] = groupRow.GroupRank
 		end
-		
+
 		local group = Group:new(row.Id, row.Name, row.Money, players)
 		GroupManager.Map[row.Id] = group
 	end
-	
+
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown"}
@@ -69,7 +69,7 @@ end
 
 function GroupManager:Event_groupRequestInfo()
 	local group = client:getGroup()
-	
+
 	if group then
 		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
 	else
@@ -82,13 +82,13 @@ function GroupManager:Event_groupCreate(name)
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
 	end
-	
+
 	-- Does the group already exist?
 	if self:getByName(name) then
 		client:sendError(_("Eine Gruppe mit diesem Namen existiert bereits!", client))
 		return
 	end
-	
+
 	-- Create the group and the the client as leader (rank 2)
 	local group = Group.create(name)
 	if group then
@@ -104,7 +104,7 @@ end
 function GroupManager:Event_groupQuit()
 	local group = client:getGroup()
 	if not group then return end
-	
+
 	if group:getPlayerRank(client) == GroupRank.Leader then
 		client:sendWarning(_("Bitte übertrage den Leiter-Status erst auf ein anderes Mitglied der Gruppe!", client))
 		return
@@ -117,7 +117,7 @@ end
 function GroupManager:Event_groupDelete()
 	local group = client:getGroup()
 	if not group then return end
-	
+
 	if group:getPlayerRank(client) ~= GroupRank.Leader then
 		client:sendError(_("Du bist nicht berechtigt die Gruppe zu löschen!", client))
 		-- Todo: Report possible cheat attempt
@@ -148,7 +148,7 @@ function GroupManager:Event_groupDelete()
             delete(player)
         end
     end
-	
+
 	group:purge()
 	client:sendShortMessage(_("Deine Gruppe wurde soeben gelöscht", client))
 	client:triggerEvent("groupRetrieveInfo")
@@ -157,12 +157,12 @@ end
 function GroupManager:Event_groupDeposit(amount)
 	local group = client:getGroup()
 	if not group then return end
-	
+
 	if client:getMoney() < amount then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
 	end
-	
+
 	client:takeMoney(amount)
 	group:giveMoney(amount)
 	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
@@ -171,18 +171,18 @@ end
 function GroupManager:Event_groupWithdraw(amount)
 	local group = client:getGroup()
 	if not group then return end
-	
+
 	if group:getPlayerRank(client) < GroupRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
-	
+
 	if group:getMoney() < amount then
 		client:sendError(_("In der Gruppenkasse befindet sich nicht genügend Geld!", client))
 		return
 	end
-	
+
 	group:takeMoney(amount)
 	client:giveMoney(amount)
 	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
@@ -192,18 +192,23 @@ function GroupManager:Event_groupAddPlayer(player)
 	if not player then return end
 	local group = client:getGroup()
 	if not group then return end
-	
+
 	if group:getPlayerRank(client) < GroupRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt Gruppenmitglieder hinzuzufügen!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
-	
+
+	if player:getGroup() then
+		client:sendError(_("Du bist bereits in einer Gruppe!", client))
+		return
+	end
+
 	if not group:isPlayerMember(player) then
 		if not group:hasInvitation(player) then
 			group:invitePlayer(player)
 		else
-			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!"), client)
+			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!", client))
 		end
 		--group:addPlayer(player)
 		--client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
@@ -216,18 +221,18 @@ function GroupManager:Event_groupDeleteMember(playerId)
 	if not playerId then return end
 	local group = client:getGroup()
 	if not group then return end
-	
+
 	if group:getPlayerRank(client) < GroupRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
-	
+
 	if group:getPlayerRank(playerId) == GroupRank.Leader then
 		client:sendError(_("Du kannst den Gruppenleiter nicht rauswerfen!", client))
 		return
 	end
-	
+
 	group:removePlayer(playerId)
 	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
 end
@@ -235,7 +240,7 @@ end
 function GroupManager:Event_groupInvitationAccept(groupId)
 	local group = self:getFromId(groupId)
 	if not group then return end
-	
+
 	if group:hasInvitation(client) then
 		group:addPlayer(client)
 		group:removeInvitation(client)
@@ -248,7 +253,7 @@ end
 function GroupManager:Event_groupInvitationDecline(groupId)
 	local group = self:getFromId(groupId)
 	if not group then return end
-	
+
 	if group:hasInvitation(client) then
 		group:removeInvitation(client)
 		group:sendMessage(_("%s hat die Gruppeneinladung abgelehnt", client, getPlayerName(client)))
@@ -261,13 +266,13 @@ function GroupManager:Event_groupRankUp(playerId)
 	if not playerId then return end
 	local group = client:getGroup()
 	if not group then return end
-	
+
 	if group:getPlayerRank(client) < GroupRank.Leader then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
-	
+
 	if group:getPlayerRank(playerId) < GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
 		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
@@ -280,13 +285,13 @@ function GroupManager:Event_groupRankDown(playerId)
 	if not playerId then return end
 	local group = client:getGroup()
 	if not group then return end
-	
+
 	if group:getPlayerRank(client) < GroupRank.Leader then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
-	
+
 	if group:getPlayerRank(playerId) == GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
 		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
