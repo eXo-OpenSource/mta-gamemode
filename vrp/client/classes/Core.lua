@@ -94,6 +94,11 @@ function Core:afterLogin()
 	InventoryGUI:getSingleton():close()
 	bindKey("i", "down", function() InventoryGUI:getSingleton():toggle() end)
 
+	if not localPlayer:getJob() then
+		-- Change text in help menu (to the main text)
+		HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+	end
+
 	self:createBlips()
 end
 

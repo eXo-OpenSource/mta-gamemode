@@ -41,9 +41,9 @@ function JobTrashman:start()
 	self.m_ContainerLabel = GUILabel:new(150, 4, 50, 40, "0", self.m_TrashImage):setFont(VRPFont(40))
 	
 	self:reset()
-	
+
 	-- Show text in help menu
-	HelpBar:getSingleton():addText("Job: Müllmann", HelpTexts.Jobs.Trashman)
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Trashman), _(HelpTexts.Jobs.Trashman))
 end
 
 function JobTrashman:onInfo()
@@ -82,6 +82,9 @@ function JobTrashman:stop()
 	delete(self.m_TrashImage)
 	delete(self.m_CanLabel)
 	delete(self.m_ContainerLabel)
+
+	-- Reset text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
 
 function JobTrashman:reset()

@@ -51,6 +51,9 @@ function JobLumberjack:start()
 	end
 	
 	self.m_SawMillBlip = Blip:new("RedSaw.png", -1969.8, -2432.6)
+
+	-- Show text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Lumberjack), _(HelpTexts.Jobs.Lumberjack))
 end
 
 function JobLumberjack:stop()
@@ -70,6 +73,9 @@ function JobLumberjack:stop()
 		delete(self.m_SawMillBlip)
 		self.m_SawMillBlip = nil
 	end
+
+	-- Reset text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
 
 function JobLumberjack:processTreeDamage(loss, attacker)

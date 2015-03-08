@@ -31,3 +31,65 @@ NO_MUNITION_ITEMS = {
 }
 
 RadarDesign = {Monochrome = 1, GTA = 2}
+
+HelpTexts = {
+	General = {
+		Main = [[Todo]];
+		LoginRegister = [[
+			Dies ist das Login Fenster. Im Tab 'Login' kannst Du dich einloggen, im Tab 'Registrieren' demzufolge registrieren.
+
+			Tipp:
+			Wenn du den Server erst einmal testen möchtest, kannst du als Gast spielen und dich während des Spielens registrieren.
+			Für ein optimales Spielerlebnis und um Verluste zu vermeiden, empfehlen wir Dir jedoch eine sofortige Registration.
+		]];
+		Team = [[
+			Entwicklung und Administration:
+			Jusonex <jusonex@v-roleplay.net>
+			sbx320 <sbx320@v-roleplay.net>
+			Revelse <revelse@v-roleplay.net>
+			StiviK <stivik@v-roleplay.net>
+
+			Administration:
+			Doneasty <doneasty@v-roleplay.net> (außerdem verantwortlich für Grafik und Design)
+			Sarcasm <sarcasm@v-roleplay.net> (außerdem verantwortlich für den Webauftritt)
+
+			Moderation:
+			Toxsi <toxsi@v-roleplay.net> (außerdem verantwortlich für Mapping)
+
+			Vielen Dank an:
+			Sam@ke (für seine wunderschönen Shader)
+			thefleshpound (für seine Zeit als Grafiker)
+			Schlumpf (für seine kurze Zeit als Mapper)
+			ReZ (für seine kurze Zeit als Mapper)
+			Alex (für seine Zeit als Mapper)
+		]];
+	};
+	Jobs = {
+		BusDriver = [[Todo]];
+		Farmer = [[Todo]];
+		Logistician = [[Todo]];
+		Lumberjack = [[Todo]];
+		Mechanic = [[Todo]];
+		Police = [[Todo]];
+		RoadSweeper = [[Todo]];
+		Trashman = [[Todo]];
+	};
+};
+
+HelpTextTitles = {
+	General = {
+		Main = "Main";
+		LoginRegister = "Login/Registration";
+		Team = "Team";
+	};
+	Jobs = {
+		BusDriver = "Job: Busfahrer";
+		Farmer = "Job: Bauer";
+		Logistician = "Job: Logistik";
+		Lumberjack = "Job: Holzfäller";
+		Mechanic = "Job: Mechaniker";
+		Police = "Job: Polizist";
+		RoadSweeper = "Job: Straßenkehrer";
+		Trashman = "Job: Müllmann";
+	}
+}

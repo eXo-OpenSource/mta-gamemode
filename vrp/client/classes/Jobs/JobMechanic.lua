@@ -15,9 +15,11 @@ function JobMechanic:constructor()
 end
 
 function JobMechanic:start()
-	
+	-- Show text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Mechanic), _(HelpTexts.Jobs.Mechanic))
 end
 
 function JobMechanic:stop()
-	
+	-- Reset text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end

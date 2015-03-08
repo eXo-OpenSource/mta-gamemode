@@ -18,9 +18,13 @@ function JobBusDriver:constructor()
 end
 
 function JobBusDriver:start()
+	-- Show text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.BusDriver), _(HelpTexts.Jobs.BusDriver))
 end
 
 function JobBusDriver:stop()
+	-- Reset text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
 
 function JobBusDriver:setBusDisplayText(vehicle, text)

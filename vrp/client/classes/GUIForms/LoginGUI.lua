@@ -142,7 +142,7 @@ function LoginGUI:constructor()
 	self:showLogin()
 	
 	-- Show some help
-	HelpBar:getSingleton():addText("Login/Registration", HelpTexts.General.LoginRegister, false)
+	HelpBar:getSingleton():addText(HelpTextTitles.General.LoginRegister, HelpTexts.General.LoginRegister, false)
 end
 
 function LoginGUI:destructor()
@@ -254,7 +254,5 @@ addEventHandler("loginsuccess", root,
 			--HUDRadar:getSingleton():show()
 			--HUDUI:getSingleton():show()
 		end
-
-		
 	end
 )

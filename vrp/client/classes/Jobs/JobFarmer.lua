@@ -13,9 +13,6 @@ function JobFarmer:constructor()
 	
 end
 
-function JobFarmer:start()
-end
-
 function JobFarmer:onInfo()
 	setCameraMatrix(-1091.6918945313,-1176.2930908203,130.55819702148,-1092.5964355469,-1176.6628417969,130.34576416016,0,70)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Es gibt verschiedene Aufgaben auf der Farm.",255,255,255,true)
@@ -46,6 +43,13 @@ function JobFarmer:onInfo()
 	end, 21500,1)
 end
 
+function JobFarmer:start()
+	-- Show text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Farmer), _(HelpTexts.Jobs.Farmer))
+end
+
 function JobFarmer:stop()
+	-- Reset text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
 

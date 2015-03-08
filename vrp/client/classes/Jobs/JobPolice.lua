@@ -17,7 +17,11 @@ function JobPolice:constructor()
 end
 
 function JobPolice:start()
+	-- Show text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Police), _(HelpTexts.Jobs.Police))
 end
 
 function JobPolice:stop()
+	-- Reset text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end

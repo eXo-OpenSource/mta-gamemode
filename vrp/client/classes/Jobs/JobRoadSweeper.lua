@@ -31,6 +31,9 @@ function JobRoadSweeper:start()
 		
 		table.insert(self.m_Rubbish, colShape)
 	end
+
+	-- Show text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.RoadSweeper), _(HelpTexts.Jobs.RoadSweeper))
 end
 
 function JobRoadSweeper:stop()
@@ -40,6 +43,9 @@ function JobRoadSweeper:stop()
 		end
 	end
 	self.m_Rubbish = {}
+
+	-- Reset text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
 
 function JobRoadSweeper:Rubbish_Hit(hitElement, matchingDimension)
