@@ -95,7 +95,7 @@ function Event:start()
 	self.m_EventBlip = nil
 
 	self.m_Started = true
-	triggerClientEvent(self.m_Players, "eventStart", root, self.m_Id, self.m_Players)
+	triggerClientEvent(self.m_Players, "eventStart", root, self.m_EventType, self.m_Id, self.m_Players)
 	self:onStart()
 end
 
@@ -106,7 +106,7 @@ function Event:sendMessage(text, r, g, b, ...)
 end
 
 function Event:openGUI(player)
-	player:triggerEvent("eventGUI", self.m_Id)
+	player:triggerEvent("eventGUI", self.m_Id, self:getName(player), self:getDescription(player))
 end
 
 function Event:isMember(player)
@@ -135,5 +135,5 @@ function Event:hasStarted()
 end
 
 Event.getName = pure_virtual
-Event.onStart = pure_virtual
+Event.getDescription = pure_virtual
 Event.getPositions = pure_virtual

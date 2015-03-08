@@ -15,3 +15,9 @@ end
 function Event:isMember(player)
 	return table.find(self.m_Players, player) ~= nil
 end
+
+function Event:start()
+	if self.onStart() then
+		self:onStart()
+	end
+end

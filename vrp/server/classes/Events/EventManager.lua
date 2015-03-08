@@ -11,8 +11,12 @@ addEvent("eventJoin", true)
 
 function EventManager:constructor()
 	self.m_RunningEvents = {}
-	self.m_RegisteredEvents = {StreetRaceEvent, LasertagEvent, DMRaceEvent} -- Add it on the client as well
+	self.m_RegisteredEvents = {}
 	self.m_EventIdCounter = 0 -- We need a unique id which works for a long time (to avoid collisions if somebody forgets to close the GUI)
+
+	-- Add events (do it on the client as well)
+	self:addEvent(StreetRaceEvent)
+	self:addEvent(DMRaceEvent)
 
 	-- Start timer that opens every 30min a random event
 	setTimer(bind(self.openRandomEvent, self), 30*60*1000, 0)
@@ -99,6 +103,12 @@ function EventManager:getPlayerEvent(player)
 		end
 	end
 	return nil
+end
+
+function EventManager:addEvent(eventClass)
+	local typeId = #self.m_RegisteredEvents + 1
+	self.m_RegisteredEvents[typeId] = eventClass
+	eventClass.m_EventType = typeId
 end
 
 function EventManager:Event_eventJoin(eventId)

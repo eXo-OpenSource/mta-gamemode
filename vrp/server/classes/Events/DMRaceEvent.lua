@@ -125,3 +125,11 @@ end
 function DMRaceEvent:getName()
 	return "DM Race"
 end
+
+function DMRaceEvent:getDescription(player)
+	return _([[Der von Race Servern bekannte Gamemode mit DM Maps.
+
+		Ziel ist es, das Ziel vor allen anderen zu erreichen während sich auf dem Weg viele Hindernisse befinden.
+		Einmal ein kaputtes Auto führt und du hast verloren.
+	]], player)
+end

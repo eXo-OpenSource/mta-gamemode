@@ -41,6 +41,7 @@ function Core:ready()
 	DrivingSchool:new()
 	Achievement:new()
 	DeathmatchEvent:new()
+	EventManager:new()
 
 	VehicleShop.initializeAll()
 	VehicleGarages:new()

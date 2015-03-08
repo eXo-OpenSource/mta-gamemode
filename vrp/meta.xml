@@ -94,7 +94,6 @@
 	<script src="server/classes/Events/Event.lua" type="server"/>
 	<script src="server/classes/Events/EventManager.lua" type="server"/>
 	<script src="server/classes/Events/StreetRaceEvent.lua" type="server"/>
-	<script src="server/classes/Events/LasertagEvent.lua" type="server"/>
 	<script src="server/classes/Events/DMRaceEvent.lua" type="server"/>
     <script src="server/classes/Events/Deathmatch/DMEvent.lua" type="server"/>
     <script src="server/classes/Events/Deathmatch/DMMatch.lua" type="server"/>
@@ -336,7 +335,6 @@
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
 	<script src="client/classes/Events/EventManager.lua" type="client"/>
-	<script src="client/classes/Events/LasertagEvent.lua" type="client"/>
 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
 
 	<!-- Missions -->
