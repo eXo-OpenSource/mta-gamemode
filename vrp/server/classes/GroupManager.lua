@@ -200,7 +200,7 @@ function GroupManager:Event_groupAddPlayer(player)
 	end
 
 	if player:getGroup() then
-		client:sendError(_("Du bist bereits in einer Gruppe!", client))
+		client:sendError(_("Dieser Benutzer ist bereits in einer Gruppe!", client))
 		return
 	end
 

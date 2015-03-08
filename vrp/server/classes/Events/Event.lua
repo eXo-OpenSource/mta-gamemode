@@ -89,6 +89,15 @@ function Event:start()
 		delete(self)
 		return
 	end
+	if #self.m_Players <= 2 then
+		for k, player in pairs(self.m_Players) do
+			player:sendShortMessage(_("Das Event wurde wegen zu weniger Spieler abgesagt!", player))
+		end
+
+		delete(self)
+		return
+	end
+
 	self.m_StartMarker:destroy()
 	self.m_EventRangeShape:destroy()
 	delete(self.m_EventBlip)

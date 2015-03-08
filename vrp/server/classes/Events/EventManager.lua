@@ -128,7 +128,7 @@ function EventManager:Event_eventJoin(eventId)
 	end
 
 	event:join(client)
-	client:sendShortMessage(_("Du hast dich erfolgreich für dieses Event eingetragen", client))
+	client:sendShortMessage(_("Du hast dich erfolgreich für dieses Event eingetragen. Bleibe in der Nähe!", client))
 end
 
 function EventManager:Event_playerQuit()

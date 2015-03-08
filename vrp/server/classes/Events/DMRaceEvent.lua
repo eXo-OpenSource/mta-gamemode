@@ -30,6 +30,7 @@ function DMRaceEvent:onStart()
 	self.m_Map:create(EVENT_DIMENSION) -- TODO: Create the map only for contributing players
 
 	self.m_AFKTimer = setTimer(bind(self.AFKTimer_Tick, self), 3000, 0)
+	self.m_StartPlayerAmount = #self:getPlayers()
 
 	-- Get a list of spawnpoints
 	local spawnpoints = {}
@@ -66,13 +67,19 @@ function DMRaceEvent:onPlayerWasted(player)
 	-- Quit the player
 	self:quit(player)
 
+	local leftPlayers = #self:getPlayers()
+	local money = self.m_StartPlayerAmount * (self.m_StartPlayerAmount-leftPlayers-1) * 40
+	player:giveMoney(money)
+
 	-- Output the winner if he was the last player
-	if #self:getPlayers() == 1 then
+	if leftPlayers == 1 then
 		local winningPlayer = self:getPlayers()[1]
-		winningPlayer:sendSuccess(_("Du hast gewonnen!", winningPlayer))
+		winningPlayer:sendSuccess(_("Du hast gewonnen und %d$ bekommen!", winningPlayer, money))
 
 		-- Stop event
 		delete(self)
+	else
+		player:sendInfo(_("Du hast den %d. Platz erreicht und %d$ bekommen!", player, leftPlayers+1, money))
 	end
 end
 
