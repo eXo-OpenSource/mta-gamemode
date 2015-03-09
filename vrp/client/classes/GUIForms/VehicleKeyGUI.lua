@@ -22,7 +22,7 @@ function VehicleKeyGUI:constructor(vehicleElement)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.25, self.m_Width*0.5, self.m_Height*0.08, _"Schlüssel:", self):setFont(VRPFont(self.m_Height*0.07))
 	self.m_KeysGrid = GUIGridList:new(self.m_Width*0.01, self.m_Height*0.33, self.m_Width*0.65, self.m_Height*0.65, self)
 	self.m_KeysGrid:addColumn("Name", 0.9)
-	self.m_KeysGrid:addItem("Loading...")
+	self.m_KeysGrid:addItem("Loading...").CharacterId = false
 	self.m_RemoveButton = GUIButton:new(self.m_Width*0.67, self.m_Height*0.33, self.m_Width*0.32, self.m_Height*0.1, _"Entfernen", self):setBackgroundColor(Color.Red)
 	self.m_RemoveButton.onLeftClick = bind(self.RemoveButton_Click, self)
 	
@@ -33,9 +33,13 @@ function VehicleKeyGUI:constructor(vehicleElement)
 			-- Clear old stuff
 			self.m_KeysGrid:clear()
 			
-			-- Insert new items
-			for id, name in pairs(keyList) do
-				self.m_KeysGrid:addItem(name).CharacterId = id
+			if type(keyList) == "table" then
+				-- Insert new items
+				for id, name in pairs(keyList) do
+					self.m_KeysGrid:addItem(name).CharacterId = id
+				end
+			else
+				self.m_KeysGrid:addItem(_"Ein Fehler ist aufgetreten!").CharacterId = false
 			end
 		end
 	)

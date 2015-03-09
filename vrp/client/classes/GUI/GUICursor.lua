@@ -41,8 +41,11 @@ end
 function GUICursor:check()
 	if self.m_Counter <= 0 then
 		self.m_Counter = 0
-		showCursor(false)
 		GUIElement.unhoverAll()
+
+		if not getKeyState("b") then
+			showCursor(false)
+		end
 	else
 		showCursor(true)
 	end
@@ -71,6 +74,8 @@ function GUICursor:setCursorMode (instant)
 		unbindKey("b", "down", self.m_CursorFunc)
 		bindKey("b", "both", self.m_CursorFunc)
 	else
+		self:hide()
+
 		unbindKey("b", "both", self.m_CursorFunc)
 		bindKey("b", "down", self.m_CursorFunc)
 	end

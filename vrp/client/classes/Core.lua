@@ -42,6 +42,7 @@ function Core:ready()
 	Achievement:new()
 	DeathmatchEvent:new()
 	EventManager:new()
+	TippManager:new()
 
 	VehicleShop.initializeAll()
 	VehicleGarages:new()

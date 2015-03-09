@@ -184,6 +184,7 @@ end
 
 function VehicleManager:Event_vehicleRequestKeys()
 	if not instanceof(source, PermanentVehicle, true) then
+		triggerClientEvent(client, "vehicleKeysRetrieve", source, false)
 		return
 	end
 	

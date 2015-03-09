@@ -54,7 +54,7 @@ function VehicleGarages:createInteror(info)
 	self.m_Interiors[#self.m_Interiors+1] = {enter = info.enter, slots = info.slots, shape = exitShape}
 
 	-- Hack to ensure garage sessions are destroyed
-	local garageZone = createColSphere(exitX, exitY, exitZ, 40)
+	local garageZone = createColSphere(exitX, exitY, exitZ, 50)
 	addEventHandler("onColShapeLeave", garageZone,
 		function(player)
 			if getElementType(player) == "player" then
@@ -353,3 +353,4 @@ end
 function VehicleGarageSession:getEntranceId()
 	return self.m_EntranceId
 end
+

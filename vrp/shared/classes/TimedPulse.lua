@@ -14,7 +14,7 @@ end
 
 function TimedPulse:destructor()
 	if self.m_Timer and isTimer(self.m_Timer) then
-		destroyElement(self.m_Timer)
+		killTimer(self.m_Timer)
 	end
 end
 
