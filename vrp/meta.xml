@@ -80,7 +80,7 @@
 	<script src="server/classes/Gameplay/AmmuArena.lua" type="server"/>
 	<script src="server/classes/Gameplay/AmmuLadder.lua" type="server"/>
 	<script src="server/classes/SkinShops.lua" type="server"/>
-    <script src="server/classes/Achievement.lua" type="server"/>
+	<script src="server/classes/Achievement.lua" type="server"/>
 
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
@@ -96,8 +96,8 @@
 	<script src="server/classes/Events/EventManager.lua" type="server"/>
 	<script src="server/classes/Events/StreetRaceEvent.lua" type="server"/>
 	<script src="server/classes/Events/DMRaceEvent.lua" type="server"/>
-    <script src="server/classes/Events/Deathmatch/DMEvent.lua" type="server"/>
-    <script src="server/classes/Events/Deathmatch/DMMatch.lua" type="server"/>
+	<script src="server/classes/Events/Deathmatch/DMEvent.lua" type="server"/>
+	<script src="server/classes/Events/Deathmatch/DMMatch.lua" type="server"/>
 
 	<!-- Jobs -->
 	<script src="server/classes/Jobs/Job.lua" type="server"/>
@@ -159,11 +159,11 @@
 	<script src="client/classes/Collectables.lua" type="client"/>
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
 	<script src="client/classes/DrivingSchool.lua" type="client"/>
-    <script src="client/classes/Achievement.lua" type="client"/>
+	<script src="client/classes/Achievement.lua" type="client"/>
 	<script src="client/classes/AchievementBox.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
-    <script src="client/classes/Events/Deathmatch/DMEvent.lua" type="client"/>
-    <script src="client/classes/TippManager.lua" type="client"/>
+	<script src="client/classes/Events/Deathmatch/DMEvent.lua" type="client"/>
+	<script src="client/classes/TippManager.lua" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -277,8 +277,8 @@
 	<script src="client/classes/GUIForms/JailCountdownGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
-    <script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
-    <script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
+	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
@@ -446,7 +446,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Mechanic.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/DrivingSchool.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Skinshop.png"/>
-    <vrpfile src="files/images/Radar_Monochrome/Blips/1vs1.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/1vs1.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -468,7 +468,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Mechanic.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/DrivingSchool.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Skinshop.png"/>
-    <vrpfile src="files/images/Radar_GTA/Blips/1vs1.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/1vs1.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

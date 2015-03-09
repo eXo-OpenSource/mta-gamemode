@@ -11,9 +11,13 @@ inherit(GUIFontContainer, ShortMessage)
 ShortMessage.posOffSet = 35
 ShortMessage.MessageQueue = {}
 
-function ShortMessage:constructor(text)
+function ShortMessage:constructor(text, extratime)
     local x, y, w, h = 20, screenHeight - screenHeight*0.265 - ShortMessage.posOffSet, 340*screenWidth/1600+6, 30
     local lines = math.floor(dxGetTextWidth(text, 1.4, "default")/w) + 1
+	if string.countChar(text, "\n") > 0 then
+		local extra = string.countChar(text, "\n")
+		lines = lines + extra -- Todo: Improve
+	end
 
     -- Calculate heigth
     h = (h * lines) - (15 * math.floor(lines/2))
@@ -33,6 +37,8 @@ function ShortMessage:constructor(text)
 	if #ShortMessage.MessageQueue == 1 then
 		resetTimer(ShortMessage.Timer)
 	end
+
+	self.extratime = extratime or false -- bool
 end
 
 function ShortMessage:destructor()
@@ -56,23 +62,27 @@ function ShortMessage:drawThis()
     dxDrawLine(x + w, y, x + w, y + h, Color.White, 1)]]
 
 	-- Draw message text
-	dxDrawText(self.m_Text, x, y, x + w, y + h, Color.White, self.m_FontSize, self.m_Font, "left", "center", false, true)
+	dxDrawText(self.m_Text, x, y, x + w, y + h, Color.White, self.m_FontSize, self.m_Font, "left", "top", false, true)
 end
 
 ShortMessage.Timer = setTimer(
 	function()		
 		if #ShortMessage.MessageQueue > 0 then
-            local lastSize = ShortMessage.MessageQueue[1].m_Height
+			if not ShortMessage.MessageQueue[1].extratime then
+				local lastSize = ShortMessage.MessageQueue[1].m_Height
 
-            -- Recalculate the position offset for new Boxes
-            ShortMessage.posOffSet = ShortMessage.posOffSet - 5 - lastSize
-            
-			delete(ShortMessage.MessageQueue[1])
-            table.remove(ShortMessage.MessageQueue, 1)
+				-- Recalculate the position offset for new Boxes
+				ShortMessage.posOffSet = ShortMessage.posOffSet - 5 - lastSize
 
-            for k, v in ipairs(ShortMessage.MessageQueue) do
-				local x, y = v:getPosition()
-				v:setPosition(x, y + lastSize + 5)
+				delete(ShortMessage.MessageQueue[1])
+				table.remove(ShortMessage.MessageQueue, 1)
+
+				for k, v in ipairs(ShortMessage.MessageQueue) do
+					local x, y = v:getPosition()
+					v:setPosition(x, y + lastSize + 5)
+				end
+			else
+				ShortMessage.MessageQueue[1].extratime = false
 			end
 		end		
 	end, 4000, 0
