@@ -7,6 +7,7 @@
 -- ****************************************************************************
 DMRaceEvent = inherit(Event)
 local EVENT_DIMENSION = 3
+local MAX_TIME = 10*60*1000
 
 function DMRaceEvent:constructor()
 	-- Initialise map
@@ -30,6 +31,7 @@ function DMRaceEvent:onStart()
 	self.m_Map:create(EVENT_DIMENSION) -- TODO: Create the map only for contributing players
 
 	self.m_AFKTimer = setTimer(bind(self.AFKTimer_Tick, self), 3000, 0)
+	self.m_EndTimer = setTimer(bind(self.EndTimer_Expired, self), MAX_TIME, 1)
 	self.m_StartPlayerAmount = #self:getPlayers()
 
 	-- Get a list of spawnpoints
@@ -67,6 +69,10 @@ function DMRaceEvent:onPlayerWasted(player)
 	-- Quit the player
 	self:quit(player)
 
+	if self.m_HasExpired then
+		return
+	end
+
 	local leftPlayers = #self:getPlayers()
 	local money = self.m_StartPlayerAmount * (self.m_StartPlayerAmount-leftPlayers-1) * 40
 	player:giveMoney(money)
@@ -90,9 +96,9 @@ end
 function DMRaceEvent:Event_PlayerReachedHunter(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		-- Kill all players [except us]
-		for k, player in pairs(self:getPlayers()) do
+		while #self:getPlayers() ~= 0 do
 			--if hitElement ~= player then
-				killPed(player)
+				killPed(player:getPlayers()[1])
 			--end
 		end
 	end
@@ -103,8 +109,17 @@ function DMRaceEvent:AFKTimer_Tick()
 		-- Kick if position has not changed since 3000 seconds
 		if player:getIdleTime() >= 3000 then
 			killPed(player)
-			outputDebug("Player is afk")
 		end
+	end
+end
+
+function DMRaceEvent:EndTimer_Expired()
+	-- Quit all players without giving anyone money
+	self.m_HasExpired = true
+	while #self:getPlayers() ~= 0 do
+		local player = self:getPlayers()[1]
+		killPed(player)
+		player:sendShortMessage(_("Zeit abgelaufen!", player))
 	end
 end
 

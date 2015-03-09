@@ -87,7 +87,7 @@ function InventoryGUI:ButtonUse_Click()
 	assert(item)
 	if item.use then
 		--item:use()
-		triggerServerEvent("inventoryUseItem", root, self.m_InventoryId, item:getItemId(), item:getSlot())
+		triggerServerEvent("inventoryUseItem", resourceRoot, self.m_InventoryId, item:getItemId(), item:getSlot())
 		self.m_SelectedItem:updateFromItem()
 	else
 		self.m_ErrorText:setText(_"Fehler: \nDieses Item ist nicht verwendbar!")
@@ -147,10 +147,7 @@ end
 
 function InventoryGUI:removeItem(item, amount)
 	local guiItem = self:getGUIItemByItem(item)
-	outputDebug(item)
-	outputDebug(guiItem)
 	if guiItem then
-		outputDebug("guiItem not nil")
 		guiItem:updateFromItem()
 		guiItem.onItemRemove = function() self:resort(false) end
 		self.m_GUIItems[guiItem] = nil
