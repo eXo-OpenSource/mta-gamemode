@@ -205,6 +205,7 @@
 	<script src="client/classes/GUI/GUIRadioButton.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRadioButtonGroup.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
+	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
 
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
@@ -310,6 +311,7 @@
 	<script src="client/classes/Phone/Apps/AppSettings.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppDashboard.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNametag.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppCEF.lua" type="client"/>
 
 	<!-- Jobs -->
 	<script src="client/classes/Jobs/Job.lua" type="client"/>
