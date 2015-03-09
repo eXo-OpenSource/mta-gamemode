@@ -33,18 +33,15 @@ end
 
 function Inventory:removeItem(item, amount)
 	item.m_Count = item.m_Count - amount
-		
+
 	local inv = getInvGUI()
 	if inv then
-		local guiItem = inv:getGUIItemByItem(item)
-		if guiItem then
-			guiItem:updateFromItem()
-		end
+		inv:removeItem(item, amount)
 	end
-	
+
 	if item.m_Count == 0 then
 		delete(item)
-		table.removevalue(self.m_Items, idx)
+		table.removevalue(self.m_Items, item)
 	end
 end
 
@@ -61,7 +58,7 @@ end
 function Inventory:applyItemsFromFullsync(items)
 	for k, itemInfo in ipairs(items) do
 		local slot, itemId, amount = unpack(itemInfo)
-		
+
 		local itemClass = Items[itemId].class
 		table.insert(self.m_Items, (itemClass or Item):new(itemId, amount, slot))
 		self:addItem(self.m_Items[#self.m_Items])
@@ -92,7 +89,7 @@ addEventHandler("inventoryAddItem", root,
 	function(inventoryId, slot, itemId, amount)
 		local inventory = Inventory.Map[inventoryId]
 		if not inventory then return end
-		
+
 		local itemClass = Items[itemId].class
 		table.insert(inventory.m_Items, (itemClass or Item):new(itemId, amount, slot))
 		inventory:addItem(inventory.m_Items[#inventory.m_Items])
@@ -102,7 +99,7 @@ addEventHandler("inventoryRemoveItem", root,
 	function(inventoryId, slot, itemId, amount)
 		local inventory = Inventory.Map[inventoryId]
 		if not inventory then return end
-	
+
 		local item = inventory:findItem(slot, itemId)
 		if item then
 			inventory:removeItem(item, amount)
@@ -113,7 +110,7 @@ addEventHandler("inventoryUseItem", root,
 	function(inventoryId, itemId, slot)
 		local inventory = Inventory.Map[inventoryId]
 		if not inventory then return end
-	
+
 		local item = inventory:findItem(slot, itemId)
 		if item then
 			inventory:useItem(item)
@@ -125,10 +122,10 @@ addEventHandler("inventoryReceiveFullSync", root,
 		if not Inventory.Map[inventoryId] then
 			Inventory.Map[inventoryId] = Inventory:new(inventoryId)
 		end
-		
+
 		local inventory = Inventory.Map[inventoryId]
 		inventory:applyItemsFromFullsync(data)
-		
+
 		InventoryGUI:getSingleton():setInventory(inventory, true)
 	end
 )

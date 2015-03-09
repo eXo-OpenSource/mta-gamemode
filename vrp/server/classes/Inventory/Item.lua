@@ -27,3 +27,14 @@ end
 function Item:getModelId()
 	return Items[self.m_ItemId].modelId ~= 0 and Items[self.m_ItemId].modelId or 2969
 end
+
+function Item:copy()
+	local newItem = setmetatable({}, getmetatable(self))
+
+	-- Copy properties (only 1 level to avoid circular loops for now)
+	for k, v in pairs(self) do
+		newItem[k] = v
+	end
+
+	return newItem
+end

@@ -10,16 +10,16 @@ VRPItem = inherit(GUIRectangle)
 function VRPItem:constructor(posX, posY, width, height, item, parent)
 	checkArgs("VRPItem:constructor", "number", "number", "number", "number")
 	GUIRectangle.constructor(self, posX, posY, width, height, Color.Grey, parent)
-	
+
 	self.m_Item = item
 	local id = item:getItemId()
-	
+
 	if Items[id].icon then
 		-- Icon here
 	else
 		self.m_Icon = GUIRectangle:new(5, 5, height-15, height-15, tocolor(255, 255, 0), self)
 	end
-	
+
 	-- Name
 	GUILabel:new(height, 0, width, height/5*3, Items[id].name, self):setFont(VRPFont(height/5*4))
 	-- Description
@@ -40,7 +40,7 @@ end
 function VRPItem:updateFromItem()
 	-- If we are just removing the item we do not want to change it anymore
 	if self.m_AnimRemove then return end
-	
+
 	-- Update Count
 	local oldcount = tonumber(self.m_Count:getText())
 	if oldcount ~= self.m_Item.m_Count then
@@ -52,7 +52,7 @@ function VRPItem:updateFromItem()
 		self.m_Count:setPosition(self.m_Width-fw-10)
 		self.m_Count:anyChange()
 	end
-	
+
 	if self.m_Item.m_Count == 0 then
 		self:playRemoveAnimation()
 	end
@@ -60,7 +60,7 @@ end
 
 function VRPItem:playRemoveAnimation()
 	if self.m_AnimRemove then return end
-	
+
 	local tx = self.m_PosX + self.m_Width + 15
 	self.m_AnimRemove = Animation.Move:new(self, 1500, tx, self.m_PosY)
 	self.m_AnimRemove.onFinish = function()
@@ -73,12 +73,8 @@ end
 
 function VRPItem:move(x, y)
 	if self.m_AnimRemove then return end
-	if self.m_AnimMove then 
+	if self.m_AnimMove then
 		delete(self.m_AnimMove)
 	end
 	self.m_AnimMove = Animation.Move:new(self, 500, x, y)
-end
---item.m_Count = item.m_Count -1
-
-function VRPItem:destory()
 end

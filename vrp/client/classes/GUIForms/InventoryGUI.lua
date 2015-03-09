@@ -17,14 +17,14 @@ function InventoryGUI:constructor()
 	local w, h = screenWidth/5*3, screenHeight/5*3
 	GUIForm.constructor(self, screenWidth/5*1, screenHeight/5*1, w, h)
 	self.m_Background = GUIRectangle:new(0, 0, w, h, tocolor(0, 0, 0, 150), self)
-	
+
 	-- todo: make dependand on h instead
 	local ENTRYHEIGHT = screenHeight/100*7
 	local ENTRYWIDTH = w/3*2-50
 	local ENTRYSPACE = screenHeight/100
-	
+
 	self.m_Scrollable = GUIScrollableArea:new(w/3, 50, ENTRYWIDTH, screenHeight, ENTRYWIDTH, screenHeight, false, false, self)
-	
+
 	self.m_CategoryRects = {}
 	for categoryId, categoryName in ipairs(ItemItemCategoryNames) do
 		local rect = GUIRectangle:new(w*0.05, 50 + (ENTRYHEIGHT+ENTRYSPACE)*(categoryId-1), w*0.25, ENTRYHEIGHT, Color.Grey, self)
@@ -34,29 +34,29 @@ function InventoryGUI:constructor()
 		table.insert(self.m_CategoryRects, rect)
 	end
 	self.m_CategoryRects[1]:setColor(Color.LightBlue)
-	
-	-- Error Box
-	self.m_ErrorBox = GUIRectangle:new(50, h/100*80, w/4, h/100*15, tocolor(173, 14, 22, 255), self)
-	self.m_ErrorText = GUILabel:new(0, 0, w/4, h/100*15, "", self.m_ErrorBox) -- 1.5
+
+	-- Error box
+	self.m_ErrorBox = GUIRectangle:new(w/3, h-h/100*9, w/4, h*0.06, Color.Clear, self)
+	self.m_ErrorText = GUILabel:new(0, 0, self.m_ErrorBox.m_Width, self.m_ErrorBox.m_Height, "", self.m_ErrorBox):setColor(Color.Red)
 	self.m_ErrorText:setAlign("center", "center")
 	self.m_ErrorBox:hide()
-	
+
 	-- Buttons
 	local useText = _"Verwenden"
 	local fwUse = fontWidth(useText, "default", 1.75)
 	self.m_ButtonUse = VRPButton:new(w/3+w/3*2-50-fwUse*1.3, h-h/100*9, fwUse*1.3, h/100*6, useText, true, self):setBarColor(tocolor(28, 101, 28))
-	
+
 	local removeText = _"Wegwerfen"
 	local fwRemove = fontWidth(removeText, "default", 1.75)
 	self.m_ButtonDiscard = VRPButton:new(w/3+w/3*2-50-fwUse*1.3-fwRemove*1.3-20, h-h/100*9, fwRemove*1.3, h/100*6, removeText, true, self):setBarColor(tocolor(143, 0, 0))
-	
+
 	self.m_ButtonUse.onLeftClick = bind(self.ButtonUse_Click, self)
 	self.m_ButtonDiscard.onLeftClick = bind(self.ButtonDiscard_Click, self)
 end
 
 function InventoryGUI:setInventory(inv, loadContent)
 	self.m_Inventory = inv
-	
+
 	if loadContent then
 		self:clear()
 		for k, item in ipairs(inv:getItems()) do
@@ -70,8 +70,8 @@ function InventoryGUI:getInventory()
 end
 
 function InventoryGUI:clear()
-	for k, v in pairs(self.m_GUIItems) do
-		delete(v)
+	for guiItem, item in pairs(self.m_GUIItems) do
+		delete(guiItem)
 	end
 	self.m_GUIItems = {}
 end
@@ -82,7 +82,7 @@ function InventoryGUI:ButtonUse_Click()
 		self.m_ErrorText:setText(_"Fehler: \nKein Item ausgewählt!")
 		return
 	end
-	
+
 	local item = self.m_GUIItems[self.m_SelectedItem]
 	assert(item)
 	if item.use then
@@ -102,12 +102,15 @@ function InventoryGUI:ButtonDiscard_Click()
 		self.m_ErrorText:setText(_"Fehler: \nKein Item ausgewählt!")
 		return
 	end
-	
+
 	local item = self.m_GUIItems[self.m_SelectedItem]
-	self.m_Inventory:removeItem(item, 1)
-	if not item or item:getCount() == 0 then
-		self.m_SelectedItem = false
-	end
+	if not item then return end
+
+	-- Clear selected item
+	self.m_SelectedItem = false
+
+	-- Tell the server that we want to remove the item
+	triggerServerEvent("inventoryDropItem", resourceRoot, self.m_Id, item:getItemId(), item:getSlot(), 1)
 end
 
 function InventoryGUI:Category_Click(categoryId, rect, cx, cy)
@@ -124,18 +127,11 @@ function InventoryGUI:Item_Click(vrpitem, item)
 	if self.m_SelectedItem then
 		self.m_SelectedItem:deselect()
 	end
-	
+
 	self.m_SelectedItem = vrpitem
 	self.m_SelectedItem:select()
 end
 
-function InventoryGUI:Item_Remove(item)
-	self.m_GUIItems[item] = nil
-	self:resort(false)
-	if item == self.m_SelectedItem then
-		self.m_SelectedItem = false
-	end
-end
 
 function InventoryGUI:addItem(item)
 	local w, h = screenWidth/5*3, screenHeight/5*3
@@ -143,10 +139,26 @@ function InventoryGUI:addItem(item)
 	local ENTRYWIDTH = w/3*2-50
 	local ENTRYSPACE = screenHeight/100
 
-	local vrp = VRPItem:new(0, (ENTRYHEIGHT+ENTRYSPACE)*(table.size(self.m_GUIItems)-1), ENTRYWIDTH, ENTRYHEIGHT, item, self.m_Scrollable)
-	self.m_GUIItems[vrp] = item
-	vrp.onLeftClick = bind(InventoryGUI.Item_Click, self, vrp, item)
+	local vrpitem = VRPItem:new(0, (ENTRYHEIGHT+ENTRYSPACE)*(table.size(self.m_GUIItems)-1), ENTRYWIDTH, ENTRYHEIGHT, item, self.m_Scrollable)
+	self.m_GUIItems[vrpitem] = item
+	vrpitem.onLeftClick = bind(InventoryGUI.Item_Click, self, vrpitem, item)
 	self:resort(false)
+end
+
+function InventoryGUI:removeItem(item, amount)
+	local guiItem = self:getGUIItemByItem(item)
+	outputDebug(item)
+	outputDebug(guiItem)
+	if guiItem then
+		outputDebug("guiItem not nil")
+		guiItem:updateFromItem()
+		guiItem.onItemRemove = function() self:resort(false) end
+		self.m_GUIItems[guiItem] = nil
+	end
+
+	if guiItem == self.m_SelectedItem then
+		self.m_SelectedItem = false
+	end
 end
 
 function InventoryGUI:getGUIItemByItem(item)
@@ -159,7 +171,7 @@ function InventoryGUI:resort(useanim)
 	local ENTRYWIDTH = w/3*2-50
 	local ENTRYSPACE = screenHeight/100
 	useanim = false -- Force anim being off
-	
+
 	-- Todo: Add resort methods (table.sort GUIItems table)
 	local i = 0
 	for gui, item in pairs(self.m_GUIItems) do
@@ -176,30 +188,3 @@ function InventoryGUI:resort(useanim)
 		end
 	end
 end
-
-
-
-
---[[
-Sort stuff (reintegrate later):
-
-local sortText = _"Sortieren"
-local fwSort = fontWidth(sortText, "default", 1.75)
-self.m_ButtonSort = VRPButton:new(w/3+w/3*2-50-fwSort*1.3-fwUse*1.3-20, h-h/100*9, fwSort*1.3, h/100*6, sortText, true, self):setBarColor(tocolor(26, 85, 163))
-	
-self.m_ButtonSort.onLeftClick = bind(function(self)
-	if not self.m_SelectedItem then
-		self.m_ErrorBox:show()
-		self.m_ErrorText:setText(_"Fehler: \nKein Item ausgewählt!")
-		return
-	end
-	
-	local item = self.m_GUIItems[self.m_SelectedItem]
-	assert(item)
-	item.m_Count = item.m_Count +1
-	self.m_SelectedItem:updateFromItem()
-	
-end, self)
-
-
-]]

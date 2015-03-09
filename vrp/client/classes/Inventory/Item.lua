@@ -1,7 +1,7 @@
 Item = inherit(Object)
 
 function Item:constructor(itemId, count, slot)
-	Item.virtual_constructor(self, itemId, count)
+	Item.virtual_constructor(self, itemId, count, slot)
 end
 
 function Item:virtual_constructor(itemId, count, slot)

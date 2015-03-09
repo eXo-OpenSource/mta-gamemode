@@ -23,7 +23,7 @@ function Inventory.create()
 	sql:queryExec("INSERT INTO ??_inventory (Items) VALUES(?)", sql:getPrefix(), toJSON(inventory.m_Items))
 	inventory.m_Id = sql:lastInsertId()
 	Inventory.Map[inventory.m_Id] = inventory
-	
+
 	return inventory
 end
 
@@ -32,13 +32,13 @@ function Inventory.loadById(Id)
 	if not row then
 		return false
 	end
-	
+
 	local itemData = fromJSON(row.Items)
 	local items = {}
 	for slot, info in ipairs(itemData) do
 		items[slot] = (Items[info[1]].class or Item):new(info[1], info[2])
 	end
-	
+
 	local inv = Inventory:new(tonumber(row.Id), items)
 	Inventory.Map[inv.m_Id] = inv
 	return inv
@@ -57,7 +57,7 @@ function Inventory:save()
 	for slot, item in ipairs(self.m_Items) do
 		itemData[slot] = {item.m_ItemId, item.m_Count}
 	end
-	
+
 	sql:queryExec("UPDATE ??_inventory SET Items = ? WHERE Id = ?", sql:getPrefix(), toJSON(itemData), self.m_Id)
 end
 
@@ -80,7 +80,7 @@ function Inventory:addItem(itemId, amount)
 			return existingItem
 		end
 	end
-	
+
 	local itemObject = (itemInfo.class or Item):new(itemId, amount)
 	self:addItemByItem(itemObject)
 	return itemObject
@@ -89,7 +89,7 @@ end
 function Inventory:addItemByItem(item)
 	table.insert(self.m_Items, item)
 	local slot = #self.m_Items
-	
+
 	if self.m_InteractingPlayer then
 		self.m_InteractingPlayer:triggerEvent("inventoryAddItem", self.m_Id, slot, item:getItemId(), item:getCount())
 	end
@@ -100,24 +100,24 @@ function Inventory:removeItem(slot, amount)
 	if not item then
 		return false
 	end
-	
-	-- Todo: Call destructor
+
 	if not amount then
 		table.remove(self.m_Items, slot)
+		delete(item)
 		return true
 	end
-	
+
 	local newCount = item:getCount() - amount
 	if newCount <= 0 then
-		table.remove(self.m_Items, slot)
+		self.m_Items[slot] = nil
 	else
 		item:setCount(newCount)
 	end
-	
+
 	if self.m_InteractingPlayer then
-		self.m_InteractingPlayer:triggerEvent("inventoryRemoveItem", self.m_Id, slot, item:getId(), amount)
+		self.m_InteractingPlayer:triggerEvent("inventoryRemoveItem", self.m_Id, slot, item:getItemId(), amount)
 	end
-	
+
 	delete(item)
 	return true
 end
@@ -126,18 +126,17 @@ function Inventory:removeItemByItem(item, slot, amount)
 	return self:removeItem(slot, amount or item:getCount())
 end
 
-function Inventory:dropItem(item, slot, owner, pos, amount)
-	--local copiedItem = table.copyobject(item)
-	--copiedItem:setCount(amount)
-	-- TODO: Implement dropping single items
-	
-	local worldItem = WorldItem:new(item, owner, pos)
+function Inventory:placeItem(item, slot, owner, pos, amount)
+	-- We need to duplicate the item if the amount does not match the available amount of items
+	local newItem = item
+	if amount ~= item:getCount() then
+		newItem = item:copy()
+		newItem:setCount(amount)
+	end
+
+	local worldItem = WorldItem:new(newItem, owner, pos)
 	self:removeItemByItem(item, slot, amount)
 	return worldItem
-end
-
-function Inventory:placeItem(item, slot, owner, pos, amount)
-	return self:dropItem(item, slot, owner, pos, amount)
 end
 
 function Inventory:findItem(itemId)
@@ -180,13 +179,13 @@ end
 
 function Inventory:openFor(player)
 	self:setInteractingPlayer(player)
-	
+
 	player:triggerEvent("inventoryOpen", self.m_Id)
 end
 
 function Inventory:closeFor(player)
 	self:setInteractingPlayer(nil)
-	
+
 	player:triggerEvent("inventoryClose", self.m_Id)
 end
 
@@ -195,15 +194,15 @@ function Inventory:useItem(item, player, slot)
 	if not itemInfo then
 		return false
 	end
-	
+
 	-- Possible issue: If Item:use fails, the item will never get removed
 	if item.use then
 		item:use(self, client, slot)
 	end
-	
+
 	-- Tell the client that we started using the item
 	player:triggerEvent("inventoryUseItem", self:getId(), itemId, slot)
-	
+
 	if itemInfo.removeAfterUsage then
 		self:removeItem(slot, 1)
 	end
@@ -216,7 +215,7 @@ function Inventory:sendFullSync()
 	for slot, item in ipairs(self.m_Items) do
 		data[#data + 1] = {slot, item.m_ItemId, item.m_Count}
 	end
-	
+
 	self.m_InteractingPlayer:triggerEvent("inventoryReceiveFullSync", self.m_Id, data)
 end
 
@@ -232,24 +231,24 @@ addEventHandler("inventoryUseItem", root,
 		local inventory = client:getInventory()
 		if inventoryId then
 			inventory = Inventory.Map[inventoryId]
-			
+
 			if inventory.m_InteractingPlayer ~= client then
 				AntiCheat:getSingleton():report(client, "Not allowed inventory change", CheatSeverity.Middle)
 				return
 			end
 		end
-		
+
 		if not inventory then
 			return
 		end
-		
+
 		local item = inventory.m_Items[slot]
 		if not item then return end
 		if item:getItemId() ~= itemId then
 			AntiCheat:getSingleton():report(client, "Inventory desync", CheatSeverity.Low)
 			return
 		end
-		
+
 		inventory:useItem(item, client, slot)
 	end
 )
@@ -260,30 +259,30 @@ addEventHandler("inventoryDropItem", root,
 		local inventory = client:getInventory()
 		if inventoryId then
 			inventory = Inventory.Map[inventoryId]
-			
+
 			if inventory.m_InteractingPlayer ~= client then
 				AntiCheat:getSingleton():report(client, "Not allowed inventory change", CheatSeverity.Middle)
 				return
 			end
 		end
-		
+
 		if not inventory then
 			return
 		end
-		
+
 		local item = inventory.m_Items[slot]
 		if not item then return end
 		if item:getItemId() ~= itemId then
 			AntiCheat:getSingleton():report(client, "Inventory desync", CheatSeverity.Low)
 			return
 		end
-		
-		if amount <= item:getCount() then
+
+		if amount > item:getCount() then -- TODO: Fix cheatlog (sql table)
 			AntiCheat:getSingleton():report(client, "Tried to drop not existing items", CheatSeverity.Low)
 			return
 		end
-		
-		inventory:dropItem(item, slot, nil, client:getPosition(), amount)
+
+		inventory:removeItemByItem(item, slot, amount)
 	end
 )
 
@@ -298,7 +297,7 @@ addEventHandler("inventoryRequestFullSync", root,
 			-- Todo: Report @ AC
 			return
 		end
-		
+
 		inv:sendFullSync()
 	end
 )

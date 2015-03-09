@@ -108,12 +108,12 @@ function table.copy(tab)
 	return temp
 end
 
-function table.copyobject(tab)
+function table.copyobject(tab) -- Does not detect circular/infinite loops
 	local temp = {}
 	for k, v in pairs(tab) do
 		temp[k] = type(v) == "table" and table.copyobject(v) or v
 	end
-	return setmetatable(temp, table.copy(getmetatable(tab)))
+	return setmetatable(temp, getmetatable(tab))
 end
 
 _coroutine_resume = coroutine.resume
