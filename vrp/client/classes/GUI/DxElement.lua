@@ -12,7 +12,7 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 	if not parent and not instanceof(self, CacheArea) then
 		self.m_Parent = GUIRenderer.cacheroot
 	end
-	
+
 	if self.m_Parent then
 		self.m_Parent.m_Children[#self.m_Parent.m_Children+1] = self
 	end
@@ -25,11 +25,11 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 	self.m_Children = {}
 	self.m_Visible = true
 	self.m_Alpha = 255
-	
+
 	-- Caching in Rendertargets
 	self:anyChange()
 	self.m_CurrentRenderTarget = false
-	
+
 	-- Find cache area if exists
 	if self.m_Parent and instanceof(self.m_Parent, CacheArea) and self.m_Parent.m_CachingEnabled then
 		self.m_CacheArea = self.m_Parent
@@ -37,7 +37,7 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 	if self.m_Parent and self.m_Parent.m_CacheArea and self.m_Parent.m_CacheArea.m_CachingEnabled then
 		self.m_CacheArea = self.m_Parent.m_CacheArea
 	end
-	
+
 	-- AbsX and AbsY
 	self.m_AbsoluteX, self.m_AbsoluteY = self.m_PosX, self.m_PosY
 	local lastElement = parent
@@ -55,12 +55,12 @@ end
 
 function DxElement:destructor()
 	if self.onHide then self:onHide() end
-	
+
 	-- Delete the children (--> call their destructor)
 	for k, v in ipairs(self.m_Children) do
 		delete(v)
 	end
-	
+
 	-- Unlink from parent
 	if self.m_Parent then
 		for k, v in ipairs(self.m_Parent.m_Children) do
@@ -70,7 +70,7 @@ function DxElement:destructor()
 			end
 		end
 	end
-	
+
 	self:anyChange()
 end
 
@@ -96,7 +96,7 @@ function DxElement:draw(incache)
 		if self.drawThis then
 			self:drawThis(incache)
 		end
-		
+
 		-- Draw children
 		for k, v in ipairs(self.m_Children) do
 			if v.m_Visible and v.draw then
@@ -128,7 +128,7 @@ function DxElement:setVisible(visible, getPropagated)
 	else
 		if self.onHide then self:onHide() end
 	end
-	
+
 	if getPropagated then
 		for k, v in ipairs(self.m_Children) do
 			v:setVisible(visible)
@@ -138,7 +138,7 @@ function DxElement:setVisible(visible, getPropagated)
 	if visible and self.m_CacheArea then
 		self.m_CacheArea:bringToFront()
 	end
-	
+
 	self:anyChange()
 	return self
 end
@@ -177,7 +177,7 @@ function DxElement:setParent(parent)
 	-- Set the new parent element and link
 	self.m_Parent = parent
 	parent.m_Children[#self.m_Parent.m_Children+1] = self
-	
+
 	self:anyChange()
 	return self
 end
@@ -186,7 +186,7 @@ function DxElement:getPosition(isAbsolute)
 	if not isAbsolute then
 		return self.m_PosX, self.m_PosY
 	end
-	
+
 	local absoluteX, absoluteY = self.m_AbsoluteX, self.m_AbsoluteY
 	if self.m_CacheArea then
 		absoluteX, absoluteY = absoluteX + self.m_CacheArea.m_AbsoluteX, absoluteY + self.m_CacheArea.m_AbsoluteY
@@ -201,10 +201,10 @@ end
 function DxElement:setSize(width, height)
 	if width == nil then width = self.m_Width end
 	if height == nil then height = self.m_Height end
-	
+
 	self.m_Width = width
 	self.m_Height = height
-	
+
 	self:anyChange()
 	return self
 end
@@ -216,11 +216,11 @@ function DxElement:setPosition(posX, posY)
 	if posY == nil then
 		posY = self.m_PosY
 	end
-	
+
 	local diffX, diffY = posX-self.m_PosX, posY-self.m_PosY
 	self.m_PosX, self.m_PosY = posX, posY
 	self.m_AbsoluteX, self.m_AbsoluteY = self.m_AbsoluteX + diffX, self.m_AbsoluteY + diffY
-	
+
 	local children = self.m_Children
 	while children and #children > 0 do
 		for k, v in ipairs(children) do
@@ -241,20 +241,20 @@ function DxElement:setAbsolutePosition(posX, posY)
 	if posY == nil then
 		posY = self.m_AbsoluteY
 	end
-	
+
 	self.m_AbsoluteX = posX
 	self.m_AbsoluteY = posY
-	
+
 	local diffX, diffY = posX-self.m_AbsoluteX, posY-self.m_AbsoluteY
 	local children = self.m_Children
 	while children and #children > 0 do
-		for k, v in ipairs(children) do
+		for k, v in pairs(children) do
 			v.m_AbsoluteX = v.m_AbsoluteX + diffX
 			v.m_AbsoluteY = v.m_AbsoluteY + diffY
 		end
 		children = children.m_Children
 	end
-	
+
 	-- Todo: Adjust m_PosX etc.
 	self:anyChange()
 	return self

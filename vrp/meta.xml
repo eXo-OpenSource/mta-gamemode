@@ -207,6 +207,7 @@
 	<script src="client/classes/GUI/GUIRadioButtonGroup.lua" type="client"/>
 	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
+	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
 
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
@@ -241,6 +242,7 @@
 	<script src="client/classes/HUD/HUDUI.lua" type="client"/>
 
 	<!-- Forms -->
+	<script src="client/classes/GUIForms/GUIWebWindowForm.lua" type="client"/>
 	<script src="client/classes/GUIForms/InventoryGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>

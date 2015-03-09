@@ -22,6 +22,8 @@ end
 
 function GUIWebView:destructor()
     removeEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
+    removeEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+    self.m_Browser:destroy()
 
     GUIElement.destructor(self)
 end
@@ -38,12 +40,16 @@ end
 function GUIWebView:setVisible(state, ...)
     self.m_Browser:setRenderingPaused(not state)
 
-    GUIElement.setVisible(state, ...)
+    GUIElement.setVisible(self, state, ...)
 end
 
 function GUIWebView:onInternalLeftClick()
     self.m_Browser:focus()
 
+    self.m_Browser:injectMouseUp("left")
+end
+
+function GUIWebView:onInternalLeftClickDown()
     self.m_Browser:injectMouseDown("left")
 end
 
@@ -51,12 +57,16 @@ function GUIWebView:onInternalRightClick()
     self.m_Browser:injectMouseUp("right")
 end
 
+function GUIWebView:onInternalRightClickDown()
+    self.m_Browser:injectMouseDown("right")
+end
+
 function GUIWebView:onInternalMouseWheelDown()
-    self.m_Browser:injectMouseWheel(20, 0)
+    self.m_Browser:injectMouseWheel(-20, 0)
 end
 
 function GUIWebView:onInternalMouseWheelUp()
-    self.m_Browser:injectMouseWheel(-20, 0)
+    self.m_Browser:injectMouseWheel(20, 0)
 end
 
 function GUIWebView:onCursorMove(relX, relY, absX, absY)

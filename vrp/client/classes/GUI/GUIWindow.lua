@@ -13,18 +13,18 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 
 	-- Call base class ctors
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	
+
 	self.m_HasTitlebar = hasTitlebar
 	self.m_HasCloseButton = hasCloseButton
 	self.m_CloseOnClose = true
-	
+
 	-- Create dummy titlebar element (to be able to retrieve clicks)
-	if self.m_HasTitlebar and self.m_CacheArea then
+	if self.m_HasTitlebar then
 		--self.m_TitlebarDummy = GUIElement:new(0, 0, self.m_Width, 30, self)
 		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, tocolor(0x23, 0x23, 0x23, 230), self)
 		self.m_TitlebarDummy.onLeftClickDown = function() self:startMoving() end
 		self.m_TitlebarDummy.onLeftClick = function() self:stopMoving() end
-		
+
 		self.m_TitleLabel = GUILabel:new(0, 0, self.m_Width, 30, title, self)
 			:setAlignX("center")
 			:setAlignY("center")
@@ -52,7 +52,7 @@ function GUIWindow:drawThis()
 	--dxDrawLine(self.m_AbsoluteX + self.m_Width - 1, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - 1, self.m_AbsoluteY + self.m_Height - 1)
 	--dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1, self.m_AbsoluteX + self.m_Width, self.m_AbsoluteY + self.m_Height - 1)
 	--dxDrawLine(self.m_AbsoluteX, self.m_AbsoluteY, self.m_AbsoluteX, self.m_AbsoluteY + self.m_Height - 1)
-	
+
 	-- Draw background
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150))
 
@@ -60,12 +60,12 @@ function GUIWindow:drawThis()
 	if false then -- Should the logo be optional? | Todo: Since we haven't got a logo, disable that
 		dxDrawImage(self.m_AbsoluteX + 10, self.m_AbsoluteY + self.m_Height - 29 - 10, 62, 29, "files/images/GUI/logo.png")
 	end
-	
+
 	if self.m_HasTitlebar then
 		-- Draw line under title bar
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 1, Color.White)
 	end
-	
+
 	dxSetBlendMode("blend")
 end
 
