@@ -1,5 +1,5 @@
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
-PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which 
+PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
 RANK = {}
@@ -84,7 +84,7 @@ BankStat = {
 	Withdrawal = 3,
 	Deposit = 4,
 	Job = 5,
-	
+
 }
 
 GroupRank = {
@@ -106,17 +106,17 @@ Crime = {
 }
 
 AmmuNationInfo = {
-	
+
 	[30] = { -- AK-47
 		Magazine = {price=30,amount=30},
 		Weapon = 1850,
 		MinLevel = 7,
-	},	
+	},
 	[31] = { -- M4A1
 		Magazine = {price=60,amount=50},
 		Weapon = 2500,
 		MinLevel = 7,
-	},	
+	},
 	[29] = { -- MP5
 		Magazine = {price=40,amount=30},
 		Weapon = 1000,
@@ -131,12 +131,12 @@ AmmuNationInfo = {
 		Magazine = {price=15,amount=17},
 		Weapon = 450,
 		MinLevel = 3,
-	},	
+	},
 	[23] = { -- Silenced Pistol
 		Magazine = {price=15,amount=17},
 		Weapon = 600,
 		MinLevel = 3,
-	},	
+	},
 }
 
 GangAreaData = {

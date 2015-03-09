@@ -163,6 +163,7 @@
 	<script src="client/classes/AchievementBox.lua" type="client"/>
 	<script src="client/classes/CustomF11Map.lua" type="client"/>
     <script src="client/classes/Events/Deathmatch/DMEvent.lua" type="client"/>
+    <script src="client/classes/TippManager.lua" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>

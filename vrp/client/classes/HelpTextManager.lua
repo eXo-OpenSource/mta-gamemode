@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/HelpTextManager.lua
+-- *  FILE:        client/classes/HelpTextManager.lua
 -- *  PURPOSE:     Responsible for managing help texts
 -- *
 -- ****************************************************************************
