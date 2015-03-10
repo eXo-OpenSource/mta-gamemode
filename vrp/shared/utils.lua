@@ -404,5 +404,5 @@ function getCrimeById(crimeId)
 end
 
 function string.countChar (str, char)
-	return string.len(str) - string.len(string.gsub(str, char, ""))
+	return math.floor((string.len(str) - string.len(string.gsub(str, char, "")))/string.len(char))
 end

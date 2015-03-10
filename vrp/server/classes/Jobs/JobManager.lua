@@ -36,6 +36,7 @@ end
 function JobManager:startJobForPlayer(job, player)
 	-- Stop old job if exists
 	if player:getJob() then
+		if player:getJob() == job then return end
 		if player:getJob().stop then
 			player:getJob():stop(player)
 		end
