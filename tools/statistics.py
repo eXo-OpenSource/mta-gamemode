@@ -6,7 +6,7 @@ fileCount = 0
 scriptFileCount = 0
 lineCount = 0
 
-for root, dirs, files in os.walk("vrp"):
+for root, dirs, files in os.walk("../vrp"):
 	for name in files:
 		fileCount += 1
 	

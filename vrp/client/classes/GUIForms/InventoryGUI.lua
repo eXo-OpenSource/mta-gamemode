@@ -96,7 +96,6 @@ function InventoryGUI:ButtonUse_Click()
 end
 
 function InventoryGUI:ButtonDiscard_Click()
-	-- ToDo: Send to server
 	if not self.m_SelectedItem then
 		self.m_ErrorBox:show()
 		self.m_ErrorText:setText(_"Fehler: \nKein Item ausgewählt!")
@@ -105,9 +104,6 @@ function InventoryGUI:ButtonDiscard_Click()
 
 	local item = self.m_GUIItems[self.m_SelectedItem]
 	if not item then return end
-
-	-- Clear selected item
-	self.m_SelectedItem = false
 
 	-- Tell the server that we want to remove the item
 	triggerServerEvent("inventoryDropItem", resourceRoot, self.m_Id, item:getItemId(), item:getSlot(), 1)
@@ -150,11 +146,14 @@ function InventoryGUI:removeItem(item, amount)
 	if guiItem then
 		guiItem:updateFromItem()
 		guiItem.onItemRemove = function() self:resort(false) end
-		self.m_GUIItems[guiItem] = nil
 	end
 
-	if guiItem == self.m_SelectedItem then
-		self.m_SelectedItem = false
+	if item:getCount() == 0 then
+		self.m_GUIItems[guiItem] = nil
+
+		if guiItem == self.m_SelectedItem then
+			self.m_SelectedItem = false
+		end
 	end
 end
 

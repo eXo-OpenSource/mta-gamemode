@@ -14,19 +14,3 @@ function GUIWebForm:constructor(posX, posY, width, height) -- Override but don't
 
 	Cursor:show()
 end
-
---[[
-function GUIWebForm:destructor()
-	Cursor:hide()
-end
-
-function GUIWebForm:open(hiddenCursor)
-    -- Hacky way to implement traits
-    return GUIForm.open(hiddenCursor)
-end
-
-function GUIWebForm:close(decrementedCursorCounter)
-    -- Hacky way to implement traits
-    return GUIForm.close(decrementedCursorCounter)
-end
-]]
