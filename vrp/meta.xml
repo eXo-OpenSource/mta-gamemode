@@ -488,6 +488,8 @@
 	<vrpfile src="files/images/Items/Passport.png"/>
 
 	<vrpfile src="files/images/Nametag/default.png"/>
+	<vrpfile src="files/images/Nametag/vrp.png"/>
+	<vrpfile src="files/images/Nametag/vrpstar.png"/>
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>

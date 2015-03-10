@@ -21,6 +21,7 @@ Color = {
 	Brown     = {189, 109, 19},
 	BrownAlpha= {189, 109, 19, 180},
 	LightBlue = {6, 163, 212},
+	Orange    = {254, 138, 0},
 }
 
 for k, v in pairs(Color) do

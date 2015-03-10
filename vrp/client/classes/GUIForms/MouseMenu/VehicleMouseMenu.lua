@@ -28,13 +28,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
-	self:addItem(_"Schlüssel",
-		function()
-			if self:getElement() then
-				VehicleKeyGUI:new(self:getElement())
+	if getElementData(element, "OwnerName") then
+		self:addItem(_"Schlüssel",
+			function()
+				if self:getElement() then
+					VehicleKeyGUI:new(self:getElement())
+				end
 			end
-		end
-	)
+		)
+	end
 
 	self:addItem(_"Fahrzeug leeren",
 		function()
