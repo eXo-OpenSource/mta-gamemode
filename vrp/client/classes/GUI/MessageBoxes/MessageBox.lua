@@ -7,17 +7,35 @@
 -- ****************************************************************************
 MessageBox = inherit(DxElement)
 inherit(GUIFontContainer, MessageBox)
+MessageBox.MessageBoxes = {}
 
 function MessageBox:constructor(text, timeout)
-	DxElement.constructor(self, screenWidth/2-360/2, screenHeight - 160, 360, 140)
+	DxElement.constructor(self, screenWidth/2-360/2, screenHeight, 360, 140)
 	GUIFontContainer.constructor(self, text, 1.4, "default")
 	timeout = timeout and timeout >= 50 and timeout or 3000
 	setTimer(function() delete(self) end, timeout, 1)
 	playSound(self:getSoundPath())
+
+	table.insert(MessageBox.MessageBoxes, self)
+
+	for i = #MessageBox.MessageBoxes, 1, -1 do
+		local obj = MessageBox.MessageBoxes[i]
+		local prevObj = MessageBox.MessageBoxes[i + 1]
+
+		if prevObj then
+			obj.m_Animation = Animation.Move:new(obj, 1000, obj.m_AbsoluteX, prevObj.m_Animation.m_TY - obj.m_Height - 5)
+		else
+			obj.m_Animation = Animation.Move:new(obj, 1000, obj.m_AbsoluteX, obj.m_AbsoluteY - obj.m_Height - 5)
+		end
+	end
 end
 
 function MessageBox:virtual_constructor(text, timeout)
 	MessageBox.constructor(self, text, timeout)
+end
+
+function MessageBox:virtual_destructor ()
+	table.removevalue(MessageBox.MessageBoxes, self)
 end
 
 function MessageBox:drawThis()

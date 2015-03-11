@@ -37,6 +37,7 @@ function HelpBar:fadeIn()
 	self.m_Rectangle:setPosition(self.m_Width, 0)
 	Animation.Move:new(self.m_Rectangle, 500, 0, 0)
 
+	self.m_Icon.onUnhover()
 	self.m_Icon:setVisible(false)
 end
 
@@ -75,9 +76,4 @@ end
 
 function HelpBar:HelpIcon_Click()
 	self:fadeIn()
-
-	if self.m_BlinkTimer and isTimer(self.m_BlinkTimer) then
-		killTimer(self.m_BlinkTimer)
-		self.m_Icon:setColor(Color.White)
-	end
 end
