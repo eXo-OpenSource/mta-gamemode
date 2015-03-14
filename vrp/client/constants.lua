@@ -56,12 +56,19 @@ HelpTexts = {
 			Moderation:
 			Toxsi <toxsi@v-roleplay.net> (außerdem verantwortlich für Mapping)
 
+			Kot
+ 			Doneasty <doneasty@v-roleplay.net>
+
 			Vielen Dank an:
 			Sam@ke (für seine wunderschönen Shader)
 			thefleshpound (für seine Zeit als Grafiker)
 			Schlumpf (für seine kurze Zeit als Mapper)
 			ReZ (für seine kurze Zeit als Mapper)
 			Alex (für seine Zeit als Mapper)
+
+			Alpha-Tester:
+			Johnny
+			Gibaex
 		]];
 	};
 	Jobs = {
