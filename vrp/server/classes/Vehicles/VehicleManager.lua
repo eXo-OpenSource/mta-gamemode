@@ -27,16 +27,16 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleUpgradeGarage", root, bind(self.Event_vehicleUpgradeGarage, self))
 	addEventHandler("vehicleHotwire", root, bind(self.Event_vehicleHotwire, self))
 	addEventHandler("vehicleEmpty", root, bind(self.Event_vehicleEmpty, self))
-	
+
 	-- Prevent the engine from being turned on
 	addEventHandler("onVehicleEnter", root,
 		function(player, seat, jackingPlayer)
 			if seat == 0 then
 				self:checkVehicle(source)
-				
+
 				setVehicleEngineState(source, source:getEngineState())
 				player:triggerEvent("vehicleFuelSync", source:getFuel())
-				
+
 				local vehicleType = source:getVehicleType()
 				if (vehicleType == "Plane" or vehicleType == "Helicopter") and not player:hasPilotsLicense() then
 					player:removeFromVehicle(source)
@@ -46,7 +46,7 @@ function VehicleManager:constructor()
 			end
 		end
 	)
-	
+
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	for i, rowData in ipairs(result) do
@@ -54,9 +54,9 @@ function VehicleManager:constructor()
 		enew(vehicle, PermanentVehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys or "[]"), rowData.Color, rowData.Health, toboolean(rowData.IsInGarage))
 		self:addRef(vehicle, false)
 	end
-	
+
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
-	
+
 	setTimer(bind(self.updateFuelOfPermanentVehicles, self), 60*1000, 0)
 end
 
@@ -77,11 +77,11 @@ function VehicleManager:addRef(vehicle, isTemp)
 
 	local ownerId = vehicle:getOwner()
 	assert(ownerId, "Bad owner specified")
-	
+
 	if not self.m_Vehicles[ownerId] then
 		self.m_Vehicles[ownerId] = {}
 	end
-	
+
 	table.insert(self.m_Vehicles[ownerId], vehicle)
 end
 
@@ -96,7 +96,7 @@ function VehicleManager:removeRef(vehicle, isTemp)
 
 	local ownerId = vehicle:getOwner()
 	assert(ownerId, "Bad owner specified")
-	
+
 	if self.m_Vehicles[ownerId] then
 		local idx = table.find(self.m_Vehicles[ownerId], vehicle)
 		if idx then
@@ -107,18 +107,18 @@ end
 
 function VehicleManager:removeUnusedVehicles()
 	-- ToDo: Lateron, do not loop through all vehicles
-	for ownerid, data in pairs(self.m_Vehicles) do 
+	for ownerid, data in pairs(self.m_Vehicles) do
 		for k, vehicle in pairs(data) do
 			if vehicle:getLastUseTime() < getTickCount() - 30*1000*60 then
 				vehicle:respawn()
 			end
 		end
 	end
-	
+
 	for k, vehicle in pairs(self.m_TemporaryVehicles) do
 		if vehicle:getLastUseTime() < getTickCount() - 5*1000 then
 			vehicle:respawn()
-		end	
+		end
 	end
 end
 
@@ -150,15 +150,15 @@ end
 function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	if not VEHICLESHOPS[shop] then return end
 	if not VEHICLESHOPS[shop].Vehicles then return end
-	
+
 	local price = VEHICLESHOPS[shop].Vehicles[vehicleModel]
 	if not price then return end
-	
+
 	if client:getMoney() < price then
 		client:sendError(_("Du hast nicht genügend Geld!", client), 255, 0, 0)
 		return
 	end
-	
+
 	local spawnX, spawnY, spawnZ, rotation = unpack(VEHICLESHOPS[shop].Spawn)
 	local vehicle = PermanentVehicle.create(client, vehicleModel, spawnX, spawnY, spawnZ, rotation)
 	if vehicle then
@@ -173,12 +173,12 @@ end
 function VehicleManager:Event_vehicleLock()
 	if not source or not isElement(source) then return end
 	self:checkVehicle(source)
-	
+
 	if not source:hasKey(client) and client:getRank() <= RANK.User then
 		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
 		return
 	end
-	
+
 	source:setLocked(not source:isLocked())
 end
 
@@ -187,7 +187,7 @@ function VehicleManager:Event_vehicleRequestKeys()
 		triggerClientEvent(client, "vehicleKeysRetrieve", source, false)
 		return
 	end
-	
+
 	local names = source:getKeyNameList()
 	triggerClientEvent(client, "vehicleKeysRetrieve", source, names)
 end
@@ -196,20 +196,20 @@ function VehicleManager:Event_vehicleAddKey(player)
 	if not player or not isElement(player) then return end
 	if not player:isLoggedIn() then return end
 	if not instanceof(source, PermanentVehicle, true) then return end
-	
+
 	if not source:isPermanent() then
 		client:sendError(_("Nur nicht-permanente Fahrzeuge können Schlüssel haben", client))
 		return
 	end
-	
+
 	if source:getOwner() ~= client:getId() then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
-	
+
 	-- Finally, add the key
 	source:addKey(player)
-	
+
 	-- Todo: Tell the client that we added a new key
 end
 
@@ -218,14 +218,14 @@ function VehicleManager:Event_vehicleRemoveKey(characterId)
 		client:sendWarning(_("The specified player is not in possession of a key", client))
 		return
 	end
-	
+
 	if source:getOwner() ~= client:getId() then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
-	
+
 	source:removeKey(characterId)
-	
+
 	-- Todo: Tell the client that we removed the key
 end
 
@@ -234,14 +234,14 @@ function VehicleManager:Event_vehicleRepair()
 		AntiCheat:getSingleton():report(client, "DisallowedEvent", CheatSeverity.High)
 		return
 	end
-	
+
 	fixVehicle(source)
 end
 
 function VehicleManager:Event_vehicleRespawn()
 	if not instanceof(source, PermanentVehicle, true) then return end
 
-	if source:getOwner() ~= client:getId() then
+	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
@@ -259,13 +259,15 @@ function VehicleManager:Event_vehicleRespawn()
 	for seat, player in pairs(occupants) do
 		removePedFromVehicle(player)
 	end
-	
-	-- Todo: Check if slot limit is reached
+
+	-- TODO: Check if slot limit is reached
 	source:respawn()
-	client:takeMoney(100)
+	if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
+		client:takeMoney(100)
+	end
 	fixVehicle(source)
 	client:sendShortMessage(_("Dein Fahrzeug wurde erfolgreich in der Garage respawnt!", client))
-	
+
 	-- Refresh location in the self menu
 	local vehicles = {}
 	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
@@ -276,12 +278,12 @@ end
 
 function VehicleManager:Event_vehicleDelete()
 	self:checkVehicle(source)
-	
+
 	if client:getRank() < RANK.Moderator then
 		-- Todo: Report cheat attempt
 		return
 	end
-	
+
 	if source:isPermanent() then
 		source:purge()
 	else
@@ -292,7 +294,7 @@ end
 function VehicleManager:Event_vehicleSell()
 	if not instanceof(source, PermanentVehicle, true) then return end
 	if source:getOwner() ~= client:getId() then	return end
-	
+
 	-- Search for price in vehicle shops table
 	local getPrice = function(model)
 		for shopName, shopInfo in pairs(VEHICLESHOPS) do
@@ -303,7 +305,7 @@ function VehicleManager:Event_vehicleSell()
 		end
 		return false
 	end
-	
+
 	local price = getPrice(source:getModel())
 	if price then
 		source:purge()
@@ -316,7 +318,7 @@ function VehicleManager:Event_vehicleRequestInfo()
 	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
 		vehicles[vehicle:getId()] = {vehicle, vehicle:isInGarage()}
 	end
-	
+
 	client:triggerEvent("vehicleRetrieveInfo", vehicles, client:getGarageType())
 end
 
@@ -346,7 +348,7 @@ function VehicleManager:Event_vehicleHotwire()
 		client:sendInfoTimeout(_("Schließe kurz...", client), 20000)
 		client:reportCrime(Crime.Hotwire)
 		client:giveKarma(-0.1)
-		
+
 		setTimer(
 			function(source)
 				if isElement(source) then

@@ -244,7 +244,7 @@ function VehicleGarages.initalizeAll()
 			{enter = {1877.2, -2092, 13.4}, exit = {1877.7, -2102.8, 13.1}, gtagarage = 2};
 			{enter = {1004, -1368, 14.6}, exit = {1003.2, -1353.8, 13}};
 			{enter = {1011.2, -1368, 14.6}, exit = {1010.4, -1353.8, 13}, hideblip = true};
-			{enter = {410.70001, -1321.5, 16.2}, exit = {415.4, -1328.2, 14.6, 212}, hideblip = true};
+			{enter = {410.70001, -1321.5, 16.2}, exit = {415.4, -1328.2, 14.6, 212}};
 			{enter = {2771.3, -1623.4, 12.2}, exit = {2770.6, -1614.6, 10.6}};
 			{enter = {2778.5, -1623.4, 12.2}, exit = {2778.1, -1615.4, 10.6}, hideblip = true};
 			{enter = {2785.6001, -1623.4, 12.2}, exit = {2784.7, -1614.3, 11}, hideblip = true};
@@ -353,4 +353,3 @@ end
 function VehicleGarageSession:getEntranceId()
 	return self.m_EntranceId
 end
-
