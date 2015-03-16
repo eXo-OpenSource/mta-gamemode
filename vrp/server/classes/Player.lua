@@ -338,3 +338,12 @@ end
 function Player:addCrime(crimeType)
 	self.m_Crimes[#self.m_Crimes + 1] = crimeType
 end
+
+function Player:giveMoney(money) -- Overriden
+	DatabasePlayer.giveMoney(self, money)
+	self:sendShortMessage((money >= 0 and "+"..money or "-"..money).."$")
+end
+
+function Player:takeMoney(money)
+	self:giveMoney(-money)
+end

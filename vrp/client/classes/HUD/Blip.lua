@@ -12,7 +12,7 @@ Blip.Blips = {}
 function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	if type(worldX) ~= "number" or type(worldY) ~= "number" then
 		outputDebug(debug.traceback())
-		
+
 		-- Hack: Prevent error messages (for debugging purposes)
 		worldX, worldY = 0, 0
 	end
@@ -32,12 +32,12 @@ end
 function Blip:destructor()
 	if self.m_ID then
 		if Blip.Blips[self.m_ID] then
-			table.remove(Blip.Blips, self.m_ID)
+			Blip.Blips[self.m_ID] = nil
 		end
 	else
 		local idx = table.find(Blip.Blips, self)
 		if idx then
-			table.remove(Blip.Blips, idx)
+			Blip.Blips[idx] = nil
 		end
 	end
 end
@@ -99,6 +99,7 @@ addEventHandler("blipDestroy", root,
 	function(index)
 		if Blip.ServerBlips[index] then
 			delete(Blip.ServerBlips[index])
+			Blip.ServerBlips[index] = nil
 		end
 	end
 )

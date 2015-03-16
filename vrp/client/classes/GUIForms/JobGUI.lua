@@ -10,12 +10,12 @@ inherit(Singleton, JobGUI)
 
 function JobGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
-	
+
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "JobGUI", false, false, self)
 	self.m_Header = GUIImage:new(30, 30, 540, 135, "files/images/Jobs/HeaderTrashman.png", self)
 	self.m_InfoLabel = GUILabel:new(30, 180, 540, 200, LOREM_IPSUM, self)
 	self.m_InfoLabel:setFont(VRPFont(24))
-	
+
 	self.m_AcceptButton = GUIButton:new(50, 400, 210, 35, _"Akzeptieren", self)
 	self.m_AcceptButton:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_AcceptButton.onLeftClick = bind(self.AcceptButton_Click, self)
@@ -47,16 +47,16 @@ function JobGUI:AcceptButton_Click()
 	if self.m_AcceptCallback then
 		self.m_AcceptCallback()
 	end
-	self:close()
+	self:close(true)
 end
 
 function JobGUI:DeclineButton_Click()
-	self:close()
+	self:close(true)
 end
 
 function JobGUI:InfoButton_Click()
 	if self.m_InfoCallback then
 		self.m_InfoCallback()
 	end
-	self:close()	
+	self:close(true)	
 end

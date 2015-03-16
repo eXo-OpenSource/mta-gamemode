@@ -57,7 +57,7 @@ function HelpBar:blink()
 			isFilled = not isFilled
 
 			if isFilled then
-				self.m_Icon:setColor(Color.LightBlue)
+				self.m_Icon:setColor(Color.Yellow)
 			else
 				self.m_Icon:setColor(Color.White)
 			end
