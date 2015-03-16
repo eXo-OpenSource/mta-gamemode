@@ -50,14 +50,11 @@ HelpTexts = {
 			StiviK <stivik@v-roleplay.net>
 
 			Administration:
-			Doneasty <doneasty@v-roleplay.net> (außerdem verantwortlich für Grafik und Design)
-			Sarcasm <sarcasm@v-roleplay.net> (außerdem verantwortlich für den Webauftritt)
+			Doneasty <doneasty@v-roleplay.net> (außerdem Grafik und Design)
+			Sarcasm <sarcasm@v-roleplay.net> (außerdem Webauftritt)
 
 			Moderation:
-			Toxsi <toxsi@v-roleplay.net> (außerdem verantwortlich für Mapping)
-
-			Kot
- 			Doneasty <doneasty@v-roleplay.net>
+			Toxsi <toxsi@v-roleplay.net> (außerdem Mapping)
 
 			Vielen Dank an:
 			Sam@ke (für seine wunderschönen Shader)

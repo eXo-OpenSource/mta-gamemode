@@ -54,7 +54,7 @@ function VehicleGarages:createInteror(info)
 	self.m_Interiors[#self.m_Interiors+1] = {enter = info.enter, slots = info.slots, shape = exitShape}
 
 	-- Hack to ensure garage sessions are destroyed
-	local garageZone = createColSphere(exitX, exitY, exitZ, 50)
+	local garageZone = createColSphere(exitX, exitY, exitZ, 70)
 	addEventHandler("onColShapeLeave", garageZone,
 		function(player)
 			if getElementType(player) == "player" then
@@ -176,6 +176,10 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 		fadeCamera(hitElement, false)
 		setTimer(
 			function()
+				if not isElement(hitElement) then
+					return
+				end
+
 				local vehicle = getPedOccupiedVehicle(hitElement)
 				if vehicle then
 					vehicle:setInGarage(true)
@@ -191,7 +195,19 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				if vehicle then
 					setElementDimension(vehicle, session:getDimension())
 				end
-				fadeCamera(hitElement, true, 2)
+
+				-- Hackfix for MTA issue #4658
+				if vehicle and getVehicleType(vehicle) == "Bike" then
+					-- Wait a short moment till the world has (probably) been loaded
+					setBikePosition(vehicle, hitElement, interiorX, interiorY, interiorZ,
+						function()
+							setElementRotation(vehicle, 0, 0, rotation or 0)
+							fadeCamera(hitElement, true, 2)
+						end
+					)
+				else
+					fadeCamera(hitElement, true, 2)
+				end
 
 				setTimer(function() session:furnish() end, 1000, 1)
 			end, 2000, 1
@@ -211,8 +227,13 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 		setElementVelocity(getPedOccupiedVehicle(hitElement) or hitElement, 0, 0, 0)
 
 		fadeCamera(hitElement, false, 1)
+
 		setTimer(
 			function()
+				if not isElement(hitElement) then
+					return
+				end
+
 				local vehicle = getPedOccupiedVehicle(hitElement)
 
 				-- Remove the vehicle from the garage if exists
@@ -227,7 +248,19 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 				setElementPosition(vehicle or hitElement, exitX, exitY, exitZ)
 				setElementDimension(hitElement, 0)
 				setElementRotation(vehicle or hitElement, 0, 0, rotation or 0)
-				fadeCamera(hitElement, true)
+
+				-- Hackfix for MTA issue #4658
+				if vehicle and getVehicleType(vehicle) == "Bike" then
+					-- Wait a short moment till the world has (probably) been loaded
+					setBikePosition(vehicle, hitElement, exitX, exitY, exitZ,
+						function()
+							setElementRotation(vehicle, 0, 0, rotation or 0)
+							fadeCamera(hitElement, true)
+						end
+					)
+				else
+					fadeCamera(hitElement, true)
+				end
 
 				if vehicle then
 					setElementDimension(vehicle, 0)
