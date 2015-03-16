@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 VehicleManager = inherit(Singleton)
-VehicleManager.sPulse = TimedPulse:new(5*1000--[[*60*]])
+VehicleManager.sPulse = TimedPulse:new(5*1000)
 
 function VehicleManager:constructor()
 	self.m_Vehicles = {}
@@ -116,7 +116,7 @@ function VehicleManager:removeUnusedVehicles()
 	end
 
 	for k, vehicle in pairs(self.m_TemporaryVehicles) do
-		if vehicle:getLastUseTime() < getTickCount() - 5*1000 then
+		if vehicle:getLastUseTime() < getTickCount() - 20*60*1000 then
 			vehicle:respawn()
 		end
 	end

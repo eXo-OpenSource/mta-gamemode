@@ -9,12 +9,16 @@ GUICursor = inherit(Object)
 
 function GUICursor:constructor()
 	self.m_Counter = 0
-	self.m_CursorFunc = function()
-		if isCursorShowing() then
-			self.m_Counter = 0
-			showCursor(false)
+	self.m_CursorFunc = function(button, state)
+		if self.m_CursorMode then -- is instant?
+			showCursor(state == "down")
 		else
-			showCursor(true)
+			if isCursorShowing() then
+				self.m_Counter = 0
+				showCursor(false)
+			else
+				showCursor(true)
+			end
 		end
 	end
 
@@ -62,12 +66,14 @@ function GUICursor:hide(force)
 	if force then
 		self.m_Counter = 0
 	end
-	
+
 	self:check()
 	outputDebug("Cursor counter decremented to: "..self.m_Counter)
 end
 
-function GUICursor:setCursorMode (instant)
+function GUICursor:setCursorMode(instant)
+	self.m_CursorMode = instant
+
 	if instant then
 		self:hide()
 
