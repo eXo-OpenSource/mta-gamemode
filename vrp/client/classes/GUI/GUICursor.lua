@@ -58,7 +58,6 @@ end
 function GUICursor:show()
 	self.m_Counter = self.m_Counter + 1
 	self:check()
-	outputDebug("Cursor counter incremented to: "..self.m_Counter)
 end
 
 function GUICursor:hide(force)
@@ -68,7 +67,6 @@ function GUICursor:hide(force)
 	end
 
 	self:check()
-	outputDebug("Cursor counter decremented to: "..self.m_Counter)
 end
 
 function GUICursor:setCursorMode(instant)

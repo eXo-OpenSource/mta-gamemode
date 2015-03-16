@@ -12,20 +12,20 @@ function JobBusDriver:constructor()
 
 	-- Prepare job base
 	createObject(9131, 1729.8, -1751, 13.7, 0, 0, 0.5)
-	createObject(7018, 1770.6, -1779.3+4, 13.8, 0, 0, 269.75)
-	createObject(7018, 1770.4, -1757.8+4, 13.8, 0, 0, 89.747)
-	createObject(9131, 1811.2, -1743.3+4, 13.7, 0, 0, 0)
-	createObject(9131, 1811.4, -1764.6+4, 13.7, 0, 0, 0)
-	createObject(9131, 1811.3, -1781.2+4, 13.7, 0, 0, 0)
-	createObject(9131, 1811.3, -1785.8+4, 13.7, 0, 0, 0)
-	createObject(9131, 1811.3, -1794.3+4, 13.7, 0, 0, 0)
-	createObject(9131, 1737.5, -1794+4, 13.7, 0, 0, 0)
-	createObject(9131, 1729.7, -1743+4, 13.7, 0, 0, 0)
+	createObject(7018, 1770.6, -1779.3, 13.8, 0, 0, 269.75)
+	createObject(7018, 1770.4, -1757.8, 13.8, 0, 0, 89.747)
+	createObject(9131, 1811.2, -1743.3, 13.7, 0, 0, 0)
+	createObject(9131, 1811.4, -1764.6, 13.7, 0, 0, 0)
+	createObject(9131, 1811.3, -1781.2, 13.7, 0, 0, 0)
+	createObject(9131, 1811.3, -1785.8, 13.7, 0, 0, 0)
+	createObject(9131, 1811.3, -1794.3, 13.7, 0, 0, 0)
+	createObject(9131, 1737.5, -1794, 13.7, 0, 0, 0)
+	createObject(9131, 1729.7, -1743, 13.7, 0, 0, 0)
 	removeWorldModel(4019, 77, 1777.8, -1773.9, 12.5)
 	removeWorldModel(4025, 77, 1777.8, -1773.9, 12.5)
 	removeWorldModel(4215, 77, 1777.8, -1773.9, 12.5)
 	for i = 0, 7 do
-		AutomaticVehicleSpawner:new(437, 1799 - i * 6, -1766.2, 13.9, 0, 0, 0, function(vehicle) setVehicleVariant(vehicle, 1, 255) end, self)
+		AutomaticVehicleSpawner:new(437, 1799 - i * 6, -1770.2, 13.9, 0, 0, 0, function(vehicle) setVehicleVariant(vehicle, 1, 255) end, self)
 	end
 
 	-- Create bus stops
@@ -117,8 +117,13 @@ function JobBusDriver:BusStop_Hit(player, matchingDimension)
 		player.Bus_NextStop = newDestination
 
 		-- Pay extra money for extra occupants
-		player:giveMoney((table.size(getVehicleOccupants(vehicle)) - 1) * 50)
+		player:giveMoney((table.size(getVehicleOccupants(vehicle)) - 1) * 40)
 		player:givePoints(3)
+		for seat, player in pairs(getVehicleOccupants(vehicle)) do
+			if seat ~= 0 then
+				player:takeMoney(40)
+			end
+		end
 
 		local stopId = self.m_Lines[line][newDestination]
 		local x, y, z = getElementPosition(self.m_BusStops[stopId].object)

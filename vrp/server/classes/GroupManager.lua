@@ -268,6 +268,10 @@ function GroupManager:Event_groupRankUp(playerId)
 	local group = client:getGroup()
 	if not group then return end
 
+	if not group:isPlayerMember(client) or not group:isPlayerMember(playerId) then
+		return
+	end
+
 	if group:getPlayerRank(client) < GroupRank.Leader then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
@@ -286,6 +290,10 @@ function GroupManager:Event_groupRankDown(playerId)
 	if not playerId then return end
 	local group = client:getGroup()
 	if not group then return end
+
+	if not group:isPlayerMember(client) or not group:isPlayerMember(playerId) then
+		return
+	end
 
 	if group:getPlayerRank(client) < GroupRank.Leader then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
