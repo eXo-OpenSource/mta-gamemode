@@ -20,7 +20,7 @@
     <bus_stop id="bus_stop (20)" markerdistance="4.5" lines="2" name="Willowfield" posX="2099.8999" posY="-1887.6" posZ="13.7" rotX="0" rotY="0" rotZ="92"></bus_stop>
     <bus_stop id="bus_stop (21)" markerdistance="4.5" lines="2" name="El Corona" posX="1897.1" posY="-1925.6" posZ="13.7" rotX="0" rotY="0" rotZ="89"></bus_stop>
     <bus_stop id="bus_stop (23)" markerdistance="4.5" lines="3" name="El Carona" posX="1897.2" posY="-1939.6" posZ="13.6" rotX="0" rotY="0" rotZ="269.5"></bus_stop>
-    <bus_stop id="bus_stop (24)" markerdistance="4.5" lines="3" name="" posX="1954.8" posY="-2066.7" posZ="13.6" rotX="0" rotY="359" rotZ="179.5"></bus_stop>
+    <bus_stop id="bus_stop (24)" markerdistance="4.5" lines="3" name="Jonnny is an idiot" posX="1954.8" posY="-2066.7" posZ="13.6" rotX="0" rotY="359" rotZ="179.5"></bus_stop>
     <bus_stop id="bus_stop (25)" markerdistance="4.5" lines="3" name="Airfield" posX="1983.5" posY="-2174" posZ="14" rotX="0" rotY="0" rotZ="269.25"></bus_stop>
     <bus_stop id="bus_stop (26)" markerdistance="4.5" lines="3" name="Ocean Docks" posX="2200.8999" posY="-2502.3999" posZ="13.7" rotX="0" rotY="0" rotZ="270.5"></bus_stop>
     <bus_stop id="bus_stop (27)" markerdistance="4.5" lines="3" name="Ocean Docks" posX="2418.6001" posY="-2670.8999" posZ="13.8" rotX="0" rotY="0" rotZ="270"></bus_stop>

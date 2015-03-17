@@ -112,7 +112,7 @@ function JobBusDriver:BusStop_Hit(player, matchingDimension)
 		end
 
 		-- Give the player some money and switch to the next bus stop
-		player:giveMoney(200)
+		player:giveMoney(50)
 		local newDestination = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
 		player.Bus_NextStop = newDestination
 
@@ -127,7 +127,6 @@ function JobBusDriver:BusStop_Hit(player, matchingDimension)
 
 		local stopId = self.m_Lines[line][newDestination]
 		local x, y, z = getElementPosition(self.m_BusStops[stopId].object)
-		outputDebug(("Deleting and recreating blip %s for player %s"):format(tostring(player.Bus_Blip), getPlayerName(player)))
 		delete(player.Bus_Blip)
 		player.Bus_Blip = Blip:new("Waypoint.png", x, y, player)
 
