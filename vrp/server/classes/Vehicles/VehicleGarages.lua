@@ -54,7 +54,7 @@ function VehicleGarages:createInteror(info)
 	self.m_Interiors[#self.m_Interiors+1] = {enter = info.enter, slots = info.slots, shape = exitShape}
 
 	-- Hack to ensure garage sessions are destroyed
-	local garageZone = createColSphere(exitX, exitY, exitZ, 70)
+	local garageZone = createColSphere(exitX, exitY, exitZ, 80)
 	addEventHandler("onColShapeLeave", garageZone,
 		function(player)
 			if getElementType(player) == "player" then
@@ -91,6 +91,10 @@ function VehicleGarages:closeSession(session)
 	local sessionOwner = session.m_Player
 	sessionOwner:setPrivateSync("isInGarage", false)
 	sessionOwner.m_GarageSession = nil
+
+	-- Tell the player that we closed the garage session
+	sessionOwner:triggerEvent("vehicleGarageSessionClose")
+	sessionOwner:setSpawnLocation(SPAWN_LOCATION_DEFAULT)
 
 	self.m_Sessions[idx] = nil
 	delete(session)
@@ -240,9 +244,6 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 				if vehicle then
 					vehicle:setInGarage(false)
 				end
-				-- Tell the player that we closed the garage session
-				hitElement:triggerEvent("vehicleGarageSessionClose")
-				hitElement:setSpawnLocation(SPAWN_LOCATION_DEFAULT)
 
 				local exitX, exitY, exitZ, rotation = unpack(self.m_Entrances[entranceId].exit)
 				setElementPosition(vehicle or hitElement, exitX, exitY, exitZ)
