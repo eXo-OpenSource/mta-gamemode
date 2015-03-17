@@ -11,12 +11,12 @@ function Job:constructor(posX, posY, posZ, blipPath, headerImage, name, descript
 	-- Create the customblip
 	Blip:new(blipPath, posX, posY)
 	self.m_Name = name
-	
+
 	-- Create a job marker
 	self.m_Marker = createMarker(posX, posY, posZ, "cylinder", 1.5, 255, 255, 0, 200)
 	addEventHandler("onClientMarkerHit", self.m_Marker,
 		function(hitElement, matchingDimension)
-			if hitElement == localPlayer and matchingDimension then
+			if hitElement == localPlayer and matchingDimension and not isPedInVehicle(localPlayer) then
 				local jobGUI = JobGUI:getSingleton()
 				jobGUI:setDescription(description)
 				jobGUI:setHeaderImage(headerImage)

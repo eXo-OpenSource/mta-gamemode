@@ -11,11 +11,11 @@ addEvent("reciveCollectables", true)
 
 function Collectables:constructor()
 	self.m_Pickups = {}
-	
+
 	-- Request for pickup positions
 	triggerServerEvent("requestCollectables", localPlayer)
-	
-	
+
+
 	addEventHandler("reciveCollectables", root, bind(self.reciveCollectables,self))
 	addEventHandler("onClientPickupHit" , root, bind(self.onCollectableHit,self))
 end
@@ -33,7 +33,7 @@ end
 
 function Collectables:reciveCollectables(positions,progress)
 	for key, value in ipairs(positions) do
-		self.m_Pickups[key] = createPickup(value[1],value[2],value[3],3,1248)
+		self.m_Pickups[key] = createPickup(value[1],value[2],value[3],3,2903)
 		if progress[tostring(key)] == "1" then
 			setElementDimension(self.m_Pickups[key],PRIVATE_DIMENSION_SERVER)
 		end

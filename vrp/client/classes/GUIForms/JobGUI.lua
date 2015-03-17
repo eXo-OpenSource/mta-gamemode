@@ -47,16 +47,16 @@ function JobGUI:AcceptButton_Click()
 	if self.m_AcceptCallback then
 		self.m_AcceptCallback()
 	end
-	self:close(true)
+	self:close()
 end
 
 function JobGUI:DeclineButton_Click()
-	self:close(true)
+	self:close()
 end
 
 function JobGUI:InfoButton_Click()
 	if self.m_InfoCallback then
 		self.m_InfoCallback()
 	end
-	self:close(true)	
+	self:close()	
 end

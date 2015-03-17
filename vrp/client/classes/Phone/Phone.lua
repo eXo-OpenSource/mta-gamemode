@@ -18,6 +18,9 @@ function Phone:constructor()
 	self:registerApp(AppSettings)
 	self:registerApp(AppDashboard)
 	self:registerApp(AppNametag)
+	local TestApp = inherit(AppCEF)
+	TestApp.constructor = function(self) AppCEF.constructor(self, "YouTube", "files/images/Phone/Apps/IconHelloWorld.png", "https://youtube.com") end
+	self:registerApp(TestApp)
 
 	-- Add GUI elements
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/Phone.png", self)

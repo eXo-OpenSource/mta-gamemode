@@ -74,6 +74,6 @@ function GUIWebView:onCursorMove(relX, relY, absX, absY)
         return
     end
 
-    local x, y = absX - self.m_AbsoluteX, absY - self.m_AbsoluteY
-    self.m_Browser:injectMouseMove(x, y)
+    local guiX, guiY = self:getPosition(true)
+    self.m_Browser:injectMouseMove(absX - guiX, absY - guiY)
 end

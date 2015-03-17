@@ -420,5 +420,5 @@ function setBikePosition(vehicle, player, x, y, z, finishcallback)
 		if finishcallback then
 			finishcallback()
 		end
-	end, 800, 1)
+	end, 1500, 1)
 end
