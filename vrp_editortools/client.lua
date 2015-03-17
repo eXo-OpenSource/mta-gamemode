@@ -50,10 +50,23 @@ addEventHandler("onClientRender", root,
 			if areaX and areaY and width and height then
 				local z = getGroundPosition(areaX, areaY, 50)
 				if z then
-					dxDrawRectangle3D(areaX, areaY, z+1, width, height, tocolor(255, 255, 0, 200), 0, areaX, areaY, z+2)
+					dxDrawRectangle3D(areaX, areaY, z+1, width, height, tocolor(255, 255, 0, 200), 0, areaX, areaY-height/2, z+2)
 				end
 			end
 		end
+	end
+)
+
+bindKey("num_0", "down",
+	function()
+		local selectedObject = exports.editor_main:getSelectedElement()
+		if not selectedObject or getElementType(selectedObject) ~= "gangarea"  then
+			return
+		end
+		
+		local x, y = getElementPosition(localPlayer)
+		exports.edf:edfSetElementProperty(selectedObject, "areaX", x)
+		exports.edf:edfSetElementProperty(selectedObject, "areaY", y)
 	end
 )
 
@@ -89,5 +102,5 @@ dxDrawRectangle(0, 0, 1, 1, tocolor(255,255,255,255))
 dxSetRenderTarget()
 function dxDrawRectangle3D(x,y,z,w,h,c,r,normalX,normalY,normalZ)
 	local lx, ly, lz = x+w, y, (z+tonumber(r or 0)) or z
-	return dxDrawMaterialLine3D(x, y, z, lx, ly, lz, dot, h, c, normalX, normalY, normalZ)
+	return dxDrawMaterialLine3D(x, y-h/2, z, lx, ly-h/2, lz, dot, h, c, normalX, normalY, normalZ)
 end

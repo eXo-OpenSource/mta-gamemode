@@ -245,7 +245,7 @@ function GroupManager:Event_groupInvitationAccept(groupId)
 		group:addPlayer(client)
 		group:removeInvitation(client)
 		group:sendMessage(_("%s ist soeben der Gruppe beigetreten", client, getPlayerName(client)))
-		client:triggerEvent("groupRetrieveInfo")
+		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
 	else
 		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
 	end
