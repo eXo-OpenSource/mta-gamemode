@@ -341,7 +341,10 @@ end
 
 function Player:giveMoney(money) -- Overriden
 	DatabasePlayer.giveMoney(self, money)
-	self:sendShortMessage((money >= 0 and "+"..money or money).."$")
+
+	if money ~= 0 then
+		self:sendShortMessage((money >= 0 and "+"..money or money).."$")
+	end
 end
 
 function Player:takeMoney(money)
