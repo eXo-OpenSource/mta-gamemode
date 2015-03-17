@@ -100,7 +100,7 @@ function Player:createCharacter()
 end
 
 function Player:loadCharacterInfo()
-	local row = sql:asyncQueryFetchSingle("SELECT Weapons FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -110,20 +110,12 @@ function Player:loadCharacterInfo()
 
 	self:setName(self:getAccount():getName()) -- TODO: Does not work for some reason???
 
+	-- Load health data
+	self.m_Health = row.Health
+	self.m_Armor = row.Armor
+
 	-- Load weapons
-	if row.Weapons and row.Weapons ~= "" then
-		local weaponID = 0
-		for i = 1, 26 do
-			local value = gettok(row.Weapons, i, '|')
-			if tonumber(value) ~= 0 then
-				if math.mod(i, 2) == 1 then
-					weaponID = value
-				else
-					giveWeapon(self, weaponID, value)
-				end
-			end
-		end
-	end
+	self.m_Weapons = fromJSON(row.Weapons) or {}
 
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
@@ -150,14 +142,17 @@ function Player:save()
 	end
 	local x, y, z = getElementPosition(self)
 	local interior = getElementInterior(self)
-	local weapons = ""
-	for i = 0, 12 do
-		if i == 0 then weapons = getPedWeapon(self, i).."|"..getPedTotalAmmo(self, i)
-		else weapons = weapons.."|"..getPedWeapon(self, i).."|"..getPedTotalAmmo(self, i) end
+
+	local weapons = {}
+	for slot = 0, 11 do -- exclude satchel detonator (slot 12)
+		local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
+		if ammo > 0 then
+			weapons[#weapons + 1] = {weapon, ammo}
+		end
 	end
 
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Weapons = ?, InventoryId = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
-		x, y, z, interior, weapons, self.m_Inventory:getId(), self:getPlayTime(), self.m_Id)
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Health = ?, Armor = ?, Weapons = ?, InventoryId = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
+		x, y, z, interior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons), self.m_Inventory:getId(), self:getPlayTime(), self.m_Id)
 
 	if self:getInventory() then
 		self:getInventory():save()
@@ -181,6 +176,16 @@ function Player:spawn()
 	setElementFrozen(self, false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
+
+	-- Apply and delete health data
+	self:setHealth(self.m_Health)
+	self:setArmor(self.m_Armor)
+	self.m_Health, self.m_Armor = nil, nil
+
+	-- Give weapons
+	for k, info in pairs(self.m_Weapons) do
+		giveWeapon(self, info[1], info[2])
+	end
 end
 
 function Player:respawn(position, rotation)
@@ -196,7 +201,7 @@ function Player:sendError(text) 	self:triggerEvent("errorBox", text) 	end
 function Player:sendWarning(text)	self:triggerEvent("warningBox", text) 	end
 function Player:sendInfo(text)		self:triggerEvent("infoBox", text)		end
 function Player:sendInfoTimeout(text, timeout) self:triggerEvent("infoBox", text, timeout) end
-function Player:sendSuccess(text	self:triggerEvent("successBox", text)	end
+function Player:sendSuccess(text)	self:triggerEvent("successBox", text)	end
 function Player:sendShortMessage(text) self:triggerEvent("shortMessageBox", text)	end
 function Player:isActive() return true end
 
