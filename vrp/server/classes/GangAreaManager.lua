@@ -10,15 +10,15 @@ local RESOURCES_DISTRIBUTE_INTERVAL = 15*60*1000
 
 function GangAreaManager:constructor()
 	self.m_Map = {}
-	
+
 	outputServerLog("Loading gangareas...")
 	for i, info in ipairs(GangAreaData) do
-		self.m_Map[i] = GangArea:new(i, info.areaPosition, info.width, info.height, info.resources)
+		self.m_Map[i] = GangArea:new(i, info.areaPosition, info.width, info.height, info.resources or DEFAULT_GANGAREA_RESOURCES)
 	end
-	
+
 	addRemoteEvents{"gangAreaTagSprayed"}
 	addEventHandler("gangAreaTagSprayed", root, bind(self.Event_gangAreaTagSprayed, self))
-	
+
 	addEventHandler("onPlayerQuit", root,
 		function()
 			for k, area in pairs(self.m_Map) do
@@ -26,7 +26,7 @@ function GangAreaManager:constructor()
 			end
 		end
 	)
-	
+
 	-- Start the timer that produces and distributes the resources
 	setTimer(bind(self.distributeResources, self), RESOURCES_DISTRIBUTE_INTERVAL, 0)
 end
@@ -54,19 +54,19 @@ function GangAreaManager:Event_gangAreaTagSprayed(Id)
 		if not clientGroup then
 			return
 		end
-		
+
 		if clientGroup ~= ownerGroup then
 			if not gangArea:isTurfingInProgress() then
 				--[[if #clientGroup:getOnlinePlayers() < 3 then -- Todo: Add this as soon as it is finished
 					client:sendError(_("Es müssen mindestens 3 Mitglieder deiner Gang online sein, um dieses Gebiet zu erobern", client))
 					return
 				end]]
-				
+
 				--[[if ownerGroup and #ownerGroup:getOnlinePlayers() < 2 then -- Todo: Change this back to 3
 					client:sendError(_("Es müssen mindestens 3 Mitglieder der gegnerischen Gang online sein!", client))
 					return
 				end]]
-				
+
 				if gangArea:startTurfing(clientGroup) then
 					client:sendInfo(_("Der Gangwar wurde gestartet! Halte nun bis zur Neutralisierung im Gebiet durch!", client))
 				else
