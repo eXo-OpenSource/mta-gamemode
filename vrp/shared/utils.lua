@@ -407,18 +407,8 @@ function string.countChar (str, char)
 	return math.floor((string.len(str) - string.len(string.gsub(str, char, "")))/string.len(char))
 end
 
--- Hackfix for MTA issue #4658
-function setBikePosition(vehicle, player, x, y, z, finishcallback)
-	setTimer(function()
-		if not isElement(vehicle) or not isElement(player) then return end
+function teleportPlayerNextToVehicle(player, vehicle, distance)
+	player:removeFromVehicle()
 
-		-- Set position once again and warp the player
-		setElementPosition(vehicle, x, y, z)
-		setElementRotation(vehicle, 0, 0, rotation or 0)
-		warpPedIntoVehicle(player, vehicle)
-
-		if finishcallback then
-			finishcallback()
-		end
-	end, 1500, 1)
+	player:setPosition(vehicle.position + vehicle.matrix.right * (distance or 1))
 end

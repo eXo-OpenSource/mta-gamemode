@@ -56,8 +56,8 @@ function VehicleGarages:createInteror(info)
 	-- Hack to ensure garage sessions are destroyed
 	local garageZone = createColSphere(exitX, exitY, exitZ, 80)
 	addEventHandler("onColShapeLeave", garageZone,
-		function(player)
-			if getElementType(player) == "player" then
+		function(player, matchingDimension)
+			if getElementType(player) == "player" and matchingDimension then
 				local session = self:getSessionByPlayer(player)
 				if session then
 					self:closeSession(session)
@@ -77,6 +77,7 @@ function VehicleGarages:openSessionForPlayer(player, entranceId)
 
 	player:setSpawnLocation(SPAWN_LOCATION_GARAGE)
 	player:setLastGarageEntrance(session:getEntranceId())
+	player:setDimension(session:getDimension())
 
 	return session
 end
@@ -95,6 +96,8 @@ function VehicleGarages:closeSession(session)
 	-- Tell the player that we closed the garage session
 	sessionOwner:triggerEvent("vehicleGarageSessionClose")
 	sessionOwner:setSpawnLocation(SPAWN_LOCATION_DEFAULT)
+	sessionOwner:setDimension(0)
+	outputConsole(debug.traceback())
 
 	self.m_Sessions[idx] = nil
 	delete(session)
@@ -131,7 +134,7 @@ function VehicleGarages:spawnPlayerInGarage(player, entranceId)
 
 	local garageType = player:getGarageType()
 	local interiorX, interiorY, interiorZ, rotation = unpack(self.m_Interiors[garageType].enter)
-	setElementPosition(player, interiorX, interiorY, interiorZ)
+	player:respawn(Vector3(interiorX, interiorY, interiorZ))
 	setElementRotation(player, 0, 0, rotation)
 	setElementDimension(player, session:getDimension())
 	session:furnish()
@@ -195,23 +198,15 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				local interiorX, interiorY, interiorZ, rotation = unpack(self.m_Interiors[garageType].enter)
 				setElementPosition(vehicle or hitElement, interiorX, interiorY, interiorZ)
 				setElementRotation(vehicle or hitElement, 0, 0, rotation)
-				setElementDimension(hitElement, session:getDimension())
 				if vehicle then
 					setElementDimension(vehicle, session:getDimension())
 				end
 
 				-- Hackfix for MTA issue #4658
 				if vehicle and getVehicleType(vehicle) == "Bike" then
-					-- Wait a short moment till the world has (probably) been loaded
-					setBikePosition(vehicle, hitElement, interiorX, interiorY, interiorZ,
-						function()
-							setElementRotation(vehicle, 0, 0, rotation or 0)
-							fadeCamera(hitElement, true, 2)
-						end
-					)
-				else
-					fadeCamera(hitElement, true, 2)
+					teleportPlayerNextToVehicle(hitElement, vehicle)
 				end
+				fadeCamera(hitElement, true, 2)
 
 				setTimer(function() session:furnish() end, 1000, 1)
 			end, 2000, 1
@@ -227,7 +222,6 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 		end
 
 		local entranceId = session:getEntranceId()
-		self:closeSession(session)
 		setElementVelocity(getPedOccupiedVehicle(hitElement) or hitElement, 0, 0, 0)
 
 		fadeCamera(hitElement, false, 1)
@@ -238,6 +232,7 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 					return
 				end
 
+				self:closeSession(session)
 				local vehicle = getPedOccupiedVehicle(hitElement)
 
 				-- Remove the vehicle from the garage if exists
@@ -247,21 +242,13 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 
 				local exitX, exitY, exitZ, rotation = unpack(self.m_Entrances[entranceId].exit)
 				setElementPosition(vehicle or hitElement, exitX, exitY, exitZ)
-				setElementDimension(hitElement, 0)
 				setElementRotation(vehicle or hitElement, 0, 0, rotation or 0)
 
 				-- Hackfix for MTA issue #4658
 				if vehicle and getVehicleType(vehicle) == "Bike" then
-					-- Wait a short moment till the world has (probably) been loaded
-					setBikePosition(vehicle, hitElement, exitX, exitY, exitZ,
-						function()
-							setElementRotation(vehicle, 0, 0, rotation or 0)
-							fadeCamera(hitElement, true)
-						end
-					)
-				else
-					fadeCamera(hitElement, true)
+					teleportPlayerNextToVehicle(hitElement, vehicle)
 				end
+				fadeCamera(hitElement, true)
 
 				if vehicle then
 					setElementDimension(vehicle, 0)
