@@ -10,7 +10,7 @@ inherit(GUIFontContainer, MessageBox)
 MessageBox.MessageBoxes = {}
 
 function MessageBox:constructor(text, timeout)
-	DxElement.constructor(self, screenWidth/2-350/2, screenHeight, 340, 110)
+	DxElement.constructor(self, screenWidth/2-340/2, screenHeight, 340, 110)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(28))
 	timeout = timeout and timeout >= 50 and timeout or 3000
 	setTimer(function() delete(self) end, timeout, 1)
