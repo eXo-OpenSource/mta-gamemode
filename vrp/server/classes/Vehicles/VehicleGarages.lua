@@ -97,7 +97,6 @@ function VehicleGarages:closeSession(session)
 	sessionOwner:triggerEvent("vehicleGarageSessionClose")
 	sessionOwner:setSpawnLocation(SPAWN_LOCATION_DEFAULT)
 	sessionOwner:setDimension(0)
-	outputConsole(debug.traceback())
 
 	self.m_Sessions[idx] = nil
 	delete(session)

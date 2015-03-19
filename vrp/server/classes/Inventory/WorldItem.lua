@@ -8,12 +8,12 @@
 WorldItem = inherit(Object)
 WorldItem.Map = {}
 
-function WorldItem:constructor(item, player, pos)
+function WorldItem:constructor(item, player, pos, rotation)
 	self.m_Item = item
 	self.m_Owner = player or false
-	self.m_Object = createObject(item:getModelId(), pos)
+	self.m_Object = createObject(item:getModelId(), pos, 0, 0, rotation)
 	setElementData(self.m_Object, "worlditem", true) -- Tell the client that this is a world item (to be able to handle clicks properly)
-	
+
 	-- Add an entry to the map
 	WorldItem.Map[self.m_Object] = self
 end
@@ -31,7 +31,7 @@ function WorldItem:collect(player)
 	else
 		player:getInventory():addItemByItem(item)
 	end
-	
+
 	delete(self)
 end
 
@@ -60,7 +60,7 @@ addEventHandler("worldItemClick", root,
 	function()
 		local worldItem = WorldItem.Map[source]
 		if not worldItem then return end
-		
+
 		worldItem:onClick(client)
 	end
 )

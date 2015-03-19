@@ -126,7 +126,7 @@ function Inventory:removeItemByItem(item, slot, amount)
 	return self:removeItem(slot, amount or item:getCount())
 end
 
-function Inventory:placeItem(item, slot, owner, pos, amount)
+function Inventory:placeItem(item, slot, owner, pos, rotation, amount)
 	-- We need to duplicate the item if the amount does not match the available amount of items
 	local newItem = item
 	if amount ~= item:getCount() then
@@ -134,7 +134,7 @@ function Inventory:placeItem(item, slot, owner, pos, amount)
 		newItem:setCount(amount)
 	end
 
-	local worldItem = WorldItem:new(newItem, owner, pos)
+	local worldItem = WorldItem:new(newItem, owner, pos, rotation)
 	self:removeItemByItem(item, slot, amount)
 	return worldItem
 end

@@ -9,26 +9,40 @@ ItemRadio = inherit(PlaceableItem)
 addEvent("itemRadioChangeURL", true)
 
 function ItemRadio:constructor()
-	
+
 end
 
 function ItemRadio:destructor()
-	
+
 end
 
 function ItemRadio:use(inventory, player, slot)
-	local pos = player:getPosition()
-	--self.m_Radio = createObject(2226, pos.x+1, pos.y, pos.z, 0, 0, 0)
-	--setElementData(self.m_Radio, "Owner", player:getId())
-	
-	local worldItem = inventory:placeItem(self, slot, player, player.position + Vector3(2, 0, 0))
-	
-	addEventHandler("itemRadioChangeURL", worldItem:getObject(),
-		function(url)
-			setElementData(source, "url", url)
-			triggerClientEvent("itemRadioChangeURL", source, url) -- send url twice so that we do not get in trouble with packet ordering
+	local result = self:startObjectPlacing(player,
+		function(item, position, rotation)
+			if item ~= self then return end
+			if (position - player:getPosition()).length > 10 then
+				player:sendError(_("Du musst in der Nähe der Zielposition sein!", player))
+
+				-- Add item to the inventory again
+				inventory:addItemByItem(self)
+
+				return
+			end
+
+			local worldItem = inventory:placeItem(self, slot, player, position, rotation)
+			addEventHandler("itemRadioChangeURL", worldItem:getObject(),
+				function(url)
+					setElementData(source, "url", url)
+					triggerClientEvent("itemRadioChangeURL", source, url) -- send url twice so that we do not get in trouble with packet ordering
+				end
+			)
 		end
 	)
+
+	if not result then
+		-- Add item to the inventory again
+		inventory:addItemByItem(self)
+	end
 end
 
 function ItemRadio:onClick(player, worldItem)
