@@ -46,13 +46,10 @@ function GUITabPanel:addTab(tabName)
 		tabButton:setBackgroundColor(Color.LightBlue)
 	end
 	
-	return self[#self]
+	return self[id]
 end
 
 function GUITabPanel:drawThis()
-	-- Draw the border
-	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.White)
-
 	-- Draw the background
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150) --[[tocolor(255, 255, 255, 40)]])
 	
