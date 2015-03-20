@@ -169,6 +169,10 @@ function SelfGUI:constructor()
 end
 
 function SelfGUI:onShow()
+	-- Update VehicleTab & GroupTab
+	self:TabPanel_TabChanged(self.m_TabGroups.TabIndex)
+	self:TabPanel_TabChanged(self.m_TabVehicles.TabIndex)
+
 	-- Initialize all the stuff
 	self.m_WeaponLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getWeaponLevel())))
 	self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
@@ -176,7 +180,6 @@ function SelfGUI:onShow()
 	self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
 
 	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
-	--self.m_PlayTimeLabel:setText(tostring(localPlayer:getPlayTime() or "").."min")
 	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
 
 	if localPlayer:getJob() then

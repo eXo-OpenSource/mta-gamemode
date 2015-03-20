@@ -54,7 +54,7 @@ function GUITabPanel:drawThis()
 	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.White)
 
 	-- Draw the background
-	dxDrawRectangle(self.m_AbsoluteX+2, self.m_AbsoluteY+2, self.m_Width-4, self.m_Height-4, tocolor(0, 0, 0, 150) --[[tocolor(255, 255, 255, 40)]])
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150) --[[tocolor(255, 255, 255, 40)]])
 	
 	-- Draw a seperator line
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 2, Color.White)

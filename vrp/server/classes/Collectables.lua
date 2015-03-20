@@ -11,7 +11,6 @@ addEvent("requestCollectables", true)
 addEvent("checkCollectableHit", true)
 
 function Collectables:constructor()
-	
 	addEventHandler("requestCollectables", root, bind(self.sendCollectables,self))
 	addEventHandler("checkCollectableHit", root, bind(self.checkCollectable,self))
 end
@@ -26,6 +25,9 @@ function Collectables:checkCollectable(collectableID)
 		local collectables = client:getCollectables() or {}
 		collectables[collectableID] = "1"
 		client:setCollectables(collectables)
+
+		client:sendShortMessage("Du hast ein vRP-Logo gefunden!\nDafür erhälst du 0 vRP-Points!")
+		-- TODO: Maybe a reward? vRP-Points?
 	end
 end
 

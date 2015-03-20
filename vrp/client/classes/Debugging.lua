@@ -14,6 +14,7 @@ if DEBUG then
 		addCommandHandler("dcrun", bind(Debugging.runString, self))
 		addCommandHandler("dcreload", bind(Debugging.reloadClass, self))
 		addCommandHandler("gp", bind(Debugging.getpos, self))
+		addCommandHandler("sp", bind(Debugging.setpos, self))
 		
 		bindKey("lshift", "down",
 			function()
@@ -35,7 +36,11 @@ if DEBUG then
 		)
 		bindKey("f1", "down",
 			function()
-				MapGUI:getSingleton(function(posX, posY) setElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer, posX, posY, 20) end)
+				if MapGUI:isInstantiated() then
+					delete(MapGUI:getSingleton())
+				else
+					MapGUI:getSingleton(function(posX, posY) self:setpos("", posX, posY, 20) end)
+				end
 			end
 		)
 	end
@@ -71,5 +76,15 @@ if DEBUG then
 	
 	function Debugging:getpos(cmd)
 		outputChatBox(("Position: %.2f, %.2f, %.2f"):format(getElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer)))
+	end
+
+	function Debugging:setpos(cmd, x, y, z)
+		local x, y, z = x, y, z
+		if not x then
+			x, y, z = getElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer)
+			z = z + 1
+		end
+		outputChatBox(("Setting Position: %.2f, %.2f, %.2f"):format(x, y, z))
+		setElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer, x, y, z)
 	end
 end
