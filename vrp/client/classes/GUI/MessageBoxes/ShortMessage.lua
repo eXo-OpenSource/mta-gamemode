@@ -8,18 +8,10 @@
 ShortMessage = inherit(DxElement)
 inherit(GUIFontContainer, ShortMessage)
 
-ShortMessage.posOffSet = 35
-ShortMessage.MessageQueue = {}
+ShortMessage.MessageBoxes = {}
 
-function ShortMessage:constructor(text, extratime)
-	local x, y, w, h
-	if HUDRadar:getSingleton().m_Visible then
-		x, y, w, h = 20, screenHeight - screenHeight*0.265 - ShortMessage.posOffSet, 340*screenWidth/1600+6, 30
-		self.m_ShowType = 1
-	else
-		x, y, w, h = 20, screenHeight - 10 - ShortMessage.posOffSet, 340*screenWidth/1600+6, 30
-		self.m_ShowType = 0
-	end
+function ShortMessage:constructor(text, timeout)
+	local x, y, w, h = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6, 30
 	local lines = math.floor(dxGetTextWidth(text, 1.4, "default")/w) + 1
 	if string.countChar(text, "\n") > 0 then
 		local extra = string.countChar(text, "\n")
@@ -30,33 +22,30 @@ function ShortMessage:constructor(text, extratime)
 	h = (h * lines) - (15 * math.floor(lines/2))
 
 	-- Calculate y position
-	y = y - h + 25
+	y = y - h - 20
 
-	-- Recalculate the position offset for new Boxes
-	ShortMessage.posOffSet = ShortMessage.posOffSet + h + 5
+	timeout = timeout and timeout >= 50 and timeout or 4000
+	setTimer(function () delete(self) end, timeout + 500, 1)
 
-	-- Create it
 	DxElement.constructor(self, x, y, w, h)
 	GUIFontContainer.constructor(self, text, 1.4, "default")
-	
-	if #ShortMessage.MessageQueue == 1 then
-		resetTimer(ShortMessage.Timer)
-	end
 
-	self.extratime = extratime or false -- bool
+	self:setAlpha(0)
 
-	table.insert(ShortMessage.MessageQueue, self)
+	table.insert(ShortMessage.MessageBoxes, self)
+	ShortMessage.resortPositions()
 end
 
 function ShortMessage:destructor()
 	DxElement.destructor(self)
+	table.removevalue(ShortMessage.MessageBoxes, self)
 end
 
 function ShortMessage:drawThis()
 	local x, y, w, h = self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height
 
 	-- Draw background
-	dxDrawRectangle(x, y, w, h, tocolor(0, 0, 0, 200))
+	dxDrawRectangle(x, y, w, h, tocolor(0, 0, 0, self.m_Alpha))
 
 	-- Center the text
 	x = x + 5
@@ -69,49 +58,34 @@ function ShortMessage:drawThis()
 	dxDrawLine(x + w, y, x + w, y + h, Color.White, 1)]]
 
 	-- Draw message text
-	dxDrawText(self.m_Text, x, y, x + w, y + h, Color.White, self.m_FontSize, self.m_Font, "left", "top", false, true)
+	dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 end
 
-function ShortMessage.recalculatePositions ()
-	for _, v in ipairs(ShortMessage.MessageQueue) do
-		if HUDRadar:getSingleton().m_Visible then
-			if v.m_ShowType == 0 then
-				local x, y = v:getPosition()
-				v:setPosition(x, y - screenHeight*0.265 + 10)
-				v.m_ShowType = 1
+function ShortMessage.resortPositions ()
+	for i = #ShortMessage.MessageBoxes, 1, -1 do
+		local obj = ShortMessage.MessageBoxes[i]
+		local prevObj = ShortMessage.MessageBoxes[i + 1]
+
+		if obj.m_Animation then
+			delete(obj.m_Animation)
+		end
+
+		if prevObj then
+			local y
+			if not prevObj.m_Animation then
+				y = obj.m_AbsoluteY
+			else
+				y = prevObj.m_Animation.m_TY
 			end
+			obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, y - obj.m_Height - 5)
 		else
-			if v.m_ShowType == 1 then
-				local x, y = v:getPosition()
-				v:setPosition(x, y + screenHeight*0.265 - 10)
-				v.m_ShowType = 0
-			end
+			Animation.FadeAlpha:new(obj, 500, 0, 200)
 		end
 	end
 end
 
-ShortMessage.Timer = setTimer(
-	function()		
-		if #ShortMessage.MessageQueue > 0 then
-			if not ShortMessage.MessageQueue[1].extratime then
-				local lastSize = ShortMessage.MessageQueue[1].m_Height
-
-				-- Recalculate the position offset for new Boxes
-				ShortMessage.posOffSet = ShortMessage.posOffSet - 5 - lastSize
-
-				delete(ShortMessage.MessageQueue[1])
-				table.remove(ShortMessage.MessageQueue, 1)
-
-				for k, v in ipairs(ShortMessage.MessageQueue) do
-					local x, y = v:getPosition()
-					v:setPosition(x, y + lastSize + 5)
-				end
-			else
-				ShortMessage.MessageQueue[1].extratime = false
-			end
-		end		
-	end, 4000, 0
-)
+-- Maybe required!
+function ShortMessage.recalculatePositions () end
 
 addEvent("shortMessageBox", true)
 addEventHandler("shortMessageBox", root, function(...) ShortMessage:new(...) end)
