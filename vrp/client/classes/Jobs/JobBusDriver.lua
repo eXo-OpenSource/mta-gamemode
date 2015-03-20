@@ -8,10 +8,7 @@
 JobBusDriver = inherit(Job)
 
 function JobBusDriver:constructor()
-	Job.constructor(self, 1797, -1756, 12.5, "Bus.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Busfahrer", _([[
-		Als Busfahrer fährst du von Haltestelle zu Haltestelle und verdienst dabei Geld.
-		Wenn du an Haltestellen zusätzlich Spieler einsteigen lässt, steigt dein Verdienst.
-	]]))
+	Job.constructor(self, 1797, -1756, 12.5, "Bus.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Busfahrer", HelpTexts.Jobs.BusDriver)
 	
 	addEvent("busReachNextStop", true)
 	addEventHandler("busReachNextStop", root, bind(self.Event_busReachNextStop, self))

@@ -8,13 +8,7 @@
 JobRoadSweeper = inherit(Job)
 
 function JobRoadSweeper:constructor()
-	Job.constructor(self, 199, -1448, 12.1, "Roadsweeper.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Straßenkehrer", _([[
-		Als Straßenkehrer ist es deine Aufgabe Los Santos von Dreck zu befreien. 
-		Hierzu steht dir ein Straßenkehrfahrzeug zur Verfügung.
-		
-		Geld pro gesammelten Müllhaufen: 3$
-		Erfahrungspunkte pro gesammelten Müllhaufen: 3XP
-	]]))
+	Job.constructor(self, 199, -1448, 12.1, "Roadsweeper.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Straßenkehrer", HelpTexts.Jobs.RoadSweeper)
 	
 	self.m_Rubbish = {}
 end

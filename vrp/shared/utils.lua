@@ -414,5 +414,5 @@ function teleportPlayerNextToVehicle(player, vehicle, distance)
 end
 
 function fromboolean (bool)
-	if bool then return 1 else return 0 end
+	return bool and 1 or 0
 end

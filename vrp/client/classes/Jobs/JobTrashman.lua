@@ -8,11 +8,7 @@
 JobTrashman = inherit(Job)
 
 function JobTrashman:constructor()
-	Job.constructor(self, 2090.5, -2097.4, 12.5, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _"Müllmann", _([[
-		Als Müllmann ist es deine Aufgabe den Müll der Bewohner von Los Santos (San Andreas) zu beseitigen.
-		Dazu fährst du mit dem Müllwagen an die Mülltonne heran und wartest, bis sie eingeladen wurde.
-		Hast du, deiner Ansicht nach, genug Mülltonnen gesammelt oder ist das Fassungsvermögen des Wagens erreicht, ist es Zeit den Müll in der Basis abzuladen.
-	]]),self.onInfo)
+	Job.constructor(self, 2090.5, -2097.4, 12.5, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _"Müllmann", HelpTexts.Jobs.Trashman, self.onInfo)
 	self.m_DumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")	
 	self.m_ColShapes = {}
 	addEventHandler("onClientPreRender", root, bind(JobTrashman.renderArea, self)) -- Todo: Replace by 3d image class

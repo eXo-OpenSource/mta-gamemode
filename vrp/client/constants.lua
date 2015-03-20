@@ -70,7 +70,7 @@ HelpTexts = {
 	};
 	Jobs = {
 		BusDriver = [[
-			Da du nun Busfahrer bist musst die die Bürger von Los Santos von A nach B transportieren.
+			Als Busfahrer musst du die Bürger von Los Santos von A nach B transportieren.
 			Im Grunde musst du nur dem roten Marker mit dem grauen Dreieck folgen und kurz an den jeweiligen Bushaltestellen anhalten.
 			Wenn du keine Lust mehr hast und dine Tour beenden willst musst du nur aus dem Bus aussteigen und weglaufen.
 		]];
@@ -100,7 +100,7 @@ HelpTexts = {
 			ACHTUNG: wenn dein Karma in den negativen Bereich fällt wirst du automatisch gefeuert!
 		]];
 		RoadSweeper = [[
-			Da du nun Straßenkehrer bist hast du die Aufgabe mithilfe der Kehrmaschine die Straßen von Los Santos sauberzuhalten.
+			Als Straßenkehrer hast du die Aufgabe mithilfe der Kehrmaschine die Straßen von Los Santos sauberzuhalten.
 			Lufe in den roten Marker und hole dir dein benötigtes Fahrzeug.
 			Sofern du es hast kannst du nun losfahren und über den auf der Straße liegenden Müll fahren um ihn aufzukehren.
 		]];

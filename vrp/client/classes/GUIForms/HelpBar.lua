@@ -31,9 +31,17 @@ function HelpBar:constructor()
 	self.m_CloseButton.onLeftClick = function() self:fadeOut() end
 	self.m_CloseButton.onHover = function () self.m_CloseButton:setColor(Color.White) end
 	self.m_CloseButton.onUnhover = function () self.m_CloseButton:setColor(Color.LightBlue) end
+
+	self.m_TutorialButton = GUILabel:new(self.m_Width*0.05, self.m_Height*0.93, self.m_Width, self.m_Height*0.05, _"Zeige Tutorial", self.m_Rectangle):setColor(Color.LightBlue)
+	self.m_TutorialButton.onHover = function () self.m_TutorialButton:setColor(Color.White) end
+	self.m_TutorialButton.onUnhover = function () self.m_TutorialButton:setColor(Color.LightBlue) end
+	self.m_TutorialButton:setVisible(false)
+
+	self.m_Visible = false
 end
 
 function HelpBar:fadeIn()
+	self.m_Visible = true
 	self.m_Rectangle:setPosition(self.m_Width, 0)
 	Animation.Move:new(self.m_Rectangle, 500, 0, 0)
 
@@ -47,6 +55,7 @@ function HelpBar:fadeOut()
 
 	setTimer(function ()
 		self.m_Icon:setVisible(true)
+		self.m_Visible = false
 	end, 500, 1)
 end
 
@@ -65,12 +74,20 @@ function HelpBar:blink()
 	)
 end
 
-function HelpBar:addText(title, text, blink)
+function HelpBar:addText(title, text, blink, tutorial)
 	self.m_SubTitleLabel:setText(title)
 	self.m_TextLabel:setText(text)
 
 	if blink ~= false then
 		self:blink()
+	end
+
+	if type(tutorial) == "function" then
+		self.m_TutorialButton:setVisible(true)
+		self.m_TutorialButton.onLeftClick = tutorial
+	else
+		self.m_TutorialButton:setVisible(false)
+		self.m_TutorialButton.onLeftClick = nil
 	end
 end
 
