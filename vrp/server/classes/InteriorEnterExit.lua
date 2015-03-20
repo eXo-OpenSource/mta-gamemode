@@ -25,6 +25,8 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				setElementDimension(hitElement, dimension)
 				setElementRotation(hitElement, 0, 0, enterRotation)
 				setTimer(function() hitElement.m_DontTeleport = false end, 500, 1) -- Todo: this is a temp fix
+
+				triggerClientEvent("HUDRadar:hideRadar", hitElement)
 			end
 		end
 	)
@@ -37,6 +39,8 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				setElementRotation(hitElement, 0, 0, exitRotation)
 				resetCameraRotation(hitElement)
 				setTimer(function() hitElement.m_DontTeleport = false end, 500, 1) -- Todo: this is a temp fix
+
+				triggerClientEvent("HUDRadar:showRadar", hitElement)
 			end
 		end
 	)

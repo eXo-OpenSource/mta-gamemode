@@ -12,7 +12,14 @@ ShortMessage.posOffSet = 35
 ShortMessage.MessageQueue = {}
 
 function ShortMessage:constructor(text, extratime)
-	local x, y, w, h = 20, screenHeight - screenHeight*0.265 - ShortMessage.posOffSet, 340*screenWidth/1600+6, 30
+	local x, y, w, h
+	if HUDRadar:getSingleton().m_Visible then
+		x, y, w, h = 20, screenHeight - screenHeight*0.265 - ShortMessage.posOffSet, 340*screenWidth/1600+6, 30
+		self.m_ShowType = 1
+	else
+		x, y, w, h = 20, screenHeight - 10 - ShortMessage.posOffSet, 340*screenWidth/1600+6, 30
+		self.m_ShowType = 0
+	end
 	local lines = math.floor(dxGetTextWidth(text, 1.4, "default")/w) + 1
 	if string.countChar(text, "\n") > 0 then
 		local extra = string.countChar(text, "\n")
@@ -32,13 +39,13 @@ function ShortMessage:constructor(text, extratime)
 	DxElement.constructor(self, x, y, w, h)
 	GUIFontContainer.constructor(self, text, 1.4, "default")
 	
-	table.insert(ShortMessage.MessageQueue, self)
-	
 	if #ShortMessage.MessageQueue == 1 then
 		resetTimer(ShortMessage.Timer)
 	end
 
 	self.extratime = extratime or false -- bool
+
+	table.insert(ShortMessage.MessageQueue, self)
 end
 
 function ShortMessage:destructor()
@@ -63,6 +70,24 @@ function ShortMessage:drawThis()
 
 	-- Draw message text
 	dxDrawText(self.m_Text, x, y, x + w, y + h, Color.White, self.m_FontSize, self.m_Font, "left", "top", false, true)
+end
+
+function ShortMessage.recalculatePositions ()
+	for _, v in ipairs(ShortMessage.MessageQueue) do
+		if HUDRadar:getSingleton().m_Visible then
+			if v.m_ShowType == 0 then
+				local x, y = v:getPosition()
+				v:setPosition(x, y - screenHeight*0.265 + 10)
+				v.m_ShowType = 1
+			end
+		else
+			if v.m_ShowType == 1 then
+				local x, y = v:getPosition()
+				v:setPosition(x, y + screenHeight*0.265 - 10)
+				v.m_ShowType = 0
+			end
+		end
+	end
 end
 
 ShortMessage.Timer = setTimer(

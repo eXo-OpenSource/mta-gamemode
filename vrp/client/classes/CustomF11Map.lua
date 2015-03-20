@@ -66,7 +66,7 @@ function CustomF11Map:draw()
 	-- Draw blips
 	for i, v in ipairs(Blip.Blips) do
 		local mapX, mapY = CustomF11Map.worldToMapPosition(v.m_WorldX, v.m_WorldY)
-		dxDrawImage(mapPosX + mapX - 8, mapPosY + mapY - 8, 16, 16, v.m_ImagePath, 0)
+		dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, v.m_ImagePath, 0)
 	end
 
 	-- Draw local player blip

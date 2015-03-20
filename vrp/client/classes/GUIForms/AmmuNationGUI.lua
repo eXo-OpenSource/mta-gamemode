@@ -1,5 +1,3 @@
-
-
 AmmuNationGUI = inherit(GUIForm)
 inherit(Singleton, AmmuNationGUI)
 

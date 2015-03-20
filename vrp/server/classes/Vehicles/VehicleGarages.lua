@@ -78,6 +78,7 @@ function VehicleGarages:openSessionForPlayer(player, entranceId)
 	player:setSpawnLocation(SPAWN_LOCATION_GARAGE)
 	player:setLastGarageEntrance(session:getEntranceId())
 	player:setDimension(session:getDimension())
+	player:triggerEvent("HUDRadar:hideRadar")
 
 	return session
 end
@@ -97,6 +98,7 @@ function VehicleGarages:closeSession(session)
 	sessionOwner:triggerEvent("vehicleGarageSessionClose")
 	sessionOwner:setSpawnLocation(SPAWN_LOCATION_DEFAULT)
 	sessionOwner:setDimension(0)
+	sessionOwner:triggerEvent("HUDRadar:showRadar")
 
 	self.m_Sessions[idx] = nil
 	delete(session)

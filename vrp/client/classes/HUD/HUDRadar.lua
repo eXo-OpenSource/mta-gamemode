@@ -35,14 +35,22 @@ function HUDRadar:constructor()
 	addEventHandler("onClientRender", root, bind(self.draw, self), true, "high+10")
 	addEventHandler("onClientRestore", root, bind(self.restore, self))
 	showPlayerHudComponent("radar", false)
+
+	addRemoteEvents{"HUDRadar:showRadar", "HUDRadar:hideRadar" }
+	addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
+	addEventHandler("HUDRadar:hideRadar", root, bind(self.hide, self))
 end
 
 function HUDRadar:hide()
 	self.m_Visible = false
+
+	ShortMessage.recalculatePositions()
 end
 
 function HUDRadar:show()
 	self.m_Visible = true
+
+	ShortMessage.recalculatePositions()
 end
 
 function HUDRadar:updateMapTexture()
@@ -120,10 +128,6 @@ function HUDRadar:draw()
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
 
-    if (not isNotInInterior) or localPlayer:getPrivateSync("isInGarage") then
-       return
-    end
-	
 	-- Draw the rectangle (the border)
 	dxDrawRectangle(self.m_PosX, self.m_PosY, self.m_Width+6, self.m_Height+self.m_Height/20+9, tocolor(0, 0, 0))
 	
@@ -149,7 +153,7 @@ function HUDRadar:draw()
 	-- Draw health bar (at the bottom)
 	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2, self.m_Height/20, tocolor(71, 86, 75))
 	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2 * getElementHealth(localPlayer)/100, self.m_Height/20, tocolor(100, 121, 105))
-	
+
 	-- Draw armor bar
 	if isInWater then
 		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/4, self.m_Height/20, tocolor(63, 105, 202))
