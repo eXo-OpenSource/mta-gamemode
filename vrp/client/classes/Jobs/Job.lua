@@ -34,12 +34,7 @@ function Job:InfoMessage(name, description, tutorial)
 		text = HelpBar:getSingleton().m_TextLabel:getText();
 	}
 
-	HelpBar:getSingleton():addText(_("Job: %s", name), description, false,
-		function ()
-			HelpBar:getSingleton():fadeOut()
-			tutorial()
-		end
-	)
+	HelpBar:getSingleton():addText(_("Job: %s", name), description, false, tutorial and function () HelpBar:getSingleton():fadeOut() tutorial() end or nil)
 
 	HelpBar:getSingleton():fadeIn()
 	setTimer(
