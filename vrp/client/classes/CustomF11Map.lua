@@ -55,18 +55,22 @@ function CustomF11Map:draw()
 	dxDrawImage(mapPosX, mapPosY, height, height, HUDRadar:getSingleton():makePath("Radar.jpg"), 0, 0, 0, tocolor(255, 255, 255, 200))
 
 	-- Draw gang areas
-	for i, v in ipairs(HUDRadar:getSingleton().m_Areas) do
-		local mapX, mapY = CustomF11Map.worldToMapPosition(v.X, v.Y)
-		local width, height = v.Width/(6000/height), v.Height/(6000/height)
-		local r, g, b = fromcolor(v.color)
+	if toboolean(core:get("HUD", "drawGangAreas", 1)) then
+		for i, v in ipairs(HUDRadar:getSingleton().m_Areas) do
+			local mapX, mapY = CustomF11Map.worldToMapPosition(v.X, v.Y)
+			local width, height = v.Width/(6000/height), v.Height/(6000/height)
+			local r, g, b = fromcolor(v.color)
 
-		dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, tocolor(r, g, b, 165))
+			dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, tocolor(r, g, b, 165))
+		end
 	end
 
 	-- Draw blips
-	for i, v in ipairs(Blip.Blips) do
-		local mapX, mapY = CustomF11Map.worldToMapPosition(v.m_WorldX, v.m_WorldY)
-		dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, v.m_ImagePath, 0)
+	if toboolean(core:get("HUD", "drawBlips", 1)) then
+		for i, v in ipairs(Blip.Blips) do
+			local mapX, mapY = CustomF11Map.worldToMapPosition(v.m_WorldX, v.m_WorldY)
+			dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, v.m_ImagePath, 0)
+		end
 	end
 
 	-- Draw local player blip

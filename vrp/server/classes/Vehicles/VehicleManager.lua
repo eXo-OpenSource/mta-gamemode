@@ -314,6 +314,8 @@ function VehicleManager:Event_vehicleSell()
 	if price then
 		source:purge()
 		client:giveMoney(math.floor(price * 0.75))
+	else
+		client:sendError("Beim verkauf dieses Fahrzeuges ist ein Fehler aufgetreten!")
 	end
 end
 

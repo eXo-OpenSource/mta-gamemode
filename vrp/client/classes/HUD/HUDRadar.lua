@@ -30,6 +30,14 @@ function HUDRadar:constructor()
 	-- Create a renderTarget that has the size of the diagonal of the actual image
 	self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
 	self:updateMapTexture()
+
+	-- Settings
+	if not core:get("HUD", "drawGangAreas", false) then
+		core:set("HUD", "drawGangAreas", 1)
+	end
+	if not core:get("HUD", "drawBlips", false) then
+		core:set("HUD", "drawBlips", 1)
+	end
 	
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.draw, self), true, "high+10")
@@ -60,13 +68,15 @@ function HUDRadar:updateMapTexture()
 	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
 	
 	-- Draw radar areas
-	for k, rect in pairs(self.m_Areas) do
-		local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
-		
-		local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
-		dxDrawRectangle(mapX, mapY, width, height, rect.color)
+	if toboolean(core:get("HUD", "drawGangAreas", 1)) then
+		for k, rect in pairs(self.m_Areas) do
+			local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
+
+			local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
+			dxDrawRectangle(mapX, mapY, width, height, rect.color)
+		end
 	end
-	
+
 	dxSetRenderTarget(nil)
 end
 
@@ -170,34 +180,36 @@ function HUDRadar:draw()
 	end
 	
 	if isNotInInterior then
-		local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
-		for k, blip in pairs(self.m_Blips) do
-			local blipX, blipY = blip:getPosition()
-			if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < blip:getStreamDistance() then
-				
-				local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
-				local distanceX, distanceY = blipMapX - mapX, blipMapY - mapY
-				local distance = getDistanceBetweenPoints2D(blipMapX, blipMapY, mapX, mapY)
-				local rotation = findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY)
-				
-				local screenX =  mapCenterX - math.sin(math.rad(rotation + self.m_Rotation)) * distance
-				local screenY =  mapCenterY + math.cos(math.rad(rotation + self.m_Rotation)) * distance
-				
-				if screenX < self.m_PosX then
-					screenX = self.m_PosX
+		if toboolean(core:get("HUD", "drawBlips", 1)) then
+			local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
+			for k, blip in pairs(self.m_Blips) do
+				local blipX, blipY = blip:getPosition()
+				if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < blip:getStreamDistance() then
+
+					local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
+					local distanceX, distanceY = blipMapX - mapX, blipMapY - mapY
+					local distance = getDistanceBetweenPoints2D(blipMapX, blipMapY, mapX, mapY)
+					local rotation = findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY)
+
+					local screenX =  mapCenterX - math.sin(math.rad(rotation + self.m_Rotation)) * distance
+					local screenY =  mapCenterY + math.cos(math.rad(rotation + self.m_Rotation)) * distance
+
+					if screenX < self.m_PosX then
+						screenX = self.m_PosX
+					end
+					if screenY < self.m_PosY then
+						screenY = self.m_PosY
+					end
+					if screenX > self.m_PosX + self.m_Width then
+						screenX = self.m_PosX + self.m_Width
+					end
+					if screenY > self.m_PosY + self.m_Height then
+						screenY = self.m_PosY + self.m_Height
+					end
+
+					local blipSize = blip:getSize()
+					dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath())
 				end
-				if screenY < self.m_PosY then
-					screenY = self.m_PosY
-				end
-				if screenX > self.m_PosX + self.m_Width then
-					screenX = self.m_PosX + self.m_Width
-				end
-				if screenY > self.m_PosY + self.m_Height then
-					screenY = self.m_PosY + self.m_Height
-				end
-				
-				local blipSize = blip:getSize()
-				dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath())
 			end
 		end
 	end

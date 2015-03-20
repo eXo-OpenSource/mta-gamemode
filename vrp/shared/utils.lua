@@ -412,3 +412,7 @@ function teleportPlayerNextToVehicle(player, vehicle, distance)
 
 	player:setPosition(vehicle.position + vehicle.matrix.right * (distance or 1))
 end
+
+function fromboolean (bool)
+	if bool then return 1 else return 0 end
+end

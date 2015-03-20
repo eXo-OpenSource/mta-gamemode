@@ -34,7 +34,11 @@ function GUICheckbox:drawThis()
 end
 
 function GUICheckbox:onInternalLeftClick()
-	self:setChecked(not self:isChecked())	
+	self:setChecked(not self:isChecked())
+
+	if self.onChange then
+		self.onChange(self:isChecked())
+	end
 end
 
 function GUICheckbox:isChecked()

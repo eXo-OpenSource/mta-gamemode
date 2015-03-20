@@ -157,8 +157,25 @@ function SelfGUI:constructor()
 	self.m_RadarChange.onChange = function(text, index) HUDRadar:getSingleton():setDesignSet(index) end
 	self.m_RadarChange:setIndex(core:getConfig():get("HUD", "RadarDesign") or 1, true)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
-	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.27, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
+	self.m_BlipCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Blips anzeigen?", tabSettings)
+	self.m_BlipCheckBox:setFont(VRPFont(25))
+	self.m_BlipCheckBox:setFontSize(1)
+	self.m_BlipCheckBox:setChecked(toboolean(core:get("HUD", "drawBlips", 1)))
+	self.m_BlipCheckBox.onChange = function (state)
+		core:set("HUD", "drawBlips", fromboolean(state))
+	end
+
+	self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Gangareas anzeigen?", tabSettings)
+	self.m_GangAreaCheckBox:setFont(VRPFont(25))
+	self.m_GangAreaCheckBox:setFontSize(1)
+	self.m_GangAreaCheckBox:setChecked(toboolean(core:get("HUD", "drawGangAreas", 1)))
+	self.m_GangAreaCheckBox.onChange = function (state)
+		core:set("HUD", "drawGangAreas", fromboolean(state))
+		HUDRadar:getSingleton():updateMapTexture()
+	end
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.32, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
+	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
 	self.m_RadarChange:addItem("Normal")
 	self.m_RadarChange:addItem("Instant")
 	self.m_RadarChange.onChange = function(text, index)
