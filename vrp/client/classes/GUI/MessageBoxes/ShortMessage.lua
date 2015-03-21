@@ -43,7 +43,10 @@ function ShortMessage:constructor(text, timeout)
 end
 
 function ShortMessage:destructor()
-	DxElement.destructor(self)
+	Animation.FadeAlpha:new(self, 200, 200, 0)
+	setTimer(function ()
+		DxElement.destructor(self)
+	end, 500, 1)
 	table.removevalue(ShortMessage.MessageBoxes, self)
 
 	ShortMessage.resortPositions()
