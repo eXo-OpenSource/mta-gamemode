@@ -416,3 +416,19 @@ end
 function fromboolean (bool)
 	return bool and 1 or 0
 end
+
+function getAnglePosition(x, y, z, rx, ry, rz, distance, angle, height)
+	local nrx = math.rad(rx);
+	local nry = math.rad(ry);
+	local nrz = math.rad(angle - rz);
+
+	local dx = math.sin(nrz) * distance;
+	local dy = math.cos(nrz) * distance;
+	local dz = math.sin(nrx) * distance;
+
+	local newX = x + dx;
+	local newY = y + dy;
+	local newZ = z + height - dz;
+
+	return newX, newY, newZ;
+end

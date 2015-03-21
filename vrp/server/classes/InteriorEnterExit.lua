@@ -18,13 +18,10 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 	
 	addEventHandler("onMarkerHit", self.m_EnterMarker,
 		function(hitElement, matchingDimension)
-			if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) and not hitElement.m_DontTeleport then
-				hitElement.m_DontTeleport = true
-				setElementInterior(hitElement, interiorId)
-				setElementPosition(hitElement, interiorPosition.x, interiorPosition.y, interiorPosition.z)
+			if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
+				setElementInterior(hitElement, interiorId, getAnglePosition(interiorPosition.x, interiorPosition.y, interiorPosition.z, 0, 0, 0, 2.5, enterRotation, 0))
 				setElementDimension(hitElement, dimension)
 				setElementRotation(hitElement, 0, 0, enterRotation)
-				setTimer(function() hitElement.m_DontTeleport = false end, 500, 1) -- Todo: this is a temp fix
 
 				triggerClientEvent("HUDRadar:hideRadar", hitElement)
 			end
@@ -32,13 +29,11 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 	)
 	addEventHandler("onMarkerHit", self.m_ExitMarker,
 		function(hitElement, matchingDimension)
-			if getElementType(hitElement) == "player" and matchingDimension  and not hitElement.m_DontTeleport then
-				hitElement.m_DontTeleport = true
-				setElementInterior(hitElement, 0, entryPosition.x, entryPosition.y, entryPosition.z)
+			if getElementType(hitElement) == "player" and matchingDimension then
+				setElementInterior(hitElement, 0, getAnglePosition(entryPosition.x, entryPosition.y, entryPosition.z, 0, 0, 0, 2.5, -exitRotation, 0))
 				setElementDimension(hitElement, 0)
 				setElementRotation(hitElement, 0, 0, exitRotation)
 				resetCameraRotation(hitElement)
-				setTimer(function() hitElement.m_DontTeleport = false end, 500, 1) -- Todo: this is a temp fix
 
 				triggerClientEvent("HUDRadar:showRadar", hitElement)
 			end
