@@ -22,6 +22,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				setElementInterior(hitElement, interiorId, getAnglePosition(interiorPosition.x, interiorPosition.y, interiorPosition.z, 0, 0, 0, 2.5, enterRotation, 0))
 				setElementDimension(hitElement, dimension)
 				setElementRotation(hitElement, 0, 0, enterRotation)
+				setCameraTarget(hitElement, hitElement)
 
 				triggerClientEvent("HUDRadar:hideRadar", hitElement)
 			end
@@ -33,7 +34,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				setElementInterior(hitElement, 0, getAnglePosition(entryPosition.x, entryPosition.y, entryPosition.z, 0, 0, 0, 2.5, -exitRotation, 0))
 				setElementDimension(hitElement, 0)
 				setElementRotation(hitElement, 0, 0, exitRotation)
-				resetCameraRotation(hitElement)
+				setCameraTarget(hitElement, hitElement)
 
 				triggerClientEvent("HUDRadar:showRadar", hitElement)
 			end
