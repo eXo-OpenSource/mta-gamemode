@@ -240,13 +240,13 @@ end
 
 function HUDRadar:removeBlip(blip)
 	if blip.m_ID then
-		if self.m_Blip[blip.m_ID] then
-			table.remove(self.m_Blip, blip.m_ID)
+		if self.m_Blips[blip.m_ID] then
+			table.remove(self.m_Blips, blip.m_ID)
 		end
 	else
-		local idx = table.find(self.m_Blip, blip)
+		local idx = table.find(self.m_Blips, blip)
 		if idx then
-			table.remove(self.m_Blip, idx)
+			table.remove(self.m_Blips, idx)
 		end
 	end
 end
