@@ -138,7 +138,7 @@ AmmuNationInfo = {
 	},
 }
 
-DEFAULT_GANGAREA_RESOURCES = 2000
+DEFAULT_GANGAREA_RESOURCES = 500
 GangAreaData = {
 	{wallPosition = Vector3(2512.3999, -1683.4, 13.9), wallRotation = 129, areaPosition = Vector3(2419.7507, -1627.7887, 15), width = 122, height = 99},
 	{wallPosition = Vector3(2080.5, -1597.1, 13.8), wallRotation = 269.5, areaPosition = Vector3(2052.886, -1538.6737, 30), width = 52, height = 70},

@@ -26,10 +26,3 @@ function getElementBehindCursor(worldX, worldY, worldZ)
 
     return element
 end
-
-function resetCameraRotation()
-	local target = localPlayer.position + localPlayer.matrix.forward
-	setCameraTarget(target.x, target.y, target.z)
-end
-addEvent("resetCameraRot", true)
-addEventHandler("resetCameraRot", root, resetCameraRotation)

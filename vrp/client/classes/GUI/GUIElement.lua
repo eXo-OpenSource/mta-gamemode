@@ -16,7 +16,7 @@ function GUIElement:constructor(posX, posY, width, height, parent)
 	assert(type(parent) == "table" or parent == nil, "Bad argument #5 @ GUIElement.constructor")
 
 	DxElement.constructor(self, posX, posY, width, height, parent)
-	
+
 	-- Hover / Click Events
 	self.m_LActive = false
 	self.m_RActive = false
@@ -33,14 +33,14 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		absoluteX = absoluteX + self.m_CacheArea.m_AbsoluteX
 		absoluteY = absoluteY + self.m_CacheArea.m_AbsoluteY
 	end
-	
+
 	local inside = (absoluteX <= cx and absoluteY <= cy and absoluteX + self.m_Width > cx and absoluteY + self.m_Height > cy)
-	
+
 	if self.m_LActive and not mouse1 and (not self.ms_ClickProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
 		if self.onLeftClick			then self:onLeftClick(cx, cy)			end
 		if self.onInternalLeftClick	then self:onInternalLeftClick(cx, cy)	end
 		self.m_LActive = false
-		
+
 		if self ~= GUIRenderer.cacheroot then
 			GUIElement.ms_ClickProcessed = true
 			GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
@@ -50,13 +50,13 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		if self.onRightClick			then self:onRightClick(cx, cy)			end
 		if self.onInternalRightClick	then self:onInternalRightClick(cx, cy)	end
 		self.m_RActive = false
-		
+
 		if self ~= GUIRenderer.cacheroot then
 			GUIElement.ms_ClickProcessed = true
 			GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
 		end
 	end
-	
+
 	if not inside then
 		-- Call on*Events (disabling)
 		if self.m_Hover then
@@ -64,10 +64,10 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			if self.onInternalUnhover then self:onInternalUnhover() end
 			self.m_Hover = false
 		end
-		
+
 		return
 	end
-	
+
 	-- Set hovered element (do it every time because it gets reset before each processing iteration)
 	GUIElement.ms_HoveredElement = self
 
@@ -78,10 +78,10 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		self.m_Hover = true
 	end
 	if mouse1 and not self.m_LActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
-		if self.onLeftClickDown			then self:onLeftClickDown()			end
-		if self.onInternalLeftClickDown then self:onInternalLeftClickDown() end
+		if self.onLeftClickDown			then self:onLeftClickDown(cx, cy)			end
+		if self.onInternalLeftClickDown then self:onInternalLeftClickDown(cx, cy) 	end
 		self.m_LActive = true
-		
+
 		if self ~= GUIRenderer.cacheroot then
 			GUIElement.ms_ClickDownProcessed = true
 			GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
@@ -91,10 +91,10 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 		GUIInputControl.checkFocus(self)
 	end
 	if mouse2 and not self.m_RActive and (not GUIElement.ms_ClickDownProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
-		if self.onRightClickDown			then self:onRightClickDown()			end
-		if self.onInternalRightClickDown	then self:onInternalRightClickDown()	end
+		if self.onRightClickDown			then self:onRightClickDown(cx, cy)			end
+		if self.onInternalRightClickDown	then self:onInternalRightClickDown(cx, cy)	end
 		self.m_RActive = true
-		
+
 		if self ~= GUIRenderer.cacheroot then
 			GUIElement.ms_ClickDownProcessed = true
 			GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
@@ -109,7 +109,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	if self.m_RActive and not mouse2 then
 		self.m_RActive = false
 	end
-	
+
 	-- Check on children
 	for k, v in ipairs(self.m_Children) do
 		v:performChecks(mouse1, mouse2, cx, cy)
@@ -118,7 +118,7 @@ end
 
 function GUIElement.unhoverAll()
 	local self = GUIElement.ms_HoveredElement
-	while self do		
+	while self do
 		if self.m_Hover then
 			if self.onUnhover		  then self:onUnhover()         end
 			if self.onInternalUnhover then self:onInternalUnhover() end
