@@ -27,6 +27,7 @@ function GUIInputControl.setFocus(edit, caret)
 	end
 
 	GUIInputControl.ms_CurrentInputFocus = edit
+	GUIInputControl.ms_PreviousInput = guiGetText(GUIInputControl.ms_Edit)
 
 	if edit then
 		guiBringToFront(GUIInputControl.ms_Edit)
@@ -35,11 +36,11 @@ function GUIInputControl.setFocus(edit, caret)
 		else
 			guiEditSetCaretIndex(GUIInputControl.ms_Edit, utfLen(edit:getText()))
 		end
-		
+
 		oldCaretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
 		guiSetInputEnabled(true)
 		guiSetText(GUIInputControl.ms_Edit, edit:getText())
-		
+
 		edit:onInternalFocus()
 		if edit.onFocus then
 			edit:onFocus()
@@ -55,16 +56,28 @@ function GUIInputControl.checkFocus(element)
 	end
 end
 
-addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit, 
+addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 	function()
-		if GUIInputControl.ms_CurrentInputFocus then
-			GUIInputControl.ms_CurrentInputFocus:setText(guiGetText(source))
-			
-			if GUIInputControl.ms_CurrentInputFocus.onInternalEditInput then
-				GUIInputControl.ms_CurrentInputFocus:onInternalEditInput(guiEditGetCaretIndex and guiEditGetCaretIndex(GUIInputControl.ms_Edit))
+		local currentEdit = GUIInputControl.ms_CurrentInputFocus
+		if currentEdit then
+			local text = guiGetText(source)
+
+			if currentEdit:isNumeric() then
+				if tonumber(text) or text == "" then
+					GUIInputControl.ms_PreviousInput = text
+					currentEdit:setText(text)
+				else
+					guiSetText(source, GUIInputControl.ms_PreviousInput or "") -- Triggers onClientGUIChanged again
+				end
+			else
+				currentEdit:setText(text)
 			end
-			if GUIInputControl.ms_CurrentInputFocus.onEditInput then
-				GUIInputControl.ms_CurrentInputFocus:onEditInput(guiEditGetCaretIndex and guiEditGetCaretIndex(GUIInputControl.ms_Edit))
+
+			if currentEdit.onInternalEditInput then
+				currentEdit:onInternalEditInput(guiEditGetCaretIndex(source))
+			end
+			if currentEdit.onEditInput then
+				currentEdit:onEditInput(guiEditGetCaretIndex(source))
 			end
 		end
 	end
@@ -76,7 +89,7 @@ addEventHandler("onClientPreRender", root,
 		-- Check if caret index has changed
 		if GUIInputControl.ms_CurrentInputFocus then
 			local caretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
-			
+
 			if oldCaretIndex ~= caretIndex then
 				GUIInputControl.ms_CurrentInputFocus:setCaretPosition(caretIndex)
 				oldCaretIndex = caretIndex
@@ -88,7 +101,7 @@ addEventHandler("onClientPreRender", root,
 local function getNextEditbox(baseElement, startElement)
 	local children = baseElement:getChildren()
 	local idx = table.find(children, startElement)
-	
+
 	for i = idx+1, #children do
 		if instanceof(children[i], GUIEdit, true) then
 			return children[i]
@@ -99,7 +112,7 @@ local function getNextEditbox(baseElement, startElement)
 			return children[i]
 		end
 	end
-	
+
 	return false
 end
 

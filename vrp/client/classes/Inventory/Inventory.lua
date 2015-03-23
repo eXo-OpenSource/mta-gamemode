@@ -29,6 +29,10 @@ function Inventory:addItem(item)
 	if inv then
 		inv:addItem(item)
 	end
+
+	if TradeGUI:isInstantiated() then
+		TradeGUI:getSingleton():updateMyInventory(self)
+	end
 end
 
 function Inventory:removeItem(item, amount)
@@ -42,6 +46,10 @@ function Inventory:removeItem(item, amount)
 	if item.m_Count == 0 then
 		delete(item)
 		table.removevalue(self.m_Items, item)
+	end
+
+	if TradeGUI:isInstantiated() then
+		TradeGUI:getSingleton():updateMyInventory(self)
 	end
 end
 

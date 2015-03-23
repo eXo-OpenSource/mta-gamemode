@@ -101,11 +101,13 @@ end
 
 function GUIEdit:setMasked(maskChar)
 	self.m_MaskChar = maskChar or "*"
+	return self
 end
 
 function GUIEdit:setCursorDrawingEnabled(state)
 	self.m_DrawCursor = state
 	self:anyChange()
+	return self
 end
 
 function GUIEdit:getIndexFromPixel(posX, posY)
@@ -120,4 +122,13 @@ function GUIEdit:getIndexFromPixel(posX, posY)
 		end
 	end
 	return utfLen(text)
+end
+
+function GUIEdit:isNumeric()
+	return self.m_Numeric
+end
+
+function GUIEdit:setNumeric(numeric)
+	self.m_Numeric = numeric
+	return self
 end

@@ -22,5 +22,9 @@ function Item:getSlot()
 	return self.m_Slot
 end
 
+function Item:getName()
+	return Items[self.m_ItemId].name
+end
+
 function Item:use()
 end

@@ -21,6 +21,10 @@ function Item:setCount(count)
 	self.m_Count = count
 end
 
+function Item:getName()
+	return Items[self.m_ItemId].name
+end
+
 function Item:use()
 end
 
