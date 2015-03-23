@@ -20,7 +20,7 @@ function ItemRadio:use(inventory, player, slot)
 	local result = self:startObjectPlacing(player,
 		function(item, position, rotation)
 			if item ~= self then return end
-			if (position - player:getPosition()).length > 10 then
+			if (position - player:getPosition()).length > 20 then
 				player:sendError(_("Du musst in der Nähe der Zielposition sein!", player))
 
 				-- Add item to the inventory again

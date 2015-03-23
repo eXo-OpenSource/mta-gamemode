@@ -9,7 +9,7 @@ RadioMouseMenu = inherit(GUIMouseMenu)
 
 function RadioMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
-	
+
 	self:addItem(_"URL ändern",
 		function()
 			if self:getElement() then
@@ -20,8 +20,7 @@ function RadioMouseMenu:constructor(posX, posY, element)
 	self:addItem(_"Aufnehmen",
 		function()
 			if self:getElement() then
-				outputChatBox("Todo: Not implemented yet")
-				--triggerServerEvent("itemRadioCollect", self:getElement())
+				triggerServerEvent("worldItemCollect", self:getElement())
 			end
 		end
 	)

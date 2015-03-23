@@ -14,8 +14,8 @@ function InventoryGUI:constructor()
 	self.m_SelectedItem = false
 	self.m_CurrentCategory = ItemCategory.All
 
-	local w, h = screenWidth/5*3, screenHeight/5*3
-	GUIForm.constructor(self, screenWidth/5*1, screenHeight/5*1, w, h)
+	local w, h = screenWidth*0.6, screenHeight*0.6
+	GUIForm.constructor(self, screenWidth/2-w/2, screenHeight/2-h/2, w, h)
 	self.m_Background = GUIRectangle:new(0, 0, w, h, tocolor(0, 0, 0, 150), self)
 
 	-- todo: make dependand on h instead
@@ -23,7 +23,7 @@ function InventoryGUI:constructor()
 	local ENTRYWIDTH = w/3*2-50
 	local ENTRYSPACE = screenHeight/100
 
-	self.m_Scrollable = GUIScrollableArea:new(w/3, 50, ENTRYWIDTH, screenHeight, ENTRYWIDTH, screenHeight, false, false, self)
+	self.m_Scrollable = GUIScrollableArea:new(w/3, 50, ENTRYWIDTH, self.m_Height*0.78, ENTRYWIDTH, screenHeight, false, false, self)
 
 	self.m_CategoryRects = {}
 	for categoryId, categoryName in ipairs(ItemItemCategoryNames) do
@@ -163,9 +163,9 @@ end
 
 function InventoryGUI:resort(useanim)
 	local w, h = screenWidth/5*3, screenHeight/5*3
-	local ENTRYHEIGHT = screenHeight/100*7
+	local ENTRYHEIGHT = screenHeight*0.07
 	local ENTRYWIDTH = w/3*2-50
-	local ENTRYSPACE = screenHeight/100
+	local ENTRYSPACE = screenHeight*0.01
 	useanim = false -- Force anim being off
 
 	-- Todo: Add resort methods (table.sort GUIItems table)

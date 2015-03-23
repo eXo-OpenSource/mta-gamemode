@@ -153,18 +153,22 @@ addEventHandler("onClientResourceStart", resourceRoot,
 		bindKey("mouse_wheel_up", "down",
 			function()
 				local hoveredElement = GUIElement.getHoveredElement()
-				if hoveredElement then
+				while hoveredElement do
+					-- Trigger events up the tree
 					if hoveredElement.onInternalMouseWheelUp then hoveredElement:onInternalMouseWheelUp() end
 					if hoveredElement.onMouseWheelUp then hoveredElement:onMouseWheelUp() end
+					hoveredElement = hoveredElement.m_Parent
 				end
 			end
 		)
 		bindKey("mouse_wheel_down", "down",
 			function()
 				local hoveredElement = GUIElement.getHoveredElement()
-				if hoveredElement then
+				while hoveredElement do
+					-- Trigger events up the tree
 					if hoveredElement.onInternalMouseWheelDown then hoveredElement:onInternalMouseWheelDown() end
 					if hoveredElement.onMouseWheelDown then hoveredElement:onMouseWheelDown() end
+					hoveredElement = hoveredElement.m_Parent
 				end
 			end
 		)

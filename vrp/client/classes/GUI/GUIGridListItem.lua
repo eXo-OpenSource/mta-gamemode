@@ -13,7 +13,7 @@ function GUIGridListItem:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self, tocolor(0, 0, 0, 0))
 	GUIFontContainer.constructor(self, "", 1, VRPFont(28))
-	
+
 	self.m_Columns = {}
 end
 
@@ -44,14 +44,6 @@ function GUIGridListItem:drawThis()
 		currentXPos = currentXPos + columnWidth*self.m_Width + 5
 	end
 	dxSetBlendMode("blend")
-end
-
-function GUIGridListItem:onInternalMouseWheelUp()
-	self.m_Parent:onInternalMouseWheelUp()
-end
-
-function GUIGridListItem:onInternalMouseWheelDown()
-	self.m_Parent:onInternalMouseWheelDown()
 end
 
 function GUIGridListItem:onInternalLeftClick()

@@ -36,6 +36,11 @@ function WorldItem:collect(player)
 end
 
 function WorldItem:onClick(player)
+	if self.m_Owner and self.m_Owner ~= player then
+		AntiCheat:getSingleton():report(player, "Triggered collect event on an item which is not owned by the client", CheatSeverity.Middle)
+		return
+	end
+
 	-- DroppableItem:onClick should return true if we should handle the click, false if the item wants to handle the click itself
 	if self.m_Item:onClick(player, self) == true then
 		-- Let's reacquire the item
@@ -62,6 +67,21 @@ addEventHandler("worldItemClick", root,
 		if not worldItem then return end
 
 		worldItem:onClick(client)
+	end
+)
+
+addEvent("worldItemCollect", true)
+addEventHandler("worldItemCollect", root,
+	function()
+		local worldItem = WorldItem.Map[source]
+		if not worldItem then return end
+
+		if worldItem.m_Owner and worldItem.m_Owner ~= client then
+			AntiCheat:getSingleton():report(player, "Triggered collect event on an item which is not owned by the client", CheatSeverity.Middle)
+			return
+		end
+
+		worldItem:collect(client)
 	end
 )
 

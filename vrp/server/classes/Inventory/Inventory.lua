@@ -35,7 +35,7 @@ function Inventory.loadById(Id)
 
 	local itemData = fromJSON(row.Items)
 	local items = {}
-	for slot, info in ipairs(itemData) do
+	for slot, info in pairs(itemData) do
 		items[slot] = (Items[info[1]].class or Item):new(info[1], info[2])
 	end
 
@@ -54,7 +54,7 @@ end
 
 function Inventory:save()
 	local itemData = {}
-	for slot, item in ipairs(self.m_Items) do
+	for slot, item in pairs(self.m_Items) do
 		itemData[slot] = {item.m_ItemId, item.m_Count}
 	end
 
@@ -73,7 +73,11 @@ function Inventory:addItem(itemId, amount)
 	end
 
 	amount = amount or 1
-	if itemInfo.maxstack > 0 then
+	if amount > itemInfo.maxstack then -- Do not add item if it'd need multiple stacks (this might be a bad idea tho ==> keep it in mind when working with the inventory)
+		return false
+	end
+
+	if itemInfo.maxstack < math.huge then
 		local existingItem = self:findItem(itemId)
 		if existingItem and existingItem.m_Count+amount < itemInfo.maxstack then
 			existingItem:setCount(existingItem.m_Count + amount)
@@ -87,8 +91,8 @@ function Inventory:addItem(itemId, amount)
 end
 
 function Inventory:addItemByItem(item)
-	table.insert(self.m_Items, item)
-	local slot = #self.m_Items
+	local slot = #self.m_Items + 1
+	self.m_Items[slot] = item
 
 	if self.m_InteractingPlayer then
 		self.m_InteractingPlayer:triggerEvent("inventoryAddItem", self.m_Id, slot, item:getItemId(), item:getCount())
@@ -102,7 +106,7 @@ function Inventory:removeItem(slot, amount)
 	end
 
 	if not amount then
-		table.remove(self.m_Items, slot)
+		self.m_Items[slot] = nil
 		delete(item)
 		return true
 	end
@@ -140,7 +144,7 @@ function Inventory:placeItem(item, slot, owner, pos, rotation, amount)
 end
 
 function Inventory:findItem(itemId)
-	for slot, item in ipairs(self.m_Items) do
+	for slot, item in pairs(self.m_Items) do
 		if item.m_ItemId == itemId then
 			return item
 		end
@@ -154,9 +158,9 @@ end
 
 function Inventory:findAllItems(itemId)
 	local result = {}
-	for slot, item in ipairs(self.m_Items) do
+	for slot, item in pairs(self.m_Items) do
 		if item.m_ItemId == itemId then
-			table.insert(result, item)
+			result[#result + 1] = item
 		end
 	end
 	return result
@@ -212,7 +216,7 @@ function Inventory:sendFullSync()
 	if not self.m_InteractingPlayer then return end
 
 	local data = {}
-	for slot, item in ipairs(self.m_Items) do
+	for slot, item in pairs(self.m_Items) do
 		data[#data + 1] = {slot, item.m_ItemId, item.m_Count}
 	end
 

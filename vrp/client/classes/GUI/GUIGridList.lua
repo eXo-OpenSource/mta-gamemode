@@ -43,7 +43,19 @@ function GUIGridList:addItemNoClick(...)
 end
 
 function GUIGridList:removeItem(itemIndex)
-	delete(self.m_ScrollArea.m_Children[itemIndex])
+	local item = self.m_ScrollArea.m_Children[itemIndex]
+
+	-- Move all following items 1 item higher
+	local itemX, itemY = item:getPosition()
+	for k, v in pairs(self:getItems()) do
+		-- Since we do not have proper item rows, we've to check each height
+		local x, y = v:getPosition()
+		if y > itemY then
+			v:setPosition(x, y - ITEM_HEIGHT)
+		end
+	end
+
+	delete(item)
 	self:anyChange()
 end
 
@@ -95,14 +107,6 @@ function GUIGridList:onInternalSelectItem(item)
 
 	item:setColor(Color.LightBlue)
 	self:anyChange()
-end
-
-function GUIGridList:onInternalMouseWheelUp()
-	self.m_ScrollArea:onInternalMouseWheelUp()
-end
-
-function GUIGridList:onInternalMouseWheelDown()
-	self.m_ScrollArea:onInternalMouseWheelDown()
 end
 
 function GUIGridList:draw(incache) -- Swap render order
