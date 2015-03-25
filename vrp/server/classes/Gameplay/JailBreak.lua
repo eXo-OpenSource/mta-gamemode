@@ -11,74 +11,53 @@ addEvent("jailAnswersRetrieve", true)
 local TIME_BETWEEN_JAILBREAKS = 30*60*1000
 
 function JailBreak:constructor()
-	self.m_MainGate = getElementByID("jail_maingate")
-	self.m_IntGateRight = getElementByID("jail_intgate_right")
-	self.m_IntGateLeft = getElementByID("jail_intgate_left")
-	self.m_CellGates = {} -- Todo
-	self.m_MainGateState, self.m_InteriorGateState = true, true
 	self.m_LastJailBreakTime = 0
-	
-	self.m_MainGateKeypad = createObject(2886, 77.7, -234.5, 2.5, 0, 0, 180)
-	self.m_IntGateKeypad = createObject(2886, 98.3, -262.6, 6.2, 0, 0, 180)
-	
-	addEventHandler("keypadClick", root,
-		function()
-			if source == self.m_MainGateKeypad or source == self.m_IntGateKeypad and self.m_LastJailBreakTime + TIME_BETWEEN_JAILBREAKS > getTickCount() then
-				client:sendError(_("Du kannst den Gefängnisausbruch zurzeit nicht starten", client))
-				return
-			end
-		
-			if source == self.m_MainGateKeypad then
-				local questions = self:getQuestionSet(5)
-				client:triggerEvent("jailQuestionsRetrieve", 1, questions)
-			elseif source == self.m_IntGateKeypad then
-				local questions = self:getQuestionSet(5)
-				client:triggerEvent("jailQuestionsRetrieve", 2, questions)
-			end
-		end
-	)
-	addEventHandler("jailAnswersRetrieve", root,
-		function(answers, gateId)
-			if self:checkAnswers(answers) then
-				if gateId == 1 then
-					if self.m_MainGateState then
-						self:toggleMainGate(false)
-						setTimer(function() self:toggleMainGate(true) end, 60000, 1)
-					end
-				elseif gateId == 2 then
-					if self.m_InteriorGateState then
-						self.m_LastJailBreakTime = getTickCount()
-						self:toggleInteriorGate(false)
-						setTimer(function() self:toggleInteriorGate(true) end, 60000, 1)
-					end
-				end
-				client:sendSuccess("ACCESS GRANTED")
-			else
-				client:sendError(_("ACCESS DENIED. Zu viele falsche Fragen!", client))
-			end
-		end
-	)
+	self.m_OpenCellsKeypad = getElementByID("object (sec_keypad) (1)") -- TODO: Replace name by a proper name
+	self.m_ShutterDoor = getElementByID("ShutterDoor")
+	self.m_BombArea = BombArea:new(Vector3(3459.85, -2073.16, 16.82), function(area, player) player:triggerEvent("bankRobberyCountdown", 10) end, bind(self.Bomb_Explode, self), 10000)
+
+	self.m_GuardPed = getElementByID("JailGuardPed")
+	addEventHandler("onPedWasted", self.m_GuardPed, bind(self.GuardPed_Wasted, self))
+
+	self.m_ControlPed = getElementByID("JailControlPed")
+	addEventHandler("onPedWasted", self.m_ControlPed, bind(self.ControlPed_Wasted, self))
+
+	self.m_MainGateLeft = getElementByID("MainGateLeft")
+	self.m_MainGateRight = getElementByID("MainGateRight")
+	self.m_MainGateState = true
+
+	self.m_CellGates = {}
+	for i = 1, 4 do
+		self.m_CellGates[i] = getElementByID("CellGate"..i)
+	end
+
+	addEventHandler("keypadClick", root, bind(self.Keypad_Click, self))
+	addEventHandler("jailAnswersRetrieve", root, bind(self.KeypadAnswers_Retrieve, self))
 end
 
 function JailBreak:toggleMainGate(state) -- true: closed; false: open
 	self.m_MainGateState = state
-	
+
 	if state then
-		moveObject(self.m_MainGate, 1000, 76.7, -234.5, 0.6)
+		self.m_MainGateLeft:move(1500, 3444.2002, -2150, 17.8)
+		self.m_MainGateRight:move(1500, 3449.6006, -2150, 17.8)
 	else
-		moveObject(self.m_MainGate, 1000, 69.5, -234.5, 0.6)
+		self.m_MainGateLeft:move(1500, 3437.6, -2150, 17.8)
+		self.m_MainGateRight:move(1500, 3455.9, -2150, 17.8)
 	end
 end
 
-function JailBreak:toggleInteriorGate(state)
-	self.m_InteriorGateState = state
-	
+function JailBreak:toggleCellGate(i, state)
 	if state then
-		moveObject(self.m_IntGateLeft, 1000, 98.1, -262.7, 7.5)
-		moveObject(self.m_IntGateRight, 1000, 96.4, -262.76, 7.5)
+		self.m_CellGates[i]:move(1500, self.m_CellGates[i]:getPosition() - Vector3(2, 0, 0))
 	else
-		moveObject(self.m_IntGateLeft, 1000, 99.6, -262.7, 7.5)
-		moveObject(self.m_IntGateRight, 1000, 95, -262.8, 7.5)
+		self.m_CellGates[i]:move(1500, self.m_CellGates[i]:getPosition() + Vector3(2, 0, 0))
+	end
+end
+
+function JailBreak:toggleCellGates(state)
+	for i in pairs(self.m_CellGates) do
+		self:toggleCellGate(i, state)
 	end
 end
 
@@ -103,28 +82,50 @@ function JailBreak:checkAnswers(answers)
 	return wrongQuestionCount <= 1
 end
 
---[[
-Änderungsideen:
-- Gefängniszellen erst nach 1min Counter öffnen (damit Polizei genug Zeit hat das Ganze zu stoppen
+function JailBreak:GuardPed_Wasted(totalAmmo, killer)
+	if killer and killer:getKarma() < 0 then
+		self:toggleMainGate(false)
+	end
+end
 
-]]
+function JailBreak:ControlPed_Wasted(totalAmmo, killer)
 
--- Todo: the first field is not necessary
+end
+
+function JailBreak:Bomb_Explode()
+	self.m_ShutterDoor:move(500, self.m_ShutterDoor:getPosition() + Vector3(0, 0, 6))
+end
+
+function JailBreak:Keypad_Click()
+	if source == self.m_OpenCellsKeypad and self.m_LastJailBreakTime + TIME_BETWEEN_JAILBREAKS > getTickCount() then
+		client:sendError(_("Du kannst den Gefängnisausbruch zurzeit nicht starten", client))
+		return
+	end
+
+	if source == self.m_OpenCellsKeypad then
+		local questions = self:getQuestionSet(5)
+		client:triggerEvent("jailQuestionsRetrieve", 1, questions)
+	end
+end
+
+function JailBreak:KeypadAnswers_Retrieve(answers, gateId)
+	if self:checkAnswers(answers) then
+		if gateId == 1 then
+			-- Open all cells
+			self:toggleCellGates(false)
+		end
+		client:sendSuccess("ACCESS GRANTED")
+	else
+		client:sendError(_("ACCESS DENIED. Zu viele falsche Fragen!", client))
+	end
+end
+
+
+-- TODO: the first field is not necessary
 JailBreak.Questions = {
-	--[[{1, "Wer ist der Großmeister?", "Jusonex", "Doneasty", "LarSoWiTsH", "Alex_Stone"},
-	{2, "Wer ist Alex_Stone?", "Alex_Stone", "Johnny_Walker", "Gibaex", "thefleshpound"},
-	{3, "Nenne den Satz des Pythagoras! (c: Hypotenuse)", "c² = a² + b²", "a² = b² + c²", "c² = a² - b²", "b² = c² + b²"},
-	{4, "Wie ist das Wetter heute?", "Regnerisch", "Sonnig", "Gewitter", "Klarer Himmel"},
-	{5, "Was ist am besten?", "MTA", "Company of Heroes", "DayZ", "Call of Duty: Modern Warface 3"}]]
-	{1, "Berechne den elektrischen Widerstand R aus U = 34V, I = 500mA!", "68Ω", "17Ω", "34mΩ", "68MΩ"},
+	{1, "Wer ist Alex_Stone?", "Alex_Stone", "Johnny_Walker", "Gibaex", "thefleshpound"},
 	{2, "Nenne den Satz des Pythagoras! (c: Hypotenuse)", "c² = a² + b²", "a² = b² + c²", "c² = a² - b²", "b² = c² + b²"},
-	{3, "Was gibt die Kategorie eines Ethernetkabels an (Beispiel: Cat. 7)", "Die höchstmögliche Frequenz", "Die höchstmögliche Bandbreite", "Den Biegeradius", "Den Steckertyp"},
-	{4, "Wie viele nutzbare IP Adressen sind im Subnetz der IP 192.168.1.16 und Netzmaske 255.255.255.240?", "14", "16", "240", "1"},
-	{5, "Gegeben ist ein SFUTP Kabel. Wofür steht das U?", "Keine Adernschirmung", "Keine Gesamtschirmung", "Folienschirmung um die Adernschirmung", "Gesamtschirmung übernimmt ein Geflecht"},
-	{6, "Welches Protokoll befindet sich auf dem Application Layer des TCP/IP Models?", "FTP", "IP", "ICMP", "ARP"},
-	{7, "Was trifft auf TCP zu?", "TCP ist ein verbindungsorientiertes Protokoll", "TCP ist ein verbindungsloses Protokoll", "Die PDU von TCP wird Datagramm genannt", "TCP prüft nicht auf fehlende Segmente"},
-	{8, "Welcher Algorithmus liegt dem Routingprotokoll OSPF zugrunde?", "Shortest Path First", "Satz des Pythagoras", "Advanced Encryption Standard", "Routing Information Protocol"},
-	{9, "Welche der folgenden Programmiersprachen ist keine Programmiersprache?", "HTML", "C++", "C#", "Java"},
-	{10, "Welche Beziehung sollte in der objektorientierten Programmierung zwischen Klasse und Basisklasse vorliegen?", "Ist-ein Beziehung", "Hat-ein Beziehung", "Ehe", "War-ein Beziehung"},
-	{11, "Welchen Zweck hat das IRC-Protokoll?", "Chat", "Routing", "Dateiübertragungen", "Media-Streaming"},
+	{3, "Was ist am besten?", "MTA", "Company of Heroes", "DayZ", "Call of Duty: Modern Warface 3"},
+	{4, "Welche der folgenden Programmiersprachen ist keine Programmiersprache?", "HTML", "C++", "C#", "Java"},
+	{5, "Welchen Zweck hat das IRC-Protokoll?", "Chat", "Routing", "Dateiübertragungen", "Media-Streaming"},
 }

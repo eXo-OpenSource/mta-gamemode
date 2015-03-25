@@ -80,8 +80,9 @@ end
 
 function JobPolice:jailPlayer(player, policeman)
 	-- Teleport to jail
-	setElementPosition(player, 2739+math.random(-10, 10), -2806, 18)
-	setElementRotation(player, 0, 0, 180)
+	local pos = JailCells[math.random(1, #JailCells)]
+	player:setPosition(pos + Vector3(math.random(-2, 2), math.random(-2, 2), 0))
+	player:setRotation(0, 0, 180)
 
 	-- Pay some money, karma and xp to the policeman
 	policeman:giveMoney(player:getWantedLevel() * 100)
@@ -158,3 +159,12 @@ function JobPolice:reportCrime(player, crimeType)
 		end
 	end
 end
+
+local JailCells = {
+	Vector3(3473.7, -2090.1001, 20.9),
+	Vector3(3472.8999, -2106.1001, 20.9),
+	Vector3(3486.8999, -2106.1001, 20.9),
+	Vector3(3488.1001, -2090.3999, 20.9),
+	Vector3(3453.8999, -2153.8999, 17.1),
+	Vector3(3521, -2063.8, 21.3)
+}

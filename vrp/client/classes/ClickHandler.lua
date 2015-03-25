@@ -15,7 +15,7 @@ function ClickHandler:constructor()
 	}
 	self.m_ClickInfo = false
 	self.m_DrawCursor = false
-	
+
 	addEventHandler("onClientClick", root,
 		function(button, state, absoluteX, absoluteY, worldX, worldY, worldZ, element)
 			if state == "up" then
@@ -32,7 +32,7 @@ function ClickHandler:constructor()
 				setCursorAlpha(255)
 				return
 			end
-		
+
 			local element = getElementBehindCursor(worldX, worldY, worldZ)
 			if not element then
 				self.m_DrawCursor = false
@@ -56,14 +56,14 @@ function ClickHandler:constructor()
 		function()
 			if self.m_DrawCursor then
 				local cx, cy = getCursorPosition()
-				
+
 				if cx then
 					-- Convert relative coordinates to absolute ones
 					cx, cy = cx * screenWidth, cy * screenHeight
 
 					dxDrawImage(cx-18/2, cy-32/2, 24, 24, "files/images/Mouse.png", 0, 0, 0, Color.White, true)
 				end
-			end	
+			end
 		end
 	)
 end
@@ -94,7 +94,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 
 	-- Close all currently open menus
 	if trigger then self:clearMouseMenus() end
-	
+
 	-- Process CEF clicks
 	if not trigger and WebUIManager:getInstance():isPositionWithinWindow(clickInfo.absoluteX, clickInfo.absoluteY) then
 		return false
@@ -102,7 +102,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	if trigger and WebUIManager:getInstance():invokeClick(clickInfo.button, "up", clickInfo.absoluteX, clickInfo.absoluteY) then
 		return false
 	end
-	
+
 	local element, button = clickInfo.element, clickInfo.button
 	if not element or not isElement(element) then
 		return false
@@ -112,7 +112,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	local playerX, playerY, playerZ = getElementPosition(localPlayer)
 	local x, y, z = getElementPosition(element)
 	local range = getDistanceBetweenPoints3D(playerX, playerY, playerZ, x, y, z)
-	
+
 	-- Phase 1: Check per-element handlers
 	if element == localPlayer then
 		if trigger then
@@ -123,7 +123,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		end
 		return true
 	end
-	
+
 	-- Phase 2: Check for world items
 	if getElementData(element, "worlditem") then
 		if trigger then
@@ -134,7 +134,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		end
 		return true
 	end
-	
+
 	-- Phase 3: Check models
 	if self:checkModels(model, 1775, 1776, 1209) then
 		if trigger then
@@ -153,7 +153,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		end
 		return true
 	end
-	if model == 2886 then -- Keypad
+	if model == 2922 or model == 2886 then -- Keypad
 		if trigger then
 			if button == "left" then
 				triggerServerEvent("keypadClick", element)
@@ -161,7 +161,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		end
 		return true
 	end
-	
+
 	-- Phase 4: Check element types
 	if self.m_Menu[elementType] then
 		if trigger then

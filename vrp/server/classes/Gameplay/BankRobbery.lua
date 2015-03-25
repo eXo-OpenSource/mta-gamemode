@@ -14,14 +14,15 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 	--self.m_Safe = createObject(2332, position.x, position.y, position.z, 0, 0, rotation)
 	--setElementInterior(self.m_Safe, interior)
 	--setElementDimension(self.m_Safe, dimension or 0)
-	
+
 	table.insert(BankRobbery.Map, self)
-	
+
 	self.m_LastRobbery = 0
 	self.m_Timer = false
+	self.m_BombArea = BombArea:new(position, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), HOLD_TIME)
 	self.m_ColShape = createColSphere(position, 25)
 	setElementInterior(self.m_ColShape, interior)
-	
+
 	addEventHandler("onColShapeLeave", self.m_ColShape,
 		function(element, matchingDimension)
 			if getElementType(element) == "player" and matchingDimension then
@@ -33,7 +34,7 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 							if player:getJob() == JobPolice:getSingleton() then
 								player:giveMoney(700)
 							end
-							
+
 							player:triggerEvent("bankRobberyCountdownStop")
 						end
 					end
@@ -43,39 +44,6 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 				end
 			end
 		end
-	)
-end
-
-function BankRobbery:installBomb()
-	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-		player:triggerEvent("bankRobberyCountdown", HOLD_TIME/1000)
-		
-		local group = player:getGroup()
-		if group and group:isEvil() then
-			player:reportCrime(Crime.BankRobbery)
-		end
-	end
-	
-	-- Update last tick
-	self.m_LastRobbery = getTickCount()
-	
-	self.m_Timer = setTimer(
-		function()
-			local x, y, z = getElementPosition(self.m_ColShape)
-			createExplosion(x, y, z, 11) -- Type: Small
-			--setElementModel(self.m_Safe, 1829)
-		
-			-- Give all groups money who are within the colshape (amount depends on player count)
-			for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-				local group = player:getGroup()
-				if group and group:isEvil() then
-					group:giveMoney(400)
-					player:giveMoney(400)
-				end
-			end
-		end,
-		HOLD_TIME,
-		1
 	)
 end
 
@@ -99,51 +67,47 @@ function BankRobbery:countPolicePeople()
 	return amount
 end
 
-function BankRobbery.getRobableBankAtElement(element)
-	for k, bankRobbery in ipairs(BankRobbery.Map) do
-		if isElementWithinColShape(element, bankRobbery.m_ColShape) then
-			return bankRobbery
-		end
-	end
-	return false
-end
-
-function BankRobbery.onBombPlace(player)
-	local bankRobbery = BankRobbery.getRobableBankAtElement(player)
-	if not bankRobbery then
-		player:sendError(_("Du bist nicht in der Nähe einer ausraubbaren Bank", player))
-		return false
-	end
-	
+function BankRobbery:BombArea_Place(bombArea, player)
 	if not player:getGroup() then
 		player:sendError(_("Banken kannst du nur, wenn du Mitglied einer Gruppe bist, ausrauben", player))
-		return true
+		return false
 	end
-	
-	if not player:getGroup():isEvil() then
-		player:sendError(_("Als Gruppe mit einem positiven Karma kannst du keine Banküberfälle starten", player))
-		return true
-	end
-	
-	if getTickCount() < bankRobbery.m_LastRobbery+MIN_TIME_BETWEEN_ROBBS then
+
+	if getTickCount() < self.m_LastRobbery+MIN_TIME_BETWEEN_ROBBS then
 		player:sendError(_("Banken können nur einmal innerhalb von 30min ausgeraubt werden!", player))
-		return true
+		return false
 	end
-	
+
 	if not DEBUG and JobPolice:getSingleton():countPlayers() < 5 then
 		player:sendError(_("Um den Überfall starten zu können, müssen mindestens 5 Polizisten online sein!", player))
-		return
+		return false
 	end
-	
-	local x, y, z = getElementPosition(bankRobbery.m_ColShape)
-	if getDistanceBetweenPoints3D(x, y, z, getElementPosition(player)) > 5 then
-		player:sendError(_("Du befindest dich nicht nah genug am Tresor", player))
-		return true
+
+	-- Update last tick
+	self.m_LastRobbery = getTickCount()
+
+	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
+		player:triggerEvent("bankRobberyCountdown", HOLD_TIME/1000)
+
+		local group = player:getGroup()
+		if group and group:isEvil() then
+			player:reportCrime(Crime.BankRobbery)
+		end
 	end
-	
-	bankRobbery:installBomb()
 	return true
 end
+
+function BankRobbery:BombArea_Explode(bombArea)
+	-- Give all groups money who are within the colshape (amount depends on player count)
+	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
+		local group = player:getGroup()
+		if group and group:isEvil() then
+			group:giveMoney(400)
+			player:giveMoney(400)
+		end
+	end
+end
+
 
 function BankRobbery.initializeAll()
 	BankRobbery:new(Vector3(827.3, 4227.6, 15.75), 0, 1)

@@ -201,7 +201,9 @@ function Inventory:useItem(item, player, slot)
 
 	-- Possible issue: If Item:use fails, the item will never get removed
 	if item.use then
-		item:use(self, client, slot)
+		if item:use(self, client, slot) == false then
+			return false
+		end
 	end
 
 	-- Tell the client that we started using the item

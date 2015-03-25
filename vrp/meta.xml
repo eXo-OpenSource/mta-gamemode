@@ -72,7 +72,6 @@
 	<script src="server/classes/GangAreaManager.lua" type="server"/>
 	<script src="server/classes/AntiCheat.lua" type="server"/>
 	<script src="server/classes/Weather.lua" type="server"/>
-	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Nametag.lua" type="server"/>
 	<script src="server/classes/Collectables.lua" type="server"/>
 	<script src="server/classes/DrivingSchool.lua" type="server"/>
@@ -81,6 +80,10 @@
 	<script src="server/classes/Gameplay/AmmuLadder.lua" type="server"/>
 	<script src="server/classes/SkinShops.lua" type="server"/>
 	<script src="server/classes/Achievement.lua" type="server"/>
+
+	<!-- Gameplay -->
+	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
+	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
