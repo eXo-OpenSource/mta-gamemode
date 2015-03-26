@@ -47,7 +47,7 @@ function LocalPlayer:isLoggedIn()
 end
 
 function LocalPlayer:getPlayTime()
-	return math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self.m_JoinTime)/1000/60)
+	return (self:getPrivateSync("LastPlayTime") and self.m_JoinTime and math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self.m_JoinTime)/1000/60)) or 0
 end
 
 function LocalPlayer:getPoints()

@@ -177,15 +177,17 @@ function Player:spawn()
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
-	-- Apply and delete health data
-	self:setHealth(self.m_Health)
-	self:setArmor(self.m_Armor)
-	self.m_Health, self.m_Armor = nil, nil
+	if not self:isGuest() then
+		-- Apply and delete health data
+		self:setHealth(self.m_Health)
+		self:setArmor(self.m_Armor)
+		self.m_Health, self.m_Armor = nil, nil
 
-	-- Give weapons
-	for k, info in pairs(self.m_Weapons) do
-		giveWeapon(self, info[1], info[2])
-	end
+		-- Give weapons
+		for k, info in pairs(self.m_Weapons) do
+			giveWeapon(self, info[1], info[2])
+		end
+	end	
 end
 
 function Player:respawn(position, rotation)

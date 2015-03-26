@@ -125,4 +125,3 @@ end
 
 addEvent("shortMessageBox", true)
 addEventHandler("shortMessageBox", root, function(...) ShortMessage:new(...) end)
-
