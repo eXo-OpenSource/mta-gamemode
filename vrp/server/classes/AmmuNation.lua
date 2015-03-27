@@ -30,6 +30,7 @@ function AmmuNation:buyWeapon(id)
 			end
 			client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
 		end
+		client:sendWarning(_("Dein Waffenlevel ist zu niedrig!",client),125,0,0)
 	end
 end
 

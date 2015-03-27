@@ -28,9 +28,6 @@ function Player:constructor()
 	self.m_LastGotWantedLevelTime = 0
 	self.m_JoinTime = getTickCount()
 	self.m_Crimes = {}
-
-	self:setMoney(0)
-	self:setWantedLevel(0)
 end
 
 function Player:destructor()
@@ -100,15 +97,22 @@ function Player:createCharacter()
 end
 
 function Player:loadCharacterInfo()
+	if self:isGuest() then
+		Blip.sendAllToClient(self)
+		RadarArea.sendAllToClient(self)
+		return
+	end	
+
 	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
 
+	-- Reset Name
+	self:setName(self:getAccount():getName())
+	
 	-- Load non-element related data
 	self:load()
-
-	self:setName(self:getAccount():getName()) -- TODO: Does not work for some reason???
 
 	-- Load health data
 	self.m_Health = row.Health
@@ -161,23 +165,29 @@ function Player:save()
 end
 
 function Player:spawn()
-	if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
-		if self:isGuest() then
-			spawnPlayer(self, 638, -1542, 15, self.m_Skin, self.m_SavedInterior, 0)
-		else
-			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin, self.m_SavedInterior, 0)
-		end
-	elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
-		VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+	if self:isGuest() then
+		-- set default data (fallback / guest)
+		self:setMoney(0)
+		self:setXP(0)
+		self:setKarma(0)
+		self:setWantedLevel(0)
+		self:setJobLevel(0)
+		self:setWeaponLevel(0)
+		self:setVehicleLevel(0)
+		self:setSkinLevel(0)
+		
+		-- spawn the player
+		spawnPlayer(self, 2028, -1405, 18, self.m_Skin, self.m_SavedInterior, 0) -- Todo: change position
+		self:setRotation(0, 0, 180)
 	else
-		self:sendMessage("An error occurred", 255, 0, 0)
-	end
-
-	setElementFrozen(self, false)
-	setCameraTarget(self, self)
-	fadeCamera(self, true)
-
-	if not self:isGuest() then
+		if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
+			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin, self.m_SavedInterior, 0)
+		elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
+			VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
+		else
+			self:sendMessage("An error occurred", 255, 0, 0)
+		end
+	
 		-- Apply and delete health data
 		self:setHealth(self.m_Health)
 		self:setArmor(self.m_Armor)
@@ -187,7 +197,11 @@ function Player:spawn()
 		for k, info in pairs(self.m_Weapons) do
 			giveWeapon(self, info[1], info[2])
 		end
-	end	
+	end
+	
+	setElementFrozen(self, false)
+	setCameraTarget(self, self)
+	fadeCamera(self, true)
 end
 
 function Player:respawn(position, rotation)

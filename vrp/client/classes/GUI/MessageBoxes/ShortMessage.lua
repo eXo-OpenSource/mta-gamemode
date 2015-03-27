@@ -29,7 +29,7 @@ function ShortMessage:constructor(text, timeout)
 	-- Calculate y position
 	y = y - h - 20
 
-	timeout = timeout and timeout >= 50 and timeout or 4000
+	timeout = type(timeout) == "number" and timeout >= 50 and timeout or 4000
 	setTimer(function () delete(self) end, timeout + 500, 1)
 
 	DxElement.constructor(self, x, y, w, h)
