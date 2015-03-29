@@ -43,6 +43,7 @@ function Core:ready()
 	DeathmatchEvent:new()
 	EventManager:new()
 	TippManager:new()
+	JailBreak:new()
 
 	VehicleShop.initializeAll()
 	VehicleGarages:new()
