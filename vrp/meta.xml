@@ -551,6 +551,7 @@
 	<file src="files/maps/Garages.parsed_map"/>
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Jail.map"/>
+	<map src="files/maps/JailOut.map"/>
 	<map src="files/maps/Bank.map"/>
 	<map src="files/maps/Court.map"/>
 
