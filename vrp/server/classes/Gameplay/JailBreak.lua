@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/JailBreak.lua
+-- *  FILE:        server/classes/Gameplay/JailBreak.lua
 -- *  PURPOSE:     Jailbreak class
 -- *
 -- ****************************************************************************
@@ -48,7 +48,12 @@ function JailBreak:constructor()
 	addEventHandler("onColShapeHit", self.m_PipeExit2Shape, bind(self.PipeExitShape_Hit, self))
 	self.m_PipeExitTrollShape = createColSphere(3010.5, -2126.0996, 1, 3)
 	self.m_PipeExitTrollShape:setDimension(5)
-	addEventHandler("onColShapeHit", self.m_PipeExitTrollShape, bind(self.PipeExitTrollShape, self))
+	addEventHandler("onColShapeHit", self.m_PipeExitTrollShape, bind(self.PipeExitTrollShape_Hit, self))
+
+	-- Exit doors
+	createObject(3109, 311.79999, -1520.9, 25.1, 0, 0, 324)
+    createObject(3109, 2701.6001, -1111.3, 69.8, 0, 0, 0)
+
 end
 
 function JailBreak:toggleMainGate(state) -- true: closed; false: open
@@ -87,10 +92,6 @@ function JailBreak:toggleCellGates(state)
 	end
 end
 
-function JailBreak:getRandomQuestion()
-	return JailBreak.Questions[Randomizer:get(1, #JailBreak.Questions)]
-end
-
 function JailBreak:getQuestionSet(numQuestions)
 	return Randomizer:getRandomOf(numQuestions, JailBreak.Questions)
 end
@@ -101,7 +102,7 @@ function JailBreak:checkAnswers(answers)
 		if not JailBreak.Questions[questionId] then
 			return false
 		end
-		if JailBreak.Questions[questionId][3] ~= answer then
+		if JailBreak.Questions[questionId][2] ~= answer then
 			wrongQuestionCount = wrongQuestionCount + 1
 		end
 	end
@@ -110,7 +111,7 @@ end
 
 function JailBreak:respawnGuardPed()
 	self.m_GuardPed:destroy()
-	self.m_GuardPed = createPed(71, 3453.9004, -2153.8994, 17.1)
+	self.m_GuardPed = Ped.create(71, 3453.9004, -2153.8994, 17.1)
 end
 
 function JailBreak:reset()
@@ -135,9 +136,18 @@ function JailBreak:GuardPed_Wasted(totalAmmo, killer)
 		setTimer(
 			function()
 				-- Report jailbreak after a short delay
-				if isElement(killer) then
-					killer:reportCrime(Crime.JailBreak)
+				for k, player in pairs(getPlayersInRange(self.m_GuardPed:getPosition(), 100)) do
+					if player:getKarma() < 0 then
+						player:reportCrime(Crime.JailBreak)
+						player:sendShortMessage(_("ACHTUNG! Ihr wurdet entdeckt!", player))
+					end
 				end
+
+				-- Report special crime
+				JobPolice:getSingleton():reportSpecialCrime(Crime.JailBreak, "Unbekannte sind in das Gefängnis eingebrochen und dabei Gefangene zu befreien") -- TODO: Mark up for translation
+
+				-- Tell all clients that we started jailbreak (this also invokes the siren)
+				triggerClientEvent("jailBreakStart", resourceRoot)
 
 				-- Close main gate | TODO: How does the police enter the interior? ==> Clicksystem
 				self:toggleMainGate(true)
@@ -199,10 +209,22 @@ end
 function JailBreak:PipeExitShape_Hit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		hitElement:setDimension(0)
+
+		local positions = {
+			{1489, -1720.8, 8.2, 166},
+    		{1412.7, -1305, 9.5, 185},
+		    {2699.8999, -1110.6, 69.6, 90},
+		    {311.89999, -1520.1, 24.9, 0},
+		    {2263.5, -755.5, 38, 116},
+		    {1271.5, 295.29999, 20.7, 0}
+		}
+		local x, y, z, rot = unpack(Randomizer:getRandomTableValue(positions))
+		hitElement:setPosition(x, y, z)
+		hitElement:setRotation(0, 0, rot)
 	end
 end
 
-function JailBreak:PipeExitTrollShape(hitElement, matchingDimension)
+function JailBreak:PipeExitTrollShape_Hit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		hitElement:setDimension(0)
 		hitElement:setPosition(2868.82, -2125.05, 5.30)
@@ -211,11 +233,17 @@ function JailBreak:PipeExitTrollShape(hitElement, matchingDimension)
 end
 
 
--- TODO: the first field is not necessary
 JailBreak.Questions = {
-	{1, "Wer ist Alex_Stone?", "Alex_Stone", "Johnny_Walker", "Gibaex", "thefleshpound"},
-	{2, "Nenne den Satz des Pythagoras! (c: Hypotenuse)", "c² = a² + b²", "a² = b² + c²", "c² = a² - b²", "b² = c² + b²"},
-	{3, "Was ist am besten?", "MTA", "Company of Heroes", "DayZ", "Call of Duty: Modern Warface 3"},
-	{4, "Welche der folgenden Programmiersprachen ist keine Programmiersprache?", "HTML", "C++", "C#", "Java"},
-	{5, "Welchen Zweck hat das IRC-Protokoll?", "Chat", "Routing", "Dateiübertragungen", "Media-Streaming"},
+	{"Nenne den Satz des Pythagoras! (c: Hypotenuse)", "c² = a² + b²", "a² = b² + c²", "c² = a² - b²", "b² = c² + b²"},
+	{"Welche der folgenden Sprachen ist keine Programmiersprache?", "HTML", "C++", "C#", "Java"},
+	{"Welchen Zweck hat das IRC-Protokoll?", "Chat", "Routing", "Dateiübertragungen", "Media-Streaming"},
+	{"Wofür steht CPU?", "Central Processing Unit", "Cheese Proccess Undertakings", "Central Programming Unit", "Central Progress Unit"},
+	{"Wofür steht RAM?", "Random Access Memory", "Röchelhusten am Mittelbauch", "Right Access Memory", "Rare Access Memory"},
+	{"Wer gilt als Entwickler von C++?", "Bjarne Stroustrup", "Dennis Ritchie", "Linus Torvalds", "Bill Gates"},
+	{"Wer gilt als Gründer von Microsoft?", "Bill Gates", "Linus Torvalds", "Steve Jobs", "Dennis Ritchie"},
+	{"Wie hoch ist die Lichtgeschwindigkeit?",  "299 792.458 m/s", "299.792458 m/s", "2 997 924.58 m/s", "29 792.458 m/s"},
 }
+-- Add unique IDs
+for index in ipairs(JailBreak.Questions) do
+	JailBreak.Questions[index][6] = index
+end

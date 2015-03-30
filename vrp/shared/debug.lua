@@ -19,23 +19,23 @@ function checkArgs(funcName, ...)
 
 	for k, typeNames in ipairs(argTypes) do
 		local paramName, paramValue = debug.getlocal(2, isMethodCall and k+1 or k)
-		
+
 		if paramName == "self" then
 			isMethodCall = true
 			paramName, paramValue = debug.getlocal(2, k+1)
 		end
-		
+
 		if paramName == nil or paramValue == nil then
 			outputDebugString(debug.traceback())
 			if triggerServerEvent then -- Are we clientside?
 				outputConsole(debug.traceback())
 			end
-			error("Invalid amount of arguments")			
+			error("Invalid amount of arguments")
 		end
-		
+
 		local validArguments = false
 		local paramType = type(paramValue)
-		
+
 		if type(typeNames) == "table" then
 			for k, v in ipairs(typeNames) do
 				if paramType == v then
@@ -47,12 +47,12 @@ function checkArgs(funcName, ...)
 				validArguments = true
 			end
 		end
-			
+
 		if not validArguments then
 			-- ToDo: Fix this (stack level is different, because sometimes our calls go through the metatable stuff, sometimes not)
 			--[[local debugInfo = debug.getinfo(3)
 			local errorMsg = ("Bad argument #%d @ %s %s:%d %s expected, got %s"):format(k, funcName, debugInfo.short_src, debugInfo.currentline, typeName, type(paramValue))]]
-			
+
 			-- Temp fix: Print the whole stack traceback
 			local errorMsg = debug.traceback().."\n      '"..paramName.."' got "..paramType..", expected "..tostring(typeNames)
 			if outputServerLog then
@@ -77,6 +77,20 @@ function outputTable(tab)
 		end
 		outputDebugString("End")
 	end
+end
+
+function tableToString(tab)
+	local result = "{"
+	for k, v in pairs(tab) do
+		if type(v) == "table" then
+			result = result.."["..tostring(k).."] = "..tableToString(v)
+		else
+			result = result.."["..tostring(k).."] = "..tostring(v)
+		end
+		result = result..", "
+	end
+	result = result.."}"
+	return result
 end
 
 -- Hacked in from runcode

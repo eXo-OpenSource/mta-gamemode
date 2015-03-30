@@ -160,6 +160,10 @@ function JobPolice:reportCrime(player, crimeType)
 	end
 end
 
+function JobPolice:reportSpecialCrime(crimeType, message)
+	self:sendMessage(message)
+end
+
 local JailCells = {
 	Vector3(3473.7, -2090.1001, 20.9),
 	Vector3(3472.8999, -2106.1001, 20.9),

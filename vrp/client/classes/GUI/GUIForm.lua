@@ -7,11 +7,13 @@
 -- ****************************************************************************
 GUIForm = inherit(CacheArea)
 
-function GUIForm:constructor(posX, posY, width, height)
+function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter)
 	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true)
 	self.m_KeyBinds = {}
-	
-	Cursor:show()
+
+	if incrementCursorCounter ~= false then
+		Cursor:show()
+	end
 end
 
 function GUIForm:destructor()
@@ -21,7 +23,7 @@ function GUIForm:destructor()
 	self.m_KeyBinds = {}
 	self:setVisible(false)
 	Cursor:hide()
-	
+
 	-- Todo: Replace this by virtual_destructor
 	CacheArea.destructor(self)
 end
@@ -76,7 +78,7 @@ function GUIForm:bind(key, fn)
 	if self.m_KeyBinds[key] then
 		unbindKey(key, "down", self.m_KeyBinds[key])
 	end
-	
+
 	local handler = bind(fn, self)
 	self.m_KeyBinds[key] = handler
 	bindKey(key, "down", handler)
@@ -86,7 +88,6 @@ function GUIForm:unbind(key, fn)
 	if not self.m_KeyBinds[key] then
 		return
 	end
-	
+
 	unbindKey(key, "down", self.m_KeyBinds[key])
 end
-

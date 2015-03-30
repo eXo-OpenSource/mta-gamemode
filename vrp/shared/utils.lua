@@ -67,11 +67,15 @@ function table.findAll(tab, value)
 	return result
 end
 
-function table.compare(tab1, tab2)
+function table.compare(tab1, tab2) -- This method is for debugging purposes only
 	-- Check if tab2 is subset of tab1
 	for k, v in pairs(tab1) do
 		if type(v) == "table" and type(tab2[k]) == "table" then
 			if not table.compare(v, tab2[k]) then
+				return false
+			end
+		elseif type(v) == "number" and type(tab2[k]) == "number" then
+			if not floatEqual(v, tab2[k]) then
 				return false
 			end
 		elseif v ~= tab2[k] then
@@ -83,6 +87,10 @@ function table.compare(tab1, tab2)
 	for k, v in pairs(tab2) do
 		if type(v) == "table" and type(tab1[k]) == "table" then
 			if not table.compare(v, tab1[k]) then
+				return false
+			end
+		elseif type(v) == "number" and type(tab1[k]) == "number" then
+			if not floatEqual(v, tab1[k]) then
 				return false
 			end
 		elseif v ~= tab1[k] then
@@ -403,7 +411,7 @@ function getCrimeById(crimeId)
 	return false
 end
 
-function string.countChar (str, char)
+function string.countChar(str, char)
 	return math.floor((string.len(str) - string.len(string.gsub(str, char, "")))/string.len(char))
 end
 
@@ -413,7 +421,7 @@ function teleportPlayerNextToVehicle(player, vehicle, distance)
 	player:setPosition(vehicle.position + vehicle.matrix.right * (distance or 1))
 end
 
-function fromboolean (bool)
+function fromboolean(bool)
 	return bool and 1 or 0
 end
 
@@ -431,4 +439,20 @@ function getAnglePosition(x, y, z, rx, ry, rz, distance, angle, height)
 	local newZ = z + height - dz;
 
 	return newX, newY, newZ;
+end
+
+function getPlayersInRange(pos, range, inTable)
+	local result = {}
+	for k, player in pairs(inTable or getElementsByType("player")) do
+		-- I guess calling getDistanceBetweenPoints3D is faster than using vector operations
+		if getDistanceBetweenPoints3D(pos, player.position) <= range then
+			result[#result + 1] = player
+		end
+	end
+	return result
+end
+
+local FLOAT_EPSILON = 1e-5 --1e-9
+function floatEqual(a, b)
+	return math.abs(a - b) <= FLOAT_EPSILON
 end

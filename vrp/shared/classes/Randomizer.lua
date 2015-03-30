@@ -20,7 +20,7 @@ function Randomizer:getRandomOf(n, opportunities)
 	if n > #opportunities then
 		return false
 	end
-	
+
 	local result = {}
 	for i = 1, n do
 		-- Todo: Try optimizing the following
@@ -28,9 +28,13 @@ function Randomizer:getRandomOf(n, opportunities)
 		repeat
 			rand = math.random(1, #opportunities)
 		until not table.find(result, opportunities[rand])
-		
+
 		table.insert(result, opportunities[rand])
 	end
-	
+
 	return result
+end
+
+function Randomizer:getRandomTableValue(tab)
+	return tab[math.random(1, #tab)]
 end

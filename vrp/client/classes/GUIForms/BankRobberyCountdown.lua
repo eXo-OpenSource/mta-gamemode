@@ -9,9 +9,9 @@ BankRobberyCountdown = inherit(GUIForm)
 inherit(Singleton, BankRobberyCountdown)
 
 function BankRobberyCountdown:constructor()
-	GUIForm.constructor(self, screenWidth/2-200/2, 10, 200, 50)
+	GUIForm.constructor(self, screenWidth/2-200/2, 10, 200, 50, false)
 	self.m_Seconds = 0
-	
+
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/BankRobberyCountdown.png", self)
 	self.m_CountdownLabel = GUILabel:new(0, 0, self.m_Width, self.m_Height, tostring(self.m_Seconds), self):setAlignX("center"):setAlignY("center"):setFont(VRPFont(self.m_Height*0.75))
 end
@@ -19,12 +19,12 @@ end
 function BankRobberyCountdown:startCountdown(seconds)
 	self.m_Seconds = seconds
 	self.m_CountdownLabel:setText(tostring(self.m_Seconds))
-	
+
 	self.m_Timer = setTimer(
 		function()
 			self.m_Seconds = self.m_Seconds - 1
 			self.m_CountdownLabel:setText(tostring(self.m_Seconds))
-			
+
 			if self.m_Seconds == 0 then
 				delete(self)
 			end

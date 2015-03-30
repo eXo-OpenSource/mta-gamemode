@@ -515,6 +515,7 @@
 	<vrpfile src="files/audio/Halleluja.mp3"/>
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/Enginestart.mp3"/>
+	<vrpfile src="files/audio/Siren.ogg"/>
 
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>

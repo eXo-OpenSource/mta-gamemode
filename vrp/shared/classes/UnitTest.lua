@@ -41,12 +41,12 @@ end
 --
 -- Checks if both parameters have the same value
 -- Parameters:
---    expected: The expected value
 --    actual: The actual value
+--    expected: The expected value
 -- Returns:
 --    Returns true if both parameters are equal, false otherwise
 --
-function UnitTest:assertEquals(expected, actual)
+function UnitTest:assertEquals(actual, expected)
     if expected == actual then
         return true
     else
@@ -59,17 +59,17 @@ end
 --
 -- Compares both tables by their keys and values (deep comparison)
 -- Parameters:
---    expected: The expected key-value map
 --    actual: The actual key-value map
+--    expected: The expected key-value map
 -- Returns:
 --    Returns true if both tables are equal, false otherwise
 --
-function UnitTest:assertTableEquals(expected, actual)
+function UnitTest:assertTableEquals(actual, expected)
     -- Perform a deep comparison
     if table.compare(expected, actual) then
         return true
     else
-        self:outputLog(("ERROR: Test '%s' (line %d) failed. Expected:\n%s.\n\nGot:\n%s"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, expected, actual))
+        self:outputLog(("ERROR: Test '%s' (line %d) failed.\nExpected:\n%s.\n\nGot:\n%s"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tableToString(expected), tableToString(actual)))
         self:markAsFailed()
         return false
     end
