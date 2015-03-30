@@ -11,15 +11,15 @@ function CustomF11Map:constructor()
 	self.m_RenderFunc = bind(self.draw, self)
 	self.m_Visible = false
 	self.m_Enabled = false
-	
+
 	bindKey("f11", "down",
 		function()
 			if not self.m_Enabled then
 				return
 			end
-		
+
 			self.m_Visible = not self.m_Visible
-			
+
 			if self.m_Visible then
 				addEventHandler("onClientRender", root, self.m_RenderFunc)
 			else
@@ -41,7 +41,7 @@ end
 
 function CustomF11Map:disable()
 	toggleControl("radar", true)
-	
+
 	self.m_Enabled = false
 	self.m_Visible = false
 	removeEventHandler("onClientRender", root, self.m_RenderFunc)
@@ -56,7 +56,7 @@ function CustomF11Map:draw()
 
 	-- Draw gang areas
 	if toboolean(core:get("HUD", "drawGangAreas", 1)) then
-		for i, v in ipairs(HUDRadar:getSingleton().m_Areas) do
+		for i, v in pairs(HUDRadar:getSingleton().m_Areas) do
 			local mapX, mapY = CustomF11Map.worldToMapPosition(v.X, v.Y)
 			local width, height = v.Width/(6000/height), v.Height/(6000/height)
 			local r, g, b = fromcolor(v.color)
@@ -67,7 +67,7 @@ function CustomF11Map:draw()
 
 	-- Draw blips
 	if toboolean(core:get("HUD", "drawBlips", 1)) then
-		for i, v in ipairs(Blip.Blips) do
+		for i, v in pairs(Blip.Blips) do
 			local mapX, mapY = CustomF11Map.worldToMapPosition(v.m_WorldX, v.m_WorldY)
 			dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, v.m_ImagePath, 0)
 		end

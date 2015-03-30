@@ -24,7 +24,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	self.m_WorldY = worldY
 	self.m_Alpha = 255
 	self.m_Size = 24
-	self.m_StreamDistance = streamDistance or math.huge
+	self.m_StreamDistance = streamDistance or 700
 
 	Blip.Blips[self.m_ID] = self
 end

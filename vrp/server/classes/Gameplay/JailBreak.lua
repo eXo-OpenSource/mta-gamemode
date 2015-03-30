@@ -17,8 +17,7 @@ function JailBreak:constructor()
 	self.m_CellRoomDoor = getElementByID("CellRoomDoor")
 	self.m_BombArea = BombArea:new(Vector3(3459.85, -2073.16, 16.82), bind(self.Bomb_Place, self), bind(self.Bomb_Explode, self), 10000)
 
-	self.m_GuardPed = getElementByID("JailGuardPed")
-	addEventHandler("onPedWasted", self.m_GuardPed, bind(self.GuardPed_Wasted, self))
+	self:respawnGuardPed()
 
 	self.m_ControlPed = getElementByID("JailControlPed")
 	addEventHandler("onPedWasted", self.m_ControlPed, bind(self.ControlPed_Wasted, self))
@@ -110,8 +109,11 @@ function JailBreak:checkAnswers(answers)
 end
 
 function JailBreak:respawnGuardPed()
-	self.m_GuardPed:destroy()
+	if self.m_GuardPed then
+		self.m_GuardPed:destroy()
+	end
 	self.m_GuardPed = Ped.create(71, 3453.9004, -2153.8994, 17.1)
+	addEventHandler("onPedWasted", self.m_GuardPed, bind(self.GuardPed_Wasted, self))
 end
 
 function JailBreak:reset()
@@ -212,11 +214,11 @@ function JailBreak:PipeExitShape_Hit(hitElement, matchingDimension)
 
 		local positions = {
 			{1489, -1720.8, 8.2, 166},
-    		{1412.7, -1305, 9.5, 185},
-		    {2699.8999, -1110.6, 69.6, 90},
-		    {311.89999, -1520.1, 24.9, 0},
-		    {2263.5, -755.5, 38, 116},
-		    {1271.5, 295.29999, 20.7, 0}
+			{1412.7, -1305, 9.5, 185},
+			{2699.8999, -1110.6, 69.6, 90},
+			{311.89999, -1520.1, 24.9, 0},
+			{2263.5, -755.5, 38, 116},
+			{1271.5, 295.29999, 20.7, 0}
 		}
 		local x, y, z, rot = unpack(Randomizer:getRandomTableValue(positions))
 		hitElement:setPosition(x, y, z)

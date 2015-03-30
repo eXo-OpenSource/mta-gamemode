@@ -11,6 +11,7 @@ VehicleManager.sPulse = TimedPulse:new(5*1000)
 function VehicleManager:constructor()
 	self.m_Vehicles = {}
 	self.m_TemporaryVehicles = {}
+	self:setSpeedLimits()
 
 	-- Add events
 	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty"}
@@ -148,6 +149,14 @@ function VehicleManager:checkVehicle(vehicle)
 		-- Make a temporary vehicle if vehicle is not yet instance of any class
 		enew(vehicle, TemporaryVehicle)
 	end
+end
+
+function VehicleManager:setSpeedLimits()
+	outputDebug("Setting speed limits")
+	setModelHandling(462, "maxVelocity", 50) -- Faggio
+	setModelHandling(509, "maxVelocity", 50) -- Bike
+	setModelHandling(481, "maxVelocity", 50) -- BMX
+	setModelHandling(510, "maxVelocity", 50) -- Mountain Bike
 end
 
 
