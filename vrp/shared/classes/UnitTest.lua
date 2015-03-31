@@ -9,17 +9,25 @@
 UnitTest = inherit(Object)
 
 function UnitTest:virtual_constructor(name)
-    self:outputLog("TEST: Entering test: "..(name or ""))
+    name = name or ""
+    self:outputLog(("TEST: Entering test: '%s'"):format(name))
+
+    local testCounter = 0
+    local succeededTestCounter = 0
 
     -- Iterate class and execute all methods (we don't have to check for methods of this class since it's not in the inherited class table)
     for name, method in pairs(getmetatable(self).__index) do
         self.m_FailedHere = false
+        testCounter = testCounter + 1
         method(self, name)
 
         if not self.m_FailedHere then
+            succeededTestCounter = succeededTestCounter + 1
             self:outputLog(("SUCCESS: Test method '%s' succeeded"):format(name))
         end
     end
+
+    self:outputLog(("TEST: Test '%s' completed. Executed %d tests, %d succeeded, %d failed"):format(name, testCounter, succeededTestCounter, testCounter - succeededTestCounter))
 end
 
 function UnitTest:outputLog(message)

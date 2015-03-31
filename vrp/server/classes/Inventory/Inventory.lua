@@ -170,6 +170,10 @@ function Inventory:getItems()
 	return self.m_Items
 end
 
+function Inventory:getItem(slot)
+	return self.m_Items[slot]
+end
+
 function Inventory:setInteractingPlayer(player)
 	if self.m_InteractingPlayer and self.m_InteractingPlayer ~= player then
 		self:unloadOnClient()
@@ -251,7 +255,7 @@ addEventHandler("inventoryUseItem", root,
 		local item = inventory.m_Items[slot]
 		if not item then return end
 		if item:getItemId() ~= itemId then
-			AntiCheat:getSingleton():report(client, "Inventory desync", CheatSeverity.Low)
+			AntiCheat:getSingleton():report(client, "Inventory desync #1", CheatSeverity.Low)
 			return
 		end
 
@@ -279,7 +283,7 @@ addEventHandler("inventoryDropItem", root,
 		local item = inventory.m_Items[slot]
 		if not item then return end
 		if item:getItemId() ~= itemId then
-			AntiCheat:getSingleton():report(client, "Inventory desync", CheatSeverity.Low)
+			AntiCheat:getSingleton():report(client, "Inventory desync #2", CheatSeverity.Low)
 			return
 		end
 
@@ -305,5 +309,62 @@ addEventHandler("inventoryRequestFullSync", root,
 		end
 
 		inv:sendFullSync()
+	end
+)
+
+addEvent("tradeItemAdd", true)
+addEventHandler("tradeItemAdd", root,
+	function(itemId, amount, slot)
+		local inv = client:getInventory()
+		if not inv then return end
+
+		local tradingPartner = client:getTradingPartner()
+		if not tradingPartner then return end
+
+		local item = inv:getItem(slot)
+		if item:getItemId() ~= itemId then
+			AntiCheat:getSingleton():report(client, "Inventory desync #3", CheatSeverity.Low)
+			return
+		end
+
+		-- TODO: Implement stacking
+		client.m_TradeItems[#client.m_TradeItems + 1] = {itemId, amount}
+		tradingPartner:triggerEvent("tradeItemUpdate", client.m_TradeItems)
+	end
+)
+
+addEvent("tradeItemRemove", true)
+addEventHandler("tradeItemRemove", root,
+	function(itemId, amount)
+		local inv = client:getInventory()
+		if not inv then return end
+
+		local tradingPartner = client:getTradingPartner()
+		if not tradingPartner then return end
+
+		-- TODO: Implement stacking
+		for k, item in pairs(client.m_TradeItems) do
+			if item[1] == itemId then
+				if not amount or amount >= item[2] then
+					client.m_TradeItems[k] = nil
+				else
+					client.m_TradeItems[k][2] = item[2] - amount
+				end
+				break
+			end
+		end
+
+		tradingPartner:triggerEvent("tradeItemUpdate", client.m_TradeItems)
+	end
+)
+
+addEvent("tradeMoneyChange", true)
+addEventHandler("tradeMoneyChange", root,
+	function(money)
+		local tradingPartner = client:getTradingPartner()
+		if not tradingPartner then return end
+
+		client.m_TradeMoney = money
+		tradingPartner:triggerEvent("tradeMoneyChange", money)
 	end
 )

@@ -32,9 +32,9 @@ function TradeGUI:constructor(myInventory)
     self.m_ButtonRemove.onLeftClick = bind(self.ButtonRemove_Click, self)
 
     GUILabel:new(self.m_Width*0.69, self.m_Height*0.07, self.m_Width*0.3, self.m_Height*0.05, _"Gegenleistung: ", self.m_Window)
-    self.m_RemoteItems = GUIGridList:new(self.m_Width*0.69, self.m_Height*0.12, self.m_Width*0.3, self.m_Height*0.7, self.m_Window)
-    self.m_RemoteItems:addColumn(_"Item", 0.7)
-    self.m_RemoteItems:addColumn(_"Anzahl", 0.3)
+    self.m_RemoteItemsGrid = GUIGridList:new(self.m_Width*0.69, self.m_Height*0.12, self.m_Width*0.3, self.m_Height*0.7, self.m_Window)
+    self.m_RemoteItemsGrid:addColumn(_"Item", 0.7)
+    self.m_RemoteItemsGrid:addColumn(_"Anzahl", 0.3)
 
     GUILabel:new(self.m_Width*0.01, self.m_Height*0.83, self.m_Width*0.08, self.m_Height*0.05, _"Anzahl:", self.m_Window)
     self.m_AmountEdit = GUIEdit:new(self.m_Width*0.09, self.m_Height*0.83, self.m_Width*0.14, self.m_Height*0.05, self.m_Window):setText("1"):setNumeric(true)
@@ -59,14 +59,15 @@ function TradeGUI:updateMyInventory(inv)
     self.m_MyItemsGrid:clear()
 
     for k, item in pairs(self.m_MyInventory:getItems()) do
-        self.m_MyItemsGrid:addItem(item:getName(), tostring(item:getCount()))
+        local listItem = self.m_MyItemsGrid:addItem(item:getName(), tostring(item:getCount()))
+        listItem.Item = item
     end
 
     -- Remove trade items from my inventory item list
     local removeList = {}
-    local findItem = function(itemName) for k, item in pairs(self.m_MyItemsGrid:getItems()) do if item:getColumnText(1) == itemName then return item end end end -- TODO: Use itemId instead
+    local findItem = function(itemId) for k, item in pairs(self.m_MyItemsGrid:getItems()) do if item.Item:getItemId() == itemId then return item end end end
     for k, item in pairs(self.m_TradeItemsGrid:getItems()) do
-        local myItem = findItem(item:getColumnText(1))
+        local myItem = findItem(item.ItemId)
         if myItem then
             local availableAmount = tonumber(myItem:getColumnText(2))
             local tradeAmount = tonumber(item:getColumnText(2))
@@ -116,14 +117,17 @@ function TradeGUI:ButtonAdd_Click()
     -- TODO: Implement item stacking
 
     -- Add to trade list and remove from my item list
-    self.m_TradeItemsGrid:addItem(name, tostring(amount))
+    local listItem = self.m_TradeItemsGrid:addItem(name, tostring(amount))
+    listItem.ItemId = selectedItem.Item:getItemId()
     if availableAmount - amount == 0 then
         self.m_MyItemsGrid:removeItemByItem(selectedItem)
     else
         selectedItem:setColumnText(2, tostring(availableAmount - amount))
     end
 
-    -- TODO: Inform server about this
+    -- Inform the server about this
+    local item = selectedItem.Item
+    triggerServerEvent("tradeItemAdd", localPlayer, item:getItemId(), amount, item:getSlot())
 end
 
 function TradeGUI:ButtonRemove_Click()
@@ -136,12 +140,51 @@ function TradeGUI:ButtonRemove_Click()
     -- Remove item and update everything (updateMyInventory will substract the trading items then)
     self.m_TradeItemsGrid:removeItemByItem(selectedItem)
     self:updateMyInventory()
+
+    -- Inform the server about this
+    -- TODO: Add amount
+    triggerServerEvent("tradeItemRemove", localPlayer, selectedItem.ItemId)
 end
 
 function TradeGUI:MyMoneyEdit_Input()
     local money = tonumber(self.m_MyMoneyEdit:getText())
     if money then
-        -- TODO: Tell the server we changed our money amount
-
+        -- Tell the server that we changed our money amount
+        triggerServerEvent("tradeMoneyChange", localPlayer, money)
     end
 end
+
+addEvent("tradingStart", true)
+addEventHandler("tradingStart", root,
+    function(invId)
+        if TradeGUI:isInstantiated() then
+            delete(TradeGUI:getSingleton())
+        end
+
+        -- TODO: Replace by something like localPlayer:getInventory()
+        if Inventory.Map[invId] then
+            TradeGUI:new(Inventory.Map[invId])
+        end
+    end
+)
+
+addEvent("tradeItemUpdate", true)
+addEventHandler("tradeItemUpdate", root,
+    function(items)
+        local tradeGUI = TradeGUI:getSingleton()
+
+        tradeGUI.m_RemoteItemsGrid:clear()
+        for k, item in pairs(items) do
+            local itemId, amount = unpack(item)
+            tradeGUI.m_RemoteItemsGrid:addItem(Items[itemId].name, tostring(amount))
+        end
+    end
+)
+
+addEvent("tradeMoneyChange", true)
+addEventHandler("tradeMoneyChange", root,
+    function(money)
+        local tradeGUI = TradeGUI:getSingleton()
+        tradeGUI.m_RemoteMoney:setText(_("Geld: %s$", tostring(money)))
+    end
+)

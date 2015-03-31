@@ -152,7 +152,6 @@ function VehicleManager:checkVehicle(vehicle)
 end
 
 function VehicleManager:setSpeedLimits()
-	outputDebug("Setting speed limits")
 	setModelHandling(462, "maxVelocity", 50) -- Faggio
 	setModelHandling(509, "maxVelocity", 50) -- Bike
 	setModelHandling(481, "maxVelocity", 50) -- BMX

@@ -101,7 +101,7 @@ function Player:loadCharacterInfo()
 		Blip.sendAllToClient(self)
 		RadarArea.sendAllToClient(self)
 		return
-	end	
+	end
 
 	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
@@ -110,7 +110,7 @@ function Player:loadCharacterInfo()
 
 	-- Reset Name
 	self:setName(self:getAccount():getName())
-	
+
 	-- Load non-element related data
 	self:load()
 
@@ -175,7 +175,7 @@ function Player:spawn()
 		self:setWeaponLevel(0)
 		self:setVehicleLevel(0)
 		self:setSkinLevel(0)
-		
+
 		-- spawn the player
 		spawnPlayer(self, 2028, -1405, 18, self.m_Skin, self.m_SavedInterior, 0) -- Todo: change position
 		self:setRotation(0, 0, 180)
@@ -187,7 +187,7 @@ function Player:spawn()
 		else
 			self:sendMessage("An error occurred", 255, 0, 0)
 		end
-	
+
 		-- Apply and delete health data
 		self:setHealth(self.m_Health)
 		self:setArmor(self.m_Armor)
@@ -198,7 +198,7 @@ function Player:spawn()
 			giveWeapon(self, info[1], info[2])
 		end
 	end
-	
+
 	setElementFrozen(self, false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
@@ -370,4 +370,19 @@ end
 
 function Player:takeMoney(money)
 	self:giveMoney(-money)
+end
+
+function Player:startTrading(tradingPartner)
+	self.m_TradingPartner = tradingPartner
+	self.m_TradeItems = {}
+
+	tradingPartner.m_TradingPartner = self
+	tradingPartner.m_TradeItems = {}
+
+	self:triggerEvent("tradingStart", self:getInventory():getId())
+	tradingPartner:triggerEvent("tradingStart", tradingPartner:getInventory():getId())
+end
+
+function Player:getTradingPartner()
+	return self.m_TradingPartner
 end
