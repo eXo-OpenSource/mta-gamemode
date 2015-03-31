@@ -32,6 +32,6 @@ end
 
 function JailBreak:ElevatorMusic_Hit(hitElement, matchingDimension)
     if hitElement == localPlayer and matchingDimension then
-        Sound.create("https://jusonex.net/public/saonline/ElevatorMusic.ogg")
+        Sound.create("files/audio/ElevatorMusic.ogg")
     end
 end

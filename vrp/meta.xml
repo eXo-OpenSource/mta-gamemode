@@ -509,13 +509,13 @@
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Ringtone3.mp3"/>
-	<vrpfile src="files/audio/Ringtones/Ringtone4.mp3"/>
 
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/Halleluja.mp3"/>
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/Enginestart.mp3"/>
 	<vrpfile src="files/audio/Siren.ogg"/>
+	<vrpfile src="files/audio/ElevatorMusic.ogg"/>
 
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
