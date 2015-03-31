@@ -46,6 +46,6 @@
 		<data name="height" type="number" default="10"/>
 	</element>
 	
-	<script src="client.lua" type="client" />
-	<script src="server.lua" type="server" />
+	<script src="editor_client.lua" type="client" />
+	<script src="editor_server.lua" type="server" />
 </def>
