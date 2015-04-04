@@ -4,7 +4,7 @@ MYSQL_USER	= "saonline"
 MYSQL_PW	= "fI8;26>6F#"
 MYSQL_DB	= "saonline"
 
-API_URL = "http://178.251.228.229/forum/wcf/lib/data/vrp/api/api.php?"
+API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
 
 SPAWN_LOCATION_DEFAULT = 0
 SPAWN_LOCATION_JAIL = 1
