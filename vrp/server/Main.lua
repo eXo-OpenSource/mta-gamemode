@@ -1,5 +1,10 @@
 Main = {}
 
+-- Require bcrypt module
+if not bcrypt_digest then 
+	error("Missing bcrypt module")
+end
+
 function Main.resourceStart()
 	-- Instantiate Core
 	core = Core:new()

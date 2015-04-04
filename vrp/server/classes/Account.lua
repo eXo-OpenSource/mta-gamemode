@@ -12,35 +12,31 @@ function Account.login(player, username, password, pwhash)
 	if (not username or not password) and not pwhash then return false end
 
 	-- Ask SQL to fetch the salt and id
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id, Salt FROM ??_account WHERE Name = ? ", sql:getPrefix(), username)
+	sql:queryFetchSingle(Async.waitFor(self), "SELECT password, userID FROM vrp_forum.wcf1_user WHERE username = ?;", username)
 	local row = Async.wait()
-		
-	if not row or not row.Id then
-		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- "Error: Invalid username or password"
+	
+	if not row or not row.userID then
+		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- No such user
 		return false
 	end
 	
-	if not pwhash then
-		pwhash = sha256(row.Salt..password)
-	end
+	local salt = bcrypt_getsalt(row.password)
+	local hash = bcrypt_digest(bcrypt_digest(password, salt), salt)
 	
-	-- Ask SQL to attempt a Login
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Id = ? AND Password = ?;", sql:getPrefix(), row.Id, pwhash)
-	local row = Async.wait()
-	if not row or not row.Id then
-		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort 2") -- Error: Invalid username or password2
+	if hash ~= row.password then
+		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- Wrong password
 		return false
 	end
 	
-	if DatabasePlayer.getFromId(row.Id) then
+	if DatabasePlayer.getFromId(row.userID) then
 		player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
 		return false
 	end
 	
 	-- Update last serial and last login
-	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), getPlayerSerial(player), row.Id)
+	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), getPlayerSerial(player), row.userID)
 	
-	player.m_Account = Account:new(row.Id, username, player, false)
+	player.m_Account = Account:new(row.userID, username, player, false)
 
 	if player:getTutorialStage() == 1 then
 		player:createCharacter()
