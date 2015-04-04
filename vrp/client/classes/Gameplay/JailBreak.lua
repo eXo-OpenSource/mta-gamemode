@@ -14,6 +14,11 @@ function JailBreak:constructor()
     addEventHandler("onClientColShapeHit", self.m_ElevatorMusic, bind(self.ElevatorMusic_Hit, self))
 
     addEventHandler("jailBreakStart", root, bind(self.onStart, self))
+
+    -- Replace textures
+	TextureReplace:new("sam_camo", "files/images/Textures/JetDoorFront.jpg", false, 256, 256)
+	TextureReplace:new("bonyrd_skin2", "files/images/Textures/JetDoorBack.jpg", false, 256, 256)
+
 end
 
 function JailBreak:playSiren()

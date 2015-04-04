@@ -11,9 +11,8 @@ local MIN_TIME_BETWEEN_ROBBS = 5000 --30*60*1000
 local HOLD_TIME = 20*1000 --4*60*1000
 
 function BankRobbery:constructor(position, rotation, interior, dimension)
-	--self.m_Safe = createObject(2332, position.x, position.y, position.z, 0, 0, rotation)
-	--setElementInterior(self.m_Safe, interior)
-	--setElementDimension(self.m_Safe, dimension or 0)
+	self.m_SafeDoor = createObject(2634, 828.70001, 4227.6001, 15.9, 0, 0, 90)
+	self.m_SafeDoor:setInterior(1)
 
 	table.insert(BankRobbery.Map, self)
 
@@ -106,6 +105,17 @@ function BankRobbery:BombArea_Explode(bombArea)
 			player:giveMoney(400)
 		end
 	end
+
+	-- Destroy door
+	self.m_SafeDoor:destroy()
+
+	-- Clear visibility after some time
+	setTimer(function()
+		if not isElement(self.m_SafeDoor) then
+			self.m_SafeDoor = createObject(2634, 828.70001, 4227.6001, 15.9, 0, 0, 90)
+			self.m_SafeDoor:setInterior(1)
+		end
+	end, MIN_TIME_BETWEEN_ROBBS, 1)
 end
 
 

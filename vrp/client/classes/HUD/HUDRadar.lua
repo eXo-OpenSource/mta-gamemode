@@ -16,17 +16,17 @@ function HUDRadar:constructor()
 	if self.m_DesignSet == RadarDesign.Monochrome or self.m_DesignSet == RadarDesign.GTA then
 		CustomF11Map:getSingleton():enable()
 	end
-	
+
 	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
 	self.m_Zoom = 1
 	self.m_Rotation = 0
 	self.m_Blips = Blip.Blips
 	self.m_Areas = {}
 	self.m_Visible = false
-	
+
 	-- Set texture edge to border (no-repeat)
 	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
-	
+
 	-- Create a renderTarget that has the size of the diagonal of the actual image
 	self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
 	self:updateMapTexture()
@@ -38,7 +38,7 @@ function HUDRadar:constructor()
 	if not core:get("HUD", "drawBlips", false) then
 		core:set("HUD", "drawBlips", 1)
 	end
-	
+
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.draw, self), true, "high+10")
 	addEventHandler("onClientRestore", root, bind(self.restore, self))
@@ -52,21 +52,21 @@ end
 function HUDRadar:hide()
 	self.m_Visible = false
 
-	ShortMessage.recalculatePositions()
+	--ShortMessage.recalculatePositions()
 end
 
 function HUDRadar:show()
 	self.m_Visible = true
 
-	ShortMessage.recalculatePositions()
+	--ShortMessage.recalculatePositions()
 end
 
 function HUDRadar:updateMapTexture()
 	dxSetRenderTarget(self.m_Texture)
-	
+
 	-- Draw actual map texture
 	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
-	
+
 	-- Draw radar areas
 	if toboolean(core:get("HUD", "drawGangAreas", 1)) then
 		for k, rect in pairs(self.m_Areas) do
@@ -98,7 +98,7 @@ function HUDRadar:setDesignSet(design)
 	self.m_DesignSet = design
 	core:getConfig():set("HUD", "RadarDesign", design)
 	self:updateMapTexture()
-	
+
 	for k, blip in pairs(self.m_Blips) do
 		blip:updateDesignSet()
 	end
@@ -121,7 +121,7 @@ function HUDRadar:update()
 	if vehicle and (getControlState("vehicle_look_behind") or
 		(getControlState("vehicle_look_left") and getControlState("vehicle_look_right")) or
 		(getVehicleType(vehicle) ~= "Plane" and getVehicleType(vehicle) ~= "Helicopter" and (getControlState("vehicle_look_left") or getControlState("vehicle_look_right")))) then
-	
+
 		local element = vehicle or localPlayer
 		local _, _, rotation = getElementRotation(element)
 		self.m_Rotation = rotation
@@ -129,7 +129,7 @@ function HUDRadar:update()
 		self.m_Rotation = -math.rad(getPedRotation(localPlayer))
 	else
 		local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
-		self.m_Rotation = math.deg(6.2831853071796 - math.atan2 ( ( lookAtX - camX ), ( lookAtY - camY ) ) % 6.2831853071796)
+		self.m_Rotation = math.deg(6.2831853071796 - math.atan2(lookAtX - camX, lookAtY - camY) % 6.2831853071796)
 	end
 end
 
@@ -138,13 +138,17 @@ function HUDRadar:draw()
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
 
+	if not isNotInInterior or localPlayer:getPrivateSync("isInGarage") then
+		return
+	end
+
 	-- Draw the rectangle (the border)
 	dxDrawRectangle(self.m_PosX, self.m_PosY, self.m_Width+6, self.m_Height+self.m_Height/20+9, tocolor(0, 0, 0))
-	
+
 	-- Draw the map
 	local posX, posY, posZ = getElementPosition(localPlayer)
 	local mapX, mapY = self:worldToMapPosition(posX, posY)
-	
+
 	-- Render (rotated) image section to renderTarget
 	if isNotInInterior then
 		dxSetRenderTarget(self.m_RenderTarget, true)
@@ -159,7 +163,7 @@ function HUDRadar:draw()
 	else
 		dxDrawRectangle(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, tocolor(125, 168, 210))
 	end
-	
+
 	-- Draw health bar (at the bottom)
 	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2, self.m_Height/20, tocolor(71, 86, 75))
 	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2 * getElementHealth(localPlayer)/100, self.m_Height/20, tocolor(100, 121, 105))
@@ -172,13 +176,13 @@ function HUDRadar:draw()
 		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, self.m_Width/2-3, self.m_Height/20, tocolor(63, 105, 202))
 		dxDrawRectangle(self.m_PosX+self.m_Width/2+6, self.m_PosY+self.m_Height+6, (self.m_Width/2-3) * (getPedArmor(localPlayer)/100), self.m_Height/20, tocolor(77, 154, 202))
 	end
-	
+
 	-- Draw oxygen bar
 	if isInWater then
 		dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, self.m_Width/4-6, self.m_Height/20, tocolor(65, 56, 15))
 		dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, (self.m_Width/4-6) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
 	end
-	
+
 	if isNotInInterior then
 		if toboolean(core:get("HUD", "drawBlips", 1)) then
 			local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
