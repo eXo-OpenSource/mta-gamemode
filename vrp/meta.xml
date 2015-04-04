@@ -505,6 +505,9 @@
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>
 	<vrpfile src="files/images/HUD/JobLevel.png"/>
 
+	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
+	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
+
 	<!-- Audio -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>

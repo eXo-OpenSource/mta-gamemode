@@ -672,7 +672,7 @@
     <object id="object (a51_jetdoor) (107)" breakable="true" interior="0" collisions="true" alpha="255" model="3095" doublesided="false" scale="1" dimension="0" posX="3480.3" posY="-2081.5" posZ="15.1" rotX="270" rotY="359.996" rotZ="95.499"></object>
     <object id="object (a51_jetdoor) (174)" breakable="true" interior="0" collisions="true" alpha="255" model="3095" doublesided="false" scale="1" dimension="0" posX="3489.1001" posY="-2081.3" posZ="15.3" rotX="90" rotY="0" rotZ="109.5"></object>
     <object id="object (a51_jetdoor) (160)" breakable="true" interior="0" collisions="true" alpha="255" model="3095" doublesided="false" scale="1" dimension="0" posX="3486.9004" posY="-2094.2002" posZ="15.3" rotX="90" rotY="0" rotZ="0"></object>
-    <object id="BreakFreeDoor" breakable="true" interior="0" collisions="true" alpha="150" model="3055" doublesided="true" scale="1" dimension="0" posX="3483.7002" posY="-2077" posZ="16" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="BreakFreeDoor" breakable="true" interior="0" collisions="true" alpha="255" model="3055" doublesided="true" scale="1" dimension="0" posX="3483.7002" posY="-2077" posZ="16" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (CJ_WASHINGMAC) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="1733" doublesided="false" scale="1" dimension="0" posX="3483.3" posY="-2089.7" posZ="16.4" rotX="0" rotY="0" rotZ="91"></object>
     <object id="object (mafCasPipes01) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="14578" doublesided="false" scale="1" dimension="0" posX="3489.3999" posY="-2094.2" posZ="19.4" rotX="0" rotY="0" rotZ="1.5"></object>
     <object id="object (mafCasPipes01) (2)" breakable="true" interior="0" collisions="true" alpha="255" model="14578" doublesided="false" scale="1" dimension="0" posX="3484.3999" posY="-2094.3" posZ="19.4" rotX="0" rotY="0" rotZ="1.5"></object>
@@ -731,8 +731,7 @@
     <object id="object (a51_jetdoor) (182)" breakable="true" interior="0" collisions="true" alpha="255" model="3095" doublesided="false" scale="1" dimension="0" posX="3457.2" posY="-2141.8" posZ="22.6" rotX="90" rotY="0" rotZ="88.748"></object>
     <object id="object (CJ_AIRP_PILLARS) (57)" breakable="true" interior="0" collisions="true" alpha="255" model="2774" doublesided="false" scale="1" dimension="0" posX="3457.1001" posY="-2138.1001" posZ="16.6" rotX="0" rotY="0" rotZ="357.99"></object>
     <object id="object (bar_gatebox01) (1)" breakable="true" interior="0" collisions="false" alpha="255" model="967" doublesided="true" scale="1" dimension="0" posX="3453.8" posY="-2153.8999" posZ="16.1" rotX="0" rotY="0" rotZ="270"></object>
-    <ped id="JailGuardPed" dimension="0" model="71" interior="0" rotZ="180" frozen="true" alpha="255" posX="3453.9004" posY="-2153.8994" posZ="17.1" rotX="0" rotY="0"></ped>
     <ped id="JailControlPed" dimension="0" model="0" interior="0" rotZ="0.003" frozen="false" alpha="255" posX="3521" posY="-2063.8" posZ="21.3" rotX="0" rotY="0"></ped>
-    <object id="object (minigun_base) (1)" breakable="true" interior="0" alpha="255" model="2985" doublesided="false" scale="1" dimension="0" posX="3472.3" posY="-2073.3" posZ="15.9" rotX="0" rotY="0" rotZ="182.5"></object>
+    <object id="object (minigun_base) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="2985" doublesided="false" scale="1" dimension="0" posX="3472.3" posY="-2073.3" posZ="15.9" rotX="0" rotY="0" rotZ="182.5"></object>
     <object id="object (carter-stairs07) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="14416" doublesided="false" scale="1" dimension="0" posX="3455.6001" posY="-2106" posZ="16.7" rotX="0" rotY="0" rotZ="179.492"></object>
 </map>
