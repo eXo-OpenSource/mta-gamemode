@@ -10,7 +10,7 @@ GangArea = inherit(Object)
 function GangArea:constructor(Id, areaPosition, width, height, resourcesPerDistribution)
 	self.m_Id = Id
 	local result = sql:queryFetchSingle("SELECT Owner, State FROM ??_gangareas WHERE Id = ?", sql:getPrefix(), self.m_Id)
-	
+
 	self.m_ColShape = createColRectangle(areaPosition.x, areaPosition.y, width, height)
 	self.m_RadarArea = RadarArea:new(areaPosition.x, areaPosition.y+height, width, height, {0, 255, 0, 200}) -- todo: Move to the client
 	if not result then
@@ -21,19 +21,19 @@ function GangArea:constructor(Id, areaPosition, width, height, resourcesPerDistr
 			setElementData(self.m_ColShape, "OwnerName", self.m_OwnerGroup:getName())
 		end
 	end
-	
+
 	-- Sync some data to the client | that's probably a bit hacky
 	setElementID(self.m_ColShape, "GangArea"..Id)
-	
+
 	self.m_TurfingPlayers = {}
 	self.m_DefendingPlayers = {}
 	self.m_TurfingGroup = false
 	self.m_TurfingTimer = nil
 	self.m_TurfingProgress = 100
 	self.m_TurfingDirection = nil -- true: attacking; false: defending
-	
+
 	self.m_ResourcesPerDistribution = resourcesPerDistribution
-	
+
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Area_Enter, self))
 	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.Area_Leave, self))
 end
@@ -56,13 +56,13 @@ function GangArea:Area_Enter(hitElement, matchingDimension)
 		if not group then
 			return
 		end
-		
+
 		-- Push to the turfing players list if the player is a member of the attacking or defending group
 		if group == self.m_TurfingGroup then
 			table.insert(self.m_TurfingPlayers, hitElement)
 			hitElement:triggerEvent("gangAreaTurfStart", self.m_Id, self.m_TurfingGroup:getName(), self.m_TurfingProgress)
 		end
-		
+
 		if group == self.m_OwnerGroup then
 			table.insert(self.m_DefendingPlayers, hitElement)
 			hitElement:triggerEvent("gangAreaTurfStart", self.m_Id, self.m_TurfingGroup:getName(), self.m_TurfingProgress)
@@ -75,7 +75,7 @@ function GangArea:Area_Leave(hitElement, matchingDimension)
 		if not self.m_TurfingGroup then
 			return
 		end
-	
+
 		local idx = table.find(self.m_TurfingPlayers, hitElement)
 		if idx then
 			table.remove(self.m_TurfingPlayers, idx)
@@ -86,7 +86,7 @@ function GangArea:Area_Leave(hitElement, matchingDimension)
 			table.remove(self.m_DefendingPlayers, idx)
 			hitElement:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_LEAVEAREA, self.m_TurfingGroup:getName())
 		end
-		
+
 		-- Check if the gangarea was successfully defended
 		if #self.m_TurfingPlayers == 0 then
 			if self.m_OwnerGroup then
@@ -95,12 +95,12 @@ function GangArea:Area_Leave(hitElement, matchingDimension)
 					player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_DEFENDED, self.m_TurfingGroup:getName())
 				end
 			end
-			
+
 			-- Stop attacking mode
 			self.m_TurfingGroup = false
 			self.m_TurfingProgress = 100
 			self.m_DefendingPlayers = {}
-			
+
 			killTimer(self.m_TurfingTimer)
 			self.m_TurfingTimer = nil
 		end
@@ -112,7 +112,7 @@ function GangArea:updateTurfing()
 	if self.m_TurfingDirection then
 		-- Attacking mode
 		self.m_TurfingProgress = self.m_TurfingProgress - 1
-		
+
 		-- Tripple speed if the area has no owner group
 		if not self.m_OwnerGroup then
 			self.m_TurfingProgress = self.m_TurfingProgress - 2 -- We don't need to take the turfing direction into account as defending is not possible if there isn't any owner group
@@ -121,7 +121,7 @@ function GangArea:updateTurfing()
 		-- Defending mode
 		self.m_TurfingProgress = self.m_TurfingProgress + 1
 	end
-	
+
 	if self.m_TurfingProgress <= 0 then
 		-- Looks like the gang area has a new owner :)
 		self:setOwner(self.m_TurfingGroup)
@@ -129,38 +129,40 @@ function GangArea:updateTurfing()
 		self.m_TurfingGroup = false
 		killTimer(self.m_TurfingTimer)
 		self.m_TurfingTimer = nil
-		
+
 		for k, player in pairs(self.m_TurfingPlayers) do
 			player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_NEWOWNER, self.m_OwnerGroup:getName())
 		end
 		for k, player in pairs(self.m_DefendingPlayers) do
 			player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_NEWOWNER, self.m_OwnerGroup:getName())
 		end
-		
+
 		self.m_TurfingPlayers = {}
 		self.m_DefendingPlayers = {}
+		self.m_RadarArea:setFlashing(false)
 		return
 	end
-	
+
 	if self.m_TurfingProgress > 100 then
 		-- Area was successfully defended
 		self.m_TurfingProgress = 100
 		self.m_TurfingGroup = false
 		killTimer(self.m_TurfingTimer)
 		self.m_TurfingTimer = nil
-		
+
 		for k, player in pairs(self.m_TurfingPlayers) do
 			player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_DEFENDED, self.m_OwnerGroup:getName())
 		end
 		for k, player in pairs(self.m_DefendingPlayers) do
 			player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_DEFENDED, self.m_OwnerGroup:getName())
 		end
-		
+
 		self.m_TurfingPlayers = {}
 		self.m_DefendingPlayers = {}
+		self.m_RadarArea:setFlashing(false)
 		return
 	end
-	
+
 	for k, player in pairs(self.m_TurfingPlayers) do
 		player:triggerEvent("gangAreaTurfUpdate", self.m_TurfingProgress)
 	end
@@ -177,7 +179,8 @@ function GangArea:startTurfing(group)
 	self.m_TurfingGroup = group
 	self.m_TurfingDirection = true
 	self.m_TurfingTimer = setTimer(bind(self.updateTurfing, self), 4000, 0)
-	
+	self.m_RadarArea:setFlashing(true)
+
 	-- Tell the client that we're turfing now
 	if self.m_OwnerGroup then
 		local onlinePlayers = self.m_OwnerGroup:getOnlinePlayers()
@@ -186,7 +189,7 @@ function GangArea:startTurfing(group)
 			player:sendWarning(_("Achtung! Eines eurer Gebiete in %s wird angegriffen!", player, getZoneName(x, y, z, false)))
 		end
 	end
-	
+
 	-- Add all players of the attacking group within the gangarea to the gangwar
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
 		if player:getGroup() == self.m_TurfingGroup then
@@ -197,7 +200,7 @@ function GangArea:startTurfing(group)
 			table.insert(self.m_DefendingPlayers, player)
 		end
 	end
-	
+
 	return true
 end
 
@@ -207,7 +210,7 @@ function GangArea:sendMessage(message, ...)
 			player:sendMessage(_(message, player, ...))
 		end
 	end
-	
+
 	for k, player in pairs(self.m_TurfingPlayers) do
 		player:sendMessage(_(message, player, ...))
 	end
@@ -235,13 +238,13 @@ end
 function GangArea:setOwner(newOwner)
 	self.m_OwnerGroup = newOwner
 	setElementData(self.m_ColShape, "OwnerName", self.m_OwnerGroup and self.m_OwnerGroup:getName() or "")
-	
+
 	if self.m_OwnerGroup then
 		sql:queryExec("INSERT INTO ??_gangareas (Id, Owner) VALUES(?, ?) ON DUPLICATE KEY UPDATE Owner = ?", sql:getPrefix(), self.m_Id, self.m_OwnerGroup:getId(), self.m_OwnerGroup:getId())
 	else
 		sql:queryExec("DELETE FROM ??_gangareas WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	end
-	
+
 	if not self.m_OwnerGroup and self:isTurfingInProgress() then
 		killTimer(self.m_TurfingTimer)
 		self.m_TurfingTimer = nil
@@ -254,7 +257,7 @@ function GangArea:distributeResources()
 	if not self.m_OwnerGroup then
 		return false
 	end
-	
+
 	self.m_OwnerGroup:distributeMoney(self.m_ResourcesPerDistribution)
 	return true
 end

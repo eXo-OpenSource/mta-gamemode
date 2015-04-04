@@ -61,7 +61,12 @@ function CustomF11Map:draw()
 			local width, height = v.Width/(6000/height), v.Height/(6000/height)
 			local r, g, b = fromcolor(v.color)
 
-			dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, tocolor(r, g, b, 165))
+			if v.flashing then
+				dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, Color.Red)
+				dxDrawRectangle(mapPosX + mapX + 2, mapPosY + mapY + 2,  width - 4, height - 4, tocolor(r, g, b, 165))
+			else
+				dxDrawRectangle(mapPosX + mapX, mapPosY + mapY,  width, height, tocolor(r, g, b, 165))
+			end
 		end
 	end
 

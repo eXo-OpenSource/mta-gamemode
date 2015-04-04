@@ -73,7 +73,13 @@ function HUDRadar:updateMapTexture()
 			local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
 
 			local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
-			dxDrawRectangle(mapX, mapY, width, height, rect.color)
+
+			if rect.flashing then
+				dxDrawRectangle(mapX, mapY, width, height, Color.Red)
+				dxDrawRectangle(mapX+2, mapY+2, width-4, height-4, rect.color)
+			else
+				dxDrawRectangle(mapX, mapY, width, height, rect.color)
+			end
 		end
 	end
 
@@ -269,10 +275,18 @@ function HUDRadar:addArea(worldX, worldY, width, height, color)
 end
 
 function HUDRadar:removeArea(area)
-	local idx = table.find(self.m_Areas)
+	local idx = table.find(self.m_Areas, area)
 	if idx then
 		destroyElement(self.m_Areas[idx].mtaElement)
 		table.remove(self.m_Areas, idx)
+		self:updateMapTexture()
+	end
+end
+
+function HUDRadar:setRadarAreaFlashing(serverAreaId, state)
+	local area = HUDRadar.ServerAreas[serverAreaId]
+	if area then
+		area.flashing = state
 		self:updateMapTexture()
 	end
 end
@@ -300,7 +314,15 @@ addEvent("radarAreasRetrieve", true)
 addEventHandler("radarAreasRetrieve", root,
 	function(data)
 		for k, v in pairs(data) do
-			HUDRadar.ServerAreas[k] = HUDRadar:getSingleton():addArea(unpack(v))
+			local id, x, y, width, height, color = unpack(v)
+			HUDRadar.ServerAreas[id] = HUDRadar:getSingleton():addArea(x, y, width, height, color)
 		end
+	end
+)
+
+addEvent("radarAreaFlash", true)
+addEventHandler("radarAreaFlash", root,
+	function(id, state)
+		HUDRadar:getSingleton():setRadarAreaFlashing(id, state)
 	end
 )
