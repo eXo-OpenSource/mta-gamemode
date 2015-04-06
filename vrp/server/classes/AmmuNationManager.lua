@@ -7,9 +7,7 @@ AmmuNationManager.DATA = {
 		{
 			{1368.23376,-1279.83606,13.54688}
 		},
-		DIMENSION = 1,
-		ENTER_ROT = 360,
-		EXIT_ROT = 90
+		DIMENSION = 1
 	},	
 	[2] = {
 		NAME = "Los Santos East",
@@ -17,9 +15,7 @@ AmmuNationManager.DATA = {
 		{
 			{2400.59106,-1981.68750,13.54688}
 		},
-		DIMENSION = 2,
-		ENTER_ROT = 0,
-		EXIT_ROT = 0
+		DIMENSION = 2
 	},
 }
 
@@ -33,7 +29,7 @@ function AmmuNationManager:constructor()
 		table.insert(self.m_AmmuNations,new(AmmuNation,value.NAME))
 		local instance = self.m_AmmuNations[#self.m_AmmuNations]
 		for k, coords in ipairs(value.ENTER) do
-			instance:addEnter(coords[1],coords[2],coords[3],value.DIMENSION,value.ENTER_ROT, value.EXIT_ROT)
+			instance:addEnter(coords[1],coords[2],coords[3],value.DIMENSION)
 		end
 	end
 	

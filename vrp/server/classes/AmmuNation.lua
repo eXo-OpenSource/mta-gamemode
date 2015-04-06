@@ -47,9 +47,9 @@ function AmmuNation:buyMagazine(id)
 	end
 end
 
-function AmmuNation:addEnter(x,y,z,dimension, enterrot, exitrot)
+function AmmuNation:addEnter(x,y,z,dimension)
 
-	local instance = InteriorEnterExit:new(Vector3(x, y, z), Vector3(AmmuNation.ENTERPOS.X, AmmuNation.ENTERPOS.Y, AmmuNation.ENTERPOS.Z), enterrot, exitrot, AmmuNation.INTERIORID, dimension)
+	local instance = InteriorEnterExit:new(Vector3(x, y, z), Vector3(AmmuNation.ENTERPOS.X, AmmuNation.ENTERPOS.Y, AmmuNation.ENTERPOS.Z), 0, 0, AmmuNation.INTERIORID, dimension)
 	Blip:new("AmmuNation.png", x, y)
 	
 	addEventHandler ("onMarkerHit", instance:getEnterMarker(),
