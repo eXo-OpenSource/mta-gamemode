@@ -9,11 +9,11 @@ JobMechanic = inherit(Job)
 
 function JobMechanic:constructor()
 	Job.constructor(self)
-	
+
 	for i = 0, 3 do
 		AutomaticVehicleSpawner:new(getVehicleModelFromName("Towtruck"), 686.9 + i*4.8, -1571.9, 14.1, 0, 0, 180, nil, self)
 	end
-	
+
 	addEvent("mechanicRepair", true)
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
 	addEvent("mechanicRepairConfirm", true)
@@ -23,7 +23,7 @@ function JobMechanic:constructor()
 end
 
 function JobMechanic:start(player)
-	
+
 end
 
 function JobMechanic:checkRequirements(player)
@@ -38,7 +38,7 @@ function JobMechanic:Event_mechanicRepair()
 	if client:getJob() ~= self then
 		return
 	end
-	
+
 	local driver = getVehicleOccupant(source, 0)
 	if not driver then
 		client:sendError(_("Jemand muss sich auf dem Fahrersitz befinden!", client))
@@ -52,7 +52,7 @@ function JobMechanic:Event_mechanicRepair()
 		client:sendError(_("Dieses Fahrzeug hat keine nennenswerten Beschädigungen!", client))
 		return
 	end
-	
+
 	source.PendingMechanic = client
 	local price = math.floor((1000 - getElementHealth(source))*0.5)
 	driver:triggerEvent("questionBox", _("Darf %s dein Fahrzeug reparieren? Dies kostet dich zurzeit %d$!\nBeim nächsten Pay'n'Spray zahlst du einen Aufschlag von +33%%!", client, getPlayerName(client), price), "mechanicRepairConfirm", "mechanicRepairCancel", source)
@@ -63,9 +63,11 @@ function JobMechanic:Event_mechanicRepairConfirm(vehicle)
 	if client:getMoney() >= price then
 		fixVehicle(vehicle)
 		client:takeMoney(price)
+
 		if vehicle.PendingMechanic then
 			if client ~= vehicle.PendingMechanic then
 				vehicle.PendingMechanic:giveMoney(price)
+				vehicle.PendingMechanic:givePoints(5)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
 				client:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", client, getPlayerName(vehicle.PendingMechanic)))
 			else

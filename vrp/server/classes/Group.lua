@@ -179,7 +179,7 @@ function Group:getOnlinePlayers()
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
 		if player then
-			table.insert(players, player)
+			players[#players + 1] = player
 		end
 	end
 	return players

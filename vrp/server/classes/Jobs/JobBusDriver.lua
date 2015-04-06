@@ -74,6 +74,14 @@ function JobBusDriver:destructor()
 	end
 end
 
+function JobBusDriver:checkRequirements(player)
+	if not (player:getJobLevel() >= 2) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 2", player), 255, 0, 0)
+		return false
+	end
+	return true
+end
+
 function JobBusDriver:start(player)
 	local line = math.random(1, #self.m_Lines) -- Note: Lines have to be sequent (1, 2, 3, 4, ...)
 
