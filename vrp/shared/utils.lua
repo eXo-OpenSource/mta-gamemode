@@ -456,3 +456,7 @@ local FLOAT_EPSILON = 1e-5 --1e-9
 function floatEqual(a, b)
 	return math.abs(a - b) <= FLOAT_EPSILON
 end
+
+function getThisFunction()
+	return debug.getinfo(2, "f").func
+end

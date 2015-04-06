@@ -93,6 +93,7 @@
 	<script src="server/classes/Vehicles/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleGarages.lua" type="server"/>
 	<script src="server/classes/Vehicles/GasStation.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleTuning.lua" type="server"/>
 
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -289,6 +290,7 @@
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ColorPickerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
@@ -438,6 +440,7 @@
 	<vrpfile src="files/images/HelpIcon.png"/>
 	<vrpfile src="files/images/DrivingSchool.png"/>
 	<vrpfile src="files/images/ClothesHeader.png"/>
+	<vrpfile src="files/images/TuningHeader.png"/>
 	<!--<vrpfile src="files/images/ColorPicker.png"/>-->
 
 	<!-- Radar -->
@@ -562,6 +565,7 @@
 	<map src="files/maps/JailOut.map"/>
 	<map src="files/maps/Bank.map"/>
 	<map src="files/maps/Court.map"/>
+	<map src="files/maps/TuningGarages.map"/>
 
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
