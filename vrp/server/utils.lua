@@ -1,6 +1,7 @@
 function critical_error(errmsg)
 	outputDebugString("[CRITICAL ERROR] "..tostring(errmsg))
 	outputDebugString("[CRITICAL ERROR] vRoleplay Script will now halt")
+	outputDebugString("[CRITICAL ERROR] If you cannot solve this issue please report at fixme: forumurl ")
 	stopResource(getThisResource())
 	error("Critical Error")
 end
@@ -32,8 +33,4 @@ function getElementMatrix(element)
 	matrix[4][4] = 1
 
 	return matrix
-end
-
-function bcrypt_getsalt(hash)
-	return hash:sub(0, 29)
 end
