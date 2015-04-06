@@ -30,6 +30,7 @@ function AmmuNation:buyWeapon(id)
 			end
 			client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
 		end
+		client:sendWarning(_("Dein Waffenlevel ist zu niedrig!",client),125,0,0)
 	end
 end
 
@@ -46,12 +47,12 @@ function AmmuNation:buyMagazine(id)
 	end
 end
 
-function AmmuNation:addEnter(x,y,z,dimension)
+function AmmuNation:addEnter(x,y,z,dimension, enterrot, exitrot)
 
-	local instance = InteriorEnterExit:new(Vector3(x, y, z), Vector3(AmmuNation.ENTERPOS.X, AmmuNation.ENTERPOS.Y, AmmuNation.ENTERPOS.Z), 0, 0, AmmuNation.INTERIORID, dimension)
+	local instance = InteriorEnterExit:new(Vector3(x, y, z), Vector3(AmmuNation.ENTERPOS.X, AmmuNation.ENTERPOS.Y, AmmuNation.ENTERPOS.Z), enterrot, exitrot, AmmuNation.INTERIORID, dimension)
 	Blip:new("AmmuNation.png", x, y)
 	
-	addEventHandler ("onMarkerHit",instance:getEnterMarker(),
+	addEventHandler ("onMarkerHit", instance:getEnterMarker(),
 		function(hitElement,matchingDimension)
 			if matchingDimension and not isPedInVehicle(hitElement) then
 				hitElement:sendShortMessage(("Willkommen %s, im Ammu Nation \"%s\""):format(getPlayerName(hitElement),self.m_Name))
