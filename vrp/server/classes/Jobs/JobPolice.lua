@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 JobPolice = inherit(Job)
+local JailCells
 
 function JobPolice:constructor()
 	Job.constructor(self)
@@ -91,12 +92,13 @@ function JobPolice:jailPlayer(player, policeman)
 
 	-- Start freeing timer
 	local jailTime = player:getWantedLevel() * 20
-	player:sendInfo(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %ds verweilen!", player, jailTime))
 	setTimer(
 		function()
-			setElementPosition(player, 1539.7, -1659.5 + math.random(-3, 3), 13.6)
-			setElementRotation(player, 0, 0, 90)
-			player:setWantedLevel(0)
+			if isElement(player) then
+				player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+				player:setRotation(0, 0, 90)
+				player:setWantedLevel(0)
+			end
 		end, jailTime * 1000, 1
 	)
 
@@ -106,8 +108,8 @@ function JobPolice:jailPlayer(player, policeman)
 	-- Tell the other policemen that we jailed someone
 	self:sendMessage("%s wurde soeben von %s verhaftet!", getPlayerName(player), getPlayerName(policeman))
 
-	-- Show the countdown GUI
-	player:triggerEvent("jailCountdownStart", jailTime)
+	-- Tell the client that we were jailed
+	player:triggerEvent("playerJailed", jailTime)
 end
 
 function JobPolice:playerDamage(attacker, attackerWeapon, bodypart, loss)
@@ -165,7 +167,7 @@ function JobPolice:reportSpecialCrime(crimeType, message)
 	self:sendMessage(message)
 end
 
-local JailCells = {
+JailCells = {
 	Vector3(3473.7, -2090.1001, 20.9),
 	Vector3(3472.8999, -2106.1001, 20.9),
 	Vector3(3486.8999, -2106.1001, 20.9),

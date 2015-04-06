@@ -7,24 +7,30 @@ end
 
 function CutscenePlayer:playCutscene(name, finishcallback)
 	assert(self.m_CutsceneList[name])
-	setElementDimension(localPlayer, PRIVATE_DIMENSION_CLIENT)
+
+	localPlayer:setDimension(PRIVATE_DIMENSION_CLIENT)
+	localPlayer:setFrozen(true)
+
 	self.m_Cutscene = Cutscene:new(self.m_CutsceneList[name])
-	self.m_Cutscene.onFinish = 
+	self.m_Cutscene.onFinish =
 		function(cutscene)
 			CutscenePlayer:getSingleton():stopCutscene()
-			setElementDimension(localPlayer, 0)
-			if finishcallback then 
+			localPlayer:setDimension(0)
+			localPlayer:setFrozen(false)
+			setCameraTarget(localPlayer)
+
+			if finishcallback then
 				finishcallback()
 			end
-			
+
 			-- Show HUD
 			HUDRadar:getSingleton():show()
 			HUDUI:getSingleton():show()
 			showChat(true)
 		end;
-	
+
 	self.m_Cutscene:play()
-	
+
 	-- Hide HUD
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()

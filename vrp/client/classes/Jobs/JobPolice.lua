@@ -20,3 +20,20 @@ function JobPolice:stop()
 	-- Reset text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
+
+addEvent("playerJailed", true)
+addEventHandler("playerJailed", root,
+	function(jailTime)
+		local jailedTime = getTickCount()
+
+		-- Play arrest cutscene
+		CutscenePlayer:getSingleton():playCutscene("Arrest",
+			function()
+				local remainingTime = math.floor(jailTime - (getTickCount() - jailedTime)/1000)
+
+				InfoBox:new(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %ds verweilen!", remainingTime))
+				JailCountdownGUI:new(remainingTime)
+			end
+		)
+	end
+)

@@ -2,7 +2,8 @@ CutscenePlayer:getSingleton():registerCutscene("Arrest", {
 	name = "Arrest";
 	startscene = "Arrest1";
 	debug = true;
-	
+	interior = 1;
+
 	{
 		uid = "Arrest1";
 		letterbox = true;
@@ -139,7 +140,7 @@ CutscenePlayer:getSingleton():registerCutscene("Arrest", {
 			action = "Graphic.setLetterBoxText";
 			duration = 4000;
 			starttick = 0;
-			text = "Der Richter wird das Urteil jetzt sprechen";
+			text = "Du wurdest zu einer Haftstrafe verurteilt!";
 		};
 		{
 			action = "General.finish";

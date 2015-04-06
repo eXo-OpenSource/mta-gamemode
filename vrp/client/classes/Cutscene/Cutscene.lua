@@ -4,15 +4,17 @@ function Cutscene:constructor(data)
 	self.m_Name = data.name
 	self.m_Startscene = data.startscene
 	self.m_Elements = {}
-	
+
 	self.m_Scene = {}
 	self.m_ActiveScene = false
 	self.m_Debug = data.debug
+	self.m_Interior = data.interior or 0
+
 	for k, v in ipairs(data) do
 		local scene = Scene:new(v, self)
 		self.m_Scene[scene.m_Uid] = scene
 	end
-	
+
 	self.m_fnRender = bind(Cutscene.render, self)
 	self.m_fnPreRender = bind(Cutscene.preRender, self)
 end
@@ -35,7 +37,8 @@ end
 function Cutscene:play()
 	self.m_ActiveScene = self.m_Scene[self.m_Startscene]
 	self.m_Scene[self.m_Startscene]:start()
-	
+	setCameraInterior(self.m_Interior)
+
 	addEventHandler("onClientRender", root, self.m_fnRender)
 	addEventHandler("onClientPreRender", root, self.m_fnPreRender)
 end
@@ -43,10 +46,11 @@ end
 function Cutscene:stop()
 	self.m_ActiveScene:stop()
 	self.m_ActiveScene = false
-	
+	setCameraInterior(localPlayer:getInterior())
+
 	removeEventHandler("onClientRender", root, self.m_fnRender)
 	removeEventHandler("onClientPreRender", root, self.m_fnPreRender)
-	
+
 	for k, v in pairs(self.m_Elements) do
 		destroyElement(v)
 	end
