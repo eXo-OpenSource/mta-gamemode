@@ -9,7 +9,7 @@ DrivingSchool = inherit(Singleton)
 local DRIVERSLICENSE_PRICE = 80000
 
 function DrivingSchool:constructor()
-	self.m_InteriorEnterExit = InteriorEnterExit:new(Vector3(1052.5, -1524, 13.5), Vector3(-2027, -104.2, 1035.1), -90, 90, 3)
+	self.m_InteriorEnterExit = InteriorEnterExit:new(Vector3(1052.5, -1524, 13.5), Vector3(-2027, -104.2, 1035.1), 180, 90, 3)
 	
 	addEvent("buyDriversLicense", true)
 	addEventHandler("buyDriversLicense", root,
