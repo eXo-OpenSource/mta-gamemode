@@ -132,6 +132,7 @@
 
 	<!-- Tests -->
 	<script src="server/tests/UtilsTest.lua" type="server"/>
+	<script src="server/tests/GroupTest.lua" type="server"/>
 
 	<script src="server/Main.lua" type="server"/>
 

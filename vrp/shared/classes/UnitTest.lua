@@ -12,22 +12,29 @@ function UnitTest:virtual_constructor(name)
     name = name or ""
     self:outputLog(("TEST: Entering test: '%s'"):format(name))
 
+    if self.init then
+        self:init()
+    end
+
     local testCounter = 0
     local succeededTestCounter = 0
 
     -- Iterate class and execute all methods (we don't have to check for methods of this class since it's not in the inherited class table)
     for name, method in pairs(getmetatable(self).__index) do
-        self.m_FailedHere = false
-        testCounter = testCounter + 1
-        method(self, name)
+        if name ~= "init" and name ~= "destructor" then
+            self.m_FailedHere = false
+            testCounter = testCounter + 1
+            method(self, name)
 
-        if not self.m_FailedHere then
-            succeededTestCounter = succeededTestCounter + 1
-            self:outputLog(("SUCCESS: Test method '%s' succeeded"):format(name))
+            if not self.m_FailedHere then
+                succeededTestCounter = succeededTestCounter + 1
+                self:outputLog(("SUCCESS: Test method '%s' succeeded"):format(name))
+            end
         end
     end
 
     self:outputLog(("TEST: Test '%s' completed. Executed %d tests, %d succeeded, %d failed"):format(name, testCounter, succeededTestCounter, testCounter - succeededTestCounter))
+    delete(self)
 end
 
 function UnitTest:outputLog(message)
@@ -38,7 +45,7 @@ end
 
 function UnitTest:getTestMethodName()
     -- debug.getinfo does not work as we'll get 'method' as name then (@line 17)
-    local t, name = debug.getlocal(4, 5)
+    local t, name = debug.getlocal(5, 5)
     return tostring(name)
 end
 
@@ -58,7 +65,7 @@ function UnitTest:assertEquals(actual, expected)
     if expected == actual then
         return true
     else
-        self:outputLog(("ERROR: Test '%s' (line %n) failed. Expected '%s', got '%s'"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, expected, actual))
+        self:outputLog(("ERROR: Test method '%s' (line %n) failed. Expected '%s', got '%s'"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, expected, actual))
         self:markAsFailed()
         return false
     end
@@ -77,7 +84,7 @@ function UnitTest:assertTableEquals(actual, expected)
     if table.compare(expected, actual) then
         return true
     else
-        self:outputLog(("ERROR: Test '%s' (line %d) failed.\nExpected:\n%s.\n\nGot:\n%s"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tableToString(expected), tableToString(actual)))
+        self:outputLog(("ERROR: Test method '%s' (line %d) failed.\nExpected:\n%s.\n\nGot:\n%s"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tableToString(expected), tableToString(actual)))
         self:markAsFailed()
         return false
     end
@@ -94,7 +101,7 @@ function UnitTest:assertTrue(result)
     if result then
         return true
     else
-        self:outputLog(("ERROR: Test '%s' (line %d) failed. Expected true, got '%s'"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tostring(result)))
+        self:outputLog(("ERROR: Test method '%s' (line %d) failed. Expected true, got '%s'"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tostring(result)))
         self:markAsFailed()
         return false
     end
@@ -111,7 +118,7 @@ function UnitTest:assertFalse(result)
     if result == false then
         return true
     else
-        self:outputLog(("ERROR: Test '%s' (line %d) failed. Expected false, got '%s'"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tostring(result)))
+        self:outputLog(("ERROR: Test method '%s' (line %d) failed. Expected false, got '%s'"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tostring(result)))
         self:markAsFailed()
         return false
     end

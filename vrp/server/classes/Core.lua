@@ -104,6 +104,7 @@ function Core:runTests()
 
 	-- Instantiates tests here
 	UtilsTest:new("UtilsTest")
+	GroupTest:new("GroupTest")
 
 	outputServerLog("")
 end

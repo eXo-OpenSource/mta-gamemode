@@ -67,6 +67,11 @@ function GangAreaManager:Event_gangAreaTagSprayed(Id)
 					return
 				end]]
 
+				if not gangArea:canBeTurfed() then
+					client:sendError(_("Dieses Gebiet kann derzeit nicht erobert werden. Versuche es in ein paar Stunden wieder!", client))
+					return
+				end
+
 				if gangArea:startTurfing(clientGroup) then
 					client:sendInfo(_("Der Gangwar wurde gestartet! Halte nun bis zur Neutralisierung im Gebiet durch!", client))
 				else

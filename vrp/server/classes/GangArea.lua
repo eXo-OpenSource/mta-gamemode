@@ -261,3 +261,25 @@ function GangArea:distributeResources()
 	self.m_OwnerGroup:distributeMoney(self.m_ResourcesPerDistribution)
 	return true
 end
+
+function GangArea:canBeTurfed()
+	-- Check if the gang area has no owner
+	if not self.m_OwnerGroup then
+		return true
+	end
+
+	-- Check if noone is playing
+	if #self.m_OwnerGroup:getOnlinePlayers() > 0 then
+		return true
+	end
+
+	-- Check if noone was playing (use MySQL statement directly instead of loading all data)
+	for playerId in pairs(self.m_OwnerGroup:getPlayers(true)) do
+		local row = sql:queryFetchSingle("SELECT DATE_ADD(LastLogin, INTERVAL 24 HOUR) > NOW() AS WasOnline FROM ??_accounts WHERE Id = ?", sql:getPrefix(), playerId)
+		if row.WasOnline == 1 then
+			return false
+		end
+	end
+
+	return true
+end
