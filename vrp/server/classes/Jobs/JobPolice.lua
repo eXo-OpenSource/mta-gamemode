@@ -87,6 +87,7 @@ function JobPolice:jailPlayer(player, policeman)
 	-- Pay some money, karma and xp to the policeman
 	policeman:giveMoney(player:getWantedLevel() * 100)
 	policeman:giveKarma(player:getWantedLevel() * 0.05)
+	policeman:givePoints(3)
 
 	-- Start freeing timer
 	local jailTime = player:getWantedLevel() * 20

@@ -93,6 +93,9 @@ function GangArea:Area_Leave(hitElement, matchingDimension)
 				hitElement:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_DEFENDED, self.m_TurfingGroup:getName())
 				for k, player in pairs(self.m_DefendingPlayers) do
 					player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_DEFENDED, self.m_TurfingGroup:getName())
+
+					-- Give successful players a few points
+					player:givePoints(20)
 				end
 			end
 
@@ -132,6 +135,9 @@ function GangArea:updateTurfing()
 
 		for k, player in pairs(self.m_TurfingPlayers) do
 			player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_NEWOWNER, self.m_OwnerGroup:getName())
+
+			-- Give successful players a few points
+			player:givePoints(20)
 		end
 		for k, player in pairs(self.m_DefendingPlayers) do
 			player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_NEWOWNER, self.m_OwnerGroup:getName())
@@ -155,6 +161,9 @@ function GangArea:updateTurfing()
 		end
 		for k, player in pairs(self.m_DefendingPlayers) do
 			player:triggerEvent("gangAreaTurfStop", self.m_Id, TURFING_STOPREASON_DEFENDED, self.m_OwnerGroup:getName())
+
+			-- Give successful players a few points
+			player:givePoints(20)
 		end
 
 		self.m_TurfingPlayers = {}
@@ -255,6 +264,11 @@ end
 function GangArea:distributeResources()
 	-- Do we have an owner?
 	if not self.m_OwnerGroup then
+		return false
+	end
+
+	-- Do not distribute resources if noone is online
+	if #self.m_OwnerGroup:getOnlinePlayers() == 0 then
 		return false
 	end
 
