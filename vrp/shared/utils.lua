@@ -460,3 +460,11 @@ end
 function getThisFunction()
 	return debug.getinfo(2, "f").func
 end
+
+function getVehicleUpgradeNameFromID(upgradeId)
+	return VEHICLE_UPGRADE_NAMES[upgradeId] or false
+end
+
+function getVehicleUpgradePrice(upgradeId)
+	return VEHICLE_UPGRADE_PRICES[upgradeId]
+end

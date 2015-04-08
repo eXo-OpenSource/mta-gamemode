@@ -17,6 +17,7 @@
 	<script src="shared/math.lua" type="shared"/>
 	<script src="shared/crc32lua.lua" type="shared"/>
 	<script src="shared/deflatelua.lua" type="shared"/>
+	<script src="shared/data.lua" type="shared"/>
 	<script src="shared/classes/File.lua" type="shared"/>
 	<script src="shared/classes/Log.lua" type="shared"/>
 	<script src="shared/classes/POParser.lua" type="shared"/>

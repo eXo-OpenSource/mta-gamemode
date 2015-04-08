@@ -45,11 +45,11 @@ function VehicleTuningGUI:constructor(vehicle)
     self.m_CartContent = {}
     self.m_Vehicle = vehicle
     self:initPartsList()
-    self:moveCameraToSlot(7)
+    self:moveCameraToSlot(7, true)
     self:updatePrices()
     showChat(false)
 
-    --self.m_Music = Sound.create("https://jusonex.net/public/saonline/Audio/GarageMusic.mp3", true)
+    self.m_Music = Sound.create("https://jusonex.net/public/saonline/Audio/GarageMusic.mp3", true)
 end
 
 function VehicleTuningGUI:destructor()
@@ -83,13 +83,18 @@ function VehicleTuningGUI:updateUpgradeList(slot)
     self.m_UpgradeIdMapping = {}
     self.m_UpgradeChanger:clear()
 
+    -- Add compatible upgrades
     for k, upgradeId in pairs(upgrades) do
         local rowId = self.m_UpgradeChanger:addItem(tostring(getVehicleUpgradeNameFromID(upgradeId)))
         self.m_UpgradeIdMapping[rowId] = upgradeId
     end
+
+    -- Add no upgrade
+    local rowId = self.m_UpgradeChanger:addItem(_"Standard")
+    self.m_UpgradeIdMapping[rowId] = 0 -- 0 stands for standard
 end
 
-function VehicleTuningGUI:moveCameraToSlot(slot)
+function VehicleTuningGUI:moveCameraToSlot(slot, noAnimation)
     local targetPosition = self.CameraPositions[slot]
     local targetLookAtPosition = self.m_Vehicle:getPosition()
     if type(targetPosition) == "table" then
@@ -99,6 +104,10 @@ function VehicleTuningGUI:moveCameraToSlot(slot)
 
     local oldX, oldY, oldZ, oldLookX, oldLookY, oldLookZ = getCameraMatrix()
     local progress = 0
+
+    if noAnimation then
+        progress = 1
+    end
 
     addEventHandler("onClientPreRender", root,
         function(deltaTime)
@@ -117,9 +126,12 @@ end
 function VehicleTuningGUI:updatePrices()
     local overallPrice = 0
     for slot, upgradeId in pairs(self.m_CartContent) do
-        -- TODO: Get price from price table
-        local price = 100
-        overallPrice = overallPrice + price
+        if upgradeId then
+            -- Get price from price table
+            local price = getVehicleUpgradePrice(upgradeId)
+            assert(price, "Invalid price for upgrade "..tostring(upgradeId))
+            overallPrice = overallPrice + price
+        end
     end
 
     self.m_PriceLabel:setText(_("Preis: %d$", overallPrice))
@@ -135,7 +147,18 @@ end
 function VehicleTuningGUI:UpgradeChanger_Change(text, index)
     local upgradeId = self.m_UpgradeIdMapping[index]
     if upgradeId then
-        self.m_Vehicle:addUpgrade(upgradeId)
+        if upgradeId ~= 0 then
+            self.m_Vehicle:addUpgrade(upgradeId)
+        else
+            -- Remove the upgrade
+            local selectedPartItem = self.m_PartsList:getSelectedItem()
+            if selectedPartItem and selectedPartItem.PartSlot then
+                local upgradeId = getVehicleUpgradeOnSlot(self.m_Vehicle, selectedPartItem.PartSlot)
+                if upgradeId then
+                    self.m_Vehicle:removeUpgrade(upgradeId)
+                end
+            end
+        end
     end
 end
 
@@ -157,10 +180,15 @@ function VehicleTuningGUI:AddToCartButton_Click()
             end
         end
 
-        self.m_CartContent[slot] = self.m_UpgradeIdMapping[changerIndex]
+        local upgradeId = self.m_UpgradeIdMapping[changerIndex]
+        self.m_CartContent[slot] = upgradeId ~= 0 and upgradeId or false
 
-        -- TODO: Get price from price table
-        local price = 100
+        -- Get price from price table
+        local price = getVehicleUpgradePrice(upgradeId)
+        if upgradeId == 0 then -- Standard parts are free
+            price = 0
+        end
+
         local item = self.m_ShoppingCartGrid:addItem(partName..": "..upgradeName, tostring(price).."$")
         item.PartSlot = slot
 
