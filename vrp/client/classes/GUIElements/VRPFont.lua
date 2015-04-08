@@ -13,7 +13,7 @@ function VRPFont(height)
 	if not VRPFonts[fontsize] then
 		VRPFonts[fontsize] = dxCreateFont("files/fonts/Segoe/segoeui.ttf", fontsize)
 	end
-	
+
 	return VRPFonts[fontsize]
 end
 
@@ -21,3 +21,18 @@ end
 function VRPTextWidth(text, height)
 	return dxGetTextWidth(text, 1, VRPFont(height))
 end
+
+
+local FontAwesomes = {}
+function FontAwesome(height)
+	local fontsize = math.floor(height/2)
+	if not FontAwesomes[fontsize] then
+		FontAwesomes[fontsize] = dxCreateFont("files/fonts/FontAwesome.otf", fontsize)
+	end
+
+	return FontAwesomes[fontsize]
+end
+
+FontAwesomeSymbols = {
+	CartPlus = ""
+}

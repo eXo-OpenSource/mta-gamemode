@@ -555,6 +555,7 @@
 	<file src="files/fonts/Segoe/segoeui.ttf"/>
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
+	<vrpfile src="files/fonts/FontAwesome.otf"/>
 
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>

@@ -36,12 +36,15 @@ end
 function GUIChanger:drawThis()
 	dxSetBlendMode("modulate_add")
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, Color.LightBlue)
-	dxDrawText(self.m_Items[self.m_CurrentItem], self.m_AbsoluteX + self.m_Height, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - self.m_Height, self.m_AbsoluteY + self.m_Height, self:getColor(), 1, VRPFont(self.m_Height-8), "center", "center")
+	dxDrawText(self.m_Items[self.m_CurrentItem] or "", self.m_AbsoluteX + self.m_Height, self.m_AbsoluteY, self.m_AbsoluteX + self.m_Width - self.m_Height, self.m_AbsoluteY + self.m_Height, self:getColor(), 1, VRPFont(self.m_Height-8), "center", "center")
 	dxSetBlendMode("blend")
 end
 
 function GUIChanger:addItem(text)
-	table.insert(self.m_Items, text)
+	local itemId = #self.m_Items + 1
+	self.m_Items[itemId] = text
+	self:anyChange()
+	return itemId
 end
 
 function GUIChanger:setIndex(index, dontTriggerChangeEvent)
@@ -58,4 +61,10 @@ end
 
 function GUIChanger:getIndex()
 	return self.m_Items[self.m_CurrentItem], self.m_CurrentItem
+end
+
+function GUIChanger:clear()
+	self.m_Items = {}
+	self.m_CurrentItem = 1
+	self:anyChange()
 end

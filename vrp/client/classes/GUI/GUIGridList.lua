@@ -87,6 +87,7 @@ end
 
 function GUIGridList:addColumn(text, width)
 	table.insert(self.m_Columns, {text = text, width = width})
+	return self
 end
 
 function GUIGridList:getSelectedItem()
