@@ -43,6 +43,7 @@ function Core:constructor()
 	Achievement:new()
 	SkinShops:new()
 	Deathmatch:new()
+	VehicleTuning:new()
 
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

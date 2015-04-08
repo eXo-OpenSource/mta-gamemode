@@ -40,6 +40,7 @@ function VehicleTuningGUI:constructor(vehicle)
             :addColumn(_"Preis", 0.3)
         self.m_PriceLabel = GUILabel:new(width*0.02, height*0.9, width*0.5, height*0.1, "", self.m_ShoppingCartWindow)
         self.m_BuyButton = GUIButton:new(width*0.6, height*0.9, width*0.4, height*0.1, _"Kaufen", self.m_ShoppingCartWindow):setBackgroundColor(Color.Green)
+        self.m_BuyButton.onLeftClick = bind(self.BuyButton_Click, self)
     end
 
     self.m_CartContent = {}
@@ -48,6 +49,12 @@ function VehicleTuningGUI:constructor(vehicle)
     self:moveCameraToSlot(7, true)
     self:updatePrices()
     showChat(false)
+
+    -- Get a list of currently attached parts
+    self.m_CurrentUpgrades = {}
+    for slot = 0, 16 do
+        self.m_CurrentUpgrades[slot] = getVehicleUpgradeOnSlot(self.m_Vehicle, slot)
+    end
 
     self.m_Music = Sound.create("https://jusonex.net/public/saonline/Audio/GarageMusic.mp3", true)
 end
@@ -58,7 +65,8 @@ function VehicleTuningGUI:destructor()
         self.m_Music:destroy()
     end
     delete(self.m_UpgradeChanger)
-    delete(self.m_PutIntoCartButton)
+    delete(self.m_AddToCartButton)
+    delete(self.m_ShoppingCartWindow)
     showChat(true)
 
     GUIForm.destructor(self)
@@ -83,15 +91,15 @@ function VehicleTuningGUI:updateUpgradeList(slot)
     self.m_UpgradeIdMapping = {}
     self.m_UpgradeChanger:clear()
 
+    -- Add no upgrade
+    local rowId = self.m_UpgradeChanger:addItem(_"Standard")
+    self.m_UpgradeIdMapping[rowId] = 0 -- 0 stands for standard
+
     -- Add compatible upgrades
     for k, upgradeId in pairs(upgrades) do
         local rowId = self.m_UpgradeChanger:addItem(tostring(getVehicleUpgradeNameFromID(upgradeId)))
         self.m_UpgradeIdMapping[rowId] = upgradeId
     end
-
-    -- Add no upgrade
-    local rowId = self.m_UpgradeChanger:addItem(_"Standard")
-    self.m_UpgradeIdMapping[rowId] = 0 -- 0 stands for standard
 end
 
 function VehicleTuningGUI:moveCameraToSlot(slot, noAnimation)
@@ -126,7 +134,7 @@ end
 function VehicleTuningGUI:updatePrices()
     local overallPrice = 0
     for slot, upgradeId in pairs(self.m_CartContent) do
-        if upgradeId then
+        if upgradeId ~= 0 then
             -- Get price from price table
             local price = getVehicleUpgradePrice(upgradeId)
             assert(price, "Invalid price for upgrade "..tostring(upgradeId))
@@ -137,7 +145,34 @@ function VehicleTuningGUI:updatePrices()
     self.m_PriceLabel:setText(_("Preis: %d$", overallPrice))
 end
 
+function VehicleTuningGUI:resetUpgrades()
+    -- First, remove all upgrades
+    for slot = 0, 16 do
+        local upgradeId = getVehicleUpgradeOnSlot(self.m_Vehicle, slot)
+        if upgradeId and upgradeId ~= 0 then
+            self.m_Vehicle:removeUpgrade(upgradeId)
+            outputDebug("Removing upgrade: "..upgradeId)
+        end
+    end
+
+    -- Re-add the upgrades now
+    for slot, upgradeId in pairs(self.m_CurrentUpgrades) do
+        if upgradeId and upgradeId ~= 0 then
+            self.m_Vehicle:addUpgrade(upgradeId)
+        end
+    end
+
+    -- Finally, override by the upgrades from our shopping cart
+    for slot, upgradeId in pairs(self.m_CartContent) do
+        if upgradeId and upgradeId ~= 0 then
+            self.m_Vehicle:addUpgrade(upgradeId)
+        end
+    end
+end
+
 function VehicleTuningGUI:PartItem_Click(item)
+    self:resetUpgrades()
+
     self:moveCameraToSlot(item.PartSlot)
     if item.PartSlot then
         self:updateUpgradeList(item.PartSlot)
@@ -170,7 +205,7 @@ function VehicleTuningGUI:AddToCartButton_Click()
         local slot = selectedPartItem.PartSlot
         local partName = selectedPartItem:getColumnText(1)
 
-        -- Remove upgrade if already exists for tihs slot
+        -- Remove upgrade if already exists for this slot
         if self.m_CartContent[slot] then
             for rowId, item in pairs(self.m_ShoppingCartGrid:getItems()) do
                 if item.PartSlot == slot then
@@ -181,7 +216,7 @@ function VehicleTuningGUI:AddToCartButton_Click()
         end
 
         local upgradeId = self.m_UpgradeIdMapping[changerIndex]
-        self.m_CartContent[slot] = upgradeId ~= 0 and upgradeId or false
+        self.m_CartContent[slot] = upgradeId
 
         -- Get price from price table
         local price = getVehicleUpgradePrice(upgradeId)
@@ -196,6 +231,33 @@ function VehicleTuningGUI:AddToCartButton_Click()
         self:updatePrices()
     end
 end
+
+function VehicleTuningGUI:BuyButton_Click()
+    triggerServerEvent("vehicleUpgradesBuy", localPlayer, self.m_CartContent)
+end
+
+local vehicleTuningShop = false
+addEvent("vehicleTuningShopEnter", true)
+addEventHandler("vehicleTuningShopEnter", root,
+    function(vehicle)
+        if vehicleTuningShop then
+            delete(vehicleTuningShop)
+        end
+
+        vehicleTuningShop = VehicleTuningGUI:new(vehicle)
+    end
+)
+
+addEvent("vehicleTuningShopExit", true)
+addEventHandler("vehicleTuningShopExit", root,
+    function()
+        if vehicleTuningShop then
+            delete(vehicleTuningShop)
+            vehicleTuningShop = false
+        end
+    end
+)
+
 
 VehicleTuningGUI.CameraPositions = {
     [0] = Vector3(0, 5.6, 1.5), -- Hood
@@ -216,22 +278,3 @@ VehicleTuningGUI.CameraPositions = {
     [15] = Vector3(0, -6, 0.2), -- Rear Bumper
     [16] = Vector3(4.2, 2.1, 2.1), -- Misc
 }
-
--- A piece of debug code | TODO: Remove soon
-if DEBUG then
-    local tuningGUI = false
-
-    addCommandHandler("setvehicle",
-        function(cmd, id)
-            id = tonumber(id)
-            if not id or id < 1 or id > 3 then
-                return
-            end
-
-            if tuningGUI then
-                delete(tuningGUI)
-            end
-            tuningGUI = VehicleTuningGUI:new(getElementByID("TuningVehicle"..id))
-        end
-    )
-end
