@@ -61,6 +61,7 @@ function VehicleTuningGUI:constructor(vehicle)
 end
 
 function VehicleTuningGUI:destructor()
+    self:emptyCart()
     self:resetUpgrades()
     setCameraTarget(localPlayer)
     if self.m_Music then
@@ -225,6 +226,10 @@ function VehicleTuningGUI:addPartToCart(partId, partName, info, upgradeName)
 
     -- Update overall costs
     self:updatePrices()
+end
+
+function VehicleTuningGUI:emptyCart()
+    self.m_CartContent = {}
 end
 
 function VehicleTuningGUI:PartItem_Click(item)

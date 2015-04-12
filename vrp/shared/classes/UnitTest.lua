@@ -45,8 +45,8 @@ end
 
 function UnitTest:getTestMethodName()
     -- debug.getinfo does not work as we'll get 'method' as name then (@line 17)
-    local t, name = debug.getlocal(5, 5)
-    return tostring(name)
+    local index, value = debug.getlocal(4, 8)
+    return tostring(value)
 end
 
 function UnitTest:markAsFailed()
