@@ -7,11 +7,12 @@
 -- ****************************************************************************
 ColorPickerGUI = inherit(GUIForm)
 
-function ColorPickerGUI:constructor(acceptCallback)
+function ColorPickerGUI:constructor(acceptCallback, changeCallback)
     local width, height = 330, 250
     GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2-height/2, width, height)
 
     self.m_AcceptCallback = acceptCallback
+    self.m_ChangeCallback = changeCallback
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Farbwähler", true, true, self)
 
     local scrollFunc = bind(self.Color_Change, self)
@@ -36,11 +37,16 @@ function ColorPickerGUI:Color_Change()
     local b = self.m_ScrollbarBlue:getScrollPosition() * 255
 
     self.m_PreviewRect:setColorRGB(r, g, b)
+
+    if self.m_ChangeCallback then
+        self.m_ChangeCallback(r, g, b)
+    end
 end
 
 function ColorPickerGUI:AcceptButton_Click()
     if self.m_AcceptCallback then
-        self.m_AcceptCallback(self.m_PreviewRect:getColor())
+        local r, g, b = self.m_PreviewRect:getColorRGB()
+        self.m_AcceptCallback(r, g, b)
     end
     delete(self)
 end

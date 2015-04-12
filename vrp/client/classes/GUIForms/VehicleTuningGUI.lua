@@ -55,11 +55,13 @@ function VehicleTuningGUI:constructor(vehicle)
     for slot = 0, 16 do
         self.m_CurrentUpgrades[slot] = getVehicleUpgradeOnSlot(self.m_Vehicle, slot)
     end
+    self.m_CurrentUpgrades[VehicleSpecialProperty.Color] = {self.m_Vehicle:getColor(true)}
 
     self.m_Music = Sound.create("https://jusonex.net/public/saonline/Audio/GarageMusic.mp3", true)
 end
 
 function VehicleTuningGUI:destructor()
+    self:resetUpgrades()
     setCameraTarget(localPlayer)
     if self.m_Music then
         self.m_Music:destroy()
@@ -76,6 +78,16 @@ function VehicleTuningGUI:destructor()
 end
 
 function VehicleTuningGUI:initPartsList()
+    -- Add 'special properties' (e.g. color)
+    local specialProperties = {{VehicleSpecialProperty.Color, _"Farbe"}}
+    for k, v in pairs(specialProperties) do
+        local partSlot, partName = unpack(v)
+        local item = self.m_PartsList:addItem(partName)
+        item.PartSlot = partSlot
+        item.onLeftClick = bind(self.PartItem_Click, self)
+    end
+
+    -- Add upgrades
     for slot = 0, 16 do
         if slot ~= 10 and slot ~= 11 then -- Exclude Stereo and Unknown
             local compatibleUpgrades = getVehicleCompatibleUpgrades(self.m_Vehicle, slot)
@@ -140,6 +152,10 @@ function VehicleTuningGUI:updatePrices()
         if upgradeId ~= 0 then
             -- Get price from price table
             local price = getVehicleUpgradePrice(upgradeId)
+            -- If no price is available, search for the part price instead
+            if not price then
+                price = getVehicleUpgradePrice(slot)
+            end
             assert(price, "Invalid price for upgrade "..tostring(upgradeId))
             overallPrice = overallPrice + price
         end
@@ -154,30 +170,78 @@ function VehicleTuningGUI:resetUpgrades()
         local upgradeId = getVehicleUpgradeOnSlot(self.m_Vehicle, slot)
         if upgradeId and upgradeId ~= 0 then
             self.m_Vehicle:removeUpgrade(upgradeId)
-            outputDebug("Removing upgrade: "..upgradeId)
         end
     end
 
     -- Re-add the upgrades now
     for slot, upgradeId in pairs(self.m_CurrentUpgrades) do
-        if upgradeId and upgradeId ~= 0 then
+        if upgradeId and upgradeId ~= 0 and slot >= 0 then
             self.m_Vehicle:addUpgrade(upgradeId)
         end
     end
+    self.m_Vehicle:setColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color]))
 
     -- Finally, override with the upgrades from our shopping cart
     for slot, upgradeId in pairs(self.m_CartContent) do
-        if upgradeId and upgradeId ~= 0 then
+        if upgradeId and upgradeId ~= 0 and slot >= 0 then
             self.m_Vehicle:addUpgrade(upgradeId)
+        end
+
+        if slot == VehicleSpecialProperty.Color then
+            local r, g, b = unpack(upgradeId)
+            self.m_Vehicle:setColor(r, g, b)
         end
     end
 end
 
+function VehicleTuningGUI:addPartToCart(partId, partName, info, upgradeName)
+    -- Remove upgrade if already exists for this slot
+    if self.m_CartContent[partId] then
+        for rowId, item in pairs(self.m_ShoppingCartGrid:getItems()) do
+            if item.PartSlot == partId then
+                self.m_ShoppingCartGrid:removeItem(rowId)
+                break
+            end
+        end
+    end
+
+    -- Get price from price table
+    local price = getVehicleUpgradePrice(info)
+    -- If no price is available, search for the part price instead
+    if not price then
+        price = getVehicleUpgradePrice(partId)
+    end
+    -- Standard parts are free
+    if info == 0 then
+        price = 0
+    end
+
+    local name = upgradeName and partName..": "..upgradeName or partName
+    local item = self.m_ShoppingCartGrid:addItem(name, tostring(price).."$")
+    item.PartSlot = partId
+
+    -- Add item to cart now
+    self.m_CartContent[partId] = info
+
+    -- Update overall costs
+    self:updatePrices()
+end
+
 function VehicleTuningGUI:PartItem_Click(item)
     self:resetUpgrades()
+    self.m_UpgradeChanger:setVisible(true)
+    self.m_AddToCartButton:setVisible(true)
 
     self:moveCameraToSlot(item.PartSlot)
     if item.PartSlot then
+        -- Check for special properties
+        if item.PartSlot == VehicleSpecialProperty.Color then
+            self.m_UpgradeChanger:setVisible(false)
+            self.m_AddToCartButton:setVisible(false)
+            ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.Color, _"Farbe", {r, g, b}) end, function(r, g, b) self.m_Vehicle:setColor(r, g, b) end)
+            return
+        end
+
         self:updateUpgradeList(item.PartSlot)
     end
 end
@@ -207,31 +271,10 @@ function VehicleTuningGUI:AddToCartButton_Click()
     if selectedPartItem and selectedPartItem.PartSlot and changerIndex and self.m_UpgradeIdMapping[changerIndex] then
         local slot = selectedPartItem.PartSlot
         local partName = selectedPartItem:getColumnText(1)
-
-        -- Remove upgrade if already exists for this slot
-        if self.m_CartContent[slot] then
-            for rowId, item in pairs(self.m_ShoppingCartGrid:getItems()) do
-                if item.PartSlot == slot then
-                    self.m_ShoppingCartGrid:removeItem(rowId)
-                    break
-                end
-            end
-        end
-
         local upgradeId = self.m_UpgradeIdMapping[changerIndex]
-        self.m_CartContent[slot] = upgradeId
 
-        -- Get price from price table
-        local price = getVehicleUpgradePrice(upgradeId)
-        if upgradeId == 0 then -- Standard parts are free
-            price = 0
-        end
-
-        local item = self.m_ShoppingCartGrid:addItem(partName..": "..upgradeName, tostring(price).."$")
-        item.PartSlot = slot
-
-        -- Update overall costs
-        self:updatePrices()
+        -- Add to cart
+        self:addPartToCart(slot, partName, upgradeId, upgradeName)
     end
 end
 
@@ -285,4 +328,7 @@ VehicleTuningGUI.CameraPositions = {
     [14] = Vector3(0, 5.8, 0.2), -- Front Bumper
     [15] = Vector3(0, -6, 0.2), -- Rear Bumper
     [16] = Vector3(4.2, 2.1, 2.1), -- Misc
+
+    -- Special properties
+    [VehicleSpecialProperty.Color] = Vector3(4.2, 2.1, 2.1),
 }

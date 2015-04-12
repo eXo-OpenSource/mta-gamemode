@@ -391,4 +391,7 @@ VEHICLE_UPGRADE_PRICES = {
 	[1191] = 3000,
 	[1192] = 3000,
 	[1193] = 2000,
+
+
+	 [VehicleSpecialProperty.Color] = 5000,
 }

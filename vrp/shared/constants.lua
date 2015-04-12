@@ -210,3 +210,5 @@ SkinInfo = {
 }
 
 MAX_KARMA_LEVEL = 150
+
+VehicleSpecialProperty = {Color = -1}

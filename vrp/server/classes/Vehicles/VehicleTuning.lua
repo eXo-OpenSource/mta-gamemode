@@ -134,7 +134,13 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
     local overallPrice = 0
     for slot, upgradeId in pairs(cartContent) do
         if upgradeId ~= 0 then
-            overallPrice = overallPrice + getVehicleUpgradePrice(upgradeId)
+            local price = getVehicleUpgradePrice(upgradeId)
+            -- Search for part price if not available
+            if not price then
+                price = getVehicleUpgradePrice(slot)
+            end
+
+            overallPrice = overallPrice + price
         end
     end
 
@@ -146,10 +152,16 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
     client:takeMoney(overallPrice)
 
     for slot, upgradeId in pairs(cartContent) do
-        if upgradeId ~= 0 then
-            vehicle:addUpgrade(upgradeId)
+        if slot >= 0 then
+            if upgradeId ~= 0 then
+                vehicle:addUpgrade(upgradeId)
+            else
+                vehicle:removeUpgrade(vehicle:getUpgradeOnSlot(upgradeId))
+            end
         else
-            vehicle:removeUpgrade(vehicle:getUpgradeOnSlot(upgradeId))
+            if slot == VehicleSpecialProperty.Color then
+                vehicle:setColor(unpack(upgradeId))
+            end
         end
     end
     client:sendSuccess(_("Upgrades gekauft!", client))

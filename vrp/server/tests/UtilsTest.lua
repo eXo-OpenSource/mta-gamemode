@@ -27,3 +27,9 @@ function UtilsTest:test_getAnglePosition()
     self:assertTableEquals({getAnglePosition(0, 0, 0, 0, 0, 0, 1, 90, 0)}, {1, 0, 0})
     self:assertTableEquals({getAnglePosition(0, 0, 0, 0, 0, 0, 1, 180, 0)}, {0, -1, 0})
 end
+
+function UtilsTest:test_fromcolor()
+    self:assertTableEquals({fromcolor(-256)}, {255, 255, 0, 255})
+    self:assertTableEquals({fromcolor(-1)}, {255, 255, 255, 255})
+    self:assertTableEquals({fromcolor(-16777216)}, {0, 0, 0, 255})
+end
