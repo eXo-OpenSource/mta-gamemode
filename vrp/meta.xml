@@ -237,11 +237,6 @@
 	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
 
-	<script src="client/classes/WebUI/WebWindow.lua" type="client"/>
-	<script src="client/classes/WebUI/FrameWebWindow.lua" type="client"/>
-	<script src="client/classes/WebUI/WebUIManager.lua" type="client"/>
-	<script src="client/classes/WebUI/VRPWebWindow.lua" type="client"/>
-
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>

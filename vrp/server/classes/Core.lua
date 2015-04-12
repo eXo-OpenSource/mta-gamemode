@@ -1,6 +1,5 @@
 Core = inherit(Object)
 addEvent("Core.onClientInternalError", true)
-local RUN_UNIT_TESTS = DEBUG and true
 
 function Core:constructor()
 	outputServerLog("Initializing core...")
@@ -79,9 +78,9 @@ function Core:constructor()
 
 	addEventHandler("Core.onClientInternalError", root, bind(self.onClientInternalError, self))
 
-	-- Execute tests
-	if RUN_UNIT_TESTS then
-		self:runTests()
+	-- Prepare unit tests
+	if DEBUG then
+		addCommandHandler("runtests", bind(self.runTests, self))
 	end
 end
 

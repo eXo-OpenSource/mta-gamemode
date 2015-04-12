@@ -5,14 +5,16 @@
 -- *  PURPOSE:     PolicePanel form class
 -- *
 -- ****************************************************************************
-PolicePanel = inherit(VRPWebWindow)
+PolicePanel = inherit(GUIWebForm)
 inherit(Singleton, PolicePanel)
 addEvent("policePanelListRetrieve", true)
 
 function PolicePanel:constructor()
-	local size = Vector2(screenWidth*0.6, screenHeight*0.6)
-	VRPWebWindow.constructor(self, screenSize/2-size/2, size, "files/html/PolicePanel/PolicePanel.html", false)
-	self:setTitle(_"Polizeicomputer")
+	local width, height = screenWidth*0.6, screenHeight*0.6
+	GUIWebForm.constructor(self, screenWidth/2-width/2, screenHeight/2-height/2, width, height)
+
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Polizeicomputer", true, true, self)
+	self.m_WebView = GUIWebView:new(0, 30, self.m_Width, self.m_Height-30, "files/html/PolicePanel/PolicePanel.html", false, self.m_Window)
 
 	self.m_ListRetrieveFunc = bind(self.setCrimes, self)
 	addEventHandler("policePanelListRetrieve", root, self.m_ListRetrieveFunc)
@@ -21,7 +23,7 @@ end
 function PolicePanel:destructor()
 	removeEventHandler("policePanelListRetrieve", root, self.m_ListRetrieveFunc)
 
-	VRPWebWindow.destructor(self)
+	GUIWebForm.destructor(self)
 end
 
 function PolicePanel:setCrimes(crimeInfo)
@@ -40,7 +42,7 @@ function PolicePanel:setCrimes(crimeInfo)
 	end
 
 	-- Pass data to CEF
-	return self:callEvent("setCrimes", crimeInfo)
+	return self.m_WebView:callEvent("setCrimes", crimeInfo)
 end
 
 function PolicePanel:onDocumentReady(url)
