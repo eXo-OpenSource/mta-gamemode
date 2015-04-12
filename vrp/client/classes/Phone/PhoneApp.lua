@@ -69,3 +69,11 @@ function PhoneApp:getActivities()
 end
 
 PhoneApp.onOpen = pure_virtual
+
+
+-- Utilities
+function PhoneApp.makeWebApp(caption, iconPath, url)
+	local appClass = inherit(AppCEF)
+	appClass.constructor = function(self) AppCEF.constructor(self, caption, iconPath, url) end
+	return appClass
+end

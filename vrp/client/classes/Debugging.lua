@@ -5,7 +5,10 @@
 -- *  PURPOSE:     Debugging class
 -- *
 -- ****************************************************************************
+GUI_DEBUG = false
+
 if DEBUG then
+	local CEF_DEBUG = false
 
 	Debugging = inherit(Singleton)
 
@@ -15,7 +18,9 @@ if DEBUG then
 		addCommandHandler("dcreload", bind(Debugging.reloadClass, self))
 		addCommandHandler("gp", bind(Debugging.getpos, self))
 		addCommandHandler("sp", bind(Debugging.setpos, self))
-		
+		addCommandHandler("gui_debug", bind(Debugging.gui_debug, self))
+		addCommandHandler("cef_debug", bind(Debugging.cef_debug, self))
+
 		bindKey("lshift", "down",
 			function()
 				local vehicle = getPedOccupiedVehicle(localPlayer)
@@ -51,9 +56,9 @@ if DEBUG then
 			runString(codeString, root, player)
 		end
 	end
-	
+
 	function Debugging:reloadClass(cmd, file)
-		if not fileExists(file) then 
+		if not fileExists(file) then
 			outputChatBox("file does not exist")
 		else
 			outputChatBox("reloading " .. file)
@@ -73,7 +78,7 @@ if DEBUG then
 			outputChatBox("Successfully reloaded")
 		end
 	end
-	
+
 	function Debugging:getpos(cmd)
 		outputChatBox(("Position: %.2f, %.2f, %.2f"):format(getElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer)))
 	end
@@ -86,5 +91,14 @@ if DEBUG then
 		end
 		outputChatBox(("Setting Position: %.2f, %.2f, %.2f"):format(x, y, z))
 		setElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer, x, y, z)
+	end
+
+	function Debugging:gui_debug()
+		GUI_DEBUG = not GUI_DEBUG
+	end
+
+	function Debugging:cef_debug()
+		CEF_DEBUG = not CEF_DEBUG
+		setDevelopmentMode(true, CEF_DEBUG)
 	end
 end

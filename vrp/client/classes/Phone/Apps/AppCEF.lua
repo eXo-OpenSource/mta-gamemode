@@ -19,6 +19,12 @@ function AppCEF:onOpen(form)
 	if self.m_DestroyOnClose or not self.m_Browser then
 		local width, height = form:getSize()
 		self.m_WebView = GUIWebView:new(0, 0, width, height, self.m_StartURL, true, form)
+
+		-- Set mobile property
+		local browser = self.m_WebView:getUnderlyingBrowser()
+		if browser.setProperty then -- backwards compatibility
+			browser:setProperty("mobile", "1")
+		end
 	else
 		self.m_WebView:setVisible(true)
 	end

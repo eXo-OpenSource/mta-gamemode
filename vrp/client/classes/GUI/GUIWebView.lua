@@ -18,6 +18,7 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     addEventHandler("onClientCursorMove", root, self.m_CursorMoveFunc)
     addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
     addEventHandler("onClientBrowserCreated", self.m_Browser, function() source:loadURL(url) end)
+    addEventHandler("onClientBrowserDocumentReady", self.m_Browser, function(...) if self.onDocumentReady then self:onDocumentReady(...) end end)
 end
 
 function GUIWebView:destructor()
@@ -41,6 +42,15 @@ function GUIWebView:setVisible(state, ...)
     self.m_Browser:setRenderingPaused(not state)
 
     GUIElement.setVisible(self, state, ...)
+end
+
+function GUIWebView:getUnderlyingBrowser()
+    return self.m_Browser
+end
+
+function GUIWebView:callEvent(eventName, ...)
+    local code = ("mtatools._callEvent('%s', '%s')"):format(eventName, toJSON({...}))
+    return self.m_Browser:executeJavascript(code)
 end
 
 function GUIWebView:onInternalLeftClick()

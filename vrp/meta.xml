@@ -389,6 +389,7 @@
 	<vrpfile src="files/images/Phone/Apps/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps/IconMessage.png"/>
 	<vrpfile src="files/images/Phone/Apps/IconSettings.png"/>
+	<vrpfile src="files/images/Phone/Apps/IconYouTube.png"/>
 
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>

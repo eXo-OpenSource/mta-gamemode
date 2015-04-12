@@ -15,6 +15,7 @@ function PolicePanel:constructor()
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Polizeicomputer", true, true, self)
 	self.m_WebView = GUIWebView:new(0, 30, self.m_Width, self.m_Height-30, "files/html/PolicePanel/PolicePanel.html", false, self.m_Window)
+	self.m_WebView.onDocumentReady = bind(self.onDocumentReady, self)
 
 	self.m_ListRetrieveFunc = bind(self.setCrimes, self)
 	addEventHandler("policePanelListRetrieve", root, self.m_ListRetrieveFunc)
