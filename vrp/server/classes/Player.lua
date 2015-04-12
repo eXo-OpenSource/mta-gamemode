@@ -8,6 +8,7 @@
 Player = inherit(MTAElement)
 inherit(DatabasePlayer, Player)
 registerElementClass("player", Player)
+Player.ms_QuitHook = Hook:new()
 
 addEvent("introFinished", true)
 addEventHandler("introFinished", root, function()
@@ -28,12 +29,16 @@ function Player:constructor()
 	self.m_LastGotWantedLevelTime = 0
 	self.m_JoinTime = getTickCount()
 	self.m_Crimes = {}
+
 end
 
 function Player:destructor()
-	if self.m_JobVehicle and isElement(self.m_JobVehicle) then
+	if self.m_JobVehicle and isElement(self.m_JobVehicle) then -- TODO: Move this to an appropriate position to be able to use the quit hook
 		destroyElement(self.m_JobVehicle)
 	end
+
+	-- Call the quit hook (to clean up various things before saving)
+	Player.ms_QuitHook:call(self)
 
 	self:save()
 
@@ -385,4 +390,8 @@ end
 
 function Player:getTradingPartner()
 	return self.m_TradingPartner
+end
+
+function Player.getQuitHook()
+	return Player.ms_QuitHook
 end

@@ -46,7 +46,7 @@ function VehicleTuningGUI:constructor(vehicle)
     self.m_CartContent = {}
     self.m_Vehicle = vehicle
     self:initPartsList()
-    self:moveCameraToSlot(7, true)
+    setTimer(function() self:moveCameraToSlot(7, true) end, 100, 1)
     self:updatePrices()
     showChat(false)
 
@@ -68,6 +68,9 @@ function VehicleTuningGUI:destructor()
     delete(self.m_AddToCartButton)
     delete(self.m_ShoppingCartWindow)
     showChat(true)
+
+    -- Tell the server that we do not want to upgrade anything
+    triggerServerEvent("vehicleUpgradesAbort", localPlayer)
 
     GUIForm.destructor(self)
 end
@@ -162,7 +165,7 @@ function VehicleTuningGUI:resetUpgrades()
         end
     end
 
-    -- Finally, override by the upgrades from our shopping cart
+    -- Finally, override with the upgrades from our shopping cart
     for slot, upgradeId in pairs(self.m_CartContent) do
         if upgradeId and upgradeId ~= 0 then
             self.m_Vehicle:addUpgrade(upgradeId)
@@ -245,6 +248,9 @@ addEventHandler("vehicleTuningShopEnter", root,
         end
 
         vehicleTuningShop = VehicleTuningGUI:new(vehicle)
+
+        vehicle:setDimension(PRIVATE_DIMENSION_CLIENT)
+        localPlayer:setDimension(PRIVATE_DIMENSION_CLIENT)
     end
 )
 
@@ -252,12 +258,14 @@ addEvent("vehicleTuningShopExit", true)
 addEventHandler("vehicleTuningShopExit", root,
     function()
         if vehicleTuningShop then
+            vehicleTuningShop.m_Vehicle:setDimension(0)
+            localPlayer:setDimension(0)
+
             delete(vehicleTuningShop)
             vehicleTuningShop = false
         end
     end
 )
-
 
 VehicleTuningGUI.CameraPositions = {
     [0] = Vector3(0, 5.6, 1.5), -- Hood

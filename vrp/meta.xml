@@ -466,6 +466,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/DrivingSchool.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Skinshop.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/1vs1.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/TuningGarage.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -488,6 +489,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/DrivingSchool.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Skinshop.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/1vs1.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/TuningGarage.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
