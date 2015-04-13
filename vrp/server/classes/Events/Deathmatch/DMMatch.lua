@@ -46,9 +46,11 @@ function DeathmatchMatch:getMatchData ()
 	}
 end
 
-function DeathmatchMatch:setStatus (status)
-	if Deathmatch.Status[status] then
-		self.m_Data["Status"] = status
+function DeathmatchMatch:setStatus (status, ...)
+	if not Deathmatch.Status[status] then return end
+	self.m_Data["Status"] = status
+	if status == 2 then
+		self:startMatch(...)
 	end
 
 	Deathmatch:getSingleton():syncData()
@@ -69,6 +71,20 @@ function DeathmatchMatch:removePlayer (player)
 
 	-- at the end -> sync it
 	Deathmatch:getSingleton():syncData()
+end
+
+function DeathmatchMatch:startMatch ()
+	outputDebug("Starting Match #"..self.m_ID.."...")
+
+	self.m_MatchDimension = math.random()
+	for i, v in pairs(self.m_Players) do
+		v:setFrozen(false)
+		v:triggerEvent("DeathmatchEvent.closeGUIForm")
+	end
+end
+
+function DeathmatchMatch:stopMatch ()
+	outputDebug("Stopping Match #"..self.m_ID.."...")
 end
 
 -- DEBUG

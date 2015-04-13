@@ -45,6 +45,7 @@ function Core:ready()
 	EventManager:new()
 	TippManager:new()
 	JailBreak:new()
+	DimensionManager:new()
 
 	VehicleShop.initializeAll()
 	VehicleGarages:new()
