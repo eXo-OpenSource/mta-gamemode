@@ -71,8 +71,8 @@ function DeathmatchEvent:fetchMatchData (data)
 	self.m_Matches = data
 
 	if self.m_GUI then
-		if rawget(self.m_GUI, "update") then
-			self.m_GUI:update()
+		if self.m_GUI.updateData then
+			self.m_GUI:updateData()
 		end
 	end
 end
@@ -86,8 +86,6 @@ function DeathmatchEvent:addPlayertoMatch (id)
 
 	-- Todo: Improve!
 	localPlayer:setTempMatchID(id)
-
-	-- Todo: Password
 
 	triggerServerEvent("Deathmatch.addPlayertoMatch", root, id)
 end

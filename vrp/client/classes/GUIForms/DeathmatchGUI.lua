@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIForms/DeathmatchGUI.lua
+-- *  PURPOSE:     DeathmatchGUI class
+-- *
+-- ****************************************************************************
 DeathmatchGUI = inherit(GUIForm)
 
 function DeathmatchGUI:constructor ()
@@ -77,8 +84,6 @@ function DeathmatchGUI:updateData ()
 		item.onLeftDoubleClick = function () self.m_ButtonJoin.onLeftClick()  end
 	end
 end
-function DeathmatchGUI:update (...) return self:updateData(...) end
-
 
 -- ########################################
 HostDeathmatchGUI = inherit(GUIForm)
@@ -156,9 +161,12 @@ end
 LobbyDeathmatchGUI = inherit(GUIForm)
 
 function LobbyDeathmatchGUI:constructor ()
+	-- Freeze the Player
+	localPlayer:setFrozen(true)
+
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.35/2, screenHeight/2 - screenHeight*0.45/2, screenWidth*0.35, screenHeight*0.45)
 
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Deathmatch Lobby", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Deathmatch Lobby", true, false, self)
 	self.m_TypeLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.48, self.m_Height*0.08, _"Spieler in der Lobby:", self.m_Window)
 	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.48, self.m_Height*0.6, self.m_Window)
 	self.m_Grid:addColumn(_"Spielername", 0.35)
@@ -179,18 +187,26 @@ function LobbyDeathmatchGUI:constructor ()
 
 	self.m_KickButton.onLeftClick = (
 		function()
-
+			WarningBox:new("Not implemented yet!")
 		end
 	)
 	self.m_StartButton.onLeftClick = (
 		function()
-			triggerServerEvent("Deathmatch.setMatchStatus", root, localPlayer:getMatchID(), 2)
+			--triggerServerEvent("Deathmatch.setMatchStatus", root, localPlayer:getMatchID(), 2)
+			local instance = DeathmatchEvent:getSingleton()
+			local matchData = instance:getMatchData(localPlayer:getMatchID())
+			if #matchData["players"] == matchData["type"]*2 then
+			else
+				WarningBox:new(_"Es sind zu wenige spieler zum starten!")
+			end
 		end
 	)
 	self.m_ButtonCancel.onLeftClick = (
 		function()
 			local instance = DeathmatchEvent:getSingleton()
 			local removeFunc = function ()
+				localPlayer:setFrozen(false)
+
 				instance:removePlayerfromMatch(localPlayer:getMatchID())
 				instance:closeGUIForm()
 				instance:openGUIForm(1)
@@ -235,4 +251,3 @@ function LobbyDeathmatchGUI:updateData ()
 	self.m_KickButton:setEnabled(isHost)
 	self.m_StartButton:setEnabled(isHost)
 end
-function LobbyDeathmatchGUI:update (...) return self:updateData(...) end
