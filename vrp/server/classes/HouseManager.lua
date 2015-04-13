@@ -1,28 +1,34 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/HouseManager.lua
+-- *  PURPOSE:     House manager class
+-- *
+-- ****************************************************************************
 HouseManager = inherit(Singleton)
-
 addRemoteEvents{"enterHouse","leaveHouse","buyHouse","rentHouse","unrentHouse","breakHouse"}
 
 local ROB_DELAY = 1000*60*15
 
 function HouseManager:constructor()
-	
+
 	self.m_RobPlayers = {}
 	self.m_Houses = {}
-	
+
 	outputServerLog("Loading houses...")
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
-	
-	for key, value in ipairs(query) do
+
+	for key, value in pairs(query) do
 		self.m_Houses[value["Id"]] = House:new(value["Id"], value["x"], value["y"], value["z"], value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"])
 	end
-	
+
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
 	addEventHandler("rentHouse",root,bind(self.rentHouse,self))
 	addEventHandler("unrentHouse",root,bind(self.unrentHouse,self))
 	addEventHandler("buyHouse",root,bind(self.buyHouse,self))
 	addEventHandler("enterHouse",root,bind(self.enterHouse,self))
 	addEventHandler("leaveHouse",root,bind(self.leaveHouse,self))
-	
+
 end
 
 function HouseManager:addCharacterToRoblist(player)
@@ -73,7 +79,7 @@ function HouseManager:newHouse(x, y, z, interiorID, price)
 
 	sql:queryExec("INSERT INTO ??_houses VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
 		sql:getPrefix(), x, y, z, interiorID, toJSON({}), 0, price, 0, 25,toJSON({}))
-	
+
 	local Id = sql:lastInsertId()
 	self.m_Houses[Id] = House:new(Id, x, y, z, interiorID, {}, 0, price, 0, 25, {}) -- Jusonex: Schluessel-Wert Table benutzen, um spaeter leichter von der Id zum eigentlichen Haus Objekt zu kommen
 end

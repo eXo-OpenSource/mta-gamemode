@@ -25,6 +25,7 @@ function PlayerManager:constructor()
 	addEventHandler("requestVehicleLevelUp", root, bind(self.Event_requestVehicleLevelUp, self))
 	addEventHandler("requestSkinLevelUp", root, bind(self.Event_requestSkinLevelUp, self))
 	addEventHandler("requestJobLevelUp", root, bind(self.Event_requestJobLevelUp, self))
+	addEventHandler("playerRequestTrading", root, bind(self.Event_playerRequestTrading, self))
 
 	self.m_SyncPulse = TimedPulse:new(500)
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
@@ -180,4 +181,9 @@ function PlayerManager:Event_requestJobLevelUp()
 	else
 		client:sendError(_("Du hast nicht genügend Punkte!", client))
 	end
+end
+
+function PlayerManager:Event_playerRequestTrading()
+	-- TODO: Add accept prompt box
+	client:startTrading(source)
 end

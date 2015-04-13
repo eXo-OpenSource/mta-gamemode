@@ -378,11 +378,17 @@ function Player:takeMoney(money)
 end
 
 function Player:startTrading(tradingPartner)
+	if self == tradingPartner then
+		return
+	end
+
 	self.m_TradingPartner = tradingPartner
 	self.m_TradeItems = {}
+	self.m_TradingStatus = false
 
 	tradingPartner.m_TradingPartner = self
 	tradingPartner.m_TradeItems = {}
+	tradingPartner.m_TradingStatus = false
 
 	self:triggerEvent("tradingStart", self:getInventory():getId())
 	tradingPartner:triggerEvent("tradingStart", tradingPartner:getInventory():getId())

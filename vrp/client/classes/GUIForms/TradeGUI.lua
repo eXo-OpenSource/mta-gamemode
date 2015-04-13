@@ -46,6 +46,7 @@ function TradeGUI:constructor(myInventory)
     self.m_RemoteMoney = GUILabel:new(self.m_Width*0.69, self.m_Height*0.83, self.m_Width*0.3, self.m_Height*0.05, _"Geld: 0$", self.m_Window)
 
     self.m_AcceptCheck = GUICheckbox:new(self.m_Width*0.01, self.m_Height*0.92, self.m_Width*0.3, self.m_Height*0.05, _"Ich bin einverstanden", self.m_Window)
+    self.m_AcceptCheck.onChange = bind(self.AcceptCheck_Change, self)
 
     -- Update inventory
     self:updateMyInventory(myInventory)
@@ -153,6 +154,12 @@ function TradeGUI:MyMoneyEdit_Input()
         triggerServerEvent("tradeMoneyChange", localPlayer, money)
     end
 end
+
+function TradeGUI:AcceptCheck_Change(state)
+    -- Tell the server that we are or are not ready for trading
+    triggerServerEvent("tradeAcceptStatusChange", localPlayer)
+end
+
 
 addEvent("tradingStart", true)
 addEventHandler("tradingStart", root,

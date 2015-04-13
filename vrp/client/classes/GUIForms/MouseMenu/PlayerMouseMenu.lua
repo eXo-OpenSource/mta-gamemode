@@ -9,9 +9,9 @@ PlayerMouseMenu = inherit(GUIMouseMenu)
 
 function PlayerMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
-	
+
 	self:addItem("Name: "..getPlayerName(element)):setTextColor(Color.Red)
-	
+
 	self:addItem(_"Geld geben",
 		function()
 			if self:getElement() then
@@ -22,8 +22,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 	self:addItem(_"Handel starten",
 		function()
 			if self:getElement() then
-				outputChatBox("Not implemented yet")
-				--triggerServerEvent("playerStartTrade", self:getElement())
+				triggerServerEvent("playerRequestTrading", self:getElement())
 			end
 		end
 	)
@@ -34,7 +33,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
-	
+
 	if localPlayer:getRank() >= RANK.Moderator then
 		self:addItem(_"Kick",
 			function()

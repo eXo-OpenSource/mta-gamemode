@@ -1,14 +1,20 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/House.lua
+-- *  PURPOSE:     Serverside house class
+-- *
+-- ****************************************************************************
 House = inherit(Object)
 
 local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
 
 function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStatus, rentPrice, elements)
-
 	if owner == 0 then
-		owner = false 
+		owner = false
 	end
-	
+
 	self.m_CurrentRobber = false
 	self.m_LastRobbed = 0
 	self.m_PlayersInterior = {}
@@ -27,7 +33,7 @@ function House:constructor(id, x, y, z, interiorID, keys, owner, price, lockStat
 	setElementDimension(self.m_HouseMarker,self.m_Id)
 	setElementInterior(self.m_HouseMarker,int)
 	self.m_ColShape = createColSphere(x,y,z,1)
-	
+
 	--addEventHandler ("onPlayerJoin",root, bind(self.checkContractMonthly, self))
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerFade, self))
 	addEventHandler("onPlayerWasted", root, bind(self.onPlayerFade, self))
@@ -40,7 +46,7 @@ end
 function House:breakHouse(player)
 	if getRealTime().timestamp >= self.m_LastRobbed + ROB_DELAY then
 		if not HouseManager:getSingleton():isCharacterAllowedToRob(player) then
-			player:sendMessage("Sie haben vor kurzem schon ein Haus ausgeraubt!",125,0,0)
+			player:sendWarning(_("Du hast vor kurzem schon ein Haus ausgeraubt!", player),125,0,0)
 			return
 		end
 		self.m_CurrentRobber = player
@@ -48,22 +54,22 @@ function House:breakHouse(player)
 		HouseManager:getSingleton():addCharacterToRoblist(player)
 		self:enterHouse(player)
 		player:reportCrime(Crime.HouseRob)
-		player:sendMessage("Halte die Stellung fuer %d Minuten!", 125, 0, 0, ROB_NEEDED_TIME/1000/60)
-		
+		player:sendMessage("Halte die Stellung für %d Minuten!", 125, 0, 0, ROB_NEEDED_TIME/1000/60)
+
 		setTimer(
 			function(unit)
-				local isRobSuccessfully = false 
-				
+				local isRobSuccessfully = false
+
 				if unit and isElement(unit) and self.m_PlayersInterior[unit] then
 					isRobSuccessfully = true
 				end
 				if isRobSuccessfully then
 					local loot = math.floor(self.m_Price/20*(math.random(75,100)/100))
 					unit:giveMoney(loot)
-					unit:sendMessage("Du hast den Raub erfolgreich abgeschlossen! Dafuer erhaelst du $ %s.",0,125,0,loot)
+					unit:sendMessage("Du hast den Raub erfolgreich abgeschlossen! Dafür erhälst du $%s.",0,125,0,loot)
 					self:leaveHouse(unit)
 				end
-				
+
 				self.m_CurrentRobber = false
 			end,
 			ROB_NEEDED_TIME,1,player)
@@ -74,7 +80,7 @@ end
 
 function House:onMarkerHit(hitElement,matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
-		hitElement:triggerEvent("showHouseMenu",self.m_Owner,self.m_Price,self.m_RentPrice)
+		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice)
 	end
 end
 
@@ -97,20 +103,25 @@ end
 
 function House:rentHouse(player)
 	if not self.m_Keys[player:getId()] then
-		if self.m_Owner and player:getId() ~= self.m_Owner then
+		if not self.m_Owner then
+			player:sendError(_("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentümer!", player), 255, 0, 0)
+			return
+		end
+
+		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
-			player:sendMessage("Sie wurden erfolgreich eingemietet.",0,255,0)
+			player:sendSuccess(_("Sie wurden erfolgreich eingemietet", player),0,255,0)
 		else
-			player:sendMessage("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentuemer!",255,0,0)
+			player:sendError(_("Du kannst dich nicht in dein eigenes Haus einmieten!", player))
 		end
 	end
 end
 
-function House:save ()
+function House:save()
 	local houseID = self.m_Owner or 0
-	
+
 	return sql:queryExec("UPDATE ??_houses SET interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ?, elements = ? WHERE id = ?;", sql:getPrefix(),
-		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Id)	
+		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Id)
 end
 
 function House:sellHouse(player)
@@ -120,15 +131,15 @@ end
 function House:onPickupHit(hitElement)
 	if getElementType(hitElement) == "player" and (getElementDimension(hitElement) == getElementDimension(source)) then
 		hitElement.visitingHouse = self.m_Id
-		hitElement:triggerEvent("showHouseMenu",self.m_Owner,self.m_Price,self.m_RentPrice,self:isValidRob(hitElement))
+		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(hitElement))
 	end
 end
 
 function House:unrentHouse(player)
 	if self.m_Keys[player:getId()] then
 		self.m_Keys[player:getId()] = nil
-		if player and isElement(player) then -- Jusonex: Andersherum, da sonst Bad argument @ isElement
-			player:sendMessage("Sie wurden ausgemietet!",255,0,0)
+		if player and isElement(player) then
+			player:sendSuccess(_("Du hast gekündigt!", player),255,0,0)
 		end
 	end
 end
@@ -173,9 +184,17 @@ function House:onPlayerFade()
 end
 
 function House:buyHouse(player)
-	if not self.m_Owner and getPlayerMoney(player) >= self.m_Price then
-		takePlayerMoney(player, self.m_Price)
+	if self.m_Owner then
+		player:sendError(_("Dieses Haus hat schon einen Besitzer!", player))
+		return
+	end
+
+	if player:getMoney() >= self.m_Price then
+		player:takeMoney(self.m_Price)
 		self.m_Owner = player:getId()
+		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
+	else
+		player:sendError(_("Du hast nicht genügend Geld!", player))
 	end
 end
 

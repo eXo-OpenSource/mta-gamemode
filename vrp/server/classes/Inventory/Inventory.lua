@@ -73,13 +73,10 @@ function Inventory:addItem(itemId, amount)
 	end
 
 	amount = amount or 1
-	if amount > itemInfo.maxstack then -- Do not add item if it'd need multiple stacks (this might be a bad idea tho ==> keep it in mind when working with the inventory)
-		return false
-	end
 
-	if itemInfo.maxstack < math.huge then
+	if itemInfo.stackable then
 		local existingItem = self:findItem(itemId)
-		if existingItem and existingItem.m_Count+amount < itemInfo.maxstack then
+		if existingItem then
 			existingItem:setCount(existingItem.m_Count + amount)
 			return existingItem
 		end
@@ -112,10 +109,9 @@ function Inventory:removeItem(slot, amount)
 	end
 
 	local newCount = item:getCount() - amount
+	item:setCount(newCount)
 	if newCount <= 0 then
 		self.m_Items[slot] = nil
-	else
-		item:setCount(newCount)
 	end
 
 	if self.m_InteractingPlayer then
@@ -128,6 +124,18 @@ end
 
 function Inventory:removeItemByItem(item, slot, amount)
 	return self:removeItem(slot, amount or item:getCount())
+end
+
+function Inventory:removeItemByItemId(itemId, amount)
+	local item, slot = self:findItem(itemId)
+	if not item then return end
+
+	-- We cannot have multiple stacks, so returning here is okay
+	if amount and item:getCount() < amount then
+		return false
+	end
+
+	return self:removeItemByItem(item, slot, amount)
 end
 
 function Inventory:placeItem(item, slot, owner, pos, rotation, amount)
@@ -146,7 +154,7 @@ end
 function Inventory:findItem(itemId)
 	for slot, item in pairs(self.m_Items) do
 		if item.m_ItemId == itemId then
-			return item
+			return item, slot
 		end
 	end
 	return false
@@ -366,5 +374,35 @@ addEventHandler("tradeMoneyChange", root,
 
 		client.m_TradeMoney = money
 		tradingPartner:triggerEvent("tradeMoneyChange", money)
+	end
+)
+
+addEvent("tradeAcceptStatusChange", true)
+addEventHandler("tradeAcceptStatusChange", root,
+	function(state)
+		client.m_TradingStatus = state
+
+		local tradingPartner = client:getTradingPartner()
+		if not tradingPartner then return end
+
+		-- Are we ready to perform the trade?
+		if state and tradingPartner.m_TradingStatus then
+			-- Transfer client's trade items to tradingPartner
+			for k, item in pairs(client.m_TradeItems) do
+				local itemId, amount = unpack(item)
+				if tradingPartner:removeItemByItemId(itemId, amount) then
+					client:getInventory():addItem(itemId, amount)
+				end
+			end
+
+			-- Vice versa
+			-- Transfer client's trade items to tradingPartner
+			for k, item in pairs(tradingPartner.m_TradeItems) do
+				local itemId, amount = unpack(item)
+				if client:removeItemByItemId(itemId, amount) then
+					tradePartner:getInventory():addItem(itemId, amount)
+				end
+			end
+		end
 	end
 )
