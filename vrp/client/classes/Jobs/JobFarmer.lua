@@ -5,8 +5,8 @@ JobFarmer = inherit(Job)
 addEvent("onReciveFarmerData",true)
 
 function JobFarmer:constructor()
-	Job.constructor(self, -1059, -1206, 128, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _"Farmer", HelpTexts.Jobs.Farmer, self.onInfo)
-	
+	Job.constructor(self, -1059, -1206, 128, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _"Farmer", _(HelpTexts.Jobs.Farmer), self.onInfo)
+
 end
 
 function JobFarmer:onInfo()
@@ -27,12 +27,12 @@ function JobFarmer:onInfo()
 	setCameraMatrix(-1071.8698730469,-1220.8608398438,130.6183013916,-1071.9873046875,-1219.8944091797,130.38986206055,0,70)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Mit dem Traktor kannst du das Korn ernten und mit dem Wagon",255,255,255,true)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF kannst du das Getreide zur Abgabe bringen.",255,255,255,true)
-	end, 12000, 1)	
+	end, 12000, 1)
 	--- ### 4
 	setTimer(function()
 	setCameraMatrix(-1050.2618408203,-1637.7829589844,85.58869934082,-1051.2099609375,-1637.5382080078,85.385673522949,0,70)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Diese musste du zu diesem Punkt bringen.",255,255,255,true)
-	end, 18000, 1)		
+	end, 18000, 1)
 	-- ### LAST
 	setTimer(function()
 	setCameraTarget(localPlayer,localPlayer)
@@ -41,11 +41,10 @@ end
 
 function JobFarmer:start()
 	-- Show text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Farmer), _(HelpTexts.Jobs.Farmer))
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Farmer), _(HelpTexts.Jobs.Farmer), true, self.onInfo)
 end
 
 function JobFarmer:stop()
 	-- Reset text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
-

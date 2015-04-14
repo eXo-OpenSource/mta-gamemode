@@ -8,8 +8,8 @@
 JobBusDriver = inherit(Job)
 
 function JobBusDriver:constructor()
-	Job.constructor(self, 1797, -1756, 12.5, "Bus.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Busfahrer", HelpTexts.Jobs.BusDriver)
-	
+	Job.constructor(self, 1797, -1756, 12.5, "Bus.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Busfahrer", _(HelpTexts.Jobs.BusDriver))
+
 	addEvent("busReachNextStop", true)
 	addEventHandler("busReachNextStop", root, bind(self.Event_busReachNextStop, self))
 end
@@ -29,7 +29,7 @@ function JobBusDriver:setBusDisplayText(vehicle, text)
 		vehicle.Bus_TexReplace = TextureReplace:new("coach92decals128", "files/images/CoachTexture.png", true, 256, 256)
 		addEventHandler("onClientElementDestroy", vehicle, function() delete(vehicle.Bus_TexReplace) end)
 	end
-	
+
 	dxSetRenderTarget(vehicle.Bus_TexReplace:getTexture(), true)
 	dxDrawText("Nächster Halt:\n"..text, 5*2, 90*2, 123*2, 125*2, Color.Red, 1, VRPFont(35), "left", "top", false, true)
 	dxSetRenderTarget(nil)
@@ -43,7 +43,7 @@ function JobBusDriver:Event_busReachNextStop(vehicle, nextStopName)
 	end
 
 	self:setBusDisplayText(vehicle, nextStopName)
-	
+
 	if getPedOccupiedVehicle(localPlayer) == vehicle then
 		playSound("http://translate.google.com/translate_tts?tl=en&q=Next station: "..nextStopName)
 	end

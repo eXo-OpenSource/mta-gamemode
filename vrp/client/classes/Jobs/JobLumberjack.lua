@@ -8,12 +8,12 @@
 JobLumberjack = inherit(Job)
 
 function JobLumberjack:constructor()
-	Job.constructor(self, 1105.6, -299.6, 73.5, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _"Holzfäller", HelpTexts.Jobs.Lumberjack)
-	
+	Job.constructor(self, 1105.6, -299.6, 73.5, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _"Holzfäller", _(HelpTexts.Jobs.Lumberjack))
+
 	self.m_Trees = {}
 	self.m_StackedTrees = {}
 	self.m_NumTrees = 0
-	
+
 	-- Disable chainsaw damage
 	addEventHandler("onClientPlayerDamage", localPlayer,
 		function()
@@ -22,7 +22,7 @@ function JobLumberjack:constructor()
 			end
 		end
 	)
-	
+
 	addEvent("lumberjackTreesLoadUp", true)
 	addEventHandler("lumberjackTreesLoadUp", root, bind(JobLumberjack.Event_lumberjackTreesLoadUp, self))
 end
@@ -37,13 +37,13 @@ function JobLumberjack:start()
 		table.insert(self.m_Trees, object)
 		addEventHandler("onClientObjectDamage", object, func)
 	end
-	
+
 	-- Removals
 	for k, v in ipairs(JobLumberjack.Removals) do
 		local model, radius, x, y, z = unpack(v)
 		removeWorldModel(model, radius, x, y, z)
 	end
-	
+
 	self.m_SawMillBlip = Blip:new("RedSaw.png", -1969.8, -2432.6)
 
 	-- Show text in help menu
@@ -56,13 +56,13 @@ function JobLumberjack:stop()
 			destroyElement(v)
 		end
 	end
-	
+
 	-- Restore removed objects
 	for k, v in ipairs(JobLumberjack.Removals) do
 		local model, radius, x, y, z = unpack(v)
 		restoreWorldModel(model, radius, x, y, z)
 	end
-	
+
 	if self.m_SawMillBlip then
 		delete(self.m_SawMillBlip)
 		self.m_SawMillBlip = nil
@@ -76,22 +76,22 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 	if attacker == localPlayer and not source.broken then
 		-- Apply new health manually since our tree object is not a breakable/damageable object
 		setElementHealth(source, getElementHealth(source) - loss/5)
-		
+
 		if getElementHealth(source) <= 0 then
 			source.broken = true
 			local x, y, z = getElementPosition(source)
 			moveObject(source, 4000, x, y, z + 0.5, 88, math.random(0, 88), 0, "InQuad")
 			setElementCollisionsEnabled(source, false)
-			
+
 			setTimer(
 				function(object)
 					moveObject(object, 8000, x, y, z - 10)
-					
+
 					-- Add tree to stack
 					if not self:addStackedTree() then
 						localPlayer:sendMessage(_"The wood pile is full. Please transport the trees first to earn more money")
 					end
-					
+
 					-- "Respawn" the tree after a while
 					setTimer(
 						function(object)
@@ -110,20 +110,20 @@ end
 
 function JobLumberjack:addStackedTree()
 	self.m_NumTrees = self.m_NumTrees + 1
-	
+
 	if self.m_NumTrees > (#JobLumberjack.WoodStackOffsets * #JobLumberjack.WoodStacks) then
 		return false
 	end
-	
+
 	triggerServerEvent("lumberjackTreeCut", root)
-	
+
 	local stackId = math.floor(self.m_NumTrees / #JobLumberjack.WoodStackOffsets) + 1
 	local treeId = self.m_NumTrees % #JobLumberjack.WoodStackOffsets + 1
 	local stackOffsets = JobLumberjack.WoodStacks[stackId]
 	local treeOffsets = JobLumberjack.WoodStackOffsets[treeId]
 	local x, y, z = stackOffsets[1] + treeOffsets[1], stackOffsets[2] + treeOffsets[2], stackOffsets[3] + treeOffsets[3]
 	self.m_StackedTrees[#self.m_StackedTrees + 1] = createObject(837, x, y, z, 0, 0, 356)
-	
+
 	return true
 end
 

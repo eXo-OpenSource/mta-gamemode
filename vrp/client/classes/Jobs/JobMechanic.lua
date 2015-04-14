@@ -8,8 +8,8 @@
 JobMechanic = inherit(Job)
 
 function JobMechanic:constructor()
-	Job.constructor(self, 682.4, -1577.6, 13.1, "Mechanic.png", "files/images/Jobs/HeaderMechanic.png", _"Mechaniker", HelpTexts.Jobs.Mechanic)
-	
+	Job.constructor(self, 682.4, -1577.6, 13.1, "Mechanic.png", "files/images/Jobs/HeaderMechanic.png", _"Mechaniker", _(HelpTexts.Jobs.Mechanic))
+
 end
 
 function JobMechanic:start()
