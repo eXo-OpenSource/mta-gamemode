@@ -8,7 +8,7 @@
 JobPolice = inherit(Job)
 
 function JobPolice:constructor()
-	Job.constructor(self, 1549.5, -1681.6, 12.6, "Police.png", "files/images/Jobs/HeaderPolice.png", _"Polizist/-in", HelpTexts.Jobs.Police)
+	Job.constructor(self, 1549.5, -1681.6, 12.6, "Police.png", "files/images/Jobs/HeaderPolice.png", _"Polizist/-in", _(HelpTexts.Jobs.Police))
 end
 
 function JobPolice:start()

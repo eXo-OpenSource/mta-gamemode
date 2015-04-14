@@ -38,10 +38,12 @@ function DeathmatchEvent:constructor ()
 	self.m_GUI = false
 	self.m_GUIForm = 0
 
-	addRemoteEvents{"DeathmatchEvent.openGUIForm", "DeathmatchEvent.closeGUIForm", "DeathmatchEvent.sendData"}
+	addRemoteEvents{"DeathmatchEvent.openGUIForm", "DeathmatchEvent.closeGUIForm", "DeathmatchEvent.sendData", "DeathmatchEvent.onHelpColHit", "DeathmatchEvent.onHelpColLeave"}
 	addEventHandler("DeathmatchEvent.openGUIForm", root, bind(DeathmatchEvent.openGUIForm, self))
 	addEventHandler("DeathmatchEvent.closeGUIForm", root, bind(DeathmatchEvent.closeGUIForm, self))
 	addEventHandler("DeathmatchEvent.sendData", root, bind(DeathmatchEvent.fetchMatchData, self))
+	addEventHandler("DeathmatchEvent.onHelpColHit", root, self.onHelpColHit)
+	addEventHandler("DeathmatchEvent.onHelpColLeave", root, self.onHelpColLeave)
 end
 
 function DeathmatchEvent:openGUIForm (type, ...)
@@ -98,4 +100,12 @@ end
 
 function DeathmatchEvent:getMatchData (id)
 	return (self.m_Matches[id] ~= nil and self.m_Matches[id]) or false
+end
+
+function DeathmatchEvent.onHelpColHit ()
+		HelpBar:getSingleton():addText(_(HelpTextTitles.Events.Deathmatch), _(HelpTexts.Events.Deathmatch))
+end
+
+function DeathmatchEvent.onHelpColLeave ()
+	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end

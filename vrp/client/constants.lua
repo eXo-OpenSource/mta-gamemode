@@ -106,6 +106,9 @@ HelpTexts = {
 		]];
 		Trashman = [[Todo]];
 	};
+	Events = {
+		Deathmatch = [[Todo]];
+	};
 };
 
 HelpTextTitles = {
@@ -123,7 +126,10 @@ HelpTextTitles = {
 		Police = "Job: Polizist";
 		RoadSweeper = "Job: Straßenkehrer";
 		Trashman = "Job: Müllmann";
-	}
+	};
+	Events = {
+		Deathmatch = "Event: Deathmatch";
+	};
 }
 
 Tipps = {

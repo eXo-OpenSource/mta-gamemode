@@ -8,8 +8,8 @@
 JobRoadSweeper = inherit(Job)
 
 function JobRoadSweeper:constructor()
-	Job.constructor(self, 199, -1448, 12.1, "Roadsweeper.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Straßenkehrer", HelpTexts.Jobs.RoadSweeper)
-	
+	Job.constructor(self, 199, -1448, 12.1, "Roadsweeper.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Straßenkehrer", _(HelpTexts.Jobs.RoadSweeper))
+
 	self.m_Rubbish = {}
 end
 
@@ -22,7 +22,7 @@ function JobRoadSweeper:start()
 		local colShape = createColSphere(x, y, z, 5)
 		setElementParent(object, colShape)
 		addEventHandler("onClientColShapeHit", colShape, func)
-		
+
 		table.insert(self.m_Rubbish, colShape)
 	end
 
@@ -49,10 +49,10 @@ function JobRoadSweeper:Rubbish_Hit(hitElement, matchingDimension)
 			localPlayer:sendMessage(_"Hierzu musst du einen Roadsweeper fahren!", 255, 0, 0)
 			return
 		end
-		
+
 		destroyElement(source)
 		triggerServerEvent("sweeperGarbageCollect", root)
-		
+
 		setElementFrozen(vehicle, true)
 		self.m_Busy = true
 		setTimer(function() setElementFrozen(vehicle, false) self.m_Busy = nil end, 500, 1)

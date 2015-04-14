@@ -33,6 +33,18 @@ function Deathmatch:constructor ()
 		end
 	end)
 
+	self.m_HelpCol = createColSphere(2729.59, -1828.04, 11.84, 10)
+	addEventHandler("onColShapeHit", self.m_HelpCol, function (hitelement, dim)
+		if getElementType(hitelement) == "player" and dim then
+			hitelement:triggerEvent("DeathmatchEvent.onHelpColHit", guiID)
+		end
+	end)
+	addEventHandler("onColShapeLeave", self.m_HelpCol, function (hitelement, dim)
+		if getElementType(hitelement) == "player" and dim then
+			hitelement:triggerEvent("DeathmatchEvent.onHelpColLeave")
+		end
+	end)
+
 	self.m_Blip = Blip:new("1vs1.png", self.Position.x, self.Position.y)
 	self.m_Matches = {}
 
@@ -43,16 +55,10 @@ function Deathmatch:constructor ()
 	addEventHandler("Deathmatch.setMatchStatus", root, bind(self.setMatchStatus, self))
 end
 
-function Deathmatch:virtual_constructor (...)
-end
-
-function Deathmatch:virtual_destructor (...)
-end
-
 function Deathmatch:newMatch (host, ...)
 	if host and getPlayerName(host) and (host.m_dmID == nil) then -- Check if the host is online
 		local id = #self.m_Matches + 1
-		self.m_Matches[id] = new(DeathmatchMatch, id, host, ...)
+		self.m_Matches[id] = new(DMMatch, id, host, ...)
 		self:syncData()
 
 		host:setMatchID(id)

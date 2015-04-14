@@ -8,11 +8,11 @@
 JobTrashman = inherit(Job)
 
 function JobTrashman:constructor()
-	Job.constructor(self, 2090.5, -2097.4, 12.5, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _"Müllmann", HelpTexts.Jobs.Trashman, self.onInfo)
-	self.m_DumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")	
+	Job.constructor(self, 2090.5, -2097.4, 12.5, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _"Müllmann", _(HelpTexts.Jobs.Trashman), self.onInfo)
+	self.m_DumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")
 	self.m_ColShapes = {}
 	addEventHandler("onClientPreRender", root, bind(JobTrashman.renderArea, self)) -- Todo: Replace by 3d image class
-	
+
 	addEvent("trashcanReset", true)
 	addEventHandler("trashcanReset", root, bind(JobTrashman.reset, self))
 
@@ -27,15 +27,15 @@ function JobTrashman:start()
 		local colShape = createColSphere(x, y, z, 5)
 		colShape:setData("Can", object)
 		addEventHandler("onClientColShapeHit", colShape, func)
-		
+
 		table.insert(self.m_ColShapes, colShape)
 	end
-	
+
 	-- Create trash can display
 	self.m_TrashImage = GUIImage:new(screenWidth/2-200/2, 10, 200, 50, "files/images/Jobs/Trashdisplay.png")
 	self.m_CanLabel = GUILabel:new(55, 4, 55, 40, "0", self.m_TrashImage):setFont(VRPFont(40))
 	self.m_ContainerLabel = GUILabel:new(150, 4, 50, 40, "0", self.m_TrashImage):setFont(VRPFont(40))
-	
+
 	self:reset()
 
 	-- Show text in help menu
@@ -55,7 +55,7 @@ function JobTrashman:onInfo()
 	setTimer(function()
 	setCameraMatrix(1961.2126464844,-2175.6647949219,14.784899711609,1962.0383300781,-2176.1984863281,14.60235786438,0,70)
 	outputChatBox(_"#0000FF[Trashman]#FFFFFF Diese Art von Mülltonen sind dein Gebiet.",255,255,255,true)
-	end, 12000, 1)	
+	end, 12000, 1)
 	-- ### LAST
 	setTimer(function()
 	setCameraTarget(localPlayer,localPlayer)
@@ -74,7 +74,7 @@ function JobTrashman:stop()
 	end
 	self.m_ColShapes = {}
 	self:reset()
-	
+
 	delete(self.m_TrashImage)
 	delete(self.m_CanLabel)
 	delete(self.m_ContainerLabel)
@@ -96,12 +96,12 @@ function JobTrashman:Trashcan_Hit(hitElement, matchingDimension)
 		if not (vehicle and getVehicleOccupant(vehicle) == localPlayer) then
 			return
 		end
-		
+
 		if not vehicle or getElementModel(vehicle) ~= 408 then
 			localPlayer:sendMessage("You have to drive a Trashmaster", 255, 0, 0)
 			return
 		end
-	
+
 		local can = source:getData("Can")
 		if can then
 			if getElementModel(can) == 1337 then
@@ -112,13 +112,13 @@ function JobTrashman:Trashcan_Hit(hitElement, matchingDimension)
 				self.m_CollectedContainer = self.m_CollectedContainer + 1
 				self.m_ContainerLabel:setText(tostring(self.m_CollectedContainer))
 			end
-			
+
 			-- Notify the server
 			triggerServerEvent("trashcanCollect", root, getElementModel(can) == 1337 and 1 or 2)
-			
+
 			destroyElement(can)
 			destroyElement(source)
-			
+
 			setElementFrozen(vehicle, true)
 			setTimer(setElementFrozen, 3000, 1, vehicle, false)
 		end
