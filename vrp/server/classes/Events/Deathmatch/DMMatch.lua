@@ -26,6 +26,10 @@ end
 
 function DeathmatchMatch:destructor ()
 	outputDebug("Deleting Match #"..self.m_ID.."...")
+
+	if self.m_Data["Status"] == 2 or self.m_Data["Status"] == 3 then
+		self:stopMatch()
+	end
 end
 
 function DeathmatchMatch:deleteMatch ()
@@ -74,24 +78,27 @@ function DeathmatchMatch:removePlayer (player)
 end
 
 function DeathmatchMatch:startMatch ()
-	outputDebug("Starting Match #"..self.m_ID.."...")
-
-	self.m_MatchDimension = math.random()
+	self.m_MatchDimension = DimensionManager:getSingleton():getFreeDimension()
 	for i, v in pairs(self.m_Players) do
-		v:setFrozen(false)
 		v:triggerEvent("DeathmatchEvent.closeGUIForm")
+		v:setFrozen(false)
+		v:setDimension(self.m_MatchDimension)
 	end
 end
 
 function DeathmatchMatch:stopMatch ()
-	outputDebug("Stopping Match #"..self.m_ID.."...")
+	DimensionManager:getSingleton():freeDimension(self.m_MatchDimension)
+
+	for i, v in pairs(self.m_Players) do
+		v:setDimension(0)
+	end
 end
 
 -- DEBUG
 addCommandHandler("testf", function ()
-	local instance = Deathmatch:getSingleton():newMatch(getPlayerFromName("StiviK"), math.random(3), {true, "hallo"}, 1, 3)
+	local instance = Deathmatch:getSingleton():newMatch(getRandomPlayer(), math.random(3), {true, "hallo"}, 1, 3)
 	addCommandHandler("testf2", function ()
-		instance:setStatus(math.random(3))
+		instance:setStatus(2)
 	end)
 end)
 
