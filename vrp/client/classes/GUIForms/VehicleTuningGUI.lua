@@ -15,7 +15,7 @@ function VehicleTuningGUI:constructor(vehicle)
         self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Vehicle shop", false, true, self)
         self.m_PartsList = GUIGridList:new(0, self.m_Height*0.21, self.m_Width, self.m_Height*0.72, self.m_Window)
         self.m_PartsList:addColumn(_"Name", 1)
-        GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/TuningHeader.png", self.m_Window)
+        GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/Shops/TuningHeader.png", self.m_Window)
         GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
         GUIRectangle:new(0, self.m_Height*0.93, self.m_Width, self.m_Height*0.005, Color.LightBlue, self.m_Window)
     end

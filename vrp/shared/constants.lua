@@ -20,7 +20,7 @@ RANK = r2
 
 VEHICLESHOPS = {
 	["Coutt and Schutz"] = {
-		ImgPath = "files/images/CouttSchutz.png";
+		ImgPath = "files/images/Shops/CouttSchutz.png";
 		Position = {2132, -1150.3, 23};
 		Rect = {2141.3, -1207.74, 24.47, 76.15};
 		Spawn = {2148.2, -1179.96, 23.5, 90};
@@ -40,7 +40,7 @@ VEHICLESHOPS = {
 		};
 	};
 	["Bertram's bobbycars"] = {
-		ImgPath = "files/images/Bertrams.png";
+		ImgPath = "files/images/Shops/Bertrams.png";
 		Position = {310.39999, -1798.5, 3.5};
 		Rect = {308.8, -1812.5, 20, 20};
 		Spawn = {321.70001, -1789.6, 4.7};
@@ -62,7 +62,7 @@ VEHICLESHOPS = {
 		};
 	};
 	["Harry's bikes"] = {
-		ImgPath = "files/images/HarrysBikes.png";
+		ImgPath = "files/images/Shops/HarrysBikes.png";
 		Position = {1310.2, -1368.3, 12.5};
 		Rect = {1271.5, -1384.4, 12, 12};
 		Spawn = {1274.9, -1373.6, 13.1};

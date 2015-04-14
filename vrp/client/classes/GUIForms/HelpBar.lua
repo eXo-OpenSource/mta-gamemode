@@ -11,7 +11,7 @@ inherit(Singleton, HelpBar)
 function HelpBar:constructor()
 	GUIForm.constructor(self, screenWidth*0.84, 0, screenWidth*0.16, screenHeight)
 
-	self.m_Icon = GUIImage:new(screenWidth-screenWidth*0.028, screenHeight*0.4, screenWidth*0.03, screenHeight*0.1, "files/images/HelpIcon.png")
+	self.m_Icon = GUIImage:new(screenWidth-screenWidth*0.028, screenHeight*0.4, screenWidth*0.03, screenHeight*0.1, "files/images/GUI/HelpIcon.png")
 	self.m_Icon.onLeftClick = bind(self.HelpIcon_Click, self)
 	self.m_Icon.onHover = function ()
 		if self.m_BlinkTimer and isTimer(self.m_BlinkTimer) then

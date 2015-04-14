@@ -74,7 +74,10 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 		end
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then
 			self.m_CurrentPlants[player] = PLANTSONWALTON
+			self:updatePrivateData(player)
+
 			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm - PLANTSONWALTON
+			self:updateClientData()
 			setElementFrozen ( hitElement, true )
 			for i = 1, 3 do
 				for j = 1, 3 do
@@ -150,6 +153,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 		outputChatBox ("Sie haben die Lieferung abgegeben, Gehalt : $ "..self.m_CurrentPlants[player]*MONEYPERPLANT,player,0,255,0)
 		player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT)
 		self.m_CurrentPlants[player] = 0
+		self:updatePrivateData(player)
 
 		for i, v in pairs(getAttachedElements(hitElement)) do
 			if v:getModel() == 2968 then -- only destroy crates
@@ -174,6 +178,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 		self.m_Plants[createColShape] = nil
 		hitElement:giveMoney(math.random(5,8))
 		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
+		self:updateClientData()
 	else
 		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[createColShape] then
 			self.m_Plants[createColShape] = createObject(818,x,y,z-1.5)
@@ -184,7 +189,16 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			hitElement:giveMoney(math.random(2,4))
 		end
 	end
+end
 
+function JobFarmer:updateClientData ()
+	for i, v in pairs(getElementsByType("player")) do
+		v:triggerEvent("Job.updateFarmPlants", self.m_CurrentPlantsFarm)
+	end
+end
+
+function JobFarmer:updatePrivateData (player)
+	player:triggerEvent("Job.updatePlayerPlants", self.m_CurrentPlants[player])
 end
 
 JobFarmer.PlantPlaces = {
@@ -503,18 +517,3 @@ JobFarmer.PlantPlaces = {
 {-1099.6385498047,-1212.2254638672,129}         ;
 {-1105.4639892578,-1212.1599121094,129}         ;
 }
-
-
-addCommandHandler("attach", function ()
-	local player = getRandomPlayer()
-	local vehicle = createVehicle(478, player.matrix.position + player.matrix.forward * 4)
-	vehicle:setVariant(2)
-	vehicle:setRotation(0, 0, 0)
-	for i = 1, 3 do
-		for j = 1, 3 do
-			--2968
-			local obj = createObject(2968, 0, 0, 0)
-			attachElements(obj, vehicle, -1.2 + j * 0.6, -2.8 + i * 0.5, 0.3, 0, 0, 0)
-		end
-	end
-end)

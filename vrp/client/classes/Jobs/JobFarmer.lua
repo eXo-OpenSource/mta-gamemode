@@ -6,7 +6,6 @@ addEvent("onReciveFarmerData",true)
 
 function JobFarmer:constructor()
 	Job.constructor(self, -1059, -1206, 128, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _"Farmer", _(HelpTexts.Jobs.Farmer), self.onInfo)
-
 end
 
 function JobFarmer:onInfo()
@@ -42,9 +41,26 @@ end
 function JobFarmer:start()
 	-- Show text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Farmer), _(HelpTexts.Jobs.Farmer), true, self.onInfo)
+
+	-- Create info display
+	self.m_FarmerImage = GUIImage:new(screenWidth/2-200/2, 10, 200, 50, "files/images/Jobs/Farmerdisplay.png")
+	self.m_FarmLabel = GUILabel:new(55, 4, 55, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
+	self.m_TruckLabel = GUILabel:new(150, 4, 50, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
+
+	-- Register update events
+	addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants"}
+	addEventHandler("Job.updateFarmPlants", root, function (num)
+		self.m_FarmLabel:setText(tostring(num))
+	end)
+	addEventHandler("Job.updatePlayerPlants", root, function (num)
+		self.m_TruckLabel:setText(tostring(num))
+	end)
 end
 
 function JobFarmer:stop()
 	-- Reset text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+
+	-- delete infopanels
+	delete(self.m_FarmerImage)
 end

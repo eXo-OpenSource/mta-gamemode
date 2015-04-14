@@ -26,7 +26,7 @@ end
 
 function JobBusDriver:setBusDisplayText(vehicle, text)
 	if not vehicle.Bus_TexReplace then
-		vehicle.Bus_TexReplace = TextureReplace:new("coach92decals128", "files/images/CoachTexture.png", true, 256, 256)
+		vehicle.Bus_TexReplace = TextureReplace:new("coach92decals128", "files/images/Textures/CoachTexture.png", true, 256, 256)
 		addEventHandler("onClientElementDestroy", vehicle, function() delete(vehicle.Bus_TexReplace) end)
 	end
 

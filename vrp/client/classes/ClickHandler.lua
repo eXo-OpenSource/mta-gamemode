@@ -61,7 +61,7 @@ function ClickHandler:constructor()
 					-- Convert relative coordinates to absolute ones
 					cx, cy = cx * screenWidth, cy * screenHeight
 
-					dxDrawImage(cx-18/2, cy-32/2, 24, 24, "files/images/Mouse.png", 0, 0, 0, Color.White, true)
+					dxDrawImage(cx-18/2, cy-32/2, 24, 24, "files/images/GUI/Mouse.png", 0, 0, 0, Color.White, true)
 				end
 			end
 		end

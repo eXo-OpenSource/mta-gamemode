@@ -397,9 +397,10 @@
 	<vrpfile src="files/images/GUI/Radiobutton.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Radiobutton_checked.png" onDemand="false"/>
 	<file src="files/images/GUI/Cursor.png"/>
-	<file src="files/images/Mouse.png"/>
+	<file src="files/images/GUI/Mouse.png"/>
 	<vrpfile src="files/images/GUI/Editbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/RoundedCorner.png" onDemand="false"/>
+	<vrpfile src="files/images/GUI/HelpIcon.png"/>
 
 	<vrpfile src="files/images/Radio/radio_bg.png"/>
 	<vrpfile src="files/images/Radio/sound_back.png"/>
@@ -426,20 +427,19 @@
 
 	<vrpfile src="files/images/avatar_default.png"/>
 	<vrpfile src="files/images/world.png"/>
-	<vrpfile src="files/images/Bertrams.png"/>
-	<vrpfile src="files/images/HarrysBikes.png"/>
-	<vrpfile src="files/images/CouttSchutz.png"/>
-	<vrpfile src="files/images/BankHeader.png"/>
 	<vrpfile src="files/images/Bar.png"/>
 	<vrpfile src="files/images/Bar_hover.png"/>
 	<vrpfile src="files/images/BankRobberyCountdown.png"/>
-	<vrpfile src="files/images/CoachTexture.png"/>
-	<vrpfile src="files/images/wanted.png"/>
-	<vrpfile src="files/images/HelpIcon.png"/>
-	<vrpfile src="files/images/DrivingSchool.png"/>
-	<vrpfile src="files/images/ClothesHeader.png"/>
-	<vrpfile src="files/images/TuningHeader.png"/>
 	<!--<vrpfile src="files/images/ColorPicker.png"/>-->
+
+	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
+	<vrpfile src="files/images/Shops/ClothesHeader.png"/>
+	<vrpfile src="files/images/Shops/TuningHeader.png"/>
+	<vrpfile src="files/images/Shops/Bertrams.png"/>
+	<vrpfile src="files/images/Shops/HarrysBikes.png"/>
+	<vrpfile src="files/images/Shops/CouttSchutz.png"/>
+	<vrpfile src="files/images/Shops/BankHeader.png"/>
+
 
 	<!-- Radar -->
 	<vrpfile src="files/images/Radar_Monochrome/Radar.jpg"/>
@@ -498,6 +498,7 @@
 	<vrpfile src="files/images/Jobs/TrashDumpArea.png"/>
 	<vrpfile src="files/images/Jobs/HeaderFarmer.png"/>
 	<vrpfile src="files/images/Jobs/HeaderMechanic.png"/>
+	<vrpfile src="files/images/Jobs/Farmerdisplay.png"/>
 
 	<vrpfile src="files/images/Items/Passport.png"/>
 
@@ -508,9 +509,11 @@
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>
 	<vrpfile src="files/images/HUD/JobLevel.png"/>
+	<vrpfile src="files/images/HUD/wanted.png"/>
 
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
+	<vrpfile src="files/images/Textures/CoachTexture.png"/>
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
