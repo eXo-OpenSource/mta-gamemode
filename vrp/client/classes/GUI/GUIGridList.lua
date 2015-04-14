@@ -31,7 +31,7 @@ function GUIGridList:addItem(...)
 end
 
 function GUIGridList:addItemNoClick(...)
-	local listItem = GUIGridListNoClickItem:new(0, #self:getItems() * ITEM_HEIGHT, self.m_Width, ITEM_HEIGHT, self.m_ScrollArea)
+	local listItem = GUIGridListItem:new(0, #self:getItems() * ITEM_HEIGHT, self.m_Width, ITEM_HEIGHT, self.m_ScrollArea):setClickable(false)
 	for k, arg in ipairs({...}) do
 		listItem:setColumnText(k, arg)
 	end

@@ -5,7 +5,10 @@ JobFarmer = inherit(Job)
 addEvent("onReciveFarmerData",true)
 
 function JobFarmer:constructor()
-	Job.constructor(self, -1059, -1206, 128, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _"Farmer", _(HelpTexts.Jobs.Farmer), self.onInfo)
+	Job.constructor(self, -1059, -1206, 128, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
+
+	-- add job to help menu
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer))
 end
 
 function JobFarmer:onInfo()

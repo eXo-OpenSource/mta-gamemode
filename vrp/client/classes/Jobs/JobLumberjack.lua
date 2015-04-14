@@ -8,7 +8,7 @@
 JobLumberjack = inherit(Job)
 
 function JobLumberjack:constructor()
-	Job.constructor(self, 1105.6, -299.6, 73.5, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _"Holzfäller", _(HelpTexts.Jobs.Lumberjack))
+	Job.constructor(self, 1105.6, -299.6, 73.5, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), _(HelpTexts.Jobs.Lumberjack))
 
 	self.m_Trees = {}
 	self.m_StackedTrees = {}
@@ -25,6 +25,9 @@ function JobLumberjack:constructor()
 
 	addEvent("lumberjackTreesLoadUp", true)
 	addEventHandler("lumberjackTreesLoadUp", root, bind(JobLumberjack.Event_lumberjackTreesLoadUp, self))
+
+	-- add job to help menu
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), _(HelpTexts.Jobs.Lumberjack))
 end
 
 function JobLumberjack:start()

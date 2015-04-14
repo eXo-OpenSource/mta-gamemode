@@ -8,9 +8,12 @@
 JobRoadSweeper = inherit(Job)
 
 function JobRoadSweeper:constructor()
-	Job.constructor(self, 199, -1448, 12.1, "Roadsweeper.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Straßenkehrer", _(HelpTexts.Jobs.RoadSweeper))
+	Job.constructor(self, 199, -1448, 12.1, "Roadsweeper.png", "files/images/Jobs/HeaderRoadSweeper.png", _(HelpTextTitles.Jobs.RoadSweeper):gsub("Job: ", ""), _(HelpTexts.Jobs.RoadSweeper))
 
 	self.m_Rubbish = {}
+
+	-- add job to help menu
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.RoadSweeper):gsub("Job: ", ""), _(HelpTexts.Jobs.RoadSweeper))
 end
 
 function JobRoadSweeper:start()

@@ -8,10 +8,13 @@
 JobBusDriver = inherit(Job)
 
 function JobBusDriver:constructor()
-	Job.constructor(self, 1797, -1756, 12.5, "Bus.png", "files/images/Jobs/HeaderRoadSweeper.png", _"Busfahrer", _(HelpTexts.Jobs.BusDriver))
+	Job.constructor(self, 1797, -1756, 12.5, "Bus.png", "files/images/Jobs/HeaderRoadSweeper.png", _(HelpTextTitles.Jobs.BusDriver):gsub("Job: ", ""), _(HelpTexts.Jobs.BusDriver))
 
 	addEvent("busReachNextStop", true)
 	addEventHandler("busReachNextStop", root, bind(self.Event_busReachNextStop, self))
+
+	-- add job to help menu
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.BusDriver):gsub("Job: ", ""), _(HelpTexts.Jobs.BusDriver))
 end
 
 function JobBusDriver:start()

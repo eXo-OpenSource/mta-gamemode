@@ -15,6 +15,7 @@ function GUIGridListItem:constructor(posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(28))
 
 	self.m_Columns = {}
+	self.m_Clickable = true
 end
 
 function GUIGridListItem:setColumnText(columnIndex, value, alignX)
@@ -33,6 +34,11 @@ function GUIGridListItem:setColumnAlignX(columnIndex, alignX)
 	return self
 end
 
+function GUIGridListItem:setClickable(bool)
+	self.m_Clickable = bool
+	return self
+end
+
 function GUIGridListItem:drawThis()
 	dxSetBlendMode("modulate_add")
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_Color)
@@ -40,13 +46,15 @@ function GUIGridListItem:drawThis()
 	local currentXPos = 0
 	for columnIndex, columnValue in ipairs(self.m_Columns) do
 		local columnWidth = self:getGridList():getColumnWidth(columnIndex)
-		dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, Color.White, self.m_FontSize, self.m_Font, self.m_Columns[columnIndex].alignX)
+		dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, self.m_Clickable and Color.White or Color.Red, self.m_FontSize, self.m_Font, self.m_Columns[columnIndex].alignX)
 		currentXPos = currentXPos + columnWidth*self.m_Width + 5
 	end
 	dxSetBlendMode("blend")
 end
 
 function GUIGridListItem:onInternalLeftClick()
+	if not self.m_Clickable then return end
+
 	self:getGridList():onInternalSelectItem(self)
 	if self:getGridList().onSelectItem then
 		self:getGridList().onSelectItem(self)
