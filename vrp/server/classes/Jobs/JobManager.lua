@@ -22,7 +22,7 @@ function JobManager:constructor()
 	for k, v in ipairs(self.m_Jobs) do
 		v:setId(k)
 	end
-	
+
 	addEvent("jobAccepted", true)
 	addEvent("jobQuit", true)
 	addEventHandler("jobAccepted", root, bind(self.Event_jobAccepted, self))
@@ -37,14 +37,12 @@ function JobManager:startJobForPlayer(job, player)
 	-- Stop old job if exists
 	if player:getJob() then
 		if player:getJob() == job then return end
-		if player:getJob().stop then
-			player:getJob():stop(player)
-		end
+		player:getJob():stop(player)
 	end
-	
+
 	-- We're ready to start the job :)
 	job:start(player)
-	
+
 	-- Tell the client that we started the job
 	player:triggerEvent("jobStart", job:getId())
 end
@@ -54,26 +52,26 @@ function JobManager:stopJobForPlayer(player)
 	if not job then
 		return false
 	end
-	
+
 	if job.stop then
 		job:stop(player)
 	end
-	
+
 	player:triggerEvent("jobQuit")
 end
 
 function JobManager:Event_jobAccepted(jobId)
 	if not jobId then return end
-	
+
 	-- Get the job
 	local job = self:getFromId(jobId)
 	if not job then return end
-	
+
 	-- Check requirements
 	if job.checkRequirements and not job:checkRequirements(client) then
 		return
 	end
-	
+
 	-- Start the job
 	client:setJob(job)
 end
@@ -81,6 +79,6 @@ end
 function JobManager:Event_jobQuit()
 	local job = client:getJob()
 	if not job then return end
-	
+
 	client:setJob(nil)
 end

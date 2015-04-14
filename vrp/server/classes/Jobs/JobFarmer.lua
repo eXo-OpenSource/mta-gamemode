@@ -3,60 +3,60 @@
 JobFarmer = inherit(Job)
 
 local VEHICLE_SPAWN = {-1063.92468,-1226.01440,128.41875,90}
-local PLANT_DELIVERY = {-1108.28723,-1620.65833,75.36719}
+--local PLANT_DELIVERY = {-1108.28723,-1620.65833,75.36719}
+local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
 local MONEYPERPLANT = 25 -- Money per plant at the delivery point
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-1073.52661,-1207.41882,128.21875}
 
 function JobFarmer:constructor()
 	Job.constructor(self)
-	
+
 	self.m_Plants = {}
-	
+
 	local x,y,z,rotation = unpack ( VEHICLE_SPAWN )
-	
+
 	VehicleSpawner:new(x,y,z, {"Combine Harvester";"Tractor";"Walton"}, rotation, bind(Job.requireVehicle, self))
-	
+
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
 	self.m_CurrentPlantsFarm = 0
-	
+
 	local x,y,z = unpack(STOREMARKERPOS)
-		
+
 	self.m_Storemarker = self:createJobElement ( createMarker (x,y,z,"cylinder",3,0,125,0,125) )
-	
+
 	addEventHandler("onMarkerHit",self.m_Storemarker,bind(self.storeHit,self))
-	
-	
+
+
 	-- // this the delivery BLIP
 	x,y,z = unpack (PLANT_DELIVERY)
-	
-	self.m_DeliveryMarker = self:createJobElement(createMarker(x,y,z,"cylinder",4))
-	self:createJobElement (createBlip(x,y,z))
-	
+
+	self.m_DeliveryMarker = self:createJobElement(createMarker(x,y,z,"corona",4))
+
 	addEventHandler ("onMarkerHit",self.m_DeliveryMarker,bind(self.deliveryHit,self))
-	
+
 	-- //
-	
+
 	for key, value in ipairs (JobFarmer.PlantPlaces) do
 		x,y,z = unpack(value)
 
 		addEventHandler("onColShapeHit",createColSphere (x,y,z,3),
 			function (hitElement)
-				
+
 				if getElementType(hitElement) ~= "vehicle" then
 					return
 				end
-				
+
 				local player = getVehicleOccupant(hitElement,0)
-				
+
 				if player then
 					self:createPlant(player,source,hitElement)
 				end
 			end
 		)
 	end
-	
+
 end
 
 function JobFarmer:storeHit(hitElement,matchingDimension)
@@ -69,27 +69,36 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] ~= 0 then
-			outputChatBox("Du hast schon "..PLANTSONWALTON.." Pflanzen auf deinem Walton !",player,255,0,0)
+			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Pflanzen auf deinem Walton !",player,255,0,0)
 			return
 		end
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then
 			self.m_CurrentPlants[player] = PLANTSONWALTON
 			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm - PLANTSONWALTON
 			setElementFrozen ( hitElement, true )
-			setTimer ( 
-				function(element) 
+			for i = 1, 3 do
+				for j = 1, 3 do
+					local obj = createObject(2968, 0, 0, 0)
+					obj:setFrozen(true)
+					attachElements(obj, hitElement, -1.2 + j * 0.6, -2.8 + i * 0.5, 0.3, 0, 0, 0)
+					setElementParent(obj, hitElement)
+				end
+			end
+
+			setTimer (
+				function(element)
 					setElementFrozen(element,false)
 				end,3500,1,hitElement
 			)
 		else
-			outputChatBox("Es gibt momentan nicht genug Pflanzen auf der Farm. Momentane Pflanzen : "..self.m_CurrentPlantsFarm,player,255,0,0)
+			outputChatBox("Es gibt momentan nicht genug Pflanzen auf der Farm (Mindestens "..PLANTSONWALTON.."). Momentane Pflanzen : "..self.m_CurrentPlantsFarm,player,255,0,0)
 		end
-	end	
+	end
 end
 
 function JobFarmer:createJobElement (element)
 	setElementVisibleTo (element,root,false)
-	table.insert (self.m_JobElements,element)	
+	table.insert (self.m_JobElements,element)
 	return element
 end
 
@@ -99,6 +108,13 @@ function JobFarmer:start(player)
 end
 
 function JobFarmer:setJobElementVisibility (player,boolean)
+	if boolean then
+		local x, y = unpack(PLANT_DELIVERY)
+		self.m_DeliveryBlip = Blip:new("Waypoint.png", x, y)
+	else
+		delete(self.m_DeliveryBlip)
+	end
+
 	for key, value in ipairs (self.m_JobElements) do
 		setElementVisibleTo (value,player,boolean)
 	end
@@ -110,7 +126,6 @@ end
 
 function JobFarmer:stop(player)
 	self.m_CurrentPlants[player] = nil
-	--self:destroyPlants(player)
 	self:setJobElementVisibility(player,false)
 	self.m_Plants[player] = nil
 end
@@ -135,19 +150,25 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 		outputChatBox ("Sie haben die Lieferung abgegeben, Gehalt : $ "..self.m_CurrentPlants[player]*MONEYPERPLANT,player,0,255,0)
 		player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT)
 		self.m_CurrentPlants[player] = 0
+
+		for i, v in pairs(getAttachedElements(hitElement)) do
+			if v:getModel() == 2968 then -- only destroy crates
+				destroyElement(v)
+			end
+		end
 	end
 end
 
 function JobFarmer:createPlant (hitElement,createColShape,vehicle )
-	
+
 	if hitElement:getJob() ~= self then
 		return
 	end
-	
+
 	local x,y,z = getElementPosition(hitElement)
-	
+
 	local vehicleID = getElementModel(vehicle)
-	
+
 	if self.m_Plants[createColShape] and vehicleID == getVehicleModelFromName("Combine Harvester") and self.m_Plants[createColShape].isFarmAble then
 		destroyElement (self.m_Plants[createColShape])
 		self.m_Plants[createColShape] = nil
@@ -163,7 +184,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			hitElement:giveMoney(math.random(2,4))
 		end
 	end
-	
+
 end
 
 JobFarmer.PlantPlaces = {
@@ -206,7 +227,7 @@ JobFarmer.PlantPlaces = {
 {-1096.369140625,-1252.0166015625,129}                  ;
 {-1091.11328125,-1246.2412109375,129}                   ;
 {-1091.7685546875,-1236.7509765625,129}                 ;
-{-1091.947265625,-1225.2021484375,129}                  ;
+{-1091.947265625,-1225.2021484375,129}               		;
 {-1175.2666015625,-1160.759765625,129}              ;
 {-1168.83984375,-1162.35546875,129}                 ;
 {-1162.369140625,-1164.2919921875,129}              ;
@@ -483,3 +504,17 @@ JobFarmer.PlantPlaces = {
 {-1105.4639892578,-1212.1599121094,129}         ;
 }
 
+
+addCommandHandler("attach", function ()
+	local player = getRandomPlayer()
+	local vehicle = createVehicle(478, player.matrix.position + player.matrix.forward * 4)
+	vehicle:setVariant(2)
+	vehicle:setRotation(0, 0, 0)
+	for i = 1, 3 do
+		for j = 1, 3 do
+			--2968
+			local obj = createObject(2968, 0, 0, 0)
+			attachElements(obj, vehicle, -1.2 + j * 0.6, -2.8 + i * 0.5, 0.3, 0, 0, 0)
+		end
+	end
+end)
