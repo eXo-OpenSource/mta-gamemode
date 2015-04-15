@@ -8,7 +8,7 @@
 JobTrashman = inherit(Job)
 
 function JobTrashman:constructor()
-	Job.constructor(self, 2090.5, -2097.4, 12.5, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _"Müllmann", _(HelpTexts.Jobs.Trashman), self.onInfo)
+	Job.constructor(self, 2090.5, -2097.4, 12.5, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman), self.onInfo)
 	self.m_DumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")
 	self.m_ColShapes = {}
 	addEventHandler("onClientPreRender", root, bind(JobTrashman.renderArea, self)) -- Todo: Replace by 3d image class
@@ -40,7 +40,7 @@ function JobTrashman:start()
 	self:reset()
 
 	-- Show text in help menu
-	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Trashman), _(HelpTexts.Jobs.Trashman))
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Trashman), _(HelpTexts.Jobs.Trashman), true, self.onInfo)
 end
 
 function JobTrashman:onInfo()

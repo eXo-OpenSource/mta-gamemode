@@ -90,7 +90,10 @@ function HelpBar:addText(title, text, blink, tutorial)
 
 	if type(tutorial) == "function" then
 		self.m_TutorialButton:setVisible(true)
-		self.m_TutorialButton.onLeftClick = tutorial
+		self.m_TutorialButton.onLeftClick = function ()
+			self:fadeOut()
+			QuestionBox:new(_"Willst du wirklich das Tutorial ansehen?", tutorial, bind(self.fadeIn, self))
+		end
 	else
 		self.m_TutorialButton:setVisible(false)
 		self.m_TutorialButton.onLeftClick = nil

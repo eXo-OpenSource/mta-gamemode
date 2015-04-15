@@ -34,7 +34,10 @@ RadarDesign = {Monochrome = 1, GTA = 2}
 
 HelpTexts = {
 	General = {
-		Main = [[Todo]];
+		Main = [[
+			Hier folgt ein krasser Text der vRP beschreiben soll. -> Doneasty? ;)
+
+		]]..LOREM_IPSUM;
 		LoginRegister = [[
 			Dies ist das Login Fenster. Im Tab 'Login' kannst Du dich einloggen, im Tab 'Registrieren' demzufolge registrieren.
 
@@ -113,7 +116,7 @@ HelpTexts = {
 
 HelpTextTitles = {
 	General = {
-		Main = "Main";
+		Main = "vRoleplay";
 		LoginRegister = "Login/Registration";
 		Team = "Team";
 	};
