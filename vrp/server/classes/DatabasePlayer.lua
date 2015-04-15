@@ -213,6 +213,11 @@ function DatabasePlayer:giveKarma(value, factor, addDirectly)
 
 	self:setXP(self.m_XP + math.abs(changekarma) * 10)
 	self:setKarma(self.m_Karma + changekarma)
+
+	local group = self:getGroup()
+	if group then
+		group:giveKarma(changekarma)
+	end
 end
 
 function DatabasePlayer:givePoints(p)

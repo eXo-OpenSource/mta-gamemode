@@ -15,6 +15,7 @@ function Group:constructor(Id, name, money, players)
 	self.m_Money = money
 	self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
 	self.m_Invitations = {}
+	self.m_Karma = 0
 end
 
 function Group:destructor()
@@ -59,14 +60,19 @@ function Group:getName()
 end
 
 function Group:getKarma()
-	local karmaSum = 0
-	local onlinePlayers = self:getOnlinePlayers()
+	return self.m_Karma
+end
 
-	for k, player in pairs(onlinePlayers) do
-		karmaSum = karmaSum + player:getKarma()
-	end
+function Group:setKarma(karma)
+	self.m_Karma = karma
+end
 
-	return karmaSum / #onlinePlayers
+function Group:giveKarma(karma)
+	self.m_Karma = self.m_Karma + karma
+end
+
+function Group:getKarma()
+	return self.m_Karma
 end
 
 function Group:isEvil()
