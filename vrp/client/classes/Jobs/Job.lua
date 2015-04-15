@@ -29,22 +29,7 @@ function Job:constructor(posX, posY, posZ, blipPath, headerImage, name, descript
 end
 
 function Job:InfoMessage(name, description, tutorial)
-	local temp = {
-		title = HelpBar:getSingleton().m_SubTitleLabel:getText();
-		text = HelpBar:getSingleton().m_TextLabel:getText();
-	}
-
-	HelpBar:getSingleton():addText(_("Job: %s", name), description, false, tutorial and function () HelpBar:getSingleton():fadeOut() tutorial() end or nil)
-
-	HelpBar:getSingleton():fadeIn()
-	setTimer(
-		function()
-			if HelpBar:getSingleton().m_Visible then
-				HelpBar:getSingleton():fadeOut()
-			end
-			HelpBar:getSingleton():addText(temp.title, temp.text, false)
-		end, 10000,1
-	)
+	HelpBar:getSingleton():addTempText(_("Job: %s", name), description, false, tutorial and function () HelpBar:getSingleton():fadeOut() tutorial() end or nil, 10000, true)
 end
 
 function Job:acceptHandler()

@@ -75,6 +75,12 @@ function HelpBar:blink()
 end
 
 function HelpBar:addText(title, text, blink, tutorial)
+	localPlayer.m_oldHelp = {
+		title = self.m_SubTitleLabel:getText();
+		text = self.m_TextLabel:getText();
+		tutorial = self.m_TutorialButton.onLeftClick
+	}
+
 	self.m_SubTitleLabel:setText(title)
 	self.m_TextLabel:setText(text)
 
@@ -89,6 +95,33 @@ function HelpBar:addText(title, text, blink, tutorial)
 		self.m_TutorialButton:setVisible(false)
 		self.m_TutorialButton.onLeftClick = nil
 	end
+end
+
+function HelpBar:addTempText(title, text, blink, tutorial, timeout, anim)
+	self:addText(title, text, blink, tutorial)
+
+	if anim then
+		if not self.m_Visible then
+			self:fadeIn()
+		end
+	end
+	setTimer(
+		function ()
+			if anim then
+				if self.m_Visible then
+					self:fadeOut()
+				end
+
+				setTimer(
+					function ()
+						self:addText(localPlayer.m_oldHelp.title, localPlayer.m_oldHelp.text, false, localPlayer.m_oldHelp.tutorial)
+					end, 550, 1
+				)
+			else
+				self:addText(localPlayer.m_oldHelp.title, localPlayer.m_oldHelp.text, false, localPlayer.m_oldHelp.tutorial)
+			end
+		end, timeout or 10000, 1
+	)
 end
 
 function HelpBar:HelpIcon_Click()

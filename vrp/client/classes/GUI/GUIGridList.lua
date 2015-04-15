@@ -128,9 +128,6 @@ function GUIGridList:draw(incache) -- Swap render order
 end
 
 function GUIGridList:drawThis()
-	-- Draw header line
-	--dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, ITEM_HEIGHT, Color.Black)
-
 	-- Draw column header
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do

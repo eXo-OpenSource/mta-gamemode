@@ -107,5 +107,5 @@ function DeathmatchEvent.onHelpColHit ()
 end
 
 function DeathmatchEvent.onHelpColLeave ()
-	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+	HelpBar:getSingleton():addText(localPlayer.m_oldHelp.title or _(HelpTextTitles.General.Main), localPlayer.m_oldHelp.text or _(HelpTexts.General.Main), false, localPlayer.m_oldHelp.tutorial or false)
 end
