@@ -12,5 +12,9 @@ function GuardActor:constructor()
     self:giveWeapon(23, 999999999, true)
 
     -- Start tasks
-    self:startPrimaryTask(TaskGuard)
+    self:startIdleTask()
+end
+
+function GuardActor:getIdleTask()
+    return TaskGuard
 end

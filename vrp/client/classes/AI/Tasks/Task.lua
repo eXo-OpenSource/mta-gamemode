@@ -8,7 +8,9 @@
 Task = inherit(Object)
 Task.Map = {}
 
-function Task:virtual_constructor()
+function Task:virtual_constructor(actor)
+    self.m_Actor = actor
+
     if self.update then
         self.m_UpdateFunc = bind(self.update, self)
         addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
@@ -16,8 +18,13 @@ function Task:virtual_constructor()
 end
 
 function Task:virtual_destructor()
+    self:stopUpdating()
+end
+
+function Task:stopUpdating()
     if self.m_UpdateFunc then
         removeEventHandler("onClientPreRender", root, self.m_UpdateFunc)
+        self.m_UpdateFunc = nil
     end
 end
 

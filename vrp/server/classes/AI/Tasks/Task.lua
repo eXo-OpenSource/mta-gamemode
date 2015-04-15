@@ -8,8 +8,8 @@
 Task = inherit(Object)
 Task.Map = {}
 
-function Task:virtual_constructor()
-
+function Task:virtual_constructor(actor)
+    self.m_Actor = actor
 end
 
 function Task.onInherit(derivedClass)

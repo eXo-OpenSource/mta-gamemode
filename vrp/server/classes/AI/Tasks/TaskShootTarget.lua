@@ -8,8 +8,6 @@
 TaskShootTarget = inherit(Task)
 
 function TaskShootTarget:constructor(actor, target)
-    self.m_Actor = actor
-
     self.m_Target = target
 end
 
@@ -36,3 +34,17 @@ end
 function TaskShootTarget:stopShooting()
     -- TODO
 end
+
+addEvent("taskShootTargetTooFarAway", true)
+addEventHandler("taskShootTargetTooFarAway", root,
+    function()
+        if not instanceof(source, Actor) then
+            return
+        end
+
+        if source:getPrimaryTaskClass() == TaskShootTarget then
+            -- Fallback to idle mode
+            source:startIdleTask()
+        end
+    end
+)

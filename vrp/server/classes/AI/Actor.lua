@@ -23,6 +23,7 @@ end
 function Actor:startPrimaryTask(taskClass, ...)
     -- Delete old primary task if available
     if self.m_PrimaryTask then
+        triggerClientEvent("actorStopPrimaryTask", self)
         delete(self.m_PrimaryTask)
     end
 
@@ -44,4 +45,10 @@ function Actor:getPrimaryTaskClass()
         return Task.getById(self.m_PrimaryTask:getId())
     end
     return false
+end
+
+function Actor:startIdleTask(...)
+    if self.getIdleTask then
+        self:startPrimaryTask(self:getIdleTask(), ...)
+    end
 end

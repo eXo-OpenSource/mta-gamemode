@@ -9,7 +9,6 @@ TaskGuard = inherit(Task)
 
 function TaskGuard:constructor(actor)
     self.m_DamageFunc = bind(self.Actor_Damage, self)
-    self.m_Actor = actor
 
     addEventHandler("onClientPedDamage", actor, self.m_DamageFunc)
 end
@@ -19,6 +18,8 @@ function TaskGuard:getId()
 end
 
 function TaskGuard:Actor_Damage(attacker, weapon, bodypart, loss)
-    -- Tell server that we've been damaged
-    triggerServerEvent("taskGuardDamage", self.m_Actor, attacker)
+    if attacker and isElement(attacker) and getElementType(attacker) == "player" then
+        -- Tell server that we've been damaged
+        triggerServerEvent("taskGuardDamage", self.m_Actor, attacker)
+    end
 end
