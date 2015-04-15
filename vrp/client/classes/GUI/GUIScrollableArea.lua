@@ -6,8 +6,9 @@
 -- *
 -- ****************************************************************************
 GUIScrollableArea = inherit(GUIElement)
+local SCROLL_DISTANCE = 14
 
-function GUIScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent)
+function GUIScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent, space)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 
 	self.m_PageTarget = dxCreateRenderTarget(documentWidth, documentHeight, true)
@@ -20,12 +21,19 @@ function GUIScrollableArea:constructor(posX, posY, width, height, documentWidth,
 	self.m_ChangedSinceLastFrame = true
 
 	if verticalScrollbar or horizontalScrollbar then
-		--self:createScrollbars(verticalScrollbar, horizontalScrollbar)
+		self:createScrollbars(verticalScrollbar, horizontalScrollbar, space)
 	end
 end
 
 function GUIScrollableArea:destructor()
 	destroyElement(self.m_PageTarget)
+	if self.m_HorizontalScrollbar then
+		delete(self.m_HorizontalScrollbar)
+	end
+	if self.m_VerticalScrollbar then
+		delete(self.m_VerticalScrollbar)
+	end
+
 	GUIElement.destructor(self)
 end
 
@@ -65,7 +73,7 @@ function GUIScrollableArea:draw(incache)
 	if GUI_DEBUG then
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
 	end
-	
+
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_DocumentWidth, self.m_DocumentHeight, self.m_PageTarget)
 	dxDrawImageSection(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, 0, 0, self.m_Width, self.m_Height, self.m_PageTarget)
 end
@@ -75,11 +83,11 @@ function GUIScrollableArea:setScrollPosition(x, y)
 	self.m_ScrollX, self.m_ScrollY = x, y
 
 	if self.m_VerticalScrollbar then
-		self.m_VerticalScrollbar:setScrollPosition(self.m_ScrollY / self.m_Height)
+		self.m_VerticalScrollbar:setScrollPosition(-self.m_ScrollY / (self.m_DocumentHeight-self.m_Height))
 	end
 
 	if self.m_HorizontalScrollbar then
-		self.m_HorizontalScrollbar:setScrollPosition(self.m_ScrollX / self.m_Width)
+		self.m_HorizontalScrollbar:setScrollPosition(self.m_ScrollX / self.m_DocumentWidth)
 	end
 
 	local refreshAbsolutePosition;
@@ -115,22 +123,39 @@ function GUIScrollableArea:resize(documentWidth, documentHeight)
 	self:anyChange()
 end
 
-function GUIScrollableArea:createScrollbars(verticalScrollbar, horizontalScrollbar)
+function GUIScrollableArea:createScrollbars(verticalScrollbar, horizontalScrollbar, space)
+	-- We cannot create any scrollbar is this element does not have a parent
+	if not self.m_Parent then
+		return
+	end
+
 	if verticalScrollbar then
-		self.m_VerticalScrollbar = GUIVerticalScrollbar:new(self.m_PosX + self.m_Width - 20, 0, 20, self.m_Height, self)
+		self.m_VerticalScrollbar = GUIVerticalScrollbar:new(self.m_PosX + self.m_Width - 4, space or 0, 4, self.m_Height, self.m_Parent)
 	end
 end
 
 function GUIScrollableArea:onInternalMouseWheelUp()
-	if self.m_ScrollY >= 0 then
-		self.m_ScrollY = 0
-	else
-		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY + 14)
+	if self.m_ScrollY < 0 then
+		local diff = SCROLL_DISTANCE
+		if -self.m_ScrollY < SCROLL_DISTANCE then
+			diff = -self.m_ScrollY
+		end
+
+		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY + diff)
 	end
 end
 
 function GUIScrollableArea:onInternalMouseWheelDown()
-	if self.m_ScrollY >= -self.m_DocumentHeight+self.m_Height+60+14 then
-		self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - 14)
+	local diff = self.m_DocumentHeight - self.m_Height + self.m_ScrollY
+	if diff <= 0 then
+		return
 	end
+
+	if diff >= SCROLL_DISTANCE then
+		diff = SCROLL_DISTANCE
+	else
+		diff = diff % SCROLL_DISTANCE
+	end
+
+	self:setScrollPosition(self.m_ScrollX, self.m_ScrollY - diff)
 end

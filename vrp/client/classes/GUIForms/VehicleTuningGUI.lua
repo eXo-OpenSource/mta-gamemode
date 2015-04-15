@@ -60,9 +60,13 @@ function VehicleTuningGUI:constructor(vehicle)
     self.m_Music = Sound.create("https://jusonex.net/public/saonline/Audio/GarageMusic.mp3", true)
 end
 
-function VehicleTuningGUI:destructor()
-    self:emptyCart()
-    self:resetUpgrades()
+function VehicleTuningGUI:destructor(closedByServer)
+    if not closedByServer then
+        self:emptyCart()
+        self:resetUpgrades()-- Tell the server that we do not want to upgrade anything
+        triggerServerEvent("vehicleUpgradesAbort", localPlayer)
+    end
+
     setCameraTarget(localPlayer)
     if self.m_Music then
         self.m_Music:destroy()
@@ -71,9 +75,6 @@ function VehicleTuningGUI:destructor()
     delete(self.m_AddToCartButton)
     delete(self.m_ShoppingCartWindow)
     showChat(true)
-
-    -- Tell the server that we do not want to upgrade anything
-    triggerServerEvent("vehicleUpgradesAbort", localPlayer)
 
     GUIForm.destructor(self)
 end
@@ -309,7 +310,7 @@ addEventHandler("vehicleTuningShopExit", root,
             vehicleTuningShop.m_Vehicle:setDimension(0)
             localPlayer:setDimension(0)
 
-            delete(vehicleTuningShop)
+            delete(vehicleTuningShop, true)
             vehicleTuningShop = false
         end
     end

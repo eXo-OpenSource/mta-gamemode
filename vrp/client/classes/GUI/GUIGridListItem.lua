@@ -11,10 +11,11 @@ inherit(GUIFontContainer, GUIGridListItem)
 
 function GUIGridListItem:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
-	GUIColorable.constructor(self, tocolor(0, 0, 0, 0))
+	GUIColorable.constructor(self, Color.White)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(28))
 
 	self.m_Columns = {}
+	self.m_BackgroundColor = Color.Clear
 	self.m_Clickable = true
 end
 
@@ -34,19 +35,29 @@ function GUIGridListItem:setColumnAlignX(columnIndex, alignX)
 	return self
 end
 
-function GUIGridListItem:setClickable(bool)
-	self.m_Clickable = bool
+function GUIGridListItem:setClickable(state)
+	self.m_Clickable = state
+
+	self:setColor(state and Color.White or Color.LightBlue)
 	return self
+end
+
+function GUIGridListItem:setBackgroundColor(color)
+	self.m_BackgroundColor = color
+end
+
+function GUIGridListItem:getBackgroundColor()
+	return self.m_BackgroundColor
 end
 
 function GUIGridListItem:drawThis()
 	dxSetBlendMode("modulate_add")
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_Color)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
 
 	local currentXPos = 0
 	for columnIndex, columnValue in ipairs(self.m_Columns) do
 		local columnWidth = self:getGridList():getColumnWidth(columnIndex)
-		dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, self.m_Clickable and Color.White or Color.Red, self.m_FontSize, self.m_Font, self.m_Columns[columnIndex].alignX)
+		dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, self.m_Color, self.m_FontSize, self.m_Font, self.m_Columns[columnIndex].alignX)
 		currentXPos = currentXPos + columnWidth*self.m_Width + 5
 	end
 	dxSetBlendMode("blend")

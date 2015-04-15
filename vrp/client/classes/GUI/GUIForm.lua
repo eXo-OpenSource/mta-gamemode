@@ -29,14 +29,14 @@ function GUIForm:destructor()
 end
 
 function GUIForm:open(hiddenCursor)
-	if not hiddenCursor then
+	if not hiddenCursor and not self:isVisible() then
 		Cursor:show()
 	end
 	return self:setVisible(true)
 end
 
 function GUIForm:close(decrementedCursorCounter)
-	if not decrementedCursorCounter then
+	if not decrementedCursorCounter and self:isVisible() then
 		Cursor:hide()
 	end
 	return self:setVisible(false)

@@ -58,5 +58,5 @@ function JobGUI:InfoButton_Click()
 	if self.m_InfoCallback then
 		self.m_InfoCallback()
 	end
-	self:close()	
+	self:close()
 end

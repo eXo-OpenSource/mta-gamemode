@@ -14,7 +14,7 @@ function GUIGridList:constructor(posX, posY, width, height, parent)
 	GUIColorable.constructor(self, tocolor(0, 0, 0, 180))
 
 	self.m_Columns = {}
-	self.m_ScrollArea = GUIScrollableArea:new(0, ITEM_HEIGHT, self.m_Width, self.m_Height-ITEM_HEIGHT, self.m_Width, 1, true, false, self)
+	self.m_ScrollArea = GUIScrollableArea:new(0, ITEM_HEIGHT, self.m_Width, self.m_Height-ITEM_HEIGHT, self.m_Width, 1, true, false, self, ITEM_HEIGHT)
 	self.m_SelectedItem = nil
 end
 
@@ -25,7 +25,7 @@ function GUIGridList:addItem(...)
 	end
 
 	-- Resize the document
-	self.m_ScrollArea:resize(self.m_Width, 60 + #self:getItems() * ITEM_HEIGHT)
+	self.m_ScrollArea:resize(self.m_Width, #self:getItems() * ITEM_HEIGHT)
 
 	return listItem
 end
@@ -37,7 +37,7 @@ function GUIGridList:addItemNoClick(...)
 	end
 
 	-- Resize the document
-	self.m_ScrollArea:resize(self.m_Width, 60 + #self:getItems() * ITEM_HEIGHT)
+	self.m_ScrollArea:resize(self.m_Width, #self:getItems() * ITEM_HEIGHT)
 
 	return listItem
 end
@@ -96,17 +96,17 @@ end
 
 function GUIGridList:clear()
 	delete(self.m_ScrollArea)
-	self.m_ScrollArea = GUIScrollableArea:new(0, ITEM_HEIGHT, self.m_Width, self.m_Height-ITEM_HEIGHT, self.m_Width, 1, true, false, self)
+	self.m_ScrollArea = GUIScrollableArea:new(0, ITEM_HEIGHT, self.m_Width, self.m_Height-ITEM_HEIGHT, self.m_Width, 1, true, false, self, ITEM_HEIGHT)
 end
 
 function GUIGridList:onInternalSelectItem(item)
 	self.m_SelectedItem = item
 
-	for k, v in ipairs(self:getItems()) do
-		v.m_Color = Color.Clear
+	for k, item in ipairs(self:getItems()) do
+		item:setBackgroundColor(Color.Clear)
 	end
 
-	item:setColor(Color.LightBlue)
+	item:setBackgroundColor(Color.LightBlue)
 	self:anyChange()
 end
 
