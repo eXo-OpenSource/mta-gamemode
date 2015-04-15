@@ -9,15 +9,14 @@ GUIVerticalScrollbar = inherit(GUIScrollbar)
 
 function GUIVerticalScrollbar:constructor(posX, posY, width, height, parent)
 	self.m_CursorMoveHandler = bind(GUIVerticalScrollbar.Event_onClientCursorMove, self)
-	self.m_ScrollerHeight = 50 -- TODO: Make height dependend on the document height
 end
 
 function GUIVerticalScrollbar:onInternalLeftClickDown()
 	local scrollerX = self.m_AbsoluteX
-	local scrollerY = self.m_AbsoluteY + self.m_ScrollPosition * (self.m_Height-self.m_ScrollerHeight)
+	local scrollerY = self.m_AbsoluteY + self.m_ScrollPosition * (self.m_Height-self.m_ScrollerSize)
 
 	-- Is the cursor on top of the slider?
-	if self:isCursorWithinBox(0, scrollerY - self.m_AbsoluteY, self.m_Width, scrollerY - self.m_AbsoluteY + self.m_ScrollerHeight) then
+	if self:isCursorWithinBox(0, scrollerY - self.m_AbsoluteY, self.m_Width, scrollerY - self.m_AbsoluteY + self.m_ScrollerSize) then
 		-- Attach moving event
 		addEventHandler("onClientCursorMove", root, self.m_CursorMoveHandler)
 		self.m_Scrolling = true
@@ -41,7 +40,7 @@ function GUIVerticalScrollbar:Event_onClientCursorMove(_, _, cursorX, cursorY)
 	self.m_CursorOffset = self.m_CursorOffset or diff
 	local newY = currentY + diff - self.m_CursorOffset
 
-	if newY < self.m_Height-self.m_ScrollerHeight then
+	if newY < self.m_Height-self.m_ScrollerSize then
 		self:setScrollPosition(newY / self.m_Height)
 
 		-- Call scroll handler
@@ -53,7 +52,7 @@ end
 
 function GUIVerticalScrollbar:drawThis()
 	-- Draw scroller
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ScrollPosition * (self.m_Height-self.m_ScrollerHeight), self.m_Width, self.m_ScrollerHeight)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ScrollPosition * (self.m_Height-self.m_ScrollerSize), self.m_Width, self.m_ScrollerSize)
 
 	-- Draw scroll bar (rectangle)
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/scrollbar.png")

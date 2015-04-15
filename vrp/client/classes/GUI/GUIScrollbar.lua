@@ -13,7 +13,7 @@ function GUIScrollbar:constructor()
 	error "Please use GUIHorizontalScrollbar or CGUIVerticalScrollbar"
 end
 
-function GUIScrollbar:virtual_constructor(posX, posY, width, height, parent)
+function GUIScrollbar:virtual_constructor(posX, posY, width, height, parent, scrollerSize)
 	checkArgs("GUIScrollbar:virtual_constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
@@ -22,6 +22,7 @@ function GUIScrollbar:virtual_constructor(posX, posY, width, height, parent)
 	self.m_Color = tocolor(0, 0, 0, 200)
 	self.m_ScrollPosition = 0
 	self.m_Scrolling = false
+	self.m_ScrollerSize = scrollerSize or 50
 end
 
 function GUIScrollbar:getScrollPosition()
@@ -46,4 +47,12 @@ function GUIScrollbar:setScrollPosition(scrollPos)
 		return self
 	end
 	return self
+end
+
+function GUIScrollbar:getScrollerSize()
+	return self.m_ScrollerSize
+end
+
+function GUIScrollbar:setScrollerSize(size)
+	self.m_ScrollerSize = size
 end

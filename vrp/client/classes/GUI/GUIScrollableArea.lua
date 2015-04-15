@@ -120,6 +120,12 @@ function GUIScrollableArea:resize(documentWidth, documentHeight)
 	dxSetTextureEdge(self.m_PageTarget, "border", Color.Clear)
 
 	self.m_DocumentWidth, self.m_DocumentHeight = documentWidth, documentHeight
+
+	if self.m_VerticalScrollbar and self.m_DocumentHeight > self.m_Height then
+		self.m_VerticalScrollbar:setVisible(true)
+		self.m_VerticalScrollbar:setScrollerSize(self.m_Height/self.m_DocumentHeight * self.m_Height)
+	end
+
 	self:anyChange()
 end
 
@@ -131,6 +137,10 @@ function GUIScrollableArea:createScrollbars(verticalScrollbar, horizontalScrollb
 
 	if verticalScrollbar then
 		self.m_VerticalScrollbar = GUIVerticalScrollbar:new(self.m_PosX + self.m_Width - 4, space or 0, 4, self.m_Height, self.m_Parent)
+
+		if self.m_DocumentHeight <= self.m_Height then
+			self.m_VerticalScrollbar:setVisible(false)
+		end
 	end
 end
 
