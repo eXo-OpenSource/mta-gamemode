@@ -44,6 +44,9 @@ function DeathmatchEvent:constructor ()
 	addEventHandler("DeathmatchEvent.sendData", root, bind(DeathmatchEvent.fetchMatchData, self))
 	addEventHandler("DeathmatchEvent.onHelpColHit", root, self.onHelpColHit)
 	addEventHandler("DeathmatchEvent.onHelpColLeave", root, self.onHelpColLeave)
+
+	-- Add to Helpmenu
+	HelpTextManager:getSingleton():addText(_"Events", _(HelpTextTitles.Events.Deathmatch):gsub("Event: ", ""), _(HelpTexts.Events.Deathmatch))
 end
 
 function DeathmatchEvent:openGUIForm (type, ...)

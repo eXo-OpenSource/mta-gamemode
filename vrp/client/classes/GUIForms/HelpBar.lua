@@ -61,6 +61,8 @@ end
 
 function HelpBar:blink()
 	local isFilled = true
+	self.m_Icon:setColor(Color.Yellow)
+
 	self.m_BlinkTimer = setTimer(
 		function()
 			isFilled = not isFilled
@@ -80,6 +82,11 @@ function HelpBar:addText(title, text, blink, tutorial)
 		text = self.m_TextLabel:getText();
 		tutorial = self.m_TutorialButton.onLeftClick
 	}
+
+	if isTimer(self.m_BlinkTimer) then
+		killTimer(self.m_BlinkTimer)
+		self.m_Icon:setColor(Color.White)
+	end
 
 	self.m_SubTitleLabel:setText(title)
 	self.m_TextLabel:setText(text)

@@ -41,11 +41,15 @@ function Core:ready()
 	Housing:new()
 	DrivingSchool:new()
 	Achievement:new()
-	DeathmatchEvent:new()
-	EventManager:new()
 	TippManager:new()
 	JailBreak:new()
 	DimensionManager:new()
+
+	-- Events
+	EventManager:new()
+	DMRaceEvent:new()
+	DeathmatchEvent:new()
+	StreetRaceEvent:new()
 
 	VehicleShop.initializeAll()
 	VehicleGarages:new()

@@ -367,6 +367,7 @@
 	<script src="client/classes/Events/Event.lua" type="client"/>
 	<script src="client/classes/Events/EventManager.lua" type="client"/>
 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
+	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
 
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>

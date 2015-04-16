@@ -32,12 +32,32 @@ NO_MUNITION_ITEMS = {
 
 RadarDesign = {Monochrome = 1, GTA = 2}
 
+HelpTextTitles = {
+	General = {
+		Main = "Such Help. So vRP. Wow.\n";
+		LoginRegister = "Login/Registration";
+		Team = "Team";
+	};
+	Jobs = {
+		BusDriver = "Job: Busfahrer";
+		Farmer = "Job: Bauer";
+		Logistician = "Job: Logistik";
+		Lumberjack = "Job: Holzfäller";
+		Mechanic = "Job: Mechaniker";
+		Police = "Job: Polizist";
+		RoadSweeper = "Job: Straßenkehrer";
+		Trashman = "Job: Müllmann";
+	};
+	Events = {
+		Deathmatch = "Event: Deathmatch";
+		DMRace = "Event: DM-Race";
+		StreetRace = "Event: Street Race";
+	};
+}
+
 HelpTexts = {
 	General = {
-		Main = [[
-			Hier folgt ein krasser Text der vRP beschreiben soll. -> Doneasty? ;)
-
-		]]..LOREM_IPSUM;
+		Main = "\n"..LOREM_IPSUM;
 		LoginRegister = [[
 			Dies ist das Login Fenster. Im Tab 'Login' kannst Du dich einloggen, im Tab 'Registrieren' demzufolge registrieren.
 
@@ -111,29 +131,10 @@ HelpTexts = {
 	};
 	Events = {
 		Deathmatch = [[Todo]];
+		DMRace = [[Todo]];
+		StreetRace = [[Todo]];
 	};
 };
-
-HelpTextTitles = {
-	General = {
-		Main = "vRoleplay";
-		LoginRegister = "Login/Registration";
-		Team = "Team";
-	};
-	Jobs = {
-		BusDriver = "Job: Busfahrer";
-		Farmer = "Job: Bauer";
-		Logistician = "Job: Logistik";
-		Lumberjack = "Job: Holzfäller";
-		Mechanic = "Job: Mechaniker";
-		Police = "Job: Polizist";
-		RoadSweeper = "Job: Straßenkehrer";
-		Trashman = "Job: Müllmann";
-	};
-	Events = {
-		Deathmatch = "Event: Deathmatch";
-	};
-}
 
 Tipps = {
 	{"", "Schon ein paar vRP-Points bekommen? Nein? Dann suche auf der Karte nach schwebenden vRoleplay Logos oder bekomme Archievements! Mithilfe der vRP-Points kannst du dir diverse Premiumdinge holen oder sie in XP eintauschen."};
