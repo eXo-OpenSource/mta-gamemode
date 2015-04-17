@@ -21,7 +21,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	-- Create dummy titlebar element (to be able to retrieve clicks)
 	if self.m_HasTitlebar then
 		--self.m_TitlebarDummy = GUIElement:new(0, 0, self.m_Width, 30, self)
-		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, tocolor(0x23, 0x23, 0x23, 230), self)
+		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, Color.Grey, self)
 		self.m_TitlebarDummy.onLeftClickDown = function() self:startMoving() end
 		self.m_TitlebarDummy.onLeftClick = function() self:stopMoving() end
 
@@ -75,6 +75,11 @@ function GUIWindow:CloseButton_Click()
 	else
 		(self.m_Parent or self):setVisible(false) -- Todo: if self.m_Parent == cacheroot then problem() end
 	end
+end
+
+function GUIWindow:setTitleBarText (text)
+	self.m_TitleLabel:setText(text)
+	return self
 end
 
 --- Closes the window
