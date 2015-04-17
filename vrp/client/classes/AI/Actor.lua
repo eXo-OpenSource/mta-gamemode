@@ -6,10 +6,11 @@
 -- *
 -- ****************************************************************************
 Actor = inherit(Ped)
-addRemoteEvents{"actorCreate", "actorStartPrimaryTask", "actorStopPrimaryTask"}
+addRemoteEvents{"actorCreate", "actorStartPrimaryTask", "actorStopPrimaryTask", "actorStartSecondaryTask"}
 
 function Actor:constructor()
     self.m_PrimaryTask = false
+    self.m_SecondaryTasks = {}
 end
 
 function Actor:getPrimaryTask()
@@ -20,6 +21,19 @@ function Actor:setPrimaryTask(task)
     self.m_PrimaryTask = task
 end
 
+function Actor:addSecondaryTask(task)
+    self.m_SecondaryTasks[#self.m_SecondaryTasks + 1] = task
+end
+
+function Actor:removeSecondaryTaskById(taskId)
+    for k, v in pairs(self.m_SecondaryTasks) do
+        if taskId == v:getId() then
+            delete(v)
+            self.m_SecondaryTasks[k] = nil
+            break
+        end
+    end
+end
 
 addEventHandler("actorCreate", root,
     function(...)
@@ -45,5 +59,22 @@ addEventHandler("actorStopPrimaryTask", root,
             delete(task)
             source:setPrimaryTask(false)
         end
+    end
+)
+
+addEventHandler("actorStartSecondaryTask", root,
+    function(taskId, ...)
+        local taskClass = Task.getById(taskId)
+        if taskClass then
+            source:addPrimaryTask(taskClass:new(source, ...))
+        else
+            error("Invalid secondary task Id has been passed!")
+        end
+    end
+)
+
+addEventHandler("actorStopSecondaryTask", root,
+    function(taskId)
+        source:removeSecondaryTaskById(taskId)
     end
 )

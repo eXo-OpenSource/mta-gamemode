@@ -216,4 +216,5 @@ VehicleSpecialProperty = {Color = -1}
 Tasks = {
 	TASK_GUARD = 1,
 	TASK_SHOOT_TARGET = 2,
+	TASK_GETTING_TARGETTED = 3,
 }
