@@ -72,8 +72,8 @@ function DownloadGUI:onComplete()
 		lgi:setVisible(false)
 		lgi:fadeIn(750)
 		
-		local pwhash = core:get("login", "password") or ""
-		local username = core:get("login", "username") or ""
+		local pwhash = core:get("Login", "password", "")
+		local username = core:get("Login", "username", "")
 		lgi.m_LoginEditUser:setText(username)
 		lgi.m_LoginEditPass:setText(pwhash)
 		lgi.usePasswordHash = pwhash

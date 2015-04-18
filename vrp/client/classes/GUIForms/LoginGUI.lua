@@ -227,8 +227,8 @@ addEventHandler("loginsuccess", root,
 		lgi.m_LoginLoginButton:setEnabled(true)
 	
 		if lgi.m_LoginCheckbox:isChecked() and pwhash then
-			core:set("login", "username", lgi.m_LoginEditUser:getText())
-			core:set("login", "password", pwhash)
+			core:set("Login", "username", lgi.m_LoginEditUser:getText())
+			core:set("Login", "password", pwhash)
 		end
 		lgi:delete()
 		

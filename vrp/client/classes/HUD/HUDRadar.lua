@@ -32,11 +32,11 @@ function HUDRadar:constructor()
 	self:updateMapTexture()
 
 	-- Settings
-	if not core:get("HUD", "drawGangAreas", false) then
-		core:set("HUD", "drawGangAreas", 1)
+	if core:get("HUD", "drawGangAreas", nil) == nil then
+		core:set("HUD", "drawGangAreas", true)
 	end
-	if not core:get("HUD", "drawBlips", false) then
-		core:set("HUD", "drawBlips", 1)
+	if core:get("HUD", "drawBlips", nil) == nil then
+		core:set("HUD", "drawBlips", true)
 	end
 
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
@@ -68,7 +68,7 @@ function HUDRadar:updateMapTexture()
 	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
 
 	-- Draw radar areas
-	if toboolean(core:get("HUD", "drawGangAreas", 1)) then
+	if core:get("HUD", "drawGangAreas", true) then
 		for k, rect in pairs(self.m_Areas) do
 			local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
 
@@ -190,7 +190,7 @@ function HUDRadar:draw()
 	end
 
 	if isNotInInterior then
-		if toboolean(core:get("HUD", "drawBlips", 1)) then
+		if core:get("HUD", "drawBlips", true) then
 			local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
 			for k, blip in pairs(self.m_Blips) do
 				local blipX, blipY = blip:getPosition()

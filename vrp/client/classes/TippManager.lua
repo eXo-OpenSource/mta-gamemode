@@ -23,7 +23,7 @@ end
 function TippManager:createTipp ()
 	self.m_LastTippId = self.m_LastTippId + 1
 	if self.m_Tipps[self.m_LastTippId] then
-		core:set("tipps", "lastTipp", self.m_LastTippId)
+		core:set("Tipps", "lastTipp", self.m_LastTippId)
 
 		ShortMessage:new(("Tipp: %s\n\n%s"):format(string.len(self.m_Tipps[self.m_LastTippId][1]) > 1 and self.m_Tipps[self.m_LastTippId][1].."?" or "", self.m_Tipps[self.m_LastTippId][2]), true)
 	else
