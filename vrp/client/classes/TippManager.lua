@@ -9,7 +9,7 @@
 TippManager = inherit(Singleton)
 
 function TippManager:constructor ()
-	self.m_LastTippId = core:get("tipps", "lastTipp", 0)
+	self.m_LastTippId = core:get("Tipps", "lastTipp", 0)
 	self.m_IntervallTime = 2 * 60 * 1000
 	self.m_Tipps = Tipps;
 	self.m_TimedPulse = TimedPulse:new(self.m_IntervallTime)
@@ -21,6 +21,11 @@ function TippManager:constructor ()
 end
 
 function TippManager:createTipp ()
+	if not localPlayer.m_showTipps then
+		delete(self)
+		return
+	end
+
 	self.m_LastTippId = self.m_LastTippId + 1
 	if self.m_Tipps[self.m_LastTippId] then
 		core:set("Tipps", "lastTipp", self.m_LastTippId)
