@@ -75,12 +75,12 @@ function GUICursor:setCursorMode(instant)
 	if instant then
 		self:hide()
 
-		unbindKey("b", "down", self.m_CursorFunc)
-		bindKey("b", "both", self.m_CursorFunc)
+		unbindKey(core:get("KeyBindings", "KeyToggleCursor", "b"), "down", self.m_CursorFunc)
+		bindKey(core:get("KeyBindings", "KeyToggleCursor", "b"), "both", self.m_CursorFunc)
 	else
 		self:hide()
 
-		unbindKey("b", "both", self.m_CursorFunc)
-		bindKey("b", "down", self.m_CursorFunc)
+		unbindKey(core:get("KeyBindings", "KeyToggleCursor", "b"), "both", self.m_CursorFunc)
+		bindKey(core:get("KeyBindings", "KeyToggleCursor", "b"), "down", self.m_CursorFunc)
 	end
 end

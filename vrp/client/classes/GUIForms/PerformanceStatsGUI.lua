@@ -51,7 +51,7 @@ end
 addEventHandler("onClientResourceStart", resourceRoot,
 	function()
 		PerformanceStatsGUI:new():setVisible(false)
-		bindKey("f3", "down",
+		bindKey(core:get("KeyBindings", "KeyTogglePerformanceStats", "f3"), "down",
 			function()
 				PerformanceStatsGUI:getSingleton():setVisible(not PerformanceStatsGUI:getSingleton():isVisible())
 			end

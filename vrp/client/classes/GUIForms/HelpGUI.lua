@@ -32,13 +32,3 @@ function HelpGUI:constructor()
 	self.m_Grid:onInternalSelectItem(item)
 	item.onLeftClick()
 end
-
-bindKey("f9", "down",
-	function()
-		if not HelpGUI:isInstantiated() then
-			HelpGUI:new()
-		else
-			delete(HelpGUI:getSingleton())
-		end
-	end
-)

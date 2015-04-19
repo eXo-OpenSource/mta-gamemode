@@ -12,7 +12,7 @@ function CustomF11Map:constructor()
 	self.m_Visible = false
 	self.m_Enabled = false
 
-	bindKey("f11", "down",
+	bindKey(core:get("KeyBindings", "KeyToggleCustomMap", "f11"), "down",
 		function()
 			if not self.m_Enabled then
 				return
