@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, money, players)
+function Group:constructor(Id, name, money, players, karma)
 	self.m_Id = Id
 
 	self.m_Players = players or {}
@@ -15,7 +15,7 @@ function Group:constructor(Id, name, money, players)
 	self.m_Money = money
 	self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
 	self.m_Invitations = {}
-	self.m_Karma = 0
+	self.m_Karma = karma
 end
 
 function Group:destructor()
@@ -65,10 +65,12 @@ end
 
 function Group:setKarma(karma)
 	self.m_Karma = karma
+
+	sql:queryExec("UPDATE ??_groups SET Karma = ? WHERE Id = ?", sql:getPrefix(), self.m_Karma, self.m_Id)
 end
 
 function Group:giveKarma(karma)
-	self.m_Karma = self.m_Karma + karma
+	self:setKarma(self:getKarma() + karma)
 end
 
 function Group:getKarma()

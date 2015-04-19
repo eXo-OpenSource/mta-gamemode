@@ -55,6 +55,17 @@ function Core:ready()
 	VehicleGarages:new()
 	GasStationGUI:new()
 	SkinShopGUI.initialise()
+
+	-- Init Binds
+	bindKey(core:get("KeyBindings", "KeyToggleHelpGUI", "f9"), "down",
+		function()
+			if not HelpGUI:isInstantiated() then
+				HelpGUI:new()
+			else
+				delete(HelpGUI:getSingleton())
+			end
+		end
+	)
 end
 
 function Core:afterLogin()
@@ -72,13 +83,13 @@ function Core:afterLogin()
 	-- Phone
 	Phone:new()
 	Phone:getSingleton():close()
-	bindKey("k", "down",
+	bindKey(core:get("KeyBindings", "KeyTogglePhone", "k"), "down",
 		function()
 			Phone:getSingleton():toggle(true)
 		end
 	)
 
-	bindKey("f4", "down",
+	bindKey(core:get("KeyBindings", "KeyTogglePolicePanel", "f4"), "down",
 		function()
 			if localPlayer:getJob() == JobPolice:getSingleton() then
 				if PolicePanel:isInstantiated() then
@@ -93,15 +104,15 @@ function Core:afterLogin()
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
-	bindKey("f2", "down", function() SelfGUI:getSingleton():toggle(true) end)
+	bindKey(core:get("KeyBindings", "KeyToggleSelfGUI", "f2"), "down", function() SelfGUI:getSingleton():toggle(true) end)
 
 	ScoreboardGUI:getSingleton():close()
-	bindKey("tab", "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
-	bindKey("tab", "up", function() ScoreboardGUI:getSingleton():setVisible(false) end)
+	bindKey(core:get("KeyBindings", "KeyToggleScoreboard", "tab"), "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
+	bindKey(core:get("KeyBindings", "KeyToggleScoreboard", "tab"), "up", function() ScoreboardGUI:getSingleton():setVisible(false) end)
 
 	InventoryGUI:new()
 	InventoryGUI:getSingleton():close()
-	bindKey("i", "down", function() InventoryGUI:getSingleton():toggle() end)
+	bindKey(core:get("KeyBindings", "KeyToggleInventory", "i"), "down", function() InventoryGUI:getSingleton():toggle() end)
 
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)

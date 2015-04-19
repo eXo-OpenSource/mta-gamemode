@@ -33,8 +33,10 @@ function SelfGUI:constructor()
 	self.m_TabGroups = tabGroups
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Gruppe:", tabGroups)
 	self.m_GroupsNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.06, _"Gruppenrang:", tabGroups)
-	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGroups)
+	self.m_GroupsKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"Gruppenrang:", tabGroups)
+	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	self.m_GroupCreateButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Erstellen", true, tabGroups):setBarColor(Color.Green)
 	self.m_GroupQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.07, _"Verlassen", true, tabGroups):setBarColor(Color.Red)
 	self.m_GroupDeleteButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, _"Löschen", true, tabGroups):setBarColor(Color.Red)
@@ -222,6 +224,13 @@ function SelfGUI:constructor()
 			ErrorBox:new(_"Tipps wurden deaktiviert!")
 		end
 	end
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.74, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnungen", tabSettings)
+	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
+	self.m_KeyBindingsButton.onLeftClick = function ()
+		self:close()
+		KeyBindings:new()
+	end
 end
 
 function SelfGUI:onShow()
@@ -261,11 +270,12 @@ function SelfGUI:JobQuitButton_Click()
 	self.m_JobQuitButton:setVisible(false)
 end
 
-function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players)
+function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
 	self:adjustGroupTab(rank or false)
 
 	if name then
 		self.m_GroupsNameLabel:setText(name)
+		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 		self.m_GroupsRankLabel:setText(tostring(rank))
 		self.m_GroupMoneyLabel:setText(tostring(money).."$")
 

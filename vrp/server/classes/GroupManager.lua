@@ -11,7 +11,7 @@ GroupManager.GroupCosts = 30000
 
 function GroupManager:constructor()
 	outputServerLog("Loading groups...")
-	local result = sql:queryFetch("SELECT Id, Name, Money FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, Karma FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
 		local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 		local players = {}
@@ -19,7 +19,7 @@ function GroupManager:constructor()
 			players[groupRow.Id] = groupRow.GroupRank
 		end
 
-		local group = Group:new(row.Id, row.Name, row.Money, players)
+		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma)
 		GroupManager.Map[row.Id] = group
 	end
 
@@ -71,7 +71,7 @@ function GroupManager:Event_groupRequestInfo()
 	local group = client:getGroup()
 
 	if group then
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 	else
 		client:triggerEvent("groupRetrieveInfo")
 	end
