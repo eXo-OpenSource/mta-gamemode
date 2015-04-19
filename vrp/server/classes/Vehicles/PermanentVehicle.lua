@@ -7,7 +7,7 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, health, inGarage)
+function PermanentVehicle:constructor(Id, owner, keys, color, health, inGarage, tunings)
 	self.m_Id = Id
 	self.m_Owner = owner
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- *hide*
@@ -20,6 +20,16 @@ function PermanentVehicle:constructor(Id, owner, keys, color, health, inGarage)
 		local a, r, g, b = getBytesInInt32(color)
 		setVehicleColor(self, r, g, b)
 	end
+
+	for i, v in pairs(tunings) do
+		addVehicleUpgrade(self, v)
+	end
+
+	--[[ Todo: Maybe add Custom Tunings
+	for i, v in pairs(custom_tunings) do
+
+	end
+	]]
 
 	if self.m_InGarage then
 		-- Move to unused dimension | Todo: That's probably a bad solution
@@ -60,9 +70,10 @@ function PermanentVehicle:save()
 	local health = getElementHealth(self)
 	local r, g, b = getVehicleColor(self, true)
 	local color = setBytesInInt32(255, r, g, b) -- Format: argb
+	local tunings = getVehicleUpgrades(self) or {}
 
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, IsInGarage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_InGarage and 1 or 0, self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, IsInGarage = ?, Tunings = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_InGarage and 1 or 0, toJSON(tunings), self.m_Id)
 end
 
 function PermanentVehicle:getId()
