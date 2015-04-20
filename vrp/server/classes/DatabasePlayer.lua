@@ -35,6 +35,8 @@ function DatabasePlayer:virtual_constructor()
 	self.m_Id = -1
 	self.m_Inventory = false
 	self.m_Skills = {}
+	self.m_Health = 100
+	self.m_Armor = 0
 	self.m_XP 	 = 0
 	self.m_Karma = 0
 	self.m_Points = 0

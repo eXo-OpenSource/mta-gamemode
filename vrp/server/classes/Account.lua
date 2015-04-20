@@ -57,33 +57,24 @@ function Account.register(player, username, password, email)
 	if player:getAccount() then return false end
 	if not username or not password then return false end
 
-	-- Some sanity checks on the username (enable later)
-	if false then
-		-- Require at least 1 letter and a length of 3
-		if not username:match("[a-zA-Z]") or #username < 3 then
-			player:triggerEvent("registerfailed", "Error: Invalid Nickname")
-			return false
-		end
-	end
-
-	local response,errno = Forum:getSingleton():createAccount(player, username, password, email)
-
-	if response == "ERROR" then
-		player:triggerEvent("registerfailed", "Error: Interner Fehler. Bitte einen Administrator kontaktieren!")
+	-- Some sanity checks on the username
+	-- Require at least 1 letter and a length of 3
+	if not username:match("[a-zA-Z]") or #username < 3 then
+		player:triggerEvent("registerfailed", _("Fehler: Ungültiger Nickname", player))
 		return false
 	end
 
-	if response == "0" then
-		player:triggerEvent("registerfailed", "Error: Invalid Nickname")
+	-- Validate email
+	if not pregMatch(email, "[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,8}") or #email > 50 then
+		player:triggerEvent("registerfailed", _("Fehler: Ungültige eMail", player))
 		return false
 	end
-	local forumId = tonumber(response)
 
 	-- Check if someone uses this username already
 	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Name = ? ", sql:getPrefix(), username)
 	local row = Async.wait()
 	if row then
-		player:triggerEvent("registerfailed", "Error: Username is already in use")
+		player:triggerEvent("registerfailed", _("Fehler: Benutzer existiert bereits", player))
 		return false
 	end
 
@@ -92,14 +83,14 @@ function Account.register(player, username, password, email)
 	-- todo: get a better salt
 	local salt = md5(math.random())
 
-	sql:queryExec("INSERT INTO ??_account(Id, Name, Password, Salt, Rank, LastSerial, LastLogin) VALUES (?, ?, ?, ?, ?, ?, NOW());", sql:getPrefix(), forumId, username, sha256(salt..password), salt, 0, getPlayerSerial(player))
+	sql:queryExec("INSERT INTO ??_account(Name, Password, Salt, Rank, LastSerial, LastLogin, EMail) VALUES (?, ?, ?, ?, ?, NOW(), ?);", sql:getPrefix(), username, sha256(salt..password), salt, 0, getPlayerSerial(player), email)
 
-	player.m_Account = Account:new(forumId, username, player, false)
+	player.m_Account = Account:new(sql:lastInsertId(), username, player, false)
 
 	player:createCharacter()
 	player:loadCharacter()
 	player:spawn()
-	triggerClientEvent(player, "loginsuccess", root, nil, player:getTutorialStage())
+	player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
 end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(...) Async.create(Account.register)(client, ...) end)
