@@ -21,6 +21,10 @@ function Actor:new(position, ...)
     return ped
 end
 
+function Actor:createFromPed(ped, ...)
+    enew(ped, self, ...)
+end
+
 function Actor:startPrimaryTask(taskClass, ...)
     -- Delete old primary task if available
     if self.m_PrimaryTask then
