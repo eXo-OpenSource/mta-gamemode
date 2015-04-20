@@ -23,7 +23,7 @@ Items = {
 { "ITEM_DILDO",		"Dildo"; 			"Der kleine Männerersatz."; 																nil; 									ItemDildo,		false,					ItemCategory.Other,		true,					0};
 { "ITEM_HOTWIREKIT", "Kurzschließkit";	"Autos abgeschlossen? Kein Problem!";														nil;									ItemHotwireKit,	false,					ItemCategory.Tools,		false,					0};
 { "ITEM_BOMB",		"Bombe";			"Erzeugt eine große Explosion und wird bei verschiedenen Events benötigt";					nil;									ItemBomb,		true,					ItemCategory.Other,		true,					0};
-{ "ITEM_RADIO",		"Radio";			"Ein Radio, das Musik für alle abspielt";													nil;									ItemRadio,		false,					ItemCategory.Other,		true,					2226};
+{ "ITEM_RADIO",		"Radio";			"Ein Radio, das Musik für alle abspielt";													nil;									ItemRadio,		false,					ItemCategory.Other,		false,					2226};
 }
 
 local newitems = {}

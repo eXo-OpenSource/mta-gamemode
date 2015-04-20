@@ -141,9 +141,9 @@ end
 function Inventory:placeItem(item, slot, owner, pos, rotation, amount)
 	-- We need to duplicate the item if the amount does not match the available amount of items
 	local newItem = item
-	if amount ~= item:getCount() then
+	if not amount or amount ~= item:getCount() then
 		newItem = item:copy()
-		newItem:setCount(amount)
+		newItem:setCount(amount or item:getCount())
 	end
 
 	local worldItem = WorldItem:new(newItem, owner, pos, rotation)
