@@ -7,4 +7,10 @@
     <object id="object (cjsaveg) (6)" breakable="true" interior="0" alpha="255" model="17950" doublesided="false" scale="1" dimension="0" posX="2785.6001" posY="-1623.4" posZ="12.2" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (cjsaveg) (8)" breakable="true" interior="0" alpha="255" model="17950" doublesided="false" scale="1" dimension="0" posX="1827.3" posY="-1074.8" posZ="25.3" rotX="0" rotY="0" rotZ="90"></object>
     <object id="object (cjsaveg) (9)" breakable="true" interior="0" alpha="255" model="17950" doublesided="false" scale="1" dimension="0" posX="1827.4" posY="-1082" posZ="25.3" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (cjsaveg) (11)" breakable="true" interior="0" collisions="true" alpha="255" model="17950" doublesided="false" scale="1" dimension="0" posX="667.70001" posY="-581.5" posZ="17.6" rotX="0" rotY="0" rotZ="179.75"></object>
+    <object id="object (cjsaveg) (12)" breakable="true" interior="0" collisions="true" alpha="255" model="17950" doublesided="false" scale="1" dimension="0" posX="251.89999" posY="-155.5" posZ="2.8" rotX="0" rotY="0" rotZ="90.5"></object>
+    <object id="object (cjsaveg) (13)" breakable="true" interior="0" collisions="true" alpha="255" model="17950" doublesided="false" scale="1" dimension="0" posX="-2199.6001" posY="-2350.7" posZ="31.9" rotX="0" rotY="0" rotZ="231.5"></object>
+    <object id="object (cjsaveg) (7)" breakable="true" interior="0" collisions="true" alpha="255" model="17950" doublesided="false" scale="1" dimension="0" posX="-1845" posY="114" posZ="16.3" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (cjsaveg) (10)" breakable="true" interior="0" collisions="true" alpha="255" model="17950" doublesided="false" scale="1" dimension="0" posX="-1851.8" posY="114" posZ="16.3" rotX="0" rotY="0" rotZ="0"></object>
+
 </map>

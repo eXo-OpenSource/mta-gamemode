@@ -16,6 +16,7 @@ function Vehicle:virtual_constructor()
 	setVehicleEngineState(self, false)
 	self.m_EngineState = false
 	self.m_Fuel = 100
+	self.m_Mileage = 0
 end
 
 function Vehicle:virtual_destructor()
@@ -130,6 +131,14 @@ end
 
 function Vehicle:getFuel()
 	return self.m_Fuel
+end
+
+function Vehicle:setMileage(mileage)
+	self.m_Mileage = mileage
+end
+
+function Vehicle:getMileage()
+	return self.m_Mileage
 end
 
 Vehicle.isPermanent = pure_virtual

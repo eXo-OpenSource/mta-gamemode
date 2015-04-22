@@ -14,7 +14,9 @@ function VehicleManager:constructor()
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey", "vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo", "vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty"}
+	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
+		"vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo",
+		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage"}
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -28,6 +30,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleUpgradeGarage", root, bind(self.Event_vehicleUpgradeGarage, self))
 	addEventHandler("vehicleHotwire", root, bind(self.Event_vehicleHotwire, self))
 	addEventHandler("vehicleEmpty", root, bind(self.Event_vehicleEmpty, self))
+	addEventHandler("vehicleSyncMileage", root, bind(self.Event_vehicleSyncMileage, self))
 
 	-- Prevent the engine from being turned on
 	addEventHandler("onVehicleEnter", root,
@@ -50,9 +53,9 @@ function VehicleManager:constructor()
 
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
-	for i, rowData in ipairs(result) do
-		local vehicle = createVehicle(rowData.Model, rowData.PosX, rowData.PosY, rowData.PosZ, 0, 0, rowData.Rotation)
-		enew(vehicle, PermanentVehicle, tonumber(rowData.Id), rowData.Owner, fromJSON(rowData.Keys or "[ [ ] ]"), rowData.Color, rowData.Health, toboolean(rowData.IsInGarage), fromJSON(rowData.Tunings or "[ [ ] ]"))
+	for i, row in pairs(result) do
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Health, toboolean(row.IsInGarage), fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		self:addRef(vehicle, false)
 	end
 
@@ -385,5 +388,17 @@ function VehicleManager:Event_vehicleEmpty()
 		client:sendShortMessage(_("Mitfahrer wurden herausgeworfen!", client))
 	else
 		client:sendError(_("Hierzu hast du keine Berechtigungen!", client))
+	end
+end
+
+function VehicleManager:Event_vehicleSyncMileage(diff)
+	if diff < -0.001 then
+		AntiCheat:getSingleton():report(client, "Sent invalid mileage", CheatSeverity.Middle)
+		return
+	end
+
+	local vehicle = client:getOccupiedVehicle()
+	if vehicle then
+		vehicle:setMileage(vehicle:getMileage() + diff)
 	end
 end
