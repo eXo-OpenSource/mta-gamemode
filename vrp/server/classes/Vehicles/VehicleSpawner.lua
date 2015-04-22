@@ -11,6 +11,7 @@ VehicleSpawner.Map = {}
 function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionFunc, postSpawnFunc)
 	VehicleSpawner.Map[#VehicleSpawner.Map + 1] = self
 	self.m_Id = #VehicleSpawner.Map
+	self.m_Hook = Hook:new()
 	self.m_Vehicles = {}
 	for k, v in ipairs(vehicles) do
 		self.m_Vehicles[type(v) == "number" and v or getVehicleModelFromName(v)] = true
@@ -54,6 +55,10 @@ addEventHandler("vehicleSpawn", root,
 		local vehicle = TemporaryVehicle.create(vehicleModel, shop.m_Position.x, shop.m_Position.y, shop.m_Position.z + 1.5, shop.m_Rotation)
 		if shop.m_PostSpawnFunc then
 			shop.m_PostSpawnFunc(vehicle, client)
+		end
+		
+		if shop.m_Hook then
+			shop.m_Hook:call(client,vehicleModel,vehicle)
 		end
 		
 		warpPedIntoVehicle(client, vehicle)

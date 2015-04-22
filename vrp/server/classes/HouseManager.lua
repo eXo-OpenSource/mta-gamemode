@@ -29,6 +29,21 @@ function HouseManager:constructor()
 	addEventHandler("enterHouse",root,bind(self.enterHouse,self))
 	addEventHandler("leaveHouse",root,bind(self.leaveHouse,self))
 
+	addCommandHandler("createhouse", bind(self.createNewHouse,self))
+	
+end
+
+function HouseManager:createNewHouse(player,cmd,...)
+	if select("#",...) < 2 then player:sendMessage("Syntax: interior, price",255,0,0) return false end
+	if player:getRank() >= RANK.Administrator then
+		local interior, price = ...
+		interior, price = tonumber(interior), tonumber(price)
+		if interior and price and House.interiorTable[interior] then
+			local x,y,z = getElementPosition(player)
+			self:newHouse(x,y,z,interior,price)
+			player:sendMessage(("house created @ %f, %f, %f"):format(x,y,z), 255, 255, 255)
+		end
+	end
 end
 
 function HouseManager:addCharacterToRoblist(player)
@@ -71,17 +86,12 @@ function HouseManager:unrentHouse()
 end
 
 function HouseManager:newHouse(x, y, z, interiorID, price)
-	--[[
-		Aenderungen:
-		- Wenn moeglich, unsigned Typen in MySQL benutzt
-		- Fuer Id: AUTO_INCREMENT (um sql:lastInsertId benutzen zu koennen)
-	]]
-
-	sql:queryExec("INSERT INTO ??_houses VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?)",
-		sql:getPrefix(), x, y, z, interiorID, toJSON({}), 0, price, 0, 25,toJSON({}))
+	sql:queryExec("INSERT INTO ??_houses (x,y,z,interiorID,`keys`,owner,price,lockStatus,rentPrice,elements) VALUES (?,?,?,?,?,?,?,?,?,?)",
+		sql:getPrefix(), x, y, z, interiorID, toJSON({}), 0, price, 0, 25, toJSON({}))
 
 	local Id = sql:lastInsertId()
-	self.m_Houses[Id] = House:new(Id, x, y, z, interiorID, {}, 0, price, 0, 25, {}) -- Jusonex: Schluessel-Wert Table benutzen, um spaeter leichter von der Id zum eigentlichen Haus Objekt zu kommen
+	
+	self.m_Houses[Id] = House:new(Id, x, y, z, interiorID, toJSON({}), 0, price, 0, 25, toJSON({}))
 end
 
 function HouseManager:destructor ()

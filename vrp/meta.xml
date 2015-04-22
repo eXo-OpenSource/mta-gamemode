@@ -295,6 +295,7 @@
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
+	<script src="client/classes/GUIForms/AmmuLadder.lua" type="client"/>
 	<script src="client/classes/GUIForms/ColorPickerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>

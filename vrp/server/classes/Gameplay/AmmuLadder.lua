@@ -12,21 +12,24 @@ AmmuLadder.Settings = {
 		TIME = 1000*60*3,
 		WEAPONS = {
 			31,24,29
-		}
+		},
+		MAX_PER_TEAM = 2,
 	},
 	["3vs3"] = 
 	{
 		TIME = 1000*60*5,
 		WEAPONS = {
 			31,24,29
-		}
+		},
+		MAX_PER_TEAM = 3,
 	},
 	["5vs5"] = 
 	{
 		TIME = 1000*60*7,
 		WEAPONS = {
 			31,24,29
-		}
+		},
+		MAX_PER_TEAM = 5,
 	},	
 }
 
@@ -52,7 +55,7 @@ end
 
 function AmmuLadder:foundTeam(founder,name,kind)
 	if not AmmuLadder.Settings[kind] then return end
-	if name:len() == MIN_NAME_LENGHT then return end
+	if name:len() < MIN_NAME_LENGHT then return end
 	if founder:getTeamId(kind) then return end
 	
 	sql:queryExec("INSERT INTO ??_ladder (Name,Rating,Type,Members,Founder) VALUES (?,?,?,?,?)",
@@ -72,7 +75,7 @@ addCommandHandler("kasdf",
 function AmmuLadder:queueTeam(kind)
 	if not AmmuLadder.Settings[kind] then return end -- suppress wrong kinds
 	local team = self:getTeam(client:getTeamId(kind))
-	if team and #team:getMembers() then
+	if team and #team:getMembers() == AmmuLadder.Settings[kind].MAX_PER_TEAM then
 		-- Todo
 	end
 end

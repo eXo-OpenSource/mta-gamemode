@@ -10,7 +10,7 @@ function AmmuNationGUI:constructor()
 	self.m_Active = false
 	self.m_CameraInstance = false
 	
-	GUIForm.constructor(self,150,200,400,200)
+	GUIForm.constructor(self,screenWidth/2,screenHeight/2,400,200)
 	
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Ammu-Nation", true, false, self)
 	self.m_Label = GUILabel:new(30, 45, 300, 300, _("Waffe : %s\nBenoetigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel), self)

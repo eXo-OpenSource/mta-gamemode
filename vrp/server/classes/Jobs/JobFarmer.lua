@@ -1,23 +1,19 @@
--- // Server
-
 JobFarmer = inherit(Job)
 
 local VEHICLE_SPAWN = {-1063.92468,-1226.01440,128.41875,90}
 --local PLANT_DELIVERY = {-1108.28723,-1620.65833,75.36719}
 local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
-local MONEYPERPLANT = 25 -- Money per plant at the delivery point
+local MONEYPERPLANT = 25
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-1073.52661,-1207.41882,128.21875}
 
 function JobFarmer:constructor()
 	Job.constructor(self)
-
 	self.m_Plants = {}
 
 	local x,y,z,rotation = unpack ( VEHICLE_SPAWN )
-
-	VehicleSpawner:new(x,y,z, {"Combine Harvester";"Tractor";"Walton"}, rotation, bind(Job.requireVehicle, self))
-
+	self.m_Spawner = VehicleSpawner:new(x,y,z, {"Combine Harvester";"Tractor";"Walton"}, rotation, bind(Job.requireVehicle, self))
+	self.m_Spawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
 	self.m_CurrentPlantsFarm = 0
@@ -36,14 +32,11 @@ function JobFarmer:constructor()
 
 	addEventHandler ("onMarkerHit",self.m_DeliveryMarker,bind(self.deliveryHit,self))
 
-	-- //
-
 	for key, value in ipairs (JobFarmer.PlantPlaces) do
 		x,y,z = unpack(value)
 
 		addEventHandler("onColShapeHit",createColSphere (x,y,z,3),
 			function (hitElement)
-
 				if getElementType(hitElement) ~= "vehicle" then
 					return
 				end
@@ -57,6 +50,18 @@ function JobFarmer:constructor()
 		)
 	end
 
+end
+
+function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
+	if vehicleModel == getVehicleModelFromName("Walton") then
+		
+	end
+end
+
+function JobFarmer:onVehicleDestroy(vehicle)
+	if vehicle:getModel() == getVehicleModelFromName("Combine Harvester") and vehicle.ColShape then
+		vehicle.ColShape:destroy()
+	end
 end
 
 function JobFarmer:storeHit(hitElement,matchingDimension)
@@ -94,7 +99,7 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 				end,3500,1,hitElement
 			)
 		else
-			outputChatBox("Es gibt momentan nicht genug Pflanzen auf der Farm (Mindestens "..PLANTSONWALTON.."). Momentane Pflanzen : "..self.m_CurrentPlantsFarm,player,255,0,0)
+			player:sendMessage("Es gibt momentan nicht genug Pflanzen auf der Farm. Momentane Pflanzen : "..self.m_CurrentPlantsFarm,255,0,0)
 		end
 	end
 end
@@ -123,10 +128,6 @@ function JobFarmer:setJobElementVisibility (player,boolean)
 	end
 end
 
-function JobFarmer:destroyPlants (player)
-
-end
-
 function JobFarmer:stop(player)
 	self.m_CurrentPlants[player] = nil
 	self:setJobElementVisibility(player,false)
@@ -150,7 +151,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 		return
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
-		outputChatBox ("Sie haben die Lieferung abgegeben, Gehalt : $ "..self.m_CurrentPlants[player]*MONEYPERPLANT,player,0,255,0)
+		player:sendMessage ("Sie haben die Lieferung abgegeben, Gehalt : $ "..self.m_CurrentPlants[player]*MONEYPERPLANT,0,255,0)
 		player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT)
 		self.m_CurrentPlants[player] = 0
 		self:updatePrivateData(player)
@@ -174,6 +175,9 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 	local vehicleID = getElementModel(vehicle)
 
 	if self.m_Plants[createColShape] and vehicleID == getVehicleModelFromName("Combine Harvester") and self.m_Plants[createColShape].isFarmAble then
+		local pos = vehicle.position + vehicle.matrix.forward * 2
+		local distance = getDistanceBetweenPoints3D(pos,createColShape.position)
+		if distance > 4 then return end
 		destroyElement (self.m_Plants[createColShape])
 		self.m_Plants[createColShape] = nil
 		hitElement:giveMoney(math.random(5,8))
@@ -184,9 +188,9 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			self.m_Plants[createColShape] = createObject(818,x,y,z-1.5)
 			local object = self.m_Plants[createColShape]
 			object.isFarmAble = false
-			setTimer ( function (o) o.isFarmAble = true end, 1000*30, 1, object )
+			setTimer ( function (o) o.isFarmAble = true end, 1000*7.5, 1, object )
 			setElementVisibleTo (object,hitElement,true)
-			hitElement:giveMoney(math.random(2,4))
+			hitElement:giveMoney(math.random(4,5))
 		end
 	end
 end

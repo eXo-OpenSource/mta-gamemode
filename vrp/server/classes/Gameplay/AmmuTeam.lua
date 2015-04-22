@@ -11,7 +11,7 @@ function AmmuTeam:constructor(id,name,rating,kind,members,founder)
 	print(self.m_Kind,"team created")
 end
 
--- shortens
+-- short get-funcs
 
 function AmmuTeam:getKind() return self.m_Kind end 
 function AmmuTeam:getRating() return self.m_Rating end
@@ -21,8 +21,9 @@ function AmmuTeam:getMembers() return self.m_Members end
 --
 
 function AmmuTeam:addMember(player)
-	table.insert(self.m_Members,player:getId())
-	player:setTeamId(self.m_Kind,self.m_Id)
+	if player:setTeamId(self.m_Kind,self.m_Id) then
+		table.insert(self.m_Members,player:getId())
+	end
 end
 
 function AmmuTeam:setRating(new)
