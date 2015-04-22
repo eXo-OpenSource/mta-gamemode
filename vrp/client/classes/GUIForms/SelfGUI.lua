@@ -274,6 +274,8 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
 	self:adjustGroupTab(rank or false)
 
 	if name then
+		local karma = math.floor(karma)
+
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 		self.m_GroupsRankLabel:setText(tostring(rank))

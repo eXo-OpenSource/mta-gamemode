@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Inventory/ItemRadio.lua
+-- *  FILE:        shared/items.lua
 -- *  PURPOSE:     Item definition file
 -- *
 -- ****************************************************************************

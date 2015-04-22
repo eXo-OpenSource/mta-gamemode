@@ -72,6 +72,11 @@ function JobManager:Event_jobAccepted(jobId)
 		return
 	end
 
+	if not client:getInventory():hasItem(ITEM_PASSPORT) then
+		client:sendError(_("Dafür benötigst du einen Personalausweis!", client))
+		return
+	end
+
 	-- Start the job
 	client:setJob(job)
 end

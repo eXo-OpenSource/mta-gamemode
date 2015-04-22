@@ -14,8 +14,8 @@ function VRPItem:constructor(posX, posY, width, height, item, parent)
 	self.m_Item = item
 	local id = item:getItemId()
 
-	if Items[id].icon then
-		-- Icon here
+	if Items[id].imagepath then
+		self.m_Icon = GUIImage:new(5, 5, height-15, height-15, Items[id].imagepath, self)
 	else
 		self.m_Icon = GUIRectangle:new(5, 5, height-15, height-15, tocolor(255, 255, 0), self)
 	end

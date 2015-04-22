@@ -9,7 +9,7 @@ JailCountdownGUI = inherit(GUIForm)
 
 function JailCountdownGUI:constructor(countFrom)
 	local width, height = 0.16, 0.23
-	GUIForm.constructor(self, screenWidth/2 - screenWidth*width/2, screenHeight/2 - screenHeight*height/2, screenWidth*width, screenHeight*height)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth*width/2, height + 10, screenWidth*width, screenHeight*height)
 
 	self.m_Background = GUIRoundedRect:new(0, 0, self.m_Width, self.m_Height, self)
 	GUILabel:new(self.m_Width*0.05, self.m_Height*0.02, self.m_Width*0.9, self.m_Height*0.2, _"Frei in...", self.m_Background)

@@ -84,6 +84,9 @@ function JobPolice:jailPlayer(player, policeman)
 	local pos = JailCells[math.random(1, #JailCells)]
 	player:setPosition(pos + Vector3(math.random(-2, 2), math.random(-2, 2), 0))
 	player:setRotation(0, 0, 180)
+	player:toggleControl("fire", false)
+	player:toggleControl("jump", false)
+	player:toggleControl("aim_weapon ", false)
 
 	-- Pay some money, karma and xp to the policeman
 	policeman:giveMoney(player:getWantedLevel() * 100)
@@ -91,13 +94,16 @@ function JobPolice:jailPlayer(player, policeman)
 	policeman:givePoints(3)
 
 	-- Start freeing timer
-	local jailTime = player:getWantedLevel() * 20
+	local jailTime = player:getWantedLevel() * 360
 	setTimer(
 		function()
 			if isElement(player) then
 				player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 				player:setRotation(0, 0, 90)
 				player:setWantedLevel(0)
+				player:toggleControl("fire", true)
+				player:toggleControl("jump", true)
+				player:toggleControl("aim_weapon ", true)
 			end
 		end, jailTime * 1000, 1
 	)
