@@ -42,7 +42,9 @@ setTimer(
 			-- Send current mileage every minute to the server
 			counter = counter + 1
 			if counter >= 60 then
-				triggerServerEvent("vehicleSyncMileage", localPlayer, vehicle.m_DiffMileage)
+				if vehicle.m_DiffMileage > 10 then
+					triggerServerEvent("vehicleSyncMileage", localPlayer, vehicle.m_DiffMileage)
+				end
 
 				counter = 0
 				vehicle.m_DiffMileage = 0

@@ -12,6 +12,7 @@ function HUDRadar:constructor()
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900
 	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-20
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
+	self.m_RotLimit = math.deg(math.acos(self.m_Width/self.m_Diagonal))*2
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
 	if self.m_DesignSet == RadarDesign.Monochrome or self.m_DesignSet == RadarDesign.GTA then
 		CustomF11Map:getSingleton():enable()
@@ -139,6 +140,8 @@ function HUDRadar:update()
 	end
 end
 
+local pi = math.pi
+local twoPi = pi*2
 function HUDRadar:draw()
 	if not self.m_Visible or isPlayerMapVisible() then return end
 	local isNotInInterior = getElementInterior(localPlayer) == 0
@@ -199,22 +202,31 @@ function HUDRadar:draw()
 					local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
 					local distanceX, distanceY = blipMapX - mapX, blipMapY - mapY
 					local distance = getDistanceBetweenPoints2D(blipMapX, blipMapY, mapX, mapY)
-					local rotation = findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY)
+					local rotation = (findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY) + self.m_Rotation) % 360
 
-					local screenX =  mapCenterX - math.sin(math.rad(rotation + self.m_Rotation)) * distance
-					local screenY =  mapCenterY + math.cos(math.rad(rotation + self.m_Rotation)) * distance
+					local screenX = mapCenterX - math.sin(math.rad(rotation)) * distance
+					local screenY = mapCenterY + math.cos(math.rad(rotation)) * distance
+					local right, bottom = self.m_PosX + self.m_Width, self.m_PosY + self.m_Height
 
-					if screenX < self.m_PosX then
-						screenX = self.m_PosX
-					end
-					if screenY < self.m_PosY then
-						screenY = self.m_PosY
-					end
-					if screenX > self.m_PosX + self.m_Width then
-						screenX = self.m_PosX + self.m_Width
-					end
-					if screenY > self.m_PosY + self.m_Height then
-						screenY = self.m_PosY + self.m_Height
+					if screenX < self.m_PosX or screenY < self.m_PosY or screenX > right or screenY > bottom then
+						local rotLimit = self.m_RotLimit
+						if rotation > rotLimit and rotation < 180-rotLimit then
+							local r = rotation - 90
+							screenX = self.m_PosX
+							screenY = self.m_PosY + self.m_Height/2 - math.tan(math.rad(r)) * self.m_Width/2
+						elseif rotation >= 180-rotLimit and rotation < 180+rotLimit then
+							local r = rotation - 180
+							screenX = self.m_PosX + self.m_Width/2 + math.tan(math.rad(r)) * self.m_Height/2
+							screenY = self.m_PosY
+						elseif rotation >= 180+rotLimit and rotation < 360-rotLimit then
+							local r = rotation - 270
+							screenX = right
+							screenY = self.m_PosY + self.m_Height/2 + math.tan(math.rad(r)) * self.m_Width/2
+						else
+							local r = rotation
+							screenX = self.m_PosX + self.m_Width/2 - math.tan(math.rad(r)) * self.m_Height/2
+							screenY = bottom
+						end
 					end
 
 					local blipSize = blip:getSize()
