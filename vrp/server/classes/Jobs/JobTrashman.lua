@@ -25,6 +25,7 @@ end
 
 function JobTrashman:start(player)
 	player:setData("Trashman:Cans", 0)
+	player:giveAchievement(12)
 end
 
 function JobTrashman:checkRequirements(player)

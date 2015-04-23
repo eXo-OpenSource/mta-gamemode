@@ -174,7 +174,18 @@ function DatabasePlayer:hasPilotsLicense() return self.m_HasPilotsLicense end
 
 -- Short setters
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) end end
-function DatabasePlayer:setWantedLevel(level) self.m_WantedLevel = level setPlayerWantedLevel(self, level) end
+function DatabasePlayer:setWantedLevel(level)
+	-- give Achievement
+	if level == 6 then
+		self:giveAchievement(46)
+	elseif level > 0 then
+		self:giveAchievement(45)
+	end
+
+	-- set data
+	self.m_WantedLevel = level
+	setPlayerWantedLevel(self, level)
+end
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
@@ -271,6 +282,12 @@ function DatabasePlayer:addBankMoney(amount, logType)
 	logType = logType or BankStat.Income
 	if sql:queryExec("INSERT INTO ??_bank_statements (UserId, Type, Amount, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), self.m_Id, logType, amount) then
 		self.m_BankMoney = self.m_BankMoney + amount
+		if self.m_BankMoney >= 10000000 then
+			self:giveAchievement(40)
+		elseif self.m_BankMoney >= 1000000 then
+			self:giveAchievement(21)
+		end
+
 		return true
 	end
 	return false

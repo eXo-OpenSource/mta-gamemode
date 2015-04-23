@@ -54,7 +54,7 @@ end
 
 function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 	if vehicleModel == getVehicleModelFromName("Walton") then
-		
+
 	end
 end
 
@@ -113,6 +113,9 @@ end
 function JobFarmer:start(player)
 	self:setJobElementVisibility (player,true)
 	self.m_CurrentPlants[player] = 0
+
+	-- give Achievement
+	player:giveAchievement(20)
 end
 
 function JobFarmer:setJobElementVisibility (player,boolean)

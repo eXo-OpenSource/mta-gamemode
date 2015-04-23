@@ -65,6 +65,7 @@ end
 
 function JobPolice:start(player)
 	giveWeapon(player, 3, 1, true)
+	player:giveAchievement(9)
 end
 
 function JobPolice:stop(player)
@@ -92,6 +93,17 @@ function JobPolice:jailPlayer(player, policeman)
 	policeman:giveMoney(player:getWantedLevel() * 100)
 	policeman:giveKarma(player:getWantedLevel() * 0.05)
 	policeman:givePoints(3)
+
+	-- Give Achievements
+	if player:getWantedLevel() > 4 then
+		policeman:giveAchievement(48)
+	else
+		policeman:giveAchievement(47)
+	end
+
+	setTimer(function () -- (delayed)
+		player:giveAchievement(31)
+	end, 14000, 1)
 
 	-- Start freeing timer
 	local jailTime = player:getWantedLevel() * 360

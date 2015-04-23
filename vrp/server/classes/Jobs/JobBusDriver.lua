@@ -90,6 +90,8 @@ function JobBusDriver:start(player)
 
 	local x, y, z = getElementPosition(self.m_BusStops[self.m_Lines[line][1]].object)
 	player.Bus_Blip = Blip:new("Waypoint.png", x, y, player)
+
+	player:giveAchievement(17)
 end
 
 function JobBusDriver:stop(player)

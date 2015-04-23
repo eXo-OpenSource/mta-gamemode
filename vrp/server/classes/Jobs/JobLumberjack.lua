@@ -26,6 +26,7 @@ end
 
 function JobLumberjack:start(player)
 	giveWeapon(player, 9, 1, true)
+	player:giveAchievement(11)
 end
 
 function JobLumberjack:stop(player)

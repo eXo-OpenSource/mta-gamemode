@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        
--- *  PURPOSE:     
+-- *  FILE:
+-- *  PURPOSE:
 -- *
 -- ****************************************************************************
 
@@ -40,7 +40,7 @@ function AchievementBox:constructor (text, xp)
 		--dxDrawRectangle(75, 10, 320, self.ms_endSize.y - 15)
 		--dxDrawText(("Achievement unlocked:\n%s XP - %s"):format(self.m_XP, self.m_Text), 75, 10, 320, self.ms_endSize.y - 15, Color.White, 1.4, "default", "right", "center")
 		dxDrawText("Achievement unlocked:", 80, 10, 360, 35, Color.White, 1.3, "default", "center", "center")
-		dxDrawText(("%s XP - %s"):format(self.m_XP, self.m_Text), 80, 35, 360, self.ms_endSize.y - 15, Color.White, 1, self.m_Font, "center", "center", true)
+		dxDrawText(_("%s", self.m_Text), 80, 35, 360, self.ms_endSize.y - 15, Color.White, 1, self.m_Font, "center", "center", true)
 
 		dxSetBlendMode("blend")
 	dxSetRenderTarget()

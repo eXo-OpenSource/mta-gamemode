@@ -3,7 +3,7 @@ VendingMachine.Map = {}
 
 function VendingMachine:constructor(model, x, y, z, rotation)
 	self.m_LastRobTime = 0
-	
+
 	local object = createObject(model, x, y, z, 0, 0, rotation)
 	VendingMachine.Map[object] = self
 end
@@ -13,7 +13,7 @@ function VendingMachine.initializeAll()
 	addEvent("vendingBuySnack", true)
 	addEventHandler("vendingRob", root, VendingMachine.Event_vendingRob)
 	addEventHandler("vendingBuySnack", root, VendingMachine.Event_vendingBuySnack)
-	
+
 	-- Create machines
 	for k, data in ipairs(VendingMachine.MachineData) do
 		local model, x, y, z, rotation = unpack(data)
@@ -24,19 +24,22 @@ end
 function VendingMachine.Event_vendingRob()
 	local vendingMachine = VendingMachine.Map[source]
 	if not vendingMachine then return end
-	
+
 	if getTickCount() - vendingMachine.m_LastRobTime < 5*60*1000 then
 		client:sendMessage(_("Dieser Automat kann zurzeit nicht ausgeraubt werden!", client), 255, 0, 0)
 		return
 	end
-	
+
 	-- Play animation
 	client:setAnimation("BOMBER", "BOM_Plant", -1, false, true, false, false)
-	
+
 	-- Give wage
 	client:giveMoney(math.random(10, 100))
 	client:giveKarma(-0.05)
-	
+
+	-- give Achievement
+	client:giveAchievement(19)
+
 	-- Update rob time
 	vendingMachine.m_LastRobTime = getTickCount()
 end

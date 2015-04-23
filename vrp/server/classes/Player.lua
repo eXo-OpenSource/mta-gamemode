@@ -401,3 +401,11 @@ end
 function Player.getQuitHook()
 	return Player.ms_QuitHook
 end
+
+function Player:givePoints(p) -- Overriden
+	DatabasePlayer.givePoints(self, p)
+
+	if money ~= 0 then
+		self:sendShortMessage((p >= 0 and "+"..p or p).._(" Punkte", self))
+	end
+end

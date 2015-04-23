@@ -27,12 +27,12 @@ end
 
 function Achievement:giveAchievement (player, id)
 	if self.ms_Achievements[id] ~= nil then
-		if not player:getAchievementStatus(id) then
+		--if not player:getAchievementStatus(id) then
 			player:setAchievementStatus(id, true)
-			player:setXP(player.m_XP + self.ms_Achievements[id]["exp"])
+			player:givePoints(self.ms_Achievements[id]["exp"])
 
 			player:triggerEvent("Achievement.onPlayerReceiveAchievement", id)
-		end
+		--end
 	else
 		outputDebug("Missing Achievement in Database. ID: "..id)
 		return false
