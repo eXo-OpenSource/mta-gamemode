@@ -1,8 +1,8 @@
-MYSQL_HOST	= "jusonex.net"
+MYSQL_HOST	= "srv2.jusonex.net"
 MYSQL_PORT	= 3306
-MYSQL_USER	= "saonline"
+MYSQL_USER	= "vrp"
 MYSQL_PW	= "fI8;26>6F#"
-MYSQL_DB	= "saonline"
+MYSQL_DB	= "vrp"
 
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
 
@@ -14,5 +14,5 @@ CheatSeverity = {Low = 1, Middle = 2, High = 3, Brutal = 4}
 
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
-MAX_VEHICLE_LEVEL = 10 
+MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
