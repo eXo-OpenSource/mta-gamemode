@@ -34,6 +34,10 @@ function JobMechanic:checkRequirements(player)
 	return true
 end
 
+function JobMechanic:respawnVehicle(vehicle)
+	outputDebug("PLACEHOLDER: Respawning vehicle in mechanic base")
+end
+
 function JobMechanic:Event_mechanicRepair()
 	if client:getJob() ~= self then
 		return

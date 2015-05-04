@@ -21,7 +21,7 @@ function PermanentVehicle:constructor(Id, owner, keys, color, health, inGarage, 
 		setVehicleColor(self, r, g, b)
 	end
 
-	for i, v in pairs(tunings) do
+	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
 	end
 
@@ -124,19 +124,41 @@ function PermanentVehicle:setInGarage(state)
 end
 
 function PermanentVehicle:respawn()
-	-- TODO: Check if slot limit is reached
 	-- Set inGarage flag and teleport to private dimension
-	self:setInGarage(true)
-	fixVehicle(self)
-	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	self.m_LastUseTime = math.huge
 
 	-- Add to active garage session if there is one
 	local owner = Player.getFromId(self.m_Owner)
-	if owner then
-		local garageSession = owner.m_GarageSession
-		if garageSession then
-			garageSession:addVehicle(self)
+	if owner and isElement(owner) then
+		-- Does the player have a garage
+		if owner:getGarageType() > 0 then
+			-- Is there a slot available?
+			local maxSlots = VehicleGarages:getSingleton():getMaxSlots(owner:getGarageType())
+			local playerVehicles = VehicleManager:getSingleton():getPlayerVehicles(owner)
+			local numVehiclesInGarage = 0
+			for k, v in pairs(playerVehicles) do
+				if v:isInGarage() then numVehiclesInGarage = numVehiclesInGarage + 1 end
+			end
+
+			if maxSlots > numVehiclesInGarage then
+				self:setInGarage(true)
+				self:setDimension(PRIVATE_DIMENSION_SERVER)
+				fixVehicle(self)
+
+				local garageSession = owner.m_GarageSession
+				if garageSession then
+					garageSession:addVehicle(self)
+				end
+
+				owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in deiner Garage respawnt", owner, self:getName()))
+				return
+			end
 		end
+	end
+
+	-- Respawn at mechanic base
+	JobMechanic:getSingleton():respawnVehicle(self)
+	if owner and isElement(owner) then
+		owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
 	end
 end

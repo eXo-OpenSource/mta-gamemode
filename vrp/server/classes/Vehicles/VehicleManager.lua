@@ -275,13 +275,11 @@ function VehicleManager:Event_vehicleRespawn()
 		removePedFromVehicle(player)
 	end
 
-	-- TODO: Check if slot limit is reached
 	source:respawn()
 	if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
 		client:takeMoney(100)
 	end
 	fixVehicle(source)
-	client:sendShortMessage(_("Dein Fahrzeug wurde erfolgreich in der Garage respawnt!", client))
 
 	-- Refresh location in the self menu
 	local vehicles = {}
@@ -340,7 +338,7 @@ function VehicleManager:Event_vehicleRequestInfo()
 end
 
 function VehicleManager:Event_vehicleUpgradeGarage()
-	local UpgradeToPrices = {[2] = 100000, [3] = 500000}
+	local UpgradeToPrices = {[1] = 200000, [2] = 250000, [3] = 500000}
 	local currentGarage = client:getGarageType()
 	if currentGarage > 0 then
 		local price = UpgradeToPrices[currentGarage + 1]

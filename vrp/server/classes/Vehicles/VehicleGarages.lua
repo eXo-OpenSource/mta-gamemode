@@ -3,8 +3,6 @@
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/VehicleGarages.lua
 -- *  PURPOSE:     Vehicle garage class (respawn location etc.)
--- *  ISSUES:      - If the player gets teleported somehow, the garage session will never be closed (Todo)
--- *			   - Player spawns somewhere in the sky after reconnect
 -- *
 -- ****************************************************************************
 VehicleGarages = inherit(Singleton)
@@ -167,7 +165,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
         end
 
         if hitElement:getGarageType() == 0 then
-            hitElement:sendError(_("Du besitzt keine gültige Garage!", hitElement))
+            hitElement:sendError(_("Du besitzt keine Garage!", hitElement))
             return
         end
 
