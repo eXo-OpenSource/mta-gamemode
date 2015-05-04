@@ -12,7 +12,16 @@ MessageBox.MessageBoxes = {}
 function MessageBox:constructor(text, timeout)
 	DxElement.constructor(self, screenWidth/2-340/2, screenHeight, 340, 110)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(28))
-	timeout = timeout and timeout >= 50 and timeout or 5000
+
+	if timeout and type(timeout) == "number" then
+		if timeout > 50 then
+			timeout = timeout
+		else
+			timeout = 5000
+		end
+	else
+		timeout = 5000
+	end	
 	setTimer(function() delete(self) end, timeout, 1)
 	playSound(self:getSoundPath())
 
