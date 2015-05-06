@@ -16,7 +16,7 @@ function VehicleManager:constructor()
 	-- Add events
 	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo",
-		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage"}
+		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak"}
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -31,6 +31,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleHotwire", root, bind(self.Event_vehicleHotwire, self))
 	addEventHandler("vehicleEmpty", root, bind(self.Event_vehicleEmpty, self))
 	addEventHandler("vehicleSyncMileage", root, bind(self.Event_vehicleSyncMileage, self))
+	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
 
 	-- Prevent the engine from being turned on
 	addEventHandler("onVehicleEnter", root,
@@ -399,4 +400,8 @@ function VehicleManager:Event_vehicleSyncMileage(diff)
 	if vehicle then
 		vehicle:setMileage(vehicle:getMileage() + diff)
 	end
+end
+
+function VehicleManager:Event_vehicleBreak()
+	outputChatBox("Vehicle has been broken by "..client:getName())
 end

@@ -72,7 +72,7 @@ function JobManager:Event_jobAccepted(jobId)
 		return
 	end
 
-	if not client:getInventory():hasItem(ITEM_PASSPORT) then
+	if not client:getInventory():hasItem(ITEM_PASSPORT) then -- TODO: Fix guest
 		client:sendError(_("Dafür benötigst du einen Personalausweis!", client))
 		return
 	end

@@ -16,7 +16,8 @@ function InventoryGUI:constructor()
 
 	local w, h = screenWidth*0.6, screenHeight*0.6
 	GUIForm.constructor(self, screenWidth/2-w/2, screenHeight/2-h/2, w, h)
-	self.m_Background = GUIRectangle:new(0, 0, w, h, tocolor(0, 0, 0, 150), self)
+	self.m_Background = GUIWindow:new(0, 0, w, h, "", false, true, self)
+	self.m_Background:setCloseOnClose(false)
 
 	-- todo: make dependand on h instead
 	local ENTRYHEIGHT = screenHeight/100*7

@@ -54,3 +54,19 @@ setTimer(
 	1000,
 	0
 )
+
+-- The following code prevents vehicle from exploding "fully"
+addEventHandler("onClientVehicleDamage", root,
+	function(attacker, weapon, loss)
+		if source:getHealth() - loss < 310 then
+			cancelEvent()
+
+			if isElementSyncer(source) and source:getHealth() >= 310 then
+				triggerServerEvent("vehicleBreak", source)
+				source.m_Broken = true
+			end
+
+			source:setHealth(301)
+		end
+	end
+)

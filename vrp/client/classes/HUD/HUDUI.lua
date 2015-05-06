@@ -29,14 +29,14 @@ function HUDUI:hide()
 	self.m_IsVisible = false
 end
 
-function HUDUI:draw()	
+function HUDUI:draw()
 	if not self.m_IsVisible then
 		return
 	end
 
 	dxDrawRectangle(screenWidth-0.195*screenWidth,0.04*screenHeight,0.195*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
-	dxDrawText ("$",screenWidth-0.169*screenWidth,0.092*screenHeight/2,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
-	dxDrawText (getPlayerMoney(localPlayer),screenWidth-0.14*screenWidth,0.092*screenHeight/2,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
+	dxDrawText("$",screenWidth-0.169*screenWidth,0.092*screenHeight/2,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
+	dxDrawText(getPlayerMoney(localPlayer),screenWidth-0.14*screenWidth,0.092*screenHeight/2,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
 
 	local munitionWindowActive = true
 
@@ -44,14 +44,15 @@ function HUDUI:draw()
 		munitionWindowActive = false
 	end
 
+	-- TODO: Make frame independent
 	if munitionWindowActive and self.m_MunitionProgress < 1 then
-		self.m_MunitionProgress = self.m_MunitionProgress + 0.01
+		self.m_MunitionProgress = self.m_MunitionProgress + 0.07
 	elseif not munitionWindowActive and self.m_MunitionProgress > 0 then
-		self.m_MunitionProgress = self.m_MunitionProgress - 0.01
+		self.m_MunitionProgress = self.m_MunitionProgress - 0.07
 	end
 
 	-- Weapon-Window
-	local addX = math.floor(interpolateBetween(0,0,0,0.156*screenWidth,0,0,self.m_MunitionProgress,"OutElastic"))
+	local addX = math.floor(interpolateBetween(0,0,0,0.156*screenWidth,0,0,self.m_MunitionProgress,"OutBack"))
 	dxDrawRectangle(screenWidth-(0.25*screenWidth+addX),0.04*screenHeight,0.05*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
 	-- images became changed later
 	if munitionWindowActive then
