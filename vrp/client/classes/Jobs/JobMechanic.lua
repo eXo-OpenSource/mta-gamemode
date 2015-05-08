@@ -10,7 +10,9 @@ JobMechanic = inherit(Job)
 function JobMechanic:constructor()
 	Job.constructor(self, 682.4, -1577.6, 13.1, "Mechanic.png", "files/images/Jobs/HeaderMechanic.png", _(HelpTextTitles.Jobs.Mechanic):gsub("Job: ", ""), _(HelpTexts.Jobs.Mechanic))
 
-	-- add job to help menu
+	NonCollidingArea:new(1083, -1189.7-62.6, 38.3, 62.6)
+
+	-- Add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Mechanic):gsub("Job: ", ""), _(HelpTexts.Jobs.Mechanic))
 end
 

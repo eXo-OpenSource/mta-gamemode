@@ -7,15 +7,15 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, health, inGarage, tunings, mileage)
+function PermanentVehicle:constructor(Id, owner, keys, color, health, positionType, tunings, mileage)
 	self.m_Id = Id
 	self.m_Owner = owner
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- *hide*
 	self.m_Keys = keys or {}
-	self.m_InGarage = inGarage or false
+	self.m_PositionType = positionType or VehiclePositionType.World
 
-	setElementHealth(self, health)
-	setVehicleLocked(self, true)
+	self:setHealth(health)
+	self:setLocked(true)
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
 		setVehicleColor(self, r, g, b)
@@ -31,7 +31,7 @@ function PermanentVehicle:constructor(Id, owner, keys, color, health, inGarage, 
 	end
 	]]
 
-	if self.m_InGarage then
+	if self.m_PositionType ~= VehiclePositionType.World then
 		-- Move to unused dimension | Todo: That's probably a bad solution
 		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	end
@@ -73,8 +73,8 @@ function PermanentVehicle:save()
 	local color = setBytesInInt32(255, r, g, b) -- Format: argb
 	local tunings = getVehicleUpgrades(self) or {}
 
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, IsInGarage = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_InGarage and 1 or 0, toJSON(tunings), self:getMileage(), self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), self.m_Id)
 end
 
 function PermanentVehicle:getId()
@@ -116,11 +116,19 @@ function PermanentVehicle:removeKey(player)
 end
 
 function PermanentVehicle:isInGarage()
-	return self.m_InGarage
+	return self.m_PositionType == VehiclePositionType.Garage
 end
 
 function PermanentVehicle:setInGarage(state)
-	self.m_InGarage = state
+	self.m_PositionType = VehiclePositionType.Garage
+end
+
+function PermanentVehicle:getPositionType()
+	return self.m_PositionType
+end
+
+function PermanentVehicle:setPositionType(type)
+	self.m_PositionType = type
 end
 
 function PermanentVehicle:respawn()

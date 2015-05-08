@@ -89,9 +89,15 @@ end
 function Vehicle:toggleEngine(player)
 	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() then
 		local state = not getVehicleEngineState(self)
-		if state == true and self.m_Fuel <= 0 then
-			player:sendError(_("Dein Tank ist leer!", player))
-			return false
+		if state == true then
+			if self.m_Fuel <= 0 then
+				player:sendError(_("Dein Tank ist leer!", player))
+				return false
+			end
+			if self:isBroken() then
+				player:sendError(_("Das Fahrzeug ist kaputt und muss erst repariert werden!", player))
+				return false
+			end
 		end
 
 		self:setEngineState(state)
@@ -119,8 +125,7 @@ function Vehicle:setFuel(fuel)
 
 	-- Switch engine off in case of an empty fuel tank
 	if self.m_Fuel <= 0 then
-		setVehicleEngineState(self, false)
-		self.m_EngineState = false
+		self:setEngineState(false)
 	else
 		local driver = getVehicleOccupant(self, 0)
 		if driver then
@@ -139,6 +144,17 @@ end
 
 function Vehicle:getMileage()
 	return self.m_Mileage
+end
+
+function Vehicle:setBroken(state)
+	self:setHealth(301)
+	if state then
+		self:setEngineState(false)
+	end
+end
+
+function Vehicle:isBroken()
+	return self:getHealth() <= 301.01
 end
 
 Vehicle.isPermanent = pure_virtual

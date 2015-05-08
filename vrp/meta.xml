@@ -2,6 +2,7 @@
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
 	<min_mta_version server="1.5" client="1.5"/>
 	<oop>true</oop>
+	<sync_map_element_data>false</sync_map_element_data>
 
 	<!-- Shared -->
 	<script src="shared/classlib.lua" type="shared"/>
@@ -300,6 +301,7 @@
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/KeyBindingsGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleMechanicTakeGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
