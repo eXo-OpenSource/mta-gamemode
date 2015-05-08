@@ -25,6 +25,7 @@ function JobTrashman:start()
 	for k, v in ipairs(JobTrashman.Trashcans) do
 		local model, x, y, z, rx, ry, rz = unpack(v)
 		local object = createObject(model, x, y, z, rx, ry, rz)
+		object:setCollisionsEnabled(false)
 		local colShape = createColSphere(x, y, z, 5)
 		colShape:setData("Can", object)
 		addEventHandler("onClientColShapeHit", colShape, func)

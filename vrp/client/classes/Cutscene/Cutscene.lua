@@ -70,3 +70,7 @@ function Cutscene:preRender()
 		self.m_ActiveScene:preRender()
 	end
 end
+
+function Cutscene:getInterior()
+	return self.m_Interior
+end

@@ -12,7 +12,7 @@ Action.Vehicle.create.constructor = function(self, data, scene)
 	if data.rot then
 		self.rx, self.ry, self.rz = unpack(data.rot)
 	end
-	
+
 	self.cutscene = scene:getCutscene()
 end
 
@@ -21,8 +21,9 @@ Action.Vehicle.create.trigger = function(self)
 		self.model,
 		self.x, self.y, self.z,
 		self.rx, self.ry, self.rz)
-		
-	setElementDimension(self.cutscene.m_Elements[self.id], PRIVATE_DIMENSION_CLIENT)
+
+	self.cutscene.m_Elements[self.id]:setDimension(PRIVATE_DIMENSION_CLIENT)
+	self.cutscene.m_Elements[self.id]:setInterior(self.cutscene:getInterior())
 end
 
 -- Switch the engine
@@ -35,6 +36,6 @@ Action.Vehicle.setEngine.constructor = function(self, data, scene)
 end
 
 Action.Vehicle.setEngine.trigger = function(self)
-	local veh = self.cutscene.m_Elements[self.id] 
+	local veh = self.cutscene.m_Elements[self.id]
 	setVehicleEngineState(veh, self.state)
 end

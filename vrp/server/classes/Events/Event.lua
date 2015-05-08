@@ -48,6 +48,11 @@ function Event:virtual_constructor(Id)
 end
 
 function Event:virtual_destructor()
+	-- Quit all remaining players
+	for k, player in pairs(self.m_Players) do
+		self:quit(player)
+	end
+
 	-- Unlink from event manager
 	EventManager:getSingleton():unlinkEvent(self)
 
