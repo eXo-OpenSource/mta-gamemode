@@ -593,6 +593,7 @@
 	<map src="files/maps/Bank.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
+	<map src="files/maps/MechanicBase.map"/>
 
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>

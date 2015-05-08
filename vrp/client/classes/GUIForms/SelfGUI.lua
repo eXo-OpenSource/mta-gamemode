@@ -410,9 +410,16 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType)
 	if vehiclesInfo then
 		self.m_VehiclesGrid:clear()
 		for vehicleId, vehicleInfo in pairs(vehiclesInfo) do
-			local element, inGarage = unpack(vehicleInfo)
+			local element, positionType = unpack(vehicleInfo)
 			local x, y, z = getElementPosition(element)
-			local item = self.m_VehiclesGrid:addItem(getVehicleName(element), inGarage and _"Garage" or getZoneName(x, y, z, false))
+			if positionType == VehiclePositionType.World then
+				positionType = getZoneName(x, y, z, false)
+			elseif positionType == VehiclePositionType.Garage then
+				positionType = _"Garage"
+			else
+				positionType = _"Autohof"
+			end
+			local item = self.m_VehiclesGrid:addItem(getVehicleName(element), positionType)
 			item.VehicleId = vehicleId
 			item.VehicleElement = element
 			item.VehicleInGarage = inGarage
@@ -457,10 +464,10 @@ function SelfGUI:VehicleRespawnButton_Click()
 		return
 	end
 
-	if localPlayer:getGarageType() == 0 then
+	--[[if localPlayer:getGarageType() == 0 then
 		ErrorBox:new(_"Du besitzt keine gültige Garage!")
 		return
-	end
+	end]]
 
 	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end

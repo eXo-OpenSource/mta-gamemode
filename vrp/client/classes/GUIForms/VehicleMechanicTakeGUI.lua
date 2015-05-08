@@ -33,9 +33,10 @@ function VehicleMechanicTakeGUI:TakeButton_Click()
 		return
 	end
 
-	if item.Vehicle then
-		triggerServerEvent("mechanicTakeVehicle", item.Vehicle)
+	if selectedItem.Vehicle then
+		triggerServerEvent("mechanicTakeVehicle", selectedItem.Vehicle)
 	end
+	delete(self)
 end
 
 

@@ -16,5 +16,3 @@ MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
-
-VehiclePositionType = {World = 1, Garage = 2, Mechanic = 3}

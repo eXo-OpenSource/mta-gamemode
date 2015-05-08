@@ -280,12 +280,12 @@ function VehicleManager:Event_vehicleRespawn()
 	if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
 		client:takeMoney(100)
 	end
-	fixVehicle(source)
+	source:fix()
 
 	-- Refresh location in the self menu
 	local vehicles = {}
 	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
-		vehicles[vehicle:getId()] = {vehicle, vehicle:isInGarage()}
+		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 	end
 	client:triggerEvent("vehicleRetrieveInfo", vehicles)
 end
@@ -332,7 +332,7 @@ end
 function VehicleManager:Event_vehicleRequestInfo()
 	local vehicles = {}
 	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
-		vehicles[vehicle:getId()] = {vehicle, vehicle:isInGarage()}
+		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 	end
 
 	client:triggerEvent("vehicleRetrieveInfo", vehicles, client:getGarageType())

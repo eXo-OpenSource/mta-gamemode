@@ -6,24 +6,21 @@
 -- *
 -- ****************************************************************************
 JobMechanic = inherit(Job)
+addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicTakeVehicle"}
 
 function JobMechanic:constructor()
 	Job.constructor(self)
 
 	for i = 0, 3 do
-		AutomaticVehicleSpawner:new(getVehicleModelFromName("Towtruck"), 686.9 + i*4.8, -1571.9, 14.1, 0, 0, 180, nil, self)
+		AutomaticVehicleSpawner:new(getVehicleModelFromName("Towtruck"), 1086.7 + i * 7.8, -1245.5, 15.85, 0, 0, 0, nil, self)
 	end
 
-	self.m_VehicleTakeMarker = Marker.create(1810.2, -1601.6, 12.5, "cylinder", 1, 255, 255, 0)
+	self.m_VehicleTakeMarker = Marker.create(1086.8, -1214.8, 16.9, "cylinder", 1, 255, 255, 0)
 	addEventHandler("onMarkerHit", self.m_VehicleTakeMarker, bind(self.VehicleTakeMarker_Hit, self))
-	
-	addEvent("mechanicRepair", true)
+
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
-	addEvent("mechanicRepairConfirm", true)
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
-	addEvent("mechanicRepairCancel", true)
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
-	addEvent("mechanicTakeVehicle", true)
 	addEventHandler("mechanicTakeVehicle", root, bind(self.Event_mechanicTakeVehicle, self))
 end
 
@@ -32,7 +29,7 @@ function JobMechanic:start(player)
 end
 
 function JobMechanic:checkRequirements(player)
-	if not (player:getJobLevel() >= 3) then
+	if player:getJobLevel() < 3 then
 		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 3", player), 255, 0, 0)
 		return false
 	end
@@ -40,11 +37,11 @@ function JobMechanic:checkRequirements(player)
 end
 
 function JobMechanic:respawnVehicle(vehicle)
-	outputDebug("PLACEHOLDER: Respawning vehicle in mechanic base")
+	outputDebug("Respawning vehicle in mechanic base")
 
 	vehicle:setPositionType(VehiclePositionType.Mechanic)
-	self:setDimension(PRIVATE_DIMENSION_SERVER)
-	self:fix()
+	vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+	vehicle:fix()
 end
 
 function JobMechanic:VehicleTakeMarker_Hit(hitElement, matchingDimension)
@@ -71,7 +68,7 @@ function JobMechanic:Event_mechanicRepair()
 		return
 	end
 
-	local driver = getVehicleOccupant(source, 0)
+	local driver = source:getOccupant(0)
 	if not driver then
 		client:sendError(_("Jemand muss sich auf dem Fahrersitz befinden!", client))
 		return
@@ -80,7 +77,7 @@ function JobMechanic:Event_mechanicRepair()
 		client:sendError(_("Du kannst dein eigenes Fahrzeug nicht reparieren!", client))
 		return
 	end]]
-	if getElementHealth(source) > 950 then
+	if source:getHealth() > 950 then
 		client:sendError(_("Dieses Fahrzeug hat keine nennenswerten Beschädigungen!", client))
 		return
 	end
@@ -124,11 +121,22 @@ function JobMechanic:Event_mechanicTakeVehicle()
 		client:takeMoney(500)
 		source:fix()
 
-		-- TODO: Spawn vehicle in non-collision zone
+		-- Spawn vehicle in non-collision zone
+		source:setPositionType(VehiclePositionType.World)
 		source:setDimension(0)
-		source:setPosition(0, 0, 0)
+		local x, y, z, rotation = unpack(Randomizer:getRandomTableValue(self.SpawnPositions))
+		source:setPosition(x, y, z)
+		source:setRotation(0, 0, rotation)
 		client:warpIntoVehicle(source)
 	else
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 	end
 end
+
+JobMechanic.SpawnPositions = {
+	{1108.5, -1198.2, 17.70, 180},
+	{1103, -1198.2, 17.7, 180},
+	{1097.2, -1198.1, 17.70, 180},
+	{1091.7, -1198.3, 17.70, 180},
+	{1086.1, -1198.2, 17.70, 180},
+}

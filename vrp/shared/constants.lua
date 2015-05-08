@@ -218,3 +218,5 @@ Tasks = {
 	TASK_SHOOT_TARGET = 2,
 	TASK_GETTING_TARGETTED = 3,
 }
+
+VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2}
