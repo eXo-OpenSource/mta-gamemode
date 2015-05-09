@@ -18,11 +18,12 @@ function JobManager:constructor()
 		JobBusDriver:new();
 		JobMechanic:new();
 		--JobLogistician:new();
+		JobServiceTechnician:new();
 	}
 	for k, v in ipairs(self.m_Jobs) do
 		v:setId(k)
 	end
-	
+
 	addEvent("jobStart", true)
 	addEvent("jobQuit", true)
 	addEventHandler("jobStart", root, bind(self.Event_jobStart, self))
@@ -36,14 +37,14 @@ end
 function JobManager:Event_jobStart(jobId)
 	local job = self:getFromId(jobId)
 	if not job then return end
-	
+
 	-- Stop old job if exists
 	if localPlayer:getJob() then
 		if localPlayer:getJob().stop then
 			localPlayer:getJob():stop()
 		end
 	end
-	
+
 	-- We're ready to start the job :)
 	localPlayer:setJob(job)
 	job:start()
@@ -52,7 +53,7 @@ end
 function JobManager:Event_jobQuit()
 	local job = localPlayer:getJob()
 	if not job then return end
-	
+
 	if job.stop then
 		job:stop()
 	end

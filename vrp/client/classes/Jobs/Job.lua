@@ -47,3 +47,5 @@ end
 function Job:getName()
 	return self.m_Name
 end
+
+Job.start = pure_virtual

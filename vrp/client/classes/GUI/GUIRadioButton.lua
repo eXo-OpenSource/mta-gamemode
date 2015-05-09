@@ -13,7 +13,7 @@ local GUI_RADIO_TEXT_MARGIN = 5
 
 function GUIRadioButton:constructor(posX, posY, width, height, text, parent)
 	checkArgs("GUIRadioButton.constructor", "number", "number", "number", "number")
-	
+
 	if not instanceof(parent, GUIRadioButtonGroup) then
 		error("GUIRadioButton's parent should be a GUIRadioButtonGroup")
 	end
@@ -21,7 +21,7 @@ function GUIRadioButton:constructor(posX, posY, width, height, text, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, text, 1.5)
 	GUIColorable.constructor(self)
-	
+
 	self.m_Checked = false
 
 	-- Mark first item in radio button group as checked
@@ -32,7 +32,7 @@ end
 
 function GUIRadioButton:onInternalLeftClick()
 	if self.m_Parent then -- Should always exist
-		self:setChecked(not self:isChecked())
+		self:setChecked(true)
 	end
 end
 

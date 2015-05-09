@@ -117,6 +117,9 @@
 	<script src="server/classes/Jobs/JobFarmer.lua" type="server"/>
 	<script src="server/classes/Jobs/JobBusDriver.lua" type="server"/>
 	<script src="server/classes/Jobs/JobMechanic.lua" type="server"/>
+	<script src="server/classes/Jobs/JobServiceTechnician.lua" type="server"/>
+	<script src="server/classes/Jobs/JobServiceTechnicianTask.lua" type="server"/>
+	<script src="server/classes/Jobs/JobServiceTechnicianTaskQuestion.lua" type="server"/>
 
 	<!-- NPCs and shops -->
 	<script src="server/classes/NPC.lua" type="server"/>
@@ -302,6 +305,7 @@
 	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/KeyBindingsGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleMechanicTakeGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/JobServiceTechnicianQuestionGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
@@ -347,6 +351,7 @@
 	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
 	<script src="client/classes/Jobs/JobBusDriver.lua" type="client"/>
 	<script src="client/classes/Jobs/JobMechanic.lua" type="client"/>
+	<script src="client/classes/Jobs/JobServiceTechnician.lua" type="client"/>
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
@@ -488,6 +493,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/1vs1.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/TuningGarage.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Shop.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/ServiceTechnician.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -512,6 +518,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/1vs1.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/TuningGarage.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Shop.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/ServiceTechnician.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -524,6 +531,7 @@
 	<vrpfile src="files/images/Jobs/HeaderFarmer.png"/>
 	<vrpfile src="files/images/Jobs/HeaderMechanic.png"/>
 	<vrpfile src="files/images/Jobs/Farmerdisplay.png"/>
+	<vrpfile src="files/images/Jobs/HeaderServiceTechnician.png"/>
 
 	<vrpfile src="files/images/Items/Bomb.png"/>
 	<vrpfile src="files/images/Items/HotwireKit.png"/>

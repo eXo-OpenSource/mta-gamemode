@@ -80,15 +80,6 @@ function HUDUI:draw()
 	local karma = (karma >= 0 and "+" or "")..math.floor(karma)
 	dxDrawText(karma,(screenWidth-0.25*screenWidth)+((0.195*screenWidth)/2-(dxGetTextWidth(karma, 0.5, self.m_Font)/2)),0.145*screenHeight,0,0,Color.White,0.5,self.m_Font)
 
-	--[[
-	-- Levelbar
-	local XP = 100
-	dxDrawRectangle(screenWidth-0.25*screenWidth, 0.185*screenHeight, 0.195*screenWidth, 0.0425*screenHeight, tocolor(0,50,0,220))
-	dxDrawRectangle(screenWidth-0.25*screenWidth, 0.185*screenHeight, 0.195*screenWidth, 0.0425*screenHeight, tocolor(0,50,0,220))
-	dxDrawRectangle(screenWidth-0.25*screenWidth,0.185*screenHeight,(0.195*screenWidth)*XP/175,0.0425*screenHeight,tocolor(75,160,75,220))
-	dxDrawText(XP.." XP",(screenWidth-0.25*screenWidth)+((0.195*screenWidth)/2-(dxGetTextWidth(XP.." XP", 0.5, self.m_Font)/2)),0.185*screenHeight,0,0,Color.White,0.5,self.m_Font)
-	--]]
-
 	-- Wantedlevel
 	dxDrawRectangle(screenWidth-0.05*screenWidth,0.14*screenHeight,0.05*screenWidth,0.09*screenHeight,tocolor(0,0,0,150))
 	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.145*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/HUD/wanted.png", 0, 0, 0, getPlayerWantedLevel() > 0 and Color.Yellow or Color.White)

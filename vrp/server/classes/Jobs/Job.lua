@@ -8,7 +8,7 @@
 Job = inherit(Singleton)
 
 function Job:constructor()
-	
+
 end
 
 function Job:getId()
@@ -24,7 +24,7 @@ function Job:requireVehicle(player)
 end
 
 function Job:sendMessage(message, ...)
-	for k, player in ipairs(getElementsByType("player")) do
+	for k, player in pairs(getElementsByType("player")) do
 		if player:getJob() == self then
 			player:sendMessage(_("[JOB] ", player).._(message, player, ...), 0, 0, 255)
 		end
@@ -38,7 +38,7 @@ function Job:countPlayers()
 			count = count + 1
 		end
 	end
-	
+
 	return count
 end
 
