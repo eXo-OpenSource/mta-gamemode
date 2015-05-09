@@ -33,7 +33,7 @@ function Inventory.loadById(Id)
 		return false
 	end
 
-	local itemData = fromJSON(row.Items)
+	local itemData = fromJSON(row.Items) or {}
 	local items = {}
 	for slot, info in pairs(itemData) do
 		items[slot] = (Items[info[1]].class or Item):new(info[1], info[2])

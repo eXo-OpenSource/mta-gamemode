@@ -9,8 +9,6 @@ GUIImage = inherit(GUIElement)
 inherit(GUIColorable, GUIImage)
 
 function GUIImage:constructor(posX, posY, width, height, path, parent)
-	checkArgs("GUIImage:constructor", "number", "number", "number", "number", "string")
-
 	self.m_Image = path
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
@@ -31,7 +29,7 @@ function GUIImage:setRotation(rotation, rotationCenterOffsetX, rotationCenterOff
 	self.m_Rotation = rotation
 	self.m_RotationCenterOffsetX = rotationCenterOffsetX
 	self.m_RotationCenterOffsetY = rotationCenterOffsetY
-	
+
 	return self
 end
 

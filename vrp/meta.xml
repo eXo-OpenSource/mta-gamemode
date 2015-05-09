@@ -487,6 +487,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Skinshop.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/1vs1.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/TuningGarage.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Shop.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -510,6 +511,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Skinshop.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/1vs1.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/TuningGarage.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Shop.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -523,7 +525,10 @@
 	<vrpfile src="files/images/Jobs/HeaderMechanic.png"/>
 	<vrpfile src="files/images/Jobs/Farmerdisplay.png"/>
 
+	<vrpfile src="files/images/Items/Bomb.png"/>
+	<vrpfile src="files/images/Items/HotwireKit.png"/>
 	<vrpfile src="files/images/Items/Passport.png"/>
+	<vrpfile src="files/images/Items/Radio.png"/>
 
 	<vrpfile src="files/images/Nametag/default.png"/>
 	<vrpfile src="files/images/Nametag/vrp.png"/>
