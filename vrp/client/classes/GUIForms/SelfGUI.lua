@@ -425,8 +425,13 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType)
 			item.VehicleInGarage = inGarage
 		end
 	end
+
+	self.m_VehicleGarageUpgradeButton:setText(_"Upgrade")
 	if garageType then
 		localPlayer.m_GarageType = garageType
+		if garageType == 0 then
+			self.m_VehicleGarageUpgradeButton:setText(_"Garage kaufen")
+		end
 
 		local texts = {[0] = _"Garage: keine Garage (0 Slots)", [1] = _"Garage: Standard Garage (3 Slots)", [2] = _"Garage: Komfortable Garage (6 Slots)", [3] = _"Garage: Luxus Garage (10 Slots)"}
 		self.m_VehicleGarages:setText(texts[garageType])

@@ -1,26 +1,33 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        shared/classes/Package.lua
+-- *  PURPOSE:     Data files package class
+-- *
+-- ****************************************************************************
 Package = {}
 
 function Package.save(path, filelist)
 	local pack = setmetatable({}, { __index = Package })
 	local fh = fileCreate(path)
-	
+
 	for k, v in pairs(filelist) do
 		pack:addFile(fh, v)
 	end
-	
+
 	fileClose(fh)
 end
 
 function Package.load(path)
 	local fh = fileOpen(path)
 	while fileGetSize(fh) ~= fileGetPos(fh) do
-		local name = Package._readEntry(fh, 64) 
-		local size = Package._readEntry(fh, 32) 
+		local name = Package._readEntry(fh, 64)
+		local size = Package._readEntry(fh, 32)
 		local data = fileRead(fh, tonumber(size))
 		if fileExists(name) then
 			fileDelete(name)
 		end
-		
+
 		local ff = fileCreate(name)
 		fileWrite(ff, data)
 		fileClose(ff)
@@ -39,7 +46,8 @@ end
 function Package:addFile(fh, file)
 	local r = fileOpen(file)
 	if not r then
-		print("[PACKAGE] Cant open file : "..file)
+		outputDebugString("[PACKAGE] Cant open file : "..file)
+		return
 	end
 	local size = fileGetSize(r)
 	local data = fileRead(r, size)

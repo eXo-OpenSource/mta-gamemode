@@ -450,8 +450,16 @@
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
 
-	<vrpfile src="files/images/Weapons/gun.png"/>
-	<vrpfile src="files/images/Weapons/hand.png"/>
+	<vrpfile src="files/images/Weapons/BaseballBat.png"/>
+	<vrpfile src="files/images/Weapons/Grenade.png"/>
+	<vrpfile src="files/images/Weapons/Knife.png"/>
+	<vrpfile src="files/images/Weapons/M4.png"/>
+	<vrpfile src="files/images/Weapons/Minigun.png"/>
+	<vrpfile src="files/images/Weapons/Nightvision.png"/>
+	<vrpfile src="files/images/Weapons/RPG.png"/>
+	<vrpfile src="files/images/Weapons/SawnOffShotgun.png"/>
+	<vrpfile src="files/images/Weapons/Sniper.png"/>
+	<vrpfile src="files/images/Weapons/Teargas.png"/>
 
 	<vrpfile src="files/images/avatar_default.png"/>
 	<vrpfile src="files/images/world.png"/>

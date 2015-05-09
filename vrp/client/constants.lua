@@ -5,7 +5,6 @@
 -- *  PURPOSE:     Global clientside constants
 -- *
 -- ****************************************************************************
-
 screenWidth, screenHeight = guiGetScreenSize()
 screenSize = Vector2(screenWidth, screenHeight)
 ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/1.8
@@ -29,6 +28,22 @@ NO_MUNITION_ITEMS = {
 	[45] = true;
 	[46] = true;
 }
+
+WeaponIcons = {
+	--[0] = "Fist.png",
+	[4] = "Knife.png",
+	[5] = "BaseballBat.png",
+	[16] = "Grenade.png",
+	[17] = "Teargas.png",
+	[25] = "SawnOffShotgun.png",
+	[31] = "M4.png",
+	[34] = "Sniper.png",
+	[35] = "RPG.png",
+	[38] = "Minigun.png",
+	[44] = "Nightvision.png",
+	[45] = "Nightvision.png",
+}
+for k, v in pairs(WeaponIcons) do WeaponIcons[k] = "files/images/Weapons/"..v end
 
 RadarDesign = {Monochrome = 1, GTA = 2}
 

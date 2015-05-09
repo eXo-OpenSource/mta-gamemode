@@ -341,7 +341,7 @@ end
 function VehicleManager:Event_vehicleUpgradeGarage()
 	local UpgradeToPrices = {[1] = 200000, [2] = 250000, [3] = 500000}
 	local currentGarage = client:getGarageType()
-	if currentGarage > 0 then
+	if currentGarage >= 0 then
 		local price = UpgradeToPrices[currentGarage + 1]
 		if price then
 			if client:getMoney() >= price then

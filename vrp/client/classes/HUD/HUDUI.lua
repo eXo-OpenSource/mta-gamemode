@@ -33,10 +33,10 @@ function HUDUI:draw()
 	if not self.m_IsVisible then
 		return
 	end
+	local f = math.floor
 
 	dxDrawRectangle(screenWidth-0.195*screenWidth,0.04*screenHeight,0.195*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
-	dxDrawText("$",screenWidth-0.169*screenWidth,0.092*screenHeight/2,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
-	dxDrawText(getPlayerMoney(localPlayer),screenWidth-0.14*screenWidth,0.092*screenHeight/2,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
+	dxDrawText("$"..getPlayerMoney(localPlayer),screenWidth-0.14*screenWidth,0.092*screenHeight/2,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
 
 	local munitionWindowActive = true
 
@@ -54,11 +54,14 @@ function HUDUI:draw()
 	-- Weapon-Window
 	local addX = math.floor(interpolateBetween(0,0,0,0.156*screenWidth,0,0,self.m_MunitionProgress,"OutBack"))
 	dxDrawRectangle(screenWidth-(0.25*screenWidth+addX),0.04*screenHeight,0.05*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
-	-- images became changed later
-	if munitionWindowActive then
-		dxDrawImage(math.floor(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2)),math.floor(0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2)),math.floor(0.033*screenWidth),math.floor(0.059*screenHeight),"files/images/Weapons/gun.png")
-	else
-		dxDrawImage(math.floor(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2)),math.floor(0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2)),math.floor(0.033*screenWidth),math.floor(0.059*screenHeight),"files/images/Weapons/hand.png")
+
+	local weaponIconPath = WeaponIcons[localPlayer:getWeapon()]
+	if weaponIconPath then
+		if munitionWindowActive then
+			dxDrawImage(f(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2)), f(0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2)), f(0.033*screenWidth), f(0.059*screenHeight), weaponIconPath)
+		else
+			dxDrawImage(f(screenWidth-(0.25*screenWidth+addX)+(0.05*screenWidth/2)-(0.033*screenWidth/2)), f(0.0465*screenHeight+(0.09*screenHeight/2)-(0.059*screenHeight/2)), f(0.033*screenWidth), f(0.059*screenHeight), weaponIconPath)
+		end
 	end
 
 	-- Munition-Window
