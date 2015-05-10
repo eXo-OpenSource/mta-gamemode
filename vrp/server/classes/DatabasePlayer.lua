@@ -83,7 +83,7 @@ function DatabasePlayer:load()
 	self.m_Skin = row.Skin
 	self:setXP(row.XP)
 	self:setKarma(row.Karma)
-	self:givePoints(row.Points)
+	self:setPoints(row.Points)
 	self.m_Money = row.Money
 	self.m_WantedLevel = row.WantedLevel
 	self.m_BankMoney = row.BankMoney
@@ -101,7 +101,7 @@ function DatabasePlayer:load()
 	if row.GroupId and row.GroupId ~= 0 then
 		self:setGroup(GroupManager:getSingleton():getFromId(row.GroupId))
 	end
-	self.m_Inventory = self.m_Inventory or Inventory.loadById(row.InventoryId) or Inventory.create()
+	self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
 	self.m_GarageType = row.GarageType
 	self.m_LastGarageEntrance = row.LastGarageEntrance
 	self.m_SpawnLocation = row.SpawnLocation
@@ -235,6 +235,11 @@ end
 
 function DatabasePlayer:givePoints(p)
 	self.m_Points = self.m_Points + math.floor(p)
+	if self:isActive() then self:setPrivateSync("Points", self.m_Points) end
+end
+
+function DatabasePlayer:setPoints(p)
+	self.m_Points = math.floor(p)
 	if self:isActive() then self:setPrivateSync("Points", self.m_Points) end
 end
 
