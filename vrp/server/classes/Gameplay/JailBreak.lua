@@ -15,29 +15,24 @@ function JailBreak:constructor()
 	self.m_CanBeStarted = true
 	self.m_OpenCellsKeypad = getElementByID("OpenCellKeypad")
 	self.m_CellRoomDoor = getElementByID("CellRoomDoor")
-	self.m_BombArea = BombArea:new(Vector3(3459.85, -2073.16, 16.82), bind(self.Bomb_Place, self), bind(self.Bomb_Explode, self), 10000)
-
-	self:respawnGuardPed()
-
-	self.m_ControlPed = getElementByID("JailControlPed")
-	addEventHandler("onPedWasted", self.m_ControlPed, bind(self.ControlPed_Wasted, self))
-
-	self.m_MainGateLeft = getElementByID("MainGateLeft")
-	self.m_MainGateRight = getElementByID("MainGateRight")
-	self.m_MainGateState = true
-
-	self.m_CellGates = {}
-	for i = 1, 6 do
-		self.m_CellGates[i] = getElementByID("CellGate"..i)
-	end
 	self.m_BreakFreeDoor = getElementByID("BreakFreeDoor")
-	self.m_HallDoorLeft = getElementByID("HallDoorLeft")
-	self.m_HallDoorRight = getElementByID("HallDoorRight")
+	self.m_BombArea = BombArea:new(Vector3(2668.3, -2124.8, 13), bind(self.Bomb_Place, self), bind(self.Bomb_Explode, self), 10000)
+
+	self:respawnGuardPed1()
+	self:respawnGuardPed2()
+
+	self.m_MainGate1 = getElementByID("MainGate1")
+	self.m_MainGate2 = getElementByID("MainGate2")
+	self.m_MainGate3 = getElementByID("MainGate3")
+	self.m_MainGate1State = true
+	self.m_MainGate3State = true
+
+	self.m_CellGates = {getElementByID("CellGate")}
 
 	addEventHandler("keypadClick", root, bind(self.Keypad_Click, self))
 	addEventHandler("jailAnswersRetrieve", root, bind(self.KeypadAnswers_Retrieve, self))
 
-	self.m_PipeOutShape = createColSphere(3490.72, -2093.12, 16.87, 3)
+	self.m_PipeOutShape = createColSphere(2661.14, -2122.41, 13.47, 3)
 	addEventHandler("onColShapeHit", self.m_PipeOutShape, bind(self.PipeOutShape_Hit, self))
 	self.m_PipeExit1Shape = createColSphere(3039.1006, -2069.7002, 1216.2, 3)
 	self.m_PipeExit2Shape = createColSphere(3073.9004, -2226.3994, 1208.2, 3)
@@ -55,23 +50,33 @@ function JailBreak:constructor()
 
 end
 
-function JailBreak:toggleMainGate(state) -- true: closed; false: open
-	self.m_MainGateState = state
+function JailBreak:toggleMainGate1_2(state) -- true: closed; false: open
+	self.m_MainGate1State = state
 
 	if state then
-		self.m_MainGateLeft:move(1500, 3444.2002, -2150, 17.8)
-		self.m_MainGateRight:move(1500, 3449.6006, -2150, 17.8)
+		self.m_MainGate1:move(1500, 2541, -2121.4, 12.5)
+		self.m_MainGate2:move(1500, 2624.2, -2121.3, 12.6)
 	else
-		self.m_MainGateLeft:move(1500, 3437.6, -2150, 17.8)
-		self.m_MainGateRight:move(1500, 3455.9, -2150, 17.8)
+		self.m_MainGate1:move(1500, 2540.9, -2112.5, 12.5)
+		self.m_MainGate2:move(1500, 2624, -2112.4, 12.6)
+	end
+end
+
+function JailBreak:toggleMainGate3(state) -- true: closed; false: open
+	self.m_MainGate3State = state
+
+	if state then
+		self.m_MainGate3:move(1500, 2667.3, -2112.3, 11.7)
+	else
+		self.m_MainGate3:move(1500, 2666.9, -2104.3, 11.7)
 	end
 end
 
 function JailBreak:toggleCellGate(i, state)
 	if state then
-		self.m_CellGates[i]:move(1500, self.m_CellGates[i]:getPosition() - Vector3(2, 0, 0))
+		self.m_CellGates[i]:move(1500, self.m_CellGates[i]:getPosition() - Vector3(0, 2, 0))
 	else
-		self.m_CellGates[i]:move(1500, self.m_CellGates[i]:getPosition() + Vector3(2, 0, 0))
+		self.m_CellGates[i]:move(1500, self.m_CellGates[i]:getPosition() + Vector3(0, 2, 0))
 	end
 end
 
@@ -82,12 +87,8 @@ function JailBreak:toggleCellGates(state)
 
 	if state then
 		self.m_BreakFreeDoor:move(1500, self.m_BreakFreeDoor:getPosition() + Vector3(0, 0, 5))
-		self.m_HallDoorLeft:move(1500, self.m_HallDoorLeft:getPosition() + Vector3(2, 0, 0))
-		self.m_HallDoorRight:move(1500, self.m_HallDoorLeft:getPosition() - Vector3(2, 0, 0))
 	else
 		self.m_BreakFreeDoor:move(1500, self.m_BreakFreeDoor:getPosition() - Vector3(0, 0, 5))
-		self.m_HallDoorLeft:move(1500, self.m_HallDoorLeft:getPosition() - Vector3(2, 0, 0))
-		self.m_HallDoorRight:move(1500, self.m_HallDoorLeft:getPosition() + Vector3(2, 0, 0))
 	end
 end
 
@@ -108,30 +109,47 @@ function JailBreak:checkAnswers(answers)
 	return wrongQuestionCount <= 1
 end
 
-function JailBreak:respawnGuardPed()
-	if self.m_GuardPed then
-		self.m_GuardPed:destroy()
+function JailBreak:respawnGuardPed1()
+	if self.m_GuardPed1 then
+		self.m_GuardPed1:destroy()
 	end
-	self.m_GuardPed = GuardActor:new(Vector3(3453.9004, -2153.8994, 17.1))
-	self.m_GuardPed:setRotation(0, 0, 180)
-	addEventHandler("onPedWasted", self.m_GuardPed, bind(self.GuardPed_Wasted, self))
+	self.m_GuardPed1 = GuardActor:new(Vector3(2539.9, -2112, 13.5))
+	self.m_GuardPed1:setRotation(0, 0, 90)
+	addEventHandler("onPedWasted", self.m_GuardPed1, bind(self.GuardPed1_Wasted, self))
+end
+
+function JailBreak:respawnGuardPed2()
+	if self.m_GuardPed2 then
+		self.m_GuardPed2:destroy()
+	end
+	self.m_GuardPed2 = GuardActor:new(Vector3(2649.34, -2108.5, 13.5))
+	self.m_GuardPed2:setRotation(0, 0, 90)
+	addEventHandler("onPedWasted", self.m_GuardPed2, bind(self.GuardPed2_Wasted, self))
 end
 
 function JailBreak:reset()
-	self:respawnGuardPed()
+	self:respawnGuardPed1()
+	self:respawnGuardPed2()
 	self:toggleCellGates(true)
 
 	self.m_CellRoomDoor:move(500, self.m_CellRoomDoor:getPosition() + Vector3(0, 0, 6))
 	self.m_CanBeStarted = true
 end
 
-function JailBreak:GuardPed_Wasted(totalAmmo, killer)
-	if killer and killer:getKarma() < 0 then
+function JailBreak:GuardPed1_Wasted(totalAmmo, killer)
+	self:toggleMainGate1_2()
+
+	-- Report the kill crime, but do not report jailbreak yet
+	killer:reportCrime(Crime.Kill)
+end
+
+function JailBreak:GuardPed2_Wasted(totalAmmo, killer)
+	if killer and killer:getKarma() < -20 then
 		-- Prevent new jail breaks for the specified time
 		self.m_CanBeStarted = false
 
 		-- Open main gate
-		self:toggleMainGate(false)
+		self:toggleMainGate3(false)
 
 		-- Report the kill crime, but do not report jailbreak yet
 		killer:reportCrime(Crime.Kill)
@@ -139,7 +157,7 @@ function JailBreak:GuardPed_Wasted(totalAmmo, killer)
 		setTimer(
 			function()
 				-- Report jailbreak after a short delay
-				for k, player in pairs(getPlayersInRange(self.m_GuardPed:getPosition(), 100)) do
+				for k, player in pairs(getPlayersInRange(self.m_GuardPed2:getPosition(), 100)) do
 					if player:getKarma() < 0 then
 						player:reportCrime(Crime.JailBreak)
 						player:sendShortMessage(_("ACHTUNG! Ihr wurdet entdeckt!", player))
@@ -153,7 +171,7 @@ function JailBreak:GuardPed_Wasted(totalAmmo, killer)
 				triggerClientEvent("jailBreakStart", resourceRoot)
 
 				-- Close main gate | TODO: How does the police enter the interior? ==> Clicksystem
-				self:toggleMainGate(true)
+				self:toggleMainGate3(true)
 
 			end, 60*1000, 1
 		)
@@ -162,12 +180,12 @@ function JailBreak:GuardPed_Wasted(totalAmmo, killer)
 		setTimer(bind(self.reset, self), TIME_BETWEEN_JAILBREAKS, 1)
 	else
 		-- Respawn immediately
-		self:respawnGuardPed()
+		self:respawnGuardPed2()
+
+		if killer then
+			killer:sendError(_("Hierzu muss dein Karma geringer als -20 sein!", killer))
+		end
 	end
-end
-
-function JailBreak:ControlPed_Wasted(totalAmmo, killer)
-
 end
 
 function JailBreak:Bomb_Place(bombArea, player)

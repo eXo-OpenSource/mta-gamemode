@@ -451,13 +451,26 @@
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
 
 	<vrpfile src="files/images/Weapons/BaseballBat.png"/>
+	<vrpfile src="files/images/Weapons/BrassKnuckles.png"/>
+	<vrpfile src="files/images/Weapons/Camera.png"/>
+	<vrpfile src="files/images/Weapons/Chainsaw.png"/>
+	<vrpfile src="files/images/Weapons/FireExtinguisher.png"/>
+	<vrpfile src="files/images/Weapons/Fist.png"/>
+	<vrpfile src="files/images/Weapons/Flowers.png"/>
+	<vrpfile src="files/images/Weapons/Golf.png"/>
 	<vrpfile src="files/images/Weapons/Grenade.png"/>
+	<vrpfile src="files/images/Weapons/Katana.png"/>
 	<vrpfile src="files/images/Weapons/Knife.png"/>
 	<vrpfile src="files/images/Weapons/M4.png"/>
 	<vrpfile src="files/images/Weapons/Minigun.png"/>
 	<vrpfile src="files/images/Weapons/Nightvision.png"/>
+	<vrpfile src="files/images/Weapons/Parachute.png"/>
+	<vrpfile src="files/images/Weapons/Pistol.png"/>
 	<vrpfile src="files/images/Weapons/RPG.png"/>
+	<vrpfile src="files/images/Weapons/Satchel.png"/>
+	<vrpfile src="files/images/Weapons/SatchelDetonator.png"/>
 	<vrpfile src="files/images/Weapons/SawnOffShotgun.png"/>
+	<vrpfile src="files/images/Weapons/Shovel.png"/>
 	<vrpfile src="files/images/Weapons/Sniper.png"/>
 	<vrpfile src="files/images/Weapons/Teargas.png"/>
 

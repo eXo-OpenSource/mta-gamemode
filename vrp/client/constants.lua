@@ -30,18 +30,31 @@ NO_MUNITION_ITEMS = {
 }
 
 WeaponIcons = {
-	--[0] = "Fist.png",
+	[0] = "Fist.png",
+	[1] = "BrassKnuckles.png",
+	[2] = "Golf.png",
 	[4] = "Knife.png",
 	[5] = "BaseballBat.png",
+	[6] = "Shovel.png",
+	[7] = "Cue.png",
+	[8] = "Katana.png",
+	[9] = "Chainsaw.png",
+	[14] = "Flowers.png",
 	[16] = "Grenade.png",
 	[17] = "Teargas.png",
+	[22] = "Pistol.png",
 	[25] = "SawnOffShotgun.png",
 	[31] = "M4.png",
 	[34] = "Sniper.png",
 	[35] = "RPG.png",
 	[38] = "Minigun.png",
+	[39] = "Satchel.png",
+	[40] = "SatchelDetonator.png",
+	[42] = "FireExtinguisher.png",
+	[43] = "Camera.png",
 	[44] = "Nightvision.png",
 	[45] = "Nightvision.png",
+	[46] = "Parachute.png",
 }
 for k, v in pairs(WeaponIcons) do WeaponIcons[k] = "files/images/Weapons/"..v end
 
