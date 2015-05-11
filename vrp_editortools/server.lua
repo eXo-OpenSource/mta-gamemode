@@ -21,7 +21,8 @@ addEvent("garbageAdd", true)
 addEventHandler("garbageAdd", root,
 	function(x, y, z)
 		local object = createObject(2670, x, y, z)
-		cache[#cache + 1] = {x, y, z, object}
+		local blip = createBlip(x, y, z, 0, 1)
+		cache[#cache + 1] = {x, y, z, object, blip}
 	end
 )
 
@@ -43,6 +44,7 @@ addCommandHandler("dellast",
 			local last = cache[lastIndex]
 			cache[lastIndex] = nil
 			destroyElement(last[4])
+			destroyElement(last[5])
 		end
 	end
 )

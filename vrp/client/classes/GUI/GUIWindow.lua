@@ -74,6 +74,7 @@ function GUIWindow:CloseButton_Click()
 		self:close()
 	else
 		(self.m_Parent or self):setVisible(false) -- Todo: if self.m_Parent == cacheroot then problem() end
+		Cursor:hide()
 	end
 end
 
