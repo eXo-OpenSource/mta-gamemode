@@ -113,6 +113,7 @@ HelpTexts = {
 			Schlumpf (für seine kurze Zeit als Mapper)
 			ReZ (für seine kurze Zeit als Mapper)
 			Alex (für seine Zeit als Mapper)
+			Audifire (für das Verteilen von Müll)
 
 			Alpha-Tester:
 			Johnny
