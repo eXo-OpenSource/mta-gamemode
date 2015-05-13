@@ -49,7 +49,6 @@ function JobRoadSweeper:Rubbish_Hit(hitElement, matchingDimension)
 	if hitElement == localPlayer and matchingDimension and not self.m_Busy then
 		local vehicle = getPedOccupiedVehicle(localPlayer)
 		if not vehicle or getElementModel(vehicle) ~= 574 then -- Sweeper
-			localPlayer:sendMessage(_"Hierzu musst du einen Roadsweeper fahren!", 255, 0, 0)
 			return
 		end
 

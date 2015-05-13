@@ -208,6 +208,7 @@ function Group:distributeMoney(amount)
 	local amountPerPlayer = moneyForPlayers / #onlinePlayers
 
 	for k, player in pairs(onlinePlayers) do
+		outputDebug(player)
 		player:giveMoney(amountPerPlayer)
 	end
 end

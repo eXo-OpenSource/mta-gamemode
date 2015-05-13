@@ -95,7 +95,7 @@ function GroupManager:Event_groupCreate(name)
 		group:addPlayer(client, GroupRank.Leader)
 		client:takeMoney(GroupManager.GroupCosts)
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der Gruppe %s", client, name))
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 	else
 		client:sendError(_("Interner Fehler beim Erstellen der Gruppe", client))
 	end
@@ -165,7 +165,7 @@ function GroupManager:Event_groupDeposit(amount)
 
 	client:takeMoney(amount)
 	group:giveMoney(amount)
-	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 end
 
 function GroupManager:Event_groupWithdraw(amount)
@@ -185,7 +185,7 @@ function GroupManager:Event_groupWithdraw(amount)
 
 	group:takeMoney(amount)
 	client:giveMoney(amount)
-	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 end
 
 function GroupManager:Event_groupAddPlayer(player)
@@ -211,7 +211,7 @@ function GroupManager:Event_groupAddPlayer(player)
 			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!", client))
 		end
 		--group:addPlayer(player)
-		--client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+		--client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 	else
 		client:sendError(_("Dieser Spieler ist bereits in der Gruppe!", client))
 	end
@@ -234,7 +234,7 @@ function GroupManager:Event_groupDeleteMember(playerId)
 	end
 
 	group:removePlayer(playerId)
-	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 end
 
 function GroupManager:Event_groupInvitationAccept(groupId)
@@ -245,7 +245,7 @@ function GroupManager:Event_groupInvitationAccept(groupId)
 		group:addPlayer(client)
 		group:removeInvitation(client)
 		group:sendMessage(_("%s ist soeben der Gruppe beigetreten", client, getPlayerName(client)))
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 	else
 		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
 	end
@@ -280,7 +280,7 @@ function GroupManager:Event_groupRankUp(playerId)
 
 	if group:getPlayerRank(playerId) < GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
 	end
@@ -303,6 +303,6 @@ function GroupManager:Event_groupRankDown(playerId)
 
 	if group:getPlayerRank(playerId) == GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers())
+		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 	end
 end
