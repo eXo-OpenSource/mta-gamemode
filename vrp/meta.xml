@@ -450,12 +450,19 @@
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
 
+	<vrpfile src="files/images/Weapons/AK-47.png"/>
 	<vrpfile src="files/images/Weapons/BaseballBat.png"/>
 	<vrpfile src="files/images/Weapons/BrassKnuckles.png"/>
 	<vrpfile src="files/images/Weapons/Camera.png"/>
+	<vrpfile src="files/images/Weapons/Cane.png"/>
 	<vrpfile src="files/images/Weapons/Chainsaw.png"/>
+	<vrpfile src="files/images/Weapons/CountryRifle.png"/>
+	<vrpfile src="files/images/Weapons/Deagle.png"/>
+	<vrpfile src="files/images/Weapons/Dildo.png"/>
+	<vrpfile src="files/images/Weapons/DildoSmall.png"/>
 	<vrpfile src="files/images/Weapons/FireExtinguisher.png"/>
 	<vrpfile src="files/images/Weapons/Fist.png"/>
+	<vrpfile src="files/images/Weapons/FlameThrower.png"/>
 	<vrpfile src="files/images/Weapons/Flowers.png"/>
 	<vrpfile src="files/images/Weapons/Golf.png"/>
 	<vrpfile src="files/images/Weapons/Grenade.png"/>
@@ -463,16 +470,27 @@
 	<vrpfile src="files/images/Weapons/Knife.png"/>
 	<vrpfile src="files/images/Weapons/M4.png"/>
 	<vrpfile src="files/images/Weapons/Minigun.png"/>
+	<vrpfile src="files/images/Weapons/Molotov.png"/>
+	<vrpfile src="files/images/Weapons/MP5.png"/>
+	<vrpfile src="files/images/Weapons/Nightstick.png"/>
 	<vrpfile src="files/images/Weapons/Nightvision.png"/>
 	<vrpfile src="files/images/Weapons/Parachute.png"/>
 	<vrpfile src="files/images/Weapons/Pistol.png"/>
+	<vrpfile src="files/images/Weapons/RocketHS.png"/>
 	<vrpfile src="files/images/Weapons/RPG.png"/>
 	<vrpfile src="files/images/Weapons/Satchel.png"/>
 	<vrpfile src="files/images/Weapons/SatchelDetonator.png"/>
 	<vrpfile src="files/images/Weapons/SawnOffShotgun.png"/>
+	<vrpfile src="files/images/Weapons/SPAZ-12.png"/>
+	<vrpfile src="files/images/Weapons/Shotgun.png"/>
 	<vrpfile src="files/images/Weapons/Shovel.png"/>
+	<vrpfile src="files/images/Weapons/SilencedPistol.png"/>
 	<vrpfile src="files/images/Weapons/Sniper.png"/>
+	<vrpfile src="files/images/Weapons/Spraycan.png"/>
 	<vrpfile src="files/images/Weapons/Teargas.png"/>
+	<vrpfile src="files/images/Weapons/TEC-9.png"/>
+	<vrpfile src="files/images/Weapons/Uzi.png"/>
+	<vrpfile src="files/images/Weapons/Vibrator.png"/>
 
 	<vrpfile src="files/images/avatar_default.png"/>
 	<vrpfile src="files/images/world.png"/>
