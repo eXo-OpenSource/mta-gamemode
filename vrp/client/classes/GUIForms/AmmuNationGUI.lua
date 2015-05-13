@@ -8,17 +8,13 @@
 AmmuNationGUI = inherit(GUIForm)
 inherit(Singleton, AmmuNationGUI)
 
-AmmuNationGUI.MARKER = createMarker(308.29330,-141.14204,998.60156,"cylinder",1.2,255,0,0,125)
-
 function AmmuNationGUI:constructor()
 	self.m_Selection = 1
-	self.m_Active = false
 	self.m_CameraInstance = false
 
 	GUIForm.constructor(self,screenWidth/2,screenHeight/2,400,200)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Ammu-Nation", true, true, self)
-	self.m_Window:setCloseOnClose(false)
 	self.m_Label = GUILabel:new(30, 45, 300, 300, _("Waffe: %s\nBenötigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel), self.m_Window)
 	self.m_Label:setFont(VRPFont(24))
 	self.m_BuyMagazine = GUIButton:new(30, 90, self.m_Width-60, 35, _("Magazin kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Magazine.price), self.m_Window)
@@ -28,22 +24,19 @@ function AmmuNationGUI:constructor()
 	self.m_BuyWeapon:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_BuyWeapon.onLeftClick = bind(self.buyWeapon,self)
 	GUILabel:new(30, 175, 300, 20, "Leertaste - Schließen", self.m_Window)
-	self:close()
 
-	-- if the player spawn in this interior
-	setElementInterior(AmmuNationGUI.MARKER,7)
-
-	addEvent("AmmuNation:setDimension",true)
-	addEventHandler("AmmuNation:setDimension",localPlayer,bind(self.setDimension,self))
-
-	addEventHandler("onClientKey", root, bind(self.onKey,self))
-	addEventHandler("onClientMarkerHit", AmmuNationGUI.MARKER, bind(self.onMarkerHit,self))
+	self.m_OnKeyFunc = bind(self.onKey, self)
+	addEventHandler("onClientKey", root, self.m_OnKeyFunc)
 end
 
-function AmmuNationGUI:onHide()
-	self.m_Active = false
-	if self.m_CameraInstance then delete(self.m_CameraInstance) end
-	setCameraTarget(localPlayer,localPlayer)
+function AmmuNationGUI:destructor()
+	if self.m_CameraInstance then
+		delete(self.m_CameraInstance)
+	end
+	setCameraTarget(localPlayer, localPlayer)
+	removeEventHandler("onClientKey", root, self.m_OnKeyFunc)
+
+	GUIForm.destructor(self)
 end
 
 function AmmuNationGUI:buyMagazine()
@@ -54,30 +47,16 @@ function AmmuNationGUI:buyWeapon()
 	triggerServerEvent("onPlayerWeaponBuy",localPlayer,AmmuNationGUI.INFO[self.m_Selection].ID)
 end
 
-function AmmuNationGUI:onMarkerHit(hitElement,dim)
-	if hitElement == localPlayer and dim then
-		self.m_Active = true
-		self:open()
-		self:updateMatrix()
-	end
-end
-
-function AmmuNationGUI:setDimension(int)
+function AmmuNationGUI:updateDimension(int)
 	for key, value in pairs(AmmuNationGUI.INFO) do
-		setElementDimension(value.WEAPON,getElementDimension(localPlayer))
-		setElementInterior(value.WEAPON,7)
+		value.WEAPON:setDimension(localPlayer:getDimension())
+		value.WEAPON:setInterior(7)
 	end
-
-	setElementDimension(AmmuNationGUI.MARKER,getElementDimension(localPlayer))
 end
 
 function AmmuNationGUI:onKey(key,state)
-	if not self.m_Active then
-		return
-	end
-
 	if key == "space" then
-		self:close()
+		delete(self)
 		return
 	end
 
@@ -89,8 +68,8 @@ function AmmuNationGUI:onKey(key,state)
 		else
 			return
 		end
-		self.m_Selection = math.max(math.min(self.m_Selection,#AmmuNationGUI.INFO),1)
-		self.m_Label:setText(_("Waffe: %s\nBenoetigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel))
+		self.m_Selection = math.max(math.min(self.m_Selection, #AmmuNationGUI.INFO), 1)
+		self.m_Label:setText(_("Waffe: %s\nBenötigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel))
 		self.m_BuyMagazine:setText(_("Magazin kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Magazine.price))
 		self.m_BuyWeapon:setText(_("Waffe kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Weapon))
 		self:updateMatrix()
@@ -112,6 +91,15 @@ function AmmuNationGUI:updateMatrix()
 		1500
 	)
 end
+
+addEvent("openAmmuNationGUI", true)
+addEventHandler("openAmmuNationGUI", root,
+	function()
+		local gui = AmmuNationGUI:getSingleton()
+		gui:updateMatrix()
+		gui:updateDimension()
+	end
+)
 
 AmmuNationGUI.INFO = {
 	[1] = {

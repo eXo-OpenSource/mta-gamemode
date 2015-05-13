@@ -1,4 +1,4 @@
-MYSQL_HOST	= "srv2.jusonex.net"
+MYSQL_HOST	= "jusonex.net"
 MYSQL_PORT	= 3306
 MYSQL_USER	= "vrp"
 MYSQL_PW	= "fI8;26>6F#"
