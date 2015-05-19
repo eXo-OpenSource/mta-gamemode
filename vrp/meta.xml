@@ -533,7 +533,6 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/TuningGarage.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Shop.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/ServiceTechnician.png"/>
-	<vrpfile src="files/images/Radar_Monochrome/Blips/Player.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/in.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/1.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/2.png"/>
@@ -564,9 +563,11 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/TuningGarage.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Shop.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/ServiceTechnician.png"/>
-	<vrpfile src="files/images/Radar_GTA/Blips/Player.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/in.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/1.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/2.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/3.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/4.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

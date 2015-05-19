@@ -265,7 +265,7 @@ function HUDRadar:draw()
 
 	-- Draw the player blip
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
-	--dxDrawImage(self.m_PosX+self.m_Width/2-6, self.m_PosY+2+self.m_Height/2-6, 16, 16, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
+	dxDrawImage(self.m_PosX+self.m_Width/2-6, self.m_PosY+2+self.m_Height/2-6, 16, 16, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
 end
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
