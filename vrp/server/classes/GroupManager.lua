@@ -318,6 +318,7 @@ function GroupManager:Event_groupChangeName(name)
 	if not name then return end
 	local group = client:getGroup()
 	if not group then return end
+	local name = name:gsub(" ", "")
 
 	if not group:isPlayerMember(client) then
 		return
@@ -334,13 +335,24 @@ function GroupManager:Event_groupChangeName(name)
 		return
 	end
 
+	if client:getMoney() < 20000 then
+		client:sendError(_("Du hast nicht genügend Geld!", client))
+		return
+	end
+
+	if name:len() < 5 then
+		client:sendError(_("Der Name muss mindestens 5 Zeichen lang sein!", client))
+		return
+	end
+
 	if (getRealTime().timestamp - group.m_LastNameChange) < GROUP_RENAME_TIMEOUT then
 		client:sendError(_("Du kannst deine Gruppe nur alle "..(GROUP_RENAME_TIMEOUT/24/60/60).." Tage umbennen!", client))
 		return
 	end
 
 	if group:setName(name) then
-		client:sendSuccess(_("Deine Gruppe heißt nun\n%s!", client, name))
+		client:takeMoney(20000)
+		client:sendSuccess(_("Deine Gruppe heißt nun\n%s!", client, group:getName()))
 		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 	else
 		client:sendError(_("Es ist ein unbekannter Fehler aufgetreten!", client))
