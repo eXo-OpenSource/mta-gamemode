@@ -140,7 +140,7 @@ function HUDRadar:update()
 	end
 
 	for i, v in pairs(getElementsByType("player")) do
-		--if v ~= localPlayer then
+		if v ~= localPlayer then
 			if ((v:getPosition() - localPlayer:getPosition()).length < 30 or getPedTarget(localPlayer) == v) and v:getWantedLevel() == 0 then
 				outputDebug(v:getName().." is streamed in")
 
@@ -149,6 +149,7 @@ function HUDRadar:update()
 					v.m_Blip = {}
 					v.m_Blip[1] = Blip:new("PlayerMarker/in.png", pos.x, pos.y):setSize(20)
 					v.m_Blip[2] = Blip:new("PlayerMarker/4.png", pos.x, pos.y):setSize(20)
+					-- Todo: Position is on the Radar not correct! @Jusonex
 				end
 
 				local k = v:getKarma()
@@ -163,7 +164,7 @@ function HUDRadar:update()
 					v.m_Blip = nil
 				end
 			end
-		--end
+		end
 	end
 end
 
