@@ -36,9 +36,12 @@ end
 
 function JobManager:startJobForPlayer(job, player)
 	-- Stop old job if exists
-	if player:getJob() then
-		if player:getJob() == job then return end
-		player:getJob():stop(player)
+	local currentJob = player:getJob()
+	if currentJob then
+		if currentJob == job then return end
+		if currentJob.stop then
+			currentJob:stop(player)
+		end
 	end
 
 	-- We're ready to start the job :)
@@ -70,16 +73,6 @@ function JobManager:Event_jobAccepted(jobId)
 
 	-- Check requirements
 	if job.checkRequirements and not job:checkRequirements(client) then
-		return
-	end
-
-	if not client:getInventory():hasItem(ITEM_PASSPORT) then -- TODO: Fix guest
-		client:sendError(_("Dafür benötigst du einen Personalausweis!", client))
-		return
-	end
-
-	if client:getJob() then
-		client:sendError(_("Du hast bereits einen Job, kündige diesen zuerst!", client))
 		return
 	end
 

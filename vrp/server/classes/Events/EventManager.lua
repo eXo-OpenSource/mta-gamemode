@@ -35,7 +35,6 @@ function EventManager:constructor()
 			if event.onPlayerWasted then event:onPlayerWasted(player) end
 
 			if event:hasExit() then
-				player:respawn(event:getExitPosition())
 				return true
 			end
 		end

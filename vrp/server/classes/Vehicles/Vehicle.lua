@@ -143,6 +143,11 @@ function Vehicle:setMileage(mileage)
 end
 
 function Vehicle:getMileage()
+	if not self.m_Mileage then
+		outputDebug("Invalid mileage detected. Vehicle: "..self:getName())
+		return 0
+	end
+
 	return self.m_Mileage
 end
 

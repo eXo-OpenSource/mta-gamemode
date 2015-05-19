@@ -289,7 +289,7 @@ function GangArea:canBeTurfed()
 
 	-- Check if noone was playing (use MySQL statement directly instead of loading all data)
 	for playerId in pairs(self.m_OwnerGroup:getPlayers(true)) do
-		local row = sql:queryFetchSingle("SELECT DATE_ADD(LastLogin, INTERVAL 24 HOUR) > NOW() AS WasOnline FROM ??_accounts WHERE Id = ?", sql:getPrefix(), playerId)
+		local row = sql:queryFetchSingle("SELECT DATE_ADD(LastLogin, INTERVAL 24 HOUR) > NOW() AS WasOnline FROM ??_account WHERE Id = ?", sql:getPrefix(), playerId)
 		if row.WasOnline == 1 then
 			return false
 		end
