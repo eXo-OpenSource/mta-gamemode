@@ -25,6 +25,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	self.m_Alpha = 255
 	self.m_Size = 24
 	self.m_StreamDistance = streamDistance or 800
+	self.m_Color = tocolor(255, 255, 255, 255)
 
 	Blip.Blips[self.m_ID] = self
 end
@@ -49,6 +50,8 @@ end
 function Blip:setImagePath(path)
 	self.m_RawImagePath = path
 	self:updateDesignSet()
+
+	return self
 end
 
 function Blip:getPosition()
@@ -57,6 +60,8 @@ end
 
 function Blip:setPosition(x, y)
 	self.m_WorldX, self.m_WorldY = x, y
+
+	return self
 end
 
 function Blip:getAlpha()
@@ -65,6 +70,8 @@ end
 
 function Blip:setAlpha(alpha)
 	self.m_Alpha = alpha
+
+	return self
 end
 
 function Blip:getSize()
@@ -73,6 +80,8 @@ end
 
 function Blip:setSize(size)
 	self.m_Size = size
+
+	return self
 end
 
 function Blip:getStreamDistance()
@@ -81,10 +90,22 @@ end
 
 function Blip:setStreamDistance(distance)
 	self.m_StreamDistance = distance
+
+	return self
 end
 
 function Blip:updateDesignSet()
 	self.m_ImagePath = HUDRadar:getSingleton():makePath(self.m_RawImagePath, true)
+end
+
+function Blip:setColor(color)
+	self.m_Color = color
+
+	return self
+end
+
+function Blip:getColor()
+	return self.m_Color
 end
 
 addEvent("blipCreate", true)

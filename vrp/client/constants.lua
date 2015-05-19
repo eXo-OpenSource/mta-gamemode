@@ -93,6 +93,7 @@ HelpTextTitles = {
 		Police = "Job: Polizist";
 		RoadSweeper = "Job: Straßenkehrer";
 		Trashman = "Job: Müllmann";
+		ServiceTechnician = "Job: Service-Techniker"
 	};
 	Events = {
 		Deathmatch = "Event: Deathmatch";
@@ -175,6 +176,7 @@ HelpTexts = {
 			Sofern du es hast kannst du nun losfahren und über den auf der Straße liegenden Müll fahren um ihn aufzukehren.
 		]];
 		Trashman = [[Todo]];
+		ServiceTechnician = [[Todo]];
 	};
 	Events = {
 		Deathmatch = [[Todo]];

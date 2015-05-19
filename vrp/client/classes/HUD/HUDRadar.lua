@@ -138,6 +138,33 @@ function HUDRadar:update()
 		local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
 		self.m_Rotation = math.deg(6.2831853071796 - math.atan2(lookAtX - camX, lookAtY - camY) % 6.2831853071796)
 	end
+
+	for i, v in pairs(getElementsByType("player")) do
+		--if v ~= localPlayer then
+			if ((v:getPosition() - localPlayer:getPosition()).length < 30 or getPedTarget(localPlayer) == v) and v:getWantedLevel() == 0 then
+				outputDebug(v:getName().." is streamed in")
+
+				local pos = v:getPosition()
+				if not v.m_Blip then
+					v.m_Blip = {}
+					v.m_Blip[1] = Blip:new("PlayerMarker/in.png", pos.x, pos.y):setSize(20)
+					v.m_Blip[2] = Blip:new("PlayerMarker/4.png", pos.x, pos.y):setSize(20)
+				end
+
+				local k = v:getKarma()
+				v.m_Blip[1]:setColor(tocolor(255-(k+150)*(255/300), (k+150)*(255/300), -math.abs(k*(127/150))+127))
+				v.m_Blip[1]:setPosition(pos.x, pos.y)
+				v.m_Blip[2]:setPosition(pos.x, pos.y)
+			else
+				if v.m_Blip then
+					for i, v in pairs(v.m_Blip) do
+						delete(v)
+					end
+					v.m_Blip = nil
+				end
+			end
+		--end
+	end
 end
 
 local pi = math.pi
@@ -230,7 +257,7 @@ function HUDRadar:draw()
 					end
 
 					local blipSize = blip:getSize()
-					dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath())
+					dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath(), 0, 0, 0, blip:getColor())
 				end
 			end
 		end
@@ -238,7 +265,7 @@ function HUDRadar:draw()
 
 	-- Draw the player blip
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
-	dxDrawImage(self.m_PosX+self.m_Width/2-6, self.m_PosY+2+self.m_Height/2-6, 16, 16, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
+	--dxDrawImage(self.m_PosX+self.m_Width/2-6, self.m_PosY+2+self.m_Height/2-6, 16, 16, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
 end
 
 function HUDRadar:worldToMapPosition(worldX, worldY)

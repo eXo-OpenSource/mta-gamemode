@@ -78,6 +78,11 @@ function JobManager:Event_jobAccepted(jobId)
 		return
 	end
 
+	if client:getJob() then
+		client:sendError(_("Du hast bereits einen Job, kündige diesen zuerst!", client))
+		return
+	end
+
 	-- Start the job
 	client:setJob(job)
 end

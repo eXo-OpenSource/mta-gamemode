@@ -8,10 +8,16 @@
 JobServiceTechnician = inherit(Job)
 
 function JobServiceTechnician:constructor()
-    Job.constructor(self, 900.80, -1447.34, 13.29, "ServiceTechnician.png", "files/images/Jobs/HeaderServiceTechnician.png", _"Service-Techniker", _"Dies ist der Service Techniker")
+    Job.constructor(self, 900.80, -1447.34, 13.29, "ServiceTechnician.png", "files/images/Jobs/HeaderServiceTechnician.png", _(HelpTextTitles.Jobs.ServiceTechnician):gsub("Job: ", ""), _(HelpTexts.Jobs.ServiceTechnician))
 
 end
 
 function JobServiceTechnician:start()
+  -- Show text in help menu
+	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.ServiceTechnician), _(HelpTexts.Jobs.ServiceTechnician))
+end
 
+function JobServiceTechnician:stop()
+  -- Reset text in help menu
+  HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end

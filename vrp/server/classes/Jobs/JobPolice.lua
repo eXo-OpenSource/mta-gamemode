@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 JobPolice = inherit(Job)
-local JailCells
 
 function JobPolice:constructor()
 	Job.constructor(self)
@@ -82,9 +81,8 @@ end
 
 function JobPolice:jailPlayer(player, policeman)
 	-- Teleport to jail
-	local pos = JailCells[math.random(1, #JailCells)]
-	player:setPosition(pos + Vector3(math.random(-2, 2), math.random(-2, 2), 0))
-	player:setRotation(0, 0, 180)
+	player:setPosition(Vector3(2673.37, -2112.44, 19.05) + Vector3(math.random(-2, 2), math.random(-2, 2), 0))
+	player:setRotation(0, 0, 90)
 	player:toggleControl("fire", false)
 	player:toggleControl("jump", false)
 	player:toggleControl("aim_weapon ", false)
@@ -184,12 +182,3 @@ end
 function JobPolice:reportSpecialCrime(crimeType, message)
 	self:sendMessage(message)
 end
-
-JailCells = {
-	Vector3(3473.7, -2090.1001, 20.9),
-	Vector3(3472.8999, -2106.1001, 20.9),
-	Vector3(3486.8999, -2106.1001, 20.9),
-	Vector3(3488.1001, -2090.3999, 20.9),
-	Vector3(3453.8999, -2153.8999, 17.1),
-	Vector3(3521, -2063.8, 21.3)
-}
