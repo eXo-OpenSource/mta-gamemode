@@ -223,12 +223,14 @@ end
 function JailBreak:PipeOutShape_Hit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		hitElement:setPosition(2971.4004, -2132, 1211.4)
+		hitElement:setRotation(0, 0, 263)
 		hitElement:setDimension(5)
 	end
 end
 
 function JailBreak:PipeExitShape_Hit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
+		hitElement:fadeCamera(false)
 		hitElement:setDimension(0)
 
 		local positions = {
@@ -239,9 +241,13 @@ function JailBreak:PipeExitShape_Hit(hitElement, matchingDimension)
 			{2263.5, -755.5, 38, 116},
 			{1271.5, 295.29999, 20.7, 0}
 		}
-		local x, y, z, rot = unpack(Randomizer:getRandomTableValue(positions))
-		hitElement:setPosition(x, y, z)
-		hitElement:setRotation(0, 0, rot)
+		setTimer(function ()
+			local x, y, z, rot = unpack(Randomizer:getRandomTableValue(positions))
+			hitElement:setPosition(x, y, z)
+			hitElement:setRotation(0, 0, rot)
+
+			setTimer(bind(hitElement.fadeCamera, hitElement, true), 500, 1)
+		end, 1050, 1)
 	end
 end
 

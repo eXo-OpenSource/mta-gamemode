@@ -84,7 +84,6 @@ BankStat = {
 	Withdrawal = 3,
 	Deposit = 4,
 	Job = 5,
-
 }
 
 GroupRank = {
@@ -92,6 +91,12 @@ GroupRank = {
 	Manager = 1,
 	Leader = 2
 }
+local r3 = {}
+for k, v in pairs(GroupRank) do
+	r3[k] = v
+	r3[v] = k
+end
+GroupRank = r3
 
 Crime = {
 	Kill = {id = 1, text = "Mord", maxwanted = 4, maxdistance = 1500},

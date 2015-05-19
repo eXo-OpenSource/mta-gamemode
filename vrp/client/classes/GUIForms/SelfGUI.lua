@@ -33,6 +33,10 @@ function SelfGUI:constructor()
 	self.m_TabGroups = tabGroups
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Gruppe:", tabGroups)
 	self.m_GroupsNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
+	self.m_GroupsNameChangeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.1, self.m_Height*0.06, "(change)", tabGroups):setColor(Color.LightBlue)
+	self.m_GroupsNameChangeLabel.onLeftClick = function() ErrorBox:new("Not implemented yet!") end
+	self.m_GroupsNameChangeLabel.onHover = function () self.m_GroupsNameChangeLabel:setColor(Color.White) end
+	self.m_GroupsNameChangeLabel.onUnhover = function () self.m_GroupsNameChangeLabel:setColor(Color.LightBlue) end
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGroups)
 	self.m_GroupsKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"Gruppenrang:", tabGroups)
@@ -276,10 +280,11 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
 
 	if name then
 		local karma = math.floor(karma)
-
+		local x, y = self.m_GroupsNameLabel:getPosition()
+		self.m_GroupsNameChangeLabel:setPosition(x + dxGetTextWidth(name, self.m_GroupsNameLabel:getFontSize(), self.m_GroupsNameLabel:getFont()) + 10, y)
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
-		self.m_GroupsRankLabel:setText(tostring(rank))
+		self.m_GroupsRankLabel:setText(GroupRank[rank])
 		self.m_GroupMoneyLabel:setText(tostring(money).."$")
 
 		self.m_GroupPlayersGrid:clear()
