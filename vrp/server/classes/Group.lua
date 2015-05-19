@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, money, players, karma)
+function Group:constructor(Id, name, money, players, karma, lastNameChange)
 	self.m_Id = Id
 
 	self.m_Players = players or {}
@@ -16,6 +16,7 @@ function Group:constructor(Id, name, money, players, karma)
 	self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
 	self.m_Invitations = {}
 	self.m_Karma = karma
+	self.m_LastNameChange = lastNameChange
 end
 
 function Group:destructor()
@@ -53,6 +54,18 @@ end
 
 function Group:getId()
 	return self.m_Id
+end
+
+function Group:setName(name)
+	local timestamp = getRealTime().timestamp
+	if not sql:queryExec("UPDATE ??_groups SET Name = ?, lastNameChange = ? WHERE Id = ?", sql:getPrefix(), name, timestamp, self.m_Id) then
+		return false
+	end
+
+	self.m_Name = name
+	self.m_LastNameChange = timestamp
+
+	return true
 end
 
 function Group:getName()

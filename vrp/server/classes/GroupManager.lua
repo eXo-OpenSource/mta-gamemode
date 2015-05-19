@@ -11,7 +11,7 @@ GroupManager.GroupCosts = 30000
 
 function GroupManager:constructor()
 	outputServerLog("Loading groups...")
-	local result = sql:queryFetch("SELECT Id, Name, Money, Karma FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
 		local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 		local players = {}
@@ -19,13 +19,13 @@ function GroupManager:constructor()
 			players[groupRow.Id] = groupRow.GroupRank
 		end
 
-		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma)
+		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma, row.lastNameChange)
 		GroupManager.Map[row.Id] = group
 	end
 
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
-		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown"}
+		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_groupRequestInfo, self))
 	addEventHandler("groupCreate", root, bind(self.Event_groupCreate, self))
 	addEventHandler("groupQuit", root, bind(self.Event_groupQuit, self))
@@ -38,6 +38,7 @@ function GroupManager:constructor()
 	addEventHandler("groupInvitationDecline", root, bind(self.Event_groupInvitationDecline, self))
 	addEventHandler("groupRankUp", root, bind(self.Event_groupRankUp, self))
 	addEventHandler("groupRankDown", root, bind(self.Event_groupRankDown, self))
+	addEventHandler("groupChangeName", root, bind(self.Event_groupChangeName, self))
 end
 
 function GroupManager:destructor()
@@ -304,5 +305,38 @@ function GroupManager:Event_groupRankDown(playerId)
 	if group:getPlayerRank(playerId) == GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
 		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+	end
+end
+
+function GroupManager:Event_groupChangeName(name)
+	if not name then return end
+	local group = client:getGroup()
+	if not group then return end
+
+	if not group:isPlayerMember(client) then
+		return
+	end
+
+	if group:getPlayerRank(client) < GroupRank.Leader then
+		client:sendError(_("Du bist nicht berechtigt den Namen zu verändern!", client))
+		-- Todo: Report possible cheat attempt
+		return
+	end
+
+	if self:getByName(name) then
+		client:sendError(_("Es existiert bereits eine Gruppe mit diesem Namen!", client))
+		return
+	end
+
+	if (getRealTime().timestamp - group.m_LastNameChange) < GROUP_RENAME_TIMEOUT then
+		client:sendError(_("Du kannst deine Gruppe nur alle "..(GROUP_RENAME_TIMEOUT/24/60/60).." Tage umbennen!", client))
+		return
+	end
+
+	if group:setName(name) then
+		client:sendSuccess(_("Deine Gruppe heißt nun\n%s!", client, name))
+		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+	else
+		client:sendError(_("Es ist ein unbekannter Fehler aufgetreten!", client))
 	end
 end
