@@ -88,8 +88,8 @@ function SelfGUI:constructor()
 	self.m_VehiclesGrid:addColumn(_"Name", 0.3)
 	self.m_VehiclesGrid:addColumn(_"Standort", 0.7)
 	self.m_VehicleGarages = GUILabel:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.5, self.m_Height*0.06, _"Garage:", tabVehicles)
-	self.m_VehicleHangar = GUILabel:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.5, self.m_Height*0.06, _"Hangar: kein Hangar", tabVehicles)
-	self.m_VehicleGarageUpgradeButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.35, self.m_Height*0.07, _"Upgrade", true, tabVehicles)
+	self.m_VehicleHangar = GUILabel:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.5, self.m_Height*0.06, _"Hangar:", tabVehicles)
+	self.m_VehicleGarageUpgradeButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.35, self.m_Height*0.07, _"Garage kaufen", true, tabVehicles)
 	self.m_VehicleHangarButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.84, self.m_Width*0.35, self.m_Height*0.07, _"Hangar kaufen", true, tabVehicles)
 	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
 	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles)
@@ -432,15 +432,28 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType)
 		end
 	end
 
-	self.m_VehicleGarageUpgradeButton:setText(_"Upgrade")
+	self.m_VehicleGarageUpgradeButton:setText(_"Garage kaufen")
 	if garageType then
 		localPlayer.m_GarageType = garageType
-		if garageType == 0 then
-			self.m_VehicleGarageUpgradeButton:setText(_"Garage kaufen")
+		if garageType > 0 then
+			self.m_VehicleGarageUpgradeButton:setText(_"Upgrade")
 		end
 
-		local texts = {[0] = _"Garage: keine Garage (0 Slots)", [1] = _"Garage: Standard Garage (3 Slots)", [2] = _"Garage: Komfortable Garage (6 Slots)", [3] = _"Garage: Luxus Garage (10 Slots)"}
-		self.m_VehicleGarages:setText(texts[garageType])
+		local Garagetexts = {[0] = _"Garage: keine Garage (0 Slots)", [1] = _"Garage: Standard Garage (3 Slots)", [2] = _"Garage: Komfortable Garage (6 Slots)", [3] = _"Garage: Luxus Garage (10 Slots)"}
+		self.m_VehicleGarages:setText(Garagetexts[garageType])
+	end
+
+
+	local hangarType = 0 -- Todo: Implement Hangar
+	self.m_VehicleHangarButton:setText(_"Hangar kaufen")
+	if hangarType then
+		localPlayer.m_HangarType = hangarType
+		if hangarType > 0 then
+			self.m_VehicleHangarButton:setText(_"Upgrade")
+		end
+
+		local Hangartexts = {[0] = _"Hangar: kein Hangar (0 Slots)", [1] = _"Hangar: Unkown Hangar (Unkown Slots)", [2] = _"Garage: Unkown Hangar (Unkown Slots)", [3] = _"Hangar:  Unkown Hangar (Unkown Slots)"}
+		self.m_VehicleHangar:setText(Hangartexts[hangarType])
 	end
 end
 

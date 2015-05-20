@@ -61,6 +61,7 @@ function Group:setName(name)
 	if not sql:queryExec("UPDATE ??_groups SET Name = ?, lastNameChange = ? WHERE Id = ?", sql:getPrefix(), name, timestamp, self.m_Id) then
 		return false
 	end
+	triggerClientEvent("gangAreaOnGroupNameChange", root, self.m_Name, name)
 
 	self.m_Name = name
 	self.m_LastNameChange = timestamp
