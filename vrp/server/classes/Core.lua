@@ -44,6 +44,7 @@ function Core:constructor()
 	Deathmatch:new()
 	VehicleTuning:new()
 	DimensionManager:new()
+	ActorManager:new()
 
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

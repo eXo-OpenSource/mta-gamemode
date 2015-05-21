@@ -6,11 +6,21 @@
 -- *
 -- ****************************************************************************
 Actor = inherit(Ped)
-addRemoteEvents{"actorCreate", "actorStartPrimaryTask", "actorStopPrimaryTask", "actorStartSecondaryTask"}
+addRemoteEvents{"actorCreate", "actorStartPrimaryTask", "actorStopPrimaryTask", "actorStartSecondaryTask", "actorInitialSync"}
 
 function Actor:constructor()
     self.m_PrimaryTask = false
     self.m_SecondaryTasks = {}
+end
+
+function Actor:destructor()
+    if self.m_PrimaryTask then
+        delete(self.m_PrimaryTask)
+    end
+
+    for k, task in pairs(self.m_SecondaryTasks) do
+        delete(task)
+    end
 end
 
 function Actor:getPrimaryTask()
@@ -76,5 +86,30 @@ addEventHandler("actorStartSecondaryTask", root,
 addEventHandler("actorStopSecondaryTask", root,
     function(taskId)
         source:removeSecondaryTaskById(taskId)
+    end
+)
+
+addEventHandler("actorInitialSync", root,
+    function(syncInfo)
+        local loadSyncInfo = function(actor, info)
+                local taskId, parameters = unpack(info)
+                local taskClass = Task.getById(taskId)
+                outputDebug("Loading taskId: "..tostring(taskId).."; taskClass: "..tostring(taskClass))
+                if taskClass then
+                    actor:setPrimaryTask(taskClass:new(actor, unpack(parameters)))
+                end
+            end
+
+        for actor, info in pairs(syncInfo) do
+            enew(actor, Actor)
+
+            if info.Primary then
+                loadSyncInfo(actor, info.Primary)
+            end
+
+            for k, secInfo in pairs(info.Secondary) do
+                loadSyncInfo(actor, secInfo)
+            end
+        end
     end
 )

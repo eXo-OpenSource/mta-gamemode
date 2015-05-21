@@ -10,10 +10,12 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
+	self.m_ReadyPlayers = {}
 
 	-- Register events
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
+	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
 	addEventHandler("onPlayerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 
@@ -47,6 +49,10 @@ function PlayerManager:getWastedHook()
 	return self.m_WastedHook
 end
 
+function PlayerManager:getReadyPlayers()
+	return self.m_ReadyPlayers
+end
+
 
 -----------------------------------------
 --------       Event zone       ---------
@@ -63,8 +69,17 @@ function PlayerManager:playerJoin()
 	source:join()
 end
 
+function PlayerManager:playerQuit()
+	local index = table.find(self.m_ReadyPlayers)
+	if index then
+		table.remove(self.m_ReadyPlayers, index)
+	end
+end
+
 function PlayerManager:Event_playerReady()
 	local player = client
+
+	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = source
 
 	-- Send sync
 	for k, v in pairs(getElementsByType("player")) do

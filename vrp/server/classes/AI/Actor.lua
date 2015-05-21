@@ -11,7 +11,23 @@ function Actor:virtual_constructor()
     self.m_PrimaryTask = false
     self.m_SecondaryTasks = {}
 
-    triggerClientEvent("actorCreate", self)
+    triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "actorCreate", self)
+
+    -- Register at the actor manager
+    ActorManager:getSingleton():register(self)
+end
+
+function Actor:destructor()
+    -- Unregister at the actor manager
+    ActorManager:getSingleton():unregister(self)
+
+    if self.m_PrimaryTask then
+        delete(self.m_PrimaryTask)
+    end
+
+    for k, task in pairs(self.m_SecondaryTasks) do
+        delete(task)
+    end
 end
 
 -- Custom allocator
@@ -28,7 +44,7 @@ end
 function Actor:startPrimaryTask(taskClass, ...)
     -- Delete old primary task if available
     if self.m_PrimaryTask then
-        triggerClientEvent("actorStopPrimaryTask", self)
+        triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "actorStopPrimaryTask", self)
         delete(self.m_PrimaryTask)
     end
 
@@ -36,7 +52,7 @@ function Actor:startPrimaryTask(taskClass, ...)
 
     if self.m_PrimaryTask:hasClientScript() then
         local parameters = self.m_PrimaryTask.getClientParameter and self.m_PrimaryTask:getClientParameter() or {}
-        triggerClientEvent("actorStartPrimaryTask", self, self.m_PrimaryTask:getId(), unpack(parameters))
+        triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "actorStartPrimaryTask", self, self.m_PrimaryTask:getId(), unpack(parameters))
     end
 end
 
@@ -57,7 +73,7 @@ function Actor:startSecondaryTask(taskClass, ...)
 
     if task:hasClientScript() then
         local parameters = task.getClientParameter and task:getClientParameter() or {}
-        triggerClientEvent("actorStartSecondaryTask", self, task:getId(), unpack(parameters))
+        triggerClientEvent(PlayerManager:getSingleton():getReadyPlayers(), "actorStartSecondaryTask", self, task:getId(), unpack(parameters))
     end
 end
 
@@ -73,6 +89,24 @@ end
 
 function Actor:getSecondaryTasks()
     return self.m_SecondaryTasks
+end
+
+function Actor:getSyncInfo()
+    local primaryInfo = false
+    local parameters = self.m_PrimaryTask.getClientParameter and self.m_PrimaryTask:getClientParameter() or {}
+    if self.m_PrimaryTask:hasClientScript() then
+        primaryInfo = {self.m_PrimaryTask:getId(), parameters}
+    end
+
+    local secondaryInfo = {}
+    for k, task in ipairs(self.m_SecondaryTasks) do
+        if task:hasClientScript() then
+            local parameters = task.getClientParameter and task:getClientParameter() or {}
+            secondaryInfo[#secondaryInfo + 1] = {task:getId(), parameters}
+        end
+    end
+
+    return {Primary = primaryInfo, Secondary = secondaryInfo}
 end
 
 function Actor:getTaskById(taskId)
