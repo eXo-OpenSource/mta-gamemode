@@ -28,7 +28,7 @@ function ItemRadio:use(inventory, player, slot)
 			local worldItem = inventory:placeItem(self, slot, player, position, rotation)
 			addEventHandler("itemRadioChangeURL", worldItem:getObject(),
 				function(url)
-					inventory:performItemAction(self, root, "changeurl", url, worldItem)
+					inventory:performWorldItemAction(worldItem, root, "changeurl", url, worldItem:getObject())
 				end
 			)
 		end

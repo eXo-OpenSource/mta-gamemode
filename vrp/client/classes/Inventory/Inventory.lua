@@ -8,7 +8,8 @@
 Inventory = inherit(Object)
 Inventory.Map = {}
 Inventory.WorldItemMap = {}
-addRemoteEvents{"inventoryUnload", "inventoryAddItem", "inventoryRemoveItem", "inventoryUseItem", "inventoryReceiveFullSync", "worldItemPlace", "worldItemCollect"}
+addRemoteEvents{"inventoryUnload", "inventoryAddItem", "inventoryRemoveItem", "inventoryUseItem", "inventoryReceiveFullSync",
+	"worldItemPlace", "worldItemCollect", "inventoryPerformItemAction", "inventoryPerformWorldItemAction"}
 
 local function getInvGUI() return InventoryGUI:getSingleton() end
 
@@ -170,6 +171,18 @@ addEventHandler("inventoryPerformItemAction", root,
 		if not inventory then return end
 
 		local item = inventory:findItem(slot, itemId)
+		if item then
+			item:onAction(actionName, ...)
+		end
+	end
+)
+addEventHandler("inventoryPerformWorldItemAction", root,
+	function(actionName, ...)
+		local item = Inventory.WorldItemMap[source]
+		if not item then
+			error("Attempt to perform an action on an inalid item (inventoryPerformWorldItemAction)")
+		end
+
 		if item then
 			item:onAction(actionName, ...)
 		end

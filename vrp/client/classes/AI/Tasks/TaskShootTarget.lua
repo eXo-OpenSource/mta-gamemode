@@ -9,6 +9,7 @@ TaskShootTarget = inherit(Task)
 local MAX_SHOOT_DISTANCE = 30
 
 function TaskShootTarget:constructor(actor, target)
+    outputDebug("TaskShootTarget:constructor - target: "..tostring(target))
     self.m_Target = target
     self.m_ShootTimer = false
 
@@ -49,6 +50,10 @@ function TaskShootTarget:stopShooting()
 end
 
 function TaskShootTarget:update()
+    if not self.m_Target then
+        return
+    end
+
     local actorPosition = self.m_Actor:getPosition()
     local targetPosition = self.m_Target:getPosition()
     self.m_Actor:setRotation(0, 0, findRotation(actorPosition.x, actorPosition.y, targetPosition.x, targetPosition.y))

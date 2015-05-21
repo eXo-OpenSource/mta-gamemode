@@ -230,8 +230,13 @@ function Inventory:useItem(item, player, slot)
 	end
 end
 
-function Inventory:performItemAction(item, player, actionName, ...)
-	triggerClientEvent(player, "inventoryPerformItemAction", player, self.m_Id, item:getItemId(), item:getSlot(), actionName, ...)
+-- The following 2 functions are kinda garbage
+function Inventory:performItemAction(item, slot, player, actionName, ...)
+	triggerClientEvent(player, "inventoryPerformItemAction", player, self.m_Id, item:getItemId(), slot, actionName, ...)
+end
+
+function Inventory:performWorldItemAction(worldItem, player, actionName, ...)
+	triggerClientEvent(player, "inventoryPerformWorldItemAction", worldItem:getObject(), actionName, ...)
 end
 
 function Inventory:sendFullSync()

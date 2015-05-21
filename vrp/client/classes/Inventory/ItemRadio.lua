@@ -18,8 +18,10 @@ function ItemRadio:use(player)
 end
 
 function ItemRadio:onCollect()
-	self.m_Sound:destroy()
-	self.m_Sound = nil
+	if self.m_Sound then
+		self.m_Sound:destroy()
+		self.m_Sound = false
+	end
 end
 
 function ItemRadio:onAction(name, url, object)

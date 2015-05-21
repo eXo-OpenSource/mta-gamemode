@@ -79,7 +79,7 @@ end
 function PlayerManager:Event_playerReady()
 	local player = client
 
-	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = source
+	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
 
 	-- Send sync
 	for k, v in pairs(getElementsByType("player")) do
