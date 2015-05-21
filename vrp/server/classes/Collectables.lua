@@ -26,14 +26,14 @@ function Collectables:checkCollectable(collectableID)
 		collectables[collectableID] = "1"
 		client:setCollectables(collectables)
 
-		client:sendShortMessage(_("Du hast ein vRP-Logo gefunden!\nDafür erhälst du %s vRP-Points!", client, 0))
-		-- TODO: Maybe a reward? vRP-Points?
+		client:sendShortMessage(_("Du hast ein vRP-Logo gefunden!\nDafür erhälst du %s vRP-Points!", client, 500))
+		client:givePoints(500)
 	end
 end
 
 function Collectables:sendCollectables()
 	if not client then return end
-	
+
 	triggerClientEvent(client,"reciveCollectables",client,Collectables.POSITIONS,client:getCollectables() or {})
 end
 

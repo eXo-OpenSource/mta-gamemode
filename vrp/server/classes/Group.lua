@@ -66,6 +66,10 @@ function Group:setName(name)
 	self.m_Name = name
 	self.m_LastNameChange = timestamp
 
+	for i, player in pairs(self:getOnlinePlayers()) do
+		player:setPublicSync("GroupName", self:getName())
+	end
+
 	return true
 end
 

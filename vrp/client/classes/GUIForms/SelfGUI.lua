@@ -33,7 +33,7 @@ function SelfGUI:constructor()
 	self.m_TabGroups = tabGroups
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Gruppe:", tabGroups)
 	self.m_GroupsNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
-	self.m_GroupsNameChangeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.1, self.m_Height*0.06, "(change)", tabGroups):setColor(Color.LightBlue)
+	self.m_GroupsNameChangeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.1, self.m_Height*0.06, _"(ändern)", tabGroups):setColor(Color.LightBlue)
 	self.m_GroupsNameChangeLabel.onLeftClick = function() InputBox:new(_"Gruppennamen ändern", _"Bitte gib einen neuen Name für deine Gruppe ein! Dies kostet dich 20000$!", function (name) triggerServerEvent("groupChangeName", root, name) end) end
 	self.m_GroupsNameChangeLabel.onHover = function () self.m_GroupsNameChangeLabel:setColor(Color.White) end
 	self.m_GroupsNameChangeLabel.onUnhover = function () self.m_GroupsNameChangeLabel:setColor(Color.LightBlue) end

@@ -345,6 +345,12 @@ function GroupManager:Event_groupChangeName(name)
 		return
 	end
 
+	if name:len() > 20 then
+		client:sendError(_("Der Name darf nicht länger als 20 Zeichen sein!", client))
+		return
+	end
+
+
 	if (getRealTime().timestamp - group.m_LastNameChange) < GROUP_RENAME_TIMEOUT then
 		client:sendError(_("Du kannst deine Gruppe nur alle "..(GROUP_RENAME_TIMEOUT/24/60/60).." Tage umbennen!", client))
 		return

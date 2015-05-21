@@ -492,12 +492,7 @@
 	<vrpfile src="files/images/Weapons/Uzi.png"/>
 	<vrpfile src="files/images/Weapons/Vibrator.png"/>
 
-	<vrpfile src="files/images/avatar_default.png"/>
-	<vrpfile src="files/images/world.png"/>
-	<vrpfile src="files/images/Bar.png"/>
-	<vrpfile src="files/images/Bar_hover.png"/>
-	<vrpfile src="files/images/BankRobberyCountdown.png"/>
-	<!--<vrpfile src="files/images/ColorPicker.png"/>-->
+	<vrpfile src="files/images/Other/BankRobberyCountdown.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>
