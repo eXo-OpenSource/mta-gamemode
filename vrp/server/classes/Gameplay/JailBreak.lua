@@ -115,6 +115,7 @@ function JailBreak:respawnGuardPed1()
 	end
 	self.m_GuardPed1 = GuardActor:new(Vector3(2539.9, -2112, 13.5))
 	self.m_GuardPed1:setRotation(0, 0, 90)
+	self.m_GuardPed1:setFrozen(true)
 	addEventHandler("onPedWasted", self.m_GuardPed1, bind(self.GuardPed1_Wasted, self))
 end
 
@@ -124,6 +125,7 @@ function JailBreak:respawnGuardPed2()
 	end
 	self.m_GuardPed2 = GuardActor:new(Vector3(2649.34, -2108.5, 13.5))
 	self.m_GuardPed2:setRotation(0, 0, 90)
+	self.m_GuardPed2:setFrozen(true)
 	addEventHandler("onPedWasted", self.m_GuardPed2, bind(self.GuardPed2_Wasted, self))
 end
 

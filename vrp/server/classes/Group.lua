@@ -12,10 +12,10 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange)
 
 	self.m_Players = players or {}
 	self.m_Name = name
-	self.m_Money = money
+	self.m_Money = money or 0
 	self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
 	self.m_Invitations = {}
-	self.m_Karma = karma
+	self.m_Karma = karma or 0
 	self.m_LastNameChange = lastNameChange
 end
 
@@ -24,7 +24,7 @@ end
 
 function Group.create(name)
 	if sql:queryExec("INSERT INTO ??_groups (Name) VALUES(?)", sql:getPrefix(), name) then
-		local group = Group:new(sql:lastInsertId(), name, 0)
+		local group = Group:new(sql:lastInsertId(), name)
 
 		-- Add refernece
 		GroupManager:getSingleton():addRef(group)

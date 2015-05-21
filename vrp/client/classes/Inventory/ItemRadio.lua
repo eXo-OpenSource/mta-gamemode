@@ -8,7 +8,7 @@
 ItemRadio = inherit(Item)
 
 function ItemRadio:constructor()
-	
+	self.m_Sound = false
 end
 
 function ItemRadio:destructor()
@@ -17,22 +17,24 @@ end
 function ItemRadio:use(player)
 end
 
-addEvent("itemRadioChangeURL", true)
-addEventHandler("itemRadioChangeURL", root,
-	function(url)
-		local radioObject = source
-		
-		if radioObject.sound then
-			radioObject.sound:destroy()
-			radioObject.sound = nil
+function ItemRadio:onCollect()
+	self.m_Sound:destroy()
+	self.m_Sound = nil
+end
+
+function ItemRadio:onAction(name, url, object)
+	if name == "changeurl" then
+		if self.m_Sound then
+			self.m_Sound:destroy()
+			self.m_Sound = nil
 		end
-		
+
 		if url ~= "" then
 			-- Todo: Adjust sound range
-			radioObject.sound = Sound3D.create(url, radioObject:getPosition())
+			self.m_Sound = Sound3D.create(url, object:getPosition())
 		end
 	end
-)
+end
 
 addEvent("itemRadioMenu", true)
 addEventHandler("itemRadioMenu", root,

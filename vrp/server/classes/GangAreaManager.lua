@@ -31,6 +31,11 @@ function GangAreaManager:constructor()
 	setTimer(bind(self.distributeResources, self), RESOURCES_DISTRIBUTE_INTERVAL, 0)
 end
 
+function GangAreaManager:destructor()
+	for k, gangArea in pairs(self.m_Map) do
+		delete(gangArea)
+	end
+end
 
 function GangAreaManager:distributeResources()
 	for k, gangArea in pairs(self.m_Map) do

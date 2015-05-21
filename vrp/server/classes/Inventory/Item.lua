@@ -53,7 +53,7 @@ function Item:startObjectPlacing(player, callback)
 	player:triggerEvent("objectPlacerStart", self:getModelId(), "itemPlaced")
 	player.m_PlacingInfo = {item = self, callback = callback}
 	return true
- end
+end
 
 addEvent("itemPlaced", true)
 addEventHandler("itemPlaced", root,

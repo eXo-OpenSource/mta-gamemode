@@ -23,6 +23,8 @@ function WorldItem:destructor()
 end
 
 function WorldItem:collect(player)
+	player:triggerEvent("worldItemCollect", item.m_Object)
+
 	local item = self.m_Item
 	if item.onCollect then
 		if item:onCollect(player) ~= false then

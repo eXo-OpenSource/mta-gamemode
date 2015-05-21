@@ -147,6 +147,10 @@ function Inventory:placeItem(item, slot, owner, pos, rotation, amount)
 	end
 
 	local worldItem = WorldItem:new(newItem, owner, pos, rotation)
+	if owner then
+		owner:triggerEvent("worldItemPlace", self.m_Id, item:getItemId(), slot, worldItem:getObject())
+	end
+
 	self:removeItemByItem(item, slot, amount)
 	return worldItem
 end
@@ -224,6 +228,10 @@ function Inventory:useItem(item, player, slot)
 	if itemInfo.removeAfterUsage then
 		self:removeItem(slot, 1)
 	end
+end
+
+function Inventory:performItemAction(item, player, actionName, ...)
+	triggerClientEvent(player, "inventoryPerformItemAction", player, self.m_Id, item:getItemId(), item:getSlot(), actionName, ...)
 end
 
 function Inventory:sendFullSync()

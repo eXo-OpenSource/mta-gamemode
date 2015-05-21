@@ -39,8 +39,8 @@ function GangArea:constructor(Id, areaPosition, width, height, resourcesPerDistr
 end
 
 function GangArea:destructor()
-	destroyElement(self.m_ColShape)
-	destroyElement(self.m_RadarArea)
+	self.m_ColShape:destroy()
+	delete(self.m_RadarArea)
 end
 
 function GangArea:getOwnerGroup()

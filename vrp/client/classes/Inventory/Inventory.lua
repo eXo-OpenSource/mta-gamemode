@@ -7,7 +7,8 @@
 -- ****************************************************************************
 Inventory = inherit(Object)
 Inventory.Map = {}
-addRemoteEvents{"inventoryUnload", "inventoryAddItem", "inventoryRemoveItem", "inventoryUseItem", "inventoryReceiveFullSync"}
+Inventory.WorldItemMap = {}
+addRemoteEvents{"inventoryUnload", "inventoryAddItem", "inventoryRemoveItem", "inventoryUseItem", "inventoryReceiveFullSync", "worldItemPlace", "worldItemCollect"}
 
 local function getInvGUI() return InventoryGUI:getSingleton() end
 
@@ -135,5 +136,42 @@ addEventHandler("inventoryReceiveFullSync", root,
 		inventory:applyItemsFromFullsync(data)
 
 		InventoryGUI:getSingleton():setInventory(inventory, true)
+	end
+)
+addEventHandler("worldItemPlace", root,
+	function(inventoryId, itemId, slot, mtaObject)
+		local inventory = Inventory.Map[inventoryId]
+		if not inventory then return end
+
+		local item = inventory:findItem(slot, itemId)
+		if item then
+			-- Add to world item map
+			Inventory.WorldItemMap[mtaObject] = item
+		end
+	end
+)
+addEventHandler("worldItemCollect", root,
+	function(mtaObject)
+		local item = Inventory.WorldItemMap[mtaObject]
+		if not item then
+			error("Attempt to collect an invalid item (worldItemCollect)")
+		end
+
+		if item.onCollect then
+			item:onCollect(mtaObject)
+		end
+
+		Inventory.WorldItemMap[mtaObject] = nil
+	end
+)
+addEventHandler("inventoryPerformItemAction", root,
+	function(inventoryId, itemId, slot, actionName, ...)
+		local inventory = Inventory.Map[inventoryId]
+		if not inventory then return end
+
+		local item = inventory:findItem(slot, itemId)
+		if item then
+			item:onAction(actionName, ...)
+		end
 	end
 )
