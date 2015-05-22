@@ -187,6 +187,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				local vehicle = getPedOccupiedVehicle(hitElement)
 				if vehicle then
 					vehicle:setInGarage(true)
+					vehicle:setPositionType(VehiclePositionType.Garage)
 				end
 				-- Tell the player that we opened the garage session
 				hitElement:triggerEvent("vehicleGarageSessionOpen", session:getDimension())
@@ -235,6 +236,7 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 				-- Remove the vehicle from the garage if exists
 				if vehicle then
 					vehicle:setInGarage(false)
+					vehicle:setPositionType(VehiclePositionType.World)
 				end
 
 				local exitX, exitY, exitZ, rotation = unpack(self.m_Entrances[entranceId].exit)

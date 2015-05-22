@@ -422,13 +422,19 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType)
 				positionType = getZoneName(x, y, z, false)
 			elseif positionType == VehiclePositionType.Garage then
 				positionType = _"Garage"
-			else
+			elseif positionType == VehiclePositionType.Mechanic then
 				positionType = _"Autohof"
+			else
+				positionType = _"Unbekannt"
 			end
 			local item = self.m_VehiclesGrid:addItem(getVehicleName(element), positionType)
 			item.VehicleId = vehicleId
 			item.VehicleElement = element
-			item.VehicleInGarage = inGarage
+			item.PositionType = (
+	 			(vehicleInfo[2] == VehiclePositionType.Mechanic and VehiclePositionType.Mechanic) or
+				(vehicleInfo[2] == VehiclePositionType.Garage and VehiclePositionType.Garage) or
+				(vehicleInfo[2] == VehiclePositionType.World and VehiclePositionType.World)
+			)
 		end
 	end
 
@@ -472,12 +478,18 @@ function SelfGUI:VehicleLocateButton_Click()
 		return
 	end
 
-	if not item.VehicleInGarage then
-		local x, y = getElementPosition(item.VehicleElement)
+	if item.PositionType == VehiclePositionType.World then
+		local x, y, z = getElementPosition(item.VehicleElement)
 		local blip = Blip:new("Waypoint.png", x, y)
 		setTimer(function() HUDRadar:getSingleton():removeBlip(blip) end, 5000, 1)
+
+		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)))
+	elseif item.PositionType == VehiclePositionType.Garage then
+ 		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!")
+	elseif item.PositionType == VehiclePositionType.Mechanic then
+		ShortMessage:new(_"Dieses Fahrzeug befindet sich im Autohof (Mechanic Base)!")
 	else
-		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!")
+		ErrorBox:new(_"Es ist ein interner Fehler aufgetreten!")
 	end
 end
 
