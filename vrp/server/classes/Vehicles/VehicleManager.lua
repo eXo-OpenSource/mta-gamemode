@@ -214,7 +214,7 @@ function VehicleManager:Event_vehicleAddKey(player)
 	if not instanceof(source, PermanentVehicle, true) then return end
 
 	if not source:isPermanent() then
-		client:sendError(_("Nur nicht-permanente Fahrzeuge können Schlüssel haben", client))
+		client:sendError(_("Nur permanente Fahrzeuge können Schlüssel haben!", client))
 		return
 	end
 
@@ -223,10 +223,16 @@ function VehicleManager:Event_vehicleAddKey(player)
 		return
 	end
 
+	if source:hasKey(player:getId()) then
+		client:sendWarning(_("Dieser Spieler besitzt bereits einen Schlüssel!", client))
+		return
+	end
+
 	-- Finally, add the key
 	source:addKey(player)
 
-	-- Todo: Tell the client that we added a new key
+	-- Tell the client that we added a new key
+	triggerClientEvent(client, "vehicleKeysRetrieve", source, source:getKeyNameList())
 end
 
 function VehicleManager:Event_vehicleRemoveKey(characterId)
@@ -240,9 +246,11 @@ function VehicleManager:Event_vehicleRemoveKey(characterId)
 		return
 	end
 
+	-- Finally, remove the key
 	source:removeKey(characterId)
 
-	-- Todo: Tell the client that we removed the key
+	-- Tell the client that we removed the key
+	triggerClientEvent(client, "vehicleKeysRetrieve", source, source:getKeyNameList())
 end
 
 function VehicleManager:Event_vehicleRepair()

@@ -10,7 +10,7 @@ PermanentVehicle = inherit(Vehicle)
 function PermanentVehicle:constructor(Id, owner, keys, color, health, positionType, tunings, mileage)
 	self.m_Id = Id
 	self.m_Owner = owner
-	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- *hide*
+	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
 	self.m_Keys = keys or {}
 	self.m_PositionType = positionType or VehiclePositionType.World
 

@@ -424,16 +424,19 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType)
 				positionType = _"Garage"
 			elseif positionType == VehiclePositionType.Mechanic then
 				positionType = _"Autohof"
+			elseif positionType == VehiclePositionType.Hangar then
+				positionType = _"Hangar"
 			else
 				positionType = _"Unbekannt"
 			end
-			local item = self.m_VehiclesGrid:addItem(getVehicleName(element), positionType)
+			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType)
 			item.VehicleId = vehicleId
 			item.VehicleElement = element
 			item.PositionType = (
-	 			(vehicleInfo[2] == VehiclePositionType.Mechanic and VehiclePositionType.Mechanic) or
+				(vehicleInfo[2] == VehiclePositionType.World and VehiclePositionType.World) or
 				(vehicleInfo[2] == VehiclePositionType.Garage and VehiclePositionType.Garage) or
-				(vehicleInfo[2] == VehiclePositionType.World and VehiclePositionType.World)
+				(vehicleInfo[2] == VehiclePositionType.Mechanic and VehiclePositionType.Mechanic) or
+				(vehicleInfo[2] == VehiclePositionType.Hangar and VehiclePositionType.Hangar)
 			)
 		end
 	end
@@ -488,6 +491,8 @@ function SelfGUI:VehicleLocateButton_Click()
  		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!")
 	elseif item.PositionType == VehiclePositionType.Mechanic then
 		ShortMessage:new(_"Dieses Fahrzeug befindet sich im Autohof (Mechanic Base)!")
+	elseif item.PositionType == VehiclePositionType.Hangar then
+		ShortMessage:new(_"Dieses Flugzeug befindet sich im Hangar!")
 	else
 		ErrorBox:new(_"Es ist ein interner Fehler aufgetreten!")
 	end
