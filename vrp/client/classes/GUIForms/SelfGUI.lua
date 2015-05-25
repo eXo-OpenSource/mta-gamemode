@@ -189,7 +189,7 @@ function SelfGUI:constructor()
 		core:getConfig():set("HUD", "CursorMode", index - 1)
 		Cursor:setCursorMode(toboolean(index - 1))
 	end
-	self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 1) + 1, true)
+	self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.8, self.m_Height*0.07, _"Tipps", tabSettings)
 	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren?", tabSettings)
@@ -204,9 +204,9 @@ function SelfGUI:constructor()
 		if not state then
 			delete(TippManager:getSingleton())
 		else
-				if not TippManager:isInstantiated() then
-					TippManager:new()
-				end
+			if not TippManager:isInstantiated() then
+				TippManager:new()
+			end
 		end
 	end
 
@@ -230,12 +230,12 @@ function SelfGUI:constructor()
 		end
 	end
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.74, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnungen", tabSettings)
+	--[[GUILabel:new(self.m_Width*0.02, self.m_Height*0.74, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnungen", tabSettings)
 	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
 	self.m_KeyBindingsButton.onLeftClick = function ()
 		self:close()
 		KeyBindings:new()
-	end
+	end]]
 end
 
 function SelfGUI:onShow()

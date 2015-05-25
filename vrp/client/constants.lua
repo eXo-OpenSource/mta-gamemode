@@ -80,7 +80,7 @@ RadarDesign = {Monochrome = 1, GTA = 2}
 
 HelpTextTitles = {
 	General = {
-		Main = "Such Help. So vRP. Wow.\n";
+		Main = "vRoleplay";
 		LoginRegister = "Login/Registration";
 		Team = "Team";
 	};
@@ -104,7 +104,13 @@ HelpTextTitles = {
 
 HelpTexts = {
 	General = {
-		Main = "\n"..LOREM_IPSUM;
+		Main = [[
+			vRoleplay ist ein Server-Projekt für die Multiplayer Modifikation Multi Theft Auto: San Andreas für GTA: San Andreas.
+			Ziel des Projekts ist ein möglichst umfangreiches, neuartiges Rollenspiel zu schaffen.
+
+			Wir befinden uns derzeit in der Alpha Testphase, was bedeutet, dass es momentan hauptsächlich darum geht,
+			das richtige Balancing zu finden und fehlende Features auszumachen.
+		]],
 		LoginRegister = [[
 			Dies ist das Login Fenster. Im Tab 'Login' kannst Du dich einloggen, im Tab 'Registrieren' demzufolge registrieren.
 
@@ -142,20 +148,26 @@ HelpTexts = {
 	Jobs = {
 		BusDriver = [[
 			Als Busfahrer musst du die Bürger von Los Santos von A nach B transportieren.
-			Im Grunde musst du nur dem roten Marker mit dem grauen Dreieck folgen und kurz an den jeweiligen Bushaltestellen anhalten.
-			Wenn du keine Lust mehr hast und dine Tour beenden willst musst du nur aus dem Bus aussteigen und weglaufen.
+			Im Grunde musst du nur dem roten Marker mit dem grauen Dreieck folgen und
+			kurz an den jeweiligen Bushaltestellen anhalten.
+
+			Wenn du keine Lust mehr hast und dine Tour beenden willst,
+			musst du nur aus dem Bus aussteigen und weglaufen.
 		]];
 		Farmer = [[
 			Als Farmer hast du 3 Aufgaben: sähen, ernten und beliefern.
 			Spawne zu Anfang im roten Marker einen Traktor um mit diesem auf dem Feld hinter dem Marker zu sähen.
 			Anschließend spawnst du dir einen Mähdrescher, mit welchem du nun deine Ernte einholst.
-			Anschließend holst du dir deinen kleinen Pick up Truck (ebenfalls im roten Marker) und belieferst den auf der Karte angezeigten Supermarkt ("Waypoint"-Blip).
+			Anschließend holst du dir deinen kleinen Pick up Truck (ebenfalls im roten Marker) und
+			belieferst den auf der Karte angezeigten Supermarkt ("Waypoint"-Blip).
 		]];
 		Logistician = [[Todo]];
 		Lumberjack = [[
 			Als Holzfäller musst du die Bäume am Hügel fällen und sie zum Sägewerk fahren.
-			Sofern du genug Bäume gefällt hast schnappst du dir einen Flatbed und fährst in den blauen Marker, neben welchem sich ein Haufen von Bäumen angesammelt hat (deine gefällten Bäume).
-			Nun werden diese Bäume aufgeladen. Nachdem sie aufgeladen wurden musst du zum Sägewerk fahren (die rote Säge auf der Karte). Dort lieferst du sie ab.
+			Sofern du genug Bäume gefällt hast schnappst du dir einen Flatbed und fährst in den
+			blauen Marker, neben welchem sich ein Haufen von Bäumen angesammelt hat (deine gefällten Bäume).
+			Nun werden diese Bäume aufgeladen. Nachdem sie aufgeladen wurden musst du zum Sägewerk fahren (die rote Säge auf der Karte).
+			Dort lieferst du sie ab.
 		]];
 		Mechanic = [[
 			Als Mechaniker musst du die Autos deiner Mitbürger reparieren. Du reparierst sie, indem du auf das gewünschte Auto klickst und "reparieren" wählst.

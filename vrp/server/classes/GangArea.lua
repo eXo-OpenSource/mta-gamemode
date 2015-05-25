@@ -112,17 +112,19 @@ end
 
 function GangArea:updateTurfing()
 	-- Using a timer interval of 4 seconds results in a overall turfing time of 400 seconds (4000ms * 100)
-	if self.m_TurfingDirection then
-		-- Attacking mode
-		self.m_TurfingProgress = self.m_TurfingProgress - 1
+	if #self.m_TurfingPlayers > 0 or #self.m_DefendingPlayers > 0 then
+		if self.m_TurfingDirection then
+			-- Attacking mode
+			self.m_TurfingProgress = self.m_TurfingProgress - 1
 
-		-- Tripple speed if the area has no owner group
-		if not self.m_OwnerGroup then
-			self.m_TurfingProgress = self.m_TurfingProgress - 2 -- We don't need to take the turfing direction into account as defending is not possible if there isn't any owner group
+			-- Tripple speed if the area has no owner group
+			if not self.m_OwnerGroup then
+				self.m_TurfingProgress = self.m_TurfingProgress - 2 -- We don't need to take the turfing direction into account as defending is not possible if there isn't any owner group
+			end
+		else
+			-- Defending mode
+			self.m_TurfingProgress = self.m_TurfingProgress + 1
 		end
-	else
-		-- Defending mode
-		self.m_TurfingProgress = self.m_TurfingProgress + 1
 	end
 
 	if self.m_TurfingProgress <= 0 then

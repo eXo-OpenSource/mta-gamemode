@@ -231,6 +231,7 @@
 	<script src="client/classes/GUI/GUIRoundedRect.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
+	<script src="client/classes/GUI/GUIScrollableText.lua" type="client"/>
 
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>

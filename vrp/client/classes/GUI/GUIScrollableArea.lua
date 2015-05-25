@@ -124,6 +124,8 @@ function GUIScrollableArea:resize(documentWidth, documentHeight)
 	if self.m_VerticalScrollbar and self.m_DocumentHeight > self.m_Height then
 		self.m_VerticalScrollbar:setVisible(true)
 		self.m_VerticalScrollbar:setScrollerSize(self.m_Height/self.m_DocumentHeight * self.m_Height)
+	else
+		self.m_VerticalScrollbar:setVisible(false)
 	end
 
 	self:anyChange()

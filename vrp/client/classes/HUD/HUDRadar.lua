@@ -142,8 +142,6 @@ function HUDRadar:update()
 	for i, v in pairs(getElementsByType("player")) do
 		if v ~= localPlayer then
 			if ((v:getPosition() - localPlayer:getPosition()).length < 30 or getPedTarget(localPlayer) == v) and v:getWantedLevel() == 0 then
-				outputDebug(v:getName().." is streamed in")
-
 				local pos = v:getPosition()
 				if not v.m_Blip then
 					v.m_Blip = {}

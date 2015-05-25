@@ -11,7 +11,7 @@ function HelpTextManager:constructor()
 	self.m_Texts = {}
 
 	-- General purpose texts here
-	self:addText(_"Allgemein", "vRoleplay", LOREM_IPSUM)
+	self:addText(_"Allgemein", _(HelpTextTitles.General.Main), _(HelpTexts.General.Main))
 	self:addText(_"Allgemein", _(HelpTextTitles.General.Team), _(HelpTexts.General.Team))
 end
 

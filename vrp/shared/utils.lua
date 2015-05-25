@@ -369,7 +369,7 @@ function isEventHandlerAdded( sEventName, pElementAttachedTo, func )
 	return false
 end
 
-function hasPedThisWeaponInSlots ( ped, id )
+function hasPedThisWeaponInSlots(ped, id)
 	local occupied = false
 	for i = 1, 8 do
 		local weapon = getPedWeapon ( ped, i )
@@ -467,4 +467,14 @@ end
 
 function getVehicleUpgradePrice(upgradeId)
 	return VEHICLE_UPGRADE_PRICES[upgradeId]
+end
+
+function countLineBreaks(text)
+	local count = 0
+	for i = 0, #text do
+		if text:sub(i, i) == "\n" then
+			count = count + 1
+		end
+	end
+	return count
 end

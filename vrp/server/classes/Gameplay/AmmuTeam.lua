@@ -7,13 +7,11 @@ function AmmuTeam:constructor(id,name,rating,kind,members,founder)
 	self.m_Kind = kind
 	self.m_Members = members
 	self.m_Founder = founder
-	
-	print(self.m_Kind,"team created")
 end
 
 -- short get-funcs
 
-function AmmuTeam:getKind() return self.m_Kind end 
+function AmmuTeam:getKind() return self.m_Kind end
 function AmmuTeam:getRating() return self.m_Rating end
 function AmmuTeam:getName() return self.m_Name end
 function AmmuTeam:getMembers() return self.m_Members end
