@@ -12,15 +12,16 @@ function Phone:constructor()
 	GUIForm.constructor(self, screenWidth-270, screenHeight-500, 250, 490)
 
 	self.m_Apps = {}
+	self.m_CurrentApp = false
 
 	-- Register apps
 	self:registerApp(AppCall)
 	self:registerApp(AppSettings)
 	self:registerApp(AppDashboard)
-	self:registerApp(AppNametag)
+	--self:registerApp(AppNametag)
 
 	-- Register web apps
-	self:registerApp(PhoneApp.makeWebApp("YouTube", "files/images/Phone/Apps/IconYouTube.png", "https://youtube.com"))
+	self:registerApp(PhoneApp.makeWebApp("YouTube", "files/images/Phone/Apps/IconYouTube.png", "https://youtube.com/tv", false))
 
 	-- Add GUI elements
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/Phone.png", self)
@@ -60,8 +61,15 @@ function Phone:open()
 end
 
 function Phone:close()
-	self:closeAllApps()
+	for k, app in ipairs(self.m_Apps) do
+		if app:isOpen() and app:isDestroyOnCloseEnabled() then
+			app:close()
+		end
+	end
+	self.m_IconSurface:setVisible(true)
+
 	self:setVisible(false)
+	self.m_CurrentApp = false
 end
 
 function Phone:closeAllApps()
@@ -91,6 +99,7 @@ function Phone:openApp(app)
 	if not self:isVisible() then
 		self:open()
 	end
+	self.m_CurrentApp = app
 
 	-- Hide app icon surface/activity
 	self.m_IconSurface:setVisible(false)

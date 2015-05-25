@@ -12,6 +12,7 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
 
     self.m_IsLocal = url:sub(0, 7) ~= "http://" and url:sub(0, 8) ~= "https://"
     self.m_Browser = Browser.create(width, height, self.m_IsLocal, transparent)
+    self.m_PauseOnHide = true
 
     self.m_CursorMoveFunc = bind(self.onCursorMove, self)
     self.m_UpdateFunc = bind(self.update, self)
@@ -19,6 +20,7 @@ function GUIWebView:constructor(posX, posY, width, height, url, transparent, par
     addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
     addEventHandler("onClientBrowserCreated", self.m_Browser, function() source:loadURL(url) end)
     addEventHandler("onClientBrowserDocumentReady", self.m_Browser, function(...) if self.onDocumentReady then self:onDocumentReady(...) end end)
+    addEventHandler("onClientBrowserInputFocusChanged", self.m_Browser, function(gainedFocus) guiSetInputEnabled(gainedFocus) end)
 end
 
 function GUIWebView:destructor()
@@ -39,7 +41,10 @@ function GUIWebView:update()
 end
 
 function GUIWebView:setVisible(state, ...)
-    self.m_Browser:setRenderingPaused(not state)
+    -- TODO: Looks like this function is never called?
+    if self.m_PauseOnHide then
+        self.m_Browser:setRenderingPaused(not state)
+    end
 
     GUIElement.setVisible(self, state, ...)
 end
@@ -55,6 +60,7 @@ end
 
 function GUIWebView:onInternalLeftClick()
     self.m_Browser:focus()
+    guiSetInputEnabled(true)
 
     self.m_Browser:injectMouseUp("left")
 end
@@ -86,4 +92,13 @@ function GUIWebView:onCursorMove(relX, relY, absX, absY)
 
     local guiX, guiY = self:getPosition(true)
     self.m_Browser:injectMouseMove(absX - guiX, absY - guiY)
+end
+
+function GUIWebView:setPausingOnHide(state)
+    self.m_PauseOnHide = state
+    return self
+end
+
+function GUIWebView:isPausingOnHide()
+    return self.m_PauseOnHide
 end

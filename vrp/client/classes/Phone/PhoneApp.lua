@@ -12,6 +12,7 @@ function PhoneApp:constructor(appName, iconPath)
 	self.m_IconPath = iconPath
 	self.m_IsOpen = false
 	self.m_Activities = {}
+	self.m_DestroyOnClose = true
 end
 
 function PhoneApp:destructor()
@@ -68,12 +69,20 @@ function PhoneApp:getActivities()
 	return self.m_Activities
 end
 
+function PhoneApp:isDestroyOnCloseEnabled()
+	return self.m_DestroyOnClose
+end
+
+function PhoneApp:setDestroyOnCloseEnabled(state)
+	self.m_DestroyOnClose = state
+end
+
 PhoneApp.onOpen = pure_virtual
 
 
 -- Utilities
-function PhoneApp.makeWebApp(caption, iconPath, url)
+function PhoneApp.makeWebApp(caption, iconPath, url, destroyOnClose)
 	local appClass = inherit(AppCEF)
-	appClass.constructor = function(self) AppCEF.constructor(self, caption, iconPath, url) end
+	appClass.constructor = function(self) AppCEF.constructor(self, caption, iconPath, url, destroyOnClose) end
 	return appClass
 end

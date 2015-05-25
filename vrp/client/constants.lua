@@ -127,9 +127,10 @@ HelpTexts = {
 
 			Administration:
 			Doneasty <doneasty@v-roleplay.net> (außerdem Grafik und Design)
-			Sarcasm <sarcasm@v-roleplay.net> (außerdem Webauftritt)
 
 			Moderation:
+			Sarcasm <sarcasm@v-roleplay.net> (außerdem Webauftritt)
+			Johnny <johnny@v-roleplay.net> (außerdem Mapping)
 			Toxsi <toxsi@v-roleplay.net> (außerdem Mapping)
 
 			Vielen Dank an:
@@ -141,7 +142,6 @@ HelpTexts = {
 			Audifire (für das Verteilen von Müll)
 
 			Alpha-Tester:
-			Johnny
 			Gibaex
 		]];
 	};
