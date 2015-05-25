@@ -11,20 +11,16 @@ inherit(GUIFontContainer, ShortMessage)
 ShortMessage.MessageBoxes = {}
 
 function ShortMessage:constructor(text, timeout)
-	local x, y, w, h
+	local x, y, w
 	if HUDRadar:getSingleton().m_Visible then
-		x, y, w, h = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6, 30
+		x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
 	else
-		x, y, w, h = 20, screenHeight - 5, 340*screenWidth/1600+6, 30
-	end
-	local lines = math.floor(dxGetTextWidth(text, 1.4, "default")/w) + 1
-	if string.countChar(text, "\n") > 0 then
-		local extra = string.countChar(text, "\n")
-		lines = lines + extra -- Todo: improve
+		x, y, w = 20, screenHeight - 5, 340*screenWidth/1600+6
 	end
 
 	-- Calculate heigth
-	h = (h * lines) - (15 * math.floor(lines/2))
+	local fontSize = 1.4
+	local h = textHeight(text, w - 8, "default", fontSize) + 4
 
 	-- Calculate y position
 	y = y - h - 20
@@ -41,7 +37,7 @@ function ShortMessage:constructor(text, timeout)
 	setTimer(function () delete(self) end, timeout + 500, 1)
 
 	DxElement.constructor(self, x, y, w, h)
-	GUIFontContainer.constructor(self, text, 1.4, "default")
+	GUIFontContainer.constructor(self, text, fontSize, "default")
 
 	self:setAlpha(0)
 	self.m_AlphaFaded = false
@@ -67,8 +63,8 @@ function ShortMessage:drawThis()
 	dxDrawRectangle(x, y, w, h, tocolor(0, 0, 0, self.m_Alpha))
 
 	-- Center the text
-	x = x + 5
-	w = w - 10
+	x = x + 4
+	w = w - 4
 
 	-- Draw the text bounding box (DEBUG)
 	--[[dxDrawLine(x, y, x + w, y, Color.White, 1)

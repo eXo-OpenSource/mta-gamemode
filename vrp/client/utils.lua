@@ -17,6 +17,38 @@ function fontWidth(text, font, size)
 	return dxGetTextWidth(text, size or 1, font or "default")
 end
 
+function textHeight(text, lineWidth, font, size)
+	--[[
+	Breaks words. Lines are automatically broken between words if a word would
+	extend past the edge of the rectangle specified by the pRect parameter.
+	A carriage return/line feed sequence also breaks the line.
+	]]
+	local start = 1
+	local height = dxGetFontHeight(size, font)
+	for pos = 1, text:len() do
+		if dxGetTextWidth(text:sub(start, pos), size, font) > lineWidth or text:sub(pos, pos) == "\n" then
+			local fh = dxGetFontHeight(size, font)
+			height = height + fh
+			start = pos - 1
+		end
+	end
+	return height
+end
+
+--[[local text = "BlaBlaBlaBla\nfffasdfasdfasdf\nasdf"
+local lineWidth = 200
+local h = textHeight(text, lineWidth, "arial", 3)
+outputDebug("h:"..h)
+addEventHandler("onClientRender", root,
+	function()
+
+		dxDrawRectangle(300, 300, lineWidth, 100, tocolor(255, 255, 0, 255))
+		dxDrawRectangle(300, 300, lineWidth, h, tocolor(0, 0, 255, 255))
+		dxDrawText(text, 300, 300, 300+lineWidth, 500, tocolor(255, 0, 0), 3, "arial", "left", "top", false, true)
+
+	end
+)]]
+
 _guiCreateScrollBar = guiCreateScrollBar
 function guiCreateScrollBar(...) return GUIScrollbarHorizontaloooooooo(...) or _guiCreateScrollBar(...) end
 

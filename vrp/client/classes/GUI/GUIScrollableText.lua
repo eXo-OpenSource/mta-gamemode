@@ -19,11 +19,7 @@ end
 function GUIScrollableText:setText(text)
     self.m_Label:setText(text)
     self:setScrollPosition(0, 0)
-
-    -- TODO: Don't count line breaks, but calculate it correctly using dxGetTextWidth + linebreaks (might be useful to add a new parameter to dxGetFontHeight)
-    local lineBreaks = countLineBreaks(text)
-    local height = (dxGetFontHeight(self.m_Label:getFontSize(), self.m_Label:getFont()) + 20) * (lineBreaks + 1) -- Tempfix: Use 20px to get a sufficient height
-    self:resize(self.m_Width, height)
+    self:resize(self.m_Width, textHeight(text, self.m_Width, self.m_Label:getFont(), self.m_Label:getFontSize()))
 end
 
 function GUIScrollableText:getText()

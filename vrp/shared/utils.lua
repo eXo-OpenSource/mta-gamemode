@@ -256,9 +256,8 @@ function string.duration(seconds)
 	end
 end
 
-function string.sub(s, Start, End)
-	return utfSub(s, Start, End)
-end
+string.sub = utfSub
+string.len = utfLen
 
 function setBytesInInt32(byte1, byte2, byte3, byte4)
 	assert(byte1 >= 0 and byte1 <= 255)
