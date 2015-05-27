@@ -105,6 +105,7 @@ Crime = {
 	JailBreak = {id = 4, text = "Gefängnisausbruch", maxwanted = 4, maxdistance = math.huge},
 	PlacingBomb = {id = 5, text = "Legen einer Bombe", maxwanted = 6, maxdistance = 5000},
 	HouseRob = {id = 6, text = "Einbruch", maxwanted = 3, maxdistance = math.huge},
+	ShopRob = {id = 7, text = "Raubüberfall", maxwanted = 5, maxdistance = math.huge}
 }
 
 AmmuNationInfo = {

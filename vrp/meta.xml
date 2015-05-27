@@ -391,6 +391,7 @@
 
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
+	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 
 	<!-- Tests -->
 	<!-- Todo -->

@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/NPC.lua
+-- *  FILE:        server/classes/Gameplay/RobableShop.lua
 -- *  PURPOSE:     Robable shop class
 -- *
 -- ****************************************************************************
@@ -13,7 +13,32 @@ function RobableShop:constructor(enterPosition, interiorPosition, enterRotation,
 
 	-- Create NPC(s)
 	self.m_Ped = ShopNPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, 180)
-	setElementInterior(self.m_Ped, interiorId)
+	self.m_Ped:setInterior(interiorId)
+	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
+end
+
+function RobableShop:Ped_Targetted(ped, attacker)
+	-- Play an alarm
+	local pos = ped:getPosition()
+	triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z)
+
+	-- Report the crime
+	attacker:reportCrime(Crime.ShopRob)
+
+	-- Start giving some money (execute the timer 60 times every second --> overall duration: 60 seconds)
+	setTimer(
+		function()
+			if isElement(attacker) then
+				if attacker:getTarget() == ped then
+					attacker:giveMoney(math.random(1, 8))
+				end
+				return
+			end
+			killTimer(sourceTimer)
+		end,
+		1000,
+		60
+	)
 end
 
 function RobableShop.initalizeAll()
