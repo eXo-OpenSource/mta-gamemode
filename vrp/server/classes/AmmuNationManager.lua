@@ -6,8 +6,7 @@
 -- *
 -- ****************************************************************************
 AmmuNationManager = inherit(Singleton)
-addEvent("onPlayerWeaponBuy", true)
-addEvent("onPlayerMagazineBuy", true)
+addRemoteEvents{"onPlayerWeaponBuy", "onPlayerMagazineBuy"}
 
 AmmuNationManager.DATA = {
 	[1] = {
@@ -16,27 +15,29 @@ AmmuNationManager.DATA = {
 		{
 			{1368.23376,-1279.83606,13.54688}
 		},
-		DIMENSION = 1
+		DIMENSION = Interiors.AmmuNation1
 	},
 	[2] = {
 		NAME = "Los Santos East",
-		ENTER =
-		{
+		ENTER = {
 			{2400.59106,-1981.68750,13.54688}
 		},
-		DIMENSION = 2
+		DIMENSION = Interiors.AmmuNation2
 	},
 }
 
 function AmmuNationManager:constructor()
 	self.m_AmmuNations = {}
 
-	for key, value in pairs(AmmuNationManager.DATA) do
-		table.insert(self.m_AmmuNations, new(AmmuNation,value.NAME))
-		local instance = self.m_AmmuNations[#self.m_AmmuNations]
+	for k, info in pairs(AmmuNationManager.DATA) do
+		local ammuNation = AmmuNation:new(info.NAME)
+		table.insert(self.m_AmmuNations, ammuNation)
 
-		for k, coords in pairs(value.ENTER) do
-			instance:addEnter(coords[1], coords[2], coords[3], value.DIMENSION)
+		for k, coords in pairs(info.ENTER) do
+			ammuNation:addEnter(coords[1], coords[2], coords[3], info.DIMENSION)
 		end
+
+		-- Register interiors (so that the player respawns here after reconnecting)
+		InteriorManager:getSingleton():registerInterior(info.DIMENSION, AmmuNation.INTERIORID, Vector3(info.ENTER[1]))
 	end
 end

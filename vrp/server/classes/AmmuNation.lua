@@ -50,8 +50,9 @@ function AmmuNation:addEnter(x, y, z, dimension)
 
 	addEventHandler ("onMarkerHit", interiorEnter:getEnterMarker(),
 		function(hitElement, matchingDimension)
-			if hitElement:getType() == "player" and matchingDimension and not isPedInVehicle(hitElement) then
+			if hitElement:getType() == "player" and matchingDimension and not hitElement:isInVehicle() then
 				hitElement:sendShortMessage(("Willkommen %s, im Ammu Nation \"%s\""):format(getPlayerName(hitElement), self.m_Name))
+				hitElement:setUniqueInterior(dimension)
 			end
 		end
 	)

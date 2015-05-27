@@ -108,7 +108,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -118,6 +118,8 @@ function Player:loadCharacterInfo()
 
 	-- Load non-element related data
 	self:load()
+
+	self.m_UniqueInterior = row.UniqueInterior
 
 	-- Load health data
 	self.m_Health = row.Health
@@ -150,7 +152,12 @@ function Player:save()
 		return
 	end
 	local x, y, z = getElementPosition(self)
-	local interior = getElementInterior(self)
+	local interior = self:getInterior()
+
+	-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
+	if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
+		self.m_UniqueInterior = 0
+	end
 
 	local weapons = {}
 	for slot = 0, 11 do -- exclude satchel detonator (slot 12)
@@ -160,8 +167,8 @@ function Player:save()
 		end
 	end
 
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Health = ?, Armor = ?, Weapons = ?, InventoryId = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
-		x, y, z, interior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons), self.m_Inventory:getId(), self:getPlayTime(), self.m_Id)
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, InventoryId = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
+		x, y, z, interior, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons), self.m_Inventory:getId(), self:getPlayTime(), self.m_Id)
 
 	if self:getInventory() then
 		self:getInventory():save()
@@ -190,7 +197,13 @@ function Player:spawn()
 		elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
 			VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 		else
-			self:sendMessage("An error occurred", 255, 0, 0)
+			outputServerLog("Invalid spawn location ("..self:getName()..")")
+		end
+
+		-- Teleport player into a "unique interior"
+		if self.m_UniqueInterior ~= 0 then
+			InteriorManager:getSingleton():teleportPlayerToInterior(self, self.m_UniqueInterior)
+			self.m_UniqueInterior = 0
 		end
 
 		-- Apply and delete health data
@@ -408,4 +421,8 @@ function Player:givePoints(p) -- Overriden
 	if p ~= 0 then
 		self:sendShortMessage((p >= 0 and "+"..p or p).._(" Punkte", self))
 	end
+end
+
+function Player:setUniqueInterior(uniqueInteriorId)
+	self.m_UniqueInterior = uniqueInteriorId
 end

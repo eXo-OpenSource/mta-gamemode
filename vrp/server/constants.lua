@@ -16,3 +16,10 @@ MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10
 MAX_SKIN_LEVEL = 10
+
+Interiors = {
+    -- Name -- Dimension ("Allocate" a block of dimensions)
+    AmmuNation1 = 50000,
+    AmmuNation2 = 50001,
+
+}

@@ -45,6 +45,7 @@ function Core:constructor()
 	VehicleTuning:new()
 	DimensionManager:new()
 	ActorManager:new()
+	InteriorManager:new()
 
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()
