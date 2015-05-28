@@ -7,14 +7,18 @@
 -- ****************************************************************************
 InteriorEnterExit = inherit(Object)
 
-function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension)
+function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension, isRed)
 	self.m_EnterMarker = createMarker(entryPosition, "corona", 2, 255, 255, 255, 200)
 	self.m_ExitMarker = createMarker(interiorPosition, "corona", 2, 255, 255, 255, 200)
+	if isRed then -- Debug code
+		self.m_EnterMarker:setColor(255, 0, 0, 200)
+		self.m_ExitMarker:setColor(255, 0, 0, 200)
+	end
 
 	interiorId = interiorId or 0
 	dimension = dimension or 0
-	setElementInterior(self.m_ExitMarker, interiorId)
-	setElementDimension(self.m_ExitMarker, dimension)
+	self.m_ExitMarker:setInterior(interiorId)
+	self.m_ExitMarker:setDimension(dimension)
 
 	addEventHandler("onMarkerHit", self.m_EnterMarker,
 		function(hitElement, matchingDimension)
@@ -48,15 +52,4 @@ end
 
 function InteriorEnterExit:getExitMarker()
 	return self.m_ExitMarker
-end
-
-function InteriorEnterExit:initializeAll()
-	-- Note: Some may not here
-	local data = {
-		{1554.8, -1675.7, 16, 246.7, 63, 1003.64, 0, 90, 6},
-	}
-
-	for k, info in pairs(data) do
-		InteriorEnterExit:new(Vector3(info[1], info[2], info[3]), Vector3(info[4], info[5], info[6]), info[7], info[8], info[9], info[10])
-	end
 end

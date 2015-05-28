@@ -7,8 +7,8 @@
 -- ****************************************************************************
 BankRobbery = inherit(Object)
 BankRobbery.Map = {}
-local MIN_TIME_BETWEEN_ROBBS = 5000 --30*60*1000
-local HOLD_TIME = 20*1000 --4*60*1000
+local MIN_TIME_BETWEEN_ROBBS = 5*60*1000 --30*60*1000
+local HOLD_TIME = 60*1000 --4*60*1000
 
 function BankRobbery:constructor(position, rotation, interior, dimension)
 	self.m_SafeDoor = createObject(2634, 828.70001, 4227.6001, 15.9, 0, 0, 90)
@@ -20,7 +20,7 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 	self.m_Timer = false
 	self.m_BombArea = BombArea:new(position, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), HOLD_TIME)
 	self.m_ColShape = createColSphere(position, 25)
-	setElementInterior(self.m_ColShape, interior)
+	self.m_ColShape:setInterior(interior)
 
 	addEventHandler("onColShapeLeave", self.m_ColShape,
 		function(element, matchingDimension)
