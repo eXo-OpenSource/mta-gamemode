@@ -386,10 +386,6 @@ function Player:giveMoney(money) -- Overriden
 	end
 end
 
-function Player:takeMoney(money)
-	self:giveMoney(-money)
-end
-
 function Player:startTrading(tradingPartner)
 	if self == tradingPartner then
 		return

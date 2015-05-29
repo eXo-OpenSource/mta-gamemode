@@ -200,7 +200,7 @@ function DatabasePlayer:giveMoney(money)
 end
 
 function DatabasePlayer:takeMoney(money)
-	self:setMoney(self:getMoney() - money)
+	self:giveMoney(-money)
 end
 
 function DatabasePlayer:setXP(xp)
@@ -236,6 +236,10 @@ end
 function DatabasePlayer:givePoints(p)
 	self.m_Points = self.m_Points + math.floor(p)
 	if self:isActive() then self:setPrivateSync("Points", self.m_Points) end
+end
+
+function DatabasePlayer:takePoints(p)
+	self:givePoints(-p)
 end
 
 function DatabasePlayer:setPoints(p)
