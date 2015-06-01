@@ -39,7 +39,7 @@ end
 
 function InteriorManager:createDefaultInteriors()
     for k, info in pairs(self.InteriorData) do
-        InteriorEnterExit:new(info.enter, info.spawn, info.rotation, 0, info.interior, 0, true)
+        InteriorEnterExit:new(info.enter + Vector3(0, 0, 0.5), info.spawn + Vector3(0, 0, 0.5), info.rotation, 0, info.interior, info.dimension, true)
     end
 
     -- Copied over from InteriorEnterExit
@@ -100,7 +100,7 @@ InteriorManager.InteriorData = {
     {enter = Vector3(-1883.2, 865.473, 34.2601), spawn = Vector3(161.39, -96.69, 1000.81), dimension = 1, interior = 18, rotation = 129},
     {enter = Vector3(2572.07, 1904.83, 10.0231), spawn = Vector3(161.39, -96.69, 1000.81), dimension = 2, interior = 18, rotation = 180},
     {enter = Vector3(2090.58, 2224.2, 10.0579), spawn = Vector3(161.39, -96.69, 1000.81), dimension = 3, interior = 18, rotation = 180},
-    {enter = Vector3(2244.47, -1665.36, 14.4839), spawn = Vector3(207.74, -111.42, 1004.27), dimension = 0, interior = 15, rotation = -363},
+    --{enter = Vector3(2244.47, -1665.36, 14.4839), spawn = Vector3(207.74, -111.42, 1004.27), dimension = 0, interior = 15, rotation = -363}, -- binco grove street
     {enter = Vector3(-2375.32, 910.293, 44.4578), spawn = Vector3(207.74, -111.42, 1004.27), dimension = 1, interior = 15, rotation = 5507.58},
     {enter = Vector3(1657.01, 1733.33, 10.0209), spawn = Vector3(207.74, -111.42, 1004.27), dimension = 2, interior = 15, rotation = 90},
     {enter = Vector3(2102.69, 2257.49, 10.0579), spawn = Vector3(207.74, -111.42, 1004.27), dimension = 3, interior = 15, rotation = 270},
