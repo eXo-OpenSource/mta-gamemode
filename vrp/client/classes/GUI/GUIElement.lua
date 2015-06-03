@@ -45,7 +45,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			GUIElement.ms_ClickProcessed = true
 			GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
 		end
-		return true
+		--return true
 	end
 	if self.m_RActive and not mouse2 and (not self.ms_ClickProcessed or GUIElement.ms_CacheAreaRetrievedClick == self.m_CacheArea) then
 		if self.onRightClick			then self:onRightClick(cx, cy)			end
@@ -56,7 +56,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			GUIElement.ms_ClickProcessed = true
 			GUIElement.ms_CacheAreaRetrievedClick = self.m_CacheArea
 		end
-		return true
+		--return true
 	end
 
 	if not inside then
@@ -122,7 +122,7 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 	-- Check on children
 	for k, v in ipairs(self.m_Children) do
 		if v:performChecks(mouse1, mouse2, cx, cy) then
-			break
+			--break
 		end
 	end
 end
@@ -188,8 +188,8 @@ addEventHandler("onClientResourceStart", resourceRoot,
 
 addEventHandler("onClientDoubleClick", root,
 	function(button, absoluteX, absoluteY)
-		--local guiElement = self:getElementAt(absoluteX, absoluteY)
 		local guiElement = GUIElement.getHoveredElement()
+
 		if guiElement and guiElement:isVisible(true) then
 			if button == "left" and guiElement.onLeftDoubleClick then
 				guiElement:onLeftDoubleClick(absoluteX, absoluteY)

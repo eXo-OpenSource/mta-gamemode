@@ -15,10 +15,10 @@ end
 
 function StreetRaceEvent:onStart()
 	-- Start the countdown
-	for k, player in ipairs(self.m_Players) do
+	for k, player in pairs(self.m_Players) do
 		player:triggerEvent("countdownStart", 3)
 	end
-	
+
 	setTimer(
 		function()
 			destroyElement(self.m_StartMarker)
@@ -28,19 +28,19 @@ function StreetRaceEvent:onStart()
 			repeat
 				pos, randomIndex = self.getRandomPosition()
 			until randomIndex ~= self.m_StartIndex
-			
+
 			self.m_DestinationBlip = Blip:new("Waypoint.png", pos.x, pos.y)
 			self.m_ColShape = createColSphere(pos, 20)
 			addEventHandler("onColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
-			
+
 			-- Start the GPS for each player
 			for k, player in ipairs(self.m_Players) do
 				player:startNavigationTo(pos)
 			end
-			
+
 			-- Tell player that we started the event
 			self:sendMessage("Das Event wurde gestartet!", 255, 255, 0)
-			
+
 			-- Set time out after 10min
 			self.m_TimeoutTimer = setTimer(function() delete(self) end, 10*60*1000, 1)
 		end,
@@ -69,18 +69,18 @@ function StreetRaceEvent:colShapeHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension and getPedOccupiedVehicleSeat(hitElement) == 0 then
 		-- Add player to the winner list
 		self.m_Ranks[#self.m_Ranks+1] = hitElement
-		
+
 		-- Tell all players that someone reached the destination
 		self:sendMessage("%s hat das Ziel als %d. erreicht", 255, 255, 0, getPlayerName(hitElement), #self.m_Ranks)
-		
+
 		-- Give him some money
 		local moneyAmount = 100 * #self.m_Players / #self.m_Ranks
 		hitElement:giveMoney(moneyAmount)
-		hitElement:sendMessage(_("[EVENT] Du hast %d$ gewonnen!", hitElement, moneyAmount), 0, 255, 0)
-		
+		hitElement:sendSuccess(_("Du hast das Straßenrennen %d$ gewonnen!", hitElement, moneyAmount), 0, 255, 0)
+
 		-- Quit the hitting player
 		self:quit(hitElement)
-		
+
 		-- Stop the event is all players reached the destination
 		if #self.m_Players == 0 then
 			delete(self)
@@ -103,6 +103,15 @@ function StreetRaceEvent:getPositions()
 end
 
 StreetRaceEvent.Positions = {
-	Vector3(0, 0, 4),
-	Vector3(-1656.3, -539.8, 10.8)
+	Vector3(-1656.3, -539.8, 10.8),
+	Vector3(1824.1, -1576, 13),
+	Vector3(1866.2, -1130.2, 23.5),
+	Vector3(2286.4, -1152.1, 26.5),
+	Vector3(2489.5, -1666.1, 13),
+	Vector3(2198, -1646.6, 15.1),
+	Vector3(1949, -2353, 13.3),
+	Vector3(1788.8, 833.3, 10.4),
+	Vector3(1808.3, 2318.9, 6),
+	Vector3(1087.2, 2499.9, 10.5),
+	Vector3(1448.9, 2849.1, 10.6),
 }

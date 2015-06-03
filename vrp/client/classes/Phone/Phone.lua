@@ -38,7 +38,7 @@ function Phone:constructor()
 		local appLabel = GUILabel:new(5+54*column, 62+75*row, 52, 20, app:getName(), self.m_IconSurface)
 		appLabel:setAlignX("center")
 
-		appIcon.onLeftClick = function() self.m_IconSurface:setVisible(false) app:open() end
+		appIcon.onLeftClick = function() self.m_IconSurface:setVisible(false) self:openApp(app) end
 	end
 
 	-- Create elements at the bottom
@@ -58,6 +58,10 @@ end
 
 function Phone:open()
 	self:setVisible(true)
+
+	if self.m_CurrentApp then
+		self.m_IconSurface:setVisible(false)
+	end
 end
 
 function Phone:close()
@@ -69,7 +73,9 @@ function Phone:close()
 	self.m_IconSurface:setVisible(true)
 
 	self:setVisible(false)
-	self.m_CurrentApp = false
+	if self.m_CurrentApp and self.m_CurrentApp:isDestroyOnCloseEnabled() then
+		self.m_CurrentApp = false
+	end
 end
 
 function Phone:closeAllApps()

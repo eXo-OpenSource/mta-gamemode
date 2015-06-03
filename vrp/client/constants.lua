@@ -140,6 +140,7 @@ HelpTexts = {
 			ReZ (für seine kurze Zeit als Mapper)
 			Alex (für seine Zeit als Mapper)
 			Audifire (für das Verteilen von Müll)
+			Poof (für das Schreiben von Hilfetexten)
 
 			Alpha-Tester:
 			Gibaex
