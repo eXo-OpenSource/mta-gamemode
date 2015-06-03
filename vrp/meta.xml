@@ -84,6 +84,7 @@
 	<script src="server/classes/SkinShops.lua" type="server"/>
 	<script src="server/classes/Achievement.lua" type="server"/>
 	<script src="server/classes/InteriorManager.lua" type="server"/>
+	<script src="server/classes/StatisticsLogger.lua" type="server"/>
 
 	<!-- Gameplay -->
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>

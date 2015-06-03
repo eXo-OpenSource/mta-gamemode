@@ -195,12 +195,18 @@ function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e e
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
 
-function DatabasePlayer:giveMoney(money)
-	self:setMoney(self:getMoney() + money)
+function DatabasePlayer:giveMoney(amount)
+	self:setMoney(self:getMoney() + amount)
+
+	-- Log to database
+	if DEBUG then
+		-- Use sourcefile as description here
+		StatisticsLogger:getSingleton():logMoney(self, amount, tostring(debug.getinfo(4, "S").source)..":"..tostring(debug.getinfo(4, "l").currentline))
+	end
 end
 
-function DatabasePlayer:takeMoney(money)
-	self:giveMoney(-money)
+function DatabasePlayer:takeMoney(amount)
+	self:giveMoney(-amount)
 end
 
 function DatabasePlayer:setXP(xp)
