@@ -10,9 +10,6 @@ JobPolice = inherit(Job)
 function JobPolice:constructor()
 	Job.constructor(self)
 
-	VehicleSpawner:new(1555.3, -1605.5, 12.5, {"Police LS"}, 180, bind(Job.requireVehicle, self))
-	VehicleSpawner:new(1566.3, -1605.5, 12.5, {"Police LS"}, 180, bind(Job.requireVehicle, self))
-
 	addEventHandler("onPlayerDamage", root, bind(self.playerDamage, self))
 	addEventHandler("onPlayerVehicleExit", root, bind(self.playerVehicleExit, self))
 

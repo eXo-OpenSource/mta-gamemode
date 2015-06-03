@@ -3,7 +3,19 @@ Police = inherit(Singleton)
 function Police:constructor()
 	-- Garage Spawns
 	local policeVehicleCreation = bind(Police.onVehicleSpawn, self)
-	
+	local jobPolice = JobPolice:getSingleton()
+
+	for i = 0, 4 do
+		AutomaticVehicleSpawner:new(596, 1554.9 + i * 5, -1606.4, 13.2, 0, 0, 180, policeVehicleCreation, jobPolice)
+	end
+	for i = 5, 7 do
+		AutomaticVehicleSpawner:new(599, 1554.9 + i * 5, -1606.4, 13.5, 0, 0, 180, policeVehicleCreation, jobPolice)
+	end
+	for i = 8, 10 do
+		AutomaticVehicleSpawner:new(523, 1554.9 + i * 5, -1606.4, 13, 0, 0, 180, policeVehicleCreation, jobPolice)
+	end
+
+	-- Cellar
 	AutomaticVehicleSpawner:new(427, 1534.77, -1645.97, 6.02, 0.00, 0.00, 180.61, policeVehicleCreation, self)
 	AutomaticVehicleSpawner:new(427, 1526.55, -1645.73, 6.02, 0.00, 0.00, 181.03, policeVehicleCreation, self)
 	AutomaticVehicleSpawner:new(596, 1545.93, -1659.14, 5.61, 0.00, 0.00, 89.46,  policeVehicleCreation, self)
@@ -22,7 +34,7 @@ function Police:constructor()
 	AutomaticVehicleSpawner:new(596, 1601.24, -1692.24, 5.61, 0.00, 0.00, 90.24,  policeVehicleCreation, self)
 	AutomaticVehicleSpawner:new(523, 1603.58, -1682.96, 5.46, 0.00, 0.00, 89.01,  policeVehicleCreation, self)
 	AutomaticVehicleSpawner:new(523, 1603.20, -1686.84, 5.46, 0.00, 0.00, 89.22,  policeVehicleCreation, self)
-	
+
 	self.m_VehicleAccessHandler = bind(Police.validateVehicleAccess, self)
 end
 
@@ -32,19 +44,19 @@ end
 
 function Police:validateVehicleAccess(player, seat)
 	local vehicle = source
-	
+
 	-- If not driver, ignore
 	if seat ~= 0 then
 		return
 	end
-	
+
 	local karma = player:getKarma()
 	local neededKarma = 0
 	local model = getElementModel(vehicle)
-	if 		model == 523 or 
+	if 		model == 523 or
 			model == 596 then neededKarma = Karma.POLICE_VEHICLE_NORMAL
 	elseif 	model == 427 then neededKarma = Karma.POLICE_ENFORCER
-	elseif 	model == 499 then neededKarma = Karma.POLICE_RANGER
+	elseif 	model == 599 then neededKarma = Karma.POLICE_RANGER
 	elseif 	model == 601 then neededKarma = Karma.POLICE_SWAT_TANK
 	elseif 	model == 528 then neededKarma = Karma.POLICE_SWAT
 	elseif 	model == 497 then neededKarma = Karma.POLICE_HELI
@@ -52,25 +64,12 @@ function Police:validateVehicleAccess(player, seat)
 		outputDebug("Police - Invalid Model "..tostring(model))
 		neededKarma = 9999 -- this should not happen
 	end
-	
+
 	if karma < neededKarma then
 		cancelEvent()
-		player:sendShortMessage("Du kannst dieses Fahrzeug erst ab %d positivem Karma nutzen!", neededKarma)
+		player:sendShortMessage(_("Du kannst dieses Fahrzeug erst ab %d positivem Karma nutzen!", player, neededKarma))
 		return
 	end
-	
+
 	vehicle.m_TempoaryOwner = player
 end
-
-
-
-
-
-
-
-
-
-
-
-
-
