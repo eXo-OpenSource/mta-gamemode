@@ -86,13 +86,17 @@ function LocalPlayer:playerWasted()
 			playSound("files/audio/Halleluja.mp3")
 			local x, y, z = 2028, -1405, 110
 
+			-- Disable damage while resurrecting
+			addEventHandler("onClientPlayerDamage", root, cancelEvent)
+
 			addEventHandler("onClientPreRender", root,
 				function(deltaTime)
 					z = z-0.005*deltaTime
-					setElementPosition(localPlayer, x, y, z)
-					setElementRotation(localPlayer, 0, 0, 225)
+					localPlayer:setPosition(x, y, z)
+					localPlayer:setRotation(0, 0, 225)
 					if z <= 18 then
-						removeEventHandler("onClientPreRender", root, debug.getinfo(1, "f").func)
+						removeEventHandler("onClientPreRender", root, getThisFunction())
+						removeEventHandler("onClientPlayerDamage", root, cancelEvent)
 					end
 				end
 			)

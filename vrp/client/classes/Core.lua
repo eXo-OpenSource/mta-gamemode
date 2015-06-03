@@ -7,10 +7,6 @@ function Core:constructor()
 	-- Instantiate the localPlayer instance right now
 	enew(localPlayer, LocalPlayer)
 
-	if DEBUG then
-		Debugging:new()
-	end
-
 	self.m_Config = ConfigXML:new("config.xml")
 	Version:new()
 	Provider:new()
@@ -73,11 +69,13 @@ function Core:afterLogin()
 	KarmaBar:new()
 	HUDSpeedo:new()
 	Nametag:new()
-	--HUDRadar:new()
-	--HUDUI:new()
 	HUDRadar:getSingleton():show()
 	HUDUI:getSingleton():show()
 	Collectables:new()
+
+	if DEBUG then
+		Debugging:new()
+	end
 
 	-- Phone
 	Phone:new()

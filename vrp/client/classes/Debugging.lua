@@ -23,19 +23,23 @@ if DEBUG then
 
 		bindKey("lshift", "down",
 			function()
-				local vehicle = getPedOccupiedVehicle(localPlayer)
-				if vehicle then
-					local vx, vy, vz = getElementVelocity(vehicle)
-					setElementVelocity(vehicle, vx, vy, 0.3)
+				if localPlayer:getRank() >= RANK.Moderator then
+					local vehicle = getPedOccupiedVehicle(localPlayer)
+					if vehicle then
+						local vx, vy, vz = getElementVelocity(vehicle)
+						setElementVelocity(vehicle, vx, vy, 0.3)
+					end
 				end
 			end
 		)
 		bindKey("lalt", "down",
 			function()
-				local vehicle = getPedOccupiedVehicle(localPlayer)
-				if vehicle then
-					local vx, vy, vz = getElementVelocity(vehicle)
-					setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
+				if localPlayer:getRank() >= RANK.Moderator then
+					local vehicle = getPedOccupiedVehicle(localPlayer)
+					if vehicle then
+						local vx, vy, vz = getElementVelocity(vehicle)
+						setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
+					end
 				end
 			end
 		)
