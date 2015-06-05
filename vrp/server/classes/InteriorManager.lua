@@ -279,7 +279,7 @@ InteriorManager.InteriorData = {
     {enter = Vector3(681.579, -473.419, 15.592), spawn = Vector3(681.58, -473.42, 15.59), dimension = 0, interior = 1, rotation = 180},
     {enter = Vector3(-88.5875, 1378.36, 9.56984), spawn = Vector3(-229.03, 1401.23, 26.77), dimension = 0, interior = 18, rotation = 270},
     {enter = Vector3(-2155.92, 645.38, 52.37), spawn = Vector3(-2158.675, 642.8, 1052.4), dimension = 0, interior = 1, rotation = 134},
-    {enter = Vector3(1833.54, -1843.38, 12.5595), spawn = Vector3(-30.95, -91.71, 1002.55), dimension = 0, interior = 18, rotation = 90},
+    --{enter = Vector3(1833.54, -1843.38, 12.5595), spawn = Vector3(-30.95, -91.71, 1002.55), dimension = 0, interior = 18, rotation = 90}, -- 24/7
     {enter = Vector3(1315.49, -897.843, 38.571), spawn = Vector3(-30.95, -91.71, 1002.55), dimension = 1, interior = 18, rotation = 180},
     {enter = Vector3(2546.71, 1972.28, 9.822), spawn = Vector3(-30.95, -91.71, 1002.55), dimension = 2, interior = 18, rotation = 180},
     {enter = Vector3(2884.83, 2453.28, 10.061), spawn = Vector3(-30.95, -91.71, 1002.55), dimension = 3, interior = 18, rotation = 224},

@@ -98,6 +98,11 @@ function StreetRaceEvent:getName()
 	return "Straßenrennen"
 end
 
+function StreetRaceEvent:getDescription(player)
+	return _([[Straßenrennen gegen andere Spieler
+	]], player)
+end
+
 function StreetRaceEvent:getPositions()
 	return StreetRaceEvent.Positions
 end

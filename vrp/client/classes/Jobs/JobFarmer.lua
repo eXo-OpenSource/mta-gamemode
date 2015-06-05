@@ -1,8 +1,12 @@
--- // Client
-
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/Jobs/JobFarmer.lua
+-- *  PURPOSE:     Farmer job
+-- *
+-- ****************************************************************************
 JobFarmer = inherit(Job)
-
-addEvent("onReciveFarmerData",true)
+addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants", "onReciveFarmerData"}
 
 function JobFarmer:constructor()
 	Job.constructor(self, -1059, -1206, 128, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
@@ -51,7 +55,6 @@ function JobFarmer:start()
 	self.m_TruckLabel = GUILabel:new(150, 4, 50, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
 
 	-- Register update events
-	addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants"}
 	addEventHandler("Job.updateFarmPlants", root, function (num)
 		self.m_FarmLabel:setText(tostring(num))
 	end)

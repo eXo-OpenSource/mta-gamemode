@@ -12,7 +12,6 @@ ItemItemCategoryNames = {[ItemCategory.All] = "Alle", [ItemCategory.Drugs] = "Dr
 Items = {
 -- Wer irgendwo mittendrin Items einfügt oder entfernt, wird erschossen.
 -- ID				  Name				Beschreibung			   																	Pfad zum Bild							Klasse			Stapelbar			 	Kategorie			Nach Benutzung entfernen  ModelId
-{ "ITEM_PASSPORT", 	"Personalausweis";	"Der Personalausweis dient zur Identifizierung und ist eine gleichzeitige Arbeitserlaubnis"; "files/images/Items/Passport.png";		ItemPassport,	false,					ItemCategory.Player,	false,					0};
 { "ITEM_HOTWIREKIT", "Kurzschließkit";	"Autos abgeschlossen? Kein Problem!";														"files/images/Items/HotwireKit.png";	ItemHotwireKit,	false,					ItemCategory.Tools,		false,					0};
 { "ITEM_BOMB",		"Bombe";			"Erzeugt eine große Explosion und wird bei verschiedenen Events benötigt";					"files/images/Items/Bomb.png";			ItemBomb,		true,					ItemCategory.Other,		true,					0};
 { "ITEM_RADIO",		"Radio";			"Ein Radio, das Musik für alle abspielt";													"files/images/Items/Radio.png";			ItemRadio,		false,					ItemCategory.Other,		false,					2226};

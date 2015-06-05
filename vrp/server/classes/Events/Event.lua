@@ -86,12 +86,12 @@ function Event:quit(player)
 
 	table.remove(self.m_Players, idx)
 
+	if self.onQuit then	self:onQuit(player) end
+
 	if self:hasExit() then
 		player:respawn(self:getExitPosition())
 		return true
 	end
-
-	if self.onQuit then	self:onQuit(player) end
 end
 
 function Event:start()

@@ -199,6 +199,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 end
 
 function JobFarmer:updateClientData ()
+	-- TODO: Send info only to players doing this job
 	for i, v in pairs(getElementsByType("player")) do
 		v:triggerEvent("Job.updateFarmPlants", self.m_CurrentPlantsFarm)
 	end
