@@ -100,7 +100,7 @@ function JobTrashman:Trashcan_Hit(hitElement, matchingDimension)
 		end
 
 		if not vehicle or getElementModel(vehicle) ~= 408 then
-			localPlayer:sendMessage("You have to drive a Trashmaster", 255, 0, 0)
+			ErrorBox:new(_"Hierzu musst du ein Müllauto fahren!")
 			return
 		end
 

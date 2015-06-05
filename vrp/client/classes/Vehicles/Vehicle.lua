@@ -64,7 +64,10 @@ addEventHandler("onClientVehicleDamage", root,
 			if isElementSyncer(source) and source:getHealth() >= 310 then
 				triggerServerEvent("vehicleBreak", source)
 				source.m_Broken = true
-				WarningBox:new(_"Dein Fahrzeug ist kaputt und muss repariert werden!")
+
+				if localPlayer:getOccupiedVehicle() == source then
+					WarningBox:new(_"Dein Fahrzeug ist kaputt und muss repariert werden!")
+				end
 			end
 
 			source:setHealth(301)

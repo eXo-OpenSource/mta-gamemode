@@ -223,10 +223,9 @@ function Group:distributeMoney(amount)
 
 	local moneyForPlayers = amount - moneyForFund
 	local onlinePlayers = self:getOnlinePlayers()
-	local amountPerPlayer = moneyForPlayers / #onlinePlayers
+	local amountPerPlayer = math.floor(moneyForPlayers / #onlinePlayers)
 
 	for k, player in pairs(onlinePlayers) do
-		outputDebug(player)
 		player:giveMoney(amountPerPlayer)
 	end
 end

@@ -62,9 +62,9 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 		local moneyAmount = numCans * MONEY_PER_CAN
 
 		hitElement:giveMoney(moneyAmount)
-		hitElement:givePoints(numCans)
+		hitElement:givePoints(math.ceil(numCans/3))
 
-		hitElement:sendMessage(_("Dein Lohn: %d$", hitElement, moneyAmount), 0, 255, 0)
+		hitElement:sendInfoTimeout(_("Dein Lohn: %d$", hitElement, moneyAmount), 5000)
 
 		hitElement:setData("Trashman:Cans", 0)
 		hitElement:triggerEvent("trashcanReset")
