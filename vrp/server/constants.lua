@@ -12,6 +12,7 @@ SPAWN_LOCATION_GARAGE = 2
 
 CheatSeverity = {Low = 1, Middle = 2, High = 3, Brutal = 4}
 
+-- TODO: Change before release
 MAX_JOB_LEVEL = 10
 MAX_WEAPON_LEVEL = 10
 MAX_VEHICLE_LEVEL = 10

@@ -388,8 +388,7 @@ function calculatePlayerLevel(xp)
 end
 
 function calculatePointsToNextLevel(currentLevel)
-	-- p(l)=10l
-	return (currentLevel+1) * 10
+	return (currentLevel+1)^3 * 10
 end
 
 function getRandomUniqueNick()

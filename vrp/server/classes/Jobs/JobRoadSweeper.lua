@@ -35,5 +35,7 @@ function JobRoadSweeper:Event_sweeperGarbageCollect()
 	client:setData("Sweeper:Last", getTickCount())
 
 	client:giveMoney(3)
-	client:givePoints(1)
+	if chance(15) then
+		client:givePoints(1)
+	end
 end

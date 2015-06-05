@@ -83,7 +83,7 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 
 			self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm - PLANTSONWALTON
 			self:updateClientData()
-			setElementFrozen ( hitElement, true )
+			hitElement:setFrozen(true)
 			for i = 1, 3 do
 				for j = 1, 3 do
 					local obj = createObject(2968, 0, 0, 0)
@@ -183,7 +183,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 		if distance > 4 then return end
 		destroyElement (self.m_Plants[createColShape])
 		self.m_Plants[createColShape] = nil
-		hitElement:giveMoney(math.random(5,8))
+		hitElement:giveMoney(math.random(2, 3))
 		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 		self:updateClientData()
 	else
@@ -191,9 +191,9 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			self.m_Plants[createColShape] = createObject(818,x,y,z-1.5)
 			local object = self.m_Plants[createColShape]
 			object.isFarmAble = false
-			setTimer ( function (o) o.isFarmAble = true end, 1000*7.5, 1, object )
-			setElementVisibleTo (object,hitElement,true)
-			hitElement:giveMoney(math.random(4,5))
+			setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
+			setElementVisibleTo(object, hitElement, true)
+			hitElement:giveMoney(math.random(1, 2))
 		end
 	end
 end

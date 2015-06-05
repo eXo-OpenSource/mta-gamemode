@@ -201,7 +201,10 @@ function DatabasePlayer:giveMoney(amount)
 	-- Log to database
 	if DEBUG then
 		-- Use sourcefile as description here
-		StatisticsLogger:getSingleton():logMoney(self, amount, tostring(debug.getinfo(4, "S").source)..":"..tostring(debug.getinfo(4, "l").currentline))
+		local debugInfo = debug.getinfo(4, "Sl")
+		if debugInfo then
+			StatisticsLogger:getSingleton():logMoney(self, amount, tostring(debugInfo.source)..":"..tostring(debugInfo.currentline))
+		end
 	end
 end
 

@@ -126,9 +126,9 @@ function PlayerManager:Event_playerSendMoney(amount)
 end
 
 function PlayerManager:Event_requestPointsToKarma(positive)
-	if client:getPoints() >= 400 then
+	if client:getPoints() >= 200 then
 		client:giveKarma(1, (positive and 1 or -1), true)
-		client:givePoints(-400)
+		client:givePoints(-200)
 		client:sendInfo(_("Punkte eingetauscht!", client))
 	else
 		client:sendError(_("Du hast nicht genügend Punkte!", client))

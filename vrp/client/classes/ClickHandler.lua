@@ -90,7 +90,7 @@ end
 
 function ClickHandler:dispatchClick(clickInfo, trigger)
 	-- Focus if no element was clicked
-	if trigger then Browser.focus(nil) guiSetInputEnabled(false) outputDebug("Disabling browser focus") end
+	if trigger then Browser.focus(nil) guiSetInputEnabled(false) end
 
 	-- Disabled clickhandler as long as the player is not logged in
 	if not localPlayer:isLoggedIn() then return end
