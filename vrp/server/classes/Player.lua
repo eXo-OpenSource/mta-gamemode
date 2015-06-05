@@ -93,6 +93,7 @@ function Player:loadCharacter()
 
 	-- Add command and event handler
 	addCommandHandler("Group", Player.staticGroupChatHandler)
+	self:setPublicSync("Rank", self:getRank())
 end
 
 function Player:createCharacter()

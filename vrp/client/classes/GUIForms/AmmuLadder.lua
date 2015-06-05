@@ -43,6 +43,12 @@ function AmmuLadder:constructor()
 	self.m_SearchTab  = GUIRectangle:new(0,TITLEBAR_HEIGHT+self.m_Height*0.06, self.m_Width, self.m_Height-(TITLEBAR_HEIGHT+self.m_Height*0.06*2),tocolor(0,0,0,125), self)
 	self.m_LadderTab = GUIRectangle:new(0,TITLEBAR_HEIGHT+self.m_Height*0.06, self.m_Width, self.m_Height-(TITLEBAR_HEIGHT+self.m_Height*0.06*2),tocolor(0,0,0,125), self)
 	
+	-- Found Tab
+	
+	-- Search Tab
+	
+	-- Ladder Tab
+	
 	-- Switch to main tab
 	self:FoundTeamButtonClick()
 	

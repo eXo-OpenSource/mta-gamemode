@@ -6,6 +6,8 @@ Nametag.BUFF_IMG = {
 	["default"] = "files/images/Nametag/default.png"
 }
 
+local sizePerRankIcon = 150/5
+
 function isCursorOverArea ( x,y,w,h )
 	if isCursorShowing () then
 		local cursorPos = {getCursorPosition()}
@@ -62,7 +64,7 @@ function Nametag:draw()
 			local lx,ly,lz = getElementPosition(localPlayer)
 			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,false,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < 30 or getPedTarget(localPlayer) == player) then
 				local name = getPlayerName(player):gsub("#%d%d%d%d%d%d%d%d","")
-				dxDrawText(name,x-(dxGetTextWidth(name,2.1,"default-bold")/2),y,0,0,Color.Black,2.1,"default-bold")
+			--[[	dxDrawText(name,x-(dxGetTextWidth(name,2.1,"default-bold")/2),y,0,0,Color.Black,2.1,"default-bold")
 				dxDrawText(name,x-(dxGetTextWidth(name,2,"default-bold")/2),y,0,0,Color.White,2,"default-bold")
 				dxDrawRectangle(x-220*0.5,y-45,220,30,tocolor(0,0,0,125))
 				dxDrawRectangle(x-200*0.5,y-40,getElementHealth(player)*2,20,tocolor(0,125,0,125))
@@ -79,8 +81,22 @@ function Nametag:draw()
 						dxDrawImage    (x+(itemInRow*(220/3))-100,y-100-(row*40),40,30, Nametag.BUFF_IMG[buff.BUFF] or Nametag.BUFF_IMG["default"])
 						dxDrawText     (buff.AMOUNT,x+(itemInRow*(220/3))-75,y-85-(row*40),0,0,Color.Black)
 					end
+				end]]
+			
+			
+			dxDrawRectangle(x-300/2, y-60, 300, 120, tocolor(0,0,0,200))
+			dxDrawText(getPlayerName(player), x-300/2+5, y-55, 145, 60,Color.White,3,"default-bold")
+						
+			if (player:getPublicSync("Rank") or 0) > 0 then
+				for i = 0, player:getPublicSync("Rank")-1 do
+					dxDrawImage(x-300/2+150+i*sizePerRankIcon, y-45, sizePerRankIcon-5, 24, "files/images/LogoNoFont.png")
 				end
-					
+			end
+			
+			dxDrawRectangle(x-300/2+25, y+5, 250, 40, tocolor(0,0,0,125))
+			dxDrawRectangle(x-300/2+25, y+5, 250*getElementHealth(player)/100, 40, tocolor(0,125,0,255))
+			dxDrawRectangle(x-300/2+25, y+5, 250*getPedArmor(player)/100, 40, Color.LightBlue)
+			
 			end
 			
 			if self.m_IsModifying and player == localPlayer then

@@ -414,7 +414,8 @@
 	<file src="files/images/Logo.png"/>
 	<file src="files/html/jquery-1.11.2.min.js"/>
 	<file src="files/html/mtaevents.js"/>
-
+	
+	<vrpfile src="files/images/LogoNoFont.png"/>
 	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Warning.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Error.png" onDemand="false"/>
