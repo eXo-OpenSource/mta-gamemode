@@ -313,6 +313,7 @@
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
+	<script src="client/classes/WebForms/SkillTreeGUI.lua" type="client"/>
 
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
@@ -637,12 +638,14 @@
 	<vrpfile src="files/html/PolicePanel/PolicePanel.html"/>
 	<vrpfile src="files/html/PolicePanel/main.css"/>
 	<vrpfile src="files/html/PolicePanel/main.js"/>
+	<vrpfile src="files/html/Skilltree.html"/>
 
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/Segoe/segoeui.ttf"/>
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
+	<vrpfile src="files/fonts/Gasalt_Black.ttf"/>
 	<vrpfile src="files/fonts/FontAwesome.otf"/>
 
 	<!-- Maps -->
