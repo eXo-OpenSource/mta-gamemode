@@ -73,8 +73,10 @@ function VehicleTuning:openFor(player, vehicle, garageId)
     player:triggerEvent("vehicleTuningShopEnter", vehicle or player:getPedOccupiedVehicle())
 
     vehicle:setFrozen(true)
+    player:setFrozen(true)
     local position = self.m_GarageInfo[garageId][3]
     vehicle:setPosition(position)
+    setTimer(function() warpPedIntoVehicle(player, vehicle) end, 500, 1)
     player.m_VehicleTuningGarageId = garageId
 
     -- Get a dimension slot and move both player and vehicle to it
@@ -107,6 +109,7 @@ function VehicleTuning:closeFor(player, vehicle, doNotCallEvent)
         end]]
 
         player:setPosition(position) -- Set player position also as it will not be updated automatically before quit
+        player:setFrozen(false)
         player.m_VehicleTuningGarageId = nil
     end
 end
@@ -127,8 +130,10 @@ function VehicleTuning:EntryColShape_Hit(garageId, hitElement, matchingDimension
         end
 
         -- Remove occupants
-        for k, player in pairs(vehicle:getOccupants() or {}) do
-            player:removeFromVehicle()
+        for seat, player in pairs(vehicle:getOccupants() or {}) do
+            if seat ~= 0 then
+                player:removeFromVehicle()
+            end
         end
 
         local vehicleType = vehicle:getVehicleType()

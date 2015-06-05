@@ -121,7 +121,7 @@ end
 function JobFarmer:setJobElementVisibility (player,boolean)
 	if boolean then
 		local x, y = unpack(PLANT_DELIVERY)
-		self.m_DeliveryBlip = Blip:new("Waypoint.png", x, y)
+		self.m_DeliveryBlip = Blip:new("Waypoint.png", x, y, player)
 	else
 		delete(self.m_DeliveryBlip)
 	end
