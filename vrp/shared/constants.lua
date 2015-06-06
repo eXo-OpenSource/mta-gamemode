@@ -25,18 +25,20 @@ VEHICLESHOPS = {
 		Rect = {2141.3, -1207.74, 24.47, 76.15};
 		Spawn = {2148.2, -1179.96, 23.5, 90};
 		Vehicles = {
-			[536] = 7200, -- Blade
-			[518] = 8300, -- Buccaneer
-			[540] = 9000, -- Vincent
-			[589] = 11000, -- Club
-			[533] = 11300, -- Feltzer
-			[561] = 13000, -- Stratum
-			[402] = 14000, -- Buffallo
-			[400] = 14500, -- Landstalker
-			[550] = 16000, -- Sunrise
-			[603] = 17000, -- Phoenix
-			[489] = 17000, -- Rancher
-			[560] = 19000, -- Sultan
+			--model, price, requiredLevel
+			[536] = {7200, 4}, -- Blade
+			[518] = {8300, 4},-- Buccaneer
+			[567] = {8000, 5}, -- Savanna
+			[540] = {9000, 4}, -- Vincent
+			[589] = {11000, 4}, -- Club
+			[533] = {11300, 4}, -- Feltzer
+			[561] = {13000, 5}, -- Stratum
+			[402] = {14000, 5}, -- Buffallo
+			[400] = {14500, 5}, -- Landstalker
+			[550] = {16000, 6}, -- Sunrise
+			[603] = {17000, 6}, -- Phoenix
+			[489] = {17000, 6}, -- Rancher
+			[560] = {19000, 7}, -- Sultan
 		};
 	};
 	["Bertram's bobbycars"] = {
@@ -45,20 +47,20 @@ VEHICLESHOPS = {
 		Rect = {308.8, -1812.5, 20, 20};
 		Spawn = {321.70001, -1789.6, 4.7};
 		Vehicles = {
-			[543] = 2700, -- Sadler
-			[404] = 3000, -- Perennial
-			[549] = 3500, -- Tampa
-			[479] = 3700, -- Regina
-			[445] = 3750, -- Admiral
-			[527] = 4000, -- Cadrona
-			[566] = 5000, -- Tahoma
-			[491] = 5000, -- Virgo
-			[546] = 5700, -- Intruder
-			[542] = 6000, -- Clover
-			[600] = 7200, -- Picador
-			[585] = 7500, -- Emperor
-			[439] = 6500, -- Stallion
-			[567] = 8000, -- Savanna
+			--model, price, requiredLevel
+			[543] = {2700, 1}, -- Sadler
+			[404] = {3000, 1}, -- Perennial
+			[549] = {3500, 2}, -- Tampa
+			[479] = {3700, 1}, -- Regina
+			[445] = {3750, 2}, -- Admiral
+			[527] = {4000, 2}, -- Cadrona
+			[566] = {5000, 2}, -- Tahoma
+			[491] = {5000, 2}, -- Virgo
+			[546] = {5700, 2}, -- Intruder
+			[542] = {6000, 2}, -- Clover
+			[600] = {7200, 3}, -- Picador
+			[585] = {7500, 3}, -- Emperor
+			[439] = {6500, 3}, -- Stallion
 		};
 	};
 	["Harry's bikes"] = {
@@ -67,12 +69,13 @@ VEHICLESHOPS = {
 		Rect = {1271.5, -1384.4, 12, 12};
 		Spawn = {1274.9, -1373.6, 13.1};
 		Vehicles = {
-			[581] = 8000, -- BF-400
-			[521] = 8000, -- FCR-900
-			[463] = 12000, -- Freeway
-			[522] = 16000, -- NRG-500
-			[461] = 9000, -- PCJ-600
-			[468] = 4500, -- Sanchez
+			--model, price, requiredLevel
+			[581] = {8000, 6}, -- BF-400
+			[521] = {8000, 6}, -- FCR-900
+			[463] = {12000, 6}, -- Freeway
+			[522] = {16000, 8}, -- NRG-500
+			[461] = {9000, 3}, -- PCJ-600
+			[468] = {4500, 2}, -- Sanchez
 		}
 	};
 }

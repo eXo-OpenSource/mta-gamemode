@@ -154,8 +154,9 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 		return
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
-		player:sendMessage ("Sie haben die Lieferung abgegeben, Gehalt : $ "..self.m_CurrentPlants[player]*MONEYPERPLANT,0,255,0)
+		player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEYPERPLANT,0,255,0)
 		player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT)
+		player:givePoints(math.ceil(self.m_CurrentPlants[player]/10))
 		self.m_CurrentPlants[player] = 0
 		self:updatePrivateData(player)
 
@@ -186,6 +187,11 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 		hitElement:giveMoney(math.random(2, 3))
 		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 		self:updateClientData()
+
+		-- Give some points
+		if chance(6) then
+			hitElement:givePoints(1)
+		end
 	else
 		if vehicleID == getVehicleModelFromName("Tractor") and not self.m_Plants[createColShape] then
 			self.m_Plants[createColShape] = createObject(818,x,y,z-1.5)
@@ -194,6 +200,11 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
 			setElementVisibleTo(object, hitElement, true)
 			hitElement:giveMoney(math.random(1, 2))
+
+			-- Give some points
+			if chance(4) then
+				hitElement:givePoints(1)
+			end
 		end
 	end
 end

@@ -167,8 +167,13 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	if not VEHICLESHOPS[shop] then return end
 	if not VEHICLESHOPS[shop].Vehicles then return end
 
-	local price = VEHICLESHOPS[shop].Vehicles[vehicleModel]
+	local price, requiredLevel = unpack(VEHICLESHOPS[shop].Vehicles[vehicleModel])
 	if not price then return end
+
+	if requiredLevel < client:getVehicleLevel() then
+		client:sendError(_("Für dieses Fahrzeug brauchst du min. Fahrzeuglevel %d", client, requiredLevel))
+		return
+	end
 
 	if client:getMoney() < price then
 		client:sendError(_("Du hast nicht genügend Geld!", client), 255, 0, 0)
