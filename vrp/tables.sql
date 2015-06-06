@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : vRP
-Source Server Version : 50173
-Source Host           : jusonex.net:3306
-Source Database       : saonline
+Source Server         : vRP_new
+Source Server Version : 50543
+Source Host           : srv2.jusonex.net:3306
+Source Database       : vrp
 
 Target Server Type    : MYSQL
-Target Server Version : 50173
+Target Server Version : 50543
 File Encoding         : 65001
 
-Date: 2015-04-24 18:13:29
+Date: 2015-06-06 13:33:32
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -43,22 +43,27 @@ CREATE TABLE `vrp_account` (
   `LastLogin` datetime DEFAULT NULL,
   `EMail` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=30 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of vrp_account
 -- ----------------------------
-INSERT INTO `vrp_account` VALUES ('17', 'false', '7365D32189ECBDD8FC818EF537F79BA1', 'AF5A64ED5E8461D824B94F97F006854046A55F27D812BC0F0D452DA872F35DF6', '5', '368989309EB012227161093646E56843', '2015-04-22 17:29:58', null);
-INSERT INTO `vrp_account` VALUES ('1', 'Jusonex', '79C501C2830570204C6915BFBDEA9B2E', 'EAAD8B87E27E8258E0D550F6F6816675C65A5748FCC72D880E0F68502E01FD2C', '5', 'C4586E3449E6ECC0FA1FD8B269E2A873', '2015-04-23 19:29:57', null);
-INSERT INTO `vrp_account` VALUES ('2', 'Doneasty', '', '994FCB227681CFD6CA119F0A30553FCA590AECF5EA2617C9E4AF934198B85956', '4', '239A5FCD692C6C4D8ABD55F3C00E4D94', '2015-04-06 22:01:08', null);
-INSERT INTO `vrp_account` VALUES ('3', 'StiviK', '', 'DAF9854A6D826EA2B31E2336ECD0875836E4EFAD6CA23349BE083E68FE34A05E', '5', '71B947A4FF2929B905F4EE55B9182F02', '2015-04-23 19:39:04', null);
-INSERT INTO `vrp_account` VALUES ('18', 'Toxsi', '', '530AF54CE47C502654D30C74A6B4CAF5861DB3AF5D307187A8F99C150D4BCF4D', '2', '28D715400EC6C9F57DEB328D003ADA43', '2015-04-10 16:18:44', null);
+INSERT INTO `vrp_account` VALUES ('17', 'false', '7365D32189ECBDD8FC818EF537F79BA1', 'AF5A64ED5E8461D824B94F97F006854046A55F27D812BC0F0D452DA872F35DF6', '5', '368989309EB012227161093646E56843', '2015-06-06 13:23:11', null);
+INSERT INTO `vrp_account` VALUES ('1', 'Jusonex', '79C501C2830570204C6915BFBDEA9B2E', 'EAAD8B87E27E8258E0D550F6F6816675C65A5748FCC72D880E0F68502E01FD2C', '5', 'C4586E3449E6ECC0FA1FD8B269E2A873', '2015-06-06 13:10:27', null);
+INSERT INTO `vrp_account` VALUES ('2', 'Doneasty', '', '994FCB227681CFD6CA119F0A30553FCA590AECF5EA2617C9E4AF934198B85956', '4', '239A5FCD692C6C4D8ABD55F3C00E4D94', '2015-06-06 13:24:04', null);
+INSERT INTO `vrp_account` VALUES ('3', 'StiviK', '', 'DAF9854A6D826EA2B31E2336ECD0875836E4EFAD6CA23349BE083E68FE34A05E', '5', '71B947A4FF2929B905F4EE55B9182F02', '2015-06-06 12:56:53', 'stivik@v-roleplay.net');
+INSERT INTO `vrp_account` VALUES ('18', 'Toxsi', '', '530AF54CE47C502654D30C74A6B4CAF5861DB3AF5D307187A8F99C150D4BCF4D', '2', '28D715400EC6C9F57DEB328D003ADA43', '2015-05-19 14:37:28', null);
 INSERT INTO `vrp_account` VALUES ('19', 'sbx320', '', '8D969EEF6ECAD3C29A3A629280E686CF0C3F5D5A86AFF3CA12020C923ADC6C92', '5', null, null, null);
-INSERT INTO `vrp_account` VALUES ('20', 'Johnny', '', 'C549ADDC80367E17FD46B5B6A094EE7F9958D5C92FBA35F519E64C5A4304DDE6', '2', 'F4274B79FE188EFA7C4680896AB9F282', '2015-04-06 21:58:03', null);
-INSERT INTO `vrp_account` VALUES ('21', 'Gibaex', '', 'C549ADDC80367E17FD46B5B6A094EE7F9958D5C92FBA35F519E64C5A4304DDE6', '0', '3B8A80C51B9676FB85CD5BC30FD36544', '2015-03-16 19:57:40', null);
+INSERT INTO `vrp_account` VALUES ('20', 'Johnny', '', 'C549ADDC80367E17FD46B5B6A094EE7F9958D5C92FBA35F519E64C5A4304DDE6', '2', 'F4274B79FE188EFA7C4680896AB9F282', '2015-06-06 00:58:39', null);
+INSERT INTO `vrp_account` VALUES ('21', 'Gibaex', '', 'C549ADDC80367E17FD46B5B6A094EE7F9958D5C92FBA35F519E64C5A4304DDE6', '0', 'F4274B79FE188EFA7C4680896AB9F282', '2015-06-05 20:06:02', null);
 INSERT INTO `vrp_account` VALUES ('22', 'Sarcasm', '', '5994471ABB01112AFCC18159F6CC74B4F511B99806DA59B3CAF5A9C173CACFC5', '3', 'D43F3EA89CAFB26F6AA8EE0EDA339A53', '2015-04-07 18:53:11', null);
 INSERT INTO `vrp_account` VALUES ('23', 'TestUser4', '79C501C2830570204C6915BFBDEA9B2E', 'EAAD8B87E27E8258E0D550F6F6816675C65A5748FCC72D880E0F68502E01FD2C', '0', '', null, 'jusonex@v-roleplay.net');
 INSERT INTO `vrp_account` VALUES ('24', 'TestUser5', '5CC91EB66F1963FC8DBAC6D47935151F', '3286AFDBFBB08817A88C6CC58767E281199CBA11E17DF5E4C7D0369C57ED81E3', '0', 'C4586E3449E6ECC0FA1FD8B269E2A873', '2015-04-20 14:35:49', 'doneasty@web.de');
+INSERT INTO `vrp_account` VALUES ('25', 'Poof', 'EAAB5A103F24EA75A8AD87251652F167', '4CB0045D6E15D2376A9EAFB85CC4D861961CD0076EC244F28B884944779C2262', '0', 'F885F6BBB6A49FA4BD3D7EBC6C78CB84', '2015-05-18 21:21:31', 'poof@sbx320.net');
+INSERT INTO `vrp_account` VALUES ('26', 'Yetii', '8CD338D51246B23F935A36E76EFDDB12', '5C49A89AD8F6AD54929308DB3A2947EAD9E48A20A526742FC223DC9FFFE0E4FB', '0', 'C8631CD688CD35A3192BA7F5243BAD62', '2015-06-06 12:39:51', 'yetistone12@gmx.de');
+INSERT INTO `vrp_account` VALUES ('27', 'HEXASHOT', '3FE6FB34111C2DC08B17EB9DA9A85313', 'AD09CBECB7166C4C071987A86BD3183A1C17A3CDFE5DD0B29EB3D1BBD4D4DE3E', '0', 'A93331720EDD7DED935B4516E79F0284', '2015-06-06 12:46:21', 'hexashot@web.de');
+INSERT INTO `vrp_account` VALUES ('28', 'Simpsons183', '27B2D0A6CBD72146E97C376F68BADD23', '5FB5EFE66EC63D0807C45A5EA55B51868BE905D1394DD52E2D127ABF985B2FE6', '0', '5C61D77DDB092AF8FAE6A7FA7AA55C02', '2015-06-06 12:30:30', 'albandietze1999@gmx.de');
+INSERT INTO `vrp_account` VALUES ('29', 'Harrikan', 'DC186DB031FDF13683B3509108392A29', 'AFF556A2CE7979F5DBA736B93B5876AB56182896A0B9EC95B77377C48AFF81E8', '0', '1488BCD6D847073EA7D6D45435ED4E42', '2015-06-06 10:57:34', 'harrikan@web.de');
 
 -- ----------------------------
 -- Table structure for `vrp_achievements`
@@ -250,6 +255,17 @@ INSERT INTO `vrp_bank_statements` VALUES ('3', '4', '1000000', '2015-04-23 17:29
 INSERT INTO `vrp_bank_statements` VALUES ('3', '4', '9000000', '2015-04-23 17:30:10');
 INSERT INTO `vrp_bank_statements` VALUES ('3', '3', '3001', '2015-04-23 17:35:15');
 INSERT INTO `vrp_bank_statements` VALUES ('3', '4', '6002', '2015-04-23 17:35:21');
+INSERT INTO `vrp_bank_statements` VALUES ('1', '4', '5000', '2015-05-14 00:05:04');
+INSERT INTO `vrp_bank_statements` VALUES ('1', '4', '10000', '2015-05-14 00:05:11');
+INSERT INTO `vrp_bank_statements` VALUES ('2', '4', '100000', '2015-05-25 14:59:02');
+INSERT INTO `vrp_bank_statements` VALUES ('2', '3', '1000000', '2015-06-05 20:01:31');
+INSERT INTO `vrp_bank_statements` VALUES ('26', '4', '758', '2015-06-05 20:48:51');
+INSERT INTO `vrp_bank_statements` VALUES ('27', '4', '322', '2015-06-05 20:48:53');
+INSERT INTO `vrp_bank_statements` VALUES ('28', '4', '947', '2015-06-05 20:48:59');
+INSERT INTO `vrp_bank_statements` VALUES ('26', '4', '66909', '2015-06-05 21:20:33');
+INSERT INTO `vrp_bank_statements` VALUES ('26', '3', '10000', '2015-06-05 21:50:27');
+INSERT INTO `vrp_bank_statements` VALUES ('2', '4', '2900', '2015-06-06 10:56:56');
+INSERT INTO `vrp_bank_statements` VALUES ('27', '4', '5148', '2015-06-06 13:11:23');
 
 -- ----------------------------
 -- Table structure for `vrp_bans`
@@ -276,6 +292,7 @@ CREATE TABLE `vrp_character` (
   `PosY` float DEFAULT '0',
   `PosZ` float DEFAULT '0',
   `Interior` tinyint(3) unsigned DEFAULT '0',
+  `UniqueInterior` smallint(5) unsigned DEFAULT '0',
   `Skin` smallint(5) unsigned DEFAULT '0',
   `Health` tinyint(3) unsigned DEFAULT '100',
   `Armor` tinyint(3) unsigned DEFAULT '0',
@@ -296,7 +313,7 @@ CREATE TABLE `vrp_character` (
   `EnduranceSkill` tinyint(3) unsigned DEFAULT '0',
   `Weapons` text,
   `InventoryId` int(10) unsigned DEFAULT '0',
-  `GarageType` tinyint(3) unsigned DEFAULT '1',
+  `GarageType` tinyint(3) unsigned DEFAULT '0',
   `LastGarageEntrance` tinyint(3) unsigned DEFAULT '0',
   `SpawnLocation` tinyint(3) unsigned DEFAULT '0',
   `Collectables` text,
@@ -314,28 +331,32 @@ CREATE TABLE `vrp_character` (
 -- ----------------------------
 -- Records of vrp_character
 -- ----------------------------
-INSERT INTO `vrp_character` VALUES ('17', '2147.11', '-1263.11', '23.9943', '0', '0', '95', '0', '0', '0', '0', '276', '0', '0', '3', '5', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '1', '1', '0', '0', '[ [ ] ]', '0', '0', '0', '20', '1', '', '[ { \"0\": false } ]', '4397');
-INSERT INTO `vrp_character` VALUES ('21', '1568.78', '-1167.39', '24.0781', '0', '0', '100', '0', '216.992', '-10.1493', '0', '4000', '0', '0', '3', '6', '23', '2', '0', '0', '0', '0', '0', '0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0', '8', '1', '8', '0', '[ [ ] ]', '0', '0', '0', '2', '1', '', '[ { \"0\": false, \"3\": true, \"6\": true } ]', '18');
-INSERT INTO `vrp_character` VALUES ('3', '649.22', '-1202.08', '18.1074', '0', '200', '72', '0', '4750.86', '93.7694', '14661', '2950', '10003001', '0', '3', '0', '26', '2', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '2', '3', '12', '0', '[ { \"1\": \"1\", \"11\": \"1\" } ]', '8', '2', '7', '3', '1', '', '[ { \"0\": false, \"40\": true, \"47\": true, \"19\": true, \"46\": true, \"45\": true, \"31\": true, \"48\": true, \"49\": true, \"21\": true, \"17\": true, \"13\": true, \"12\": true, \"11\": true, \"9\": true } ]', '5087');
-INSERT INTO `vrp_character` VALUES ('18', '1079.61', '4465.82', '-0.55', '0', '216', '46', '0', '42.4988', '-0.049875', '13', '500', '150500', '0', '3', '3', '27', '2', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '3', '1', '8', '0', '[ { \"1\": \"1\", \"20\": \"1\" } ]', '2', '1', '1', '6', '1', '', '[ { \"1\": true, \"0\": false, \"3\": true, \"2\": true, \"6\": true } ]', '68');
-INSERT INTO `vrp_character` VALUES ('19', '135.62', '1095.17', '13.6094', '0', '0', '100', '0', '0', '0', '0', '55', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0', '4', '1', '0', '0', '[ [ ] ]', '0', '0', '0', '2', '1', '', '[ { \"0\": false } ]', '2');
-INSERT INTO `vrp_character` VALUES ('20', '540', '-1739', '8.92467', '0', '248', '79', '0', '297.686', '-2.29982', '100', '512104', '117000', '0', '3', '1', '25', '2', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ], [ 31, 484 ] ] ]', '3', '3', '7', '0', '[ { \"1\": \"1\", \"4\": \"1\", \"3\": \"1\" } ]', '7', '5', '5', '5', '1', '', '[ { \"0\": false, \"3\": true, \"6\": true } ]', '1558');
-INSERT INTO `vrp_character` VALUES ('1', '2023.31', '-1418.17', '16.9922', '0', '269', '100', '0', '1537.77', '-50.1244', '226', '90238', '0', '0', '3', '6', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '1', '1', '10', '0', '[ { \"1\": \"1\", \"3\": \"1\", \"20\": \"1\" } ]', '1', '1', '1', '3', '1', '', '[ { \"1\": true, \"0\": false, \"3\": true, \"2\": true, \"6\": true } ]', '4231');
-INSERT INTO `vrp_character` VALUES ('22', '3449.95', '-2142.65', '16.8162', '0', '163', '23', '0', '218.783', '-29.9111', '0', '389426', '948039', '0', '3', '0', '25', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ], [ 25, 7 ], [ 30, 12 ] ] ]', '5', '1', '3', '0', '[ { \"13\": \"1\", \"12\": \"1\", \"7\": \"1\", \"1\": \"1\" } ]', '7', '9', '3', '4', '0', '', '[ { \"3\": true, \"0\": false } ]', '998');
-INSERT INTO `vrp_character` VALUES ('2', '495.06', '-1730.17', '11.3011', '0', '264', '45', '0', '19.6718', '-10', '117', '203877', '953039', '0', '3', '6', '25', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ], [ 30, 810 ], [ 41, 776 ] ] ]', '4', '3', '8', '0', '[ { \"13\": \"1\", \"12\": \"1\", \"7\": \"1\", \"1\": \"1\" } ]', '4', '4', '2', '4', '1', '', '[ { \"3\": true, \"0\": false } ]', '994');
-INSERT INTO `vrp_character` VALUES ('24', '141.554', '-77.1562', '1.57812', '0', '0', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', null, '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '8', '1', '0', '0', null, '0', '0', '0', '0', '0', '', '[ { \"0\": false } ]', '42');
-INSERT INTO `vrp_character` VALUES ('23', '131.378', '-67.6865', '1.57812', '0', '0', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', null, '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '7', '1', '0', '0', null, '0', '0', '0', '0', '0', '', '[ { \"0\": false } ]', '3');
-INSERT INTO `vrp_character` VALUES ('25', '136.336', '-73.1523', '1.42969', '0', '0', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', null, '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '9', '1', '0', '0', null, '0', '0', '0', '0', '0', '', '[ { \"0\": false } ]', '2');
-INSERT INTO `vrp_character` VALUES ('26', '132', '-67.291', '1.57812', '0', '0', '100', '100', '0', '0', '0', '0', '0', '0', '3', '0', '0', null, '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '10', '1', '0', '0', null, '0', '0', '0', '0', '0', '', '[ { \"0\": false } ]', '1');
+INSERT INTO `vrp_character` VALUES ('17', '706.309', '-481.976', '16.1875', '0', '0', '0', '70', '0', '1.5', '-0.15', '5', '24', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '1', '0', '0', '0', '[ [ ] ]', '0', '0', '0', '0', '1', '', '[ { \"20\": true, \"0\": false, \"6\": true } ]', '4558');
+INSERT INTO `vrp_character` VALUES ('21', '2666.12', '-1843.64', '11.4632', '0', '0', '0', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '8', '0', '8', '0', '[ [ ] ]', '0', '0', '2', '0', '1', '', '[ { \"9\": true, \"0\": false, \"3\": true, \"17\": true, \"19\": true, \"49\": true, \"45\": true, \"6\": true } ]', '102');
+INSERT INTO `vrp_character` VALUES ('3', '923.637', '-1210.86', '26.0574', '0', '0', '200', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '2', '0', '2', '0', '[ [ \"1\" ] ]', '0', '0', '7', '0', '1', '', '[ { \"47\": true, \"0\": false, \"40\": true, \"31\": true, \"19\": true, \"46\": true, \"45\": true, \"6\": true, \"48\": true, \"49\": true, \"21\": true, \"17\": true, \"13\": true, \"12\": true, \"11\": true, \"9\": true } ]', '6676');
+INSERT INTO `vrp_character` VALUES ('18', '1219.24', '-212.25', '34.587', '0', '0', '216', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '3', '0', '8', '0', '[ { \"1\": \"1\", \"20\": \"1\" } ]', '0', '0', '1', '0', '1', '', '[ { \"1\": true, \"0\": false, \"3\": true, \"2\": true, \"11\": true, \"6\": true } ]', '81');
+INSERT INTO `vrp_character` VALUES ('19', '135.62', '1095.17', '13.6094', '0', '0', '0', '100', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0|1|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0|0', '4', '0', '0', '0', '[ [ ] ]', '0', '0', '0', '0', '1', '', '[ { \"0\": false } ]', '2');
+INSERT INTO `vrp_character` VALUES ('20', '1100.28', '-1406.92', '13.4516', '0', '0', '248', '80', '0', '0', '0', '33', '788', '0', '0', '3', '1', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '3', '0', '1', '0', '[ { \"1\": \"1\", \"4\": \"1\", \"3\": \"1\" } ]', '0', '0', '5', '1', '1', '', '[ { \"0\": false, \"3\": true, \"46\": true, \"45\": true, \"6\": true, \"49\": true, \"17\": true, \"13\": true, \"12\": true, \"11\": true } ]', '1852');
+INSERT INTO `vrp_character` VALUES ('1', '1228.62', '-1720.12', '13.5469', '0', '0', '289', '12', '0', '0', '0', '41', '1509', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ ] ]', '1', '0', '1', '0', '[ { \"1\": \"1\", \"3\": \"1\", \"20\": \"1\" } ]', '1', '0', '3', '1', '1', '', '[ { \"1\": true, \"0\": false, \"3\": true, \"2\": true, \"19\": true, \"45\": true, \"6\": true, \"9\": true, \"49\": true, \"17\": true, \"13\": true, \"12\": true, \"11\": true, \"20\": true } ]', '6393');
+INSERT INTO `vrp_character` VALUES ('22', '3449.95', '-2142.65', '16.8162', '0', '0', '163', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ], [ 25, 7 ], [ 30, 12 ] ] ]', '5', '0', '3', '0', '[ { \"13\": \"1\", \"12\": \"1\", \"7\": \"1\", \"1\": \"1\" } ]', '0', '0', '3', '0', '0', '', '[ { \"3\": true, \"0\": false } ]', '998');
+INSERT INTO `vrp_character` VALUES ('2', '706.997', '-488.387', '16.1875', '0', '0', '241', '100', '0', '10.4999', '-1.04999', '35', '581', '2900', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ], [ 30, 214 ] ] ]', '4', '0', '1', '0', '[ { \"13\": \"1\", \"12\": \"1\", \"7\": \"1\", \"1\": \"1\" } ]', '2', '1', '3', '4', '1', '', '[ { \"0\": false, \"3\": true, \"45\": true, \"49\": true, \"21\": true, \"17\": true, \"20\": true, \"12\": true, \"11\": true, \"13\": true } ]', '1943');
+INSERT INTO `vrp_character` VALUES ('24', '141.554', '-77.1562', '1.57812', '0', '0', '0', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '8', '0', '0', '0', null, '0', '0', '0', '0', '0', '', '[ { \"0\": false } ]', '42');
+INSERT INTO `vrp_character` VALUES ('23', '131.378', '-67.6865', '1.57812', '0', '0', '0', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '7', '0', '0', '0', null, '0', '0', '0', '0', '0', '', '[ { \"0\": false } ]', '3');
+INSERT INTO `vrp_character` VALUES ('25', '2011.37', '-1416.38', '16.9922', '0', '0', '0', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '9', '0', '2', '0', null, '0', '0', '0', '0', '1', '', '[ { \"0\": false, \"3\": true, \"17\": true, \"13\": true, \"12\": true, \"11\": true, \"6\": true } ]', '113');
+INSERT INTO `vrp_character` VALUES ('26', '2243.62', '-1656.31', '15.2881', '0', '0', '164', '65', '0', '20', '2', '12', '12357', '0', '0', '3', '6', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ], [ 29, 264 ] ] ]', '10', '0', '1', '0', null, '6', '0', '1', '4', '0', '', '[ { \"0\": false, \"45\": true, \"6\": true, \"49\": true, \"31\": true, \"17\": true, \"13\": true, \"12\": true, \"11\": true, \"20\": true } ]', '257');
+INSERT INTO `vrp_character` VALUES ('27', '2006.46', '-1452.69', '13.5547', '0', '0', '185', '63', '0', '3', '-0.3', '146', '0', '5148', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '14', '0', '1', '0', null, '0', '1', '0', '1', '0', '', '[ { \"0\": false, \"3\": true, \"6\": true, \"9\": true, \"49\": true, \"17\": true, \"13\": true, \"12\": true, \"11\": true, \"20\": true } ]', '201');
+INSERT INTO `vrp_character` VALUES ('28', '1914.69', '-1453.18', '13.5469', '0', '0', '163', '95', '0', '30', '3', '254', '23153', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '16', '0', '1', '0', '[ { \"4\": \"1\" } ]', '2', '4', '2', '5', '0', '', '[ { \"0\": false, \"3\": true, \"45\": true, \"6\": true, \"49\": true, \"17\": true, \"13\": true, \"12\": true, \"11\": true, \"20\": true } ]', '351');
+INSERT INTO `vrp_character` VALUES ('29', '1312.41', '-1568.69', '12.8948', '0', '0', '195', '100', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '[ [ [ 0, 1 ] ] ]', '18', '0', '1', '0', null, '0', '0', '0', '0', '0', '', '[ { \"0\": false, \"3\": true, \"47\": true, \"9\": true, \"49\": true, \"17\": true, \"20\": true, \"12\": true, \"11\": true, \"13\": true } ]', '109');
 
 -- ----------------------------
 -- Table structure for `vrp_cheatlog`
 -- ----------------------------
 DROP TABLE IF EXISTS `vrp_cheatlog`;
 CREATE TABLE `vrp_cheatlog` (
-  `UserId` int(10) unsigned DEFAULT NULL,
-  `Name` varchar(25) DEFAULT NULL,
-  `Severity` tinyint(1) unsigned DEFAULT NULL
+  `UserId` int(10) unsigned NOT NULL,
+  `Name` varchar(25) NOT NULL,
+  `Severity` tinyint(1) unsigned NOT NULL,
+  KEY `UserId` (`UserId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- ----------------------------
@@ -348,6 +369,41 @@ INSERT INTO `vrp_cheatlog` VALUES ('1', 'Sent invalid mileage', '2');
 INSERT INTO `vrp_cheatlog` VALUES ('1', 'Sent invalid mileage', '2');
 INSERT INTO `vrp_cheatlog` VALUES ('1', 'Sent invalid mileage', '2');
 INSERT INTO `vrp_cheatlog` VALUES ('1', 'Sent invalid mileage', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('2', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('2', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('1', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('1', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('1', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('1', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('1', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('2', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('1', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('20', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('26', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('1', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('27', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('27', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('27', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('27', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('29', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('29', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('29', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('29', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('29', 'Triggered collect event o', '2');
+INSERT INTO `vrp_cheatlog` VALUES ('29', 'Triggered collect event o', '2');
 
 -- ----------------------------
 -- Table structure for `vrp_gangareas`
@@ -363,19 +419,6 @@ CREATE TABLE `vrp_gangareas` (
 -- ----------------------------
 -- Records of vrp_gangareas
 -- ----------------------------
-INSERT INTO `vrp_gangareas` VALUES ('1', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('2', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('3', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('7', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('6', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('14', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('17', '27', null);
-INSERT INTO `vrp_gangareas` VALUES ('12', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('18', '26', null);
-INSERT INTO `vrp_gangareas` VALUES ('16', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('15', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('5', '25', null);
-INSERT INTO `vrp_gangareas` VALUES ('9', '27', null);
 
 -- ----------------------------
 -- Table structure for `vrp_groups`
@@ -384,18 +427,16 @@ DROP TABLE IF EXISTS `vrp_groups`;
 CREATE TABLE `vrp_groups` (
   `Id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `Name` varchar(20) DEFAULT NULL,
+  `Tag` varchar(5) DEFAULT NULL,
   `Money` int(10) unsigned DEFAULT '0',
   `Karma` int(10) DEFAULT '0',
+  `lastNameChange` int(10) DEFAULT '0',
   PRIMARY KEY (`Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=193 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of vrp_groups
 -- ----------------------------
-INSERT INTO `vrp_groups` VALUES ('23', 'Wehrmacht denn sowas', '0', '0');
-INSERT INTO `vrp_groups` VALUES ('26', '5edth', '4294967295', '131');
-INSERT INTO `vrp_groups` VALUES ('25', '1% Hells Virgins MC', '9492000', '0');
-INSERT INTO `vrp_groups` VALUES ('27', 'Kanal-Arbeiter', '158817', '0');
 
 -- ----------------------------
 -- Table structure for `vrp_houses`
@@ -420,11 +461,11 @@ CREATE TABLE `vrp_houses` (
 -- Records of vrp_houses
 -- ----------------------------
 INSERT INTO `vrp_houses` VALUES ('1', '2091.676757812500000000000000000000', '-1278.489257812500000000000000000000', '26.179687500000000000000000000000', '1', '[ [ ] ]', '1', '25000', '0', '25', '[ [ ] ]');
-INSERT INTO `vrp_houses` VALUES ('2', '2111.196289062500000000000000000000', '-1279.395507812500000000000000000000', '25.687500000000000000000000000000', '1', '[ [ ] ]', '0', '35000', '0', '25', '[ [ ] ]');
-INSERT INTO `vrp_houses` VALUES ('3', '2100.969726562500000000000000000000', '-1321.155273437500000000000000000000', '25.953125000000000000000000000000', '2', '[ [ ] ]', '0', '15000', '0', '25', '[ [ ] ]');
-INSERT INTO `vrp_houses` VALUES ('4', '2126.564453125000000000000000000000', '-1320.563476562500000000000000000000', '26.623929977416992187500000000000', '1', '[ [ ] ]', '0', '150000', '0', '25', '[ [ ] ]');
-INSERT INTO `vrp_houses` VALUES ('5', '2132.632812500000000000000000000000', '-1280.931640625000000000000000000000', '25.890625000000000000000000000000', '2', '[ [ ] ]', '0', '75000', '0', '25', '[ [ ] ]');
-INSERT INTO `vrp_houses` VALUES ('6', '2150.021484375000000000000000000000', '-1285.411132812500000000000000000000', '24.196470260620117187500000000000', '2', '[ [ ] ]', '0', '60000', '0', '25', '[ [ ] ]');
+INSERT INTO `vrp_houses` VALUES ('2', '2111.196289062500000000000000000000', '-1279.395507812500000000000000000000', '25.687500000000000000000000000000', '1', '[ [ ] ]', '3', '35000', '0', '25', '[ [ ] ]');
+INSERT INTO `vrp_houses` VALUES ('3', '2100.969726562500000000000000000000', '-1321.155273437500000000000000000000', '25.953125000000000000000000000000', '2', '[ [ ] ]', '3', '15000', '0', '25', '[ [ ] ]');
+INSERT INTO `vrp_houses` VALUES ('4', '2126.564453125000000000000000000000', '-1320.563476562500000000000000000000', '26.623929977416992000000000000000', '1', '[ [ ] ]', '3', '150000', '0', '25', '[ [ ] ]');
+INSERT INTO `vrp_houses` VALUES ('5', '2132.632812500000000000000000000000', '-1280.931640625000000000000000000000', '25.890625000000000000000000000000', '2', '[ [ ] ]', '3', '75000', '0', '25', '[ [ ] ]');
+INSERT INTO `vrp_houses` VALUES ('6', '2150.021484375000000000000000000000', '-1285.411132812500000000000000000000', '24.196470260620117000000000000000', '2', '[ [ ] ]', '3', '60000', '0', '25', '[ [ ] ]');
 
 -- ----------------------------
 -- Table structure for `vrp_inventory`
@@ -435,13 +476,13 @@ CREATE TABLE `vrp_inventory` (
   `Items` text NOT NULL,
   `Data` text NOT NULL,
   PRIMARY KEY (`Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=19 DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of vrp_inventory
 -- ----------------------------
-INSERT INTO `vrp_inventory` VALUES ('1', '[ [ [ 12, 1 ] ] ]', '');
-INSERT INTO `vrp_inventory` VALUES ('2', '[ [ [ 4, 99 ], [ 3, 98 ], [ 2, 99 ], [ 1, 99 ], [ 6, 100 ], [ 7, 1 ], [ 10, 100 ], [ 11, 97 ] ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('1', '[ [ ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('2', '[ [ ] ]', '');
 INSERT INTO `vrp_inventory` VALUES ('3', '[ [ ] ]', '');
 INSERT INTO `vrp_inventory` VALUES ('4', '[ [ ] ]', '');
 INSERT INTO `vrp_inventory` VALUES ('5', '[ [ ] ]', '');
@@ -450,6 +491,14 @@ INSERT INTO `vrp_inventory` VALUES ('7', '[ [ ] ]', '');
 INSERT INTO `vrp_inventory` VALUES ('8', '[ [ ] ]', '');
 INSERT INTO `vrp_inventory` VALUES ('9', '[ [ ] ]', '');
 INSERT INTO `vrp_inventory` VALUES ('10', '[ [ ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('11', '[ [ ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('12', '[ [ ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('13', '[ [ ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('14', '[ [ ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('15', '[ [ ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('16', '[ [ ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('17', '[ [ ] ]', '');
+INSERT INTO `vrp_inventory` VALUES ('18', '[ [ ] ]', '');
 
 -- ----------------------------
 -- Table structure for `vrp_ladder`
@@ -490,6 +539,21 @@ CREATE TABLE `vrp_paylog` (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for `vrp_stats_money`
+-- ----------------------------
+DROP TABLE IF EXISTS `vrp_stats_money`;
+CREATE TABLE `vrp_stats_money` (
+  `UserId` int(10) unsigned NOT NULL,
+  `Amount` bigint(20) NOT NULL,
+  `Description` text,
+  `Date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- ----------------------------
+-- Records of vrp_stats_money
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for `vrp_vehicles`
 -- ----------------------------
 DROP TABLE IF EXISTS `vrp_vehicles`;
@@ -504,38 +568,12 @@ CREATE TABLE `vrp_vehicles` (
   `Color` int(10) unsigned DEFAULT NULL,
   `Health` smallint(5) unsigned DEFAULT NULL,
   `Keys` text,
-  `IsInGarage` tinyint(3) unsigned DEFAULT '0',
+  `PositionType` tinyint(3) unsigned DEFAULT '0',
   `Tunings` text,
-  `Mileage` bigint(20) unsigned DEFAULT '0',
+  `Mileage` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`Id`)
-) ENGINE=MyISAM AUTO_INCREMENT=45 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- ----------------------------
 -- Records of vrp_vehicles
 -- ----------------------------
-INSERT INTO `vrp_vehicles` VALUES ('1', '522', '1', '1599.81', '965.6', '10.4226', '270', '4285343799', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('9', '438', '3', '1598.6', '1084', '10.8005', '326', '4291586057', '998', '[ [ 3 ] ]', '1', '[ [ 1010, 1087, 1085 ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('17', '560', '3', '-4545.12', '-2384.09', '-0.444292', '234', '4292174848', '1000', '[ [ ] ]', '0', '[ [ 1015, 1030, 1033, 1010, 1087, 1080, 1029 ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('13', '560', '1', '1604.3', '974.798', '10.5694', '180', '4285730330', '1000', '[ [ 2 ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('16', '561', '21', '1599.8', '965.6', '10.6686', '270', '4281154101', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('23', '463', '20', '2734.24', '-2845.04', '11.4367', '144', '4288650644', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('19', '572', '3', '1606', '1083.29', '10.4385', '326', '4284426027', '994', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('20', '581', '2', '1599.93', '1083.21', '10.4297', '326', '4280231227', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('21', '560', '2', '1606.11', '1083.15', '12.5582', '326', '4281154101', '782', '[ [ 20, 20 ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('22', '600', '2', '1615.26', '1081.77', '10.5188', '341', '4284836473', '997', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('24', '463', '1', '1609', '961.301', '10.4043', '300', '4288650644', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('25', '522', '20', '1606.02', '1083.31', '10.5591', '326', '4290625222', '997', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('26', '521', '1', '1817.35', '-1173.45', '23.1418', '198', '4288916934', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('27', '521', '20', '1613.22', '1079.38', '10.5442', '12', '4280295468', '998', '[ [ 2 ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('28', '463', '2', '1830.69', '-1501.65', '4.33414', '91', '4279640648', '1000', '[ [ 18 ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('29', '518', '20', '1619.4', '1082.15', '10.5404', '0', '4285301909', '991', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('31', '462', '3', '1613.41', '1083.02', '10.4466', '326', '4294967295', '996', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('32', '441', '3', '1619.4', '1083.4', '9.9612', '0', '4294967295', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('33', '574', '3', '1624.21', '1081.11', '10.5557', '226', '4294967295', '845', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('34', '416', '3', '1598.65', '1095.95', '11.014', '218', '4294967295', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('35', '568', '3', '1606.6', '1095.5', '10.7227', '218', '4294967295', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('42', '522', '3', '1614.02', '1094.98', '10.4016', '218', '4278190080', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('43', '567', '22', '368.081', '-1723.11', '21.5115', '1', '4285301909', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('40', '527', '20', '1623.9', '1083.6', '10.5191', '0', '4281604638', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('41', '567', '20', '1597.9', '1095.8', '10.6071', '219', '4289704369', '874', '[ [ ] ]', '1', '[ [ ] ]', '0');
-INSERT INTO `vrp_vehicles` VALUES ('44', '561', '18', '1858.95', '-2066.65', '14.7868', '316', '4281154101', '1000', '[ [ ] ]', '1', '[ [ ] ]', '0');

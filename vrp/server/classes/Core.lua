@@ -11,6 +11,11 @@ function Core:constructor()
 		Debugging:new()
 	end
 
+	-- Update MySQL DB if this is not the testserver/releaseserver
+	if not IS_TESTSERVER then
+		MYSQL_DB = "vrp_local"
+	end
+
 	-- Establish database connection
 	sql = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, MYSQL_DB, "")
 	sql:setPrefix("vrp")

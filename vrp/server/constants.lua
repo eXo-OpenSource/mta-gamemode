@@ -5,6 +5,7 @@ MYSQL_PW	= "fI8;26>6F#"
 MYSQL_DB	= "vrp"
 
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
+IS_TESTSERVER = getServerName():find("Testserver") ~= nil
 
 SPAWN_LOCATION_DEFAULT = 0
 SPAWN_LOCATION_JAIL = 1

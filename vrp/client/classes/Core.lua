@@ -101,7 +101,7 @@ function Core:afterLogin()
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
-	bindKey(core:get("KeyBindings", "KeyToggleSelfGUI", "f2"), "down", function() SelfGUI:getSingleton():toggle(true) end)
+	bindKey(core:get("KeyBindings", "KeyToggleSelfGUI", "f2"), "down", function() SelfGUI:getSingleton():toggle() end)
 
 	ScoreboardGUI:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleScoreboard", "tab"), "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
