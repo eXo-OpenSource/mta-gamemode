@@ -12,11 +12,11 @@ function Blip:constructor(imagePath, x, y, visibleTo)
 	if self.m_VisibleTo == root then
 		for k, player in pairs(getElementsByType("player")) do
 			if player:isLoggedIn() then
-				player:triggerEvent("blipCreate", #Blip.Map, self.m_ImagePath, self.m_PosX, self.m_PosY)
+				player:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY)
 			end
 		end
 	else
-		self.m_VisibleTo:triggerEvent("blipCreate", #Blip.Map, self.m_ImagePath, self.m_PosX, self.m_PosY)
+		self.m_VisibleTo:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY)
 	end
 end
 

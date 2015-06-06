@@ -4,7 +4,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 	self.m_FixShape = createColSphere(x, y, z, 4)
 	self.m_Blip = Blip:new("PayNSpray.png", x, y)
 	setGarageOpen(garageId, true)
-	
+
 	addEventHandler("onColShapeHit", self.m_FixShape,
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension then
@@ -18,17 +18,17 @@ function PayNSpray:constructor(x, y, z, garageId)
 					return
 				end
 
-				local costs = math.floor((1000-getElementHealth(vehicle))*0.5) + math.floor((1000-getElementHealth(vehicle))*0.5)*0.33
+				local costs = math.floor((1000-getElementHealth(vehicle))*0.5) + math.floor((1000-getElementHealth(vehicle))*0.5*0.33)
 				if hitElement:getMoney() < costs then
 					hitElement:sendError(_("Du hast nicht genügend Geld!", hitElement))
 					return
 				end
-				
+
 				setGarageOpen(garageId, false)
 				setElementFrozen(vehicle, true)
 				hitElement:takeMoney(costs)
 				hitElement:sendShortMessage(_("Die Reperatur kostete %d$", hitElement, costs))
-				
+
 				setTimer(
 					function()
 						fixVehicle(vehicle)

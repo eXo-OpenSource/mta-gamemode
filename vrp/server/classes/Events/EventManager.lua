@@ -78,7 +78,7 @@ function EventManager:openEvent(eventClass)
 	end
 
 	-- Start the event in 5min
-	setTimer(bind(event.start, event), 0.5*60*1000, 1)
+	setTimer(bind(event.start, event), 5*60*1000, 1)
 end
 
 function EventManager:isPlayerInEvent(player, eventClass)

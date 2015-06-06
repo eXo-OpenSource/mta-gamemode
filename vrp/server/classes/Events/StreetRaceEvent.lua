@@ -66,7 +66,7 @@ function StreetRaceEvent:destructor()
 end
 
 function StreetRaceEvent:colShapeHit(hitElement, matchingDimension)
-	if getElementType(hitElement) == "player" and matchingDimension and getPedOccupiedVehicleSeat(hitElement) == 0 then
+	if getElementType(hitElement) == "player" and matchingDimension and getPedOccupiedVehicleSeat(hitElement) == 0 and self:isMember(hitElement) then
 		-- Add player to the winner list
 		self.m_Ranks[#self.m_Ranks+1] = hitElement
 
@@ -75,11 +75,20 @@ function StreetRaceEvent:colShapeHit(hitElement, matchingDimension)
 
 		-- Give him some money
 		local moneyAmount = 100 * #self.m_Players / #self.m_Ranks
-		hitElement:giveMoney(moneyAmount)
+		hitElement:giveMoney(math.ceil(moneyAmount))
 		hitElement:sendSuccess(_("Du hast das Straßenrennen %d$ gewonnen!", hitElement, moneyAmount), 0, 255, 0)
 
 		-- Quit the hitting player
 		self:quit(hitElement)
+
+		-- Start countdown when the first player has reached the destination
+		if #self.m_Ranks == 1 then
+			self:sendMessage("Der erste Spieler hat das Ziel erreicht. Du hast du noch 1 Minute Zeit, um das Ziel zu erreichen!", 255, 255, 0)
+
+			-- Kill old timeout timer and restart
+			self.m_TimeoutTimer:destroy()
+			self.m_TimeoutTimer = setTimer(function() delete(self) end, 60*1000, 1)
+		end
 
 		-- Stop the event is all players reached the destination
 		if #self.m_Players == 0 then

@@ -25,14 +25,14 @@ local VRP_RADIO = {
 	{"ClubTime.fm", "http://listen.ClubTime.fm/dsl.pls"},
 	{"CoreTime.fm", "http://listen.CoreTime.fm/dsl.pls"},
 	{"RADIO METAL ON", "http://62.210.125.50:8000/mp3"},
-	
+
 	-- GTA channels
 	{"Playback FM", 1},
 	{"K-Rose", 2},
 	{"K-DST", 3},
 	{"Bounce FM", 4},
 	{"SF-UR", 5},
-	{"Radio Los Santops", 6},
+	{"Radio Los Santos", 6},
 	{"Radio X", 7},
 	{"CSR 103.9", 8},
 	{"K-Jah West", 9},
@@ -48,7 +48,7 @@ function RadioGUI:constructor()
 	showPlayerHudComponent("radio", false)
 	setRadioChannel(0)
 	addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
-	
+
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Radio/radio_bg.png", self)
 	self.m_Last = GUIImage:new(self.m_Width*0.02, self.m_Height*0.10, self.m_Width*0.11, self.m_Height*0.29, "files/images/Radio/sound_back.png", self.m_Background)
 	self.m_Next = GUIImage:new(self.m_Width*0.87, self.m_Height*0.10, self.m_Width*0.11, self.m_Height*0.29, "files/images/Radio/sound_next.png", self.m_Background)
@@ -58,30 +58,30 @@ function RadioGUI:constructor()
 	self.m_Radioname = GUILabel:new(self.m_Width*0.06, self.m_Height*0.53, self.m_Width*0.88, self.m_Height*0.20, "", self.m_Background)
 		:setFont(VRPFont(self.m_Height*0.2))
 		:setAlign("center", "center")
-	
+
 	-- Add click events
 	self.m_Last.onLeftClick = function() self:previousStation() end
 	self.m_Next.onLeftClick = function() self:nextStation() end
 	self.m_VolumeUp.onLeftClick = function() self:setVolume(self:getVolume() + 0.1) end
 	self.m_VolumeDown.onLeftClick = function() self:setVolume(self:getVolume() - 0.1) end
 	self.m_ToggleSound.onLeftClick = function() self:toggle() end
-	
+
 	-- First of all, set radio off
 	self:setRadioStation(0)
 	if not isPedInVehicle(localPlayer) then
 		self:close()
 	end
-	
+
 	-- Bind controls
 	bindKey("radio_next", "down", function() self:nextStation() end)
 	bindKey("radio_previous", "down", function() self:previousStation() end)
-	
+
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
 		function()
 			self:setRadioStation(self.m_CurrentStation)
 		end
 	)
-	addEventHandler("onClientPlayerVehicleExit", localPlayer, 
+	addEventHandler("onClientPlayerVehicleExit", localPlayer,
 		function()
 			self:setVisible(false)
 			self:stopSound()
@@ -95,7 +95,7 @@ function RadioGUI:constructor()
 			end
 		end
 	)
-	
+
 	self:close()
 end
 
@@ -106,7 +106,7 @@ end
 
 function RadioGUI:setRadioStation(station)
 	assert(VRP_RADIO[station] or station == 0, "Bad argument @ RadioGUI.setRadioStation")
-	
+
 	self.m_CurrentStation = station
 
 	if self.m_CurrentStation == 0 then
@@ -121,12 +121,12 @@ function RadioGUI:setRadioStation(station)
 		self.m_ToggleSound:setImage("files/images/Radio/sound_play.png")
 		return true
 	end
-	
+
 	if self.m_Sound and isElement(self.m_Sound) then
 		stopSound(self.m_Sound)
 		self.m_Sound = nil
 	end
-	
+
 	local radioName, radioUrl = unpack(VRP_RADIO[self.m_CurrentStation])
 	if type(radioUrl) == "string" then
 		removeEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
@@ -146,7 +146,7 @@ function RadioGUI:setRadioStation(station)
 		self.m_Radioname:setText(radioName)
 		self.m_ToggleSound:setImage("files/images/Radio/sound_stop.png")
 	end
-	
+
 	return true
 end
 
@@ -155,13 +155,13 @@ function RadioGUI:setVolume(volume)
 	if volume < 0.1 then
 		volume = 0
 	end
-	
+
 	if volume > 0.9 then
 		volume = 1
 	end
-	
+
 	self.m_Volume = volume
-	
+
 	if self.m_Sound then
 		setSoundVolume(self.m_Sound, self.m_Volume)
 	end
@@ -180,7 +180,7 @@ function RadioGUI:nextStation()
 		self.m_CurrentStation = 0
 	end
 	self:setRadioStation(self.m_CurrentStation)
-	
+
 	if not self:isVisible() then
 		self:fadeIn(1000)
 		setTimer(function() self:fadeOut(1000) end, 5000, 1)
@@ -193,7 +193,7 @@ function RadioGUI:previousStation()
 		self.m_CurrentStation = #VRP_RADIO
 	end
 	self:setRadioStation(self.m_CurrentStation)
-	
+
 	if not self:isVisible() then
 		self:fadeIn(1000)
 		setTimer(function() self:fadeOut(1000) end, 5000, 1)

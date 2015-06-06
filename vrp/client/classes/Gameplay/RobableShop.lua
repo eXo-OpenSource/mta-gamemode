@@ -11,7 +11,7 @@ addEvent("shopRobbed", true)
 addEventHandler("shopRobbed", root,
     function(x, y, z)
         -- Play an alarm for 5min
-        local sound = Sound3D.create("files/audio/Siren.ogg", x, y, z)
+        local sound = Sound3D.create("files/audio/Siren.ogg", x, y, z, true)
 
         setTimer(function() sound:destroy() end, 5*60*1000, 1)
     end

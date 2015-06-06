@@ -128,7 +128,7 @@ function JobBusDriver:BusStop_Hit(player, matchingDimension)
 
 		-- Pay extra money for extra occupants
 		player:giveMoney((table.size(getVehicleOccupants(vehicle)) - 1) * 40)
-		player:givePoints(3)
+		player:givePoints(2)
 		for seat, player in pairs(getVehicleOccupants(vehicle)) do
 			if seat ~= 0 then
 				player:takeMoney(40)

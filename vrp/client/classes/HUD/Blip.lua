@@ -10,13 +10,6 @@ Blip.ServerBlips = {}
 Blip.Blips = {}
 
 function Blip:constructor(imagePath, worldX, worldY, streamDistance)
-	if type(worldX) ~= "number" or type(worldY) ~= "number" then
-		outputDebug(debug.traceback())
-
-		-- Hack: Prevent error messages (for debugging purposes)
-		worldX, worldY = 0, 0
-	end
-
 	self.m_ID = #Blip.Blips + 1
 	self.m_RawImagePath = imagePath
 	self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
@@ -31,10 +24,8 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 end
 
 function Blip:destructor()
-	if self.m_ID then
-		if Blip.Blips[self.m_ID] then
-			Blip.Blips[self.m_ID] = nil
-		end
+	if self.m_ID and Blip.Blips[self.m_ID] then
+		Blip.Blips[self.m_ID] = nil
 	else
 		local idx = table.find(Blip.Blips, self)
 		if idx then
@@ -111,6 +102,7 @@ end
 addEvent("blipCreate", true)
 addEventHandler("blipCreate", root,
 	function(index, path, x, y)
+		outputDebug("Creating blip: "..tostring(index))
 		Blip.ServerBlips[index] = Blip:new(path, x, y)
 	end
 )
@@ -119,6 +111,7 @@ addEvent("blipDestroy", true)
 addEventHandler("blipDestroy", root,
 	function(index)
 		if Blip.ServerBlips[index] then
+			outputDebug("Destroying blip: "..tostring(index))
 			delete(Blip.ServerBlips[index])
 			Blip.ServerBlips[index] = nil
 		end

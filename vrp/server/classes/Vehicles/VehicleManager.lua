@@ -170,7 +170,7 @@ function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
 	local price, requiredLevel = unpack(VEHICLESHOPS[shop].Vehicles[vehicleModel])
 	if not price then return end
 
-	if requiredLevel < client:getVehicleLevel() then
+	if client:getVehicleLevel() < requiredLevel then
 		client:sendError(_("Für dieses Fahrzeug brauchst du min. Fahrzeuglevel %d", client, requiredLevel))
 		return
 	end
