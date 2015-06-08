@@ -7,6 +7,7 @@ Nametag.BUFF_IMG = {
 }
 
 local sizePerRankIcon = 150/5
+local maxDistance = 30
 
 function isCursorOverArea ( x,y,w,h )
 	if isCursorShowing () then
@@ -23,8 +24,8 @@ function Nametag:constructor()
 	
 	self.m_Players = {}
 	self.m_PlayerBuffs = {}
+	self.m_RenderTarget = dxCreateRenderTarget(300, 120, true)
 	self.m_IsModifying = false
-	self.m_Bone = 8
 	
 	self.m_Draw = bind(self.draw,self)
 	self.m_ReciveBuffs = bind(self.reciveBuffs,self)
@@ -58,64 +59,34 @@ function Nametag:draw()
 		end
 		if player ~= localPlayer or self.m_IsModifying then
 			setPlayerNametagShowing(player,false)
-			local px,py,pz = getPedBonePosition(player,self.m_Bone)
-			pz = pz + 0.3
+			local px,py,pz = getPedBonePosition(player, 8)
+			pz = pz + 0.5
 			local x,y = getScreenFromWorldPosition(px,py,pz)
 			local lx,ly,lz = getElementPosition(localPlayer)
-			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,false,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < 30 or getPedTarget(localPlayer) == player) then
+			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,false,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < maxDistance or getPedTarget(localPlayer) == player) then
 				local name = getPlayerName(player):gsub("#%d%d%d%d%d%d%d%d","")
-			--[[	dxDrawText(name,x-(dxGetTextWidth(name,2.1,"default-bold")/2),y,0,0,Color.Black,2.1,"default-bold")
-				dxDrawText(name,x-(dxGetTextWidth(name,2,"default-bold")/2),y,0,0,Color.White,2,"default-bold")
-				dxDrawRectangle(x-220*0.5,y-45,220,30,tocolor(0,0,0,125))
-				dxDrawRectangle(x-200*0.5,y-40,getElementHealth(player)*2,20,tocolor(0,125,0,125))
-				dxDrawRectangle(x-200*0.5,y-40,getPedArmor(player)*2,20,tocolor(0,0,125,125))
-				
-				-- DRAW BUFFS
-				
-				if self.m_PlayerBuffs[getPlayerName(player)] then
-					for key, buff in ipairs(self.m_PlayerBuffs[getPlayerName(player)]) do
-						local i = key-1
-						local row = math.floor (i/3)
-						local itemInRow = i-row*3
-						--dxDrawRectangle(x+(itemInRow*(220/3))-100,y-100-(row*40),40,30,Color.White)
-						dxDrawImage    (x+(itemInRow*(220/3))-100,y-100-(row*40),40,30, Nametag.BUFF_IMG[buff.BUFF] or Nametag.BUFF_IMG["default"])
-						dxDrawText     (buff.AMOUNT,x+(itemInRow*(220/3))-75,y-85-(row*40),0,0,Color.Black)
-					end
-				end]]
+			dxSetRenderTarget(self.m_RenderTarget,true)
 			
-			
-			dxDrawRectangle(x-300/2, y-60, 300, 120, tocolor(0,0,0,200))
-			dxDrawText(getPlayerName(player), x-300/2+5, y-55, 145, 60,Color.White,3,"default-bold")
+			dxDrawRectangle(0, 0, 300, 120, tocolor(0,0,0,200))
+			dxDrawText(getPlayerName(player), 10, 5, 145, 60,AdminColor[player:getPublicSync("Rank") or 0],3,"default-bold")
 						
-			if (player:getPublicSync("Rank") or 0) > 0 then
+			--[[if (player:getPublicSync("Rank") or 0) > 0 then
 				for i = 0, player:getPublicSync("Rank")-1 do
-					dxDrawImage(x-300/2+150+i*sizePerRankIcon, y-45, sizePerRankIcon-5, 24, "files/images/LogoNoFont.png")
+					dxDrawImage(150+i*sizePerRankIcon, 20, sizePerRankIcon-5, 24, "files/images/LogoNoFont.png")
 				end
-			end
+			end]]
 			
-			dxDrawRectangle(x-300/2+25, y+5, 250, 40, tocolor(0,0,0,125))
-			dxDrawRectangle(x-300/2+25, y+5, 250*getElementHealth(player)/100, 40, tocolor(0,125,0,255))
-			dxDrawRectangle(x-300/2+25, y+5, 250*getPedArmor(player)/100, 40, Color.LightBlue)
+			dxDrawRectangle(25, 65, 250, 40, tocolor(0,0,0,125))
+			dxDrawRectangle(25, 65, 250*getElementHealth(player)/100, 40, tocolor(0,125,0,255))
+			dxDrawRectangle(25, 65, 250*getPedArmor(player)/100, 40, Color.LightBlue)
 			
-			end
+			dxSetRenderTarget()
 			
-			if self.m_IsModifying and player == localPlayer then
-				for i = 1,54,1 do
-					local bonePosition = {getPedBonePosition(player,i)}
-					if bonePosition[2] then
-						local x,y = getScreenFromWorldPosition(unpack(bonePosition))
-						if x and y then
-							if i == self.m_Bone then
-								dxDrawRectangle(x,y,5,5,Color.Green)
-							else
-								dxDrawRectangle(x,y,5,5,Color.Red)
-								if isCursorOverArea(x,y,5,5) and getKeyState("mouse1") then
-									self.m_Bone = i
-								end
-							end
-						end
-					end
-				end
+			local distance = getDistanceBetweenPoints3D(px,py,pz,lx,ly,lz)
+			
+			local scale = 0.8 + ( 15 - distance ) * 0.02
+			dxDrawImage(x-240*scale/2,y-60, 240*scale, 90*scale, self.m_RenderTarget)
+			
 			end
 			
 		end

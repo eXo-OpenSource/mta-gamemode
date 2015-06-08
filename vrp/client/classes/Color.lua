@@ -24,6 +24,19 @@ Color = {
 	Orange    = {254, 138, 0},
 }
 
+AdminColor = {
+	[0] = {255,255,255},
+	[1] = {0,128,0},
+	[2] = {4,95,180},
+	[3] = {4,95,180},
+	[4] = {255,0,0},
+	[5] = {255,0,0},
+}
+
+for k,v in ipairs(AdminColor) do
+	AdminColor[k] = tocolor(unpack(v))
+end
+
 for k, v in pairs(Color) do
 	Color[k] = tocolor(unpack(v))
 end
