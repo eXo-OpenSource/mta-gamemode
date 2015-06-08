@@ -107,8 +107,8 @@ function PlayerManager:playerChat(message, messageType)
 			outputChatBox(getPlayerName(source)..": "..message, root, 255, 255, 0)
 		else
 			-- Send handy message
-			outputChatBox(_("%s from phone: %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
-			outputChatBox(_("%s from phone: %s", source, getPlayerName(source), message), source, 0, 255, 0)
+			outputChatBox(_("%s (Telefon): %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
+			outputChatBox(_("%s (Telefon): %s", source, getPlayerName(source), message), source, 0, 255, 0)
 		end
 		cancelEvent()
 	end

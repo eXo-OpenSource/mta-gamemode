@@ -314,6 +314,7 @@
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/WebForms/SkillTreeGUI.lua" type="client"/>
+	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
 
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
@@ -414,7 +415,7 @@
 	<file src="files/images/Logo.png"/>
 	<file src="files/html/jquery-1.11.2.min.js"/>
 	<file src="files/html/mtaevents.js"/>
-	
+
 	<vrpfile src="files/images/LogoNoFont.png"/>
 	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Warning.png" onDemand="false"/>

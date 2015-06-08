@@ -36,7 +36,7 @@ function HUDUI:draw()
 	local f = math.floor
 
 	dxDrawRectangle(screenWidth-0.195*screenWidth,0.04*screenHeight,0.195*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
-	dxDrawText("$"..getPlayerMoney(localPlayer),screenWidth-0.14*screenWidth,0.092*screenHeight/2,0.195*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
+	dxDrawText("$"..localPlayer:getMoney(), screenWidth-0.14*screenWidth, 0.097*screenHeight/2, 0.195*screenWidth, 0.097*screenHeight, Color.White, 1, self.m_Font)
 
 	local munitionWindowActive = true
 

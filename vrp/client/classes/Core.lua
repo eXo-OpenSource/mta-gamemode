@@ -107,6 +107,9 @@ function Core:afterLogin()
 	bindKey(core:get("KeyBindings", "KeyToggleScoreboard", "tab"), "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
 	bindKey(core:get("KeyBindings", "KeyToggleScoreboard", "tab"), "up", function() ScoreboardGUI:getSingleton():setVisible(false) end)
 
+	WebPanel:getSingleton():close()
+	bindKey(core:get("KeyBindings", "KeyToggleWebPanel", "f1"), "down", function() WebPanel:getSingleton():toggle() end)
+
 	InventoryGUI:new()
 	InventoryGUI:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleInventory", "i"), "down", function() InventoryGUI:getSingleton():toggle() end)

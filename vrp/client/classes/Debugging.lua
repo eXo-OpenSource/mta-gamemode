@@ -43,7 +43,7 @@ if DEBUG then
 				end
 			end
 		)
-		bindKey("f1", "down",
+		bindKey("f5", "down",
 			function()
 				if MapGUI:isInstantiated() then
 					delete(MapGUI:getSingleton())
