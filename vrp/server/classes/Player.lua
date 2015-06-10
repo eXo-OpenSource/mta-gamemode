@@ -218,7 +218,7 @@ function Player:spawn()
 		end
 	end
 
-	setElementFrozen(self, false)
+	self:setFrozen(false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 end
@@ -254,15 +254,15 @@ end
 
 function Player:setSkin(skin)
 	self.m_Skin = skin
-	setElementModel(self, skin)
+	self:setModel(skin)
 end
 
 function Player:setJobDutySkin(skin)
 	if skin ~= nil then
 		self.m_JobDutySkin = skin
-		setElementModel(self, skin)
+		self:setModel(skin)
 	else
-		setElementModel(self, self.m_Skin)
+		self:setModel(self.m_Skin)
 	end
 end
 

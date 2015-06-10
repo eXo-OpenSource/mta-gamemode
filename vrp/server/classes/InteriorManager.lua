@@ -123,8 +123,8 @@ InteriorManager.InteriorData = {
     {enter = Vector3(-1700.01, 1380.49, 6.20434), spawn = Vector3(459.35, -111.01, 998.72), dimension = 4, interior = 5, rotation = 3729.57},
     {enter = Vector3(-2524.11, 1216.16, 36.4496), spawn = Vector3(459.35, -111.01, 998.72), dimension = 5, interior = 5, rotation = -90},
     {enter = Vector3(2368.06, 1983.19, 10.003), spawn = Vector3(459.35, -111.01, 998.72), dimension = 6, interior = 5, rotation = 125},]]
-    {enter = Vector3(-2029.72, -120.926, 34.1691), spawn = Vector3(-2029.72, -119.55, 1034.17), dimension = 0, interior = 3, rotation = 180},
-    {enter = Vector3(-2026.92, -101.459, 34.259), spawn = Vector3(-2026.92, -103.48, 1034.27), dimension = 0, interior = 3, rotation = 0},
+    --{enter = Vector3(-2029.72, -120.926, 34.1691), spawn = Vector3(-2029.72, -119.55, 1034.17), dimension = 0, interior = 3, rotation = 180}, -- driving school
+    --{enter = Vector3(-2026.92, -101.459, 34.259), spawn = Vector3(-2026.92, -103.48, 1034.27), dimension = 0, interior = 3, rotation = 0}, -- driving school
     {enter = Vector3(811.982, -1616.02, 12.618), spawn = Vector3(363.11, -74.88, 1000.55), dimension = 0, interior = 10, rotation = -1169.58},
     {enter = Vector3(1199.13, -918.071, 42.3243), spawn = Vector3(363.11, -74.88, 1000.55), dimension = 1, interior = 10, rotation = 180},
     {enter = Vector3(-1912.27, 828.025, 34.5615), spawn = Vector3(363.11, -74.88, 1000.55), dimension = 2, interior = 10, rotation = 334},

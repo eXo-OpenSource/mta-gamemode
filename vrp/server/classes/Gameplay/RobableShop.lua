@@ -33,7 +33,7 @@ end
 function RobableShop:Ped_Targetted(ped, attacker)
 	-- Play an alarm
 	local pos = ped:getPosition()
-	triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z)
+	triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z, ped:getDimension())
 
 	-- Report the crime
 	attacker:reportCrime(Crime.ShopRob)
