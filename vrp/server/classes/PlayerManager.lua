@@ -70,7 +70,7 @@ function PlayerManager:playerJoin()
 end
 
 function PlayerManager:playerQuit()
-	local index = table.find(self.m_ReadyPlayers)
+	local index = table.find(self.m_ReadyPlayers, source)
 	if index then
 		table.remove(self.m_ReadyPlayers, index)
 	end

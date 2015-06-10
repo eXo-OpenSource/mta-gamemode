@@ -56,15 +56,13 @@ function Phone:registerApp(appClasst)
 	return app
 end
 
-function Phone:open()
-	self:setVisible(true)
-
+function Phone:onShow()
 	if self.m_CurrentApp then
 		self.m_IconSurface:setVisible(false)
 	end
 end
 
-function Phone:close()
+function Phone:onHide()
 	for k, app in ipairs(self.m_Apps) do
 		if app:isOpen() and app:isDestroyOnCloseEnabled() then
 			app:close()
@@ -72,7 +70,6 @@ function Phone:close()
 	end
 	self.m_IconSurface:setVisible(true)
 
-	self:setVisible(false)
 	if self.m_CurrentApp and self.m_CurrentApp:isDestroyOnCloseEnabled() then
 		self.m_CurrentApp = false
 	end

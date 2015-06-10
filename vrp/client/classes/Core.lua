@@ -82,7 +82,7 @@ function Core:afterLogin()
 	Phone:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyTogglePhone", "u"), "down",
 		function()
-			Phone:getSingleton():toggle(true)
+			Phone:getSingleton():toggle()
 		end
 	)
 

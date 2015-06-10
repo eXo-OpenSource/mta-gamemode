@@ -106,6 +106,7 @@ function GangArea:Area_Leave(hitElement, matchingDimension)
 
 			killTimer(self.m_TurfingTimer)
 			self.m_TurfingTimer = nil
+			self.m_RadarArea:setFlashing(false)
 		end
 	end
 end

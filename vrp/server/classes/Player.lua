@@ -37,6 +37,12 @@ function Player:destructor()
 		destroyElement(self.m_JobVehicle)
 	end
 
+	-- Collect all world items
+	local worldItems = WorldItem.getItemsByOwner(self)
+	for k, worldItem in pairs(worldItems) do
+		worldItem:collect(self)
+	end
+
 	-- Call the quit hook (to clean up various things before saving)
 	Player.ms_QuitHook:call(self)
 

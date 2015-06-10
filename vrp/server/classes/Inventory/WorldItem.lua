@@ -62,6 +62,16 @@ function WorldItem:getItem()
 	return self.m_Item
 end
 
+function WorldItem.getItemsByOwner(player)
+	local result = {}
+	for k, worldItem in pairs(WorldItem.Map) do
+		if worldItem.m_Owner == player then
+			result[#result + 1] = worldItem
+		end
+	end
+	return result
+end
+
 addEvent("worldItemClick", true)
 addEventHandler("worldItemClick", root,
 	function()
