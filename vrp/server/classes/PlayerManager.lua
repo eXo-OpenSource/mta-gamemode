@@ -81,11 +81,10 @@ function PlayerManager:Event_playerReady()
 
 	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
 
-	-- Send sync
-	for k, v in pairs(getElementsByType("player")) do
-		if isElement(v) and v.sendInitalSyncTo then
-			v:sendInitalSyncTo(player)
-		end
+	-- Send server version info
+	local version = core:getVersion()
+	if version then
+		player:triggerEvent("versionReceive", version)
 	end
 end
 

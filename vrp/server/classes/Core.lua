@@ -115,3 +115,16 @@ function Core:runTests()
 
 	outputServerLog("")
 end
+
+function Core:getVersion()
+	if self.m_Version == nil then
+		local file = File.Open("version.txt")
+		if file then
+			self.m_Version = file:getContent()
+			file:close()
+		else
+			self.m_Version = false
+		end
+	end
+	return self.m_Version
+end
