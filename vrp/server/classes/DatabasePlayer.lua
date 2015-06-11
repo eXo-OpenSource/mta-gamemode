@@ -73,7 +73,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -104,6 +104,8 @@ function DatabasePlayer:load()
 	self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
 	self.m_GarageType = row.GarageType
 	self.m_LastGarageEntrance = row.LastGarageEntrance
+	self.m_HangarType = row.HangarType
+	self.m_LastHangarEntrance = row.LastHangarEntrance
 	self.m_SpawnLocation = row.SpawnLocation
 	self.m_Collectables = fromJSON(row.Collectables or "")
 	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
@@ -168,6 +170,7 @@ function DatabasePlayer:getGroup()		return self.m_Group		end
 function DatabasePlayer:getInventory()	return self.m_Inventory	end
 function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
+function DatabasePlayer:getHangarType() return self.m_HangarType end -- Todo: Only Databseside implemented
 function DatabasePlayer:getSpawnLocation() return self.m_SpawnLocation end
 function DatabasePlayer:getCollectables() return self.m_Collectables end
 function DatabasePlayer:hasPilotsLicense() return self.m_HasPilotsLicense end

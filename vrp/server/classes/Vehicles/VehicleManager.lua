@@ -350,19 +350,23 @@ function VehicleManager:Event_vehicleRequestInfo()
 		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 	end
 
-	client:triggerEvent("vehicleRetrieveInfo", vehicles, client:getGarageType())
+	local GarageUpgrade = GARAGE_UPGRADES_COSTS[client:getGarageType() + 1] or "-"
+	local HangarUpgrade = HANGAR_UPGRADES_COSTS[client:getHangarType() + 1] or "-"
+	client:triggerEvent("vehicleRetrieveInfo", vehicles, client:getGarageType(), client:getHangarType(), GarageUpgrade, HangarUpgrade)
 end
 
 function VehicleManager:Event_vehicleUpgradeGarage()
-	local UpgradeToPrices = {[1] = 200000, [2] = 250000, [3] = 500000}
 	local currentGarage = client:getGarageType()
 	if currentGarage >= 0 then
-		local price = UpgradeToPrices[currentGarage + 1]
+		local price = GARAGE_UPGRADES_COSTS[currentGarage + 1]
 		if price then
 			if client:getMoney() >= price then
 				client:takeMoney(price)
 				client:setGarageType(currentGarage + 1)
-				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType())
+
+				local GarageUpgrade = GARAGE_UPGRADES_COSTS[client:getGarageType() + 1] or "-"
+				local HangarUpgrade = HANGAR_UPGRADES_COSTS[client:getHangarType() + 1] or "-"
+				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType(), GarageUpgrade, HangarUpgrade)
 			else
 				client:sendError(_("Du hast nicht genügend Geld, um deine Garage zu upgraden", client))
 			end
