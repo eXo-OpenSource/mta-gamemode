@@ -53,6 +53,9 @@ function JobPolice:constructor()
 			cancelEvent()
 		end
 	)
+
+	self.m_JailColShape = createColRectangle(2665, -2120, 20, 28)
+	addEventHandler("onColShapeHit", self.m_JailColShape, bind(self.JailColShape_Hit, self))
 end
 
 function JobPolice:destructor()
@@ -102,7 +105,7 @@ function JobPolice:jailPlayer(player, policeman)
 
 	-- Start freeing timer
 	local jailTime = player:getWantedLevel() * 360
-	setTimer(
+	player.m_JailTimer = setTimer(
 		function()
 			if isElement(player) then
 				player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
@@ -111,6 +114,8 @@ function JobPolice:jailPlayer(player, policeman)
 				player:toggleControl("fire", true)
 				player:toggleControl("jump", true)
 				player:toggleControl("aim_weapon ", true)
+
+				player.m_JailTimer = nil
 			end
 		end, jailTime * 1000, 1
 	)
@@ -178,4 +183,15 @@ end
 
 function JobPolice:reportSpecialCrime(crimeType, message)
 	self:sendMessage(message)
+end
+
+function JobPolice:JailColShape_Hit(hitElement, matchingDimension)
+	if getElementType(hitElement) == "player" and matchingDimension then
+		local jailTimer = hitElement.m_JailTimer
+		if jailTimer and isTimer(jailTimer) then
+			hitElement:triggerEvent("playerLeftJail")
+			killTimer(jailTimer)
+			hitElement.m_JailTimer = nil
+		end
+	end
 end

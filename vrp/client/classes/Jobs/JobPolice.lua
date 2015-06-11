@@ -24,6 +24,7 @@ function JobPolice:stop()
 	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
 
+local jailCountdownGUI
 addEvent("playerJailed", true)
 addEventHandler("playerJailed", root,
 	function(jailTime)
@@ -35,8 +36,18 @@ addEventHandler("playerJailed", root,
 				local remainingTime = math.floor(jailTime - (getTickCount() - jailedTime)/1000)
 
 				InfoBox:new(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %ds verweilen!", remainingTime))
-				JailCountdownGUI:new(remainingTime)
+				jailCountdownGUI = JailCountdownGUI:new(remainingTime)
 			end
 		)
+	end
+)
+
+addEvent("playerLeftJail", true)
+addEventHandler("playerLeftJail", root,
+	function()
+		if jailCountdownGUI then
+			delete(jailCountdownGUI)
+			jailCountdownGUI = nil
+		end
 	end
 )

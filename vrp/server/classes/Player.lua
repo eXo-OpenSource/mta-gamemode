@@ -133,7 +133,7 @@ function Player:loadCharacterInfo()
 	self.m_Armor = row.Armor
 
 	-- Load weapons
-	self.m_Weapons = fromJSON(row.Weapons) or {}
+	self.m_Weapons = fromJSON(row.Weapons or "") or {}
 
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
@@ -175,7 +175,7 @@ function Player:save()
 	end
 
 	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, InventoryId = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
-		x, y, z, interior, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons), self.m_Inventory:getId(), self:getPlayTime(), self.m_Id)
+		x, y, z, interior, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self.m_Inventory:getId(), self:getPlayTime(), self.m_Id)
 
 	if self:getInventory() then
 		self:getInventory():save()
@@ -216,7 +216,7 @@ function Player:spawn()
 		-- Apply and delete health data
 		self:setHealth(self.m_Health)
 		self:setArmor(self.m_Armor)
-		self.m_Health, self.m_Armor = nil, nil
+		--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 
 		-- Give weapons
 		for k, info in pairs(self.m_Weapons) do
