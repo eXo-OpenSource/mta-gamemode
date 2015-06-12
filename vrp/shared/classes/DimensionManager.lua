@@ -23,9 +23,12 @@ function DimensionManager:constructor()
 end
 
 function DimensionManager:getFreeDimension()
-    local dim = #self.m_Dimensions + 1
-    self.m_Dimensions[dim] = true
-
+    local dim = 0 
+	repeat 
+ 		dim = dim + 1 
+ 	until not self.m_Dimensions[dim]
+ 	
+ 	self.m_Dimensions[dim] = true
     return dim
 end
 
