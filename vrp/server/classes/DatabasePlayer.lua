@@ -134,8 +134,8 @@ function DatabasePlayer:save()
 		return false
 	end
 
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, toJSON(self.m_Collectables, true), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements(), true), toJSON(self.m_LadderTeam, true), self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance, toJSON(self.m_Collectables, true), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements(), true), toJSON(self.m_LadderTeam, true), self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -195,6 +195,7 @@ function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
 function DatabasePlayer:setGroup(group)	self.m_Group = group if self:isActive() then self:setPublicSync("GroupName", group and group:getName() or "") end end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
+function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
 
@@ -362,6 +363,11 @@ end
 function DatabasePlayer:setGarageType(garageType)
 	self.m_GarageType = garageType
 	sql:queryExec("UPDATE ??_character SET GarageType = ? WHERE Id = ?", sql:getPrefix(), garageType, self.m_Id)
+end
+
+function DatabasePlayer:setHangarType(hangarType)
+	self.m_HangarType = hangarType
+	sql:queryExec("UPDATE ??_character SET hangarType = ? WHERE Id = ?", sql:getPrefix(), hangarType, self.m_Id)
 end
 
 function DatabasePlayer:getTeamId(kind)

@@ -16,7 +16,7 @@ function VehicleManager:constructor()
 	-- Add events
 	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo",
-		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak"}
+		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar"}
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -32,6 +32,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleEmpty", root, bind(self.Event_vehicleEmpty, self))
 	addEventHandler("vehicleSyncMileage", root, bind(self.Event_vehicleSyncMileage, self))
 	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
+	addEventHandler("vehicleUpgradeHangar", root, bind(self.Event_vehicleUpgradeHangar, self))
 
 	-- Prevent the engine from being turned on
 	addEventHandler("onVehicleEnter", root,
@@ -375,6 +376,29 @@ function VehicleManager:Event_vehicleUpgradeGarage()
 		end
 	else
 		client:sendError(_("Du besitzt keine gültige Garage!", client))
+	end
+end
+
+function VehicleManager:Event_vehicleUpgradeHangar()
+	local currentHangar = client:getHangarType()
+	if currentHangar >= 0 then
+		local price = HANGAR_UPGRADES_COSTS[currentHangar + 1]
+		if price then
+			if client:getMoney() >= price then
+				client:takeMoney(price)
+				client:setHangarType(currentHangar + 1)
+
+				local GarageUpgrade = GARAGE_UPGRADES_COSTS[client:getGarageType() + 1] or "-"
+				local HangarUpgrade = HANGAR_UPGRADES_COSTS[client:getHangarType() + 1] or "-"
+				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType(), GarageUpgrade, HangarUpgrade)
+			else
+				client:sendError(_("Du hast nicht genügend Geld, um dein Hangar zu upgraden", client))
+			end
+		else
+			client:sendError(_("Deine Hangar ist bereits auf dem höchsten Level", client))
+		end
+	else
+		client:sendError(_("Du besitzt keinen gültigen Hangar!", client))
 	end
 end
 

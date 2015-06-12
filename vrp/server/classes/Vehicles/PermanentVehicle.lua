@@ -123,6 +123,14 @@ function PermanentVehicle:setInGarage(state)
 	self.m_PositionType = VehiclePositionType.Garage
 end
 
+function PermanentVehicle:isInHangar()
+	return self.m_PositionType == VehiclePositionType.Hangar
+end
+
+function PermanentVehicle:setInHangar(state)
+	self.m_PositionType = VehiclePositionType.Hangar
+end
+
 function PermanentVehicle:getPositionType()
 	return self.m_PositionType
 end

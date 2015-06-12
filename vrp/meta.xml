@@ -96,7 +96,8 @@
 	<script src="server/classes/Vehicles/TemporaryVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleSpawner.lua" type="server"/>
-	<script src="server/classes/Vehicles/VehicleGarages.lua" type="server"/>
+	<script src="server/classes/Vehicles/Storage/VehicleGarages.lua" type="server"/>
+	<script src="server/classes/Vehicles/Storage/VehicleGarageSession.lua" type="server"/>
 	<script src="server/classes/Vehicles/GasStation.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleTuning.lua" type="server"/>
 
