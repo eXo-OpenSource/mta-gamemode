@@ -1,4 +1,6 @@
 @echo off
 
 lua gettext_lua.lua
-pause
+echo.
+echo Press [Enter] to exit
+pause >nul

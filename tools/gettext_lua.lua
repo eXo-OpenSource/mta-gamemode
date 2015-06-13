@@ -1,7 +1,7 @@
 --[[
 File: 		 gettext_lua.lua
 Description: A simple parser for Lua files to gather strings for translation
-				for the Open MTA:DayZ project.
+			 for the Open MTA:DayZ project. (vRoleplay)
 ]]
 
 require("lfs")
@@ -17,6 +17,8 @@ end
 
 -- Processes a lua file and writes the strings to pothandle
 function processLuaFile(path, name, pothandle)
+	print("   Processing file "..path.."/"..name)
+
 	-- Read the file
 	local fh = io.open(path.."/"..name, "r")
 	local input = fh:read("*all")
@@ -34,7 +36,7 @@ end
 
 -- Processes all lua files in a directory and all subdirectories
 function processDirectory(dir, pothandle)
-	print("Processing directory "..dir.."...")
+	print("\nProcessing directory "..dir.."...")
 	for file in lfs.dir(dir) do
 		if file == "." or file == ".." then
 		else
@@ -50,8 +52,6 @@ end
 function writePotHeader(pothandle)
 	pothandle:write("# vRoleplay Translation File\n")
 	pothandle:write("# http://www.v-roleplay.net\n")
-	pothandle:write("msgid \"\"\n")
-	pothandle:write("msgstr \"\"\n")
 	pothandle:write("\"Project-Id-Version: PACKAGE VERSION\\n\"\n",
 					"\"Report-Msgid-Bugs-To: \\n\"\n",
 					"\"POT-Creation-Date: "..os.date("%Y-%m-%d %H:%M+0000").."\\n\"\n", -- Note: This ignores the local timezone :(
@@ -64,11 +64,11 @@ function writePotHeader(pothandle)
 end
 
 function genpot(name)
-	local pot = io.open(name..".pot", "w")
+	local pot = io.open(name..".po", "w")
 	writePotHeader(pot)
 	
 	-- change to main directory
-	lfs.chdir("../saonline")
+	lfs.chdir("../vrp")
 	processDirectory(name, pot)
 	
 	-- go back to tools
