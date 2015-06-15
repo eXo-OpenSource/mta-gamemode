@@ -33,7 +33,7 @@ AdminColor = {
 	[5] = {255,0,0},
 }
 
-for k,v in ipairs(AdminColor) do
+for k,v in pairs(AdminColor) do
 	AdminColor[k] = tocolor(unpack(v))
 end
 

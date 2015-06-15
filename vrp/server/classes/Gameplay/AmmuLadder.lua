@@ -82,10 +82,15 @@ function AmmuLadder:getTeam(id)
 end
 
 function AmmuLadder:passQueue()
-	for _, kind in ipairs(self.m_QueuedTeams) do
-		for _, team in ipairs(kind) do
-			if not team:getStatus() then
-				self:findOpponent(team,kind)
+	for kind, kindTeams in pairs(self.m_QueuedTeams) do
+		for key, team in ipairs(kindTeams) do
+			if select(2,team:countMember()) then
+				if not team:getStatus() then
+					self:findOpponent(team,kind)
+				end
+			else
+				-- If one of the members is offline -> cancel queue
+				table.remove(self.m_QueuedTeams[kind],key)
 			end
 		end
 	end
@@ -103,6 +108,7 @@ function AmmuLadder:findOpponent(team,kind)
 			if teamRating-opponentRating < 100 or opponentRating-teamRating < 100 then
 				opponent:setRequestStatus(true)
 				self:startBattle(team,opponent)
+				break
 			end
 		end
 	end
@@ -134,7 +140,7 @@ addCommandHandler("kasdf",
 function AmmuLadder:queueTeam(kind)
 	if not AmmuLadder.Settings[kind] then return end -- suppress wrong kinds
 	local team = self:getTeam(client:getTeamId(kind))
-	if team and #team:getMembers() == AmmuLadder.Settings[kind].MAX_PER_TEAM and not team:getQueueStatus() then
+	if team and select(2,team:countMembers()) and not team:getQueueStatus() then
 		table.insert(self.m_QueuedTeams[kind],team)
 		team:setQueueStatus(true)
 	end

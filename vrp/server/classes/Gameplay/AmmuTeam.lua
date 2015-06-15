@@ -35,6 +35,16 @@ function AmmuTeam:addMember(player)
 	end
 end
 
+function AmmuTeam:countMembers()
+	local count = 0
+	for key, value in ipairs(self.m_Members) do
+		if isElement(Player.getFromId(value)) then
+			count = count + 1
+		end
+	end
+	return count, count == AmmuLadder.Settings[self:getKind()].MAX_PER_TEAM
+end
+
 function AmmuTeam:setRating(new)
 	self.m_Rating = new
 end
