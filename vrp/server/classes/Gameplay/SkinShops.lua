@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/SkinShops.lua
+-- *  FILE:        server/classes/Gameplay/SkinShops.lua
 -- *  PURPOSE:     Skin shops singleton class
 -- *
 -- ****************************************************************************

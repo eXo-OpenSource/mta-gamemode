@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Player.lua
+-- *  FILE:        server/classes/Player/Player.lua
 -- *  PURPOSE:     Player class
 -- *
 -- ****************************************************************************

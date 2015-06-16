@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/WantedSystem.lua
+-- *  FILE:        server/classes/Player/WantedSystem.lua
 -- *  PURPOSE:     Wantedsystem class
 -- *
 -- ****************************************************************************

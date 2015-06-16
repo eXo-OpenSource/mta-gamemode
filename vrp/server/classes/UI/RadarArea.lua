@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/UI/RadarArea.lua
+-- *  PURPOSE:     RadarArea manager
+-- *
+-- ****************************************************************************
 RadarArea = inherit(Object)
 RadarArea.Map = {}
 

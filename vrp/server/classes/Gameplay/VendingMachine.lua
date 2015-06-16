@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Gameplay/VendingMachine.lua
+-- *  PURPOSE:     Vending Machine class
+-- *
+-- ****************************************************************************
 VendingMachine = inherit(Object)
 VendingMachine.Map = {}
 

@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Root.lua
+-- *  FILE:        server/classes/Super/Root.lua
 -- *  PURPOSE:     Root element class
 -- *
 -- ****************************************************************************

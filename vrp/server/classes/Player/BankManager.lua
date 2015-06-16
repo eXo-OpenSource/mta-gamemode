@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/BankManager.lua
+-- *  FILE:        server/classes/Player/BankManager.lua
 -- *  PURPOSE:     Bank manager class
 -- *
 -- ****************************************************************************

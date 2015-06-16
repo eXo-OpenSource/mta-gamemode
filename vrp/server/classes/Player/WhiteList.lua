@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/WhiteList.lua
+-- *  FILE:        server/classes/Player/WhiteList.lua
 -- *  PURPOSE:     Whitelist class
 -- *
 -- ****************************************************************************

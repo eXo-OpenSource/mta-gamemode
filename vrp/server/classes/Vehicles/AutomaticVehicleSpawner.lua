@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/AutomaticVehicleSpawner.lua
+-- *  FILE:        server/classes/´Vehicles/AutomaticVehicleSpawner.lua
 -- *  PURPOSE:     AutomaticVehicleSpawner class
 -- *
 -- ****************************************************************************

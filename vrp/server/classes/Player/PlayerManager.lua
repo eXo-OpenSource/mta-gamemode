@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/PlayerManager.lua
+-- *  FILE:        server/classes/Player/PlayerManager.lua
 -- *  PURPOSE:     Player manager class
 -- *
 -- ****************************************************************************

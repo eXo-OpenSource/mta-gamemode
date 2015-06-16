@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Super/MTAElement.lua
+-- *  PURPOSE:     MTAElement class
+-- *
+-- ****************************************************************************
 MTAElement = inherit(Object)
 registerElementClass("ped", MTAElement)
 registerElementClass("object", MTAElement)

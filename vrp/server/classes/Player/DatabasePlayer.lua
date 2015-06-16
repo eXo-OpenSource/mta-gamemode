@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/DatabasePlayer.lua
+-- *  FILE:        server/classes/Player/DatabasePlayer.lua
 -- *  PURPOSE:     Player class for possibly inactive players
 -- *
 -- ****************************************************************************

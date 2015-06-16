@@ -1,3 +1,10 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Player/Ban.lua
+-- *  PURPOSE:     Ban class
+-- *
+-- ****************************************************************************
 Ban = {}
 function Ban.addBan(who, author, reason, duration)
 	if type(author) == "userdata" and getElementType(author) == "player" then

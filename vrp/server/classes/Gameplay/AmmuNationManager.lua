@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/AmmuNationManager.lua
+-- *  FILE:        server/classes/Gameplay/AmmuNationManager.lua
 -- *  PURPOSE:     Weapon shop manager class
 -- *
 -- ****************************************************************************

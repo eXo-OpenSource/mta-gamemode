@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Account.lua
+-- *  FILE:        server/classes/Player/Account.lua
 -- *  PURPOSE:     Account class
 -- *
 -- ****************************************************************************

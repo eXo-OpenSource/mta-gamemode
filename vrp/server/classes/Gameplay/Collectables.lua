@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Collectables.lua
+-- *  FILE:        server/classes/Gameplay/Collectables.lua
 -- *  PURPOSE:     Collectables server-side class
 -- *
 -- ****************************************************************************

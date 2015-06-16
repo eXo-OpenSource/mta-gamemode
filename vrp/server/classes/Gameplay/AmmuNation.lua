@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/AmmuNation.lua
+-- *  FILE:        server/classes/Gameplay/AmmuNation.lua
 -- *  PURPOSE:     Weapon shop class
 -- *
 -- ****************************************************************************
