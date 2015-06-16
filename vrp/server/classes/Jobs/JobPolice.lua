@@ -55,7 +55,7 @@ function JobPolice:constructor()
 	)
 
 	self.m_JailColShape = createColRectangle(2665, -2120, 20, 28)
-	addEventHandler("onColShapeHit", self.m_JailColShape, bind(self.JailColShape_Hit, self))
+	addEventHandler("onColShapeLeave", self.m_JailColShape, bind(self.JailColShape_Hit, self))
 end
 
 function JobPolice:destructor()

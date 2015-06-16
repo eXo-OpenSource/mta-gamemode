@@ -53,10 +53,8 @@
 	<script src="server/classes/Ban.lua" type="server"/>
 	<script src="server/classes/BankManager.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
-	<script src="server/classes/Forum.lua" type="server"/>
+	<script src="server/classes/API.lua" type="server"/>
 	<script src="server/classes/WantedSystem.lua" type="server"/>
-	<script src="server/classes/Group.lua" type="server"/>
-	<script src="server/classes/GroupManager.lua" type="server"/>
 	<script src="server/classes/Provider.lua" type="server"/>
 	<script src="server/classes/House.lua" type="server"/>
 	<script src="server/classes/HouseManager.lua" type="server"/>
@@ -71,8 +69,6 @@
 	<script src="server/classes/Karma.lua" type="server"/>
 	<script src="server/classes/AutomaticVehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Gameplay/Police.lua" type="server"/>
-	<script src="server/classes/GangArea.lua" type="server"/>
-	<script src="server/classes/GangAreaManager.lua" type="server"/>
 	<script src="server/classes/AntiCheat.lua" type="server"/>
 	<script src="server/classes/Weather.lua" type="server"/>
 	<script src="server/classes/Nametag.lua" type="server"/>
@@ -89,6 +85,12 @@
 	<!-- Gameplay -->
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
+
+	<!-- Groups -->
+	<script src="server/classes/Groups/Group.lua" type="server"/>
+	<script src="server/classes/Groups/GroupManager.lua" type="server"/>
+	<script src="server/classes/Groups/GangArea.lua" type="server"/>
+	<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>
 
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
@@ -179,8 +181,6 @@
 	<script src="client/classes/CameraDrive.lua" type="client"/>
 	<script src="client/classes/TextureReplace.lua" type="client"/>
 	<script src="client/classes/NonCollidingArea.lua" type="client"/>
-	<script src="client/classes/GangArea.lua" type="client"/>
-	<script src="client/classes/GangAreaManager.lua" type="client"/>
 	<script src="client/classes/Housing.lua" type="client"/>
 	<script src="client/classes/Collectables.lua" type="client"/>
 	<script src="client/classes/WorldTextManager.lua" type="client"/>
@@ -359,6 +359,10 @@
 	<script src="client/classes/Jobs/JobBusDriver.lua" type="client"/>
 	<script src="client/classes/Jobs/JobMechanic.lua" type="client"/>
 	<script src="client/classes/Jobs/JobServiceTechnician.lua" type="client"/>
+
+	<!-- Groups -->
+	<script src="client/classes/Groups/GangArea.lua" type="client"/>
+	<script src="client/classes/Groups/GangAreaManager.lua" type="client"/>
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
