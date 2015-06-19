@@ -48,6 +48,6 @@ function JobBusDriver:Event_busReachNextStop(vehicle, nextStopName)
 	self:setBusDisplayText(vehicle, nextStopName)
 
 	if getPedOccupiedVehicle(localPlayer) == vehicle then
-		playSound("http://translate.google.com/translate_tts?tl=en&q=Next station: "..nextStopName)
+		playSound("http://translate.google.com/translate_tts?tl=de&q=Naechster%20Halt: "..nextStopName)
 	end
 end

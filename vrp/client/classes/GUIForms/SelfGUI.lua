@@ -439,8 +439,8 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType,
 			item.PositionType = (
 				(vehicleInfo[2] == VehiclePositionType.World and VehiclePositionType.World) or
 				(vehicleInfo[2] == VehiclePositionType.Garage and VehiclePositionType.Garage) or
-				(vehicleInfo[2] == VehiclePositionType.Mechanic and VehiclePositionType.Mechanic) or
-				(vehicleInfo[2] == VehiclePositionType.Hangar and VehiclePositionType.Hangar)
+				(vehicleInfo[2] == VehiclePositionType.Hangar and VehiclePositionType.Hangar) or
+				(vehicleInfo[2] == VehiclePositionType.Mechanic and VehiclePositionType.Mechanic)
 			)
 		end
 	end

@@ -64,7 +64,7 @@ function writePotHeader(pothandle)
 end
 
 function genpot(name)
-	local pot = io.open(name..".po", "w")
+	local pot = io.open(name..".pot", "w")
 	writePotHeader(pot)
 	
 	-- change to main directory
