@@ -51,6 +51,7 @@ function Core:constructor()
 	DimensionManager:new()
 	ActorManager:new()
 	InteriorManager:new()
+	CompanyManager:new()
 
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

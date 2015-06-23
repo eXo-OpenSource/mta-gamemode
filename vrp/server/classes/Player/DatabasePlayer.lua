@@ -73,7 +73,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder, CompanyId, CompanyRank FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -112,6 +112,10 @@ function DatabasePlayer:load()
 	self.m_LadderTeam = fromJSON(row.Ladder or "[[]]")
 	self.m_LastPlayTime = row.PlayTime
 
+	if row.CompanyId > 0 then
+		CompanyManager:getSingleton():getFromId(row.CompanyId):addPlayer(self:getId(), row.CompanyRank or 0)
+	end
+
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
 	self.m_Skills["Flying"] 	= row.FlyingSkill
@@ -134,8 +138,8 @@ function DatabasePlayer:save()
 		return false
 	end
 
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance, toJSON(self.m_Collectables, true), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements(), true), toJSON(self.m_LadderTeam, true), self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=?, CompanyId=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance, toJSON(self.m_Collectables, true), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements(), true), toJSON(self.m_LadderTeam, true), self:getCompanyId(), self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -174,6 +178,8 @@ function DatabasePlayer:getHangarType() return self.m_HangarType end -- Todo: On
 function DatabasePlayer:getSpawnLocation() return self.m_SpawnLocation end
 function DatabasePlayer:getCollectables() return self.m_Collectables end
 function DatabasePlayer:hasPilotsLicense() return self.m_HasPilotsLicense end
+function DatabasePlayer:getCompany() return self.m_Company end
+function DatabasePlayer:getCompanyId() return type(self.m_Company) == "table" and self.m_Company:getId() or 0 end
 
 -- Short setters
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) end end
@@ -198,6 +204,7 @@ function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e e
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
+function DatabasePlayer:setCompany(c) self.m_Company = c end
 
 function DatabasePlayer:giveMoney(amount)
 	self:setMoney(self:getMoney() + amount)
