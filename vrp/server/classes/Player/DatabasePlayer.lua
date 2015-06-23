@@ -101,6 +101,9 @@ function DatabasePlayer:load()
 	if row.GroupId and row.GroupId ~= 0 then
 		self:setGroup(GroupManager:getSingleton():getFromId(row.GroupId))
 	end
+	if row.CompanyId > 0 then
+		self:setCompany(CompanyManager:getSingleton():getFromId(row.CompanyId))
+	end
 	self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
 	self.m_GarageType = row.GarageType
 	self.m_LastGarageEntrance = row.LastGarageEntrance
@@ -111,10 +114,6 @@ function DatabasePlayer:load()
 	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
 	self.m_LadderTeam = fromJSON(row.Ladder or "[[]]")
 	self.m_LastPlayTime = row.PlayTime
-
-	if row.CompanyId > 0 then
-		CompanyManager:getSingleton():getFromId(row.CompanyId):addPlayer(self:getId(), row.CompanyRank or 0)
-	end
 
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill

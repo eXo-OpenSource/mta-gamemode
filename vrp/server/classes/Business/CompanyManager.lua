@@ -10,10 +10,11 @@ CompanyManager = inherit(Singleton)
 
 function CompanyManager:constructor()
   self.m_Companies = {
-    TestCompany:new("TestCompany", "test", Vector3(2075, -1250, 24), {}, 34508);
+    TestCompany:new("TestCompany", "test", Vector3(2075, -1250, 24), 34508);
   }
   for k, v in ipairs(self.m_Companies) do
-		v:setId(k)
+    v:setId(k)
+    v:addPlayers()
 	end
 
   -- Todo: this sync method should be work fine -> test it.

@@ -160,13 +160,10 @@
 	<script src="server/classes/Inventory/ItemHash.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
 
+	<!-- Business -->
 	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
 	<script src="server/classes/Business/Company.lua" type="server"/>
 	<script src="server/classes/Business/Companies/TestCompany.lua" type="server"/>
-
-	<script src="client/classes/Business/Company.lua" type="client"/>
-	<script src="client/classes/Business/CompanyManager.lua" type="client"/>
-		<script src="client/classes/Business/Companies/TestCompany.lua" type="client"/>
 
 	<!-- Tests -->
 	<script src="server/tests/UtilsTest.lua" type="server"/>
@@ -417,6 +414,11 @@
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 
+	<!-- Business -->
+	<script src="client/classes/Business/Company.lua" type="client"/>
+	<script src="client/classes/Business/CompanyManager.lua" type="client"/>
+	<script src="client/classes/Business/Companies/TestCompany.lua" type="client"/>
+
 	<!-- Tests -->
 	<!-- Todo -->
 
@@ -561,6 +563,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/2.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/3.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/4.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/TestCompany.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -591,7 +594,6 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/2.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/3.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/4.png"/>
-	<vrpfile src="files/images/Radar_Monochrome/Blips/TestCompany.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

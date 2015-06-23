@@ -14,13 +14,13 @@ Company.destructor = pure_virtual
 Company.start = pure_virtual -- Todo: don't know for what, ask Jusonex :P
 Company.stop = pure_virtual -- Same here.
 
-function Company:virtual_constructor(name, desc, position, players, money)
+function Company:virtual_constructor(name, desc, position, money)
   outputDebug("Company.virtual_constructor")
 
   self.m_Name = name
   self.m_Description = desc
   self.m_Position = position
-  self.m_Players = players
+  self.m_Players = {}
   self.m_Money = money
 end
 
@@ -34,6 +34,13 @@ end
 
 function Company:getId()
   return self.m_Id
+end
+
+function Company:addPlayers()
+  local result = sql:queryFetch("SELECT Id, CompanyRank FROM ??_character WHERE CompanyId = ?", sql:getPrefix(), self:getId())
+  for i, row in ipairs(result) do
+    self.m_Players[row.Id] = row.CompanyRank
+  end
 end
 
 function Company:getName()
@@ -84,10 +91,6 @@ function Company:addPlayer(playerId, rank)
 	if player then
 		player:setCompany(self)
 	end
-
-  for i, v in pairs(self.m_Players) do
-    print(i, v)
-  end
 
   self:sendSync()
 end
