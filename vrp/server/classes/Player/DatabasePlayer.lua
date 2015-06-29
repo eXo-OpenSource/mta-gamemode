@@ -58,6 +58,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_TutorialStage = 0
 	self.m_JobVehicle = false
 	self.m_GarageType = 0
+	self.m_HangarType = 0
 	self.m_LastGarageEntrance = 0
 	self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
 	self.m_Collectables = {}

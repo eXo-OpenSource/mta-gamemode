@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Vehicles/Storage/VehicleGarages.lua
+-- *  FILE:        server/classes/Vehicles/Storage/VehicleHangars.lua
 -- *  PURPOSE:     Vehicle garage class (respawn location etc.)
 -- *
 -- ****************************************************************************

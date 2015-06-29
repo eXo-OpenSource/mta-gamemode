@@ -16,7 +16,7 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange)
 	self.m_ProfitProportion = 0.5 -- Amount of money for the group fund
 	self.m_Invitations = {}
 	self.m_Karma = karma or 0
-	self.m_LastNameChange = lastNameChange
+	self.m_LastNameChange = lastNameChange or 0
 end
 
 function Group:destructor()
