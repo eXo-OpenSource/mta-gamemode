@@ -1,7 +1,7 @@
-MYSQL_HOST	= "jusonex.net"
+MYSQL_HOST	= "localhost"
 MYSQL_PORT	= 3306
-MYSQL_USER	= "vrp"
-MYSQL_PW	= "fI8;26>6F#"
+MYSQL_USER	= "root"
+MYSQL_PW	= ""
 MYSQL_DB	= "vrp"
 
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
