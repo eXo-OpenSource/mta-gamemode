@@ -3,6 +3,7 @@ MYSQL_PORT	= 3306
 MYSQL_USER	= "exo_test_ingame"
 MYSQL_PW	= "kmd1581adf%%f"
 MYSQL_DB	= "vRP"
+MYSQL_UNIX_SOCKET = "/var/run/mysqld/mysqld.sock"
 
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
 IS_TESTSERVER = getServerName():find("Testserver") ~= nil
