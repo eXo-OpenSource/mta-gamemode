@@ -1,6 +1,6 @@
 MYSQL_HOST	= "87.98.241.93"
 MYSQL_PORT	= 6033
-MYSQL_USER	= "exo_test_ingame"
+MYSQL_USER	= "vRP"
 MYSQL_PW	= "kmd1581adf%%f"
 MYSQL_DB	= "vRP"
 MYSQL_UNIX_SOCKET = "/var/run/mysqld/mysqld.sock"
