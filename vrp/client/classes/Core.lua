@@ -41,7 +41,6 @@ function Core:ready()
 	JailBreak:new()
 	DimensionManager:new()
 	CompanyManager:new()
-	FactionManager:new()
 	
 	-- Events
 	EventManager:new()

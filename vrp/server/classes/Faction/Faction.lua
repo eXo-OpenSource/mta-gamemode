@@ -14,18 +14,26 @@ Faction.destructor = pure_virtual
 Faction.start = pure_virtual -- Todo: don't know for what, ask Jusonex :P
 Faction.stop = pure_virtual -- Same here.
 
-function Faction:virtual_constructor(name, desc, position, money)
+function Faction:constructor(id,name_short, name, money,players)
   outputDebug("Faction.virtual_constructor")
 
+  self.m_Id = id
+  self.m_Name_Short = name_short
   self.m_Name = name
-  self.m_Description = desc
-  self.m_Position = position
-  self.m_Players = {}
+  self.m_Players = players
   self.m_Money = money
+  
+  outputDebugString("Faction "..self.m_Name.." loaded")
 end
 
-function Faction:virtual_destructor()
+function Faction:destructor()
   FactionManager:getSingleton():removeRef(self)
+end
+
+function Faction:stop()
+end
+
+function Faction:start()
 end
 
 function Faction:setId(Id)

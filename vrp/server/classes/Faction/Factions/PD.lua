@@ -1,7 +1,7 @@
 PD = inherit(Faction)
 
 function PD:constructor()
-  outputDebug("PD.constructor")
+  outputDebugString("PD loaded")
 end
 
 function PD:destructor()

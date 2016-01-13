@@ -10,25 +10,25 @@ FactionManager = inherit(Singleton)
 
 function FactionManager:constructor()
   outputServerLog("Loading factions...")
-	local result = sql:queryFetch("SELECT Id, Name, Name_Short, Money FROM ??_factions", sql:getPrefix())
+	local result = sql:queryFetch("SELECT ID, Name,Name_Short, Money FROM ??factions", sql:getPrefix())
 	for k, row in ipairs(result) do
 		local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
 		local players = {}
 		for i, factionRow in ipairs(result2) do
 			players[factionRow.Id] = factionRow.FactionRank
 		end
-		--self.m_Factions = {
+		self.m_Factions = {
 			Faction:new(row.Id, row.Name_Short, row.Name, row.Money, players)
-		--}
+		}
 	end
   
---	for k, v in ipairs(self.m_Factions) do
---		v:setId(k)
---		v:addPlayers()
---	end
+	for k, v in ipairs(self.m_Factions) do
+		v:setId(k)
+		v:addPlayers()
+	end
 
   -- Todo: this sync method should be work fine -> test it.
-  --addEventHandler("playerReady", root, bind(FactionManager.sendFullSync, self))
+  addEventHandler("playerReady", root, bind(FactionManager.sendFullSync, self))
 end
 
 function FactionManager:getFromId(Id)

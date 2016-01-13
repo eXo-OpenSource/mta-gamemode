@@ -6,7 +6,7 @@ MYSQL_DB	= "vRP"
 MYSQL_UNIX_SOCKET = "/var/run/mysqld/mysqld.sock"
 
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
-IS_TESTSERVER = getServerName():find("Testserver") ~= nil
+IS_TESTSERVER = getServerName():find("Script") ~= nil
 
 SPAWN_LOCATION_DEFAULT = 0
 SPAWN_LOCATION_JAIL = 1

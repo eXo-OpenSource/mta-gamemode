@@ -424,10 +424,6 @@
 	<script src="client/classes/Business/CompanyManager.lua" type="client"/>
 	<script src="client/classes/Business/Companies/TestCompany.lua" type="client"/>
 	
-	<!-- Factions -->
-	<script src="client/classes/Faction/Faction.lua" type="client"/>
-	<script src="client/classes/Faction/FactionManager.lua" type="client"/>
-	<script src="client/classes/Faction/Factions/TestCompany.lua" type="client"/>
 	<!-- Tests -->
 	<!-- Todo -->
 
