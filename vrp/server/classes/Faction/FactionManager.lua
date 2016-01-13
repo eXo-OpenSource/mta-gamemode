@@ -152,7 +152,7 @@ function FactionManager:Event_factionDeleteMember(playerId)
 	end
 
 	faction:removePlayer(playerId)
-	client:triggerEvent("factionRetrieveInfo", faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction:getKarma())
+	client:triggerEvent("factionRetrieveInfo", faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
 end
 
 function FactionManager:Event_factionInvitationAccept(factionId)

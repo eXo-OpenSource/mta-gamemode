@@ -26,20 +26,20 @@ function FactionGUI:constructor()
 	self.m_FactionRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
 	self.m_FactionQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.2, self.m_Width*0.25, self.m_Height*0.07, _"Verlassen", true, tabAllgemein):setBarColor(Color.Red)
 
-	self.m_FactionInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabAllgemein)
-	self.m_FactionInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabAllgemein)
-	self.m_FactionInvitationsGrid:addColumn(_"Name", 1)
-	self.m_FactionInvitationsAcceptButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.195, self.m_Height*0.06, "✓", tabAllgemein):setBackgroundColor(Color.Green)
-	self.m_FactionInvitationsDeclineButton = GUIButton:new(self.m_Width*0.225, self.m_Height*0.7, self.m_Width*0.195, self.m_Height*0.06, "✕", tabAllgemein):setBackgroundColor(Color.Red)
+--	self.m_FactionInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabAllgemein)
+--	self.m_FactionInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabAllgemein)
+--	self.m_FactionInvitationsGrid:addColumn(_"Name", 1)
+--	self.m_FactionInvitationsAcceptButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.195, self.m_Height*0.06, "✓", tabAllgemein):setBackgroundColor(Color.Green)
+--	self.m_FactionInvitationsDeclineButton = GUIButton:new(self.m_Width*0.225, self.m_Height*0.7, self.m_Width*0.195, self.m_Height*0.06, "✕", tabAllgemein):setBackgroundColor(Color.Red)
 	
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
-	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.4, self.m_Height*0.5, tabMitglieder)
+	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, tabMitglieder)
 	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.7)
 	self.m_FactionPlayersGrid:addColumn(_"Rang", 0.3)
-	self.m_FactionAddPlayerButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabMitglieder):setBarColor(Color.Green)
-	self.m_FactionRemovePlayerButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
-	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
-	self.m_FactionRankDownButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
+	self.m_FactionAddPlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabMitglieder):setBarColor(Color.Green)
+	self.m_FactionRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
+	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
+	self.m_FactionRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
 	
 	local tabKasse = self.m_TabPanel:addTab(_"Kasse")
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Kasse:", tabKasse)
@@ -48,7 +48,7 @@ function FactionGUI:constructor()
 	self.m_FactionMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabKasse)
 	self.m_FactionMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabKasse)
 
-	
+	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 --	self.m_FactionCreateButton.onLeftClick = bind(self.FactionCreateButton_Click, self)
 --	self.m_FactionQuitButton.onLeftClick = bind(self.FactionQuitButton_Click, self)
 --	self.m_FactionDeleteButton.onLeftClick = bind(self.FactionDeleteButton_Click, self)
@@ -64,9 +64,9 @@ function FactionGUI:constructor()
 	
 	
 --	addRemoteEvents{"factionRetrieveInfo", "factionInvitationRetrieve"}
---	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
+	addRemoteEvents{"factionRetrieveInfo"}
+	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 --	addEventHandler("factionInvitationRetrieve", root, bind(self.Event_factionInvitationRetrieve, self))
-	
 	
 end
 
@@ -74,16 +74,16 @@ function FactionGUI:onShow()
 	triggerServerEvent("factionRequestInfo", root)
 end
 
-function FactionGUI:Event_factionRetrieveInfo(name, rank, money, players, karma)
-	self:adjustFactionTab(rank or false)
+function FactionGUI:TabPanel_TabChanged(tabId)
+	triggerServerEvent("factionRequestInfo", root)
+end
 
-	if name then
-		local karma = math.floor(karma)
+function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players)
+	--self:adjustFactionTab(rank or false)
+	if id > 0 then
 		local x, y = self.m_FactionNameLabel:getPosition()
-		self.m_FactionNameChangeLabel:setPosition(x + dxGetTextWidth(name, self.m_FactionNameLabel:getFontSize(), self.m_FactionNameLabel:getFont()) + 10, y)
 		self.m_FactionNameLabel:setText(name)
-		self.m_FactionKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
-		self.m_FactionRankLabel:setText(FactionRank[rank])
+		self.m_FactionRankLabel:setText(tostring(rank))
 		self.m_FactionMoneyLabel:setText(tostring(money).."$")
 
 		self.m_FactionPlayersGrid:clear()
@@ -91,15 +91,6 @@ function FactionGUI:Event_factionRetrieveInfo(name, rank, money, players, karma)
 			local item = self.m_FactionPlayersGrid:addItem(info.name, info.rank)
 			item.Id = playerId
 		end
-	end
-end
-function FactionGUI:Event_factionRetrieveInfo(id, name, rank)
-	if id and id > 0 then
-		self.m_FactionNameLabel:setText(name.." - Rang: "..rank)
-		self.m_FactionMenuButton:setVisible(true)
-	else
-		self.m_FactionNameLabel:setText("-keine Fraktion-")
-		self.m_FactionMenuButton:setVisible(false)
 	end
 end
 
