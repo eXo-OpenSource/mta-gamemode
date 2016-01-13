@@ -162,22 +162,28 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				hitElement:sendError(_("Du kannst nur deine eigenen Fahrzeuge in der Garage abstellen!", hitElement))
 				return
 			end
-        end
+    end
 
-        if hitElement:getGarageType() == 0 then
-            hitElement:sendError(_("Du besitzt keine Garage!", hitElement))
-            return
-        end
-
-		local session = self:openSessionForPlayer(hitElement, source.EntranceId)
-		if vehicle then
-			if #session:getSlots() == self:getMaxSlots(hitElement:getGarageType()) then
-				hitElement:sendError(_("Diese Garage bietet keinen Platz für ein weiteres Fahrzeug! Steige aus!", hitElement))
-				return
-			end
-		end
+    if hitElement:getGarageType() == 0 then
+      hitElement:sendError(_("Du besitzt keine Garage!", hitElement))
+      return
+    end
 
 		fadeCamera(hitElement, false)
+
+		local session = false
+		setTimer(
+			function (source)
+				session = self:openSessionForPlayer(hitElement, source.EntranceId)
+				if vehicle then
+					if #session:getSlots() == self:getMaxSlots(hitElement:getGarageType()) then
+						hitElement:sendError(_("Diese Garage bietet keinen Platz für ein weiteres Fahrzeug! Steige aus!", hitElement))
+						return
+					end
+				end
+			end, 1000, 1, source
+		)
+
 		setTimer(
 			function()
 				if not isElement(hitElement) then
@@ -204,10 +210,10 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				if vehicle and getVehicleType(vehicle) == "Bike" then
 					teleportPlayerNextToVehicle(hitElement, vehicle)
 				end
-				fadeCamera(hitElement, true, 2)
+				fadeCamera(hitElement, true, 1)
 
 				setTimer(function() session:furnish() end, 1000, 1)
-			end, 2000, 1
+			end, 1050, 1
 		)
 	end
 end

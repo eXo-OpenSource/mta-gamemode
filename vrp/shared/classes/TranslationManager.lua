@@ -11,13 +11,13 @@ SERVER = triggerServerEvent == nil
 function TranslationManager:constructor()
 	self.m_Translations = {}
 	self.m_AddonTranslations = {}
-	
+
 	-- Load standard translations
 	self:loadTranslation("de")
 end
 
 function TranslationManager:loadTranslation(locale, poFile)
-	if not poFile then	
+	if not poFile then
 		local path = "files/translation/"..(SERVER and "server" or "client").."."..locale..".po"
 		if fileExists(path) then
 			self.m_Translations[locale] = POParser:new(path)
@@ -29,7 +29,7 @@ function TranslationManager:loadTranslation(locale, poFile)
 		if not fileExists(poFile) then
 			return false
 		end
-		
+
 		if not self.m_AddonTranslations[locale] then
 			self.m_AddonTranslations[locale] = {}
 		end
@@ -38,7 +38,7 @@ function TranslationManager:loadTranslation(locale, poFile)
 			table.insert(self.m_AddonTranslations[locale], poParser)
 			outputDebug("Locale \'"..locale.."\' has been loaded!")
 			return true
-		end		
+		end
 	end
 	return false
 end
@@ -47,12 +47,12 @@ function TranslationManager:translate(message, locale)
 	if locale == "en" then
 		return message
 	end
-	
+
 	if not self.m_Translations[locale] and not self.m_AddonTranslations[locale] then
 	--	outputDebugString("The translation has not been loaded yet")
 		return message
 	end
-	
+
 	if self.m_Translations[locale] then
 		local translatedMsg = self.m_Translations[locale]:translate(message)
 		if not translatedMsg then
@@ -61,7 +61,7 @@ function TranslationManager:translate(message, locale)
 			return message
 		end
 		return translatedMsg
-	else	
+	else
 		-- Look up in loaded addon translations
 		for k, poParser in ipairs(self.m_AddonTranslations[locale] or {}) do
 			translatedMsg = poParser:translate(message)
@@ -70,7 +70,7 @@ function TranslationManager:translate(message, locale)
 			end
 		end
 	end
-	
+
 	return message
 end
 

@@ -31,7 +31,9 @@ function Achievement:giveAchievement (player, id)
 			player:setAchievementStatus(id, true)
 			player:givePoints(self.ms_Achievements[id]["exp"])
 
-			player:triggerEvent("Achievement.onPlayerReceiveAchievement", id)
+			if player:isActive() then
+				player:triggerEvent("Achievement.onPlayerReceiveAchievement", id)
+			end
 		end
 	else
 		outputDebug("Missing Achievement in Database. ID: "..id)
