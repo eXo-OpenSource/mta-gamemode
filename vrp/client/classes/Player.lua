@@ -57,6 +57,10 @@ function Player:getGroupName()
 	return self:getPublicSync("GroupName") or ""
 end
 
+function Player:getFactionName()
+	return self:getPublicSync("FactionName") or "-"
+end
+
 function Player:getJobName()
 	local job = JobManager:getSingleton():getFromId(self:getPublicSync("JobId"))
 	if job then

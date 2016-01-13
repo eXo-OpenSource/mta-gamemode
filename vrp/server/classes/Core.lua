@@ -22,7 +22,7 @@ function Core:constructor()
 
 	-- Instantiate classes (Create objects)
 	TranslationManager:new()
-	WhiteList:new()
+	--WhiteList:new()
 	VehicleManager:new()
 	PhoneInteraction:new()
 	PlayerManager:new()

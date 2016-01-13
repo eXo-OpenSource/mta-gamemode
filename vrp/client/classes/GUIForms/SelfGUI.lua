@@ -15,7 +15,7 @@ function SelfGUI:constructor()
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
-	-- Tab: Job
+	-- Tab: Allgemein
 	local tabGeneral = self.m_TabPanel:addTab(_"Allgemein")
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.016, self.m_Width*0.3, self.m_Height*0.12, _"Allgemein", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.13, self.m_Width*0.25, self.m_Height*0.06, _"Spielzeit:", tabGeneral)
@@ -27,7 +27,16 @@ function SelfGUI:constructor()
 	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.06, _"Job kündigen", tabGeneral):setBackgroundColor(Color.Red)
 	self.m_JobQuitButton:setFontSize(1.3)
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
-
+	
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.516, self.m_Width*0.25, self.m_Height*0.12, _"Fraktion", tabGeneral)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.63, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
+	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.63, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_FactionMenuButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.69, self.m_Width*0.25, self.m_Height*0.06, _"Fraktions-Menü", tabGeneral):setBackgroundColor(Color.Blue)
+	self.m_FactionMenuButton:setFontSize(1.2)
+	--self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
+	addRemoteEvents{"factionRetrieveInfo"}
+	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
+	
 	-- Tab: Groups
 	local tabGroups = self.m_TabPanel:addTab(_"Gruppen")
 	self.m_TabGroups = tabGroups
@@ -263,6 +272,12 @@ function SelfGUI:onShow()
 		self.m_JobNameLabel:setText("-")
 		self.m_JobQuitButton:setVisible(false)
 	end
+	
+	triggerServerEvent("factionRequestInfo", root)
+	
+	
+	
+	
 end
 
 function SelfGUI:TabPanel_TabChanged(tabId)
@@ -296,6 +311,15 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
 			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank)
 			item.Id = playerId
 		end
+	end
+end
+function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
+	if id and id > 0 then
+		self.m_FactionNameLabel:setText(name.." - Rang: "..rank)
+		self.m_FactionMenuButton:setVisible(true)
+	else
+		self.m_FactionNameLabel:setText("-keine Fraktion-")
+		self.m_FactionMenuButton:setVisible(false)
 	end
 end
 

@@ -74,11 +74,10 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder, CompanyId, CompanyRank FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder, CompanyId, CompanyRank FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
-
 	self.m_SavedPosition = Vector3(row.PosX, row.PosY, row.PosZ)
 	self.m_SavedInterior = row.Interior
 	self.m_Skin = row.Skin
@@ -101,6 +100,9 @@ function DatabasePlayer:load()
 	end
 	if row.GroupId and row.GroupId ~= 0 then
 		self:setGroup(GroupManager:getSingleton():getFromId(row.GroupId))
+	end
+	if row.FactionId and row.FactionId ~= 0 then
+		self:setFaction(FactionManager:getSingleton():getFromId(row.FactionId))
 	end
 	if row.CompanyId > 0 then
 		self:setCompany(CompanyManager:getSingleton():getFromId(row.CompanyId))
@@ -171,6 +173,8 @@ function DatabasePlayer:getPhonePartner() return self.m_PhonePartner end
 function DatabasePlayer:getTutorialStage() return self.m_TutorialStage end
 function DatabasePlayer:getJobVehicle() return self.m_JobVehicle end
 function DatabasePlayer:getGroup()		return self.m_Group		end
+function DatabasePlayer:getFaction()	return self.m_Faction	end
+
 function DatabasePlayer:getInventory()	return self.m_Inventory	end
 function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
@@ -199,6 +203,7 @@ function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
 function DatabasePlayer:setGroup(group)	self.m_Group = group if self:isActive() then self:setPublicSync("GroupName", group and group:getName() or "") end end
+function DatabasePlayer:setFaction(faction)		 self.m_Faction = faction if self:isActive() then self:setPublicSync("FactionName", group and group:getName() or "") end end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
