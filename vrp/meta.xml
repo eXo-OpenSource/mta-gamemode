@@ -164,7 +164,12 @@
 	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
 	<script src="server/classes/Business/Company.lua" type="server"/>
 	<script src="server/classes/Business/Companies/TestCompany.lua" type="server"/>
-
+	
+	<!-- Factions -->
+	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
+	<script src="server/classes/Faction/Faction.lua" type="server"/>
+	<script src="server/classes/Faction/Factions/PD.lua" type="server"/>
+	
 	<!-- Tests -->
 	<script src="server/tests/UtilsTest.lua" type="server"/>
 	<script src="server/tests/GroupTest.lua" type="server"/>
@@ -418,7 +423,11 @@
 	<script src="client/classes/Business/Company.lua" type="client"/>
 	<script src="client/classes/Business/CompanyManager.lua" type="client"/>
 	<script src="client/classes/Business/Companies/TestCompany.lua" type="client"/>
-
+	
+	<!-- Factions -->
+	<script src="client/classes/Faction/Faction.lua" type="client"/>
+	<script src="client/classes/Faction/FactionManager.lua" type="client"/>
+	<script src="client/classes/Faction/Factions/TestCompany.lua" type="client"/>
 	<!-- Tests -->
 	<!-- Todo -->
 

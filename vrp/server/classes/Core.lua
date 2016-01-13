@@ -52,7 +52,8 @@ function Core:constructor()
 	ActorManager:new()
 	InteriorManager:new()
 	CompanyManager:new()
-
+	FactionManager:new()
+	
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()
 	VehicleGarages.initalizeAll()
