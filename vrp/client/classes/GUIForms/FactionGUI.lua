@@ -22,10 +22,16 @@ function FactionGUI:constructor()
 	self.m_tabAllgemein = tabAllgemein
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Fraktion:", tabAllgemein)
 	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"Rang:", tabAllgemein)
-	self.m_FactionRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
-	self.m_FactionQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.2, self.m_Width*0.25, self.m_Height*0.07, _"Verlassen", true, tabAllgemein):setBarColor(Color.Red)
-
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.06, _"Rang:", tabAllgemein)
+	self.m_FactionRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.1, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
+--	self.m_FactionQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Fraktion verlassen", true, tabAllgemein):setBarColor(Color.Red)
+	
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.1, _"Kasse:", tabAllgemein)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, _"Inhalt:", tabAllgemein)
+	self.m_FactionMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, "", tabAllgemein)
+	self.m_FactionMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.27, self.m_Height*0.07, tabAllgemein):setCaption(_"Betrag")
+	self.m_FactionMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabAllgemein)
+	self.m_FactionMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabAllgemein)
 --	self.m_FactionInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabAllgemein)
 --	self.m_FactionInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabAllgemein)
 --	self.m_FactionInvitationsGrid:addColumn(_"Name", 1)
@@ -40,24 +46,16 @@ function FactionGUI:constructor()
 	self.m_FactionRemovePlayerButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.15, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabMitglieder):setBarColor(Color.Red)
 	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
 	self.m_FactionRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
-	
-	local tabKasse = self.m_TabPanel:addTab(_"Kasse")
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Kasse:", tabKasse)
-	self.m_FactionMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, "", tabKasse)
-	self.m_FactionMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.27, self.m_Height*0.07, tabKasse):setCaption(_"Betrag")
-	self.m_FactionMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabKasse)
-	self.m_FactionMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabKasse)
+		
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
---	self.m_FactionCreateButton.onLeftClick = bind(self.FactionCreateButton_Click, self)
 --	self.m_FactionQuitButton.onLeftClick = bind(self.FactionQuitButton_Click, self)
---	self.m_FactionDeleteButton.onLeftClick = bind(self.FactionDeleteButton_Click, self)
---	self.m_FactionMoneyDepositButton.onLeftClick = bind(self.FactionMoneyDepositButton_Click, self)
---	self.m_FactionMoneyWithdrawButton.onLeftClick = bind(self.FactionMoneyWithdrawButton_Click, self)
---	self.m_FactionAddPlayerButton.onLeftClick = bind(self.FactionAddPlayerButton_Click, self)
---	self.m_FactionRemovePlayerButton.onLeftClick = bind(self.FactionRemovePlayerButton_Click, self)
---	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
---	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
+	self.m_FactionMoneyDepositButton.onLeftClick = bind(self.FactionMoneyDepositButton_Click, self)
+	self.m_FactionMoneyWithdrawButton.onLeftClick = bind(self.FactionMoneyWithdrawButton_Click, self)
+	self.m_FactionAddPlayerButton.onLeftClick = bind(self.FactionAddPlayerButton_Click, self)
+	self.m_FactionRemovePlayerButton.onLeftClick = bind(self.FactionRemovePlayerButton_Click, self)
+	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
+	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
 --	self.m_FactionInvitationsAcceptButton.onLeftClick = bind(self.FactionInvitationsAcceptButton_Click, self)
 --	self.m_FactionInvitationsDeclineButton.onLeftClick = bind(self.FactionInvitationsDeclineButton_Click, self)
 	
@@ -94,11 +92,11 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players)
 	end
 end
 
-function FactionGUI:Event_groupInvitationRetrieve(groupId, name)
+function FactionGUI:Event_factionInvitationRetrieve(factionId, name)
 	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
 
 	local item = self.m_FactionInvitationsGrid:addItem(name)
-	item.FactionId = groupId
+	item.FactionId = factionId
 end
 
 function FactionGUI:adjustFactionTab(rank)
@@ -126,7 +124,7 @@ function FactionGUI:adjustFactionTab(rank)
 			self.m_FactionRankDownButton:setVisible(false)
 		end
 	else
-		-- We're not in a group, so show the invitation stuff
+		-- We're not in a faction, so show the invitation stuff
 		self.m_FactionInvitationsLabel:setVisible(true)
 		self.m_FactionInvitationsGrid:setVisible(true)
 		self.m_FactionInvitationsAcceptButton:setVisible(true)
@@ -138,18 +136,10 @@ function FactionGUI:FactionCreateButton_Click()
 	FactionCreationGUI:new()
 end
 
-function FactionGUI:FactionQuitButton_Click()
-	triggerServerEvent("groupQuit", root)
-end
-
-function FactionGUI:FactionDeleteButton_Click()
-	triggerServerEvent("groupDelete", root)
-end
-
 function FactionGUI:FactionMoneyDepositButton_Click()
 	local amount = tonumber(self.m_FactionMoneyAmountEdit:getText())
 	if amount and amount > 0 then
-		triggerServerEvent("groupDeposit", root, amount)
+		triggerServerEvent("factionDeposit", root, amount)
 	else
 		ErrorBox:new(_"Bitte gebe einen gültigen Betrag ein!")
 	end
@@ -158,7 +148,7 @@ end
 function FactionGUI:FactionMoneyWithdrawButton_Click()
 	local amount = tonumber(self.m_FactionMoneyAmountEdit:getText())
 	if amount and amount > 0 then
-		triggerServerEvent("groupWithdraw", root, amount)
+		triggerServerEvent("factionWithdraw", root, amount)
 	else
 		ErrorBox:new(_"Bitte gebe einen gültigen Betrag ein!")
 	end
@@ -171,7 +161,7 @@ end
 function FactionGUI:FactionRemovePlayerButton_Click()
 	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("groupDeleteMember", root, selectedItem.Id)
+		triggerServerEvent("factionDeleteMember", root, selectedItem.Id)
 	else
 		ErrorBox:new(_"Dieser Spieler ist nicht (mehr) online")
 	end
@@ -180,14 +170,14 @@ end
 function FactionGUI:FactionRankUpButton_Click()
 	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("groupRankUp", root, selectedItem.Id)
+		triggerServerEvent("factionRankUp", root, selectedItem.Id)
 	end
 end
 
 function FactionGUI:FactionRankDownButton_Click()
 	local selectedItem = self.m_FactionPlayersGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("groupRankDown", root, selectedItem.Id)
+		triggerServerEvent("factionRankDown", root, selectedItem.Id)
 	end
 end
 
@@ -195,7 +185,7 @@ function FactionGUI:FactionInvitationsAcceptButton_Click()
 	local selectedItem = self.m_FactionInvitationsGrid:getSelectedItem()
 	if selectedItem then
 		if selectedItem.FactionId then
-			triggerServerEvent("groupInvitationAccept", resourceRoot, selectedItem.FactionId)
+			triggerServerEvent("factionInvitationAccept", resourceRoot, selectedItem.FactionId)
 		end
 		self.m_FactionInvitationsGrid:removeItemByItem(selectedItem)
 	end
@@ -205,7 +195,7 @@ function FactionGUI:FactionInvitationsDeclineButton_Click()
 	local selectedItem = self.m_FactionInvitationsGrid:getSelectedItem()
 	if selectedItem then
 		if selectedItem.FactionId then
-			triggerServerEvent("groupInvitationDecline", resourceRoot, selectedItem.FactionId)
+			triggerServerEvent("factionInvitationDecline", resourceRoot, selectedItem.FactionId)
 		end
 		self.m_FactionInvitationsGrid:removeItemByItem(selectedItem)
 	end

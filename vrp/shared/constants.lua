@@ -91,9 +91,16 @@ BankStat = {
 
 GroupRank = {
 	Normal = 0,
-	Manager = 1,
-	Leader = 2
+	Manager = 5,
+	Leader = 6
 }
+
+FactionRank = {
+	Normal = 0,
+	Manager = 5,
+	Leader = 6
+}
+
 local r3 = {}
 for k, v in pairs(GroupRank) do
 	r3[k] = v

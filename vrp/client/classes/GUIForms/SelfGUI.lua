@@ -33,7 +33,7 @@ function SelfGUI:constructor()
 	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.63, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
 	self.m_FactionMenuButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.69, self.m_Width*0.25, self.m_Height*0.06, _"Fraktions-Menü", tabGeneral):setBackgroundColor(Color.Blue)
 	self.m_FactionMenuButton:setFontSize(1.2)
-	--self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
+	self.m_FactionMenuButton.onLeftClick = bind(self.FactionMenuButton_Click, self)
 	addRemoteEvents{"factionRetrieveInfo"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 	
@@ -288,10 +288,16 @@ function SelfGUI:TabPanel_TabChanged(tabId)
 	end
 end
 
+
 function SelfGUI:JobQuitButton_Click()
 	triggerServerEvent("jobQuit", root)
 	self.m_JobNameLabel:setText("-")
 	self.m_JobQuitButton:setVisible(false)
+end
+
+function SelfGUI:FactionMenuButton_Click()
+	self:close()
+	FactionGUI:getSingleton():open()
 end
 
 function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
