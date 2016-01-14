@@ -74,10 +74,11 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder, CompanyId, CompanyRank, BankAccount FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder, BankAccount FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
+
 	self.m_SavedPosition = Vector3(row.PosX, row.PosY, row.PosZ)
 	self.m_SavedInterior = row.Interior
 	self.m_Skin = row.Skin
@@ -88,7 +89,6 @@ function DatabasePlayer:load()
 	self.m_WantedLevel = row.WantedLevel
 	self.m_TutorialStage = row.TutorialStage
 
-	outputDebug(row.BankAccount)
 	if row.BankAccount == 0 then
 		self.m_BankAccount = BankAccount.create(BankAccountTypes.Player, self:getId())
 	else
@@ -147,8 +147,8 @@ function DatabasePlayer:save()
 		delete(self.m_BankAccount)
 	end
 
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=?, CompanyId=?, BankAccount=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance, toJSON(self.m_Collectables or {}, true), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements() or {}, true), toJSON(self.m_LadderTeam or {}, true), self:getCompanyId(), self:getBankAccount():getId(), self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=?, BankAccount=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance, toJSON(self.m_Collectables or {}, true), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements() or {}, true), toJSON(self.m_LadderTeam or {}, true), self:getBankAccount():getId(), self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -190,8 +190,6 @@ function DatabasePlayer:getHangarType() return self.m_HangarType end -- Todo: On
 function DatabasePlayer:getSpawnLocation() return self.m_SpawnLocation end
 function DatabasePlayer:getCollectables() return self.m_Collectables end
 function DatabasePlayer:hasPilotsLicense() return self.m_HasPilotsLicense end
-function DatabasePlayer:getCompany() return self.m_Company end
-function DatabasePlayer:getCompanyId() return type(self.m_Company) == "table" and self.m_Company:getId() or 0 end
 
 -- Short setters
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) end end
