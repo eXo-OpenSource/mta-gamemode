@@ -21,6 +21,7 @@ function FactionManager:constructor()
 		--self.m_Factions = {
 		local faction =	Faction:new(row.Id, row.Name_Short, row.Name, row.Money, players)
 		FactionManager.Map[row.Id] = faction
+		FactionVehicles:new(row.Id)
 		--}
 	end
   

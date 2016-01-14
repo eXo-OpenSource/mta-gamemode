@@ -11,29 +11,22 @@ Faction = inherit(Object)
 -- implement by children
 Faction.constructor = pure_virtual
 Faction.destructor = pure_virtual
-Faction.start = pure_virtual -- Todo: don't know for what, ask Jusonex :P
-Faction.stop = pure_virtual -- Same here.
 
 function Faction:constructor(id,name_short, name, money,players)
-  outputDebug("Faction.virtual_constructor")
-
   self.m_Id = id
   self.m_Name_Short = name_short
   self.m_Name = name
   self.m_Players = players
   self.m_Money = money
   self.m_Invitations = {}
-  outputDebugString("Faction "..self.m_Name.." loaded")
+  if id == 1 then
+	PD:new()
+  end
 end
 
 function Faction:destructor()
 end
 
-function Faction:stop()
-end
-
-function Faction:start()
-end
 
 function Faction:getId()
 	return self.m_Id

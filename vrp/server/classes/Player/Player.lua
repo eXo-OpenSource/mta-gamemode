@@ -98,6 +98,7 @@ function Player:loadCharacter()
 	self:initialiseBinds()
 
 	-- Add command and event handler
+	addCommandHandler("Fraktion", Player.staticFactionChatHandler)
 	addCommandHandler("Group", Player.staticGroupChatHandler)
 	self:setPublicSync("Rank", self:getRank())
 end
@@ -149,7 +150,8 @@ function Player:loadCharacterInfo()
 end
 
 function Player:initialiseBinds()
-	bindKey(self, "y", "down", "chatbox", "Group")
+	bindKey(self, "c", "down", "chatbox", "Group")
+	bindKey(self, "y", "down", "chatbox", "Fraktion")
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 end
@@ -251,6 +253,12 @@ function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
 function Player.staticGroupChatHandler(self, command, ...)
 	if self.m_Group then
 		self.m_Group:sendMessage(("[GROUP] %s: %s"):format(getPlayerName(self), table.concat({...}, " ")))
+	end
+end
+
+function Player.staticFactionChatHandler(self, command, ...)
+	if self.m_Faction then
+		self.m_Faction:sendMessage(("[Fraktion] %s: %s"):format(getPlayerName(self), table.concat({...}, " ")))
 	end
 end
 
