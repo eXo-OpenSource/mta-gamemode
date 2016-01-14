@@ -158,12 +158,15 @@ function FactionManager:Event_factionDeleteMember(playerId)
 	end
 
 	faction:removePlayer(playerId)
-	client:triggerEvent("factionRetrieveInfo", faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
+		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
 end
 
 function FactionManager:Event_factionInvitationAccept(factionId)
 	local faction = self:getFromId(factionId)
-	if not faction then return end
+	if not faction then 
+		client:sendError(_("Faction not found!", client))
+		return 
+	end
 
 	if faction:hasInvitation(client) then
 		faction:addPlayer(client)
@@ -182,6 +185,7 @@ function FactionManager:Event_factionInvitationDecline(factionId)
 	if faction:hasInvitation(client) then
 		faction:removeInvitation(client)
 		faction:sendMessage(_("%s hat die Fraktionneinladung abgelehnt", client, getPlayerName(client)))
+		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
 	else
 		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
 	end
@@ -216,6 +220,7 @@ function FactionManager:Event_factionRankDown(playerId)
 	if not faction then return end
 
 	if not faction:isPlayerMember(client) or not faction:isPlayerMember(playerId) then
+		client:sendError(_("Du oder das Ziel sind nicht mehr in der Fraktion!", client))
 		return
 	end
 
@@ -225,7 +230,7 @@ function FactionManager:Event_factionRankDown(playerId)
 		return
 	end
 
-	if faction:getPlayerRank(playerId) == FactionRank.Manager then
+	if faction:getPlayerRank(playerId) >= FactionRank.Manager then
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
 		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
 	end

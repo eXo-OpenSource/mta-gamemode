@@ -22,7 +22,7 @@ function Faction:constructor(id,name_short, name, money,players)
   self.m_Name = name
   self.m_Players = players
   self.m_Money = money
-  
+  self.m_Invitations = {}
   outputDebugString("Faction "..self.m_Name.." loaded")
 end
 

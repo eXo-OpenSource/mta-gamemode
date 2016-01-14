@@ -10,7 +10,7 @@ inherit(Singleton, SelfGUI)
 
 function SelfGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
-
+		
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
 	self.m_CloseButton.onLeftClick = function() self:close() end
@@ -31,11 +31,21 @@ function SelfGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.516, self.m_Width*0.25, self.m_Height*0.12, _"Fraktion", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.63, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
 	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.63, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_FactionInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.69, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
+	self.m_FactionInvitationsAcceptButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.76, self.m_Width*0.195, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
+	self.m_FactionInvitationsDeclineButton = GUIButton:new(self.m_Width*0.225, self.m_Height*0.76, self.m_Width*0.195, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
 	self.m_FactionMenuButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.69, self.m_Width*0.25, self.m_Height*0.06, _"Fraktions-Menü", tabGeneral):setBackgroundColor(Color.Blue)
 	self.m_FactionMenuButton:setFontSize(1.2)
+	
+
+	
 	self.m_FactionMenuButton.onLeftClick = bind(self.FactionMenuButton_Click, self)
-	addRemoteEvents{"factionRetrieveInfo"}
+	self.m_FactionInvitationsAcceptButton.onLeftClick = bind(self.FactionInvitationsAcceptButton_Click, self)
+	self.m_FactionInvitationsDeclineButton.onLeftClick = bind(self.FactionInvitationsDeclineButton_Click, self)
+	
+	addRemoteEvents{"factionRetrieveInfo", "factionInvitationRetrieve"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
+	addEventHandler("factionInvitationRetrieve", root, bind(self.Event_factionInvitationRetrieve, self))
 	
 	-- Tab: Groups
 	local tabGroups = self.m_TabPanel:addTab(_"Gruppen")
@@ -84,6 +94,7 @@ function SelfGUI:constructor()
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
 	self.m_GroupInvitationsAcceptButton.onLeftClick = bind(self.GroupInvitationsAcceptButton_Click, self)
 	self.m_GroupInvitationsDeclineButton.onLeftClick = bind(self.GroupInvitationsDeclineButton_Click, self)
+	
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
@@ -300,6 +311,54 @@ function SelfGUI:FactionMenuButton_Click()
 	FactionGUI:getSingleton():open()
 end
 
+function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
+	self.m_FactionInvationLabel:setVisible(false)
+	self.m_FactionInvitationsAcceptButton:setVisible(false)
+	self.m_FactionInvitationsDeclineButton:setVisible(false)
+	
+	if rank and rank > 0 then
+		self.m_FactionNameLabel:setText(name.." - Rang: "..rank)
+		self.m_FactionInvationLabel:setVisible(false)
+		self.m_FactionMenuButton:setVisible(true)
+		self.InvationFactionId = 0
+	else
+		self.m_FactionNameLabel:setText("-keine Fraktion-")
+		self.m_FactionInvationLabel:setVisible(true)
+		self.m_FactionMenuButton:setVisible(false)
+		
+		if self.InvationFactionId and self.InvationFactionId > 0 then
+			self.m_FactionInvationLabel:setVisible(true)
+			self.m_FactionInvitationsAcceptButton:setVisible(true)
+			self.m_FactionInvitationsDeclineButton:setVisible(true)
+		end
+		
+	end
+end
+
+function SelfGUI:Event_factionInvitationRetrieve(factionId, name)
+	if factionId > 0 then
+		ShortMessage:new(_("Du wurdest in die Fraktion '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+		self.m_FactionInvationLabel:setVisible(true)
+		self.m_FactionInvitationsAcceptButton:setVisible(true)
+		self.m_FactionInvitationsDeclineButton:setVisible(true)
+		self.m_FactionInvationLabel:setText("Du wurdest in die Fraktion \""..name.."\" eingeladen!")
+		self.InvationFactionId = factionId
+	end
+end
+
+function SelfGUI:FactionInvitationsAcceptButton_Click()
+	if self.InvationFactionId then
+		triggerServerEvent("factionInvitationAccept", resourceRoot, self.InvationFactionId)
+	end
+end
+
+function SelfGUI:FactionInvitationsDeclineButton_Click()
+	if self.InvationFactionId then
+		triggerServerEvent("factionInvitationDecline", resourceRoot, self.InvationFactionId)
+		self.InvationFactionId = 0
+	end
+end
+
 function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
 	self:adjustGroupTab(rank or false)
 
@@ -319,15 +378,6 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
 		end
 	end
 end
-function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
-	if id and id > 0 then
-		self.m_FactionNameLabel:setText(name.." - Rang: "..rank)
-		self.m_FactionMenuButton:setVisible(true)
-	else
-		self.m_FactionNameLabel:setText("-keine Fraktion-")
-		self.m_FactionMenuButton:setVisible(false)
-	end
-end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
 	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
@@ -335,6 +385,8 @@ function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
 	local item = self.m_GroupInvitationsGrid:addItem(name)
 	item.GroupId = groupId
 end
+
+
 
 function SelfGUI:adjustGroupTab(rank)
 	local isInGroup = rank ~= false
@@ -445,6 +497,8 @@ function SelfGUI:GroupInvitationsDeclineButton_Click()
 		self.m_GroupInvitationsGrid:removeItemByItem(selectedItem)
 	end
 end
+
+
 
 function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType, upgradeGarage, upgradeHangar)
 	if vehiclesInfo then
