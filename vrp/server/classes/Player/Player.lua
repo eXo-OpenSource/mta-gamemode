@@ -229,6 +229,9 @@ function Player:spawn()
 	self:setFrozen(false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
+	
+	self:destroyChatColShapes( )
+	self:createChatColshapes( ) 
 end
 
 function Player:respawn(position, rotation)
@@ -437,3 +440,45 @@ end
 function Player:setUniqueInterior(uniqueInteriorId)
 	self.m_UniqueInterior = uniqueInteriorId
 end
+
+function Player:createChatColshapes( ) 
+	local x,y,z = getElementPosition( self )
+	self.chatCol_whisper = createColSphere ( x,y,z, CHAT_WHISPER_RANGE )
+	attachElements(self.chatCol_whisper,self)
+	self.chatCol_talk = createColSphere ( x,y,z, CHAT_TALK_RANGE )
+	attachElements(self.chatCol_talk ,self)
+	self.chatCol_scream = createColSphere ( x,y,z, CHAT_SCREAM_RANGE )
+	attachElements(self.chatCol_scream,self)
+end
+
+function Player:destroyChatColShapes( )
+	if self.chatCol_scream then destroyElement(self.chatCol_scream) end
+	if self.chatCol_talk then destroyElement(self.chatCol_talk) end
+	if self.chatCol_whisper then destroyElement(self.chatCol_whisper) end
+end
+
+function Player:getPlayersInChatRange( irange) 
+	local colShape
+	if irange == 0 then
+		colShape = self.chatCol_whisper
+	elseif irange == 1 then
+		colShape = self.chatCol_talk
+	elseif irange == 2 then 
+		colShape = self.chatCol_scream
+	end
+	local playersInRange = {	}
+	local elementTable = getElementsWithinColShape( colShape,"player")
+	local player,dimension,interior,check
+	for index = 1,#elementTable do 
+		player = elementTable[index]
+		dimension = player.dimension
+		interior = player.interior
+		if interior == self.interior then 
+			if dimension == self.dimension then 
+				playersInRange[#playersInRange+1] = player
+			end
+		end
+	end
+	return playersInRange
+end
+

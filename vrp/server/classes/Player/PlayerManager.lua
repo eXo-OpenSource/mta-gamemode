@@ -1,4 +1,4 @@
--- ****************************************************************************
+﻿-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Player/PlayerManager.lua
@@ -29,6 +29,9 @@ function PlayerManager:constructor()
 	addEventHandler("requestJobLevelUp", root, bind(self.Event_requestJobLevelUp, self))
 	addEventHandler("playerRequestTrading", root, bind(self.Event_playerRequestTrading, self))
 
+	addCommandHandler("s",bind(self.Command_playerScream, self))
+	addCommandHandler("l",bind(self.Command_playerWhisper, self))
+	
 	self.m_SyncPulse = TimedPulse:new(500)
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 end
@@ -103,7 +106,10 @@ function PlayerManager:playerChat(message, messageType)
 	if messageType == 0 then
 		local phonePartner = source:getPhonePartner()
 		if not phonePartner then
-			outputChatBox(getPlayerName(source)..": "..message, root, 255, 255, 0)
+			local playersToSend = source:getPlayersInChatRange( 1 ) 
+			for index = 1,#playersToSend do 
+				outputChatBox(getPlayerName(source).." sagt: #FFFFFF"..message, playersToSend[index], 220, 220, 220,true)
+			end
 		else
 			-- Send handy message
 			outputChatBox(_("%s (Telefon): %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
@@ -112,6 +118,27 @@ function PlayerManager:playerChat(message, messageType)
 		cancelEvent()
 	end
 end
+
+function PlayerManager:Command_playerScream(  source , cmd, ...) 
+	local argTable = { ... } 
+	local text = table.concat ( argTable , " " )
+	local playersToSend = source:getPlayersInChatRange( 2 ) 
+	for index = 1,#playersToSend do 
+		outputChatBox(getPlayerName(source).." schreit: #FFFFFF"..text, playersToSend[index], 240, 240, 240,true)
+	end
+end
+
+function PlayerManager:Command_playerWhisper(  source , cmd, ...) 
+	local argTable = { ... } 
+	local text = table.concat ( argTable , " " )
+	local playersToSend = source:getPlayersInChatRange( 0 ) 
+	for index = 1,#playersToSend do 
+		outputChatBox(getPlayerName(source).." flüstert: #FFFFFF"..text, playersToSend[index], 140, 140, 140,true)
+	end
+end
+
+
+
 
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
