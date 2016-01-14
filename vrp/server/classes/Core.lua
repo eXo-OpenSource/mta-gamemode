@@ -51,7 +51,6 @@ function Core:constructor()
 	DimensionManager:new()
 	ActorManager:new()
 	InteriorManager:new()
-	CompanyManager:new()
 	FactionManager:new()
 
 	VendingMachine.initializeAll()

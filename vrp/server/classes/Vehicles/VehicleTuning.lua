@@ -120,11 +120,16 @@ function VehicleTuning:EntryColShape_Hit(garageId, hitElement, matchingDimension
         local vehicle = hitElement:getOccupiedVehicle()
         if not vehicle or hitElement:getOccupiedVehicleSeat() ~= 0 then return end
 
-        if vehicle:isPermanent() then
+        if vehicle:isPermanent() and not instanceof(vehicle, CompanyVehicle) then
             if vehicle:getOwner() ~= hitElement:getId() then
                 hitElement:sendError(_("Du kannst nur deine eigenen Fahrzeuge tunen!", hitElement))
                 return
             end
+        elseif instanceof(vehicle, CompanyVehicle) then
+          if not vehicle:canBeModified() then
+              hitElement:sendError(_("Dieser Firmenwagen darf nicht getunt werden!", hitElement))
+              return
+          end
         else
             hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
         end

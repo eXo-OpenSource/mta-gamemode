@@ -11,6 +11,7 @@ VehicleManager.sPulse = TimedPulse:new(5*1000)
 function VehicleManager:constructor()
 	self.m_Vehicles = {}
 	self.m_TemporaryVehicles = {}
+	self.m_CompanyVehicles = {}
 	self:setSpeedLimits()
 
 	-- Add events
@@ -60,6 +61,13 @@ function VehicleManager:constructor()
 		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		self:addRef(vehicle, false)
 	end
+	outputServerLog("Loading company vehicles")
+	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
+	for i, row in pairs(result) do
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+		self:addRef(vehicle, false)
+	end
 
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
 
@@ -73,11 +81,29 @@ function VehicleManager:destructor()
 		end
 	end
 	outputServerLog("Saved vehicles")
+
+	for companyId, vehicles in pairs(self.m_CompanyVehicles) do
+		for k, vehicle in pairs(vehicles) do
+			vehicle:save()
+		end
+	end
+	outputServerLog("Saved company vehicles")
 end
 
 function VehicleManager:addRef(vehicle, isTemp)
 	if isTemp then
 		self.m_TemporaryVehicles[#self.m_TemporaryVehicles+1] = vehicle
+		return
+	end
+	if instanceof(vehicle, CompanyVehicle) and vehicle:getCompany() then
+		local companyId = vehicle:getCompany() and vehicle:getCompany():getId()
+		assert(companyId, "Bad owner specified")
+
+		if not self.m_CompanyVehicles[companyId] then
+			self.m_CompanyVehicles[companyId] = {}
+		end
+
+		table.insert(self.m_CompanyVehicles[companyId], vehicle)
 		return
 	end
 
@@ -196,7 +222,7 @@ function VehicleManager:Event_vehicleLock()
 	if not source or not isElement(source) then return end
 	self:checkVehicle(source)
 
-	if not source:hasKey(client) and client:getRank() <= RANK.User then
+	if not source:hasKey(client) or client:getRank() <= RANK.User then
 		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
 		return
 	end

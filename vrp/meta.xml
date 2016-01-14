@@ -103,6 +103,7 @@
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/TemporaryVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/CompanyVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleGarages.lua" type="server"/>
@@ -163,9 +164,7 @@
 	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
 
 	<!-- Business -->
-	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
-	<script src="server/classes/Business/Company.lua" type="server"/>
-	<script src="server/classes/Business/Companies/TestCompany.lua" type="server"/>
+
 
 	<!-- Factions -->
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
@@ -425,9 +424,7 @@
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 
 	<!-- Business -->
-	<script src="client/classes/Business/Company.lua" type="client"/>
-	<script src="client/classes/Business/CompanyManager.lua" type="client"/>
-	<script src="client/classes/Business/Companies/TestCompany.lua" type="client"/>
+
 
 	<!-- Tests -->
 	<!-- Todo -->

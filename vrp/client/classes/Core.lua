@@ -40,7 +40,6 @@ function Core:ready()
 	TippManager:new()
 	JailBreak:new()
 	DimensionManager:new()
-	CompanyManager:new()
 	
 	-- Events
 	EventManager:new()
@@ -103,11 +102,11 @@ function Core:afterLogin()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	bindKey(core:get("KeyBindings", "KeyToggleSelfGUI", "f2"), "down", function() SelfGUI:getSingleton():toggle() end)
-	
+
 	FactionGUI:new()
 	FactionGUI:getSingleton():close()
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
-	
+
 	ScoreboardGUI:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleScoreboard", "tab"), "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
 	bindKey(core:get("KeyBindings", "KeyToggleScoreboard", "tab"), "up", function() ScoreboardGUI:getSingleton():setVisible(false) end)

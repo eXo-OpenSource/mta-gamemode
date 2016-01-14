@@ -103,6 +103,8 @@ function Vehicle:toggleEngine(player)
 		self:setEngineState(state)
 		return true
 	end
+
+	player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
 	return false
 end
 

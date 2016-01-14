@@ -28,7 +28,6 @@ Interiors = {
     -- Name -- Dimension ("Allocate" a block of dimensions)
     AmmuNation1 = 50000,
     AmmuNation2 = 50001,
-
 }
 
 SkillTreeKey = {
