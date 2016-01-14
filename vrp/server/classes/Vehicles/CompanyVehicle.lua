@@ -13,6 +13,37 @@ function CompanyManager.getFromId(Id)
 	return {getId = function () return Id end}
 end
 
+-- This function converts a normal (User/PermanentVehicle) to an CompanyVehicle
+function CompanyVehicle.convertVehicle(vehicle, Company)
+	if vehicle:isPermanent() then
+		if not vehicle:isInGarage() then
+			local position = vehicle:getPosition()
+			local rotation = vehicle:getRotation()
+			local model = vehicle:getModel()
+			local health = vehicle:getHealth()
+			local r, g, b = getVehicleColor(vehicle, true)
+			local tunings = false
+			--if Company:canVehiclesBeModified() then
+				tunings = getVehicleUpgrades(vehicle) or {}
+			--end
+
+			if vehicle:purge() then
+				local vehicle = CompanyVehicle.create(Company, model, position.x, position.y, position.z, rotation)
+				vehicle:setHealth(health)
+				vehicle:setColor(r, g, b)
+				--if Company:canVehiclesBeModified() then
+					for k, v in pairs(tunings or {}) do
+						addVehicleUpgrade(vehicle, v)
+					end
+				--end
+				return vehicle:save()
+			end
+		end
+	end
+
+	return false
+end
+
 function CompanyVehicle:constructor(Id, company, color, health, posionType, tunings, mileage)
   self.m_Id = Id
   self.m_Company = company
