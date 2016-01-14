@@ -7,13 +7,15 @@
 -- ****************************************************************************
 
 FactionManager = inherit(Singleton)
+FactionManager.Map = {}
 
 function FactionManager:constructor()
-  self.m_Companies = {
-    TestFaction:new("PD", "test", Vector3(2075, -1250, 24));
+  local Factions = {
+    TestFaction:new(Vector3(2075, -1250, 24));
   }
-  for k, v in ipairs(self.m_Companies) do
+  for k, v in ipairs(Factions) do
 		v:setId(k)
+    self:addRef(v)
 	end
 
   addRemoteEvents{"receiveSync"}
@@ -21,7 +23,7 @@ function FactionManager:constructor()
 end
 
 function FactionManager:getFromId(Id)
-  return self.m_Companies[Id]
+  return FactionManager.Map[Id]
 end
 
 
@@ -32,11 +34,9 @@ function FactionManager:receiveSync(Id, ...)
 end
 
 function FactionManager:addRef(ref)
-  local id = #FactionManager.m_Companies + 1
-	FactionManager.m_Companies[id] = ref
-  ref:setId(id)
+	FactionManager.Map[ref:getId()] = ref
 end
 
 function FactionManager:removeRef(ref)
-	FactionManager.m_Companies[ref:getId()] = nil
+	FactionManager.Map[ref:getId()] = nil
 end

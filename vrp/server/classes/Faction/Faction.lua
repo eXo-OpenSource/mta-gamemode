@@ -11,22 +11,24 @@ Faction = inherit(Object)
 -- implement by children
 Faction.constructor = pure_virtual
 Faction.destructor = pure_virtual
+Faction.getClassId = pure_virtual
 
-function Faction:constructor(id,name_short, name, money,players)
-  self.m_Id = id
+function Faction:virtual_constructor(id, name_short, name, money, players)
   self.m_Name_Short = name_short
   self.m_Name = name
   self.m_Players = players
   self.m_Money = money
   self.m_Invitations = {}
-  if id == 1 then
-	PD:new()
-  end
 end
 
 function Faction:destructor()
 end
 
+function Faction:setId(Id)
+  self.m_Id = Id
+
+  return self
+end
 
 function Faction:getId()
 	return self.m_Id

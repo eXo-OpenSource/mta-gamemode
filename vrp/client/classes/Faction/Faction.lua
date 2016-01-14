@@ -14,24 +14,11 @@ Faction.destructor = pure_virtual
 Faction.start = pure_virtual -- Todo: don't know for what, ask Jusonex :P
 Faction.stop = pure_virtual -- Same here.
 
-function Faction:virtual_constructor(name, desc, position)
+function Faction:virtual_constructor()
   outputDebug("Faction.virtual_constructor")
-
-  self.m_Name = name
-  self.m_Description = desc
-  self.m_Position = position
-  self.m_Pickup = Pickup.create(self.m_Position, 3, 1239)
-  self.m_Blip = Blip:new(("%s.png"):format(name), self.m_Position.x, self.m_Position.y)
-
-  addEventHandler("onClientPickupHit", self.m_Pickup, bind(Faction.onInfoHit, self))
 end
 
 function Faction:virtual_destructor()
-  if self.m_Blip then
-    delete(self.m_Blip)
-  end
-  destroyElement(self.m_Pickup)
-
   FactionManager:getSingleton():removeRef(self)
 end
 

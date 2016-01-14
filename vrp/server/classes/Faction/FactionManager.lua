@@ -8,26 +8,16 @@
 
 FactionManager = inherit(Singleton)
 FactionManager.Map = {}
+FactionManager.LoadedFactions = {}
 
 function FactionManager:constructor()
-  outputServerLog("Loading factions...")
-	local result = sql:queryFetch("SELECT Id, Name, Name_Short, Money FROM ??_factions", sql:getPrefix())
-	for k, row in ipairs(result) do
-		local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
-		local players = {}
-		for i, factionRow in ipairs(result2) do
-			players[factionRow.Id] = factionRow.FactionRank
-		end
-		--self.m_Factions = {
-		local faction =	Faction:new(row.Id, row.Name_Short, row.Name, row.Money, players)
-		FactionManager.Map[row.Id] = faction
-		FactionVehicles:new(row.Id)
-		--}
-	end
-  
--- Events
-	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw",
-		"factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown"}
+  FactionManager.LoadedFactions = {
+    [1] = FactionPolice;
+  }
+  self:loadFactions()
+
+  -- Events
+	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown"}
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
@@ -46,7 +36,39 @@ function FactionManager:destructor()
 	end
 end
 
-function FactionManager:getFromId(Id)
+function FactionManager:loadFactions()
+  outputServerLog("Loading factions...")
+  local result = sql:queryFetch("SELECT Id, Name, Name_Short, Money FROM ??_factions", sql:getPrefix())
+  for k, row in ipairs(result) do
+    local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
+    local players = {}
+    for i, factionRow in ipairs(result2) do
+      players[factionRow.Id] = factionRow.FactionRank
+    end
+
+    if FactionManager.LoadedFactions[row.Id] then
+      local instance = FactionManager.LoadedFactions[row.Id]:new(row.Id, row.Name_Short, row.Name, row.Money, players)
+      instance:setId(row.Id)
+      self:addRef(instance)
+
+      FactionVehicles:new(instance)
+    else
+      outputDebug(("Unable to load Faction Id: %d!"):format(row.Id))
+    end
+  end
+end
+
+function FactionManager:addRef(ref)
+  outputDebug(ref:getId())
+  FactionManager.Map[ref:getId()] = ref
+  return ref
+end
+
+function FactionManager:removeRef(ref)
+  FactionManager.Map[ref:getId()] = nil
+end
+
+function FactionManager.getFromId(Id)
 	return FactionManager.Map[Id]
 end
 
@@ -140,13 +162,13 @@ function FactionManager:Event_factionDeleteMember(playerId)
 	if not playerId then return end
 	local faction = client:getFaction()
 	if not faction then return end
-	
+
 	if client:getId() == playerId then
 		client:sendError(_("Du kannst dich nicht selbst aus der Fraktion werfen!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
-	
+
 	if faction:getPlayerRank(client) < FactionRank.Manager then
 		client:sendError(_("Du kannst den Spieler nicht rauswerfen!", client))
 		-- Todo: Report possible cheat attempt
@@ -164,9 +186,9 @@ end
 
 function FactionManager:Event_factionInvitationAccept(factionId)
 	local faction = self:getFromId(factionId)
-	if not faction then 
+	if not faction then
 		client:sendError(_("Faction not found!", client))
-		return 
+		return
 	end
 
 	if faction:hasInvitation(client) then

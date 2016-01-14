@@ -1,9 +1,13 @@
-PD = inherit(Faction)
+FactionPolice = inherit(Faction)
 
-function PD:constructor()
-  outputDebugString("PD loaded")
+function FactionPolice:constructor()
+  outputDebugString("FactionPolice loaded")
 end
 
-function PD:destructor()
-  outputDebug("PD.destructor")
+function FactionPolice:destructor()
+  outputDebug("FactionPolice.destructor")
+end
+
+function FactionPolice:getClassId()
+  return 1
 end

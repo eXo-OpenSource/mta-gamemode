@@ -168,10 +168,10 @@
 	<script src="server/classes/Business/Companies/TestCompany.lua" type="server"/>
 
 	<!-- Factions -->
-	<script src="server/classes/Faction/FactionVehicles.lua" type="server"/>
-	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
+	<script src="server/classes/Faction/FactionVehicles.lua" type="server"/>
 	<script src="server/classes/Faction/Factions/PD.lua" type="server"/>
+	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
 
 	<!-- Tests -->
 	<script src="server/tests/UtilsTest.lua" type="server"/>

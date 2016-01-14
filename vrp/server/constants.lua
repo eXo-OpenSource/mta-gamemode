@@ -50,3 +50,9 @@ SkillTreeKey = {
     EVIL_VEHICLE1_BIKER = 20,
     EVIL_VEHICLE2_BIKER = 21,
 }
+
+BankAccountTypes = {
+  Player = 1;
+  Faction = 2;
+  Company = 3;
+}

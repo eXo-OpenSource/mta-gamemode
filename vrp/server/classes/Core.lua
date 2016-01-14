@@ -13,7 +13,7 @@ function Core:constructor()
 
 	-- Update MySQL DB if this is not the testserver/releaseserver
 	if not IS_TESTSERVER then
-		MYSQL_DB = "vrp_local"
+		--MYSQL_DB = "vrp_local"
 	end
 
 	-- Establish database connection
@@ -53,7 +53,7 @@ function Core:constructor()
 	InteriorManager:new()
 	CompanyManager:new()
 	FactionManager:new()
-	
+
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()
 	VehicleGarages.initalizeAll()
