@@ -74,7 +74,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, BankMoney, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder, CompanyId, CompanyRank FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder, CompanyId, CompanyRank, BankAccount FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -86,9 +86,14 @@ function DatabasePlayer:load()
 	self:setPoints(row.Points)
 	self.m_Money = row.Money
 	self.m_WantedLevel = row.WantedLevel
-	self.m_BankMoney = row.BankMoney
 	self.m_TutorialStage = row.TutorialStage
 
+	outputDebug(row.BankAccount)
+	if row.BankAccount == 0 then
+		self.m_BankAccount = BankAccount.create(BankAccountTypes.Player, self:getId())
+	else
+		self.m_BankAccount = BankAccount.load(row.BankAccount)
+	end
 	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
 		self:updateAchievements(fromJSON(row.Achievements))
 	else
@@ -103,9 +108,6 @@ function DatabasePlayer:load()
 	end
 	if row.FactionId and row.FactionId ~= 0 then
 		self:setFaction(FactionManager:getSingleton():getFromId(row.FactionId))
-	end
-	if row.CompanyId > 0 then
-		self:setCompany(CompanyManager:getSingleton():getFromId(row.CompanyId))
 	end
 	self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
 	self.m_GarageType = row.GarageType
@@ -140,8 +142,13 @@ function DatabasePlayer:save()
 		return false
 	end
 
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, BankMoney=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=?, CompanyId=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_BankMoney, self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance, toJSON(self.m_Collectables or {}, true), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements() or {}, true), toJSON(self.m_LadderTeam or {}, true), self:getCompanyId(), self:getId())
+	-- Unload stuff
+	if self.m_BankAccount then
+		delete(self.m_BankAccount)
+	end
+
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, HasPilotsLicense=?, JobLevel=?, Achievements=?, Ladder=?, CompanyId=?, BankAccount=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance, toJSON(self.m_Collectables or {}, true), self.m_HasPilotsLicense, self:getJobLevel(), toJSON(self:getAchievements() or {}, true), toJSON(self.m_LadderTeam or {}, true), self:getCompanyId(), self:getBankAccount():getId(), self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -164,7 +171,8 @@ function DatabasePlayer:getWeaponLevel()return self.m_WeaponLevel end
 function DatabasePlayer:getVehicleLevel() return self.m_VehicleLevel end
 function DatabasePlayer:getSkinLevel()	return self.m_SkinLevel	end
 function DatabasePlayer:getJobLevel()	return self.m_JobLevel	end
-function DatabasePlayer:getBankMoney()	return self.m_BankMoney	end
+function DatabasePlayer:getBankAccount() return self.m_BankAccount end
+function DatabasePlayer:getBankMoney()	return self.m_BankAccount:getMoney()	end
 function DatabasePlayer:getWantedLevel()return self.m_WantedLevel end
 function DatabasePlayer:getJob()   		return self.m_Job		end
 function DatabasePlayer:getAccount()	return self.m_Account	end
@@ -315,7 +323,7 @@ end
 function DatabasePlayer:addBankMoney(amount, logType)
 	logType = logType or BankStat.Income
 	if sql:queryExec("INSERT INTO ??_bank_statements (UserId, Type, Amount, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), self.m_Id, logType, amount) then
-		self.m_BankMoney = self.m_BankMoney + amount
+		self:getBankAccount():addMoney(amount)
 		if self.m_BankMoney >= 10000000 then
 			self:giveAchievement(40)
 		elseif self.m_BankMoney >= 1000000 then
@@ -330,7 +338,7 @@ end
 function DatabasePlayer:takeBankMoney(amount, logType)
 	logType = logType or BankStat.Payment
 	if sql:queryExec("INSERT INTO ??_bank_statements (UserId, Type, Amount, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), self.m_Id, logType, amount) then
-		self.m_BankMoney = self.m_BankMoney - amount
+		self:getBankAccount():takeMoney(amount)
 		return true
 	end
 	return false
