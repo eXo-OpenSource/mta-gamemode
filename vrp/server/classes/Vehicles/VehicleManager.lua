@@ -12,6 +12,7 @@ function VehicleManager:constructor()
 	self.m_Vehicles = {}
 	self.m_TemporaryVehicles = {}
 	self.m_CompanyVehicles = {}
+	self.m_FactionVehicles = {}
 	self:setSpeedLimits()
 
 	-- Add events
@@ -68,6 +69,13 @@ function VehicleManager:constructor()
 		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		self:addRef(vehicle, false)
 	end
+	outputServerLog("Loading faction vehicles")
+	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
+	for i, row in pairs(result) do
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+		self:addRef(vehicle, false)
+	end
 
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
 
@@ -88,6 +96,12 @@ function VehicleManager:destructor()
 		end
 	end
 	outputServerLog("Saved company vehicles")
+	for factionId, vehicles in pairs(self.m_FactionVehicles) do
+		for k, vehicle in pairs(vehicles) do
+			vehicle:save()
+		end
+	end
+	outputServerLog("Saved faction vehicles")
 end
 
 function VehicleManager:addRef(vehicle, isTemp)
@@ -106,9 +120,23 @@ function VehicleManager:addRef(vehicle, isTemp)
 		table.insert(self.m_CompanyVehicles[companyId], vehicle)
 		return
 	end
-
+	
 	local ownerId = vehicle:getOwner()
 	assert(ownerId, "Bad company specified")
+	
+	if instanceof(vehicle, FactionVehicle) and vehicle:getFaction() then
+		local factionId = vehicle:getFaction() and vehicle:getFaction():getId()
+		assert(factionId, "Bad owner specified")
+
+		if not self.m_FactionVehicles[factionId] then
+			self.m_FactionVehicles[factionId] = {}
+		end
+
+		table.insert(self.m_FactionVehicles[factionId], vehicle)
+		return
+	end
+
+	
 
 	if not self.m_Vehicles[ownerId] then
 		self.m_Vehicles[ownerId] = {}
@@ -133,6 +161,19 @@ function VehicleManager:removeRef(vehicle, isTemp)
 			local idx = table.find(self.m_CompanyVehicles[companyId], vehicle)
 			if idx then
 				table.remove(self.m_CompanyVehicles[companyId], idx)
+			end
+		end
+		return
+	end
+	
+	if instanceof(vehicle, FactionVehicle) and vehicle:getFaction() then
+		local factionId = vehicle:getFaction() and vehicle:getFaction():getId()
+		assert(factionId, "Bad faction specified")
+
+		if self.m_FactionVehicles[factionId] then
+			local idx = table.find(self.m_FactionVehicles[factionId], vehicle)
+			if idx then
+				table.remove(self.m_FactionVehicles[factionId], idx)
 			end
 		end
 		return

@@ -162,6 +162,10 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				hitElement:sendError(_("Du kannst keine Firmenwagen in der Garage abstellen!", hitElement))
 				return
 			end
+			if instanceof(vehicle, FactionVehicle) then
+				hitElement:sendError(_("Du kannst keine Fraktions-Fahrzeuge in der Garage abstellen!", hitElement))
+				return
+			end
 			if not instanceof(vehicle, Vehicle) or vehicle:getOwner() ~= hitElement:getId() then
 				hitElement:sendError(_("Du kannst nur deine eigenen Fahrzeuge in der Garage abstellen!", hitElement))
 				return

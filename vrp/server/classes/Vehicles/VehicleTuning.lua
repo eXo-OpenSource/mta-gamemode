@@ -130,6 +130,11 @@ function VehicleTuning:EntryColShape_Hit(garageId, hitElement, matchingDimension
               hitElement:sendError(_("Dieser Firmenwagen darf nicht getunt werden!", hitElement))
               return
           end
+				elseif instanceof(vehicle, FactionVehicle) then
+          if not vehicle:canBeModified() then
+              hitElement:sendError(_("Dieser Fraktions-Wagen darf nicht getunt werden!", hitElement))
+              return
+          end
         else
             hitElement:sendWarning(_("Achtung! Du tunst gerade ein temporäres Fahrzeug!", hitElement))
         end

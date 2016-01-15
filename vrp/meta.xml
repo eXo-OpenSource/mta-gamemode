@@ -104,6 +104,7 @@
 	<script src="server/classes/Vehicles/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/TemporaryVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/CompanyVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/FactionVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleGarages.lua" type="server"/>
