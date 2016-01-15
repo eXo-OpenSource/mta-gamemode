@@ -107,7 +107,7 @@ function DatabasePlayer:load()
 		self:setGroup(GroupManager:getSingleton():getFromId(row.GroupId))
 	end
 	if row.FactionId and row.FactionId ~= 0 then
-		self:setFaction(FactionManager:getSingleton():getFromId(row.FactionId))
+		self:setFaction(FactionManager.getFromId(row.FactionId))
 	end
 	self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
 	self.m_GarageType = row.GarageType
