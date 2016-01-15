@@ -38,7 +38,7 @@ end
 
 function FactionManager:loadFactions()
   outputServerLog("Loading factions...")
-  local result = sql:queryFetch("SELECT Id, Name, Name_Short, Money FROM ??_factions", sql:getPrefix())
+  local result = sql:queryFetch("SELECT Id, Name, Name_Short, BankAccount FROM ??_factions", sql:getPrefix())
   for k, row in ipairs(result) do
     local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
     local players = {}
@@ -47,11 +47,10 @@ function FactionManager:loadFactions()
     end
 
     if FactionManager.LoadedFactions[row.Id] then
-      local instance = FactionManager.LoadedFactions[row.Id]:new(row.Id, row.Name_Short, row.Name, row.Money, players)
-      instance:setId(row.Id)
+      local instance = FactionManager.LoadedFactions[row.Id]:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players)
       self:addRef(instance)
 
-      FactionVehicles:new(instance)
+      --FactionVehicles:new(instance)
     else
       outputDebug(("Unable to load Faction Id: %d!"):format(row.Id))
     end

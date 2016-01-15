@@ -19,10 +19,6 @@ function FactionState:destructor()
   outputDebug("FactionState.destructor")
 end
 
-function FactionState:getClassId()
-  return 1
-end
-
 function FactionState:createDutyPickups()
 	self.m_DutyPickup = createPickup(252.6, 69.4, 1003.64, 3, 1275) --PD
 	setElementInterior(self.m_DutyPickup, 6)

@@ -64,6 +64,11 @@ function BankAccount:getId()
   return self.m_Id
 end
 
+function BankAccount:setMoney(amount)
+  self.m_Money = amount
+  self:update()
+end
+
 function BankAccount:getMoney()
   return self.m_Money
 end

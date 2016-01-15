@@ -13,25 +13,29 @@ Faction.constructor = pure_virtual
 Faction.destructor = pure_virtual
 Faction.getClassId = pure_virtual
 
-function Faction:virtual_constructor(id, name_short, name, money, players)
+function Faction:virtual_constructor(id, name_short, name, bankAccountId, players)
+  self.m_Id = id
   self.m_Name_Short = name_short
   self.m_Name = name
   self.m_Players = players
-  self.m_Money = money
+  self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
   self.m_Invitations = {}
+
+  outputDebug("TRUE1")
 end
 
-function Faction:destructor()
+function Faction:virtual_destructor()
+  outputDebug("TRUE2")
+  if self.m_BankAccount then
+    outputDebug("TRUE3")
+    delete(self.m_BankAccount)
+  end
+
+  sql:queryExec("UPDATE ??_factions SET Name_Short = ?, Name = ?, BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_Name_Short, self.m_Name, self.m_BankAccount:getId(), self:getId())
 end
 
 function Faction:isStateFaction()
-  return true
-end
-
-function Faction:setId(Id)
-  self.m_Id = Id
-
-  return self
+  return true -- TODO: @Stumpy -> is this correct? Every faction is a StateFaction?
 end
 
 function Faction:getId()
@@ -47,7 +51,7 @@ function Faction:addPlayer(playerId, rank)
 		playerId = playerId:getId()
 	end
 
-	rank = rank or 0
+	rank = rank or 1
 	self.m_Players[playerId] = rank
 	local player = Player.getFromId(playerId)
 	if player then
@@ -72,8 +76,7 @@ function Faction:removePlayer(playerId)
 end
 
 function Faction:invitePlayer(player)
-    client:sendShortMessage(("Du hast %s erfolgreich in die Fraktion eingeladen."):format(getPlayerName(player)))
-
+  client:sendShortMessage(("Du hast %s erfolgreich in die Fraktion eingeladen."):format(getPlayerName(player)))
 	player:triggerEvent("factionInvitationRetrieve", self:getId(), self:getName())
 
 	self.m_Invitations[player] = true
@@ -114,21 +117,19 @@ function Faction:setPlayerRank(playerId, rank)
 end
 
 function Faction:getMoney()
-	return self.m_Money
+	return self.m_BankAccount:getMoney()
 end
 
 function Faction:giveMoney(amount)
-	self:setMoney(self.m_Money + amount)
+	return self.m_BankAccount:addMoney(amount)
 end
 
 function Faction:takeMoney(amount)
-	self:setMoney(self.m_Money - amount)
+	return self.m_BankAccount:takeMoney(amount)
 end
 
 function Faction:setMoney(amount)
-	self.m_Money = amount
-
-	sql:queryExec("UPDATE ??_factions SET Money = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Id)
+  return self.m_BankAccount:setMoney(amount)
 end
 
 function Faction:getPlayers(getIDsOnly)

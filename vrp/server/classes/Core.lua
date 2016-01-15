@@ -102,6 +102,7 @@ function Core:destructor()
 	delete(PlayerManager:getSingleton())
 	delete(GroupManager:getSingleton())
 	delete(HouseManager:getSingleton())
+	delete(FactionManager:getSingleton())
 
 	delete(sql)
 end
