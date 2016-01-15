@@ -29,7 +29,8 @@ function Player:constructor()
 	self.m_LastGotWantedLevelTime = 0
 	self.m_JoinTime = getTickCount()
 	self.m_Crimes = {}
-
+	
+	
 end
 
 function Player:destructor()
@@ -101,6 +102,7 @@ function Player:loadCharacter()
 	addCommandHandler("Fraktion", Player.staticFactionChatHandler)
 	addCommandHandler("Group", Player.staticGroupChatHandler)
 	self:setPublicSync("Rank", self:getRank())
+	
 end
 
 function Player:createCharacter()
@@ -242,6 +244,7 @@ function Player:respawn(position, rotation)
 	setCameraTarget(self, self)
 end
 
+
 -- Message Boxes
 function Player:sendError(text) 	self:triggerEvent("errorBox", text) 	end
 function Player:sendWarning(text)	self:triggerEvent("warningBox", text) 	end
@@ -272,6 +275,10 @@ end
 function Player:setSkin(skin)
 	self.m_Skin = skin
 	self:setModel(skin)
+end
+
+function Player:isFactionDuty()
+  return self.m_FactionDuty
 end
 
 function Player:setJobDutySkin(skin)

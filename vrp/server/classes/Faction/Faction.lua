@@ -20,8 +20,6 @@ function Faction:virtual_constructor(id, name_short, name, bankAccountId, player
   self.m_Players = players
   self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
   self.m_Invitations = {}
-
-  outputDebug("TRUE1")
 end
 
 function Faction:virtual_destructor()
@@ -30,7 +28,6 @@ function Faction:virtual_destructor()
     outputDebug("TRUE3")
     delete(self.m_BankAccount)
   end
-
   sql:queryExec("UPDATE ??_factions SET Name_Short = ?, Name = ?, BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_Name_Short, self.m_Name, self.m_BankAccount:getId(), self:getId())
 end
 

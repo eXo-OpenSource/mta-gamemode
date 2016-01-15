@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp"}
+addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp","playerToggleFactionDuty"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -28,6 +28,7 @@ function PlayerManager:constructor()
 	addEventHandler("requestSkinLevelUp", root, bind(self.Event_requestSkinLevelUp, self))
 	addEventHandler("requestJobLevelUp", root, bind(self.Event_requestJobLevelUp, self))
 	addEventHandler("playerRequestTrading", root, bind(self.Event_playerRequestTrading, self))
+	addEventHandler("playerToggleFactionDuty", root, bind(self.Event_toggleFactionDuty, self))
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -55,6 +56,7 @@ end
 function PlayerManager:getReadyPlayers()
 	return self.m_ReadyPlayers
 end
+
 
 
 -----------------------------------------
@@ -228,4 +230,22 @@ end
 function PlayerManager:Event_playerRequestTrading()
 	-- TODO: Add accept prompt box
 	client:startTrading(source)
+end
+
+function PlayerManager:Event_toggleFactionDuty()
+	if Faction:isStateFaction(client:getFaction()) then
+		if client:isFactionDuty() then
+			client:setJobDutySkin(nil)
+			client.m_FactionDuty = false
+			client:setPublicSync("Faction:Duty",false)
+			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
+		else
+			client:setJobDutySkin(280)
+			client.m_FactionDuty = true
+			client:setPublicSync("Faction:Duty",true)
+			client:sendInfo(_("Du bist nun im Dienst!", client))
+		end
+	else
+		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
+	end
 end

@@ -46,7 +46,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_WeaponLevel = 0
 	self.m_VehicleLevel = 0
 	self.m_SkinLevel = 0
-
+	self.m_FactionDuty = false
 	--[[
 	Tutorial Stages:
 	0 - Just created an account
@@ -119,7 +119,7 @@ function DatabasePlayer:load()
 	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
 	self.m_LadderTeam = fromJSON(row.Ladder or "[[]]")
 	self.m_LastPlayTime = row.PlayTime
-
+	
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
 	self.m_Skills["Flying"] 	= row.FlyingSkill

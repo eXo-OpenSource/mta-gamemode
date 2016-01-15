@@ -17,7 +17,7 @@ function FactionManager:constructor()
   self:loadFactions()
 
   -- Events
-	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown"}
+	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionChangeSkin", "factionRearm", "factionSwat"}
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
@@ -28,6 +28,10 @@ function FactionManager:constructor()
 	addEventHandler("factionInvitationDecline", root, bind(self.Event_factionInvitationDecline, self))
 	addEventHandler("factionRankUp", root, bind(self.Event_factionRankUp, self))
 	addEventHandler("factionRankDown", root, bind(self.Event_factionRankDown, self))
+	addEventHandler("factionChangeSkin", root, bind(self.changeSkin, self))
+	addEventHandler("factionRearm", root, bind(self.rearm, self))
+	addEventHandler("factionSwat", root, bind(self.toggleSwat, self))
+
 end
 
 function FactionManager:destructor()
@@ -49,7 +53,6 @@ function FactionManager:loadFactions()
     if FactionManager.LoadedFactions[row.Id] then
       local instance = FactionManager.LoadedFactions[row.Id]:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players)
       self:addRef(instance)
-
       --FactionVehicles:new(instance)
     else
       outputDebug(("Unable to load Faction Id: %d!"):format(row.Id))
@@ -67,6 +70,33 @@ end
 
 function FactionManager.getFromId(Id)
 	return FactionManager.Map[Id]
+end
+
+function FactionManager:toggleSwat()
+	if client:isFactionDuty() then
+		local swat = client:getPublicSync("Fraktion:Swat")
+		if swat == true then
+			client:setJobDutySkin(nil)
+			client:setPublicSync("Fraktion:Swat",false)
+			client:sendInfo(_("Du hast den Swat-Modus beendet Dienst!", client))
+		else
+			client:setJobDutySkin(285)
+			client:setPublicSync("Fraktion:Swat",true)
+			client:sendInfo(_("Du hast bist in den Swat-Modus gewechselt!", client))
+		end
+	end
+end
+
+function FactionManager:changeSkin()
+	if client:isFactionDuty() then
+		client:setJobDutySkin(280)
+	end
+end
+
+function FactionManager:rearm()
+	if client:isFactionDuty() then
+		client:setJobDutySkin(280)
+	end
 end
 
 function FactionManager:Event_factionRequestInfo()
