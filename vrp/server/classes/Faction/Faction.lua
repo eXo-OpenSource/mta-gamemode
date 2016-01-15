@@ -24,6 +24,10 @@ end
 function Faction:destructor()
 end
 
+function Faction:isStateFaction()
+  return true
+end
+
 function Faction:setId(Id)
   self.m_Id = Id
 
