@@ -30,13 +30,9 @@ function FactionState:createDutyPickups()
 		function(hitElement)
 			if getElementType(hitElement) == "player" then
 				local faction = hitElement:getFaction()
-				--if faction.isStateFaction() == true then
-					if getElementModel(hitElement) ~= 280 then
-						hitElement:setJobDutySkin(280)
-					else
-						hitElement:setJobDutySkin(nil)
-					end
-				--end
+				if faction:isStateFaction() == true then
+					outputChatBox("Duty Marker")
+				end
 			end
 			cancelEvent()
 		end
