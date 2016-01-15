@@ -183,7 +183,7 @@ function FactionManager:Event_factionDeleteMember(playerId)
 end
 
 function FactionManager:Event_factionInvitationAccept(factionId)
-	local faction = self:getFromId(factionId)
+	local faction = self.getFromId(factionId)
 	if not faction then
 		client:sendError(_("Faction not found!", client))
 		return
@@ -200,7 +200,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 end
 
 function FactionManager:Event_factionInvitationDecline(factionId)
-	local faction = self:getFromId(factionId)
+	local faction = self.getFromId(factionId)
 	if not faction then return end
 
 	if faction:hasInvitation(client) then

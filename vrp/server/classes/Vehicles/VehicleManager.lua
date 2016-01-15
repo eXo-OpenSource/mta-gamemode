@@ -108,7 +108,7 @@ function VehicleManager:addRef(vehicle, isTemp)
 	end
 
 	local ownerId = vehicle:getOwner()
-	assert(ownerId, "Bad owner specified")
+	assert(ownerId, "Bad company specified")
 
 	if not self.m_Vehicles[ownerId] then
 		self.m_Vehicles[ownerId] = {}
@@ -122,6 +122,18 @@ function VehicleManager:removeRef(vehicle, isTemp)
 		local idx = table.find(self.m_TemporaryVehicles, vehicle)
 		if idx then
 			table.remove(self.m_TemporaryVehicles, idx)
+		end
+		return
+	end
+	if instanceof(vehicle, CompanyVehicle) and vehicle:getCompany() then
+		local companyId = vehicle:getCompany() and vehicle:getCompany():getId()
+		assert(companyId, "Bad company specified")
+
+		if self.m_CompanyVehicles[companyId] then
+			local idx = table.find(self.m_CompanyVehicles[companyId], vehicle)
+			if idx then
+				table.remove(self.m_CompanyVehicles[companyId], idx)
+			end
 		end
 		return
 	end
