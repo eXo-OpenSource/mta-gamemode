@@ -31,7 +31,7 @@ function FactionState:createDutyPickups()
 			if getElementType(hitElement) == "player" then
 				local faction = hitElement:getFaction()
 				if faction:isStateFaction() == true then
-					outputChatBox("Duty Marker")
+					hitElement:triggerEvent("showStateFactionDutyGUI")
 				end
 			end
 			cancelEvent()
