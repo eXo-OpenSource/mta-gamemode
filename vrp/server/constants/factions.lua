@@ -1,6 +1,6 @@
 ﻿factionColors = {}
 factionRankNames = {}
-
+factionSkins = {}
 -- ID 1 = Police Departement
 
 factionColors[1] = {
@@ -18,3 +18,4 @@ factionRankNames[1] = {
 [5] = "Deputy",
 [6] = "Chief"
 }
+factionSkins[1] = {"93","265","266","267","280","281","282","283","284","288"}

@@ -28,8 +28,8 @@ function FactionManager:constructor()
 	addEventHandler("factionInvitationDecline", root, bind(self.Event_factionInvitationDecline, self))
 	addEventHandler("factionRankUp", root, bind(self.Event_factionRankUp, self))
 	addEventHandler("factionRankDown", root, bind(self.Event_factionRankDown, self))
-	addEventHandler("factionChangeSkin", root, bind(self.changeSkin, self))
-	addEventHandler("factionRearm", root, bind(self.rearm, self))
+	addEventHandler("factionChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
+	addEventHandler("factionRearm", root, bind(self.Event_FactionRearm, self))
 	addEventHandler("factionSwat", root, bind(self.toggleSwat, self))
 
 end
@@ -51,7 +51,7 @@ function FactionManager:loadFactions()
     end
 
     if FactionManager.LoadedFactions[row.Id] then
-      local instance = FactionManager.LoadedFactions[row.Id]:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players)
+			local instance = FactionManager.LoadedFactions[row.Id]:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id])
       self:addRef(instance)
       --FactionVehicles:new(instance)
     else
@@ -89,15 +89,15 @@ function FactionManager:toggleSwat()
 	end
 end
 
-function FactionManager:changeSkin()
+function FactionManager:Event_FactionChangeSkin()
 	if client:isFactionDuty() then
-		client:setJobDutySkin(280)
+		client:getFaction():changeSkin(client)
 	end
 end
 
-function FactionManager:rearm()
+function FactionManager:Event_FactionRearm()
 	if client:isFactionDuty() then
-		client:setJobDutySkin(280)
+		client:getFaction():rearm(client)
 	end
 end
 

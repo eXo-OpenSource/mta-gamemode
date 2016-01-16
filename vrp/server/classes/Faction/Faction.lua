@@ -13,15 +13,16 @@ Faction.constructor = pure_virtual
 Faction.destructor = pure_virtual
 Faction.getClassId = pure_virtual
 
-function Faction:virtual_constructor(id, name_short, name, bankAccountId, players)
+function Faction:virtual_constructor(id, name_short, name, bankAccountId, players,ranks,colors,skins)
   self.m_Id = id
   self.m_Name_Short = name_short
   self.m_Name = name
   self.m_Players = players
   self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
   self.m_Invitations = {}
-	self.m_RankNames = factionRankNames[id]
-	self.m_Color = factionColors[id]
+	self.m_RankNames = ranks
+	self.m_Color = colors
+	self.m_Skins = skins
 end
 
 function Faction:virtual_destructor()
@@ -42,6 +43,20 @@ function Faction:getId()
 end
 
 function Faction:getName()
+	return self.m_Name
+end
+
+function Faction:changeSkin(player)
+	local oldSkin = getElementModel(player)
+	for key, value in ipairs(self.m_Skins) do
+		if value > oldSkin then
+			player:setSkin(value)
+			break;
+		end
+	end
+end
+
+function Faction:rearm(player)
 	return self.m_Name
 end
 
