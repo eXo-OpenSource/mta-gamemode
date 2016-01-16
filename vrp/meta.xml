@@ -35,9 +35,10 @@
 	<script src="shared/classes/DimensionManager.lua" type="shared"/>
 
 	<!-- Server -->
-	<script src="server/constants.lua" type="server"/>
 	<script src="server/utils.lua" type="server"/>
 	<script src="server/mapEditorScriptingExtension_s.lua" type="server"/>
+	<script src="server/constants/main.lua" type="server"/>
+	<script src="server/constants/factions.lua" type="server"/>
 	<script src="server/classes/Debugging.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>

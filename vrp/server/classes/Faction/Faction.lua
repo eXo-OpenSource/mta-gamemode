@@ -20,6 +20,8 @@ function Faction:virtual_constructor(id, name_short, name, bankAccountId, player
   self.m_Players = players
   self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
   self.m_Invitations = {}
+	self.m_RankNames = factionRankNames[id]
+	self.m_Color = factionColors[id]
 end
 
 function Faction:virtual_destructor()
@@ -159,5 +161,16 @@ end
 function Faction:sendMessage(text, r, g, b, ...)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, r, g, b, ...)
+	end
+end
+
+function Faction:sendChatMessage(sourcePlayer,text)
+	local playerId = sourcePlayer:getId()
+	local rank = self.m_Players[playerId]
+	local rankName = self.m_RankNames[rank]
+	local r,g,b = self.m_Color["r"],self.m_Color["g"],self.m_Color["b"]
+	local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), text)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b)
 	end
 end

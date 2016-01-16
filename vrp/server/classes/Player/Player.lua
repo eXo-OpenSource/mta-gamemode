@@ -264,7 +264,7 @@ end
 
 function Player.staticFactionChatHandler(self, command, ...)
 	if self.m_Faction then
-		self.m_Faction:sendMessage(("[Fraktion] %s: %s"):format(getPlayerName(self), table.concat({...}, " ")))
+		self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
 	end
 end
 
