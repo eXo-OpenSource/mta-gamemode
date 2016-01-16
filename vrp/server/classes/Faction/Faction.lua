@@ -26,9 +26,7 @@ function Faction:virtual_constructor(id, name_short, name, bankAccountId, player
 end
 
 function Faction:virtual_destructor()
-  outputDebug("TRUE2")
   if self.m_BankAccount then
-    outputDebug("TRUE3")
     delete(self.m_BankAccount)
   end
   sql:queryExec("UPDATE ??_factions SET Name_Short = ?, Name = ?, BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_Name_Short, self.m_Name, self.m_BankAccount:getId(), self:getId())

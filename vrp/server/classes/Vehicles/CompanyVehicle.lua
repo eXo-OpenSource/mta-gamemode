@@ -1,20 +1,11 @@
 -- ****************************************************************************
 -- *
--- *  PROJECT:     vRoleplay
+-- *  PROJECT:     eXo
 -- *  FILE:        server/classes/CompanyVehicle.lua
 -- *  PURPOSE:     Company Vehicle class
 -- *
 -- ****************************************************************************
 CompanyVehicle = inherit(PermanentVehicle)
-
--- HACK :P
-CompanyManager = {}
-function CompanyManager.getFromId(Id)
-	return {
-		getId = function () return Id end;
-		canVehiclesBeModified = function () return true end
-	}
-end
 
 -- This function converts a normal (User/PermanentVehicle) to an CompanyVehicle
 function CompanyVehicle.convertVehicle(vehicle, Company)
@@ -51,7 +42,7 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
   self.m_Id = Id
   self.m_Company = company
   self.m_PositionType = positionType or VehiclePositionType.World
-  setElementData(self, "OwnerName", "asdh") -- Todo: *hide*
+  setElementData(self, "OwnerName", self.m_Company:getName())*
 
   self:setHealth(health)
   self:setLocked(true)
@@ -69,6 +60,10 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
     setElementDimension(self, PRIVATE_DIMENSION_SERVER)
   end
   self:setMileage(mileage)
+
+	if self.m_Company.m_Vehicles then
+		table.insert(self.m_Company.m_Vehicles, self)
+	end
 end
 
 function CompanyVehicle:destructor()
@@ -117,13 +112,12 @@ end
 
 function CompanyVehicle:hasKey(player)
   if self:isPermanent() then
-    --if player:getCompany() == self.m_Company then
-    --  return true
-    --end
+    if player:getCompany() == self:getCompany() then
+      return true
+    end
   end
 
-  --return false
-  return true
+  return false
 end
 
 function CompanyVehicle:addKey(player)
@@ -135,8 +129,7 @@ function CompanyVehicle:removeKey(player)
 end
 
 function CompanyVehicle:canBeModified()
-  --return self:getCompany():canVehiclesBeModified()
-  return false
+  return self:getCompany():canVehiclesBeModified()
 end
 
 function CompanyVehicle:respawn()

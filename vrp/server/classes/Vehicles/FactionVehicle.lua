@@ -7,15 +7,6 @@
 -- ****************************************************************************
 FactionVehicle = inherit(PermanentVehicle)
 
--- HACK :P
-FactionManager = {}
-function FactionManager.getFromId(Id)
-	return {
-		getId = function () return Id end;
-		canVehiclesBeModified = function () return false end
-	}
-end
-
 function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage)
   self.m_Id = Id
   self.m_Faction = faction

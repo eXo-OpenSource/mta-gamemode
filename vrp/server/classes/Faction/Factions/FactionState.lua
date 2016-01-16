@@ -11,12 +11,10 @@ FactionState = inherit(Faction)
 
 
 function FactionState:constructor(Id, Name_Short, Name, Money, players)
-	outputServerLog("FactionState loaded")
 	self:createDutyPickups()
 end
 
 function FactionState:destructor()
-  outputDebug("FactionState.destructor")
 end
 
 function FactionState:createDutyPickups()

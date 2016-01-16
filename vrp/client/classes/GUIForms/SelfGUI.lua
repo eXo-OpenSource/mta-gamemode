@@ -17,16 +17,20 @@ function SelfGUI:constructor()
 
 	-- Tab: Allgemein
 	local tabGeneral = self.m_TabPanel:addTab(_"Allgemein")
+	self.m_TabGeneral = tabGeneral
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.016, self.m_Width*0.3, self.m_Height*0.12, _"Allgemein", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.25, self.m_Height*0.06, _"Spielzeit:", tabGeneral)
 	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGeneral)
 	self.m_GeneralKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.24, self.m_Width*0.25, self.m_Height*0.06, _"Unternehmen:", tabGeneral)
-	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.24, self.m_Width*0.4, self.m_Height*0.06, "Race'n'Drift", tabGeneral)
-	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.24, self.m_Width*0.4, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
+	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.24, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.24, self.m_Width*0.125, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
+	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
+	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
+	--addEventHandler("companyInvitationRetrieve", root, bind(self.Event_companyInvitationRetrieve, self))
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.25, self.m_Height*0.12, _"Job", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
@@ -101,7 +105,6 @@ function SelfGUI:constructor()
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
 	self.m_GroupInvitationsAcceptButton.onLeftClick = bind(self.GroupInvitationsAcceptButton_Click, self)
 	self.m_GroupInvitationsDeclineButton.onLeftClick = bind(self.GroupInvitationsDeclineButton_Click, self)
-
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
@@ -271,6 +274,7 @@ end
 
 function SelfGUI:onShow()
 	-- Update VehicleTab & GroupTab
+	self:TabPanel_TabChanged(self.m_TabGeneral.TabIndex)
 	self:TabPanel_TabChanged(self.m_TabGroups.TabIndex)
 	self:TabPanel_TabChanged(self.m_TabVehicles.TabIndex)
 
@@ -294,24 +298,30 @@ function SelfGUI:onShow()
 		local karma = localPlayer:getKarma()
 		self.m_GeneralKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 	end
-	--if localPlayer:getCompany() then
-		local companyName = "Race'n'Drift" --localPlayer:getCompany():getName()
-		--self.m_CompanyNameLabel:setText(companyName)
-		local x, y = self.m_CompanyNameLabel:getPosition()
-		self.m_CompanyEditLabel:setPosition(x + dxGetTextWidth(companyName, self.m_CompanyNameLabel:getFontSize(), self.m_CompanyNameLabel:getFont()) + 10, y)
-	--end
-
-	triggerServerEvent("factionRequestInfo", root)
 end
 
 function SelfGUI:TabPanel_TabChanged(tabId)
-	if tabId == self.m_TabGroups.TabIndex then
+	if tabId == self.m_TabGeneral.TabIndex then
+		triggerServerEvent("companyRequestInfo", root)
+		triggerServerEvent("factionRequestInfo", root)
+	elseif tabId == self.m_TabGroups.TabIndex then
 		triggerServerEvent("groupRequestInfo", root)
 	elseif tabId == self.m_TabVehicles.TabIndex then
 		triggerServerEvent("vehicleRequestInfo", root)
 	end
 end
 
+function SelfGUI:Event_companyRetrieveInfo(name)
+	self:adjustGeneralTab(name)
+
+	if name then
+		self.m_CompanyNameLabel:setText(name)
+		local x, y = self.m_CompanyNameLabel:getPosition()
+		self.m_CompanyEditLabel:setPosition(x + dxGetTextWidth(name, self.m_CompanyNameLabel:getFontSize(), self.m_CompanyNameLabel:getFont()) + 10, y)
+	else
+		self.m_CompanyNameLabel:setText("-")
+	end
+end
 
 function SelfGUI:JobQuitButton_Click()
 	triggerServerEvent("jobQuit", root)
@@ -403,7 +413,10 @@ function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
 	item.GroupId = groupId
 end
 
-
+function SelfGUI:adjustGeneralTab(name)
+	local isInCompany = name ~= nil
+	self.m_CompanyEditLabel:setVisible(isInCompany)
+end
 
 function SelfGUI:adjustGroupTab(rank)
 	local isInGroup = rank ~= false

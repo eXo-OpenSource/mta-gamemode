@@ -68,7 +68,7 @@ function FactionManager:removeRef(ref)
   FactionManager.Map[ref:getId()] = nil
 end
 
-function FactionManager.getFromId(Id)
+function FactionManager:getFromId(Id)
 	return FactionManager.Map[Id]
 end
 

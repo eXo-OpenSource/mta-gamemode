@@ -74,7 +74,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder, BankAccount FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, Achievements, PlayTime, Ladder, BankAccount, CompanyId FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -107,7 +107,10 @@ function DatabasePlayer:load()
 		self:setGroup(GroupManager:getSingleton():getFromId(row.GroupId))
 	end
 	if row.FactionId and row.FactionId ~= 0 then
-		self:setFaction(FactionManager.getFromId(row.FactionId))
+		self:setFaction(FactionManager:getSingleton():getFromId(row.FactionId))
+	end
+	if row.CompanyId and row.CompanyId ~= 0 then
+		self:setCompany(CompanyManager:getSingleton():getFromId(row.CompanyId))
 	end
 	self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
 	self.m_GarageType = row.GarageType
@@ -119,7 +122,7 @@ function DatabasePlayer:load()
 	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
 	self.m_LadderTeam = fromJSON(row.Ladder or "[[]]")
 	self.m_LastPlayTime = row.PlayTime
-	
+
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
 	self.m_Skills["Flying"] 	= row.FlyingSkill
@@ -182,7 +185,6 @@ function DatabasePlayer:getTutorialStage() return self.m_TutorialStage end
 function DatabasePlayer:getJobVehicle() return self.m_JobVehicle end
 function DatabasePlayer:getGroup()		return self.m_Group		end
 function DatabasePlayer:getFaction()	return self.m_Faction	end
-
 function DatabasePlayer:getInventory()	return self.m_Inventory	end
 function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
@@ -190,6 +192,7 @@ function DatabasePlayer:getHangarType() return self.m_HangarType end -- Todo: On
 function DatabasePlayer:getSpawnLocation() return self.m_SpawnLocation end
 function DatabasePlayer:getCollectables() return self.m_Collectables end
 function DatabasePlayer:hasPilotsLicense() return self.m_HasPilotsLicense end
+function DatabasePlayer:getCompany() return self.m_Company end
 
 -- Short setters
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) end end
@@ -215,7 +218,7 @@ function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e e
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
-function DatabasePlayer:setCompany(c) self.m_Company = c end
+function DatabasePlayer:setCompany(c) self.m_Company = c if self:isActive() then self:setPublicSync("CompanyName", c and c:getName() or "") end end
 
 function DatabasePlayer:giveMoney(amount)
 	self:setMoney(self:getMoney() + amount)

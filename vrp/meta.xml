@@ -56,7 +56,6 @@
 	<script src="server/classes/AntiCheat.lua" type="server"/>
 	<script src="server/classes/Weather.lua" type="server"/>
 	<script src="server/classes/Nametag.lua" type="server"/>
-	<script src="server/classes/DrivingSchool.lua" type="server"/>
 	<script src="server/classes/Achievement.lua" type="server"/>
 	<script src="server/classes/InteriorManager.lua" type="server"/>
 	<script src="server/classes/StatisticsLogger.lua" type="server"/>
@@ -99,6 +98,17 @@
 	<script src="server/classes/Groups/GroupManager.lua" type="server"/>
 	<script src="server/classes/Groups/GangArea.lua" type="server"/>
 	<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>
+
+	<!-- Business -->
+	<script src="server/classes/Business/Company.lua" type="server"/>
+	<script src="server/classes/Business/Companies/DrivingSchool.lua" type="server"/>
+	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
+
+	<!-- Factions -->
+	<script src="server/classes/Faction/Faction.lua" type="server"/>
+	<script src="server/classes/Faction/FactionVehicles.lua" type="server"/>
+	<script src="server/classes/Faction/Factions/FactionState.lua" type="server"/>
+	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
 
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
@@ -164,15 +174,6 @@
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemHash.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
-
-	<!-- Business -->
-
-
-	<!-- Factions -->
-	<script src="server/classes/Faction/Faction.lua" type="server"/>
-	<script src="server/classes/Faction/FactionVehicles.lua" type="server"/>
-	<script src="server/classes/Faction/Factions/FactionState.lua" type="server"/>
-	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
 
 	<!-- Tests -->
 	<script src="server/tests/UtilsTest.lua" type="server"/>
@@ -574,7 +575,6 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/2.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/3.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/4.png"/>
-	<vrpfile src="files/images/Radar_Monochrome/Blips/TestCompany.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>

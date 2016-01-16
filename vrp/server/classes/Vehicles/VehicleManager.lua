@@ -54,29 +54,6 @@ function VehicleManager:constructor()
 			end
 		end
 	)
-
-	outputServerLog("Loading vehicles...")
-	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
-	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
-		self:addRef(vehicle, false)
-	end
-	outputServerLog("Loading company vehicles")
-	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
-	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
-		self:addRef(vehicle, false)
-	end
-	outputServerLog("Loading faction vehicles")
-	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
-	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-		enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
-		self:addRef(vehicle, false)
-	end
-
 	VehicleManager.sPulse:registerHandler(bind(VehicleManager.removeUnusedVehicles, self))
 
 	setTimer(bind(self.updateFuelOfPermanentVehicles, self), 60*1000, 0)
@@ -104,14 +81,38 @@ function VehicleManager:destructor()
 	outputServerLog("Saved faction vehicles")
 end
 
+function VehicleManager.loadVehicles()
+	outputServerLog("Loading vehicles...")
+	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
+	for i, row in pairs(result) do
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+		VehicleManager:getSingleton():addRef(vehicle, false)
+	end
+	outputServerLog("Loading company vehicles")
+	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
+	for i, row in pairs(result) do
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+		VehicleManager:getSingleton():addRef(vehicle, false)
+	end
+	outputServerLog("Loading faction vehicles")
+	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
+	for i, row in pairs(result) do
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+		self:addRef(vehicle, false)
+	end
+end
+
 function VehicleManager:addRef(vehicle, isTemp)
 	if isTemp then
 		self.m_TemporaryVehicles[#self.m_TemporaryVehicles+1] = vehicle
 		return
 	end
-	if instanceof(vehicle, CompanyVehicle) and vehicle:getCompany() then
+	if instanceof(vehicle, CompanyVehicle) then
 		local companyId = vehicle:getCompany() and vehicle:getCompany():getId()
-		assert(companyId, "Bad owner specified")
+		assert(companyId, "Bad company specified")
 
 		if not self.m_CompanyVehicles[companyId] then
 			self.m_CompanyVehicles[companyId] = {}
@@ -120,10 +121,6 @@ function VehicleManager:addRef(vehicle, isTemp)
 		table.insert(self.m_CompanyVehicles[companyId], vehicle)
 		return
 	end
-	
-	local ownerId = vehicle:getOwner()
-	assert(ownerId, "Bad company specified")
-	
 	if instanceof(vehicle, FactionVehicle) and vehicle:getFaction() then
 		local factionId = vehicle:getFaction() and vehicle:getFaction():getId()
 		assert(factionId, "Bad owner specified")
@@ -136,7 +133,8 @@ function VehicleManager:addRef(vehicle, isTemp)
 		return
 	end
 
-	
+	local ownerId = vehicle:getOwner()
+	assert(ownerId, "Bad owner specified")
 
 	if not self.m_Vehicles[ownerId] then
 		self.m_Vehicles[ownerId] = {}
@@ -165,7 +163,7 @@ function VehicleManager:removeRef(vehicle, isTemp)
 		end
 		return
 	end
-	
+
 	if instanceof(vehicle, FactionVehicle) and vehicle:getFaction() then
 		local factionId = vehicle:getFaction() and vehicle:getFaction():getId()
 		assert(factionId, "Bad faction specified")
@@ -204,7 +202,7 @@ function VehicleManager:removeUnusedVehicles()
 		if vehicle:getHealth() < 0.1 and vehicle:getLastUseTime() < getTickCount() - 1*60*1000 then
 			vehicle:respawn()
 		else
-			if vehicle:getLastUseTime() < getTickCount() - 20*60*1000 then
+			if vehicle:getLastUseTime() < getTickCount() - 2*60*1000 then
 				vehicle:respawn()
 			end
 		end

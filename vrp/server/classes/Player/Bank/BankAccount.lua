@@ -41,7 +41,7 @@ function BankAccount:destructor()
 end
 
 function BankAccount:save()
-  return sql:queryExec("UPDATE ??_bank_accounts SET Money = ? WHERE Id = ?", sql:getPrefix(), self:getMoney(), self:getId())
+  return sql:queryExec("UPDATE ??_bank_accounts SET Money = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_Id)
 end
 
 function BankAccount:update()
