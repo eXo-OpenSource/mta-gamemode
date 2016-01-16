@@ -28,6 +28,7 @@ function FactionState:createDutyPickups()
 				local faction = hitElement:getFaction()
 				if faction:isStateFaction() == true then
 					hitElement:triggerEvent("showStateFactionDutyGUI")
+					hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
 				end
 			end
 			cancelEvent()

@@ -64,6 +64,19 @@ function GUIButton:setColor(color)
 	return self
 end
 
+function GUIButton:setAlpha(alpha)
+	self.m_Alpha = alpha
+	local r,g,b,a = fromcolor(self.m_Color)
+	self.m_Color = tocolor(r, g, b, alpha)
+	
+	local r,g,b,a = fromcolor(self.m_BackgroundColor)
+	self.m_BackgroundColor = tocolor(r, g, b, alpha)
+	
+	self:anyChange()
+	return self
+end
+
+
 function GUIButton:setHoverColor(color)
 	self.m_HoverColor = color
 	self:anyChange()
@@ -83,6 +96,11 @@ function GUIButton:setBackgroundColor(color)
 end
 
 function GUIButton:setEnabled(state)
+	if state == true then
+		self:setAlpha(255)
+	else
+		self:setAlpha(100)
+	end
 	self.m_Enabled = state
 	self:anyChange()
 end
@@ -90,3 +108,5 @@ end
 function GUIButton:isEnabled()
 	return self.m_Enabled
 end
+
+

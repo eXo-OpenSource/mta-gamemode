@@ -79,10 +79,12 @@ function FactionManager:toggleSwat()
 			client:setJobDutySkin(nil)
 			client:setPublicSync("Fraktion:Swat",false)
 			client:sendInfo(_("Du hast den Swat-Modus beendet Dienst!", client))
+			client:getFaction():updateStateFactionDutyGUI(client)
 		else
 			client:setJobDutySkin(285)
 			client:setPublicSync("Fraktion:Swat",true)
 			client:sendInfo(_("Du hast bist in den Swat-Modus gewechselt!", client))
+			client:getFaction():updateStateFactionDutyGUI(client)
 		end
 	end
 end

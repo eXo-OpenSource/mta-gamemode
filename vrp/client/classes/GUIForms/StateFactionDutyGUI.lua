@@ -8,7 +8,7 @@
 StateFactionDutyGUI = inherit(GUIForm)
 inherit(Singleton, StateFactionDutyGUI)
 
-addRemoteEvents{"showStateFactionDutyGUI"}
+addRemoteEvents{"showStateFactionDutyGUI","updateStateFactionDutyGUI"}
 
 function StateFactionDutyGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(150/2), 300, 300)
@@ -34,20 +34,31 @@ function StateFactionDutyGUI:constructor()
 	self.m_Close:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Close.onLeftClick = function () self:hide() end
 	
+	addEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
 	--self:refresh()
 end
 
-function StateFactionDutyGUI:refresh()
-	self.m_Rearm:setEnabled(false)
-	self.m_Swat:setEnabled(false)
-	self.m_SkinChange:setEnabled(false)
+function StateFactionDutyGUI:Event_updateStateFactionDutyGUI(duty,swat)
 	
-	if getLocalPlayer():getPublicSync("Faction:Duty") == true then
+	
+	if duty == true then
 		self.m_Rearm:setEnabled(true)
 		self.m_Swat:setEnabled(true)
 		self.m_SkinChange:setEnabled(true)
+		self.m_Duty:setBackgroundColor(Color.Red)
+		self.m_Duty:setText("Dienst beenden")
+	else
+		self.m_Rearm:setEnabled(false)
+		self.m_Swat:setEnabled(false)
+		self.m_SkinChange:setEnabled(false)
+		self.m_Duty:setBackgroundColor(Color.Green)
+		self.m_Duty:setText("In den Dienst gehen")
 	end
-
+	if swat == true then
+		self.m_Swat:setText("Swat-Modus beenden")
+	else
+		self.m_Swat:setText("Zum Swat-Modus wechseln")
+	end
 end
 
 addEventHandler("showStateFactionDutyGUI", root,
@@ -59,6 +70,7 @@ addEventHandler("showStateFactionDutyGUI", root,
 
 function StateFactionDutyGUI:hide()
 	GUIForm.destructor(self)
+	removeEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
 end
 
 function StateFactionDutyGUI:factionToggleDuty()

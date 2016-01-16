@@ -237,12 +237,12 @@ function PlayerManager:Event_toggleFactionDuty()
 		if client:isFactionDuty() then
 			client:setJobDutySkin(nil)
 			client.m_FactionDuty = false
-			client:setPublicSync("Faction:Duty",false)
+			client:getFaction():updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 		else
 			client:setJobDutySkin(280)
 			client.m_FactionDuty = true
-			client:setPublicSync("Faction:Duty",true)
+			client:getFaction():updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nun im Dienst!", client))
 		end
 	else

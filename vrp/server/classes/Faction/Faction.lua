@@ -43,6 +43,10 @@ function Faction:getName()
 	return self.m_Name
 end
 
+function Faction:updateStateFactionDutyGUI(player)
+	player:triggerEvent("updateStateFactionDutyGUI", player:isFactionDuty(),player:getPublicSync("Fraktion:Swat"))
+end
+
 function Faction:addPlayer(playerId, rank)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
