@@ -42,7 +42,7 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
   self.m_Id = Id
   self.m_Company = company
   self.m_PositionType = positionType or VehiclePositionType.World
-  setElementData(self, "OwnerName", self.m_Company:getName())*
+  setElementData(self, "OwnerName", self.m_Company:getName())
 
   self:setHealth(health)
   self:setLocked(true)

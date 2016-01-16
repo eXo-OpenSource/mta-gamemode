@@ -20,6 +20,7 @@ function DrivingSchool:constructor()
 
   -- Plane
   AutomaticVehicleSpawner:new(593, 1933.5, -2244.180, 14.1, 0, 0, 180, bind(self.onVehicleSpawn, self), nil, function (...) return self:onVehiceEnter(...) end)
+  AutomaticVehicleSpawner:new(489, 1895.3, -2244.35, 13.6, 0, 0, 180, bind(self.onVehicleSpawn, self), nil, function (...) return self:onVehiceEnter(...) end)
 end
 
 function DrivingSchool:destructor()
