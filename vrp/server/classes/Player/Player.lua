@@ -31,6 +31,7 @@ function Player:constructor()
 	self.m_Crimes = {}
 	
 	
+	
 end
 
 function Player:destructor()
@@ -91,7 +92,8 @@ function Player:loadCharacter()
 		Rank = self:getRank();
 	}
 	self:triggerEvent("retrieveInfo", info)
-
+	
+	
 	-- Send initial sync
 	self:sendInitialSync()
 
@@ -103,6 +105,9 @@ function Player:loadCharacter()
 	addCommandHandler("Group", Player.staticGroupChatHandler)
 	self:setPublicSync("Rank", self:getRank())
 	
+	if self:getRank() > 0 then
+		AdminManager:addAdmin(self)
+	end
 end
 
 function Player:createCharacter()

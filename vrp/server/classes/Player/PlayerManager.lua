@@ -139,9 +139,6 @@ function PlayerManager:Command_playerWhisper(  source , cmd, ...)
 	end
 end
 
-
-
-
 function PlayerManager:Event_playerSendMoney(amount)
 	if not client then return end
 	amount = math.floor(amount)
