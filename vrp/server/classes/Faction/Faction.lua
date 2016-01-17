@@ -33,7 +33,7 @@ function Faction:virtual_destructor()
 end
 
 function Faction:isStateFaction()
-  return true -- TODO: @Stumpy -> is this correct? Every faction is a StateFaction?
+	return instanceof(self, FactionState)
 end
 
 function Faction:getId()
@@ -45,13 +45,24 @@ function Faction:getName()
 end
 
 function Faction:changeSkin(player)
-	local oldSkin = getElementModel(player)
-	for key, value in ipairs(self.m_Skins) do
-		if value > oldSkin then
-			player:setSkin(value)
-			break;
+	local curskin = getElementModel(player)
+	suc = false
+	for i = curskin+1, 313 do
+		if self.m_Skins[i] then
+			suc = true
+			player:setSkin(i)
+			break
 		end
 	end
+	if suc == false then
+		for i = 0, curskin do
+			if self.m_Skins[i] then
+				suc = true
+				player:setSkin(i)
+				break
+			end
+		end
+	end	
 end
 
 function Faction:rearm(player)

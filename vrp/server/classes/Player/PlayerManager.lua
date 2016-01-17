@@ -233,16 +233,17 @@ function PlayerManager:Event_playerRequestTrading()
 end
 
 function PlayerManager:Event_toggleFactionDuty()
-	if Faction:isStateFaction(client:getFaction()) then
+	local faction = client:getFaction()
+	if faction:isStateFaction() then
 		if client:isFactionDuty() then
 			client:setJobDutySkin(nil)
 			client.m_FactionDuty = false
-			client:getFaction():updateStateFactionDutyGUI(client)
+			faction:updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 		else
 			client:setJobDutySkin(280)
 			client.m_FactionDuty = true
-			client:getFaction():updateStateFactionDutyGUI(client)
+			faction:updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nun im Dienst!", client))
 		end
 	else
