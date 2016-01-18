@@ -17,9 +17,10 @@ function ScoreboardGUI:constructor()
 	self.m_Grid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.27, self.m_Width*0.9, self.m_Height*0.75, self.m_Rect)
 	self.m_Grid:setColor(Color.Clear)
 	self.m_Grid:addColumn(_"Name", 0.35)
+	self.m_Grid:addColumn(_"Fraktion", 0.2)
 	self.m_Grid:addColumn(_"Karma", 0.1)
-	self.m_Grid:addColumn(_"Gruppen", 0.35)
-	self.m_Grid:addColumn(_"Job", 0.2)
+	self.m_Grid:addColumn(_"Gruppen", 0.2)
+	self.m_Grid:addColumn(_"Job", 0.1)
 
 	setTimer(bind(self.refresh, self), 1000, 0)
 end
@@ -29,12 +30,12 @@ function ScoreboardGUI:refresh()
 
 	for k, player in pairs(getElementsByType("player")) do
 		local karma = math.floor(player:getKarma() or 0)
-		local item = self.m_Grid:addItem(player:getName(), karma >= 0 and "+"..karma or " "..tostring(karma), player:getGroupName(), player:getJobName())
+		local item = self.m_Grid:addItem(player:getName(),player:getShortFactionName(), karma >= 0 and "+"..karma or " "..tostring(karma), player:getGroupName(), player:getJobName())
 
 		if karma >= 5 then
-			item:setColumnColor(2, Color.Green)
+			item:setColumnColor(3, Color.Green)
 		elseif karma <= -5 then
-			item:setColumnColor(2, Color.Red)
+			item:setColumnColor(3, Color.Red)
 		end
 	end
 end

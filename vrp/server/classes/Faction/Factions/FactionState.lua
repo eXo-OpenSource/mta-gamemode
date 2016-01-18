@@ -12,6 +12,7 @@ FactionState = inherit(Faction)
 
 function FactionState:constructor(Id, Name_Short, Name, Money, players)
 	self:createDutyPickups()
+	
 end
 
 function FactionState:destructor()

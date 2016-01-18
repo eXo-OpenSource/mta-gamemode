@@ -1,13 +1,13 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Player/AdminManager.lua
--- *  PURPOSE:     Admin manager class
+-- *  FILE:        server/classes/Player/Admin.lua
+-- *  PURPOSE:     Admin class
 -- *
 -- ****************************************************************************
-AdminManager = inherit(Singleton)
+Admin = inherit(Singleton)
 
-function AdminManager:constructor()
+function Admin:constructor()
   self.m_OnlineAdmins = {}
 	
 	self.m_RankNames = {
@@ -21,27 +21,27 @@ function AdminManager:constructor()
 	addCommandHandler("admins", bind(self.onlineList, self))
 	addCommandHandler("a", bind(self.chat, self))
 	addCommandHandler("o", bind(self.ochat, self))
-	outputDebugString("AdminManager loaded")
+	outputDebugString("Admin loaded")
 end
 
-function AdminManager:destructor()
+function Admin:destructor()
 
 end
 
-function AdminManager:addAdmin(player,rank)
+function Admin:addAdmin(player,rank)
 	outputDebugString("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
 end
 
-function AdminManager:getRank(player)
+function Admin:getRank(player)
 	return self.m_OnlineAdmins[player]
 end
 
-function AdminManager:removeAdmin(player)
+function Admin:removeAdmin(player)
 	self.m_OnlineAdmins[player] = nil
 end
 
-function AdminManager:chat(player,cmd,...)
+function Admin:chat(player,cmd,...)
 	if self:getRank(player) > 0 then
 		local msg = table.concat( {...}, " " )
 		for key, value in pairs(self.m_OnlineAdmins) do
@@ -52,7 +52,7 @@ function AdminManager:chat(player,cmd,...)
 	end
 end
 
-function AdminManager:ochat(player,cmd,...)
+function Admin:ochat(player,cmd,...)
 	if self:getRank(player) > 2 then
 		local rankName = self.m_RankNames[self:getRank(player)]
 		local msg = table.concat( {...}, " " )
@@ -62,7 +62,7 @@ function AdminManager:ochat(player,cmd,...)
 	end
 end
 
-function AdminManager:onlineList(player)
+function Admin:onlineList(player)
 	
 		outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
 		for key, value in pairs(self.m_OnlineAdmins) do

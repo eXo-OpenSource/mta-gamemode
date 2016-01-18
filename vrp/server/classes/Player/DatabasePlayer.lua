@@ -212,13 +212,19 @@ function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
 function DatabasePlayer:setGroup(group)	self.m_Group = group if self:isActive() then self:setPublicSync("GroupName", group and group:getName() or "") end end
-function DatabasePlayer:setFaction(faction)		 self.m_Faction = faction if self:isActive() then self:setPublicSync("FactionName", faction and faction:getName() or "") end end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
 function DatabasePlayer:setCompany(c) self.m_Company = c if self:isActive() then self:setPublicSync("CompanyName", c and c:getName() or "") end end
+function DatabasePlayer:setFaction(faction)		 
+	self.m_Faction = faction 
+	if self:isActive() then 
+		self:setPublicSync("FactionName", faction and faction:getName() or "") 
+		self:setPublicSync("ShortFactionName", faction and faction:getShortName() or "") 
+	end 
+end
 
 function DatabasePlayer:giveMoney(amount)
 	self:setMoney(self:getMoney() + amount)

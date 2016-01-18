@@ -44,6 +44,10 @@ function Faction:getName()
 	return self.m_Name
 end
 
+function Faction:getShortName()
+	return self.m_Name_Short
+end
+
 function Faction:changeSkin(player)
 	local curskin = getElementModel(player)
 	suc = false
