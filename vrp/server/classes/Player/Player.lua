@@ -47,7 +47,11 @@ function Player:destructor()
 
 	-- Call the quit hook (to clean up various things before saving)
 	Player.ms_QuitHook:call(self)
-
+	
+	if self:getRank() > 0 then
+		Admin:getSingleton():removeAdmin(self,self:getRank())
+	end
+	
 	self:save()
 
 	-- Unload stuff

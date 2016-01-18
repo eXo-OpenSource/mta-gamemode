@@ -10,7 +10,13 @@ Admin = inherit(Singleton)
 function Admin:constructor()
   self.m_OnlineAdmins = {}
 	
-	self.m_RankNames = RANK
+	self.m_RankNames = {
+		[1] = "Supporter",
+		[2] = "Moderator",
+		[3] = "Super-Moderator",
+		[4] = "Administrator",
+		[5] = "Projektleiter"
+	}
 	
 	addCommandHandler("admins", bind(self.onlineList, self))
 	addCommandHandler("a", bind(self.chat, self))
@@ -34,22 +40,27 @@ function Admin:removeAdmin(player)
 end
 
 function Admin:chat(player,cmd,...)
-	if player:getRank() > 0 then
+	if player:getRank() >= RANK.Supporter then
 		local msg = table.concat( {...}, " " )
 		local rankName = self.m_RankNames[player:getRank()]
-		for key, value in pairs(self.m_OnlineAdmins) do
-			outputChatBox(("[%s %s]: %s"):format(_(rankName, player), player:getName(), msg), key, 255, 255, 0)
-		end
+		local text = ("[ %s %s ]: %s"):format(_(rankName, player), player:getName(), msg)
+		self:sendMessage(text,255,255,0)
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end
 end
 
+function Admin:sendMessage(msg,r,g,b)
+	for key, value in pairs(self.m_OnlineAdmins) do
+		outputChatBox(msg, key, r,g,b)
+	end
+end
+
 function Admin:ochat(player,cmd,...)
-	if player:getRank() > 2 then
+	if player:getRank() >= RANK.Supporter then
 		local rankName = self.m_RankNames[player:getRank()]
 		local msg = table.concat( {...}, " " )
-		outputChatBox(("[%s %s]: %s"):format(_(rankName, player), player:getName(), msg), root, 50, 200, 255)
+		outputChatBox(("[ %s %s ]: %s"):format(_(rankName, player), player:getName(), msg), root, 50, 200, 255)
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end

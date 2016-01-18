@@ -69,13 +69,12 @@ function Nametag:draw()
 			
 			dxDrawText(getPlayerName(player), 10, 5, 145, 60,AdminColor[player:getPublicSync("Rank") or 0],2,"default-bold")
 						
-			--[[if (player:getPublicSync("Rank") or 0) > 0 then
+			if (player:getPublicSync("Rank") or 0) > 0 then
 				for i = 0, player:getPublicSync("Rank")-1 do
-					dxDrawImage(150+i*sizePerRankIcon, 20, sizePerRankIcon-5, 24, "files/images/LogoNoFont.png")
+					dxDrawImage(10+i*sizePerRankIcon, 60, sizePerRankIcon-5, 28, "files/images/LogoNoFont.png")
 				end
-			end]]
+			end
 			
-			--dxDrawRectangle(25, 65, 250, 40, tocolor(0,0,0,125))
 			dxDrawRectangle(10, 40, 250*getElementHealth(player)/100, 15, tocolor(0,125,0,255))
 			dxDrawRectangle(10, 40, 250*getPedArmor(player)/100, 15, Color.LightBlue)
 			
@@ -90,4 +89,8 @@ function Nametag:draw()
 			
 		--end
 	end
+end
+
+function Nametag:drawIcons(player)
+	
 end
