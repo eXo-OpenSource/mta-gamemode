@@ -57,10 +57,10 @@ function Nametag:draw()
 		if not self.m_Players[player] then
 			self:onUnknownSpotted(player)
 		end
-		--if player ~= localPlayer or self.m_IsModifying then
+		if player ~= localPlayer or self.m_IsModifying then
 			setPlayerNametagShowing(player,false)
 			local px,py,pz = getPedBonePosition(player, 2)
-			pz = pz + 0.9
+			pz = pz + 1
 			local x,y = getScreenFromWorldPosition(px,py,pz)
 			local lx,ly,lz = getElementPosition(localPlayer)
 			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,false,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < maxDistance or getPedTarget(localPlayer) == player) then
@@ -68,12 +68,10 @@ function Nametag:draw()
 			dxSetRenderTarget(self.m_RenderTarget,true)
 			
 			dxDrawText(getPlayerName(player), 10, 5, 145, 60,AdminColor[player:getPublicSync("Rank") or 0],2,"default-bold")
-						
-			if (player:getPublicSync("Rank") or 0) > 0 then
-				for i = 0, player:getPublicSync("Rank")-1 do
-					dxDrawImage(10+i*sizePerRankIcon, 60, sizePerRankIcon-5, 28, "files/images/LogoNoFont.png")
-				end
-			end
+			
+			self:drawIcons(player)
+			
+			
 			
 			dxDrawRectangle(10, 40, 250*getElementHealth(player)/100, 15, tocolor(0,125,0,255))
 			dxDrawRectangle(10, 40, 250*getPedArmor(player)/100, 15, Color.LightBlue)
@@ -83,14 +81,26 @@ function Nametag:draw()
 			local distance = getDistanceBetweenPoints3D(px,py,pz,lx,ly,lz)
 			
 			local scale = 0.4 + ( 15 - distance ) * 0.02
-			dxDrawImage(x-240*scale/2,y-60, 240*scale, 90*scale+20, self.m_RenderTarget)
+			dxDrawImage(x-240*scale/2,y-60, 240*scale, 120*scale, self.m_RenderTarget)
 			
 			end
 			
-		--end
+		end
 	end
 end
 
 function Nametag:drawIcons(player)
-	
+	iconI = 0
+	if (player:getPublicSync("Rank") or 0) > 0 then
+		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/admin.png")
+		iconI = iconI+1
+	end
+	if getPlayerWantedLevel(player) > 0 then
+		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/w"..getPlayerWantedLevel(player)..".png")
+		iconI = iconI+1
+	end
+	if player:getShortFactionName() then
+		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/"..player:getShortFactionName()..".png")
+		iconI = iconI+1
+	end
 end

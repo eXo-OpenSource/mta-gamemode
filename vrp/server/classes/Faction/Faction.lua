@@ -29,7 +29,6 @@ function Faction:virtual_destructor()
   if self.m_BankAccount then
     delete(self.m_BankAccount)
   end
-  sql:queryExec("UPDATE ??_factions SET Name_Short = ?, Name = ?, BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_Name_Short, self.m_Name, self.m_BankAccount:getId(), self:getId())
 end
 
 function Faction:isStateFaction()
