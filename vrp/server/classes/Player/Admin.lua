@@ -10,13 +10,7 @@ Admin = inherit(Singleton)
 function Admin:constructor()
   self.m_OnlineAdmins = {}
 	
-	self.m_RankNames = {
-	[1] = "Ticket-Supporter",
-	[2] = "Supporter",
-	[3] = "Administrator",
-	[4] = "stellv. Projektleiter",
-	[5] = "Projektleiter"
-	}
+	self.m_RankNames = RANK
 	
 	addCommandHandler("admins", bind(self.onlineList, self))
 	addCommandHandler("a", bind(self.chat, self))
@@ -25,7 +19,9 @@ function Admin:constructor()
 end
 
 function Admin:destructor()
-
+	removeCommandHandler("admins", bind(self.onlineList, self))
+	removeCommandHandler("a", bind(self.chat, self))
+	removeCommandHandler("o", bind(self.ochat, self))
 end
 
 function Admin:addAdmin(player,rank)
@@ -33,19 +29,16 @@ function Admin:addAdmin(player,rank)
 	self.m_OnlineAdmins[player] = rank
 end
 
-function Admin:getRank(player)
-	return self.m_OnlineAdmins[player]
-end
-
 function Admin:removeAdmin(player)
 	self.m_OnlineAdmins[player] = nil
 end
 
 function Admin:chat(player,cmd,...)
-	if self:getRank(player) > 0 then
+	if player:getRank() > 0 then
 		local msg = table.concat( {...}, " " )
+		local rankName = self.m_RankNames[player:getRank()]
 		for key, value in pairs(self.m_OnlineAdmins) do
-			outputChatBox("[ "..self.m_RankNames[value].." "..player:getName().." ]: "..msg,key,255,255,0)
+			outputChatBox(("[%s %s]: %s"):format(_(rankName, player), player:getName(), msg), root, 50, 200, 255)
 		end
 	else
 		player:sendError(_("Du bist kein Admin!", player))
@@ -53,10 +46,10 @@ function Admin:chat(player,cmd,...)
 end
 
 function Admin:ochat(player,cmd,...)
-	if self:getRank(player) > 2 then
-		local rankName = self.m_RankNames[self:getRank(player)]
+	if player:getRank() > 2 then
+		local rankName = self.m_RankNames[player:getRank()]
 		local msg = table.concat( {...}, " " )
-		outputChatBox("[ "..rankName.." "..player:getName().." ]: "..msg,getRootElement(),50,200,255)
+		outputChatBox(("[%s %s]: %s"):format(_(rankName, player), player:getName(), msg), root, 50, 200, 255)
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end

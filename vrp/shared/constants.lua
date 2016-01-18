@@ -9,7 +9,7 @@ RANK[1] = "Supporter"
 RANK[2] = "Moderator"
 RANK[3] = "SuperModerator"
 RANK[4] = "Administrator"
-RANK[5] = "Developer"
+RANK[5] = "Projektleiter"
 
 local r2 = {}
 for k, v in pairs(RANK) do
