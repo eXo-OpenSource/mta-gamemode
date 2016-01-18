@@ -76,9 +76,9 @@ function Nametag:draw()
 				end
 			end]]
 			
-			dxDrawRectangle(25, 65, 250, 40, tocolor(0,0,0,125))
-			dxDrawRectangle(25, 65, 250*getElementHealth(player)/100, 40, tocolor(0,125,0,255))
-			dxDrawRectangle(25, 65, 250*getPedArmor(player)/100, 40, Color.LightBlue)
+			--dxDrawRectangle(25, 65, 250, 40, tocolor(0,0,0,125))
+			dxDrawRectangle(25, 65, 250*getElementHealth(player)/100, 20, tocolor(0,125,0,255))
+			dxDrawRectangle(25, 65, 250*getPedArmor(player)/100, 20, Color.LightBlue)
 			
 			dxSetRenderTarget()
 			

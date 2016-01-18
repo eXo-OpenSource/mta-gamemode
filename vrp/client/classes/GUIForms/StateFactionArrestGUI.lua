@@ -11,7 +11,7 @@ inherit(Singleton, StateFactionArrestGUI)
 addRemoteEvents{"showStateFactionArrestGUI"}
 
 function StateFactionArrestGUI:constructor(col)
-	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(400/2), 300, 400)
+	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(370/2), 300, 370)
 	self.m_Window = GUIWindow:new(0,0,300,500,_"Arrest-Menü",true,true,self)
 
 	self.m_List = GUIGridList:new(30, 50, self.m_Width-60, 200, self.m_Window)
@@ -26,10 +26,6 @@ function StateFactionArrestGUI:constructor(col)
 	self.m_ohneKaution = GUIButton:new(30, 310, self.m_Width-60, 35,_"ohne Kaution einknasten", self.m_Window)
 	self.m_ohneKaution:setBackgroundColor(Color.Blue):setFont(VRPFont(28)):setFontSize(1)
 	self.m_ohneKaution.onLeftClick = bind(self.factionArrestOhneKaution,self)
-
-	self.m_Close = GUIButton:new(30, 360, self.m_Width-60, 35,_"Schließen", self.m_Window)
-	self.m_Close:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
-	self.m_Close.onLeftClick = function () bind(self.hide,self) end
 	
 	self:refreshGrid(col)
 	self.m_refreshTimer = setTimer(bind(self.refreshGrid, self),5000,0,col)

@@ -38,7 +38,7 @@ function Admin:chat(player,cmd,...)
 		local msg = table.concat( {...}, " " )
 		local rankName = self.m_RankNames[player:getRank()]
 		for key, value in pairs(self.m_OnlineAdmins) do
-			outputChatBox(("[%s %s]: %s"):format(_(rankName, player), player:getName(), msg), root, 50, 200, 255)
+			outputChatBox(("[%s %s]: %s"):format(_(rankName, player), player:getName(), msg), key, 255, 255, 0)
 		end
 	else
 		player:sendError(_("Du bist kein Admin!", player))
