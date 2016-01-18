@@ -29,7 +29,8 @@ function Player:constructor()
 	self.m_LastGotWantedLevelTime = 0
 	self.m_JoinTime = getTickCount()
 	self.m_Crimes = {}
-	
+	self:destroyChatColShapes( )
+	self:createChatColshapes( ) 
 	
 	
 end
@@ -241,8 +242,7 @@ function Player:spawn()
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 	
-	self:destroyChatColShapes( )
-	self:createChatColshapes( ) 
+	
 end
 
 function Player:respawn(position, rotation)

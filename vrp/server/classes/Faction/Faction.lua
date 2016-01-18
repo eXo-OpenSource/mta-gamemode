@@ -9,11 +9,8 @@
 Faction = inherit(Object)
 
 -- implement by children
-Faction.constructor = pure_virtual
-Faction.destructor = pure_virtual
-Faction.getClassId = pure_virtual
 
-function Faction:virtual_constructor(id, name_short, name, bankAccountId, players,ranks,colors,skins)
+function Faction:constructor(id, name_short, name, bankAccountId, players,ranks,colors,skins,state)
   self.m_Id = id
   self.m_Name_Short = name_short
   self.m_Name = name
@@ -23,16 +20,17 @@ function Faction:virtual_constructor(id, name_short, name, bankAccountId, player
 	self.m_RankNames = ranks
 	self.m_Color = colors
 	self.m_Skins = skins
+	self.m_State = state
 end
 
-function Faction:virtual_destructor()
+function Faction:destructor()
   if self.m_BankAccount then
     delete(self.m_BankAccount)
   end
 end
 
 function Faction:isStateFaction()
-	return instanceof(self, FactionState)
+	return self.m_State
 end
 
 function Faction:getId()

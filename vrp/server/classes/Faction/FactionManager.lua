@@ -8,12 +8,10 @@
 
 FactionManager = inherit(Singleton)
 FactionManager.Map = {}
-FactionManager.LoadedFactions = {}
+
 
 function FactionManager:constructor()
-  FactionManager.LoadedFactions = {
-    [1] = FactionState;
-  }
+	self.StateFactions = {[1] = true}
   self:loadFactions()
 
   -- Events
@@ -31,7 +29,8 @@ function FactionManager:constructor()
 	addEventHandler("factionChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
 	addEventHandler("factionRearm", root, bind(self.Event_FactionRearm, self))
 	addEventHandler("factionSwat", root, bind(self.toggleSwat, self))
-
+	
+	FactionState:getSingleton():new()
 end
 
 function FactionManager:destructor()
@@ -49,14 +48,11 @@ function FactionManager:loadFactions()
     for i, factionRow in ipairs(result2) do
       players[factionRow.Id] = factionRow.FactionRank
     end
-
-    if FactionManager.LoadedFactions[row.Id] then
-			local instance = FactionManager.LoadedFactions[row.Id]:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id])
+			local state = false
+			if self.StateFactions[row.Id] == true then state = true end
+			local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id],state)
       self:addRef(instance)
       --FactionVehicles:new(instance)
-    else
-      outputDebug(("Unable to load Faction Id: %d!"):format(row.Id))
-    end
   end
 end
 

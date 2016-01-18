@@ -57,7 +57,31 @@ function PlayerManager:getReadyPlayers()
 	return self.m_ReadyPlayers
 end
 
-
+function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
+	if name and sourcePlayer then
+		local matches = {}
+		for i, v in ipairs(getElementsByType('player')) do
+			if getPlayerName(v) == name then
+				return v
+			end
+			if string.find(string.lower(getPlayerName(v)), string.lower(name), 0, false) then
+				table.insert(matches, v)
+			end
+		end
+		if #matches == 1 then
+			return matches[1]
+		elseif #matches >= 2 then
+			if not noOutput then
+				outputChatBox('Es wurden '..#matches..' Spieler gefunden! Bitte genauer angeben!', sourcePlayer, 255, 0, 0)
+			end
+		else
+			if not noOutput then
+				outputChatBox('Es wurden kein Spieler gefunden!', sourcePlayer, 255, 0, 0)
+			end
+		end
+	end
+	return false
+end
 
 -----------------------------------------
 --------       Event zone       ---------
