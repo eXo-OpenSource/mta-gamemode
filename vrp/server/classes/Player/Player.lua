@@ -106,7 +106,7 @@ function Player:loadCharacter()
 	self:setPublicSync("Rank", self:getRank())
 	
 	if self:getRank() > 0 then
-		AdminManager:addAdmin(self)
+		AdminManager:getSingleton():addAdmin(self,self:getRank())
 	end
 end
 

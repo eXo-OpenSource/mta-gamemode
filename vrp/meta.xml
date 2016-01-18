@@ -72,7 +72,6 @@
 	<script src="server/classes/Player/PlayerManager.lua" type="server"/>
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 	<script src="server/classes/Player/AdminManager.lua" type="server"/>
-	<script src="server/classes/Player/Admin.lua" type="server"/>
 
 		<!-- Bank System -->
 		<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
