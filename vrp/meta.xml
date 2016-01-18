@@ -338,6 +338,7 @@
 	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionInviteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StateFactionDutyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/StateFactionArrestGUI.lua" type="client"/>
 
 
 	<!-- Web forms -->
