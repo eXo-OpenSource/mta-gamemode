@@ -24,7 +24,7 @@ function Nametag:constructor()
 	
 	self.m_Players = {}
 	self.m_PlayerBuffs = {}
-	self.m_RenderTarget = dxCreateRenderTarget(300, 120, true)
+	self.m_RenderTarget = dxCreateRenderTarget(200, 120, true)
 	self.m_IsModifying = false
 	
 	self.m_Draw = bind(self.draw,self)
@@ -57,18 +57,17 @@ function Nametag:draw()
 		if not self.m_Players[player] then
 			self:onUnknownSpotted(player)
 		end
-		if player ~= localPlayer or self.m_IsModifying then
+		--if player ~= localPlayer or self.m_IsModifying then
 			setPlayerNametagShowing(player,false)
-			local px,py,pz = getPedBonePosition(player, 8)
-			pz = pz + 0.5
+			local px,py,pz = getPedBonePosition(player, 2)
+			pz = pz + 0.9
 			local x,y = getScreenFromWorldPosition(px,py,pz)
 			local lx,ly,lz = getElementPosition(localPlayer)
 			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,false,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < maxDistance or getPedTarget(localPlayer) == player) then
-				local name = getPlayerName(player):gsub("#%d%d%d%d%d%d%d%d","")
+			--local name = getPlayerName(player):gsub("#%d%d%d%d","")
 			dxSetRenderTarget(self.m_RenderTarget,true)
 			
-			dxDrawRectangle(0, 0, 300, 120, tocolor(0,0,0,200))
-			dxDrawText(getPlayerName(player), 10, 5, 145, 60,AdminColor[player:getPublicSync("Rank") or 0],3,"default-bold")
+			dxDrawText(getPlayerName(player), 10, 5, 145, 60,AdminColor[player:getPublicSync("Rank") or 0],2,"default-bold")
 						
 			--[[if (player:getPublicSync("Rank") or 0) > 0 then
 				for i = 0, player:getPublicSync("Rank")-1 do
@@ -77,18 +76,18 @@ function Nametag:draw()
 			end]]
 			
 			--dxDrawRectangle(25, 65, 250, 40, tocolor(0,0,0,125))
-			dxDrawRectangle(25, 65, 250*getElementHealth(player)/100, 20, tocolor(0,125,0,255))
-			dxDrawRectangle(25, 65, 250*getPedArmor(player)/100, 20, Color.LightBlue)
+			dxDrawRectangle(10, 40, 250*getElementHealth(player)/100, 15, tocolor(0,125,0,255))
+			dxDrawRectangle(10, 40, 250*getPedArmor(player)/100, 15, Color.LightBlue)
 			
 			dxSetRenderTarget()
 			
 			local distance = getDistanceBetweenPoints3D(px,py,pz,lx,ly,lz)
 			
-			local scale = 0.8 + ( 15 - distance ) * 0.02
-			dxDrawImage(x-240*scale/2,y-60, 240*scale, 90*scale, self.m_RenderTarget)
+			local scale = 0.4 + ( 15 - distance ) * 0.02
+			dxDrawImage(x-240*scale/2,y-60, 240*scale, 90*scale+20, self.m_RenderTarget)
 			
 			end
 			
-		end
+		--end
 	end
 end
