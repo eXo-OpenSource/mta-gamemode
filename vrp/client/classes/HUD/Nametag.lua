@@ -99,7 +99,7 @@ function Nametag:drawIcons(player)
 		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/w"..getPlayerWantedLevel(player)..".png")
 		iconI = iconI+1
 	end
-	if player:getShortFactionName() then
+	if player:getShortFactionName() ~= "-" then
 		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/"..player:getShortFactionName()..".png")
 		iconI = iconI+1
 	end

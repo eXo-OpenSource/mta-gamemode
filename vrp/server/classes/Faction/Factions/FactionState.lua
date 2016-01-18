@@ -108,34 +108,23 @@ function FactionState:getFullReasonFromShortcut(reason)
 	return reason
 end
 
-function FactionState:suspect(player,target,reason)
-	if getPlayerWantedLevel(target) <= 5 then
-		setPlayerWantedLevel ( target, getPlayerWantedLevel(target)+1 )
-	end
-	outputChatBox ( "Du hast ein Verbrechen begangen: "..reason..", Gemeldet von: "..getPlayerName(player), target, 255, 255, 0 )
-	local msg = getPlayerName(player).." hat "..getPlayerName(target).." ein Wanted wegen "..reason.." gegeben!"
-	player:getFaction():sendMessage(msg, 255,0,0)
-
-end
-
 function FactionState:Command_suspect(player,cmd,target,anzahl,...)
 	local anzahl = tonumber(anzahl)
-	if anzahl > 0 and anzahl < 7 then
-		if not r2 then r2 = "" end
-		if not r3 then r3 = "" end
-		if not r4 then r4 = "" end
-		local reason = table.concat({...}, " ")
-		local reason = self:getFullReasonFromShortcut(reason)
+	if anzahl >= 1 and anzahl <= 6 then
+		local reason = self:getFullReasonFromShortcut(table.concat({...}, " "))
 		local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 		if isElement(target) then
 			if not isPedDead(target) then
-				if string.len(reason) < 50 then
+				if string.len(reason) > 2 and string.len(reason) < 50 then
 					local targetname = getPlayerName ( target )
-						for i=1,tonumber(anzahl),1 do
-							self:suspect (player,target,reason)
-						end
+					local newWanteds = getPlayerWantedLevel(target)+anzahl
+					if newWanteds > 6 then newWanteds = 6 end
+					setPlayerWantedLevel ( target, newWanteds )
+					outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,anzahl,player:getName()), target, 255, 255, 0 )
+					local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),anzahl, reason)
+					player:getFaction():sendMessage(msg, 255,0,0)
 				else
-					player:sendError(_("Der Grund ist zu lang!"))
+					player:sendError(_("Der Grund ist ungültig!"))
 				end
 			else
 				player:sendError(_("Der Spieler ist tot!"))

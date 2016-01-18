@@ -51,17 +51,9 @@ function FactionManager:loadFactions()
 			local state = false
 			if self.StateFactions[row.Id] == true then state = true end
 			local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id],state)
-      self:addRef(instance)
+      FactionManager.Map[row.Id] = instance
       --FactionVehicles:new(instance)
   end
-end
-
-function FactionManager:addRef(ref)
-  FactionManager.Map[ref:getId()] = ref
-end
-
-function FactionManager:removeRef(ref)
-  FactionManager.Map[ref:getId()] = nil
 end
 
 function FactionManager:getFromId(Id)
