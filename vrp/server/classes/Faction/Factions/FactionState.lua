@@ -117,9 +117,7 @@ function FactionState:Command_suspect(player,cmd,target,anzahl,...)
 			if not isPedDead(target) then
 				if string.len(reason) > 2 and string.len(reason) < 50 then
 					local targetname = getPlayerName ( target )
-					local newWanteds = getPlayerWantedLevel(target)+anzahl
-					if newWanteds > 6 then newWanteds = 6 end
-					setPlayerWantedLevel ( target, newWanteds )
+					target:giveWantedLevel(anzahl)
 					outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,anzahl,player:getName()), target, 255, 255, 0 )
 					local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),anzahl, reason)
 					player:getFaction():sendMessage(msg, 255,0,0)
