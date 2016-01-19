@@ -74,17 +74,17 @@ function StateFactionDutyGUI:hide()
 end
 
 function StateFactionDutyGUI:factionToggleDuty()
-	triggerServerEvent("playerToggleFactionDuty", getLocalPlayer())
+	triggerServerEvent("playerToggleFactionDuty", localPlayer)
 end
 
 function StateFactionDutyGUI:factionRearm()
-	triggerServerEvent("factionRearm", getLocalPlayer())
+	triggerServerEvent("factionStateRearm", localPlayer)
 end
 
 function StateFactionDutyGUI:factionSwat()
-	triggerServerEvent("factionSwat", getLocalPlayer())
+	triggerServerEvent("factionStateSwat", localPlayer)
 end
 
 function StateFactionDutyGUI:factionChangeSkin()
-	triggerServerEvent("factionChangeSkin", getLocalPlayer())
+	triggerServerEvent("factionStateChangeSkin", localPlayer)
 end

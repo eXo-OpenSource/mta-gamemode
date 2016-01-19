@@ -15,7 +15,7 @@ function FactionManager:constructor()
   self:loadFactions()
 
   -- Events
-	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionChangeSkin", "factionRearm", "factionSwat"}
+	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown"}
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
@@ -26,9 +26,7 @@ function FactionManager:constructor()
 	addEventHandler("factionInvitationDecline", root, bind(self.Event_factionInvitationDecline, self))
 	addEventHandler("factionRankUp", root, bind(self.Event_factionRankUp, self))
 	addEventHandler("factionRankDown", root, bind(self.Event_factionRankDown, self))
-	addEventHandler("factionChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
-	addEventHandler("factionRearm", root, bind(self.Event_FactionRearm, self))
-	addEventHandler("factionSwat", root, bind(self.toggleSwat, self))
+
 	
 	FactionState:getSingleton():new()
 end
@@ -60,34 +58,6 @@ function FactionManager:getFromId(Id)
 	return FactionManager.Map[Id]
 end
 
-function FactionManager:toggleSwat()
-	if client:isFactionDuty() then
-		local swat = client:getPublicSync("Fraktion:Swat")
-		if swat == true then
-			client:setJobDutySkin(nil)
-			client:setPublicSync("Fraktion:Swat",false)
-			client:sendInfo(_("Du hast den Swat-Modus beendet Dienst!", client))
-			client:getFaction():updateStateFactionDutyGUI(client)
-		else
-			client:setJobDutySkin(285)
-			client:setPublicSync("Fraktion:Swat",true)
-			client:sendInfo(_("Du hast bist in den Swat-Modus gewechselt!", client))
-			client:getFaction():updateStateFactionDutyGUI(client)
-		end
-	end
-end
-
-function FactionManager:Event_FactionChangeSkin()
-	if client:isFactionDuty() then
-		client:getFaction():changeSkin(client)
-	end
-end
-
-function FactionManager:Event_FactionRearm()
-	if client:isFactionDuty() then
-		client:getFaction():rearm(client)
-	end
-end
 
 function FactionManager:Event_factionRequestInfo()
 	local faction = client:getFaction()

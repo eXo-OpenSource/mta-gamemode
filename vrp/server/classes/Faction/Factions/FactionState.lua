@@ -13,8 +13,18 @@ function FactionState:constructor()
 	outputDebugString("Faction State loaded")
 	self:createDutyPickup(252.6, 69.4, 1003.64,6)
 	self:createArrestZone(1564.92, -1693.55, 5.89)
+	
+	local pdGarageEnter = InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0)
+	--local pdGarageExit = InteriorEnterExit:new(Vector3(259.22, 73.73, 1003.64), Vector3(1527.16, -1678.17, 5.89), 0, 0, 0, 0)
+	
+	addRemoteEvents{"FactionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat"}
+
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
+	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
+	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
+	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
+	addEventHandler("factionStateSwat", root, bind(self.Event_toggleSwat, self))
 end
 
 function FactionState:destructor()
@@ -45,7 +55,9 @@ function FactionState:createArrestZone(x,y,z,int)
 			if getElementType(hitElement) == "player" then
 				local faction = hitElement:getFaction()
 				if faction:isStateFaction() == true then
-					hitElement:triggerEvent("showStateFactionArrestGUI",self.m_ArrestZoneCol)
+					if hitElement:isFactionDuty() then
+						hitElement:triggerEvent("showStateFactionArrestGUI",self.m_ArrestZoneCol)
+					end
 				end
 			end
 			cancelEvent()
@@ -109,26 +121,121 @@ function FactionState:getFullReasonFromShortcut(reason)
 end
 
 function FactionState:Command_suspect(player,cmd,target,anzahl,...)
-	local anzahl = tonumber(anzahl)
-	if anzahl >= 1 and anzahl <= 6 then
-		local reason = self:getFullReasonFromShortcut(table.concat({...}, " "))
-		local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
-		if isElement(target) then
-			if not isPedDead(target) then
-				if string.len(reason) > 2 and string.len(reason) < 50 then
-					local targetname = getPlayerName ( target )
-					target:giveWantedLevel(anzahl)
-					outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,anzahl,player:getName()), target, 255, 255, 0 )
-					local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),anzahl, reason)
-					player:getFaction():sendMessage(msg, 255,0,0)
+	if player:isFactionDuty() then
+		local anzahl = tonumber(anzahl)
+		if anzahl >= 1 and anzahl <= 6 then
+			local reason = self:getFullReasonFromShortcut(table.concat({...}, " "))
+			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
+			if isElement(target) then
+				if not isPedDead(target) then
+					if string.len(reason) > 2 and string.len(reason) < 50 then
+						local targetname = getPlayerName ( target )
+						target:giveWantedLevel(anzahl)
+						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,anzahl,player:getName()), target, 255, 255, 0 )
+						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),anzahl, reason)
+						player:getFaction():sendMessage(msg, 255,0,0)
+					else
+						player:sendError(_("Der Grund ist ungültig!"))
+					end
 				else
-					player:sendError(_("Der Grund ist ungültig!"))
+					player:sendError(_("Der Spieler ist tot!"))
 				end
-			else
-				player:sendError(_("Der Spieler ist tot!"))
 			end
+		else
+			player:sendError(_("Die Anzahl muss zwischen 1 und 6 liegen!"))
 		end
 	else
-		player:sendError(_("Die Anzahl muss zwischen 1 und 6 liegen!"))
+		player:sendError(_("Du bist nicht im Dienst!"))
 	end
 end
+
+function FactionState:Event_JailPlayer(player)
+	local policeman = client
+	if policeman:isFactionDuty() then
+		if player:getWantedLevel() > 0 then
+			-- Teleport to jail
+			player:setPosition(Vector3(2673.37, -2112.44, 19.05) + Vector3(math.random(-2, 2), math.random(-2, 2), 0))
+			player:setRotation(0, 0, 90)
+			player:toggleControl("fire", false)
+			player:toggleControl("jump", false)
+			player:toggleControl("aim_weapon ", false)
+
+			-- Pay some money, karma and xp to the policeman
+			policeman:giveMoney(player:getWantedLevel() * 100)
+			policeman:giveKarma(player:getWantedLevel() * 0.05)
+			policeman:givePoints(3)
+
+			-- Give Achievements
+			if player:getWantedLevel() > 4 then
+				policeman:giveAchievement(48)
+			else
+				policeman:giveAchievement(47)
+			end
+
+			setTimer(function () -- (delayed)
+				player:giveAchievement(31)
+			end, 14000, 1)
+
+			-- Start freeing timer
+			local jailTime = player:getWantedLevel() * 360
+			player.m_JailTimer = setTimer(
+				function()
+					if isElement(player) then
+						player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+						player:setRotation(0, 0, 90)
+						player:setWantedLevel(0)
+						player:toggleControl("fire", true)
+						player:toggleControl("jump", true)
+						player:toggleControl("aim_weapon ", true)
+
+						player.m_JailTimer = nil
+					end
+				end, jailTime * 1000, 1
+			)
+
+			-- Clear crimes
+			player:clearCrimes()
+
+			-- Tell the other policemen that we jailed someone
+			policeman:getFaction():sendMessage("%s wurde soeben von %s eingesperrt!", getPlayerName(player), getPlayerName(policeman))
+
+			-- Tell the client that we were jailed
+			player:triggerEvent("playerJailed", jailTime)
+		else
+			policeman:sendError("Der Spieler wird nicht gesucht!")
+		end
+	else
+		policeman:sendError(_("Du bist nicht im Dienst!"))
+	end
+end
+
+
+function FactionState:Event_toggleSwat()
+	if client:isFactionDuty() then
+		local swat = client:getPublicSync("Fraktion:Swat")
+		if swat == true then
+			client:setJobDutySkin(nil)
+			client:setPublicSync("Fraktion:Swat",false)
+			client:sendInfo(_("Du hast den Swat-Modus beendet Dienst!", client))
+			client:getFaction():updateStateFactionDutyGUI(client)
+		else
+			client:setJobDutySkin(285)
+			client:setPublicSync("Fraktion:Swat",true)
+			client:sendInfo(_("Du hast bist in den Swat-Modus gewechselt!", client))
+			client:getFaction():updateStateFactionDutyGUI(client)
+		end
+	end
+end
+
+function FactionState:Event_FactionChangeSkin()
+	if client:isFactionDuty() then
+		client:getFaction():changeSkin(client)
+	end
+end
+
+function FactionState:Event_FactionRearm()
+	if client:isFactionDuty() then
+		client:getFaction():rearm(client)
+	end
+end
+
