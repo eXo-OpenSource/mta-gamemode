@@ -11,7 +11,14 @@ FactionManager.Map = {}
 
 
 function FactionManager:constructor()
-	self.StateFactions = {[1] = true}
+	self.StateFactions = {
+	[1] = true,
+	[2] = true,
+	[3] = true
+	}
+	self.EvilFactions = {
+	[5] = true
+	}
   self:loadFactions()
 
   -- Events
@@ -29,6 +36,7 @@ function FactionManager:constructor()
 
 	
 	FactionState:getSingleton():new()
+	FactionEvil:getSingleton():new()
 end
 
 function FactionManager:destructor()
@@ -46,9 +54,9 @@ function FactionManager:loadFactions()
     for i, factionRow in ipairs(result2) do
       players[factionRow.Id] = factionRow.FactionRank
     end
-			local state = false
-			if self.StateFactions[row.Id] == true then state = true end
-			local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id],state)
+			local FactionType = "Default"
+			if self.StateFactions[row.Id] == true then FactionType = "State" elseif self.EvilFactions[row.Id] == true then FactionType = "Evil" end
+			local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id],FactionType)
       FactionManager.Map[row.Id] = instance
       --FactionVehicles:new(instance)
   end

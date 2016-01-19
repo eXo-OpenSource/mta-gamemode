@@ -107,9 +107,11 @@
 	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
 
 	<!-- Factions -->
+	<script src="server/classes/Faction/Actions/WeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
 	<script src="server/classes/Faction/FactionVehicles.lua" type="server"/>
-	<script src="server/classes/Faction/Factions/FactionState.lua" type="server"/>
+	<script src="server/classes/Faction/FactionState.lua" type="server"/>
+	<script src="server/classes/Faction/FactionEvil.lua" type="server"/>
 	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
 
 	<!-- Vehicles -->

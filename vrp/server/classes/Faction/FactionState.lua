@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Faction/FactionManager.lua
--- *  PURPOSE:     Factionmanager Class
+-- *  FILE:        server/classes/Faction/FactionState.lua
+-- *  PURPOSE:     Faction State Class
 -- *
 -- ****************************************************************************
 
@@ -11,8 +11,8 @@ FactionState = inherit(Singleton)
 
 function FactionState:constructor()
 	outputDebugString("Faction State loaded")
-	self:createDutyPickup(252.6, 69.4, 1003.64,6)
-	self:createArrestZone(1564.92, -1693.55, 5.89)
+	self:createDutyPickup(252.6, 69.4, 1003.64,6) -- PD Interior
+	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
 	
 	local pdGarageEnter = InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0)
 	--local pdGarageExit = InteriorEnterExit:new(Vector3(259.22, 73.73, 1003.64), Vector3(1527.16, -1678.17, 5.89), 0, 0, 0, 0)

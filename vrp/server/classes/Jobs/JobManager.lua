@@ -13,7 +13,7 @@ function JobManager:constructor()
 		JobTrashman:new();
 		JobRoadSweeper:new();
 		JobLumberjack:new();
-		JobPolice:new();
+		--JobPolice:new();
 		JobFarmer:new();
 		JobBusDriver:new();
 		JobMechanic:new();

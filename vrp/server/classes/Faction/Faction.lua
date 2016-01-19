@@ -10,7 +10,7 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(id, name_short, name, bankAccountId, players,ranks,colors,skins,state)
+function Faction:constructor(id, name_short, name, bankAccountId, players,ranks,colors,skins,factionType)
   self.m_Id = id
   self.m_Name_Short = name_short
   self.m_Name = name
@@ -20,7 +20,7 @@ function Faction:constructor(id, name_short, name, bankAccountId, players,ranks,
 	self.m_RankNames = ranks
 	self.m_Color = colors
 	self.m_Skins = skins
-	self.m_State = state
+	self.m_Type = factionType
 end
 
 function Faction:destructor()
@@ -30,7 +30,17 @@ function Faction:destructor()
 end
 
 function Faction:isStateFaction()
-	return self.m_State
+	if self.m_Type == "State" then
+		return true
+	end
+	return false
+end
+
+function Faction:isEvilFaction()
+	if self.m_Type == "Evil" then
+		return true
+	end
+	return false
 end
 
 function Faction:getId()
