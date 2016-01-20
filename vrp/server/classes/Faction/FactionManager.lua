@@ -22,7 +22,7 @@ function FactionManager:constructor()
   self:loadFactions()
 
   -- Events
-	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown"}
+	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos"}
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
@@ -34,6 +34,8 @@ function FactionManager:constructor()
 	addEventHandler("factionRankUp", root, bind(self.Event_factionRankUp, self))
 	addEventHandler("factionRankDown", root, bind(self.Event_factionRankDown, self))
 	addCommandHandler("shop",bind(self.openFactionWeaponShopGUI, self))
+	addEventHandler("factionReceiveWeaponShopInfos", root, bind(self.Event_receiveFactionWeaponShopInfos, self))
+
 	
 	FactionState:getSingleton():new()
 	FactionEvil:getSingleton():new()
@@ -58,7 +60,7 @@ function FactionManager:loadFactions()
 	local FactionType = "Default"
 	if self.StateFactions[row.Id] == true then FactionType = "State" elseif self.EvilFactions[row.Id] == true then FactionType = "Evil" end
 	
-	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id],row.Depot,factionWeapons[row.Id],FactionType)
+	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],row.Depot,FactionType)
     FactionManager.Map[row.Id] = instance
   end
 end
@@ -257,4 +259,10 @@ end
 
 function FactionManager:openFactionWeaponShopGUI(player)
 	player:triggerEvent("showFactionWeaponShopGUI")
+end
+
+function FactionManager:Event_receiveFactionWeaponShopInfos()
+	local faction = client:getFaction()
+	local depot = faction.m_Depot
+	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,faction.m_ValidWeapons,depot:getWeaponTable(id))
 end

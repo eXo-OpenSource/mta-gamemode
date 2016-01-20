@@ -31,7 +31,7 @@ end
 
 function Depot:constructor(Id, weapons)
 	self.m_Id = Id
-	self.m_Weapons = weapons  
+	self.m_Weapons = fromJSON(weapons)  
 end
 
 function Depot:destructor()

@@ -29,7 +29,7 @@ factionRankNames[2] = {
 }
 factionColors[2] = {["r"] = 50,["g"] = 50,["b"] = 255}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
-factionWeapons[1] = {[24]=true,[27]=true,[29]=true,[31]=true}
+factionWeapons[2] = {[24]=true,[27]=true,[29]=true,[31]=true}
 
 -- ID 3 = Army:
 factionRankNames[3] = {
