@@ -58,9 +58,8 @@ function FactionManager:loadFactions()
 	local FactionType = "Default"
 	if self.StateFactions[row.Id] == true then FactionType = "State" elseif self.EvilFactions[row.Id] == true then FactionType = "Evil" end
 	
-	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id],row.Depot,FactionType)
+	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id],row.Depot,factionWeapons[row.Id],FactionType)
     FactionManager.Map[row.Id] = instance
-    --FactionVehicles:new(instance)
   end
 end
 
