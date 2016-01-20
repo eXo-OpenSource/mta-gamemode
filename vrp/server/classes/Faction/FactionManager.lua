@@ -33,7 +33,7 @@ function FactionManager:constructor()
 	addEventHandler("factionInvitationDecline", root, bind(self.Event_factionInvitationDecline, self))
 	addEventHandler("factionRankUp", root, bind(self.Event_factionRankUp, self))
 	addEventHandler("factionRankDown", root, bind(self.Event_factionRankDown, self))
-
+	addCommandHandler("shop",bind(self.openFactionWeaponShopGUI, self))
 	
 	FactionState:getSingleton():new()
 	FactionEvil:getSingleton():new()
@@ -253,4 +253,8 @@ function FactionManager:Event_factionRankDown(playerId)
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
 		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
 	end
+end
+
+function FactionManager:openFactionWeaponShopGUI(player)
+	player:triggerEvent("showFactionWeaponShopGUI")
 end
