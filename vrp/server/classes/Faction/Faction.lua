@@ -10,23 +10,24 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(id, name_short, name, bankAccountId, players,ranks,colors,skins,factionType)
-  self.m_Id = id
-  self.m_Name_Short = name_short
-  self.m_Name = name
-  self.m_Players = players
-  self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
-  self.m_Invitations = {}
+function Faction:constructor(id, name_short, name, bankAccountId, players,ranks,colors,skins,depotId,factionType)
+	self.m_Id = id
+	self.m_Name_Short = name_short
+	self.m_Name = name
+	self.m_Players = players
+	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
+	self.m_Invitations = {}
 	self.m_RankNames = ranks
 	self.m_Color = colors
 	self.m_Skins = skins
 	self.m_Type = factionType
+	self.m_Depot = Depot.load(depotId,id)
 end
 
 function Faction:destructor()
-  if self.m_BankAccount then
-    delete(self.m_BankAccount)
-  end
+	if self.m_BankAccount then
+		delete(self.m_BankAccount)
+	end
 end
 
 function Faction:isStateFaction()

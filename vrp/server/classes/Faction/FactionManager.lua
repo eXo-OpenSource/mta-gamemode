@@ -47,18 +47,20 @@ end
 
 function FactionManager:loadFactions()
   outputServerLog("Loading factions...")
-  local result = sql:queryFetch("SELECT Id, Name, Name_Short, BankAccount FROM ??_factions", sql:getPrefix())
+  local result = sql:queryFetch("SELECT Id, Name, Name_Short, BankAccount,Depot FROM ??_factions", sql:getPrefix())
   for k, row in ipairs(result) do
     local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
     local players = {}
     for i, factionRow in ipairs(result2) do
       players[factionRow.Id] = factionRow.FactionRank
     end
-			local FactionType = "Default"
-			if self.StateFactions[row.Id] == true then FactionType = "State" elseif self.EvilFactions[row.Id] == true then FactionType = "Evil" end
-			local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id],FactionType)
-      FactionManager.Map[row.Id] = instance
-      --FactionVehicles:new(instance)
+	
+	local FactionType = "Default"
+	if self.StateFactions[row.Id] == true then FactionType = "State" elseif self.EvilFactions[row.Id] == true then FactionType = "Evil" end
+	
+	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],factionColors[row.Id],factionSkins[row.Id],row.Depot,FactionType)
+    FactionManager.Map[row.Id] = instance
+    --FactionVehicles:new(instance)
   end
 end
 
