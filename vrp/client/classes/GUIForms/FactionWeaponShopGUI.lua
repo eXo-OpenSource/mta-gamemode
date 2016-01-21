@@ -15,7 +15,7 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fraktions Waffenshop", true, true, self)
 	
 	self.m_Cart = {}
-	
+
 	self.m_WeaponsImage = {}
 	self.m_WeaponsName = {}
 	self.m_WeaponsMenge = {}
@@ -25,19 +25,19 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	self.m_WaffenAnzahl = 0
 	self.m_WaffenRow = 0
 	self.m_WaffenColumn = 0
+	
 	self.m_validWeapons = validWeapons
-	
-	
 	
 	GUILabel:new(280,220, 320, 35, "Warenkorb:", self.m_Window)
 	self.m_CartGrid = GUIGridList:new(280, 250, 320, 180, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
 	self.m_CartGrid:addColumn(_"Anzahl", 0.4)
 	self.m_del = GUIButton:new(280, 430, 155, 20,_"entfernen", self.m_Window)
+	self.m_del:setBackgroundColor(Color.Red)
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
-	self.m_buy = GUIButton:new(450, 430, 155, 20,_"Check out", self.m_Window)
-	--addRemoteEvents{"depotRetrieveInfo"}
-	--addEventHandler("depotRetrieveInfo", root, bind(self.Event_depotRetrieveInfo, self))
+	self.m_buy = GUIButton:new(450, 430, 155, 20,_"Bestätigen", self.m_Window)
+	self.m_buy.onLeftClick = bind(self.factionWeaponShopBuy,self)
+
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWeaponShopGUI, self))
 	
 	self:getPlayerWeapons()
@@ -84,35 +84,36 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 	else
 		self.m_WaffenRow = self.m_WaffenRow+1
 	end
+	
 end
 
 function FactionWeaponShopGUI:updateButtons()
-	for k,v in pairs(self.m_validWeapons) do
+	for weaponID,v in pairs(self.m_validWeapons) do
 		if v == true then
-			if self.m_playerWeapons[k] or (self.m_Cart[k] and self.m_Cart[k]["Waffe"] > 0) then
-				if self.m_WeaponsBuyMunition[k] then
-					self.m_WeaponsBuyMunition[k]:setEnabled(true)
+			if self.m_playerWeapons[weaponID] or (self.m_Cart[weaponID] and self.m_Cart[weaponID]["Waffe"] > 0) then
+				if self.m_WeaponsBuyMunition[weaponID] then
+					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
 				end
-				self.m_WeaponsBuyGun[k]:setEnabled(false)
+				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
 			else
-				self.m_WeaponsBuyGun[k]:setEnabled(true)
-				if self.m_WeaponsBuyMunition[k] then
-					self.m_WeaponsBuyMunition[k]:setEnabled(false)
-					if self.m_Cart[k] then
-						self.m_Cart[k]["Munition"] = 0
+				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
+				if self.m_WeaponsBuyMunition[weaponID] then
+					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
+					if self.m_Cart[weaponID] then
+						self.m_Cart[weaponID]["Munition"] = 0
 					end
 				end
 			end
-
-			if self.depot[k]["Waffe"] == 0 then
-				self.m_WeaponsBuyGun[k]:setEnabled(false)
+			
+			if self.depot[weaponID]["Waffe"] == 0 then
+				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
 			end
-			if self.depot[k]["Munition"] == 0 then
-				if self.m_WeaponsBuyMunition[k] then
-					self.m_WeaponsBuyMunition[k]:setEnabled(false)
+			
+			if self.depot[weaponID]["Munition"] == 0 then
+				if self.m_WeaponsBuyMunition[weaponID] then
+					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 				end
 			end
-
 		end
 	end
 	self:updateCart()
@@ -130,17 +131,17 @@ end
 function FactionWeaponShopGUI:updateCart()
 	self.m_CartGrid:clear()
 	local name,item
-	for k,v in pairs(self.m_Cart) do
-		for k1,v1 in pairs(self.m_Cart[k]) do
-			if v1 > 0 then
-				if k1 == "Waffe" then
-					name = getWeaponNameFromID(k)
-				elseif k1 == "Munition" then
-					name = getWeaponNameFromID(k).." Magazin"
+	for weaponID,v in pairs(self.m_Cart) do
+		for typ,amount in pairs(self.m_Cart[weaponID]) do
+			if amount > 0 then
+				if typ == "Waffe" then
+					name = getWeaponNameFromID(weaponID)
+				elseif typ == "Munition" then
+					name = getWeaponNameFromID(weaponID).." Magazin"
 				end
-				item = self.m_CartGrid:addItem(name,v1)
-				item.typ = k1
-				item.id = k
+				item = self.m_CartGrid:addItem(name,amount)
+				item.typ = typ
+				item.id = weaponID
 			end
 		end
 	end
@@ -180,6 +181,10 @@ end
 
 function FactionWeaponShopGUI:factionReceiveWeaponShopInfos()
 		triggerServerEvent("factionReceiveWeaponShopInfos",localPlayer)
+end
+
+function FactionWeaponShopGUI:factionWeaponShopBuy()
+	triggerServerEvent("factionWeaponShopBuy",root,self.m_Cart)
 end
 
 function FactionWeaponShopGUI:destuctor()	

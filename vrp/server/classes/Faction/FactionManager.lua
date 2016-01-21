@@ -22,7 +22,7 @@ function FactionManager:constructor()
   self:loadFactions()
 
   -- Events
-	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos"}
+	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy"}
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
@@ -35,6 +35,8 @@ function FactionManager:constructor()
 	addEventHandler("factionRankDown", root, bind(self.Event_factionRankDown, self))
 	addCommandHandler("shop",bind(self.openFactionWeaponShopGUI, self))
 	addEventHandler("factionReceiveWeaponShopInfos", root, bind(self.Event_receiveFactionWeaponShopInfos, self))
+	addEventHandler("factionWeaponShopBuy", root, bind(self.Event_factionWeaponShopBuy, self))
+
 
 	
 	FactionState:getSingleton():new()
@@ -266,4 +268,10 @@ function FactionManager:Event_receiveFactionWeaponShopInfos()
 	local faction = client:getFaction()
 	local depot = faction.m_Depot
 	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,depot:getWeaponTable(id))
+end
+
+function FactionManager:Event_factionWeaponShopBuy(weaponTable)
+	local faction = client:getFaction()
+	local depot = faction.m_Depot
+	depot:takeWeaponsFromDepot(client,weaponTable)
 end
