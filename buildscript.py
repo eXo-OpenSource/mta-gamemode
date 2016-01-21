@@ -12,6 +12,12 @@ if platform.system() == "Windows":
 rootdir = "vrp/"
 outdir = "vrp_build/"
 
+# At first remove UTF8BOM
+if platform.system() == "Windows":
+	os.chdir("tools")
+	call(["py", "-3", "removeUTF8BOM.py" ])
+	os.chdir("..")
+
 # Build vrp_build structure
 def rm_r(path):
     if os.path.isdir(path):

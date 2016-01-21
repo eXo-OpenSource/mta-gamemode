@@ -1,4 +1,4 @@
-﻿factionColors = {}
+factionColors = {}
 factionRankNames = {}
 factionSkins = {}
 factionWeapons = {}
