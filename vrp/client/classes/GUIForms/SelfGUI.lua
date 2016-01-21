@@ -530,7 +530,7 @@ end
 
 
 
-function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType, upgradeGarage, upgradeHangar)
+function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 	if vehiclesInfo then
 		self.m_VehiclesGrid:clear()
 		for vehicleId, vehicleInfo in pairs(vehiclesInfo) do
@@ -561,12 +561,13 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType,
 
 	if garageType then
 		localPlayer.m_GarageType = garageType
-		self.m_VehicleGarages:setText(_(GARAGE_UPGRADES_TEXTS[localPlayer.m_GarageType]))
+		self.m_VehicleGarages:setText(_(GARAGE_UPGRADES_TEXTS[garageType]))
 
+		local price = GARAGE_UPGRADES_COSTS[garageType + 1] or "-"
 		if localPlayer.m_GarageType == 0 then
-			self.m_VehicleGarageUpgradeButton:setText(_("(Kaufen: %s$)", upgradeGarage))
+			self.m_VehicleGarageUpgradeButton:setText(_("(Kaufen: %s$)", price))
 		else
-			self.m_VehicleGarageUpgradeButton:setText(_("(Upgrade: %s$)", upgradeGarage))
+			self.m_VehicleGarageUpgradeButton:setText(_("(Upgrade: %s$)", price))
 		end
 		self.m_VehicleGarageUpgradeButton:setPosition(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.75)
 		self.m_VehicleGarageUpgradeButton:setSize(dxGetTextWidth(self.m_VehicleGarageUpgradeButton:getText(), self.m_VehicleGarageUpgradeButton:getFontSize(), self.m_VehicleGarageUpgradeButton:getFont()), self.m_Height*0.06)
@@ -574,12 +575,13 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType,
 
 	if hangarType then
 		localPlayer.m_HangarType = hangarType
-		self.m_VehicleHangar:setText(_(HANGAR_UPGRADES_TEXTS[localPlayer.m_HangarType]))
+		self.m_VehicleHangar:setText(_(HANGAR_UPGRADES_TEXTS[hangarType]))
 
+		local price = HANGAR_UPGRADES_COSTS[hangarType + 1] or "-"
 		if localPlayer.m_HangarType == 0 then
-			self.m_VehicleHangarButton:setText(_("(Kaufen: %s$)", upgradeHangar))
+			self.m_VehicleHangarButton:setText(_("(Kaufen: %s$)", price))
 		else
-			self.m_VehicleHangarButton:setText(_("(Upgrade: %s$)", upgradeHangar))
+			self.m_VehicleHangarButton:setText(_("(Upgrade: %s$)", price))
 		end
 		self.m_VehicleHangarButton:setPosition(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleHangar:getText(), self.m_VehicleHangar:getFontSize(), self.m_VehicleHangar:getFont()) + 5, self.m_Height*0.81)
 		self.m_VehicleHangarButton:setSize(dxGetTextWidth(self.m_VehicleHangarButton:getText(), self.m_VehicleHangarButton:getFontSize(), self.m_VehicleHangarButton:getFont()), self.m_Height*0.06)
