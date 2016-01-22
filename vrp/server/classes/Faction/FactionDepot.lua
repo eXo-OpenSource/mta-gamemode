@@ -15,12 +15,13 @@ function Depot.load(Id,Owner)
 	local WeaponNew = false
 	if string.len(weapons) < 10 then
 		weapons = {}
-		for i=1,43 do
+		for i=1,45 do
 			weapons[i] = {}
 			weapons[i]["Id"] = i
 			weapons[i]["Waffe"] = 0
 			weapons[i]["Munition"] = 0
 		end
+		weapons = toJSON(weapons)
 		WeaponNew = true
 		outputDebugString("Creating new Weapon-Table for Depot "..Id)
 	end

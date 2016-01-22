@@ -11,7 +11,7 @@ inherit(Singleton, FactionWeaponShopGUI)
 addRemoteEvents{"showFactionWeaponShopGUI","updateFactionWeaponShopGUI"}
 
 function FactionWeaponShopGUI:constructor(validWeapons)
-	GUIForm.constructor(self, screenWidth/2-310, screenHeight/2-230, 620, 460)
+	GUIForm.constructor(self, screenWidth/2-370, screenHeight/2-230, 740, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fraktions Waffenshop", true, true, self)
 	
 	self.m_Cart = {}
@@ -28,14 +28,14 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	
 	self.m_validWeapons = validWeapons
 	
-	GUILabel:new(280,220, 320, 35, "Warenkorb:", self.m_Window)
-	self.m_CartGrid = GUIGridList:new(280, 250, 320, 180, self.m_Window)
+	GUILabel:new(400,220, 320, 35, "Warenkorb:", self.m_Window)
+	self.m_CartGrid = GUIGridList:new(400, 250, 320, 180, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
 	self.m_CartGrid:addColumn(_"Anzahl", 0.4)
-	self.m_del = GUIButton:new(280, 430, 155, 20,_"entfernen", self.m_Window)
+	self.m_del = GUIButton:new(400, 430, 155, 20,_"entfernen", self.m_Window)
 	self.m_del:setBackgroundColor(Color.Red)
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
-	self.m_buy = GUIButton:new(450, 430, 155, 20,_"Bestätigen", self.m_Window)
+	self.m_buy = GUIButton:new(570, 430, 155, 20,_"Bestätigen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponShopBuy,self)
 
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWeaponShopGUI, self))
@@ -80,9 +80,15 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 		end
 	end
 	
+	if not(self.m_Cart[weaponID]) then
+		self.m_Cart[weaponID] = {}
+		self.m_Cart[weaponID]["Waffe"] = 0
+		self.m_Cart[weaponID]["Munition"] = 0
+	end
+	
 	self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
 	
-	if self.m_WaffenAnzahl == 5 or self.m_WaffenAnzahl == 7 then
+	if self.m_WaffenAnzahl == 6 or self.m_WaffenAnzahl == 9 then
 		self.m_WaffenRow = 0
 		self.m_WaffenColumn = self.m_WaffenColumn+1
 	else
@@ -94,7 +100,7 @@ end
 function FactionWeaponShopGUI:updateButtons()
 	for weaponID,v in pairs(self.m_validWeapons) do
 		if v == true then
-			if self.m_playerWeapons[weaponID] or (self.m_Cart[weaponID] and self.m_Cart[weaponID]["Waffe"] > 0) then
+			if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 then
 				if self.m_WeaponsBuyMunition[weaponID] then
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
 				end
@@ -103,17 +109,15 @@ function FactionWeaponShopGUI:updateButtons()
 				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
 				if self.m_WeaponsBuyMunition[weaponID] then
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
-					if self.m_Cart[weaponID] then
-						self.m_Cart[weaponID]["Munition"] = 0
-					end
+					self.m_Cart[weaponID]["Munition"] = 0
 				end
 			end
 			
-			if self.depot[weaponID]["Waffe"] <= 0 then
+			if self.depot[weaponID]["Waffe"]-self.m_Cart[weaponID]["Waffe"] <= 0 then
 				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
 			end
 			
-			if self.depot[weaponID]["Munition"] <= 0 then
+			if self.depot[weaponID]["Munition"]-self.m_Cart[weaponID]["Munition"] <= 0 then
 				if self.m_WeaponsBuyMunition[weaponID] then
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 				end
@@ -161,11 +165,6 @@ function FactionWeaponShopGUI:deleteItemFromCart()
 end
 
 function FactionWeaponShopGUI:addItemToCart(typ,weapon)
-	if not(self.m_Cart[weapon]) then
-		self.m_Cart[weapon] = {}
-		self.m_Cart[weapon]["Waffe"] = 0
-		self.m_Cart[weapon]["Munition"] = 0
-	end
 	if typ == "weapon" then self.m_Cart[weapon]["Waffe"] = self.m_Cart[weapon]["Waffe"]+1 end
 	if typ == "munition" then self.m_Cart[weapon]["Munition"] = self.m_Cart[weapon]["Munition"]+1 end
 	
@@ -174,11 +173,6 @@ function FactionWeaponShopGUI:addItemToCart(typ,weapon)
 end
 
 function FactionWeaponShopGUI:addMunitionToCart(weapon)
-	if not(self.m_Cart[weapon]) then
-		self.m_Cart[weapon] = {}
-		self.m_Cart[weapon]["Waffe"] = 0
-		self.m_Cart[weapon]["Munition"] = 0
-	end
 	self.m_Cart[weapon]["Magazin"] = self.m_Cart[weapon]["Magazin"]+1
 	self:updateCart()
 end
