@@ -74,5 +74,6 @@ function AutomaticVehicleSpawner:VehicleEnterHandler(player)
 	setVehicleDamageProof(vehicle, false)
 	self.m_LastVehicle = false
 
-	removeEventHandler("onVehicleStartEnter", vehicle, self.m_VehicleEnterHandler)
+	-- Do we require to remove it?
+	--removeEventHandler("onVehicleStartEnter", vehicle, self.m_VehicleEnterHandler)
 end

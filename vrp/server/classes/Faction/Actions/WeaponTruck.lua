@@ -7,7 +7,6 @@
 -- ****************************************************************************
 
 WeaponTruck = inherit(Singleton)
-  -- implement by children
 
 function WeaponTruck:constructor()
 	self:createStartPoint(-1869.14, 1421.49, 7.18)
