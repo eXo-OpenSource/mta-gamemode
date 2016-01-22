@@ -19,7 +19,7 @@ function FactionManager:constructor()
 	self.EvilFactions = {
 	[5] = true
 	}
-  self:loadFactions()
+	self:loadFactions()
 
   -- Events
 	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy"}
@@ -40,7 +40,7 @@ function FactionManager:constructor()
 
 	
 	FactionState:getSingleton():new()
-	FactionEvil:getSingleton():new()
+	FactionEvil:getSingleton():new(self.EvilFactions)
 end
 
 function FactionManager:destructor()
@@ -65,6 +65,10 @@ function FactionManager:loadFactions()
 	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],row.Depot,FactionType)
     FactionManager.Map[row.Id] = instance
   end
+end
+
+function FactionManager:getMap()
+	return self.Map
 end
 
 function FactionManager:getFromId(Id)
