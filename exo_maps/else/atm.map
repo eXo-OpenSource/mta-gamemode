@@ -1,0 +1,29 @@
+<map edf:definitions="editor_main">
+     <object id="object (kmb_atm1) Fahrschule" doublesided="false" model="2942" interior="0" dimension="0" posX="-2025.1999511719" posY="-102.09999847412" posZ="34.799999237061" rotX="0" rotY="0" rotZ="180" />
+    <object id="object (kmb_atm1) EK-Strasse" doublesided="false" model="2942" interior="0" dimension="0" posX="-2491.5" posY="-51.700000762939" posZ="25.299999237061" rotX="0" rotY="0" rotZ="270" />
+    <object id="object (kmb_atm1) Triaden" doublesided="false" model="2942" interior="0" dimension="0" posX="-2172.3999023438" posY="702" posZ="53.5" rotX="0" rotY="0" rotZ="270" />
+    <object id="object (kmb_atm1) Autohaus Infernus" doublesided="false" model="2942" interior="0" dimension="0" posX="-1649" posY="1202.4000244141" posZ="6.8000001907349" rotX="0" rotY="0" rotZ="180" />
+    <object id="object (kmb_atm1) PDSF" doublesided="false" model="2942" interior="0" dimension="0" posX="-1649" posY="717.5" posZ="14.20" rotX="0" rotY="0" rotZ="90" />
+    <object id="object (kmb_atm1) Noob" doublesided="false" model="2942" interior="0" dimension="0" posX="-1447.5999755859" posY="859.90002441406" posZ="6.8000001907349" rotX="0" rotY="0" rotZ="90" />
+    <object id="object (kmb_atm1) Zetas" doublesided="false" model="2942" interior="0" dimension="0" posX="-735" posY="2747.8999023438" posZ="46.799999237061" rotX="0" rotY="0" rotZ="0" />
+    <object id="object (kmb_atm1) ZetasTankstelle" doublesided="false" model="2942" interior="0" dimension="0" posX="-1318.3000488281" posY="2700" posZ="49.900001525879" rotX="0" rotY="0" rotZ="30.25" />
+    <object id="object (kmb_atm1) ?" doublesided="false" model="2942" interior="0" dimension="0" posX="-2715.5" posY="122.09999847412" posZ="4" rotX="0" rotY="0" rotZ="90" />
+    <object id="object (kmb_atm2) ?" doublesided="false" model="2942" interior="0" dimension="0" posX="-2636" posY="208.69999694824" posZ="4" rotX="0" rotY="0" rotZ="180" />
+    <object id="object (kmb_atm3) ?" doublesided="false" model="2942" interior="0" dimension="0" posX="-1967.1999511719" posY="296.29998779297" posZ="34.900001525879" rotX="0" rotY="0" rotZ="270" />
+    <object id="object (kmb_atm4) ?" doublesided="false" model="2942" interior="0" dimension="0" posX="-1623" posY="716.79998779297" posZ="14.300000190735" rotX="0" rotY="0" rotZ="180" />
+    <object id="object (kmb_atm5) ?" doublesided="false" model="2942" interior="0" dimension="0" posX="-1644.5999755859" posY="1200.5999755859" posZ="6.9000000953674" rotX="0" rotY="0" rotZ="0" />
+    <object id="object (kmb_atm1)LS ?" doublesided="false" model="2942" interior="0" dimension="0" posX="1430.3000488281" posY="-1022.299987793" posZ="23.5" rotX="0" rotY="0" rotZ="0" />
+    <object id="object (kmb_atm2)LS ?" doublesided="false" model="2942" interior="0" dimension="0" posX="1367.1999511719" posY="-1283.5999755859" posZ="13.199999809265" rotX="0" rotY="0" rotZ="270" />
+    <object id="object (kmb_atm3)LS ?" doublesided="false" model="2942" interior="0" dimension="0" posX="1507.3000488281" posY="-1673.3000488281" posZ="13.699999809265" rotX="0" rotY="0" rotZ="98.25" />
+    <object id="object (kmb_atm4)LS ?" doublesided="false" model="2942" interior="0" dimension="0" posX="1813.5" posY="-2064.3999023438" posZ="13.199999809265" rotX="0" rotY="0" rotZ="92" />
+    <object id="object (kmb_atm5)LS ?" doublesided="false" model="2942" interior="0" dimension="0" posX="569.29998779297" posY="-1285.0999755859" posZ="16.89999961853" rotX="0" rotY="0" rotZ="282" />
+    <object id="object (kmb_atm1) (2)" doublesided="false" model="2942" interior="0" dimension="0" posX="672.09997558594" posY="-502.79998779297" posZ="16" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (kmb_atm1) (4)" doublesided="false" model="2942" interior="0" dimension="0" posX="1154.9000244141" posY="-1429.5999755859" posZ="15.39999961853" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (kmb_atm1) (5)" doublesided="false" model="2942" interior="0" dimension="0" posX="1095.5" posY="-1483.8000488281" posZ="15.39999961853" rotX="0" rotY="0" rotZ="76"></object>
+    <object id="object (kmb_atm1) (6)" doublesided="false" model="2942" interior="0" dimension="0" posX="474.39999389648" posY="-1517.6999511719" posZ="20.10000038147" rotX="0" rotY="0" rotZ="96"></object>
+    <object id="object (kmb_atm1) (7)" doublesided="false" model="2942" interior="0" dimension="0" posX="2133.3999023438" posY="-1151.3000488281" posZ="23.700000762939" rotX="0" rotY="0" rotZ="180"></object>
+    <object id="object (kmb_atm1) (8)" doublesided="false" model="2942" interior="0" dimension="0" posX="2850.5" posY="-1537.1999511719" posZ="10.699999809265" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (kmb_atm1) (9)" doublesided="false" model="2942" interior="0" dimension="0" posX="1358.8000488281" posY="-1662.3000488281" posZ="13.199999809265" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (kmb_atm1) (10)" doublesided="false" model="2942" interior="0" dimension="0" posX="1122.5" posY="-1200.8000488281" posZ="17.299999237061" rotX="0" rotY="0" rotZ="270"></object>
+
+	</map>

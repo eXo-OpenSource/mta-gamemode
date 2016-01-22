@@ -1,0 +1,7 @@
+<map edf:definitions="editor_main">
+    <object id="object (lift_dr) (1)" doublesided="false" model="3051" interior="6" dimension="0" posX="226.30000305176" posY="75.199996948242" posZ="1005.4000244141" rotX="0" rotY="0" rotZ="45"></object>
+    <object id="object (lift_dr) (2)" doublesided="false" model="3051" interior="6" dimension="0" posX="226.30000305176" posY="76.400001525879" posZ="1005.4000244141" rotX="0" rotY="0" rotZ="45"></object>
+    <object id="object (lift_dr) (3)" doublesided="false" model="3051" interior="6" dimension="0" posX="260.39999389648" posY="73.300003051758" posZ="1003.5999755859" rotX="0" rotY="0" rotZ="45"></object>
+    <object id="object (lift_dr) (4)" doublesided="false" model="3051" interior="6" dimension="0" posX="260.39999389648" posY="74.300003051758" posZ="1003.5999755859" rotX="0" rotY="0" rotZ="44.994506835938"></object>
+    <object id="object (int_policeA01) (1)" doublesided="false" model="14843" interior="6" dimension="0" posX="266.29998779297" posY="83.099998474121" posZ="1001.0999755859" rotX="0" rotY="0" rotZ="270"></object>
+</map>

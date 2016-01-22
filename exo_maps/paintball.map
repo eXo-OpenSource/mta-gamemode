@@ -1,0 +1,5 @@
+<map edf:definitions="editor_main">
+    <object id="object (kmb_lockeddoor) (1)" doublesided="false" model="2949" interior="5" dimension="0" posX="321.39999389648" posY="310.20001220703" posZ="998.20001220703" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (kmb_lockeddoor) (2)" doublesided="false" model="2949" interior="5" dimension="0" posX="321.5" posY="310.10000610352" posZ="998.20001220703" rotX="0" rotY="0" rotZ="90"></object>
+    <object id="object (Gen_doorSHOP3) (1)" doublesided="false" model="1522" interior="5" dimension="0" posX="321.39999389648" posY="301.89999389648" posZ="998.20001220703" rotX="0" rotY="0" rotZ="0"></object>
+</map>

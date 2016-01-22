@@ -1,0 +1,12 @@
+<map edf:definitions="editor_main">
+    <object id="object (des_ranchjetty) (3)" interior="0" collisions="true" alpha="255" doublesided="false" model="11495" scale="1" dimension="0" posX="1633.69922" posY="563.5" posZ="0.4" rotX="0" rotY="0" rotZ="180.027"></object>
+    <object id="object (des_ranchjetty) (4)" interior="0" collisions="true" alpha="255" doublesided="false" model="11495" scale="1" dimension="0" posX="1622.90002" posY="563.5" posZ="0.5" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (des_ranchjetty) (5)" interior="0" collisions="true" alpha="255" doublesided="false" model="11495" scale="1" dimension="0" posX="1622.90002" posY="541.5" posZ="0.5" rotX="0" rotY="0" rotZ="0"></object>
+    <object id="object (des_ranchjetty) (6)" interior="0" collisions="true" alpha="255" doublesided="false" model="11495" scale="1" dimension="0" posX="1633.69922" posY="542.09961" posZ="0.4" rotX="0" rotY="0" rotZ="180.049"></object>
+    <object id="object (des_ranchjetty) (7)" interior="0" collisions="true" alpha="255" doublesided="false" model="11495" scale="1" dimension="0" posX="1611" posY="552.59998" posZ="0.5" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (des_ranchjetty) (8)" interior="0" collisions="true" alpha="255" doublesided="false" model="11495" scale="1" dimension="0" posX="1612.80005" posY="529.59998" posZ="0.5" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (des_ranchjetty) (9)" interior="0" collisions="true" alpha="255" doublesided="false" model="11495" scale="1" dimension="0" posX="1589" posY="552.59998" posZ="0.5" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (des_ranchjetty) (10)" interior="0" collisions="true" alpha="255" doublesided="false" model="11495" scale="1" dimension="0" posX="1590.80005" posY="529.59998" posZ="0.5" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (boatoffice_sfn) (1)" interior="0" collisions="true" alpha="255" doublesided="false" model="9361" scale="1" dimension="0" posX="1625.40002" posY="587.40002" posZ="3.2" rotX="0" rotY="0" rotZ="45.196"></object>
+    <object id="object (boatoffice2_sfn) (1)" interior="0" collisions="true" alpha="255" doublesided="false" model="9362" scale="1" dimension="0" posX="1625.30005" posY="585.59998" posZ="1.6" rotX="0" rotY="0" rotZ="272.751"></object>
+</map>

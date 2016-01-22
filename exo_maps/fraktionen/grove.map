@@ -1,0 +1,4 @@
+<map edf:definitions="editor_main">
+    <object id="object (cos_sbanksteps04) (1)" interior="0" alpha="255" doublesided="false" model="13011" scale="1" dimension="0" posX="2525.1000976563" posY="-1669.5999755859" posZ="15.300000190735" rotX="0" rotY="0" rotZ="270"></object>
+    <object id="object (CJ_CHRIS_CRATE) (1)" interior="0" alpha="255" doublesided="false" model="2669" scale="1" dimension="0" posX="2536.6000976563" posY="-1663.3000488281" posZ="15.5" rotX="0" rotY="0" rotZ="182.5"></object>
+</map>

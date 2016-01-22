@@ -1,0 +1,73 @@
+<meta>
+    <info author="Stumpy" type="script" name="miami_map" description="Miami Reallife" />
+    <min_mta_version client="1.3.1-9.04779" />
+    
+    <script src="removals.lua" type="server" />
+    <script src="removals.lua" type="client" />
+    <script src="textur_removals.lua" type="client" />
+    <script src="mapEditorScriptingExtension_s.lua" type="server"></script>
+    <script src="mapEditorScriptingExtension_c.lua" type="client"></script>
+    
+	<map src="atm.map" />
+    
+    <map src="fun/boxarena.map" />
+
+    <map src="fraktionen/army_base.map" />
+    <map src="fraktionen/army_area.map" />
+    <map src="fraktionen/army_lsbase.map" />
+    <map src="fraktionen/ballas.map" />
+    <map src="fraktionen/grove.map" />
+    <map src="fraktionen/biker.map" />
+    <map src="fraktionen/cosanostra.map" />
+    <map src="fraktionen/yakuza.map" />
+    <map src="fraktionen/lspd-int.map" />
+    <map src="fraktionen/lspd-out.map" />
+    <map src="fraktionen/sfpd_int.map" />
+    <map src="fraktionen/sfpd_out.map" />
+    <map src="fraktionen/staattankstellen.map" />
+    <map src="fraktionen/fbi.map" />
+    
+    <map src="unternehmen/fahrschule.map" />
+    <map src="unternehmen/mechanic.map" />
+    <map src="unternehmen/rescue.map" />
+    <map src="unternehmen/ltr.map" />
+	<map src="unternehmen/public_transport.map" />
+    
+	<map src="banken/bankLS.map" />
+	<map src="banken/bankSF.map" />
+	
+    <map src="autohaus/9_bike.map" />
+    <map src="autohaus/11_sport.map" />
+    <map src="autohaus/12_elegant.map" />
+    <map src="autohaus/billig_autohaus.map" />
+    <map src="autohaus/bootshop.map" />
+    
+    <map src="jobs/drug_job.map" />
+    <map src="jobs/drug_farm.map" />
+    <map src="jobs/cartransport.map" />
+	<map src="jobs/gaertnerei.map" />
+    <map src="jobs/gabelstapler.map" />
+    <map src="jobs/kiesgrube.map" />
+    <map src="jobs/kranjob.map" />
+
+    <map src="else/atm.map" />
+    <map src="else/safetytank.map" />
+    
+    <map src="sprunk.map" />
+    <map src="noobroom.map" />
+    <map src="noobspawn.map" />
+    <map src="prison.map" />
+    
+    <map src="paintball.map" />
+    <map src="knast_int.map" />
+        
+    <map src="alcatraz.map" />
+    <map src="premium.map" />
+	<map src="zollstationen.map" />
+  
+	<map src="airport.map" />
+    <map src="helm_shop.map" />
+	
+	<map src="tankstellen_removals.map" />
+	
+</meta>
