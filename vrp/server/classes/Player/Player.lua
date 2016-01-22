@@ -30,9 +30,9 @@ function Player:constructor()
 	self.m_JoinTime = getTickCount()
 	self.m_Crimes = {}
 	self:destroyChatColShapes( )
-	self:createChatColshapes( ) 
-	
-	
+	self:createChatColshapes( )
+
+
 end
 
 function Player:destructor()
@@ -48,11 +48,11 @@ function Player:destructor()
 
 	-- Call the quit hook (to clean up various things before saving)
 	Player.ms_QuitHook:call(self)
-	
+
 	if self:getRank() > 0 then
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
-	
+
 	self:save()
 
 	-- Unload stuff
@@ -97,8 +97,8 @@ function Player:loadCharacter()
 		Rank = self:getRank();
 	}
 	self:triggerEvent("retrieveInfo", info)
-	
-	
+
+
 	-- Send initial sync
 	self:sendInitialSync()
 
@@ -109,7 +109,7 @@ function Player:loadCharacter()
 	addCommandHandler("Fraktion", Player.staticFactionChatHandler)
 	addCommandHandler("Group", Player.staticGroupChatHandler)
 	self:setPublicSync("Rank", self:getRank())
-	
+
 	if self:getRank() > 0 then
 		Admin:getSingleton():addAdmin(self,self:getRank())
 	end
@@ -241,8 +241,11 @@ function Player:spawn()
 	self:setFrozen(false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
-	
-	
+
+	-- reAttach ChatCols
+	attachElements(self.chatCol_whisper, self)
+	attachElements(self.chatCol_talk, self)
+	attachElements(self.chatCol_scream, self)
 end
 
 function Player:respawn(position, rotation)
@@ -457,14 +460,14 @@ function Player:setUniqueInterior(uniqueInteriorId)
 	self.m_UniqueInterior = uniqueInteriorId
 end
 
-function Player:createChatColshapes( ) 
+function Player:createChatColshapes( )
 	local x,y,z = getElementPosition( self )
 	self.chatCol_whisper = createColSphere ( x,y,z, CHAT_WHISPER_RANGE )
-	attachElements(self.chatCol_whisper,self)
+	attachElements(self.chatCol_whisper, self)
 	self.chatCol_talk = createColSphere ( x,y,z, CHAT_TALK_RANGE )
-	attachElements(self.chatCol_talk ,self)
+	attachElements(self.chatCol_talk, self)
 	self.chatCol_scream = createColSphere ( x,y,z, CHAT_SCREAM_RANGE )
-	attachElements(self.chatCol_scream,self)
+	attachElements(self.chatCol_scream, self)
 end
 
 function Player:destroyChatColShapes( )
@@ -473,28 +476,27 @@ function Player:destroyChatColShapes( )
 	if self.chatCol_whisper then destroyElement(self.chatCol_whisper) end
 end
 
-function Player:getPlayersInChatRange( irange) 
+function Player:getPlayersInChatRange( irange)
 	local colShape
 	if irange == 0 then
 		colShape = self.chatCol_whisper
 	elseif irange == 1 then
 		colShape = self.chatCol_talk
-	elseif irange == 2 then 
+	elseif irange == 2 then
 		colShape = self.chatCol_scream
 	end
 	local playersInRange = {	}
 	local elementTable = getElementsWithinColShape( colShape,"player")
 	local player,dimension,interior,check
-	for index = 1,#elementTable do 
+	for index = 1,#elementTable do
 		player = elementTable[index]
 		dimension = player.dimension
 		interior = player.interior
-		if interior == self.interior then 
-			if dimension == self.dimension then 
+		if interior == self.interior then
+			if dimension == self.dimension then
 				playersInRange[#playersInRange+1] = player
 			end
 		end
 	end
 	return playersInRange
 end
-
