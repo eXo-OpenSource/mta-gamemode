@@ -85,6 +85,7 @@ if DEBUG then
 
 	function Debugging:getpos(cmd)
 		outputChatBox(("Position: %.2f, %.2f, %.2f"):format(getElementPosition(getPedOccupiedVehicle(localPlayer) or localPlayer)))
+		outputChatBox(("Rotation: %.2f, %.2f, %.2f"):format(getElementRotation(getPedOccupiedVehicle(localPlayer) or localPlayer)))
 	end
 
 	function Debugging:setpos(cmd, x, y, z)

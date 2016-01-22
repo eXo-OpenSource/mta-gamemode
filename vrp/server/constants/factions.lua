@@ -2,6 +2,7 @@ factionColors = {}
 factionRankNames = {}
 factionSkins = {}
 factionWeapons = {}
+evilFactionInteriorEnter = {}
 
 -- ID 1 = Police Departement:
 factionRankNames[1] = {
@@ -72,3 +73,4 @@ factionRankNames[5] = {
 factionColors[5] = {["r"] = 100,["g"] = 100,["b"] = 100}
 factionSkins[5] = {[111]=true, [112]=true, [113]=true, [124]=true, [125]=true, [126]=true, [127]=true,[237]=true,[272]=true}
 factionWeapons[5] = {[4]=true,[24]=true,[25]=true,[29]=true,[41]=true}
+evilFactionInteriorEnter[5] = {["x"] = 691.58, ["y"]= -1275.94, ["z"] = 13.56}

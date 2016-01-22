@@ -57,6 +57,18 @@ function Faction:getShortName()
 	return self.m_Name_Short
 end
 
+function Faction:getRandomSkin()
+	local i = 1
+	local skins = {}
+	for skinId,bool in pairs(self.m_Skins) do
+		if bool == true then
+			skins[i] = skinId
+			i = i+1
+		end
+	end
+	return skins[math.random(1,#skins)]
+end
+
 function Faction:changeSkin(player)
 	local curskin = getElementModel(player)
 	suc = false

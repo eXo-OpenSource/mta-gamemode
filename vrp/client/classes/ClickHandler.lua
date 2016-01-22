@@ -129,6 +129,19 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		end
 		return true
 	end
+	
+	-- Phase 3: Check for clickable NPC
+	if getElementType(element) == "ped" and getElementData(element, "clickable") then
+		if trigger then
+			if button == "left" then
+				if getElementData(element, "factionWeaponShopPed") then
+					triggerServerEvent("openFactionWeaponShopGUI", localPlayer)
+				end
+			elseif button == "right" then
+			end
+		end
+		return true
+	end
 
 	-- Phase 3: Check models
 	if self:checkModels(model, 1775, 1776, 1209) then

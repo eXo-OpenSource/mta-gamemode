@@ -22,7 +22,7 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy"}
+	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","openFactionWeaponShopGUI"}
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
@@ -33,12 +33,12 @@ function FactionManager:constructor()
 	addEventHandler("factionInvitationDecline", root, bind(self.Event_factionInvitationDecline, self))
 	addEventHandler("factionRankUp", root, bind(self.Event_factionRankUp, self))
 	addEventHandler("factionRankDown", root, bind(self.Event_factionRankDown, self))
-	addCommandHandler("shop",bind(self.openFactionWeaponShopGUI, self))
+	addEventHandler("openFactionWeaponShopGUI", root, bind(self.Event_openFactionWeaponShopGUI, self))
 	addEventHandler("factionReceiveWeaponShopInfos", root, bind(self.Event_receiveFactionWeaponShopInfos, self))
 	addEventHandler("factionWeaponShopBuy", root, bind(self.Event_factionWeaponShopBuy, self))
 
 
-	
+
 	FactionState:getSingleton():new()
 	FactionEvil:getSingleton():new(self.EvilFactions)
 end
@@ -58,16 +58,16 @@ function FactionManager:loadFactions()
     for i, factionRow in ipairs(result2) do
       players[factionRow.Id] = factionRow.FactionRank
     end
-	
+
 	local FactionType = "Default"
 	if self.StateFactions[row.Id] == true then FactionType = "State" elseif self.EvilFactions[row.Id] == true then FactionType = "Evil" end
-	
+
 	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],row.Depot,FactionType)
     FactionManager.Map[row.Id] = instance
   end
 end
 
-function FactionManager:getMap()
+function FactionManager:getAllFactions()
 	return self.Map
 end
 
@@ -263,9 +263,11 @@ function FactionManager:Event_factionRankDown(playerId)
 	end
 end
 
-function FactionManager:openFactionWeaponShopGUI(player)
-	local faction = player:getFaction()
-	player:triggerEvent("showFactionWeaponShopGUI",faction.m_ValidWeapons)
+function FactionManager:Event_openFactionWeaponShopGUI()
+	local faction = client:getFaction()
+	if faction then
+		client:triggerEvent("showFactionWeaponShopGUI",faction.m_ValidWeapons)
+	end
 end
 
 function FactionManager:Event_receiveFactionWeaponShopInfos()
