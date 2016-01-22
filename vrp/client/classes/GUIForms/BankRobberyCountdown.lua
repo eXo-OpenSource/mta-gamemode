@@ -52,6 +52,8 @@ addEventHandler("bankRobberyCountdown", root,
 addEvent("bankRobberyCountdownStop", true)
 addEventHandler("bankRobberyCountdownStop", root,
 	function(seconds)
-		BankRobberyCountdown:getSingleton():stopCountdown()
+		if BankRobberyCountdown:isInstantiated() then
+			BankRobberyCountdown:getSingleton():stopCountdown()
+		end
 	end
 )

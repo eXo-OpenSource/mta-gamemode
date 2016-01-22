@@ -53,7 +53,7 @@ function Core:constructor()
 	InteriorManager:new()
 	FactionManager:new()
 	CompanyManager:new()
-	
+
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
@@ -63,6 +63,9 @@ function Core:constructor()
 	VehicleSpawner.initializeAll()
 	PayNSpray.initializeAll()
 	GasStation.initializeAll()
+
+	-- Generate Missions
+	MStealWeaponTruck:new()
 
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")
