@@ -45,6 +45,10 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	
 end
 
+function FactionWeaponShopGUI:destuctor()	
+	removeEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWeaponShopGUI, self))
+end
+
 function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(depotWeapons)
 	for k,v in pairs(self.m_validWeapons) do
 		if v == true then
@@ -105,11 +109,11 @@ function FactionWeaponShopGUI:updateButtons()
 				end
 			end
 			
-			if self.depot[weaponID]["Waffe"] == 0 then
+			if self.depot[weaponID]["Waffe"] <= 0 then
 				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
 			end
 			
-			if self.depot[weaponID]["Munition"] == 0 then
+			if self.depot[weaponID]["Munition"] <= 0 then
 				if self.m_WeaponsBuyMunition[weaponID] then
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 				end
@@ -185,10 +189,6 @@ end
 
 function FactionWeaponShopGUI:factionWeaponShopBuy()
 	triggerServerEvent("factionWeaponShopBuy",root,self.m_Cart)
-end
-
-function FactionWeaponShopGUI:destuctor()	
-	--removeEventHandler("depotRetrieveInfo", root, bind(self.Event_depotRetrieveInfo, self))
 end
 
 addEventHandler("showFactionWeaponShopGUI", root,
