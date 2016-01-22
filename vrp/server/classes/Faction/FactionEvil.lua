@@ -34,6 +34,8 @@ function FactionEvil:createInterior(Id)
 	setElementInterior(self.WeaponPed[Id], 8)
 	setElementData(self.WeaponPed[Id],"clickable",true) -- Makes Ped clickable
 	setElementData(self.WeaponPed[Id],"factionWeaponShopPed",true)  -- Set factionWeaponShopPed for clickable
+	setElementData(self.WeaponPed[Id],"factionId",Id)
+
 	local int = {
 		createObject(351, 2818, -1173.6, 1025.6, 80, 340, 0),
 		createObject(348, 2813.6001, -1166.8, 1025.64, 90, 0, 332),

@@ -28,7 +28,7 @@ end
 function Player:onUpdateSync(private, public)
 	for k, v in pairs(private or {}) do
 		self.m_PrivateSync[k] = v
-		
+
 		local f = self.m_PrivateSyncChangeHandler[k]
 		if f then f(v) end
 	end
@@ -55,6 +55,10 @@ end
 
 function Player:getGroupName()
 	return self:getPublicSync("GroupName") or ""
+end
+
+function Player:getFactionId()
+	return self:getPublicSync("FactionId") or 0
 end
 
 function Player:getFactionName()

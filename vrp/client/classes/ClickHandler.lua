@@ -129,13 +129,17 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		end
 		return true
 	end
-	
+
 	-- Phase 3: Check for clickable NPC
 	if getElementType(element) == "ped" and getElementData(element, "clickable") then
 		if trigger then
 			if button == "left" then
 				if getElementData(element, "factionWeaponShopPed") then
-					triggerServerEvent("openFactionWeaponShopGUI", localPlayer)
+					if getElementData(element, "factionId") == localPlayer:getFactionId() then
+						triggerServerEvent("openFactionWeaponShopGUI", localPlayer)
+					else
+						ErrorBox:new(_"Dieser Waffenverkäufer liefert nicht für deine Fraktion!")
+					end
 				end
 			elseif button == "right" then
 			end
@@ -143,7 +147,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		return true
 	end
 
-	-- Phase 3: Check models
+	-- Phase 4: Check models
 	if self:checkModels(model, 1775, 1776, 1209) then
 		if trigger then
 			if button == "left" then
@@ -170,7 +174,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		return true
 	end
 
-	-- Phase 4: Check element types
+	-- Phase 5: Check element types
 	if self.m_Menu[elementType] then
 		if trigger then
 			if button == "left" then

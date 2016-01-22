@@ -12,8 +12,8 @@ addRemoteEvents{"showFactionWeaponShopGUI","updateFactionWeaponShopGUI"}
 
 function FactionWeaponShopGUI:constructor(validWeapons)
 	GUIForm.constructor(self, screenWidth/2-370, screenHeight/2-230, 740, 460)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fraktions Waffenshop", true, true, self)
-	
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fraktions Waffenshop - "..localPlayer:getFactionName(), true, true, self)
+
 	self.m_Cart = {}
 
 	self.m_WeaponsImage = {}
@@ -25,9 +25,9 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	self.m_WaffenAnzahl = 0
 	self.m_WaffenRow = 0
 	self.m_WaffenColumn = 0
-	
+
 	self.m_validWeapons = validWeapons
-	
+
 	GUILabel:new(400,220, 320, 35, "Warenkorb:", self.m_Window)
 	self.m_CartGrid = GUIGridList:new(400, 250, 320, 180, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
@@ -39,13 +39,13 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	self.m_buy.onLeftClick = bind(self.factionWeaponShopBuy,self)
 
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWeaponShopGUI, self))
-	
+
 	self:getPlayerWeapons()
 	self:factionReceiveWeaponShopInfos()
-	
+
 end
 
-function FactionWeaponShopGUI:destuctor()	
+function FactionWeaponShopGUI:destuctor()
 	removeEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWeaponShopGUI, self))
 end
 
@@ -70,7 +70,7 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 	self.m_WeaponsBuyGun[weaponID] = GUIButton:new(25+self.m_WaffenRow*120, 170+self.m_WaffenColumn*200, 100, 20,"+ Waffe", self)
 	self.m_WeaponsBuyGun[weaponID]:setBackgroundColor(Color.Red):setFontSize(1)
 	self.m_WeaponsBuyGun[weaponID].onLeftClick = bind(self.addItemToCart,self,"weapon",weaponID)
-	
+
 	if weaponID >=22 and weaponID <= 43 then
 		self.m_WeaponsBuyMunition[weaponID] = GUIButton:new(25+self.m_WaffenRow*120, 195+self.m_WaffenColumn*200, 100, 20,"+ Magazin", self)
 		self.m_WeaponsBuyMunition[weaponID]:setBackgroundColor(Color.Blue):setFontSize(1)
@@ -79,22 +79,22 @@ function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 			self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 		end
 	end
-	
+
 	if not(self.m_Cart[weaponID]) then
 		self.m_Cart[weaponID] = {}
 		self.m_Cart[weaponID]["Waffe"] = 0
 		self.m_Cart[weaponID]["Munition"] = 0
 	end
-	
+
 	self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
-	
+
 	if self.m_WaffenAnzahl == 6 or self.m_WaffenAnzahl == 9 then
 		self.m_WaffenRow = 0
 		self.m_WaffenColumn = self.m_WaffenColumn+1
 	else
 		self.m_WaffenRow = self.m_WaffenRow+1
 	end
-	
+
 end
 
 function FactionWeaponShopGUI:updateButtons()
@@ -112,11 +112,11 @@ function FactionWeaponShopGUI:updateButtons()
 					self.m_Cart[weaponID]["Munition"] = 0
 				end
 			end
-			
+
 			if self.depot[weaponID]["Waffe"]-self.m_Cart[weaponID]["Waffe"] <= 0 then
 				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
 			end
-			
+
 			if self.depot[weaponID]["Munition"]-self.m_Cart[weaponID]["Munition"] <= 0 then
 				if self.m_WeaponsBuyMunition[weaponID] then
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
@@ -157,9 +157,9 @@ end
 
 function FactionWeaponShopGUI:deleteItemFromCart()
 	local item = self.m_CartGrid:getSelectedItem()
-	
+
 	self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
-	
+
 	self:updateCart()
 	self:updateButtons()
 end
@@ -167,7 +167,7 @@ end
 function FactionWeaponShopGUI:addItemToCart(typ,weapon)
 	if typ == "weapon" then self.m_Cart[weapon]["Waffe"] = self.m_Cart[weapon]["Waffe"]+1 end
 	if typ == "munition" then self.m_Cart[weapon]["Munition"] = self.m_Cart[weapon]["Munition"]+1 end
-	
+
 	self:updateCart()
 	self:updateButtons()
 end
