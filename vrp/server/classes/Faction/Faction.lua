@@ -21,7 +21,7 @@ function Faction:constructor(id, name_short, name, bankAccountId, players,ranks,
 	self.m_Type = factionType
 	self.m_Color = factionColors[id]
 	self.m_Skins = factionSkins[id]
-	self.m_ValidWeapons = factionWeapons[id]	
+	self.m_ValidWeapons = factionWeapons[id]
 	self.m_Depot = Depot.load(depotId,id)
 end
 
@@ -75,7 +75,7 @@ function Faction:changeSkin(player)
 				break
 			end
 		end
-	end	
+	end
 end
 
 function Faction:rearm(player)

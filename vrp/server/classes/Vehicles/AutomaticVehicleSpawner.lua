@@ -19,6 +19,7 @@ function AutomaticVehicleSpawner:constructor(model, x, y, z, rx, ry, rz, createf
 
 	local w, h = 3.5, 8
 
+	if rz < 0 then rz = -rz end
 	if rz > 45 and rz < 135 or rz > 225 and rz < 315 then
 		local a, b = w, h
 		h, w = a, b
