@@ -16,16 +16,16 @@ function DrivingSchool:constructor()
   -- Helicopter
   for i = 1, 2, 1 do
     AutomaticVehicleSpawner:new(487, 1909.57 + (i-1)*12, -2244.180, 13.8, 0, 0, 180, bind(self.onVehicleSpawn, self), nil, function (...) return self:onVehiceEnter(...) end)
-  end
+    end
 
   -- Plane
   AutomaticVehicleSpawner:new(593, 1933.5, -2244.180, 14.1, 0, 0, 180, bind(self.onVehicleSpawn, self), nil, function (...) return self:onVehiceEnter(...) end)
   AutomaticVehicleSpawner:new(489, 1895.3, -2244.35, 13.6, 0, 0, 180, bind(self.onVehicleSpawn, self), nil, function (...) return self:onVehiceEnter(...) end)
 
   -- Create Barriers
-  VehicleBarrier:new(Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 88), function (...) return self:onBarrierHit(...) end)
-  VehicleBarrier:new(Vector3(1345.19, -1722.80, 13.39), Vector3(0, 90, 0), function (...) return self:onBarrierHit(...) end)
-  VehicleBarrier:new(Vector3(1354.80, -1591.00, 13.39), Vector3(0, 90, 161), function (...) return self:onBarrierHit(...) end)
+  VehicleBarrier:new(Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 88)).onBarrierHit = function (...) return self:onBarrierHit(...) end
+  VehicleBarrier:new(Vector3(1345.19, -1722.80, 13.39), Vector3(0, 90, 0)).onBarrierHit = function (...) return self:onBarrierHit(...) end
+  VehicleBarrier:new(Vector3(1354.80, -1591.00, 13.39), Vector3(0, 90, 161), 0).onBarrierHit = function (...) return self:onBarrierHit(...) end
 end
 
 function DrivingSchool:destructor()
