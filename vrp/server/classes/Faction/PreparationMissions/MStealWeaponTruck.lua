@@ -1,5 +1,5 @@
 MStealWeaponTruck = inherit(Singleton)
-local TIME_UNTIL_CLOSE = 120*1000
+local TIME_UNTIL_CLOSE = 30*1000
 --local TIME_BETWEEN_ACTION = 1*60*60*1000
 local TIME_BETWEEN_ACTION = 20*1000
 
@@ -8,7 +8,9 @@ function MStealWeaponTruck:constructor()
   self.m_Gate1:setRotation(0, 0, 90)
   self.m_Gate2 = createObject(975, Vector3(2720.5, -2503.9, 13.60))
   self.m_Gate2:setRotation(0, 0, 90)
-  self.m_GateState = {true, true}
+  self.m_Gate3 = createObject(980, Vector3(2774.4, -2455.7, 14.4))
+  self.m_Gate3:setRotation(0, 0, 90)
+  self.m_GateState = {true, true, true}
 
   self:respawnGuardPed1()
   self:respawnGuardPed2()
@@ -69,6 +71,10 @@ function MStealWeaponTruck:delayedClose()
     end
   end
 
+  -- Spawn Guard Peds
+  self:respawnGuardPed3()
+  self:respawnGuardPed4()
+
   -- Create the Truck
   self:createTruck()
 end
@@ -82,11 +88,20 @@ function MStealWeaponTruck:close()
   if self.m_GateState[2] == false then
     self:toggleGate2()
   end
+  if self.m_GateState[3] == false then
+    self:toggleGate3()
+  end
   if isElement(self.m_GuardPed1) then
 		self.m_GuardPed1:destroy()
   end
   if isElement(self.m_GuardPed2) then
 		self.m_GuardPed2:destroy()
+  end
+  if isElement(self.m_GuardPed3) then
+      self.m_GuardPed3:destroy()
+  end
+  if isElement(self.m_GuardPed4) then
+      self.m_GuardPed4:destroy()
   end
 
   -- Destroy the Truck
@@ -116,6 +131,16 @@ function MStealWeaponTruck:toggleGate2()
   end
 end
 
+function MStealWeaponTruck:toggleGate3()
+  if self.m_GateState[3] == true then
+    self.m_Gate3:move(2000, self.m_Gate3:getPosition() + self.m_Gate3.matrix.up*-4.5)
+    self.m_GateState[3] = false
+  else
+    self.m_Gate3:move(2000, self.m_Gate3:getPosition() + self.m_Gate3.matrix.up*4.5)
+    self.m_GateState[3] = true
+  end
+end
+
 function MStealWeaponTruck:respawnGuardPed1()
 	if isElement(self.m_GuardPed1) then
 		self.m_GuardPed1:destroy()
@@ -136,6 +161,26 @@ function MStealWeaponTruck:respawnGuardPed2()
 	addEventHandler("onPedWasted", self.m_GuardPed2, bind(self.GuardPed2_Wasted, self))
 end
 
+function MStealWeaponTruck:respawnGuardPed3()
+	if isElement(self.m_GuardPed3) then
+		self.m_GuardPed3:destroy()
+	end
+	self.m_GuardPed3 = GuardActor:new(Vector3(2773.834, -2461.304, 13.637))
+	self.m_GuardPed3:setRotation(0, 0, 90)
+	self.m_GuardPed3:setFrozen(true)
+	addEventHandler("onPedWasted", self.m_GuardPed3, bind(self.GuardPed3_Wasted, self))
+end
+
+function MStealWeaponTruck:respawnGuardPed4()
+	if isElement(self.m_GuardPed4) then
+		self.m_GuardPed4:destroy()
+	end
+	self.m_GuardPed4 = GuardActor:new(Vector3(2773.835, -2450.368, 13.637))
+	self.m_GuardPed4:setRotation(0, 0, 90)
+	self.m_GuardPed4:setFrozen(true)
+	addEventHandler("onPedWasted", self.m_GuardPed4, bind(self.GuardPed4_Wasted, self))
+end
+
 function MStealWeaponTruck:GuardPed1_Wasted(totalAmmo, killer)
   -- Report the kill crime, but do not report jailbreak yet
   killer:reportCrime(Crime.Kill)
@@ -152,12 +197,27 @@ function MStealWeaponTruck:GuardPed2_Wasted(totalAmmo, killer)
   self:delayedClose()
 end
 
+function MStealWeaponTruck:GuardPed3_Wasted(totalAmmo, killer)
+  -- Report the kill crime, but do not report jailbreak yet
+  killer:reportCrime(Crime.Kill)
+
+  self.m_Truck:setLocked(false)
+end
+
+function MStealWeaponTruck:GuardPed4_Wasted(totalAmmo, killer)
+  -- Report the kill crime, but do not report jailbreak yet
+  killer:reportCrime(Crime.Kill)
+
+  self:toggleGate3()
+end
+
 function MStealWeaponTruck:createTruck()
     if self.m_Truck then return false end
 
     self.m_Truck = TemporaryVehicle.create(515, 2784.753, -2456.110, 14.651, 90)
     self.m_Truck:setData("WeaponTruck", true)
     self.m_Truck:setColor(0, 0, 0)
+    self.m_Truck:setLocked(true)
     self.m_Trailer = TemporaryVehicle.create(435, 2794.614, -2456.069, 13.632 , 90)
     self.m_Trailer:setData("WeaponTruck", true)
     self.m_Trailer:setVariant(1, 1)
@@ -167,8 +227,7 @@ end
 
 function MStealWeaponTruck:destroyTruck()
     if not self.m_Truck then return false end
-    destroyElement(self.m_Truck)
-    destroyElement(self.m_Trailer)
+    destroyElement(self.m_Truck) -- Trailer gets automatically destroyed!
     self.m_Truck = false
     self.m_Trailer = false
 end
