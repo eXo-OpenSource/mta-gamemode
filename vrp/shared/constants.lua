@@ -91,8 +91,8 @@ BankStat = {
 
 GroupRank = {
 	Normal = 0,
-	Manager = 5,
-	Leader = 6
+	Manager = 1,
+	Leader = 2
 }
 
 FactionRank = {
