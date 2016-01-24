@@ -197,6 +197,14 @@ function Faction:setMoney(amount)
   return self.m_BankAccount:setMoney(amount)
 end
 
+function Faction:setRankLoan(rank,amount)
+  self.m_RankLoans[tostring(rank)] = amount
+end
+
+function Faction:setRankSkin(rank,skinId)
+  self.m_RankSkins[tostring(rank)] = skinId
+end
+
 function Faction:getPlayers(getIDsOnly)
 	if getIDsOnly then
 		return self.m_Players

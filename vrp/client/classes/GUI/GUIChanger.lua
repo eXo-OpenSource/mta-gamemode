@@ -59,6 +59,14 @@ function GUIChanger:setIndex(index, dontTriggerChangeEvent)
 	self:anyChange()
 end
 
+function GUIChanger:setSelectedItem(item)
+	for k,v in ipairs(self.m_Items) do
+		if item == v then
+			self:setIndex(k)
+		end
+	end
+end
+
 function GUIChanger:getIndex()
 	return self.m_Items[self.m_CurrentItem], self.m_CurrentItem
 end

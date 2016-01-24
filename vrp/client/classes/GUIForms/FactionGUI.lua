@@ -83,26 +83,33 @@ function FactionGUI:addLeaderTab()
 		self.m_SkinVorschau.onUnhover = function () self.m_SkinVorschau:setColor(Color.LightBlue) end
 		self.m_SkinVorschau.onLeftClick = bind(self.SkinVorschauClick, self)
 
+		self.m_SaveRank = VRPButton:new(self.m_Width*0.65, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang Speichern", true, tabLeader)
+		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 
 		for rank,name in pairs(self.m_RankNames) do
 			local item = self.m_FactionRangGrid:addItem(rank, name)
 			item.Id = rank
 			item.onLeftClick = function()
 				self.m_LeaderRankName:setText(name.." - "..rank)
-				--self.m_LeaderLoan:setText(self.m_rankLoans[tostring(rank)])
-
+				self.m_LeaderLoan:setText(tostring(self.m_rankLoans[tostring(rank)]))
+				self.m_selectedRank = rank
 				for skinId,bool in pairs(self.m_skins) do
 					if bool == true then
 						self.m_SkinChanger:addItem(skinId)
+
 					end
 				end
-
+				self.m_SkinChanger:setSelectedItem(self.m_rankSkins[tostring(rank)])
 			end
 		end
 
 
 		self.m_LeaderTab = true
 	end
+end
+
+function FactionGUI:saveRank()
+	triggerServerEvent("factionSaveRank",localPlayer,self.m_selectedRank,self.m_SkinChanger:getIndex(),self.m_LeaderLoan:getText())
 end
 
 function FactionGUI:SkinVorschauClick()

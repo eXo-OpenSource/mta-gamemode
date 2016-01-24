@@ -22,7 +22,7 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","openFactionWeaponShopGUI"}
+	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","openFactionWeaponShopGUI","factionSaveRank"}
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
@@ -36,7 +36,7 @@ function FactionManager:constructor()
 	addEventHandler("openFactionWeaponShopGUI", root, bind(self.Event_openFactionWeaponShopGUI, self))
 	addEventHandler("factionReceiveWeaponShopInfos", root, bind(self.Event_receiveFactionWeaponShopInfos, self))
 	addEventHandler("factionWeaponShopBuy", root, bind(self.Event_factionWeaponShopBuy, self))
-
+	addEventHandler("factionSaveRank", root, bind(self.Event_factionSaveRank, self))
 
 
 	FactionState:getSingleton():new()
@@ -75,6 +75,16 @@ function FactionManager:getFromId(Id)
 	return self.Map[Id]
 end
 
+function FactionManager:Event_factionSaveRank(rank,skinId,loan)
+	local faction = client:getFaction()
+	if faction then
+		faction:setRankSkin(rank,skinId)
+		faction:setRankLoan(rank,loan)
+		faction:save()
+		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
+		self:sendInfosToClient(client)
+	end
+end
 
 function FactionManager:Event_factionRequestInfo()
 	self:sendInfosToClient(client)
