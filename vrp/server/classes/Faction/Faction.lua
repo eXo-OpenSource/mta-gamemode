@@ -10,18 +10,25 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(id, name_short, name, bankAccountId, players,ranks,depotId,factionType)
+function Faction:constructor(id, name_short, name, bankAccountId, players,rankLoans,rankSkins,depotId,factionType)
 	self.m_Id = id
 	self.m_Name_Short = name_short
 	self.m_Name = name
 	self.m_Players = players
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
 	self.m_Invitations = {}
-	self.m_RankNames = ranks
-	self.m_Type = factionType
-	self.m_Color = factionColors[id]
+	self.m_RankNames = factionRankNames[id]
 	self.m_Skins = factionSkins[id]
 	self.m_ValidWeapons = factionWeapons[id]
+	self.m_Color = factionColors[id]
+
+	if rankLoans == "" then	rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for faction "..id) end
+	if rankSkins == "" then	rankSkins = {} for i=0,6 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for faction "..id) end
+
+	self.m_RankLoans = fromJSON(rankLoans)
+	self.m_RankSkins = fromJSON(rankSkins)
+	self.m_Type = factionType
+
 	self.m_Depot = Depot.load(depotId,id)
 end
 
@@ -29,6 +36,12 @@ function Faction:destructor()
 	if self.m_BankAccount then
 		delete(self.m_BankAccount)
 	end
+	self:save()
+end
+
+function Faction:save()
+	outputDebug("Saved Faction "..self.m_Id)
+	sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ? WHERE Id = ?",sql:getPrefix(),toJSON(self.m_RankLoans),toJSON(self.m_RankSkins),self.m_Id)
 end
 
 function Faction:isStateFaction()

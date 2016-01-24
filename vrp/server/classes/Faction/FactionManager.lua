@@ -51,7 +51,7 @@ end
 
 function FactionManager:loadFactions()
   outputServerLog("Loading factions...")
-  local result = sql:queryFetch("SELECT Id, Name, Name_Short, BankAccount,Depot FROM ??_factions", sql:getPrefix())
+  local result = sql:queryFetch("SELECT * FROM ??_factions", sql:getPrefix())
   for k, row in ipairs(result) do
     local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
     local players = {}
@@ -62,7 +62,7 @@ function FactionManager:loadFactions()
 	local FactionType = "Default"
 	if self.StateFactions[row.Id] == true then FactionType = "State" elseif self.EvilFactions[row.Id] == true then FactionType = "Evil" end
 
-	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,factionRankNames[row.Id],row.Depot,FactionType)
+	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,row.RankLoans,row.RankSkins,row.Depot,FactionType)
     FactionManager.Map[row.Id] = instance
   end
 end
@@ -77,10 +77,14 @@ end
 
 
 function FactionManager:Event_factionRequestInfo()
+	self:sendInfosToClient(client)
+end
+
+function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
+		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(),faction.m_Skins,faction.m_RankNames,faction.m_RankLoans,faction.m_RankSkins,faction.m_ValidWeapons)
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end
@@ -96,7 +100,7 @@ function FactionManager:Event_factionQuit()
 	end
 	faction:removePlayer(client)
 	client:sendSuccess(_("Du hast die Fraktion erfolgreich verlassen!", client))
-	client:triggerEvent("factionRetrieveInfo")
+	self:sendInfosToClient(client)
 end
 
 function FactionManager:Event_factionDeposit(amount)
@@ -110,7 +114,7 @@ function FactionManager:Event_factionDeposit(amount)
 
 	client:takeMoney(amount)
 	faction:giveMoney(amount)
-	client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
+	self:sendInfosToClient(client)
 end
 
 function FactionManager:Event_factionWithdraw(amount)
@@ -130,7 +134,7 @@ function FactionManager:Event_factionWithdraw(amount)
 
 	faction:takeMoney(amount)
 	client:giveMoney(amount)
-	client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
+	self:sendInfosToClient(client)
 end
 
 function FactionManager:Event_factionAddPlayer(player)
@@ -185,7 +189,7 @@ function FactionManager:Event_factionDeleteMember(playerId)
 	end
 
 	faction:removePlayer(playerId)
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
+	self:sendInfosToClient(client)
 end
 
 function FactionManager:Event_factionInvitationAccept(factionId)
@@ -199,7 +203,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 		faction:addPlayer(client)
 		faction:removeInvitation(client)
 		faction:sendMessage(_("%s ist soeben der Fraktion beigetreten", client, getPlayerName(client)))
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
+		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
 	end
@@ -212,7 +216,7 @@ function FactionManager:Event_factionInvitationDecline(factionId)
 	if faction:hasInvitation(client) then
 		faction:removeInvitation(client)
 		faction:sendMessage(_("%s hat die Fraktionneinladung abgelehnt", client, getPlayerName(client)))
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
+		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
 	end
@@ -235,7 +239,7 @@ function FactionManager:Event_factionRankUp(playerId)
 
 	if faction:getPlayerRank(playerId) < FactionRank.Manager then
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) + 1)
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
+		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
 	end
@@ -259,7 +263,7 @@ function FactionManager:Event_factionRankDown(playerId)
 
 	if faction:getPlayerRank(playerId) >= FactionRank.Manager then
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
+		self:sendInfosToClient(client)
 	end
 end
 
