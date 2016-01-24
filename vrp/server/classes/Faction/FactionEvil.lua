@@ -20,8 +20,6 @@ function FactionEvil:constructor()
 			self:createInterior(Id)
 		end
 	end
-
-	WeaponTruck:getSingleton():new()
 end
 
 function FactionEvil:destructor()

@@ -19,9 +19,9 @@ function CompanyManager:constructor()
     end
 
     if Company.DerivedClasses[row.Id] then
-      self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}))
+      self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}))
     else
-      self:addRef(Company:new(row.Id, row.Name, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}))
+      self:addRef(Company:new(row.Id, row.Name, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}))
     end
   end
 

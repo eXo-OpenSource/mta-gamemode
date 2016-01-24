@@ -13,20 +13,44 @@ function MStealWeaponTruck:constructor()
   self:respawnGuardPed1()
   self:respawnGuardPed2()
 
-  self.m_CanBeStarted = true
-  self.m_ResetInProgress = false
+  self.m_CloseStarted = false
 
   self.m_Area = ColShape.Cuboid(Vector3(2685.642, -2513.948, 12.142), 120, 130, 15)
-  addEventHandler("onColShapeLeave", self.m_Area,
-  function(ele, matchingDimension)
-    if not matchingDimension then return end
-    if ele:getType() ~= "player" then return end
-    ele:triggerEvent("bankRobberyCountdownStop")
-  end)
+  addEventHandler("onColShapeHit", self.m_Area, bind(self.onZoneHit, self))
+  addEventHandler("onColShapeLeave", self.m_Area, bind(self.onZoneLeft, self))
+
+  self.m_Truck = false
+  self.m_Trailer = false
 end
 
 function MStealWeaponTruck:destructor()
 
+end
+
+function MStealWeaponTruck:onZoneHit(ele, matchingDimension)
+    if not matchingDimension then return end
+    if ele:getType() == "player" then
+        if self.m_CloseStarted then
+            ele:triggerEvent("bankRobberyCountdown", math.floor((TIME_UNTIL_CLOSE-(getTickCount()-self.m_CloseStarted))/1000))
+        end
+    end
+end
+
+function MStealWeaponTruck:onZoneLeft(ele, matchingDimension)
+    if not matchingDimension then return end
+    if ele:getType() == "player" then
+        ele:triggerEvent("bankRobberyCountdownStop")
+
+        local Truck = ele:getOccupiedVehicle()
+        if Truck then
+            if Truck == self.m_Truck then
+                WeaponTruck:new(self.m_Truck, ele)
+
+                self.m_Truck = false
+                self.m_Trailer = false
+            end
+        end
+    end
 end
 
 function MStealWeaponTruck:reset()
@@ -34,20 +58,23 @@ function MStealWeaponTruck:reset()
   self:respawnGuardPed2()
 end
 
-function MStealWeaponTruck:delayedClose(delay)
-  if self.m_ResetInProgress then return end
-  self.m_CloseInProgress = true
-  setTimer(bind(self.close, self), delay, 1)
+function MStealWeaponTruck:delayedClose()
+  if self.m_CloseStarted then return end
+  self.m_CloseStarted = getTickCount()
+  setTimer(bind(self.close, self), TIME_UNTIL_CLOSE, 1)
 
   for i, v in pairs(self.m_Area:getElementsWithin()) do
     if v:getType() == "player" then
-      v:triggerEvent("bankRobberyCountdown", delay/1000)
+      v:triggerEvent("bankRobberyCountdown", TIME_UNTIL_CLOSE/1000)
     end
   end
+
+  -- Create the Truck
+  self:createTruck()
 end
 
 function MStealWeaponTruck:close()
-  self.m_CloseInProgress = false
+  self.m_CloseStarted = false
 
   if self.m_GateState[1] == false then
     self:toggleGate1()
@@ -57,10 +84,13 @@ function MStealWeaponTruck:close()
   end
   if isElement(self.m_GuardPed1) then
 		self.m_GuardPed1:destroy()
-	end
+  end
   if isElement(self.m_GuardPed2) then
 		self.m_GuardPed2:destroy()
-	end
+  end
+
+  -- Destroy the Truck
+  self:destroyTruck()
 
   -- Reset it in an hour
   setTimer(bind(self.reset, self), TIME_BETWEEN_ACTION, 1)
@@ -110,18 +140,37 @@ function MStealWeaponTruck:GuardPed1_Wasted(totalAmmo, killer)
   -- Report the kill crime, but do not report jailbreak yet
   killer:reportCrime(Crime.Kill)
 
-	self:toggleGate1()
-  self:delayedClose(TIME_UNTIL_CLOSE)
-  self.m_CanBeStarted = false
+  self:toggleGate1()
+  self:delayedClose()
 end
 
 function MStealWeaponTruck:GuardPed2_Wasted(totalAmmo, killer)
   -- Report the kill crime, but do not report jailbreak yet
   killer:reportCrime(Crime.Kill)
 
-	self:toggleGate2()
-  self:delayedClose(TIME_UNTIL_CLOSE)
-  self.m_CanBeStarted = false
+  self:toggleGate2()
+  self:delayedClose()
+end
+
+function MStealWeaponTruck:createTruck()
+    if self.m_Truck then return false end
+
+    self.m_Truck = TemporaryVehicle.create(515, 2784.753, -2456.110, 14.651, 90)
+    self.m_Truck:setData("WeaponTruck", true)
+    self.m_Truck:setColor(0, 0, 0)
+    self.m_Trailer = TemporaryVehicle.create(435, 2794.614, -2456.069, 13.632 , 90)
+    self.m_Trailer:setData("WeaponTruck", true)
+    self.m_Trailer:setVariant(1, 1)
+    self.m_Trailer:setParent(self.m_Truck)
+    attachTrailerToVehicle(self.m_Truck, self.m_Trailer)
+end
+
+function MStealWeaponTruck:destroyTruck()
+    if not self.m_Truck then return false end
+    destroyElement(self.m_Truck)
+    destroyElement(self.m_Trailer)
+    self.m_Truck = false
+    self.m_Trailer = false
 end
 
 function MStealWeaponTruck:checkRequirements(player)

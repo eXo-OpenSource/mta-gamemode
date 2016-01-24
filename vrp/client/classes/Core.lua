@@ -40,7 +40,7 @@ function Core:ready()
 	TippManager:new()
 	JailBreak:new()
 	DimensionManager:new()
-	
+
 	-- Events
 	EventManager:new()
 	DMRaceEvent:new()

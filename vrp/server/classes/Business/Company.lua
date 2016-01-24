@@ -12,9 +12,10 @@ function Company.onInherit(derivedClass)
   Company.DerivedClasses[#Company.DerivedClasses+1] = derivedClass
 end
 
-function Company:constructor(Id, Name, players, lastNameChange, bankAccountId, Settings)
+function Company:constructor(Id, Name, Creator, players, lastNameChange, bankAccountId, Settings)
   self.m_Id = Id
   self.m_Name = Name
+  self.m_Creator = Creator
   self.m_Players = players or {}
   self.m_LastNameChange = lastNameChange or 0
   self.m_Invitations = {}
@@ -47,8 +48,8 @@ function Company:virtual_destructor(...)
   Company.destructor(self, ...)
 end
 
-function Company.create(Name)
-  if sql:queryExec("INSERT INTO ??_companies(Name) VALUES(?);", sql:getPrefix(), Name) then
+function Company.create(Name, Creator)
+  if sql:queryExec("INSERT INTO ??_companies(Name, Creator) VALUES(?, ?);", sql:getPrefix(), Name, Creator:getName()) then
     local company = Company:new(sql:lastInsertId(), Name)
 
     -- Add refernece
@@ -72,10 +73,6 @@ function Company:purge()
     return true
 	end
 	return false
-end
-
-function Company:getStaticId() -- Only for derived Classes! So return false :>
-  return false
 end
 
 function Company:getId()
@@ -177,4 +174,8 @@ end
 
 function Company:canVehiclesBeModified()
   return self.m_VehiclesCanBeModified
+end
+
+function Company:getCreator()
+    return self.m_Creator
 end
