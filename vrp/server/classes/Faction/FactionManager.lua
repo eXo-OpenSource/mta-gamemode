@@ -62,7 +62,7 @@ function FactionManager:loadFactions()
 	local FactionType = "Default"
 	if self.StateFactions[row.Id] == true then FactionType = "State" elseif self.EvilFactions[row.Id] == true then FactionType = "Evil" end
 
-	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,row.RankLoans,row.RankSkins,row.Depot,FactionType)
+	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,row.RankLoans,row.RankSkins,row.RankWeapons,row.Depot,FactionType)
     FactionManager.Map[row.Id] = instance
   end
 end
@@ -75,11 +75,12 @@ function FactionManager:getFromId(Id)
 	return self.Map[Id]
 end
 
-function FactionManager:Event_factionSaveRank(rank,skinId,loan)
+function FactionManager:Event_factionSaveRank(rank,skinId,loan,rankWeapons)
 	local faction = client:getFaction()
 	if faction then
 		faction:setRankSkin(rank,skinId)
 		faction:setRankLoan(rank,loan)
+		faction:setRankWeapons(rank,rankWeapons)
 		faction:save()
 		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
 		self:sendInfosToClient(client)
@@ -94,7 +95,7 @@ function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(),faction.m_Skins,faction.m_RankNames,faction.m_RankLoans,faction.m_RankSkins,faction.m_ValidWeapons)
+		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(),faction.m_Skins,faction.m_RankNames,faction.m_RankLoans,faction.m_RankSkins,faction.m_ValidWeapons,faction.m_RankWeapons)
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end

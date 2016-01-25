@@ -51,9 +51,20 @@ function FactionGUI:constructor()
 	self.m_FactionRemovePlayerButton.onLeftClick = bind(self.FactionRemovePlayerButton_Click, self)
 	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
 	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
-
+	
+	self.m_WaffenRow = 0
+	self.m_WaffenColumn = 0
+	self.m_WaffenAnzahl = 0
+	self.m_WeaponsName = {}
+	self.m_WeaponsImage = {}
+	self.m_WeaponsCheck = {}
+	
 	addRemoteEvents{"factionRetrieveInfo"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
+end
+
+function FactionGUI:destructor()
+	GUIForm.destructor(self)
 end
 
 function FactionGUI:onShow()
@@ -83,33 +94,79 @@ function FactionGUI:addLeaderTab()
 		self.m_SkinVorschau.onUnhover = function () self.m_SkinVorschau:setColor(Color.LightBlue) end
 		self.m_SkinVorschau.onLeftClick = bind(self.SkinVorschauClick, self)
 
-		self.m_SaveRank = VRPButton:new(self.m_Width*0.65, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang Speichern", true, tabLeader)
+		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang Speichern", true, tabLeader)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
+		self.m_SaveRank:setEnabled(false)
+		
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"Waffen:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 
+		for weaponID,v in pairs(self.m_validWeapons) do
+			if v == true then
+				self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.42+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.1, self.m_Height*0.05, getWeaponNameFromID(weaponID), tabLeader)
+				self.m_WeaponsName[weaponID]:setAlignX("center")
+				self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.46+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.08, self.m_Width*0.08, WeaponIcons[weaponID], tabLeader)
+				self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.58+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.2, self.m_Height*0.025, "aktiviert", tabLeader)
+				self.m_WeaponsCheck[weaponID]:setFontSize(1)
+				self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
+				if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 then
+					self.m_WaffenRow = 0
+					self.m_WaffenColumn = self.m_WaffenColumn+1
+				else
+					self.m_WaffenRow = self.m_WaffenRow+1
+				end
+				
+			end
+		end
+		
 		for rank,name in pairs(self.m_RankNames) do
 			local item = self.m_FactionRangGrid:addItem(rank, name)
 			item.Id = rank
 			item.onLeftClick = function()
-				self.m_LeaderRankName:setText(name.." - "..rank)
-				self.m_LeaderLoan:setText(tostring(self.m_rankLoans[tostring(rank)]))
-				self.m_selectedRank = rank
-				for skinId,bool in pairs(self.m_skins) do
-					if bool == true then
-						self.m_SkinChanger:addItem(skinId)
-
-					end
-				end
-				self.m_SkinChanger:setSelectedItem(self.m_rankSkins[tostring(rank)])
+				self.m_SelectedRank = rank
+				self:onSelectRank(name,rank)
 			end
 		end
-
 
 		self.m_LeaderTab = true
 	end
 end
 
 function FactionGUI:saveRank()
-	triggerServerEvent("factionSaveRank",localPlayer,self.m_selectedRank,self.m_SkinChanger:getIndex(),self.m_LeaderLoan:getText())
+	if self.m_SelectedRank then
+		local rankWeapons = self.m_rankWeapons[tostring(self.m_SelectedRank)]
+		for weaponID = 0, 46 do
+			if self.m_WeaponsCheck[weaponID] and self.m_WeaponsCheck[weaponID]:isChecked() == true then
+				rankWeapons[tostring(weaponID)] = 1
+			else
+				rankWeapons[tostring(weaponID)] = 0
+			end
+		end
+		
+		triggerServerEvent("factionSaveRank",localPlayer,self.m_SelectedRank,self.m_SkinChanger:getIndex(),self.m_LeaderLoan:getText(),rankWeapons)
+	end
+end
+
+function FactionGUI:onSelectRank(name,rank)
+	self.m_LeaderRankName:setText(name.." - "..rank)
+	self.m_LeaderLoan:setText(tostring(self.m_rankLoans[tostring(rank)]))
+	self.m_SaveRank:setEnabled(true)
+	for skinId,bool in pairs(self.m_skins) do
+		if bool == true then
+			self.m_SkinChanger:addItem(skinId)
+		end
+	end
+	
+	for weaponID,v in pairs(self.m_validWeapons) do
+		if v == true then
+			if self.m_rankWeapons[tostring(rank)][tostring(weaponID)] == 1 then
+				self.m_WeaponsCheck[weaponID]:setChecked(true)
+			else
+				self.m_WeaponsCheck[weaponID]:setChecked(false)
+			end
+		end
+	end
+	
+	self.m_SkinChanger:setSelectedItem(self.m_rankSkins[tostring(rank)])
 end
 
 function FactionGUI:SkinVorschauClick()
@@ -118,7 +175,7 @@ function FactionGUI:SkinVorschauClick()
 
 end
 
-function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players,skins, rankNames,rankLoans,rankSkins,validWeapons)
+function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players,skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons)
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
@@ -139,6 +196,7 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players,skin
 				self.m_rankLoans = rankLoans
 				self.m_rankSkins = rankSkins
 				self.m_validWeapons = validWeapons
+				self.m_rankWeapons = rankWeapons
 				self:addLeaderTab()
 			end
 		end

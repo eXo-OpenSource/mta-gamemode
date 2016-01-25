@@ -47,6 +47,7 @@ end
 
 function FactionWeaponShopGUI:destuctor()
 	removeEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWeaponShopGUI, self))
+	GUIForm.destructor(self)
 end
 
 function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(depotWeapons)

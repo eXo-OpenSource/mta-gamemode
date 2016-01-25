@@ -10,7 +10,7 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(id, name_short, name, bankAccountId, players,rankLoans,rankSkins,depotId,factionType)
+function Faction:constructor(id, name_short, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType)
 	self.m_Id = id
 	self.m_Name_Short = name_short
 	self.m_Name = name
@@ -24,13 +24,16 @@ function Faction:constructor(id, name_short, name, bankAccountId, players,rankLo
 
 	if rankLoans == "" then	rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for faction "..id) end
 	if rankSkins == "" then	rankSkins = {} for i=0,6 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for faction "..id) end
-
+	if rankWeapons == "" then rankWeapons = {} for i=0,6 do rankWeapons[i] = {} for wi=0,46 do rankWeapons[i][wi] = 0 end end rankWeapons = toJSON(rankWeapons) outputDebug("Created RankWeapons for faction "..id) end
+	
+	self.m_RankWeapons = fromJSON(rankWeapons)
 	self.m_RankLoans = fromJSON(rankLoans)
 	self.m_RankSkins = fromJSON(rankSkins)
 	self.m_Type = factionType
 
 	self.m_Depot = Depot.load(depotId,id)
 end
+
 
 function Faction:destructor()
 	if self.m_BankAccount then
@@ -41,7 +44,7 @@ end
 
 function Faction:save()
 	outputDebug("Saved Faction "..self.m_Id)
-	sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ? WHERE Id = ?",sql:getPrefix(),toJSON(self.m_RankLoans),toJSON(self.m_RankSkins),self.m_Id)
+	sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ? WHERE Id = ?",sql:getPrefix(),toJSON(self.m_RankLoans),toJSON(self.m_RankSkins),toJSON(self.m_RankWeapons),self.m_Id)
 end
 
 function Faction:isStateFaction()
@@ -194,15 +197,19 @@ function Faction:takeMoney(amount)
 end
 
 function Faction:setMoney(amount)
-  return self.m_BankAccount:setMoney(amount)
+	return self.m_BankAccount:setMoney(amount)
 end
 
 function Faction:setRankLoan(rank,amount)
-  self.m_RankLoans[tostring(rank)] = amount
+	self.m_RankLoans[tostring(rank)] = amount
 end
 
 function Faction:setRankSkin(rank,skinId)
-  self.m_RankSkins[tostring(rank)] = skinId
+	self.m_RankSkins[tostring(rank)] = skinId
+end
+
+function Faction:setRankWeapons(rank,weaponsTable)
+	self.m_RankWeapons[tostring(rank)] = weaponsTable
 end
 
 function Faction:getPlayers(getIDsOnly)
