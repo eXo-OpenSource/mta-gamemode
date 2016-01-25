@@ -18,10 +18,13 @@ function Admin:constructor()
 		[5] = "Projektleiter"
 	}
 	
+	addRemoteEvents{"adminSetPlayerFaction"}
+	
 	addCommandHandler("admins", bind(self.onlineList, self))
 	addCommandHandler("a", bind(self.chat, self))
 	addCommandHandler("o", bind(self.ochat, self))
 	addCommandHandler("adminmenu", bind(self.openAdminMenu, self))
+	addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
 	outputDebugString("Admin loaded")
 end
 
@@ -80,4 +83,16 @@ function Admin:onlineList(player)
 			outputChatBox(self.m_RankNames[value].." "..key:getName(),player,255,255,255)
 		end
 
+end
+
+function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
+	if client:getRank() >= RANK.Supporter then
+		local faction = FactionManager:getSingleton():getFromId(Id)
+		if faction then
+			faction:addPlayer(targetPlayer,6)
+			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
+		else
+			client:sendError(_("Fraktion nicht gefunden!", client))
+		end
+	end
 end
