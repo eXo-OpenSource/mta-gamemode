@@ -24,6 +24,8 @@ function Admin:constructor()
 	addCommandHandler("a", bind(self.chat, self))
 	addCommandHandler("o", bind(self.ochat, self))
 	addCommandHandler("adminmenu", bind(self.openAdminMenu, self))
+	addCommandHandler("goto", bind(self.goToPlayer, self))
+	addCommandHandler("gethere", bind(self.getHerePlayer, self))
 	addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
 	outputDebugString("Admin loaded")
 end
@@ -85,6 +87,34 @@ function Admin:onlineList(player)
 			outputChatBox(self.m_RankNames[value].." "..key:getName(),player,255,255,255)
 		end
 
+end
+
+function Admin:goToPlayer(player,cmd,target)
+	if player:getRank() >= RANK.Supporter then
+		if target then
+			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
+			local x,y,z = getElementPosition(target)
+			setElementPosition(player,x+0.01,y,z)
+		else
+			player:sendError(_("Kein Ziel eingegeben!", player))
+		end
+	else
+		player:sendError(_("Du bist kein Admin!", player))
+	end
+end
+
+function Admin:getHerePlayer(player,cmd,target)
+	if player:getRank() >= RANK.Supporter then
+		if target then
+			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
+			local x,y,z = getElementPosition(player)
+			setElementPosition(target,x+0.01,y,z)
+		else
+			player:sendError(_("Kein Ziel eingegeben!", player))
+		end
+	else
+		player:sendError(_("Du bist kein Admin!", player))
+	end
 end
 
 function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
