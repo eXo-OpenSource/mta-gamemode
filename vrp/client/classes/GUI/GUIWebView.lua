@@ -40,6 +40,10 @@ function GUIWebView:update()
     self:anyChange()
 end
 
+function GUIWebView:loadURL(url)
+    self.m_Browser:loadURL(url)
+end
+
 function GUIWebView:setVisible(state, ...)
     -- TODO: Looks like this function is never called?
     if self.m_PauseOnHide then

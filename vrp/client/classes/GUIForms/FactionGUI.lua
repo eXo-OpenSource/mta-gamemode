@@ -51,14 +51,14 @@ function FactionGUI:constructor()
 	self.m_FactionRemovePlayerButton.onLeftClick = bind(self.FactionRemovePlayerButton_Click, self)
 	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
 	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
-	
+
 	self.m_WaffenRow = 0
 	self.m_WaffenColumn = 0
 	self.m_WaffenAnzahl = 0
 	self.m_WeaponsName = {}
 	self.m_WeaponsImage = {}
 	self.m_WeaponsCheck = {}
-	
+
 	addRemoteEvents{"factionRetrieveInfo"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 end
@@ -87,17 +87,16 @@ function FactionGUI:addLeaderTab()
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, tabLeader):setNumeric()
 		GUILabel:new(self.m_Width*0.69, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Skin:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
-		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, tabLeader)
 
-		self.m_SkinVorschau = GUILabel:new(self.m_Width*0.87, self.m_Height*0.29, self.m_Width*0.15, self.m_Height*0.06, _"Vorschau", tabLeader):setColor(Color.LightBlue)
-		self.m_SkinVorschau.onHover = function () self.m_SkinVorschau:setColor(Color.White) end
-		self.m_SkinVorschau.onUnhover = function () self.m_SkinVorschau:setColor(Color.LightBlue) end
-		self.m_SkinVorschau.onLeftClick = bind(self.SkinVorschauClick, self)
+		self.m_SkinVorschauBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, tabLeader)
+
+		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, tabLeader)
+		self.m_SkinChanger.onChange = function(text, index) self.m_SkinVorschauBrowser:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..text) end
 
 		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang Speichern", true, tabLeader)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
-		
+
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"Waffen:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 
 		for weaponID,v in pairs(self.m_validWeapons) do
@@ -105,7 +104,7 @@ function FactionGUI:addLeaderTab()
 				self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.42+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.1, self.m_Height*0.05, getWeaponNameFromID(weaponID), tabLeader)
 				self.m_WeaponsName[weaponID]:setAlignX("center")
 				self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.46+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.08, self.m_Width*0.08, WeaponIcons[weaponID], tabLeader)
-				self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.58+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.2, self.m_Height*0.025, "aktiviert", tabLeader)
+				self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.58+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.12, self.m_Height*0.025, "aktiviert", tabLeader)
 				self.m_WeaponsCheck[weaponID]:setFontSize(1)
 				self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
 				if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 then
@@ -114,10 +113,10 @@ function FactionGUI:addLeaderTab()
 				else
 					self.m_WaffenRow = self.m_WaffenRow+1
 				end
-				
+
 			end
 		end
-		
+
 		for rank,name in pairs(self.m_RankNames) do
 			local item = self.m_FactionRangGrid:addItem(rank, name)
 			item.Id = rank
@@ -141,7 +140,7 @@ function FactionGUI:saveRank()
 				rankWeapons[tostring(weaponID)] = 0
 			end
 		end
-		
+
 		triggerServerEvent("factionSaveRank",localPlayer,self.m_SelectedRank,self.m_SkinChanger:getIndex(),self.m_LeaderLoan:getText(),rankWeapons)
 	end
 end
@@ -150,12 +149,13 @@ function FactionGUI:onSelectRank(name,rank)
 	self.m_LeaderRankName:setText(name.." - "..rank)
 	self.m_LeaderLoan:setText(tostring(self.m_rankLoans[tostring(rank)]))
 	self.m_SaveRank:setEnabled(true)
+
 	for skinId,bool in pairs(self.m_skins) do
 		if bool == true then
 			self.m_SkinChanger:addItem(skinId)
 		end
 	end
-	
+
 	for weaponID,v in pairs(self.m_validWeapons) do
 		if v == true then
 			if self.m_rankWeapons[tostring(rank)][tostring(weaponID)] == 1 then
@@ -165,13 +165,8 @@ function FactionGUI:onSelectRank(name,rank)
 			end
 		end
 	end
-	
-	self.m_SkinChanger:setSelectedItem(self.m_rankSkins[tostring(rank)])
-end
 
-function FactionGUI:SkinVorschauClick()
-	local skin = self.m_SkinChanger:getIndex()
-	SkinPreview:new(skin)
+	self.m_SkinChanger:setSelectedItem(self.m_rankSkins[tostring(rank)])
 
 end
 

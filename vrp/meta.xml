@@ -350,7 +350,6 @@
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/WebForms/SkillTreeGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
-	<script src="client/classes/WebForms/SkinPreview.lua" type="client"/>
 
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
