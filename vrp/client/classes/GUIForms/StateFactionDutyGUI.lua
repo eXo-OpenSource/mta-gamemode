@@ -78,6 +78,7 @@ function StateFactionDutyGUI:factionToggleDuty()
 end
 
 function StateFactionDutyGUI:factionRearm()
+	self:hide()
 	triggerServerEvent("factionStateRearm", localPlayer)
 end
 

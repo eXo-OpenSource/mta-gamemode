@@ -59,6 +59,7 @@
 	<script src="server/classes/Achievement.lua" type="server"/>
 	<script src="server/classes/InteriorManager.lua" type="server"/>
 	<script src="server/classes/StatisticsLogger.lua" type="server"/>
+	<script src="server/classes/Admin.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -71,11 +72,10 @@
 	<script src="server/classes/Player/Player.lua" type="server"/>
 	<script src="server/classes/Player/PlayerManager.lua" type="server"/>
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
-	<script src="server/classes/Player/Admin.lua" type="server"/>
 
-		<!-- Bank System -->
-		<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
-		<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
+	<!-- Bank System -->
+	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
+	<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
 
 	<!-- UI -->
 	<script src="server/classes/UI/Blip.lua" type="server"/>
@@ -88,7 +88,7 @@
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
-	<script src="server/classes/Gameplay/Police.lua" type="server"/>
+	<!--<script src="server/classes/Gameplay/Police.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
@@ -147,7 +147,7 @@
 	<script src="server/classes/Jobs/JobTrashman.lua" type="server"/>
 	<script src="server/classes/Jobs/JobRoadSweeper.lua" type="server"/>
 	<script src="server/classes/Jobs/JobLumberjack.lua" type="server"/>
-	<script src="server/classes/Jobs/JobPolice.lua" type="server"/>
+	<!--<script src="server/classes/Jobs/JobPolice.lua" type="server"/> -->
 	<script src="server/classes/Jobs/JobFarmer.lua" type="server"/>
 	<script src="server/classes/Jobs/JobBusDriver.lua" type="server"/>
 	<script src="server/classes/Jobs/JobMechanic.lua" type="server"/>
@@ -263,6 +263,7 @@
 	<script src="client/classes/GUI/GUIWebView.lua" type="client"/>
 	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollableText.lua" type="client"/>
+	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
@@ -345,6 +346,7 @@
 	<script src="client/classes/GUIForms/StateFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StateFactionArrestGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionWeaponShopGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
@@ -388,7 +390,7 @@
 	<script src="client/classes/Jobs/JobTrashman.lua" type="client"/>
 	<script src="client/classes/Jobs/JobRoadSweeper.lua" type="client"/>
 	<script src="client/classes/Jobs/JobLumberjack.lua" type="client"/>
-	<script src="client/classes/Jobs/JobPolice.lua" type="client"/>
+	<!--<script src="client/classes/Jobs/JobPolice.lua" type="client"/> -->
 	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
 	<script src="client/classes/Jobs/JobBusDriver.lua" type="client"/>
 	<script src="client/classes/Jobs/JobMechanic.lua" type="client"/>

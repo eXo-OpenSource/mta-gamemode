@@ -288,7 +288,9 @@ end
 function FactionManager:Event_receiveFactionWeaponShopInfos()
 	local faction = client:getFaction()
 	local depot = faction.m_Depot
-	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,depot:getWeaponTable(id))
+	local playerId = client:getId()
+	local rank = faction.m_Players[playerId]
+	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,depot:getWeaponTable(id),faction:getRankWeapons(rank))
 end
 
 function FactionManager:Event_factionWeaponShopBuy(weaponTable)

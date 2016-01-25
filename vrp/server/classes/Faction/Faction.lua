@@ -212,6 +212,10 @@ function Faction:setRankWeapons(rank,weaponsTable)
 	self.m_RankWeapons[tostring(rank)] = weaponsTable
 end
 
+function Faction:getRankWeapons(rank)
+	return self.m_RankWeapons[tostring(rank)]
+end
+
 function Faction:getPlayers(getIDsOnly)
 	if getIDsOnly then
 		return self.m_Players

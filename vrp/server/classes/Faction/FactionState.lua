@@ -239,3 +239,9 @@ function FactionState:Event_FactionRearm()
 	end
 end
 
+function FactionState:Event_FactionRearm()
+	if client:isFactionDuty() then
+		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
+	end
+end
+

@@ -50,12 +50,13 @@ function FactionWeaponShopGUI:destuctor()
 	GUIForm.destructor(self)
 end
 
-function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(depotWeapons)
+function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(depotWeapons,rankWeapons)
 	for k,v in pairs(self.m_validWeapons) do
 		if v == true then
 			self:addWeaponToGUI(k,depotWeapons[k]["Waffe"],depotWeapons[k]["Munition"])
 		end
 	end
+	self.rankWeapons = rankWeapons
 	self.depot = depotWeapons
 	self:updateButtons()
 end
@@ -123,6 +124,19 @@ function FactionWeaponShopGUI:updateButtons()
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 				end
 			end
+			
+			if self.rankWeapons[tostring(weaponID)] == 1 then
+				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
+				if self.m_WeaponsBuyMunition[weaponID] then
+					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
+				end
+			else
+				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
+				if self.m_WeaponsBuyMunition[weaponID] then
+					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
+				end
+			end
+			
 		end
 	end
 	self:updateCart()
