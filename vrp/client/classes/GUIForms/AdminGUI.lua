@@ -15,7 +15,7 @@ function AdminGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.5/2, screenHeight/2-screenHeight*0.5/2, screenWidth*0.5, screenHeight*0.5)
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
-	self.m_CloseButton.onLeftClick = function() self:close() end
+	self.m_CloseButton.onLeftClick = function() self:delete() end
 	
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.2, self.m_Width*0.25, self.m_Height*0.07, _"Adminansage:", tabAllgemein):setColor(Color.White)
@@ -27,6 +27,10 @@ function AdminGUI:constructor()
 	self.m_PlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.9, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
 	self.m_setFactionButton = GUIButton:new(self.m_Width*0.40, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.075, _"in Fraktion setzten",  tabSpieler)
+	
+	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
+	self.m_SkinVorschauBrowser = GUIWebView:new(0, 0, self.m_Width, self.m_Height*0.9, "http://exo-reallife.de/ingame/ticketSystem/admin.php", true, tabTicket)
+
 	
 	for key, playeritem in ipairs(getElementsByType("player")) do
 		local item = self.m_PlayersGrid:addItem(playeritem:getName())
@@ -42,6 +46,7 @@ function AdminGUI:constructor()
 	end
 end
 
+		
 function AdminGUI:AnnounceButton_Click()
 	local announceString = self.m_AdminAnnounceText:getText()
 	if announceString ~= "" and #announceString > 0 then 
@@ -60,8 +65,7 @@ function AdminGUI:AnnounceText( message )
 end
 
 addEventHandler("showAdminMenu", root,
-		function(...)
-			if not AdminGUI then AdminGUI:new() end
-			AdminGUI:open()
-		end
-	)
+	function(...)
+		AdminGUI:new()
+	end
+)
