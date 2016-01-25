@@ -281,7 +281,7 @@ function Player.staticFactionChatHandler(self, command, ...)
 end
 
 function Player:reportCrime(crimeType)
-	JobPolice:getSingleton():reportCrime(self, crimeType)
+	--JobPolice:getSingleton():reportCrime(self, crimeType)
 end
 
 function Player:setSkin(skin)

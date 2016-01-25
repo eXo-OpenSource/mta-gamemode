@@ -61,7 +61,7 @@ end
 
 addEventHandler("showAdminMenu", root,
 		function(...)
-			AdminGUI:new()
-			AdminGUI:show()
+			if not AdminGUI then AdminGUI:new() end
+			AdminGUI:open()
 		end
 	)

@@ -46,6 +46,8 @@ end
 function Admin:openAdminMenu( player ) 
 	if self.m_OnlineAdmins[player] > 0 then
 		triggerClientEvent(player,"showAdminMenu",player)
+	else
+		player:sendError(_("Du bist kein Admin!", player))
 	end
 end
 
