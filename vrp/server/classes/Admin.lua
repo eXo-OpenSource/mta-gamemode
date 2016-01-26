@@ -94,10 +94,14 @@ end
 function Admin:goToPlayer(player,cmd,target)
 	if player:getRank() >= RANK.Supporter then
 		if target then
-			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
-			local x,y,z = getElementPosition(target)
-			if isPedInVehicle(player) then removePedFromVehicle(player) end
-			setElementPosition(player,x+0.01,y,z)
+			local target = PlayerManager:getPlayerFromPartOfName(target,player)
+			local dim,int = target:getDimension(), target:getInterior() 
+			local pos = target:getPosition()
+			pos.x = pos.x + 0.01
+			if player:isInVehicle() then player:removeFromVehicle() end
+			player:setPosition(pos)
+			player:setDimension(dim)
+			player:setInterior(int)
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
 		end
@@ -109,10 +113,14 @@ end
 function Admin:getHerePlayer(player,cmd,target)
 	if player:getRank() >= RANK.Supporter then
 		if target then
-			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
-			local x,y,z = getElementPosition(player)
-			if isPedInVehicle(target) then removePedFromVehicle(target) end
-			setElementPosition(target,x+0.01,y,z)
+			local target = PlayerManager:getPlayerFromPartOfName(target,player)
+			local dim,int = player:getDimension(), player:getInterior() 
+			local pos = player:getPosition()
+			pos.x = pos.x + 0.01
+			if target:isInVehicle() then target:removeFromVehicle() end
+			target:setPosition(pos)
+			target:setDimension(dim)
+			target:setInterior(int)
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
 		end
