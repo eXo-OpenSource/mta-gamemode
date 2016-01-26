@@ -63,7 +63,7 @@ function SelfGUI:constructor()
 	self.m_GroupMenuButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.69, self.m_Width*0.25, self.m_Height*0.06, _"Firmen/Gang-Menü", tabGeneral):setBackgroundColor(Color.Blue)
 	self.m_GroupMenuButton:setFontSize(1.2)
 	self.m_GroupMenuButton.onLeftClick = bind(self.GroupMenuButton_Click, self)
-	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
+	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.79, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
 	self.m_GroupInvitationsLabel:setVisible(false)
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
@@ -338,7 +338,7 @@ end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
 	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
-	self.m_GroupInvitationsLabel:setText("Du hast Einladungen in private Firmen/Gangs, äffne das Menü um diese anzunehmen!")
+	self.m_GroupInvitationsLabel:setText("Du hast Einladungen in private Firmen/Gangs, öffne das Menü um diese anzunehmen!")
 	self.m_GroupInvitationsLabel:setVisible(true)
 	self.m_InvationGroupId = groupId
 	

@@ -96,8 +96,6 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
 end
 
 function GroupGUI:Event_groupInvitationRetrieve(groupId, name)
-	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
-
 	local item = self.m_GroupInvitationsGrid:addItem(name)
 	item.GroupId = groupId
 end

@@ -102,7 +102,7 @@ function Core:afterLogin()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	bindKey(core:get("KeyBindings", "KeyToggleSelfGUI", "f2"), "down", function() SelfGUI:getSingleton():toggle() end)
-
+	
 	FactionGUI:new()
 	FactionGUI:getSingleton():close()
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
@@ -117,7 +117,10 @@ function Core:afterLogin()
 	InventoryGUI:new()
 	InventoryGUI:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleInventory", "i"), "down", function() InventoryGUI:getSingleton():toggle() end)
-
+	
+	GroupGUI:new()
+	GroupGUI:getSingleton():close()
+	
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
 		HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
