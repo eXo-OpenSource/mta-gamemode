@@ -18,96 +18,58 @@ function SelfGUI:constructor()
 	-- Tab: Allgemein
 	local tabGeneral = self.m_TabPanel:addTab(_"Allgemein")
 	self.m_TabGeneral = tabGeneral
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.016, self.m_Width*0.3, self.m_Height*0.12, _"Allgemein", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.25, self.m_Height*0.06, _"Spielzeit:", tabGeneral)
-	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGeneral)
-	self.m_GeneralKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.24, self.m_Width*0.25, self.m_Height*0.06, _"Unternehmen:", tabGeneral)
-	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.24, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.24, self.m_Width*0.125, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.10, _"Allgemein", tabGeneral)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.11, self.m_Width*0.25, self.m_Height*0.06, _"Spielzeit:", tabGeneral)
+	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", tabGeneral)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.17, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGeneral)
+	self.m_GeneralKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.17, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Unternehmen:", tabGeneral)
+	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.125, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
 	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
 	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
 	--addEventHandler("companyInvitationRetrieve", root, bind(self.Event_companyInvitationRetrieve, self))
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.25, self.m_Height*0.12, _"Job", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
-	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.48, self.m_Width*0.25, self.m_Height*0.06, _"Job kündigen", tabGeneral):setBackgroundColor(Color.Red)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
+	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"Job kündigen", tabGeneral):setBackgroundColor(Color.Red)
 	self.m_JobQuitButton:setFontSize(1.2)
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.25, self.m_Height*0.12, _"Fraktion", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.69, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
-	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.69, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_FactionInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
-	self.m_FactionInvationLabel:setVisible(false)
-	self.m_FactionInvitationsAcceptButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.195, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
-	self.m_FactionInvitationsAcceptButton:setVisible(false)
-	self.m_FactionInvitationsDeclineButton = GUIButton:new(self.m_Width*0.225, self.m_Height*0.81, self.m_Width*0.195, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
-	self.m_FactionInvitationsDeclineButton:setVisible(false)
-	self.m_FactionMenuButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.755, self.m_Width*0.25, self.m_Height*0.06, _"Fraktions-Menü", tabGeneral):setBackgroundColor(Color.Blue)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.25, self.m_Height*0.10, _"Fraktion", tabGeneral)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
+	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.49, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_FactionMenuButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.49, self.m_Width*0.25, self.m_Height*0.06, _"Fraktions-Menü", tabGeneral):setBackgroundColor(Color.Blue)
 	self.m_FactionMenuButton:setFontSize(1.2)
 	self.m_FactionMenuButton:setVisible(false)
 	self.m_FactionMenuButton.onLeftClick = bind(self.FactionMenuButton_Click, self)
+	self.m_FactionInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
+	self.m_FactionInvationLabel:setVisible(false)
+	self.m_FactionInvitationsAcceptButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.195, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
+	self.m_FactionInvitationsAcceptButton:setVisible(false)
+	self.m_FactionInvitationsDeclineButton = GUIButton:new(self.m_Width*0.225, self.m_Height*0.6, self.m_Width*0.195, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
+	self.m_FactionInvitationsDeclineButton:setVisible(false)
 	self.m_FactionInvitationsAcceptButton.onLeftClick = bind(self.FactionInvitationsAcceptButton_Click, self)
 	self.m_FactionInvitationsDeclineButton.onLeftClick = bind(self.FactionInvitationsDeclineButton_Click, self)
 	addRemoteEvents{"factionRetrieveInfo", "factionInvitationRetrieve"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 	addEventHandler("factionInvitationRetrieve", root, bind(self.Event_factionInvitationRetrieve, self))
-
-	-- Tab: Groups
-	local tabGroups = self.m_TabPanel:addTab(_"Gruppen")
-	self.m_TabGroups = tabGroups
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Gruppe:", tabGroups)
-	self.m_GroupsNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
-	self.m_GroupsNameChangeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.1, self.m_Height*0.06, _"(ändern)", tabGroups):setColor(Color.LightBlue)
-	self.m_GroupsNameChangeLabel.onLeftClick = function() InputBox:new(_"Gruppennamen ändern", _"Bitte gib einen neuen Name für deine Gruppe ein! Dies kostet dich 20000$!", function (name) triggerServerEvent("groupChangeName", root, name) end) end
-	self.m_GroupsNameChangeLabel.onHover = function () self.m_GroupsNameChangeLabel:setColor(Color.White) end
-	self.m_GroupsNameChangeLabel.onUnhover = function () self.m_GroupsNameChangeLabel:setColor(Color.LightBlue) end
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGroups)
-	self.m_GroupsKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"Gruppenrang:", tabGroups)
-	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
-	self.m_GroupCreateButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Erstellen", true, tabGroups):setBarColor(Color.Green)
-	self.m_GroupQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.07, _"Verlassen", true, tabGroups):setBarColor(Color.Red)
-	self.m_GroupDeleteButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, _"Löschen", true, tabGroups):setBarColor(Color.Red)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Kasse:", tabGroups)
-	self.m_GroupMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, "", tabGroups)
-	self.m_GroupMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.27, self.m_Height*0.07, tabGroups):setCaption(_"Betrag")
-	self.m_GroupMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabGroups)
-	self.m_GroupMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabGroups)
-	self.m_GroupPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.4, self.m_Height*0.5, tabGroups)
-	self.m_GroupPlayersGrid:addColumn(_"Spieler", 0.7)
-	self.m_GroupPlayersGrid:addColumn(_"Rang", 0.3)
-	self.m_GroupAddPlayerButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.4, self.m_Width*0.3, self.m_Height*0.07, _"Spieler hinzufügen", true, tabGroups):setBarColor(Color.Green)
-	self.m_GroupRemovePlayerButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.48, self.m_Width*0.3, self.m_Height*0.07, _"Spieler rauswerfen", true, tabGroups):setBarColor(Color.Red)
-	self.m_GroupRankUpButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.56, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabGroups)
-	self.m_GroupRankDownButton = VRPButton:new(self.m_Width*0.43, self.m_Height*0.64, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabGroups)
-
-	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.06, _"Einladungen:", tabGroups)
-	self.m_GroupInvitationsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.6, tabGroups)
-	self.m_GroupInvitationsGrid:addColumn(_"Name", 1)
-	self.m_GroupInvitationsAcceptButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.195, self.m_Height*0.06, "✓", tabGroups):setBackgroundColor(Color.Green)
-	self.m_GroupInvitationsDeclineButton = GUIButton:new(self.m_Width*0.225, self.m_Height*0.7, self.m_Width*0.195, self.m_Height*0.06, "✕", tabGroups):setBackgroundColor(Color.Red)
-
-	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
-	self.m_GroupCreateButton.onLeftClick = bind(self.GroupCreateButton_Click, self)
-	self.m_GroupQuitButton.onLeftClick = bind(self.GroupQuitButton_Click, self)
-	self.m_GroupDeleteButton.onLeftClick = bind(self.GroupDeleteButton_Click, self)
-	self.m_GroupMoneyDepositButton.onLeftClick = bind(self.GroupMoneyDepositButton_Click, self)
-	self.m_GroupMoneyWithdrawButton.onLeftClick = bind(self.GroupMoneyWithdrawButton_Click, self)
-	self.m_GroupAddPlayerButton.onLeftClick = bind(self.GroupAddPlayerButton_Click, self)
-	self.m_GroupRemovePlayerButton.onLeftClick = bind(self.GroupRemovePlayerButton_Click, self)
-	self.m_GroupRankUpButton.onLeftClick = bind(self.GroupRankUpButton_Click, self)
-	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
-	self.m_GroupInvitationsAcceptButton.onLeftClick = bind(self.GroupInvitationsAcceptButton_Click, self)
-	self.m_GroupInvitationsDeclineButton.onLeftClick = bind(self.GroupInvitationsDeclineButton_Click, self)
+	
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.9, self.m_Height*0.10, _"Private Firma / Gang:", tabGeneral)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.69, self.m_Width*0.25, self.m_Height*0.06, _"Firma / Gang:", tabGeneral)
+	self.m_GroupNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.69, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_GroupMenuButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.69, self.m_Width*0.25, self.m_Height*0.06, _"Firmen/Gang-Menü", tabGeneral):setBackgroundColor(Color.Blue)
+	self.m_GroupMenuButton:setFontSize(1.2)
+	self.m_GroupMenuButton.onLeftClick = bind(self.GroupMenuButton_Click, self)
+	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.58, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
+	self.m_GroupInvitationsLabel:setVisible(false)
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
+
+
 
 
 	-- Tab: Vehicles
@@ -273,9 +235,8 @@ function SelfGUI:constructor()
 end
 
 function SelfGUI:onShow()
-	-- Update VehicleTab & GroupTab
+	-- Update VehicleTab
 	self:TabPanel_TabChanged(self.m_TabGeneral.TabIndex)
-	self:TabPanel_TabChanged(self.m_TabGroups.TabIndex)
 	self:TabPanel_TabChanged(self.m_TabVehicles.TabIndex)
 
 	-- Initialize all the stuff
@@ -300,15 +261,20 @@ function SelfGUI:onShow()
 	end
 end
 
+
 function SelfGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabGeneral.TabIndex then
 		triggerServerEvent("companyRequestInfo", root)
 		triggerServerEvent("factionRequestInfo", root)
-	elseif tabId == self.m_TabGroups.TabIndex then
 		triggerServerEvent("groupRequestInfo", root)
 	elseif tabId == self.m_TabVehicles.TabIndex then
 		triggerServerEvent("vehicleRequestInfo", root)
 	end
+end
+
+function SelfGUI:adjustGeneralTab(name)
+	local isInCompany = name ~= nil
+	self.m_CompanyEditLabel:setVisible(isInCompany)
 end
 
 function SelfGUI:Event_companyRetrieveInfo(name)
@@ -327,6 +293,11 @@ function SelfGUI:JobQuitButton_Click()
 	triggerServerEvent("jobQuit", root)
 	self.m_JobNameLabel:setText("-")
 	self.m_JobQuitButton:setVisible(false)
+end
+
+function SelfGUI:GroupMenuButton_Click()
+	self:close()
+	GroupGUI:getSingleton():open()
 end
 
 function SelfGUI:FactionMenuButton_Click()
@@ -364,6 +335,30 @@ function SelfGUI:Event_factionInvitationRetrieve(factionId, name)
 	end
 end
 
+
+function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
+	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+	self.m_GroupInvitationsLabel:setText("Du hast Einladungen in private Firmen/Gangs, äffne das Menü um diese anzunehmen!")
+	self.m_GroupInvitationsLabel:setVisible(true)
+	self.m_InvationGroupId = groupId
+	
+end
+
+function SelfGUI:Event_groupRetrieveInfo(name, rank)
+	if rank and rank > 0 then
+		self.m_GroupNameLabel:setText(_("%s - Rang: %d", name, rank))
+		self.m_GroupInvitationsLabel:setVisible(false)
+		self.m_InvationGroupId = 0
+	else
+		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
+		self.m_GroupInvitationsLabel:setVisible(true)
+
+		if self.m_InvationGroupId and self.m_InvationGroupId > 0 then
+			self.m_GroupInvitationsLabel:setVisible(true)
+		end
+	end
+end
+
 function SelfGUI:FactionInvitationsAcceptButton_Click()
 	if self.m_InvationFactionId then
 		triggerServerEvent("factionInvitationAccept", resourceRoot, self.m_InvationFactionId)
@@ -383,148 +378,6 @@ function SelfGUI:FactionInvitationsDeclineButton_Click()
 		self.m_FactionInvitationsDeclineButton:setVisible(false)
 		self.m_FactionInvationLabel:setText("")
 		self.m_InvationFactionId = 0
-	end
-end
-
-function SelfGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
-	self:adjustGroupTab(rank or false)
-
-	if name then
-		local karma = math.floor(karma)
-		local x, y = self.m_GroupsNameLabel:getPosition()
-		self.m_GroupsNameChangeLabel:setPosition(x + dxGetTextWidth(name, self.m_GroupsNameLabel:getFontSize(), self.m_GroupsNameLabel:getFont()) + 10, y)
-		self.m_GroupsNameLabel:setText(name)
-		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
-		self.m_GroupsRankLabel:setText(GroupRank[rank])
-		self.m_GroupMoneyLabel:setText(tostring(money).."$")
-
-		self.m_GroupPlayersGrid:clear()
-		for playerId, info in pairs(players) do
-			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank)
-			item.Id = playerId
-		end
-	end
-end
-
-function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
-	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
-
-	local item = self.m_GroupInvitationsGrid:addItem(name)
-	item.GroupId = groupId
-end
-
-function SelfGUI:adjustGeneralTab(name)
-	local isInCompany = name ~= nil
-	self.m_CompanyEditLabel:setVisible(isInCompany)
-end
-
-function SelfGUI:adjustGroupTab(rank)
-	local isInGroup = rank ~= false
-
-	for k, element in ipairs(self.m_TabGroups:getChildren()) do
-		if element ~= self.m_GroupCreateButton then
-			element:setVisible(isInGroup)
-		end
-	end
-	self.m_GroupInvitationsLabel:setVisible(false)
-	self.m_GroupInvitationsGrid:setVisible(false)
-	self.m_GroupInvitationsAcceptButton:setVisible(false)
-	self.m_GroupInvitationsDeclineButton:setVisible(false)
-
-	if rank then
-		if rank ~= GroupRank.Leader then
-			self.m_GroupDeleteButton:setVisible(false)
-		end
-		if rank < GroupRank.Manager then
-			self.m_GroupMoneyWithdrawButton:setVisible(false)
-			self.m_GroupAddPlayerButton:setVisible(false)
-			self.m_GroupRemovePlayerButton:setVisible(false)
-			self.m_GroupRankUpButton:setVisible(false)
-			self.m_GroupRankDownButton:setVisible(false)
-		end
-	else
-		-- We're not in a group, so show the invitation stuff
-		self.m_GroupInvitationsLabel:setVisible(true)
-		self.m_GroupInvitationsGrid:setVisible(true)
-		self.m_GroupInvitationsAcceptButton:setVisible(true)
-		self.m_GroupInvitationsDeclineButton:setVisible(true)
-	end
-end
-
-function SelfGUI:GroupCreateButton_Click()
-	GroupCreationGUI:new()
-end
-
-function SelfGUI:GroupQuitButton_Click()
-	triggerServerEvent("groupQuit", root)
-end
-
-function SelfGUI:GroupDeleteButton_Click()
-	triggerServerEvent("groupDelete", root)
-end
-
-function SelfGUI:GroupMoneyDepositButton_Click()
-	local amount = tonumber(self.m_GroupMoneyAmountEdit:getText())
-	if amount and amount > 0 then
-		triggerServerEvent("groupDeposit", root, amount)
-	else
-		ErrorBox:new(_"Bitte gebe einen gültigen Betrag ein!")
-	end
-end
-
-function SelfGUI:GroupMoneyWithdrawButton_Click()
-	local amount = tonumber(self.m_GroupMoneyAmountEdit:getText())
-	if amount and amount > 0 then
-		triggerServerEvent("groupWithdraw", root, amount)
-	else
-		ErrorBox:new(_"Bitte gebe einen gültigen Betrag ein!")
-	end
-end
-
-function SelfGUI:GroupAddPlayerButton_Click()
-	GroupInviteGUI:new()
-end
-
-function SelfGUI:GroupRemovePlayerButton_Click()
-	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
-	if selectedItem and selectedItem.Id then
-		triggerServerEvent("groupDeleteMember", root, selectedItem.Id)
-	else
-		ErrorBox:new(_"Dieser Spieler ist nicht (mehr) online")
-	end
-end
-
-function SelfGUI:GroupRankUpButton_Click()
-	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
-	if selectedItem and selectedItem.Id then
-		triggerServerEvent("groupRankUp", root, selectedItem.Id)
-	end
-end
-
-function SelfGUI:GroupRankDownButton_Click()
-	local selectedItem = self.m_GroupPlayersGrid:getSelectedItem()
-	if selectedItem and selectedItem.Id then
-		triggerServerEvent("groupRankDown", root, selectedItem.Id)
-	end
-end
-
-function SelfGUI:GroupInvitationsAcceptButton_Click()
-	local selectedItem = self.m_GroupInvitationsGrid:getSelectedItem()
-	if selectedItem then
-		if selectedItem.GroupId then
-			triggerServerEvent("groupInvitationAccept", resourceRoot, selectedItem.GroupId)
-		end
-		self.m_GroupInvitationsGrid:removeItemByItem(selectedItem)
-	end
-end
-
-function SelfGUI:GroupInvitationsDeclineButton_Click()
-	local selectedItem = self.m_GroupInvitationsGrid:getSelectedItem()
-	if selectedItem then
-		if selectedItem.GroupId then
-			triggerServerEvent("groupInvitationDecline", resourceRoot, selectedItem.GroupId)
-		end
-		self.m_GroupInvitationsGrid:removeItemByItem(selectedItem)
 	end
 end
 
