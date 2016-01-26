@@ -124,6 +124,11 @@ function FactionGUI:addLeaderTab()
 				self.m_SelectedRank = rank
 				self:onSelectRank(name,rank)
 			end
+
+			if rank == 1 then
+				self.m_FactionRangGrid:onInternalSelectItem(item)
+				item.onLeftClick()
+			end
 		end
 
 		self.m_LeaderTab = true
