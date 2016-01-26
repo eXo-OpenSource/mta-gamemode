@@ -114,7 +114,7 @@ function VehicleManager.loadVehicles()
 	for i, row in pairs(result) do
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
 		enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
-		self:addRef(vehicle, false)
+		VehicleManager:getSingleton():addRef(vehicle, false)
 	end
 end
 

@@ -27,6 +27,7 @@ function Admin:constructor()
 	addCommandHandler("goto", bind(self.goToPlayer, self))
 	addCommandHandler("gethere", bind(self.getHerePlayer, self))
 	addCommandHandler("tp", bind(self.teleportTo, self))
+	addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
 	addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
 	outputDebugString("Admin loaded")
 end
@@ -180,6 +181,30 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
 			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
 		else
 			client:sendError(_("Fraktion nicht gefunden!", client))
+		end
+	end
+end
+
+function Admin:addFactionVehicle(player,cmd,factionID)
+	if player:getRank() >= RANK.Supporter then
+		if isPedInVehicle(player) then
+			if factionID then
+				factionID = tonumber(factionID)
+				local faction = FactionManager:getFromId(factionID)
+				if faction then
+					local veh = getPedOccupiedVehicle(player)
+					local model = getElementModel(veh)
+					local posX, posY, posZ = getElementPosition(veh)
+					local rotX, rotY, rotZ = getElementRotation(veh)
+					FactionVehicle:create(faction, model, posX, posY, posZ, rotZ)
+				else
+					player:sendError(_("Fraktion nicht gefunden!", player))
+				end
+			else
+				player:sendError(_("Befehl: /addFactionVehicle [FactionID]!", player))
+			end
+		else
+			player:sendError(_("Du sitzt in keinem Fahrzeug!", player))
 		end
 	end
 end

@@ -8,27 +8,27 @@
 FactionVehicle = inherit(PermanentVehicle)
 
 function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage)
-  self.m_Id = Id
-  self.m_Faction = faction
-  self.m_PositionType = positionType or VehiclePositionType.World
-  setElementData(self, "OwnerName", "asdh") -- Todo: *hide*
+	self.m_Id = Id
+	self.m_Faction = faction
+	self.m_PositionType = positionType or VehiclePositionType.World
+	setElementData(self, "OwnerName", faction:getName())
 
-  self:setHealth(health)
-  self:setLocked(true)
-  if color then
-    local a, r, g, b = getBytesInInt32(color)
-    setVehicleColor(self, r, g, b)
-  end
+	self:setHealth(health)
+	if color then
+	local a, r, g, b = getBytesInInt32(color)
+	setVehicleColor(self, r, g, b)
+	end
 
-  for k, v in pairs(tunings or {}) do
-    addVehicleUpgrade(self, v)
-  end
+	for k, v in pairs(tunings or {}) do
+		addVehicleUpgrade(self, v)
+	end
+	
+	self.StartEnter = bind(self.onStartEnter, self)
+    addEventHandler("onVehiceStartEnter",self, self.StartEnter)
+	self.Enter = bind(self.onEnter, self)
+    addEventHandler("onVehiceEnter",self, self.Enter)
 
-  if self.m_PositionType ~= VehiclePositionType.World then
-    -- Move to unused dimension | Todo: That's probably a bad solution
-    setElementDimension(self, PRIVATE_DIMENSION_SERVER)
-  end
-  self:setMileage(mileage)
+	self:setMileage(mileage)
 end
 
 function FactionVehicle:destructor()
@@ -43,7 +43,21 @@ function FactionVehicle:getFaction()
   return self.m_Faction
 end
 
-function FactionVehicle.create(Faction, model, posX, posY, posZ, rotation)
+function FactionVehicle:onStartEnter(player)
+	outputChatBox("Fahrzeug onStartEnter!")
+	if player:getFaction() ~= source.m_Faction then
+		cancelEvent()
+	end
+end
+
+function FactionVehicle:onEnter(player)
+	outputChatBox("Fahrzeug onEnter!")
+	if player:getFaction() == source.m_Faction then
+		outputChatBox(source.m_Faction:getName().." Fahrzeug eingestiegen!",player)
+	end
+end
+
+function FactionVehicle:create(Faction, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
 	if sql:queryExec("INSERT INTO ??_faction_vehicles (Faction, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), Faction:getId(), model, posX, posY, posZ, rotation) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
