@@ -23,10 +23,8 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		addVehicleUpgrade(self, v)
 	end
 	
-	self.StartEnter = bind(self.onStartEnter, self)
-    addEventHandler("onVehiceStartEnter",self, self.StartEnter)
-	self.Enter = bind(self.onEnter, self)
-    addEventHandler("onVehiceEnter",self, self.Enter)
+    addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+    addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
 
 	self:setMileage(mileage)
 end
@@ -43,18 +41,27 @@ function FactionVehicle:getFaction()
   return self.m_Faction
 end
 
-function FactionVehicle:onStartEnter(player)
-	outputChatBox("Fahrzeug onStartEnter!")
-	if player:getFaction() ~= source.m_Faction then
-		cancelEvent()
+function FactionVehicle:onStartEnter(player,seat)
+	if seat == 0 then
+		if player:getFaction() == self.m_Faction then
+			
+		elseif player:getFaction():isStateFaction() == true	and self.m_Faction:isStateFaction() == true then
+			
+		else
+			cancelEvent()
+			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
+		end
 	end
 end
 
 function FactionVehicle:onEnter(player)
-	outputChatBox("Fahrzeug onEnter!")
 	if player:getFaction() == source.m_Faction then
-		outputChatBox(source.m_Faction:getName().." Fahrzeug eingestiegen!",player)
+		
 	end
+end
+
+function FactionVehicle:respawn()
+	respawnVehicle(self)
 end
 
 function FactionVehicle:create(Faction, model, posX, posY, posZ, rotation)
@@ -78,15 +85,13 @@ function FactionVehicle:purge()
 end
 
 function FactionVehicle:save()
-	local posX, posY, posZ = getElementPosition(self)
-	local rotX, rotY, rotZ = getElementRotation(self)
 	local health = getElementHealth(self)
 	local r, g, b = getVehicleColor(self, true)
 	local color = setBytesInInt32(255, r, g, b) -- Format: argb
 	local tunings = getVehicleUpgrades(self) or {}
 
-	return sql:queryExec("UPDATE ??_faction_vehicles SET Faction = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, PositionType = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Faction:getId(), posX, posY, posZ, rotZ, health, color, self.m_PositionType, toJSON(tunings), self:getMileage(), self.m_Id)
+	return sql:queryExec("UPDATE ??_faction_vehicles SET Faction = ?, Health = ?, Color = ?, PositionType = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Faction:getId(), health, color, self.m_PositionType, toJSON(tunings), self:getMileage(), self.m_Id)
 end
 
 function FactionVehicle:hasKey(player)

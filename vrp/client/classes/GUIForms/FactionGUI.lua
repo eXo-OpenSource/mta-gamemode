@@ -32,7 +32,12 @@ function FactionGUI:constructor()
 	self.m_FactionMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.27, self.m_Height*0.07, tabAllgemein):setCaption(_"Betrag")
 	self.m_FactionMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabAllgemein)
 	self.m_FactionMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabAllgemein)
+	
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Funktionen:", tabAllgemein)
+	self.m_FactionRespawnVehicleButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", true, tabAllgemein)
+	self.m_FactionRespawnVehicleButton.onLeftClick = bind(self.FactionRespawnVehicles, self)
 
+	
 	local tabMitglieder = self.m_TabPanel:addTab(_"Mitglieder")
 	self.m_FactionPlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, tabMitglieder)
 	self.m_FactionPlayersGrid:addColumn(_"Spieler", 0.7)
@@ -273,4 +278,8 @@ function FactionGUI:FactionRankDownButton_Click()
 	if selectedItem and selectedItem.Id then
 		triggerServerEvent("factionRankDown", root, selectedItem.Id)
 	end
+end
+
+function FactionGUI:FactionRespawnVehicles()
+	triggerServerEvent("factionRespawnVehicles", root)
 end

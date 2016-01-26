@@ -255,3 +255,12 @@ function Faction:sendChatMessage(sourcePlayer,text)
 		player:sendMessage(text, r, g, b)
 	end
 end
+
+function Faction:respawnVehicles()
+	local factionVehicles = VehicleManager:getSingleton():getFactionVehicles(self.m_Id)
+	for factionId, vehicle in pairs(factionVehicles) do
+		if vehicle:getFaction() == self then
+			vehicle:respawn()
+		end
+	end
+end

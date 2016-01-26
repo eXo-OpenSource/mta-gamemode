@@ -94,6 +94,10 @@ function VehicleManager:destructor()
 	outputServerLog("Saved faction vehicles")
 end
 
+function VehicleManager:getFactionVehicles(factionID)
+	return self.m_FactionVehicles[factionID]
+end
+
 function VehicleManager.loadVehicles()
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())

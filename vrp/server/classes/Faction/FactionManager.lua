@@ -22,7 +22,7 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","openFactionWeaponShopGUI","factionSaveRank"}
+	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","openFactionWeaponShopGUI","factionSaveRank","factionRespawnVehicles"}
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
@@ -37,7 +37,9 @@ function FactionManager:constructor()
 	addEventHandler("factionReceiveWeaponShopInfos", root, bind(self.Event_receiveFactionWeaponShopInfos, self))
 	addEventHandler("factionWeaponShopBuy", root, bind(self.Event_factionWeaponShopBuy, self))
 	addEventHandler("factionSaveRank", root, bind(self.Event_factionSaveRank, self))
+	addEventHandler("factionRespawnVehicles", root, bind(self.Event_factionRespawnVehicles, self))
 
+	
 
 	FactionState:getSingleton():new()
 	FactionEvil:getSingleton():new(self.EvilFactions)
@@ -298,3 +300,8 @@ function FactionManager:Event_factionWeaponShopBuy(weaponTable)
 	local depot = faction.m_Depot
 	depot:takeWeaponsFromDepot(client,weaponTable)
 end
+
+function FactionManager:Event_factionRespawnVehicles()
+	client:getFaction():respawnVehicles()
+end
+
