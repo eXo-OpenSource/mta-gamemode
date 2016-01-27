@@ -31,7 +31,8 @@ function Player:constructor()
 	self.m_Crimes = {}
 	self:destroyChatColShapes( )
 	self:createChatColshapes( )
-
+	
+	
 
 end
 
@@ -113,6 +114,10 @@ function Player:loadCharacter()
 	if self:getRank() > 0 then
 		Admin:getSingleton():addAdmin(self,self:getRank())
 	end
+	
+	-- Add Payday
+	local nextPayDay = self:getMinutesUntilNextPayday()*60*1000
+	self.m_PayDayTimer = setTimer(bind(self.payDay, self),nextPayDay,1)
 end
 
 function Player:createCharacter()
@@ -209,7 +214,7 @@ function Player:spawn()
 		self:setSkinLevel(0)
 
 		-- spawn the player
-		spawnPlayer(self, NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z, self.m_Skin, self.m_SavedInterior, 0) -- Todo: change position
+		spawnPlayer(self, NOOB_SPAWN, self.m_Skin, self.m_SavedInterior, 0) -- Todo: change position
 		self:setRotation(0, 0, 180)
 	else
 		if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
@@ -400,6 +405,21 @@ end
 
 function Player:getPlayTime()
 	return math.floor(self.m_LastPlayTime + (getTickCount() - self.m_JoinTime)/1000/60)
+end
+
+function Player:getMinutesUntilNextPayday()
+	local payday = (math.floor(self:getPlayTime()/60)+1)*60
+	return payday-self:getPlayTime()
+end
+
+function Player:payDay()
+	local time = getRealTime()
+	outputChatBox ( "PAYDAY: "..time.hour..":"..time.minute,self,255,0,0 )
+	-- in Developement | only for testing
+	
+	-- Add Payday again
+	local nextPayDay = self:getMinutesUntilNextPayday()*60*1000
+	self.m_PayDayTimer = setTimer(bind(self.payDay, self),nextPayDay,1)
 end
 
 function Player:getCrimes()
