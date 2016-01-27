@@ -303,6 +303,10 @@ function Player:setJobDutySkin(skin)
 	end
 end
 
+function Player:setDefaultSkin()
+	self:setModel(self.m_Skin)
+end
+
 function Player:setKarma(karma)
 	DatabasePlayer.setKarma(self, karma)
 	self:setPublicSync("Karma", self.m_Karma)

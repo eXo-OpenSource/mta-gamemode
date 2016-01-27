@@ -129,11 +129,21 @@ end
 function Inventory:removeItemByItemId(itemId, amount)
 	local item, slot = self:findItem(itemId)
 	if not item then return end
-
+	
 	-- We cannot have multiple stacks, so returning here is okay
 	if amount and item:getCount() < amount then
 		return false
 	end
+
+	return self:removeItemByItem(item, slot, amount)
+end
+
+function Inventory:removeAllItemByItemId(itemId)
+	local item, slot = self:findItem(itemId)
+	if not item then return end
+	
+	-- We cannot have multiple stacks, so returning here is okay
+	local amount = item:getCount()
 
 	return self:removeItemByItem(item, slot, amount)
 end

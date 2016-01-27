@@ -257,14 +257,19 @@ function PlayerManager:Event_toggleFactionDuty()
 	local faction = client:getFaction()
 	if faction:isStateFaction() then
 		if client:isFactionDuty() then
-			client:setJobDutySkin(nil)
+			client:setDefaultSkin()
 			client.m_FactionDuty = false
 			faction:updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
+			
+			client:getInventory():removeAllItemByItemId(ITEM_BARRICADE)
+			
 		else
-			client:setJobDutySkin(280)
+			faction:changeSkin(client)
 			client.m_FactionDuty = true
 			faction:updateStateFactionDutyGUI(client)
+			client:getInventory():removeAllItemByItemId(ITEM_BARRICADE)
+			client:getInventory():addItem(ITEM_BARRICADE,10)
 			client:sendInfo(_("Du bist nun im Dienst!", client))
 		end
 	else

@@ -87,7 +87,7 @@ end
 
 function Faction:changeSkin(player)
 	local rank = self:getPlayerRank(player)
-	player:setSkin(self.m_RankSkins[tostring(rank)])
+	player:setModel(self.m_RankSkins[tostring(rank)])
 end
 
 function Faction:changeSkin_old(player)
