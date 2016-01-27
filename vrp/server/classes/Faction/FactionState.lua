@@ -244,4 +244,3 @@ function FactionState:Event_FactionRearm()
 		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
 	end
 end
-

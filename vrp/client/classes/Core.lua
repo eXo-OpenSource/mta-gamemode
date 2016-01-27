@@ -16,7 +16,7 @@ function Core:constructor()
 	DownloadGUI:new()
 	local dgi = DownloadGUI:getSingleton()
 	Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
-
+	setAmbientSoundEnabled( "gunfire", false )
 	showChat(true)
 end
 

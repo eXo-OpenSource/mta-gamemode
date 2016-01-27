@@ -15,6 +15,7 @@ Items = {
 { "ITEM_HOTWIREKIT", "Kurzschließkit";	"Autos abgeschlossen? Kein Problem!";														"files/images/Items/HotwireKit.png";	ItemHotwireKit,	false,					ItemCategory.Tools,		false,					0};
 { "ITEM_BOMB",		"Bombe";			"Erzeugt eine große Explosion und wird bei verschiedenen Events benötigt";					"files/images/Items/Bomb.png";			ItemBomb,		true,					ItemCategory.Other,		true,					0};
 { "ITEM_RADIO",		"Radio";			"Ein Radio, das Musik für alle abspielt";													"files/images/Items/Radio.png";			ItemRadio,		false,					ItemCategory.Other,		false,					2226};
+{ "ITEM_BARRICADE",	"Barrikade";		"Eine Barrikade für Staatsfraktionisten";													"files/images/Items/Barricade.png";		ItemBarricade,	true,					ItemCategory.Other,		true,					1422};
 }
 
 local newitems = {}
