@@ -79,7 +79,7 @@ for k, v in pairs(WeaponIcons) do WeaponIcons[k] = "files/images/Weapons/"..v en
 RadarDesign = {Monochrome = 1, GTA = 2}
 for i, v in pairs(RadarDesign) do RadarDesign[v] = i end
 
-UIStyle = {vRoleplay = 1, eXo = 2}
+UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
 for i, v in pairs(UIStyle) do UIStyle[v] = i end
 
 HelpTextTitles = {

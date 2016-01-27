@@ -223,7 +223,7 @@ function SelfGUI:constructor()
 	self.m_RadarChange:addItem("Normal")
 	self.m_RadarChange:addItem("Instant")
 	self.m_RadarChange.onChange = function(text, index)
-		core:getConfig():set("HUD", "CursorMode", index - 1)
+		core:set("HUD", "CursorMode", index - 1)
 		Cursor:setCursorMode(toboolean(index - 1))
 	end
 	self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)

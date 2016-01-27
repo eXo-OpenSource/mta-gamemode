@@ -15,8 +15,13 @@ function HUDUI:constructor()
 
 	self.m_MunitionProgress = 0
 
-	showPlayerHudComponent("all",false)
-	showPlayerHudComponent("crosshair",true)
+	if self.m_UIMode == UIStyle.Default and self.m_Enabled then
+		showPlayerHudComponent("all", true)
+		showPlayerHudComponent("radar", false)
+	else
+		showPlayerHudComponent("all", false)
+		showPlayerHudComponent("crosshair", true)
+	end
 
 	self.m_RenderHandler = bind(self.draw,self)
 
@@ -34,18 +39,40 @@ end
 function HUDUI:draw()
 	if not self.m_Enabled then return end
 	if not self.m_IsVisible then return end
-	
+
 	if self.m_UIMode == UIStyle.vRoleplay then
 		self:drawDefault()
+	elseif self.m_UIMode == UIStyle.eXo then
+
+	elseif self.m_UIMode == UIStyle.Default then
+		return
 	end
 end
 
 function HUDUI:setUIMode(uiMode)
+	if uiMode == UIStyle.Default then
+		showPlayerHudComponent("all", true)
+		showPlayerHudComponent("radar", false)
+	elseif self.m_UIMode == UIStyle.Default then
+		showPlayerHudComponent("all", false)
+		showPlayerHudComponent("crosshair", true)
+	end
+
 	self.m_UIMode = uiMode
 end
 
 function HUDUI:setEnabled(state)
 	self.m_Enabled = state
+
+	if self.m_UIMode == UIStyle.Default then
+		if not state then
+			showPlayerHudComponent("all", false)
+			showPlayerHudComponent("crosshair", true)
+		else
+			showPlayerHudComponent("all", true)
+			showPlayerHudComponent("radar", false)
+		end
+	end
 end
 
 function HUDUI:isEnabled()
