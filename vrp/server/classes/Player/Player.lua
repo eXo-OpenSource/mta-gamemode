@@ -31,9 +31,6 @@ function Player:constructor()
 	self.m_Crimes = {}
 	self:destroyChatColShapes( )
 	self:createChatColshapes( )
-	
-	
-
 end
 
 function Player:destructor()

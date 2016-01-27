@@ -28,16 +28,25 @@ function SelfGUI:constructor()
 	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.125, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
-	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
-	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
-	--addEventHandler("companyInvitationRetrieve", root, bind(self.Event_companyInvitationRetrieve, self))
-
+	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
 	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_JobQuitButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"Job kündigen", tabGeneral):setBackgroundColor(Color.Red)
-	self.m_JobQuitButton:setFontSize(1.2)
+	self.m_JobQuitButton = GUILabel:new(self.m_Width*0.7, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"(Job kündigen)", tabGeneral):setColor(Color.Red)
+	self.m_JobQuitButton.onHover = function () self.m_JobQuitButton:setColor(Color.White) end
+	self.m_JobQuitButton.onUnhover = function () self.m_JobQuitButton:setColor(Color.Red) end
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
+	
+	self.m_TicketButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, _"Tickets", true, tabGeneral)
+	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
+	
+	self.m_AdminButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.07, _"Adminmenü", true, tabGeneral)
+	self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
 
+	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
+	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
+	
+	--addEventHandler("companyInvitationRetrieve", root, bind(self.Event_companyInvitationRetrieve, self))
+	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.25, self.m_Height*0.10, _"Fraktion", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
 	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.49, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
@@ -291,12 +300,15 @@ function SelfGUI:onShow()
 
 	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
 	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
-
+	
+	local x, y = self.m_JobNameLabel:getPosition()
 	if localPlayer:getJob() then
 		self.m_JobNameLabel:setText(localPlayer:getJob():getName())
+		self.m_JobQuitButton:setPosition(x + dxGetTextWidth(self.m_JobNameLabel:getText(), self.m_JobQuitButton:getFontSize(), self.m_JobQuitButton:getFont()) + 10, y)
 		self.m_JobQuitButton:setVisible(true)
 	else
 		self.m_JobNameLabel:setText("-")
+		self.m_JobQuitButton:setPosition(x + dxGetTextWidth(self.m_JobNameLabel:getText(), self.m_JobQuitButton:getFontSize(), self.m_JobQuitButton:getFont()) + 10, y)
 		self.m_JobQuitButton:setVisible(false)
 	end
 	if localPlayer:getKarma() then
@@ -348,6 +360,17 @@ function SelfGUI:FactionMenuButton_Click()
 	self:close()
 	FactionGUI:getSingleton():open()
 end
+
+function SelfGUI:TicketButton_Click()
+	self:close()
+	TicketGUI:getSingleton():open()
+end
+
+function SelfGUI:AdminButton_Click()
+	self:close()
+	AdminGUI:getSingleton():open()
+end
+
 
 function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
 	if rank and rank > 0 then

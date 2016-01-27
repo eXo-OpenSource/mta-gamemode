@@ -121,6 +121,9 @@ function Core:afterLogin()
 	GroupGUI:new()
 	GroupGUI:getSingleton():close()
 	
+	TicketGUI:new()
+	TicketGUI:getSingleton():close()
+	
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
 		HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
