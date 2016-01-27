@@ -13,8 +13,13 @@ function Gangwar:constructor( )
 	local drow = sql:queryFetch(sql_query,sql:getPrefix())
 	if drow then 
 		for i, datarow in ipairs( drow ) do 
-			Area:new( datarow )
+			self.m_Areas[#self.m_Areas+1] = Area:new( datarow )
 		end
 	end
 end	
 
+function Gangwar:destructor( )
+	for index = 1,#self.m_Areas do 
+		self.m_Areas[index]:destructor()
+	end
+end

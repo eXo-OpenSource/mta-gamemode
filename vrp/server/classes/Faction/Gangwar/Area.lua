@@ -14,15 +14,28 @@ function Area:constructor( dataset )
 	self:createCenterCol( )
 end	
 
+
 function Area:createCenterCol() 
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
-	self.m_CenterSphere = createColSphere(x,y,z,GANGWAR_CENTER_HOLD_RANGE)+
+	self.m_CenterSphere = createColSphere(x,y,z,GANGWAR_CENTER_HOLD_RANGE)
 end
 
 function Area:attack()
 	if not self.m_IsAttacked then 
 		self.m_IsAttacked = true
 		self.m_BattleTime = setTimer(bind(self.attackEnd, self), GANGWAR_MATCH_TIME, 1)
+		
+	end
+end
+
+function Area:onCenterLeave( leaveElement,dimension )
+	if dimension then 
+		
+	end
+end
+
+function Area:onCenterEnter( leaveElement,dimension )
+	if dimension then 
 		
 	end
 end
@@ -46,4 +59,5 @@ end
 
 function Area:destructor() 
 	--// Do some delete
+	self:update()
 end
