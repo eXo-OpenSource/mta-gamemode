@@ -91,14 +91,17 @@ function tableToString(tab)
 end
 
 -- Hacked in from runcode
-function runString (commandstring, outputTo, source)
-	local sourceName
-	if source then
+function runString(commandstring, source)
+	local sourceName, output
+	if getPlayerName(source) ~= "Console" then
 		sourceName = getPlayerName(source)
+		output = outputChatBox
 	else
 		sourceName = "Console"
+		output = outputDebugString
+		
 	end
-	outputChatBox(sourceName.." executed command: "..commandstring)
+	output(sourceName.." executed command: "..commandstring)
 	local notReturned
 	--First we test with return
 	local commandFunction,errorMsg = loadstring("return "..commandstring)
@@ -109,16 +112,17 @@ function runString (commandstring, outputTo, source)
 	end
 	if errorMsg then
 		--It still failed.  Print the error message and stop the function
-		outputChatBox("Error: "..errorMsg)
+		output("Error: "..errorMsg)
 		return
 	end
 	--Finally, lets execute our function
 	results = { pcall(commandFunction) }
 	if not results[1] then
 		--It failed.
-		outputChatBox("Error: "..results[2])
+		output("Error: "..results[2])
 		return
 	end
+	
 	if not notReturned then
 		local resultsString = ""
 		local first = true
@@ -134,9 +138,9 @@ function runString (commandstring, outputTo, source)
 			end
 			resultsString = resultsString..tostring(results[i]).." ["..resultType.."]"
 		end
-		outputChatBox("Command results: "..resultsString)
+		output("Command results: "..resultsString)
 	elseif not errorMsg then
-		outputChatBox("Command executed!")
+		output("Command executed!")
 	end
 end
 

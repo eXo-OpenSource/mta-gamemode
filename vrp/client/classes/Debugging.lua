@@ -57,7 +57,7 @@ if DEBUG then
 	function Debugging:runString(cmd, ...)
 		if localPlayer:getRank() >= RANK.Administrator then
 			local codeString = table.concat({...}, " ")
-			runString(codeString, root, player)
+			runString(codeString, player)
 		end
 	end
 
