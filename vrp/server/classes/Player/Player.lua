@@ -116,8 +116,7 @@ function Player:loadCharacter()
 end
 
 function Player:createCharacter()
-	sql:queryExec("INSERT INTO ??_character(Id) VALUES(?);", sql:getPrefix(), self.m_Id)
-
+	sql:queryExec("INSERT INTO ??_character(Id,PosX,PosY,PosZ) VALUES(?,?,?,?);", sql:getPrefix(), self.m_Id,NoobSpawn["x"],NoobSpawn["y"],NoobSpawn["z"])
 	self.m_Inventory = Inventory.create()
 end
 
@@ -210,7 +209,7 @@ function Player:spawn()
 		self:setSkinLevel(0)
 
 		-- spawn the player
-		spawnPlayer(self, 2028, -1405, 18, self.m_Skin, self.m_SavedInterior, 0) -- Todo: change position
+		spawnPlayer(self, NoobSpawn["x"], NoobSpawn["y"], NoobSpawn["z"], self.m_Skin, self.m_SavedInterior, 0) -- Todo: change position
 		self:setRotation(0, 0, 180)
 	else
 		if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
