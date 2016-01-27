@@ -94,7 +94,7 @@ end
 function Admin:goToPlayer(player,cmd,target)
 	if player:getRank() >= RANK.Supporter then
 		if target then
-			local target = PlayerManager:getPlayerFromPartOfName(target,player)
+			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			local dim,int = target:getDimension(), target:getInterior() 
 			local pos = target:getPosition()
 			pos.x = pos.x + 0.01
@@ -113,7 +113,7 @@ end
 function Admin:getHerePlayer(player,cmd,target)
 	if player:getRank() >= RANK.Supporter then
 		if target then
-			local target = PlayerManager:getPlayerFromPartOfName(target,player)
+			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			local dim,int = player:getDimension(), player:getInterior() 
 			local pos = player:getPosition()
 			pos.x = pos.x + 0.01
