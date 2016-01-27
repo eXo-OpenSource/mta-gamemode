@@ -89,3 +89,15 @@ addEventHandler("onClientRender", root,
   end
 )
 ```
+
+### Header
+Folgender Header sollte einheitlich verwendet werden. 
+Autor und Datum sind irrelevant, da man dies sowieso übersichtlich in Github sieht.
+
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     [ProjectName]
+-- *  FILE:        [FilePath]
+-- *  PURPOSE:     [Description]
+-- *
+-- ****************************************************************************
