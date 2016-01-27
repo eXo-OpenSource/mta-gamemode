@@ -3,6 +3,10 @@
 
 Gangwar = inherit(Singleton)
 
+--// Gangwar - Constants //--
+GANGWAR_MATCH_TIME = 15
+GANGWAR_CENTER_HOLD_RANGE = 20
+
 function Gangwar:constructor( )
 	self.m_Areas = {	}
 	local sql_query = "SELECT * FROM ??_gangwar"
