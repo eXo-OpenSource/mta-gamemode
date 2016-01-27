@@ -66,6 +66,9 @@ function Core:constructor()
 
 	-- Generate Missions
 	MStealWeaponTruck:new()
+	
+	--// Gangwar
+	Gangwar:new()
 
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")

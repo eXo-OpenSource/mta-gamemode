@@ -115,7 +115,9 @@
 	<script src="server/classes/Faction/FactionState.lua" type="server"/>
 	<script src="server/classes/Faction/FactionEvil.lua" type="server"/>
 	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
-
+	<script src="server/classes/Faction/Gangwar/GangwarManager.lua" type="server"/>
+	<script src="server/classes/Faction/Gangwar/Area.lua" type="server"/>
+	
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/PermanentVehicle.lua" type="server"/>
@@ -342,7 +344,6 @@
 	<script src="client/classes/GUIForms/VehicleMechanicTakeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobServiceTechnicianQuestionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CompanyInfoGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GroupGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionInviteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StateFactionDutyGUI.lua" type="client"/>
@@ -354,7 +355,6 @@
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/WebForms/SkillTreeGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
-	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
 
 	<!-- Cutscene -->
 	<script src="client/classes/Cutscene/Cutscene.lua" type="client"/>
