@@ -18,7 +18,7 @@ CHAT_SCREAM_RANGE = 30
 
 CheatSeverity = {Low = 1, Middle = 2, High = 3, Brutal = 4}
 
-NoobSpawn = {["x"] = 1474.83, ["y"] = -1738.96, ["z"] = 13.55}
+NOOB_SPAWN = Vector3(1474.83,-1738.96,13.55)
 
 -- TODO: Change before release
 MAX_JOB_LEVEL = 10

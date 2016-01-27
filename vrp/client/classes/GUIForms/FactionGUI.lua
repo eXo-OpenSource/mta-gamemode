@@ -104,7 +104,7 @@ function FactionGUI:addLeaderTab()
 
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"Waffen:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 
-		for weaponID,v in pairs(self.m_validWeapons) do
+		for weaponID,v in pairs(self.m_ValidWeapons) do
 			if v == true then
 				self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.42+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.1, self.m_Height*0.05, getWeaponNameFromID(weaponID), tabLeader)
 				self.m_WeaponsName[weaponID]:setAlignX("center")
@@ -142,7 +142,7 @@ end
 
 function FactionGUI:saveRank()
 	if self.m_SelectedRank then
-		local rankWeapons = self.m_rankWeapons[tostring(self.m_SelectedRank)]
+		local rankWeapons = self.m_RankWeapons[tostring(self.m_SelectedRank)]
 		for weaponID = 0, 46 do
 			if self.m_WeaponsCheck[weaponID] and self.m_WeaponsCheck[weaponID]:isChecked() == true then
 				rankWeapons[tostring(weaponID)] = 1
@@ -157,7 +157,7 @@ end
 
 function FactionGUI:onSelectRank(name,rank)
 	self.m_LeaderRankName:setText(name.." - "..rank)
-	self.m_LeaderLoan:setText(tostring(self.m_rankLoans[tostring(rank)]))
+	self.m_LeaderLoan:setText(tostring(self.m_RankLoans[tostring(rank)]))
 	self.m_SaveRank:setEnabled(true)
 
 	for skinId,bool in pairs(self.m_skins) do
@@ -166,9 +166,9 @@ function FactionGUI:onSelectRank(name,rank)
 		end
 	end
 
-	for weaponID,v in pairs(self.m_validWeapons) do
+	for weaponID,v in pairs(self.m_ValidWeapons) do
 		if v == true then
-			if self.m_rankWeapons[tostring(rank)][tostring(weaponID)] == 1 then
+			if self.m_RankWeapons[tostring(rank)][tostring(weaponID)] == 1 then
 				self.m_WeaponsCheck[weaponID]:setChecked(true)
 			else
 				self.m_WeaponsCheck[weaponID]:setChecked(false)
@@ -176,7 +176,7 @@ function FactionGUI:onSelectRank(name,rank)
 		end
 	end
 
-	self.m_SkinChanger:setSelectedItem(self.m_rankSkins[tostring(rank)])
+	self.m_SkinChanger:setSelectedItem(self.m_RankSkins[tostring(rank)])
 
 end
 
@@ -198,10 +198,10 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players,skin
 
 			if rank >= FactionRank.Manager then
 				self.m_skins = skins
-				self.m_rankLoans = rankLoans
-				self.m_rankSkins = rankSkins
-				self.m_validWeapons = validWeapons
-				self.m_rankWeapons = rankWeapons
+				self.m_RankLoans = rankLoans
+				self.m_RankSkins = rankSkins
+				self.m_ValidWeapons = validWeapons
+				self.m_RankWeapons = rankWeapons
 				self:addLeaderTab()
 			end
 		end
