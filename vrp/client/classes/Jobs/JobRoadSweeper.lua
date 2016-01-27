@@ -54,10 +54,6 @@ function JobRoadSweeper:Rubbish_Hit(hitElement, matchingDimension)
 
 		destroyElement(source)
 		triggerServerEvent("sweeperGarbageCollect", root)
-
-		setElementFrozen(vehicle, true)
-		self.m_Busy = true
-		setTimer(function() setElementFrozen(vehicle, false) self.m_Busy = nil end, 500, 1)
 	end
 end
 

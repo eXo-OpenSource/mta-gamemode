@@ -24,6 +24,7 @@ function HUDRadar:constructor()
 	self.m_Blips = Blip.Blips
 	self.m_Areas = {}
 	self.m_Visible = false
+	self.m_Enabled = core:get("HUD", "showRadar", true)
 
 	-- Set texture edge to border (no-repeat)
 	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
@@ -33,6 +34,9 @@ function HUDRadar:constructor()
 	self:updateMapTexture()
 
 	-- Settings
+	if core:get("HUD", "showRadar", nil) == nil then
+		core:set("HUD", "showRadar", true)
+	end
 	if core:get("HUD", "drawGangAreas", nil) == nil then
 		core:set("HUD", "drawGangAreas", true)
 	end
@@ -115,6 +119,14 @@ function HUDRadar:getDesignSet()
 	return self.m_DesignSet
 end
 
+function HUDRadar:setEnabled(state)
+	self.m_Enabled = state
+end
+
+function HUDRadar:isEnabled()
+	return self.m_Enabled
+end
+
 function HUDRadar:restore(clearedRenderTargets)
 	if clearedRenderTargets then
 		self:updateMapTexture()
@@ -169,6 +181,7 @@ end
 local pi = math.pi
 local twoPi = pi*2
 function HUDRadar:draw()
+	if not self.m_Enabled then return end
 	if not self.m_Visible or isPlayerMapVisible() then return end
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)

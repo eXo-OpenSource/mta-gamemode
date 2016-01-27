@@ -73,8 +73,9 @@ function SelfGUI:constructor()
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 
-
-
+	-- Tab: Statistics
+	local tabStatistics = self.m_TabPanel:addTab(_"Statistiken")
+	self.m_TabStatistics = tabStatistics
 
 	-- Tab: Vehicles
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
@@ -157,14 +158,24 @@ function SelfGUI:constructor()
 	-- Tab: Settings
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
 	self.m_TabSettings = tabSettings
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD und Nametag", tabSettings)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Radar", tabSettings)
 	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
-	self.m_RadarChange:addItem(_"Monochrom")
-	self.m_RadarChange:addItem("GTA:SA")
+	for i, v in ipairs(RadarDesign) do
+		self.m_RadarChange:addItem(v)
+	end
 	self.m_RadarChange.onChange = function(text, index) HUDRadar:getSingleton():setDesignSet(index) end
 	self.m_RadarChange:setIndex(core:get("HUD", "RadarDesign") or 1, true)
 
-	self.m_BlipCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Blips anzeigen?", tabSettings)
+	self.m_RadarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Radar aktivieren?", tabSettings)
+	self.m_RadarCheckBox:setFont(VRPFont(25))
+	self.m_RadarCheckBox:setFontSize(1)
+	self.m_RadarCheckBox:setChecked(core:get("HUD", "showRadar", true))
+	self.m_RadarCheckBox.onChange = function (state)
+		core:set("HUD", "showRadar", state)
+		HUDRadar:getSingleton():setEnabled(state)
+	end
+
+	self.m_BlipCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Blips anzeigen?", tabSettings)
 	self.m_BlipCheckBox:setFont(VRPFont(25))
 	self.m_BlipCheckBox:setFontSize(1)
 	self.m_BlipCheckBox:setChecked(core:get("HUD", "drawBlips", true))
@@ -172,7 +183,7 @@ function SelfGUI:constructor()
 		core:set("HUD", "drawBlips", state)
 	end
 
-	self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Gangareas anzeigen?", tabSettings)
+	self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Gangareas anzeigen?", tabSettings)
 	self.m_GangAreaCheckBox:setFont(VRPFont(25))
 	self.m_GangAreaCheckBox:setFontSize(1)
 	self.m_GangAreaCheckBox:setChecked(core:get("HUD", "drawGangAreas", true))
@@ -181,8 +192,34 @@ function SelfGUI:constructor()
 		HUDRadar:getSingleton():updateMapTexture()
 	end
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.32, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
-	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.8, self.m_Height*0.07, _"HUD / UI", tabSettings)
+	self.m_UIChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
+	for i, v in ipairs(UIStyle) do
+		self.m_UIChange:addItem(v)
+	end
+	self.m_UIChange.onChange = function(text, index)
+		core:set("HUD", "UIStyle", index)
+		HUDUI:getSingleton():setUIMode(index)
+	end
+	self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.vRoleplay), true)
+
+	self.m_UICheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.35, self.m_Height*0.04, _"UI aktivieren?", tabSettings)
+	self.m_UICheckBox:setFont(VRPFont(25))
+	self.m_UICheckBox:setFontSize(1)
+	self.m_UICheckBox:setChecked(core:get("HUD", "showUI", true))
+	self.m_UICheckBox.onChange = function (state)
+		core:set("HUD", "showUI", state)
+		HUDUI:getSingleton():setEnabled(state)
+	end
+
+	self.m_ChatCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, _"Chat aktivieren?", tabSettings)
+	self.m_ChatCheckBox:setFont(VRPFont(25))
+	self.m_ChatCheckBox:setFontSize(1)
+	self.m_ChatCheckBox:setChecked(isChatVisible())
+	self.m_ChatCheckBox.onChange = function (state) showChat(state) end
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
+	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
 	self.m_RadarChange:addItem("Normal")
 	self.m_RadarChange:addItem("Instant")
 	self.m_RadarChange.onChange = function(text, index)
@@ -191,6 +228,8 @@ function SelfGUI:constructor()
 	end
 	self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
 
+
+	--[[ TODO: Do we require this?
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.8, self.m_Height*0.07, _"Tipps", tabSettings)
 	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren?", tabSettings)
 	self.m_EnableTippsBox:setFont(VRPFont(25))
@@ -229,6 +268,7 @@ function SelfGUI:constructor()
 			ErrorBox:new(_"Tipps wurden deaktiviert!")
 		end
 	end
+	--]]
 
 	--[[GUILabel:new(self.m_Width*0.02, self.m_Height*0.74, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnungen", tabSettings)
 	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
@@ -350,25 +390,25 @@ end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
 	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
-	self.m_GroupInvitationsLabel:setText("Du hast Einladungen in private Firmen/Gangs, öffne das Menü um diese anzunehmen!")
+	self.m_GroupInvitationsLabel:setText("Du hast eine Einladungen für eine private Firma/Gang erhalten, öffne das Menü um diese anzunehmen!")
 	self.m_GroupInvitationsLabel:setVisible(true)
-	self.m_InvationGroupId = groupId
-
+	self.m_HasGroupInvation = true
 end
 
 function SelfGUI:Event_groupRetrieveInfo(name, rank)
 	local x, y = self.m_GroupNameLabel:getPosition()
 	if rank and rank > 0 then
 		self.m_GroupNameLabel:setText(_("%s - Rang: %s", name, GroupRank[rank]))
+		self.m_GroupMenuButton:setVisible(true)
 		self.m_GroupInvitationsLabel:setVisible(false)
-		self.m_InvationGroupId = 0
+		self.m_HasGroupInvation = false
 		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("%s - Rang: %s", name, GroupRank[rank]), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
 	else
 		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
 		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
 		self.m_GroupInvitationsLabel:setVisible(true)
 
-		if self.m_InvationGroupId and self.m_InvationGroupId > 0 then
+		if self.m_HasGroupInvation then
 			self.m_GroupInvitationsLabel:setVisible(true)
 		end
 	end
@@ -418,12 +458,7 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType)
 			item.VehicleId = vehicleId
 			item.VehicleElement = element
-			item.PositionType = (
-				(vehicleInfo[2] == VehiclePositionType.World and VehiclePositionType.World) or
-				(vehicleInfo[2] == VehiclePositionType.Garage and VehiclePositionType.Garage) or
-				(vehicleInfo[2] == VehiclePositionType.Hangar and VehiclePositionType.Hangar) or
-				(vehicleInfo[2] == VehiclePositionType.Mechanic and VehiclePositionType.Mechanic)
-			)
+			item.PositionType = vehicleInfo[2]
 		end
 	end
 

@@ -7,7 +7,7 @@
 -- ****************************************************************************
 screenWidth, screenHeight = guiGetScreenSize()
 screenSize = Vector2(screenWidth, screenHeight)
-ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/1.8
+ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 
 NO_MUNITION_ITEMS = {
 	[0] = true;
@@ -77,6 +77,10 @@ WeaponIcons = {
 for k, v in pairs(WeaponIcons) do WeaponIcons[k] = "files/images/Weapons/"..v end
 
 RadarDesign = {Monochrome = 1, GTA = 2}
+for i, v in pairs(RadarDesign) do RadarDesign[v] = i end
+
+UIStyle = {vRoleplay = 1, eXo = 2}
+for i, v in pairs(UIStyle) do UIStyle[v] = i end
 
 HelpTextTitles = {
 	General = {

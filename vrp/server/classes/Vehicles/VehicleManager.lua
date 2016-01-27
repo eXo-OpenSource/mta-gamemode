@@ -42,13 +42,15 @@ function VehicleManager:constructor()
 			if seat == 0 then
 				self:checkVehicle(source)
 
-				local vehicleType = source:getVehicleType()
-				if (vehicleType == "Plane" or vehicleType == "Helicopter") and not player:hasPilotsLicense() then
-					player:removeFromVehicle(source)
-					player:setPosition(source.matrix:transformPosition(-1.5, 5, 0))
-					player:sendShortMessage(_("Du hast keinen Flugschein!", player))
-				elseif vehicleType == "Automobile" and not player:hasDrivingLicense() then
-					player:sendShortMessage(_("Du hast keinen Führerschein! Lass dich nicht erwischen!", player))
+				if not source:isLocked() then
+					local vehicleType = source:getVehicleType()
+					if (vehicleType == "Plane" or vehicleType == "Helicopter") and not player:hasPilotsLicense() then
+						player:removeFromVehicle(source)
+						player:setPosition(source.matrix:transformPosition(-1.5, 5, 0))
+						player:sendShortMessage(_("Du hast keinen Flugschein!", player))
+					elseif vehicleType == "Automobile" and not player:hasDrivingLicense() then
+						player:sendShortMessage(_("Du hast keinen Führerschein! Lass dich nicht erwischen!", player))
+					end
 				end
 
 				outputDebug(vehicleType)
@@ -224,7 +226,7 @@ function VehicleManager:removeUnusedVehicles()
 					if vehicle:getTowingVehicle() then
 						return
 					end
-				end		
+				end
 
 				vehicle:respawn()
 			end
