@@ -9,6 +9,5 @@ function phpSDKGetPlayers()
 		players[i]["pname"] = player:getName()
 		i = i+1
 	end
-	outputDebugString("PHP-Request Playerlist")
-	return players;
+	return players
 end
