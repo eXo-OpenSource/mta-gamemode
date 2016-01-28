@@ -25,6 +25,6 @@ end
 
 function Gangwar:destructor( )
 	for index = 1,#self.m_Areas do 
-		self.m_Areas[index]:destructor()
+		self.m_Areas[index]:delete()
 	end
 end

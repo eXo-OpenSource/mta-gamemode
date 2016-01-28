@@ -27,7 +27,6 @@ end
 function Area:attack()
 	if not self.m_IsAttacked then 
 		self.m_IsAttacked = true
-		self.m_BattleTime = setTimer(bind(self.attackEnd, self), GANGWAR_MATCH_TIME, 1)
 		
 	end
 end
