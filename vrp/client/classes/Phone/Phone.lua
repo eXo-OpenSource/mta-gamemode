@@ -22,6 +22,7 @@ function Phone:constructor()
 
 	-- Register web apps
 	self:registerApp(PhoneApp.makeWebApp("YouTube", "files/images/Phone/Apps/IconYouTube.png", "https://youtube.com/tv", false))
+	self:registerApp(PhoneApp.makeWebApp("Nachrichten", "files/images/Phone/Apps/IconMessage.png", "http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player="..localPlayer:getName(), false))
 
 	-- Add GUI elements
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/Phone.png", self)
