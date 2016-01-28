@@ -29,6 +29,6 @@ function AttackSession:onPlayerQuit()
 end
 
 
-function Attack.attackEnd() 
+function AttackSession.attackEnd() 
 	
 end
