@@ -1,10 +1,14 @@
---//	eXo 3-0 		//**
---//	Strobe,27.1,16	//**
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/Faction/Gangwar/Area.lua
+-- *  PURPOSE:     Gangwar Area Class
+-- *
+-- ****************************************************************************
 
 Area = inherit(Object)
 
 function Area:constructor( dataset )
-	outputChatBox(tostring(dataset))
 	self.m_Name = dataset["Name"]
 	self.m_ID = dataset["ID"]
 	self.m_Owner = dataset["Besitzer"]

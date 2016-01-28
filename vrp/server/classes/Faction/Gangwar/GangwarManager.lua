@@ -1,5 +1,10 @@
---//	eXo 3-0 		//**
---//	Strobe,27.1,16	//**
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/Faction/Gangwar/GangwarManager.lua
+-- *  PURPOSE:     Gangwar Class
+-- *
+-- ****************************************************************************
 
 Gangwar = inherit(Singleton)
 
