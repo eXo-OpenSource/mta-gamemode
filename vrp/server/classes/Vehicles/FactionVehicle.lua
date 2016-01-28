@@ -90,8 +90,8 @@ function FactionVehicle:save()
 	local color = setBytesInInt32(255, r, g, b) -- Format: argb
 	local tunings = getVehicleUpgrades(self) or {}
 
-	return sql:queryExec("UPDATE ??_faction_vehicles SET Faction = ?, Health = ?, Color = ?, PositionType = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Faction:getId(), health, color, self.m_PositionType, toJSON(tunings), self:getMileage(), self.m_Id)
+	return sql:queryExec("UPDATE ??_faction_vehicles SET Faction = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Faction:getId(), self:getMileage(), self.m_Id)
 end
 
 function FactionVehicle:hasKey(player)

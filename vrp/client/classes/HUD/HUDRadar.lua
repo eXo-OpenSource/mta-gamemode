@@ -12,7 +12,6 @@ function HUDRadar:constructor()
 	self.m_Width, self.m_Height = 340*screenWidth/1600, 200*screenHeight/900
 	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-20
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
-	self.m_RotLimit = math.deg(math.acos(self.m_Width/self.m_Diagonal))*2
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
 	if self.m_DesignSet == RadarDesign.Monochrome or self.m_DesignSet == RadarDesign.GTA then
 		CustomF11Map:getSingleton():enable()
@@ -148,7 +147,7 @@ function HUDRadar:update()
 		self.m_Rotation = -math.rad(getPedRotation(localPlayer))
 	else
 		local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
-		self.m_Rotation = math.deg(6.2831853071796 - math.atan2(lookAtX - camX, lookAtY - camY) % 6.2831853071796)
+		self.m_Rotation = 360 - math.deg(math.atan2(lookAtX - camX, lookAtY - camY)) % 360
 	end
 
 	for i, v in pairs(getElementsByType("player")) do
@@ -178,8 +177,6 @@ function HUDRadar:update()
 	end
 end
 
-local pi = math.pi
-local twoPi = pi*2
 function HUDRadar:draw()
 	if not self.m_Enabled then return end
 	if not self.m_Visible or isPlayerMapVisible() then return end
@@ -207,7 +204,6 @@ function HUDRadar:draw()
 	-- Draw renderTarget
 	if isNotInInterior then
 		dxDrawImageSection(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)
-		--dxDrawImage(200, 300, self.m_Diagonal, self.m_Diagonal, self.m_RenderTarget) -- test
 	else
 		dxDrawRectangle(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, tocolor(125, 168, 210))
 	end
@@ -231,53 +227,66 @@ function HUDRadar:draw()
 		dxDrawRectangle(self.m_PosX+self.m_Width*3/4+9, self.m_PosY+self.m_Height+6, (self.m_Width/4-6) * (getPedOxygenLevel(localPlayer)/1000), self.m_Height/20, tocolor(91, 79, 21))
 	end
 
-	if isNotInInterior then
-		if core:get("HUD", "drawBlips", true) then
-			local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
-			for k, blip in pairs(self.m_Blips) do
-				local blipX, blipY = blip:getPosition()
-				if getDistanceBetweenPoints2D(posX, posY, blipX, blipY) < blip:getStreamDistance() then
-
-					local blipMapX, blipMapY = self:worldToMapPosition(blipX, blipY)
-					local distanceX, distanceY = blipMapX - mapX, blipMapY - mapY
-					local distance = getDistanceBetweenPoints2D(blipMapX, blipMapY, mapX, mapY)
-					local rotation = (findRotation(mapCenterX, mapCenterY, mapCenterX + distanceX, mapCenterY + distanceY) + self.m_Rotation) % 360
-
-					local screenX = mapCenterX - math.sin(math.rad(rotation)) * distance
-					local screenY = mapCenterY + math.cos(math.rad(rotation)) * distance
-					local right, bottom = self.m_PosX + self.m_Width, self.m_PosY + self.m_Height
-
-					if screenX < self.m_PosX or screenY < self.m_PosY or screenX > right or screenY > bottom then
-						local rotLimit = self.m_RotLimit
-						if rotation > rotLimit and rotation < 180-rotLimit then
-							local r = rotation - 90
-							screenX = self.m_PosX
-							screenY = self.m_PosY + self.m_Height/2 - math.tan(math.rad(r)) * self.m_Width/2
-						elseif rotation >= 180-rotLimit and rotation < 180+rotLimit then
-							local r = rotation - 180
-							screenX = self.m_PosX + self.m_Width/2 + math.tan(math.rad(r)) * self.m_Height/2
-							screenY = self.m_PosY
-						elseif rotation >= 180+rotLimit and rotation < 360-rotLimit then
-							local r = rotation - 270
-							screenX = right
-							screenY = self.m_PosY + self.m_Height/2 + math.tan(math.rad(r)) * self.m_Width/2
-						else
-							local r = rotation
-							screenX = self.m_PosX + self.m_Width/2 - math.tan(math.rad(r)) * self.m_Height/2
-							screenY = bottom
-						end
-					end
-
-					local blipSize = blip:getSize()
-					dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath(), 0, 0, 0, blip:getColor())
-				end
-			end
-		end
+	if isNotInInterior and core:get("HUD", "drawBlips", true) then
+		self:drawBlips()
 	end
 
 	-- Draw the player blip
 	local rotX, rotY, rotZ = getElementRotation(localPlayer)
 	dxDrawImage(self.m_PosX+self.m_Width/2-6, self.m_PosY+2+self.m_Height/2-6, 16, 16, self:makePath("LocalPlayer.png", true), self.m_Rotation - rotZ) -- dunno where the 6 comes from but it matches better
+end
+
+function HUDRadar:drawBlips()
+	-- Build matrix that converts world coordinates into the map coordinate system
+	--
+	-- Steps:
+	-- 1) Move world coordinate system so that the player is the center of the world
+	-- 2) Scale the coordinate system to the size of our map image (also invert the Y axis here)
+	-- 3) Rotate coordinate system
+	-- All steps are intrinsic, so multiply matrices the other way round
+	--
+	local px, py, pz = getElementPosition(localPlayer)
+	local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
+	local mat = math.matrix.three.rotate_z(math.rad(self.m_Rotation)) * math.matrix.three.scale(self.m_ImageSize/6000, -self.m_ImageSize/6000, 1) * math.matrix.three.translate(-px, -py, -pz)
+	local rotLimit = math.atan2(self.m_Height, self.m_Width)
+
+	for k, blip in pairs(self.m_Blips) do
+		local blipX, blipY = blip:getPosition()
+		if getDistanceBetweenPoints2D(px, py, blipX, blipY) < blip:getStreamDistance() then
+			-- Do transformation
+			local pos = mat * math.matrix.three.hvector(blipX, blipY, 0, 1)
+			local x, y = pos[1][1], pos[2][1]
+
+			-- Check borders and fix position if necessary
+			if x < -self.m_Width/2 or x > self.m_Width/2 or y < -self.m_Height/2 or y > self.m_Height/2 then
+				-- Calculate angle
+				local rotation = math.atan2(y, x)
+
+				-- Identify and fix edges
+				-- Use the 2. intercept theorem (ger. Strahlensatz)
+				if rotation < -rotLimit and rotation > -math.pi+rotLimit then -- top
+					x = -self.m_Height/2 / y * x
+					y = -self.m_Height/2
+				elseif rotation > rotLimit and rotation < math.pi-rotLimit then -- bottom
+					x = self.m_Height/2 / y * x
+					y = self.m_Height/2
+				elseif rotation >= -rotLimit and rotation <= rotLimit then -- right
+					y = self.m_Width/2 / x * y
+					x = self.m_Width/2
+				else -- left
+					y = -self.m_Width/2 / x * y
+					x = -self.m_Width/2
+				end
+			end
+
+			-- Translate map to screen coordinates
+			local screenX, screenY = mapCenterX + x, mapCenterY + y
+
+			-- Finally, draw
+			local blipSize = blip:getSize()
+			dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath(), 0, 0, 0, blip:getColor())
+		end
+	end
 end
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
