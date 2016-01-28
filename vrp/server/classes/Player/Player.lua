@@ -407,6 +407,10 @@ function Player:getJoinTime()
 	return self.m_JoinTime
 end
 
+function Player:getPlayTime()
+	return math.floor(self.m_LastPlayTime + (getTickCount() - self.m_JoinTime)/1000/60)
+end
+
 function Player:setNextPayday()
 	local payday = (math.floor(self:getPlayTime()/60)+1)*60
 	self.m_NextPayday = payday
