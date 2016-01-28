@@ -113,8 +113,7 @@ function Player:loadCharacter()
 	end
 	
 	-- Add Payday
-	local nextPayDay = self:getMinutesUntilNextPayday()*60*1000
-	self.m_PayDayTimer = setTimer(bind(self.payDay, self),nextPayDay,1)
+	self:setNextPayday()
 end
 
 function Player:createCharacter()
@@ -408,9 +407,9 @@ function Player:getPlayTime()
 	return math.floor(self.m_LastPlayTime + (getTickCount() - self.m_JoinTime)/1000/60)
 end
 
-function Player:getMinutesUntilNextPayday()
+function Player:setNextPayday()
 	local payday = (math.floor(self:getPlayTime()/60)+1)*60
-	return payday-self:getPlayTime()
+	self.m_NextPayday = payday
 end
 
 function Player:payDay()
@@ -419,8 +418,7 @@ function Player:payDay()
 	-- in Developement | only for testing
 	
 	-- Add Payday again
-	local nextPayDay = self:getMinutesUntilNextPayday()*60*1000
-	self.m_PayDayTimer = setTimer(bind(self.payDay, self),nextPayDay,1)
+	self:setNextPayday()
 end
 
 function Player:getCrimes()

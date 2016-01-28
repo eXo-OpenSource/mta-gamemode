@@ -33,6 +33,9 @@ function PlayerManager:constructor()
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	
+	self.m_PaydayPulse = TimedPulse:new(60000)
+	self.m_PaydayPulse:registerHandler(bind(self.checkPayday, self))
+	
 	self.m_SyncPulse = TimedPulse:new(500)
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 end
@@ -46,6 +49,14 @@ end
 function PlayerManager:updatePlayerSync()
 	for k, v in pairs(getElementsByType("player")) do
 		v:updateSync()
+	end
+end
+
+function PlayerManager:checkPayday()
+	for k, v in pairs(getElementsByType("player")) do
+		if v.m_NextPayday == v:getPlayTime() then
+			v:payDay()
+		end
 	end
 end
 
