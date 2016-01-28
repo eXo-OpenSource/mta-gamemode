@@ -41,7 +41,7 @@ Danach die Repository auf Github übertragen:
 Änderungen zusammenführen (wenn es Konflikte gibt):
 > git stash pop
 
-Merged Commits verhindern:
+Merge-Commit verhindern:
 > git pull --rebase
 
 Weitere Dokumentation:

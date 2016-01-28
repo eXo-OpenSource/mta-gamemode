@@ -163,8 +163,6 @@ function Player:loadCharacterInfo()
 	else
 		outputDebugString("Inventory has not been instantiated successfully!")
 	end
-
-	self:setPrivateSync("LastPlayTime", self.m_LastPlayTime)
 end
 
 function Player:initialiseBinds()
@@ -407,10 +405,6 @@ end
 
 function Player:getJoinTime()
 	return self.m_JoinTime
-end
-
-function Player:getPlayTime()
-	return math.floor(self.m_LastPlayTime + (getTickCount() - self.m_JoinTime)/1000/60)
 end
 
 function Player:setNextPayday()

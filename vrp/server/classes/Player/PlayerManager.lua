@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp","playerToggleFactionDuty"}
+addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp","playerToggleFactionDuty","webGetPlayers"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -29,6 +29,7 @@ function PlayerManager:constructor()
 	addEventHandler("requestJobLevelUp", root, bind(self.Event_requestJobLevelUp, self))
 	addEventHandler("playerRequestTrading", root, bind(self.Event_playerRequestTrading, self))
 	addEventHandler("playerToggleFactionDuty", root, bind(self.Event_toggleFactionDuty, self))
+	addEventHandler("webGetPlayers", root, bind(self.Web_getPlayers, self))
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -286,4 +287,19 @@ function PlayerManager:Event_toggleFactionDuty()
 	else
 		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
 	end
+end
+
+--WEB (PHP mtasdk)
+
+function PlayerManager:Web_getPlayers()
+	local name
+	local players = {}
+	local i = 1
+	for index, player in pairs(getElementsByType("player")) do
+		players[i]={}
+		players[i]["pname"] = player:getName()
+		i = i+1
+	end
+	outputDebugString("PHP-Request Playerlist")
+	return players;
 end
