@@ -57,6 +57,9 @@ function Player:destructor()
 	if self.m_Inventory then
 		delete(self.m_Inventory)
 	end
+	
+	--// gangwar 
+	triggerEvent("onDeloadCharacter",self)
 end
 
 function Player:connect()
@@ -114,6 +117,9 @@ function Player:loadCharacter()
 	
 	-- Add Payday
 	self:setNextPayday()
+	
+	--// Gangwar 
+	triggerEvent("onLoadCharacter",self)
 end
 
 function Player:createCharacter()

@@ -11,6 +11,7 @@ Gangwar = inherit(Singleton)
 --// Gangwar - Constants //--
 GANGWAR_MATCH_TIME = 15
 GANGWAR_CENTER_HOLD_RANGE = 20
+addRemoteEvents{"onLoadCharacter","onDeloadCharacter"}
 
 function Gangwar:constructor( )
 	self.m_Areas = {	}
@@ -21,10 +22,20 @@ function Gangwar:constructor( )
 			self.m_Areas[#self.m_Areas+1] = Area:new( datarow )
 		end
 	end
+		
+	addEventHandler("onLoadCharacter",root,bind(self.onPlayerJoin,self))
+	addEventHandler("onDeloadCharacter",root,bind(self.onPlayerQuit,self))
 end	
 
 function Gangwar:destructor( )
 	for index = 1,#self.m_Areas do 
 		self.m_Areas[index]:delete()
 	end
+end
+
+function Gangwar:onPlayerJoin()
+end
+
+function Gangwar:onPlayerQuit()
+
 end
