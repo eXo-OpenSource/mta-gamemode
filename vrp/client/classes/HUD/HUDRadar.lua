@@ -147,7 +147,7 @@ function HUDRadar:update()
 		self.m_Rotation = -math.rad(getPedRotation(localPlayer))
 	else
 		local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
-		self.m_Rotation = 180 - math.deg(math.atan2(lookAtX - camX, lookAtY - camY)) % 180
+		self.m_Rotation = 360 - math.deg(math.atan2(lookAtX - camX, lookAtY - camY)) % 360
 	end
 
 	for i, v in pairs(getElementsByType("player")) do
