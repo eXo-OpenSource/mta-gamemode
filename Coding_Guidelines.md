@@ -94,6 +94,7 @@ addEventHandler("onClientRender", root,
 Folgender Header sollte einheitlich verwendet werden. 
 Autor und Datum sind irrelevant, da man dies sowieso übersichtlich in Github sieht.
 
+```lua
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     [ProjectName]
@@ -101,3 +102,4 @@ Autor und Datum sind irrelevant, da man dies sowieso übersichtlich in Github si
 -- *  PURPOSE:     [Description]
 -- *
 -- ****************************************************************************
+```
