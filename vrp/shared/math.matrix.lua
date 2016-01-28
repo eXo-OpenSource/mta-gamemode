@@ -92,7 +92,7 @@ end
 -- Builds a homogeneous 4D vector
 -- @param x, y, z 3D coordinates
 -- @param w homogeneous component (1 if translation is included, 0 otherwise)
--- @return A 4x4 homogenous rotation matrix
+-- @return A homogeneous 4D vector
 --
 function math.matrix.three.hvector(x, y, z, w)
 	return matrix:new({{x}, {y}, {z}, {w}})
