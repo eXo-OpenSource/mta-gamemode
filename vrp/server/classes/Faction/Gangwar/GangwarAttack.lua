@@ -5,8 +5,7 @@
 -- *  PURPOSE:     Gangwar Attack class
 -- *
 -- ****************************************************************************
-
-AttackSession = inherit(object)
+AttackSession = inherit(Object)
 
 --// @param_desc: faction1: attacker-faction, faction2: defender-faction
 function AttackSession:constructor( pAreaObj , faction1 , faction2  ) 

@@ -57,9 +57,6 @@ function Player:destructor()
 	if self.m_Inventory then
 		delete(self.m_Inventory)
 	end
-	
-	--// Deload Character
-	self:triggerEvent("onDeloadCharacter",self)
 end
 
 function Player:connect()
@@ -117,9 +114,6 @@ function Player:loadCharacter()
 	
 	-- Add Payday
 	self:setNextPayday()
-	
-	--// trigger Login
-	self:triggerEvent("onLoadCharacter",self)
 end
 
 function Player:createCharacter()
