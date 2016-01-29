@@ -11,17 +11,42 @@ Area = inherit(Object)
 function Area:constructor( dataset )
 	self.m_Name = dataset["Name"]
 	self.m_ID = dataset["ID"]
-	self.m_Owner = dataset["Besitzer"]
+	self.m_Owner = tonumber(dataset["Besitzer"])
 	self.m_LastAttack = dataset["lastAttack"]
-	self.m_Position = {dataset["x"],dataset["y"],dataset["z"]}
-	self.m_PositionRadar = {dataset["cX"],dataset["cY"],dataset["cX2"],dataset["cY2"]}
+	self.m_Position = {tonumber(dataset["x"]),tonumber(dataset["y"]),tonumber(dataset["z"])}
+	self.m_PositionRadar = {tonumber(dataset["cX"]),tonumber(dataset["cY"]),tonumber(dataset["cX2"]),tonumber(dataset["cY2"])}
 	self:createCenterCol( )
+	self:createRadar()
+	self:createCenterPickup() 
 end	
 
+function Area:createRadar() 
+	local areaX,areaY = self.m_PositionRadar[1],self.m_PositionRadar[2]
+	local areaX2, areaY2 = self.m_PositionRadar[3],self.m_PositionRadar[4]
+	local areaWidth = math.abs(areaX -  areaX2)			
+	local areaHeight = math.abs(areaY - areaY2)  
+	local factionColor = factionColors[self.m_Owner] 
+	if factionColor then 
+		 factionColor = setBytesInInt32(240,factionColor.r,factionColor.g,factionColor.b)
+	else factionColor = GANGWAR_DUMP_COLOR
+	end
+		self.m_RadarArea = RadarArea:new(areaX, areaY, areaWidth, -1*areaHeight,factionColor )
+end
+
+function Area:createCenterPickup() 
+	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
+	self.m_Pickup = createPickup( x,y,z ,3,2993,5)
+end
 
 function Area:createCenterCol() 
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
 	self.m_CenterSphere = createColSphere(x,y,z,GANGWAR_CENTER_HOLD_RANGE)
+	addEventHandler("onColShapeHit",self.m_CenterSphere,bind(self.onCenterEnter,self))
+	addEventHandler("onColShapeLeave",self.m_CenterSphere,bind(self.onCenterLeave,self))
+	local tElements = getElementsWithinColShape(self.m_CenterSphere,"player")
+	for key,player in ipairs(tElements) do 
+		player.m_InsideArea = self
+	end
 end
 
 function Area:attack( faction1, faction2)
@@ -33,13 +58,19 @@ end
 
 function Area:onCenterLeave( leaveElement,dimension )
 	if dimension then 
-		
+		local bType = getElementType(leaveElement) == "player"
+		if bType then 
+			leaveElement.m_InsideArea = nil
+		end
 	end
 end
 
-function Area:onCenterEnter( leaveElement,dimension )
+function Area:onCenterEnter( hitElement,dimension )
 	if dimension then 
-		
+		local bType = getElementType(hitElement) == "player"
+		if bType then 
+			hitElement.m_InsideArea = self
+		end
 	end
 end
 
