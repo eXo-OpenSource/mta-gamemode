@@ -74,3 +74,18 @@ factionColors[5] = {["r"] = 100,["g"] = 100,["b"] = 100}
 factionSkins[5] = {[111]=true, [112]=true, [113]=true, [124]=true, [125]=true, [126]=true, [127]=true,[237]=true,[272]=true}
 factionWeapons[5] = {[4]=true,[24]=true,[25]=true,[29]=true,[41]=true}
 evilFactionInteriorEnter[5] = {["x"] = 691.58, ["y"]= -1275.94, ["z"] = 13.56}
+
+-- ID 6 = Yakuza
+factionRankNames[6] = {
+[0] = "Oyabun",
+[1] = "Saiko-Kamon",
+[2] = "Wakagashira",
+[3] = "Shateigashira",
+[4] = "Shingiin",
+[5] = "Kyodai",
+[6] = "Shatei"
+}
+factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
+factionSkins[6] = {[49]=true, [57]=true, [59]=true, [120]=true, [122]=true, [123]=true, [141]=true,[60]=true,[58]=true}
+factionWeapons[6] = {[8]=true,[24]=true,[25]=true,[29]=true,[41]=true}
+evilFactionInteriorEnter[6] = {["x"] = 691.58, ["y"]= -1275.94, ["z"] = 13.56}

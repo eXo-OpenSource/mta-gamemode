@@ -39,7 +39,7 @@ function AdminGUI:constructor()
 	end
 	
 	self.m_setFactionButton.onLeftClick = function() 
-		local factionTable = {[1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra"}
+		local factionTable = {[1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra",[6] = "Yakuza"}
 		if self.m_PlayersGrid:getSelectedItem() then
 			local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
 			ChangerBox:new(_"Fraktion setzten", _"Bitte wähle die gewünschte Fraktion aus:",factionTable, function (factionId) triggerServerEvent("adminSetPlayerFaction", root, selectedPlayer,factionId) end) 

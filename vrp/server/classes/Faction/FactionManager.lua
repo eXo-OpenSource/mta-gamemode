@@ -17,7 +17,8 @@ function FactionManager:constructor()
 	[3] = true
 	}
 	self.EvilFactions = {
-	[5] = true
+	[5] = true,
+	[6] = true
 	}
 	self:loadFactions()
 
