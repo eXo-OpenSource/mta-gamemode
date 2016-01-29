@@ -24,10 +24,10 @@ function Area:createCenterCol()
 	self.m_CenterSphere = createColSphere(x,y,z,GANGWAR_CENTER_HOLD_RANGE)
 end
 
-function Area:attack()
+function Area:attack( faction1, faction2)
 	if not self.m_IsAttacked then 
 		self.m_IsAttacked = true
-		
+		self.m_AttackSession = AttackSession:new( self, faction1 , faction2)
 	end
 end
 
@@ -47,6 +47,7 @@ end
 -- @param_desc: id = WinnerID
 function Area:attackEnd( id ) 
 	if self.m_IsAttacked then 
+		self.m_AttackSession:delete()
 		self.m_IsAttacked = false
 		self.m_Owner = id
 		self:update()
@@ -63,4 +64,14 @@ end
 function Area:destructor() 
 	--// Do some delete
 	self:update()
+end
+
+function Area:isUnderAttack( )
+	return self.m_IsAttacked
+end
+
+function Area:getMatchFactions() 
+	if self.m_IsAttacked then 
+		return self.m_AttackSession:getFactions()
+	end
 end
