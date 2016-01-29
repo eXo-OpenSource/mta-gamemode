@@ -40,7 +40,7 @@ function FactionManager:constructor()
 	addEventHandler("factionSaveRank", root, bind(self.Event_factionSaveRank, self))
 	addEventHandler("factionRespawnVehicles", root, bind(self.Event_factionRespawnVehicles, self))
 
-	
+
 
 	FactionState:getSingleton():new()
 	FactionEvil:getSingleton():new(self.EvilFactions)
@@ -305,4 +305,3 @@ end
 function FactionManager:Event_factionRespawnVehicles()
 	client:getFaction():respawnVehicles()
 end
-

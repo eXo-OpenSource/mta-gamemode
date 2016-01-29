@@ -57,8 +57,8 @@ function Player:destructor()
 	--if self.m_Inventory then
 	--	delete(self.m_Inventory)
 	--end
-	
-	--// gangwar 
+
+	--// gangwar
 	triggerEvent("onDeloadCharacter",self)
 end
 
@@ -114,11 +114,13 @@ function Player:loadCharacter()
 	if self:getRank() > 0 then
 		Admin:getSingleton():addAdmin(self,self:getRank())
 	end
-	
+
 	-- Add Payday
 	self:setNextPayday()
-	
-	--// Gangwar 
+
+	Inventory:getSingleton():loadInventory(self)
+
+	--// Gangwar
 	triggerEvent("onLoadCharacter",self)
 end
 
@@ -420,7 +422,7 @@ function Player:payDay()
 	local time = getRealTime()
 	outputChatBox ( "PAYDAY: "..time.hour..":"..time.minute,self,255,0,0 )
 	-- in Developement | only for testing
-	
+
 	-- Add Payday again
 	self:setNextPayday()
 end

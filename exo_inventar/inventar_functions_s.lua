@@ -1,6 +1,6 @@
 ﻿inventar_debug = false
 
-local function isPlatzEmpty(player,tasche,platz)
+local function Inventory:isPlatzEmpty(player,tasche,platz)
 	local id = getElementData(player,"Item_"..tasche,platz.."_id")
 	local item_table = getElementData(player,"Item")
 	if item_table[id] then
@@ -16,7 +16,7 @@ local function isPlatzEmpty(player,tasche,platz)
 	end
 end
 
-local function getLowEmptyPlace(player,tasche)
+local function Inventory:getLowEmptyPlace(player,tasche)
 	for i = 0, getInventarPlaces(player,tasche),1 do
 		if(isPlatzEmpty(player,tasche,i)) then
 			return i
@@ -27,7 +27,7 @@ end
 
 
 
-local function getLowestOccupiedPlace(player,tasche)
+local function Inventory:getLowestOccupiedPlace(player,tasche)
 	local tasche = getElementData(player,"Item_"..tasche)
 	for index,value in pairs(tasche) do
 		if(value) then
@@ -38,7 +38,7 @@ local function getLowestOccupiedPlace(player,tasche)
 	return false
 end
 
-function getInventarPlaces(player,tasche)
+function Inventory:getInventarPlaces(player,tasche)
 	if tasche then
 		if getElementData(player,"Inventar",tasche.."Platz") then
 			return tonumber(getElementData(player,"Inventar",tasche.."Platz"))-1
@@ -50,7 +50,7 @@ function getInventarPlaces(player,tasche)
 	end
 end
 
-function getCountOfPlaces(player,tasche,item)
+function Inventory:getCountOfPlaces(player,tasche,item)
 	local maxItemStack = tonumber(itemData[item]["Item_Max"])
 	local places = maxItemStack
 	local invplaetze = getInventarPlaces(player,tasche)
@@ -63,11 +63,11 @@ function getCountOfPlaces(player,tasche,item)
 	return freeplaces
 end
 
-function getItemID(player,tasche,platz)
+function Inventory:getItemID(player,tasche,platz)
 	return getElementData(player,"Item_"..tasche,platz.."_id")
 end
 
-function setItemPlace(player,tasche,oplatz,platz)
+function Inventory:setItemPlace(player,tasche,oplatz,platz)
 	local id = getItemID(player,tasche,oplatz)
 	local nid= getItemID(player,tasche,platz)
 	if(not id or (nid and getElementData(player,"Item",nid) ~= getElementData(player,"Item",id)) ) then
@@ -82,7 +82,7 @@ function setItemPlace(player,tasche,oplatz,platz)
 	return true
 end
 
-function c_stackItems(newid,oldid,oldplatz) --OLD = Moved
+function Inventory:c_stackItems(newid,oldid,oldplatz) --OLD = Moved
 	if(source ~= client) then
 		return false
 	end
@@ -105,7 +105,7 @@ end
 addEvent("c_stackItems",true)
 addEventHandler("c_stackItems",getRootElement(),c_stackItems)
 
-function c_setItemPlace(tasche,platz,nplatz) 
+function Inventory:c_setItemPlace(tasche,platz,nplatz) 
 	if(source ~= client) then
 		return false
 	end
@@ -114,7 +114,7 @@ end
 addEvent("c_setItemPlace",true)
 addEventHandler("c_setItemPlace",getRootElement(),c_setItemPlace)
 
-function removeItemFromPlatz(player,tasche,platz,anzahl)
+function Inventory:removeItemFromPlatz(player,tasche,platz,anzahl)
 		
 		local id = getElementData(player,"Item_"..tasche,platz.."_id")
 		if(not id) then
@@ -146,7 +146,7 @@ function removeItemFromPlatz(player,tasche,platz,anzahl)
 
 end
 
-function wegwerfItem_func(item,tasche,id,platz)
+function Inventory:wegwerfItem_func(item,tasche,id,platz)
 	local player = client
 	executeCommandHandler ( "meCMD", player, " wirft "..item.." weg..." )
 	removeItemFromPlatz(player,tasche,platz)
@@ -155,7 +155,7 @@ addEvent("wegwerfItem",true)
 addEventHandler("wegwerfItem",getRootElement(),wegwerfItem_func)
 
 
-function getFreePlacesForItem(player,item)
+function Inventory:getFreePlacesForItem(player,item)
 	
 	if inventar_debug == true then
 		outputDebugString("INV-DEBUG-getFreePlacesForItem: Spieler: "..getPlayerName(player).." | Item: "..item)
@@ -204,7 +204,7 @@ function getFreePlacesForItem(player,item)
 	return 0
 end
 
-function removeItem(player,item,anzahl)
+function Inventory:removeItem(player,item,anzahl)
 	if inventar_debug == true then
 		outputDebugString("INV-DEBUG-removeItem: Spieler: "..getPlayerName(player).." | Item: "..item.." | Anzahl: "..anzahl)
 	end
@@ -237,7 +237,7 @@ function removeItem(player,item,anzahl)
 	end
 end
 
-function removeOneItem(player,item)
+function Inventory:removeOneItem(player,item)
 	if itemData[item] then
 		local tasche = itemData[item]["Tasche"]
 		local invplaetze = getInventarPlaces(player,tasche)
@@ -269,7 +269,7 @@ function removeOneItem(player,item)
 end
 
 
-function getPlatzForItem(player,item,itemanzahl)
+function Inventory:getPlatzForItem(player,item,itemanzahl)
 	if itemData[item] then
 		local tasche = itemData[item]["Tasche"]
 		local invplaetze = getInventarPlaces(player,tasche)
@@ -293,7 +293,7 @@ function getPlatzForItem(player,item,itemanzahl)
 	end
 end
 
-function getPlayerItemAnzahl(player,item)
+function Inventory:getPlayerItemAnzahl(player,item)
 	
 	if inventar_debug == true then
 		outputDebugString("INV-DEBUG-getPlayerItemAnzahl: Spieler: "..getPlayerName(player).." | Item: "..item)
@@ -318,7 +318,7 @@ function getPlayerItemAnzahl(player,item)
 	end
 end
 
-function giveItem(player,item,anzahl)
+function Inventory:giveItem(player,item,anzahl)
 	
 	if inventar_debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..getPlayerName(player).." | Item: "..item.." | Anzahl: "..anzahl)

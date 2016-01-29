@@ -40,7 +40,7 @@ function Core:ready()
 	TippManager:new()
 	JailBreak:new()
 	DimensionManager:new()
-
+	
 	-- Events
 	EventManager:new()
 	DMRaceEvent:new()
@@ -102,7 +102,7 @@ function Core:afterLogin()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
 	bindKey(core:get("KeyBindings", "KeyToggleSelfGUI", "f2"), "down", function() SelfGUI:getSingleton():toggle() end)
-	
+
 	FactionGUI:new()
 	FactionGUI:getSingleton():close()
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
@@ -113,17 +113,17 @@ function Core:afterLogin()
 
 	WebPanel:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleWebPanel", "f1"), "down", function() WebPanel:getSingleton():toggle() end)
-	
+
 	GroupGUI:new()
 	GroupGUI:getSingleton():close()
-	
+
 	TicketGUI:new()
 	TicketGUI:getSingleton():close()
-	
+
 	PhoneCEF:new()
 	PhoneCEF:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleCEFPhone", "o"), "down", function() PhoneCEF:getSingleton():toggle() end)
-	
+
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
 		HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
