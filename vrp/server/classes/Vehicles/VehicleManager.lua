@@ -12,6 +12,7 @@ function VehicleManager:constructor()
 	self.m_Vehicles = {}
 	self.m_TemporaryVehicles = {}
 	self.m_CompanyVehicles = {}
+	self.m_GroupVehicles = {}
 	self.m_FactionVehicles = {}
 	self:setSpeedLimits()
 
@@ -88,6 +89,12 @@ function VehicleManager:destructor()
 		end
 	end
 	outputServerLog("Saved company vehicles")
+	for groupId, vehicles in pairs(self.m_GroupVehicles) do
+		for k, vehicle in pairs(vehicles) do
+			vehicle:save()
+		end
+	end
+	outputServerLog("Saved Group vehicles")
 	for factionId, vehicles in pairs(self.m_FactionVehicles) do
 		for k, vehicle in pairs(vehicles) do
 			vehicle:save()
@@ -122,6 +129,13 @@ function VehicleManager.loadVehicles()
 		enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 	end
+	outputServerLog("Loading group vehicles")
+	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles", sql:getPrefix())
+	for i, row in pairs(result) do
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		enew(vehicle, GroupVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+		VehicleManager:getSingleton():addRef(vehicle, false)
+	end
 end
 
 function VehicleManager:addRef(vehicle, isTemp)
@@ -138,6 +152,17 @@ function VehicleManager:addRef(vehicle, isTemp)
 		end
 
 		table.insert(self.m_CompanyVehicles[companyId], vehicle)
+		return
+	end
+	if instanceof(vehicle, GroupVehicle) then
+		local groupId = vehicle:getGroup() and vehicle:getGroup():getId()
+		assert(groupId, "Bad group specified")
+
+		if not self.m_GroupVehicles[groupId] then
+			self.m_GroupVehicles[groupId] = {}
+		end
+
+		table.insert(self.m_GroupVehicles[groupId], vehicle)
 		return
 	end
 	if instanceof(vehicle, FactionVehicle) and vehicle:getFaction() then
@@ -178,6 +203,19 @@ function VehicleManager:removeRef(vehicle, isTemp)
 			local idx = table.find(self.m_CompanyVehicles[companyId], vehicle)
 			if idx then
 				table.remove(self.m_CompanyVehicles[companyId], idx)
+			end
+		end
+		return
+	end
+	
+	if instanceof(vehicle, GroupVehicle) and vehicle:getGroup() then
+		local groupId = vehicle:getGroup() and vehicle:getGroup():getId()
+		assert(groupId, "Bad company specified")
+
+		if self.m_GroupVehicles[groupId] then
+			local idx = table.find(self.m_GroupVehicles[groupId], vehicle)
+			if idx then
+				table.remove(self.m_GroupVehicles[groupId], idx)
 			end
 		end
 		return

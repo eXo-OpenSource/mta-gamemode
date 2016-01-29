@@ -16,7 +16,7 @@ function GroupGUI:constructor()
 	self.m_CloseButton.onLeftClick = function() self:close() end
 	
 	-- Tab: Groups
-	local tabGroups = self.m_TabPanel:addTab(_"Gruppen")
+	local tabGroups = self.m_TabPanel:addTab(_"Allgemein")
 	self.m_TabGroups = tabGroups
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Gruppe:", tabGroups)
 	self.m_GroupsNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
@@ -65,6 +65,19 @@ function GroupGUI:constructor()
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
+	
+	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
+	self.m_GroupVehicleGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.55, tabVehicles)
+	self.m_GroupVehicleGrid:addColumn(_"Fahrzeuge", 1)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
+	
+	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
+	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles)
+	self.m_VehicleMakeGroupVehicleButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug zur Firma/Gang hinzufügen", tabVehicles):setFontSize(1)
+	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
+	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
+	addRemoteEvents{"groupVehicleRetrieveInfo"}
+	addEventHandler("groupVehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
 end
 
 function GroupGUI:onShow()
@@ -212,3 +225,15 @@ function GroupGUI:GroupInvitationsDeclineButton_Click()
 	end
 end
 
+
+function GroupGUI:Event_vehicleRetrieveInfo()
+
+end
+
+function GroupGUI:VehicleRespawnButton_Click()
+
+end
+
+function GroupGUI:VehicleLocateButton_Click()
+
+end

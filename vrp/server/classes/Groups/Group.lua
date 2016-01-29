@@ -17,6 +17,7 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange)
 	self.m_Invitations = {}
 	self.m_Karma = karma or 0
 	self.m_LastNameChange = lastNameChange or 0
+	self.m_VehiclesCanBeModified = true
 end
 
 function Group:destructor()
@@ -54,6 +55,10 @@ end
 
 function Group:getId()
 	return self.m_Id
+end
+
+function Group:canVehiclesBeModified()
+  return self.m_VehiclesCanBeModified
 end
 
 function Group:setName(name)
