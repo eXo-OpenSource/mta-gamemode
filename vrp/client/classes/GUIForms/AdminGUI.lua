@@ -12,7 +12,7 @@ inherit(Singleton, AdminGUI)
 addRemoteEvents{"showAdminMenu"}
 function AdminGUI:constructor() 
 	
-	GUIForm.constructor(self, screenWidth/2-screenWidth*0.5/2, screenHeight/2-screenHeight*0.5/2, screenWidth*0.5, screenHeight*0.5)
+	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-250, 800, 540)
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
 	self.m_CloseButton.onLeftClick = function() self:delete() end
@@ -29,7 +29,8 @@ function AdminGUI:constructor()
 	self.m_setFactionButton = GUIButton:new(self.m_Width*0.40, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.075, _"in Fraktion setzten",  tabSpieler)
 	
 	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
-	self.m_SkinVorschauBrowser = GUIWebView:new(0, 0, self.m_Width, self.m_Height*0.9, "http://exo-reallife.de/ingame/ticketSystem/admin.php", true, tabTicket)
+	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, "http://exo-reallife.de/ingame/ticketSystem/admin.php?player="..getPlayerName(getLocalPlayer()).."&sessionID="..self:generateSessionId(), true, tabTicket)
+	Browser.requestDomains{"exo-reallife.de", "maxcdn.bootstrapcdn.com"}
 
 	
 	for key, playeritem in ipairs(getElementsByType("player")) do
@@ -63,6 +64,12 @@ function AdminGUI:AnnounceText( message )
 		self.m_MoveText = GUIMovetext:new(0, 0, screenWidth, screenHeight*0.05,message,"",1,(screenWidth*0.1)*-1, self,"files/images/GUI/megafone.png",true)
 	end
 end
+
+
+function AdminGUI:generateSessionId()
+	return md5(localPlayer:getName()..localPlayer:getSerial()) -- ToDo: generate serverside with lastlogin timestamp for more security
+end
+
 
 addEventHandler("showAdminMenu", root,
 	function(...)
