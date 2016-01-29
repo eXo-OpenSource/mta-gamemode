@@ -58,7 +58,7 @@ end
 
 function Area:onCenterLeave( leaveElement,dimension )
 	if dimension then 
-		local bType = getElementType(hitElement) == "player"
+		local bType = getElementType(leaveElement) == "player"
 		if bType then 
 			leaveElement.m_InsideArea = nil
 		end
