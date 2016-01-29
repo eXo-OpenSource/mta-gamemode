@@ -174,18 +174,6 @@
 	<script src="server/classes/AI/Tasks/TaskShootTarget.lua" type="server"/>
 	<script src="server/classes/AI/Tasks/TaskWaitForGettingTargetted.lua" type="server"/>
 
-	<!-- Inventory -->
-	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
-	<script src="server/classes/Inventory/Item.lua" type="server"/>
-	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
-	<script src="server/classes/Inventory/PlaceableItem.lua" type="server"/>
-	<script src="server/classes/Inventory/ItemShops.lua" type="server"/>
-	<script src="server/classes/Inventory/ItemHotwireKit.lua" type="server"/>
-	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
-	<script src="server/classes/Inventory/ItemHash.lua" type="server"/>
-	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
-	<script src="server/classes/Inventory/ItemBarricade.lua" type="server"/>
-
 	<!-- Tests -->
 	<script src="server/tests/UtilsTest.lua" type="server"/>
 	<script src="server/tests/GroupTest.lua" type="server"/>
@@ -298,7 +286,6 @@
 
 	<!-- Forms -->
 	<script src="client/classes/GUIForms/GUIWebWindowForm.lua" type="client"/>
-	<script src="client/classes/GUIForms/InventoryGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/LoginGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
@@ -407,15 +394,6 @@
 	<!-- Groups -->
 	<script src="client/classes/Groups/GangArea.lua" type="client"/>
 	<script src="client/classes/Groups/GangAreaManager.lua" type="client"/>
-
-	<!-- Inventory -->
-	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
-	<script src="client/classes/Inventory/Item.lua" type="client"/>
-	<script src="client/classes/Inventory/ItemHotwireKit.lua" type="client"/>
-	<script src="client/classes/Inventory/ItemBomb.lua" type="client"/>
-	<script src="client/classes/Inventory/ItemHash.lua" type="client"/>
-	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
-	<script src="client/classes/Inventory/ItemBarricade.lua" type="client"/>
 
 	<!-- AI -->
 	<script src="client/classes/AI/Actor.lua" type="client"/>

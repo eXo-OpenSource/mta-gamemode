@@ -113,10 +113,6 @@ function Core:afterLogin()
 
 	WebPanel:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleWebPanel", "f1"), "down", function() WebPanel:getSingleton():toggle() end)
-
-	InventoryGUI:new()
-	InventoryGUI:getSingleton():close()
-	bindKey(core:get("KeyBindings", "KeyToggleInventory", "i"), "down", function() InventoryGUI:getSingleton():toggle() end)
 	
 	GroupGUI:new()
 	GroupGUI:getSingleton():close()

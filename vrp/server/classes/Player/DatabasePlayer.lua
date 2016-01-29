@@ -112,7 +112,7 @@ function DatabasePlayer:load()
 	if row.CompanyId and row.CompanyId ~= 0 then
 		self:setCompany(CompanyManager:getSingleton():getFromId(row.CompanyId))
 	end
-	self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
+	--self.m_Inventory = row.InventoryId and Inventory.loadById(row.InventoryId) or Inventory.create()
 	self.m_GarageType = row.GarageType
 	self.m_LastGarageEntrance = row.LastGarageEntrance
 	self.m_HangarType = row.HangarType
@@ -188,7 +188,7 @@ function DatabasePlayer:getTutorialStage() return self.m_TutorialStage end
 function DatabasePlayer:getJobVehicle() return self.m_JobVehicle end
 function DatabasePlayer:getGroup()		return self.m_Group		end
 function DatabasePlayer:getFaction()	return self.m_Faction	end
-function DatabasePlayer:getInventory()	return self.m_Inventory	end
+--function DatabasePlayer:getInventory()	return self.m_Inventory	end
 function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
 function DatabasePlayer:getHangarType() return self.m_HangarType end -- Todo: Only Databseside implemented

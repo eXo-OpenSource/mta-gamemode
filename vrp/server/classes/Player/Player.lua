@@ -39,10 +39,10 @@ function Player:destructor()
 	end
 
 	-- Collect all world items
-	local worldItems = WorldItem.getItemsByOwner(self)
-	for k, worldItem in pairs(worldItems) do
-		worldItem:collect(self)
-	end
+--	local worldItems = WorldItem.getItemsByOwner(self)
+--	for k, worldItem in pairs(worldItems) do
+--		worldItem:collect(self)
+--	end
 
 	-- Call the quit hook (to clean up various things before saving)
 	Player.ms_QuitHook:call(self)
@@ -54,9 +54,9 @@ function Player:destructor()
 	self:save()
 
 	-- Unload stuff
-	if self.m_Inventory then
-		delete(self.m_Inventory)
-	end
+	--if self.m_Inventory then
+	--	delete(self.m_Inventory)
+	--end
 	
 	--// gangwar 
 	triggerEvent("onDeloadCharacter",self)
@@ -124,7 +124,7 @@ end
 
 function Player:createCharacter()
 	sql:queryExec("INSERT INTO ??_character(Id,PosX,PosY,PosZ) VALUES(?,?,?,?);", sql:getPrefix(), self.m_Id, NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z)
-	self.m_Inventory = Inventory.create()
+	--self.m_Inventory = Inventory.create()
 end
 
 function Player:loadCharacterInfo()
@@ -157,12 +157,12 @@ function Player:loadCharacterInfo()
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
-	if self.m_Inventory then
-		self.m_Inventory:setInteractingPlayer(self)
-		self.m_Inventory:sendFullSync()
-	else
-		outputDebugString("Inventory has not been instantiated successfully!")
-	end
+	--if self.m_Inventory then
+	--	self.m_Inventory:setInteractingPlayer(self)
+	--	self.m_Inventory:sendFullSync()
+	--else
+	--	outputDebugString("Inventory has not been instantiated successfully!")
+	--end
 end
 
 function Player:initialiseBinds()
@@ -192,12 +192,12 @@ function Player:save()
 		end
 	end
 
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, InventoryId = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
-		x, y, z, interior, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self.m_Inventory:getId(), self:getPlayTime(), self.m_Id)
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
+		x, y, z, interior, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), self.m_Id)
 
-	if self:getInventory() then
-		self:getInventory():save()
-	end
+	--if self:getInventory() then
+	--	self:getInventory():save()
+	--end
 	DatabasePlayer.save(self)
 end
 
@@ -458,8 +458,8 @@ function Player:startTrading(tradingPartner)
 	tradingPartner.m_TradeItems = {}
 	tradingPartner.m_TradingStatus = false
 
-	self:triggerEvent("tradingStart", self:getInventory():getId())
-	tradingPartner:triggerEvent("tradingStart", tradingPartner:getInventory():getId())
+	--self:triggerEvent("tradingStart", self:getInventory():getId())
+	--tradingPartner:triggerEvent("tradingStart", tradingPartner:getInventory():getId())
 end
 
 function Player:getTradingPartner()
