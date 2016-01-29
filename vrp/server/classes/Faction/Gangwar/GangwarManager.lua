@@ -16,6 +16,9 @@ GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
 --// Gangwar - Constants //--
 GANGWAR_MATCH_TIME = 15
 GANGWAR_CENTER_HOLD_RANGE = 20
+GANGWAR_MIN_PLAYERS = 0
+GANGWAR_ATTACK_PAUSE = 1 --// DAY
+UNIX_TIMESTAMP_24HRS = 86400
 GANGWAR_DUMP_COLOR = setBytesInInt32(240,0,200,200)
 addRemoteEvents{"onLoadCharacter","onDeloadCharacter"}
 
@@ -32,9 +35,11 @@ function Gangwar:constructor( )
 			self.m_Areas[#self.m_Areas+1] = Area:new( datarow )
 		end
 	end
+	
 	addCommandHandler("attack",bind(self.onAttackCommand,self))
 	addEventHandler("onLoadCharacter",root,bind(self.onPlayerJoin,self))
 	addEventHandler("onDeloadCharacter",root,bind(self.onPlayerQuit,self))
+	
 end	
 
 function Gangwar:RESET() 
@@ -57,6 +62,7 @@ function Gangwar:onPlayerJoin()
 			local faction1,faction2 = self.m_CurrentAttacks[index]:getMatchFactions()
 			if faction1 == factionID or faction2 == factionID then 
 				--// gangwar join
+				AttackSession:joinPlayer( source ) 
 			end
 		end
 	end
@@ -70,6 +76,7 @@ function Gangwar:onPlayerQuit()
 			local faction1,faction2 = self.m_CurrentAttacks[index]:getMatchFactions()
 			if faction1 == factionID or faction2 == factionID then 
 				--// gangwar quit
+				AttackSession:quitPlayer( source ) 
 			end
 		end
 	end
@@ -112,12 +119,43 @@ function Gangwar:onAttackCommand( player )
 			local bWithin = isElementWithinColShape(player,mArea.m_CenterSphere)
 			if bWithin then 
 				local areaOwner = mArea.m_Owner
+				local faction2 = FactionManager:getFromId(areaOwner)
 				if areaOwner ~= id then 
-					
+					local factionCount = #faction:getOnlinePlayers()
+					local factionCount2 = #faction2:getOnlinePlayers()
+					if factionCount >= GANGWAR_MIN_PLAYERS then 
+						if factionCount2 >= GANGWAR_MIN_PLAYERS then 
+							local activeGangwars = self:getCurrentGangwars( )
+							local acGangwar,acFaction1,acFaction2
+							for index = 1,#activeGangwars do 
+								acGangwar = activeGangwars[index]
+								if acGangwar.m_AttackSessions then 
+									acFaction1,acFaction2 = acGangwar.m_AttackSessions:getFactions()
+									if acFaction1 ~= faction and acFaction2 ~= faction then 
+										if acFaction2 ~= faction2 and acFaction2 ~= faction2 then 
+										else return player:sendError(_("Die gegnerische Fraktion ist bereits in einem Gangwar!", player))
+										end
+									else return player:sendError(_("Ihre Fraktion ist bereits in einem Gangwar!", player))
+									end
+								end
+							end
+							local lastAttack = mArea.m_LastAttack 
+							local currentTimestamp = getRealTime().timestamp
+							local nextAttack = lastAttack + ( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS)
+							if nextAttack <= currentTimestamp then 
+								mArea:attack(faction,faction2)
+							else player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!", player))
+							end
+						else player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus der Gegner-Fraktion online sein!", player))
+						end
+					else player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus Ihrer Fraktion online sein!", player))
+					end
 				else player:sendError(_("Sie können sich nicht selbst angreifen!", player))
 				end
+			else player:sendError(_("Sie sind an keinem Gebiet!", player))
 			end
+		else player:sendError(_("Sie sind an keinem Gebiet!", player))
 		end
-	else player:sendError(_("Du bist in keiner Fraktion!", player))
+	else player:sendError(_("Sie sind in keiner Fraktion!", player))
 	end
 end
