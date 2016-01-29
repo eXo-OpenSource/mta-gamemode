@@ -414,6 +414,10 @@
 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
 
+	<!-- Gangwar -->
+	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
+	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
+	
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
 
@@ -576,6 +580,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/2.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/3.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/4.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/gangwar.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -644,6 +649,8 @@
 	<vrpfile src="files/images/HUD/JobLevel.png"/>
 	<vrpfile src="files/images/HUD/wanted.png"/>
 
+	<!-- Gangwar -->
+	
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
@@ -707,6 +714,7 @@
 	<map src="files/maps/TuningGarages.map"/>
 	<map src="files/maps/MechanicBase.map"/>
 
+	
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
 	

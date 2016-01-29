@@ -15,15 +15,27 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_Faction2 = faction2 
 	self.m_Disqualified = {	} --//
 	self.m_Participants = {	}
-	self:fillListAtStart()
-	
-	self.m_BattleTime = setTimer(bind(self.attackEnd, self), GANGWAR_MATCH_TIME*60000, 1)
+	self:setupSession( )
+	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
 	
 end
 
-function AttackSession:fillListAtStart ( )
-	for k,v in ipairs( self.m_Faction1:getPlayersOnline() ) do 
+function AttackSession:setupSession ( )
+	for k,v in ipairs( self.m_Faction1:getOnlinePlayers() ) do 
 		self.m_Participants[#self.m_Participants + 1] = v
+	end
+	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do 
+		self.m_Participants[#self.m_Participants + 1] = v
+	end
+	self:synchronizeAllParticipants( ) 
+end
+
+function AttackSession:synchronizeAllParticipants( ) 
+	for k,v in ipairs( self.m_Participants ) do 
+		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
+	end
+	for k,v in ipairs( self.m_Disqualified ) do 
+		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
 	end
 end
 
@@ -51,16 +63,68 @@ function AttackSession:removeParticipant( player )
 	end
 end
 
-function AttackSession:joinPlayer( player ) 
-	
+function AttackSession:isPlayerDisqualified( player )
+	for index = 1,#self.m_Disqualified do 
+		if self.m_Disqualified[index] == player.name then 
+			return true
+		end
+	end
+	return false
 end
 
-function AttackSession:quitPlayer() 
+function AttackSession:disqualifyPlayer( player )
+	local bIsDisqualifed = self:isPlayerDisqualified( player )
+	if not bIsDisqualifed then 
+		self.m_Disqualified[ #self.m_Disqualified + 1] = player.name
+	end
+end
 
+function AttackSession:joinPlayer( player ) 
+	self:addParticipant( player )
+end
+
+function AttackSession:quitPlayer( player ) 
+	self:removeParticipant( player )
+end
+
+function AttackSession:onPlayerLeaveCenter( player )
+	local id = player.m_Faction.m_Id 
+	if id == self.m_Faction1.m_Id then
+		local isAnyoneInside = self:checkPlayersInCenter( )
+		if not isAnyoneInside then 
+			self:setCenterCountdown()
+			--// Notify team 1
+		end
+	end
+end
+
+function AttackSession:onPlayerEnterCenter( player )
+	local id = player.m_Faction.m_Id 
+	if id == self.m_Faction1.m_Id then
+		local bCenterTimer = isTimer( self.m_HoldCenterTimer )
+		local bNotifyTimer = isTimer( self.m_NotifiyAgainTimer )
+		if bCenterTimer then 
+			killTimer( self.m_HoldCenterTimer )
+			--// Notify team 1
+		end
+		if bNotifyTimer then 
+			killTimer( self.m_NotifiyAgainTimer )
+		end
+	end
+end
+
+function AttackSession:setCenterCountdown()
+	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFIhr habt noch "..GANGWAR_CENTER_TIMEOUT.." Sekunden Zeit die Flagge zu erreichen!",200,0,0,true)
+	self.m_HoldCenterTimer = setTimer( bind(self.attackLose, self), GANGWAR_CENTER_TIMEOUT*1000,1)
+	self.m_NotifiyAgainTimer = setTimer( bind(self.notifyFaction1, self), math.floor((GANGWAR_CENTER_TIMEOUT*1000)/2),1)
+end
+
+function AttackSession:notifyFaction1( ) 
+	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFIhr habt nur noch "..math.floor(GANGWAR_CENTER_TIMEOUT/2).." Sekunden Zeit die Flagge zu erreichen!",200,0,0,true)
 end
 
 function AttackSession:checkPlayersInCenter( )
-	local pTable = getElementsWithinColShape( self.m_AreaObj.m_ColSphere, "player")
+	local pTable = getElementsWithinColShape( self.m_AreaObj.m_CenterSphere, "player")
 	local factionID
 	for key, player in ipairs( pTable ) do 
 		if not isPedDead( player ) then 
@@ -74,8 +138,24 @@ function AttackSession:checkPlayersInCenter( )
 end
 
 
-function AttackSession:attackEnd() 
+function AttackSession:attackLose() --// loose for team1
+	self.m_AreaObj:update()
 	
+	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff ist gescheitert!",200,0,0,true)
+	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet wurde verteidigt!",0,180,40,true)
+	
+	self.m_AreaObj:attackEnd(  ) 
+end
+
+function AttackSession:attackWin() --// win for team1
+
+	self.m_AreaObj.m_Owner = self.m_Faction1.m_Id 
+	self.m_AreaObj:update()
+	
+	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet ist verloren!",2000,0,0,true)
+	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff war erfolgreich!",0,180,40,true)
+	
+	self.m_AreaObj:attackEnd(  ) 
 end
 
 function AttackSession:getFactions() 

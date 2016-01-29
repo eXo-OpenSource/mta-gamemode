@@ -30,7 +30,10 @@ function Area:createRadar()
 		 factionColor = setBytesInInt32(240,factionColor.r,factionColor.g,factionColor.b)
 	else factionColor = GANGWAR_DUMP_COLOR
 	end
-		self.m_RadarArea = RadarArea:new(areaX, areaY, areaWidth, -1*areaHeight,factionColor )
+	if self.m_IsAttacked then 
+		factionColor = setBytesInInt32(255,220,0,0)
+	end
+	self.m_RadarArea = RadarArea:new(areaX, areaY, areaWidth, -1*areaHeight,factionColor )
 end
 
 function Area:createCenterPickup() 
@@ -53,6 +56,11 @@ function Area:attack( faction1, faction2)
 	if not self.m_IsAttacked then 
 		self.m_IsAttacked = true
 		self.m_AttackSession = AttackSession:new( self, faction1 , faction2)
+		self.m_LastAttack = getRealTime().timestamp
+		self.m_RadarArea:setFlashing(true)
+		self.m_RadarArea:delete()
+		self.m_BlipImage = Blip:new("gangwar.png", self.m_Position[1], self.m_Position[2])
+		self:createRadar() 
 		faction1:sendMessage("[Gangwar] #FFFFFFIhre Fraktion hat einen Attack gestartet! ( Gebiet: "..self.m_Name.." )", 0,204,204,true)
 		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
 	end
@@ -63,6 +71,9 @@ function Area:onCenterLeave( leaveElement,dimension )
 		local bType = getElementType(leaveElement) == "player"
 		if bType then 
 			leaveElement.m_InsideArea = nil
+			if self.m_IsAttacked then 
+				self.m_AttackSession:onPlayerLeaveCenter( leaveElement )
+			end
 		end
 	end
 end
@@ -72,26 +83,31 @@ function Area:onCenterEnter( hitElement,dimension )
 		local bType = getElementType(hitElement) == "player"
 		if bType then 
 			hitElement.m_InsideArea = self
+			if self.m_IsAttacked then 
+				self.m_AttackSession:onPlayerEnterCenter( hitElement )
+			end
 		end
 	end
 end
 
 --// :attackEnd //
 -- @param_desc: id = WinnerID
-function Area:attackEnd( id ) 
+function Area:attackEnd(  ) 
 	if self.m_IsAttacked then 
+		self.m_RadarArea:setFlashing(false)
 		self.m_AttackSession:delete()
 		self.m_IsAttacked = false
-		self.m_Owner = id
-		self:update()
+		self.m_RadarArea:delete()
+		self:createRadar() 
+		self.m_BlipImage:delete()
 	end
 end
 
 --// :update //
 --// @desc: update sql values
 function Area:update() 
-	local sql_query = "UPDATE ??_gangwar Besitzer=?,lastAttack=?"
-	sql:queryFetch(sql_query,sql:getPrefix(),self.m_Owner,self.m_LastAttack)
+	local sql_query = "UPDATE ??_gangwar SET Besitzer=?,lastAttack=? WHERE ID=?"
+	sql:queryFetch(sql_query,sql:getPrefix(),self.m_Owner,self.m_LastAttack,self.m_ID)
 end
 
 function Area:destructor() 
