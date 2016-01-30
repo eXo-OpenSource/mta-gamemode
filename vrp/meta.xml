@@ -422,8 +422,9 @@
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
 
 	<!-- Gangwar -->
-	 <script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
-	 <script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
+	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
+	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
+	<script src="client/classes/Faction/Gangwar/GangwarDisplay.lua" type="client"/>
 
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
@@ -655,7 +656,10 @@
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>
 	<vrpfile src="files/images/HUD/JobLevel.png"/>
 	<vrpfile src="files/images/HUD/wanted.png"/>
-
+	
+	<!-- Gangwar -->
+	<vrpfile src="files/images/Gangwar/tile.png"/>
+	
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
