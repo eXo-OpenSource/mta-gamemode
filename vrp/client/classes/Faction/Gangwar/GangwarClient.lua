@@ -41,6 +41,7 @@ end
 function GangwarClient:clickBind( b, s)
 	if b == "left" then 
 		if s == "up" then 
+			outputChatBox(self.m_Over)
 			if self.m_Over == 1 then 
 				self:hide_AttackRequest()
 				triggerServerEvent("Gangwar:onClientRequestAttack",localPlayer)

@@ -27,6 +27,7 @@ function AttackSession:setupSession ( )
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do 
 		self.m_Participants[#self.m_Participants + 1] = v
 	end
+	outputChatBox("participants:"..#self.m_Participants)
 	self:synchronizeAllParticipants( ) 
 end
 
@@ -197,9 +198,11 @@ end
 function AttackSession:stopClients()
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 			v:triggerEvent("AttackClient:stopClient")
+			v.m_RefAttackSession = nil
 		end
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
 			v:triggerEvent("AttackClient:stopClient")
+			v.m_RefAttackSession = nil
 		end
 end
 
