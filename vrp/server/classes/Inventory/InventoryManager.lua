@@ -5,8 +5,9 @@
 -- *  PURPOSE:     Inventory Class
 -- *
 -- ****************************************************************************
-Inventory = inherit(Singleton)
-function Inventory:constructor()
+InventoryManager = inherit(Singleton)
+
+function InventoryManager:constructor()
 
 	self.m_ItemData = {}
 	self.m_ItemData = self:loadItems()
@@ -19,16 +20,16 @@ function Inventory:constructor()
 	addEventHandler("c_setItemPlace",getRootElement(),bind(self.Event_c_setItemPlace, self))
 end
 
-function Inventory:destructor()
+function InventoryManager:destructor()
 
 end
 
-function Inventory:getItemData()
+function InventoryManager:getItemData()
 	return self.m_ItemData
 end
 
-function Inventory:loadItems()
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_items",sql:getPrefix())
+function InventoryManager:loadItems()
+	local result = sql:queryFetch("SELECT * FROM ??_inventory_items",sql:getPrefix()) -- ToDo add Prefix
 	local itemData = {}
 	for i, row in ipairs(result) do
 		itemData[row["Objektname"]] = {}
@@ -46,37 +47,21 @@ function Inventory:loadItems()
 	return itemData
 end
 
-function Inventory:saveItemMenge(id,menge)
-	sql:queryExec("UPDATE ??_inventory_slots SET Menge= ?? WHERE id = ??",sql:getPrefix(),menge,id )
+function InventoryManager:saveItemMenge(id,menge)
+	sql:queryExec("UPDATE inventarinhalt SET Menge= ?? WHERE id = ??",menge,id ) -- ToDo add Prefix
 end
 
-function Inventory:saveItemPlatz(id,platz)
-	sql:queryExec("UPDATE ??_inventory_slots SET Platz= ?? WHERE id = ??",sql:getPrefix(),platz,id )
+function InventoryManager:createInventory(player)
+	sql:queryExec("INSERT INTO inventarinfo (Name) VALUES(?)",player:getName() ) -- ToDo add Prefix
+	self:loadInventory(player)
 end
 
-function Inventory:deleteItem(id)
-	sql:queryExec("DELETE FROM ??_inventory_slots WHERE `id`= ??",sql:getPrefix(),id )
-end
-
-function Inventory:insertItem(pname, anzahl, item, platz, tasche)
-	sql:queryExec("INSERT INTO ??_inventory_slots (Name,Menge,Objekt,Platz,Tasche) VALUES (??, ??, ??, ??, ??)",sql:getPrefix(),pname, anzahl, item, platz, tasche ) -- ToDo add Prefix
-	return sql:lastInsertId()
-end
-
-function Inventory:loadItem(player,id)
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE id = ?",sql:getPrefix(),id) 
-
-	for i, row in ipairs(result) do
-		self:setData(player,"Item",tonumber(row["id"]),tostring(row["Objekt"]),true)
-		self:setData(player,"Item",tonumber(row["id"]).."_Menge",tonumber(row["Menge"]),true)
-		self:setData(player,"Item",tonumber(row["id"]).."_Platz",tonumber(row["Platz"]),true)
-		self:setData(player,"Item_"..tostring(row["Tasche"]),tonumber(row["Platz"]).."_id",tonumber(row["id"]),true)
+function InventoryManager:loadInventory(player)
+	local result = sql:queryFetch("SELECT * FROM inventarinfo WHERE Name = ?",player:getName()) -- ToDo add Prefix
+	if #result == 0 then
+		self:createInventory(player)
+		return
 	end
-
-	triggerClientEvent(player,"setIKoords_c",player,platz,tasche)
-end
-
-function Inventory:loadInventory(player)
 
 	self:setData(player,"Inventar","ItemsPlatz",14,true)
 	self:setData(player,"Inventar","ObjektePlatz",3,true)
@@ -84,7 +69,7 @@ function Inventory:loadInventory(player)
 	self:setData(player,"Inventar","DrogenPlatz",7,true)
 
 
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE Name = ?",sql:getPrefix(),player:getName()) -- ToDo add Prefix
+	local result = sql:queryFetch("SELECT * FROM inventarinhalt WHERE Name = ?",player:getName()) -- ToDo add Prefix
 	for i, row in ipairs(result) do
 		if tonumber(row["Menge"]) > 0 then
 			self:setData(player,"Item",tonumber(row["id"]),tostring(row["Objekt"]),true)
@@ -101,16 +86,16 @@ function Inventory:loadInventory(player)
 
 end
 
-function Inventory:Event_changePlaces(player,tasche,oPlace,nPlace)
+function InventoryManager:Event_changePlaces(player,tasche,oPlace,nPlace)
 	if(client ~= player) then
 		return false
 	end
-	self:setItemPlace(player,tasche,oPlace,-1)
-	self:setItemPlace(player,tasche,nPlace,oPlace)
-	self:setItemPlace(player,tasche,-1,nPlace)
+	setItemPlace(player,tasche,oPlace,-1)
+	setItemPlace(player,tasche,nPlace,oPlace)
+	setItemPlace(player,tasche,-1,nPlace)
 end
 
-function Inventory:setData(element,tname,index,value,stream)
+function InventoryManager:setData(element,tname,index,value,stream)
 	if(not isElement(element)) then
 		outputDebugString("Inventar: setData > arg #1 not a element",2)
 		return false
@@ -136,7 +121,7 @@ function Inventory:setData(element,tname,index,value,stream)
 	end
 end
 
-function Inventory:updatePlayerTable(player,elementDataName,tableName,...)
+function InventoryManager:updatePlayerTable(player,elementDataName,tableName,...)
 	if(self:getData(player,"loggedin") ~= true) then
 		return false
 	end
@@ -169,11 +154,11 @@ function Inventory:updatePlayerTable(player,elementDataName,tableName,...)
 		end
 
 	end
-	sql:queryExec("UPDATE ??_?? SET ?? WHERE ?? = ??",sql:getPrefix(),tostring(tableName),tostring(mysqlString),tostring(nameTag),player:getName() )
+	sql:queryExec("UPDATE ?? SET ?? WHERE ?? = ??",tostring(tableName),tostring(mysqlString),tostring(nameTag),player:getName() ) -- ToDo add Prefix
 	return true
 end
 
-function Inventory:Event_onItemUse(itemid,tasche,itemname,platz,delete)
+function InventoryManager:Event_onItemUse(itemid,tasche,itemname,platz,delete)
 	if delete == true then
 		self:removeItemFromPlatz(client,tasche,platz,1)
 	end
@@ -182,7 +167,7 @@ end
 
 inventar_debug = false
 
-function Inventory:isPlatzEmpty(player,tasche,platz)
+function InventoryManager:isPlatzEmpty(player,tasche,platz)
 	local id = self:getData(player,"Item_"..tasche,platz.."_id")
 	local item_table = self:getData(player,"Item")
 	if item_table[id] then
@@ -198,7 +183,7 @@ function Inventory:isPlatzEmpty(player,tasche,platz)
 	end
 end
 
-function Inventory:getLowEmptyPlace(player,tasche)
+function InventoryManager:getLowEmptyPlace(player,tasche)
 	for i = 0, self:getInventarPlaces(player,tasche),1 do
 		if(self:isPlatzEmpty(player,tasche,i)) then
 			return i
@@ -207,7 +192,7 @@ function Inventory:getLowEmptyPlace(player,tasche)
 	return false
 end
 
-function Inventory:getLowestOccupiedPlace(player,tasche)
+function InventoryManager:getLowestOccupiedPlace(player,tasche)
 	local tasche = self:getData(player,"Item_"..tasche)
 	for index,value in pairs(tasche) do
 		if(value) then
@@ -218,7 +203,7 @@ function Inventory:getLowestOccupiedPlace(player,tasche)
 	return false
 end
 
-function Inventory:getInventarPlaces(player,tasche)
+function InventoryManager:getInventarPlaces(player,tasche)
 	if tasche then
 		if self:getData(player,"Inventar",tasche.."Platz") then
 			return tonumber(self:getData(player,"Inventar",tasche.."Platz"))-1
@@ -230,7 +215,7 @@ function Inventory:getInventarPlaces(player,tasche)
 	end
 end
 
-function Inventory:getCountOfPlaces(player,tasche,item)
+function InventoryManager:getCountOfPlaces(player,tasche,item)
 	local maxItemStack = tonumber(itemData[item]["Item_Max"])
 	local places = maxItemStack
 	local invplaetze = self:getInventarPlaces(player,tasche)
@@ -243,12 +228,11 @@ function Inventory:getCountOfPlaces(player,tasche,item)
 	return freeplaces
 end
 
-function Inventory:getItemID(player,tasche,platz)
+function InventoryManager:getItemID(player,tasche,platz)
 	return self:getData(player,"Item_"..tasche,platz.."_id")
 end
 
-function Inventory:setItemPlace(player,tasche,oplatz,platz)
-	outputChatBox("OLD: "..oplatz.." NEW:"..platz)
+function InventoryManager:setItemPlace(player,tasche,oplatz,platz)
 	local id = self:getItemID(player,tasche,oplatz)
 	local nid= self:getItemID(player,tasche,platz)
 	if(not id or (nid and self:getData(player,"Item",nid) ~= self:getData(player,"Item",id)) ) then
@@ -257,11 +241,12 @@ function Inventory:setItemPlace(player,tasche,oplatz,platz)
 	self:setData(player,"Item_"..tasche,oplatz.."_id",nil,true)
 	self:setData(player,"Item",id.."_Platz",platz,true)
 	self:setData(player,"Item_"..tasche,platz.."_id",id,true)
-	Inventory:saveItemPlatz(id,self:getData(player,"Item",id.."_Platz"))
+	sql:queryExec("UPDATE inventarinhalt SET Platz= ?? WHERE id = ??",self:getData(player,"Item",id.."_Platz"),id ) -- ToDo add Prefix
+
 	return true
 end
 
-function Inventory:Event_c_stackItems(newid,oldid,oldplatz) --OLD = Moved
+function InventoryManager:Event_c_stackItems(newid,oldid,oldplatz) --OLD = Moved
 	if(source ~= client) then
 		return false
 	end
@@ -284,14 +269,14 @@ end
 addEvent("c_stackItems",true)
 
 
-function Inventory:Event_c_setItemPlace(tasche,platz,nplatz)
+function InventoryManager:Event_c_setItemPlace(tasche,platz,nplatz)
 	if(source ~= client) then
 		return false
 	end
-	self:setItemPlace(source,tasche,platz,nplatz)
+	setItemPlace(source,tasche,platz,nplatz)
 end
 
-function Inventory:getData(element, name,index)
+function InventoryManager:getData(element, name,index)
 		if(not element ) then
 			return error("getElementData > no argument",2)
 		elseif(not isElement(element)) then
@@ -312,7 +297,7 @@ function Inventory:getData(element, name,index)
 		return result
 end
 
-function Inventory:removeItemFromPlatz(player,tasche,platz,anzahl)
+function InventoryManager:removeItemFromPlatz(player,tasche,platz,anzahl)
 
 		local id = self:getData(player,"Item_"..tasche,platz.."_id")
 		if(not id) then
@@ -334,8 +319,7 @@ function Inventory:removeItemFromPlatz(player,tasche,platz,anzahl)
 			self:saveItemMenge(id,self:getData(player,"Item",id.."_Menge"))
 
 		else
-			
-			self:deleteItem(id)
+			sql:queryExec("DELETE FROM `inventarinhalt` WHERE `id`= ??",id ) -- ToDo add Prefix
 			self:setData(player,"Item",id,nil,true)
 			self:setData(player,"Item",id.."_Menge",nil,true)
 			self:setData(player,"Item",id.."_Platz",nil,true)
@@ -344,14 +328,14 @@ function Inventory:removeItemFromPlatz(player,tasche,platz,anzahl)
 
 end
 
-function Inventory:Event_wegwerfItem(item,tasche,id,platz)
+function InventoryManager:Event_wegwerfItem(item,tasche,id,platz)
 	local player = client
 	executeCommandHandler ( "meCMD", player, " wirft "..item.." weg..." )
 	self:removeItemFromPlatz(player,tasche,platz)
 end
 
 
-function Inventory:getFreePlacesForItem(player,item)
+function InventoryManager:getFreePlacesForItem(player,item)
 
 	if inventar_debug == true then
 		outputDebugString("INV-DEBUG-getFreePlacesForItem: Spieler: "..getPlayerName(player).." | Item: "..item)
@@ -400,7 +384,7 @@ function Inventory:getFreePlacesForItem(player,item)
 	return 0
 end
 
-function Inventory:removeItem(player,item,anzahl)
+function InventoryManager:removeItem(player,item,anzahl)
 	if inventar_debug == true then
 		outputDebugString("INV-DEBUG-removeItem: Spieler: "..getPlayerName(player).." | Item: "..item.." | Anzahl: "..anzahl)
 	end
@@ -433,7 +417,7 @@ function Inventory:removeItem(player,item,anzahl)
 	end
 end
 
-function Inventory:removeOneItem(player,item)
+function InventoryManager:removeOneItem(player,item)
 	if itemData[item] then
 		local tasche = itemData[item]["Tasche"]
 		local invplaetze = self:getInventarPlaces(player,tasche)
@@ -465,7 +449,7 @@ function Inventory:removeOneItem(player,item)
 end
 
 
-function Inventory:getPlatzForItem(player,item,itemanzahl)
+function InventoryManager:getPlatzForItem(player,item,itemanzahl)
 	if itemData[item] then
 		local tasche = itemData[item]["Tasche"]
 		local invplaetze = getInventarPlaces(player,tasche)
@@ -489,7 +473,7 @@ function Inventory:getPlatzForItem(player,item,itemanzahl)
 	end
 end
 
-function Inventory:getPlayerItemAnzahl(player,item)
+function InventoryManager:getPlayerItemAnzahl(player,item)
 
 	if inventar_debug == true then
 		outputDebugString("INV-DEBUG-getPlayerItemAnzahl: Spieler: "..getPlayerName(player).." | Item: "..item)
@@ -514,7 +498,7 @@ function Inventory:getPlayerItemAnzahl(player,item)
 	end
 end
 
-function Inventory:giveItem(player,item,anzahl)
+function InventoryManager:giveItem(player,item,anzahl)
 
 	if inventar_debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..getPlayerName(player).." | Item: "..item.." | Anzahl: "..anzahl)
@@ -573,8 +557,18 @@ function Inventory:giveItem(player,item,anzahl)
 			elseif platztyp == "new" then
 				if anzahl > 0 then
 				--	outputDebugString("giveItem - NewStack")
-					local lastId = self:insertItem(getPlayerName(player), anzahl, item, platz, tasche)
-					self:loadItem(player,lastId)
+
+					sql:queryExec("INSERT INTO `inventarinhalt` (Name,Menge,Objekt,Platz,Tasche) VALUES (??, ??, ??, ??, ??)",getPlayerName(player), anzahl, item, platz, tasche ) -- ToDo add Prefix
+					local result = sql:queryFetch("SELECT * FROM inventarinhalt WHERE Name = ?? AND `Tasche` = ??' AND `Platz` = ?? AND `Objekt`= ??",getPlayerName(player),tasche,platz,item) -- ToDo add Prefix
+
+					for i, row in ipairs(result) do
+						self:setData(player,"Item",tonumber(row["id"]),tostring(row["Objekt"]),true)
+						self:setData(player,"Item",tonumber(row["id"]).."_Menge",tonumber(row["Menge"]),true)
+						self:setData(player,"Item",tonumber(row["id"]).."_Platz",tonumber(row["Platz"]),true)
+						self:setData(player,"Item_"..tostring(row["Tasche"]),tonumber(row["Platz"]).."_id",tonumber(row["id"]),true)
+					end
+
+					triggerClientEvent(player,"setIKoords_c",player,platz,tasche)
 					return true
 				end
 			end

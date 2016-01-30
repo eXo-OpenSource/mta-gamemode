@@ -74,6 +74,9 @@
 	<script src="server/classes/Player/PlayerManager.lua" type="server"/>
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
+	<!-- Inventory System -->
+	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
+
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
 	<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
@@ -257,6 +260,10 @@
 	<script src="client/classes/GUI/GUIScrollableText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 
+	<!-- Inventory -->
+	<script src="client/classes/Inventory/InventoryFunc.lua" type="client"/>
+	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
+
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeOut.lua" type="client"/>
@@ -415,10 +422,9 @@
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
 
 	<!-- Gangwar -->
-	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
-	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
-	<script src="client/classes/Faction/Gangwar/GangwarDisplay.lua" type="client"/>
-	
+	 <script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
+	 <script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
+
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
 
@@ -445,10 +451,10 @@
 	<!-- Web API -->
 	<html src="server/http/api.lua" />
 	<export function="api_request" type="server" http="true"/>
-	
+
 	<script src="server/http/phpsdk.lua" type="server"/>
 	<export function="phpSDKGetPlayers" type="server" http="true" />
-	
+
 
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
@@ -650,13 +656,73 @@
 	<vrpfile src="files/images/HUD/JobLevel.png"/>
 	<vrpfile src="files/images/HUD/wanted.png"/>
 
-	<!-- Gangwar -->
-	<vrpfile src="files/images/Gangwar/tile.png"/>
-	
-	
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
+
+	<!-- Inventory Images -->
+	<vrpfile src="files/images/Inventory/items.png" />
+	<vrpfile src="files/images/Inventory/food.png" />
+	<vrpfile src="files/images/Inventory/drogen.png" />
+	<vrpfile src="files/images/Inventory/closeinv.png" />
+	<vrpfile src="files/images/Inventory/closeinvS.png" />
+	<vrpfile src="files/images/Inventory/moveinv.png" />
+	<vrpfile src="files/images/Inventory/moveinvS.png" />
+	<vrpfile src="files/images/Inventory/reset.png" />
+	<vrpfile src="files/images/Inventory/resetS.png" />
+	<vrpfile src="files/images/Inventory/infoblubf.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte.png" />
+
+	<vrpfile src="files/images/Inventory/items/Drogen/Weed.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Pilze.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Samen.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Ecstasy.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Heroin.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Koks.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Crystal-Meth-1.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Crystal-Meth-2.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Crystal-Meth-3.png" />
+
+	<vrpfile src="files/images/Inventory/items/Items/Benzinkanister.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Chips.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Fernglas.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Gameboy.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Lottoschein.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Medikit.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Radio.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Wuerfel.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Ausweis.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Munition.png" />
+	<vrpfile src="files/images/Inventory/items/Items/eXoPad.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Fische.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Mats.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Zeitung.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Frostschutzmittel.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Batterie.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Badesalz.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Reparaturkit.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Kuerbis.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Paeckchen.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Mautpass.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Maske.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Helm.png" />
+	<vrpfile src="files/images/Inventory/items/Items/X-MAS-Muetze.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Keks.png" />
+
+	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Zigeretten.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Pommes.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Snack.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Bier.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Suessigkeiten.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Gluehwein.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Lebkuchen.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Schnaps.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Wuerstchen.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Kaffee.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Kuheuter mit Pommes.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Zombie-Burger.png" />
+
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
@@ -717,8 +783,7 @@
 	<map src="files/maps/TuningGarages.map"/>
 	<map src="files/maps/MechanicBase.map"/>
 
-	
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
-	
+
 </meta>
