@@ -24,12 +24,7 @@ end
 
 function RadarArea:destructor()
 	RadarArea.Map[self.m_Id] = nil
-	--// triggerClientEvent("radarAreaDestroy", resourecRoot, self.m_Id)
-	for k, player in pairs(getElementsByType("player")) do
-		if player:isLoggedIn() then
-			player:triggerEvent("radarAreaDestroy", self.m_Id, self.m_PosX, self.m_PosY, self.m_Width, self.m_Height, self.m_Color)
-		end
-	end
+	triggerClientEvent("radarAreaDestroy", resourceRoot, self.m_Id)
 end
 
 function RadarArea:setFlashing(state)

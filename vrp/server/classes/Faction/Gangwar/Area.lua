@@ -61,6 +61,7 @@ function Area:attack( faction1, faction2)
 		self.m_RadarArea:delete()
 		self.m_BlipImage = Blip:new("gangwar.png", self.m_Position[1], self.m_Position[2])
 		self:createRadar() 
+		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)
 		faction1:sendMessage("[Gangwar] #FFFFFFIhre Fraktion hat einen Attack gestartet! ( Gebiet: "..self.m_Name.." )", 0,204,204,true)
 		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
 	end
@@ -100,6 +101,7 @@ function Area:attackEnd(  )
 		self.m_RadarArea:delete()
 		self:createRadar() 
 		self.m_BlipImage:delete()
+		setPickupType(self.m_Pickup,3,2993)
 	end
 end
 

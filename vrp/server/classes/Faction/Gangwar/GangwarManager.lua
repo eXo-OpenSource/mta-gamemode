@@ -20,6 +20,7 @@ GANGWAR_MIN_PLAYERS = 0
 GANGWAR_ATTACK_PAUSE = 0 --// DAY
 GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
 GANGWAR_DUMP_COLOR = setBytesInInt32(240,0,200,200)
+GANGWAR_ATTACK_PICKUPMODEL =  1313
 UNIX_TIMESTAMP_24HRS = 86400
 --//
 
@@ -42,6 +43,8 @@ function Gangwar:constructor( )
 	addCommandHandler("attack",bind(self.onAttackCommand,self))
 	addEventHandler("onLoadCharacter",root,bind(self.onPlayerJoin,self))
 	addEventHandler("onDeloadCharacter",root,bind(self.onPlayerQuit,self))
+	
+	addEventHandler("onPlayerWasted",root,bind(self.onPlayerWasted,self))
 	
 end	
 
@@ -82,6 +85,13 @@ function Gangwar:onPlayerQuit()
 				AttackSession:quitPlayer( source ) 
 			end
 		end
+	end
+end
+
+function Gangwar:onPlayerWasted(  ... ) 
+	local attackSession = source.m_RefAttackSession
+	if attackSession then 
+		attackSession:onPlayerWasted( source,... )
 	end
 end
 
