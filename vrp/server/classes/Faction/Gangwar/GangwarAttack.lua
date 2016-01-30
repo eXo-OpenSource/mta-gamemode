@@ -34,10 +34,12 @@ function AttackSession:synchronizeAllParticipants( )
 	for k,v in ipairs( self.m_Participants ) do 
 		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified)
 		v.m_RefAttackSession = self
+		v:triggerEvent("GangwarQuestion:new")
 	end
 	for k,v in ipairs( self.m_Disqualified ) do 
 		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified)
 		v.m_RefAttackSession = self
+		v:triggerEvent("GangwarQuestion:new")
 	end
 end
 
@@ -63,6 +65,7 @@ function AttackSession:removeParticipant( player )
 			return table.remove( self.m_Participants, index )
 		end
 	end
+	self:sessionCheck()
 end
 
 function AttackSession:isPlayerDisqualified( player )
@@ -79,6 +82,7 @@ function AttackSession:disqualifyPlayer( player )
 	if not bIsDisqualifed then 
 		self.m_Disqualified[ #self.m_Disqualified + 1] = player.name
 	end
+	self:sessionCheck()
 end
 
 function AttackSession:joinPlayer( player ) 
@@ -88,6 +92,10 @@ end
 
 function AttackSession:quitPlayer( player ) 
 	self:removeParticipant( player )
+end
+
+function AttackSession:onPurposlyDisqualify( player )
+	self:disqualifyPlayer( player )
 end
 
 function AttackSession:onPlayerLeaveCenter( player )
@@ -101,7 +109,7 @@ function AttackSession:onPlayerLeaveCenter( player )
 	end
 end
 
-function AttackSession:SessionCheck() 
+function AttackSession:sessionCheck() 
 	local factionCount1 = 0 
 	local factionCount2 = 0
 	for k,v in ipairs( self.m_Participants ) do 

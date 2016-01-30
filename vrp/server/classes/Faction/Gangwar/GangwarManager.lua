@@ -15,7 +15,7 @@ GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
 
 --// Gangwar - Constants //--
 GANGWAR_MATCH_TIME = 15
-GANGWAR_CENTER_HOLD_RANGE = 20
+GANGWAR_CENTER_HOLD_RANGE = 10
 GANGWAR_MIN_PLAYERS = 0
 GANGWAR_ATTACK_PAUSE = 0 --// DAY
 GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
@@ -24,7 +24,7 @@ GANGWAR_ATTACK_PICKUPMODEL =  1313
 UNIX_TIMESTAMP_24HRS = 86400
 --//
 
-addRemoteEvents{"onLoadCharacter","onDeloadCharacter","Gangwar:onClientRequestAttack"}
+addRemoteEvents{"onLoadCharacter","onDeloadCharacter","Gangwar:onClientRequestAttack","GangwarQuestion:disqualify"}
 
 function Gangwar:constructor( )
 	if GANGWAR_RESET_AREAS then 
@@ -45,6 +45,7 @@ function Gangwar:constructor( )
 	addEventHandler("onDeloadCharacter",root,bind(self.onPlayerQuit,self))
 	addEventHandler("Gangwar:onClientRequestAttack",root,bind(self.attackReceiveCMD,self))
 	addEventHandler("onPlayerWasted",root,bind(self.onPlayerWasted,self))
+	addEventHandler("GangwarQuestion:disqualify",root,bind(self.onPlayerAbort,self))
 	
 end	
 
@@ -92,6 +93,17 @@ function Gangwar:onPlayerWasted(  ... )
 	local attackSession = source.m_RefAttackSession
 	if attackSession then 
 		attackSession:onPlayerWasted( source,... )
+	end
+end
+
+function Gangwar:onPlayerAbort( )
+	if client then 
+		if client == source then 
+			local attackSession = source.m_RefAttackSession
+			if attackSession then 
+				attackSession:onPurposlyDisqualify( source  )
+			end	
+		end
 	end
 end
 

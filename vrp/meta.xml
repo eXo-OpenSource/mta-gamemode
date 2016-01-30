@@ -425,7 +425,8 @@
 	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarDisplay.lua" type="client"/>
-
+	<script src="client/classes/Faction/Gangwar/GangwarQuestion.lua" type="client"/>
+	
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
 
@@ -660,9 +661,12 @@
 	
 	<!-- Gangwar -->
 	<vrpfile src="files/images/Gangwar/tile.png"/>
+	<vrpfile src="files/images/Gangwar/tilefade.png"/>
 	<vrpfile src="files/images/Gangwar/Gangwar.png"/>
 	<vrpfile src="files/images/Gangwar/Attack.png"/>
 	<vrpfile src="files/images/Gangwar/Close.png"/>
+	<vrpfile src="files/images/Gangwar/cross.png"/>
+	<vrpfile src="files/images/Gangwar/tick.png"/>
 	
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
