@@ -51,7 +51,7 @@ function Core:ready()
 	VehicleGarages:new()
 	GasStationGUI:new()
 	SkinShopGUI.initialise()
-
+  
 	--// Gangwar 
 	GangwarClient:new( )
 

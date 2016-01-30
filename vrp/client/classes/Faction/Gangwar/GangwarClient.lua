@@ -9,7 +9,7 @@
 GangwarClient = inherit( Singleton )
 addRemoteEvents{"Gangwar:show_AttackGUI"}
 
-
+ 
 --// CONSTANTS 
 local ANIM_SCALE = 1 
 local ANIM_TIME = 2000

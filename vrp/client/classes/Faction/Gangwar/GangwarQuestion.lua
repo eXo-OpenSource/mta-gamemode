@@ -34,7 +34,7 @@ function GangwarQuestion:onClick( b, s )
 						triggerServerEvent("GangwarQuestion:disqualify",localPlayer)
 						PseudoObj:delete()
 					else 
-						PseudoObj:delete()
+						PseudoObj:delete() 
 					end
 					PseudoObj:delete()
 				else self.m_SureCheck = nil

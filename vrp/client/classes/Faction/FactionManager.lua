@@ -10,11 +10,11 @@ FactionManager = inherit(Singleton)
 FactionManager.Map = {}
 
 function FactionManager:constructor()
-  local Factions = {
+  local Factions = { 
     TestFaction:new(Vector3(2075, -1250, 24));
   }
   for k, v in ipairs(Factions) do
-		v:setId(k)
+		v:setId(k) 
     self:addRef(v)
 	end
 

@@ -14,7 +14,7 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	self.m_Faction2 = faction2
 	self.m_Participants = pParticipants 
 	self.m_Disqualified = pDisqualified
-	localPlayer.attackSession = self
+	localPlayer.attackSession = self 
 	self.m_Display = GangwarDisplay:new( faction1, faction2, pParticipants )
 end
 

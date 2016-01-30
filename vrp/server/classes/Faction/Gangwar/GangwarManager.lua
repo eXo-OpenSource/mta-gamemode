@@ -73,7 +73,7 @@ function Gangwar:onPlayerJoin()
 			end
 		end
 	end
-end
+end  
 
 function Gangwar:onPlayerQuit()
 	local factionObj = source.m_Faction

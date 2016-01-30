@@ -10,7 +10,7 @@ AdminGUI = inherit(GUIForm)
 inherit(Singleton, AdminGUI)
 
 addRemoteEvents{"showAdminMenu"}
-function AdminGUI:constructor() 
+function AdminGUI:constructor()  
 	
 	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-250, 800, 540)
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)

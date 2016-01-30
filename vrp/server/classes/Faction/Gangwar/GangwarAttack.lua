@@ -49,7 +49,7 @@ function AttackSession:addParticipantToList( player )
 		self.m_Participants[#self.m_Participants + 1] = player 
 	end
 end
-
+ 
 function AttackSession:isParticipantInList( player )
 	for index = 1,#self.m_Participants do 
 		if self.m_Participants[index] == player then 
