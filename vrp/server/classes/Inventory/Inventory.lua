@@ -10,9 +10,9 @@ function Inventory:constructor()
 
 	self.m_ItemData = {}
 	self.m_ItemData = self:loadItems()
-	
+
 	self.m_Debug = true
-	
+
 	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "wegwerfItem", "c_setItemPlace"}
 	addEventHandler("changePlaces", root, bind(self.Event_changePlaces, self))
 	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
@@ -66,7 +66,7 @@ function Inventory:insertItem(pname, anzahl, item, platz, tasche)
 end
 
 function Inventory:loadItem(player,id)
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE id = ?",sql:getPrefix(),id) 
+	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE id = ?",sql:getPrefix(),id)
 
 	for i, row in ipairs(result) do
 		self:setData(player,"Item",tonumber(row["id"]),tostring(row["Objekt"]),true)
@@ -84,7 +84,7 @@ function Inventory:loadInventory(player)
 	self:setData(player,"Inventar","ObjektePlatz",3,true)
 	self:setData(player,"Inventar","EssenPlatz",5,true)
 	self:setData(player,"Inventar","DrogenPlatz",7,true)
-	
+
 	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE Name = ?",sql:getPrefix(),player:getName()) -- ToDo add Prefix
 	for i, row in ipairs(result) do
 		if tonumber(row["Menge"]) > 0 then
@@ -108,8 +108,24 @@ function Inventory:Event_changePlaces(tasche,oPlace,nPlace)
 	self:setItemPlace(client,tasche,-1,nPlace)
 end
 
+function Inventory:getData(element, name,index)
+	checkArgs("Inventory:getData", "userdata", "string")
+
+	local result
+	if(not index) then
+		result = getElementData ( element, name)
+	else
+		if(getElementData(element,name)) then
+			result = getElementData ( element, name)[index]
+		else
+			result = getElementData ( element, name)
+		end
+	end
+	return result
+end
+
 function Inventory:setData(element,tname,index,value,stream)
-	checkArgs("Inventory:setData", "element", "string")
+	checkArgs("Inventory:setData", "userdata", "string")
 	if not self:getData(element,tname) then
 		setElementData(element,tname,{})
 	end
@@ -243,26 +259,6 @@ function Inventory:Event_c_setItemPlace(tasche,platz,nplatz)
 	self:setItemPlace(source,tasche,platz,nplatz)
 end
 
-function Inventory:getData(element, name,index)
-		if(not element ) then
-			return error("getElementData > no argument",2)
-		elseif(not isElement(element)) then
-			return error("getElementData > arg #1 not a element",2)
-		elseif(type(name) ~= "string") then
-			return error("getElementData > arg #2 not a string",2)
-		end
-		local result
-		if(not index) then
-			result = getElementData ( element, name)
-		else
-			if(getElementData(element,name)) then
-				result = getElementData ( element, name)[index]
-			else
-				result = getElementData ( element, name)
-			end
-		end
-		return result
-end
 
 function Inventory:removeItemFromPlatz(player,tasche,platz,anzahl)
 
@@ -286,7 +282,7 @@ function Inventory:removeItemFromPlatz(player,tasche,platz,anzahl)
 			self:saveItemMenge(id,self:getData(player,"Item",id.."_Menge"))
 
 		else
-			
+
 			self:deleteItem(id)
 			self:setData(player,"Item",id,nil,true)
 			self:setData(player,"Item",id.."_Menge",nil,true)
@@ -467,6 +463,7 @@ function Inventory:getPlayerItemAnzahl(player,item)
 end
 
 function Inventory:giveItem(player,item,anzahl)
+	checkArgs("Inventory:giveItem", "userdata", "string", "number")
 
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..getPlayerName(player).." | Item: "..item.." | Anzahl: "..anzahl)
@@ -475,21 +472,6 @@ function Inventory:giveItem(player,item,anzahl)
 
 	if itemData[item] then
 		local tasche = itemData[item]["Tasche"]
-
-
-		if(not item or type(item) ~= "string") then
-			outputDebugString("giveItem > arg #2 not a string")
-			return
-		elseif(not anzahl or type(anzahl) ~= "number") then
-			outputDebugString("giveItem > arg #3 not a string")
-			return
-		elseif(not tasche or type(tasche) ~= "string") then
-			outputDebugString("giveItem > arg #4 not a string")
-			return
-		elseif(not player or getElementType(player) ~= "player") then
-			outputDebugString("giveItem > arg #1 not a player")
-			return
-		end
 
 		local max_items = tonumber(itemData[item]["Item_Max"])
 		local new_items = self:getPlayerItemAnzahl(player,item)+anzahl

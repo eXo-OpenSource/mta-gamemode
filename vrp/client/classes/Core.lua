@@ -40,7 +40,8 @@ function Core:ready()
 	TippManager:new()
 	JailBreak:new()
 	DimensionManager:new()
-	
+	Inventory:new()
+
 	-- Events
 	EventManager:new()
 	DMRaceEvent:new()
@@ -52,10 +53,10 @@ function Core:ready()
 	GasStationGUI:new()
 	SkinShopGUI.initialise()
 
-	--// Gangwar 
+	--// Gangwar
 	GangwarClient:new( )
 
-	
+
 	-- Init Binds
 	bindKey(core:get("KeyBindings", "KeyToggleHelpGUI", "f9"), "down",
 		function()
