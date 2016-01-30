@@ -74,14 +74,15 @@ function GangwarClient:render_Window_options( )
 	local dur = self.m_EndTick2 - self.m_StartTick2 
 	local prog = elap / dur 
 	local w_x = interpolateBetween( w*0.2,0,0,w*0.5,0,0,prog,"OutBack")
-	local w_x2 = interpolateBetween( w*0.5,0,0,w*0.65,0,0,prog,"Linear")
-	local color1 = tocolor(255,255,255,255)
-	local color2 = tocolor(255,255,255,255)
+	local alpha = interpolateBetween(0,0,0,255,0,0,prog,"Linear")
+	local w_x2 = interpolateBetween( w*0.5,0,0,w*0.65,0,0,prog,"OutBack")
+	local color1 = tocolor(255,255,255,alpha)
+	local color2 = tocolor(255,255,255,alpha)
 	if self:isMouseOver( w_x,(h*0.5)-(w*0.05),w*0.15,w*0.05) then 
-		color1 = tocolor(0,204,204,255)
+		color1 = tocolor(0,204,204,alpha)
 		self.m_Over = 1 
 	elseif self:isMouseOver( w_x,(h*0.5)-(w*0.05)+(w*0.05),w*0.15,w*0.05) then 
-		color2 = tocolor(0,204,204,255)
+		color2 = tocolor(0,204,204,alpha)
 		self.m_Over = 2
 	else self.m_Over = nil
 	end
