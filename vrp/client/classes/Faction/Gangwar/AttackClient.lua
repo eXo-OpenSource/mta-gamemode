@@ -29,6 +29,10 @@ function AttackClient:synchronizeLists( pParticipants, pDisqualified )
 	self.m_Disqualified = pDisqualified
 end
 
+function AttackClient:synchronizeTime( ) 
+
+end
+
 addEvent("AttackClient:synchronizeLists",true)
 function AttackClient.remoteSynchronize( pParticipants, pDisqualified )
 	pseudoSingleton:synchronizeLists( pParticipants , pDisqualified )

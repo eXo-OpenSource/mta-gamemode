@@ -619,7 +619,8 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/2.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/3.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/4.png"/>
-
+	<vrpfile src="files/images/Radar_GTA/Blips/gangwar.png"/>
+	
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
 	<vrpfile src="files/images/Jobs/HeaderPolice.png"/>
@@ -659,6 +660,9 @@
 	
 	<!-- Gangwar -->
 	<vrpfile src="files/images/Gangwar/tile.png"/>
+	<vrpfile src="files/images/Gangwar/Gangwar.png"/>
+	<vrpfile src="files/images/Gangwar/Attack.png"/>
+	<vrpfile src="files/images/Gangwar/Close.png"/>
 	
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>

@@ -24,7 +24,7 @@ GANGWAR_ATTACK_PICKUPMODEL =  1313
 UNIX_TIMESTAMP_24HRS = 86400
 --//
 
-addRemoteEvents{"onLoadCharacter","onDeloadCharacter"}
+addRemoteEvents{"onLoadCharacter","onDeloadCharacter","Gangwar:onClientRequestAttack"}
 
 function Gangwar:constructor( )
 	if GANGWAR_RESET_AREAS then 
@@ -40,10 +40,10 @@ function Gangwar:constructor( )
 		end
 	end
 	
-	addCommandHandler("attack",bind(self.onAttackCommand,self))
+	addCommandHandler("attack",bind(self.onAttackCMD,self))
 	addEventHandler("onLoadCharacter",root,bind(self.onPlayerJoin,self))
 	addEventHandler("onDeloadCharacter",root,bind(self.onPlayerQuit,self))
-	
+	addEventHandler("Gangwar:onClientRequestAttack",root,bind(self.attackReceiveCMD,self))
 	addEventHandler("onPlayerWasted",root,bind(self.onPlayerWasted,self))
 	
 end	
@@ -122,8 +122,22 @@ function Gangwar:getCurrentGangwars( )
 end
 
 
+function Gangwar:onAttackCMD( player )
+	local mArea = player.m_InsideArea 
+	if mArea then 
+		player:triggerEvent("Gangwar:show_AttackGUI")
+	end
+end
 
-function Gangwar:onAttackCommand( player )
+function Gangwar:attackReceiveCMD( ) 
+	if client then 
+		if client == source then 
+			self:attackArea( client )
+		end
+	end
+end
+
+function Gangwar:attackArea( player )
 	local faction = player.m_Faction 
 	if faction then 
 		local id = player.m_Faction.m_Id 
@@ -132,7 +146,7 @@ function Gangwar:onAttackCommand( player )
 			local bWithin = isElementWithinColShape(player,mArea.m_CenterSphere)
 			if bWithin then 
 				local areaOwner = mArea.m_Owner
-				local faction2 = FactionManager:getFromId(areaOwner)
+				local faction2 = FactionManager:getSingleton():getFromId(areaOwner)
 				if areaOwner ~= id then 
 					local factionCount = #faction:getOnlinePlayers()
 					local factionCount2 = #faction2:getOnlinePlayers()
