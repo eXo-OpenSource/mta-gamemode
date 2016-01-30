@@ -105,6 +105,3 @@ function GangwarClient:isMouseOver( x,y,width,height)
 	end
 	return false
 end
-	addCommandHandler("at",function() 
-		GangwarClient:getSingleton():show_AttackRequest( )
-	end)
