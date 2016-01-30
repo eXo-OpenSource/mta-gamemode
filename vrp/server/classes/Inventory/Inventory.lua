@@ -10,7 +10,9 @@ function Inventory:constructor()
 
 	self.m_ItemData = {}
 	self.m_ItemData = self:loadItems()
-
+	
+	self.m_Debug = true
+	
 	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "wegwerfItem", "c_setItemPlace"}
 	addEventHandler("changePlaces", root, bind(self.Event_changePlaces, self))
 	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
@@ -82,8 +84,7 @@ function Inventory:loadInventory(player)
 	self:setData(player,"Inventar","ObjektePlatz",3,true)
 	self:setData(player,"Inventar","EssenPlatz",5,true)
 	self:setData(player,"Inventar","DrogenPlatz",7,true)
-
-
+	
 	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE Name = ?",sql:getPrefix(),player:getName()) -- ToDo add Prefix
 	for i, row in ipairs(result) do
 		if tonumber(row["Menge"]) > 0 then
@@ -101,23 +102,14 @@ function Inventory:loadInventory(player)
 
 end
 
-function Inventory:Event_changePlaces(player,tasche,oPlace,nPlace)
-	if(client ~= player) then
-		return false
-	end
-	self:setItemPlace(player,tasche,oPlace,-1)
-	self:setItemPlace(player,tasche,nPlace,oPlace)
-	self:setItemPlace(player,tasche,-1,nPlace)
+function Inventory:Event_changePlaces(tasche,oPlace,nPlace)
+	self:setItemPlace(client,tasche,oPlace,-1)
+	self:setItemPlace(client,tasche,nPlace,oPlace)
+	self:setItemPlace(client,tasche,-1,nPlace)
 end
 
 function Inventory:setData(element,tname,index,value,stream)
-	if(not isElement(element)) then
-		outputDebugString("Inventar: setData > arg #1 not a element",2)
-		return false
-	elseif(type(tname) ~= "string") then
-		outputDebugString("Inventar: setData > arg #2 not a string",2)
-		return false
-	end
+	checkArgs("Inventory:setData", "element", "string")
 	if not self:getData(element,tname) then
 		setElementData(element,tname,{})
 	end
@@ -136,51 +128,12 @@ function Inventory:setData(element,tname,index,value,stream)
 	end
 end
 
-function Inventory:updatePlayerTable(player,elementDataName,tableName,...)
-	if(self:getData(player,"loggedin") ~= true) then
-		return false
-	end
-	local district = {...}
-	local isDistricted = {}
-	for i,v in pairs(district) do
-		isDistricted[tostring(v)] = true
-	end
-	if(type(elementDataName) ~= "string" or not elementDataName) then
-		error("updatePlayerTable > arg #1 no string",2)
-		return false
-	elseif(type(tableName) ~= "string" or not tableName) then
-		error("updatePlayerTable > arg #2 no string",2)
-		return false
-	end
-	local mysqlString = ""
-	local nameTag
-	for i,v in pairs(self:getData(player,elementDataName)) do
-		if(not isDistricted[tostring(i)]) then
-			if(i == "Name" or i == "Benutzername") then
-				nameTag = i
-			else
-				if(mysqlString ~= "") then
-					mysqlString = tostring(mysqlString)..",`"..tostring(i).."`='"..tostring(v).."'"
-				else
-					mysqlString = "`"..i.."`='"..tostring(v).."'"
-				end
-			end
-		else
-		end
-
-	end
-	sql:queryExec("UPDATE ??_?? SET ?? WHERE ?? = ??",sql:getPrefix(),tostring(tableName),tostring(mysqlString),tostring(nameTag),player:getName() )
-	return true
-end
-
 function Inventory:Event_onItemUse(itemid,tasche,itemname,platz,delete)
 	if delete == true then
 		self:removeItemFromPlatz(client,tasche,platz,1)
 	end
 	outputChatBox("Du benutzt das Item "..itemname.." aus der Tasche "..tasche.."!",client,0,255,0)
 end
-
-inventar_debug = false
 
 function Inventory:isPlatzEmpty(player,tasche,platz)
 	local id = self:getData(player,"Item_"..tasche,platz.."_id")
@@ -248,7 +201,6 @@ function Inventory:getItemID(player,tasche,platz)
 end
 
 function Inventory:setItemPlace(player,tasche,oplatz,platz)
-	outputChatBox("OLD: "..oplatz.." NEW:"..platz)
 	local id = self:getItemID(player,tasche,oplatz)
 	local nid= self:getItemID(player,tasche,platz)
 	if(not id or (nid and self:getData(player,"Item",nid) ~= self:getData(player,"Item",id)) ) then
@@ -353,7 +305,7 @@ end
 
 function Inventory:getFreePlacesForItem(player,item)
 
-	if inventar_debug == true then
+	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-getFreePlacesForItem: Spieler: "..getPlayerName(player).." | Item: "..item)
 	end
 
@@ -401,7 +353,7 @@ function Inventory:getFreePlacesForItem(player,item)
 end
 
 function Inventory:removeItem(player,item,anzahl)
-	if inventar_debug == true then
+	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-removeItem: Spieler: "..getPlayerName(player).." | Item: "..item.." | Anzahl: "..anzahl)
 	end
 
@@ -491,7 +443,7 @@ end
 
 function Inventory:getPlayerItemAnzahl(player,item)
 
-	if inventar_debug == true then
+	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-getPlayerItemAnzahl: Spieler: "..getPlayerName(player).." | Item: "..item)
 	end
 
@@ -516,7 +468,7 @@ end
 
 function Inventory:giveItem(player,item,anzahl)
 
-	if inventar_debug == true then
+	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..getPlayerName(player).." | Item: "..item.." | Anzahl: "..anzahl)
 	end
 

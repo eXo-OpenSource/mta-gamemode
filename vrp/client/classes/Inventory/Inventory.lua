@@ -421,7 +421,7 @@ function onClickAndDropUp(button)
 					setItemRGB(splace,50,200,255)
 					lockItemUseState[aktuel] = {[splace]=true}
 				end
-				triggerServerEvent("changePlaces",lp,lp,aktuel,oPlace,place)
+				triggerServerEvent("changePlaces",lp,aktuel,oPlace,place)
 			else
 				local id = getElementData(lp,"Item_"..aktuel.."_c")[splace.."_id"]
 				if(lockItemUseState[aktuel] and lockItemUseState[aktuel][splace]) then
