@@ -12,3 +12,4 @@ GangwarClient = inherit(Singleton)
 function GangwarClient:constructor( ) 
 
 end
+ 

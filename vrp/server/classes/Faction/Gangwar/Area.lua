@@ -99,7 +99,7 @@ function Area:attackEnd(  )
 		self.m_AttackSession:delete()
 		self.m_IsAttacked = false
 		self.m_RadarArea:delete()
-		self:createRadar() 
+		self:createRadar()  
 		self.m_BlipImage:delete()
 		setPickupType(self.m_Pickup,3,2993)
 	end

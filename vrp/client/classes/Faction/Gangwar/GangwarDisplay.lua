@@ -24,5 +24,5 @@ function GangwarDisplay:rend_Display( )
 end
 
 function GangwarDisplay:destructor()
-	removeEventHandler("onClientRender",root,self.m_BindRender)
+	removeEventHandler("onClientRender",root,self.m_BindRender) 
 end

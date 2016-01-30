@@ -214,7 +214,7 @@ function AttackSession:checkPlayersInCenter( )
 end
 
 
-function AttackSession:attackLose() --// loose for team1
+function AttackSession:attackLose() --// loose for team1 
 	self:notifyFactions() 
 	self.m_AreaObj:update()
 	

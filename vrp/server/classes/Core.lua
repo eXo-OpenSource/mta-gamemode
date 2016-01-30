@@ -54,6 +54,7 @@ function Core:constructor()
 	FactionManager:new()
 	CompanyManager:new()
 
+	Inventory:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
@@ -66,7 +67,7 @@ function Core:constructor()
 
 	-- Generate Missions
 	MStealWeaponTruck:new()
-	
+
 	--// Gangwar
 	Gangwar:new()
 

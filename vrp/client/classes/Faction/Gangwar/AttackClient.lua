@@ -22,7 +22,7 @@ function AttackClient:destructor()
 	if self.m_Display then 
 		self.m_Display:destructor()
 	end
-end
+end 
 
 function AttackClient:synchronizeLists( pParticipants, pDisqualified )
 	self.m_Participants = pParticipants 

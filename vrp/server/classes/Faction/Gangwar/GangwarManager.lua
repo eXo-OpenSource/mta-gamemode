@@ -158,7 +158,7 @@ function Gangwar:onAttackCommand( player )
 							if nextAttack <= currentTimestamp then 
 								mArea:attack(faction,faction2)
 							else player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!", player))
-							end
+							end 
 						else player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus der Gegner-Fraktion online sein!", player))
 						end
 					else player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus Ihrer Fraktion online sein!", player))
