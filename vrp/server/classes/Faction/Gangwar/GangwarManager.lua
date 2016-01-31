@@ -145,7 +145,7 @@ end
 function Gangwar:onAttackCMD( player )
 	local mArea = player.m_InsideArea 
 	if mArea then 
-		player:triggerEvent("Gangwar:show_AttackGUI")
+		player:triggerEvent("Gangwar:show_AttackGUI",mArea)
 	end
 end
 
