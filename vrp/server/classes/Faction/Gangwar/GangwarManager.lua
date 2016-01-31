@@ -36,7 +36,7 @@ function Gangwar:constructor( )
 	local drow = sql:queryFetch(sql_query,sql:getPrefix())
 	if drow then 
 		for i, datarow in ipairs( drow ) do 
-			self.m_Areas[#self.m_Areas+1] = Area:new( datarow )
+			self.m_Areas[#self.m_Areas+1] = Area:new( datarow ,self)
 		end
 	end
 	
@@ -64,12 +64,12 @@ end
 function Gangwar:onPlayerJoin()
 	local factionObj = source.m_Faction
 	if factionObj then 
-		local factionID = factionObj.m_Id
 		for index = 1,#self.m_CurrentAttacks do 
 			local faction1,faction2 = self.m_CurrentAttacks[index]:getMatchFactions()
-			if faction1 == factionID or faction2 == factionID then 
+			if faction1 == factionObj or faction2 == factionObj then 
 				--// gangwar join
-				AttackSession:joinPlayer( source ) 
+				local area = self.m_CurrentAttacks[index]
+				area.m_AttackSession:joinPlayer( source ) 
 			end
 		end
 	end
@@ -78,12 +78,12 @@ end
 function Gangwar:onPlayerQuit()
 	local factionObj = source.m_Faction
 	if factionObj then 
-		local factionID = factionObj.m_Id
 		for index = 1,#self.m_CurrentAttacks do 
 			local faction1,faction2 = self.m_CurrentAttacks[index]:getMatchFactions()
-			if faction1 == factionID or faction2 == factionID then 
+			if faction1 == factionObj or faction2 == factionObj then 
 				--// gangwar quit
-				AttackSession:quitPlayer( source ) 
+				local area = self.m_CurrentAttacks[index]
+				area.m_AttackSession:quitPlayer( source ) 
 			end
 		end
 	end
@@ -109,6 +109,14 @@ end
 
 function Gangwar:addAreaToAttacks( pArea ) 
 	self.m_CurrentAttacks[#self.m_CurrentAttacks + 1] = pArea
+end
+
+function Gangwar:removeAreaFromAttacks( pArea ) 
+	for index = 1,#self.m_CurrentAttacks do
+		if self.m_CurrentAttacks[index] == pArea then 
+			return table.remove(self.m_CurrentAttacks,index)
+		end
+	end
 end
 
 function Gangwar:removeAreaFromAttacks( pArea ) 
@@ -168,8 +176,8 @@ function Gangwar:attackArea( player )
 							local acGangwar,acFaction1,acFaction2
 							for index = 1,#activeGangwars do 
 								acGangwar = activeGangwars[index]
-								if acGangwar.m_AttackSessions then 
-									acFaction1,acFaction2 = acGangwar.m_AttackSessions:getFactions()
+								if acGangwar.m_AttackSession then 
+									acFaction1,acFaction2 = acGangwar.m_AttackSession:getFactions()
 									if acFaction1 ~= faction and acFaction2 ~= faction then 
 										if acFaction2 ~= faction2 and acFaction2 ~= faction2 then 
 										else return player:sendError(_("Die gegnerische Fraktion ist bereits in einem Gangwar!", player))

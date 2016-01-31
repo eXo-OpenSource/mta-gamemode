@@ -8,7 +8,7 @@
 
 Area = inherit(Object)
 
-function Area:constructor( dataset )
+function Area:constructor( dataset, pGManager )
 	self.m_Name = dataset["Name"]
 	self.m_ID = dataset["ID"]
 	self.m_Owner = tonumber(dataset["Besitzer"])
@@ -17,6 +17,7 @@ function Area:constructor( dataset )
 	self.m_PositionRadar = {tonumber(dataset["cX"]),tonumber(dataset["cY"]),tonumber(dataset["cX2"]),tonumber(dataset["cY2"])}
 	self:createCenterCol( )
 	self:createRadar()
+	self.m_GangwarManager = pGManager
 	self:createCenterPickup() 
 end	
 
@@ -64,6 +65,7 @@ function Area:attack( faction1, faction2)
 		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)
 		faction1:sendMessage("[Gangwar] #FFFFFFIhre Fraktion hat einen Attack gestartet! ( Gebiet: "..self.m_Name.." )", 0,204,204,true)
 		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
+		self.m_GangwarManager:addAreaToAttacks( self ) 
 	end
 end
 
@@ -102,6 +104,7 @@ function Area:attackEnd(  )
 		self:createRadar()  
 		self.m_BlipImage:delete()
 		setPickupType(self.m_Pickup,3,2993)
+		self.m_GangwarManager:removeAreaFromAttacks( self ) 
 	end
 end
 

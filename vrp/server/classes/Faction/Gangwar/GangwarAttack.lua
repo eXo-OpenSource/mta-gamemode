@@ -27,7 +27,6 @@ function AttackSession:setupSession ( )
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do 
 		self.m_Participants[#self.m_Participants + 1] = v
 	end
-	outputChatBox("participants:"..#self.m_Participants)
 	self:synchronizeAllParticipants( ) 
 end
 
@@ -48,6 +47,10 @@ function AttackSession:addParticipantToList( player )
 	local bInList = self:isParticipantInList( player )
 	if not bInList then 
 		self.m_Participants[#self.m_Participants + 1] = player 
+		player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified)
+		player:triggerEvent("GangwarQuestion:new")
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
+		self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
 	end
 end
  
@@ -63,7 +66,7 @@ end
 function AttackSession:removeParticipant( player )
 	for index = 1,#self.m_Participants do 
 		if self.m_Participants[index] == player then 
-			return table.remove( self.m_Participants, index )
+			table.remove( self.m_Participants, index )
 		end
 	end
 	self:sessionCheck()
@@ -87,7 +90,7 @@ function AttackSession:disqualifyPlayer( player )
 end
 
 function AttackSession:joinPlayer( player ) 
-	self:addParticipant( player )
+	self:addParticipantToList( player )
 	player.m_RefAttackSession = self
 end
 
@@ -100,8 +103,8 @@ function AttackSession:onPurposlyDisqualify( player )
 end
 
 function AttackSession:onPlayerLeaveCenter( player )
-	local id = player.m_Faction.m_Id 
-	if id == self.m_Faction1.m_Id then
+	local faction = player.m_Faction
+	if faction == self.m_Faction1 then
 		local isAnyoneInside = self:checkPlayersInCenter( )
 		if not isAnyoneInside then 
 			self:setCenterCountdown()
@@ -114,8 +117,7 @@ function AttackSession:sessionCheck()
 	local factionCount1 = 0 
 	local factionCount2 = 0
 	for k,v in ipairs( self.m_Participants ) do 
-		local id = v.m_Faction.m_Id 
-		if id == self.m_Faction1 then 
+		if v.m_Faction == self.m_Faction1 then 
 			factionCount1 = factionCount1 + 1
 		else 
 			factionCount2 = factionCount2 + 1
@@ -131,11 +133,9 @@ function AttackSession:sessionCheck()
 end
 
 function AttackSession:onPlayerWasted( player, tAmmo, killer, kWeapon, bodyP )
-	local factionID = player.m_Faction.m_Id 
 	local bParticipant = self:isParticipantInList( player )
 	if bParticipant then 
 		if killer then 
-			local factionID2 = killer.m_Faction.m_Id 
 			local bParticipant2 = self:isParticipantInList( killer ) 
 			if bParticipant2 then 
 				self:removeParticipant( player )
@@ -150,8 +150,8 @@ function AttackSession:onPlayerWasted( player, tAmmo, killer, kWeapon, bodyP )
 end
 
 function AttackSession:onPlayerEnterCenter( player )
-	local id = player.m_Faction.m_Id 
-	if id == self.m_Faction1.m_Id then
+	local faction = player.m_Faction
+	if faction == self.m_Faction1 then
 		local bCenterTimer = isTimer( self.m_HoldCenterTimer )
 		local bNotifyTimer = isTimer( self.m_NotifiyAgainTimer )
 		if bCenterTimer then 
@@ -212,11 +212,11 @@ end
 
 function AttackSession:checkPlayersInCenter( )
 	local pTable = getElementsWithinColShape( self.m_AreaObj.m_CenterSphere, "player")
-	local factionID
+	local faction
 	for key, player in ipairs( pTable ) do 
 		if not isPedDead( player ) then 
-			factionID = player.m_Faction.m_Id 
-			if factionID == self.m_Faction1 then 
+			faction = player.m_Faction
+			if faction == self.m_Faction1 then 
 				return true
 			end
 		end
