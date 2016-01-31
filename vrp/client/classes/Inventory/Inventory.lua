@@ -846,11 +846,9 @@ InventarBlipAlpha = 0
 function Inventory:Event_onItemClick(itemname,itemid,tasche,platz)
 	if(not lockItemUseState[tasche] or not lockItemUseState[tasche][platz]) then
 		local verbraucht = self.m_ItemData[itemname]["Verbraucht"]
-		if verbraucht == 1 then delete = true
-	elseif verbraucht == 2 then delete = false
-	elseif verbraucht == 0 then delete = false
-		end
-			triggerServerEvent("onPlayerItemUseServer",localPlayer,itemid,tasche,itemname,platz,delete)
+		local itemDelete = false
+		if verbraucht == 1 then itemDelete = true end
+		triggerServerEvent("onPlayerItemUseServer",localPlayer,itemid,tasche,itemname,platz,itemDelete)
 	end
 
 end
