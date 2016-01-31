@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/HUD/HUIUI.lua
--- *  PURPOSE:     HUD UI class
+-- *  FILE:        client/classes/Inventory/Inventory.lua
+-- *  PURPOSE:     Inventory class
 -- *
 -- ****************************************************************************
 --TODO: delete file, and write new ;)
@@ -28,8 +28,25 @@ function Inventory:constructor()
 	self.m_aktuel = "Items"
 	self.m_oldaktuel = "Items"
 
-
-	addRemoteEvents{"loadPlayerInventarClient","loadItemDataFromServer","setIKoords_c",onPlayerItemUse}
+	self.m_RenderInventar = bind(self.renderInventar,self)
+	self.m_onButtonInvEnter = bind(self.onButtonInvEnter,self)
+	self.m_onButtonInvLeave = bind(self.onButtonInvLeave,self)
+	self.m_onInvClick = bind(self.onInvClick,self)
+	self.m_onItemMouseOver = bind(self.onButtonInvEnter,self)
+	self.m_onButtonInvEnter = bind(self.onItemMouseOver,self)
+	self.m_onItemMouseLeave = bind(self.onItemMouseLeave,self)
+	self.m_MoveGUI = bind(self.MoveGUI,self)
+	self.m_moveInfoWindow = bind(self.moveInfoWindow,self)
+	self.m_onClickAndDropDown = bind(self.onClickAndDropDown,self)
+	self.m_onClickAndDropUp = bind(self.onClickAndDropUp,self)
+	self.m_onCloseClick = bind(self.onCloseClick,self)
+	self.m_onMoveClick = bind(self.onMoveClick,self)
+	self.m_onStopMove = bind(self.onStopMove,self)
+	self.m_onResetClick = bind(self.onResetClick,self)
+	self.m_onClientDragAndDropMove = bind(self.onClientDragAndDropMove,self)
+	
+	
+	addRemoteEvents{"loadPlayerInventarClient","loadItemDataFromServer","setIKoords_c","onPlayerItemUse"}
 	addEventHandler("loadPlayerInventarClient", root, bind(self.Event_loadPlayerInventarClient, self))
 	addEventHandler("loadItemDataFromServer", root, bind(self.Event_loadItemDataFromServer, self))
 	addEventHandler("setIKoords_c",root, bind(self.Event_setInventarKoordinaten, self))
@@ -79,18 +96,6 @@ function Inventory:getPlaceMouseOver()
 	end
 	return false
 end
-
--- Direct X Drawing
-local x,y,bx,by, slots
-local pClose,pMove,pReset
-local r,g,b
-local spawnLock,callCheck, mouseDistX,mouseDistY
-
-
-
-
-
-
 
 function Inventory:onItemMouseOver()
 	local src = false
@@ -146,7 +151,7 @@ function Inventory:onCloseClick(button)
 end
 
 function Inventory:MoveGUI(mx,my)
-	x,y = mx - mouseDistX, my - mouseDistY
+	self.m_X,self.m_Y = mx - self.m_mouseDistX, my - self.m_mouseDistY
 	self.m_slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_aktuel.."Platz"])
 	local line,oline,platz
 	for i=0,self.m_slots-1,1 do
@@ -158,40 +163,40 @@ function Inventory:MoveGUI(mx,my)
 		if(	getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") ) then
 			id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[i.."_id"]
 			if(id) then
-				self.m_item[id]= { ["x"]= x+10 + 40 * platz + 5 * platz,["y"]=y+10 + 40 * line + 5 * line }
+				self.m_item[id]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 			end
 		end
-		guiSetPosition ( self.m_btn_inventar[self.m_aktuel][i], x+10 + 40 * platz + 5 * platz,y+10 + 40 * line + 5 * line, false )
-		self.m_sitem[i]= { ["x"]= x+10 + 40 * platz + 5 * platz,["y"]=y+10 + 40 * line + 5 * line }
+		guiSetPosition ( self.m_btn_inventar[self.m_aktuel][i], self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line, false )
+		self.m_sitem[i]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 		oline = line
 		platz = platz + 1
 	end
-	guiSetPosition ( self.m_btn_Items, x+2,y-48, false )
-	guiSetPosition ( self.m_btn_Objekte ,x+2 + 82,y-48, false )
-	guiSetPosition ( self.m_btn_Essen , x+2 + 82*2,y-48, false )
-	guiSetPosition ( self.m_btn_Drogen,  x+2 + 82*3,y-48, false )
-	guiSetPosition ( self.m_btn_Close , x+bx + 1,y-49, false )
-	guiSetPosition ( self.m_btn_Move, x+bx + 1,y-49+18, false )
-	guiSetPosition ( self.m_btn_Reset, x+bx + 1,y-49+36, false )
+	guiSetPosition ( self.m_btn_Items, self.m_X+2,self.m_Y-48, false )
+	guiSetPosition ( self.m_btn_Objekte ,self.m_X+2 + 82,self.m_Y-48, false )
+	guiSetPosition ( self.m_btn_Essen , self.m_X+2 + 82*2,self.m_Y-48, false )
+	guiSetPosition ( self.m_btn_Drogen,  self.m_X+2 + 82*3,self.m_Y-48, false )
+	guiSetPosition ( self.m_btn_Close , self.m_X+self.m_BX + 1,self.m_Y-49, false )
+	guiSetPosition ( self.m_btn_Move, self.m_X+self.m_BX + 1,self.m_Y-49+18, false )
+	guiSetPosition ( self.m_btn_Reset, self.m_X+self.m_BX + 1,self.m_Y-49+36, false )
 
 end
 
 function Inventory:onMoveClick(button,mx,my)
 	if(button == "left") then
-		mouseDistX,mouseDistY = mx - x, my - y
-		addEventHandler("onClientMouseMove",root,bind(self.MoveGUI,self))
+		self.m_mouseDistX,self.m_mouseDistY = mx - self.m_X, my - self.m_Y
+		addEventHandler("onClientMouseMove",root,self.m_MoveGUI)
 	end
 end
 
 function Inventory:onStopMove(button)
 	if(button == "left") then
-		removeEventHandler("onClientMouseMove",root,bind(self.MoveGUI,self))
+		removeEventHandler("onClientMouseMove",root,self.m_MoveGUI)
 	end
 end
 
 function Inventory:onResetClick(button)
 	if(button == "left") then
-		x,y = screenWidth/2 - bx/2,screenHeight/2 - by/2
+		self.m_X,self.m_Y = screenWidth/2 - self.m_BX/2,screenHeight/2 - self.m_BY/2
 		self.m_slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_aktuel.."Platz"])
 		local line,oline,platz
 		for i=0,self.m_slots-1,1 do
@@ -203,58 +208,58 @@ function Inventory:onResetClick(button)
 			if(	getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") ) then
 				id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[i.."_id"]
 				if(id) then
-					self.m_item[id]= { ["x"]= x+10 + 40 * platz + 5 * platz,["y"]=y+10 + 40 * line + 5 * line }
+					self.m_item[id]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 				end
 			end
-			guiSetPosition ( self.m_btn_inventar[self.m_aktuel][i], x+10 + 40 * platz + 5 * platz,y+10 + 40 * line + 5 * line, false )
-			self.m_sitem[i]= { ["x"]= x+10 + 40 * platz + 5 * platz,["y"]=y+10 + 40 * line + 5 * line }
+			guiSetPosition ( self.m_btn_inventar[self.m_aktuel][i], self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line, false )
+			self.m_sitem[i]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 			oline = line
 			platz = platz + 1
 		end
-		guiSetPosition ( self.m_btn_Items, x+2,y-48, false )
-		guiSetPosition ( self.m_btn_Objekte ,x+2 + 82,y-48, false )
-		guiSetPosition ( self.m_btn_Essen , x+2 + 82*2,y-48, false )
-		guiSetPosition ( self.m_btn_Drogen,  x+2 + 82*3,y-48, false )
-		guiSetPosition ( self.m_btn_Close , x+bx + 1,y-49, false )
-		guiSetPosition ( self.m_btn_Move, x+bx + 1,y-49+18, false )
-		guiSetPosition ( self.m_btn_Reset, x+bx + 1,y-49+36, false )
+		guiSetPosition ( self.m_btn_Items, self.m_X+2,self.m_Y-48, false )
+		guiSetPosition ( self.m_btn_Objekte ,self.m_X+2 + 82,self.m_Y-48, false )
+		guiSetPosition ( self.m_btn_Essen , self.m_X+2 + 82*2,self.m_Y-48, false )
+		guiSetPosition ( self.m_btn_Drogen,  self.m_X+2 + 82*3,self.m_Y-48, false )
+		guiSetPosition ( self.m_btn_Close , self.m_X+self.m_BX + 1,self.m_Y-49, false )
+		guiSetPosition ( self.m_btn_Move, self.m_X+self.m_BX + 1,self.m_Y-49+18, false )
+		guiSetPosition ( self.m_btn_Reset, self.m_X+self.m_BX + 1,self.m_Y-49+36, false )
 	end
 end
 
 function Inventory:renderInventar()
-		dxDrawImage(x,y-95,50,50,":vrp/files/images/logo.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
+		dxDrawImage(self.m_X,self.m_Y-95,50,50,":vrp/files/images/logo.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
 
-		dxDrawRectangle(x,y-50,82.0,50.0,tocolor(r["Rahmen"],g["Rahmen"],b["Rahmen"],255),false)
-        dxDrawRectangle(x+2,y-48,80.0,48.0,tocolor(0,0,0,255),false)
-		dxDrawRectangle(x+2.0,y-48,80.0,48.0,tocolor(r["Items"],g["Items"],b["Items"],200),false)
-		dxDrawImage(x+20,y-48,48.0,48.0,self.m_ImagePath.."items.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
+		dxDrawRectangle(self.m_X,self.m_Y-50,82.0,50.0,tocolor(self.m_R["Rahmen"],self.m_G["Rahmen"],self.m_B["Rahmen"],255),false)
+        dxDrawRectangle(self.m_X+2,self.m_Y-48,80.0,48.0,tocolor(0,0,0,255),false)
+		dxDrawRectangle(self.m_X+2.0,self.m_Y-48,80.0,48.0,tocolor(self.m_R["Items"],self.m_G["Items"],self.m_B["Items"],200),false)
+		dxDrawImage(self.m_X+20,self.m_Y-48,48.0,48.0,self.m_ImagePath.."items.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
 
-		dxDrawRectangle(x + 82,y-50,82.0,50.0,tocolor(r["Rahmen"],g["Rahmen"],b["Rahmen"],255),false)
-        dxDrawRectangle(x+2 + 82,y-48,80.0,48.0,tocolor(0,0,0,255),false)
-		dxDrawRectangle(x+2 + 82,y-48,80.0,48.0,tocolor(r["Objekte"],g["Objekte"],b["Objekte"],200),false)
-		dxDrawImage(x+20 + 82,y-48,48.0,48.0,self.m_ImagePath.."items/Objekte.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
+		dxDrawRectangle(self.m_X + 82,self.m_Y-50,82.0,50.0,tocolor(self.m_R["Rahmen"],self.m_G["Rahmen"],self.m_B["Rahmen"],255),false)
+        dxDrawRectangle(self.m_X+2 + 82,self.m_Y-48,80.0,48.0,tocolor(0,0,0,255),false)
+		dxDrawRectangle(self.m_X+2 + 82,self.m_Y-48,80.0,48.0,tocolor(self.m_R["Objekte"],self.m_G["Objekte"],self.m_B["Objekte"],200),false)
+		dxDrawImage(self.m_X+20 + 82,self.m_Y-48,48.0,48.0,self.m_ImagePath.."items/Objekte.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
 
-		dxDrawRectangle(x + 82*2,y-50,82.0,50.0,tocolor(r["Rahmen"],g["Rahmen"],b["Rahmen"],255),false)
-        dxDrawRectangle(x+2 + 82*2,y-48,80.0,48.0,tocolor(0,0,0,255),false)
-		dxDrawRectangle(x+2 + 82*2,y-48,80.0,48.0,tocolor(r["Essen"],g["Essen"],b["Essen"],200),false)
-		dxDrawImage(x+20 + 82*2,y-48,48.0,48.0,self.m_ImagePath.."food.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
+		dxDrawRectangle(self.m_X + 82*2,self.m_Y-50,82.0,50.0,tocolor(self.m_R["Rahmen"],self.m_G["Rahmen"],self.m_B["Rahmen"],255),false)
+        dxDrawRectangle(self.m_X+2 + 82*2,self.m_Y-48,80.0,48.0,tocolor(0,0,0,255),false)
+		dxDrawRectangle(self.m_X+2 + 82*2,self.m_Y-48,80.0,48.0,tocolor(self.m_R["Essen"],self.m_G["Essen"],self.m_B["Essen"],200),false)
+		dxDrawImage(self.m_X+20 + 82*2,self.m_Y-48,48.0,48.0,self.m_ImagePath.."food.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
 
-		dxDrawRectangle(x + 82*3,y-50,84.0,50.0,tocolor(r["Rahmen"],g["Rahmen"],b["Rahmen"],255),false)
-        dxDrawRectangle(x+2 + 82*3,y-48,80.0,48.0,tocolor(0,0,0,255),false)
-		dxDrawRectangle(x+2 + 82*3,y-48,80.0,48.0,tocolor(r["Drogen"],g["Drogen"],b["Drogen"],200),false)
-		dxDrawImage(x+20 + 82*3,y-48,48.0,48.0,self.m_ImagePath.."drogen.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
+		dxDrawRectangle(self.m_X + 82*3,self.m_Y-50,84.0,50.0,tocolor(self.m_R["Rahmen"],self.m_G["Rahmen"],self.m_B["Rahmen"],255),false)
+        dxDrawRectangle(self.m_X+2 + 82*3,self.m_Y-48,80.0,48.0,tocolor(0,0,0,255),false)
+		dxDrawRectangle(self.m_X+2 + 82*3,self.m_Y-48,80.0,48.0,tocolor(self.m_R["Drogen"],self.m_G["Drogen"],self.m_B["Drogen"],200),false)
+		dxDrawImage(self.m_X+20 + 82*3,self.m_Y-48,48.0,48.0,self.m_ImagePath.."drogen.png",0.0,0.0,0.0,tocolor(255,255,255,255),false)
 
 
-		dxDrawRectangle(x+bx ,y-50,20.0,56.0,tocolor(0,0,0,200),false)
+		dxDrawRectangle(self.m_X+self.m_BX ,self.m_Y-50,20.0,56.0,tocolor(0,0,0,200),false)
 
-		dxDrawRectangle(x,y,bx,by,tocolor(r["Rahmen"],g["Rahmen"],b["Rahmen"],255),false)
-		dxDrawRectangle(x+2,y+2,bx-4,by-4,tocolor(50,200,255,255),false)
-		dxDrawText("Verwende Items mit der linken Maustaste\nZum Verschieben benutze die rechte Maustaste!",x,y+by+2,x+bx,y+by+4,tocolor(255,255,255,255), 1.2, "defauld-bold","center","top")
-		dxDrawText("Mit /handel [NAME] kannst du mit deinen Items handeln!",x,y+by+45,x+bx,y+by+55,tocolor(50,200,255,255), 0.9, "defauld-bold","center","bottom")
+		dxDrawRectangle(self.m_X,self.m_Y,self.m_BX,self.m_BY,tocolor(self.m_R["Rahmen"],self.m_G["Rahmen"],self.m_B["Rahmen"],255),false)
+		dxDrawRectangle(self.m_X+2,self.m_Y+2,self.m_BX-4,self.m_BY-4,tocolor(50,200,255,255),false)
+		dxDrawText("Verwende Items mit der linken Maustaste\nZum Verschieben benutze die rechte Maustaste!",self.m_X,self.m_Y+self.m_BY+2,self.m_X+self.m_BX,self.m_Y+self.m_BY+4,tocolor(255,255,255,255), 1.2, "defauld-bold","center","top")
+		dxDrawText("Mit /handel [NAME] kannst du mit deinen Items handeln!",self.m_X,self.m_Y+self.m_BY+45,self.m_X+self.m_BX,self.m_Y+self.m_BY+55,tocolor(50,200,255,255), 0.9, "defauld-bold","center","bottom")
 
-		dxDrawImage(x+bx + 1,y-49,18,18,pClose,0.0,0.0,0.0,tocolor(255,255,255,255),false)
-		dxDrawImage(x+bx + 1,y-49+18,18.0,18.0,pMove,0.0,0.0,0.0,tocolor(255,255,255,255),false)
-		dxDrawImage(x+bx + 1,y-49+36,18.0,18.0,pReset,0.0,0.0,0.0,tocolor(255,255,255,255),false)
+		dxDrawImage(self.m_X+self.m_BX + 1,self.m_Y-49,18,18,self.pClose,0.0,0.0,0.0,tocolor(255,255,255,255),false)
+		dxDrawImage(self.m_X+self.m_BX + 1,self.m_Y-49+18,18.0,18.0,self.pMove,0.0,0.0,0.0,tocolor(255,255,255,255),false)
+		dxDrawImage(self.m_X+self.m_BX + 1,self.m_Y-49+36,18.0,18.0,self.pReset,0.0,0.0,0.0,tocolor(255,255,255,255),false)
 
 		local line
 		local oline
@@ -269,7 +274,7 @@ function Inventory:renderInventar()
 					self:setItemRGB(i,110,110,110)
 				end
 			end
-			dxDrawRectangle(x+10 + 40 * platz + 5 * platz,y+10 + 40 * line + 5 * line,40,40,tocolor(self.m_itemPlatzR[self.m_aktuel][i],self.m_itemPlatzG[self.m_aktuel][i],self.m_itemPlatzB[self.m_aktuel][i],200),false)
+			dxDrawRectangle(self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line,40,40,tocolor(self.m_itemPlatzR[self.m_aktuel][i],self.m_itemPlatzG[self.m_aktuel][i],self.m_itemPlatzB[self.m_aktuel][i],200),false)
 			local item_table_aktuell = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")
 			if item_table_aktuell then
 				local id = item_table_aktuell[tostring(i).."_id"]
@@ -309,7 +314,7 @@ function Inventory:onClientDragAndDropMove()
 	local mx,my = getCursorPosition ()
 	local x,y = self.m_startMoveButton["x"],self.m_startMoveButton["y"]
 	local fx,fy = self.m_startMoveButton["bx"] + x,self.m_startMoveButton["by"] + y
-	--if(mx < x or mx >screenWidth or my < y or my > screenHeight) then
+	--if(mx < self.m_BY or mx >screenWidth or my < self.m_Y or my > screenHeight) then
 		local button = self.m_startMoveButton["object"]
 		local platz
 		if(getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") ~= false) then
@@ -321,7 +326,7 @@ function Inventory:onClientDragAndDropMove()
 		if(showInfoBlip) then
 			showInfoBlip = false
 			InventarBlipAlpha = 0
-			removeEventHandler("onClientMouseMove",root,bind(self.moveInfoWindow,self))
+			removeEventHandler("onClientMouseMove",root,self.m_moveInfoWindow)
 		end
 		killTimer(InfoBlipTimer)
 		if(self:getPlaceMouseOver() ~= button) then
@@ -352,7 +357,7 @@ function Inventory:onClientDragAndDropMove()
 			end
 		else
 			self.m_startMoveButton = nil
-			removeEventHandler("onClientPreRender",root,bind(self.onClientDragAndDropMove,self))
+			removeEventHandler("onClientPreRender",root,self.m_onClientDragAndDropMove)
 		end
 	--end
 end
@@ -386,7 +391,7 @@ function Inventory:onClickAndDropDown(button)
 				self.m_startMoveButton = { ["object"] = source }
 				self.m_startMoveButton["x"],self.m_startMoveButton["y"] = guiGetPosition ( source, true )
 				self.m_startMoveButton["bx"],self.m_startMoveButton["by"] = guiGetSize ( source, true )
-				addEventHandler("onClientPreRender",root,bind(self.onClientDragAndDropMove,self))
+				addEventHandler("onClientPreRender",root,self.m_onClientDragAndDropMove)
 				return false
 			end
 			return false
@@ -396,10 +401,11 @@ function Inventory:onClickAndDropDown(button)
 		if(id) then
 			self.m_itemFront[id] = true
 		end
+
 		self.m_startMoveButton = { ["object"] = source }
 		self.m_startMoveButton["x"],self.m_startMoveButton["y"] = guiGetPosition ( source, true )
 		self.m_startMoveButton["bx"],self.m_startMoveButton["by"] = guiGetSize ( source, true )
-		addEventHandler("onClientPreRender",root,bind(self.onClientDragAndDropMove,self))
+		addEventHandler("onClientPreRender",root,self.m_onClientDragAndDropMove)
 	end
 end
 
@@ -412,7 +418,7 @@ function Inventory:onClickAndDropUp(button)
 		end
 	end
 
-	if(self.m_startMoveButton) then
+	if self.m_startMoveButton and self.m_startMoveButton["object"] then
 		local place = false
 		local splace = tonumber(guiGetText(self.m_startMoveButton["object"]))
 		local item_table = getElementData(localPlayer,"Item_c")
@@ -420,9 +426,10 @@ function Inventory:onClickAndDropUp(button)
 		if(src ~= true) then
 			if(source ~= self.m_btn_Move and (source == self.m_btn_Items or source == self.m_btn_Objekte or source == self.m_btn_Essen or source == self.m_btn_Drogen or source == self.m_btn_Close or source == self.m_btn_Reset) ) then
 
+				removeEventHandler("onClientPreRender",root,self.m_onClientDragAndDropMove)
 				self.m_startMoveButton = nil
 				self.m_lastOver = nil
-				removeEventHandler("onClientPreRender",root,bind(self.onClientDragAndDropMove,self))
+
 				self:inventarSetItemToPlace(id,splace)
 				--return false
 			end
@@ -481,7 +488,7 @@ function Inventory:onClickAndDropUp(button)
 			local mx,my = getCursorPosition ( )
 			mx,my = mx *screenWidth,my*screenHeight
 
-			if(mx >= x and mx <= x+bx and my >= y-50 and my <= y+by) then
+			if(mx >= self.m_X and mx <= self.m_X+self.m_BX and my >= self.m_Y-50 and my <= self.m_Y+self.m_BY) then
 				local id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[splace.."_id"]
 				self:inventarSetItemToPlace(id,splace)
 				if(lockItemUseState[self.m_aktuel] and lockItemUseState[self.m_aktuel][splace]) then
@@ -504,10 +511,10 @@ function Inventory:onClickAndDropUp(button)
 			end
 		end
 	end
-
+	removeEventHandler("onClientPreRender",root,self.m_onClientDragAndDropMove)
 	self.m_startMoveButton = nil
 	self.m_lastOver = nil
-	removeEventHandler("onClientPreRender",root,bind(self.onClientDragAndDropMove,self))
+
 
 	local id
 	if(getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")) then
@@ -523,17 +530,17 @@ function Inventory:show()
 	showCursor ( true ,false)
 	toggleControl ( "fire", false)
 
-	pClose,pMove,pReset = self.m_ImagePath.."closeinv.png",self.m_ImagePath.."moveinv.png",self.m_ImagePath.."reset.png"
-	r,g,b = { ["Items"]=50,["Essen"]=50,["Objekte"]=50,["Drogen"]=50, ["Rahmen"]=255} , { ["Items"]=200,["Essen"]=200,["Objekte"]=200,["Drogen"]=200 ,["Rahmen"]=255} , { ["Items"]=255,["Essen"]=255,["Objekte"]=255,["Drogen"]=255,["Rahmen"]=255 }
+	self.pClose,self.pMove,self.pReset = self.m_ImagePath.."closeinv.png",self.m_ImagePath.."moveinv.png",self.m_ImagePath.."reset.png"
+	self.m_R,self.m_G,self.m_B = { ["Items"]=50,["Essen"]=50,["Objekte"]=50,["Drogen"]=50, ["Rahmen"]=255} , { ["Items"]=200,["Essen"]=200,["Objekte"]=200,["Drogen"]=200 ,["Rahmen"]=255} , { ["Items"]=255,["Essen"]=255,["Objekte"]=255,["Drogen"]=255,["Rahmen"]=255 }
 
 	self.m_slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_aktuel.."Platz"])
 	lines = math.ceil(self.m_slots/7)
-	bx,by = 330, 20 - 4 + 45*lines --543,266
-	if(not x and not y) then
-		x,y = screenWidth/2 - bx/2,screenHeight/2 - by/2
+	self.m_BX,self.m_BY = 330, 20 - 4 + 45*lines --543,266
+	if(not self.m_X and not self.m_Y) then
+		self.m_X,self.m_Y = screenWidth/2 - self.m_BX/2,screenHeight/2 - self.m_BY/2
 	end
-	r[self.m_aktuel],g[self.m_aktuel],b[self.m_aktuel] = 100,130,140
-	r["o"..self.m_aktuel],g["o"..self.m_aktuel],b["o"..self.m_aktuel] = 0,255,0
+	self.m_R[self.m_aktuel],self.m_G[self.m_aktuel],self.m_B[self.m_aktuel] = 100,130,140
+	self.m_R["o"..self.m_aktuel],self.m_G["o"..self.m_aktuel],self.m_B["o"..self.m_aktuel] = 0,255,0
 	local line
 	local oline
 	local platz
@@ -543,78 +550,72 @@ function Inventory:show()
 		if(line ~= oline) then
 			platz = 0
 		end
-		self.m_btn_inventar[self.m_aktuel][i] = guiCreateButton (x+10 + 40 * platz + 5 * platz,y+10 + 40 * line + 5 * line,40,40, i.."", false)
+		self.m_btn_inventar[self.m_aktuel][i] = guiCreateButton (self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line,40,40, i.."", false)
 		guiSetAlpha(self.m_btn_inventar[self.m_aktuel][i],0)
 		local id
 		if(	getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") ) then
 			id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[i.."_id"]
 			if(id) then
-				self.m_item[id]= { ["x"]= x+10 + 40 * platz + 5 * platz ,["y"]=y+10 + 40 * line + 5 * line }
+				self.m_item[id]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz ,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 				self.m_itemFront[id] = false
 			end
 		end
 		if(not lockItemUseState[self.m_aktuel] or not lockItemUseState[self.m_aktuel][tonumber(i)]) then
 			self:setItemRGB(i,110,110,110)
 		end
-		self.m_sitem[i]= { ["x"]= x+10 + 40 * platz + 5 * platz,["y"]=y+10 + 40 * line + 5 * line }
+		self.m_sitem[i]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 		oline = line
 		platz = platz + 1
 	end
 
-	self.m_btn_Items = guiCreateButton (x+2,y-48,80.0,48.0, "", false)
+	self.m_btn_Items = guiCreateButton (self.m_X+2,self.m_Y-48,80.0,48.0, "", false)
 	guiSetAlpha(self.m_btn_Items,0)
-	self.m_btn_Objekte = guiCreateButton ( x+2 + 82,y-48, 80.0,48.0, "", false )
+	self.m_btn_Objekte = guiCreateButton ( self.m_X+2 + 82,self.m_Y-48, 80.0,48.0, "", false )
 	guiSetAlpha(self.m_btn_Objekte,0)
-	self.m_btn_Essen = guiCreateButton ( x+2 + 82*2,y-48, 80.0,48.0, "", false )
+	self.m_btn_Essen = guiCreateButton ( self.m_X+2 + 82*2,self.m_Y-48, 80.0,48.0, "", false )
 	guiSetAlpha(self.m_btn_Essen,0)
-	self.m_btn_Drogen = guiCreateButton ( x+2 + 82*3,y-48, 80.0,48.0, "", false )
+	self.m_btn_Drogen = guiCreateButton ( self.m_X+2 + 82*3,self.m_Y-48, 80.0,48.0, "", false )
 	guiSetAlpha(self.m_btn_Drogen,0)
-	self.m_btn_Close = guiCreateButton ( x+bx + 1,y-49, 18,18, "", false  )
+	self.m_btn_Close = guiCreateButton ( self.m_X+self.m_BX + 1,self.m_Y-49, 18,18, "", false  )
 	guiSetAlpha(self.m_btn_Close,0)
-	self.m_btn_Move = guiCreateButton ( x+bx + 1,y-49+18, 18,18, "", false )
+	self.m_btn_Move = guiCreateButton ( self.m_X+self.m_BX + 1,self.m_Y-49+18, 18,18, "", false )
 	guiSetAlpha(self.m_btn_Move,0)
-	self.m_btn_Reset = guiCreateButton ( x+bx + 1,y-49+36, 18,18, "", false )
+	self.m_btn_Reset = guiCreateButton ( self.m_X+self.m_BX + 1,self.m_Y-49+36, 18,18, "", false )
 	guiSetAlpha(self.m_btn_Reset,0)
 
 
-	addEventHandler("onClientMouseEnter",root,bind(self.onButtonInvEnter,self))
-	addEventHandler("onClientMouseLeave",root,bind(self.onButtonInvLeave,self))
-	addEventHandler("onClientGUIClick",root,bind(self.onInvClick,self))
+	addEventHandler("onClientMouseEnter",root,self.m_onButtonInvEnter)
+	addEventHandler("onClientMouseLeave",root,self.m_onButtonInvLeave)
+	addEventHandler("onClientGUIClick",root,self.m_onInvClick)
 
-	addEventHandler("onClientMouseEnter",root,bind(self.onItemMouseOver,self))
-	addEventHandler("onClientMouseLeave",root,bind(self.onItemMouseLeave,self))
+	addEventHandler("onClientMouseEnter",root,self.m_onItemMouseOver)
+	addEventHandler("onClientMouseLeave",root,self.m_onItemMouseLeave)
 
-	addEventHandler("onClientGUIClick",self.m_btn_Close,bind(self.onCloseClick,self))
-	addEventHandler("onClientGUIMouseDown",self.m_btn_Move,bind(self.onMoveClick,self))
-	addEventHandler("onClientGUIMouseUp",self.m_btn_Move,bind(self.onStopMove,self))
-	addEventHandler("onClientGUIClick",self.m_btn_Reset,bind(self.onResetClick,self))
+	addEventHandler("onClientGUIClick",self.m_btn_Close,self.m_onCloseClick)
+	addEventHandler("onClientGUIMouseDown",self.m_btn_Move,self.m_onMoveClick)
+	addEventHandler("onClientGUIMouseUp",self.m_btn_Move,self.m_onStopMove)
+	addEventHandler("onClientGUIClick",self.m_btn_Reset,self.m_onResetClick)
 
-	addEventHandler("onClientGUIMouseDown",root,bind(self.onClickAndDropDown,self))
-	addEventHandler("onClientGUIMouseUp",root,bind(self.onClickAndDropUp,self))
+	addEventHandler("onClientGUIMouseDown",root,self.m_onClickAndDropDown)
+	addEventHandler("onClientGUIMouseUp",root,self.m_onClickAndDropUp)
 
 
-	addEventHandler("onClientRender",root,bind(self.renderInventar,self))
+	addEventHandler("onClientRender",root,self.m_RenderInventar)
 end
 
 function Inventory:hide()
-	if(not self.m_btn_Items) then
-		return false
-	end
 	showCursor ( false )
 
-	removeEventHandler("onClientRender",root,bind(self.renderInventar,self))
-	removeEventHandler("onClientMouseEnter",root,bind(self.onButtonInvEnter,self))
-	removeEventHandler("onClientMouseLeave",root,bind(self.onButtonInvLeave,self))
-	removeEventHandler("onClientGUIClick",root,bind(self.onInvClick,self))
-	removeEventHandler("onClientMouseEnter",root,bind(self.onItemMouseOver,self))
-	removeEventHandler("onClientMouseLeave",root,bind(self.onItemMouseLeave,self))
-	removeEventHandler("onClientGUIClick", self.m_btn_Close,bind(self.onCloseClick,self))
-	removeEventHandler("onClientGUIMouseDown",self.m_btn_Move,bind(self.onMoveClick,self))
-	removeEventHandler("onClientGUIMouseUp",self.m_btn_Move,bind(self.onStopMove,self))
-	removeEventHandler("onClientMouseMove",root,bind(self.MoveGUI,self))
-	removeEventHandler("onClientMouseMove",root,bind(self.moveInfoWindow,self))
-	removeEventHandler("onClientGUIMouseDown",root,bind(self.onClickAndDropDown,self))
-	removeEventHandler("onClientGUIMouseUp",root,bind(self.onClickAndDropUp,self))
+	removeEventHandler("onClientRender",root,self.m_RenderInventar)
+	removeEventHandler("onClientMouseEnter",root,self.m_onButtonInvEnter)
+	removeEventHandler("onClientMouseLeave",root,self.m_onButtonInvLeave)
+	removeEventHandler("onClientGUIClick",root,self.m_onInvClick)
+
+	removeEventHandler("onClientMouseEnter",root,self.m_onItemMouseOver)
+	removeEventHandler("onClientMouseLeave",root,self.m_onItemMouseLeave)
+
+	removeEventHandler("onClientGUIMouseDown",root,self.m_onClickAndDropDown)
+	removeEventHandler("onClientGUIMouseUp",root,self.m_onClickAndDropUp)
 
 	destroyElement(self.m_btn_Items)
 	destroyElement(self.m_btn_Objekte)
@@ -629,12 +630,12 @@ function Inventory:hide()
 	if(isTimer(InfoBlipTimer) and getTimerDetails(InfoBlipTimer)) then
 		killTimer(InfoBlipTimer)
 	end
-	if(callCheck == true) then
+	if(self.m_callCheck == true) then
 		local slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_oldaktuel.."Platz"])
 		for i=0,slots-1,1 do
 			destroyElement(self.m_btn_inventar[self.m_oldaktuel][i])
 		end
-		callCheck = false
+		self.m_callCheck = false
 	else
 		local slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_aktuel.."Platz"])
 		for i=0,slots-1,1 do
@@ -665,8 +666,8 @@ function Inventory:onInvClick(button)
 		else
 			return 0
 		end
-		r[self.m_oldaktuel],g[self.m_oldaktuel],b[self.m_oldaktuel] = 110,110,110
-		callCheck = true
+		self.m_R[self.m_oldaktuel],self.m_G[self.m_oldaktuel],self.m_B[self.m_oldaktuel] = 110,110,110
+		self.m_callCheck = true
 		self:hide()
 		self:show()
 	end
@@ -681,32 +682,32 @@ function Inventory:onButtonInvEnter()
 		if(self.m_aktuel == "Items") then
 			return 0
 		end
-		r["oItems"],g["oItems"],b["oItems"] = r["Items"],g["Items"],b["Items"]
-		r["Items"],g["Items"],b["Items"] = 100,130,140
+		self.m_R["oItems"],self.m_G["oItems"],self.m_B["oItems"] = self.m_R["Items"],self.m_G["Items"],self.m_B["Items"]
+		self.m_R["Items"],self.m_G["Items"],self.m_B["Items"] = 100,130,140
 	elseif( source == self.m_btn_Objekte) then
 		if(self.m_aktuel == "Objekte") then
 			return 0
 		end
-		r["oObjekte"],g["oObjekte"],b["oObjekte"] = r["Objekte"],g["Objekte"],b["Objekte"]
-		r["Objekte"],g["Objekte"],b["Objekte"] = 100,130,140
+		self.m_R["oObjekte"],self.m_G["oObjekte"],self.m_B["oObjekte"] = self.m_R["Objekte"],self.m_G["Objekte"],self.m_B["Objekte"]
+		self.m_R["Objekte"],self.m_G["Objekte"],self.m_B["Objekte"] = 100,130,140
 	elseif( source == self.m_btn_Essen) then
 		if(self.m_aktuel == "Essen") then
 			return 0
 		end
-		r["oEssen"],g["oEssen"],b["oEssen"] = r["Essen"],g["Essen"],b["Essen"]
-		r["Essen"],g["Essen"],b["Essen"] = 100,130,140
+		self.m_R["oEssen"],self.m_G["oEssen"],self.m_B["oEssen"] = self.m_R["Essen"],self.m_G["Essen"],self.m_B["Essen"]
+		self.m_R["Essen"],self.m_G["Essen"],self.m_B["Essen"] = 100,130,140
 	elseif( source == self.m_btn_Drogen) then
 		if(self.m_aktuel == "Drogen") then
 			return 0
 		end
-		r["oDrogen"],g["oDrogen"],b["oDrogen"] = r["Drogen"],g["Drogen"],b["Drogen"]
-		r["Drogen"],g["Drogen"],b["Drogen"] = 100,130,140
+		self.m_R["oDrogen"],self.m_G["oDrogen"],self.m_B["oDrogen"] = self.m_R["Drogen"],self.m_G["Drogen"],self.m_B["Drogen"]
+		self.m_R["Drogen"],self.m_G["Drogen"],self.m_B["Drogen"] = 100,130,140
 	elseif( source == self.m_btn_Close) then
-		pClose = self.m_ImagePath.."closeinvS.png"
+		self.pClose = self.m_ImagePath.."closeinvS.png"
 	elseif( source == self.m_btn_Move) then
-		pMove = self.m_ImagePath.."moveinvS.png"
+		self.pMove = self.m_ImagePath.."moveinvS.png"
 	elseif( source == self.m_btn_Reset) then
-		pReset = self.m_ImagePath.."resetS.png"
+		self.pReset = self.m_ImagePath.."resetS.png"
 	end
 end
 
@@ -718,28 +719,28 @@ function Inventory:onButtonInvLeave()
 		if(self.m_aktuel == "Items") then
 			return 0
 		end
-		r["Items"],g["Items"],b["Items"] = r["oItems"],g["oItems"],b["oItems"]
+		self.m_R["Items"],self.m_G["Items"],self.m_B["Items"] = self.m_R["oItems"],self.m_G["oItems"],self.m_B["oItems"]
 	elseif( source == self.m_btn_Objekte) then
 		if(self.m_aktuel == "Objekte") then
 			return 0
 		end
-		r["Objekte"],g["Objekte"],b["Objekte"] = r["oObjekte"],g["oObjekte"],b["oObjekte"]
+		self.m_R["Objekte"],self.m_G["Objekte"],self.m_B["Objekte"] = self.m_R["oObjekte"],self.m_G["oObjekte"],self.m_B["oObjekte"]
 	elseif( source == self.m_btn_Essen) then
 		if(self.m_aktuel == "Essen") then
 			return 0
 		end
-		r["Essen"],g["Essen"],b["Essen"] = r["oEssen"],g["oEssen"],b["oEssen"]
+		self.m_R["Essen"],self.m_G["Essen"],self.m_B["Essen"] = self.m_R["oEssen"],self.m_G["oEssen"],self.m_B["oEssen"]
 	elseif( source == self.m_btn_Drogen) then
 		if(self.m_aktuel == "Drogen") then
 			return 0
 		end
-		r["Drogen"],g["Drogen"],b["Drogen"] = r["oDrogen"],g["oDrogen"],b["oDrogen"]
+		self.m_R["Drogen"],self.m_G["Drogen"],self.m_B["Drogen"] = self.m_R["oDrogen"],self.m_G["oDrogen"],self.m_B["oDrogen"]
 	elseif( source == self.m_btn_Close) then
-		pClose = self.m_ImagePath.."closeinv.png"
+		self.pClose = self.m_ImagePath.."closeinv.png"
 	elseif( source == self.m_btn_Move) then
-		pMove = self.m_ImagePath.."moveinv.png"
+		self.pMove = self.m_ImagePath.."moveinv.png"
 	elseif( source == self.m_btn_Reset) then
-		pReset = self.m_ImagePath.."reset.png"
+		self.pReset = self.m_ImagePath.."reset.png"
 	end
 
 end
@@ -753,13 +754,13 @@ end
 
 function Inventory:Event_setInventarKoordinaten(platz,tasche)
 	if(tasche == self.m_aktuel) then
-		if x then
+		if self.m_X then
 			local id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[platz.."_id"]
 			local line = math.floor(platz/7)
 			if(platz ~= 0) then
 				platz = platz/(platz/7) - 1
 			end
-			self.m_item[id]= { ["x"]= x+10 + 40 * platz + 5 * platz ,["y"]=y+10 + 40 * line + 5 * line }
+			self.m_item[id]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz ,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 		end
 	end
 end
@@ -902,7 +903,7 @@ function Inventory:showInfoBlipFunc(button)
 
 				showInfoBlip = true
 
-				addEventHandler("onClientMouseMove",root,bind(self.moveInfoWindow,self))
+				addEventHandler("onClientMouseMove",root,self.m_moveInfoWindow)
 			end
 		end
 	end

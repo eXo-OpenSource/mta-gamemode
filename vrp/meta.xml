@@ -261,7 +261,6 @@
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 
 	<!-- Inventory -->
-	<!--script src="client/classes/Inventory/InventoryFunc.lua" type="client"/>
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 
 	<!-- Animations -->
@@ -426,7 +425,7 @@
 	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarDisplay.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarQuestion.lua" type="client"/>
-	
+
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
 
@@ -621,7 +620,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/3.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/4.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/gangwar.png"/>
-	
+
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
 	<vrpfile src="files/images/Jobs/HeaderPolice.png"/>
@@ -658,7 +657,7 @@
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>
 	<vrpfile src="files/images/HUD/JobLevel.png"/>
 	<vrpfile src="files/images/HUD/wanted.png"/>
-	
+
 	<!-- Gangwar -->
 	<vrpfile src="files/images/Gangwar/tile.png"/>
 	<vrpfile src="files/images/Gangwar/tilefade.png"/>
@@ -668,7 +667,7 @@
 	<vrpfile src="files/images/Gangwar/cross.png"/>
 	<vrpfile src="files/images/Gangwar/tick.png"/>
 	<vrpfile src="files/images/Gangwar/teilnehmen.png"/>
-	
+
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
