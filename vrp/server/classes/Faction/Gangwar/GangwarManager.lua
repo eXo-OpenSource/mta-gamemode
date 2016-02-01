@@ -182,7 +182,7 @@ function Gangwar:attackArea( player )
 										if acFaction2 ~= faction2 and acFaction2 ~= faction2 then 
 										else return player:sendError(_("Die gegnerische Fraktion ist bereits in einem Gangwar!", player))
 										end
-									else return player:sendError(_("Ihre Fraktion ist bereits in einem Gangwar!", player))
+									else return player:sendError(_("Deine Fraktion ist bereits in einem Gangwar!", player))
 									end
 								end
 							end
@@ -195,14 +195,14 @@ function Gangwar:attackArea( player )
 							end 
 						else player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus der Gegner-Fraktion online sein!", player))
 						end
-					else player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus Ihrer Fraktion online sein!", player))
+					else player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus deiner Fraktion online sein!", player))
 					end
-				else player:sendError(_("Sie können sich nicht selbst angreifen!", player))
+				else player:sendError(_("Du kannst dich nicht selbst angreifen!", player))
 				end
-			else player:sendError(_("Sie sind an keinem Gebiet!", player))
+			else player:sendError(_("Du bist an keinem Gebiet!", player))
 			end
-		else player:sendError(_("Sie sind an keinem Gebiet!", player))
+		else player:sendError(_("Du bist an keinem Gebiet!", player))
 		end
-	else player:sendError(_("Sie sind in keiner Fraktion!", player))
+	else player:sendError(_("Du bist in keiner Fraktion!", player))
 	end
 end

@@ -36,12 +36,18 @@ function AttackSession:synchronizeAllParticipants( )
 		v.m_RefAttackSession = self
 		v:triggerEvent("GangwarQuestion:new")
 	end
-	for k,v in ipairs( self.m_Disqualified ) do 
-		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified)
-		v.m_RefAttackSession = self
-		v:triggerEvent("GangwarQuestion:new")
+
+end
+
+function AttackSession:synchronizeLists( )
+	for k,v in ipairs( self.m_Faction1:getOnlinePlayers()) do 
+		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
+	end
+	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do 
+		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
 	end
 end
+
 
 function AttackSession:addParticipantToList( player )
 	local bInList = self:isParticipantInList( player )
