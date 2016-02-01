@@ -38,7 +38,9 @@ function Player:destructor()
 		destroyElement(self.m_JobVehicle)
 	end
 
-	delete(self.m_Inventory)
+	if self.m_Inventory then
+		delete(self.m_Inventory)
+	end
 	-- Collect all world items
 --	local worldItems = WorldItem.getItemsByOwner(self)
 --	for k, worldItem in pairs(worldItems) do

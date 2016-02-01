@@ -114,7 +114,8 @@ function Core:destructor()
 	delete(HouseManager:getSingleton())
 	delete(FactionManager:getSingleton())
 	delete(CompanyManager:getSingleton())
-
+	delete(InventoryManager:getSingleton())
+	
 	delete(sql)
 end
 

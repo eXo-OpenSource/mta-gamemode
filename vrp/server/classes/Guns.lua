@@ -20,9 +20,11 @@ end
 function Guns:Event_onTaser(target)
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
 	target:setFrozen(true)
+	toggleAllControls(target,false)
 	target:sendInfo(_("Du wurdest von %s getazert!", target, client:getName()))
 	setTimer ( function(target)
 		target:setAnimation()
 		target:setFrozen(false)
-	end, 5000, 1, target )
+		toggleAllControls(target,true)
+	end, 15000, 1, target )
 end

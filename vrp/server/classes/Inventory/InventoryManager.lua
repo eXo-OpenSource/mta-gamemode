@@ -57,7 +57,7 @@ function InventoryManager:loadItems()
 end
 
 function InventoryManager:loadInventory(player)
-	if not self:getPlayerInventory(player) then
+	if not self.Map[player] then
 		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData)
 		self.Map[player] = instance
 		return instance
