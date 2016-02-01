@@ -41,6 +41,7 @@ function Core:ready()
 	JailBreak:new()
 	DimensionManager:new()
 	Inventory:new()
+	Guns:new()
 	-- Events
 	EventManager:new()
 	DMRaceEvent:new()

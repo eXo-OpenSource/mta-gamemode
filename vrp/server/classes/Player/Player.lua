@@ -38,6 +38,7 @@ function Player:destructor()
 		destroyElement(self.m_JobVehicle)
 	end
 
+	delete(self.m_Inventory)
 	-- Collect all world items
 --	local worldItems = WorldItem.getItemsByOwner(self)
 --	for k, worldItem in pairs(worldItems) do
@@ -118,7 +119,7 @@ function Player:loadCharacter()
 	-- Add Payday
 	self:setNextPayday()
 
-	InventoryManager:getSingleton():loadInventory(self)
+	self.m_Inventory = InventoryManager:getSingleton():loadInventory(self)
 
 	--// Gangwar
 	triggerEvent("onLoadCharacter",self)
@@ -273,6 +274,10 @@ function Player:sendShortMessage(text) self:triggerEvent("shortMessageBox", text
 function Player:isActive() return true end
 
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
+
+function Player:getInventory()
+	return self.m_Inventory
+end
 
 function Player.staticGroupChatHandler(self, command, ...)
 	if self.m_Group then

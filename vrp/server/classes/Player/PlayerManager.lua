@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp","playerToggleFactionDuty"}
+addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -28,14 +28,13 @@ function PlayerManager:constructor()
 	addEventHandler("requestSkinLevelUp", root, bind(self.Event_requestSkinLevelUp, self))
 	addEventHandler("requestJobLevelUp", root, bind(self.Event_requestJobLevelUp, self))
 	addEventHandler("playerRequestTrading", root, bind(self.Event_playerRequestTrading, self))
-	addEventHandler("playerToggleFactionDuty", root, bind(self.Event_toggleFactionDuty, self))
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
-	
+
 	self.m_PaydayPulse = TimedPulse:new(60000)
 	self.m_PaydayPulse:registerHandler(bind(self.checkPayday, self))
-	
+
 	self.m_SyncPulse = TimedPulse:new(500)
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 end
@@ -54,8 +53,10 @@ end
 
 function PlayerManager:checkPayday()
 	for k, v in pairs(getElementsByType("player")) do
-		if v.m_NextPayday == v:getPlayTime() then
-			v:payDay()
+		if v.m_LastPlayTime then
+			if v.m_NextPayday == v:getPlayTime() then
+				v:payDay()
+			end
 		end
 	end
 end
@@ -143,8 +144,8 @@ function PlayerManager:playerChat(message, messageType)
 	if messageType == 0 then
 		local phonePartner = source:getPhonePartner()
 		if not phonePartner then
-			local playersToSend = source:getPlayersInChatRange( 1 ) 
-			for index = 1,#playersToSend do 
+			local playersToSend = source:getPlayersInChatRange( 1 )
+			for index = 1,#playersToSend do
 				outputChatBox(getPlayerName(source).." sagt: #FFFFFF"..message, playersToSend[index], 220, 220, 220,true)
 			end
 		else
@@ -156,20 +157,20 @@ function PlayerManager:playerChat(message, messageType)
 	end
 end
 
-function PlayerManager:Command_playerScream(  source , cmd, ...) 
-	local argTable = { ... } 
+function PlayerManager:Command_playerScream(  source , cmd, ...)
+	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
-	local playersToSend = source:getPlayersInChatRange( 2 ) 
-	for index = 1,#playersToSend do 
+	local playersToSend = source:getPlayersInChatRange( 2 )
+	for index = 1,#playersToSend do
 		outputChatBox(getPlayerName(source).." schreit: #FFFFFF"..text, playersToSend[index], 240, 240, 240,true)
 	end
 end
 
-function PlayerManager:Command_playerWhisper(  source , cmd, ...) 
-	local argTable = { ... } 
+function PlayerManager:Command_playerWhisper(  source , cmd, ...)
+	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
-	local playersToSend = source:getPlayersInChatRange( 0 ) 
-	for index = 1,#playersToSend do 
+	local playersToSend = source:getPlayersInChatRange( 0 )
+	for index = 1,#playersToSend do
 		outputChatBox(getPlayerName(source).." flüstert: #FFFFFF"..text, playersToSend[index], 140, 140, 140,true)
 	end
 end
@@ -262,28 +263,4 @@ end
 function PlayerManager:Event_playerRequestTrading()
 	-- TODO: Add accept prompt box
 	client:startTrading(source)
-end
-
-function PlayerManager:Event_toggleFactionDuty()
-	local faction = client:getFaction()
-	if faction:isStateFaction() then
-		if client:isFactionDuty() then
-			client:setDefaultSkin()
-			client.m_FactionDuty = false
-			faction:updateStateFactionDutyGUI(client)
-			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
-			
-			client:getInventory():removeAllItemByItemId(ITEM_BARRICADE)
-			
-		else
-			faction:changeSkin(client)
-			client.m_FactionDuty = true
-			faction:updateStateFactionDutyGUI(client)
-			client:getInventory():removeAllItemByItemId(ITEM_BARRICADE)
-			client:getInventory():addItem(ITEM_BARRICADE,10)
-			client:sendInfo(_("Du bist nun im Dienst!", client))
-		end
-	else
-		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
-	end
 end

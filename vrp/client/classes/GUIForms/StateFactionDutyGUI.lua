@@ -33,14 +33,14 @@ function StateFactionDutyGUI:constructor()
 	self.m_Close = GUIButton:new(30, 235, self.m_Width-60, 35,_"Schließen", self)
 	self.m_Close:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Close.onLeftClick = function () self:hide() end
-	
+
 	addEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
 	--self:refresh()
 end
 
 function StateFactionDutyGUI:Event_updateStateFactionDutyGUI(duty,swat)
-	
-	
+
+
 	if duty == true then
 		self.m_Rearm:setEnabled(true)
 		self.m_Swat:setEnabled(true)
@@ -66,7 +66,7 @@ addEventHandler("showStateFactionDutyGUI", root,
 			StateFactionDutyGUI:new()
 		end
 	)
-	
+
 
 function StateFactionDutyGUI:hide()
 	GUIForm.destructor(self)
@@ -74,7 +74,7 @@ function StateFactionDutyGUI:hide()
 end
 
 function StateFactionDutyGUI:factionToggleDuty()
-	triggerServerEvent("playerToggleFactionDuty", localPlayer)
+	triggerServerEvent("factionStateToggleDuty", localPlayer)
 end
 
 function StateFactionDutyGUI:factionRearm()

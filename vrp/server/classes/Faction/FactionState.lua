@@ -13,11 +13,11 @@ function FactionState:constructor()
 	outputDebugString("Faction State loaded")
 	self:createDutyPickup(252.6, 69.4, 1003.64,6) -- PD Interior
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
-	
+
 	local pdGarageEnter = InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0)
 	--local pdGarageExit = InteriorEnterExit:new(Vector3(259.22, 73.73, 1003.64), Vector3(1527.16, -1678.17, 5.89), 0, 0, 0, 0)
-	
-	addRemoteEvents{"FactionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat"}
+
+	addRemoteEvents{"FactionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -25,6 +25,8 @@ function FactionState:constructor()
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
 	addEventHandler("factionStateSwat", root, bind(self.Event_toggleSwat, self))
+	addEventHandler("factionStateToggleDuty", root, bind(self.Event_toggleDuty, self))
+
 end
 
 function FactionState:destructor()
@@ -222,7 +224,7 @@ function FactionState:Event_toggleSwat()
 			client:getFaction():updateStateFactionDutyGUI(client)
 		else
 			client:setJobDutySkin(285)
-			client:setPublicSync("Fraktion:Swat",true)
+			client:setPublicSync("Faction:Swat",true)
 			client:sendInfo(_("Du hast bist in den Swat-Modus gewechselt!", client))
 			client:getFaction():updateStateFactionDutyGUI(client)
 		end
@@ -244,5 +246,29 @@ end
 function FactionState:Event_FactionRearm()
 	if client:isFactionDuty() then
 		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
+	end
+end
+
+function FactionState:Event_toggleDuty()
+	local faction = client:getFaction()
+	if faction:isStateFaction() then
+		if client:isFactionDuty() then
+			client:setDefaultSkin()
+			client.m_FactionDuty = false
+			faction:updateStateFactionDutyGUI(client)
+			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
+			client:getInventory():removeAllItem("Barrikade")
+			client:setPublicSync("Faction:Duty",false)
+		else
+			faction:changeSkin(client)
+			client.m_FactionDuty = true
+			faction:updateStateFactionDutyGUI(client)
+			client:getInventory():removeAllItem("Barrikade")
+			client:getInventory():giveItem("Barrikade", 10)
+			client:sendInfo(_("Du bist nun im Dienst!", client))
+			client:setPublicSync("Faction:Duty",true)
+		end
+	else
+		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
 	end
 end

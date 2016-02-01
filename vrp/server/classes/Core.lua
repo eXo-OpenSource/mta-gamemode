@@ -53,7 +53,7 @@ function Core:constructor()
 	InteriorManager:new()
 	FactionManager:new()
 	CompanyManager:new()
-
+	Guns:new()
 	InventoryManager:new()
 
 	VehicleManager.loadVehicles()

@@ -18,7 +18,7 @@ function Inventory:constructor()
 	self.m_item = {}
 	self.m_sitem = {}
 	self.m_itemFront = {}
-	
+
 	self.m_BlipSize = 1.1
 	self.m_TextSize = 0.8
 	self.m_InfoBlipAlpha = 0
@@ -30,9 +30,9 @@ function Inventory:constructor()
 
 	self.m_BagCurrent = "Items"
 	self.m_BagOld = "Items"
-	
+
 	self.m_lockItemUseState = {}
-	
+
 	self.m_RenderInventar = bind(self.renderInventar, self)
 	self.m_onButtonInvEnter = bind(self.onButtonInvEnter, self)
 	self.m_onButtonInvLeave = bind(self.onButtonInvLeave, self)
@@ -257,7 +257,7 @@ function Inventory:renderInventar()
 	dxDrawImage(self.m_X+20 + 82*3, self.m_Y-48, 48.0, 48.0, self.m_ImagePath.."drogen.png", 0.0, 0.0, 0.0, tocolor(255, 255, 255, 255), false)
 
 	dxDrawRectangle(self.m_X+self.m_BX , self.m_Y-50, 20.0, 56.0, tocolor(0, 0, 0, 200), false)
-	
+
 	dxDrawRectangle(self.m_X, self.m_Y, self.m_BX, self.m_BY, tocolor(self.m_R["Rahmen"], self.m_G["Rahmen"], self.m_B["Rahmen"], 255), false)
 	dxDrawRectangle(self.m_X+2, self.m_Y+2, self.m_BX-4, self.m_BY-4, tocolor(50, 200, 255, 255), false)
 	dxDrawText("Verwende Items mit der linken Maustaste\nZum Verschieben benutze die rechte Maustaste!", self.m_X, self.m_Y+self.m_BY+2, self.m_X+self.m_BX, self.m_Y+self.m_BY+4, tocolor(255, 255, 255, 255),  1.2,  "defauld-bold", "center", "top")
@@ -509,7 +509,7 @@ function Inventory:show()
 	showCursor ( true , false)
 	toggleControl ( "fire",  false)
 	triggerServerEvent("refreshInventory", localPlayer)
-	
+
 	self.m_screenGUI = guiCreateStaticImage(0, 0, screenWidth, screenHeight, "files/images/Logo.png", false)
 	guiSetAlpha(self.m_screenGUI, 0)
 	self.pClose, self.pMove, self.pReset = self.m_ImagePath.."closeinv.png", self.m_ImagePath.."moveinv.png", self.m_ImagePath.."reset.png"
@@ -587,6 +587,7 @@ end
 
 function Inventory:hide()
 	showCursor ( false )
+	toggleControl ( "fire",  true)
 
 	removeEventHandler("onClientRender", root, self.m_RenderInventar)
 	removeEventHandler("onClientMouseEnter", root, self.m_onButtonInvEnter)
@@ -598,7 +599,7 @@ function Inventory:hide()
 
 	removeEventHandler("onClientGUIMouseDown", root, self.m_onClickAndDropDown)
 	removeEventHandler("onClientGUIMouseUp", root, self.m_onClickAndDropUp)
-	
+
 	destroyElement(self.m_screenGUI)
 	destroyElement(self.m_btn_Items)
 	destroyElement(self.m_btn_Objekte)

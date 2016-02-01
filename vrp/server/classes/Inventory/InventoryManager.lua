@@ -10,10 +10,10 @@ InventoryManager = inherit(Singleton)
 function InventoryManager:constructor()
 
 	self.m_Slots={
-		["Items"] = 14, 
-		["Objekte"] = 3, 
-		["Essen"] = 5, 
-		["Drogen"] = 7, 
+		["Items"] = 14,
+		["Objekte"] = 3,
+		["Essen"] = 5,
+		["Drogen"] = 7,
 	}
 
 	self.m_ItemData = {}
@@ -60,7 +60,12 @@ function InventoryManager:loadInventory(player)
 	if not self:getPlayerInventory(player) then
 		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData)
 		self.Map[player] = instance
+		return instance
 	end
+end
+
+function InventoryManager:deleteInventory(player)
+	self.Map[player] = nil
 end
 
 function InventoryManager:getPlayerInventory(player)
