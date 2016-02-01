@@ -24,7 +24,7 @@ function InventoryManager:constructor()
 	addEventHandler("changePlaces", root, bind(self.Event_changePlaces, self))
 	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
 	addEventHandler("c_stackItems", root, bind(self.Event_c_stackItems, self))
-	addEventHandler("wegwerfItem", root, bind(self.Event_wegwerfItem, self))
+	addEventHandler("throwItem", root, bind(self.Event_throwItem, self))
 	addEventHandler("c_setItemPlace", root, bind(self.Event_c_setItemPlace, self))
 	addEventHandler("refreshInventory", root, bind(self.Event_refreshInventory, self))
 end
@@ -70,28 +70,28 @@ function InventoryManager:getPlayerInventory(player)
 	return false
 end
 
-function InventoryManager:Event_changePlaces(tasche, oPlace, nPlace)
-	self:getPlayerInventory(client):changePlaces(tasche, oPlace, nPlace)
+function InventoryManager:Event_changePlaces(bag, oPlace, nPlace)
+	self:getPlayerInventory(client):changePlaces(bag, oPlace, nPlace)
 end
 
 
-function InventoryManager:Event_onItemUse(itemid, tasche, itemname, platz, delete)
-	self:getPlayerInventory(client):useItem(itemid, tasche, itemname, platz, delete)
+function InventoryManager:Event_onItemUse(itemid, bag, itemName, place, delete)
+	self:getPlayerInventory(client):useItem(itemid, bag, itemName, place, delete)
 
 end
 
-function InventoryManager:Event_c_stackItems(newid, oldid, oldplatz)
-	self:getPlayerInventory(client):c_stackItems(newid, oldid, oldplatz)
+function InventoryManager:Event_c_stackItems(newId, oldId, oldPlace)
+	self:getPlayerInventory(client):c_stackItems(newId, oldId, oldPlace)
 end
 
 
-function InventoryManager:Event_c_setItemPlace(tasche, platz, nplatz)
-	self:getPlayerInventory(client):c_setItemPlace(tasche, platz, nplatz)
+function InventoryManager:Event_c_setItemPlace(bag, oldPlace, newPlace)
+	self:getPlayerInventory(client):c_setItemPlace(bag, oldPlace, newPlace)
 end
 
 
-function InventoryManager:Event_wegwerfItem(item, tasche, id, platz)
-	self:getPlayerInventory(client):wegwerfItem(item, tasche, id, platz)
+function InventoryManager:Event_throwItem(item, bag, id, place)
+	self:getPlayerInventory(client):throwItem(item, bag, id, place)
 end
 
 function InventoryManager:Event_refreshInventory()
