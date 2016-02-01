@@ -32,7 +32,6 @@ function Inventory:constructor()
 	self.m_TascheOld = "Items"
 	
 	self.m_lockItemUseState = {}
-	self.m_mouseState = "up"
 	
 	self.m_RenderInventar = bind(self.renderInventar, self)
 	self.m_onButtonInvEnter = bind(self.onButtonInvEnter, self)
@@ -55,10 +54,8 @@ function Inventory:constructor()
 	addEventHandler("loadPlayerInventarClient",  root,  bind(self.Event_loadPlayerInventarClient,  self))
 	addEventHandler("syncInventoryFromServer",  root,  bind(self.Event_syncInventoryFromServer,  self))
 
-	addEventHandler("onClientClick", root, bind(self.onClick,  self))
 	addEventHandler("setIKoords_c", root,  bind(self.Event_setInventarKoordinaten,  self))
 	addEventHandler("onPlayerItemUse", root,  bind(self.Event_onItemClick,  self))
-	addEventHandler("onClientClick", root, bind(self.onClick,  self))
 
 end
 
@@ -885,8 +882,4 @@ function Inventory:setInventarBlipPos(x, y)
 	Itx, Ity = IBx + 8, IBy + 20
 	Iobx, Ioby = Itx + 137, Ity --1255, 523
 	Ibx, Iby = self:getInfoClip(IBtext, Itx, Ity, Iobx, Ioby , "default-bold", self.m_TextSize)
-end
-
-function Inventory:onClick(button, state)
-	self.m_mouseState = state
 end
