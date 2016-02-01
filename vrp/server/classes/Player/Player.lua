@@ -118,7 +118,7 @@ function Player:loadCharacter()
 	-- Add Payday
 	self:setNextPayday()
 
-	Inventory:getSingleton():loadInventory(self)
+	InventoryManager:getSingleton():loadInventory(self)
 
 	--// Gangwar
 	triggerEvent("onLoadCharacter",self)

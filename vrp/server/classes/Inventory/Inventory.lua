@@ -6,46 +6,52 @@
 -- *
 -- ****************************************************************************
 Inventory = inherit(Singleton)
-function Inventory:constructor()
 
-	self.m_ItemData = {}
-	self.m_ItemData = self:loadItems()
+function Inventory:constructor(owner, inventorySlots, itemData)
+	self.m_InventorySlots = inventorySlots
+	self.m_ItemData = itemData
+	self.m_Owner = owner
+	self.m_Tasche = {}
+	self.m_Items = {}
 
-	self.m_Debug = true
+	for k,v in pairs(inventorySlots) do
+		self.m_Tasche[k] = {}
+	end
 
-	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "wegwerfItem", "c_setItemPlace"}
-	addEventHandler("changePlaces", root, bind(self.Event_changePlaces, self))
-	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
-	addEventHandler("c_stackItems",getRootElement(),bind(self.Event_c_stackItems, self))
-	addEventHandler("wegwerfItem",getRootElement(),bind(self.Event_wegwerfItem, self))
-	addEventHandler("c_setItemPlace",getRootElement(),bind(self.Event_c_setItemPlace, self))
+	local id,platz
+
+	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE Name = ?",sql:getPrefix(),self.m_Owner:getName()) -- ToDo add Prefix
+	for i, row in ipairs(result) do
+		if tonumber(row["Menge"]) > 0 then
+			id = tonumber(row["id"])
+			platz = tonumber(row["Platz"])
+			self.m_Items[id] = {}
+			self.m_Items[id]["Objekt"] = row["Objekt"]
+			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
+			self.m_Items[id]["Platz"] = platz
+			self.m_Tasche[row["Tasche"]][platz] = id
+		else
+			removeItemFromPlatz(row["Tasche"],tonumber(row["Platz"]))
+		end
+	end
+
+	triggerClientEvent(self.m_Owner,"loadPlayerInventarClient",self.m_Owner,self.m_InventorySlots,self.m_ItemData)
+	self:syncClient()
 end
 
 function Inventory:destructor()
 
 end
 
-function Inventory:getItemData()
-	return self.m_ItemData
+function Inventory:syncClient()
+	triggerClientEvent(self.m_Owner,"syncInventoryFromServer",self.m_Owner,self.m_Tasche,self.m_Items)
 end
 
-function Inventory:loadItems()
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_items",sql:getPrefix())
-	local itemData = {}
-	for i, row in ipairs(result) do
-		itemData[row["Objektname"]] = {}
-		itemData[row["Objektname"]]["Name"] = row["Objektname"]
-		itemData[row["Objektname"]]["Info"] = row["Info"]
-		itemData[row["Objektname"]]["Tasche"] = row["Tasche"]
-		itemData[row["Objektname"]]["Icon"] = row["Icon"]
-		itemData[row["Objektname"]]["Item_Max"] = tonumber(row["max_items"])
-		itemData[row["Objektname"]]["Wegwerf"] = tonumber(row["wegwerfen"])
-		itemData[row["Objektname"]]["Handel"] = tonumber(row["Handel"])
-		itemData[row["Objektname"]]["Stack_max"] = tonumber(row["stack_max"])
-		itemData[row["Objektname"]]["Verbraucht"] = tonumber(row["verbraucht"])
+function Inventory:useItem(itemid,tasche,itemname,platz,delete)
+	if delete == true then
+		self:removeItemFromPlatz(tasche,platz,1)
 	end
-
-	return itemData
+	outputChatBox("Du benutzt das Item "..itemname.." aus der Tasche "..tasche.."!",self.m_Owner,0,255,0)
 end
 
 function Inventory:saveItemMenge(id,menge)
@@ -60,100 +66,20 @@ function Inventory:deleteItem(id)
 	sql:queryExec("DELETE FROM ??_inventory_slots WHERE `id`= ??",sql:getPrefix(),id )
 end
 
-function Inventory:insertItem(pname, anzahl, item, platz, tasche)
-	sql:queryExec("INSERT INTO ??_inventory_slots (Name,Menge,Objekt,Platz,Tasche) VALUES (??, ??, ??, ??, ??)",sql:getPrefix(),pname, anzahl, item, platz, tasche ) -- ToDo add Prefix
+function Inventory:insertItem(anzahl, item, platz, tasche)
+	sql:queryExec("INSERT INTO ??_inventory_slots (Name,Menge,Objekt,Platz,Tasche) VALUES (??, ??, ??, ??, ??)",sql:getPrefix(),self.m_Owner:getName(), anzahl, item, platz, tasche ) -- ToDo add Prefix
 	return sql:lastInsertId()
 end
 
-function Inventory:loadItem(player,id)
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE id = ?",sql:getPrefix(),id)
-
-	for i, row in ipairs(result) do
-		self:setData(player,"Item",tonumber(row["id"]),tostring(row["Objekt"]),true)
-		self:setData(player,"Item",tonumber(row["id"]).."_Menge",tonumber(row["Menge"]),true)
-		self:setData(player,"Item",tonumber(row["id"]).."_Platz",tonumber(row["Platz"]),true)
-		self:setData(player,"Item_"..tostring(row["Tasche"]),tonumber(row["Platz"]).."_id",tonumber(row["id"]),true)
-	end
-
-	triggerClientEvent(player,"setIKoords_c",player,platz,tasche)
+function Inventory:changePlaces(tasche,oPlace,nPlace)
+	self:setItemPlace(tasche,oPlace,-1)
+	self:setItemPlace(tasche,nPlace,oPlace)
+	self:setItemPlace(tasche,-1,nPlace)
 end
 
-function Inventory:loadInventory(player)
-
-	self:setData(player,"Inventar","ItemsPlatz",14,true)
-	self:setData(player,"Inventar","ObjektePlatz",3,true)
-	self:setData(player,"Inventar","EssenPlatz",5,true)
-	self:setData(player,"Inventar","DrogenPlatz",7,true)
-
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE Name = ?",sql:getPrefix(),player:getName()) -- ToDo add Prefix
-	for i, row in ipairs(result) do
-		if tonumber(row["Menge"]) > 0 then
-			self:setData(player,"Item",tonumber(row["id"]),tostring(row["Objekt"]),true)
-			self:setData(player,"Item",tonumber(row["id"]).."_Menge",tonumber(row["Menge"]),true)
-			self:setData(player,"Item",tonumber(row["id"]).."_Platz",tonumber(row["Platz"]),true)
-			self:setData(player,"Item_"..tostring(row["Tasche"]),tonumber(row["Platz"]).."_id",tonumber(row["id"]),true)
-		else
-			removeItemFromPlatz(player,row["Tasche"],tonumber(row["Platz"]))
-		end
-	end
-
-	triggerClientEvent(player,"loadItemDataFromServer",player,self.m_ItemData)
-	triggerClientEvent(player,"loadPlayerInventarClient",player)
-
-end
-
-function Inventory:Event_changePlaces(tasche,oPlace,nPlace)
-	self:setItemPlace(client,tasche,oPlace,-1)
-	self:setItemPlace(client,tasche,nPlace,oPlace)
-	self:setItemPlace(client,tasche,-1,nPlace)
-end
-
-function Inventory:getData(element, name,index)
-	checkArgs("Inventory:getData", "userdata", "string")
-
-	local result
-	if(not index) then
-		result = getElementData ( element, name)
-	else
-		if(getElementData(element,name)) then
-			result = getElementData ( element, name)[index]
-		else
-			result = getElementData ( element, name)
-		end
-	end
-	return result
-end
-
-function Inventory:setData(element,tname,index,value,stream)
-	checkArgs("Inventory:setData", "userdata", "string")
-	if not self:getData(element,tname) then
-		setElementData(element,tname,{})
-	end
-	local invtable = self:getData(element,tname)
-	invtable[index] = value
-	setElementData(element,tname,invtable,false)
-
-	if(stream == true) then
-		if(self:getData(element,tname.."_c") == false) then
-			setElementData(element,tname.."_c",{})
-		end
-		local invtable = self:getData(element,tname)
-		invtable[index] = value
-		setElementData(element,tname.."_c",invtable,true)
-
-	end
-end
-
-function Inventory:Event_onItemUse(itemid,tasche,itemname,platz,delete)
-	if delete == true then
-		self:removeItemFromPlatz(client,tasche,platz,1)
-	end
-	outputChatBox("Du benutzt das Item "..itemname.." aus der Tasche "..tasche.."!",client,0,255,0)
-end
-
-function Inventory:isPlatzEmpty(player,tasche,platz)
-	local id = self:getData(player,"Item_"..tasche,platz.."_id")
-	local item_table = self:getData(player,"Item")
+function Inventory:isPlatzEmpty(tasche,platz)
+	local id = self.m_Tasche[tasche][id]
+	local item_table = self.m_Items
 	if item_table[id] then
 		local itemname = item_table[id]
 
@@ -167,30 +93,30 @@ function Inventory:isPlatzEmpty(player,tasche,platz)
 	end
 end
 
-function Inventory:getLowEmptyPlace(player,tasche)
-	for i = 0, self:getInventarPlaces(player,tasche),1 do
-		if(self:isPlatzEmpty(player,tasche,i)) then
+function Inventory:getLowEmptyPlace(tasche)
+	for i = 0, self:getInventarPlaces(tasche),1 do
+		if(self:isPlatzEmpty(tasche,i)) then
 			return i
 		end
 	end
 	return false
 end
 
-function Inventory:getLowestOccupiedPlace(player,tasche)
-	local tasche = self:getData(player,"Item_"..tasche)
+function Inventory:getLowestOccupiedPlace(tasche)
+	local tasche = self.m_Tasche[tasche]
 	for index,value in pairs(tasche) do
 		if(value) then
-			local place = self:getData(player,"Item",value.."_Platz")
+			local place =  self.m_Items[id]["Platz"]
 			return place
 		end
 	end
 	return false
 end
 
-function Inventory:getInventarPlaces(player,tasche)
+function Inventory:getInventarPlaces(tasche)
 	if tasche then
-		if self:getData(player,"Inventar",tasche.."Platz") then
-			return tonumber(self:getData(player,"Inventar",tasche.."Platz"))-1
+		if self.m_InventorySlots[tasche] then
+			return tonumber(self.m_InventorySlots[tasche])-1
 		else
 			return 0
 		end
@@ -199,136 +125,99 @@ function Inventory:getInventarPlaces(player,tasche)
 	end
 end
 
-function Inventory:getCountOfPlaces(player,tasche,item)
-	local maxItemStack = tonumber(itemData[item]["Item_Max"])
+function Inventory:getCountOfPlaces(tasche,item)
+	local maxItemStack = tonumber(self.m_ItemData[item]["Item_Max"])
 	local places = maxItemStack
-	local invplaetze = self:getInventarPlaces(player,tasche)
+	local invplaetze = self:getInventarPlaces(tasche)
 	local freeplaces = 0
 	for i = 0, invplaetze,1 do
-		if isPlatzEmpty(player,tasche,i) then
+		if isPlatzEmpty(tasche,i) then
 			freeplaces = freeplaces+1
 		end
 	end
 	return freeplaces
 end
 
-function Inventory:getItemID(player,tasche,platz)
-	return self:getData(player,"Item_"..tasche,platz.."_id")
+function Inventory:getItemID(tasche,platz)
+	return self.m_Tasche[tasche][id]
+
 end
 
-function Inventory:setItemPlace(player,tasche,oplatz,platz)
-	local id = self:getItemID(player,tasche,oplatz)
-	local nid= self:getItemID(player,tasche,platz)
-	if(not id or (nid and self:getData(player,"Item",nid) ~= self:getData(player,"Item",id)) ) then
+function Inventory:setItemPlace(tasche,oplatz,platz)
+	local id = self:getItemID(tasche,oplatz)
+	local nid= self:getItemID(tasche,platz)
+	if(not id or (nid and self.m_Items[nid]) ~= self.m_Items[id]) then
 		return false
 	end
-	self:setData(player,"Item_"..tasche,oplatz.."_id",nil,true)
-	self:setData(player,"Item",id.."_Platz",platz,true)
-	self:setData(player,"Item_"..tasche,platz.."_id",id,true)
-	Inventory:saveItemPlatz(id,self:getData(player,"Item",id.."_Platz"))
+	self.m_Tasche[tasche][oid] = nil
+	self.m_Items[id]["Platz"] = platz
+	self.m_Tasche[tasche][id] = id
+	Inventory:saveItemPlatz(id,self.m_Items[id]["Platz"])
 	return true
 end
 
-function Inventory:Event_c_stackItems(newid,oldid,oldplatz) --OLD = Moved
-	if(source ~= client) then
-		return false
-	end
-	local player = source
-	local item_table = self:getData(player,"Item")
-	local itemname_old = item_table[oldid]
-	local itemname_new = item_table[newid]
-	if itemname_old == itemname_new then
-		local anzahl_new = self:getData(player,"Item",newid.."_Menge")
-		local anzahl_old = self:getData(player,"Item",oldid.."_Menge")
-		local gesamt = anzahl_new + anzahl_old
-		if gesamt <= itemData[itemname_old]["Stack_max"] then
-			self:setData(player,"Item",newid.."_Menge",gesamt,true)
-			self:saveItemMenge(newid,self:getData(player,"Item",id.."_Menge"))
-			local tasche = itemData[itemname_new]["Tasche"]
-			self:removeItemFromPlatz(player,tasche,oldplatz,anzahl_old)
-		end
-	end
-end
-addEvent("c_stackItems",true)
+function Inventory:removeItemFromPlatz(tasche,platz,anzahl)
 
-
-function Inventory:Event_c_setItemPlace(tasche,platz,nplatz)
-	if(source ~= client) then
-		return false
-	end
-	self:setItemPlace(source,tasche,platz,nplatz)
-end
-
-
-function Inventory:removeItemFromPlatz(player,tasche,platz,anzahl)
-
-		local id = self:getData(player,"Item_"..tasche,platz.."_id")
+		local id = self.m_Tasche[tasche][id]
 		if(not id) then
 			return false
 		end
 
 		if(not anzahl) then
-			anzahl = self:getData(player,"Item",id.."_Menge")
+			anzahl = self.m_Items[id]["Menge"]
 		elseif(anzahl < 0) then
 			error("removeItem > You cant remove less then 0 items!",2)
 			return false
 		end
-		local itemA = self:getData(player,"Item",id.."_Menge")
+		local itemA = self.m_Items[id]["Menge"]
 
 		if(itemA - anzahl < 0) then
 			return false
 		elseif(itemA - anzahl > 0) then
-			self:setData(player,"Item",id.."_Menge",itemA - anzahl,true)
-			self:saveItemMenge(id,self:getData(player,"Item",id.."_Menge"))
+			self.m_Items[id]["Menge"] = itemA - anzahl
+			self:saveItemMenge(id,self.m_Items[id]["Menge"])
 
 		else
 
 			self:deleteItem(id)
-			self:setData(player,"Item",id,nil,true)
-			self:setData(player,"Item",id.."_Menge",nil,true)
-			self:setData(player,"Item",id.."_Platz",nil,true)
-			self:setData(player,"Item_"..tasche,platz.."_id",nil,true)
+			self.m_Items[id] = nil
+			self.m_Tasche[tasche][id] = nil
 		end
 
 end
 
-function Inventory:Event_wegwerfItem(item,tasche,id,platz)
-	local player = client
-	executeCommandHandler ( "meCMD", player, " wirft "..item.." weg..." )
-	self:removeItemFromPlatz(player,tasche,platz)
-end
 
 
-function Inventory:getFreePlacesForItem(player,item)
+function Inventory:getFreePlacesForItem(item)
 
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-getFreePlacesForItem: Spieler: "..getPlayerName(player).." | Item: "..item)
 	end
 
-	if itemData[item] then
-		local tasche = itemData[item]["Tasche"]
-		local invplaetze = self:getInventarPlaces(player,tasche)
-		local stackmax = itemData[item]["Stack_max"]
-		local item_max = itemData[item]["Item_Max"]
+	if self.m_ItemData[item] then
+		local tasche = self.m_ItemData[item]["Tasche"]
+		local invplaetze = self:getInventarPlaces(tasche)
+		local stackmax = self.m_ItemData[item]["Stack_max"]
+		local item_max = self.m_ItemData[item]["Item_Max"]
 		local placesplus = 0
 		local anzahl = 0
 
 		local places = 0
 
-		if self:getPlayerItemAnzahl(player,item) >= item_max then
+		if self:getPlayerItemAnzahl(item) >= item_max then
 			return 0
 		end
 
 		for i = 0, invplaetze,1 do
 			local platz = i
-			local id = self:getData(player,"Item_"..tasche,platz.."_id")
-			local item_table = self:getData(player,"Item")
+			local id = self.m_Tasche[tasche][id]
+			local item_table = self.m_Items
 			local itemname = item_table[id]
 			anzahl = 0
 			placesplus = 0
 			if itemname then
 				if itemname == item then
-					anzahl = tonumber(self:getData(player,"Item",id.."_Menge"))
+					anzahl = tonumber(self.m_Items[id]["Menge"])
 					if anzahl <= stackmax then
 						placesplus = stackmax-anzahl
 						places = places + placesplus
@@ -348,26 +237,26 @@ function Inventory:getFreePlacesForItem(player,item)
 	return 0
 end
 
-function Inventory:removeItem(player,item,anzahl)
+function Inventory:removeItem(item,anzahl)
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-removeItem: Spieler: "..getPlayerName(player).." | Item: "..item.." | Anzahl: "..anzahl)
 	end
 
-	if itemData[item] then
-		local tasche = itemData[item]["Tasche"]
-		local invplaetze = self:getInventarPlaces(player,tasche)
+	if self.m_ItemData[item] then
+		local tasche = self.m_ItemData[item]["Tasche"]
+		local invplaetze = self:getInventarPlaces(tasche)
 		for i = 0, invplaetze,1 do
 			local platz = i
-			local id = self:getData(player,"Item_"..tasche,platz.."_id")
-			local item_table = self:getData(player,"Item")
+			local id = self.m_Tasche[tasche][id]
+			local item_table = self.m_Items
 			local itemname = item_table[id]
 			local invanzahl = 0
 			placesplus = 0
 			if itemname then
 				if itemname == item then
-					invanzahl = tonumber(self:getData(player,"Item",id.."_Menge"))
+					invanzahl = tonumber(self.m_Items[id]["Menge"])
 					if invanzahl >=anzahl then
-						self:removeItemFromPlatz(player,tasche,platz,anzahl)
+						self:removeItemFromPlatz(tasche,platz,anzahl)
 						return
 					end
 				end
@@ -376,31 +265,31 @@ function Inventory:removeItem(player,item,anzahl)
 
 
 		for i=1,anzahl,1 do
-			self:removeOneItem(player,item)
+			self:removeOneItem(item)
 		end
 	end
 end
 
-function Inventory:removeOneItem(player,item)
-	if itemData[item] then
-		local tasche = itemData[item]["Tasche"]
-		local invplaetze = self:getInventarPlaces(player,tasche)
+function Inventory:removeOneItem(item)
+	if self.m_ItemData[item] then
+		local tasche = self.m_ItemData[item]["Tasche"]
+		local invplaetze = self:getInventarPlaces(tasche)
 		local anzahl = 0
 		for i = 0, invplaetze,1 do
 			anzahl = 0
 			local platz = i
-			local id = self:getData(player,"Item_"..tasche,platz.."_id")
-			local item_table = self:getData(player,"Item")
+			local id = self.m_Tasche[tasche][id]
+			local item_table = self.m_Items
 			local itemname = item_table[id]
 			if itemname == item then
-				anzahl = self:getData(player,"Item",id.."_Menge")
+				anzahl = self.m_Items[id]["Menge"]
 				if anzahl > 1 then
-					self:setData(player,"Item",id.."_Menge",anzahl - 1,true)
-					self:saveItemMenge(id,self:getData(player,"Item",id.."_Menge"))
+					self.m_Items[id]["Menge"] = anzahl-1
+					self:saveItemMenge(id,self.m_Items[id]["Menge"])
 
 					return true
 				elseif anzahl == 1 then
-					self:removeItemFromPlatz(player,tasche,platz,1)
+					self:removeItemFromPlatz(tasche,platz,1)
 					return true
 				end
 			end
@@ -413,19 +302,19 @@ function Inventory:removeOneItem(player,item)
 end
 
 
-function Inventory:getPlatzForItem(player,item,itemanzahl)
-	if itemData[item] then
-		local tasche = itemData[item]["Tasche"]
-		local invplaetze = getInventarPlaces(player,tasche)
-		local stackmax = itemData[item]["Stack_max"]
+function Inventory:getPlatzForItem(item,itemanzahl)
+	if self.m_ItemData[item] then
+		local tasche = self.m_ItemData[item]["Tasche"]
+		local invplaetze = getInventarPlaces(tasche)
+		local stackmax = self.m_ItemData[item]["Stack_max"]
 		for i = 0, invplaetze,1 do
 			local platz =i
-			local id = self:getData(player,"Item_"..tasche,platz.."_id")
-			local item_table = self:getData(player,"Item")
+			local id = self.m_Tasche[tasche][id]
+			local item_table = self.m_Items
 			local itemname = item_table[id]
 			local anzahl = 0
 			if itemname == item then
-				anzahl = tonumber(self:getData(player,"Item",id.."_Menge"))+itemanzahl
+				anzahl = tonumber(self.m_Items[id]["Menge"])+itemanzahl
 				if anzahl <= stackmax then
 					return platz
 				end
@@ -437,23 +326,23 @@ function Inventory:getPlatzForItem(player,item,itemanzahl)
 	end
 end
 
-function Inventory:getPlayerItemAnzahl(player,item)
+function Inventory:getPlayerItemAnzahl(item)
 
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-getPlayerItemAnzahl: Spieler: "..getPlayerName(player).." | Item: "..item)
 	end
 
-	if itemData[item] then
-		local tasche = itemData[item]["Tasche"]
-		local invplaetze = self:getInventarPlaces(player,tasche)
+	if self.m_ItemData[item] then
+		local tasche = self.m_ItemData[item]["Tasche"]
+		local invplaetze = self:getInventarPlaces(tasche)
 		local anzahl = 0
 		for i = 0, invplaetze,1 do
 			local platz = i
-			local id = self:getData(player,"Item_"..tasche,platz.."_id")
-			local item_table = self:getData(player,"Item")
+			local id = self.m_Tasche[tasche][id]
+			local item_table = self.m_Items
 			local itemname = item_table[id]
 			if itemname == item then
-				anzahl = anzahl+tonumber(self:getData(player,"Item",id.."_Menge"))
+				anzahl = anzahl+tonumber(self.m_Items[id]["Menge"])
 			end
 		end
 		return anzahl
@@ -462,60 +351,86 @@ function Inventory:getPlayerItemAnzahl(player,item)
 	end
 end
 
-function Inventory:giveItem(player,item,anzahl)
-	checkArgs("Inventory:giveItem", "userdata", "string", "number")
+function Inventory:wegwerfItem(item,tasche,id,platz)
+	outputChatBox("Du hast das Item "..item.." weggewofen!",self.m_Owner,255,0,0)
+	self:removeItemFromPlatz(tasche,platz)
+end
+
+function Inventory:c_setItemPlace(tasche,platz,nplatz)
+	self:setItemPlace(tasche,platz,nplatz)
+end
+
+function Inventory:c_stackItems(newid,oldid,oldplatz)
+	local itemname_old = self.m_Items[oldid]["Objekt"]
+	local itemname_new = self.m_Items[newid]["Objekt"]
+	if itemname_old == itemname_new then
+		local anzahl_new = self.m_Items[newid]["Menge"]
+		local anzahl_old = self.m_Items[oldid]["Menge"]
+		local gesamt = anzahl_new + anzahl_old
+		if gesamt <= self.m_ItemData[itemname_old]["Stack_max"] then
+			self.m_Items[newid]["Menge"] = gesamt
+			self:saveItemMenge(newid,self.m_Items[newid]["Menge"])
+			local tasche = self.m_Items[itemname_new]["Tasche"]
+			self:removeItemFromPlatz(tasche,oldplatz,anzahl_old)
+		end
+	end
+end
+
+
+function Inventory:giveItem(item,anzahl)
+	checkArgs("Inventory:giveItem", "string", "number")
 
 	if self.m_Debug == true then
-		outputDebugString("INV-DEBUG-giveItem: Spieler: "..getPlayerName(player).." | Item: "..item.." | Anzahl: "..anzahl)
+		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..anzahl)
 	end
 
 
-	if itemData[item] then
-		local tasche = itemData[item]["Tasche"]
+	if self.m_ItemData[item] then
+		local tasche = self.m_ItemData[item]["Tasche"]
 
-		local max_items = tonumber(itemData[item]["Item_Max"])
-		local new_items = self:getPlayerItemAnzahl(player,item)+anzahl
+		local max_items = tonumber(self.m_ItemData[item]["Item_Max"])
+		local new_items = self:getPlayerItemAnzahl(item)+anzahl
 
 		if new_items > max_items  then
-			outputChatBox("Die maximale Anzahl des Items '"..item.."' beträgt "..max_items.."!",player,255,0,0)
+			outputChatBox("Die maximale Anzahl des Items '"..item.."' beträgt "..max_items.."!",self.m_Owner,255,0,0)
 			return
 		end
 
-		local item_table = self:getData(player,"Item")
+		local item_table = self.m_Items
 
 		local platztyp = "new"
 
-		local stackplatz = self:getPlatzForItem(player,item,anzahl)
+		local stackplatz = self:getPlatzForItem(item,anzahl)
 		if stackplatz then
 			platztyp = "stack"
 			platz = stackplatz
 		else
-			platz = self:getLowEmptyPlace(player,tasche)
+			platz = self:getLowEmptyPlace(tasche)
 		end
 		if platz then
 
-			local id = self:getData(player,"Item_"..tasche,platz.."_id")
+			local id = self.m_Tasche[tasche][id]
 			if platztyp == "stack" then
 				--outputDebugString("giveItem - OldStack")
-				local itemA = self:getData(player,"Item",id.."_Menge")
-				self:setData(player,"Item",id.."_Menge",itemA + anzahl,true)
-				self:saveItemMenge(id,self:getData(player,"Item",id.."_Menge"))
+				local itemA = self.m_Items[id]["Menge"]
+				self.m_Items[id]["Menge"] = itemA + anzahl
+				self:saveItemMenge(id,self.m_Items[id]["Menge"])
 
-				triggerClientEvent(player,"setIKoords_c",player,platz,tasche)
+				triggerClientEvent(self.m_Owner,"setIKoords_c",self.m_Owner,platz,tasche)
 				return true
 
 			elseif platztyp == "new" then
 				if anzahl > 0 then
 				--	outputDebugString("giveItem - NewStack")
-					local lastId = self:insertItem(getPlayerName(player), anzahl, item, platz, tasche)
-					self:loadItem(player,lastId)
+					local lastId = self:insertItem(anzahl, item, platz, tasche)
+					self:loadItem(lastId)
 					return true
 				end
 			end
 		else
-			outputChatBox("Kein Platz in deinem Inventar!",player,255,0,0)
+			outputChatBox("Kein Platz in deinem Inventar!",self.m_Owner,255,0,0)
 		end
 	else
-		outputChatBox("Ungültiges Item! ("..item..")",player,255,0,0)
+		outputChatBox("Ungültiges Item! ("..item..")",self.m_Owner,255,0,0)
 	end
 end

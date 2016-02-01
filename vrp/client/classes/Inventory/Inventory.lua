@@ -25,15 +25,14 @@ function Inventory:constructor()
 	self.m_itemPlatzG = tabs
 	self.m_itemPlatzB = tabs
 
-	self.m_aktuel = "Items"
-	self.m_oldaktuel = "Items"
+	self.m_TascheAktuell = "Items"
+	self.m_TascheOld = "Items"
 
 	self.m_RenderInventar = bind(self.renderInventar,self)
 	self.m_onButtonInvEnter = bind(self.onButtonInvEnter,self)
 	self.m_onButtonInvLeave = bind(self.onButtonInvLeave,self)
 	self.m_onInvClick = bind(self.onInvClick,self)
-	self.m_onItemMouseOver = bind(self.onButtonInvEnter,self)
-	self.m_onButtonInvEnter = bind(self.onItemMouseOver,self)
+	self.m_onItemMouseOver = bind(self.onItemMouseOver,self)
 	self.m_onItemMouseLeave = bind(self.onItemMouseLeave,self)
 	self.m_MoveGUI = bind(self.MoveGUI,self)
 	self.m_moveInfoWindow = bind(self.moveInfoWindow,self)
@@ -44,11 +43,13 @@ function Inventory:constructor()
 	self.m_onStopMove = bind(self.onStopMove,self)
 	self.m_onResetClick = bind(self.onResetClick,self)
 	self.m_onClientDragAndDropMove = bind(self.onClientDragAndDropMove,self)
-	
-	
-	addRemoteEvents{"loadPlayerInventarClient","loadItemDataFromServer","setIKoords_c","onPlayerItemUse"}
+
+
+	addRemoteEvents{"loadPlayerInventarClient","setIKoords_c","onPlayerItemUse","syncInventoryFromServer"}
 	addEventHandler("loadPlayerInventarClient", root, bind(self.Event_loadPlayerInventarClient, self))
-	addEventHandler("loadItemDataFromServer", root, bind(self.Event_loadItemDataFromServer, self))
+	addEventHandler("syncInventoryFromServer", root, bind(self.Event_syncInventoryFromServer, self))
+
+	addEventHandler("onClientClick",root,bind(self.onClick, self))
 	addEventHandler("setIKoords_c",root, bind(self.Event_setInventarKoordinaten, self))
 	addEventHandler("onPlayerItemUse",root, bind(self.Event_onItemClick, self))
 	addEventHandler("onClientClick",root,bind(self.onClick, self))
@@ -59,8 +60,16 @@ function Inventory:destructor()
 
 end
 
-function Inventory:Event_loadPlayerInventarClient()
+function Inventory:Event_syncInventoryFromServer(tasche,items)
+	self.m_Tasche = tasche
+	self.m_Items = items
+end
+
+function Inventory:Event_loadPlayerInventarClient(slots,itemdata)
+	self.m_Slots = slots
+	self.m_ItemData = itemdata
 	bindKey(self.InventoryKey,"down",bind(self.toggle, self))
+
 end
 
 function Inventory:toggle()
@@ -69,6 +78,8 @@ function Inventory:toggle()
 		self:hide()
 	else
 		self.Show = true
+		triggerServerEvent("refreshInventory",localPlayer)
+
 		self:show()
 	end
 end
@@ -78,19 +89,15 @@ function Inventory:getRealItemName(name)
 	return self:refreshStringManuel(nstring)
 end
 
-function Inventory:Event_loadItemDataFromServer(itemdata)
-	self.m_ItemData = itemdata
-end
-
 function Inventory:getPlaceMouseOver()
 	local mx,my =  getCursorPosition()
-	for i=0,self.m_slots-1,1 do
-		if(self.m_btn_inventar[self.m_aktuel][i]) then
-			local x,y = guiGetPosition(self.m_btn_inventar[self.m_aktuel][i],true)
-			local bx,by = guiGetSize(self.m_btn_inventar[self.m_aktuel][i],true)
+	for i=0,self.m_slotsAktuell-1,1 do
+		if(self.m_btn_inventar[self.m_TascheAktuell][i]) then
+			local x,y = guiGetPosition(self.m_btn_inventar[self.m_TascheAktuell][i],true)
+			local bx,by = guiGetSize(self.m_btn_inventar[self.m_TascheAktuell][i],true)
 			bx,by = bx +x , by +y
 			if(mx > x and mx < bx and my > y and my < by) then
-				return self.m_btn_inventar[self.m_aktuel][i]
+				return self.m_btn_inventar[self.m_TascheAktuell][i]
 			end
 		end
 	end
@@ -99,8 +106,8 @@ end
 
 function Inventory:onItemMouseOver()
 	local src = false
-	for i=0,self.m_slots-1,1 do
-		if(source == self.m_btn_inventar[self.m_aktuel][i]) then
+	for i=0,self.m_slotsAktuell-1,1 do
+		if(source == self.m_btn_inventar[self.m_TascheAktuell][i]) then
 			src = true
 		end
 	end
@@ -108,10 +115,10 @@ function Inventory:onItemMouseOver()
 		return 0
 	end
 
-	if(showInfoBlip == true) then
+	if(self.m_showInfoBlip == true) then
 		return false
 	end
-	if(not lockItemUseState[self.m_aktuel] or not lockItemUseState[self.m_aktuel][tonumber(guiGetText(source))]) then
+	if(not lockItemUseState[self.m_TascheAktuell] or not lockItemUseState[self.m_TascheAktuell][tonumber(guiGetText(source))]) then
 		self:setItemRGB(tonumber(guiGetText(source)),255,255,0)
 	end
 
@@ -122,22 +129,22 @@ end
 
 function Inventory:onItemMouseLeave()
 	local src = false
-	for i=0,self.m_slots-1,1 do
-		if(source == self.m_btn_inventar[self.m_aktuel][i]) then
+	for i=0,self.m_slotsAktuell-1,1 do
+		if(source == self.m_btn_inventar[self.m_TascheAktuell][i]) then
 			src = true
 		end
 	end
 	if(src ~= true ) then
 		return false
 	end
-	if(( ( lockItemUseState[self.m_aktuel] and lockItemUseState[self.m_aktuel][tonumber(guiGetText(source))] ) )) then
+	if(( ( lockItemUseState[self.m_TascheAktuell] and lockItemUseState[self.m_TascheAktuell][tonumber(guiGetText(source))] ) )) then
 
 	else
 		self:setItemRGB(tonumber(guiGetText(source)), 110,110,110 )
 	end
 
-	if(showInfoBlip) then
-		showInfoBlip = false
+	if(self.m_showInfoBlip) then
+		self.m_showInfoBlip = false
 		InventarBlipAlpha = 0
 		removeEventHandler("onClientMouseMove",root,self.moveInfoWindow)
 	end
@@ -152,21 +159,21 @@ end
 
 function Inventory:MoveGUI(mx,my)
 	self.m_X,self.m_Y = mx - self.m_mouseDistX, my - self.m_mouseDistY
-	self.m_slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_aktuel.."Platz"])
+	self.m_slotsAktuell = self.m_Slots[self.m_TascheAktuell]
 	local line,oline,platz
-	for i=0,self.m_slots-1,1 do
+	for i=0,self.m_slotsAktuell-1,1 do
 		line = math.floor(i/7)
 		if(line ~= oline) then
 			platz = 0
 		end
 		local id
-		if(	getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") ) then
-			id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[i.."_id"]
+		if self.m_Tasche[self.m_TascheAktuell] then
+			id = self.m_Tasche[self.m_TascheAktuell][i]
 			if(id) then
 				self.m_item[id]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 			end
 		end
-		guiSetPosition ( self.m_btn_inventar[self.m_aktuel][i], self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line, false )
+		guiSetPosition ( self.m_btn_inventar[self.m_TascheAktuell][i], self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line, false )
 		self.m_sitem[i]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 		oline = line
 		platz = platz + 1
@@ -197,21 +204,21 @@ end
 function Inventory:onResetClick(button)
 	if(button == "left") then
 		self.m_X,self.m_Y = screenWidth/2 - self.m_BX/2,screenHeight/2 - self.m_BY/2
-		self.m_slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_aktuel.."Platz"])
+		self.m_slotsAktuell = self.m_Slots[self.m_TascheAktuell]
 		local line,oline,platz
-		for i=0,self.m_slots-1,1 do
+		for i=0,self.m_slotsAktuell-1,1 do
 			line = math.floor(i/7)
 			if(line ~= oline) then
 				platz = 0
 			end
 			local id
-			if(	getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") ) then
-				id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[i.."_id"]
+			if(	self.m_Tasche[self.m_TascheAktuell] ) then
+				id = self.m_Tasche[self.m_TascheAktuell][i]
 				if(id) then
 					self.m_item[id]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 				end
 			end
-			guiSetPosition ( self.m_btn_inventar[self.m_aktuel][i], self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line, false )
+			guiSetPosition ( self.m_btn_inventar[self.m_TascheAktuell][i], self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line, false )
 			self.m_sitem[i]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 			oline = line
 			platz = platz + 1
@@ -264,45 +271,37 @@ function Inventory:renderInventar()
 		local line
 		local oline
 		local platz
-		for i=0,self.m_slots-1,1 do
+		for i=0,self.m_slotsAktuell-1,1 do
 			line = math.floor(i/7)
 			if(line ~= oline) then
 				platz = 0
 			end
-			if(not self.m_itemPlatzR[self.m_aktuel][i]) then
-				if(not lockItemUseState[self.m_aktuel] or not lockItemUseState[self.m_aktuel][i]) then
+			if(not self.m_itemPlatzR[self.m_TascheAktuell][i]) then
+				if(not lockItemUseState[self.m_TascheAktuell] or not lockItemUseState[self.m_TascheAktuell][i]) then
 					self:setItemRGB(i,110,110,110)
 				end
 			end
-			dxDrawRectangle(self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line,40,40,tocolor(self.m_itemPlatzR[self.m_aktuel][i],self.m_itemPlatzG[self.m_aktuel][i],self.m_itemPlatzB[self.m_aktuel][i],200),false)
-			local item_table_aktuell = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")
-			if item_table_aktuell then
-				local id = item_table_aktuell[tostring(i).."_id"]
-
-				if(id) then
-					local rx,gx,bx = self.m_itemPlatzR[self.m_aktuel][i] - 10,self.m_itemPlatzG[self.m_aktuel][i]- 10,self.m_itemPlatzB[self.m_aktuel][i]- 10
-					local a = 255
-					if (rx == 100) then
-						rx,gx,bx = 255,255,255
-						a = 180
-					end
-					local item_table = getElementData(localPlayer,"Item_c")
-					local itemname = item_table[id]
-					if itemname then
-						local icon = self.m_ItemData[itemname]["Icon"]
-
-						if item_table then
-							dxDrawImage(self.m_item[id]["x"],self.m_item[id]["y"],40,40,self.m_ImagePath.."items/"..icon,0.0,0.0,0.0,tocolor(rx,gx,bx,255),self.m_itemFront[id])
-							dxDrawText(tostring(getElementData(localPlayer,"Item_c")[tostring(id).."_Menge"]),self.m_item[id]["x"] + 40 - dxGetTextWidth (tostring(getElementData(localPlayer,"Item_c")[tostring(id).."_Menge"] , 0.85, "defauld-bold")),self.m_item[id]["y"] + 27.25,40,40,tocolor(rx,gx,bx,a),0.85,"default-bold","left","top",false,false,self.m_itemFront[id])
-						end
-					end
+			dxDrawRectangle(self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line,40,40,tocolor(self.m_itemPlatzR[self.m_TascheAktuell][i],self.m_itemPlatzG[self.m_TascheAktuell][i],self.m_itemPlatzB[self.m_TascheAktuell][i],200),false)
+			local id = self.m_Tasche[self.m_TascheAktuell][i]
+			if(id) then
+				local rx,gx,bx = self.m_itemPlatzR[self.m_TascheAktuell][i] - 10,self.m_itemPlatzG[self.m_TascheAktuell][i]- 10,self.m_itemPlatzB[self.m_TascheAktuell][i]- 10
+				local a = 255
+				if (rx == 100) then
+					rx,gx,bx = 255,255,255
+					a = 180
+				end
+				local itemName = self.m_Items[id]["Objekt"]
+				if itemName then
+					local icon = self.m_ItemData[itemName]["Icon"]
+					dxDrawImage(self.m_item[id]["x"],self.m_item[id]["y"],40,40,self.m_ImagePath.."items/"..icon,0.0,0.0,0.0,tocolor(rx,gx,bx,255),self.m_itemFront[id])
+					dxDrawText(tostring(self.m_Items[id]["Menge"]),self.m_item[id]["x"] + 40 - dxGetTextWidth (tostring(self.m_Items[id]["Menge"] , 0.85, "defauld-bold")),self.m_item[id]["y"] + 27.25,40,40,tocolor(rx,gx,bx,a),0.85,"default-bold","left","top",false,false,self.m_itemFront[id])
 				end
 			end
 			oline = line
 			platz = platz + 1
 		end
 
-		if(showInfoBlip == true) then
+		if(self.m_showInfoBlip == true) then
 
 			self:showInfo(IBUeber,IBtext,IBx,IBy,Itx,Ity,Iobx,Ioby,Ibx,Iby)
 		end
@@ -317,14 +316,14 @@ function Inventory:onClientDragAndDropMove()
 	--if(mx < self.m_BY or mx >screenWidth or my < self.m_Y or my > screenHeight) then
 		local button = self.m_startMoveButton["object"]
 		local platz
-		if(getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") ~= false) then
-			platz = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[guiGetText(button).."_id"]
+		if(self.m_Tasche[self.m_TascheAktuell] ~= false) then
+			platz = self.m_Tasche[self.m_TascheAktuell][tonumber(guiGetText(button))]
 		else
 			platz = nil
 		end
 
-		if(showInfoBlip) then
-			showInfoBlip = false
+		if(self.m_showInfoBlip) then
+			self.m_showInfoBlip = false
 			InventarBlipAlpha = 0
 			removeEventHandler("onClientMouseMove",root,self.m_moveInfoWindow)
 		end
@@ -334,12 +333,12 @@ function Inventory:onClientDragAndDropMove()
 		end
 		if(platz) then
 
-			local place = guiGetText(button)
+			local place = tonumber(guiGetText(button))
 
 			local fullx,fully = guiGetScreenSize()
 			mx,my = mx*fullx,my*fully
-			if(	getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") ) then
-				id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[place.."_id"]
+			if(	self.m_Tasche[self.m_TascheAktuell] ) then
+				id = self.m_Tasche[self.m_TascheAktuell][place]
 				if(id) then
 					self.m_item[tonumber(id)] = { ["x"]= mx,["y"]=my }
 				end
@@ -365,24 +364,23 @@ end
 function Inventory:onClickAndDropDown(button)
 	local id
 
-	if(getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")) then
-		id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[guiGetText(source).."_id"]
+	if(self.m_Tasche[self.m_TascheAktuell]) then
+		id = self.m_Tasche[self.m_TascheAktuell][tonumber(guiGetText(source))]
 	end
 
 	if button == "left" then
 		if(id) then
-			local itemname = getElementData(localPlayer,"Item_c")
-			local item = itemname[id]
+			local itemname = self.m_Items[id]["Object"]
+			local item = self.m_Items[id]
 			if item then
-				triggerEvent("onPlayerItemUse",localPlayer,getElementData(localPlayer,"Item_c")[id],id,self.m_aktuel,tonumber(guiGetText(source)))
+				triggerEvent("onPlayerItemUse",localPlayer,id,self.m_TascheAktuell,tonumber(guiGetText(source)))
 			end
 		end
 		return false
 	else
-
 		local src
-		for i=0,self.m_slots-1,1 do
-			if(source == self.m_btn_inventar[self.m_aktuel][i]) then
+		for i=0,self.m_slotsAktuell-1,1 do
+			if(source == self.m_btn_inventar[self.m_TascheAktuell][i]) then
 				src = true
 			end
 		end
@@ -396,7 +394,6 @@ function Inventory:onClickAndDropDown(button)
 			end
 			return false
 		end
-
 
 		if(id) then
 			self.m_itemFront[id] = true
@@ -412,8 +409,8 @@ end
 function Inventory:onClickAndDropUp(button)
 
 	local src
-	for i=0,self.m_slots-1,1 do
-		if(source == self.m_btn_inventar[self.m_aktuel][i]) then
+	for i=0,self.m_slotsAktuell-1,1 do
+		if(source == self.m_btn_inventar[self.m_TascheAktuell][i]) then
 			src = true
 		end
 	end
@@ -421,7 +418,7 @@ function Inventory:onClickAndDropUp(button)
 	if self.m_startMoveButton and self.m_startMoveButton["object"] then
 		local place = false
 		local splace = tonumber(guiGetText(self.m_startMoveButton["object"]))
-		local item_table = getElementData(localPlayer,"Item_c")
+		local item_table = self.m_Items
 
 		if(src ~= true) then
 			if(source ~= self.m_btn_Move and (source == self.m_btn_Items or source == self.m_btn_Objekte or source == self.m_btn_Essen or source == self.m_btn_Drogen or source == self.m_btn_Close or source == self.m_btn_Reset) ) then
@@ -439,19 +436,19 @@ function Inventory:onClickAndDropUp(button)
 
 		if self:getPlaceMouseOver() then
 			place = tonumber(guiGetText(self:getPlaceMouseOver()))
-			local nid = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[place.."_id"]
+			local nid = self.m_Tasche[self.m_TascheAktuell][place]
 			if(nid) then
 				local oPlace = guiGetText(self.m_startMoveButton["object"])
 
 
-				local id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[splace.."_id"]
+				local id = self.m_Tasche[self.m_TascheAktuell][splace]
 
-				local itemname_moved = item_table[id]
-				local itemname_old = item_table[nid]
+				local itemname_moved = item_table[id]["Object"]
+				local itemname_old = item_table[nid]["Object"]
 				if id ~= nid then
 					if itemname_moved == itemname_old then
-						local itemmenge_moved = tonumber(getElementData(localPlayer,"Item_c")[tostring(id).."_Menge"])
-						local itemmenge_old = tonumber(getElementData(localPlayer,"Item_c")[tostring(nid).."_Menge"])
+						local itemmenge_moved = tonumber(self.m_Items[id]["Menge"])
+						local itemmenge_old = tonumber(self.m_Items[nid]["Menge"])
 						local gesamt = itemmenge_moved+itemmenge_old
 						if self.m_ItemData[itemname_moved]["Stack_max"] >= gesamt then
 							triggerServerEvent("c_stackItems",localPlayer,id,nid,place)
@@ -466,44 +463,44 @@ function Inventory:onClickAndDropUp(button)
 				self:inventarSetItemToPlace(id,place)
 				self:inventarSetItemToPlace(nid,splace)
 
-				if(lockItemUseState[self.m_aktuel] and lockItemUseState[self.m_aktuel][splace]) then
-					self:setItemsRGBDefault(self.m_aktuel)
+				if(lockItemUseState[self.m_TascheAktuell] and lockItemUseState[self.m_TascheAktuell][splace]) then
+					self:setItemsRGBDefault(self.m_TascheAktuell)
 					self:setItemRGB(splace,50,200,255)
-					lockItemUseState[self.m_aktuel] = {[splace]=true}
+					lockItemUseState[self.m_TascheAktuell] = {[splace]=true}
 				end
-				triggerServerEvent("changePlaces",localPlayer,self.m_aktuel,oPlace,place)
+				triggerServerEvent("changePlaces",localPlayer,self.m_TascheAktuell,oPlace,place)
 			else
-				local id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[splace.."_id"]
-				if(lockItemUseState[self.m_aktuel] and lockItemUseState[self.m_aktuel][splace]) then
-					self:setItemsRGBDefault(self.m_aktuel)
+				local id = self.m_Tasche[self.m_TascheAktuell][splace]
+				if(lockItemUseState[self.m_TascheAktuell] and lockItemUseState[self.m_TascheAktuell][splace]) then
+					self:setItemsRGBDefault(self.m_TascheAktuell)
 					self:setItemRGB(tonumber(place),50,200,255)
-					lockItemUseState[self.m_aktuel] = {[tonumber(place)]=true}
+					lockItemUseState[self.m_TascheAktuell] = {[tonumber(place)]=true}
 
 				end
 
 				self:inventarSetItemToPlace(id,place)
-				triggerServerEvent("c_setItemPlace",localPlayer,self.m_aktuel,splace,tonumber(place))
+				triggerServerEvent("c_setItemPlace",localPlayer,self.m_TascheAktuell,splace,tonumber(place))
 			end
 		else
 			local mx,my = getCursorPosition ( )
 			mx,my = mx *screenWidth,my*screenHeight
 
 			if(mx >= self.m_X and mx <= self.m_X+self.m_BX and my >= self.m_Y-50 and my <= self.m_Y+self.m_BY) then
-				local id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[splace.."_id"]
+				local id = self.m_Tasche[self.m_TascheAktuell][splace]
 				self:inventarSetItemToPlace(id,splace)
-				if(lockItemUseState[self.m_aktuel] and lockItemUseState[self.m_aktuel][splace]) then
-					self:setItemsRGBDefault(self.m_aktuel)
+				if(lockItemUseState[self.m_TascheAktuell] and lockItemUseState[self.m_TascheAktuell][splace]) then
+					self:setItemsRGBDefault(self.m_TascheAktuell)
 
 				--	outputChatBox("To Green")
 					--setItemRGB(splace,0,255,0,true)
-					--lockItemUseState[self.m_aktuel] = {[splace] = true}
+					--lockItemUseState[self.m_TascheAktuell] = {[splace] = true}
 				end
 			else
-				local id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[splace.."_id"]
-				local itemname = getElementData(localPlayer,"Item_c")
+				local id = self.m_Tasche[self.m_TascheAktuell][splace]
+				local itemname = self.m_Items["Object"]
 				if tonumber(self.m_ItemData[(itemname[id])]["Wegwerf"]) == 1 then
-					--triggerServerEvent("layItemInWorld_c",localPlayer,localPlayer,self.m_aktuel,id)
-					triggerServerEvent("wegwerfItem",localPlayer,itemname[id],self.m_aktuel,id,splace)
+					--triggerServerEvent("layItemInWorld_c",localPlayer,localPlayer,self.m_TascheAktuell,id)
+					triggerServerEvent("wegwerfItem",localPlayer,itemname[id],self.m_TascheAktuell,id,splace)
 				else
 					self:inventarSetItemToPlace(id,splace)
 					outputChatBox("Dieses Item kann nicht weggeworfen werden!",255,0,0)
@@ -517,8 +514,8 @@ function Inventory:onClickAndDropUp(button)
 
 
 	local id
-	if(getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")) then
-		id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[guiGetText(source).."_id"]
+	if(self.m_Tasche[self.m_TascheAktuell]) then
+		id = self.m_Tasche[self.m_TascheAktuell][guiGetText(source)]
 	end
 	if(id) then
 		self.m_itemFront[id] = false
@@ -533,34 +530,34 @@ function Inventory:show()
 	self.pClose,self.pMove,self.pReset = self.m_ImagePath.."closeinv.png",self.m_ImagePath.."moveinv.png",self.m_ImagePath.."reset.png"
 	self.m_R,self.m_G,self.m_B = { ["Items"]=50,["Essen"]=50,["Objekte"]=50,["Drogen"]=50, ["Rahmen"]=255} , { ["Items"]=200,["Essen"]=200,["Objekte"]=200,["Drogen"]=200 ,["Rahmen"]=255} , { ["Items"]=255,["Essen"]=255,["Objekte"]=255,["Drogen"]=255,["Rahmen"]=255 }
 
-	self.m_slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_aktuel.."Platz"])
-	lines = math.ceil(self.m_slots/7)
+	self.m_slotsAktuell = self.m_Slots[self.m_TascheAktuell]
+	lines = math.ceil(self.m_slotsAktuell/7)
 	self.m_BX,self.m_BY = 330, 20 - 4 + 45*lines --543,266
 	if(not self.m_X and not self.m_Y) then
 		self.m_X,self.m_Y = screenWidth/2 - self.m_BX/2,screenHeight/2 - self.m_BY/2
 	end
-	self.m_R[self.m_aktuel],self.m_G[self.m_aktuel],self.m_B[self.m_aktuel] = 100,130,140
-	self.m_R["o"..self.m_aktuel],self.m_G["o"..self.m_aktuel],self.m_B["o"..self.m_aktuel] = 0,255,0
+	self.m_R[self.m_TascheAktuell],self.m_G[self.m_TascheAktuell],self.m_B[self.m_TascheAktuell] = 100,130,140
+	self.m_R["o"..self.m_TascheAktuell],self.m_G["o"..self.m_TascheAktuell],self.m_B["o"..self.m_TascheAktuell] = 0,255,0
 	local line
 	local oline
 	local platz
 
-	for i=0,self.m_slots-1,1 do
+	for i=0,self.m_slotsAktuell-1,1 do
 		line = math.floor(i/7)
 		if(line ~= oline) then
 			platz = 0
 		end
-		self.m_btn_inventar[self.m_aktuel][i] = guiCreateButton (self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line,40,40, i.."", false)
-		guiSetAlpha(self.m_btn_inventar[self.m_aktuel][i],0)
+		self.m_btn_inventar[self.m_TascheAktuell][i] = guiCreateButton (self.m_X+10 + 40 * platz + 5 * platz,self.m_Y+10 + 40 * line + 5 * line,40,40, i.."", false)
+		guiSetAlpha(self.m_btn_inventar[self.m_TascheAktuell][i],0)
 		local id
-		if(	getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") ) then
-			id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[i.."_id"]
+		if(	self.m_Tasche[self.m_TascheAktuell] ) then
+			id = self.m_Tasche[self.m_TascheAktuell][i]
 			if(id) then
 				self.m_item[id]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz ,["y"]=self.m_Y+10 + 40 * line + 5 * line }
 				self.m_itemFront[id] = false
 			end
 		end
-		if(not lockItemUseState[self.m_aktuel] or not lockItemUseState[self.m_aktuel][tonumber(i)]) then
+		if(not lockItemUseState[self.m_TascheAktuell] or not lockItemUseState[self.m_TascheAktuell][tonumber(i)]) then
 			self:setItemRGB(i,110,110,110)
 		end
 		self.m_sitem[i]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
@@ -631,19 +628,19 @@ function Inventory:hide()
 		killTimer(InfoBlipTimer)
 	end
 	if(self.m_callCheck == true) then
-		local slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_oldaktuel.."Platz"])
+		local slots = self.m_Slots[self.m_TascheOld]
 		for i=0,slots-1,1 do
-			destroyElement(self.m_btn_inventar[self.m_oldaktuel][i])
+			destroyElement(self.m_btn_inventar[self.m_TascheOld][i])
 		end
 		self.m_callCheck = false
 	else
-		local slots = tonumber(getElementData(localPlayer,"Inventar_c")[self.m_aktuel.."Platz"])
+		local slots = self.m_Slots[self.m_TascheAktuell]
 		for i=0,slots-1,1 do
-			destroyElement(self.m_btn_inventar[self.m_aktuel][i])
+			destroyElement(self.m_btn_inventar[self.m_TascheAktuell][i])
 		end
 	end
 
-	showInfoBlip = false
+	self.m_showInfoBlip = false
 	InventarBlipAlpha = 0
 
 end
@@ -654,19 +651,19 @@ function Inventory:onInvClick(button)
 		if(source ~= self.m_btn_Items and source ~= self.m_btn_Objekte and source ~= self.m_btn_Essen and source ~= self.m_btn_Drogen) then
 			return 0
 		end
-		self.m_oldaktuel = self.m_aktuel
-		if( source == self.m_btn_Items and self.m_aktuel ~= "Items") then
-			self.m_aktuel = "Items"
-		elseif( source == self.m_btn_Objekte and self.m_aktuel ~= "Objekte") then
-			self.m_aktuel = "Objekte"
-		elseif( source == self.m_btn_Essen and self.m_aktuel ~= "Essen") then
-			self.m_aktuel = "Essen"
-		elseif( source == self.m_btn_Drogen and self.m_aktuel ~= "Drogen") then
-			self.m_aktuel = "Drogen"
+		self.m_TascheOld = self.m_TascheAktuell
+		if( source == self.m_btn_Items and self.m_TascheAktuell ~= "Items") then
+			self.m_TascheAktuell = "Items"
+		elseif( source == self.m_btn_Objekte and self.m_TascheAktuell ~= "Objekte") then
+			self.m_TascheAktuell = "Objekte"
+		elseif( source == self.m_btn_Essen and self.m_TascheAktuell ~= "Essen") then
+			self.m_TascheAktuell = "Essen"
+		elseif( source == self.m_btn_Drogen and self.m_TascheAktuell ~= "Drogen") then
+			self.m_TascheAktuell = "Drogen"
 		else
 			return 0
 		end
-		self.m_R[self.m_oldaktuel],self.m_G[self.m_oldaktuel],self.m_B[self.m_oldaktuel] = 110,110,110
+		self.m_R[self.m_TascheOld],self.m_G[self.m_TascheOld],self.m_B[self.m_TascheOld] = 110,110,110
 		self.m_callCheck = true
 		self:hide()
 		self:show()
@@ -679,25 +676,25 @@ function Inventory:onButtonInvEnter()
 	end
 
 	if( source == self.m_btn_Items) then
-		if(self.m_aktuel == "Items") then
+		if(self.m_TascheAktuell == "Items") then
 			return 0
 		end
 		self.m_R["oItems"],self.m_G["oItems"],self.m_B["oItems"] = self.m_R["Items"],self.m_G["Items"],self.m_B["Items"]
 		self.m_R["Items"],self.m_G["Items"],self.m_B["Items"] = 100,130,140
 	elseif( source == self.m_btn_Objekte) then
-		if(self.m_aktuel == "Objekte") then
+		if(self.m_TascheAktuell == "Objekte") then
 			return 0
 		end
 		self.m_R["oObjekte"],self.m_G["oObjekte"],self.m_B["oObjekte"] = self.m_R["Objekte"],self.m_G["Objekte"],self.m_B["Objekte"]
 		self.m_R["Objekte"],self.m_G["Objekte"],self.m_B["Objekte"] = 100,130,140
 	elseif( source == self.m_btn_Essen) then
-		if(self.m_aktuel == "Essen") then
+		if(self.m_TascheAktuell == "Essen") then
 			return 0
 		end
 		self.m_R["oEssen"],self.m_G["oEssen"],self.m_B["oEssen"] = self.m_R["Essen"],self.m_G["Essen"],self.m_B["Essen"]
 		self.m_R["Essen"],self.m_G["Essen"],self.m_B["Essen"] = 100,130,140
 	elseif( source == self.m_btn_Drogen) then
-		if(self.m_aktuel == "Drogen") then
+		if(self.m_TascheAktuell == "Drogen") then
 			return 0
 		end
 		self.m_R["oDrogen"],self.m_G["oDrogen"],self.m_B["oDrogen"] = self.m_R["Drogen"],self.m_G["Drogen"],self.m_B["Drogen"]
@@ -716,22 +713,22 @@ function Inventory:onButtonInvLeave()
 		return 1
 	end
 	if( source == self.m_btn_Items) then
-		if(self.m_aktuel == "Items") then
+		if(self.m_TascheAktuell == "Items") then
 			return 0
 		end
 		self.m_R["Items"],self.m_G["Items"],self.m_B["Items"] = self.m_R["oItems"],self.m_G["oItems"],self.m_B["oItems"]
 	elseif( source == self.m_btn_Objekte) then
-		if(self.m_aktuel == "Objekte") then
+		if(self.m_TascheAktuell == "Objekte") then
 			return 0
 		end
 		self.m_R["Objekte"],self.m_G["Objekte"],self.m_B["Objekte"] = self.m_R["oObjekte"],self.m_G["oObjekte"],self.m_B["oObjekte"]
 	elseif( source == self.m_btn_Essen) then
-		if(self.m_aktuel == "Essen") then
+		if(self.m_TascheAktuell == "Essen") then
 			return 0
 		end
 		self.m_R["Essen"],self.m_G["Essen"],self.m_B["Essen"] = self.m_R["oEssen"],self.m_G["oEssen"],self.m_B["oEssen"]
 	elseif( source == self.m_btn_Drogen) then
-		if(self.m_aktuel == "Drogen") then
+		if(self.m_TascheAktuell == "Drogen") then
 			return 0
 		end
 		self.m_R["Drogen"],self.m_G["Drogen"],self.m_B["Drogen"] = self.m_R["oDrogen"],self.m_G["oDrogen"],self.m_B["oDrogen"]
@@ -753,9 +750,9 @@ end
 
 
 function Inventory:Event_setInventarKoordinaten(platz,tasche)
-	if(tasche == self.m_aktuel) then
+	if(tasche == self.m_TascheAktuell) then
 		if self.m_X then
-			local id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[platz.."_id"]
+			local id = self.m_Tasche[self.m_TascheAktuell][platz]
 			local line = math.floor(platz/7)
 			if(platz ~= 0) then
 				platz = platz/(platz/7) - 1
@@ -768,15 +765,15 @@ end
 
 function Inventory:setItemRGB(platz,r,g,b)
 	if(r) then
-		self.m_itemPlatzR[self.m_aktuel][platz] = r
+		self.m_itemPlatzR[self.m_TascheAktuell][platz] = r
 	end
 
 	if(g) then
-		self.m_itemPlatzG[self.m_aktuel][platz] = g
+		self.m_itemPlatzG[self.m_TascheAktuell][platz] = g
 	end
 
 	if(b) then
-		self.m_itemPlatzB[self.m_aktuel][platz] = b
+		self.m_itemPlatzB[self.m_TascheAktuell][platz] = b
 	end
 end
 
@@ -843,8 +840,9 @@ function Inventory:showInfo2()
 end
 InventarBlipAlpha = 0
 
-function Inventory:Event_onItemClick(itemname,itemid,tasche,platz)
+function Inventory:Event_onItemClick(itemid,tasche,platz)
 	if(not lockItemUseState[tasche] or not lockItemUseState[tasche][platz]) then
+		local itemname = self.m_Items[itemid]["Objekt"]
 		local verbraucht = self.m_ItemData[itemname]["Verbraucht"]
 		local itemDelete = false
 		if verbraucht == 1 then itemDelete = true end
@@ -855,7 +853,7 @@ end
 
 
 function Inventory:setItemsRGBDefault(tasche,setFalse)
-	local max = getElementData(localPlayer,"Inventar_c")[tasche.."Platz"]
+	local max = self.m_Slots[tasche]
 	for i=0,max,1 do
 		self:setItemRGB(i,110,110,110)
 	end
@@ -872,24 +870,24 @@ function Inventory:moveInfoWindow(x,y)
 end
 
 function Inventory:showInfoBlipFunc(button)
-	if(showInfoBlip == true) then
+	if(self.m_showInfoBlip == true) then
 		return false
 	end
 
-	if(getElementData(localPlayer,"Item_"..self.m_aktuel.."_c") == false) then
-		showInfoBlip = "close"
+	if(self.m_Tasche[self.m_TascheAktuell] == false) then
+		self.m_showInfoBlip = "close"
 		return false
 	end
-	local id = getElementData(localPlayer,"Item_"..self.m_aktuel.."_c")[guiGetText(button).."_id"]
+	local id = self.m_Tasche[self.m_TascheAktuell][tonumber(guiGetText(button))]
 	if(id == nil) then
-		showInfoBlip = "close"
+		self.m_showInfoBlip = "close"
 		return 0
 	end
 
-	local itemtable = getElementData(localPlayer,"Item_c")
+	local itemtable = self.m_Items
 	if itemtable then
 		if id then
-			local name = itemtable[tonumber(id)]
+			local name = itemtable[tonumber(id)]["Objekt"]
 			if name then
 				local text = self.m_ItemData[name]["Info"]
 				aname, atext = self:getRealItemName(name),text
@@ -899,7 +897,7 @@ function Inventory:showInfoBlipFunc(button)
 				local mx,my = getCursorPosition ()
 				self:setInventarBlipData(aname,text,mx * fx + 5,my *fy + 8)
 
-				showInfoBlip = true
+				self.m_showInfoBlip = true
 
 				addEventHandler("onClientMouseMove",root,self.m_moveInfoWindow)
 			end

@@ -76,6 +76,7 @@
 
 	<!-- Inventory System -->
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
+	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>

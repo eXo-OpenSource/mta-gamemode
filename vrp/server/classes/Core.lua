@@ -54,7 +54,7 @@ function Core:constructor()
 	FactionManager:new()
 	CompanyManager:new()
 
-	Inventory:new()
+	InventoryManager:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
