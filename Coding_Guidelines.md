@@ -1,7 +1,7 @@
 In diesem Dokument wird versucht, einen einheitlichen Scriptstil zu beschreiben.
 Dieses Dokument sollte derzeit als Vorschlag gesehen werden, in dem ich versuche, den durchschnittlichen Scriptstil der MTA-Community zu beschrieben.
 
-### Leerzeichen zwischen Funktionsklammern
+### 1. Leerzeichen zwischen Funktionsklammern
 Zwischen, sowie vor und nach Funktionklammern werden __keine__ Leerzeichen gesetzt.
 
 #### Beispiel
@@ -13,7 +13,7 @@ end
 eineFunktion(1, 2, 3)
 ```
 
-### Klammern und Leerzeichen bei if-, for-, while-, repeat-until-Blöcken
+### 2. Klammern und Leerzeichen bei if-, for-, while-, repeat-until-Blöcken
 Klammern werden, wenn sie nicht notwendig sind um den Vorrang zu verändern, nicht geschrieben. Leerzeichen werden außerdem, wie bei Funktionen weggelassen.
 
 #### Beispiel
@@ -33,7 +33,7 @@ if (myFirstVar == 1 or mySecondVar == 1337) and myThirdVar == 42 then
 end
 ```
 
-### Leerzeichen nach Kommata
+### 3. Leerzeichen nach Kommata
 Nach Kommata werden grundsätzlich Leerzeichen gesetzt.
 
 #### Beispiel
@@ -45,10 +45,10 @@ myFunc(1, 2, 3, 4, 5, 6)
 local myTable = {1, 2, 3, 4, 5, 6}
 ```
 
-### Tabs vs Leerzeichen
+### 4. Tabs vs Leerzeichen
 Zur Einrückungen werden __Tabs__ verwendet.
 
-### Ungarische Notation
+### 5. Ungarische Notation
 Da Lua dynamisch typisiert ist, macht eine vollständige Umsetzung der ungarischen Notation keinen Sinn.
 Eine eingeschränkte Variante mag jedoch sinnvoll sein für:
 * Membervariablen (Präfix: `m_`)
@@ -73,13 +73,13 @@ function MyClass:thisIsAMethod()
 end
 ```
 
-### Semikola
+### 6. Semikola
 Semikola werden an Zeilenenden weggelassen.
 
-### Anführungszeichen
+### 7. Anführungszeichen
 Es werden Double Quotes (`" "`) verwendet.
 
-### Anonyme Funktionen
+### 8. Anonyme Funktionen
 Anonyme Funktionen werden mit einem Zeilenumbruch eingeleitet.
 
 ```lua
@@ -90,7 +90,7 @@ addEventHandler("onClientRender", root,
 )
 ```
 
-### Header
+### 9. Header
 Folgender Header sollte einheitlich verwendet werden. 
 Autor und Datum sind irrelevant, da man dies sowieso übersichtlich in Github sieht.
 
@@ -103,3 +103,6 @@ Autor und Datum sind irrelevant, da man dies sowieso übersichtlich in Github si
 -- *
 -- ****************************************************************************
 ```
+
+### 10. Benennung von Variablen und Kommentaren
+Alle **Variablen** und Kommentare sind auf Englisch in der Konventation unter Punkt 5 zu benennen.
