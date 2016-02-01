@@ -56,18 +56,22 @@ end
 
 function Inventory:saveItemMenge(id,menge)
 	sql:queryExec("UPDATE ??_inventory_slots SET Menge= ?? WHERE id = ??",sql:getPrefix(),menge,id )
+	self:syncClient()
 end
 
 function Inventory:saveItemPlatz(id,platz)
 	sql:queryExec("UPDATE ??_inventory_slots SET Platz= ?? WHERE id = ??",sql:getPrefix(),platz,id )
+	self:syncClient()
 end
 
 function Inventory:deleteItem(id)
 	sql:queryExec("DELETE FROM ??_inventory_slots WHERE `id`= ??",sql:getPrefix(),id )
+	self:syncClient()
 end
 
 function Inventory:insertItem(anzahl, item, platz, tasche)
 	sql:queryExec("INSERT INTO ??_inventory_slots (Name,Menge,Objekt,Platz,Tasche) VALUES (??, ??, ??, ??, ??)",sql:getPrefix(),self.m_Owner:getName(), anzahl, item, platz, tasche ) -- ToDo add Prefix
+	self:syncClient()
 	return sql:lastInsertId()
 end
 
@@ -78,7 +82,7 @@ function Inventory:changePlaces(tasche,oPlace,nPlace)
 end
 
 function Inventory:isPlatzEmpty(tasche,platz)
-	local id = self.m_Tasche[tasche][id]
+	local id = self.m_Tasche[tasche][platz]
 	local item_table = self.m_Items
 	if item_table[id] then
 		local itemname = item_table[id]
@@ -139,26 +143,26 @@ function Inventory:getCountOfPlaces(tasche,item)
 end
 
 function Inventory:getItemID(tasche,platz)
-	return self.m_Tasche[tasche][id]
+	return self.m_Tasche[tasche][platz]
 
 end
 
-function Inventory:setItemPlace(tasche,oplatz,platz)
-	local id = self:getItemID(tasche,oplatz)
-	local nid= self:getItemID(tasche,platz)
-	if(not id or (nid and self.m_Items[nid]) ~= self.m_Items[id]) then
+function Inventory:setItemPlace(tasche,placeOld,placeNew)
+	local id = self:getItemID(tasche,placeOld)
+	local nid= self:getItemID(tasche,placeNew)
+	if not id or not self.m_Items[id] and self.m_Items[nid] ~= self.m_Items[id] then
 		return false
 	end
-	self.m_Tasche[tasche][oid] = nil
-	self.m_Items[id]["Platz"] = platz
-	self.m_Tasche[tasche][id] = id
-	Inventory:saveItemPlatz(id,self.m_Items[id]["Platz"])
+	self.m_Tasche[tasche][placeOld] = nil
+	self.m_Items[id]["Platz"] = placeNew
+	self.m_Tasche[tasche][placeNew] = id
+	self:saveItemPlatz(id,self.m_Items[id]["Platz"])
 	return true
 end
 
 function Inventory:removeItemFromPlatz(tasche,platz,anzahl)
 
-		local id = self.m_Tasche[tasche][id]
+		local id = self.m_Tasche[tasche][platz]
 		if(not id) then
 			return false
 		end
@@ -181,7 +185,7 @@ function Inventory:removeItemFromPlatz(tasche,platz,anzahl)
 
 			self:deleteItem(id)
 			self.m_Items[id] = nil
-			self.m_Tasche[tasche][id] = nil
+			self.m_Tasche[tasche][platz] = nil
 		end
 
 end
@@ -210,7 +214,7 @@ function Inventory:getFreePlacesForItem(item)
 
 		for i = 0, invplaetze,1 do
 			local platz = i
-			local id = self.m_Tasche[tasche][id]
+			local id = self.m_Tasche[tasche][platz]
 			local item_table = self.m_Items
 			local itemname = item_table[id]
 			anzahl = 0
@@ -247,7 +251,7 @@ function Inventory:removeItem(item,anzahl)
 		local invplaetze = self:getInventarPlaces(tasche)
 		for i = 0, invplaetze,1 do
 			local platz = i
-			local id = self.m_Tasche[tasche][id]
+			local id = self.m_Tasche[tasche][platz]
 			local item_table = self.m_Items
 			local itemname = item_table[id]
 			local invanzahl = 0
@@ -278,7 +282,7 @@ function Inventory:removeOneItem(item)
 		for i = 0, invplaetze,1 do
 			anzahl = 0
 			local platz = i
-			local id = self.m_Tasche[tasche][id]
+			local id = self.m_Tasche[tasche][platz]
 			local item_table = self.m_Items
 			local itemname = item_table[id]
 			if itemname == item then
@@ -309,7 +313,7 @@ function Inventory:getPlatzForItem(item,itemanzahl)
 		local stackmax = self.m_ItemData[item]["Stack_max"]
 		for i = 0, invplaetze,1 do
 			local platz =i
-			local id = self.m_Tasche[tasche][id]
+			local id = self.m_Tasche[tasche][platz]
 			local item_table = self.m_Items
 			local itemname = item_table[id]
 			local anzahl = 0
@@ -338,7 +342,7 @@ function Inventory:getPlayerItemAnzahl(item)
 		local anzahl = 0
 		for i = 0, invplaetze,1 do
 			local platz = i
-			local id = self.m_Tasche[tasche][id]
+			local id = self.m_Tasche[tasche][platz]
 			local item_table = self.m_Items
 			local itemname = item_table[id]
 			if itemname == item then
@@ -409,7 +413,7 @@ function Inventory:giveItem(item,anzahl)
 		end
 		if platz then
 
-			local id = self.m_Tasche[tasche][id]
+			local id = self.m_Tasche[tasche][platz]
 			if platztyp == "stack" then
 				--outputDebugString("giveItem - OldStack")
 				local itemA = self.m_Items[id]["Menge"]

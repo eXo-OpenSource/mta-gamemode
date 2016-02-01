@@ -27,7 +27,9 @@ function Inventory:constructor()
 
 	self.m_TascheAktuell = "Items"
 	self.m_TascheOld = "Items"
-
+	
+	self.m_lockItemUseState = {}
+	
 	self.m_RenderInventar = bind(self.renderInventar,self)
 	self.m_onButtonInvEnter = bind(self.onButtonInvEnter,self)
 	self.m_onButtonInvLeave = bind(self.onButtonInvLeave,self)
@@ -118,7 +120,7 @@ function Inventory:onItemMouseOver()
 	if(self.m_showInfoBlip == true) then
 		return false
 	end
-	if(not lockItemUseState[self.m_TascheAktuell] or not lockItemUseState[self.m_TascheAktuell][tonumber(guiGetText(source))]) then
+	if(not self.m_lockItemUseState[self.m_TascheAktuell] or not self.m_lockItemUseState[self.m_TascheAktuell][tonumber(guiGetText(source))]) then
 		self:setItemRGB(tonumber(guiGetText(source)),255,255,0)
 	end
 
@@ -137,7 +139,7 @@ function Inventory:onItemMouseLeave()
 	if(src ~= true ) then
 		return false
 	end
-	if(( ( lockItemUseState[self.m_TascheAktuell] and lockItemUseState[self.m_TascheAktuell][tonumber(guiGetText(source))] ) )) then
+	if(( ( self.m_lockItemUseState[self.m_TascheAktuell] and self.m_lockItemUseState[self.m_TascheAktuell][tonumber(guiGetText(source))] ) )) then
 
 	else
 		self:setItemRGB(tonumber(guiGetText(source)), 110,110,110 )
@@ -277,7 +279,7 @@ function Inventory:renderInventar()
 				platz = 0
 			end
 			if(not self.m_itemPlatzR[self.m_TascheAktuell][i]) then
-				if(not lockItemUseState[self.m_TascheAktuell] or not lockItemUseState[self.m_TascheAktuell][i]) then
+				if(not self.m_lockItemUseState[self.m_TascheAktuell] or not self.m_lockItemUseState[self.m_TascheAktuell][i]) then
 					self:setItemRGB(i,110,110,110)
 				end
 			end
@@ -313,52 +315,50 @@ function Inventory:onClientDragAndDropMove()
 	local mx,my = getCursorPosition ()
 	local x,y = self.m_startMoveButton["x"],self.m_startMoveButton["y"]
 	local fx,fy = self.m_startMoveButton["bx"] + x,self.m_startMoveButton["by"] + y
-	--if(mx < self.m_BY or mx >screenWidth or my < self.m_Y or my > screenHeight) then
-		local button = self.m_startMoveButton["object"]
-		local platz
-		if(self.m_Tasche[self.m_TascheAktuell] ~= false) then
-			platz = self.m_Tasche[self.m_TascheAktuell][tonumber(guiGetText(button))]
-		else
-			platz = nil
-		end
+	local button = self.m_startMoveButton["object"]
+	local platz
+	if(self.m_Tasche[self.m_TascheAktuell] ~= false) then
+		platz = self.m_Tasche[self.m_TascheAktuell][tonumber(guiGetText(button))]
+	else
+		platz = nil
+	end
 
-		if(self.m_showInfoBlip) then
-			self.m_showInfoBlip = false
-			InventarBlipAlpha = 0
-			removeEventHandler("onClientMouseMove",root,self.m_moveInfoWindow)
-		end
-		killTimer(InfoBlipTimer)
-		if(self:getPlaceMouseOver() ~= button) then
-			triggerEvent("onClientMouseLeave",button)
-		end
-		if(platz) then
+	if(self.m_showInfoBlip) then
+		self.m_showInfoBlip = false
+		InventarBlipAlpha = 0
+		removeEventHandler("onClientMouseMove",root,self.m_moveInfoWindow)
+	end
+	killTimer(InfoBlipTimer)
+	if(self:getPlaceMouseOver() ~= button) then
+		triggerEvent("onClientMouseLeave",button)
+	end
+	if(platz) then
 
-			local place = tonumber(guiGetText(button))
+		local place = tonumber(guiGetText(button))
 
-			local fullx,fully = guiGetScreenSize()
-			mx,my = mx*fullx,my*fully
-			if(	self.m_Tasche[self.m_TascheAktuell] ) then
-				id = self.m_Tasche[self.m_TascheAktuell][place]
-				if(id) then
-					self.m_item[tonumber(id)] = { ["x"]= mx,["y"]=my }
-				end
+		local fullx,fully = guiGetScreenSize()
+		mx,my = mx*fullx,my*fully
+		if(	self.m_Tasche[self.m_TascheAktuell] ) then
+			id = self.m_Tasche[self.m_TascheAktuell][place]
+			if(id) then
+				self.m_item[tonumber(id)] = { ["x"]= mx,["y"]=my }
 			end
+		end
 
-			if(isElement(self:getPlaceMouseOver())) then
-				triggerEvent("onClientMouseEnter",self:getPlaceMouseOver())
-				if(isElement(self.m_lastOver) and self.m_lastOver ~= self:getPlaceMouseOver()) then
-					triggerEvent("onClientMouseLeave",self.m_lastOver)
-				end
-				self.m_lastOver = self:getPlaceMouseOver()
-			elseif(isElement(self.m_lastOver)) then
+		if(isElement(self:getPlaceMouseOver())) then
+			triggerEvent("onClientMouseEnter",self:getPlaceMouseOver())
+			if(isElement(self.m_lastOver) and self.m_lastOver ~= self:getPlaceMouseOver()) then
 				triggerEvent("onClientMouseLeave",self.m_lastOver)
-				self.m_lastOver = nil
 			end
-		else
-			self.m_startMoveButton = nil
-			removeEventHandler("onClientPreRender",root,self.m_onClientDragAndDropMove)
+			self.m_lastOver = self:getPlaceMouseOver()
+		elseif(isElement(self.m_lastOver)) then
+			triggerEvent("onClientMouseLeave",self.m_lastOver)
+			self.m_lastOver = nil
 		end
-	--end
+	else
+		self.m_startMoveButton = nil
+		removeEventHandler("onClientPreRender",root,self.m_onClientDragAndDropMove)
+	end
 end
 
 function Inventory:onClickAndDropDown(button)
@@ -370,7 +370,7 @@ function Inventory:onClickAndDropDown(button)
 
 	if button == "left" then
 		if(id) then
-			local itemname = self.m_Items[id]["Object"]
+			local itemname = self.m_Items[id]["Objekt"]
 			local item = self.m_Items[id]
 			if item then
 				triggerEvent("onPlayerItemUse",localPlayer,id,self.m_TascheAktuell,tonumber(guiGetText(source)))
@@ -407,7 +407,6 @@ function Inventory:onClickAndDropDown(button)
 end
 
 function Inventory:onClickAndDropUp(button)
-
 	local src
 	for i=0,self.m_slotsAktuell-1,1 do
 		if(source == self.m_btn_inventar[self.m_TascheAktuell][i]) then
@@ -418,7 +417,6 @@ function Inventory:onClickAndDropUp(button)
 	if self.m_startMoveButton and self.m_startMoveButton["object"] then
 		local place = false
 		local splace = tonumber(guiGetText(self.m_startMoveButton["object"]))
-		local item_table = self.m_Items
 
 		if(src ~= true) then
 			if(source ~= self.m_btn_Move and (source == self.m_btn_Items or source == self.m_btn_Objekte or source == self.m_btn_Essen or source == self.m_btn_Drogen or source == self.m_btn_Close or source == self.m_btn_Reset) ) then
@@ -438,17 +436,15 @@ function Inventory:onClickAndDropUp(button)
 			place = tonumber(guiGetText(self:getPlaceMouseOver()))
 			local nid = self.m_Tasche[self.m_TascheAktuell][place]
 			if(nid) then
-				local oPlace = guiGetText(self.m_startMoveButton["object"])
-
+				local oPlace = tonumber(guiGetText(self.m_startMoveButton["object"]))
 
 				local id = self.m_Tasche[self.m_TascheAktuell][splace]
-
-				local itemname_moved = item_table[id]["Object"]
-				local itemname_old = item_table[nid]["Object"]
+				local itemname_moved = self.m_Items[id]["Objekt"]
+				local itemname_old = self.m_Items[nid]["Objekt"]
 				if id ~= nid then
 					if itemname_moved == itemname_old then
-						local itemmenge_moved = tonumber(self.m_Items[id]["Menge"])
-						local itemmenge_old = tonumber(self.m_Items[nid]["Menge"])
+						local itemmenge_moved = self.m_Items[id]["Menge"]
+						local itemmenge_old = self.m_Items[nid]["Menge"]
 						local gesamt = itemmenge_moved+itemmenge_old
 						if self.m_ItemData[itemname_moved]["Stack_max"] >= gesamt then
 							triggerServerEvent("c_stackItems",localPlayer,id,nid,place)
@@ -463,18 +459,18 @@ function Inventory:onClickAndDropUp(button)
 				self:inventarSetItemToPlace(id,place)
 				self:inventarSetItemToPlace(nid,splace)
 
-				if(lockItemUseState[self.m_TascheAktuell] and lockItemUseState[self.m_TascheAktuell][splace]) then
+				if(self.m_lockItemUseState[self.m_TascheAktuell] and self.m_lockItemUseState[self.m_TascheAktuell][splace]) then
 					self:setItemsRGBDefault(self.m_TascheAktuell)
 					self:setItemRGB(splace,50,200,255)
-					lockItemUseState[self.m_TascheAktuell] = {[splace]=true}
+					self.m_lockItemUseState[self.m_TascheAktuell] = {[splace]=true}
 				end
 				triggerServerEvent("changePlaces",localPlayer,self.m_TascheAktuell,oPlace,place)
 			else
 				local id = self.m_Tasche[self.m_TascheAktuell][splace]
-				if(lockItemUseState[self.m_TascheAktuell] and lockItemUseState[self.m_TascheAktuell][splace]) then
+				if(self.m_lockItemUseState[self.m_TascheAktuell] and self.m_lockItemUseState[self.m_TascheAktuell][splace]) then
 					self:setItemsRGBDefault(self.m_TascheAktuell)
 					self:setItemRGB(tonumber(place),50,200,255)
-					lockItemUseState[self.m_TascheAktuell] = {[tonumber(place)]=true}
+					self.m_lockItemUseState[self.m_TascheAktuell] = {[tonumber(place)]=true}
 
 				end
 
@@ -488,19 +484,19 @@ function Inventory:onClickAndDropUp(button)
 			if(mx >= self.m_X and mx <= self.m_X+self.m_BX and my >= self.m_Y-50 and my <= self.m_Y+self.m_BY) then
 				local id = self.m_Tasche[self.m_TascheAktuell][splace]
 				self:inventarSetItemToPlace(id,splace)
-				if(lockItemUseState[self.m_TascheAktuell] and lockItemUseState[self.m_TascheAktuell][splace]) then
+				if(self.m_lockItemUseState[self.m_TascheAktuell] and self.m_lockItemUseState[self.m_TascheAktuell][splace]) then
 					self:setItemsRGBDefault(self.m_TascheAktuell)
 
 				--	outputChatBox("To Green")
 					--setItemRGB(splace,0,255,0,true)
-					--lockItemUseState[self.m_TascheAktuell] = {[splace] = true}
+					--self.m_lockItemUseState[self.m_TascheAktuell] = {[splace] = true}
 				end
 			else
 				local id = self.m_Tasche[self.m_TascheAktuell][splace]
-				local itemname = self.m_Items["Object"]
-				if tonumber(self.m_ItemData[(itemname[id])]["Wegwerf"]) == 1 then
+				local itemname = self.m_Items[id]["Objekt"]
+				if self.m_ItemData[itemname]["Wegwerf"] == 1 then
 					--triggerServerEvent("layItemInWorld_c",localPlayer,localPlayer,self.m_TascheAktuell,id)
-					triggerServerEvent("wegwerfItem",localPlayer,itemname[id],self.m_TascheAktuell,id,splace)
+					triggerServerEvent("wegwerfItem",localPlayer,itemname,self.m_TascheAktuell,id,splace)
 				else
 					self:inventarSetItemToPlace(id,splace)
 					outputChatBox("Dieses Item kann nicht weggeworfen werden!",255,0,0)
@@ -511,7 +507,6 @@ function Inventory:onClickAndDropUp(button)
 	removeEventHandler("onClientPreRender",root,self.m_onClientDragAndDropMove)
 	self.m_startMoveButton = nil
 	self.m_lastOver = nil
-
 
 	local id
 	if(self.m_Tasche[self.m_TascheAktuell]) then
@@ -526,7 +521,9 @@ function Inventory:show()
 
 	showCursor ( true ,false)
 	toggleControl ( "fire", false)
-
+	
+	self.m_screenGUI = guiCreateStaticImage(0,0,screenWidth,screenHeight,"files/images/Logo.png",false)
+	guiSetAlpha(self.m_screenGUI,0)
 	self.pClose,self.pMove,self.pReset = self.m_ImagePath.."closeinv.png",self.m_ImagePath.."moveinv.png",self.m_ImagePath.."reset.png"
 	self.m_R,self.m_G,self.m_B = { ["Items"]=50,["Essen"]=50,["Objekte"]=50,["Drogen"]=50, ["Rahmen"]=255} , { ["Items"]=200,["Essen"]=200,["Objekte"]=200,["Drogen"]=200 ,["Rahmen"]=255} , { ["Items"]=255,["Essen"]=255,["Objekte"]=255,["Drogen"]=255,["Rahmen"]=255 }
 
@@ -557,7 +554,7 @@ function Inventory:show()
 				self.m_itemFront[id] = false
 			end
 		end
-		if(not lockItemUseState[self.m_TascheAktuell] or not lockItemUseState[self.m_TascheAktuell][tonumber(i)]) then
+		if(not self.m_lockItemUseState[self.m_TascheAktuell] or not self.m_lockItemUseState[self.m_TascheAktuell][tonumber(i)]) then
 			self:setItemRGB(i,110,110,110)
 		end
 		self.m_sitem[i]= { ["x"]= self.m_X+10 + 40 * platz + 5 * platz,["y"]=self.m_Y+10 + 40 * line + 5 * line }
@@ -613,7 +610,8 @@ function Inventory:hide()
 
 	removeEventHandler("onClientGUIMouseDown",root,self.m_onClickAndDropDown)
 	removeEventHandler("onClientGUIMouseUp",root,self.m_onClickAndDropUp)
-
+	
+	destroyElement(self.m_screenGUI)
 	destroyElement(self.m_btn_Items)
 	destroyElement(self.m_btn_Objekte)
 	destroyElement(self.m_btn_Essen)
@@ -777,7 +775,6 @@ function Inventory:setItemRGB(platz,r,g,b)
 	end
 end
 
-lockItemUseState = {}
 
 function Inventory:makeStringToLines(string,xpos,breite,schrift,scale)
 	local fullstring = {}
@@ -841,7 +838,7 @@ end
 InventarBlipAlpha = 0
 
 function Inventory:Event_onItemClick(itemid,tasche,platz)
-	if(not lockItemUseState[tasche] or not lockItemUseState[tasche][platz]) then
+	if(not self.m_lockItemUseState[tasche] or not self.m_lockItemUseState[tasche][platz]) then
 		local itemname = self.m_Items[itemid]["Objekt"]
 		local verbraucht = self.m_ItemData[itemname]["Verbraucht"]
 		local itemDelete = false
@@ -859,8 +856,8 @@ function Inventory:setItemsRGBDefault(tasche,setFalse)
 	end
 
 	if(not setFalse) then
-		if(lockItemUseState[tasche]) then
-			lockItemUseState[tasche] = nil
+		if(self.m_lockItemUseState[tasche]) then
+			self.m_lockItemUseState[tasche] = nil
 		end
 	end
 end
@@ -887,7 +884,7 @@ function Inventory:showInfoBlipFunc(button)
 	local itemtable = self.m_Items
 	if itemtable then
 		if id then
-			local name = itemtable[tonumber(id)]["Objekt"]
+			local name = itemtable[id]["Objekt"]
 			if name then
 				local text = self.m_ItemData[name]["Info"]
 				aname, atext = self:getRealItemName(name),text
