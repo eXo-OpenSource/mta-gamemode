@@ -32,6 +32,17 @@ end
 function FactionState:destructor()
 end
 
+function FactionState:countPlayers()
+	local factions = FactionManager:getSingleton():getAllFactions()
+	local amount = 0
+	for index,faction in pairs(factions) do
+		if faction:isStateFaction() then
+			amount = amount+faction:getOnlinePlayers()
+		end
+	end
+	return amount
+end
+
 function FactionState:createDutyPickup(x,y,z,int)
 	self.m_DutyPickup = createPickup(x,y,z, 3, 1275) --PD
 	setElementInterior(self.m_DutyPickup, int)

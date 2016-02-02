@@ -30,7 +30,7 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 					if self:countPolicePeople() > 0 then
 						-- Give some money to the good people for defending the bank successfully
 						for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-							if player:getJob() == JobPolice:getSingleton() then
+							if player:getFaction() and player:getFaction():isStateFaction() then
 								player:giveMoney(700)
 							end
 
@@ -49,7 +49,7 @@ end
 function BankRobbery:countEvilPeople()
 	local amount = 0
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-		if player:getGroup() and player:getGroup():isEvil() then
+		if player:getFaction() and player:getFaction():isEvilFaction() then
 			amount = amount + 1
 		end
 	end
@@ -59,7 +59,7 @@ end
 function BankRobbery:countPolicePeople()
 	local amount = 0
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-		if player:getJob() == JobPolice:getSingleton() then
+		if player:getFaction() and player:getFaction():isStateFaction() then
 			amount = amount + 1
 		end
 	end
@@ -67,8 +67,8 @@ function BankRobbery:countPolicePeople()
 end
 
 function BankRobbery:BombArea_Place(bombArea, player)
-	if not player:getGroup() then
-		player:sendError(_("Banken kannst du nur, wenn du Mitglied einer Gruppe bist, ausrauben", player))
+	if not player:getFaction() then
+		player:sendError(_("Banken kannst du nur, wenn du Mitglied einer bösen Fraktion bist, ausrauben", player))
 		return false
 	end
 
@@ -77,7 +77,7 @@ function BankRobbery:BombArea_Place(bombArea, player)
 		return false
 	end
 
-	if not DEBUG and JobPolice:getSingleton():countPlayers() < 5 then
+	if not DEBUG and FactionState:getSingleton():countPlayers() < 5 then
 		player:sendError(_("Um den Überfall starten zu können, müssen mindestens 5 Polizisten online sein!", player))
 		return false
 	end
@@ -88,8 +88,8 @@ function BankRobbery:BombArea_Place(bombArea, player)
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
 		player:triggerEvent("bankRobberyCountdown", HOLD_TIME/1000)
 
-		local group = player:getGroup()
-		if group and group:isEvil() then
+		local faction = player:getFaction()
+		if faction and faction:isEvilFaction() then
 			player:reportCrime(Crime.BankRobbery)
 		end
 	end
@@ -97,11 +97,10 @@ function BankRobbery:BombArea_Place(bombArea, player)
 end
 
 function BankRobbery:BombArea_Explode(bombArea)
-	-- Give all groups money who are within the colshape (amount depends on player count)
+	-- Give all evil faction money who are within the colshape (amount depends on player count)
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-		local group = player:getGroup()
-		if group and group:isEvil() then
-			group:giveMoney(400)
+		if player:getFaction() and player:getFaction():isEvilFaction() then
+			faction:giveMoney(400)
 			player:giveMoney(400)
 		end
 	end
