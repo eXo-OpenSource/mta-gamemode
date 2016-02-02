@@ -553,6 +553,7 @@
 	<vrpfile src="files/images/Weapons/Vibrator.png"/>
 
 	<vrpfile src="files/images/Other/BankRobberyCountdown.png"/>
+	<vrpfile src="files/images/Other/thunder.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>
@@ -763,6 +764,8 @@
 	<vrpfile src="files/models/vrp_logo.txd"/>
 	<vrpfile src="files/models/repair.txd"/>
 	<vrpfile src="files/models/repair.dff"/>
+	<vrpfile src="files/models/taser.txd"/>
+	<vrpfile src="files/models/taser.dff"/>
 	<vrpfile src="files/models/nitro.txd"/>
 	<vrpfile src="files/models/nitro.dff"/>
 	<vrpfile src="files/models/vehiclechange.txd"/>

@@ -9,6 +9,15 @@
 Guns = inherit(Singleton)
 
 function Guns:constructor()
+	local weaponSkills = {"std","pro","poor"}
+	
+	for index,skill in pairs(weaponSkills) do
+		-- Taser:
+		setWeaponProperty (23, skill, "weapon_range", 10 )
+		setWeaponProperty (23, skill, "maximum_clip_ammo", 9999 )
+		setWeaponProperty (23, skill, "anim_loop_stop", 0 )
+	end
+	
 	addRemoteEvents{"onTaser"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 end
