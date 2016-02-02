@@ -13,6 +13,8 @@ function SelfGUI:constructor()
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
+	--self.m_CloseButton.onHover = function () self.m_CloseButton:setColor(Color.LightRed) end
+	--self.m_CloseButton.onUnhover = function () self.m_CloseButton:setColor(Color.White) end
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
 	-- Tab: Allgemein
@@ -38,10 +40,10 @@ function SelfGUI:constructor()
 
 	self.m_TicketButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, _"Tickets", true, tabGeneral)
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
-	
+
 	self.m_MigrationButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.145, self.m_Width*0.25, self.m_Height*0.07, _"Account-Migration", true, tabGeneral):setBarColor(Color.Yellow)
 	self.m_MigrationButton.onLeftClick = bind(self.MigratorButton_Click, self)
-	
+
 	self.m_AdminButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.24, self.m_Width*0.25, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
 	self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
 

@@ -93,3 +93,24 @@ function GUIWindow:setCloseOnClose(close) -- Todo: Find a better name
 	self.m_CloseOnClose = close
 	return self
 end
+
+function GUIWindow:addBackButton(callback)
+	self.m_BackButton = GUILabel:new(self.m_Width-58, 0, 30, 28, "[←]", self):setFont(VRPFont(35))
+	--self.m_BackButton.onHover = function () self.m_BackButton:setColor(Color.LightBlue) end
+	--self.m_BackButton.onUnhover = function () self.m_BackButton:setColor(Color.White) end
+	self.m_BackButton.onLeftClick = function()
+		self:close()
+		if type(callback) == "function" then
+			callback()
+			Cursor:show()
+		else
+			outputDebug("Invalid back function")
+		end
+	end
+end
+
+function GUIWindow:removeBackButton()
+	if self.m_BackButton then
+		delete(self.m_BackButton)
+	end
+end

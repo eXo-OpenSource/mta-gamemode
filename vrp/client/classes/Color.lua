@@ -22,6 +22,7 @@ Color = {
 	BrownAlpha= {189, 109, 19, 180},
 	LightBlue = {6, 163, 212},
 	Orange    = {254, 138, 0},
+	LightRed  = {242, 0, 86},
 }
 
 AdminColor = {

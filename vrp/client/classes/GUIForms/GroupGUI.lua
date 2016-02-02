@@ -13,8 +13,15 @@ function GroupGUI:constructor()
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
+	--self.m_CloseButton.onHover = function () self.m_CloseButton:setColor(Color.LightRed) end
+	--self.m_CloseButton.onUnhover = function () self.m_CloseButton:setColor(Color.White) end
 	self.m_CloseButton.onLeftClick = function() self:close() end
-	
+
+	self.m_BackButton = GUILabel:new(self.m_Width-58, 0, 30, 28, "[←]", self):setFont(VRPFont(35))
+	--self.m_BackButton.onHover = function () self.m_BackButton:setColor(Color.LightBlue) end
+	--self.m_BackButton.onUnhover = function () self.m_BackButton:setColor(Color.White) end
+	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
+
 	-- Tab: Groups
 	local tabGroups = self.m_TabPanel:addTab(_"Allgemein")
 	self.m_TabGroups = tabGroups
@@ -65,12 +72,12 @@ function GroupGUI:constructor()
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
-	
+
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
 	self.m_GroupVehicleGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.55, tabVehicles)
 	self.m_GroupVehicleGrid:addColumn(_"Fahrzeuge", 1)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
-	
+
 	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
 	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles)
 	self.m_VehicleMakeGroupVehicleButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug zur Firma/Gang hinzufügen", tabVehicles):setFontSize(1)
