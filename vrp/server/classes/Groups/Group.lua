@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, money, players, karma, lastNameChange)
+function Group:constructor(Id, name, money, players, karma, lastNameChange, type)
 	self.m_Id = Id
 
 	self.m_Players = players or {}
@@ -18,13 +18,14 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange)
 	self.m_Karma = karma or 0
 	self.m_LastNameChange = lastNameChange or 0
 	self.m_VehiclesCanBeModified = true
+	self.m_Type = type
 end
 
 function Group:destructor()
 end
 
-function Group.create(name)
-	if sql:queryExec("INSERT INTO ??_groups (Name) VALUES(?)", sql:getPrefix(), name) then
+function Group.create(name,type)
+	if sql:queryExec("INSERT INTO ??_groups (Name,Type) VALUES(?,?)", sql:getPrefix(), name,type) then
 		local group = Group:new(sql:lastInsertId(), name)
 
 		-- Add refernece
@@ -55,6 +56,10 @@ end
 
 function Group:getId()
 	return self.m_Id
+end
+
+function Group:getType()
+	return self.m_Type
 end
 
 function Group:canVehiclesBeModified()

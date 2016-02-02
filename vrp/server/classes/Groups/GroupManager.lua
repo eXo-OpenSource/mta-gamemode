@@ -8,10 +8,11 @@
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
 GroupManager.GroupCosts = 30000
+GroupManager.GroupTypes = {[0] = "Gang", [1] = "Firma"}
 
 function GroupManager:constructor()
 	outputServerLog("Loading groups...")
-	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
 		local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 		local players = {}
@@ -19,7 +20,7 @@ function GroupManager:constructor()
 			players[groupRow.Id] = groupRow.GroupRank
 		end
 
-		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma, row.lastNameChange)
+		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma, row.lastNameChange, self.GroupTypes[row.Type])
 		GroupManager.Map[row.Id] = group
 	end
 
@@ -68,17 +69,21 @@ function GroupManager:getByName(groupName)
 	return false
 end
 
-function GroupManager:Event_groupRequestInfo()
-	local group = client:getGroup()
+function GroupManager:sendInfo(player)
+	local group = player:getGroup()
 
 	if group then
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType())
 	else
-		client:triggerEvent("groupRetrieveInfo")
+		player:triggerEvent("groupRetrieveInfo")
 	end
 end
 
-function GroupManager:Event_groupCreate(name)
+function GroupManager:Event_groupRequestInfo()
+	self:sendInfo(client)
+end
+
+function GroupManager:Event_groupCreate(name,type)
 	if client:getMoney() < GroupManager.GroupCosts then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
@@ -86,19 +91,30 @@ function GroupManager:Event_groupCreate(name)
 
 	-- Does the group already exist?
 	if self:getByName(name) then
-		client:sendError(_("Eine Gruppe mit diesem Namen existiert bereits!", client))
+		client:sendError(_("Eine Gang oder Firma mit diesem Namen existiert bereits!", client))
+		return
+	end
+
+	-- Check Group Type
+	local typeInt
+	if type == self.GroupTypes[0] then
+		typeInt = 0
+	elseif type == self.GroupTypes[1] then
+		typeInt = 1
+	else
+		client:sendError(_("Ungültiger Typ!", client))
 		return
 	end
 
 	-- Create the group and the the client as leader (rank 2)
-	local group = Group.create(name)
+	local group = Group.create(name,typeInt)
 	if group then
 		group:addPlayer(client, GroupRank.Leader)
 		client:takeMoney(GroupManager.GroupCosts)
-		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der Gruppe %s", client, name))
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
+		self:sendInfo(client)
 	else
-		client:sendError(_("Interner Fehler beim Erstellen der Gruppe", client))
+		client:sendError(_("Interner Fehler beim Erstellen der %s", client, type))
 	end
 end
 
@@ -112,7 +128,7 @@ function GroupManager:Event_groupQuit()
 	end
 	group:removePlayer(client)
 	client:sendSuccess(_("Du hast die Gruppe erfolgreich verlassen!", client))
-	client:triggerEvent("groupRetrieveInfo")
+	self:sendInfo(client)
 end
 
 function GroupManager:Event_groupDelete()
@@ -172,7 +188,7 @@ function GroupManager:Event_groupDeposit(amount)
 
 	client:takeMoney(amount)
 	group:giveMoney(amount)
-	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+	self:sendInfo(client)
 end
 
 function GroupManager:Event_groupWithdraw(amount)
@@ -192,7 +208,7 @@ function GroupManager:Event_groupWithdraw(amount)
 
 	group:takeMoney(amount)
 	client:giveMoney(amount)
-	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+	self:sendInfo(client)
 end
 
 function GroupManager:Event_groupAddPlayer(player)
@@ -241,7 +257,7 @@ function GroupManager:Event_groupDeleteMember(playerId)
 	end
 
 	group:removePlayer(playerId)
-	client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+	self:sendInfo(client)
 end
 
 function GroupManager:Event_groupInvitationAccept(groupId)
@@ -252,7 +268,7 @@ function GroupManager:Event_groupInvitationAccept(groupId)
 		group:addPlayer(client)
 		group:removeInvitation(client)
 		group:sendMessage(_("%s ist soeben der Gruppe beigetreten", client, getPlayerName(client)))
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+		self:sendInfo(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
 	end
@@ -287,7 +303,7 @@ function GroupManager:Event_groupRankUp(playerId)
 
 	if group:getPlayerRank(playerId) < GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+		self:sendInfo(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
 	end
@@ -310,7 +326,7 @@ function GroupManager:Event_groupRankDown(playerId)
 
 	if group:getPlayerRank(playerId) == GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+		self:sendInfo(client)
 	end
 end
 
@@ -359,7 +375,7 @@ function GroupManager:Event_groupChangeName(name)
 	if group:setName(name) then
 		client:takeMoney(20000)
 		client:sendSuccess(_("Deine Gruppe heißt nun\n%s!", client, group:getName()))
-		client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
+		self:sendInfo(client)
 	else
 		client:sendError(_("Es ist ein unbekannter Fehler aufgetreten!", client))
 	end

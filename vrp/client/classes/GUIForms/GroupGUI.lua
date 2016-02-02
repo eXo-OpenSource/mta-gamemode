@@ -156,6 +156,7 @@ function GroupGUI:adjustGroupTab(rank)
 end
 
 function GroupGUI:GroupCreateButton_Click()
+	self:close()
 	GroupCreationGUI:new()
 end
 
