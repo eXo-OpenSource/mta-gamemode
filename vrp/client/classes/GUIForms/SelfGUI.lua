@@ -38,8 +38,11 @@ function SelfGUI:constructor()
 
 	self.m_TicketButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, _"Tickets", true, tabGeneral)
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
-
-	self.m_AdminButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.07, _"Adminmenü", true, tabGeneral)
+	
+	self.m_MigrationButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.145, self.m_Width*0.25, self.m_Height*0.07, _"Account-Migration", true, tabGeneral):setBarColor(Color.Yellow)
+	self.m_MigrationButton.onLeftClick = bind(self.MigratorButton_Click, self)
+	
+	self.m_AdminButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.24, self.m_Width*0.25, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
 	self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
 
 	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
@@ -370,6 +373,13 @@ function SelfGUI:AdminButton_Click()
 	self:close()
 	AdminGUI:getSingleton():open()
 end
+
+function SelfGUI:MigratorButton_Click()
+	self:close()
+	MigratorPanel:getSingleton():open()
+end
+
+
 
 
 function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
