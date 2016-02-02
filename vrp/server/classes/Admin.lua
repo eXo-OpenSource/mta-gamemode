@@ -58,9 +58,10 @@ end
 function Admin:chat(player,cmd,...)
 	if player:getRank() >= RANK.Supporter then
 		local msg = table.concat( {...}, " " )
-		local rankName = self.m_RankNames[player:getRank()]
-		local text = ("[ %s %s ]: %s"):format(_(rankName, player), player:getName(), msg)
-		self:sendMessage(text,255,255,0)
+		if self.m_RankNames[player:getRank()] then
+			local text = ("[ %s %s ]: %s"):format(_(self.m_RankNames[player:getRank()], player), player:getName(), msg)
+			self:sendMessage(text,255,255,0)
+		end
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end
@@ -95,13 +96,15 @@ function Admin:goToPlayer(player,cmd,target)
 	if player:getRank() >= RANK.Supporter then
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
-			local dim,int = target:getDimension(), target:getInterior() 
-			local pos = target:getPosition()
-			pos.x = pos.x + 0.01
-			if player:isInVehicle() then player:removeFromVehicle() end
-			player:setPosition(pos)
-			player:setDimension(dim)
-			player:setInterior(int)
+			if isElement(target) then
+				local dim,int = target:getDimension(), target:getInterior() 
+				local pos = target:getPosition()
+				pos.x = pos.x + 0.01
+				if player:isInVehicle() then player:removeFromVehicle() end
+				player:setPosition(pos)
+				player:setDimension(dim)
+				player:setInterior(int)
+			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
 		end
@@ -114,13 +117,15 @@ function Admin:getHerePlayer(player,cmd,target)
 	if player:getRank() >= RANK.Supporter then
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
-			local dim,int = player:getDimension(), player:getInterior() 
-			local pos = player:getPosition()
-			pos.x = pos.x + 0.01
-			if target:isInVehicle() then target:removeFromVehicle() end
-			target:setPosition(pos)
-			target:setDimension(dim)
-			target:setInterior(int)
+			if isElement(target) then
+				local dim,int = player:getDimension(), player:getInterior() 
+				local pos = player:getPosition()
+				pos.x = pos.x + 0.01
+				if target:isInVehicle() then target:removeFromVehicle() end
+				target:setPosition(pos)
+				target:setDimension(dim)
+				target:setInterior(int)
+			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
 		end
