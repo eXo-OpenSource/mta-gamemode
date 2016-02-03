@@ -18,7 +18,7 @@ end
 
 function TranslationManager:loadTranslation(locale, poFile)
 	if not poFile then
-		local path = "files/translation/"..(SERVER and "server" or "client").."."..locale..".po"
+		local path = ("files/translation/%s.%s.po"):format(SERVER and "server" or "client", locale)
 		if fileExists(path) then
 			self.m_Translations[locale] = POParser:new(path)
 			outputDebug("Locale \'"..locale.."\' has been loaded!")
