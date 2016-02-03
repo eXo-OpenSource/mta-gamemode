@@ -1,10 +1,12 @@
 Item = inherit(Object)
 
-function Item:constructor(itemName, itemClass, itemModel)
+function Item:constructor(itemName, itemModel)
+	Item.virtual_constructor(self, itemName, itemModel)
+end
+
+function Item:virtual_constructor(itemName, itemModel)
 	self.m_ItemName = itemName
-	self.m_ItemClass = itemClass
 	self.m_ItemModel = itemModel
-	self.m_ItemClass:new()
 end
 
 function Item:getName()

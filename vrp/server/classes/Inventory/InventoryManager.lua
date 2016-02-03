@@ -63,7 +63,7 @@ function InventoryManager:loadItems()
 		itemData[itemName]["ModelID"] = tonumber(row["ModelID"])
 
 		if self.m_ClassItems[itemName] then
-			Item:new(itemName,self.m_ClassItems[itemName],tonumber(row["ModelID"]))
+			self.m_ClassItems[itemName]:new(itemName,tonumber(row["ModelID"]))
 		end
 	end
 

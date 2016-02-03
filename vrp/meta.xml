@@ -100,6 +100,7 @@
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
+	<script src="server/classes/Gameplay/Casino.lua" type="server"/>
 	<!--<script src="server/classes/Gameplay/Police.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>

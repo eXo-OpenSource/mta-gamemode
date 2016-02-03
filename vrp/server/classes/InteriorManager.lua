@@ -188,7 +188,7 @@ InteriorManager.InteriorData = {
     {enter = Vector3(2421.52, -1220.65, 24.6085), spawn = Vector3(1204.81, -12.79, 1000.09), dimension = 0, interior = 2, rotation = -180},
     {enter = Vector3(2506.74, 2120.39, 9.8472), spawn = Vector3(1204.81, -12.79, 1000.09), dimension = 1, interior = 2, rotation = 0},
     {enter = Vector3(1259.39, -785.332, 91.042), spawn = Vector3(1260.58, -785.31, 1090.96), dimension = 0, interior = 5, rotation = 90},
-    {enter = Vector3(2196.92, 1676.52, 11.368), spawn = Vector3(2233.91, 1714.73, 1011.38), dimension = 0, interior = 1, rotation = 90},
+    --{enter = Vector3(2196.92, 1676.52, 11.368), spawn = Vector3(2233.91, 1714.73, 1011.38), dimension = 0, interior = 1, rotation = 90}, CASINO
     {enter = Vector3(1298.34, -797.968, 83.1574), spawn = Vector3(1299.08, -796.83, 1083.03), dimension = 0, interior = 5, rotation = 200},
     {enter = Vector3(2232.87, -1159.71, 24.9416), spawn = Vector3(2214.34, -1150.51, 1024.8), dimension = 0, interior = 15, rotation = 90},
     {enter = Vector3(2412.6, 1123.81, 9.8529), spawn = Vector3(390.87, 173.81, 1007.39), dimension = 0, interior = 3, rotation = 270},
