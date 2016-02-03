@@ -16,7 +16,7 @@ function enew(element, class, ...)
 			assert(v ~= pure_virtual, "Attempted to instanciate a class with an unimplemented pure virtual method ("..tostring(k)..")")
 		end
 	end
-	
+
 	local instance = setmetatable( { element = element },
 		{
 			__index = class;
@@ -30,11 +30,11 @@ function enew(element, class, ...)
 			__mul = class.__mul;
 			__div = class.__div;
 			__pow = class.__pow;
-			__concat = class.__concat;		
+			__concat = class.__concat;
 		})
-	
+
 	oop.elementInfo[element] = instance
-	
+
 	local callDerivedConstructor;
 	callDerivedConstructor = function(parentClasses, instance, ...)
 		for k, v in pairs(parentClasses) do
@@ -45,34 +45,34 @@ function enew(element, class, ...)
 			if s then callDerivedConstructor(s, instance, ...) end
 		end
 	end
-		
-	callDerivedConstructor(super(instance), element, ...) 
-	
+
+	callDerivedConstructor(super(instance), element, ...)
+
 	-- Call constructor
 	if rawget(class, "constructor") then
 		rawget(class, "constructor")(element, ...)
 	end
 	element.constructor = false
-	
+
 	-- Add the destruction handler
 	addEventHandler(
 		triggerClientEvent ~= nil and
 		"onElementDestroy" or
 		"onClientElementDestroy", element, __removeElementIndex, false, "low-999999")
-	
+
 	return element
 end
 
 function new(class, ...)
 	assert(type(class) == "table", "first argument provided to new is not a table")
-	
+
 	-- DEBUG: Validate that we are not instantiating a class with pure virtual methods
 	if DEBUG then
 		for k, v in pairs(class) do
 			assert(v ~= pure_virtual, "Attempted to instanciate a class with an unimplemented pure virtual method ("..tostring(k)..")")
 		end
 	end
-	
+
 	local instance = setmetatable( { },
 		{
 			__index = class;
@@ -86,9 +86,9 @@ function new(class, ...)
 			__mul = class.__mul;
 			__div = class.__div;
 			__pow = class.__pow;
-			__concat = class.__concat;		
+			__concat = class.__concat;
 		})
-	
+
 	-- Call derived constructors
 	local callDerivedConstructor;
 	callDerivedConstructor = function(self, instance, ...)
@@ -100,9 +100,9 @@ function new(class, ...)
 			if s then callDerivedConstructor(s, instance, ...) end
 		end
 	end
-		
-	callDerivedConstructor(super(class), instance, ...) 
-	
+
+	callDerivedConstructor(super(class), instance, ...)
+
 	-- Call constructor
 	if rawget(class, "constructor") then
 		rawget(class, "constructor")(instance, ...)
@@ -117,9 +117,9 @@ function delete(self, ...)
 		self:destructor(...)
 	end
 
-	-- Prevent the destructor to be called twice 
+	-- Prevent the destructor to be called twice
 	self.destructor = false
-	
+
 	local callDerivedDestructor;
 	callDerivedDestructor = function(parentClasses, instance, ...)
 		for k, v in pairs(parentClasses) do
@@ -139,13 +139,14 @@ function super(self)
 		self = oop.elementInfo[self]
 	end
 	local metatable = getmetatable(self)
-	if metatable then return metatable.__super 
-	else 
+	if metatable then return metatable.__super
+	else
 		return {}
 	end
 end
 
 function inherit(from, what)
+	if not from then outputDebug(debug.traceback()) end
 	assert(from, "Attempt to inherit a nil table value")
 	if not what then
 		local classt = setmetatable({}, { __index = _inheritIndex, __super = { from } })
@@ -154,13 +155,13 @@ function inherit(from, what)
 		end
 		return classt
 	end
-	
+
 	local metatable = getmetatable(what) or {}
 	local oldsuper = metatable and metatable.__super or {}
 	table.insert(oldsuper, 1, from)
 	metatable.__super = oldsuper
 	metatable.__index = _inheritIndex
-	
+
 	-- Inherit __call
 	for k, v in ipairs(metatable.__super) do
 		if v.__call then
@@ -168,7 +169,7 @@ function inherit(from, what)
 			break
 		end
 	end
-	
+
 	return setmetatable(what, metatable)
 end
 
@@ -191,14 +192,14 @@ function instanceof(self, class, direct)
 	for k, v in pairs(super(self)) do
 		if v == class then return true end
 	end
-	
+
 	if direct then return false end
-		
+
 	local check = false
 	-- Check if any of 'self's base classes is inheriting from 'class'
 	for k, v in pairs(super(self)) do
 		check = instanceof(v, class, false)
-	end	
+	end
 	return check
 end
 
@@ -215,22 +216,22 @@ function bind(func, ...)
 		end
 		error("Bad function pointer @ bind. See console for more details")
 	end
-	
+
 	local boundParams = {...}
-	return 
-		function(...) 
+	return
+		function(...)
 			local params = {}
 			local boundParamSize = select("#", unpack(boundParams))
 			for i = 1, boundParamSize do
 				params[i] = boundParams[i]
 			end
-			
+
 			local funcParams = {...}
 			for i = 1, select("#", ...) do
 				params[boundParamSize + i] = funcParams[i]
 			end
-			return func(unpack(params)) 
-		end 
+			return func(unpack(params))
+		end
 end
 
 function load(class, ...)
@@ -242,7 +243,7 @@ function load(class, ...)
 			__newindex = class.__newindex;
 			__call = class.__call;
 		})
-	
+
 	-- Call load
 	if rawget(class, "load") then
 		rawget(class, "load")(instance, ...)
@@ -260,17 +261,17 @@ oop.elementClasses = {}
 
 oop.prepareClass = function(name)
 	local mt = debug.getregistry().mt[name]
-	
+
 	if not mt then
 		outputDebugString("No such class mt "..tostring(name))
 		return
 	end
-	
+
 	-- Store MTA's metafunctions
 	local __mtaindex = mt.__index
 	local __mtanewindex = mt.__newindex
 	local __set= mt.__set
-	
+
 	mt.__index = function(self, key)
 		if not oop.handled then
 			if not oop.elementInfo[self] then
@@ -286,33 +287,33 @@ oop.prepareClass = function(name)
 		oop.handled = false
 		return value
 	end
-	
-	
+
+
 	mt.__newindex = function(self, key, value)
 		if __set[key] ~= nil then
 			__mtanewindex(self, key, value)
 			return
 		end
-		
+
 		if not oop.elementInfo[self] then
 			enew(self, oop.elementClasses[getElementType(self)] or {})
 		end
-		
+
 		oop.elementInfo[self][key] = value
 	end
 end
 
-function registerElementClass(name, class) 
+function registerElementClass(name, class)
 	assert(type(name) == "string", "Bad argument #1 for registerElementClass")
 	assert(type(class) == "table", "Bad argument #2 for registerElementClass")
 	oop.elementClasses[name] = class
 end
 
 oop.initClasses = function()
-	-- this has to match 
+	-- this has to match
 	--	(Server) MTA10_Server\mods\deathmatch\logic\lua\CLuaMain.cpp
 	--	(Client) MTA10\mods\shared_logic\lua\CLuaMain.cpp
-	if SERVER then	
+	if SERVER then
 		oop.prepareClass("ACL")
 		oop.prepareClass("ACLGroup")
 		oop.prepareClass("Account")
@@ -355,7 +356,7 @@ oop.initClasses = function()
 		oop.prepareClass("DxRenderTarget")
 		oop.prepareClass("Weapon")
 	end
-	
+
 	oop.prepareClass("Object")
 	oop.prepareClass("Ped")
 	oop.prepareClass("Pickup")
@@ -369,7 +370,7 @@ oop.initClasses = function()
 	oop.prepareClass("Blip")
 	oop.prepareClass("ColShape")
 	oop.prepareClass("File")
-	oop.prepareClass("Marker")		
+	oop.prepareClass("Marker")
 	oop.prepareClass("Vehicle")
 	oop.prepareClass("Water")
 	oop.prepareClass("XML")

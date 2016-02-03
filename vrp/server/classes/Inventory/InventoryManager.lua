@@ -16,6 +16,10 @@ function InventoryManager:constructor()
 		["Drogen"] = 7,
 	}
 
+	self.m_ClassItems = {
+		["Barrikade"] = ItemBarricade
+	}
+
 	self.m_ItemData = {}
 	self.m_ItemData = self:loadItems()
 	self.Map = {}
@@ -38,27 +42,39 @@ function InventoryManager:getItemData()
 end
 
 function InventoryManager:loadItems()
+
+
+
 	local result = sql:queryFetch("SELECT * FROM ??_inventory_items", sql:getPrefix())
 	local itemData = {}
+	local itemName
 	for i, row in ipairs(result) do
-		itemData[row["Objektname"]] = {}
-		itemData[row["Objektname"]]["Name"] = row["Objektname"]
-		itemData[row["Objektname"]]["Info"] = row["Info"]
-		itemData[row["Objektname"]]["Tasche"] = row["Tasche"]
-		itemData[row["Objektname"]]["Icon"] = row["Icon"]
-		itemData[row["Objektname"]]["Item_Max"] = tonumber(row["max_items"])
-		itemData[row["Objektname"]]["Wegwerf"] = tonumber(row["wegwerfen"])
-		itemData[row["Objektname"]]["Handel"] = tonumber(row["Handel"])
-		itemData[row["Objektname"]]["Stack_max"] = tonumber(row["stack_max"])
-		itemData[row["Objektname"]]["Verbraucht"] = tonumber(row["verbraucht"])
+		itemName = row["Objektname"]
+		itemData[itemName] = {}
+		itemData[itemName]["Name"] = itemName
+		itemData[itemName]["Info"] = row["Info"]
+		itemData[itemName]["Tasche"] = row["Tasche"]
+		itemData[itemName]["Icon"] = row["Icon"]
+		itemData[itemName]["Item_Max"] = tonumber(row["max_items"])
+		itemData[itemName]["Wegwerf"] = tonumber(row["wegwerfen"])
+		itemData[itemName]["Handel"] = tonumber(row["Handel"])
+		itemData[itemName]["Stack_max"] = tonumber(row["stack_max"])
+		itemData[itemName]["Verbraucht"] = tonumber(row["verbraucht"])
+		itemData[itemName]["ModelID"] = tonumber(row["ModelID"])
+
+		if self.m_ClassItems[itemName] then
+			Item:new(itemName,self.m_ClassItems[itemName],tonumber(row["ModelID"]))
+		end
 	end
+
+
 
 	return itemData
 end
 
 function InventoryManager:loadInventory(player)
 	if not self.Map[player] then
-		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData)
+		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,self.m_ClassItems)
 		self.Map[player] = instance
 		return instance
 	end

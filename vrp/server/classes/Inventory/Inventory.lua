@@ -7,12 +7,13 @@
 -- ****************************************************************************
 Inventory = inherit(Singleton)
 
-function Inventory:constructor(owner, inventorySlots, itemData)
+function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 	self.m_InventorySlots = inventorySlots
 	self.m_ItemData = itemData
 	self.m_Owner = owner
 	self.m_Bag = {}
 	self.m_Items = {}
+	self.m_ClassItems = classItems
 
 	self.m_Debug = true
 
@@ -73,6 +74,18 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 	if delete == true then
 		self:removeItemFromPlace(bag, place, 1)
 	end
+
+	if self.m_ClassItems[itemName] then
+		local item = self.m_ClassItems[itemName]
+		if item.use then
+			if item:use(client) == false then
+				return false
+			end
+		end
+	end
+	-- Possible issue: If Item:use fails, the item will never get removed
+
+
 	outputChatBox("Du benutzt das Item "..itemName.." aus der Tasche "..bag.."!", self.m_Owner, 0, 255, 0) -- in Developement
 end
 

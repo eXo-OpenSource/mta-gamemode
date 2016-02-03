@@ -23,7 +23,8 @@ function ObjectPlacer:constructor(model, callback)
     addEventHandler("onClientClick", root, self.m_Click)
 
     -- Hide inventory
-    InventoryGUI:getSingleton():setVisible(false)
+    Inventory:getSingleton():hide()
+    showCursor(true)
 end
 
 function ObjectPlacer:destructor()
