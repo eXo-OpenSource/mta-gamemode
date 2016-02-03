@@ -65,6 +65,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_LadderTeam = {}
 	self.m_Achievements = {[0] = false} -- Dummy element, otherwise the JSON string is built wrong
 	self.m_DMMatchID = 0
+	self.m_SessionId = false
 end
 
 function DatabasePlayer:virtual_destructor()
@@ -135,6 +136,9 @@ function DatabasePlayer:load()
 	if self:isActive() then
 		setPlayerWantedLevel(self, self.m_WantedLevel)
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
+
+		-- Generate Session Id
+		self:setSessionId(hash("md5", ("%s-%s-%s"):format(getRealTime().timestamp, self:getName(), self.m_JoinTime)))
 	end
 
 	self:setWeaponLevel(row.WeaponLevel)

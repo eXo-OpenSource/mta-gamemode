@@ -50,6 +50,7 @@
 	<map src="jobs/gabelstapler.map" />
 	<map src="jobs/kiesgrube.map" />
 	<map src="jobs/kranjob.map" />
+	<map src="jobs/busjob.map" />
 
 	<map src="else/atm.map" />
 	<map src="else/safetytank.map" />

@@ -70,6 +70,10 @@ function LocalPlayer:getJobLevel()
 	return self:getPrivateSync("JobLevel") or 0
 end
 
+function LocalPlayer:getSessionId()
+	return self:getPrivateSync("SessionID") or ""
+end
+
 function LocalPlayer:playerWasted()
 	-- Play knock out effect
 	FadeOutShader:new()

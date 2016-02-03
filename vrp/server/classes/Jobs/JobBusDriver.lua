@@ -11,6 +11,7 @@ function JobBusDriver:constructor()
 	Job.constructor(self)
 
 	-- Prepare job base
+	--[[
 	createObject(9131, 1729.8, -1751, 13.7, 0, 0, 0.5)
 	createObject(7018, 1770.6, -1779.3, 13.8, 0, 0, 269.75)
 	createObject(7018, 1770.4, -1757.8, 13.8, 0, 0, 89.747)
@@ -24,9 +25,15 @@ function JobBusDriver:constructor()
 	removeWorldModel(4019, 77, 1777.8, -1773.9, 12.5)
 	removeWorldModel(4025, 77, 1777.8, -1773.9, 12.5)
 	removeWorldModel(4215, 77, 1777.8, -1773.9, 12.5)
-	for i = 0, 7 do
-		AutomaticVehicleSpawner:new(437, 1799 - i * 6, -1770.2, 13.9, 0, 0, 0, function(vehicle) setVehicleVariant(vehicle, 1, 255) end, self)
+	--]]
+
+	for i = 0, 3 do
+		-- 1799 - i * 6, -1770.2, 13.9
+		AutomaticVehicleSpawner:new(437, 1080.76, -1775.55 + i * 5.9, 13.44, 0, 0, 90, function(vehicle) setVehicleVariant(vehicle, 1, 255) end, self)
 	end
+
+	-- Create Barrier
+	VehicleBarrier:new(Vector3(1101.90, -1743, 13.19), Vector3(0, 90, 90), 9).onBarrierHit = bind(self.onBarrierHit, self)
 
 	-- Create bus stops
 	self.m_BusStops = {}
@@ -143,4 +150,8 @@ function JobBusDriver:BusStop_Hit(player, matchingDimension)
 		-- Tell other players that we reached a bus stop (to adjust the bus display labels)
 		triggerClientEvent("busReachNextStop", root, vehicle, self.m_BusStops[stopId].name)
 	end
+end
+
+function JobBusDriver:onBarrierHit(player)
+	return player:getJob() == self
 end

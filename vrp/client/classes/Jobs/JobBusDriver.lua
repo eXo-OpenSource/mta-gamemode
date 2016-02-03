@@ -8,7 +8,7 @@
 JobBusDriver = inherit(Job)
 
 function JobBusDriver:constructor()
-	Job.constructor(self, 1797, -1756, 12.5, "Bus.png", "files/images/Jobs/HeaderRoadSweeper.png", _(HelpTextTitles.Jobs.BusDriver):gsub("Job: ", ""), _(HelpTexts.Jobs.BusDriver))
+	Job.constructor(self, 1108.823, -1748.504, 12.570, "Bus.png", "files/images/Jobs/HeaderRoadSweeper.png", _(HelpTextTitles.Jobs.BusDriver):gsub("Job: ", ""), _(HelpTexts.Jobs.BusDriver))
 
 	addEvent("busReachNextStop", true)
 	addEventHandler("busReachNextStop", root, bind(self.Event_busReachNextStop, self))

@@ -123,7 +123,7 @@
 	<script src="server/classes/Faction/Gangwar/GangwarManager.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/Area.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/GangwarAttack.lua" type="server"/>
-		
+
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/PermanentVehicle.lua" type="server"/>
@@ -413,7 +413,7 @@
 	<script src="client/classes/AI/Tasks/Task.lua" type="client"/>
 	<script src="client/classes/AI/Tasks/TaskGuard.lua" type="client"/>
 	<script src="client/classes/AI/Tasks/TaskShootTarget.lua" type="client"/>
-	
+
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
@@ -732,7 +732,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/X-MAS-Muetze.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Keks.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Barrikade.png" />
-	
+
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Zigeretten.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pommes.png" />
@@ -812,4 +812,6 @@
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
 
+	<!-- Includes -->
+	<include resource="exo_maps" />
 </meta>
