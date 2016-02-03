@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, money, players, karma, lastNameChange, type)
+function Group:constructor(Id, name, money, players, karma, lastNameChange, rankNames, rankLoans, type)
 	self.m_Id = Id
 
 	self.m_Players = players or {}
@@ -19,6 +19,15 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange, type
 	self.m_LastNameChange = lastNameChange or 0
 	self.m_VehiclesCanBeModified = true
 	self.m_Type = type
+	local saveRanks = false
+	if rankNames == "" then	rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
+	if rankLoans == "" then	rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
+
+	self.m_RankNames = fromJSON(rankNames)
+	self.m_RankLoans = fromJSON(rankLoans)
+	if saveRanks == true then
+		self:saveRankSettings()
+	end
 end
 
 function Group:destructor()
@@ -68,7 +77,7 @@ end
 
 function Group:setName(name)
 	local timestamp = getRealTime().timestamp
-	if not sql:queryExec("UPDATE ??_groups SET Name = ?, lastNameChange = ? WHERE Id = ?", sql:getPrefix(), name, timestamp, self.m_Id) then
+	if not sql:queryExec("UPDATE ??_groups SET Name = ?, lastNameChange = ?, RankNames = ?, RankLoans = ? WHERE Id = ?", sql:getPrefix(), name, timestamp, toJSON(self.m_RankNames), toJSON(self.m_RankLoans), self.m_Id) then
 		return false
 	end
 	triggerClientEvent("gangAreaOnGroupNameChange", root, self.m_Name, name)
@@ -80,6 +89,13 @@ function Group:setName(name)
 		player:setPublicSync("GroupName", self:getName())
 	end
 
+	return true
+end
+
+function Group:saveRankSettings()
+	if not sql:queryExec("UPDATE ??_groups SET RankNames = ?, RankLoans = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankNames), toJSON(self.m_RankLoans), self.m_Id) then
+		return false
+	end
 	return true
 end
 
@@ -95,6 +111,14 @@ function Group:setKarma(karma)
 	self.m_Karma = karma
 
 	sql:queryExec("UPDATE ??_groups SET Karma = ? WHERE Id = ?", sql:getPrefix(), self.m_Karma, self.m_Id)
+end
+
+function Group:setRankName(rank,name)
+	self.m_RankNames[tostring(rank)] = name
+end
+
+function Group:setRankLoan(rank,amount)
+	self.m_RankLoans[tostring(rank)] = amount
 end
 
 function Group:giveKarma(karma)

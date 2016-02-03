@@ -85,6 +85,8 @@ function GroupGUI:constructor()
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
 	addRemoteEvents{"groupVehicleRetrieveInfo"}
 	addEventHandler("groupVehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
+
+	self.m_LeaderTab = false
 end
 
 function GroupGUI:onShow()
@@ -95,7 +97,7 @@ function GroupGUI:TabPanel_TabChanged()
 	triggerServerEvent("groupRequestInfo", root)
 end
 
-function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
+function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans)
 	self:adjustGroupTab(rank or false)
 
 	if name then
@@ -112,6 +114,13 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma)
 			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank)
 			item.Id = playerId
 		end
+		if rank >= GroupRank.Manager then
+			self.m_RankNames = rankNames
+			self.m_RankLoans = rankLoans
+			self:addLeaderTab()
+			self:refreshRankGrid()
+		end
+
 	end
 end
 
@@ -233,6 +242,56 @@ function GroupGUI:GroupInvitationsDeclineButton_Click()
 	end
 end
 
+function GroupGUI:addLeaderTab()
+	if self.m_LeaderTab == false then
+		local tabLeader = self.m_TabPanel:addTab(_"Leader")
+		self.m_FactionRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, tabLeader)
+		self.m_FactionRangGrid:addColumn(_"Rang", 0.2)
+		self.m_FactionRangGrid:addColumn(_"Name", 0.8)
+
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Rangname:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		self.m_LeaderRankName = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, tabLeader)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.1, self.m_Height*0.06, tabLeader):setNumeric()
+
+		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang Speichern", true, tabLeader)
+		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
+		self.m_SaveRank:setEnabled(false)
+
+		self:refreshRankGrid()
+
+		self.m_LeaderTab = true
+	end
+end
+
+function GroupGUI:saveRank()
+	if self.m_SelectedRank then
+		triggerServerEvent("groupSaveRank",localPlayer,self.m_SelectedRank,self.m_LeaderRankName:getText(),self.m_LeaderLoan:getText())
+	end
+end
+
+function GroupGUI:refreshRankGrid()
+	self.m_FactionRangGrid:clear()
+	for rank,name in pairs(self.m_RankNames) do
+		local item = self.m_FactionRangGrid:addItem(rank, name)
+		item.Id = rank
+		item.onLeftClick = function()
+			self.m_SelectedRank = rank
+			self:onSelectRank(name,rank)
+		end
+
+		if rank == self.m_SelectedRank then
+			self.m_FactionRangGrid:onInternalSelectItem(item)
+			item.onLeftClick()
+		end
+	end
+end
+
+function GroupGUI:onSelectRank(name,rank)
+	self.m_LeaderRankName:setText(tostring(self.m_RankNames[tostring(rank)]))
+	self.m_LeaderLoan:setText(tostring(self.m_RankLoans[tostring(rank)]))
+	self.m_SaveRank:setEnabled(true)
+end
 
 function GroupGUI:Event_vehicleRetrieveInfo()
 

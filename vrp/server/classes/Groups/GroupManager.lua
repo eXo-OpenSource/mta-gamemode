@@ -12,21 +12,23 @@ GroupManager.GroupTypes = {[0] = "Gang", [1] = "Firma"}
 
 function GroupManager:constructor()
 	outputServerLog("Loading groups...")
-	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
+
+
 		local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
 		local players = {}
 		for i, groupRow in ipairs(result2) do
 			players[groupRow.Id] = groupRow.GroupRank
 		end
 
-		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma, row.lastNameChange, self.GroupTypes[row.Type])
+		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, self.GroupTypes[row.Type])
 		GroupManager.Map[row.Id] = group
 	end
 
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
-		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName"}
+		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName", "groupSaveRank"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_groupRequestInfo, self))
 	addEventHandler("groupCreate", root, bind(self.Event_groupCreate, self))
 	addEventHandler("groupQuit", root, bind(self.Event_groupQuit, self))
@@ -40,6 +42,9 @@ function GroupManager:constructor()
 	addEventHandler("groupRankUp", root, bind(self.Event_groupRankUp, self))
 	addEventHandler("groupRankDown", root, bind(self.Event_groupRankDown, self))
 	addEventHandler("groupChangeName", root, bind(self.Event_groupChangeName, self))
+	addEventHandler("groupSaveRank", root, bind(self.Event_groupSaveRank, self))
+
+
 end
 
 function GroupManager:destructor()
@@ -69,18 +74,18 @@ function GroupManager:getByName(groupName)
 	return false
 end
 
-function GroupManager:sendInfo(player)
+function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
 	if group then
-		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType())
+		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans)
 	else
 		player:triggerEvent("groupRetrieveInfo")
 	end
 end
 
 function GroupManager:Event_groupRequestInfo()
-	self:sendInfo(client)
+	self:sendInfosToClient(client)
 end
 
 function GroupManager:Event_groupCreate(name,type)
@@ -96,14 +101,13 @@ function GroupManager:Event_groupCreate(name,type)
 	end
 
 	-- Check Group Type
-	local typeInt
-	if type == self.GroupTypes[0] then
-		typeInt = 0
-	elseif type == self.GroupTypes[1] then
-		typeInt = 1
-	else
+	for i, v in pairs(GroupManager.GroupTypes) do
+		GroupManager.GroupTypes[v] = i
+	end
+	local typeInt = self.GroupTypes[type]
+	if not typeInt then
 		client:sendError(_("Ungültiger Typ!", client))
-		return
+		return false
 	end
 
 	-- Create the group and the the client as leader (rank 2)
@@ -112,7 +116,7 @@ function GroupManager:Event_groupCreate(name,type)
 		group:addPlayer(client, GroupRank.Leader)
 		client:takeMoney(GroupManager.GroupCosts)
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
-		self:sendInfo(client)
+		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Interner Fehler beim Erstellen der %s", client, type))
 	end
@@ -128,7 +132,7 @@ function GroupManager:Event_groupQuit()
 	end
 	group:removePlayer(client)
 	client:sendSuccess(_("Du hast die Gruppe erfolgreich verlassen!", client))
-	self:sendInfo(client)
+	self:sendInfosToClient(client)
 end
 
 function GroupManager:Event_groupDelete()
@@ -188,7 +192,7 @@ function GroupManager:Event_groupDeposit(amount)
 
 	client:takeMoney(amount)
 	group:giveMoney(amount)
-	self:sendInfo(client)
+	self:sendInfosToClient(client)
 end
 
 function GroupManager:Event_groupWithdraw(amount)
@@ -208,7 +212,7 @@ function GroupManager:Event_groupWithdraw(amount)
 
 	group:takeMoney(amount)
 	client:giveMoney(amount)
-	self:sendInfo(client)
+	self:sendInfosToClient(client)
 end
 
 function GroupManager:Event_groupAddPlayer(player)
@@ -257,7 +261,7 @@ function GroupManager:Event_groupDeleteMember(playerId)
 	end
 
 	group:removePlayer(playerId)
-	self:sendInfo(client)
+	self:sendInfosToClient(client)
 end
 
 function GroupManager:Event_groupInvitationAccept(groupId)
@@ -268,7 +272,7 @@ function GroupManager:Event_groupInvitationAccept(groupId)
 		group:addPlayer(client)
 		group:removeInvitation(client)
 		group:sendMessage(_("%s ist soeben der Gruppe beigetreten", client, getPlayerName(client)))
-		self:sendInfo(client)
+		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
 	end
@@ -303,7 +307,7 @@ function GroupManager:Event_groupRankUp(playerId)
 
 	if group:getPlayerRank(playerId) < GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
-		self:sendInfo(client)
+		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
 	end
@@ -326,7 +330,7 @@ function GroupManager:Event_groupRankDown(playerId)
 
 	if group:getPlayerRank(playerId) == GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
-		self:sendInfo(client)
+		self:sendInfosToClient(client)
 	end
 end
 
@@ -375,8 +379,20 @@ function GroupManager:Event_groupChangeName(name)
 	if group:setName(name) then
 		client:takeMoney(20000)
 		client:sendSuccess(_("Deine Gruppe heißt nun\n%s!", client, group:getName()))
-		self:sendInfo(client)
+		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Es ist ein unbekannter Fehler aufgetreten!", client))
+	end
+end
+
+
+function GroupManager:Event_groupSaveRank(rank,name,loan)
+	local group = client:getGroup()
+	if group then
+		group:setRankName(rank,name)
+		group:setRankLoan(rank,loan)
+		group:saveRankSettings()
+		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
+		self:sendInfosToClient(client)
 	end
 end
