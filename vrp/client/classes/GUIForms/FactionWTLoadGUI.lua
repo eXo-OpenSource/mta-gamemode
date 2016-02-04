@@ -25,8 +25,6 @@ function FactionWTLoadGUI:constructor(validWeapons, depotWeaponsMax)
 	self.m_WaffenAnzahl = 0
 	self.m_WaffenRow = 0
 	self.m_WaffenColumn = 0
-	self.m_validWeapons = validWeapons
-	self.m_DepotWeaponsMax = depotWeaponsMax
 	self.m_TotalCosts = 0
 
 	GUILabel:new(540,30, 280, 35, "im Waffentruck:", self.m_Window)
@@ -42,8 +40,14 @@ function FactionWTLoadGUI:constructor(validWeapons, depotWeaponsMax)
 	self.m_Sum = GUILabel:new(540,390, 280, 30, "Gesamtkosten: 0$/"..WEAPONTRUCK_MAX_LOAD.."$", self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
-	self:factionReceiveWeaponShopInfos()
+	self:onShow(validWeapons, depotWeaponsMax)
 
+end
+
+function FactionWTLoadGUI:onShow(validWeapons, depotWeaponsMax)
+	self.m_validWeapons = validWeapons
+	self.m_DepotWeaponsMax = depotWeaponsMax
+	self:factionReceiveWeaponShopInfos()
 end
 
 function FactionWTLoadGUI:destuctor()
@@ -157,11 +161,14 @@ end
 
 function FactionWTLoadGUI:deleteItemFromCart()
 	local item = self.m_CartGrid:getSelectedItem()
+	if item then
+		self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
 
-	self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
-
-	self:updateCart()
-	self:updateButtons()
+		self:updateCart()
+		self:updateButtons()
+	else
+		ErrorBox:new(_"Kein Item ausgewählt!")
+	end
 end
 
 function FactionWTLoadGUI:addItemToCart(typ,weapon)
@@ -183,10 +190,17 @@ end
 
 function FactionWTLoadGUI:factionWeaponTruckLoad()
 	triggerServerEvent("onWeaponTruckLoad",root,self.m_Cart)
+	InfoBox:new(_"Der Truck wurde beladen! Klicke die Kisten an und bringe sie zum Waffen-Truck!")
+	self:close()
 end
 
 addEventHandler("showFactionWTLoadGUI", root,
 		function(validWeapons, depotWeaponsMax)
-			FactionWTLoadGUI:new(validWeapons, depotWeaponsMax)
+			if FactionWTLoadGUI:isInstantiated() then
+				FactionWTLoadGUI:open(validWeapons, depotWeaponsMax)
+			else
+				FactionWTLoadGUI:new(validWeapons, depotWeaponsMax)
+			end
+
 		end
 	)

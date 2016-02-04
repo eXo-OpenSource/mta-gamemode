@@ -14,28 +14,77 @@ WeaponTruck.attachCords = {
 
 function WeaponTruck:constructor(driver, weaponTable)
 	self.m_Truck = TemporaryVehicle.create(455, -1869.58, 1430.02, 7.62, 224)
-	self.m_Truck:setFrozen(true)
+	--self.m_Truck:setFrozen(true)
 	self.m_Truck:setData("WeaponTruck", true)
     self.m_Truck:setColor(0, 0, 0)
-    self.m_Truck:setLocked(true)
+    --self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
+
 	self.m_Boxes = {}
 	self.m_BoxesOnTruck = {}
 	self.m_StartPlayer = driver
 	self.m_WeaponLoad = weaponTable
 	self.m_AttachBoxEvent =bind(self.attachBoxToPlayer,self)
 
+	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.EventOnWeaponTruckStartEnter,self))
+	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.EventOnWeaponTruckEnter,self))
+	addEventHandler("onVehicleExit",self.m_Truck,bind(self.EventOnWeaponTruckExit,self))
+
 	self:spawnBoxes()
 	self:createLoadMarker()
 end
 
 function WeaponTruck:destructor()
+	self.m_Truck:destroy()
+	self.m_DestinationMarker:destroy()
+	for index, value in pairs(self.m_Boxes) do
+		value:destroy()
+	end
+end
 
+function WeaponTruck:EventOnWeaponTruckStartEnter(player,seat)
+	if seat == 0 and not player:getFaction() then
+		player:sendError(_("Den Waffentruck können nur Fraktionisten fahren!",player))
+		cancelEvent()
+	end
+end
+
+function WeaponTruck:EventOnWeaponTruckEnter(player,seat)
+	if seat == 0 and player:getFaction() then
+		local factionId = player:getFaction():getId()
+		outputDebug(factionId)
+		local destination = factionWTDestination[factionId]
+		self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, player)
+		self.m_DestinationMarker = createMarker(destination,"cylinder",8)
+		addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
+	end
+end
+
+function WeaponTruck:EventOnWeaponTruckExit(player,seat)
+	if seat == 0 and player:getFaction() then
+		self.m_Blip:delete()
+		self.m_DestinationMarker:delete()
+	end
 end
 
 function WeaponTruck:createLoadMarker()
 	self.m_LoadMarker = createMarker(-1873.56, 1434.15, 7.18,"corona",2)
 	addEventHandler("onMarkerHit", self.m_LoadMarker, bind(self.Event_onLoadMarkerHit, self))
+end
+
+function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
+	if hitElement:getType() == "player" and matchingDimension then
+		local faction = hitElement:getFaction()
+		if faction then
+			if faction:isEvilFaction() then
+				outputChatBox(_("Der Waffentruck erfolgreich wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
+				hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
+				local depot = faction.m_Depot
+				depot:addWeaponsToDepot(self.m_WeaponLoad)
+				self:delete()
+			end
+		end
+	end
 end
 
 function WeaponTruck:Event_onLoadMarkerHit(hitElement, matchingDimension)
@@ -87,7 +136,7 @@ function WeaponTruck:toggleControlsWhileBoxAttached(player, bool)
 	toggleControl(player, "fire", bool )
 	toggleControl(player, "sprint", bool )
 	toggleControl(player, "next_weapon", bool )
-	toggleControl(player, "preexous_weapon", bool )
+	toggleControl(player, "previous weapon", bool )
 end
 
 function WeaponTruck:attachBoxToPlayer(button, state, player)
@@ -99,7 +148,7 @@ function WeaponTruck:attachBoxToPlayer(button, state, player)
 				source:attach(player, -0.09, 0.35, 0.45, 10, 0, 0)
 				player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
 			else
-				player:sendInfo(_("Du bist zuweit von der Kiste entfernt!", player))
+				player:sendError(_("Du bist zuweit von der Kiste entfernt!", player))
 			end
 		end
 	end
@@ -113,6 +162,7 @@ function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 	if #self.m_BoxesOnTruck >= 8 then
 		player:sendInfo(_("Alle Kisten aufgeladen! Der Truck ist bereit!",player))
 		self.m_Truck:setFrozen(false)
+		self.m_Truck:setLocked(false)
 		self.m_LoadMarker:destroy()
 	else
 		player:sendInfo(_("%d/8 Kisten aufgeladen!", player, #self.m_BoxesOnTruck))

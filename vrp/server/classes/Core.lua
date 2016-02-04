@@ -56,6 +56,7 @@ function Core:constructor()
 	Guns:new()
 	InventoryManager:new()
 	Casino:new()
+	ActionsCheck:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
