@@ -121,6 +121,7 @@
 
 	<!-- Factions -->
 	<script src="server/classes/Faction/PreparationMissions/MStealWeaponTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/MWeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/FactionDepot.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>

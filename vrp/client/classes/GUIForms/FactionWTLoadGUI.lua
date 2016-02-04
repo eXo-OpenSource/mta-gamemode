@@ -28,7 +28,7 @@ function FactionWTLoadGUI:constructor(validWeapons, depotWeaponsMax)
 	self.m_validWeapons = validWeapons
 	self.m_DepotWeaponsMax = depotWeaponsMax
 	self.m_TotalCosts = 0
-	
+
 	GUILabel:new(540,30, 280, 35, "im Waffentruck:", self.m_Window)
 	self.m_CartGrid = GUIGridList:new(540, 65, 280, 300, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
@@ -38,7 +38,7 @@ function FactionWTLoadGUI:constructor(validWeapons, depotWeaponsMax)
 	self.m_del:setBackgroundColor(Color.Red)
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
 	self.m_buy = GUIButton:new(690, 430, 135, 20,_"Beladen", self.m_Window)
-	self.m_buy.onLeftClick = bind(self.factionWeaponShopBuy,self)
+	self.m_buy.onLeftClick = bind(self.factionWeaponTruckLoad,self)
 	self.m_Sum = GUILabel:new(540,390, 280, 30, "Gesamtkosten: 0$/"..WEAPONTRUCK_MAX_LOAD.."$", self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
@@ -114,7 +114,7 @@ function FactionWTLoadGUI:updateButtons()
 			else
 				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
 			end
-		
+
 			if self.m_WeaponsBuyMunition[weaponID] then
 				if self.depot[weaponID]["Munition"]+self.m_Cart[weaponID]["Munition"] < self.m_DepotWeaponsMax[weaponID]["Magazine"] then
 					if self.m_TotalCosts + self.m_DepotWeaponsMax[weaponID]["MagazinPreis"] < WEAPONTRUCK_MAX_LOAD then
@@ -181,8 +181,8 @@ function FactionWTLoadGUI:factionReceiveWeaponShopInfos()
 		triggerServerEvent("factionReceiveWeaponShopInfos",localPlayer)
 end
 
-function FactionWTLoadGUI:factionWeaponShopBuy()
-	triggerServerEvent("factionWeaponShopBuy",root,self.m_Cart)
+function FactionWTLoadGUI:factionWeaponTruckLoad()
+	triggerServerEvent("onWeaponTruckLoad",root,self.m_Cart)
 end
 
 addEventHandler("showFactionWTLoadGUI", root,
