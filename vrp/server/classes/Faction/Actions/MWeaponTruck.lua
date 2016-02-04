@@ -59,7 +59,7 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 		if client:getMoney() >= totalAmount then
 			if ActionsCheck:getSingleton():isActionAllowed(client) then
 				if not self.m_CurrentWT then
-					outputChatBox(_("Ein Waffentruck wird beladen!",hitElement),rootElement,255,0,0)
+					outputChatBox(_("Ein Waffentruck wird beladen!",client),rootElement,255,0,0)
 					outputChatBox(_("Die Kisten stehen bereit zum beladen! Gesamtkosten: %d$",client,totalAmount),client,255,125,0)
 					self.m_CurrentWT = WeaponTruck:new(client,weaponTable)
 					ActionsCheck:getSingleton():setAction("Waffentruck")

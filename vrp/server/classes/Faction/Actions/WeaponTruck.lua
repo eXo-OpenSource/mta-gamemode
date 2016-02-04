@@ -79,6 +79,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			if faction:isEvilFaction() then
 				outputChatBox(_("Der Waffentruck erfolgreich wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
 				hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
+				ActionsCheck:getSingleton():endAction()
 				local depot = faction.m_Depot
 				depot:addWeaponsToDepot(self.m_WeaponLoad)
 				self:delete()

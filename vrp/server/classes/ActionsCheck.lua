@@ -32,7 +32,7 @@ function ActionsCheck:setAction(action)
 	self.m_CurrentAction = action
 end
 
-function ActionsCheck:endAction(action)
+function ActionsCheck:endAction()
 	self.m_LastAction = getRealTime().timestamp
 	self.m_CurrentAction = false
 end
