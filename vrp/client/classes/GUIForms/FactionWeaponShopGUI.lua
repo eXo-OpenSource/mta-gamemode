@@ -124,7 +124,7 @@ function FactionWeaponShopGUI:updateButtons()
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 				end
 			end
-			
+
 			if self.rankWeapons[tostring(weaponID)] == 1 then
 				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
 				if self.m_WeaponsBuyMunition[weaponID] then
@@ -136,7 +136,7 @@ function FactionWeaponShopGUI:updateButtons()
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 				end
 			end
-			
+
 		end
 	end
 	self:updateCart()

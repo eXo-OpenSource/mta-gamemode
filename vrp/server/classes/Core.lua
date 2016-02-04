@@ -69,6 +69,9 @@ function Core:constructor()
 	-- Generate Missions
 	MStealWeaponTruck:new()
 
+	-- Missions
+	WeaponTruck:new()
+
 	--// Gangwar
 	Gangwar:new()
 
