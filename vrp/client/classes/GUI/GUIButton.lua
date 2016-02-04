@@ -16,10 +16,10 @@ function GUIButton:constructor(posX, posY, width, height, text, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, text, height*0.05)
 
-	self.m_Path = "files/images/GUI/Button.png"
 	self.m_NormalColor = Color.White
 	self.m_HoverColor = Color.Black
 	self.m_BackgroundColor = tocolor(0, 32, 63, 255)
+	self.m_BackgroundNormalColor = tocolor(0, 32, 63, 255)
 	self.m_BackgroundHoverColor = Color.White
 	self.m_Color = self.m_NormalColor
 	self.m_Enabled = true
@@ -28,8 +28,7 @@ end
 function GUIButton:drawThis()
 	dxSetBlendMode("modulate_add")
 
-	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, math.floor(self.m_Width), math.floor(self.m_Height), self.m_Path)
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self:isHovered() and self.m_BackgroundHoverColor or self.m_BackgroundColor)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_BackgroundColor)
 	dxDrawText(self:getText(), self.m_AbsoluteX + GUI_BUTTON_BORDER_MARGIN, self.m_AbsoluteY + GUI_BUTTON_BORDER_MARGIN,
 		self.m_AbsoluteX + self.m_Width - GUI_BUTTON_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height - GUI_BUTTON_BORDER_MARGIN, self.m_Color, self:getFontSize(), self:getFont(), "center", "center", false, true)
 
@@ -44,14 +43,14 @@ function GUIButton:performChecks(...)
 end
 
 function GUIButton:onInternalHover()
-	self.m_Path = "files/images/GUI/Button_hover.png"
 	self.m_Color = self.m_HoverColor
+	self.m_BackgroundColor = self.m_BackgroundHoverColor	
 	self:anyChange()
 end
 
 function GUIButton:onInternalUnhover()
-	self.m_Path = "files/images/GUI/Button.png"
 	self.m_Color = self.m_NormalColor
+	self.m_BackgroundColor = self.m_BackgroundNormalColor	
 	self:anyChange()
 end
 
@@ -65,13 +64,14 @@ function GUIButton:setColor(color)
 end
 
 function GUIButton:setAlpha(alpha)
+	
 	self.m_Alpha = alpha
 	local r,g,b,a = fromcolor(self.m_Color)
 	self.m_Color = tocolor(r, g, b, alpha)
+	local r1,g1,b1,a1 = fromcolor(self.m_BackgroundNormalColor)
+	self.m_BackgroundColor = tocolor(r1, g1, b1, alpha)
 	
-	local r,g,b,a = fromcolor(self.m_BackgroundColor)
-	self.m_BackgroundColor = tocolor(r, g, b, alpha)
-	
+
 	self:anyChange()
 	return self
 end
@@ -91,6 +91,7 @@ end
 
 function GUIButton:setBackgroundColor(color)
 	self.m_BackgroundColor = color
+	self.m_BackgroundNormalColor = color
 	self:anyChange()
 	return self
 end
@@ -99,6 +100,7 @@ function GUIButton:setEnabled(state)
 	if state == true then
 		self:setAlpha(255)
 	else
+		self:setBackgroundColor(self.m_BackgroundNormalColor)
 		self:setAlpha(100)
 	end
 	self.m_Enabled = state

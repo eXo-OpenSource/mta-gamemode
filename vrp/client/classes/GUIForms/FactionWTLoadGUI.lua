@@ -27,7 +27,8 @@ function FactionWTLoadGUI:constructor(validWeapons, depotWeaponsMax)
 	self.m_WaffenColumn = 0
 	self.m_validWeapons = validWeapons
 	self.m_DepotWeaponsMax = depotWeaponsMax
-
+	self.m_TotalCosts = 0
+	
 	GUILabel:new(540,30, 280, 35, "im Waffentruck:", self.m_Window)
 	self.m_CartGrid = GUIGridList:new(540, 65, 280, 300, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
@@ -38,7 +39,7 @@ function FactionWTLoadGUI:constructor(validWeapons, depotWeaponsMax)
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
 	self.m_buy = GUIButton:new(690, 430, 135, 20,_"Beladen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponShopBuy,self)
-	self.m_Sum = GUILabel:new(540,390, 280, 30, "Gesamtkosten: 0$", self.m_Window)
+	self.m_Sum = GUILabel:new(540,390, 280, 30, "Gesamtkosten: 0$/"..WEAPONTRUCK_MAX_LOAD.."$", self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
 	self:factionReceiveWeaponShopInfos()
@@ -58,6 +59,7 @@ function FactionWTLoadGUI:Event_updateFactionWTLoadGUI(depotWeapons)
 	end
 	self.depot = depotWeapons
 	self:updateButtons()
+	self:updateCart()
 end
 
 function FactionWTLoadGUI:addWeaponToGUI(weaponID,Waffen,Munition)
@@ -103,22 +105,29 @@ end
 function FactionWTLoadGUI:updateButtons()
 	for weaponID,v in pairs(self.m_validWeapons) do
 		if v == true then
-			if self.depot[weaponID]["Waffe"]+self.m_Cart[weaponID]["Waffe"] >= self.m_DepotWeaponsMax[weaponID]["Waffe"] then
-				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
-			else
-				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
-			end
-
-			if self.m_WeaponsBuyMunition[weaponID] then
-				if self.depot[weaponID]["Munition"]+self.m_Cart[weaponID]["Munition"] >= self.m_DepotWeaponsMax[weaponID]["Magazine"] then
-					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
+			if self.depot[weaponID]["Waffe"]+self.m_Cart[weaponID]["Waffe"] < self.m_DepotWeaponsMax[weaponID]["Waffe"] then
+				if self.m_TotalCosts + self.m_DepotWeaponsMax[weaponID]["WaffenPreis"] < WEAPONTRUCK_MAX_LOAD then
+					self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
 				else
-					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
+					self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
+				end
+			else
+				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
+			end
+		
+			if self.m_WeaponsBuyMunition[weaponID] then
+				if self.depot[weaponID]["Munition"]+self.m_Cart[weaponID]["Munition"] < self.m_DepotWeaponsMax[weaponID]["Magazine"] then
+					if self.m_TotalCosts + self.m_DepotWeaponsMax[weaponID]["MagazinPreis"] < WEAPONTRUCK_MAX_LOAD then
+						self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
+					else
+						self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
+					end
+				else
+					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 				end
 			end
 		end
 	end
-	self:updateCart()
 end
 
 function FactionWTLoadGUI:updateCart()
@@ -142,7 +151,8 @@ function FactionWTLoadGUI:updateCart()
 			end
 		end
 	end
-	self.m_Sum:setText("Gesamtkosten: "..totalCosts.."$")
+	self.m_TotalCosts = totalCosts
+	self.m_Sum:setText("Gesamtkosten: "..totalCosts.."$/"..WEAPONTRUCK_MAX_LOAD.."$")
 end
 
 function FactionWTLoadGUI:deleteItemFromCart()
