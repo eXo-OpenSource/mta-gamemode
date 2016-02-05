@@ -66,6 +66,8 @@ end
 
 function BankAccount:setMoney(amount)
   self.m_Money = amount
+
+  CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendMessage(("%s$"):format(self.m_Money))
   self:update()
 end
 
@@ -75,10 +77,18 @@ end
 
 function BankAccount:addMoney(money)
   self.m_Money = self.m_Money + money
+
+  if self.m_OwnerType == BankAccountTypes.Company then
+    CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendMessage(("+%s$ (%s$)"):format(money, self.m_Money))
+  end
   self:update()
 end
 
 function BankAccount:takeMoney(money)
   self.m_Money = self.m_Money - money
+
+  if self.m_OwnerType == BankAccountTypes.Company then
+    CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendMessage(("-%s$ (%s$)"):format(money, self.m_Money))
+  end
   self:update()
 end

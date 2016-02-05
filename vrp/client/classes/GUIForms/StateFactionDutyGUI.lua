@@ -32,7 +32,7 @@ function StateFactionDutyGUI:constructor()
 
 	self.m_Close = GUIButton:new(30, 235, self.m_Width-60, 35,_"Schließen", self)
 	self.m_Close:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
-	self.m_Close.onLeftClick = function () self:hide() end
+	self.m_Close.onLeftClick = function () self:close() end
 
 	addEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
 	--self:refresh()
@@ -63,13 +63,23 @@ end
 
 addEventHandler("showStateFactionDutyGUI", root,
 		function()
-			StateFactionDutyGUI:new()
+			StateFactionDutyGUI:getSingleton():show()
 		end
 	)
 
 
+function StateFactionDutyGUI:onShow()
+	Cursor:show()
+end
+
+function StateFactionDutyGUI:onHide()
+	Cursor:hide()
+end
+
+
 function StateFactionDutyGUI:hide()
-	GUIForm.destructor(self)
+	GUIForm.hide(self)
+
 	removeEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
 end
 

@@ -179,3 +179,11 @@ end
 function Company:getCreator()
     return self.m_Creator
 end
+
+function Company:sendMessage(msg)
+    for i, v in pairs(Element.getAllByType("player")) do
+        if v:getCompany() == self then
+            v:sendShortMessage(("%s:\n%s"):format(self:getName(), msg))
+        end
+    end
+end

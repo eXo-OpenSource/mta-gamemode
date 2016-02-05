@@ -27,8 +27,9 @@ if DEBUG then
 			return
 		end
 		model = tonumber(model) or 411
-		local x, y, z = getElementPosition(player)
-		TemporaryVehicle.create(model, x+3, y, z)
+		local pos = player:getPosition()
+		local veh = TemporaryVehicle.create(model, pos + player.matrix.forward*3)
+		veh:setRotation(player:getRotation() + Vector3(0, 0, 90))
 	end
 
 	function Debugging:karma(player, cmd, karma)

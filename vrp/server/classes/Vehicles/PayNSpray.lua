@@ -3,7 +3,11 @@ PayNSpray = inherit(Object)
 function PayNSpray:constructor(x, y, z, garageId)
 	self.m_FixShape = createColSphere(x, y, z, 4)
 	self.m_Blip = Blip:new("PayNSpray.png", x, y)
-	setGarageOpen(garageId, true)
+	if garageId then
+		setGarageOpen(garageId, true)
+	end
+
+	self.m_Company = CompanyManager:getSingleton():getFromId(2) -- Mechanic and Tow Id
 
 	addEventHandler("onColShapeHit", self.m_FixShape,
 		function(hitElement, matchingDimension)
@@ -24,16 +28,24 @@ function PayNSpray:constructor(x, y, z, garageId)
 					return
 				end
 
-				setGarageOpen(garageId, false)
+				if garageId then
+					setGarageOpen(garageId, false)
+				end
 				setElementFrozen(vehicle, true)
-				hitElement:takeMoney(costs)
-				hitElement:sendShortMessage(_("Die Reperatur kostete %d$", hitElement, costs))
+
+				-- Give money to the Owner (TODO: Improve this -> complete Repair ~4.58$ (310% Vehicle Health) -> is it okay?)
+				self.m_Company.m_BankAccount:addMoney(costs*0.01)
 
 				setTimer(
 					function()
 						fixVehicle(vehicle)
 						setElementFrozen(vehicle, false)
-						setGarageOpen(garageId, true)
+						if garageId then
+							setGarageOpen(garageId, true)
+						end
+
+						hitElement:takeMoney(costs)
+						hitElement:sendShortMessage(_("Die Reperatur kostete %d$", hitElement, costs))
 					end,
 					3000,
 					1
@@ -53,4 +65,5 @@ function PayNSpray.initializeAll()
 	PayNSpray:new(2063.2, -1831.3, 13.5, 8)
 	PayNSpray:new(487.4, -1742.8, 11.1, 12)
 	PayNSpray:new(1025.1, -1022, 32.1, 11)
+	PayNSpray:new(1444.860, -1785.127, 13.250)
 end

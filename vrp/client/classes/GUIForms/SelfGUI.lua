@@ -30,6 +30,7 @@ function SelfGUI:constructor()
 	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.125, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
+	self.m_CompanyEditLabel.onLeftClick = bind(self.CompanyMenuButton_Click, self)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
 	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
@@ -354,6 +355,11 @@ function SelfGUI:JobQuitButton_Click()
 	triggerServerEvent("jobQuit", root)
 	self.m_JobNameLabel:setText("-")
 	self.m_JobQuitButton:setVisible(false)
+end
+
+function SelfGUI:CompanyMenuButton_Click()
+	self:close()
+	CompanyGUI:getSingleton():open()
 end
 
 function SelfGUI:GroupMenuButton_Click()

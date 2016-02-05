@@ -172,11 +172,12 @@ end
 
 function FactionWeaponShopGUI:deleteItemFromCart()
 	local item = self.m_CartGrid:getSelectedItem()
+	if item then
+		self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
 
-	self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
-
-	self:updateCart()
-	self:updateButtons()
+		self:updateCart()
+		self:updateButtons()
+	end
 end
 
 function FactionWeaponShopGUI:addItemToCart(typ,weapon)
