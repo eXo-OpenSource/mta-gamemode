@@ -56,6 +56,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 	end
 
+	if getElementData(element,"WeaponTruck") then
+		self:addItem(_"Kiste abladen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("weaponTruckDeloadBox", self:getElement())
+				end
+			end
+		)
+	end
+
 	if localPlayer:getJob() == JobMechanic:getSingleton() then
 		self:addItem(_"Mechaniker: Reparieren",
 			function()

@@ -118,7 +118,6 @@
 	<!-- Business -->
 	<script src="server/classes/Business/Company.lua" type="server"/>
 	<script src="server/classes/Business/Companies/DrivingSchool.lua" type="server"/>
-	<script src="server/classes/Business/Companies/Mechanic-Tow.lua" type="server"/>
 	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
 
 	<!-- Factions -->
@@ -362,7 +361,6 @@
 	<script src="client/classes/GUIForms/StateFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StateFactionArrestGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/CompanyGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
