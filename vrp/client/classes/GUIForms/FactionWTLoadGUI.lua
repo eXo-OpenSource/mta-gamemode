@@ -34,6 +34,7 @@ function FactionWTLoadGUI:constructor(validWeapons, depotWeaponsMax)
 	self.m_CartGrid:addColumn(_"Preis", 0.3)
 	self.m_del = GUIButton:new(540, 430, 135, 20,_"entfernen", self.m_Window)
 	self.m_del:setBackgroundColor(Color.Red)
+	self.m_del:setEnabled(false)
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
 	self.m_buy = GUIButton:new(690, 430, 135, 20,_"Beladen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponTruckLoad,self)
@@ -132,9 +133,11 @@ function FactionWTLoadGUI:updateButtons()
 			end
 		end
 	end
+	if self.m_TotalCosts > 0 then self.m_buy:setEnabled(true) else	self.m_buy:setEnabled(false) end
 end
 
 function FactionWTLoadGUI:updateCart()
+	self.m_del:setEnabled(false)
 	self.m_CartGrid:clear()
 	local name, item, price
 	local totalCosts = 0
@@ -152,9 +155,11 @@ function FactionWTLoadGUI:updateCart()
 				item = self.m_CartGrid:addItem(name, amount, price.."$")
 				item.typ = typ
 				item.id = weaponID
+				item.onLeftClick = function() self.m_del:setEnabled(true) end
 			end
 		end
 	end
+
 	self.m_TotalCosts = totalCosts
 	self.m_Sum:setText("Gesamtkosten: "..totalCosts.."$/"..WEAPONTRUCK_MAX_LOAD.."$")
 end

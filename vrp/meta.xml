@@ -322,7 +322,8 @@
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CharacterCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
-	<script src="client/classes/GUIForms/BankRobberyCountdown.lua" type="client"/>
+	<script src="client/classes/GUIForms/Countdown.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleHealth.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/EventJoinGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CountdownGUI.lua" type="client"/>
@@ -562,7 +563,7 @@
 	<vrpfile src="files/images/Weapons/Uzi.png"/>
 	<vrpfile src="files/images/Weapons/Vibrator.png"/>
 
-	<vrpfile src="files/images/Other/BankRobberyCountdown.png"/>
+	<vrpfile src="files/images/Other/Countdown.png"/>
 	<vrpfile src="files/images/Other/thunder.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>

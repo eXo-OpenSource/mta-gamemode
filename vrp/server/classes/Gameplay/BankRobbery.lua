@@ -34,7 +34,7 @@ function BankRobbery:constructor(position, rotation, interior, dimension)
 								player:giveMoney(700)
 							end
 
-							player:triggerEvent("bankRobberyCountdownStop")
+							player:triggerEvent("CountdownStop")
 						end
 					end
 					if self.m_Timer and isTimer(self.m_Timer) then
@@ -86,7 +86,7 @@ function BankRobbery:BombArea_Place(bombArea, player)
 	self.m_LastRobbery = getTickCount()
 
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-		player:triggerEvent("bankRobberyCountdown", HOLD_TIME/1000)
+		player:triggerEvent("Countdown", HOLD_TIME/1000)
 
 		local faction = player:getFaction()
 		if faction and faction:isEvilFaction() then

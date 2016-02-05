@@ -7,6 +7,7 @@
 -- ****************************************************************************
 
 WeaponTruck = inherit(Object)
+WeaponTruck.Time = 10*60*1000 -- in ms
 WeaponTruck.attachCords = {
 	Vector3(0.7, -0.1, 0.1), Vector3(-0.7, -0.1, 0.1), Vector3(0.7, -1.4, 0.1), Vector3(-0.7, -1.4, 0.1),
 	Vector3(-0.7, -2.7, 0.1), Vector3(0.7, -2.7, 0.1), Vector3(-0.7, -4, 0.1), Vector3(0.7, -4, 0.1)
@@ -14,11 +15,12 @@ WeaponTruck.attachCords = {
 
 function WeaponTruck:constructor(driver, weaponTable)
 	self.m_Truck = TemporaryVehicle.create(455, -1869.58, 1430.02, 7.62, 224)
-	--self.m_Truck:setFrozen(true)
 	self.m_Truck:setData("WeaponTruck", true)
     self.m_Truck:setColor(0, 0, 0)
+	--self.m_Truck:setFrozen(true)
     --self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
+	self.m_StartTime = getTickCount()
 
 	self.m_Boxes = {}
 	self.m_BoxesOnTruck = {}
@@ -26,17 +28,26 @@ function WeaponTruck:constructor(driver, weaponTable)
 	self.m_WeaponLoad = weaponTable
 	self.m_AttachBoxEvent =bind(self.attachBoxToPlayer,self)
 
+	self.m_Timer = setTimer(bind(self.timeUp, self), WeaponTruck.Time, 1)
+	self.m_Destroyed = false
+
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.EventOnWeaponTruckStartEnter,self))
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.EventOnWeaponTruckEnter,self))
 	addEventHandler("onVehicleExit",self.m_Truck,bind(self.EventOnWeaponTruckExit,self))
+	addEventHandler("onElementDestroy",self.m_Truck,bind(self.EventOnWeaponTruckDestroy,self))
 
 	self:spawnBoxes()
 	self:createLoadMarker()
 end
 
 function WeaponTruck:destructor()
+	ActionsCheck:getSingleton():endAction()
 	self.m_Truck:destroy()
-	self.m_DestinationMarker:destroy()
+
+	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
+	if isElement(self.m_Blip) then self.m_Blip:destroy() end
+	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
+
 	for index, value in pairs(self.m_Boxes) do
 		value:destroy()
 	end
@@ -49,11 +60,27 @@ function WeaponTruck:EventOnWeaponTruckStartEnter(player,seat)
 	end
 end
 
+function WeaponTruck:EventOnWeaponTruckDestroy()
+	if self and not self.m_Destroyed then
+		self.m_Destroyed = true
+		self:EventOnWeaponTruckExit(self.m_Driver,0)
+		outputChatBox(_("Der Waffentruck ist fehlgeschlagen! (Zerstört)",self.m_StartPlayer),rootElement,255,0,0)
+		self:delete()
+	end
+end
+
+function WeaponTruck:timeUp()
+	outputChatBox(_("Der Waffentruck ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer),rootElement,255,0,0)
+	self:delete()
+end
+
 function WeaponTruck:EventOnWeaponTruckEnter(player,seat)
 	if seat == 0 and player:getFaction() then
 		local factionId = player:getFaction():getId()
-		outputDebug(factionId)
 		local destination = factionWTDestination[factionId]
+		self.m_Driver = player
+		player:triggerEvent("Countdown", math.floor((WeaponTruck.Time-(getTickCount()-self.m_StartTime))/1000))
+		player:triggerEvent("VehicleHealth")
 		self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, player)
 		self.m_DestinationMarker = createMarker(destination,"cylinder",8)
 		addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
@@ -61,9 +88,11 @@ function WeaponTruck:EventOnWeaponTruckEnter(player,seat)
 end
 
 function WeaponTruck:EventOnWeaponTruckExit(player,seat)
-	if seat == 0 and player:getFaction() then
-		self.m_Blip:delete()
-		self.m_DestinationMarker:delete()
+	if seat == 0 then
+		player:triggerEvent("CountdownStop")
+		player:triggerEvent("VehicleHealthStop")
+		if isElement(self.m_Blip) then self.m_Blip:destroy() end
+		if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
 	end
 end
 
@@ -77,12 +106,13 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 		local faction = hitElement:getFaction()
 		if faction then
 			if faction:isEvilFaction() then
-				outputChatBox(_("Der Waffentruck erfolgreich wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
-				hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
-				ActionsCheck:getSingleton():endAction()
-				local depot = faction.m_Depot
-				depot:addWeaponsToDepot(self.m_WeaponLoad)
-				self:delete()
+				if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+					outputChatBox(_("Der Waffentruck erfolgreich wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
+					hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
+					local depot = faction.m_Depot
+					depot:addWeaponsToDepot(self.m_WeaponLoad)
+					self:delete()
+				end
 			end
 		end
 	end
