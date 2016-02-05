@@ -116,16 +116,13 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 end
 
 function Depot:addWeaponsToDepot(weaponTable)
-	outputChatBox("Es wurden folgende Waffen und Magazine in das Lager gelegt:",player,255,255,255)
 	for weaponID,v in pairs(weaponTable) do
 		for typ,amount in pairs(weaponTable[weaponID]) do
 			if amount > 0 then
 				if typ == "Waffe" then
-					outputChatBox(amount.." "..getWeaponNameFromID(weaponID),player,255,125,0)
 					self:addWeaponD(weaponID,amount)
 				elseif typ == "Munition" then
 					self:addMagazineD(weaponID,amount)
-					outputChatBox(amount.." "..getWeaponNameFromID(weaponID).." Magazin/e",player,255,125,0)
 				end
 			end
 		end
