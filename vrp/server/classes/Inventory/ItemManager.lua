@@ -9,7 +9,8 @@ ItemManager = inherit(Singleton)
 
 function ItemManager:constructor()
 	self.m_ClassItems = {
-		["Barrikade"] = ItemBarricade
+		["Barrikade"] = ItemBarricade,
+		["Sprengstoff"] = ItemBomb
 	}
 
 	for name, class in pairs(self.m_ClassItems) do

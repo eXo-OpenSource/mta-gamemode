@@ -79,7 +79,6 @@
 	<!-- Inventory System -->
 	<script src="server/classes/Inventory/Item.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
-	<script src="server/classes/Inventory/PlacableItem.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBarricade.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
@@ -104,7 +103,6 @@
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
 	<script src="server/classes/Gameplay/Casino.lua" type="server"/>
 	<!--<script src="server/classes/Gameplay/Police.lua" type="server"/>-->
-	<script src="server/classes/Gameplay/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/AmmuNation.lua" type="server"/>
@@ -126,6 +124,7 @@
 	<script src="server/classes/Faction/PreparationMissions/MStealWeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/MWeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeaponTruck.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/BankRobbery.lua" type="server"/>
 	<script src="server/classes/Faction/FactionDepot.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
 	<script src="server/classes/Faction/FactionState.lua" type="server"/>
@@ -471,10 +470,6 @@
 
 	<script src="client/Main.lua" type="client"/>
 
-
-	<!-- Shared and dependent on server/client -->
-	<script src="shared/items.lua" type="shared"/>
-
 	<!-- Web API -->
 	<html src="server/http/api.lua" />
 	<export function="api_request" type="server" http="true"/>
@@ -661,12 +656,6 @@
 	<vrpfile src="files/images/Jobs/Farmerdisplay.png"/>
 	<vrpfile src="files/images/Jobs/HeaderServiceTechnician.png"/>
 
-	<vrpfile src="files/images/Items/Bomb.png"/>
-	<vrpfile src="files/images/Items/HotwireKit.png"/>
-	<vrpfile src="files/images/Items/Passport.png"/>
-	<vrpfile src="files/images/Items/Radio.png"/>
-	<vrpfile src="files/images/Items/Barricade.png"/>
-
 	<vrpfile src="files/images/Nametag/default.png"/>
 	<vrpfile src="files/images/Nametag/vrp.png"/>
 	<vrpfile src="files/images/Nametag/vrpstar.png"/>
@@ -753,6 +742,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/X-MAS-Muetze.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Keks.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Barrikade.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Zigeretten.png" />

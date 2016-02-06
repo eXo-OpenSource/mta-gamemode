@@ -8,6 +8,8 @@
 ObjectPlacer = inherit(Object)
 
 function ObjectPlacer:constructor(model, callback)
+    showCursor(true)
+
     self.m_Object = createObject(model, localPlayer:getPosition())
     self.m_Object:setCollisionsEnabled(false)
     self.m_Callback = callback
@@ -22,9 +24,7 @@ function ObjectPlacer:constructor(model, callback)
     self.m_Click = bind(self.Event_Click, self)
     addEventHandler("onClientClick", root, self.m_Click)
 
-    -- Hide inventory
-    Inventory:getSingleton():hide()
-    showCursor(true)
+
 end
 
 function ObjectPlacer:destructor()
@@ -68,10 +68,15 @@ end
 addEvent("objectPlacerStart", true)
 addEventHandler("objectPlacerStart", root,
     function(model, callbackEvent)
-        local objectPlacer = ObjectPlacer:new(model,
-            function(position, rotation)
-                triggerServerEvent(callbackEvent, localPlayer, position.x, position.y, position.z, rotation)
-            end
-        )
+        Inventory:getSingleton():hide()
+        setTimer(
+        function(model,callbackEvent)
+            local objectPlacer = ObjectPlacer:new(model,
+                function(position, rotation)
+                    triggerServerEvent(callbackEvent, localPlayer, position.x, position.y, position.z, rotation)
+                end
+            )
+        end,250,1,model,callbackEvent)
+
     end
 )

@@ -15,10 +15,15 @@ function Item:setName(name)
 end
 
 function Item:loadItem()
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_items WHERE Objektname = ?", sql:getPrefix(), self.m_ItemName)
-	for i, row in ipairs(result) do
-		self.m_ItemModel = tonumber(row["ModelID"])
-	end
+	local itemData = InventoryManager:getSingleton():getItemDataForItem(self.m_ItemName)
+	self.m_ItemTasche = itemData["Tasche"]
+	self.m_ItemIcon = itemData["Icon"]
+	self.m_ItemItemMax = itemData["Item_Max"]
+	self.m_ItemWegwerf = itemData["Wegwerf"]
+	self.m_ItemHandel = itemData["Handel"]
+	self.m_ItemStack_max = itemData["Stack_max"]
+	self.m_ItemVerbraucht = itemData["Verbraucht"]
+	self.m_ItemModel = itemData["ModelID"]
 end
 
 function Item:getName()
@@ -58,11 +63,6 @@ addEventHandler("itemPlaced", root,
 	function(x, y, z, rotation)
 		local placingInfo = client.m_PlacingInfo
 		if placingInfo then
-			-- Check if the player still has the item | The item has already been removed from the inventory here!!!
-			--[[if not client:getInventory():hasItem(placingInfo.item:getItemId()) then
-				return
-			end]]
-
 			placingInfo.callback(placingInfo.item, Vector3(x, y, z), rotation)
 			client.m_PlacingInfo = nil
 		end

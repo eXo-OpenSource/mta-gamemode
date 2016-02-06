@@ -37,6 +37,10 @@ function InventoryManager:getItemData()
 	return self.m_ItemData
 end
 
+function InventoryManager:getItemDataForItem(itemName)
+	return self.m_ItemData[itemName]
+end
+
 function InventoryManager:loadItems()
 	local result = sql:queryFetch("SELECT * FROM ??_inventory_items", sql:getPrefix())
 	local itemData = {}

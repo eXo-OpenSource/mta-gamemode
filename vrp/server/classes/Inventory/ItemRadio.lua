@@ -5,7 +5,7 @@
 -- *  PURPOSE:     3dRadio item class
 -- *
 -- ****************************************************************************
-ItemRadio = inherit(PlaceableItem)
+ItemRadio = inherit(Item)
 addEvent("itemRadioChangeURL", true)
 
 function ItemRadio:constructor()
