@@ -8,8 +8,8 @@
 SideSwipe = inherit(Object)
 
 function SideSwipe:constructor()
-	self.JosefinSans30 = dxCreateFont("res/font/JosefinSans-Regular.ttf", 30)
-	self.JosefinSans100 = dxCreateFont("res/font/JosefinSans-Regular.ttf", 100)
+	self.JosefinSans30 = dxCreateFont("files/fonts/JosefinSans-Regular.ttf", 30)
+	self.JosefinSans100 = dxCreateFont("files/fonts/JosefinSans-Regular.ttf", 100)
 
 	self.state = "Home"
 	self.width, self.height = 400, 600
@@ -29,11 +29,34 @@ function SideSwipe:constructor()
 	--Update the render target
 	self:updateRenderTarget()
 
-	--Event:add(self, "onClientRender", root, true)
+	self._onClientRender = bind(SideSwipe.onClientRender, self)
+	addEventHandler("onClientRender", root, self._onClientRender)
 end
 
 function SideSwipe:destructor()
+	--Remove Events
+	removeEventHandler("onClientRender", root, self._onClientRender)
+	--removeEventHandler("onClientResourceStop", resourceRoot, self._closeFunc)
 
+	--unbind keys
+	unbindKey("backspace", "down", self._closeFunc)
+	unbindKey("num_4", "down", self._swipeFunc)
+	unbindKey("num_6", "down", self._swipeFunc)
+
+	--Stop/delete animations
+	delete(self.anim_swipeRight)
+	delete(self.anim_swipeLeft)
+	delete(self.anim_failMove)
+
+	for k, v in pairs(self) do
+		if isElement(v) and v.destroy then
+			v:destroy()
+		end
+
+		self[k] = nil
+	end
+
+	collectgarbage()
 end
 
 ----
@@ -50,7 +73,7 @@ function SideSwipe:loadImages()
 	}
 
 	for _, img in ipairs(self.images) do
-		self[img] = DxTexture(("res/img/%s.png"):format(img))
+		self[img] = DxTexture(("files/images/SideSwipe/%s.png"):format(img))
 	end
 
 	self.background = math.random(1, 6)
@@ -59,9 +82,6 @@ end
 function SideSwipe:loadAnimations()
 	self.swipeToRightWidth = 0      --Blue
 	self.swipeToLeftWidth = 0       --Orange
-
-	self.blackY = self.height
-	self.blackWidth = 0
 
 	self.anim_swipeRight = new(CAnimation, self, bind(SideSwipe.swipeDone, self), "swipeToRightWidth")
 	self.anim_swipeLeft = new(CAnimation, self, bind(SideSwipe.swipeDone, self), "swipeToLeftWidth")
@@ -199,6 +219,8 @@ function SideSwipe:failed(type)
 	end
 
 	self.state = "Died"
+	self.blackY = self.height
+	self.blackWidth = 0
 	self.anim_failMove:startAnimation(450, "OutQuad", 0, self.width)
 
 	for ID, drop in ipairs(self.Drops) do
@@ -426,7 +448,7 @@ function SideSwipe:explode(startX, startY, sColor)
 
 	local startX = startX
 	local startY = startY + self.dropY*0.75
-	playSound("res/sound/blop.mp3")
+	playSound("files/audio/SideSwipe/blop.mp3")
 	for i = 1, 15 do
 		self[("BallX_%s"):format(i)] = startX + math.random(-20, 20)
 		self[("BallY_%s"):format(i)] = startY + math.random(-20, 20)
@@ -506,5 +528,5 @@ end
 function SideSwipe:onClientRender()
 	if not self.renderTarget then return end
 
-	dxDrawImage(x/2-self.width/2, y/2-self.height/2, self.width, self.height, self.renderTarget)
+	dxDrawImage(screenWidth/2-self.width/2, screenHeight/2-self.height/2, self.width, self.height, self.renderTarget)
 end

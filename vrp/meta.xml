@@ -761,14 +761,12 @@
 	<!-- GoJump -->
 	<vrpfile src = "files/images/GoJump/titlescreen.png" />
 	<vrpfile src = "files/images/GoJump/howto.png" />
-
 	<vrpfile src = "files/images/GoJump/bg_1.png" />
 	<vrpfile src = "files/images/GoJump/bg_2.png" />
 	<vrpfile src = "files/images/GoJump/bg_3.png" />
 	<vrpfile src = "files/images/GoJump/bg_4.png" />
 	<vrpfile src = "files/images/GoJump/bg_5.png" />
 	<vrpfile src = "files/images/GoJump/bg_6.png" />
-
 	<vrpfile src = "files/images/GoJump/circle_play.png" />
 	<vrpfile src = "files/images/GoJump/circle_stats.png" />
 	<vrpfile src = "files/images/GoJump/circle_color.png" />
@@ -777,6 +775,13 @@
 	<vrpfile src = "files/images/GoJump/player_l.png" />
 	<vrpfile src = "files/images/GoJump/player_r.png" />
 	<vrpfile src = "files/images/GoJump/arrow_down.png" />
+
+	<!-- SideSwipe -->
+	<file src = "files/images/SideSwipe/titlescreen.png" />
+	<file src = "files/images/SideSwipe/filled_circle.png" />
+	<file src = "files/images/SideSwipe/drop.png" />
+	<file src = "files/images/SideSwipe/play.png" />
+	<file src = "files/images/SideSwipe/direction.png" />
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>
@@ -798,6 +803,9 @@
 	<vrpfile src = "files/audio/GoJump/button.wav" />
 	<vrpfile src = "files/audio/GoJump/average.wav" />
 	<vrpfile src = "files/audio/GoJump/highscore.wav" />
+
+	<!-- SideSwipe -->
+	<vrpfile src = "files/audio/SideSwipe/blop.mp3" />
 
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
@@ -836,6 +844,7 @@
 	<vrpfile src="files/fonts/Gasalt_Black.ttf"/>
 	<vrpfile src="files/fonts/FontAwesome.otf"/>
 	<vrpfile src="files/fonts/JosefinSans-Thin.ttf"/>
+	<vrpfile src="files/fonts/JosefinSans-Regular.ttf"/>
 
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>

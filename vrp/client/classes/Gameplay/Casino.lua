@@ -43,7 +43,7 @@ function Casino:createGameMarker()
 		function(hitElement)
 			if hitElement:getType() ~= "player" then return end
 
-			--SideSwipe:new()
+			SideSwipe:new()
 		end
 	)
 
