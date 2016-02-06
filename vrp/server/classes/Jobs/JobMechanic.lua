@@ -33,6 +33,10 @@ function JobMechanic:checkRequirements(player)
 		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 3", player), 255, 0, 0)
 		return false
 	end
+	if player:getCompany() ~= CompanyManager:getSingleton():getFromId(2) then
+		player:sendError(_("Für diesen Job musst du Mitglied bei '%s' sein!", player, CompanyManager:getSingleton():getFromId(2):getName()))
+		return false
+	end
 	return true
 end
 
