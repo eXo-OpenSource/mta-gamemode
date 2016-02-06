@@ -455,6 +455,12 @@
 	<!-- Gameplay -->
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
+	<script src="client/classes/Gameplay/Casino.lua" type="client"/>
+
+	<!--Minigames-->
+	<script src="client/classes/Gameplay/Minigames/CAnimations.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/CGoJump.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/CSideSwipe.lua" type="client"/>
 
 	<!-- Business -->
 
@@ -761,18 +767,46 @@
 	<vrpfile src="files/images/Inventory/items/Essen/Kuheuter mit Pommes.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Zombie-Burger.png" />
 
+	<!-- GoJump -->
+	<vrpfile src = "files/images/GoJump/titlescreen.png" />
+	<vrpfile src = "files/images/GoJump/howto.png" />
+
+	<vrpfile src = "files/images/GoJump/bg_1.png" />
+	<vrpfile src = "files/images/GoJump/bg_2.png" />
+	<vrpfile src = "files/images/GoJump/bg_3.png" />
+	<vrpfile src = "files/images/GoJump/bg_4.png" />
+	<vrpfile src = "files/images/GoJump/bg_5.png" />
+	<vrpfile src = "files/images/GoJump/bg_6.png" />
+
+	<vrpfile src = "files/images/GoJump/circle_play.png" />
+	<vrpfile src = "files/images/GoJump/circle_stats.png" />
+	<vrpfile src = "files/images/GoJump/circle_color.png" />
+	<vrpfile src = "files/images/GoJump/circle_sound.png" />
+	<vrpfile src = "files/images/GoJump/circle_sound_off.png" />
+	<vrpfile src = "files/images/GoJump/player_l.png" />
+	<vrpfile src = "files/images/GoJump/player_r.png" />
+	<vrpfile src = "files/images/GoJump/arrow_down.png" />
 
 	<!-- Audio -->
-	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
-	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>
-	<vrpfile src="files/audio/Ringtones/Ringtone3.mp3"/>
-
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/Halleluja.mp3"/>
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/Enginestart.mp3"/>
 	<vrpfile src="files/audio/Siren.ogg"/>
 	<vrpfile src="files/audio/ElevatorMusic.ogg"/>
+
+	<!-- Ringtones -->
+	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Ringtone3.mp3"/>
+
+	<!-- GoJump -->
+	<vrpfile src = "files/audio/GoJump/jump.wav" />
+	<vrpfile src = "files/audio/GoJump/point.wav" />
+	<vrpfile src = "files/audio/GoJump/dead.wav" />
+	<vrpfile src = "files/audio/GoJump/button.wav" />
+	<vrpfile src = "files/audio/GoJump/average.wav" />
+	<vrpfile src = "files/audio/GoJump/highscore.wav" />
 
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
@@ -810,6 +844,7 @@
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
 	<vrpfile src="files/fonts/Gasalt_Black.ttf"/>
 	<vrpfile src="files/fonts/FontAwesome.otf"/>
+	<vrpfile src="files/fonts/JosefinSans-Thin.ttf"/>
 
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>

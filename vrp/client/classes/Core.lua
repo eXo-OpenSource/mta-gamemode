@@ -42,6 +42,8 @@ function Core:ready()
 	DimensionManager:new()
 	Inventory:new()
 	Guns:new()
+	Casino:new()
+
 	-- Events
 	EventManager:new()
 	DMRaceEvent:new()
