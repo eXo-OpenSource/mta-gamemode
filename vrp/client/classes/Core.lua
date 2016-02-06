@@ -129,6 +129,9 @@ function Core:afterLogin()
 	PhoneCEF:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleCEFPhone", "o"), "down", function() PhoneCEF:getSingleton():toggle() end)
 
+	FactionWTBoxHoverGUI:new()
+	FactionWTBoxHoverGUI:getSingleton():close()
+
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
 		HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)

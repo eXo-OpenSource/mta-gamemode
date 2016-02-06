@@ -135,6 +135,9 @@ function WeaponTruck:spawnBox(i, position)
 	self.m_Boxes[i].content = {}
 	self.m_Boxes[i].sum = 0
 	self:setBoxContent(i)
+	self.m_Boxes[i]:setData("weaponBox", true, true)
+	self.m_Boxes[i]:setData("content", self.m_Boxes[i].content, true)
+	--self:outputBoxContent(self.m_StartPlayer,i)
 	return self.m_Boxes[i]
 end
 
@@ -208,10 +211,11 @@ function WeaponTruck:setBoxContent(boxId)
 			if amount > 0 then
 				for i=0,amount do
 					if typ == "Waffe" then preisString = "WaffenPreis" elseif typ == "Munition" then preisString = "MagazinPreis" end
-					if box.sum < self.m_AmountPerBox or depotInfo[weaponID][preisString] > self.m_AmountPerBox then
+					if box.sum + depotInfo[weaponID][preisString] < self.m_AmountPerBox or depotInfo[weaponID][preisString] > self.m_AmountPerBox then
+						if not box.content[weaponID] then box.content[weaponID] = { ["Waffe"] = 0, ["Munition"] = 0 } end
+
 						box.sum = box.sum + depotInfo[weaponID][preisString]
 						self.m_WeaponLoad[weaponID][typ] = self.m_WeaponLoad[weaponID][typ] - 1
-						if not box.content[weaponID] then box.content = {[weaponID] = {["Waffe"] = 0, ["Munition"] = 0 }} end
 						box.content[weaponID][typ] = box.content[weaponID][typ] + 1
 						--outputChatBox("1 "..typ.." "..getWeaponNameFromID(weaponID).." in die Kiste "..boxId.." geladen! SUM: "..box.sum.."$") -- Debug
 						self:setBoxContent(boxId)
