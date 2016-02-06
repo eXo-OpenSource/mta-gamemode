@@ -16,10 +16,6 @@ function InventoryManager:constructor()
 		["Drogen"] = 7,
 	}
 
-	self.m_ClassItems = {
-		["Barrikade"] = ItemBarricade
-	}
-
 	self.m_ItemData = {}
 	self.m_ItemData = self:loadItems()
 	self.Map = {}
@@ -42,9 +38,6 @@ function InventoryManager:getItemData()
 end
 
 function InventoryManager:loadItems()
-
-
-
 	local result = sql:queryFetch("SELECT * FROM ??_inventory_items", sql:getPrefix())
 	local itemData = {}
 	local itemName
@@ -61,20 +54,14 @@ function InventoryManager:loadItems()
 		itemData[itemName]["Stack_max"] = tonumber(row["stack_max"])
 		itemData[itemName]["Verbraucht"] = tonumber(row["verbraucht"])
 		itemData[itemName]["ModelID"] = tonumber(row["ModelID"])
-
-		if self.m_ClassItems[itemName] then
-			self.m_ClassItems[itemName]:new(itemName,tonumber(row["ModelID"]))
-		end
 	end
-
-
 
 	return itemData
 end
 
 function InventoryManager:loadInventory(player)
 	if not self.Map[player] then
-		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,self.m_ClassItems)
+		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,ItemManager:getSingleton():getClassItems())
 		self.Map[player] = instance
 		return instance
 	end

@@ -1,12 +1,24 @@
-Item = inherit(Object)
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Inventory/Item.lua
+-- *  PURPOSE:     Item Super Class
+-- *
+-- ****************************************************************************
+Item = inherit(Singleton)
 
-function Item:constructor(itemName, itemModel)
-	Item.virtual_constructor(self, itemName, itemModel)
+function Item:constructor()
 end
 
-function Item:virtual_constructor(itemName, itemModel)
-	self.m_ItemName = itemName
-	self.m_ItemModel = itemModel
+function Item:setName(name)
+	self.m_ItemName = name
+end
+
+function Item:loadItem()
+	local result = sql:queryFetch("SELECT * FROM ??_inventory_items WHERE Objektname = ?", sql:getPrefix(), self.m_ItemName)
+	for i, row in ipairs(result) do
+		self.m_ItemModel = tonumber(row["ModelID"])
+	end
 end
 
 function Item:getName()
@@ -22,7 +34,6 @@ end
 
 function Item:place(owner, pos, rotation, amount)
 	-- We need to duplicate the item if the amount does not match the available amount of items
-	outputChatBox(self.m_ItemModel)
 	local worldItem = WorldItem:new(self, owner, pos, rotation)
 	if owner then
 		--owner:triggerEvent("worldItemPlace", self.m_ItemName, worldItem:getObject())

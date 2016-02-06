@@ -55,6 +55,7 @@ function Core:constructor()
 	CompanyManager:new()
 	Guns:new()
 	InventoryManager:new()
+	ItemManager:new()
 	Casino:new()
 	ActionsCheck:new()
 

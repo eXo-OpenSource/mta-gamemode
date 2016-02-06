@@ -78,6 +78,7 @@
 
 	<!-- Inventory System -->
 	<script src="server/classes/Inventory/Item.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/PlacableItem.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBarricade.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>

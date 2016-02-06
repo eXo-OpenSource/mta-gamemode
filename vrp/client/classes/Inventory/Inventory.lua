@@ -76,10 +76,8 @@ end
 
 function Inventory:toggle()
 	if self.Show == true then
-		self.Show = false
 		self:hide()
 	else
-		self.Show = true
 		self:show()
 	end
 end
@@ -506,130 +504,135 @@ function Inventory:onClickAndDropUp(button)
 end
 
 function Inventory:show()
-	showCursor ( true , false)
-	toggleControl ( "fire",  false)
-	triggerServerEvent("refreshInventory", localPlayer)
+	if self.Show == false then
+		self.Show = true
+		showCursor ( true , false)
+		toggleControl ( "fire",  false)
+		triggerServerEvent("refreshInventory", localPlayer)
 
-	self.m_screenGUI = guiCreateStaticImage(0, 0, screenWidth, screenHeight, "files/images/Logo.png", false)
-	guiSetAlpha(self.m_screenGUI, 0)
-	self.pClose, self.pMove, self.pReset = self.m_ImagePath.."closeinv.png", self.m_ImagePath.."moveinv.png", self.m_ImagePath.."reset.png"
-	self.m_R, self.m_G, self.m_B = { ["Items"]=50, ["Essen"]=50, ["Objekte"]=50, ["Drogen"]=50,  ["Rahmen"]=255} ,  { ["Items"]=200, ["Essen"]=200, ["Objekte"]=200, ["Drogen"]=200 , ["Rahmen"]=255} ,  { ["Items"]=255, ["Essen"]=255, ["Objekte"]=255, ["Drogen"]=255, ["Rahmen"]=255 }
+		self.m_screenGUI = guiCreateStaticImage(0, 0, screenWidth, screenHeight, "files/images/Logo.png", false)
+		guiSetAlpha(self.m_screenGUI, 0)
+		self.pClose, self.pMove, self.pReset = self.m_ImagePath.."closeinv.png", self.m_ImagePath.."moveinv.png", self.m_ImagePath.."reset.png"
+		self.m_R, self.m_G, self.m_B = { ["Items"]=50, ["Essen"]=50, ["Objekte"]=50, ["Drogen"]=50,  ["Rahmen"]=255} ,  { ["Items"]=200, ["Essen"]=200, ["Objekte"]=200, ["Drogen"]=200 , ["Rahmen"]=255} ,  { ["Items"]=255, ["Essen"]=255, ["Objekte"]=255, ["Drogen"]=255, ["Rahmen"]=255 }
 
-	self.m_SlotsCurrent = self.m_Slots[self.m_BagCurrent]
-	lines = math.ceil(self.m_SlotsCurrent/7)
-	self.m_BX, self.m_BY = 330,  20 - 4 + 45*lines --543, 266
-	if(not self.m_X and not self.m_Y) then
-		self.m_X, self.m_Y = screenWidth/2 - self.m_BX/2, screenHeight/2 - self.m_BY/2
-	end
-	self.m_R[self.m_BagCurrent], self.m_G[self.m_BagCurrent], self.m_B[self.m_BagCurrent] = 100, 130, 140
-	self.m_R["o"..self.m_BagCurrent], self.m_G["o"..self.m_BagCurrent], self.m_B["o"..self.m_BagCurrent] = 0, 255, 0
-	local line
-	local oline
-	local place
-
-	for i=0, self.m_SlotsCurrent-1, 1 do
-		line = math.floor(i/7)
-		if(line ~= oline) then
-			place = 0
+		self.m_SlotsCurrent = self.m_Slots[self.m_BagCurrent]
+		lines = math.ceil(self.m_SlotsCurrent/7)
+		self.m_BX, self.m_BY = 330,  20 - 4 + 45*lines --543, 266
+		if(not self.m_X and not self.m_Y) then
+			self.m_X, self.m_Y = screenWidth/2 - self.m_BX/2, screenHeight/2 - self.m_BY/2
 		end
-		self.m_btn_inventar[self.m_BagCurrent][i] = guiCreateButton (self.m_X+10 + 40 * place + 5 * place, self.m_Y+10 + 40 * line + 5 * line, 40, 40,  i.."",  false)
-		guiSetAlpha(self.m_btn_inventar[self.m_BagCurrent][i], 0)
-		local id
-		if(	self.m_Bag[self.m_BagCurrent] ) then
-			id = self.m_Bag[self.m_BagCurrent][i]
-			if(id) then
-				self.m_item[id]= { ["x"]= self.m_X+10 + 40 * place + 5 * place , ["y"]=self.m_Y+10 + 40 * line + 5 * line }
-				self.m_itemFront[id] = false
+		self.m_R[self.m_BagCurrent], self.m_G[self.m_BagCurrent], self.m_B[self.m_BagCurrent] = 100, 130, 140
+		self.m_R["o"..self.m_BagCurrent], self.m_G["o"..self.m_BagCurrent], self.m_B["o"..self.m_BagCurrent] = 0, 255, 0
+		local line
+		local oline
+		local place
+
+		for i=0, self.m_SlotsCurrent-1, 1 do
+			line = math.floor(i/7)
+			if(line ~= oline) then
+				place = 0
 			end
+			self.m_btn_inventar[self.m_BagCurrent][i] = guiCreateButton (self.m_X+10 + 40 * place + 5 * place, self.m_Y+10 + 40 * line + 5 * line, 40, 40,  i.."",  false)
+			guiSetAlpha(self.m_btn_inventar[self.m_BagCurrent][i], 0)
+			local id
+			if(	self.m_Bag[self.m_BagCurrent] ) then
+				id = self.m_Bag[self.m_BagCurrent][i]
+				if(id) then
+					self.m_item[id]= { ["x"]= self.m_X+10 + 40 * place + 5 * place , ["y"]=self.m_Y+10 + 40 * line + 5 * line }
+					self.m_itemFront[id] = false
+				end
+			end
+			if(not self.m_lockItemUseState[self.m_BagCurrent] or not self.m_lockItemUseState[self.m_BagCurrent][tonumber(i)]) then
+				self:setItemRGB(i, 110, 110, 110)
+			end
+			self.m_sitem[i]= { ["x"]= self.m_X+10 + 40 * place + 5 * place, ["y"]=self.m_Y+10 + 40 * line + 5 * line }
+			oline = line
+			place = place + 1
 		end
-		if(not self.m_lockItemUseState[self.m_BagCurrent] or not self.m_lockItemUseState[self.m_BagCurrent][tonumber(i)]) then
-			self:setItemRGB(i, 110, 110, 110)
-		end
-		self.m_sitem[i]= { ["x"]= self.m_X+10 + 40 * place + 5 * place, ["y"]=self.m_Y+10 + 40 * line + 5 * line }
-		oline = line
-		place = place + 1
+
+		self.m_btn_Items = guiCreateButton (self.m_X+2, self.m_Y-48, 80.0, 48.0,  "",  false)
+		guiSetAlpha(self.m_btn_Items, 0)
+		self.m_btn_Objekte = guiCreateButton ( self.m_X+2 + 82, self.m_Y-48,  80.0, 48.0,  "",  false )
+		guiSetAlpha(self.m_btn_Objekte, 0)
+		self.m_btn_Essen = guiCreateButton ( self.m_X+2 + 82*2, self.m_Y-48,  80.0, 48.0,  "",  false )
+		guiSetAlpha(self.m_btn_Essen, 0)
+		self.m_btn_Drogen = guiCreateButton ( self.m_X+2 + 82*3, self.m_Y-48,  80.0, 48.0,  "",  false )
+		guiSetAlpha(self.m_btn_Drogen, 0)
+		self.m_btn_Close = guiCreateButton ( self.m_X+self.m_BX + 1, self.m_Y-49,  18, 18,  "",  false  )
+		guiSetAlpha(self.m_btn_Close, 0)
+		self.m_btn_Move = guiCreateButton ( self.m_X+self.m_BX + 1, self.m_Y-49+18,  18, 18,  "",  false )
+		guiSetAlpha(self.m_btn_Move, 0)
+		self.m_btn_Reset = guiCreateButton ( self.m_X+self.m_BX + 1, self.m_Y-49+36,  18, 18,  "",  false )
+		guiSetAlpha(self.m_btn_Reset, 0)
+
+
+		addEventHandler("onClientMouseEnter", root, self.m_onButtonInvEnter)
+		addEventHandler("onClientMouseLeave", root, self.m_onButtonInvLeave)
+		addEventHandler("onClientGUIClick", root, self.m_onInvClick)
+
+		addEventHandler("onClientMouseEnter", root, self.m_onItemMouseOver)
+		addEventHandler("onClientMouseLeave", root, self.m_onItemMouseLeave)
+
+		addEventHandler("onClientGUIClick", self.m_btn_Close, self.m_onCloseClick)
+		addEventHandler("onClientGUIMouseDown", self.m_btn_Move, self.m_onMoveClick)
+		addEventHandler("onClientGUIMouseUp", self.m_btn_Move, self.m_onStopMove)
+		addEventHandler("onClientGUIClick", self.m_btn_Reset, self.m_onResetClick)
+
+		addEventHandler("onClientGUIMouseDown", root, self.m_onClickAndDropDown)
+		addEventHandler("onClientGUIMouseUp", root, self.m_onClickAndDropUp)
+
+
+		addEventHandler("onClientRender", root, self.m_RenderInventar)
 	end
-
-	self.m_btn_Items = guiCreateButton (self.m_X+2, self.m_Y-48, 80.0, 48.0,  "",  false)
-	guiSetAlpha(self.m_btn_Items, 0)
-	self.m_btn_Objekte = guiCreateButton ( self.m_X+2 + 82, self.m_Y-48,  80.0, 48.0,  "",  false )
-	guiSetAlpha(self.m_btn_Objekte, 0)
-	self.m_btn_Essen = guiCreateButton ( self.m_X+2 + 82*2, self.m_Y-48,  80.0, 48.0,  "",  false )
-	guiSetAlpha(self.m_btn_Essen, 0)
-	self.m_btn_Drogen = guiCreateButton ( self.m_X+2 + 82*3, self.m_Y-48,  80.0, 48.0,  "",  false )
-	guiSetAlpha(self.m_btn_Drogen, 0)
-	self.m_btn_Close = guiCreateButton ( self.m_X+self.m_BX + 1, self.m_Y-49,  18, 18,  "",  false  )
-	guiSetAlpha(self.m_btn_Close, 0)
-	self.m_btn_Move = guiCreateButton ( self.m_X+self.m_BX + 1, self.m_Y-49+18,  18, 18,  "",  false )
-	guiSetAlpha(self.m_btn_Move, 0)
-	self.m_btn_Reset = guiCreateButton ( self.m_X+self.m_BX + 1, self.m_Y-49+36,  18, 18,  "",  false )
-	guiSetAlpha(self.m_btn_Reset, 0)
-
-
-	addEventHandler("onClientMouseEnter", root, self.m_onButtonInvEnter)
-	addEventHandler("onClientMouseLeave", root, self.m_onButtonInvLeave)
-	addEventHandler("onClientGUIClick", root, self.m_onInvClick)
-
-	addEventHandler("onClientMouseEnter", root, self.m_onItemMouseOver)
-	addEventHandler("onClientMouseLeave", root, self.m_onItemMouseLeave)
-
-	addEventHandler("onClientGUIClick", self.m_btn_Close, self.m_onCloseClick)
-	addEventHandler("onClientGUIMouseDown", self.m_btn_Move, self.m_onMoveClick)
-	addEventHandler("onClientGUIMouseUp", self.m_btn_Move, self.m_onStopMove)
-	addEventHandler("onClientGUIClick", self.m_btn_Reset, self.m_onResetClick)
-
-	addEventHandler("onClientGUIMouseDown", root, self.m_onClickAndDropDown)
-	addEventHandler("onClientGUIMouseUp", root, self.m_onClickAndDropUp)
-
-
-	addEventHandler("onClientRender", root, self.m_RenderInventar)
 end
 
 function Inventory:hide()
-	showCursor ( false )
-	toggleControl ( "fire",  true)
+	if self.Show == true then
+		self.Show = false
+		showCursor ( false )
+		toggleControl ( "fire",  true)
 
-	removeEventHandler("onClientRender", root, self.m_RenderInventar)
-	removeEventHandler("onClientMouseEnter", root, self.m_onButtonInvEnter)
-	removeEventHandler("onClientMouseLeave", root, self.m_onButtonInvLeave)
-	removeEventHandler("onClientGUIClick", root, self.m_onInvClick)
+		removeEventHandler("onClientRender", root, self.m_RenderInventar)
+		removeEventHandler("onClientMouseEnter", root, self.m_onButtonInvEnter)
+		removeEventHandler("onClientMouseLeave", root, self.m_onButtonInvLeave)
+		removeEventHandler("onClientGUIClick", root, self.m_onInvClick)
 
-	removeEventHandler("onClientMouseEnter", root, self.m_onItemMouseOver)
-	removeEventHandler("onClientMouseLeave", root, self.m_onItemMouseLeave)
+		removeEventHandler("onClientMouseEnter", root, self.m_onItemMouseOver)
+		removeEventHandler("onClientMouseLeave", root, self.m_onItemMouseLeave)
 
-	removeEventHandler("onClientGUIMouseDown", root, self.m_onClickAndDropDown)
-	removeEventHandler("onClientGUIMouseUp", root, self.m_onClickAndDropUp)
+		removeEventHandler("onClientGUIMouseDown", root, self.m_onClickAndDropDown)
+		removeEventHandler("onClientGUIMouseUp", root, self.m_onClickAndDropUp)
 
-	destroyElement(self.m_screenGUI)
-	destroyElement(self.m_btn_Items)
-	destroyElement(self.m_btn_Objekte)
-	destroyElement(self.m_btn_Essen)
-	destroyElement(self.m_btn_Drogen)
-	destroyElement(self.m_btn_Close)
-	destroyElement(self.m_btn_Move)
-	destroyElement(self.m_btn_Reset)
-	self.m_btn_Items = nil
-	self.m_sitem = {}
-	self.m_item = {}
-	if(isTimer(self.m_InfoBlipTimer) and getTimerDetails(self.m_InfoBlipTimer)) then
-		killTimer(self.m_InfoBlipTimer)
-	end
-	if(self.m_callCheck == true) then
-		local slots = self.m_Slots[self.m_BagOld]
-		for i=0, slots-1, 1 do
-			destroyElement(self.m_btn_inventar[self.m_BagOld][i])
+		destroyElement(self.m_screenGUI)
+		destroyElement(self.m_btn_Items)
+		destroyElement(self.m_btn_Objekte)
+		destroyElement(self.m_btn_Essen)
+		destroyElement(self.m_btn_Drogen)
+		destroyElement(self.m_btn_Close)
+		destroyElement(self.m_btn_Move)
+		destroyElement(self.m_btn_Reset)
+		self.m_btn_Items = nil
+		self.m_sitem = {}
+		self.m_item = {}
+		if(isTimer(self.m_InfoBlipTimer) and getTimerDetails(self.m_InfoBlipTimer)) then
+			killTimer(self.m_InfoBlipTimer)
 		end
-		self.m_callCheck = false
-	else
-		local slots = self.m_Slots[self.m_BagCurrent]
-		for i=0, slots-1, 1 do
-			destroyElement(self.m_btn_inventar[self.m_BagCurrent][i])
+		if(self.m_callCheck == true) then
+			local slots = self.m_Slots[self.m_BagOld]
+			for i=0, slots-1, 1 do
+				destroyElement(self.m_btn_inventar[self.m_BagOld][i])
+			end
+			self.m_callCheck = false
+		else
+			local slots = self.m_Slots[self.m_BagCurrent]
+			for i=0, slots-1, 1 do
+				destroyElement(self.m_btn_inventar[self.m_BagCurrent][i])
+			end
 		end
+
+		self.m_showInfoBlip = false
+		self.m_InfoBlipAlpha = 0
 	end
-
-	self.m_showInfoBlip = false
-	self.m_InfoBlipAlpha = 0
-
 end
 
 function Inventory:onInvClick(button)

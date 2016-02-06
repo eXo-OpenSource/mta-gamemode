@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Barricade item class
 -- *
 -- ****************************************************************************
-ItemBarricade = inherit(PlaceableItem)
+ItemBarricade = inherit(Item)
 
 function ItemBarricade:constructor()
 end
@@ -23,7 +23,7 @@ function ItemBarricade:use(player)
 				return
 			end
 
-			local worldItem = self:place(self, player, position, rotation)
+			local worldItem = self:place(player, position, rotation)
 		end
 	)
 end
