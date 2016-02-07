@@ -99,7 +99,7 @@ function runString(commandstring, source)
 	else
 		sourceName = "Console"
 		output = outputDebugString
-		
+
 	end
 	output(sourceName.." executed command: "..commandstring)
 	local notReturned
@@ -122,7 +122,7 @@ function runString(commandstring, source)
 		output("Error: "..results[2])
 		return
 	end
-	
+
 	if not notReturned then
 		local resultsString = ""
 		local first = true
@@ -144,9 +144,19 @@ function runString(commandstring, source)
 	end
 end
 
+--[[
 function outputDebug(errmsg)
 	if DEBUG then
 		outputDebugString((triggerServerEvent and "CLIENT " or "SERVER ")..tostring(errmsg))
+	end
+end
+--]]
+function outputDebug(errmsg)
+	if DEBUG then
+		local filePath = split(debug.getinfo(2).source, '\\')
+		local className = filePath[#filePath]:gsub(".lua", "")
+
+		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, tostring(debug.getinfo(2).name), tostring(debug.getinfo(2).currentline), errmsg), 3)
 	end
 end
 
