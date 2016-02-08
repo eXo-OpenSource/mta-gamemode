@@ -153,7 +153,13 @@ end
 --]]
 function outputDebug(errmsg)
 	if DEBUG then
-		local filePath = split(debug.getinfo(2).source, '\\')
+		local source = debug.getinfo(2).source
+		local filePath
+		if source:find("\\") then
+			filePath = split(source, '\\')
+		else
+			filePath = split(source, '/')
+		end
 		local className = filePath[#filePath]:gsub(".lua", "")
 
 		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, tostring(debug.getinfo(2).name), tostring(debug.getinfo(2).currentline), errmsg), 3)

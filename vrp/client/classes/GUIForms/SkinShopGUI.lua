@@ -10,9 +10,6 @@ inherit(Singleton, SkinShopGUI)
 
 function SkinShopGUI:constructor()
 	localPlayer:setFrozen(true)
-	localPlayer:setPosition(Vector3(217.922, -98.563, 1005.258))
-	localPlayer:setRotation(Vector3(0.000, 0.000, 299))
-	setCameraMatrix(216.056396484375, -99.181800842285156, 1006.8388061523437, 216.90571594238281, -98.900047302246094, 1006.3923950195312, 0, 70)
 
 	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
 
@@ -57,15 +54,38 @@ function SkinShopGUI:destructor()
 	GUIForm.destructor(self)
 end
 
-function SkinShopGUI.initialise()
+function SkinShopGUI.initializeAll()
+	--[[
 	local marker = Marker.create(218.2, -98.5, 1004.3, "cylinder", 1.4, 255, 255, 0)
 	marker:setInterior(15)
 
 	addEventHandler("onClientMarkerHit", marker,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
+				localPlayer:setPosition(Vector3(217.922, -98.563, 1005.258))
+				localPlayer:setRotation(Vector3(0.000, 0.000, 299))
+				setCameraMatrix(216.056396484375, -99.181800842285156, 1006.8388061523437, 216.90571594238281, -98.900047302246094, 1006.3923950195312, 0, 70)
+
 				SkinShopGUI:new()
 			end
 		end
 	)
+	--]]
+
+	for i, v in pairs(SkinShops) do
+		local marker = Marker.create(v.Marker, "cylinder", 1.4, 255, 255, 0)
+		marker:setInterior(v.MarkerInt)
+
+		addEventHandler("onClientMarkerHit", marker,
+			function(hitElement, matchingDimension)
+				if hitElement == localPlayer and matchingDimension then
+					localPlayer:setPosition(v.PlayerPos)
+					localPlayer:setRotation(v.PlayerRot)
+					setCameraMatrix(unpack(v.CameraMatrix))
+
+					SkinShopGUI:new()
+				end
+			end
+		)
+	end
 end

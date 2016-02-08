@@ -53,10 +53,10 @@ function Core:ready()
 	VehicleShop.initializeAll()
 	VehicleGarages:new()
 	GasStationGUI:new()
-	SkinShopGUI.initialise()
+	SkinShopGUI.initializeAll()
 
 	--// Gangwar
-	GangwarClient:new( )
+	GangwarClient:new()
 
 
 	-- Init Binds

@@ -212,3 +212,13 @@ Tipps = {
 	{"wie erreiche ich das Team", "Um das Team zu erreichen kannst du das Support System auf dem Hotkey 'hierderkrassehotkey' öffnen und ein Ticket schreiben."};
 	{"was macht man als Gang", "Als Gruppe mit positivem Durchschnittskarma kann man besipielsweise auf Verbecherjagd gehen (sofern man Polizist ist). Mit negativem Karma kann man diverse Raubüberfälle auf Läden, Häuser oder Banken starten, Ganggebiete erobern, seine 'Brüder' aus dem Knast holen, mit Drogen dealen und die Stadt nach und nach erobern."};
 }
+
+SkinShops = {
+	{
+		Marker = Vector3(218.2, -98.5, 1004.3);
+		MarkerInt = 15;
+		PlayerPos = Vector3(217.922, -98.563, 1005.258);
+		PlayerRot = Vector3(0.000, 0.000, 299);
+		CameraMatrix = {216.056396484375, -99.181800842285156, 1006.8388061523437, 216.90571594238281, -98.900047302246094, 1006.3923950195312, 0, 70}
+	};
+}
