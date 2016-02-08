@@ -121,9 +121,12 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		end
 
 		self.m_VehiclesGrid:clear()
-		for key, veh in pairs(vehicles) do
-			local item = self.m_VehiclesGrid:addItem(getVehicleName(veh))
-			item.VehicleElement = veh
+
+		if vehicles then
+			for key, veh in pairs(vehicles) do
+				local item = self.m_VehiclesGrid:addItem(getVehicleName(veh))
+				item.VehicleElement = veh
+			end
 		end
 	end
 end
