@@ -5,6 +5,8 @@ factionWeapons = {}
 evilFactionInteriorEnter = {}
 factionWTDestination = {}
 
+FACTION_STATE_WT_DESTINATION = Vector3(1598.78064, -1611.63953, 13.44956)
+
 -- ID 1 = Police Departement:
 factionRankNames[1] = {
 [0] = "Cadet",
@@ -18,7 +20,6 @@ factionRankNames[1] = {
 factionColors[1] = {["r"] = 0,["g"] = 255,["b"] = 150}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
 factionWeapons[1] = {[3]=true,[24]=true,[25]=true,[29]=true,[31]=true}
-factionWTDestination[1] = Vector3(2711.486328125,-2413.099609375,13.1)
 -- ID 2 = FBI:
 factionRankNames[2] = {
 [0] = "Probationary Agent",
@@ -32,7 +33,6 @@ factionRankNames[2] = {
 factionColors[2] = {["r"] = 50,["g"] = 50,["b"] = 255}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
 factionWeapons[2] = {[24]=true,[27]=true,[29]=true,[31]=true}
-factionWTDestination[2] = Vector3(2711.486328125,-2413.099609375,13.1)
 
 -- ID 3 = Army:
 factionRankNames[3] = {
@@ -47,7 +47,6 @@ factionRankNames[3] = {
 factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
 factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true}
 factionWeapons[3] = {[6]=true,[24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true}
-factionWTDestination[3] = Vector3(2711.486328125,-2413.099609375,13.1)
 
 -- ID 4 = Rescue Team:
 factionRankNames[4] = {
@@ -77,8 +76,8 @@ factionColors[5] = {["r"] = 100,["g"] = 100,["b"] = 100}
 factionSkins[5] = {[111]=true, [112]=true, [113]=true, [124]=true, [125]=true, [126]=true, [127]=true,[237]=true,[272]=true}
 factionWeapons[5] = {[4]=true, [22]=true, [24]=true, [25]=true, [26]=true, [29]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[5] = {["x"] = 691.58, ["y"]= -1275.94, ["z"] = 13.56}
---factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,18.6)
-factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
+factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,18.6)
+--factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
 
 -- ID 6 = Yakuza
 factionRankNames[6] = {

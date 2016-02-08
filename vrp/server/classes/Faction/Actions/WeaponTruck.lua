@@ -42,6 +42,9 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount)
 	self.m_Destroyed = false
 	self.m_DestroyFunc = bind(self.Event_OnWeaponTruckDestroy,self)
 
+	self.m_StateMarker = createMarker(FACTION_STATE_WT_DESTINATION,"cylinder",6)
+	addEventHandler("onMarkerHit", self.m_StateMarker, bind(self.Event_onStateMarkerHit, self))
+
 	addRemoteEvents{"weaponTruckDeloadBox"}
 
 	addEventHandler("weaponTruckDeloadBox",self.m_Truck,bind(self.Event_DeloadBox,self))
@@ -64,7 +67,7 @@ function WeaponTruck:destructor()
 	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 
 	for index, value in pairs(self.m_Boxes) do
-		value:destroy()
+		if isElement(value) then value:destroy() end
 	end
 end
 
@@ -86,17 +89,30 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if faction:isEvilFaction() then
-					if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+					if (isPedInVehicle(hitElement) and self:getAttachedBox(getPedOccupiedVehicle(hitElement))) or self:getAttachedBox(hitElement) then
 						local depot = faction.m_Depot
-						outputChatBox("Es wurden folgende Waffen und Magazine in das Lager gelegt:",hitElement,255,255,255)
-						for key, value in pairs (getAttachedElements(self.m_Truck)) do
-							depot:addWeaponsToDepot(value.content)
-							self:outputBoxContent(hitElement,key)
+						local boxes
+						if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+							boxes = getAttachedElements(self.m_Truck)
+							outputChatBox(_("Der Waffentruck erfolgreich wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
+							hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
+							self:Event_OnWeaponTruckExit(hitElement,0)
+						elseif self:getAttachedBox(hitElement) then
+							boxes = getAttachedElements(hitElement)
+							outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
+							hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 						end
-						outputChatBox(_("Der Waffentruck erfolgreich wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
-						hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
-						self:Event_OnWeaponTruckExit(hitElement,0)
-						self:delete()
+						outputChatBox("Es wurden folgende Waffen und Magazine in das Lager gelegt:",hitElement,255,255,255)
+						for key, value in pairs (boxes) do
+							if value:getModel() == 2912 then
+								depot:addWeaponsToDepot(value.content)
+								self:outputBoxContent(hitElement,key)
+								value:destroy()
+							end
+						end
+						if self:getRemainingBoxAmount() == 0 then
+							self:delete()
+						end
 					end
 				end
 			end
@@ -109,7 +125,7 @@ function WeaponTruck:Event_onLoadMarkerHit(hitElement, matchingDimension)
 		local faction = hitElement:getFaction()
 		if faction then
 			if faction:isEvilFaction() then
-				local box = self:getPlayerAttachedBox(hitElement)
+				local box = self:getAttachedBox(hitElement)
 				if box then
 					box:detach()
 					unbindKey(hitElement,"x")
@@ -129,6 +145,16 @@ function WeaponTruck:spawnBoxes()
 	for i=1,self.m_BoxesCount do
 		self:spawnBox(i, WeaponTruck.boxSpawnCords[i])
 	end
+end
+
+function WeaponTruck:getRemainingBoxAmount()
+	local count = 0
+	for i,k in pairs(self.m_Boxes) do
+		if isElement(k) then
+			count = count +1
+		end
+	end
+	return count
 end
 
 function WeaponTruck:spawnBox(i, position)
@@ -154,7 +180,7 @@ function WeaponTruck:Event_onBoxClick(button, state, player)
 end
 
 function WeaponTruck:attachBoxToPlayer(player,box)
-	if not self:getPlayerAttachedBox(player) then
+	if not self:getAttachedBox(player) then
 		self:toggleControlsWhileBoxAttached(player, false)
 		box:setCollisionsEnabled(false)
 		box:attach(player, -0.09, 0.35, 0.45, 10, 0, 0)
@@ -175,6 +201,7 @@ function WeaponTruck:toggleControlsWhileBoxAttached(player, bool)
 	toggleControl(player, "sprint", bool )
 	toggleControl(player, "next_weapon", bool )
 	toggleControl(player, "previous weapon", bool )
+	toggleControl(player, "enter_exit", bool )
 end
 
 function WeaponTruck:loadBoxOnWeaponTruck(player,box)
@@ -192,8 +219,8 @@ function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 	end
 end
 
-function WeaponTruck:getPlayerAttachedBox(player)
-	for key, value in pairs (getAttachedElements(player)) do
+function WeaponTruck:getAttachedBox(element)
+	for key, value in pairs (getAttachedElements(element)) do
 		if value:getModel() == 2912 then
 			return value
 		end
@@ -299,5 +326,16 @@ function WeaponTruck:Event_DeloadBox()
 		end
 	else
 		client:sendError(_("Nur Fraktionisten können Kisten abladen!",client))
+	end
+end
+
+function WeaponTruck:Event_onStateMarkerHit(hitElement, matchingDimension)
+	if hitElement:getType() == "player" and matchingDimension then
+		local faction = hitElement:getFaction()
+		if faction then
+			if faction:isStateFaction() then
+
+			end
+		end
 	end
 end

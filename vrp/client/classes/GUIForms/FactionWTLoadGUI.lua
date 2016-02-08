@@ -195,7 +195,7 @@ end
 
 function FactionWTLoadGUI:factionWeaponTruckLoad()
 	triggerServerEvent("onWeaponTruckLoad",root,self.m_Cart)
-	InfoBox:new(_"Der Truck wurde beladen! Klicke die Kisten an und bringe sie zum Waffen-Truck!")
+	InfoBox:new(_"Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck!")
 	self:close()
 end
 
