@@ -80,7 +80,7 @@ end
 
 function GroupVehicle.create(Group, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
-	if sql:queryExec("INSERT INTO ??_group_vehicles (Group, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotation) then
+	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotation) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
 		enew(vehicle, GroupVehicle, sql:lastInsertId(), Group, nil, 1000)
     VehicleManager:getSingleton():addRef(vehicle)

@@ -74,17 +74,16 @@ function GroupGUI:constructor()
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
-	self.m_GroupVehicleGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.55, tabVehicles)
-	self.m_GroupVehicleGrid:addColumn(_"Fahrzeuge", 1)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
+	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.55, tabVehicles)
+	self.m_VehiclesGrid:addColumn(_"Fahrzeuge", 1)
+	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
 
 	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
 	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles)
-	self.m_VehicleMakeGroupVehicleButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug zur Firma/Gang hinzufügen", tabVehicles):setFontSize(1)
+	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug zur Firma/Gang hinzufügen", tabVehicles):setFontSize(1)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
-	addRemoteEvents{"groupVehicleRetrieveInfo"}
-	addEventHandler("groupVehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
+	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 
 	self.m_LeaderTab = false
 end
@@ -97,7 +96,7 @@ function GroupGUI:TabPanel_TabChanged()
 	triggerServerEvent("groupRequestInfo", root)
 end
 
-function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans)
+function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles)
 	self:adjustGroupTab(rank or false)
 
 	if name then
@@ -121,6 +120,11 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 			self:refreshRankGrid()
 		end
 
+		self.m_VehiclesGrid:clear()
+		for key, veh in pairs(vehicles) do
+			local item = self.m_VehiclesGrid:addItem(getVehicleName(veh))
+			item.VehicleElement = veh
+		end
 	end
 end
 
@@ -128,8 +132,6 @@ function GroupGUI:Event_groupInvitationRetrieve(groupId, name)
 	local item = self.m_GroupInvitationsGrid:addItem(name)
 	item.GroupId = groupId
 end
-
-
 
 function GroupGUI:adjustGroupTab(rank)
 	local isInGroup = rank ~= false
@@ -293,14 +295,28 @@ function GroupGUI:onSelectRank(name,rank)
 	self.m_SaveRank:setEnabled(true)
 end
 
-function GroupGUI:Event_vehicleRetrieveInfo()
-
+function GroupGUI:VehicleRespawnButton_Click()
+	local item = self.m_VehiclesGrid:getSelectedItem()
+	if not item then
+		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		return
+	end
+	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end
 
-function GroupGUI:VehicleRespawnButton_Click()
-
+function GroupGUI:VehicleConvertToGroupButton_Click()
+	triggerServerEvent("groupConvertVehicle", localPlayer)
 end
 
 function GroupGUI:VehicleLocateButton_Click()
+	local item = self.m_VehiclesGrid:getSelectedItem()
+	if not item then
+		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		return
+	end
+	local x, y, z = getElementPosition(item.VehicleElement)
+	local blip = Blip:new("Waypoint.png", x, y)
+	setTimer(function() HUDRadar:getSingleton():removeBlip(blip) end, 5000, 1)
 
+	ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)))
 end

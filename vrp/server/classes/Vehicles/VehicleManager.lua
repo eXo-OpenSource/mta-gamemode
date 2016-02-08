@@ -103,8 +103,12 @@ function VehicleManager:destructor()
 	outputServerLog("Saved faction vehicles")
 end
 
-function VehicleManager:getFactionVehicles(factionID)
-	return self.m_FactionVehicles[factionID]
+function VehicleManager:getFactionVehicles(factionId)
+	return self.m_FactionVehicles[factionId]
+end
+
+function VehicleManager:getGroupVehicles(groupId)
+	return self.m_GroupVehicles[groupId]
 end
 
 function VehicleManager.loadVehicles()

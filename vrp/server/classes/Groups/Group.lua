@@ -71,6 +71,10 @@ function Group:getType()
 	return self.m_Type
 end
 
+function Group:getVehicles()
+  return VehicleManager:getSingleton():getGroupVehicles(self.m_Id)
+end
+
 function Group:canVehiclesBeModified()
   return self.m_VehiclesCanBeModified
 end

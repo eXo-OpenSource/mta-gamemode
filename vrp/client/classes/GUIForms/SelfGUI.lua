@@ -574,12 +574,6 @@ function SelfGUI:VehicleRespawnButton_Click()
 		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
-
-	--[[if localPlayer:getGarageType() == 0 then
-		ErrorBox:new(_"Du besitzt keine gültige Garage!")
-		return
-	end]]
-
 	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end
 

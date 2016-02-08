@@ -28,7 +28,7 @@ function GroupManager:constructor()
 
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
-		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName", "groupSaveRank"}
+		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName", "groupSaveRank", "groupConvertVehicle"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_groupRequestInfo, self))
 	addEventHandler("groupCreate", root, bind(self.Event_groupCreate, self))
 	addEventHandler("groupQuit", root, bind(self.Event_groupQuit, self))
@@ -43,6 +43,7 @@ function GroupManager:constructor()
 	addEventHandler("groupRankDown", root, bind(self.Event_groupRankDown, self))
 	addEventHandler("groupChangeName", root, bind(self.Event_groupChangeName, self))
 	addEventHandler("groupSaveRank", root, bind(self.Event_groupSaveRank, self))
+	addEventHandler("groupConvertVehicle", root, bind(self.Event_groupConvertVehicle, self))
 
 
 end
@@ -78,7 +79,7 @@ function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
 	if group then
-		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, VehicleManager.m_GroupVehicles)
+		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, group:getVehicles())
 	else
 		player:triggerEvent("groupRetrieveInfo")
 	end
@@ -385,7 +386,6 @@ function GroupManager:Event_groupChangeName(name)
 	end
 end
 
-
 function GroupManager:Event_groupSaveRank(rank,name,loan)
 	local group = client:getGroup()
 	if group then
@@ -394,5 +394,23 @@ function GroupManager:Event_groupSaveRank(rank,name,loan)
 		group:saveRankSettings()
 		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
 		self:sendInfosToClient(client)
+	end
+end
+
+function GroupManager:Event_groupConvertVehicle()
+	local group = client:getGroup()
+	if group then
+		if client.isInVehicle then
+			local veh = client.vehicle
+			if veh:getOwner() == client:getId() then
+				GroupVehicle.convertVehicle(veh, group)
+				client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
+				self:sendInfosToClient(client)
+			else
+				client:sendError(_("Das ist nicht dein Fahrzeug!", client))
+			end
+		else
+			client:sendError(_("Du sitzt in keinem Fahrzeug!", client))
+		end
 	end
 end
