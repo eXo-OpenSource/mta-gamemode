@@ -133,7 +133,7 @@ function VehicleManager.loadVehicles()
 	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-		enew(vehicle, GroupVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+		enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 	end
 end
@@ -207,7 +207,7 @@ function VehicleManager:removeRef(vehicle, isTemp)
 		end
 		return
 	end
-	
+
 	if instanceof(vehicle, GroupVehicle) and vehicle:getGroup() then
 		local groupId = vehicle:getGroup() and vehicle:getGroup():getId()
 		assert(groupId, "Bad company specified")
