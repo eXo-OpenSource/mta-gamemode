@@ -21,10 +21,12 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount)
 	self.m_Truck = TemporaryVehicle.create(455, -1869.58, 1430.02, 7.62, 224)
 	self.m_Truck:setData("WeaponTruck", true, true)
     self.m_Truck:setColor(0, 0, 0)
-	--self.m_Truck:setFrozen(true)
-    --self.m_Truck:setLocked(true)
+	self.m_Truck:setFrozen(true)
+    self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
+	self.m_Truck:setEngineState(true)
 	self.m_StartTime = getTickCount()
+
 
 	self.m_AmountPerBox = 1250
 	self.m_BoxesCount = math.ceil(totalAmount/self.m_AmountPerBox)
@@ -93,7 +95,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 						end
 						outputChatBox(_("Der Waffentruck erfolgreich wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
 						hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
-						self:EventOnWeaponTruckExit(hitElement,0)
+						self:Event_OnWeaponTruckExit(hitElement,0)
 						self:delete()
 					end
 				end
@@ -166,8 +168,6 @@ function WeaponTruck:attachBoxToPlayer(player,box)
 		end, self, box)
 	end
 end
-
-
 
 function WeaponTruck:toggleControlsWhileBoxAttached(player, bool)
 	toggleControl(player, "jump", bool )
