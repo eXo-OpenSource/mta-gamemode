@@ -161,6 +161,8 @@ function outputDebug(errmsg)
 			filePath = split(source, '/')
 		end
 		local className = filePath[#filePath]:gsub(".lua", "")
+		if not className then className = "UNKOWN" end
+		if not errmsg then errmsg = "" end
 
 		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, tostring(debug.getinfo(2).name), tostring(debug.getinfo(2).currentline), errmsg), 3)
 	end
