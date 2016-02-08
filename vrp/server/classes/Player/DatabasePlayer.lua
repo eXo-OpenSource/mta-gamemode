@@ -125,7 +125,6 @@ function DatabasePlayer:load()
 	self.m_HasBikeLicense = toboolean(row.HasBikeLicense)
 	self.m_HasTruckLicense = toboolean(row.HasTruckLicense)
 	self.m_LadderTeam = fromJSON(row.Ladder or "[[]]")
-	self.m_LastPlayTime = row.PlayTime
 
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -145,6 +144,7 @@ function DatabasePlayer:load()
 	self:setVehicleLevel(row.VehicleLevel)
 	self:setSkinLevel(row.SkinLevel)
 	self:setJobLevel(row.JobLevel)
+	self:setPlayTime(row.PlayTime)
 end
 
 function DatabasePlayer:save()
@@ -236,6 +236,7 @@ function DatabasePlayer:setFaction(faction)
 		self:setPublicSync("ShortFactionName", faction and faction:getShortName() or "")
 	end
 end
+function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if self:isActive() then self:setPrivateSync("LastPlayTime", self.m_LastPlayTime) end end
 
 function DatabasePlayer:giveMoney(amount)
 	self:setMoney(self:getMoney() + amount)

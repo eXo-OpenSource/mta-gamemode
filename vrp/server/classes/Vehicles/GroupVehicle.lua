@@ -61,9 +61,9 @@ function GroupVehicle:constructor(Id, Group, color, health, posionType, tunings,
   end
   self:setMileage(mileage)
 
-	if self.m_Group.m_Vehicles then
-		table.insert(self.m_Group.m_Vehicles, self)
-	end
+  if self.m_Group.m_Vehicles then
+	table.insert(self.m_Group.m_Vehicles, self)
+  end
 end
 
 function GroupVehicle:destructor()
