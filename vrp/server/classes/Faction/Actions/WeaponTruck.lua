@@ -45,9 +45,12 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount)
 	self.m_StateMarker = createMarker(FACTION_STATE_WT_DESTINATION,"cylinder",6)
 	addEventHandler("onMarkerHit", self.m_StateMarker, bind(self.Event_onStateMarkerHit, self))
 
-	addRemoteEvents{"weaponTruckDeloadBox"}
+	addRemoteEvents{"weaponTruckDeloadBox", "weaponTruckLoadBox"}
 
-	addEventHandler("weaponTruckDeloadBox",self.m_Truck,bind(self.Event_DeloadBox,self))
+	addEventHandler("weaponTruckDeloadBox",root, bind(self.Event_DeloadBox,self))
+	addEventHandler("weaponTruckLoadBox",root, bind(self.Event_LoadBox,self))
+
+
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnWeaponTruckStartEnter,self))
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnWeaponTruckEnter,self))
 	addEventHandler("onVehicleExit",self.m_Truck,bind(self.Event_OnWeaponTruckExit,self))
@@ -94,7 +97,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 						local boxes
 						if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 							boxes = getAttachedElements(self.m_Truck)
-							outputChatBox(_("Der Waffentruck erfolgreich wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
+							outputChatBox(_("Der Waffentruck wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
 							hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 							self:Event_OnWeaponTruckExit(hitElement,0)
 						elseif self:getAttachedBox(hitElement) then
@@ -202,13 +205,15 @@ function WeaponTruck:toggleControlsWhileBoxAttached(player, bool)
 	toggleControl(player, "next_weapon", bool )
 	toggleControl(player, "previous weapon", bool )
 	toggleControl(player, "enter_exit", bool )
+	if bool == false then
+		player:setAnimation(false)
+	end
 end
 
 function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 	table.insert(self.m_BoxesOnTruck,box)
 	box:setScale(1.6)
 	box:attach(self.m_Truck, WeaponTruck.attachCords[#self.m_BoxesOnTruck])
-
 	if #self.m_BoxesOnTruck >= self.m_BoxesCount then
 		player:sendInfo(_("Alle Kisten aufgeladen! Der Truck ist bereit!",player))
 		self.m_Truck:setFrozen(false)
@@ -226,6 +231,16 @@ function WeaponTruck:getAttachedBox(element)
 		end
 	end
 	return false
+end
+
+function WeaponTruck:getAttachedBoxesCount(element)
+	local count = 0
+	for key, value in pairs (getAttachedElements(element)) do
+		if value:getModel() == 2912 then
+			count = count+1
+		end
+	end
+	return count
 end
 
 function WeaponTruck:setBoxContent(boxId)
@@ -310,23 +325,62 @@ function WeaponTruck:Event_OnWeaponTruckExit(player,seat)
 	end
 end
 
-function WeaponTruck:Event_DeloadBox()
+function WeaponTruck:Event_DeloadBox(veh)
 	if client:getFaction() then
-		if getDistanceBetweenPoints3D(self.m_Truck.position,client.position) < 7 then
-			if not client.vehicle then
-				for key, box in pairs (getAttachedElements(self.m_Truck)) do
-					box:setScale(1)
-					box:detach(self.m_Truck)
-					self:attachBoxToPlayer(client,box)
+		if getElementData(veh,"WeaponTruck") or VEHICLE_BOX_LOAD[veh.model] then
+			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
+				if not client.vehicle then
+					for key, box in pairs (getAttachedElements(veh)) do
+						if box.model == 2912 then
+							box:setScale(1)
+							box:detach(self.m_Truck)
+							self:attachBoxToPlayer(client,box)
+							return
+						end
+					end
+					client:sendError(_("Es befindet sich keine Kiste auf dem Truck!",client))
 					return
+				else
+					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!",client))
 				end
-				client:sendError(_("Es befindet sich keine Kiste auf dem Truck!",client))
-				return
 			else
-				client:sendError(_("Du darfst in keinem Fahrzeug sitzen!",client))
+				client:sendError(_("Du bist zuweit vom Truck entfernt!",client))
 			end
 		else
-			client:sendError(_("Du bist zuweit vom Truck entfernt!",client))
+			client:sendError(_("Dieses Fahrzeug kann nicht entladen werden!",client))
+		end
+	else
+		client:sendError(_("Nur Fraktionisten können Kisten abladen!",client))
+	end
+end
+
+function WeaponTruck:Event_LoadBox(veh)
+	if client:getFaction() then
+		if getElementData(veh,"WeaponTruck") or VEHICLE_BOX_LOAD[veh.model] then
+			if getDistanceBetweenPoints3D(veh.position,client.position) < 7 then
+				if not client.vehicle then
+					local box = self:getAttachedBox(client)
+					if self:getAttachedBoxesCount(veh) < VEHICLE_BOX_LOAD[veh.model]["count"] then
+						if box then
+							local count = #getAttachedElements(veh)
+							box:detach(client)
+							box:attach(veh, VEHICLE_BOX_LOAD[veh.model][count+1])
+
+							self:toggleControlsWhileBoxAttached(client, true)
+						else
+							client:sendError(_("Du hast keine Kiste dabei!",client))
+						end
+					else
+						client:sendError(_("Das Fahrzeug ist bereits voll beladen!",client))
+					end
+				else
+					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!",client))
+				end
+			else
+				client:sendError(_("Du bist zuweit vom Truck entfernt!",client))
+			end
+		else
+			client:sendError(_("Dieses Fahrzeug kann nicht beladen werden!",client))
 		end
 	else
 		client:sendError(_("Nur Fraktionisten können Kisten abladen!",client))

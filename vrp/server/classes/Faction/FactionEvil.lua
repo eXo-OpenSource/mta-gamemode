@@ -30,9 +30,9 @@ function FactionEvil:createInterior(Id)
 	self.WeaponPed[Id] = NPC:new(FactionManager:getFromId(Id):getRandomSkin(), 2819.20, -1166.77, 1025.58, 133.63)
 	setElementDimension(self.WeaponPed[Id], Id)
 	setElementInterior(self.WeaponPed[Id], 8)
-	setElementData(self.WeaponPed[Id],"clickable",true) -- Makes Ped clickable
-	setElementData(self.WeaponPed[Id],"factionWeaponShopPed",true)  -- Set factionWeaponShopPed for clickable
-	setElementData(self.WeaponPed[Id],"factionId",Id)
+	self.WeaponPed[Id]:setData("clickable",true,true) -- Makes Ped clickable
+	self.WeaponPed[Id]:setData("factionWeaponShopPed",true,true)  -- Set factionWeaponShopPed for clickable
+	self.WeaponPed[Id]:setData("factionId",Id,true)
 
 	local int = {
 		createObject(351, 2818, -1173.6, 1025.6, 80, 340, 0),

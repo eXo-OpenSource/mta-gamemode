@@ -56,14 +56,21 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 	end
 
-	if getElementData(element,"WeaponTruck") then
-		self:addItem(_"Kiste abladen",
-			function()
-				if self:getElement() then
-					triggerServerEvent("weaponTruckDeloadBox", self:getElement())
+	if getElementData(element,"WeaponTruck") or VEHICLE_BOX_LOAD[element.model] then
+		if #self:getAttachedBoxes(element) > 0 then
+			self:addItem(_"Kiste abladen",
+				function()
+					triggerServerEvent("weaponTruckDeloadBox", self:getElement(), element)
 				end
-			end
-		)
+			)
+		end
+		if #self:getAttachedBoxes(localPlayer) > 0 then
+			self:addItem(_"Kiste aufladen",
+				function()
+					triggerServerEvent("weaponTruckLoadBox", self:getElement(), element)
+				end
+			)
+		end
 	end
 
 	if localPlayer:getJob() == JobMechanic:getSingleton() then
@@ -97,4 +104,14 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
+end
+
+function VehicleMouseMenu:getAttachedBoxes(element)
+	local boxes = {}
+	for key,value in pairs(element:getAttachedElements()) do
+		if value.model == 2912 then
+			table.insert(boxes, value)
+		end
+	end
+	return boxes
 end
