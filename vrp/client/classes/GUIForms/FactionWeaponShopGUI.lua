@@ -26,8 +26,6 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	self.m_WaffenRow = 0
 	self.m_WaffenColumn = 0
 
-	self.m_validWeapons = validWeapons
-
 	GUILabel:new(400,220, 320, 35, "Warenkorb:", self.m_Window)
 	self.m_CartGrid = GUIGridList:new(400, 250, 320, 180, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
@@ -42,7 +40,6 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 
 	self:getPlayerWeapons()
 	self:factionReceiveWeaponShopInfos()
-
 end
 
 function FactionWeaponShopGUI:destuctor()
@@ -50,7 +47,8 @@ function FactionWeaponShopGUI:destuctor()
 	GUIForm.destructor(self)
 end
 
-function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(depotWeapons,rankWeapons)
+function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, depotWeaponsMax, depotWeapons,rankWeapons)
+	self.m_validWeapons = validWeapons
 	for k,v in pairs(self.m_validWeapons) do
 		if v == true then
 			self:addWeaponToGUI(k,depotWeapons[k]["Waffe"],depotWeapons[k]["Munition"])

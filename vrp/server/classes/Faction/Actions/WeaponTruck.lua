@@ -313,14 +313,18 @@ end
 function WeaponTruck:Event_DeloadBox()
 	if client:getFaction() then
 		if getDistanceBetweenPoints3D(self.m_Truck.position,client.position) < 7 then
-			for key, box in pairs (getAttachedElements(self.m_Truck)) do
-				box:setScale(1)
-				box:detach(self.m_Truck)
-				self:attachBoxToPlayer(client,box)
+			if not client.vehicle then
+				for key, box in pairs (getAttachedElements(self.m_Truck)) do
+					box:setScale(1)
+					box:detach(self.m_Truck)
+					self:attachBoxToPlayer(client,box)
+					return
+				end
+				client:sendError(_("Es befindet sich keine Kiste auf dem Truck!",client))
 				return
+			else
+				client:sendError(_("Du darfst in keinem Fahrzeug sitzen!",client))
 			end
-			client:sendError(_("Es befindet sich keine Kiste auf dem Truck!",client))
-			return
 		else
 			client:sendError(_("Du bist zuweit vom Truck entfernt!",client))
 		end

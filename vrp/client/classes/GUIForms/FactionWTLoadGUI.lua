@@ -10,7 +10,7 @@ inherit(Singleton, FactionWTLoadGUI)
 
 addRemoteEvents{"showFactionWTLoadGUI", "updateFactionWeaponShopGUI"}
 
-function FactionWTLoadGUI:constructor(validWeapons, depotWeaponsMax)
+function FactionWTLoadGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-390, screenHeight/2-230, 840, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Waffentruck beladen", true, true, self)
 
@@ -41,13 +41,6 @@ function FactionWTLoadGUI:constructor(validWeapons, depotWeaponsMax)
 	self.m_Sum = GUILabel:new(540,390, 280, 30, "Gesamtkosten: 0$/"..WEAPONTRUCK_MAX_LOAD.."$", self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
-	self:onShow(validWeapons, depotWeaponsMax)
-
-end
-
-function FactionWTLoadGUI:onShow(validWeapons, depotWeaponsMax)
-	self.m_validWeapons = validWeapons
-	self.m_DepotWeaponsMax = depotWeaponsMax
 	self:factionReceiveWeaponShopInfos()
 end
 
@@ -56,7 +49,9 @@ function FactionWTLoadGUI:destuctor()
 	GUIForm.destructor(self)
 end
 
-function FactionWTLoadGUI:Event_updateFactionWTLoadGUI(depotWeapons)
+function FactionWTLoadGUI:Event_updateFactionWTLoadGUI(validWeapons, depotWeaponsMax, depotWeapons)
+	self.m_validWeapons = validWeapons
+	self.m_DepotWeaponsMax = depotWeaponsMax
 	for k,v in pairs(self.m_validWeapons) do
 		if v == true then
 			self:addWeaponToGUI(k,depotWeapons[k]["Waffe"],depotWeapons[k]["Munition"])
@@ -195,16 +190,15 @@ end
 
 function FactionWTLoadGUI:factionWeaponTruckLoad()
 	triggerServerEvent("onWeaponTruckLoad",root,self.m_Cart)
-	InfoBox:new(_"Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck!")
 	self:close()
 end
 
 addEventHandler("showFactionWTLoadGUI", root,
-		function(validWeapons, depotWeaponsMax)
-			if FactionWTLoadGUI:isInstantiated() then
-				FactionWTLoadGUI:open(validWeapons, depotWeaponsMax)
+		function()
+			if FactionWTLoadGUI:getSingleton():isInstantiated() then
+				FactionWTLoadGUI:getSingleton():open()
 			else
-				FactionWTLoadGUI:new(validWeapons, depotWeaponsMax)
+				FactionWTLoadGUI:getSingleton():new()
 			end
 
 		end

@@ -284,7 +284,7 @@ end
 function FactionManager:Event_openFactionWeaponShopGUI()
 	local faction = client:getFaction()
 	if faction then
-		client:triggerEvent("showFactionWeaponShopGUI",faction.m_ValidWeapons)
+		client:triggerEvent("showFactionWeaponShopGUI")
 	end
 end
 
@@ -293,7 +293,7 @@ function FactionManager:Event_receiveFactionWeaponShopInfos()
 	local depot = faction.m_Depot
 	local playerId = client:getId()
 	local rank = faction.m_Players[playerId]
-	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,depot:getWeaponTable(id),faction:getRankWeapons(rank))
+	triggerClientEvent(client,"updateFactionWeaponShopGUI",client,faction.m_ValidWeapons, faction.m_WeaponDepotInfo, depot:getWeaponTable(id), faction:getRankWeapons(rank))
 end
 
 function FactionManager:Event_factionWeaponShopBuy(weaponTable)

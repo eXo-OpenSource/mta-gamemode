@@ -31,7 +31,7 @@ function MWeaponTruck:onStartPointHit(hitElement, matchingDimension)
 		if faction then
 			if faction:isEvilFaction() then
 				if ActionsCheck:getSingleton():isActionAllowed(hitElement) then
-					hitElement:triggerEvent("showFactionWTLoadGUI",faction.m_ValidWeapons, faction.m_WeaponDepotInfo)
+					hitElement:triggerEvent("showFactionWTLoadGUI")
 				end
 			else
 				hitElement:sendError(_("Den Waffentruck können nur Mitglieder böser Fraktionen starten!",hitElement))
@@ -60,15 +60,11 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 		if client:getMoney() >= totalAmount then
 			if totalAmount > 0 then
 				if ActionsCheck:getSingleton():isActionAllowed(client) then
-					if not self.m_CurrentWT then
-						client:takeMoney(totalAmount)
-						outputChatBox(_("Ein Waffentruck wird beladen!",client),rootElement,255,0,0)
-						outputChatBox(_("Die Kisten stehen bereit zum beladen! Gesamtkosten: %d$",client,totalAmount),client,255,125,0)
-						self.m_CurrentWT = WeaponTruck:new(client,weaponTable,totalAmount)
-						ActionsCheck:getSingleton():setAction("Waffentruck")
-					else
-						client:sendError(_("Es läuft aktuell bereits ein Waffentruck!",client))
-					end
+					client:takeMoney(totalAmount)
+					outputChatBox(_("Ein Waffentruck wird beladen!",client),rootElement,255,0,0)
+					client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
+					self.m_CurrentWT = WeaponTruck:new(client,weaponTable,totalAmount)
+					ActionsCheck:getSingleton():setAction("Waffentruck")
 				end
 			else
 				client:sendError(_("Du hast zuwenig augeladen! Mindestens: %d$",client,self.m_AmountPerBox))

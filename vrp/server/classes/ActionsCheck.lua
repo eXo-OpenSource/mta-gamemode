@@ -36,3 +36,8 @@ function ActionsCheck:endAction()
 	self.m_LastAction = getRealTime().timestamp
 	self.m_CurrentAction = false
 end
+
+function ActionsCheck:reset()
+	self.m_LastAction = getRealTime().timestamp - ActionsCheck.Pause - 60
+	self.m_CurrentAction = false
+end
