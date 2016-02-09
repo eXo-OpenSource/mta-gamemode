@@ -9,7 +9,7 @@ Admin = inherit(Singleton)
 
 function Admin:constructor()
   self.m_OnlineAdmins = {}
-	
+
 	self.m_RankNames = {
 		[1] = "Supporter",
 		[2] = "Moderator",
@@ -17,9 +17,9 @@ function Admin:constructor()
 		[4] = "Administrator",
 		[5] = "Projektleiter"
 	}
-	
-	addRemoteEvents{"adminSetPlayerFaction"}
-	
+
+	addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany"}
+
 	addCommandHandler("admins", bind(self.onlineList, self))
 	addCommandHandler("a", bind(self.chat, self))
 	addCommandHandler("o", bind(self.ochat, self))
@@ -29,6 +29,7 @@ function Admin:constructor()
 	addCommandHandler("tp", bind(self.teleportTo, self))
 	addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
 	addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
+    addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
 	outputDebugString("Admin loaded")
 end
 
@@ -47,7 +48,7 @@ function Admin:removeAdmin(player)
 	self.m_OnlineAdmins[player] = nil
 end
 
-function Admin:openAdminMenu( player ) 
+function Admin:openAdminMenu( player )
 	if self.m_OnlineAdmins[player] > 0 then
 		triggerClientEvent(player,"showAdminMenu",player)
 	else
@@ -84,7 +85,7 @@ function Admin:ochat(player,cmd,...)
 end
 
 function Admin:onlineList(player)
-	
+
 		outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
 		for key, value in pairs(self.m_OnlineAdmins) do
 			outputChatBox(self.m_RankNames[value].." "..key:getName(),player,255,255,255)
@@ -97,7 +98,7 @@ function Admin:goToPlayer(player,cmd,target)
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
-				local dim,int = target:getDimension(), target:getInterior() 
+				local dim,int = target:getDimension(), target:getInterior()
 				local pos = target:getPosition()
 				pos.x = pos.x + 0.01
 				if player:isInVehicle() then player:removeFromVehicle() end
@@ -118,7 +119,7 @@ function Admin:getHerePlayer(player,cmd,target)
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
-				local dim,int = player:getDimension(), player:getInterior() 
+				local dim,int = player:getDimension(), player:getInterior()
 				local pos = player:getPosition()
 				pos.x = pos.x + 0.01
 				if target:isInVehicle() then target:removeFromVehicle() end
@@ -194,6 +195,18 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
 			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
 		else
 			client:sendError(_("Fraktion nicht gefunden!", client))
+		end
+	end
+end
+
+function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
+	if client:getRank() >= RANK.Supporter then
+		local company = CompanyManager:getSingleton():getFromId(Id)
+		if company then
+			company:addPlayer(targetPlayer,5)
+			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
+		else
+			client:sendError(_("Unternehmen nicht gefunden!", client))
 		end
 	end
 end

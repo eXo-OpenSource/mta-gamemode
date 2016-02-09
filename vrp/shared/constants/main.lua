@@ -101,6 +101,13 @@ FactionRank = {
 	Leader = 6
 }
 
+CompanyRank = {
+	Normal = 0,
+	Manager = 4,
+	Leader = 5
+}
+
+
 local r3 = {}
 for k, v in pairs(GroupRank) do
 	r3[k] = v

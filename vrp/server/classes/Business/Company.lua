@@ -12,20 +12,28 @@ function Company.onInherit(derivedClass)
   Company.DerivedClasses[#Company.DerivedClasses+1] = derivedClass
 end
 
-function Company:constructor(Id, Name, Creator, players, lastNameChange, bankAccountId, Settings)
+function Company:constructor(Id, Name, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins )
   self.m_Id = Id
   self.m_Name = Name
   self.m_Creator = Creator
-  self.m_Players = players or {}
+  self.m_Players = players
   self.m_LastNameChange = lastNameChange or 0
   self.m_Invitations = {}
   self.m_Vehicles = {}
   self.m_Level = 0
-
+  self.m_RankNames = companyRankNames[Id]
+  self.m_Skins = companySkins[Id]
   -- Settings
   self.m_VehiclesCanBeModified = Settings.VehiclesCanBeModified or false
 
+  if rankLoans == "" then rankLoans = {} for i=0,5 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for company "..Id) end
+  if rankSkins == "" then rankSkins = {} for i=0,5 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for company "..Id) end
+
+  self.m_RankLoans = fromJSON(rankLoans)
+  self.m_RankSkins = fromJSON(rankSkins)
+
   self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Company, self.m_Id)
+
   sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
 end
 
@@ -34,10 +42,17 @@ function Company:destructor()
     delete(self.m_BankAccount)
   end
 
-  local Settings = {
-    VehiclesCanBeModified = self.m_VehiclesCanBeModified
-  }
-  sql:queryExec("UPDATE ??_companies SET Settings = ? WHERE Id = ?;", sql:getPrefix(), toJSON(Settings), self.m_Id)
+  self:save()
+end
+
+function Company:save()
+	outputDebug("Saved company "..self.m_Id)
+
+    local Settings = {
+      VehiclesCanBeModified = self.m_VehiclesCanBeModified
+    }
+
+    sql:queryExec("UPDATE ??_companies SET RankLoans = ?, RankSkins = ?, Settings = ? WHERE Id = ?",sql:getPrefix(),toJSON(self.m_RankLoans),toJSON(self.m_RankSkins),toJSON(Settings),self.m_Id)
 end
 
 function Company:virtual_constructor(...)
@@ -168,8 +183,16 @@ function Company:getPlayerRank(playerId)
   return self.m_Players[playerId]
 end
 
-function Company:getPlayers()
-  return self.m_Players
+function Company:getPlayers(getIDsOnly)
+	if getIDsOnly then
+		return self.m_Players
+	end
+
+	local temp = {}
+	for playerId, rank in pairs(self.m_Players) do
+		temp[playerId] = {name = Account.getNameFromId(playerId), rank = rank}
+	end
+	return temp
 end
 
 function Company:canVehiclesBeModified()
@@ -186,4 +209,16 @@ function Company:sendMessage(msg)
             v:sendShortMessage(("%s:\n%s"):format(self:getName(), msg))
         end
     end
+end
+
+function Company:getRandomSkin()
+	local i = 1
+	local skins = {}
+	for skinId,bool in pairs(self.m_Skins) do
+		if bool == true then
+			skins[i] = skinId
+			i = i+1
+		end
+	end
+	return skins[math.random(1,#skins)]
 end

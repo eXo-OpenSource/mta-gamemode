@@ -19,9 +19,9 @@ function CompanyManager:constructor()
     end
 
     if Company.DerivedClasses[row.Id] then
-      self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}))
+      self:addRef(Company.DerivedClasses[row.Id]:new(row.Id, row.Name, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
     else
-      self:addRef(Company:new(row.Id, row.Name, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}))
+      self:addRef(Company:new(row.Id, row.Name, row.Creator, players, row.lastNameChange, row.BankAccount, fromJSON(row.Settings) or {["VehiclesCanBeModified"]=false}, row.RankLoans, row.RankSkins))
     end
   end
 
@@ -52,7 +52,8 @@ function CompanyManager:Event_companyRequestInfo()
 	local company = client:getCompany()
 
 	if company then
-		client:triggerEvent("companyRetrieveInfo", company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers())
+--id, name, rank, money, players, skins, rankNames, rankLoans, rankSkins
+		client:triggerEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins)
 	else
 		client:triggerEvent("companyRetrieveInfo")
 	end

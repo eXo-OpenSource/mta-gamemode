@@ -339,7 +339,7 @@ function SelfGUI:adjustGeneralTab(name)
 	self.m_CompanyEditLabel:setVisible(isInCompany)
 end
 
-function SelfGUI:Event_companyRetrieveInfo(name)
+function SelfGUI:Event_companyRetrieveInfo(id, name)
 	self:adjustGeneralTab(name)
 
 	if name then

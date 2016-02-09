@@ -33,7 +33,8 @@ function AdminGUI:constructor()
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_PlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.9, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
-	self.m_setFactionButton = GUIButton:new(self.m_Width*0.40, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.075, _"in Fraktion setzten",  tabSpieler)
+	self.m_setFactionButton = GUIButton:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.05, _"in Fraktion setzten",  tabSpieler)
+	self.m_setCompanyButton = GUIButton:new(self.m_Width*0.35, self.m_Height*0.12, self.m_Width*0.3, self.m_Height*0.05, _"in Unternehmen setzten",  tabSpieler)
 
 	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
 	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, "http://exo-reallife.de/ingame/ticketSystem/admin.php?player="..getPlayerName(getLocalPlayer()).."&sessionID="..self:generateSessionId(), true, tabTicket)
@@ -43,6 +44,14 @@ function AdminGUI:constructor()
 	for key, playeritem in ipairs(getElementsByType("player")) do
 		local item = self.m_PlayersGrid:addItem(playeritem:getName())
 		item.player = playeritem
+	end
+
+	self.m_setCompanyButton.onLeftClick = function()
+		local companyTable = {[1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
+		if self.m_PlayersGrid:getSelectedItem() then
+			local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
+			ChangerBox:new(_"Unternehmen setzten", _"Bitte wähle das gewünschte Unternehmen aus:",companyTable, function (companyId) triggerServerEvent("adminSetPlayerCompany", root, selectedPlayer,companyId) end)
+		end
 	end
 
 	self.m_setFactionButton.onLeftClick = function()
