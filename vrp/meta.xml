@@ -347,6 +347,7 @@
 	<script src="client/classes/GUIForms/JailCountdownGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolMenuGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>

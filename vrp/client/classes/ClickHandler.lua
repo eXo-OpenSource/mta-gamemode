@@ -109,6 +109,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	local range = getDistanceBetweenPoints3D(playerX, playerY, playerZ, x, y, z)
 
 	-- Phase 1: Check per-element handlers
+	--[[
 	if element == localPlayer then
 		if trigger then
 			if button == "left" then
@@ -118,7 +119,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		end
 		return true
 	end
-
+	]]
 	-- Phase 2: Check for world items
 	if getElementData(element, "worlditem") then
 		if trigger then

@@ -61,6 +61,10 @@ function Player:getFactionId()
 	return self:getPublicSync("FactionId") or 0
 end
 
+function Player:getCompanyId()
+	return self:getPublicSync("CompanyId") or 0
+end
+
 function Player:getFactionName()
 	return self:getPublicSync("FactionName") or "-"
 end

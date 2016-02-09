@@ -33,6 +33,32 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
+	if localPlayer:getCompanyId() == 1 and localPlayer:getPublicSync("Company:Duty") == true then
+		if not element:getPublicSync("inDrivingLession") then
+			self:addItem(_"Fahrstunde starten",
+				function()
+					if self:getElement() then
+						DrivingSchoolChooseLicenseGUI:new(self:getElement())
+					end
+				end
+			)
+		else
+			self:addItem(_"Fahrstunde abbrechen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("drivingSchoolEndLession", localPlayer, self:getElement(), false)
+					end
+				end
+			)
+			self:addItem(_"Schein geben",
+				function()
+					if self:getElement() then
+						triggerServerEvent("drivingSchoolEndLession", localPlayer, self:getElement(), true)
+					end
+				end
+			)
+		end
+	end
 
 	if localPlayer:getRank() >= RANK.Moderator then
 		self:addItem(_"Kick",

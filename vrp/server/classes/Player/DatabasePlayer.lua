@@ -228,16 +228,24 @@ function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e e
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
-function DatabasePlayer:setCompany(c) self.m_Company = c if self:isActive() then self:setPublicSync("CompanyName", c and c:getName() or "") end end
+function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if self:isActive() then self:setPrivateSync("LastPlayTime", self.m_LastPlayTime) end end
+
+function DatabasePlayer:setCompany(company)
+	self.m_Company = company
+	if self:isActive() then
+		self:setPublicSync("CompanyId", company and company:getId() or 0)
+		self:setPublicSync("CompanyName", company and company:getName() or "")
+	end
+end
+
 function DatabasePlayer:setFaction(faction)
 	self.m_Faction = faction
 	if self:isActive() then
-		self:setPublicSync("FactionId", faction and faction:getId() or "")
+		self:setPublicSync("FactionId", faction and faction:getId() or 0)
 		self:setPublicSync("FactionName", faction and faction:getName() or "")
 		self:setPublicSync("ShortFactionName", faction and faction:getShortName() or "")
 	end
 end
-function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if self:isActive() then self:setPrivateSync("LastPlayTime", self.m_LastPlayTime) end end
 
 function DatabasePlayer:giveMoney(amount)
 	self:setMoney(self:getMoney() + amount)
