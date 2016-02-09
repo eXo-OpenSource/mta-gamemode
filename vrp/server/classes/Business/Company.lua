@@ -154,6 +154,23 @@ function Company:removePlayer(playerId)
   end
 end
 
+function Company:getOnlinePlayers()
+	local players = {}
+	for playerId in pairs(self.m_Players) do
+		local player = Player.getFromId(playerId)
+		if player then
+			players[#players + 1] = player
+		end
+	end
+	return players
+end
+
+function Company:sendMessage(text, r, g, b, ...)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b, ...)
+	end
+end
+
 function Company:invitePlayer(player)
   client:sendShortMessage(("Du hast %s erfolgreich in deine Firma eingeladen."):format(getPlayerName(player)))
 	player:triggerEvent("companyInvitationRetrieve", self:getId(), self:getName())
