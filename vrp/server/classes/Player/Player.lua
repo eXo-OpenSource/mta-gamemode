@@ -307,6 +307,10 @@ function Player:isFactionDuty()
   return self.m_FactionDuty
 end
 
+function Player:isCompanyDuty()
+  return self.m_CompanyDuty
+end
+
 function Player:setJobDutySkin(skin)
 	if skin ~= nil then
 		self.m_JobDutySkin = skin

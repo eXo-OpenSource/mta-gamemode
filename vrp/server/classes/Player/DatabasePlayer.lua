@@ -47,6 +47,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_VehicleLevel = 0
 	self.m_SkinLevel = 0
 	self.m_FactionDuty = false
+	self.m_CompanyDuty = false
 	--[[
 	Tutorial Stages:
 	0 - Just created an account

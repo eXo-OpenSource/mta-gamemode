@@ -35,6 +35,8 @@ function Company:constructor(Id, Name, Creator, players, lastNameChange, bankAcc
   self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Company, self.m_Id)
 
   sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
+
+  self:createDutyMarker()
 end
 
 function Company:destructor()
@@ -229,4 +231,29 @@ end
 
 function Company:setRankSkin(rank,skinId)
 	self.m_RankSkins[tostring(rank)] = skinId
+end
+
+function Company:updateCompanyDutyGUI(player)
+	player:triggerEvent("updateCompanyDutyGUI", player:isCompanyDuty())
+end
+
+function Company:changeSkin(player)
+	local rank = self:getPlayerRank(player)
+	player:setModel(self.m_RankSkins[tostring(rank)])
+end
+
+function Company:createDutyMarker()
+    	self.m_DutyPickup = createPickup(companyDutyMarker[self.m_Id], 3, 1275)
+    	addEventHandler("onPickupHit", self.m_DutyPickup,
+    		function(hitElement)
+    			if getElementType(hitElement) == "player" then
+    				local company = hitElement:getCompany()
+    				if company then
+    					hitElement:triggerEvent("showCompanyDutyGUI")
+    					hitElement:getCompany():updateCompanyDutyGUI(hitElement)
+    				end
+    			end
+    			cancelEvent()
+    		end
+    	)
 end

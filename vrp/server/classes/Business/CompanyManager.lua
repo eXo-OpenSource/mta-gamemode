@@ -26,7 +26,7 @@ function CompanyManager:constructor()
   end
 
   -- Add events
-  addRemoteEvents{"companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown","companySaveRank","companyRespawnVehicles"}
+  addRemoteEvents{"companyRequestInfo", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty"}
   addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
   addEventHandler("companyDeposit", root, bind(self.Event_companyDeposit, self))
   addEventHandler("companyWithdraw", root, bind(self.Event_companyWithdraw, self))
@@ -38,6 +38,9 @@ function CompanyManager:constructor()
   addEventHandler("companyRankDown", root, bind(self.Event_companyRankDown, self))
   addEventHandler("companySaveRank", root, bind(self.Event_companySaveRank, self))
   addEventHandler("companyRespawnVehicles", root, bind(self.Event_companyRespawnVehicles, self))
+  addEventHandler("companyChangeSkin", root, bind(self.Event_changeSkin, self))
+  addEventHandler("companyToggleDuty", root, bind(self.Event_toggleDuty, self))
+
 end
 
 function CompanyManager:destructor()
@@ -282,5 +285,32 @@ function CompanyManager:Event_companySaveRank(rank,skinId,loan)
 		company:save()
 		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
 		self:sendInfosToClient(client)
+	end
+end
+
+function CompanyManager:Event_changeSkin()
+	if client:isCompanyDuty() then
+		client:getCompany():changeSkin(client)
+	end
+end
+
+function CompanyManager:Event_toggleDuty()
+	local company = client:getCompany()
+	if company then
+		if client:isCompanyDuty() then
+			client:setDefaultSkin()
+			client.m_CompanyDuty = false
+			company:updateCompanyDutyGUI(client)
+			client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
+			client:setPublicSync("Company:Duty",false)
+		else
+			company:changeSkin(client)
+			client.m_CompanyDuty = true
+			company:updateCompanyDutyGUI(client)
+			client:sendInfo(_("Du bist nun im Unternehmens-Dienst!", client))
+			client:setPublicSync("Company:Duty",true)
+		end
+	else
+		client:sendError(_("Du bist in keinem Unternehmen!", client))
 	end
 end
