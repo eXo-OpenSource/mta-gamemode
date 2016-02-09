@@ -222,3 +222,11 @@ function Company:getRandomSkin()
 	end
 	return skins[math.random(1,#skins)]
 end
+
+function Company:setRankLoan(rank,amount)
+	self.m_RankLoans[tostring(rank)] = amount
+end
+
+function Company:setRankSkin(rank,skinId)
+	self.m_RankSkins[tostring(rank)] = skinId
+end
