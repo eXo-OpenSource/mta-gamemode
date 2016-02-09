@@ -202,6 +202,15 @@ function Company:getPlayerRank(playerId)
   return self.m_Players[playerId]
 end
 
+function Company:setPlayerRank(playerId, rank)
+	if type(playerId) == "userdata" then
+		playerId = playerId:getId()
+	end
+
+	self.m_Players[playerId] = rank
+	sql:queryExec("UPDATE ??_character SET CompanyRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
+end
+
 function Company:getPlayers(getIDsOnly)
 	if getIDsOnly then
 		return self.m_Players
