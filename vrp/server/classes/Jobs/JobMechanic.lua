@@ -15,7 +15,14 @@ function JobMechanic:constructor()
 		AutomaticVehicleSpawner:new(getVehicleModelFromName("Towtruck"), 1086.7 + i * 7.8, -1245.5, 15.85, 0, 0, 0, nil, self)
 	end
 
-	self.m_VehicleTakeMarker = Marker.create(1086.8, -1214.8, 16.9, "cylinder", 1, 255, 255, 0)
+	-- "Link" with the Company
+	self.m_Company = CompanyManager:getSingleton():getFromId(2)
+	if not self.m_Company then
+		outputDebug("Linking with Company (Id: 2) failed!")
+	end
+
+	--self.m_VehicleTakeMarker = Marker.create(1086.8, -1214.8, 16.9, "cylinder", 1, 255, 255, 0)
+	self.m_VehicleTakeMarker = Marker.create(920.614, -1176.063, 16.2, "cylinder", 1, 255, 255, 0)
 	addEventHandler("onMarkerHit", self.m_VehicleTakeMarker, bind(self.VehicleTakeMarker_Hit, self))
 
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
@@ -29,8 +36,12 @@ function JobMechanic:start(player)
 end
 
 function JobMechanic:checkRequirements(player)
-	if player:getCompany() ~= CompanyManager:getSingleton():getFromId(2) then
-		player:sendError(_("Für diesen Job musst du Mitglied bei '%s' sein!", player, CompanyManager:getSingleton():getFromId(2):getName()))
+	if player:getCompany() ~= self.m_Company then
+		player:sendError(_("Für diesen Job musst du Mitglied bei '%s' sein!", player, self.m_Company:getName()))
+		return false
+	end
+	if not player:getPublicSync("Company:Duty") then
+		player:sendError(_("Für diesen Job musst du im Dienst sein!", player, self.m_Company:getName()))
 		return false
 	end
 	if player:getJobLevel() < 3 then
@@ -138,9 +149,9 @@ function JobMechanic:Event_mechanicTakeVehicle()
 end
 
 JobMechanic.SpawnPositions = {
-	{1108.5, -1198.2, 17.70, 180},
-	{1103, -1198.2, 17.7, 180},
-	{1097.2, -1198.1, 17.70, 180},
-	{1091.7, -1198.3, 17.70, 180},
-	{1086.1, -1198.2, 17.70, 180},
+	{894.370, -1187.525, 16.704, 180},
+	{924.837, -1192.842, 16.704, 90},
+	--{1097.2, -1198.1, 17.70, 180},
+	--{1091.7, -1198.3, 17.70, 180},
+	--{1086.1, -1198.2, 17.70, 180},
 }

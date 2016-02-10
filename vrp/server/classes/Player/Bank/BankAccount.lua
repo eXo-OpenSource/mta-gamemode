@@ -52,7 +52,9 @@ function BankAccount:update()
       delete(player)
     end
 
-    player:setPrivateSync("BankMoney", self:getMoney())
+    if player:isActive() then
+        player:setPrivateSync("BankMoney", self:getMoney())
+    end
   elseif self.m_OwnerType == BankAccountTypes.Faction then
     return false
   elseif self.m_OwnerType == BankAccountTypes.Company then
@@ -72,7 +74,7 @@ function BankAccount:setMoney(amount)
 end
 
 function BankAccount:getMoney()
-  return self.m_Money
+  return tonumber(self.m_Money)
 end
 
 function BankAccount:addMoney(money)

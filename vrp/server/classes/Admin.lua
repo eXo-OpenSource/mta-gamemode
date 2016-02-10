@@ -31,7 +31,6 @@ function Admin:constructor()
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
 	addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
-	outputDebugString("Admin loaded")
 end
 
 function Admin:destructor()
@@ -41,7 +40,7 @@ function Admin:destructor()
 end
 
 function Admin:addAdmin(player,rank)
-	outputDebugString("Added Admin "..player:getName())
+	outputDebug("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
 end
 

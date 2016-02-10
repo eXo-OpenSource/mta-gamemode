@@ -112,7 +112,7 @@ function CompanyManager:Event_companyWithdraw(amount)
 		return
 	end
 
-	if company:getMoney() < amount then
+	if company.m_BankAccount:getMoney() < amount then
 		client:sendError(_("In der Gruppenkasse befindet sich nicht genügend Geld!", client))
 		return
 	end
@@ -303,12 +303,20 @@ function CompanyManager:Event_toggleDuty()
 			company:updateCompanyDutyGUI(client)
 			client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
 			client:setPublicSync("Company:Duty",false)
+
+            if company.stop then
+                company:stop(client)
+            end
 		else
 			company:changeSkin(client)
 			client.m_CompanyDuty = true
 			company:updateCompanyDutyGUI(client)
 			client:sendInfo(_("Du bist nun im Unternehmens-Dienst!", client))
 			client:setPublicSync("Company:Duty",true)
+
+            if company.start then
+                company:start(client)
+            end
 		end
 	else
 		client:sendError(_("Du bist in keinem Unternehmen!", client))

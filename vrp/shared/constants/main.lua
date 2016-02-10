@@ -169,7 +169,7 @@ GangAreaData = {
 	{wallPosition = Vector3(1959.6, -1173.6, 20.4), wallRotation = 179.5, areaPosition = Vector3(1860.3521, -1140.6764, 30), width = 208, height = 117},
 	{wallPosition = Vector3(2215.5, -1173.9, 26.1), wallRotation = 89.75, areaPosition = Vector3(2185.2979, -1130.2002, 30), width = 82, height = 85},
 	{wallPosition = Vector3(2768.2, -1625, 11.3), wallRotation = 0, areaPosition = Vector3(2743.6201, -1495.0059, 30), width = 111, height = 155},
-	{wallPosition = Vector3(920.29999, -1231.7, 17.3), wallRotation = 87, areaPosition = Vector3(801.5957, -1154.6094, 30), width = 139, height = 155},
+	--{wallPosition = Vector3(920.29999, -1231.7, 17.3), wallRotation = 87, areaPosition = Vector3(801.5957, -1154.6094, 30), width = 139, height = 155},
 	{wallPosition = Vector3(1237.9, -916.40002, 43.1), wallRotation = 280, areaPosition = Vector3(1156.7124, -850.0401, 30), width = 185, height = 75},
 	{wallPosition = Vector3(382.70001, -1875.7, 8.2), wallRotation = 92, areaPosition = Vector3(342.92822, -1796.2261, 30), width = 75, height = 320},
 	{wallPosition = Vector3(1065.2, -1617.6, 21.1), wallRotation = 0, areaPosition = Vector3(1035.9404, -1575.9678, 30), width = 111, height = 90},

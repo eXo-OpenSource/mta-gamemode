@@ -15,8 +15,6 @@ function DrivingSchool:constructor()
     addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))
     addEventHandler("drivingSchoolStartLession", root, bind(self.Event_startLession, self))
     addEventHandler("drivingSchoolEndLession", root, bind(self.Event_endLession, self))
-
-
 end
 
 function DrivingSchool:destructor()
@@ -68,7 +66,7 @@ function DrivingSchool:Event_drivingSchoolMenu(func)
     elseif func == "showInstructor" then
         outputChatBox(_("Folgende Fahrlehrer sind online:",client), client, 255, 255, 255)
         for k, player in pairs(self:getOnlinePlayers()) do
-            outputChatBox(player.name,client,255,125,0)
+            outputChatBox(("%s %s"):format(player.name, player:getPublicSync("Company:Duty") and _("%s(Im Dienst)", client, "#357c01") or _("%s(Nicht im Dienst)", client, "#870000")), client, 255, 125, 0, true)
         end
     end
 end

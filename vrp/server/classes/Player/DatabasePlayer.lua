@@ -183,7 +183,7 @@ function DatabasePlayer:getVehicleLevel() return self.m_VehicleLevel end
 function DatabasePlayer:getSkinLevel()	return self.m_SkinLevel	end
 function DatabasePlayer:getJobLevel()	return self.m_JobLevel	end
 function DatabasePlayer:getBankAccount() return self.m_BankAccount end
-function DatabasePlayer:getBankMoney()	return self.m_BankAccount:getMoney()	end
+function DatabasePlayer:getBankMoney()	return self.m_BankAccount:getMoney() end
 function DatabasePlayer:getWantedLevel()return self.m_WantedLevel end
 function DatabasePlayer:getJob()   		return self.m_Job		end
 function DatabasePlayer:getAccount()	return self.m_Account	end

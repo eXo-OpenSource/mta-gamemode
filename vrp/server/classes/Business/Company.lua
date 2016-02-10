@@ -48,7 +48,7 @@ function Company:destructor()
 end
 
 function Company:save()
-	outputDebug("Saved company "..self.m_Id)
+	outputDebug(("Saved Company '%s' (Id: %d)"):format(self:getName(), self:getId()))
 
     local Settings = {
       VehiclesCanBeModified = self.m_VehiclesCanBeModified
@@ -116,6 +116,14 @@ end
 
 function Company:getMoney(...)
   return self.m_BankAccount:getMoney(...)
+end
+
+function Company:giveMoney(amount)
+    return self.m_BankAccount:setMoney(self.m_BankAccount:getMoney() + amount)
+end
+
+function Company:takeMoney(amount)
+    return self.m_BankAccount:setMoney(self.m_BankAccount:getMoney() - amount)
 end
 
 function Company:addPlayer(playerId, rank)

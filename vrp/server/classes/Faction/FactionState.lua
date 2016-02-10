@@ -10,7 +10,7 @@ FactionState = inherit(Singleton)
   -- implement by children
 
 function FactionState:constructor()
-	outputDebugString("Faction State loaded")
+	outputDebug("Faction State loaded")
 	self:createDutyPickup(252.6, 69.4, 1003.64,6) -- PD Interior
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
 

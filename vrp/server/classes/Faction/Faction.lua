@@ -43,8 +43,11 @@ function Faction:destructor()
 end
 
 function Faction:save()
-	outputDebug("Saved Faction "..self.m_Id)
-	sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ? WHERE Id = ?",sql:getPrefix(),toJSON(self.m_RankLoans),toJSON(self.m_RankSkins),toJSON(self.m_RankWeapons),self.m_Id)
+	if sql:queryExec("UPDATE ??_factions SET RankLoans = ?, RankSkins = ?, RankWeapons = ?, BankAccount = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_RankLoans), toJSON(self.m_RankSkins), toJSON(self.m_RankWeapons), self.m_BankAccount:getId(), self.m_Id) then
+		outputDebug(("Saved Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
+	else
+		outputDebug(("Failed to save Faction '%s' (Id: %d)"):format(self:getName(), self:getId()))
+	end
 end
 
 function Faction:isStateFaction()

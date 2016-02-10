@@ -14,13 +14,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		self:addItem(_("Besitzer: %s", getElementData(element, "OwnerName"))):setTextColor(Color.Red)
 	end
 
-	self:addItem(_"Auf-/Zuschließen",
-		function()
-			if self:getElement() then
-				triggerServerEvent("vehicleLock", self:getElement())
+	if element:getVehicleType() ~= "Bike" then
+		self:addItem(_"Auf-/Zuschließen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleLock", self:getElement())
+				end
 			end
-		end
-	)
+		)
+	end
 	self:addItem(_"Respawn",
 		function()
 			if self:getElement() then

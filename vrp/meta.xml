@@ -119,8 +119,8 @@
 	<!-- Business -->
 	<script src="server/classes/Business/Company.lua" type="server"/>
 	<script src="server/classes/Business/Companies/DrivingSchool.lua" type="server"/>
-	<script src="server/classes/Business/Companies/San-News.lua" type="server"/>
 	<script src="server/classes/Business/Companies/Mechanic-Tow.lua" type="server"/>
+	<script src="server/classes/Business/Companies/San-News.lua" type="server"/>
 	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
 
 	<!-- Factions -->
