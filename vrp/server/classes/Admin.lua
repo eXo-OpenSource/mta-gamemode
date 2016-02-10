@@ -28,6 +28,7 @@ function Admin:constructor()
 	addCommandHandler("gethere", bind(self.getHerePlayer, self))
 	addCommandHandler("tp", bind(self.teleportTo, self))
 	addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
+    addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
 	addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
 	outputDebugString("Admin loaded")
@@ -211,7 +212,7 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
 	end
 end
 
-function Admin:addFactionVehicle(player,cmd,factionID)
+function Admin:addFactionVehicle(player, cmd, factionID)
 	if player:getRank() >= RANK.Supporter then
 		if isPedInVehicle(player) then
 			if factionID then
@@ -228,6 +229,29 @@ function Admin:addFactionVehicle(player,cmd,factionID)
 				end
 			else
 				player:sendError(_("Befehl: /addFactionVehicle [FactionID]!", player))
+			end
+		else
+			player:sendError(_("Du sitzt in keinem Fahrzeug!", player))
+		end
+	end
+end
+
+function Admin:addCompanyVehicle(player, cmd, companyID)
+	if player:getRank() >= RANK.Supporter then
+		if isPedInVehicle(player) then
+			if companyID then
+				companyID = tonumber(companyID)
+				local company = CompanyManager:getFromId(companyID)
+				if company then
+					local veh = getPedOccupiedVehicle(player)
+					local posX, posY, posZ = getElementPosition(veh)
+					local rotX, rotY, rotZ = getElementRotation(veh)
+					CompanyVehicle:create(company, veh.model, posX, posY, posZ, rotZ)
+				else
+					player:sendError(_("Unternehmen nicht gefunden!", player))
+				end
+			else
+				player:sendError(_("Befehl: /addCompanyVehicle [CompanyID]!", player))
 			end
 		else
 			player:sendError(_("Du sitzt in keinem Fahrzeug!", player))

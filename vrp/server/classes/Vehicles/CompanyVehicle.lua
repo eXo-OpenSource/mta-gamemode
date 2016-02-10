@@ -64,6 +64,9 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 	if self.m_Company.m_Vehicles then
 		table.insert(self.m_Company.m_Vehicles, self)
 	end
+
+	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+
 end
 
 function CompanyVehicle:destructor()
@@ -78,7 +81,18 @@ function CompanyVehicle:getCompany()
   return self.m_Company
 end
 
-function CompanyVehicle.create(Company, model, posX, posY, posZ, rotation)
+function CompanyVehicle:onStartEnter(player,seat)
+	if seat == 0 then
+		if player:getCompany() == self.m_Company or (self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
+
+		else
+			cancelEvent()
+			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
+		end
+	end
+end
+
+function CompanyVehicle:create(Company, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
 	if sql:queryExec("INSERT INTO ??_company_vehicles (Company, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), Company:getId(), model, posX, posY, posZ, rotation) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
@@ -99,15 +113,10 @@ function CompanyVehicle:purge()
 end
 
 function CompanyVehicle:save()
-	local posX, posY, posZ = getElementPosition(self)
-	local rotX, rotY, rotZ = getElementRotation(self)
-	local health = getElementHealth(self)
-	local r, g, b = getVehicleColor(self, true)
-	local color = setBytesInInt32(255, r, g, b) -- Format: argb
 	local tunings = getVehicleUpgrades(self) or {}
 
-	return sql:queryExec("UPDATE ??_company_vehicles SET Company = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, PositionType = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Company:getId(), posX, posY, posZ, rotZ, health, color, self.m_PositionType, toJSON(tunings), self:getMileage(), self.m_Id)
+	return sql:queryExec("UPDATE ??_company_vehicles SET Company = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Company:getId(), toJSON(tunings), self:getMileage(), self.m_Id)
 end
 
 function CompanyVehicle:hasKey(player)
