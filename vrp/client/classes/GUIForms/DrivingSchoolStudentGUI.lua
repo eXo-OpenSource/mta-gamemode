@@ -11,23 +11,23 @@ inherit(Singleton, DrivingSchoolStudentGUI)
 addRemoteEvents{"showDrivingSchoolStudentGUI", "hideDrivingSchoolStudentGUI"}
 
 function DrivingSchoolStudentGUI:constructor(type)
-	GUIForm.constructor(self, screenWidth/2-(110/2), 10, 110, 150, false)
+	GUIForm.constructor(self, screenWidth/2-(110/2), 10, 110, 135, false)
 	GUIRectangle:new(0, 0, self.m_Width, 20, Color.Black, self)
 	self.m_TypeLabel= GUILabel:new(0, 1, self.m_Width-4, 18, type, self):setAlignX("center")
-	self.m_Rectangle = GUIRectangle:new(0, 20, self.m_Width, self.m_Height, Color.Orange, self)
-	self.m_Image =  GUIImage:new(5, 5, self.m_Width-10, self.m_Height-30, "files/images/Other/trans.png", self.b)
-	self.m_InstructionLabel = GUILabel:new(5, 5, self.m_Width-10, self.m_Height-10, "Bitte steige in\nein Fahrschul\nFahrzeug ein!", self.m_Rectangle)
+	self.m_Rectangle = GUIRectangle:new(0, 20, self.m_Width, self.m_Height-20, Color.Orange, self)
+	self.m_Image =  GUIImage:new(10, 25, 90, 90, "files/images/Other/trans.png", self)
+	self.m_InstructionLabel = GUILabel:new(5, 25, 100, 90, "Bitte steige in\nein Fahrschul\nFahrzeug ein!", self)
 	self.m_InstructionLabel:setColor(Color.Black):setAlignX("center"):setFont(VRPFont(25)):setMultiline(true)
-	self.m_DirectionLabel = GUILabel:new(0,self.m_Width, self.m_Height-20, 20, "", self.m_Rectangle):setColor(Color.Black):setAlignX("center")
+	self.m_DirectionLabel = GUILabel:new(0, self.m_Height-20, self.m_Width, 20, "", self):setColor(Color.Black):setAlignX("center")
 
 	if localPlayer.vehicle then
 		self:setInVehicle()
 	end
 
 	addRemoteEvents{"drivingSchoolChangeDirection"}
-	addEventHandler("drivingSchoolChangeDirection", root ,bind(self.changeDirection,self))
-	addEventHandler("onClientPlayerVehicleExit", root,bind(function() self:delete() end,self.m_Rectangle))
-	addEventHandler("onClientPlayerVehicleEnter", root,bind(self.setInVehicle,self))
+	addEventHandler("drivingSchoolChangeDirection", root , bind(self.changeDirection, self))
+	addEventHandler("onClientPlayerVehicleExit", root, bind(function() self:delete() end, self.m_Rectangle))
+	addEventHandler("onClientPlayerVehicleEnter", root, bind(self.setInVehicle, self))
 
 end
 
