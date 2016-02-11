@@ -75,7 +75,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		end
 	end
 
-	if localPlayer:getJob() == JobMechanic:getSingleton() then
+	if localPlayer:getPublicSync("CompanyId") == 2 then
 		self:addItem(_"Mechaniker: Reparieren",
 			function()
 				if self:getElement() then

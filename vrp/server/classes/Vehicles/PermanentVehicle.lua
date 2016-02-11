@@ -7,7 +7,7 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, health, positionType, tunings, mileage)
+function PermanentVehicle:constructor(Id, owner, keys, color, health, positionType, tunings, mileage, lightColor)
 	self.m_Id = Id
 	self.m_Owner = owner
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
@@ -19,6 +19,10 @@ function PermanentVehicle:constructor(Id, owner, keys, color, health, positionTy
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
 		setVehicleColor(self, r, g, b)
+	end
+	if lightColor then
+		local a, r, g, b = getBytesInInt32(lightColor)
+		setVehicleHeadLightColor(self, r, g, b)
 	end
 
 	for k, v in pairs(tunings or {}) do
@@ -71,10 +75,12 @@ function PermanentVehicle:save()
 	local health = getElementHealth(self)
 	local r, g, b = getVehicleColor(self, true)
 	local color = setBytesInInt32(255, r, g, b) -- Format: argb
+	local r2, g2, b2 = getVehicleHeadLightColor(self)
+	local lightColor = setBytesInInt32(255, r2, g2, b2)
 	local tunings = getVehicleUpgrades(self) or {}
 
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_Id)
 end
 
 function PermanentVehicle:getId()
@@ -173,7 +179,7 @@ function PermanentVehicle:respawn()
 	end
 
 	-- Respawn at mechanic base
-	JobMechanic:getSingleton():respawnVehicle(self)
+	CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
 	if owner and isElement(owner) then
 		owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
 	end

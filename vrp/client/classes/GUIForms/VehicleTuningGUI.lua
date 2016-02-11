@@ -56,8 +56,10 @@ function VehicleTuningGUI:constructor(vehicle)
         self.m_CurrentUpgrades[slot] = getVehicleUpgradeOnSlot(self.m_Vehicle, slot)
     end
     self.m_CurrentUpgrades[VehicleSpecialProperty.Color] = {self.m_Vehicle:getColor(true)}
+	self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor] = {self.m_Vehicle:getHeadLightColor()}
 
     self.m_Music = Sound.create("https://jusonex.net/public/saonline/Audio/GarageMusic.mp3", true)
+    self.m_Vehicle:setOverrideLights(2)
 end
 
 function VehicleTuningGUI:destructor(closedByServer)
@@ -74,6 +76,7 @@ function VehicleTuningGUI:destructor(closedByServer)
     delete(self.m_UpgradeChanger)
     delete(self.m_AddToCartButton)
     delete(self.m_ShoppingCartWindow)
+    self.m_Vehicle:setOverrideLights(0)
     showChat(true)
 
     GUIForm.destructor(self)
@@ -81,7 +84,7 @@ end
 
 function VehicleTuningGUI:initPartsList()
     -- Add 'special properties' (e.g. color)
-    local specialProperties = {{VehicleSpecialProperty.Color, _"Farbe"}}
+    local specialProperties = {{VehicleSpecialProperty.Color, _"Farbe"}, {VehicleSpecialProperty.LightColor, _"Licht-Farbe"}}
     for k, v in pairs(specialProperties) do
         local partSlot, partName = unpack(v)
         local item = self.m_PartsList:addItem(partName)
@@ -182,6 +185,7 @@ function VehicleTuningGUI:resetUpgrades()
         end
     end
     self.m_Vehicle:setColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color]))
+    self.m_Vehicle:setHeadLightColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor]))
 
     -- Finally, override with the upgrades from our shopping cart
     for slot, upgradeId in pairs(self.m_CartContent) do
@@ -192,6 +196,10 @@ function VehicleTuningGUI:resetUpgrades()
         if slot == VehicleSpecialProperty.Color then
             local r, g, b = unpack(upgradeId)
             self.m_Vehicle:setColor(r, g, b)
+        end
+        if slot == VehicleSpecialProperty.LightBlueColor then
+            local r, g, b = unpack(upgradeId)
+            self.m_Vehicle:setHeadLightColor(r, g, b)
         end
     end
 end
@@ -245,6 +253,11 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
             ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.Color, _"Farbe", {r, g, b}) end, function(r, g, b) self.m_Vehicle:setColor(r, g, b) end)
+            return
+        elseif item.PartSlot == VehicleSpecialProperty.LightColor then
+            self.m_UpgradeChanger:setVisible(false)
+            self.m_AddToCartButton:setVisible(false)
+            ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.LightColor, _"Licht-Farbe", {r, g, b}) end, function(r, g, b) self.m_Vehicle:setHeadLightColor(r, g, b) end)
             return
         end
 
@@ -337,4 +350,5 @@ VehicleTuningGUI.CameraPositions = {
 
     -- Special properties
     [VehicleSpecialProperty.Color] = Vector3(4.2, 2.1, 2.1),
+    [VehicleSpecialProperty.LightColor] = Vector3(3, -2, 2.1),
 }

@@ -172,7 +172,7 @@
 	<!--<script src="server/classes/Jobs/JobPolice.lua" type="server"/> -->
 	<script src="server/classes/Jobs/JobFarmer.lua" type="server"/>
 	<script src="server/classes/Jobs/JobBusDriver.lua" type="server"/>
-	<script src="server/classes/Jobs/JobMechanic.lua" type="server"/>
+	<!--<script src="server/classes/Jobs/JobMechanic.lua" type="server"/> -->
 	<script src="server/classes/Jobs/JobServiceTechnician.lua" type="server"/>
 	<script src="server/classes/Jobs/JobServiceTechnicianTask.lua" type="server"/>
 	<script src="server/classes/Jobs/JobServiceTechnicianTaskQuestion.lua" type="server"/>
@@ -421,7 +421,7 @@
 	<!--<script src="client/classes/Jobs/JobPolice.lua" type="client"/> -->
 	<script src="client/classes/Jobs/JobFarmer.lua" type="client"/>
 	<script src="client/classes/Jobs/JobBusDriver.lua" type="client"/>
-	<script src="client/classes/Jobs/JobMechanic.lua" type="client"/>
+	<!--<script src="client/classes/Jobs/JobMechanic.lua" type="client"/> -->
 	<script src="client/classes/Jobs/JobServiceTechnician.lua" type="client"/>
 
 	<!-- Groups -->

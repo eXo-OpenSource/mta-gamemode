@@ -14,6 +14,9 @@ end
 function VehicleBarrier:Event_onColShapeHit(hitEle, matchingDimension)
     if hitEle:getType() == "player" and matchingDimension then
         local player = hitEle
+        if player:isInVehicle() and player:getOccupiedVehicleSeat() ~= 0 then
+            return
+        end
         if self.m_Timer and isTimer(self.m_Timer) then
             killTimer(self.m_Timer)
         end

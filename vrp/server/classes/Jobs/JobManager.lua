@@ -16,7 +16,7 @@ function JobManager:constructor()
 		--JobPolice:new();
 		JobFarmer:new();
 		JobBusDriver:new();
-		JobMechanic:new();
+		--JobMechanic:new();
 		--JobLogistician:new();
 		JobServiceTechnician:new();
 	}

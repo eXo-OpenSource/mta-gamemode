@@ -190,6 +190,8 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
         else
             if slot == VehicleSpecialProperty.Color then
                 vehicle:setColor(unpack(upgradeId))
+            elseif slot == VehicleSpecialProperty.LightColor then
+                vehicle:setHeadLightColor(unpack(upgradeId))
             end
         end
     end
