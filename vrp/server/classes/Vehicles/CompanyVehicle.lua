@@ -66,7 +66,6 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 	end
 
 	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
-
 end
 
 function CompanyVehicle:destructor()

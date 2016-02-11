@@ -348,6 +348,8 @@
 	<script src="client/classes/GUIForms/DrivingSchoolGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolMenuGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DrivingSchoolStudentGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DrivingSchoolInstructorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
@@ -575,7 +577,11 @@
 	<vrpfile src="files/images/Weapons/Vibrator.png"/>
 
 	<vrpfile src="files/images/Other/Countdown.png"/>
+	<vrpfile src="files/images/Other/trans.png"/>
 	<vrpfile src="files/images/Other/thunder.png"/>
+	<vrpfile src="files/images/Other/arrow.png"/>
+	<vrpfile src="files/images/Other/arrow_ta.png"/>
+
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>

@@ -587,6 +587,7 @@ function Inventory:show()
 end
 
 function Inventory:hide()
+
 	if self.Show == true then
 		self.Show = false
 		showCursor ( false )
