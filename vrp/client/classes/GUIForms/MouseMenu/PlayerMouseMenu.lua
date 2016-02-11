@@ -35,7 +35,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 	)
 	if localPlayer:getCompanyId() == 1 and localPlayer:getPublicSync("Company:Duty") == true then
 		if not element:getPublicSync("inDrivingLession") then
-			self:addItem(_"Fahrstunde starten",
+			self:addItem(_"Fahrschule: Prüfung starten",
 				function()
 					if self:getElement() then
 						DrivingSchoolChooseLicenseGUI:new(self:getElement())
@@ -43,14 +43,14 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 				end
 			)
 		else
-			self:addItem(_"Fahrstunde abbrechen",
+			self:addItem(_"Fahrschule: Prüfung abbrechen",
 				function()
 					if self:getElement() then
 						triggerServerEvent("drivingSchoolEndLession", localPlayer, self:getElement(), false)
 					end
 				end
 			)
-			self:addItem(_"Schein geben",
+			self:addItem(_"Fahrschule: Schein geben",
 				function()
 					if self:getElement() then
 						triggerServerEvent("drivingSchoolEndLession", localPlayer, self:getElement(), true)
@@ -61,7 +61,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 	end
 
 	if localPlayer:getRank() >= RANK.Moderator then
-		self:addItem(_"Kick",
+		self:addItem(_"Admin: Kick",
 			function()
 				outputChatBox("Not implemented yet")
 				--[[if self:getElement() then

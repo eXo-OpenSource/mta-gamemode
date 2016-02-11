@@ -38,10 +38,12 @@ function CompanyVehicle.convertVehicle(vehicle, Company)
 	return false
 end
 
-function CompanyVehicle:constructor(Id, company, color, health, posionType, tunings, mileage)
+function CompanyVehicle:constructor(Id, company, color, health, posionType, tunings, mileage, spawnPosition, spawnRotation)
   self.m_Id = Id
   self.m_Company = company
   self.m_PositionType = positionType or VehiclePositionType.World
+  self.m_SpawnPosition = spawnPosition or self:getPosition()
+  self.m_SpawnRotation = spawnRotation or self:getRotation()
   setElementData(self, "OwnerName", self.m_Company:getName())
 
   self:setHealth(health)
@@ -113,9 +115,13 @@ end
 
 function CompanyVehicle:save()
 	local tunings = getVehicleUpgrades(self) or {}
+	local posX, posY, posZ = getElementPosition(self)
+	local _, _, RotZ = getElementRotation(self)
+	local SpawnPosX, SpawnPosY, SpawnPosZ = self.m_SpawnPosition.x, self.m_SpawnPosition.y, self.m_SpawnPosition.z
+	local SpawnRotZ = self.m_SpawnRotation.z
 
-	return sql:queryExec("UPDATE ??_company_vehicles SET Company = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Company:getId(), toJSON(tunings), self:getMileage(), self.m_Id)
+	return sql:queryExec("UPDATE ??_company_vehicles SET PosX = ?, PosY = ?, PosZ = ?, SpawnPosX = ?, SpawnPosY = ?, SpawnPosZ = ?, Rotation = ?, SpawnRotation = ?, Company = ?, Tunings = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
+		posX, posY, posZ, SpawnPosX, SpawnPosY, SpawnPosZ, RotZ, SpawnRotZ, self.m_Company:getId(), toJSON(tunings), self:getMileage(), self.m_Id)
 end
 
 function CompanyVehicle:hasKey(player)
@@ -143,4 +149,17 @@ end
 function CompanyVehicle:respawn()
 	-- Set inGarage flag and teleport to private dimension
 	self.m_LastUseTime = math.huge
+
+	-- Remove all from the Vehicle
+	for seat, occupant in pairs(getVehicleOccupants(self) or {}) do
+		removePedFromVehicle(occupant)
+	end
+
+	-- Spawn Vehicle at spawnPosition
+	fixVehicle(self)
+	self:setLocked(true)
+	self:setEngineState(false)
+
+	self:setPosition(self.m_SpawnPosition)
+	self:setRotation(self.m_SpawnRotation)
 end

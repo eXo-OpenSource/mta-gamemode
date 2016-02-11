@@ -235,6 +235,7 @@ function DatabasePlayer:setCompany(company)
 	if self:isActive() then
 		self:setPublicSync("CompanyId", company and company:getId() or 0)
 		self:setPublicSync("CompanyName", company and company:getName() or "")
+		self:setPrivateSync("CompanyRank", company:getPlayerRank(self) or 0)
 	end
 end
 

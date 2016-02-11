@@ -107,7 +107,7 @@ function Core:afterLogin()
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
-	bindKey(core:get("KeyBindings", "KeyToggleSelfGUI", "f2"), "down", function() SelfGUI:getSingleton():toggle() end)
+
 
 	FactionGUI:new()
 	FactionGUI:getSingleton():close()
@@ -120,11 +120,43 @@ function Core:afterLogin()
 	WebPanel:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleWebPanel", "f1"), "down", function() WebPanel:getSingleton():toggle() end)
 
+	-- Pre-Instantiate important GUIS
+	-- TODO: I think we have to improve this block, currently i don't have an idea. (In my tests this takes ~32ms, relevant?)
 	GroupGUI:new()
 	GroupGUI:getSingleton():close()
-
 	TicketGUI:new()
 	TicketGUI:getSingleton():close()
+	CompanyGUI:new()
+	CompanyGUI:getSingleton():close()
+	FactionGUI:new()
+	FactionGUI:getSingleton():close()
+	AdminGUI:new()
+	AdminGUI:getSingleton():close()
+	MigratorPanel:new()
+	MigratorPanel:getSingleton():close()
+
+	bindKey(core:get("KeyBindings", "KeyToggleSelfGUI", "f2"), "down",
+		function ()
+			if SelfGUI:getSingleton():isVisible() then
+				SelfGUI:getSingleton():close()
+			elseif CompanyGUI:getSingleton():isVisible() then
+				CompanyGUI:getSingleton():close()
+			elseif FactionGUI:getSingleton():isVisible() then
+				FactionGUI:getSingleton():close()
+			elseif GroupGUI:getSingleton():isVisible() then
+				GroupGUI:getSingleton():close()
+			elseif TicketGUI:getSingleton():isVisible() then
+				TicketGUI:getSingleton():close()
+			elseif AdminGUI:getSingleton():isVisible() then
+				AdminGUI:getSingleton():close()
+			elseif MigratorPanel:getSingleton():isVisible() then
+				MigratorPanel:getSingleton():close()
+			else
+				SelfGUI:getSingleton():open()
+			end
+		end
+	)
+	-- TODO: Block end
 
 	PhoneCEF:new()
 	PhoneCEF:getSingleton():close()
