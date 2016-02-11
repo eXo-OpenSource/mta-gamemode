@@ -38,26 +38,26 @@ function DrivingSchoolChooseLicenseGUI:constructor(target)
 end
 
 function DrivingSchoolChooseLicenseGUI:startLession_Car()
-	triggerServerEvent("drivingSchoolStartLession", localPlayer, self.m_Target, "car")
+	triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "car")
 	self:delete()
 end
 
 function DrivingSchoolChooseLicenseGUI:startLession_Bike()
-	triggerServerEvent("drivingSchoolStartLession", localPlayer, self.m_Target, "bike")
+	triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "bike")
 	self:delete()
 end
 
 function DrivingSchoolChooseLicenseGUI:startLession_Truck()
-	triggerServerEvent("drivingSchoolStartLession", localPlayer, self.m_Target, "truck")
+	triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "truck")
 	self:delete()
 end
 
 function DrivingSchoolChooseLicenseGUI:startLession_Heli()
-	triggerServerEvent("drivingSchoolStartLession", localPlayer, self.m_Target, "heli")
+	triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "heli")
 	self:delete()
 end
 
 function DrivingSchoolChooseLicenseGUI:startLession_Plane()
-	triggerServerEvent("drivingSchoolStartLession", localPlayer, self.m_Target, "plane")
+	triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "plane")
 	self:delete()
 end

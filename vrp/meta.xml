@@ -802,6 +802,7 @@
 	<vrpfile src="files/audio/Enginestart.mp3"/>
 	<vrpfile src="files/audio/Siren.ogg"/>
 	<vrpfile src="files/audio/ElevatorMusic.ogg"/>
+	<vrpfile src="files/audio/Message.mp3"/>
 
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>

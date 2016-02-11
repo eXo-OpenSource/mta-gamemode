@@ -112,11 +112,11 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	if element == localPlayer then
 		if trigger then
 			if button == "left" then
-				SelfGUI:getSingleton():open()
+			--	SelfGUI:getSingleton():open()
 			elseif button == "right" then
 			end
 		end
-		return true
+		--return true
 	end
 
 	-- Phase 2: Check for world items

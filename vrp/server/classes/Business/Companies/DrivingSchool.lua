@@ -12,8 +12,10 @@ function DrivingSchool:constructor()
     VehicleBarrier:new(Vector3(1345.19, -1722.80, 13.39), Vector3(0, 90, 0)).onBarrierHit = bind(self.onBarrierHit, self)
     VehicleBarrier:new(Vector3(1354.80, -1591.00, 13.39), Vector3(0, 90, 161), 0).onBarrierHit = bind(self.onBarrierHit, self)
 
-    addRemoteEvents{"drivingSchoolMenu", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand"}
+    addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand"}
     addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))
+    addEventHandler("drivingSchoolDiscardLession", root, bind(self.Event_discardLession, self))
+    addEventHandler("drivingSchoolstartLessionQuestion", root, bind(self.Event_startLessionQuestion, self))
     addEventHandler("drivingSchoolStartLession", root, bind(self.Event_startLession, self))
     addEventHandler("drivingSchoolEndLession", root, bind(self.Event_endLession, self))
     addEventHandler("drivingSchoolReceiveTurnCommand", root, bind(self.Event_receiveTurnCommand, self))
@@ -99,6 +101,15 @@ function DrivingSchool:givePlayerLicense(player, type)
     elseif type == "plane" then
         player.m_HasPilotsLicense = true
     end
+end
+
+function DrivingSchool:Event_startLessionQuestion(target, type)
+    target:triggerEvent("questionBox", _("Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\nDiese kostet %d$! Möchtest du die Prüfung starten?", target, client.name, DrivingSchool.TypeNames[type], DrivingSchool.LicenseCosts[type]), "drivingSchoolStartLession", "drivingSchoolDiscardLession", target, type)
+end
+
+function DrivingSchool:Event_discardLession(target, type)
+    client:sendError(_("Der Spieler %s hat die %s Prüfung abgelehnt!", client, target.name, DrivingSchool.TypeNames[type]))
+    target:sendError(_("Du hast die %s Prüfung mit %s abgelehnt!", target, DrivingSchool.TypeNames[type], client.name))
 end
 
 function DrivingSchool:Event_startLession(target, type)
