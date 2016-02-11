@@ -2,6 +2,7 @@ companyColors = {}
 companyRankNames = {}
 companySkins = {}
 companyDutyMarker = {}
+companyDutyMarkerInterior = {}
 
 -- ID 1 = Fahrschule:
 companyRankNames[1] = {
@@ -14,7 +15,8 @@ companyRankNames[1] = {
 }
 companyColors[1] = {["r"] = 255,["g"] = 0,["b"] = 255}
 companySkins[1] = {[217]=true, [226]=true, [250]=true, [290]=true, [295]=true,[296]=true,[299]=true}
-companyDutyMarker[1] = Vector3(1368.19, -1658.25, 13.38)
+companyDutyMarker[1] = Vector3(-2023.07, -114.14, 1035.17)
+companyDutyMarkerInterior[1] = 3
 
 -- ID 2 = Mech & Tow:
 companyRankNames[2] = {

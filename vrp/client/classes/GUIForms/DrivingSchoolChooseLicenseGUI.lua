@@ -8,8 +8,6 @@
 DrivingSchoolChooseLicenseGUI = inherit(GUIForm)
 inherit(Singleton, DrivingSchoolChooseLicenseGUI)
 
-addRemoteEvents{"showDrivingSchoolMenu"}
-
 function DrivingSchoolChooseLicenseGUI:constructor(target)
 	self.m_Target = target
 

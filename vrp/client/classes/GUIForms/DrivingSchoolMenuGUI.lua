@@ -10,8 +10,8 @@ inherit(Singleton, DrivingSchoolMenuGUI)
 
 addRemoteEvents{"showDrivingSchoolMenu"}
 
-function DrivingSchoolMenuGUI:constructor()
-	self.m_InstructorCount = 0
+function DrivingSchoolMenuGUI:constructor(count)
+	self.m_InstructorCount = count
 
 	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(160/2), 300, 160)
 	self.m_Window = GUIWindow:new(0,0,300,500,_"eXo Fahrschule",true,true,self):setCloseOnClose(true)
@@ -28,8 +28,8 @@ function DrivingSchoolMenuGUI:constructor()
 end
 
 addEventHandler("showDrivingSchoolMenu", root,
-	function()
-		DrivingSchoolMenuGUI:new()
+	function(count)
+		DrivingSchoolMenuGUI:new(count)
 	end
 	)
 

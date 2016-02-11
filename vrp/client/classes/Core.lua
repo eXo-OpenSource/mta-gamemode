@@ -35,7 +35,6 @@ function Core:ready()
 	AmmuLadder:new()
 	HouseGUI:new()
 	Housing:new()
-	DrivingSchool:new()
 	Achievement:new()
 	TippManager:new()
 	JailBreak:new()
@@ -133,7 +132,7 @@ function Core:afterLogin()
 
 	FactionWTBoxHoverGUI:new()
 	FactionWTBoxHoverGUI:getSingleton():close()
-	
+
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
 		HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
