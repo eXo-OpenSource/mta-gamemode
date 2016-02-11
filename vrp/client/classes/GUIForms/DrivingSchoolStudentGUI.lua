@@ -73,6 +73,6 @@ addEventHandler("showDrivingSchoolStudentGUI", root,
 
 addEventHandler("hideDrivingSchoolStudentGUI", root,
 	function()
-		DrivingSchoolStudentGUI:delete()
+		DrivingSchoolStudentGUI:getSingleton():delete()
 	end
 )
