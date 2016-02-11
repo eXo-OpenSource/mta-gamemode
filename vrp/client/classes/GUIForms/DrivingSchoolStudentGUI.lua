@@ -26,7 +26,6 @@ function DrivingSchoolStudentGUI:constructor(type)
 
 	addRemoteEvents{"drivingSchoolChangeDirection"}
 	addEventHandler("drivingSchoolChangeDirection", root , bind(self.changeDirection, self))
-	addEventHandler("onClientPlayerVehicleExit", root, bind(function() self:delete() end, self.m_Rectangle))
 	addEventHandler("onClientPlayerVehicleEnter", root, bind(self.setInVehicle, self))
 
 end
