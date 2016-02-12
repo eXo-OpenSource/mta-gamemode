@@ -4,10 +4,10 @@ function Gate:constructor(model, pos, rot, openPos, customOffset)
   self.m_ClosedPos = pos
   self.m_OpenPos = openPos
   self.m_Gate = createObject(model, pos, rot)
-  local x, y = getPointFromDistanceRotation(pos.x, pos.y, 4, 90+(90-rot.z))
-  self.m_ColShape1 = ColShape.Sphere(Vector3(x, y, pos.z) + self.m_Gate.matrix.forward*(customOffset and -customOffset or 2.5), 5)
-  local x, y = getPointFromDistanceRotation(pos.x, pos.y, 4, (90-rot.z)-75)
-  self.m_ColShape2 = ColShape.Sphere(Vector3(x, y, pos.z) + self.m_Gate.matrix.forward*(customOffset or 2.5), 5)
+  local x, y = getPointFromDistanceRotation(pos.x, pos.y, 4, -rot.z+180)
+  self.m_ColShape1 = ColShape.Sphere(Vector3(x, y, pos.z - 1.75) + self.m_Gate.matrix.forward*(customOffset and -customOffset or -1.5), 5)
+  local x, y = getPointFromDistanceRotation(pos.x, pos.y, 4, rot.z)
+  self.m_ColShape2 = ColShape.Sphere(Vector3(x, y, pos.z - 1.75) + self.m_Gate.matrix.forward*(customOffset or 1.5), 5)
   addEventHandler("onColShapeHit", self.m_ColShape1, bind(self.Event_onColShapeHit, self))
   addEventHandler("onColShapeHit", self.m_ColShape2, bind(self.Event_onColShapeHit, self))
 end
