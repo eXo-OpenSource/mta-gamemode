@@ -14,6 +14,9 @@ function FactionState:constructor()
 	self:createDutyPickup(252.6, 69.4, 1003.64,6) -- PD Interior
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
 
+	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
+	Gate:new(980, Vector3(1588, -1637.90, 14.90), Vector3(0, 0, 0), Vector3(1598, -1637.90, 14.90)).onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
+
 	local pdGarageEnter = InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0)
 	--local pdGarageExit = InteriorEnterExit:new(Vector3(259.22, 73.73, 1003.64), Vector3(1527.16, -1678.17, 5.89), 0, 0, 0, 0)
 
@@ -41,6 +44,14 @@ function FactionState:countPlayers()
 		end
 	end
 	return amount
+end
+
+function FactionState:onBarrierGateHit(player)
+    if not player:getFaction():isStateFaction() then
+        player:sendError(_("Zufahrt Verboten!", player))
+        return false
+    end
+    return true
 end
 
 function FactionState:createDutyPickup(x,y,z,int)
