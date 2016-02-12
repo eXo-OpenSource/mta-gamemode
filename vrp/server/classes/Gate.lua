@@ -37,3 +37,7 @@ function Gate:Event_onColShapeHit(hitEle, matchingDimension)
          end
      end
 end
+
+function Gate:setGateScale(scale)
+    self.m_Gate:setScale(scale)
+end
