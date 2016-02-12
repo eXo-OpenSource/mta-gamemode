@@ -292,9 +292,3 @@ function Company:createDutyMarker()
     		end
     	)
 end
-
-function Company:respawnVehicles()
-    for i, v in pairs(self.m_Vehicles) do
-        v:respawn()
-    end
-end

@@ -19,7 +19,7 @@ function VehicleManager:constructor()
 	-- Add events
 	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo",
-		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehicleSaveSpawnPos"}
+		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar"}
 	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -36,7 +36,6 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleSyncMileage", root, bind(self.Event_vehicleSyncMileage, self))
 	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
 	addEventHandler("vehicleUpgradeHangar", root, bind(self.Event_vehicleUpgradeHangar, self))
-	addEventHandler("vehicleSaveSpawnPos", root, bind(self.Event_vehicleSaveSpawnPos, self))
 
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
@@ -122,7 +121,7 @@ function VehicleManager.loadVehicles()
 	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, Vector3(row.SpawnPosX, row.SpawnPosY, row.SpawnPosZ), Vector3(0, 0, row.SpawnRotation))
+		enew(vehicle, CompanyVehicle, tonumber(row.Id), CompanyManager:getSingleton():getFromId(row.Company), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 	end
 	outputServerLog("Loading faction vehicles")
@@ -412,50 +411,39 @@ function VehicleManager:Event_vehicleRepair()
 end
 
 function VehicleManager:Event_vehicleRespawn()
-	if instanceof(source, PermanentVehicle, true) then
-		if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
-			client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
-			return
-		end
-		if client:getMoney() < 100 then
-			client:sendError(_("Du hast nicht genügend Geld!", client))
-			return
-		end
-		if source:isInGarage() then
-			fixVehicle(source)
-			client:takeMoney(100)
-			client:sendShortMessage(_("Fahrzeug repariert!", client))
-			return
-		end
-		local occupants = getVehicleOccupants(source)
-		for seat, player in pairs(occupants) do
-			removePedFromVehicle(player)
-		end
+	if not instanceof(source, PermanentVehicle, true) then return end
 
-		source:respawn()
-		if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
-			client:takeMoney(100)
-		end
-		source:fix()
-
-		-- Refresh location in the self menu
-		local vehicles = {}
-		for k, vehicle in pairs(self:getPlayerVehicles(client)) do
-			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
-		end
-		client:triggerEvent("vehicleRetrieveInfo", vehicles)
-	elseif not instanceof(source, TemporaryVehicle, true) then
-		if instanceof(source, CompanyVehicle, true) then
-			if client:getCompany() == source:getCompany() or client:getRank() >= RANK.Moderator then
-				source:respawn()
-
-				client:sendShortMessage(_("Du hast das Fahrzeug erfolgreich respawnt!", client))
-				return
-			end
-		end
-
-		client:sendError(_("Du darfst dieses Fahrzeug nicht respawnen!", client))
+	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
+		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
+		return
 	end
+	if client:getMoney() < 100 then
+		client:sendError(_("Du hast nicht genügend Geld!", client))
+		return
+	end
+	if source:isInGarage() then
+		fixVehicle(source)
+		client:takeMoney(100)
+		client:sendShortMessage(_("Fahrzeug repariert!", client))
+		return
+	end
+	local occupants = getVehicleOccupants(source)
+	for seat, player in pairs(occupants) do
+		removePedFromVehicle(player)
+	end
+
+	source:respawn()
+	if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
+		client:takeMoney(100)
+	end
+	source:fix()
+
+	-- Refresh location in the self menu
+	local vehicles = {}
+	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
+		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
+	end
+	client:triggerEvent("vehicleRetrieveInfo", vehicles)
 end
 
 function VehicleManager:Event_vehicleDelete()
@@ -602,13 +590,4 @@ function VehicleManager:Event_vehicleBreak()
 	outputDebug("Vehicle has been broken by "..client:getName())
 	-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
 	source:setBroken(true)
-end
-
-function VehicleManager:Event_vehicleSaveSpawnPos()
-	if instanceof(source, CompanyVehicle, true) then
-		if source:getCompany():getPlayerRank(client) >= CompanyRank.Manager then
-			source.m_SpawnPosition = source:getPosition()
-			source.m_SpawnRotation = source:getRotation()
-		end
-	end
 end
