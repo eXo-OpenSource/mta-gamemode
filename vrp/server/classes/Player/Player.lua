@@ -436,28 +436,37 @@ function Player:payDay()
 	self.m_paydayTexts = {}
 
 	local income, outgoing, total = 0, 0, 0
-	local income_faction, income_group = 0, 0
+	local income_faction, income_company, income_group, income_interest = 0, 0, 0, 0
 	local outgoing_vehicles = 0
 	--Income:
 	if self:getFaction() then
 		income_faction = self:getFaction():paydayPlayer(self)
 		income = income + income_faction
-		self:addPaydayText("fraktion","Fraktion: "..income_faction.."$",255,255,255)
+		self:addPaydayText("faction","Fraktion: "..income_faction.."$",255,255,255)
 	end
-
+	if self:getCompany() then
+		income_company = self:getCompany():paydayPlayer(self)
+		income = income + income_company
+		self:addPaydayText("company","Unternehmen: "..income_company.."$",255,255,255)
+	end
 	if self:getGroup() then
 		income_group = self:getGroup():paydayPlayer(self)
 		income = income + income_group
 		self:addPaydayText("group","Gang/Firma: "..income_group.."$",255,255,255)
 	end
 
+	income_interest = math.floor(self:getBankMoney()*0.01)
+	income = income + income_interest
+	self:addPaydayText("interest","Bank-Zinsen: "..income_interest.."$",255,255,255)
+
 	--Outgoing
 	outgoing_vehicles = #self:getVehicles()*75
 	outgoing = outgoing + outgoing_vehicles
-	self:addPaydayText("fahrzeugsteuer","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
+	self:addPaydayText("vehicleTax","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
+
 	total = income - outgoing
-	self:addPaydayText("gesamtEK","Gesamteinkommen: "..income.." $",255,255,255)
-	self:addPaydayText("gesamtAG","Gesamtausgaben: "..outgoing.." $",255,255,255)
+	self:addPaydayText("totelIncome","Gesamteinkommen: "..income.." $",255,255,255)
+	self:addPaydayText("totalOutgoing","Gesamtausgaben: "..outgoing.." $",255,255,255)
 	self:addPaydayText("payday","Der Payday über "..total.."$ wurde auf dein Konto überwiesen!",255,150,0)
 
 	self:addBankMoney(total, "Payday")

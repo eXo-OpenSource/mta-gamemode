@@ -6,21 +6,21 @@
 -- *
 -- ****************************************************************************
 GUIPaydayBox = inherit(DxElement)
-inherit(GUIFontContainer, GUIPaydayBox)
+inherit(GUIPaydayBox)
 GUIPaydayBox.GUIPaydayBoxes = {}
 
 function GUIPaydayBox:constructor(texts)
 	DxElement.constructor(self, screenWidth/2-400/2, -200, 400, 200)
-	GUIFontContainer.constructor(self, text, 1, VRPFont(28))
 
 	self.m_PaydayTexts = texts
-	--timeout = 10000
 
-	--setTimer(function() delete(self) end, timeout, 1)
 	playSound("files/audio/Payday.mp3")
 
 	self.m_Close = bind(self.endPayday, self)
-	bindKey("space", "down", self.m_Close)
+
+	setTimer(function()
+		bindKey("space", "down", self.m_Close)
+	end,1500,1)
 
 	self.m_Animation = Animation.Move:new(self, 1500, self.m_AbsoluteX, 10)
 end
@@ -42,27 +42,27 @@ function GUIPaydayBox:drawThis()
 	left = left+10
 	dxDrawText ( "Einkommen:", left, top, left+100, top+10, tocolor(0,255,0,255), 1,"default-bold", "left", "top", false, false,false, true)
 	top = top+15
-	self:outputPaydayLine("fraktion",left,top,1,"default")
+	self:outputPaydayLine("faction",left,top,1,"default")
 	top = top+15
-	self:outputPaydayLine("unternehmen",left,top,1,"default")
+	self:outputPaydayLine("company",left,top,1,"default")
 	top = top+15
 	self:outputPaydayLine("group",left,top,1,"default")
 	top = top+15
-	self:outputPaydayLine("zinsen",left,top,1,"default")
+	self:outputPaydayLine("interest",left,top,1,"default")
 	top = top+15
-	self:outputPaydayLine("gesamtEK",left,top,1,"default-bold")
+	self:outputPaydayLine("totelIncome",left,top,1,"default-bold")
 	--SPALTE 2
 	top = self.m_AbsoluteY+30
 	left = self.m_AbsoluteX+self.m_Width/2
 	dxDrawText ( "Ausgaben:", left, top, left+100, top+10, tocolor(255,0,0,255), 1,"default-bold", "left", "top", false, false,false, true)
 	top = top+15
-	self:outputPaydayLine("fahrzeugsteuer",left,top,1,"default")
+	self:outputPaydayLine("vehicleTax",left,top,1,"default")
 	top = top+15
 	self:outputPaydayLine("miete",left,top,1,"default")
 	top = top+15
 	self:outputPaydayLine("einkommenssteuer",left,top,1,"default")
 	top = top+15
-	self:outputPaydayLine("gesamtAG",left,top,1,"default-bold")
+	self:outputPaydayLine("totalOutgoing",left,top,1,"default-bold")
 
 	--Allgemein
 	top = self.m_AbsoluteY+130

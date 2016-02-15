@@ -276,6 +276,14 @@ function Company:changeSkin(player)
 	player:setModel(self.m_RankSkins[tostring(rank)])
 end
 
+function Company:paydayPlayer(player)
+	local rank = self.m_Players[player:getId()]
+	local loan = tonumber(self.m_RankLoans[tostring(rank)])
+	if self.m_BankAccount:getMoney() < loan then loan = self.m_BankAccount:getMoney() end
+	self.m_BankAccount:takeMoney(loan)
+	return loan
+end
+
 function Company:createDutyMarker()
     	self.m_DutyPickup = createPickup(companyDutyMarker[self.m_Id], 3, 1275)
         if companyDutyMarkerInterior[self.m_Id] then self.m_DutyPickup:setInterior(companyDutyMarkerInterior[self.m_Id]) end
