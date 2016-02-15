@@ -42,6 +42,7 @@
 	<script src="server/constants/main.lua" type="server"/>
 	<script src="server/constants/factions.lua" type="server"/>
 	<script src="server/constants/companies.lua" type="server"/>
+	<script src="server/constants/beggar.lua" type="server"/>
 	<script src="server/classes/Debugging.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>
@@ -111,12 +112,14 @@
 	<script src="server/classes/Gameplay/VendingMachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/AmmuNation.lua" type="server"/>
 	<script src="server/classes/Gameplay/AmmuNationManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
+	<script src="server/classes/Gameplay/Beggar/BeggarPedManager.lua" type="server"/>
 
 	<!-- Groups -->
 	<script src="server/classes/Groups/Group.lua" type="server"/>
 	<script src="server/classes/Groups/GroupManager.lua" type="server"/>
-	<script src="server/classes/Groups/GangArea.lua" type="server"/>
-	<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>
+	<!--<script src="server/classes/Groups/GangArea.lua" type="server"/>-->
+	<!--<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>-->
 
 	<!-- Business -->
 	<script src="server/classes/Business/Company.lua" type="server"/>
@@ -323,6 +326,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/BeggarPedMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupInviteGUI.lua" type="client"/>
@@ -427,8 +431,8 @@
 	<script src="client/classes/Jobs/JobServiceTechnician.lua" type="client"/>
 
 	<!-- Groups -->
-	<script src="client/classes/Groups/GangArea.lua" type="client"/>
-	<script src="client/classes/Groups/GangAreaManager.lua" type="client"/>
+	<!--<script src="client/classes/Groups/GangArea.lua" type="client"/>-->
+	<!--<script src="client/classes/Groups/GangAreaManager.lua" type="client"/>-->
 
 	<!-- AI -->
 	<script src="client/classes/AI/Actor.lua" type="client"/>

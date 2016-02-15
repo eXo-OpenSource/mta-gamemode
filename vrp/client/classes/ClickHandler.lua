@@ -140,6 +140,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 					else
 						ErrorBox:new(_"Dieser Waffenverkäufer liefert nicht für deine Fraktion!")
 					end
+				elseif getElementData(element, "BeggarId") then
+					self:addMouseMenu(BeggarPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 				end
 			elseif button == "right" then
 			end
