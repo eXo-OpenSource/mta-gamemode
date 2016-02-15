@@ -212,6 +212,14 @@ function Faction:setRankLoan(rank,amount)
 	self.m_RankLoans[tostring(rank)] = amount
 end
 
+function Faction:paydayPlayer(player)
+	local rank = self.m_Players[player:getId()]
+	local loan = tonumber(self.m_RankLoans[tostring(rank)])
+	if self.m_BankAccount:getMoney() < loan then loan = self.m_BankAccount:getMoney() end
+	self:takeMoney(loan)
+	return loan
+end
+
 function Faction:setRankSkin(rank,skinId)
 	self.m_RankSkins[tostring(rank)] = skinId
 end

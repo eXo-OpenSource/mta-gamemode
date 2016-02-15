@@ -32,6 +32,9 @@ function PlayerManager:constructor()
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 
+	addCommandHandler("payday",bind(self.startPaydayDebug, self)) -- Only for Debug while Developement
+
+
 	self.m_PaydayPulse = TimedPulse:new(60000)
 	self.m_PaydayPulse:registerHandler(bind(self.checkPayday, self))
 
@@ -67,6 +70,10 @@ end
 
 function PlayerManager:getReadyPlayers()
 	return self.m_ReadyPlayers
+end
+
+function PlayerManager:startPaydayDebug(player)
+	player:payDay()
 end
 
 function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)

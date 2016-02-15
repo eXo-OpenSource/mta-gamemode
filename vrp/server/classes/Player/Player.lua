@@ -433,10 +433,46 @@ end
 function Player:payDay()
 	local time = getRealTime()
 	outputChatBox ( "PAYDAY: "..time.hour..":"..time.minute,self,255,0,0 )
-	-- in Developement | only for testing
+	self.m_paydayTexts = {}
 
+	local income, outgoing, total = 0, 0, 0
+	local income_faction, income_group = 0, 0
+	local outgoing_vehicles = 0
+	--Income:
+	if self:getFaction() then
+		income_faction = self:getFaction():paydayPlayer(self)
+		income = income + income_faction
+		self:addPaydayText("fraktion","Fraktion: "..income_faction.."$",255,255,255)
+	end
+
+	if self:getGroup() then
+		income_group = self:getGroup():paydayPlayer(self)
+		income = income + income_group
+		self:addPaydayText("group","Gang/Firma: "..income_group.."$",255,255,255)
+	end
+
+	--Outgoing
+	outgoing_vehicles = #self:getVehicles()*75
+	outgoing = outgoing + outgoing_vehicles
+	self:addPaydayText("fahrzeugsteuer","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
+	total = income - outgoing
+	self:addPaydayText("gesamtEK","Gesamteinkommen: "..income.." $",255,255,255)
+	self:addPaydayText("gesamtAG","Gesamtausgaben: "..outgoing.." $",255,255,255)
+	self:addPaydayText("payday","Der Payday über "..total.."$ wurde auf dein Konto überwiesen!",255,150,0)
+
+	self:addBankMoney(total, "Payday")
+
+	triggerClientEvent ( self, "paydayBox", self, self.m_paydayTexts)
 	-- Add Payday again
 	self:setNextPayday()
+end
+
+function Player:addPaydayText(typ,text,r,g,b)
+	self.m_paydayTexts[typ] = {}
+	self.m_paydayTexts[typ]["text"] = text
+	self.m_paydayTexts[typ]["r"] = r
+	self.m_paydayTexts[typ]["g"] = g
+	self.m_paydayTexts[typ]["b"] = b
 end
 
 function Player:getCrimes()
