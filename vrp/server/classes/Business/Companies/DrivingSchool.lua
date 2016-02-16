@@ -114,7 +114,7 @@ function DrivingSchool:Event_startLessionQuestion(target, type)
             if target:getMoney() >= costs then
                 if not target:getPublicSync("inDrivingLession") == true then
                     if not self.m_CurrentLessions[client] then
-                        target:triggerEvent("questionBox", _("Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\nDiese kostet %d$! Möchtest du die Prüfung starten?", target, client.name, DrivingSchool.TypeNames[type], DrivingSchool.LicenseCosts[type]), "drivingSchoolStartLession", "drivingSchoolDiscardLession", target, type)
+                        target:triggerEvent("questionBox", _("Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\nDiese kostet %d$! Möchtest du die Prüfung starten?", target, client.name, DrivingSchool.TypeNames[type], DrivingSchool.LicenseCosts[type]), "drivingSchoolStartLession", "drivingSchoolDiscardLession", client, target, type)
                     else
                         client:sendError(_("Du bist bereits in einer Fahrprüfung!", client))
                     end
