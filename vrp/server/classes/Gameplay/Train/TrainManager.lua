@@ -7,7 +7,7 @@ function TrainManager:constructor()
 
 	-- Finally load the tracks
 	self:loadTracks()
-	self:calculateTracksDistance()
+	self:calculateNodeDistances()
 end
 
 function TrainManager:destructor()
@@ -43,11 +43,19 @@ function TrainManager:loadTracks()
 	outputDebug(("Finished loading %d Track(s) for ServerTrains, took %dms."):format(#self.m_TrackFiles, getTickCount()-start))
 end
 
-function TrainManager:calculateTracksDistance()
+function TrainManager:calculateNodeDistances()
 	for trackIndex, Nodes in ipairs(self.m_Tracks) do
 		for nodeIndex, nodeData in ipairs(Nodes) do
-			local prevTrackData = self:getNode(trackIndex, nodeIndex-1) or self:getNode(trackIndex, #self:getNode(trackIndex))
-			prevTrackData.distanceToNext = getDistanceBetweenPoints3D(prevTrackData.pos, nodeData.pos)
+			local currentNode = self:getNode(trackIndex, nodeIndex)
+			local prevNode = self:getNode(trackIndex, nodeIndex-1) or self:getNode(trackIndex, #self:getNode(trackIndex))
+			local nextNode = self:getNode(trackIndex, nodeIndex+1) or self:getNode(trackIndex, 1)
+			currentNode.distances = {
+				[prevNode.index] = getDistanceBetweenPoints3D(prevNode.pos, currentNode.pos);
+				[nextNode.index] = getDistanceBetweenPoints3D(prevNode.pos, nextNode.pos);
+			}
+
+			--local prevTrackData = self:getNode(trackIndex, nodeIndex-1) or self:getNode(trackIndex, #self:getNode(trackIndex))
+			--prevTrackData.distanceToNext = getDistanceBetweenPoints3D(prevTrackData.pos, nodeData.pos)
 		end
 	end
 end
@@ -86,6 +94,11 @@ end
 function TrainManager:outputNodeInfo(...)
 	local node = self:getNode(...)
 	if node then
-		outputDebug(("Found new node. Node: %s NodeDistanceToNext: %s (Track: %s)"):format(tostring(node.index), tostring(node.distanceToNext), tostring(node.track)))
+		local distanceNodeString = "{"
+		for i, v in pairs(node.distances) do
+			distanceNodeString = distanceNodeString..("[%d] = %s; "):format(i, v)
+		end
+		distanceNodeString = distanceNodeString.."}"
+		outputDebug(("Found new node.\nNode: %s NodeDistanceData: %s (Track: %s)"):format(tostring(node.index), distanceNodeString, tostring(node.track)))
 	end
 end
