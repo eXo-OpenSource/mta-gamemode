@@ -9,6 +9,9 @@ BankRobbery = inherit(Object)
 BankRobbery.Map = {}
 local MIN_TIME_BETWEEN_ROBBS = 5*60*1000 --30*60*1000
 local HOLD_TIME = 60*1000 --4*60*1000
+local MONEY_PER_SAFE_MIN = 100
+local MONEY_PER_SAFE_MAX = 200
+local MAX_MONEY_PER_BAG = 2000
 
 function BankRobbery:constructor()
 	self.m_SafeDoor = createObject(2634, 2314.1, 18.94, 26.7, 0, 0, 270)
@@ -16,6 +19,8 @@ function BankRobbery:constructor()
 	self.m_BombAreaTarget = createObject(3108, 2317.8, 11.3, 26.8, 0, 90, 0):setScale(0.2)
 	self.m_HackableComputer = createObject(2181, 2313.3999, 11.9, 25.5, 0, 0, 270)
 	addEventHandler( "onElementClicked", self.m_HackableComputer, bind(self.Event_onComputerClicked,self))
+
+	self.m_MoneyBags = {}
 
 	table.insert(BankRobbery.Map, self)
 
@@ -27,7 +32,7 @@ function BankRobbery:constructor()
 	--1829 Offen mit Geld -- DEV NOTICE
 	--2004 Offen ohne Geld -- DEV NOTICE
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked,self)
-
+	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick,self)
 
 	self:createSafes()
 	self:createBombableBricks()
@@ -258,10 +263,70 @@ function BankRobbery:Event_onSafeClicked(button, state, player)
 		if player:getFaction() and player:getFaction():isEvilFaction() then
 			local position = source:getPosition()
 			local rotation = source:getRotation()
+			local model = source:getModel()
 			source:destroy()
-			createObject(1829, position, rotation)
+			if model == 2332 then
+				local obj = createObject(1829, position, rotation)
+				addEventHandler( "onElementClicked", obj, self.m_OnSafeClickFunction)
+			elseif model == 1829 then
+				createObject(2003, position, rotation)
+				local money = math.random(MONEY_PER_SAFE_MIN, MONEY_PER_SAFE_MAX)
+				self:addMoneyToBag(player, money)
+			end
+
 		end
 	end
+end
+
+function BankRobbery:Event_onBagClick(button, state, player)
+	if button == "left" and state == "down" then
+		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
+			self:attachBagToPlayer(player,source)
+		else
+			player:sendError(_("Du bist zuweit von dem Geldsack entfernt!", player))
+		end
+	end
+end
+
+function BankRobbery:getAttachedBag(element)
+	for key, value in pairs (getAttachedElements(element)) do
+		if value:getModel() == 1550 then
+			return value
+		end
+	end
+	return false
+end
+
+function BankRobbery:attachBagToPlayer(player,bag)
+	if not self:getAttachedBag(player) then
+		player:toggleControlsWhileObjectAttached(false)
+		bag:setCollisionsEnabled(false)
+		bag:attach(player, 0, -0.3, 0.3, 0, 0, 180)
+		player:sendShortMessage(_("Drücke 'x' um den Geldsack abzulegen!", player))
+		bindKey(player, "x", "down", function(player, key, keyState, obj, bag)
+			bag:detach(player)
+			bag:setCollisionsEnabled(true)
+			player:toggleControlsWhileObjectAttached(true)
+			unbindKey(player, "x")
+		end, self, bag)
+	end
+end
+
+function BankRobbery:addMoneyToBag(player, money)
+	for i, bag in pairs(self.m_MoneyBags) do
+		if bag:getData("Money") + money < MAX_MONEY_PER_BAG then
+			bag:setData("Money", bag:getData("Money") + money)
+			player:sendShortMessage(_("%d$ in den Geldsack %d gepackt!",player, money, i))
+			return
+		end
+	end
+
+	local pos = Vector3(2307 + #self.m_MoneyBags, 18.87, 26)
+	local newBag = createObject(1550, pos)
+	table.insert(self.m_MoneyBags, newBag)
+	newBag:setData("Money", money)
+	addEventHandler("onElementClicked", newBag, self.m_Event_onBagClickFunc)
+	player:sendShortMessage(_("%d$ in eine Geldsack %d gepackt!",player, money, #self.m_MoneyBags))
 end
 
 function BankRobbery.initializeAll()
