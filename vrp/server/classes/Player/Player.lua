@@ -34,6 +34,9 @@ function Player:constructor()
 end
 
 function Player:destructor()
+	if not self:isLoggedIn() then
+		return
+	end
 	if self.m_JobVehicle and isElement(self.m_JobVehicle) then -- TODO: Move this to an appropriate position to be able to use the quit hook
 		destroyElement(self.m_JobVehicle)
 	end
