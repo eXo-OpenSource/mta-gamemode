@@ -11,8 +11,9 @@ function HelpTextManager:constructor()
 	self.m_Texts = {}
 
 	-- General purpose texts here
-	self:addText(_"Allgemein", _(HelpTextTitles.General.Main), _(HelpTexts.General.Main))
-	self:addText(_"Allgemein", _(HelpTextTitles.General.Team), _(HelpTexts.General.Team))
+	self:addText("Allgemein", HelpTextTitles.General.Main, HelpTexts.General.Main)
+	self:addText("Allgemein", HelpTextTitles.General.Team, HelpTexts.General.Team)
+	self:addText("Allgemein", HelpTextTitles.General.OldVRPTeam, HelpTexts.General.OldVRPTeam)
 end
 
 function HelpTextManager:addText(category, title, text)

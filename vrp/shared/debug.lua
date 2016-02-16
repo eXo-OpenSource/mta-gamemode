@@ -164,7 +164,7 @@ function outputDebug(errmsg)
 		if not className then className = "UNKOWN" end
 		if not errmsg then errmsg = "" end
 
-		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, tostring(debug.getinfo(2).name), tostring(debug.getinfo(2).currentline), errmsg), 3)
+		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, tostring(debug.getinfo(2).name), tostring(debug.getinfo(2).currentline), tostring(errmsg)), 3)
 	end
 end
 

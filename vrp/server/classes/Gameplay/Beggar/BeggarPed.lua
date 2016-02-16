@@ -18,7 +18,7 @@ function BeggarPed:constructor(Id)
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
 	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.Event_onColShapeLeave, self))
 
-	if chance(75) then -- 75% 'cause sometimes the animation fails
+	if chance(50) then
 		outputDebug("setting animation")
 		local animation = Randomizer:getRandomTableValue(BeggarAnimations)
 		outputTable(animation)

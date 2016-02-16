@@ -87,6 +87,7 @@ HelpTextTitles = {
 		Main = "vRoleplay";
 		LoginRegister = "Login/Registration";
 		Team = "Team";
+		OldVRPTeam = "vRP-Team";
 	};
 	Jobs = {
 		BusDriver = "Job: Busfahrer";
@@ -123,19 +124,58 @@ HelpTexts = {
 			Für ein optimales Spielerlebnis und um Verluste zu vermeiden, empfehlen wir Dir jedoch eine sofortige Registration.
 		]];
 		Team = [[
-			Entwicklung und Administration:
-			Jusonex <jusonex@v-roleplay.net>
-			sbx320 <sbx320@v-roleplay.net>
-			Revelse <revelse@v-roleplay.net>
-			StiviK <stivik@v-roleplay.net>
+			Entwicklung:
+			[eXo]Stumpy
+			Heisi
+			StiviK
+			Jusonex (kleinere Unterstüzung)
+			Strobe
+			PewX
+
+			Projektleitung:
+			[eXo]Stumpy
+			Heisi
+
+			stellv. Projektleitung:
+			[eXo]Clausus
+			[eXo]LAURIIST4AR
+			StiviK
 
 			Administration:
-			Doneasty <doneasty@v-roleplay.net> (außerdem Grafik und Design)
+			[eXo]xXKing
+			[eXo]Chris
+
+			Moderation (+S.Mod):
+			[eXo]StrongVan
+			[eXo]Don_Leone
+			[eXo]High5
+			[eXo]Phil
+
+			Support:
+			[eXo]Gamer64
+			[eXo]Creo
+			[eXo]Bonez
+			[eXo]Janni_Morita
+			[eXo]AfGun
+
+			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
+		]];
+		OldVRPTeam = [[
+			Dies ist das ehemalige Team des vRP-Gamemodes, die uns freundlicherweise den Gamemode überlassen haben.
+
+			Entwicklung und Administration:
+			Jusonex
+			sbx320
+			Revelse
+			StiviK
+
+			Administration:
+			Doneasty (außerdem Grafik und Design)
 
 			Moderation:
-			Sarcasm <sarcasm@v-roleplay.net> (außerdem Webauftritt)
-			Johnny <johnny@v-roleplay.net> (außerdem Mapping)
-			Toxsi <toxsi@v-roleplay.net> (außerdem Mapping)
+			Sarcasm (außerdem Webauftritt)
+			Johnny (außerdem Mapping)
+			Toxsi (außerdem Mapping)
 
 			Vielen Dank an:
 			Sam@ke (für seine wunderschönen Shader)
