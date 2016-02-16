@@ -132,47 +132,47 @@ function DrivingSchool:Event_startLessionQuestion(target, type)
     end
 end
 
-function DrivingSchool:Event_discardLession(target, type)
-    client:sendError(_("Der Spieler %s hat die %s Prüfung abgelehnt!", client, target.name, DrivingSchool.TypeNames[type]))
-    target:sendError(_("Du hast die %s Prüfung mit %s abgelehnt!", target, DrivingSchool.TypeNames[type], client.name))
+function DrivingSchool:Event_discardLession(instructor, target, type)
+    instructor:sendError(_("Der Spieler %s hat die %s Prüfung abgelehnt!", instructor, target.name, DrivingSchool.TypeNames[type]))
+    target:sendError(_("Du hast die %s Prüfung mit %s abgelehnt!", target, DrivingSchool.TypeNames[type], instructor.name))
 end
 
-function DrivingSchool:Event_startLession(target, type)
+function DrivingSchool:Event_startLession(instructor, target, type)
     local costs = DrivingSchool.LicenseCosts[type]
     if costs and target then
         if self:checkPlayerLicense(target, type) == false then
             if target:getMoney() >= costs then
                 if not target:getPublicSync("inDrivingLession") == true then
-                    if not self.m_CurrentLessions[client] then
-                        self.m_CurrentLessions[client] = {
-                            ["target"] = target, ["type"] = type, ["instructor"] = client
+                    if not self.m_CurrentLessions[instructor] then
+                        self.m_CurrentLessions[instructor] = {
+                            ["target"] = target, ["type"] = type, ["instructor"] = instructor
                         }
                         target:takeMoney(costs)
                         self:setMoney(self:getMoney() + math.floor(costs/5))
                         target:setPublicSync("inDrivingLession",true)
-                        client:sendInfo(_("Du hast die %s Prüfung mit %s gestartet!", client, DrivingSchool.TypeNames[type], target.name))
-                        target:sendInfo(_("Fahrlehrer %s hat die %s Prüfung mit dir gestartet, Folge seinen Anweisungen!", target, client.name, DrivingSchool.TypeNames[type]))
+                        instructor:sendInfo(_("Du hast die %s Prüfung mit %s gestartet!", instructor, DrivingSchool.TypeNames[type], target.name))
+                        target:sendInfo(_("Fahrlehrer %s hat die %s Prüfung mit dir gestartet, Folge seinen Anweisungen!", target, instructor.name, DrivingSchool.TypeNames[type]))
                         target:triggerEvent("showDrivingSchoolStudentGUI", DrivingSchool.TypeNames[type])
-                        client:triggerEvent("showDrivingSchoolInstructorGUI", DrivingSchool.TypeNames[type], target)
-                        addEventHandler("onPlayerQuit", client, self.m_OnQuit)
+                        instructor:triggerEvent("showDrivingSchoolInstructorGUI", DrivingSchool.TypeNames[type], target)
+                        addEventHandler("onPlayerQuit", instructor, self.m_OnQuit)
                         addEventHandler("onPlayerQuit", target, self.m_OnQuit)
                     else
-                        client:sendError(_("Du bist bereits in einer Fahrprüfung!", client))
+                        instructor:sendError(_("Du bist bereits in einer Fahrprüfung!", instructor))
                     end
                 else
-                    client:sendError(_("Der Spieler %s ist bereits in einer Prüfung!", client, target.name))
+                    instructor:sendError(_("Der Spieler %s ist bereits in einer Prüfung!", instructor, target.name))
                     target:sendError(_("Du bist bereits in einer Prüfung!", target))
                 end
             else
-                client:sendError(_("Der Spieler %s hat nicht genug Geld dabei! (%d$)", client, target.name, costs))
+                instructor:sendError(_("Der Spieler %s hat nicht genug Geld dabei! (%d$)", instructor, target.name, costs))
                 target:sendError(_("Du hast nicht genug Geld dabei! (%d$)", target, costs))
             end
         else
-            client:sendError(_("Der Spieler %s hat den %s bereits!", client, target.name, DrivingSchool.TypeNames[type]))
+            instructor:sendError(_("Der Spieler %s hat den %s bereits!", instructor, target.name, DrivingSchool.TypeNames[type]))
             target:sendError(_("Du hast den %s bereits!", target, DrivingSchool.TypeNames[type]))
         end
     else
-        client:sendError(_("Interner Fehler: Argumente falsch @DrivingSchool:Event_startLession!", client))
+        instructor:sendError(_("Interner Fehler: Argumente falsch @DrivingSchool:Event_startLession!", instructor))
     end
 end
 
