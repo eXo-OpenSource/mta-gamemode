@@ -207,18 +207,6 @@ function DatabasePlayer:hasTruckLicense() return self.m_HasTruckLicense end
 
 -- Short setters
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) end end
-function DatabasePlayer:setWantedLevel(level)
-	-- give Achievement
-	if level == 6 then
-		self:giveAchievement(46)
-	elseif level > 0 then
-		self:giveAchievement(45)
-	end
-
-	-- set data
-	self.m_WantedLevel = level
-	setPlayerWantedLevel(self, level)
-end
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
@@ -229,6 +217,20 @@ function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e e
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
 function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if self:isActive() then self:setPrivateSync("LastPlayTime", self.m_LastPlayTime) end end
+
+function DatabasePlayer:setWantedLevel(level)
+	-- give Achievement
+	if level == 6 then
+		self:giveAchievement(46)
+	elseif level > 0 then
+		self:giveAchievement(45)
+	end
+
+	-- set data
+	self.m_WantedLevel = level
+	self:setPublicSync("Wanteds", level)
+	setPlayerWantedLevel(self, level)
+end
 
 function DatabasePlayer:setCompany(company)
 	self.m_Company = company

@@ -16,28 +16,28 @@ function isCursorOverArea ( x,y,w,h )
 		if mx >= x and mx <= x+w and my >= y and my <= y+h then
 			return true
 		end
-	end	
+	end
 	return false
 end
 
 function Nametag:constructor()
-	
+
 	self.m_Players = {}
 	self.m_PlayerBuffs = {}
 	self.m_RenderTarget = dxCreateRenderTarget(200, 120, true)
 	self.m_IsModifying = false
-	
+
 	self.m_Draw = bind(self.draw,self)
 	self.m_ReciveBuffs = bind(self.reciveBuffs,self)
-	
+
 	addEventHandler("onClientRender", root, self.m_Draw, true, "high+999")
 	addEventHandler("reciveNametagBuffs",root,self.m_ReciveBuffs)
-	
+
 end
 
 function Nametag:reciveBuffs(buffs)
 	self.m_PlayerBuffs = buffs
-	
+
 	for key, value in pairs(self.m_PlayerBuffs) do
 		if not self.m_Players[getPlayerFromName(key)] then
 			self.m_Players[getPlayerFromName(key)] = true
@@ -66,25 +66,25 @@ function Nametag:draw()
 			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,false,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < maxDistance or getPedTarget(localPlayer) == player) then
 			--local name = getPlayerName(player):gsub("#%d%d%d%d","")
 			dxSetRenderTarget(self.m_RenderTarget,true)
-			
+
 			dxDrawText(getPlayerName(player), 10, 5, 145, 60,AdminColor[player:getPublicSync("Rank") or 0],2,"default-bold")
-			
+
 			self:drawIcons(player)
-			
-			
-			
+
+
+
 			dxDrawRectangle(10, 40, 250*getElementHealth(player)/100, 15, tocolor(0,125,0,255))
 			dxDrawRectangle(10, 40, 250*getPedArmor(player)/100, 15, Color.LightBlue)
-			
+
 			dxSetRenderTarget()
-			
+
 			local distance = getDistanceBetweenPoints3D(px,py,pz,lx,ly,lz)
-			
+
 			local scale = 0.4 + ( 15 - distance ) * 0.02
 			dxDrawImage(x-240*scale/2,y-60, 240*scale, 120*scale, self.m_RenderTarget)
-			
+
 			end
-			
+
 		end
 	end
 end
@@ -95,7 +95,7 @@ function Nametag:drawIcons(player)
 		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/admin.png")
 		iconI = iconI+1
 	end
-	if getPlayerWantedLevel(player) > 0 then
+	if player:getWanteds() > 0 then
 		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/w"..getPlayerWantedLevel(player)..".png")
 		iconI = iconI+1
 	end

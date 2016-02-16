@@ -49,6 +49,10 @@ function Player:getLevel()
 	return calculatePlayerLevel(self:getXP())
 end
 
+function Player:getWanteds()
+	return self:getPublicSync("Wanteds") or 0
+end
+
 function Player:getKarma()
 	return self:getPublicSync("Karma") or 0
 end

@@ -166,17 +166,17 @@ function FactionState:Command_suspect(player,cmd,target,anzahl,...)
 						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),anzahl, reason)
 						player:getFaction():sendMessage(msg, 255,0,0)
 					else
-						player:sendError(_("Der Grund ist ungültig!"))
+						player:sendError(_("Der Grund ist ungültig!", player))
 					end
 				else
-					player:sendError(_("Der Spieler ist tot!"))
+					player:sendError(_("Der Spieler ist tot!", player))
 				end
 			end
 		else
-			player:sendError(_("Die Anzahl muss zwischen 1 und 6 liegen!"))
+			player:sendError(_("Die Anzahl muss zwischen 1 und 6 liegen!", player))
 		end
 	else
-		player:sendError(_("Du bist nicht im Dienst!"))
+		player:sendError(_("Du bist nicht im Dienst!", player))
 	end
 end
 
@@ -233,10 +233,10 @@ function FactionState:Event_JailPlayer(player)
 			-- Tell the client that we were jailed
 			player:triggerEvent("playerJailed", jailTime)
 		else
-			policeman:sendError("Der Spieler wird nicht gesucht!")
+			policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
 		end
 	else
-		policeman:sendError(_("Du bist nicht im Dienst!"))
+		policeman:sendError(_("Du bist nicht im Dienst!", player))
 	end
 end
 
