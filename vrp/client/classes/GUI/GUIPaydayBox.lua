@@ -50,7 +50,7 @@ function GUIPaydayBox:drawThis()
 	top = top+15
 	self:outputPaydayLine("interest",left,top,1,"default")
 	top = top+15
-	self:outputPaydayLine("totelIncome",left,top,1,"default-bold")
+	self:outputPaydayLine("totalIncome",left,top,1,"default-bold")
 	--SPALTE 2
 	top = self.m_AbsoluteY+30
 	left = self.m_AbsoluteX+self.m_Width/2

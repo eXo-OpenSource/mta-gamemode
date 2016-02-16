@@ -36,7 +36,8 @@
 	
 	<map src="banken/bankLS.map" />
 	<map src="banken/bankSF.map" />
-	
+	<map src="banken/bankPalomino.map" />
+
 	<map src="autohaus/9_bike.map" />
 	<map src="autohaus/11_sport.map" />
 	<map src="autohaus/12_elegant.map" />

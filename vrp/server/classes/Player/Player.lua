@@ -465,7 +465,7 @@ function Player:payDay()
 	self:addPaydayText("vehicleTax","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
 
 	total = income - outgoing
-	self:addPaydayText("totelIncome","Gesamteinkommen: "..income.." $",255,255,255)
+	self:addPaydayText("totalIncome","Gesamteinkommen: "..income.." $",255,255,255)
 	self:addPaydayText("totalOutgoing","Gesamtausgaben: "..outgoing.." $",255,255,255)
 	self:addPaydayText("payday","Der Payday über "..total.."$ wurde auf dein Konto überwiesen!",255,150,0)
 
