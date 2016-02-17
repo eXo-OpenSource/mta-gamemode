@@ -9,7 +9,7 @@ GuardActor = inherit(Actor)
 
 function GuardActor:constructor()
     self:setModel(71)
-    self:giveWeapon(23, 999999999, true)
+    self:giveWeapon(24, 999999999, true)
 
     -- Start tasks
     self:startIdleTask()

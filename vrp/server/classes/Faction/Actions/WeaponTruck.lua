@@ -134,7 +134,7 @@ function WeaponTruck:Event_onLoadMarkerHit(hitElement, matchingDimension)
 					unbindKey(hitElement,"x")
 					hitElement:setAnimation(false)
 					self:loadBoxOnWeaponTruck(hitElement,box)
-					self:toggleControlsWhileBoxAttached(hitElement, true)
+					hitElement:toggleControlsWhileObjectAttached(true)
 				else
 					hitElement:sendError(_("Du hast keine Kiste dabei!",hitElement))
 				end
@@ -184,7 +184,7 @@ end
 
 function WeaponTruck:attachBoxToPlayer(player,box)
 	if not self:getAttachedBox(player) then
-		self:toggleControlsWhileBoxAttached(player, false)
+		player:toggleControlsWhileObjectAttached(false)
 		box:setCollisionsEnabled(false)
 		box:attach(player, -0.09, 0.35, 0.45, 10, 0, 0)
 		player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
@@ -192,21 +192,9 @@ function WeaponTruck:attachBoxToPlayer(player,box)
 		bindKey(player,"x","down",function(player, key, keyState, obj, box)
 			box:detach(player)
 			box:setCollisionsEnabled(true)
-			WeaponTruck:toggleControlsWhileBoxAttached(player, true)
+			player:toggleControlsWhileObjectAttached(true)
 			unbindKey(player,"x")
 		end, self, box)
-	end
-end
-
-function WeaponTruck:toggleControlsWhileBoxAttached(player, bool)
-	toggleControl(player, "jump", bool )
-	toggleControl(player, "fire", bool )
-	toggleControl(player, "sprint", bool )
-	toggleControl(player, "next_weapon", bool )
-	toggleControl(player, "previous weapon", bool )
-	toggleControl(player, "enter_exit", bool )
-	if bool == false then
-		player:setAnimation(false)
 	end
 end
 
@@ -366,7 +354,7 @@ function WeaponTruck:Event_LoadBox(veh)
 							box:detach(client)
 							box:attach(veh, VEHICLE_BOX_LOAD[veh.model][count+1])
 
-							self:toggleControlsWhileBoxAttached(client, true)
+							client:toggleControlsWhileObjectAttached(true)
 						else
 							client:sendError(_("Du hast keine Kiste dabei!",client))
 						end

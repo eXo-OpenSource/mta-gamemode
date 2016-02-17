@@ -454,7 +454,8 @@
 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
 
-	<!-- Gangwar -->
+	<!-- Factions -->
+	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarDisplay.lua" type="client"/>
@@ -808,6 +809,7 @@
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/Enginestart.mp3"/>
 	<vrpfile src="files/audio/Siren.ogg"/>
+	<vrpfile src="files/audio/Alarm.mp3"/>
 	<vrpfile src="files/audio/ElevatorMusic.ogg"/>
 	<vrpfile src="files/audio/Message.mp3"/>
 	<vrpfile src="files/audio/Payday.mp3"/>

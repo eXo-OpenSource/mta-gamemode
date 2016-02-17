@@ -23,7 +23,7 @@ function ShopNPC:constructor(skinId, x, y, z, rotation)
 				end
 
 				-- Block inTarget for a while | TODO: Optimize this
-				setTimer(function() self.m_InTarget = false self:setAnimation(nil) end, 5*60*1000, 1)
+				setTimer(function() self.m_InTarget = false self:setAnimation(nil) end, 30*1000, 1)
 			end
 		end
 	)

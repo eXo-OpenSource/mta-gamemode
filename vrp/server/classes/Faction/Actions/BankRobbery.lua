@@ -8,7 +8,7 @@
 BankRobbery = inherit(Object)
 BankRobbery.Map = {}
 local MIN_TIME_BETWEEN_ROBBS = 5*60*1000 --30*60*1000
-local HOLD_TIME = 60*1000 --4*60*1000
+local HOLD_TIME = 30*1000 --4*60*1000
 local MONEY_PER_SAFE_MIN = 100
 local MONEY_PER_SAFE_MAX = 200
 local MAX_MONEY_PER_BAG = 2000
@@ -21,6 +21,11 @@ function BankRobbery:constructor()
 	addEventHandler( "onElementClicked", self.m_HackableComputer, bind(self.Event_onComputerClicked,self))
 
 	self.m_MoneyBags = {}
+
+	self.m_Ped = ShopNPC:new(295, 2310.28, -10.87, 26.74, 180)
+	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
+
+	self:spawnGuards()
 
 	table.insert(BankRobbery.Map, self)
 
@@ -62,16 +67,34 @@ function BankRobbery:constructor()
 	)
 end
 
+function BankRobbery:Ped_Targetted(ped, attacker)
+	local faction = attacker:getFaction()
+	if faction and faction:isEvilFaction() then
+		self:startRob()
+	else
+		attacker:sendError(_("Nur Mitglieder einer bösen Fraktion können die Bank ausrauben!",attacker))
+	end
+end
+
+
 function BankRobbery:destructor()
 	for index, safe in pairs(self.m_Safes) do
 		safe:destroy()
 	end
-
 	for index, brick in pairs(self.m_BombableBricks) do
 		brick:destroy()
 	end
+end
 
+function BankRobbery:startRob()
+	outputChatBox("Die Bank in Palomino Creek wird überfallen!",rootElement,255,0,0)
+	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)
+end
 
+function BankRobbery:spawnGuards()
+	self.m_GuardPed1 = GuardActor:new(Vector3(2315.25, 20.34, 26.53))
+	self.m_GuardPed1:setRotation(270,0,270,"default",true)
+	self.m_GuardPed1:setFrozen(true)
 end
 
 function BankRobbery:createSafes()
@@ -219,6 +242,7 @@ function BankRobbery:BombArea_Place(bombArea, player)
 		local faction = player:getFaction()
 		if faction and faction:isEvilFaction() then
 			player:reportCrime(Crime.BankRobbery)
+			self:startRob()
 		end
 	end
 	return true

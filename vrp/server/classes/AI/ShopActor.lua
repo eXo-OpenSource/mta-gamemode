@@ -9,7 +9,6 @@ ShopActor = inherit(Actor)
 
 function ShopActor:constructor()
     self:setModel(155)
-    self:giveWeapon(23, 999999999, true)
 
     -- Start tasks
     self:startPrimaryTask(TaskGuard)
