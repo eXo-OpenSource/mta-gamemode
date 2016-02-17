@@ -59,14 +59,14 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	end
 
 	if getElementData(element,"WeaponTruck") or VEHICLE_BOX_LOAD[element.model] then
-		if #self:getAttachedBoxes(element) > 0 then
+		if #self:getAttachedElement(2912, element) > 0 then
 			self:addItem(_"Kiste abladen",
 				function()
 					triggerServerEvent("weaponTruckDeloadBox", self:getElement(), element)
 				end
 			)
 		end
-		if #self:getAttachedBoxes(localPlayer) > 0 then
+		if #self:getAttachedElement(2912, localPlayer) > 0 then
 			self:addItem(_"Kiste aufladen",
 				function()
 					triggerServerEvent("weaponTruckLoadBox", self:getElement(), element)
@@ -74,6 +74,24 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			)
 		end
 	end
+
+	if VEHICLE_BAG_LOAD[element.model] then
+		if #self:getAttachedElement(1550, element) > 0 then
+			self:addItem(_"Geldsack abladen",
+				function()
+					triggerServerEvent("bankRobberyDeloadBag", self:getElement(), element)
+				end
+			)
+		end
+		if #self:getAttachedElement(1550, localPlayer) > 0 then
+			self:addItem(_"Geldsack aufladen",
+				function()
+					triggerServerEvent("bankRobberyLoadBag", self:getElement(), element)
+				end
+			)
+		end
+	end
+
 
 	if localPlayer:getPublicSync("CompanyId") == 2 then
 		self:addItem(_"Mechaniker: Reparieren",
@@ -108,10 +126,10 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	end
 end
 
-function VehicleMouseMenu:getAttachedBoxes(element)
+function VehicleMouseMenu:getAttachedElement(model, element)
 	local boxes = {}
 	for key,value in pairs(element:getAttachedElements()) do
-		if value.model == 2912 then
+		if value.model == model then
 			table.insert(boxes, value)
 		end
 	end
