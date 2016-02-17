@@ -42,6 +42,7 @@ function Core:ready()
 	Inventory:new()
 	Guns:new()
 	Casino:new()
+	TrainManager:new()
 
 	-- Events
 	EventManager:new()

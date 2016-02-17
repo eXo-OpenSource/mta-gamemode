@@ -58,6 +58,7 @@ function Core:constructor()
 	ItemManager:new()
 	Casino:new()
 	ActionsCheck:new()
+	TrainManager:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
@@ -67,6 +68,7 @@ function Core:constructor()
 	VehicleSpawner.initializeAll()
 	PayNSpray.initializeAll()
 	GasStation.initializeAll()
+	TrainManager.initializeAll()
 
 	-- Generate Missions
 	MStealWeaponTruck:new()

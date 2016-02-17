@@ -115,6 +115,7 @@
 	<script src="server/classes/Gameplay/Beggar/BeggarPed.lua" type="server"/>
 	<script src="server/classes/Gameplay/Beggar/BeggarPedManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Train/TrainManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Train/Train.lua" type="server"/>
 
 	<!-- Groups -->
 	<script src="server/classes/Groups/Group.lua" type="server"/>
@@ -472,6 +473,7 @@
 	<script src="client/classes/Gameplay/JailBreak.lua" type="client"/>
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 	<script src="client/classes/Gameplay/Casino.lua" type="client"/>
+	<script src="client/classes/Gameplay/TrainManager.lua" type="client"/>
 
 	<!--Minigames-->
 	<script src="client/classes/Gameplay/Minigames/CAnimations.lua" type="client"/>
