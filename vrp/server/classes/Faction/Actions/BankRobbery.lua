@@ -14,6 +14,8 @@ local MONEY_PER_SAFE_MAX = 200
 local MAX_MONEY_PER_BAG = 2000
 
 function BankRobbery:constructor()
+	table.insert(BankRobbery.Map, self)
+
 	self.m_SafeDoor = createObject(2634, 2314.1, 18.94, 26.7, 0, 0, 270)
 	self.m_BombAreaPosition = Vector3(2318.43, 11.37, 26.48)
 	self.m_BombAreaTarget = createObject(3108, 2317.8, 11.3, 26.8, 0, 90, 0):setScale(0.2)
@@ -34,21 +36,15 @@ function BankRobbery:constructor()
 
 	self:spawnGuards()
 
-	table.insert(BankRobbery.Map, self)
-
-	self.m_LastRobbery = 0
 	self.m_Timer = false
 	self.m_BombArea = BombArea:new(self.m_BombAreaPosition, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), HOLD_TIME)
 	self.m_ColShape = createColSphere(self.m_BombAreaPosition, 30)
 
-	--1829 Offen mit Geld -- DEV NOTICE
-	--2004 Offen ohne Geld -- DEV NOTICE
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked,self)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick,self)
 
 	self:createSafes()
 	self:createBombableBricks()
-
 
 	addEventHandler("onColShapeLeave", self.m_ColShape,
 		function(element, matchingDimension)
@@ -85,27 +81,16 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 		self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
 		outputChatBox(_("Bankangestellter sagt: Hilfe! Ich öffne Ihnen die Tür zum Tresorraum!", attacker),attacker,255,255,255)
 		outputChatBox(_("Bankangestellter sagt: Bitte tun sie mir nichts!", attacker),attacker,255,255,255)
-
 	else
 		attacker:sendError(_("Nur Mitglieder einer bösen Fraktion können die Bank ausrauben!",attacker))
 	end
 end
 
-
 function BankRobbery:destructor()
-	for index, safe in pairs(self.m_Safes) do
-		if isElement(safe) then safe:destroy() end
-	end
-	for index, brick in pairs(self.m_BombableBricks) do
-		if isElement(brick) then brick:destroy() end
-	end
-	for index, blip in pairs(self.m_Blip) do
-		blip:delete()
-	end
-	for index, marker in pairs(self.m_DestinationMarker) do
-		marker:destroy()
-	end
-
+	for index, safe in pairs(self.m_Safes) do if isElement(safe) then safe:destroy() end	end
+	for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then brick:destroy() end end
+	for index, blip in pairs(self.m_Blip) do blip:delete() end
+	for index, marker in pairs(self.m_DestinationMarker) do	marker:destroy() end
 
 	ActionsCheck:getSingleton():endAction()
 	self:initializeAll()
@@ -136,10 +121,7 @@ function BankRobbery:startRob(player)
 
 	addEventHandler("bankRobberyLoadBag",root, bind(self.Event_LoadBag,self))
 	addEventHandler("bankRobberyDeloadBag",root, bind(self.Event_DeloadBag,self))
-
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnTruckStartEnter,self))
-	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnTruckEnter,self))
-	addEventHandler("onVehicleExit",self.m_Truck,bind(self.Event_OnTruckExit,self))
 end
 
 function BankRobbery:spawnGuards()
@@ -149,7 +131,6 @@ function BankRobbery:spawnGuards()
 end
 
 function BankRobbery:createSafes()
-	self.m_Safes = {}
 	self.m_Safes = {
 		createObject(2332, 2305.5, 19.12012, 26.85, 0, 0, 90),
 		createObject(2332, 2305.5, 18.29004, 26.85, 0, 0, 90),
@@ -225,13 +206,9 @@ function BankRobbery:createSafes()
 	for index, safe in pairs(self.m_Safes) do
 		addEventHandler( "onElementClicked", safe, self.m_OnSafeClickFunction)
 	end
-
-
 end
 
-
 function BankRobbery:createBombableBricks()
-
 	self.m_BombableBricks = {
 		createObject(9131, 2317.334, 10.25, 28.87, 0, 0, 270),
 		createObject(9131, 2317.334, 10.25, 26.6, 0, 0, 270),
@@ -274,12 +251,10 @@ function BankRobbery:BombArea_Place(bombArea, player)
 		return false
 	end
 
-	if not ActionsCheck:getSingleton():isActionAllowed(player) then
-		return false
-	end
+	if not ActionsCheck:getSingleton():isActionAllowed(player) then	return false end
 
 	if not DEBUG and FactionState:getSingleton():countPlayers() < 5 then
-		player:sendError(_("Um den Überfall starten zu können, müssen mindestens 5 Polizisten online sein!", player))
+		player:sendError(_("Um den Überfall starten zu können, müssen mindestens 5 Staats-Fraktionisten online sein!", player))
 		return false
 	end
 
@@ -296,11 +271,10 @@ function BankRobbery:BombArea_Place(bombArea, player)
 end
 
 function BankRobbery:BombArea_Explode(bombArea, player)
-	-- Destroy Bricks
-		self:startRob(player)
-		for index, brick in pairs(self.m_BombableBricks) do
-			brick:destroy()
-		end
+	self:startRob(player)
+	for index, brick in pairs(self.m_BombableBricks) do
+		brick:destroy()
+	end
 end
 
 function BankRobbery:Event_onHackSuccessful(player)
@@ -313,7 +287,6 @@ function BankRobbery:Event_onComputerClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isEvilFaction() then
 			outputChatBox("Todo Hacking in Developement by PewX",player,255,0,0)
-
 			setTimer(function()
 				self:Event_onHackSuccessful(player)
 			end,3000,1)
@@ -336,7 +309,6 @@ function BankRobbery:Event_onSafeClicked(button, state, player)
 				local money = math.random(MONEY_PER_SAFE_MIN, MONEY_PER_SAFE_MAX)
 				self:addMoneyToBag(player, money)
 			end
-
 		end
 	end
 end
@@ -436,28 +408,6 @@ function BankRobbery:Event_OnTruckStartEnter(player,seat)
 	if seat == 0 and not player:getFaction() then
 		player:sendError(_("Den Bank-Überfall Truck können nur Fraktionisten fahren!",player))
 		cancelEvent()
-	end
-end
-
-function BankRobbery:Event_OnTruckEnter(player,seat)
-	if seat == 0 and player:getFaction() then
-		local factionId = player:getFaction():getId()
-		--local destination = factionWTDestination[factionId]
-		self.m_Driver = player
-		--player:triggerEvent("Countdown", math.floor((WeaponTruck.Time-(getTickCount()-self.m_StartTime))/1000))
-		--player:triggerEvent("VehicleHealth")
-		--self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, player)
-		--self.m_DestinationMarker = createMarker(destination,"cylinder",8)
-		--addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
-	end
-end
-
-function BankRobbery:Event_OnTruckExit(player,seat)
-	if seat == 0 then
-		--player:triggerEvent("CountdownStop")
-		--player:triggerEvent("VehicleHealthStop")
-		--self.m_Blip:delete()
-		--if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
 	end
 end
 

@@ -19,11 +19,9 @@ function HoverHandler:closeAll()
 		delete(FactionWTBoxHoverGUI:getSingleton())
 	end
 	if FactionMoneyBagHoverGUI:isInstantiated() then
-		delete(FactionMoneyBagHoverGUI:getSingleton()) -- Not working yet
-		outputChatBox("close FactionMoneyGUI - Not working yet")
+		delete(FactionMoneyBagHoverGUI:getSingleton())
 	end
 	self.m_CurrentHoverElement = false
-
 end
 
 function HoverHandler:onClientCursorMove(cursorX, cursorY, absX, absY, worldX, worldY, worldZ)

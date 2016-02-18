@@ -48,7 +48,7 @@ if DEBUG then
 				if MapGUI:isInstantiated() then
 					delete(MapGUI:getSingleton())
 				else
-					MapGUI:getSingleton(function(posX, posY) self:setpos("", posX, posY, 20) end)
+					MapGUI:getSingleton(function(posX, posY, posZ) self:setpos("", posX, posY, posZ) end)
 				end
 			end
 		)

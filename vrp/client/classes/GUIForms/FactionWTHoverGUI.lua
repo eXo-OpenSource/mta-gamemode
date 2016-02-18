@@ -20,7 +20,7 @@ function FactionWTBoxHoverGUI:constructor(box)
 end
 
 function FactionWTBoxHoverGUI:destructor()
-
+	self:close()
 end
 
 function FactionWTBoxHoverGUI:loadContent()
