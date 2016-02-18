@@ -59,7 +59,6 @@ function Core:ready()
 	--// Gangwar
 	GangwarClient:new()
 
-
 	-- Init Binds
 	bindKey(core:get("KeyBindings", "KeyToggleHelpGUI", "f9"), "down",
 		function()

@@ -82,7 +82,7 @@ end
 function BankRobbery:startRob(player)
 	ActionsCheck:getSingleton():setAction("Banküberfall")
 	local faction = player:getFaction()
-	outputChatBox("Die Bank in Palomino Creek wird überfallen!",rootElement,255,0,0)
+	PlayerManager:getSingleton():breakingNews(_("Eine derzeit unbekannte Gruppe überfällt die Palomino-Creek Bank!", player))
 	self.m_RobPlayer = player
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
@@ -97,6 +97,7 @@ function BankRobbery:startRob(player)
 	self.m_HackMarker = createMarker(2313.4, 11.61, 29, "arrow", 0.8, 255, 255, 0)
 
 	self.m_Timer = setTimer(bind(self.timeUp, self), BANKROB_TIME, 1)
+	self.m_UpdateBreakingNewsTimer = setTimer(bind(self.updateBreakingNews, self), 30000, 0)
 
 	for markerIndex, destination in pairs(BankRobbery.FinishMarker) do
 		for index, playeritem in pairs(faction:getOnlinePlayers()) do
@@ -116,7 +117,26 @@ end
 
 function BankRobbery:timeUp()
 	self:delete()
-	outputChatBox(_("Der Bankraub ist fehlgeschlagen! (Zeit abgelaufen)",self.m_RobPlayer),rootElement,255,0,0)
+	PlayerManager:getSingleton():breakingNews(_("Der Banküberfall ist beendet! Die Täter haben sich zuviel Zeit gelassen!", self.m_RobPlayer))
+end
+
+function BankRobbery:updateBreakingNews()
+	PlayerManager:getSingleton():breakingNews(_("Der Banküberfall ist immer noch im Gange!", self.m_RobPlayer))
+	if not self.m_BrNe_EvilPeople then self.m_BrNe_EvilPeople = 0 end
+	local nowEvilPeople = self:countEvilPeople()
+	if self.m_BrNe_EvilPeople > nowEvilPeople then
+		PlayerManager:getSingleton():breakingNews(_("Nach neuesten Informationen befinden sich nur noch %d Räuber am Gelände!", self.m_RobPlayer, nowEvilPeople))
+		self.m_BrNe_EvilPeople = nowEvilPeople
+		return
+	elseif self.m_BrNe_EvilPeople < nowEvilPeople then
+		PlayerManager:getSingleton():breakingNews(_("Nach neuesten Informationen befinden sich nun bereits %d Räuber am Gelände!", self.m_RobPlayer, nowEvilPeople))
+		self.m_BrNe_EvilPeople = nowEvilPeople
+		return
+	elseif self.m_BrNe_EvilPeople == nowEvilPeople then
+		PlayerManager:getSingleton():breakingNews(_("Die Lage bleibt unverändert. Nach unseren Informationen handelt es sich um %d Räuber!", self.m_RobPlayer, nowEvilPeople))
+		self.m_BrNe_EvilPeople = nowEvilPeople
+		return
+	end
 end
 
 function BankRobbery:spawnGuards()

@@ -76,6 +76,12 @@ function PlayerManager:startPaydayDebug(player)
 	player:payDay()
 end
 
+function PlayerManager:breakingNews(text)
+	for k, v in pairs(getElementsByType("player")) do
+		v:triggerEvent("breakingNews", text)
+	end
+end
+
 function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 	if name and sourcePlayer then
 		local matches = {}
