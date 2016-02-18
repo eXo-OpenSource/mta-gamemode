@@ -590,6 +590,6 @@ function Player:toggleControlsWhileObjectAttached(bool)
 	toggleControl(self, "fire", bool )
 	toggleControl(self, "sprint", bool )
 	toggleControl(self, "next_weapon", bool )
-	toggleControl(self, "previous weapon", bool )
+	toggleControl(self, "previous_weapon", bool )
 	toggleControl(self, "enter_exit", bool )
 end

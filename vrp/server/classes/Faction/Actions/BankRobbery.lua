@@ -30,6 +30,7 @@ function BankRobbery:constructor()
 	self.m_MoneyBags = {}
 
 	self.m_RobFaction = nil
+	self.m_IsBankrobRunning = false
 
 	self.m_Ped = ShopNPC:new(295, 2310.28, -10.87, 26.74, 180)
 	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
@@ -91,6 +92,10 @@ function BankRobbery:destructor()
 	for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then brick:destroy() end end
 	for index, blip in pairs(self.m_Blip) do blip:delete() end
 	for index, marker in pairs(self.m_DestinationMarker) do	marker:destroy() end
+	if isElement(self.m_BankDoor) then destroyElement(self.m_BankDoor) end
+	if isElement(self.m_BombArea) then destroyElement(self.m_BombArea) end
+	if isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
+	if isElement(self.m_Ped) then destroyElement(self.m_Ped) end
 
 	ActionsCheck:getSingleton():endAction()
 	self:initializeAll()
@@ -101,6 +106,7 @@ function BankRobbery:startRob(player)
 	local faction = player:getFaction()
 	outputChatBox("Die Bank in Palomino Creek wird überfallen!",rootElement,255,0,0)
 	self.m_RobFaction = faction
+	self.m_IsBankrobRunning = true
 	faction:sendMessage(_("Euer Spieler %s startet einen Banküberfall! Der Truck wurde gespawnt!", player, player.name),0,255,0)
 	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)
 	self.m_Truck = TemporaryVehicle.create(428, 2330.77, 11.33, 26.60, 270)
@@ -108,6 +114,8 @@ function BankRobbery:startRob(player)
     self.m_Truck:setColor(0, 0, 0)
     self.m_Truck:setLocked(false)
 	self.m_Truck:setEngineState(true)
+
+	self.m_HackMarker = createMarker(2313.4, 11.61, 29, "arrow", 0.8, 255, 255, 0)
 
 	for markerIndex, destination in pairs(BankRobbery.FinishMarker) do
 		for index, playeritem in pairs(faction:getOnlinePlayers()) do
@@ -286,10 +294,14 @@ end
 function BankRobbery:Event_onComputerClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isEvilFaction() then
-			outputChatBox("Todo Hacking in Developement by PewX",player,255,0,0)
-			setTimer(function()
-				self:Event_onHackSuccessful(player)
-			end,3000,1)
+			if self.m_IsBankrobRunning then
+				outputChatBox("Todo Hacking in Developement by PewX",player,255,0,0)
+				setTimer(function()
+					self:Event_onHackSuccessful(player)
+				end,3000,1)
+			else
+				player:sendError(_("Derzeit läuft kein Bankraub!", player))
+			end
 		end
 	end
 end
@@ -297,17 +309,21 @@ end
 function BankRobbery:Event_onSafeClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction():isEvilFaction() then
-			local position = source:getPosition()
-			local rotation = source:getRotation()
-			local model = source:getModel()
-			source:destroy()
-			if model == 2332 then
-				local obj = createObject(1829, position, rotation)
-				addEventHandler( "onElementClicked", obj, self.m_OnSafeClickFunction)
-			elseif model == 1829 then
-				createObject(2003, position, rotation)
-				local money = math.random(MONEY_PER_SAFE_MIN, MONEY_PER_SAFE_MAX)
-				self:addMoneyToBag(player, money)
+			if self.m_IsBankrobRunning then
+				local position = source:getPosition()
+				local rotation = source:getRotation()
+				local model = source:getModel()
+				source:destroy()
+				if model == 2332 then
+					local obj = createObject(1829, position, rotation)
+					addEventHandler( "onElementClicked", obj, self.m_OnSafeClickFunction)
+				elseif model == 1829 then
+					createObject(2003, position, rotation)
+					local money = math.random(MONEY_PER_SAFE_MIN, MONEY_PER_SAFE_MAX)
+					self:addMoneyToBag(player, money)
+				end
+			else
+				player:sendError(_("Derzeit läuft kein Bankraub!", player))
 			end
 		end
 	end
@@ -467,7 +483,6 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							bags = getAttachedElements(self.m_Truck)
 							outputChatBox(_("Der Bankraub wurde erfolgreich abgeschlossen!",hitElement),rootElement,255,0,0)
 							hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!",hitElement))
-							self:Event_OnTruckExit(hitElement,0)
 						elseif self:getAttachedBag(hitElement) then
 							bags = getAttachedElements(hitElement)
 							outputChatBox(_("Ein Geldsack wurde abgegeben! (%d/%d)",hitElement,self:getRemainingBagAmount(),self.m_MoneyBagCount),rootElement,255,0,0)
@@ -482,7 +497,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							end
 						end
 						outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount),hitElement,255,255,255)
-
+						self.m_Truck:destroy()
 						if self:getRemainingBagAmount() == 0 then
 							self:delete()
 						end

@@ -9,8 +9,6 @@ HoverHandler = inherit(Singleton)
 
 function HoverHandler:constructor()
 	addEventHandler("onClientCursorMove", root,bind(self.onClientCursorMove,self))
-	setElementData(localPlayer,"lastHoverElement",nil)
-	setElementData(localPlayer,"hoverElement",nil)
 	self.m_CurrentHoverElement = false
 end
 
