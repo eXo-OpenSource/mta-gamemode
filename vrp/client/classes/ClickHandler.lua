@@ -131,19 +131,25 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	end
 
 	-- Phase 3: Check for clickable NPC
-	if getElementType(element) == "ped" and getElementData(element, "clickable") then
+	if getElementData(element, "clickable") then
 		if trigger then
 			if button == "left" then
-				if getElementData(element, "factionWeaponShopPed") then
-					if getElementData(element, "factionId") == localPlayer:getFactionId() then
-						triggerServerEvent("openFactionWeaponShopGUI", localPlayer)
-					else
-						ErrorBox:new(_"Dieser Waffenverkäufer liefert nicht für deine Fraktion!")
+				if getElementType(element) == "ped" then
+					if getElementData(element, "factionWeaponShopPed") then
+						if getElementData(element, "factionId") == localPlayer:getFactionId() then
+							triggerServerEvent("openFactionWeaponShopGUI", localPlayer)
+						else
+							ErrorBox:new(_"Dieser Waffenverkäufer liefert nicht für deine Fraktion!")
+						end
+					elseif getElementData(element, "BeggarId") then
+						self:addMouseMenu(BeggarPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 					end
-				elseif getElementData(element, "BeggarId") then
-					self:addMouseMenu(BeggarPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+				elseif getElementType(element) == "object" then
+					if getElementData(element, "bankPC") then
+						self:addMouseMenu(BankPcMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+					end
 				end
-			elseif button == "right" then
+
 			end
 		end
 		return true

@@ -332,6 +332,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/BeggarPedMouseMenu.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/BankPcMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupInviteGUI.lua" type="client"/>
