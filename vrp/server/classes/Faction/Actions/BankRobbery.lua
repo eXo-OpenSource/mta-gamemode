@@ -388,7 +388,7 @@ end
 function BankRobbery:addMoneyToBag(player, money)
 	for i, bag in pairs(self.m_MoneyBags) do
 		if bag:getData("Money") + money < MAX_MONEY_PER_BAG then
-			bag:setData("Money", bag:getData("Money") + money)
+			bag:setData("Money", bag:getData("Money") + money, true)
 			player:sendShortMessage(_("%d$ in den Geldsack %d gepackt!",player, money, i))
 			return
 		end
@@ -397,7 +397,8 @@ function BankRobbery:addMoneyToBag(player, money)
 	local pos = Vector3(2307 + #self.m_MoneyBags, 18.87, 26)
 	local newBag = createObject(1550, pos)
 	table.insert(self.m_MoneyBags, newBag)
-	newBag:setData("Money", money)
+	newBag:setData("Money", money, true)
+	newBag:setData("MoneyBag", true, true)
 	addEventHandler("onElementClicked", newBag, self.m_Event_onBagClickFunc)
 	player:sendShortMessage(_("%d$ in eine Geldsack %d gepackt!",player, money, #self.m_MoneyBags))
 	self.m_MoneyBagCount = #self.m_MoneyBags
