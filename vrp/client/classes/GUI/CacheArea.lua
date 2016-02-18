@@ -7,11 +7,12 @@
 -- ****************************************************************************
 CacheArea = inherit(DxElement)
 
-function CacheArea:constructor(posX, posY, width, height, containsGUIElements, cachingEnabled)
+function CacheArea:constructor(posX, posY, width, height, containsGUIElements, cachingEnabled, postGUI)
 	DxElement.constructor(self, posX, posY, width, height)
 
 	GUIRenderer.addToDrawList(self)
 
+	self.m_PostGUI = postGUI
 	self.m_TimeoutCounter = 0
 	self.m_ContainsGUIElements = containsGUIElements
 	self:setCachingEnabled(cachingEnabled == nil and true or cachingEnabled)
@@ -77,7 +78,7 @@ function CacheArea:drawCached()
 
 	-- Render! :>
 	dxSetBlendMode(self.m_BlendMode or "add")
-	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha))
+	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, self.m_Alpha), self.m_PostGUI)
 	dxSetBlendMode("blend")
 
 	return true

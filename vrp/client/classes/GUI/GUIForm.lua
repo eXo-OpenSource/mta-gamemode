@@ -7,8 +7,8 @@
 -- ****************************************************************************
 GUIForm = inherit(CacheArea)
 
-function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter)
-	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true)
+function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, postGUI)
+	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true, postGUI)
 	self.m_KeyBinds = {}
 
 	if incrementCursorCounter ~= false then
