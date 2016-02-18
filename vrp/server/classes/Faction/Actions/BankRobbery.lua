@@ -12,6 +12,7 @@ local HOLD_TIME = 30*1000 --4*60*1000
 local MONEY_PER_SAFE_MIN = 100
 local MONEY_PER_SAFE_MAX = 200
 local MAX_MONEY_PER_BAG = 2000
+local BANKROB_TIME = 10*60*1000
 
 function BankRobbery:constructor()
 	table.insert(BankRobbery.Map, self)
@@ -39,36 +40,13 @@ function BankRobbery:constructor()
 
 	self.m_Timer = false
 	self.m_BombArea = BombArea:new(self.m_BombAreaPosition, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), HOLD_TIME)
-	self.m_ColShape = createColSphere(self.m_BombAreaPosition, 30)
-
+	self.m_ColShape = createColSphere(self.m_BombAreaPosition, 60)
+	self.m_BombColShape = createColSphere(self.m_BombAreaPosition, 10)
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked,self)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick,self)
 
 	self:createSafes()
 	self:createBombableBricks()
-
-	addEventHandler("onColShapeLeave", self.m_ColShape,
-		function(element, matchingDimension)
-			if getElementType(element) == "player" and matchingDimension then
-				-- Stop the countdown if all evil people were eliminated
-				if self:countEvilPeople() == 0 then
-					if self:countPolicePeople() > 0 then
-						-- Give some money to the good people for defending the bank successfully
-						for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-							if player:getFaction() and player:getFaction():isStateFaction() then
-								player:giveMoney(700)
-							end
-
-							player:triggerEvent("CountdownStop")
-						end
-					end
-					if self.m_Timer and isTimer(self.m_Timer) then
-						killTimer(self.m_Timer)
-					end
-				end
-			end
-		end
-	)
 end
 
 function BankRobbery:Ped_Targetted(ped, attacker)
@@ -88,14 +66,14 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 end
 
 function BankRobbery:destructor()
+	for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then	marker:destroy() end end
 	for index, safe in pairs(self.m_Safes) do if isElement(safe) then safe:destroy() end	end
-	for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then brick:destroy() end end
-	for index, blip in pairs(self.m_Blip) do blip:delete() end
-	for index, marker in pairs(self.m_DestinationMarker) do	marker:destroy() end
+--	for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then brick:destroy() end end
+--	for index, blip in pairs(self.m_Blip) do blip:delete() end
 	if isElement(self.m_BankDoor) then destroyElement(self.m_BankDoor) end
-	if isElement(self.m_BombArea) then destroyElement(self.m_BombArea) end
 	if isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
 	if isElement(self.m_Ped) then destroyElement(self.m_Ped) end
+	if isElement(self.m_Truck) then destroyElement(self.m_Truck) end
 
 	ActionsCheck:getSingleton():endAction()
 	self:initializeAll()
@@ -105,11 +83,12 @@ function BankRobbery:startRob(player)
 	ActionsCheck:getSingleton():setAction("Banküberfall")
 	local faction = player:getFaction()
 	outputChatBox("Die Bank in Palomino Creek wird überfallen!",rootElement,255,0,0)
+	self.m_RobPlayer = player
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
 	faction:sendMessage(_("Euer Spieler %s startet einen Banküberfall! Der Truck wurde gespawnt!", player, player.name),0,255,0)
 	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)
-	self.m_Truck = TemporaryVehicle.create(428, 2330.77, 11.33, 26.60, 270)
+	self.m_Truck = TemporaryVehicle.create(428,  2337.54, 16.67, 26.61, 0)
 	self.m_Truck:setData("BankRobberyTruck", true, true)
     self.m_Truck:setColor(0, 0, 0)
     self.m_Truck:setLocked(false)
@@ -117,11 +96,14 @@ function BankRobbery:startRob(player)
 
 	self.m_HackMarker = createMarker(2313.4, 11.61, 29, "arrow", 0.8, 255, 255, 0)
 
+	self.m_Timer = setTimer(bind(self.timeUp, self), BANKROB_TIME, 1)
+
 	for markerIndex, destination in pairs(BankRobbery.FinishMarker) do
 		for index, playeritem in pairs(faction:getOnlinePlayers()) do
 			self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
 			self.m_DestinationMarker[markerIndex] = createMarker(destination,"cylinder",8)
 			addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
+			playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000))
 		end
 	end
 
@@ -130,6 +112,11 @@ function BankRobbery:startRob(player)
 	addEventHandler("bankRobberyLoadBag",root, bind(self.Event_LoadBag,self))
 	addEventHandler("bankRobberyDeloadBag",root, bind(self.Event_DeloadBag,self))
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnTruckStartEnter,self))
+end
+
+function BankRobbery:timeUp()
+	self:delete()
+	outputChatBox(_("Der Bankraub ist fehlgeschlagen! (Zeit abgelaufen)",self.m_RobPlayer),rootElement,255,0,0)
 end
 
 function BankRobbery:spawnGuards()
@@ -266,7 +253,7 @@ function BankRobbery:BombArea_Place(bombArea, player)
 		return false
 	end
 
-	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
+	for k, player in pairs(getElementsWithinColShape(self.m_BombColShape, "player")) do
 		player:triggerEvent("Countdown", HOLD_TIME/1000)
 
 		local faction = player:getFaction()
@@ -341,7 +328,7 @@ end
 
 function BankRobbery:getAttachedBag(element)
 	for key, value in pairs (getAttachedElements(element)) do
-		if value:getModel() == 1550 then
+		if isElement(value) and value:getModel() == 1550 then
 			return value
 		end
 	end
@@ -351,7 +338,7 @@ end
 function BankRobbery:getAttachedBagsCount(element)
 	local count = 0
 	for key, value in pairs (getAttachedElements(element)) do
-		if value:getModel() == 1550 then
+		if isElement(value) and value:getModel() == 1550 then
 			count = count+1
 		end
 	end
@@ -363,12 +350,12 @@ function BankRobbery:attachBagToPlayer(player,bag)
 		player:toggleControlsWhileObjectAttached(false)
 		bag:setCollisionsEnabled(false)
 		bag:attach(player, 0, -0.3, 0.3, 0, 0, 180)
-		player:sendShortMessage(_("Drücke 'x' um den Geldsack abzulegen!", player))
-		bindKey(player, "x", "down", function(player, key, keyState, obj, bag)
+		player:sendShortMessage(_("Drücke 'n' um den Geldsack abzulegen!", player))
+		bindKey(player, "n", "down", function(player, key, keyState, obj, bag)
 			bag:detach(player)
 			bag:setCollisionsEnabled(true)
 			player:toggleControlsWhileObjectAttached(true)
-			unbindKey(player, "x")
+			unbindKey(player, "n")
 		end, self, bag)
 	end
 end
@@ -497,8 +484,9 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							end
 						end
 						outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount),hitElement,255,255,255)
-						self.m_Truck:destroy()
-						if self:getRemainingBagAmount() == 0 then
+
+						if self:getRemainingBagAmount() == 0 or getPedOccupiedVehicle(hitElement) == self.m_Truck then
+							source:destroy()
 							self:delete()
 						end
 					end
