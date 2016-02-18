@@ -18,10 +18,26 @@ function Train:constructor(speed)
 
 	-- Add ref to Manager
 	self.m_Manager:addRef(self)
+
+	-- Disable Sync
+	addEventHandler("onElementStartSync", self,
+		function (syncer)
+			--setElementSyncer(self, nil)
+			--cancelEvent()
+			for i, v in pairs(self.m_Manager.Map) do
+				setElementSyncer(v, syncer)
+			end
+		end
+	)
 end
 
 function Train:destructor()
 	self.m_Manager:removeRef(self)
+
+	-- Destroy Trailer
+	for i, v in pairs(self.Trailers or {}) do
+		v:destroy()
+	end
 end
 
 -- Originally from https://github.com/ReWrite94/iLife/blob/master/server/Classes/Vehicle/cServerTrains.lua#L131-#L178
@@ -63,5 +79,5 @@ function Train:update()
         self.m_Speed = 0.8
     end
 
-	 triggerClientEvent("onTrainSync", self, x, y, z, self.m_Speed/1.398601398601399)
+	 triggerClientEvent("onTrainSync", self, x, y, z, self.m_Speed/1.398356930606537) -- Speed = 1 => TrainSpeed = 0.715125
 end

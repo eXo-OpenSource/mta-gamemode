@@ -183,8 +183,37 @@ function TrainManager:updateTrains()
 end
 
 function TrainManager.initializeAll()
-	-- Train at Linden Station
-	local train = Train:new(537, 1, 1, 0.8)
+	local train = Train:new(537, 1, 133, 0.8)
+	train.Trailers = {}
+	local trailers = {
+		537,
+        569,
+        590,
+        590,
+        590,
+        569,
+        569,
+        569,
+        569,
+        569,
+        590,
+        590,
+        590,
+        570,
+    }
+
+	for i, v in pairs(trailers) do
+		setTimer(function ()
+			local trailer = createVehicle(v, train:getPosition())
+			train.Trailers[#train.Trailers+1] = trailer
+			attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
+		end, 50*i, 1)
+	end
+
+	--[[
+	-- Train at Linden Stationw
+	local train = Train:new(538, 1, 1, 0.8)
+	train:addSyncerEvent()
 	train.Trailers = {}
 	for i = 1, 3 do
 		setTimer(function ()
@@ -195,7 +224,33 @@ function TrainManager.initializeAll()
 	end
 
 	-- Tram in Los Santos
-	Train:new(449, 2, 1, 0.4)
+	local train = Train:new(449, 2, 1, 0.4)
+	train:addSyncerEvent()
+	train.Trailers = {}
+	setTimer(function ()
+		local trailer = createVehicle(449, train:getPosition())
+		attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
+	end, 50, 1)
+
+	-- Train at Los Santos
+	local train = Train:new(537, 1, 599, 0.8)
+	train:addSyncerEvent()
+	train.Trailers = {}
+	for i = 1, 5 do
+		setTimer(function ()
+			local trailer
+			if i == 1 then
+				trailer = createVehicle(537, train:getPosition())
+			elseif i ~= 5 then
+				trailer = createVehicle(590, train:getPosition())
+			else
+				trailer = createVehicle(569, train:getPosition())
+			end
+			train.Trailers[#train.Trailers+1] = trailer
+			attachTrailerToVehicle(train.Trailers[#train.Trailers-1] or train, trailer)
+		end, 50*i, 1)
+	end
+	--]]
 end
 
 -- DEBUG
