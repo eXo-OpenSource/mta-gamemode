@@ -10,13 +10,12 @@ inherit(Singleton, BreakingNews)
 
 function BreakingNews:constructor(text)
 	GUIForm.constructor(self, 0, 0, screenWidth*0.6, 50, false, true)
-	GUIImage:new(0, 0, self.m_Width-24, self.m_Height, "files/images/Other/BreakingNewsBG.png", self):setAlpha(200)
-	GUIImage:new(self.m_Width-24, 0, 24, self.m_Height, "files/images/Other/BreakingNewsEnd.png", self):setAlpha(200)
+	GUIImage:new(0, 0, self.m_Width-24, self.m_Height, "files/images/Other/BreakingNewsBG.png", self):setAlpha(220)
+	GUIImage:new(self.m_Width-24, 0, 24, self.m_Height, "files/images/Other/BreakingNewsEnd.png", self):setAlpha(220)
 	GUIImage:new(5, self.m_Height/2 - 40/2, 71, 40, "files/images/Other/BreakingNews.png", self)
+	self.m_Label = GUILabel:new(85, 0, self.m_Width-85, self.m_Height, text, self):setAlignY("center"):setFont(VRPFont(32)):setFontSize(1)
 	self:setVisible(false)
 	self:FadeIn()
-	self.m_Label = GUILabel:new(85, 0, self.m_Width-85, self.m_Height, text, self):setAlignY("center"):setFont(VRPFont(35)):setFontSize(1)
-
 end
 
 function BreakingNews:FadeIn()

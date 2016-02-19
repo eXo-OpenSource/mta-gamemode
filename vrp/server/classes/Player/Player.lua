@@ -459,6 +459,7 @@ function Player:payDay()
 	end
 
 	income_interest = math.floor(self:getBankMoney()*0.01)
+	if income_interest > 1500 then income_interest = 1500 end
 	income = income + income_interest
 	self:addPaydayText("interest","Bank-Zinsen: "..income_interest.."$",255,255,255)
 
