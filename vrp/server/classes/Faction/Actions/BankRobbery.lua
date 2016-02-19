@@ -35,9 +35,6 @@ function BankRobbery:constructor()
 	self.m_DestinationMarker = {}
 	self.m_MoneyBags = {}
 
-	self.m_Ped = ShopNPC:new(295, 2310.28, -10.87, 26.74, 180)
-	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
-
 	self.m_BombAreaPosition = Vector3(2318.43, 11.37, 26.48)
 	self.m_BombAreaTarget = createObject(3108, 2317.8, 11.3, 26.8, 0, 90, 0):setScale(0.2)
 	self.m_BombArea = BombArea:new(self.m_BombAreaPosition, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), BOMB_TIME)
@@ -48,6 +45,7 @@ function BankRobbery:constructor()
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
 
+	self:spawnPed()
 	self:spawnGuards()
 	self:createSafes()
 	self:createBombableBricks()
@@ -55,6 +53,17 @@ function BankRobbery:constructor()
 	addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm"}
 	addEventHandler("bankRobberyPcHack", root, bind(self.Event_onStartHacking, self))
 	addEventHandler("bankRobberyPcDisarm", root, bind(self.Event_onDisarmAlarm, self))
+end
+
+function BankRobbery:spawnPed()
+	self.m_Ped = ShopNPC:new(295, 2310.28, -10.87, 26.74, 180)
+	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
+
+	addEventHandler("onPedWasted", self.m_Ped,
+		function()
+			setTimer(function() self:spawnPed() end, 5*60*1000, 1)
+		end
+	)
 end
 
 function BankRobbery:destructor()
@@ -396,22 +405,28 @@ end
 function BankRobbery:Event_onBagClick(button, state, player)
 	if button == "left" and state == "down" then
 		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
-			self:attachBagToPlayer(player, source)
+			if player:getFaction() then
+				if player:getFaction():isStateFaction() then
+					self:statePeopleClickBag(player, source)
+				elseif player:getFaction():isEvilFaction() then
+					player:attachPlayerObject(source)
+				end
+			else
+				player:sendError(_("Nur Fraktionisten können den Geldsack aufheben!", player))
+			end
 		else
 			player:sendError(_("Du bist zuweit von dem Geldsack entfernt!", player))
 		end
 	end
 end
 
-function BankRobbery:getAttachedBag(element)
-	if isElement(element) then
-		for key, value in pairs (getAttachedElements(element)) do
-			if isElement(value) and value:getModel() == 1550 then
-				return value
-			end
-		end
-		return false
-	end
+function BankRobbery:statePeopleClickBag(player, bag)
+	local amount = math.floor(bag:getData("Money")/2)
+	PlayerManager:getSingleton():breakingNews(_("Das SAPD hat einen Geldsack sichergestellt!", player))
+	player:sendInfo(_("Geldsack sichergestellt, es wurden %d$ in die Staatskasse gelegt!", player, amount))
+	FactionManager:getSingleton():getFromId(1):giveMoney(amount)
+	table.remove(self.m_MoneyBags, table.find(self.m_MoneyBags, bag))
+	bag:destoy()
 end
 
 function BankRobbery:getAttachedBagsCount(element)
@@ -422,21 +437,6 @@ function BankRobbery:getAttachedBagsCount(element)
 		end
 	end
 	return count
-end
-
-function BankRobbery:attachBagToPlayer(player, bag)
-	if not self:getAttachedBag(player) then
-		player:toggleControlsWhileObjectAttached(false)
-		bag:setCollisionsEnabled(false)
-		bag:attach(player, 0, -0.3, 0.3, 0, 0, 180)
-		player:sendShortMessage(_("Drücke 'n' um den Geldsack abzulegen!", player))
-		bindKey(player, "n", "down", function(player, key, keyState, obj, bag)
-			bag:detach(player)
-			bag:setCollisionsEnabled(true)
-			player:toggleControlsWhileObjectAttached(true)
-			Key(player, "n")
-		end, self, bag)
-	end
 end
 
 function BankRobbery:addMoneyToBag(player, money)
@@ -466,7 +466,7 @@ function BankRobbery:Event_DeloadBag(veh)
 					for key, bag in pairs (getAttachedElements(veh)) do
 						if bag.model == 1550 then
 							bag:detach(self.m_Truck)
-							self:attachBagToPlayer(client, bag)
+							client:attachPlayerObject(bag)
 							return
 						end
 					end
@@ -498,14 +498,12 @@ function BankRobbery:Event_LoadBag(veh)
 		if VEHICLE_BAG_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
 				if not client.vehicle then
-					local bag = self:getAttachedBag(client)
+					local bag = client:getPlayerAttachedObject()
 					if self:getAttachedBagsCount(veh) < VEHICLE_BAG_LOAD[veh.model]["count"] then
 						if bag then
 							local count = #getAttachedElements(veh)
-							bag:detach(client)
+							client:detachPlayerObject(bag)
 							bag:attach(veh, VEHICLE_BAG_LOAD[veh.model][count+1])
-
-							client:toggleControlsWhileObjectAttached(true)
 						else
 							client:sendError(_("Du hast keinen Geldsack dabei!", client))
 						end
@@ -542,13 +540,13 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if faction:isEvilFaction() then
-					if (isPedInVehicle(hitElement) and self:getAttachedBag(getPedOccupiedVehicle(hitElement))) or self:getAttachedBag(hitElement) then
+					if (isPedInVehicle(hitElement) and self:getAttachedBagCount(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
 						local bags, amount
 						local totalAmount = 0
 						if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 							bags = getAttachedElements(self.m_Truck)
 							hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-						elseif self:getAttachedBag(hitElement) then
+						elseif hitElement:getPlayerAttachedObject() then
 							bags = getAttachedElements(hitElement)
 							outputChatBox(_("Ein Geldsack wurde abgegeben! (%d übrig)", hitElement, self:getRemainingBagAmount()), rootElement, 255, 0, 0)
 							hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))

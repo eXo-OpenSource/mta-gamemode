@@ -92,7 +92,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if faction:isEvilFaction() then
-					if (isPedInVehicle(hitElement) and self:getAttachedBox(getPedOccupiedVehicle(hitElement))) or self:getAttachedBox(hitElement) then
+					if (isPedInVehicle(hitElement) and self:getAttachedBoxesCount(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
 						local depot = faction.m_Depot
 						local boxes
 						if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
@@ -100,7 +100,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							outputChatBox(_("Der Waffentruck wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
 							hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 							self:Event_OnWeaponTruckExit(hitElement,0)
-						elseif self:getAttachedBox(hitElement) then
+						elseif hitElement:getPlayerAttachedObject() then
 							boxes = getAttachedElements(hitElement)
 							outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
 							hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
@@ -128,13 +128,10 @@ function WeaponTruck:Event_onLoadMarkerHit(hitElement, matchingDimension)
 		local faction = hitElement:getFaction()
 		if faction then
 			if faction:isEvilFaction() then
-				local box = self:getAttachedBox(hitElement)
+				local box = hitElement:getPlayerAttachedObject()
 				if box then
-					box:detach()
-					unbindKey(hitElement,"n")
-					hitElement:setAnimation(false)
+					hitElement:detachPlayerObject(box)
 					self:loadBoxOnWeaponTruck(hitElement,box)
-					hitElement:toggleControlsWhileObjectAttached(true)
 				else
 					hitElement:sendError(_("Du hast keine Kiste dabei!",hitElement))
 				end
@@ -175,26 +172,11 @@ end
 function WeaponTruck:Event_onBoxClick(button, state, player)
 	if button == "left" and state == "down" then
 		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
-			self:attachBoxToPlayer(player,source)
+			player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
+			player:attachPlayerObject(source)
 		else
 			player:sendError(_("Du bist zuweit von der Kiste entfernt!", player))
 		end
-	end
-end
-
-function WeaponTruck:attachBoxToPlayer(player,box)
-	if not self:getAttachedBox(player) then
-		player:toggleControlsWhileObjectAttached(false)
-		box:setCollisionsEnabled(false)
-		box:attach(player, -0.09, 0.35, 0.45, 10, 0, 0)
-		player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
-		player:sendShortMessage(_("Drücke 'x' um die Kiste abzulegen!", player))
-		bindKey(player,"n","down",function(player, key, keyState, obj, box)
-			box:detach(player)
-			box:setCollisionsEnabled(true)
-			player:toggleControlsWhileObjectAttached(true)
-			unbindKey(player,"n")
-		end, self, box)
 	end
 end
 
@@ -210,15 +192,6 @@ function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 	else
 		player:sendInfo(_("%d/%d Kisten aufgeladen!", player, #self.m_BoxesOnTruck, self.m_BoxesCount))
 	end
-end
-
-function WeaponTruck:getAttachedBox(element)
-	for key, value in pairs (getAttachedElements(element)) do
-		if value:getModel() == 2912 then
-			return value
-		end
-	end
-	return false
 end
 
 function WeaponTruck:getAttachedBoxesCount(element)
@@ -322,7 +295,8 @@ function WeaponTruck:Event_DeloadBox(veh)
 						if box.model == 2912 then
 							box:setScale(1)
 							box:detach(self.m_Truck)
-							self:attachBoxToPlayer(client,box)
+							client:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
+							client:attachPlayerObject(box)
 							return
 						end
 					end
@@ -347,14 +321,13 @@ function WeaponTruck:Event_LoadBox(veh)
 		if getElementData(veh,"WeaponTruck") or VEHICLE_BOX_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position,client.position) < 7 then
 				if not client.vehicle then
-					local box = self:getAttachedBox(client)
+					local box = client:getPlayerAttachedObject()
 					if self:getAttachedBoxesCount(veh) < VEHICLE_BOX_LOAD[veh.model]["count"] then
 						if box then
 							local count = #getAttachedElements(veh)
-							box:detach(client)
+							client:detachPlayerObject(box)
 							box:attach(veh, VEHICLE_BOX_LOAD[veh.model][count+1])
 
-							client:toggleControlsWhileObjectAttached(true)
 						else
 							client:sendError(_("Du hast keine Kiste dabei!",client))
 						end
