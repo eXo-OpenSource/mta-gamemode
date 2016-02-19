@@ -58,6 +58,24 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 				end
 			)
 		end
+	elseif localPlayer:getCompanyId() == 3 and localPlayer:getPublicSync("Company:Duty") == true then
+		if not element:getPublicSync("inInterview") then
+			self:addItem(_"San News: Interview starten",
+				function()
+					if self:getElement() then
+						triggerServerEvent("sanNewsStartInterview", localPlayer, self:getElement())
+					end
+				end
+			)
+		else
+			self:addItem(_"San News: Interview beenden",
+				function()
+					if self:getElement() then
+						triggerServerEvent("sanNewsStopInterview", localPlayer, self:getElement())
+					end
+				end
+			)
+		end
 	end
 
 	if localPlayer:getRank() >= RANK.Moderator then
