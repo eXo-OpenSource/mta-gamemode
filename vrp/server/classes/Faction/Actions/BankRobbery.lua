@@ -25,6 +25,8 @@ function BankRobbery:constructor()
 	self.m_HackableComputer:setData("bankPC", true, true)
 	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
 	self.m_BankDoor:setScale(0.88)
+	self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
+	self.m_BackDoor:setFrozen(true)
 
 	self.m_Blip = {}
 	self.m_DestinationMarker = {}
@@ -45,6 +47,9 @@ function BankRobbery:constructor()
 	self.m_BombColShape = createColSphere(self.m_BombAreaPosition, 10)
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
+
+
+
 
 	self:createSafes()
 	self:createBombableBricks()
@@ -75,13 +80,21 @@ function BankRobbery:destructor()
 	for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then	marker:destroy() end end
 	for index, safe in pairs(self.m_Safes) do if isElement(safe) then safe:destroy() end	end
 	for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then brick:destroy() end end
+	for index, bag in pairs(self.m_MoneyBags) do	if isElement(bag) then bag:destroy() end end
 	for index, blip in pairs(self.m_Blip) do blip:delete() end
 	if isElement(self.m_BankDoor) then destroyElement(self.m_BankDoor) end
+	if isElement(self.m_SafeDoor) then destroyElement(self.m_SafeDoor) end
 	if isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
 	if isElement(self.m_Ped) then destroyElement(self.m_Ped) end
 	if isElement(self.m_Truck) then destroyElement(self.m_Truck) end
+	if isElement(self.m_BackDoor) then destroyElement(self.m_BackDoor) end
 	killTimer(self.m_Timer)
 	killTimer(self.m_UpdateBreakingNewsTimer)
+
+	for index, playeritem in pairs(self.m_RobFaction:getOnlinePlayers()) do
+		playeritem:triggerEvent("CountdownStop")
+	end
+
 	ActionsCheck:getSingleton():endAction()
 	self:initializeAll()
 end
@@ -93,6 +106,8 @@ function BankRobbery:startRob(player)
 	self.m_RobPlayer = player
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
+	self.m_BackDoor:setFrozen(false)
+
 	faction:sendMessage(_("Euer Spieler %s startet einen Banküberfall! Der Truck wurde gespawnt!", player, player.name), 0, 255, 0)
 	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)
 	self.m_Truck = TemporaryVehicle.create(428, 2337.54, 16.67, 26.61, 0)
@@ -111,8 +126,12 @@ function BankRobbery:startRob(player)
 			self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
 			self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
 			addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
-			playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000))
+
 		end
+	end
+
+	for index, playeritem in pairs(faction:getOnlinePlayers()) do
+		playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000))
 	end
 
 	addRemoteEvents{"bankRobberyLoadBag", "bankRobberyDeloadBag"}
@@ -341,10 +360,12 @@ function BankRobbery:Event_onSafeClicked(button, state, player)
 				if model == 2332 then
 					local obj = createObject(1829, position, rotation)
 					addEventHandler( "onElementClicked", obj, self.m_OnSafeClickFunction)
+					table.insert(self.m_Safes, obj)
 				elseif model == 1829 then
-					createObject(2003, position, rotation)
+					local obj = createObject(2003, position, rotation)
 					local money = math.random(MONEY_PER_SAFE_MIN, MONEY_PER_SAFE_MAX)
 					self:addMoneyToBag(player, money)
+					table.insert(self.m_Safes, obj)
 				end
 			else
 				player:sendError(_("Derzeit läuft kein Bankraub!", player))
@@ -364,12 +385,14 @@ function BankRobbery:Event_onBagClick(button, state, player)
 end
 
 function BankRobbery:getAttachedBag(element)
-	for key, value in pairs (getAttachedElements(element)) do
-		if isElement(value) and value:getModel() == 1550 then
-			return value
+	if isElement(element) then
+		for key, value in pairs (getAttachedElements(element)) do
+			if isElement(value) and value:getModel() == 1550 then
+				return value
+			end
 		end
+		return false
 	end
-	return false
 end
 
 function BankRobbery:getAttachedBagsCount(element)
@@ -511,6 +534,8 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							bags = getAttachedElements(hitElement)
 							outputChatBox(_("Ein Geldsack wurde abgegeben! (%d/%d)", hitElement, self:getRemainingBagAmount(), self.m_MoneyBagCount), rootElement, 255, 0, 0)
 							hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
+							unbindKey(hitElement, "n")
+							hitElement:toggleControlsWhileObjectAttached(true)
 						end
 						for key, value in pairs (bags) do
 							if value:getModel() == 1550 then
