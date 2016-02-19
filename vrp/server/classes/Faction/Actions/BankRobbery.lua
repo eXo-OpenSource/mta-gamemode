@@ -157,30 +157,30 @@ function BankRobbery:updateBreakingNews()
 		if not self.m_BrNe_EvilPeople then self.m_BrNe_EvilPeople = 0 end
 		local nowEvilPeople = self:countEvilPeople()
 		if self.m_BrNe_EvilPeople > nowEvilPeople then
-			msg = _("Nach neuesten Informationen befinden sich nur noch %d Räuber am Gelände!", self.m_RobPlayer, nowEvilPeople)
+			msg = _("Den neuesten Informationen zufolge befinden sich nur noch %d Räuber am Gelände!", self.m_RobPlayer, nowEvilPeople)
 			self.m_BrNe_EvilPeople = nowEvilPeople
 		elseif self.m_BrNe_EvilPeople < nowEvilPeople then
-			msg = _("Das SAPD geht nun von %d Räuber am Bankgelände aus!", self.m_RobPlayer, nowEvilPeople)
+			msg = _("Das SAPD geht nun von %d beteiligten Räubern aus!", self.m_RobPlayer, nowEvilPeople)
 			self.m_BrNe_EvilPeople = nowEvilPeople
 		elseif self.m_BrNe_EvilPeople == nowEvilPeople then
-			msg = _("Die Lage an der Palomino-Creek Bank ist unverändert. %d Räuber befinden sich am Gelände!", self.m_RobPlayer, nowEvilPeople)
+			msg = _("Die Lage an der Palomino Creek-Bank ist unverändert. %d Räuber befinden sich am Gelände!", self.m_RobPlayer, nowEvilPeople)
 			self.m_BrNe_EvilPeople = nowEvilPeople
 		end
 	elseif rnd == 3 then
 		if not self.m_BrNe_StatePeople then self.m_BrNe_StatePeople = 0 end
 		local nowStatePeople = self:countStatePeople()
 		if self.m_BrNe_StatePeople > nowStatePeople then
-			msg = _("Nach neuesten Informationen befinden sich nur noch %d Polizeibeamte am Gelände!", self.m_RobPlayer, nowStatePeople)
+			msg = _("Das SAPD ist nur noch mit %d Beamten am Gelände!", self.m_RobPlayer, nowStatePeople)
 			self.m_BrNe_StatePeople = nowStatePeople
 		elseif self.m_BrNe_StatePeople < nowStatePeople then
-			msg = _("Das SAPD ist mit %d Mann am Bankgelände!", self.m_RobPlayer, nowStatePeople)
+			msg = _("Das SAPD hat zusätzliche Einheiten hinzugezogen. Es befinden sich %d Beamten vor Ort!", self.m_RobPlayer, nowStatePeople)
 			self.m_BrNe_StatePeople = nowStatePeople
 		elseif self.m_BrNe_StatePeople == nowStatePeople then
 			msg = _("Die Lage an der Palomino-Creek Bank ist unverändert. %d Beamte befinden sich am Gelände!", self.m_RobPlayer, nowStatePeople)
 			self.m_BrNe_StatePeople = nowStatePeople
 		end
 	elseif rnd == 4 then
-		msg = _("Neuester Informationen zur Folge handelt es sich bei den Räubern um Mitglieder der %s!", self.m_RobPlayer, self.m_RobFaction:getName())
+		msg = _("Neuesten Informationen zur Folge handelt es sich bei den Tätern um Mitglieder der %s!", self.m_RobPlayer, self.m_RobFaction:getName())
 	end
 	PlayerManager:getSingleton():breakingNews(msg, self.m_RobPlayer)
 end
