@@ -92,7 +92,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if faction:isEvilFaction() then
-					if (isPedInVehicle(hitElement) and self:getAttachedBoxesCount(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
+					if (isPedInVehicle(hitElement) and #getAttachedElements(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
 						local depot = faction.m_Depot
 						local boxes
 						if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
@@ -192,16 +192,6 @@ function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 	else
 		player:sendInfo(_("%d/%d Kisten aufgeladen!", player, #self.m_BoxesOnTruck, self.m_BoxesCount))
 	end
-end
-
-function WeaponTruck:getAttachedBoxesCount(element)
-	local count = 0
-	for key, value in pairs (getAttachedElements(element)) do
-		if value:getModel() == 2912 then
-			count = count+1
-		end
-	end
-	return count
 end
 
 function WeaponTruck:setBoxContent(boxId)
@@ -322,7 +312,7 @@ function WeaponTruck:Event_LoadBox(veh)
 			if getDistanceBetweenPoints3D(veh.position,client.position) < 7 then
 				if not client.vehicle then
 					local box = client:getPlayerAttachedObject()
-					if self:getAttachedBoxesCount(veh) < VEHICLE_BOX_LOAD[veh.model]["count"] then
+					if #getAttachedElements(veh) < VEHICLE_BOX_LOAD[veh.model]["count"] then
 						if box then
 							local count = #getAttachedElements(veh)
 							client:detachPlayerObject(box)

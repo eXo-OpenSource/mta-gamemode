@@ -429,16 +429,6 @@ function BankRobbery:statePeopleClickBag(player, bag)
 	bag:destoy()
 end
 
-function BankRobbery:getAttachedBagsCount(element)
-	local count = 0
-	for key, value in pairs (getAttachedElements(element)) do
-		if isElement(value) and value:getModel() == 1550 then
-			count = count+1
-		end
-	end
-	return count
-end
-
 function BankRobbery:addMoneyToBag(player, money)
 	for i, bag in pairs(self.m_MoneyBags) do
 		if bag:getData("Money") + money < MAX_MONEY_PER_BAG then
@@ -499,7 +489,7 @@ function BankRobbery:Event_LoadBag(veh)
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
 				if not client.vehicle then
 					local bag = client:getPlayerAttachedObject()
-					if self:getAttachedBagsCount(veh) < VEHICLE_BAG_LOAD[veh.model]["count"] then
+					if #getAttachedElements(veh) < VEHICLE_BAG_LOAD[veh.model]["count"] then
 						if bag then
 							local count = #getAttachedElements(veh)
 							client:detachPlayerObject(bag)
@@ -540,7 +530,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if faction:isEvilFaction() then
-					if (isPedInVehicle(hitElement) and self:getAttachedBagCount(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
+					if (isPedInVehicle(hitElement) and #getAttachedElements(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
 						local bags, amount
 						local totalAmount = 0
 						if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
