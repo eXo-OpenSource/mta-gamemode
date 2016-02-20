@@ -135,6 +135,9 @@
 	<script src="server/classes/Faction/Actions/MWeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/WeaponTruck.lua" type="server"/>
 	<script src="server/classes/Faction/Actions/BankRobbery.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/Fire.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/FireManager.lua" type="server"/>
+	<script src="server/classes/Faction/Actions/FireMap.lua" type="server"/>
 	<script src="server/classes/Faction/FactionDepot.lua" type="server"/>
 	<script src="server/classes/Faction/Faction.lua" type="server"/>
 	<script src="server/classes/Faction/FactionState.lua" type="server"/>
@@ -462,6 +465,7 @@
 
 	<!-- Factions -->
 	<script src="client/classes/Faction/Actions/BankRobbery.lua" type="client"/>
+	<script src="client/classes/Faction/Actions/Fire.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/AttackClient.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarDisplay.lua" type="client"/>
