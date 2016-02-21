@@ -26,8 +26,13 @@ local FIRE_MESSAGES = {
 function FireManager:constructor()
 	local rnd = math.random(FIRE_TIME_MIN, FIRE_TIME_MAX)*1000
 	self.m_StartFirePulse = TimedPulse:new(rnd)
-	self.m_StartFirePulse:registerHandler(bind(self.chooseRandomFire, self))
+	self.m_StartFirePulse:registerHandler()
+	self.m_CurrentFire = nil
 	self.m_Fires = {}
+
+	self:loadFirePlaces()
+	--Developement:
+	addCommandHandler("fire", bind(self.startRandomFire, self))
 end
 
 function FireManager:loadFirePlaces()
@@ -47,7 +52,6 @@ function FireManager:startRandomFire()
 end
 
 function FireManager:startFire(id)
-	local position = getZoneName(self.m_Fires[index]["position"],false).."/"..getZoneName(self.m_Fires[index]["position"],true)
-	PlayerManager:getSingleton():breakingNews(_(self.m_Fires[id]["message"], getElementsByType("player")[1], position))
-	
+	if self.m_CurrentFire then delete(self.m_CurrentFire) end
+	self.m_CurrentFire = Fire:new(self.m_Fires[id])
 end

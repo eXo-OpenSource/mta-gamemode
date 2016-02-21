@@ -59,6 +59,7 @@ function Core:constructor()
 	Casino:new()
 	ActionsCheck:new()
 	TrainManager:new()
+	FireManager:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
