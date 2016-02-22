@@ -27,7 +27,7 @@ function TrainManager:onTrainSync(x, y, z, speed)
 	local pos = Vector3(x, y, z) -- Convert to a vector
 	if DEBUG then
 		if not self.m_Blips[source] then
-			self.m_Blips[source] = Blip:new("Waypoint.png", 0, 0)
+			self.m_Blips[source] = Blip:new("Train.png", 0, 0)
 		end
 		self.m_Blips[source]:setPosition(pos.x, pos.y)
 	end

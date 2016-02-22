@@ -54,6 +54,14 @@ function Fire:getRemainingAmount()
 	return count
 end
 
+function Fire:syncFires(player)
+	for ped, bool in pairs(self.m_FirePeds) do
+		if bool == true and isElement(ped) then
+			triggerClientEvent(player, "createFire", ped)
+		end
+	end
+end
+
 function Fire:destroyFire(ped)
 	if self.m_FirePeds[ped] then
 		triggerClientEvent("destroyFire", resourceRoot, ped)

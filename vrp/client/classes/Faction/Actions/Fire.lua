@@ -19,6 +19,8 @@ function Fire:constructor()
 	addEventHandler("createFire", root, bind(self.createFire, self))
 	addEventHandler("destroyFire", root, bind(self.destroyFire, self))
 
+	triggerServerEvent("receiveFires", localPlayer)
+
 	addEventHandler("onClientPedHitByWaterCannon", root, bind(self.handlePedWaterCannon, self))
 end
 

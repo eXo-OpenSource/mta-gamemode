@@ -645,6 +645,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/4.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/gangwar.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Fire.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Train.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -677,6 +678,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/4.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/gangwar.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Fire.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Train.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

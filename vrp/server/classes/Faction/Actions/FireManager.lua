@@ -31,6 +31,10 @@ function FireManager:constructor()
 	self.m_Fires = {}
 
 	self:loadFirePlaces()
+
+	addRemoteEvents{"receiveFires"}
+	addEventHandler("receiveFires", root, bind(self.receiveFires, self))
+
 	--Developement:
 	addCommandHandler("fire", bind(self.startRandomFire, self))
 end
@@ -52,6 +56,12 @@ function FireManager:startRandomFire()
 end
 
 function FireManager:startFire(id)
-	if self.m_CurrentFire then delete(self.m_CurrentFire) end
+	if self.m_CurrentFire then delete(self.m_CurrentFire) self.m_CurrentFire = nil end
 	self.m_CurrentFire = Fire:new(self.m_Fires[id])
+end
+
+function FireManager:receiveFires()
+	if self.m_CurrentFire then
+		self.m_CurrentFire:syncFires(client)
+	end
 end
