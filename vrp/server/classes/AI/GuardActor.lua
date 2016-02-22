@@ -18,3 +18,9 @@ end
 function GuardActor:getIdleTask()
     return TaskGuard
 end
+
+function GuardActor:startShooting(target)
+    if self:getPrimaryTaskClass() == TaskGuard then
+        self:startPrimaryTask(TaskShootTarget, target)
+    end
+end
