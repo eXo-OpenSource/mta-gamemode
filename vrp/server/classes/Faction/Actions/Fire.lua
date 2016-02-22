@@ -7,7 +7,6 @@
 -- ****************************************************************************
 Fire = inherit(Singleton)
 
-
 function Fire:constructor(fireTable)
 	self.m_Position = fireTable["position"]
 	self.m_PositionName = getZoneName(self.m_Position).."/"..getZoneName(self.m_Position,true)
@@ -27,8 +26,17 @@ function Fire:constructor(fireTable)
 	for index, pos in pairs(self.m_FireTable) do
 		self:create(pos)
 	end
-
 end
+
+function Fire:destructor()
+	for ped, bool in pairs(self.m_FirePeds) do
+		if bool == true and isElement(ped) then
+			self:destroyFire(ped)
+		end
+	end
+	delete(self.m_Blip)
+end
+
 
 function Fire:create(pos)
 	local ped = createPed(0, pos)
@@ -54,9 +62,10 @@ function Fire:destroyFire(ped)
 		end
 		table.remove(self.m_FirePeds, table.find(self.m_FirePeds, ped))
 		local remainingFires = self:getRemainingAmount()
-		client:sendShortMessage(_("Flamme gelöscht! %d übrig!", client, remainingFires))
+		if client then client:sendShortMessage(_("Flamme gelöscht! %d übrig!", client, remainingFires))	end
 		if remainingFires <= 0 then
-			PlayerManager:getSingleton():breakingNews("Das Rescue Team hat den Brand bei %s erfolgreich gelöscht!", self.m_PositionName)
+			if client then PlayerManager:getSingleton():breakingNews("Das Rescue Team hat den Brand bei %s erfolgreich gelöscht!", self.m_PositionName) end
+			delete(self)
 		end
 		return true
 	end

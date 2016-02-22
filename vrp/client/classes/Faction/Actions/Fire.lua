@@ -28,7 +28,7 @@ function Fire:createFire()
 	local size = math.random(1,3)
 	self.m_Fires[ped] = {}
 	self.m_Fires[ped].Size = size
-	self.m_Fires[ped].Effect = createEffect(FIRE_EFFECTS[size], pos,-90, 0, 0, 20*size)
+	self.m_Fires[ped].Effect = createEffect(FIRE_EFFECTS[size], pos.x, pos.y, pos.z-1, -90, 0, 0, 20*size)
 	self.m_Fires[ped].Colshape = createColSphere(pos, size/4)
 	setElementCollidableWith (ped, localPlayer, false)
 	for index,vehicle in ipairs(getElementsByType("vehicle")) do
