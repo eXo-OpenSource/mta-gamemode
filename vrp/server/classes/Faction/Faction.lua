@@ -57,6 +57,13 @@ function Faction:isStateFaction()
 	return false
 end
 
+function Faction:isRescueFaction()
+	if self.m_Type == "Rescue" then
+		return true
+	end
+	return false
+end
+
 function Faction:isEvilFaction()
 	if self.m_Type == "Evil" then
 		return true
