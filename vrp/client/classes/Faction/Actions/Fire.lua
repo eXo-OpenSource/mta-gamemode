@@ -52,7 +52,7 @@ function Fire:onPedDamage(attacker, weapon)
 		if weapon == 42 then -- extinguisher
 			self:smoke(source)
 			if getElementHealth(source) <= (100-10*self.m_Fires[source].Size) and attacker == localPlayer then
-				triggerServerEvent("requestFireDeletion", source)
+				triggerServerEvent("requestFireDeletion", localPlayer, source)
 			end
 		else
 			cancelEvent()
@@ -77,8 +77,8 @@ function Fire:handlePedWaterCannon(ped)
 	if self.m_Fires[ped] then
 		if getElementModel(source) == 407 then -- fire truck
 			self:smoke(ped)
-			if math.random(1, self.m_Fires[ped].Size*5) == 1 and getVehicleController(source) == localPlayer then
-				triggerServerEvent("requestFireDeletion", ped)
+			if math.random(1, 5) == 1 and getVehicleController(source) == localPlayer then
+				triggerServerEvent("requestFireDeletion", localPlayer, ped)
 			end
 		end
 	end

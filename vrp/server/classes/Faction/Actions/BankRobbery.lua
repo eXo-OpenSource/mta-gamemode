@@ -95,7 +95,7 @@ end
 function BankRobbery:startRob(player)
 	ActionsCheck:getSingleton():setAction("Banküberfall")
 	local faction = player:getFaction()
-	PlayerManager:getSingleton():breakingNews(_("Eine derzeit unbekannte Gruppe überfällt die Palomino-Creek Bank!", player))
+	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Gruppe überfällt die Palomino-Creek Bank!")
 	self.m_RobPlayer = player
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
@@ -154,7 +154,7 @@ end
 
 function BankRobbery:timeUp()
 	self:delete()
-	PlayerManager:getSingleton():breakingNews(_("Der Banküberfall ist beendet! Die Täter haben sich zuviel Zeit gelassen!", self.m_RobPlayer))
+	PlayerManager:getSingleton():breakingNews("Der Banküberfall ist beendet! Die Täter haben sich zuviel Zeit gelassen!")
 end
 
 function BankRobbery:updateBreakingNews()
@@ -191,7 +191,7 @@ function BankRobbery:updateBreakingNews()
 	elseif rnd == 4 then
 		msg = _("Neuesten Informationen zur Folge handelt es sich bei den Tätern um Mitglieder der %s!", self.m_RobPlayer, self.m_RobFaction:getName())
 	end
-	PlayerManager:getSingleton():breakingNews(msg, self.m_RobPlayer)
+	PlayerManager:getSingleton():breakingNews(msg)
 end
 
 function BankRobbery:spawnGuards()
@@ -422,7 +422,7 @@ end
 
 function BankRobbery:statePeopleClickBag(player, bag)
 	local amount = math.floor(bag:getData("Money")/2)
-	PlayerManager:getSingleton():breakingNews(_("Das SAPD hat einen Geldsack sichergestellt!", player))
+	PlayerManager:getSingleton():breakingNews("Das SAPD hat einen Geldsack sichergestellt!")
 	player:sendInfo(_("Geldsack sichergestellt, es wurden %d$ in die Staatskasse gelegt!", player, amount))
 	FactionManager:getSingleton():getFromId(1):giveMoney(amount)
 	table.remove(self.m_MoneyBags, table.find(self.m_MoneyBags, bag))
@@ -554,7 +554,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 						outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
 
 						if self:getRemainingBagAmount() == 0 or getPedOccupiedVehicle(hitElement) == self.m_Truck then
-							PlayerManager:getSingleton():breakingNews(_("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!", hitElement))
+							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
 							source:destroy()
 							self:delete()
 						end

@@ -76,9 +76,10 @@ function PlayerManager:startPaydayDebug(player)
 	player:payDay()
 end
 
-function PlayerManager:breakingNews(text)
+function PlayerManager:breakingNews(text, ...)
 	for k, v in pairs(getElementsByType("player")) do
-		v:triggerEvent("breakingNews", text)
+		local textFinish = _(text, v, ...)
+		v:triggerEvent("breakingNews", textFinish)
 	end
 end
 

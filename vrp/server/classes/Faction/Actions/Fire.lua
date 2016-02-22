@@ -19,33 +19,45 @@ function Fire:constructor(fireTable)
 
 	self.m_DestroyFireFunc = bind(self.destroyFire, self)
 
-	PlayerManager:getSingleton():breakingNews(_(self.m_Message, getElementsByType("player")[1], self.m_PositionName))
+	PlayerManager:getSingleton():breakingNews(self.m_Message, self.m_PositionName)
 
 	addRemoteEvents{"requestFireDeletion"}
+	addEventHandler("requestFireDeletion", root, self.m_DestroyFireFunc)
 
 	for index, pos in pairs(self.m_FireTable) do
-		self:create(index, pos)
+		self:create(pos)
 	end
 
 end
 
-function Fire:create(index, pos)
+function Fire:create(pos)
 	local ped = createPed(0, pos)
 	ped:setFrozen(true)
 	ped:setAlpha(0)
-	table.insert(self.m_FirePeds, ped)
+	self.m_FirePeds[ped] = true
 	triggerClientEvent("createFire", ped)
-	addEventHandler("requestFireDeletion", ped, self.m_DestroyFireFunc)
-	return ped
 end
 
-function Fire:destroyFire(ped, destroyer)
+function Fire:getRemainingAmount()
+	local count = 0
+	for ped, bool in pairs(self.m_FirePeds) do
+		if bool == true and isElement(ped) then count = count + 1 end
+	end
+	return count
+end
+
+function Fire:destroyFire(ped)
 	if self.m_FirePeds[ped] then
-		triggerClientEvent("fireDestroy", resourceRoot, ped)
+		triggerClientEvent("destroyFire", resourceRoot, ped)
 		if isElement(ped) then
 			destroyElement(ped)
 		end
 		table.remove(self.m_FirePeds, table.find(self.m_FirePeds, ped))
+		local remainingFires = self:getRemainingAmount()
+		client:sendShortMessage(_("Flamme gelöscht! %d übrig!", client, remainingFires))
+		if remainingFires <= 0 then
+			PlayerManager:getSingleton():breakingNews("Das Rescue Team hat den Brand bei %s erfolgreich gelöscht!", self.m_PositionName)
+		end
 		return true
 	end
 	return false
