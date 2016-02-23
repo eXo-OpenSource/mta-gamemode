@@ -9,7 +9,7 @@ GUIButtonMenu = inherit(GUIForm)
 
 function GUIButtonMenu:constructor(text)
 	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(150/2), 300, 300)
-	self.m_Window = GUIWindow:new(0, 0 ,300 ,500 ,text , true, true, self)
+	self.m_Window = GUIWindow:new(0, 0 ,300 ,self.m_Height ,text , true, true, self)
 	self.m_Items   = {}
 	self.m_Element = nil
 end
@@ -20,10 +20,12 @@ function GUIButtonMenu:drawThis()
 end
 
 function GUIButtonMenu:addItem(text, color, callback)
-	self.m_Height = (#self.m_Items+1)*45+50
+	self.m_Height = (#self.m_Items+1)*55+120
+	self.m_Window:setSize(300, self.m_Height)
+	outputChatBox(self.m_Height)
 	local item
 	if callback then
-		item = GUIButton:new(30, 50 + #self.m_Items*45, self.m_Width - 60, 35, text, self)
+		item = GUIButton:new(30, 50 + #self.m_Items*55, self.m_Width - 60, 40, text, self)
 		item:setBackgroundColor(color):setFont(VRPFont(28)):setFontSize(1)
 		item.onLeftClick = function(item) callback(item, self.m_Element) delete(self) end
 	end

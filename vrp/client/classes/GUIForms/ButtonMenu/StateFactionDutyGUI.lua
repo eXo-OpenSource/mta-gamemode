@@ -42,7 +42,7 @@ function StateFactionDutyGUI:constructor(text)
 	)
 
 
-	--addEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
+	addEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
 	--self:refresh()
 end
 
