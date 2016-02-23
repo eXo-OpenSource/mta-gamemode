@@ -5,7 +5,8 @@ DrivingSchool.TypeNames = {["car"] = "Autoführerschein", ["bike"] = "Motorradsc
 function DrivingSchool:constructor()
     outputDebug(("[%s] Extra-class successfully loaded! (Id: %d)"):format(self:getName(), self:getId()))
     self:createDrivingSchoolMarker(Vector3(1362.04, -1663.74, 13.57))
-
+	self:createSchoolPed( Vector3( -2035.32, -117.65, 1035.17) )
+	
     self.m_CurrentLessions = {}
 
     InteriorEnterExit:new(Vector3(1364.14, -1669.00, 13.57), Vector3(-2026.87, -103.61, 1035.18), 0, 268, 3, 0, false)
@@ -63,6 +64,23 @@ function DrivingSchool:createDrivingSchoolMarker(pos)
                 hitElement:triggerEvent("showDrivingSchoolMenu",#self:getOnlinePlayers())
             end
             cancelEvent()
+        end
+    )
+end
+
+function DrivingSchool:createSchoolPed( pos )
+	outputChatBox("HERE")
+	self.m_DrivingSchoolPed = createPed(295, pos,-90 )
+	setElementInterior(self.m_DrivingSchoolPed, 3, pos)
+    addEventHandler("onElementClicked", self.m_DrivingSchoolPed,
+        function(button ,state ,player )
+			if button == "left" and state == "up" then 
+				if source == self.m_DrivingSchoolPed then
+					if not player.m_DrivingSchoolTheoryTest then 
+						player:triggerEvent("showDrivingSchoolTest")
+					end
+				end
+			end
         end
     )
 end
