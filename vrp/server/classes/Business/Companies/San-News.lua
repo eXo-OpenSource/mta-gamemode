@@ -8,7 +8,10 @@ function SanNews:constructor()
 
 	self.m_onInterviewColshapeLeaveFunc = bind(self.onInterviewColshapeLeave, self)
 	self.m_onPlayerChatFunc = bind(self.Event_onPlayerChat, self)
-	self.m_onPlayerQuitFunc = bind(self.Event_onPlayerQuit, self)
+
+	-- Register in Player Hooks
+	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
+	Player.getChatHook():register(bind(self.Event_onPlayerChat, self))
 
 	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview"}
 	addEventHandler("sanNewsStartInterview", root, bind(self.Event_startInterview, self))
@@ -58,10 +61,7 @@ end
 function SanNews:addInterviewPlayer(player)
 	table.insert(self.m_InterviewPlayer, player)
 	player:setPublicSync("inInterview", true)
-	addEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
-	addEventHandler("onPlayerChat", player, self.m_onPlayerChatFunc, true, "high")
 end
-
 
 function SanNews:Event_stopInterview(target)
 	if client:getCompany() == self then
@@ -96,23 +96,23 @@ end
 function SanNews:stopInterview()
 	for index, player in pairs(self.m_InterviewPlayer) do
 		player:setPublicSync("inInterview", false)
-		removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
-		removeEventHandler("onPlayerChat", player, self.m_onPlayerChatFunc, true, "high")
 	end
 	self.m_isInterview = false
 	self.m_InterviewPlayer = {}
 	self.m_InterviewColshape:destroy()
 end
 
-function SanNews:Event_onPlayerChat(text, type)
+function SanNews:Event_onPlayerChat(player, text, type)
 	if type == 0 then
-		if table.find(self.m_InterviewPlayer, source) then
-			if source:getCompany() == self and source:isCompanyDuty() then
-				outputChatBox(_("#FE8D14Reporter %s:#FEDD42 %s", source, source.name, text), root, 255, 200, 20, true)
-			else
-				outputChatBox(_("#FE8D14[Interview] %s:#FEDD42 %s", source, source.name, text), root, 255, 200, 20, true)
+		if table.find(self.m_InterviewPlayer, player) then
+			if text:sub(1, 2):lower() ~= "@l" then
+				if player:getCompany() == self and player:isCompanyDuty() then
+					outputChatBox(_("#FE8D14Reporter %s:#FEDD42 %s", player, player.name, text), root, 255, 200, 20, true)
+				else
+					outputChatBox(_("#FE8D14[Interview] %s:#FEDD42 %s", player, player.name, text), root, 255, 200, 20, true)
+				end
+				return true
 			end
-			cancelEvent()
 		end
 	end
 end

@@ -65,7 +65,7 @@ function FactionState:getOnlinePlayers()
 end
 
 function FactionState:onBarrierGateHit(player)
-    if not player:getFaction():isStateFaction() then
+    if not player:getFaction() or not player:getFaction():isStateFaction() then
         player:sendError(_("Zufahrt Verboten!", player))
         return false
     end

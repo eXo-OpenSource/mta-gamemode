@@ -310,8 +310,6 @@
 	<script src="client/classes/GUI/MessageBoxes/SuccessBox.lua" type="client"/>
 	<script src="client/classes/GUI/MessageBoxes/ShortMessage.lua" type="client"/>
 
-	<script src="client/classes/GUI/GUIBreakingNews.lua" type="client"/>
-
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPButton.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
@@ -391,6 +389,7 @@
 	<script src="client/classes/GUIForms/FactionMoneyBagHoverGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StateFactionArrestGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/BreakingNews.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>

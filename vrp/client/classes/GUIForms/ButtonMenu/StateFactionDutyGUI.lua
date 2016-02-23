@@ -9,56 +9,48 @@ StateFactionDutyGUI = inherit(GUIButtonMenu)
 
 addRemoteEvents{"showStateFactionDutyGUI","updateStateFactionDutyGUI"}
 
-function StateFactionDutyGUI:constructor(duty, swat)
-	GUIButtonMenu.constructor(self, "Fraktion Duty Menü")
+function StateFactionDutyGUI:constructor()
+	GUIButtonMenu.constructor(self, "SAPD Duty Menü")
 
-	self.m_Duty = self:addItem(_"In den Dienst gehen",Color.Green ,
-		function()
-			triggerServerEvent("factionStateToggleDuty", localPlayer)
-		end
-	)
+	-- Add the Items
+	self:addItems()
 
-	self.m_Rearm = self:addItem(_"Neu ausrüsten",Color.Green ,
-		function()
-			triggerServerEvent("factionStateRearm", localPlayer)
-		end
-	)
-
-	self.m_Swat = self:addItem(_"Zum Swat-Modus wechseln",Color.Blue ,
-		function()
-			triggerServerEvent("factionStateSwat", localPlayer)
-		end
-	)
-
-	self.m_SkinChange = self:addItem(_"Skin wechseln",Color.Blue ,
-		function()
-			triggerServerEvent("factionStateChangeSkin", localPlayer)
-		end
-	)
-
+	-- Events
 	addEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
 end
 
-function StateFactionDutyGUI:Event_updateStateFactionDutyGUI(duty,swat)
-
-
-	if duty == true then
-		self.m_Rearm:setEnabled(true)
-		self.m_Swat:setEnabled(true)
-		self.m_SkinChange:setEnabled(true)
-		self.m_Duty:setBackgroundColor(Color.Red)
-		self.m_Duty:setText("Dienst beenden")
+function StateFactionDutyGUI:addItems()
+	if localPlayer:getPublicSync("Faction:Duty") then
+		self:addItem(_"Dienst beenden", Color.Green, bind(self.itemCallback, self, 1))
+		self:addItem(_"Neu ausrüsten", Color.Green, bind(self.itemCallback, self, 2))
+		self.m_Swat = self:addItem(_"Zum Swat-Modus wechseln",Color.Blue, bind(self.itemCallback, self, 3))
+		self:addItem(_"Skin wechseln", Color.Blue, bind(self.itemCallback, self, 4))
 	else
-		self.m_Rearm:setEnabled(false)
-		self.m_Swat:setEnabled(false)
-		self.m_SkinChange:setEnabled(false)
-		self.m_Duty:setBackgroundColor(Color.Green)
-		self.m_Duty:setText("In den Dienst gehen")
+		self:addItem(_"In den Dienst gehen", Color.Green, bind(self.itemCallback, self, 1))
 	end
-	if swat == true then
-		self.m_Swat:setText("Swat-Modus beenden")
-	else
-		self.m_Swat:setText("Zum Swat-Modus wechseln")
+	self:addItem(_"Schließen", Color.Red, bind(self.itemCallback, self))
+end
+
+function StateFactionDutyGUI:itemCallback(type)
+	if type == 1 then
+		triggerServerEvent("factionStateToggleDuty", localPlayer)
+	elseif type == 2 then
+		triggerServerEvent("factionStateRearm", localPlayer)
+	elseif type == 3 then
+		triggerServerEvent("factionStateSwat", localPlayer)
+	elseif type == 4 then
+		triggerServerEvent("factionStateChangeSkin", localPlayer)
+	end
+	self:close()
+end
+
+function StateFactionDutyGUI:Event_updateStateFactionDutyGUI(duty, swat)
+	if self.m_Swat then
+		if swat == true then
+			self.m_Swat:setText(_"Swat-Modus beenden")
+		else
+			self.m_Swat:setText(_"Zum Swat-Modus wechseln")
+		end
 	end
 end
 

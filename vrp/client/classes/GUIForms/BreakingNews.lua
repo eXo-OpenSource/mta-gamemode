@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/GUI/GUIBreakingNews.lua
+-- *  FILE:        client/classes/GUIForms/BreakingNews.lua
 -- *  PURPOSE:     Breaking News class
 -- *
 -- ****************************************************************************
@@ -28,7 +28,7 @@ function BreakingNews:FadeOut()
 	setTimer(function() delete(self) end, 750, 1)
 end
 
-addEvent("breakingNews",true)
+addEvent("breakingNews", true)
 addEventHandler("breakingNews", root, function(...)
 	if BreakingNews:isInstantiated() then delete(BreakingNews:getSingleton()) end
 	BreakingNews:new(...)

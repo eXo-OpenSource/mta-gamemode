@@ -18,7 +18,6 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
 	addEventHandler("onPlayerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
-
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
 	addEventHandler("playerReady", root, bind(self.Event_playerReady, self))
 	addEventHandler("playerSendMoney", root, bind(self.Event_playerSendMoney, self))
@@ -155,6 +154,16 @@ function PlayerManager:playerWasted()
 end
 
 function PlayerManager:playerChat(message, messageType)
+	if Player.getChatHook():call(source, message, messageType) then
+		cancelEvent()
+		return
+	end
+
+	-- Look for special Chars (e.g. '@l': Local Chat, at Interview)
+	if message:sub(1, 2):lower() == "@l" then
+		message = message:sub(3, #message)
+	end
+
 	if messageType == 0 then
 		local phonePartner = source:getPhonePartner()
 		if not phonePartner then

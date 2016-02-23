@@ -8,7 +8,10 @@
 Player = inherit(MTAElement)
 inherit(DatabasePlayer, Player)
 registerElementClass("player", Player)
+
+-- Create Hooks
 Player.ms_QuitHook = Hook:new()
+Player.ms_ChatHook = Hook:new()
 
 addEvent("introFinished", true)
 addEventHandler("introFinished", root, function()
@@ -29,6 +32,7 @@ function Player:constructor()
 	self.m_LastGotWantedLevelTime = 0
 	self.m_JoinTime = getTickCount()
 	self.m_Crimes = {}
+	self.m_LastPlayTime = 0
 	self:destroyChatColShapes( )
 	self:createChatColshapes( )
 
@@ -534,6 +538,10 @@ end
 
 function Player.getQuitHook()
 	return Player.ms_QuitHook
+end
+
+function Player.getChatHook()
+	return Player.ms_ChatHook
 end
 
 function Player:givePoints(p) -- Overriden

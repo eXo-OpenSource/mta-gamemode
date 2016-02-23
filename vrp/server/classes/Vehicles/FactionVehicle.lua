@@ -15,14 +15,19 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 
 	self:setHealth(health)
 	if color then
-	local a, r, g, b = getBytesInInt32(color)
-	setVehicleColor(self, r, g, b)
+		local a, r, g, b = getBytesInInt32(color)
+		if factionColors[self.m_Faction:getId()] then
+			local fR, fB, fG = factionColors[self.m_Faction:getId()].r, factionColors[self.m_Faction:getId()].b, factionColors[self.m_Faction:getId()].g
+			setVehicleColor(self, r, g, b, fR, fG, fB)
+		else
+			setVehicleColor(self, r, g, b)
+		end
 	end
 
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
 	end
-	
+
     addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
     addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
 
@@ -44,9 +49,9 @@ end
 function FactionVehicle:onStartEnter(player,seat)
 	if seat == 0 then
 		if player:getFaction() == self.m_Faction then
-			
+
 		elseif player:getFaction():isStateFaction() == true	and self.m_Faction:isStateFaction() == true then
-			
+
 		else
 			cancelEvent()
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
@@ -56,7 +61,7 @@ end
 
 function FactionVehicle:onEnter(player)
 	if player:getFaction() == source.m_Faction then
-		
+
 	end
 end
 
@@ -90,8 +95,8 @@ function FactionVehicle:save()
 	local color = setBytesInInt32(255, r, g, b) -- Format: argb
 	local tunings = getVehicleUpgrades(self) or {}
 
-	return sql:queryExec("UPDATE ??_faction_vehicles SET Faction = ?, Mileage = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Faction:getId(), self:getMileage(), self.m_Id)
+	return sql:queryExec("UPDATE ??_faction_vehicles SET Faction = ?, Mileage = ?, Color = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Faction:getId(), self:getMileage(), color, self.m_Id)
 end
 
 function FactionVehicle:hasKey(player)
