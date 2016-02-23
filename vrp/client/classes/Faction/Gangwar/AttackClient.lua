@@ -15,7 +15,45 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	self.m_Participants = pParticipants 
 	self.m_Disqualified = pDisqualified
 	localPlayer.attackSession = self 
+	self.m_GangwarDamage = 0
+	self.m_GangwarKill = 0
 	self.m_Display = GangwarDisplay:new( faction1, faction2, self )
+	self.m_DamageFunc = bind( self.addDamage, self)
+	addEventHandler("onClientPlayerDamage",root, self.m_DamageFunc)
+	self.m_KillFunc = bind( self.addKill, self)
+	addEventHandler("onClientPlayerWasted",root, self.m_KillFunc)
+end
+
+function AttackClient:addDamage( attacker, weapon, bodypart, loss )
+	if source ~= localPlayer then 
+		local facSource = source:getFaction()
+		local facAttacker = attacker:getFaction()
+		if facSource ~= facAttacker then 
+			if facSource == self.m_Faction or facSource == self.m_Faction2 then 
+				if facAttacker == self.m_Faction or facAttacker == self.m_Faction2 then 
+					if attacker == localPlayer then 
+						localPlayer.m_GangwarDamage = localPlayer.m_GangwarDamage + loss
+					end
+				end
+			end
+		end
+	end
+end
+
+function AttackClient:addKill( attacker, weapon, bodypart)
+	if source ~= localPlayer then 
+		local facSource = source:getFaction()
+		local facAttacker = attacker:getFaction()
+		if facSource ~= facAttacker then 
+			if facSource == self.m_Faction or facSource == self.m_Faction2 then 
+				if facAttacker == self.m_Faction or facAttacker == self.m_Faction2 then 
+					if attacker == localPlayer then 
+						localPlayer.m_GangwarKill = localPlayer.m_GangwarKill + 1
+					end
+				end
+			end
+		end
+	end
 end
 
 function AttackClient:destructor() 
