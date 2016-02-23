@@ -46,9 +46,9 @@ function FactionManager:constructor()
 
 
 
-	FactionState:getSingleton():new()
-	FactionRescue:getSingleton():new()
-	FactionEvil:getSingleton():new(self.EvilFactions)
+	FactionState:new()
+	FactionRescue:new()
+	FactionEvil:new(self.EvilFactions)
 end
 
 function FactionManager:destructor()

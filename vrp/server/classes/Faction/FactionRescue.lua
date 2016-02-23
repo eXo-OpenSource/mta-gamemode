@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 FactionRescue = inherit(Singleton)
-addRemoteEvents{"factionRescueToggleDuty"}
+addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer"}
 
 function FactionRescue:constructor()
 	-- Duty Pickup
@@ -21,7 +21,9 @@ function FactionRescue:constructor()
 
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
-
+	addEventHandler("factionRescueHealPlayerQuestion", root, bind(self.Event_healPlayerQuestion, self))
+	addEventHandler("factionRescueDiscardHealPlayer", root, bind(self.Event_discardHealPlayer, self))
+	addEventHandler("factionRescueHealPlayer", root, bind(self.Event_healPlayer, self))
 
 	outputDebug("Faction Rescue loaded")
 end
@@ -137,4 +139,46 @@ function FactionRescue:Event_OnPlayerWasted(player)
 	end
 
 	return false
+end
+
+function FactionRescue:Event_healPlayerQuestion(target)
+	if isElement(target) then
+		if target:getHealth() < 100 then
+			local costs = math.floor(100-target:getHealth())
+			target:triggerEvent("questionBox", _("Der Medic %s bietet Ihnen eine Heilung an! \nDiese kostet %d$! Annehmen?", target, client.name, costs), "factionRescueHealPlayer", "factionRescueDiscardHealPlayer", client, target)
+		else
+			client:sendError(_("Der Spieler hat volles Leben!", client))
+		end
+	else
+		client:sendError(_("Interner Fehler: Argumente falsch @FactionRescue:Event_healPlayerQuestion!", client))
+	end
+end
+
+function FactionRescue:Event_discardHealPlayer(medic, target)
+    medic:sendError(_("Der Spieler %s hat die Heilung abgelehnt!", medic, target.name))
+    target:sendError(_("Du hast die Heilung mit %s abgelehnt!", target, medic.name))
+end
+
+function FactionRescue:Event_healPlayer(medic, target)
+	if isElement(target) then
+		if target:getHealth() < 100 then
+
+			local costs = math.floor(100-target:getHealth())
+			if target:getMoney() >= costs then
+				medic:sendInfo(_("Du hast den Spieler %s für %d$ geheilt!", medic, target.name, costs ))
+				target:sendInfo(_("Du wurdest von medic %s für %d$ geheilt!", target, medic.name, costs ))
+				target:setHealth(100)
+				target:takeMoney(costs)
+				self.m_Faction:setMoney(self.m_Faction:getMoney() + costs)
+			else
+				medic:sendError(_("Der Spieler hat nicht genug Geld! (%d$)", medic, costs))
+				target:sendError(_("Du hast nicht genug Geld! (%d$)", target, costs))
+
+			end
+		else
+			medic:sendError(_("Der Spieler hat volles Leben!", medic))
+		end
+	else
+		medic:sendError(_("Interner Fehler: Argumente falsch @FactionRescue:Event_healPlayer!", medic))
+	end
 end
