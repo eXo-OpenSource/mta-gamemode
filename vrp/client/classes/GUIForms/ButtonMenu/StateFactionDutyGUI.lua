@@ -9,41 +9,34 @@ StateFactionDutyGUI = inherit(GUIButtonMenu)
 
 addRemoteEvents{"showStateFactionDutyGUI","updateStateFactionDutyGUI"}
 
-function StateFactionDutyGUI:constructor(text)
-	GUIButtonMenu.constructor(self, text) -- height doesn't matter as it will be set automatically
-	self:addItem(_"In den Dienst gehen",Color.Green ,
+function StateFactionDutyGUI:constructor(duty, swat)
+	GUIButtonMenu.constructor(self, "Fraktion Duty Menü")
+
+	self.m_Duty = self:addItem(_"In den Dienst gehen",Color.Green ,
 		function()
 			triggerServerEvent("factionStateToggleDuty", localPlayer)
 		end
 	)
 
-	self:addItem(_"Neu ausrüsten",Color.Green ,
+	self.m_Rearm = self:addItem(_"Neu ausrüsten",Color.Green ,
 		function()
 			triggerServerEvent("factionStateRearm", localPlayer)
 		end
 	)
 
-	self:addItem(_"Zum Swat-Modus wechseln",Color.Blue ,
+	self.m_Swat = self:addItem(_"Zum Swat-Modus wechseln",Color.Blue ,
 		function()
 			triggerServerEvent("factionStateSwat", localPlayer)
 		end
 	)
 
-	self:addItem(_"Skin wechseln",Color.Blue ,
+	self.m_SkinChange = self:addItem(_"Skin wechseln",Color.Blue ,
 		function()
 			triggerServerEvent("factionStateChangeSkin", localPlayer)
 		end
 	)
 
-	self:addItem(_"Schließen",Color.Red ,
-		function()
-			self:close()
-		end
-	)
-
-
 	addEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
-	--self:refresh()
 end
 
 function StateFactionDutyGUI:Event_updateStateFactionDutyGUI(duty,swat)
@@ -71,22 +64,6 @@ end
 
 addEventHandler("showStateFactionDutyGUI", root,
 		function()
-			StateFactionDutyGUI:new("Fraktion Duty Menü")
+			StateFactionDutyGUI:new()
 		end
 	)
-
-
-function StateFactionDutyGUI:onShow()
-	Cursor:show()
-end
-
-function StateFactionDutyGUI:onHide()
-	Cursor:hide()
-end
-
-
-function StateFactionDutyGUI:hide()
-	GUIForm.hide(self)
-
-	removeEventHandler("updateStateFactionDutyGUI", root, bind(self.Event_updateStateFactionDutyGUI, self))
-end
