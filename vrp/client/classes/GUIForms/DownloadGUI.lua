@@ -4,7 +4,7 @@ inherit(Singleton, DownloadGUI)
 function DownloadGUI:constructor()
 	GUIForm.constructor(self, 0, 0, screenWidth, screenHeight)
 
-	self.m_Logo = GUIImage:new(screenWidth/2 - 250/2, screenHeight/2 - 250/2 - 120, 250, 250, "files/images/Logo.png", self)
+	self.m_Logo = GUIImage:new(screenWidth/2 - 350/2, screenHeight/2 - 200/2 - 120, 350, 200, "files/images/Logo.png", self)
 	self.m_Text = GUILabel:new(0, screenHeight/2 - 150/2 + 50, screenWidth, 50, "Bitte warte, bis die erforderlichen Spielinhalte bereit sind...", self):setAlignX("center"):setFont(VRPFont(40))
 	if screenWidth < 1024 then
 		self.m_ResolutionWarning = GUILabel:new(0, screenHeight - 200, screenWidth, 20, "Bitte erhöhe deine Auflösung, um Darstellungsfehler zu vermeiden!", self):setAlignX("center"):setFont(VRPFont(30)):setColor(Color.Red)
@@ -14,7 +14,7 @@ function DownloadGUI:constructor()
 	self.m_ProgressBar = GUIProgressBar:new(screenWidth/2 - 500/2, screenHeight/2 - 150/2 + 110, 500, 30, self)
 
 	fadeCamera(false) -- freeroam hack | todo: Remove when freeroam is no longer required
-	self:setStateText("Lade Datenarchiv: vrp.data...")
+	self:setStateText("Lade Datenarchiv: exo.data...")
 
 	setTimer(bind(DownloadGUI.launchMusic, self), 150, 1)
 end
@@ -53,7 +53,7 @@ function DownloadGUI:onProgress(p, fullSize)
 	outputConsole("FullSize: "..tostring(fullSize))
 
 	local downloadedSize = (tonumber(p) or 0)*(fullSize/100)
-	self:setStateText(("Lade Datenarchiv: vrp.data... (%.2fMB/%.2fMB)"):format(downloadedSize/1024/1024, fullSize/1024/1024))
+	self:setStateText(("Lade Datenarchiv: exo.data... (%.2fMB/%.2fMB)"):format(downloadedSize/1024/1024, fullSize/1024/1024))
 
 	fadeCamera(false) -- freeroam hack | todo: Remove when freeroam is no longer required
 end

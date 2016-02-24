@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 FactionRescue = inherit(Singleton)
-addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer"}
+addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer", "factionRescueGetStretcher", "factionRescueRemoveStretcher"}
 
 function FactionRescue:constructor()
 	-- Duty Pickup
@@ -14,7 +14,7 @@ function FactionRescue:constructor()
 
 	-- Barriers
 	VehicleBarrier:new(Vector3(1743.09, -1742.30, 13.30), Vector3(0, 90, -180)).onBarrierHit = bind(self.onBarrierHit, self)
-	VehicleBarrier:new(Vector3(1740.59, -1807.80, 13.39), Vector3(0, 0, -15.75)).onBarrierHit = bind(self.onBarrierHit, self)
+	VehicleBarrier:new(Vector3(1740.59, -1807.80, 13.39), Vector3(0, 90, -15.75)).onBarrierHit = bind(self.onBarrierHit, self)
 
 	-- Register in Player Hook
 	PlayerManager:getSingleton():getWastedHook():register(bind(self.Event_OnPlayerWasted, self))
@@ -24,6 +24,9 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueHealPlayerQuestion", root, bind(self.Event_healPlayerQuestion, self))
 	addEventHandler("factionRescueDiscardHealPlayer", root, bind(self.Event_discardHealPlayer, self))
 	addEventHandler("factionRescueHealPlayer", root, bind(self.Event_healPlayer, self))
+	addEventHandler("factionRescueGetStretcher", root, bind(self.Event_GetStretcher, self))
+	addEventHandler("factionRescueRemoveStretcher", root, bind(self.Event_RemoveStretcher, self))
+
 
 	outputDebug("Faction Rescue loaded")
 end
@@ -107,6 +110,141 @@ function FactionRescue:Event_toggleDuty(type)
 end
 
 -- Death System
+function FactionRescue:Event_GetStretcher()
+	local faction = FactionManager:getSingleton():getFromId(4)
+	if client:getFaction() == faction then
+		-- Check for the correct Vehicle
+		if client.m_RescueStretcher then
+			if client.m_RescueStretcher.m_Vehicle ~= source then
+				client:sendError(_("Deine Trage befindet sich in einem anderen Fahrzeug!", client))
+				return
+			end
+		end
+
+		local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
+		outputDebug(distance)
+		if distance >= 2.5 and distance <= 4 then
+			-- Open the doors
+			source:setDoorState(4, 0)
+			source:setDoorState(5, 0)
+			source:setDoorOpenRatio(4, 1)
+			source:setDoorOpenRatio(5, 1)
+
+			-- Create the Stretcher
+			if not client.m_RescueStretcher then
+				client.m_RescueStretcher = createObject(2146, source:getPosition() + source.matrix.forward*-3, source:getRotation())
+				client.m_RescueStretcher:setCollisionsEnabled(false)
+				client.m_RescueStretcher.m_Vehicle = source
+			end
+
+			-- Move the Stretcher to the Player
+			client.m_RescueStretcher:detach()
+			moveObject(client.m_RescueStretcher, 3000, client:getPosition() + client.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, client:getRotation().z - source:getRotation().z), "InOutQuad")
+			client:setFrozen(true)
+
+			setTimer(
+				function (client)
+					client.m_RescueStretcher:attach(client, Vector3(0, 1.4, -0.5))
+					client:toggleControlsWhileObjectAttached(false)
+					client:setFrozen(false)
+				end, 3000, 1, client
+			)
+		else
+			client:sendWarning(_("Die Trage kann in dieser Position nicht ausgeladen werden!", client))
+			local tempMarker = createMarker(source:getPosition() + source.matrix.forward*-7.5, "corona", 1)
+			setTimer(
+				function ()
+					tempMarker:destroy()
+				end, 5000, 1
+			)
+		end
+	end
+end
+
+function FactionRescue:Event_RemoveStretcher()
+	local faction = FactionManager:getSingleton():getFromId(4)
+	if client:getFaction() == faction then
+		if client.m_RescueStretcher and client.m_RescueStretcher.m_Vehicle == source then
+			local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
+			if distance >= 2.5 and distance <= 4 then
+				-- Move it into the Vehicle
+				client.m_RescueStretcher:detach()
+				client.m_RescueStretcher:setRotation(client:getRotation())
+				client.m_RescueStretcher:setPosition(client:getPosition() + client.matrix.forward*1.4 + Vector3(0, 0, -0.5))
+				moveObject(client.m_RescueStretcher, 3000, source:getPosition() + source.matrix.forward*-2, Vector3(0, 0, source:getRotation().z - client:getRotation().z), "InOutQuad")
+
+				-- Enable Controls
+				client:toggleControlsWhileObjectAttached(true)
+
+				setTimer(
+					function(source, client)
+						-- Close the doors
+						source:setDoorOpenRatio(4, 0)
+						source:setDoorOpenRatio(5, 0)
+
+						client.m_RescueStretcher:destroy()
+						client.m_RescueStretcher = nil
+					end, 3000, 1, source, client
+				)
+			else
+				client:sendWarning(_("Die Trage kann in dieser Position nicht ausgeladen werden!", client))
+				local tempMarker = createMarker(source:getPosition() + source.matrix.forward*-7.5, "corona", 1)
+				setTimer(
+					function ()
+						tempMarker:destroy()
+					end, 5000, 1
+				)
+			end
+		else
+			client:sendError(_("In dieses Fahrzeug kannst du die Trage nicht einladen!", client))
+		end
+	end
+end
+
+--[[ Very buggy, i don't know why? TODO!
+function FactionRescue:Event_RemoveStretcher()
+	local faction = FactionManager:getSingleton():getFromId(4)
+	if client:getFaction() == faction then
+		if client.m_RescueStretcher and client.m_RescueStretcher.m_Vehicle == source then
+			local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
+			if distance >= 2.5 and distance <= 4 then
+				-- Move it into the Vehicle
+				client.m_RescueStretcher:setPosition(client:getPosition() + Vector3(0, 1.4, -0.5))
+				client.m_RescueStretcher:setRotation(client:getRotation())
+				client.m_RescueStretcher:detach()
+				moveObject(client.m_RescueStretcher, 3000, source:getPosition() + source.matrix.forward*-2, 0, 0, 0, "InOutQuad")
+
+				-- Enable Controls
+				client:toggleControlsWhileObjectAttached(true)
+
+				setTimer(
+					function(source, client)
+						-- Close the doors
+						source:setDoorOpenRatio(4, 0)
+						source:setDoorOpenRatio(5, 0)
+
+						-- Attach to the Vehicle
+						client.m_RescueStretcher:setPosition(source:getPosition() + source.matrix.forward*-2)
+						client.m_RescueStretcher:setRotation(source:getRotation())
+						outputDebug(client.m_RescueStretcher:attach(source, source:getPosition() + source.matrix.forward*-2))
+					end, 3000, 1, source, client
+				)
+			else
+				client:sendWarning(_("Die Trage kann in dieser Position nicht ausgeladen werden!", client))
+				local tempMarker = createMarker(source:getPosition() + source.matrix.forward*-7.5, "corona", 1)
+				setTimer(
+					function ()
+						tempMarker:destroy()
+					end, 5000, 1
+				)
+			end
+		else
+			client:sendError(_("In dieses Fahrzeug kannst du die Trage nicht einladen!", client))
+		end
+	end
+end
+--]]
+
 function FactionRescue:createDeathPickup(player)
 	player.m_DeathPickup = Pickup(player:getPosition(), 3, 1254, 0)
 	addEventHandler("onPickupHit", player.m_DeathPickup,

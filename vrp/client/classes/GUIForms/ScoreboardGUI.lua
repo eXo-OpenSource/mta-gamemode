@@ -12,7 +12,7 @@ function ScoreboardGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.25 / ASPECT_RATIO_MULTIPLIER, screenHeight/2-screenHeight*0.3, screenWidth*0.5, screenHeight*0.6)
 
 	self.m_Rect = GUIRoundedRect:new(0, 0, self.m_Width, self.m_Height, self)
-	self.m_Logo = GUIImage:new(self.m_Width/2-self.m_Width*0.25*0.5, -self.m_Width*0.03, self.m_Width*0.25, self.m_Width*0.25, "files/images/Logo.png", self.m_Rect)
+	self.m_Logo = GUIImage:new(self.m_Width/2-self.m_Width*0.25*0.5, self.m_Height*0.005, self.m_Width*0.275, self.m_Width*0.18, "files/images/LogoNoFont.png", self.m_Rect)
 
 	self.m_Grid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.27, self.m_Width*0.9, self.m_Height*0.75, self.m_Rect)
 	self.m_Grid:setColor(Color.Clear)
