@@ -17,13 +17,14 @@ function DrivingSchool:constructor()
 
     self.m_OnQuit = bind(self.Event_onQuit,self)
 
-    addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand"}
+    addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand","drivingSchoolPassTheory"}
     addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))
     addEventHandler("drivingSchoolDiscardLession", root, bind(self.Event_discardLession, self))
     addEventHandler("drivingSchoolstartLessionQuestion", root, bind(self.Event_startLessionQuestion, self))
     addEventHandler("drivingSchoolStartLession", root, bind(self.Event_startLession, self))
     addEventHandler("drivingSchoolEndLession", root, bind(self.Event_endLession, self))
     addEventHandler("drivingSchoolReceiveTurnCommand", root, bind(self.Event_receiveTurnCommand, self))
+	addEventHandler("drivingSchoolPassTheory", root, bind(self.Event_passTheory, self))
 end
 
 function DrivingSchool:destructor()
@@ -69,15 +70,18 @@ function DrivingSchool:createDrivingSchoolMarker(pos)
 end
 
 function DrivingSchool:createSchoolPed( pos )
-	outputChatBox("HERE")
 	self.m_DrivingSchoolPed = createPed(295, pos,-90 )
 	setElementInterior(self.m_DrivingSchoolPed, 3, pos)
     addEventHandler("onElementClicked", self.m_DrivingSchoolPed,
         function(button ,state ,player )
 			if button == "left" and state == "up" then 
 				if source == self.m_DrivingSchoolPed then
-					if not player.m_DrivingSchoolTheoryTest then 
-						player:triggerEvent("showDrivingSchoolTest")
+						if not player.m_HasCarTheory then 
+						if player.money >= 300 then 
+							player:triggerEvent("showDrivingSchoolTest")
+						else player:sendError("Du hast nicht genug Geld ( Kosten: 300)!")
+						end
+					else player:sendError("Du hast bereits die Theorieprüfung bestanden!")
 					end
 				end
 			end
@@ -99,7 +103,7 @@ end
 
 function DrivingSchool:checkPlayerLicense(player, type)
     if type == "car" then
-        return player.m_HasDrivingLicense
+        return player.m_HasDrivingLicense 
     elseif type == "bike" then
         return player.m_HasBikeLicense
     elseif type == "truck" then
@@ -129,6 +133,11 @@ function DrivingSchool:Event_startLessionQuestion(target, type)
     local costs = DrivingSchool.LicenseCosts[type]
     if costs and target then
         if self:checkPlayerLicense(target, type) == false then
+			if type == "car" then 
+				if not target.m_HasCarTheory then 
+					return client:sendError(_("Der Spieler %s muss erst die theoretische Fahrprüfung bestehen!", client, target.name))
+				end
+			end
             if target:getMoney() >= costs then
                 if not target:getPublicSync("inDrivingLession") == true then
                     if not self.m_CurrentLessions[client] then
@@ -238,4 +247,9 @@ function DrivingSchool:Event_receiveTurnCommand(turnCommand)
     if target then
         target:triggerEvent("drivingSchoolChangeDirection", turnCommand)
     end
+end
+
+function DrivingSchool:Event_passTheory( )
+	source.m_HasCarTheory = true
+	source:sendInfo(_("Gehe nun zur praktischen Prüfung!",client )
 end
