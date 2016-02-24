@@ -220,7 +220,7 @@ function DrivingSchool:Event_onQuit()
         lession["instructor"]:sendError(_("Der Fahrschüler %s ist offline gegangen!",lession["instructor"], source.name))
     else
     end
-end
+end 
 
 function DrivingSchool:Event_endLession(target, success, clientServer)
     if not client and clientServer then client = clientServer end
@@ -251,5 +251,5 @@ end
 
 function DrivingSchool:Event_passTheory( )
 	source.m_HasCarTheory = true
-	source:sendInfo(_("Gehe nun zur praktischen Prüfung!",client )
+	source:sendInfo(_("Gehe nun zur praktischen Prüfung!",client ))
 end

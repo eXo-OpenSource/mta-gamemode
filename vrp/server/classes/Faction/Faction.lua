@@ -268,6 +268,12 @@ function Faction:sendMessage(text, r, g, b, ...)
 	end
 end
 
+function Faction:sendShortMessage(text, ...)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendShortMessage(("%s:\n%s"):format(self:getName(), text), ...)
+	end
+end
+
 function Faction:sendChatMessage(sourcePlayer,text)
 	local playerId = sourcePlayer:getId()
 	local rank = self.m_Players[playerId]

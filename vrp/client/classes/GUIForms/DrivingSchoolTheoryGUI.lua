@@ -26,7 +26,7 @@ local QUESTIONS =
 	{"Was gilt bei einem Stopp-Schild?","an der Sichtlinie halten","Durchfahren sofern keiner Sie behindert","An der Haltelinie komplett anhalten","Nicht an der Haltelinie halten wenn die Straße frei ist",4,3},
 	{"Wozu dienen Blinker?","Zur Beleuchtung des Fahrzeuges","Als Indikatoren der Fahrtrichtung","Als Sirene",nil,4,2},
 }
-
+ 
 function DrivingSchoolTheoryGUI:constructor(type)
 	GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2 - height/2, width,height, false)
 	GUIRectangle:new(0, 0, self.m_Width,self.m_Height, tocolor(200,200,200,200), self)

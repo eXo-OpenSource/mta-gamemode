@@ -33,6 +33,15 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
+	if localPlayer:getFactionId() == 4 and localPlayer:getPublicSync("Faction:Duty") == true then
+		self:addItem(_"Medic: heilen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("factionRescueHealPlayerQuestion", localPlayer, self:getElement())
+				end
+			end
+		)
+	end
 	if localPlayer:getCompanyId() == 1 and localPlayer:getPublicSync("Company:Duty") == true then
 		if not element:getPublicSync("inDrivingLession") then
 			self:addItem(_"Fahrschule: Prüfung starten",
