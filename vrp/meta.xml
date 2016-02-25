@@ -519,7 +519,9 @@
 	<vrpfile src="files/images/MessageBoxes/Warning.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Error.png" onDemand="false"/>
 	<vrpfile src="files/images/MessageBoxes/Success.png" onDemand="false"/>
-	<vrpfile src="files/images/Phone/Phone.png"/>
+	<vrpfile src="files/images/Phone/AndroidPhone.png"/>
+	<vrpfile src="files/images/Phone/iPhone.png"/>
+
 	<vrpfile src="files/images/Phone/Apps/IconHelloWorld.png"/>
 	<vrpfile src="files/images/Phone/Apps/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps/IconMessage.png"/>

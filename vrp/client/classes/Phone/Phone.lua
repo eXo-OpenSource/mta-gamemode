@@ -9,7 +9,7 @@ Phone = inherit(GUIForm)
 inherit(Singleton, Phone)
 
 function Phone:constructor()
-	GUIForm.constructor(self, screenWidth-270, screenHeight-500, 250, 490)
+	GUIForm.constructor(self, screenWidth-310, screenHeight-620, 295, 600)
 
 	self.m_Apps = {}
 	self.m_CurrentApp = false
@@ -24,31 +24,36 @@ function Phone:constructor()
 	self:registerApp(PhoneApp.makeWebApp("YouTube", "files/images/Phone/Apps/IconYouTube.png", "https://youtube.com/tv", false))
 	self:registerApp(PhoneApp.makeWebApp("Nachrichten", "files/images/Phone/Apps/IconMessage.png", "http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player="..localPlayer:getName(), false))
 
+	local phone = "Android-Phone"
+	if core:get("Phone", "Phone") then
+		phone = core:get("Phone", "Phone")
+	end
+
 	-- Add GUI elements
-	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/Phone.png", self)
+	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/"..phone:gsub("-", "")..".png", self)
 
 	-- Create app icons
-	self.m_IconSurface = GUIElement:new(14, 41, 222, 391, self)
+	self.m_IconSurface = GUIElement:new(17, 71, 260, 460, self)
 	for k, app in ipairs(self.m_Apps) do
 		local column, row = (k-1)%4, math.floor((k-1)/4)
 
 		-- Create app icon
-		local appIcon = GUIImage:new(5+54*column, 9+75*row, 52, 52, app:getIconPath(), self.m_IconSurface)
+		local appIcon = GUIImage:new(5+65*column, 9+75*row, 52, 52, app:getIconPath(), self.m_IconSurface)
 
 		-- Create app label
-		local appLabel = GUILabel:new(5+54*column, 62+75*row, 52, 20, app:getName(), self.m_IconSurface)
+		local appLabel = GUILabel:new(65*column, 62+75*row, 69, 18, app:getName(), self.m_IconSurface)
 		appLabel:setAlignX("center")
 
 		appIcon.onLeftClick = function() self.m_IconSurface:setVisible(false) self:openApp(app) end
 	end
 
 	-- Create elements at the bottom
-	self.m_BackButton = GUIRectangle:new(14, 410, 80, 25, Color.Clear, self)
-	self.m_BackButton.onLeftClick = function() self:closeAllApps() self.m_IconSurface:setVisible(true) end -- Todo: In-App back
-	self.m_HomeButton = GUIRectangle:new(95, 410, 60, 25, Color.Clear, self)
+	self.m_HomeButton = GUIRectangle:new(117, 530, 60, 60, Color.Clear, self)
 	self.m_HomeButton.onLeftClick = function() self:closeAllApps() self.m_IconSurface:setVisible(true) end
-	self.m_RecentButton = GUIRectangle:new(156, 410, 80, 25, Color.Clear, self)
-	self.m_RecentButton.onLeftClick = function() outputChatBox("Not implemented") end
+end
+
+function Phone:setPhone(phone)
+	self.m_Background:setImage("files/images/Phone/"..phone:gsub("-", "")..".png")
 end
 
 function Phone:registerApp(appClasst)
