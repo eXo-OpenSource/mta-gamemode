@@ -112,10 +112,11 @@ function Account:constructor(id, username, player, guest)
 	player.m_Id = self.m_Id
 
 	if not guest then
-		sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+		sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, LastLogin FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 		local row = Async.wait()
 
 		self.m_Rank = row.Rank
+		self.m_LastLogin = row.LastLogin
 
 		if self.m_Rank == RANK.Banned then
 			Ban:new(player)
@@ -137,6 +138,10 @@ end
 
 function Account:getRank()
 	return self.m_Rank
+end
+
+function Account:getLastLogin()
+	return self.m_LastLogin
 end
 
 function Account:getName()
