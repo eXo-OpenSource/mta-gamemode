@@ -138,7 +138,7 @@ function DatabasePlayer:load()
 		setPlayerMoney(self, self.m_Money, true) -- Todo: Remove this line later
 
 		-- Generate Session Id
-		self:setSessionId(hash("md5", ("%s-%s-%s"):format(getRealTime().timestamp, self:getName(), self.m_JoinTime)))
+		self:setSessionId(hash("md5", self:getSerial(), self:getName(), self.m_JoinTime))
 	end
 
 	self:setWeaponLevel(row.WeaponLevel)

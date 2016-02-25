@@ -160,10 +160,6 @@ function Core:afterLogin()
 	)
 	-- TODO: Block end
 
-	PhoneCEF:new()
-	PhoneCEF:getSingleton():close()
-	bindKey(core:get("KeyBindings", "KeyToggleCEFPhone", "o"), "down", function() PhoneCEF:getSingleton():toggle() end)
-
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
 		HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
