@@ -12,7 +12,7 @@ local CALL_RESULT_ANSWER = 2
 local CALL_RESULT_CALLING = 3
 
 function AppCall:constructor()
-	PhoneApp.constructor(self, "Telefon", "files/images/Phone/Apps/IconCall.png")
+	PhoneApp.constructor(self, "Telefon", "IconCall.png")
 
 	-- Add event handlers
 	addEvent("callIncoming", true)

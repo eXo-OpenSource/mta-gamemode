@@ -7,8 +7,8 @@
 -- ****************************************************************************
 AppCEF = inherit(PhoneApp)
 
-function AppCEF:constructor(title, iconPath, url, destroyOnClose)
-	PhoneApp.constructor(self, title, iconPath)
+function AppCEF:constructor(title, icon, url, destroyOnClose)
+	PhoneApp.constructor(self, title, icon)
 
 	self.m_StartURL = url
 	self.m_Browser = false

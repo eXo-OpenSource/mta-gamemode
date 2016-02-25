@@ -8,7 +8,7 @@
 AppSettings = inherit(PhoneApp)
 
 function AppSettings:constructor()
-	PhoneApp.constructor(self, "Einstellungen", "files/images/Phone/Apps/IconSettings.png")
+	PhoneApp.constructor(self, "Einstellungen", "IconSettings.png")
 end
 
 function AppSettings:onOpen(form)

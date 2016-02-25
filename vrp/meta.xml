@@ -522,11 +522,15 @@
 	<vrpfile src="files/images/Phone/AndroidPhone.png"/>
 	<vrpfile src="files/images/Phone/iPhone.png"/>
 
-	<vrpfile src="files/images/Phone/Apps/IconHelloWorld.png"/>
-	<vrpfile src="files/images/Phone/Apps/IconCall.png"/>
-	<vrpfile src="files/images/Phone/Apps/IconMessage.png"/>
-	<vrpfile src="files/images/Phone/Apps/IconSettings.png"/>
-	<vrpfile src="files/images/Phone/Apps/IconYouTube.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconMessage.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSettings.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconYouTube.png"/>
+
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconMessage.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconSettings.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconYouTube.png"/>
 
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>

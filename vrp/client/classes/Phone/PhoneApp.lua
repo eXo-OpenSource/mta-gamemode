@@ -7,9 +7,9 @@
 -- ****************************************************************************
 PhoneApp = inherit(Object)
 
-function PhoneApp:constructor(appName, iconPath)
+function PhoneApp:constructor(appName, icon)
 	self.m_Name = appName
-	self.m_IconPath = iconPath
+	self.m_Icon = icon
 	self.m_IsOpen = false
 	self.m_Activities = {}
 	self.m_DestroyOnClose = true
@@ -26,8 +26,8 @@ function PhoneApp:getName()
 	return self.m_Name
 end
 
-function PhoneApp:getIconPath()
-	return self.m_IconPath
+function PhoneApp:getIcon()
+	return self.m_Icon
 end
 
 function PhoneApp:getForm()
@@ -81,8 +81,8 @@ PhoneApp.onOpen = pure_virtual
 
 
 -- Utilities
-function PhoneApp.makeWebApp(caption, iconPath, url, destroyOnClose)
+function PhoneApp.makeWebApp(caption, icon, url, destroyOnClose)
 	local appClass = inherit(AppCEF)
-	appClass.constructor = function(self) AppCEF.constructor(self, caption, iconPath, url, destroyOnClose) end
+	appClass.constructor = function(self) AppCEF.constructor(self, caption, icon, url, destroyOnClose) end
 	return appClass
 end

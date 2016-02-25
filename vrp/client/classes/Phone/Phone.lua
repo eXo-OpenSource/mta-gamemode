@@ -11,40 +11,47 @@ inherit(Singleton, Phone)
 function Phone:constructor()
 	GUIForm.constructor(self, screenWidth-310, screenHeight-620, 295, 600)
 
+	local phone = "iPhone"
+	if core:get("Phone", "Phone") then
+		phone = core:get("Phone", "Phone")
+	end
+	self.m_Phone = phone
+
 	self.m_Apps = {}
 	self.m_CurrentApp = false
 
 	-- Register apps
 	self:registerApp(AppCall)
 	self:registerApp(AppSettings)
-	self:registerApp(AppDashboard)
+	--self:registerApp(AppDashboard)
 	--self:registerApp(AppNametag)
 
 	-- Register web apps
-	self:registerApp(PhoneApp.makeWebApp("YouTube", "files/images/Phone/Apps/IconYouTube.png", "https://youtube.com/tv", false))
-	self:registerApp(PhoneApp.makeWebApp("Nachrichten", "files/images/Phone/Apps/IconMessage.png", "http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player="..localPlayer:getName(), false))
+	self:registerApp(PhoneApp.makeWebApp("YouTube", "IconYouTube.png", "https://youtube.com/tv", false))
+	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", "http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player="..localPlayer:getName(), false))
 
-	local phone = "Android-Phone"
-	if core:get("Phone", "Phone") then
-		phone = core:get("Phone", "Phone")
-	end
+
 
 	-- Add GUI elements
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/"..phone:gsub("-", "")..".png", self)
 
 	-- Create app icons
+	local iconPath = "files/images/Phone/Apps_"..self.m_Phone:gsub("-", "").."/"
+
 	self.m_IconSurface = GUIElement:new(17, 71, 260, 460, self)
+	self.m_AppIcons = {}
+	self.m_AppLabels = {}
 	for k, app in ipairs(self.m_Apps) do
 		local column, row = (k-1)%4, math.floor((k-1)/4)
 
 		-- Create app icon
-		local appIcon = GUIImage:new(5+65*column, 9+75*row, 52, 52, app:getIconPath(), self.m_IconSurface)
+		self.m_AppIcons[k] = GUIImage:new(5+65*column, 9+75*row, 50, 50,  iconPath..app:getIcon(), self.m_IconSurface)
 
 		-- Create app label
-		local appLabel = GUILabel:new(65*column, 62+75*row, 69, 18, app:getName(), self.m_IconSurface)
-		appLabel:setAlignX("center")
+		self.m_AppLabels[k] = GUILabel:new(65*column-7, 62+75*row, 74, 16, app:getName(), self.m_IconSurface)
+		self.m_AppLabels[k]:setAlignX("center")
 
-		appIcon.onLeftClick = function() self.m_IconSurface:setVisible(false) self:openApp(app) end
+		self.m_AppIcons[k].onLeftClick = function() self.m_IconSurface:setVisible(false) self:openApp(app) end
 	end
 
 	-- Create elements at the bottom
@@ -52,8 +59,17 @@ function Phone:constructor()
 	self.m_HomeButton.onLeftClick = function() self:closeAllApps() self.m_IconSurface:setVisible(true) end
 end
 
+function Phone:refreshAppIcons()
+	local iconPath = "files/images/Phone/Apps_"..self.m_Phone:gsub("-", "").."/"
+	for k, app in ipairs(self.m_Apps) do
+		self.m_AppIcons[k]:setImage(iconPath..app:getIcon())
+	end
+end
+
 function Phone:setPhone(phone)
 	self.m_Background:setImage("files/images/Phone/"..phone:gsub("-", "")..".png")
+	self.m_Phone = phone
+	self:refreshAppIcons()
 end
 
 function Phone:registerApp(appClasst)
