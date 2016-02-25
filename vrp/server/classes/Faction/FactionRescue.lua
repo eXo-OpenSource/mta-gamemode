@@ -138,7 +138,6 @@ function FactionRescue:Event_GetStretcher()
 			end
 
 			-- Move the Stretcher to the Player
-			client.m_RescueStretcher:detach()
 			moveObject(client.m_RescueStretcher, 3000, client:getPosition() + client.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, client:getRotation().z - source:getRotation().z), "InOutQuad")
 			client:setFrozen(true)
 
@@ -164,39 +163,43 @@ end
 function FactionRescue:Event_RemoveStretcher()
 	local faction = FactionManager:getSingleton():getFromId(4)
 	if client:getFaction() == faction then
-		if client.m_RescueStretcher and client.m_RescueStretcher.m_Vehicle == source then
-			local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
-			if distance >= 2.5 and distance <= 4 then
-				-- Move it into the Vehicle
-				client.m_RescueStretcher:detach()
-				client.m_RescueStretcher:setRotation(client:getRotation())
-				client.m_RescueStretcher:setPosition(client:getPosition() + client.matrix.forward*1.4 + Vector3(0, 0, -0.5))
-				moveObject(client.m_RescueStretcher, 3000, source:getPosition() + source.matrix.forward*-2, Vector3(0, 0, source:getRotation().z - client:getRotation().z), "InOutQuad")
+		if client.m_RescueStretcher  then
+			if client.m_RescueStretcher.m_Vehicle == source then
+				local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
+				if distance >= 2.5 and distance <= 4 then
+					-- Move it into the Vehicle
+					client.m_RescueStretcher:detach()
+					client.m_RescueStretcher:setRotation(client:getRotation())
+					client.m_RescueStretcher:setPosition(client:getPosition() + client.matrix.forward*1.4 + Vector3(0, 0, -0.5))
+					moveObject(client.m_RescueStretcher, 3000, source:getPosition() + source.matrix.forward*-2, Vector3(0, 0, source:getRotation().z - client:getRotation().z), "InOutQuad")
 
-				-- Enable Controls
-				client:toggleControlsWhileObjectAttached(true)
+					-- Enable Controls
+					client:toggleControlsWhileObjectAttached(true)
 
-				setTimer(
-					function(source, client)
-						-- Close the doors
-						source:setDoorOpenRatio(4, 0)
-						source:setDoorOpenRatio(5, 0)
+					setTimer(
+						function(source, client)
+							-- Close the doors
+							source:setDoorOpenRatio(4, 0)
+							source:setDoorOpenRatio(5, 0)
 
-						client.m_RescueStretcher:destroy()
-						client.m_RescueStretcher = nil
-					end, 3000, 1, source, client
-				)
+							client.m_RescueStretcher:destroy()
+							client.m_RescueStretcher = nil
+						end, 3000, 1, source, client
+					)
+				else
+					client:sendWarning(_("Die Trage kann in dieser Position nicht ausgeladen werden!", client))
+					local tempMarker = createMarker(source:getPosition() + source.matrix.forward*-7.5, "corona", 1)
+					setTimer(
+						function ()
+							tempMarker:destroy()
+						end, 5000, 1
+					)
+				end
 			else
-				client:sendWarning(_("Die Trage kann in dieser Position nicht ausgeladen werden!", client))
-				local tempMarker = createMarker(source:getPosition() + source.matrix.forward*-7.5, "corona", 1)
-				setTimer(
-					function ()
-						tempMarker:destroy()
-					end, 5000, 1
-				)
+				client:sendError(_("In dieses Fahrzeug kannst du die Trage nicht einladen!", client))
 			end
 		else
-			client:sendError(_("In dieses Fahrzeug kannst du die Trage nicht einladen!", client))
+			client:sendError(_("Du hast keine Trage!", client))
 		end
 	end
 end

@@ -7,6 +7,30 @@ factionWTDestination = {}
 
 FACTION_STATE_WT_DESTINATION = Vector3(1598.78064, -1611.63953, 13.44956)
 
+-- Vehicle Shaders
+factionVehicleShaders = {
+	-- SAPD
+	[1] = {
+		[596] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
+		[599] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
+		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
+	};
+
+	-- FBI
+	[2] = {
+		[528] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
+		[601] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
+		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
+	};
+
+	-- Rescue
+	[4] = {
+		[416] = {shaderEnabled = true, textureName = "ambulan92decal128", texturePath = "files/images/Textures/RescueTexture.png"};
+		[599] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/RescueTexture2.png"};
+		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/RescueTexture2.png"};
+	}
+}
+
 -- ID 1 = Police Departement:
 factionRankNames[1] = {
 [0] = "Cadet",

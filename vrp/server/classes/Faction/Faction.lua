@@ -22,6 +22,7 @@ function Faction:constructor(id, name_short, name, bankAccountId, players, rankL
 	self.m_ValidWeapons = factionWeapons[id]
 	self.m_Color = factionColors[id]
 	self.m_WeaponDepotInfo = factionWeaponDepotInfo
+	self.m_Vehicles = {}
 	if rankLoans == "" then	rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for faction "..id) end
 	if rankSkins == "" then	rankSkins = {} for i=0,6 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for faction "..id) end
 	if rankWeapons == "" then rankWeapons = {} for i=0,6 do rankWeapons[i] = {} for wi=0,46 do rankWeapons[i][wi] = 0 end end rankWeapons = toJSON(rankWeapons) outputDebug("Created RankWeapons for faction "..id) end

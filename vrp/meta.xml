@@ -737,6 +737,14 @@
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
+	<vrpfile src="files/images/Textures/BusTexture.png"/>
+	<vrpfile src="files/images/Textures/FBITexture.png"/>
+	<vrpfile src="files/images/Textures/MechanicTexture.png"/>
+	<vrpfile src="files/images/Textures/MechanicTexture2.png"/>
+	<vrpfile src="files/images/Textures/PoliceTexture.png"/>
+	<vrpfile src="files/images/Textures/RescueTexture.png"/>
+	<vrpfile src="files/images/Textures/RescueTexture2.png"/>
+
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
