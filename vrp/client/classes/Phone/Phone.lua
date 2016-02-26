@@ -57,12 +57,15 @@ function Phone:constructor()
 			self.m_IconSurface:setVisible(true)
 		end
 	end
+
+	triggerServerEvent("setPhoneStatus", localPlayer, self.m_PhoneOn)
 end
 
 function Phone:switchOff()
 	core:getConfig():set("Phone", "On", 0)
 	self.m_PhoneOn = 0
 	self:loadHomeScreen()
+	triggerServerEvent("setPhoneStatus", localPlayer, self.m_PhoneOn)
 end
 
 function Phone:switchOn()
@@ -70,6 +73,7 @@ function Phone:switchOn()
 	self.m_PhoneOn = 1
 	self:closeAllApps()
 	self:loadHomeScreen()
+	triggerServerEvent("setPhoneStatus", localPlayer, self.m_PhoneOn)
 end
 
 function Phone:loadHomeScreen()

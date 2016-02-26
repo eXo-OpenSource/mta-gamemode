@@ -496,6 +496,14 @@ function Player:addPaydayText(typ,text,r,g,b)
 	self.m_paydayTexts[typ]["b"] = b
 end
 
+function Player:togglePhone(status)
+	self.m_PhoneOn = status
+end
+
+function Player:isPhoneEnabled()
+	return self.m_PhoneOn
+end
+
 function Player:getCrimes()
 	return self.m_Crimes
 end

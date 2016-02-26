@@ -21,4 +21,5 @@ function phpSDKSendChatBox(type, target, message, r, g, b)
 			target:outputChat(message, r, g, b)
 		end
 	end
+	return
 end

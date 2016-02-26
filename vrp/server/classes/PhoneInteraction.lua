@@ -8,10 +8,8 @@
 PhoneInteraction = inherit(Singleton)
 
 function PhoneInteraction:constructor()
-	addEvent("callStart", true)
-	addEvent("callBusy", true)
-	addEvent("callAnswer", true)
-	addEvent("callReplace", true)
+	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace"}
+	
 	addEventHandler("callStart", root, bind(self.callStart, self))
 	addEventHandler("callBusy", root, bind(self.callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.callAnswer, self))
@@ -20,8 +18,11 @@ end
 
 function PhoneInteraction:callStart(player, voiceEnabled)
 	if not player then return end
-	
-	player:triggerEvent("callIncoming", client, voiceEnabled)
+	if player:isPhoneEnabled() == true then
+		player:triggerEvent("callIncoming", client, voiceEnabled)
+	else
+		client:sendError(_("Das Handy von '%s' ist ausgeschaltet!",client, player.name))
+	end
 end
 
 function PhoneInteraction:callBusy(caller)
@@ -32,11 +33,11 @@ end
 function PhoneInteraction:callAnswer(caller, voiceCall)
 	if not caller or not isElement(caller) then return end
 	caller:triggerEvent("callAnswer", client, voiceCall)
-	
+
 	-- Set phone partner
 	caller:setPhonePartner(client)
 	client:setPhonePartner(caller)
-	
+
 	-- Start voice broadcasting
 	if voiceCall and isVoiceEnabled() then
 		setPlayerVoiceBroadcastTo(caller, client)
@@ -47,12 +48,12 @@ end
 function PhoneInteraction:callReplace(callee)
 	if not callee then return end
 	if client:getPhonePartner() ~= callee then return end
-	
+
 	client:setPhonePartner(nil)
 	callee:setPhonePartner(nil)
 	setPlayerVoiceBroadcastTo(client, nil) -- Todo: Check if a voice call was active
 	setPlayerVoiceBroadcastTo(callee, nil)
-	
+
 	-- Todo: Notify the callee
 	callee:triggerEvent("callReplace", client)
 end

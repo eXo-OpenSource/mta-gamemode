@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp"}
+addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -27,6 +27,7 @@ function PlayerManager:constructor()
 	addEventHandler("requestSkinLevelUp", root, bind(self.Event_requestSkinLevelUp, self))
 	addEventHandler("requestJobLevelUp", root, bind(self.Event_requestJobLevelUp, self))
 	addEventHandler("playerRequestTrading", root, bind(self.Event_playerRequestTrading, self))
+	addEventHandler("setPhoneStatus", root, bind(self.Event_setPhoneStatus, self))
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -286,4 +287,8 @@ end
 function PlayerManager:Event_playerRequestTrading()
 	-- TODO: Add accept prompt box
 	client:startTrading(source)
+end
+
+function PlayerManager:Event_setPhoneStatus(status)
+	if status == 0 then	client:togglePhone(false) else client:togglePhone(true) end
 end
