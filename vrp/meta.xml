@@ -428,6 +428,7 @@
 	<script src="client/classes/Phone/Apps/AppDashboard.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppNametag.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppCEF.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppOnOff.lua" type="client"/>
 
 	<!-- Jobs -->
 	<script src="client/classes/Jobs/Job.lua" type="client"/>
@@ -525,11 +526,15 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconMessage.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSettings.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconYouTube.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOff.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOn.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconMessage.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconSettings.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconYouTube.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconOff.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconOn.png"/>
 
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
