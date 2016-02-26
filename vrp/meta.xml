@@ -528,6 +528,8 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconYouTube.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOff.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOn.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSanNews.png"/>
+
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconMessage.png"/>
@@ -535,6 +537,7 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconYouTube.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconOff.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconOn.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconSanNews.png"/>
 
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
