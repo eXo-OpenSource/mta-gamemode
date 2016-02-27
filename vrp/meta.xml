@@ -100,6 +100,11 @@
 	<script src="server/classes/UI/RadarArea.lua" type="server"/>
 
 	<!-- Gameplay -->
+
+	<!-- Minigames -->	<!-- not done yet-->
+	<!--<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>-->
+
 	<script src="server/classes/Gameplay/AmmuTeam.lua" type="server"/>
 	<script src="server/classes/Gameplay/AmmuArena.lua" type="server"/>
 	<script src="server/classes/Gameplay/AmmuLadder.lua" type="server"/>
@@ -487,10 +492,11 @@
 	<script src="client/classes/Gameplay/Casino.lua" type="client"/>
 	<script src="client/classes/Gameplay/TrainManager.lua" type="client"/>
 
-	<!--Minigames-->
-	<script src="client/classes/Gameplay/Minigames/CAnimations.lua" type="client"/>
-	<script src="client/classes/Gameplay/Minigames/CGoJump.lua" type="client"/>
-	<script src="client/classes/Gameplay/Minigames/CSideSwipe.lua" type="client"/>
+	<!-- Minigames -->
+	<script src="client/classes/Gameplay/Minigames/Animations.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/GoJump.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/SideSwipe.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/CircuitBreaker.lua" type="client"/>
 
 	<!-- Business -->
 
@@ -838,11 +844,16 @@
 	<vrpfile src = "files/images/GoJump/arrow_down.png" />
 
 	<!-- SideSwipe -->
-	<file src = "files/images/SideSwipe/titlescreen.png" />
-	<file src = "files/images/SideSwipe/filled_circle.png" />
-	<file src = "files/images/SideSwipe/drop.png" />
-	<file src = "files/images/SideSwipe/play.png" />
-	<file src = "files/images/SideSwipe/direction.png" />
+	<vrpfile src = "files/images/SideSwipe/titlescreen.png" />
+	<vrpfile src = "files/images/SideSwipe/filled_circle.png" />
+	<vrpfile src = "files/images/SideSwipe/drop.png" />
+	<vrpfile src = "files/images/SideSwipe/play.png" />
+	<vrpfile src = "files/images/SideSwipe/direction.png" />
+
+	<!-- CircuitBreaker -->
+	<vrpfile src = "files/images/CircuitBreaker/bg.png" />
+	<vrpfile src = "files/images/CircuitBreaker/input.png" />
+	<vrpfile src = "files/images/CircuitBreaker/output.png" />
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>

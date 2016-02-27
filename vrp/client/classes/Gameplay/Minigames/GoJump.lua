@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/Gameplay/Minigames/CGoJump.lua
+-- *  FILE:        client/classes/Gameplay/Minigames/GoJump.lua
 -- *  PURPOSE:     Minigame - GoJump vRP Edition (Original: https://github.com/HorrorClown/MTAGoJump)
 -- *
 -- ****************************************************************************
