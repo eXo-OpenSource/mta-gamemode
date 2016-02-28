@@ -79,6 +79,7 @@ function DrivingSchool:createSchoolPed( pos )
 					if not player.m_HasTheory then 
 						if player.money >= 300 then 
 							player:triggerEvent("showDrivingSchoolTest")
+							player:takeMoney(300)
 						else player:sendError("Du hast nicht genug Geld ( Kosten: 300)!")
 						end
 					else player:sendError("Du hast bereits die Theorieprüfung bestanden!")
