@@ -159,7 +159,7 @@ function DatabasePlayer:save()
 	end
 
 	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, Ladder=?, BankAccount=?, HasPilotsLicense=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP, self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel, self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance, toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), toJSON(self.m_LadderTeam or {}, true), self:getBankAccount():getId(), self.m_HasPilotsLicense, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self:getId())
+		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0,	self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), toJSON(self.m_LadderTeam or {}, true),	self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasDrivingLicense, self.m_HasBikeLicense,	self.m_HasTruckLicense,	self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
