@@ -76,6 +76,7 @@ function DrivingSchoolTheoryGUI:nextQuestion()
 	end
 	if self.m_QuestionText then 
 		self.m_QuestionText:delete()
+		self.m_QuestionPoints:delete()
 		self.m_RBGroup:delete()
 	end
 	local randomInt = math.random( 1,#QUESTIONS )
@@ -83,7 +84,11 @@ function DrivingSchoolTheoryGUI:nextQuestion()
 		self.m_QuestionButtons = {	}
 		self.m_QuestionCounter = self.m_QuestionCounter + 1
 		local question = QUESTIONS[randomInt][1]
-		self.m_QuestionText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.15, self.m_Width*0.9,self.m_Height, "Frage "..self.m_QuestionCounter..": "..question.."\n("..QUESTIONS[randomInt][6].." Punkte)" ,self):setFont(VRPFont(28))
+		self.m_QuestionPoints = GUILabel:new( self.m_Width*0.025, self.m_Height*0.1, self.m_Width*0.9,self.m_Height, QUESTIONS[randomInt][6].." Punkte" ,self):setFont(VRPFont(22))
+		self.m_QuestionPoints:setAlignX( "left" )
+		self.m_QuestionPoints:setAlignY( "top" )
+		self.m_QuestionPoints:setColor(Color.Black)
+		self.m_QuestionText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.15, self.m_Width*0.9,self.m_Height, self.m_QuestionCounter..". "..question ,self):setFont(VRPFont(28))
 		self.m_QuestionText:setAlignX( "center" )
 		self.m_QuestionText:setAlignY( "top" )
 		self.m_QuestionText:setColor(Color.Black)
@@ -100,6 +105,9 @@ function DrivingSchoolTheoryGUI:nextQuestion()
 end
 
 function DrivingSchoolTheoryGUI:showResult() 
+	if self.m_SubmitButton then 
+		self.m_SubmitButton:delete()
+	end
 	if self.m_QuestionText then 
 		self.m_QuestionText:delete()
 		self.m_RBGroup:delete()

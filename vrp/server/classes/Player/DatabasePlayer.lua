@@ -76,7 +76,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasDrivingLicense, HasBikeLicense, HasTruckLicense, Achievements, PlayTime, Ladder, BankAccount, CompanyId FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, Achievements, PlayTime, Ladder, BankAccount, CompanyId FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -122,6 +122,7 @@ function DatabasePlayer:load()
 	self.m_SpawnLocation = row.SpawnLocation
 	self.m_Collectables = fromJSON(row.Collectables or "")
 	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
+	self.m_HasTheory = toboolean(row.HasTheory)
 	self.m_HasDrivingLicense = toboolean(row.HasDrivingLicense)
 	self.m_HasBikeLicense = toboolean(row.HasBikeLicense)
 	self.m_HasTruckLicense = toboolean(row.HasTruckLicense)
@@ -158,8 +159,8 @@ function DatabasePlayer:save()
 		delete(self.m_BankAccount)
 	end
 
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, Ladder=?, BankAccount=?, HasPilotsLicense=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0,	self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), toJSON(self.m_LadderTeam or {}, true),	self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasDrivingLicense, self.m_HasBikeLicense,	self.m_HasTruckLicense,	self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, Ladder=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0,	self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), toJSON(self.m_LadderTeam or {}, true),	self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense,	self.m_HasTruckLicense,	self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
