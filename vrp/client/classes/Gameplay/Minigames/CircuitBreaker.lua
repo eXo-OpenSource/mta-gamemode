@@ -11,9 +11,9 @@ function CircuitBreaker:constructor()
 	self.WIDTH, self.HEIGHT = 1080, 650
 
 	--Render targets
-	self.m_rt_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
-	self.m_rt_PCB = DxRenderTarget(self.WIDTH, self.HEIGHT, false)			-- PCB
-	self.m_rt_line = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- Line		(may an extra render target for smooth line bg..)
+	self.m_RT_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
+	self.m_RT_PCB = DxRenderTarget(self.WIDTH, self.HEIGHT, false)			-- PCB
+	self.m_RT_line = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- Line		(may an extra render target for smooth line bg..)
 
 	self:loadImages()
 	self:createGameplay()
@@ -26,96 +26,96 @@ function CircuitBreaker:constructor()
 end
 
 function CircuitBreaker:loadImages()
-	self.m_images = {
+	self.m_Images = {
 		"bg",
 		"input",
 		"output",
 	}
 
-	for _, img in ipairs(self.m_images) do
+	for _, img in ipairs(self.m_Images) do
 		self[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
 	end
 end
 
 function CircuitBreaker:createGameplay()
 	-- Some definitions
-	self.m_level = 1
-	self.m_state = "idle"
-	self.m_moveDirection = "r"											--r = right | l = left | u = up | d = down
+	self.m_Level = 1
+	self.m_State = "idle"
+	self.m_MoveDirection = "r"											--r = right | l = left | u = up | d = down
 
 	-- Set D-Sub9 start pos
-	self.m_levelStartPosX = 0
-	self.m_levelStartPosY = math.random(0, self.HEIGHT - 82)
+	self.m_LevelStartPosX = 0
+	self.m_LevelStartPosY = math.random(0, self.HEIGHT - 82)
 
 	-- Set D-Sub9 end pos
-	self.m_levelEndPosX = self.WIDTH - 56 								--56 is the with of the d-sub 9 connector
-	self.m_levelEndPosY = math.random(0, self.HEIGHT - 82)
+	self.m_LevelEndPosX = self.WIDTH - 56 								--56 is the with of the d-sub 9 connector
+	self.m_LevelEndPosY = math.random(0, self.HEIGHT - 82)
 
 	-- Set line pos
-	self.m_linePosX = 56 - 5
-	self.m_linePosY = self.m_levelStartPosY + 82/2 - 5/2
+	self.m_LinePosX = 56 - 5
+	self.m_LinePosY = self.m_LevelStartPosY + 82/2 - 5/2
 
-	self.m_moveSpeed = self.m_level + 2
-	self.m_lineWidth = 0
+	self.m_MoveSpeed = self.m_Level + 2
+	self.m_LineWidth = 0
 
-	self.m_lineColor = tocolor(50, 140, 100)
+	self.m_LineColor = tocolor(50, 140, 100)
 
-	self.m_lines = {}													-- Storage for "old" render targets
+	self.m_Lines = {}													-- Storage for "old" render targets
 end
 
 function CircuitBreaker:createNextLevel()
-	self.m_moveDirection = "r"
+	self.m_MoveDirection = "r"
 
 	-- Set D-Sub9 start pos
-	self.m_levelStartPosX = 0
-	self.m_levelStartPosY = self.m_levelEndPosY 						-- Start where the last level has ended
+	self.m_LevelStartPosX = 0
+	self.m_LevelStartPosY = self.m_LevelEndPosY 						-- Start where the last level has ended
 
 	-- Set D-Sub9 end pos
-	self.m_levelEndPosX = self.WIDTH - 56 								--56 is the with of the d-sub 9 connector
-	self.m_levelEndPosY = math.random(0, self.HEIGHT - 82)
+	self.m_LevelEndPosX = self.WIDTH - 56 								--56 is the with of the d-sub 9 connector
+	self.m_LevelEndPosY = math.random(0, self.HEIGHT - 82)
 
 	-- Set line pos
-	self.m_linePosX = 56 - 5
-	self.m_linePosY = self.m_levelStartPosY + 82/2 - 5/2
+	self.m_LinePosX = 56 - 5
+	self.m_LinePosY = self.m_LevelStartPosY + 82/2 - 5/2
 
-	self.m_moveSpeed = self.m_level + 2
-	self.m_lineWidth = 0
+	self.m_MoveSpeed = self.m_Level + 2
+	self.m_LineWidth = 0
 
-	self.m_lineColor = tocolor(50, 140, 100)
+	self.m_LineColor = tocolor(50, 140, 100)
 end
 
 function CircuitBreaker:setState(state)		--Todo: freaky function.. need improvements lel
 	if state == "play" then
-		self.m_state = "play"
-		self.m_lineWidth = 5
+		self.m_State = "play"
+		self.m_LineWidth = 5
 	end
 
 	if state == "done" then
-		self.m_state = "done"
+		self.m_State = "done"
 		outputChatBox("all levels done")
 		--Todo: Show completed PCB (end screen)
 		--Todo: Trigger ?!
 	end
 
 	if state == "tryPlay" then
-		if self.m_state == "idle" then
+		if self.m_State == "idle" then
 			self:setState("play")
 		end
 
-		if self.m_state == "failed" then
-			self.m_rt_line:setAsTarget(true) dxSetRenderTarget()		--Clear render target
+		if self.m_State == "failed" then
+			self.m_RT_line:setAsTarget(true) dxSetRenderTarget()		--Clear render target
 
-			self.m_moveDirection = "r"
+			self.m_MoveDirection = "r"
 
-			self.m_linePosX = 56 - 5
-			self.m_linePosY = self.m_levelStartPosY + 82/2 - 5/2
-			self.m_lineColor = tocolor(50, 140, 100)
+			self.m_LinePosX = 56 - 5
+			self.m_LinePosY = self.m_LevelStartPosY + 82/2 - 5/2
+			self.m_LineColor = tocolor(50, 140, 100)
 
 			self:setState("play")
 		end
 
-		if self.m_state == "complete" then
-			self.m_rt_line = DxRenderTarget(self.WIDTH, self.HEIGHT, true)
+		if self.m_State == "complete" then
+			self.m_RT_line = DxRenderTarget(self.WIDTH, self.HEIGHT, true)
 			self:createNextLevel()
 			self:updateRenderTarget()
 
@@ -125,22 +125,22 @@ function CircuitBreaker:setState(state)		--Todo: freaky function.. need improvem
 
 
 	if state == "complete" then	--Todo: Call next level via 5 sec. timer
-		self.m_state = "complete"
+		self.m_State = "complete"
 		outputChatBox("level complete")
-		self.m_lineColor = tocolor(50, 200, 130)
+		self.m_LineColor = tocolor(50, 200, 130)
 		self:updateRenderTarget()
 
-		self.m_lines[self.m_level] = {line = self.m_rt_line, ICs = nil}
-		self.m_level = self.m_level + 1
+		self.m_Lines[self.m_Level] = {line = self.m_RT_line, ICs = nil}
+		self.m_Level = self.m_Level + 1
 
-		if self.m_level > 3 then
+		if self.m_Level > 3 then
 			self:setState("done")
 		end
 	end
 
 	if state == "failed" then
-		self.m_state = "failed"
-		self.m_lineColor = tocolor(220, 0, 0)
+		self.m_State = "failed"
+		self.m_LineColor = tocolor(220, 0, 0)
 		self:updateRenderTarget()
 	end
 end
@@ -162,7 +162,7 @@ function CircuitBreaker:bindKeys()
 end
 
 function CircuitBreaker:changeDirection(key)
-	if not self.m_state == "play" then return end
+	if not self.m_State == "play" then return end
 
 	-- normalise key names
 	key = key == "arrow_l" and "l" or key == "a" and "l" or key
@@ -171,19 +171,17 @@ function CircuitBreaker:changeDirection(key)
 	key = key == "arrow_d" and "d" or key == "s" and "d" or key
 
 	-- disable opposite movements
-	if self.m_moveDirection == "l" and key == "r" then return end
-	if self.m_moveDirection == "r" and key == "l" then return end
-	if self.m_moveDirection == "u" and key == "d" then return end
-	if self.m_moveDirection == "d" and key == "u" then return end
+	if self.m_MoveDirection == "l" and key == "r" then return end
+	if self.m_MoveDirection == "r" and key == "l" then return end
+	if self.m_MoveDirection == "u" and key == "d" then return end
+	if self.m_MoveDirection == "d" and key == "u" then return end
 
-	self.m_moveDirection = key
+	self.m_MoveDirection = key
 end
-
-
 
 function CircuitBreaker:updateRenderTarget()
 	-- Update background render target
-	self.m_rt_background:setAsTarget()
+	self.m_RT_background:setAsTarget()
 
 	local headerWidth = screenHeight/6
 
@@ -197,28 +195,28 @@ function CircuitBreaker:updateRenderTarget()
 	dxSetRenderTarget()
 
 	-- Update PCB render target
-	self.m_rt_PCB:setAsTarget()
+	self.m_RT_PCB:setAsTarget()
 
 	dxDrawRectangle(0, 0, self.WIDTH, self.HEIGHT, tocolor(9, 35, 30))
-	dxDrawImage(self.m_levelStartPosX, self.m_levelStartPosY, 56, 82, self.input)
-	dxDrawImage(self.m_levelEndPosX, self.m_levelEndPosY, 56, 82, self.output)
+	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.input)
+	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY, 56, 82, self.output)
 
 	dxSetRenderTarget()
 
 	-- Update line render target
 
-	self.m_rt_line:setAsTarget()
+	self.m_RT_line:setAsTarget()
 	dxSetBlendMode("overwrite")
 
-	if self.m_moveDirection == "r" or self.m_moveDirection == "l" then
-		dxDrawRectangle(self.m_linePosX, self.m_linePosY - 2, self.m_lineWidth, self.m_lineWidth + 4, tocolor(255, 255, 255, 50))
-		dxDrawRectangle(self.m_linePosX, self.m_linePosY - 1, self.m_lineWidth, self.m_lineWidth + 2, tocolor(255, 255, 255, 150))
+	if self.m_MoveDirection == "r" or self.m_MoveDirection == "l" then
+		dxDrawRectangle(self.m_LinePosX, self.m_LinePosY - 2, self.m_LineWidth, self.m_LineWidth + 4, tocolor(255, 255, 255, 50))
+		dxDrawRectangle(self.m_LinePosX, self.m_LinePosY - 1, self.m_LineWidth, self.m_LineWidth + 2, tocolor(255, 255, 255, 150))
 	else
-		dxDrawRectangle(self.m_linePosX - 2, self.m_linePosY, self.m_lineWidth + 4, self.m_lineWidth, tocolor(255, 255, 255, 50))
-		dxDrawRectangle(self.m_linePosX - 1, self.m_linePosY, self.m_lineWidth + 2, self.m_lineWidth, tocolor(255, 255, 255, 150))
+		dxDrawRectangle(self.m_LinePosX - 2, self.m_LinePosY, self.m_LineWidth + 4, self.m_LineWidth, tocolor(255, 255, 255, 50))
+		dxDrawRectangle(self.m_LinePosX - 1, self.m_LinePosY, self.m_LineWidth + 2, self.m_LineWidth, tocolor(255, 255, 255, 150))
 	end
 
-	dxDrawRectangle(self.m_linePosX, self.m_linePosY, self.m_lineWidth, self.m_lineWidth, tocolor(255, 255, 255))
+	dxDrawRectangle(self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth, tocolor(255, 255, 255))
 
 	dxSetBlendMode("blend")
 	dxSetRenderTarget()
@@ -226,26 +224,26 @@ end
 
 function CircuitBreaker:onClientRender()
 	-- idk how to title that
-	if self.m_state == "play" then
-		if self.m_moveDirection == "r" then
-			self.m_linePosX = self.m_linePosX + self.m_moveSpeed
-		elseif self.m_moveDirection == "l" then
-			self.m_linePosX = self.m_linePosX - self.m_moveSpeed
-		elseif self.m_moveDirection == "u" then
-			self.m_linePosY = self.m_linePosY - self.m_moveSpeed
-		elseif self.m_moveDirection == "d" then
-			self.m_linePosY = self.m_linePosY + self.m_moveSpeed
+	if self.m_State == "play" then
+		if self.m_MoveDirection == "r" then
+			self.m_LinePosX = self.m_LinePosX + self.m_MoveSpeed
+		elseif self.m_MoveDirection == "l" then
+			self.m_LinePosX = self.m_LinePosX - self.m_MoveSpeed
+		elseif self.m_MoveDirection == "u" then
+			self.m_LinePosY = self.m_LinePosY - self.m_MoveSpeed
+		elseif self.m_MoveDirection == "d" then
+			self.m_LinePosY = self.m_LinePosY + self.m_MoveSpeed
 		end
 
 		self:updateRenderTarget()
 
 		-- Out of screen detection
-		if not CircuitBreaker:collision(0, 0, self.WIDTH, self.HEIGHT, self.m_linePosX, self.m_linePosY, self.m_lineWidth, self.m_lineWidth) then
+		if not CircuitBreaker:collision(0, 0, self.WIDTH, self.HEIGHT, self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
 			self:setState("failed")
 		end
 
 		-- Collision detection
-		if CircuitBreaker:collision(self.m_levelEndPosX, self.m_levelEndPosY, 56, 82, self.m_linePosX, self.m_linePosY, self.m_lineWidth, self.m_lineWidth) then
+		if CircuitBreaker:collision(self.m_LevelEndPosX, self.m_LevelEndPosY, 56, 82, self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
 			self:setState("complete")
 		end
 	end
@@ -253,9 +251,9 @@ function CircuitBreaker:onClientRender()
 	-- Draw render targets
 	local headerWidth = screenHeight/6
 
-	dxDrawImage(0, 0, screenWidth, screenHeight, self.m_rt_background)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_rt_PCB)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_rt_line, 0, 0, 0, self.m_lineColor)
+	dxDrawImage(0, 0, screenWidth, screenHeight, self.m_RT_background)
+	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_PCB)
+	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
 end
 
 function CircuitBreaker:collision(sx, sy, sw, sh, px, py, pw, ph)
