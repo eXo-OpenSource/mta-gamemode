@@ -25,6 +25,10 @@ local QUESTIONS =
 	{"Warum sollten Sie nicht zu langsam fahren?", "Um Auffahrunfälle zu vermeiden", "Um Sprit zu sparen", nil,nil,5,1},
 	{"Was gilt bei einem Stopp-Schild?","an der Sichtlinie halten","Durchfahren sofern keiner Sie behindert","An der Haltelinie komplett anhalten","Nicht an der Haltelinie halten wenn die Straße frei ist",4,3},
 	{"Wozu dienen Blinker?","Zur Beleuchtung des Fahrzeuges","Als Indikatoren der Fahrtrichtung","Als Sirene",nil,4,2},
+	{"Wo dürfen Sie parken?", "Auf Kraftfahrstraßen", "Außerorts auf der rechten Seite", "An gekennzeichneten Stellen",nil,4,3},
+	{"Wie viel Abstand müssen Sie beim Parken vor einem Stoppschild einhalten?","5 m","10 m","15 m","20 m",4,2},
+	{"Wie viel Abstand müssen Sie beim Parken vor einem Zebrastreifen einhalten?","5 m","10 m","15 m","20 m",4,1},
+	{"Wie viel Abstand müssen Sie beim Parken vor einer Haltestelle einhalten?","5 m","10 m","15 m","20 m",4,3},
 }
  
 function DrivingSchoolTheoryGUI:constructor(type)
@@ -113,13 +117,13 @@ function DrivingSchoolTheoryGUI:showResult()
 		self.m_RBGroup:delete()
 	end
 	if self.m_ErrPoints <= 10 then 
-		self.m_ResultText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.1, self.m_Width*0.9,self.m_Height,"Glückwunsch, Bestanden! Fehlerpunkte:".." "..self.m_ErrPoints,self):setFont(VRPFont(30))
+		self.m_ResultText = GUILabel:new( self.m_Width*0.05, self.m_Height*0, self.m_Width*0.9,self.m_Height,"Glückwunsch, Bestanden! Fehlerpunkte:".." "..self.m_ErrPoints,self):setFont(VRPFont(30))
 		self.m_ResultText:setAlignX( "center" )
 		self.m_ResultText:setAlignY( "center" )
 		self.m_ResultText:setColor(Color.Green)
 		triggerServerEvent("drivingSchoolPassTheory",localPlayer)
 	else
-		self.m_ResultText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.1, self.m_Width*0.9,self.m_Height,"Sie sind durchgefallen! Fehlerpunkte:".." "..self.m_ErrPoints,self ):setFont(VRPFont(30))
+		self.m_ResultText = GUILabel:new( self.m_Width*0.05, self.m_Height*0, self.m_Width*0.9,self.m_Height,"Sie sind durchgefallen! Fehlerpunkte:".." "..self.m_ErrPoints,self ):setFont(VRPFont(30))
 		self.m_ResultText:setAlignX( "center" )
 		self.m_ResultText:setAlignY( "center" )
 		self.m_ResultText:setColor(Color.Red)
