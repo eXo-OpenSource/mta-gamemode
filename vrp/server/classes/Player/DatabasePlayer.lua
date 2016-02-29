@@ -91,7 +91,7 @@ function DatabasePlayer:load()
 	self.m_WantedLevel = row.WantedLevel
 	self.m_TutorialStage = row.TutorialStage
 
-	if row.BankAccount == 0 then
+	if not row.BankAccount or row.BankAccount == 0 then
 		self.m_BankAccount = BankAccount.create(BankAccountTypes.Player, self:getId())
 	else
 		self.m_BankAccount = BankAccount.load(row.BankAccount)

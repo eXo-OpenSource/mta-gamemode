@@ -9,7 +9,7 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 
 		if path then
 			dxSetRenderTarget(texture)
-			dxDrawImage(0, 0, width, height, path)
+				dxDrawImage(0, 0, width, height, path)
 			dxSetRenderTarget(nil)
 		end
 	end

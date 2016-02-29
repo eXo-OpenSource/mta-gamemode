@@ -6,8 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addEvent("retrieveInfo", true)
-addEvent("playerWasted", true)
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted"}
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -18,8 +17,8 @@ function LocalPlayer:constructor()
 
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
-
 	addEventHandler("playerWasted", root, bind(self.playerWasted, self))
+	addEventHandler("playerRescueWasted", root, bind(self.playerRescueWasted, self))
 end
 
 function LocalPlayer:destructor()
@@ -106,6 +105,47 @@ function LocalPlayer:playerWasted()
 			)
 
 		end, 8000, 1
+	)
+end
+
+function LocalPlayer:playerRescueWasted()
+	local callback = function (sound)
+		if isElement(sound) then
+			sound:destroy()
+		end
+		fadeCamera(false, 1)
+
+		setTimer( -- Todo: Remove later
+			function ()
+				HUDRadar:getSingleton():show()
+				HUDUI:getSingleton():show()
+				showChat(true)
+			end, 3000, 1
+		)
+	end
+
+	-- Hide UI Elements
+	HUDRadar:getSingleton():hide()
+	HUDUI:getSingleton():hide()
+	showChat(false)
+
+	-- Move camera into the Sky
+	local pos = self:getPosition()
+	local add = 0
+	local sound = playSound("files/audio/Halleluja.mp3")
+	setCameraInterior(0)
+	addEventHandler("onClientPreRender", root,
+		function(deltaTime)
+			add = add+0.005*deltaTime
+			setCameraMatrix(pos.x, pos.y, pos.z + add, pos)
+			if (pos.z + add) - pos.z >= 100 then
+				-- Play knock out effect
+				FadeOutShader:new()
+				setTimer(callback, 4000, 1, sound, start)
+
+				removeEventHandler("onClientPreRender", root, getThisFunction())
+			end
+		end
 	)
 end
 

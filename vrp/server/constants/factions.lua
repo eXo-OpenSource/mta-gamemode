@@ -41,7 +41,7 @@ factionRankNames[1] = {
 [5] = "Deputy",
 [6] = "Chief"
 }
-factionColors[1] = {["r"] = 0,["g"] = 255,["b"] = 150}
+factionColors[1] = {["r"] = 11,["g"] = 102,["b"] = 8}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
 factionWeapons[1] = {[3]=true,[24]=true,[25]=true,[29]=true,[31]=true}
 -- ID 2 = FBI:
@@ -82,7 +82,8 @@ factionRankNames[4] = {
 [5] = "Rescue-Deputy",
 [6] = "Rescue-Chief"
 }
-factionColors[4] = {["r"] = 255,["g"] = 85,["b"] = 0}
+--factionColors[4] = {["r"] = 255,["g"] = 85,["b"] = 0}
+factionColors[4] = {["r"] = 187,["g"] = 0,["b"] = 0}
 factionSkins[4] = {[260]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true}
 factionWeapons[4] = {[9]=true}
 

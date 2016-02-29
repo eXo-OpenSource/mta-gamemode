@@ -250,6 +250,9 @@ end
 
 function FactionRescue:createDeathPickup(player)
 	player.m_DeathPickup = Pickup(player:getPosition(), 3, 1254, 0)
+	player:setPosition(player.m_DeathPickup:getPosition())
+	player:kill()
+
 	addEventHandler("onPickupHit", player.m_DeathPickup,
 		function (hitPlayer)
 			if hitPlayer:getFaction() and hitPlayer:getFaction():isRescueFaction() then
@@ -267,11 +270,19 @@ function FactionRescue:Event_OnPlayerWasted(player)
 	local faction = FactionManager:getSingleton():getFromId(4)
 	if #faction:getOnlinePlayers() > 0 then
 		if not player.m_DeathPickup then
-			local zoneName, cityName = getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)
-
-			faction:sendShortMessage(("%s died.\nPosition: %s - %s"):format(player:getName(), zoneName, cityName))
+			faction:sendShortMessage(("%s died.\nPosition: %s - %s"):format(player:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
 			self:createDeathPickup(player)
-			player:respawn()
+
+
+			-- INFO: This is the end Screen (when the player completely died without help!)
+			player:triggerEvent("playerRescueWasted")
+			setTimer(
+				function ()
+					player:setCameraTarget(player)
+					player:respawn()
+					player:fadeCamera(true, 1)
+				end, 27000, 1
+			)
 
 			return true
 		else -- This should never never happen!
