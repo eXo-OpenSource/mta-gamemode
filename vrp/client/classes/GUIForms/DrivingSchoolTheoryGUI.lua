@@ -13,7 +13,7 @@ addRemoteEvents{ "showDrivingSchoolTest" }
 --// CONSTANTS //
 local width,height = screenWidth*0.4,screenHeight*0.4
 local TEXT_INFO = "Prüfungsablauf:\nWillkommen zur theoretischen Fahrprüfung für die Führerscheinklasse B. Es werden 10 Fragen folgen, welche mit einer maximal Fehlerpunktzahl von 10 beantwortet werden müssen. Das Ergebnis wird sofort danach angezeigt."
-local QUESTIONS = 
+local QUESTIONS =
 {
 	{"Wie schnell darf innerorts normalerweise auf einer Vorfahrtstraße gefahren werden?","30","60","120","50",3,4},
 	{"Wann darf rechts überholt werden?","Auf einer Autobahn","Innerorts auf einer Mehrspurigen Straße","Überall","Außerorts",3,2},
@@ -30,55 +30,48 @@ local QUESTIONS =
 	{"Wie viel Abstand müssen Sie beim Parken vor einem Zebrastreifen einhalten?","5 m","10 m","15 m","20 m",4,1},
 	{"Wie viel Abstand müssen Sie beim Parken vor einer Haltestelle einhalten?","5 m","10 m","15 m","20 m",4,3},
 }
- 
+
 function DrivingSchoolTheoryGUI:constructor(type)
 	GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2 - height/2, width,height, false)
-	GUIRectangle:new(0, 0, self.m_Width,self.m_Height, tocolor(200,200,200,200), self)
-	GUIRectangle:new(0, 0, self.m_Width,self.m_Height*0.05,Color.Black , self)
-	self.m_CloseButton = GUIButton:new( self.m_Width*0.9, 0, self.m_Width*0.1,self.m_Height*0.05, "[x]", self)
-	self.m_CloseButton.onLeftClick = function() self:delete() end
-	self.m_Title = GUILabel:new( 0, 0, self.m_Width,self.m_Height*0.05, "Theoretische Fahrprüfung ( Klasse B )", self)
-	self.m_Title:setAlignX( "center" )
-	self.m_Title:setAlignY( "top" )
-	self.m_Title:setColor(Color.White)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Theoretische Prüfung"), true, true, self)
+	self.m_Window:setCloseOnClose(true)
 	self.m_Text = GUILabel:new( self.m_Width*0.05, self.m_Height*0.2, self.m_Width*0.9,self.m_Height, TEXT_INFO, self):setFont(VRPFont(24))
 	self.m_Text:setAlignX( "left" )
 	self.m_Text:setAlignY( "top" )
-	self.m_Text:setColor(Color.Black)
 	self.m_StartButton = GUIButton:new( self.m_Width*0.3, self.m_Height*0.7 , self.m_Width*0.4,self.m_Height*0.1, "Starten", self)
 	self.m_StartButton.onLeftClick = function() self.m_Text:delete(); self.m_StartButton:delete(); self:nextQuestion(); end
 	self.m_QuestionsDone = {	}
-	self.m_QuestionCounter = 0 
+	self.m_QuestionCounter = 0
 	self.m_ErrPoints = 0
 end
 
 
 
-function DrivingSchoolTheoryGUI:submitQuestion( pQuestion ) 
+function DrivingSchoolTheoryGUI:submitQuestion( pQuestion )
 	self.m_QuestionsDone[pQuestion] = true
 	local iAnswer = QUESTIONS[pQuestion][7]
 	local iChecked
-	for i = 1,4 do 
-		if self.m_QuestionButtons[i]:isChecked() then 
-			iChecked = i 
+	for i = 1,4 do
+		if self.m_QuestionButtons[i]:isChecked() then
+			iChecked = i
 			break
 		end
 	end
-	if iAnswer ~= iChecked then 
-		self.m_ErrPoints = self.m_ErrPoints + QUESTIONS[pQuestion][6] 
+	if iAnswer ~= iChecked then
+		self.m_ErrPoints = self.m_ErrPoints + QUESTIONS[pQuestion][6]
 	end
-	if self.m_QuestionCounter < 10 then 
+	if self.m_QuestionCounter < 10 then
 		self:nextQuestion()
-	else 
-		self:showResult() 
+	else
+		self:showResult()
 	end
 end
 
 function DrivingSchoolTheoryGUI:nextQuestion()
-	if not self.m_SubmitButton then 
+	if not self.m_SubmitButton then
 		self.m_SubmitButton = GUIButton:new( self.m_Width*0.3, self.m_Height*0.9 , self.m_Width*0.4,self.m_Height*0.08, "Weiter", self)
 	end
-	if self.m_QuestionText then 
+	if self.m_QuestionText then
 		self.m_QuestionText:delete()
 		self.m_QuestionPoints:delete()
 		self.m_RBGroup:delete()
@@ -88,35 +81,32 @@ function DrivingSchoolTheoryGUI:nextQuestion()
 		self.m_QuestionButtons = {	}
 		self.m_QuestionCounter = self.m_QuestionCounter + 1
 		local question = QUESTIONS[randomInt][1]
-		self.m_QuestionPoints = GUILabel:new( self.m_Width*0.025, self.m_Height*0.1, self.m_Width*0.9,self.m_Height, QUESTIONS[randomInt][6].." Punkte" ,self):setFont(VRPFont(22))
+		self.m_QuestionPoints = GUILabel:new( self.m_Width*0.025, self.m_Height*0.15, self.m_Width*0.9,self.m_Height, QUESTIONS[randomInt][6].." Punkte" ,self):setFont(VRPFont(22))
 		self.m_QuestionPoints:setAlignX( "left" )
 		self.m_QuestionPoints:setAlignY( "top" )
-		self.m_QuestionPoints:setColor(Color.Black)
-		self.m_QuestionText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.15, self.m_Width*0.9,self.m_Height, self.m_QuestionCounter..". "..question ,self):setFont(VRPFont(28))
+		self.m_QuestionText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.2, self.m_Width*0.9,self.m_Height, self.m_QuestionCounter..". "..question ,self):setFont(VRPFont(28))
 		self.m_QuestionText:setAlignX( "center" )
 		self.m_QuestionText:setAlignY( "top" )
-		self.m_QuestionText:setColor(Color.Black)
-		self.m_RBGroup = GUIRadioButtonGroup:new(self.m_Width*0.1, self.m_Height*0.3, self.m_Width*0.09, self.m_Height*0.4 ,self)
-		for i =1,4 do 
-			if QUESTIONS[randomInt][1+i] then 
-				self.m_QuestionButtons[i] = GUIRadioButton:new(0, self.m_Height*0.1*(i-1), self.m_Width*0.9,  self.m_Height*0.1,QUESTIONS[randomInt][1+i]  , self.m_RBGroup)
-				self.m_QuestionButtons[i]:setColor(Color.Black)
+		self.m_RBGroup = GUIRadioButtonGroup:new(self.m_Width*0.1, self.m_Height*0.4, self.m_Width*0.09, self.m_Height*0.4 ,self)
+		for i =1,4 do
+			if QUESTIONS[randomInt][1+i] then
+				self.m_QuestionButtons[i] = GUIRadioButton:new(0, self.m_Height*0.11*(i-1), self.m_Width*0.9,  self.m_Height*0.1,QUESTIONS[randomInt][1+i]  , self.m_RBGroup)
 			end
 		end
-		self.m_SubmitButton.onLeftClick = function() self:submitQuestion( randomInt ) end 
+		self.m_SubmitButton.onLeftClick = function() self:submitQuestion( randomInt ) end
 	else return self:nextQuestion()
 	end
 end
 
-function DrivingSchoolTheoryGUI:showResult() 
-	if self.m_SubmitButton then 
+function DrivingSchoolTheoryGUI:showResult()
+	if self.m_SubmitButton then
 		self.m_SubmitButton:delete()
 	end
-	if self.m_QuestionText then 
+	if self.m_QuestionText then
 		self.m_QuestionText:delete()
 		self.m_RBGroup:delete()
 	end
-	if self.m_ErrPoints <= 10 then 
+	if self.m_ErrPoints <= 10 then
 		self.m_ResultText = GUILabel:new( self.m_Width*0.05, self.m_Height*0, self.m_Width*0.9,self.m_Height,"Glückwunsch, Bestanden! Fehlerpunkte:".." "..self.m_ErrPoints,self):setFont(VRPFont(30))
 		self.m_ResultText:setAlignX( "center" )
 		self.m_ResultText:setAlignY( "center" )
