@@ -76,9 +76,10 @@ function DrivingSchool:createSchoolPed( pos )
         function(button ,state ,player )
 			if button == "left" and state == "up" then 
 				if source == self.m_DrivingSchoolPed then
-						if not player.m_HasCarTheory then 
+					if not player.m_HasTheory then 
 						if player.money >= 300 then 
 							player:triggerEvent("showDrivingSchoolTest")
+							player:takeMoney(300)
 						else player:sendError("Du hast nicht genug Geld ( Kosten: 300)!")
 						end
 					else player:sendError("Du hast bereits die Theorieprüfung bestanden!")
@@ -133,27 +134,25 @@ function DrivingSchool:Event_startLessionQuestion(target, type)
     local costs = DrivingSchool.LicenseCosts[type]
     if costs and target then
         if self:checkPlayerLicense(target, type) == false then
-			if type == "car" then 
-				if not target.m_HasCarTheory then 
-					return client:sendError(_("Der Spieler %s muss erst die theoretische Fahrprüfung bestehen!", client, target.name))
+			if not target.m_HasTheory then 
+				if target:getMoney() >= costs then
+					if not target:getPublicSync("inDrivingLession") == true then
+						if not self.m_CurrentLessions[client] then
+							target:triggerEvent("questionBox", _("Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\nDiese kostet %d$! Möchtest du die Prüfung starten?", target, client.name, DrivingSchool.TypeNames[type], DrivingSchool.LicenseCosts[type]), "drivingSchoolStartLession", "drivingSchoolDiscardLession", client, target, type)
+						else
+							client:sendError(_("Du bist bereits in einer Fahrprüfung!", client))
+						end
+					else
+						client:sendError(_("Der Spieler %s ist bereits in einer Prüfung!", client, target.name))
+					end
+				else
+					client:sendError(_("Der Spieler %s hat nicht genug Geld dabei! (%d$)", client, target.name, costs))
 				end
+			else client:sendError(_("Der Spieler %s muss erst die theoretische Fahrprüfung bestehen!", client, target.name))
 			end
-            if target:getMoney() >= costs then
-                if not target:getPublicSync("inDrivingLession") == true then
-                    if not self.m_CurrentLessions[client] then
-                        target:triggerEvent("questionBox", _("Der Fahrlehrer %s möchte mit dir die %s Prüfung starten!\nDiese kostet %d$! Möchtest du die Prüfung starten?", target, client.name, DrivingSchool.TypeNames[type], DrivingSchool.LicenseCosts[type]), "drivingSchoolStartLession", "drivingSchoolDiscardLession", client, target, type)
-                    else
-                        client:sendError(_("Du bist bereits in einer Fahrprüfung!", client))
-                    end
-                else
-                    client:sendError(_("Der Spieler %s ist bereits in einer Prüfung!", client, target.name))
-                end
-            else
-                client:sendError(_("Der Spieler %s hat nicht genug Geld dabei! (%d$)", client, target.name, costs))
-            end
-        else
-            client:sendError(_("Der Spieler %s hat den %s bereits!", client, target.name, DrivingSchool.TypeNames[type]))
-        end
+		else
+			client:sendError(_("Der Spieler %s hat den %s bereits!", client, target.name, DrivingSchool.TypeNames[type]))
+		end
     else
         client:sendError(_("Interner Fehler: Argumente falsch @DrivingSchool:Event_startLessionQuestion!", client))
     end
@@ -250,6 +249,6 @@ function DrivingSchool:Event_receiveTurnCommand(turnCommand)
 end
 
 function DrivingSchool:Event_passTheory( )
-	source.m_HasCarTheory = true
+	source.m_HasTheory = true
 	source:sendInfo(_("Gehe nun zur praktischen Prüfung!",client ))
 end
