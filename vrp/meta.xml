@@ -88,9 +88,11 @@
 	<script src="server/classes/Inventory/ItemBarricade.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemDrugs.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
+	<script src="server/classes/Inventory/Drugs/DrugsWeed.lua" type="server"/>
 
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
