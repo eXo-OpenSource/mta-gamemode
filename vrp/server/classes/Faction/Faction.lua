@@ -10,29 +10,33 @@ Faction = inherit(Object)
 
 -- implement by children
 
-function Faction:constructor(id, name_short, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType)
-	self.m_Id = id
+function Faction:constructor(Id, name_short, name, bankAccountId, players, rankLoans, rankSkins, rankWeapons, depotId, factionType)
+	self.m_Id = Id
 	self.m_Name_Short = name_short
 	self.m_Name = name
 	self.m_Players = players
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Faction, self:getId())
 	self.m_Invitations = {}
-	self.m_RankNames = factionRankNames[id]
-	self.m_Skins = factionSkins[id]
-	self.m_ValidWeapons = factionWeapons[id]
-	self.m_Color = factionColors[id]
+	self.m_RankNames = factionRankNames[Id]
+	self.m_Skins = factionSkins[Id]
+	self.m_ValidWeapons = factionWeapons[Id]
+	self.m_Color = factionColors[Id]
 	self.m_WeaponDepotInfo = factionWeaponDepotInfo
 	self.m_Vehicles = {}
-	if rankLoans == "" then	rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for faction "..id) end
-	if rankSkins == "" then	rankSkins = {} for i=0,6 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for faction "..id) end
-	if rankWeapons == "" then rankWeapons = {} for i=0,6 do rankWeapons[i] = {} for wi=0,46 do rankWeapons[i][wi] = 0 end end rankWeapons = toJSON(rankWeapons) outputDebug("Created RankWeapons for faction "..id) end
+
+	if rankLoans == "" then	rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for faction "..Id) end
+	if rankSkins == "" then	rankSkins = {} for i=0,6 do rankSkins[i] = self:getRandomSkin() end rankSkins = toJSON(rankSkins) outputDebug("Created RankSkins for faction "..Id) end
+	if rankWeapons == "" then rankWeapons = {} for i=0,6 do rankWeapons[i] = {} for wi=0,46 do rankWeapons[i][wi] = 0 end end rankWeapons = toJSON(rankWeapons) outputDebug("Created RankWeapons for faction "..Id) end
 
 	self.m_RankWeapons = fromJSON(rankWeapons)
 	self.m_RankLoans = fromJSON(rankLoans)
 	self.m_RankSkins = fromJSON(rankSkins)
 	self.m_Type = factionType
 
-	self.m_Depot = Depot.load(depotId,id)
+	self.m_Depot = Depot.load(depotId,Id)
+
+	self.m_PhoneNumber = PhoneNumbers:getSingleton():loadOrGenerateNumber("faction", Id)
+
 end
 
 

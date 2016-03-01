@@ -6,29 +6,80 @@
 -- *
 -- ****************************************************************************
 PhoneNumbers = inherit(Singleton)
+
 PHONE_NUMBER_TYPES = {[1] = "player", [2] = "faction", [3] = "company", [4] = "group"}
 PHONE_NUMBER_LENGTH = {["player"] = 6, ["faction"] = 3, ["company"] = 3, ["group"] = 4}
 
 function PhoneNumbers:constructor()
 	self.m_PhoneNumbers = {}
+	self:loadNumbers()
+
+end
+
+function PhoneNumbers:loadNumbers()
+	local result = sql:queryFetch("SELECT * FROM ??_phone_numbers", sql:getPrefix())
+	for k, row in ipairs(result) do
+		self:loadSingleNumber(row.Number, row.OwnerType, row.Owner)
+	end
+end
+
+function PhoneNumbers:loadSingleNumber(number, typeId, ownerId)
+	local owner
+	if type == 1 then
+		owner = DatabasePlayer:getFromId(ownerId)
+	elseif type == 2 then
+		owner = FactionManager:getFromId(ownerId)
+	elseif type == 3 then
+		owner = CompanyManager:getFromId(ownerId)
+	elseif type == 4 then
+		owner = GroupManager:getFromId(ownerId)
+	end
+
+	self.m_PhoneNumbers[number] = {}
+	self.m_PhoneNumbers[number]["type"] = PHONE_NUMBER_TYPES[typeId]
+	self.m_PhoneNumbers[number]["owner"] = owner
+	self.m_PhoneNumbers[number]["ownerId"] = ownerId
+end
+
+function PhoneNumbers:loadOrGenerateNumber(type, ownerId)
+	if not self:getNumber(type, ownerId) then
+		return self:generateNumber(type, ownerId)
+	end
+end
+
+function PhoneNumbers:getNumber(type, ownerId)
+	for index, num in pairs(self.m_PhoneNumbers) do
+		if num["type"] == type and num["ownerId"] == ownerId then
+			return index
+		end
+	end
+	return false
 end
 
 function PhoneNumbers:generateNumber(type, owner)
-	local number
-	for i=0, PHONE_NUMBER_LENGTH[type] do
-		number = number..math.random(0, 9)
+	local number = ""
+	for i=0, PHONE_NUMBER_LENGTH[type]-1 do
+		number = tonumber(number..math.random(0, 9))
 	end
 	if self:checkNumber(number) == false then
-		self:addNumber(number, type, owner)
+		return self:saveNumber(number, type, owner)
 	else
 		self:generateNumber(type, owner)
 	end
 end
 
-function PhoneNumbers:addNumber(number, type, owner)
-	self.m_PhoneNumbers[number] = {}
-	self.m_PhoneNumbers[number]["type"] = type
-	self.m_PhoneNumbers[number]["owner"] = owner
+function PhoneNumbers:saveNumber(number, type, ownerId)
+	local typeId = 0
+	for index, key in pairs(PHONE_NUMBER_TYPES) do
+		if key == type then
+			typeId = index
+		end
+	end
+	outputDebug("Saved PhoneNumber "..number.." Typ: "..typeId.." Owner: "..ownerId)
+
+	sql:queryFetch("INSERT INTO ??_phone_numbers (Number, OwnerType, Owner) VALUES (?, ?, ?)", sql:getPrefix(), number, typeId, ownerId)
+	self:loadSingleNumber(number, typeId, ownerId)
+	return number
 end
 
 function PhoneNumbers:removeNumber(number)

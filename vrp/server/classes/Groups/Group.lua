@@ -28,6 +28,8 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange, rank
 	if saveRanks == true then
 		self:saveRankSettings()
 	end
+	self.m_PhoneNumber = PhoneNumbers:getSingleton():loadOrGenerateNumber("group", Id)
+
 end
 
 function Group:destructor()
