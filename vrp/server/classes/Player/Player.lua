@@ -654,3 +654,7 @@ function Player:getPlayerAttachedObject()
 	end
 	return false
 end
+
+function Player:setModel( skin )
+	setElementModel( self, skin )
+end
