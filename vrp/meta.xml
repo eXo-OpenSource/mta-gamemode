@@ -192,7 +192,8 @@
 	<script src="server/classes/Jobs/JobServiceTechnician.lua" type="server"/>
 	<script src="server/classes/Jobs/JobServiceTechnicianTask.lua" type="server"/>
 	<script src="server/classes/Jobs/JobServiceTechnicianTaskQuestion.lua" type="server"/>
-
+	<script src="server/classes/Jobs/JobPizzaDelivery.lua" type="server"/>
+		
 	<!-- NPCs and shops -->
 	<script src="server/classes/Gameplay/ShopNPC.lua" type="server"/>
 	<script src="server/classes/Gameplay/RobableShop.lua" type="server"/>
@@ -447,7 +448,7 @@
 	<script src="client/classes/Jobs/JobBusDriver.lua" type="client"/>
 	<!--<script src="client/classes/Jobs/JobMechanic.lua" type="client"/> -->
 	<script src="client/classes/Jobs/JobServiceTechnician.lua" type="client"/>
-
+	<script src="client/classes/Jobs/JobPizzaDelivery.lua" type="client"/>
 	<!-- Groups -->
 	<!--<script src="client/classes/Groups/GangArea.lua" type="client"/>-->
 	<!--<script src="client/classes/Groups/GangAreaManager.lua" type="client"/>-->
@@ -640,6 +641,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/LocalPlayer.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Logistician.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Trashman.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Pizza.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/RoadSweeper.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Lumberjack.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Police.png"/>
@@ -673,6 +675,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Logistician.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Trashman.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Pizza.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/RoadSweeper.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Lumberjack.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Police.png"/>
@@ -714,7 +717,8 @@
 	<vrpfile src="files/images/Jobs/HeaderMechanic.png"/>
 	<vrpfile src="files/images/Jobs/Farmerdisplay.png"/>
 	<vrpfile src="files/images/Jobs/HeaderServiceTechnician.png"/>
-
+	<vrpfile src="files/images/Jobs/HeaderPizzaDelivery.png"/>
+	
 	<vrpfile src="files/images/Nametag/default.png"/>
 	<vrpfile src="files/images/Nametag/vrp.png"/>
 	<vrpfile src="files/images/Nametag/vrpstar.png"/>
