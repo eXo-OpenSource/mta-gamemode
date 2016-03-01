@@ -68,6 +68,7 @@
 	<script src="server/classes/ActionsCheck.lua" type="server"/>
 	<script src="server/classes/Gate.lua" type="server"/>
 	<script src="server/classes/Door.lua" type="server"/>
+	<script src="server/classes/PhoneNumbers.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -193,7 +194,7 @@
 	<script src="server/classes/Jobs/JobServiceTechnicianTask.lua" type="server"/>
 	<script src="server/classes/Jobs/JobServiceTechnicianTaskQuestion.lua" type="server"/>
 	<script src="server/classes/Jobs/JobPizzaDelivery.lua" type="server"/>
-		
+
 	<!-- NPCs and shops -->
 	<script src="server/classes/Gameplay/ShopNPC.lua" type="server"/>
 	<script src="server/classes/Gameplay/RobableShop.lua" type="server"/>
@@ -718,7 +719,7 @@
 	<vrpfile src="files/images/Jobs/Farmerdisplay.png"/>
 	<vrpfile src="files/images/Jobs/HeaderServiceTechnician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderPizzaDelivery.png"/>
-	
+
 	<vrpfile src="files/images/Nametag/default.png"/>
 	<vrpfile src="files/images/Nametag/vrp.png"/>
 	<vrpfile src="files/images/Nametag/vrpstar.png"/>
