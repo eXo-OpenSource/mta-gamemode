@@ -12,11 +12,12 @@ addRemoteEvents{ "onPizzaDelivered"}
 local BASE_LOAN = 10
 function JobPizza:constructor( )
 	Job.constructor(self)
+	VehicleSpawner:new(2102.41, -1785.12, 12.39, {509,448}, 90,  bind(JobPizza.additionalCheck, self),bind(JobPizza.onVehicleSpawn, self))
 
 end
 
 function JobPizza:start(player)
-	VehicleSpawner:new(2102.41, -1785.12, 12.39, {509,448}, 90,  bind(JobPizza.additionalCheck, self),bind(JobPizza.onVehicleSpawn, self))
+
 end
 
 function JobPizza:onVehicleSpawn( vehicle, player )
