@@ -522,6 +522,7 @@ function Player:giveMoney(money) -- Overriden
 	if money ~= 0 then
 		self:sendShortMessage((money >= 0 and "+"..money or money).."$")
 	end
+	self:triggerEvent("playerCashChange")
 end
 
 function Player:startTrading(tradingPartner)

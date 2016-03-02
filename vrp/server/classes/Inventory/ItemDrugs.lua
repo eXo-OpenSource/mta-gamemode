@@ -14,3 +14,7 @@ end
 function ItemDrugs:destructor()
 
 end
+
+function ItemDrugs:use( )
+
+end

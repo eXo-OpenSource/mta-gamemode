@@ -1,4 +1,4 @@
--- ****************************************************************************
+﻿-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/Jobs/JobPizzaDelivery.lua
@@ -10,7 +10,7 @@ JobPizza = inherit(Job)
 
 addRemoteEvents{ "nextPizzaDelivery", "stopPizzaShift" }
 
-local PickupX, PickupY, PickupZ =  2098.50, -1808.93, 13.07 
+local PickupX, PickupY, PickupZ =  2098.50, -1808.93, 13.07
 local objID = 1582
 function JobPizza:constructor()
 	Job.constructor(self,2104.20, -1815.21, 12.55, "Pizza.png", "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman), self.onInfo)
@@ -22,34 +22,34 @@ end
 
 
 function JobPizza:start()
-	
+
 end
 
 function JobPizza:throwPizza()
 	local obj = getPedOccupiedVehicle( localPlayer ) or localPlayer
 	local x, y, z = getElementPosition( obj )
-	local _,_,rot = getElementRotation( obj ) 
-	local x2, y2 = getPointFromDistanceRotation(x, y, 1, rot-90)
+	local _,_,rot = getElementRotation( obj )
+	local x2, y2 = getPointFromDistanceRotation(x, y, 1.5, rot-90)
 	self.m_PizzaObj = createObject ( objID, x, y , z+ 1)
 	setElementCollisionsEnabled( self.m_PizzaObj, false)
 	moveObject( self.m_PizzaObj, 500,x2, y2, z-0.5 ,0,0,0,"OutBack")
 	setTimer( bind( JobPizza.destroyThrow, self), 700, 1 )
 end
 
-function JobPizza:destroyThrow() 
-	if self.m_PizzaObj then 
+function JobPizza:destroyThrow()
+	if self.m_PizzaObj then
 		destroyElement( self.m_PizzaObj )
 	end
 end
 
 function JobPizza:endShift( )
-	if self.m_PizzaJobBlip then 
+	if self.m_PizzaJobBlip then
 		self.m_PizzaJobBlip:delete()
-	end 
-	if self.m_PizzaJobMarker then 
+	end
+	if self.m_PizzaJobMarker then
 		destroyElement( self.m_PizzaJobMarker )
 	end
-	if self.m_PizzaPickupMarker then 
+	if self.m_PizzaPickupMarker then
 		destroyElement( self.m_PizzaPickupMarker )
 	end
 end
@@ -136,7 +136,7 @@ local DeliverPositions = {
  {2440.4077148438,-1098.2082519531,42.614627838135},
  {2408.1013183594,-1100.9923095703,39.624187469482},
  {2408.7565917969,-1101.7497558594,39.71813583374},
- 
+
  {1340.9881591797,-1063.7813720703,26.136180877686},
  {1337.7608642578,-1097.6398925781,23.621845245361},
  {1371.0822753906,-1089.2873535156,24.201076507568},
@@ -266,48 +266,57 @@ local DeliverPositions = {
 
 
 
-function JobPizza:nextDeliver( ) 
+function JobPizza:nextDeliver( )
 	local randPosition = math.random(1, PosCount)
 	local x,y,z = DeliverPositions[randPosition][1], DeliverPositions[randPosition][2], DeliverPositions[randPosition][3]
 	local px,py = getElementPosition( localPlayer )
 	self.m_PizzaJobMarker = createMarker(x, y, z,"checkpoint", 2, 0, 200, 200, 255)
-	self.m_DeliverDistance = math.floor( getDistanceBetweenPoints2D( px, py, x, y) ) 
+	self.m_DeliverDistance = math.floor( getDistanceBetweenPoints2D( px, py, x, y) )
 	addEventHandler("onClientMarkerHit",self.m_PizzaJobMarker,bind( JobPizza.onMarkerHit, self))
 	self.m_PizzaJobBlip = Blip:new("Waypoint.png",x , y)
 	self.m_PizzaTick = getTickCount()
 end
 
 function JobPizza:onMarkerHit( )
+	local obj = getPedOccupiedVehicle( localPlayer )
+	if obj then
+			local speedx, speedy, speedz = getElementVelocity ( obj )
+			local actualspeed = (speedx^2 + speedy^2 + speedz^2)^(0.5)
+			local kmh = actualspeed * 180
+			if kmh > 25 then
+				return triggerEvent("errorBox", localPlayer,"Zu schnell! Fahre langsamer heran.")
+			end
+	end
 	self.m_PizzaJobBlip:delete()
 	destroyElement( self.m_PizzaJobMarker )
 	self:pickupDeliver( )
 end
 
 function JobPizza:pickupDeliver( )
-	triggerEvent("infoBox", localPlayer,"Fahre zur�ck zum Pizza-Stack !")
-	self:throwPizza()	
+	triggerEvent("infoBox", localPlayer,"Fahre zurück zum Pizza-Stack !")
+	self:throwPizza()
 	self.m_PizzaPickupMarker = createMarker( PickupX, PickupY, PickupZ , "checkpoint", 2, 200, 200, 0, 255)
 	self.m_PizzaJobBlip = Blip:new("Waypoint.png",PickupX , PickupY)
 	addEventHandler("onClientMarkerHit",self.m_PizzaPickupMarker,bind( JobPizza.onNextDeliver, self))
 end
 
-function JobPizza:onNextDeliver( ) 
-	--// pay 
+function JobPizza:onNextDeliver( )
+	--// pay
 	local now = getTickCount()
 	local duration = (now - self.m_PizzaTick) / 1000 -- in seconds
 	triggerServerEvent("onPizzaDelivered", localPlayer, self.m_DeliverDistance, duration )
 	destroyElement( self.m_PizzaPickupMarker )
 	self.m_PizzaJobBlip:delete()
-	self:nextDeliver( ) 
+	self:nextDeliver( )
 end
 
 function getPointFromDistanceRotation(x, y, dist, angle)
- 
+
     local a = math.rad(90 - angle);
- 
+
     local dx = math.cos(a) * dist;
     local dy = math.sin(a) * dist;
- 
+
     return x+dx, y+dy;
- 
+
 end

@@ -13,3 +13,7 @@ end
 function DrugsWeed:destructor()
 
 end
+
+function DrugsWeed:use( player )
+  
+end
