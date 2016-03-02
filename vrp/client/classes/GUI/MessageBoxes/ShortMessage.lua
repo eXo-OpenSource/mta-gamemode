@@ -64,13 +64,15 @@ function ShortMessage:drawThis()
 
 	-- Center the text
 	x = x + 4
-	w = w - 4
+	w = w - 8
 
 	-- Draw the text bounding box (DEBUG)
-	--[[dxDrawLine(x, y, x + w, y, Color.White, 1)
-	dxDrawLine(x, y, x, y + h, Color.White, 1)
-	dxDrawLine(x, y + h, x + w, y + h, Color.White, 1)
-	dxDrawLine(x + w, y, x + w, y + h, Color.White, 1)]]
+	if GUI_DEBUG then
+		dxDrawLine(x, y, x + w, y, Color.White, 1)
+		dxDrawLine(x, y, x, y + h, Color.White, 1)
+		dxDrawLine(x, y + h, x + w, y + h, Color.White, 1)
+		dxDrawLine(x + w, y, x + w, y + h, Color.White, 1)
+	end
 
 	-- Draw message text
 	dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)

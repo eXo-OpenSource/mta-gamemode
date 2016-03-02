@@ -13,9 +13,10 @@ addRemoteEvents{ "nextPizzaDelivery", "stopPizzaShift" }
 local PickupX, PickupY, PickupZ =  2098.50, -1808.93, 13.07
 local objID = 1582
 function JobPizza:constructor()
-	Job.constructor(self,2104.20, -1815.21, 12.55, "Pizza.png", "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman), self.onInfo)
+	Job.constructor(self, 2104.20, -1815.21, 12.55, "Pizza.png", "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), _(HelpTexts.Jobs.PizzaDelivery), self.onInfo)
+
 	-- add job to help menu
-	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman))
+	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), _(HelpTexts.Jobs.PizzaDelivery))
 	addEventHandler("nextPizzaDelivery", localPlayer, bind(JobPizza.nextDeliver, self))
 	addEventHandler("stopPizzaShift", localPlayer, bind(JobPizza.endShift, self))
 end

@@ -55,7 +55,7 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.25, self.m_Height*0.10, _"Fraktion", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
-	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.49, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.49, self.m_Width*0.64, self.m_Height*0.06, "", tabGeneral)
 	self.m_FactionMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.49, self.m_Width*0.4, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_FactionMenuButton.onHover = function () self.m_FactionMenuButton:setColor(Color.White) end
 	self.m_FactionMenuButton.onUnhover = function () self.m_FactionMenuButton:setColor(Color.LightBlue) end

@@ -35,7 +35,7 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 
 	self.m_Depot = Depot.load(depotId,Id)
 
-	self.m_PhoneNumber = PhoneNumbers:getSingleton():loadOrGenerateNumber("faction", Id)
+	self.m_PhoneNumber = PhoneNumbers:getSingleton():loadOrGenerateNumber("faction", self)
 
 end
 

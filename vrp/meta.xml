@@ -43,6 +43,7 @@
 	<script src="server/constants/factions.lua" type="server"/>
 	<script src="server/constants/companies.lua" type="server"/>
 	<script src="server/constants/beggar.lua" type="server"/>
+	<script src="server/constants/tollstations.lua" type="server"/>
 	<script src="server/classes/Debugging.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>
@@ -172,6 +173,7 @@
 	<script src="server/classes/Vehicles/AutomaticVehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/PayNSpray.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleBarrier.lua" type="server"/>
+	<script src="server/classes/Vehicles/TollStation.lua" type="server"/>
 
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -949,4 +951,12 @@
 
 	<!-- Includes -->
 	<include resource="exo_maps" />
+
+	<!-- ACL Request -->
+	<aclrequest>
+		<right name="function.startResource" access="true" />
+		<right name="function.stopResource" access="true" />
+		<right name="function.kickPlayer" access="true" />
+		<right name="function.fetchRemote" access="true" />
+	</aclrequest>
 </meta>
