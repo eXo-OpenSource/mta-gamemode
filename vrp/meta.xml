@@ -301,6 +301,8 @@
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
+	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
 
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
@@ -912,6 +914,7 @@
 	<vrpfile src="files/shader/texreplace.fx"/>
 	<vrpfile src="files/shader/cuttexture.fx"/>
 	<vrpfile src="files/shader/fadeOut.fx"/>
+	<vrpfile src="files/shader/drug-weedshader.fx"/>
 
 	<!-- HTML -->
 	<vrpfile src="files/html/PolicePanel/PolicePanel.html"/>
