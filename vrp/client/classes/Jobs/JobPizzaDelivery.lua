@@ -277,19 +277,21 @@ function JobPizza:nextDeliver( )
 	self.m_PizzaTick = getTickCount()
 end
 
-function JobPizza:onMarkerHit( )
-	local obj = getPedOccupiedVehicle( localPlayer )
-	if obj then
-			local speedx, speedy, speedz = getElementVelocity ( obj )
-			local actualspeed = (speedx^2 + speedy^2 + speedz^2)^(0.5)
-			local kmh = actualspeed * 180
-			if kmh > 25 then
-				return triggerEvent("errorBox", localPlayer,"Zu schnell! Fahre langsamer heran.")
+function JobPizza:onMarkerHit( element, bdim )
+	if element == localPlayer or element == getPedOccupiedVehicle( localPlayer ) then
+		local obj = getPedOccupiedVehicle( localPlayer )
+		if obj then
+				local speedx, speedy, speedz = getElementVelocity ( obj )
+				local actualspeed = (speedx^2 + speedy^2 + speedz^2)^(0.5)
+				local kmh = actualspeed * 180
+				if kmh > 25 then
+					return triggerEvent("errorBox", localPlayer,"Zu schnell! Fahre langsamer heran.")
+				end
 			end
+		self.m_PizzaJobBlip:delete()
+		destroyElement( self.m_PizzaJobMarker )
+		self:pickupDeliver( )
 	end
-	self.m_PizzaJobBlip:delete()
-	destroyElement( self.m_PizzaJobMarker )
-	self:pickupDeliver( )
 end
 
 function JobPizza:pickupDeliver( )
@@ -300,14 +302,16 @@ function JobPizza:pickupDeliver( )
 	addEventHandler("onClientMarkerHit",self.m_PizzaPickupMarker,bind( JobPizza.onNextDeliver, self))
 end
 
-function JobPizza:onNextDeliver( )
+function JobPizza:onNextDeliver( elem, dim )
 	--// pay
-	local now = getTickCount()
-	local duration = (now - self.m_PizzaTick) / 1000 -- in seconds
-	triggerServerEvent("onPizzaDelivered", localPlayer, self.m_DeliverDistance, duration )
-	destroyElement( self.m_PizzaPickupMarker )
-	self.m_PizzaJobBlip:delete()
-	self:nextDeliver( )
+	if elem == localPlayer or elem == getPedOccupiedVehicle( localPlayer ) then
+		local now = getTickCount()
+		local duration = (now - self.m_PizzaTick) / 1000 -- in seconds
+		triggerServerEvent("onPizzaDelivered", localPlayer, localPlayer, self.m_DeliverDistance, duration )
+		destroyElement( self.m_PizzaPickupMarker )
+		self.m_PizzaJobBlip:delete()
+		self:nextDeliver( )
+	end
 end
 
 function getPointFromDistanceRotation(x, y, dist, angle)

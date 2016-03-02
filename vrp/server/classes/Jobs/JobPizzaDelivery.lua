@@ -13,7 +13,7 @@ local BASE_LOAN = 10
 function JobPizza:constructor( )
 	Job.constructor(self)
 	VehicleSpawner:new(2102.41, -1785.12, 12.39, {509,448}, 90,  bind(JobPizza.additionalCheck, self),bind(JobPizza.onVehicleSpawn, self))
-
+	addEventHandler("onPizzaDelivered", root, bind( JobPizza.onPizzaDeliver, self ) )
 end
 
 function JobPizza:start(player)
@@ -31,8 +31,6 @@ function JobPizza:onVehicleSpawn( vehicle, player )
 	addEventHandler("onVehicleDamage", vehicle, bind(JobPizza.onDamageVehicle, self) )
 	addEventHandler("onVehicleExplode", vehicle, bind(JobPizza.onExplodeVehicle, self) )
 	addEventHandler("onPlayerDisconnect", player, bind(JobPizza.onPlayerDisconnect, self) )
-	self.m_DeliverFunc =  bind( JobPizza.onPizzaDeliver, self )
-	addEventHandler("onPizzaDelivered", player, self.m_DeliverFunc )
 	player:triggerEvent("nextPizzaDelivery")
 end
 
@@ -68,7 +66,6 @@ function JobPizza:endPizzaShift ( player )
 	player.m_PizzaVeh = nil
 	player:setModel( player.m_OldSkin )
 	player:triggerEvent("stopPizzaShift")
-	removeEventHandler("onPizzaDelivered", player, self.m_DeliverFunc )
 	player:sendInfo(_("Schicht beendet!" , player ))
 	if isTimer(player.m_EndPizzaJobTimer) then
 		killTimer( player.m_EndPizzaJobTimer )
@@ -97,8 +94,8 @@ function JobPizza:onExitVehicle( player )
 end
 
 --// Loan-Formula = BASE_LOAN * ( distance / time )
-function JobPizza:onPizzaDeliver( distance, time)
+function JobPizza:onPizzaDeliver( player, distance, time)
 	local workFactor = distance / time
 	local pay = math.floor( BASE_LOAN * workFactor )
-	source:giveMoney( pay )
+	player:giveMoney( pay )
 end
