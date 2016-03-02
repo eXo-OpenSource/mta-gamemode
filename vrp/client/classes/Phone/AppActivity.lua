@@ -8,14 +8,14 @@
 AppActivity = inherit(GUIElement)
 
 function AppActivity:constructor(app)
-	GUIElement.constructor(self, 0, 0, 222, 365, app:getForm())
-	
+	GUIElement.constructor(self, 0, 0, 260, 460, app:getForm())
+
 	-- Close all current activities
 	app:closeActivities()
-	
+
 	-- Add the new activity
 	app:addActivity(self)
-	
+
 	self.m_App = app
 end
 

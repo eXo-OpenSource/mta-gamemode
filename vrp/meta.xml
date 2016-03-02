@@ -297,6 +297,7 @@
 	<script src="client/classes/GUI/GUIWebForm.lua" type="client"/>
 	<script src="client/classes/GUI/GUIScrollableText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
+	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>

@@ -71,14 +71,17 @@ MainActivity = inherit(AppActivity)
 
 function MainActivity:constructor(app)
 	AppActivity.constructor(self, app)
-
-	self.m_Label = GUILabel:new(8, 10, 200, 50, _"Telefon", self) -- 3
-	self.m_Label:setColor(Color.Black)
-	self.m_Edit = GUIEdit:new(8, 70, 206, 25, self)
+	self.m_TabPanel = GUIPhoneTabPanel:new(0, 0, self.m_Width, self.m_Height, self)
+	local tabKeyboard = self.m_TabPanel:addTab(_"Anrufen", FontAwesomeSymbols.Phone)
+	self.m_Label = GUILabel:new(8, 10, 200, 50, _"Telefon", tabKeyboard) -- 3
+	self.m_Edit = GUIEdit:new(8, 70, 206, 25, tabKeyboard)
 	self.m_Edit:setCaption(_"Spielername")
-	self.m_ButtonCall = GUIButton:new(8, 100, 206, 40, _"Anrufen", self)
+	self.m_ButtonCall = GUIButton:new(8, 100, 206, 40, _"Anrufen", tabKeyboard)
 	self.m_ButtonCall.onLeftClick = bind(self.ButtonCall_Click, self)
-	self.m_CheckVoice = GUICheckbox:new(8, 150, 206, 20, _"Sprachanruf", self)
+	self.m_CheckVoice = GUICheckbox:new(8, 150, 206, 20, _"Sprachanruf", tabKeyboard)
+	local tabPhoneBook = self.m_TabPanel:addTab(_"Telefonbuch", FontAwesomeSymbols.Book)
+	self.m_TabPanel:addTab(_"Test1", FontAwesomeSymbols.Book)
+	self.m_TabPanel:addTab(_"Test2", FontAwesomeSymbols.Book)
 end
 
 function MainActivity:ButtonCall_Click()
