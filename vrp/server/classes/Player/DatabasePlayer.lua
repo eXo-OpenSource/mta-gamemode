@@ -147,7 +147,7 @@ function DatabasePlayer:load()
 	self:setSkinLevel(row.SkinLevel)
 	self:setJobLevel(row.JobLevel)
 	self:setPlayTime(row.PlayTime)
-	self.m_PhoneNumber = PhoneNumbers:getSingleton():loadOrGenerateNumber("player", self.m_Id)
+	self.m_PhoneNumber = PhoneNumbers:getSingleton():loadOrGenerateNumber("player", self)
 
 end
 

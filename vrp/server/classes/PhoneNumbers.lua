@@ -12,7 +12,7 @@ PHONE_NUMBER_LENGTH = {["player"] = 6, ["faction"] = 3, ["company"] = 3, ["group
 
 function PhoneNumbers:constructor()
 	self.m_PhoneNumbers = {}
-	self:loadNumbers()
+
 	addRemoteEvents{"requestPhoneNumbers"}
 	addEventHandler("requestPhoneNumbers", root, bind(self.Event_requestNumbers, self))
 end
@@ -20,45 +20,44 @@ end
 function PhoneNumbers:loadNumbers()
 	local result = sql:queryFetch("SELECT * FROM ??_phone_numbers", sql:getPrefix())
 	for k, row in ipairs(result) do
-		self:loadSingleNumber(row.Number, row.OwnerType, row.Owner)
+		local owner
+		if row.OwnerType == 1 then
+			owner = DatabasePlayer:getFromId(row.Owner)
+		elseif row.OwnerType == 2 then
+			owner = FactionManager:getSingleton():getFromId(row.Owner)
+		elseif row.OwnerType == 3 then
+			owner = CompanyManager:getSingleton():getFromId(row.Owner)
+		elseif row.OwnerType == 4 then
+			owner = GroupManager:getSingleton():getFromId(row.Owner)
+		end
+		if owner then
+			self:loadSingleNumber(row.Number, row.OwnerType, owner)
+		else
+			outputDebugString("Error Loading Number "..row.Number)
+		end
 	end
 end
 
-function PhoneNumbers:loadSingleNumber(number, typeId, ownerId)
-	local owner = false
-	if typeId == 1 then
-		owner = DatabasePlayer.get(ownerId)
-	elseif typeId == 2 then
-		owner = FactionManager:getFromId(ownerId)
-	elseif typeId == 3 then
-		owner = CompanyManager:getFromId(ownerId)
-	elseif typeId == 4 then
-		owner = GroupManager:getFromId(ownerId)
-	end
-
-	self.m_PhoneNumbers[number] = {}
-	self.m_PhoneNumbers[number]["type"] = PHONE_NUMBER_TYPES[typeId]
-	self.m_PhoneNumbers[number]["ownerId"] = ownerId
-
-	if owner then
-	--if owner and owner:getName() then
+function PhoneNumbers:loadSingleNumber(number, typeId, owner)
+	--outputDebugString("Load Single Number: Type: "..PHONE_NUMBER_TYPES[typeId].." Number: "..number)
+	if owner and owner:getName() then
+		self.m_PhoneNumbers[number] = {}
 		self.m_PhoneNumbers[number]["owner"] = owner
-		--self.m_PhoneNumbers[number]["ownerName"] = owner:getName()
-		self.m_PhoneNumbers[number]["ownerId"] = ownerId
+		self.m_PhoneNumbers[number]["type"] = PHONE_NUMBER_TYPES[typeId]
 	else
-		outputDebugString("Owner not found! Type: "..PHONE_NUMBER_TYPES[typeId].." Number: "..number.." ID: "..ownerId)
+		outputDebugString("Owner not found! Type: "..PHONE_NUMBER_TYPES[typeId].." Number: "..number)
 	end
 end
 
-function PhoneNumbers:loadOrGenerateNumber(type, ownerId)
-	if not self:getNumber(type, ownerId) then
-		return self:generateNumber(type, ownerId)
+function PhoneNumbers:loadOrGenerateNumber(type, owner)
+	if not self:getNumber(type, owner) then
+		return self:generateNumber(type, owner)
 	end
 end
 
-function PhoneNumbers:getNumber(type, ownerId)
+function PhoneNumbers:getNumber(type, owner)
 	for index, num in pairs(self.m_PhoneNumbers) do
-		if num["type"] == type and num["ownerId"] == ownerId then
+		if num["type"] == type and num["owner"]:getId() == owner:getId() then
 			return index
 		end
 	end
@@ -77,17 +76,17 @@ function PhoneNumbers:generateNumber(type, owner)
 	end
 end
 
-function PhoneNumbers:saveNumber(number, type, ownerId)
+function PhoneNumbers:saveNumber(number, type, owner)
 	local typeId = 0
 	for index, key in pairs(PHONE_NUMBER_TYPES) do
 		if key == type then
 			typeId = index
 		end
 	end
-	outputDebug("Saved PhoneNumber "..number.." Typ: "..typeId.." Owner: "..ownerId)
+	outputDebug("Saved PhoneNumber "..number.." Typ: "..typeId.." Owner: "..owner:getId())
 
-	sql:queryFetch("INSERT INTO ??_phone_numbers (Number, OwnerType, Owner) VALUES (?, ?, ?)", sql:getPrefix(), number, typeId, ownerId)
-	self:loadSingleNumber(number, typeId, ownerId)
+	sql:queryFetch("INSERT INTO ??_phone_numbers (Number, OwnerType, Owner) VALUES (?, ?, ?)", sql:getPrefix(), number, typeId, owner:getId())
+	self:loadSingleNumber(number, typeId, owner)
 	return number
 end
 

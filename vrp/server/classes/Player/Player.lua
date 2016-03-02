@@ -130,6 +130,7 @@ function Player:loadCharacter()
 
 	-- Add Payday
 	self:setNextPayday()
+	self.m_PhoneNumber = PhoneNumbers:getSingleton():loadOrGenerateNumber("player", self)
 
 	self.m_Inventory = InventoryManager:getSingleton():loadInventory(self)
 
