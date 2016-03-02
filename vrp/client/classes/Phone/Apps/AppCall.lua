@@ -15,10 +15,8 @@ function AppCall:constructor()
 	PhoneApp.constructor(self, "Telefon", "IconCall.png")
 
 	-- Add event handlers
-	addEvent("callIncoming", true)
-	addEvent("callBusy", true)
-	addEvent("callAnswer", true)
-	addEvent("callReplace", true)
+	addRemoteEvents{"callIncoming", "callReplace", "callAnswer", "callBusy"}
+
 	addEventHandler("callIncoming", root, bind(self.Event_callIncoming, self))
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
@@ -28,6 +26,7 @@ end
 function AppCall:onOpen(form)
 	-- Create main activity
 	MainActivity:new(self)
+	triggerServerEvent("requestPhoneNumbers", localPlayer)
 end
 
 function AppCall:onClose()
@@ -79,9 +78,16 @@ function MainActivity:constructor(app)
 	self.m_ButtonCall = GUIButton:new(8, 100, 206, 40, _"Anrufen", tabKeyboard)
 	self.m_ButtonCall.onLeftClick = bind(self.ButtonCall_Click, self)
 	self.m_CheckVoice = GUICheckbox:new(8, 150, 206, 20, _"Sprachanruf", tabKeyboard)
-	local tabPhoneBook = self.m_TabPanel:addTab(_"Telefonbuch", FontAwesomeSymbols.Book)
+	local tabPhoneBook = self.m_TabPanel:addTab(_"Spieler", FontAwesomeSymbols.Book)
+	self.m_PlayerListGrid = GUIGridList:new(0, 0, self.m_Width, self.m_Height-50, tabPhoneBook)
+	self.m_PlayerListGrid:addColumn(_"Spieler", 0.5)
+	self.m_PlayerListGrid:addColumn(_"Nummer", 0.4)
 	self.m_TabPanel:addTab(_"Test1", FontAwesomeSymbols.Book)
 	self.m_TabPanel:addTab(_"Test2", FontAwesomeSymbols.Book)
+
+	addRemoteEvents{"receivePhoneNumbers"}
+	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
+
 end
 
 function MainActivity:ButtonCall_Click()
@@ -99,6 +105,14 @@ function MainActivity:ButtonCall_Click()
 	triggerServerEvent("callStart", root, player, self.m_CheckVoice:isChecked())
 end
 
+function MainActivity:Event_receivePhoneNumbers(list)
+	self.m_PlayerListGrid:clear()
+	for index, number in pairs(list) do
+		if number["type"] == "player" then
+			self.m_PlayerListGrid:addItem(number["ownerName"], tostring(index))
+		end
+	end
+end
 
 IncomingCallActivity = inherit(AppActivity)
 

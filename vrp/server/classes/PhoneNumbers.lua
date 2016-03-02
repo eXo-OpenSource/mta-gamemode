@@ -13,7 +13,8 @@ PHONE_NUMBER_LENGTH = {["player"] = 6, ["faction"] = 3, ["company"] = 3, ["group
 function PhoneNumbers:constructor()
 	self.m_PhoneNumbers = {}
 	self:loadNumbers()
-
+	addRemoteEvents{"requestPhoneNumbers"}
+	addEventHandler("requestPhoneNumbers", root, bind(self.Event_requestNumbers, self))
 end
 
 function PhoneNumbers:loadNumbers()
@@ -24,21 +25,29 @@ function PhoneNumbers:loadNumbers()
 end
 
 function PhoneNumbers:loadSingleNumber(number, typeId, ownerId)
-	local owner
-	if type == 1 then
-		owner = DatabasePlayer:getFromId(ownerId)
-	elseif type == 2 then
+	local owner = false
+	if typeId == 1 then
+		owner = DatabasePlayer.get(ownerId)
+	elseif typeId == 2 then
 		owner = FactionManager:getFromId(ownerId)
-	elseif type == 3 then
+	elseif typeId == 3 then
 		owner = CompanyManager:getFromId(ownerId)
-	elseif type == 4 then
+	elseif typeId == 4 then
 		owner = GroupManager:getFromId(ownerId)
 	end
 
 	self.m_PhoneNumbers[number] = {}
 	self.m_PhoneNumbers[number]["type"] = PHONE_NUMBER_TYPES[typeId]
-	self.m_PhoneNumbers[number]["owner"] = owner
 	self.m_PhoneNumbers[number]["ownerId"] = ownerId
+
+	if owner then
+	--if owner and owner:getName() then
+		self.m_PhoneNumbers[number]["owner"] = owner
+		--self.m_PhoneNumbers[number]["ownerName"] = owner:getName()
+		self.m_PhoneNumbers[number]["ownerId"] = ownerId
+	else
+		outputDebugString("Owner not found! Type: "..PHONE_NUMBER_TYPES[typeId].." Number: "..number.." ID: "..ownerId)
+	end
 end
 
 function PhoneNumbers:loadOrGenerateNumber(type, ownerId)
@@ -96,4 +105,8 @@ function PhoneNumbers:getOwner(number)
 		return self.m_PhoneNumbers[number]["owner"], self.m_PhoneNumbers[number]["type"]
 	end
 	return false
+end
+
+function PhoneNumbers:Event_requestNumbers()
+	client:triggerEvent("receivePhoneNumbers", self.m_PhoneNumbers)
 end
