@@ -35,7 +35,7 @@ function Version:setRevision(rev)
 	REVISION = rev
 
 	if BUILD == "development" then
-		VERSION_LABEL = ("%s %sdev %s"):format(PROJECT_NAME, VERSION, rev:sub(1,7))
+		VERSION_LABEL = ("%s %sdev @ %s"):format(PROJECT_NAME, VERSION, rev:sub(1,7))
 	elseif BUILD == "unstable" then
 		VERSION_LABEL = ("%s %s unstable"):format(PROJECT_NAME, VERSION)
 	else
