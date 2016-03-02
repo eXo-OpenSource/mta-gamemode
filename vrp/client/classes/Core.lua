@@ -54,11 +54,13 @@ function Core:ready()
 
 	VehicleShop.initializeAll()
 	VehicleGarages:new()
+	ELSSystem:new()
 	GasStationGUI:new()
 	SkinShopGUI.initializeAll()
 	ItemManager:new();
 	--// Gangwar
 	GangwarClient:new()
+
 
 	-- Init Binds
 	bindKey(core:get("KeyBindings", "KeyToggleHelpGUI", "f9"), "down",

@@ -36,6 +36,9 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	end
 
 	self:setMileage(mileage)
+	if faction.m_Id == 1 then
+			self.m_VehELSObj = ELSSystem:new( self )
+	end
 end
 
 function FactionVehicle:destructor()

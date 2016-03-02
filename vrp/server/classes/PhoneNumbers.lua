@@ -22,7 +22,7 @@ function PhoneNumbers:loadNumbers()
 	for k, row in ipairs(result) do
 		local owner
 		if row.OwnerType == 1 then
-			owner = DatabasePlayer:getFromId(row.Owner)
+			--owner = DatabasePlayer:getFromId(row.Owner)
 		elseif row.OwnerType == 2 then
 			owner = FactionManager:getSingleton():getFromId(row.Owner)
 		elseif row.OwnerType == 3 then
