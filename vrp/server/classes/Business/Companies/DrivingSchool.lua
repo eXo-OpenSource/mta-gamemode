@@ -5,8 +5,8 @@ DrivingSchool.TypeNames = {["car"] = "Autoführerschein", ["bike"] = "Motorradsc
 function DrivingSchool:constructor()
     outputDebug(("[%s] Extra-class successfully loaded! (Id: %d)"):format(self:getName(), self:getId()))
     self:createDrivingSchoolMarker(Vector3(1362.04, -1663.74, 13.57))
-	self:createSchoolPed( Vector3( -2035.32, -117.65, 1035.17) )
-	
+	self:createSchoolPed(Vector3( -2035.32, -117.65, 1035.17))
+
     self.m_CurrentLessions = {}
 
     InteriorEnterExit:new(Vector3(1364.14, -1669.00, 13.57), Vector3(-2026.87, -103.61, 1035.18), 0, 268, 3, 0, false)
@@ -71,18 +71,21 @@ end
 
 function DrivingSchool:createSchoolPed( pos )
 	self.m_DrivingSchoolPed = createPed(295, pos,-90 )
+    self.m_DrivingSchoolPed:setData("clickable", true, true)
 	setElementInterior(self.m_DrivingSchoolPed, 3, pos)
     addEventHandler("onElementClicked", self.m_DrivingSchoolPed,
         function(button ,state ,player )
-			if button == "left" and state == "up" then 
+			if button == "left" and state == "up" then
 				if source == self.m_DrivingSchoolPed then
-					if not player.m_HasTheory then 
-						if player.money >= 300 then 
+					if not player.m_HasTheory then
+						if player.money >= 300 then
 							player:triggerEvent("showDrivingSchoolTest")
 							player:takeMoney(300)
-						else player:sendError("Du hast nicht genug Geld ( Kosten: 300)!")
+						else
+                            player:sendError("Du hast nicht genug Geld ( Kosten: 300)!")
 						end
-					else player:sendError("Du hast bereits die Theorieprüfung bestanden!")
+					else
+                        player:sendError("Du hast bereits die Theorieprüfung bestanden!")
 					end
 				end
 			end
@@ -104,7 +107,7 @@ end
 
 function DrivingSchool:checkPlayerLicense(player, type)
     if type == "car" then
-        return player.m_HasDrivingLicense 
+        return player.m_HasDrivingLicense
     elseif type == "bike" then
         return player.m_HasBikeLicense
     elseif type == "truck" then
@@ -134,7 +137,7 @@ function DrivingSchool:Event_startLessionQuestion(target, type)
     local costs = DrivingSchool.LicenseCosts[type]
     if costs and target then
         if self:checkPlayerLicense(target, type) == false then
-			if not target.m_HasTheory then 
+			if target.m_HasTheory then
 				if target:getMoney() >= costs then
 					if not target:getPublicSync("inDrivingLession") == true then
 						if not self.m_CurrentLessions[client] then
@@ -148,7 +151,8 @@ function DrivingSchool:Event_startLessionQuestion(target, type)
 				else
 					client:sendError(_("Der Spieler %s hat nicht genug Geld dabei! (%d$)", client, target.name, costs))
 				end
-			else client:sendError(_("Der Spieler %s muss erst die theoretische Fahrprüfung bestehen!", client, target.name))
+			else
+                client:sendError(_("Der Spieler %s muss erst die theoretische Fahrprüfung bestehen!", client, target.name))
 			end
 		else
 			client:sendError(_("Der Spieler %s hat den %s bereits!", client, target.name, DrivingSchool.TypeNames[type]))
@@ -219,7 +223,7 @@ function DrivingSchool:Event_onQuit()
         lession["instructor"]:sendError(_("Der Fahrschüler %s ist offline gegangen!",lession["instructor"], source.name))
     else
     end
-end 
+end
 
 function DrivingSchool:Event_endLession(target, success, clientServer)
     if not client and clientServer then client = clientServer end
