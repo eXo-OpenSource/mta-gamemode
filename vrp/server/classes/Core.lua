@@ -71,6 +71,7 @@ function Core:constructor()
 	PayNSpray.initializeAll()
 	GasStation.initializeAll()
 	TrainManager.initializeAll()
+	TollStation.initializeAll()
 
 	-- Generate Missions
 	MStealWeaponTruck:new()

@@ -98,7 +98,8 @@ HelpTextTitles = {
 		Police = "Job: Polizist";
 		RoadSweeper = "Job: Straßenkehrer";
 		Trashman = "Job: Müllmann";
-		ServiceTechnician = "Job: Service-Techniker"
+		ServiceTechnician = "Job: Service-Techniker";
+		PizzaDelivery = "Job: Pizza-Lieferant"
 	};
 	Events = {
 		Deathmatch = "Event: Deathmatch";
@@ -234,6 +235,7 @@ HelpTexts = {
 		]];
 		Trashman = [[Todo]];
 		ServiceTechnician = [[Todo]];
+		PizzaDelivery = [[Todo]];
 	};
 	Events = {
 		Deathmatch = [[Todo]];

@@ -7,25 +7,27 @@
 -- ****************************************************************************
 Ban = {}
 function Ban.addBan(who, author, reason, duration)
+	local authorId = 0
 	if type(author) == "userdata" and getElementType(author) == "player" then
 		author = getPlayerName(author)
+		authorId = author:getId()
 	elseif author == nil then
 		author = "System"
 	end
-	
+
 	if not duration then duration = 0 end
-	
+
 	local player = false
 	if type(who) == "userdata" and getElementType(who) == "player" then
 		player = who
 		who = getPlayerSerial(who)
 	end
-	
+
 	local expires = duration + getRealTime().timestamp
 	if duration == 0 then expires = 0 end
-	
-	sql:queryExec("INSERT INTO ??_bans(serial, author, reason, expires) VALUES (?, ?, ?, ?)", sql:getPrefix(), who, author, reason, expires)
-	
+
+	sql:queryExec("INSERT INTO ??_bans(serial, author, reason, expires) VALUES (?, ?, ?, ?)", sql:getPrefix(), who, authorId, reason, expires)
+
 	if not player then
 		for k, v in pairs(getElementsByType("player")) do
 			if getPlayerSerial(v) == serial then
@@ -34,9 +36,9 @@ function Ban.addBan(who, author, reason, duration)
 			end
 		end
 	end
-	
+
 	if player then
-		local reasonstr 
+		local reasonstr
 		if duration > 0 then
 			reasonstr = ("You were banned by %s for %s (Reason: %s"):format(author, string.duration(duration), reason)
 		else
@@ -61,7 +63,7 @@ function Ban.checkBan(player)
 		elseif duration > 0 then
 			reasonstr = ("You are banned for %s (Reason: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
 		end
-			
+
 		kickPlayer(player, reasonstr)
 		return false
 	end
