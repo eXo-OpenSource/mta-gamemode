@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 FactionRescue = inherit(Singleton)
-addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer", "factionRescueGetStretcher", "factionRescueRemoveStretcher"}
+addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer", "factionRescueGetStretcher", "factionRescueRemoveStretcher", "factionRescueWastedFinished"}
 
 function FactionRescue:constructor()
 	-- Duty Pickup
@@ -26,6 +26,7 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueHealPlayer", root, bind(self.Event_healPlayer, self))
 	addEventHandler("factionRescueGetStretcher", root, bind(self.Event_GetStretcher, self))
 	addEventHandler("factionRescueRemoveStretcher", root, bind(self.Event_RemoveStretcher, self))
+	addEventHandler("factionRescueWastedFinished", root, bind(self.Event_OnPlayerWastedFinish, self))
 
 
 	outputDebug("Faction Rescue loaded")
@@ -248,18 +249,36 @@ function FactionRescue:Event_RemoveStretcher()
 end
 --]]
 
-function FactionRescue:createDeathPickup(player)
+function FactionRescue:createDeathPickup(player, ...)
 	player.m_DeathPickup = Pickup(player:getPosition(), 3, 1254, 0)
-	player:setPosition(player.m_DeathPickup:getPosition())
-	player:kill()
+	--player:setPosition(player.m_DeathPickup:getPosition())
+	--player:kill()
 
 	addEventHandler("onPickupHit", player.m_DeathPickup,
 		function (hitPlayer)
 			if hitPlayer:getFaction() and hitPlayer:getFaction():isRescueFaction() then
-				hitPlayer:sendShortMessage(("He's dead son.\nIn Memories of %s"):format(player:getName()))
-				-- open clientside gui
+				if hitPlayer:getPublicSync("Faction:Duty") and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
+					hitPlayer:sendShortMessage(("He's dead son.\nIn Memories of %s"):format(player:getName()))
+				end
 			end
 		end
+	)
+
+	-- Create PlayerDeathTimeout
+	self:createDeathTimeout(player, ...)
+end
+
+function FactionRescue:createDeathTimeout(player, callback)
+	--player:triggerEvent("playerRescueDeathTimeout", PLAYER_DEATH_TIME)
+	setTimer(
+		function ()
+			if player.m_DeathPickup then
+				player.m_DeathPickup:destroy()
+				player.m_DeathPickup = nil
+			end
+			return callback()
+		end, 5000, 1
+		-- PLAYER_DEATH_TIME
 	)
 end
 
@@ -271,19 +290,7 @@ function FactionRescue:Event_OnPlayerWasted(player)
 	if #faction:getOnlinePlayers() > 0 then
 		if not player.m_DeathPickup then
 			faction:sendShortMessage(("%s died.\nPosition: %s - %s"):format(player:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
-			self:createDeathPickup(player)
-
-
-			-- INFO: This is the end Screen (when the player completely died without help!)
-			player:triggerEvent("playerRescueWasted")
-			setTimer(
-				function ()
-					player:setCameraTarget(player)
-					player:respawn()
-					player:fadeCamera(true, 1)
-				end, 27000, 1
-			)
-
+			self:createDeathPickup(player, function () player:triggerEvent("playerRescueWasted") end)
 			return true
 		else -- This should never never happen!
 			outputDebug("Internal Error! Player died while he is Dead. Dafuq?")
@@ -291,6 +298,12 @@ function FactionRescue:Event_OnPlayerWasted(player)
 	end
 
 	return false
+end
+
+function FactionRescue:Event_OnPlayerWastedFinish()
+	source:setCameraTarget(player)
+	source:respawn()
+	source:fadeCamera(true, 1)
 end
 
 function FactionRescue:Event_healPlayerQuestion(target)

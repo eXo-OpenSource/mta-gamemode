@@ -28,10 +28,9 @@ function CompanyGUI:constructor()
 	-- Tab: Allgemein
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
 	self.m_tabAllgemein = tabAllgemein
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Unternehmen:", tabAllgemein)
-	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.06, _"Rang:", tabAllgemein)
-	self.m_CompanyRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.1, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
+	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.96, self.m_Height*0.10, "", tabAllgemein)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.12, self.m_Width*0.25, self.m_Height*0.06, _"Rang:", tabAllgemein)
+	self.m_CompanyRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", tabAllgemein)
 --	self.m_CompanyQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Fraktion verlassen", true, tabAllgemein):setBarColor(Color.Red)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.1, _"Kasse:", tabAllgemein)

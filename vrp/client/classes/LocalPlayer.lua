@@ -126,6 +126,9 @@ function LocalPlayer:playerRescueWasted()
 				HUDRadar:getSingleton():show()
 				HUDUI:getSingleton():show()
 				showChat(true)
+
+				-- Trigger it back to the Server (TODO: Maybe is this Event unsafe..?)
+				triggerServerEvent("factionRescueWastedFinished", localPlayer)
 			end, 3000, 1
 		)
 	end
@@ -136,15 +139,19 @@ function LocalPlayer:playerRescueWasted()
 	showChat(false)
 
 	-- Move camera into the Sky
+	setCameraInterior(0)
 	local pos = self:getPosition()
 	local add = 0
-	local sound = playSound("files/audio/Halleluja.mp3")
-	setCameraInterior(0)
+	local sound = Sound("files/audio/Halleluja.mp3")
+	local soundStart = getTickCount()
+	local soundLength = sound:getLength()
+	ShortMessage:new(_"Dir konnte leider niemand mehr helfen..! Du bist Tod.\n\nBut... have a good flight into the Heaven!", (soundLength-1)*1000)
 	addEventHandler("onClientPreRender", root,
 		function(deltaTime)
 			add = add+0.005*deltaTime
 			setCameraMatrix(pos.x, pos.y, pos.z + add, pos)
-			if (pos.z + add) - pos.z >= 100 then
+
+			if (getTickCount()-soundStart) >= (soundLength*1000) then
 				-- Play knock out effect
 				FadeOutShader:new()
 				setTimer(callback, 4000, 1, sound, start)
