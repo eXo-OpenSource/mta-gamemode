@@ -89,7 +89,7 @@ end
 
 
 function JobPizza:onExitVehicle( player )
-player:sendWarning(_("Du hast noch 20 Sekunden um wieder in den Pizza-Boy einzusteigen!" , player ))
+	player:sendWarning(_("Du hast noch 20 Sekunden um wieder in den Pizza-Boy einzusteigen!" , player ))
 	player.m_EndPizzaJobTimer = setTimer( bind(JobPizza.endPizzaShift,self),20000,1, player )
 end
 
