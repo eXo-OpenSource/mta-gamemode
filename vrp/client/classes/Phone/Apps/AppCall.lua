@@ -77,12 +77,13 @@ function MainActivity:constructor(app)
 	self.m_Edit = GUIEdit:new(10, 60, 200, 40, self.m_Tabs["Keyboard"])
 	self.m_Edit:setCaption(_"Telefonnummer")
 	self.m_ButtonDelete = GUIButton:new(215, 60, 40, 40, FontAwesomeSymbols.Back, self.m_Tabs["Keyboard"])
-		:setFont(FontAwesome(15))
+		:setFont(FontAwesome(30))
+		:setFontSize(1)
 		:setBackgroundColor(Color.Red)
 	self.m_ButtonDelete.onLeftClick = function() self.m_Edit:setText(self.m_Edit:getText():sub(1, #self.m_Edit:getText() - 1)) end
 
-	self.m_ButtonCall = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
-	self.m_ButtonCall.onLeftClick = bind(self.ButtonCall_Click, self)
+	self.m_ButtonCallNumpad = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallNumpad.onLeftClick = bind(self.ButtonCallNumpad_Click, self)
 	self.m_CheckVoice = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
 	self.m_NumpadButton = {}
 	self:addNumpadButton("1", 1, 0)
@@ -103,7 +104,7 @@ function MainActivity:constructor(app)
 	self.m_PlayerListGrid:addColumn(_"Spieler", 0.7)
 	self.m_PlayerListGrid:addColumn(_"Num.", 0.3)
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
-	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCall_Click, self)
+	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
 	self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
 
 	self.m_Tabs["Service"] = self.m_TabPanel:addTab(_"Service", FontAwesomeSymbols.Book)
@@ -111,14 +112,14 @@ function MainActivity:constructor(app)
 	self.m_ServiceListGrid:addColumn(_"Frak/Untern.", 0.7)
 	self.m_ServiceListGrid:addColumn(_"Num.", 0.3)
 	self.m_ButtonCallService = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Service"]):setBackgroundColor(Color.Green)
-	self.m_ButtonCallService.onLeftClick = bind(self.ButtonCall_Click, self)
+	self.m_ButtonCallService.onLeftClick = bind(self.ButtonCallService_Click, self)
 
 	self.m_Tabs["Group"] = self.m_TabPanel:addTab(_"Firmen/Gangs", FontAwesomeSymbols.Group)
 	self.m_GroupListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Group"])
 	self.m_GroupListGrid:addColumn(_"Firma/Gang", 0.7)
 	self.m_GroupListGrid:addColumn(_"Num.", 0.3)
 	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green)
-	self.m_ButtonCallGroup.onLeftClick = bind(self.ButtonCall_Click, self)
+	self.m_ButtonCallGroup.onLeftClick = bind(self.ButtonCallGroup_Click, self)
 
 	addRemoteEvents{"receivePhoneNumbers"}
 	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
@@ -132,8 +133,20 @@ function MainActivity:addNumpadButton(text, column, row)
 	end
 end
 
-function MainActivity:ButtonCall_Click()
-	local player = getPlayerFromName(self.m_Edit:getText())
+function MainActivity:ButtonCallNumpad_Click()
+
+end
+
+function MainActivity:ButtonCallService_Click()
+
+end
+
+function MainActivity:ButtonCallGroup_Click()
+
+end
+
+function MainActivity:ButtonCallPlayer_Click()
+	local player = getPlayerFromName(self.m_PlayerListGrid:getSelectedItem().Owner)
 	if not player then
 		ErrorBox:new(_"Dieser Spieler ist nicht online!")
 		return
@@ -149,11 +162,14 @@ end
 
 function MainActivity:Event_receivePhoneNumbers(list)
 	local grid = {["player"] = self.m_PlayerListGrid, ["group"] = self.m_GroupListGrid, ["faction"] = self.m_ServiceListGrid, ["company"] = self.m_ServiceListGrid }
+	local item
 	for index, key in pairs(grid) do
 		key:clear()
 	end
 	for index, number in pairs(list) do
-		grid[number["OwnerType"]]:addItem(number["OwnerName"], tostring(index))
+		item = grid[number["OwnerType"]]:addItem(number["OwnerName"], tostring(index))
+		item.Owner = number["OwnerName"]
+		item.Number = index
 	end
 end
 
