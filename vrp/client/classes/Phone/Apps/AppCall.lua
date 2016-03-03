@@ -72,7 +72,7 @@ function MainActivity:constructor(app)
 	AppActivity.constructor(self, app)
 	self.m_TabPanel = GUIPhoneTabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_Tabs = {}
-	self.m_Tabs["Keyboard"] = self.m_TabPanel:addTab(_"Anrufen", FontAwesomeSymbols.Phone)
+	self.m_Tabs["Keyboard"] = self.m_TabPanel:addTab(_"Ziffernblock", FontAwesomeSymbols.Phone)
 	self.m_Label = GUILabel:new(10, 10, 200, 50, _"Telefon", self.m_Tabs["Keyboard"]) -- 3
 	self.m_Edit = GUIEdit:new(10, 60, 200, 40, self.m_Tabs["Keyboard"])
 	self.m_Edit:setCaption(_"Telefonnummer")
@@ -81,7 +81,7 @@ function MainActivity:constructor(app)
 		:setBackgroundColor(Color.Red)
 	self.m_ButtonDelete.onLeftClick = function() self.m_Edit:setText(self.m_Edit:getText():sub(1, #self.m_Edit:getText() - 1)) end
 
-	self.m_ButtonCall = GUIButton:new(140, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCall = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCall.onLeftClick = bind(self.ButtonCall_Click, self)
 	self.m_CheckVoice = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
 	self.m_NumpadButton = {}
@@ -98,15 +98,28 @@ function MainActivity:constructor(app)
 	self:addNumpadButton("*", 1, 3)
 	self:addNumpadButton("#", 3, 3)
 
-	self.m_Tabs["Players"] = self.m_TabPanel:addTab(_"Spieler", FontAwesomeSymbols.Book)
+	self.m_Tabs["Players"] = self.m_TabPanel:addTab(_"Spieler", FontAwesomeSymbols.Player)
 	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Players"])
 	self.m_PlayerListGrid:addColumn(_"Spieler", 0.5)
 	self.m_PlayerListGrid:addColumn(_"Nummer", 0.4)
-	self.m_TabPanel:addTab(_"Test1", FontAwesomeSymbols.Book)
-	self.m_TabPanel:addTab(_"Test2", FontAwesomeSymbols.Book)
-	self.m_ButtonCallPlayers = GUIButton:new(140, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCall_Click, self)
 	self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
+
+	self.m_Tabs["Service"] = self.m_TabPanel:addTab(_"Service", FontAwesomeSymbols.Book)
+	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Service"])
+	self.m_PlayerListGrid:addColumn(_"Service", 0.5)
+	self.m_PlayerListGrid:addColumn(_"Nummer", 0.4)
+	self.m_ButtonCallService = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Service"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallService.onLeftClick = bind(self.ButtonCall_Click, self)
+
+	self.m_Tabs["Group"] = self.m_TabPanel:addTab(_"Firmen/Gangs", FontAwesomeSymbols.Group)
+	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Group"])
+	self.m_PlayerListGrid:addColumn(_"Firma/Gang", 0.5)
+	self.m_PlayerListGrid:addColumn(_"Nummer", 0.4)
+	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallGroup.onLeftClick = bind(self.ButtonCall_Click, self)
+
 	addRemoteEvents{"receivePhoneNumbers"}
 	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
 
