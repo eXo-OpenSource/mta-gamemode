@@ -9,7 +9,7 @@ PhoneInteraction = inherit(Singleton)
 
 function PhoneInteraction:constructor()
 	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace"}
-	
+
 	addEventHandler("callStart", root, bind(self.callStart, self))
 	addEventHandler("callBusy", root, bind(self.callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.callAnswer, self))

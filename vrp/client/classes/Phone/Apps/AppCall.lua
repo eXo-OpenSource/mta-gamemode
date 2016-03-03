@@ -84,7 +84,7 @@ function MainActivity:constructor(app)
 
 	self.m_ButtonCallNumpad = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallNumpad.onLeftClick = bind(self.ButtonCallNumpad_Click, self)
-	self.m_CheckVoice = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
+	self.m_CheckVoiceNumpad = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
 	self.m_NumpadButton = {}
 	self:addNumpadButton("1", 1, 0)
 	self:addNumpadButton("2", 2, 0)
@@ -134,6 +134,29 @@ function MainActivity:addNumpadButton(text, column, row)
 end
 
 function MainActivity:ButtonCallNumpad_Click()
+	local number = tonumber(self.m_Edit:getText())
+	if not number or string.len(number) < 3 then
+		ErrorBox:new(_"Ungültige Telefonnummer eingegeben!")
+		return
+	end
+
+	if not self.m_PhoneNumbers[number] then
+		ErrorBox:new(_"Diese Telefonnummer ist nicht vergeben!")
+		return
+	end
+
+	if self.m_PhoneNumbers[number]["OwnerType"] == "player" then
+		if getPlayerFromName(self.m_PhoneNumbers[number]["OwnerName"]) then
+			local player = getPlayerFromName(self.m_PhoneNumbers[number]["OwnerName"])
+			CallResultActivity:new(self:getApp(), player, CALL_RESULT_CALLING, self.m_CheckVoiceNumpad:isChecked())
+			triggerServerEvent("callStart", root, player, self.m_CheckVoiceNumpad:isChecked())
+		else
+			ErrorBox:new(_"Der Spieler ist nicht online!")
+		end
+	else
+		outputChatBox("You called a faction, group or company! - In Development!")
+	end
+
 
 end
 
@@ -156,11 +179,12 @@ function MainActivity:ButtonCallPlayer_Click()
 		return
 	end
 
-	CallResultActivity:new(self:getApp(), player, CALL_RESULT_CALLING, self.m_CheckVoice:isChecked())
-	triggerServerEvent("callStart", root, player, self.m_CheckVoice:isChecked())
+	CallResultActivity:new(self:getApp(), player, CALL_RESULT_CALLING, self.m_CheckVoicePlayers:isChecked())
+	triggerServerEvent("callStart", root, player, self.m_CheckVoicePlayers:isChecked())
 end
 
 function MainActivity:Event_receivePhoneNumbers(list)
+	self.m_PhoneNumbers = list
 	local grid = {["player"] = self.m_PlayerListGrid, ["group"] = self.m_GroupListGrid, ["faction"] = self.m_ServiceListGrid, ["company"] = self.m_ServiceListGrid }
 	local item
 	for index, key in pairs(grid) do
@@ -180,12 +204,13 @@ function IncomingCallActivity:constructor(app, caller, voiceEnabled)
 	self.m_Caller = caller
 	self.m_VoiceEnabled = voiceEnabled
 
-	self.m_CallLabel = GUILabel:new(8, 10, 200, 20, _("Eingehender Anruf von %s", caller:getName()), self)
+	self.m_CallLabel = GUILabel:new(8, 10, self.m_Width, 30, _("Eingehender Anruf von \n%s", caller:getName()), self):setMultiline(true):setAlignX("center")
 	self.m_CallLabel:setColor(Color.Black)
-	self.m_ButtonAnswer = GUIButton:new(8, 200, 100, 40, "Answer", self)
+	GUIWebView:new(self.m_Width/2-70, 70, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..caller:getModel(), true, self)
+	self.m_ButtonAnswer = GUIButton:new(10, self.m_Height-50, 110, 30, _"Annehmen", self)
 	self.m_ButtonAnswer:setBackgroundColor(Color.Green)
 	self.m_ButtonAnswer.onLeftClick = bind(self.ButtonAnswer_Click, self)
-	self.m_ButtonBusy = GUIButton:new(113, 200, 100, 40, "Busy", self)
+	self.m_ButtonBusy = GUIButton:new(self.m_Width-120, self.m_Height-50, 110, 30, _"Ablehnen", self)
 	self.m_ButtonBusy:setBackgroundColor(Color.Red)
 	self.m_ButtonBusy.onLeftClick = bind(self.ButtonBusy_Click, self)
 
@@ -231,18 +256,20 @@ function CallResultActivity:constructor(app, callee, resultType, voiceCall)
 	AppActivity.constructor(self, app)
 	self.m_Callee = callee
 
-	self.m_ResultLabel = GUILabel:new(8, 10, 200, 40, "", self)
+	self.m_ResultLabel = GUILabel:new(0, 10, self.m_Width, 40, "", self):setAlignX("center")
 	if resultType == CALL_RESULT_ANSWER then
-		self.m_ResultLabel:setText(_"Angenommen")
+		self.m_ResultLabel:setText(_"Verbunden mit")
 		self.m_ResultLabel:setColor(Color.Green)
+		GUILabel:new(0, 50, self.m_Width, 30, callee:getName(), self):setColor(Color.Black):setAlignX("center")
 		if voiceCall then
-			GUILabel:new(8, 80, 200, 25, _"Drücke z für Voicechat", self):setColor(Color.Black)
+			GUILabel:new(8, self.m_Height-110, self.m_Width, 20, _"Drücke z für Voicechat", self):setColor(Color.Black):setAlignX("center")
 		end
-		self.m_ButtonReplace = GUIButton:new(8, 222, 205, 40, _"Auflegen", self)
+		GUIWebView:new(self.m_Width/2-70, 80, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..callee:getModel(), true, self)
+		self.m_ButtonReplace = GUIButton:new(10, self.m_Height-50, self.m_Width-20, 40, _"Auflegen", self)
 		self.m_ButtonReplace:setBackgroundColor(Color.Red)
 		self.m_ButtonReplace.onLeftClick = bind(self.ButtonReplace_Click, self)
 	elseif resultType == CALL_RESULT_BUSY then
-		self.m_ResultLabel:setText("Busy")
+		self.m_ResultLabel:setText("Abgelehnt...")
 		self.m_ResultLabel:setColor(Color.Red)
 		setTimer(
 			function()
