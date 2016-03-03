@@ -11,15 +11,15 @@ GUIPhoneTabPanel = inherit(GUIElement)
 function GUIPhoneTabPanel:constructor(posX, posY, width, height, parent)
 	checkArgs("GUIPhoneTabPanel:constructor", "number", "number", "number", "number")
 	self.m_CurrentTab = false
-
+	self.m_Tabs = {}
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 end
 
 function GUIPhoneTabPanel:setTab(id)
 	if self.m_CurrentTab then
-		self[self.m_CurrentTab]:setVisible(false)
+		self.m_Tabs[self.m_CurrentTab]:setVisible(false)
 	end
-	self[id]:setVisible(true)
+	self.m_Tabs[id]:setVisible(true)
 	self.m_CurrentTab = id
 
 	if self.onTabChanged then
@@ -38,9 +38,9 @@ function GUIPhoneTabPanel:getCurrentTab()
 end
 
 function GUIPhoneTabPanel:addTab(tabName, symbol)
-	local tabButton = GUIButton:new(#self * 65, self.m_Height-50, 65, 50, "", self)
-	local tabLabel = GUILabel:new(#self * 65, self.m_Height-16, 65, 15, tabName, self):setAlignX("center"):setFontSize(1)
-	local tabIcon = GUILabel:new(#self * 65, self.m_Height-45, 65, 25, symbol, self):setAlignX("center"):setFont(FontAwesome(30))
+	local tabButton = GUIButton:new(#self.m_Tabs * 65, self.m_Height-50, 65, 50, "", self)
+	local tabLabel = GUILabel:new(#self.m_Tabs * 65, self.m_Height-16, 65, 15, tabName, self):setAlignX("center"):setFontSize(1)
+	local tabIcon = GUILabel:new(#self.m_Tabs * 65, self.m_Height-45, 65, 25, symbol, self):setAlignX("center"):setFont(FontAwesome(30))
 
 	tabButton:setColor(Color.White)
 	tabButton:setBackgroundColor(Color.Grey)
@@ -48,7 +48,7 @@ function GUIPhoneTabPanel:addTab(tabName, symbol)
 	tabButton:setFontSize(1)
 	tabButton:setFont(VRPFont(26))
 
-	local id = #self+1
+	local id = #self.m_Tabs+1
 	tabButton.onLeftClick = function()
 		self:setTab(id)
 
@@ -63,17 +63,17 @@ function GUIPhoneTabPanel:addTab(tabName, symbol)
 		tabButton:setBackgroundColor(Color.LightBlue)
 	end
 
-	self[id] = GUIElement:new(0, 0, self.m_Width, self.m_Height-40, self)
-	self[id].TabIndex = id
+	self.m_Tabs[id] = GUIElement:new(0, 0, self.m_Width, self.m_Height-40, self)
+	self.m_Tabs[id].TabIndex = id
 	if id ~= 1 then
-		self[id]:setVisible(false)
+		self.m_Tabs[id]:setVisible(false)
 	else
 		self.m_CurrentTab = 1
 		tabButton:setColor(Color.Grey)
 		tabButton:setBackgroundColor(Color.LightBlue)
 	end
 
-	return self[id]
+	return self.m_Tabs[id]
 end
 
 function GUIPhoneTabPanel:drawThis()
