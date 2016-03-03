@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/PhoneNumbers_old.lua
+-- *  FILE:        server/classes/PhoneNumbers.lua
 -- *  PURPOSE:     Phone Numbers class
 -- *
 -- ****************************************************************************
@@ -68,6 +68,11 @@ function PhoneNumber:Event_RequestPhoneNumbers()
 end
 
 function PhoneNumber:destructor()
+end
+
+function PhoneNumber:setNumber(Number)
+	self.m_Number = Number
+	sql:queryExec("UPDATE ??_phone_numbers SET Number = ? WHERE Id = ?;", sql:getPrefix(), self.m_Number, self.m_Id)
 end
 
 function PhoneNumber:getId()

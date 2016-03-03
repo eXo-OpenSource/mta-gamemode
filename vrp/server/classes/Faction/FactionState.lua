@@ -13,6 +13,7 @@ function FactionState:constructor()
 	outputDebug("Faction State loaded")
 	self:createDutyPickup(252.6, 69.4, 1003.64,6) -- PD Interior
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
+	Blip:new("Police.png", 1552.278, -1675.725)
 
 	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
 	local gate = Gate:new(9093, Vector3(1588.80, -1638.30, 14.50), Vector3(0, 0, 270), Vector3(1598.80, -1638.30, 14.50))

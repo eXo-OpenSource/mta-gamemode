@@ -151,9 +151,9 @@ function outputDebug(errmsg)
 	end
 end
 --]]
-function outputDebug(errmsg)
+function getDebugInfo(stack)
 	if DEBUG then
-		local source = debug.getinfo(2).source
+		local source = debug.getinfo(stack or 2).source
 		local filePath
 		if source:find("\\") then
 			filePath = split(source, '\\')
@@ -162,9 +162,15 @@ function outputDebug(errmsg)
 		end
 		local className = filePath[#filePath]:gsub(".lua", "")
 		if not className then className = "UNKOWN" end
-		if not errmsg then errmsg = "" end
+		return className, tostring(debug.getinfo(stack or 2).name), tostring(debug.getinfo(stack or 2).currentline)
+	end
+	return false
+end
 
-		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, tostring(debug.getinfo(2).name), tostring(debug.getinfo(2).currentline), tostring(errmsg)), 3)
+function outputDebug(errmsg)
+	if DEBUG then
+		local className, methodName, currentline = getDebugInfo(3)
+		 outputDebugString(("%s [%s:%s (%s)] %s"):format(SERVER and "SERVER" or "CLIENT", className, methodName, currentline, tostring(errmsg)), 3)
 	end
 end
 
