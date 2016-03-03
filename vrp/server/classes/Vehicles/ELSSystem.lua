@@ -55,19 +55,18 @@ function ELSSystem:onEnterVehicle( controller, seat)
 end
 
 function ELSSystem:setLightPeriod( _, _, state, period)
-  outputChatBox(tostring( state ))
   local yelp = false
   if state == "up" then
     self.m_LightSystem = not self.m_LightSystem
   else
       yelp = true
   end
-  local syncer = getElementSyncer ( self.m_Vehicle )
-  if syncer then
-    syncer:triggerEvent("updateVehicleELS", self.m_Vehicle, self.m_LightSystem , period)
+  local all = getElementsByType( "player" )
+  for key, player in ipairs( all ) do
+    player:triggerEvent("updateVehicleELS", self.m_Vehicle, self.m_LightSystem , period)
   end
   if yelp then
-    local all = getElementsByType( "player" )
+
     for key, player in ipairs( all ) do
       player:triggerEvent( "onVehicleYelp", self.m_Vehicle )
     end
@@ -75,9 +74,9 @@ function ELSSystem:setLightPeriod( _, _, state, period)
 end
 
 function ELSSystem:setBlink( _,_, state, dir )
-  local syncer = getElementSyncer ( self.m_Vehicle )
-  if syncer then
-    syncer:triggerEvent("updateVehicleBlink", self.m_Vehicle, self.m_Markers , dir)
+  local all = getElementsByType( "player" )
+  for key, player in ipairs( all ) do
+    player:triggerEvent("updateVehicleBlink", self.m_Vehicle, self.m_Markers , dir)
   end
 end
 
