@@ -147,6 +147,7 @@ function DatabasePlayer:load()
 	self:setSkinLevel(row.SkinLevel)
 	self:setJobLevel(row.JobLevel)
 	self:setPlayTime(row.PlayTime)
+	self.m_PhoneNumer = (PhoneNumber.load(1, self.m_Id) or PhoneNumber.generateNumber(1, self.m_Id))
 end
 
 function DatabasePlayer:save()

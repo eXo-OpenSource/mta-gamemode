@@ -12,9 +12,10 @@ function Company.onInherit(derivedClass)
   Company.DerivedClasses[#Company.DerivedClasses+1] = derivedClass
 end
 
-function Company:constructor(Id, Name, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins )
+function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChange, bankAccountId, Settings, rankLoans, rankSkins )
   self.m_Id = Id
   self.m_Name = Name
+  self.m_ShortName = ShortName
   self.m_Creator = Creator
   self.m_Players = players
   self.m_LastNameChange = lastNameChange or 0
@@ -37,6 +38,7 @@ function Company:constructor(Id, Name, Creator, players, lastNameChange, bankAcc
   sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
 
   self:createDutyMarker()
+  self.m_PhoneNumer = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
 end
 
 function Company:destructor()
@@ -108,6 +110,10 @@ end
 
 function Company:getName()
   return self.m_Name
+end
+
+function Company:getShortName()
+  return self.m_ShortName
 end
 
 function Company:setMoney(...)

@@ -77,7 +77,7 @@ function MainActivity:constructor(app)
 	self.m_Edit = GUIEdit:new(10, 60, 200, 40, self.m_Tabs["Keyboard"])
 	self.m_Edit:setCaption(_"Telefonnummer")
 	self.m_ButtonDelete = GUIButton:new(215, 60, 40, 40, FontAwesomeSymbols.Back, self.m_Tabs["Keyboard"])
-		:setFont(FontAwesome(20))
+		:setFont(FontAwesome(15))
 		:setBackgroundColor(Color.Red)
 	self.m_ButtonDelete.onLeftClick = function() self.m_Edit:setText(self.m_Edit:getText():sub(1, #self.m_Edit:getText() - 1)) end
 
@@ -100,23 +100,23 @@ function MainActivity:constructor(app)
 
 	self.m_Tabs["Players"] = self.m_TabPanel:addTab(_"Spieler", FontAwesomeSymbols.Player)
 	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Players"])
-	self.m_PlayerListGrid:addColumn(_"Spieler", 0.5)
+	self.m_PlayerListGrid:addColumn(_"Spieler", 0.6)
 	self.m_PlayerListGrid:addColumn(_"Nummer", 0.4)
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCall_Click, self)
 	self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
 
 	self.m_Tabs["Service"] = self.m_TabPanel:addTab(_"Service", FontAwesomeSymbols.Book)
-	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Service"])
-	self.m_PlayerListGrid:addColumn(_"Service", 0.5)
-	self.m_PlayerListGrid:addColumn(_"Nummer", 0.4)
+	self.m_ServiceListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Service"])
+	self.m_ServiceListGrid:addColumn(_"Service", 0.6)
+	self.m_ServiceListGrid:addColumn(_"Nummer", 0.4)
 	self.m_ButtonCallService = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Service"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallService.onLeftClick = bind(self.ButtonCall_Click, self)
 
 	self.m_Tabs["Group"] = self.m_TabPanel:addTab(_"Firmen/Gangs", FontAwesomeSymbols.Group)
-	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Group"])
-	self.m_PlayerListGrid:addColumn(_"Firma/Gang", 0.5)
-	self.m_PlayerListGrid:addColumn(_"Nummer", 0.4)
+	self.m_GroupListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Group"])
+	self.m_GroupListGrid:addColumn(_"Firma/Gang", 0.6)
+	self.m_GroupListGrid:addColumn(_"Nummer", 0.4)
 	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallGroup.onLeftClick = bind(self.ButtonCall_Click, self)
 
@@ -148,11 +148,12 @@ function MainActivity:ButtonCall_Click()
 end
 
 function MainActivity:Event_receivePhoneNumbers(list)
-	self.m_PlayerListGrid:clear()
+	local grid = {["player"] = self.m_PlayerListGrid, ["group"] = self.m_GroupListGrid, ["faction"] = self.m_ServiceListGrid, ["company"] = self.m_ServiceListGrid }
+	for index, key in pairs(grid) do
+		key:clear()
+	end
 	for index, number in pairs(list) do
-		if number["type"] == "player" then
-			self.m_PlayerListGrid:addItem(number["ownerName"], tostring(index))
-		end
+		grid[number["OwnerType"]]:addItem(number["OwnerName"], tostring(index))
 	end
 end
 

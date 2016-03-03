@@ -63,6 +63,10 @@ function PhoneNumber:constructor(Id, Number, OwnerType, OwnerId)
 	self.m_OwnerId = OwnerId
 end
 
+function PhoneNumber:Event_RequestPhoneNumbers()
+
+end
+
 function PhoneNumber:destructor()
 end
 
@@ -72,6 +76,10 @@ end
 
 function PhoneNumber:getNumber()
 	return self.m_Number
+end
+
+function PhoneNumber:getOwnerType()
+	return self.m_OwnerType
 end
 
 function PhoneNumber:getOwner(instance)
@@ -94,3 +102,19 @@ function PhoneNumber:getOwner(instance)
 		return GroupManager:getSingleton():getFromId(self.m_OwnerId)
 	end
 end
+
+addEventHandler("requestPhoneNumbers", root, function()
+	local number
+	local numTable = {}
+	for index, instance in pairs(PhoneNumber.Map) do
+		number = instance:getNumber()
+		numTable[number] = {}
+		if PHONE_NUMBER_TYPES[instance:getOwnerType()] == "faction" or PHONE_NUMBER_TYPES[instance:getOwnerType()] == "company" then
+			numTable[number]["OwnerName"] = instance:getOwner(instance):getShortName()
+		else
+			numTable[number]["OwnerName"] = instance:getOwner(instance):getName()
+		end
+		numTable[number]["OwnerType"] = PHONE_NUMBER_TYPES[instance:getOwnerType()]
+	end
+	triggerClientEvent(client, "receivePhoneNumbers", client, numTable)
+end)
