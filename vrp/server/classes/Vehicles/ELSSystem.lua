@@ -11,23 +11,51 @@ ELSSystem = inherit( Object )
 function ELSSystem:constructor( vehicle , type )
   self.m_Vehicle = vehicle
   self:createBlinkMarkers( )
+  self.m_LightSystem = false
   addEventHandler("onVehicleEnter", vehicle, bind( ELSSystem.onEnterVehicle, self))
+  addEventHandler("onVehicleExit", vehicle, bind( ELSSystem.onLeaveVehicle, self))
 end
 
 function ELSSystem:destructor( )
-
+  local controller = getVehicleOccupant ( self.m_Vehicle )
+  unbindKey(controller, "z","up",  self.m_BindLight , 400)
+  unbindKey(controller, "z","down", self.m_BindLight, 100)
+  unbindKey(controller, ",","up", self.m_BindBlink, "left")
+  unbindKey(controller, ".","up", self.m_BindBlink, "right")
+  unbindKey(controller, "-","up", self.m_BindBlink, "off")
+  for i = 1,8 do
+    if self.m_Markers[i] then
+      destroyElement( self.m_Markers[i] )
+    end
+  end
+  local all = getElementsByType( "player" )
+  for key, player in ipairs( all ) do
+    player:triggerEvent( "onClientELSVehicleDestroy", self.m_Vehicle )
+  end
 end
 
+function ELSSystem:onLeaveVehicle( controller, seat )
+  if seat == 0 then
+    unbindKey(controller, "z","up",  self.m_BindLight , 400)
+    unbindKey(controller, "z","down", self.m_BindLight, 100)
+    unbindKey(controller, ",","up", self.m_BindBlink, "left")
+		unbindKey(controller, ".","up", self.m_BindBlink, "right")
+		unbindKey(controller, "-","up", self.m_BindBlink, "off")
+  end
+end
 
 function ELSSystem:onEnterVehicle( controller, seat)
-    bindKey(controller, "z","up", bind( ELSSystem.setLightPeriod, self), 400)
-		bindKey(controller, "z","down", bind( ELSSystem.setLightPeriod, self), 100)
-		bindKey(controller, ",","up", bind( ELSSystem.setBlink, self), "left")
-		bindKey(controller, ".","up", bind( ELSSystem.setBlink, self), "right")
-		bindKey(controller, "-","up", bind( ELSSystem.setBlink, self), "off")
+    self.m_BindLight = bind( ELSSystem.setLightPeriod, self)
+    bindKey(controller, "z","up",  self.m_BindLight , 400)
+		bindKey(controller, "z","down", self.m_BindLight, 100)
+    self.m_BindBlink = bind( ELSSystem.setBlink, self)
+		bindKey(controller, ",","up", self.m_BindBlink, "left")
+		bindKey(controller, ".","up", self.m_BindBlink, "right")
+		bindKey(controller, "-","up", self.m_BindBlink, "off")
 end
 
 function ELSSystem:setLightPeriod( _, _, state, period)
+  outputChatBox(tostring( state ))
   local yelp = false
   if state == "up" then
     self.m_LightSystem = not self.m_LightSystem
@@ -37,6 +65,12 @@ function ELSSystem:setLightPeriod( _, _, state, period)
   local syncer = getElementSyncer ( self.m_Vehicle )
   if syncer then
     syncer:triggerEvent("updateVehicleELS", self.m_Vehicle, self.m_LightSystem , period)
+  end
+  if yelp then
+    local all = getElementsByType( "player" )
+    for key, player in ipairs( all ) do
+      player:triggerEvent( "onVehicleYelp", self.m_Vehicle )
+    end
   end
 end
 

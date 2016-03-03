@@ -7,7 +7,7 @@
 -- *******************************************
 
 ELSSystem = inherit( Singleton )
-addRemoteEvents{ "updateVehicleELS", "updateVehicleBlink" }
+addRemoteEvents{ "updateVehicleELS", "updateVehicleBlink", "onClientELSVehicleDestroy", "onVehicleYelp" }
 
 --CONSTANTS--
 local R_COLOR_STATE_1 = {0,0,200}
@@ -19,6 +19,9 @@ function ELSSystem:constructor( )
     self.m_Vehicles_Blink = { }
     addEventHandler( "updateVehicleELS", localPlayer, bind( ELSSystem.updateVehicleELS, self))
     addEventHandler( "updateVehicleBlink", localPlayer, bind( ELSSystem.updateBlink, self))
+    self.m_DestrucBind = function( vehicle ) self:onVehicleDestroy( vehicle ) end
+    addEventHandler( "onClientELSVehicleDestroy", localPlayer, self.m_DestrucBind)
+    addEventHandler( "onVehicleYelp", localPlayer, bind( ELSSystem.onVehicleYelp, self))
 end
 
 function ELSSystem:destructor( )
@@ -34,7 +37,6 @@ function ELSSystem:updateVehicleELS( vehicle, state, period)
 			end
     end
       setVehicleOverrideLights( vehicle, 2)
-		  setVehicleOverrideLights( vehicle, 2)
       self.m_Vehicles[vehicle] = {}
       self.m_Vehicles[vehicle][2] = 1
       self.m_Vehicles[vehicle][1] = setTimer( bind( ELSSystem.switchLights, self), period, 0, vehicle)
@@ -43,15 +45,42 @@ function ELSSystem:updateVehicleELS( vehicle, state, period)
           local isTimer = isTimer( self.m_Vehicles[vehicle][1] )
           if isTimer then
             killTimer( self.m_Vehicles[vehicle][1] )
-            local r,g,b = R_COLOR_STATE_N[1],R_COLOR_STATE_N[2],R_COLOR_STATE_N[3]
-            if isElement( vehicle ) then
-                setVehicleHeadLightColor ( vehicle, r, g, b)
-					      setVehicleLightState ( vehicle, 0, 1)
-					      setVehicleLightState ( vehicle, 1, 1)
-            end
+          end
+          local r,g,b = R_COLOR_STATE_N[1],R_COLOR_STATE_N[2],R_COLOR_STATE_N[3]
+          if isElement( vehicle ) then
+              setVehicleHeadLightColor ( vehicle, r, g, b)
+              setVehicleOverrideLights( vehicle, 2)
+              setVehicleLightState ( vehicle,0,0)
+              setVehicleLightState ( vehicle,1,0)
           end
       end
   end
+end
+
+function ELSSystem:onVehicleDestroy( vehicle )
+    if self.m_Vehicles[vehicle] then
+      local isTimer = isTimer( self.m_Vehicles[vehicle][1] )
+      if isTimer then
+        killTimer( self.m_Vehicles[vehicle][1] )
+      end
+    end
+    if self.m_Vehicles_Blink[vehicle] then
+      if isTimer( self.m_Vehicles_Blink[vehicle][1] )  then
+        killTimer(  self.m_Vehicles_Blink[vehicle][1] )
+      end
+    end
+end
+
+function ELSSystem:onVehicleYelp( vehicle )
+  if self.m_YelpSound then
+    if isElement( self.m_YelpSound ) then
+      stopSound( self.m_YelpSound )
+      self.m_YelpSound = nil
+    end
+  end
+  local x, y, z = getElementPosition( vehicle )
+  self.m_YelpSound  = playSound3D( "files/audio/yelp.ogg",x,y,z)
+  setSoundMaxDistance ( self.m_YelpSound , 30)
 end
 
 function ELSSystem:switchLights( vehicle )

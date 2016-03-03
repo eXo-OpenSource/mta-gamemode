@@ -880,6 +880,7 @@
 	<vrpfile src="files/audio/Message.mp3"/>
 	<vrpfile src="files/audio/Payday.mp3"/>
 	<vrpfile src="files/audio/cash_register.ogg"/>
+	<vrpfile src="files/audio/yelp.ogg"/>
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>

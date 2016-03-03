@@ -42,7 +42,10 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 end
 
 function FactionVehicle:destructor()
-
+	outputChatBox("destructed")
+	if self.m_VehELSObj then
+		self.m_VehELSObj:delete()
+	end
 end
 
 function FactionVehicle:getId()
