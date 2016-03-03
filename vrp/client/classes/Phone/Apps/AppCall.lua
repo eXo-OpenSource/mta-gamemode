@@ -71,23 +71,52 @@ MainActivity = inherit(AppActivity)
 function MainActivity:constructor(app)
 	AppActivity.constructor(self, app)
 	self.m_TabPanel = GUIPhoneTabPanel:new(0, 0, self.m_Width, self.m_Height, self)
-	local tabKeyboard = self.m_TabPanel:addTab(_"Anrufen", FontAwesomeSymbols.Phone)
-	self.m_Label = GUILabel:new(8, 10, 200, 50, _"Telefon", tabKeyboard) -- 3
-	self.m_Edit = GUIEdit:new(8, 70, 206, 25, tabKeyboard)
-	self.m_Edit:setCaption(_"Spielername")
-	self.m_ButtonCall = GUIButton:new(8, 100, 206, 40, _"Anrufen", tabKeyboard)
+	self.m_Tabs = {}
+	self.m_Tabs["Keyboard"] = self.m_TabPanel:addTab(_"Anrufen", FontAwesomeSymbols.Phone)
+	self.m_Label = GUILabel:new(10, 10, 200, 50, _"Telefon", self.m_Tabs["Keyboard"]) -- 3
+	self.m_Edit = GUIEdit:new(10, 60, 200, 40, self.m_Tabs["Keyboard"])
+	self.m_Edit:setCaption(_"Telefonnummer")
+	self.m_ButtonDelete = GUIButton:new(215, 60, 40, 40, FontAwesomeSymbols.Back, self.m_Tabs["Keyboard"])
+		:setFont(FontAwesome(20))
+		:setBackgroundColor(Color.Red)
+	self.m_ButtonDelete.onLeftClick = function() self.m_Edit:setText(self.m_Edit:getText():sub(1, #self.m_Edit:getText() - 1)) end
+
+	self.m_ButtonCall = GUIButton:new(140, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCall.onLeftClick = bind(self.ButtonCall_Click, self)
-	self.m_CheckVoice = GUICheckbox:new(8, 150, 206, 20, _"Sprachanruf", tabKeyboard)
-	local tabPhoneBook = self.m_TabPanel:addTab(_"Spieler", FontAwesomeSymbols.Book)
-	self.m_PlayerListGrid = GUIGridList:new(0, 0, self.m_Width, self.m_Height-50, tabPhoneBook)
+	self.m_CheckVoice = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
+	self.m_NumpadButton = {}
+	self:addNumpadButton("1", 1, 0)
+	self:addNumpadButton("2", 2, 0)
+	self:addNumpadButton("3", 3, 0)
+	self:addNumpadButton("4", 1, 1)
+	self:addNumpadButton("5", 2, 1)
+	self:addNumpadButton("6", 3, 1)
+	self:addNumpadButton("7", 1, 2)
+	self:addNumpadButton("8", 2, 2)
+	self:addNumpadButton("9", 3, 2)
+	self:addNumpadButton("0", 2, 3)
+	self:addNumpadButton("*", 1, 3)
+	self:addNumpadButton("#", 3, 3)
+
+	self.m_Tabs["Players"] = self.m_TabPanel:addTab(_"Spieler", FontAwesomeSymbols.Book)
+	self.m_PlayerListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Players"])
 	self.m_PlayerListGrid:addColumn(_"Spieler", 0.5)
 	self.m_PlayerListGrid:addColumn(_"Nummer", 0.4)
 	self.m_TabPanel:addTab(_"Test1", FontAwesomeSymbols.Book)
 	self.m_TabPanel:addTab(_"Test2", FontAwesomeSymbols.Book)
-
+	self.m_ButtonCallPlayers = GUIButton:new(140, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
+	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCall_Click, self)
+	self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
 	addRemoteEvents{"receivePhoneNumbers"}
 	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
 
+end
+
+function MainActivity:addNumpadButton(text, column, row)
+	self.m_NumpadButton[text] = GUIButton:new(60*column-20, 120+60*row, 55, 55, tostring(text), self.m_Tabs["Keyboard"])
+	self.m_NumpadButton[text].onLeftClick = function()
+		self.m_Edit:setText(self.m_Edit:getText()..text)
+	end
 end
 
 function MainActivity:ButtonCall_Click()
