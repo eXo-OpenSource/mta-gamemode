@@ -38,7 +38,7 @@ function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChan
   sql:queryExec("UPDATE ??_companies SET BankAccount = ? WHERE Id = ?;", sql:getPrefix(), self.m_BankAccount:getId(), self.m_Id)
 
   self:createDutyMarker()
-  self.m_PhoneNumer = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
+  self.m_PhoneNumber = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
 end
 
 function Company:destructor()

@@ -35,7 +35,7 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 
 	self.m_Depot = Depot.load(depotId,Id)
 
-	self.m_PhoneNumer = (PhoneNumber.load(2, self.m_Id) or PhoneNumber.generateNumber(2, self.m_Id))
+	self.m_PhoneNumber = (PhoneNumber.load(2, self.m_Id) or PhoneNumber.generateNumber(2, self.m_Id))
 end
 
 
