@@ -251,7 +251,7 @@ end
 
 function FactionRescue:createDeathPickup(player, ...)
 	player.m_DeathPickup = Pickup(player:getPosition(), 3, 1254, 0)
-	--player:setPosition(player.m_DeathPickup:getPosition())
+	nextframe(function () player:setPosition(player.m_DeathPickup:getPosition()) end)
 	--player:kill()
 
 	addEventHandler("onPickupHit", player.m_DeathPickup,

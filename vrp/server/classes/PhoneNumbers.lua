@@ -1,111 +1,96 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/PhoneNumbers.lua
+-- *  FILE:        server/classes/PhoneNumbers_old.lua
 -- *  PURPOSE:     Phone Numbers class
 -- *
 -- ****************************************************************************
-PhoneNumbers = inherit(Singleton)
+PhoneNumber = inherit(Object)
+PhoneNumber.Map = {}
+addRemoteEvents{"requestPhoneNumbers"}
 
 PHONE_NUMBER_TYPES = {[1] = "player", [2] = "faction", [3] = "company", [4] = "group"}
-PHONE_NUMBER_LENGTH = {["player"] = 6, ["faction"] = 3, ["company"] = 3, ["group"] = 4}
-
-function PhoneNumbers:constructor()
-	self.m_PhoneNumbers = {}
-
-	addRemoteEvents{"requestPhoneNumbers"}
-	addEventHandler("requestPhoneNumbers", root, bind(self.Event_requestNumbers, self))
+for i, v in pairs(PHONE_NUMBER_TYPES) do
+	PHONE_NUMBER_TYPES[v] = i
 end
 
-function PhoneNumbers:loadNumbers()
-	local result = sql:queryFetch("SELECT * FROM ??_phone_numbers", sql:getPrefix())
-	for k, row in ipairs(result) do
-		local owner
-		if row.OwnerType == 1 then
-			owner = DatabasePlayer:getFromId(row.Owner)
-		elseif row.OwnerType == 2 then
-			owner = FactionManager:getSingleton():getFromId(row.Owner)
-		elseif row.OwnerType == 3 then
-			owner = CompanyManager:getSingleton():getFromId(row.Owner)
-		elseif row.OwnerType == 4 then
-			owner = GroupManager:getSingleton():getFromId(row.Owner)
-		end
-		if owner then
-			self:loadSingleNumber(row.Number, row.OwnerType, owner)
-		else
-			outputDebugString("Error Loading Number "..row.Number)
-		end
-	end
-end
+PHONE_NUMBER_LENGTH = {[1] = 6, [2] = 3, [3] = 3, [4] = 4}
 
-function PhoneNumbers:loadSingleNumber(number, typeId, owner)
-	--outputDebugString("Load Single Number: Type: "..PHONE_NUMBER_TYPES[typeId].." Number: "..number)
-	if owner and owner:getName() then
-		self.m_PhoneNumbers[number] = {}
-		self.m_PhoneNumbers[number]["owner"] = owner
-		self.m_PhoneNumbers[number]["type"] = PHONE_NUMBER_TYPES[typeId]
-	else
-		outputDebugString("Owner not found! Type: "..PHONE_NUMBER_TYPES[typeId].." Number: "..number)
-	end
-end
-
-function PhoneNumbers:loadOrGenerateNumber(type, owner)
-	if not self:getNumber(type, owner) then
-		return self:generateNumber(type, owner)
-	end
-end
-
-function PhoneNumbers:getNumber(type, owner)
-	for index, num in pairs(self.m_PhoneNumbers) do
-		if num["type"] == type and num["owner"]:getId() == owner:getId() then
-			return index
-		end
-	end
-	return false
-end
-
-function PhoneNumbers:generateNumber(type, owner)
+function PhoneNumber.generateNumber(OwnerType, OwnerId)
 	local number = ""
-	for i=0, PHONE_NUMBER_LENGTH[type]-1 do
+	for i=0, PHONE_NUMBER_LENGTH[OwnerType]-1 do
 		number = tonumber(number..math.random(0, 9))
 	end
-	if self:checkNumber(number) == false then
-		return self:saveNumber(number, type, owner)
+	if PhoneNumber.getInstance(number) == false then
+		return PhoneNumber.create(number, OwnerType, OwnerId)
 	else
-		self:generateNumber(type, owner)
+		PhoneNumber.generateNumber(OwnerType, OwnerId)
 	end
 end
 
-function PhoneNumbers:saveNumber(number, type, owner)
-	local typeId = 0
-	for index, key in pairs(PHONE_NUMBER_TYPES) do
-		if key == type then
-			typeId = index
+function PhoneNumber.getInstance(number)
+	for Id, v in pairs(PhoneNumber.Map) do
+		if v:getNumber() == number then
+			return v
 		end
 	end
-	outputDebug("Saved PhoneNumber "..number.." Typ: "..typeId.." Owner: "..owner:getId())
 
-	sql:queryFetch("INSERT INTO ??_phone_numbers (Number, OwnerType, Owner) VALUES (?, ?, ?)", sql:getPrefix(), number, typeId, owner:getId())
-	self:loadSingleNumber(number, typeId, owner)
-	return number
-end
-
-function PhoneNumbers:removeNumber(number)
-	table.remove(self.m_PhoneNumbers, table.find(self.m_PhoneNumbers, number))
-end
-
-function PhoneNumbers:checkNumber(number)
-	if self.m_PhoneNumbers[number] then return true end
 	return false
 end
 
-function PhoneNumbers:getOwner(number)
-	if self.m_PhoneNumbers[number] then
-		return self.m_PhoneNumbers[number]["owner"], self.m_PhoneNumbers[number]["type"]
+function PhoneNumber.create(Number, OwnerType, OwnerId)
+	sql:queryExec("INSERT INTO ??_phone_numbers(Number, OwnerType, OwnerId) VALUES (?, ?, ?);", sql:getPrefix(), Number, OwnerType, OwnerId)
+
+	local Id = sql:lastInsertId()
+	PhoneNumber.Map[Id] = PhoneNumber:new(Id, Number, OwnerType, OwnerId)
+	return PhoneNumber.Map[Id]
+end
+
+function PhoneNumber.load(OwnerType, OwnerId)
+    local row = sql:queryFetchSingle("SELECT Id, OwnerType, OwnerId, Number FROM ??_phone_numbers WHERE OwnerType = ? AND OwnerId = ?;", sql:getPrefix(), OwnerType, OwnerId)
+    if not row then
+      return false
+    end
+
+    PhoneNumber.Map[row.Id] = PhoneNumber:new(row.Id, row.Number, row.OwnerType, row.OwnerId)
+    return PhoneNumber.Map[row.Id]
+end
+
+function PhoneNumber:constructor(Id, Number, OwnerType, OwnerId)
+	self.m_Id = Id
+	self.m_Number = Number
+	self.m_OwnerType = OwnerType
+	self.m_OwnerId = OwnerId
+end
+
+function PhoneNumber:destructor()
+end
+
+function PhoneNumber:getId()
+	return self.m_Id
+end
+
+function PhoneNumber:getNumber()
+	return self.m_Number
+end
+
+function PhoneNumber:getOwner(instance)
+	if not instance then
+		return self.m_OwnerId, self.m_OwnerType
 	end
-	return false
-end
 
-function PhoneNumbers:Event_requestNumbers()
-	client:triggerEvent("receivePhoneNumbers", self.m_PhoneNumbers)
+	if self.m_OwnerType == PHONE_NUMBER_TYPES.player then
+		local player = Player.getFromId(self.m_OwnerId)
+		if player then
+			return player
+		else
+			return false
+		end
+	elseif self.m_OwnerType == PHONE_NUMBER_TYPES.faction then
+		return FactionManager:getSingleton():getFromId(self.m_OwnerId)
+	elseif self.m_OwnerType == PHONE_NUMBER_TYPES.company then
+		return CompanyManager:getSingleton():getFromId(self.m_OwnerId)
+	elseif self.m_OwnerType == PHONE_NUMBER_TYPES.group then
+		return GroupManager:getSingleton():getFromId(self.m_OwnerId)
+	end
 end
