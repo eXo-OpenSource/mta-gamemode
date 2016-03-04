@@ -65,6 +65,9 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 		table.insert(self.m_Company.m_Vehicles, self)
 	end
 
+	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
+	addEventHandler("onVehicleExit",self, bind(self.onExit, self))
+
 	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
 end
 
@@ -90,6 +93,19 @@ function CompanyVehicle:onStartEnter(player,seat)
 		end
 	end
 end
+
+function CompanyVehicle:onEnter(player, seat)
+	if self:getCompany():getId() == 4 then
+		self:getCompany():onVehiceEnter(source, player, seat)
+	end
+end
+
+function CompanyVehicle:onExit(player, seat)
+	if self:getCompany():getId() == 4 then
+		self:getCompany():onVehiceExit(source, player, seat)
+	end
+end
+
 
 function CompanyVehicle:create(Company, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0

@@ -137,6 +137,7 @@
 	<script src="server/classes/Business/Companies/DrivingSchool.lua" type="server"/>
 	<script src="server/classes/Business/Companies/Mechanic-Tow.lua" type="server"/>
 	<script src="server/classes/Business/Companies/San-News.lua" type="server"/>
+	<script src="server/classes/Business/Companies/PublicTransport.lua" type="server"/>
 	<script src="server/classes/Business/CompanyManager.lua" type="server"/>
 
 	<!-- Factions -->
@@ -384,6 +385,7 @@
 	<script src="client/classes/GUIForms/DrivingSchoolTheoryGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolStudentGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DrivingSchoolInstructorGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/PublicTransportTaxoMeterGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
@@ -636,6 +638,7 @@
 	<vrpfile src="files/images/Other/BreakingNews.png"/>
 	<vrpfile src="files/images/Other/BreakingNewsBG.png"/>
 	<vrpfile src="files/images/Other/BreakingNewsEnd.png"/>
+	<vrpfile src="files/images/Other/TaxoMeter.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>
