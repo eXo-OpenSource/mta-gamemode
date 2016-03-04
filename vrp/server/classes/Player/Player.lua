@@ -22,7 +22,6 @@ end)
 function Player:constructor()
 	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	setElementFrozen(self, true)
-	setElementAlpha(self, 150)
 
 	self.m_PrivateSync = {}
 	self.m_PrivateSyncUpdate = {}
@@ -106,7 +105,6 @@ end
 function Player:loadCharacter()
 	DatabasePlayer.Map[self.m_Id] = self
 	self:loadCharacterInfo()
-	self:setAlpha(255)
 
 	-- Send infos to client
 	local info = {
