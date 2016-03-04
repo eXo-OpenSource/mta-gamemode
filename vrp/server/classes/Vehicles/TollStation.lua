@@ -15,6 +15,9 @@ function TollStation:constructor(Name, BarrierPos, BarrierRot, PedPos, PedRot, t
 	self.m_Ped = Ped(71, PedPos, PedRot.z)
 	self.m_Ped:setFrozen(true)
 	self.m_Ped:setAnimation("cop_ambient", "Coplook_loop", -1, true, false, true)
+	self.m_RespawnPos = PedPos
+	self.m_RespawnRot = PedRot
+	addEventHandler("onPedWasted", self.m_Ped, bind(self.onPedWasted, self))
 end
 
 function TollStation:destructor()
@@ -33,23 +36,27 @@ function TollStation:checkRequirements(player)
 end
 
 function TollStation:onBarrierHit(player)
-	if self:checkRequirements(player) then -- Check for Toll Pass
-		return true
-	else
-		if not player.m_BuyTollFunc then
-			if player:getWantedLevel() > 0 then
-				for i, faction in pairs(FactionState:getSingleton():getFactions()) do
-					faction:sendShortMessage(("Ein Beamter der Maut-Station %s meldet die Sichtung des Flüchtigen %s!"):format(self.m_Name, player:getName()), 10000)
-				end
-			end
-
-			player:sendShortMessage(("Willkommen bei der Maut-Station %s! Drücke auf '%s' um ein Ticket zu kaufen!\nDu kannst dir aber auch an einem 24/7 einen Mautpass kaufen, dann fährst du unkompliziert und schnell durch die Maut-Stationen!"):format(self.m_Name, TOLL_PAY_KEY:upper()))
-
-			player.m_BuyTollFunc = bind(self.buyToll, self, player)
-			bindKey(player, TOLL_PAY_KEY, "down", player.m_BuyTollFunc)
+	if not self.m_Ped:isDead() then
+		if self:checkRequirements(player) then -- Check for Toll Pass
+			return true
 		else
-			player:sendError(_("Internal Error! Bitte verlasse die Maut-Station und drücke '%s'.", player, TOLL_PAY_KEY:upper()))
+			if not player.m_BuyTollFunc then
+				if player:getWantedLevel() > 0 then
+					for i, faction in pairs(FactionState:getSingleton():getFactions()) do
+						faction:sendShortMessage(("Ein Beamter der Maut-Station %s meldet die Sichtung des Flüchtigen %s!"):format(self.m_Name, player:getName()), 10000)
+					end
+				end
+
+				player:sendShortMessage(("Willkommen bei der Maut-Station %s! Drücke auf '%s' um ein Ticket zu kaufen!\nDu kannst dir aber auch an einem 24/7 einen Mautpass kaufen, dann fährst du unkompliziert und schnell durch die Maut-Stationen!"):format(self.m_Name, TOLL_PAY_KEY:upper()))
+
+				player.m_BuyTollFunc = bind(self.buyToll, self, player)
+				bindKey(player, TOLL_PAY_KEY, "down", player.m_BuyTollFunc)
+			else
+				player:sendError(_("Internal Error! Bitte verlasse die Maut-Station und drücke '%s'.", player, TOLL_PAY_KEY:upper()))
+			end
 		end
+	else
+		player:sendError(_("Diese Maut-Stationen ist derzeit geschlossen!", player))
 	end
 
 	return false
@@ -72,6 +79,30 @@ function TollStation:buyToll(player)
 
 		unbindKey(player, TOLL_PAY_KEY, "down", player.m_BuyTollFunc)
 		player.m_BuyTollFunc = nil
+	end
+end
+
+function TollStation:onPedWasted(_, killer)
+	local killer = killer
+	if killer then
+		if killer:getType() == "vehicle" then
+			killer = killer:getOccupant()
+		end
+
+		if killer:getType() == "player" then
+			killer:reportCrime(Crime.Kill)
+			outputDebug(("%s killed a Ped at %s"):format(killer:getName(), self.m_Name))
+
+			setTimer(
+				function()
+					self.m_Ped:destroy()
+					self.m_Ped = Ped(71, self.m_RespawnPos, self.m_RespawnRot.z)
+					self.m_Ped:setFrozen(true)
+					self.m_Ped:setAnimation("cop_ambient", "Coplook_loop", -1, true, false, true)
+					addEventHandler("onPedWasted", self.m_Ped, bind(self.onPedWasted, self))
+				end, TOLL_PED_RESPAWN_TIME, 1
+			)
+		end
 	end
 end
 
