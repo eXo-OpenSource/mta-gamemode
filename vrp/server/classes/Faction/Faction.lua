@@ -297,3 +297,7 @@ function Faction:respawnVehicles()
 		end
 	end
 end
+
+function Faction:phoneCall(caller)
+	self:sendMessage(_("Der Spieler %s ruft eure Fraktion (%s) an!", caller, caller:getName(), self:getName()), 50, 200, 255)
+end

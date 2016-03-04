@@ -8,12 +8,15 @@
 PhoneInteraction = inherit(Singleton)
 
 function PhoneInteraction:constructor()
-	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace"}
+	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial"}
 
 	addEventHandler("callStart", root, bind(self.callStart, self))
 	addEventHandler("callBusy", root, bind(self.callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.callReplace, self))
+	addEventHandler("callStartSpecial", root, bind(self.callStartSpecial, self))
+
+
 end
 
 function PhoneInteraction:callStart(player, voiceEnabled)
@@ -56,4 +59,12 @@ function PhoneInteraction:callReplace(callee)
 
 	-- Todo: Notify the callee
 	callee:triggerEvent("callReplace", client)
+end
+
+function PhoneInteraction:callStartSpecial(number)
+	for index, instance in pairs(PhoneNumber.Map) do
+		if instance:getNumber() == number then
+			instance:getOwner(instance):phoneCall(client)
+		end
+	end
 end

@@ -306,3 +306,7 @@ function Company:createDutyMarker()
     		end
     	)
 end
+
+function Company:phoneCall(caller)
+    self:sendMessage(_("Der Spieler %s ruft eurer Unternehmen (%s) an!", caller, caller:getName(), self:getName()), 50, 200, 255)
+end

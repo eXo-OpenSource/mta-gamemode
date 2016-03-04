@@ -277,3 +277,7 @@ function Group:distributeMoney(amount)
 		player:giveMoney(amountPerPlayer)
 	end
 end
+
+function Group:phoneCall(caller)
+	self:sendMessage(_("Der Spieler %s ruft eure Gang/Firma (%s) an!", caller, caller:getName(), self:getName()), 50, 200, 255)
+end

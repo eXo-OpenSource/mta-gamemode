@@ -148,24 +148,27 @@ function MainActivity:ButtonCallNumpad_Click()
 	if self.m_PhoneNumbers[number]["OwnerType"] == "player" then
 		if getPlayerFromName(self.m_PhoneNumbers[number]["OwnerName"]) then
 			local player = getPlayerFromName(self.m_PhoneNumbers[number]["OwnerName"])
-			CallResultActivity:new(self:getApp(), player, CALL_RESULT_CALLING, self.m_CheckVoiceNumpad:isChecked())
+			CallResultActivity:new(self:getApp(), "player", player, CALL_RESULT_CALLING, self.m_CheckVoiceNumpad:isChecked())
 			triggerServerEvent("callStart", root, player, self.m_CheckVoiceNumpad:isChecked())
 		else
 			ErrorBox:new(_"Der Spieler ist nicht online!")
 		end
 	else
-		outputChatBox("You called a faction, group or company! - In Development!")
+		CallResultActivity:new(self:getApp(), self.m_PhoneNumbers[number]["OwnerType"], self.m_PhoneNumbers[number]["OwnerName"], CALL_RESULT_CALLING, false)
+		triggerServerEvent("callStartSpecial", root, number)
 	end
-
-
 end
 
 function MainActivity:ButtonCallService_Click()
-
+	local number = tonumber(self.m_ServiceListGrid:getSelectedItem().Number)
+	CallResultActivity:new(self:getApp(), self.m_PhoneNumbers[number]["OwnerType"], self.m_PhoneNumbers[number]["OwnerName"], CALL_RESULT_CALLING, false)
+	triggerServerEvent("callStartSpecial", root, number)
 end
 
 function MainActivity:ButtonCallGroup_Click()
-
+	local number = tonumber(self.m_GroupListGrid:getSelectedItem().Number)
+	CallResultActivity:new(self:getApp(), self.m_PhoneNumbers[number]["OwnerType"], self.m_PhoneNumbers[number]["OwnerName"], CALL_RESULT_CALLING, false)
+	triggerServerEvent("callStartSpecial", root, number)
 end
 
 function MainActivity:ButtonCallPlayer_Click()
@@ -252,7 +255,7 @@ end
 
 CallResultActivity = inherit(AppActivity)
 
-function CallResultActivity:constructor(app, callee, resultType, voiceCall)
+function CallResultActivity:constructor(app, calleeType, callee, resultType, voiceCall)
 	AppActivity.constructor(self, app)
 	self.m_Callee = callee
 
@@ -291,6 +294,11 @@ function CallResultActivity:constructor(app, callee, resultType, voiceCall)
 	elseif resultType == CALL_RESULT_CALLING then
 		self.m_ResultLabel:setText(_"Anrufen...")
 		self.m_ResultLabel:setColor(Color.Black)
+		if calleeType == "player" then
+			GUILabel:new(0, 50, self.m_Width, 30, callee:getName(), self):setColor(Color.Black):setAlignX("center")
+		else
+			GUILabel:new(0, 50, self.m_Width, 30, callee, self):setColor(Color.Black):setAlignX("center")
+		end
 	end
 end
 
