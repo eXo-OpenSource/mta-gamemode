@@ -54,7 +54,7 @@ function Phone:constructor()
 	self.m_HomeButton.onLeftClick =
 	function()
 		if self.m_PhoneOn == 1 then
-			--if self.m_CurrentApp and self.m_CurrentApp.isInCall == true then return end
+			if self.m_CurrentApp and self.m_CurrentApp.m_InCall == true then return end
 			self:closeAllApps()
 			self.m_IconSurface:setVisible(true)
 		end

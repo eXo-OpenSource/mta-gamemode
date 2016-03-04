@@ -28,7 +28,6 @@ end
 function AppCall:onOpen(form)
 	-- Create main activity
 	MainActivity:new(self)
-	triggerServerEvent("requestPhoneNumbers", localPlayer)
 end
 
 function AppCall:onClose()
@@ -36,6 +35,10 @@ function AppCall:onClose()
 		if instanceof(activity, IncomingCallActivity, true) then
 			if activity:getCaller() then
 				activity:busy()
+			end
+		elseif instanceof(activity, CallResultActivity, true) then
+			if activity.m_InCall == true then
+				activity:ButtonReplace_Click()
 			end
 		end
 	end
@@ -122,6 +125,8 @@ function MainActivity:constructor(app)
 	self.m_GroupListGrid:addColumn(_"Num.", 0.3)
 	self.m_ButtonCallGroup = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Group"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallGroup.onLeftClick = bind(self.ButtonCallGroup_Click, self)
+
+	triggerServerEvent("requestPhoneNumbers", localPlayer)
 
 	addRemoteEvents{"receivePhoneNumbers"}
 	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
@@ -266,6 +271,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 
 	self.m_ResultLabel = GUILabel:new(0, 10, self.m_Width, 40, "", self):setAlignX("center")
 	if resultType == CALL_RESULT_ANSWER then
+		self.m_Caller = callee
 		self.m_ResultLabel:setText(_"Verbunden mit")
 		self.m_ResultLabel:setColor(Color.Green)
 		GUILabel:new(0, 50, self.m_Width, 30, callee:getName(), self):setColor(Color.Black):setAlignX("center")
@@ -313,5 +319,6 @@ function CallResultActivity:ButtonReplace_Click()
 	if self.m_Callee and isElement(self.m_Callee) then
 		triggerServerEvent("callReplace", root, self.m_Callee)
 	end
+	self.m_InCall = false
 	MainActivity:new(self:getApp())
 end

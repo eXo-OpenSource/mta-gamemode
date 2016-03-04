@@ -302,8 +302,10 @@ end
 
 function Faction:phoneCall(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(_("Der Spieler %s ruft eure Fraktion (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
-		bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+		if not player:getPhonePartner() then
+			player:sendShortMessage(_("Der Spieler %s ruft eure Fraktion (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
+			bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+		end
 	end
 end
 
@@ -314,6 +316,8 @@ function Faction:phoneTakeOff(player, key, state, caller)
 	caller:setPhonePartner(player)
 	player:setPhonePartner(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+		if isKeyBound(player, "F5", "down", self.m_PhoneTakeOff) then
+			unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+		end
 	end
 end
