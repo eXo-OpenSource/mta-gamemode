@@ -70,7 +70,7 @@ function BankAccount:setMoney(amount)
   self.m_Money = amount
 
   if self.m_OwnerType == BankAccountTypes.Company then
-    CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendMessage(("%s$"):format(self.m_Money))
+    CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("%s$"):format(self.m_Money))
   elseif self.m_OwnerType == BankAccountTypes.Faction then
     FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("%s$"):format(self.m_Money))
   end
@@ -85,7 +85,7 @@ function BankAccount:addMoney(money)
   self.m_Money = self.m_Money + money
 
   if self.m_OwnerType == BankAccountTypes.Company then
-    CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendMessage(("+%s$ (%s$)"):format(money, self.m_Money))
+    CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("+%s$ (%s$)"):format(money, self.m_Money))
   elseif self.m_OwnerType == BankAccountTypes.Faction then
     FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("+%s$ (%s$)"):format(money, self.m_Money))
   end
@@ -96,7 +96,7 @@ function BankAccount:takeMoney(money)
   self.m_Money = self.m_Money - money
 
   if self.m_OwnerType == BankAccountTypes.Company then
-    CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendMessage(("-%s$ (%s$)"):format(money, self.m_Money))
+    CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("-%s$ (%s$)"):format(money, self.m_Money))
   elseif self.m_OwnerType == BankAccountTypes.Faction then
     FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("-%s$ (%s$)"):format(money, self.m_Money))
   end

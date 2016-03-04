@@ -12,9 +12,10 @@ function TollStation:constructor(Name, BarrierPos, BarrierRot, PedPos, PedRot, t
 	self.m_Barrier = VehicleBarrier:new(BarrierPos, BarrierRot, 2.5, type, 1500)
 	self.m_Barrier.onBarrierHit = bind(self.onBarrierHit, self)
 
-	self.m_Ped = Ped(71, PedPos, PedRot.z)
+	self.m_Ped = GuardActor:new(PedPos)
+	self.m_Ped:giveWeapon(31, 999999999, true)
+	self.m_Ped:setRotation(PedRot)
 	self.m_Ped:setFrozen(true)
-	self.m_Ped:setAnimation("cop_ambient", "Coplook_loop", -1, true, false, true)
 	self.m_RespawnPos = PedPos
 	self.m_RespawnRot = PedRot
 	addEventHandler("onPedWasted", self.m_Ped, bind(self.onPedWasted, self))
@@ -90,15 +91,19 @@ function TollStation:onPedWasted(_, killer)
 		end
 
 		if killer:getType() == "player" then
+			-- Send the News to the San News Company
+			CompanyManager:getSingleton():getFromId(3):sendShortMessage(("Ein Beamter an der Maut-Station %s wurde erschossen! Die Station bleibt bis auf weiteres geschlossen."):format(self.m_Name), 10000)
+
 			killer:reportCrime(Crime.Kill)
 			outputDebug(("%s killed a Ped at %s"):format(killer:getName(), self.m_Name))
 
 			setTimer(
 				function()
 					self.m_Ped:destroy()
-					self.m_Ped = Ped(71, self.m_RespawnPos, self.m_RespawnRot.z)
+					self.m_Ped = GuardActor:new(self.m_RespawnPos)
+					self.m_Ped:setRotation(self.m_RespawnRot)
+					self.m_Ped:giveWeapon(31, 999999999, true)
 					self.m_Ped:setFrozen(true)
-					self.m_Ped:setAnimation("cop_ambient", "Coplook_loop", -1, true, false, true)
 					addEventHandler("onPedWasted", self.m_Ped, bind(self.onPedWasted, self))
 				end, TOLL_PED_RESPAWN_TIME, 1
 			)
