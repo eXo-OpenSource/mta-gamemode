@@ -259,3 +259,4 @@ PlayerAttachObjects = {
 }
 
 PLAYER_DEATH_TIME = 3*60*1000
+VEHICLE_SPECIAL_SMOKE = {[512] = true, [513] = true}

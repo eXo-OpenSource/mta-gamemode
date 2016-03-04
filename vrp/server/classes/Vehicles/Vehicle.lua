@@ -9,6 +9,7 @@ Vehicle = inherit(MTAElement)
 
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
+	addEventHandler("onVehicleEnter", self, bind(self.onPlayerEnter, self))
 	addEventHandler("onVehicleExit", self, bind(self.onPlayerExit, self))
 
 	self.m_LastUseTime = math.huge
@@ -17,6 +18,11 @@ function Vehicle:virtual_constructor()
 	self.m_EngineState = false
 	self.m_Fuel = 100
 	self.m_Mileage = 0
+
+	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+		self.m_SpecialSmokeEnabled = false
+		self.m_SpecialSmokeInternalToggle = bind(self.toggleInternalSmoke, self)
+	end
 end
 
 function Vehicle:virtual_destructor()
@@ -63,8 +69,23 @@ function Vehicle:isLocked()
 	return isVehicleLocked(self)
 end
 
-function Vehicle:onPlayerExit(player)
+function Vehicle:onPlayerEnter(player, seat)
+	if seat == 0 then
+		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+			bindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
+		end
+	end
+end
+
+function Vehicle:onPlayerExit(player, seat)
 	self.m_LastUseTime = getTickCount()
+
+	if seat == 0 then
+		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+			self:toggleInternalSmoke()
+			unbindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
+		end
+	end
 end
 
 function Vehicle:getLastUseTime()
@@ -97,6 +118,10 @@ function Vehicle:toggleEngine(player)
 			if self:isBroken() then
 				player:sendError(_("Das Fahrzeug ist kaputt und muss erst repariert werden!", player))
 				return false
+			end
+		else
+			if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+				self:toggleInternalSmoke()
 			end
 		end
 
@@ -162,6 +187,18 @@ end
 
 function Vehicle:isBroken()
 	return self:getHealth() <= 301.01
+end
+
+function Vehicle:toggleInternalSmoke()
+	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+		if self:getEngineState() then
+			self.m_SpecialSmokeEnabled = not self.m_SpecialSmokeEnabled
+		end
+	end
+end
+
+function Vehicle:isSmokeEnabled()
+	return self.m_SpecialSmokeEnabled
 end
 
 Vehicle.isPermanent = pure_virtual
