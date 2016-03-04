@@ -276,7 +276,7 @@ end
 
 function Faction:sendShortMessage(text, ...)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(("%s:\n%s"):format(self:getName(), text), ...)
+		player:sendShortMessage(("%s:\n%s"):format(self:getName(), _(text, player)), ...)
 	end
 end
 
@@ -302,7 +302,7 @@ end
 
 function Faction:phoneCall(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(_("Der Spieler %s ruft eure Fraktion (%s) an!\n Drücke \"F5\" um abzuheben.", player, caller:getName(), self:getName()))
+		player:sendShortMessage(_("Der Spieler %s ruft eure Fraktion (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
 		bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
 	end
 end

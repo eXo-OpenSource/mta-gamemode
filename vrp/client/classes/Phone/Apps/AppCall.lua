@@ -195,10 +195,10 @@ function MainActivity:Event_receivePhoneNumbers(list)
 	for index, key in pairs(grid) do
 		key:clear()
 	end
-	for index, number in pairs(list) do
-		item = grid[number["OwnerType"]]:addItem(number["OwnerName"], tostring(index))
-		item.Owner = number["OwnerName"]
-		item.Number = index
+	for number, numData in pairs(list) do
+		local item = grid[numData["OwnerType"]]:addItem(numData["OwnerName"], tostring(number))
+		item.Owner = numData["OwnerName"]
+		item.Number = number
 	end
 end
 

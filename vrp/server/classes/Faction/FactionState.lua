@@ -65,6 +65,17 @@ function FactionState:getOnlinePlayers()
 	return players
 end
 
+function FactionState:getFactions()
+	local factions = FactionManager:getSingleton():getAllFactions()
+	local returnFactions = {}
+	for i, faction in pairs(factions) do
+		if faction:isStateFaction() then
+			table.insert(returnFactions, faction)
+		end
+	end
+	return returnFactions
+end
+
 function FactionState:onBarrierGateHit(player)
     if not player:getFaction() or not player:getFaction():isStateFaction() then
         player:sendError(_("Zufahrt Verboten!", player))

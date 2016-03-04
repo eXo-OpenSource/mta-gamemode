@@ -6,7 +6,7 @@ function TrainManager:constructor()
 	self.m_TrackFiles = {
 		"files/data/traintracks/tracks.dat",
 		--"files/data/traintracks/tracks2.dat",
-		"files/data/traintracks/tracks3.dat",
+		--"files/data/traintracks/tracks3.dat",
 		--"files/data/traintracks/tracks4.dat",
 	}
 	if DEBUG then

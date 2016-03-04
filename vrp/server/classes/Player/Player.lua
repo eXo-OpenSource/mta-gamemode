@@ -282,7 +282,7 @@ function Player:sendWarning(text)	self:triggerEvent("warningBox", text) 	end
 function Player:sendInfo(text)		self:triggerEvent("infoBox", text)		end
 function Player:sendInfoTimeout(text, timeout) self:triggerEvent("infoBox", text, timeout) end
 function Player:sendSuccess(text)	self:triggerEvent("successBox", text)	end
-function Player:sendShortMessage(text) self:triggerEvent("shortMessageBox", text)	end
+function Player:sendShortMessage(text, ...) self:triggerEvent("shortMessageBox", text, ...)	end
 function Player:isActive() return true end
 
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end

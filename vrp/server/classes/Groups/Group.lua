@@ -287,7 +287,7 @@ end
 
 function Group:phoneCall(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(_("Der Spieler %s ruft eure Gang/Firma (%s) an!\n Drücke \"F5\" um abzuheben.", player, caller:getName(), self:getName()))
+		player:sendShortMessage(_("Der Spieler %s ruft eure Gang/Firma (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
 		bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
 	end
 end

@@ -36,10 +36,20 @@ function TollStation:onBarrierHit(player)
 	if self:checkRequirements(player) then -- Check for Toll Pass
 		return true
 	else
-		player:sendShortMessage(("Willkommen bei der Maut-Station %s! Drücke auf '%s' um ein Ticket zu kaufen!\nDu kannst dir aber auch an einem 24/7 einen Mautpass kaufen, dann fährst du unkompliziert und schnell durch die Maut-Stationen!"):format(self.m_Name, TOLL_PAY_KEY))
+		if not player.m_BuyTollFunc then
+			if player:getWantedLevel() > 0 then
+				for i, faction in pairs(FactionState:getSingleton():getFactions()) do
+					faction:sendShortMessage(("Ein Beamter der Maut-Station %s meldet die Sichtung des Flüchtigen %s!"):format(self.m_Name, player:getName()), 10000)
+				end
+			end
 
-		player.m_BuyTollFunc = bind(self.buyToll, self, player)
-		bindKey(player, TOLL_PAY_KEY, "down", player.m_BuyTollFunc)
+			player:sendShortMessage(("Willkommen bei der Maut-Station %s! Drücke auf '%s' um ein Ticket zu kaufen!\nDu kannst dir aber auch an einem 24/7 einen Mautpass kaufen, dann fährst du unkompliziert und schnell durch die Maut-Stationen!"):format(self.m_Name, TOLL_PAY_KEY:upper()))
+
+			player.m_BuyTollFunc = bind(self.buyToll, self, player)
+			bindKey(player, TOLL_PAY_KEY, "down", player.m_BuyTollFunc)
+		else
+			player:sendError(_("Internal Error! Bitte verlasse die Maut-Station und drücke '%s'.", player, TOLL_PAY_KEY:upper()))
+		end
 	end
 
 	return false
