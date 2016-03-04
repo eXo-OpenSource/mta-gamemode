@@ -51,17 +51,17 @@ end
 function PhoneApp:Event_callBusy(callee)
 	-- Create busy activity
 	Phone:getSingleton():openApp(self)
-	CallResultActivity:new(self, callee, CALL_RESULT_BUSY)
+	CallResultActivity:new(self, "player", callee, CALL_RESULT_BUSY)
 end
 
 function PhoneApp:Event_callAnswer(callee, voiceCall)
 	-- Create answer activity
 	Phone:getSingleton():openApp(self)
-	CallResultActivity:new(self, callee, CALL_RESULT_ANSWER, voiceCall)
+	CallResultActivity:new(self, "player", callee, CALL_RESULT_ANSWER, voiceCall)
 end
 
 function PhoneApp:Event_callReplace(responsiblePlayer)
-	CallResultActivity:new(self, callee, CALL_RESULT_REPLACE)
+	CallResultActivity:new(self, "player", callee, CALL_RESULT_REPLACE)
 end
 
 
@@ -182,7 +182,7 @@ function MainActivity:ButtonCallPlayer_Click()
 		return
 	end
 
-	CallResultActivity:new(self:getApp(), player, CALL_RESULT_CALLING, self.m_CheckVoicePlayers:isChecked())
+	CallResultActivity:new(self:getApp(), "player", player, CALL_RESULT_CALLING, self.m_CheckVoicePlayers:isChecked())
 	triggerServerEvent("callStart", root, player, self.m_CheckVoicePlayers:isChecked())
 end
 
@@ -229,7 +229,7 @@ function IncomingCallActivity:ButtonAnswer_Click()
 		triggerServerEvent("callAnswer", root, self.m_Caller, self.m_VoiceEnabled)
 
 		-- Show active call activity
-		CallResultActivity:new(self:getApp(), self.m_Caller, CALL_RESULT_ANSWER, self.m_VoiceEnabled)
+		CallResultActivity:new(self:getApp(), "player",self.m_Caller, CALL_RESULT_ANSWER, self.m_VoiceEnabled)
 	end
 end
 
