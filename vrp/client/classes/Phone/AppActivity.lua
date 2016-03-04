@@ -17,6 +17,7 @@ function AppActivity:constructor(app)
 	app:addActivity(self)
 
 	self.m_App = app
+
 end
 
 function AppActivity:isOpen()

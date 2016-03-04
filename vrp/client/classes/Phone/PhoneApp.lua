@@ -12,7 +12,7 @@ function PhoneApp:constructor(appName, icon)
 	self.m_Icon = icon
 	self.m_IsOpen = false
 	self.m_Activities = {}
-	self.m_DestroyOnClose = true
+	self.m_DestroyOnClose = false
 end
 
 function PhoneApp:destructor()

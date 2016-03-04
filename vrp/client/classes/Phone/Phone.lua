@@ -37,8 +37,8 @@ function Phone:constructor()
 	-- Register web apps
 	self:registerApp(PhoneApp.makeWebApp("YouTube", "IconYouTube.png", "https://youtube.com/tv", false))
 	self:registerApp(AppOnOff)
-	self:registerApp(PhoneApp.makeWebApp("SanNews",  "IconSanNews.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sanNews&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), true, self))
-	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), true, self))
+	self:registerApp(PhoneApp.makeWebApp("SanNews",  "IconSanNews.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sanNews&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
+	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 
 
 
@@ -54,6 +54,7 @@ function Phone:constructor()
 	self.m_HomeButton.onLeftClick =
 	function()
 		if self.m_PhoneOn == 1 then
+			--if self.m_CurrentApp and self.m_CurrentApp.isInCall == true then return end
 			self:closeAllApps()
 			self.m_IconSurface:setVisible(true)
 		end
@@ -80,7 +81,6 @@ end
 function Phone:loadHomeScreen()
 	if self.m_PhoneOn == 1 then
 		local iconPath = "files/images/Phone/Apps_"..self.m_Phone:gsub("-", "").."/"
-
 
 		self.m_AppIcons = {}
 		self.m_AppLabels = {}
@@ -137,7 +137,6 @@ function Phone:onHide()
 			app:close()
 		end
 	end
-	self.m_IconSurface:setVisible(true)
 
 	if self.m_CurrentApp and self.m_CurrentApp:isDestroyOnCloseEnabled() then
 		self.m_CurrentApp = false

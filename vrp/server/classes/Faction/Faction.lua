@@ -310,6 +310,7 @@ end
 function Faction:phoneTakeOff(player, key, state, caller)
 	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
 	caller:triggerEvent("callAnswer", player, voiceCall)
+	player:triggerEvent("callAnswer", caller, voiceCall)
 	caller:setPhonePartner(player)
 	player:setPhonePartner(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do

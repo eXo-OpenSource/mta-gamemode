@@ -21,6 +21,8 @@ function AppCall:constructor()
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
+
+	self.m_InCall = false
 end
 
 function AppCall:onOpen(form)
@@ -257,6 +259,9 @@ CallResultActivity = inherit(AppActivity)
 
 function CallResultActivity:constructor(app, calleeType, callee, resultType, voiceCall)
 	AppActivity.constructor(self, app)
+
+	self.m_InCall = true
+
 	self.m_Callee = callee
 
 	self.m_ResultLabel = GUILabel:new(0, 10, self.m_Width, 40, "", self):setAlignX("center")
@@ -278,6 +283,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 			function()
 				if self:isOpen() then
 					MainActivity:new(app)
+					self.m_InCall = false
 				end
 			end, 3000, 1
 		)
@@ -288,6 +294,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 			function()
 				if self:isOpen() then
 					MainActivity:new(app)
+					self.m_InCall = false
 				end
 			end, 3000, 1
 		)
