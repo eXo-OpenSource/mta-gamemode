@@ -39,6 +39,8 @@ function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChan
 
   self:createDutyMarker()
   self.m_PhoneNumber = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
+  self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
+
 end
 
 function Company:destructor()
@@ -245,12 +247,16 @@ function Company:getCreator()
     return self.m_Creator
 end
 
-function Company:sendMessage(msg)
-    for i, v in pairs(Element.getAllByType("player")) do
-        if v:getCompany() == self then
-            v:sendShortMessage(("%s:\n%s"):format(self:getName(), msg))
-        end
-    end
+function Company:sendMessage(text, r, g, b, ...)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b, ...)
+	end
+end
+
+function Company:sendShortMessage(text, ...)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendShortMessage(("%s:\n%s"):format(self:getName(), text), ...)
+	end
 end
 
 function Company:getRandomSkin()
@@ -308,5 +314,18 @@ function Company:createDutyMarker()
 end
 
 function Company:phoneCall(caller)
-    self:sendMessage(_("Der Spieler %s ruft eurer Unternehmen (%s) an!", caller, caller:getName(), self:getName()), 50, 200, 255)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendShortMessage(_("Der Spieler %s ruft eurer Unternehmen (%s) an!\n Drücke \"F5\" um abzuheben.", player, caller:getName(), self:getName()))
+		bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+	end
+end
+
+function Company:phoneTakeOff(player, key, state, caller)
+	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
+	caller:triggerEvent("callAnswer", player, voiceCall)
+	caller:setPhonePartner(player)
+	player:setPhonePartner(caller)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+	end
 end

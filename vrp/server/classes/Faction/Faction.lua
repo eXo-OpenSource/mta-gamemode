@@ -36,6 +36,8 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_Depot = Depot.load(depotId,Id)
 
 	self.m_PhoneNumber = (PhoneNumber.load(2, self.m_Id) or PhoneNumber.generateNumber(2, self.m_Id))
+	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
+
 end
 
 
@@ -299,5 +301,18 @@ function Faction:respawnVehicles()
 end
 
 function Faction:phoneCall(caller)
-	self:sendMessage(_("Der Spieler %s ruft eure Fraktion (%s) an!", caller, caller:getName(), self:getName()), 50, 200, 255)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendShortMessage(_("Der Spieler %s ruft eure Fraktion (%s) an!\n Drücke \"F5\" um abzuheben.", player, caller:getName(), self:getName()))
+		bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+	end
+end
+
+function Faction:phoneTakeOff(player, key, state, caller)
+	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
+	caller:triggerEvent("callAnswer", player, voiceCall)
+	caller:setPhonePartner(player)
+	player:setPhonePartner(caller)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+	end
 end

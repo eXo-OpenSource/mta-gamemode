@@ -30,6 +30,7 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange, rank
 	end
 
 	self.m_PhoneNumber = (PhoneNumber.load(4, self.m_Id) or PhoneNumber.generateNumber(4, self.m_Id))
+	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 end
 
 function Group:destructor()
@@ -265,6 +266,12 @@ function Group:sendMessage(text, r, g, b, ...)
 	end
 end
 
+function Group:sendShortMessage(text, ...)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendShortMessage(("%s:\n%s"):format(self:getName(), text), ...)
+	end
+end
+
 function Group:distributeMoney(amount)
 	local moneyForFund = amount * self.m_ProfitProportion
 	self:giveMoney(moneyForFund)
@@ -279,5 +286,18 @@ function Group:distributeMoney(amount)
 end
 
 function Group:phoneCall(caller)
-	self:sendMessage(_("Der Spieler %s ruft eure Gang/Firma (%s) an!", caller, caller:getName(), self:getName()), 50, 200, 255)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendShortMessage(_("Der Spieler %s ruft eure Gang/Firma (%s) an!\n Drücke \"F5\" um abzuheben.", player, caller:getName(), self:getName()))
+		bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+	end
+end
+
+function Group:phoneTakeOff(player, key, state, caller)
+	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
+	caller:triggerEvent("callAnswer", player, voiceCall)
+	caller:setPhonePartner(player)
+	player:setPhonePartner(caller)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		unbindKey(player, "F5", "down", self.m_PhoneTakeOff)
+	end
 end
