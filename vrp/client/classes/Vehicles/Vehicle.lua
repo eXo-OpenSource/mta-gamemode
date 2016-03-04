@@ -7,21 +7,37 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 registerElementClass("vehicle", Vehicle)
+addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
+
+	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
+		self.m_SpecialSmokeEnabled = false
+	end
 end
 
 function Vehicle:getFuel()
 	return 100
 end
 
+function Vehicle:isSmokeEnabled()
+	return self.m_SpecialSmokeEnabled
+end
 
 addEvent("vehicleEngineStart", true)
 addEventHandler("vehicleEngineStart", root,
 	function()
 		if chance(10) then
 			playSound("files/audio/Enginestart.mp3")
+		end
+	end
+)
+
+addEventHandler("vehicleOnSmokeStateChange", root,
+	function (state)
+		if VEHICLE_SPECIAL_SMOKE[source:getModel()] then
+			source.m_SpecialSmokeEnabled = state
 		end
 	end
 )

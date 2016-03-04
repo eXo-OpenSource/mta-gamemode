@@ -193,6 +193,7 @@ function Vehicle:toggleInternalSmoke()
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		if self:getEngineState() then
 			self.m_SpecialSmokeEnabled = not self.m_SpecialSmokeEnabled
+			triggerClientEvent("vehicleOnSmokeStateChange", self, self.m_SpecialSmokeEnabled)
 		end
 	end
 end
