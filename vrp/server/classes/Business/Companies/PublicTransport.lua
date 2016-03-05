@@ -6,6 +6,9 @@ function PublicTransport:constructor()
 	self.m_TaxiCustomer = {}
 	self.m_TaxoMeter = bind(self.updateTaxometer, self)
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
+	addRemoteEvents{"publicTransportSetTargetMap", "publicTransportSetTargetTell"}
+	addEventHandler("publicTransportSetTargetMap", root, bind(self.Event_setTargetFromMap))
+	addEventHandler("publicTransportSetTargetTell", root, bind(self.Event_sendTargetTellMessage))
 end
 
 function PublicTransport:destuctor()
@@ -17,6 +20,14 @@ function PublicTransport:onVehiceEnter(veh, player, seat)
 		triggerClientEvent(player, "showTaxoMeter", player)
 	else
 		self:startTaxiDrive(veh, player)
+		triggerClientEvent(player, "showPublicTransportTaxiGUI", player)
+	end
+end
+
+function PublicTransport:onVehiceStartEnter(veh, player, seat)
+	if seat > 0 and not veh:getOccupant(0) then
+		cancelEvent()
+		player:sendError(_("Es sitzt kein Fahrer im Taxi", player))
 	end
 end
 
@@ -45,13 +56,16 @@ function PublicTransport:endTaxiDrive(customer)
 	if self.m_TaxiCustomer[customer] then
 		local driver = self.m_TaxiCustomer[customer]["driver"]
 		local price = self.m_TaxiCustomer[customer]["price"]
+		local vehicle = self.m_TaxiCustomer[customer]["vehicle"]
 		customer:takeMoney(price)
 		driver:giveMoney(price)
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
 		killTimer(self.m_TaxiCustomer[customer]["timer"])
+		if self.m_TaxiCustomer[customer]["blip"] then delete(self.m_TaxiCustomer[customer]["blip"]) end
 		self.m_TaxiCustomer[customer] = nil
 		triggerClientEvent(customer, "hideTaxoMeter", customer)
+		updateDriverTaxometer(vehicle, driver)
 	end
 end
 
@@ -77,7 +91,9 @@ function PublicTransport:updateDriverTaxometer(vehicle, driver)
 			end
 		end
 	end
-	triggerClientEvent(driver, "syncDriverTaxoMeter", driver, customers)
+	if driver then
+		triggerClientEvent(driver, "syncDriverTaxoMeter", driver, customers)
+	end
 end
 
 function PublicTransport:Event_onPlayerQuit()
@@ -85,5 +101,23 @@ function PublicTransport:Event_onPlayerQuit()
 		local driver = self.m_TaxiCustomer[source]["driver"]
 		driver:sendError(_("Der Kunde %s ist offline gegangen!", driver, source:getName()))
 		self:endTaxiDrive(source)
+	end
+end
+
+function PublicTransport:Event_setTargetFromMap(posX, posY)
+
+	if self.m_TaxiCustomer[client]["driver"] then
+		local driver = self.m_TaxiCustomer[client]["driver"]
+		driver:sendInfo(_("Der Kunde %s hat sein Ziel auf der Karte markiert! Ziel: %s/%s", driver, client:getName(), getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))
+		client:sendInfo(_("Du hast dein Ziel auf der Karte markiert! Ziel: %s/%s", client, getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))
+		self.m_TaxiCustomer[client]["blip"] = Blip:new("Waypoint.png", posX, posY)
+	end
+end
+
+function PublicTransport:Event_sendTargetTellMessage(posX, posY)
+	local driver = self.m_TaxiCustomer[client]["driver"]
+	if driver then
+		driver:sendInfo(_("Der Kunde %s wird dir sein Ziel mitteilen!", driver, source:getName()))
+		client:sendInfo(_("Bitte nenne dem Fahrer %s dein Ziel", client, driver:getName()))
 	end
 end

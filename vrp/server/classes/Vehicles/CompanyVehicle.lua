@@ -91,6 +91,10 @@ function CompanyVehicle:onStartEnter(player,seat)
 			cancelEvent()
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
 		end
+	else
+		if self:getCompany():getId() == 4 then
+			self:getCompany():onVehiceStartEnter(source, player, seat)
+		end
 	end
 end
 
