@@ -13,19 +13,24 @@ function PublicTransport:destuctor()
 end
 
 function PublicTransport:onVehiceEnter(veh, player, seat)
-	--if seat > 0 then
+	if seat == 0 then
+		triggerClientEvent(player, "showTaxoMeter", player)
+	else
 		self:startTaxiDrive(veh, player)
-	--end
+	end
 end
 
 function PublicTransport:onVehiceExit(veh, player, seat)
-	--if seat > 0 then
+	if seat == 0 then
+		triggerClientEvent(player, "hideTaxoMeter", player)
+	else
 		self:endTaxiDrive(player)
-	--end
+	end
 end
 
 function PublicTransport:startTaxiDrive(veh, customer)
 	self.m_TaxiCustomer[customer] = {}
+	self.m_TaxiCustomer[customer]["customer"] = customer
 	self.m_TaxiCustomer[customer]["vehicle"] = veh
 	self.m_TaxiCustomer[customer]["driver"] = veh:getOccupant(0)
 	self.m_TaxiCustomer[customer]["startMileage"] = veh:getMileage()
@@ -50,8 +55,6 @@ function PublicTransport:endTaxiDrive(customer)
 end
 
 function PublicTransport:updateTaxometer(customer)
-	local driver = self.m_TaxiCustomer[customer]["driver"]
-
 	self.m_TaxiCustomer[customer]["diff"] = (self.m_TaxiCustomer[customer]["vehicle"]:getMileage() - self.m_TaxiCustomer[customer]["startMileage"])/1000
 	self.m_TaxiCustomer[customer]["price"] = math.floor(self.m_TaxiCustomer[customer]["diff"] * TAXI_PRICE_PER_KM)
 	if customer:getMoney() < self.m_TaxiCustomer[customer]["price"] then
@@ -61,7 +64,19 @@ function PublicTransport:updateTaxometer(customer)
 	end
 	triggerClientEvent(customer, "syncTaxoMeter", customer, self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
 
-	triggerClientEvent(driver, "syncTaxoMeter", driver, self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
+	self:updateDriverTaxometer(self.m_TaxiCustomer[customer]["vehicle"], self.m_TaxiCustomer[customer]["driver"])
+end
+
+function PublicTransport:updateDriverTaxometer(vehicle, driver)
+	local customers = {}
+	for seat, customer in pairs(vehicle:getOccupants()) do
+		if seat > 0 then
+			if self.m_TaxiCustomer[customer] then
+				customers[seat] = self.m_TaxiCustomer[customer]
+			end
+		end
+	end
+	triggerClientEvent(driver, "syncDriverTaxoMeter", driver, customers)
 end
 
 function PublicTransport:Event_onPlayerQuit()
