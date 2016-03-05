@@ -42,16 +42,17 @@ function PublicTransport:startTaxiDrive(veh, customer)
 end
 
 function PublicTransport:endTaxiDrive(customer)
-	local driver = self.m_TaxiCustomer[customer]["driver"]
-	local price = self.m_TaxiCustomer[customer]["price"]
-	customer:takeMoney(price)
-	driver:giveMoney(price)
-	customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
-	driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
-	killTimer(self.m_TaxiCustomer[customer]["timer"])
-	self.m_TaxiCustomer[customer] = nil
-	triggerClientEvent(customer, "hideTaxoMeter", customer)
-
+	if self.m_TaxiCustomer[customer] then
+		local driver = self.m_TaxiCustomer[customer]["driver"]
+		local price = self.m_TaxiCustomer[customer]["price"]
+		customer:takeMoney(price)
+		driver:giveMoney(price)
+		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
+		driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
+		killTimer(self.m_TaxiCustomer[customer]["timer"])
+		self.m_TaxiCustomer[customer] = nil
+		triggerClientEvent(customer, "hideTaxoMeter", customer)
+	end
 end
 
 function PublicTransport:updateTaxometer(customer)

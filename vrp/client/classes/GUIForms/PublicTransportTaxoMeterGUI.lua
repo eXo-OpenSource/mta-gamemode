@@ -46,7 +46,7 @@ function PublicTransportTaxoMeterGUI:syncDriverTaxoMeter(customerTable)
 	if self.m_Driver == true then
 		for i = 1, 3 do
 			if customerTable[i] then
-				self.m_CustomerName[i]:setText(customerTable[i][customer]:getName())
+				self.m_CustomerName[i]:setText(customerTable[i]["customer"]:getName())
 				self.m_CustomerDistance[i]:setText(_("%s km", math.round(customerTable[i]["diff"],2)))
 				self.m_CustomerPrice[i]:setText(_("%d $", customerTable[i]["price"]))
 			else
