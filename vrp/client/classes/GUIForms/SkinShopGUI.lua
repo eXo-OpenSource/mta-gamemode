@@ -7,6 +7,7 @@
 -- ****************************************************************************
 SkinShopGUI = inherit(GUIForm)
 inherit(Singleton, SkinShopGUI)
+addEvent("skinBought", true)
 
 function SkinShopGUI:constructor()
 	localPlayer:setFrozen(true)
@@ -21,15 +22,8 @@ function SkinShopGUI:constructor()
 	GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
 	GUILabel:new(6, self.m_Height-self.m_Height/14, self.m_Width*0.5, self.m_Height/14, _"Doppelklick zum Kaufen", self.m_Window):setFont(VRPFont(self.m_Height*0.045)):setAlignY("center"):setColor(Color.Red)
 
-	addEvent("skinBought", true)
-	addEventHandler("skinBought", root,
-		function(skinId)
-			delete(self)
-			SuccessBox:new(_"Skin erfolgreich übernommen!", 0, 255, 0)
-
-			localPlayer.m_OldSkin = skinId
-		end
-	)
+	self.m_SkinBought = bind(self.Event_SkinBought, self)
+	addEventHandler("skinBought", root, self.m_SkinBought)
 
 	-- Load skin info
 	for skinId, info in pairs(SkinInfo) do
@@ -46,12 +40,21 @@ function SkinShopGUI:constructor()
 end
 
 function SkinShopGUI:destructor()
+	removeEventHandler("skinBought", root, self.m_SkinBought)
+
 	localPlayer:setFrozen(false)
 	localPlayer:setModel(localPlayer.m_OldSkin)
 	setCameraTarget(localPlayer, localPlayer)
 	showChat(true)
 
 	GUIForm.destructor(self)
+end
+
+function SkinShopGUI:Event_SkinBought(skinId)
+	localPlayer.m_OldSkin = skinId
+	delete(self)
+
+	SuccessBox:new(_"Skin erfolgreich übernommen!", 0, 255, 0)
 end
 
 function SkinShopGUI.initializeAll()

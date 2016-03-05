@@ -35,6 +35,7 @@
 	<script src="shared/classes/Hook.lua" type="shared"/>
 	<script src="shared/classes/UnitTest.lua" type="shared"/>
 	<script src="shared/classes/DimensionManager.lua" type="shared"/>
+	<script src="shared/classes/Thread.lua" type="shared"/>
 
 	<!-- Server -->
 	<script src="server/utils.lua" type="server"/>
@@ -718,7 +719,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/4.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/gangwar.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Fire.png"/>
-	<vrpfile src="files/images/Radar_Monochrome/Blips/Train.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Train.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

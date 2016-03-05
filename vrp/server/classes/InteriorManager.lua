@@ -96,7 +96,7 @@ InteriorManager.InteriorData = {
     {enter = Vector3(2495.33, -1690.75, 13.7847), spawn = Vector3(2496.05, -1692.73, 1013.75), dimension = 0, interior = 3, rotation = 0},
     {enter = Vector3(2540.08, -1304, 33.9877), spawn = Vector3(2541.7, -1304.01, 1024.07), dimension = 0, interior = 2, rotation = 90},
     {enter = Vector3(1659.42, 2249.69, 10.0664), spawn = Vector3(1133.07, -12.77, 999.75), dimension = 0, interior = 12, rotation = 0},
-    {enter = Vector3(1456.77, -1138.02, 23.2872), spawn = Vector3(161.39, -96.69, 1000.81), dimension = 0, interior = 18, rotation = -141},
+    --{enter = Vector3(1456.77, -1138.02, 23.2872), spawn = Vector3(161.39, -96.69, 1000.81), dimension = 0, interior = 18, rotation = -141}, -- Skin Shop
     {enter = Vector3(-1883.2, 865.473, 34.2601), spawn = Vector3(161.39, -96.69, 1000.81), dimension = 1, interior = 18, rotation = 129},
     {enter = Vector3(2572.07, 1904.83, 10.0231), spawn = Vector3(161.39, -96.69, 1000.81), dimension = 2, interior = 18, rotation = 180},
     {enter = Vector3(2090.58, 2224.2, 10.0579), spawn = Vector3(161.39, -96.69, 1000.81), dimension = 3, interior = 18, rotation = 180},
