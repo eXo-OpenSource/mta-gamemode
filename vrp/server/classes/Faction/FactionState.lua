@@ -36,6 +36,22 @@ function FactionState:constructor()
 	addEventHandler("factionStateSwat", root, bind(self.Event_toggleSwat, self))
 	addEventHandler("factionStateToggleDuty", root, bind(self.Event_toggleDuty, self))
 
+
+	-- Prepare the Area51
+	self:createDefendActors(
+		{
+			{Vector3(128.396, 1954.551, 19.428), Vector3(0, 0, 354.965), 287, 31, 30};
+			{Vector3(340.742, 1793.668, 18.140), Vector3(0, 0, 216.25), 287, 31, 30};
+			{Vector3(350.257, 1800.481, 18.577), Vector3(0, 0, 227.407), 287, 31, 30};
+			{Vector3(281.812, 1816.380, 17.970), Vector3(0, 0, 359.113), 287, 31, 30};
+			{Vector3(97.468, 1942.034, 34.378), Vector3(0, 0, 19.822), 287, 34, 90};
+			{Vector3(161.950, 1935.313, 33.898), Vector3(0, 0, 0.349), 287, 34, 90};
+			{Vector3(111.469, 1812.475, 33.898), Vector3(0, 0, 135.428), 287, 34, 90};
+			{Vector3(262.044, 1805.083, 33.898), Vector3(0, 0, 173.677), 287, 34, 90};
+			{Vector3(384.456, 1961.135, 33.278), Vector3(0, 0, 266.788), 287, 34, 90};
+			{Vector3(277.512, 2061.715, 33.678), Vector3(0, 0, 358.1), 287, 34, 90};
+		}
+	)
 end
 
 function FactionState:destructor()
@@ -322,5 +338,36 @@ function FactionState:Event_toggleDuty()
 		end
 	else
 		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
+	end
+end
+
+-- Area 51
+function FactionState:createDefendActors(Actors)
+	for i, v in pairs(Actors or {}) do
+		local actor = DefendActor:new(v[1], v[3], v[4], v[5])
+		actor:setRotation(v[2])
+		actor:setFrozen(true)
+		actor.onAttackRangeHit = function (actor, ele)
+			if ele then
+				local ele = ele
+				if ele:getType() == "vehicle" or ele:getType() == "player" then
+					if ele:getType() == "vehicle" then
+						ele = ele:getOccupant()
+						if not ele then -- Do not attack emtpy vehicles
+							return true
+						end
+					end
+					if ele:getType() == "player" then
+						if ele:getFaction() and ele:getFaction():isStateFaction() then
+							return true
+						end
+					end
+				else
+					return true -- Only attack Vehicles and Players
+				end
+			end
+
+			return false
+		end
 	end
 end

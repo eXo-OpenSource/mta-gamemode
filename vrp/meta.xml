@@ -211,6 +211,7 @@
 	<script src="server/classes/AI/Actor.lua" type="server"/>
 	<script src="server/classes/AI/GuardActor.lua" type="server"/>
 	<script src="server/classes/AI/ShopActor.lua" type="server"/>
+	<script src="server/classes/AI/DefendActor.lua" type="server"/>
 
 	<!-- AI tasks -->
 	<script src="server/classes/AI/Tasks/Task.lua" type="server"/>
