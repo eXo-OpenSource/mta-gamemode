@@ -29,13 +29,13 @@ end
 
 function ItemShopGUI:setItems(items)
 	self.m_Grid:clear()
-
-	for itemId, price in pairs(items) do
-		local item = self.m_Grid:addItem(Items[itemId].name, tostring(price).."$")
-		item.ItemId = itemId
+	local itemData = Inventory:getSingleton():getItemData()
+	for itemName, price in pairs(items) do
+		local item = self.m_Grid:addItem(itemName, tostring(price).."$")
+		item.itemName = itemName
 		item.onLeftClick = function()
-			self.m_Preview:setImage(Items[itemId].imagepath)
-			self.m_LabelDescription:setText(Items[itemId].description)
+			self.m_Preview:setImage("files/images/Inventory/items/"..itemData[itemName]["Icon"])
+			self.m_LabelDescription:setText(itemData[itemName]["Info"])
 		end
 	end
 end
@@ -46,18 +46,18 @@ function ItemShopGUI:ButtonBuy_Click()
 		return
 	end
 
-	local itemId = self.m_Grid:getSelectedItem().ItemId
-	if not itemId then
-		core:throwInternalError("Unknown item ID @ ItemShopGUI")
+	local itemName = self.m_Grid:getSelectedItem().itemName
+	if not itemName then
+		core:throwInternalError("Unknown itemName @ ItemShopGUI")
 		return
 	end
 	local amount = tonumber(self.m_EditAmount:getText())
 	if not amount then
-		ErrorBox:new(_"Bitte gebe einen gültigen Betrag ein!")
+		ErrorBox:new(_"Bitte gebe einen gültige Anzahl ein!")
 		return
 	end
 
-	triggerServerEvent("itemBuy", root, itemId, amount)
+	triggerServerEvent("itemBuy", root, itemName, amount)
 end
 
 addEvent("itemShopGUI", true)

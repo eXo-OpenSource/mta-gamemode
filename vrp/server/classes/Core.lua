@@ -41,7 +41,7 @@ function Core:constructor()
 	Weather:new()
 	JailBreak:new()
 	Nametag:new()
-	--ItemShops:new()
+	ItemShops:new()
 	Collectables:new()
 	AmmuLadder:new()
 	Achievement:new()
@@ -60,7 +60,7 @@ function Core:constructor()
 	ActionsCheck:new()
 	TrainManager:new()
 	FireManager:new()
-	
+
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()

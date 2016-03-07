@@ -94,6 +94,7 @@
 	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemShops.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsWeed.lua" type="server"/>
 
 	<!-- Bank System -->

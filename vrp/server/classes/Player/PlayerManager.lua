@@ -32,9 +32,7 @@ function PlayerManager:constructor()
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
-
-	addCommandHandler("payday",bind(self.startPaydayDebug, self)) -- Only for Debug while Developement
-
+	addCommandHandler("me",bind(self.Command_playerMe, self))
 
 	self.m_PaydayPulse = TimedPulse:new(60000)
 	self.m_PaydayPulse:registerHandler(bind(self.checkPayday, self))
@@ -197,6 +195,24 @@ function PlayerManager:Command_playerWhisper(  source , cmd, ...)
 	local playersToSend = source:getPlayersInChatRange( 0 )
 	for index = 1,#playersToSend do
 		outputChatBox(getPlayerName(source).." flüstert: #FFFFFF"..text, playersToSend[index], 140, 140, 140,true)
+	end
+end
+
+function PlayerManager:Command_playerMe(  source , cmd, ...)
+	local argTable = { ... }
+	local text = table.concat ( argTable , " " )
+	local playersToSend = source:getPlayersInChatRange( 1 )
+	for index = 1,#playersToSend do
+		outputChatBox(getPlayerName(source).." "..text, playersToSend[index], 100, 0, 255)
+	end
+end
+
+function PlayerManager:Command_playerMeServer(source , ...)
+	local argTable = { ... }
+	local text = table.concat ( argTable , " " )
+	local playersToSend = source:getPlayersInChatRange( 1 )
+	for index = 1,#playersToSend do
+		outputChatBox("** "..getPlayerName(source).." "..text.." **", playersToSend[index], 100, 0, 255)
 	end
 end
 

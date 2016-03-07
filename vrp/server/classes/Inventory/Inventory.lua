@@ -203,12 +203,16 @@ function Inventory:removeItemFromPlace(bag, place, amount)
 		return false
 	elseif(ItemAmount - amount > 0) then
 		self.m_Items[id]["Menge"] = ItemAmount - amount
-		self:saveItemMenge(id, self.m_Items[id]["Menge"])
+		self:saveItemAmount(id, self.m_Items[id]["Menge"])
 	else
 		self:deleteItem(id)
 		self.m_Items[id] = nil
 		self.m_Bag[bag][place] = nil
 	end
+end
+
+function Inventory:getMaxItemAmount(item)
+	return self.m_ItemData[item]["Item_Max"]
 end
 
 function Inventory:getFreePlacesForItem(item)
@@ -232,10 +236,10 @@ function Inventory:getFreePlacesForItem(item)
 		for i = 0, invplaetze, 1 do
 			local place = i
 			local id = self.m_Bag[bag][place]
-			local itemName = self.m_Items[id]["Objekt"]
+			local itemName = self.m_ItemData[item]["Name"]
 			amount = 0
 			placesplus = 0
-			if itemName then
+			if itemName and id then
 				if itemName == item then
 					amount = self.m_Items[id]["Menge"]
 					if amount <= stackMax then
@@ -315,7 +319,7 @@ function Inventory:removeOneItem(item)
 				amount = self.m_Items[id]["Menge"]
 				if amount > 1 then
 					self.m_Items[id]["Menge"] = amount-1
-					self:saveItemMenge(id, self.m_Items[id]["Menge"])
+					self:saveItemAmount(id, self.m_Items[id]["Menge"])
 					return true
 				elseif amount == 1 then
 					self:removeItemFromPlace(bag, place, 1)
@@ -391,7 +395,7 @@ function Inventory:c_stackItems(newId, oldId, oldPlace)
 		local total = amountNew + amountOld
 		if total <= self.m_ItemData[itemNameOld]["Stack_max"] then
 			self.m_Items[newId]["Menge"] = total
-			self:saveItemMenge(newId, self.m_Items[newId]["Menge"])
+			self:saveItemAmount(newId, self.m_Items[newId]["Menge"])
 			local bag = self.m_Items[itemNameNew]["Tasche"]
 			self:removeItemFromPlace(bag, oldPlace, amountOld)
 		end
@@ -426,7 +430,7 @@ function Inventory:giveItem(item, amount)
 				--outputDebugString("giveItem - OldStack")
 				local itemAmount = self.m_Items[id]["Menge"]
 				self.m_Items[id]["Menge"] = itemAmount + amount
-				self:saveItemMenge(id, self.m_Items[id]["Menge"])
+				self:saveItemAmount(id, self.m_Items[id]["Menge"])
 				triggerClientEvent(self.m_Owner, "setInventoryCoordinates", self.m_Owner, place, bag)
 				return true
 			elseif placeType == "new" then

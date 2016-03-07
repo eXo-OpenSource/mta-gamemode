@@ -74,6 +74,10 @@ function Inventory:Event_loadPlayerInventarClient(slots, itemData)
 	bindKey(self.InventoryKey, "down", bind(self.toggle,  self))
 end
 
+function Inventory:getItemData()
+	return self.m_ItemData
+end
+
 function Inventory:toggle()
 	if self.Show == true then
 		self:hide()

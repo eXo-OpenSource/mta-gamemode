@@ -15,9 +15,9 @@ function ItemManager:constructor()
 	}
 
 	for name, class in pairs(self.m_ClassItems) do
-		class:new()
-		class:setName(name)
-		class:loadItem()
+		local instance = class:new()
+		instance:setName(name)
+		instance:loadItem()
 	end
 end
 

@@ -18,6 +18,7 @@ BeggarTypes = {
 	Money = 1;
 	Food = 2;
 	Water = 3;
+    Ecstasy = 4;
 }
 for i, v in pairs(BeggarTypes) do
 	BeggarTypes[v] = i
@@ -34,6 +35,9 @@ BeggarHelpPhrases = {
 	{ -- Type: Water
 		"Du da! Willste mich hier verdursten lassen?"
 	};
+    { -- Type: Ecstasy
+		"Hey! Bock auf nen Ecstasy Trip?"
+	};
 }
 
 BeggarThanksPhrases = {
@@ -45,6 +49,9 @@ BeggarThanksPhrases = {
 	};
 	{
 		"Mercie."
+	};
+    {
+		"Schön mit dir Geschäfte zu machen. Wenn du wieder Stoff brauchst, komm vorbei!"
 	};
 }
 
@@ -78,7 +85,28 @@ BeggarNames = {
     "Trompeten Heinz",
     "Vodka Willi",
     "Fliesentisch Klaus",
-    "Gürtelrosen Sepp"
+    "Gürtelrosen Sepp",
+    "Detlev Maier",
+    "Gustav Gans",
+    "Jürgen Chefs",
+    "Leon Messi",
+    "Christian Ronald",
+    "Manfred Neuer",
+    "Stomas Müllner",
+    "Freddy Feuerfelsen",
+    "Stivi K.",
+    "Johann Arschgucker",
+    "Axel SChweiß",
+    "Gisela von Hinten",
+    "Peter Peters",
+    "Tim Buktu",
+    "Reiner Ernst",
+    "Ernst Haft",
+    "Klieh Doris",
+    "Rosa Loch",
+    "Wilma Lutschen",
+    "Marie Juhana",
+    "Ernst Scherz"
 }
 
 BeggarAnimations = {
