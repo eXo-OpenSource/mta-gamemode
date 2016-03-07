@@ -27,6 +27,6 @@ function PublicTransport:Event_busReachNextStop(vehicle, nextStopName)
 	self:setBusDisplayText(vehicle, nextStopName)
 
 	if getPedOccupiedVehicle(localPlayer) == vehicle then
-		playSound("http://translate.google.com/translate_tts?tl=de&q=Naechster%20Halt: "..nextStopName)
+		playSound("http://translate.google.com/translate_tts?ie=UTF-8&tl=de-De&q=Naechster%20Halt: "..nextStopName.."&client=tw-ob")
 	end
 end
