@@ -296,4 +296,11 @@ end
 
 function PlayerManager:Event_toggleAFK(bool)
 	client:setPublicSync("AFK", bool)
+	if bool == true then
+		if client:isInVehicle() then client:removeFromVehicle() end
+		client:setInterior(4)
+		client:setDimension(0)
+		local afkPos = AFK_POSITIONS[math.random(0, #AFK_POSITIONS)]
+		client:setPosition(afkPos.x, afkPos.y, 999.5546875)
+	end
 end

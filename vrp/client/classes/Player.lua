@@ -126,15 +126,8 @@ function Player:checkAFK()
 			self:generateAFKCode()
 		elseif self.m_AFKCheckCount == 30 then
 			self.m_AFKCode = false
-			if self:isInVehicle() then self:removeFromVehicle() end
-			self:setInterior(4)
-			self:setDimension(0)
-
-			local afkPos = AFK_POSITIONS[math.random(0, #AFK_POSITIONS)]
-			self:setPosition(afkPos.x, afkPos.y, 999.5546875)
 			triggerServerEvent("toggleAFK", localPlayer, true)
 			addEventHandler ( "onClientPedDamage", localPlayer, function() cancelEvent() end)
-
 		end
 		self.m_LastPositon = pos
 	end
