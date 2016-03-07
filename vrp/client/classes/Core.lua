@@ -45,6 +45,7 @@ function Core:ready()
 	Casino:new()
 	TrainManager:new()
 	Fire:new()
+	PublicTransport:new()
 
 	-- Events
 	EventManager:new()
