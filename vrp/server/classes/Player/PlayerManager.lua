@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus"}
+addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -28,6 +28,7 @@ function PlayerManager:constructor()
 	addEventHandler("requestJobLevelUp", root, bind(self.Event_requestJobLevelUp, self))
 	addEventHandler("playerRequestTrading", root, bind(self.Event_playerRequestTrading, self))
 	addEventHandler("setPhoneStatus", root, bind(self.Event_setPhoneStatus, self))
+	addEventHandler("toggleAFK", root, bind(self.Event_toggleAFK, self))
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -291,4 +292,8 @@ end
 
 function PlayerManager:Event_setPhoneStatus(status)
 	if status == 0 then	client:togglePhone(false) else client:togglePhone(true) end
+end
+
+function PlayerManager:Event_toggleAFK(bool)
+	client:setPublicSync("AFK", bool)
 end

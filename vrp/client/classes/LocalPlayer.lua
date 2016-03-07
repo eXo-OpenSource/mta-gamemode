@@ -14,7 +14,6 @@ function LocalPlayer:constructor()
 	self.m_Rank = 0
 	self.m_LoggedIn = false
 	self.m_JoinTime = getTickCount()
-
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
 	addEventHandler("playerWasted", root, bind(self.playerWasted, self))

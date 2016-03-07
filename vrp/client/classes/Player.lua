@@ -15,6 +15,9 @@ function Player:virtual_constructor()
 	self.m_PublicSync = {}
 	self.m_PrivateSync = {}
 	self.m_PrivateSyncChangeHandler = {}
+	self.m_AFKCheckCount = 0
+	self.m_LastPositon = Vector3(0, 0, 0)
+	self.m_AFKTimer = setTimer ( bind(self.checkAFK, self), 20000, 0)
 end
 
 function Player:getPublicSync(key)
@@ -107,6 +110,47 @@ function Player:setTempMatchID (id)
 	setTimer(function ()
 		self.m_tempMatchID = 0
 	end, 1000, 1)
+end
+
+function Player:checkAFK()
+	if not self:getPublicSync("AFK") == true then
+		local pos = self:getPosition()
+		self.m_AFKCheckCount = self.m_AFKCheckCount + 1
+		if getDistanceBetweenPoints3D(pos, self.m_LastPositon) > 3 then
+			self.m_AFKCheckCount = 0
+			triggerServerEvent("toggleAFK", localPlayer, false)
+			removeEventHandler ( "onClientPedDamage", localPlayer, function() cancelEvent() end)
+		end
+		if self.m_AFKCheckCount == 27 then
+			outputChatBox ( "WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
+			self:generateAFKCode()
+		elseif self.m_AFKCheckCount == 30 then
+			self.m_AFKCode = false
+			if self:isInVehicle() then self:removeFromVehicle() end
+			self:setInterior(4)
+			self:setDimension(0)
+
+			local afkPos = AFK_POSITIONS[math.random(0, #AFK_POSITIONS)]
+			self:setPosition(afkPos.x, afkPos.y, 999.5546875)
+			triggerServerEvent("toggleAFK", localPlayer, true)
+			addEventHandler ( "onClientPedDamage", localPlayer, function() cancelEvent() end)
+
+		end
+		self.m_LastPositon = pos
+	end
+end
+
+function Player:generateAFKCode()
+	local char = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z","0","1","2","3","4","5","6","7","8","9"}
+	local code = {}
+	for z = 1,4 do
+		a = math.random(1,#char)
+		x=string.lower(char[a])
+		table.insert(code, x)
+	end
+	local fcode = table.concat(code)
+	self.m_AFKCode = fcode
+	outputChatBox("Um nicht ins AFK-Cafe zu kommen, gib folgenden Befehl ein: /noafk "..fcode,255,0,0)
 end
 
 function Player:getMatchID ()
