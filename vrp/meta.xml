@@ -128,6 +128,13 @@
 	<script src="server/classes/Gameplay/Train/TrainManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Train/Train.lua" type="server"/>
 
+	<script src="server/classes/Gameplay/Shops/ShopManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/FoodShop.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/PizzaStack.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/BurgerShot.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/CluckinBell.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/RustyBrown.lua" type="server"/>
+
 	<!-- Groups -->
 	<script src="server/classes/Groups/Group.lua" type="server"/>
 	<script src="server/classes/Groups/GroupManager.lua" type="server"/>
@@ -412,6 +419,7 @@
 	<script src="client/classes/GUIForms/StateFactionArrestGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AdminGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BreakingNews.lua" type="client"/>
+	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
