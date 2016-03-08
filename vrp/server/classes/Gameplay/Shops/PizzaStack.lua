@@ -21,4 +21,5 @@ function PizzaStack:constructor(pos, dimension, interior)
 	self.m_Items = {["Burger"] = 50}
 
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onFoodMarkerHit, self))
+
 end

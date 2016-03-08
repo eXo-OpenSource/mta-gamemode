@@ -7,6 +7,7 @@
 -- ****************************************************************************
 FoodShop = inherit(Object)
 
+
 function FoodShop:constructor()
 	addRemoteEvents{"foodShopBuyMenu"}
 	addEventHandler("foodShopBuyMenu", root, bind(self.buyMenu, self))

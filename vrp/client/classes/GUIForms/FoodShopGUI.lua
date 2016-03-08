@@ -55,7 +55,7 @@ function FoodShopGUI:constructor()
 	addEventHandler("refreshFoodShopMenu", root, bind(self.refreshFoodShopMenu, self))
 end
 
-function FoodShopGUI:destructor()
+function FoodShopGUI:onHide()
 	if isElement(self.m_Object) then self.m_Object:destroy() end
 	setCameraTarget(localPlayer)
 end
@@ -66,8 +66,7 @@ function FoodShopGUI:refreshFoodShopMenu(type, menues, items)
 	self.m_FoodList:clear()
 	for index, menu in pairs(menues) do
 		item = self.m_FoodList:addItem(menu["Name"], tostring(menu["Price"]).."$")
-		item.Id = type
-		item.ShopType = index
+		item.Id = index
 		item.onLeftClick = function()
 								self:onSelectMenu(index, type)
 							end
