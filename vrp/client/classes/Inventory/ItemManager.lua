@@ -10,8 +10,9 @@ ItemManager = inherit( Singleton )
 
 addRemoteEvents{ "onClientItemUse", "onClientItemExpire"}
 function ItemManager:constructor( )
-  addEventHandler( "onClientItemUse", localPlayer, bind( ItemManager.onItemUse, self))
-  addEventHandler( "onClientItemExpire", localPlayer, bind( ItemManager.onItemExpire, self))
+    self:loadEffectItems( )
+    addEventHandler( "onClientItemUse", localPlayer, bind( ItemManager.onItemUse, self))
+    addEventHandler( "onClientItemExpire", localPlayer, bind( ItemManager.onItemExpire, self))
 end
 
 function ItemManager:onItemUse( Item )

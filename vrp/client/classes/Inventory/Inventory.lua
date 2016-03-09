@@ -78,6 +78,10 @@ function Inventory:getItemData()
 	return self.m_ItemData
 end
 
+function Inventory:getItems()
+	return self.m_item
+end
+
 function Inventory:toggle()
 	if self.Show == true then
 		self:hide()

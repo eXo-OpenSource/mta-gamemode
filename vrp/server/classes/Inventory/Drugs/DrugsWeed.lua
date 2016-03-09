@@ -15,5 +15,5 @@ function DrugsWeed:destructor()
 end
 
 function DrugsWeed:use( player )
-  	player:triggerEvent("onClientItemUse", player, "Weed" )
+  	player:triggerEvent("onClientItemUse", "Weed" )
 end
