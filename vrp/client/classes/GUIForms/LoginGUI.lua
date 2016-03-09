@@ -6,9 +6,9 @@ function LoginGUI:constructor()
 	self.usePasswordHash = false
 
 	GUIForm.constructor(self, sw*0.2, sh*0.2, sw*0.6, sh*0.6)
-	self.m_LoginButton 		= VRPButton:new(0, 0, sw*0.6/3, sh*0.6*0.1, "Login", false, self)
-	self.m_RegisterButton 	= VRPButton:new(sw*0.6/3, 0, sw*0.6/3, sh*0.6*0.1, "Registrieren", false, self)
-	self.m_GuestButton 		= VRPButton:new(sw*0.6/3*2, 0, sw*0.6/3, sh*0.6*0.1, "Als Gast spielen", false, self)
+	self.m_LoginButton 		= VRPButton:new(0, 0, sw*0.6/2, sh*0.6*0.1, "Login", false, self)
+	self.m_RegisterButton 	= VRPButton:new(sw*0.6/2, 0, sw*0.6/2, sh*0.6*0.1, "Registrieren", false, self)
+--	self.m_GuestButton 		= VRPButton:new(sw*0.6/3*2, 0, sw*0.6/3, sh*0.6*0.1, "Als Gast spielen", false, self)
 
 	self.m_NewsTab 			= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.25, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
 	self.m_NewsTabBar		= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.010, sh*0.6-sh*0.6*0.01, tocolor(230, 230, 230, 200), self)
@@ -24,7 +24,7 @@ function LoginGUI:constructor()
 	self.m_LoginErrorText = GUILabel:new(0, 0, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.061, "Fehler: Irgendwas stimmt nicht!", self.m_LoginErrorBox):setAlign("center", "center")
 
 	self.m_LoginLoginButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Einloggen", true, self.m_LoginTab)
-	self.m_LoginLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_LoginTab)
+	self.m_LoginLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.06, sh*0.175, sh*0.084, "files/images/Logo.png", self.m_LoginTab)
 
 	self.m_LoginEditPass:setMasked("*")
 	self.m_LoginInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.025,
@@ -59,7 +59,7 @@ function LoginGUI:constructor()
 
 	Bitte fülle die folgenden Informationen aus um dich zu registrieren!
 	]], self.m_RegisterTab):setFont(VRPFont(sh*0.035))
-
+	--[[
 	self.m_GuestTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
 	self.m_GuestTab:setVisible(false)
 
@@ -71,19 +71,14 @@ function LoginGUI:constructor()
 	self.m_GuestLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_GuestTab)
 
 	self.m_GuestInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.04,
-
-	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf V-Roleplay!
-
-	Bevor du dich registrierst, kannst du den Server natürlich auch ersteinmal als Gast unverbindlich testen. Du kannst dich während du testest jederzeit registrieren, ohne deinen bisherigen Fortschritt zu verlieren!
-	]], self.m_GuestTab):setFont(VRPFont(sh*0.035))
-
+	--]]
 	self.m_LoginButton:dark(true)
 	self.m_RegisterButton:dark(true)
-	self.m_GuestButton:dark(true)
+	--self.m_GuestButton:dark(true)
 
 	self.m_LoginButton.onLeftClick = bind(self.showLogin, self)
 	self.m_RegisterButton.onLeftClick = bind(self.showRegister, self)
-	self.m_GuestButton.onLeftClick = bind(self.showGuest, self)
+	--self.m_GuestButton.onLeftClick = bind(self.showGuest, self)
 
 	self.m_LoginLoginButton.onLeftClick = bind(function(self)
 		local pw = self.m_LoginEditPass:getText()
@@ -102,16 +97,18 @@ function LoginGUI:constructor()
 	end, self)
 
 
-	self.m_GuestGuestButton.onLeftClick = bind(function(self)
-		triggerServerEvent("accountguest", root)
-	end, self)
+	--self.m_GuestGuestButton.onLeftClick = bind(function(self)
+	--	triggerServerEvent("accountguest", root)
+	--end, self)
 
 	self:bind("arrow_l",
 		function(self)
 			if self.m_RegisterTab:isVisible() then
 				self:showLogin()
-			elseif self.m_GuestTab:isVisible() then
+			elseif self.m_LoginTab:isVisible() then
 				self:showRegister()
+		--	elseif self.m_GuestTab:isVisible() then
+		--		self:showRegister()
 			end
 		end
 	)
@@ -121,7 +118,8 @@ function LoginGUI:constructor()
 			if self.m_LoginTab:isVisible() then
 				self:showRegister()
 			elseif self.m_RegisterTab:isVisible() then
-				self:showGuest()
+		--		self:showGuest()
+				self:showLogin()
 			end
 		end
 	)
@@ -132,8 +130,8 @@ function LoginGUI:constructor()
 				self.m_LoginLoginButton:onLeftClick()
 			elseif self.m_RegisterTab:isVisible() then
 				self.m_RegisterRegisterButton:onLeftClick()
-			else
-				self.m_GuestGuestButton:onLeftClick()
+			--else
+			--	self.m_GuestGuestButton:onLeftClick()
 			end
 		end
 	)
@@ -152,30 +150,30 @@ end
 function LoginGUI:showLogin()
 	self.m_LoginButton:light()
 	self.m_RegisterButton:dark()
-	self.m_GuestButton:dark()
+--	self.m_GuestButton:dark()
 
 	self.m_LoginTab:setVisible(true)
-	self.m_GuestTab:setVisible(false)
+--	self.m_GuestTab:setVisible(false)
 	self.m_RegisterTab:setVisible(false)
 end
 
 function LoginGUI:showRegister()
 	self.m_RegisterButton:light()
 	self.m_LoginButton:dark()
-	self.m_GuestButton:dark()
+--	self.m_GuestButton:dark()
 
 	self.m_LoginTab:setVisible(false)
-	self.m_GuestTab:setVisible(false)
+--	self.m_GuestTab:setVisible(false)
 	self.m_RegisterTab:setVisible(true)
 end
 
 function LoginGUI:showGuest()
 	self.m_RegisterButton:dark()
 	self.m_LoginButton:dark()
-	self.m_GuestButton:light()
+--	self.m_GuestButton:light()
 
 	self.m_LoginTab:setVisible(false)
-	self.m_GuestTab:setVisible(true)
+--	self.m_GuestTab:setVisible(true)
 	self.m_RegisterTab:setVisible(false)
 end
 
