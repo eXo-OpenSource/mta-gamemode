@@ -9,7 +9,7 @@ FoodShopGUI = inherit(GUIForm)
 inherit(Singleton, FoodShopGUI)
 
 local CLUCKIN_BELL = {
-	["Pos"] = Vector3(370, -5.3, 1001.95),
+	["Pos"] = Vector3(370.5, -5.3, 1001.95),
 	["Rot"] = Vector3(334, 25, 74),
 	["CameraMatrixPos"] =  Vector3(370.09591674805, -6.1112585067749, 1002.5751953125),
 	["CameraMatrixLookAt"] = Vector3(370.86077880859, 73.279449462891, 941.77612304688),
@@ -60,8 +60,8 @@ function FoodShopGUI:onHide()
 	setCameraTarget(localPlayer)
 end
 
-function FoodShopGUI:refreshFoodShopMenu(type, menues, items)
-
+function FoodShopGUI:refreshFoodShopMenu(shop, type, menues, items)
+	self.m_Shop = shop
 	local item
 	self.m_FoodList:clear()
 	for index, menu in pairs(menues) do
@@ -75,7 +75,7 @@ end
 
 function FoodShopGUI:buy()
 	local item = self.m_FoodList:getSelectedItem()
-	triggerServerEvent("foodShopBuyMenu", resourceRoot, item.Id)
+	triggerServerEvent("foodShopBuyMenu", resourceRoot, self.m_Shop, item.Id)
 end
 
 function FoodShopGUI:onSelectMenu(menu, type)

@@ -7,9 +7,9 @@
 -- ****************************************************************************
 PizzaStack = inherit(FoodShop)
 
-function PizzaStack:constructor(pos, dimension, interior)
-	self.m_Marker = createMarker(pos, "cylinder", 1, 255, 255, 0, 200)
-	self.m_Marker:setInterior(interior)
+function PizzaStack:constructor(dimension)
+	self.m_Marker = createMarker(Vector3(374.68, -118.80, 1000.6), "cylinder", 1, 255, 255, 0, 200)
+	self.m_Marker:setInterior(5)
 	self.m_Marker:setDimension(dimension)
 	self.m_Type = "PizzaStack"
 	self.m_Menues = {
@@ -21,5 +21,4 @@ function PizzaStack:constructor(pos, dimension, interior)
 	self.m_Items = {["Burger"] = 50}
 
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onFoodMarkerHit, self))
-
 end

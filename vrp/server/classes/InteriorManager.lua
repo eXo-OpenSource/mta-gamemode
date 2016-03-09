@@ -65,6 +65,7 @@ InteriorManager.InteriorData = {
     {enter = Vector3(-1749.35, 869.279, 24.0593), spawn = Vector3(-1753.85, 885.679, 295.059), dimension = 2, interior = 0, rotation = 0},
     {enter = Vector3(-1753.75, 883.965, 294.645), spawn = Vector3(-1749.38, 865.158, 24.1455), dimension = 3, interior = 0, rotation = 0},
     {enter = Vector3(966.608, 2160.68, 9.82222), spawn = Vector3(965.38, 2159.33, 1010.02), dimension = 0, interior = 1, rotation = 270},
+    {enter = Vector3(1038.15, -1340.33, 13.74), spawn = Vector3(377.08, -192.86, 1000.64), dimension = 0, interior = 17, rotation = 270}, -- RustyBrown
     -- AmmuNations
     --[[{enter = Vector3(1368.35, -1279.06, 12.55), spawn = Vector3(286.15, -41.54, 1000.57), dimension = 0, interior = 1, rotation = 90},
     {enter = Vector3(-2625.85, 208.345, 3.98935), spawn = Vector3(286.15, -41.54, 1000.57), dimension = 1, interior = 1, rotation = 5400.06},
@@ -125,6 +126,7 @@ InteriorManager.InteriorData = {
     {enter = Vector3(2368.06, 1983.19, 10.003), spawn = Vector3(459.35, -111.01, 998.72), dimension = 6, interior = 5, rotation = 125},]]
     --{enter = Vector3(-2029.72, -120.926, 34.1691), spawn = Vector3(-2029.72, -119.55, 1034.17), dimension = 0, interior = 3, rotation = 180}, -- driving school
     --{enter = Vector3(-2026.92, -101.459, 34.259), spawn = Vector3(-2026.92, -103.48, 1034.27), dimension = 0, interior = 3, rotation = 0}, -- driving school
+    -- BurgerShot Begin
     {enter = Vector3(811.982, -1616.02, 12.618), spawn = Vector3(363.11, -74.88, 1000.55), dimension = 0, interior = 10, rotation = -1169.58},
     {enter = Vector3(1199.13, -918.071, 42.3243), spawn = Vector3(363.11, -74.88, 1000.55), dimension = 1, interior = 10, rotation = 180},
     {enter = Vector3(-1912.27, 828.025, 34.5615), spawn = Vector3(363.11, -74.88, 1000.55), dimension = 2, interior = 10, rotation = 334},
@@ -135,6 +137,7 @@ InteriorManager.InteriorData = {
     {enter = Vector3(2169.86, 2795.79, 9.89528), spawn = Vector3(363.11, -74.88, 1000.55), dimension = 7, interior = 10, rotation = 270},
     {enter = Vector3(1872.24, 2072.07, 9.82222), spawn = Vector3(363.11, -74.88, 1000.55), dimension = 8, interior = 10, rotation = 270},
     {enter = Vector3(1158.43, 2072.02, 9.82222), spawn = Vector3(363.11, -74.88, 1000.55), dimension = 9, interior = 10, rotation = 270},
+    -- CluckinBell Begin
     {enter = Vector3(172.727, 1176.68, 13.773), spawn = Vector3(365.67, -11.61, 1000.87), dimension = 0, interior = 9, rotation = 190.224},
     {enter = Vector3(-1213.71, 1830.46, 40.9335), spawn = Vector3(365.67, -11.61, 1000.87), dimension = 1, interior = 9, rotation = 312},
     {enter = Vector3(-2155.03, -2460.28, 29.8484), spawn = Vector3(365.67, -11.61, 1000.87), dimension = 2, interior = 9, rotation = 229},
@@ -147,6 +150,7 @@ InteriorManager.InteriorData = {
     {enter = Vector3(2393.18, 2041.66, 9.8472), spawn = Vector3(365.67, -11.61, 1000.87), dimension = 9, interior = 9, rotation = 0},
     {enter = Vector3(2838.43, 2407.26, 10.061), spawn = Vector3(365.67, -11.61, 1000.87), dimension = 10, interior = 9, rotation = 224},
     {enter = Vector3(2102.69, 2228.76, 10.0579), spawn = Vector3(365.67, -11.61, 1000.87), dimension = 11, interior = 9, rotation = 270},
+    -- Pizza Stacks Begin
     {enter = Vector3(1367.27, 248.388, 18.6229), spawn = Vector3(372.35, -133.55, 1000.45), dimension = 0, interior = 5, rotation = 69.0975},
     {enter = Vector3(2333.43, 75.0488, 25.7342), spawn = Vector3(372.35, -133.55, 1000.45), dimension = 1, interior = 5, rotation = -90},
     {enter = Vector3(2333.43, 75.0488, 25.7342), spawn = Vector3(372.35, -133.55, 1000.45), dimension = 2, interior = 5, rotation = -90},
@@ -159,10 +163,7 @@ InteriorManager.InteriorData = {
     {enter = Vector3(2756.01, 2477.05, 10.061), spawn = Vector3(372.35, -133.55, 1000.45), dimension = 9, interior = 5, rotation = 181},
     {enter = Vector3(2351.89, 2532.19, 9.82217), spawn = Vector3(372.35, -133.55, 1000.45), dimension = 10, interior = 5, rotation = 180},
     {enter = Vector3(2083.49, 2224.2, 10.0579), spawn = Vector3(372.35, -133.55, 1000.45), dimension = 11, interior = 5, rotation = 180},
-    {enter = Vector3(419.191, -1428.71, 31.8959), spawn = Vector3(452.89, -18.18, 1000.18), dimension = 0, interior = 1, rotation = 129},
-    {enter = Vector3(-2463.06, 132.287, 34.198), spawn = Vector3(452.89, -18.18, 1000.18), dimension = 1, interior = 1, rotation = 5359.06},
-    {enter = Vector3(2489.87, 2065.15, 9.8472), spawn = Vector3(452.89, -18.18, 1000.18), dimension = 2, interior = 1, rotation = 180},
-    {enter = Vector3(1693.19, 2209.13, 10.0212), spawn = Vector3(452.89, -18.18, 1000.18), dimension = 3, interior = 1, rotation = 180},
+    -- Pizza Stacks End
     {enter = Vector3(2351.97, -1169.86, 27.0309), spawn = Vector3(2352.34, -1181.25, 1027), dimension = 0, interior = 5, rotation = 0},
     {enter = Vector3(1288.8, 271.002, 18.5554), spawn = Vector3(834.82, 7.42, 1003.18), dimension = 0, interior = 3, rotation = -2285.19},
     {enter = Vector3(1631.86, -1172.57, 23.1349), spawn = Vector3(834.82, 7.42, 1003.18), dimension = 1, interior = 3, rotation = -3240.3},

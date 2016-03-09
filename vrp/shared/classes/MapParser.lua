@@ -33,13 +33,13 @@ local createFuncs = {
 	racepickup = function(info)
 		local model, func
 		if info.pickuptype == "nitro" then
-			model = 2221
+			model = 2839
 			func = function(vehicle) addVehicleUpgrade(vehicle, 1010) end
 		elseif info.pickuptype == "vehiclechange" then
-			model = 2223
+			model = 2838
 			func = function(vehicle) setElementModel(vehicle, info.model) end
 		else
-			model = 2222
+			model = 2837
 			func = function(vehicle) fixVehicle(vehicle) end
 		end
 		local pickup = createPickup(info.x, info.y, info.z, 3, model, 0)
