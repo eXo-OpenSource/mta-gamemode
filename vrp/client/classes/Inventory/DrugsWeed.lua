@@ -22,6 +22,7 @@ end
 
 function DrugsWeed:onRender()
   dxUpdateScreenSource( self.m_ScreenSource )
+  dxSetShaderValue( self.m_Shader, "ScreenTexture", self.m_ScreenSource)
   dxDrawImage( 0, 0, w, h , self.m_Shader)
 end
 
