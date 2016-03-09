@@ -99,7 +99,7 @@ function Core:afterLogin()
 
 	bindKey(core:get("KeyBindings", "KeyTogglePolicePanel", "f4"), "down",
 		function()
-			if localPlayer:getJob() == JobPolice:getSingleton() then
+			if localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3 and localPlayer:getPublicSync("Faction:Duty") then
 				if PolicePanel:isInstantiated() then
 					delete(PolicePanel:getSingleton())
 				else

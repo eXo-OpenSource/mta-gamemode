@@ -26,7 +26,7 @@ function FactionState:constructor()
 	local pdGarageEnter = InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0)
 	--local pdGarageExit = InteriorEnterExit:new(Vector3(259.22, 73.73, 1003.64), Vector3(1527.16, -1678.17, 5.89), 0, 0, 0, 0)
 
-	addRemoteEvents{"FactionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty"}
+	addRemoteEvents{"FactionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "policePanelListRequest"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -35,7 +35,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
 	addEventHandler("factionStateSwat", root, bind(self.Event_toggleSwat, self))
 	addEventHandler("factionStateToggleDuty", root, bind(self.Event_toggleDuty, self))
-
+	addEventHandler("policePanelListRequest", root, bind(self.Event_policePanelListRequest, self))
 
 	-- Prepare the Area51
 	self:createDefendActors(
@@ -368,6 +368,31 @@ function FactionState:createDefendActors(Actors)
 			end
 
 			return false
+		end
+	end
+end
+
+
+function FactionState:Event_policePanelListRequest()
+	local faction = client:getFaction()
+	if faction and faction:isStateFaction() then
+		if client:isFactionDuty() then
+			local data = {}
+			for k, player in pairs(getElementsByType("player")) do
+				if player:getWantedLevel() > 0 then
+					local info = {
+						player = player:getName(),
+						wanted = player:getWantedLevel()
+					}
+
+					info.crimes = {}
+					for k, crime in pairs(player:getCrimes()) do
+						info.crimes[k] = crime.id
+					end
+					data[#data + 1] = info
+				end
+			end
+			client:triggerEvent("policePanelListRetrieve", data)
 		end
 	end
 end
