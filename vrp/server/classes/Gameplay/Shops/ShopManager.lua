@@ -26,8 +26,9 @@ function ShopManager:constructor()
 
 	RustyBrown:new(0)
 
-	addRemoteEvents{"foodShopBuyMenu"}
+	addRemoteEvents{"foodShopBuyMenu", "foodShopBuyItem"}
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
+	addEventHandler("foodShopBuyItem", root, bind(self.foodShopBuyItem, self))
 
 end
 
@@ -37,6 +38,24 @@ function ShopManager:foodShopBuyMenu(shop, menu)
 			client:setHealth(client:getHealth() + shop.m_Menues[menu]["Health"])
 			client:takeMoney(shop.m_Menues[menu]["Price"])
 			client:sendInfo(_("Guten Appetit!", client))
+		else
+			client:sendError(_("Du hast nicht genug Geld dabei!", client))
+		end
+	else
+		client:sendError(_("Internal Error! Menu not found!", client))
+	end
+end
+
+function ShopManager:foodShopBuyItem(shop, item)
+	if shop.m_Items[item] then
+		if client:getMoney() >= shop.m_Items[item] then
+			if client:getInventory():getFreePlacesForItem(item) >= 1 then
+				client:getInventory():giveItem(item, 1)
+				client:takeMoney(shop.m_Items[item])
+				client:sendInfo(_("Vielen Dank für den Einkauf!", client))
+			else
+				client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
+			end
 		else
 			client:sendError(_("Du hast nicht genug Geld dabei!", client))
 		end

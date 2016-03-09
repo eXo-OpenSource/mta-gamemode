@@ -44,38 +44,56 @@ local RUSTY_BROWN = {
 addRemoteEvents{"showFoodShopMenu", "refreshFoodShopMenu"}
 
 function FoodShopGUI:constructor()
-	GUIForm.constructor(self, 10, screenHeight/2-300/2, 300, 300)
+	GUIForm.constructor(self, 10, screenHeight/2-350/2, 300, 350)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Restaurant", true, true, self)
 
-	self.m_FoodList = GUIGridList:new(5, 35, self.m_Width-10, 220, self)
+	self.m_FoodList = GUIGridList:new(5, 35, self.m_Width-10, 270, self)
 	self.m_FoodList:addColumn(_"Name", 0.75)
 	self.m_FoodList:addColumn(_"Preis", 0.25)
-	self.m_Buy = GUIButton:new(5, 265, self.m_Width-10, 30, "Kaufen", self):setBackgroundColor(Color.Green)
+	self.m_Buy = GUIButton:new(5, 315, self.m_Width-10, 30, "Kaufen", self):setBackgroundColor(Color.Green)
 	self.m_Buy.onLeftClick = function() self:buy() end
 	addEventHandler("refreshFoodShopMenu", root, bind(self.refreshFoodShopMenu, self))
 end
 
 function FoodShopGUI:onHide()
 	if isElement(self.m_Object) then self.m_Object:destroy() end
-	setCameraTarget(localPlayer)
+	if self.m_CamaraMatrix then
+		setCameraTarget(localPlayer)
+		self.m_CamaraMatrix = false
+	end
 end
 
 function FoodShopGUI:refreshFoodShopMenu(shop, type, menues, items)
 	self.m_Shop = shop
 	local item
 	self.m_FoodList:clear()
+	self.m_FoodList:addItemNoClick("zum hier essen", "")
 	for index, menu in pairs(menues) do
 		item = self.m_FoodList:addItem(menu["Name"], tostring(menu["Price"]).."$")
 		item.Id = index
+		item.Type = "Menu"
 		item.onLeftClick = function()
 								self:onSelectMenu(index, type)
+							end
+	end
+	self.m_FoodList:addItemNoClick("zum mitnehmen", "")
+	for name, price in pairs(items) do
+		item = self.m_FoodList:addItem(name, tostring(price.."$"))
+		item.Id = name
+		item.Type = "Item"
+		item.onLeftClick = function()
+								self:onSelectItem(name)
 							end
 	end
 end
 
 function FoodShopGUI:buy()
 	local item = self.m_FoodList:getSelectedItem()
-	triggerServerEvent("foodShopBuyMenu", resourceRoot, self.m_Shop, item.Id)
+	if  item.Type == "Menu" then
+		triggerServerEvent("foodShopBuyMenu", resourceRoot, self.m_Shop, item.Id)
+	else
+		triggerServerEvent("foodShopBuyItem", resourceRoot, self.m_Shop, item.Id)
+	end
 end
 
 function FoodShopGUI:onSelectMenu(menu, type)
@@ -87,10 +105,18 @@ function FoodShopGUI:onSelectMenu(menu, type)
 	}
 	local table = typeTable[type]
 	setCameraMatrix(table["CameraMatrixPos"], table["CameraMatrixLookAt"], 0, 70)
+	self.m_CamaraMatrix = true
 	if isElement(self.m_Object) then self.m_Object:destroy() end
 	self.m_Object = createObject(table["Objects"][menu], table["Pos"], table["Rot"])
 	self.m_Object:setInterior(localPlayer:getInterior())
 	self.m_Object:setDimension(localPlayer:getDimension())
+end
+
+function FoodShopGUI:onSelectItem(item)
+	if self.m_CamaraMatrix then
+		setCameraTarget(localPlayer)
+		self.m_CamaraMatrix = false
+	end
 end
 
 addEventHandler("showFoodShopMenu", root,
