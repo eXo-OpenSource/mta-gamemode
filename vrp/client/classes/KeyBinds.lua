@@ -30,16 +30,16 @@ function KeyBinds:loadBinds()
 	end
 end
 
-function KeyBinds:reloadBinds()
+function KeyBinds:unloadBinds()
 	for index, key in pairs(self.m_Keys) do
 		unbindKey(core:get("KeyBindings", index, key["defaultKey"]), "down", key["func"])
 	end
-	self:loadBinds()
 end
 
 function KeyBinds:changeKey(keyName, newKey)
-	 core:set("KeyBindings", keyName, newKey)
-	 self:reloadBinds()
+	self:unloadBinds()
+	core:set("KeyBindings", keyName, newKey)
+	self:loadBinds()
 end
 
 function KeyBinds:getBindsList()
