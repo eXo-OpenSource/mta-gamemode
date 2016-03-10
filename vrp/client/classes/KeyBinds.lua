@@ -21,7 +21,7 @@ function KeyBinds:constructor()
 	  ["KeyTogglePhone"]         = {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
 	  ["KeyTogglePolicePanel"]   = {["defaultKey"] = "F4", ["name"] = "Polizei Computer", ["func"] = self.m_PolicePanel};
 	  ["KeyToggleSelfGUI"]       = {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
-	  ["KeyToggleHelpGUI"]       = {["defaultKey"] = "F9", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
+	  ["KeyToggleHelpGUI"]       = {["defaultKey"] = "F1", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
 	  ["KeyToggleAnimationMenu"] = {["defaultKey"] = "l", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
 	  ["KeyToggleScoreboard"]    = {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
 	  ["KeyToggleCustomMap"] = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
