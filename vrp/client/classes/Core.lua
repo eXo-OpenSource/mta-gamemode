@@ -97,6 +97,18 @@ function Core:afterLogin()
 		end
 	)
 
+	bindKey(core:get("KeyBindings", "KeyToggleAnimationPanel", "l"), "down",
+		function()
+			if not localPlayer:isInVehicle() then
+				if AnimationGUI:isInstantiated() then
+					delete(AnimationGUI:getSingleton())
+				else
+					AnimationGUI:new()
+				end
+			end
+		end
+	)
+
 	bindKey(core:get("KeyBindings", "KeyTogglePolicePanel", "f4"), "down",
 		function()
 			if localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3 and localPlayer:getPublicSync("Faction:Duty") then

@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK"}
+addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -29,6 +29,9 @@ function PlayerManager:constructor()
 	addEventHandler("playerRequestTrading", root, bind(self.Event_playerRequestTrading, self))
 	addEventHandler("setPhoneStatus", root, bind(self.Event_setPhoneStatus, self))
 	addEventHandler("toggleAFK", root, bind(self.Event_toggleAFK, self))
+	addEventHandler("startAnimation", root, bind(self.Event_startAnimation, self))
+
+
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -318,5 +321,15 @@ function PlayerManager:Event_toggleAFK(bool)
 		client:setDimension(0)
 		local afkPos = AFK_POSITIONS[math.random(0, #AFK_POSITIONS)]
 		client:setPosition(afkPos.x, afkPos.y, 999.5546875)
+	end
+end
+
+function PlayerManager:Event_startAnimation(animation)
+	if ANIMATIONS[animation] then
+		local ani = ANIMATIONS[animation]
+		client:sendShortMessage(_("Mit Leertaste kannst du die Animation beenden!", client))
+		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], true, ani["interruptable"], ani["freezeLastFrame"])
+	else
+		client:sendError("Internal Error! Animation nicht gefunden!")
 	end
 end
