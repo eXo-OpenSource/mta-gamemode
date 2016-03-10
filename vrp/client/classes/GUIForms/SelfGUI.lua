@@ -285,12 +285,11 @@ function SelfGUI:constructor()
 	end
 	--]]
 
-	--[[GUILabel:new(self.m_Width*0.02, self.m_Height*0.74, self.m_Width*0.8, self.m_Height*0.07, _"Tastenzuordnungen", tabSettings)
-	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
+	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
 	self.m_KeyBindingsButton.onLeftClick = function ()
 		self:close()
 		KeyBindings:new()
-	end]]
+	end
 end
 
 function SelfGUI:onShow()
