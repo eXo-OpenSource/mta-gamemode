@@ -25,16 +25,18 @@ function ShortMessage:constructor(text, timeout)
 	-- Calculate y position
 	y = y - h - 20
 
-	if timeout and type(timeout) == "number" then
-		if timeout > 50 then
-			timeout = timeout
+	if timeout ~= -1 then
+		if timeout and type(timeout) == "number" then
+			if timeout > 50 then
+				timeout = timeout
+			else
+				timeout = 5000
+			end
 		else
 			timeout = 5000
 		end
-	else
-		timeout = 5000
+		setTimer(function () delete(self) end, timeout + 500, 1)
 	end
-	setTimer(function () delete(self) end, timeout + 500, 1)
 
 	DxElement.constructor(self, x, y, w, h)
 	GUIFontContainer.constructor(self, text, fontSize, "default")
@@ -47,13 +49,11 @@ function ShortMessage:constructor(text, timeout)
 end
 
 function ShortMessage:destructor()
-	Animation.FadeAlpha:new(self, 200, 200, 0)
-	setTimer(function ()
+	Animation.FadeAlpha:new(self, 200, 200, 0).onFinish = function ()
 		DxElement.destructor(self)
-	end, 500, 1)
-	table.removevalue(ShortMessage.MessageBoxes, self)
-
-	ShortMessage.resortPositions()
+		table.removevalue(ShortMessage.MessageBoxes, self)
+		ShortMessage.resortPositions()
+	end
 end
 
 function ShortMessage:drawThis()

@@ -327,7 +327,6 @@ end
 function PlayerManager:Event_startAnimation(animation)
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
-		client:sendShortMessage(_("Mit Leertaste kannst du die Animation beenden!", client))
 		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], true, ani["interruptable"], ani["freezeLastFrame"])
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
 	else
@@ -338,4 +337,7 @@ end
 function PlayerManager:stopAnimation(player)
 	player:setAnimation(false)
 	unbindKey(player, "space", "down", self.m_AnimationStopFunc)
+
+	-- Tell the client
+	player:triggerEvent("onClientAnimationStop")
 end
