@@ -19,7 +19,7 @@ function KeyBinds:constructor()
 	  ["KeyTogglePolicePanel"]= {["defaultKey"] = "F4", ["name"] = "Polizei Computer", ["func"] = self.m_PolicePanel};
 	  ["KeyToggleSelfGUI"]    = {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
 	  ["KeyToggleHelpGUI"]    = {["defaultKey"] = "F9", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
-	  ["KeyToggleAnimationMenu"] = {["defaultKey"] = "l", ["name"] = "Hilfe-Menü", ["func"] = self.m_AnimationMenu};
+	  ["KeyToggleAnimationMenu"] = {["defaultKey"] = "l", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
 	}
 	self:loadBinds()
 end
