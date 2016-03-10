@@ -67,6 +67,9 @@ function Core:ready()
 end
 
 function Core:afterLogin()
+	-- Request Browser Domains
+	Browser.requestDomains{"exo-reallife.de", "maxcdn.bootstrapcdn.com"}
+
 	RadioGUI:new()
 	KarmaBar:new()
 	HUDSpeedo:new()
@@ -87,9 +90,8 @@ function Core:afterLogin()
 	FactionGUI:getSingleton():close()
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 
+	ScoreboardGUI:new()
 	ScoreboardGUI:getSingleton():close()
-	bindKey(core:get("KeyBindings", "KeyToggleScoreboard", "tab"), "down", function() ScoreboardGUI:getSingleton():setVisible(true):bringToFront() end)
-	bindKey(core:get("KeyBindings", "KeyToggleScoreboard", "tab"), "up", function() ScoreboardGUI:getSingleton():setVisible(false) end)
 
 	WebPanel:getSingleton():close()
 	bindKey(core:get("KeyBindings", "KeyToggleWebPanel", "f1"), "down", function() WebPanel:getSingleton():toggle() end)

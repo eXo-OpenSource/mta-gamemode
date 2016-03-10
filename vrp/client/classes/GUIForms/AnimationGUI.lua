@@ -25,7 +25,7 @@ function AnimationGUI:constructor()
 		self.m_AnimationList:addItemNoClick(_(group))
 		for index, animation in pairs(ANIMATIONS) do
 			if animation["group"] == group then
-				item = self.m_AnimationList:addItem(_(index))
+				item = self.m_AnimationList:addItem(_(("%s%s"):format(index:sub(1, 1):upper(), index:sub(2, #index))))
 				item.Name = index
 				item.onLeftDoubleClick = function () self:startAnimation() end
 			end

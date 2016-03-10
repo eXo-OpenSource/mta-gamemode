@@ -286,10 +286,7 @@ function SelfGUI:constructor()
 	--]]
 
 	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
-	self.m_KeyBindingsButton.onLeftClick = function ()
-		self:close()
-		KeyBindings:new()
-	end
+	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 end
 
 function SelfGUI:onShow()
@@ -386,8 +383,10 @@ function SelfGUI:MigratorButton_Click()
 	MigratorPanel:getSingleton():open()
 end
 
-
-
+function SelfGUI:KeyBindsButton_Click()
+	self:close()
+	KeyBindings:getSingleton():open()
+end
 
 function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
 	if rank and rank > 0 then

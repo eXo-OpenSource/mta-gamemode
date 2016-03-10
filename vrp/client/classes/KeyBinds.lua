@@ -13,26 +13,28 @@ function KeyBinds:constructor()
 	self.m_AnimationMenu = bind(self.animationMenu, self)
 	self.m_PolicePanel = bind(self.policePanel, self)
 	self.m_SelfMenu = bind(self.selfMenu, self)
+	self.m_ScoreboardTrigger = bind(self.scoreboardGUI, self)
 
 	self.m_Keys = {
-	  ["KeyTogglePhone"]  = 	{["defaultKey"] = "u", 	["name"] = "Handy", ["func"] = self.m_TogglePhone};
-	  ["KeyTogglePolicePanel"]= {["defaultKey"] = "F4", ["name"] = "Polizei Computer", ["func"] = self.m_PolicePanel};
-	  ["KeyToggleSelfGUI"]    = {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
-	  ["KeyToggleHelpGUI"]    = {["defaultKey"] = "F9", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
+	  ["KeyTogglePhone"]         = {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
+	  ["KeyTogglePolicePanel"]   = {["defaultKey"] = "F4", ["name"] = "Polizei Computer", ["func"] = self.m_PolicePanel};
+	  ["KeyToggleSelfGUI"]       = {["defaultKey"] = "F2", ["name"] = "Self-Menü", ["func"] = self.m_SelfMenu};
+	  ["KeyToggleHelpGUI"]       = {["defaultKey"] = "F9", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
 	  ["KeyToggleAnimationMenu"] = {["defaultKey"] = "l", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
+	  ["KeyToggleScoreboard"]    = {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
 	}
 	self:loadBinds()
 end
 
 function KeyBinds:loadBinds()
 	for index, key in pairs(self.m_Keys) do
-		bindKey(core:get("KeyBindings", index, key["defaultKey"]), "down", key["func"])
+		bindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"])
 	end
 end
 
 function KeyBinds:unloadBinds()
 	for index, key in pairs(self.m_Keys) do
-		unbindKey(core:get("KeyBindings", index, key["defaultKey"]), "down", key["func"])
+		unbindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"])
 	end
 end
 
@@ -65,6 +67,8 @@ function KeyBinds:selfMenu()
 		AdminGUI:getSingleton():close()
 	elseif MigratorPanel:getSingleton():isVisible() then
 		MigratorPanel:getSingleton():close()
+	elseif KeyBindings:getSingleton():isVisible() then
+		KeyBindings:getSingleton():close()
 	else
 		SelfGUI:getSingleton():open()
 	end
@@ -95,5 +99,13 @@ function KeyBinds:helpMenu()
 		HelpGUI:new()
 	else
 		delete(HelpGUI:getSingleton())
+	end
+end
+
+function KeyBinds:scoreboardGUI()
+	if not ScoreboardGUI:getSingleton():isVisible() then
+		ScoreboardGUI:getSingleton():setVisible(true):bringToFront()
+	else
+		ScoreboardGUI:getSingleton():setVisible(false)
 	end
 end

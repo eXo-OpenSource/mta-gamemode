@@ -13,7 +13,6 @@ function WebPanel:constructor()
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Webpanel", true, true, self)
 	self.m_WebView = GUIWebView:new(0, 30, self.m_Width, self.m_Height-30, "http://exo-reallife.de/dev", true, self.m_Window)
-	Browser.requestDomains{"exo-reallife.de", "maxcdn.bootstrapcdn.com"}
 end
 
 function WebPanel:destructor()

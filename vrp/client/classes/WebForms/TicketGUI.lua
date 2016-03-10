@@ -14,7 +14,6 @@ function TicketGUI:constructor()
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"eXo Ticket-System", true, true, self)
 	self.m_Window:addBackButton(function () SelfGUI:getSingleton():show() end)
 	self.m_WebView = GUIWebView:new(0, 30, self.m_Width, self.m_Height-30, ("http://exo-reallife.de/ingame/ticketSystem/user.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), true, self.m_Window)
-	Browser.requestDomains{"exo-reallife.de", "maxcdn.bootstrapcdn.com"}
 end
 
 function TicketGUI:destructor()

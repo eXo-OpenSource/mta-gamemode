@@ -38,7 +38,6 @@ function AdminGUI:constructor()
 
 	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
 	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, "http://exo-reallife.de/ingame/ticketSystem/admin.php?player="..getPlayerName(getLocalPlayer()).."&sessionID="..self:generateSessionId(), true, tabTicket)
-	Browser.requestDomains{"exo-reallife.de", "maxcdn.bootstrapcdn.com"}
 
 
 	for key, playeritem in ipairs(getElementsByType("player")) do
