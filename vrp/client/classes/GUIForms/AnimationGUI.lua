@@ -24,6 +24,7 @@ function AnimationGUI:constructor()
 			if animation["group"] == group then
 				item = self.m_AnimationList:addItem(_(index))
 				item.Name = index
+				item.onLeftDoubleClick = function () self:startAnimation() end
 			end
 		end
 	end

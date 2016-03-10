@@ -31,8 +31,6 @@ function PlayerManager:constructor()
 	addEventHandler("toggleAFK", root, bind(self.Event_toggleAFK, self))
 	addEventHandler("startAnimation", root, bind(self.Event_startAnimation, self))
 
-
-
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("me",bind(self.Command_playerMe, self))
@@ -42,6 +40,8 @@ function PlayerManager:constructor()
 
 	self.m_SyncPulse = TimedPulse:new(500)
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
+
+	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
 end
 
 function PlayerManager:destructor()
@@ -329,7 +329,13 @@ function PlayerManager:Event_startAnimation(animation)
 		local ani = ANIMATIONS[animation]
 		client:sendShortMessage(_("Mit Leertaste kannst du die Animation beenden!", client))
 		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], true, ani["interruptable"], ani["freezeLastFrame"])
+		bindKey(client, "space", "down", self.m_AnimationStopFunc)
 	else
 		client:sendError("Internal Error! Animation nicht gefunden!")
 	end
+end
+
+function PlayerManager:stopAnimation(player)
+	player:setAnimation(false)
+	unbindKey(player, "space", "down", self.m_AnimationStopFunc)
 end
