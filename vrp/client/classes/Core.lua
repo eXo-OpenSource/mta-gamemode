@@ -61,18 +61,9 @@ function Core:ready()
 	ItemManager:new();
 	--// Gangwar
 	GangwarClient:new()
+	KeyBinds:new()
 
 
-	-- Init Binds
-	bindKey(core:get("KeyBindings", "KeyToggleHelpGUI", "f9"), "down",
-		function()
-			if not HelpGUI:isInstantiated() then
-				HelpGUI:new()
-			else
-				delete(HelpGUI:getSingleton())
-			end
-		end
-	)
 end
 
 function Core:afterLogin()
@@ -88,43 +79,9 @@ function Core:afterLogin()
 		Debugging:new()
 	end
 
-	-- Phone
-	Phone:new()
-	Phone:getSingleton():close()
-	bindKey(core:get("KeyBindings", "KeyTogglePhone", "u"), "down",
-		function()
-			Phone:getSingleton():toggle()
-		end
-	)
-
-	bindKey(core:get("KeyBindings", "KeyToggleAnimationPanel", "l"), "down",
-		function()
-			if not localPlayer:isInVehicle() then
-				if AnimationGUI:isInstantiated() then
-					delete(AnimationGUI:getSingleton())
-				else
-					AnimationGUI:new()
-				end
-			end
-		end
-	)
-
-	bindKey(core:get("KeyBindings", "KeyTogglePolicePanel", "f4"), "down",
-		function()
-			if localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3 and localPlayer:getPublicSync("Faction:Duty") then
-				if PolicePanel:isInstantiated() then
-					delete(PolicePanel:getSingleton())
-				else
-					PolicePanel:new()
-				end
-			end
-		end
-	)
-
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
 	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
-
 
 	FactionGUI:new()
 	FactionGUI:getSingleton():close()
@@ -151,29 +108,6 @@ function Core:afterLogin()
 	AdminGUI:getSingleton():close()
 	MigratorPanel:new()
 	MigratorPanel:getSingleton():close()
-
-	bindKey(core:get("KeyBindings", "KeyToggleSelfGUI", "f2"), "down",
-		function ()
-			if SelfGUI:getSingleton():isVisible() then
-				SelfGUI:getSingleton():close()
-			elseif CompanyGUI:getSingleton():isVisible() then
-				CompanyGUI:getSingleton():close()
-			elseif FactionGUI:getSingleton():isVisible() then
-				FactionGUI:getSingleton():close()
-			elseif GroupGUI:getSingleton():isVisible() then
-				GroupGUI:getSingleton():close()
-			elseif TicketGUI:getSingleton():isVisible() then
-				TicketGUI:getSingleton():close()
-			elseif AdminGUI:getSingleton():isVisible() then
-				AdminGUI:getSingleton():close()
-			elseif MigratorPanel:getSingleton():isVisible() then
-				MigratorPanel:getSingleton():close()
-			else
-				SelfGUI:getSingleton():open()
-			end
-		end
-	)
-	-- TODO: Block end
 
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
