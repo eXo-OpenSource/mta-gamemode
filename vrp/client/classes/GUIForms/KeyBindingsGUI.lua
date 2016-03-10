@@ -24,7 +24,7 @@ function KeyBindings:constructor()
   self.m_SelectedLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setVisible(false)
   self.m_SelectedButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1.2):setVisible(false)
   self.m_SelectedButton.onLeftClick = function () self:waitForKey() end
-  self.m_DefaultButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.5, self.m_Width*0.32, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.Red):setFontSize(1.2):setVisible(false)
+  self.m_DefaultButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.5, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.Red):setFontSize(1.2):setVisible(false)
   self.m_DefaultButton.onLeftClick =
   function ()
       local item = self.m_KeyGridList:getSelectedItem()
