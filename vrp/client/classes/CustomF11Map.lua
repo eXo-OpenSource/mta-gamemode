@@ -11,22 +11,6 @@ function CustomF11Map:constructor()
 	self.m_RenderFunc = bind(self.draw, self)
 	self.m_Visible = false
 	self.m_Enabled = false
-
-	bindKey(core:get("KeyBindings", "KeyToggleCustomMap", "f11"), "down",
-		function()
-			if not self.m_Enabled then
-				return
-			end
-
-			self.m_Visible = not self.m_Visible
-
-			if self.m_Visible then
-				addEventHandler("onClientRender", root, self.m_RenderFunc)
-			else
-				removeEventHandler("onClientRender", root, self.m_RenderFunc)
-			end
-		end
-	)
 end
 
 function CustomF11Map:destructor()
@@ -37,6 +21,18 @@ function CustomF11Map:enable()
 	toggleControl("radar", false)
 	forcePlayerMap(false)
 	self.m_Enabled = true
+end
+
+function CustomF11Map:toggle()
+	if not self.m_Enabled then return end
+
+	self.m_Visible = not self.m_Visible
+
+	if self.m_Visible then
+		addEventHandler("onClientRender", root, self.m_RenderFunc)
+	else
+		removeEventHandler("onClientRender", root, self.m_RenderFunc)
+	end
 end
 
 function CustomF11Map:disable()

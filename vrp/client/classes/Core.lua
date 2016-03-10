@@ -94,7 +94,6 @@ function Core:afterLogin()
 	ScoreboardGUI:getSingleton():close()
 
 	WebPanel:getSingleton():close()
-	bindKey(core:get("KeyBindings", "KeyToggleWebPanel", "f1"), "down", function() WebPanel:getSingleton():toggle() end)
 
 	-- Pre-Instantiate important GUIS
 	-- TODO: I think we have to improve this block, currently i don't have an idea. (In my tests this takes ~32ms, relevant?)
