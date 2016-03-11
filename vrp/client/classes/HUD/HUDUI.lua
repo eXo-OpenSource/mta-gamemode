@@ -12,6 +12,7 @@ function HUDUI:constructor()
 	self.m_Font = VRPFont(70)
 	self.m_UIMode = core:get("HUD", "UIStyle", UIStyle.vRoleplay)
 	self.m_Enabled = core:get("HUD", "showUI", true)
+	self.m_RedDot = core:get("HUD", "reddot", false)
 
 	self.m_MunitionProgress = 0
 
@@ -47,6 +48,9 @@ function HUDUI:draw()
 	elseif self.m_UIMode == UIStyle.Default then
 		return
 	end
+	if self.m_RedDot == true then
+		self:drawRedDot()
+	end
 end
 
 function HUDUI:setUIMode(uiMode)
@@ -73,6 +77,10 @@ function HUDUI:setEnabled(state)
 			showPlayerHudComponent("radar", false)
 		end
 	end
+end
+
+function HUDUI:toggleReddot(state)
+	self.m_RedDot = state
 end
 
 function HUDUI:isEnabled()
@@ -160,4 +168,20 @@ function HUDUI:drawDefault()
 	dxDrawText     (getPlayerWantedLevel(),screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-5,0.148*screenHeight+(0.09*screenHeight/2),0,0,Color.White,0.5,self.m_Font)
 
 	self:drawLevelRect()
+end
+
+function HUDUI:drawRedDot()
+	local reddotSlots = {2, 3, 4, 5, 6, 7}
+	if reddotSlots[getPedWeaponSlot(localPlayer)] then
+		if getPedControlState(localPlayer, "aim_weapon" ) then
+			local x1, y1, z1 = getPedWeaponMuzzlePosition(localPlayer)
+			local x2, y2, z2 = getPedTargetEnd(localPlayer)
+			local x3, y3, z3 = getPedTargetCollision(localPlayer)
+			if x3 then
+				dxDrawLine3D(x1, y1, z1, x3, y3, z3, tocolor(200, 0, 0, 200), 3, false)
+			else
+				dxDrawLine3D(x1, y1, z1, x2, y2, z2, tocolor(200, 0, 0, 200), 3, false)
+			end
+		end
+	end
 end

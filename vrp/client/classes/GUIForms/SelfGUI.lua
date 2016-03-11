@@ -207,8 +207,8 @@ function SelfGUI:constructor()
 		HUDRadar:getSingleton():updateMapTexture()
 	end
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.8, self.m_Height*0.07, _"HUD / UI", tabSettings)
-	self.m_UIChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
+	GUILabel:new(self.m_Width*0.5, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / UI", tabSettings)
+	self.m_UIChange = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
 	for i, v in ipairs(UIStyle) do
 		self.m_UIChange:addItem(v)
 	end
@@ -218,7 +218,7 @@ function SelfGUI:constructor()
 	end
 	self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.vRoleplay), true)
 
-	self.m_UICheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.35, self.m_Height*0.04, _"UI aktivieren?", tabSettings)
+	self.m_UICheckBox = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"UI aktivieren?", tabSettings)
 	self.m_UICheckBox:setFont(VRPFont(25))
 	self.m_UICheckBox:setFontSize(1)
 	self.m_UICheckBox:setChecked(core:get("HUD", "showUI", true))
@@ -227,14 +227,23 @@ function SelfGUI:constructor()
 		HUDUI:getSingleton():setEnabled(state)
 	end
 
-	self.m_ChatCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, _"Chat aktivieren?", tabSettings)
+	self.m_ChatCheckBox = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Chat aktivieren?", tabSettings)
 	self.m_ChatCheckBox:setFont(VRPFont(25))
 	self.m_ChatCheckBox:setFontSize(1)
 	self.m_ChatCheckBox:setChecked(isChatVisible())
 	self.m_ChatCheckBox.onChange = function (state) showChat(state) end
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.68, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
-	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
+	self.m_Reddot = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Rotpunkt aktivieren?", tabSettings)
+	self.m_Reddot:setFont(VRPFont(25))
+	self.m_Reddot:setFontSize(1)
+	self.m_Reddot:setChecked(core:get("HUD", "reddot", false))
+	self.m_Reddot.onChange = function (state)
+		core:set("HUD", "reddot", state)
+		HUDUI:getSingleton():toggleReddot(state)
+	end
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
+	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
 	self.m_RadarChange:addItem("Normal")
 	self.m_RadarChange:addItem("Instant")
 	self.m_RadarChange.onChange = function(text, index)
@@ -243,6 +252,8 @@ function SelfGUI:constructor()
 	end
 	self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
 
+	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.75, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
+	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
 	--[[ TODO: Do we require this?
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.8, self.m_Height*0.07, _"Tipps", tabSettings)
@@ -285,8 +296,7 @@ function SelfGUI:constructor()
 	end
 	--]]
 
-	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
-	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
+
 end
 
 function SelfGUI:onShow()
