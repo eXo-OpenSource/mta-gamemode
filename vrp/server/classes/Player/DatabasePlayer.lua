@@ -498,8 +498,9 @@ function DatabasePlayer:getPlayTime() -- This function is overriden by Player:ge
 end
 
 function DatabasePlayer:loadMigratorData()
-	local row = sql:queryFetch("SELECT Money, PlayTime, Points FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
-	self.m_Money = row.Money
+	local row = sql:queryFetchSingle("SELECT Money, PlayTime, Points FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	if not row then return false end
+	self:setMoney(row.Money)
 	self:setPoints(row.Points)
 	self:setPlayTime(row.PlayTime)
 end
