@@ -99,7 +99,8 @@ HelpTextTitles = {
 		RoadSweeper = "Job: Straßenkehrer";
 		Trashman = "Job: Müllmann";
 		ServiceTechnician = "Job: Service-Techniker";
-		PizzaDelivery = "Job: Pizza-Lieferant"
+		PizzaDelivery = "Job: Pizza-Lieferant";
+		HeliTransport = "Job: Helikopter-Pilot"
 	};
 	Events = {
 		Deathmatch = "Event: Deathmatch";
@@ -233,6 +234,7 @@ HelpTexts = {
 			Lufe in den roten Marker und hole dir dein benötigtes Fahrzeug.
 			Sofern du es hast kannst du nun losfahren und über den auf der Straße liegenden Müll fahren um ihn aufzukehren.
 		]];
+		HeliTransport = [[Todo]];
 		Trashman = [[Todo]];
 		ServiceTechnician = [[Todo]];
 		PizzaDelivery = [[Todo]];
