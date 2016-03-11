@@ -115,7 +115,7 @@ function HUDUI:drawDefault()
 	local f = math.floor
 
 	dxDrawRectangle(screenWidth-0.195*screenWidth,0.04*screenHeight,0.195*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
-	dxDrawText("$"..localPlayer:getMoney(), screenWidth-0.14*screenWidth, 0.097*screenHeight/2, 0.195*screenWidth, 0.097*screenHeight, Color.White, 1, self.m_Font)
+	dxDrawText("$"..localPlayer:getMoney(), screenWidth-0.14*screenWidth, 0.097*screenHeight/2, screenWidth-screenWidth*0.007, 0.097*screenHeight, Color.White, 1, self.m_Font, "right")
 
 	local munitionWindowActive = true
 
@@ -149,7 +149,7 @@ function HUDUI:drawDefault()
 	local inClip = getPedAmmoInClip(localPlayer)
 	local totalAmmo = getPedTotalAmmo(localPlayer)
 	local sMunition = ("%d - %d"):format(inClip,totalAmmo-inClip)
-	dxDrawText(sMunition,screenWidth-0.276*screenWidth-(dxGetTextWidth(sMunition,1,self.m_Font)/2),-85+addY,0.153*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
+	dxDrawText(sMunition,screenWidth-0.276*screenWidth-(dxGetTextWidth(sMunition,1,self.m_Font)/2), -85+addY+screenHeight*0.015, 0.153*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
 
 	-- Karmabar
 	local karma = localPlayer:getKarma() or 0
@@ -178,9 +178,9 @@ function HUDUI:drawRedDot()
 			local x2, y2, z2 = getPedTargetEnd(localPlayer)
 			local x3, y3, z3 = getPedTargetCollision(localPlayer)
 			if x3 then
-				dxDrawLine3D(x1, y1, z1, x3, y3, z3, tocolor(200, 0, 0, 200), 3, false)
+				dxDrawLine3D(x1, y1, z1, x3, y3, z3, tocolor(200, 0, 0, 200), 2, false)
 			else
-				dxDrawLine3D(x1, y1, z1, x2, y2, z2, tocolor(200, 0, 0, 200), 3, false)
+				dxDrawLine3D(x1, y1, z1, x2, y2, z2, tocolor(200, 0, 0, 200), 2, false)
 			end
 		end
 	end
