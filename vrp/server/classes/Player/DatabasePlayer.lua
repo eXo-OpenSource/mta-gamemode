@@ -496,3 +496,10 @@ end
 function DatabasePlayer:getPlayTime() -- This function is overriden by Player:getPlayTime (to provide a live playtime)
 	return self.m_LastPlayTime
 end
+
+function DatabasePlayer:loadMigratorData()
+	local row = sql:queryFetch("SELECT Money, PlayTime, Points FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	self.m_Money = row.Money
+	self:setPoints(row.Points)
+	self:setPlayTime(row.PlayTime)
+end
