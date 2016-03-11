@@ -23,3 +23,10 @@ function phpSDKSendChatBox(type, target, message, r, g, b)
 	end
 	return
 end
+
+function phpSDKLoadCharacterInfo(targetName) -- Cause of Migrator
+	local target = getPlayerFomName(targetName)
+	if isElement(target) then
+		target:loadCharacterInfo()
+	end
+end
