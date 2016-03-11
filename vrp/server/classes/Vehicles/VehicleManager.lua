@@ -281,6 +281,17 @@ function VehicleManager:getPlayerVehicles(player)
 	return self.m_Vehicles[player] or {}
 end
 
+function VehicleManager:loadPlayerVehicles(player)
+	if player:getId() then
+		local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), player:getId())
+		for i, row in pairs(result) do
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.LightColor)
+			VehicleManager:getSingleton():addRef(vehicle, false)
+		end
+	end
+end
+
 function VehicleManager:updateFuelOfPermanentVehicles()
 	for k, player in pairs(getElementsByType("player")) do
 		local vehicle = getPedOccupiedVehicle(player)

@@ -503,4 +503,9 @@ function DatabasePlayer:loadMigratorData()
 	self:setMoney(row.Money)
 	self:setPoints(row.Points)
 	self:setPlayTime(row.PlayTime)
+	for index, veh in pairs(VehicleManager:getSingleton():getPlayerVehicles(self)) do
+		VehicleManager:getSingleton():removeRef(veh, false)
+		veh:destroy()
+	end
+	VehicleManager:loadPlayerVehicles(self)
 end
