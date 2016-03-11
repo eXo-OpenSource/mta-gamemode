@@ -16,7 +16,7 @@ function phpSDKSendChatBox(type, target, message, r, g, b)
 	if type == "admin" then
 		Admin:getSingleton():sendMessage(message, r, g, b)
 	elseif type == "player" then
-		local target = getPlayerFomName(target)
+		local target = getPlayerFromName(target)
 		if isElement(target) then
 			target:outputChat(message, r, g, b)
 		end
@@ -25,7 +25,7 @@ function phpSDKSendChatBox(type, target, message, r, g, b)
 end
 
 function phpSDKLoadCharacterInfo(targetName) -- Cause of Migrator
-	local target = getPlayerFomName(targetName)
+	local target = getPlayerFromName(targetName)
 	if isElement(target) then
 		target:loadCharacterInfo()
 	end
