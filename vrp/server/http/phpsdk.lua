@@ -27,6 +27,6 @@ end
 function phpSDKLoadCharacterInfo(targetName) -- Cause of Migrator
 	local target = getPlayerFromName(targetName)
 	if isElement(target) then
-		target:loadCharacterInfo()
+		target:load()
 	end
 end
