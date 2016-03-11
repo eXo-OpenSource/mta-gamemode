@@ -42,7 +42,7 @@ function JobHeliTransport:createTarget(type)
 	self.m_Target["blip"] = Blip:new("Waypoint.png", pos.x, pos.y)
 	outputChatBox("TYPE:"..type)
 	addEventHandler("onClientMarkerHit", self.m_Target["marker"], function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
+		if hitElement == localPlayer and dim then
 			if self.m_Target["type"] == "pickup" then
 				triggerServerEvent("jobHeliTransportOnPickupLoad", localPlayer)
 			elseif self.m_Target["type"] == "delivery" then

@@ -39,7 +39,7 @@ function JobHeliTransport:onPickupLoad()
 		self.m_VehData[vehicle].package:setAlpha(255)
 		self.m_VehData[vehicle].load = true
 		client:sendInfo(_("Ladung aufgenommen! Liefere Sie nun ab!", client))
-		player:triggerEvent("jobHeliTransportCreateMarker", "delivery")
+		client:triggerEvent("jobHeliTransportCreateMarker", "delivery")
 	else
 		client:sendInfo(_("Falsches Fahrzeug!", client))
 	end
@@ -51,7 +51,7 @@ function JobHeliTransport:onDelivery()
 		self.m_VehData[vehicle].package:setAlpha(0)
 		self.m_VehData[vehicle].load = false
 		client:sendInfo(_("Du hast die Ladung abgegeben! Hole eine neue am Ladepunkt!", client))
-		player:triggerEvent("jobHeliTransportCreateMarker", "pickup")
+		client:triggerEvent("jobHeliTransportCreateMarker", "pickup")
 	else
 		client:sendInfo(_("Falsches Fahrzeug!", client))
 	end
