@@ -10,7 +10,7 @@ GUIWebView = inherit(GUIElement)
 function GUIWebView:constructor(posX, posY, width, height, url, transparent, parent)
     GUIElement.constructor(self, posX, posY, width, height, parent)
 
-    self.m_IsLocal = url:sub(0, 7) ~= "http://" and url:sub(0, 8) ~= "https://"
+    self.m_IsLocal = url:sub(0, 10) == "http://mta"
     self.m_Browser = Browser.create(width, height, self.m_IsLocal, transparent)
     self.m_PauseOnHide = true
 

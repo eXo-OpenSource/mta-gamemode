@@ -14,7 +14,7 @@ function PolicePanel:constructor()
 	GUIWebForm.constructor(self, screenWidth/2-width/2, screenHeight/2-height/2, width, height)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Polizeicomputer", true, true, self)
-	self.m_WebView = GUIWebView:new(0, 30, self.m_Width, self.m_Height-30, "files/html/PolicePanel/PolicePanel.html", false, self.m_Window)
+	self.m_WebView = GUIWebView:new(0, 30, self.m_Width, self.m_Height-30, "http://mta/local/files/html/PolicePanel/PolicePanel.html", false, self.m_Window)
 	self.m_WebView.onDocumentReady = bind(self.onDocumentReady, self)
 
 	self.m_ListRetrieveFunc = bind(self.setCrimes, self)
