@@ -16,20 +16,29 @@ function JobHeliTransport:constructor()
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))
 
-	addRemoteEvents{"jobHeliTransportCreateMarker"}
+	addRemoteEvents{"jobHeliTransportCreateMarker", "endHeliTransport"}
 	addEventHandler("jobHeliTransportCreateMarker", root, bind(self.createTarget, self))
+	addEventHandler("endHeliTransport", root, bind(self.endHeliTransport, self))
 end
 
 function JobHeliTransport:start()
-	-- Show text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.HeliTransport), _(HelpTexts.Jobs.HeliTransport))
+end
+
+
+function JobHeliTransport:start()
+	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
+end
+
+function JobHeliTransport:endHeliTransport()
+	if self.m_Target["marker"] then self.m_Target["marker"]:destroy() end
+	if self.m_Target["blip"] then delete(self.m_Target["blip"]) end
 end
 
 function JobHeliTransport:createTarget(type)
 	local pos
 	if type == "pickup" then
 		pos = Vector3(2778.5, -2350.2, 16.1)
-		InfoBox:new(_"Bitte belade deinen Helikopter am Zielpunkt!")
 	elseif type == "delivery" then
 		pos = JobHeliTransport.m_Targets[math.random(1, #JobHeliTransport.m_Targets)]
 	end
@@ -40,7 +49,6 @@ function JobHeliTransport:createTarget(type)
 	self.m_Target["type"] = type
 	self.m_Target["marker"] = createMarker(pos, "corona", 3, 0, 0, 255, 255)
 	self.m_Target["blip"] = Blip:new("Waypoint.png", pos.x, pos.y)
-	outputChatBox("TYPE:"..type)
 	addEventHandler("onClientMarkerHit", self.m_Target["marker"], function(hitElement, dim)
 		if hitElement == localPlayer and dim then
 			if self.m_Target["type"] == "pickup" then
