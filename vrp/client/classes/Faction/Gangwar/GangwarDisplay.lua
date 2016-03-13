@@ -12,20 +12,26 @@ local w,h = guiGetScreenSize()
 local width, height = w*0.2,h*0.1
 local startX,startY = w- width*1.1, h*0.5-(height/2)
 
-function GangwarDisplay:constructor( fac1, fac2, pAttackClient) 
+function GangwarDisplay:constructor( fac1, fac2, pAttackClient, pInitTime) 
 	self.m_Faction1 = fac1
 	self.m_Faction2 = fac2 
 	self.m_AttackClient = pAttackClient 
-	
+	self.m_TimeLeft = pInitTime
 	self.m_BindRender = bind( self.render,self)
 	addEventHandler("onClientRender",root,self.m_BindRender)
 	self.m_BindClick = bind(self.click,self)
 	addEventHandler("onClientClick",root,self.m_BindClick)
+	self.m_BindFuncTime = bind( GangwarDisplay.tickTime, self )
+	setTimer( self.m_BindFuncTime, 1000, pInitTime )
 end
 
 function GangwarDisplay:render() 
 	self:checkDragDrop()
 	self:rend_Display()
+end
+
+function GangwarDisplay:synchronizeTime( pTime ) 
+	self.m_TimeLeft = pTime
 end
 
 function GangwarDisplay:checkDragDrop() 
@@ -61,6 +67,9 @@ function GangwarDisplay:click( b, s)
 	end
 end
 
+function GangwarDisplay:tickTime( ) 
+	self.m_TimeLeft = self.m_TimeLeft - 1 
+end
 
 
 function GangwarDisplay:rend_Display( )
@@ -95,11 +104,13 @@ function GangwarDisplay:rend_Display( )
 	
 	dxDrawRectangle( startX+(bottom_width*2 + width*0.01) , startY+height*0.5, bottom_width, height*0.495, tocolor(0,204,204,100)  )
 	self:dxDrawBoxShape(startX+(bottom_width*2 + width*0.01) , startY+height*0.5, bottom_width, height*0.495,tocolor(0,0,0,150))
-	self:drawShadowBoxText( "0",startX+(bottom_width*2 + width*0.01) , startY+height*0.5, bottom_width, height*0.495, tocolor(255,255,255,255),1,"default-bold","center","center" )
+	self:drawShadowBoxText( self:formatTick( self.m_TimeLeft ) ,startX+(bottom_width*2 + width*0.01) , startY+height*0.5, bottom_width, height*0.495, tocolor(255,255,255,255),1,"default-bold","center","center" )
 	
 	self:dxDrawBoxShape(startX,startY,width,height,tocolor(0,0,0,150))
 	
+	
 end
+
 
 function GangwarDisplay:drawShadowBoxText( text,x,y,w,h, color,... )
 	self:dxDrawBoxText(text,x-1,y-1,w,h,tocolor(0,0,0,255),...)
@@ -141,4 +152,10 @@ end
 
 function GangwarDisplay:dxDrawBoxText( text , x, y , w , h , ... ) 
 	dxDrawText( text , x , y , x + w , y + h , ... ) 
+end
+
+function GangwarDisplay:formatTick( tick ) 	
+	if tick then
+		 return string.format("%.2d:%.2d", tick/60%60, tick%60)
+	end
 end

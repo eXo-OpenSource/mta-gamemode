@@ -17,7 +17,6 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_Participants = {	}
 	self:setupSession( )
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
-
 end
 
 function AttackSession:setupSession ( )
@@ -32,7 +31,7 @@ end
 
 function AttackSession:synchronizeAllParticipants( )
 	for k,v in ipairs( self.m_Participants ) do
-		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified)
+		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60)
 		v.m_RefAttackSession = self
 		v:triggerEvent("GangwarQuestion:new")
 	end
@@ -53,7 +52,7 @@ function AttackSession:addParticipantToList( player )
 	local bInList = self:isParticipantInList( player )
 	if not bInList then
 		self.m_Participants[#self.m_Participants + 1] = player
-		player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified)
+		player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60)
 		player:triggerEvent("GangwarQuestion:new")
 		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
 		self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
