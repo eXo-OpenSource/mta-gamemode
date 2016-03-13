@@ -15,8 +15,8 @@ function JobLogistician:constructor()
 	local Crane1 = Crane:new(2387.30, -2492.40, 19.6, 2387.30, -2625.60, 19.6)
 	local Crane2 = Crane:new(-219.70, -269.30, 7.30, -219.70, -200.30, 7.30)
 
-	self.m_Marker1 = self:createCraneMarker(Crane1, Vector3(2386.92, -2494.24, 13))
-	self.m_Marker2 = self:createCraneMarker(Crane2, Vector3(-219.35, -268.77, 0.6))
+	self.m_Marker1 = self:createCraneMarker(Crane1, Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.26), 0)
+	self.m_Marker2 = self:createCraneMarker(Crane2, Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2.05), 0)
 
 	self.m_Spawner1 = VehicleSpawner:new(2405.45, -2445.40, 13, {"DFT-30"}, 230, bind(Job.requireVehicle, self))
 	self.m_Spawner1.m_Hook:register(bind(self.onVehicleSpawn,self))
@@ -38,13 +38,14 @@ end
 function JobLogistician:onVehicleExit(player)
 	player:setPosition(player:getData("Logistican:VehicleSpawn"))
 	player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
-	if getVehicleAttachedContainer(source) then getVehicleAttachedContainer(source):destroy() end
+
+	if player:getData("Logistician:LastCrane"):getVehicleAttachedContainer(source) then player:getData("Logistician:LastCrane"):getVehicleAttachedContainer(source):destroy() end
 	source:destroy()
 	if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
 	player:setData("Logistician:TargetMarker", nil)
 end
 
-function JobLogistician:setNewDestination(player, targetMarker)
+function JobLogistician:setNewDestination(player, targetMarker, crane)
 
 	local pos = targetMarker:getPosition()
 	player:sendInfo(_("Ein Container wird aufgeladen! Bringe ihn nach %s!", player, getZoneName(pos)))
@@ -58,11 +59,14 @@ function JobLogistician:setNewDestination(player, targetMarker)
 	player:setData("Logistician:Blip", blip)
 
 	player:setData("Logistician:TargetMarker", targetMarker)
+	player:setData("Logistician:LastCrane", crane)
 end
 
-function JobLogistician:createCraneMarker(crane, pos)
+function JobLogistician:createCraneMarker(crane, pos, vehPos, vehRot)
 	local marker = createMarker(pos, "cylinder", 3, 255, 255, 0, 127)
 	marker:setData("Crane", crane)
+	marker:setData("VehiclePosition", vehPos)
+	marker:setData("VehicleRotation", Vector3(0, 0, vehRot))
 	addEventHandler("onMarkerHit", marker, bind(self.onMarkerHit, self))
 	return marker
 end
@@ -70,20 +74,23 @@ end
 function JobLogistician:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle():getData("LogisticanVehicle") == true then
+			local veh = hitElement:getOccupiedVehicle()
 			if source:getData("Crane") then
 				local crane = source:getData("Crane")
-				if crane:getVehicleAttachedContainer(hitElement:getOccupiedVehicle()) then
+				veh:setPosition(source:getData("VehiclePosition"))
+				veh:setRotation(source:getData("VehicleRotation"))
+				if crane:getVehicleAttachedContainer(veh) then
 					if source == hitElement:getData("Logistician:TargetMarker") then
-						crane:dropContainer(getPedOccupiedVehicle(hitElement), function() hitElement:giveMoney(MONEY_PER_TRANSPORT) end)
+						crane:dropContainer(veh, function() hitElement:giveMoney(MONEY_PER_TRANSPORT) end)
 					else
 						hitElement:sendError(_("Du bist am falschen Kran!", hitElement))
 					end
 				else
-					crane:loadContainer(hitElement:getOccupiedVehicle())
+					crane:loadContainer(veh)
 					if source == self.m_Marker1 then
-						self:setNewDestination(hitElement, self.m_Marker2)
+						self:setNewDestination(hitElement, self.m_Marker2, crane)
 					elseif source == self.m_Marker2 then
-						self:setNewDestination(hitElement, self.m_Marker1)
+						self:setNewDestination(hitElement, self.m_Marker1, crane)
 					else
 						hitElement:sendError(_("Internal Error! Marker does not match", hitElement))
 					end
@@ -132,7 +139,7 @@ function Crane:dropContainer(vehicle, callback)
 			-- Detach it from the player's vehicle and attach it to the tow
 			detachElements(container)
 			attachElements(container, self.m_Tow, 0, 0, -4.1, 0, 0)
-
+			vehicle:setFrozen(false)
 			-- Roll up the tow
 			self:rollTowUp(
 				function()
@@ -152,7 +159,7 @@ function Crane:dropContainer(vehicle, callback)
 										function()
 											moveObject(self.m_Object, 10000, self.m_StartX, self.m_StartY, self.m_StartZ)
 											if callback then callback() end
-											vehicle:setFrozen(false)
+
 											setTimer(function() self.m_Busy = false end, 10000, 1)
 										end
 									)
