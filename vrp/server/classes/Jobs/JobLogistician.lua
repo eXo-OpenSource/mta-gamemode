@@ -165,7 +165,7 @@ function Crane:loadContainer(vehicle, callback)
 	vehicle:setFrozen(true)
 	-- Move Crane to the "container platform"
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
-
+	moveObject(self.m_Tow, 10000, self.m_EndX+0.5, self.m_EndY-0.7, self.m_EndZ+5)
 	-- Wait till we're at the target position
 	setTimer(
 		function()
