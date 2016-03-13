@@ -101,9 +101,9 @@ end
 
 addEvent("blipCreate", true)
 addEventHandler("blipCreate", root,
-	function(index, path, x, y)
+	function(index, path, x, y, streamDistance)
 		outputDebug("Creating blip: "..tostring(index))
-		Blip.ServerBlips[index] = Blip:new(path, x, y)
+		Blip.ServerBlips[index] = Blip:new(path, x, y, streamDistance)
 	end
 )
 

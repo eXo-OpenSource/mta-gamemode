@@ -31,6 +31,17 @@ end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
 	vehicle:setData("LogisticanVehicle", true)
+	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
+	addEventHandler("onVehicleExit", vehicle, bind(self.onVehicleExit, self))
+end
+
+function JobLogistician:onVehicleExit(player)
+	player:setPosition(player:getData("Logistican:VehicleSpawn"))
+	player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
+	if getVehicleAttachedContainer(source) then getVehicleAttachedContainer(source):destroy() end
+	source:destroy()
+	if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
+	player:setData("Logistician:TargetMarker", nil)
 end
 
 function JobLogistician:setNewDestination(player, targetMarker)
@@ -38,11 +49,12 @@ function JobLogistician:setNewDestination(player, targetMarker)
 	local pos = targetMarker:getPosition()
 	player:sendInfo(_("Ein Container wird aufgeladen! Bringe ihn nach %s!", player, getZoneName(pos)))
 	-- Destroy the old waypoint blip and create a new one
-	if player:getData("LogisticianBlip") then
-		delete(player:getData("LogisticianBlip"))
+	if player:getData("Logistician:Blip") then
+		delete(player:getData("Logistician:Blip"))
 	end
 
 	local blip = Blip:new("Waypoint.png", pos.x, pos.y)
+	blip:setStreamDistance(10000)
 	player:setData("Logistician:Blip", blip)
 
 	player:setData("Logistician:TargetMarker", targetMarker)
@@ -60,7 +72,7 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle():getData("LogisticanVehicle") == true then
 			if source:getData("Crane") then
 				local crane = source:getData("Crane")
-				if crane:isContainerAttachedAtVehicle(hitElement:getOccupiedVehicle()) then
+				if crane:getVehicleAttachedContainer(hitElement:getOccupiedVehicle()) then
 					if source == hitElement:getData("Logistician:TargetMarker") then
 						crane:dropContainer(getPedOccupiedVehicle(hitElement), function() hitElement:giveMoney(MONEY_PER_TRANSPORT) end)
 					else
@@ -234,10 +246,10 @@ function Crane:rollTowUp(callback)
 	end
 end
 
-function Crane:isContainerAttachedAtVehicle(veh)
+function Crane:getVehicleAttachedContainer(veh)
 	for index, element in pairs(veh:getAttachedElements()) do
 		if element:getModel() == 2934 or element:getModel() == 2935 then
-			return true
+			return element
 		end
 	end
 	return false

@@ -10,7 +10,7 @@ JobHeliTransport = inherit(Job)
 function JobHeliTransport:constructor()
 	Job.constructor(self)
 
-	self.m_Spawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 26, {"Cargobob"}, 0, bind(Job.requireVehicle, self))
+	self.m_Spawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 26, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
 	self.m_Spawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehData = {}
 
@@ -38,16 +38,18 @@ end
 
 function JobHeliTransport:onCargoBobExplode()
 	local player = source:getOccupant()
-	player:setPosition(Vector3(1765.5999755859, -2286.3000488281, 26))
+	player:setPosition(Vector3(1788.84, -2275.36, 26.78))
 	player:sendError(_("Dein Helikopter ist explodiert! Der Job wurde beendet!", player))
 	self.m_VehData[source] = nil
 	player:triggerEvent("endHeliTransport")
 end
 
 function JobHeliTransport:onCargoBobExit(player)
-	player:setPosition(Vector3(1765.5999755859, -2286.3000488281, 26))
+	player:setPosition(Vector3(1788.84, -2275.36, 26.78))
 	player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
+	source:destroy()
 	self.m_VehData[source] = nil
+
 	player:triggerEvent("endHeliTransport")
 end
 

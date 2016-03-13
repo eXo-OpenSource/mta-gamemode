@@ -12,18 +12,24 @@ function Blip:constructor(imagePath, x, y, visibleTo)
 	self.m_ImagePath = imagePath
 	self.m_PosX, self.m_PosY = x, y
 	self.m_VisibleTo = visibleTo or root
+	self.m_StreamDistance = 800
 
 	self.m_Id = #Blip.Map + 1
 	Blip.Map[self.m_Id] = self
 
+	self:sendToClient()
+end
+
+function Blip:sendToClient()
+
 	if self.m_VisibleTo == root then
 		for k, player in pairs(getElementsByType("player")) do
 			if player:isLoggedIn() then
-				player:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY)
+				player:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY, self.m_StreamDistance)
 			end
 		end
 	else
-		self.m_VisibleTo:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY)
+		self.m_VisibleTo:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY, self.m_StreamDistance)
 	end
 end
 
@@ -37,11 +43,23 @@ function Blip:destructor()
 	end
 end
 
+function Blip:setStreamDistance(distance)
+	self.m_StreamDistance = distance
+
+	if self.m_VisibleTo == root then
+		triggerClientEvent("blipDestroy", root, self.m_Id)
+	else
+		self.m_VisibleTo:triggerEvent("blipDestroy", self.m_Id)
+	end
+
+	self:sendToClient()
+end
+
 function Blip.sendAllToClient(player)
 	local data = {}
 	for k, v in pairs(Blip.Map) do
 		if v.m_VisibleTo == root then
-			data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY}
+			data[k] = {v.m_ImagePath, v.m_PosX, v.m_PosY, v.m_StreamDistance}
 		end
 	end
 	player:triggerEvent("blipsRetrieve", data)

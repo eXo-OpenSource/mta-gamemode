@@ -38,7 +38,7 @@ end
 function JobHeliTransport:createTarget(type)
 	local pos
 	if type == "pickup" then
-		pos = Vector3(2778.5, -2350.2, 16.1)
+		pos = Vector3(2509.94, -2204.42, 15.22)
 	elseif type == "delivery" then
 		pos = JobHeliTransport.m_Targets[math.random(1, #JobHeliTransport.m_Targets)]
 	end
@@ -49,6 +49,7 @@ function JobHeliTransport:createTarget(type)
 	self.m_Target["type"] = type
 	self.m_Target["marker"] = createMarker(pos, "corona", 3, 0, 0, 255, 255)
 	self.m_Target["blip"] = Blip:new("Waypoint.png", pos.x, pos.y)
+	self.m_Target["blip"]:setStreamDistance(10000)
 	addEventHandler("onClientMarkerHit", self.m_Target["marker"], function(hitElement, dim)
 		if hitElement == localPlayer and dim then
 			if self.m_Target["type"] == "pickup" then
