@@ -1,14 +1,11 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Jobs/JobHeliTransport.lua
+-- *  FILE:        client/classes/Jobs/JobHeliTransport.lua
 -- *  PURPOSE:     Heli Transport job class
 -- *
 -- ****************************************************************************
 JobHeliTransport = inherit(Job)
-JobHeliTransport.Targets = {
-
-}
 
 function JobHeliTransport:constructor()
 	Job.constructor(self, 1786.04, -2273.60, 26, "HeliTransport.png", "files/images/Jobs/HeaderHeliTransport.png", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))
@@ -25,8 +22,7 @@ function JobHeliTransport:start()
 	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.HeliTransport), _(HelpTexts.Jobs.HeliTransport))
 end
 
-
-function JobHeliTransport:start()
+function JobHeliTransport:stop()
 	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
 

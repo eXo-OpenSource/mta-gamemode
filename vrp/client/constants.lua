@@ -100,7 +100,8 @@ HelpTextTitles = {
 		Trashman = "Job: Müllmann";
 		ServiceTechnician = "Job: Service-Techniker";
 		PizzaDelivery = "Job: Pizza-Lieferant";
-		HeliTransport = "Job: Helikopter-Pilot"
+		HeliTransport = "Job: Helikopter-Pilot";
+		ForkLift = "Job: Gabelstapler-Fahrer";
 	};
 	Events = {
 		Deathmatch = "Event: Deathmatch";
@@ -238,6 +239,7 @@ HelpTexts = {
 		Trashman = [[Todo]];
 		ServiceTechnician = [[Todo]];
 		PizzaDelivery = [[Todo]];
+		ForkLift = [[Todo]];
 	};
 	Events = {
 		Deathmatch = [[Todo]];

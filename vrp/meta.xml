@@ -208,6 +208,7 @@
 	<script src="server/classes/Jobs/JobServiceTechnicianTaskQuestion.lua" type="server"/>
 	<script src="server/classes/Jobs/JobPizzaDelivery.lua" type="server"/>
 	<script src="server/classes/Jobs/JobHeliTransport.lua" type="server"/>
+	<script src="server/classes/Jobs/JobForkLift.lua" type="server"/>
 
 	<!-- NPCs and shops -->
 	<script src="server/classes/Gameplay/ShopNPC.lua" type="server"/>
@@ -475,6 +476,7 @@
 	<script src="client/classes/Jobs/JobServiceTechnician.lua" type="client"/>
 	<script src="client/classes/Jobs/JobPizzaDelivery.lua" type="client"/>
 	<script src="client/classes/Jobs/JobHeliTransport.lua" type="client"/>
+	<script src="client/classes/Jobs/JobForkLift.lua" type="client"/>
 
 	<!-- Groups -->
 	<!--<script src="client/classes/Groups/GangArea.lua" type="client"/>-->
@@ -676,6 +678,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Lumberjack.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Police.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/HeliTransport.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/ForkLift.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Farmer.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Bank.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PayNSpray.png"/>
@@ -711,6 +714,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Lumberjack.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Police.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/HeliTransport.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/ForkLift.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Farmer.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Bank.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/PayNSpray.png"/>
@@ -751,6 +755,7 @@
 	<vrpfile src="files/images/Jobs/HeaderServiceTechnician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderPizzaDelivery.png"/>
 	<vrpfile src="files/images/Jobs/HeaderHeliTransport.png"/>
+	<vrpfile src="files/images/Jobs/HeaderForkLift.png"/>
 
 	<vrpfile src="files/images/Nametag/default.png"/>
 	<vrpfile src="files/images/Nametag/vrp.png"/>

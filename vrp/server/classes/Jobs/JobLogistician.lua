@@ -32,17 +32,20 @@ end
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
 	vehicle:setData("LogisticanVehicle", true)
 	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
+	addEventHandler("onElementDestroy", vehicle, bind(self.onVehicleDestroy, self))
 	addEventHandler("onVehicleExit", vehicle, bind(self.onVehicleExit, self))
 end
 
 function JobLogistician:onVehicleExit(player)
 	player:setPosition(player:getData("Logistican:VehicleSpawn"))
 	player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
-
-	if player:getData("Logistician:LastCrane"):getVehicleAttachedContainer(source) then player:getData("Logistician:LastCrane"):getVehicleAttachedContainer(source):destroy() end
 	source:destroy()
 	if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
 	player:setData("Logistician:TargetMarker", nil)
+end
+
+function JobLogistician:onVehicleDestroy(player)
+	if player:getData("Logistician:LastCrane"):getVehicleAttachedContainer(source) then player:getData("Logistician:LastCrane"):getVehicleAttachedContainer(source):destroy() end
 end
 
 function JobLogistician:setNewDestination(player, targetMarker, crane)
