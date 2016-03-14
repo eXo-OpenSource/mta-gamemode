@@ -280,10 +280,14 @@ end
 function CompanyManager:Event_companySaveRank(rank,skinId,loan)
 	local company = client:getCompany()
 	if company then
-		company:setRankSkin(rank,skinId)
-		company:setRankLoan(rank,loan)
+        if tonumber(loan) > COMPANY_MAX_RANK_LOANS[rank] then
+			client:sendError(_("Der maximale Lohn für diesen Rang beträgt %d$", client, COMPANY_MAX_RANK_LOANS[rank]))
+			return
+		end
+        company:setRankLoan(rank,loan)
+        company:setRankSkin(rank,skinId)
 		company:save()
-		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
+		client:sendInfo(_("Die Einstellungen für Rang %d wurden gespeichert!", client, rank))
 		self:sendInfosToClient(client)
 	end
 end

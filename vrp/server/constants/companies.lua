@@ -4,6 +4,15 @@ companySkins = {}
 companyDutyMarker = {}
 companyDutyMarkerInterior = {}
 
+COMPANY_MAX_RANK_LOANS ={
+	[0] = 750,
+	[1] = 1000,
+	[2] = 1250,
+	[3] = 1500,
+	[4] = 1750,
+	[5] = 2000
+}
+
 -- ID 1 = Fahrschule:
 companyRankNames[1] = {
 [0] = "Praktikant",

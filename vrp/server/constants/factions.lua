@@ -8,6 +8,16 @@ factionWTDestination = {}
 FACTION_STATE_WT_DESTINATION = Vector3(1598.78064, -1611.63953, 13.44956)
 WEAPONTRUCK_NAME = {["evil"] = "Waffentruck", ["state"] = "Staats-Waffentruck"}
 
+FACTION_MAX_RANK_LOANS ={
+	[0] = 750,
+	[1] = 1000,
+	[2] = 1500,
+	[3] = 1750,
+	[4] = 2000,
+	[5] = 2500,
+	[6] = 3000
+}
+
 -- Vehicle Shaders
 factionVehicleShaders = {
 	-- SAPD

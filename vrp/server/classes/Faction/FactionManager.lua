@@ -86,11 +86,15 @@ end
 function FactionManager:Event_factionSaveRank(rank,skinId,loan,rankWeapons)
 	local faction = client:getFaction()
 	if faction then
-		faction:setRankSkin(rank,skinId)
+		if tonumber(loan) > FACTION_MAX_RANK_LOANS[rank] then
+			client:sendError(_("Der maximale Lohn für diesen Rang beträgt %d$", client, FACTION_MAX_RANK_LOANS[rank]))
+			return
+		end
 		faction:setRankLoan(rank,loan)
+		faction:setRankSkin(rank,skinId)
 		faction:setRankWeapons(rank,rankWeapons)
 		faction:save()
-		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
+		client:sendInfo(_("Die Einstellungen für Rang %d wurden gespeichert!", client, rank))
 		self:sendInfosToClient(client)
 	end
 end

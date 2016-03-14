@@ -65,10 +65,14 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 				end
 			end
 		end
-		if client:getMoney() >= totalAmount then
+		if (self.m_CurrentType == "evil" and client:getMoney() >= totalAmount) or (self.m_CurrentType == "state" and faction:getMoney() >= totalAmount) then
 			if totalAmount > 0 then
 				if ActionsCheck:getSingleton():isActionAllowed(client) then
-					client:takeMoney(totalAmount)
+					if self.m_CurrentType == "evil" then
+						client:takeMoney(totalAmount)
+					elseif self.m_CurrentType == "state" then
+						faction:takeMoney(totalAmount)
+					end
 					client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
 					self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
 					PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
@@ -78,7 +82,11 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 				client:sendError(_("Du hast zuwenig augeladen! Mindestens: %d$",client,self.m_AmountPerBox))
 			end
 		else
-			client:sendError(_("Du hast nicht ausreichend Geld! (%d$)",client,totalAmount))
+			if self.m_CurrentType == "evil" then
+				client:sendError(_("Du hast nicht ausreichend Geld dabei! (%d$)",client,totalAmount))
+			elseif self.m_CurrentType == "state" then
+				client:sendError(_("Ihr habt nicht genug Geld in der Staatskasse! (%d$)",client,totalAmount))
+			end
 		end
 	else
 		client:sendError(_("Du bist in keiner Fraktion!",client))
