@@ -8,10 +8,12 @@
 
 MWeaponTruck = inherit(Singleton)
 
-function MWeaponTruck:constructor()
-	self:createStartPoint(-1869.14, 1421.49, 6.5)
-	self.m_IsCurrentWT = false
 
+function MWeaponTruck:constructor()
+	self:createStartPoint(-1869.14, 1421.49, 6.5, "evil")
+	self:createStartPoint(117.28, 1884.58, 17, "state")
+	self.m_IsCurrentWT = false
+	self.m_CurrentType = ""
 	addRemoteEvents{"onWeaponTruckLoad"}
 	addEventHandler("onWeaponTruckLoad", root, bind(self.Event_onWeaponTruckLoad, self))
 end
@@ -19,25 +21,31 @@ end
 function MWeaponTruck:destructor()
 end
 
-function MWeaponTruck:createStartPoint(x, y, z)
+function MWeaponTruck:createStartPoint(x, y, z, type)
 	--self.m_Blip = Blip:new("Waypoint.png", x, y, self.m_Driver)
-	self.m_StartMarker = createMarker(x, y, z, "cylinder",1)
-	addEventHandler("onMarkerHit", self.m_StartMarker, bind(self.onStartPointHit, self))
+	local marker = createMarker(x, y, z, "cylinder",1)
+	marker.type = type
+	addEventHandler("onMarkerHit", marker, bind(self.onStartPointHit, self))
 end
 
 function MWeaponTruck:onStartPointHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		local faction = hitElement:getFaction()
 		if faction then
-			if faction:isEvilFaction() then
+			if (faction:isEvilFaction() and source.type == "evil") or (faction:isStateFaction() and source.type == "state") then
 				if ActionsCheck:getSingleton():isActionAllowed(hitElement) then
 					hitElement:triggerEvent("showFactionWTLoadGUI")
+					self.m_CurrentType = source.type
 				end
 			else
-				hitElement:sendError(_("Den Waffentruck können nur Mitglieder böser Fraktionen starten!",hitElement))
+				if source.type == "evil" then
+					hitElement:sendError(_("Den Waffentruck können nur Mitglieder böser Fraktionen starten!",hitElement))
+				elseif source.type == "state" then
+					hitElement:sendError(_("Den Staats-Waffentruck können nur Mitglieder von Staats-Fraktionen starten!",hitElement))
+				end
 			end
 		else
-			hitElement:sendError(_("Den Waffentruck können nur Mitglieder böser Fraktionen starten!",hitElement))
+			hitElement:sendError(_("Den Waffentruck können nur Fraktions-Mitglieder starten!",hitElement))
 		end
 	end
 end
@@ -61,10 +69,10 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 			if totalAmount > 0 then
 				if ActionsCheck:getSingleton():isActionAllowed(client) then
 					client:takeMoney(totalAmount)
-					outputChatBox(_("Ein Waffentruck wird beladen!",client),rootElement,255,0,0)
 					client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
-					self.m_CurrentWT = WeaponTruck:new(client,weaponTable,totalAmount)
-					ActionsCheck:getSingleton():setAction("Waffentruck")
+					self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
+					PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
+					ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
 				end
 			else
 				client:sendError(_("Du hast zuwenig augeladen! Mindestens: %d$",client,self.m_AmountPerBox))

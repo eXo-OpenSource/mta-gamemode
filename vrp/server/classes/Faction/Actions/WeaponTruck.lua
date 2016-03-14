@@ -8,17 +8,36 @@
 
 WeaponTruck = inherit(Object)
 WeaponTruck.Time = 10*60*1000 -- in ms
+WeaponTruck.spawnPos = {
+	["evil"] = {-1869.58, 1430.02, 7.62, 224},
+	["state"] = {120.23, 1899.40, 18.97, 0}
+}
+WeaponTruck.loadMarkerPos = {
+	["evil"] = Vector3(-1873.56, 1434.15, 7.18),
+	["state"] = Vector3(120.26, 1894.21, 18.42)
+}
 WeaponTruck.attachCords = {
 	Vector3(0.7, -0.1, 0.1), Vector3(-0.7, -0.1, 0.1), Vector3(0.7, -1.4, 0.1), Vector3(-0.7, -1.4, 0.1),
 	Vector3(-0.7, -2.7, 0.1), Vector3(0.7, -2.7, 0.1), Vector3(-0.7, -4, 0.1), Vector3(0.7, -4, 0.1)
 }
 WeaponTruck.boxSpawnCords = {
-	Vector3(-1875.75, 1416, 6.2), Vector3(-1875.75, 1416, 6.9), Vector3(-1873.74, 1415, 6.2), Vector3(-1873.74, 1415, 6.9),
-	Vector3(-1875.27, 1414, 6.2), Vector3(-1875.27, 1414, 6.9), Vector3(-1873.11, 1413, 6.2), Vector3(-1873.11, 1413, 6.9)
+	["evil"] = {
+					Vector3(-1875.75, 1416, 6.2), Vector3(-1875.75, 1416, 6.9),
+					Vector3(-1873.74, 1415, 6.2), Vector3(-1873.74, 1415, 6.9),
+					Vector3(-1875.27, 1414, 6.2), Vector3(-1875.27, 1414, 6.9),
+					Vector3(-1873.11, 1413, 6.2), Vector3(-1873.11, 1413, 6.9)
+				},
+	["state"] = {
+					Vector3(124.81, 1894.03, 17.5), Vector3(124.81, 1894.03, 18.2),
+					Vector3(123.61, 1897.85, 17.5), Vector3(123.61, 1897.85, 18.2),
+					Vector3(125.19, 1896.54, 17.5), Vector3(125.19, 1896.54, 18.2),
+					Vector3(125.37, 1892.65, 17.5), Vector3(125.37, 1892.65, 18.2)
+				}
 }
 
-function WeaponTruck:constructor(driver, weaponTable, totalAmount)
-	self.m_Truck = TemporaryVehicle.create(455, -1869.58, 1430.02, 7.62, 224)
+function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
+	self.m_Type = type
+	self.m_Truck = TemporaryVehicle.create(455, unpack(WeaponTruck.spawnPos[type]))
 	self.m_Truck:setData("WeaponTruck", true, true)
     self.m_Truck:setColor(0, 0, 0)
 	self.m_Truck:setFrozen(true)
@@ -76,13 +95,13 @@ end
 
 
 function WeaponTruck:timeUp()
-	outputChatBox(_("Der Waffentruck ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer),rootElement,255,0,0)
+	outputChatBox(_("Der %s ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 	self:delete()
 end
 
 -- Marker methodes/events
 function WeaponTruck:createLoadMarker()
-	self.m_LoadMarker = createMarker(-1873.56, 1434.15, 7.18,"corona",2)
+	self.m_LoadMarker = createMarker(WeaponTruck.loadMarkerPos[self.m_Type],"corona",2)
 	addEventHandler("onMarkerHit", self.m_LoadMarker, bind(self.Event_onLoadMarkerHit, self))
 end
 
@@ -91,31 +110,29 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 		if hitElement.type == "player" then
 			local faction = hitElement:getFaction()
 			if faction then
-				if faction:isEvilFaction() then
-					if (isPedInVehicle(hitElement) and #getAttachedElements(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
-						local depot = faction.m_Depot
-						local boxes
-						if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
-							boxes = getAttachedElements(self.m_Truck)
-							outputChatBox(_("Der Waffentruck wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
-							hitElement:sendInfo(_("Du hast den Matstruck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
-							self:Event_OnWeaponTruckExit(hitElement,0)
-						elseif hitElement:getPlayerAttachedObject() then
-							boxes = getAttachedElements(hitElement)
-							outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
-							hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
+				if (isPedInVehicle(hitElement) and #getAttachedElements(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
+					local depot = faction.m_Depot
+					local boxes
+					if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+						boxes = getAttachedElements(self.m_Truck)
+						outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
+						hitElement:sendInfo(_("Truck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
+						self:Event_OnWeaponTruckExit(hitElement,0)
+					elseif hitElement:getPlayerAttachedObject() then
+						boxes = getAttachedElements(hitElement)
+						outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
+						hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
+					end
+					outputChatBox("Es wurden folgende Waffen und Magazine in das Lager gelegt:",hitElement,255,255,255)
+					for key, value in pairs (boxes) do
+						if value:getModel() == 2912 then
+							depot:addWeaponsToDepot(value.content)
+							self:outputBoxContent(hitElement,key)
+							value:destroy()
 						end
-						outputChatBox("Es wurden folgende Waffen und Magazine in das Lager gelegt:",hitElement,255,255,255)
-						for key, value in pairs (boxes) do
-							if value:getModel() == 2912 then
-								depot:addWeaponsToDepot(value.content)
-								self:outputBoxContent(hitElement,key)
-								value:destroy()
-							end
-						end
-						if self:getRemainingBoxAmount() == 0 then
-							self:delete()
-						end
+					end
+					if self:getRemainingBoxAmount() == 0 then
+						self:delete()
 					end
 				end
 			end
@@ -127,14 +144,12 @@ function WeaponTruck:Event_onLoadMarkerHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		local faction = hitElement:getFaction()
 		if faction then
-			if faction:isEvilFaction() then
-				local box = hitElement:getPlayerAttachedObject()
-				if box then
-					hitElement:detachPlayerObject(box)
-					self:loadBoxOnWeaponTruck(hitElement,box)
-				else
-					hitElement:sendError(_("Du hast keine Kiste dabei!",hitElement))
-				end
+			local box = hitElement:getPlayerAttachedObject()
+			if box then
+				hitElement:detachPlayerObject(box)
+				self:loadBoxOnWeaponTruck(hitElement,box)
+			else
+				hitElement:sendError(_("Du hast keine Kiste dabei!",hitElement))
 			end
 		end
 	end
@@ -143,7 +158,7 @@ end
 --Box methodes
 function WeaponTruck:spawnBoxes()
 	for i=1,self.m_BoxesCount do
-		self:spawnBox(i, WeaponTruck.boxSpawnCords[i])
+		self:spawnBox(i, WeaponTruck.boxSpawnCords[self.m_Type][i])
 	end
 end
 
@@ -249,7 +264,7 @@ function WeaponTruck:Event_OnWeaponTruckDestroy()
 	if self and not self.m_Destroyed then
 		self.m_Destroyed = true
 		self:Event_OnWeaponTruckExit(self.m_Driver,0)
-		outputChatBox(_("Der Waffentruck ist fehlgeschlagen! (Zerstört)",self.m_StartPlayer),rootElement,255,0,0)
+		outputChatBox(_("Der %s ist fehlgeschlagen! (Zerstört)",self.m_StartPlayer, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 		self:delete()
 	end
 end
