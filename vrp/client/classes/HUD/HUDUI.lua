@@ -168,7 +168,7 @@ function HUDUI:drawDefault()
 	else
 		dxDrawRectangle(screenWidth-0.25*screenWidth,0.14*screenHeight,(0.195*screenWidth)*-karma/MAX_KARMA_LEVEL,0.041*screenHeight,tocolor(160,75,75,220))
 	end
-	local karma = "Karma "..(karma >= 0 and "+" or "")..math.floor(karma)
+	local karma = "Karma: "..(karma >= 0 and "+" or "")..math.floor(karma)
 	dxDrawText(karma,(screenWidth-0.25*screenWidth)+((0.195*screenWidth)/2-(dxGetTextWidth(karma, 0.45, self.m_Font)/2)),0.145*screenHeight,0,0,Color.White,0.45,self.m_Font)
 
 	-- Wantedlevel
