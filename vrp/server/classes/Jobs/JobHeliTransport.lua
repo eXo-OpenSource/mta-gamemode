@@ -34,6 +34,8 @@ function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)
 	client:sendInfo(_("Bitte belade deinen Helikopter am Ladepunkt!", client))
 	addEventHandler("onVehicleExplode", vehicle, bind(self.onCargoBobExplode, self))
 	addEventHandler("onVehicleExit", vehicle, bind(self.onCargoBobExit, self))
+	addEventHandler("onVehicleDestroy", vehicle, bind(self.onCargoBobDestroy, self))
+
 end
 
 function JobHeliTransport:onCargoBobExplode()
@@ -51,6 +53,10 @@ function JobHeliTransport:onCargoBobExit(player)
 	self.m_VehData[source] = nil
 
 	player:triggerEvent("endHeliTransport")
+end
+
+function JobHeliTransport:onCargoBobDestroy()
+	if isElement(self.m_VehData[source].package) then self.m_VehData[source].package:destroy() end
 end
 
 function JobHeliTransport:onPickupLoad()
