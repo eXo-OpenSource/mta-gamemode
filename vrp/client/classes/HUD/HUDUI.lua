@@ -176,17 +176,24 @@ function HUDUI:drawKarmaBar(height, fontSize)
 	local left, top = screenWidth-0.25*screenWidth, 0.14*screenHeight
 	local width = 0.195*screenWidth
 
-	local karma = localPlayer:getKarma() or 0
-	dxDrawRectangle(left, top, width, height,karma >= 0 and tocolor(0,50,0,220) or tocolor(50,0,0,220))
+	local karma = math.floor(localPlayer:getKarma()) or 0
+
 	local barWidth = width*math.abs(karma)/MAX_KARMA_LEVEL/2
-	local vz = ""
-	if karma >= 0 then
-		dxDrawRectangle(left+width/2, top, barWidth, height,tocolor(75,160,75,220))
-		vz = "+"
+	if karma == 0 then
+		dxDrawRectangle(left, top, width/2-1, height,tocolor(0,0,0,150))
+		dxDrawRectangle(left+width/2+1, top, width/2-1, height, tocolor(0,0,0,150))
+		dxDrawText("Karma neutral", left, top, left+width, top+height, Color.White, fontSize, "default-bold", "center", "center")
+	elseif karma > 0 then
+		dxDrawRectangle(left, top, width/2-1, height,tocolor(0,0,0,150))
+		dxDrawRectangle(left+width/2+1, top, width/2-1, height, tocolor(0,50,0,220))
+		dxDrawRectangle(left+width/2+1, top, barWidth, height,tocolor(75,160,75,220))
+		dxDrawText("Karma: +"..math.abs(karma), left+width/2+1, top, left+width, top+height, Color.White, fontSize, "default-bold", "center", "center")
 	else
-		dxDrawRectangle((left + width/2)-barWidth, top, barWidth, height,tocolor(160,75,75,220))
+		dxDrawRectangle(left, top, width/2-1, height,tocolor(50,0,0,220))
+		dxDrawRectangle(left+width/2+1, top, width/2-1, height, tocolor(0,0,0,150))
+		dxDrawRectangle((left + width/2)-barWidth-1, top, barWidth, height,tocolor(160,75,75,220))
+		dxDrawText("Karma: -"..math.abs(karma), left, top, left+width/2-1, top+height, Color.White, fontSize, "default-bold", "center", "center")
 	end
-	dxDrawText("Karma: "..vz..math.floor(karma), left, top, left+width, top+height, Color.White, fontSize, "default-bold", "center", "center")
 end
 
 function HUDUI:drawDefaultHealthArmor()
