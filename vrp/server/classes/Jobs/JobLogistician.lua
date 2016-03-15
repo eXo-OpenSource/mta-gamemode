@@ -36,12 +36,14 @@ function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
 	addEventHandler("onVehicleExit", vehicle, bind(self.onVehicleExit, self))
 end
 
-function JobLogistician:onVehicleExit(player)
-	player:setPosition(player:getData("Logistican:VehicleSpawn"))
-	player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
-	source:destroy()
-	if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
-	player:setData("Logistician:TargetMarker", nil)
+function JobLogistician:onVehicleExit(player, seat)
+	if seat == 0 then
+		player:setPosition(player:getData("Logistican:VehicleSpawn"))
+		player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
+		source:destroy()
+		if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
+		player:setData("Logistician:TargetMarker", nil)
+	end
 end
 
 function JobLogistician:onVehicleDestroy(player)
@@ -57,7 +59,7 @@ function JobLogistician:setNewDestination(player, targetMarker, crane)
 		delete(player:getData("Logistician:Blip"))
 	end
 
-	local blip = Blip:new("Waypoint.png", pos.x, pos.y)
+	local blip = Blip:new("Waypoint.png", pos.x, pos.y, player)
 	blip:setStreamDistance(10000)
 	player:setData("Logistician:Blip", blip)
 
