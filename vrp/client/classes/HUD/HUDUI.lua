@@ -46,6 +46,9 @@ function HUDUI:draw()
 		self:drawDefault()
 		if self.m_DefaultHealhArmor == true then
 			self:drawDefaultHealthArmor()
+			self:drawKarmaBar(0.0325*screenHeight, 1.2)
+		else
+			self:drawKarmaBar(0.0425*screenHeight, 1.8)
 		end
 	elseif self.m_UIMode == UIStyle.eXo then
 
@@ -160,43 +163,67 @@ function HUDUI:drawDefault()
 	local sMunition = ("%d - %d"):format(inClip,totalAmmo-inClip)
 	dxDrawText(sMunition,screenWidth-0.276*screenWidth-(dxGetTextWidth(sMunition,1,self.m_Font)/2), -85+addY+screenHeight*0.015, 0.153*screenWidth,0.092*screenHeight,Color.White,1,self.m_Font)
 
-	-- Karmabar
-	local karma = localPlayer:getKarma() or 0
-	dxDrawRectangle(screenWidth-0.25*screenWidth, 0.14*screenHeight, 0.195*screenWidth, 0.0425*screenHeight,karma >= 0 and tocolor(0,50,0,220) or tocolor(50,0,0,220))
-	if karma >= 0 then
-		dxDrawRectangle(screenWidth-0.25*screenWidth,0.14*screenHeight,(0.195*screenWidth)*karma/MAX_KARMA_LEVEL,0.041*screenHeight,tocolor(75,160,75,220))
-	else
-		dxDrawRectangle(screenWidth-0.25*screenWidth,0.14*screenHeight,(0.195*screenWidth)*-karma/MAX_KARMA_LEVEL,0.041*screenHeight,tocolor(160,75,75,220))
-	end
-	local karma = "Karma: "..(karma >= 0 and "+" or "")..math.floor(karma)
-	dxDrawText(karma,(screenWidth-0.25*screenWidth)+((0.195*screenWidth)/2-(dxGetTextWidth(karma, 0.45, self.m_Font)/2)),0.145*screenHeight,0,0,Color.White,0.45,self.m_Font)
 
 	-- Wantedlevel
-	dxDrawRectangle(screenWidth-0.05*screenWidth,0.14*screenHeight,0.05*screenWidth,0.093*screenHeight,tocolor(0,0,0,150))
-	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.145*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/HUD/wanted.png", 0, 0, 0, getPlayerWantedLevel() > 0 and Color.Yellow or Color.White)
-	dxDrawText     (getPlayerWantedLevel(),screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-5,0.148*screenHeight+(0.09*screenHeight/2),0,0,Color.White,0.5,self.m_Font)
+	dxDrawRectangle(screenWidth-0.05*screenWidth,0.14*screenHeight,0.05*screenWidth,0.105*screenHeight,tocolor(0,0,0,150))
+	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.155*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/HUD/wanted.png", 0, 0, 0, getPlayerWantedLevel() > 0 and Color.Yellow or Color.White)
+	dxDrawText     (getPlayerWantedLevel(),screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-5,0.16*screenHeight+(0.09*screenHeight/2),0,0,Color.White,0.5,self.m_Font)
 
 	self:drawLevelRect()
+end
+
+function HUDUI:drawKarmaBar(height, fontSize)
+	local left, top = screenWidth-0.25*screenWidth, 0.14*screenHeight
+	local width = 0.195*screenWidth
+
+	local karma = localPlayer:getKarma() or 0
+	dxDrawRectangle(left, top, width, height,karma >= 0 and tocolor(0,50,0,220) or tocolor(50,0,0,220))
+	local barWidth = width*math.abs(karma)/MAX_KARMA_LEVEL/2
+	local vz = ""
+	if karma >= 0 then
+		dxDrawRectangle(left+width/2, top, barWidth, height,tocolor(75,160,75,220))
+		vz = "+"
+	else
+		dxDrawRectangle((left + width/2)-barWidth, top, barWidth, height,tocolor(160,75,75,220))
+	end
+	dxDrawText("Karma: "..vz..math.floor(karma), left, top, left+width, top+height, Color.White, fontSize, "default-bold", "center", "center")
 end
 
 function HUDUI:drawDefaultHealthArmor()
 	local health = localPlayer:getHealth()
 	local color = tocolor(0,150,50) -- Todo find better solution
-	if health < 50 then color = tocolor(255,128,50) end
-	if health < 25 then color = tocolor(150,0,0) end
+	local blink = false
+	if health < 50 then
+		color = tocolor(255,128,50)
+		if health < 25 then
+			color = tocolor(150,0,0)
+			if health < 15 then blink = true end
+		end
+	end
 
-	dxDrawRectangle(screenWidth-0.25*screenWidth, 0.185*screenHeight, 0.195*screenWidth, 0.0225*screenHeight,tocolor(0,0,0,150))
-	dxDrawRectangle(screenWidth-0.25*screenWidth,0.185*screenHeight,(0.195*screenWidth)*health/100,0.0225*screenHeight, color)
+	local left, top = screenWidth-0.25*screenWidth, 0.175*screenHeight
+	local width, height = 0.195*screenWidth, 0.0325*screenHeight
+
+	dxDrawRectangle(left, top, width, height,tocolor(0,0,0,150))
+	if blink == true then
+		if math.floor(getRealTime().timestamp/2) == getRealTime().timestamp/2 then
+			dxDrawRectangle(left, top, width*health/100, height, color)
+		end
+	else
+		dxDrawRectangle(left, top, width*health/100, height, color)
+	end
 
 	health = "Leben: "..math.floor(health).." %"
-	dxDrawText(health,(screenWidth-0.25*screenWidth)+((0.195*screenWidth)/2-(dxGetTextWidth(health, 0.3, self.m_Font)/2)),0.185*screenHeight,0,0,Color.White,0.3,self.m_Font)
+	dxDrawText(health, left , top, left+width, top+height, Color.White, 1.2, "default-bold", "center", "center")
+
+	top =  0.21*screenHeight
 
 	local armor = localPlayer:getArmor()
-	dxDrawRectangle(screenWidth-0.25*screenWidth, 0.21*screenHeight, 0.195*screenWidth, 0.0225*screenHeight,tocolor(0, 0, 0, 150))
-	dxDrawRectangle(screenWidth-0.25*screenWidth,0.21*screenHeight,(0.195*screenWidth)*armor/100,0.0225*screenHeight, tocolor(0, 0, 128))
+	dxDrawRectangle(left, top, width, height, tocolor(0, 0, 0, 150))
+	dxDrawRectangle(left, top, width*armor/100, height, tocolor(0, 0, 128))
 
 	local armor = "Schutzweste: "..math.floor(armor).." %"
-	dxDrawText(armor,(screenWidth-0.25*screenWidth)+((0.195*screenWidth)/2-(dxGetTextWidth(health, 0.3, self.m_Font)/2)),0.21*screenHeight,0,0,Color.White,0.3,self.m_Font)
+	dxDrawText(armor, left , top, left+width, top+height, Color.White, 1.2, "default-bold", "center", "center")
 end
 
 function HUDUI:drawRedDot()
