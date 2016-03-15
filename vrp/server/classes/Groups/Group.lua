@@ -286,18 +286,23 @@ function Group:distributeMoney(amount)
 end
 
 function Group:phoneCall(caller)
-	for k, player in ipairs(self:getOnlinePlayers()) do
-		if not player:getPhonePartner() then
-			player:sendShortMessage(_("Der Spieler %s ruft eure Firma/Gang (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
-			bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+	if #self:getOnlinePlayers() > 0 then
+		for k, player in ipairs(self:getOnlinePlayers()) do
+			if not player:getPhonePartner() then
+				player:sendShortMessage(_("Der Spieler %s ruft eure Firma/Gang (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
+				bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+			end
 		end
+	else
+		caller:sendShortMessage(_("Es ist aktuell kein Spieler der Firma/Gang online!", caller))
+		caller:triggerEvent("callBusy", caller)
 	end
 end
 
 function Group:phoneTakeOff(player, key, state, caller)
 	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
-	caller:triggerEvent("callAnswer", player, voiceCall)
-	player:triggerEvent("callAnswer", caller, voiceCall)
+	caller:triggerEvent("callAnswer", player, false)
+	player:triggerEvent("callAnswer", caller, false)
 	caller:setPhonePartner(player)
 	player:setPhonePartner(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
