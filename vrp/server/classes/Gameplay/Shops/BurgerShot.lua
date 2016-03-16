@@ -8,16 +8,8 @@
 BurgerShot = inherit(Shop)
 
 function BurgerShot:constructor(id, position, typeData, dimension, robable)
-	local interior, intPosition = unpack(typeData["Interior"])
-	local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
+	self:createShop(id, position, typeData, dimension, robable)
 
-	InteriorEnterExit:new(position, intPosition, 0, 0, interior, dimension)
-
-	self:createShopPed(pedSkin, pedPosition, pedRotation, interior, dimension, robable)
-
-	self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 200)
-	self.m_Marker:setInterior(interior)
-	self.m_Marker:setDimension(dimension)
 	self.m_Type = "BurgerShot"
 	self.m_Menues = {
 		["Small"] = {["Name"] = "Kleines Menü", ["Price"] = 30, ["Health"] = 30},

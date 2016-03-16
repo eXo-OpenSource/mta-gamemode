@@ -15,8 +15,6 @@ function PhoneInteraction:constructor()
 	addEventHandler("callAnswer", root, bind(self.callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.callReplace, self))
 	addEventHandler("callStartSpecial", root, bind(self.callStartSpecial, self))
-
-
 end
 
 function PhoneInteraction:callStart(player, voiceEnabled)
