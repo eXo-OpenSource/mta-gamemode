@@ -95,7 +95,6 @@
 	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
-	<script src="server/classes/Inventory/ItemShops.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsWeed.lua" type="server"/>
 
 	<!-- Bank System -->
@@ -130,7 +129,10 @@
 	<script src="server/classes/Gameplay/Train/Train.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Shops/ShopManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Shops/FoodShop.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/Shop.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ShopNPC.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/RobableShop.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/ItemShop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/PizzaStack.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/BurgerShot.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/CluckinBell.lua" type="server"/>
@@ -211,9 +213,6 @@
 	<script src="server/classes/Jobs/JobHeliTransport.lua" type="server"/>
 	<script src="server/classes/Jobs/JobForkLift.lua" type="server"/>
 
-	<!-- NPCs and shops -->
-	<script src="server/classes/Gameplay/ShopNPC.lua" type="server"/>
-	<script src="server/classes/Gameplay/RobableShop.lua" type="server"/>
 
 	<!-- AI -->
 	<script src="server/classes/AI/ActorManager.lua" type="server"/>

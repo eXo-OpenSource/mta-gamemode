@@ -26,5 +26,13 @@ SHOP_TYPES = {
 		["Ped"] = {209, Vector3(380.67, -189.11, 1000.63), 247},
 		["Marker"] = Vector3(379.34, -190.71, 999.9),
 		["Class"] = RustyBrown
+	},
+	[5] = {
+		["Name"] = "24/7",
+		["Interior"] = {18, Vector3(-30.98, -91.9, 1003.5)},
+		["Ped"] = {202, Vector3(-28.15, -91.64, 1003.55), 0},
+		["Marker"] = Vector3(-28, -89.9, 1002.7),
+		["Class"] = ItemShop
 	}
+
 }

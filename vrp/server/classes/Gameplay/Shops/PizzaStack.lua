@@ -5,7 +5,7 @@
 -- *  PURPOSE:     PizzaStack Class
 -- *
 -- ****************************************************************************
-PizzaStack = inherit(FoodShop)
+PizzaStack = inherit(Shop)
 
 function PizzaStack:constructor(id, position, typeData, dimension, robable)
 	local interior, intPosition = unpack(typeData["Interior"])

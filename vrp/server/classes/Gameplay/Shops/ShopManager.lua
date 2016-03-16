@@ -13,10 +13,10 @@ local BURGER_SHOT_DIMS = {0, 1, 2, 3, 4, 5}
 
 function ShopManager:constructor()
 	self:loadShops()
-
-	addRemoteEvents{"foodShopBuyMenu", "foodShopBuyItem"}
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem"}
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
-	addEventHandler("foodShopBuyItem", root, bind(self.foodShopBuyItem, self))
+	addEventHandler("shopBuyItem", root, bind(self.buyItem, self))
+
 end
 
 function ShopManager:loadShops()
@@ -46,7 +46,10 @@ function ShopManager:foodShopBuyMenu(shop, menu)
 	end
 end
 
-function ShopManager:foodShopBuyItem(shop, item)
+function ShopManager:buyItem(shop, item, amount)
+	if not item then return end
+	if not amount then amount = 1 end
+
 	if shop.m_Items[item] then
 		if client:getMoney() >= shop.m_Items[item] then
 			if client:getInventory():getFreePlacesForItem(item) >= 1 then
@@ -60,6 +63,6 @@ function ShopManager:foodShopBuyItem(shop, item)
 			client:sendError(_("Du hast nicht genug Geld dabei!", client))
 		end
 	else
-		client:sendError(_("Internal Error! Menu not found!", client))
+		client:sendError(_("Internal Error! Item not found!", client))
 	end
 end

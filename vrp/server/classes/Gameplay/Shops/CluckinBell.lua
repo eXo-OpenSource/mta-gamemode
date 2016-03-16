@@ -5,7 +5,7 @@
 -- *  PURPOSE:     CluckinBell Class
 -- *
 -- ****************************************************************************
-CluckinBell = inherit(FoodShop)
+CluckinBell = inherit(Shop)
 
 function CluckinBell:constructor(id, position, typeData, dimension, robable)
 	local interior, intPosition = unpack(typeData["Interior"])

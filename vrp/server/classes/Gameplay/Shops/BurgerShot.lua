@@ -5,7 +5,7 @@
 -- *  PURPOSE:     BurgerShot Class
 -- *
 -- ****************************************************************************
-BurgerShot = inherit(FoodShop)
+BurgerShot = inherit(Shop)
 
 function BurgerShot:constructor(id, position, typeData, dimension, robable)
 	local interior, intPosition = unpack(typeData["Interior"])
