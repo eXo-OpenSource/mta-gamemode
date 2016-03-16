@@ -63,8 +63,8 @@ function FoodShopGUI:onHide()
 	end
 end
 
-function FoodShopGUI:refreshFoodShopMenu(shop, type, menues, items)
-	self.m_Shop = shop
+function FoodShopGUI:refreshFoodShopMenu(shopId, type, menues, items)
+	self.m_Shop = shopId
 	local item
 	self.m_FoodList:clear()
 	self.m_FoodList:addItemNoClick("zum hier essen", "")
@@ -92,7 +92,7 @@ function FoodShopGUI:buy()
 	if  item.Type == "Menu" then
 		triggerServerEvent("foodShopBuyMenu", resourceRoot, self.m_Shop, item.Id)
 	else
-		triggerServerEvent("foodShopBuyItem", resourceRoot, self.m_Shop, item.Id)
+		triggerServerEvent("shopBuyItem", resourceRoot, self.m_Shop, item.Id)
 	end
 end
 

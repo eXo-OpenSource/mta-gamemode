@@ -33,8 +33,8 @@ function ItemShopGUI:constructor()
 
 end
 
-function ItemShopGUI:refreshItemShopGUI(shop, items)
-	self.m_Shop = shop
+function ItemShopGUI:refreshItemShopGUI(shopId, items)
+	self.m_Shop = shopId
 	local item
 	local itemData = Inventory:getSingleton():getItemData()
 	self.m_Grid:clear()

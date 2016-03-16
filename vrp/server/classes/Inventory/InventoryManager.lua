@@ -20,7 +20,7 @@ function InventoryManager:constructor()
 	self.m_ItemData = self:loadItems()
 	self.Map = {}
 
-	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "wegwerfItem", "c_setItemPlace", "refreshInventory"}
+	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "throwItem", "c_setItemPlace", "refreshInventory"}
 	addEventHandler("changePlaces", root, bind(self.Event_changePlaces, self))
 	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
 	addEventHandler("c_stackItems", root, bind(self.Event_c_stackItems, self))

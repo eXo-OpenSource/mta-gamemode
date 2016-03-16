@@ -11,7 +11,15 @@ function Shop:constructor()
 
 end
 
-function Shop:createShop(id, position, typeData, dimension, robable)
+function Shop:create(id, name, position, typeData, dimension, robable, money, lastRob, owner, price)
+	self.m_Id = id
+	self.m_Name = name
+	self.m_BuyAble = price > 0 and true or false
+	self.m_Price = price
+	self.m_LastRob = lastRob
+	self.m_OwnerId = owner
+	self.m_Money = money
+
 	local interior, intPosition = unpack(typeData["Interior"])
 	local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
 
@@ -33,13 +41,32 @@ end
 function Shop:onFoodMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		hitElement:triggerEvent("showFoodShopMenu")
-		triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self, self.m_Type, self.m_Menues, self.m_Items)
+		triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self.m_Id, self.m_Type, self.m_Menues, self.m_Items)
 	end
 end
 
 function Shop:onItemMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		hitElement:triggerEvent("showItemShopGUI")
-		triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self, self.m_Items)
+		triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
+	end
+end
+
+function Shop:giveMoney(amount, reason)
+	if amount > 0 then self.m_Money = self.m_Money + amount end
+end
+
+function Shop:takeMoney(amount, reason)
+	if amount > 0 then self.m_Money = self.m_Money - amount end
+end
+
+function Shop:getMoney(amount)
+	return self.m_Money
+end
+
+function Shop:save()
+	if sql:queryExec("UPDATE ??_shops SET Money = ?, LastRob = ?, Owner = ? WHERE Id = ?", sql:getPrefix(), self.m_Money, self.m_LastRob, self.m_Owner, self.m_Id) then
+	else
+		outputDebug(("Failed to save Shop '%s' (Id: %d)"):format(self.m_Name, self.m_Id))
 	end
 end
