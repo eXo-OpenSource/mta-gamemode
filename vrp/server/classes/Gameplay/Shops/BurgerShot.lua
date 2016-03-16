@@ -7,9 +7,18 @@
 -- ****************************************************************************
 BurgerShot = inherit(FoodShop)
 
-function BurgerShot:constructor(dimension)
-	self.m_Marker = createMarker(Vector3(376.60, -68.03, 1000.8), "cylinder", 1, 255, 255, 0, 200)
-	self.m_Marker:setInterior(10)
+function BurgerShot:constructor(id, position, typeData, dimension, robable)
+	local interior, intPosition = unpack(typeData["Interior"])
+	local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
+
+	InteriorEnterExit:new(position, intPosition, 0, 0, interior, dimension)
+	if robable == 1 then
+		RobableShop:new(pedPosition, pedRotation, pedSkin, interior, dimension)
+	else
+		createPed(pedSkin, pedPosition, pedRotation)
+	end
+	self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 200)
+	self.m_Marker:setInterior(interior)
 	self.m_Marker:setDimension(dimension)
 	self.m_Type = "BurgerShot"
 	self.m_Menues = {
@@ -18,6 +27,7 @@ function BurgerShot:constructor(dimension)
 		["Big"] = {["Name"] = "Großes Menü", ["Price"] = 80, ["Health"] = 80},
 		["Healthy"] = {["Name"] = "Vegetarier Menü", ["Price"] = 50, ["Health"] = 50}
 	}
+	self.m_Items = {["Burger"] = 50}
 
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onFoodMarkerHit, self))
 end

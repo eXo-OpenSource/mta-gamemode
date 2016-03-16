@@ -7,9 +7,18 @@
 -- ****************************************************************************
 CluckinBell = inherit(FoodShop)
 
-function CluckinBell:constructor(dimension)
-	self.m_Marker = createMarker(Vector3(368.36, -6.42, 1000.9), "cylinder", 1, 255, 255, 0, 200)
-	self.m_Marker:setInterior(9)
+function CluckinBell:constructor(id, position, typeData, dimension, robable)
+	local interior, intPosition = unpack(typeData["Interior"])
+	local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
+
+	InteriorEnterExit:new(position, intPosition, 0, 0, interior, dimension)
+	if robable == 1 then
+		RobableShop:new(pedPosition, pedRotation, pedSkin, interior, dimension)
+	else
+		createPed(pedSkin, pedPosition, pedRotation)
+	end
+	self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 200)
+	self.m_Marker:setInterior(interior)
 	self.m_Marker:setDimension(dimension)
 	self.m_Type = "CluckinBell"
 	self.m_Menues = {

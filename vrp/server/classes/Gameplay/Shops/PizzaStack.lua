@@ -7,9 +7,18 @@
 -- ****************************************************************************
 PizzaStack = inherit(FoodShop)
 
-function PizzaStack:constructor(dimension)
-	self.m_Marker = createMarker(Vector3(374.68, -118.80, 1000.6), "cylinder", 1, 255, 255, 0, 200)
-	self.m_Marker:setInterior(5)
+function PizzaStack:constructor(id, position, typeData, dimension, robable)
+	local interior, intPosition = unpack(typeData["Interior"])
+	local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
+
+	InteriorEnterExit:new(position, intPosition, 0, 0, interior, dimension)
+	if robable == 1 then
+		RobableShop:new(pedPosition, pedRotation, pedSkin, interior, dimension)
+	else
+		createPed(pedSkin, pedPosition, pedRotation)
+	end
+	self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 200)
+	self.m_Marker:setInterior(interior)
 	self.m_Marker:setDimension(dimension)
 	self.m_Type = "PizzaStack"
 	self.m_Menues = {

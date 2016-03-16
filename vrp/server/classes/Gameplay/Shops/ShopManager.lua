@@ -12,24 +12,24 @@ local CLUCKIN_BELL_DIMS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 local BURGER_SHOT_DIMS = {0, 1, 2, 3, 4, 5}
 
 function ShopManager:constructor()
-	for index, key in pairs(PIZZA_STACK_DIMS) do
-		PizzaStack:new(key)
-	end
-
-	for index, key in pairs(CLUCKIN_BELL_DIMS) do
-		CluckinBell:new(key)
-	end
-
-	for index, key in pairs(BURGER_SHOT_DIMS) do
-		BurgerShot:new(key)
-	end
-
-	RustyBrown:new(0)
+	self:loadShops()
 
 	addRemoteEvents{"foodShopBuyMenu", "foodShopBuyItem"}
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
 	addEventHandler("foodShopBuyItem", root, bind(self.foodShopBuyItem, self))
+end
 
+function ShopManager:loadShops()
+	local result = sql:queryFetch("SELECT * FROM ??_shops", sql:getPrefix())
+    for k, row in ipairs(result) do
+		if not SHOP_TYPES[row.Type] then outputDebug("Error Loading Shop ID "..row.Id.." | Invalid Type") end
+
+		--local newName = SHOP_TYPES[row.Type]["Name"].." "..getZoneName(row.PosX, row.PosY, row.PosZ)
+		--sql:queryExec("UPDATE ??_shops SET Name = ? WHERE Id = ?", sql:getPrefix(), newName ,row.Id)
+
+		SHOP_TYPES[row.Type]["Class"]:new(row.Id, Vector3(row.PosX, row.PosY, row.PosZ), SHOP_TYPES[row.Type], row.Dimension, row.robable)
+
+	end
 end
 
 function ShopManager:foodShopBuyMenu(shop, menu)
