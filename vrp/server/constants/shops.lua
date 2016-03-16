@@ -15,7 +15,7 @@ SHOP_TYPES = {
 	},
 	[3] = {
 		["Name"] = "Pizza Stack",
-		["Interior"] = {5, Vector3(365.67, -11.61, 1000.87)},
+		["Interior"] = {5, Vector3(372.25, -133.52, 1001.49)},
 		["Ped"] = {155, Vector3(374.78, -117.28, 1001.49), 180},
 		["Marker"] = Vector3(374.68, -118.80, 1000.6),
 		["Class"] = PizzaStack

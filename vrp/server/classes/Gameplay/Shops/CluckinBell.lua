@@ -12,11 +12,9 @@ function CluckinBell:constructor(id, position, typeData, dimension, robable)
 	local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
 
 	InteriorEnterExit:new(position, intPosition, 0, 0, interior, dimension)
-	if robable == 1 then
-		RobableShop:new(pedPosition, pedRotation, pedSkin, interior, dimension)
-	else
-		createPed(pedSkin, pedPosition, pedRotation)
-	end
+
+	self:createShopPed(pedSkin, pedPosition, pedRotation, interior, dimension, robable)
+
 	self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 200)
 	self.m_Marker:setInterior(interior)
 	self.m_Marker:setDimension(dimension)
