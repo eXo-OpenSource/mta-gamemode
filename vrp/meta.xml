@@ -37,6 +37,8 @@
 	<script src="shared/classes/UnitTest.lua" type="shared"/>
 	<script src="shared/classes/DimensionManager.lua" type="shared"/>
 	<script src="shared/classes/Thread.lua" type="shared"/>
+	<script src="shared/classes/Promise.lua" type="shared"/>
+
 
 	<!-- Server -->
 	<script src="server/utils.lua" type="server"/>
