@@ -7,6 +7,8 @@
 -- ****************************************************************************
 RobableShop = inherit(Object)
 
+addRemoteEvents{"robableShopGiveBagFromCrash"}
+
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	-- Create NPC(s)
 	self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
@@ -17,6 +19,8 @@ function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interi
 			setTimer(function() self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension) end, 5*60*1000, 1)
 		end
 	)
+
+
 end
 
 function RobableShop:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
@@ -39,52 +43,7 @@ function RobableShop:Ped_Targetted(ped, attacker)
 		local shop = ped.Shop
 		self.m_Shop = shop
 		if shop:getMoney() >= 250 then
-			PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
-			ActionsCheck:getSingleton():setAction("Shop-Überfall")
-
-			-- Play an alarm
-			local pos = ped:getPosition()
-			triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z, ped:getDimension())
-
-			-- Report the crime
-			attacker:reportCrime(Crime.ShopRob)
-
-			self.m_Bag = createObject(1550, pos)
-			self.m_Bag.Money = 0
-			self:giveBag(attacker)
-
-			local evilPos = ROBABLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_SHOP_EVIL_TARGETS)]
-			local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
-
-			self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y)
-			self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y)
-			self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
-			self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
-			self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
-			addEventHandler("onMarkerHit", self.m_EvilMarker, self.m_onDeliveryMarkerHit)
-			addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
-
-			setTimer(
-				function()
-					if isElement(attacker) then
-						if attacker:getTarget() == ped then
-							local rnd = math.random(5, 10)
-							if shop:getMoney() >= rnd then
-								--shop:takeMoney(rnd)
-								self.m_Bag.Money = self.m_Bag.Money + rnd
-								attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
-							else
-								killTimer(sourceTimer)
-								attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
-							end
-						end
-						return
-					end
-					killTimer(sourceTimer)
-				end,
-				1000,
-				60
-			)
+			self:startRob(shop, attacker, ped)
 		else
 			attacker:sendError("Es ist nicht genug Geld zum ausrauben in der Shopkasse!", attacker)
 		end
@@ -93,16 +52,56 @@ function RobableShop:Ped_Targetted(ped, attacker)
 	end
 end
 
-function RobableShop:giveBag(player)
-	self.m_Bag:setInterior(player:getInterior())
-	self.m_Bag:setDimension(player:getDimension())
-	player:attachPlayerObject(self.m_Bag, true)
-	if isElement(shopBlib) then destroyElement(shopBlib) end
-	self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
-	self.m_BagBlip:attach(player)
-	--addEventHandler ( "onPlayerDamage", player, )
-	--addEventHandler ( "onPlayerWasted", player, )
-	--addEventHandler ( "onPlayerVehicleEnter", player, )
+function RobableShop:startRob(shop, attacker, ped)
+	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
+	ActionsCheck:getSingleton():setAction("Shop-Überfall")
+
+	-- Play an alarm
+	local pos = ped:getPosition()
+	triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z, ped:getDimension())
+
+	-- Report the crime
+	attacker:reportCrime(Crime.ShopRob)
+
+	self.m_Bag = createObject(1550, pos)
+	self.m_Bag.Money = 0
+	self:giveBag(attacker)
+
+	local evilPos = ROBABLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_SHOP_EVIL_TARGETS)]
+	local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
+
+	self.m_Gang = attacker:getGroup()
+	self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y)
+	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y)
+	self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
+	self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
+	self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
+	addEventHandler("onMarkerHit", self.m_EvilMarker, self.m_onDeliveryMarkerHit)
+	addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
+	self.m_onCrash = bind(self.onCrash, self)
+	addEventHandler("robableShopGiveBagFromCrash", root, self.onCrash)
+
+	setTimer(
+		function()
+			if isElement(attacker) then
+				if attacker:getTarget() == ped then
+					local rnd = math.random(5, 10)
+					if shop:getMoney() >= rnd then
+						--shop:takeMoney(rnd)
+						self.m_Bag.Money = self.m_Bag.Money + rnd
+						attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
+					else
+						killTimer(sourceTimer)
+						attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
+					end
+				end
+				return
+			end
+			killTimer(sourceTimer)
+		end,
+		1000,
+		60
+	)
 end
 
 function RobableShop:stopRob()
@@ -113,7 +112,90 @@ function RobableShop:stopRob()
 	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
 	delete(self.m_BagBlip)
+	removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
 
+end
+
+function RobableShop:giveBag(player)
+
+	self.m_Bag:setInterior(player:getInterior())
+	self.m_Bag:setDimension(player:getDimension())
+	player:attachPlayerObject(self.m_Bag, true)
+	if self.m_BagBlip then self.m_BagBlip:destroy() end
+	self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
+	self.m_BagBlip:attach(player)
+
+	self.m_onDamageFunc = bind(self.onDamage, self)
+	addEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
+	self.m_onWastedFunc = bind(self.onWasted, self)
+	addEventHandler ("onPlayerWasted", player, self.m_onWastedFunc)
+	self.m_onVehicleEnterFunc = bind(self.onVehicleEnter, self)
+	addEventHandler ("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
+end
+
+function RobableShop:removeBag(player)
+	removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
+	player:detachPlayerObject(self.m_Bag)
+end
+
+function RobableShop:checkBagAllowed(player)
+	if player:getGroup() == self.m_Gang or player:getFaction():isStateFaction() then
+		return true
+	end
+	return false
+end
+
+function RobableShop:onDamage(attacker, weapon)
+	if isElement(attacker) and self:checkBagAllowed(attacker) then
+		if weapon == 0 then
+			if source:getPlayerAttachedObject() and source:getPlayerAttachedObject() == self.m_Bag then
+				self:removeBag(source)
+				self:giveBag(attacker)
+			end
+		end
+	end
+end
+
+function RobableShop:onWasted()
+	local pos = source:getPosition()
+	pos.z = pos.z-1
+	self:removeBag(source)
+	self.m_Bag:setPosition(pos)
+	local beutePickup = createPickup(pos,3,1274)
+	addEventHandler ( "onPickupHit", beutePickup,
+		function(hitElement)
+			if getElementType(hitElement) == "player" then
+				if self:checkBagAllowed(hitElement) then
+					self:giveBag(attacker)
+					destroyElement(source)
+				else
+					hitElement:sendError(_("Du darfst die Beute nicht besitzen!", hitElement))
+				end
+			end
+		end
+	)
+end
+
+function RobableShop:onVehicleEnter(veh)
+	triggerClientEvent(source, "robableShopEnableVehicleCollision", source, veh)
+	self.m_onVehicleExitFunc = bind(self.onVehicleExit, self)
+	addEventHandler("onPlayerVehicleExit", source, self.m_onVehicleExitFunc)
+end
+
+function RobableShop:onVehicleExit(veh)
+	triggerClientEvent(source, "robableShopDisableVehicleCollision", source, veh)
+	removeEventHandler("onPlayerVehicleExit", source, self.m_onVehicleExitFunc)
+end
+
+function RobableShop:onCrash(player)
+	if client:getPlayerAttachedObject() and client:getPlayerAttachedObject() == self.m_Bag then
+		if self:checkBagAllowed(player) then
+			self:removeBag(client)
+			self:giveBag(player)
+		else
+			player:sendError(_("Du darfst die Beute nicht besitzen!", player))
+		end
+	end
 end
 
 function RobableShop:onDeliveryMarkerHit(hitElement, dim)

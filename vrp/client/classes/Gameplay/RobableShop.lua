@@ -5,7 +5,23 @@
 -- *  PURPOSE:     Robable shop class (client)
 -- *
 -- ****************************************************************************
---RobableShop = inherit(Object)
+RobableShop = inherit(Object)
+RobableShop.CrashBreak = false
+
+function RobableShop.onVehicleCrash(veh)
+    if source == localPlayer:getOccupiedVehicle() then
+		if isElement(veh) and veh:getType() == "vehicle" and veh:getOccupant() then
+            local driver = veh:getOccupant()
+            if RobableShop.CrashBreak == false then
+				triggerServerEvent("robableShopGiveBagFromCrash", rootElement, driver)
+				RobableShop.CrashBreak = true
+				setTimer(function()
+					RobableShop.CrashBreak = false
+				end,7500,1)
+			end
+        end
+    end
+end
 
 addEvent("shopRobbed", true)
 addEventHandler("shopRobbed", root,
@@ -17,3 +33,13 @@ addEventHandler("shopRobbed", root,
         setTimer(function() sound:destroy() end, 5*60*1000, 1)
     end
 )
+
+addEvent("robableShopEnableVehicleCollision", true)
+addEventHandler("robableShopEnableVehicleCollision", root, function(vehicle)
+    addEventHandler ( "onClientVehicleCollision", vehicle, RobableShop.onVehicleCrash)
+end)
+
+addEvent("robableShopDisableVehicleCollision", true)
+addEventHandler("robableShopDisableVehicleCollision", root, function(vehicle)
+    removeEventHandler ( "onClientVehicleCollision", vehicle, RobableShop.onVehicleCrash)
+end)
