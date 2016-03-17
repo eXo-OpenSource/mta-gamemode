@@ -59,7 +59,7 @@ function Group:purge()
 		GroupManager:getSingleton():removeRef(self)
 
 		-- Free owned gangareas
-		GangAreaManager:getSingleton():freeAreas()
+	--	GangAreaManager:getSingleton():freeAreas()
 
 		return true
 	end

@@ -26,7 +26,7 @@ function Shop:create(id, name, position, typeData, dimension, robable, money, la
 	InteriorEnterExit:new(position, intPosition, 0, 0, interior, dimension)
 
 	if robable == 1 then
-		RobableShop:new(pedPosition, pedRotation, pedSkin, interior, dimension)
+		RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)
 	else
 		local ped = createPed(pedSkin, pedPosition, pedRotation)
 		ped:setInterior(interior)
@@ -52,6 +52,10 @@ function Shop:onItemMarkerHit(hitElement, dim)
 	end
 end
 
+function Shop:getName()
+	return self.m_Name
+end
+
 function Shop:giveMoney(amount, reason)
 	if amount > 0 then self.m_Money = self.m_Money + amount end
 end
@@ -60,7 +64,7 @@ function Shop:takeMoney(amount, reason)
 	if amount > 0 then self.m_Money = self.m_Money - amount end
 end
 
-function Shop:getMoney(amount)
+function Shop:getMoney()
 	return self.m_Money
 end
 

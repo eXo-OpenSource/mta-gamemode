@@ -34,3 +34,17 @@ function getElementMatrix(element)
 
 	return matrix
 end
+
+addEvent ( "onElementInteriorChange", true )
+_setElementInterior = setElementInterior
+function setElementInterior(element, interior, x, y, z)
+	_setElementInterior(element, interior, x, y, z)
+	triggerEvent("onElementInteriorChange", element, interior)
+end
+
+addEvent ( "onElementDimensionChange", true )
+_setElementDimension = setElementDimension
+function setElementDimension(element, dimension)
+	_setElementDimension(element, dimension)
+	triggerEvent("onElementDimensionChange", element, dimension)
+end

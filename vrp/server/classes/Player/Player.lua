@@ -619,18 +619,29 @@ function Player:toggleControlsWhileObjectAttached(bool)
 	toggleControl(self, "enter_exit", bool )
 end
 
-function Player:attachPlayerObject(object)
+function Player:attachPlayerObject(object, allowWeapons)
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		local settings = PlayerAttachObjects[model]
 		object:setCollisionsEnabled(false)
 		object:attach(self, settings["pos"], settings["rot"])
-		self:toggleControlsWhileObjectAttached(false)
+		if not allowWeapons then
+			self:toggleControlsWhileObjectAttached(false)
+		end
 		self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
 		bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
+		self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
+		addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
+		addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
+
 	else
 		self:sendError("Internal Error: attachPlayerObject: Wrong Object")
 	end
+end
+
+function Player:refreshAttachedObject()
+	self:getPlayerAttachedObject():setInterior(self:getInterior())
+	self:getPlayerAttachedObject():setDimension(self:getDimension())
 end
 
 function Player:detachPlayerObjectBind(presser, key, state, object)
@@ -645,6 +656,8 @@ function Player:detachPlayerObject(object)
 		unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
 		self:setAnimation(false)
 		self:toggleControlsWhileObjectAttached(true)
+		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
+		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
 	end
 end
 

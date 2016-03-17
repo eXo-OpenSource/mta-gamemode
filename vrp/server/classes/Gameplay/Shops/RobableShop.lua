@@ -7,19 +7,19 @@
 -- ****************************************************************************
 RobableShop = inherit(Object)
 
-function RobableShop:constructor(pedPosition, pedRotation, pedSkin, interiorId, dimension)
+function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	-- Create NPC(s)
-	self:spawnPed(pedPosition, pedRotation, pedSkin, interiorId, dimension)
+	self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 
 	-- Respawn ped after a while (if necessary)
 	addEventHandler("onPedWasted", self.m_Ped,
 		function()
-			setTimer(function() self:spawnPed(pedPosition, pedRotation, pedSkin, interiorId, dimension) end, 5*60*1000, 1)
+			setTimer(function() self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension) end, 5*60*1000, 1)
 		end
 	)
 end
 
-function RobableShop:spawnPed(pedPosition, pedRotation, pedSkin, interiorId, dimension)
+function RobableShop:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 	if self.m_Ped and isElement(self.m_Ped) then
 		self.m_Ped:destroy()
 	end
@@ -27,31 +27,62 @@ function RobableShop:spawnPed(pedPosition, pedRotation, pedSkin, interiorId, dim
 	self.m_Ped = ShopNPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
 	self.m_Ped:setInterior(interiorId)
 	self.m_Ped:setDimension(dimension)
+	self.m_Ped.Shop = shop
 	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
 end
 
 function RobableShop:Ped_Targetted(ped, attacker)
-	-- Play an alarm
-	local pos = ped:getPosition()
-	triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z, ped:getDimension())
+	if attacker:getGroup() and attacker:getGroup():getType() == "Gang" then
+		local shop = ped.Shop
+		if shop:getMoney() >= 250 then
+			PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
 
-	-- Report the crime
-	attacker:reportCrime(Crime.ShopRob)
+			-- Play an alarm
+			local pos = ped:getPosition()
+			triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z, ped:getDimension())
 
-	-- Start giving some money (execute the timer 60 times every second --> overall duration: 60 seconds)
-	setTimer(
-		function()
-			if isElement(attacker) then
-				if attacker:getTarget() == ped then
-					attacker:giveMoney(math.random(1, 8))
-				end
-				return
-			end
-			killTimer(sourceTimer)
-		end,
-		1000,
-		60
-	)
+			-- Report the crime
+			attacker:reportCrime(Crime.ShopRob)
+
+			local bag = createObject(1550, pos)
+			bag.Money = 0
+			bag:setInterior(attacker:getInterior())
+			bag:setDimension(attacker:getDimension())
+			attacker:attachPlayerObject(bag, true)
+
+			local evilPos = ROBABLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_SHOP_EVIL_TARGETS)]
+			local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
+
+			self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y)
+			self.m_StateBlip = Blip:new("Waypoint.png", statePos.x, statePos.y):setColor(Vector4(0, 255, 0, 255))
+
+			setTimer(
+				function()
+					if isElement(attacker) then
+						if attacker:getTarget() == ped then
+							local rnd = math.random(5, 10)
+							if shop:getMoney() >= rnd then
+								--shop:takeMoney(rnd)
+								bag.Money = bag.Money + rnd
+								attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, bag.Money))
+							else
+								killTimer(sourceTimer)
+								attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
+							end
+						end
+						return
+					end
+					killTimer(sourceTimer)
+				end,
+				1000,
+				60
+			)
+		else
+			attacker:sendError("Es ist nicht genug Geld zum ausrauben in der Shopkasse!", attacker)
+		end
+	else
+		attacker:sendError("Nur Mitglieder privater Gangs können Shops überfallen!", attacker)
+	end
 end
 
 function RobableShop.initalizeAll()
@@ -98,7 +129,7 @@ function RobableShop.initalizeAll()
 				outputChatBox(i)
 			end, 500, 20)
 		end
-	)]]
+	)
 
 	for k, info in pairs(positions) do
 		local model, x, y, z, rotation, interior, dimension = unpack(info)
@@ -107,4 +138,5 @@ function RobableShop.initalizeAll()
 			RobableShop:new(Vector3(x, y, z), rotation, model, interior, i)
 		end
 	end
+	]]
 end

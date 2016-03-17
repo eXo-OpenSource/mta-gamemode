@@ -9,7 +9,7 @@ Blip = inherit(Object)
 Blip.ServerBlips = {}
 Blip.Blips = {}
 
-function Blip:constructor(imagePath, worldX, worldY, streamDistance)
+function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
 	self.m_ID = #Blip.Blips + 1
 	self.m_RawImagePath = imagePath
 	self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
@@ -18,7 +18,12 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance)
 	self.m_Alpha = 255
 	self.m_Size = 24
 	self.m_StreamDistance = streamDistance or 800
-	self.m_Color = tocolor(255, 255, 255, 255)
+
+	if color then
+		self.m_Color = tocolor(color)
+	else
+		self.m_Color = tocolor(255, 255, 255, 255)
+	end
 
 	Blip.Blips[self.m_ID] = self
 end

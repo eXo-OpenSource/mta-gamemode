@@ -134,9 +134,13 @@ function VehicleManager.loadVehicles()
 	outputServerLog("Loading group vehicles")
 	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-		enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
-		VehicleManager:getSingleton():addRef(vehicle, false)
+		if GroupManager:getFromId(row.Group) then
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+			VehicleManager:getSingleton():addRef(vehicle, false)
+		else
+			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
+		end
 	end
 end
 
