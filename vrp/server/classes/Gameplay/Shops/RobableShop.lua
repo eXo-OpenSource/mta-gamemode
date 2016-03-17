@@ -33,9 +33,14 @@ end
 
 function RobableShop:Ped_Targetted(ped, attacker)
 	if attacker:getGroup() and attacker:getGroup():getType() == "Gang" then
+		if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
+			return false
+		end
 		local shop = ped.Shop
+		self.m_Shop = shop
 		if shop:getMoney() >= 250 then
 			PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
+			ActionsCheck:getSingleton():setAction("Shop-Überfall")
 
 			-- Play an alarm
 			local pos = ped:getPosition()
@@ -44,17 +49,20 @@ function RobableShop:Ped_Targetted(ped, attacker)
 			-- Report the crime
 			attacker:reportCrime(Crime.ShopRob)
 
-			local bag = createObject(1550, pos)
-			bag.Money = 0
-			bag:setInterior(attacker:getInterior())
-			bag:setDimension(attacker:getDimension())
-			attacker:attachPlayerObject(bag, true)
+			self.m_Bag = createObject(1550, pos)
+			self.m_Bag.Money = 0
+			self:giveBag(attacker)
 
 			local evilPos = ROBABLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_SHOP_EVIL_TARGETS)]
 			local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
 
 			self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y)
 			self.m_StateBlip = Blip:new("Waypoint.png", statePos.x, statePos.y):setColor(Vector4(0, 255, 0, 255))
+			self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
+			self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
+			self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
+			addEventHandler("onMarkerHit", self.m_EvilMarker, self.m_onDeliveryMarkerHit)
+			addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
 
 			setTimer(
 				function()
@@ -63,8 +71,8 @@ function RobableShop:Ped_Targetted(ped, attacker)
 							local rnd = math.random(5, 10)
 							if shop:getMoney() >= rnd then
 								--shop:takeMoney(rnd)
-								bag.Money = bag.Money + rnd
-								attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, bag.Money))
+								self.m_Bag.Money = self.m_Bag.Money + rnd
+								attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
 							else
 								killTimer(sourceTimer)
 								attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
@@ -82,6 +90,48 @@ function RobableShop:Ped_Targetted(ped, attacker)
 		end
 	else
 		attacker:sendError("Nur Mitglieder privater Gangs können Shops überfallen!", attacker)
+	end
+end
+
+function RobableShop:giveBag(player)
+	self.m_Bag:setInterior(player:getInterior())
+	self.m_Bag:setDimension(player:getDimension())
+	player:attachPlayerObject(self.m_Bag, true)
+	if isElement(shopBlib) then destroyElement(shopBlib) end
+	self.m_BagBlip = createBlipAttachedTo(player,0,2,130,0,255,255,1,400)
+	--addEventHandler ( "onPlayerDamage", player, )
+	--addEventHandler ( "onPlayerWasted", player, )
+	--addEventHandler ( "onPlayerVehicleEnter", player, )
+end
+
+function RobableShop:stopRob()
+	self.m_EvilMarker:destroy()
+	self.m_StateMarker:destroy()
+	self.m_Bag:destroy()
+	delete(self.m_EvilBlip)
+	delete(self.m_StateBlip)
+	ActionsCheck:getSingleton():endAction()
+end
+
+function RobableShop:onDeliveryMarkerHit(hitElement, dim)
+	if hitElement:getType() == "player" and dim then
+		if hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject() == self.m_Bag then
+			local money =  self.m_Bag.Money
+			if source == self.m_EvilMarker then
+				hitElement:giveMoney(money)
+				hitElement:sendInfo(_("Du hast durch den Raub %d$ erhalten!", hitElement, money))
+				PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter sind mit der Beute entkommen!", self.m_Shop:getName())
+			elseif source == self.m_StateMarker then
+				local stateMoney = math.floor(money/3)
+				hitElement:giveMoney(stateMoney)
+				hitElement:getFaction():giveMoney(stateMoney)
+				self.m_Shop:giveMoney(stateMoney)
+				hitElement:sendInfo(_("Beute sichergestellt! Der Shop, du und die Staatskasse haben je %d$ erhalten!", hitElement, stateMoney))
+				PlayerManager:getSingleton():breakingNews("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName())
+			end
+			self.m_Bag.Money = 0
+			self:stopRob()
+		end
 	end
 end
 

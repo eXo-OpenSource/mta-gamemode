@@ -9,8 +9,7 @@ ActionsCheck = inherit(Singleton)
 ActionsCheck.Pause = 5*60 -- Amount in Minutes
 
 function ActionsCheck:constructor()
-	self.m_LastAction = getRealTime().timestamp - ActionsCheck.Pause - 60
-	self.m_CurrentAction = false
+	self:reset()
 end
 
 function ActionsCheck:isActionAllowed(player)
