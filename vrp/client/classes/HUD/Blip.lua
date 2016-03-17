@@ -8,6 +8,7 @@
 Blip = inherit(Object)
 Blip.ServerBlips = {}
 Blip.Blips = {}
+Blip.AttachedBlips = {}
 
 function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
 	self.m_ID = #Blip.Blips + 1
@@ -32,11 +33,12 @@ function Blip:destructor()
 	if self.m_ID and Blip.Blips[self.m_ID] then
 		Blip.Blips[self.m_ID] = nil
 	else
-		local idx = table.find(Blip.Blips, self)
-		if idx then
+		local index = table.find(Blip.Blips, self)
+		if index then
 			Blip.Blips[idx] = nil
 		end
 	end
+
 end
 
 function Blip:getImagePath()
@@ -104,6 +106,11 @@ function Blip:getColor()
 	return self.m_Color
 end
 
+function Blip:attachTo(element)
+	if Blip.AttachedBlips[self] then table.remove(Blip.AttachedBlips, table.find(self)) end
+	Blip.AttachedBlips[self] = element
+end
+
 addEvent("blipCreate", true)
 addEventHandler("blipCreate", root,
 	function(index, path, x, y, streamDistance)
@@ -128,6 +135,16 @@ addEventHandler("blipsRetrieve", root,
 	function(data)
 		for k, v in pairs(data) do
 			Blip.ServerBlips[k] = Blip:new(unpack(v))
+		end
+	end
+)
+
+addEvent("blipAttach", true)
+addEventHandler("blipAttach", root,
+	function(index, element)
+		if Blip.ServerBlips[index] then
+			outputDebug("Attached blip: "..tostring(index))
+			Blip.ServerBlips[index]:attachTo(element)
 		end
 	end
 )

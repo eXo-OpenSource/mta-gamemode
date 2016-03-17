@@ -57,7 +57,7 @@ function RobableShop:Ped_Targetted(ped, attacker)
 			local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
 
 			self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y)
-			self.m_StateBlip = Blip:new("Waypoint.png", statePos.x, statePos.y):setColor(Vector4(0, 255, 0, 255))
+			self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y)
 			self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
 			self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
 			self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
@@ -98,19 +98,22 @@ function RobableShop:giveBag(player)
 	self.m_Bag:setDimension(player:getDimension())
 	player:attachPlayerObject(self.m_Bag, true)
 	if isElement(shopBlib) then destroyElement(shopBlib) end
-	self.m_BagBlip = createBlipAttachedTo(player,0,2,130,0,255,255,1,400)
+	self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
+	self.m_BagBlip:attach(player)
 	--addEventHandler ( "onPlayerDamage", player, )
 	--addEventHandler ( "onPlayerWasted", player, )
 	--addEventHandler ( "onPlayerVehicleEnter", player, )
 end
 
 function RobableShop:stopRob()
+	ActionsCheck:getSingleton():endAction()
 	self.m_EvilMarker:destroy()
 	self.m_StateMarker:destroy()
 	self.m_Bag:destroy()
 	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
-	ActionsCheck:getSingleton():endAction()
+	delete(self.m_BagBlip)
+
 end
 
 function RobableShop:onDeliveryMarkerHit(hitElement, dim)

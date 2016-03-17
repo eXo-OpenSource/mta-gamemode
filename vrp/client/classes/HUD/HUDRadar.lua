@@ -252,6 +252,11 @@ function HUDRadar:drawBlips()
 
 	for k, blip in pairs(self.m_Blips) do
 		local blipX, blipY = blip:getPosition()
+
+		if Blip.AttachedBlips[blip] then
+			blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
+		end
+
 		if getDistanceBetweenPoints2D(px, py, blipX, blipY) < blip:getStreamDistance() then
 			-- Do transformation
 			local pos = mat * math.matrix.three.hvector(blipX, blipY, 0, 1)

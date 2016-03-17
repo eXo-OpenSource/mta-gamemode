@@ -27,10 +27,16 @@ function Blip:sendToClient()
 		for k, player in pairs(getElementsByType("player")) do
 			if player:isLoggedIn() then
 				player:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY, self.m_StreamDistance)
+				if self.m_AttachedTo then
+					player:triggerEvent("blipAttach", self.m_Id, self.m_AttachedTo)
+				end
 			end
 		end
 	else
 		self.m_VisibleTo:triggerEvent("blipCreate", self.m_Id, self.m_ImagePath, self.m_PosX, self.m_PosY, self.m_StreamDistance)
+		if self.m_AttachedTo then
+			self.m_VisibleTo:triggerEvent("blipAttach", self.m_Id, self.m_AttachedTo)
+		end
 	end
 end
 
@@ -61,6 +67,11 @@ end
 
 function Blip:setColor(color)
 	self.m_Color = color
+	self:updateClient()
+end
+
+function Blip:attach(element)
+	self.m_AttachedTo = element
 	self:updateClient()
 end
 
