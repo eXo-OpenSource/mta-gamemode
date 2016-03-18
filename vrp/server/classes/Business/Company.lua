@@ -334,3 +334,11 @@ function Company:phoneTakeOff(player, key, state, caller)
 		end
 	end
 end
+
+function Company:addLog(player, category, text)
+	StatisticsLogger:getSingleton():addLog(player, "company", self, category, text)
+end
+
+function Company:getLog()
+	return StatisticsLogger:getSingleton():getGroupLogs("company", self.m_Id)
+end

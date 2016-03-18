@@ -69,7 +69,7 @@ function CompanyManager:sendInfosToClient(client)
 	local company = client:getCompany()
 
 	if company then
-        client:triggerEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins)
+        client:triggerEvent("companyRetrieveInfo",company:getId(), company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers(), company.m_Skins, company.m_RankNames, company.m_RankLoans, company.m_RankSkins, company:getLog())
 	else
 		client:triggerEvent("companyRetrieveInfo")
 	end
@@ -84,7 +84,9 @@ function CompanyManager:Event_companyQuit()
 		return
 	end
 	company:removePlayer(client)
-	client:sendSuccess(_("Du hast die Fraktion erfolgreich verlassen!", client))
+	client:sendSuccess(_("Du hast das Unternehmen erfolgreich verlassen!", client))
+    company:addLog(client, "Unternehmen", "hat das Unternehmen verlassen!")
+
 	self:sendInfosToClient(client)
 end
 
@@ -99,6 +101,7 @@ function CompanyManager:Event_companyDeposit(amount)
 
 	client:takeMoney(amount)
 	company:giveMoney(amount)
+    company:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
 	self:sendInfosToClient(client)
 end
 
@@ -119,6 +122,7 @@ function CompanyManager:Event_companyWithdraw(amount)
 
 	company:takeMoney(amount)
 	client:giveMoney(amount)
+    company:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
 	self:sendInfosToClient(client)
 end
 
@@ -141,6 +145,7 @@ function CompanyManager:Event_companyAddPlayer(player)
 	if not company:isPlayerMember(player) then
 		if not company:hasInvitation(player) then
 			company:invitePlayer(player)
+            company:addLog(client, "Unternehmen", "hat den Spieler "..player:getName().." in das Unternehmen eingeladen!")
 		else
 			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!", client))
 		end
@@ -174,6 +179,8 @@ function CompanyManager:Event_companyDeleteMember(playerId)
 	end
 
 	company:removePlayer(playerId)
+    company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." aus dem Unternehmen geworfen!")
+
 	self:sendInfosToClient(client)
 end
 
@@ -188,6 +195,8 @@ function CompanyManager:Event_companyInvitationAccept(companyId)
 		company:addPlayer(client)
 		company:removeInvitation(client)
 		company:sendMessage(_("%s ist soeben der Fraktion beigetreten", client, getPlayerName(client)))
+        company:addLog(client, "Unternehmen", "ist dem Unternehmen beigetreten!")
+
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
@@ -201,6 +210,7 @@ function CompanyManager:Event_companyInvitationDecline(companyId)
 	if company:hasInvitation(client) then
 		company:removeInvitation(client)
 		company:sendMessage(_("%s hat die Fraktionneinladung abgelehnt", client, getPlayerName(client)))
+        company:addLog(client, "Unternehmen", "hat die Einladung abgelehnt!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
@@ -224,6 +234,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 
 	if company:getPlayerRank(playerId) < CompanyRank.Manager then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
+        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." ein RankUp auf Rang "..faction:getPlayerRank(playerId).." gegeben!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
@@ -248,6 +259,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 
 	if company:getPlayerRank(playerId) >= CompanyRank.Manager then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
+        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." ein RankDown auf Rang "..faction:getPlayerRank(playerId).." gegeben!")
 		self:sendInfosToClient(client)
 	end
 end
@@ -288,6 +300,7 @@ function CompanyManager:Event_companySaveRank(rank,skinId,loan)
         company:setRankSkin(rank,skinId)
 		company:save()
 		client:sendInfo(_("Die Einstellungen für Rang %d wurden gespeichert!", client, rank))
+        company:addLog(client, "Unternehmen", "hat die Einstellungen für Rang "..rank.." geändert!")
 		self:sendInfosToClient(client)
 	end
 end

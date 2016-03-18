@@ -327,6 +327,5 @@ function Faction:addLog(player, category, text)
 end
 
 function Faction:getLog()
-	local log = StatisticsLogger:getSingleton():getGroupLogs("faction", self.m_Id)
-	return log
+	return StatisticsLogger:getSingleton():getGroupLogs("faction", self.m_Id)
 end

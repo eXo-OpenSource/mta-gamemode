@@ -23,7 +23,7 @@ function CompanyGUI:constructor()
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	self.m_LeaderTab = false
-
+	self.m_LogTab = false
 
 	-- Tab: Allgemein
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
@@ -120,6 +120,14 @@ function CompanyGUI:addLeaderTab()
 	end
 end
 
+function CompanyGUI:addLogTab(logs, players)
+	if self.m_LogTab == false then
+		local tabLog = self.m_TabPanel:addTab(_"Logs")
+		LogGUI:new(tabLog, logs, players)
+		self.m_LogTab = true
+	end
+end
+
 function CompanyGUI:saveRank()
 	if self.m_SelectedRank then
 		triggerServerEvent("companySaveRank",localPlayer,self.m_SelectedRank,self.m_SkinChanger:getIndex(),self.m_LeaderLoan:getText())
@@ -141,7 +149,7 @@ function CompanyGUI:onSelectRank(name,rank)
 
 end
 
-function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, skins, rankNames, rankLoans, rankSkins)
+function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, skins, rankNames, rankLoans, rankSkins, logs)
 	--self:adjustCompanyTab(rank or false)
 	if id then
 		if id > 0 then
@@ -162,6 +170,7 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 				self.m_RankLoans = rankLoans
 				self.m_RankSkins = rankSkins
 				self:addLeaderTab()
+				self:addLogTab(logs, players)
 			end
 		end
 	end

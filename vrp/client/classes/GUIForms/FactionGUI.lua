@@ -154,7 +154,6 @@ function FactionGUI:addLogTab(logs, players)
 		LogGUI:new(tabLog, logs, players)
 		self.m_LogTab = true
 	end
-
 end
 
 function FactionGUI:saveRank()

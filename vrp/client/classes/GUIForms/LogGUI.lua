@@ -1,12 +1,10 @@
 LogGUI = inherit(GUIForm)
-inherit(Singleton, LogGUI)
 
 function LogGUI:constructor(parent, log, players)
 	self.m_Log = log
 	self.m_Players = players
 	GUILabel:new(parent.m_Width*0.02, parent.m_Height*0.02, parent.m_Width*0.2, parent.m_Height*0.08, _"Filter:", parent)
 	self.m_Filter = GUIChanger:new(parent.m_Width*0.2, parent.m_Height*0.02, parent.m_Width*0.25, parent.m_Height*0.07, parent)
-	self.m_Filter:addItem("Alle")
 	self.m_Filter.onChange = function(text, index) self:setFilter(text) end
 	self.m_Categories = {}
 	self.m_LogText = GUIScrollableText:new(parent.m_Width*0.02, parent.m_Height*0.1, parent.m_Width*0.98, parent.m_Height*0.8, "", parent.m_Height*0.065, parent)
@@ -27,11 +25,20 @@ function LogGUI:refresh()
 		end
 	end
 
-	for key, bool in pairs(self.m_Categories) do
-		self.m_Filter:addItem(key)
+	if not self.m_FilterLoaded then
+		self:loadFilter()
 	end
 
 	self.m_LogText:setText(self.m_Text)
+end
+
+function LogGUI:loadFilter()
+	self.m_Filter:addItem("Alle")
+	for key, bool in pairs(self.m_Categories) do
+		outputChatBox(key)
+		self.m_Filter:addItem(key)
+	end
+	self.m_FilterLoaded = true
 end
 
 function LogGUI:addLine(row)

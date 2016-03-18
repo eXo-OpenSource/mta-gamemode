@@ -124,6 +124,7 @@ function FactionManager:Event_factionQuit()
 	end
 	faction:removePlayer(client)
 	client:sendSuccess(_("Du hast die Fraktion erfolgreich verlassen!", client))
+	faction:addLog(client, "Fraktion", "hat die Fraktion verlassen!")
 	self:sendInfosToClient(client)
 end
 
@@ -214,7 +215,7 @@ function FactionManager:Event_factionDeleteMember(playerId)
 		client:sendError(_("Du kannst den Fraktionnleiter nicht rauswerfen!", client))
 		return
 	end
-	faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." aus der Fraktion geschmissen!")
+	faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." aus der Fraktion geworfen!")
 
 	faction:removePlayer(playerId)
 	self:sendInfosToClient(client)
