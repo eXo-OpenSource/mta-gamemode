@@ -95,6 +95,7 @@ function FactionManager:Event_factionSaveRank(rank,skinId,loan,rankWeapons)
 		faction:setRankWeapons(rank,rankWeapons)
 		faction:save()
 		client:sendInfo(_("Die Einstellungen für Rang %d wurden gespeichert!", client, rank))
+		faction:addLog(client, "Fraktion", "hat die Einstellungen für Rang "..rank.." geändert!")
 		self:sendInfosToClient(client)
 	end
 end
@@ -137,6 +138,7 @@ function FactionManager:Event_factionDeposit(amount)
 
 	client:takeMoney(amount)
 	faction:giveMoney(amount)
+	faction:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
 	self:sendInfosToClient(client)
 end
 
@@ -156,6 +158,7 @@ function FactionManager:Event_factionWithdraw(amount)
 	end
 
 	faction:takeMoney(amount)
+	faction:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
 	client:giveMoney(amount)
 	self:sendInfosToClient(client)
 end
@@ -179,6 +182,7 @@ function FactionManager:Event_factionAddPlayer(player)
 	if not faction:isPlayerMember(player) then
 		if not faction:hasInvitation(player) then
 			faction:invitePlayer(player)
+			faction:addLog(client, "Fraktion", "hat den Spieler "..player:getName().." in die Fraktion eingeladen!")
 		else
 			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!", client))
 		end
@@ -210,6 +214,7 @@ function FactionManager:Event_factionDeleteMember(playerId)
 		client:sendError(_("Du kannst den Fraktionnleiter nicht rauswerfen!", client))
 		return
 	end
+	faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." aus der Fraktion geschmissen!")
 
 	faction:removePlayer(playerId)
 	self:sendInfosToClient(client)
@@ -225,6 +230,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 	if faction:hasInvitation(client) then
 		faction:addPlayer(client)
 		faction:removeInvitation(client)
+		faction:addLog(client, "Fraktion", "ist der Fraktion beigetreten!")
 		faction:sendMessage(_("%s ist soeben der Fraktion beigetreten", client, getPlayerName(client)))
 		self:sendInfosToClient(client)
 	else
@@ -239,6 +245,8 @@ function FactionManager:Event_factionInvitationDecline(factionId)
 	if faction:hasInvitation(client) then
 		faction:removeInvitation(client)
 		faction:sendMessage(_("%s hat die Fraktionneinladung abgelehnt", client, getPlayerName(client)))
+		faction:addLog(client, "Fraktion", "hat die Einladung abgelehnt!")
+
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
@@ -262,6 +270,7 @@ function FactionManager:Event_factionRankUp(playerId)
 
 	if faction:getPlayerRank(playerId) < FactionRank.Manager then
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) + 1)
+		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." ein RankUp auf Rang "..faction:getPlayerRank(playerId).." gegeben!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
@@ -286,6 +295,7 @@ function FactionManager:Event_factionRankDown(playerId)
 
 	if faction:getPlayerRank(playerId) >= FactionRank.Manager then
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
+		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." ein RankDown auf Rang "..faction:getPlayerRank(playerId).." gegeben!")
 		self:sendInfosToClient(client)
 	end
 end
