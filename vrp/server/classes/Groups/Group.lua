@@ -285,6 +285,34 @@ function Group:distributeMoney(amount)
 	end
 end
 
+function Group:attachPlayerMarkers()
+	self.m_Markers = {}
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
+		self.m_Markers[player]:setDimension(player:getDimension())
+		self.m_Markers[player]:setInterior(player:getInterior())
+		self.m_Markers[player]:attach(player,0,0,1.5)
+		self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+		addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+		addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	end
+end
+
+function Group:removePlayerMarkers()
+	self.m_Markers = {}
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		self.m_Markers[player]:destroy()
+		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedMarker)
+		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedMarker)
+	end
+end
+
+function Group:refreshAttachedMarker()
+	self.m_Markers[source]:setInterior(source:getInterior())
+	self.m_Markers[source]:setDimension(source:getDimension())
+end
+
+
 function Group:phoneCall(caller)
 	if #self:getOnlinePlayers() > 0 then
 		for k, player in ipairs(self:getOnlinePlayers()) do

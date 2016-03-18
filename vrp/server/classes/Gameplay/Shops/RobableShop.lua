@@ -65,12 +65,15 @@ function RobableShop:startRob(shop, attacker, ped)
 
 	self.m_Bag = createObject(1550, pos)
 	self.m_Bag.Money = 0
+	addEventHandler("onElementClicked", self.m_Bag, bind(self.onBagClick, self))
+
 	self:giveBag(attacker)
 
 	local evilPos = ROBABLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_SHOP_EVIL_TARGETS)]
 	local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
 
 	self.m_Gang = attacker:getGroup()
+	self.m_Gang:attachPlayerMarkers()
 	self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y)
 	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y)
 	self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
@@ -79,7 +82,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	addEventHandler("onMarkerHit", self.m_EvilMarker, self.m_onDeliveryMarkerHit)
 	addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
 	self.m_onCrash = bind(self.onCrash, self)
-	addEventHandler("robableShopGiveBagFromCrash", root, self.onCrash)
+	addEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
 
 	setTimer(
 		function()
@@ -112,30 +115,60 @@ function RobableShop:stopRob()
 	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
 	delete(self.m_BagBlip)
+	self.m_Gang:removePlayerMarkers()
 	removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
 
 end
 
 function RobableShop:giveBag(player)
-
 	self.m_Bag:setInterior(player:getInterior())
 	self.m_Bag:setDimension(player:getDimension())
 	player:attachPlayerObject(self.m_Bag, true)
-	if self.m_BagBlip then self.m_BagBlip:destroy() end
+	if isElement(self.m_BagBlip) then self.m_BagBlip:destroy() end
 	self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
-	self.m_BagBlip:attach(player)
+	self.m_BagBlip:attach(self.m_Bag)
 
 	self.m_onDamageFunc = bind(self.onDamage, self)
-	addEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
 	self.m_onWastedFunc = bind(self.onWasted, self)
-	addEventHandler ("onPlayerWasted", player, self.m_onWastedFunc)
 	self.m_onVehicleEnterFunc = bind(self.onVehicleEnter, self)
-	addEventHandler ("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
+	self.m_onVehicleExitFunc = bind(self.onVehicleExit, self)
+
+	addEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
+	addEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
+	addEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
+	addEventHandler("onPlayerVehicleExit", source, self.m_onVehicleExitFunc)
+
+	player:sendShortMessage(_("Du hast die Beute erhalten!", player))
+
+	if player:getOccupiedVehicle() then
+		triggerClientEvent(player, "robableShopEnableVehicleCollision", player, player:getOccupiedVehicle())
+	end
+
+end
+
+function RobableShop:onBagClick(button, state, player)
+	if button == "left" and state == "down" then
+		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
+			if self:checkBagAllowed(player) then
+				self:giveBag(player)
+			else
+				player:sendError(_("Du darfst die Beute nicht besitzen!", player))
+			end
+		else
+			player:sendError(_("Du bist zuweit von dem Geldsack entfernt!", player))
+		end
+	end
 end
 
 function RobableShop:removeBag(player)
-	removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
 	player:detachPlayerObject(self.m_Bag)
+
+	removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
+	removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
+	removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
+	removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
+
+	player:sendShortMessage(_("Du hast die Beute verloren!", player))
 end
 
 function RobableShop:checkBagAllowed(player)
@@ -158,44 +191,36 @@ end
 
 function RobableShop:onWasted()
 	local pos = source:getPosition()
-	pos.z = pos.z-1
+	pos.z = pos.z+1.5
 	self:removeBag(source)
 	self.m_Bag:setPosition(pos)
-	local beutePickup = createPickup(pos,3,1274)
-	addEventHandler ( "onPickupHit", beutePickup,
-		function(hitElement)
-			if getElementType(hitElement) == "player" then
-				if self:checkBagAllowed(hitElement) then
-					self:giveBag(attacker)
-					destroyElement(source)
-				else
-					hitElement:sendError(_("Du darfst die Beute nicht besitzen!", hitElement))
-				end
-			end
-		end
-	)
+	self.m_Bag:setCollisionsEnabled(true)
 end
 
 function RobableShop:onVehicleEnter(veh)
 	triggerClientEvent(source, "robableShopEnableVehicleCollision", source, veh)
-	self.m_onVehicleExitFunc = bind(self.onVehicleExit, self)
-	addEventHandler("onPlayerVehicleExit", source, self.m_onVehicleExitFunc)
 end
 
 function RobableShop:onVehicleExit(veh)
 	triggerClientEvent(source, "robableShopDisableVehicleCollision", source, veh)
-	removeEventHandler("onPlayerVehicleExit", source, self.m_onVehicleExitFunc)
 end
 
 function RobableShop:onCrash(player)
-	if client:getPlayerAttachedObject() and client:getPlayerAttachedObject() == self.m_Bag then
-		if self:checkBagAllowed(player) then
-			self:removeBag(client)
-			self:giveBag(player)
+	if isElement(player) then
+		if client:getPlayerAttachedObject() and client:getPlayerAttachedObject():getModel() == 1550 then
+			if self:checkBagAllowed(player) then
+				self:removeBag(client)
+				self:giveBag(player)
+			else
+				player:sendError(_("Du darfst die Beute nicht besitzen!", player))
+			end
 		else
-			player:sendError(_("Du darfst die Beute nicht besitzen!", player))
+			outputChatBox("Spieler "..client:getName().." hat keine Beute")
 		end
+	else
+		outputChatBox("No Player")
 	end
+
 end
 
 function RobableShop:onDeliveryMarkerHit(hitElement, dim)

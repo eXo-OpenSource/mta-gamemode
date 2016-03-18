@@ -11,7 +11,7 @@ function Shop:constructor()
 
 end
 
-function Shop:create(id, name, position, typeData, dimension, robable, money, lastRob, owner, price)
+function Shop:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price)
 	self.m_Id = id
 	self.m_Name = name
 	self.m_BuyAble = price > 0 and true or false
@@ -23,7 +23,7 @@ function Shop:create(id, name, position, typeData, dimension, robable, money, la
 	local interior, intPosition = unpack(typeData["Interior"])
 	local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
 
-	InteriorEnterExit:new(position, intPosition, 0, 0, interior, dimension)
+	InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
 
 	if robable == 1 then
 		RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)

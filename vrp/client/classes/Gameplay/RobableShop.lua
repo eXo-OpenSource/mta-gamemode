@@ -12,13 +12,15 @@ function RobableShop.onVehicleCrash(veh)
     if source == localPlayer:getOccupiedVehicle() then
 		if isElement(veh) and veh:getType() == "vehicle" and veh:getOccupant() then
             local driver = veh:getOccupant()
-            if RobableShop.CrashBreak == false then
-				triggerServerEvent("robableShopGiveBagFromCrash", rootElement, driver)
-				RobableShop.CrashBreak = true
-				setTimer(function()
-					RobableShop.CrashBreak = false
-				end,7500,1)
-			end
+            if isElement(driver) then
+                if RobableShop.CrashBreak == false then
+                    triggerServerEvent("robableShopGiveBagFromCrash", localPlayer, driver)
+    				RobableShop.CrashBreak = true
+    				setTimer(function()
+    					RobableShop.CrashBreak = false
+    				end,7500,1)
+    			end
+            end
         end
     end
 end
