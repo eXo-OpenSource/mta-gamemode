@@ -23,7 +23,7 @@ function FactionGUI:constructor()
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	self.m_LeaderTab = false
-
+	self.m_LogTab = false
 
 	-- Tab: Allgemein
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
@@ -148,6 +148,15 @@ function FactionGUI:addLeaderTab()
 	end
 end
 
+function FactionGUI:addLogTab(logs, players)
+	if self.m_LogTab == false then
+		local tabLog = self.m_TabPanel:addTab(_"Logs")
+		LogGUI:new(tabLog, logs, players)
+		self.m_LogTab = true
+	end
+
+end
+
 function FactionGUI:saveRank()
 	if self.m_SelectedRank then
 		local rankWeapons = self.m_RankWeapons[tostring(self.m_SelectedRank)]
@@ -188,7 +197,7 @@ function FactionGUI:onSelectRank(name,rank)
 
 end
 
-function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players,skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons)
+function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players,skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons, logs)
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
@@ -211,6 +220,7 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players,skin
 				self.m_ValidWeapons = validWeapons
 				self.m_RankWeapons = rankWeapons
 				self:addLeaderTab()
+				self:addLogTab(logs, players)
 			end
 		end
 	end

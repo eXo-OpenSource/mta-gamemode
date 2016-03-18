@@ -21,3 +21,8 @@ function StatisticsLogger:addLog(player, groupType, group, category, desc)
     sql:queryExec("INSERT INTO ??_logs (UserId, GroupType, GroupId, Category, Description, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
         sql:getPrefix(), userId, groupType, groupId, category, desc, getRealTime().timestamp)
 end
+
+function StatisticsLogger:getGroupLogs(groupType, groupId)
+    local result = sql:queryFetch("SELECT * FROM ??_logs WHERE GroupType = ? AND GroupId = ? ORDER BY Id DESC", sql:getPrefix(), groupType, groupId)
+    return result
+end

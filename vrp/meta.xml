@@ -425,6 +425,8 @@
 	<script src="client/classes/GUIForms/BreakingNews.lua" type="client"/>
 	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/LogGUI.lua" type="client"/>
+
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
