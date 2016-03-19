@@ -69,9 +69,7 @@ function GroupGUI:constructor()
 	self.m_GroupRankDownButton.onLeftClick = bind(self.GroupRankDownButton_Click, self)
 	self.m_GroupInvitationsAcceptButton.onLeftClick = bind(self.GroupInvitationsAcceptButton_Click, self)
 	self.m_GroupInvitationsDeclineButton.onLeftClick = bind(self.GroupInvitationsDeclineButton_Click, self)
-	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
-	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
-	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
+
 
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
 	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.55, tabVehicles)
@@ -85,15 +83,35 @@ function GroupGUI:constructor()
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 
+	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
+
 	self.m_LeaderTab = false
+
+	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetrieveLog"}
+	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
+	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
+	addEventHandler("groupRetrieveLog", root, bind(self.Event_groupRetrieveLog, self))
+
 end
 
 function GroupGUI:onShow()
 	self:TabPanel_TabChanged()
 end
 
-function GroupGUI:TabPanel_TabChanged()
-	triggerServerEvent("groupRequestInfo", root)
+function GroupGUI:TabPanel_TabChanged(tabId)
+	if tabId == self.m_TabLogs.TabIndex then
+		triggerServerEvent("groupRequestLog", root)
+	else
+		triggerServerEvent("groupRequestInfo", root)
+	end
+end
+
+function GroupGUI:Event_groupRetrieveLog(players, logs)
+	if not self.m_LogGUI then
+		self.m_LogGUI = LogGUI:new(self.m_TabLogs, logs, players)
+	else
+		self.m_LogGUI:updateLog(players, logs)
+	end
 end
 
 function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles)

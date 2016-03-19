@@ -339,3 +339,11 @@ function Group:phoneTakeOff(player, key, state, caller)
 		end
 	end
 end
+
+function Group:addLog(player, category, text)
+	StatisticsLogger:getSingleton():addLog(player, "group", self, category, text)
+end
+
+function Group:getLog()
+	return StatisticsLogger:getSingleton():getGroupLogs("group", self.m_Id)
+end

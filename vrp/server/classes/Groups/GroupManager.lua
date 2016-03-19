@@ -27,9 +27,10 @@ function GroupManager:constructor()
 	end
 
 	-- Events
-	addRemoteEvents{"groupRequestInfo", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
+	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName", "groupSaveRank", "groupConvertVehicle"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_groupRequestInfo, self))
+	addEventHandler("groupRequestLog", root, bind(self.Event_groupRequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_groupCreate, self))
 	addEventHandler("groupQuit", root, bind(self.Event_groupQuit, self))
 	addEventHandler("groupDelete", root, bind(self.Event_groupDelete, self))
@@ -75,6 +76,13 @@ function GroupManager:getByName(groupName)
 	return false
 end
 
+function GroupManager:Event_groupRequestLog()
+	local group = client:getGroup()
+	if group then
+		client:triggerEvent("groupRetrieveLog", group:getPlayers(), group:getLog())
+	end
+end
+
 function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
@@ -117,6 +125,7 @@ function GroupManager:Event_groupCreate(name,type)
 		group:addPlayer(client, GroupRank.Leader)
 		client:takeMoney(GroupManager.GroupCosts)
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
+		group:addLog(client, "Gang/Firma", "hat die "..self.GroupTypes[type].." "..name.." erstellt!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Interner Fehler beim Erstellen der %s", client, type))
@@ -133,6 +142,7 @@ function GroupManager:Event_groupQuit()
 	end
 	group:removePlayer(client)
 	client:sendSuccess(_("Du hast die Gruppe erfolgreich verlassen!", client))
+	group:addLog(client, "Gang/Firma", "hat die Gang/Firma verlassen!")
 	self:sendInfosToClient(client)
 end
 
@@ -176,9 +186,10 @@ function GroupManager:Event_groupDelete()
           delete(player)
       end
   end
-
+  	group:addLog(client, "Gang/Firma", "hat die Gang/Firma gelöscht!")
 	group:purge()
 	client:sendShortMessage(_("Deine Gruppe wurde soeben gelöscht", client))
+
 	client:triggerEvent("groupRetrieveInfo")
 end
 
@@ -193,6 +204,7 @@ function GroupManager:Event_groupDeposit(amount)
 
 	client:takeMoney(amount)
 	group:giveMoney(amount)
+	group:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
 	self:sendInfosToClient(client)
 end
 
@@ -213,6 +225,8 @@ function GroupManager:Event_groupWithdraw(amount)
 
 	group:takeMoney(amount)
 	client:giveMoney(amount)
+	group:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
+
 	self:sendInfosToClient(client)
 end
 
@@ -235,6 +249,7 @@ function GroupManager:Event_groupAddPlayer(player)
 	if not group:isPlayerMember(player) then
 		if not group:hasInvitation(player) then
 			group:invitePlayer(player)
+			group:addLog(client, "Gang/Firma", "hat den Spieler "..player:getName().." in die Gang/Firma eingeladen!")
 		else
 			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!", client))
 		end
@@ -262,6 +277,8 @@ function GroupManager:Event_groupDeleteMember(playerId)
 	end
 
 	group:removePlayer(playerId)
+	group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." aus der Gang/Firma geworfen!")
+
 	self:sendInfosToClient(client)
 end
 
@@ -273,6 +290,7 @@ function GroupManager:Event_groupInvitationAccept(groupId)
 		group:addPlayer(client)
 		group:removeInvitation(client)
 		group:sendMessage(_("%s ist soeben der Gruppe beigetreten", client, getPlayerName(client)))
+		group:addLog(client, "Gang/Firma", "ist der Gang/Firma beigetreten!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
@@ -286,6 +304,8 @@ function GroupManager:Event_groupInvitationDecline(groupId)
 	if group:hasInvitation(client) then
 		group:removeInvitation(client)
 		group:sendMessage(_("%s hat die Gruppeneinladung abgelehnt", client, getPlayerName(client)))
+		group:addLog(client, "Gang/Firma", "hat die Einladung abgelehnt!")
+
 	else
 		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
 	end
@@ -308,6 +328,7 @@ function GroupManager:Event_groupRankUp(playerId)
 
 	if group:getPlayerRank(playerId) < GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
+		group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." befördert!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
@@ -331,6 +352,7 @@ function GroupManager:Event_groupRankDown(playerId)
 
 	if group:getPlayerRank(playerId) == GroupRank.Manager then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
+		group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." degradiert!")
 		self:sendInfosToClient(client)
 	end
 end
@@ -380,6 +402,8 @@ function GroupManager:Event_groupChangeName(name)
 	if group:setName(name) then
 		client:takeMoney(20000)
 		client:sendSuccess(_("Deine Gruppe heißt nun\n%s!", client, group:getName()))
+		group:addLog(client, "Gang/Firma", "hat die Gang Firma in "..group:getName().." umbenannt!")
+
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Es ist ein unbekannter Fehler aufgetreten!", client))
@@ -393,6 +417,7 @@ function GroupManager:Event_groupSaveRank(rank,name,loan)
 		group:setRankLoan(rank,loan)
 		group:saveRankSettings()
 		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
+		group:addLog(client, "Gang/Firma", "hat die Einstellungen für Rang "..rank.." geändert!")
 		self:sendInfosToClient(client)
 	end
 end
@@ -405,6 +430,7 @@ function GroupManager:Event_groupConvertVehicle()
 			if veh:getOwner() == client:getId() then
 				GroupVehicle.convertVehicle(veh, group)
 				client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
+				group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..getModelName(veh).." hinzugefügt!")
 				self:sendInfosToClient(client)
 			else
 				client:sendError(_("Das ist nicht dein Fahrzeug!", client))

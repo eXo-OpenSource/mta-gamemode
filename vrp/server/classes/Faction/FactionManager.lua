@@ -279,7 +279,7 @@ function FactionManager:Event_factionRankUp(playerId)
 
 	if faction:getPlayerRank(playerId) < FactionRank.Manager then
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) + 1)
-		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." ein RankUp auf Rang "..faction:getPlayerRank(playerId).." gegeben!")
+		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." befördert!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
@@ -304,7 +304,7 @@ function FactionManager:Event_factionRankDown(playerId)
 
 	if faction:getPlayerRank(playerId) >= FactionRank.Manager then
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
-		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." ein RankDown auf Rang "..faction:getPlayerRank(playerId).." gegeben!")
+		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
 		self:sendInfosToClient(client)
 	end
 end

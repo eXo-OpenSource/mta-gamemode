@@ -242,7 +242,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 
 	if company:getPlayerRank(playerId) < CompanyRank.Manager then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
-        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." ein RankUp auf Rang "..faction:getPlayerRank(playerId).." gegeben!")
+        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." befördert!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
@@ -267,7 +267,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 
 	if company:getPlayerRank(playerId) >= CompanyRank.Manager then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
-        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." ein RankDown auf Rang "..faction:getPlayerRank(playerId).." gegeben!")
+        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
 		self:sendInfosToClient(client)
 	end
 end
