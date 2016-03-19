@@ -72,8 +72,13 @@ function FactionGUI:constructor()
 	self.m_WeaponsImage = {}
 	self.m_WeaponsCheck = {}
 
-	addRemoteEvents{"factionRetrieveInfo"}
+	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
+
+
+	addRemoteEvents{"factionRetrieveInfo", "factionRetrieveLog"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
+	addEventHandler("factionRetrieveLog", root, bind(self.Event_factionRetrieveLog, self))
+
 end
 
 function FactionGUI:destructor()
@@ -85,7 +90,19 @@ function FactionGUI:onShow()
 end
 
 function FactionGUI:TabPanel_TabChanged(tabId)
-	triggerServerEvent("factionRequestInfo", root)
+	if tabId == self.m_TabLogs.TabIndex then
+		triggerServerEvent("factionRequestLog", root)
+	else
+		triggerServerEvent("factionRequestInfo", root)
+	end
+end
+
+function FactionGUI:Event_factionRetrieveLog(players, logs)
+	if not self.m_LogGUI then
+		self.m_LogGUI = LogGUI:new(self.m_TabLogs, logs, players)
+	else
+		self.m_LogGUI:updateLog(players, logs)
+	end
 end
 
 function FactionGUI:addLeaderTab()
@@ -148,14 +165,6 @@ function FactionGUI:addLeaderTab()
 	end
 end
 
-function FactionGUI:addLogTab(logs, players)
-	if self.m_LogTab == false then
-		local tabLog = self.m_TabPanel:addTab(_"Logs")
-		LogGUI:new(tabLog, logs, players)
-		self.m_LogTab = true
-	end
-end
-
 function FactionGUI:saveRank()
 	if self.m_SelectedRank then
 		local rankWeapons = self.m_RankWeapons[tostring(self.m_SelectedRank)]
@@ -196,7 +205,7 @@ function FactionGUI:onSelectRank(name,rank)
 
 end
 
-function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players,skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons, logs)
+function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players,skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons)
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
@@ -219,7 +228,6 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank,money, players,skin
 				self.m_ValidWeapons = validWeapons
 				self.m_RankWeapons = rankWeapons
 				self:addLeaderTab()
-				self:addLogTab(logs, players)
 			end
 		end
 	end

@@ -64,8 +64,12 @@ function CompanyGUI:constructor()
 	self.m_CompanyRankUpButton.onLeftClick = bind(self.CompanyRankUpButton_Click, self)
 	self.m_CompanyRankDownButton.onLeftClick = bind(self.CompanyRankDownButton_Click, self)
 
-	addRemoteEvents{"companyRetrieveInfo"}
+	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
+
+	addRemoteEvents{"companyRetrieveInfo", "companyRetrieveLog"}
 	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
+	addEventHandler("companyRetrieveLog", root, bind(self.Event_companyRetrieveLog, self))
+
 end
 
 function CompanyGUI:destructor()
@@ -77,7 +81,19 @@ function CompanyGUI:onShow()
 end
 
 function CompanyGUI:TabPanel_TabChanged(tabId)
-	triggerServerEvent("companyRequestInfo", root)
+	if tabId == self.m_TabLogs.TabIndex then
+		triggerServerEvent("companyRequestLog", root)
+	else
+		triggerServerEvent("companyRequestInfo", root)
+	end
+end
+
+function CompanyGUI:Event_companyRetrieveLog(players, logs)
+	if not self.m_LogGUI then
+		self.m_LogGUI = LogGUI:new(self.m_TabLogs, logs, players)
+	else
+		self.m_LogGUI:updateLog(players, logs)
+	end
 end
 
 function CompanyGUI:addLeaderTab()
@@ -120,14 +136,6 @@ function CompanyGUI:addLeaderTab()
 	end
 end
 
-function CompanyGUI:addLogTab(logs, players)
-	if self.m_LogTab == false then
-		local tabLog = self.m_TabPanel:addTab(_"Logs")
-		LogGUI:new(tabLog, logs, players)
-		self.m_LogTab = true
-	end
-end
-
 function CompanyGUI:saveRank()
 	if self.m_SelectedRank then
 		triggerServerEvent("companySaveRank",localPlayer,self.m_SelectedRank,self.m_SkinChanger:getIndex(),self.m_LeaderLoan:getText())
@@ -149,7 +157,7 @@ function CompanyGUI:onSelectRank(name,rank)
 
 end
 
-function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, skins, rankNames, rankLoans, rankSkins, logs)
+function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, skins, rankNames, rankLoans, rankSkins)
 	--self:adjustCompanyTab(rank or false)
 	if id then
 		if id > 0 then
@@ -170,7 +178,6 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 				self.m_RankLoans = rankLoans
 				self.m_RankSkins = rankSkins
 				self:addLeaderTab()
-				self:addLogTab(logs, players)
 			end
 		end
 	end

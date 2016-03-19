@@ -15,6 +15,12 @@ function LogGUI:constructor(parent, log, players)
 	self:refresh()
 end
 
+function LogGUI:updateLog(players, log)
+	self.m_Log = log
+	self.m_Players = players
+	self:refresh()
+end
+
 function LogGUI:refresh()
 	self.m_Text = ""
 	local playerName, timeOptical

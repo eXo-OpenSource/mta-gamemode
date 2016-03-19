@@ -27,8 +27,9 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"factionRequestInfo", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","openFactionWeaponShopGUI","factionSaveRank","factionRespawnVehicles"}
+	addRemoteEvents{"factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","openFactionWeaponShopGUI","factionSaveRank","factionRespawnVehicles"}
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
+	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
 	addEventHandler("factionQuit", root, bind(self.Event_factionQuit, self))
 	addEventHandler("factionDeposit", root, bind(self.Event_factionDeposit, self))
 	addEventHandler("factionWithdraw", root, bind(self.Event_factionWithdraw, self))
@@ -104,11 +105,18 @@ function FactionManager:Event_factionRequestInfo()
 	self:sendInfosToClient(client)
 end
 
+function FactionManager:Event_factionRequestLog()
+	local faction = client:getFaction()
+	if faction then
+		client:triggerEvent("factionRetrieveLog", faction:getPlayers(), faction:getLog())
+	end
+end
+
 function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(),faction.m_Skins,faction.m_RankNames,faction.m_RankLoans,faction.m_RankSkins,faction.m_ValidWeapons,faction.m_RankWeapons, faction:getLog())
+		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(),faction.m_Skins,faction.m_RankNames,faction.m_RankLoans,faction.m_RankSkins,faction.m_ValidWeapons,faction.m_RankWeapons)
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end
