@@ -48,10 +48,10 @@ function HUDUI:draw()
 			self:drawDefaultHealthArmor()
 			self:drawKarmaBar(0.0325*screenHeight, 1.2)
 		else
-			self:drawKarmaBar(0.0425*screenHeight, 1.8)
+			self:drawKarmaBar(0.0425*screenHeight, 1.6)
 		end
 	elseif self.m_UIMode == UIStyle.eXo then
-
+		self:drawExo()
 	elseif self.m_UIMode == UIStyle.Default then
 		return
 	end
@@ -231,6 +231,102 @@ function HUDUI:drawDefaultHealthArmor()
 
 	local armor = "Schutzweste: "..math.floor(armor).." %"
 	dxDrawText(armor, left , top, left+width, top+height, Color.White, 1.2, "default-bold", "center", "center")
+end
+
+function HUDUI:getZone()
+	local pos = localPlayer:getPosition()
+	local zone1 = getZoneName(pos)
+	local zone2 = getZoneName(pos,true)
+	local zone = ""
+	if string.len(zone1) > 12 then
+		zone = zone1
+	else
+		zone = zone1.." - "..zone2
+	end
+	if zone == "Unknown - Unknown" then zone = "Kein GPS-Signal" end
+	return zone
+end
+
+function HUDUI:drawExo()
+	sx_g = screenWidth
+	local sx = screenWidth
+	if sx_g > 1400 then sx_g = 1400 end
+
+	local width = math.floor(sx_g*0.22)
+	local height = math.floor(sx_g*0.22)
+	local r_os = 1
+
+	local lebensanzeige = getElementHealth(localPlayer)
+	local progressBarSpeed = 24000
+
+		if not start_count then start_count = getTickCount() end
+		if not end_count then end_count = start_count + progressBarSpeed end
+
+
+		local now = getTickCount()
+		local elapsed = now - start_count
+		local duration = end_count - start_count
+		local prog = elapsed / duration
+		local scroll_ = interpolateBetween(207,0,0,-207,0,0,prog,'Linear')
+
+		dxDrawImage(math.floor(screenWidth-width-r_os),1,math.floor(width),math.floor(height),'files/images/HUD/exo/bg.png')
+		dxDrawText (localPlayer:getMoney(),screenWidth-width*0.7-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default-bold" ) --Money
+		dxDrawText (getRealTime().hour..":"..getRealTime().minute,screenWidth-width*0.22-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) -- Clock
+		dxDrawText (self:getZone(),screenWidth-width*0.7-r_os,width*0.372,width,height, tocolor ( 255, 255, 255, 255 ), 1.02*width*0.0039, "default" ) -- ORT
+		--dxDrawText (getSpielzeit(),screenWidth-width*0.55-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
+		--dxDrawText (getLevel(),screenWidth-width*0.15-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
+
+		local wanted = localPlayer:getWantedLevel()
+		if wanted > 0 then dxDrawImage(screenWidth-width*0.146-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+		if wanted > 1 then dxDrawImage(screenWidth-width*0.256-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+		if wanted > 2 then dxDrawImage(screenWidth-width*0.36-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+		if wanted > 3 then dxDrawImage(screenWidth-width*0.47-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+		if wanted > 4 then dxDrawImage(screenWidth-width*0.58-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+		if wanted > 5 then dxDrawImage(screenWidth-width*0.69-r_os,width*0.86,width*0.1,height*0.1,"files/images/HUD/exo/wanted.png") end
+
+		local b_x = 100
+
+		b_x = localPlayer:getArmor()/100
+		dxDrawImageSection(screenWidth-width*0.687-r_os,sx*0.1051,sx*0.1485*b_x,sx*0.01,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
+
+		b_x = localPlayer:getHealth()/100
+		dxDrawImageSection(screenWidth-width*0.687-r_os,sx*0.1264,sx*0.1485*b_x,sx*0.01,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
+
+		b_x = localPlayer:getKarma()/150
+		dxDrawImageSection(screenWidth-width*0.687-r_os,sx*0.1484,sx*0.1485*b_x,sx*0.01,scroll_,0,207*b_x,15,'files/images/HUD/exo/green_b.png',0,0,0,tocolor(255,255,255,200))
+
+		if prog >= 1 then
+			start_count = getTickCount()
+			end_count = start_count + progressBarSpeed
+		end
+		local r,g,b,a = 0,0,0,200
+
+		if lebensanzeige > 0 and lebensanzeige < 1 then lebensanzeige = 1 end
+		lebensanzeige = math.floor(lebensanzeige)
+
+		dxDrawText ("SCHUTZWESTE: "..math.floor(getPedArmor(localPlayer)).."%",screenWidth-width*0.5-r_os,width*0.475,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","right" ) --Money
+		dxDrawText ("LEBEN: "..lebensanzeige.."%",screenWidth-width*0.5-r_os,width*0.58,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","right" ) --Money
+		dxDrawText ("KARMA: "..math.floor(localPlayer:getKarma()).."%",screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","right" ) --Money
+
+		dxDrawImage(screenWidth-width*0.3-r_os,(sx*0),sx*0.045,sx*0.045, WeaponIcons[localPlayer:getWeapon()])
+
+		if getPedWeapon(localPlayer) > 9  then
+				firestate = getHudFirestate()
+				dxDrawText(getPedTotalAmmo ( localPlayer)-getPedAmmoInClip(localPlayer)..'-'..getPedAmmoInClip(localPlayer),screenWidth-width*0.57-r_os,width*0.14,width,height,tocolor(255,255,255,255),0.7,'pricedown')
+				dxDrawText(firestate,screenWidth-width*0.57-r_os,width*0.07,width,height,tocolor(255,255,255,255),0.8*width*0.0039,'pricedown')
+
+				local ammoTyp = getElementData ( localPlayer, "curAmmoTyp" )
+				if not isElementInWater(localPlayer) and ammoTyp and ammoTyp > 0 and spezMuniWaffen[getPedWeapon(localPlayer)] then
+					local ammo = specialAmmoName[ammoTyp]
+					dxDrawRectangle ((screenWidth-width)*1.05,sx*0.218,sx*0.4,sx*0.02, tocolor ( 255,0,0,125 ))
+					dxDrawText ("Spezialmunition: "..ammo.."",screenWidth-width*0.687-r_os,sx*0.22,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
+				end
+		end
+
+		if isElementInWater(localPlayer) then
+			dxDrawRectangle ((screenWidth-width)*1.05,sx*0.218,sx*0.4,sx*0.02, tocolor ( 50,200,255,125 ))
+			dxDrawText ("Sauerstoff: "..math.floor((getPedOxygenLevel(localPlayer)*100)/2500).."%",sx*0.9-r_os,sx*0.22,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
+		end
 end
 
 function HUDUI:drawRedDot()
