@@ -64,9 +64,8 @@
 	<map src="prison.map" />
 	
 	<map src="paintball.map" />
-	<map src="knast_int.map" />
 		
-	<map src="alcatraz.map" />
+	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
   

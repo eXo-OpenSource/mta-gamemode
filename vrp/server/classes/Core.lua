@@ -60,6 +60,7 @@ function Core:constructor()
 	TrainManager:new()
 	FireManager:new()
 	ShopManager:new()
+	Jail:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
