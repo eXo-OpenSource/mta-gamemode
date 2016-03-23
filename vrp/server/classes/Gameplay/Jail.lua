@@ -29,20 +29,39 @@ function Jail:constructor()
 	self:createGate(Vector3(142.40, 359.10, 7985.30), 270,Vector3(139.60, 358.30, 7984.10), 90, Vector3(139.60, 359.80, 7984.10), 90)
 	self:createGate(Vector3(151.46, 368.27, 7985.24), 0,  Vector3(151.20, 366.30, 7984.10), 270,Vector3(151.80, 366.70, 7984.10), 180)
 	self:createGate(Vector3(176.20, 367.80, 7985.29), 0,  Vector3(176.40, 365.70, 7984.10), 90, Vector3(175.60, 366.10, 7984.10), 180)
-	--Cells
-	self:createGate(Vector3(173.70, 349.10, 7985.30), 270,  Vector3(171.70, 349.10, 7985.30), 180)
 
+	--Cells Left
+	self:createGate(Vector3(173.70, 349.10, 7985.30), 270,  Vector3(171.70, 349.20, 7984.10), 180)
+	self:createGate(Vector3(169.80, 349.10, 7985.30), 270,  Vector3(167.60, 349.20, 7984.10), 180)
+	self:createGate(Vector3(165.90, 349.10, 7985.30), 270,  Vector3(163.80, 349.20, 7984.10), 180)
+	self:createGate(Vector3(162.00, 349.10, 7985.30), 270,  Vector3(159.90, 349.20, 7984.10), 180)
+	self:createGate(Vector3(158.20, 349.10, 7985.30), 270,  Vector3(156.10, 349.20, 7984.10), 180)
+	self:createGate(Vector3(154.30, 349.10, 7985.30), 270,  Vector3(152.20, 349.20, 7984.10), 180)
+	self:createGate(Vector3(150.50, 349.10, 7985.30), 270,  Vector3(148.40, 349.20, 7984.10), 180)
+	self:createGate(Vector3(146.50, 349.10, 7985.30), 270,  Vector3(144.50, 349.20, 7984.10), 180)
+
+	-- Cells Right
+	self:createGate(Vector3(153.68, 369.50, 7985.24), 270,  Vector3(155.60, 369.40, 7984.10), 0)
+	self:createGate(Vector3(157.60, 369.50, 7985.24), 270,  Vector3(159.50, 369.40, 7984.10), 0)
+	self:createGate(Vector3(161.65, 369.50, 7985.24), 270,  Vector3(163.50, 369.40, 7984.10), 0)
+	self:createGate(Vector3(165.60, 369.50, 7985.24), 270,  Vector3(167.50, 369.40, 7984.10), 0)
+	self:createGate(Vector3(169.60, 369.50, 7985.24), 270,  Vector3(171.50, 369.40, 7984.10), 0)
+	self:createGate(Vector3(173.43, 369.50, 7985.24), 270,  Vector3(175.30, 369.40, 7984.10), 0)
+
+	InteriorEnterExit:new(Vector3(-589.67, -489.02, 25.53), Vector3(183.25, 372.91, 7983.66), 180, 0)
 
 end
+
 function Jail:createGate(gatePos, gateRot, keypad1Pos, keypad1Rot, keypad2Pos, keypad2Rot)
 	local Id = #self.m_Gates+1
 	self.m_Gates[Id] = createObject(2930, gatePos, 0, 0, gateRot)
 	self.m_Gates[Id].closed = true
+	self.m_Gates[Id].moving = false
 
 	self.m_Keypad1[Id] = createObject(2886, keypad1Pos, 0, 0, keypad1Rot)
 	self.m_Keypad1[Id].Id = Id
 	addEventHandler( "onElementClicked", self.m_Keypad1[Id], self.m_onKeypadClicked)
-
+	createMarker(keypad1Pos.x, keypad1Pos.y, keypad1Pos.z, 3, "corona")
 	if keypad2Pos then
 		self.m_Keypad2[Id] = createObject(2886, keypad2Pos, 0, 0, keypad2Rot)
 		self.m_Keypad2[Id].Id = Id
@@ -57,12 +76,18 @@ function Jail:onKeypadClick(button, state, player)
 			local pos = gate:getPosition()
 			local rot = gate:getRotation()
 			local offset = self.ms_OffsetFromRotation[math.floor(rot.z)]
-			if gate.closed == true then
-				gate:move(1500, pos.x + offset["x"], pos.y + offset["y"], pos.z)
-				gate.closed = false
-			else
-				gate:move(1500, pos.x - offset["x"], pos.y - offset["y"], pos.z)
-				gate.closed = true
+			if not gate.moving == true then
+				if gate.closed == true then
+					gate:move(1500, pos.x + offset["x"], pos.y + offset["y"], pos.z)
+					gate.closed = false
+				else
+					gate:move(1500, pos.x - offset["x"], pos.y - offset["y"], pos.z)
+					gate.closed = true
+				end
+				gate.moving = true
+				setTimer(function(gate)
+					gate.moving = false
+				end,1500, 1, gate)
 			end
 		else
 			player:sendError("Internal Error! No Id!")

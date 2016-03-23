@@ -24,11 +24,12 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) and not hitElement.m_DontTeleport then
 				hitElement.m_DontTeleport = true
-				setElementInterior(hitElement, interiorId)
-				setElementPosition(hitElement, interiorPosition.x, interiorPosition.y, interiorPosition.z)
-				setElementDimension(hitElement, dimension)
-				setElementRotation(hitElement, 0, 0, enterRotation)
-				setTimer(function() hitElement.m_DontTeleport = false end, 500, 1) -- Todo: this is a temp fix
+				hitElement:setInterior(interiorId)
+				hitElement:setPosition(interiorPosition)
+				hitElement:setDimension(dimension)
+				hitElement:setRotation(0, 0, enterRotation)
+				hitElement:setCameraTarget(hitElement)
+				setTimer(function() hitElement.m_DontTeleport = false end, 1000, 1) -- Todo: this is a temp fix
 			end
 		end
 	)
@@ -36,11 +37,12 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension  and not hitElement.m_DontTeleport then
 				hitElement.m_DontTeleport = true
-				setElementInterior(hitElement, 0, entryPosition.x, entryPosition.y, entryPosition.z)
-				setElementDimension(hitElement, 0)
-				setElementRotation(hitElement, 0, 0, exitRotation)
-				setCameraTarget(hitElement, hitElement)
-				setTimer(function() hitElement.m_DontTeleport = false end, 500, 1) -- Todo: this is a temp fix
+				hitElement:setInterior(0)
+				hitElement:setPosition(entryPosition)
+				hitElement:setDimension(0)
+				hitElement:setRotation(0, 0, exitRotation)
+				hitElement:setCameraTarget(hitElement)
+				setTimer(function() hitElement.m_DontTeleport = false end, 1000, 1) -- Todo: this is a temp fix
 			end
 		end
 	)
