@@ -37,7 +37,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension  and not hitElement.m_DontTeleport then
 				hitElement.m_DontTeleport = true
-				hitElement:setInterior(0)
+				hitElement:setInterior(0, entryPosition.x, entryPosition.y, entryPosition.z)
 				hitElement:setPosition(entryPosition)
 				hitElement:setDimension(0)
 				hitElement:setRotation(0, 0, exitRotation)

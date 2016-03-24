@@ -50,6 +50,7 @@ function Jail:constructor()
 
 	InteriorEnterExit:new(Vector3(-589.67, -489.02, 25.53), Vector3(183.25, 372.91, 7983.66), 180, 0)
 
+
 end
 
 function Jail:createGate(gatePos, gateRot, keypad1Pos, keypad1Rot, keypad2Pos, keypad2Rot)
