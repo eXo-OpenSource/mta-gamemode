@@ -33,6 +33,9 @@ end
 function Item:use()
 end
 
+function Item:expire()
+end
+
 function Item:getModelId()
 	return self.m_ItemModel ~= 0 and self.m_ItemModel or 2969
 end

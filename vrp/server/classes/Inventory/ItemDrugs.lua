@@ -7,6 +7,12 @@
 -- ****************************************************************************
 ItemDrugs = inherit(Item)
 
+--CONSTANTS
+-- units in ms
+WEED_EXPIRETIME = 10 * 1000
+HEROIN_EXPIRETIME = 50 * 1000
+SHROOM_EXPIRETIME = 60 * 1000
+
 function ItemDrugs:constructor()
 
 end

@@ -7,6 +7,7 @@
 -- ****************************************************************************
 
 ItemManager = inherit( Singleton )
+local w,h = guiGetScreenSize()
 
 addRemoteEvents{ "onClientItemUse", "onClientItemExpire"}
 function ItemManager:constructor( )
@@ -15,10 +16,28 @@ function ItemManager:constructor( )
     addEventHandler( "onClientItemExpire", localPlayer, bind( ItemManager.onItemExpire, self))
 end
 
-function ItemManager:onItemUse( Item )
+function ItemManager:onItemUse( Item , Expiretime)
   if self.m_Items[Item].onUse then
     self.m_Items[Item]:onUse()
+    if Expiretime then
+        self.m_ItemExpire = Expiretime / 1000
+        self.m_LastTick = getTickCount()
+        self.m_ExpireFunc = bind( ItemManager.renderExpireTime, self )
+        addEventHandler( "onClientRender", root, self.m_ExpireFunc )
+    end
   end
+end
+
+function ItemManager:renderExpireTime( )
+  local now = getTickCount()
+  if now - self.m_LastTick >= 1000 then
+    self.m_ItemExpire = self.m_ItemExpire -1
+    self.m_LastTick = now
+    if self.m_ItemExpire <= 0 then
+      removeEventHandler( "onClientRender", root, self.m_ExpireFunc )
+    end
+  end
+  dxDrawText( self.m_ItemExpire, 0 ,h*0.1 ,w , h, tocolor( 255,255,255,255), 1, "default-bold","center","top")
 end
 
 function ItemManager:onItemExpire( Item )
