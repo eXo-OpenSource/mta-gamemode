@@ -27,8 +27,9 @@ function Jail:constructor()
 	self:createGate(Vector3(176.30, 358.60, 7985.30), 0,  Vector3(176.30, 356.50, 7984.10), 90, Vector3(176.20, 356.50, 7984.10), 270)
 	self:createGate(Vector3(144.20, 352.30, 7985.30), 0,  Vector3(144.10, 349.00, 7984.10), 270,Vector3(144.70, 352.30, 7984.10), 0)
 	self:createGate(Vector3(142.40, 359.10, 7985.30), 270,Vector3(139.60, 358.30, 7984.10), 90, Vector3(139.60, 359.80, 7984.10), 90)
-	self:createGate(Vector3(151.46, 368.27, 7985.24), 0,  Vector3(151.20, 366.30, 7984.10), 270,Vector3(151.80, 366.70, 7984.10), 180)
-	self:createGate(Vector3(176.20, 367.80, 7985.29), 0,  Vector3(176.40, 365.70, 7984.10), 90, Vector3(175.60, 366.10, 7984.10), 180)
+	self:createGate(Vector3(151.46, 368.27, 7985.30), 0,  Vector3(151.20, 366.30, 7984.10), 270,Vector3(151.80, 366.70, 7984.10), 180)
+	self:createGate(Vector3(176.20, 367.80, 7985.30), 0,  Vector3(176.40, 365.70, 7984.10), 90, Vector3(175.60, 366.10, 7984.10), 180)
+	self:createGate(Vector3(181.70, 365.60, 7985.30), 270,Vector3(180.10, 364.50, 7984.10), 90, Vector3(180.10, 366.60, 7984.10), 90)
 
 	--Cells Left
 	self:createGate(Vector3(173.70, 349.10, 7985.30), 270,  Vector3(171.70, 349.20, 7984.10), 180)
@@ -81,9 +82,11 @@ function Jail:onKeypadClick(button, state, player)
 				if gate.closed == true then
 					gate:move(1500, pos.x + offset["x"], pos.y + offset["y"], pos.z)
 					gate.closed = false
+					--outputChatBox("Gate "..source.Id.." geöffnet", player, 255, 0, 0)
 				else
 					gate:move(1500, pos.x - offset["x"], pos.y - offset["y"], pos.z)
 					gate.closed = true
+					--outputChatBox("Gate "..source.Id.." geschlossen", player, 255, 0, 0)
 				end
 				gate.moving = true
 				setTimer(function(gate)

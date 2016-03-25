@@ -12,7 +12,7 @@ inherit(Singleton, AdminGUI)
 addRemoteEvents{"showAdminMenu"}
 function AdminGUI:constructor()
 
-	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-250, 800, 540)
+	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-200, 600, 400, false, true)
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
 	--self.m_CloseButton.onHover = function () self.m_CloseButton:setColor(Color.LightRed) end
@@ -25,16 +25,26 @@ function AdminGUI:constructor()
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.2, self.m_Width*0.25, self.m_Height*0.07, _"Adminansage:", tabAllgemein):setColor(Color.White)
-	self.m_AdminAnnounceText = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.6, self.m_Height*0.09,tabAllgemein)
-	self.m_AnnounceButton = GUIButton:new(self.m_Width*0.68, self.m_Height*0.29, self.m_Width*0.2, self.m_Height*0.09, _"senden",  tabAllgemein)
+	GUILabel:new(10, 10, 150, 30, _"Adminansage:", tabAllgemein):setColor(Color.White)
+	self.m_AdminAnnounceText = GUIEdit:new(150, 10, 330, 30,tabAllgemein)
+	self.m_AnnounceButton = GUIButton:new(490, 10, 100, 30, _"senden",  tabAllgemein)
 	self.m_AnnounceButton.onLeftClick = bind(self.AnnounceButton_Click, self)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
-	self.m_PlayersGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.9, tabSpieler)
+	self.m_PlayersGrid = GUIGridList:new(10, 10, 200, 380, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
-	self.m_setFactionButton = GUIButton:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.05, _"in Fraktion setzten",  tabSpieler)
-	self.m_setCompanyButton = GUIButton:new(self.m_Width*0.35, self.m_Height*0.12, self.m_Width*0.3, self.m_Height*0.05, _"in Unternehmen setzten",  tabSpieler)
+
+	self.m_PlayerNameLabel = GUILabel:new(220, 10, 200, 20, _"Spieler: -", tabSpieler)
+
+	self.m_adminButton = {}
+	self:addAdminButton("kick", "kicken", 220, 210, 180, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("prison", "ins Prison", 220, 250, 180, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("warn", "Warn geben", 220, 290, 180, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("timeban", "Timeban", 410, 210, 180, 30, Color.Red, tabSpieler)
+	self:addAdminButton("permaban", "Permaban", 410, 250, 180, 30, Color.Red, tabSpieler)
+
+	self:addAdminButton("setFaction", "in Fraktion setzen", 220, 330, 180, 30, Color.Blue, tabSpieler)
+	self:addAdminButton("setCompany", "in Unternehmen setzen", 410, 330, 180, 30, Color.Blue, tabSpieler)
 
 	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
 	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, "http://exo-reallife.de/ingame/ticketSystem/admin.php?player="..getPlayerName(getLocalPlayer()).."&sessionID="..self:generateSessionId(), true, tabTicket)
@@ -43,25 +53,49 @@ function AdminGUI:constructor()
 	for key, playeritem in ipairs(getElementsByType("player")) do
 		local item = self.m_PlayersGrid:addItem(playeritem:getName())
 		item.player = playeritem
+		item.onLeftClick = function()
+			self:onSelectPlayer(playeritem)
+		end
 	end
+end
 
-	self.m_setCompanyButton.onLeftClick = function()
-		local companyTable = {[1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
+function AdminGUI:addAdminButton(func, text, x, y, width, height, color, parent)
+	self.m_adminButton[func] = GUIButton:new(x, y, width, height, _(text),  parent):setFontSize(1):setBackgroundColor(color)
+	self.m_adminButton[func].func = func
+	self.m_adminButton[func].onLeftClick = function () self:onButtonClick(func) end
+	self.m_adminButton[func]:setEnabled(false)
+end
+
+function AdminGUI:onSelectPlayer(player)
+	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
+	self:refreshButtons()
+end
+
+function AdminGUI:refreshButtons()
+	for index, btn in pairs(self.m_adminButton) do
+		if localPlayer:getRank() < ADMIN_RANK_PERMISSION[btn.func] then
+			btn:setEnabled(false)
+		else
+			btn:setEnabled(true)
+		end
+	end
+end
+
+function AdminGUI:onButtonClick(func)
+	if func == "setCompany" then
+		local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
 		if self.m_PlayersGrid:getSelectedItem() then
 			local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
 			ChangerBox:new(_"Unternehmen setzten", _"Bitte wähle das gewünschte Unternehmen aus:",companyTable, function (companyId) triggerServerEvent("adminSetPlayerCompany", root, selectedPlayer,companyId) end)
 		end
-	end
-
-	self.m_setFactionButton.onLeftClick = function()
-		local factionTable = {[1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra",[6] = "Yakuza"}
+	elseif func == "setFaction" then
+		local factionTable = {[0] = "Keine Fraktion", [1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra",[6] = "Yakuza"}
 		if self.m_PlayersGrid:getSelectedItem() then
 			local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
 			ChangerBox:new(_"Fraktion setzten", _"Bitte wähle die gewünschte Fraktion aus:",factionTable, function (factionId) triggerServerEvent("adminSetPlayerFaction", root, selectedPlayer,factionId) end)
 		end
 	end
 end
-
 
 function AdminGUI:AnnounceButton_Click()
 	local announceString = self.m_AdminAnnounceText:getText()

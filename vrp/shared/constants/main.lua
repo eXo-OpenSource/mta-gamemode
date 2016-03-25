@@ -18,6 +18,17 @@ for k, v in pairs(RANK) do
 end
 RANK = r2
 
+ADMIN_RANK_PERMISSION = {
+	["kick"] = RANK.Supporter,
+	["prison"] = RANK.Supporter,
+	["warn"] = RANK.Supporter,
+	["timeban"] = RANK.Moderator,
+	["permaban"] = RANK.SuperModerator,
+	["nickchange"] = RANK.SuperModerator,
+	["setFaction"] = RANK.SuperModerator,
+	["setCompany"] = RANK.SuperModerator
+}
+
 VEHICLESHOPS = {
 	["Coutt and Schutz"] = {
 		ImgPath = "files/images/Shops/CouttSchutz.png";
