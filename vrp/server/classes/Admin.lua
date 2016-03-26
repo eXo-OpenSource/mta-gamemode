@@ -58,15 +58,19 @@ function Admin:openAdminMenu( player )
 end
 
 function Admin:Event_adminTriggerFunction(func, target, arg1, arg2)
-    if func == "goto" then
-        self:goToPlayer(client, func, target:getName())
-        self:sendShortMessage(_("%s hat sich zu %s geportet!", client, client:getName(), target:getName()))
-    elseif func == "gethere" then
-        self:getHerePlayer(client, func, target:getName())
-        self:sendShortMessage(_("%s hat %s zu sich geportet!", client, client:getName(), target:getName()))
-    elseif func == "kick" then
-        self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", client, client:getName(), target:getName(), arg1))
-        target:kick(client, arg1)
+    if client:getRank() >= ADMIN_RANK_PERMISSION[func] then
+        if func == "goto" then
+            self:goToPlayer(client, func, target:getName())
+            self:sendShortMessage(_("%s hat sich zu %s geportet!", client, client:getName(), target:getName()))
+        elseif func == "gethere" then
+            self:getHerePlayer(client, func, target:getName())
+            self:sendShortMessage(_("%s hat %s zu sich geportet!", client, client:getName(), target:getName()))
+        elseif func == "kick" then
+            self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", client, client:getName(), target:getName(), arg1))
+            target:kick(client, arg1)
+        end
+    else
+        client:sendError(_("Du darst diese Aktion nicht ausführen!", client))
     end
 end
 
