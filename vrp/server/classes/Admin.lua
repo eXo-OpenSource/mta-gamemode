@@ -18,7 +18,7 @@ function Admin:constructor()
 		[5] = "Projektleiter"
 	}
 
-	addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany"}
+	addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction"}
 
 	addCommandHandler("admins", bind(self.onlineList, self))
 	addCommandHandler("a", bind(self.chat, self))
@@ -31,6 +31,7 @@ function Admin:constructor()
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
 	addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
+    addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
 end
 
 function Admin:destructor()
@@ -56,6 +57,19 @@ function Admin:openAdminMenu( player )
 	end
 end
 
+function Admin:Event_adminTriggerFunction(func, target, arg1, arg2)
+    if func == "goto" then
+        self:goToPlayer(client, func, target:getName())
+        self:sendShortMessage(_("%s hat sich zu %s geportet!", client, client:getName(), target:getName()))
+    elseif func == "gethere" then
+        self:getHerePlayer(client, func, target:getName())
+        self:sendShortMessage(_("%s hat %s zu sich geportet!", client, client:getName(), target:getName()))
+    elseif func == "kick" then
+        self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", client, client:getName(), target:getName(), arg1))
+        target:kick(client, arg1)
+    end
+end
+
 function Admin:chat(player,cmd,...)
 	if player:getRank() >= RANK.Supporter then
 		local msg = table.concat( {...}, " " )
@@ -74,6 +88,12 @@ function Admin:sendMessage(msg,r,g,b)
 	end
 end
 
+function Admin:sendShortMessage(text, ...)
+	for player, rank in pairs(self.m_OnlineAdmins) do
+		player:sendShortMessage(("Admin: %s"):format(text), ...)
+	end
+end
+
 function Admin:ochat(player,cmd,...)
 	if player:getRank() >= RANK.Supporter then
 		local rankName = self.m_RankNames[player:getRank()]
@@ -85,12 +105,10 @@ function Admin:ochat(player,cmd,...)
 end
 
 function Admin:onlineList(player)
-
-		outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
-		for key, value in pairs(self.m_OnlineAdmins) do
-			outputChatBox(self.m_RankNames[value].." "..key:getName(),player,255,255,255)
-		end
-
+	outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
+	for key, value in pairs(self.m_OnlineAdmins) do
+		outputChatBox(self.m_RankNames[value].." "..key:getName(),player,255,255,255)
+	end
 end
 
 function Admin:goToPlayer(player,cmd,target)
@@ -114,7 +132,7 @@ function Admin:goToPlayer(player,cmd,target)
 	end
 end
 
-function Admin:getHerePlayer(player,cmd,target)
+function Admin:getHerePlayer(player, cmd, target)
 	if player:getRank() >= RANK.Supporter then
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
@@ -189,25 +207,37 @@ end
 
 function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
 	if client:getRank() >= RANK.Supporter then
-		local faction = FactionManager:getSingleton():getFromId(Id)
-		if faction then
-			faction:addPlayer(targetPlayer,6)
-			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
-		else
-			client:sendError(_("Fraktion nicht gefunden!", client))
-		end
+        if Id == 0 then
+            local faction = targetPlayer:getFaction()
+            faction:removePlayer(targetPlayer)
+            client:sendInfo(_("Du hast den Spieler aus seiner Fraktion entfernt!", client))
+        else
+            local faction = FactionManager:getSingleton():getFromId(Id)
+    		if faction then
+    			faction:addPlayer(targetPlayer,6)
+    			client:sendInfo(_("Du hast den Spieler in die Fraktion "..faction:getName().." gesetzt!", client))
+    		else
+    			client:sendError(_("Fraktion nicht gefunden!", client))
+    		end
+        end
 	end
 end
 
 function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
 	if client:getRank() >= RANK.Supporter then
-		local company = CompanyManager:getSingleton():getFromId(Id)
-		if company then
-			company:addPlayer(targetPlayer,5)
-			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
-		else
-			client:sendError(_("Unternehmen nicht gefunden!", client))
-		end
+        if Id == 0 then
+            local company = targetPlayer:getCompany()
+            company:removePlayer(targetPlayer)
+            client:sendInfo(_("Du hast den Spieler aus seinem Unternehmen entfernt!", client))
+        else
+            local company = CompanyManager:getSingleton():getFromId(Id)
+    		if company then
+    			company:addPlayer(targetPlayer,5)
+    			client:sendInfo(_("Du hast den Spieler in das Unternehmen "..company:getName().." gesetzt!", client))
+    		else
+    			client:sendError(_("Unternehmen nicht gefunden!", client))
+    		end
+        end
 	end
 end
 

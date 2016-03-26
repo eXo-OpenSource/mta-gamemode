@@ -34,15 +34,21 @@ function AdminGUI:constructor()
 	self.m_PlayersGrid = GUIGridList:new(10, 10, 200, 380, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
 
-	self.m_PlayerNameLabel = GUILabel:new(220, 10, 200, 20, _"Spieler: -", tabSpieler)
+	self.m_PlayerNameLabel = GUILabel:new(220, 10, 180, 20, _"Spieler: -", tabSpieler)
+	self.m_PlayerTimeLabel = GUILabel:new(220, 35, 180, 20, _"Spielstunden: -", tabSpieler)
+	self.m_PlayerJobLabel = GUILabel:new(220, 60, 180, 20, _"Job: -", tabSpieler)
+	self.m_PlayerFactionLabel = GUILabel:new(410, 10, 180, 20, _"Fraktion: -", tabSpieler)
+	self.m_PlayerCompanyLabel = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabSpieler)
+	self.m_PlayerGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabSpieler)
 
 	self.m_adminButton = {}
+	self:addAdminButton("goto", "hin porten", 220, 170, 180, 30, Color.Green, tabSpieler)
+	self:addAdminButton("gethere", "her porten", 410, 170, 180, 30, Color.Green, tabSpieler)
 	self:addAdminButton("kick", "kicken", 220, 210, 180, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("prison", "ins Prison", 220, 250, 180, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("warn", "Warn geben", 220, 290, 180, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("timeban", "Timeban", 410, 210, 180, 30, Color.Red, tabSpieler)
 	self:addAdminButton("permaban", "Permaban", 410, 250, 180, 30, Color.Red, tabSpieler)
-
 	self:addAdminButton("setFaction", "in Fraktion setzen", 220, 330, 180, 30, Color.Blue, tabSpieler)
 	self:addAdminButton("setCompany", "in Unternehmen setzen", 410, 330, 180, 30, Color.Blue, tabSpieler)
 
@@ -68,6 +74,14 @@ end
 
 function AdminGUI:onSelectPlayer(player)
 	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
+	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
+	self.m_PlayerTimeLabel:setText(_("Spielzeit: %s:%s h", hours, minutes))
+	self.m_PlayerFactionLabel:setText(_("Fraktion: %s", player:getShortFactionName()))
+	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getShortCompanyName()))
+	self.m_PlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
+	self.m_PlayerJobLabel:setText(_("Job: %s", player:getJobName()))
+
+
 	self:refreshButtons()
 end
 
@@ -82,19 +96,23 @@ function AdminGUI:refreshButtons()
 end
 
 function AdminGUI:onButtonClick(func)
-	if func == "setCompany" then
-		local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
-		if self.m_PlayersGrid:getSelectedItem() then
-			local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
+	if self.m_PlayersGrid:getSelectedItem() then
+		local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
+		if func == "gethere" or func == "goto" then
+			triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer)
+		elseif func == "kick" then
+			InputBox:new(_("Spieler %s kicken", selectedPlayer:getName()), _("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", selectedPlayer:getName()), function (reason) triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason) end)
+		elseif func == "setCompany" then
+			local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
 			ChangerBox:new(_"Unternehmen setzten", _"Bitte wähle das gewünschte Unternehmen aus:",companyTable, function (companyId) triggerServerEvent("adminSetPlayerCompany", root, selectedPlayer,companyId) end)
-		end
-	elseif func == "setFaction" then
-		local factionTable = {[0] = "Keine Fraktion", [1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra",[6] = "Yakuza"}
-		if self.m_PlayersGrid:getSelectedItem() then
-			local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
+		elseif func == "setFaction" then
+			local factionTable = {[0] = "Keine Fraktion", [1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra", [6] = "Yakuza"}
 			ChangerBox:new(_"Fraktion setzten", _"Bitte wähle die gewünschte Fraktion aus:",factionTable, function (factionId) triggerServerEvent("adminSetPlayerFaction", root, selectedPlayer,factionId) end)
+		else
+			outputDebug("Under Developement", 255, 0 ,0)
 		end
 	end
+	self:delete()
 end
 
 function AdminGUI:AnnounceButton_Click()

@@ -80,6 +80,18 @@ function Player:getShortFactionName()
 	return self:getPublicSync("ShortFactionName") or "-"
 end
 
+function Player:getCompanyName()
+	return self:getPublicSync("CompanyName") or "-"
+end
+
+function Player:getShortCompanyName()
+	return self:getPublicSync("ShortCompanyName") or "-"
+end
+
+function Player:getPlayTime()
+	return (self:getPrivateSync("LastPlayTime") and self.m_JoinTime and math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self.m_JoinTime)/1000/60)) or 0
+end
+
 function Player:getJobName()
 	local job = JobManager:getSingleton():getFromId(self:getPublicSync("JobId"))
 	if job then
