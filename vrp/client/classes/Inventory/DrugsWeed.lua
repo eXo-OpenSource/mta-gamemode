@@ -14,10 +14,14 @@ function DrugsWeed:constructor( )
 end
 
 function DrugsWeed:onUse(  )
-  if self.m_ScreenSource then
+  if isElement( self.m_ScreenSource )  then
       destroyElement( self.m_ScreenSource )
-      destroyElement( self.m_Shader )
-      removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
+  end
+  if  isElement( self.m_Shader ) then
+    destroyElement( self.m_Shader )
+  end
+  if self.m_RenderBindFunc then
+    removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
   end
   self.m_ScreenSource = dxCreateScreenSource( w, h)
   self.m_Shader = dxCreateShader( "files/shader/drug-weedshader.fx" )

@@ -22,6 +22,9 @@ function ItemManager:onItemUse( Item , Expiretime)
     if Expiretime then
         self.m_ItemExpire = Expiretime / 1000
         self.m_LastTick = getTickCount()
+        if self.m_ExpireFunc then
+          removeEventHandler( "onClientRender", root, self.m_ExpireFunc )
+        end
         self.m_ExpireFunc = bind( ItemManager.renderExpireTime, self )
         addEventHandler( "onClientRender", root, self.m_ExpireFunc )
     end
