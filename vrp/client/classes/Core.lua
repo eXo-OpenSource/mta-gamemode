@@ -109,6 +109,8 @@ function Core:afterLogin()
 	AdminGUI:getSingleton():close()
 	MigratorPanel:new()
 	MigratorPanel:getSingleton():close()
+	KeyBindings:new()
+	KeyBindings:getSingleton():close()
 
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)

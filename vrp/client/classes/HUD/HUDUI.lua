@@ -104,7 +104,7 @@ function HUDUI:drawLevelRect()
 
 	-- Background
 	dxDrawRectangle(screenWidth - screenWidth*0.195, 0, screenWidth*0.2, screenHeight*0.035, tocolor(0, 0, 0, 120))
-	dxDrawRectangle(screenWidth - screenWidth*0.195, 0, screenWidth*0.2, 5, Color.DarkLightBlue)
+	dxDrawRectangle(screenWidth - screenWidth*0.195, 0, screenWidth*0.2, 5, Color.LightBlue)
 
 	-- Joblevel
 	dxDrawImage(f(screenWidth*0.81), f(screenHeight*0.0095), f(screenWidth*0.016 / ASPECT_RATIO_MULTIPLIER), f(screenHeight*0.02), "files/images/HUD/JobLevel.png")
@@ -178,32 +178,33 @@ function HUDUI:drawKarmaBar(height, fontSize)
 
 	local karma = math.floor(localPlayer:getKarma()) or 0
 
-	local barWidth = width*math.abs(karma)/MAX_KARMA_LEVEL/2
+	local barWidth = width*(math.abs(karma) <= 150 and math.abs(karma) or 150)/MAX_KARMA_LEVEL/2
 	if karma == 0 then
-		dxDrawRectangle(left, top, width/2-1, height,tocolor(0,0,0,150))
+		dxDrawRectangle(left, top, width/2-1, height, tocolor(0,0,0,150))
 		dxDrawRectangle(left+width/2+1, top, width/2-1, height, tocolor(0,0,0,150))
 		dxDrawText("Karma neutral", left, top, left+width, top+height, Color.White, fontSize, "default-bold", "center", "center")
 	elseif karma > 0 then
-		dxDrawRectangle(left, top, width/2-1, height,tocolor(0,0,0,150))
+		dxDrawRectangle(left, top, width/2-1, height, tocolor(0,0,0,150))
 		dxDrawRectangle(left+width/2+1, top, width/2-1, height, tocolor(0,50,0,220))
-		dxDrawRectangle(left+width/2+1, top, barWidth, height,tocolor(75,160,75,220))
+		dxDrawRectangle(left+width/2+1, top, barWidth, height, tocolor(75,160,75,220))
 		dxDrawText("Karma: +"..math.abs(karma), left+width/2+1, top, left+width, top+height, Color.White, fontSize, "default-bold", "center", "center")
 	else
-		dxDrawRectangle(left, top, width/2-1, height,tocolor(50,0,0,220))
+		dxDrawRectangle(left, top, width/2-1, height, tocolor(50,0,0,220))
 		dxDrawRectangle(left+width/2+1, top, width/2-1, height, tocolor(0,0,0,150))
-		dxDrawRectangle((left + width/2)-barWidth-1, top, barWidth, height,tocolor(160,75,75,220))
+		dxDrawRectangle((left + width/2)-barWidth-1, top, barWidth, height, tocolor(160,75,75,220))
 		dxDrawText("Karma: -"..math.abs(karma), left, top, left+width/2-1, top+height, Color.White, fontSize, "default-bold", "center", "center")
 	end
 end
 
 function HUDUI:drawDefaultHealthArmor()
 	local health = localPlayer:getHealth()
-	local color = tocolor(0,150,50) -- Todo find better solution
+	--local color = tocolor(0,150,50) -- Todo find better solution
+	local color = tocolor(255-(health+150)*(255/300), (health+150)*(255/300), -math.abs(health*(127/150))+127)
 	local blink = false
 	if health < 50 then
-		color = tocolor(255,128,50)
+		--color = tocolor(255,128,50)
 		if health < 25 then
-			color = tocolor(150,0,0)
+			--color = tocolor(150,0,0)
 			if health < 15 then blink = true end
 		end
 	end

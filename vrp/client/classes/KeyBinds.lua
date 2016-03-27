@@ -24,8 +24,8 @@ function KeyBinds:constructor()
 	  ["KeyToggleHelpGUI"]       = {["defaultKey"] = "F1", ["name"] = "Hilfe-Menü", ["func"] = self.m_HelpMenu};
 	  ["KeyToggleAnimationMenu"] = {["defaultKey"] = "l", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
 	  ["KeyToggleScoreboard"]    = {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
-	  ["KeyToggleCustomMap"] = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
-	  ["KeyToggleWebPanel"] = {["defaultKey"] = "F9", ["name"] = "Webpanel", ["func"] = self.m_WebPanel};
+	  ["KeyToggleCustomMap"]     = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
+	  ["KeyToggleWebPanel"]      = {["defaultKey"] = "F9", ["name"] = "Webpanel", ["func"] = self.m_WebPanel};
 	}
 	self:loadBinds()
 end
