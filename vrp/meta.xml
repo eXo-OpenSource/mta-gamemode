@@ -98,7 +98,7 @@
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsWeed.lua" type="server"/>
-
+	<script src="server/classes/Inventory/Drugs/DrugsHeroin.lua" type="server"/>
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
 	<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
@@ -322,7 +322,7 @@
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
-
+	<script src="client/classes/Inventory/DrugsHeroin.lua" type="client"/>
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeOut.lua" type="client"/>
@@ -965,7 +965,7 @@
 	<vrpfile src="files/shader/cuttexture.fx"/>
 	<vrpfile src="files/shader/fadeOut.fx"/>
 	<vrpfile src="files/shader/drug-weedshader.fx"/>
-
+	<vrpfile src="files/shader/drug-heroinshader.fx"/>
 	<!-- HTML -->
 	<vrpfile src="files/html/PolicePanel/PolicePanel.html"/>
 	<vrpfile src="files/html/PolicePanel/main.css"/>

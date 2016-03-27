@@ -1,19 +1,19 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/Inventory/DrugsWeed.lua
--- *  PURPOSE:     Weed class client
+-- *  FILE:        client/classes/Inventory/DrugsHeroin.lua
+-- *  PURPOSE:     Heroin class client
 -- *
 -- ****************************************************************************
 local w,h = guiGetScreenSize()
-DrugsWeed = inherit( Object )
+DrugsHeroin = inherit( Object )
 
 
-function DrugsWeed:constructor( )
+function DrugsHeroin:constructor( )
 
 end
 
-function DrugsWeed:onUse(  )
+function DrugsHeroin:onUse(  )
   if isElement( self.m_ScreenSource )  then
       destroyElement( self.m_ScreenSource )
   end
@@ -24,18 +24,18 @@ function DrugsWeed:onUse(  )
     removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
   end
   self.m_ScreenSource = dxCreateScreenSource( w, h)
-  self.m_Shader = dxCreateShader( "files/shader/drug-weedshader.fx" )
+  self.m_Shader = dxCreateShader( "files/shader/drug-heroinshader.fx" )
   self.m_RenderBindFunc = function() self:onRender() end
   addEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
 end
 
-function DrugsWeed:onRender()
+function DrugsHeroin:onRender()
   dxUpdateScreenSource( self.m_ScreenSource )
   dxSetShaderValue( self.m_Shader, "ScreenTexture", self.m_ScreenSource)
   dxDrawImage( 0, 0, w, h , self.m_Shader)
 end
 
-function DrugsWeed:onExpire()
+function DrugsHeroin:onExpire()
   removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
   if self.m_ScreenSource then
     destroyElement( self.m_ScreenSource )
@@ -45,6 +45,6 @@ function DrugsWeed:onExpire()
   end
 end
 
-function DrugsWeed:destructor( )
+function DrugsHeroin:destructor( )
 
 end
