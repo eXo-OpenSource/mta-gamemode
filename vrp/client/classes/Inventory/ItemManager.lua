@@ -18,7 +18,11 @@ end
 
 function ItemManager:onItemUse( Item , Expiretime)
   if self.m_Items[Item].onUse then
+    if self.m_ActiveDrug then
+      self.m_Items[self.m_ActiveDrug]:stopRender()
+    end
     self.m_Items[Item]:onUse()
+    self.m_ActiveDrug = Item
     if Expiretime then
         self.m_ItemExpire = Expiretime / 1000
         self.m_LastTick = getTickCount()

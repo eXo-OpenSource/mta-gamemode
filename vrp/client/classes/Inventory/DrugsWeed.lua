@@ -35,6 +35,10 @@ function DrugsWeed:onRender()
   dxDrawImage( 0, 0, w, h , self.m_Shader)
 end
 
+function DrugsWeed:stopRender( )
+  removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
+end
+
 function DrugsWeed:onExpire()
   removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
   if self.m_ScreenSource then
