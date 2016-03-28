@@ -50,6 +50,7 @@ end
 function ItemManager:onItemExpire( Item )
   if self.m_Items[Item].onExpire then
     self.m_Items[Item]:onExpire()
+    removeEventHandler( "onClientRender", root, self.m_ExpireFunc )
   end
 end
 

@@ -36,6 +36,12 @@ end
 
 function DrugsShroom:stopRender( )
   removeEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
+  if isElement( self.m_ScreenSource )  then
+      destroyElement( self.m_ScreenSource )
+  end
+  if  isElement( self.m_Shader ) then
+    destroyElement( self.m_Shader )
+  end
 end
 
 
