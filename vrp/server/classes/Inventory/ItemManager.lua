@@ -13,7 +13,8 @@ function ItemManager:constructor()
 		["Sprengstoff"] = ItemBomb,
 		["Weed"] = DrugsWeed,
 		["Heroin"] = DrugsHeroin,
-		["Shrooms"] = DrugsShroom
+		["Shrooms"] = DrugsShroom,
+		["Kokain"] = DrugsCocaine,
 	}
 
 	for name, class in pairs(self.m_ClassItems) do
