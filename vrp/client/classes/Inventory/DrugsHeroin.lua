@@ -33,7 +33,6 @@ function DrugsHeroin:onUse(  )
   self.m_EndAmount = 1.5
   self.m_StartWidth = 0.001
   self.m_EndWidth = math.random( 0.001,0.005)
-  setGameSpeed( 1.1 )
 end
 
 function DrugsHeroin:stopRender( )
@@ -70,7 +69,6 @@ function DrugsHeroin:onExpire()
   if self.m_Shader then
     destroyElement( self.m_Shader )
   end
-  setGameSpeed(1)
 end
 
 function DrugsHeroin:destructor( )

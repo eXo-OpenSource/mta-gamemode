@@ -100,6 +100,7 @@
 	<script src="server/classes/Inventory/Drugs/DrugsWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsHeroin.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsShroom.lua" type="server"/>
+	<script src="server/classes/Inventory/Drugs/DrugsCocaine.lua" type="server"/>
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
 	<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
@@ -323,6 +324,7 @@
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
+	<script src="client/classes/Inventory/DrugsCocaine.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsHeroin.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsShroom.lua" type="client"/>
 	<!-- Animations -->
@@ -666,6 +668,7 @@
 	<vrpfile src="files/images/Other/BreakingNewsBG.png"/>
 	<vrpfile src="files/images/Other/BreakingNewsEnd.png"/>
 	<vrpfile src="files/images/Other/TaxoMeter.png"/>
+	<vrpfile src="files/images/Other/Circle.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>
@@ -969,6 +972,7 @@
 	<vrpfile src="files/shader/drug-weedshader.fx"/>
 	<vrpfile src="files/shader/drug-heroinshader.fx"/>
 	<vrpfile src="files/shader/drug-shroomshader.fx"/>
+	<vrpfile src="files/shader/drug-cocaineshader.fx"/>
 	<!-- HTML -->
 	<vrpfile src="files/html/PolicePanel/PolicePanel.html"/>
 	<vrpfile src="files/html/PolicePanel/main.css"/>

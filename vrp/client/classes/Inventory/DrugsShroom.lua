@@ -31,6 +31,7 @@ function DrugsShroom:onUse(  )
   self.m_StartAmount = 1
   self.m_EndAmount = 0.5
   addEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
+  setGameSpeed( 1.1 )
 end
 
 function DrugsShroom:stopRender( )
@@ -67,6 +68,7 @@ function DrugsShroom:onExpire()
   if self.m_Shader then
     destroyElement( self.m_Shader )
   end
+  setGameSpeed( 1 )
 end
 
 function DrugsShroom:destructor( )

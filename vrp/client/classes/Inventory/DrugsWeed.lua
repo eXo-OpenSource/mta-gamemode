@@ -26,13 +26,25 @@ function DrugsWeed:onUse(  )
   self.m_ScreenSource = dxCreateScreenSource( w, h)
   self.m_Shader = dxCreateShader( "files/shader/drug-weedshader.fx" )
   self.m_RenderBindFunc = function() self:onRender() end
+  self.m_StartTick = getTickCount()
+  self.m_EndTick = self.m_StartTick + 1000
   addEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
 end
 
 function DrugsWeed:onRender()
+  local now = getTickCount()
+  local elap = now - self.m_StartTick
+  local dur = self.m_EndTick - self.m_StartTick
+  local prog = elap / dur
+  local alpha = interpolateBetween(0,0,0 ,1,0,0, prog , "SineCurve")
   dxUpdateScreenSource( self.m_ScreenSource )
+  dxSetShaderValue( self.m_Shader, "alpha", alpha)
   dxSetShaderValue( self.m_Shader, "ScreenTexture", self.m_ScreenSource)
   dxDrawImage( 0, 0, w, h , self.m_Shader)
+  if prog >= 1 then
+    self.m_StartTick = getTickCount()
+    self.m_EndTick = self.m_StartTick + 1000
+  end
 end
 
 function DrugsWeed:stopRender( )

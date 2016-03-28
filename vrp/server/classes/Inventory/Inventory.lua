@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Inventory Class
 -- *
 -- ****************************************************************************
-Inventory = inherit(Singleton)
+Inventory = inherit(Object)
 
 function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 	self.m_InventorySlots = inventorySlots

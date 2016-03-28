@@ -2,7 +2,7 @@
     //DUBOIS GREEN/MAGENTA Sidy by Side
 
     texture ScreenTexture;
-
+    float alpha = 0;
     sampler TextureSampler = sampler_state
     {
         Texture = <ScreenTexture>;
@@ -25,7 +25,7 @@
 		 color.rgb = luminance; //(luminance > 0.3f) ? 1.0f : 0.0f;
 		 }
 
-		 return float4(color, 1);
+		 return float4(color, alpha);
 
     }
 
