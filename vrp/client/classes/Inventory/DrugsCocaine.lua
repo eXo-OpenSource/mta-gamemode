@@ -61,7 +61,7 @@ function DrugsCocaine:onRender()
   local prog2 = elap / dur2
 
   local radius, alpha,radius3 = interpolateBetween( 0 ,255 ,0 ,4 ,0 ,10 ,prog ,"Linear")
-  local radius2,radius4,magrate = interpolateBetween( 0 ,0 ,1 ,4 ,10 ,2 ,prog2 ,"Linear")
+  local radius2,radius4,magrate = interpolateBetween( 0 ,0 ,1 ,4 ,10 ,1.3 ,prog2 ,"Linear")
   local innerradius,oradius = interpolateBetween( 0.0, 0.0, 0, 0.4, 0.6, 0,prog ,"SineCurve")
   local players = getElementsByType("player", root, true)
 
@@ -86,9 +86,9 @@ function DrugsCocaine:onRender()
       radius3 = radius3 * multiplier
       radius4 = radius4 * multiplier
       x,y,z = getPedBonePosition( pl, 53)
-	     x2,y2,z2 = getPedBonePosition( pl, 43)
-	      self:dx3D(x-radius/2 ,y-radius/2 , z , radius , radius , self.m_TextureCircle,tocolor(255,255,255,alpha), 0, x,y,z+4)
-	       self:dx3D(x2-radius2/2 ,y2-radius2/2 ,z2 ,radius2 ,radius2 , self.m_TextureCircle ,tocolor(255,255,255,alpha) ,0,x2,y2,z2+4)
+	    x2,y2,z2 = getPedBonePosition( pl, 43)
+	    self:dx3D(x-radius/2 ,y-radius/2 , z , radius , radius , self.m_TextureCircle,tocolor(255,255,255,alpha), 0, x,y,z+4)
+	    self:dx3D(x2-radius2/2 ,y2-radius2/2 ,z2 ,radius2 ,radius2 , self.m_TextureCircle ,tocolor(255,255,255,alpha) ,0,x2,y2,z2+4)
       self:dx3D(x-radius3/2 ,y-radius3/2 , z , radius3 , radius3 , self.m_TextureCircle,tocolor(255,255,255,alpha), 0, x,y,z+4)
       self:dx3D(x2-radius4/2 ,y2-radius4/2 ,z2 ,radius4 ,radius4 , self.m_TextureCircle ,tocolor(255,255,255,alpha) ,0,x2,y2,z2+4)
     end
@@ -106,6 +106,9 @@ function DrugsCocaine:onExpire()
   end
   if self.m_Shader then
     destroyElement( self.m_Shader )
+  end
+  if isElement( self.m_TextureCircle ) then
+    destroyElement( self.m_TextureCircle )
   end
 end
 

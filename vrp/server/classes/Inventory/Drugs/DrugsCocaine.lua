@@ -32,6 +32,8 @@ end
 
 
 function DrugsCocaine:expire( player )
-  player.m_DrugOverDose = 0
-  player:triggerEvent("onClientItemExpire", "Kokain" )
+  if player then
+    player.m_DrugOverDose = 0
+    player:triggerEvent("onClientItemExpire", "Kokain" )
+  end
 end
