@@ -189,5 +189,11 @@ function AdminInputBox:constructor(title, durationText, callback)
 	self.m_ReasonBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.46, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
 	self.m_SubmitButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", true, self.m_Window):setBarColor(Color.Green)
 
-	self.m_SubmitButton.onLeftClick = function() if callback then callback(self.m_DurationBox:getText(), self.m_ReasonBox:getText()) end delete(self) end
+	self.m_SubmitButton.onLeftClick =
+	function()
+		if callback then
+			callback(self.m_ReasonBox:getText(), tonumber(self.m_DurationBox:getText()))
+		end
+		delete(self)
+	end
 end

@@ -677,6 +677,31 @@ function Player:setModel( skin )
 end
 
 function Player:setPrison(duration)
-	self:setPosition(Vector3(-224,2371.29,5688.73))
-	self.m_PrisonTime = self.m_PrisonTime + duration*60
+	self.m_PrisonTime = self.m_PrisonTime + duration
+	if isTimer(self.m_PrisonTimer) then killTimer(self.m_PrisonTimer) end
+	if self.m_PrisonTime > 0 then
+		if self:getOccupiedVehicle() then self:removeFromVehicle() end
+		self:setDimension(0)
+		self:setInterior(0)
+		self:setPosition(Vector3(-224,2371.29,5688.73))
+		self:triggerEvent("Countdown", self.m_PrisonTime)
+		self.m_PrisonTimer = setTimer(bind(self.endPrison, self), self.m_PrisonTime*1000, 1, player)
+	end
+end
+
+function Player:getRemainingPrisonTime(player)
+	local timerLeft = 0
+	if isTimer(self.m_PrisonTimer) then
+		timerLeft = getTimerDetails(self.m_PrisonTimer)/1000
+	end
+	self.m_PrisonTime = self.m_PrisonTime - timerLeft
+	return self.m_PrisonTime
+end
+
+function Player:endPrison(player)
+	self:setPosition(Vector3(1478.87, -1726.17, 13.55))
+	self:setDimension(0)
+	self:setInterior(0)
+	self:triggerEvent("CountdownStop")
+	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
 end

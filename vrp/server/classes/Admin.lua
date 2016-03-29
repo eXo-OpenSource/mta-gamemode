@@ -61,23 +61,23 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration)
     if client:getRank() >= ADMIN_RANK_PERMISSION[func] then
         if func == "goto" then
             self:goToPlayer(client, func, target:getName())
-            self:sendShortMessage(_("%s hat sich zu %s geportet!", client, client:getName(), target:getName()))
+            self:sendShortMessage(_("hat sich zu %s geportet!", client, target:getName()))
         elseif func == "gethere" then
             self:getHerePlayer(client, func, target:getName())
-            self:sendShortMessage(_("%s hat %s zu sich geportet!", client, client:getName(), target:getName()))
+            self:sendShortMessage(_("hat %s zu sich geportet!", client, target:getName()))
         elseif func == "kick" then
-            self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", client, client:getName(), target:getName(), reason))
+            self:sendShortMessage(_("hat %s gekickt! Grund: %s", client, target:getName(), reason))
             target:kick(client, reason)
         elseif func == "prison" then
             duration = tonumber(duration)
-            self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", client, client:getName(), target:getName(), duration, reason))
-            target:setPrison(duration)
+            self:sendShortMessage(_("hat %s für %d Minuten ins Prison gesteckt! Grund: %s", client, target:getName(), duration, reason))
+            target:setPrison(duration*60)
         elseif func == "timeban" then
             duration = tonumber(duration)
-            self:sendShortMessage(_("%s hat %s für %d Stunden ins gebannt! Grund: %s", client, client:getName(), target:getName(), duration, reason))
+            self:sendShortMessage(_("hat %s für %d Stunden ins gebannt! Grund: %s", client, target:getName(), duration, reason))
             Ban.addBan(target, client, reason, duration*60*60)
         elseif func == "permaban" then
-            self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", client, client:getName(), target:getName(), reason))
+            self:sendShortMessage(_("hat %s permanent gebannt! Grund: %s", client, target:getName(), reason))
             Ban.addBan(target, client, reason)
         end
     else
