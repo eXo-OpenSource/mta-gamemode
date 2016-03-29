@@ -101,13 +101,45 @@ function AdminGUI:onButtonClick(func)
 		if func == "gethere" or func == "goto" then
 			triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer)
 		elseif func == "kick" then
-			InputBox:new(_("Spieler %s kicken", selectedPlayer:getName()), _("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", selectedPlayer:getName()), function (reason) triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason) end)
+			InputBox:new(_("Spieler %s kicken", selectedPlayer:getName()),
+					_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", selectedPlayer:getName()),
+					function (reason)
+						triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason)
+					end)
+		elseif func == "prison" then
+			AdminInputBox:new(
+					_("Spieler %s ins Prison schicken", selectedPlayer:getName()),
+					_"Dauer in Minuten:",
+					function (reason, duration)
+						triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason, duration)
+					end)
+		elseif func == "timeban" then
+			AdminInputBox:new(
+					_("Spieler %s time bannen", selectedPlayer:getName()),
+					_"Dauer in Stunden:",
+					function (reason, duration)
+						triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason, duration)
+					end)
+		elseif func == "permaban" then
+			InputBox:new(_("Spieler %s permanent Bannen", selectedPlayer:getName()),
+					_("Aus welchem Grund möchtest du den Spieler %s permanent bannen?", selectedPlayer:getName()),
+					function (reason)
+						triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason)
+					end)
 		elseif func == "setCompany" then
 			local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
-			ChangerBox:new(_"Unternehmen setzten", _"Bitte wähle das gewünschte Unternehmen aus:",companyTable, function (companyId) triggerServerEvent("adminSetPlayerCompany", root, selectedPlayer,companyId) end)
+			ChangerBox:new(_"Unternehmen setzten",
+					_"Bitte wähle das gewünschte Unternehmen aus:",companyTable,
+					function (companyId)
+						triggerServerEvent("adminSetPlayerCompany", root, selectedPlayer,companyId)
+					end)
 		elseif func == "setFaction" then
 			local factionTable = {[0] = "Keine Fraktion", [1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra", [6] = "Yakuza"}
-			ChangerBox:new(_"Fraktion setzten", _"Bitte wähle die gewünschte Fraktion aus:",factionTable, function (factionId) triggerServerEvent("adminSetPlayerFaction", root, selectedPlayer,factionId) end)
+			ChangerBox:new(_"Fraktion setzten",
+					_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
+					function (factionId)
+						triggerServerEvent("adminSetPlayerFaction", root, selectedPlayer,factionId)
+					end)
 		else
 			outputDebug("Under Developement", 255, 0 ,0)
 		end
@@ -143,3 +175,19 @@ addEventHandler("showAdminMenu", root,
 		AdminGUI:new()
 	end
 )
+
+AdminInputBox = inherit(GUIForm)
+
+function AdminInputBox:constructor(title, durationText, callback)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
+
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, title, true, true, self)
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.24, self.m_Width*0.5, self.m_Height*0.17, durationText, self.m_Window)
+	self.m_DurationBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.24, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
+	self.m_DurationBox:setNumeric(true)
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.17, _"Grund:", self.m_Window)
+	self.m_ReasonBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.46, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
+	self.m_SubmitButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", true, self.m_Window):setBarColor(Color.Green)
+
+	self.m_SubmitButton.onLeftClick = function() if callback then callback(self.m_DurationBox:getText(), self.m_ReasonBox:getText()) end delete(self) end
+end

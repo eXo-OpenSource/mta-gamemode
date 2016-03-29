@@ -57,7 +57,7 @@ function Admin:openAdminMenu( player )
 	end
 end
 
-function Admin:Event_adminTriggerFunction(func, target, arg1, arg2)
+function Admin:Event_adminTriggerFunction(func, target, reason, duration)
     if client:getRank() >= ADMIN_RANK_PERMISSION[func] then
         if func == "goto" then
             self:goToPlayer(client, func, target:getName())
@@ -66,8 +66,19 @@ function Admin:Event_adminTriggerFunction(func, target, arg1, arg2)
             self:getHerePlayer(client, func, target:getName())
             self:sendShortMessage(_("%s hat %s zu sich geportet!", client, client:getName(), target:getName()))
         elseif func == "kick" then
-            self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", client, client:getName(), target:getName(), arg1))
-            target:kick(client, arg1)
+            self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", client, client:getName(), target:getName(), reason))
+            target:kick(client, reason)
+        elseif func == "prison" then
+            duration = tonumber(duration)
+            self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", client, client:getName(), target:getName(), duration, reason))
+            target:setPrison(duration)
+        elseif func == "timeban" then
+            duration = tonumber(duration)
+            self:sendShortMessage(_("%s hat %s für %d Stunden ins gebannt! Grund: %s", client, client:getName(), target:getName(), duration, reason))
+            Ban.addBan(target, client, reason, duration*60*60)
+        elseif func == "permaban" then
+            self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", client, client:getName(), target:getName(), reason))
+            Ban.addBan(target, client, reason)
         end
     else
         client:sendError(_("Du darst diese Aktion nicht ausführen!", client))

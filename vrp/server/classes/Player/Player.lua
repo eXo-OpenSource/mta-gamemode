@@ -675,3 +675,8 @@ end
 function Player:setModel( skin )
 	setElementModel( self, skin )
 end
+
+function Player:setPrison(duration)
+	self:setPosition(Vector3(-224,2371.29,5688.73))
+	self.m_PrisonTime = self.m_PrisonTime + duration*60
+end
