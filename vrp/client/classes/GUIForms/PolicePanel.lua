@@ -1,0 +1,47 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIForms/PolicePanel.lua
+-- *  PURPOSE:     PolicePanel form class
+-- *
+-- ****************************************************************************
+
+PolicePanel = inherit(GUIForm)
+inherit(Singleton, PolicePanel)
+
+function PolicePanel:constructor()
+	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+
+	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
+	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
+	self.m_CloseButton.onLeftClick = function() self:close() end
+	self.m_TabSpieler = self.m_TabPanel:addTab(_"Spieler")
+
+	self.m_PlayersGrid = GUIGridList:new(10, 30, 300, 400, self.m_TabSpieler)
+	self.m_PlayersGrid:addColumn(_"Spieler", 0.5)
+	self.m_PlayersGrid:addColumn(_"Fraktion", 0.3)
+
+	self:loadPlayers()
+end
+
+function PolicePanel:loadPlayers()
+	self.m_PlayersGrid:clear()
+	self.m_Players = {}
+	for i=0, 6 do
+		for Id, player in pairs(Element.getAllByType("player")) do
+			if player:getWantedLevel() == i then
+				if not self.m_Players[i] then self.m_Players[i] = {} end
+				self.m_Players[i][player] = true
+			end
+		end
+	end
+	for i = 6, 0, -1 do
+		if self.m_Players[i] then
+			self.m_PlayersGrid:addItemNoClick(i.." Wanteds", "")
+			for player, bool in pairs(self.m_Players[i]) do
+				local item = self.m_PlayersGrid:addItem(player:getName(), player:getShortFactionName())
+				item.player = player
+			end
+		end
+	end
+end

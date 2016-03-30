@@ -71,7 +71,6 @@ end
 function Inventory:Event_loadPlayerInventarClient(slots, itemData)
 	self.m_Slots = slots
 	self.m_ItemData = itemData
-	bindKey(self.InventoryKey, "down", bind(self.toggle,  self))
 end
 
 function Inventory:getItemData()

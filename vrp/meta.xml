@@ -432,10 +432,10 @@
 	<script src="client/classes/GUIForms/FoodShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AnimationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/LogGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
+	<script src="client/classes/GUIForms/MostWanted3D.lua" type="client"/>
 
 	<!-- Web forms -->
-	<script src="client/classes/WebForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/WebForms/SkillTreeGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>

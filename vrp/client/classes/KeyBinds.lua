@@ -16,6 +16,9 @@ function KeyBinds:constructor()
 	self.m_ScoreboardTrigger = bind(self.scoreboardGUI, self)
 	self.m_CustomMap = bind(self.customMap, self)
 	self.m_WebPanel = bind(self.webPanel, self)
+	self.m_Inventory = bind(self.inventory, self)
+
+
 
 	self.m_Keys = {
 	  ["KeyTogglePhone"]         = {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
@@ -26,6 +29,8 @@ function KeyBinds:constructor()
 	  ["KeyToggleScoreboard"]    = {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
 	  ["KeyToggleCustomMap"]     = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
 	  ["KeyToggleWebPanel"]      = {["defaultKey"] = "F9", ["name"] = "Webpanel", ["func"] = self.m_WebPanel};
+	  ["KeyToggleInventory"]     = {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
+
 	}
 	self:loadBinds()
 end
@@ -54,6 +59,10 @@ end
 
 function KeyBinds:webPanel()
 	WebPanel:getSingleton():toggle()
+end
+
+function KeyBinds:inventory()
+	Inventory:getSingleton():toggle()
 end
 
 function KeyBinds:togglePhone()
@@ -88,21 +97,21 @@ end
 
 function KeyBinds:animationMenu()
 	if not localPlayer:isInVehicle() then
-		if AnimationGUI:isInstantiated() then
-			delete(AnimationGUI:getSingleton())
-		else
+		if not AnimationGUI:isInstantiated() then
 			AnimationGUI:new()
+		else
+			delete(AnimationGUI:getSingleton())
 		end
 	end
 end
 
 function KeyBinds:policePanel()
-	if localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3 and localPlayer:getPublicSync("Faction:Duty") then
-		if PolicePanel:isInstantiated() then
-			delete(PolicePanel:getSingleton())
-		else
+	if not PolicePanel:isInstantiated() then
+		if localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3 and localPlayer:getPublicSync("Faction:Duty") == true then
 			PolicePanel:new()
 		end
+	else
+		delete(PolicePanel:getSingleton())
 	end
 end
 

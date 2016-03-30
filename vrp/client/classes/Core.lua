@@ -62,6 +62,7 @@ function Core:ready()
 	--// Gangwar
 	GangwarClient:new()
 	KeyBinds:new()
+	MostWanted:new()
 
 
 end
