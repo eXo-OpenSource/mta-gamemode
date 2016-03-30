@@ -704,4 +704,5 @@ function Player:endPrison(player)
 	self:setInterior(0)
 	self:triggerEvent("CountdownStop")
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
+	self.m_PrisonTime = 0
 end
