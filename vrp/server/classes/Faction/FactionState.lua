@@ -11,7 +11,9 @@ FactionState = inherit(Singleton)
 
 function FactionState:constructor()
 	outputDebug("Faction State loaded")
-	self:createDutyPickup(252.6, 69.4, 1003.64,6) -- PD Interior
+	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
+	self:createDutyPickup(1530.21, -1671.66, 6.22, 0) -- PD Garage
+
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
 	Blip:new("Police.png", 1552.278, -1675.725)
 
@@ -26,7 +28,7 @@ function FactionState:constructor()
 	local pdGarageEnter = InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0)
 	--local pdGarageExit = InteriorEnterExit:new(Vector3(259.22, 73.73, 1003.64), Vector3(1527.16, -1678.17, 5.89), 0, 0, 0, 0)
 
-	addRemoteEvents{"FactionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "policePanelListRequest"}
+	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "policePanelListRequest"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -221,12 +223,15 @@ function FactionState:Command_suspect(player,cmd,target,anzahl,...)
 	end
 end
 
-function FactionState:Event_JailPlayer(player)
+function FactionState:Event_JailPlayer(player, bail)
 	local policeman = client
 	if policeman:isFactionDuty() then
 		if player:getWantedLevel() > 0 then
 			-- Teleport to jail
-			player:setPosition(Vector3(2673.37, -2112.44, 19.05) + Vector3(math.random(-2, 2), math.random(-2, 2), 0))
+			local rnd = math.random(1, #Jail.Cells)
+			player:setPosition(Jail.Cells[rnd])
+			player:setInterior(0)
+			player:setDimension(0)
 			player:setRotation(0, 0, 90)
 			player:toggleControl("fire", false)
 			player:toggleControl("jump", false)
@@ -235,7 +240,7 @@ function FactionState:Event_JailPlayer(player)
 			-- Pay some money, karma and xp to the policeman
 			policeman:giveMoney(player:getWantedLevel() * 100)
 			policeman:giveKarma(player:getWantedLevel() * 0.05)
-			policeman:givePoints(3)
+			policeman:givePoints(player:getWantedLevel())
 
 			-- Give Achievements
 			if player:getWantedLevel() > 4 then
@@ -265,13 +270,10 @@ function FactionState:Event_JailPlayer(player)
 				end, jailTime * 1000, 1
 			)
 
-			-- Clear crimes
 			player:clearCrimes()
 
-			-- Tell the other policemen that we jailed someone
-			policeman:getFaction():sendMessage("%s wurde soeben von %s eingesperrt!", getPlayerName(player), getPlayerName(policeman))
+			policeman:getFaction():sendMessage(_("%s wurde soeben von %s eingesperrt!", player, player:getName(), policeman:getName()), 255, 255, 0)
 
-			-- Tell the client that we were jailed
 			player:triggerEvent("playerJailed", jailTime)
 		else
 			policeman:sendError(_("Der Spieler wird nicht gesucht!", player))

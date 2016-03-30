@@ -29,20 +29,27 @@ function StateFactionArrestGUI:constructor(col)
 
 	self:refreshGrid(col)
 	self.m_refreshTimer = setTimer(bind(self.refreshGrid, self),500,0,col)
-
 end
 
 function StateFactionArrestGUI:refreshGrid(col)
 	local players = getElementsWithinColShape(col,"player")
+	local oldSelected = self.m_List:getSelectedItem()
 	self.m_List:clear()
 	local item
 	local selectedItem = self.m_List:getSelectedItem()
+
+	if oldSelected then self.m_List:onInternalSelectItem(oldSelected) end
+
 	if selectedItem and selectedItem.Player then
-		self.m_mitKaution:setEnabled(true)
-		self.m_ohneKaution:setEnabled(true)
+		if not self.m_mitKaution:isEnabled() == true then
+			self.m_mitKaution:setEnabled(true)
+			self.m_ohneKaution:setEnabled(true)
+		end
 	else
-		self.m_mitKaution:setEnabled(false)
-		self.m_ohneKaution:setEnabled(false)
+		if self.m_mitKaution:isEnabled() == true then
+			self.m_mitKaution:setEnabled(false)
+			self.m_ohneKaution:setEnabled(false)
+		end
 	end
 	for key,playeritem in pairs(players) do
 		if playeritem:getWanteds() > 0 then
@@ -51,9 +58,6 @@ function StateFactionArrestGUI:refreshGrid(col)
 			if selectedItem and selectedItem.Player and selectedItem.Player == playeritem then self.m_List:onInternalSelectItem(item)	end
 		end
 	end
-
-
-
 end
 
 addEventHandler("showStateFactionArrestGUI", root,
@@ -72,7 +76,7 @@ end
 function StateFactionArrestGUI:factionArrestMitKaution()
 	local selectedItem = self.m_List:getSelectedItem()
 	if selectedItem and isElement(selectedItem.Player) then
-		triggerServerEvent("FactionStateArrestPlayer", localPlayer,selectedItem.Player,true)
+		triggerServerEvent("factionStateArrestPlayer", localPlayer,selectedItem.Player,true)
 	else
 		ErrorBox:new(_"Du hast keinen Spieler ausgewählt!")
 	end
@@ -81,7 +85,7 @@ end
 function StateFactionArrestGUI:factionArrestOhneKaution()
 	local selectedItem = self.m_List:getSelectedItem()
 	if selectedItem and isElement(selectedItem.Player) then
-		triggerServerEvent("FactionStateArrestPlayer", localPlayer,selectedItem.Player,false)
+		triggerServerEvent("factionStateArrestPlayer", localPlayer,selectedItem.Player,false)
 	else
 		ErrorBox:new(_"Du hast keinen Spieler ausgewählt!")
 	end

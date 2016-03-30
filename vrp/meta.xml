@@ -532,6 +532,7 @@
 	<script src="client/classes/Gameplay/RobableShop.lua" type="client"/>
 	<script src="client/classes/Gameplay/Casino.lua" type="client"/>
 	<script src="client/classes/Gameplay/TrainManager.lua" type="client"/>
+	<script src="client/classes/Gameplay/Jail.lua" type="client"/>
 
 	<!-- Minigames -->
 	<script src="client/classes/Gameplay/Minigames/Animations.lua" type="client"/>
