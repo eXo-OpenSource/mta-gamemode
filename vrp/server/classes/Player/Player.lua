@@ -501,6 +501,7 @@ end
 
 function Player:togglePhone(status)
 	self.m_PhoneOn = status
+	self:setPublicSync("Phone", status)
 end
 
 function Player:isPhoneEnabled()

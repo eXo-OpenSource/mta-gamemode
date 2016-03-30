@@ -94,6 +94,9 @@ function Core:afterLogin()
 	ScoreboardGUI:new()
 	ScoreboardGUI:getSingleton():close()
 
+	Phone:new()
+	Phone:getSingleton():close()
+
 	WebPanel:getSingleton():close()
 
 	-- Pre-Instantiate important GUIS

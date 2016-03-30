@@ -18,8 +18,6 @@ function KeyBinds:constructor()
 	self.m_WebPanel = bind(self.webPanel, self)
 	self.m_Inventory = bind(self.inventory, self)
 
-
-
 	self.m_Keys = {
 	  ["KeyTogglePhone"]         = {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
 	  ["KeyTogglePolicePanel"]   = {["defaultKey"] = "F4", ["name"] = "Polizei Computer", ["func"] = self.m_PolicePanel};
@@ -30,7 +28,6 @@ function KeyBinds:constructor()
 	  ["KeyToggleCustomMap"]     = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
 	  ["KeyToggleWebPanel"]      = {["defaultKey"] = "F9", ["name"] = "Webpanel", ["func"] = self.m_WebPanel};
 	  ["KeyToggleInventory"]     = {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
-
 	}
 	self:loadBinds()
 end

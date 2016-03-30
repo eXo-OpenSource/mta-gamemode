@@ -60,7 +60,7 @@ function Phone:constructor()
 		end
 	end
 
-	triggerServerEvent("setPhoneStatus", localPlayer, self.m_PhoneOn)
+	triggerServerEvent("setPhoneStatus", root, self.m_PhoneOn)
 end
 
 function Phone:switchOff()

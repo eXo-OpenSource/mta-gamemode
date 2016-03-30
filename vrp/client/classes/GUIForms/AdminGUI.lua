@@ -74,7 +74,7 @@ end
 
 function AdminGUI:onSelectPlayer(player)
 	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
-	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
+	local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
 	self.m_PlayerTimeLabel:setText(_("Spielzeit: %s:%s h", hours, minutes))
 	self.m_PlayerFactionLabel:setText(_("Fraktion: %s", player:getShortFactionName()))
 	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getShortCompanyName()))
