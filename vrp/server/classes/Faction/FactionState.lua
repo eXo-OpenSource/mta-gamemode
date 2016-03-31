@@ -28,7 +28,7 @@ function FactionState:constructor()
 	local pdGarageEnter = InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0)
 	--local pdGarageExit = InteriorEnterExit:new(Vector3(259.22, 73.73, 1003.64), Vector3(1527.16, -1678.17, 5.89), 0, 0, 0, 0)
 
-	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "policePanelListRequest"}
+	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -37,7 +37,8 @@ function FactionState:constructor()
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
 	addEventHandler("factionStateSwat", root, bind(self.Event_toggleSwat, self))
 	addEventHandler("factionStateToggleDuty", root, bind(self.Event_toggleDuty, self))
-	addEventHandler("policePanelListRequest", root, bind(self.Event_policePanelListRequest, self))
+	addEventHandler("factionStateGiveWanteds", root, bind(self.Event_giveWanteds, self))
+	addEventHandler("factionStateClearWanteds", root, bind(self.Event_clearWanteds, self))
 
 	-- Prepare the Area51
 	self:createDefendActors(
@@ -194,19 +195,18 @@ function FactionState:getFullReasonFromShortcut(reason)
 	return reason
 end
 
-function FactionState:Command_suspect(player,cmd,target,anzahl,...)
+function FactionState:Command_suspect(player,cmd,target,amount,...)
 	if player:isFactionDuty() then
-		local anzahl = tonumber(anzahl)
-		if anzahl >= 1 and anzahl <= 6 then
+		local amount = tonumber(amount)
+		if amount >= 1 and amount <= 6 then
 			local reason = self:getFullReasonFromShortcut(table.concat({...}, " "))
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
 				if not isPedDead(target) then
 					if string.len(reason) > 2 and string.len(reason) < 50 then
-						local targetname = getPlayerName ( target )
-						target:giveWantedLevel(anzahl)
-						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,anzahl,player:getName()), target, 255, 255, 0 )
-						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),anzahl, reason)
+						target:giveWantedLevel(amount)
+						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
+						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						player:getFaction():sendMessage(msg, 255,0,0)
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
@@ -375,26 +375,26 @@ function FactionState:createDefendActors(Actors)
 end
 
 
-function FactionState:Event_policePanelListRequest()
+function FactionState:Event_giveWanteds(target, amount, reason)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			local data = {}
-			for k, player in pairs(getElementsByType("player")) do
-				if player:getWantedLevel() > 0 then
-					local info = {
-						player = player:getName(),
-						wanted = player:getWantedLevel()
-					}
+			target:giveWantedLevel(amount)
+			outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
+			local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
+			client:getFaction():sendMessage(msg, 255,0,0)
+		end
+	end
+end
 
-					info.crimes = {}
-					for k, crime in pairs(player:getCrimes()) do
-						info.crimes[k] = crime.id
-					end
-					data[#data + 1] = info
-				end
-			end
-			client:triggerEvent("policePanelListRetrieve", data)
+function FactionState:Event_clearWanteds(target)
+	local faction = client:getFaction()
+	if faction and faction:isStateFaction() then
+		if client:isFactionDuty() then
+			target:takeWantedLevel(6)
+			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
+			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
+			client:getFaction():sendMessage(msg, 255,0,0)
 		end
 	end
 end

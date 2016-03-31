@@ -23,15 +23,25 @@ function PolicePanel:constructor()
 	self.m_PlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_PlayersGrid:addColumn(_"Fraktion", 0.3)
 
-	self.m_PlayerNameLabel = GUILabel:new(320, 10, 180, 20, _"Spieler: -", self.m_TabSpieler)
-	self.m_PlayerTimeLabel = GUILabel:new(320, 35, 180, 20, _"Spielstunden: -", self.m_TabSpieler)
-	self.m_PlayerFactionLabel = GUILabel:new(320, 60, 180, 20, _"Fraktion: -", self.m_TabSpieler)
-	self.m_PlayerCompanyLabel = GUILabel:new(320, 85, 180, 20, _"Unternehmen: -", self.m_TabSpieler)
-	self.m_PlayerGroupLabel = GUILabel:new(320, 110, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
-	self.m_PhoneStatus = GUILabel:new(320, 135, 180, 20, _"Handy: -", self.m_TabSpieler)
+	GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabSpieler)
 
-	self.m_LocatePlayerBtn = GUIButton:new(320, 280, 250, 30, "Spieler orten", self.m_TabSpieler)
+	self.m_Skin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabSpieler)
+
+	self.m_PlayerNameLabel = 	GUILabel:new(320, 150, 180, 20, _"Spieler: -", self.m_TabSpieler)
+	self.m_PlayerFactionLabel = GUILabel:new(320, 175, 180, 20, _"Fraktion: -", self.m_TabSpieler)
+	self.m_PlayerCompanyLabel = GUILabel:new(320, 200, 180, 20, _"Unternehmen: -", self.m_TabSpieler)
+	self.m_PlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
+	self.m_PhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabSpieler)
+
+	self.m_LocatePlayerBtn = GUIButton:new(320, 300, 250, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green)
 	self.m_LocatePlayerBtn.onLeftClick = function() self:locatePlayer() end
+
+	self.m_AddWantedsBtn = GUIButton:new(320, 335, 250, 30, "Wanteds geben", self.m_TabSpieler)
+	self.m_AddWantedsBtn.onLeftClick = function() self:giveWanteds() end
+
+
+	self.m_DeleteWantedsBtn = GUIButton:new(320, 370, 250, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red)
+
 
 	self:loadPlayers()
 end
@@ -63,14 +73,14 @@ end
 
 function PolicePanel:onSelectPlayer(player)
 	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
-	local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
-	self.m_PlayerTimeLabel:setText(_("Spielzeit: %s:%s h", hours, minutes))
 	self.m_PlayerFactionLabel:setText(_("Fraktion: %s", player:getShortFactionName()))
 	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getShortCompanyName()))
 	self.m_PlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
 	local phone = "Ausgeschaltet"
 	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
 	self.m_PhoneStatus:setText(_("Handy: %s", phone))
+
+	self.m_Skin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end
 
 function PolicePanel:locatePlayer()
@@ -89,5 +99,32 @@ function PolicePanel:locatePlayer()
 		end
 	else
 		ErrorBox:new(_"Spieler nicht mehr online!")
+	end
+end
+
+function PolicePanel:giveWanteds()
+	local item = self.m_PlayersGrid:getSelectedItem()
+	local player = item.player
+	GiveWantedBox:new(player)
+end
+
+GiveWantedBox = inherit(GUIForm)
+
+function GiveWantedBox:constructor(player)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.2/2, screenWidth*0.4, screenHeight*0.2)
+
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("%s Wanteds geben", player:getName()), true, true, self)
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.24, self.m_Width*0.5, self.m_Height*0.17, "Anzahl:", self.m_Window)
+	self.m_Changer = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.24, self.m_Width*0.2, self.m_Height*0.2, self.m_Window)
+	for i = 1, 6 do
+		self.m_Changer:addItem(tostring(i))
+	end
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.46, self.m_Width*0.5, self.m_Height*0.17, _"Grund:", self.m_Window)
+	self.m_ReasonBox = GUIEdit:new(self.m_Width*0.5, self.m_Height*0.46, self.m_Width*0.45, self.m_Height*0.2, self.m_Window)
+	self.m_SubmitButton = VRPButton:new(self.m_Width*0.5, self.m_Height*0.75, self.m_Width*0.45, self.m_Height*0.2, _"Bestätigen", true, self.m_Window):setBarColor(Color.Green)
+	self.m_SubmitButton.onLeftClick =
+	function()
+		triggerServerEvent("factionStateGiveWanteds", localPlayer, player, self.m_Changer:getIndex(), self.m_ReasonBox:getText())
+		delete(self)
 	end
 end
