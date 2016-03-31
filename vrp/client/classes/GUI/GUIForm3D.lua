@@ -7,9 +7,11 @@
 -- ****************************************************************************
 GUIForm3D = inherit(CacheArea3D)
 
-function GUIForm3D:constructor(position, rotation, size, resolution, streamdistance)
+function GUIForm3D:constructor(position, rotation, normal, size, resolution, streamdistance)
 	-- Calculate Euler angles from plain normals (since Euler angles are easier to handle than line pos + normals)
-	local startpos, endpos, normal = math.getPlainInfoFromEuler(position, rotation, size)
+	--local startpos, endpos, normal = math.getPlainInfoFromEuler(position, rotation, size)
+	local startpos = position
+	local endpos = Vector3(position.x + size.x, position.y + size.y, position.z + size.z)
 
 	CacheArea3D.constructor(self, startpos, endpos, normal, math.abs(endpos.y-startpos.y), resolution.x, resolution.y, true)
 

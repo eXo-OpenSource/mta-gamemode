@@ -17,6 +17,7 @@ function PolicePanel:constructor()
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
 	self.m_CloseButton.onLeftClick = function() self:close() end
+
 	self.m_TabSpieler = self.m_TabPanel:addTab(_"Spieler")
 
 	self.m_PlayersGrid = GUIGridList:new(10, 10, 300, 400, self.m_TabSpieler)
@@ -41,9 +42,17 @@ function PolicePanel:constructor()
 
 
 	self.m_DeleteWantedsBtn = GUIButton:new(320, 370, 250, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red)
-
+	self.m_DeleteWantedsBtn.onLeftClick = function() QuestionBox:new(
+		_("Möchtest du wirklich alle Wanteds von %s löschen?", self.m_SelectedPlayer:getName()),
+		function() triggerServerEvent("factionStateClearWanteds", localPlayer, self.m_SelectedPlayer) end)
+	end
 
 	self:loadPlayers()
+
+	self.m_TabWantedRules = self.m_TabPanel:addTab(_"Wantedregeln")
+	GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
+
+
 end
 
 function PolicePanel:loadPlayers()
@@ -76,6 +85,7 @@ function PolicePanel:onSelectPlayer(player)
 	self.m_PlayerFactionLabel:setText(_("Fraktion: %s", player:getShortFactionName()))
 	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getShortCompanyName()))
 	self.m_PlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
+	self.m_SelectedPlayer = player
 	local phone = "Ausgeschaltet"
 	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
 	self.m_PhoneStatus:setText(_("Handy: %s", phone))
