@@ -12,14 +12,13 @@ function CacheArea3D:constructor(startPos, endPos, normal, saheight, resx, resy,
 	self.m_3DEnd = endPos
 
 	self.m_3DWidth = (self.m_3DStart - self.m_3DEnd).length
-	self.m_3DHeight= saheight;
+	self.m_3DHeight= saheight
 	self.m_Normal = normal
 
 	self.m_Middle = self.m_3DStart  + (self.m_3DEnd -self.m_3DStart) / 2
 
 	local norm2 = (self.m_3DEnd - self.m_3DStart):cross(self.m_Normal)
 	self.m_SecPos = self.m_Middle + norm2/norm2.length * saheight/2
-
 
 	self.m_ResX = resx
 	self.m_ResY = resy
@@ -45,31 +44,39 @@ function CacheArea3D:setPosition(startX, startY, startZ, endX, endY, endZ)
 end
 
 function CacheArea3D:performMouse(vecMouse3D, mouse1, mouse2, A, B, C, D)
-	-- Eckpunkte berechnen
-
-	-- Mittelpunkt berechnen
+	-- Calculate center
 	local mid = self.m_Middle
 
-	local dirX = mid - self.m_3DStart
-	local dirY = mid - self.m_SecPos
+	-- Calculate direction vectors
+	local dirX = mid - self.m_SecPos
+	local dirY = mid - self.m_3DStart
+	
+	-- Calculate corners
+	--[[
+		A------C
+		|  mid |
+		B------D
+	]]
+	A = mid - dirX - dirY
+	B = mid - dirX + dirY
+	C = mid + dirX - dirY
+	D = mid + dirX + dirY
 
-	local A = mid - dirX - dirY
-	local B = mid - dirX + dirY
-	local C = mid + dirX - dirY
-	local D = mid + dirX + dirY
-
+	-- Calculate direction vectors based upon the plane's origin (A)
 	local P = vecMouse3D
 	local AC = C - A
 	local AB = B - A
 	local AP = P - A
+	
+	-- Translate world coordinates to plane coordinates
+	local x = AP:dot(AC / AC.length)
+	local y = AP:dot(AB / AB.length)
 
-	local x = AP:dot(AB / AB.length)
-	local y = AP:dot(AC / AC.length)
+	-- Translate plane coordinates into pixel coordinates
+	local cx = x / self.m_3DHeight * self.m_ResX
+	local cy = y / self.m_3DWidth* self.m_ResY
 
-
-	local cx = y / self.m_3DWidth * self.m_ResX
-	local cy = x / self.m_3DHeight* self.m_ResY
-
+	-- Check if we have a collision
 	if cx > self.m_ResX or cx < 0 then
 		self:unhoverChildren()
 		return
@@ -79,9 +86,15 @@ function CacheArea3D:performMouse(vecMouse3D, mouse1, mouse2, A, B, C, D)
 		return
 	end
 
+	-- Process children
 	for k, v in pairs(self.m_Children) do
 		v:performChecks(mouse1, mouse2, cx, cy)
 	end
+end
+
+function CacheArea3D:performChecks()
+	-- Disable 2D checks
+	return false
 end
 
 function CacheArea3D:unhoverChildren()

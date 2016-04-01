@@ -9,5 +9,5 @@ function MostWanted:constructor()
 	self.m_Window = GUIWindow:new(0, 0, 600, 400, "Most Wanted", true, false, self)
 
 	local button = GUIButton:new(20, 200, 500, 150, "A fancy button", self.m_Window)
-	button.onHover = function() outputChatBox("Hovered 3D button") end
+	button.onClick = function() outputChatBox("Clicked 3D button") end
 end
