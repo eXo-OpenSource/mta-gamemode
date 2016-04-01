@@ -12,7 +12,7 @@ function AppOnOff:constructor()
 end
 
 function AppOnOff:onOpen(form)
-	if core:get("Phone", "On") == 1 then
+	if Phone:getSingleton():isOn() then
 		GUILabel:new(10, 10, 200, 35, _"Handy ausschalten", form):setColor(Color.Black)
 
 		GUILabel:new(10, 60, 200, 20, _"Möchtest du das Handy ausschalten?", form):setColor(Color.Black)

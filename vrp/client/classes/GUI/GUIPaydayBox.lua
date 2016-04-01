@@ -37,7 +37,7 @@ function GUIPaydayBox:drawThis()
 	local top = self.m_AbsoluteY
 	dxDrawRectangle(left, top, 400, 200, tocolor ( 0, 0, 0, 150 ) )
 	dxDrawText("e#32c8ffX#FFFFFFo Payday", left, top, right, 30, tocolor(255,255,255,255), 1.7,"default", "center", "top", false, false,false, true)
-	dxDrawText("Leertaste zum\nschließen drücken", left, top+5, right-5, 30, tocolor(255,255,255,255), 0.9,"default", "right", "top", false, false,false, true)
+	dxDrawText("Leertaste zum\nSchließen drücken", left, top+5, right-5, 30, tocolor(255,255,255,255), 0.9,"default", "right", "top", false, false,false, true)
 	top = top+30
 	left = left+10
 	dxDrawText ( "Einkommen:", left, top, left+100, top+10, tocolor(0,255,0,255), 1,"default-bold", "left", "top", false, false,false, true)

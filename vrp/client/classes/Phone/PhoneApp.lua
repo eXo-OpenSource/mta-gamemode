@@ -41,7 +41,7 @@ function PhoneApp:open()
 	end
 	self.m_IsOpen = true
 
-	self.m_Form = GUIRectangle:new(17, 71, 260, 460, tocolor(255, 255, 255, 150), Phone:getSingleton())
+	self.m_Form = GUIRectangle:new(17, 71, 260, 460, tocolor(255, 255, 255, 150), Phone:getSingleton():getSurface())
 	self:onOpen(self.m_Form)
 end
 
