@@ -58,6 +58,11 @@ function GUIEdit:onInternalEditInput(caret)
 		return
 	end
 	self.m_Caret = caret
+
+	if self.onChange then
+		self.onChange(self:getDrawnText())
+	end
+
 end
 
 function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)

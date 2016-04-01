@@ -282,3 +282,19 @@ THREAD_PRIORITY_LOW = 500
 THREAD_PRIORITY_MIDDLE = 250
 THREAD_PRIORITY_HIGH = 150
 THREAD_PRIORITY_HIGHEST = 50
+
+AD_COST = 30
+AD_COST_PER_CHAR = 3
+
+AD_COLORS = {
+	["Schwarz"] = {["r"] = 0, ["g"] = 0, ["b"] = 0},
+	["Rot"] = {["r"] = 255, ["g"] = 0, ["b"] = 0},
+	["Grün"] = {["r"] = 0, ["g"] = 255, ["b"] = 0},
+	["Blau"] = {["r"] = 0, ["g"] = 0, ["b"] = 255}
+}
+
+AD_DURATIONS = {
+	["20 Sekunden"] = 20,
+	["30 Sekunden"] = 30,
+	["45 Sekunden"] = 45
+}

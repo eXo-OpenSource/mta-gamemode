@@ -13,9 +13,10 @@ function SanNews:constructor()
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	Player.getChatHook():register(bind(self.Event_onPlayerChat, self))
 
-	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview"}
+	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview", "sanNewsAdvertisement"}
 	addEventHandler("sanNewsStartInterview", root, bind(self.Event_startInterview, self))
 	addEventHandler("sanNewsStopInterview", root, bind(self.Event_stopInterview, self))
+	addEventHandler("sanNewsAdvertisement", root, bind(self.Event_advertisement, self))
 
 	addCommandHandler("news", bind(self.Event_news, self))
 end
@@ -113,6 +114,27 @@ function SanNews:Event_onPlayerChat(player, text, type)
 				end
 				return true
 			end
+		end
+	end
+end
+
+function SanNews:Event_advertisement(text, color, duration)
+	local length = string.len(text)
+
+
+	if length <= 50 and length > 5 then
+		local durationExtra = (AD_DURATIONS[duration] - 20) * 2
+		local colorMultiplicator = 1
+		if color ~= "Schwarz" then
+			colorMultiplicator = 2
+		end
+
+		local costs = (length*AD_COST_PER_CHAR + AD_COST + durationExtra) * colorMultiplicator
+		if client:getMoney() >= costs then
+			client:takeMoney(costs)
+			triggerClientEvent("showAd", client, client, text, color, duration)
+		else
+			client:sendError(_("Du hast zu wenig Geld dabei! (%s$)", client, costs))
 		end
 	end
 end

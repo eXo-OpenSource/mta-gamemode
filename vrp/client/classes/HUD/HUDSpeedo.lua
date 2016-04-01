@@ -50,31 +50,31 @@ function HUDSpeedo:draw()
 		self:hide()
 		return
 	end
-	
+
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if not vehicle:getFuel() then return end
 	local vx, vy, vz = getElementVelocity(vehicle)
 	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 161
-	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size
-	
+	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
+
 	-- Set maximum
 	if speed > 240 then
 		speed = 240
 	end
-	
+
 	--dxSetBlendMode("add")
 	-- draw the main speedo
 	dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
-	
+
 	-- draw the gear level
 	--dxDrawText(getVehicleCurrentGear(vehicle), drawX+158, drawY+108, 20, 20, tocolor(255, 255, 255), 2.5, "default")
-	
+
 	-- draw the engine icon
 	if getVehicleEngineState(vehicle) then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/engine.png")
 	end
-	
+
 	-- draw the fuel-o-meter
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)

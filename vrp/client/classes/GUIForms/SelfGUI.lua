@@ -39,14 +39,19 @@ function SelfGUI:constructor()
 	self.m_JobQuitButton.onUnhover = function () self.m_JobQuitButton:setColor(Color.Red) end
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
 
-	self.m_TicketButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, _"Tickets", true, tabGeneral)
+	self.m_AdButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, _"Werbung schalten", true, tabGeneral)
+	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)
+
+	self.m_TicketButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.13, self.m_Width*0.25, self.m_Height*0.07, _"Tickets", true, tabGeneral):setBarColor(Color.Green)
 	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
 
-	self.m_MigrationButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.145, self.m_Width*0.25, self.m_Height*0.07, _"Account-Migration", true, tabGeneral):setBarColor(Color.Yellow)
+	self.m_MigrationButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.21, self.m_Width*0.25, self.m_Height*0.07, _"Account-Migration", true, tabGeneral):setBarColor(Color.Yellow)
 	self.m_MigrationButton.onLeftClick = bind(self.MigratorButton_Click, self)
 
-	self.m_AdminButton = VRPButton:new(self.m_Width*0.7, self.m_Height*0.24, self.m_Width*0.25, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
-	self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
+	if localPlayer:getRank() > 0 then
+		self.m_AdminButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
+		self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
+	end
 
 	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
 	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
@@ -407,6 +412,12 @@ function SelfGUI:MigratorButton_Click()
 	self:close()
 	MigratorPanel:getSingleton():open()
 end
+
+function SelfGUI:AdButton_Click()
+	self:close()
+	AdvertisementBox:getSingleton():open()
+end
+
 
 function SelfGUI:KeyBindsButton_Click()
 	self:close()

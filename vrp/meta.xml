@@ -434,6 +434,7 @@
 	<script src="client/classes/GUIForms/LogGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/GUIForms/MostWanted3D.lua" type="client"/>
+	<script src="client/classes/GUIForms/Advertisement.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/SkillTreeGUI.lua" type="client"/>
