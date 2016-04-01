@@ -7,13 +7,11 @@
 -- ****************************************************************************
 GUIForm3D = inherit(CacheArea3D)
 
-function GUIForm3D:constructor(position, rotation, normal, size, resolution, streamdistance)
+function GUIForm3D:constructor(position, rotation, size, resolution, streamdistance)
 	-- Calculate Euler angles from plain normals (since Euler angles are easier to handle than line pos + normals)
-	--local startpos, endpos, normal = math.getPlainInfoFromEuler(position, rotation, size)
-	local startpos = position
-	local endpos = Vector3(position.x + size.x, position.y + size.y, position.z + size.z)
+	local startpos, endpos, normal = math.getPlainInfoFromEuler(position, rotation, size)
 
-	CacheArea3D.constructor(self, startpos, endpos, normal, math.abs(endpos.y-startpos.y), resolution.x, resolution.y, true)
+	CacheArea3D.constructor(self, startpos, endpos, normal, size.x, resolution.x, resolution.y, true)
 
 	-- Remove CacheArea3D immediately from the render queue (or do it already in CacheArea3D)
 	GUIRenderer.remove3DGUI(self)
@@ -24,6 +22,9 @@ function GUIForm3D:constructor(position, rotation, normal, size, resolution, str
 end
 
 function GUIForm3D:destructor()
+	self.m_StreamArea:destroy()
+	GUIRenderer.remove3DGUI(self)
+	
 	CacheArea3D.destructor(self)
 end
 

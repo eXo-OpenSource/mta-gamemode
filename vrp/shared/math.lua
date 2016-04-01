@@ -45,7 +45,7 @@ function math.getPlainInfoFromEuler(position, rotation, size)
 	local normal = mat.forward
 	
 	local startpos = position
-	local endpos = mat:transformPosition(Vector3(size.x, 0, 0))
+	local endpos = mat:transformPosition(Vector3(0, 0, -size.y))
 	
 	return startpos, endpos, normal
 end

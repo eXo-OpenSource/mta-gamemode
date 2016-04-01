@@ -3,9 +3,11 @@ MostWanted = inherit(GUIForm3D)
 inherit(Singleton, MostWanted)
 
 function MostWanted:constructor()
-	self.m_Normal = Vector3(300,0,300)
+	self.m_Normal = Vector3(1,0,0)
 
-	GUIForm3D.constructor(self, Vector3(1536.01, -1650.98, 13.55), 0, self.m_Normal, Vector3(5, 5, 5), Vector2(600,400), 5)
-	self.m_Window = GUIWindow:new(0, 0, 500, 500, "Most Wanted", true, false, self)
+	GUIForm3D.constructor(self, Vector3(1553.8, -1654.5, 21.7), Vector3(0, 0, 90), Vector2(6, 4), Vector2(600,400), 100)
+	self.m_Window = GUIWindow:new(0, 0, 600, 400, "Most Wanted", true, false, self)
 
+	local button = GUIButton:new(20, 200, 500, 150, "A fancy button", self.m_Window)
+	button.onHover = function() outputChatBox("Hovered 3D button") end
 end
