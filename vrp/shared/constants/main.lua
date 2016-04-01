@@ -285,13 +285,9 @@ THREAD_PRIORITY_HIGHEST = 50
 
 AD_COST = 30
 AD_COST_PER_CHAR = 3
+AD_BREAK_TIME = 30 -- In Seconds
 
-AD_COLORS = {
-	["Schwarz"] = {["r"] = 0, ["g"] = 0, ["b"] = 0},
-	["Rot"] = {["r"] = 255, ["g"] = 0, ["b"] = 0},
-	["Grün"] = {["r"] = 0, ["g"] = 255, ["b"] = 0},
-	["Blau"] = {["r"] = 0, ["g"] = 0, ["b"] = 255}
-}
+AD_COLORS = {"Schwarz", "Rot", "Grün", "Blau"}
 
 AD_DURATIONS = {
 	["20 Sekunden"] = 20,

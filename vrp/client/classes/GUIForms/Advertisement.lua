@@ -13,13 +13,13 @@ function AdvertisementBox:constructor()
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.24/2, screenWidth*0.4, screenHeight*0.24)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Werbung schalten", true, true, self)
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.15, self.m_Width*0.98, self.m_Height*0.15, "Bitte gib deinen gewünschten Werbe-Text ein:", self.m_Window)
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.17, self.m_Width*0.98, self.m_Height*0.15, "Bitte gib deinen gewünschten Werbe-Text ein:", self.m_Window)
 	self.m_EditBox = GUIEdit:new(self.m_Width*0.01, self.m_Height*0.32, self.m_Width*0.98, self.m_Height*0.15, self.m_Window)
 	self.m_EditBox.onChange = function () self:calcCosts() end
 
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.5, self.m_Width*0.2, self.m_Height*0.15, "Farbe:", self.m_Window)
 	self.m_ColorChanger = GUIChanger:new(self.m_Width*0.15, self.m_Height*0.5, self.m_Width*0.3, self.m_Height*0.15, self.m_Window)
-	for name, color in pairs(AD_COLORS) do
+	for key, name in pairs(AD_COLORS) do
 		self.m_ColorChanger:addItem(name)
 	end
 	self.m_ColorChanger.onChange = function () self:calcCosts() end
@@ -66,12 +66,22 @@ function AdvertisementBox:calcCosts()
 	end
 end
 
+local ColorTable = {
+	["Schwarz"] = Color.Black,
+	["Rot"] = Color.Red,
+	["Grün"] = Color.Green,
+	["Blau"] = Color.Blue
+}
+
+
 Advertisement = inherit(GUIForm)
 inherit(Singleton, Advertisement)
 
 function Advertisement:constructor(player, text, color, duration)
 	GUIForm.constructor(self, 0, screenHeight-30, screenWidth, 30, false, true)
-	GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(AD_COLORS[color]["r"], AD_COLORS[color]["g"], AD_COLORS[color]["b"]), self):setAlpha(220)
+	self.m_Rectangle = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, ColorTable[color], self)
+	self.m_Rectangle:setAlpha(220)
+
 	self.m_Duration = AD_DURATIONS[duration]*1000
 	self.m_Label = GUILabel:new(10, 0, self.m_Width-10, self.m_Height-2, _("Werbung von %s: %s", player:getName(), text), self):setFont(VRPFont(32)):setFontSize(1)
 	self:setVisible(false)

@@ -5,7 +5,7 @@ function SanNews:constructor()
 
 	self.m_isInterview = false
 	self.m_InterviewPlayer = {}
-
+	self.m_NextAd = getRealTime().timestamp
 	self.m_onInterviewColshapeLeaveFunc = bind(self.onInterviewColshapeLeave, self)
 	self.m_onPlayerChatFunc = bind(self.Event_onPlayerChat, self)
 
@@ -131,8 +131,15 @@ function SanNews:Event_advertisement(text, color, duration)
 
 		local costs = (length*AD_COST_PER_CHAR + AD_COST + durationExtra) * colorMultiplicator
 		if client:getMoney() >= costs then
-			client:takeMoney(costs)
-			triggerClientEvent("showAd", client, client, text, color, duration)
+			if self.m_NextAd < getRealTime().timestamp then
+				client:takeMoney(costs)
+				self:giveMoney(costs)
+				self.m_NextAd = getRealTime().timestamp + AD_DURATIONS[duration] + AD_BREAK_TIME
+				triggerClientEvent("showAd", client, client, text, color, duration)
+			else
+				local next = self.m_NextAd - getRealTime().timestamp
+				client:sendError(_("Die nächste Werbung kann erst in %d Sekunden gesendet werden!", client, next))
+			end
 		else
 			client:sendError(_("Du hast zu wenig Geld dabei! (%s$)", client, costs))
 		end
