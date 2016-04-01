@@ -73,19 +73,25 @@ local ColorTable = {
 	["Blau"] = Color.Blue
 }
 
-
 Advertisement = inherit(GUIForm)
 inherit(Singleton, Advertisement)
 
 function Advertisement:constructor(player, text, color, duration)
-	GUIForm.constructor(self, 0, screenHeight-30, screenWidth, 30, false, true)
-	self.m_Rectangle = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, ColorTable[color], self)
-	self.m_Rectangle:setAlpha(220)
+	if core:get("Ad", "Chat", 0) == 0 then
+		GUIForm.constructor(self, 0, screenHeight-30, screenWidth, 30, false, true)
+		self.m_Rectangle = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, ColorTable[color], self)
+		self.m_Rectangle:setAlpha(220)
 
-	self.m_Duration = AD_DURATIONS[duration]*1000
-	self.m_Label = GUILabel:new(10, 0, self.m_Width-10, self.m_Height-2, _("Werbung von %s: %s", player:getName(), text), self):setFont(VRPFont(32)):setFontSize(1)
-	self:setVisible(false)
-	self:FadeIn()
+		self.m_Duration = AD_DURATIONS[duration]*1000
+		self.m_Label = GUILabel:new(10, 0, self.m_Width-10, self.m_Height-2, _("Werbung von %s: %s", player:getName(), text), self):setFont(VRPFont(32)):setFontSize(1)
+		self:setVisible(false)
+		self:FadeIn()
+	else
+		local r,g,b = fromcolor(ColorTable[color])
+		if color == "Schwarz" then r,g,b = 180,180,180 end
+		outputChatBox(_("Werbung von %s:", player:getName()), r, g, b)
+		outputChatBox(text, r, g, b)
+	end
 end
 
 function Advertisement:FadeIn()

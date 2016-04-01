@@ -272,6 +272,14 @@ function SelfGUI:constructor()
 	end
 	self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
 
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.07, _"Werbung (ad)", tabSettings)
+	self.m_AdChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.62, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
+	self.m_AdChange:addItem("als Box unten")
+	self.m_AdChange:addItem("im Chat")
+	self.m_AdChange.onChange = function(text, index)
+		core:set("Ad", "Chat", index - 1)
+	end
+
 	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.75, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
 	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
