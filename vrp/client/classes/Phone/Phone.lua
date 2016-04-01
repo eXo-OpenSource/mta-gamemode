@@ -142,6 +142,7 @@ function Phone:closeAllApps()
 		end
 	end
 	self.m_IconSurface:setVisible(true)
+	self.m_CurrentApp = false
 end
 
 function Phone:getAppByClass(classt)
