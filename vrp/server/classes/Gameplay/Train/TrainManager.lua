@@ -59,7 +59,7 @@ function TrainManager:constructor()
 		end, THREAD_PRIORITY_HIGHEST
 	).done(
 		function () TrainManager.onInitFinished() end,
-		function () end -- gets never called!
+		function () end -- should never get called!
 	)
 
 	-- Start the update Timer

@@ -79,39 +79,3 @@ end
 function Thread:setPriority(priority)
 	self.m_Priority = priority
 end
-
-
-
-
-
-if DEBUG then
-	local thread
-	addCommandHandler("testThread",
-		function ()
-			function testFunc(start)
-				for i = start or 1, 100, 1 do
-					print(i)
-					if i%10 == 0 then
-						Thread.pause()
-					end
-				end
-			end
-			Thread:new(testFunc, THREAD_PRIORITY_HIGHEST).done(
-				function ()
-					print("THREAD FINISHED!")
-				end,
-				function ()
-					print("THREAD FAILED!")
-				end
-			)
-		end
-	)
-
-	addCommandHandler("stopThread",
-		function ()
-			if thread then
-				delete(thread)
-			end
-		end
-	)
-end
