@@ -1,6 +1,5 @@
 addEventHandler("onClientElementPropertyChanged", root,
 	function(propertyName)
-		outputChatBox("a")
 		if getElementType(source) == "bus_stop" then
 			if propertyName == "markerdistance" then
 				local markerDistance = tonumber(exports.edf:edfGetElementProperty(source, "markerdistance"))
