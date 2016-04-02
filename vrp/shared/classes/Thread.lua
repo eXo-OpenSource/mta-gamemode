@@ -8,6 +8,12 @@
 Thread = inherit(Object)
 Thread.Map = {}
 
+function Thread:new(func, piority, ...)
+	local self = new(self, func, piority)
+	self.ms_Promise = Promise:new(bind(self.start, self))
+	return self.ms_Promise
+end
+
 function Thread:constructor(func, priority)
 	Thread.Map[#Thread.Map+1] = self
 	self.m_Id = #Thread.Map
@@ -28,10 +34,10 @@ function Thread:destructor()
 	end
 end
 
-function Thread:start(...)
+function Thread:start(fulfill, reject)
 	self.ms_Thread = coroutine.create(self.m_Func)
 	self.ms_StartTime = getTickCount()
-	self:resume(...)
+	self:resume()
 
 	self.ms_Timer = setTimer(
 		function()
@@ -39,6 +45,7 @@ function Thread:start(...)
 				self:resume()
 		  		self.m_Yields = self.m_Yields + 1
 			elseif self:getStatus() == COROUTINE_STATUS_DEAD then
+				fulfill()
 				delete(self)
 			end
 		end, self:getPriority(), 0
@@ -82,15 +89,21 @@ if DEBUG then
 	addCommandHandler("testThread",
 		function ()
 			function testFunc(start)
-				for i = start or 1, 1000000, 1 do
+				for i = start or 1, 100, 1 do
 					print(i)
-					if i%100 == 0 then
+					if i%10 == 0 then
 						Thread.pause()
 					end
 				end
 			end
-			thread = Thread:new(testFunc, THREAD_PRIORITY_HIGHEST)
-			thread:start(1)
+			Thread:new(testFunc, THREAD_PRIORITY_HIGHEST).done(
+				function ()
+					print("THREAD FINISHED!")
+				end,
+				function ()
+					print("THREAD FAILED!")
+				end
+			)
 		end
 	)
 

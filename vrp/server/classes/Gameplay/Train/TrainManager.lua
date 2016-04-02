@@ -52,8 +52,15 @@ function TrainManager:constructor()
     }
 
 	-- Finally load the tracks
-	self:loadTracks()
-	self:calculateNodeDistances()
+	Thread:new(
+		function ()
+			self:loadTracks()
+			self:calculateNodeDistances()
+		end, THREAD_PRIORITY_HIGHEST
+	).done(
+		function () TrainManager.onInitFinished() end,
+		function () end -- gets never called!
+	)
 
 	-- Start the update Timer
 	self.m_Timer = setTimer(bind(self.updateTrains, self), self.m_UpdateInterval, 0)
@@ -90,24 +97,23 @@ function TrainManager:removeRef(ref)
 end
 
 function TrainManager:loadTracks()
-	outputDebug(("Started loading %d Track(s) for ServerTrains."):format(#self.m_TrackFiles))
-	local start = getTickCount()
-
 	for trackIndex, filePath in ipairs(self.m_TrackFiles) do
 		local file = fileOpen(filePath, true) -- Open file with "read-only" tag
 		local data = file:read(file:getSize())
 		file:close()
 
+		local runs = 1
 		for nodeIndex, nodePos in ipairs(split(data, "\r\n")) do
 			if nodeIndex ~= 1 then
 				self:createNode(trackIndex, nodeIndex-1, Vector3(unpack(split(nodePos, " "))))
-			else
-				outputDebug(("Loading %d Track node(s) for Track %d."):format(nodePos, trackIndex))
+			end
+
+			runs = runs + 1
+			if runs%100 == 0 then
+				Thread.pause()
 			end
 		end
 	end
-
-	outputDebug(("Finished loading %d Track(s) for ServerTrains, took %dms."):format(#self.m_TrackFiles, getTickCount()-start))
 end
 
 function TrainManager:calculateNodeDistances()
@@ -182,7 +188,7 @@ function TrainManager:updateTrains()
 	end
 end
 
-function TrainManager.initializeAll()
+function TrainManager.onInitFinished()
 	local train = Train:new(537, 1, 133, 0.8)
 	train.Trailers = {}
 	local trailers = {

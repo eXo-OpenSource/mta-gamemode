@@ -70,7 +70,6 @@ function Core:constructor()
 	VehicleSpawner.initializeAll()
 	PayNSpray.initializeAll()
 	GasStation.initializeAll()
-	TrainManager.initializeAll()
 	TollStation.initializeAll()
 
 	-- Generate Missions

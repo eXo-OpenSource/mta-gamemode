@@ -10,8 +10,6 @@ FactionEvil = inherit(Singleton)
   -- implement by children
 
 function FactionEvil:constructor()
-	outputDebug("Faction Evil loaded")
-
 	self.InteriorEnterExit = {}
 	self.WeaponPed = {}
 

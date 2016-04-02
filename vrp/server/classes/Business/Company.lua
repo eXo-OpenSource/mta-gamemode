@@ -52,8 +52,6 @@ function Company:destructor()
 end
 
 function Company:save()
-	outputDebug(("Saved Company '%s' (Id: %d)"):format(self:getName(), self:getId()))
-
     local Settings = {
       VehiclesCanBeModified = self.m_VehiclesCanBeModified
     }

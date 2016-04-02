@@ -1,8 +1,6 @@
 SanNews = inherit(Company)
 
 function SanNews:constructor()
-	outputDebug(("[%s] Extra-class successfully loaded! (Id: %d)"):format(self:getName(), self:getId()))
-
 	self.m_isInterview = false
 	self.m_InterviewPlayer = {}
 	self.m_NextAd = getRealTime().timestamp

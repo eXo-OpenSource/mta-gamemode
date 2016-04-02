@@ -27,9 +27,6 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueGetStretcher", root, bind(self.Event_GetStretcher, self))
 	addEventHandler("factionRescueRemoveStretcher", root, bind(self.Event_RemoveStretcher, self))
 	addEventHandler("factionRescueWastedFinished", root, bind(self.Event_OnPlayerWastedFinish, self))
-
-
-	outputDebug("Faction Rescue loaded")
 end
 
 function FactionRescue:destructor()

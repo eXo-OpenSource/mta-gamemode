@@ -3,7 +3,6 @@ DrivingSchool.LicenseCosts = {["car"] = 1500, ["bike"] = 750, ["truck"] = 4000, 
 DrivingSchool.TypeNames = {["car"] = "Autoführerschein", ["bike"] = "Motorradschein", ["truck"] = "LKW-Schein", ["heli"] = "Helikopterschein", ["plane"] = "Flugschein" }
 
 function DrivingSchool:constructor()
-    outputDebug(("[%s] Extra-class successfully loaded! (Id: %d)"):format(self:getName(), self:getId()))
     self:createDrivingSchoolMarker(Vector3(1362.04, -1663.74, 13.57))
 	self:createSchoolPed(Vector3( -2035.32, -117.65, 1035.17))
 

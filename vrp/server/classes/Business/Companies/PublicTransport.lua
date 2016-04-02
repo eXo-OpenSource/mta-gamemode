@@ -2,7 +2,6 @@ PublicTransport = inherit(Company)
 local TAXI_PRICE_PER_KM = 20
 
 function PublicTransport:constructor()
-	outputDebug(("[%s] Extra-class successfully loaded! (Id: %d)"):format(self:getName(), self:getId()))
 	self.m_TaxiCustomer = {}
 	self.m_TaxoMeter = bind(self.updateTaxometer, self)
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))

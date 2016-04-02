@@ -9,18 +9,11 @@ function Promise:constructor(func)
 	self.m_Handlers = {}
 
 	self.done = function (onFulfilled, onRejected)
-		setTimer(function()
-			self:handle({onFulfilled = onFulfilled, onRejected = onRejected})
-		end, 50, 1)
-	end
-	--[[
-	self.next = function (...)
-		Promise.addNext(self)
-		return self.next(...)
-	end
-	--]]
+		self.m_OnFulfilled = onFulfilled
+		self.m_OnRejected = onRejected
+ 	end
 
-	Promise.doResolve(func, bind(self.resolve, self), bind(self.reject, self))
+	Promise.doResolve(self, func, bind(self.resolve, self), bind(self.reject, self))
 end
 
 function Promise:fulfill(result)
@@ -54,23 +47,36 @@ function Promise:handle(handler)
 	end
 end
 
-function Promise.doResolve(func, onFulfilled, onRejected)
+function Promise:doResolve(func, onFulfilled, onRejected)
 	local done = false;
 	func(
 		function (value)
 			if (done) then return end
 			done = true
 			onFulfilled(value)
+
+			-- 'cause of Asynchronous functions we have to call it here!
+			nextframe(
+				function ()
+					self:handle({onFulfilled = self.m_OnFulfilled, onRejected = self.m_OnRejected})
+				end
+			)
 	    end,
 		function (reason)
 	      if (done) then return end
 	      done = true
 	      onRejected(reason)
+
+		  -- 'cause of Asynchronous functions we have to call it here!
+		  nextframe(
+			  function ()
+				  self:handle({onFulfilled = self.m_OnFulfilled, onRejected = self.m_OnRejected})
+			  end
+		  )
 	  	end
 	)
 end
 
---[[
 function Promise.addNext(self)
 	self.next = function (onFulfilled, onRejected)
 		return Promise:new(
@@ -95,23 +101,24 @@ function Promise.addNext(self)
 		);
 	end
 end
---]]
 
 if DEBUG and SERVER then
 	addCommandHandler("testPromise",
 		function ()
 			local test = function (fulfill, reject)
 				math.randomseed(getTickCount())
-				local randInt = math.random(1, 2)
-				outputDebug(randInt)
-				if randInt == 1 then
+				local num = math.random(1, 2)
+				outputDebug(num)
+				if num == 1 then
 					fulfill(math.random(1, 23542))
 				else
 					reject(math.random(1, 23542))
 				end
 			end
 
-			Promise:new(test).done(
+			local prom = Promise:new(test)
+			Promise.addNext(prom)
+			prom.next(
 				function (val)
 					outputDebug("STATE: TRUE")
 					outputDebug("VALUE: "..val)
