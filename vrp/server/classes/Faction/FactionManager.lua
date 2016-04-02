@@ -340,7 +340,7 @@ function FactionManager:sendAllToClient(client)
 		if faction:isStateFaction() or faction:isRescueFaction() then
 			for i, v in pairs(faction.m_Vehicles) do
 				if not factionVehicleShaders[faction:getId()] or not factionVehicleShaders[faction:getId()][v:getModel()] then
-					outputDebug(("[%s] ShaderInfo for Vehicle Model %d not found!"):format(faction:getName(), v:getModel()))
+					--outputDebug(("[%s] ShaderInfo for Vehicle Model %d not found!"):format(faction:getName(), v:getModel()))
 				else
 					local shaderInfo = factionVehicleShaders[faction:getId()][v:getModel()]
 					if shaderInfo.shaderEnabled then
