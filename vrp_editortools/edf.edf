@@ -46,6 +46,26 @@
 		<data name="height" type="number" default="10"/>
 	</element>
 	
+	<!-- guiwall -->
+	<element name="guiwall" friendlyname="Gui-Wall" icon="guiwall.png">
+		<data name="position" type="coord3d" default="0,0,0" required="true"/>
+
+		<object editorOnly="true" model="2395" rotZ="270" doublesided="true"/>
+		<object editorOnly="true" model="7246" posX="-1.3" posY="-2.8" posZ="-1.8" rotY="180" doublesided="true"/>
+		<object editorOnly="true" model="7246" posX="-1.3" posY="-0.1" posZ="-1.8" rotY="180" doublesided="true"/>
+		<marker editorOnly="true" type="cylinder" size="4" color="#ff0000cc"/>
+
+		<data name="startPosX" type="number" default="0"/>
+		<data name="startPosY" type="number" default="0"/>
+		<data name="startPosZ" type="number" default="0"/>
+		<data name="sizeX" type="number" default="0"/>
+		<data name="sizeY" type="number" default="0"/>
+		<data name="sizeZ" type="number" default="4"/>
+		<data name="width" type="number" default="4"/>
+
+
+	</element>
+	
 	<script src="editor_client.lua" type="client" />
 	<script src="editor_server.lua" type="server" />
 </def>

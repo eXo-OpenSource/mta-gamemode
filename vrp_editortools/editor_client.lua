@@ -21,10 +21,10 @@ addEventHandler("onClientElementPropertyChanged", root,
 )
 
 addEventHandler("onClientElementCreate", root,
-	function()
+	function()		
 		if getElementType(source) == "bus_stop" then
 			local markerDistance = tonumber(exports.edf:edfGetElementProperty(source, "markerdistance"))
-			local object = getRepresentation(source, "object")
+			local object = f(source, "object")
 			local marker = getRepresentation(source, "marker")
 				
 			if object and object[1] and marker and markerDistance then
@@ -38,9 +38,28 @@ addEventHandler("onClientElementCreate", root,
 			local x, y, z = exports.edf:edfGetElementPosition(source)
 			exports.edf:edfSetElementProperty(source, "areaX", x)
 			exports.edf:edfSetElementProperty(source, "areaY", y)
+		elseif getElementType(source) == "guiwall" then
+			local object = getRepresentation(source, "object")
+			local marker = getRepresentation(source, "marker")
+			
+			for index, obj in pairs(object) do
+				setElementDoubleSided(obj, true)
+			end
+			
+			local x,y,z = getElementPosition(object[1])
+			exports.edf:edfSetElementProperty(source, "startPosX", x)
+			exports.edf:edfSetElementProperty(source, "startPosY", y)
+			exports.edf:edfSetElementProperty(source, "startPosZ", z)
+			
+			detachElements(marker)
+			local x1, y1, z1 = getPositionFromElementOffset(object[1], 1, 5, -1)
+			exports.edf:edfSetElementPosition(marker, x1, y1, z1)
+			attachElements(marker, object[1], 1, 5, -1)
 		end
 	end
 )
+
+local greenTexture = dxCreateTexture(":vrp_editortools/green.png")
 
 addEventHandler("onClientRender", root,
 	function()
@@ -52,6 +71,18 @@ addEventHandler("onClientRender", root,
 				if z then
 					dxDrawRectangle3D(areaX, areaY, z+1, width, height, tocolor(255, 255, 0, 200), 0, areaX, areaY-height/2, z+2)
 				end
+			end
+		end
+		
+		for k, guiwall in pairs(getElementsByType("guiwall")) do
+			local startPosX, startPosY, startPosZ = exports.edf:edfGetElementProperty(guiwall, "startPosX"), exports.edf:edfGetElementProperty(guiwall, "startPosY"), exports.edf:edfGetElementProperty(guiwall, "startPosZ")
+			local sizeX, sizeY, sizeZ = exports.edf:edfGetElementProperty(guiwall, "sizeX"), exports.edf:edfGetElementProperty(guiwall, "sizeY"), exports.edf:edfGetElementProperty(guiwall, "sizeZ")
+			local width = exports.edf:edfGetElementProperty(guiwall, "width")
+			if startPosX and startPosY then
+				
+				local marker = getRepresentation(guiwall, "marker")
+				local x1, y1, z1 = exports.edf:edfGetElementPosition(marker)
+				dxDrawMaterialLine3D ( startPosX, startPosY, startPosZ, startPosX+sizeX, startPosY+sizeY, startPosZ+sizeZ, greenTexture, width, nil, x1, y1, z1)
 			end
 		end
 	end
