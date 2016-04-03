@@ -56,26 +56,35 @@ function GUIRenderer.process3DMouse()
 		return
 	end
 
+	-- Convert relative to absolute coordinates
 	local sw, sh = guiGetScreenSize()
 	cx = cx*sw
 	cy = cy*sh
+	
+	-- Retrieve mouse states
+	local mouse1, mouse2 = getKeyState("mouse1"), getKeyState("mouse2")
 
+	-- Make coordinates for a 3D line a long the cursor (orthogonal to the camera)
 	local wx1, wy1, wz1 = getWorldFromScreenPosition(cx, cy, 3)
 	local wx2, wy2, wz2 = getWorldFromScreenPosition(cx, cy, 5)
 
+	-- Make a 3D line described by a position and direction vector
 	local cursorPos = Vector3(wx1, wy1, wz1)
 	local cursorDir = Vector3(wx2-wx1, wy2-wy1, wz2-wz1)
 
 	for k, ca in pairs(GUIRenderer.ms_3DGUIs) do
 		if ca:isVisible() then
+			-- Make 3D plane described by a position vector and two direction vectors
 			local caStart = ca.m_3DStart
 			local caV1 = ca.m_3DEnd - ca.m_3DStart
 			local caV2 = ca.m_SecPos - ca.m_3DStart
 
+			-- Calculate intersection point between plane and line (solves a linear equation system)
 			local vecIntersection = math.line_plane_intersection(cursorPos, cursorDir, caStart, caV1, caV2)
 
+			-- Perform mouse click in case of intersection
 			if vecIntersection then
-				ca:performMouse(vecIntersection, false, false)
+				ca:performMouse(vecIntersection, mouse1, mouse2)
 			else
 				ca:unhoverChildren()
 			end
@@ -84,8 +93,8 @@ function GUIRenderer.process3DMouse()
 end
 
 function GUIRenderer.drawAll()
-	for k, v in ipairs(GUIRenderer.cache) do
-		v:draw()
+	for i = 1, #GUIRenderer.cache do
+		GUIRenderer.cache[i]:draw()
 	end
 end
 
@@ -94,8 +103,8 @@ function GUIRenderer.restore(clearedRenderTargets)
 		-- Redraw render target(s)
 		GUIRenderer.cacheroot:updateArea()
 
-		for k, v in ipairs(GUIRenderer.cache) do
-			v:updateArea()
+		for i = 1, #GUIRenderer.cache do
+			GUIRenderer.cache[i]:updateArea()
 		end
 	--end
 end

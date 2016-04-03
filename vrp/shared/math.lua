@@ -39,7 +39,7 @@ function math.getAngle(vec1, vec2)
 	return math.acos(vec1:dot(vec2)/(vec1.length * vec2.length))
 end
 
-function math.getPlainInfoFromEuler(position, rotation, size)
+function math.getPlaneInfoFromEuler(position, rotation, size)
 	-- Build entity matrix and calculate the normal
 	local mat = Matrix(position, rotation)
 	local normal = mat.forward

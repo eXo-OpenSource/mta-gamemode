@@ -8,8 +8,8 @@
 GUIForm3D = inherit(Object)
 
 function GUIForm3D:constructor(position, rotation, size, resolution, streamdistance)
-	-- Calculate Euler angles from plain normals (since Euler angles are easier to handle than line pos + normals)
-	self.m_StartPosition, self.m_EndPosition, self.m_Normal = math.getPlainInfoFromEuler(position, rotation, size)
+	-- Calculate Euler angles from plane normals (since Euler angles are easier to handle than line pos + normals)
+	self.m_StartPosition, self.m_EndPosition, self.m_Normal = math.getPlaneInfoFromEuler(position, rotation, size)
 	self.m_CacheArea = false
 	self.m_Resolution, self.m_Size = resolution, size
 
@@ -21,8 +21,8 @@ function GUIForm3D:constructor(position, rotation, size, resolution, streamdista
 	-- Remove CacheArea3D immediately from the render queue (or do it already in CacheArea3D) a bit delayed
 	nextframe(
 		function()
-			if localPlayer:isWithinColShape(self.m_StreamArea) and not self.m_CacheArea then
-				self.m_CacheArea = CacheArea3D:new(self.m_StartPosition, self.m_EndPosition, self.m_Normal, self.m_Size.x, self.m_Resolution.x, self.m_Resolution.y, true)
+			if localPlayer:isWithinColShape(self.m_StreamArea) then
+				self:StreamArea_Hit(localPlayer, true)
 			end
 		end
 	)
@@ -42,8 +42,10 @@ function GUIForm3D:StreamArea_Hit(hitElement, matchingDimension)
 	end
 
 	-- Dynamically create cache area
-	self.m_CacheArea = CacheArea3D:new(self.m_StartPosition, self.m_EndPosition, self.m_Normal, self.m_Size.x, self.m_Resolution.x, self.m_Resolution.y, true)
-	self:onStreamIn(self.m_CacheArea)
+	if not self.m_CacheArea then
+		self.m_CacheArea = CacheArea3D:new(self.m_StartPosition, self.m_EndPosition, self.m_Normal, self.m_Size.x, self.m_Resolution.x, self.m_Resolution.y, true)
+		self:onStreamIn(self.m_CacheArea)
+	end
 end
 
 function GUIForm3D:StreamArea_Leave(hitElement, matchingDimension)
