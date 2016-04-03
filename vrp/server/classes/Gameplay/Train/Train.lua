@@ -3,11 +3,11 @@ Train = inherit(Object)
 function Train:new(Id, Track, Node, ...)
 	-- 449: Tram
 	local vehicle = createVehicle(Id, TrainManager:getSingleton():getNode(Track, Node).pos)
+	enew(vehicle, self, ...)
+	
 	vehicle:setDirection(true)
 	vehicle:setDerailable(false)
 	vehicle.getMileage = function () end
-
-	enew(vehicle, self, ...)
 	return vehicle
 end
 
