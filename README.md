@@ -47,8 +47,8 @@ Merge-Commit verhindern:
 Weitere Dokumentation:
 https://git-scm.com/book/de/v1
 
-# Klassen Crash-Kurs
-## Promises
+## Klassen Crash-Kurs
+### Promises
 Beispiel:
 ```lua
 -- See JS-Example: https://www.promisejs.org @ Constructing a promise + Transformation / Chaining
