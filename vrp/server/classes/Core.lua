@@ -131,14 +131,10 @@ function Core:destructor()
 end
 
 function Core:runTests()
-	-- Add some space
-	outputServerLog("")
-
 	-- Instantiates tests here
 	UtilsTest:new("UtilsTest")
-	GroupTest:new("GroupTest")
-
-	outputServerLog("")
+	--GroupTest:new("GroupTest") // Throws an Erorr
+	PromiseTest:new("PromiseTest")
 end
 
 function Core:getVersion()

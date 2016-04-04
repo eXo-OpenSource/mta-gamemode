@@ -150,6 +150,7 @@
 	<script src="server/classes/Groups/GroupManager.lua" type="server"/>
 	<!--<script src="server/classes/Groups/GangArea.lua" type="server"/>-->
 	<!--<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>-->
+	<script src="server/classes/Groups/GroupProperty.lua" type="server"/>
 
 	<!-- Business -->
 	<script src="server/classes/Business/Company.lua" type="server"/>
@@ -236,6 +237,7 @@
 	<!-- Tests -->
 	<script src="server/tests/UtilsTest.lua" type="server"/>
 	<script src="server/tests/GroupTest.lua" type="server"/>
+	<script src="server/tests/PromiseTest.lua" type="server"/>
 
 	<script src="server/Main.lua" type="server"/>
 

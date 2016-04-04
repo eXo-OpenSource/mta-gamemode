@@ -19,10 +19,10 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange, rank
 	self.m_LastNameChange = lastNameChange or 0
 	self.m_VehiclesCanBeModified = true
 	self.m_Type = type
+
 	local saveRanks = false
 	if rankNames == "" then	rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
 	if rankLoans == "" then	rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
-
 	self.m_RankNames = fromJSON(rankNames)
 	self.m_RankLoans = fromJSON(rankLoans)
 	if saveRanks == true then
@@ -36,7 +36,7 @@ end
 function Group:destructor()
 end
 
-function Group.create(name,type)
+function Group.create(name, type)
 	if sql:queryExec("INSERT INTO ??_groups (Name,Type) VALUES(?,?)", sql:getPrefix(), name,type) then
 		local group = Group:new(sql:lastInsertId(), name)
 
@@ -60,6 +60,8 @@ function Group:purge()
 
 		-- Free owned gangareas
 	--	GangAreaManager:getSingleton():freeAreas()
+
+		-- TODO: Should we also free the number?
 
 		return true
 	end

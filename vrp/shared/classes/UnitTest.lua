@@ -10,6 +10,7 @@ UnitTest = inherit(Object)
 
 function UnitTest:virtual_constructor(name)
     name = name or ""
+    self:outputLog(" ")
     self:outputLog(("TEST: Entering test: '%s'"):format(name))
 
     if self.init then
@@ -20,21 +21,27 @@ function UnitTest:virtual_constructor(name)
     local succeededTestCounter = 0
 
     -- Iterate class and execute all methods (we don't have to check for methods of this class since it's not in the inherited class table)
-    for name, method in pairs(getmetatable(self).__index) do
-        if name ~= "init" and name ~= "destructor" then
-            self.m_FailedHere = false
-            testCounter = testCounter + 1
-            method(self, name)
+    local runTests = function ()
+        for name, method in pairs(getmetatable(self).__index) do
+            if name ~= "init" and name ~= "destructor" then
+                self.m_FailedHere = false
+                testCounter = testCounter + 1
+                method(self, name)
 
-            if not self.m_FailedHere then
-                succeededTestCounter = succeededTestCounter + 1
-                self:outputLog(("SUCCESS: Test method '%s' succeeded"):format(name))
+                if not self.m_FailedHere then
+                    succeededTestCounter = succeededTestCounter + 1
+                    self:outputLog(("SUCCESS: Test method '%s' succeeded"):format(name))
+                end
             end
         end
+
+        self:outputLog(("TEST: Test '%s' completed. Executed %d tests, %d succeeded, %d failed"):format(name, testCounter, succeededTestCounter, testCounter - succeededTestCounter))
+        self:outputLog(" ")
+        delete(self)
     end
 
-    self:outputLog(("TEST: Test '%s' completed. Executed %d tests, %d succeeded, %d failed"):format(name, testCounter, succeededTestCounter, testCounter - succeededTestCounter))
-    delete(self)
+    self.m_Coroutine = coroutine.create(runTests)
+    self:resume()
 end
 
 function UnitTest:outputLog(message)
@@ -65,7 +72,7 @@ function UnitTest:assertEquals(actual, expected)
     if expected == actual then
         return true
     else
-        self:outputLog(("ERROR: Test method '%s' (line %n) failed. Expected '%s', got '%s'"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, expected, actual))
+        self:outputLog(("ERROR: Test method '%s' (line %d) failed. Expected '%s', got '%s'"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, expected, actual))
         self:markAsFailed()
         return false
     end
@@ -84,7 +91,7 @@ function UnitTest:assertTableEquals(actual, expected)
     if table.compare(expected, actual) then
         return true
     else
-        self:outputLog(("ERROR: Test method '%s' (line %d) failed.\nExpected:\n%s.\n\nGot:\n%s"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tableToString(expected), tableToString(actual)))
+        self:outputLog(("ERROR: Test method '%s' (line %d) failed.\nExpected:\n%s.\n\nGot:\n%s"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, self:resume(), tableToString(actual)))
         self:markAsFailed()
         return false
     end
@@ -121,5 +128,18 @@ function UnitTest:assertFalse(result)
         self:outputLog(("ERROR: Test method '%s' (line %d) failed. Expected false, got '%s'"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tostring(result)))
         self:markAsFailed()
         return false
+    end
+end
+
+
+function UnitTest:yield()
+    if self.m_Coroutine and coroutine.status(self.m_Coroutine) == COROUTINE_STATUS_RUNNING then
+        coroutine.yield()
+    end
+end
+
+function UnitTest:resume()
+    if self.m_Coroutine and coroutine.status(self.m_Coroutine) == COROUTINE_STATUS_SUSPENDED then
+        coroutine.resume(self.m_Coroutine)
     end
 end
