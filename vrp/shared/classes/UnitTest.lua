@@ -91,7 +91,7 @@ function UnitTest:assertTableEquals(actual, expected)
     if table.compare(expected, actual) then
         return true
     else
-        self:outputLog(("ERROR: Test method '%s' (line %d) failed.\nExpected:\n%s.\n\nGot:\n%s"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, self:resume(), tableToString(actual)))
+        self:outputLog(("ERROR: Test method '%s' (line %d) failed.\nExpected:\n%s.\n\nGot:\n%s"):format(self:getTestMethodName(), debug.getinfo(2, "l").currentline, tableToString(expected), tableToString(actual)))
         self:markAsFailed()
         return false
     end
