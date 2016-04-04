@@ -65,7 +65,7 @@ function PromiseTest:test_AdvancedPromise()
 	local readString = function ()
 		local promise = Promise:new(function (fullfill, reject)
 			-- Example (here shorten): We're reading a json string from a file
-			local err = false -- err is true, when file reading fails
+			local err = true -- err is true, when file reading fails
 			if err then
 				reject("A error")
 			else
@@ -77,22 +77,17 @@ function PromiseTest:test_AdvancedPromise()
 		Promise.addNext(promise)
 		return promise
 	end
-	--[[
-	local parseJSON = function (res) -- function which parses the json
-		return fromJSON(res)
-	end
-	--]]
 	local readJSON = function () -- function which reads json from the file and parses it
 		return readString().next(fromJSON)
 	end
 
 	readJSON().done( -- implement handlers for the readJSON function
-		function (result) -- function if the progress is successfull
+		function (result) -- function if the progress is successful
 			self:assertTableEquals(result, {["name"] = "StiviK", ["date_of_birth"] = "11.05.1998", ["a_number"] = 12, ["a_boolean"] = false})
 			self:resume()
 		end,
 		function (err) -- err function if file reading fails
-			outputDebug(("[PromiseTest:test_AdvancedPromise]: %s"):format(tostring(err)))
+			outputServerLog(("INFO: [PromiseTest:test_AdvancedPromise]: %s"):format(tostring(err)))
 
 			self:assertTrue(true)
 			self:resume()
