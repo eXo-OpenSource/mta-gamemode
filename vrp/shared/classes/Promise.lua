@@ -12,6 +12,10 @@ function Promise:constructor(func)
 		self.m_OnFulfilled = onFulfilled
 		self.m_OnRejected = onRejected
  	end
+	self.next = function (...)
+		Promise.addNext(self)
+		return self.next(...)
+	end
 
 	Promise.doResolve(self, func, bind(self.resolve, self), bind(self.reject, self))
 end
@@ -27,10 +31,6 @@ function Promise:reject(error)
 end
 
 function Promise:resolve(result)
-	if (self.next) then
-		Promise.doResolve(bind(self.next, result), bind(self.resolve, self), bind(self.reject, self))
-		return
-	end
 	self:fulfill(result);
 end
 
