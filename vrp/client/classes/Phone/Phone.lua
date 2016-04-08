@@ -13,7 +13,7 @@ function Phone:constructor()
 
 	self.m_Phone = core:get("Phone", "Phone", "iPhone")
 	self.m_PhoneOn = core:get("Phone", "On", true)
-	
+
 	self.m_Apps = {}
 	self.m_CurrentApp = false
 
@@ -28,6 +28,7 @@ function Phone:constructor()
 	self:registerApp(AppOnOff)
 	self:registerApp(PhoneApp.makeWebApp("SanNews",  "IconSanNews.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sanNews&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
+	self:registerApp(AppAmmunation)
 
 
 
@@ -55,7 +56,7 @@ end
 function Phone:switchOff()
 	self.m_PhoneOn = false
 	core:getConfig():set("Phone", "On", self.m_PhoneOn)
-	
+
 	self:closeAllApps()
 	self:openAppByClass(AppOnOff)
 	triggerServerEvent("setPhoneStatus", localPlayer, self.m_PhoneOn)
@@ -64,7 +65,7 @@ end
 function Phone:switchOn()
 	self.m_PhoneOn = true
 	core:getConfig():set("Phone", "On", self.m_PhoneOn)
-	
+
 	self:closeAllApps()
 	self:loadHomeScreen()
 	triggerServerEvent("setPhoneStatus", localPlayer, self.m_PhoneOn)
@@ -83,10 +84,10 @@ function Phone:loadHomeScreen()
 		local column, row = (k-1)%4, math.floor((k-1)/4)
 
 		-- Create app icon
-		self.m_AppIcons[k] = GUIImage:new(5+65*column, 9+75*row, 50, 50,  iconPath..app:getIcon(), self.m_IconSurface)
+		self.m_AppIcons[k] = GUIImage:new(5+65*column, 9+80*row, 50, 50,  iconPath..app:getIcon(), self.m_IconSurface)
 
 		-- Create app label
-		self.m_AppLabels[k] = GUILabel:new(65*column-7, 62+75*row, 74, 16, app:getName(), self.m_IconSurface)
+		self.m_AppLabels[k] = GUILabel:new(65*column-7, 62+80*row, 74, 16, app:getName(), self.m_IconSurface)
 		self.m_AppLabels[k]:setAlignX("center")
 
 		self.m_AppIcons[k].onLeftClick = function() self.m_IconSurface:setVisible(false) self:openApp(app) end

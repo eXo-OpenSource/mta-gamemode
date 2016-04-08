@@ -39,5 +39,7 @@ FontAwesomeSymbols = {
 	Book = "",
 	Back = "",
 	Player = "",
-	Group = ""
+	Group = "",
+	Money = "",
+	Info = ""
 }

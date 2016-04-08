@@ -474,6 +474,7 @@
 	<script src="client/classes/Phone/Apps/AppNametag.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppCEF.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppOnOff.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppAmmunation.lua" type="client"/>
 
 	<!-- Companies -->
 	<script src="client/classes/Business/Companies/PublicTransport.lua" type="client"/>
@@ -581,6 +582,7 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOff.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconOn.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSanNews.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconAmmuNation.png"/>
 
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
@@ -590,6 +592,7 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconOff.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconOn.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconSanNews.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconAmmuNation.png"/>
 
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>

@@ -13,6 +13,8 @@ function GUIPhoneTabPanel:constructor(posX, posY, width, height, parent)
 	self.m_CurrentTab = false
 	self.m_Tabs = {}
 	GUIElement.constructor(self, posX, posY, width, height, parent)
+	GUIRectangle:new(posX, height-50, width, 50, Color.Grey, self)
+
 end
 
 function GUIPhoneTabPanel:setTab(id)
