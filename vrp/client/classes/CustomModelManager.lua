@@ -15,9 +15,9 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/yoda.dff", 41)
 
 	-- vRP Logo
-	self:loadImportTXD("files/models/vrp_logo.txd", 2903)
-	self:loadImportDFF("files/models/vrp_logo.dff", 2903)
-	self:loadImportCOL("files/models/vrp_logo.col", 2903)
+	self:loadImportTXD("files/models/exo_logo.txd", 2836)
+	self:loadImportDFF("files/models/exo_logo.dff", 2836)
+	self:loadImportCOL("files/models/exo_logo.col", 2836)
 
 	-- Race pickups
 	self:loadImportTXD("files/models/nitro.txd", 2839)
