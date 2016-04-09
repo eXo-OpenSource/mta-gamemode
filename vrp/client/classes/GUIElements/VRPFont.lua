@@ -35,6 +35,7 @@ end
 
 FontAwesomeSymbols = {
 	CartPlus = "",
+	Cart = "",
 	Phone = "",
 	Book = "",
 	Back = "",
