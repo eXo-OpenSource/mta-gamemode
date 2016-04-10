@@ -925,6 +925,8 @@
 
 	<!-- CircuitBreaker -->
 	<vrpfile src = "files/images/CircuitBreaker/bg.png" />
+	<vrpfile src = "files/images/CircuitBreaker/pcb.png" />
+	<vrpfile src = "files/images/CircuitBreaker/mcu.png" />
 	<vrpfile src = "files/images/CircuitBreaker/input.png" />
 	<vrpfile src = "files/images/CircuitBreaker/output.png" />
 
