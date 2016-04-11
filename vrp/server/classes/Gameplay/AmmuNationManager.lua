@@ -105,8 +105,13 @@ function AmmuNationManager:giveWeaponsFromOrder(player, weaponTable)
 		for typ,amount in pairs(weaponTable[weaponID]) do
 			if amount > 0 then
 				if typ == "Waffe" then
-					outputChatBox(amount.." "..getWeaponNameFromID(weaponID),player,255,125,0)
-					giveWeapon(player,weaponID,amount)
+					if weaponID > 0 then
+						outputChatBox(amount.." "..getWeaponNameFromID(weaponID),player,255,125,0)
+						giveWeapon(player,weaponID,amount)
+					else
+						outputChatBox("1 Schutzweste",player,255,125,0)
+						player:setArmor(100)
+					end
 				elseif typ == "Munition" then
 					playerWeapons = self:getPlayerWeapons(player)
 					if playerWeapons[weaponID] then

@@ -25,10 +25,15 @@ function AppAmmunation:onOpen(form)
 	self.m_WeaponChanger = GUIChanger:new(10, 65, 240, 30, self.m_Tabs["Order"])
 	self.m_WeaponChanger:addItem("<< Produkt auswählen >>")
 	for id, key in pairs(AmmuNationInfo) do
-		self.m_WeaponChanger:addItem(getWeaponNameFromID(id))
-		if not self.m_Cart[id] then self.m_Cart[id] = {["Waffe"] = 0, ["Munition"] = 0} end
-
+		if id > 0 then
+			self.m_WeaponChanger:addItem(getWeaponNameFromID(id))
+			if not self.m_Cart[id] then self.m_Cart[id] = {["Waffe"] = 0, ["Munition"] = 0} end
+		end
 	end
+	self.m_WeaponChanger:addItem("Schutzweste")
+	if not self.m_Cart[0] then self.m_Cart[0] = {["Waffe"] = 0, ["Munition"] = 0} end
+
+
 	self.m_WeaponChanger.onChange = function(text)
 		self:onWeaponChange(text)
 	end
@@ -74,12 +79,10 @@ end
 
 function AppAmmunation:addItemToCart(typ)
 	local weaponID = self.m_SelectedWeaponId
-	if weaponID > 0 then
-		if typ == "weapon" then self.m_Cart[weaponID]["Waffe"] = self.m_Cart[weaponID]["Waffe"]+1 end
-		if typ == "munition" then self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+1 end
+	if typ == "weapon" then self.m_Cart[weaponID]["Waffe"] = self.m_Cart[weaponID]["Waffe"]+1 end
+	if typ == "munition" then self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+1 end
 
-		self:updateCart()
-	end
+	self:updateCart()
 end
 
 function AppAmmunation:order()
@@ -108,6 +111,7 @@ function AppAmmunation:updateCart()
 					name = getWeaponNameFromID(weaponID).." Magazin"
 					price = amount*AmmuNationInfo[weaponID].Magazine.price
 				end
+				if weaponID == 0 then name = "Schutzweste" end
 				totalCosts = totalCosts + price
 				item = self.m_CartGrid:addItem(name,amount)
 				item.typ = typ
@@ -148,20 +152,30 @@ function AppAmmunation:getPlayerWeapons()
 end
 
 function AppAmmunation:onWeaponChange(name)
-	if getWeaponIDFromName(name) then
-		local weaponID = getWeaponIDFromName(name)
-		self.m_WeaponImage:setImage(WeaponIcons[weaponID])
-		self.m_WeaponName:setText(_("Waffe: %s", name))
-		self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon))
-		self.m_MagazineBuyBtn:setText(_("Magazin (%d$)", AmmuNationInfo[weaponID].Magazine.price))
-		self.m_SelectedWeaponId = weaponID
+	if getWeaponIDFromName(name) or name == "Schutzweste" then
 		self.m_CartLabel:setVisible(true)
 		self.m_WeaponName:setVisible(true)
 		self.m_WeaponImage:setVisible(true)
 		self.m_WeaponBuyBtn:setVisible(true)
-		self.m_MagazineBuyBtn:setVisible(true)
-		self:updateButtons()
 
+		if name == "Schutzweste" then
+			self.m_SelectedWeaponId = 0
+			self.m_WeaponImage:setImage("files/images/Weapons/Vest.png")
+			self.m_WeaponName:setText(name)
+			self.m_WeaponBuyBtn:setText(_("Schutzweste (%d$)", AmmuNationInfo[0].Weapon))
+			self.m_MagazineBuyBtn:setVisible(false)
+			self:updateButtons()
+		else
+			local weaponID = getWeaponIDFromName(name)
+			self.m_SelectedWeaponId = weaponID
+
+			self.m_WeaponImage:setImage(WeaponIcons[weaponID])
+			self.m_WeaponName:setText(_("Waffe: %s", name))
+			self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon))
+			self.m_MagazineBuyBtn:setText(_("Magazin (%d$)", AmmuNationInfo[weaponID].Magazine.price))
+			self.m_MagazineBuyBtn:setVisible(true)
+			self:updateButtons()
+		end
 	else
 		self.m_CartLabel:setVisible(false)
 		self.m_WeaponName:setVisible(false)
