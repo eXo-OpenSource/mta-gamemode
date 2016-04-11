@@ -20,12 +20,14 @@ function AppAmmunation:onOpen(form)
 	self.m_Tabs = {}
 	self.m_Tabs["Info"] = self.m_TabPanel:addTab(_"Information", FontAwesomeSymbols.Info)
 	GUILabel:new(10, 10, 200, 50, _"Ammunation", self.m_Tabs["Info"])
-	self.m_Tabs["Order"] = self.m_TabPanel:addTab(_"Bestellen:", FontAwesomeSymbols.CartPlus)
-	GUILabel:new(10, 10, 200, 50, _"Bestellen", self.m_Tabs["Order"])
+	self.m_Tabs["Order"] = self.m_TabPanel:addTab(_"Bestellen", FontAwesomeSymbols.CartPlus)
+	GUILabel:new(10, 10, 200, 50, _"Bestellen:", self.m_Tabs["Order"])
 	self.m_WeaponChanger = GUIChanger:new(10, 65, 240, 30, self.m_Tabs["Order"])
 	self.m_WeaponChanger:addItem("<< Produkt auswählen >>")
 	for id, key in pairs(AmmuNationInfo) do
 		self.m_WeaponChanger:addItem(getWeaponNameFromID(id))
+		if not self.m_Cart[id] then self.m_Cart[id] = {["Waffe"] = 0, ["Munition"] = 0} end
+
 	end
 	self.m_WeaponChanger.onChange = function(text)
 		self:onWeaponChange(text)
@@ -44,6 +46,8 @@ function AppAmmunation:onOpen(form)
 	GUILabel:new(190, 310, 50, 50, FontAwesomeSymbols.Cart, self.m_Tabs["Order"]):setFont(FontAwesome(50))
 	self.m_OrderBtn = GUIButton:new(10, 365, 240, 30, "Waren bestellen", self.m_Tabs["Order"])
 	self.m_OrderBtn:setBackgroundColor(Color.Green)
+	self.m_OrderBtn.onLeftClick = bind(self.order,self)
+
 
 	self.m_CartLabel:setVisible(false)
 	self.m_WeaponName:setVisible(false)
@@ -62,18 +66,24 @@ function AppAmmunation:onOpen(form)
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
 	self.m_OrderBtnCart = GUIButton:new(135, 375, 115, 20,_"Bestellen", self.m_Tabs["Basket"])
 	self.m_OrderBtnCart:setBackgroundColor(Color.Green)
+	self.m_OrderBtnCart.onLeftClick = bind(self.order,self)
+	self:getPlayerWeapons()
+
 
 end
 
 function AppAmmunation:addItemToCart(typ)
 	local weaponID = self.m_SelectedWeaponId
 	if weaponID > 0 then
-		if not self.m_Cart[weaponID] then self.m_Cart[weaponID] = {["Waffe"] = 0, ["Munition"] = 0} end
 		if typ == "weapon" then self.m_Cart[weaponID]["Waffe"] = self.m_Cart[weaponID]["Waffe"]+1 end
 		if typ == "munition" then self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+1 end
 
 		self:updateCart()
 	end
+end
+
+function AppAmmunation:order()
+	triggerServerEvent("onAmmunationAppOrder",root,self.m_Cart)
 end
 
 function AppAmmunation:deleteItemFromCart()
@@ -108,7 +118,33 @@ function AppAmmunation:updateCart()
 	self.m_TotalCosts = totalCosts
 	self.m_SumLabel:setText(_("Gesamtsumme: %d$", totalCosts))
 	self.m_SumLabelCart:setText(_("Gesamtsumme: %d$", totalCosts))
+	self:updateButtons()
 
+end
+
+function AppAmmunation:updateButtons()
+	local weaponID = self.m_SelectedWeaponId
+	if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 then
+		if self.m_MagazineBuyBtn then
+			self.m_MagazineBuyBtn:setEnabled(true)
+		end
+		self.m_WeaponBuyBtn:setEnabled(false)
+	else
+		self.m_WeaponBuyBtn:setEnabled(true)
+		if self.m_MagazineBuyBtn then
+			self.m_MagazineBuyBtn:setEnabled(false)
+			self.m_Cart[weaponID]["Munition"] = 0
+		end
+	end
+end
+
+function AppAmmunation:getPlayerWeapons()
+	self.m_playerWeapons = {}
+	for i=1, 12 do
+		if getPedWeapon(localPlayer,i) > 0 then
+			self.m_playerWeapons[getPedWeapon(localPlayer,i)] = true
+		end
+	end
 end
 
 function AppAmmunation:onWeaponChange(name)
@@ -124,6 +160,8 @@ function AppAmmunation:onWeaponChange(name)
 		self.m_WeaponImage:setVisible(true)
 		self.m_WeaponBuyBtn:setVisible(true)
 		self.m_MagazineBuyBtn:setVisible(true)
+		self:updateButtons()
+
 	else
 		self.m_CartLabel:setVisible(false)
 		self.m_WeaponName:setVisible(false)
