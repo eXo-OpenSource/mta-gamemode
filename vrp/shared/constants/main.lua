@@ -170,6 +170,10 @@ AmmuNationInfo = {
 		Weapon = 600,
 		MinLevel = 3,
 	},
+	[0] = { -- Armor
+		Weapon = 150,
+		MinLevel = 0,
+	},
 }
 
 DEFAULT_GANGAREA_RESOURCES = 500

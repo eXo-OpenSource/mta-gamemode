@@ -20,10 +20,19 @@ end
 function AmmuNation:buyWeapon(id)
 	if AmmuNationInfo[id].MinLevel <= client:getWeaponLevel() then
 		if client:getMoney() >= AmmuNationInfo[id].Weapon then
-			giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
-			client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
-			client:sendMessage(_("Waffe erhalten.",client),0,125,0)
-			return
+			if AmmuNationInfo[id].Magazine then
+				giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
+				client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
+				client:sendShortMessage(_("Waffe erhalten.",client))
+				return
+			else
+				if id == 0 then
+					client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
+					client:setArmor(100)
+					client:sendShortMessage(_("Schutzweste erhalten.",client))
+					return
+				end
+			end
 		end
 		client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
 	end

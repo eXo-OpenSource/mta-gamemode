@@ -69,9 +69,17 @@ function AmmuNationGUI:onKey(key,state)
 			return
 		end
 		self.m_Selection = math.max(math.min(self.m_Selection, #AmmuNationGUI.INFO), 1)
-		self.m_Label:setText(_("Waffe: %s\nBenötigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel))
-		self.m_BuyMagazine:setText(_("Magazin kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Magazine.price))
-		self.m_BuyWeapon:setText(_("Waffe kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Weapon))
+
+		if AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Magazine then
+			self.m_Label:setText(_("Waffe: %s\nBenötigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel))
+			self.m_BuyMagazine:setText(_("Magazin kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Magazine.price))
+			self.m_BuyMagazine:setVisible(true)
+			self.m_BuyWeapon:setText(_("Waffe kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Weapon))
+		else
+			self.m_Label:setText(_("%s\nBenötigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel))
+			self.m_BuyMagazine:setVisible(false)
+			self.m_BuyWeapon:setText(_("Schutzweste kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Weapon))
+		end
 		self:updateMatrix()
 	end
 end
@@ -138,8 +146,13 @@ AmmuNationGUI.INFO = {
 		MATRIX = {315.967560,-131.796539,1000.857971,415.202942,-131.063644,988.537292},
 		ID = 25
 	},
+	[7] = {
+		NAME = "Schutzweste",
+		WEAPON = createObject(1242,308, -131.27, 1002,0,0,180),
+		MATRIX = {307.9905090332, -134.74839782715, 1002.470703125, 308.07321166992, -133.81578063965, 1002.1194458008},
+		ID = 0
+	},
 }
-
 --[[AmmuNation = inherit(Singleton)
 
 addRemoteEvents{"AmmuNationReciveDimension"}
