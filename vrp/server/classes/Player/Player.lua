@@ -251,6 +251,8 @@ function Player:spawn()
 		self:setArmor(self.m_Armor)
 		--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 
+		self:setPublicSync("Faction:Duty",false)
+
 		-- Give weapons
 		for k, info in pairs(self.m_Weapons) do
 			giveWeapon(self, info[1], info[2])

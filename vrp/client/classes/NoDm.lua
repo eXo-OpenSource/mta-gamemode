@@ -1,0 +1,112 @@
+NoDm = inherit(Singleton)
+NoDm.Zones = {
+	[1] = {Vector3(1399.1123046875,-1862.453125, 12), Vector3(160,120,15)},
+	[2] = {Vector3(1322.850219726,-1721.6591796875, 12), Vector3(92,120, 15)}
+}
+
+function NoDm:constructor()
+	self.m_NoDmZones = {}
+	self.m_NoDmRadarAreas = {}
+	self.m_NoDm = false
+
+	self.m_RenderBind = bind(self.renderNoDmImage, self)
+	self.m_UnRenderBind = bind(self.unrenderNoDmImage, self)
+
+	for index, koords in pairs(NoDm.Zones) do
+		self.m_NoDmZones[index] = createColCuboid(koords[1], koords[2])
+		self.m_NoDmRadarAreas[index] = HUDRadar:getSingleton():addArea(koords[1].x, koords[1].y, koords[2].x, -1*koords[2].y, {0, 255, 0, 200})
+
+		addEventHandler ("onClientColShapeHit", self.m_NoDmZones[index], bind(self.onNoDmZoneHit, self))
+		addEventHandler ("onClientColShapeLeave", self.m_NoDmZones[index], bind(self.onNoDmZoneLeave, self))
+	end
+end
+
+function NoDm:onNoDmZoneHit(hitElement, dim)
+	if hitElement== localPlayer and dim then
+		self:setPlayerNoDm(hitElement, true)
+	end
+end
+
+function NoDm:onNoDmZoneLeave(hitElement, dim)
+	if hitElement== localPlayer and dim then
+		self:setPlayerNoDm(hitElement, false)
+	end
+end
+
+function NoDm:setPlayerNoDm(player, state)
+	if state == true then
+		if localPlayer:getPublicSync("Faction:Duty") == false then
+			toggleControl ("fire", false)
+			toggleControl ("next_weapon", false)
+			toggleControl ("previous_weapon", false)
+			toggleControl ("aim_weapon", false)
+			toggleControl ("vehicle_fire", false)
+			setPedWeaponSlot(localPlayer, 0)
+			if getPedWeapon ( player, 9 ) == 43 then
+				if not isPedInVehicle(localPlayer) then
+					setPedWeaponSlot(localPlayer,9)
+					toggleControl ("aim_weapon", true)
+					toggleControl ("fire", true)
+					setTimer(showChat,100,1,true)
+				end
+			end
+		end
+		self:toggleNoDmImage(true)
+	else
+		if localPlayer:getPublicSync("Faction:Duty") == false then
+			toggleControl ("fire", true)
+			toggleControl ("next_weapon", true)
+			toggleControl ("previous_weapon", true)
+			toggleControl ("aim_weapon", true)
+			toggleControl ("vehicle_fire", true)
+			setElementData(player,"schutzzone",false)
+		end
+		self:toggleNoDmImage(false)
+	end
+end
+
+function NoDm:toggleNoDmImage(state)
+	if state == true and self.m_NoDm == false then
+		self.m_currentImagePosition = 0
+		addEventHandler ( "onClientRender", getRootElement(), self.m_RenderBind)
+		self.m_NoDm = true
+	elseif state == false and self.m_NoDm == true then
+		addEventHandler ( "onClientRender", getRootElement(), self.m_UnRenderBind)
+		self.m_NoDm = false
+	end
+end
+
+function NoDm:renderNoDmImage()
+	local target = screenWidth*0.15
+	if self.m_currentImagePosition < target then self.m_currentImagePosition = self.m_currentImagePosition +10 end
+
+	local px = screenWidth-self.m_currentImagePosition
+	local py = screenHeight/2
+	dxDrawImage(px,py,screenWidth*0.15,screenWidth*0.08,"files/images/Other/nodm.png",0, 0, 0, tocolor(255, 255, 255, 255))
+end
+
+function NoDm:unrenderNoDmImage()
+	if self.m_currentImagePosition > 0 then self.m_currentImagePosition = self.m_currentImagePosition -20 end
+	if self.m_currentImagePosition <= 0 then
+		removeEventHandler ( "onClientRender", getRootElement(), self.m_RenderBind)
+		removeEventHandler ( "onClientRender", getRootElement(), self.m_UnRenderBind)
+	end
+
+end
+
+function NoDm:isInNoDmZone()
+	for i, shape in pairs (self.m_NoDmZones) do
+		if isElementWithinColShape(localPlayer, shape) then
+			return true
+		end
+	end
+	return false
+end
+
+function NoDm:checkNoDm()
+	if self:isInNoDmZone() then
+		self:setPlayerNoDm(localPlayer, true)
+	else
+		self:setPlayerNoDm(localPlayer, false)
+	end
+end

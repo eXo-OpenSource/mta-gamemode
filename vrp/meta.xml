@@ -274,6 +274,7 @@
 	<script src="client/classes/ObjectPlacer.lua" type="client"/>
 	<script src="client/classes/Guns.lua" type="client"/>
 	<script src="client/classes/KeyBinds.lua" type="client"/>
+	<script src="client/classes/NoDm.lua" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -677,6 +678,7 @@
 	<vrpfile src="files/images/Other/BreakingNewsEnd.png"/>
 	<vrpfile src="files/images/Other/TaxoMeter.png"/>
 	<vrpfile src="files/images/Other/Circle.png"/>
+	<vrpfile src="files/images/Other/nodm.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>
