@@ -79,6 +79,10 @@ end
 
 function AppAmmunation:addItemToCart(typ)
 	local weaponID = self.m_SelectedWeaponId
+	if localPlayer:getWeaponLevel() < AmmuNationInfo[weaponID].MinLevel then
+		ErrorBox:new(_("Dein Waffenlevel ist zu niedrig! (Benötigt: %i)", AmmuNationInfo[weaponID].MinLevel))
+		return
+	end
 	if typ == "weapon" then self.m_Cart[weaponID]["Waffe"] = self.m_Cart[weaponID]["Waffe"]+1 end
 	if typ == "munition" then self.m_Cart[weaponID]["Munition"] = self.m_Cart[weaponID]["Munition"]+1 end
 
@@ -170,7 +174,7 @@ function AppAmmunation:onWeaponChange(name)
 			self.m_SelectedWeaponId = weaponID
 
 			self.m_WeaponImage:setImage(WeaponIcons[weaponID])
-			self.m_WeaponName:setText(_("Waffe: %s", name))
+			self.m_WeaponName:setText(_("Waffe: %s (Level: %i)", name, AmmuNationInfo[weaponID].MinLevel))
 			self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon))
 			self.m_MagazineBuyBtn:setText(_("Magazin (%d$)", AmmuNationInfo[weaponID].Magazine.price))
 			self.m_MagazineBuyBtn:setVisible(true)

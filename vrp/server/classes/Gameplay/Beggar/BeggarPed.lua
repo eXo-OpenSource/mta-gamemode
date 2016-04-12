@@ -12,7 +12,7 @@ function BeggarPed:constructor(Id)
 	self.m_Id = Id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
 	self.m_ColShape = ColShape.Sphere(self:getPosition(), 10)
-	self.m_Type = 1
+	self.m_Type = math.random(1, 3)
 	self.m_LastRobTime = 0
 
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
@@ -44,6 +44,18 @@ function BeggarPed:getId()
 	return self.m_Id
 end
 
+function BeggarPed:despawn()
+    setTimer(function ()
+        local newAlpha = self:getAlpha() - 10
+        if newAlpha < 10 then newAlpha = 0 end
+        if newAlpha == 0 then
+            self:destroy()
+        else
+            self:setAlpha(newAlpha)
+        end
+    end, 50, 255/10)
+end
+
 function BeggarPed:rob(player)
 	--if getTickCount() - self.m_LastRobTime < 5*60*1000 then
 	--	return
@@ -51,14 +63,19 @@ function BeggarPed:rob(player)
 
 	-- Give wage
 	client:giveMoney(math.random(1, 5))
-	client:giveKarma(-0.1)
+	client:giveKarma(-0.15)
 	client:sendShortMessage(_("Well done. Du hast einen Bettler ausgeraubt!", player))
+    self:sendMessage(client, BeggarPhraseTypes.Rob)
 
 	-- give Achievement
 	client:giveAchievement(50)
 
 	-- Update rob time
 	self.m_LastRobTime = getTickCount()
+end
+
+function BeggarPed:sendMessage(player, type)
+    player:sendMessage(_("#FE8A00%s: #FFFFFF%s", player, self.m_Name, BeggarPedManager:getSingleton():getPhrase(self.m_Type, type)))
 end
 
 function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
@@ -69,14 +86,22 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 		killer:giveKarma(-0.15)
 
 		-- Destory the Ped
-		self:destroy()
+		self:despawn()
 	end
 end
 
-function BeggarPed:Event_onColShapeHit()
-	outputDebug(BeggarPedManager:getSingleton():getPhrase(self.m_Type, BeggarPhraseTypes.Help))
+function BeggarPed:Event_onColShapeHit(hitElement, dim)
+    if dim then
+        if hitElement:getType() ~= "player" then return end
+        self:sendMessage(hitElement, BeggarPhraseTypes.Help)
+        hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Gameplay.Beggar", "HelpTexts.Gameplay.Beggar", true)
+    end
 end
 
-function BeggarPed:Event_onColShapeLeave()
-	outputDebug(BeggarPedManager:getSingleton():getPhrase(self.m_Type, BeggarPhraseTypes.NoHelp))
+function BeggarPed:Event_onColShapeLeave(hitElement, dim)
+    if dim then
+        if hitElement:getType() ~= "player" then return end
+        self:sendMessage(hitElement, BeggarPhraseTypes.NoHelp)
+        hitElement:triggerEvent("resetManualHelpBarText")
+    end
 end

@@ -63,9 +63,9 @@ function PromiseTest:test_AdvancedPromise()
 	-- See JS-Example: https://www.promisejs.org @ Constructing a promise + Transformation / Chaining
 
 	local readString = function ()
-		local promise = Promise:new(function (fullfill, reject)
+		return Promise:new(function (fullfill, reject)
 			-- Example (here shorten): We're reading a json string from a file
-			local err = true -- err is true, when file reading fails
+			local err = false -- err is true, when file reading fails
 			if err then
 				reject("A error")
 			else
@@ -73,9 +73,6 @@ function PromiseTest:test_AdvancedPromise()
 				fullfill("[ { \"a_number\": 12, \"date_of_birth\": \"11.05.1998\", \"name\": \"StiviK\", \"a_boolean\": false } ]")
 			end
 		end)
-
-		Promise.addNext(promise)
-		return promise
 	end
 	local readJSON = function () -- function which reads json from the file and parses it
 		return readString().next(fromJSON)

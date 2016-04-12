@@ -48,7 +48,7 @@ BeggarThanksPhrases = {
 		"Danke Meister, meine Ratte wäre fast verhungert."
 	};
 	{
-		"Mercie."
+		"Ouhh tut die Dusche gut!"
 	};
     {
 		"Schön mit dir Geschäfte zu machen. Wenn du wieder Stoff brauchst, komm vorbei!"
@@ -56,11 +56,14 @@ BeggarThanksPhrases = {
 }
 
 BeggarNoHelpPhrases = {
-	"Bye."
+	"You mofugga!",
+    "Fck1ng F4gg0t.",
+    "1337 h4x0r! Gesegnet seist du.",
+    "Einen schönen Tag noch."
 }
 
 BeggarRobPhrases = {
-	"Ich habe eh schon nichts. Und da willst du mir noch mehr nehmen? Da."
+	"Ich habe eh schon nichts. Und da willst du mir noch mehr nehmen?"
 }
 
 BeggarSkins = {
@@ -80,7 +83,7 @@ BeggarNames = {
     "Karsten Stahl",
     "Donetasty S.",
     "Jizzynex H.",
-    "Scheißhaus Schorch",
+    "Scheißhaus Schorsch",
     "Pfandflaschen Tony",
     "Trompeten Heinz",
     "Vodka Willi",
@@ -94,9 +97,9 @@ BeggarNames = {
     "Manfred Neuer",
     "Stomas Müllner",
     "Freddy Feuerfelsen",
-    "Stivi K.",
+    "Schteven K.",
     "Johann Arschgucker",
-    "Axel SChweiß",
+    "Axel Schweiß",
     "Gisela von Hinten",
     "Peter Peters",
     "Tim Buktu",

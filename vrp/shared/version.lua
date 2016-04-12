@@ -10,7 +10,7 @@ BUILD = "development"
 --BUILD = "stable"
 --BUILD = "unstable"
 REVISION = 0
-PROJECT_NAME = "vRoleplay"
+PROJECT_NAME = "eXo Reallife"
 
 if BUILD == "development" then
 	VERSION_LABEL = ("%s %sdev r%d"):format(PROJECT_NAME, VERSION, REVISION)

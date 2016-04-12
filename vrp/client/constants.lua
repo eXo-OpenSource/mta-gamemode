@@ -108,6 +108,9 @@ HelpTextTitles = {
 		DMRace = "Event: DM-Race";
 		StreetRace = "Event: Street Race";
 	};
+	Gameplay = {
+		Beggar = "Gameplay: Bettler"
+	}
 }
 
 HelpTexts = {
@@ -246,6 +249,9 @@ HelpTexts = {
 		DMRace = [[Todo]];
 		StreetRace = [[Todo]];
 	};
+	Gameplay = {
+		Beggar = [[Todo]];
+	}
 };
 
 Tipps = {

@@ -152,19 +152,16 @@ function outputDebug(errmsg)
 end
 --]]
 function getDebugInfo(stack)
-	if DEBUG then
-		local source = debug.getinfo(stack or 2).source
-		local filePath
-		if source:find("\\") then
-			filePath = split(source, '\\')
-		else
-			filePath = split(source, '/')
-		end
-		local className = filePath[#filePath]:gsub(".lua", "")
-		if not className then className = "UNKOWN" end
-		return className, tostring(debug.getinfo(stack or 2).name), tostring(debug.getinfo(stack or 2).currentline)
+	local source = debug.getinfo(stack or 2).source
+	local filePath
+	if source:find("\\") then
+		filePath = split(source, '\\')
+	else
+		filePath = split(source, '/')
 	end
-	return false
+	local className = filePath[#filePath]:gsub(".lua", "")
+	if not className then className = "UNKOWN" end
+	return className, tostring(debug.getinfo(stack or 2).name), tostring(debug.getinfo(stack or 2).currentline)
 end
 
 function outputDebug(errmsg)

@@ -7,6 +7,7 @@
 -- ****************************************************************************
 HelpBar = inherit(GUIForm)
 inherit(Singleton, HelpBar)
+addRemoteEvents{"setManualHelpBarText", "resetManualHelpBarText"}
 
 function HelpBar:constructor()
 	GUIForm.constructor(self, screenWidth*0.84, 0, screenWidth*0.16, screenHeight)
@@ -137,3 +138,31 @@ end
 function HelpBar:HelpIcon_Click()
 	self:fadeIn()
 end
+
+
+-- Events
+function HelpBar.Event_SetManualText(title, text, translate)
+	local newTitle
+	for i, v in ipairs(split(title, ".")) do
+		if i == 1 then
+			newTitle = _G[v]
+		else
+			newTitle = newTitle[v]
+		end
+	end
+	local newText
+	for i, v in ipairs(split(text, ".")) do
+		if i == 1 then
+			newText = _G[v]
+		else
+			newText = newText[v]
+		end
+	end
+	HelpBar:getSingleton():addText(translate and _(newTitle) or newTitle, translate and _(newText) or newText)
+end
+addEventHandler("setManualHelpBarText", root, HelpBar.Event_SetManualText)
+
+function HelpBar.Event_ResetManualText()
+	HelpBar:getSingleton():addText(localPlayer.m_oldHelp.title or _(HelpTextTitles.General.Main), localPlayer.m_oldHelp.text or _(HelpTexts.General.Main), false, localPlayer.m_oldHelp.tutorial or false)
+end
+addEventHandler("resetManualHelpBarText", root, HelpBar.Event_ResetManualText)

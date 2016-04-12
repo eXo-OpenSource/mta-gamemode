@@ -56,17 +56,22 @@ end
 
 function AmmuNationManager:onAmmunationAppOrder(weaponTable)
 	local totalAmount = 0
-		for weaponID,v in pairs(weaponTable) do
-			for typ,amount in pairs(weaponTable[weaponID]) do
-				if amount > 0 then
-					if typ == "Waffe" then
-						totalAmount = totalAmount + AmmuNationInfo[weaponID].Weapon * amount
-					elseif typ == "Munition" then
-						totalAmount = totalAmount + AmmuNationInfo[weaponID].Magazine.price * amount
-					end
+	local canBuyWeapons = true
+	for weaponID,v in pairs(weaponTable) do
+		for typ,amount in pairs(weaponTable[weaponID]) do
+			if amount > 0 then
+				if typ == "Waffe" then
+					totalAmount = totalAmount + AmmuNationInfo[weaponID].Weapon * amount
+				elseif typ == "Munition" then
+					totalAmount = totalAmount + AmmuNationInfo[weaponID].Magazine.price * amount
+				end
+				if client:getWeaponLevel() < AmmuNationInfo[weaponID].MinLevel then
+					canBuyWeapons = false
 				end
 			end
 		end
+	end
+	if canBuyWeapons then
 		if client:getMoney() >= totalAmount then
 			if totalAmount > 0 then
 				client:takeMoney(totalAmount)
@@ -77,6 +82,10 @@ function AmmuNationManager:onAmmunationAppOrder(weaponTable)
 		else
 			client:sendError(_("Du hast nicht ausreichend Geld dabei! (%d$)",client, totalAmount))
 		end
+	else
+		-- Possible Cheat attempt?
+		client:sendError(_("An Internal Error occured!", client))
+	end
 end
 
 function AmmuNationManager:createOrder(player, weaponTable)
