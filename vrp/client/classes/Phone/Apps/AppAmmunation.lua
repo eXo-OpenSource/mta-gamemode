@@ -132,16 +132,16 @@ end
 
 function AppAmmunation:updateButtons()
 	local weaponID = self.m_SelectedWeaponId
+	self.m_MagazineBuyBtn:setEnabled(false)
+	self.m_WeaponBuyBtn:setEnabled(false)
+
 	if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 then
-		if self.m_MagazineBuyBtn then
+		if localPlayer:getWeaponLevel() >= AmmuNationInfo[weaponID].MinLevel then
 			self.m_MagazineBuyBtn:setEnabled(true)
 		end
-		self.m_WeaponBuyBtn:setEnabled(false)
 	else
-		self.m_WeaponBuyBtn:setEnabled(true)
-		if self.m_MagazineBuyBtn then
-			self.m_MagazineBuyBtn:setEnabled(false)
-			self.m_Cart[weaponID]["Munition"] = 0
+		if localPlayer:getWeaponLevel() >= AmmuNationInfo[weaponID].MinLevel then
+			self.m_WeaponBuyBtn:setEnabled(true)
 		end
 	end
 end
