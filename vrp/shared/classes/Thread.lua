@@ -8,8 +8,8 @@
 Thread = inherit(Object)
 Thread.Map = {}
 
-function Thread:new(func, piority, ...)
-	local self = new(self, func, piority)
+function Thread:new(func, priority, ...)
+	local self = new(self, func, priority)
 	self.ms_Promise = Promise:new(bind(self.start, self))
 	return self.ms_Promise
 end
@@ -18,7 +18,7 @@ function Thread:constructor(func, priority)
 	Thread.Map[#Thread.Map+1] = self
 	self.m_Id = #Thread.Map
 	self.m_Func = func
-	self.m_Priority = piority or THREAD_PRIORITY_LOW
+	self.m_Priority = priority or THREAD_PRIORITY_LOW
 	self.ms_Thread = false
 	self.ms_Timer = false
 	self.m_Yields = 0
