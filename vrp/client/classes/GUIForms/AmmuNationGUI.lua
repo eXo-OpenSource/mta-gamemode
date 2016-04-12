@@ -78,7 +78,7 @@ function AmmuNationGUI:onKey(key,state)
 		else
 			self.m_Label:setText(_("%s\nBenötigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME,AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].MinLevel))
 			self.m_BuyMagazine:setVisible(false)
-			self.m_BuyWeapon:setText(_("Schutzweste kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Weapon))
+			self.m_BuyWeapon:setText(_("%s kaufen ($%i)",AmmuNationGUI.INFO[self.m_Selection].NAME, AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Weapon))
 		end
 		self:updateMatrix()
 	end
@@ -135,10 +135,10 @@ AmmuNationGUI.INFO = {
 		ID = 22
 	},
 	[5] = {
-		NAME = "Pistol-S",
-		WEAPON = createObject(347,310,-142.39999389648,999.70001220703,0,23,305),
+		NAME = "Desert Eagle",
+		WEAPON = createObject(348,310,-142.39999389648,999.70001220703,0,23,305),
 		MATRIX = {311.121979,-141.730835,1000.188477,238.921417,-199.475098,962.074463},
-		ID = 23
+		ID = 24
 	},
 	[6] = {
 		NAME = "Shotgun",
@@ -147,9 +147,23 @@ AmmuNationGUI.INFO = {
 		ID = 25
 	},
 	[7] = {
+		NAME = "Rifle",
+		WEAPON = createObject(357,317.29998779297,-133.5,1000.6,0,0,270),
+		MATRIX = {315.967560,-133.8,1000.857971,415.202942,-131.063644,988.537292},
+		ID = 33
+	},
+
+	[8] = {
+		NAME = "Schlagring",
+		WEAPON = createObject(331,313, -131.27, 1002,0,0,180),
+		MATRIX = {313, -134.74839782715, 1002.470703125, 313, -133.81578063965, 1002.1194458008},
+		ID = 1
+	},
+
+	[9] = {
 		NAME = "Schutzweste",
-		WEAPON = createObject(1242,308, -131.27, 1002,0,0,180),
-		MATRIX = {307.9905090332, -134.74839782715, 1002.470703125, 308.07321166992, -133.81578063965, 1002.1194458008},
+		WEAPON = createObject(1242,308, -131.27, 1001.75,0,0,180),
+		MATRIX = {308, -134.74839782715, 1002.470703125, 308, -133.81578063965, 1002.1194458008},
 		ID = 0
 	},
 }

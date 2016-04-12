@@ -31,6 +31,11 @@ function AmmuNation:buyWeapon(id)
 					client:setArmor(100)
 					client:sendShortMessage(_("Schutzweste erhalten.",client))
 					return
+				else
+					client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
+					giveWeapon(client,id,1)
+					client:sendShortMessage(_("Schlagwaffe erhalten.",client))
+					return
 				end
 			end
 		end

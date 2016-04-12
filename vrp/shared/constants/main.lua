@@ -139,7 +139,6 @@ Crime = {
 }
 
 AmmuNationInfo = {
-
 	[30] = { -- AK-47
 		Magazine = {price=30,amount=30},
 		Weapon = 1850,
@@ -157,18 +156,27 @@ AmmuNationInfo = {
 	},
 	[25] = { -- Shotgun
 		Magazine = {price=2,amount=1},
-		Weapon = 1500,
+		Weapon = 900,
 		MinLevel = 5,
+	},
+	[33] = { -- Rifle
+		Magazine = {price=4,amount=1},
+		Weapon = 1250,
+		MinLevel = 6,
 	},
 	[22] = { -- Pistol
 		Magazine = {price=15,amount=17},
 		Weapon = 450,
 		MinLevel = 3,
 	},
-	[23] = { -- Silenced Pistol
-		Magazine = {price=15,amount=17},
-		Weapon = 600,
+	[24] = { -- Desert Eagle
+		Magazine = {price=7,amount=7},
+		Weapon = 1150,
 		MinLevel = 3,
+	},
+	[1] = { -- Brass Knuckles
+		Weapon = 50,
+		MinLevel = 0,
 	},
 	[0] = { -- Armor
 		Weapon = 150,

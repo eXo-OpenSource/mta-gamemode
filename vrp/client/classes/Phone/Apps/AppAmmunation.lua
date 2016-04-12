@@ -176,8 +176,12 @@ function AppAmmunation:onWeaponChange(name)
 			self.m_WeaponImage:setImage(WeaponIcons[weaponID])
 			self.m_WeaponName:setText(_("Waffe: %s (Level: %i)", name, AmmuNationInfo[weaponID].MinLevel))
 			self.m_WeaponBuyBtn:setText(_("Waffe (%d$)", AmmuNationInfo[weaponID].Weapon))
-			self.m_MagazineBuyBtn:setText(_("Magazin (%d$)", AmmuNationInfo[weaponID].Magazine.price))
-			self.m_MagazineBuyBtn:setVisible(true)
+			if AmmuNationInfo[weaponID].Magazine then
+				self.m_MagazineBuyBtn:setText(_("Magazin (%d$)", AmmuNationInfo[weaponID].Magazine.price))
+				self.m_MagazineBuyBtn:setVisible(true)
+			else
+				self.m_MagazineBuyBtn:setVisible(false)
+			end
 			self:updateButtons()
 		end
 	else
