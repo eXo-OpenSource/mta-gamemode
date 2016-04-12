@@ -202,12 +202,7 @@ function PlayerManager:Command_playerWhisper(  source , cmd, ...)
 end
 
 function PlayerManager:Command_playerMe(  source , cmd, ...)
-	local argTable = { ... }
-	local text = table.concat ( argTable , " " )
-	local playersToSend = source:getPlayersInChatRange( 1 )
-	for index = 1,#playersToSend do
-		outputChatBox(getPlayerName(source).." "..text, playersToSend[index], 100, 0, 255)
-	end
+	source:meChat(false, ...)
 end
 
 function PlayerManager:Command_playerMeServer(source , ...)

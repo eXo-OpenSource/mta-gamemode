@@ -709,3 +709,15 @@ function Player:endPrison(player)
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
 	self.m_PrisonTime = 0
 end
+
+function Player:meChat(system, ...)
+	local argTable = { ... }
+	local text = table.concat ( argTable , " " )
+	local playersToSend = self:getPlayersInChatRange( 1 )
+	local systemText = ""
+	if system == true then systemText = " ** " end
+
+	for index = 1,#playersToSend do
+		outputChatBox(systemText..getPlayerName(self).." "..text..systemText, playersToSend[index], 100, 0, 255)
+	end
+end

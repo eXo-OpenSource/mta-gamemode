@@ -5,7 +5,10 @@
 -- *  PURPOSE:     Item Super Class
 -- *
 -- ****************************************************************************
-Item = inherit(Singleton)
+Item = inherit(Object)
+
+function Item.onInherit(derivedClass)
+end
 
 function Item:constructor()
 end
@@ -28,9 +31,6 @@ end
 
 function Item:getName()
 	return self.m_ItemName
-end
-
-function Item:use()
 end
 
 function Item:expire()

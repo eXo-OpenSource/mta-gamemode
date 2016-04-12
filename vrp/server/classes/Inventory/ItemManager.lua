@@ -15,6 +15,7 @@ function ItemManager:constructor()
 		["Heroin"] = DrugsHeroin,
 		["Shrooms"] = DrugsShroom,
 		["Kokain"] = DrugsCocaine,
+		["Burger"] = ItemFood
 	}
 
 	for name, class in pairs(self.m_ClassItems) do
