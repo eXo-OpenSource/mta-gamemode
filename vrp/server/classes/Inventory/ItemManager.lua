@@ -16,7 +16,8 @@ function ItemManager:constructor()
 		["Heroin"] = DrugsHeroin,
 		["Shrooms"] = DrugsShroom,
 		["Kokain"] = DrugsCocaine,
-		["Burger"] = ItemFood
+		["Burger"] = ItemFood,
+		["Pizza"] = ItemFood
 	}
 
 	for name, class in pairs(self.m_ClassItems) do
@@ -27,14 +28,10 @@ function ItemManager:constructor()
 	end
 end
 
-function ItemManager:getFromName(itemName)
-	return self.m_ClassItems[itemName]
-end
-
 function ItemManager:getClassItems()
 	return self.m_ClassItems
 end
 
-function ItemManager:getClass(itemName)
+function ItemManager:getInstance(itemName)
 	return ItemManager.Map[itemName]
 end
