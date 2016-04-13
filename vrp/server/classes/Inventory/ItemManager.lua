@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 ItemManager = inherit(Singleton)
+ItemManager.Map = {}
 
 function ItemManager:constructor()
 	self.m_ClassItems = {
@@ -22,6 +23,7 @@ function ItemManager:constructor()
 		local instance = class:new()
 		instance:setName(name)
 		instance:loadItem()
+		ItemManager.Map[name] = instance
 	end
 end
 
@@ -31,4 +33,8 @@ end
 
 function ItemManager:getClassItems()
 	return self.m_ClassItems
+end
+
+function ItemManager:getClass(itemName)
+	return ItemManager.Map[itemName]
 end

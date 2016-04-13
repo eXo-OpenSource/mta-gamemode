@@ -20,7 +20,12 @@ function ItemFood:destructor()
 end
 
 function ItemFood:use(player)
-	-- TODO: self:getName() does not work yet
-	player:setHealth(player:getHealth()+ItemFood.Settings[self:getName()]["Health"])
+	local burger = createObject(2880,0,0,0)
+	exports.bone_attach:attachElementToBone(burger, player,12,0,0,0,0,-90,0)
 	player:meChat(true, "isst "..ItemFood.Settings[self:getName()]["Text"].."!")
+	player:setAnimation("FOOD", "EAT_Burger", 2000, false, false, false)
+	setTimer(function()
+		burger:destroy()
+		player:setHealth(player:getHealth()+ItemFood.Settings[self:getName()]["Health"])
+	end, 4500, 1)
 end

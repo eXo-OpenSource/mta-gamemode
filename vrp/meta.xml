@@ -1021,6 +1021,7 @@
 
 	<!-- Includes -->
 	<include resource="exo_maps" />
+	<include resource="bone_attach" />
 
 	<!-- ACL Request -->
 	<aclrequest>
