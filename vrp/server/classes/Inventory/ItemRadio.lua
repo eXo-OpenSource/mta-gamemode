@@ -16,7 +16,7 @@ function ItemRadio:destructor()
 
 end
 
-function ItemRadio:use(inventory, player, slot)
+function ItemRadio:use(player)
 	local result = self:startObjectPlacing(player,
 		function(item, position, rotation)
 			if item ~= self then return end
@@ -25,10 +25,11 @@ function ItemRadio:use(inventory, player, slot)
 				return
 			end
 
-			local worldItem = inventory:placeItem(self, slot, player, position, rotation)
+			local worldItem = self:place(player, position, rotation)
+			player:getInventory():removeItem(self:getName(), 1)
 			addEventHandler("itemRadioChangeURL", worldItem:getObject(),
 				function(url)
-					inventory:performWorldItemAction(worldItem, root, "changeurl", url, worldItem:getObject())
+					triggerClientEvent("itemRadioChangeURLClient", worldItem:getObject(), url)
 				end
 			)
 		end
@@ -43,4 +44,8 @@ function ItemRadio:onClick(player, worldItem)
 	else
 		player:sendError(_("Du hast keine Befugnisse dieses Item zu nutzen!", player))
 	end
+end
+
+function ItemRadio:removeFromWorld(worldItem)
+	triggerClientEvent("itemRadioRemove", worldItem:getObject())
 end

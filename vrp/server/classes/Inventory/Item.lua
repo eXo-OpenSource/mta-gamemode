@@ -7,9 +7,6 @@
 -- ****************************************************************************
 Item = inherit(Object)
 
-function Item.onInherit(derivedClass)
-end
-
 function Item:constructor()
 end
 
@@ -41,11 +38,7 @@ function Item:getModelId()
 end
 
 function Item:place(owner, pos, rotation, amount)
-	-- We need to duplicate the item if the amount does not match the available amount of items
 	local worldItem = WorldItem:new(self, owner, pos, rotation)
-	if owner then
-		--owner:triggerEvent("worldItemPlace", self.m_ItemName, worldItem:getObject())
-	end
 	return worldItem
 end
 

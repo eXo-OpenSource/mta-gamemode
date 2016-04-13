@@ -24,6 +24,7 @@ function ItemBarricade:use(player)
 			end
 
 			local worldItem = self:place(player, position, rotation)
+			player:getInventory():removeItem(self:getName(), 1)
 		end
 	)
 end

@@ -11,6 +11,7 @@ ItemManager.Map = {}
 function ItemManager:constructor()
 	self.m_ClassItems = {
 		["Barrikade"] = ItemBarricade,
+		["Radio"] = ItemRadio,
 		["Sprengstoff"] = ItemBomb,
 		["Weed"] = DrugsWeed,
 		["Heroin"] = DrugsHeroin,

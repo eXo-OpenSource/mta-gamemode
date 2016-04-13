@@ -10,6 +10,7 @@ WorldItem.Map = {}
 
 function WorldItem:constructor(item, player, pos, rotation)
 	self.m_Item = item
+	self.m_ItemName = item:getName()
 	self.m_Owner = player or false
 	self.m_Object = createObject(item:getModelId(), pos, 0, 0, rotation)
 	setElementData(self.m_Object, "worlditem", true) -- Tell the client that this is a world item (to be able to handle clicks properly)
@@ -23,16 +24,11 @@ function WorldItem:destructor()
 end
 
 function WorldItem:collect(player)
-	player:triggerEvent("worldItemCollect", self.m_Object)
-
-	local item = self.m_Item
-	if item.onCollect then
-		if item:onCollect(player) ~= false then
-			player:getInventory():addItemByItem(item)
-		end
-	else
-		player:getInventory():addItemByItem(item)
+	if self.m_Item.removeFromWorld then
+		self.m_Item:removeFromWorld(self)
 	end
+
+	player:getInventory():giveItem(self.m_ItemName, 1)
 
 	delete(self)
 end

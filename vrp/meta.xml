@@ -327,6 +327,7 @@
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsCocaine.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsHeroin.lua" type="client"/>
