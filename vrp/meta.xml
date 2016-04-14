@@ -931,11 +931,14 @@
 	<vrpfile src = "files/images/SideSwipe/direction.png" />
 
 	<!-- CircuitBreaker -->
-	<vrpfile src = "files/images/CircuitBreaker/bg.png" />
 	<vrpfile src = "files/images/CircuitBreaker/pcb.png" />
-	<vrpfile src = "files/images/CircuitBreaker/mcu.png" />
 	<vrpfile src = "files/images/CircuitBreaker/input.png" />
 	<vrpfile src = "files/images/CircuitBreaker/output.png" />
+	<vrpfile src = "files/images/CircuitBreaker/qfp44.png" />
+	<vrpfile src = "files/images/CircuitBreaker/sop8.png" />
+	<vrpfile src = "files/images/CircuitBreaker/smdcapacitor.png" />
+	<vrpfile src = "files/images/CircuitBreaker/smdresistor.png" />
+
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>

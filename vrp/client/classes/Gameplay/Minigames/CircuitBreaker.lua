@@ -35,12 +35,40 @@ function CircuitBreaker:loadImages()
 		"input",
 		"output",
 		"pcb",
-		"mcu",
+		"qfp44",
+		"sop8",
+		"smdcapacitor",
+		"smdresistor",
 	}
 
 	for _, img in pairs(self.m_Images) do
 		self[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
 	end
+
+	-- Precreate some collidable structures
+	local backgroundColor = tocolor(200, 0, 0, 150)
+	self.m_CollidableImages = {}
+	--self.m_CollidableImages.w350h100 =  DxRenderTarget(350, 100, true)
+	self.m_CollidableImages.w150h150 =  DxRenderTarget(150, 150, true)
+	--self.m_CollidableImages.w150h300 =  DxRenderTarget(150, 300, true)
+
+	self.m_CollidableImages.w150h150:setAsTarget()
+	dxDrawRectangle(0, 0, 150, 150, backgroundColor)
+	dxDrawImage(3, 3, 88, 88, self.qfp44)
+	dxDrawImage(52, 98, 39, 48, self.sop8)
+	dxDrawImage(8, 112, 30, 14, self.smdresistor)
+	dxDrawImage(8, 130, 30, 14, self.smdresistor)
+	dxDrawImage(115, 6, 30, 14, self.smdresistor)
+	dxDrawImage(115, 46, 30, 14, self.smdresistor)
+	dxDrawImage(109, 112, 46, 22, self.smdcapacitor, -90)
+	dxDrawImage(99, 22, 46, 22, self.smdcapacitor)
+
+	dxDrawText("1k0", 8, 112, 8 + 30, 112 + 14, tocolor(255, 255, 255), .5, "clear", "center", "center")
+	dxDrawText("1k2", 8, 130, 8 + 30, 130 + 14, tocolor(255, 255, 255), .5, "clear", "center", "center")
+	dxDrawText("4R7", 115, 6, 115 + 30, 6 + 14, tocolor(255, 255, 255), .5, "clear", "center", "center")
+	dxDrawText("2R0", 115, 46, 115 + 30, 46 + 14, tocolor(255, 255, 255), .5, "clear", "center", "center")
+
+	dxSetRenderTarget()
 end
 
 function CircuitBreaker:createGameplay()
@@ -50,80 +78,80 @@ function CircuitBreaker:createGameplay()
 
 		[1] = {
 			{
-				{125, 25, 256, 256, self.mcu},
-				{500, 330, 256, 256, self.mcu},
-				{220, 350, 128, 128, self.mcu},
-				{660, 90, 128, 128, self.mcu},
-				{870, 470, 128, 128, self.mcu},
+				{125, 25, 256, 256, self.qfp44},
+				{500, 330, 256, 256, self.qfp44},
+				{220, 350, 128, 128, self.qfp44},
+				{660, 90, 128, 128, self.qfp44},
+				{870, 470, 128, 128, self.qfp44},
 			},
 			{
-				{140, 360, 256, 256, self.mcu},
-				{650, 20, 256, 256, self.mcu},
-				{170, 50, 128, 128, self.mcu},
-				{420, 100, 128, 128, self.mcu},
-				{590, 450, 128, 128, self.mcu},
+				{140, 360, 256, 256, self.qfp44},
+				{650, 20, 256, 256, self.qfp44},
+				{170, 50, 128, 128, self.qfp44},
+				{420, 100, 128, 128, self.qfp44},
+				{590, 450, 128, 128, self.qfp44},
 			},
 			{
-				{360, 25, 256, 256, self.mcu},
-				{660, 370, 256, 256, self.mcu},
-				{140, 150, 128, 128, self.mcu},
-				{330, 400, 128, 128, self.mcu},
-				{740, 70, 128, 128, self.mcu},
+				{360, 25, 256, 256, self.qfp44},
+				{660, 370, 256, 256, self.qfp44},
+				{140, 150, 128, 128, self.qfp44},
+				{330, 400, 128, 128, self.qfp44},
+				{740, 70, 128, 128, self.qfp44},
 			},
 		},
 
 		--Levels for level 2
 		[2] = {
 			{
-				{300, 15, 256, 256, self.mcu},
-				{500, 365, 256, 256, self.mcu},
-				{140, 155, 128, 128, self.mcu},
-				{140, 283, 128, 128, self.mcu},
-				{250, 460, 128, 128, self.mcu},
-				{590, 210, 128, 128, self.mcu},
-				{780, 110, 128, 128, self.mcu},
-				{800, 490, 128, 128, self.mcu},
+				{300, 15, 256, 256, self.qfp44},
+				{500, 365, 256, 256, self.qfp44},
+				{140, 155, 128, 128, self.qfp44},
+				{140, 283, 128, 128, self.qfp44},
+				{250, 460, 128, 128, self.qfp44},
+				{590, 210, 128, 128, self.qfp44},
+				{780, 110, 128, 128, self.qfp44},
+				{800, 490, 128, 128, self.qfp44},
 			},
 			{
-				{130, 330, 256, 256, self.mcu},
-				{690, 345, 256, 256, self.mcu},
-				{460, 100, 128, 128, self.mcu},
-				{460, 280, 128, 128, self.mcu},
-				{460, 408, 128, 128, self.mcu},
-				{300, 25, 128, 128, self.mcu},
-				{610, 180, 128, 128, self.mcu},
-				{700, 25, 128, 128, self.mcu},
+				{130, 330, 256, 256, self.qfp44},
+				{690, 345, 256, 256, self.qfp44},
+				{460, 100, 128, 128, self.qfp44},
+				{460, 280, 128, 128, self.qfp44},
+				{460, 408, 128, 128, self.qfp44},
+				{300, 25, 128, 128, self.qfp44},
+				{610, 180, 128, 128, self.qfp44},
+				{700, 25, 128, 128, self.qfp44},
 			},
 			{
-				{350, 95, 256, 256, self.mcu},
-				{225, 350, 256, 256, self.mcu},
-				{100, 90, 128, 128, self.mcu},
-				{525, 400, 128, 128, self.mcu},
-				{655, 155, 128, 128, self.mcu},
-				{700, 10, 128, 128, self.mcu},
-				{700, 475, 128, 128, self.mcu},
-				{765, 310, 128, 128, self.mcu},
+				{350, 95, 256, 256, self.qfp44},
+				{225, 350, 256, 256, self.qfp44},
+				{100, 90, 128, 128, self.qfp44},
+				{525, 400, 128, 128, self.qfp44},
+				{655, 155, 128, 128, self.qfp44},
+				{700, 10, 128, 128, self.qfp44},
+				{700, 475, 128, 128, self.qfp44},
+				{765, 310, 128, 128, self.qfp44},
 			}
 		},
 
 		--Levels for level 3
 		[3] = {
 				{
-					{320, 170, 256, 256, self.mcu},
-					{150, 375, 128, 128, self.mcu},
-					{150, 503, 128, 128, self.mcu},
-					{190, 160, 64, 64, self.mcu},
-					{300, 10, 128, 128, self.mcu},
-					{480, 90, 64, 64, self.mcu},
-					{380, 460, 128, 128, self.mcu},
-					{510, 580, 64, 64, self.mcu},
-					{625, 150, 64, 64, self.mcu},
-					{625, 240, 128, 128, self.mcu},
-					{650, 10, 64, 64, self.mcu},
-					{690, 400, 128, 128, self.mcu},
-					{740, 30, 128, 128, self.mcu},
-					{630, 540, 64, 64, self.mcu},
-					{550, 450, 64, 64, self.mcu},
+					{320, 170, 256, 256, self.qfp44},
+					{150, 375, 128, 128, self.qfp44},
+					{150, 503, 128, 128, self.qfp44},
+					{190, 160, 64, 64, self.qfp44},
+					{300, 10, 128, 128, self.qfp44},
+					{480, 90, 64, 64, self.qfp44},
+					{380, 460, 128, 128, self.qfp44},
+					{510, 580, 64, 64, self.qfp44},
+					{625, 150, 64, 64, self.qfp44},
+					{625, 240, 128, 128, self.qfp44},
+					{650, 10, 64, 64, self.qfp44},
+					{690, 400, 128, 128, self.qfp44},
+					{740, 30, 128, 128, self.qfp44},
+					{630, 540, 64, 64, self.qfp44},
+					{550, 450, 64, 64, self.qfp44},
 				}
 		}
 	}
@@ -182,6 +210,7 @@ function CircuitBreaker:setState(state)		--Todo: freaky function.. need improvem
 	end
 
 	if state == "done" then
+		self.m_RT_endscreen = DxRenderTarget(self.WIDTH*3, self.HEIGHT, true)
 		self.m_State = "done"
 		outputChatBox("all levels done")
 		--Todo: Show completed PCB (end screen)
@@ -399,7 +428,6 @@ function CircuitBreaker:collision(sx, sy, sw, sh, px, py, pw, ph)
 		return true
 	end
 end
-
 
 -- dev.. todo: remove when its done
 addCommandHandler("g",
