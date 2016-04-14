@@ -27,6 +27,17 @@ function CircuitBreaker:constructor()
 
 	self.m_fnRender = bind(CircuitBreaker.onClientRender, self)
 	addEventHandler("onClientRender", root, self.m_fnRender)
+	localPlayer:setFrozen(true)
+end
+
+function CircuitBreaker:destructor()
+	removeEventHandler("onClientRender", root, self.m_fnRender)
+	localPlayer:setFrozen(false)
+end
+
+
+function CircuitBreaker:setCallBackEvent(callbackEvent)
+	self.m_CallBackEvent = callbackEvent
 end
 
 function CircuitBreaker:loadImages()
@@ -213,9 +224,8 @@ function CircuitBreaker:setState(state)		--Todo: freaky function.. need improvem
 		self.m_RT_endscreen = DxRenderTarget(self.WIDTH*3, self.HEIGHT, true)
 		self.m_State = "done"
 		outputChatBox("all levels done")
-		--Todo: Show completed PCB (end screen)
 
-		--Todo: Trigger ?!
+		--Todo: Show completed PCB (end screen)
 	end
 
 	if state == "tryPlay" then
@@ -278,7 +288,14 @@ function CircuitBreaker:bindKeys()
 
 	self.fn_StartGame =
 		function()
-			self:setState("tryPlay")
+			if self.m_State == "done" then
+				if self.m_CallBackEvent then
+					triggerServerEvent(self.m_CallBackEvent, localPlayer)
+				end
+				delete(self)
+			else
+				self:setState("tryPlay")
+			end
 		end
 
 	bindKey("arrow_l", "down", self.fn_changeDirection)			bindKey("a", "down", self.fn_changeDirection)
@@ -434,4 +451,12 @@ addCommandHandler("g",
 	function()
 		CircuitBreaker:new()
 	end
+)
+
+addEvent("startCircuitBreaker", true)
+addEventHandler("startCircuitBreaker", root,
+    function(callbackEvent)
+        local instance = CircuitBreaker:new()
+		instance:setCallBackEvent(callbackEvent)
+    end
 )

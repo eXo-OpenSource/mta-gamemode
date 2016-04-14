@@ -50,9 +50,12 @@ function BankRobbery:constructor()
 	self:createSafes()
 	self:createBombableBricks()
 
-	addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm"}
+	addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
 	addEventHandler("bankRobberyPcHack", root, bind(self.Event_onStartHacking, self))
 	addEventHandler("bankRobberyPcDisarm", root, bind(self.Event_onDisarmAlarm, self))
+	addEventHandler("bankRobberyPcHackSuccess", root, bind(self.Event_onHackSuccessful, self))
+
+
 end
 
 function BankRobbery:spawnPed()
@@ -356,8 +359,8 @@ function BankRobbery:BombArea_Explode(bombArea, player)
 	end
 end
 
-function BankRobbery:Event_onHackSuccessful(player)
-	player:sendSuccess(_("Du hast das Sicherheitssystem geknackt! Die Safetür ist offen", player))
+function BankRobbery:Event_onHackSuccessful()
+	client:sendSuccess(_("Du hast das Sicherheitssystem geknackt! Die Safetür ist offen", client))
 	local pos = self.m_SafeDoor:getPosition()
 	self.m_SafeDoor:move(3000, pos.x, pos.y+1.5, pos.z, 0, 0, 0)
 end
@@ -365,10 +368,7 @@ end
 function BankRobbery:Event_onStartHacking()
 	if client:getFaction() and client:getFaction():isEvilFaction() then
 		if self.m_IsBankrobRunning then
-			outputChatBox("Todo Hacking in Developement by PewX", client, 255, 0, 0)
-			setTimer(function(player)
-				self:Event_onHackSuccessful(player)
-			end, 3000, 1, client)
+			triggerClientEvent(client, "startCircuitBreaker", client, "bankRobberyPcHackSuccess")
 		else
 			client:sendError(_("Derzeit läuft kein Bankraub!", client))
 		end
