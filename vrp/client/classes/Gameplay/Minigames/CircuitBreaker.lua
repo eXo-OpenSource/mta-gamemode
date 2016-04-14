@@ -31,10 +31,14 @@ function CircuitBreaker:constructor()
 end
 
 function CircuitBreaker:destructor()
+	unbindKey("arrow_l", "down", self.fn_changeDirection)			unbindKey("a", "down", self.fn_changeDirection)
+	unbindKey("arrow_r", "down", self.fn_changeDirection)			unbindKey("d", "down", self.fn_changeDirection)
+	unbindKey("arrow_u", "down", self.fn_changeDirection)			unbindKey("w", "down", self.fn_changeDirection)
+	unbindKey("arrow_d", "down", self.fn_changeDirection)			unbindKey("s", "down", self.fn_changeDirection)
+
 	removeEventHandler("onClientRender", root, self.m_fnRender)
 	localPlayer:setFrozen(false)
 end
-
 
 function CircuitBreaker:setCallBackEvent(callbackEvent)
 	self.m_CallBackEvent = callbackEvent
@@ -60,25 +64,19 @@ function CircuitBreaker:loadImages()
 	local backgroundColor = tocolor(200, 0, 0, 150)
 	self.m_CollidableImages = {}
 	--self.m_CollidableImages.w350h100 =  DxRenderTarget(350, 100, true)
-	self.m_CollidableImages.w150h150 =  DxRenderTarget(150, 150, true)
 	--self.m_CollidableImages.w150h300 =  DxRenderTarget(150, 300, true)
 
+	self.m_CollidableImages.w150h150 =  DxRenderTarget(150, 150, true)
 	self.m_CollidableImages.w150h150:setAsTarget()
 	dxDrawRectangle(0, 0, 150, 150, backgroundColor)
 	dxDrawImage(3, 3, 88, 88, self.qfp44)
 	dxDrawImage(52, 98, 39, 48, self.sop8)
-	dxDrawImage(8, 112, 30, 14, self.smdresistor)
-	dxDrawImage(8, 130, 30, 14, self.smdresistor)
-	dxDrawImage(115, 6, 30, 14, self.smdresistor)
-	dxDrawImage(115, 46, 30, 14, self.smdresistor)
+	self:createRandomResistor(8, 112, 30, 14)
+	self:createRandomResistor(8, 130, 30, 14)
+	self:createRandomResistor(115, 6, 30, 14)
+	self:createRandomResistor(115, 46, 30, 14)
 	dxDrawImage(109, 112, 46, 22, self.smdcapacitor, -90)
 	dxDrawImage(99, 22, 46, 22, self.smdcapacitor)
-
-	dxDrawText("1k0", 8, 112, 8 + 30, 112 + 14, tocolor(255, 255, 255), .5, "clear", "center", "center")
-	dxDrawText("1k2", 8, 130, 8 + 30, 130 + 14, tocolor(255, 255, 255), .5, "clear", "center", "center")
-	dxDrawText("4R7", 115, 6, 115 + 30, 6 + 14, tocolor(255, 255, 255), .5, "clear", "center", "center")
-	dxDrawText("2R0", 115, 46, 115 + 30, 46 + 14, tocolor(255, 255, 255), .5, "clear", "center", "center")
-
 	dxSetRenderTarget()
 end
 
@@ -89,80 +87,33 @@ function CircuitBreaker:createGameplay()
 
 		[1] = {
 			{
-				{125, 25, 256, 256, self.qfp44},
-				{500, 330, 256, 256, self.qfp44},
-				{220, 350, 128, 128, self.qfp44},
-				{660, 90, 128, 128, self.qfp44},
-				{870, 470, 128, 128, self.qfp44},
+
 			},
 			{
-				{140, 360, 256, 256, self.qfp44},
-				{650, 20, 256, 256, self.qfp44},
-				{170, 50, 128, 128, self.qfp44},
-				{420, 100, 128, 128, self.qfp44},
-				{590, 450, 128, 128, self.qfp44},
+
 			},
 			{
-				{360, 25, 256, 256, self.qfp44},
-				{660, 370, 256, 256, self.qfp44},
-				{140, 150, 128, 128, self.qfp44},
-				{330, 400, 128, 128, self.qfp44},
-				{740, 70, 128, 128, self.qfp44},
+
 			},
 		},
 
 		--Levels for level 2
 		[2] = {
 			{
-				{300, 15, 256, 256, self.qfp44},
-				{500, 365, 256, 256, self.qfp44},
-				{140, 155, 128, 128, self.qfp44},
-				{140, 283, 128, 128, self.qfp44},
-				{250, 460, 128, 128, self.qfp44},
-				{590, 210, 128, 128, self.qfp44},
-				{780, 110, 128, 128, self.qfp44},
-				{800, 490, 128, 128, self.qfp44},
+
 			},
 			{
-				{130, 330, 256, 256, self.qfp44},
-				{690, 345, 256, 256, self.qfp44},
-				{460, 100, 128, 128, self.qfp44},
-				{460, 280, 128, 128, self.qfp44},
-				{460, 408, 128, 128, self.qfp44},
-				{300, 25, 128, 128, self.qfp44},
-				{610, 180, 128, 128, self.qfp44},
-				{700, 25, 128, 128, self.qfp44},
+
 			},
 			{
-				{350, 95, 256, 256, self.qfp44},
-				{225, 350, 256, 256, self.qfp44},
-				{100, 90, 128, 128, self.qfp44},
-				{525, 400, 128, 128, self.qfp44},
-				{655, 155, 128, 128, self.qfp44},
-				{700, 10, 128, 128, self.qfp44},
-				{700, 475, 128, 128, self.qfp44},
-				{765, 310, 128, 128, self.qfp44},
+
 			}
 		},
 
 		--Levels for level 3
 		[3] = {
 				{
-					{320, 170, 256, 256, self.qfp44},
-					{150, 375, 128, 128, self.qfp44},
-					{150, 503, 128, 128, self.qfp44},
-					{190, 160, 64, 64, self.qfp44},
-					{300, 10, 128, 128, self.qfp44},
-					{480, 90, 64, 64, self.qfp44},
-					{380, 460, 128, 128, self.qfp44},
-					{510, 580, 64, 64, self.qfp44},
-					{625, 150, 64, 64, self.qfp44},
-					{625, 240, 128, 128, self.qfp44},
-					{650, 10, 64, 64, self.qfp44},
-					{690, 400, 128, 128, self.qfp44},
-					{740, 30, 128, 128, self.qfp44},
-					{630, 540, 64, 64, self.qfp44},
-					{550, 450, 64, 64, self.qfp44},
+
 				}
 		}
 	}
@@ -170,7 +121,7 @@ function CircuitBreaker:createGameplay()
 	-- Some definitions
 	self.m_DefaultLineColor = tocolor(70, 160, 255)
 	self.m_Level = 1
-	self.m_RandomPattern = math.random(1, #self.m_Levels[self.m_Level])
+	--self.m_RandomPattern = math.random(1, #self.m_Levels[self.m_Level])
 	self.m_State = "idle"
 	self.m_MoveDirection = "r"											--r = right | l = left | u = up | d = down
 
@@ -196,7 +147,7 @@ end
 
 function CircuitBreaker:createNextLevel()
 	self.m_MoveDirection = "r"
-	self.m_RandomPattern = math.random(1, #self.m_Levels[self.m_Level])
+	--self.m_RandomPattern = math.random(1, #self.m_Levels[self.m_Level])
 
 	-- Set D-Sub9 start pos
 	self.m_LevelStartPosX = 0
@@ -353,10 +304,10 @@ function CircuitBreaker:updateRenderTarget()
 	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.input)
 	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY, 56, 82, self.output)
 
-	for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
+	--[[for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
 		--dxDrawRectangle(v[1], v[2], v[3], v[4], tocolor(255, 0, 0, 100))
 		dxDrawImage(unpack(v))
-	end
+	end]]
 
 	dxSetRenderTarget()
 
@@ -401,11 +352,11 @@ function CircuitBreaker:onClientRender()
 			self:setState("failed")
 		end
 
-		for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
+		--[[for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
 			if self:collision(v[1], v[2], v[3], v[4], self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
 				self:setState("failed")
 			end
-		end
+		end]]
 
 		-- Collision detection
 		if self:collision(self.m_LevelEndPosX, self.m_LevelEndPosY, 56, 82, self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
@@ -436,6 +387,9 @@ function CircuitBreaker:onClientRender()
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_lineBG)
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
+
+	--dev
+	--dxDrawImage(screenWidth/2, screenHeight/2, 150, 150, self.m_CollidableImages.w150h150)
 end
 
 function CircuitBreaker:collision(sx, sy, sw, sh, px, py, pw, ph)
@@ -444,6 +398,27 @@ function CircuitBreaker:collision(sx, sy, sw, sh, px, py, pw, ph)
 	if focusX >= sx and focusY >= sy and focusX < sx + sw and focusY < sy + sh then
 		return true
 	end
+end
+
+local E24 = {"1.0", "1.1", "1.2", "1.3", "1.5", "1.6", "1.8", "2.0", "2.2", "2.4", "2.7", "3.0", "3.3", "3.6", "3.9", "4.3", "4.7",	"5.1", "5.6", "6.2", "6.8", "7.5", "8.2", "9.1"}
+local eToChar = {[0] = "R", [1] = "R", [2] = "R", [3] = "K", [4] = "K", [5] = "K", [6] = "M"}
+function CircuitBreaker:createRandomResistor(posX, posY, width, height, labelType)
+	if not labelType then labelType = "SI" end --SI = Internationales Einheitensystem
+	local e = math.random(0, 6)
+	local value = E24[math.random(1, 24)]
+
+	if labelType == "SI" then
+		if e == 0 or e == 3 or e == 6 then
+			value = value:gsub("[.]", eToChar[e])
+		else
+			value = ("%s%s%s"):format(value:gsub("[.]", ""), ("0"):rep(e - (e < 3 and 1 or 4)), eToChar[e])
+		end
+	elseif labelType == "COMPACT" then
+		value = ("%s%s"):format(value:gsub("[.]", ""), e)
+	end
+
+	dxDrawImage(posX, posY, width, height, self.smdresistor)
+	dxDrawText(value, posX, posY, posX + width, posY + height, tocolor(255, 255, 255), .5/14*height, "clear", "center", "center")
 end
 
 -- dev.. todo: remove when its done
