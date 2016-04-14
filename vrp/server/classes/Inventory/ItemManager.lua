@@ -18,7 +18,8 @@ function ItemManager:constructor()
 		["Shrooms"] = DrugsShroom,
 		["Kokain"] = DrugsCocaine,
 		["Burger"] = ItemFood,
-		["Pizza"] = ItemFood
+		["Pizza"] = ItemFood,
+		["Wuerfel"] = ItemDice
 	}
 
 	for name, class in pairs(self.m_ClassItems) do

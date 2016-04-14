@@ -8,9 +8,19 @@
 addEvent("itemRadioChangeURLClient", true)
 addEventHandler("itemRadioChangeURLClient", root,
 	function(url)
+		if isElement(source.Sound) then
+			source.Sound:destroy()
+		end
 		local sound = Sound3D.create(url, source:getPosition())
 		sound:attach(source)
 		source.Sound = sound
+	end
+)
+
+addEvent("itemRadioRemove", true)
+addEventHandler("itemRadioRemove", root,
+	function()
+		source.Sound:destroy()
 	end
 )
 
@@ -19,12 +29,5 @@ addEventHandler("itemRadioMenu", root,
 	function()
 		local cx, cy = getCursorPosition()
 		ClickHandler:getSingleton():addMouseMenu(RadioMouseMenu:new(cx*screenWidth, cy*screenHeight, source), source)
-	end
-)
-
-addEvent("itemRadioRemove", true)
-addEventHandler("itemRadioRemove", root,
-	function()
-		source.Sound:destroy()
 	end
 )

@@ -92,6 +92,7 @@
 	<script src="server/classes/Inventory/ItemManager.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBarricade.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemBomb.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemDice.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemDrugs.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemFood.lua" type="server"/>
