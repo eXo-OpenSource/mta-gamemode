@@ -30,10 +30,10 @@ end
 
 function RockPaperScissors:setSelection(player, selection)
 	self.m_Players[player] = selection
-	self:checkReady()
+	self:checkReady(player)
 end
 
-function RockPaperScissors:checkReady()
+function RockPaperScissors:checkReady(player)
 	local count = 0
 	for playerItem, selection in pairs(self.m_Players) do
 		if selection ~= "none" then
@@ -42,6 +42,8 @@ function RockPaperScissors:checkReady()
 	end
 	if count == 2 then
 		self:checkResult()
+	else
+		player:sendInfo(_("Bitte warte einen kurzen Moment bis der Gegner seine Auswahl getroffen hat!", player))
 	end
 end
 
@@ -69,11 +71,14 @@ function RockPaperScissors:showResult(winner)
 		if winner then
 			if winner == playerItem then
 				playerItem:triggerEvent("rockPaperScissorsShowResult", "win", self.m_Players)
+				playerItem:giveAchievement(51)
 			else
 				playerItem:triggerEvent("rockPaperScissorsShowResult", "loose", self.m_Players)
+				playerItem:giveAchievement(52)
 			end
 		else
 			playerItem:triggerEvent("rockPaperScissorsShowResult", "draw", self.m_Players)
+			playerItem:giveAchievement(53)
 		end
 	end
 end
