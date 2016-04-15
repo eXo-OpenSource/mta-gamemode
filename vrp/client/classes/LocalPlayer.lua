@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange"}
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "playerToggleDamage"}
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -19,6 +19,8 @@ function LocalPlayer:constructor()
 	addEventHandler("playerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("playerRescueWasted", root, bind(self.playerRescueWasted, self))
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
+	addEventHandler("playerToggleDamage", self, bind(self.toggleDamage, self))
+
 end
 
 function LocalPlayer:destructor()
@@ -73,6 +75,13 @@ function LocalPlayer:playCashChange( )
 	playSound( "files/audio/cash_register.ogg" )
 end
 
+function LocalPlayer:toggleDamage(state)
+	if state == true then
+		addEventHandler("onClientPlayerDamage", root, cancelEvent)
+	else
+		removeEventHandler("onClientPlayerDamage", root, cancelEvent)
+	end
+end
 
 function LocalPlayer:playerWasted()
 	-- Play knock out effect

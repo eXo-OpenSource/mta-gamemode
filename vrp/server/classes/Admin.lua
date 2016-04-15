@@ -8,28 +8,28 @@
 Admin = inherit(Singleton)
 
 function Admin:constructor()
-  self.m_OnlineAdmins = {}
+    self.m_OnlineAdmins = {}
+    self.m_SupportArrow = {}
+    self.m_RankNames = {
+        [1] = "Supporter",
+        [2] = "Moderator",
+        [3] = "Super-Moderator",
+        [4] = "Administrator",
+        [5] = "Projektleiter"
+    }
 
-	self.m_RankNames = {
-		[1] = "Supporter",
-		[2] = "Moderator",
-		[3] = "Super-Moderator",
-		[4] = "Administrator",
-		[5] = "Projektleiter"
-	}
+    addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction"}
 
-	addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction"}
-
-	addCommandHandler("admins", bind(self.onlineList, self))
-	addCommandHandler("a", bind(self.chat, self))
-	addCommandHandler("o", bind(self.ochat, self))
-	addCommandHandler("adminmenu", bind(self.openAdminMenu, self))
-	addCommandHandler("goto", bind(self.goToPlayer, self))
-	addCommandHandler("gethere", bind(self.getHerePlayer, self))
-	addCommandHandler("tp", bind(self.teleportTo, self))
-	addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
+    addCommandHandler("admins", bind(self.onlineList, self))
+    addCommandHandler("a", bind(self.chat, self))
+    addCommandHandler("o", bind(self.ochat, self))
+    addCommandHandler("adminmenu", bind(self.openAdminMenu, self))
+    addCommandHandler("goto", bind(self.goToPlayer, self))
+    addCommandHandler("gethere", bind(self.getHerePlayer, self))
+    addCommandHandler("tp", bind(self.teleportTo, self))
+    addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
-	addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
+    addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
 end
@@ -79,6 +79,8 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration)
         elseif func == "permaban" then
             self:sendShortMessage(_("hat %s permanent gebannt! Grund: %s", client, target:getName(), reason))
             Ban.addBan(target, client, reason)
+        elseif func == "supportMode" then
+            self:toggleSupportMode(client)
         end
     else
         client:sendError(_("Du darst diese Aktion nicht ausführen!", client))
@@ -95,6 +97,42 @@ function Admin:chat(player,cmd,...)
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end
+end
+
+function Admin:toggleSupportMode(player)
+    if not player:getPublicSync("supportMode") then
+        player:setPublicSync("supportMode", true)
+        player:sendInfo(_("Support Modus aktiviert!", player))
+        player:setModel(260)
+        player:triggerEvent("playerToggleDamage", true)
+        self:toggleSupportArrow(player, true)
+    else
+        player:setPublicSync("supportMode", false)
+        player:sendInfo(_("Support Modus deaktiviert!", player))
+        player:setDefaultSkin()
+        player:triggerEvent("playerToggleDamage", false)
+        self:toggleSupportArrow(player, false)
+    end
+end
+
+function Admin:toggleSupportArrow(player, state)
+	if state == true then
+		if isElement(self.m_SupportArrow[player]) then self.m_SupportArrow[player]:destroy() end
+        local pos = player:getPosition()
+		self.m_SupportArrow[player] = createMarker(pos, "arrow" ,0.5, 255, 255, 0)
+        self.m_SupportArrow[player]:attach(player, 0, 0, 1.5)
+        self.m_DeleteArrowBind = bind(self.deleteArrow, self)
+		addEventHandler("onPlayerQuit", player, self.m_DeleteArrowBind)
+		addEventHandler("onPlayerWasted", player, self.m_DeleteArrowBind)
+	elseif state == false then
+        if isElement(self.m_SupportArrow[player]) then self.m_SupportArrow[player]:destroy() end
+        removeEventHandler("onPlayerQuit", player, self.m_DeleteArrowBind)
+		removeEventHandler("onPlayerWasted", player, self.m_DeleteArrowBind)
+	end
+end
+
+function Admin:deleteArrow()
+    if isElement(self.m_SupportArrow[source]) then self.m_SupportArrow[source]:destroy() end
 end
 
 function Admin:sendMessage(msg,r,g,b)

@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 AdminGUI = inherit(GUIForm)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "timeban", "permaban", "setCompany", "setFaction"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "warn", "timeban", "permaban", "setCompany", "setFaction"}
 
 inherit(Singleton, AdminGUI)
 
@@ -34,7 +34,7 @@ function AdminGUI:constructor()
 	self.m_AdminAnnounceText = GUIEdit:new(150, 10, 330, 30,tabAllgemein)
 	self.m_AnnounceButton = GUIButton:new(490, 10, 100, 30, _"senden",  tabAllgemein)
 	self.m_AnnounceButton.onLeftClick = bind(self.AnnounceButton_Click, self)
-	--self:addAdminButton("supportMode", "Support-Modus aktivieren", 10, 50, 200, 30, Color.Green, tabAllgemein)
+	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", 10, 50, 250, 30, Color.Green, tabAllgemein)
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
 	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"N",  tabAllgemein):setBackgroundColor(Color.Orange)
 	self.m_portNorth.onLeftClick = function () self:portAdmin("N") end
@@ -71,8 +71,8 @@ function AdminGUI:constructor()
 	self:addAdminButton("setCompany", "in Unternehmen setzen", 410, 330, 180, 30, Color.Blue, tabSpieler)
 
 	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
-	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, "http://exo-reallife.de/ingame/ticketSystem/admin.php?player="..getPlayerName(getLocalPlayer()).."&sessionID="..self:generateSessionId(), true, tabTicket)
-
+	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
+	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, tabTicket)
 
 	for key, playeritem in ipairs(getElementsByType("player")) do
 		local item = self.m_PlayersGrid:addItem(playeritem:getName())
@@ -89,7 +89,9 @@ function AdminGUI:addAdminButton(func, text, x, y, width, height, color, parent)
 	self.m_adminButton[func] = GUIButton:new(x, y, width, height, _(text),  parent):setFontSize(1):setBackgroundColor(color)
 	self.m_adminButton[func].func = func
 	self.m_adminButton[func].onLeftClick = function () self:onButtonClick(func) end
-	self.m_adminButton[func]:setEnabled(false)
+	if table.find(AdminGUI.playerFunctions, func) then
+		self.m_adminButton[func]:setEnabled(false)
+	end
 end
 
 function AdminGUI:onSelectPlayer(player)
@@ -125,21 +127,27 @@ function AdminGUI:refreshButtons()
 		if localPlayer:getRank() < ADMIN_RANK_PERMISSION[btn.func] then
 			btn:setEnabled(false)
 		else
-			btn:setEnabled(true)
+			btn:setEnabled(false)
+			if table.find(AdminGUI.playerFunctions, btn.func) then
+				if self.m_PlayersGrid:getSelectedItem() then
+					btn:setEnabled(true)
+				end
+			else
+				btn:setEnabled(true)
+			end
 		end
 	end
 end
 
 function AdminGUI:onButtonClick(func)
 	if table.find(AdminGUI.playerFunctions, func) then
-		if not self.m_PlayersGrid:getSelectedItem() then
+		if self.m_PlayersGrid:getSelectedItem() then
+			local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
+		else
 			ErrorBox:new(_"Kein Spieler ausgewählt!")
 			return
-		else
-			local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
 		end
 	end
-	local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
 	if func == "gethere" or func == "goto" then
 		triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer)
 	elseif func == "kick" then
@@ -182,6 +190,8 @@ function AdminGUI:onButtonClick(func)
 				function (factionId)
 					triggerServerEvent("adminSetPlayerFaction", root, selectedPlayer,factionId)
 				end)
+	elseif func == "supportMode" then
+		triggerServerEvent("adminTriggerFunction", root, func)
 	else
 		outputDebug("Under Developement", 255, 0 ,0)
 	end
@@ -203,12 +213,6 @@ function AdminGUI:AnnounceText( message )
 		self.m_MoveText = GUIMovetext:new(0, 0, screenWidth, screenHeight*0.05,message,"",1,(screenWidth*0.1)*-1, self,"files/images/GUI/megafone.png",true)
 	end
 end
-
-
-function AdminGUI:generateSessionId()
-	return md5(localPlayer:getName()..localPlayer:getSerial()) -- ToDo: generate serverside with lastlogin timestamp for more security
-end
-
 
 addEventHandler("showAdminMenu", root,
 	function(...)
