@@ -15,11 +15,16 @@ function Area:constructor( dataset, pGManager )
 	self.m_LastAttack = dataset["lastAttack"]
 	self.m_Position = {tonumber(dataset["x"]),tonumber(dataset["y"]),tonumber(dataset["z"])}
 	self.m_PositionRadar = {tonumber(dataset["cX"]),tonumber(dataset["cY"]),tonumber(dataset["cX2"]),tonumber(dataset["cY2"])}
+	self.m_CarCount = dataset["Autos"]
 	self:createCenterCol( )
 	self:createRadar()
 	self.m_GangwarManager = pGManager
 	self:createCenterPickup() 
 end	
+
+function Area:destructor( ) 
+	
+end
 
 function Area:createRadar() 
 	local areaX,areaY = self.m_PositionRadar[1],self.m_PositionRadar[2]
