@@ -26,10 +26,10 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
-	self:addItem(_"Im Handy speichern",
+	self:addItem(_"Schere-Stein-Papier spielen",
 		function()
 			if self:getElement() then
-				outputChatBox("Not implemented yet")
+				triggerServerEvent("rockPaperScissorsQuestion", localPlayer, self:getElement())
 			end
 		end
 	)

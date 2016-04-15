@@ -116,6 +116,7 @@
 	<!-- Minigames -->	<!-- not done yet-->
 	<!--<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>-->
+	<script src="server/classes/Gameplay/Minigames/RockPaperScissors.lua" type="server"/>-->
 
 	<script src="server/classes/Gameplay/AmmuTeam.lua" type="server"/>
 	<script src="server/classes/Gameplay/AmmuArena.lua" type="server"/>
@@ -547,6 +548,8 @@
 	<script src="client/classes/Gameplay/Minigames/GoJump.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/SideSwipe.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/CircuitBreaker.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/RockPaperScissors.lua" type="client"/>
+
 
 	<!-- Business -->
 
@@ -691,6 +694,9 @@
 	<vrpfile src="files/images/Shops/CouttSchutz.png"/>
 	<vrpfile src="files/images/Shops/BankHeader.png"/>
 
+	<vrpfile src="files/images/RockPaperScissors/paper.png"/>
+	<vrpfile src="files/images/RockPaperScissors/rock.png"/>
+	<vrpfile src="files/images/RockPaperScissors/scissors.png"/>
 
 	<!-- Radar -->
 	<vrpfile src="files/images/Radar_Monochrome/Radar.jpg"/>
