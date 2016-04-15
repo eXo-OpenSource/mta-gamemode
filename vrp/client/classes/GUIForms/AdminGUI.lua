@@ -7,12 +7,17 @@
 -- ****************************************************************************
 
 AdminGUI = inherit(GUIForm)
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "timeban", "permaban", "setCompany", "setFaction"}
+
 inherit(Singleton, AdminGUI)
 
 addRemoteEvents{"showAdminMenu"}
-function AdminGUI:constructor()
 
+function AdminGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-200, 600, 400, false, true)
+
+	self.m_adminButton = {}
+
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
 	--self.m_CloseButton.onHover = function () self.m_CloseButton:setColor(Color.LightRed) end
@@ -29,6 +34,20 @@ function AdminGUI:constructor()
 	self.m_AdminAnnounceText = GUIEdit:new(150, 10, 330, 30,tabAllgemein)
 	self.m_AnnounceButton = GUIButton:new(490, 10, 100, 30, _"senden",  tabAllgemein)
 	self.m_AnnounceButton.onLeftClick = bind(self.AnnounceButton_Click, self)
+	--self:addAdminButton("supportMode", "Support-Modus aktivieren", 10, 50, 200, 30, Color.Green, tabAllgemein)
+	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
+	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"N",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portNorth.onLeftClick = function () self:portAdmin("N") end
+	self.m_portEast = GUIButton:new(self.m_Width-70, 110, 30, 30, _"O",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portEast.onLeftClick = function () self:portAdmin("O") end
+	self.m_portSouth = GUIButton:new(self.m_Width-105, 145, 30, 30, _"S",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portSouth.onLeftClick = function () self:portAdmin("S") end
+	self.m_portWest = GUIButton:new(self.m_Width-140, 110, 30, 30, _"W",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portWest.onLeftClick = function () self:portAdmin("W") end
+	self.m_portUp = GUIButton:new(self.m_Width-70, 75, 60, 30, _"Rauf",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_portUp.onLeftClick = function () self:portAdmin("U") end
+	self.m_portDown = GUIButton:new(self.m_Width-70, 145, 60, 30, _"Runter",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_portDown.onLeftClick = function () self:portAdmin("D") end
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_PlayersGrid = GUIGridList:new(10, 10, 200, 380, tabSpieler)
@@ -41,7 +60,6 @@ function AdminGUI:constructor()
 	self.m_PlayerCompanyLabel = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabSpieler)
 	self.m_PlayerGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabSpieler)
 
-	self.m_adminButton = {}
 	self:addAdminButton("goto", "hin porten", 220, 170, 180, 30, Color.Green, tabSpieler)
 	self:addAdminButton("gethere", "her porten", 410, 170, 180, 30, Color.Green, tabSpieler)
 	self:addAdminButton("kick", "kicken", 220, 210, 180, 30, Color.Orange, tabSpieler)
@@ -63,6 +81,8 @@ function AdminGUI:constructor()
 			self:onSelectPlayer(playeritem)
 		end
 	end
+
+	self:refreshButtons()
 end
 
 function AdminGUI:addAdminButton(func, text, x, y, width, height, color, parent)
@@ -81,8 +101,23 @@ function AdminGUI:onSelectPlayer(player)
 	self.m_PlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
 	self.m_PlayerJobLabel:setText(_("Job: %s", player:getJobName()))
 
-
 	self:refreshButtons()
+end
+
+function AdminGUI:portAdmin(direction)
+	local element = localPlayer
+
+	if localPlayer:getOccupiedVehicle() then element = localPlayer:getOccupiedVehicle()	end
+
+	local pos = element:getPosition()
+		if direction == "N" then pos.y = pos.y+2
+	elseif direction == "O" then pos.x = pos.x+2
+	elseif direction == "S" then pos.y = pos.y-2
+	elseif direction == "W" then pos.x = pos.x-2
+	elseif direction == "U" then pos.z = pos.z+2
+	elseif direction == "D" then pos.z = pos.z-2
+	end
+	element:setPosition(pos)
 end
 
 function AdminGUI:refreshButtons()
@@ -96,55 +131,60 @@ function AdminGUI:refreshButtons()
 end
 
 function AdminGUI:onButtonClick(func)
-	if self.m_PlayersGrid:getSelectedItem() then
-		local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
-		if func == "gethere" or func == "goto" then
-			triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer)
-		elseif func == "kick" then
-			InputBox:new(_("Spieler %s kicken", selectedPlayer:getName()),
-					_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", selectedPlayer:getName()),
-					function (reason)
-						triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason)
-					end)
-		elseif func == "prison" then
-			AdminInputBox:new(
-					_("Spieler %s ins Prison schicken", selectedPlayer:getName()),
-					_"Dauer in Minuten:",
-					function (reason, duration)
-						triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason, duration)
-					end)
-		elseif func == "timeban" then
-			AdminInputBox:new(
-					_("Spieler %s time bannen", selectedPlayer:getName()),
-					_"Dauer in Stunden:",
-					function (reason, duration)
-						triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason, duration)
-					end)
-		elseif func == "permaban" then
-			InputBox:new(_("Spieler %s permanent Bannen", selectedPlayer:getName()),
-					_("Aus welchem Grund möchtest du den Spieler %s permanent bannen?", selectedPlayer:getName()),
-					function (reason)
-						triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason)
-					end)
-		elseif func == "setCompany" then
-			local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
-			ChangerBox:new(_"Unternehmen setzten",
-					_"Bitte wähle das gewünschte Unternehmen aus:",companyTable,
-					function (companyId)
-						triggerServerEvent("adminSetPlayerCompany", root, selectedPlayer,companyId)
-					end)
-		elseif func == "setFaction" then
-			local factionTable = {[0] = "Keine Fraktion", [1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra", [6] = "Yakuza"}
-			ChangerBox:new(_"Fraktion setzten",
-					_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
-					function (factionId)
-						triggerServerEvent("adminSetPlayerFaction", root, selectedPlayer,factionId)
-					end)
+	if table.find(AdminGUI.playerFunctions, func) then
+		if not self.m_PlayersGrid:getSelectedItem() then
+			ErrorBox:new(_"Kein Spieler ausgewählt!")
+			return
 		else
-			outputDebug("Under Developement", 255, 0 ,0)
+			local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
 		end
 	end
-	self:delete()
+	local selectedPlayer = self.m_PlayersGrid:getSelectedItem().player
+	if func == "gethere" or func == "goto" then
+		triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer)
+	elseif func == "kick" then
+		InputBox:new(_("Spieler %s kicken", selectedPlayer:getName()),
+				_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", selectedPlayer:getName()),
+				function (reason)
+					triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason)
+				end)
+	elseif func == "prison" then
+		AdminInputBox:new(
+				_("Spieler %s ins Prison schicken", selectedPlayer:getName()),
+				_"Dauer in Minuten:",
+				function (reason, duration)
+					triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason, duration)
+				end)
+	elseif func == "timeban" then
+		AdminInputBox:new(
+				_("Spieler %s time bannen", selectedPlayer:getName()),
+				_"Dauer in Stunden:",
+				function (reason, duration)
+					triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason, duration)
+				end)
+	elseif func == "permaban" then
+		InputBox:new(_("Spieler %s permanent Bannen", selectedPlayer:getName()),
+				_("Aus welchem Grund möchtest du den Spieler %s permanent bannen?", selectedPlayer:getName()),
+				function (reason)
+					triggerServerEvent("adminTriggerFunction", root, func, selectedPlayer, reason)
+				end)
+	elseif func == "setCompany" then
+		local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
+		ChangerBox:new(_"Unternehmen setzten",
+				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable,
+				function (companyId)
+					triggerServerEvent("adminSetPlayerCompany", root, selectedPlayer,companyId)
+				end)
+	elseif func == "setFaction" then
+		local factionTable = {[0] = "Keine Fraktion", [1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra", [6] = "Yakuza"}
+		ChangerBox:new(_"Fraktion setzten",
+				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
+				function (factionId)
+					triggerServerEvent("adminSetPlayerFaction", root, selectedPlayer,factionId)
+				end)
+	else
+		outputDebug("Under Developement", 255, 0 ,0)
+	end
 end
 
 function AdminGUI:AnnounceButton_Click()

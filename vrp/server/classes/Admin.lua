@@ -222,9 +222,10 @@ end
 
 function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
 	if client:getRank() >= RANK.Supporter then
+
+        if targetPlayer:getFaction() then targetPlayer:getFaction():removePlayer(targetPlayer) end
+
         if Id == 0 then
-            local faction = targetPlayer:getFaction()
-            faction:removePlayer(targetPlayer)
             client:sendInfo(_("Du hast den Spieler aus seiner Fraktion entfernt!", client))
         else
             local faction = FactionManager:getSingleton():getFromId(Id)
@@ -235,14 +236,14 @@ function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
     			client:sendError(_("Fraktion nicht gefunden!", client))
     		end
         end
+
 	end
 end
 
 function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
 	if client:getRank() >= RANK.Supporter then
+        if targetPlayer:getCompany() then targetPlayer:getCompany():removePlayer(targetPlayer) end
         if Id == 0 then
-            local company = targetPlayer:getCompany()
-            company:removePlayer(targetPlayer)
             client:sendInfo(_("Du hast den Spieler aus seinem Unternehmen entfernt!", client))
         else
             local company = CompanyManager:getSingleton():getFromId(Id)
