@@ -94,18 +94,20 @@ function GangwarDisplay:rend_Display( )
 	self:drawShadowBoxText(#tParticipants.."/"..#tFacMembers,startX+width*0.5 , startY -height*0.1, width*0.495 , height*0.495, tocolor(255,255,255,255),1,"default-bold","center","bottom" )
 
 	
-	dxDrawRectangle( startX , startY+height*0.5 , bottom_width , height*0.495, tocolor(0,204,204,100)  )
+	dxDrawImage( startX , startY+height*0.5 , bottom_width , height*0.495,"files/images/gangwar/tile.png",0,0,0, tocolor(0,204,204,180)  )
 	self:dxDrawBoxShape(startX , startY+height*0.5 , bottom_width , height*0.495,tocolor(0,0,0,150))
+	dxDrawImage( startX+ bottom_width*0.075 , startY+height*0.5+(height*0.495)*0.3 , bottom_width*0.2, bottom_width*0.2, "files/images/gangwar/gw_damage.png" )
 	self:drawShadowBoxText( self.m_AttackClient.m_GangwarDamage,startX , startY+height*0.5 , bottom_width , height*0.495, tocolor(255,255,255,255),1,"default-bold","center","center" )
 	
-	dxDrawRectangle( startX+(bottom_width+width*0.005) , startY + height*0.5, bottom_width , height*0.495, tocolor(0,204,204,100)  )
+	dxDrawImage( startX+(bottom_width+width*0.005) , startY + height*0.5, bottom_width , height*0.495, "files/images/gangwar/tile.png",0,0,0,tocolor(0,204,204,180)  )
 	self:dxDrawBoxShape(startX+(bottom_width+width*0.005) , startY + height*0.5, bottom_width , height*0.495,tocolor(0,0,0,150))
+	dxDrawImage( startX+(bottom_width + width*0.01)+ bottom_width*0.075 , startY+height*0.5+(height*0.495)*0.3 , bottom_width*0.2, bottom_width*0.2, "files/images/gangwar/gw_kill.png" )
 	self:drawShadowBoxText( self.m_AttackClient.m_GangwarKill,startX+(bottom_width+width*0.005) , startY + height*0.5, bottom_width , height*0.495, tocolor(255,255,255,255),1,"default-bold","center","center" )
 	
-	dxDrawRectangle( startX+(bottom_width*2 + width*0.01) , startY+height*0.5, bottom_width, height*0.495, tocolor(0,204,204,100)  )
+	dxDrawImage( startX+(bottom_width*2 + width*0.01) , startY+height*0.5, bottom_width, height*0.495, "files/images/gangwar/tile.png",0,0,0,tocolor(0,204,204,180)  )
 	self:dxDrawBoxShape(startX+(bottom_width*2 + width*0.01) , startY+height*0.5, bottom_width, height*0.495,tocolor(0,0,0,150))
 	self:drawShadowBoxText( self:formatTick( self.m_TimeLeft ) ,startX+(bottom_width*2 + width*0.01) , startY+height*0.5, bottom_width, height*0.495, tocolor(255,255,255,255),1,"default-bold","center","center" )
-	
+	dxDrawImage( startX+(bottom_width*2 + width*0.01)+ bottom_width*0.075 , startY+height*0.5+(height*0.495)*0.3 , bottom_width*0.2, bottom_width*0.2, "files/images/gangwar/gw_time.png" )
 	self:dxDrawBoxShape(startX,startY,width,height,tocolor(0,0,0,150))
 	
 	

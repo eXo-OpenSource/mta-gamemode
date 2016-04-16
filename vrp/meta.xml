@@ -833,7 +833,10 @@
 	<vrpfile src="files/images/Gangwar/cross.png"/>
 	<vrpfile src="files/images/Gangwar/tick.png"/>
 	<vrpfile src="files/images/Gangwar/teilnehmen.png"/>
-
+	<vrpfile src="files/images/Gangwar/gw_damage.png"/>
+	<vrpfile src="files/images/Gangwar/gw_kill.png"/>
+	<vrpfile src="files/images/Gangwar/gw_time.png"/>
+	
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
