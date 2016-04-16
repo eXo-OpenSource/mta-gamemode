@@ -79,6 +79,9 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration)
         elseif func == "permaban" then
             self:sendShortMessage(_("hat %s permanent gebannt! Grund: %s", client, target:getName(), reason))
             Ban.addBan(target, client, reason)
+        elseif func == "addWarn" then
+            self:sendShortMessage(_("hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", client, target:getName(), duration, reason))
+            Warn.addWarn(target, client, reason, duration*60*60*24)
         elseif func == "supportMode" then
             self:toggleSupportMode(client)
         end

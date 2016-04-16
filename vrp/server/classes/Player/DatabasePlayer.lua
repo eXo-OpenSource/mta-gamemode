@@ -149,6 +149,7 @@ function DatabasePlayer:load()
 	self:setJobLevel(row.JobLevel)
 	self:setPlayTime(row.PlayTime)
 	self:setPrison(row.PrisonTime)
+	self:setWarns()
 	self.m_PhoneNumber = (PhoneNumber.load(1, self.m_Id) or PhoneNumber.generateNumber(1, self.m_Id))
 end
 
@@ -221,6 +222,18 @@ function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e e
 function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
 function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if self:isActive() then self:setPrivateSync("LastPlayTime", self.m_LastPlayTime) end end
+
+function DatabasePlayer:setWarns()
+	local rows = sql:queryFetch("SELECT * FROM ??_warns WHERE userId = ?;", sql:getPrefix(), self.m_Id)
+	if #rows > 0 then
+		outputChatBox(_("Vorsicht du hast bereits %d Verwarnung/en!", self, #rows),self, 255,0,0)
+		self:setPublicSync("Warns", rows)
+	end
+end
+
+function DatabasePlayer:getWarns()
+	return self.m_Warns
+end
 
 function DatabasePlayer:setWantedLevel(level)
 	-- give Achievement

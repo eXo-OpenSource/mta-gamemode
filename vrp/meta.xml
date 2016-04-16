@@ -55,6 +55,7 @@
 	<script src="server/classes/Player/WhiteList.lua" type="server"/>
 	<script src="server/classes/PhoneInteraction.lua" type="server"/>
 	<script src="server/classes/Player/Ban.lua" type="server"/>
+	<script src="server/classes/Player/Warn.lua" type="server"/>
 	<script src="server/classes/Garage.lua" type="server"/>
 	<script src="server/classes/API.lua" type="server"/>
 	<script src="server/classes/Provider.lua" type="server"/>

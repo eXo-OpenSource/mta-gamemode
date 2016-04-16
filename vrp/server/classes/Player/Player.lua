@@ -76,7 +76,11 @@ function Player:destructor()
 end
 
 function Player:connect()
-	if not Ban.checkBan(self) then return end
+	if not Ban.checkBan(self) then
+		if not Warn.checkWarn(self) then
+			return
+		end
+	end
 end
 
 function Player:join()
