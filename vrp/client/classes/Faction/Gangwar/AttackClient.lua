@@ -5,7 +5,7 @@
 -- *  PURPOSE:     AttackSession Client
 -- *
 -- ****************************************************************************
-
+local w,h = guiGetScreenSize()
 AttackClient = inherit(Object)
 local pseudoSingleton
 
@@ -114,3 +114,31 @@ function AttackClient.stopClient(   )
 	end
 end
 addEventHandler("AttackClient:stopClient",localPlayer,AttackClient.stopClient)
+
+addEvent("AttackClient:sendBreakMsg", true)
+function AttackClient.onBreakCMD( bState )
+	if pseudoSingleton then 
+		if bState then 
+			pseudoSingleton.m_State = "Gebraked"
+		else 
+			pseudoSingleton.m_State = "Entbraked"
+		end
+		if not pseudoSingleton.m_RenderFunc then 
+			pseudoSingleton.m_RenderFunc = bind( AttackClient.m_BreakRender, pseudoSingleton)
+		end
+		pseudoSingleton.m_StartTick = getTickCount()
+		removeEventHandler("onClientRender", root, pseudoSingleton.m_RenderFunc)
+		addEventHandler("onClientRender", root, pseudoSingleton.m_RenderFunc)
+	end
+end
+addEventHandler("AttackClient:sendBreakMsg", localPlayer, AttackClient.onBreakCMD)
+
+function AttackClient.m_BreakRender( )
+	local now = getTickCount()
+	if now - pseudoSingleton.m_StartTick < 5000 then 
+		dxDrawRectangle(w*0.3,h*0.6,w*0.4,h*0.05,tocolor(0,0,0,200))
+		dxDrawText("#FFFFFF[Sie haben diese Fahrzeug #00FFFF"..pseudoSingleton.m_State.." #FFFFFF!]",w*0.3,h*0.6,w*0.7,h*0.6+h*0.05,tocolor(255,255,255,255),1,"sans","center","center",false,false,false,true)
+	else removeEventHandler("onClientRender", root, pseudoSingleton.m_RenderFunc)
+	end
+end
+
