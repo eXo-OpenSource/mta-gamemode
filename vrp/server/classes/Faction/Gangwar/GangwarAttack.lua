@@ -24,6 +24,9 @@ end
 
 function AttackSession:destructor()
 	self:destroyBarricadeCars( ) 
+	if isTimer( self.m_BattleTime ) then 
+		killTimer( self.m_BattleTime )
+	end
 end
 
 function AttackSession:setupSession ( )
@@ -246,6 +249,9 @@ function AttackSession:attackLose() --// loose for team1
 	
 	self.m_AreaObj:attackEnd(  )
 	self:stopClients()
+	if isTimer( self.m_BattleTime ) then 
+		killTimer( self.m_BattleTime )
+	end
 end
 
 function AttackSession:attackWin() --// win for team1
@@ -258,6 +264,9 @@ function AttackSession:attackWin() --// win for team1
 
 	self.m_AreaObj:attackEnd(  )
 	self:stopClients()
+	if isTimer( self.m_BattleTime ) then 
+		killTimer( self.m_BattleTime )
+	end
 end
 
 function AttackSession:getFactions()
@@ -269,14 +278,25 @@ function AttackSession:createBarricadeCars( )
 	local iCarCount = self.m_AreaObj.m_CarCount
 	local x,y,z = self.m_AreaObj.m_Position[1], self.m_AreaObj.m_Position[2], self.m_AreaObj.m_Position[3]
 	local newX, newY
-	local factionColor = factionColors[self.m_AreaObj.m_Owner]
+	local factionColor = factionColors[self.m_Faction1.m_Id]
 	for i = 1, iCarCount do 
 		newX, newY = getPointFromDistanceRotation(x, y, 6, 360 * (i/5));
 		self.m_Barricades[i] = createVehicle( 482, newX, newY, z)
 		setElementData( self.m_Barricades[i] , "breakCar", true)
 		setVehicleDamageProof( self.m_Barricades[i], true )
 		setVehicleColor( self.m_Barricades[i], factionColor.r , factionColor.g , factionColor.b ) 
+		self.m_OnEnter = bind( AttackSession.onVehicleEnter, self)
+		addEventHandler("onVehicleStartEnter", self.m_Barricades[i], self.m_OnEnter )
 	end 
+end
+
+function AttackSession:onVehicleEnter( pEnter )
+	if pEnter.m_Faction == self.m_Faction1 then 
+	
+	else 
+		pEnter:sendError(_("Sie sind kein Angreifer!", pEnter))
+		cancelEvent()
+	end
 end
 
 function AttackSession:onBreakCMD( cmdstring )
@@ -284,8 +304,10 @@ function AttackSession:onBreakCMD( cmdstring )
 		if source.m_Faction == self.m_Faction1 then
 			local pOcc = getPedOccupiedVehicle( source )
 			if pOcc then
-				if getElementData( pOcc, "breakCar") then 
-					setElementFrozen( pOcc, not isElementFrozen( pOcc ) )
+				if getElementData( pOcc, "breakCar") then
+					local bState = not isElementFrozen( pOcc ) 
+					setElementFrozen( pOcc, bState)
+					source:triggerEvent("AttackClient:sendBreakMsg", bState)
 				end
 			end
 		end
