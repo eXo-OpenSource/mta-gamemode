@@ -18,7 +18,7 @@ inherit(Singleton, AdminGUI)
 addRemoteEvents{"showAdminMenu"}
 
 function AdminGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-200, 600, 400, false, true)
+	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-200, 600, 400, false, false)
 
 	self.m_adminButton = {}
 
@@ -158,7 +158,7 @@ function AdminGUI:onButtonClick(func)
 	if func == "gethere" or func == "goto" then
 		triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer)
 	elseif func == "kick" then
-		InputBox:new(_("Spieler %s kicken", selectedPlayer:getName()),
+		InputBox:new(_("Spieler %s kicken", self.m_SelectedPlayer:getName()),
 				_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", self.m_SelectedPlayer:getName()),
 				function (reason)
 					triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason)
@@ -181,7 +181,7 @@ function AdminGUI:onButtonClick(func)
 				WarnManagement:new(self.m_SelectedPlayer, self)
 				self:close()
 	elseif func == "permaban" then
-		InputBox:new(_("Spieler %s permanent Bannen", selectedPlayer:getName()),
+		InputBox:new(_("Spieler %s permanent Bannen", self.m_SelectedPlayer:getName()),
 				_("Aus welchem Grund möchtest du den Spieler %s permanent bannen?", self.m_SelectedPlayer:getName()),
 				function (reason)
 					triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason)

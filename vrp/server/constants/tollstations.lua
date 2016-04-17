@@ -99,3 +99,37 @@ TOLL_STATIONS = {
 		Type = 1;
 	};
 }
+
+TOLL_LONG_VEHICLES = {
+	[403] = true;
+	[406] = true;
+	[407] = true;
+	[408] = true;
+	[409] = true;
+	[414] = true;
+	[427] = true;
+	[428] = true;
+	[431] = true;
+	[432] = true;
+	[433] = true;
+	[437] = true;
+	[440] = true;
+	[443] = true;
+	[444] = true;
+	[455] = true;
+	[456] = true;
+	[486] = true;
+	[498] = true;
+	[499] = true;
+	[508] = true;
+	[514] = true;
+	[515] = true;
+	[524] = true;
+	[525] = true;
+	[544] = true;
+	[552] = true;
+	[556] = true;
+	[557] = true;
+	[578] = true;
+	[609] = true;
+}

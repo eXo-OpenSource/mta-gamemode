@@ -697,11 +697,13 @@ function Player:setPrison(duration)
 end
 
 function Player:getRemainingPrisonTime(player)
-	local timerLeft = 0
+    local timerLeft = false
 	if isTimer(self.m_PrisonTimer) then
 		timerLeft = getTimerDetails(self.m_PrisonTimer)/1000
 	end
-	self.m_PrisonTime = self.m_PrisonTime - timerLeft
+	if timerLeft then
+		self.m_PrisonTime = timerLeft
+	end
 	return self.m_PrisonTime
 end
 

@@ -13,7 +13,7 @@ function TranslationManager:constructor()
 	self.m_AddonTranslations = {}
 
 	-- Load standard translations
-	self:loadTranslation("de")
+	self:loadTranslation("en")
 end
 
 function TranslationManager:loadTranslation(locale, poFile)
@@ -44,7 +44,7 @@ function TranslationManager:loadTranslation(locale, poFile)
 end
 
 function TranslationManager:translate(message, locale)
-	if locale == "en" then
+	if locale == "de" then
 		return message
 	end
 
