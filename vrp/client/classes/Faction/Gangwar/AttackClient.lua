@@ -9,7 +9,7 @@ local w,h = guiGetScreenSize()
 AttackClient = inherit(Object)
 local pseudoSingleton
 
-function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime) 
+function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos) 
 	self.m_Faction = faction1 
 	self.m_Faction2 = faction2
 	self.m_Participants = pParticipants 
@@ -17,7 +17,7 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	localPlayer.attackSession = self 
 	self.m_GangwarDamage = 0
 	self.m_GangwarKill = 0
-	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime )
+	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime, pPos )
 	self.m_DamageFunc = bind( self.addDamage, self)
 	addEventHandler("onClientPlayerDamage",root, self.m_DamageFunc)
 	self.m_KillFunc = bind( self.addKill, self)
@@ -99,11 +99,11 @@ end
 addEventHandler("AttackClient:synchronizeLists",root,AttackClient.remoteSynchronize)
 
 addEvent("AttackClient:launchClient",true)
-function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime )
+function AttackClient.newClient( faction1, faction2, pParticipants, pDisqualified, pTime, pPos )
 	if pseudoSingleton then 
 		pseudoSingleton:delete()
 	end
-	pseudoSingleton = AttackClient:new( faction1, faction2, pParticipants, pDisqualified, pTime)
+	pseudoSingleton = AttackClient:new( faction1, faction2, pParticipants, pDisqualified, pTime, pPos)
 end
 addEventHandler("AttackClient:launchClient",localPlayer,AttackClient.newClient)
 

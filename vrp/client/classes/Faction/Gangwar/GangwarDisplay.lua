@@ -12,12 +12,13 @@ local w,h = guiGetScreenSize()
 local width, height = w*0.2,h*0.1
 local startX,startY = w- width*1.1, h*0.5-(height/2)
 
-function GangwarDisplay:constructor( fac1, fac2, pAttackClient, pInitTime) 
+function GangwarDisplay:constructor( fac1, fac2, pAttackClient, pInitTime, pPos ) 
 	self.m_Faction1 = fac1
 	self.m_Faction2 = fac2 
 	self.m_AttackClient = pAttackClient 
 	self.m_TimeLeft = pInitTime
 	self.m_BindRender = bind( self.render,self)
+	self.m_FlagPosition = pPos
 	addEventHandler("onClientRender",root,self.m_BindRender)
 	self.m_BindClick = bind(self.click,self)
 	addEventHandler("onClientClick",root,self.m_BindClick)
@@ -110,7 +111,21 @@ function GangwarDisplay:rend_Display( )
 	dxDrawImage( startX+(bottom_width*2 + width*0.01)+ bottom_width*0.075 , startY+height*0.5+(height*0.495)*0.3 , bottom_width*0.2, bottom_width*0.2, "files/images/gangwar/gw_time.png" )
 	self:dxDrawBoxShape(startX,startY,width,height,tocolor(0,0,0,150))
 	
-	
+	self:rend_Flag() 
+end
+
+function GangwarDisplay:rend_Flag() 
+	if self.m_FlagPosition then 
+		local x, y = self.m_FlagPosition[1], self.m_FlagPosition[2], self.m_FlagPosition[3]
+		local px, py = getElementPosition( localPlayer )
+		local distance = math.floor( getDistanceBetweenPoints2D( x, y, px ,py) )
+		if distance > 15 then 
+			distance = "#ee0000"..distance
+		else 
+			distance = "#00ee00"..distance
+		end
+		dxDrawText( distance.."#ffffff/15 m",startX, startY - height*0.2, width, height*0.2, tocolor( 255, 255, 255, 255), 1,"default-bold","left","top", false, false, false, true)
+	end
 end
 
 
