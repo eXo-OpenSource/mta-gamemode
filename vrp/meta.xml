@@ -837,7 +837,7 @@
 	<vrpfile src="files/images/Gangwar/gw_damage.png"/>
 	<vrpfile src="files/images/Gangwar/gw_kill.png"/>
 	<vrpfile src="files/images/Gangwar/gw_time.png"/>
-	
+
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
@@ -848,7 +848,6 @@
 	<vrpfile src="files/images/Textures/PoliceTexture.png"/>
 	<vrpfile src="files/images/Textures/RescueTexture.png"/>
 	<vrpfile src="files/images/Textures/RescueTexture2.png"/>
-
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
@@ -950,7 +949,6 @@
 	<vrpfile src = "files/images/CircuitBreaker/smdcapacitor.png" />
 	<vrpfile src = "files/images/CircuitBreaker/smdresistor.png" />
 
-
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/Halleluja.mp3"/>
@@ -963,6 +961,7 @@
 	<vrpfile src="files/audio/Payday.mp3"/>
 	<vrpfile src="files/audio/cash_register.ogg"/>
 	<vrpfile src="files/audio/yelp.ogg"/>
+
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>

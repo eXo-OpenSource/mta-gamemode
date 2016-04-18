@@ -58,7 +58,7 @@ function VehicleTuningGUI:constructor(vehicle)
     self.m_CurrentUpgrades[VehicleSpecialProperty.Color] = {self.m_Vehicle:getColor(true)}
 	self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor] = {self.m_Vehicle:getHeadLightColor()}
 
-    self.m_Music = Sound.create("https://jusonex.net/public/saonline/Audio/GarageMusic.mp3", true)
+    self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
     self.m_Vehicle:setOverrideLights(2)
 end
 

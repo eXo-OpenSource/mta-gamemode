@@ -25,12 +25,13 @@ ADMIN_RANK_PERMISSION = {
 	["goto"] = RANK.Supporter,
 	["warn"] = RANK.Supporter,
 	["supportMode"] = RANK.Supporter,
+	["addWarn"] = RANK.Supporter,
 	["timeban"] = RANK.Moderator,
 	["permaban"] = RANK.SuperModerator,
 	["nickchange"] = RANK.SuperModerator,
 	["setFaction"] = RANK.SuperModerator,
-	["setCompany"] = RANK.SuperModerator
-
+	["setCompany"] = RANK.SuperModerator,
+	["removeWarn"] = RANK.SuperModerator
 }
 
 VEHICLESHOPS = {

@@ -257,24 +257,57 @@ WarnManagement = inherit(GUIForm)
 function WarnManagement:constructor(player, adminGui)
 	self.m_Player = player
 	self.m_AdminGui = adminGui
-	GUIForm.constructor(self, screenWidth/2-400/2, screenHeight/2-300/2, 400, 300)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Warn Verwaltung von %s", player:getName()), true, true, self)
-	if player:getPublicSync("Warns") then
-		self.m_PlayersGrid = GUIGridList:new(10, 30, self.m_Width-20, 200, self)
-		self.m_PlayersGrid:addColumn(_"Warn", 0.2)
-		self.m_PlayersGrid:addColumn(_"Grund", 0.2)
-		self.m_PlayersGrid:addColumn(_"Admin", 0.2)
-		self.m_PlayersGrid:addColumn(_"Datum", 0.2)
-		self.m_PlayersGrid:addColumn(_"Ablauf", 0.2)
-		for index, row in pairs(player:getPublicSync("Warns")) do
-			self.m_PlayersGrid:addItem(row.Id, row.reason, row.adminId, row.created, row.expires)
+	GUIForm.constructor(self, screenWidth/2-500/2, screenHeight/2-270/2, 500, 270)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Warns von %s", player:getName()), true, true, self)
+	self.m_Window:addBackButton(function () AdminGUI:getSingleton():show() end)
+
+	self.m_addWarn = GUIButton:new(10, 235, self.m_Width/2-15, 30, _"Verwarnen",  self):setBackgroundColor(Color.Orange):setFontSize(1)
+	self.m_removeWarn = GUIButton:new(self.m_Width/2+5, 235, self.m_Width/2-15, 30, _"Warn löschen",  self):setBackgroundColor(Color.Red):setFontSize(1)
+
+	self.m_removeWarn.onLeftClick = function()
+		if not self.m_WarnGrid:getSelectedItem() then
+			ErrorBox:new(_"Kein Warn ausgewählt!")
+			return
 		end
-	else
-		GUILabel:new(10,115,self.m_Width-20,30, _("Der Spieler %s hat keine Warns!", player:getName()), self):setAlignX("center")
+		triggerServerEvent("adminTriggerFunction", root, "removeWarn", player, self.m_WarnGrid:getSelectedItem().Id)
+		setTimer(function()
+			self:loadWarns()
+		end	,500, 1)
 	end
-	self.m_addWarn = GUIButton:new(10, 235, 185, 30, _"Verwarnen",  self):setBackgroundColor(Color.Orange):setFontSize(1)
-	self.m_removeWarn = GUIButton:new(205, 235, 185, 30, _"Warn löschen",  self):setBackgroundColor(Color.Red):setFontSize(1)
 
+	self.m_addWarn.onLeftClick = function()
+		AdminInputBox:new(
+			_("Spieler %s verwarnen", player:getName()),
+			_"Dauer in Tagen:",
+			function (reason, duration)
+				triggerServerEvent("adminTriggerFunction", root, "addWarn", player, reason, duration)
+				setTimer(function()
+					self:loadWarns()
+				end	,500, 1)
+			end)
+		end
 
+	self:loadWarns()
+end
 
+function WarnManagement:loadWarns()
+	if self.m_WarnGrid then delete(self.m_WarnGrid) end
+	if self.m_NoWarnLabel then delete(self.m_NoWarnLabel) end
+
+	if #self.m_Player:getPublicSync("Warns") > 0 then
+		self.m_WarnGrid = GUIGridList:new(10, 30, self.m_Width-20, 200, self)
+		self.m_WarnGrid:addColumn(_"Grund", 0.3)
+		self.m_WarnGrid:addColumn(_"Admin", 0.2)
+		self.m_WarnGrid:addColumn(_"Datum", 0.25)
+		self.m_WarnGrid:addColumn(_"Ablauf", 0.25)
+		local item
+		for index, row in pairs(self.m_Player:getPublicSync("Warns")) do
+			item = self.m_WarnGrid:addItem(row.reason, row.adminName, getOpticalTimestamp(row.created), getOpticalTimestamp(row.expires))
+			item.Id = row.Id
+		end
+		self.m_removeWarn:setEnabled(true)
+	else
+		self.m_NoWarnLabel = GUILabel:new(10,115,self.m_Width-20,30, _("Der Spieler %s hat keine Warns!", self.m_Player:getName()), self):setAlignX("center")
+		self.m_removeWarn:setEnabled(false)
+	end
 end

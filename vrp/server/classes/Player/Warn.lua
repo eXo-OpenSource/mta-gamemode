@@ -9,7 +9,6 @@ Warn = {}
 function Warn.addWarn(who, author, reason, duration)
 	local authorId = 0
 	if type(author) == "userdata" and getElementType(author) == "player" then
-		author = getPlayerName(author)
 		authorId = author:getId()
 	elseif author == nil then
 		author = "System"
@@ -25,7 +24,11 @@ function Warn.addWarn(who, author, reason, duration)
 
 	local expires = duration + getRealTime().timestamp
 
-	sql:queryExec("INSERT INTO ??_warns(userId, author, reason, expires, created) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), who, authorId, reason, expires, getRealTime().timestamp)
+	sql:queryExec("INSERT INTO ??_warns(userId, adminId, reason, expires, created) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), who, authorId, reason, expires, getRealTime().timestamp)
+
+	if isElement(player) then
+		player:setWarns()
+	end
 
 	if Warn.getAmount(who) >= 3 then
 		if not player then
@@ -47,9 +50,20 @@ function Warn.getAmount(who)
 	return #rows
 end
 
+function Warn.removeWarn(who, warnId)
+	if type(who) == "userdata" and getElementType(who) == "player" then
+		player = who
+		who = player:getId()
+	end
+	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? AND Id = ?;", sql:getPrefix(), who, warnId)
+	if isElement(player) then
+		player:setWarns()
+	end
+end
+
 function Warn.checkWarn(player)
 	local id = player:getId()
-	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? expires < ?;", sql:getPrefix(), id, getRealTime().timestamp)
+	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? AND expires < ?;", sql:getPrefix(), id, getRealTime().timestamp)
 
 	if Warn.getAmount(who) >= 3 then
 		sql:queryFetchSingle(Async.waitFor(), "SELECT expires FROM ??_warns WHERE userId = ? ORDER BY expires;", sql:getPrefix(), id)
