@@ -519,5 +519,6 @@ function getOpticalTimestamp(ts)
 	local time = getRealTime(ts)
 	local month = time.month+1
 	local year = time.year-100
-	return tostring(time.monthday.."."..month.."."..year.."-"..time.hour..":"..time.minute)
+	return ("%s.%s.%s-%s:%s"):format(time.monthday, month, year, time.hour, time.minute)
+	--return tostring(time.monthday.."."..month.."."..year.."-"..time.hour..":"..time.minute)
 end
