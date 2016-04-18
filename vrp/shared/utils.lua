@@ -514,3 +514,10 @@ function getWeekNumber()	--Maybe needs optimization
 
 	return math.floor((realtime.yearday + firstYearDayTime.weekday) / 7)
 end
+
+function getOpticalTimestamp(ts)
+	local time = getRealTime(ts)
+	local month = time.month+1
+	local year = time.year-100
+	return tostring(time.monthday.."."..month.."."..year.."-"..time.hour..":"..time.minute)
+end

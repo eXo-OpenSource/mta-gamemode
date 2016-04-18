@@ -225,9 +225,14 @@ function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if 
 
 function DatabasePlayer:setWarns()
 	local rows = sql:queryFetch("SELECT * FROM ??_warns WHERE userId = ?;", sql:getPrefix(), self.m_Id)
+	for index, row in pairs(rows) do
+		row.adminName = Account.getNameFromId(row["adminId"])
+	end
+	self.m_Warns = rows
+
+	self:setPublicSync("Warns", rows)
 	if #rows > 0 then
 		outputChatBox(_("Vorsicht du hast bereits %d Verwarnung/en!", self, #rows),self, 255,0,0)
-		self:setPublicSync("Warns", rows)
 	end
 end
 

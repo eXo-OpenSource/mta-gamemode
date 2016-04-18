@@ -82,6 +82,11 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration)
         elseif func == "addWarn" then
             self:sendShortMessage(_("hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", client, target:getName(), duration, reason))
             Warn.addWarn(target, client, reason, duration*60*60*24)
+            target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, client:getName(), duration, reason), 255, 0, 0)
+        elseif func == "removeWarn" then
+            self:sendShortMessage(_("hat einen Warn von %s entfernt!", client, target:getName()))
+            local id = reason
+            Warn.removeWarn(target, id)
         elseif func == "supportMode" then
             self:toggleSupportMode(client)
         end
