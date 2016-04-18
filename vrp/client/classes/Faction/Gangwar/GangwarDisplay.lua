@@ -128,7 +128,6 @@ function GangwarDisplay:rend_Flag()
 	end
 end
 
-
 function GangwarDisplay:drawShadowBoxText( text,x,y,w,h, color,... )
 	self:dxDrawBoxText(text,x-1,y-1,w,h,tocolor(0,0,0,255),...)
 	self:dxDrawBoxText(text,x+1,y+1,w,h,tocolor(0,0,0,255),...)
@@ -176,3 +175,4 @@ function GangwarDisplay:formatTick( tick )
 		 return string.format("%.2d:%.2d", tick/60%60, tick%60)
 	end
 end
+

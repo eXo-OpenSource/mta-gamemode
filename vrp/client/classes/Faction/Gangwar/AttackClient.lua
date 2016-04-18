@@ -22,6 +22,8 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	addEventHandler("onClientPlayerDamage",root, self.m_DamageFunc)
 	self.m_KillFunc = bind( self.addKill, self)
 	addEventHandler("onClientPlayerWasted",root, self.m_KillFunc)
+	self.m_bindWeaponBoxFunc = bind( AttackClient.showWeaponBox, self )
+	addEventHandler( "Gangwar:showWeaponBox", localPlayer, self.m_bindWeaponBoxFunc)
 end
 
 function AttackClient:addDamage( attacker, weapon, bodypart, loss )
@@ -139,6 +141,14 @@ function AttackClient.m_BreakRender( )
 		dxDrawRectangle(w*0.3,h*0.6,w*0.4,h*0.05,tocolor(0,0,0,200))
 		dxDrawText("#FFFFFF[Sie haben diese Fahrzeug #00FFFF"..pseudoSingleton.m_State.." #FFFFFF!]",w*0.3,h*0.6,w*0.7,h*0.6+h*0.05,tocolor(255,255,255,255),1,"sans","center","center",false,false,false,true)
 	else removeEventHandler("onClientRender", root, pseudoSingleton.m_RenderFunc)
+	end
+end
+
+addEvent("Gangwar:showWeaponBox", true )
+function AttackClient:showWeaponBox() 
+	if not self.m_WeaponBoxUI then 
+		self.m_WeaponBoxUI = WeaponBoxGUI:new( self )
+	else outputChatBox( tostring( self.m_WeaponBoxUI )  )
 	end
 end
 
