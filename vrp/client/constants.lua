@@ -212,7 +212,12 @@ HelpTexts = {
 			Anschließend holst du dir deinen kleinen Pick up Truck (ebenfalls im roten Marker) und
 			belieferst den auf der Karte angezeigten Supermarkt ("Waypoint"-Blip).
 		]];
-		Logistician = [[Todo]];
+		Logistician = [[
+			Als Logistiker ist es dein Job, Container zum anderen Verladezentrum zu fahren.
+			Dazu hast du einen DFT-300 zur verfügung, den du dir am roten Marker erstellen kannst.
+			Anschließend musst du unter den Ladekran fahren und warten bis der Container aufgeladen wurde.
+			Dein Ziel wird dir auf der Karte markiert.
+		]];
 		Lumberjack = [[
 			Als Holzfäller musst du die Bäume am Hügel fällen und sie zum Sägewerk fahren.
 			Sofern du genug Bäume gefällt hast schnappst du dir einen Flatbed und fährst in den
@@ -235,14 +240,28 @@ HelpTexts = {
 		]];
 		RoadSweeper = [[
 			Als Straßenkehrer hast du die Aufgabe mithilfe der Kehrmaschine die Straßen von Los Santos sauberzuhalten.
-			Lufe in den roten Marker und hole dir dein benötigtes Fahrzeug.
+			Laufe in den roten Marker und hole dir dein benötigtes Fahrzeug.
 			Sofern du es hast kannst du nun losfahren und über den auf der Straße liegenden Müll fahren um ihn aufzukehren.
 		]];
-		HeliTransport = [[Todo]];
-		Trashman = [[Todo]];
+		HeliTransport = [[
+			Du bist der Pilot eines Helikopters und musst Waren transportieren.
+			Deinen Helikopter bekommst du beim roten Marker.
+			Mit diesem begibst du dich dann zum markierten Ort an den LS-Docks, wo Waren auf dich warten.
+			Lande darauf und fliege anschließend zum angegebenen Zielort!
+		]];
+		Trashman = [[
+			Als Müllmann musst du mit deinem Müllwagen Abfalltonnen & Container abholen.
+			Im roten Marker bekommst du dein benötigtes Fahrzeug.
+			In den Straßen von Los Santos sind Mülltonnen verteilt, neben denen du halten musst.
+			Fahre Anschließend zur Deponie zurück und lade deinen Müll in der Dump-Area aus.
+		]];
 		ServiceTechnician = [[Todo]];
 		PizzaDelivery = [[Todo]];
-		ForkLift = [[Todo]];
+		ForkLift = [[
+			Wenn du Gabelstaplerfahrer bist, kannst du mit deinem Forklift Kisten aufladen.
+			Diese musst du anschließend bei den LKW's abliefern.
+			Deinen Forklift kannst du dir am roten Marker erstellen.
+		]];
 	};
 	Events = {
 		Deathmatch = [[Todo]];
