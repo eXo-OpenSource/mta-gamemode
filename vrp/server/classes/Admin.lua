@@ -72,21 +72,26 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration)
             duration = tonumber(duration)
             self:sendShortMessage(_("hat %s für %d Minuten ins Prison gesteckt! Grund: %s", client, target:getName(), duration, reason))
             target:setPrison(duration*60)
+            self:addPunishLog(client, target, func, reason, duration*60)
         elseif func == "timeban" then
             duration = tonumber(duration)
             self:sendShortMessage(_("hat %s für %d Stunden ins gebannt! Grund: %s", client, target:getName(), duration, reason))
             Ban.addBan(target, client, reason, duration*60*60)
+            self:addPunishLog(client, target, func, reason, duration*60*60)
         elseif func == "permaban" then
             self:sendShortMessage(_("hat %s permanent gebannt! Grund: %s", client, target:getName(), reason))
             Ban.addBan(target, client, reason)
+            self:addPunishLog(client, target, func, reason, 0)
         elseif func == "addWarn" then
             self:sendShortMessage(_("hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", client, target:getName(), duration, reason))
             Warn.addWarn(target, client, reason, duration*60*60*24)
             target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, client:getName(), duration, reason), 255, 0, 0)
+            self:addPunishLog(client, target, func, reason, duration*60*60*24)
         elseif func == "removeWarn" then
             self:sendShortMessage(_("hat einen Warn von %s entfernt!", client, target:getName()))
             local id = reason
             Warn.removeWarn(target, id)
+            self:addPunishLog(client, target, func, "", 0)
         elseif func == "supportMode" then
             self:toggleSupportMode(client)
         end
@@ -264,6 +269,11 @@ function Admin:teleportTo(player,cmd,ort)
 			outputChatBox(v..": "..strings[v], player, 0, 125, 0 )
 		end
 	end
+end
+
+function Admin:addPunishLog(admin, player, type, reason, duration)
+    StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
+
 end
 
 function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)

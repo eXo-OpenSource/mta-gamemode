@@ -322,7 +322,7 @@ function Faction:phoneTakeOff(player, key, state, caller)
 end
 
 function Faction:addLog(player, category, text)
-	StatisticsLogger:getSingleton():addLog(player, "faction", self, category, text)
+	StatisticsLogger:getSingleton():addGroupLog(player, "faction", self, category, text)
 end
 
 function Faction:getLog()

@@ -343,7 +343,7 @@ function Group:phoneTakeOff(player, key, state, caller)
 end
 
 function Group:addLog(player, category, text)
-	StatisticsLogger:getSingleton():addLog(player, "group", self, category, text)
+	StatisticsLogger:getSingleton():addGroupLog(player, "group", self, category, text)
 end
 
 function Group:getLog()

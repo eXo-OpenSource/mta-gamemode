@@ -13,16 +13,35 @@ function StatisticsLogger:logMoney(player, amount, desc)
     end
 end
 
-function StatisticsLogger:addLog(player, groupType, group, category, desc)
+function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
     local userId = 0
     local groupId = 0
     if isElement(player) then userId = player:getId() end
     if group then groupId = group:getId() end
-    sql:queryExec("INSERT INTO ??_logs (UserId, GroupType, GroupId, Category, Description, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
+    sql:queryExec("INSERT INTO ??_logsGroups (UserId, GroupType, GroupId, Category, Description, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
         sql:getPrefix(), userId, groupType, groupId, category, desc, getRealTime().timestamp)
 end
 
 function StatisticsLogger:getGroupLogs(groupType, groupId)
-    local result = sql:queryFetch("SELECT * FROM ??_logs WHERE GroupType = ? AND GroupId = ? ORDER BY Id DESC", sql:getPrefix(), groupType, groupId)
+    local result = sql:queryFetch("SELECT * FROM ??_logsGroups WHERE GroupType = ? AND GroupId = ? ORDER BY Id DESC", sql:getPrefix(), groupType, groupId)
+    return result
+end
+
+function StatisticsLogger:addPunishLog(admin, player, type, reason, duration)
+    local userId = 0
+    local adminId = 0
+    if isElement(admin) then adminId = admin:getId() end
+    if isElement(player) then userId = player:getId() end
+
+    sql:queryExec("INSERT INTO ??_logsPunish (UserId, AdminId, Type, Reason, Duration, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
+        sql:getPrefix(), userId, adminId, type, reason, duration, getRealTime().timestamp)
+end
+
+function StatisticsLogger:getPunishLogs(userId)
+    if userId then
+        local result = sql:queryFetch("SELECT * FROM ??_logsPunish WHERE UserId = ? ORDER BY Id DESC", sql:getPrefix(), userId)
+    else
+        local result = sql:queryFetch("SELECT * FROM ??_logsPunish WHERE ORDER BY Id DESC", sql:getPrefix())
+    end
     return result
 end
