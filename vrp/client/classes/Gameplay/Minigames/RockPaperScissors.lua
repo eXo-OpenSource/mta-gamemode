@@ -108,14 +108,3 @@ addEventHandler("rockPaperScissorsShowResult", root,
 		RockPaperScissorsResult:new(result, pTable)
 	end
 )
-
-
--- DEBUG:
---[[
-addCommandHandler("n",
-	function(result, pTable)
-		local tab = {[localPlayer] = "Paper"}
-		RockPaperScissorsResult:new("win", tab)
-	end
-)
-]]

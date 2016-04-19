@@ -194,6 +194,19 @@ function FactionState:getFullReasonFromShortcut(reason)
 	return reason
 end
 
+
+function FactionState:sendStateChatMessage(sourcePlayer,text)
+	local playerId = sourcePlayer:getId()
+	local faction = sourcePlayer:getFaction()
+	local rank = faction:getPlayerRank(playerId)
+	local rankName = faction:getRankName(rank)
+	local r,g,b = 200, 100, 100
+	local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), text)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b)
+	end
+end
+
 function FactionState:Command_suspect(player,cmd,target,amount,...)
 	if player:isFactionDuty() then
 		local amount = tonumber(amount)

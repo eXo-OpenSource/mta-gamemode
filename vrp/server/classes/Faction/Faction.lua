@@ -88,6 +88,10 @@ function Faction:getShortName()
 	return self.m_Name_Short
 end
 
+function Faction:getRankName(rank)
+	return self.m_RankNames[rank]
+end
+
 function Faction:getRandomSkin()
 	local i = 1
 	local skins = {}
