@@ -31,6 +31,7 @@ function FactionState:constructor()
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
+	addCommandHandler("m",bind(self.Command_megaphone, self))
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
@@ -196,14 +197,40 @@ end
 
 
 function FactionState:sendStateChatMessage(sourcePlayer,text)
-	local playerId = sourcePlayer:getId()
 	local faction = sourcePlayer:getFaction()
-	local rank = faction:getPlayerRank(playerId)
-	local rankName = faction:getRankName(rank)
-	local r,g,b = 200, 100, 100
-	local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), text)
-	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendMessage(text, r, g, b)
+	if faction and faction:isStateFaction() == true then
+		if sourcePlayer:isFactionDuty() then
+			local playerId = sourcePlayer:getId()
+			local rank = faction:getPlayerRank(playerId)
+			local rankName = faction:getRankName(rank)
+			local r,g,b = 200, 100, 100
+			local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), text)
+			for k, player in ipairs(self:getOnlinePlayers()) do
+				player:sendMessage(text, r, g, b)
+			end
+		else
+			sourcePlayer:sendError(_("Du bist nicht im Dienst!", sourcePlayer))
+		end
+	end
+end
+
+function FactionState:Command_megaphone(player, cmd, ...)
+	local faction = player:getFaction()
+	if faction and faction:isStateFaction() == true then
+		if player:isFactionDuty() then
+			if player:getOccupiedVehicle() and player:getOccupiedVehicle():getFaction() and player:getOccupiedVehicle():getFaction():isStateFaction() then
+				local playerId = player:getId()
+				local playersToSend = player:getPlayersInChatRange(2)
+				local text = ("[[ %s %s: %s ]]"):format(faction:getShortName(), player:getName(), table.concat({...}, " "))
+				for index = 1,#playersToSend do
+					playersToSend[index]:sendMessage(text, 255, 255, 0)
+				end
+			else
+				player:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", player))
+			end
+		else
+			player:sendError(_("Du bist nicht im Dienst!", player))
+		end
 	end
 end
 
