@@ -20,12 +20,12 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_BreakFunc = bind(  AttackSession.onBreakCMD , self)
 	addEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
-	self:createWeaponBox() 
+	self:createWeaponBox()
 end
 
 function AttackSession:destructor()
-	self:destroyBarricadeCars( ) 
-	if isTimer( self.m_BattleTime ) then 
+	self:destroyBarricadeCars( )
+	if isTimer( self.m_BattleTime ) then
 		killTimer( self.m_BattleTime )
 	end
 end
@@ -247,10 +247,10 @@ function AttackSession:attackLose() --// loose for team1
 
 	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Angriff ist gescheitert!",200,0,0,true)
 	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDas Gebiet wurde verteidigt!",0,180,40,true)
-	
+
 	self.m_AreaObj:attackEnd(  )
 	self:stopClients()
-	if isTimer( self.m_BattleTime ) then 
+	if isTimer( self.m_BattleTime ) then
 		killTimer( self.m_BattleTime )
 	end
 end
@@ -265,7 +265,7 @@ function AttackSession:attackWin() --// win for team1
 
 	self.m_AreaObj:attackEnd(  )
 	self:stopClients()
-	if isTimer( self.m_BattleTime ) then 
+	if isTimer( self.m_BattleTime ) then
 		killTimer( self.m_BattleTime )
 	end
 end
@@ -274,40 +274,40 @@ function AttackSession:getFactions()
 	return self.m_Faction1,self.m_Faction2
 end
 
-function AttackSession:createBarricadeCars( ) 
+function AttackSession:createBarricadeCars( )
 	self.m_Barricades = {	}
 	local iCarCount = self.m_AreaObj.m_CarCount
 	local x,y,z = self.m_AreaObj.m_Position[1], self.m_AreaObj.m_Position[2], self.m_AreaObj.m_Position[3]
 	local newX, newY
 	local factionColor = factionColors[self.m_Faction1.m_Id]
-	for i = 1, iCarCount do 
+	for i = 1, iCarCount do
 		newX, newY = getPointFromDistanceRotation(x, y, 6, 360 * (i/5));
-		self.m_Barricades[i] = createVehicle( 482, newX, newY, z)
-		self.m_Barricades[i].toggleLight = function() end
+		self.m_Barricades[i] = TemporaryVehicle.create(482, newX, newY, z, 0)
+		self.m_Barricades[i]:disableRespawn(true)
 		setElementData( self.m_Barricades[i] , "breakCar", true)
 		setVehicleDamageProof( self.m_Barricades[i], true )
-		setVehicleColor( self.m_Barricades[i], factionColor.r , factionColor.g , factionColor.b ) 
+		setVehicleColor( self.m_Barricades[i], factionColor.r , factionColor.g , factionColor.b )
 		self.m_OnEnter = bind( AttackSession.onVehicleEnter, self)
 		addEventHandler("onVehicleStartEnter", self.m_Barricades[i], self.m_OnEnter )
-	end 
+	end
 end
 
 function AttackSession:onVehicleEnter( pEnter )
-	if pEnter.m_Faction == self.m_Faction1 then 
-	
-	else 
+	if pEnter.m_Faction == self.m_Faction1 then
+
+	else
 		pEnter:sendError(_("Sie sind kein Angreifer!", pEnter))
 		cancelEvent()
 	end
 end
 
 function AttackSession:onBreakCMD( cmdstring )
-	if cmdstring == "fbrake" then 
+	if cmdstring == "fbrake" then
 		if source.m_Faction == self.m_Faction1 then
 			local pOcc = getPedOccupiedVehicle( source )
 			if pOcc then
 				if getElementData( pOcc, "breakCar") then
-					local bState = not isElementFrozen( pOcc ) 
+					local bState = not isElementFrozen( pOcc )
 					setElementFrozen( pOcc, bState)
 					source:triggerEvent("AttackClient:sendBreakMsg", bState)
 				end
@@ -316,30 +316,30 @@ function AttackSession:onBreakCMD( cmdstring )
 	end
 end
 
-function AttackSession:destroyBarricadeCars( ) 
-	for i = 1, #self.m_Barricades do 
+function AttackSession:destroyBarricadeCars( )
+	for i = 1, #self.m_Barricades do
 		destroyElement( self.m_Barricades[i] )
 	end
 	removeEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 end
 
-function AttackSession:createWeaponBox() 
+function AttackSession:createWeaponBox()
 	local x, y, z = self.m_AreaObj.m_Position[1], self.m_AreaObj.m_Position[2], self.m_AreaObj.m_Position[3]
 	self.m_WeaponBox = createObject( 964, x, y, z-1)
 	self.m_bindFunc = bind( AttackSession.onWeaponBoxClick, self )
-	addEventHandler("onElementClicked", self.m_WeaponBox, self.m_bindFunc ) 
+	addEventHandler("onElementClicked", self.m_WeaponBox, self.m_bindFunc )
 end
 
 function AttackSession:onWeaponBoxClick( button, state, clicker)
-	if button == "left" and state == "up" then 
-		if clicker.m_Faction == self.m_Faction1 then 
+	if button == "left" and state == "up" then
+		if clicker.m_Faction == self.m_Faction1 then
 			clicker:triggerEvent( "Gangwar:showWeaponBox" )
 		end
 	end
 end
 
-function AttackSession:destroyWeaponBox() 
-	if self.m_WeaponBox then 
+function AttackSession:destroyWeaponBox()
+	if self.m_WeaponBox then
 		destroyElement( self.m_WeaponBox )
 	end
 end

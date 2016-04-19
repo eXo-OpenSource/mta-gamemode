@@ -29,5 +29,11 @@ end
 
 function TemporaryVehicle:respawn()
 	-- Remove
-	destroyElement(self)
+	if not self.m_disableRespawn == true then
+		destroyElement(self)
+	end
+end
+
+function TemporaryVehicle:disableRespawn(state)
+	self.m_disableRespawn = state
 end
