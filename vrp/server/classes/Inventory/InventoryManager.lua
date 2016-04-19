@@ -20,13 +20,17 @@ function InventoryManager:constructor()
 	self.m_ItemData = self:loadItems()
 	self.Map = {}
 
-	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "throwItem", "c_setItemPlace", "refreshInventory"}
+	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "throwItem", "c_setItemPlace", "refreshInventory", "requestTrade", "acceptTrade", "declineTrade"}
 	addEventHandler("changePlaces", root, bind(self.Event_changePlaces, self))
 	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
 	addEventHandler("c_stackItems", root, bind(self.Event_c_stackItems, self))
 	addEventHandler("throwItem", root, bind(self.Event_throwItem, self))
 	addEventHandler("c_setItemPlace", root, bind(self.Event_c_setItemPlace, self))
 	addEventHandler("refreshInventory", root, bind(self.Event_refreshInventory, self))
+	addEventHandler("requestTrade", root, bind(self.Event_requestTrade, self))
+	addEventHandler("acceptTrade", root, bind(self.Event_acceptTrade, self))
+	addEventHandler("declineTrade", root, bind(self.Event_declineTrade, self))
+
 end
 
 function InventoryManager:destructor()
@@ -109,4 +113,40 @@ end
 
 function InventoryManager:Event_refreshInventory()
 	self:getPlayerInventory(client):syncClient()
+end
+
+function InventoryManager:Event_requestTrade(target, item, amount, money)
+	if self:getPlayerInventory(client):getItemAmount(item) >= amount then
+		local text = _("%s möchte dir %d %s schenken! Geschenk annehmen?", target, client.name, amount, item)
+		if money > 0 then
+			text = _("%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?", target, client.name, amount, item, money)
+		end
+		target:triggerEvent("questionBox", text, "acceptTrade", "declineTrade", client, target, item, amount, money)
+	else
+		client:sendError(_("Du hast nicht ausreichend %s!", client, item))
+	end
+end
+
+function InventoryManager:Event_declineTrade(player, target, item, amount, money)
+	target:sendError(_("Du hast das Angebot von %s abglehent!", target, player:getName()))
+	player:sendError(_("%s hat den Handel abglehent!", player, target:getName()))
+end
+
+function InventoryManager:Event_acceptTrade(player, target, item, amount, money)
+	if self:getPlayerInventory(player):getItemAmount(item) >= amount then
+		if target:getMoney() >= money then
+			player:sendInfo(_("%s hat den Handel akzeptiert!", player, target:getName()))
+			target:sendInfo(_("Du hast das Angebot von %s akzeptiert und erhälst %d %s für %d$!", target, player:getName(), amount, item, money))
+			self:getPlayerInventory(player):removeItem(item, amount)
+			self:getPlayerInventory(target):giveItem(item, amount)
+			target:takeMoney(money)
+			player:giveMoney(money)
+		else
+			player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
+			target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))
+		end
+	else
+		target:sendError(_("%s hat nicht mehr ausreichend %s!", target, player:getName(), item))
+		player:sendError(_("Du hsat nicht mehr ausreichend %s!", player, item))
+	end
 end

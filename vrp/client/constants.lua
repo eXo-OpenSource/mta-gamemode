@@ -84,7 +84,7 @@ for i, v in pairs(UIStyle) do UIStyle[v] = i end
 
 HelpTextTitles = {
 	General = {
-		Main = "vRoleplay";
+		Main = "eXo-Reallife";
 		LoginRegister = "Login/Registration";
 		Team = "Team";
 		OldVRPTeam = "vRP-Team";
@@ -116,7 +116,7 @@ HelpTextTitles = {
 HelpTexts = {
 	General = {
 		Main = [[
-			vRoleplay ist ein Server-Projekt für die Multiplayer Modifikation Multi Theft Auto: San Andreas für GTA: San Andreas.
+			eXo-Reallife ist ein Server-Projekt für die Multiplayer Modifikation Multi Theft Auto: San Andreas für GTA: San Andreas.
 			Ziel des Projekts ist ein möglichst umfangreiches, neuartiges Rollenspiel zu schaffen.
 
 			Wir befinden uns derzeit in der Alpha Testphase, was bedeutet, dass es momentan hauptsächlich darum geht,
@@ -274,7 +274,7 @@ HelpTexts = {
 };
 
 Tipps = {
-	{"", "Schon ein paar vRP-Points bekommen? Nein? Dann suche auf der Karte nach schwebenden vRoleplay Logos oder bekomme Archievements! Mithilfe der vRP-Points kannst du dir diverse Premiumdinge holen oder sie in XP eintauschen."};
+	{"", "Schon ein paar eXo-Points bekommen? Nein? Dann suche auf der Karte nach schwebenden eXo Logos oder bekomme Archievements! Mithilfe der eXo-Points kannst du dir diverse Premiumdinge holen oder sie in XP eintauschen."};
 	{"wie ändere ich mein Karma", "Um auf die gute Seite zu wechseln kannst du a.) gute Taten vollbringen oder b.) ein paar deiner gesammelten XP in Karmapunkte eintauschen. Wenn dein Karma im positiven Bereich ist kannst du dich als Polizist versuchen und weiter positives Karma sammeln. Wenn du auf die böse Seite wechseln willst musst du im Grunde nur böses tun. Raube Läden aus, überfalle Leute und lebe ein Gangsterleben."};
 	{"wie komme ich in eine Gang", "Um in eine Gang zu kommen muss der Gangboss dir eine Einladung senden. Diese wird dir auf dein Handy (Hotkey 'K') geschickt. Du findest sie in der Dashboard App."};
 	{"wie gründe ich eine Gang", "Um eine Gang zu gründen brauchst du a.) reichlich XP und b.) ein großes Vermögen, denn die Gründung kostet 100.000$! Du kannst sie im Self-Menü unter 'Gruppen' gründen. Als Boss hast du Rang 2 und kannst die Ränge nach belieben verwalten. Natürlich kannst du die Gruppe jederzeit verlassen und/oder löschen."};

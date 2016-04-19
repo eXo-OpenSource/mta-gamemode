@@ -229,7 +229,7 @@ function Inventory:getFreePlacesForItem(item)
 		local amount = 0
 		local places = 0
 
-		if self:getPlayerItemAmount(item) >= itemMax then
+		if self:getItemAmount(item) >= itemMax then
 			return 0
 		end
 
@@ -353,7 +353,7 @@ function Inventory:getPlaceForItem(item, itemAmount)
 	end
 end
 
-function Inventory:getPlayerItemAmount(item)
+function Inventory:getItemAmount(item)
 
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-getPlayerItemAnzahl: Spieler: "..getPlayerName(self.m_Owner).." | Item: "..item)
@@ -412,7 +412,7 @@ function Inventory:giveItem(item, amount)
 	if self.m_ItemData[item] then
 		local bag = self.m_ItemData[item]["Tasche"]
 		local itemMax = self.m_ItemData[item]["Item_Max"]
-		if self:getPlayerItemAmount(item)+amount > itemMax  then
+		if self:getItemAmount(item)+amount > itemMax  then
 			self.m_Owner:sendError(_("Die maximale Anzahl des Items %s beträgt %d!", self.m_Owner,item,itemMax))
 			return
 		end

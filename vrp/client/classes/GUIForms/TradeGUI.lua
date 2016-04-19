@@ -8,190 +8,88 @@
 TradeGUI = inherit(GUIForm)
 inherit(Singleton, TradeGUI)
 
-function TradeGUI:constructor(myInventory)
-    local width, height = screenWidth*0.5, screenHeight*0.6
-    GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2-height/2, width, height)
+function TradeGUI:constructor(target)
+    GUIForm.constructor(self, screenWidth/2-600/2, screenHeight/2-400/2, 580, 400)
+    self.m_TargetPlayer = target
 
-    self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Handeln", true, true, self)
-
-    -- Vertical line between local and remote inventory/trading list
-    GUIRectangle:new(self.m_Width*0.65, 30, 3, self.m_Height-30, Color.White, self.m_Window)
-
-    GUILabel:new(self.m_Width*0.01, self.m_Height*0.07, self.m_Width*0.27, self.m_Height*0.05, _"Meine Items:", self.m_Window)
-    self.m_MyItemsGrid = GUIGridList:new(self.m_Width*0.01, self.m_Height*0.12, self.m_Width*0.3, self.m_Height*0.7, self.m_Window)
+    self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Handel mit %s", target:getName()), true, true, self)
+    GUILabel:new(10, 35, 340, 35, _"Meine Items:", self.m_Window)
+    self.m_MyItemsGrid = GUIGridList:new(10, 70, 300, 315, self.m_Window)
     self.m_MyItemsGrid:addColumn(_"Item", 0.7)
     self.m_MyItemsGrid:addColumn(_"Anzahl", 0.3)
-    self.m_ButtonAdd = GUIButton:new(self.m_Width*0.26, self.m_Height*0.83, self.m_Width*0.05, self.m_Height*0.05, ">", self.m_Window):setBackgroundColor(Color.Green)
-    self.m_ButtonAdd.onLeftClick = bind(self.ButtonAdd_Click, self)
+    self.m_Preview = GUIImage:new(423, 35, 64, 64, false, self.m_Window)
+    self.m_LabelDescription = GUILabel:new(340, 105, 230, 20, "", self.m_Window)
+    self.m_LabelDescription:setFont(VRPFont(self.m_Height*0.05))
+    self.m_LabelDescription:setAlignX("center")
+    GUILabel:new(340, 200, 110, 30, "Item-Anzahl:", self.m_Window)
+    self.m_Amount = GUIEdit:new(460, 200, 85, 30, self.m_Window)
 
-    GUILabel:new(self.m_Width*0.33, self.m_Height*0.07, self.m_Width*0.27, self.m_Height*0.05, _"Handeln: ", self.m_Window)
-    self.m_TradeItemsGrid = GUIGridList:new(self.m_Width*0.33, self.m_Height*0.12, self.m_Width*0.3, self.m_Height*0.7, self.m_Window)
-    self.m_TradeItemsGrid:addColumn(_"Item", 0.7)
-    self.m_TradeItemsGrid:addColumn(_"Anzahl", 0.3)
-    self.m_ButtonRemove = GUIButton:new(self.m_Width*0.33, self.m_Height*0.83, self.m_Width*0.05, self.m_Height*0.05, "<", self.m_Window):setBackgroundColor(Color.Red)
-    self.m_ButtonRemove.onLeftClick = bind(self.ButtonRemove_Click, self)
+    self.m_Amount.onChange = function()
+        self:checkAmount()
+    end
+    GUILabel:new(340, 240, 220, 30, "gewünschtes Geld:", self.m_Window)
+    self.m_Money = GUIEdit:new(340, 270, 205, 30, self.m_Window)
+    GUILabel:new(550, 270, 20, 30, "$", self.m_Window)
+    self.m_Money:setNumeric(true)
+    self.m_LabelError = GUILabel:new(340, 310, 225, 25, "", self.m_Window)
+    self.m_LabelError:setColor(Color.Red)
 
-    GUILabel:new(self.m_Width*0.69, self.m_Height*0.07, self.m_Width*0.3, self.m_Height*0.05, _"Gegenleistung: ", self.m_Window)
-    self.m_RemoteItemsGrid = GUIGridList:new(self.m_Width*0.69, self.m_Height*0.12, self.m_Width*0.3, self.m_Height*0.7, self.m_Window)
-    self.m_RemoteItemsGrid:addColumn(_"Item", 0.7)
-    self.m_RemoteItemsGrid:addColumn(_"Anzahl", 0.3)
+    self.m_ButtonTrade = VRPButton:new(340, 350, 225, 35, _"Handel vorschlagen", true, self.m_Window):setBarColor(Color.Green)
+    self.m_ButtonTrade:setEnabled(false)
 
-    GUILabel:new(self.m_Width*0.01, self.m_Height*0.83, self.m_Width*0.08, self.m_Height*0.05, _"Anzahl:", self.m_Window)
-    self.m_AmountEdit = GUIEdit:new(self.m_Width*0.09, self.m_Height*0.83, self.m_Width*0.14, self.m_Height*0.05, self.m_Window):setText("1"):setNumeric(true)
-
-    GUILabel:new(self.m_Width*0.395, self.m_Height*0.83, self.m_Width*0.07, self.m_Height*0.05, _"Geld:", self.m_Window)
-    self.m_MyMoneyEdit = GUIEdit:new(self.m_Width*0.46, self.m_Height*0.83, self.m_Width*0.17, self.m_Height*0.05, self.m_Window):setText("0"):setNumeric(true)
-    self.m_MyMoneyEdit.onEditInput = bind(self.MyMoneyEdit_Input, self)
-
-    self.m_RemoteMoney = GUILabel:new(self.m_Width*0.69, self.m_Height*0.83, self.m_Width*0.3, self.m_Height*0.05, _"Geld: 0$", self.m_Window)
-
-    self.m_AcceptCheck = GUICheckbox:new(self.m_Width*0.01, self.m_Height*0.92, self.m_Width*0.3, self.m_Height*0.05, _"Ich bin einverstanden", self.m_Window)
-    self.m_AcceptCheck.onChange = bind(self.AcceptCheck_Change, self)
-
-    -- Update inventory
-    self:updateMyInventory(myInventory)
+    self.m_ButtonTrade.onLeftClick = function() self:requestTrade() end
+    self:loadItems()
 end
 
-function TradeGUI:updateMyInventory(inv)
-    if inv then
-        self.m_MyInventory = inv -- inv is normally the same as m_MyInventory
+function TradeGUI:loadItems()
+    self.m_ItemData = Inventory:getSingleton():getItemData()
+    self.m_Items = Inventory:getSingleton():getItems()
+
+    local item
+    for index, itemInv in pairs(self.m_Items) do
+        if self.m_ItemData[itemInv["Objekt"]]["Handel"] == 1 then
+            item = self.m_MyItemsGrid:addItem(itemInv["Objekt"], itemInv["Menge"])
+            item.onLeftClick = function()
+                self.m_SelectedItem = itemInv["Objekt"]
+                self.m_SelectedItemAmount = itemInv["Menge"]
+                self.m_ButtonTrade:setEnabled(true)
+                self.m_Preview:setImage("files/images/Inventory/items/"..self.m_ItemData[itemInv["Objekt"]]["Icon"])
+                self.m_LabelDescription:setText(self.m_ItemData[itemInv["Objekt"]]["Info"])
+                self:checkAmount()
+            end
+        end
     end
 
-    self.m_MyItemsGrid:clear()
+end
 
-    for k, item in pairs(self.m_MyInventory:getItems()) do
-        local listItem = self.m_MyItemsGrid:addItem(item:getName(), tostring(item:getCount()))
-        listItem.Item = item
-    end
-
-    -- Remove trade items from my inventory item list
-    local removeList = {}
-    local findItem = function(itemId) for k, item in pairs(self.m_MyItemsGrid:getItems()) do if item.Item:getItemId() == itemId then return item end end end
-    for k, item in pairs(self.m_TradeItemsGrid:getItems()) do
-        local myItem = findItem(item.ItemId)
-        if myItem then
-            local availableAmount = tonumber(myItem:getColumnText(2))
-            local tradeAmount = tonumber(item:getColumnText(2))
-
-            if availableAmount >= tradeAmount then
-                myItem:setColumnText(2, tostring(availableAmount - tradeAmount))
+function TradeGUI:checkAmount(text)
+    local amount = self.m_Amount:getText()
+    if tonumber(amount) then
+        if self.m_SelectedItemAmount then
+            if tonumber(amount) > self.m_SelectedItemAmount then
+                self.m_LabelError:setText(_("Du hast nicht soviel %s!", self.m_SelectedItem))
+                self.m_ButtonTrade:setEnabled(false)
             else
-                -- Remove item if less items are available than we want to trade
-                removeList[#removeList+1] = myItem
+                self.m_LabelError:setText("")
+                self.m_ButtonTrade:setEnabled(true)
             end
         else
-            -- Remove item if it does not exist anymore
-            removeList[#removeList+1] = myItem
+            self.m_LabelError:setText(_"Bitte wähle ein Item aus!")
         end
-    end
-
-    -- Remove items here as we'd corrupt the iterator above otherwise
-    for k, item in pairs(removeList) do
-        self.m_TradeItemsGrid:removeItemByItem(item)
-    end
-
-    -- Uncheck 'accept' as the inventory has changed
-    self.m_AcceptCheck:setChecked(false)
-end
-
-function TradeGUI:ButtonAdd_Click()
-    local selectedItem = self.m_MyItemsGrid:getSelectedItem()
-    if not selectedItem then
-        WarningBox:new(_"Bitte wähle ein Item aus deinem Inventar aus")
-        return
-    end
-
-    local amount = tonumber(self.m_AmountEdit:getText())
-    if not amount or amount == 0 then
-        WarningBox:new(_"Bitte gib eine gültige Anzahl an Items ein!")
-        return
-    end
-
-    local name, availableAmount = selectedItem:getColumnText(1), tonumber(selectedItem:getColumnText(2))
-    if not availableAmount then error("Internal error @ TradeGUI.ButtonAdd_Click") end
-
-    if amount > availableAmount then
-        WarningBox:new(_"Du kannst nicht mit mehr Items Handeln als du hast")
-        return
-    end
-
-    -- TODO: Implement item stacking
-
-    -- Add to trade list and remove from my item list
-    local listItem = self.m_TradeItemsGrid:addItem(name, tostring(amount))
-    listItem.ItemId = selectedItem.Item:getItemId()
-    if availableAmount - amount == 0 then
-        self.m_MyItemsGrid:removeItemByItem(selectedItem)
     else
-        selectedItem:setColumnText(2, tostring(availableAmount - amount))
-    end
-
-    -- Inform the server about this
-    local item = selectedItem.Item
-    triggerServerEvent("tradeItemAdd", localPlayer, item:getItemId(), amount, item:getSlot())
-end
-
-function TradeGUI:ButtonRemove_Click()
-    local selectedItem = self.m_TradeItemsGrid:getSelectedItem()
-    if not selectedItem then
-        WarningBox:new(_"Bitte wähle ein Item aus deinem Inventar aus")
-        return
-    end
-
-    -- Remove item and update everything (updateMyInventory will substract the trading items then)
-    self.m_TradeItemsGrid:removeItemByItem(selectedItem)
-    self:updateMyInventory()
-
-    -- Inform the server about this
-    -- TODO: Add amount
-    triggerServerEvent("tradeItemRemove", localPlayer, selectedItem.ItemId)
-end
-
-function TradeGUI:MyMoneyEdit_Input()
-    local money = tonumber(self.m_MyMoneyEdit:getText())
-    if money then
-        -- Tell the server that we changed our money amount
-        triggerServerEvent("tradeMoneyChange", localPlayer, money)
+        self.m_LabelError:setText(_"Bitte gib eine gültige Anzahl ein!")
     end
 end
 
-function TradeGUI:AcceptCheck_Change(state)
-    -- Tell the server that we are or are not ready for trading
-    triggerServerEvent("tradeAcceptStatusChange", localPlayer)
-end
-
-
-addEvent("tradingStart", true)
-addEventHandler("tradingStart", root,
-    function(invId)
-        if TradeGUI:isInstantiated() then
-            delete(TradeGUI:getSingleton())
+function TradeGUI:requestTrade()
+    if tonumber(self.m_Amount:getText()) > 0 then
+        if tonumber(self.m_Amount:getText()) <= self.m_SelectedItemAmount then
+            triggerServerEvent("requestTrade", localPlayer, self.m_TargetPlayer, self.m_SelectedItem, tonumber(self.m_Amount:getText()), tonumber(self.m_Money:getText()))
+            delete(self)
+        else
+            ErrorBox:new(_("Du nicht ausreichend %s!", self.m_SelectedItem))
         end
-
-        -- TODO: Replace by something like localPlayer:getInventory()
-        if Inventory.Map[invId] then
-            TradeGUI:new(Inventory.Map[invId])
-        end
+    else
+        ErrorBox:new(_"Du hast keine Anzahl eingegeben!")
     end
-)
-
-addEvent("tradeItemUpdate", true)
-addEventHandler("tradeItemUpdate", root,
-    function(items)
-        local tradeGUI = TradeGUI:getSingleton()
-
-        tradeGUI.m_RemoteItemsGrid:clear()
-        for k, item in pairs(items) do
-            local itemId, amount = unpack(item)
-            tradeGUI.m_RemoteItemsGrid:addItem(Items[itemId].name, tostring(amount))
-        end
-    end
-)
-
-addEvent("tradeMoneyChange", true)
-addEventHandler("tradeMoneyChange", root,
-    function(money)
-        local tradeGUI = TradeGUI:getSingleton()
-        tradeGUI.m_RemoteMoney:setText(_("Geld: %s$", tostring(money)))
-    end
-)
+end

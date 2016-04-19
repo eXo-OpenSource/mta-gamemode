@@ -22,7 +22,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 	self:addItem(_"Handel starten",
 		function()
 			if self:getElement() then
-				triggerServerEvent("playerRequestTrading", self:getElement())
+				TradeGUI:new(self:getElement())
 			end
 		end
 	)

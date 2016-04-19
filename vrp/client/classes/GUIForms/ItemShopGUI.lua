@@ -24,6 +24,7 @@ function ItemShopGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.3, self.m_Height*0.9, self.m_Width*0.1, self.m_Height*0.06, "Anzahl:", self.m_Window)
 	self.m_EditAmount = GUIEdit:new(self.m_Width*0.42, self.m_Height*0.9, self.m_Width*0.1, self.m_Height*0.06, self.m_Window)
+	self.m_EditAmount:setNumeric(true)
 	self.m_EditAmount:setText("1")
 
 	self.m_ButtonBuy = VRPButton:new(self.m_Width*0.78, self.m_Height*0.9, self.m_Width*0.2, self.m_Height*0.06, _"Kaufen", true, self.m_Window):setBarColor(Color.Green)

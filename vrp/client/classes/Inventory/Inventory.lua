@@ -78,7 +78,7 @@ function Inventory:getItemData()
 end
 
 function Inventory:getItems()
-	return self.m_item
+	return self.m_Items
 end
 
 function Inventory:toggle()
