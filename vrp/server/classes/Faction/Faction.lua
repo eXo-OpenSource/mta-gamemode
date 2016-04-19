@@ -275,7 +275,7 @@ end
 
 function Faction:sendShortMessage(text, ...)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(("%s:\n%s"):format(self:getName(), _(text, player)), ...)
+		player:sendShortMessage(_(text, player), self:getName(), {11, 102, 8}, ...)
 	end
 end
 

@@ -28,7 +28,7 @@ function TollStation:checkRequirements(player)
 	-- Step 1: Check for State Duty
 	if player:getFaction() and player:getFaction():isStateFaction() then
 		if player:getPublicSync("Faction:Duty") then
-			player:sendShortMessage(("Willkommen bei der Maut-Station %s! Da du Staats-Dienstlich unterwegs bist, darfst du kostenlos passieren! Gute Fahrt."):format(self.m_Name))
+			player:sendShortMessage(("Willkommen bei der Maut-Station %s! Da du Staats-Dienstlich unterwegs bist, darfst du kostenlos passieren! Gute Fahrt."):format(self.m_Name), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
 			return true
 		end
 	end
@@ -52,7 +52,7 @@ function TollStation:onBarrierHit(player)
 				end
 			end
 
-			player:sendShortMessage(("Willkommen bei der Maut-Station %s! Drücke auf '%s' um ein Ticket zu kaufen!\nDu kannst dir aber auch an einem 24/7 einen Mautpass kaufen, dann fährst du unkompliziert und schnell durch die Maut-Stationen!"):format(self.m_Name, TOLL_PAY_KEY:upper()))
+			player:sendShortMessage(("Willkommen bei der Maut-Station %s! Drücke auf '%s' um ein Ticket zu kaufen!\nDu kannst dir aber auch an einem 24/7 einen Mautpass kaufen, dann fährst du unkompliziert und schnell durch die Maut-Stationen!"):format(self.m_Name, TOLL_PAY_KEY:upper()), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
 
 			player.m_BuyTollFunc = bind(self.buyToll, self, player)
 			bindKey(player, TOLL_PAY_KEY, "down", player.m_BuyTollFunc)
@@ -71,7 +71,7 @@ function TollStation:buyToll(player)
 				player:takeMoney(TOLL_KEY_COSTS)
 				self.m_Barrier:toggleBarrier(player, true)
 
-				player:sendShortMessage(_("Vielen Dank. Wir wünschen dir eine gute Fahrt!", player))
+				player:sendShortMessage(_("Vielen Dank. Wir wünschen dir eine gute Fahrt!", player), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
 			else
 				player:sendError(_("Du hast zuwenig Geld! (%s$)", player, TOLL_KEY_COSTS))
 			end

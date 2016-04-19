@@ -253,7 +253,7 @@ end
 
 function Company:sendShortMessage(text, ...)
 	for k, player in ipairs(self:getOnlinePlayers()) do
-		player:sendShortMessage(("%s:\n%s"):format(self:getName(), text), ...)
+		player:sendShortMessage(_(text, player), self:getName(), {0, 32, 63}, ...)
 	end
 end
 

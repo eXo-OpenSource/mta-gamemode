@@ -10,7 +10,15 @@ inherit(GUIFontContainer, ShortMessage)
 
 ShortMessage.MessageBoxes = {}
 
-function ShortMessage:constructor(text, timeout)
+function ShortMessage:new(text, title, tcolor, timeout)
+	if type(title) == "number" then
+		return new(ShortMessage, text, nil, nil, title)
+	else
+		return new(ShortMessage, text, title, tcolor, timeout)
+	end
+end
+
+function ShortMessage:constructor(text, title, tcolor, timeout)
 	local x, y, w
 	if HUDRadar:getSingleton().m_Visible then
 		x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
@@ -18,29 +26,39 @@ function ShortMessage:constructor(text, timeout)
 		x, y, w = 20, screenHeight - 5, 340*screenWidth/1600+6
 	end
 
+	-- Text
+	self.m_Text = text
+
+	-- Titlte Bar
+	self.m_HasTitleBar = title ~= nil
+	self.m_Title = title
+	self.m_TitleColor = (type(tcolor) == "table" and tcolor) or {125, 0, 0}
+
 	-- Calculate heigth
 	local fontSize = 1.4
-	local h = textHeight(text, w - 8, "default", fontSize) + 4
+	local h
+	if self.m_HasTitleBar then
+		h = textHeight(text, w - 8, "default", fontSize) + 24
+	else
+		h = textHeight(text, w - 8, "default", fontSize) + 4
+	end
 
 	-- Calculate y position
 	y = y - h - 20
 
+	-- Instantiate dxElement
+	DxElement.constructor(self, x, y, w, h)
+
+	-- Calculate timeout
 	if timeout ~= -1 then
-		if timeout and type(timeout) == "number" then
-			if timeout > 50 then
-				timeout = timeout
-			else
-				timeout = 5000
-			end
-		else
-			timeout = 5000
-		end
-		setTimer(function () delete(self) end, timeout + 500, 1)
+		setTimer(function () delete(self) end, ((type(timeout) == "number" and timeout > 50 and timeout) or 5000) + 500, 1)
 	end
 
-	DxElement.constructor(self, x, y, w, h)
-	GUIFontContainer.constructor(self, text, fontSize, "default")
+	-- Font
+	self.m_FontSize = 1
+	self.m_Font = VRPFont(24)
 
+	-- Alpha
 	self:setAlpha(0)
 	self.m_AlphaFaded = false
 
@@ -60,22 +78,24 @@ function ShortMessage:drawThis()
 	local x, y, w, h = self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height
 
 	-- Draw background
-	dxDrawRectangle(x, y, w, h, tocolor(0, 0, 0, self.m_Alpha))
+	if self.m_HasTitleBar then
+		dxDrawRectangle(x, y, w, 20, tocolor(self.m_TitleColor[1], self.m_TitleColor[2], self.m_TitleColor[3], self.m_Alpha))
+		dxDrawRectangle(x, y + 20, w, h - 20, tocolor(0, 0, 0, self.m_Alpha))
+	else
+		dxDrawRectangle(x, y, w, h, tocolor(0, 0, 0, self.m_Alpha))
+	end
 
 	-- Center the text
 	x = x + 4
 	w = w - 8
 
-	-- Draw the text bounding box (DEBUG)
-	if GUI_DEBUG then
-		dxDrawLine(x, y, x + w, y, Color.White, 1)
-		dxDrawLine(x, y, x, y + h, Color.White, 1)
-		dxDrawLine(x, y + h, x + w, y + h, Color.White, 1)
-		dxDrawLine(x + w, y, x + w, y + h, Color.White, 1)
-	end
-
 	-- Draw message text
-	dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+	if self.m_HasTitleBar then
+		dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+		dxDrawText(self.m_Text, x, y + 20, x + w, y + (h - 20), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+	else
+		dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+	end
 end
 
 function ShortMessage.resortPositions ()
