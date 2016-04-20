@@ -33,6 +33,15 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
+	if (localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3) and localPlayer:getPublicSync("Faction:Duty") == true then
+		self:addItem(_"Fraktion: ins Fahrzeug zerren",
+			function()
+				if self:getElement() then
+					triggerServerEvent("factionStateGrabPlayer", localPlayer, self:getElement())
+				end
+			end
+		)
+	end
 	if localPlayer:getFactionId() == 4 and localPlayer:getPublicSync("Faction:Duty") == true then
 		self:addItem(_"Medic: heilen",
 			function()

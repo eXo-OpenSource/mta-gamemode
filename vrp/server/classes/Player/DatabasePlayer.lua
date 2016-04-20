@@ -271,7 +271,7 @@ function DatabasePlayer:setFaction(faction)
 		self:setPublicSync("FactionName", faction and faction:getName() or "")
 		self:setPublicSync("ShortFactionName", faction and faction:getShortName() or "")
 		if faction and faction:isStateFaction() then
-			bindKey(self, "g", "down", "chatbox", "BeamtenChat")
+			bindKey(self, "m", "down", "chatbox", "BeamtenChat")
 		end
 	end
 end

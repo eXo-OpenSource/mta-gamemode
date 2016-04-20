@@ -31,9 +31,11 @@ function Guns:Event_onTaser(target)
 	target:setFrozen(true)
 	toggleAllControls(target,false)
 	target:sendInfo(_("Du wurdest von %s getazert!", target, client:getName()))
+	target.isTasered = true
 	setTimer ( function(target)
 		target:setAnimation()
 		target:setFrozen(false)
 		toggleAllControls(target,true)
+		target.isTasered = false
 	end, 15000, 1, target )
 end

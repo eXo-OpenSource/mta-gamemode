@@ -56,6 +56,10 @@ function FactionVehicle:getFaction()
   return self.m_Faction
 end
 
+function FactionVehicle:isStateVehicle()
+  	return self.m_Faction:isStateFaction()
+end
+
 function FactionVehicle:onStartEnter(player,seat)
 	if seat == 0 then
 		if player:getFaction() == self.m_Faction then

@@ -27,7 +27,7 @@ function FactionState:constructor()
 	local pdGarageEnter = InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0)
 	--local pdGarageExit = InteriorEnterExit:new(Vector3(259.22, 73.73, 1003.64), Vector3(1527.16, -1678.17, 5.89), 0, 0, 0, 0)
 
-	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds"}
+	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds", "factionStateGrabPlayer"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -39,6 +39,8 @@ function FactionState:constructor()
 	addEventHandler("factionStateToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("factionStateGiveWanteds", root, bind(self.Event_giveWanteds, self))
 	addEventHandler("factionStateClearWanteds", root, bind(self.Event_clearWanteds, self))
+	addEventHandler("factionStateGrabPlayer", root, bind(self.Event_grabPlayer, self))
+
 
 	-- Prepare the Area51
 	self:createDefendActors(
@@ -218,7 +220,7 @@ function FactionState:Command_megaphone(player, cmd, ...)
 	local faction = player:getFaction()
 	if faction and faction:isStateFaction() == true then
 		if player:isFactionDuty() then
-			if player:getOccupiedVehicle() and player:getOccupiedVehicle():getFaction() and player:getOccupiedVehicle():getFaction():isStateFaction() then
+			if player:getOccupiedVehicle() and player:getOccupiedVehicle():getFaction() and player:getOccupiedVehicle():isStateVehicle() then
 				local playerId = player:getId()
 				local playersToSend = player:getPlayersInChatRange(2)
 				local text = ("[[ %s %s: %s ]]"):format(faction:getShortName(), player:getName(), table.concat({...}, " "))
@@ -434,6 +436,29 @@ function FactionState:Event_clearWanteds(target)
 			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
 			client:getFaction():sendMessage(msg, 255,0,0)
+		end
+	end
+end
+
+function FactionState:Event_grabPlayer(target)
+	local faction = client:getFaction()
+	if faction and faction:isStateFaction() then
+		if client:isFactionDuty() then
+			if client:getOccupiedVehicle() and client:getOccupiedVehicle():getFaction() and client:getOccupiedVehicle():isStateVehicle() then
+				if target.isTasered == true then
+					for seat, playerItem in pairs(client:getOccupiedVehicle():getOccupants()) do
+						if seat > 0 then
+							if not isElement(playerItem) then
+								warpPedIntoVehicle(target, client:getOccupiedVehicle(), seat)
+							end
+						end
+					end
+				else
+					client:sendError(_("Der Spieler ist nicht getazert!", client))
+				end
+			else
+				client:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", client))
+			end
 		end
 	end
 end
