@@ -26,22 +26,14 @@ function ShortMessage:constructor(text, title, tcolor, timeout)
 		x, y, w = 20, screenHeight - 5, 340*screenWidth/1600+6
 	end
 
-	-- Text
-	self.m_Text = text
-
 	-- Titlte Bar
 	self.m_HasTitleBar = title ~= nil
 	self.m_Title = title
 	self.m_TitleColor = (type(tcolor) == "table" and tcolor) or {125, 0, 0}
 
-	-- Calculate heigth
-	local fontSize = 1.4
-	local h
-	if self.m_HasTitleBar then
-		h = textHeight(text, w - 8, "default", fontSize) + 24
-	else
-		h = textHeight(text, w - 8, "default", fontSize) + 4
-	end
+	-- Font
+	GUIFontContainer.constructor(self, text, 1, VRPFont(24))
+	local h = textHeight(text, w - 8, self.m_Font, self.m_FontSize) + (self.m_HasTitleBar and 24 or 4)
 
 	-- Calculate y position
 	y = y - h - 20
@@ -53,10 +45,6 @@ function ShortMessage:constructor(text, title, tcolor, timeout)
 	if timeout ~= -1 then
 		setTimer(function () delete(self) end, ((type(timeout) == "number" and timeout > 50 and timeout) or 5000) + 500, 1)
 	end
-
-	-- Font
-	self.m_FontSize = 1
-	self.m_Font = VRPFont(24)
 
 	-- Alpha
 	self:setAlpha(0)

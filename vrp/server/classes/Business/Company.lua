@@ -1,4 +1,4 @@
-﻿-- ****************************************************************************
+-- ****************************************************************************
 -- *
 -- *  PROJECT:     eXo
 -- *  FILE:        server/classes/Business/Company.lua
@@ -125,11 +125,11 @@ function Company:getMoney(...)
 end
 
 function Company:giveMoney(amount)
-    return self.m_BankAccount:setMoney(self.m_BankAccount:getMoney() + amount)
+    return self.m_BankAccount:addMoney(amount)
 end
 
 function Company:takeMoney(amount)
-    return self.m_BankAccount:setMoney(self.m_BankAccount:getMoney() - amount)
+    return self.m_BankAccount:takeMoney(amount)
 end
 
 function Company:addPlayer(playerId, rank)
