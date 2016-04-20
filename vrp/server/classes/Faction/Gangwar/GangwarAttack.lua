@@ -328,6 +328,15 @@ function AttackSession:createWeaponBox()
 	self.m_WeaponBox = createObject( 964, x, y, z-1)
 	self.m_bindFunc = bind( AttackSession.onWeaponBoxClick, self )
 	addEventHandler("onElementClicked", self.m_WeaponBox, self.m_bindFunc )
+	self.m_WeaponBoxFunc = bind( AttackSession.takeWeaponFromBox, self)
+	addEventHandler("ClientBox:takeWeaponFromBox", root , self.m_WeaponBoxFunc)
+end
+
+function AttackSession:generateWeapons( )
+	self.m_BoxWeapons ={	}
+	for i = 1, 3 do 
+		self.m_BoxWeapons[24] = 200
+	end
 end
 
 function AttackSession:onWeaponBoxClick( button, state, clicker)
@@ -335,6 +344,13 @@ function AttackSession:onWeaponBoxClick( button, state, clicker)
 		if clicker.m_Faction == self.m_Faction1 then
 			clicker:triggerEvent( "Gangwar:showWeaponBox" )
 		end
+	end
+end
+
+addEvent("ClientBox:takeWeaponFromBox", true)
+function AttackSession:takeWeaponFromBox( weaponID )
+	if self.m_BoxWeapons[weaponID] then 
+		giveWeapon( source, weaponID, self.m_BoxWeapons[weaponID], true )
 	end
 end
 

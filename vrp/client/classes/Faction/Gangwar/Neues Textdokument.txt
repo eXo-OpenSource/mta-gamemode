@@ -1,9 +1,0 @@
--- ****************************************************************************
--- *
--- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/Faction/Gangwar/GangwarWeaponBox.lua
--- *  PURPOSE:     Gangwar Waffenbox
--- *
--- ****************************************************************************
-
-WeaponBoxGUI = inherit(GUIForm)

@@ -146,9 +146,8 @@ end
 
 addEvent("Gangwar:showWeaponBox", true )
 function AttackClient:showWeaponBox() 
-	if not self.m_WeaponBoxUI then 
-		self.m_WeaponBoxUI = WeaponBoxGUI:new( self )
-	else outputChatBox( tostring( self.m_WeaponBoxUI )  )
+	if not self.m_isBoxActive then 
+		self.m_WeaponBoxUI = WeaponBoxGUI:new( self ,{[24] = 200,[31] = 2000})
 	end
 end
 
