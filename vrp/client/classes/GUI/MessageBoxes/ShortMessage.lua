@@ -29,7 +29,7 @@ function ShortMessage:constructor(text, title, tcolor, timeout)
 	-- Titlte Bar
 	self.m_HasTitleBar = title ~= nil
 	self.m_Title = title
-	self.m_TitleColor = (type(tcolor) == "table" and tcolor) or {125, 0, 0}
+	self.m_TitleColor = (type(tcolor) == "table" and tcolor) or (type(tcolor) == "number" and {fromcolor(tcolor)}) or {125, 0, 0}
 
 	-- Font
 	GUIFontContainer.constructor(self, text, 1, VRPFont(24))

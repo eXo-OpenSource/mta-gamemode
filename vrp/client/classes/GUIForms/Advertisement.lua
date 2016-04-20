@@ -50,6 +50,12 @@ function AdvertisementBox:calcCosts()
 		colorMultiplicator = 2
 	end
 
+	if self.m_EditBox:getText():find("\\") then
+		self.m_InfoLabel:setText(_"Invalid Text!")
+		self.m_InfoLabel:setColor(Color.Red)
+		self.m_SubmitButton:setEnabled(false)
+		return
+	end
 	if length < 5 then
 		self.m_InfoLabel:setText(_"Dein Werbetext ist zu kurz! Mindestens 5 Zeichen!")
 		self.m_InfoLabel:setColor(Color.Red)
@@ -67,12 +73,12 @@ function AdvertisementBox:calcCosts()
 end
 
 local ColorTable = {
-	["Schwarz"] = Color.Black,
-	["Rot"] = Color.Red,
+	["Orange"] = Color.Orange,
 	["Grün"] = Color.Green,
-	["Blau"] = Color.Blue
+	["Hell-Blau"] = {0, 125, 125},
 }
 
+--[[
 Advertisement = inherit(GUIForm)
 inherit(Singleton, Advertisement)
 
@@ -103,9 +109,9 @@ function Advertisement:FadeOut()
 	GUIForm.fadeOut(self, 750)
 	setTimer(function() delete(self) end, 750, 1)
 end
+--]]
 
 addEvent("showAd", true)
-addEventHandler("showAd", root, function(...)
-	if Advertisement:isInstantiated() then delete(Advertisement:getSingleton()) end
-	Advertisement:new(...)
+addEventHandler("showAd", root, function(player, text, color, duration)
+	ShortMessage:new(("Werbung:\n%s"):format(text), player:getName(), ColorTable[color], AD_DURATIONS[duration]*1000)
 end)
