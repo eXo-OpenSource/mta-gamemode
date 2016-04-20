@@ -46,7 +46,7 @@ function Core:ready()
 	TrainManager:new()
 	Fire:new()
 	PublicTransport:new()
-
+	VehicleInteraction:new()
 	-- Events
 	EventManager:new()
 	DMRaceEvent:new()

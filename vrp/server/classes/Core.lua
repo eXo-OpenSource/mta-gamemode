@@ -61,7 +61,8 @@ function Core:constructor()
 	FireManager:new()
 	ShopManager:new()
 	Jail:new()
-
+	VehicleInteraction:new()
+	
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

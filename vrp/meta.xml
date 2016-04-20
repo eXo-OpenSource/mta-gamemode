@@ -200,6 +200,7 @@
 	<script src="server/classes/Vehicles/VehicleBarrier.lua" type="server"/>
 	<script src="server/classes/Vehicles/TollStation.lua" type="server"/>
 	<script src="server/classes/Vehicles/ELSSystem.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleInteraction.lua" type="server"/>
 
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -515,6 +516,8 @@
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleShop.lua" type="client"/>
 	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
+	<script src="client/classes/Vehicles/VehicleInteraction.lua" type="client"/>
+
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
@@ -530,7 +533,7 @@
 	<script src="client/classes/Faction/Gangwar/GangwarDisplay.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarQuestion.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarWeaponBox.lua" type="client"/>
-	
+
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
 
@@ -961,6 +964,10 @@
 	<vrpfile src="files/audio/Payday.mp3"/>
 	<vrpfile src="files/audio/cash_register.ogg"/>
 	<vrpfile src="files/audio/yelp.ogg"/>
+	<vrpfile src="files/audio/onDoorClosed.mp3"/>
+	<vrpfile src="files/audio/onDoorOpened.mp3"/>
+
+
 
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
