@@ -64,7 +64,7 @@ function Core:ready()
 	KeyBinds:new()
 	MostWanted:new()
 	NoDm:new()
-
+	FactionManager:new()
 end
 
 function Core:afterLogin()

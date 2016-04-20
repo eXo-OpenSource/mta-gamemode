@@ -30,7 +30,7 @@ function ScoreboardGUI:refresh()
 
 	for k, player in pairs(getElementsByType("player")) do
 		local karma = math.floor(player:getKarma() or 0)
-		local item = self.m_Grid:addItem(player:getName(),player:getShortFactionName(), karma >= 0 and "+"..karma or " "..tostring(karma), player:getGroupName(), player:getJobName())
+		local item = self.m_Grid:addItem(player:getName(),player:getFaction():getShortName() or "- Keine -", karma >= 0 and "+"..karma or " "..tostring(karma), player:getGroupName(), player:getJobName())
 
 		if karma >= 5 then
 			item:setColumnColor(3, Color.Green)

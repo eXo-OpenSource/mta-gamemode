@@ -72,12 +72,12 @@ function Player:getCompanyId()
 	return self:getPublicSync("CompanyId") or 0
 end
 
-function Player:getFactionName()
-	return self:getPublicSync("FactionName") or "-"
-end
-
-function Player:getShortFactionName()
-	return self:getPublicSync("ShortFactionName") or "-"
+function Player:getFaction()
+	if self:getPublicSync("FactionId") > 0 then
+		return FactionManager:getSingleton():getFromId(self:getPublicSync("FactionId"))
+	else
+		return false
+	end
 end
 
 function Player:getCompanyName()

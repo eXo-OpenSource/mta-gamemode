@@ -76,6 +76,10 @@ function Faction:isEvilFaction()
 	return false
 end
 
+function Faction:getType()
+	return self.m_Type
+end
+
 function Faction:getId()
 	return self.m_Id
 end
@@ -90,6 +94,10 @@ end
 
 function Faction:getRankName(rank)
 	return self.m_RankNames[rank]
+end
+
+function Faction:getRankNames()
+	return self.m_RankNames
 end
 
 function Faction:getRandomSkin()
