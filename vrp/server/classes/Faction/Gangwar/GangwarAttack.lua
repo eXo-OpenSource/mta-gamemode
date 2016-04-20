@@ -25,8 +25,12 @@ end
 
 function AttackSession:destructor()
 	self:destroyBarricadeCars( )
+	self:destroyWeaponBox()
 	if isTimer( self.m_BattleTime ) then
 		killTimer( self.m_BattleTime )
+	end
+	if isTimer( self.m_WeaponBoxTimer ) then
+		killTimer( self.m_WeaponBoxTimer )
 	end
 end
 
@@ -282,7 +286,7 @@ function AttackSession:createBarricadeCars( )
 	local factionColor = factionColors[self.m_Faction1.m_Id]
 	for i = 1, iCarCount do
 		newX, newY = getPointFromDistanceRotation(x, y, 6, 360 * (i/5));
-		self.m_Barricades[i] = TemporaryVehicle.create(482, newX, newY, z, 0)
+		self.m_Barricades[i] = TemporaryVehicle.create(482, newX, newY, z, i* (360/iCarCount))
 		self.m_Barricades[i]:disableRespawn(true)
 		setElementData( self.m_Barricades[i] , "breakCar", true)
 		setVehicleDamageProof( self.m_Barricades[i], true )
@@ -325,37 +329,90 @@ end
 
 function AttackSession:createWeaponBox()
 	local x, y, z = self.m_AreaObj.m_Position[1], self.m_AreaObj.m_Position[2], self.m_AreaObj.m_Position[3]
-	self.m_WeaponBox = createObject( 964, x, y, z-1)
+	self.m_WeaponBox = createObject( 964, x, y, z-1.5)
+	self:generateWeapons( )
+	self.m_WeaponBoxAttendants = {}
 	self.m_bindFunc = bind( AttackSession.onWeaponBoxClick, self )
 	addEventHandler("onElementClicked", self.m_WeaponBox, self.m_bindFunc )
 	self.m_WeaponBoxFunc = bind( AttackSession.takeWeaponFromBox, self)
 	addEventHandler("ClientBox:takeWeaponFromBox", root , self.m_WeaponBoxFunc)
+	self.m_BindCloseWeaponFunc = bind( AttackSession.removeFromWeaponBoxUI, self)
+	addEventHandler("ClientBox:onCloseWeaponBox", root, self.m_BindCloseWeaponFunc )
+	self.m_BindBoxTimer = function() self:destroyWeaponBox() end
+	self.m_WeaponBoxTimer = setTimer(self.m_BindBoxTimer, 60000,1)
+	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDie Waffenbox ist für eine Minute vorhanden!",0,204,204,true)
 end
 
 function AttackSession:generateWeapons( )
 	self.m_BoxWeapons ={	}
 	for i = 1, 3 do 
-		self.m_BoxWeapons[24] = 200
+		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {31,200}
+	end
+	for i = 1, 3 do 
+		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {24,200}
+	end
+	for i = 1, 3 do 
+		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {30,200}
 	end
 end
 
 function AttackSession:onWeaponBoxClick( button, state, clicker)
 	if button == "left" and state == "up" then
 		if clicker.m_Faction == self.m_Faction1 then
-			clicker:triggerEvent( "Gangwar:showWeaponBox" )
+			self:addToWeaponBoxUI( clicker )
+			clicker:triggerEvent( "Gangwar:showWeaponBox", self.m_BoxWeapons  )
 		end
 	end
 end
 
-addEvent("ClientBox:takeWeaponFromBox", true)
-function AttackSession:takeWeaponFromBox( weaponID )
-	if self.m_BoxWeapons[weaponID] then 
-		giveWeapon( source, weaponID, self.m_BoxWeapons[weaponID], true )
+function AttackSession:addToWeaponBoxUI( player )
+	if not self:isInWeaponBoxUI( player ) then 
+		self.m_WeaponBoxAttendants[#self.m_WeaponBoxAttendants + 1] = player
 	end
 end
+
+function AttackSession:isInWeaponBoxUI( player )
+	if self.m_WeaponBoxAttendants then 
+		for i = 1, #self.m_WeaponBoxAttendants do 
+			if self.m_WeaponBoxAttendants[i] == player then 
+				return i 
+			end
+		end
+	end
+	return false
+end
+
+addEvent("ClientBox:onCloseWeaponBox", true)
+function AttackSession:removeFromWeaponBoxUI( player )
+	local key = self.isInWeaponBoxUI( player )
+	if key then 
+		table.remove( self.m_WeaponBoxAttendants, key )
+	end
+end
+
+addEvent("ClientBox:takeWeaponFromBox", true)
+function AttackSession:takeWeaponFromBox( key)
+	if self.m_BoxWeapons[key] then 
+		giveWeapon( source, self.m_BoxWeapons[key][1], self.m_BoxWeapons[key][2], true )
+		table.remove( self.m_BoxWeapons, key )
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName( source ).." nahm sich eine "..getWeaponNameFromID( self.m_BoxWeapons[key][1] ).." aus der Box heraus.",0,204,204,true)
+		self:refreshWeaponBox(  )
+	end
+end
+
+function AttackSession:refreshWeaponBox(  )
+	for i = 1, # self.m_WeaponBoxAttendants do 
+		self.m_WeaponBoxAttendants[i]:triggerEvent( "ClientBox:refreshItems", self.m_BoxWeapons )
+	end
+end
+
 
 function AttackSession:destroyWeaponBox()
 	if self.m_WeaponBox then
 		destroyElement( self.m_WeaponBox )
+		for i = 1, #self.m_WeaponBoxAttendants do 
+			self.m_WeaponBoxAttendants[i]:triggerEvent( "ClientBox:forceClose")
+		end
+		self.m_WeaponBoxAttendants = {}
 	end
 end

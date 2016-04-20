@@ -9,7 +9,7 @@ local w,h = guiGetScreenSize()
 AttackClient = inherit(Object)
 local pseudoSingleton
 
-function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos) 
+function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, bIsNoRush) 
 	self.m_Faction = faction1 
 	self.m_Faction2 = faction2
 	self.m_Participants = pParticipants 
@@ -17,6 +17,7 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	localPlayer.attackSession = self 
 	self.m_GangwarDamage = 0
 	self.m_GangwarKill = 0
+	self.m_NoRush = bIsNoRush
 	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime, pPos )
 	self.m_DamageFunc = bind( self.addDamage, self)
 	addEventHandler("onClientPlayerDamage",root, self.m_DamageFunc)
@@ -24,6 +25,18 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	addEventHandler("onClientPlayerWasted",root, self.m_KillFunc)
 	self.m_bindWeaponBoxFunc = bind( AttackClient.showWeaponBox, self )
 	addEventHandler( "Gangwar:showWeaponBox", localPlayer, self.m_bindWeaponBoxFunc)
+	self.m_bindWeaponBoxRefreshFunc = bind( AttackClient.onRefreshItems, self )
+	addEventHandler( "ClientBox:refreshItems", localPlayer, self.m_bindWeaponBoxRefreshFunc)
+	self.m_bindWeaponBoxCloseFunc = bind( AttackClient.forceClose, self )
+	addEventHandler( "ClientBox:forceClose", localPlayer, self.m_bindWeaponBoxCloseFunc)
+	self.m_BindNoRushFunc = bind( AttackClient.onDamage, self )
+	addEventHandler("onClientPlayerDamage",root, self.m_BindNoRushFunc)
+end
+
+function AttackClient:onDamage( attacker )
+	if self.m_NoRush then 
+	
+	end
 end
 
 function AttackClient:addDamage( attacker, weapon, bodypart, loss )
@@ -145,9 +158,24 @@ function AttackClient.m_BreakRender( )
 end
 
 addEvent("Gangwar:showWeaponBox", true )
-function AttackClient:showWeaponBox() 
+function AttackClient:showWeaponBox( pList ) 
 	if not self.m_isBoxActive then 
-		self.m_WeaponBoxUI = WeaponBoxGUI:new( self ,{[24] = 200,[31] = 2000})
+		self.m_WeaponBoxUI = WeaponBoxGUI:new( self , pList )
 	end
 end
+
+addEvent("ClientBox:refreshItems",true)
+function AttackClient:onRefreshItems( pList )
+	if self.m_WeaponBoxUI then 
+		self.m_WeaponBoxUI:refreshItems( pList ) 
+	end
+end
+
+addEvent("ClientBox:forceClose",true)
+function AttackClient:forceClose( )
+	if self.m_WeaponBoxUI then 
+		self.m_WeaponBoxUI:destructor()
+	end
+end
+
 
