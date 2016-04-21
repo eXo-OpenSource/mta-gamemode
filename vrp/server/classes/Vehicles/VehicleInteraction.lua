@@ -33,17 +33,21 @@ end
 
 function VehicleInteraction:doLock()
 	local lookAtVehicle = getPedTarget(client)
-	if lookAtVehicle:isLocked() then
-		lookAtVehicle:setLocked(false)
+	if lookAtVehicle:hasKey(client) then
+		if lookAtVehicle:isLocked() then
+			lookAtVehicle:setLocked(false)
+		else
+			lookAtVehicle:setLocked(true)
+		end
 	else
-		lookAtVehicle:setLocked(true)
+		client:sendError(_("Du hast keinen Schlüssel für das Fahrzeug!", client))
 	end
 end
 
 function VehicleInteraction:doAction(door)
 	local lookAtVehicle = getPedTarget(client)
 
-    if (lookAtVehicle) and (getElementType(lookAtVehicle) == "vehicle" ) then
+    if lookAtVehicle and (getElementType(lookAtVehicle) == "vehicle" ) then
 		local veh = lookAtVehicle
         local doorRatio = getVehicleDoorOpenRatio(lookAtVehicle, door)
         local checkDoor = getVehicleDoorState(lookAtVehicle, door)
@@ -55,46 +59,38 @@ function VehicleInteraction:doAction(door)
 		local doorState = getElementData(veh, door)
 
 		if doorRatio > 0 or checkDoor == 4 or doorState == "open" then
-			if isPrivatveh(veh) then
-				if door == 1 then
-					if exoGetElementData ( veh, "stuning1" ) then
-						openKofferraumServer(client,veh)
-						exoSetElementData ( client, "clickedVehicle", veh )
-						showCursor ( client, true )
-						setElementData ( client, "ElementClicked", true )
+			if door == 1 then
+				client:sendInfo(_("Noch nicht implementiert", client))
+			elseif door == 0 then
+				if client:getInventory():getItemAmount("Reparaturkit") > 0 then
+					if veh.isBroken and veh:isBroken() then
+						client:sendInfo(_("Das Fahrzeug wird repariert! Bitte warten!", client))
+						client:setAnimation("BAR" ,"Barserve_give" ,0 ,true)
+						local player = client
+						setTimer(function()
+							veh:setBroken(false)
+							veh:setHealth(veh:getHealth() + 300)
+
+							player:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", player))
+							player:setAnimation(false)
+							player:getInventory():removeItem("Reparaturkit", 1)
+						end, 5000, 1)
 					else
-						outputChatBox("Das Fahrzeug hat keinen Kofferraum eingebaut!",client,255,0,0)
+						client:sendError(_("Das Fahrzeug hat keinen Totalschaden!", client))
 					end
-				elseif door == 0 then
-					if exoGetElementData(veh,"owner") == getclientName(client) then
-						if getclientItemAnzahl(client,"Reparaturkit") > 0 then
-							if exoGetElementData(veh,"totalschaden") == true then
-								infobox ( client, "\nMotor wird repariert!\n Bitte warten!!", 4500, 0, 0, 255 )
-								setPedAnimation(client,"BAR","Barserve_give",-1,true)
-								setTimer(function()
-									saveTotalschadenForPrivVeh ( veh,0 )
-									takeItem(client,"Reparaturkit",1)
-									outputChatBox("Motor wird repariert! Totalschaden repariert!",client,0,255,0)
-									setPedAnimation(client)
-								end,5000,1)
-							else
-								infobox ( client, "\nDas Fahrzeug hat keinen Totalschaden!", 7500, 255, 0, 0 )
-							end
-						else
-							infobox ( client, "\nDu hast keinen Reparaturkit!", 7500, 255, 0, 0 )
-						end
-					else
-						infobox ( client, "\nDas ist nicht\n dein Fahrzeug, es gehört "..exoGetElementData(veh,"owner").."!", 7500, 255, 0, 0 )
-					end
+				else
+					client:sendError(_("Du hast keinen Reparaturkit dabei!", client))
 				end
 			end
 		else
 			if door == 1 then doorname = "Der Kofferraum" else doorname="Die Motorhaube" end
-			outputChatBox(doorname.." ist nicht offen!",client,255,0,0)
+			client:sendError(_("%s ist nicht geöffnet!", client, doorname))
 		end
 
 	end
 end
+
+
 
 function VehicleInteraction:interactWith(source, vehicle, door)
     local doorRatio = getVehicleDoorOpenRatio(vehicle, door)
