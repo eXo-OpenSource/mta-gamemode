@@ -19,47 +19,63 @@ function Area:constructor( dataset, pGManager )
 	self:createCenterCol( )
 	self:createRadar()
 	self.m_GangwarManager = pGManager
-	self:createCenterPickup() 
-end	
-
-function Area:destructor( ) 
-	
+	self:createCenterPickup()
 end
 
-function Area:createRadar() 
+function Area:destructor( )
+
+end
+
+function Area:getName()
+	return self.m_Name
+end
+
+function Area:getPosition()
+	return self.m_Position
+end
+
+function Area:getLastAttack()
+	return self.m_LastAttack
+end
+
+function Area:getOwnerId()
+	return self.m_Owner
+end
+
+function Area:createRadar()
 	local areaX,areaY = self.m_PositionRadar[1],self.m_PositionRadar[2]
 	local areaX2, areaY2 = self.m_PositionRadar[3],self.m_PositionRadar[4]
-	local areaWidth = math.abs(areaX -  areaX2)			
-	local areaHeight = math.abs(areaY - areaY2)  
-	local factionColor = factionColors[self.m_Owner] 
-	if factionColor then 
+	local areaWidth = math.abs(areaX -  areaX2)
+	local areaHeight = math.abs(areaY - areaY2)
+	local factionColor = factionColors[self.m_Owner]
+	if factionColor then
 		 factionColor = setBytesInInt32(240,factionColor.r,factionColor.g,factionColor.b)
 	else factionColor = GANGWAR_DUMP_COLOR
 	end
-	if self.m_IsAttacked then 
+	if self.m_IsAttacked then
 		factionColor = setBytesInInt32(255,220,0,0)
 	end
 	self.m_RadarArea = RadarArea:new(areaX, areaY, areaWidth, -1*areaHeight,factionColor )
 end
 
-function Area:createCenterPickup() 
+function Area:createCenterPickup()
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
 	self.m_Pickup = createPickup( x,y,z ,3,2993,5)
 end
 
-function Area:createCenterCol() 
+function Area:createCenterCol()
 	local x,y,z = self.m_Position[1],self.m_Position[2],self.m_Position[3]
 	self.m_CenterSphere = createColSphere(x,y,z,GANGWAR_CENTER_HOLD_RANGE)
 	addEventHandler("onColShapeHit",self.m_CenterSphere,bind(self.onCenterEnter,self))
 	addEventHandler("onColShapeLeave",self.m_CenterSphere,bind(self.onCenterLeave,self))
 	local tElements = getElementsWithinColShape(self.m_CenterSphere,"player")
-	for key,player in ipairs(tElements) do 
+	for key,player in ipairs(tElements) do
 		player.m_InsideArea = self
 	end
 end
 
 function Area:attack( faction1, faction2)
-	if not self.m_IsAttacked then 
+	if not self.m_IsAttacked then
 		self.m_IsAttacked = true
 		faction1:sendMessage("[Gangwar] #FFFFFFIhre Fraktion hat einen Attack gestartet! ( Gebiet: "..self.m_Name.." )", 0,204,204,true)
 		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
@@ -68,18 +84,18 @@ function Area:attack( faction1, faction2)
 		self.m_RadarArea:setFlashing(true)
 		self.m_RadarArea:delete()
 		self.m_BlipImage = Blip:new("gangwar.png", self.m_Position[1], self.m_Position[2])
-		self:createRadar() 
+		self:createRadar()
 		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)
-		self.m_GangwarManager:addAreaToAttacks( self ) 
+		self.m_GangwarManager:addAreaToAttacks( self )
 	end
 end
 
 function Area:onCenterLeave( leaveElement,dimension )
-	if dimension then 
+	if dimension then
 		local bType = getElementType(leaveElement) == "player"
-		if bType then 
+		if bType then
 			leaveElement.m_InsideArea = nil
-			if self.m_IsAttacked then 
+			if self.m_IsAttacked then
 				self.m_AttackSession:onPlayerLeaveCenter( leaveElement )
 			end
 		end
@@ -87,11 +103,11 @@ function Area:onCenterLeave( leaveElement,dimension )
 end
 
 function Area:onCenterEnter( hitElement,dimension )
-	if dimension then 
+	if dimension then
 		local bType = getElementType(hitElement) == "player"
-		if bType then 
+		if bType then
 			hitElement.m_InsideArea = self
-			if self.m_IsAttacked then 
+			if self.m_IsAttacked then
 				self.m_AttackSession:onPlayerEnterCenter( hitElement )
 			end
 		end
@@ -100,27 +116,27 @@ end
 
 --// :attackEnd //
 -- @param_desc: id = WinnerID
-function Area:attackEnd(  ) 
-	if self.m_IsAttacked then 
+function Area:attackEnd(  )
+	if self.m_IsAttacked then
 		self.m_RadarArea:setFlashing(false)
 		self.m_AttackSession:delete()
 		self.m_IsAttacked = false
 		self.m_RadarArea:delete()
-		self:createRadar()  
+		self:createRadar()
 		self.m_BlipImage:delete()
 		setPickupType(self.m_Pickup,3,2993)
-		self.m_GangwarManager:removeAreaFromAttacks( self ) 
+		self.m_GangwarManager:removeAreaFromAttacks( self )
 	end
 end
 
 --// :update //
 --// @desc: update sql values
-function Area:update() 
+function Area:update()
 	local sql_query = "UPDATE ??_gangwar SET Besitzer=?,lastAttack=? WHERE ID=?"
 	sql:queryFetch(sql_query,sql:getPrefix(),self.m_Owner,self.m_LastAttack,self.m_ID)
 end
 
-function Area:destructor() 
+function Area:destructor()
 	--// Do some delete
 	self:update()
 end
@@ -129,8 +145,8 @@ function Area:isUnderAttack( )
 	return self.m_IsAttacked
 end
 
-function Area:getMatchFactions() 
-	if self.m_IsAttacked then 
+function Area:getMatchFactions()
+	if self.m_IsAttacked then
 		return self.m_AttackSession:getFactions()
 	end
 end
