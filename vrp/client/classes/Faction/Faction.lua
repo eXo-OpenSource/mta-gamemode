@@ -25,12 +25,13 @@ end
 
 Faction = inherit(Object)
 
-function Faction:constructor(Id, name, name_short, rankNames, factionType)
+function Faction:constructor(Id, name, name_short, rankNames, factionType, color)
 	self.m_Id = Id
 	self.m_Name = name
 	self.m_NameShort = name_short
 	self.m_RankNames = rankNames
 	self.m_FactionType = factionTyp
+	self.m_Color = color
 end
 
 function Faction:getName()

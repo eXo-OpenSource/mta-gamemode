@@ -55,6 +55,14 @@ function FactionGUI:constructor()
 	self.m_FactionRankUpButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.25, self.m_Width*0.3, self.m_Height*0.07, _"Rang hoch", true, tabMitglieder)
 	self.m_FactionRankDownButton = VRPButton:new(self.m_Width*0.6, self.m_Height*0.35, self.m_Width*0.3, self.m_Height*0.07, _"Rang runter", true, tabMitglieder)
 
+	local tabGangwar = self.m_TabPanel:addTab(_"Gangwar")
+	self.m_tabGangwar = tabGangwar
+	self.m_GangAreasGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.3, self.m_Height*0.8, tabGangwar)
+	self.m_GangAreasGrid:addColumn(_"Gebiet", 0.7)
+	self.m_GangAreasOverviewItem = self.m_GangAreasGrid:addItem(_"Übersicht")
+	self.m_GangAreasOverviewItem.onLeftClick = function() self:onGangwarItemSelect(self.m_GangAreasOverviewItem) end
+
+
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 --	self.m_FactionQuitButton.onLeftClick = bind(self.FactionQuitButton_Click, self)
@@ -92,6 +100,9 @@ end
 function FactionGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabLogs.TabIndex then
 		triggerServerEvent("factionRequestLog", root)
+	elseif tabId == self.m_tabGangwar.TabIndex then
+		self.m_GangAreasGrid:onInternalSelectItem(self.m_GangAreasOverviewItem)
+		self:onGangwarItemSelect(self.m_GangAreasOverviewItem)
 	else
 		triggerServerEvent("factionRequestInfo", root)
 	end
@@ -204,6 +215,15 @@ function FactionGUI:onSelectRank(name,rank)
 	self.m_SkinChanger:setSelectedItem(self.m_RankSkins[tostring(rank)])
 
 end
+
+function FactionGUI:onGangwarItemSelect(item)
+	if self.m_GangwarChart then delete(self.m_GangwarChart) end
+	if item == self.m_GangAreasOverviewItem then
+		self.m_GangwarChart = GUIWebView:new(self.m_Width*0.35, self.m_Height*0.06, self.m_Width*0.64, self.m_Height*0.8, "http://exo-reallife.de/ingame/other/gangwar.php", true, self.m_tabGangwar)
+	end
+end
+
+
 
 function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players,skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons)
 	--self:adjustFactionTab(rank or false)

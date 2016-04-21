@@ -69,7 +69,7 @@ end
 
 function Core:afterLogin()
 	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de", "maxcdn.bootstrapcdn.com"}
+	Browser.requestDomains{"exo-reallife.de"}
 
 	RadioGUI:new()
 	KarmaBar:new()

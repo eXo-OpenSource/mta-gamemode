@@ -80,6 +80,10 @@ function Faction:getType()
 	return self.m_Type
 end
 
+function Faction:getColor()
+	return self.m_Color
+end
+
 function Faction:getId()
 	return self.m_Id
 end

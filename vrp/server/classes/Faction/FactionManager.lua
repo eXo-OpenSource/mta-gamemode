@@ -357,6 +357,6 @@ end
 
 function FactionManager:Event_getFactions()
 	for id, faction in pairs(self.Map) do
-		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType())
+		client:triggerEvent("loadClientFaction", faction:getId(), faction:getName(), faction:getShortName(), faction:getRankNames(), faction:getType(), faction:getColor())
 	end
 end
