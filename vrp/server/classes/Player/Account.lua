@@ -64,6 +64,11 @@ function Account.register(player, username, password, email)
 		return false
 	end
 
+	if #password < 5 then
+		player:triggerEvent("registerfailed", _("Fehler: Passwort zu kurz! Min. 5 Zeichen!", player))
+		return false
+	end
+
 	-- Validate email
 	if not pregMatch(email, "[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,8}") or #email > 50 then
 		player:triggerEvent("registerfailed", _("Fehler: Ungültige eMail", player))

@@ -6,7 +6,8 @@
 -- *
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
-addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp", "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation"}
+addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
+"requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -30,6 +31,8 @@ function PlayerManager:constructor()
 	addEventHandler("setPhoneStatus", root, bind(self.Event_setPhoneStatus, self))
 	addEventHandler("toggleAFK", root, bind(self.Event_toggleAFK, self))
 	addEventHandler("startAnimation", root, bind(self.Event_startAnimation, self))
+	addEventHandler("passwordChange", root, bind(self.Event_passwordChange, self))
+
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -335,4 +338,26 @@ function PlayerManager:stopAnimation(player)
 
 	-- Tell the client
 	player:triggerEvent("onClientAnimationStop")
+end
+
+function PlayerManager:Event_passwordChange(old, new1, new2)
+	if new1 == new2 then
+		local row = sql:queryFetchSingle("SELECT Id, Salt, Password FROM ??_account WHERE Name = ? ", sql:getPrefix(), client:getName())
+		if row then
+			local oldPwhash = sha256(row.Salt..old)
+			if oldPwhash == row.Password then
+				local newSalt = md5(math.random())
+				local newPwhash = sha256(newSalt..new1)
+				sql:queryExec("UPDATE ??_account SET Password = ?, Salt = ? WHERE Name = ? ", sql:getPrefix(), newPwhash, newSalt, client:getName())
+				client:sendInfo("Dein neues Passwort wurde gespeichert!", client)
+				client:triggerEvent("passwordChangeSuccess")
+			else
+				client:sendError("Dein eingegebenes altes Passwort ist nicht korrekt!", client)
+			end
+		else
+			client:sendError("Internal Error @Password Change!", client)
+		end
+	else
+		client:sendError("Dein eingegebenen neuen Passwört sind nicht identisch!", client)
+	end
 end
