@@ -238,8 +238,10 @@ function FactionGUI:onGangwarItemSelect(item)
 			local ownerFaction = FactionManager:getSingleton():getFromId(item.owner)
 			self.m_AreaOwner = GUILabel:new(self.m_Width*0.35, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, _("Besitzer: %s", ownerFaction:getName()), self.m_tabGangwar)
 			self.m_LastAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.21, self.m_Width*0.4, self.m_Height*0.06, _("Letzter Angriff: %s", getOpticalTimestamp(item.lastAttack)), self.m_tabGangwar)
-			self.m_Map = GUIMiniMap:new(self.m_Width*0.35, self.m_Height*0.5, self.m_Width*0.64, self.m_Height*0.4, "Radar_Monochrome", self.m_tabGangwar)
+			self.m_Map = GUIMiniMap:new(self.m_Width*0.35, self.m_Height*0.5, self.m_Width*0.63, self.m_Height*0.4, "Radar_Monochrome", self.m_tabGangwar)
 			self.m_Map:setPosition(item.posX, item.posY)
+			self.m_Map:addBlip("Waypoint.png", item.posX, item.posY)
+
 		end
 	end
 end
