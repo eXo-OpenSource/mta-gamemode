@@ -9,7 +9,6 @@ Ban = {}
 function Ban.addBan(who, author, reason, duration)
 	local authorId = 0
 	if type(author) == "userdata" and getElementType(author) == "player" then
-		author = getPlayerName(author)
 		authorId = author:getId()
 	elseif author == nil then
 		author = "System"

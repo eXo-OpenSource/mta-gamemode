@@ -20,11 +20,14 @@ RANK = r2
 
 ADMIN_RANK_PERMISSION = {
 	["kick"] = RANK.Supporter,
+	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
 	["gethere"] = RANK.Supporter,
 	["goto"] = RANK.Supporter,
 	["warn"] = RANK.Supporter,
 	["supportMode"] = RANK.Supporter,
+	["smode"] = RANK.Supporter,
+	["warn"] = RANK.Supporter,
 	["addWarn"] = RANK.Supporter,
 	["timeban"] = RANK.Moderator,
 	["permaban"] = RANK.SuperModerator,

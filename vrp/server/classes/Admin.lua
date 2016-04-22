@@ -29,6 +29,18 @@ function Admin:constructor()
     addCommandHandler("tp", bind(self.teleportTo, self))
     addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
+    addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
+
+    local adminCommandBind = bind(self.command, self)
+
+    addCommandHandler("timeban", adminCommandBind)
+    addCommandHandler("permaban", adminCommandBind)
+    addCommandHandler("prison", adminCommandBind)
+    addCommandHandler("smode", adminCommandBind)
+    addCommandHandler("rkick", adminCommandBind)
+    addCommandHandler("warn", adminCommandBind)
+
+
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
@@ -36,6 +48,12 @@ end
 
 function Admin:destructor()
 	removeCommandHandler("admins", bind(self.onlineList, self))
+    removeCommandHandler("timeban", adminCommandBind)
+    removeCommandHandler("permaban", adminCommandBind)
+    removeCommandHandler("prison", adminCommandBind)
+    removeCommandHandler("smode", adminCommandBind)
+    removeCommandHandler("rkick", adminCommandBind)
+    removeCommandHandler("warn", adminCommandBind)
 	removeCommandHandler("a", bind(self.chat, self))
 	removeCommandHandler("o", bind(self.ochat, self))
 end
@@ -57,46 +75,80 @@ function Admin:openAdminMenu( player )
 	end
 end
 
-function Admin:Event_adminTriggerFunction(func, target, reason, duration)
-    if client:getRank() >= ADMIN_RANK_PERMISSION[func] then
+function Admin:command(admin, cmd, targetName, arg1, arg2)
+    if cmd == "smode" then
+        self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
+    else
+        if targetName and arg1 then
+            local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
+            if isElement(target) then
+                if cmd == "rkick" then
+                    self:Event_adminTriggerFunction(cmd, target, arg1, 0, admin)
+                else
+                    if arg2 then
+                        self:Event_adminTriggerFunction(cmd, target, arg2, arg1, admin)
+                    else
+                        admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
+                    end
+                end
+            end
+        else
+            if cmd == "rkick" then
+                admin:sendError(_("Befehl: /%s [Ziel] [Grund]", admin, cmd))
+            else
+                admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
+            end
+        end
+    end
+end
+
+function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
+    if client and isElement(client) then
+        admin = client
+    elseif isElement(admin) then
+        admin = admin
+    else
+        outputDebug("Event_adminTriggerFunction Error - Admin not found")
+        return
+    end
+
+    if admin:getRank() >= ADMIN_RANK_PERMISSION[func] then
         if func == "goto" then
-            self:goToPlayer(client, func, target:getName())
-            self:sendShortMessage(_("hat sich zu %s geportet!", client, target:getName()))
+            self:goToPlayer(admin, func, target:getName())
         elseif func == "gethere" then
-            self:getHerePlayer(client, func, target:getName())
-            self:sendShortMessage(_("hat %s zu sich geportet!", client, target:getName()))
-        elseif func == "kick" then
-            self:sendShortMessage(_("hat %s gekickt! Grund: %s", client, target:getName(), reason))
-            target:kick(client, reason)
+            self:getHerePlayer(admin, func, target:getName())
+        elseif func == "kick" or func == "rkick" then
+            self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
+            target:kick(admin, reason)
         elseif func == "prison" then
             duration = tonumber(duration)
-            self:sendShortMessage(_("hat %s für %d Minuten ins Prison gesteckt! Grund: %s", client, target:getName(), duration, reason))
+            self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
             target:setPrison(duration*60)
-            self:addPunishLog(client, target, func, reason, duration*60)
+            self:addPunishLog(admin, target, func, reason, duration*60)
         elseif func == "timeban" then
             duration = tonumber(duration)
-            self:sendShortMessage(_("hat %s für %d Stunden ins gebannt! Grund: %s", client, target:getName(), duration, reason))
-            Ban.addBan(target, client, reason, duration*60*60)
-            self:addPunishLog(client, target, func, reason, duration*60*60)
+            self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+            Ban.addBan(target, admin, reason, duration*60*60)
+            self:addPunishLog(admin, target, func, reason, duration*60*60)
         elseif func == "permaban" then
-            self:sendShortMessage(_("hat %s permanent gebannt! Grund: %s", client, target:getName(), reason))
-            Ban.addBan(target, client, reason)
-            self:addPunishLog(client, target, func, reason, 0)
-        elseif func == "addWarn" then
-            self:sendShortMessage(_("hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", client, target:getName(), duration, reason))
-            Warn.addWarn(target, client, reason, duration*60*60*24)
-            target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, client:getName(), duration, reason), 255, 0, 0)
-            self:addPunishLog(client, target, func, reason, duration*60*60*24)
+            self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
+            Ban.addBan(target, admin, reason)
+            self:addPunishLog(admin, target, func, reason, 0)
+        elseif func == "addWarn" or func == "warn" then
+            self:sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+            Warn.addWarn(target, admin, reason, duration*60*60*24)
+            target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, admin:getName(), duration, reason), 255, 0, 0)
+            self:addPunishLog(admin, target, func, reason, duration*60*60*24)
         elseif func == "removeWarn" then
-            self:sendShortMessage(_("hat einen Warn von %s entfernt!", client, target:getName()))
+            self:sendShortMessage(_("%s hat einen Warn von %s entfernt!", admin, admin:getName(), target:getName()))
             local id = reason
             Warn.removeWarn(target, id)
-            self:addPunishLog(client, target, func, "", 0)
-        elseif func == "supportMode" then
-            self:toggleSupportMode(client)
+            self:addPunishLog(admin, target, func, "", 0)
+        elseif func == "supportMode" or func == "smode" then
+            self:toggleSupportMode(admin)
         end
     else
-        client:sendError(_("Du darst diese Aktion nicht ausführen!", client))
+        admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))
     end
 end
 
@@ -116,12 +168,14 @@ function Admin:toggleSupportMode(player)
     if not player:getPublicSync("supportMode") then
         player:setPublicSync("supportMode", true)
         player:sendInfo(_("Support Modus aktiviert!", player))
+        self:sendShortMessage(_("%s hat den Support Modus aktiviert!", player, player:getName()))
         player:setModel(260)
         player:triggerEvent("playerToggleDamage", true)
         self:toggleSupportArrow(player, true)
     else
         player:setPublicSync("supportMode", false)
         player:sendInfo(_("Support Modus deaktiviert!", player))
+        self:sendShortMessage(_("%s hat den Support Modus deaktiviert!", player, player:getName()))
         player:setDefaultSkin()
         player:triggerEvent("playerToggleDamage", false)
         self:toggleSupportArrow(player, false)
@@ -182,7 +236,8 @@ function Admin:goToPlayer(player,cmd,target)
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
-				local dim,int = target:getDimension(), target:getInterior()
+                self:sendShortMessage(_("%s hat %s zu sich geportet!", player, player:getName(), target:getName()))
+                local dim,int = target:getDimension(), target:getInterior()
 				local pos = target:getPosition()
 				pos.x = pos.x + 0.01
 				if player:isInVehicle() then player:removeFromVehicle() end
@@ -203,7 +258,8 @@ function Admin:getHerePlayer(player, cmd, target)
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
-				local dim,int = player:getDimension(), player:getInterior()
+                self:sendShortMessage(_("%s hat %s zu sich geportet!", player, player:getName(), target:getName()))
+                local dim,int = player:getDimension(), player:getInterior()
 				local pos = player:getPosition()
 				pos.x = pos.x + 0.01
 				if target:isInVehicle() then target:removeFromVehicle() end
