@@ -14,12 +14,19 @@ function LocalPlayer:constructor()
 	self.m_Rank = 0
 	self.m_LoggedIn = false
 	self.m_JoinTime = getTickCount()
+
+	self.m_AFKCheckCount = 0
+	self.m_LastPositon = Vector3(0, 0, 0)
+	self.m_AFKTimer = setTimer ( bind(self.checkAFK, self), 5000, 0)
+
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
 	addEventHandler("playerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("playerRescueWasted", root, bind(self.playerRescueWasted, self))
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
 	addEventHandler("playerToggleDamage", self, bind(self.toggleDamage, self))
+
+	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
 end
 
@@ -164,6 +171,78 @@ function LocalPlayer:playerRescueWasted()
 			end
 		end
 	)
+end
+
+function LocalPlayer:checkAFK()
+	if not self:getPublicSync("AFK") == true then
+		local pos = self:getPosition()
+
+		if self:getInterior() == 4 and getDistanceBetweenPoints3D(pos, Vector3(449.03, -88.86, 999.55)) < 50 then
+			self:toggleAFK(true, false)
+			return
+		end
+
+		self.m_AFKCheckCount = self.m_AFKCheckCount + 1
+		if getDistanceBetweenPoints3D(pos, self.m_LastPositon) > 15 then
+			self.m_AFKCheckCount = 0
+			triggerServerEvent("toggleAFK", localPlayer, false)
+			removeEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
+			return
+		end
+		if self.m_AFKCheckCount == 60 then
+			outputChatBox ( "WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
+			self:generateAFKCode()
+			return
+		elseif self.m_AFKCheckCount == 72 then
+			self:toggleAFK(true, true)
+			return
+		end
+		self.m_LastPositon = pos
+	else
+		if self:getInterior() == 0 then
+			self:toggleAFK(false)
+		end
+	end
+end
+
+function LocalPlayer:toggleAFK(state, teleport)
+	if state == true then
+		self.m_AFKCode = false
+		InfoBox:new(_"Du wurdest ins AFK-Cafe teleportiert!")
+		triggerServerEvent("toggleAFK", localPlayer, true, teleport)
+		addEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
+	else
+		InfoBox:new(_("Willkommen zurück, %s!", localPlayer:getName()))
+		triggerServerEvent("toggleAFK", localPlayer, false)
+		removeEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
+	end
+end
+
+function LocalPlayer:generateAFKCode()
+	local char = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z","0","1","2","3","4","5","6","7","8","9"}
+	local code = {}
+	for z = 1,4 do
+		a = math.random(1,#char)
+		x = string.lower(char[a])
+		table.insert(code, x)
+	end
+	local fcode = table.concat(code)
+	self.m_AFKCode = fcode
+	outputChatBox("Um nicht ins AFK-Cafe zu kommen, gib folgenden Befehl ein: /noafk "..fcode,255,0,0)
+end
+
+function LocalPlayer:onAFKCodeInput(cmd, code)
+	if self.m_AFKCode then
+		if self.m_AFKCode == code then
+			infoBox:new(_"Der eingegeben Code wurde akzeptiert!")
+			self.m_AFKCheckCount = 0
+			self.m_AFKCode = false
+		else
+			ErrorBox:new(_"Der eingegeben Code ist falsch!")
+		end
+	else
+		ErrorBox:new(_"Der Code ist nicht mehr gültig!")
+	end
 end
 
 -- Events

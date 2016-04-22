@@ -59,6 +59,10 @@ function HUDUI:draw()
 	if self.m_RedDot == true then
 		self:drawRedDot()
 	end
+
+	if localPlayer:getPublicSync("AFK") == true then
+		self:drawAFK()
+	end
 end
 
 function HUDUI:setUIMode(uiMode)
@@ -344,4 +348,8 @@ function HUDUI:drawRedDot()
 			end
 		end
 	end
+end
+
+function HUDUI:drawAFK()
+	dxDrawText ("- AFK - ",0,0,screenWidth, 100,  Color.Orange, 5, "sans","center" )
 end

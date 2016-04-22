@@ -31,6 +31,8 @@ function Player:constructor()
 	self.m_Achievements = {}
 	self.m_LastGotWantedLevelTime = 0
 	self.m_JoinTime = getTickCount()
+	self.m_AFKTime = 0
+	self.m_AFKStartTime = 0
 	self.m_Crimes = {}
 	self.m_LastPlayTime = 0
 	self:destroyChatColShapes( )
@@ -448,8 +450,27 @@ function Player:getJoinTime()
 	return self.m_JoinTime
 end
 
+function Player:getAFKTime()
+	if self.m_AFKTime > 0 and self.m_AFKStartTime > 0 then
+		self.m_AFKTime = self.m_AFKTime + (getTickCount() - self.m_AFKStartTime)
+	elseif self.m_AFKStartTime > 0 then
+		self.m_AFKTime = getTickCount() - self.m_AFKStartTime
+	end
+
+	return self.m_AFKTime
+end
+
+function Player:startAFK()
+	self.m_AFKStartTime = getTickCount()
+end
+
+function Player:endAFK()
+	self:getAFKTime()
+	self.m_AFKStartTime = 0
+end
+
 function Player:getPlayTime()
-	return math.floor(self.m_LastPlayTime + (getTickCount() - self.m_JoinTime)/1000/60)
+	return math.floor(self.m_LastPlayTime + (getTickCount() - self.m_JoinTime - self:getAFKTime())/1000/60)
 end
 
 function Player:setNextPayday()
