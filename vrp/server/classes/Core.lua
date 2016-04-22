@@ -62,7 +62,7 @@ function Core:constructor()
 	ShopManager:new()
 	Jail:new()
 	VehicleInteraction:new()
-	
+
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()
@@ -78,6 +78,7 @@ function Core:constructor()
 
 	-- Missions
 	MWeaponTruck:new()
+	MWeedTruck:new()
 
 	--// Gangwar
 	Gangwar:new()
