@@ -50,6 +50,11 @@ function BankRobbery:constructor()
 	self:createSafes()
 	self:createBombableBricks()
 
+	self.m_HelpColShape = createColSphere(2301.44, -15.98, 26.48, 5)
+	addEventHandler("onColShapeHit", self.m_HelpColShape, bind(self.onHelpColHit, self))
+	addEventHandler("onColShapeLeave", self.m_HelpColShape, bind(self.onHelpColHit, self))
+
+
 	addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
 	addEventHandler("bankRobberyPcHack", root, bind(self.Event_onStartHacking, self))
 	addEventHandler("bankRobberyPcDisarm", root, bind(self.Event_onDisarmAlarm, self))
@@ -93,6 +98,18 @@ function BankRobbery:destructor()
 
 	ActionsCheck:getSingleton():endAction()
 	self:initializeAll()
+end
+
+function BankRobbery:onHelpColHit(hitElement, matchingDimension)
+	if hitElement:getType() == "player" and matchingDimension then
+		hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.Bankrob", "HelpTexts.Actions.Bankrob", true)
+	end
+end
+
+function BankRobbery:onHelpColLeave(hitElement, matchingDimension)
+	if hitElement:getType() == "player" and matchingDimension then
+		hitElement:triggerEvent("resetManualHelpBarText")
+	end
 end
 
 function BankRobbery:startRob(player)

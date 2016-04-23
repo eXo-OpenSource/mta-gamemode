@@ -24,7 +24,7 @@ function WeedTruck:constructor(driver)
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
 
-	self.m_Timer = setTimer(bind(self.timeUp, self), WeedTruck.Time, 1)
+
 	self.m_Destroyed = false
 	self.m_DestroyFunc = bind(self.Event_OnWeedTruckDestroy,self)
 
@@ -57,6 +57,9 @@ end
 function WeedTruck:truckLoaded()
 	self.m_StartPlayer:sendInfo(_("Der Weed-Truck ist vollständig beladen!", self.m_StartPlayer))
 	self.m_Truck:setFrozen(false)
+	self.m_Timer = setTimer(bind(self.timeUp, self), WeedTruck.Time, 1)
+	self:Event_OnWeedTruckEnter(self.m_StartPlayer, 0)
+
 end
 
 function WeedTruck:timeUp()
@@ -81,7 +84,7 @@ function WeedTruck:Event_OnWeedTruckDestroy()
 	end
 end
 
-function WeedTruck:Event_OnWeedTruckEnter(player,seat)
+function WeedTruck:Event_OnWeedTruckEnter(player, seat)
 	if seat == 0 and player:getFaction() then
 		local factionId = player:getFaction():getId()
 		local destination = factionWTDestination[factionId]

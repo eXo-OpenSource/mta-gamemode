@@ -110,7 +110,14 @@ HelpTextTitles = {
 	};
 	Gameplay = {
 		Beggar = "Gameplay: Bettler"
-	}
+	};
+	Actions = {
+		WeaponTruck = "Aktionen: Waffen-Truck";
+		WeedTruck = "Aktionen: Weed-Truck";
+		Bankrob = "Aktionen: Bank-Überfall";
+		StateWeaponTruck = "Aktionen: Staats Waffen Truck";
+
+	};
 }
 
 HelpTexts = {
@@ -270,7 +277,32 @@ HelpTexts = {
 	};
 	Gameplay = {
 		Beggar = [[Todo]];
-	}
+	};
+	Actions = {
+		WeaponTruck = [[
+			Wählt die Waffen die ihr benötigt aus und ladet diese auf den Truck.
+			Fahrt nun mit dem Truck zu eurer Base und versucht die Kisten abzugeben.
+			Die Cops werden versuchen euren Truck zu zerstören. Falls ihnen das gelingt, könnt ihr
+			eure Kisten mit einem kleinem Lieferwagen aus eurer Base weitertransportieren.
+		]];
+		StateWeaponTruck = [[
+			Wählt die Waffen die ihr benötigt aus und ladet diese auf den Staatswaffentruck.
+			Fahrt nun den Truck an die LS Docks und versucht die Kisten abzugeben.
+			Die Bösen Fraktionisten werden versuchen den SWT zu zerstören.
+			Falls ihnen das gelingt, könnt ihr die Waffen mit einem Enforcer vom LSPD weitertransportieren.
+		]];
+		WeedTruck = [[Todo]];
+		Bankrob = [[
+		Nachdem ihr den Kassierer mit einer Waffe bedroht oder ein Loch in die Wand gesprengt habt, müsst ihr
+		zum Kontrollraum laufen und die Tresortür knacken. Außerdem könnt ihr dort den Alarm ausschalten.
+		Sobald der Tresorraum offen ist, knackt einen Safe in dem ihr auf einen klickst. Nach einem weiteren
+		Klick nehmt ihr das Geld aus ihm heraus. Die Taschen auf dem Boden füllen sich mit Geld. Wenn ihr genug habt,
+		oder der Tresorraum leer ist, könnt ihr die Taschen via. Klicksystem auf den Rücken schnallen.
+		Lauft zum Boxville um die Ecke und ladet durch einen klick auf ihn die Taschen ein.
+		Fahrt nun schnell zu einem der Abgabepunkte!
+		]];
+	};
+
 };
 
 Tipps = {

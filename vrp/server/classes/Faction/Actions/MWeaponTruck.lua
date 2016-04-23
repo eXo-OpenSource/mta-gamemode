@@ -26,6 +26,27 @@ function MWeaponTruck:createStartPoint(x, y, z, type)
 	local marker = createMarker(x, y, z, "cylinder",1)
 	marker.type = type
 	addEventHandler("onMarkerHit", marker, bind(self.onStartPointHit, self))
+	self.m_HelpColShape = createColSphere(x, y, z, 5)
+	self.m_HelpColShape.type = type
+	addEventHandler("onColShapeHit", self.m_HelpColShape, bind(self.onHelpColHit, self))
+	addEventHandler("onColShapeLeave", self.m_HelpColShape, bind(self.onHelpColHit, self))
+
+end
+
+function MWeaponTruck:onHelpColHit(hitElement, matchingDimension)
+	if hitElement:getType() == "player" and matchingDimension then
+		if source.type == "evil" then
+			hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.WeaponTruck", "HelpTexts.Actions.WeaponTruck", true)
+		elseif source.type == "state" then
+			hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.StateWeaponTruck", "HelpTexts.Actions.StateWeaponTruck", true)
+		end
+	end
+end
+
+function MWeaponTruck:onHelpColLeave(hitElement, matchingDimension)
+	if hitElement:getType() == "player" and matchingDimension then
+		hitElement:triggerEvent("resetManualHelpBarText")
+	end
 end
 
 function MWeaponTruck:onStartPointHit(hitElement, matchingDimension)

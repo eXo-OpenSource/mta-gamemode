@@ -12,6 +12,10 @@ MWeedTruck.Settings = {["costs"] = 10000}
 function MWeedTruck:constructor()
 	self:createStartPoint(-1095.50, -1614.75, 75.5)
 
+	self.m_HelpColShape = createColSphere(-1095.50, -1614.75, 75.5, 5)
+	addEventHandler("onColShapeHit", self.m_HelpColShape, bind(self.onHelpColHit, self))
+	addEventHandler("onColShapeLeave", self.m_HelpColShape, bind(self.onHelpColHit, self))
+
 	addRemoteEvents{"weedTruckStart"}
 	addEventHandler("weedTruckStart", root, bind(self.Event_weedTruckStart, self))
 end
@@ -23,6 +27,18 @@ function MWeedTruck:createStartPoint(x, y, z, type)
 	--self.m_Blip = Blip:new("Waypoint.png", x, y, self.m_Driver)
 	local marker = createMarker(x, y, z, "cylinder",1)
 	addEventHandler("onMarkerHit", marker, bind(self.onStartPointHit, self))
+end
+
+function MWeedTruck:onHelpColHit(hitElement, matchingDimension)
+	if hitElement:getType() == "player" and matchingDimension then
+		hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.WeedTruck", "HelpTexts.Actions.WeedTruck", true)
+	end
+end
+
+function MWeedTruck:onHelpColLeave(hitElement, matchingDimension)
+	if hitElement:getType() == "player" and matchingDimension then
+		hitElement:triggerEvent("resetManualHelpBarText")
+	end
 end
 
 function MWeedTruck:onStartPointHit(hitElement, matchingDimension)
