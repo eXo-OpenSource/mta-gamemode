@@ -17,10 +17,9 @@ function VehicleManager:constructor()
 	self:setSpeedLimits()
 
 	-- Add events
-	addRemoteEvents{"vehicleBuy", "vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
+	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo",
 		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar"}
-	addEventHandler("vehicleBuy", root, bind(self.Event_vehicleBuy, self))
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
@@ -318,35 +317,6 @@ function VehicleManager:setSpeedLimits()
 	setModelHandling(509, "maxVelocity", 50) -- Bike
 	setModelHandling(481, "maxVelocity", 50) -- BMX
 	setModelHandling(510, "maxVelocity", 50) -- Mountain Bike
-end
-
-
-function VehicleManager:Event_vehicleBuy(vehicleModel, shop)
-	if not VEHICLESHOPS[shop] then return end
-	if not VEHICLESHOPS[shop].Vehicles then return end
-
-	local price, requiredLevel = unpack(VEHICLESHOPS[shop].Vehicles[vehicleModel])
-	if not price then return end
-
-	if client:getVehicleLevel() < requiredLevel then
-		client:sendError(_("Für dieses Fahrzeug brauchst du min. Fahrzeuglevel %d", client, requiredLevel))
-		return
-	end
-
-	if client:getMoney() < price then
-		client:sendError(_("Du hast nicht genügend Geld!", client), 255, 0, 0)
-		return
-	end
-
-	local spawnX, spawnY, spawnZ, rotation = unpack(VEHICLESHOPS[shop].Spawn)
-	local vehicle = PermanentVehicle.create(client, vehicleModel, spawnX, spawnY, spawnZ, rotation)
-	if vehicle then
-		client:takeMoney(price)
-		warpPedIntoVehicle(client, vehicle)
-		client:triggerEvent("vehicleBought")
-	else
-		client:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", client), 255, 0, 0)
-	end
 end
 
 function VehicleManager:Event_vehicleLock()

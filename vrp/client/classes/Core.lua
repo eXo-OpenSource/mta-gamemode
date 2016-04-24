@@ -53,7 +53,6 @@ function Core:ready()
 	DeathmatchEvent:new()
 	StreetRaceEvent:new()
 
-	VehicleShop.initializeAll()
 	VehicleGarages:new()
 	ELSSystem:new()
 	GasStationGUI:new()

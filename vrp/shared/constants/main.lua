@@ -38,48 +38,55 @@ ADMIN_RANK_PERMISSION = {
 }
 
 VEHICLESHOPS = {
-	["Coutt and Schutz"] = {
+	["Coutt and Schutz Tuning"] = {
 		ImgPath = "files/images/Shops/CouttSchutz.png";
 		Position = {2132, -1150.3, 23};
 		Rect = {2141.3, -1207.74, 24.47, 76.15};
 		Spawn = {2148.2, -1179.96, 23.5, 90};
 		Vehicles = {
 			--model, price, requiredLevel
-			[536] = {7200, 4}, -- Blade
-			[518] = {8300, 4},-- Buccaneer
-			[567] = {8000, 5}, -- Savanna
-			[540] = {9000, 4}, -- Vincent
-			[589] = {11000, 4}, -- Club
-			[533] = {11300, 4}, -- Feltzer
-			[561] = {13000, 5}, -- Stratum
-			[402] = {14000, 5}, -- Buffallo
-			[400] = {14500, 5}, -- Landstalker
-			[550] = {16000, 6}, -- Sunrise
-			[603] = {17000, 6}, -- Phoenix
-			[489] = {17000, 6}, -- Rancher
-			[560] = {19000, 7}, -- Sultan
+			[562] = {60000, 4}, -- Elegy
+			[589] = {100000, 4},-- Club
+			[496] = {50000, 5}, -- Blista Compact
+			[559] = {85000, 4}, -- Jester
+			[561] = {70000, 4}, -- Stratum
+			[560] = {50000, 4}, -- Sultan
+			[507] = {60000, 5}, -- Elegant
 		};
 	};
-	["Bertram's bobbycars"] = {
-		ImgPath = "files/images/Shops/Bertrams.png";
-		Position = {310.39999, -1798.5, 3.5};
-		Rect = {308.8, -1812.5, 20, 20};
-		Spawn = {321.70001, -1789.6, 4.7};
+	["Grotti Los Santos"] = {
+		ImgPath = "files/images/Shops/CouttSchutz.png";
+		Position = {562.40,-1293.5,16.20};
+		Rect = {561.17, -1265.08, 24.47, 76.15};
+		Spawn = {549.68,-1265.02,16.92,300};
 		Vehicles = {
 			--model, price, requiredLevel
-			[543] = {2700, 1}, -- Sadler
-			[404] = {3000, 1}, -- Perennial
-			[549] = {3500, 2}, -- Tampa
-			[479] = {3700, 1}, -- Regina
-			[445] = {3750, 2}, -- Admiral
-			[527] = {4000, 2}, -- Cadrona
-			[566] = {5000, 2}, -- Tahoma
-			[491] = {5000, 2}, -- Virgo
-			[546] = {5700, 2}, -- Intruder
-			[542] = {6000, 2}, -- Clover
-			[600] = {7200, 3}, -- Picador
-			[585] = {7500, 3}, -- Emperor
-			[439] = {6500, 3}, -- Stallion
+			[580] = {99000, 8}, -- Stafford
+			[411] = {180000, 8},-- Infernus
+			[440] = {60000, 8}, -- Rumpo
+			[402] = {90000, 8}, -- Bufallo
+			[533] = {100000, 8}, -- Feltzer
+			[451] = {400000, 10}, -- Turismo
+		};
+	};
+	["LS Slow & Used"] = {
+		ImgPath = "files/images/Shops/CouttSchutz.png";
+		Position = {2853.05, -1532.57, 10};
+		Rect = { 1090, -1250, 24.47, 76.15};
+		Spawn = {1094.76 ,-1249.06, 15.82,0};
+		Vehicles = {
+			--model, price, requiredLevel
+			[400] = {15000, 3}, -- Landstalker
+			[436] = {10000, 2},-- Previon
+			[566] = {80000, 4}, -- Tahoma
+			[549] = {2500, 1}, -- Tampa
+			[604] = {900, 1}, -- Kaputter Glendale
+			[605] = {5000, 1}, -- Kaputter Sadler
+			[475] = {18000, 3}, -- Sabre
+			[426] = {20000, 3}, -- Premier
+			[527] = {15000, 3}, -- Cadrona
+			[542] = {9000, 2}, -- Clover
+			[458] = {13000, 2}, -- Solair
 		};
 	};
 	["Harry's bikes"] = {

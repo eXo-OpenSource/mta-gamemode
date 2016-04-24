@@ -147,6 +147,7 @@
 	<script src="server/classes/Gameplay/Shops/BurgerShot.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/CluckinBell.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/RustyBrown.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
 	<script src="server/constants/shops.lua" type="server"/>
 
 	<!-- Groups -->
@@ -1043,7 +1044,6 @@
 	<map src="files/maps/Bank.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
-	<map src="files/maps/MechanicBase.map"/>
 
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>

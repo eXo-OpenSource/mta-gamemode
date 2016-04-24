@@ -8,6 +8,8 @@
 VehicleShopGUI = inherit(GUIForm)
 inherit(Singleton, VehicleShopGUI)
 
+addRemoteEvents{"showVehicleShopMenu"}
+
 function VehicleShopGUI:constructor()
 	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
 
@@ -33,18 +35,25 @@ end
 
 function VehicleShopGUI:destructor()
 	showChat(true)
-
+	setCameraTarget(localPlayer, localPlayer)
+	setTimer(function()
+		setCameraTarget(localPlayer, localPlayer)
+	end, 2000, 1)
 	GUIForm.destructor(self)
 end
 
 function VehicleShopGUI:buyVehicle(item)
 	if item.VehicleId then
-		triggerServerEvent("vehicleBuy", root, item.VehicleId, self.m_ShopName)
+		triggerServerEvent("vehicleBuy", root, self.m_Id, item.VehicleId)
 	end
 end
 
 function VehicleShopGUI:setShopName(name)
 	self.m_ShopName = name
+end
+
+function VehicleShopGUI:setShopId(id)
+	self.m_Id = id
 end
 
 function VehicleShopGUI:setShopLogoPath(path)
@@ -56,9 +65,42 @@ function VehicleShopGUI:setVehicleList(list)
 	self.m_VehicleList:clear()
 
 	for k, v in pairs(list) do
-		local item = self.m_VehicleList:addItem(getVehicleNameFromModel(k), v[2], "$"..tostring(v[1])):setColumnAlignX(3, "right")
+		local item = self.m_VehicleList:addItem(getVehicleNameFromModel(k), v[3], "$"..tostring(v[2])):setColumnAlignX(3, "right")
 		item.VehicleId = k
-
+		item.onLeftClick = function()
+			self.m_CurrentVehicle = v[1]
+			self:updateMatrix()
+		end
 		item.onLeftDoubleClick = bind(self.buyVehicle, self)
 	end
 end
+
+
+
+function VehicleShopGUI:updateMatrix()
+	self.m_CurrentMatrix = {getCameraMatrix(localPlayer)}
+	local pos = self.m_CurrentVehicle:getPosition()
+	local offsetX, offsetY, offsetZ = getPositionFromElementOffset(self.m_CurrentVehicle, 5, 5, 5)
+	local fadeMatrix = {offsetX, offsetY, offsetZ, pos.x, pos.y, pos.z, -25, 90}
+
+	if self.m_CameraInstance then
+		delete(self.m_CameraInstance)
+	end
+
+	self.m_CameraInstance = cameraDrive:new(self.m_CurrentMatrix[1],self.m_CurrentMatrix[2],self.m_CurrentMatrix[3],
+		self.m_CurrentMatrix[4],self.m_CurrentMatrix[5],self.m_CurrentMatrix[6],
+		fadeMatrix[1],fadeMatrix[2],fadeMatrix[3],
+		fadeMatrix[4],fadeMatrix[5],fadeMatrix[6],
+		1500
+	)
+end
+
+addEventHandler("showVehicleShopMenu", root, function(id, name, image, vehicles)
+	local shopGUI = VehicleShopGUI:getSingleton()
+	shopGUI:setShopName(name)
+	shopGUI:setShopId(id)
+	shopGUI:setShopLogoPath("files/images/Shops/"..image)
+	shopGUI:setVehicleList(vehicles)
+
+	VehicleShopGUI:getSingleton():setVisible(true)
+end)
