@@ -520,7 +520,6 @@
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
-	<script src="client/classes/Vehicles/VehicleShop.lua" type="client"/>
 	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleInteraction.lua" type="client"/>
 
