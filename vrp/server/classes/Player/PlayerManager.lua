@@ -357,12 +357,12 @@ function PlayerManager:Event_passwordChange(old, new1, new2)
 				client:sendInfo("Dein neues Passwort wurde gespeichert!", client)
 				client:triggerEvent("passwordChangeSuccess")
 			else
-				client:sendError("Dein eingegebenes altes Passwort ist nicht korrekt!", client)
+				client:sendError("Dein bisheriges Passwort ist nicht korrekt!", client)
 			end
 		else
 			client:sendError("Internal Error @Password Change!", client)
 		end
 	else
-		client:sendError("Dein eingegebenen neuen Passwört sind nicht identisch!", client)
+		client:sendError("Die beiden eingegebenen neuen Passwörter sind nicht identisch!", client)
 	end
 end

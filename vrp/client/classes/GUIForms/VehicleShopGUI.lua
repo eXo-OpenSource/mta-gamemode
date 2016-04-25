@@ -144,11 +144,5 @@ function VehicleShopInfoGUI:updateVehicle(veh)
 	self.m_MaxSpeed:setText(_("%d km/H Höchstgeschwindigkeit", handling["maxVelocity"]*0.9))
 	self.m_DriveType:setText(_("%s", driveType[handling["driveType"]]))
 	self.m_Seats:setText(_("%d Sitzplätze", veh:getMaxPassengers()+1))
-
-	if handling["ABS"] == true then
-		self.m_ABS:setText("ABS")
-	else
-		self.m_ABS:setText("")
-	end
-
+	self.m_ABS:setText(handling["ABS"] and "ABS" or "")
 end
