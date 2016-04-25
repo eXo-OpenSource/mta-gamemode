@@ -11,6 +11,8 @@ WeedTruck.LoadTime = 30*1000 -- in ms
 WeedTruck.Time = 10*60*1000 -- in ms
 WeedTruck.spawnPos = Vector3(-1105.76, -1621.55, 76.54)
 WeedTruck.spawnRot = Vector3(0, 0, 270)
+WeedTruck.Destination = Vector3(2181.59, -2626.35, 13.55)
+WeedTruck.Weed = 2500
 
 function WeedTruck:constructor(driver)
 	self.m_Truck = TemporaryVehicle.create(456, WeedTruck.spawnPos, WeedTruck.spawnRot)
@@ -63,7 +65,7 @@ function WeedTruck:truckLoaded()
 end
 
 function WeedTruck:timeUp()
-	outputChatBox(_("Der %s ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer, WeedTruck_NAME[self.m_Type]),rootElement,255,0,0)
+	outputChatBox(_("Der Weed-Truck ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer),rootElement,255,0,0)
 	self:delete()
 end
 
@@ -87,7 +89,7 @@ end
 function WeedTruck:Event_OnWeedTruckEnter(player, seat)
 	if seat == 0 and player:getFaction() then
 		local factionId = player:getFaction():getId()
-		local destination = factionWTDestination[factionId]
+		local destination = WeedTruck.Destination
 		self.m_Driver = player
 		player:triggerEvent("Countdown", math.floor((WeedTruck.Time-(getTickCount()-self.m_StartTime))/1000))
 		player:triggerEvent("VehicleHealth")
@@ -103,5 +105,19 @@ function WeedTruck:Event_OnWeedTruckExit(player,seat)
 		player:triggerEvent("VehicleHealthStop")
 		self.m_Blip:delete()
 		if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
+	end
+end
+
+function WeedTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
+	if isElement(hitElement) and hitElement.type == "player" and matchingDimension then
+		local faction = hitElement:getFaction()
+		if faction and faction:isEvil() then
+			if isPedInVehicle(hitElement) and hitElement:getOccupiedVehicle() == self.m_Truck then
+				outputChatBox(_("Der Weed-Truck wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
+				hitElement:sendInfo(_("Weed-Truck abgegeben! Du erhälst %d Gramm Weed!", hitElement, WeedTruck.Weed))
+				hitElement:getInventory():giveItem("Weed", WeedTruck.Weed)
+				delete(self)
+			end
+		end
 	end
 end
