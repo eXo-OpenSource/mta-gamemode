@@ -410,7 +410,7 @@ function getCrimeById(crimeId)
 end
 
 function string.countChar(str, char)
-	return math.floor((string.len(str) - string.len(string.gsub(str, char, "")))/string.len(char))
+	return math.floor((str:len() - str:gsub(char, ""):len())/char:len())
 end
 
 function teleportPlayerNextToVehicle(player, vehicle, distance)

@@ -117,9 +117,7 @@ function SanNews:Event_onPlayerChat(player, text, type)
 end
 
 function SanNews:Event_advertisement(text, color, duration)
-	local length = string.len(text)
-
-
+	local length = text:len()
 	if length <= 50 and length > 5 then
 		local durationExtra = (AD_DURATIONS[duration] - 20) * 2
 		local colorMultiplicator = 1

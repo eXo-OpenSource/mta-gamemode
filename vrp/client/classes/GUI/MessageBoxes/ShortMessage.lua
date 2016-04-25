@@ -33,7 +33,7 @@ function ShortMessage:constructor(text, title, tcolor, timeout)
 
 	-- Font
 	GUIFontContainer.constructor(self, text, 1, VRPFont(24))
-	local h = textHeight(text, w - 8, self.m_Font, self.m_FontSize) + (self.m_HasTitleBar and 24 or 4)
+	local h = textHeight(self.m_Text, w - 8, self.m_Font, self.m_FontSize) + (self.m_HasTitleBar and 24 or 4)
 
 	-- Calculate y position
 	y = y - h - 20
@@ -79,7 +79,7 @@ function ShortMessage:drawThis()
 
 	-- Draw message text
 	if self.m_HasTitleBar then
-		dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+		dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", true, false)
 		dxDrawText(self.m_Text, x, y + 20, x + w, y + (h - 20), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 	else
 		dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
