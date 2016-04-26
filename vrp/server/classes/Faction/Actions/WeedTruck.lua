@@ -34,6 +34,8 @@ function WeedTruck:constructor(driver)
 	self.m_LoadTimer = setTimer(bind(self.truckLoaded, self), WeedTruck.LoadTime, 1)
 	self.m_StartPlayer:sendInfo(_("Der Weed-Truck wird beladen! Bitte warten!", self.m_StartPlayer))
 
+	PlayerManager:getSingleton():breakingNews("Ein Weed-Transport wurde soeben gestartet!")
+
 
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnWeedTruckStartEnter,self))
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnWeedTruckEnter,self))
@@ -49,7 +51,7 @@ function WeedTruck:destructor()
 	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
 	if isElement(self.m_Blip) then self.m_Blip:delete() end
 	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
-
+	if isTimer(self.m_Timer) then self.m_Timer:destroy() end
 	for index, value in pairs(self.m_Boxes) do
 		if isElement(value) then value:destroy() end
 	end
@@ -65,14 +67,14 @@ function WeedTruck:truckLoaded()
 end
 
 function WeedTruck:timeUp()
-	outputChatBox(_("Der Weed-Truck ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer),rootElement,255,0,0)
+	PlayerManager:getSingleton():breakingNews("Der Weed-Transport wurde beendet! Den Verbrechern ist die Zeit ausgegangen!")
 	self:delete()
 end
 
 --Vehicle Events
 function WeedTruck:Event_OnWeedTruckStartEnter(player,seat)
 	if seat == 0 and not player:getFaction() then
-		player:sendError(_("Den Waffentruck können nur Fraktionisten fahren!",player))
+		player:sendError(_("Den Weed-Truck können nur Fraktionisten fahren!",player))
 		cancelEvent()
 	end
 end
@@ -81,7 +83,7 @@ function WeedTruck:Event_OnWeedTruckDestroy()
 	if self and not self.m_Destroyed then
 		self.m_Destroyed = true
 		self:Event_OnWeedTruckExit(self.m_Driver,0)
-		outputChatBox(_("Der Weedtruck ist fehlgeschlagen! (Zerstört)",self.m_StartPlayer),rootElement,255,0,0)
+		PlayerManager:getSingleton():breakingNews("Der Weed-LKW wurde soeben zerstört!")
 		self:delete()
 	end
 end
@@ -113,9 +115,10 @@ function WeedTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 		local faction = hitElement:getFaction()
 		if faction and faction:isEvilFaction() then
 			if isPedInVehicle(hitElement) and hitElement:getOccupiedVehicle() == self.m_Truck then
-				outputChatBox(_("Der Weed-Truck wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
+				PlayerManager:getSingleton():breakingNews("Der Weed-Transport wurde erfolgreich abgeschlossen!")
 				hitElement:sendInfo(_("Weed-Truck abgegeben! Du erhälst %d Gramm Weed!", hitElement, WeedTruck.Weed))
 				hitElement:getInventory():giveItem("Weed", WeedTruck.Weed)
+				self:Event_OnWeedTruckExit(hitElement,0)
 				delete(self)
 			end
 		end
