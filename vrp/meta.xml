@@ -490,6 +490,7 @@
 	<script src="client/classes/Phone/Apps/AppAmmunation.lua" type="client"/>
 
 	<!-- Companies -->
+	<script src="client/classes/Business/Company.lua" type="client"/>
 	<script src="client/classes/Business/Companies/PublicTransport.lua" type="client"/>
 
 	<!-- Jobs -->

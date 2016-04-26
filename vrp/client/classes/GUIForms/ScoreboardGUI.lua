@@ -37,17 +37,25 @@ end
 function ScoreboardGUI:refresh()
 	self.m_Grid:clear()
 	self.m_Players = {}
-
 	self.m_Players[0] = {}
+	self.m_PlayersCompany = {}
+	self.m_PlayersCompany[0] = {}
+
 	local factionCount = 1
 	for id, faction in ipairs(FactionManager.Map) do
 		factionCount = factionCount + 1
 		self.m_Players[id] = {}
 	end
 
+	for id, company in ipairs(CompanyManager.Map) do
+		self.m_PlayersCompany[id] = {}
+	end
+
 	for k, player in pairs(getElementsByType("player")) do
 		local factionId = player:getFaction() and player:getFaction():getId() or 0
 		table.insert(self.m_Players[factionId], player)
+		local companyId = player:getCompany() and player:getCompany():getId() or 0
+		table.insert(self.m_PlayersCompany[companyId], player)
 	end
 
 	self.m_PlayersCount = 0
@@ -63,6 +71,9 @@ function ScoreboardGUI:refresh()
 	self.m_PlayerCountLabels = {}
 	for id, faction in ipairs(FactionManager.Map) do
 		self:addPlayerCount(faction:getShortName(), #self.m_Players[id])
+	end
+	for id, company in ipairs(CompanyManager.Map) do
+		self:addPlayerCount(company:getShortName(), #self.m_PlayersCompany[id])
 	end
 
 	self.m_PlayerCount:setText(_("Derzeit %d Spieler online", #getElementsByType("player")))
@@ -89,7 +100,7 @@ function ScoreboardGUI:insertPlayers(factionId)
 		local item = self.m_Grid:addItem(
 			player:getName(),
 			player:getFaction() and player:getFaction():getShortName() or "- Keine -",
-			player:getShortCompanyName()  or "- Keine -",
+			player:getCompany() and player:getCompany():getShortName() or "- Keine -",
 			player:getGroupName(),
 			karma >= 0 and "+"..karma or " "..tostring(karma)
 		)

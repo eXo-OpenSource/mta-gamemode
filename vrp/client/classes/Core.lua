@@ -64,6 +64,7 @@ function Core:ready()
 	MostWanted:new()
 	NoDm:new()
 	FactionManager:new()
+	CompanyManager:new()
 end
 
 function Core:afterLogin()

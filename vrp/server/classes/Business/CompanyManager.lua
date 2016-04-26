@@ -27,7 +27,8 @@ function CompanyManager:constructor()
   end
 
   -- Add events
-  addRemoteEvents{"companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty"}
+  addRemoteEvents{"getCompanies", "companyRequestInfo", "companyRequestLog", "companyQuit", "companyDeposit", "companyWithdraw", "companyAddPlayer", "companyDeleteMember", "companyInvitationAccept", "companyInvitationDecline", "companyRankUp", "companyRankDown", "companySaveRank","companyRespawnVehicles", "companyChangeSkin", "companyToggleDuty"}
+  addEventHandler("getCompanies", root, bind(self.Event_getCompanies, self))
   addEventHandler("companyRequestInfo", root, bind(self.Event_companyRequestInfo, self))
   addEventHandler("companyRequestLog", root, bind(self.Event_companyRequestLog, self))
   addEventHandler("companyDeposit", root, bind(self.Event_companyDeposit, self))
@@ -243,7 +244,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 
 	if company:getPlayerRank(playerId) < CompanyRank.Manager then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
-        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." befördert!")
+        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
@@ -268,7 +269,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 
 	if company:getPlayerRank(playerId) >= CompanyRank.Manager then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
-        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
+        company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
 		self:sendInfosToClient(client)
 	end
 end
@@ -346,5 +347,11 @@ function CompanyManager:Event_toggleDuty()
 		end
 	else
 		client:sendError(_("Du bist in keinem Unternehmen!", client))
+	end
+end
+
+function CompanyManager:Event_getCompanies()
+	for id, company in pairs(CompanyManager.Map) do
+		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName())
 	end
 end

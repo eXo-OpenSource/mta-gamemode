@@ -15,7 +15,6 @@ function Player:virtual_constructor()
 	self.m_PublicSync = {}
 	self.m_PrivateSync = {}
 	self.m_PrivateSyncChangeHandler = {}
-
 end
 
 function Player:getPublicSync(key)
@@ -78,12 +77,12 @@ function Player:getFaction()
 	end
 end
 
-function Player:getCompanyName()
-	return self:getPublicSync("CompanyName") or "-"
-end
-
-function Player:getShortCompanyName()
-	return self:getPublicSync("ShortCompanyName") or "-"
+function Player:getCompany()
+	if self:getPublicSync("CompanyId") and self:getPublicSync("CompanyId") > 0 then
+		return CompanyManager:getSingleton():getFromId(self:getPublicSync("CompanyId"))
+	else
+		return false
+	end
 end
 
 function Player:getPlayTime()
