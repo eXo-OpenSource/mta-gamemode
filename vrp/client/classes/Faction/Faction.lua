@@ -15,8 +15,8 @@ function FactionManager:constructor()
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 end
 
-function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType)
-	FactionManager.Map[Id] = Faction:new(Id, name, name_short, rankNames, factionType)
+function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color)
+	FactionManager.Map[Id] = Faction:new(Id, name, name_short, rankNames, factionType, color)
 end
 
 function FactionManager:getFromId(id)
@@ -34,10 +34,18 @@ function Faction:constructor(Id, name, name_short, rankNames, factionType, color
 	self.m_Color = color
 end
 
+function Faction:getId()
+	return self.m_Id
+end
+
 function Faction:getName()
 	return self.m_Name
 end
 
 function Faction:getShortName()
 	return self.m_NameShort
+end
+
+function Faction:getColor()
+	return self.m_Color
 end

@@ -71,7 +71,7 @@ function Player:getCompanyId()
 end
 
 function Player:getFaction()
-	if self:getPublicSync("FactionId") > 0 then
+	if self:getPublicSync("FactionId") and self:getPublicSync("FactionId") > 0 then
 		return FactionManager:getSingleton():getFromId(self:getPublicSync("FactionId"))
 	else
 		return false
