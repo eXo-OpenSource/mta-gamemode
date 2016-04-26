@@ -111,7 +111,7 @@ end
 function WeedTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 	if isElement(hitElement) and hitElement.type == "player" and matchingDimension then
 		local faction = hitElement:getFaction()
-		if faction and faction:isEvil() then
+		if faction and faction:isEvilFaction() then
 			if isPedInVehicle(hitElement) and hitElement:getOccupiedVehicle() == self.m_Truck then
 				outputChatBox(_("Der Weed-Truck wurde erfolgreich abgegeben!",hitElement),rootElement,255,0,0)
 				hitElement:sendInfo(_("Weed-Truck abgegeben! Du erhälst %d Gramm Weed!", hitElement, WeedTruck.Weed))
