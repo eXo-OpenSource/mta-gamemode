@@ -140,7 +140,7 @@ function TrainManager:createNode(trackIndex, nodeIndex, pos)
 
 		addEventHandler("onMarkerHit", marker, function (hitElement, matchingDim)
 			if matchingDim and hitElement:getType() == "vehicle" then
-				self:outputNodeInfo(node.track, node.index)
+				self:outputNodeInfo(node.track, node.index, hitElement)
 			end
 		end)
 
@@ -260,9 +260,10 @@ function TrainManager.onInitFinished()
 end
 
 -- DEBUG
-function TrainManager:outputNodeInfo(...)
-	local node = self:getNode(...)
+function TrainManager:outputNodeInfo(trackIndex, nodeIndex, hitElement)
+	local node = self:getNode(trackIndex, nodeIndex)
 	if node then
-		outputDebug(("Found new node.\nNode: %s NodeDistanceData: %s (Track: %s)"):format(tostring(node.index), tostring(node.distance), tostring(node.track)))
+		--outputDebug(("Found new node.\nNode: %s NodeDistanceData: %s (Track: %s)"):format(tostring(node.index), tostring(node.distance), tostring(node.track)))
+		hitElement:getOccupant():sendShortMessage(("TrainTrack Node:\nNode: %s\nNodeDistanceData: %s\nTrack: %s"):format(tostring(node.index), tostring(node.distance), tostring(node.track)), "TrainManager - Tracks", nil, 5000)
 	end
 end
