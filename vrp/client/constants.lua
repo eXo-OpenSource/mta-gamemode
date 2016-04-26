@@ -118,6 +118,9 @@ HelpTextTitles = {
 		StateWeaponTruck = "Aktionen: Staats Waffen Truck";
 
 	};
+	Settings = {
+		ShortMessageCTC = "Information - ShortMessage-CTC";
+	};
 }
 
 HelpTexts = {
@@ -302,7 +305,9 @@ HelpTexts = {
 		Fahrt nun schnell zu einem der Abgabepunkte!
 		]];
 	};
-
+	Settings = {
+		ShortMessageCTC = "ShortMessage-CTC (Click-to-Close) ist eine Option mit der eingestellt werden kann, ob eine ShortMessage-Box (wie diese) durch ein einfaches klicken geschlossen werden kann oder nur durch den Timeout.\n\nNote: Callback-clicks are always working!";
+	};
 };
 
 Tipps = {

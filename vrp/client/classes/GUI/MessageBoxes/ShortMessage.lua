@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Short message box class
 -- *
 -- ****************************************************************************
-ShortMessage = inherit(DxElement)
+ShortMessage = inherit(GUIElement)
 inherit(GUIFontContainer, ShortMessage)
 
 ShortMessage.MessageBoxes = {}
@@ -38,12 +38,20 @@ function ShortMessage:constructor(text, title, tcolor, timeout)
 	-- Calculate y position
 	y = y - h - 20
 
-	-- Instantiate dxElement
-	DxElement.constructor(self, x, y, w, h)
+	-- Instantiate GUIElement
+	GUIElement.constructor(self, x, y, w, h)
+	self.onLeftClick = function ()
+		if core:get("HUD", "shortMessageCTC", false) then
+			delete(self)
+		end
+		if self.callback then
+			self:callback()
+		end
+	end
 
 	-- Calculate timeout
 	if timeout ~= -1 then
-		setTimer(function () delete(self) end, ((type(timeout) == "number" and timeout > 50 and timeout) or 5000) + 500, 1)
+		self.m_Timeout = setTimer(function () delete(self) end, ((type(timeout) == "number" and timeout > 50 and timeout) or 5000) + 500, 1)
 	end
 
 	-- Alpha
@@ -55,35 +63,41 @@ function ShortMessage:constructor(text, title, tcolor, timeout)
 end
 
 function ShortMessage:destructor()
+	if self.m_Timeout and isTimer(self.m_Timeout) then
+		killTimer(self.m_Timeout)
+	end
+
 	Animation.FadeAlpha:new(self, 200, 200, 0).onFinish = function ()
-		DxElement.destructor(self)
+		GUIElement.destructor(self)
 		table.removevalue(ShortMessage.MessageBoxes, self)
 		ShortMessage.resortPositions()
 	end
 end
 
 function ShortMessage:drawThis()
-	local x, y, w, h = self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height
+	dxSetBlendMode("modulate_add")
+		local x, y, w, h = self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height
 
-	-- Draw background
-	if self.m_HasTitleBar then
-		dxDrawRectangle(x, y, w, 20, tocolor(self.m_TitleColor[1], self.m_TitleColor[2], self.m_TitleColor[3], self.m_Alpha))
-		dxDrawRectangle(x, y + 20, w, h - 20, tocolor(0, 0, 0, self.m_Alpha))
-	else
-		dxDrawRectangle(x, y, w, h, tocolor(0, 0, 0, self.m_Alpha))
-	end
+		-- Draw background
+		if self.m_HasTitleBar then
+			dxDrawRectangle(x, y, w, 20, tocolor(self.m_TitleColor[1], self.m_TitleColor[2], self.m_TitleColor[3], self.m_Alpha))
+			dxDrawRectangle(x, y + 20, w, h - 20, tocolor(0, 0, 0, self.m_Alpha))
+		else
+			dxDrawRectangle(x, y, w, h, tocolor(0, 0, 0, self.m_Alpha))
+		end
 
-	-- Center the text
-	x = x + 4
-	w = w - 8
+		-- Center the text
+		x = x + 4
+		w = w - 8
 
-	-- Draw message text
-	if self.m_HasTitleBar then
-		dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", true, false)
-		dxDrawText(self.m_Text, x, y + 20, x + w, y + (h - 20), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
-	else
-		dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
-	end
+		-- Draw message text
+		if self.m_HasTitleBar then
+			dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", true, false)
+			dxDrawText(self.m_Text, x, y + 20, x + w, y + (h - 20), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+		else
+			dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+		end
+	dxSetBlendMode("blend")
 end
 
 function ShortMessage.resortPositions ()
