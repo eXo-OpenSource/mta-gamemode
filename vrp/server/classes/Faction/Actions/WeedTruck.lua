@@ -21,6 +21,8 @@ function WeedTruck:constructor(driver)
 	self.m_Truck:setFrozen(true)
 	self.m_Truck:setVariant(255, 255)
 	self.m_Truck:setEngineState(true)
+	self.m_Truck.m_BrokenHook:register(bind(self.Event_OnWeedTruckDestroy,self))
+
 	self.m_StartTime = getTickCount()
 	warpPedIntoVehicle(driver, self.m_Truck)
 	self.m_StartPlayer = driver

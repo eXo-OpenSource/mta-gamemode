@@ -575,4 +575,6 @@ function VehicleManager:Event_vehicleBreak()
 	outputDebug("Vehicle has been broken by "..client:getName())
 	-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
 	source:setBroken(true)
+
+
 end

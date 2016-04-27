@@ -19,6 +19,9 @@ function Vehicle:virtual_constructor()
 	self.m_Fuel = 100
 	self.m_Mileage = 0
 
+	self.m_BrokenHook = Hook:new()
+
+
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
 		self.m_SpecialSmokeInternalToggle = bind(self.toggleInternalSmoke, self)
@@ -182,6 +185,9 @@ function Vehicle:setBroken(state)
 	self:setHealth(301)
 	if state then
 		self:setEngineState(false)
+		if self.m_BrokenHook then
+			self.m_BrokenHook:call(vehicle)
+		end
 	end
 end
 

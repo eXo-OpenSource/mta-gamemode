@@ -9,7 +9,7 @@ Countdown = inherit(GUIForm)
 inherit(Singleton, Countdown)
 
 function Countdown:constructor()
-	GUIForm.constructor(self, screenWidth/2-200/2, 10, 200, 50, false)
+	GUIForm.constructor(self, screenWidth/2-200/2, 60, 200, 50, false)
 	self.m_Seconds = 0
 
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Other/Countdown.png", self)

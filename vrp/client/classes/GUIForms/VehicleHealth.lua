@@ -9,7 +9,7 @@ VehicleHealth = inherit(GUIForm)
 inherit(Singleton, VehicleHealth)
 
 function VehicleHealth:constructor()
-	GUIForm.constructor(self, screenWidth/2-200/2, 70, 200, 30, false)
+	GUIForm.constructor(self, screenWidth/2-200/2, 115, 200, 30, false)
 	self.m_Progress = GUIProgressBar:new(0,0,self.m_Width, self.m_Height,self)
 	self.m_Progress:setForegroundColor(tocolor(50,200,255))
 	self.m_Progress:setBackgroundColor(tocolor(180,240,255))
@@ -29,8 +29,8 @@ end
 
 function VehicleHealth:refresh()
 	if not localPlayer:isInVehicle() then self:stopVehicleHealth() return end
-	self.m_Health = math.floor(localPlayer.vehicle.health/10)
-	self.m_VehicleHealthLabel:setText("Zustand: "..tostring(self.m_Health).."%")
+	self.m_Health = math.floor((localPlayer.vehicle.health-300)/700*100)
+	self.m_VehicleHealthLabel:setText("Zustand: "..self.m_Health.."%")
 	self.m_Progress:setProgress(self.m_Health)
 end
 
