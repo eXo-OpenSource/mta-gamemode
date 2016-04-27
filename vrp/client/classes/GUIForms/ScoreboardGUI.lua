@@ -25,58 +25,43 @@ function ScoreboardGUI:constructor()
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, tocolor(50, 200, 255, 255), self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
-	self.m_PlayerCount:setColor(Color.Black):setFont("default-bold"):setFontSize(1.4)
+	self.m_PlayerCount:setColor(Color.Black):setFont(VRPFont(self.m_Height*0.05))
 	self.m_Ping = GUILabel:new(self.m_Width/2, self.m_Height*0.65, self.m_Width/2-self.m_Width*0.05, self.m_Height*0.05, "", self.m_Rect)
-	self.m_Ping:setColor(Color.Black):setFont("default-bold"):setFontSize(1.4):setAlignX("right")
+	self.m_Ping:setColor(Color.Black):setFont(VRPFont(self.m_Height*0.05)):setAlignX("right")
 
 	self:refresh()
-
 	setTimer(bind(self.refresh, self), 1000, 0)
 end
 
 function ScoreboardGUI:refresh()
 	self.m_Grid:clear()
 	self.m_Players = {}
-	self.m_Players[0] = {}
-	self.m_PlayersCompany = {}
-	self.m_PlayersCompany[0] = {}
-
-	local factionCount = 1
-	for id, faction in ipairs(FactionManager.Map) do
-		factionCount = factionCount + 1
-		self.m_Players[id] = {}
-	end
-
-	for id, company in ipairs(CompanyManager.Map) do
-		self.m_PlayersCompany[id] = {}
-	end
+	self.m_FactionCount = {}
+	self.m_PlayersCount = #getElementsByType("player")
 
 	for k, player in pairs(getElementsByType("player")) do
 		local factionId = player:getFaction() and player:getFaction():getId() or 0
-		table.insert(self.m_Players[factionId], player)
-		local companyId = player:getCompany() and player:getCompany():getId() or 0
-		table.insert(self.m_PlayersCompany[companyId], player)
-	end
+		table.insert(self.m_Players, {player, factionId})
 
-	self.m_PlayersCount = 0
-
-	for i=0, factionCount do
-		if self.m_Players[i] then
-			self:insertPlayers(i)
+		if factionId ~= 0 then
+			if not self.m_FactionCount[factionId] then self.m_FactionCount[factionId] = 0 end
+			self.m_FactionCount[factionId] = self.m_FactionCount[factionId] + 1
 		end
 	end
 
+	table.sort(self.m_Players, function (a, b) return (a[2] > b[2]) end)
+	self:insertPlayers()
+
+	if not self.m_PlayerCountLabels then
+		self.m_PlayerCountLabels = {}
+	end
 	self.m_CountRow = 0
 	self.m_CountColumn = 0
-	self.m_PlayerCountLabels = {}
 	for id, faction in ipairs(FactionManager.Map) do
-		self:addPlayerCount(faction:getShortName(), #self.m_Players[id])
-	end
-	for id, company in ipairs(CompanyManager.Map) do
-		self:addPlayerCount(company:getShortName(), #self.m_PlayersCompany[id])
+		self:addPlayerCount(faction:getShortName(), self.m_FactionCount[id] or 0)
 	end
 
-	self.m_PlayerCount:setText(_("Derzeit %d Spieler online", #getElementsByType("player")))
+	self.m_PlayerCount:setText(_("Derzeit %d Spieler online", self.m_PlayersCount))
 	self.m_Ping:setText(_("eigener Ping: %dms", localPlayer:getPing()))
 end
 
@@ -94,18 +79,19 @@ function ScoreboardGUI:addPlayerCount(name, value)
 
 end
 
-function ScoreboardGUI:insertPlayers(factionId)
-	for index, player in pairs(self.m_Players[factionId]) do
+function ScoreboardGUI:insertPlayers()
+	for index, data in ipairs(self.m_Players) do
+		local player = data[1]
 		local karma = math.floor(player:getKarma() or 0)
 		local item = self.m_Grid:addItem(
 			player:getName(),
-			player:getFaction() and player:getFaction():getShortName() or "- Keine -",
-			player:getCompany() and player:getCompany():getShortName() or "- Keine -",
+			data[2] and player:getFaction():getShortName() or "- Keine -",
+			player:getShortCompanyName()  or "- Keine -",
 			player:getGroupName(),
 			karma >= 0 and "+"..karma or " "..tostring(karma)
 		)
 
-		if player:getFaction() then
+		if data[2] then
 			local color = player:getFaction():getColor()
 			item:setColumnColor(2, tocolor(color.r, color.g, color.b))
 		end

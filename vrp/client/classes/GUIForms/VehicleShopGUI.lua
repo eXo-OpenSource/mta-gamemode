@@ -8,7 +8,7 @@
 VehicleShopGUI = inherit(GUIForm)
 inherit(Singleton, VehicleShopGUI)
 
-addRemoteEvents{"showVehicleShopMenu"}
+addRemoteEvents{"showVehicleShopMenu", "vehicleBought"}
 
 function VehicleShopGUI:constructor()
 	GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
@@ -22,18 +22,15 @@ function VehicleShopGUI:constructor()
 	GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
 	GUILabel:new(6, self.m_Height-self.m_Height/14, self.m_Width*0.5, self.m_Height/14, _"Doppelklick zum Kaufen", self.m_Window):setFont(VRPFont(self.m_Height*0.045)):setAlignY("center"):setColor(Color.Red)
 
-	addEvent("vehicleBought", true)
-	addEventHandler("vehicleBought", root,
-		function()
-			delete(self)
-			SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!", 0, 255, 0)
-		end
-	)
+	self.m_VehicleBought = bind(self.Event_VehicleBought, self)
+	addEventHandler("vehicleBought", root, self.m_VehicleBought)
 
 	showChat(false)
 end
 
 function VehicleShopGUI:destructor()
+	removeEventHandler("vehicleBought", root, self.m_VehicleBought)
+
 	showChat(true)
 	setCameraTarget(localPlayer, localPlayer)
 	setTimer(function()
@@ -98,6 +95,11 @@ function VehicleShopGUI:updateMatrix()
 	)
 end
 
+function VehicleShopGUI:Event_VehicleBought()
+	delete(self)
+	SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!", 0, 255, 0)
+end
+
 addEventHandler("showVehicleShopMenu", root, function(id, name, image, vehicles)
 	local shopGUI = VehicleShopGUI:getSingleton()
 	shopGUI:setShopName(name)
@@ -122,14 +124,6 @@ function VehicleShopInfoGUI:constructor()
 	self.m_DriveType = GUILabel:new(10, 95, self.m_Width-20, 20, "", self.m_Window)
 	self.m_Seats = GUILabel:new(10, 115, self.m_Width-20, 20, "", self.m_Window)
 	self.m_ABS = GUILabel:new(10, 135, self.m_Width-20, 20, "", self.m_Window)
-
-	addEvent("vehicleBought", true)
-	addEventHandler("vehicleBought", root,
-		function()
-			delete(self)
-			SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!", 0, 255, 0)
-		end
-	)
 
 	showChat(false)
 end
