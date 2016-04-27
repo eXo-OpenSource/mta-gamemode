@@ -86,7 +86,7 @@ function ScoreboardGUI:insertPlayers()
 		local item = self.m_Grid:addItem(
 			player:getName(),
 			data[2] and player:getFaction():getShortName() or "- Keine -",
-			player:getShortCompanyName()  or "- Keine -",
+			player:getCompany():getShortName()  or "- Keine -",
 			player:getGroupName(),
 			karma >= 0 and "+"..karma or " "..tostring(karma)
 		)
