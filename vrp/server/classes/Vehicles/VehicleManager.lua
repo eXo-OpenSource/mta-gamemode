@@ -452,10 +452,9 @@ function VehicleManager:Event_vehicleSell()
 
 	-- Search for price in vehicle shops table
 	local getPrice = function(model)
-		for shopName, shopInfo in pairs(VEHICLESHOPS) do
-			local price = shopInfo.Vehicles[model]
-			if price then
-				return price
+		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
+			if shop:getVehiclePrice(model) then
+				return shop:getVehiclePrice(model)
 			end
 		end
 		return false

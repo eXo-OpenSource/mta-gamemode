@@ -31,6 +31,14 @@ function VehicleShop:getName()
 	return self.m_Name
 end
 
+function VehicleShop:getVehiclePrice(model)
+	if self.m_Vehicles[model] and self.m_Vehicles[model].price then
+		return self.m_Vehicles[model].price
+	else
+		return false
+	end
+end
+
 function VehicleShop:onMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		local vehicles = {}
