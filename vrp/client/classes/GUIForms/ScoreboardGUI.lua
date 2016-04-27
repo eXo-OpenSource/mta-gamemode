@@ -36,16 +36,23 @@ end
 function ScoreboardGUI:refresh()
 	self.m_Grid:clear()
 	self.m_Players = {}
+	self.m_CompanyCount = {}
 	self.m_FactionCount = {}
-	self.m_PlayersCount = #getElementsByType("player")
 
 	for k, player in pairs(getElementsByType("player")) do
 		local factionId = player:getFaction() and player:getFaction():getId() or 0
 		table.insert(self.m_Players, {player, factionId})
 
+		local companyId = player:getCompany() and player:getCompany():getId() or 0
+
 		if factionId ~= 0 then
 			if not self.m_FactionCount[factionId] then self.m_FactionCount[factionId] = 0 end
 			self.m_FactionCount[factionId] = self.m_FactionCount[factionId] + 1
+		end
+
+		if companyId ~= 0 then
+			if not self.m_CompanyCount[companyId] then self.m_CompanyCount[companyId] = 0 end
+			self.m_CompanyCount[companyId] = self.m_CompanyCount[companyId] + 1
 		end
 	end
 
@@ -60,8 +67,11 @@ function ScoreboardGUI:refresh()
 	for id, faction in ipairs(FactionManager.Map) do
 		self:addPlayerCount(faction:getShortName(), self.m_FactionCount[id] or 0)
 	end
+	for id, company in ipairs(CompanyManager.Map) do
+		self:addPlayerCount(company:getShortName(), self.m_CompanyCount[id] or 0)
+	end
 
-	self.m_PlayerCount:setText(_("Derzeit %d Spieler online", self.m_PlayersCount))
+	self.m_PlayerCount:setText(_("Derzeit %d Spieler online", #getElementsByType("player")))
 	self.m_Ping:setText(_("eigener Ping: %dms", localPlayer:getPing()))
 end
 
@@ -101,6 +111,5 @@ function ScoreboardGUI:insertPlayers()
 		elseif karma <= -5 then
 			item:setColumnColor(5, Color.Red)
 		end
-		self.m_PlayersCount = self.m_PlayersCount + 1
 	end
 end

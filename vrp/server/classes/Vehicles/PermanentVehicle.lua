@@ -7,12 +7,21 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, health, positionType, tunings, mileage, lightColor)
+function PermanentVehicle:constructor(Id, owner, keys, color, health, positionType, tunings, mileage, lightColor, trunkId)
 	self.m_Id = Id
 	self.m_Owner = owner
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
 	self.m_Keys = keys or {}
 	self.m_PositionType = positionType or VehiclePositionType.World
+
+	if trunkId > 0 then
+		self.m_Trunk = Trunk.load(trunkId)
+	else
+		trunkId = Trunk.create()
+		self.m_Trunk = Trunk.load(trunkId)
+	end
+
+	self.m_TrunkId = self.m_Trunk and self.m_Trunk:getId() or outputChatBox("Trunk "..trunkId.." not found")
 
 	self:setHealth(health)
 	self:setLocked(true)
@@ -78,9 +87,9 @@ function PermanentVehicle:save()
 	local r2, g2, b2 = getVehicleHeadLightColor(self)
 	local lightColor = setBytesInInt32(255, r2, g2, b2)
 	local tunings = getVehicleUpgrades(self) or {}
-
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_Id)
+	if self.m_Trunk then self.m_Trunk:save() end
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_Id, self.m_TrunkId)
 end
 
 function PermanentVehicle:getId()
