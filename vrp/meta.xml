@@ -450,6 +450,7 @@
 	<script src="client/classes/GUIForms/MostWanted3D.lua" type="client"/>
 	<script src="client/classes/GUIForms/Advertisement.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordChangeGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/TrunkGUI.lua" type="client"/>
 
 
 	<!-- Web forms -->
@@ -698,6 +699,7 @@
 	<vrpfile src="files/images/Other/TaxoMeter.png"/>
 	<vrpfile src="files/images/Other/Circle.png"/>
 	<vrpfile src="files/images/Other/nodm.png"/>
+	<vrpfile src="files/images/Other/noImg.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>

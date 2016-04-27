@@ -17,6 +17,17 @@ function VehicleInteraction:constructor()
 	self.m_lookAtVehicle = nil
 	self.m_doorName = ""
 
+
+	self.m_doorNames = {
+			[0] = _"der #00FF00Motorhaube",
+			[1] = _"des #00FF00Kofferraumes",
+			[2] = _"der #00FF00linken Vordertür",
+			[3] = _"der #00FF00rechten Vordertür",
+			[4] = _"der #00FF00linken hinteren Tür",
+			[5] = _"der #00FF00rechten hinteren Tür"
+		}
+
+
 	bindKey(self.m_interactButton, "down", bind(self.interact, self))
 	bindKey(self.m_actionButton, "down", bind(self.action, self))
 	bindKey(self.m_lockButton, "down", bind(self.lock, self))
@@ -38,61 +49,47 @@ function VehicleInteraction:render()
 			local vehRot = self.m_lookAtVehicle:getRotation()
 			local playerPos = localPlayer:getPosition()
 			if getDistanceBetweenPoints3D(vehPos, playerPos) < self.m_minDistance and self:getDoor() then
-				if (not isVehicleLocked(self.m_lookAtVehicle)) then
+				if not isVehicleLocked(self.m_lookAtVehicle) then
 					local checkDoor = getVehicleDoorState(self.m_lookAtVehicle, self:getDoor())
 
-					-- 0 (hood), 1 (trunk), 2 (front left), 3 (front right), 4 (rear left), 5 (rear right)
 					local door = self:getDoor()
+					local doorName = self.m_doorNames[door]
 
-					if (door == 0) then
-						doorName = "der #00FF00Motorhaube"
-					elseif (door == 1) then
-						doorName = "des #00FF00Kofferraumes"
-					elseif (door == 2) then
-						doorName = "der #00FF00linken Vordertür"
-					elseif (door == 3) then
-						doorName = "der #00FF00rechten Vordertür"
-					elseif (door == 4) then
-						doorName = "der #00FF00linken hinteren Tür"
-					elseif (door == 5) then
-						doorName = "der #00FF00rechten hinteren Tür"
+					local doorRatio = getVehicleDoorOpenRatio(self.m_lookAtVehicle, self:getDoor())
+
+					if doorRatio <= 0 and checkDoor ~= 4 then
+							self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum Öffnen %s#FFFFFF!", self.m_interactButton, doorName), 0)
+						if getElementData(self.m_lookAtVehicle,"OwnerName") == getPlayerName(localPlayer) then
+							self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um das Fahrzeug abzuschließen!", self.m_lockButton), 1)
+						end
 					end
-
-
-						local doorRatio = getVehicleDoorOpenRatio(self.m_lookAtVehicle, self:getDoor())
-
-						if (doorRatio <= 0 and checkDoor ~= 4) then
-								dxDrawRectangle ( screenWidth/2 - 125, screenHeight/2 - 8, 250, 16, tocolor( 0, 0, 0, 90 ))
-								dxDrawText("#FFFFFFDrücke #00FF00" .. self.m_interactButton .. "#FFFFFF zum Öffnen " .. doorName .. "#FFFFFF!", screenWidth/2, screenHeight/2, screenWidth/2, screenHeight/2, tocolor(255, 255, 255, 255), 1, "arial", "center", "center", false, false, false, true, true)
-							if getElementData(self.m_lookAtVehicle,"owner") == getPlayerName(getLocalPlayer()) then
-								dxDrawRectangle ( screenWidth/2 - 135, screenHeight/2 +12, 270, 16, tocolor( 0, 0, 0, 90 ))
-								dxDrawText("#FFFFFFDrücke #FF0000 "..self.m_lockButton.." #FFFFFF um das Fahrzeug abzuschließen!", screenWidth/2, screenHeight/2+38, screenWidth/2, screenHeight/2, tocolor(255, 255, 255, 255), 1, "arial", "center", "center", false, false, false, true, true)
-							end
+					if doorRatio > 0 or checkDoor == 4 then
+						if checkDoor ~= 4 then
+							self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum Schließen %s#FFFFFF!", self.m_interactButton, doorName), 0)
 						end
-						if (doorRatio > 0 or checkDoor == 4) then
-							if (checkDoor ~= 4 ) then
-								dxDrawRectangle ( screenWidth/2 - 125, screenHeight/2 - 8, 250, 16, tocolor( 0, 0, 0, 90 ))
-								dxDrawText("#FFFFFFDrücke #00FF00" .. self.m_interactButton .. "#FFFFFF zum Schließen " .. doorName .. "#FFFFFF!", screenWidth/2, screenHeight/2, screenWidth/2, screenHeight/2, tocolor(255, 255, 255, 255), 1, "arial", "center", "center", false, false, false, true, true)
-							end
-							if door == 1 then
-								dxDrawRectangle ( screenWidth/2 - 135, screenHeight/2 +12, 270, 16, tocolor( 0, 0, 0, 90 ))
-								dxDrawText("#FFFFFFDrücke #FF0000" .. self.m_actionButton .. "#FFFFFF um den Kofferraum zu durchsuchen!", screenWidth/2, screenHeight/2+38, screenWidth/2, screenHeight/2, tocolor(255, 255, 255, 255), 1, "arial", "center", "center", false, false, false, true, true)
-							elseif door == 0 then
-								dxDrawRectangle ( screenWidth/2 - 135, screenHeight/2 +12, 270, 16, tocolor( 0, 0, 0, 90 ))
-								dxDrawText("#FFFFFFDrücke #FF0000" .. self.m_actionButton .. "#FFFFFF um den Motor zu reparieren!", screenWidth/2, screenHeight/2+38, screenWidth/2, screenHeight/2, tocolor(255, 255, 255, 255), 1, "arial", "center", "center", false, false, false, true, true)
-							end
+						if door == 1 then
+							self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Kofferraum zu durchsuchen!", self.m_actionButton), 1)
+						elseif door == 0 then
+							self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Motor zu reparieren!", self.m_actionButton), 1)
 						end
+					end
 				else
-					dxDrawRectangle ( screenWidth/2 - 100, screenHeight/2 - 8, 200, 16, tocolor( 0, 0, 0, 90 ))
-					dxDrawText("#FF0000 Fahrzeug ist verschlossen!", screenWidth/2, screenHeight/2, screenWidth/2, screenHeight/2, tocolor(255, 255, 255, 255), 1, "arial", "center", "center", false, false, false, true, true)
-					if getElementData(self.m_lookAtVehicle,"owner") == getPlayerName(getLocalPlayer()) then
-						dxDrawRectangle ( screenWidth/2 - 135, screenHeight/2 +12, 270, 16, tocolor( 0, 0, 0, 90 ))
-						dxDrawText("#FFFFFFDrücke #FF0000 "..self.m_lockButton.." #FFFFFF um das Fahrzeug aufzuschließen!", screenWidth/2, screenHeight/2+38, screenWidth/2, screenHeight/2, tocolor(255, 255, 255, 255), 1, "arial", "center", "center", false, false, false, true, true)
+					self:drawTextBox(_("#FF0000 Fahrzeug ist verschlossen!", self.m_lockButton), 0)
+					if getElementData(self.m_lookAtVehicle,"OwnerName") == getPlayerName(localPlayer) then
+						self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um das Fahrzeug aufzuschließen!", self.m_lockButton), 1)
 					end
 				end
 	        end
 		end
     end
+end
+
+function VehicleInteraction:drawTextBox(text, count)
+	local width, height = 270, 16
+	local x, y = screenWidth/2 - width/2, screenHeight/2 + count*20
+	dxDrawRectangle(x, y, width, height, tocolor( 0, 0, 0, 90 ))
+	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), 1, "arial", "center", "center", false, false, false, true, true)
+
 end
 
 function VehicleInteraction:getPlayerToVehicleRelatedPosition()
@@ -381,7 +378,7 @@ end
 
 function VehicleInteraction:lock()
 	if (self.m_lookAtVehicle) and (getElementType(self.m_lookAtVehicle) == "vehicle") and (self:getDoor()) then
-		if getElementData(self.m_lookAtVehicle,"owner") == getPlayerName(getLocalPlayer()) then
+		if getElementData(self.m_lookAtVehicle,"OwnerName") == getPlayerName(localPlayer) then
 			if not isPedInVehicle(localPlayer) then
 				triggerServerEvent("onLockVehicleDoor", localPlayer, door)
 			end

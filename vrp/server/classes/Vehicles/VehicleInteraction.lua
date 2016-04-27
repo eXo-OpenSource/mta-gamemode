@@ -60,7 +60,9 @@ function VehicleInteraction:doAction(door)
 
 		if doorRatio > 0 or checkDoor == 4 or doorState == "open" then
 			if door == 1 then
-				client:sendInfo(_("Noch nicht implementiert", client))
+				if lookAtVehicle:getTrunk() then
+					lookAtVehicle:getTrunk():open(client)
+				end
 			elseif door == 0 then
 				if client:getInventory():getItemAmount("Reparaturkit") > 0 then
 					if veh.isBroken and veh:isBroken() then
