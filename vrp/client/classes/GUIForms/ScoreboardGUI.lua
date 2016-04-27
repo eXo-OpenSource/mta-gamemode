@@ -65,7 +65,8 @@ function ScoreboardGUI:refresh()
 	self.m_CountRow = 0
 	self.m_CountColumn = 0
 	for id, faction in ipairs(FactionManager.Map) do
-		self:addPlayerCount(faction:getShortName(), self.m_FactionCount[id] or 0)
+		local color = faction:getColor()
+		self:addPlayerCount(faction:getShortName(), self.m_FactionCount[id] or 0, tocolor(color.r, color.g, color.b))
 	end
 	for id, company in ipairs(CompanyManager.Map) do
 		self:addPlayerCount(company:getShortName(), self.m_CompanyCount[id] or 0)
@@ -75,7 +76,7 @@ function ScoreboardGUI:refresh()
 	self.m_Ping:setText(_("eigener Ping: %dms", localPlayer:getPing()))
 end
 
-function ScoreboardGUI:addPlayerCount(name, value)
+function ScoreboardGUI:addPlayerCount(name, value, color)
 	if self.m_CountRow >= 3 then
 		self.m_CountRow = 0
 		self.m_CountColumn =  self.m_CountColumn+1
@@ -84,6 +85,9 @@ function ScoreboardGUI:addPlayerCount(name, value)
 		self.m_PlayerCountLabels[name]:setText(("%s: %d"):format(name, value))
 	else
 		self.m_PlayerCountLabels[name] = GUILabel:new(self.m_Width*0.05 + (self.m_Width/4*self.m_CountColumn), self.m_Height*0.72 + (self.m_Height*0.05*self.m_CountRow), self.m_Width/4, self.m_Height*0.05, ("%s: %d"):format(name, value), self.m_Rect)
+		if color then
+			self.m_PlayerCountLabels[name]:setColor(color)
+		end
 	end
 	self.m_CountRow = self.m_CountRow + 1
 
