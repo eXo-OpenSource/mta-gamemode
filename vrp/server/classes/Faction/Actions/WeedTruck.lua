@@ -49,15 +49,17 @@ function WeedTruck:destructor()
 	self.m_Truck:destroy()
 
 	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
-	if isElement(self.m_Blip) then self.m_Blip:delete() end
+	if isElement(self.m_Blip) then delete(self.m_Blip) end
 	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+	TollStation.closeAll()
 end
 
 
 function WeedTruck:truckLoaded()
 	self.m_StartPlayer:sendInfo(_("Der Weed-Truck ist vollständig beladen!", self.m_StartPlayer))
 	self.m_Truck:setFrozen(false)
+	TollStation.openAll()
 	self.m_Timer = setTimer(bind(self.timeUp, self), WeedTruck.Time, 1)
 	self:Event_OnWeedTruckEnter(self.m_StartPlayer, 0)
 
@@ -65,7 +67,7 @@ end
 
 function WeedTruck:timeUp()
 	PlayerManager:getSingleton():breakingNews("Der Weed-Transport wurde beendet! Den Verbrechern ist die Zeit ausgegangen!")
-	self:delete()
+	delete(self)
 end
 
 --Vehicle Events
@@ -81,7 +83,7 @@ function WeedTruck:Event_OnWeedTruckDestroy()
 		self.m_Destroyed = true
 		self:Event_OnWeedTruckExit(self.m_Driver,0)
 		PlayerManager:getSingleton():breakingNews("Der Weed-LKW wurde soeben zerstört!")
-		self:delete()
+		delete(self)
 	end
 end
 
@@ -102,7 +104,7 @@ function WeedTruck:Event_OnWeedTruckExit(player,seat)
 	if seat == 0 then
 		player:triggerEvent("CountdownStop")
 		player:triggerEvent("VehicleHealthStop")
-		self.m_Blip:delete()
+		delete(self.m_Blip)
 		if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
 	end
 end

@@ -51,3 +51,19 @@ function VehicleBarrier:toggleBarrier(player)
         --outputDebug("Closing: "..(-rot.y+90).." ["..rot.y.."; 90]")
      end
 end
+
+function VehicleBarrier:open()
+    if self.m_Closed then
+        local rot = self.m_Barrier:getRotation()
+        self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, 0-rot.y, 0), "Linear")
+        self.m_Closed = false
+    end
+end
+
+function VehicleBarrier:close()
+    if not self.m_Closed then
+        local rot = self.m_Barrier:getRotation()
+        self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, -rot.y+90, 0), "InQuad")
+        self.m_Closed = true
+    end
+end

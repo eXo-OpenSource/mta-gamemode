@@ -36,6 +36,10 @@ function TollStation:checkRequirements(player)
 	return false
 end
 
+function TollStation:getBarrier()
+	return self.m_Barrier
+end
+
 function TollStation:onBarrierHit(player)
 	if not self.m_Ped:isDead() then
 		if self:checkRequirements(player) then -- Check for Toll Pass
@@ -112,8 +116,22 @@ function TollStation:onPedWasted(_, killer)
 	end
 end
 
+TollStation.Map = {}
+
 function TollStation.initializeAll()
 	for i, data in pairs(TOLL_STATIONS) do
-		TollStation:new(data.Name, data.BarrierData.pos, data.BarrierData.rot, data.PedData.pos, data.PedData.rot, data.Type)
+		TollStation.Map[#TollStation.Map+1] = TollStation:new(data.Name, data.BarrierData.pos, data.BarrierData.rot, data.PedData.pos, data.PedData.rot, data.Type)
+	end
+end
+
+function TollStation.openAll()
+	for i, tollstation in pairs(TollStation.Map) do
+		tollstation:getBarrier():open()
+	end
+end
+
+function TollStation.closeAll()
+	for i, tollstation in pairs(TollStation.Map) do
+		tollstation:getBarrier():close()
 	end
 end
