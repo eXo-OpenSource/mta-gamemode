@@ -26,6 +26,16 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/repair.dff", 2837)
 	self:loadImportTXD("files/models/vehiclechange.txd", 2838)
 	self:loadImportDFF("files/models/vehiclechange.dff", 2838)
+
+	--Mushrooms
+	self:loadImportTXD("files/models/mushrooms.txd", 1882)
+	self:loadImportCOL("files/models/mushroom01.col", 1882)
+	self:loadImportDFF("files/models/mushroom01.dff", 1882)
+
+	self:loadImportTXD("files/models/mushrooms.txd", 1947)
+	self:loadImportCOL("files/models/mushroom02.col", 1947)
+	self:loadImportDFF("files/models/mushroom02.dff", 1947)
+
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

@@ -8,8 +8,6 @@
 TrunkGUI = inherit(GUIForm)
 inherit(Singleton, TrunkGUI)
 
-
-
 addRemoteEvents{"openTrunk", "getTrunkData"}
 
 function TrunkGUI:constructor()

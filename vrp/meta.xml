@@ -1010,6 +1010,12 @@
 	<vrpfile src="files/models/nitro.dff"/>
 	<vrpfile src="files/models/vehiclechange.txd"/>
 	<vrpfile src="files/models/vehiclechange.dff"/>
+	<vrpfile src="files/models/mushrooms.txd"/>
+	<vrpfile src="files/models/mushroom01.dff"/>
+	<vrpfile src="files/models/mushroom01.col"/>
+	<vrpfile src="files/models/mushroom02.dff"/>
+	<vrpfile src="files/models/mushroom02.col"/>
+
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
