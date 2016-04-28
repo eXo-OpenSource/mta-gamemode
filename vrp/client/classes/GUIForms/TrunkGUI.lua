@@ -70,13 +70,14 @@ function TrunkGUI:addSlot(type, id, posX, posY)
     tableName.RectangleImage = GUIRectangle:new(posX+5, posY+10, 50, 50, tocolor(0,0,0,200), self.m_Window)
     tableName.Image = GUIImage:new(posX+10, posY+15, 40, 40, "files/images/Other/noImg.png", self.m_Window)
     tableName.Label = GUILabel:new(posX+60, posY+5, 70, 20, self.ms_SlotsSettings[type].emptyText, self.m_Window):setFontSize(1)
-    tableName.Amount = GUILabel:new(posX+60, posY+25, 70, 20, _"0 Stk.", self.m_Window):setFontSize(1)
+    tableName.Amount = GUILabel:new(posX+60, posY+25, 70, 20, "", self.m_Window):setFontSize(1)
     tableName.TakeButton = GUIButton:new(posX+60, posY+45, 70, 20, "<<", self.m_Window):setFontSize(1):setBackgroundColor(self.ms_SlotsSettings[type].btnColor)
     tableName.TakeButton:setEnabled(false)
-    tableName.TakeButton.onLeftClick = function () end
+    tableName.TakeButton.onLeftClick = function() self:fromTrunk(type, id) end
 end
 
 function TrunkGUI:loadItems()
+    self.m_MyItemsGrid:clear()
     self.m_ItemData = Inventory:getSingleton():getItemData()
     self.m_Items = Inventory:getSingleton():getItems()
     self.m_MyItemsGrid:addItemNoClick(_"Items", _"Anzahl")
@@ -91,6 +92,7 @@ function TrunkGUI:loadItems()
                 self.m_ToTrunk:setEnabled(true)
                 self.m_AmountLabel:setVisible(true)
                 self.m_Amount:setVisible(true)
+                self.m_Amount:setText(tostring(itemInv["Menge"]))
                 self:checkAmount()
             end
         end
@@ -103,6 +105,7 @@ function TrunkGUI:loadItems()
             item.onLeftClick = function()
                 self.m_SelectedItemType = "weapon"
                 self.m_SelectedItem = weaponId
+                self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
                 self.m_ToTrunk:setEnabled(true)
                 self.m_AmountLabel:setVisible(false)
                 self.m_Amount:setVisible(false)
@@ -116,19 +119,35 @@ end
 function TrunkGUI:refreshTrunkData(id, items, weapons)
     self.m_Id = id
     for index, item in pairs(items) do
-        if item.Item ~= "none" then
-            self.m_ItemSlots[index].Label:setText(item.Item)
-            self.m_WeaponSlots[index].Amount:setText(_("%d Stk.", item.Amount or 0))
+        if item["Item"] ~= "none" then
+            self.m_ItemSlots[index].Label:setText(item["Item"])
+            self.m_ItemSlots[index].Amount:setText(_("%d Stk.", item["Amount"]))
             self.m_ItemSlots[index].Image:setImage("files/images/Inventory/items/"..self.m_ItemData[item.Item]["Icon"])
+            self.m_ItemSlots[index].TakeButton:setEnabled(true)
+        else
+            self.m_ItemSlots[index].Label:setText(self.ms_SlotsSettings["item"].emptyText)
+            self.m_ItemSlots[index].Amount:setText("")
+            self.m_ItemSlots[index].Image:setImage("files/images/Other/noImg.png")
+            self.m_ItemSlots[index].TakeButton:setEnabled(false)
         end
     end
     for index, weapon in pairs(weapons) do
-        if weapon.WeaponId > 0 then
-            self.m_WeaponSlots[index].Label:setText(getWeaponNameFromID(weapon.WeaponId))
-            self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon.Amount or 0))
+        if weapon["WeaponId"] > 0 then
+            self.m_WeaponSlots[index].Label:setText(getWeaponNameFromID(weapon["WeaponId"]))
+            self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
             self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])
+            self.m_WeaponSlots[index].TakeButton:setEnabled(true)
+        else
+            self.m_WeaponSlots[index].Label:setText(self.ms_SlotsSettings["weapon"].emptyText)
+            self.m_WeaponSlots[index].Amount:setText("")
+            self.m_WeaponSlots[index].Image:setImage("files/images/Other/noImg.png")
+            self.m_WeaponSlots[index].TakeButton:setEnabled(false)
         end
     end
+    self:loadItems()
+    setTimer(function()
+        self:loadItems()
+    end, 300, 1)
 end
 
 
@@ -154,7 +173,16 @@ end
 function TrunkGUI:toTrunk()
     if self.m_Id then
         if self.m_SelectedItemType == "item" then
-            triggerServerEvent("trunkAddItem", localPlayer, self.m_Id, self.m_SelectedItem, tonumber(self.m_Amount:getText()) or 1)
+            local amount = tonumber(self.m_Amount:getText())
+            if amount and amount > 0 then
+                if amount <= self.m_SelectedItemAmount then
+                    triggerServerEvent("trunkAddItem", localPlayer, self.m_Id, self.m_SelectedItem, amount)
+                else
+                    ErrorBox:new(_"Anzahl zu hoch! Du hast nicht soviel von diesem Item!")
+                end
+            else
+                ErrorBox:new(_"Ungültige Item-Anzahl!")
+            end
         elseif self.m_SelectedItemType == "weapon" then
             triggerServerEvent("trunkAddWeapon", localPlayer, self.m_Id, self.m_SelectedItem, self.m_SelectedItemAmount)
         end
@@ -162,6 +190,22 @@ function TrunkGUI:toTrunk()
         ErrorBox:new("InternalError - TrunkId not set")
     end
 end
+
+function TrunkGUI:fromTrunk(type, id)
+    if type == "item" then
+        tableName = self.m_ItemSlots[id]
+    elseif type == "weapon" then
+        tableName = self.m_WeaponSlots[id]
+    end
+
+    if tableName.Label:getText() ~= self.ms_SlotsSettings[type].emptyText then
+        triggerServerEvent("trunkTake", localPlayer, self.m_Id, type, id)
+    else
+        ErrorBox:new(_"In diesem Slot ist kein Item!")
+    end
+end
+
+
 
 addEventHandler("openTrunk", root, function()
     if TrunkGUI:getSingleton():isInstantiated() then

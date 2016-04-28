@@ -270,14 +270,13 @@ function Inventory:removeItem(item, amount)
 		local places = self:getPlaces(bag)
 		for place = 0, places, 1 do
 			local id = self.m_Bag[bag][place]
-			local itemName = self.m_Items[id]["Objekt"]
-			local itemAmount = 0
-			if itemName then
-				if itemName == item then
-					itemAmount = self.m_Items[id]["Menge"]
-					if itemAmount >= amount then
-						self:removeItemFromPlace(bag, place, amount)
-						return
+			if self.m_Items[id] then
+				if self.m_Items[id]["Objekt"] then
+					if self.m_Items[id]["Objekt"] == item then
+						if self.m_Items[id]["Menge"] >= amount then
+							self:removeItemFromPlace(bag, place, self.m_Items[id]["Menge"])
+							return
+						end
 					end
 				end
 			end
