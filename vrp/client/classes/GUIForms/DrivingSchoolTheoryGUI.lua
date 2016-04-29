@@ -17,7 +17,7 @@ local QUESTIONS =
 {
 	{"Wie schnell darf innerorts normalerweise auf einer Vorfahrtstraße gefahren werden?","30","60","120","50",3,4},
 	{"Wann darf rechts überholt werden?","Auf einer Autobahn","Innerorts auf einer Mehrspurigen Straße","Überall","Außerorts",3,2},
-	{"Ab welchen Promille-Wert für Alkohol müssen Sie mit Strafen rechnen ?","0.3","0.5","0.9","1.2",3,1},
+	{"Ab welchen Promille-Wert für Alkohol müssen Sie mit Strafen rechnen ( mit Probezeit )?","0.3","0.5","0.9","1.2",3,1},
 	{"Was gilt an einer Kreuzung ohne Beschilderung oder Ampel?","Wer zuerst kommt fährt","Wer am schnellsten ankommt fährt","Rechts vor Links","Wer hupt fährt zuerst",5,3},
 	{"Was gilt auf Parkplätzen?","Mittig fahren um sichtbar zu sein","Rechtsfahrgebot","Es gibt keine Regelung","Linksfahrgebot",4,2},
 	{"Auf welche Verkehrsteilnehmer muss besonders geachtet werden?","LKW-Fahrer","PKW-Fahrer","Passanten",nil,5,3},
