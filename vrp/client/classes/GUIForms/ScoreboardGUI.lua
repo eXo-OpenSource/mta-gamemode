@@ -105,7 +105,7 @@ function ScoreboardGUI:insertPlayers()
 			karma >= 0 and "+"..karma or " "..tostring(karma)
 		)
 
-		if data[2] then
+		if data[2] and player:getFaction() then
 			local color = player:getFaction():getColor()
 			item:setColumnColor(2, tocolor(color.r, color.g, color.b))
 		end
