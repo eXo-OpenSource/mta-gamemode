@@ -245,27 +245,6 @@ function VehicleInteraction:getDoor()
     return nil
 end
 
-
-function VehicleInteraction:isInteractableVehicle()
-    local vehicle = self.m_lookAtVehicle
-    local interactableVehicles = {  602, 429, 402, 541, 415, 480, 562, 587, 565, 559, 603, 506, 558, 555, 536, 575,
-                                    518, 419, 534, 576, 412, 496, 401, 527, 542, 533, 526, 474, 545, 517, 410, 436,
-                                    475, 439, 549, 491, 599, 552, 499, 422, 414, 600, 543, 478, 456, 554, 589, 500,
-                                    489, 442, 495, 560, 567, 445, 438, 507, 585, 466, 492, 546, 551, 516, 467, 426,
-                                    547, 405, 580, 550, 566, 420, 540, 421, 529, 490, 596, 598, 597, 418, 579, 400,
-                                    470, 404, 479, 458, 561, 411, 451, 477, 535, 528, 525, 508, 494, 502, 503, 423,
-                                    416, 427, 609, 498, 428, 459, 482, 582, 413, 440, 433, 524, 455, 403, 443, 515,
-                                    514, 408, 407, 544, 601, 573, 574, 483, 588, 434, 444, 583, 409}
-
-    local model = getElementModel(vehicle)
-	for i, v in pairs(interactableVehicles) do
-        if (v == model) then
-            return true
-        end
-    end
-end
-
-
 function VehicleInteraction:getInteractableVehicleType()
     local vehicle = self.m_lookAtVehicle
 
@@ -296,51 +275,24 @@ function VehicleInteraction:getInteractableVehicleType()
     -- stretch
     local stretch = {409}
 
-    if (self:isInteractableVehicle()) == true then
-        for i, v in pairs(twoDoors) do
-            if (v == getElementModel(vehicle)) then
-                return "2 doors"
-            end
-        end
+	local types = {
+		["2 doors"] = twoDoors,
+		["2 doors, no trunk"] = twoDoorsNoTrunk,
+		["4 doors"] = fourDoors,
+		["Van"] = vans,
+		["Truck"] = trucks,
+		["Special"] = special,
+		["stretch"] = stretch
+	}
 
-        for i, v in pairs(twoDoorsNoTrunk) do
-            if (v == getElementModel(vehicle)) then
-                return "2 doors, no trunk"
-            end
-        end
-
-        for i, v in pairs(fourDoors) do
-            if (v == getElementModel(vehicle)) then
-                return "4 doors"
-            end
-        end
-
-        for i, v in pairs(vans) do
-            if (v == getElementModel(vehicle)) then
-                return "Van"
-            end
-        end
-
-        for i, v in pairs(trucks) do
-            if (v == getElementModel(vehicle)) then
-                return "Truck"
-            end
-        end
-
-        for i, v in pairs(special) do
-            if (v == getElementModel(vehicle)) then
-                return "Special"
-            end
-        end
-
-        for i, v in pairs(stretch) do
-            if (v == getElementModel(vehicle)) then
-                return "Stretch"
-            end
-        end
-    else
-        return "not useable"
-    end
+    for name, type in pairs(types) do
+		for index, model in pairs(type) do
+			if vehicle:getModel() == model then
+				return name
+			end
+		end
+	end
+    return "not useable"
 end
 
 
