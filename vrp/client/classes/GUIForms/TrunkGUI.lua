@@ -131,7 +131,8 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
     end
     for index, weapon in pairs(weapons) do
         if weapon["WeaponId"] > 0 then
-            self.m_WeaponSlots[index].Label:setText(getWeaponNameFromID(weapon["WeaponId"]))
+            local weaponName = getWeaponNameFromID(weapon["WeaponId"])
+            self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
             self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
             self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])
             self.m_WeaponSlots[index].TakeButton:setEnabled(true)

@@ -150,7 +150,7 @@ function Trunk:takeWeapon(player, slot)
 					self.m_WeaponSlot[slot]["WeaponId"] = 0
 					self.m_WeaponSlot[slot]["Amount"] = 0
 					player:giveWeapon(weaponId, amount)
-					player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", getWeaponNameFromID(weaponId), muni, slot))
+					player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", player, getWeaponNameFromID(weaponId), amount, slot))
 					self:refreshClient(player)
 					return
 				else

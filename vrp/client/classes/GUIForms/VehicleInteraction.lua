@@ -6,45 +6,43 @@
 -- *
 -- ****************************************************************************
 VehicleInteraction = inherit(Singleton)
+inherit(GUIFontContainer, VehicleInteraction)
+addRemoteEvents{"onDoorOpened", "onDoorClosed"}
 
 function VehicleInteraction:constructor()
 	self.m_minDistance = 10
 	self.m_interactButton = "O"
 	self.m_actionButton = "K"
 	self.m_lockButton = "L"
-
 	self.m_isDebug = false
 	self.m_lookAtVehicle = nil
 	self.m_doorName = ""
 
-
 	self.m_doorNames = {
-			[0] = _"der #00FF00Motorhaube",
-			[1] = _"des #00FF00Kofferraumes",
-			[2] = _"der #00FF00linken Vordertür",
-			[3] = _"der #00FF00rechten Vordertür",
-			[4] = _"der #00FF00linken hinteren Tür",
-			[5] = _"der #00FF00rechten hinteren Tür"
-		}
-
+		[0] = _"der #00FF00Motorhaube",
+		[1] = _"des #00FF00Kofferraumes",
+		[2] = _"der #00FF00linken Vordertür",
+		[3] = _"der #00FF00rechten Vordertür",
+		[4] = _"der #00FF00linken hinteren Tür",
+		[5] = _"der #00FF00rechten hinteren Tür"
+	}
 
 	bindKey(self.m_interactButton, "down", bind(self.interact, self))
 	bindKey(self.m_actionButton, "down", bind(self.action, self))
 	bindKey(self.m_lockButton, "down", bind(self.lock, self))
 
-	addRemoteEvents{"onDoorOpened", "onDoorClosed"}
-
 	addEventHandler("onDoorOpened", root, bind(self.onDoorOpened, self))
 	addEventHandler("onDoorClosed", root, bind(self.onDoorClosed, self))
-
 	addEventHandler("onClientRender", root, bind(self.render, self))
 
+	-- Font
+	GUIFontContainer.constructor(self, "", 1, VRPFont(16))
 end
 
 function VehicleInteraction:render()
 	self.m_lookAtVehicle = getPedTarget(localPlayer)
     if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" then
-		if not isPedInVehicle(localPlayer) then
+		if not isPedInVehicle(localPlayer) and not GUIElement.getHoveredElement() then
 			local vehPos = self.m_lookAtVehicle:getPosition()
 			local vehRot = self.m_lookAtVehicle:getRotation()
 			local playerPos = localPlayer:getPosition()
@@ -88,7 +86,7 @@ function VehicleInteraction:drawTextBox(text, count)
 	local width, height = 270, 16
 	local x, y = screenWidth/2 - width/2, screenHeight/2 + count*20
 	dxDrawRectangle(x, y, width, height, tocolor( 0, 0, 0, 90 ))
-	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), 1, "arial", "center", "center", false, false, false, true, true)
+	dxDrawText(text, x, y, x+width, y+height, tocolor(255, 255, 255, 255), 1, self.m_Font, "center", "center", false, false, false, true, false)
 
 end
 

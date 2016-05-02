@@ -451,7 +451,7 @@
 	<script src="client/classes/GUIForms/Advertisement.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordChangeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TrunkGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/VehicleInteraction.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/SkillTreeGUI.lua" type="client"/>
@@ -524,8 +524,6 @@
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
-	<script src="client/classes/Vehicles/VehicleInteraction.lua" type="client"/>
-
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
