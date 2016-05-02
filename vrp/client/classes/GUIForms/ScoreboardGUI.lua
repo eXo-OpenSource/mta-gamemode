@@ -99,13 +99,13 @@ function ScoreboardGUI:insertPlayers()
 		local karma = math.floor(player:getKarma() or 0)
 		local item = self.m_Grid:addItem(
 			player:getName(),
-			data[2] and player:getFaction():getShortName() or "- Keine -",
-			player:getCompany():getShortName()  or "- Keine -",
+			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
+			player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
 			player:getGroupName(),
 			karma >= 0 and "+"..karma or " "..tostring(karma)
 		)
 
-		if data[2] then
+		if data[2] and player:getFaction() then
 			local color = player:getFaction():getColor()
 			item:setColumnColor(2, tocolor(color.r, color.g, color.b))
 		end

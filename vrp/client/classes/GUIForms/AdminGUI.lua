@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 AdminGUI = inherit(GUIForm)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "warn", "timeban", "permaban", "setCompany", "setFaction"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -65,6 +65,7 @@ function AdminGUI:constructor()
 	self.m_PlayerCompanyLabel = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabSpieler)
 	self.m_PlayerGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabSpieler)
 
+	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", 220, 130, 180, 30, Color.LightBlue, tabSpieler)
 	self:addAdminButton("goto", "hin porten", 220, 170, 180, 30, Color.Green, tabSpieler)
 	self:addAdminButton("gethere", "her porten", 410, 170, 180, 30, Color.Green, tabSpieler)
 	self:addAdminButton("kick", "kicken", 220, 210, 180, 30, Color.Orange, tabSpieler)
@@ -155,7 +156,10 @@ function AdminGUI:onButtonClick(func)
 			return
 		end
 	end
-	if func == "gethere" or func == "goto" then
+	if func == "showVehicles" then
+		AdminVehicleGUI:new(self.m_SelectedPlayer, self)
+		self:close()
+	elseif func == "gethere" or func == "goto" then
 		triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer)
 	elseif func == "kick" then
 		InputBox:new(_("Spieler %s kicken", self.m_SelectedPlayer:getName()),
@@ -251,6 +255,77 @@ function AdminInputBox:constructor(title, durationText, callback)
 		delete(self)
 	end
 end
+
+AdminVehicleGUI = inherit(GUIForm)
+
+function AdminVehicleGUI:constructor(player, adminGui)
+	self.m_Player = player
+	self.m_AdminGui = adminGui
+	GUIForm.constructor(self, screenWidth/2-500/2, screenHeight/2-300/2, 500, 300)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Fahrzeuge von %s", player:getName()), true, true, self)
+	self.m_Window:addBackButton(function () AdminGUI:getSingleton():show() end)
+	self.m_VehiclesGrid = GUIGridList:new(10, 40, 300, 250, self.m_Window)
+	self.m_VehiclesGrid:addColumn(_"Name", 0.3)
+	self.m_VehiclesGrid:addColumn(_"Standort", 0.7)
+
+	self.m_portHere = GUIButton:new(320, 40, 170, 30, _"Fahrzeug her porten",  self):setBackgroundColor(Color.Orange):setFontSize(1)
+	self.m_portTo = GUIButton:new(320, 80, 170, 30, _"zum Fahrzeug porten",  self):setBackgroundColor(Color.Orange):setFontSize(1)
+	self.m_portHere.onLeftClick = function()
+		if not self.m_VehiclesGrid:getSelectedItem() then
+			ErrorBox:new(_"Kein Fahrzeug ausgewählt!")
+			return
+		end
+		local veh = self.m_VehiclesGrid:getSelectedItem().VehicleElement
+		local pos = localPlayer:getPosition()
+		veh:setInterior(localPlayer:getInterior())
+		veh:setDimension(localPlayer:getDimension())
+		veh:setPosition(pos.x+1, pos.y+1, pos.z+1)
+		InfoBox:new(_"Das Fahrzeug wurde zu dir geportet!")
+	end
+	self.m_portTo.onLeftClick = function()
+		if not self.m_VehiclesGrid:getSelectedItem() then
+			ErrorBox:new(_"Kein Fahrzeug ausgewählt!")
+			return
+		end
+		local veh = self.m_VehiclesGrid:getSelectedItem().VehicleElement
+		local pos = veh:getPosition()
+		localPlayer:setInterior(veh:getInterior())
+		localPlayer:setDimension(veh:getDimension())
+		localPlayer:setPosition(pos.x+1, pos.y+1, pos.z+1)
+		InfoBox:new(_"Du wurdest zum Fahrzeug geportet!")
+	end
+
+	addRemoteEvents{"adminVehicleRetrieveInfo"}
+	addEventHandler("adminVehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
+
+	triggerServerEvent("adminGetPlayerVehicles", localPlayer, player)
+end
+
+function AdminVehicleGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
+	if vehiclesInfo then
+		self.m_VehiclesGrid:clear()
+		for vehicleId, vehicleInfo in pairs(vehiclesInfo) do
+			local element, positionType = unpack(vehicleInfo)
+			local x, y, z = getElementPosition(element)
+			if positionType == VehiclePositionType.World then
+				positionType = getZoneName(x, y, z, false)
+			elseif positionType == VehiclePositionType.Garage then
+				positionType = _"Garage"
+			elseif positionType == VehiclePositionType.Mechanic then
+				positionType = _"Autohof"
+			elseif positionType == VehiclePositionType.Hangar then
+				positionType = _"Hangar"
+			else
+				positionType = _"Unbekannt"
+			end
+			local item = self.m_VehiclesGrid:addItem(element:getName(), positionType)
+			item.VehicleId = vehicleId
+			item.VehicleElement = element
+			item.PositionType = vehicleInfo[2]
+		end
+	end
+end
+
 
 WarnManagement = inherit(GUIForm)
 

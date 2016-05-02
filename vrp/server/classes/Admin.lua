@@ -18,7 +18,7 @@ function Admin:constructor()
         [5] = "Projektleiter"
     }
 
-    addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction"}
+    addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminGetPlayerVehicles"}
 
     addCommandHandler("admins", bind(self.onlineList, self))
     addCommandHandler("a", bind(self.chat, self))
@@ -44,6 +44,8 @@ function Admin:constructor()
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
+    addEventHandler("adminGetPlayerVehicles", root, bind(self.Event_vehicleRequestInfo, self))
+
 end
 
 function Admin:destructor()
@@ -367,6 +369,15 @@ function Admin:Event_adminSetPlayerCompany(targetPlayer,Id)
     		end
         end
 	end
+end
+
+function Admin:Event_vehicleRequestInfo(target)
+	local vehicles = {}
+	for k, vehicle in pairs(target:getVehicles()) do
+        vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
+	end
+
+	client:triggerEvent("adminVehicleRetrieveInfo", vehicles)
 end
 
 function Admin:addFactionVehicle(player, cmd, factionID)

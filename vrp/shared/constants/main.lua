@@ -24,6 +24,7 @@ ADMIN_RANK_PERMISSION = {
 	["prison"] = RANK.Supporter,
 	["gethere"] = RANK.Supporter,
 	["goto"] = RANK.Supporter,
+	["showVehicles"] = RANK.Supporter,
 	["warn"] = RANK.Supporter,
 	["supportMode"] = RANK.Supporter,
 	["smode"] = RANK.Supporter,

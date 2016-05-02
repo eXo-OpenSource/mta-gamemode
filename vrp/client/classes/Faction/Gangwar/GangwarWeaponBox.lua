@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 WeaponBoxGUI = inherit(GUIForm)
-inherit(Object, WeaponBoxGUI)
+inherit(Singleton, WeaponBoxGUI)
 local width,height = screenWidth * 0.3 , screenHeight*0.4
 
 function WeaponBoxGUI:constructor( pGangwarDisplay , pWeapons)
