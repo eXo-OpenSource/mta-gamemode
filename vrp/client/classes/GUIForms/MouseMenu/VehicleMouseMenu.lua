@@ -40,7 +40,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 	end
 
-	if getVehicleType(element) ~= "not useable" then
+	if element:getVehicleType() ~= VehicleType.Trailer then
 		self:addItem(_"Fahrzeug leeren",
 			function()
 				if self:getElement() then
