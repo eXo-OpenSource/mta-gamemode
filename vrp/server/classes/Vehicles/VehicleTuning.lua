@@ -152,7 +152,7 @@ function VehicleTuning:EntryColShape_Hit(garageId, hitElement, matchingDimension
         end
 
         local vehicleType = vehicle:getVehicleType()
-        if vehicleType == "Automobile" or vehicleType == "Bike" or vehicleType == "Quad" then
+        if vehicleType == VehicleType.Automobile or vehicleType == VehicleType.Bike then
             self:openFor(hitElement, vehicle, garageId)
         else
             hitElement:sendError(_("Mit diesem Fahrzeugtyp kannst du die Tuningwerkstatt nicht betreten!", hitElement))

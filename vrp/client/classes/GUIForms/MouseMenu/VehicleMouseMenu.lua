@@ -14,7 +14,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		self:addItem(_("Besitzer: %s", getElementData(element, "OwnerName"))):setTextColor(Color.Red)
 	end
 
-	if element:getVehicleType() ~= "Bike" then
+	if element:getVehicleType() ~= VehicleType.Bike and element:getVehicleType() ~= VehicleType.Trailer then
 		self:addItem(_"Auf-/Zuschließen",
 			function()
 				if self:getElement() then
@@ -40,13 +40,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 	end
 
-	self:addItem(_"Fahrzeug leeren",
-		function()
-			if self:getElement() then
-				triggerServerEvent("vehicleEmpty", self:getElement())
+	if getVehicleType(element) ~= "not useable" then
+		self:addItem(_"Fahrzeug leeren",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleEmpty", self:getElement())
+				end
 			end
-		end
-	)
+		)
+	end
 
 	if localPlayer:isInVehicle() then
 		self:addItem(_"Kurzschließen",

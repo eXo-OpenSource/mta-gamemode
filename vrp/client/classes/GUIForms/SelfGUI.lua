@@ -554,6 +554,8 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 				positionType = _"Autohof"
 			elseif positionType == VehiclePositionType.Hangar then
 				positionType = _"Hangar"
+			elseif positionType == VehiclePositionType.Harbor then
+				positionType = _"Hafen"
 			else
 				positionType = _"Unbekannt"
 			end
@@ -615,7 +617,7 @@ function SelfGUI:VehicleLocateButton_Click()
 	if item.PositionType == VehiclePositionType.World then
 		local x, y, z = getElementPosition(item.VehicleElement)
 		local blip = Blip:new("Waypoint.png", x, y)
-		setTimer(function() HUDRadar:getSingleton():removeBlip(blip) end, 5000, 1)
+		setTimer(delete, 5000, 1, blip)
 
 		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)))
 	elseif item.PositionType == VehiclePositionType.Garage then
@@ -624,6 +626,8 @@ function SelfGUI:VehicleLocateButton_Click()
 		ShortMessage:new(_"Dieses Fahrzeug befindet sich im Autohof (Mechanic Base)!")
 	elseif item.PositionType == VehiclePositionType.Hangar then
 		ShortMessage:new(_"Dieses Flugzeug befindet sich im Hangar!")
+	elseif item.PositionType == VehiclePositionType.Harbor then
+		ShortMessage:new(_"Dieses Boot befindet sich im Hafen!")
 	else
 		ErrorBox:new(_"Es ist ein interner Fehler aufgetreten!")
 	end

@@ -208,5 +208,10 @@ function Vehicle:isSmokeEnabled()
 	return self.m_SpecialSmokeEnabled
 end
 
+-- Override it
+function Vehicle:getVehicleType()
+	return getVehicleType(self)
+end
+
 Vehicle.isPermanent = pure_virtual
 Vehicle.respawn = pure_virtual

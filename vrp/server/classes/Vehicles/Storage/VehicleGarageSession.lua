@@ -35,6 +35,11 @@ function VehicleGarageSession:furnish()
 end
 
 function VehicleGarageSession:addVehicle(vehicle)
+	if vehicle:getVehicleType() == VehicleType.Plane or vehicle:getVehicleType() == VehicleType.Helicopter or vehicle:getVehicleType() == VehicleType.Boat then
+		self.m_Player:sendError("Detected wrong Vehicle in Garage! (VehicleType:"..vehicle:getVehicleType()..")")
+		return false
+	end
+
 	local slotId = #self.m_Slots + 1
 	if slotId > VehicleGarages:getSingleton():getMaxSlots(self.m_GarageType) then
 		return false

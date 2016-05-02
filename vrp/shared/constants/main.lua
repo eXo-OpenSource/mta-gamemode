@@ -212,7 +212,8 @@ Tasks = {
 	TASK_GETTING_TARGETTED = 3,
 }
 
-VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3}
+VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
+VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
 
 GROUP_RENAME_TIMEOUT = 60*60*24*30 -- 30 Days (in seconds)
 

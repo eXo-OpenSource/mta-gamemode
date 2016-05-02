@@ -25,6 +25,11 @@ function Vehicle:isSmokeEnabled()
 	return self.m_SpecialSmokeEnabled
 end
 
+-- Override it
+function Vehicle:getVehicleType()
+	return getVehicleType(self)
+end
+
 addEvent("vehicleEngineStart", true)
 addEventHandler("vehicleEngineStart", root,
 	function()
