@@ -225,7 +225,7 @@ function Group:getMoney()
 	return self.m_Money
 end
 
-function Group:giveMoney(amount)
+function Group:giveMoney(amount, reason)
 	self:setMoney(self.m_Money + amount)
 end
 
@@ -276,14 +276,14 @@ end
 
 function Group:distributeMoney(amount)
 	local moneyForFund = amount * self.m_ProfitProportion
-	self:giveMoney(moneyForFund)
+	self:giveMoney(moneyForFund, "Gang/Firma")
 
 	local moneyForPlayers = amount - moneyForFund
 	local onlinePlayers = self:getOnlinePlayers()
 	local amountPerPlayer = math.floor(moneyForPlayers / #onlinePlayers)
 
 	for k, player in pairs(onlinePlayers) do
-		player:giveMoney(amountPerPlayer)
+		player:giveMoney(amountPerPlayer, "Gang/Firma")
 	end
 end
 

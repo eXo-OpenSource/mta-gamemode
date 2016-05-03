@@ -61,7 +61,7 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 		local numCans = hitElement:getData("Trashman:Cans")
 		local moneyAmount = numCans * MONEY_PER_CAN
 
-		hitElement:giveMoney(moneyAmount)
+		hitElement:giveMoney(moneyAmount, "Müll-Job")
 		hitElement:givePoints(math.ceil(numCans/3))
 
 		hitElement:sendInfoTimeout(_("Dein Lohn: %d$", hitElement, moneyAmount), 5000)

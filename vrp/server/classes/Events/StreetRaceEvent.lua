@@ -75,7 +75,7 @@ function StreetRaceEvent:colShapeHit(hitElement, matchingDimension)
 
 		-- Give him some money
 		local moneyAmount = 100 * #self.m_Players / #self.m_Ranks
-		hitElement:giveMoney(math.ceil(moneyAmount))
+		hitElement:giveMoney(math.ceil(moneyAmount), "Event")
 		hitElement:sendSuccess(_("Du hast das Straßenrennen %d$ gewonnen!", hitElement, moneyAmount), 0, 255, 0)
 
 		-- Quit the hitting player

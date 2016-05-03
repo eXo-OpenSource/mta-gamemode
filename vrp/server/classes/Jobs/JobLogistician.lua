@@ -86,7 +86,7 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 				veh:setRotation(source:getData("VehicleRotation"))
 				if crane:getVehicleAttachedContainer(veh) then
 					if source == hitElement:getData("Logistician:TargetMarker") then
-						crane:dropContainer(veh, function() hitElement:giveMoney(MONEY_PER_TRANSPORT) end)
+						crane:dropContainer(veh, function() hitElement:giveMoney(MONEY_PER_TRANSPORT, "Logistiker Job") end)
 					else
 						hitElement:sendError(_("Du bist am falschen Kran!", hitElement))
 					end

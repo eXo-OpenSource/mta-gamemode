@@ -230,7 +230,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		end
 
 		-- Give the player some money and switch to the next bus stop
-		player:giveMoney(50)
+		player:giveMoney(50, "Public Transport Bus")
 		local newDestination = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
 		player.Bus_NextStop = newDestination
 

@@ -65,7 +65,7 @@ function House:breakHouse(player)
 				end
 				if isRobSuccessfully then
 					local loot = math.floor(self.m_Price/20*(math.random(75,100)/100))
-					unit:giveMoney(loot)
+					unit:giveMoney(loot, "Haus-Überfall")
 					unit:sendMessage("Du hast den Raub erfolgreich abgeschlossen! Dafür erhälst du $%s.",0,125,0,loot)
 					self:leaveHouse(unit)
 				end

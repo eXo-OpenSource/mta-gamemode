@@ -28,7 +28,7 @@ end
 function JobForkLift:onBoxLoad(box)
 	if isElement(box) and table.find(self.m_Boxes, box) then
 		box:destroy()
-		client:giveMoney(50)
+		client:giveMoney(50, "Gabelstapler-Job")
 	end
 end
 

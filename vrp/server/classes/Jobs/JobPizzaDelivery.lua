@@ -97,5 +97,5 @@ end
 function JobPizza:onPizzaDeliver( player, distance, time)
 	local workFactor = distance / time
 	local pay = math.floor( BASE_LOAN * workFactor )
-	player:giveMoney( pay )
+	player:giveMoney(pay, "Pizza-Job")
 end

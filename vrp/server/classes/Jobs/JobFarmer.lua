@@ -184,7 +184,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 		if distance > 4 then return end
 		destroyElement (self.m_Plants[createColShape])
 		self.m_Plants[createColShape] = nil
-		hitElement:giveMoney(math.random(2, 3))
+		hitElement:giveMoney(math.random(2, 3), "Farmer-Job")
 		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 		self:updateClientData()
 
@@ -199,7 +199,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			object.isFarmAble = false
 			setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
 			setElementVisibleTo(object, hitElement, true)
-			hitElement:giveMoney(math.random(1, 2))
+			hitElement:giveMoney(math.random(1, 2), "Farmer Job")
 
 			-- Give some points
 			if chance(4) then

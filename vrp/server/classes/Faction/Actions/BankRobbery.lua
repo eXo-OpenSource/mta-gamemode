@@ -450,7 +450,7 @@ function BankRobbery:statePeopleClickBag(player, bag)
 	local amount = math.floor(bag:getData("Money")/2)
 	PlayerManager:getSingleton():breakingNews("Das SAPD hat einen Geldsack sichergestellt!")
 	player:sendInfo(_("Geldsack sichergestellt, es wurden %d$ in die Staatskasse gelegt!", player, amount))
-	FactionManager:getSingleton():getFromId(1):giveMoney(amount)
+	FactionManager:getSingleton():getFromId(1):giveMoney(amount, "Bankrob-Geldsack")
 	table.remove(self.m_MoneyBags, table.find(self.m_MoneyBags, bag))
 	bag:destoy()
 end
@@ -573,7 +573,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							if value:getModel() == 1550 then
 								amount = value:getData("Money")
 								totalAmount = totalAmount + amount
-								faction:giveMoney(amount)
+								faction:giveMoney(amount, "Bankraub")
 								value:destroy()
 							end
 						end

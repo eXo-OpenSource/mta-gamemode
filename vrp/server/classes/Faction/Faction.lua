@@ -224,7 +224,7 @@ function Faction:getMoney()
 	return self.m_BankAccount:getMoney()
 end
 
-function Faction:giveMoney(amount)
+function Faction:giveMoney(amount, reason)
 	return self.m_BankAccount:addMoney(amount)
 end
 

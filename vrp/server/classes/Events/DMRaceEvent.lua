@@ -75,7 +75,7 @@ function DMRaceEvent:onPlayerWasted(player)
 
 	local leftPlayers = #self:getPlayers()
 	local money = self.m_StartPlayerAmount * (self.m_StartPlayerAmount-leftPlayers-1) * 40
-	player:giveMoney(money)
+	player:giveMoney(money, "Event")
 
 	-- Output the winner if he was the last player
 	if leftPlayers == 1 then

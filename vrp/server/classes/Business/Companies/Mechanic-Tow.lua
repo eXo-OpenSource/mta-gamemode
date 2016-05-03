@@ -74,7 +74,7 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 
 		if vehicle.PendingMechanic then
 			if client ~= vehicle.PendingMechanic then
-				vehicle.PendingMechanic:giveMoney(price)
+				vehicle.PendingMechanic:giveMoney(price, "Mech & Tow Reparatur")
 				vehicle.PendingMechanic:givePoints(5)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
 				client:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", client, getPlayerName(vehicle.PendingMechanic)))

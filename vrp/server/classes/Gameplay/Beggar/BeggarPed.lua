@@ -62,7 +62,7 @@ function BeggarPed:rob(player)
 	--end
 
 	-- Give wage
-	client:giveMoney(math.random(1, 5))
+	client:giveMoney(math.random(1, 5), "Bettler-Raub")
 	client:giveKarma(-0.15)
 	client:sendShortMessage(_("Well done. Du hast einen Bettler ausgeraubt!", player))
     self:sendMessage(client, BeggarPhraseTypes.Rob)

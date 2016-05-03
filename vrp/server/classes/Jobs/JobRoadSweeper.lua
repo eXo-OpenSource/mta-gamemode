@@ -34,7 +34,7 @@ function JobRoadSweeper:Event_sweeperGarbageCollect()
 	end
 	client:setData("Sweeper:Last", getTickCount())
 
-	client:giveMoney(3)
+	client:giveMoney(3, "Straßenreiniger-Job")
 	if chance(15) then
 		client:givePoints(1)
 	end

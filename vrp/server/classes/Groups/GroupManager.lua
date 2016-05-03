@@ -177,9 +177,9 @@ function GroupManager:Event_groupDelete()
   for playerId, playerRank in pairs(group.m_Players) do
       local player, isOffline = DatabasePlayer.get(playerId)
       if playerRank == GroupRank.Leader then
-          player:giveMoney(leaderAmount)
+          player:giveMoney(leaderAmount, "Gang/Firmen Auflösung")
       else
-          player:giveMoney(memberAmount)
+          player:giveMoney(memberAmount, "Gang/Firmen Auflösung"))
       end
 
       if isOffline then
