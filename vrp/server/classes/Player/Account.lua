@@ -53,6 +53,17 @@ end
 addEvent("accountlogin", true)
 addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
 
+
+addEvent("checkRegisterAllowed", true)
+addEventHandler("checkRegisterAllowed", root, function()
+	local name = Account.getNameFromSerial(client:getSerial())
+	if name then
+		client:triggerEvent("receiveRegisterAllowed", false, name)
+	else
+		client:triggerEvent("receiveRegisterAllowed", true)
+	end
+end)
+
 function Account.register(player, username, password, email)
 	if player:getAccount() then return false end
 	if not username or not password then return false end
@@ -162,6 +173,11 @@ function Account.getNameFromId(id)
 	end
 
 	local row = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
+	return row and row.Name
+end
+
+function Account.getNameFromSerial(serial)
+	local row = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE LastSerial = ?", sql:getPrefix(), serial)
 	return row and row.Name
 end
 

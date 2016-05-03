@@ -179,7 +179,7 @@ function GroupManager:Event_groupDelete()
       if playerRank == GroupRank.Leader then
           player:giveMoney(leaderAmount, "Gang/Firmen Auflösung")
       else
-          player:giveMoney(memberAmount, "Gang/Firmen Auflösung"))
+          player:giveMoney(memberAmount, "Gang/Firmen Auflösung")
       end
 
       if isOffline then

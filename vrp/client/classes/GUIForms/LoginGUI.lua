@@ -50,7 +50,7 @@ function LoginGUI:constructor()
 
 
 	self.m_RegisterRegisterButton	= VRPButton:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.75, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.1, "Registrieren", true, self.m_RegisterTab)
-	self.m_RegisterLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.025, sh*0.175, sh*0.175, "files/images/Logo.png", self.m_RegisterTab)
+	self.m_RegisterLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.06, sh*0.175, sh*0.084, "files/images/Logo.png", self.m_RegisterTab)
 
 	self.m_RegisterEditPass:setMasked("*")
 	self.m_RegisterInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.04,
@@ -77,7 +77,7 @@ function LoginGUI:constructor()
 	--self.m_GuestButton:dark(true)
 
 	self.m_LoginButton.onLeftClick = bind(self.showLogin, self)
-	self.m_RegisterButton.onLeftClick = bind(self.showRegister, self)
+	self.m_RegisterButton.onLeftClick = bind(self.checkRegister, self)
 	--self.m_GuestButton.onLeftClick = bind(self.showGuest, self)
 
 	self.m_LoginLoginButton.onLeftClick = bind(function(self)
@@ -106,7 +106,7 @@ function LoginGUI:constructor()
 			if self.m_RegisterTab:isVisible() then
 				self:showLogin()
 			elseif self.m_LoginTab:isVisible() then
-				self:showRegister()
+				self:checkRegister()
 		--	elseif self.m_GuestTab:isVisible() then
 		--		self:showRegister()
 			end
@@ -116,7 +116,7 @@ function LoginGUI:constructor()
 	self:bind("arrow_r",
 		function(self)
 			if self.m_LoginTab:isVisible() then
-				self:showRegister()
+				self:checkRegister()
 			elseif self.m_RegisterTab:isVisible() then
 		--		self:showGuest()
 				self:showLogin()
@@ -157,15 +157,51 @@ function LoginGUI:showLogin()
 	self.m_RegisterTab:setVisible(false)
 end
 
+function LoginGUI:checkRegister()
+	self:showRegister()
+	triggerServerEvent("checkRegisterAllowed", localPlayer)
+end
+
 function LoginGUI:showRegister()
 	self.m_RegisterButton:light()
 	self.m_LoginButton:dark()
---	self.m_GuestButton:dark()
-
+	--	self.m_GuestButton:dark()
 	self.m_LoginTab:setVisible(false)
---	self.m_GuestTab:setVisible(false)
+	--	self.m_GuestTab:setVisible(false)
 	self.m_RegisterTab:setVisible(true)
 end
+
+function LoginGUI:showRegisterMultiaccountError(name)
+	self.m_RegisterEditUser:setVisible(false)
+	self.m_RegisterTextUser:setVisible(false)
+	self.m_RegisterEditMail:setVisible(false)
+	self.m_RegisterTextMail:setVisible(false)
+	self.m_RegisterEditPass:setVisible(false)
+	self.m_RegisterTextPass:setVisible(false)
+	self.m_RegisterRegisterButton:setVisible(false)
+	local width, height = screenWidth*0.6*0.75*0.7, (screenHeight*0.6-screenHeight*0.6*0.01)*0.2
+
+	self.m_RegisterInfoText:setText(
+	[[Willkommen auf V-Roleplay!
+
+	Es ist ein Fehler aufgetreten!
+	]]
+	)
+
+	local text = _("Deine Serial wurde zuletzt vom Spieler '%s' benutzt! \n Jeder Spieler darf nur einen Account besitzen! Bitte melde dich bei einem Teamitglied!", name)
+	self.m_RegisterMultiaccountBox = GUIRectangle:new(screenWidth*0.6*0.75*0.15, (screenHeight*0.6-screenHeight*0.6*0.01)*0.5, width, height, tocolor(255, 0, 0, 128), self.m_RegisterTab)
+	self.m_RegisterMultiaccountText = GUILabel:new(0, 0, width, height, text, self.m_RegisterMultiaccountBox):setAlign("center", "center"):setMultiline(true):setFont(VRPFont(25))
+
+end
+
+addEvent("receiveRegisterAllowed", true)
+addEventHandler("receiveRegisterAllowed", root,
+	function(state, name)
+		if state == false then
+			LoginGUI:getSingleton():showRegisterMultiaccountError(name)
+		end
+	end
+)
 
 function LoginGUI:showGuest()
 	self.m_RegisterButton:dark()
