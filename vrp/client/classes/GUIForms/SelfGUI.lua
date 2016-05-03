@@ -543,7 +543,13 @@ end
 function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 	if vehiclesInfo then
 		self.m_VehiclesGrid:clear()
+		local vehInfo = {}
 		for vehicleId, vehicleInfo in pairs(vehiclesInfo) do
+			table.insert(vehInfo, {vehicleId, vehicleInfo})
+		end
+		table.sort(vehInfo, function (a, b) return (a[2][2] < b[2][2]) end)
+		for i, vehicleInfo in ipairs(vehInfo) do
+			local vehicleId, vehicleInfo = unpack(vehicleInfo)
 			local element, positionType = unpack(vehicleInfo)
 			local x, y, z = getElementPosition(element)
 			if positionType == VehiclePositionType.World then
@@ -627,7 +633,7 @@ function SelfGUI:VehicleLocateButton_Click()
 	elseif item.PositionType == VehiclePositionType.Hangar then
 		ShortMessage:new(_"Dieses Flugzeug befindet sich im Hangar!")
 	elseif item.PositionType == VehiclePositionType.Harbor then
-		ShortMessage:new(_"Dieses Boot befindet sich im Hafen!")
+		ShortMessage:new(_"Dieses Boot befindet sich im Industrie-Hafen (Logistik-Job)!")
 	else
 		ErrorBox:new(_"Es ist ein interner Fehler aufgetreten!")
 	end
