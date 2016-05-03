@@ -20,9 +20,11 @@ function TrunkGUI:constructor()
 
     self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Kofferraum", true, true, self)
     GUILabel:new(10, 35, 340, 35, _"Inventar:", self.m_Window)
+    self.m_LoadingLabel = GUILabel:new(10, 70, 250, 250, _"wird geladen...", self.m_Window):setAlignX("center"):setAlignY("center"):setFontSize(1):setFont(VRPFont(20))
     self.m_MyItemsGrid = GUIGridList:new(10, 70, 250, 250, self.m_Window)
     self.m_MyItemsGrid:addColumn(_"Item/Waffe", 0.7)
     self.m_MyItemsGrid:addColumn(_"Anzahl", 0.3)
+    self.m_MyItemsGrid:setVisible(false)
     self.m_AmountLabel = GUILabel:new(10, 325, 250, 30, _"Item-Anzahl:", self.m_Window)
     self.m_Amount = GUIEdit:new(10, 355, 250, 30, self.m_Window)
     self.m_AmountLabel:setVisible(false)
@@ -49,6 +51,7 @@ function TrunkGUI:constructor()
     self.m_ToTrunk:setEnabled(false)
 
     self.m_ToTrunk.onLeftClick = function() self:toTrunk() end
+    triggerServerEvent("refreshInventory", localPlayer)
     self:loadItems()
 
     addEventHandler("getTrunkData", root, bind(self.refreshTrunkData, self))
@@ -111,7 +114,8 @@ function TrunkGUI:loadItems()
             end
 		end
 	end
-
+    self.m_MyItemsGrid:setVisible(true)
+    self.m_LoadingLabel:setVisible(false)
 end
 
 function TrunkGUI:refreshTrunkData(id, items, weapons)
@@ -143,10 +147,12 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
             self.m_WeaponSlots[index].TakeButton:setEnabled(false)
         end
     end
-    self:loadItems()
+    triggerServerEvent("refreshInventory", localPlayer)
     setTimer(function()
         self:loadItems()
-    end, 300, 1)
+        self.m_MyItemsGrid:setVisible(true)
+        self.m_LoadingLabel:setVisible(false)
+    end, 250, 1)
 end
 
 
@@ -176,6 +182,8 @@ function TrunkGUI:toTrunk()
             if amount and amount > 0 then
                 if amount <= self.m_SelectedItemAmount then
                     triggerServerEvent("trunkAddItem", localPlayer, self.m_Id, self.m_SelectedItem, amount)
+                    self.m_MyItemsGrid:setVisible(false)
+                    self.m_LoadingLabel:setVisible(true)
                 else
                     ErrorBox:new(_"Anzahl zu hoch! Du hast nicht soviel von diesem Item!")
                 end
@@ -199,6 +207,8 @@ function TrunkGUI:fromTrunk(type, id)
 
     if tableName.Label:getText() ~= self.ms_SlotsSettings[type].emptyText then
         triggerServerEvent("trunkTake", localPlayer, self.m_Id, type, id)
+        self.m_MyItemsGrid:setVisible(false)
+        self.m_LoadingLabel:setVisible(true)
     else
         ErrorBox:new(_"In diesem Slot ist kein Item!")
     end
