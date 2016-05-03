@@ -195,18 +195,20 @@ function PermanentVehicle:respawn()
 	end
 
 	-- Respawn at mechanic base
-	if vehicleType ~= VehicleType.Boat --[[and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter]] then
+	if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
 		CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
 		if owner and isElement(owner) then
 			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
 		end
+		return
 	end
 
 	-- Respawn at Harbor
-	if vehicleType == VehicleType.Boat then
+	if vehicleType == VehicleType.Boat or (vehicleType == VehicleType.Plane and self:getModel() == 460) or (vehicleType == VehicleType.Helicopter and self:getModel() == 447) then
 		VehicleHarbor:getSingleton():respawnVehicle(self)
 		if owner and isElement(owner) then
 			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt", owner, self:getName()))
 		end
+		return
 	end
 end
