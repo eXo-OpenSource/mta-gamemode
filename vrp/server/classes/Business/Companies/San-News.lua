@@ -128,8 +128,8 @@ function SanNews:Event_advertisement(text, color, duration)
 		local costs = (length*AD_COST_PER_CHAR + AD_COST + durationExtra) * colorMultiplicator
 		if client:getMoney() >= costs then
 			if self.m_NextAd < getRealTime().timestamp then
-				client:takeMoney(costs)
-				self:giveMoney(costs)
+				client:takeMoney(costs, "San News Ad")
+				self:giveMoney(costs, "San News Ad")
 				self.m_NextAd = getRealTime().timestamp + AD_DURATIONS[duration] + AD_BREAK_TIME
 				triggerClientEvent("showAd", client, client, text, color, duration)
 			else

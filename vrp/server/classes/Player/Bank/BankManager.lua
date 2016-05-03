@@ -48,7 +48,7 @@ function BankManager:Event_Deposit(amount)
 	end
 
 	if client:addBankMoney(amount, BankStat.Deposit) then
-		client:takeMoney(amount)
+		client:takeMoney(amount, "Bank Einzahlung")
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end

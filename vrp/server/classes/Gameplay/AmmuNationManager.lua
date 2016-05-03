@@ -74,7 +74,7 @@ function AmmuNationManager:onAmmunationAppOrder(weaponTable)
 	if canBuyWeapons then
 		if client:getMoney() >= totalAmount then
 			if totalAmount > 0 then
-				client:takeMoney(totalAmount)
+				client:takeMoney(totalAmount, "AmmuNation Bestellung")
 				self:createOrder(client, weaponTable)
 			else
 				client:sendError(_("Du hast keine Artikel im Warenkorb!",client))

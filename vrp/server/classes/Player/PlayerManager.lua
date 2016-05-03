@@ -222,8 +222,8 @@ function PlayerManager:Event_playerSendMoney(amount)
 	amount = math.floor(amount)
 	if amount <= 0 then return end
 	if client:getMoney() >= amount then
-		client:takeMoney(amount)
-		source:giveMoney(amount)
+		client:takeMoney(amount, "Spieler-Zahlung")
+		source:giveMoney(amount, "Spieler-Zahlung")
 		source:sendShortMessage(_("Du hast %d$ von %s bekommen!", source, amount, client:getName()))
 	end
 end

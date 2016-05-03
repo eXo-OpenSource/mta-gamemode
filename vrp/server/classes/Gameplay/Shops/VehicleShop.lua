@@ -66,8 +66,8 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 	local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
 	local vehicle = PermanentVehicle.create(player, vehicleModel, spawnX, spawnY, spawnZ, rotation)
 	if vehicle then
-		player:takeMoney(price)
-		self:giveMoney(price)
+		player:takeMoney(price, "Fahrzeug-Kauf")
+		self:giveMoney(price, "Fahrzeug-Verkauf")
 		warpPedIntoVehicle(player, vehicle)
 		player:triggerEvent("vehicleBought")
 	else

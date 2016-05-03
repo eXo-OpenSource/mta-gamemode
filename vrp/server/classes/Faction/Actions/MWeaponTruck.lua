@@ -90,9 +90,9 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 			if totalAmount > 0 then
 				if ActionsCheck:getSingleton():isActionAllowed(client) then
 					if self.m_CurrentType == "evil" then
-						client:takeMoney(totalAmount)
+						client:takeMoney(totalAmount, "Waffen-Truck")
 					elseif self.m_CurrentType == "state" then
-						faction:takeMoney(totalAmount)
+						faction:takeMoney(totalAmount, "Waffen-Truck")
 					end
 					client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
 					self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)

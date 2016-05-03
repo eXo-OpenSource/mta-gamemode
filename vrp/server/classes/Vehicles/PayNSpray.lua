@@ -44,7 +44,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 							setGarageOpen(garageId, true)
 						end
 
-						hitElement:takeMoney(costs)
+						hitElement:takeMoney(costs, "Pay'N'Spray")
 						hitElement:sendShortMessage(_("Die Reperatur kostete %d$", hitElement, costs))
 					end,
 					3000,

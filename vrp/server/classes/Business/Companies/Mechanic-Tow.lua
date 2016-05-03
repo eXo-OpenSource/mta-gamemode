@@ -70,7 +70,7 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 	local price = math.floor((1000 - getElementHealth(vehicle))*0.5)
 	if client:getMoney() >= price then
 		fixVehicle(vehicle)
-		client:takeMoney(price)
+		client:takeMoney(price, "Mech&Tow")
 
 		if vehicle.PendingMechanic then
 			if client ~= vehicle.PendingMechanic then
@@ -99,7 +99,7 @@ end
 
 function MechanicTow:Event_mechanicTakeVehicle()
 	if client:getMoney() >= 500 then
-		client:takeMoney(500)
+		client:takeMoney(500, "Mech&Tow")
 		source:fix()
 
 		-- Spawn vehicle in non-collision zone

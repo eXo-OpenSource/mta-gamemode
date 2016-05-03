@@ -80,8 +80,8 @@ function ShopManager:foodShopBuyMenu(shopId, menu)
 	if shop.m_Menues[menu] then
 		if client:getMoney() >= shop.m_Menues[menu]["Price"] then
 			client:setHealth(client:getHealth() + shop.m_Menues[menu]["Health"])
-			client:takeMoney(shop.m_Menues[menu]["Price"])
-			shop:giveMoney(shop.m_Menues[menu]["Price"])
+			client:takeMoney(shop.m_Menues[menu]["Price"], "Essen")
+			shop:giveMoney(shop.m_Menues[menu]["Price"], "Kunden-Einkauf")
 			client:sendInfo(_("%s wünscht guten Appetit!", client, shop.m_Name))
 		else
 			client:sendError(_("Du hast nicht genug Geld dabei!", client))
@@ -99,9 +99,9 @@ function ShopManager:buyItem(shopId, item, amount)
 		if client:getMoney() >= shop.m_Items[item] then
 			if client:getInventory():getFreePlacesForItem(item) >= 1 then
 				client:getInventory():giveItem(item, 1)
-				client:takeMoney(shop.m_Items[item])
+				client:takeMoney(shop.m_Items[item], "Item-Einkauf")
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
-				shop:giveMoney(shop.m_Items[item])
+				shop:giveMoney(shop.m_Items[item], "Kunden-Einkauf")
 			else
 				client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
 			end

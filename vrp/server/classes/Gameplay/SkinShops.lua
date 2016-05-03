@@ -23,7 +23,7 @@ function SkinShops:Event_skinBuy(skinId)
 
 	if client:getMoney() >= price then
 		client:setSkin(skinId)
-		client:takeMoney(price)
+		client:takeMoney(price, "Kleidungs-Kauf")
 
 		client:triggerEvent("skinBought", skinId)
 	else

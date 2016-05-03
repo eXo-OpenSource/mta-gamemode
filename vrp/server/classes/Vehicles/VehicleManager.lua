@@ -408,7 +408,7 @@ function VehicleManager:Event_vehicleRespawn()
 	end
 	if source:isInGarage() then
 		fixVehicle(source)
-		client:takeMoney(100)
+		client:takeMoney(100, "Fahrzeug-Respawn")
 		client:sendShortMessage(_("Fahrzeug repariert!", client))
 		return
 	end
@@ -419,7 +419,7 @@ function VehicleManager:Event_vehicleRespawn()
 
 	source:respawn()
 	if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
-		client:takeMoney(100)
+		client:takeMoney(100, "Fahrzeug-Respawn")
 	end
 	source:fix()
 
@@ -463,7 +463,7 @@ function VehicleManager:Event_vehicleSell()
 	local price = getPrice(source:getModel())
 	if price then
 		source:purge()
-		client:giveMoney(math.floor(price * 0.75))
+		client:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")
 
 		self:Event_vehicleRequestInfo()
 	else
@@ -486,7 +486,7 @@ function VehicleManager:Event_vehicleUpgradeGarage()
 		local price = GARAGE_UPGRADES_COSTS[currentGarage + 1]
 		if price then
 			if client:getMoney() >= price then
-				client:takeMoney(price)
+				client:takeMoney(price, "Garagen-Upgrade")
 				client:setGarageType(currentGarage + 1)
 
 				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType())
@@ -507,7 +507,7 @@ function VehicleManager:Event_vehicleUpgradeHangar()
 		local price = HANGAR_UPGRADES_COSTS[currentHangar + 1]
 		if price then
 			if client:getMoney() >= price then
-				client:takeMoney(price)
+				client:takeMoney(price, "Hangar-Upgrade")
 				client:setHangarType(currentHangar + 1)
 
 				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType())

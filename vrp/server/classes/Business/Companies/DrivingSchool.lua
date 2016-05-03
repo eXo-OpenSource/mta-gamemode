@@ -79,7 +79,7 @@ function DrivingSchool:createSchoolPed( pos )
 					if not player.m_HasTheory then
 						if player.money >= 300 then
 							player:triggerEvent("showDrivingSchoolTest")
-							player:takeMoney(300)
+							player:takeMoney(300, "Fahrschule")
 						else
                             player:sendError("Du hast nicht genug Geld ( Kosten: 300)!")
 						end
@@ -176,7 +176,7 @@ function DrivingSchool:Event_startLession(instructor, target, type)
                         self.m_CurrentLessions[instructor] = {
                             ["target"] = target, ["type"] = type, ["instructor"] = instructor
                         }
-                        target:takeMoney(costs)
+                        target:takeMoney(costs, "Fahrschule")
                         self:setMoney(self:getMoney() + math.floor(costs/5))
                         target:setPublicSync("inDrivingLession",true)
                         instructor:sendInfo(_("Du hast die %s Prüfung mit %s gestartet!", instructor, DrivingSchool.TypeNames[type], target.name))

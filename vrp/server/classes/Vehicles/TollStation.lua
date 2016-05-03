@@ -72,7 +72,7 @@ function TollStation:buyToll(player)
 	if isElement(player) then
 		if (player:getPosition() - self.m_Barrier.m_Barrier:getPosition()).length <= 10 then
 			if player:getMoney() >= TOLL_KEY_COSTS then
-				player:takeMoney(TOLL_KEY_COSTS)
+				player:takeMoney(TOLL_KEY_COSTS, "Mautkosten")
 				self.m_Barrier:toggleBarrier(player, true)
 
 				player:sendShortMessage(_("Vielen Dank. Wir wünschen dir eine gute Fahrt!", player), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})

@@ -191,7 +191,7 @@ function House:buyHouse(player)
 	end
 
 	if player:getMoney() >= self.m_Price then
-		player:takeMoney(self.m_Price)
+		player:takeMoney(self.m_Price, "Haus-Kauf")
 		self.m_Owner = player:getId()
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
 	else

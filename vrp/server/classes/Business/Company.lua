@@ -124,11 +124,11 @@ function Company:getMoney(...)
   return self.m_BankAccount:getMoney(...)
 end
 
-function Company:giveMoney(amount)
+function Company:giveMoney(amount, reason)
     return self.m_BankAccount:addMoney(amount)
 end
 
-function Company:takeMoney(amount)
+function Company:takeMoney(amount, reason)
     return self.m_BankAccount:takeMoney(amount)
 end
 

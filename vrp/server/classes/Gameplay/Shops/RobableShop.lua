@@ -90,7 +90,7 @@ function RobableShop:startRob(shop, attacker, ped)
 				if attacker:getTarget() == ped then
 					local rnd = math.random(5, 10)
 					if shop:getMoney() >= rnd then
-						--shop:takeMoney(rnd)
+						shop:takeMoney(rnd, "Raub")
 						self.m_Bag.Money = self.m_Bag.Money + rnd
 						attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
 					else

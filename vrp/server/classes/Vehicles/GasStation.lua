@@ -9,7 +9,7 @@ GasStation = inherit(Object)
 
 function GasStation:constructor(position)
 	self.m_Marker = createMarker(position, "cylinder", 5, 255, 255, 0, 100)
-	
+
 	addEventHandler("onMarkerHit", self.m_Marker,
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension and getPedOccupiedVehicleSeat(hitElement) == 0 then
@@ -39,11 +39,11 @@ addEventHandler("gasStationFill", root,
 			client:sendWarning(_("Nicht-permanente Fahrzeuge können nicht betankt werden!", client))
 			return
 		end
-		
+
 		if client:getMoney() > 10 then
 			if vehicle:getFuel() <= 100-10 then
 				vehicle:setFuel(vehicle:getFuel() + 10)
-				client:takeMoney(10)
+				client:takeMoney(10, "Tanken")
 			else
 				client:sendError(_("Dein Tank ist bereits voll", client))
 			end

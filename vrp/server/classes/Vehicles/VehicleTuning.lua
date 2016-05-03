@@ -183,7 +183,7 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
         return
     end
 
-    client:takeMoney(overallPrice)
+    client:takeMoney(overallPrice, "Tuningshop")
 
     for slot, upgradeId in pairs(cartContent) do
         if slot >= 0 then

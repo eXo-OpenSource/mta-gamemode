@@ -126,8 +126,8 @@ function PublicTransport:endTaxiDrive(customer)
 		local driver = self.m_TaxiCustomer[customer]["driver"]
 		local price = self.m_TaxiCustomer[customer]["price"]
 		local vehicle = self.m_TaxiCustomer[customer]["vehicle"]
-		customer:takeMoney(price)
-		driver:giveMoney(price)
+		customer:takeMoney(price, "Public Transport Taxi")
+		driver:giveMoney(price, "Public Transport Taxi")
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
 		driver:sendInfo(_("Der Spieler %s ist ausgestiegen! Die Fahrt hat dir %d$ eingebracht!", driver, customer:getName(), price))
 		killTimer(self.m_TaxiCustomer[customer]["timer"])
@@ -239,7 +239,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		player:givePoints(2)
 		for seat, player in pairs(getVehicleOccupants(vehicle)) do
 			if seat ~= 0 then
-				player:takeMoney(40)
+				player:takeMoney(40, "Public Transport Bus")
 			end
 		end
 

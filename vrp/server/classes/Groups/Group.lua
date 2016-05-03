@@ -134,7 +134,7 @@ function Group:paydayPlayer(player)
 	local rank = self.m_Players[player:getId()]
 	local loan = tonumber(self.m_RankLoans[tostring(rank)])
 	if self:getMoney() < loan then loan = self:getMoney() end
-	self:takeMoney(loan)
+	self:takeMoney(loan, "Payday-Auszahlung")
 	return loan
 end
 

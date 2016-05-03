@@ -123,7 +123,7 @@ function GroupManager:Event_groupCreate(name,type)
 	local group = Group.create(name,typeInt)
 	if group then
 		group:addPlayer(client, GroupRank.Leader)
-		client:takeMoney(GroupManager.GroupCosts)
+		client:takeMoney(GroupManager.GroupCosts, "Firmen/Gang Gründung")
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
 		group:addLog(client, "Gang/Firma", "hat die "..self.GroupTypes[type].." "..name.." erstellt!")
 		self:sendInfosToClient(client)
@@ -202,8 +202,8 @@ function GroupManager:Event_groupDeposit(amount)
 		return
 	end
 
-	client:takeMoney(amount)
-	group:giveMoney(amount)
+	client:takeMoney(amount, "Firmen/Gang Einzahlung")
+	group:giveMoney(amount, "Firmen/Gang Auszahlung")
 	group:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
 	self:sendInfosToClient(client)
 end
@@ -223,8 +223,8 @@ function GroupManager:Event_groupWithdraw(amount)
 		return
 	end
 
-	group:takeMoney(amount)
-	client:giveMoney(amount)
+	group:takeMoney(amount, "Firmen/Gang Auszahlung")
+	client:giveMoney(amount, "Firmen/Gang Auszahlung")
 	group:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
 
 	self:sendInfosToClient(client)
@@ -400,7 +400,7 @@ function GroupManager:Event_groupChangeName(name)
 	end
 
 	if group:setName(name) then
-		client:takeMoney(20000)
+		client:takeMoney(20000, "Firmen/Gang Änderung")
 		client:sendSuccess(_("Deine Gruppe heißt nun\n%s!", client, group:getName()))
 		group:addLog(client, "Gang/Firma", "hat die Gang Firma in "..group:getName().." umbenannt!")
 
