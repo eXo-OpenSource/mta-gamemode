@@ -160,12 +160,12 @@ end
 function PermanentVehicle:respawn()
 	-- Set inGarage flag and teleport to private dimension
 	self.m_LastUseTime = math.huge
+	local vehicleType = self:getVehicleType()
 
 	-- Add to active garage session if there is one
 	local owner = Player.getFromId(self.m_Owner)
 	if owner and isElement(owner) then
 		-- Is the vehicle allowed to spawn in the garage
-		local vehicleType = self:getVehicleType()
 		if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat then
 			-- Does the player have a garage
 			if owner:getGarageType() > 0 then
@@ -195,8 +195,18 @@ function PermanentVehicle:respawn()
 	end
 
 	-- Respawn at mechanic base
-	CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
-	if owner and isElement(owner) then
-		owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
+	if vehicleType ~= VehicleType.Boat --[[and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter]] then
+		CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
+		if owner and isElement(owner) then
+			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
+		end
+	end
+
+	-- Respawn at Harbor
+	if vehicleType == VehicleType.Boat then
+		VehicleHarbor:getSingleton():respawnVehicle(self)
+		if owner and isElement(owner) then
+			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt", owner, self:getName()))
+		end
 	end
 end

@@ -62,6 +62,7 @@ function Core:constructor()
 	ShopManager:new()
 	Jail:new()
 	VehicleInteraction:new()
+	VehicleHarbor:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()

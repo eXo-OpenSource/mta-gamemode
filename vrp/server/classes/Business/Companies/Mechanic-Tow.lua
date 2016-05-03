@@ -35,7 +35,7 @@ function MechanicTow:VehicleTakeMarker_Hit(hitElement, matchingDimension)
 
 		if #vehicles > 0 then
 			-- Open "vehicle take GUI"
-			hitElement:triggerEvent("vehicleTakeMarkerGUI", vehicles)
+			hitElement:triggerEvent("vehicleTakeMarkerGUI", vehicles, "mechanicTakeVehicle")
 		else
 			hitElement:sendWarning(_("Keine abholbaren Fahrzeuge vorhanden!", hitElement))
 		end

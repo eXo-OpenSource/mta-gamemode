@@ -196,6 +196,7 @@
 	<script src="server/classes/Vehicles/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleGarages.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleGarageSession.lua" type="server"/>
+	<script src="server/classes/Vehicles/Storage/VehicleHarbor.lua" type="server"/>
 	<script src="server/classes/Vehicles/GasStation.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/AutomaticVehicleSpawner.lua" type="server"/>
@@ -429,7 +430,7 @@
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/KeyBindingsGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleMechanicTakeGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleTakeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JobServiceTechnicianQuestionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CompanyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CompanyInfoGUI.lua" type="client"/>

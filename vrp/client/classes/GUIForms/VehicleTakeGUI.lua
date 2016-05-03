@@ -5,9 +5,9 @@
 -- *  PURPOSE:     GUI form class
 -- *
 -- ****************************************************************************
-VehicleMechanicTakeGUI = inherit(GUIForm)
+VehicleTakeGUI = inherit(GUIForm)
 
-function VehicleMechanicTakeGUI:constructor()
+function VehicleTakeGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.2/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.2, screenHeight*0.4)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeuge abholen", true, true, self)
@@ -18,23 +18,36 @@ function VehicleMechanicTakeGUI:constructor()
 	self.m_TakeButton.onLeftClick = bind(self.TakeButton_Click, self)
 end
 
-function VehicleMechanicTakeGUI:setVehicles(vehicles)
+function VehicleTakeGUI:setVehicles(vehicles)
 	self.m_Grid:clear()
 	for k, vehicle in pairs(vehicles) do
 		local item = self.m_Grid:addItem(vehicle:getName())
 		item.Vehicle = vehicle
+		item.onLeftDoubleClick = bind(self.TakeButton_Click, self)
 	end
 end
 
-function VehicleMechanicTakeGUI:TakeButton_Click()
-	local selectedItem = self.m_Grid:getSelectedItem()
-	if not selectedItem then
-		ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
-		return
-	end
+function VehicleTakeGUI:setCallback(callback)
+	if type(callback) == "string" then
+		self.m_Callback = function ()
+			local selectedItem = self.m_Grid:getSelectedItem()
+			if not selectedItem then
+				ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
+				return
+			end
 
-	if selectedItem.Vehicle then
-		triggerServerEvent("mechanicTakeVehicle", selectedItem.Vehicle)
+			if selectedItem.Vehicle then
+				triggerServerEvent(callback, selectedItem.Vehicle)
+			end
+		end
+	else
+		self.m_Callback = callback
+	end
+end
+
+function VehicleTakeGUI:TakeButton_Click()
+	if self.m_Callback then
+		self.m_Callback()
 	end
 	delete(self)
 end
@@ -42,8 +55,9 @@ end
 
 addEvent("vehicleTakeMarkerGUI", true)
 addEventHandler("vehicleTakeMarkerGUI", root,
-	function(vehicles)
-		local gui = VehicleMechanicTakeGUI:new()
+	function(vehicles, callbackEvent)
+		local gui = VehicleTakeGUI:new()
 		gui:setVehicles(vehicles)
+		gui:setCallback(callbackEvent)
 	end
 )
