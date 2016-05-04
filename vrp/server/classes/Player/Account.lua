@@ -36,9 +36,12 @@ function Account.login(player, username, password, pwhash)
 		player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
 		return false
 	end
-
 	-- Update last serial and last login
 	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), getPlayerSerial(player), row.Id)
+
+	if Account.MultiaccountCheck(player, row.Id) == false then
+		return false
+	end
 
 	player.m_Account = Account:new(row.Id, username, player, false)
 
@@ -179,6 +182,57 @@ end
 function Account.getNameFromSerial(serial)
 	local row = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE LastSerial = ?", sql:getPrefix(), serial)
 	return row and row.Name
+end
+
+function Account.getSerialAmount(serial)
+	local result = sql:queryFetch("SELECT Id FROM ??_account WHERE LastSerial = ?", sql:getPrefix(), serial)
+	return #result
+end
+
+function Account.MultiaccountCheck(player, Id)
+	if Account.getSerialAmount(player:getSerial()) > 1 then
+		if not Account.getMultiaccount(Id) then
+			player:triggerEvent("loginfailed", "Fehler: Deine Serial wurde von einem anderen Account benutzt!")
+			return false
+		else
+			for dbId, serial in pairs(Account.getIdsFromSerial(player:getSerial())) do
+				if dbId ~= Id then
+					if not Account.isAcceptetMultiaccount(dbId, Id) then
+						player:triggerEvent("loginfailed", "Fehler: Deine Serial wurde von einem anderen Account benutzt!")
+						return false
+					end
+				end
+			end
+		end
+	end
+	return true
+end
+
+function Account.getIdsFromSerial(serial)
+	local result = sql:queryFetch("SELECT Id, LastSerial FROM ??_account WHERE LastSerial = ?", sql:getPrefix(), serial)
+	local accounts = {}
+	for i, row in pairs(result) do
+		accounts[row.Id] = row.LastSerial
+	end
+	return accounts
+end
+
+function Account.getMultiaccount(id)
+	local row = sql:queryFetchSingle("SELECT Player1, Player2 FROM ??_multiaccounts WHERE Player1 = ? OR Player2 = ?", sql:getPrefix(), id, id)
+	if row then
+		if row["Player1"] == id then
+			return row["Player2"]
+		else
+			return row["Player1"]
+		end
+	else
+		return false
+	end
+end
+
+function Account.isAcceptetMultiaccount(id1, id2)
+	local row = sql:queryFetchSingle("SELECT Id FROM ??_multiaccounts WHERE (Player1 = ? AND Player2 = ?) or (Player2 = ? AND Player1 = ?)", sql:getPrefix(), id1, id2, id1, id2)
+	if row then return true else return false end
 end
 
 function Account.getIdFromName(name)
