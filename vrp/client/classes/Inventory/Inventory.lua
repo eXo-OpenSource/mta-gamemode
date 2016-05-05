@@ -645,9 +645,7 @@ end
 
 function Inventory:onInvClick(button)
 	if button == "left" then
-		if(source ~= self.m_btn_Items and source ~= self.m_btn_Objekte and source ~= self.m_btn_Essen and source ~= self.m_btn_Drogen) then
-			return 0
-		end
+		outputChatBox("click")
 		self.m_BagOld = self.m_BagCurrent
 		if( source == self.m_btn_Items and self.m_BagCurrent ~= "Items") then
 			self.m_BagCurrent = "Items"
@@ -657,8 +655,6 @@ function Inventory:onInvClick(button)
 			self.m_BagCurrent = "Essen"
 		elseif( source == self.m_btn_Drogen and self.m_BagCurrent ~= "Drogen") then
 			self.m_BagCurrent = "Drogen"
-		else
-			return 0
 		end
 		self.m_R[self.m_BagOld], self.m_G[self.m_BagOld], self.m_B[self.m_BagOld] = 110, 110, 110
 		self.m_callCheck = true
@@ -668,10 +664,6 @@ function Inventory:onInvClick(button)
 end
 
 function Inventory:onButtonInvEnter()
-	if(source ~= self.m_btn_Items and source ~= self.m_btn_Objekte and source ~= self.m_btn_Essen and source ~= self.m_btn_Drogen and source ~= self.m_btn_Close and source ~= self.m_btn_Move and source ~= self.m_btn_Reset) then
-		return 1
-	end
-
 	if( source == self.m_btn_Items) then
 		if(self.m_BagCurrent == "Items") then
 			return 0
