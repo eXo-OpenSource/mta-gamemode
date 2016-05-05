@@ -87,7 +87,6 @@ HelpTextTitles = {
 		Main = "eXo-Reallife";
 		LoginRegister = "Login/Registration";
 		Team = "Team";
-		OldVRPTeam = "vRP-Team";
 	};
 	Jobs = {
 		BusDriver = "Job: Busfahrer";
@@ -117,6 +116,10 @@ HelpTextTitles = {
 		Bankrob = "Aktionen: Bank-Überfall";
 		StateWeaponTruck = "Aktionen: Staats Waffen Truck";
 
+	};
+	Credits = {
+		OldVRPTeam = "vRP-Team";
+		Other = "sonstige Credits";
 	};
 	Settings = {
 		ShortMessageCTC = "Information - ShortMessage-CTC";
@@ -176,35 +179,7 @@ HelpTexts = {
 
 			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
 		]];
-		OldVRPTeam = [[
-			Dies ist das ehemalige Team des vRP-Gamemodes, die uns freundlicherweise den Gamemode überlassen haben.
 
-			Entwicklung und Administration:
-			Jusonex
-			sbx320
-			Revelse
-			StiviK
-
-			Administration:
-			Doneasty (außerdem Grafik und Design)
-
-			Moderation:
-			Sarcasm (außerdem Webauftritt)
-			Johnny (außerdem Mapping)
-			Toxsi (außerdem Mapping)
-
-			Vielen Dank an:
-			Sam@ke (für seine wunderschönen Shader)
-			thefleshpound (für seine Zeit als Grafiker)
-			Schlumpf (für seine kurze Zeit als Mapper)
-			ReZ (für seine kurze Zeit als Mapper)
-			Alex (für seine Zeit als Mapper)
-			Audifire (für das Verteilen von Müll)
-			Poof (für das Schreiben von Hilfetexten)
-
-			Alpha-Tester:
-			Gibaex
-		]];
 	};
 	Jobs = {
 		BusDriver = [[
@@ -303,6 +278,44 @@ HelpTexts = {
 		oder der Tresorraum leer ist, könnt ihr die Taschen via. Klicksystem auf den Rücken schnallen.
 		Lauft zum Boxville um die Ecke und ladet durch einen klick auf ihn die Taschen ein.
 		Fahrt nun schnell zu einem der Abgabepunkte!
+		]];
+	};
+	Credits = {
+		OldVRPTeam = [[
+			Dies ist das ehemalige Team des vRP-Gamemodes, die uns freundlicherweise den Gamemode überlassen haben.
+
+			Entwicklung und Administration:
+			Jusonex
+			sbx320
+			Revelse
+			StiviK
+
+			Administration:
+			Doneasty (außerdem Grafik und Design)
+
+			Moderation:
+			Sarcasm (außerdem Webauftritt)
+			Johnny (außerdem Mapping)
+			Toxsi (außerdem Mapping)
+
+			Vielen Dank an:
+			Sam@ke (für seine wunderschönen Shader)
+			thefleshpound (für seine Zeit als Grafiker)
+			Schlumpf (für seine kurze Zeit als Mapper)
+			ReZ (für seine kurze Zeit als Mapper)
+			Alex (für seine Zeit als Mapper)
+			Audifire (für das Verteilen von Müll)
+			Poof (für das Schreiben von Hilfetexten)
+
+			Alpha-Tester:
+			Gibaex
+		]];
+		Other = [[
+			Wir danken folgenden Personen/Teams für zur Verfügung gestellte Scripts:
+
+			iLife-Team:
+			Slotmaschinen
+			Zug
 		]];
 	};
 	Settings = {

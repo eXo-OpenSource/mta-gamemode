@@ -127,6 +127,7 @@
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
 	<script src="server/classes/Gameplay/Casino.lua" type="server"/>
 	<script src="server/classes/Gameplay/Jail.lua" type="server"/>
+	<script src="server/classes/Gameplay/Slotmachine.lua" type="server"/>
 
 	<!--<script src="server/classes/Gameplay/Police.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
@@ -555,6 +556,7 @@
 	<script src="client/classes/Gameplay/Casino.lua" type="client"/>
 	<script src="client/classes/Gameplay/TrainManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Jail.lua" type="client"/>
+	<script src="client/classes/Gameplay/Slotmachine.lua" type="client"/>
 
 	<!-- Minigames -->
 	<script src="client/classes/Gameplay/Minigames/Animations.lua" type="client"/>
@@ -751,6 +753,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/MoneyBag.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PoliceRob.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Locate.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Casino.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -790,6 +793,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/MoneyBag.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/PoliceRob.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Locate.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Casino.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -928,38 +932,38 @@
 	<vrpfile src="files/images/Inventory/items/Essen/Zombie-Burger.png" />
 
 	<!-- GoJump -->
-	<vrpfile src = "files/images/GoJump/titlescreen.png" />
-	<vrpfile src = "files/images/GoJump/howto.png" />
-	<vrpfile src = "files/images/GoJump/bg_1.png" />
-	<vrpfile src = "files/images/GoJump/bg_2.png" />
-	<vrpfile src = "files/images/GoJump/bg_3.png" />
-	<vrpfile src = "files/images/GoJump/bg_4.png" />
-	<vrpfile src = "files/images/GoJump/bg_5.png" />
-	<vrpfile src = "files/images/GoJump/bg_6.png" />
-	<vrpfile src = "files/images/GoJump/circle_play.png" />
-	<vrpfile src = "files/images/GoJump/circle_stats.png" />
-	<vrpfile src = "files/images/GoJump/circle_color.png" />
-	<vrpfile src = "files/images/GoJump/circle_sound.png" />
-	<vrpfile src = "files/images/GoJump/circle_sound_off.png" />
-	<vrpfile src = "files/images/GoJump/player_l.png" />
-	<vrpfile src = "files/images/GoJump/player_r.png" />
-	<vrpfile src = "files/images/GoJump/arrow_down.png" />
+	<vrpfile src="files/images/GoJump/titlescreen.png" />
+	<vrpfile src="files/images/GoJump/howto.png" />
+	<vrpfile src="files/images/GoJump/bg_1.png" />
+	<vrpfile src="files/images/GoJump/bg_2.png" />
+	<vrpfile src="files/images/GoJump/bg_3.png" />
+	<vrpfile src="files/images/GoJump/bg_4.png" />
+	<vrpfile src="files/images/GoJump/bg_5.png" />
+	<vrpfile src="files/images/GoJump/bg_6.png" />
+	<vrpfile src="files/images/GoJump/circle_play.png" />
+	<vrpfile src="files/images/GoJump/circle_stats.png" />
+	<vrpfile src="files/images/GoJump/circle_color.png" />
+	<vrpfile src="files/images/GoJump/circle_sound.png" />
+	<vrpfile src="files/images/GoJump/circle_sound_off.png" />
+	<vrpfile src="files/images/GoJump/player_l.png" />
+	<vrpfile src="files/images/GoJump/player_r.png" />
+	<vrpfile src="files/images/GoJump/arrow_down.png" />
 
 	<!-- SideSwipe -->
-	<vrpfile src = "files/images/SideSwipe/titlescreen.png" />
-	<vrpfile src = "files/images/SideSwipe/filled_circle.png" />
-	<vrpfile src = "files/images/SideSwipe/drop.png" />
-	<vrpfile src = "files/images/SideSwipe/play.png" />
-	<vrpfile src = "files/images/SideSwipe/direction.png" />
+	<vrpfile src="files/images/SideSwipe/titlescreen.png" />
+	<vrpfile src="files/images/SideSwipe/filled_circle.png" />
+	<vrpfile src="files/images/SideSwipe/drop.png" />
+	<vrpfile src="files/images/SideSwipe/play.png" />
+	<vrpfile src="files/images/SideSwipe/direction.png" />
 
 	<!-- CircuitBreaker -->
-	<vrpfile src = "files/images/CircuitBreaker/pcb.png" />
-	<vrpfile src = "files/images/CircuitBreaker/input.png" />
-	<vrpfile src = "files/images/CircuitBreaker/output.png" />
-	<vrpfile src = "files/images/CircuitBreaker/qfp44.png" />
-	<vrpfile src = "files/images/CircuitBreaker/sop8.png" />
-	<vrpfile src = "files/images/CircuitBreaker/smdcapacitor.png" />
-	<vrpfile src = "files/images/CircuitBreaker/smdresistor.png" />
+	<vrpfile src="files/images/CircuitBreaker/pcb.png" />
+	<vrpfile src="files/images/CircuitBreaker/input.png" />
+	<vrpfile src="files/images/CircuitBreaker/output.png" />
+	<vrpfile src="files/images/CircuitBreaker/qfp44.png" />
+	<vrpfile src="files/images/CircuitBreaker/sop8.png" />
+	<vrpfile src="files/images/CircuitBreaker/smdcapacitor.png" />
+	<vrpfile src="files/images/CircuitBreaker/smdresistor.png" />
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>
@@ -984,15 +988,21 @@
 	<vrpfile src="files/audio/Ringtones/Ringtone3.mp3"/>
 
 	<!-- GoJump -->
-	<vrpfile src = "files/audio/GoJump/jump.wav" />
-	<vrpfile src = "files/audio/GoJump/point.wav" />
-	<vrpfile src = "files/audio/GoJump/dead.wav" />
-	<vrpfile src = "files/audio/GoJump/button.wav" />
-	<vrpfile src = "files/audio/GoJump/average.wav" />
-	<vrpfile src = "files/audio/GoJump/highscore.wav" />
+	<vrpfile src="files/audio/GoJump/jump.wav" />
+	<vrpfile src="files/audio/GoJump/point.wav" />
+	<vrpfile src="files/audio/GoJump/dead.wav" />
+	<vrpfile src="files/audio/GoJump/button.wav" />
+	<vrpfile src="files/audio/GoJump/average.wav" />
+	<vrpfile src="files/audio/GoJump/highscore.wav" />
+
+	<!-- Slotmachines -->
+	<vrpfile src="files/audio/Slotmachines/start_machine.mp3" />
+	<vrpfile src="files/audio/Slotmachines/win_jackpot.mp3" />
+	<vrpfile src="files/audio/Slotmachines/win_nothing.mp3" />
+	<vrpfile src="files/audio/Slotmachines/win_stuff.mp3" />
 
 	<!-- SideSwipe -->
-	<vrpfile src = "files/audio/SideSwipe/blop.mp3" />
+	<vrpfile src="files/audio/SideSwipe/blop.mp3" />
 
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
