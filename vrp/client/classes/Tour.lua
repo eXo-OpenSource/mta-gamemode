@@ -11,7 +11,7 @@ Tour = inherit(Singleton)
 function Tour:constructor()
 	if core:get("Tour", "done", false) == false then
 		QuestionBox:new(
-			_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
+			_("Möchtest du eine Server-Tour starten? Die Server-Tour bringt dir Erfahrung und eine kleine Anzahl an Belohnungen!"),
 			function() triggerServerEvent("tourStart", localPlayer) end, function() core:set("Tour", "done", true) end)
 	end
 	addRemoteEvents{"tourShow", "tourStop"}
@@ -36,6 +36,7 @@ function Tour:show(id, title, description, success, x, y, z)
 	self.m_TargetMarker = createMarker(self.m_TargetPos, "cylinder", 2, 50, 200, 255)
 	addEventHandler("onClientMarkerHit", self.m_TargetMarker, function(hitElement, dim)
 		if hitElement:getType() == "player" and dim then
+			source:destroy()
 			self:onTargetHit(title, success)
 		end
 	end)

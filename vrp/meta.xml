@@ -119,10 +119,6 @@
 	<!--<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/Minigames/RockPaperScissors.lua" type="server"/>-->
-
-	<script src="server/classes/Gameplay/AmmuTeam.lua" type="server"/>
-	<script src="server/classes/Gameplay/AmmuArena.lua" type="server"/>
-	<script src="server/classes/Gameplay/AmmuLadder.lua" type="server"/>
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -428,7 +424,6 @@
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
-	<script src="client/classes/GUIForms/AmmuLadder.lua" type="client"/>
 	<script src="client/classes/GUIForms/ColorPickerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
@@ -459,7 +454,6 @@
 	<script src="client/classes/GUIForms/TourGUI.lua" type="client"/>
 
 	<!-- Web forms -->
-	<script src="client/classes/WebForms/SkillTreeGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
 	<script src="client/classes/WebForms/MigratorPanel.lua" type="client"/>
@@ -589,8 +583,6 @@
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
 	<file src="files/images/Logo.png"/>
-	<file src="files/html/jquery-1.11.2.min.js"/>
-	<file src="files/html/mtaevents.js"/>
 
 	<vrpfile src="files/images/LogoNoFont.png"/>
 	<vrpfile src="files/images/MessageBoxes/Info.png" onDemand="false"/>
@@ -1040,11 +1032,6 @@
 	<vrpfile src="files/shader/drug-heroinshader.fx"/>
 	<vrpfile src="files/shader/drug-shroomshader.fx"/>
 	<vrpfile src="files/shader/drug-cocaineshader.fx"/>
-	<!-- HTML -->
-	<vrpfile src="files/html/PolicePanel/PolicePanel.html"/>
-	<vrpfile src="files/html/PolicePanel/main.css"/>
-	<vrpfile src="files/html/PolicePanel/main.js"/>
-	<vrpfile src="files/html/Skilltree.html"/>
 
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
