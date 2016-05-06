@@ -146,6 +146,12 @@
 	<script src="server/classes/Gameplay/Shops/CluckinBell.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/RustyBrown.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
+
+	<!-- Deathmatch System -->
+
+	<script src="server/classes/Gameplay/Deathmatch/ZombieSurvivalRoom.lua" type="server"/>
+
+
 	<script src="server/constants/shops.lua" type="server"/>
 
 	<!-- Groups -->
@@ -235,6 +241,7 @@
 	<script src="server/classes/AI/GuardActor.lua" type="server"/>
 	<script src="server/classes/AI/ShopActor.lua" type="server"/>
 	<script src="server/classes/AI/DefendActor.lua" type="server"/>
+	<script src="server/classes/AI/Zombie.lua" type="server"/>
 
 	<!-- AI tasks -->
 	<script src="server/classes/AI/Tasks/Task.lua" type="server"/>
@@ -513,6 +520,7 @@
 
 	<!-- AI -->
 	<script src="client/classes/AI/Actor.lua" type="client"/>
+	<script src="client/classes/AI/Zombie.lua" type="client"/>
 
 	<!-- AI tasks -->
 	<script src="client/classes/AI/Tasks/Task.lua" type="client"/>
