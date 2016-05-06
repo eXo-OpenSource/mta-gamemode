@@ -623,17 +623,26 @@ function SelfGUI:VehicleLocateButton_Click()
 	if item.PositionType == VehiclePositionType.World then
 		local x, y, z = getElementPosition(item.VehicleElement)
 		local blip = Blip:new("Waypoint.png", x, y)
-		setTimer(delete, 5000, 1, blip)
-
-		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)))
+		--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
+			ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "¡Find.dat.Car!+", Color.DarkLightBlue, -1)
+			.callback = function (this)
+				if blip then
+					delete(blip)
+				end
+				delete(this)
+			end
+		--else
+			--setTimer(function () delete(blip) end, 5000, 1)
+			--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "¡Find.dat.Car!", Color.DarkLightBlue)
+		--end
 	elseif item.PositionType == VehiclePositionType.Garage then
- 		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!")
+ 		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!", "¡Find.dat.Car!", Color.DarkLightBlue)
 	elseif item.PositionType == VehiclePositionType.Mechanic then
-		ShortMessage:new(_"Dieses Fahrzeug befindet sich im Autohof (Mechanic Base)!")
+		ShortMessage:new(_"Dieses Fahrzeug befindet sich im Autohof (Mechanic Base)!", "¡Find.dat.Car!", Color.DarkLightBlue)
 	elseif item.PositionType == VehiclePositionType.Hangar then
-		ShortMessage:new(_"Dieses Flugzeug befindet sich im Hangar!")
+		ShortMessage:new(_"Dieses Flugzeug befindet sich im Hangar!", "¡Find.dat.Car!", Color.DarkLightBlue)
 	elseif item.PositionType == VehiclePositionType.Harbor then
-		ShortMessage:new(_"Dieses Boot befindet sich im Industrie-Hafen (Logistik-Job)!")
+		ShortMessage:new(_"Dieses Boot befindet sich im Industrie-Hafen (Logistik-Job)!", "¡Find.dat.Car!", Color.DarkLightBlue)
 	else
 		ErrorBox:new(_"Es ist ein interner Fehler aufgetreten!")
 	end

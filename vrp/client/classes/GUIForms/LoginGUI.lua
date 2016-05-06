@@ -172,6 +172,8 @@ function LoginGUI:showRegister()
 end
 
 function LoginGUI:showRegisterMultiaccountError(name)
+	if self.m_RegisterMultiaccountBox then return end
+
 	self.m_RegisterEditUser:setVisible(false)
 	self.m_RegisterTextUser:setVisible(false)
 	self.m_RegisterEditMail:setVisible(false)

@@ -264,6 +264,6 @@ function TrainManager:outputNodeInfo(trackIndex, nodeIndex, hitElement)
 	local node = self:getNode(trackIndex, nodeIndex)
 	if node then
 		--outputDebug(("Found new node.\nNode: %s NodeDistanceData: %s (Track: %s)"):format(tostring(node.index), tostring(node.distance), tostring(node.track)))
-		hitElement:getOccupant():sendShortMessage(("TrainTrack Node:\nNode: %s\nNodeDistanceData: %s\nTrack: %s"):format(tostring(node.index), tostring(node.distance), tostring(node.track)), "TrainManager - Tracks", nil, 5000)
+		hitElement:getOccupant():sendShortMessage(("TrainTrack Node:\nNode: %s\nNodeDistanceData: %s\nTrack: %s"):format(tostring(node.index), tostring(node.distance), tostring(node.track)), "TrainManager - Nerd Statistics", nil, 5000)
 	end
 end
