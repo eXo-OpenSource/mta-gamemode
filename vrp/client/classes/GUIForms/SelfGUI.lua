@@ -297,9 +297,17 @@ function SelfGUI:constructor()
 	self.m_AdChange.onChange = function(text, index)
 		core:set("Ad", "Chat", index - 1)
 	end
+
+	self.m_ServerTour = GUIButton:new(self.m_Width*0.6, self.m_Height*0.6, self.m_Width*0.35, self.m_Height*0.07, _"Server-Tour starten", tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
+	self.m_ServerTour.onLeftClick = function()
+		QuestionBox:new(
+			_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
+			function() triggerServerEvent("tourStart", localPlayer, true) end)
+	end
+
 	self.m_PasswordChange = GUIButton:new(self.m_Width*0.6, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.07, _"Passwort ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
 	self.m_PasswordChange.onLeftClick = function() PasswordChangeGUI:new() self:close() end
-	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
+	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
 	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
 	--[[ TODO: Do we require this?

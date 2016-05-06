@@ -12,7 +12,7 @@ function Tour:constructor()
 	if core:get("Tour", "done", false) == false then
 		QuestionBox:new(
 			_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
-			function() triggerServerEvent("tourStart", localPlayer) end)
+			function() triggerServerEvent("tourStart", localPlayer) end, function() core:set("Tour", "done", true) end)
 	end
 	addRemoteEvents{"tourShow", "tourStop"}
 	addEventHandler("tourShow", root, bind(self.show, self))
@@ -26,6 +26,7 @@ function Tour:stop()
 	if isElement(self.m_Arrow) then self.m_Arrow:destroy() end
 	if isElement(self.m_TargetMarker) then self.m_TargetMarker:destroy() end
 	if TourGUI:isInstantiated() then delete(TourGUI:getSingleton()) end
+	removeEventHandler("onClientPreRender", root, self.m_updateArrow)
 	core:set("Tour", "done", true)
 end
 

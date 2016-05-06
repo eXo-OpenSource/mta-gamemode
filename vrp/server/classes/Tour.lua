@@ -14,19 +14,36 @@ function Tour:constructor()
 	addEventHandler("tourSuccess", root, bind(self.successStep, self))
 	self.m_showStep = bind(self.showStep, self)
 	self.m_TourPlayerData = {}
+	Player.getQuitHook():register(bind(self.save, self))
+
 end
 
-function Tour:start()
+function Tour:start(forceNew)
+	if self.m_TourPlayerData[client] then
+		self:save()
+		client:triggerEvent("tourStop")
+	end
+
 	local row = sql:queryFetchSingle("SELECT Tour FROM ??_character WHERE Id = ?;", sql:getPrefix(), client:getId())
 	local tbl = (row.Tour ~= nil and row.Tour) or toJSON({})
 	self.m_TourPlayerData[client]  = fromJSON(tbl)
-	Player.getQuitHook():register(bind(self.save, self))
 
-	self:showStep(client, 1)
+	local step = 1
+	if not forceNew == true then
+		for id, data in pairs(Tour.Data) do
+			if not self.m_TourPlayerData[client][tostring(id)] then
+				step = id
+			end
+		end
+	end
+
+	self:showStep(client, step)
 end
 
 function Tour:save(player)
-	sql:queryExec("UPDATE ??_character SET Tour = ? WHERE Id = ?;", sql:getPrefix(), toJSON(self.m_TourPlayerData[player]), player:getId())
+	if self.m_TourPlayerData[player] then
+		sql:queryExec("UPDATE ??_character SET Tour = ? WHERE Id = ?;", sql:getPrefix(), toJSON(self.m_TourPlayerData[player]), player:getId())
+	end
 end
 
 function Tour:stop()
@@ -51,7 +68,7 @@ function Tour:successStep(id)
 		else
 			client:sendShortMessage(_("Du hast bereits die Belohnung für diesen Schritt erhalten!", client))
 		end
-		setTimer(self.m_showStep, 5000, 1, client, id+1)
+		setTimer(self.m_showStep, 10000, 1, client, id+1)
 	end
 end
 
