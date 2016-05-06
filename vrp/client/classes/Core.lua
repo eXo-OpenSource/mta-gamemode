@@ -116,6 +116,7 @@ function Core:afterLogin()
 	KeyBindings:new()
 	KeyBindings:getSingleton():close()
 	NoDm:getSingleton():checkNoDm()
+	Tour:new()
 
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)

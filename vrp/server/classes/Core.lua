@@ -63,7 +63,8 @@ function Core:constructor()
 	Jail:new()
 	VehicleInteraction:new()
 	VehicleHarbor:new()
-
+	Tour:new()
+	
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
 	RobableShop.initalizeAll()

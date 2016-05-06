@@ -75,6 +75,7 @@
 	<script src="server/classes/Gate.lua" type="server"/>
 	<script src="server/classes/Door.lua" type="server"/>
 	<script src="server/classes/PhoneNumbers.lua" type="server"/>
+	<script src="server/classes/Tour.lua" type="server"/>
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -286,6 +287,7 @@
 	<script src="client/classes/Guns.lua" type="client"/>
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
+	<script src="client/classes/Tour.lua" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -454,6 +456,7 @@
 	<script src="client/classes/GUIForms/PasswordChangeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TrunkGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleInteraction.lua" type="client"/>
+	<script src="client/classes/GUIForms/TourGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/SkillTreeGUI.lua" type="client"/>
@@ -701,6 +704,7 @@
 	<vrpfile src="files/images/Other/Circle.png"/>
 	<vrpfile src="files/images/Other/nodm.png"/>
 	<vrpfile src="files/images/Other/noImg.png"/>
+	<vrpfile src="files/images/Other/Tour.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>
