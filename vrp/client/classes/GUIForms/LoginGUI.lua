@@ -37,7 +37,7 @@ function LoginGUI:constructor()
 	self.m_RegisterTab:setVisible(false)
 
 	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.1, sh*0.03, "Benutzername", self.m_RegisterTab) -- 1.75
+	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.1, sh*0.03, "Benutzername oder E-Mail", self.m_RegisterTab) -- 1.75
 	self.m_RegisterEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
 	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.1, sh*0.03, "Passwort", self.m_RegisterTab) -- 1.75
 

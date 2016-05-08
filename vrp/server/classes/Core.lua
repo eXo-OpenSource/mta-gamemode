@@ -18,6 +18,7 @@ function Core:constructor()
 
 	-- Establish database connection
 	sql = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, MYSQL_DB, MYSQL_UNIX_SOCKET)
+	board = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, BOARD_DB, MYSQL_UNIX_SOCKET)
 	sql:setPrefix("vrp")
 
 	-- Instantiate classes (Create objects)

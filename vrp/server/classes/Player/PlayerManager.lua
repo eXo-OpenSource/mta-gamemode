@@ -346,6 +346,10 @@ function PlayerManager:stopAnimation(player)
 end
 
 function PlayerManager:Event_passwordChange(old, new1, new2)
+	--Todo: Kurzfristig deaktiviert wegen Forum Login
+	client:sendError("Funktion deaktiviert!", client)
+	if true then return false end
+
 	if new1 == new2 then
 		local row = sql:queryFetchSingle("SELECT Id, Salt, Password FROM ??_account WHERE Name = ? ", sql:getPrefix(), client:getName())
 		if row then

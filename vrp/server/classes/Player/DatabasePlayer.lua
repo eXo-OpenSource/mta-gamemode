@@ -77,6 +77,7 @@ end
 
 function DatabasePlayer:load()
 	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+
 	if not row then
 		return false
 	end

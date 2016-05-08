@@ -3,6 +3,7 @@ MYSQL_PORT	= 6033
 MYSQL_USER	= "vRP"
 MYSQL_PW	= "kmd1581adf%%f"
 MYSQL_DB	= "vRP"
+BOARD_DB	= "exo_wbb_vrp"
 MYSQL_UNIX_SOCKET = "/var/run/mysqld/mysqld.sock"
 
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"

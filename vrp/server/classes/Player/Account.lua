@@ -11,51 +11,129 @@ function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
 	if (not username or not password) and not pwhash then return false end
 
-	-- Ask SQL to fetch the salt and id
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id, Salt FROM ??_account WHERE Name = ? ", sql:getPrefix(), username)
+	-- Ask SQL to fetch ForumID
+	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
-
 	if not row or not row.Id then
+		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort")
+		return false
+	end
+
+	-- Todo: Remove this workaround when done?
+	-- -- -- -- -- -- Workaround -- -- -- -- -- --
+	if row.ForumID == 0 then
+		local Id = row.Id
+		local Username = row.Name
+
+		sql:queryFetchSingle(Async.waitFor(self), ("SELECT Salt, Password, EMail FROM ??_account WHERE Id = ?"), sql:getPrefix(), Id)
+		local row = Async.wait()
+		if not row or not row.Salt or not row.Password or not row.EMail then
+			player:triggerEvent("loginfailed", "Internal error while creating forum account #1. Please contact an admin. ID: " .. tostring(Id))
+			return false
+		end
+
+		-- Need password in plaintext
+		if pwhash then
+			player:triggerEvent("loginfailed", "Bitte gib dein Passwort erneut ein")
+			return false
+		else
+			pwhash = sha256(("%s%s"):format(row.Salt, password))
+		end
+
+		if pwhash ~= row.Password then
+			player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- "Error: Invalid username or password"
+			return false
+		end
+
+		-- Validate email
+		if not row.EMail:match("^[%w.]+@%w+%.%w+$") or #row.EMail > 50 then
+			player:triggerEvent("loginfailed", "Internal error while creating forum account #2. Please contact an admin. ID: " .. tostring(Id))
+			return false
+		end
+
+		-- Check if someone uses this username already
+		board:queryFetchSingle(Async.waitFor(self), "SELECT userID, username, email FROM wcf1_user WHERE username = ? OR email = ?", Username, row.EMail)
+		local result = Async.wait()
+		if result then
+			player:triggerEvent("loginfailed", "Internal error while creating forum account #3. Please contact an admin. ID: " .. tostring(Id))
+			return false
+		end
+
+		local userID = Account.createForumAccount(Username, password, row.EMail)
+		if userID then
+			sql:queryExec("UPDATE ??_account SET LastSerial = ?, ForumID = ?, Password = 0, Salt = 0, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), getPlayerSerial(player), userID, Id)
+
+			if DatabasePlayer.getFromId(Id) then
+				player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
+				return false
+			end
+
+			if Account.MultiaccountCheck(player, Id) == false then
+				return false
+			end
+
+			player.m_Account = Account:new(Id, Username, player, false)
+
+			if player:getTutorialStage() == 1 then
+				player:createCharacter()
+			end
+
+			player:loadCharacter()
+			player:spawn()
+
+			triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
+			return
+		end
+	end
+	-- -- -- -- -- -- Workaround end -- -- -- -- -- --
+
+	local Id = row.Id
+	local ForumID = row.ForumID
+	local Username = row.Name
+
+	-- Ask SQL to fetch the password from forum
+	board:queryFetchSingle(Async.waitFor(self), "SELECT password FROM wcf1_user WHERE userID = ?", ForumID)
+	local row = Async.wait()
+	if not row or not row.password then
 		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- "Error: Invalid username or password"
 		return false
 	end
 
 	if not pwhash then
-		pwhash = sha256(row.Salt..password)
+		local salt = string.sub(row.password, 1, 29)
+		pwhash = WBBC.getDoubleSaltedHash(password, salt)
 	end
 
-	-- Ask SQL to attempt a Login
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Id = ? AND Password = ?;", sql:getPrefix(), row.Id, pwhash)
-	local row = Async.wait()
-	if not row or not row.Id then
-		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort 2") -- Error: Invalid username or password2
+	if pwhash ~= row.password then
+		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- Error: Invalid username or password2
 		return false
 	end
 
-	if DatabasePlayer.getFromId(row.Id) then
+	if DatabasePlayer.getFromId(Id) then
 		player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
 		return false
 	end
-	-- Update last serial and last login
-	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), getPlayerSerial(player), row.Id)
 
-	if Account.MultiaccountCheck(player, row.Id) == false then
+	-- Update last serial and last login
+	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), getPlayerSerial(player), Id)
+
+	if Account.MultiaccountCheck(player, Id) == false then
 		return false
 	end
 
-	player.m_Account = Account:new(row.Id, username, player, false)
+	player.m_Account = Account:new(Id, Username, player, false)
 
 	if player:getTutorialStage() == 1 then
 		player:createCharacter()
 	end
+
 	player:loadCharacter()
 	player:spawn()
-	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 
+	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
 addEvent("accountlogin", true)
 addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
-
 
 addEvent("checkRegisterAllowed", true)
 addEventHandler("checkRegisterAllowed", root, function()
@@ -84,32 +162,37 @@ function Account.register(player, username, password, email)
 	end
 
 	-- Validate email
-	if not pregMatch(email, "[-0-9a-zA-Z.+_]+@[-0-9a-zA-Z.+_]+\.[a-zA-Z]{2,8}") or #email > 50 then
+	if not email:match("^[%w.]+@%w+%.%w+$") or #email > 50 then
 		player:triggerEvent("registerfailed", _("Fehler: Ungültige eMail", player))
 		return false
 	end
 
 	-- Check if someone uses this username already
-	sql:queryFetchSingle(Async.waitFor(self), "SELECT Id FROM ??_account WHERE Name = ? ", sql:getPrefix(), username)
+	board:queryFetchSingle(Async.waitFor(self), "SELECT userID, username, email FROM wcf1_user WHERE username = ? OR email = ?", username, email)
 	local row = Async.wait()
 	if row then
-		player:triggerEvent("registerfailed", _("Fehler: Benutzer existiert bereits", player))
+		if row.username == username then
+			player:triggerEvent("registerfailed", _("Fehler: Benutzername wird bereits verwendet", player))
+		elseif row.email == email then
+			player:triggerEvent("registerfailed", _("Fehler: Diese E-Mail wird bereits verwendet", player))
+		end
+
 		return false
 	end
 
-	-- Create an account
+	local userID = Account.createForumAccount(username, password, email)
+	if userID then
+		local result, _, Id = sql:queryFetch("INSERT INTO ??_account (ForumID, Name, EMail, Rank, LastSerial, LastLogin) VALUES (?, ?, ?, ?, ?, NOW());", sql:getPrefix(), userID, username, email, 0, getPlayerSerial(player))
+		if result then
+			player.m_Account = Account:new(Id, username, player, false)
+			player:createCharacter()
+			player:loadCharacter()
+			player:spawn()
+			player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
 
-	-- todo: get a better salt
-	local salt = md5(math.random())
-
-	sql:queryExec("INSERT INTO ??_account(Name, Password, Salt, Rank, LastSerial, LastLogin, EMail, RegisterDate) VALUES (?, ?, ?, ?, ?, NOW(), ?, NOW());", sql:getPrefix(), username, sha256(salt..password), salt, 0, getPlayerSerial(player), email)
-
-	player.m_Account = Account:new(sql:lastInsertId(), username, player, false)
-
-	player:createCharacter()
-	player:loadCharacter()
-	player:spawn()
-	player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
+			-- TODO: Send validation mail via PHP
+		end
+	end
 end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(...) Async.create(Account.register)(client, ...) end)
@@ -121,6 +204,39 @@ function Account.guest(player)
 end
 addEvent("accountguest", true)
 addEventHandler("accountguest", root, function() Async.create(Account.guest)(client) end)
+
+function Account.createForumAccount(username, password, email)
+	local nTimestamp = getRealTime().timestamp
+	local pwhash = WBBC.getDoubleSaltedHash(password)
+	local nLanguageID = 1
+
+	board:queryFetch("START TRANSACTION;")
+	local result, _, userID = board:queryFetch("INSERT INTO wcf1_user (username, email, password, languageID, registrationDate, userOnlineGroupID, activationCode) VALUES (?, ?, ?, ?, ?, 1, 1)", username, email, pwhash, nLanguageID, nTimestamp)
+	if result then
+		local result = board:queryFetch("SELECT optionID, defaultValue FROM wcf1_user_option")
+		if result then
+			local columns = {}
+			local values = {}
+			for _, row in ipairs(result) do
+				--table.insert(columns, "userOption" .. row["optionID"])
+				table.insert(columns, ("userOption%s"):format(row["optionID"]))
+				local v = row["defaultValue"]
+				if v then v = tostring(v) else v = "" end
+				table.insert(values, v)
+			end
+
+			board:queryExec(("INSERT INTO wcf1_user_option_value (userID, %s) VALUES (?, '%s')"):format(table.concat(columns, ","), table.concat(values, "','")), userID)
+			board:queryExec("INSERT INTO wcf1_user_to_group (userID, groupID) VALUES (?,?)", userID, 1)
+			board:queryExec("INSERT INTO wcf1_user_to_language (userID, languageID) VALUES (?,?)", userID, nLanguageID)
+
+			board:queryFetch("COMMIT;")
+			return userID
+		end
+	end
+
+	board:queryFetch("ROLLBACK;")
+	return false
+end
 
 function Account:constructor(id, username, player, guest)
 	-- Account Information

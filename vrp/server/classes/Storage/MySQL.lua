@@ -9,13 +9,14 @@ function MySQL:constructor(host, port, user, password, database, unixpath)
 end
 
 function MySQL.dbPoll(qh, timeout)
-	local result, numrows, errmsg = dbPoll ( qh, timeout)
+	local result, numrows, lastInserID = dbPoll (qh, timeout)
 	if result == nil then
-		outputDebugString("[MySQL] dbPoll - result not ready yet" )
+		outputDebugString("[MySQL] dbPoll - result not ready yet")
 	elseif result == false then
-	    outputDebugString("[MySQL] dbPoll failed. Error code: " .. tostring(numrows) .. "  Error message: " .. tostring(errmsg) )
+	    --outputDebugString("[MySQL] dbPoll failed. Error code: " .. tostring(numrows) .. "  Error message: " .. tostring(lastInserID))
+	    outputDebugString(("[MySQL] dbPoll failed. Error code: %s. Error message: %s"):format(tostring(numrows), tostring(lastInsertID)))
 	end
-	return result
+	return result, numrows, lastInserID
 end
 
 function MySQL:lastInsertId()
