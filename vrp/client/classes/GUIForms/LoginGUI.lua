@@ -129,7 +129,9 @@ function LoginGUI:constructor()
 			if self.m_LoginTab:isVisible() then
 				self.m_LoginLoginButton:onLeftClick()
 			elseif self.m_RegisterTab:isVisible() then
-				self.m_RegisterRegisterButton:onLeftClick()
+				if self.m_RegisterRegisterButton:isVisible() then
+					self.m_RegisterRegisterButton:onLeftClick()
+				end
 			--else
 			--	self.m_GuestGuestButton:onLeftClick()
 			end
