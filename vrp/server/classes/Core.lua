@@ -64,6 +64,7 @@ function Core:constructor()
 	VehicleInteraction:new()
 	VehicleHarbor:new()
 	Tour:new()
+	Deathmatch:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()

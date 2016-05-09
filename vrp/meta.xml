@@ -12,6 +12,7 @@
 	<script src="shared/constants/main.lua" type="shared"/>
 	<script src="shared/constants/factions.lua" type="shared"/>
 	<script src="shared/constants/animations.lua" type="shared"/>
+	<script src="shared/constants/guns.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
 	<script src="shared/version.lua" type="shared"/>
@@ -150,9 +151,8 @@
 	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
 
 	<!-- Deathmatch System -->
-
+	<script src="server/classes/Gameplay/Deathmatch/DeathmatchManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/ZombieSurvivalRoom.lua" type="server"/>
-
 
 	<script src="server/constants/shops.lua" type="server"/>
 
@@ -707,6 +707,7 @@
 	<vrpfile src="files/images/Other/nodm.png"/>
 	<vrpfile src="files/images/Other/noImg.png"/>
 	<vrpfile src="files/images/Other/Tour.png"/>
+	<vrpfile src="files/images/Other/blood.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>

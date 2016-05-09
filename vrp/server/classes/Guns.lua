@@ -18,8 +18,9 @@ function Guns:constructor()
 		setWeaponProperty (23, skill, "anim_loop_stop", 0 )
 	end
 
-	addRemoteEvents{"onTaser"}
+	addRemoteEvents{"onTaser", "onClientDamage"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
+	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 end
 
 function Guns:destructor()
@@ -38,4 +39,40 @@ function Guns:Event_onTaser(target)
 		toggleAllControls(target,true)
 		target.isTasered = false
 	end, 15000, 1, target )
+end
+
+function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
+	local attacker = client
+	if weapon == 34 and bodypart == 9 then
+		target:setHeadless(true)
+		target:kill(attacker, weapon, bodypart)
+	else
+		local basicDamage = WEAPON_DAMAGE[weapon]
+		local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
+		local realLoss = basicDamage*multiplier
+		self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+	end
+end
+
+function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
+	local armor = getPedArmor ( player )
+	local health = getElementHealth ( player )
+	if armor > 0 then
+		if armor >= loss then
+			player:setArmor(armor-loss)
+			loss = armor-loss
+		else
+			player:setArmor(0)
+			player:setHealth(health-loss)
+
+			if player:getHealth()-loss <= 0 then
+				player:kill(attacker, weapon, bodypart)
+			end
+		end
+	else
+		if player:getHealth()-loss <= 0 then
+			player:kill(attacker, weapon, bodypart)
+		end
+		player:setHealth(health-loss)
+	end
 end

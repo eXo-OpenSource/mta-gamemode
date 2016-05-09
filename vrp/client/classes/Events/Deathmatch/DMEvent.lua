@@ -19,12 +19,12 @@ DeathmatchEvent.Types = {
 }
 DeathmatchEvent.data = {
 	Maps = {    -- Name, Position, Int
-		{"Deatmatch Area 1", Vector3(0, 0, 0), 0};
-		{"Deatmatch Area 2", Vector3(0, 0, 0), 0};
-		{"Deatmatch Area 3", Vector3(0, 0, 0), 0};
-		{"Deatmatch Area 4", Vector3(0, 0, 0), 0};
-		{"Deatmatch Area 5", Vector3(0, 0, 0), 0};
-		{"Deatmatch Area 6", Vector3(0, 0, 0), 0};
+		{"Deathmatch Area 1", Vector3(0, 0, 0), 0};
+		{"Deathmatch Area 2", Vector3(0, 0, 0), 0};
+		{"Deathmatch Area 3", Vector3(0, 0, 0), 0};
+		{"Deathmatch Area 4", Vector3(0, 0, 0), 0};
+		{"Deathmatch Area 5", Vector3(0, 0, 0), 0};
+		{"Deathmatch Area 6", Vector3(0, 0, 0), 0};
 	};
 	Weapons = {
 		{"Deagle", 24};
