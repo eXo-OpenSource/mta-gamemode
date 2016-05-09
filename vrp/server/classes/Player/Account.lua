@@ -46,7 +46,7 @@ function Account.login(player, username, password, pwhash)
 		end
 
 		-- Validate email
-		if not row.EMail:match("^[%w.]+@%w+%.%w+$") or #row.EMail > 50 then
+		if not row.EMail:match("^[%w._-]+@%w+%.%w+$") or #row.EMail > 50 then
 			player:triggerEvent("loginfailed", "Internal error while creating forum account #2. Please contact an admin. ID: " .. tostring(Id))
 			return false
 		end
@@ -162,7 +162,7 @@ function Account.register(player, username, password, email)
 	end
 
 	-- Validate email
-	if not email:match("^[%w.]+@%w+%.%w+$") or #email > 50 then
+	if not email:match("^[%w._-]+@%w+%.%w+$") or #email > 50 then
 		player:triggerEvent("registerfailed", _("Fehler: Ungültige eMail", player))
 		return false
 	end
