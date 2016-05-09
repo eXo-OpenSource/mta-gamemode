@@ -59,7 +59,6 @@ function Core:ready()
 	ItemManager:new();
 	--// Gangwar
 	GangwarClient:new()
-	KeyBinds:new()
 	MostWanted:new()
 	NoDm:new()
 	FactionManager:new()
@@ -77,6 +76,7 @@ function Core:afterLogin()
 	HUDRadar:getSingleton():show()
 	HUDUI:getSingleton():show()
 	Collectables:new()
+	KeyBinds:new()
 
 	if DEBUG then
 		Debugging:new()

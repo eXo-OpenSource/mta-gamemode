@@ -124,8 +124,8 @@ function KeyBinds:helpMenu()
 	end
 end
 
-function KeyBinds:scoreboardGUI()
-	if not ScoreboardGUI:getSingleton():isVisible() then
+function KeyBinds:scoreboardGUI(_, keyState)
+	if keyState == "down" then
 		ScoreboardGUI:getSingleton():setVisible(true):bringToFront()
 	else
 		ScoreboardGUI:getSingleton():setVisible(false)
