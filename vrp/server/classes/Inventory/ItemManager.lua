@@ -19,6 +19,7 @@ function ItemManager:constructor()
 		["Kokain"] = DrugsCocaine,
 		["Burger"] = ItemFood,
 		["Pizza"] = ItemFood,
+		["Pilz"] = ItemFood,
 		["Wuerfel"] = ItemDice
 	}
 

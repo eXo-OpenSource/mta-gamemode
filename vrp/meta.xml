@@ -887,7 +887,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte.png" />
 
 	<vrpfile src="files/images/Inventory/items/Drogen/Weed.png" />
-	<vrpfile src="files/images/Inventory/items/Drogen/Pilze.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Shroom.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Samen.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Ecstasy.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Heroin.png" />
@@ -938,7 +938,7 @@
 	<vrpfile src="files/images/Inventory/items/Essen/Kaffee.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Kuheuter mit Pommes.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Zombie-Burger.png" />
-
+	<vrpfile src="files/images/Inventory/items/Essen/Pilz.png" />
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />
 	<vrpfile src="files/images/GoJump/howto.png" />

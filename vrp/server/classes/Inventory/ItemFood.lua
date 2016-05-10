@@ -9,7 +9,8 @@ ItemFood = inherit(Item)
 
 ItemFood.Settings = {
 	["Burger"] = {["Health"] = 80, ["Model"] = 2880, ["Text"] = "einen Burger", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
-	["Pizza"] = {["Health"] = 80, ["Model"] = 2881, ["Text"] = "ein Stück Pizza", ["Animation"] = {"FOOD", "EAT_Pizza", 4500}}
+	["Pizza"] = {["Health"] = 80, ["Model"] = 2881, ["Text"] = "ein Stück Pizza", ["Animation"] = {"FOOD", "EAT_Pizza", 4500}},
+	["Pilz"] = {["Health"] = 10, ["Model"] = 1882, ["Text"] = "einen Pilz", ["Animation"] = {"FOOD", "EAT_Burger", 4500}}
 }
 
 function ItemFood:constructor()
