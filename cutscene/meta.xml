@@ -1,4 +1,6 @@
 <meta>
+	<map src="hospital.map" />
+
     <script src="utils.lua" type="client" />
     <script src="classlib.lua" type="client" />
     <script src="Object.lua" type="client" />
@@ -6,7 +8,8 @@
     <script src="sample.cutscene.lua" type="client" />
     <script src="vrpintro.lua" type="client" />
     <script src="Arrest.lua" type="client" />
-	
+    <script src="hospital.lua" type="client" />
+
     <script src="Cutscene/Scene.lua" type="client" />
     <script src="Cutscene/Cutscene.lua" type="client" />
     <script src="Cutscene/Action.lua" type="client" />

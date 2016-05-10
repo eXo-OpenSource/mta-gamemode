@@ -283,7 +283,7 @@ function Player:respawn(position, rotation)
 
 	position = position or Vector3(2028, -1405, 18)
 	rotation = rotation or 0
-
+	self:setHeadless(false)
 	spawnPlayer(self, position, rotation, self.m_Skin)
 	setCameraTarget(self, self)
 end
