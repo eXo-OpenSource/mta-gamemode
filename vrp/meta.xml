@@ -101,6 +101,7 @@
 	<script src="server/classes/Inventory/ItemRadio.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemDrugs.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemFood.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemGrowable.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
@@ -108,6 +109,7 @@
 	<script src="server/classes/Inventory/Drugs/DrugsHeroin.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsShroom.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsCocaine.lua" type="server"/>
+	<script src="server/classes/Inventory/Drugs/PlantWeed.lua" type="server"/>
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
 	<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
@@ -347,6 +349,7 @@
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
+	<script src="client/classes/Inventory/PlantWeed.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsCocaine.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsHeroin.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsShroom.lua" type="client"/>

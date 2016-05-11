@@ -20,7 +20,8 @@ function ItemManager:constructor()
 		["Burger"] = ItemFood,
 		["Pizza"] = ItemFood,
 		["Pilz"] = ItemFood,
-		["Wuerfel"] = ItemDice
+		["Wuerfel"] = ItemDice,
+		["Weed-Samen"] = PlantWeed,
 	}
 
 	for name, class in pairs(self.m_ClassItems) do
