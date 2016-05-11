@@ -7,7 +7,7 @@
 -- ****************************************************************************
 ItemGrowable = inherit(Item)
 --CONSTANTS--
-WEED_OBJECT = 1485
+WEED_OBJECT = 823
 
 function ItemGrowable:constructor()
 
