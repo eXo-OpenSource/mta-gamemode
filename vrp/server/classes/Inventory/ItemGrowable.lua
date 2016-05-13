@@ -7,7 +7,7 @@
 -- ****************************************************************************
 ItemGrowable = inherit(Item)
 --CONSTANTS--
-WEED_OBJECT = 823
+WEED_OBJECT = 3409
 
 function ItemGrowable:constructor()
 
@@ -18,5 +18,9 @@ function ItemGrowable:destructor()
 end
 
 function ItemGrowable:use( player )
+
+end
+
+function ItemGrowable:getClientCheck( bool )
 
 end

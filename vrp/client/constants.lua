@@ -82,6 +82,75 @@ for i, v in pairs(RadarDesign) do RadarDesign[v] = i end
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
 for i, v in pairs(UIStyle) do UIStyle[v] = i end
 
+MATERIAL_TYPES =
+{
+	[1] = 	--// GRASS
+	{
+		9,
+		10,
+		11,
+		12,
+		13,
+		14,
+		15,
+		16,
+		17,
+		20,
+		80,
+		81,
+		82,
+		115,
+		116,
+		117,
+		118,
+		119,
+		120,
+		121,
+		122,
+		125,
+		146,
+		147,
+		148,
+		149,
+		150,
+		151,
+		152,
+		153,
+		160,
+	},
+	[2] = 	--// DIRT
+	{
+		19,
+		21,
+		22,
+		24,
+		25,
+		26,
+		27,
+		40,
+		83,
+		84,
+		87,
+		88,
+		100,
+		110,
+		123,
+		124,
+		126,
+		128,
+		129,
+		130,
+		132,
+		133,
+		141,
+		142,
+		145,
+		155,
+		156,
+	}
+}
+
+
 HelpTextTitles = {
 	General = {
 		Main = "eXo-Reallife";
@@ -241,7 +310,11 @@ HelpTexts = {
 			Fahre Anschließend zur Deponie zurück und lade deinen Müll in der Dump-Area aus.
 		]];
 		ServiceTechnician = [[Todo]];
-		PizzaDelivery = [[Todo]];
+		PizzaDelivery = [[
+			Als Pizzalieferant hast du die Aufgabe die Ware des Pizza Stacks an die jeweiligen Orte zu liefern.
+			Du erhälst deine Ware beim Pizza Stack ( Marker ) und lieferst Sie zum Ziel ( Ziel-Icon beim Radar ) ab.
+			Desto schneller du dies schaffst, desto höher ist dein Bonus.
+		]];
 		ForkLift = [[
 			Wenn du Gabelstaplerfahrer bist, kannst du mit deinem Forklift Kisten aufladen.
 			Diese musst du anschließend bei den LKW's abliefern.
