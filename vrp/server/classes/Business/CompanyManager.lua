@@ -330,7 +330,7 @@ function CompanyManager:Event_toggleDuty()
 			company:updateCompanyDutyGUI(client)
 			client:sendInfo(_("Du bist nicht mehr im Unternehmens-Dienst!", client))
 			client:setPublicSync("Company:Duty",false)
-
+            takeAllWeapons(client)
             if company.stop then
                 company:stop(client)
             end
@@ -340,7 +340,7 @@ function CompanyManager:Event_toggleDuty()
 			company:updateCompanyDutyGUI(client)
 			client:sendInfo(_("Du bist nun im Unternehmens-Dienst!", client))
 			client:setPublicSync("Company:Duty",true)
-
+            takeAllWeapons(client)
             if company.start then
                 company:start(client)
             end

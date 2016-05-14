@@ -42,7 +42,7 @@ function VendingMachine.Event_vendingRob()
 
 	-- Give wage
 	client:giveMoney(math.random(10, 100), "Automaten-Raub")
-	client:giveKarma(-0.05)
+	client:giveKarma(-1)
 
 	-- give Achievement
 	client:giveAchievement(19)

@@ -1,29 +1,54 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Gameplay/Deathmatch/ZombieSurvivalRoom.lua
--- *  PURPOSE:     ZombieSurvivalRoom for Deathmatch-Script
+-- *  FILE:        server/classes/Gameplay/Deathmatch/ZombieSurvival.lua
+-- *  PURPOSE:     ZombieSurvival for Deathmatch-Script
 -- *
 -- ****************************************************************************
 
-ZombieSurvivalRoom = inherit(Object)
+ZombieSurvival = inherit(Object)
 
-function ZombieSurvivalRoom:constructor(player)
+function ZombieSurvival:constructor(player)
+	self.m_Player = player
 	self.m_Dimension = math.random(1, 999) -- Testing
+	self.m_Zombies = {}
 	player:setDimension(self.m_Dimension)
 	player:setPosition(183.62, 1764.55, 17.64)
 	player:setInterior(0)
+
 	self:loadMap()
 	self:addZombieSpawner(Vector3(179.66, 1786.36, 17.64))
 	addEventHandler("onZombieWasted", root, function(ped, player)
 		player:sendInfo("Du hast einen Zombie getötet!")
 	end)
 
+	PlayerManager:getSingleton():getWastedHook():register(
+		function(player)
+			if self.m_Player == player then
+				self.m_Player:setPosition(-35.72, 1380.00, 9.42)
+				self.m_Player:setDimension(0)
+				player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet!", player))
+				delete(self)
+				return true
+			end
+		end
+	)
+end
+
+function ZombieSurvival:destructor()
+	for index, object in pairs(self.m_Map) do
+		object:destroy()
+	end
+	for index, zombie in pairs(self.m_Zombies) do
+		if isElement(zombie) then
+			zombie:destroy()
+		end
+	end
 
 end
 
-function ZombieSurvivalRoom:loadMap()
-	local map = {
+function ZombieSurvival:loadMap()
+	self.m_Map = {
 		createObject ( 987, 213.2, 1787.2, 16.6, 0, 0, 90 ),
 		createObject ( 987, 213.2, 1775.2, 16.6, 0, 0, 90 ),
 		createObject ( 987, 213.2, 1763.2, 16.6, 0, 0, 90 ),
@@ -59,18 +84,15 @@ function ZombieSurvivalRoom:loadMap()
 		createObject ( 987, 201.2, 1799, 16.6, 0, 0, 180 ),
 		createObject ( 987, 213.2, 1799, 16.6, 0, 0, 180 )
 	}
-	for index, object in pairs(map) do
+	for index, object in pairs(self.m_Map) do
 		object:setDimension(self.m_Dimension)
 	end
 end
 
-function ZombieSurvivalRoom:addZombieSpawner(pos)
+function ZombieSurvival:addZombieSpawner(pos)
 	setTimer(function()
-		 Zombie:new(pos.x, pos.y, pos.z, 264, self.m_Dimension)
+		local zombie = Zombie:new(pos.x, pos.y, pos.z, 264, self.m_Dimension)
+		table.insert(self.m_Zombies, zombie)
 	end, 5000, 0)
 
 end
-
-addCommandHandler("zombiegame", function(player)
-	ZombieSurvivalRoom:new(player)
-end)

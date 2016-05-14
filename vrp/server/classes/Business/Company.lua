@@ -303,10 +303,12 @@ function Company:createDutyMarker()
     		function(hitElement)
     			if getElementType(hitElement) == "player" then
     				local company = hitElement:getCompany()
-    				if company then
+    				if company and company == self then
     					hitElement:triggerEvent("showCompanyDutyGUI")
     					hitElement:getCompany():updateCompanyDutyGUI(hitElement)
-    				end
+                    else
+                        hitElement:sendError(_("Du bist nicht in diesem Unternehmen!", hitElement))
+                    end
     			end
     			cancelEvent()
     		end

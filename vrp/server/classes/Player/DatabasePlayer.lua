@@ -76,7 +76,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 
 	if not row then
 		return false
@@ -84,6 +84,7 @@ function DatabasePlayer:load()
 
 	self.m_SavedPosition = Vector3(row.PosX, row.PosY, row.PosZ)
 	self.m_SavedInterior = row.Interior
+	self.m_SavedDimension = row.Dimension
 	self.m_Skin = row.Skin
 	self:setXP(row.XP)
 	self:setKarma(row.Karma)

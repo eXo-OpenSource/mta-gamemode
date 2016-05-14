@@ -645,7 +645,6 @@ end
 
 function Inventory:onInvClick(button)
 	if button == "left" then
-		outputChatBox("click")
 		self.m_BagOld = self.m_BagCurrent
 		if( source == self.m_btn_Items and self.m_BagCurrent ~= "Items") then
 			self.m_BagCurrent = "Items"

@@ -213,9 +213,12 @@ function Player:save()
 			weapons[#weapons + 1] = {weapon, ammo}
 		end
 	end
+	local dimension = 0
 
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
-		x, y, z, interior, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), self.m_Id)
+	if interior > 0 then dimension = self:getDimension() end
+
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
+		x, y, z, interior, dimension, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), self.m_Id)
 
 	--if self:getInventory() then
 	--	self:getInventory():save()
@@ -236,11 +239,11 @@ function Player:spawn()
 		self:setSkinLevel(0)
 
 		-- spawn the player
-		spawnPlayer(self, NOOB_SPAWN, self.m_Skin, self.m_SavedInterior, 0) -- Todo: change position
+		spawnPlayer(self, NOOB_SPAWN, self.m_Skin, self.m_SavedInterior, self.m_SavedDimension) -- Todo: change position
 		self:setRotation(0, 0, 180)
 	else
 		if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
-			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin, self.m_SavedInterior, 0)
+			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin, self.m_SavedInterior, self.m_SavedDimension)
 		elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
 			VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 		else

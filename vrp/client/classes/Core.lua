@@ -63,6 +63,7 @@ function Core:ready()
 	NoDm:new()
 	FactionManager:new()
 	CompanyManager:new()
+	DeathmatchManager:new()
 end
 
 function Core:afterLogin()
