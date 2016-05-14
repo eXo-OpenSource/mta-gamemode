@@ -273,21 +273,13 @@ function DatabasePlayer:setFaction(faction)
 	end
 end
 
-function DatabasePlayer:giveMoney(amount)
+function DatabasePlayer:giveMoney(amount, reason)
 	self:setMoney(self:getMoney() + amount)
-
-	-- Log to database
-	if DEBUG then
-		-- Use sourcefile as description here
-		local debugInfo = debug.getinfo(4, "Sl")
-		if debugInfo then
-			StatisticsLogger:getSingleton():logMoney(self, amount, tostring(debugInfo.source)..":"..tostring(debugInfo.currentline))
-		end
-	end
+	StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt")
 end
 
-function DatabasePlayer:takeMoney(amount)
-	self:giveMoney(-amount)
+function DatabasePlayer:takeMoney(amount, reason)
+	self:giveMoney(-amount, reason)
 end
 
 function DatabasePlayer:setXP(xp)

@@ -13,6 +13,13 @@ function StatisticsLogger:logMoney(player, amount, desc)
     end
 end
 
+function StatisticsLogger:addMoneyLog(type, element, money, reason)
+    local elementId = 0
+    if element then elementId = element:getId() end
+    sql:queryExec("INSERT INTO ??_logsMoney (ElementType, ElementId, Money, Reason, Timestamp) VALUES(?, ?, ?, ?, ?)",
+        sql:getPrefix(), type, elementId, money, reason, getRealTime().timestamp)
+end
+
 function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
     local userId = 0
     local groupId = 0

@@ -22,17 +22,17 @@ function AmmuNation:buyWeapon(id)
 		if client:getMoney() >= AmmuNationInfo[id].Weapon then
 			if AmmuNationInfo[id].Magazine then
 				giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
-				client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
+				client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
 				client:sendShortMessage(_("Waffe erhalten.",client))
 				return
 			else
 				if id == 0 then
-					client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
+					client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
 					client:setArmor(100)
 					client:sendShortMessage(_("Schutzweste erhalten.",client))
 					return
 				else
-					client:setMoney(client:getMoney()-AmmuNationInfo[id].Weapon)
+					client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
 					giveWeapon(client,id,1)
 					client:sendShortMessage(_("Schlagwaffe erhalten.",client))
 					return
@@ -48,7 +48,7 @@ function AmmuNation:buyMagazine(id)
 	if not hasPedThisWeaponInSlots (client,id) then return false end
 	if client:getMoney() >= AmmuNationInfo[id].Magazine.price then
 		giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
-		client:setMoney(client:getMoney()-AmmuNationInfo[id].Magazine.price)
+		client:takeMoney(AmmuNationInfo[id].Magazine.price, "Ammunation")
 		client:sendMessage(_("Munition erhalten.",client),0,125,0)
 		return
 	end

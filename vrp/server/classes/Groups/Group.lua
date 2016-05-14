@@ -227,10 +227,12 @@ end
 
 function Group:giveMoney(amount, reason)
 	self:setMoney(self.m_Money + amount)
+	StatisticsLogger:getSingleton():addMoneyLog("group", self, amount, reason or "Unbekannt")
 end
 
-function Group:takeMoney(amount)
+function Group:takeMoney(amount, reason)
 	self:setMoney(self.m_Money - amount)
+	StatisticsLogger:getSingleton():addMoneyLog("group", self, -amount, reason or "Unbekannt")
 end
 
 function Group:setMoney(amount)

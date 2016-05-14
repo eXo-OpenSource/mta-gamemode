@@ -125,10 +125,12 @@ function Company:getMoney(...)
 end
 
 function Company:giveMoney(amount, reason)
+    StatisticsLogger:getSingleton():addMoneyLog("company", self, amount, reason or "Unbekannt")
     return self.m_BankAccount:addMoney(amount)
 end
 
 function Company:takeMoney(amount, reason)
+    StatisticsLogger:getSingleton():addMoneyLog("company", self, -amount, reason or "Unbekannt")
     return self.m_BankAccount:takeMoney(amount)
 end
 

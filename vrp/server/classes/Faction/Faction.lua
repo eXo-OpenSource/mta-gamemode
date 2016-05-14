@@ -225,10 +225,12 @@ function Faction:getMoney()
 end
 
 function Faction:giveMoney(amount, reason)
+	StatisticsLogger:getSingleton():addMoneyLog("faction", self, amount, reason or "Unbekannt")
 	return self.m_BankAccount:addMoney(amount)
 end
 
-function Faction:takeMoney(amount)
+function Faction:takeMoney(amount, reason)
+	StatisticsLogger:getSingleton():addMoneyLog("faction", self, -amount, reason or "Unbekannt")
 	return self.m_BankAccount:takeMoney(amount)
 end
 

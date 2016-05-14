@@ -28,12 +28,12 @@ function BankManager:Event_Withdraw(amount)
 	if not amount or amount <= 0 then return end
 
 	if client:getBankMoney() < amount then
-		client:sendError(_("You cannot withdraw more money than you have", client))
+		client:sendError(_("Auf deinem Konto befindet sich nicht soviel Geld!", client))
 		return
 	end
 
 	if client:takeBankMoney(amount, BankStat.Withdrawal) then
-		client:giveMoney(amount)
+		client:giveMoney(amount, "Bank Einzahlung")
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
@@ -43,12 +43,12 @@ function BankManager:Event_Deposit(amount)
 	if not amount or amount <= 0 then return end
 
 	if client:getMoney() < amount then
-		client:sendError(_("You cannot deposit more money than you have", client))
+		client:sendError(_("Du hast nicht soviel Geld!", client))
 		return
 	end
 
 	if client:addBankMoney(amount, BankStat.Deposit) then
-		client:takeMoney(amount, "Bank Einzahlung")
+		client:takeMoney(amount, "Bank Auszahlung")
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
