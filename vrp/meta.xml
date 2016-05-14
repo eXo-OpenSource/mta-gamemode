@@ -926,7 +926,9 @@
 	<vrpfile src="files/images/Inventory/items/Items/Keks.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Barrikade.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
-
+	<vrpfile src="files/images/Inventory/items/Items/kanne_leer.png" />
+	<vrpfile src="files/images/Inventory/items/Items/kanne_voll.png" />
+	
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Zigeretten.png" />

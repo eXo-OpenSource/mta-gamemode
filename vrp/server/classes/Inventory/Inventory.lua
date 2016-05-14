@@ -78,7 +78,7 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 	if self.m_ClassItems[itemName] then
 		local instance = ItemManager.Map[itemName]
 		if instance.use then
-			if instance:use(client) == false then
+			if instance:use(client, itemId, bag, place, itemName) == false then
 				return false
 			end
 		end

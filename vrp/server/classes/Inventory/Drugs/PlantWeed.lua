@@ -27,17 +27,22 @@ function PlantWeed:use( player )
 end
 
 function PlantWeed:grow()
-	local iScale,obj
+	local iScale,obj, data
 	self:syncGrow( client )
 	for i = 1,#self.m_ActivePlant do 
 		obj = self.m_ActivePlant[i]
-		iScale = getObjectScale( obj )
-		iScale = iScale + ( iScale * growRate )
-		if iScale >= 1 then 
-			iScale = 1
-			rem( self.m_ActivePlant, i )
+		data = obj:getData("Plant:Hydration")
+		if data then 
+			if data >= 1 then
+				iScale = getObjectScale( obj )
+				iScale = iScale + ( iScale * growRate )
+				if iScale >= 1 then 
+					iScale = 1
+					rem( self.m_ActivePlant, i )
+				end
+				setObjectScale( obj, iScale)
+			end
 		end
-		setObjectScale( obj, iScale)
 	end
 end
 

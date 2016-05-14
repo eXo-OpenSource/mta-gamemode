@@ -34,13 +34,9 @@ function PlantWeed:Render( )
 			local timeElapsed = getTickCount() - self.m_RendTick
 			local f = timeElapsed / 500
 			f = math.min( f, 1 )
-
-
 			local size = math.lerp ( 1, 1.2, f )
 			local alpha = math.lerp ( 1.0, 0.0, f )
-			
 			dxSetShaderValue( shader, "sMorphSize", size, size, size )
-
 			dxSetShaderValue( shader, "sMorphColor", 0, 1, 0, alpha )
 		end
 	end
