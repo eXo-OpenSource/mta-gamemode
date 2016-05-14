@@ -396,7 +396,10 @@ function VehicleManager:Event_vehicleRepair()
 end
 
 function VehicleManager:Event_vehicleRespawn()
-	if not instanceof(source, PermanentVehicle, true) then return end
+	if not instanceof(source, PermanentVehicle, true) then
+		client:sendError(_("Das ist kein permanentes Server Fahrzeug!", client))
+		return
+	end
 
 	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))

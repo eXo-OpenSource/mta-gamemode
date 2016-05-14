@@ -60,7 +60,7 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 		self.m_TaserAttacker = source
 		self.m_HitPos = Vector3(hitX, hitY, hitZ)
 		if getDistanceBetweenPoints3D(source:getPosition(),self.m_HitPos) < 10 then
-			if hitElement and getElementType(hitElement) == "player" then
+			if hitElement and getElementType(hitElement) == "player" and not hitElement:getOccupiedVehicle() then
 				self.m_TaserTarget = hitElement
 				removeEventHandler("onClientRender",root,self.m_TaserRender)
 				addEventHandler("onClientRender",root,self.m_TaserRender)
