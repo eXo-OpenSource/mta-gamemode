@@ -42,6 +42,8 @@ function AmmuNationManager:constructor()
 	end
 	addEventHandler("onAmmunationAppOrder",root, bind(self.onAmmunationAppOrder, self))
 
+	addEventHandler("onPlayerWeaponBuy",root, bind(self.buyWeapon, self))
+	addEventHandler("onPlayerMagazineBuy",root, bind(self.buyMagazine, self))
 end
 
 function AmmuNationManager:getPlayerWeapons(player)
@@ -133,4 +135,42 @@ function AmmuNationManager:giveWeaponsFromOrder(player, weaponTable)
 			end
 		end
 	end
+end
+
+function AmmuNationManager:buyWeapon(id)
+	if AmmuNationInfo[id].MinLevel <= client:getWeaponLevel() then
+		if client:getMoney() >= AmmuNationInfo[id].Weapon then
+			if AmmuNationInfo[id].Magazine then
+				giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
+				client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
+				client:sendShortMessage(_("Waffe erhalten.",client))
+				return
+			else
+				if id == 0 then
+					client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
+					client:setArmor(100)
+					client:sendShortMessage(_("Schutzweste erhalten.",client))
+					return
+				else
+					client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
+					giveWeapon(client,id,1)
+					client:sendShortMessage(_("Schlagwaffe erhalten.",client))
+					return
+				end
+			end
+		end
+		client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
+	end
+	client:sendWarning(_("Dein Waffenlevel ist zu niedrig!",client),125,0,0)
+end
+
+function AmmuNationManager:buyMagazine(id)
+	if not hasPedThisWeaponInSlots (client,id) then return false end
+	if client:getMoney() >= AmmuNationInfo[id].Magazine.price then
+		giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
+		client:takeMoney(AmmuNationInfo[id].Magazine.price, "Ammunation")
+		client:sendShortMessage(_("Munition erhalten.",client))
+		return
+	end
+	client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
 end

@@ -13,47 +13,9 @@ AmmuNation.ENTERPOS = { X = 315.15640, Y = -142.49582, Z = 999.60156 }
 function AmmuNation:constructor(name)
 	self.m_Name = name or "NO NAME"
 
-	addEventHandler("onPlayerWeaponBuy",root, bind(self.buyWeapon, self))
-	addEventHandler("onPlayerMagazineBuy",root, bind(self.buyMagazine, self))
+
 end
 
-function AmmuNation:buyWeapon(id)
-	if AmmuNationInfo[id].MinLevel <= client:getWeaponLevel() then
-		if client:getMoney() >= AmmuNationInfo[id].Weapon then
-			if AmmuNationInfo[id].Magazine then
-				giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
-				client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
-				client:sendShortMessage(_("Waffe erhalten.",client))
-				return
-			else
-				if id == 0 then
-					client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
-					client:setArmor(100)
-					client:sendShortMessage(_("Schutzweste erhalten.",client))
-					return
-				else
-					client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
-					giveWeapon(client,id,1)
-					client:sendShortMessage(_("Schlagwaffe erhalten.",client))
-					return
-				end
-			end
-		end
-		client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
-	end
-	client:sendWarning(_("Dein Waffenlevel ist zu niedrig!",client),125,0,0)
-end
-
-function AmmuNation:buyMagazine(id)
-	if not hasPedThisWeaponInSlots (client,id) then return false end
-	if client:getMoney() >= AmmuNationInfo[id].Magazine.price then
-		giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
-		client:takeMoney(AmmuNationInfo[id].Magazine.price, "Ammunation")
-		client:sendMessage(_("Munition erhalten.",client),0,125,0)
-		return
-	end
-	client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
-end
 
 function AmmuNation:addEnter(x, y, z, dimension)
 	local interiorEnter = InteriorEnterExit:new(Vector3(x, y, z), Vector3(AmmuNation.ENTERPOS.X, AmmuNation.ENTERPOS.Y, AmmuNation.ENTERPOS.Z), 0, 0, AmmuNation.INTERIORID, dimension)

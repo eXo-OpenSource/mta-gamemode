@@ -69,7 +69,6 @@ end
 
 function InventoryManager:loadInventory(player)
 	if not self.Map[player] then
-		outputChatBox("Loaded the Inventory of "..player.name.."!",root,0,180,50)
 		local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,ItemManager:getSingleton():getClassItems())
 		self.Map[player] = instance
 		return instance

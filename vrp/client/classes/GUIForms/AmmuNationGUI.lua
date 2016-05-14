@@ -54,7 +54,7 @@ function AmmuNationGUI:updateDimension(int)
 	end
 end
 
-function AmmuNationGUI:onKey(key,state)
+function AmmuNationGUI:onKey(key, state)
 	if key == "space" then
 		delete(self)
 		return
