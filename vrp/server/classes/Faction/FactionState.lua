@@ -237,7 +237,7 @@ function FactionState:Command_megaphone(player, cmd, ...)
 end
 
 function FactionState:Command_suspect(player,cmd,target,amount,...)
-	if player:isFactionDuty() then
+	if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() == true then
 		local amount = tonumber(amount)
 		if amount >= 1 and amount <= 6 then
 			local reason = self:getFullReasonFromShortcut(table.concat({...}, " "))

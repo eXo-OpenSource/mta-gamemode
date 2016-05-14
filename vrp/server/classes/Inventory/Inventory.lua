@@ -86,7 +86,7 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 	-- Possible issue: If Item:use fails, the item will never get removed
 
 
-	outputChatBox("Du benutzt das Item "..itemName.." aus der Tasche "..bag.."!", self.m_Owner, 0, 255, 0) -- in Developement
+	--outputChatBox("Du benutzt das Item "..itemName.." aus der Tasche "..bag.."!", self.m_Owner, 0, 255, 0) -- in Developement
 end
 
 function Inventory:saveItemAmount(id, amount)
