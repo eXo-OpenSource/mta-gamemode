@@ -9,16 +9,23 @@
 DeathmatchManager = inherit(Singleton)
 
 function DeathmatchManager:constructor()
-	InteriorEnterExit:new(Vector3(2522.97, -1343.70, 31.05), Vector3(834.24, 7.44, 1004.19), 270, 180, 3)
-	self.m_EntryMaker = createMarker(822.49, 3.86, 1004.18, "cylinder", 1, 255, 0, 0, 125)
-	self.m_EntryMaker:setInterior(3)
-	addEventHandler("onMarkerHit", self.m_EntryMaker, function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
-			self:openGUI(hitElement)
-		end
-	end)
+
+	--Zombie Survival
+	 local zombiePed = createPed(1 ,-31.64, 1377.67, 9.17, 90)
+	 zombiePed:setFrozen(true)
+	 local zombieMarker = createMarker(-34.24, 1377.80, 8.5, "cylinder", 1, 255, 0, 0, 125)
+	 addEventHandler("onMarkerHit", zombieMarker, bind(self.onZombieMarkerHit, self))
+
+	 addRemoteEvents{"startZombieSurvival"}
+	 addEventHandler("startZombieSurvival", root, bind(self.startZombieSurvival))
 end
 
-function DeathmatchManager:openGUI(player)
-	player:triggerEvent("openDeathmatchGUI")
+function DeathmatchManager:onZombieMarkerHit(hitElement, dim)
+	if hitElement:getType() == "player" and dim then
+		hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde Zombie Survival spielen?", hitElement), "startZombieSurvival")
+	end
+end
+
+function DeathmatchManager:startZombieSurvival()
+	ZombieSurvival:new(client)
 end
