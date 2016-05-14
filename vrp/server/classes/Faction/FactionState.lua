@@ -366,6 +366,7 @@ function FactionState:Event_toggleDuty()
 		if client:isFactionDuty() then
 			client:setDefaultSkin()
 			client.m_FactionDuty = false
+			takeAllWeapons(client)
 			faction:updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 			client:setPublicSync("Faction:Duty",false)
@@ -373,6 +374,7 @@ function FactionState:Event_toggleDuty()
 		else
 			faction:changeSkin(client)
 			client.m_FactionDuty = true
+			takeAllWeapons(client)
 			faction:updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nun im Dienst!", client))
 			client:setPublicSync("Faction:Duty",true)
