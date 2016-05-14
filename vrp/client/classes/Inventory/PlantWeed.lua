@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 local w,h = guiGetScreenSize()
-local shader = dxCreateShader ( "files/shader/shell_layer.fx"  )
+local shader = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
 PlantWeed = inherit( Object )
 addEvent("PlantWeed:sendClientCheck", true)
 addEvent("PlantWeed:syncPlantMap", true)
@@ -66,11 +66,13 @@ end
 function PlantWeed:onSync( tbl )
 	for i = 1,#self.m_EntityTable do 
 		engineRemoveShaderFromWorldTexture ( shader, "*" ,self.m_EntityTable[i])
+		setElementAlpha( self.m_EntityTable[i], 255 )
 	end
 	self.m_EntityTable = tbl
 	self.m_RendTick = getTickCount()
 	for i = 1,#self.m_EntityTable do 
 		engineApplyShaderToWorldTexture ( shader, "*", self.m_EntityTable[i])
+		setElementAlpha( self.m_EntityTable[i], 254 )
 	end
 end
 
