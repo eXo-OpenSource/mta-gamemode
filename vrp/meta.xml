@@ -1041,6 +1041,7 @@
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
 	<vrpfile src="files/shader/texreplace.fx"/>
+	<vrpfile src="files/shader/shell_layer.fx"/>
 	<vrpfile src="files/shader/cuttexture.fx"/>
 	<vrpfile src="files/shader/fadeOut.fx"/>
 	<vrpfile src="files/shader/drug-weedshader.fx"/>
