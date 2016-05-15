@@ -7,6 +7,7 @@
 -- ****************************************************************************
 ItemFullCan = inherit( Object )
 
+
 function ItemFullCan:constructor() 
 
 end
@@ -14,3 +15,4 @@ end
 function ItemFullCan:destructor() 
 
 end
+

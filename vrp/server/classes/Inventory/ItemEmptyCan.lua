@@ -22,5 +22,6 @@ function ItemEmptyCan:use( player, itemId, bag, place, itemName )
 		inv:removeItemFromPlace(bag, place, 1)
 		inv:giveItem("Kanne-Voll", 1)
 		inv:forceRefresh()
+	else player:sendError("Sie befinden sich nicht im Wasser!")
 	end
 end

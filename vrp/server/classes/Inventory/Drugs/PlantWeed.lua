@@ -53,6 +53,7 @@ function PlantWeed:getClientCheck( bool, z_pos )
 		self.m_ActivePlant[#self.m_ActivePlant+1] = self.m_Map[#self.m_Map]
 		setObjectScale( self.m_Map[#self.m_Map], 0.1)
 		setElementCollisionsEnabled( self.m_Map[#self.m_Map], false)
+		ItemGrowable.m_WaterPlants[#ItemGrowable.m_WaterPlants+1] = self.m_Map[#self.m_Map]
 	else outputChatBox("Du bist nicht auf dem richtigen Untergrund!", source)
 	end
 end

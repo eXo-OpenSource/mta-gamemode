@@ -16,7 +16,13 @@ function ItemFullCan:destructor()
 end
 
 function ItemFullCan:use( player, itemId, bag, place, itemName )
-	if isElementInWater( player ) then
-		player.m_FullWaterBottleCount = player.m_FullWaterBottleCount +1
+	local plant = ItemGrowable:getNextWaterPlant( player )
+	if plant then
+		local inv = InventoryManager:getSingleton():getPlayerInventory(player)
+		inv:removeItemFromPlace(bag, place, 1)
+		inv:giveItem("Kanne-Leer", 1)
+		inv:forceRefresh()
+		--// INCREASE WATER OF PLANT 
 	end
 end
+
