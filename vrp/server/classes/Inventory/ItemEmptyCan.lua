@@ -18,7 +18,9 @@ end
 
 function ItemEmptyCan:use( player, itemId, bag, place, itemName )
 	if isElementInWater( player ) then
-		local inv = InventoryManager:getPlayerInventory(player)
+		local inv = InventoryManager:getSingleton():getPlayerInventory(player)
 		inv:removeItemFromPlace(bag, place, 1)
+		inv:giveItem("Kanne-Voll", 1)
+		inv:forceRefresh()
 	end
 end

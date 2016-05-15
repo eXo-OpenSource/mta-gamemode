@@ -61,6 +61,8 @@ function ItemManager:loadEffectItems( )
   self.m_Items["Shrooms"] = DrugsShroom:new();
   self.m_Items["Kokain"] = DrugsCocaine:new();
   self.m_Items["Weed-Samen"] = PlantWeed:new();
+  self.m_Items["Kanne-Leer"] = ItemEmptyCan:new();
+  self.m_Items["Kanne-Voll"] = ItemFullCan:new();
 end
 
 

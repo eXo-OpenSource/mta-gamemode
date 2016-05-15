@@ -52,6 +52,10 @@ function Inventory:syncClient()
 	triggerClientEvent(self.m_Owner, "syncInventoryFromServer", self.m_Owner, self.m_Bag, self.m_Items)
 end
 
+function Inventory:forceRefresh()
+	triggerClientEvent(self.m_Owner, "forceInventoryRefresh", self.m_Owner, self.m_Bag, self.m_Items)
+end
+
 function Inventory:loadItem(id)
 	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE id = ?", sql:getPrefix(), id) -- ToDo add Prefix
 	for i, row in ipairs(result) do

@@ -50,10 +50,11 @@ function Inventory:constructor()
 	self.m_onClientDragAndDropMove = bind(self.onClientDragAndDropMove, self)
 
 
-	addRemoteEvents{"loadPlayerInventarClient", "setInventoryCoordinates", "onPlayerItemUse", "syncInventoryFromServer"}
+	addRemoteEvents{"loadPlayerInventarClient", "setInventoryCoordinates", "onPlayerItemUse", "syncInventoryFromServer","forceInventoryRefresh"}
 	addEventHandler("loadPlayerInventarClient",  root,  bind(self.Event_loadPlayerInventarClient,  self))
 	addEventHandler("syncInventoryFromServer",  root,  bind(self.Event_syncInventoryFromServer,  self))
-
+	addEventHandler("forceInventoryRefresh",  root,  bind(self.Event_forceInventoryRefresh,  self))
+	
 	addEventHandler("setInventoryCoordinates", root,  bind(self.Event_setInventoryCoordinates,  self))
 	addEventHandler("onPlayerItemUse", root,  bind(self.Event_onItemClick,  self))
 
@@ -71,6 +72,11 @@ end
 function Inventory:Event_loadPlayerInventarClient(slots, itemData)
 	self.m_Slots = slots
 	self.m_ItemData = itemData
+end
+
+function Inventory:Event_forceInventoryRefresh(slots, itemData) 
+	self:hide()
+	self:show()
 end
 
 function Inventory:getItemData()

@@ -5,7 +5,6 @@
 -- *  PURPOSE:     Item Full Watering-Can class
 -- *
 -- ****************************************************************************
-
 ItemFullCan = inherit(Item)
 
 function ItemFullCan:constructor( )

@@ -104,6 +104,8 @@
 	<script src="server/classes/Inventory/ItemGrowable.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemFullCan.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemEmptyCan.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsHeroin.lua" type="server"/>
@@ -347,6 +349,8 @@
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemEmptyCan.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemFullCan.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsWeed.lua" type="client"/>
 	<script src="client/classes/Inventory/PlantWeed.lua" type="client"/>

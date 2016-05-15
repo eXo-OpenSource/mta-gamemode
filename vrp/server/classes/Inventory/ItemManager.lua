@@ -22,6 +22,8 @@ function ItemManager:constructor()
 		["Pilz"] = ItemFood,
 		["Wuerfel"] = ItemDice,
 		["Weed-Samen"] = PlantWeed,
+		["Kanne-Leer"] = ItemEmptyCan,
+		["Kanne-Voll"] = ItemFullCan,
 	}
 
 	for name, class in pairs(self.m_ClassItems) do
