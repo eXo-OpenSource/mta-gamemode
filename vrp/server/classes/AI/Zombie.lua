@@ -28,8 +28,8 @@ function Zombie:constructor(x, y, z, model, dim, int)
 		-- Um dem Zombie werden 2 Colshapes erstellt, ein mit kleinem Radius und ein mit Grossem.
 		-- Dies dient zum Sprinten/Erkennen.
 
-		self.bigcol = createColSphere(x, y, z, 50)
-		self.smallcol = createColSphere(x, y, z, 10)
+		self.bigcol = createColSphere(x, y, z, 100)
+		self.smallcol = createColSphere(x, y, z, 15)
 		setElementDimension(self.bigcol, dim)
 		setElementInterior(self.bigcol, int)
 		setElementDimension(self.smallcol, dim)

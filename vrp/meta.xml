@@ -770,6 +770,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/PoliceRob.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Locate.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Casino.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Zombie.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -810,6 +811,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/PoliceRob.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Locate.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Casino.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Zombie.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -934,7 +936,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
 	<vrpfile src="files/images/Inventory/items/Items/kanne_leer.png" />
 	<vrpfile src="files/images/Inventory/items/Items/kanne_voll.png" />
-	
+
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Zigeretten.png" />
@@ -1043,6 +1045,8 @@
 	<vrpfile src="files/models/mushroom01.col"/>
 	<vrpfile src="files/models/mushroom02.dff"/>
 	<vrpfile src="files/models/mushroom02.col"/>
+	<vrpfile src="files/models/zombie.dff"/>
+	<vrpfile src="files/models/zombie.txd"/>
 
 
 	<!-- Shaders -->

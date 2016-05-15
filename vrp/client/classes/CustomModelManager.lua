@@ -14,6 +14,10 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/yoda.txd", 41)
 	self:loadImportDFF("files/models/yoda.dff", 41)
 
+	-- Zombie
+	self:loadImportTXD("files/models/zombie.txd", 310)
+	self:loadImportDFF("files/models/zombie.dff", 310)
+
 	-- vRP Logo
 	self:loadImportTXD("files/models/exo_logo.txd", 2836)
 	self:loadImportDFF("files/models/exo_logo.dff", 2836)

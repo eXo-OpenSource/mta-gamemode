@@ -9,17 +9,43 @@
 ZombieSurvival = inherit(Object)
 
 function ZombieSurvival:constructor(player)
+	self.m_PickupWeapons = {25, 24, 22, 33, 30}
+
 	self.m_Player = player
 	self.m_Dimension = math.random(1, 999) -- Testing
 	self.m_Zombies = {}
+	self.m_ZombieKills = {}
+	self.m_ZombieKills[player] = 0
+
+	self.m_ZombieTime = 10000
+	self.m_IncreaseTimer = setTimer(bind(self.increaseZombies, self), 20000, 0)
+
+	self.m_CreatePickupTimer = setTimer(bind(self.createPickup, self), 20000, 0)
+
+	self:addZombie()
+
 	player:setDimension(self.m_Dimension)
 	player:setPosition(183.62, 1764.55, 17.64)
 	player:setInterior(0)
+	player:setArmor(0)
+	takeAllWeapons(player)
+	player:giveWeapon(24, 30, true)
+
 
 	self:loadMap()
-	self:addZombieSpawner(Vector3(179.66, 1786.36, 17.64))
+
+
+	addEventHandler("onPlayerDamage", player, function(attacker, weapon, bodypart, loss)
+		if isElement(attacker) and getElementData(attacker, "zombie") == true then
+			source:setHealth(source:getHealth()-loss*15)
+		end
+	end)
+
 	addEventHandler("onZombieWasted", root, function(ped, player)
-		player:sendInfo("Du hast einen Zombie getötet!")
+		if isElement(player) then
+			player:sendInfo("Du hast einen Zombie getötet!")
+			self.m_ZombieKills[player] = self.m_ZombieKills[player]+1
+		end
 	end)
 
 	PlayerManager:getSingleton():getWastedHook():register(
@@ -44,7 +70,32 @@ function ZombieSurvival:destructor()
 			zombie:destroy()
 		end
 	end
+	if isTimer(self.m_CreatePickupTimer) then killTimer(self.m_CreatePickupTimer) end
+	if isTimer(self.ZombieTimer) then killTimer(self.ZombieTimer) end
+	if isTimer(self.m_IncreaseTimer) then killTimer(self.m_IncreaseTimer) end
+	if isElement(self.m_Pickup) then self.m_Pickup:destroy() end
+end
 
+function ZombieSurvival:increaseZombies()
+
+
+	self.m_ZombieTime = self.m_ZombieTime*0.95
+	if self.m_ZombieTime < 500 then
+		self.m_ZombieTime = 500
+		if isTimer(self.m_IncreaseTimer) then killTimer(self.m_IncreaseTimer) end
+	end
+
+end
+
+function ZombieSurvival:createPickup()
+	self.m_Pickup = createPickup(math.random(82, 210), math.random(1728, 1798), 17.64, 2, self.m_PickupWeapons[math.random(1, #self.m_PickupWeapons)], 5000000, 30)
+	self.m_Pickup:setDimension(self.m_Dimension)
+end
+
+function ZombieSurvival:addZombie()
+	local zombie = Zombie:new(math.random(82, 210), math.random(1728, 1798), 17.64, 310, self.m_Dimension)
+	table.insert(self.m_Zombies, zombie)
+	self.ZombieTimer = setTimer(bind(self.addZombie, self), self.m_ZombieTime, 1)
 end
 
 function ZombieSurvival:loadMap()
@@ -87,12 +138,4 @@ function ZombieSurvival:loadMap()
 	for index, object in pairs(self.m_Map) do
 		object:setDimension(self.m_Dimension)
 	end
-end
-
-function ZombieSurvival:addZombieSpawner(pos)
-	setTimer(function()
-		local zombie = Zombie:new(pos.x, pos.y, pos.z, 264, self.m_Dimension)
-		table.insert(self.m_Zombies, zombie)
-	end, 5000, 0)
-
 end
