@@ -68,7 +68,7 @@
 	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
-  
+  	<map src="hospital.map" />
 	<map src="airport.map" />
 	<map src="helm_shop.map" />
 	

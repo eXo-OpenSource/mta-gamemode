@@ -93,36 +93,41 @@ end
 function LocalPlayer:playerWasted()
 	-- Play knock out effect
 	FadeOutShader:new()
-	DeathGUI:new(30000)
-	setTimer(
+	CutscenePlayer:getSingleton():playCutscene("Hospital",
 		function()
-			setCameraInterior(0)
-			setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
+			DeathGUI:new(30000)
 			setTimer(
 				function()
-					setCameraTarget(localPlayer)
-					localPlayer:setHeadless(false)
-					playSound("files/audio/Halleluja.mp3")
-					local x, y, z = 2028, -1405, 110
+					setCameraInterior(0)
+					setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
+					setTimer(
+						function()
+							setCameraTarget(localPlayer)
+							localPlayer:setHeadless(false)
+							playSound("files/audio/Halleluja.mp3")
+							local x, y, z = 2028, -1405, 110
 
-					-- Disable damage while resurrecting
-					addEventHandler("onClientPlayerDamage", root, cancelEvent)
+							-- Disable damage while resurrecting
+							addEventHandler("onClientPlayerDamage", root, cancelEvent)
 
-					addEventHandler("onClientPreRender", root,
-						function(deltaTime)
-							z = z-0.005*deltaTime
-							localPlayer:setPosition(x, y, z)
-							localPlayer:setRotation(0, 0, 225)
-							if z <= 18 then
-								removeEventHandler("onClientPreRender", root, getThisFunction())
-								removeEventHandler("onClientPlayerDamage", root, cancelEvent)
-							end
-						end
+							addEventHandler("onClientPreRender", root,
+								function(deltaTime)
+									z = z-0.005*deltaTime
+									localPlayer:setPosition(x, y, z)
+									localPlayer:setRotation(0, 0, 225)
+									if z <= 18 then
+										removeEventHandler("onClientPreRender", root, getThisFunction())
+										removeEventHandler("onClientPlayerDamage", root, cancelEvent)
+									end
+								end
+							)
+
+						end, 30000, 1
 					)
-
-				end, 30000, 1
+				end, 5000, 1
 			)
-		end, 5000, 1
+
+		end
 	)
 
 end
