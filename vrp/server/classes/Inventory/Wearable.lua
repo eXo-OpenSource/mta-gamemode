@@ -35,10 +35,12 @@ local attachFunc = dumpFunc
 local isAttach = dumpFunc
 local detachFunc = dumpFunc
 
-addEventHandler("onResourceStart", getResourceFromName("bone_attach", function() 
-	attachFunc = exports["bone_attach"].attachElementToBone
-	isAttach = exports["bone_attach"].isElementAttachedToBone
-	detachFunc = exports["bone_attach"].detachElementFromBone
+addEventHandler("onResourceStart", root, function( s) 
+	if s == "bone_attach" then
+		attachFunc = exports["bone_attach"].attachElementToBone
+		isAttach = exports["bone_attach"].isElementAttachedToBone
+		detachFunc = exports["bone_attach"].detachElementFromBone
+	end
 end)
 
 function Wearable:constructor() 
