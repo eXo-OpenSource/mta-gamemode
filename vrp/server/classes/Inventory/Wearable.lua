@@ -30,9 +30,9 @@
 ]]
 
 Wearable = inherit ( Singleton )
-local attachFunc = exports["bone_attach"]:attachElementToBone
-local isAttach = exports["bone_attach"]:isElementAttachedToBone
-local detachFunc = exports["bone_attach"]:detachElementFromBone
+local attachFunc = exports["bone_attach"].attachElementToBone
+local isAttach = exports["bone_attach"].isElementAttachedToBone
+local detachFunc = exports["bone_attach"].detachElementFromBone
 
 function Wearable:constructor() 
 
