@@ -30,9 +30,16 @@
 ]]
 
 Wearable = inherit ( Singleton )
-local attachFunc = exports["bone_attach"].attachElementToBone
-local isAttach = exports["bone_attach"].isElementAttachedToBone
-local detachFunc = exports["bone_attach"].detachElementFromBone
+local dumpFunc = function() end
+local attachFunc = dumpFunc
+local isAttach = dumpFunc
+local detachFunc = dumpFunc
+
+addEventHandler("onResourceStart", getResourceFromName("bone_attach", function() 
+	attachFunc = exports["bone_attach"].attachElementToBone
+	isAttach = exports["bone_attach"].isElementAttachedToBone
+	detachFunc = exports["bone_attach"].detachElementFromBone
+end)
 
 function Wearable:constructor() 
 
