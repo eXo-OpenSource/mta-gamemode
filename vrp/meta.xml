@@ -111,6 +111,8 @@
 	<script src="server/classes/Inventory/Drugs/DrugsShroom.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/DrugsCocaine.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/PlantWeed.lua" type="server"/>
+	<script src="server/classes/Inventory/Wearable.lua" type="server"/>
+	
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
 	<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
