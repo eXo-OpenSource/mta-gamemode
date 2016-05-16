@@ -93,42 +93,48 @@ end
 function LocalPlayer:playerWasted()
 	-- Play knock out effect
 	FadeOutShader:new()
-	CutscenePlayer:getSingleton():playCutscene("Hospital",
-		function()
-			DeathGUI:new(30000)
-			setTimer(
+	setTimer(function()
+			setCameraInterior(0)
+			localPlayer:setPosition(-2011.20, -61.22, 1047.65)
+			localPlayer:setInterior(0, -2011.20, -61.22, 1047.65)
+			localPlayer:setDimension(0)
+			CutscenePlayer:getSingleton():playCutscene("Hospital",
 				function()
-					setCameraInterior(0)
-					setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
+					DeathGUI:new(30000)
 					setTimer(
 						function()
-							setCameraTarget(localPlayer)
-							localPlayer:setHeadless(false)
-							playSound("files/audio/Halleluja.mp3")
-							local x, y, z = 2028, -1405, 110
 
-							-- Disable damage while resurrecting
-							addEventHandler("onClientPlayerDamage", root, cancelEvent)
+							setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
+							setTimer(
+								function()
+									setCameraTarget(localPlayer)
+									localPlayer:setHeadless(false)
+									playSound("files/audio/Halleluja.mp3")
+									local x, y, z = 2028, -1405, 110
 
-							addEventHandler("onClientPreRender", root,
-								function(deltaTime)
-									z = z-0.005*deltaTime
-									localPlayer:setPosition(x, y, z)
-									localPlayer:setRotation(0, 0, 225)
-									if z <= 18 then
-										removeEventHandler("onClientPreRender", root, getThisFunction())
-										removeEventHandler("onClientPlayerDamage", root, cancelEvent)
-									end
-								end
+									-- Disable damage while resurrecting
+									addEventHandler("onClientPlayerDamage", root, cancelEvent)
+
+									addEventHandler("onClientPreRender", root,
+										function(deltaTime)
+											z = z-0.005*deltaTime
+											localPlayer:setPosition(x, y, z)
+											localPlayer:setRotation(0, 0, 225)
+											if z <= 18 then
+												removeEventHandler("onClientPreRender", root, getThisFunction())
+												removeEventHandler("onClientPlayerDamage", root, cancelEvent)
+											end
+										end
+									)
+
+								end, 30000, 1
 							)
-
-						end, 30000, 1
+						end, 5000, 1
 					)
-				end, 5000, 1
-			)
 
-		end
-	)
+				end
+			)
+	end, 6000, 1)
 
 end
 

@@ -156,7 +156,7 @@ function PlayerManager:playerWasted()
 
 	source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
 	source:triggerEvent("playerWasted")
-	setTimer(function(player) if player and isElement(player) then player:respawn() end end, 8000, 1, source)
+	setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, source)
 end
 
 function PlayerManager:playerChat(message, messageType)
