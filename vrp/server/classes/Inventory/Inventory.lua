@@ -23,7 +23,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 
 	local id, place
 
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE Name = ?", sql:getPrefix(), self.m_Owner:getName()) -- ToDo add Prefix
+	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE Name = ?", sql:getPrefix(), self.m_Owner:getName())
 	for i, row in ipairs(result) do
 		if tonumber(row["Menge"]) > 0 then
 			id = tonumber(row["id"])
@@ -33,6 +33,12 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
 			self.m_Items[id]["Platz"] = place
 			self.m_Bag[row["Tasche"]][place] = id
+			if self:isSpecialItem(row["Objekt"]) then
+				local row_special = sql:queryFetchSingle("SELECT * FROM ??_inventory_items_special WHERE Item = ? AND PlayerId = ?", sql:getPrefix(), row["Objekt"], self.m_Owner:getId())
+				if row_special then
+					self.m_Items[id]["Special"] = row_special.Value
+				end
+			end
 		else
 			removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
 		end
@@ -54,6 +60,27 @@ end
 
 function Inventory:forceRefresh()
 	triggerClientEvent(self.m_Owner, "forceInventoryRefresh", self.m_Owner, self.m_Bag, self.m_Items)
+end
+
+function Inventory:isSpecialItem(item)
+	if ItemManager:getSingleton().m_SpecialItems[item] == true then
+		return true
+	end
+	return false
+end
+
+function Inventory:getSpecialItemData(item)
+	if self.m_Items[self:getItemIdFromName(item)]["Special"] then return self.m_Items[self:getItemIdFromName(item)]["Special"] else return false end
+end
+
+function Inventory:setSpecialItemData(item, value)
+	self.m_Items[self:getItemIdFromName(item)]["Special"] = value
+	local row = sql:queryFetchSingle("SELECT * FROM ??_inventory_items_special WHERE Item = ? AND PlayerId = ?", sql:getPrefix(), item, self.m_Owner:getId())
+	if not row then
+		sql:queryExec("INSERT INTO ??_inventory_items_special (PlayerId, Item, Value) VALUES (?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), item, value)
+	else
+		sql:queryExec("UPDATE ??_inventory_items_special SET Value = ? WHERE Item = ? AND PlayerId = ?", sql:getPrefix(), value, item, self.m_Owner:getId())
+	end
 end
 
 function Inventory:loadItem(id)
@@ -91,6 +118,11 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 
 
 	--outputChatBox("Du benutzt das Item "..itemName.." aus der Tasche "..bag.."!", self.m_Owner, 0, 255, 0) -- in Developement
+end
+
+function Inventory:saveSpecialItem(id, amount)
+	sql:queryExec("UPDATE ??_inventory_slots SET Menge = ?? WHERE id = ??", sql:getPrefix(), amount, id )
+	self:syncClient()
 end
 
 function Inventory:saveItemAmount(id, amount)
@@ -375,6 +407,30 @@ function Inventory:getItemAmount(item)
 			end
 		end
 		return amount
+	else
+		outputDebugString("[INV] Unglültiges Item: "..item)
+	end
+end
+
+function Inventory:getItemIdFromName(item)
+
+	if self.m_Debug == true then
+		outputDebugString("INV-DEBUG-getItemId: Spieler: "..getPlayerName(self.m_Owner).." | Item: "..item)
+	end
+
+	if self.m_ItemData[item] then
+		local bag = self.m_ItemData[item]["Tasche"]
+		local amount = 0
+		local places = self:getPlaces(bag)
+		for place = 0, places, 1 do
+			local id = self.m_Bag[bag][place]
+			if id then
+				if self.m_Items[id]["Objekt"] == item then
+					return id
+				end
+			end
+		end
+		return false
 	else
 		outputDebugString("[INV] Unglültiges Item: "..item)
 	end

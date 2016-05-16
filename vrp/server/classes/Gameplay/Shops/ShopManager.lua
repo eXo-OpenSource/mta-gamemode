@@ -99,6 +99,9 @@ function ShopManager:buyItem(shopId, item, amount)
 		if client:getMoney() >= shop.m_Items[item] then
 			if client:getInventory():getFreePlacesForItem(item) >= 1 then
 				client:getInventory():giveItem(item, 1)
+				if item == "Kanne" then
+					client:getInventory():setSpecialItemData(item, 10)
+				end
 				client:takeMoney(shop.m_Items[item], "Item-Einkauf")
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
 				shop:giveMoney(shop.m_Items[item], "Kunden-Einkauf")

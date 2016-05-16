@@ -22,14 +22,19 @@ function ItemManager:constructor()
 		["Pilz"] = ItemFood,
 		["Wuerfel"] = ItemDice,
 		["Weed-Samen"] = PlantWeed,
-		["Kanne-Leer"] = ItemEmptyCan,
-		["Kanne-Voll"] = ItemFullCan,
+		["Kanne"] = ItemCan
+	}
+
+	self.m_SpecialItems = {
+		["Mautpass"] = true,
+		["Kanne"] = true
 	}
 
 	for name, class in pairs(self.m_ClassItems) do
 		local instance = class:new()
 		instance:setName(name)
 		instance:loadItem()
+
 		ItemManager.Map[name] = instance
 	end
 end

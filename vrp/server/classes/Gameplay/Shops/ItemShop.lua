@@ -14,7 +14,8 @@ function ItemShop:constructor(id, name, position, rotation, typeData, dimension,
 	self.m_Items = {
 		["Radio"] = 2000,
 		["Zigaretten"] = 10,
-		["Wuerfel"] = 10
+		["Wuerfel"] = 10,
+		["Kanne"] = 500
 	}
 
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onItemMarkerHit, self))

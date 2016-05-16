@@ -40,6 +40,10 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/mushroom02.col", 1947)
 	self:loadImportDFF("files/models/mushroom02.dff", 1947)
 
+	self:loadImportTXD("files/models/waterCan.txd", 1902)
+	self:loadImportCOL("files/models/waterCan.col", 1902)
+	self:loadImportDFF("files/models/waterCan.dff", 1902)
+
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
