@@ -896,6 +896,7 @@
 	<vrpfile src="files/images/Inventory/moveinv.png" />
 	<vrpfile src="files/images/Inventory/moveinvS.png" />
 	<vrpfile src="files/images/Inventory/reset.png" />
+	<vrpfile src="files/images/Inventory/waterdrop.png" />
 	<vrpfile src="files/images/Inventory/resetS.png" />
 	<vrpfile src="files/images/Inventory/infoblubf.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte.png" />
@@ -1050,8 +1051,10 @@
 	<vrpfile src="files/models/mushroom02.col"/>
 	<vrpfile src="files/models/zombie.dff"/>
 	<vrpfile src="files/models/zombie.txd"/>
-
-
+	<vrpfile src="files/models/waterCan.txd" />
+	<vrpfile src="files/models/waterCan.dff" />
+	<vrpfile src="files/models/waterCan.col" />
+	
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>

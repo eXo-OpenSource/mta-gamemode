@@ -22,7 +22,12 @@ function ItemFullCan:use( player, itemId, bag, place, itemName )
 		inv:removeItemFromPlace(bag, place, 1)
 		inv:giveItem("Kanne-Leer", 1)
 		inv:forceRefresh()
-		--// INCREASE WATER OF PLANT 
+		local bHyd = plant:getData( "Plant:Hydration") 
+		plant:setData( "Plant:Hydration", bHyd + 1, true)
+		setPedAnimation( player, "bomber", "BOM_Plant_Loop", 2000, true, false)
+		if plant.m_OnWaterRemoteEvent then
+			player:triggerEvent( plant.m_OnWaterRemoteEvent, plant )
+		end
 	end
 end
 

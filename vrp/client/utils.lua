@@ -67,3 +67,8 @@ end
 function rgba(r, g, b, a)
 	return tocolor(r, g, b, a*255)
 end
+
+function dxDrawImage3D(x,y,z,w,h,m,c,r,...)
+	local lx, ly, lz = x+w, y+h, (z+tonumber(r or 0)) or z
+	return dxDrawMaterialLine3D(x,y,z, lx, ly, lz, m, h, c or tocolor(255,255,255,255), ...)
+end

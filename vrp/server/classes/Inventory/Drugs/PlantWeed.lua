@@ -50,11 +50,14 @@ function PlantWeed:getClientCheck( bool, z_pos )
 	if bool then
 		local x,y,z = getElementPosition( source )
 		self.m_Map[#self.m_Map+1] = createObject( WEED_OBJECT, x,y,z_pos)
-		self.m_ActivePlant[#self.m_ActivePlant+1] = self.m_Map[#self.m_Map]
-		setObjectScale( self.m_Map[#self.m_Map], 0.1)
-		setElementCollisionsEnabled( self.m_Map[#self.m_Map], false)
-		ItemGrowable.m_WaterPlants[#ItemGrowable.m_WaterPlants+1] = self.m_Map[#self.m_Map]
-	else outputChatBox("Du bist nicht auf dem richtigen Untergrund!", source)
+		local obj = self.m_Map[#self.m_Map]
+		self.m_ActivePlant[#self.m_ActivePlant+1] = obj
+		setObjectScale( obj, 0.1)
+		setElementCollisionsEnabled( obj, false)
+		ItemGrowable.m_WaterPlants[#ItemGrowable.m_WaterPlants+1] = obj
+		obj:setData("Plant:Hydration", 0, true)
+		obj.m_OnWaterRemoteEvent = "PlantWeed:onWaterPlant"
+	else source:sendError("Dies ist kein guter Untergrund zum Anpflanzen!")
 	end
 end
 
