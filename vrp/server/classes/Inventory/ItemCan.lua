@@ -34,7 +34,10 @@ end
 function ItemCan:action(player, key, state)
 	if state == "down" then
 		local itemName = "Kanne"
-		local fillstate = player:getInventory():getSpecialItemData(itemName) or 0
+		local fillstate = 0
+		if player:getInventory():getSpecialItemData(itemName) then
+			fillstate = tonumber(player:getInventory():getSpecialItemData(itemName))
+		end
 		if fillstate < 1 then
 			if isElementInWater( player ) then
 				player:getInventory():setSpecialItemData(itemName, 10)
