@@ -1101,5 +1101,6 @@
 		<right name="function.kickPlayer" access="true" />
 		<right name="function.fetchRemote" access="true" />
 		<right name="function.createResource" access="true" />
+		<right name="function.ModifyOtherObjects" access="true" />
 	</aclrequest>
 </meta>
