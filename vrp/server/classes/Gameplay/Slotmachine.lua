@@ -18,50 +18,50 @@ function Slotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 	end
 
 	-- Instances
-	self.prices = {}
+	self.m_Prices = {}
 
 	-- PRICES --
 	-- Here you can change the winning things --
-	self.prices.bet 					= 250;			-- Bet amount
+	self.m_Prices.bet 					= 250;			-- Bet amount
 
-	self.prices.normalPrice 			= 5; 		-- Minimum Win Ammount (2 Right icons)			-- Info: This ammount will be there in ANY case
-	self.prices.maxNormalRandomPrice 	= 700;			-- Maximum Random Win-add Ammount (2 Right icons)
+	self.m_Prices.normalPrice 			= 5; 		-- Minimum Win Ammount (2 Right icons)			-- Info: This ammount will be there in ANY case
+	self.m_Prices.maxNormalRandomPrice 	= 700;			-- Maximum Random Win-add Ammount (2 Right icons)
 								-- Maximum Win Ammount: normalPrice + maxNormalRandomPrice
 
-	self.prices.normalPrice2 			= 5;			-- Minimum Win Ammount 2 (2 Right Rare Icons)	-- This too
-	self.prices.maxNormalRandomPrice2 	= 700;			-- Maximum Random Win-add Ammount 2 (2 Right Rare Icons)
+	self.m_Prices.normalPrice2 			= 5;			-- Minimum Win Ammount 2 (2 Right Rare Icons)	-- This too
+	self.m_Prices.maxNormalRandomPrice2 	= 700;			-- Maximum Random Win-add Ammount 2 (2 Right Rare Icons)
 								-- Maximum Win Ammount: normalPrice + maxNormalRandomPrice
 
-	self.prices.jackpot 				= 5000;		-- Jackpot Price
-	self.prices.rareJackpot 			= 13370;		-- Rare Jackpot Price
+	self.m_Prices.jackpot 				= 5000;		-- Jackpot Price
+	self.m_Prices.rareJackpot 			= 13370;		-- Rare Jackpot Price
 
 	--  {5, 1, false}
 	-- Definition:
 	-- {iWeaponID, iWeaponAmmo}
 
-	self.settings = {}
+	self.ms_Settings = {}
 
 
 	-- Methods
-	self.resultFunc = function(...) self:doResult(...) end;
-	self.resetFunc = function(...) self:reset() end;
-	self.startFunc = function(player) self:startPlayer(player) end;
-	self.hebelClickFunc	= function(btn, state, player)
+	self.m_ResultFunc = bind(self.doResult, self)
+	self.m_ResetFunc = bind(self.reset, self)
+	self.m_StartFunc = bind(self.startPlayer, self)
+	self.m_HebelClickFunc = function(btn, state, player)
 		if btn == "left" and state == "down" then
 			self:startPlayer(player)
 		end
 	end;
 	-- Instances
 
-	self.objects = {}
+	self.m_Objects = {}
 
-	self.objects.rolls = {}
+	self.m_Objects.rolls = {}
 	-- self.hebel
 	-- self.wood
 	-- self.gun
 	self.canSpin = true
 
-	self.settings.iconNames = {
+	self.ms_Settings.iconNames = {
 		[900] = "69",
 		[1100] = "69",
 		[1300] = "Gold 1",
@@ -81,36 +81,36 @@ function Slotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 	-- Slotmachine
 
 
-	self.objects.slotmachine = createObject(2325, x, y, z, rx, ry, rz)
-	setObjectScale(self.objects.slotmachine, 2)
+	self.m_Objects.slotmachine = createObject(2325, x, y, z, rx, ry, rz)
+	setObjectScale(self.m_Objects.slotmachine, 2)
 
-	slot_machines[self.objects.slotmachine] = self.objects.slotmachine;
+	slot_machines[self.m_Objects.slotmachine] = self.m_Objects.slotmachine;
 	-- Rolls
 
 	for i = 1, 3, 1 do
-		self.objects.rolls[i] = createObject(2347, x, y, z)
-		setObjectScale(self.objects.rolls[i], 2)
-		attachElements(self.objects.rolls[i], self.objects.slotmachine, -0.45+i/4, 0, 0)
+		self.m_Objects.rolls[i] = createObject(2347, x, y, z)
+		setObjectScale(self.m_Objects.rolls[i], 2)
+		attachElements(self.m_Objects.rolls[i], self.m_Objects.slotmachine, -0.45+i/4, 0, 0)
 	end
 
 	-- Lever ( Hebel )
 
-	self.objects.hebel = createObject(1319, x, y, z)
-	attachElements(self.objects.hebel, self.objects.slotmachine, 0.9, -0.3, 0, 50, 0, rz*(360)/90)
-	setElementFrozen(self.objects.hebel, true)
-	setElementData(self.objects.hebel, "SLOTMACHINE:LEVER", true)
-	self.objects.hebel:setData("clickable", true, true)
+	self.m_Objects.hebel = createObject(1319, x, y, z)
+	attachElements(self.m_Objects.hebel, self.m_Objects.slotmachine, 0.9, -0.3, 0, 50, 0, rz*(360)/90)
+	setElementFrozen(self.m_Objects.hebel, true)
+	setElementData(self.m_Objects.hebel, "SLOTMACHINE:LEVER", true)
+	self.m_Objects.hebel:setData("clickable", true, true)
 
 	-- Wood
 
-	self.objects.wood = createObject(3260, x, y, z)
-	setObjectScale(self.objects.wood, 0.7)
-	attachElements(self.objects.wood, self.objects.slotmachine, 0, 0.5, -0.5)
+	self.m_Objects.wood = createObject(3260, x, y, z)
+	setObjectScale(self.m_Objects.wood, 0.7)
+	attachElements(self.m_Objects.wood, self.m_Objects.slotmachine, 0, 0.5, -0.5)
 
 
 	-- Dimension and Interior
 
-	for index, object in pairs(self.objects) do
+	for index, object in pairs(self.m_Objects) do
 		if type(object) == "table" then
 			for index, e1 in pairs(object) do
 				setElementInterior(e1, int)
@@ -125,8 +125,8 @@ function Slotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 --	outputDebugString("[CALLING] Slotmachine: Constructor")
 
 	-- Events --
-	addEventHandler("onElementClicked", self.objects.hebel, self.hebelClickFunc)
-	setElementData(self.objects.hebel, "SLOTMACHINE:ID", self) -- Store the Object in the element data
+	addEventHandler("onElementClicked", self.m_Objects.hebel, self.m_HebelClickFunc)
+	setElementData(self.m_Objects.hebel, "SLOTMACHINE:ID", self) -- Store the Object in the element data
 end
 
 -- ///////////////////////////////
@@ -173,27 +173,27 @@ function Slotmachine:calculateSpin()
 		grad = 2140						-- Kirsche
 	end
 
-	return grad, self.settings.iconNames[grad];
+	return grad, self.ms_Settings.iconNames[grad];
 end
 
 function Slotmachine:moveLever(player)
-	local x, y, z = getElementPosition(self.objects.hebel)
-	local _, _, _, rx, ry, rz = getElementAttachedOffsets(self.objects.hebel)
+	local x, y, z = getElementPosition(self.m_Objects.hebel)
+	local _, _, _, rx, ry, rz = getElementAttachedOffsets(self.m_Objects.hebel)
 --	local rx, ry, rz = getElementRotation(cSetting["slotmachine_hebel"][id])
-	local _, _, rz = getElementRotation(self.objects.slotmachine)
-	detachElements(self.objects.hebel)
+	local _, _, rz = getElementRotation(self.m_Objects.slotmachine)
+	detachElements(self.m_Objects.hebel)
 
-	setElementPosition(self.objects.hebel, x, y, z)
-	setElementRotation(self.objects.hebel, rx, ry, rz)
+	setElementPosition(self.m_Objects.hebel, x, y, z)
+	setElementRotation(self.m_Objects.hebel, rx, ry, rz)
 
 
-	moveObject(self.objects.hebel, 450, x, y, z, 50, 0, 0, "InQuad")
+	moveObject(self.m_Objects.hebel, 450, x, y, z, 50, 0, 0, "InQuad")
 
 	setTimer(function()
-		moveObject(self.objects.hebel, 450, x, y, z, -50, 0, 0, "InQuad")
+		moveObject(self.m_Objects.hebel, 450, x, y, z, -50, 0, 0, "InQuad")
 	end, 450, 1)
 
-	local int, dim = self.objects.slotmachine:getInterior(), self.objects.slotmachine:getDimension()
+	local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 	setTimer(triggerClientEvent, 150, 1, getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "start_machine", int, dim)
 
 
@@ -207,37 +207,37 @@ function Slotmachine:spin(player)
 	for i = 1, 3, 1 do
 		local grad, icon = self:calculateSpin()
 		--	grad, icon = 900, "69"
-		local x, y, z = getElementPosition(self.objects.rolls[i])
-		local _, _, _, rx, ry, rz = getElementAttachedOffsets(self.objects.rolls[i])
+		local x, y, z = getElementPosition(self.m_Objects.rolls[i])
+		local _, _, _, rx, ry, rz = getElementAttachedOffsets(self.m_Objects.rolls[i])
 		--if rx == 0 then
-		rx, _, _ = getElementRotation(self.objects.rolls[i])
+		rx, _, _ = getElementRotation(self.m_Objects.rolls[i])
 		--end
-		local _, _, rz = getElementRotation(self.objects.slotmachine)
-		if isElementAttached(self.objects.rolls[i]) then
-			detachElements(self.objects.rolls[i])
+		local _, _, rz = getElementRotation(self.m_Objects.slotmachine)
+		if isElementAttached(self.m_Objects.rolls[i]) then
+			detachElements(self.m_Objects.rolls[i])
 
-			setElementPosition(self.objects.rolls[i], x, y, z)
-			setElementRotation(self.objects.rolls[i], rx, ry, rz)
+			setElementPosition(self.m_Objects.rolls[i], x, y, z)
+			setElementRotation(self.m_Objects.rolls[i], rx, ry, rz)
 
 		end
 		--	outputChatBox(grad-rx)
 
 		--	outputChatBox(rx-grad)
-		local s = moveObject(self.objects.rolls[i], 2500+(i*600), x, y, z, grad, 0, 0, "InQuad")
+		local s = moveObject(self.m_Objects.rolls[i], 2500+(i*600), x, y, z, grad, 0, 0, "InQuad")
 
 		ergebnis[i] = icon
 	end
-	setTimer(self.resultFunc, 4100, 1, ergebnis, player)
+	setTimer(self.m_ResultFunc, 4100, 1, ergebnis, player)
 	return true;
 end
 
 function Slotmachine:checkRolls()
 	for i = 1, 3, 1 do
-		local x, y, z = getElementPosition(self.objects.rolls[i])
-		if not isElementAttached(self.objects.rolls[i]) then
-			local rx, ry, _ = getElementRotation(self.objects.rolls[i])
+		local x, y, z = getElementPosition(self.m_Objects.rolls[i])
+		if not isElementAttached(self.m_Objects.rolls[i]) then
+			local rx, ry, _ = getElementRotation(self.m_Objects.rolls[i])
 
-			moveObject(self.objects.rolls[i], 100, x, y, z, -rx, 0, 0, "InQuad")
+			moveObject(self.m_Objects.rolls[i], 100, x, y, z, -rx, 0, 0, "InQuad")
 		end
 	end
 end
@@ -260,31 +260,31 @@ function Slotmachine:giveWin(player, name, x, y, z, id)
 		end, 1000, 1)
 
 	elseif name == "normal" then
-		local int, dim = self.objects.slotmachine:getInterior(), self.objects.slotmachine:getDimension()
+		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
-		local rnd = math.random(0, self.prices.maxNormalRandomPrice)
-		player:giveMoney(self.prices.normalPrice+rnd, "Slotmaschine")
-		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.prices.normalPrice+rnd))
+		local rnd = math.random(0, self.m_Prices.maxNormalRandomPrice)
+		player:giveMoney(self.m_Prices.normalPrice+rnd, "Slotmaschine")
+		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.normalPrice+rnd))
 
 	elseif name == "win" then
-		local int, dim = self.objects.slotmachine:getInterior(), self.objects.slotmachine:getDimension()
+		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
-		local rnd = math.random(0, self.prices.maxNormalRandomPrice2)
-		player:giveMoney(self.prices.normalPrice2+rnd, "Slotmaschine")
-		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.prices.normalPrice2+rnd))
+		local rnd = math.random(0, self.m_Prices.maxNormalRandomPrice2)
+		player:giveMoney(self.m_Prices.normalPrice2+rnd, "Slotmaschine")
+		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.normalPrice2+rnd))
 	elseif name == "jackpot" then
-		local int, dim = self.objects.slotmachine:getInterior(), self.objects.slotmachine:getDimension()
+		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_jackpot", int, dim)
-		player:giveMoney(self.prices.jackpot, "Slotmaschine")
-		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.prices.jackpot))
+		player:giveMoney(self.m_Prices.jackpot, "Slotmaschine")
+		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.jackpot))
 		triggerClientEvent(getRootElement(), "onSlotmachineJackpot", getRootElement(), x, y, z)
 	elseif name == "rare" then
-		local int, dim = self.objects.slotmachine:getInterior(), self.objects.slotmachine:getDimension()
+		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_jackpot", int, dim)
 		triggerClientEvent(getRootElement(), "onSlotmachineJackpot", getRootElement(), x, y, z)
 		outputChatBox(getPlayerName(player).." WON THE RARE JACKPOT!!!", getRootElement(), 0, 255, 0)
-		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.prices.rareJackpot))
-		player:giveMoney(self.prices.rareJackpot, "Slotmaschine")
+		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.rareJackpot))
+		player:giveMoney(self.m_Prices.rareJackpot, "Slotmaschine")
 	elseif name == "drogen" then
 		player:sendInfo(_("Du hast 5 Gramm Weed gewonnen!", player))
 		player:getInventory():giveItem("Weed", 5)
@@ -299,7 +299,7 @@ function Slotmachine:giveWin(player, name, x, y, z, id)
 end
 
 function Slotmachine:doResult(ergebnis, player)
-	local x, y, z = getElementPosition(self.objects.slotmachine)
+	local x, y, z = getElementPosition(self.m_Objects.slotmachine)
 --	cSetting["can_play"][id] = true
 	local kirschen = 0
 	local glocken = 0
@@ -355,25 +355,25 @@ function Slotmachine:doResult(ergebnis, player)
 	elseif rare == 2 then
 		self:giveWin(player, "jackpot", x, y, z, id)
 	else
-		local int, dim = self.objects.slotmachine:getInterior(), self.objects.slotmachine:getDimension()
+		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		player:sendInfo(_("Du hast leider nichts gewonnen!", player))
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_nothing", int, dim)
 	end
 --	self:giveWin(player, "waffen", x, y, z, id)
 	if restart == true then
-		setTimer(self.resetFunc, 1500, 1, id)
+		setTimer(self.m_ResetFunc, 1500, 1, id)
 	end
 end
 
 function Slotmachine:startPlayer(player)
-	if player:getMoney() >= self.prices.bet then
+	if player:getMoney() >= self.m_Prices.bet then
 		if self.canSpin == true then
-			player:takeMoney(self.prices.bet, "Slotmaschine")
-		--	triggerClientEvent(player, "onSlotmachineWintext", player, "#FF0000-$"..self.prices.bet)
+			player:takeMoney(self.m_Prices.bet, "Slotmaschine")
+		--	triggerClientEvent(player, "onSlotmachineWintext", player, "#FF0000-$"..self.m_Prices.bet)
 			self:start(player)
 		end
 	else
-		player:sendError(_("Dir fehlen %d$ um an dieser Slotmachine zu spielen!", player, self.prices.bet))
+		player:sendError(_("Dir fehlen %d$ um an dieser Slotmachine zu spielen!", player, self.m_Prices.bet))
 
 	end
 end
