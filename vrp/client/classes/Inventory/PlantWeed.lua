@@ -5,14 +5,18 @@
 -- *  PURPOSE:     Weed-Seed class client
 -- *
 -- ****************************************************************************
-local w,h = guiGetScreenSize()
-local shader = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
-local shader2 = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
-local srcwaterdrop =  "files/images/Inventory/waterdrop.png" 
+
 PlantWeed = inherit( Object )
-addEvent("PlantWeed:sendClientCheck", true)
-addEvent("PlantWeed:syncPlantMap", true)
-addEvent("PlantWeed:onWaterPlant", true)
+
+function PlantWeed.initalize()
+	local w,h = guiGetScreenSize()
+	local shader = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
+	local shader2 = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
+	local srcwaterdrop =  "files/images/Inventory/waterdrop.png"
+	addEvent("PlantWeed:sendClientCheck", true)
+	addEvent("PlantWeed:syncPlantMap", true)
+	addEvent("PlantWeed:onWaterPlant", true)
+end
 
 function PlantWeed:constructor( )
 	self.m_BindRemoteFunc = bind( PlantWeed.onUse, self )
@@ -64,13 +68,13 @@ function PlantWeed:Render( )
 end
 
 function PlantWeed:destructor( )
-	
+
 end
 
 function IsMatInMaterialType( mat )
 	local bCheck
-	for i = 1,#MATERIAL_TYPES do 
-		for i2 = 1,#MATERIAL_TYPES[i] do 
+	for i = 1,#MATERIAL_TYPES do
+		for i2 = 1,#MATERIAL_TYPES[i] do
 			bCheck = mat == MATERIAL_TYPES[i][i2]
 			if bCheck then
 				return true
@@ -82,14 +86,14 @@ end
 
 function PlantWeed:onSync( tbl )
 	local iHyd,obj
-	for i = 1,#self.m_EntityTable do 
+	for i = 1,#self.m_EntityTable do
 		obj = self.m_EntityTable[i]
 		engineRemoveShaderFromWorldTexture ( obj.m_Shader, "*" ,self.m_EntityTable[i])
 		setElementAlpha( obj, 255 )
 	end
 	self.m_EntityTable = tbl
 	self.m_RendTick = getTickCount()
-	for i = 1,#self.m_EntityTable do 
+	for i = 1,#self.m_EntityTable do
 		obj = self.m_EntityTable[i]
 		iHyd = getElementData(	obj, "Plant:Hydration" )
 		if iHyd >= 1 then

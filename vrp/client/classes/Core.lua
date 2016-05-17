@@ -64,6 +64,8 @@ function Core:ready()
 	FactionManager:new()
 	CompanyManager:new()
 	DeathmatchManager:new()
+
+	PlantWeed.initalize()
 end
 
 function Core:afterLogin()

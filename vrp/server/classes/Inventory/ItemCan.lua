@@ -24,10 +24,12 @@ function ItemCan:use( player, itemId, bag, place, itemName )
 		exports.bone_attach:attachElementToBone(ItemCan.player, player, 12, 0, 0, 0.5, 180, 0, 0)
 		player:triggerEvent("itemCanEnable", fillstate)
 		bindKey(player, "x", "down", self.m_UseBind)
+		player:setPublicSync("ItemCanEnabled", true)
 	else
 		if isElement(ItemCan.player) then ItemCan.player:destroy() end
 		player:triggerEvent("itemCanDisable", fillstate)
 		unbindKey(player, "x", "down", self.m_UseBind)
+		player:setPublicSync("ItemCanEnabled", false)
 	end
 end
 

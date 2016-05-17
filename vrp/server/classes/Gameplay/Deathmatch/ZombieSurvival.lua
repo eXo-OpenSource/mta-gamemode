@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 ZombieSurvival = inherit(Object)
-ZombieSurvival.PickupWeapons = {25, 24, 22, 33, 30}
+ZombieSurvival.PickupWeapons = {25, 24, 22, 33}
 
 function ZombieSurvival:constructor(player)
 
@@ -27,7 +27,6 @@ function ZombieSurvival:constructor(player)
 
 	addEventHandler("onZombieWasted", root, function(ped, player)
 		if isElement(player) then
-			player:sendInfo("Du hast einen Zombie getötet!")
 			self.m_ZombieKills[player] = self.m_ZombieKills[player]+1
 			player:triggerEvent("setScore", self.m_ZombieKills[player])
 		end
@@ -43,7 +42,7 @@ function ZombieSurvival:destructor()
 			zombie:destroy()
 		end
 	end
-	player:triggerEvent("hideScore")
+	self.m_Player:triggerEvent("hideScore")
 	self.m_Player = nil
 	if isTimer(self.m_CreatePickupTimer) then killTimer(self.m_CreatePickupTimer) end
 	if isTimer(self.ZombieTimer) then killTimer(self.ZombieTimer) end
@@ -64,7 +63,7 @@ function ZombieSurvival:preparePlayer(player)
 	player:setArmor(0)
 	player:setHealth(100)
 	takeAllWeapons(player)
-	player:giveWeapon(24, 30, true)
+	player:giveWeapon(24, 15, true)
 	player:triggerEvent("showScore")
 
 	addEventHandler("onPlayerDamage", player, function(attacker, weapon, bodypart, loss)
