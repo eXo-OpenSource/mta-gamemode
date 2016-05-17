@@ -9,13 +9,11 @@
 PlantWeed = inherit( Object )
 
 function PlantWeed.initalize()
-	local w,h = guiGetScreenSize()
-	local shader = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
-	local shader2 = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
-	local srcwaterdrop =  "files/images/Inventory/waterdrop.png"
-	addEvent("PlantWeed:sendClientCheck", true)
-	addEvent("PlantWeed:syncPlantMap", true)
-	addEvent("PlantWeed:onWaterPlant", true)
+	PlantWeed.Shader = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
+	PlantWeed.Shader2 = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
+	PlantWeed.WaterDrop =  "files/images/Inventory/waterdrop.png"
+
+	addRemoteEvents{"PlantWeed:sendClientCheck", "PlantWeed:syncPlantMap", "PlantWeed:onWaterPlant"}
 end
 
 function PlantWeed:constructor( )
@@ -38,17 +36,17 @@ function PlantWeed:onUse(  objID )
 end
 
 function PlantWeed:Render( )
-	if shader and shader2 then
+	if PlantWeed.Shader and PlantWeed.Shader2 then
 		if #self.m_EntityTable ~= 0 then
 			local timeElapsed = getTickCount() - self.m_RendTick
 			local f = timeElapsed / 500
 			f = math.min( f, 1 )
 			local size = math.lerp ( 1, 1.2, f )
 			local alpha = math.lerp ( 1.0, 0.0, f )
-			dxSetShaderValue( shader, "sMorphSize", size, size, size )
-			dxSetShaderValue( shader, "sMorphColor", 0, 1, 0, alpha )
-			dxSetShaderValue( shader2, "sMorphSize", size, size, size )
-			dxSetShaderValue( shader2, "sMorphColor", 1, 0, 0, alpha )
+			dxSetShaderValue( PlantWeed.Shader, "sMorphSize", size, size, size )
+			dxSetShaderValue( PlantWeed.Shader, "sMorphColor", 0, 1, 0, alpha )
+			dxSetShaderValue( PlantWeed.Shader2, "sMorphSize", size, size, size )
+			dxSetShaderValue( PlantWeed.Shader2, "sMorphColor", 1, 0, 0, alpha )
 		end
 	end
 	if self.m_HydPlant then
@@ -60,7 +58,7 @@ function PlantWeed:Render( )
 			local sx, sy = getScreenFromWorldPosition( x,y,(z+1)- offsetZ)
 			local alpha = 255 * prog
 			local color = tocolor( 255, 255, 255, alpha)
-			dxDrawImage(sx,sy,w*0.03,w*0.05, srcwaterdrop, 0,0,0, color)
+			dxDrawImage(sx,sy,screenWidth*0.03,screenWidth*0.05, PlantWeed.WaterDrop, 0,0,0, color)
 		else
 			self.m_HydPlant = nil
 		end
@@ -97,9 +95,9 @@ function PlantWeed:onSync( tbl )
 		obj = self.m_EntityTable[i]
 		iHyd = getElementData(	obj, "Plant:Hydration" )
 		if iHyd >= 1 then
-			obj.m_Shader = shader
+			obj.m_Shader = PlantWeed.Shader
 		else
-			obj.m_Shader = shader2
+			obj.m_Shader = PlantWeed.Shader2
 		end
 		engineApplyShaderToWorldTexture ( obj.m_Shader, "*", obj)
 		setElementAlpha( obj, 254 )
