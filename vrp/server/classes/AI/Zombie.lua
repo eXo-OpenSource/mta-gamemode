@@ -2,21 +2,15 @@ Zombie = inherit(Object)
 
 addRemoteEvents{"onZombieHit", "onZombieSpawn", "onZombieWasted", "onZombieIdle", "onZombieAttack", "doZombieWasted" ,"onZombieBigColHit"}
 
-function Zombie:constructor(x, y, z, model, dim, int, target)
-	if not(dim) then
-		dim = 0
-	end
-	if not(int) then
-		int = 0
-	end
-
+function Zombie:constructor(pos, model, dim, int)
 	-- Ped halt
-	self.ped = createPed(model, x, y, z)
+	self.ped = createPed(model, pos)
 	assert(isElement(self.ped))
-	setElementDimension(self.ped, dim)
-	setElementInterior(self.ped, int)
+	setElementDimension(self.ped, dim or 0)
+	setElementInterior(self.ped, int or 0)
 	setElementData(self.ped, "zombie", true)
 
+	self.m_SeeCheck = true
 	-- Variablen
 	do
 		self.target = nil
@@ -28,12 +22,12 @@ function Zombie:constructor(x, y, z, model, dim, int, target)
 		-- Um dem Zombie werden 2 Colshapes erstellt, ein mit kleinem Radius und ein mit Grossem.
 		-- Dies dient zum Sprinten/Erkennen.
 
-		self.bigcol = createColSphere(x, y, z, 100)
-		self.smallcol = createColSphere(x, y, z, 15)
-		setElementDimension(self.bigcol, dim)
-		setElementInterior(self.bigcol, int)
-		setElementDimension(self.smallcol, dim)
-		setElementInterior(self.smallcol, int)
+		self.bigcol = createColSphere(pos, 100)
+		self.smallcol = createColSphere(pos, 5)
+		setElementDimension(self.bigcol, dim or 0)
+		setElementInterior(self.bigcol, int or 0)
+		setElementDimension(self.smallcol, dim or 0)
+		setElementInterior(self.smallcol, int or 0)
 
 		attachElements(self.bigcol, self.ped)
 		attachElements(self.smallcol, self.ped)
@@ -54,32 +48,25 @@ function Zombie:constructor(x, y, z, model, dim, int, target)
 
 		addEventHandler("onZombieHit", self.ped, function(who)
 			self.target = who;
-			self:SprintToPlayer(who)
+			self:RunToPlayer(who)
 		end)
 
 		addEventHandler("onZombieBigColHit", self.ped, function(who, bool) self:ReplyZombieCanSee(who, bool) end) -- Ob er den sehen kann
 	end
 
-	if target and isElement(target) then
-		self.target = target
-		self:SprintToPlayer(target)
-	else
-		self:SetZombieIdle(true)
-	end
+	self:SetZombieIdle(true)
 
 	triggerEvent("onZombieSpawn", self.ped, self) -- // --
 
 
 	setElementData(self.ped, "object", self);
-	return self.ped
+	return self
 end
 
 function Zombie:destructor(killer)
 	-- Destroy Colshapes
-	if(isElement(self.smallcol) and isElement(self.bigcol)) then
-		destroyElement(self.smallcol)
-		destroyElement(self.bigcol)
-	end
+	if isElement(self.smallcol) then self.smallcol:destroy() end
+	if isElement(self.bigcol) then self.bigcol:destroy() end
 
 	-- Destroy Timers
 	if(isTimer(self.updateRunTimer)) then
@@ -90,6 +77,10 @@ function Zombie:destructor(killer)
 	end
 	triggerEvent("onZombieWasted", self.ped, self, killer) -- // --
 	setTimer(function() if(isElement(self.ped)) then destroyElement(self.ped) self = nil end end, 5*60*1000, 1)
+end
+
+function Zombie:disableSeeCheck()
+	self.m_SeeCheck = false
 end
 
 function Zombie:NewIdlePos()
@@ -235,12 +226,16 @@ function Zombie:ReplyZombieCanSee(player, bool)
 end
 
 function Zombie:CheckIfZombieCanSee(attacker)
-	if(getElementType(attacker) == "vehicle") then
-		if(getVehicleOccupant(attacker)) then
-			self:ReplyZombieCanSee(getVehicleOccupant(attacker), true);
+	if self.m_SeeCheck == true then
+		if(getElementType(attacker) == "vehicle") then
+			if(getVehicleOccupant(attacker)) then
+				self:ReplyZombieCanSee(getVehicleOccupant(attacker), true);
+			end
+		elseif(getElementType(attacker) == "player") then
+			triggerClientEvent(attacker, "doZombieCanSeeCheck", attacker, self.ped);
 		end
-	elseif(getElementType(attacker) == "player") then
-		triggerClientEvent(attacker, "doZombieCanSeeCheck", attacker, self.ped);
+	else
+		self:SprintToPlayer(attacker)
 	end
 end
 
