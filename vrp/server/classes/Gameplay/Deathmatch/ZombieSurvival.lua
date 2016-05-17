@@ -102,7 +102,7 @@ end
 
 function ZombieSurvival:addZombie()
 	local pos = self:getRandomPosition()
-	local zombie = Zombie:new(pos.x, pos.y, pos.z, 310, self.m_Dimension)
+	local zombie = Zombie:new(pos.x, pos.y, pos.z, 310, self.m_Dimension,0 , self.m_Player)
 	table.insert(self.m_Zombies, zombie)
 	self.ZombieTimer = setTimer(bind(self.addZombie, self), self.m_ZombieTime, 1)
 end

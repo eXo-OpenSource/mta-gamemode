@@ -2,7 +2,7 @@ Zombie = inherit(Object)
 
 addRemoteEvents{"onZombieHit", "onZombieSpawn", "onZombieWasted", "onZombieIdle", "onZombieAttack", "doZombieWasted" ,"onZombieBigColHit"}
 
-function Zombie:constructor(x, y, z, model, dim, int)
+function Zombie:constructor(x, y, z, model, dim, int, target)
 	if not(dim) then
 		dim = 0
 	end
@@ -54,13 +54,18 @@ function Zombie:constructor(x, y, z, model, dim, int)
 
 		addEventHandler("onZombieHit", self.ped, function(who)
 			self.target = who;
-			self:RunToPlayer(who)
+			self:SprintToPlayer(who)
 		end)
 
 		addEventHandler("onZombieBigColHit", self.ped, function(who, bool) self:ReplyZombieCanSee(who, bool) end) -- Ob er den sehen kann
 	end
 
-	self:SetZombieIdle(true)
+	if target and isElement(target) then
+		self.target = target
+		self:SprintToPlayer(target)
+	else
+		self:SetZombieIdle(true)
+	end
 
 	triggerEvent("onZombieSpawn", self.ped, self) -- // --
 

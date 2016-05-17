@@ -8,12 +8,12 @@
 
 PlantWeed = inherit( Object )
 
+addRemoteEvents{"PlantWeed:sendClientCheck", "PlantWeed:syncPlantMap", "PlantWeed:onWaterPlant"}
+
 function PlantWeed.initalize()
 	PlantWeed.Shader = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
 	PlantWeed.Shader2 = dxCreateShader ( "files/shader/shell_layer.fx",0,0,true, "object" )
 	PlantWeed.WaterDrop =  "files/images/Inventory/waterdrop.png"
-
-	addRemoteEvents{"PlantWeed:sendClientCheck", "PlantWeed:syncPlantMap", "PlantWeed:onWaterPlant"}
 end
 
 function PlantWeed:constructor( )
@@ -28,7 +28,7 @@ function PlantWeed:constructor( )
 	addEventHandler("PlantWeed:onWaterPlant", localPlayer, self.m_BindRemoteFunc4 )
 end
 
-function PlantWeed:onUse(  objID )
+function PlantWeed:onUse(objID)
 	local x,y,z = getElementPosition( localPlayer )
 	local gz = getGroundPosition( x, y, z )
 	local bProc, _, _, _, _, _, _, _, mat =  processLineOfSight ( x, y, gz, x, y, gz-1)
