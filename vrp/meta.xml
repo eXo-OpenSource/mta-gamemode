@@ -112,7 +112,7 @@
 	<script src="server/classes/Inventory/Drugs/DrugsCocaine.lua" type="server"/>
 	<script src="server/classes/Inventory/Drugs/PlantWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Wearable.lua" type="server"/>
-	
+
 	<!-- Bank System -->
 	<script src="server/classes/Player/Bank/BankManager.lua" type="server"/>
 	<script src="server/classes/Player/Bank/BankAccount.lua" type="server"/>
@@ -124,7 +124,7 @@
 	<!-- Gameplay -->
 
 	<!-- Minigames -->	<!-- not done yet-->
-	<!--<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/Minigames/RockPaperScissors.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
@@ -1100,5 +1100,6 @@
 		<right name="function.stopResource" access="true" />
 		<right name="function.kickPlayer" access="true" />
 		<right name="function.fetchRemote" access="true" />
+		<right name="function.createResource" access="true" />
 	</aclrequest>
 </meta>

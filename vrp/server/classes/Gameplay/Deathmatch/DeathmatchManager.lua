@@ -11,7 +11,7 @@ DeathmatchManager = inherit(Singleton)
 function DeathmatchManager:constructor()
 
 	--Zombie Survival
-	Highscore:new("ZombieSurvival")
+	 self.m_ZombieSurvivalHighscore = Highscore:new("ZombieSurvival")
 
 	 local zombiePed = createPed(1 ,-31.64, 1377.67, 9.17, 90)
 	 zombiePed:setFrozen(true)

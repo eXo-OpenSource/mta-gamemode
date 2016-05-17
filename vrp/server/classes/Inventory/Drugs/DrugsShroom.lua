@@ -8,11 +8,13 @@
 DrugsShroom = inherit(ItemDrugs)
 
 function DrugsShroom:constructor()
-    self.m_Path = "files/data/mushrooms.dat"
+    self.m_Path = ":vrp_data/mushrooms.dat"
     self.m_MagicModel = 1947
     self.m_NormalModel = 1882
     self.m_Models = {self.m_MagicModel, self.m_NormalModel}
+    self.m_MushRoomTable = {}
     self:load()
+
 
     addCommandHandler("addMushroom", bind(self.addPosition, self))
 end
@@ -57,22 +59,34 @@ function DrugsShroom:addPosition(player, cmd)
 end
 
 function DrugsShroom:loadPositions()
-
+    if not getResourceFromName("vrp_data") then createResource("vrp_data") end
+    if not getResourceState(getResourceFromName("vrp_data")) == "running" then startResource(getResourceFromName("vrp_data")) end
     if not fileExists(self.m_Path) then
-        fileClose(fileCreate(self.m_Path))
+        local file = fileCreate(self.m_Path)
+        fileSetPos(file, 0)
+        fileWrite(file, toJSON(self.m_MushRoomTable))
+        fileClose(file)
+        fileClose()
     end
+
     local file = fileOpen (self.m_Path, false)
-	local buffer
-	while not fileIsEOF(file) do
-		buffer = fileRead(file, 50000)
-	end
-	fileClose(file)
-	self.m_MushRoomTable = fromJSON(buffer)
-    outputDebug("mushrooms.dat - Loaded "..#self.m_MushRoomTable.." Mushroom Positions!")
+    if file then
+    	local buffer
+    	while not fileIsEOF(file) do
+    		buffer = fileRead(file, 50000)
+    	end
+    	fileClose(file)
+        if fromJSON(buffer) then
+    	       self.m_MushRoomTable = fromJSON(buffer)
+           end
+        outputDebug("mushrooms.dat - Loaded "..#self.m_MushRoomTable.." Mushroom Positions!")
+    end
 end
 
 function DrugsShroom:savePositions()
     local mushRoomJSON = toJSON(self.m_MushRoomTable)
+    if not getResourceFromName("vrp_data") then createResource("vrp_data") end
+    if not getResourceState(getResourceFromName("vrp_data")) == "running" then startResource(getResourceFromName("vrp_data")) end
     fileDelete(self.m_Path)
     if not fileExists(self.m_Path) then
         fileClose(fileCreate(self.m_Path))
