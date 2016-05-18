@@ -449,14 +449,12 @@ function FactionState:Event_grabPlayer(target)
 			local vehicle = client:getOccupiedVehicle()
 			if vehicle and vehicle:getFaction() and vehicle:isStateVehicle() then
 				if target.isTasered == true then
-					for seat, playerItem in pairs(vehicle:getOccupants()) do
-						if seat > 0 then
-							if not playerItem then
-								warpPedIntoVehicle(target, vehicle, seat)
-								client:sendInfo(_("%s wurde in dein Fahrzeug gezogen!", client, target:getName()))
-								target:sendInfo(_("Du wurdest von %s in das Fahrzeug gezogen!", target, client:getName()))
-								return
-							end
+					for seat = 1, getVehicleMaxPassengers(vehicle) do
+						if not vehicle:getOccupant(seat) then
+							warpPedIntoVehicle(target, vehicle, seat)
+							client:sendInfo(_("%s wurde in dein Fahrzeug gezogen!", client, target:getName()))
+							target:sendInfo(_("Du wurdest von %s in das Fahrzeug gezogen!", target, client:getName()))
+							return
 						end
 					end
 					client:sendError(_("Du hast keinen Platz in deinem Fahrzeug!", client))
