@@ -2,16 +2,22 @@ CutscenePlayer:getSingleton():registerCutscene("Hospital", {
 	name = "Hospital";
 	startscene = "Hospital";
 	debug = true;
-
+	interior = 0;
 	-- Scene 1
 	{
 		uid = "Hospital";
 		letterbox = true;
 		{
 			action = "General.fade";
-			fadein = true;
+			fadein = false;
 			time = 0;
 			starttick = 0;
+		};
+		{
+			action = "General.fade";
+			fadein = true;
+			time = 1000;
+			starttick = 500;
 		};
 		{
 			action = "Camera.set";
