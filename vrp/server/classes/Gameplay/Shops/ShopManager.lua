@@ -42,6 +42,9 @@ function ShopManager:loadShops()
 
 		local instance = SHOP_TYPES[row.Type]["Class"]:new(row.Id, row.Name, Vector3(row.PosX, row.PosY, row.PosZ), row.Rot, SHOP_TYPES[row.Type], row.Dimension, row.RobAble, row.Money, row.LastRob, row.Owner, row.Price)
 		ShopManager.Map[row.Id] = instance
+		if row.Blip then
+			instance:addBlip(row.Blip)
+		end
 	end
 end
 
@@ -50,6 +53,9 @@ function ShopManager:loadVehicleShops()
     for k, row in ipairs(result) do
 		local instance = VehicleShop:new(row.Id, row.Name, row.Marker, row.NPC, row.Spawn, row.Image, row.Owner, row.Price, row.Money)
 		ShopManager.VehicleShopsMap[row.Id] = instance
+		if row.Blip then
+			instance:addBlip(row.Blip)
+		end
 	end
 
 	local result = sql:queryFetch("SELECT * FROM ??_vehicle_shop_veh", sql:getPrefix())

@@ -19,11 +19,14 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	self.m_LastRob = lastRob
 	self.m_OwnerId = owner
 	self.m_Money = money
+	self.m_Position = position
 
 	local interior, intPosition = unpack(typeData["Interior"])
 	local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
 
-	InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
+	if interior > 0 then
+		InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
+	end
 
 	if robable == 1 then
 		RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)
@@ -54,6 +57,10 @@ end
 
 function Shop:getName()
 	return self.m_Name
+end
+
+function Shop:addBlip(blip)
+	return Blip:new(blip, self.m_Position.x, self.m_Position.y)
 end
 
 function Shop:giveMoney(amount, reason)

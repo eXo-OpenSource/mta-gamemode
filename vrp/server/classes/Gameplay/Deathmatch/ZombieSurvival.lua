@@ -100,11 +100,23 @@ end
 
 function ZombieSurvival:addZombie()
 	local pos = self:getRandomPosition()
-	local zombie = Zombie:new(pos, 310, self.m_Dimension)
-	zombie:disableSeeCheck()
-	zombie:SprintToPlayer(self.m_Player)
-	table.insert(self.m_Zombies, zombie)
+	self:createSmoke(pos)
+	setTimer(function()
+		local zombie = Zombie:new(pos, 310, self.m_Dimension)
+		zombie:disableSeeCheck()
+		zombie:SprintToPlayer(self.m_Player)
+		table.insert(self.m_Zombies, zombie)
+	end, 2500, 1)
+
 	self.ZombieTimer = setTimer(bind(self.addZombie, self), self.m_ZombieTime, 1)
+end
+
+function ZombieSurvival:createSmoke(pos)
+	local smoker = createObject(2780, pos.x, pos.y, pos.z-1)
+	smoker:setAlpha(0)
+	smoker:setDimension(self.m_Dimension)
+	smoker:setCollisionsEnabled(false)
+	setTimer(destroyElement, 3000, 1, smoker)
 end
 
 function ZombieSurvival:loadMap()

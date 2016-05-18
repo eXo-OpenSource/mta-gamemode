@@ -33,9 +33,29 @@ SHOP_TYPES = {
 		["Ped"] = {202, Vector3(-28.15, -91.64, 1003.55), 0},
 		["Marker"] = Vector3(-28, -89.9, 1002.7),
 		["Class"] = ItemShop
+	},
+	[6] = {
+		["Name"] = "Gärtnerei",
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Ped"] = {202, Vector3(2426.27, 125.96, 26.48), 270},
+		["Marker"] = Vector3(2427.99, 126.00, 25.5),
+		["Class"] = ItemShop
 	}
-
 }
+
+SHOP_ITEMS = {
+	["Gärtnerei"] = {
+		["Weed-Samen"] = 20,
+		["Kanne"] = 500
+	};
+	["24/7"] = {
+		["Radio"] = 2000,
+		["Zigaretten"] = 10,
+		["Wuerfel"] = 10,
+		["Kanne"] = 500
+	};
+}
+
 ROBABLE_SHOP_STATE_TARGETS = {Vector3(1580,-1632.17,13.4)}
 ROBABLE_SHOP_EVIL_TARGETS = {
 	Vector3(2862.2783203125,-1439.802734375,10.941749572754),
