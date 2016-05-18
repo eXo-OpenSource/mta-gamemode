@@ -446,21 +446,28 @@ function FactionState:Event_grabPlayer(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			if client:getOccupiedVehicle() and client:getOccupiedVehicle():getFaction() and client:getOccupiedVehicle():isStateVehicle() then
+			local vehicle = client:getOccupiedVehicle()
+			if vehicle and vehicle:getFaction() and vehicle:isStateVehicle() then
 				if target.isTasered == true then
-					for seat, playerItem in pairs(client:getOccupiedVehicle():getOccupants()) do
+					for seat, playerItem in pairs(vehicle:getOccupants()) do
 						if seat > 0 then
-							if not isElement(playerItem) then
-								warpPedIntoVehicle(target, client:getOccupiedVehicle(), seat)
+							if not playerItem then
+								warpPedIntoVehicle(target, vehicle, seat)
+								client:sendInfo(_("%s wurde in dein Fahrzeug gezogen!", client, target:getName()))
+								target:sendInfo(_("Du wurdest von %s in das Fahrzeug gezogen!", target, client:getName()))
+								return
 							end
 						end
 					end
+					client:sendError(_("Du hast keinen Platz in deinem Fahrzeug!", client))
 				else
 					client:sendError(_("Der Spieler ist nicht getazert!", client))
 				end
 			else
 				client:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", client))
 			end
+		else
+			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	end
 end
