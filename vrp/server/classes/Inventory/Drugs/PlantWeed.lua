@@ -12,12 +12,13 @@ local growInterval = 10000
 addEvent("PlantWeed:getClientCheck", true)
 
 function PlantWeed:constructor()
-	self.name = "Weed"
+	self.m_Name = "Weed"
 	self.m_Map = {	}
 	self.m_ActivePlant = {	}
 	self.m_BindRemoteFunc = bind( PlantWeed.getClientCheck, self )
 	self.m_BindGrowFunc = bind( PlantWeed.grow, self )
 	self.m_GrowTimer = setTimer( self.m_BindGrowFunc, growInterval,0  )
+	ItemGrowable.m_Map[self.m_Name] = self
 	addEventHandler("PlantWeed:getClientCheck",root, self.m_BindRemoteFunc)
 end
 

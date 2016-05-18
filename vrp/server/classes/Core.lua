@@ -85,7 +85,9 @@ function Core:constructor()
 
 	--// Gangwar
 	Gangwar:new()
-
+	
+	ItemGrowable:loadPlantSQL( )
+	
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")
 	local files = {}
@@ -111,6 +113,7 @@ function Core:constructor()
 
 	addEventHandler("Core.onClientInternalError", root, bind(self.onClientInternalError, self))
 
+	
 	-- Prepare unit tests
 	if DEBUG then
 		addCommandHandler("runtests", bind(self.runTests, self))
@@ -123,6 +126,7 @@ function Core:onClientInternalError (msg)
 end
 
 function Core:destructor()
+	ItemGrowable:savePlantSQL(  )
 	delete(VehicleManager:getSingleton())
 	delete(PlayerManager:getSingleton())
 	delete(GroupManager:getSingleton())

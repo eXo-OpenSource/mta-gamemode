@@ -9,13 +9,17 @@ ItemGrowable = inherit(Item)
 ItemGrowable.m_WaterPlants = {	}
 --CONSTANTS--
 WEED_OBJECT = 3409
-local SQL_Q1 = "INSERT INTO ??_plants ( ID, PlantKey, PlantName, Owner, x, y, z, content, value2) VALUES ( ?, ? , ? , ?, ?, ?, ?, ?, ? )"
-local SQL_Q2 = "SELECT * FROM ??_plant"
+local SQL_Q1 = "INSERT INTO ??_plants (  PlantKey, PlantName, Owner, x, y, z, content, value2) VALUES (  ? , ? , ?, ?, ?, ?, ?, ? )"
+local SQL_Q2 = "UPDATE ??_plants SET content = ?, value2 = ? WHERE PlantKey =?"
+local SQL_Q3 = "SELECT * FROM ??_plants"
+local SQL_Q4 = "DELETE FROM ??_plants WHERE PlantKey = ?"
 
-ItemGrowable.m_PlantIndex = 
+ItemGrowable.m_Map = 
 {
-	["Weed"] =  PlantWeed,
+	
 }
+
+ItemGrowable.m_RemoveKeys = {	}
 
 function ItemGrowable:constructor()
 	
@@ -63,51 +67,73 @@ function ItemGrowable:getNextWaterPlant( player )
 	return minObj or nil
 end
 
-function ItemGrowable:savePlants( )
-	local obj, plant, x,y,z, owner, unique, bcheck, id
-	local notInserted = 0
-	for i = 1,#ItemGrowable.m_PlantIndex do 
-		obj = ItemGrowable.m_PlantIndex[i]
-		for i2 = 1, #obj.m_Map do
-			plant = obj.m_Map[i2]
-			x,y,z = getElementPosition( plant )
-			owner = plant.m_Owner 
-			unique = plant.m_UniqueIndex
-			bcheck = self:isPlantInSQL( plant )
-			if not bcheck then
-				--sql:queryExec( SQL_Q1, sql:getPrefix())
+function ItemGrowable:savePlantSQL( )
+	local x, y, z, owner, index, bcheck, scale, plant, obj, name
+	for name, obj in pairs( ItemGrowable.m_Map )  do
+		if obj then 
+			for index2 = 1, #obj.m_Map do 
+				plant = obj.m_Map[index2]
+				if plant then
+					x,y,z = getElementPosition( plant )
+					owner = plant.m_Owner
+					index = plant.m_UniqueIndex
+					bcheck = ItemGrowable:isPlantInSQL( plant )
+					scale = getObjectScale( plant )
+					if not bcheck then
+						bcheck = sql:queryExec( SQL_Q1, sql:getPrefix(), index, name, owner, x, y, z, scale, 0)
+					else
+						bcheck = sql:queryExec( SQL_Q2, sql:getPrefix(), scale, 0)
+					end
+					if not bcheck then
+						print("[SQL-Error] Could not edit/create Plant: "..index)
+					end
+				end
 			end
 		end
 	end
 end
 
-function ItemGrowable:loadPlants( )
-	local x, y, z, plant, scale, owner, index, id
-	local num = 0
-	local res = sql:queryFetch( SQL_Q2 , sql:getPrefix() )
-	for k, v in pairs( res ) do
-		x,y,z = v.x, v.y, v.z
-		owner = v.Owner
-		scale = v.content
-		index = v.PlantKey
-		id = v.ID
-		plant = v.PlantName
-		if self.m_PlantIndex[ plant ] then
-			self.m_PlantIndex[ plant ]:createNew( owner, index, x,y,z, scale)
-		end
-		num = num + 1
-	end
-	self.m_SQLTable = res
-	self.m_SQLROWS = num
-end
-
 function ItemGrowable:isPlantInSQL( plant )
-	local index
-	for k, v in pairs( self.m_SQLTable ) do
-		index = v.PlantKey
-		if index == plant.m_UniqueIndex then
+	for k, v in pairs( self.m_SQLt ) do
+		if v.PlantKey == plant.m_UniqueIndex then 
 			return true
 		end
 	end
 	return false
 end
+
+function ItemGrowable:loadPlantSQL(  )
+	local result = sql:queryFetch(SQL_Q3, sql:getPrefix() )
+	local owner, x,y,z, name,index, scale, value
+	if result then
+		for k, v in pairs( result ) do
+			owner = v.Owner
+			x,y,z = v.x, v.y, v.z
+			index = v.PlantKey
+			name = v.PlantName
+			scale = v.content
+			value = v.value2
+			if self.m_Map[ name ] then 
+				self.m_Map[ name ]:createNew( owner, index, x, y, z, scale)
+				outputChatBox("Planted")
+			end
+		end
+	end
+	self.m_SQLt = result
+end
+
+function ItemGrowable:removePlants( )
+	local key, bcheck
+	for index = 1, #self.m_RemoveKeys do
+		key = self.m_RemoveKeys[index]
+		if key then
+			bcheck = sql:queryExec( SQL_Q4, sql:getPrefix(), key)
+			if not bcheck then 
+				print("[SQL-Error] Could not remove Plant: "..key)
+			end
+		end
+	end
+end
+
+
+
