@@ -35,7 +35,7 @@ end
 function ShopManager:loadShops()
 	local result = sql:queryFetch("SELECT * FROM ??_shops", sql:getPrefix())
     for k, row in ipairs(result) do
-		if not SHOP_TYPES[row.Type] then outputDebug("Error Loading Shop ID "..row.Id.." | Invalid Type") end
+		if not SHOP_TYPES[row.Type] then outputDebug("Error Loading Shop ID "..row.Id.." | Invalid Type") return end
 
 		--local newName = SHOP_TYPES[row.Type]["Name"].." "..getZoneName(row.PosX, row.PosY, row.PosZ)
 		--sql:queryExec("UPDATE ??_shops SET Name = ? WHERE Id = ?", sql:getPrefix(), newName ,row.Id)
