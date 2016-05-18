@@ -10,7 +10,9 @@ local growRate = 0.1
 local rem = table.remove
 local growInterval = 10000
 addEvent("PlantWeed:getClientCheck", true)
+
 function PlantWeed:constructor()
+	self.name = "Weed"
 	self.m_Map = {	}
 	self.m_ActivePlant = {	}
 	self.m_BindRemoteFunc = bind( PlantWeed.getClientCheck, self )
@@ -57,8 +59,23 @@ function PlantWeed:getClientCheck( bool, z_pos )
 		ItemGrowable.m_WaterPlants[#ItemGrowable.m_WaterPlants+1] = obj
 		obj:setData("Plant:Hydration", 0, true)
 		obj.m_OnWaterRemoteEvent = "PlantWeed:onWaterPlant"
+		obj.m_Owner = source.name
+		obj.m_UniqueIndex = source.name.."."..getRealTime().timestamp
 	else source:sendError("Dies ist kein guter Untergrund zum Anpflanzen!")
 	end
+end
+
+function PlantWeed:createNew( owner, index, x, y, z, scale)
+	self.m_Map[#self.m_Map+1] = createObject( WEED_OBJECT, x,y,z)
+	local obj = self.m_Map[#self.m_Map]
+	self.m_ActivePlant[#self.m_ActivePlant+1] = obj
+	setObjectScale( obj, scale)
+	setElementCollisionsEnabled( obj, false)
+	ItemGrowable.m_WaterPlants[#ItemGrowable.m_WaterPlants+1] = obj
+	obj:setData("Plant:Hydration", 0, true)
+	obj.m_OnWaterRemoteEvent = "PlantWeed:onWaterPlant"
+	obj.m_Owner = owner
+	obj.m_UniqueIndex = index
 end
 
 function PlantWeed:syncGrow( client )
@@ -73,3 +90,4 @@ function PlantWeed:syncGrow( client )
 		client:triggerEvent("PlantWeed:syncPlantMap",self.m_ActivePlant )
 	end
 end
+
