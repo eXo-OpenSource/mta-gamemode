@@ -55,7 +55,7 @@ function LoginGUI:constructor()
 	self.m_RegisterEditPass:setMasked("*")
 	self.m_RegisterInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.04,
 
-	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf V-Roleplay!
+	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf eXo-Reallife!
 
 	Bitte fülle die folgenden Informationen aus um dich zu registrieren!
 	]], self.m_RegisterTab):setFont(VRPFont(sh*0.035))
@@ -186,7 +186,7 @@ function LoginGUI:showRegisterMultiaccountError(name)
 	local width, height = screenWidth*0.6*0.75*0.7, (screenHeight*0.6-screenHeight*0.6*0.01)*0.2
 
 	self.m_RegisterInfoText:setText(
-	[[Willkommen auf V-Roleplay!
+	[[Willkommen auf eXo-Reallife!
 
 	Es ist ein Fehler aufgetreten!
 	]]
