@@ -53,10 +53,8 @@ function GrowableManager:addNewPlant(type, position, owner)
 end
 
 function GrowableManager:getNextWaterPlant(player)
-	local plant
 	for id, plant in pairs(GrowableManager.Map) do
-		plant = plant:getObject()
-		if getDistanceBetweenPoints3D(player:getPosition(), obj:getPosition()) <= 5 then
+		if getDistanceBetweenPoints3D(player:getPosition(), plant:getObject():getPosition()) <= 5 then
 			return plant
 		end
 	end

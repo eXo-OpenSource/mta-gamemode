@@ -45,6 +45,16 @@ function Growable:refreshObjectSize()
 	self.m_Object:setScale(self.m_Size*self.ms_ObjectSizeSteps)
 end
 
+function Growable:getObject()
+	return self.m_Object
+end
+
+function Growable:waterPlant(player)
+	self.m_LastWatered = getRealTime().timestamp
+	player:setAnimation("bomber", "BOM_Plant_Loop", 2000, true, false)
+	player:triggerEvent("PlantWeed:onWaterPlant", self:getObject())
+end
+
 function Growable:save()
 	sql:queryExec("UPDATE ??_plants SET Size = ?, last_grown = ?, last_watered = ? WHERE Id = ?", sql:getPrefix(), self.m_Size, self.m_LastGrown, self.m_LastWatered, self.m_Id)
 end

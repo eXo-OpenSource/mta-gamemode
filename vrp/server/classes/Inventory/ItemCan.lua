@@ -49,16 +49,11 @@ function ItemCan:action(player, key, state)
 				player:sendError("Sie befinden sich nicht im Wasser!")
 			end
 		else
-			local plant = ItemGrowable:getNextWaterPlant( player )
+			local plant = GrowableManager:getSingleton():getNextWaterPlant(player)
 			if plant then
 				player:getInventory():setSpecialItemData(itemName, fillstate-1)
 				player:triggerEvent("itemCanRefresh", fillstate-1)
-				local bHyd = plant:getData( "Plant:Hydration")
-				plant:setData( "Plant:Hydration", bHyd + 1, true)
-				setPedAnimation( player, "bomber", "BOM_Plant_Loop", 2000, true, false)
-				if plant.m_OnWaterRemoteEvent then
-					player:triggerEvent( plant.m_OnWaterRemoteEvent, plant )
-				end
+				plant:waterPlant(player)
 			else
 				player:sendError("Keine Pflanze zum Bewässern in der Nähe!")
 			end
