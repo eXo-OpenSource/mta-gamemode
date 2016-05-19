@@ -35,6 +35,8 @@ function Growable:checkGrow()
 		local grow = self.ms_GrowPerHour
 		if self.m_LastWatered < self.ms_HoursWatered*60*60 then
 			grow = self.ms_GrowPerHourWatered
+		else
+			self.m_Object:setData("Plant:Hydration", false, true)
 		end
 		self.m_Size = self.m_Size+grow
 		self:refreshObjectSize()
@@ -53,6 +55,7 @@ function Growable:waterPlant(player)
 	self.m_LastWatered = getRealTime().timestamp
 	player:setAnimation("bomber", "BOM_Plant_Loop", 2000, true, false)
 	player:triggerEvent("PlantWeed:onWaterPlant", self:getObject())
+	self:getObject():setData("Plant:Hydration", true, true)
 end
 
 function Growable:save()

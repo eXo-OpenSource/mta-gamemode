@@ -93,8 +93,7 @@ function PlantWeed:onSync( tbl )
 	self.m_RendTick = getTickCount()
 	for i = 1,#self.m_EntityTable do
 		obj = self.m_EntityTable[i]
-		iHyd = getElementData(	obj, "Plant:Hydration" )
-		if iHyd >= 1 then
+		if getElementData(obj, "Plant:Hydration") then
 			obj.m_Shader = PlantWeed.Shader
 		else
 			obj.m_Shader = PlantWeed.Shader2
