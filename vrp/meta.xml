@@ -102,7 +102,6 @@
 	<script src="server/classes/Inventory/ItemDrugs.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemFood.lua" type="server"/>
 	<script src="server/classes/Inventory/ItemCan.lua" type="server"/>
-	<script src="server/classes/Inventory/ItemGrowable.lua" type="server"/>
 	<script src="server/classes/Inventory/WorldItem.lua" type="server"/>
 	<script src="server/classes/Inventory/Inventory.lua" type="server"/>
 	<script src="server/classes/Inventory/InventoryManager.lua" type="server"/>
@@ -474,7 +473,7 @@
 	<script src="client/classes/GUIForms/VehicleInteraction.lua" type="client"/>
 	<script src="client/classes/GUIForms/TourGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ScoreGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/PlantGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>

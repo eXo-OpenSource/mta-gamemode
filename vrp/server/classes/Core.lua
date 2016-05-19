@@ -87,8 +87,6 @@ function Core:constructor()
 	--// Gangwar
 	Gangwar:new()
 
-	--ItemGrowable:loadPlantSQL( )
-
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")
 	local files = {}
@@ -127,7 +125,6 @@ function Core:onClientInternalError (msg)
 end
 
 function Core:destructor()
-	ItemGrowable:savePlantSQL(  )
 	delete(VehicleManager:getSingleton())
 	delete(PlayerManager:getSingleton())
 	delete(GroupManager:getSingleton())
@@ -136,6 +133,7 @@ function Core:destructor()
 	delete(CompanyManager:getSingleton())
 	delete(InventoryManager:getSingleton())
 	delete(ShopManager:getSingleton())
+	delete(GrowableManager:getSingleton())
 
 	delete(sql)
 end

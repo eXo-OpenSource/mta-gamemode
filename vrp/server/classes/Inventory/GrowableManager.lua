@@ -10,7 +10,7 @@ GrowableManager.Types = {
 	["Weed"] = {
 		["Object"] = 3409,
 		["ObjectSizeMin"] = 0.1,
-		["ObjectSizeSteps"] = 0.1,
+		["ObjectSizeSteps"] = 0.05,
 		["GrowPerHour"] = 1,
 		["GrowPerHourWatered"] = 2,
 		["HoursWatered"] = 6,
@@ -26,7 +26,7 @@ function GrowableManager:constructor()
 	self:load()
 end
 
-function GrowableManager:deconstructor()
+function GrowableManager:destructor()
 	for id, plant in pairs(GrowableManager.Map) do
 		plant:save()
 	end
@@ -35,7 +35,7 @@ end
 function GrowableManager:load()
 	local result = sql:queryFetch("SELECT * FROM ??_plants", sql:getPrefix())
 	for i, row in pairs(result) do
-		GrowableManager.Map[row.Id] = Growable:new(row.Id, GrowableManager.Types[row.Type], Vector3(row.PosX, row.PosY, row.PosZ), row.Owner, row.Size, row.planted, row.lastGrown, row.lastWatered)
+		GrowableManager.Map[row.Id] = Growable:new(row.Id, row.Type, GrowableManager.Types[row.Type], Vector3(row.PosX, row.PosY, row.PosZ), row.Owner, row.Size, row.planted, row.last_grown, row.last_watered)
 	end
 end
 
@@ -49,7 +49,8 @@ function GrowableManager:addNewPlant(type, position, owner)
 	local ts = getRealTime().timestamp
 	sql:queryExec("INSERT INTO ??_plants (Type, Owner, PosX, PosY, PosZ, Size, planted, last_grown, last_watered) VALUES (? , ? , ?, ?, ?, ?, ?, ?, ?)",
 	sql:getPrefix(), type, owner, position.x, position.y, position.z, 1, ts, ts, 0)
-	GrowableManager.Map[sql:lastInsertId()] = Growable:new(GrowableManager.Types[type], position, owner, 1, ts, ts, 0)
+	local id = sql:lastInsertId()
+	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner, 1, ts, ts, 0)
 end
 
 function GrowableManager:getNextWaterPlant(player)

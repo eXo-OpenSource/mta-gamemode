@@ -523,6 +523,16 @@ function getOpticalTimestamp(ts)
 	--return tostring(time.monthday.."."..month.."."..year.."-"..time.hour..":"..time.minute)
 end
 
+function timespanArray(seconds)
+	local td = {}
+    td["total"] = seconds
+    td["sec"] = seconds % 60
+    td["min"] = ((seconds - td["sec"]) / 60) % 60
+    td["hour"] = ((((seconds - td["sec"]) /60)-td["min"]) / 60) % 24
+    td["day"] = math.floor( (((((seconds - td["sec"]) /60)-td["min"]) / 60) / 24) )
+    return td
+end
+
 function getVehicleInteractType(vehicle)
 	-- front doors, hood, trunk
     local twoDoors = {  602, 429, 402, 541, 415, 480, 562, 587, 565, 559, 603, 506, 558, 555, 536, 575,

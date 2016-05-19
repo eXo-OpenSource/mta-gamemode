@@ -28,11 +28,12 @@ function PlantWeed:constructor( )
 	addEventHandler("PlantWeed:onWaterPlant", localPlayer, self.m_BindRemoteFunc4 )
 end
 
-function PlantWeed:onUse(objID)
-	local x,y,z = getElementPosition( localPlayer )
-	local gz = getGroundPosition( x, y, z )
-	local bProc, _, _, _, _, _, _, _, mat =  processLineOfSight ( x, y, gz, x, y, gz-1)
-	triggerServerEvent("PlantWeed:getClientCheck", localPlayer, IsMatInMaterialType( mat ), gz)
+function PlantWeed:onUse()
+	local pos = localPlayer:getPosition()
+	local gz = getGroundPosition(pos)
+	local hit, _, _, _, _, _, _, _, surface =  processLineOfSight(pos.x, pos.y, gz, pos.x, pos.y, gz-0.001)
+	if hit then outputChatBox(surface) end
+	triggerServerEvent("PlantWeed:getClientCheck", localPlayer, IsMatInMaterialType(surface), gz)
 end
 
 function PlantWeed:Render( )
