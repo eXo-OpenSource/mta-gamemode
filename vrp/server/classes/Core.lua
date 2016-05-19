@@ -65,6 +65,7 @@ function Core:constructor()
 	VehicleHarbor:new()
 	Tour:new()
 	DeathmatchManager:new()
+	GrowableManager:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
@@ -85,9 +86,9 @@ function Core:constructor()
 
 	--// Gangwar
 	Gangwar:new()
-	
-	ItemGrowable:loadPlantSQL( )
-	
+
+	--ItemGrowable:loadPlantSQL( )
+
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")
 	local files = {}
@@ -113,7 +114,7 @@ function Core:constructor()
 
 	addEventHandler("Core.onClientInternalError", root, bind(self.onClientInternalError, self))
 
-	
+
 	-- Prepare unit tests
 	if DEBUG then
 		addCommandHandler("runtests", bind(self.runTests, self))
