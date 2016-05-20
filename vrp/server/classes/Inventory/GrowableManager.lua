@@ -66,7 +66,7 @@ end
 
 function GrowableManager:getNextPlant(player, range)
 	for id, plant in pairs(GrowableManager.Map) do
-		if getDistanceBetweenPoints3D(player:getPosition(), plant:getObject():getPosition()) <= range or 5 then
+		if getDistanceBetweenPoints3D(player:getPosition(), plant:getObject():getPosition()) <= range then
 			return plant
 		end
 	end
