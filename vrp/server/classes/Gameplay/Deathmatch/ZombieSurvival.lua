@@ -25,6 +25,7 @@ function ZombieSurvival:constructor(player)
 	self:preparePlayer(player)
 	self:loadMap()
 
+	addEventHandler("onZombieWasted", root, bind(self.zombieWasted, self))
 end
 
 function ZombieSurvival:destructor()
