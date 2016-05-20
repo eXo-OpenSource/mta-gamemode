@@ -25,12 +25,6 @@ function ZombieSurvival:constructor(player)
 	self:preparePlayer(player)
 	self:loadMap()
 
-	addEventHandler("onZombieWasted", root, function(ped, player)
-		if isElement(player) then
-			self.m_ZombieKills[player] = self.m_ZombieKills[player]+1
-			player:triggerEvent("setScore", self.m_ZombieKills[player])
-		end
-	end)
 end
 
 function ZombieSurvival:destructor()
@@ -46,6 +40,13 @@ function ZombieSurvival:destructor()
 	if isTimer(self.ZombieTimer) then killTimer(self.ZombieTimer) end
 	if isTimer(self.m_IncreaseTimer) then killTimer(self.m_IncreaseTimer) end
 	if isElement(self.m_Pickup) then self.m_Pickup:destroy() end
+end
+
+function ZombieSurvival:zombieWasted(ped, player)
+	if isElement(player) then
+		self.m_ZombieKills[player] = self.m_ZombieKills[player]+1
+		player:triggerEvent("setScore", self.m_ZombieKills[player])
+	end
 end
 
 function ZombieSurvival:getRandomPosition()

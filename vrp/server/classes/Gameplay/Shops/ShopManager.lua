@@ -102,15 +102,15 @@ function ShopManager:buyItem(shopId, item, amount)
 	if not amount then amount = 1 end
 	local shop = self:getFromId(shopId)
 	if shop.m_Items[item] then
-		if client:getMoney() >= shop.m_Items[item] then
-			if client:getInventory():getFreePlacesForItem(item) >= 1 then
-				client:getInventory():giveItem(item, 1)
+		if client:getMoney() >= shop.m_Items[item]*amount then
+			if client:getInventory():getFreePlacesForItem(item) >= amount then
+				client:getInventory():giveItem(item, amount)
 				if item == "Kanne" then
 					client:getInventory():setSpecialItemData(item, 10)
 				end
-				client:takeMoney(shop.m_Items[item], "Item-Einkauf")
+				client:takeMoney(shop.m_Items[item]*amount, "Item-Einkauf")
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
-				shop:giveMoney(shop.m_Items[item], "Kunden-Einkauf")
+				shop:giveMoney(shop.m_Items[item]*amount, "Kunden-Einkauf")
 			else
 				client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
 			end

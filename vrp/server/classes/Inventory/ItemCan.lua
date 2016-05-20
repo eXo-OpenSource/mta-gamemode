@@ -10,6 +10,7 @@ ItemCan = inherit(Item)
 
 function ItemCan:constructor( )
 	self.m_UseBind = bind(self.action, self)
+	self.m_Cans = {}
 end
 
 function ItemCan:destructor()
@@ -18,15 +19,16 @@ end
 
 function ItemCan:use( player, itemId, bag, place, itemName )
 	if not player:getPublicSync("ItemCanEnabled") then
+		if isElement(self.m_Cans[player]) then self.m_Cans[player]:destroy() end
 		local fillstate = player:getInventory():getSpecialItemData(itemName) or 0
-		ItemCan.player = createObject(1902, 0, 0, 0)
-		ItemCan.player:setScale(0.5)
-		exports.bone_attach:attachElementToBone(ItemCan.player, player, 12, 0, 0, 0.5, 180, 0, 0)
+		self.m_Cans[player] = createObject(1902, 0, 0, 0)
+		self.m_Cans[player]:setScale(0.5)
+		exports.bone_attach:attachElementToBone(self.m_Cans[player], player, 12, 0, 0, 0.5, 180, 0, 0)
 		player:triggerEvent("itemCanEnable", fillstate)
 		bindKey(player, "x", "down", self.m_UseBind)
 		player:setPublicSync("ItemCanEnabled", true)
 	else
-		if isElement(ItemCan.player) then ItemCan.player:destroy() end
+		if isElement(self.m_Cans[player]) then self.m_Cans[player]:destroy() end
 		player:triggerEvent("itemCanDisable", fillstate)
 		unbindKey(player, "x", "down", self.m_UseBind)
 		player:setPublicSync("ItemCanEnabled", false)
