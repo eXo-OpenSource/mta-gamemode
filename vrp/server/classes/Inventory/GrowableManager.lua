@@ -43,6 +43,10 @@ function GrowableManager:load()
 	end
 end
 
+function GrowableManager:removePlant(id)
+	GrowableManager.Map[id] = nil
+end
+
 function GrowableManager:grow()
 	for id, plant in pairs(GrowableManager.Map) do
 		plant:checkGrow()
@@ -66,8 +70,10 @@ end
 
 function GrowableManager:getNextPlant(player, range)
 	for id, plant in pairs(GrowableManager.Map) do
-		if getDistanceBetweenPoints3D(player:getPosition(), plant:getObject():getPosition()) <= range then
-			return plant
+		if plant and isElement(plant:getObject()) then
+			if getDistanceBetweenPoints3D(player:getPosition(), plant:getObject():getPosition()) <= range then
+				return plant
+			end
 		end
 	end
 	return false
