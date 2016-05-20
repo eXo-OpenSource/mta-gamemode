@@ -26,10 +26,10 @@ function PlantGUI.load()
 end
 
 function PlantGUI:constructor(id, type, lastGrow, size, maxSize, item, itemsPerSize, owner, lastWatered, wateredTime)
-	if id then
 		self.m_Id = id
 
 		GUIForm.constructor(self, screenWidth-270, screenHeight/2-160/2, 250, 160, false)
+		if not id then delete(self) end
 		self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, type, true, false, self)
 
 		local ts = getRealTime().timestamp
@@ -53,9 +53,6 @@ function PlantGUI:constructor(id, type, lastGrow, size, maxSize, item, itemsPerS
 		GUILabel:new(10, 130, self.m_Width-20, 20, _"[Leertaste] zum ernten!", self):setColor(Color.LightBlue):setAlignX("center")
 		self.m_HarvestBind = bind(self.harvest, self)
 		bindKey("space", "down", self.m_HarvestBind)
-	else
-		delete(self)
-	end
 end
 
 function PlantGUI:destructor()

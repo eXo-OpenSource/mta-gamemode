@@ -90,6 +90,8 @@ function Growable:waterPlant(player)
 	player:setAnimation("bomber", "BOM_Plant_Loop", 2000, true, false)
 	player:triggerEvent("PlantWeed:onWaterPlant", self:getObject())
 	self:getObject():setData("Plant:Hydration", true, true)
+	self:onColShapeLeave(player, true)
+	self:onColShapeHit(player, true)
 end
 
 function Growable:save()
@@ -99,12 +101,14 @@ end
 
 function Growable:onColShapeHit(hit, dim)
 	if hit:getType() == "player" and dim then
+		hit:setData("Plant:Current", self)
 		hit:triggerEvent("showPlantGUI", self.m_Id, self.m_Type, self.m_LastGrown, self.m_Size, self.ms_MaxSize, self.ms_Item, self.ms_ItemPerSize, self.m_Owner, self.m_LastWatered, self.ms_HoursWatered)
 	end
 end
 
 function Growable:onColShapeLeave(leave, dim)
 	if leave:getType() == "player" and dim then
+		leave:setData("Plant:Current", false)
 		leave:triggerEvent("hidePlantGUI")
 	end
 end

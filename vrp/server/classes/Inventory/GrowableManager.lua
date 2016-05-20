@@ -58,14 +58,15 @@ end
 function GrowableManager:addNewPlant(type, position, owner)
 	local ts = getRealTime().timestamp
 	sql:queryExec("INSERT INTO ??_plants (Type, Owner, PosX, PosY, PosZ, Size, planted, last_grown, last_watered) VALUES (? , ? , ?, ?, ?, ?, ?, ?, ?)",
-	sql:getPrefix(), type, owner, position.x, position.y, position.z, 0, ts, ts, 0)
+	sql:getPrefix(), type, owner:getName(), position.x, position.y, position.z, 0, ts, ts, 0)
 	local id = sql:lastInsertId()
-	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner, 1, ts, ts, 0)
+	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner:getName(), 0, ts, ts, 0)
+	GrowableManager.Map[id]:onColShapeHit(owner, true)
 end
 
-function GrowableManager:getNextWaterPlant(player)
+function GrowableManager:getNextPlant(player, range)
 	for id, plant in pairs(GrowableManager.Map) do
-		if getDistanceBetweenPoints3D(player:getPosition(), plant:getObject():getPosition()) <= 5 then
+		if getDistanceBetweenPoints3D(player:getPosition(), plant:getObject():getPosition()) <= range or 5 then
 			return plant
 		end
 	end

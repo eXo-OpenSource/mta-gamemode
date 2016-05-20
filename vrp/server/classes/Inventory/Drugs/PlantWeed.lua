@@ -17,13 +17,17 @@ function PlantWeed:destructor()
 end
 
 function PlantWeed:use(player)
-	player:triggerEvent( "PlantWeed:sendClientCheck")
+	if not GrowableManager:getSingleton():getNextPlant(player, 3) then
+		player:triggerEvent("PlantWeed:sendClientCheck")
+	else
+		player:sendInfo(_("Du bist zu nah an einer anderen Pflanze!", player))
+	end
 end
 
 function PlantWeed:getClientCheck( bool, z_pos )
 	if bool then
 		local pos = client:getPosition()
-		GrowableManager:getSingleton():addNewPlant("Weed", Vector3(pos.x, pos.y, z_pos), client:getName())
+		GrowableManager:getSingleton():addNewPlant("Weed", Vector3(pos.x, pos.y, z_pos), client)
 	else
 		client:sendError("Dies ist kein guter Untergrund zum Anpflanzen!")
 	end

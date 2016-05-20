@@ -49,7 +49,7 @@ function ItemCan:action(player, key, state)
 				player:sendError("Sie befinden sich nicht im Wasser!")
 			end
 		else
-			local plant = GrowableManager:getSingleton():getNextWaterPlant(player)
+			local plant = player:getData("Plant:Current")
 			if plant then
 				player:getInventory():setSpecialItemData(itemName, fillstate-1)
 				player:triggerEvent("itemCanRefresh", fillstate-1)
