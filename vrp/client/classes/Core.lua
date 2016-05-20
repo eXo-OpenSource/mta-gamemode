@@ -126,6 +126,7 @@ function Core:afterLogin()
 	end
 
 	self:createBlips()
+	PlantGUI.load()
 end
 
 function Core:destructor()

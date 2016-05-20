@@ -16,14 +16,18 @@ GrowableManager.Types = {
 		["HoursWatered"] = 6,
 		["MaxSize"] = 20,
 		["Item"] = "Weed",
-		["MaxItem"] = 20
+		["ItemPerSize"] = 1
 	};
 }
 GrowableManager.Map = {}
 
 function GrowableManager:constructor()
+
 	self.m_Timer = setTimer(bind(self.grow, self), 10*60*1000, 0)
 	self:load()
+
+	addRemoteEvents{"plant:harvest"}
+	addEventHandler("plant:harvest", root, bind(self.harvest, self))
 end
 
 function GrowableManager:destructor()
@@ -45,10 +49,16 @@ function GrowableManager:grow()
 	end
 end
 
+function GrowableManager:harvest(id)
+	if id and id > 0 then
+		GrowableManager.Map[id]:harvest(client)
+	end
+end
+
 function GrowableManager:addNewPlant(type, position, owner)
 	local ts = getRealTime().timestamp
 	sql:queryExec("INSERT INTO ??_plants (Type, Owner, PosX, PosY, PosZ, Size, planted, last_grown, last_watered) VALUES (? , ? , ?, ?, ?, ?, ?, ?, ?)",
-	sql:getPrefix(), type, owner, position.x, position.y, position.z, 1, ts, ts, 0)
+	sql:getPrefix(), type, owner, position.x, position.y, position.z, 0, ts, ts, 0)
 	local id = sql:lastInsertId()
 	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner, 1, ts, ts, 0)
 end

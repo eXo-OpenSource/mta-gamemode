@@ -23,7 +23,7 @@ function Growable:constructor(id, type, typeData, pos, owner, size, planted, las
 	self.ms_HoursWatered = typeData["HoursWatered"]
 	self.ms_MaxSize = typeData["MaxSize"]
 	self.ms_Item = typeData["Item"]
-	self.ms_MaxItem = typeData["MaxItem"]
+	self.ms_ItemPerSize = typeData["ItemPerSize"]
 	self.ms_ObjectSizeMin = typeData["ObjectSizeMin"]
 	self.ms_ObjectSizeSteps = typeData["ObjectSizeSteps"]
 
@@ -33,6 +33,12 @@ function Growable:constructor(id, type, typeData, pos, owner, size, planted, las
 
 	self:refreshObjectSize()
 end
+
+function Growable:destructor()
+	if isElement(self.m_Colshape) then self.m_Colshape:destroy() end
+	if isElement(self.m_Object) then self.m_Object:destroy() end
+end
+
 
 function Growable:checkGrow()
 	local ts = getRealTime().timestamp
@@ -54,11 +60,29 @@ function Growable:checkGrow()
 end
 
 function Growable:refreshObjectSize()
-	self.m_Object:setScale(self.m_Size*self.ms_ObjectSizeSteps)
+	self.m_Object:setScale(self.ms_ObjectSizeMin+self.m_Size*self.ms_ObjectSizeSteps)
 end
 
 function Growable:getObject()
 	return self.m_Object
+end
+
+function Growable:harvest(player)
+	if player:getName() == self.m_Owner then
+		local amount = self.m_Size*self.ms_ItemPerSize
+		if player:getInventory():getFreePlacesForItem(self.ms_Item) >= amount then
+			player:sendInfo(_("Du hast %d %s geerntet!", player, amount, self.ms_Item))
+			player:getInventory():giveItem(self.ms_Item, amount)
+			player:triggerEvent("hidePlantGUI")
+			self.m_Size = 0
+			sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
+			delete(self)
+		else
+			player:sendError(_("Du hast in deinem Inventar nicht Platz für %d %s!", player, amount, self.ms_Item))
+		end
+	else
+		player:sendError(_("Die Pflanze gehört nicht dir!", player))
+	end
 end
 
 function Growable:waterPlant(player)
@@ -75,7 +99,7 @@ end
 
 function Growable:onColShapeHit(hit, dim)
 	if hit:getType() == "player" and dim then
-		hit:triggerEvent("showPlantGUI", self.m_Type, self.m_LastGrown, self.m_Size, self.ms_MaxSize, self.m_Items, self.m_Owner, self.m_LastWatered, self.ms_HoursWatered)
+		hit:triggerEvent("showPlantGUI", self.m_Id, self.m_Type, self.m_LastGrown, self.m_Size, self.ms_MaxSize, self.ms_Item, self.ms_ItemPerSize, self.m_Owner, self.m_LastWatered, self.ms_HoursWatered)
 	end
 end
 
