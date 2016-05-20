@@ -32,11 +32,10 @@ function PlantWeed:onUse()
 	local pos = localPlayer:getPosition()
 	local gz = getGroundPosition(pos)
 	local hit, _, _, _, _, _, _, _, surface =  processLineOfSight(pos.x, pos.y, gz, pos.x, pos.y, gz+1, true, false, false)
-	if hit then outputChatBox(surface) end
 	triggerServerEvent("PlantWeed:getClientCheck", localPlayer, IsMatInMaterialType(surface), gz)
 end
 
-function PlantWeed:Render( )
+function PlantWeed:Render()
 	if PlantWeed.Shader and PlantWeed.Shader2 then
 		if #self.m_EntityTable ~= 0 then
 			local timeElapsed = getTickCount() - self.m_RendTick
