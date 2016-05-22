@@ -66,6 +66,7 @@ function Core:constructor()
 	Tour:new()
 	DeathmatchManager:new()
 	GrowableManager:new()
+	MinigameManager:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()

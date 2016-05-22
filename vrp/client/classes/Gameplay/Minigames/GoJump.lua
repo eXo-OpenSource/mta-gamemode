@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 GoJump = inherit(Object)
+addRemoteEvents{"GoJumpReceiveHighscores"}
 
 function GoJump:constructor()
     self.font_JosefinSans50 = dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 50)
@@ -41,10 +42,12 @@ function GoJump:constructor()
     self:updateRenderTarget()
     self:keyBinds()
 
-    self._onClientRender = bind(GoJump.onClientRender, self)
+    self._onClientRender = bind(self.onClientRender, self)
+	self.fn_ReceiveHighscores = bind(self.receiveStats, self)
     addEventHandler("onClientRender", root, self._onClientRender)
     addEventHandler("onClientResourceStop", resourceRoot, self._closeFunc)
-    --Event:addRemote(self, "sendStats", "receiveStats")
+    addEventHandler("GoJumpReceiveHighscores", resourceRoot, self.fn_ReceiveHighscores)
+	--Event:addRemote(self, "sendStats", "receiveStats")
 end
 
 function GoJump:destructor()
@@ -156,6 +159,7 @@ function GoJump:keyBinds()
                 self.state = "Stats"
                 self:updateRenderTarget()
 
+				triggerServerEvent("MinigameRequestHighscores", resourceRoot, "GoJump")
                 --RPC:call("requestStats")
             elseif self.state == "Stats" then
                 self.state = "Home"
@@ -373,7 +377,7 @@ function GoJump:playerDied()
         self.highscore = self.lastScore
         self.stats.highscore = self.lastScore
     end
-    --RPC:call("sendHighscore", self.lastScore)
+	triggerServerEvent("MinigameSendHighscore", resourceRoot, "GoJump", self.lastScore)
 
     --Average
     self.stats.totalScore = self.stats.totalScore + self.lastScore

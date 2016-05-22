@@ -34,6 +34,7 @@ function Casino:createGameMarker()
 	addEventHandler("onClientMarkerHit", marker_GoJump,
 		function(hitElement)
 			if hitElement:getType() ~= "player" then return end
+			if hitElement ~= localPlayer then return end
 
 			GoJump:new()
 		end
@@ -42,6 +43,7 @@ function Casino:createGameMarker()
 	addEventHandler("onClientMarkerHit", marker_SideSwipe,
 		function(hitElement)
 			if hitElement:getType() ~= "player" then return end
+			if hitElement ~= localPlayer then return end
 
 			SideSwipe:new()
 		end
@@ -50,6 +52,7 @@ function Casino:createGameMarker()
 	addEventHandler("onClientMarkerHit", marker_DTS,
 		function(hitElement)
 			if hitElement:getType() ~= "player" then return end
+			if hitElement ~= localPlayer then return end
 
 			--DTS:new()
 		end
@@ -58,6 +61,7 @@ function Casino:createGameMarker()
 	addEventHandler("onClientMarkerHit", marker_BomberMan2D,
 		function(hitElement)
 			if hitElement:getType() ~= "player" then return end
+			if hitElement ~= localPlayer then return end
 
 			--DTS:new()
 		end
