@@ -32,6 +32,8 @@ function FactionState:constructor()
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
 	addCommandHandler("m",bind(self.Command_megaphone, self))
+	addCommandHandler("tie",bind(self.Command_tie, self))
+
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
@@ -264,6 +266,41 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 	end
 end
 
+function FactionState:Command_tie(player, cmd, tname, bool)
+	local faction = player:getFaction()
+	if faction and faction:isStateFaction() then
+		if player:isFactionDuty() then
+			local vehicle = player:getOccupiedVehicle()
+			if vehicle and vehicle:getFaction() and vehicle:isStateVehicle() then
+				if tname then
+					local target = PlayerManager:getSingleton():getPlayerFromPartOfName(tname, player)
+					if isElement(target) then
+						if target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle then
+							if isControlEnabled(target, "enter_exit") or bool == true then
+								player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
+								target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
+								toggleControl(target, "enter_exit", false)
+							else
+								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
+								target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
+								toggleControl(target, "enter_exit", true)
+							end
+						else
+							player:sendError(_("Der Spieler ist nicht in deinem Fahrzeug!", player))
+						end
+					end
+				else
+					player:sendError(_("Kein Ziel angegeben! Befehl: /tie [NAME]!", player))
+				end
+			else
+				player:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", player))
+			end
+		else
+			player:sendError(_("Du bist nicht im Dienst!", player))
+		end
+	end
+end
+
 function FactionState:Event_JailPlayer(player, bail)
 	local policeman = client
 	if policeman:isFactionDuty() then
@@ -454,6 +491,7 @@ function FactionState:Event_grabPlayer(target)
 							warpPedIntoVehicle(target, vehicle, seat)
 							client:sendInfo(_("%s wurde in dein Fahrzeug gezogen!", client, target:getName()))
 							target:sendInfo(_("Du wurdest von %s in das Fahrzeug gezogen!", target, client:getName()))
+							self:Command_tie(client, "tie", target:getName(), true)
 							return
 						end
 					end
