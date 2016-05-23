@@ -238,11 +238,11 @@ function Admin:goToPlayer(player,cmd,target)
 		if target then
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
-                self:sendShortMessage(_("%s hat %s zu sich geportet!", player, player:getName(), target:getName()))
+                self:sendShortMessage(_("%s hat sich zu %s geportet!", player, player:getName(), target:getName()))
                 local dim,int = target:getDimension(), target:getInterior()
 				local pos = target:getPosition()
 				pos.x = pos.x + 0.01
-				if player:isInVehicle() then player:removeFromVehicle() end
+				if player:isInVehicle() then player = player:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				player:setPosition(pos)
 				player:setDimension(dim)
 				player:setInterior(int)
@@ -263,8 +263,8 @@ function Admin:getHerePlayer(player, cmd, target)
                 self:sendShortMessage(_("%s hat %s zu sich geportet!", player, player:getName(), target:getName()))
                 local dim,int = player:getDimension(), player:getInterior()
 				local pos = player:getPosition()
-				pos.x = pos.x + 0.01
-				if target:isInVehicle() then target:removeFromVehicle() end
+				pos.x = pos.x + 0.1
+				if target:isInVehicle() then target = target:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				target:setPosition(pos)
 				target:setDimension(dim)
 				target:setInterior(int)
