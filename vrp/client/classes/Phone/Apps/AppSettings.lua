@@ -40,8 +40,9 @@ function AppSettings:onOpen(form)
 		-- Save it
 		core:getConfig():set("Phone", "Ringtone", path)
 	end
+	local item
 	for i = 1, 3 do
-		self.m_RingtoneChanger:addItem(_("Klingelton %d", i))
+		item = self.m_RingtoneChanger:addItem(_("Klingelton %d", i))
 	end
 
 end

@@ -225,7 +225,7 @@ function IncomingCallActivity:constructor(app, caller, voiceEnabled)
 	self.m_ButtonBusy.onLeftClick = bind(self.ButtonBusy_Click, self)
 
 	-- Play ring sound
-	self.m_RingSound = playSound(core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Ringtone1.mp3"), true)
+	self.m_RingSound = playSound(core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3"), true)
 end
 
 function IncomingCallActivity:ButtonAnswer_Click()

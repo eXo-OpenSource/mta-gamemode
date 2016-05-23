@@ -1009,12 +1009,10 @@
 	<vrpfile src="files/audio/onDoorClosed.mp3"/>
 	<vrpfile src="files/audio/onDoorOpened.mp3"/>
 
-
-
 	<!-- Ringtones -->
-	<vrpfile src="files/audio/Ringtones/Ringtone1.mp3"/>
-	<vrpfile src="files/audio/Ringtones/Ringtone2.mp3"/>
-	<vrpfile src="files/audio/Ringtones/Ringtone3.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton2.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton3.mp3"/>
 
 	<!-- GoJump -->
 	<vrpfile src="files/audio/GoJump/jump.wav" />
