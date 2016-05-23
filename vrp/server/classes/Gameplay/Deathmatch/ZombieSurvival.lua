@@ -9,7 +9,7 @@
 ZombieSurvival = inherit(Object)
 ZombieSurvival.PickupWeapons = {25, 24, 22, 33}
 
-function ZombieSurvival:constructor(player)
+function ZombieSurvival:constructor()
 
 	self.m_Dimension = math.random(1, 999) -- Testing
 	self.m_Zombies = {}
@@ -21,8 +21,6 @@ function ZombieSurvival:constructor(player)
 	self.m_CreatePickupTimer = setTimer(bind(self.createPickup, self), 20000, 0)
 
 	self:addZombie()
-
-	self:preparePlayer(player)
 	self:loadMap()
 
 	addEventHandler("onZombieWasted", root, bind(self.zombieWasted, self))
@@ -35,8 +33,11 @@ function ZombieSurvival:destructor()
 	for index, zombie in pairs(self.m_Zombies) do
 		delete(zombie)
 	end
-	self.m_Player:triggerEvent("hideScore")
-	self.m_Player = nil
+
+	for player, score in pairs(self.m_ZombieKills) do
+		self:removePlayer(player)
+	end
+
 	if isTimer(self.m_CreatePickupTimer) then killTimer(self.m_CreatePickupTimer) end
 	if isTimer(self.ZombieTimer) then killTimer(self.ZombieTimer) end
 	if isTimer(self.m_IncreaseTimer) then killTimer(self.m_IncreaseTimer) end
@@ -54,8 +55,7 @@ function ZombieSurvival:getRandomPosition()
 	return Vector3(math.random(82, 210), math.random(1728, 1798), 17.64)
 end
 
-function ZombieSurvival:preparePlayer(player)
-	self.m_Player = player
+function ZombieSurvival:addPlayer(player)
 	self.m_ZombieKills[player] = 0
 	player:setDimension(self.m_Dimension)
 	player:setPosition(self:getRandomPosition())
@@ -72,19 +72,40 @@ function ZombieSurvival:preparePlayer(player)
 		end
 	end)
 
-	PlayerManager:getSingleton():getWastedHook():register(
-		function(player)
-			if self.m_Player == player then
-				self.m_Player:setPosition(-35.72, 1380.00, 9.42)
-				self.m_Player:setDimension(0)
 
-				player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
-				delete(self)
-				return true
-			end
-		end
-	)
+end
 
+function ZombieSurvival:removePlayer(player)
+	player:setPosition(-35.72, 1380.00, 9.42)
+	player:setDimension(0)
+	player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
+
+
+
+	DeathmatchManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), self.m_ZombieKills[player])
+	self.m_ZombieKills[player] = nil
+	takeAllWeapons(player)
+	player:triggerEvent("hideScore")
+	
+	if self:getPlayers() == 0 then
+		delete(self)
+	end
+end
+
+function ZombieSurvival:getRandomPlayer()
+	local random = {}
+	for player, score in pairs(self.m_ZombieKills) do
+		table.insert(random, player)
+	end
+	return random[math.random(1, #random)]
+end
+
+function ZombieSurvival:getPlayers()
+	local players = {}
+	for player, score in pairs(self.m_ZombieKills) do
+		table.insert(players, player)
+	end
+	return players
 end
 
 function ZombieSurvival:increaseZombies()
@@ -106,7 +127,7 @@ function ZombieSurvival:addZombie()
 	setTimer(function()
 		local zombie = Zombie:new(pos, 310, self.m_Dimension)
 		zombie:disableSeeCheck()
-		zombie:SprintToPlayer(self.m_Player)
+		zombie:SprintToPlayer(getRandomPlayer())
 		table.insert(self.m_Zombies, zombie)
 	end, 2500, 1)
 
