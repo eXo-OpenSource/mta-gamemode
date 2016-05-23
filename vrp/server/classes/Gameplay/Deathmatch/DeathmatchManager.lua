@@ -7,6 +7,7 @@
 -- ****************************************************************************
 
 DeathmatchManager = inherit(Singleton)
+DeathmatchManager.Current = {}
 
 function DeathmatchManager:constructor()
 
@@ -19,6 +20,8 @@ function DeathmatchManager:constructor()
 	 Blip:new("Zombie.png", -34.24, 1377.80)
 	 addEventHandler("onMarkerHit", zombieMarker, bind(self.onZombieMarkerHit, self))
 
+	 self:addPlayerDeathHook()
+
 	 addRemoteEvents{"startZombieSurvival"}
 	 addEventHandler("startZombieSurvival", root, bind(self.startZombieSurvival))
 end
@@ -29,6 +32,31 @@ function DeathmatchManager:onZombieMarkerHit(hitElement, dim)
 	end
 end
 
+function DeathmatchManager:addPlayerDeathHook()
+	PlayerManager:getSingleton():getWastedHook():register(
+		function(player)
+			local match = self:getPlayerDeathmatch(player)
+			if match then
+				match:removePlayer(player)
+				return true
+			end
+		end
+	)
+end
+
+function DeathmatchManager:getPlayerDeathmatch(player)
+	for index, match in pairs(DeathmatchManager.Current) do
+		if match.m_ZombieKills[player] then
+			return match
+		end
+	end
+	return false
+end
+
 function DeathmatchManager:startZombieSurvival()
-	ZombieSurvival:new(client)
+	local instance = ZombieSurvival:new()
+	instance:addPlayer(client)
+	local index = #DeathmatchManager.Current+1
+	DeathmatchManager.Current[index] = instance
+	DeathmatchManager.Current[index].Type = "ZombieSurvival"
 end
