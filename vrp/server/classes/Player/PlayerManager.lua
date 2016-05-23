@@ -36,7 +36,6 @@ function PlayerManager:constructor()
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
-	addCommandHandler("me",bind(self.Command_playerMe, self))
 
 	self.m_PaydayPulse = TimedPulse:new(60000)
 	self.m_PaydayPulse:registerHandler(bind(self.checkPayday, self))
@@ -183,37 +182,27 @@ function PlayerManager:playerChat(message, messageType)
 			outputChatBox(_("%s (Telefon): %s", source, getPlayerName(source), message), source, 0, 255, 0)
 		end
 		cancelEvent()
+	elseif messageType == 1 then
+		source:meChat(false, message)
+		cancelEvent()
 	end
 end
 
-function PlayerManager:Command_playerScream(  source , cmd, ...)
+function PlayerManager:Command_playerScream(source , cmd, ...)
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
-	local playersToSend = source:getPlayersInChatRange( 2 )
+	local playersToSend = source:getPlayersInChatRange(2)
 	for index = 1,#playersToSend do
 		outputChatBox(getPlayerName(source).." schreit: #FFFFFF"..text, playersToSend[index], 240, 240, 240,true)
 	end
 end
 
-function PlayerManager:Command_playerWhisper(  source , cmd, ...)
+function PlayerManager:Command_playerWhisper(source , cmd, ...)
 	local argTable = { ... }
-	local text = table.concat ( argTable , " " )
-	local playersToSend = source:getPlayersInChatRange( 0 )
+	local text = table.concat(argTable , " ")
+	local playersToSend = source:getPlayersInChatRange(0)
 	for index = 1,#playersToSend do
 		outputChatBox(getPlayerName(source).." flüstert: #FFFFFF"..text, playersToSend[index], 140, 140, 140,true)
-	end
-end
-
-function PlayerManager:Command_playerMe(  source , cmd, ...)
-	source:meChat(false, ...)
-end
-
-function PlayerManager:Command_playerMeServer(source , ...)
-	local argTable = { ... }
-	local text = table.concat ( argTable , " " )
-	local playersToSend = source:getPlayersInChatRange( 1 )
-	for index = 1,#playersToSend do
-		outputChatBox("** "..getPlayerName(source).." "..text.." **", playersToSend[index], 100, 0, 255)
 	end
 end
 
