@@ -2,7 +2,7 @@ introScene = {
 	name = "Intro";
 	startscene = "Welcome";
 	debug = true;
-	
+
 	-- Scene 1 
 	{
 		uid = "Welcome";

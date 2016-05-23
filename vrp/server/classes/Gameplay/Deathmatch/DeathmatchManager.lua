@@ -14,7 +14,7 @@ function DeathmatchManager:constructor()
 	--Zombie Survival
 	 self.m_ZombieSurvivalHighscore = Highscore:new("ZombieSurvival")
 
-	 local zombiePed = createPed(1 ,-31.64, 1377.67, 9.17, 90)
+	 local zombiePed = createPed(162 ,-31.64, 1377.67, 9.17, 90)
 	 zombiePed:setFrozen(true)
 	 local zombieMarker = createMarker(-34.24, 1377.80, 8.5, "cylinder", 1, 255, 0, 0, 125)
 	 Blip:new("Zombie.png", -34.24, 1377.80)
