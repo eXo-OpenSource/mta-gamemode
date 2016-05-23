@@ -80,6 +80,7 @@ function ZombieSurvival:removePlayer(player)
 	player:setDimension(0)
 	player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
 
+<<<<<<< HEAD
 	DeathmatchManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), self.m_ZombieKills[player])
 	self.m_ZombieKills[player] = nil
 	takeAllWeapons(player)
@@ -90,6 +91,20 @@ function ZombieSurvival:removePlayer(player)
 	end
 end
 
+=======
+
+
+	DeathmatchManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), self.m_ZombieKills[player])
+	self.m_ZombieKills[player] = nil
+	takeAllWeapons(player)
+	player:triggerEvent("hideScore")
+	
+	if self:getPlayers() == 0 then
+		delete(self)
+	end
+end
+
+>>>>>>> 38e4006475b7ac4830003763c321943b33127f0b
 function ZombieSurvival:getRandomPlayer()
 	local random = {}
 	for player, score in pairs(self.m_ZombieKills) do
