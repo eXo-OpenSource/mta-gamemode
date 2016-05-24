@@ -19,7 +19,7 @@ function VehicleManager:constructor()
 	-- Add events
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo",
-		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar"}
+		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark"}
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
@@ -35,6 +35,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleSyncMileage", root, bind(self.Event_vehicleSyncMileage, self))
 	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
 	addEventHandler("vehicleUpgradeHangar", root, bind(self.Event_vehicleUpgradeHangar, self))
+	addEventHandler("vehiclePark", root, bind(self.Event_vehiclePark, self))
 
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
@@ -112,7 +113,7 @@ function VehicleManager.loadVehicles()
 	outputServerLog("Loading vehicles...")
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
 		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.LightColor, row.TrunkId)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 	end
@@ -329,6 +330,22 @@ function VehicleManager:Event_vehicleLock()
 	end
 
 	source:setLocked(not source:isLocked())
+end
+
+function VehicleManager:Event_vehiclePark()
+	if not source or not isElement(source) then return end
+	self:checkVehicle(source)
+
+	if not source:hasKey(client) or client:getRank() <= RANK.User then
+		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
+		return
+	end
+	if source:getInterior() == 0 then
+		source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
+		client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
+	else
+		client:sendError(_("Du kannst dein Fahrzeug hier nicht parken!", client))
+	end
 end
 
 function VehicleManager:Event_vehicleRequestKeys()

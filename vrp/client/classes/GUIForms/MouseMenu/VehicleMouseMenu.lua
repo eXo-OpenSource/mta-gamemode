@@ -38,6 +38,13 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		)
+		self:addItem(_"hier Parken",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehiclePark", self:getElement())
+				end
+			end
+		)
 	end
 
 	if element:getVehicleType() ~= VehicleType.Trailer then
