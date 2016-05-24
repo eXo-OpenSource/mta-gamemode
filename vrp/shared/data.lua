@@ -394,5 +394,6 @@ VEHICLE_UPGRADE_PRICES = {
 
 
 	 [VehicleSpecialProperty.Color] = 5000,
+	 [VehicleSpecialProperty.Color2] = 5000,
 	 [VehicleSpecialProperty.LightColor] = 3500,
 }

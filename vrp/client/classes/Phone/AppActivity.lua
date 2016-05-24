@@ -9,7 +9,7 @@ AppActivity = inherit(GUIElement)
 
 function AppActivity:constructor(app)
 	GUIElement.constructor(self, 0, 0, 260, 460, app:getForm())
-
+	GUIRectangle:new(0, 0, self.m_Width, self.m_Height, Color.LightBlue, self)
 	-- Close all current activities
 	app:closeActivities()
 

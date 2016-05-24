@@ -7,7 +7,7 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, health, positionType, tunings, mileage, lightColor, trunkId)
+function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId)
 	self.m_Id = Id
 	self.m_Owner = owner
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
@@ -25,7 +25,13 @@ function PermanentVehicle:constructor(Id, owner, keys, color, health, positionTy
 	self:setLocked(true)
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
-		setVehicleColor(self, r, g, b)
+		if color2 then
+			local a2, r2, g2, b2 = getBytesInInt32(color2)
+			setVehicleColor(self, r, g, b, r2, g2, b2)
+		else
+			setVehicleColor(self, r, g, b)
+		end
+
 	end
 	if lightColor then
 		local a, r, g, b = getBytesInInt32(lightColor)
@@ -80,14 +86,15 @@ function PermanentVehicle:save()
 	local posX, posY, posZ = getElementPosition(self)
 	local rotX, rotY, rotZ = getElementRotation(self)
 	local health = getElementHealth(self)
-	local r, g, b = getVehicleColor(self, true)
+	local r, g, b, r2, g2, b2 = getVehicleColor(self, true)
 	local color = setBytesInInt32(255, r, g, b) -- Format: argb
-	local r2, g2, b2 = getVehicleHeadLightColor(self)
-	local lightColor = setBytesInInt32(255, r2, g2, b2)
+	local color2 = setBytesInInt32(255, r2, g2, b2) -- Format: argb
+	local rLight, gLight, bLight = getVehicleHeadLightColor(self)
+	local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
 	local tunings = getVehicleUpgrades(self) or {}
 	if self.m_Trunk then self.m_Trunk:save() end
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, posX, posY, posZ, rotZ, health, color, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Id)
 end
 
 function PermanentVehicle:getId()
