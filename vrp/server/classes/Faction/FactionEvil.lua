@@ -13,9 +13,9 @@ function FactionEvil:constructor()
 	self.InteriorEnterExit = {}
 	self.WeaponPed = {}
 
-	for Id,faction in pairs(FactionManager:getAllFactions()) do
+	for Id, faction in pairs(FactionManager:getAllFactions()) do
 		if faction:isEvilFaction() then
-			self:createInterior(Id)
+			self:createInterior(Id, faction)
 		end
 	end
 end
@@ -23,14 +23,14 @@ end
 function FactionEvil:destructor()
 end
 
-function FactionEvil:createInterior(Id)
-	self.InteriorEnterExit[Id] = InteriorEnterExit:new(Vector3(evilFactionInteriorEnter[Id]["x"], evilFactionInteriorEnter[Id]["y"], evilFactionInteriorEnter[Id]["z"]), Vector3(2807.32, -1173.92, 1025.57), 0, 0, 8, Id)
+function FactionEvil:createInterior(Id, faction)
+	self.InteriorEnterExit[Id] = InteriorEnterExit:new(evilFactionInteriorEnter[Id], Vector3(2807.32, -1173.92, 1025.57), 0, 0, 8, Id)
 	self.WeaponPed[Id] = NPC:new(FactionManager:getFromId(Id):getRandomSkin(), 2819.20, -1166.77, 1025.58, 133.63)
 	setElementDimension(self.WeaponPed[Id], Id)
 	setElementInterior(self.WeaponPed[Id], 8)
 	self.WeaponPed[Id]:setData("clickable",true,true) -- Makes Ped clickable
-	self.WeaponPed[Id]:setData("factionWeaponShopPed",true,true)  -- Set factionWeaponShopPed for clickable
-	self.WeaponPed[Id]:setData("factionId",Id,true)
+	self.WeaponPed[Id].Faction = faction
+	addEventHandler("onElementClicked", self.WeaponPed[Id], bind(self.onWeaponPedClicked, self))
 
 	local int = {
 		createObject(351, 2818, -1173.6, 1025.6, 80, 340, 0),
@@ -58,5 +58,16 @@ function FactionEvil:createInterior(Id)
 	for k,v in pairs(int) do
 		setElementDimension(v, Id)
 		setElementInterior(v, 8)
+	end
+end
+
+function FactionEvil:onWeaponPedClicked(button, state, player)
+	if button == "left" and state == "down" then
+		if player:getFaction() and player:getFaction() == source.Faction then
+			player:triggerEvent("showFactionWeaponShopGUI")
+		else
+			player:sendError(_("Dieser Waffenverkäufer liefert nicht an deine Fraktion!", player))
+			outputChatBox(source.Faction:getName())
+		end
 	end
 end

@@ -115,7 +115,7 @@ factionRankNames[5] = {
 factionColors[5] = {["r"] = 100,["g"] = 100,["b"] = 100}
 factionSkins[5] = {[111]=true, [112]=true, [113]=true, [124]=true, [125]=true, [126]=true, [127]=true,[237]=true,[272]=true}
 factionWeapons[5] = {[4]=true, [22]=true, [24]=true, [25]=true, [26]=true, [29]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[5] = {["x"] = 691.58, ["y"]= -1275.94, ["z"] = 13.56}
+evilFactionInteriorEnter[5] = Vector3(691.58, -1275.94, 13.56)
 factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,18.6)
 --factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
 
@@ -132,7 +132,7 @@ factionRankNames[6] = {
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
 factionSkins[6] = {[49]=true, [57]=true, [59]=true, [120]=true, [122]=true, [123]=true, [141]=true,[60]=true,[58]=true}
 factionWeapons[6] = {[8]=true,[24]=true,[25]=true,[29]=true,[41]=true}
-evilFactionInteriorEnter[6] = {["x"] = 691.58, ["y"]= -1275.94, ["z"] = 13.56}
+evilFactionInteriorEnter[6] = Vector3(683.59, -1435.49, 14.89)
 factionWTDestination[6] = Vector3(708.103515625,-1436.1279296875,13.5390625)
 
 -- General:

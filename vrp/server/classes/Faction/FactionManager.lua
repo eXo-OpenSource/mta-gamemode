@@ -27,7 +27,7 @@ function FactionManager:constructor()
 	self:loadFactions()
 
   -- Events
-	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","openFactionWeaponShopGUI","factionSaveRank","factionRespawnVehicles"}
+	addRemoteEvents{"getFactions", "factionRequestInfo", "factionRequestLog", "factionQuit", "factionDeposit", "factionWithdraw", "factionAddPlayer", "factionDeleteMember", "factionInvitationAccept", "factionInvitationDecline", "factionRankUp", "factionRankDown","factionReceiveWeaponShopInfos","factionWeaponShopBuy","factionSaveRank","factionRespawnVehicles"}
 	addEventHandler("getFactions", root, bind(self.Event_getFactions, self))
 	addEventHandler("factionRequestInfo", root, bind(self.Event_factionRequestInfo, self))
 	addEventHandler("factionRequestLog", root, bind(self.Event_factionRequestLog, self))
@@ -40,7 +40,6 @@ function FactionManager:constructor()
 	addEventHandler("factionInvitationDecline", root, bind(self.Event_factionInvitationDecline, self))
 	addEventHandler("factionRankUp", root, bind(self.Event_factionRankUp, self))
 	addEventHandler("factionRankDown", root, bind(self.Event_factionRankDown, self))
-	addEventHandler("openFactionWeaponShopGUI", root, bind(self.Event_openFactionWeaponShopGUI, self))
 	addEventHandler("factionReceiveWeaponShopInfos", root, bind(self.Event_receiveFactionWeaponShopInfos, self))
 	addEventHandler("factionWeaponShopBuy", root, bind(self.Event_factionWeaponShopBuy, self))
 	addEventHandler("factionSaveRank", root, bind(self.Event_factionSaveRank, self))
@@ -307,13 +306,6 @@ function FactionManager:Event_factionRankDown(playerId)
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
 		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
 		self:sendInfosToClient(client)
-	end
-end
-
-function FactionManager:Event_openFactionWeaponShopGUI()
-	local faction = client:getFaction()
-	if faction then
-		client:triggerEvent("showFactionWeaponShopGUI")
 	end
 end
 

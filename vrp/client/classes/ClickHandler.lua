@@ -135,13 +135,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		if trigger then
 			if button == "left" then
 				if getElementType(element) == "ped" then
-					if getElementData(element, "factionWeaponShopPed") then
-						if getElementData(element, "factionId") == localPlayer:getFactionId() then
-							triggerServerEvent("openFactionWeaponShopGUI", localPlayer)
-						else
-							ErrorBox:new(_"Dieser Waffenverkäufer liefert nicht für deine Fraktion!")
-						end
-					elseif getElementData(element, "BeggarId") then
+					if getElementData(element, "BeggarId") then
 						self:addMouseMenu(BeggarPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 					end
 				elseif getElementType(element) == "object" then
