@@ -341,7 +341,7 @@ function VehicleManager:Event_vehiclePark()
 		return
 	end
 	if source:getInterior() == 0 then
-		source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
+		source:setCurrentPositionAsSpawn(VehiclePositionType.World)
 		client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
 	else
 		client:sendError(_("Du kannst dein Fahrzeug hier nicht parken!", client))
