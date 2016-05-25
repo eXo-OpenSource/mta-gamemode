@@ -29,7 +29,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_Elements = fromJSON(elements or "")
 
 	local int, ix, iy, iz  = unpack(House.interiorTable[self.m_InteriorID])
-	self.m_HouseMarker = createMarker(ix, iy, iz-1, "cylinder", 1.2, 255, 255, 255, 125)
+	self.m_HouseMarker = createMarker(ix, iy, iz-0.8, "cylinder", 1.2, 255, 255, 255, 125)
 	self.m_HouseMarker:setDimension(self.m_Id)
 	self.m_HouseMarker:setInterior(int)
 
@@ -62,6 +62,7 @@ function House:breakHouse(player)
 		self:enterHouse(player)
 		player:reportCrime(Crime.HouseRob)
 		player:sendMessage("Halte die Stellung für %d Minuten!", 125, 0, 0, ROB_NEEDED_TIME/1000/60)
+		player:triggerEvent("Countdown", ROB_NEEDED_TIME/1000)
 
 		setTimer(
 			function(unit)
@@ -74,6 +75,7 @@ function House:breakHouse(player)
 					local loot = math.floor(self.m_Price/20*(math.random(75, 100)/100))
 					unit:giveMoney(loot, "Haus-Überfall")
 					unit:sendMessage("Du hast den Raub erfolgreich abgeschlossen! Dafür erhälst du $%s.", 0, 125, 0, loot)
+					unit:triggerEvent("CountdownStop")
 					self:leaveHouse(unit)
 				end
 
