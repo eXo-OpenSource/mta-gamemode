@@ -138,6 +138,7 @@ function Player:loadCharacter()
 	-- Add Payday
 	self:setNextPayday()
 	self.m_Inventory = InventoryManager:getSingleton():loadInventory(self)
+	VehicleManager.loadPlayerVehicles(self.m_Id)
 
 	--// Gangwar
 	triggerEvent("onLoadCharacter",self)

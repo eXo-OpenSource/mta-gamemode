@@ -172,6 +172,18 @@ function PermanentVehicle:setCurrentPositionAsSpawn(type)
 	self.m_SpawnRot = rot.z
 end
 
+function PermanentVehicle:respawnOnSpawnPosition()
+	if self.m_PositionType == VehiclePositionType.World then
+		self:setPosition(self.m_SpawnPos)
+		self:setRotation(0, 0, self.m_SpawnRot)
+		fixVehicle(self)
+		local owner = Player.getFromId(self.m_Owner)
+		if owner and isElement(owner) then
+			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
+		end
+	end
+end
+
 function PermanentVehicle:respawn()
 	-- Set inGarage flag and teleport to private dimension
 	self.m_LastUseTime = math.huge

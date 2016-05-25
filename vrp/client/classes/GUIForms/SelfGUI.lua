@@ -102,8 +102,8 @@ function SelfGUI:constructor()
 	self.m_TabVehicles = tabVehicles
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuge:", tabVehicles)
 	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.6, tabVehicles)
-	self.m_VehiclesGrid:addColumn(_"Name", 0.3)
-	self.m_VehiclesGrid:addColumn(_"Standort", 0.7)
+	self.m_VehiclesGrid:addColumn(_"Name", 0.5)
+	self.m_VehiclesGrid:addColumn(_"Standort", 0.5)
 	self.m_VehicleGarages = GUILabel:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.5, self.m_Height*0.06, _"Garage:", tabVehicles)
 	self.m_VehicleGarageUpgradeButton = GUILabel:new(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.75, self.m_Width*0.17, self.m_Height*0.06, _"(Kaufen: 0$)", tabVehicles):setColor(Color.LightBlue)
 	self.m_VehicleGarageUpgradeButton.onHover = function () self.m_VehicleGarageUpgradeButton:setColor(Color.White) end
@@ -113,13 +113,16 @@ function SelfGUI:constructor()
 	self.m_VehicleHangarButton.onHover = function () self.m_VehicleHangarButton:setColor(Color.White) end
 	self.m_VehicleHangarButton.onUnhover = function () self.m_VehicleHangarButton:setColor(Color.LightBlue) end
 	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
-	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles)
-	self.m_VehicleSellButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Verkaufen", true, tabVehicles)
+	self.m_VehicleSellButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"Verkaufen", true, tabVehicles)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.30, self.m_Width*0.28, self.m_Height*0.06, _"Respawnen:", tabVehicles):setColor(Color.LightBlue)
+	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.37, self.m_Width*0.28, self.m_Height*0.07, _"in Garage", true, tabVehicles)
+	self.m_VehicleWorldRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.46, self.m_Width*0.28, self.m_Height*0.07, _"an Parkposition", true, tabVehicles)
 
 	self.m_VehicleGarageUpgradeButton.onLeftClick = bind(self.VehicleGarageUpgradeButton_Click, self)
 	self.m_VehicleHangarButton.onLeftClick = bind(self.VehicleHangarButton_Click, self)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
+	self.m_VehicleWorldRespawnButton.onLeftClick = bind(self.VehicleWorldRespawnButton_Click, self)
 	self.m_VehicleSellButton.onLeftClick = bind(self.VehicleSellButton_Click, self)
 	addRemoteEvents{"vehicleRetrieveInfo"}
 	addEventHandler("vehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
@@ -664,6 +667,17 @@ function SelfGUI:VehicleRespawnButton_Click()
 	end
 	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end
+
+function SelfGUI:VehicleWorldRespawnButton_Click()
+	local item = self.m_VehiclesGrid:getSelectedItem()
+	if not item then
+		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		return
+	end
+	triggerServerEvent("vehicleRespawnWorld", item.VehicleElement)
+end
+
+
 
 function SelfGUI:VehicleSellButton_Click()
 	local item = self.m_VehiclesGrid:getSelectedItem()
