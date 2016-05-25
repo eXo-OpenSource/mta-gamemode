@@ -474,6 +474,8 @@
 	<script src="client/classes/GUIForms/TourGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ScoreGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PlantGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HighscoreGUI.lua" type="client"/>
+
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
