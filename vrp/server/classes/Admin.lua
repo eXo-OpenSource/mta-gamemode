@@ -46,6 +46,8 @@ function Admin:constructor()
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
     addEventHandler("adminGetPlayerVehicles", root, bind(self.Event_vehicleRequestInfo, self))
 
+
+
 end
 
 function Admin:destructor()
@@ -63,6 +65,16 @@ end
 function Admin:addAdmin(player,rank)
 	outputDebug("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
+
+    if DEBUG then
+        bindKey(player, "j", "down", function(player)
+            if not doesPedHaveJetPack(player) then
+              givePedJetPack(player)
+           else
+              removePedJetPack ( player )
+           end
+        end)
+    end
 end
 
 function Admin:removeAdmin(player)
