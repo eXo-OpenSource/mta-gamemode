@@ -8,11 +8,13 @@
 HouseGUI = inherit(GUIForm)
 inherit(Singleton, HouseGUI)
 
-addRemoteEvents{"showHouseMenu","hideHouseMenu","houseEnter","houseLeave"}
+addRemoteEvents{"showHouseMenu","hideHouseMenu"}
 
-function HouseGUI:constructor()
+function HouseGUI:constructor(owner,price,rentprice,isValidRob)
 	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(500/2), 300, 500)
 	self.m_Window = GUIWindow:new(0,0,300,500,_"Hausmenü",true,true,self)
+	self.m_Window:setCloseOnClose( true )
+
 	self.m_LabelOwner =     GUILabel:new(30,40,200,30,_"s", self.m_Window)
 	self.m_LabelPrice =     GUILabel:new(30,70,200,30,_"s", self.m_Window)
 	self.m_LabelRentPrice = GUILabel:new(30,100,200,30,_"s", self.m_Window)
@@ -43,53 +45,23 @@ function HouseGUI:constructor()
 
 	self.m_Close = GUIButton:new(30, 450, self.m_Width-60, 35, _("Schließen"), self)
 	self.m_Close:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
-	self.m_Close.onLeftClick = function () self:hide() end
+	self.m_Close.onLeftClick = function () delete(self) end
 
-	self.m_RentPrice = "/"
-	self.m_Owner = "/"
-	self.m_Price = "/"
-	self.m_InHouse = false
+	self.m_LabelOwner:setText(_("Besitzer: %s",owner or "-"))
+	self.m_LabelPrice:setText(_("Preis: $%d",price))
+	self.m_LabelRentPrice:setText(_("Mietpreis: $%d",rentprice))
+	self.m_Break:setVisible(isValidRob)
 
-	self:houseChange()
-
-	self:hide()
-
-	addEventHandler("showHouseMenu", root,
-		function(...)
-			self:show(...)
-		end
-	)
-
-	addEventHandler("hideHouseMenu", root,
-		function()
-			self:hide()
-		end
-	)
-
-	addEventHandler("houseEnter", root,
-		function()
-			self.m_InHouse = true
-			self:hide()
-		end
-	)
-
-	addEventHandler("houseLeave", root,
-		function()
-			self.m_InHouse = false
-		end
-	)
-end
-
-function HouseGUI:InHouse()
-	return self.m_InHouse
 end
 
 function HouseGUI:enterHouse()
 	triggerServerEvent("enterHouse",root)
+	delete(self)
 end
 
 function HouseGUI:leaveHouse()
 	triggerServerEvent("leaveHouse",root)
+	delete(self)
 end
 
 function HouseGUI:buyHouse()
@@ -106,24 +78,19 @@ end
 
 function HouseGUI:breakHouse()
 	triggerServerEvent("breakHouse",root)
+	delete(self)
 end
 
-function HouseGUI:houseChange()
-	self.m_LabelOwner:setText(_("Besitzer: %s",self.m_Owner or "-"))
-	self.m_LabelPrice:setText(_("Preis: $%s",self.m_Price))
-	self.m_LabelRentPrice:setText(_("Mietpreis: $%s",self.m_RentPrice))
-end
+addEventHandler("showHouseMenu", root,
+	function(owner,price,rentprice,isValidRob)
+		HouseGUI:new(owner,price,rentprice,isValidRob)
+	end
+)
 
-function HouseGUI:show(owner,price,rentprice,isValidRob)
-	self.m_RentPrice = rentprice
-	self.m_Price = price
-	self.m_Owner = owner
-	self:houseChange()
-	self:open()
-	self.m_Break:setVisible(isValidRob)
-
-end
-
-function HouseGUI:hide()
-	self:close()
-end
+addEventHandler("hideHouseMenu", root,
+	function()
+		if HouseGUI:isInstantiated() then
+			delete(HouseGUI:getSingleton())
+		end
+	end
+)

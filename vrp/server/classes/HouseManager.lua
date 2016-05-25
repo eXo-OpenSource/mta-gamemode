@@ -19,7 +19,7 @@ function HouseManager:constructor()
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
-		self.m_Houses[value["Id"]] = House:new(value["Id"], value["x"], value["y"], value["z"], value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"])
+		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"])
 	end
 
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
@@ -30,7 +30,7 @@ function HouseManager:constructor()
 	addEventHandler("leaveHouse",root,bind(self.leaveHouse,self))
 
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
-	
+
 end
 
 function HouseManager:createNewHouse(player,cmd,...)
@@ -39,8 +39,8 @@ function HouseManager:createNewHouse(player,cmd,...)
 		local interior, price = ...
 		interior, price = tonumber(interior), tonumber(price)
 		if interior and price and House.interiorTable[interior] then
-			local x,y,z = getElementPosition(player)
-			self:newHouse(x,y,z,interior,price)
+			local pos = player:getPosition()
+			self:newHouse(pos, interior, price)
 			player:sendMessage(("house created @ %f, %f, %f"):format(x,y,z), 255, 255, 255)
 		end
 	end
@@ -85,13 +85,13 @@ function HouseManager:unrentHouse()
 	self.m_Houses[client.visitingHouse]:unrentHouse(client)
 end
 
-function HouseManager:newHouse(x, y, z, interiorID, price)
+function HouseManager:newHouse(pos, interiorID, price)
 	sql:queryExec("INSERT INTO ??_houses (x,y,z,interiorID,`keys`,owner,price,lockStatus,rentPrice,elements) VALUES (?,?,?,?,?,?,?,?,?,?)",
-		sql:getPrefix(), x, y, z, interiorID, toJSON({}), 0, price, 0, 25, toJSON({}))
+		sql:getPrefix(), pos.x, pos.y, pos.z, interiorID, toJSON({}), 0, price, 0, 25, toJSON({}))
 
 	local Id = sql:lastInsertId()
-	
-	self.m_Houses[Id] = House:new(Id, x, y, z, interiorID, toJSON({}), 0, price, 0, 25, toJSON({}))
+
+	self.m_Houses[Id] = House:new(Id, pos, interiorID, toJSON({}), 0, price, 0, 25, toJSON({}))
 end
 
 function HouseManager:destructor ()
