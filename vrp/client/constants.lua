@@ -179,6 +179,9 @@ HelpTextTitles = {
 	Gameplay = {
 		Beggar = "Gameplay: Bettler"
 	};
+	Minigames = {
+		ZombieSurvival = "Minigame: ZombieSurvival"
+	};
 	Actions = {
 		WeaponTruck = "Aktionen: Waffen-Truck";
 		WeedTruck = "Aktionen: Weed-Truck";
@@ -324,6 +327,12 @@ HelpTexts = {
 	};
 	Gameplay = {
 		Beggar = [[Todo]];
+	};
+	Minigames = {
+		ZombieSurvival = [[
+			Kämpfe gegen Zombies bis zu deinem bitteren Tod! In der Area spawnen immer wieder gute Waffen,
+			die du dringend für deinen Überlebenskampf brauchst!
+		]];
 	};
 	Actions = {
 		WeaponTruck = [[

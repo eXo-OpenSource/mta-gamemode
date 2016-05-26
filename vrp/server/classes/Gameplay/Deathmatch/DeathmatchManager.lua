@@ -28,7 +28,7 @@ end
 
 function DeathmatchManager:onZombieMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
-		hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde Zombie Survival spielen?", hitElement), "startZombieSurvival")
+		hitElement:triggerEvent("showMinigameGUI", "ZombieSurvival")
 	end
 end
 

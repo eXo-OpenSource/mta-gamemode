@@ -6,6 +6,24 @@
 -- *
 -- ****************************************************************************
 Highscore = inherit(Object)
+Highscore.Map = {}
+
+addRemoteEvents{"highscoreRequestData"}
+
+function Highscore.getFromName(name)
+	if Highscore.Map[name] then	return Highscore.Map[name] end
+	return false
+end
+
+addEventHandler("highscoreRequestData", root,
+	function(name)
+		if Highscore.getFromName(name) then
+			client:triggerEvent("highscoreReceiveData", Highscore.getFromName(name):getHighscoresFormated())
+		else
+			client:sendError("Highscore not found!")
+		end
+	end
+)
 
 function Highscore:constructor(Name)
 	self.m_Minigame = Name
@@ -22,6 +40,9 @@ function Highscore:constructor(Name)
 		self:createDefaults()
 		return
 	end
+
+	Highscore.Map[self.m_Minigame] = self
+
 end
 
 function Highscore:createDefaults()
@@ -39,6 +60,8 @@ function Highscore:createDefaults()
 
 	sql:queryExec("INSERT INTO ??_highscores (Name, Daily, Weekly, Monthly, Yearly, Global) VALUES (?, ?, ?, ?, ?, ?)", sql:getPrefix(),
 		self.m_Minigame, toJSON(self.m_Daily), toJSON(self.m_Weekly), toJSON(self.m_Monthly), toJSON(self.m_Yearly), toJSON(self.m_Global))
+
+	Highscore.Map[self.m_Minigame] = self
 end
 
 function Highscore:updateDefaults()
@@ -70,6 +93,33 @@ end
 
 function Highscore:getHighscores()
 	return {Daily = self.m_Daily, Weekly = self.m_Weekly, Monthly = self.m_Monthly, Yearly = self.m_Yearly, Global = self.m_Global}
+end
+
+function Highscore:getHighscoresFormated()
+	local highscores = self:getHighscores()
+	local realtime = MinigameManager.getRealTime()
+
+	local sorted = {}
+	sorted.Daily = highscores.Daily[realtime.yearday]
+	sorted.Weekly = highscores.Weekly[realtime.week]
+	sorted.Monthly = highscores.Monthly[realtime.month]
+	sorted.Yearly = highscores.Yearly[realtime.year]
+	sorted.Global = highscores.Global
+
+	--TODO: Sort Tables by score
+
+	local newTable = {}
+
+	for index, tbl in pairs(sorted) do
+		newTable[index] = {}
+		for i = 1, 10 do
+			if newTable[index][i] then
+				newTable[index][i].name = Account.getNameFromId(tbl[i].PlayerID)
+				newTable[index][i].score = tbl[i].Score
+			end
+		end
+	end
+	return newTable
 end
 
 function Highscore:isHighscoreForPlayer(Id)

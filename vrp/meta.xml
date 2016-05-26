@@ -475,7 +475,7 @@
 	<script src="client/classes/GUIForms/ScoreGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PlantGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HighscoreGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/MinigameGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
@@ -725,6 +725,8 @@
 	<vrpfile src="files/images/Other/noImg.png"/>
 	<vrpfile src="files/images/Other/Tour.png"/>
 	<vrpfile src="files/images/Other/blood.png"/>
+
+	<vrpfile src="files/images/Minigames/ZombieSurvival.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>

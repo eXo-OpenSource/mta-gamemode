@@ -8,16 +8,20 @@
 HighscoreGUI = inherit(GUIForm)
 inherit(Singleton, HighscoreGUI)
 
+addRemoteEvents{"showHighscoreGUI", "highscoreReceiveData"}
+
 HighscoreGUI.Scores = {
-	[1] = {["name"] = "Global", ["data"] = "global"},
-	[2] = {["name"] = "Monatlich", ["data"] = "monthly"},
-	[3] = {["name"] = "Wöchentlich", ["data"] = "weekly"},
-	[4] = {["name"] = "Täglich", ["data"] = "dayly"},
+	[1] = {["name"] = "Global", ["data"] = "Global"},
+	[2] = {["name"] = "Jährlich", ["data"] = "Yearly"},
+	[3] = {["name"] = "Monatlich", ["data"] = "Monthly"},
+	[4] = {["name"] = "Wöchentlich", ["data"] = "Weekly"},
+	[5] = {["name"] = "Täglich", ["data"] = "Daily"}
 }
 
-function HighscoreGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-440/2, screenHeight/2-230, 440, 460)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Game-Name Highscore", true, true, self)
+function HighscoreGUI:constructor(game)
+
+	GUIForm.constructor(self, screenWidth/2-540/2, screenHeight/2-230, 540, 460)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, MinigameGUI.Data[game]["title"].." Highscore", true, true, self)
 
 	self.m_TabPanel = GUITabPanel:new(0, 40, self.m_Width, self.m_Height-50, self)
 	self.m_Tabs = {}
@@ -29,4 +33,23 @@ function HighscoreGUI:constructor()
 		self.m_GridList[score["data"]]:addColumn(_"Spieler", 0.7)
 		self.m_GridList[score["data"]]:addColumn(_"Score", 0.3)
 	end
+
+	addEventHandler("highscoreReceiveData", root, bind(self.receiveScores, self))
+
+	triggerServerEvent("highscoreRequestData", localPlayer, game)
 end
+
+function HighscoreGUI:receiveScores(tbl)
+	for index, score in pairs(HighscoreGUI.Scores) do
+		self.m_GridList[score["data"]]:clear()
+		for index2, score2 in pairs(tbl[score["data"]]) do
+			self.m_GridList[score["data"]]:addItem(score2.name, score2.score)
+		end
+	end
+end
+
+addEventHandler("showHighscoreGUI", root,
+	function(game)
+		HighscoreGUI:new(game)
+	end
+)
