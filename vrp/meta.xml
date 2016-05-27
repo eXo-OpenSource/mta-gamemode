@@ -895,6 +895,7 @@
 	<vrpfile src="files/images/Textures/RescueTexture.png"/>
 	<vrpfile src="files/images/Textures/RescueTexture2.png"/>
 	<vrpfile src="files/images/Textures/ZombieSurvival.png"/>
+	<vrpfile src="files/images/Textures/Empty.png"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />

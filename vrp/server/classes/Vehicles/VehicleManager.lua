@@ -320,12 +320,12 @@ function VehicleManager:Event_vehicleLock()
 	if not source or not isElement(source) then return end
 	self:checkVehicle(source)
 
-	if not source:hasKey(client) or client:getRank() <= RANK.User then
-		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
+	if source:hasKey(client) or client:getRank() >= RANK.Moderator then
+		source:setLocked(not source:isLocked())
 		return
 	end
-
-	source:setLocked(not source:isLocked())
+	
+	client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
 end
 
 function VehicleManager:Event_vehiclePark()

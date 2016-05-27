@@ -34,12 +34,17 @@ factionVehicleShaders = {
 		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/FBITexture.png"};
 	};
 
+	-- Army
+	[3] = {
+		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
+	};
+
 	-- Rescue
 	[4] = {
 		[416] = {shaderEnabled = true, textureName = "ambulan92decal128", texturePath = "files/images/Textures/RescueTexture.png"};
 		[599] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/RescueTexture2.png"};
 		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/RescueTexture2.png"};
-	}
+	};
 }
 
 -- ID 1 = Police Departement:

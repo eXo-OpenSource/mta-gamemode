@@ -99,19 +99,13 @@ function Highscore:getHighscoresFormated()
 	local highscores = self:getHighscores()
 	local realtime = MinigameManager.getRealTime()
 
-	local sorted = {}
-	sorted.Daily = highscores.Daily[realtime.yearday]
-	sorted.Weekly = highscores.Weekly[realtime.week]
-	sorted.Monthly = highscores.Monthly[realtime.month]
-	sorted.Yearly = highscores.Yearly[realtime.year]
-	sorted.Global = highscores.Global
-
-	--TODO: Sort Tables by score 
-
 	local newTable = {}
-
-	for index, tbl in pairs(sorted) do
-		newTable[index] = {}
+	newTable.Daily = highscores.Daily[realtime.yearday]
+	newTable.Weekly = highscores.Weekly[realtime.week]
+	newTable.Monthly = highscores.Monthly[realtime.month]
+	newTable.Yearly = highscores.Yearly[realtime.year]
+	newTable.Global = highscores.Global
+	for index, tbl in pairs(newTable) do
 		for i = 1, 10 do
 			if tbl[i] then
 				newTable[index][i] = {}
@@ -119,7 +113,14 @@ function Highscore:getHighscoresFormated()
 				newTable[index][i].score = tbl[i].Score or 0
 			end
 		end
+
+		table.sort(newTable[index],
+			function (a, b)
+				return (a.score > b.score)
+			end
+		)
 	end
+
 	return newTable
 end
 

@@ -43,7 +43,7 @@ function HighscoreGUI:receiveScores(tbl)
 	for index, score in pairs(HighscoreGUI.Scores) do
 		self.m_GridList[score["data"]]:clear()
 		if tbl[score["data"]] then
-			for index2, score2 in pairs(tbl[score["data"]]) do
+			for index2, score2 in ipairs(tbl[score["data"]]) do
 				self.m_GridList[score["data"]]:addItem(score2.name, score2.score)
 			end
 		end
