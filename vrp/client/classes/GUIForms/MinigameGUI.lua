@@ -13,7 +13,19 @@ MinigameGUI.Data = {
 		["title"] = HelpTextTitles.Minigames.ZombieSurvival,
 		["description"] = HelpTexts.Minigames.ZombieSurvival,
 		["image"] = "files/images/Minigames/ZombieSurvival.png",
-		["startEvent"] = "startZombieSurvival"
+		["startFunction"] = function() triggerServerEvent("startZombieSurvival", localPlayer) end
+	},
+	["GoJump"] = {
+		["title"] = HelpTextTitles.Minigames.GoJump,
+		["description"] = HelpTexts.Minigames.GoJump,
+		["image"] = "files/images/Other/noImg.png",
+		["startFunction"] = function() GoJump:new() end
+	},
+	["SideSwipe"] = {
+		["title"] = HelpTextTitles.Minigames.SideSwipe,
+		["description"] = HelpTexts.Minigames.SideSwipe,
+		["image"] = "files/images/Other/noImg.png",
+		["startFunction"] = function() SideSwipe:new() end
 	},
 }
 
@@ -30,7 +42,7 @@ function MinigameGUI:constructor(game)
 	self.m_HighscoreButton = VRPButton:new(320, 210, 270, 30, _"Highscore zeigen", true, self):setBarColor(Color.LightBlue)
 
 	self.m_PlayButton.onLeftClick = function()
-		triggerServerEvent(data["startEvent"], localPlayer)
+		data["startFunction"]()
 		delete(self)
 	end
 	self.m_HighscoreButton.onLeftClick = function()

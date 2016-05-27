@@ -64,7 +64,6 @@ function Core:constructor()
 	VehicleInteraction:new()
 	VehicleHarbor:new()
 	Tour:new()
-	DeathmatchManager:new()
 	GrowableManager:new()
 	MinigameManager:new()
 

@@ -36,7 +36,7 @@ function Casino:createGameMarker()
 			if hitElement:getType() ~= "player" then return end
 			if hitElement ~= localPlayer then return end
 
-			GoJump:new()
+			MinigameGUI:new("GoJump")
 		end
 	)
 
@@ -45,7 +45,7 @@ function Casino:createGameMarker()
 			if hitElement:getType() ~= "player" then return end
 			if hitElement ~= localPlayer then return end
 
-			SideSwipe:new()
+			MinigameGUI:new("SideSwipe")
 		end
 	)
 

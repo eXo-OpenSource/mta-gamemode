@@ -6,6 +6,8 @@
 -- *
 -- ****************************************************************************
 MinigameManager = inherit(Singleton)
+MinigameManager.Current = {}
+
 addRemoteEvents{"MinigameSendHighscore", "MinigameRequestHighscores"}
 
 function MinigameManager:constructor()
@@ -19,6 +21,13 @@ function MinigameManager:constructor()
 
 	self.m_GoJump.m_Highscores = self.m_GoJump.ms_Highscore:getHighscores()
 	self.m_SideSwipe.m_Highscores = self.m_SideSwipe.ms_Highscore:getHighscores()
+
+	-- Zombie Survival
+	ZombieSurvival.initalize()
+
+	self.m_ZombieSurvivalHighscore = Highscore:new("ZombieSurvival")
+	self:addPlayerDeathHook()
+
 end
 
 function MinigameManager.getRealTime()
@@ -61,3 +70,25 @@ function MinigameManager.requestHighscores(sName)
 	end
 end
 addEventHandler("MinigameRequestHighscores", resourceRoot, MinigameManager.requestHighscores)
+
+
+function MinigameManager:addPlayerDeathHook()
+	PlayerManager:getSingleton():getWastedHook():register(
+		function(player)
+			local match = self:getPlayerDeathmatch(player)
+			if match then
+				match:removePlayer(player)
+				return true
+			end
+		end
+	)
+end
+
+function MinigameManager:getPlayerDeathmatch(player)
+	for index, match in pairs(MinigameManager.Current) do
+		if match.m_ZombieKills[player] then
+			return match
+		end
+	end
+	return false
+end

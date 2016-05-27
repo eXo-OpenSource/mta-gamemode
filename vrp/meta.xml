@@ -127,8 +127,9 @@
 
 	<!-- Minigames -->	<!-- not done yet-->
 	<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
-	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>-->
-	<script src="server/classes/Gameplay/Minigames/RockPaperScissors.lua" type="server"/>-->
+	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/RockPaperScissors.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/ZombieSurvival.lua" type="server"/>
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -156,10 +157,6 @@
 	<script src="server/classes/Gameplay/Shops/CluckinBell.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/RustyBrown.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
-
-	<!-- Deathmatch System -->
-	<script src="server/classes/Gameplay/Deathmatch/DeathmatchManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Deathmatch/ZombieSurvival.lua" type="server"/>
 
 	<script src="server/constants/shops.lua" type="server"/>
 

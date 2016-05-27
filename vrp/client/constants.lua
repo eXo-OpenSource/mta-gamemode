@@ -180,7 +180,9 @@ HelpTextTitles = {
 		Beggar = "Gameplay: Bettler"
 	};
 	Minigames = {
-		ZombieSurvival = "Minigame: ZombieSurvival"
+		ZombieSurvival = "Minigame: ZombieSurvival";
+		GoJump = "Minigame: GoJump";
+		SideSwipe = "Minigame: SideSwipe";
 	};
 	Actions = {
 		WeaponTruck = "Aktionen: Waffen-Truck";
@@ -332,6 +334,12 @@ HelpTexts = {
 		ZombieSurvival = [[
 			Kämpfe gegen Zombies bis zu deinem bitteren Tod! In der Area spawnen immer wieder gute Waffen,
 			die du dringend für deinen Überlebenskampf brauchst!
+		]];
+		GoJump = [[
+			Minigame: GoJump TODO
+		]];
+		SideSwipe = [[
+			Minigame: SideSwipe TODO
 		]];
 	};
 	Actions = {
