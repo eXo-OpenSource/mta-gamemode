@@ -14,7 +14,7 @@ function ZombieSurvival:constructor()
 	self.m_Dimension = math.random(1, 999) -- Testing
 	self.m_Zombies = {}
 	self.m_ZombieKills = {}
-
+	self.m_ZombieTimers = {}
 	self.m_ZombieTime = 10000
 	self.m_IncreaseTimer = setTimer(bind(self.increaseZombies, self), 20000, 0)
 
@@ -33,13 +33,16 @@ function ZombieSurvival:destructor()
 	for index, zombie in pairs(self.m_Zombies) do
 		delete(zombie)
 	end
-
 	for player, score in pairs(self.m_ZombieKills) do
-		self:removePlayer(player)
+		if score then
+			self:removePlayer(player)
+		end
+	end
+	for index, timer in pairs(self.m_ZombieTimers) do
+		if isTimer(timer) then killTimer(timer) end
 	end
 
 	if isTimer(self.m_CreatePickupTimer) then killTimer(self.m_CreatePickupTimer) end
-	if isTimer(self.ZombieTimer) then killTimer(self.ZombieTimer) end
 	if isTimer(self.m_IncreaseTimer) then killTimer(self.m_IncreaseTimer) end
 	if isElement(self.m_Pickup) then self.m_Pickup:destroy() end
 end
@@ -76,16 +79,18 @@ function ZombieSurvival:addPlayer(player)
 end
 
 function ZombieSurvival:removePlayer(player)
+	player:setHealth(100)
+	player:spawn(-35.72, 1380.00, 9.42)
 	player:setPosition(-35.72, 1380.00, 9.42)
 	player:setDimension(0)
 	player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
 
 	DeathmatchManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), self.m_ZombieKills[player])
-	self.m_ZombieKills[player] = nil
+	self.m_ZombieKills[player] = false
 	takeAllWeapons(player)
 	player:triggerEvent("hideScore")
 
-	if self:getPlayers() == 0 then
+	if #self:getPlayers() == 0 then
 		delete(self)
 	end
 end
@@ -93,7 +98,9 @@ end
 function ZombieSurvival:getRandomPlayer()
 	local random = {}
 	for player, score in pairs(self.m_ZombieKills) do
-		table.insert(random, player)
+		if score then
+			table.insert(random, player)
+		end
 	end
 	return random[math.random(1, #random)]
 end
@@ -101,8 +108,11 @@ end
 function ZombieSurvival:getPlayers()
 	local players = {}
 	for player, score in pairs(self.m_ZombieKills) do
-		table.insert(players, player)
+		if score then
+			table.insert(players, player)
+		end
 	end
+	outputChatBox("Players:"..#players)
 	return players
 end
 
@@ -122,14 +132,16 @@ end
 function ZombieSurvival:addZombie()
 	local pos = self:getRandomPosition()
 	self:createSmoke(pos)
-	setTimer(function()
-		local zombie = Zombie:new(pos, 310, self.m_Dimension)
-		zombie:disableSeeCheck()
-		zombie:SprintToPlayer(self:getRandomPlayer())
-		table.insert(self.m_Zombies, zombie)
-	end, 2500, 1)
+	self.m_ZombieTimers[#self.m_ZombieTimers+1] = setTimer(bind(self.spawnZombie, self), 2500, 1, pos)
 
-	self.ZombieTimer = setTimer(bind(self.addZombie, self), self.m_ZombieTime, 1)
+	self.m_ZombieTimers[#self.m_ZombieTimers+1] = setTimer(bind(self.addZombie, self), self.m_ZombieTime, 1)
+end
+
+function ZombieSurvival:spawnZombie(pos)
+	local zombie = Zombie:new(pos, 310, self.m_Dimension)
+	zombie:disableSeeCheck()
+	zombie:SprintToPlayer(self:getRandomPlayer())
+	table.insert(self.m_Zombies, zombie)
 end
 
 function ZombieSurvival:createSmoke(pos)
@@ -142,40 +154,40 @@ end
 
 function ZombieSurvival:loadMap()
 	self.m_Map = {
-		createObject ( 987, 213.2, 1787.2, 16.6, 0, 0, 90 ),
-		createObject ( 987, 213.2, 1775.2, 16.6, 0, 0, 90 ),
-		createObject ( 987, 213.2, 1763.2, 16.6, 0, 0, 90 ),
-		createObject ( 987, 213.2, 1751.2, 16.6, 0, 0, 90 ),
-		createObject ( 987, 213.2, 1739.2, 16.6, 0, 0, 90 ),
-		createObject ( 987, 213.2, 1727.2, 16.6, 0, 0, 90 ),
-		createObject ( 987, 201.3, 1727.2, 16.6 ),
-		createObject ( 987, 189.3, 1727.2, 16.6 ),
-		createObject ( 987, 177.3, 1727.2, 16.6 ),
-		createObject ( 987, 165.3, 1727.2, 16.6 ),
-		createObject ( 987, 153.3, 1727.2, 16.6 ),
-		createObject ( 987, 141.3, 1727.2, 16.6 ),
-		createObject ( 987, 129.3, 1727.2, 16.6 ),
-		createObject ( 987, 117.3, 1727.2, 16.6 ),
-		createObject ( 987, 105.2, 1727.2, 16.6 ),
-		createObject ( 987, 93.2, 1727.2, 16.6 ),
-		createObject ( 987, 81.2, 1727.2, 16.6 ),
-		createObject ( 987, 81.2, 1739.1, 16.6, 0, 0, 270 ),
-		createObject ( 987, 81.2, 1751.1, 16.6, 0, 0, 270 ),
-		createObject ( 987, 81.2, 1763.1, 16.6, 0, 0, 270 ),
-		createObject ( 987, 81.2, 1775.1, 16.6, 0, 0, 270 ),
-		createObject ( 987, 81.2, 1787.1, 16.6, 0, 0, 270 ),
-		createObject ( 987, 81.2, 1799, 16.6, 0, 0, 270 ),
-		createObject ( 987, 93.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 105.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 117.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 129.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 141.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 153.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 165.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 177.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 189.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 201.2, 1799, 16.6, 0, 0, 180 ),
-		createObject ( 987, 213.2, 1799, 16.6, 0, 0, 180 )
+		createObject(987, 213.2, 1787.2, 16.6, 0, 0, 90),
+		createObject(987, 213.2, 1775.2, 16.6, 0, 0, 90),
+		createObject(987, 213.2, 1763.2, 16.6, 0, 0, 90),
+		createObject(987, 213.2, 1751.2, 16.6, 0, 0, 90),
+		createObject(987, 213.2, 1739.2, 16.6, 0, 0, 90),
+		createObject(987, 213.2, 1727.2, 16.6, 0, 0, 90),
+		createObject(987, 201.3, 1727.2, 16.6),
+		createObject(987, 189.3, 1727.2, 16.6),
+		createObject(987, 177.3, 1727.2, 16.6),
+		createObject(987, 165.3, 1727.2, 16.6),
+		createObject(987, 153.3, 1727.2, 16.6),
+		createObject(987, 141.3, 1727.2, 16.6),
+		createObject(987, 129.3, 1727.2, 16.6),
+		createObject(987, 117.3, 1727.2, 16.6),
+		createObject(987, 105.2, 1727.2, 16.6),
+		createObject(987, 93.2, 1727.2, 16.6),
+		createObject(987, 81.2, 1727.2, 16.6),
+		createObject(987, 81.2, 1739.1, 16.6, 0, 0, 270),
+		createObject(987, 81.2, 1751.1, 16.6, 0, 0, 270),
+		createObject(987, 81.2, 1763.1, 16.6, 0, 0, 270),
+		createObject(987, 81.2, 1775.1, 16.6, 0, 0, 270),
+		createObject(987, 81.2, 1787.1, 16.6, 0, 0, 270),
+		createObject(987, 81.2, 1799, 16.6, 0, 0, 270),
+		createObject(987, 93.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 105.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 117.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 129.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 141.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 153.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 165.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 177.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 189.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 201.2, 1799, 16.6, 0, 0, 180),
+		createObject(987, 213.2, 1799, 16.6, 0, 0, 180 )
 	}
 	for index, object in pairs(self.m_Map) do
 		object:setDimension(self.m_Dimension)

@@ -29,7 +29,10 @@ function MinigameGUI:constructor(game)
 	self.m_PlayButton = VRPButton:new(320, 175, 270, 30, _"Spielen", true, self):setBarColor(Color.Green)
 	self.m_HighscoreButton = VRPButton:new(320, 210, 270, 30, _"Highscore zeigen", true, self):setBarColor(Color.LightBlue)
 
-	self.m_PlayButton.onLeftClick = function() triggerServerEvent(data["startEvent"], localPlayer) end
+	self.m_PlayButton.onLeftClick = function()
+		triggerServerEvent(data["startEvent"], localPlayer)
+		delete(self)
+	end
 	self.m_HighscoreButton.onLeftClick = function()
 		HighscoreGUI:new(game)
 		delete(self)

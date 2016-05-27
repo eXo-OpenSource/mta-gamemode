@@ -22,7 +22,7 @@ end
 end]]
 
 function WantedSystem:playerWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
-	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
+	if killer and isElement(killer) and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
 		killer:reportCrime(Crime.Kill)
 
 		-- Take karma
