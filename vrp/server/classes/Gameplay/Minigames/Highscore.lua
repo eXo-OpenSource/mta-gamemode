@@ -106,16 +106,17 @@ function Highscore:getHighscoresFormated()
 	sorted.Yearly = highscores.Yearly[realtime.year]
 	sorted.Global = highscores.Global
 
-	--TODO: Sort Tables by score
+	--TODO: Sort Tables by score 
 
 	local newTable = {}
 
 	for index, tbl in pairs(sorted) do
 		newTable[index] = {}
 		for i = 1, 10 do
-			if newTable[index][i] then
-				newTable[index][i].name = Account.getNameFromId(tbl[i].PlayerID)
-				newTable[index][i].score = tbl[i].Score
+			if tbl[i] then
+				newTable[index][i] = {}
+				newTable[index][i].name = Account.getNameFromId(tbl[i].PlayerID) or "-"
+				newTable[index][i].score = tbl[i].Score or 0
 			end
 		end
 	end
