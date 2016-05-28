@@ -724,6 +724,8 @@
 	<vrpfile src="files/images/Other/blood.png"/>
 
 	<vrpfile src="files/images/Minigames/ZombieSurvival.png"/>
+	<vrpfile src="files/images/Minigames/SideSwipe.png"/>
+	<vrpfile src="files/images/Minigames/GoJump.png"/>
 
 	<vrpfile src="files/images/Shops/DrivingSchool.png"/>
 	<vrpfile src="files/images/Shops/ClothesHeader.png"/>

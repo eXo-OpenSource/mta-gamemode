@@ -18,13 +18,13 @@ MinigameGUI.Data = {
 	["GoJump"] = {
 		["title"] = HelpTextTitles.Minigames.GoJump,
 		["description"] = HelpTexts.Minigames.GoJump,
-		["image"] = "files/images/Other/noImg.png",
+		["image"] = "files/images/Minigames/GoJump.png",
 		["startFunction"] = function() GoJump:new() end
 	},
 	["SideSwipe"] = {
 		["title"] = HelpTextTitles.Minigames.SideSwipe,
 		["description"] = HelpTexts.Minigames.SideSwipe,
-		["image"] = "files/images/Other/noImg.png",
+		["image"] = "files/images/Minigames/SideSwipe.png",
 		["startFunction"] = function() SideSwipe:new() end
 	},
 }
