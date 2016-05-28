@@ -180,9 +180,10 @@ HelpTextTitles = {
 		Beggar = "Gameplay: Bettler"
 	};
 	Minigames = {
-		ZombieSurvival = "Minigame: ZombieSurvival";
+		ZombieSurvival = "Minigame: Zombie Survival";
 		GoJump = "Minigame: GoJump";
 		SideSwipe = "Minigame: SideSwipe";
+		SniperGame = "Minigame: Sniper Game";
 	};
 	Actions = {
 		WeaponTruck = "Aktionen: Waffen-Truck";
@@ -341,6 +342,10 @@ HelpTexts = {
 		SideSwipe = [[
 			Minigame: SideSwipe TODO
 		]];
+		SniperGame = [[
+			Erledige alle gespawnten Peds mit gezielten Kopfschüssen bevor sie die gelbe Linie übertreten!
+		]];
+
 	};
 	Actions = {
 		WeaponTruck = [[

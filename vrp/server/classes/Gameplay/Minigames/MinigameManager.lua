@@ -24,8 +24,12 @@ function MinigameManager:constructor()
 
 	-- Zombie Survival
 	ZombieSurvival.initalize()
-
 	self.m_ZombieSurvivalHighscore = Highscore:new("ZombieSurvival")
+
+	-- Sniper Game
+	SniperGame.initalize()
+	self.m_SniperGameHighscore = Highscore:new("SniperGame")
+
 	self:addPlayerDeathHook()
 
 end
@@ -86,7 +90,10 @@ end
 
 function MinigameManager:getPlayerDeathmatch(player)
 	for index, match in pairs(MinigameManager.Current) do
-		if match.m_ZombieKills[player] then
+		if match.m_ZombieKills[player] then --ZombieSurvival
+			return match
+		end
+		if match.m_PedKills[player] then --SniperGame
 			return match
 		end
 	end

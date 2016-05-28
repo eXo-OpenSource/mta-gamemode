@@ -27,6 +27,12 @@ MinigameGUI.Data = {
 		["image"] = "files/images/Minigames/SideSwipe.png",
 		["startFunction"] = function() SideSwipe:new() end
 	},
+	["SniperGame"] = {
+		["title"] = HelpTextTitles.Minigames.SniperGame,
+		["description"] = HelpTexts.Minigames.SniperGame,
+		["image"] = "files/images/Minigames/SniperGame.png",
+		["startFunction"] = function() triggerServerEvent("startSniperGame", localPlayer) end
+	},
 }
 
 addRemoteEvents{"showMinigameGUI"}
