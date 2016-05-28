@@ -50,6 +50,10 @@ function House:updatePickup()
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
 end
 
+function House:getOwner()
+	return self.m_Owner
+end
+
 function House:breakHouse(player)
 	if getRealTime().timestamp >= self.m_LastRobbed + ROB_DELAY then
 		if not HouseManager:getSingleton():isCharacterAllowedToRob(player) then
@@ -136,8 +140,15 @@ function House:save()
 end
 
 function House:sellHouse(player)
-	self.m_Owner = 0
-	self:updatePickup()
+	if player:getId() == self.m_Owner then
+		local price = math.floor(self.m_Price*0.75)
+		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
+		player:giveMoney(price, "Haus-Verkauf")
+		self.m_Owner = 0
+		self:updatePickup()
+	else
+		player:sendError(_("Das ist nicht dein Haus!", player))
+	end
 end
 
 function House:onPickupHit(hitElement)
@@ -194,6 +205,11 @@ function House:onPlayerFade()
 end
 
 function House:buyHouse(player)
+	if HouseManager:getSingleton():getPlayerHouse(player) then
+		player:sendWarning(_("Du hast bereits ein Haus!", player), 125, 0, 0)
+		return
+	end
+
 	if self.m_Owner > 0 then
 		player:sendError(_("Dieses Haus hat schon einen Besitzer!", player))
 		return

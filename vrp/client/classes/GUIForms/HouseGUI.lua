@@ -31,6 +31,11 @@ function HouseGUI:constructor(owner,price,rentprice,isValidRob)
 	self.m_Buy:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Buy.onLeftClick = bind(self.buyHouse,self)
 
+	self.m_Sell = GUIButton:new(30, 225, self.m_Width-60, 35, _("Haus verkaufen"), self)
+	self.m_Sell:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
+	self.m_Sell.onLeftClick = bind(self.sellHouse,self)
+	self.m_Sell:setVisible(false)
+
 	self.m_Enter = GUIButton:new(30, 280, self.m_Width/2-35, 35, _("Betreten"), self)
 	self.m_Enter:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Enter.onLeftClick = bind(self.enterHouse,self)
@@ -52,6 +57,11 @@ function HouseGUI:constructor(owner,price,rentprice,isValidRob)
 	self.m_LabelRentPrice:setText(_("Mietpreis: $%d",rentprice))
 	self.m_Break:setVisible(isValidRob)
 
+	if owner == localPlayer:getName() then
+		self.m_Buy:setVisible(false)
+		self.m_Sell:setVisible(true)
+	end
+
 end
 
 function HouseGUI:enterHouse()
@@ -65,7 +75,17 @@ function HouseGUI:leaveHouse()
 end
 
 function HouseGUI:buyHouse()
-	triggerServerEvent("buyHouse",root)
+	QuestionBox:new(_"Möchtest du wirklich dieses Haus kaufen?",
+	function() triggerServerEvent("buyHouse",root) end
+	)
+
+end
+
+function HouseGUI:sellHouse()
+	QuestionBox:new("Möchtest du wirklich dein Haus verkaufen? Du erhälst 75% des Preises zurück!",
+	function() triggerServerEvent("sellHouse",root) end
+	)
+
 end
 
 function HouseGUI:onRent()

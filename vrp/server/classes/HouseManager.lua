@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 HouseManager = inherit(Singleton)
-addRemoteEvents{"enterHouse","leaveHouse","buyHouse","rentHouse","unrentHouse","breakHouse"}
+addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse"}
 
 local ROB_DELAY = 1000*60*15
 
@@ -26,6 +26,7 @@ function HouseManager:constructor()
 	addEventHandler("rentHouse",root,bind(self.rentHouse,self))
 	addEventHandler("unrentHouse",root,bind(self.unrentHouse,self))
 	addEventHandler("buyHouse",root,bind(self.buyHouse,self))
+	addEventHandler("sellHouse",root,bind(self.sellHouse,self))
 	addEventHandler("enterHouse",root,bind(self.enterHouse,self))
 	addEventHandler("leaveHouse",root,bind(self.leaveHouse,self))
 
@@ -75,6 +76,11 @@ function HouseManager:buyHouse()
 	self.m_Houses[client.visitingHouse]:buyHouse(client)
 end
 
+function HouseManager:sellHouse()
+	if not client then return end
+	self.m_Houses[client.visitingHouse]:sellHouse(client)
+end
+
 function HouseManager:rentHouse()
 	if not client then return end
 	self.m_Houses[client.visitingHouse]:rentHouse(client)
@@ -92,6 +98,16 @@ function HouseManager:newHouse(pos, interiorID, price)
 	local Id = sql:lastInsertId()
 
 	self.m_Houses[Id] = House:new(Id, pos, interiorID, toJSON({}), 0, price, 0, 25, toJSON({}))
+end
+
+function HouseManager:getPlayerHouse(player)
+	local playerId = player:getId()
+	for key, house in pairs(self.m_Houses) do
+		if house:getOwner() == playerId then
+			return house
+		end
+	end
+	return false
 end
 
 function HouseManager:destructor ()
