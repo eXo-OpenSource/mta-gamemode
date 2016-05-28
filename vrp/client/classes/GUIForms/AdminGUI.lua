@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 AdminGUI = inherit(GUIForm)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -69,10 +69,11 @@ function AdminGUI:constructor()
 	self:addAdminButton("goto", "hin porten", 220, 170, 180, 30, Color.Green, tabSpieler)
 	self:addAdminButton("gethere", "her porten", 410, 170, 180, 30, Color.Green, tabSpieler)
 	self:addAdminButton("kick", "kicken", 220, 210, 180, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("warn", "Warns verwalten", 410, 210, 180, 30, Color.Orange, tabSpieler)
 	self:addAdminButton("prison", "ins Prison", 220, 250, 180, 30, Color.Orange, tabSpieler)
-	self:addAdminButton("warn", "Warns verwalten", 220, 290, 180, 30, Color.Orange, tabSpieler)
-	self:addAdminButton("timeban", "Timeban", 410, 210, 180, 30, Color.Red, tabSpieler)
-	self:addAdminButton("permaban", "Permaban", 410, 250, 180, 30, Color.Red, tabSpieler)
+	self:addAdminButton("unprison", "aus Prison entlassen", 410, 250, 180, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("timeban", "Timeban", 220, 290, 180, 30, Color.Red, tabSpieler)
+	self:addAdminButton("permaban", "Permaban", 410, 290, 180, 30, Color.Red, tabSpieler)
 	self:addAdminButton("setFaction", "in Fraktion setzen", 220, 330, 180, 30, Color.Blue, tabSpieler)
 	self:addAdminButton("setCompany", "in Unternehmen setzen", 410, 330, 180, 30, Color.Blue, tabSpieler)
 
@@ -173,6 +174,12 @@ function AdminGUI:onButtonClick(func)
 				_"Dauer in Minuten:",
 				function (reason, duration)
 					triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason, duration)
+				end)
+	elseif func == "unprison" then
+		QuestionBox:new(
+				_("Spieler %s aus dem Prison entlassen?", self.m_SelectedPlayer:getName()),
+				function ()
+					triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer)
 				end)
 	elseif func == "timeban" then
 		AdminInputBox:new(

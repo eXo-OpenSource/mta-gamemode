@@ -720,6 +720,9 @@ function Player:setPrison(duration)
 	if isTimer(self.m_PrisonTimer) then killTimer(self.m_PrisonTimer) end
 	if self.m_PrisonTime > 0 then
 		if self:getOccupiedVehicle() then self:removeFromVehicle() end
+		toggleControl(self, "fire", false)
+		toggleControl(self, "jump", false)
+		toggleControl(self, "aim_weapon", false)
 		self:setDimension(0)
 		self:setInterior(0)
 		self:setPosition(Vector3(-224,2371.29,5688.73))
@@ -728,7 +731,7 @@ function Player:setPrison(duration)
 	end
 end
 
-function Player:getRemainingPrisonTime(player)
+function Player:getRemainingPrisonTime()
     local timerLeft = false
 	if isTimer(self.m_PrisonTimer) then
 		timerLeft = getTimerDetails(self.m_PrisonTimer)/1000
@@ -739,10 +742,13 @@ function Player:getRemainingPrisonTime(player)
 	return self.m_PrisonTime
 end
 
-function Player:endPrison(player)
+function Player:endPrison()
 	self:setPosition(Vector3(1478.87, -1726.17, 13.55))
 	self:setDimension(0)
 	self:setInterior(0)
+	toggleControl(self, "fire", true)
+	toggleControl(self, "jump", true)
+	toggleControl(self, "aim_weapon", true)
 	self:triggerEvent("CountdownStop")
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
 	self.m_PrisonTime = 0

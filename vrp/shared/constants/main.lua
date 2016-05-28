@@ -22,6 +22,7 @@ ADMIN_RANK_PERMISSION = {
 	["kick"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
 	["prison"] = RANK.Supporter,
+	["unprison"] = RANK.Supporter,
 	["gethere"] = RANK.Supporter,
 	["goto"] = RANK.Supporter,
 	["showVehicles"] = RANK.Supporter,
