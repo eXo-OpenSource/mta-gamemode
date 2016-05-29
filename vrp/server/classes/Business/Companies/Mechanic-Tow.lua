@@ -17,7 +17,8 @@ end
 
 function MechanicTow:respawnVehicle(vehicle)
 	outputDebug("Respawning vehicle in mechanic base")
-	vehicle:setCurrentPositionAsSpawn(VehiclePositionType.Mechanic)
+
+	vehicle:setPositionType(VehiclePositionType.Mechanic)
 	vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 	vehicle:fix()
 end

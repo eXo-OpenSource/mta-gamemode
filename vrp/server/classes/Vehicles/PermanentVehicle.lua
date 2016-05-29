@@ -10,9 +10,6 @@ PermanentVehicle = inherit(Vehicle)
 function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId)
 	self.m_Id = Id
 	self.m_Owner = owner
-
-	self:setCurrentPositionAsSpawn(positionType)
-
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
 	self.m_Keys = keys or {}
 	self.m_PositionType = positionType or VehiclePositionType.World
@@ -86,6 +83,8 @@ function PermanentVehicle:purge()
 end
 
 function PermanentVehicle:save()
+	local posX, posY, posZ = getElementPosition(self)
+	local rotX, rotY, rotZ = getElementRotation(self)
 	local health = getElementHealth(self)
 	local r, g, b, r2, g2, b2 = getVehicleColor(self, true)
 	local color = setBytesInInt32(255, r, g, b) -- Format: argb
@@ -95,7 +94,7 @@ function PermanentVehicle:save()
 	local tunings = getVehicleUpgrades(self) or {}
 	if self.m_Trunk then self.m_Trunk:save() end
 	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Id)
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Id)
 end
 
 function PermanentVehicle:getId()
@@ -163,25 +162,6 @@ end
 
 function PermanentVehicle:setPositionType(type)
 	self.m_PositionType = type
-end
-
-function PermanentVehicle:setCurrentPositionAsSpawn(type)
-	self.m_PositionType = type
-	self.m_SpawnPos = self:getPosition()
-	local rot = self:getRotation()
-	self.m_SpawnRot = rot.z
-end
-
-function PermanentVehicle:respawnOnSpawnPosition()
-	if self.m_PositionType == VehiclePositionType.World then
-		self:setPosition(self.m_SpawnPos)
-		self:setRotation(0, 0, self.m_SpawnRot)
-		fixVehicle(self)
-		local owner = Player.getFromId(self.m_Owner)
-		if owner and isElement(owner) then
-			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
-		end
-	end
 end
 
 function PermanentVehicle:respawn()

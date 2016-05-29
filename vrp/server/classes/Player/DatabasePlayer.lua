@@ -513,6 +513,5 @@ function DatabasePlayer:loadMigratorData()
 		VehicleManager:getSingleton():removeRef(veh, false)
 		veh:destroy()
 	end
-	VehicleManager.loadPlayerVehicles(self.m_Id)
-
+	VehicleManager:loadPlayerVehicles(self)
 end

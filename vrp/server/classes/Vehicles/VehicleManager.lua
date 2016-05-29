@@ -18,15 +18,14 @@ function VehicleManager:constructor()
 
 	-- Add events
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
-		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleRequestInfo",
-		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark"}
+		"vehicleRepair", "vehicleRespawn", "vehicleDelete", "vehicleSell", "vehicleRequestInfo",
+		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar"}
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
 	addEventHandler("vehicleRemoveKey", root, bind(self.Event_vehicleRemoveKey, self))
 	addEventHandler("vehicleRepair", root, bind(self.Event_vehicleRepair, self))
 	addEventHandler("vehicleRespawn", root, bind(self.Event_vehicleRespawn, self))
-	addEventHandler("vehicleRespawnWorld", root, bind(self.Event_vehicleRespawnWorld, self))
 	addEventHandler("vehicleDelete", root, bind(self.Event_vehicleDelete, self))
 	addEventHandler("vehicleSell", root, bind(self.Event_vehicleSell, self))
 	addEventHandler("vehicleRequestInfo", root, bind(self.Event_vehicleRequestInfo, self))
@@ -36,9 +35,6 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleSyncMileage", root, bind(self.Event_vehicleSyncMileage, self))
 	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
 	addEventHandler("vehicleUpgradeHangar", root, bind(self.Event_vehicleUpgradeHangar, self))
-	addEventHandler("vehiclePark", root, bind(self.Event_vehiclePark, self))
-
-
 
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
@@ -112,18 +108,14 @@ function VehicleManager:getGroupVehicles(groupId)
 	return self.m_GroupVehicles[groupId]
 end
 
-function VehicleManager.loadPlayerVehicles(playerId)
-	local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), playerId)
+function VehicleManager.loadVehicles()
+	outputServerLog("Loading vehicles...")
+	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
+		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
 		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.LightColor, row.TrunkId)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 	end
-end
-
-function VehicleManager.loadVehicles()
-	outputServerLog("Loading vehicles...")
-
 	outputServerLog("Loading company vehicles")
 	local result = sql:queryFetch("SELECT * FROM ??_company_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
@@ -292,6 +284,17 @@ function VehicleManager:getPlayerVehicles(player)
 	return self.m_Vehicles[player] or {}
 end
 
+function VehicleManager:loadPlayerVehicles(player)
+	if player:getId() then
+		local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), player:getId())
+		for i, row in pairs(result) do
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.LightColor)
+			VehicleManager:getSingleton():addRef(vehicle, false)
+		end
+	end
+end
+
 function VehicleManager:updateFuelOfPermanentVehicles()
 	for k, player in pairs(getElementsByType("player")) do
 		local vehicle = getPedOccupiedVehicle(player)
@@ -326,22 +329,6 @@ function VehicleManager:Event_vehicleLock()
 	end
 	
 	client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
-end
-
-function VehicleManager:Event_vehiclePark()
-	if not source or not isElement(source) then return end
-	self:checkVehicle(source)
-
-	if not source:hasKey(client) or client:getRank() <= RANK.User then
-		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
-		return
-	end
-	if source:getInterior() == 0 then
-		source:setCurrentPositionAsSpawn(VehiclePositionType.World)
-		client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
-	else
-		client:sendError(_("Du kannst dein Fahrzeug hier nicht parken!", client))
-	end
 end
 
 function VehicleManager:Event_vehicleRequestKeys()
@@ -414,11 +401,6 @@ function VehicleManager:Event_vehicleRespawn()
 		return
 	end
 
-	if source:getPositionType() == VehiclePositionType.Mechanic then
-		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
-		return
-	end
-
 	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
@@ -451,33 +433,6 @@ function VehicleManager:Event_vehicleRespawn()
 	end
 	client:triggerEvent("vehicleRetrieveInfo", vehicles)
 end
-
-function VehicleManager:Event_vehicleRespawnWorld()
-	if not instanceof(source, PermanentVehicle, true) then
-		client:sendError(_("Das ist kein permanentes Server Fahrzeug!", client))
-		return
-	end
-
-	if source:getPositionType() == VehiclePositionType.Mechanic then
-		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
-		return
-	end
-
-	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
-		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
-		return
-	end
-	if client:getMoney() < 100 then
-		client:sendError(_("Du hast nicht genügend Geld!", client))
-		return
-	end
-	if source:getPositionType() == VehiclePositionType.World then
-		source:respawnOnSpawnPosition()
-	else
-		client:sendError(_("Das Fahrzeug hat keine Park-Position!", client))
-	end
-end
-
 
 function VehicleManager:Event_vehicleDelete()
 	self:checkVehicle(source)
