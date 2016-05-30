@@ -9,7 +9,7 @@ ScoreboardGUI = inherit(GUIForm)
 inherit(Singleton, ScoreboardGUI)
 
 function ScoreboardGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.6/2) / ASPECT_RATIO_MULTIPLIER, screenHeight/2-screenHeight*0.3, screenWidth*0.6, screenHeight*0.6)
+	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.65/2) / ASPECT_RATIO_MULTIPLIER, screenHeight/2-screenHeight*0.3, screenWidth*0.65, screenHeight*0.6)
 
 	self.m_Rect = GUIRectangle:new(0, self.m_Width*0.06 , self.m_Width, self.m_Height - self.m_Width*0.06, tocolor(0, 0, 0, 200), self)
 	self.m_Logo = GUIImage:new(self.m_Width/2-self.m_Width*0.25*0.5, self.m_Height*0.005, self.m_Width*0.275, self.m_Width*0.119, "files/images/LogoNoFont.png", self)
@@ -17,11 +17,13 @@ function ScoreboardGUI:constructor()
 
 	self.m_Grid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.14, self.m_Width*0.9, self.m_Height*0.45, self.m_Rect)
 	self.m_Grid:setColor(Color.Clear)
-	self.m_Grid:addColumn(_"Name", 0.3)
-	self.m_Grid:addColumn(_"Fraktion", 0.2)
-	self.m_Grid:addColumn(_"Unternehmen", 0.2)
-	self.m_Grid:addColumn(_"Gang/Firma", 0.2)
+	self.m_Grid:addColumn(_"Name", 0.2)
+	self.m_Grid:addColumn(_"Fraktion", 0.15)
+	self.m_Grid:addColumn(_"Unternehmen", 0.15)
+	self.m_Grid:addColumn(_"Gang/Firma", 0.15)
+	self.m_Grid:addColumn(_"Spielstunden", 0.15)
 	self.m_Grid:addColumn(_"Karma", 0.1)
+	self.m_Grid:addColumn(_"Ping", 0.1)
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, tocolor(50, 200, 255, 255), self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
@@ -97,12 +99,15 @@ function ScoreboardGUI:insertPlayers()
 	for index, data in ipairs(self.m_Players) do
 		local player = data[1]
 		local karma = math.floor(player:getKarma() or 0)
+		local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
 		local item = self.m_Grid:addItem(
 			player:getName(),
 			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
 			player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
 			player:getGroupName(),
-			karma >= 0 and "+"..karma or " "..tostring(karma)
+			hours..":"..minutes,
+			karma >= 0 and "+"..karma or " "..tostring(karma),
+			player:getPing().."ms"
 		)
 
 		if data[2] and player:getFaction() then
