@@ -62,8 +62,8 @@ end
 
 function FactionManager:loadFactions()
   outputServerLog("Loading factions...")
-  local result = sql:queryFetch("SELECT * FROM ??_factions", sql:getPrefix())
-  for k, row in ipairs(result) do
+  local result = sql:queryFetch("SELECT * FROM ??_factions WHERE active = 1", sql:getPrefix())
+  for k, row in pairs(result) do
     local result2 = sql:queryFetch("SELECT Id, FactionRank FROM ??_character WHERE FactionID = ?", sql:getPrefix(), row.Id)
     local players = {}
     for i, factionRow in ipairs(result2) do

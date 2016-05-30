@@ -126,9 +126,11 @@ function VehicleManager.loadVehicles()
 	outputServerLog("Loading faction vehicles")
 	local result = sql:queryFetch("SELECT * FROM ??_faction_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
-		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-		enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
-		VehicleManager:getSingleton():addRef(vehicle, false)
+		if FactionManager:getFromId(row.Faction) then
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			enew(vehicle, FactionVehicle, tonumber(row.Id), FactionManager:getFromId(row.Faction), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+			VehicleManager:getSingleton():addRef(vehicle, false)
+		end
 	end
 	outputServerLog("Loading group vehicles")
 	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles", sql:getPrefix())
@@ -327,7 +329,7 @@ function VehicleManager:Event_vehicleLock()
 		source:setLocked(not source:isLocked())
 		return
 	end
-	
+
 	client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
 end
 

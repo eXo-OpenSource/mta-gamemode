@@ -64,7 +64,7 @@ function ScoreboardGUI:refresh()
 	end
 	self.m_CountRow = 0
 	self.m_CountColumn = 0
-	for id, faction in ipairs(FactionManager.Map) do
+	for id, faction in pairs(FactionManager.Map) do
 		local color = faction:getColor()
 		self:addPlayerCount(faction:getShortName(), self.m_FactionCount[id] or 0, tocolor(color.r, color.g, color.b))
 	end
