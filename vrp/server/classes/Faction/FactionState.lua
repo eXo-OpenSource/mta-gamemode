@@ -17,12 +17,14 @@ function FactionState:constructor()
 	Blip:new("Police.png", 1552.278, -1675.725)
 
 	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
+	VehicleBarrier:new(Vector3(283.900390625, 1817.7998046875, 17.400001525879), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- Army Barrier
 	local gate = Gate:new(9093, Vector3(1588.80, -1638.30, 14.50), Vector3(0, 0, 270), Vector3(1598.80, -1638.30, 14.50))
 	gate.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	gate:setGateScale(1.25)
 	local door = Door:new(1499, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 180))
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	door:setDoorScale(1.1)
+
 
 	local pdGarageEnter = InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0)
 	--local pdGarageExit = InteriorEnterExit:new(Vector3(259.22, 73.73, 1003.64), Vector3(1527.16, -1678.17, 5.89), 0, 0, 0, 0)
@@ -101,7 +103,9 @@ end
 
 function FactionState:onBarrierGateHit(player)
     if not player:getFaction() or not player:getFaction():isStateFaction() then
-        player:sendError(_("Zufahrt Verboten!", player))
+		if player:isInVehicle() then
+        	player:sendError(_("Zufahrt Verboten!", player))
+		end
         return false
     end
     return true

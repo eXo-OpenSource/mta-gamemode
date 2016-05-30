@@ -310,11 +310,18 @@ end
 
 function Faction:respawnVehicles()
 	local factionVehicles = VehicleManager:getSingleton():getFactionVehicles(self.m_Id)
+	local fails = 0
+	local vehicles = 0
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
-			vehicle:respawn()
+			vehicles = vehicles + 1
+			if not vehicle:respawn() then
+				fails = fails + 1
+			end
 		end
 	end
+
+	self:sendShortMessage(("%s/%s Fahrzeuge wurden respawned!"):format(vehicles-fails, vehicles))
 end
 
 function Faction:phoneCall(caller)

@@ -561,7 +561,7 @@ function Player:giveMoney(money, reason) -- Overriden
 	DatabasePlayer.giveMoney(self, money, reason)
 
 	if money ~= 0 then
-		self:sendShortMessage((money >= 0 and "+"..money or money).."$".." - "..(reason or ""))
+		self:sendShortMessage(("%s$%s"):format(money >= 0 and "+"..money or money, reason ~= nil and " - "..reason or ""), "SA National Bank (Cash)", {0, 94, 255}, 3000)
 	end
 	self:triggerEvent("playerCashChange")
 end

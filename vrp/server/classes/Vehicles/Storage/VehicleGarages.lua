@@ -293,6 +293,7 @@ function VehicleGarages.initalizeAll()
 			{enter = {-2199.5, -2350.6, 29.9}, exit = {-2195.3, -2353, 30.3}}; -- rotation is missing here
 			{enter = {-1845, 117.1, 15.1}, exit = {-1845.4, 123.6, 14.8}};
 			{enter = {-1851.6, 116.8, 15.3}, exit = {-1852.7, 123.2, 14.8, 230}, hideblip = true};
+			{enter = { 2433.537, -4.047, 26.484}, exit = {2433.669, -13.215, 26.484}};
 		},
 		{
 			[1] = {

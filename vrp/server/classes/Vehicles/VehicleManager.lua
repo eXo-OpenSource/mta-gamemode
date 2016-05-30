@@ -398,8 +398,45 @@ function VehicleManager:Event_vehicleRepair()
 end
 
 function VehicleManager:Event_vehicleRespawn()
-	if not instanceof(source, PermanentVehicle, true) then
+	if not instanceof(source, PermanentVehicle) then
 		client:sendError(_("Das ist kein permanentes Server Fahrzeug!", client))
+		return
+	end
+
+	-- Todo: (Re-)move this block
+	if instanceof(source, FactionVehicle) then
+		if (not client:getFaction()) or source:getFaction():getId() ~= client:getFaction():getId() then
+			client:sendError(_("Dieses Fahrzeug ist nicht von deiner Fraktion!", client))
+			return
+		end
+
+		source:respawn(client:getRank() >= RANK.Moderator)
+		return
+	end
+
+	if instanceof(source, CompanyVehicle) then
+		if (not client:getCompany()) or source:getCompany():getId() ~= client:getCompany():getId() then
+			client:sendError(_("Diese Fahrzeug ist nicht von deiner Firma!", client))
+			return
+		end
+
+		source:respawn(client:getRank() >= RANK.Moderator)
+		return
+	end
+
+	if instanceof(source, GroupVehicle) then
+		if (not client:getGroup()) or source:getGroup():getId() ~= client:getGroup():getId() then
+			client:sendError(_("Diese Fahrzeug ist nicht von deiner Gruppe!", client))
+			return
+		end
+
+		source:respawn(client:getRank() >= RANK.Moderator)
+		return
+	end
+	--
+
+	if source:getPositionType() == VehiclePositionType.Mechanic then
+		client:sendError(_("Das Fahrzeug wurde abgeschleppt! Hole es an der Mech&Tow Base ab!", client))
 		return
 	end
 
