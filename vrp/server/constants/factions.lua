@@ -119,7 +119,7 @@ factionRankNames[5] = {
 }
 factionColors[5] = {["r"] = 100,["g"] = 100,["b"] = 100}
 factionSkins[5] = {[111]=true, [112]=true, [113]=true, [124]=true, [125]=true, [126]=true, [127]=true,[237]=true,[272]=true}
-factionWeapons[5] = {[4]=true, [22]=true, [24]=true, [25]=true, [26]=true, [29]=true, [33]=true, [34]=true}
+factionWeapons[5] = {[2]=true, [24]=true, [25]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[5] = Vector3(691.58, -1275.94, 13.56)
 factionWTDestination[5] = Vector3(722.1865234375,-1198.2119140625,18.6)
 --factionWTDestination[5] = Vector3(-1855.22, 1409.12, 7.19) --TESTING
@@ -136,9 +136,41 @@ factionRankNames[6] = {
 }
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
 factionSkins[6] = {[49]=true, [57]=true, [59]=true, [120]=true, [122]=true, [123]=true, [141]=true,[60]=true,[58]=true}
-factionWeapons[6] = {[8]=true,[24]=true,[25]=true,[29]=true,[41]=true}
+factionWeapons[6] = {[1]=true, [8]=true, [24]=true, [25]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3(683.59, -1435.49, 14.89)
 factionWTDestination[6] = Vector3(708.103515625,-1436.1279296875,13.5390625)
+
+-- ID 7 = Grove
+factionRankNames[7] = {
+[0] = "Newbie",
+[1] = "Hoody",
+[2] = "Homeboy",
+[3] = "Pimp",
+[4] = "Violent",
+[5] = "Cuzz",
+[6] = "Junkie"
+}
+factionColors[7] = {["r"] = 50,["g"] = 200,["b"] = 50}
+factionSkins[7] = {[105]=true, [106]=true, [107]=true, [269]=true, [270]=true, [271]=true, [293]=true, [300]=true, [301]=true, [311]=true}
+factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+evilFactionInteriorEnter[7] = Vector3(2459.54, -1690.76, 13.54)
+factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625)
+
+-- ID 8 = Ballas
+factionRankNames[8] = {
+[0] = "Serbant",
+[1] = "Newcomer",
+[2] = "Dealer",
+[3] = "Smoker",
+[4] = "Homie",
+[5] = "OG.Nigga",
+[6] = "Big Boss"
+}
+factionColors[8] = {["r"] = 200,["g"] = 0,["b"] = 255}
+factionSkins[8] = {[13]=true, [102]=true, [103]=true, [104]=true, [195]=true, [296]=true, [297]=true, [304]=true}
+factionWeapons[8] = {[5]=true, [24]=true, [25]=true, [32]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+evilFactionInteriorEnter[8] = Vector3(2524.44,-1998.40,14.11)
+factionWTDestination[8] = Vector3(2647.6513671875,-2004.439453125,12.8)
 
 -- General:
 factionWeaponDepotInfo = {

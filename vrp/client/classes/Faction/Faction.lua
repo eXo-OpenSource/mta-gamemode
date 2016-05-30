@@ -23,6 +23,14 @@ function FactionManager:getFromId(id)
 	return FactionManager.Map[id]
 end
 
+function FactionManager:getFactionNames()
+	local table = {}
+	for id, faction in pairs(FactionManager.Map) do
+		table[id] = faction:getShortName()
+	end
+	return table
+end
+
 Faction = inherit(Object)
 
 function Faction:constructor(Id, name, name_short, rankNames, factionType, color)

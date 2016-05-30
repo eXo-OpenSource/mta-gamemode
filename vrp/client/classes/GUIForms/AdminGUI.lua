@@ -205,7 +205,8 @@ function AdminGUI:onButtonClick(func)
 					triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer,companyId)
 				end)
 	elseif func == "setFaction" then
-		local factionTable = {[0] = "Keine Fraktion", [1] = "SAPD", [2] = "FBI", [3] = "SA Army", [4] = "Rescue Team", [5] = "Cosa Nostra", [6] = "Yakuza"}
+		local factionTable = FactionManager:getSingleton():getFactionNames()
+		factionTable[0] = "Keine Fraktion"
 		ChangerBox:new(_"Fraktion setzten",
 				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
 				function (factionId)
