@@ -35,8 +35,10 @@ function VehicleInteraction:doLock()
 	local lookAtVehicle = getPedTarget(client)
 	if lookAtVehicle:hasKey(client) or client:getRank() >= RANK.Moderator then
 		if lookAtVehicle:isLocked() then
+			lookAtVehicle:playLockEffect()
 			lookAtVehicle:setLocked(false)
 		else
+			lookAtVehicle:playLockEffect()
 			lookAtVehicle:setLocked(true)
 		end
 	else

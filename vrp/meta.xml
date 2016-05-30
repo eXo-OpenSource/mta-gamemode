@@ -1015,6 +1015,8 @@
 	<vrpfile src="files/audio/yelp.ogg"/>
 	<vrpfile src="files/audio/onDoorClosed.mp3"/>
 	<vrpfile src="files/audio/onDoorOpened.mp3"/>
+	<vrpfile src="files/audio/carlock.mp3"/>
+
 
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>

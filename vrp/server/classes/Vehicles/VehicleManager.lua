@@ -326,6 +326,7 @@ function VehicleManager:Event_vehicleLock()
 	self:checkVehicle(source)
 
 	if source:hasKey(client) or client:getRank() >= RANK.Moderator then
+		source:playLockEffect()
 		source:setLocked(not source:isLocked())
 		return
 	end

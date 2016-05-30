@@ -62,9 +62,15 @@ function Vehicle:hasKey(player)
 	end
 end
 
-function Vehicle:setLocked(state)
-	-- Todo: Play lock animation (flashing lights)
+function Vehicle:playLockEffect()
+	triggerClientEvent("vehicleCarlock", self)
+	setVehicleOverrideLights(self, 2)
+	setTimer(setVehicleOverrideLights, 500, 1, self, 1)
+	setTimer(setVehicleOverrideLights, 1000, 1, self, 2)
+	setTimer(setVehicleOverrideLights, 1500, 1, self, 1)
+end
 
+function Vehicle:setLocked(state)
 	return setVehicleLocked(self, state)
 end
 
