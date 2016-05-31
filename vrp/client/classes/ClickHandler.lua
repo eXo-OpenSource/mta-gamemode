@@ -13,6 +13,16 @@ function ClickHandler:constructor()
 		player = PlayerMouseMenu;
 		vehicle = VehicleMouseMenu;
 	}
+
+	self.m_ClickableModels = {
+		[2922] = function() triggerServerEvent("keypadClick", element) end;
+		[2977] = function() GunBoxGUI:new() end;
+		[2942] = function() self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[1775] = function() self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[1776] = function() self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[1209] = function() self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+	}
+
 	self.m_ClickInfo = false
 	self.m_DrawCursor = false
 
@@ -150,28 +160,10 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	end
 
 	-- Phase 4: Check models
-	if self:checkModels(model, 1775, 1776, 1209) then
+	if self.m_ClickableModels[model] then
 		if trigger then
 			if button == "left" then
-				self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-			end
-		end
-		return true
-	end
-	if model == 2942 and range <= 8 then
-		if trigger then
-			if button == "left" then
-				BankGUI:getSingleton():show()
-			elseif button == "right" then
-			end
-		end
-		return true
-	end
-
-	if model == 2977 and range <= 8 then
-		if trigger then
-			if button == "left" then
-				GunBoxGUI:new()
+				self.m_ClickableModels[model]()
 			end
 		end
 		return true
