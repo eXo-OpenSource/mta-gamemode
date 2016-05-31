@@ -10,10 +10,11 @@ Depot.Map = {}
 
 function Depot.load(Id,Owner)
 	if Depot.Map[Id] then return Depot.Map[Id] end
-	local row = sql:queryFetchSingle("SELECT Weapons FROM ??_depot WHERE Id = ?;", sql:getPrefix(), Id)
+	local row = sql:queryFetchSingle("SELECT Weapons, Items FROM ??_depot WHERE Id = ?;", sql:getPrefix(), Id)
 	local weapons = row.Weapons
-	local WeaponNew = false
-	if string.len(weapons) < 10 then
+	local items = row.Items
+	local DepotSave = false
+	if string.len(weapons) < 5 then
 		weapons = {}
 		for i=1,45 do
 			weapons[i] = {}
@@ -22,17 +23,32 @@ function Depot.load(Id,Owner)
 			weapons[i]["Munition"] = 0
 		end
 		weapons = toJSON(weapons)
-		WeaponNew = true
+		DepotSave = true
 		outputDebugString("Creating new Weapon-Table for Depot "..Id)
 	end
-	Depot.Map[Id] = Depot:new(Id,weapons,Owner)
-	if WeaponNew == true then Depot.Map[Id]:save() end
+	if string.len(items) < 5 then
+		items = {}
+		for i=1,6 do
+			items[i] = {}
+			items[i]["Item"] = 0
+			items[i]["Amount"] = 0
+		end
+		items = toJSON(items)
+		DepotSave = true
+		outputDebugString("Creating new Item-Table for Depot "..Id)
+	end
+
+	Depot.Map[Id] = Depot:new(Id,weapons,items)
+
+	if DepotSave == true then Depot.Map[Id]:save() end
+
 	return Depot.Map[Id]
 end
 
-function Depot:constructor(Id, weapons)
+function Depot:constructor(Id, weapons, items)
 	self.m_Id = Id
 	self.m_Weapons = fromJSON(weapons)
+	self.m_Items = fromJSON(items)
 end
 
 function Depot:destructor()
@@ -40,7 +56,7 @@ function Depot:destructor()
 end
 
 function Depot:save()
-	return sql:queryExec("UPDATE ??_depot SET Weapons = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_Weapons), self.m_Id)
+	return sql:queryExec("UPDATE ??_depot SET Weapons = ?, Items = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_Weapons), toJSON(self.m_Items), self.m_Id)
 end
 
 function Depot:getId()
