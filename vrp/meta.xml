@@ -39,6 +39,7 @@
 	<script src="shared/classes/DimensionManager.lua" type="shared"/>
 	<script src="shared/classes/Thread.lua" type="shared"/>
 	<script src="shared/classes/Promise.lua" type="shared"/>
+	<script src="shared/classes/MusicAPI.lua" type="shared"/>
 
 
 	<!-- Server -->
