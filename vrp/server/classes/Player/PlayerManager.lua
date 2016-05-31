@@ -7,7 +7,8 @@
 -- ****************************************************************************
 PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
-"requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange"}
+"requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
+"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -32,7 +33,9 @@ function PlayerManager:constructor()
 	addEventHandler("toggleAFK", root, bind(self.Event_toggleAFK, self))
 	addEventHandler("startAnimation", root, bind(self.Event_startAnimation, self))
 	addEventHandler("passwordChange", root, bind(self.Event_passwordChange, self))
-
+	addEventHandler("requestGunBoxData", root, bind(self.Event_requestGunBoxData, self))
+	addEventHandler("gunBoxAddWeapon", root, bind(self.Event_gunBoxAddWeapon, self))
+	addEventHandler("gunBoxTakeWeapon", root, bind(self.Event_gunBoxTakeWeapon, self))
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -357,5 +360,74 @@ function PlayerManager:Event_passwordChange(old, new1, new2)
 		end
 	else
 		client:sendError("Die beiden eingegebenen neuen Passwörter sind nicht identisch!", client)
+	end
+end
+
+function PlayerManager:Event_requestGunBoxData()
+	client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+end
+
+function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
+	for i= 1, 6 do
+		if not client.m_GunBox[tostring(i)] then
+			client.m_GunBox[tostring(i)] = {}
+			client.m_GunBox[tostring(i)]["WeaponId"] = 0
+			client.m_GunBox[tostring(i)]["Amount"] = 0
+		end
+		local slot = client.m_GunBox[tostring(i)]
+		if slot["WeaponId"] == 0 then
+			local weaponSlot = getSlotFromWeapon(weaponId)
+			if client:getWeapon(weaponSlot) > 0 then
+				if client:getTotalAmmo(weaponSlot) >= muni then
+					client:takeWeapon(weaponId)
+					slot["WeaponId"] = weaponId
+					slot["Amount"] = muni
+					client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, getWeaponNameFromID(weaponId), muni, i))
+					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+					return
+				else
+					client:sendInfo(_("Du hast nicht genug %s Munition!", client, getWeaponNameFromID(weaponId)))
+					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+					return
+				end
+			else
+				client:sendInfo(_("Du hast keine/n %s!", client, getWeaponNameFromID(weaponId)))
+				client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+				return
+			end
+		end
+	end
+	client:sendError(_("Du hast keinen freien Waffen-Slot in deiner Waffenbox!", client))
+end
+
+function PlayerManager:Event_gunBoxTakeWeapon(slotId)
+	local slot = client.m_GunBox[tostring(slotId)]
+	if slot then
+		if slot["WeaponId"] > 0 then
+			if slot["Amount"] > 0 then
+				local weaponId = slot["WeaponId"]
+				local amount = slot["Amount"]
+				if client:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
+					slot["WeaponId"] = 0
+					slot["Amount"] = 0
+					client:giveWeapon(weaponId, amount)
+					client:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deiner Waffenbox (Slot %d) genommen!", client, getWeaponNameFromID(weaponId), amount, slotId))
+					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+					return
+				else
+					client:sendError(_("Du hast bereits eine Waffe dieser Art dabei!", client))
+					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+					return
+				end
+			else
+				client:sendError("Internal Error Amount to low", client)
+				client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+				return
+			end
+		else
+			client:sendError(_("Du hast keine Waffe in diesem Slot!", client))
+			client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+			return
+		end
 	end
 end

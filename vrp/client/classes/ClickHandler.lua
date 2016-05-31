@@ -167,10 +167,11 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		end
 		return true
 	end
-	if model == 2922 or model == 2886 then -- Keypad
+
+	if model == 2977 and range <= 8 then
 		if trigger then
 			if button == "left" then
-				triggerServerEvent("keypadClick", element)
+				GunBoxGUI:new()
 			end
 		end
 		return true
