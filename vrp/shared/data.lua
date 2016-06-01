@@ -393,7 +393,8 @@ VEHICLE_UPGRADE_PRICES = {
 	[1193] = 2000,
 
 
-	 [VehicleSpecialProperty.Color] = 5000,
-	 [VehicleSpecialProperty.Color2] = 5000,
-	 [VehicleSpecialProperty.LightColor] = 3500,
+	[VehicleSpecialProperty.Color] = 5000,
+	[VehicleSpecialProperty.Color2] = 5000,
+	[VehicleSpecialProperty.LightColor] = 3500,
+	[VehicleSpecialProperty.Shader] = 10000,
 }

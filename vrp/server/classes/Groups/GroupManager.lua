@@ -428,9 +428,9 @@ function GroupManager:Event_groupConvertVehicle()
 		if client.isInVehicle then
 			local veh = client.vehicle
 			if veh:getOwner() == client:getId() then
-				GroupVehicle.convertVehicle(veh, group)
 				client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
-				group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..getModelName(veh).." hinzugefügt!")
+				group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..veh.getNameFromModel(veh:getModel()).." hinzugefügt!")
+				GroupVehicle.convertVehicle(veh, group)
 				self:sendInfosToClient(client)
 			else
 				client:sendError(_("Das ist nicht dein Fahrzeug!", client))

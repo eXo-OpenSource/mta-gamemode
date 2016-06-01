@@ -113,7 +113,7 @@ function VehicleManager.loadVehicles()
 	local result = sql:queryFetch("SELECT * FROM ??_vehicles", sql:getPrefix())
 	for i, row in pairs(result) do
 		local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.LightColor, row.TrunkId)
+		enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.LightColor, row.TrunkId, row.TexturePath)
 		VehicleManager:getSingleton():addRef(vehicle, false)
 	end
 	outputServerLog("Loading company vehicles")
@@ -248,6 +248,17 @@ function VehicleManager:removeRef(vehicle, isTemp)
 		local idx = table.find(self.m_Vehicles[ownerId], vehicle)
 		if idx then
 			table.remove(self.m_Vehicles[ownerId], idx)
+		end
+	end
+end
+
+function VehicleManager:sendTexturesToClient(client)
+	for ownerid, vehicles in pairs(self.m_Vehicles) do
+		for i, v in pairs(vehicles) do
+			outputDebug(v.m_Texture)
+			if v.m_Texture and v.m_Texture ~= "0" then
+				triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = "vehiclegrunge256", texturePath = v.m_Texture}})
+			end
 		end
 	end
 end

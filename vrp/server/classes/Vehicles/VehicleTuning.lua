@@ -200,6 +200,17 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
                 vehicle:setColor(r1, g1, b1, unpack(upgradeId))
             elseif slot == VehicleSpecialProperty.LightColor then
                 vehicle:setHeadLightColor(unpack(upgradeId))
+            elseif slot == VehicleSpecialProperty.Shader then
+                if instanceof(vehicle, PermanentVehicle, true) then -- Currently only for PlayerVehicles?
+                    if upgradeId ~= "NONE" then
+                        vehicle:setTexture(("files/images/Textures/Special/%s.jpg"):format(upgradeId))
+                    else
+                        vehicle:removeTexture()
+                    end
+                else
+                    client:sendError("Textures currently only for PrivateVehicles!")
+                    client:giveMoney(getVehicleUpgradePrice(VehicleSpecialProperty.Shader))
+                end
             end
         end
     end

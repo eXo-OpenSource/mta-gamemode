@@ -107,10 +107,9 @@ function testMusic(term)
 						print(("Album-Name: %s"):format(data["name"]))
 						print(("AlbumIMG-URL: %s/%s"):format(BASE_IMG_URL, data["avatar"]["sizes"]["q"][1]:gsub("//", "/")))
 
-
 						local artistString = "Artist-Name(s): "
 						local artistIMGString = "Artist-IMG(s): "
-						for i, v in ipairs(data.aids) do -- AIDS :P
+						for i, v in ipairs(data.aids) do
 							local artist = self:getArtistData(v)
 							if artist then
 								artistString = ("%s%s"):format(artistString, artist.fullname)

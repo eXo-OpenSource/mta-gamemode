@@ -903,6 +903,12 @@
 	<vrpfile src="files/images/Textures/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Textures/SniperGame.png"/>
 	<vrpfile src="files/images/Textures/Empty.png"/>
+	<!-- Todo: FIND OTHER TEXTURES, they are from MasterM... -->
+	<vrpfile src="files/images/Textures/Special/1.jpg"/>
+	<vrpfile src="files/images/Textures/Special/2.jpg"/>
+	<vrpfile src="files/images/Textures/Special/3.jpg"/>
+	<vrpfile src="files/images/Textures/Special/4.jpg"/>
+	<vrpfile src="files/images/Textures/Special/5.jpg"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />

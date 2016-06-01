@@ -78,6 +78,9 @@ function VehicleTuningGUI:destructor(closedByServer)
     delete(self.m_UpgradeChanger)
     delete(self.m_AddToCartButton)
     delete(self.m_ShoppingCartWindow)
+    if self.m_ColorPicker then delete(self.m_ColorPicker) end
+    if self.m_TexturePicker then delete(self.m_TexturePicker) end
+    if self.m_VehicleShader then delete(self.m_VehicleShader) end
     self.m_Vehicle:setOverrideLights(0)
     showChat(true)
 
@@ -86,7 +89,7 @@ end
 
 function VehicleTuningGUI:initPartsList()
     -- Add 'special properties' (e.g. color)
-    local specialProperties = {{VehicleSpecialProperty.Color, _"Farbe"}, {VehicleSpecialProperty.Color2, _"2. Farbe"}, {VehicleSpecialProperty.LightColor, _"Licht-Farbe"}}
+    local specialProperties = {{VehicleSpecialProperty.Color, _"Farbe"}, {VehicleSpecialProperty.Color2, _"2. Farbe"}, {VehicleSpecialProperty.LightColor, _"Licht-Farbe"}, {VehicleSpecialProperty.Shader, _"Fahrzeug-Textur"}}
     for k, v in pairs(specialProperties) do
         local partSlot, partName = unpack(v)
         local item = self.m_PartsList:addItem(partName)
@@ -188,6 +191,7 @@ function VehicleTuningGUI:resetUpgrades()
     end
     self.m_Vehicle:setColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color]), unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color2]))
     self.m_Vehicle:setHeadLightColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor]))
+    if self.m_VehicleShader then delete(self.m_VehicleShader) end
 
     -- Finally, override with the upgrades from our shopping cart
     for slot, upgradeId in pairs(self.m_CartContent) do
@@ -253,6 +257,7 @@ function VehicleTuningGUI:PartItem_Click(item)
     self.m_UpgradeChanger:setVisible(true)
     self.m_AddToCartButton:setVisible(true)
     if self.m_ColorPicker then delete(self.m_ColorPicker) end
+    if self.m_TexturePicker then delete(self.m_TexturePicker) end
     self:moveCameraToSlot(item.PartSlot)
     if item.PartSlot then
         -- Check for special properties
@@ -270,6 +275,21 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
             self.m_ColorPicker = ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.LightColor, _"Licht-Farbe", {r, g, b}) end, function(r, g, b) self.m_Vehicle:setHeadLightColor(r, g, b) end)
+            return
+        elseif item.PartSlot == VehicleSpecialProperty.Shader then
+            self.m_UpgradeChanger:setVisible(false)
+            self.m_AddToCartButton:setVisible(false)
+            self.m_TexturePicker = VehicleTuningItemGrid:new(
+                "Select Texture",
+                {"Texture 1", "Texture 2", "Texture 3", "Texture 4", "Texture 5"},
+                function (texture)
+                    self:addPartToCart(VehicleSpecialProperty.Shader, _"Fahrzeug-Textur", texture)
+                end,
+                function (texture)
+                    if self.m_VehicleShader then delete(self.m_VehicleShader) end
+                    self.m_VehicleShader = TextureReplace:new("vehiclegrunge256", "files/images/Textures/Special/"..texture..".jpg", false, 250, 250, self.m_Vehicle)
+                end
+            )
             return
         end
 
@@ -364,4 +384,5 @@ VehicleTuningGUI.CameraPositions = {
     [VehicleSpecialProperty.Color] = Vector3(4.2, 2.1, 2.1),
     [VehicleSpecialProperty.Color2] = Vector3(4.2, 2.1, 2.1),
     [VehicleSpecialProperty.LightColor] = Vector3(3, -2, 2.1),
+    [VehicleSpecialProperty.Shader] = Vector3(4.2, 2.1, 2.1),
 }

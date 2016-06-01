@@ -7,7 +7,7 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId)
+function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId, texture)
 	self.m_Id = Id
 	self.m_Owner = owner
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
@@ -41,6 +41,7 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
 	end
+	self:setTexture(texture)
 
 	--[[ Todo: Maybe add Custom Tunings
 	for i, v in pairs(custom_tunings) do
@@ -93,8 +94,8 @@ function PermanentVehicle:save()
 	local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
 	local tunings = getVehicleUpgrades(self) or {}
 	if self.m_Trunk then self.m_Trunk:save() end
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, posX, posY, posZ, rotZ, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ?, TexturePath = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Texture, self.m_Id)
 end
 
 function PermanentVehicle:getId()
@@ -218,4 +219,19 @@ function PermanentVehicle:respawn()
 		end
 		return
 	end
+end
+
+function Vehicle:setTexture(texturePath)
+	self.m_Texture = texturePath
+
+	for i, v in pairs(getElementsByType("player")) do
+		if v:isLoggedIn() and self.m_Texture ~= "0" then
+			triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = "vehiclegrunge256", texturePath = self.m_Texture}})
+		end
+	end
+end
+
+function Vehicle:removeTexture()
+	self.m_Texture = nil
+	triggerClientEvent(root, "removeElementTexture", root, self)
 end

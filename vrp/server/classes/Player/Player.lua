@@ -179,6 +179,7 @@ function Player:loadCharacterInfo()
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
 	FactionManager:getSingleton():sendAllToClient(self)
+	VehicleManager:getSingleton():sendTexturesToClient(self)
 	--if self.m_Inventory then
 	--	self.m_Inventory:setInteractingPlayer(self)
 	--	self.m_Inventory:sendFullSync()
