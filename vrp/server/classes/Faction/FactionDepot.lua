@@ -8,7 +8,23 @@
 Depot = inherit(Object)
 Depot.Map = {}
 
-function Depot.load(Id,Owner)
+function Depot.initalize()
+	addRemoteEvents{"itemDepotAdd", "itemDepotTake"}
+
+	addEventHandler("itemDepotAdd", root, function(id, item, amount)
+		if Depot.Map[id] then
+			Depot.Map[id]:addItem(client, item, amount)
+		end
+	end)
+
+	addEventHandler("itemDepotTake", root, function(id, slotId)
+		if Depot.Map[id] then
+			Depot.Map[id]:takeItem(client, slotId)
+		end
+	end)
+end
+
+function Depot.load(Id, Owner)
 	if Depot.Map[Id] then return Depot.Map[Id] end
 	local row = sql:queryFetchSingle("SELECT Weapons, Items FROM ??_depot WHERE Id = ?;", sql:getPrefix(), Id)
 	local weapons = row.Weapons
@@ -55,6 +71,8 @@ function Depot:destructor()
   self:save()
 end
 
+
+
 function Depot:save()
 	return sql:queryExec("UPDATE ??_depot SET Weapons = ?, Items = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_Weapons), toJSON(self.m_Items), self.m_Id)
 end
@@ -85,6 +103,16 @@ end
 
 function Depot:addMagazineD(id,amount)
 	self.m_Weapons[id]["Munition"] = self.m_Weapons[id]["Munition"] + amount
+end
+
+function Depot:showItemDepot(player)
+	player:triggerEvent("ItemDepotOpen")
+	player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
+end
+
+function Depot:showItemDepot(player)
+	player:triggerEvent("ItemDepotOpen")
+	player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
 end
 
 function Depot:getPlayerWeapons(player)
@@ -144,4 +172,48 @@ function Depot:addWeaponsToDepot(weaponTable)
 		end
 	end
 	self:save()
+end
+
+function Depot:addItem(player, item, amount)
+	for i=1, 6 do
+		if not self.m_Items[i] then self.m_Items[i] = {} self.m_Items[i]["Item"] = 0 self.m_Items[i]["Amount"] = 0  end
+		if self.m_Items[i]["Item"] == 0 then
+			if player:getInventory():getItemAmount(item) >= amount then
+				player:getInventory():removeItem(item, amount)
+				self.m_Items[i]["Item"] = item
+				self.m_Items[i]["Amount"] = amount
+				player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))
+				player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
+				return
+			else
+				player:sendError(_("Du hast nicht genug %s!", player, item))
+			end
+		end
+	end
+	player:sendError(_("Es gibt keinen freien Item-Slot in diesem Depot!", player))
+end
+
+function Depot:takeItem(player, slotId)
+	if self.m_Items[slotId] then
+		if self.m_Items[slotId]["Item"] ~= 0 then
+			if self.m_Items[slotId]["Amount"] > 0 then
+				local item = self.m_Items[slotId]["Item"]
+				local amount = self.m_Items[slotId]["Amount"]
+				if player:getInventory():getFreePlacesForItem(item) >= amount then
+					self.m_Items[slotId]["Item"] = 0
+					self.m_Items[slotId]["Amount"] = 0
+					player:getInventory():giveItem(item, amount)
+					player:sendInfo(_("Du hast %d %s aus dem Depot (Slot %d) genommen!", player, amount, item, slotId))
+					player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
+					return
+				else
+					player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
+				end
+			else
+				player:sendError("Internal Error Amount to low", player)
+			end
+		else
+			player:sendError(_("Du hast kein Item in diesem Slot!", player))
+		end
+	end
 end

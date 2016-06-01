@@ -8,7 +8,7 @@
 ItemDepotGUI = inherit(GUIForm)
 inherit(Singleton, ItemDepotGUI)
 
-addRemoteEvents{"openItemDepot", "getItemDepotData"}
+addRemoteEvents{"ItemDepotOpen", "ItemDepotRefresh"}
 
 function ItemDepotGUI:constructor()
     GUIForm.constructor(self, screenWidth/2-620/2, screenHeight/2-400/2, 620, 400)
@@ -50,7 +50,7 @@ function ItemDepotGUI:constructor()
     triggerServerEvent("refreshInventory", localPlayer)
     self:loadItems()
 
-    addEventHandler("getItemDepotData", root, bind(self.refreshData, self))
+    addEventHandler("ItemDepotRefresh", root, bind(self.refreshData, self))
 end
 
 function ItemDepotGUI:addSlot(id, posX, posY)
@@ -93,7 +93,7 @@ end
 function ItemDepotGUI:refreshData(id, items)
     self.m_Id = id
     for index, item in pairs(items) do
-        if item["Item"] ~= "none" then
+        if item["Item"] ~= 0 then
             self.m_ItemSlots[index].Label:setText(item["Item"])
             self.m_ItemSlots[index].Amount:setText(_("%d Stk.", item["Amount"]))
             self.m_ItemSlots[index].Image:setImage("files/images/Inventory/items/"..self.m_ItemData[item.Item]["Icon"])
@@ -155,7 +155,7 @@ function ItemDepotGUI:fromDepot(id)
     end
 end
 
-addEventHandler("openItemDepot", root, function()
+addEventHandler("ItemDepotOpen", root, function()
     if ItemDepotGUI:getSingleton():isInstantiated() then
         ItemDepotGUI:getSingleton():open()
     else

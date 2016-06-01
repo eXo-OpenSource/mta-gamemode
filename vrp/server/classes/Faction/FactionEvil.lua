@@ -11,7 +11,8 @@ FactionEvil = inherit(Singleton)
 
 function FactionEvil:constructor()
 	self.InteriorEnterExit = {}
-	self.WeaponPed = {}
+	self.m_WeaponPed = {}
+	self.m_ItemDepot = {}
 
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
 		if faction:isEvilFaction() then
@@ -25,12 +26,19 @@ end
 
 function FactionEvil:createInterior(Id, faction)
 	self.InteriorEnterExit[Id] = InteriorEnterExit:new(evilFactionInteriorEnter[Id], Vector3(2807.32, -1173.92, 1025.57), 0, 0, 8, Id)
-	self.WeaponPed[Id] = NPC:new(FactionManager:getFromId(Id):getRandomSkin(), 2819.20, -1166.77, 1025.58, 133.63)
-	setElementDimension(self.WeaponPed[Id], Id)
-	setElementInterior(self.WeaponPed[Id], 8)
-	self.WeaponPed[Id]:setData("clickable",true,true) -- Makes Ped clickable
-	self.WeaponPed[Id].Faction = faction
-	addEventHandler("onElementClicked", self.WeaponPed[Id], bind(self.onWeaponPedClicked, self))
+	self.m_WeaponPed[Id] = NPC:new(FactionManager:getFromId(Id):getRandomSkin(), 2819.20, -1166.77, 1025.58, 133.63)
+	setElementDimension(self.m_WeaponPed[Id], Id)
+	setElementInterior(self.m_WeaponPed[Id], 8)
+	self.m_WeaponPed[Id]:setData("clickable",true,true) -- Makes Ped clickable
+	self.m_WeaponPed[Id].Faction = faction
+	addEventHandler("onElementClicked", self.m_WeaponPed[Id], bind(self.onWeaponPedClicked, self))
+
+	self.m_ItemDepot[Id] = createObject(2972, 2816.8, -1173.5, 1024.4, 0, 0, 0)
+	self.m_ItemDepot[Id]:setDimension(Id)
+	self.m_ItemDepot[Id]:setInterior(8)
+	self.m_ItemDepot[Id].Faction = faction
+	self.m_ItemDepot[Id]:setData("clickable",true,true) -- Makes Ped clickable
+	addEventHandler("onElementClicked", self.m_ItemDepot[Id], bind(self.onDepotClicked, self))
 
 	local int = {
 		createObject(351, 2818, -1173.6, 1025.6, 80, 340, 0),
@@ -52,7 +60,6 @@ function FactionEvil:createInterior(Id, faction)
 		createObject(2358, 2820.2, -1165.1, 1025.5, 0, 0, 348),
 		createObject(349, 2818.8999, -1167.7, 1025.8, 90, 0, 0),
 		createObject(2977, 2819.3, -1170.6, 1024.4, 0, 0, 30.5),
-		createObject(2977, 2816.8, -1173.5, 1024.4, 0, 0, 4.498),
 		createObject(2332, 2814.6001, -1173.8, 1026.6, 0, 0, 180)
 	}
 	for k,v in pairs(int) do
@@ -67,7 +74,16 @@ function FactionEvil:onWeaponPedClicked(button, state, player)
 			player:triggerEvent("showFactionWeaponShopGUI")
 		else
 			player:sendError(_("Dieser Waffenverkäufer liefert nicht an deine Fraktion!", player))
-			outputChatBox(source.Faction:getName())
+		end
+	end
+end
+
+function FactionEvil:onDepotClicked(button, state, player)
+	if button == "left" and state == "down" then
+		if player:getFaction() and player:getFaction() == source.Faction then
+			player:getFaction():getDepot():showItemDepot(player)
+		else
+			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
 		end
 	end
 end

@@ -15,12 +15,12 @@ function ClickHandler:constructor()
 	}
 
 	self.m_ClickableModels = {
-		[2922] = function() triggerServerEvent("keypadClick", element) end;
-		[2977] = function() GunBoxGUI:new() end;
-		[2942] = function() self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
-		[1775] = function() self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
-		[1776] = function() self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
-		[1209] = function() self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[2922] = function(element) triggerServerEvent("keypadClick", element) end;
+		[2977] = function(element) GunBoxGUI:new() end;
+		[2942] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 	}
 
 	self.m_ClickInfo = false
@@ -163,7 +163,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	if self.m_ClickableModels[model] then
 		if trigger then
 			if button == "left" then
-				self.m_ClickableModels[model]()
+				self.m_ClickableModels[model](element, clickInfo)
 			end
 		end
 		return true

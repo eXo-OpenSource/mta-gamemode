@@ -45,6 +45,7 @@ function Faction:destructor()
 	if self.m_BankAccount then
 		delete(self.m_BankAccount)
 	end
+	self.m_Depot:save()
 	self:save()
 end
 
@@ -102,6 +103,10 @@ end
 
 function Faction:getRankNames()
 	return self.m_RankNames
+end
+
+function Faction:getDepot()
+	return self.m_Depot
 end
 
 function Faction:getRandomSkin()
