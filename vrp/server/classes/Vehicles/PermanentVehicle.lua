@@ -221,7 +221,7 @@ function Vehicle:setTexture(texturePath)
 
 		for i, v in pairs(getElementsByType("player")) do
 			if v:isLoggedIn() then
-				triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = "vehiclegrunge256", texturePath = self.m_Texture}})
+				triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = false, texturePath = self.m_Texture}})
 			end
 		end
 	end

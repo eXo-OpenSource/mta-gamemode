@@ -37,7 +37,7 @@ factionVehicleShaders = {
 	-- Army
 	[3] = {
 		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/Empty.png"};
-		[470] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/Special/1.jpg"};
+		[470] = {shaderEnabled = true, textureName = "vehiclegrunge256", texturePath = "files/images/Textures/Special/6.png"};
 	};
 
 	-- Rescue

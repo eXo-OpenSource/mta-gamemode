@@ -232,6 +232,21 @@ PlayerAttachObjects = {
 
 PLAYER_DEATH_TIME = 3*60*1000
 VEHICLE_SPECIAL_SMOKE = {[512] = true, [513] = true}
+VEHICLE_SPECIAL_TEXTURE = {
+	[560] = "#emapsultanbody256",
+	[561] = "#emapstratum292body256",
+	[495] = "vehiclegrunge256",
+	[575] = "remapbroadway92body128",
+	[565] = "#emapflash92body256",
+	[536] = "#emapblade92body128",
+	[483] = "#emapcamperbody256",
+	[415] = "#vehiclegrunge256",
+	[411] = "vehiclegrunge256",
+	[562] = "#emapelegybody128",
+	[562] = "#emapelegybody128",
+	[535] = "#emapslamvan92body128",
+	[559] = "#emapjesterbody256",
+}
 
 COROUTINE_STATUS_RUNNING = "running"
 COROUTINE_STATUS_SUSPENDED = "suspended"

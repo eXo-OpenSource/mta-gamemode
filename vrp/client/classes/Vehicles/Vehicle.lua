@@ -25,6 +25,10 @@ function Vehicle:isSmokeEnabled()
 	return self.m_SpecialSmokeEnabled
 end
 
+function Vehicle:getTextureName()
+	return VEHICLE_SPECIAL_TEXTURE[self:getModel()] or "vehiclegrunge256"
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)

@@ -207,7 +207,7 @@ function VehicleTuningGUI:resetUpgrades()
             local r, g, b = unpack(upgradeId)
             self.m_Vehicle:setColor(r1, g1, b1, r, g, b)
         end
-        if slot == VehicleSpecialProperty.LightBlueColor then
+        if slot == VehicleSpecialProperty.LightColor then
             local r, g, b = unpack(upgradeId)
             self.m_Vehicle:setHeadLightColor(r, g, b)
         end
@@ -280,14 +280,14 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
             self.m_TexturePicker = VehicleTuningItemGrid:new(
                 "Select Texture",
-                {"None", "Texture 1", "Texture 2", "Texture 3", "Texture 4", "Texture 5", "Camouflage"},
+                {"None", _"Österreich", _"Deutschland", _"Schweden", _"Frankreich", _"Russland", _"Camouflage", _"Türkei", _"Hipster", _"Metall", _"Italien", _"Pepe (?)", _"", _"Space", _"Cherry", _"Fire"},
                 function (texture)
                     self:addPartToCart(VehicleSpecialProperty.Shader, _"Fahrzeug-Textur", texture)
                 end,
                 function (texture)
                     if self.m_VehicleShader then delete(self.m_VehicleShader) end
                     if texture ~= 1 then
-                        self.m_VehicleShader = TextureReplace:new("vehiclegrunge256", "files/images/Textures/Special/"..(texture-1)..".jpg", false, 250, 250, self.m_Vehicle)
+                        self.m_VehicleShader = TextureReplace:new(self.m_Vehicle:getTextureName(), "files/images/Textures/Special/"..(texture-1)..".png", false, 250, 250, self.m_Vehicle)
                     else
                         ShortMessage:new("Note: The Texture will be removed when you exit the TuningShop!", "Los Santos Customs", Color.LightBlue)
                     end

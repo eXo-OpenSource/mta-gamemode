@@ -50,7 +50,7 @@ addEventHandler("changeElementTexture", root,
 				if TextureReplace.ServerElements[shaderInfo.vehicle] then
 					delete(TextureReplace.ServerElements[shaderInfo.vehicle])
 				end
-				TextureReplace.ServerElements[shaderInfo.vehicle] = TextureReplace:new(shaderInfo.textureName, shaderInfo.texturePath, false, 256, 256, shaderInfo.vehicle)
+				TextureReplace.ServerElements[shaderInfo.vehicle] = TextureReplace:new(shaderInfo.textureName or shaderInfo.vehicle:getTextureName(), shaderInfo.texturePath, false, 256, 256, shaderInfo.vehicle)
 			end
 		else
 			if TextureReplace.ServerElements[element] then
