@@ -14,14 +14,14 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 	self.m_Keys = keys or {}
 	self.m_PositionType = positionType or VehiclePositionType.World
 
-	if trunkId == 0 then
+	if trunkId == 0 or trunkId == nil then
 		trunkId = Trunk.create()
 	end
 
 	self.m_Trunk = Trunk.load(trunkId)
 	self.m_TrunkId = trunkId
 
-	self:setHealth(health)
+	self:setHealth(health or 1000)
 	self:setLocked(true)
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
@@ -41,13 +41,7 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
 	end
-	self:setTexture(texture)
-
-	--[[ Todo: Maybe add Custom Tunings
-	for i, v in pairs(custom_tunings) do
-
-	end
-	]]
+	self:setTexture(texture or "")
 
 	if self.m_PositionType ~= VehiclePositionType.World then
 		-- Move to unused dimension | Todo: That's probably a bad solution
@@ -222,11 +216,13 @@ function PermanentVehicle:respawn()
 end
 
 function Vehicle:setTexture(texturePath)
-	self.m_Texture = texturePath
+	if fileExists(texturePath) then
+		self.m_Texture = texturePath
 
-	for i, v in pairs(getElementsByType("player")) do
-		if v:isLoggedIn() and self.m_Texture ~= "0" then
-			triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = "vehiclegrunge256", texturePath = self.m_Texture}})
+		for i, v in pairs(getElementsByType("player")) do
+			if v:isLoggedIn() then
+				triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = "vehiclegrunge256", texturePath = self.m_Texture}})
+			end
 		end
 	end
 end

@@ -909,6 +909,7 @@
 	<vrpfile src="files/images/Textures/Special/3.jpg"/>
 	<vrpfile src="files/images/Textures/Special/4.jpg"/>
 	<vrpfile src="files/images/Textures/Special/5.jpg"/>
+	<vrpfile src="files/images/Textures/Special/6.jpg"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />

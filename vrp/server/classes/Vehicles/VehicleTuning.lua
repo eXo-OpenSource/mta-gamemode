@@ -202,8 +202,8 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
                 vehicle:setHeadLightColor(unpack(upgradeId))
             elseif slot == VehicleSpecialProperty.Shader then
                 if instanceof(vehicle, PermanentVehicle, true) then -- Currently only for PlayerVehicles?
-                    if upgradeId ~= "NONE" then
-                        vehicle:setTexture(("files/images/Textures/Special/%s.jpg"):format(upgradeId))
+                    if upgradeId ~= 1 then
+                        vehicle:setTexture(("files/images/Textures/Special/%s.jpg"):format(upgradeId-1))
                     else
                         vehicle:removeTexture()
                     end
