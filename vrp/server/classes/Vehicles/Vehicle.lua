@@ -109,12 +109,11 @@ end
 function Vehicle:playCustomHorn(player)
 	if self.m_CustomHorn and self.m_CustomHorn > 0 then
 		if player:getOccupiedVehicle() == self and player:getOccupiedVehicleSeat() == 0 then
-			triggerClientEvent(root, "vehiclePlayCustomHorn", root, self, self.m_CustomHorn)
-		else
-			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-			removeEventHandler("onVehicleEnter", self, self.ms_CustomHornBind)
+			triggerClientEvent("vehiclePlayCustomHorn", self, self.m_CustomHorn)
+			return
 		end
 	end
+	unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 end
 
 function Vehicle:getLastUseTime()

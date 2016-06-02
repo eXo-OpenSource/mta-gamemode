@@ -50,9 +50,8 @@ addEventHandler("vehicleCarlock", root,
 )
 
 addEventHandler("vehiclePlayCustomHorn", root,
-	function (veh, horn)
-		local pos = veh:getPosition()
-		playSound3D("files/audio/Horns/"..horn..".mp3", pos)
+	function (horn)
+		playSound3D("files/audio/Horns/"..horn..".mp3", source:getPosition())
 	end
 )
 
