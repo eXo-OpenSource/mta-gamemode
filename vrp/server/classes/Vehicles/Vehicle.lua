@@ -26,6 +26,8 @@ function Vehicle:virtual_constructor()
 		self.m_SpecialSmokeEnabled = false
 		self.m_SpecialSmokeInternalToggle = bind(self.toggleInternalSmoke, self)
 	end
+
+	self.ms_CustomHornPlayBind = bind(self.playCustomHorn, self)
 end
 
 function Vehicle:virtual_destructor()
@@ -83,6 +85,10 @@ function Vehicle:onPlayerEnter(player, seat)
 		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 			bindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
 		end
+		if self.m_CustomHorn and self.m_CustomHorn > 0 then
+			player:sendShortMessage(_("Du kannst die Spezialhupe mit 'J' benutzen!", player))
+			bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+		end
 	end
 end
 
@@ -93,6 +99,20 @@ function Vehicle:onPlayerExit(player, seat)
 		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 			self:toggleInternalSmoke()
 			unbindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
+		end
+		if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
+			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+		end
+	end
+end
+
+function Vehicle:playCustomHorn(player)
+	if self.m_CustomHorn and self.m_CustomHorn > 0 then
+		if player:getOccupiedVehicle() == self and player:getOccupiedVehicleSeat() == 0 then
+			triggerClientEvent(root, "vehiclePlayCustomHorn", root, self, self.m_CustomHorn)
+		else
+			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+			removeEventHandler("onVehicleEnter", self, self.ms_CustomHornBind)
 		end
 	end
 end

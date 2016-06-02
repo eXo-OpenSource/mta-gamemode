@@ -50,8 +50,6 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 	end
 	self:setMileage(mileage)
 
-	self.ms_CustomHornBind = bind(self.addCustomHornBind, self)
-	self.ms_CustomHornPlayBind = bind(self.playCustomHorn, self)
 	self:setCustomHorn(horn or 0)
 
 end
@@ -235,36 +233,14 @@ end
 
 function Vehicle:setCustomHorn(id)
 	self.m_CustomHorn = id
-
-	if id > 0 then
-		if self:getOccupant() then
-			self:addCustomHornBind(self:getOccupant(), 0)
-		end
-		addEventHandler("onVehicleEnter", self, self.ms_CustomHornBind)
-	else
-		removeEventHandler("onVehicleEnter", self, self.ms_CustomHornBind)
-	end
-end
-
-function Vehicle:addCustomHornBind(player, seat)
-	if seat == 0 then
-		if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then return end
-
-		bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-		addEventHandler("onVehicleExit", self, function(player, seat)
-			if seat == 0 then
+	if self:getOccupant() then
+		if id > 0 then
+			bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+		else
+			if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
 				unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 			end
-		end)
-	end
-end
-
-function Vehicle:playCustomHorn(player)
-	if player:getOccupiedVehicle() == self and player:getOccupiedVehicleSeat() == 0 then
-		triggerClientEvent(root, "vehiclePlayCustomHorn", root, self, self.m_CustomHorn)
-	else
-		unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-		removeEventHandler("onVehicleEnter", self, self.ms_CustomHornBind)
+		end
 	end
 end
 
