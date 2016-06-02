@@ -205,7 +205,7 @@ SkinInfo = {
 
 MAX_KARMA_LEVEL = 150
 
-VehicleSpecialProperty = {Color = -1, LightColor = -2, Color2 = -3, Shader = -4}
+VehicleSpecialProperty = {Color = -1, LightColor = -2, Color2 = -3, Shader = -4, Horn = -5}
 
 Tasks = {
 	TASK_GUARD = 1,

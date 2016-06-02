@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 registerElementClass("vehicle", Vehicle)
-addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock"}
+addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
@@ -46,6 +46,13 @@ addEventHandler("vehicleEngineStart", root,
 addEventHandler("vehicleCarlock", root,
 	function()
 		playSound3D("files/audio/carlock.mp3", source:getPosition())
+	end
+)
+
+addEventHandler("vehiclePlayCustomHorn", root,
+	function (veh, horn)
+		local pos = veh:getPosition()
+		playSound3D("files/audio/Horns/"..horn..".mp3", pos)
 	end
 )
 

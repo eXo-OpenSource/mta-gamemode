@@ -200,6 +200,13 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
                 vehicle:setColor(r1, g1, b1, unpack(upgradeId))
             elseif slot == VehicleSpecialProperty.LightColor then
                 vehicle:setHeadLightColor(unpack(upgradeId))
+            elseif slot == VehicleSpecialProperty.Horn then
+                if instanceof(vehicle, PermanentVehicle, true) then -- Currently only for PlayerVehicles?
+                    vehicle:setCustomHorn(upgradeId-1)
+                else
+                    client:sendError("Spezial-Hupen sind nur für Privat-Fahrzeuge verfügbar!")
+                    client:giveMoney(getVehicleUpgradePrice(VehicleSpecialProperty.Shader))
+                end
             elseif slot == VehicleSpecialProperty.Shader then
                 if instanceof(vehicle, PermanentVehicle, true) then -- Currently only for PlayerVehicles?
                     if upgradeId ~= 1 then
@@ -208,7 +215,7 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
                         vehicle:removeTexture()
                     end
                 else
-                    client:sendError("Textures currently only for PrivateVehicles!")
+                    client:sendError("Speziallackierungen sind nur für Privat-Fahrzeuge verfügbar!")
                     client:giveMoney(getVehicleUpgradePrice(VehicleSpecialProperty.Shader))
                 end
             end

@@ -81,6 +81,7 @@ function VehicleTuningGUI:destructor(closedByServer)
     if self.m_ColorPicker then delete(self.m_ColorPicker) end
     if self.m_TexturePicker then delete(self.m_TexturePicker) end
     if self.m_VehicleShader then delete(self.m_VehicleShader) end
+    if self.m_HornPicker then delete(self.m_HornPicker) end
     self.m_Vehicle:setOverrideLights(0)
     showChat(true)
 
@@ -89,7 +90,7 @@ end
 
 function VehicleTuningGUI:initPartsList()
     -- Add 'special properties' (e.g. color)
-    local specialProperties = {{VehicleSpecialProperty.Color, _"Farbe"}, {VehicleSpecialProperty.Color2, _"2. Farbe"}, {VehicleSpecialProperty.LightColor, _"Licht-Farbe"}, {VehicleSpecialProperty.Shader, _"Fahrzeug-Textur"}}
+    local specialProperties = {{VehicleSpecialProperty.Color, _"Farbe"}, {VehicleSpecialProperty.Color2, _"2. Farbe"}, {VehicleSpecialProperty.LightColor, _"Licht-Farbe"}, {VehicleSpecialProperty.Shader, _"Fahrzeug-Textur"}, {VehicleSpecialProperty.Horn, _"Spezial-Hupe"}}
     for k, v in pairs(specialProperties) do
         local partSlot, partName = unpack(v)
         local item = self.m_PartsList:addItem(partName)
@@ -275,6 +276,27 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
             self.m_ColorPicker = ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.LightColor, _"Licht-Farbe", {r, g, b}) end, function(r, g, b) self.m_Vehicle:setHeadLightColor(r, g, b) end)
             return
+        elseif item.PartSlot == VehicleSpecialProperty.Horn then
+            self.m_UpgradeChanger:setVisible(false)
+            self.m_AddToCartButton:setVisible(false)
+            local horns = {}
+            horns[1] = _"Keine"
+            for i=2, 61 do horns[i] = _("Hupe %d", i-1) end
+            self.m_HornPicker = VehicleTuningItemGrid:new(
+                "Hupe auswählen",
+                horns,
+                function (horn)
+                    self:addPartToCart(VehicleSpecialProperty.Horn, _"Spezial-Hupe", horn)
+                end,
+                function (horn)
+                    if isElement(self.m_CustomHornSound) then destroyElement(self.m_CustomHornSound) end
+                    if horn ~= 1 then
+                        local playhorn = horn-1
+                        self.m_CustomHornSound = playSound("files/audio/Horns/"..playhorn..".mp3")
+                    end
+                end
+            )
+            return
         elseif item.PartSlot == VehicleSpecialProperty.Shader then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
@@ -388,4 +410,5 @@ VehicleTuningGUI.CameraPositions = {
     [VehicleSpecialProperty.Color2] = Vector3(4.2, 2.1, 2.1),
     [VehicleSpecialProperty.LightColor] = Vector3(3, -2, 2.1),
     [VehicleSpecialProperty.Shader] = Vector3(4.2, 2.1, 2.1),
+    [VehicleSpecialProperty.Horn] = Vector3(4.2, 2.1, 2.1),
 }

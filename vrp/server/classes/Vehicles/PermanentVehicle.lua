@@ -7,7 +7,7 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId, texture)
+function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId, texture, horn)
 	self.m_Id = Id
 	self.m_Owner = owner
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
@@ -43,11 +43,17 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 	end
 	self:setTexture(texture or "")
 
+
 	if self.m_PositionType ~= VehiclePositionType.World then
 		-- Move to unused dimension | Todo: That's probably a bad solution
 		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	end
 	self:setMileage(mileage)
+
+	self.ms_CustomHornBind = bind(self.addCustomHornBind, self)
+	self.ms_CustomHornPlayBind = bind(self.playCustomHorn, self)
+	self:setCustomHorn(horn or 0)
+
 end
 
 function PermanentVehicle:destructor()
@@ -88,8 +94,8 @@ function PermanentVehicle:save()
 	local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
 	local tunings = getVehicleUpgrades(self) or {}
 	if self.m_Trunk then self.m_Trunk:save() end
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ?, TexturePath = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, posX, posY, posZ, rotZ, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Texture, self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ?, TexturePath = ?, Horn = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Texture, self.m_CustomHorn, self.m_Id)
 end
 
 function PermanentVehicle:getId()
@@ -224,6 +230,41 @@ function Vehicle:setTexture(texturePath)
 				triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = false, texturePath = self.m_Texture}})
 			end
 		end
+	end
+end
+
+function Vehicle:setCustomHorn(id)
+	self.m_CustomHorn = id
+
+	if id > 0 then
+		if self:getOccupant() then
+			self:addCustomHornBind(self:getOccupant(), 0)
+		end
+		addEventHandler("onVehicleEnter", self, self.ms_CustomHornBind)
+	else
+		removeEventHandler("onVehicleEnter", self, self.ms_CustomHornBind)
+	end
+end
+
+function Vehicle:addCustomHornBind(player, seat)
+	if seat == 0 then
+		if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then return end
+
+		bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+		addEventHandler("onVehicleExit", self, function(player, seat)
+			if seat == 0 then
+				unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+			end
+		end)
+	end
+end
+
+function Vehicle:playCustomHorn(player)
+	if player:getOccupiedVehicle() == self and player:getOccupiedVehicleSeat() == 0 then
+		triggerClientEvent(root, "vehiclePlayCustomHorn", root, self, self.m_CustomHorn)
+	else
+		unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+		removeEventHandler("onVehicleEnter", self, self.ms_CustomHornBind)
 	end
 end
 
