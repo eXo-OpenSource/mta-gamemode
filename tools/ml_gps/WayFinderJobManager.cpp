@@ -46,7 +46,7 @@ void WayFinderJobManager::runThread()
             {
                 // Calculate the path and save the result as a list
                 std::forward_list<Vector3> result;
-                m_WayFinder.calculatePath(*startNode, *endNode, result);
+                m_WayFinder.calculatePath(startNode, endNode);
 
                 // Move calculated path to result cache (will be passed to Lua via the next processGPSEvents call)
                 std::lock_guard<std::mutex> l(m_ResultCacheMutex);

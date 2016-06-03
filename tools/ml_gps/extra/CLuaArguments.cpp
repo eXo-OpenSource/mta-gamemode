@@ -3,7 +3,7 @@
 *  Multi Theft Auto: San Andreas - Deathmatch
 *
 *  ml_base, External lua add-on module
-*  
+*
 *  Copyright © 2003-2008 MTA.  All Rights Reserved.
 *
 *  Grand Theft Auto is © 2002-2003 Rockstar North
@@ -105,7 +105,7 @@ bool CLuaArguments::Call ( lua_State* luaVM, const char* szFunction ) const
         const char* szRes = lua_tostring( luaVM, -1 );
         return false; // the function call failed
     }
-        
+
     return true;
 }
 
@@ -134,9 +134,9 @@ CLuaArgument* CLuaArguments::PushNumber ( double dNumber )
 }
 
 
-CLuaArgument* CLuaArguments::PushString ( const char* szString )
+CLuaArgument* CLuaArguments::PushString ( const std::string& strString )
 {
-    CLuaArgument* pArgument = new CLuaArgument ( szString );
+    CLuaArgument* pArgument = new CLuaArgument (strString);
     m_Arguments.push_back ( pArgument );
     return pArgument;
 }

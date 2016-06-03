@@ -1,5 +1,6 @@
 #include "WayFinder.h"
 #include <limits>
+#include "Utils.h"
 
 WayFinder::WayFinder()
 {
@@ -40,22 +41,63 @@ WayNode* WayFinder::findNodeClosestToPoint(const Vector3& position)
     return minNode;
 }
 
-void WayFinder::calculatePath(const WayNode& nodeFrom, const WayNode& nodeTo, std::list<Vector3> result)
+void WayFinder::calculatePath(WayNode* nodeFrom, WayNode* nodeTo)
 {
-    // Add start point to result list
-    result.push_back(nodeFrom.position);
+	std::priority_queue<WayNode*> openList; // List that contains all nodes we need to explore
+	std::set<WayNode*> closedList; // Nodes that have already been explored
 
-    const WayNode* currentNode = &nodeFrom;
+	// Add start node to open list
+	openList.push(nodeFrom);
 
-    // Iterate until we reach the destination node
-    while (currentNode != &nodeTo)
-    {
-        // Find the successor that matches best
-        for (auto& neighbour : currentNode->neighbours)
-        {
-        
-        }
+	// Explore nodes until we found the shortest path
+	while (!openList.empty())
+	{
+		// Get and remove closest node
+		auto currentNode = openList.top();
+		openList.pop();
 
-    }
-    
+		// Have we reached the destination?
+		if (currentNode == nodeFrom)
+			break;
+
+		// Mark current node as closed (to prevent cycles)
+		closedList.insert(currentNode);
+
+		// Since we have not found the destination yet, expand successor nodes
+		ExpandNode(openList, closedList, nodeFrom, currentNode);
+	}
+}
+
+void WayFinder::ExpandNode(std::priority_queue<WayNode*>& openList, std::set<WayNode*>& closedList, WayNode* start, WayNode* node)
+{
+	// Iterate successors
+	for (auto& successor : node->successors)
+	{
+		// Skip this node if we've already expanded it
+		if (closedList.find(successor.node) != closedList.end())
+			continue;
+
+		// Estimate distance to successor
+		unsigned int distanceToSuccessor = EstimateDistance(start, node) + successor.distance;
+
+		// Don't add the successor to the openList twice and ignore if the route is worse than the one we have
+		bool contains = Utils::QueueContains(openList, successor.node);
+		if (contains && distanceToSuccessor >= EstimateDistance(start, successor.node))
+			continue;
+
+		auto realDistance = distanceToSuccessor * EstimateDistance(start, successor.node);
+		if (contains)
+			openList.pop(); // decreaseKey
+		else
+			openList.push(successor.node);
+	}
+}
+
+unsigned int WayFinder::EstimateDistance(WayNode* from, WayNode* to)
+{
+	auto x = to->position.x - from->position.x;
+	auto y = to->position.y - from->position.y;
+	auto z = to->position.z - from->position.z;
+
+	return static_cast<unsigned int>(x*x + y*y + z*z);
 }

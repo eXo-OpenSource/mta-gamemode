@@ -32,12 +32,12 @@ int CFunctions::calculateRouteBetweenPoints(lua_State* luaVM)
 
     // Create a new job
     WayFinderJob job;
-    job.positionFrom.x = lua_tonumber(luaVM, 0);
-    job.positionFrom.y = lua_tonumber(luaVM, 1);
-    job.positionFrom.z = lua_tonumber(luaVM, 2);
-    job.positionTo.x = lua_tonumber(luaVM, 3);
-    job.positionTo.y = lua_tonumber(luaVM, 4);
-    job.positionTo.z = lua_tonumber(luaVM, 5);
+    job.positionFrom.x = static_cast<float>(lua_tonumber(luaVM, 0));
+    job.positionFrom.y = static_cast<float>(lua_tonumber(luaVM, 1));
+    job.positionFrom.z = static_cast<float>(lua_tonumber(luaVM, 2));
+    job.positionTo.x = static_cast<float>(lua_tonumber(luaVM, 3));
+    job.positionTo.y = static_cast<float>(lua_tonumber(luaVM, 4));
+    job.positionTo.z = static_cast<float>(lua_tonumber(luaVM, 5));
 
     // Add the job to the job queue
     JobId jobId = WayFinderJobManager::instance().addJob(job);
@@ -82,7 +82,7 @@ int CFunctions::processGPSEvents(lua_State* luaVM)
             lua_pushnumber(luaVM, 2);
             lua_pushnumber(luaVM, v.y);
             lua_settable(luaVM, -3);
-            
+
             lua_pushnumber(luaVM, 3);
             lua_pushnumber(luaVM, v.z);
             lua_settable(luaVM, -3);
@@ -90,7 +90,7 @@ int CFunctions::processGPSEvents(lua_State* luaVM)
             // Add vector table to result table
             lua_settable(luaVM, -3);
         }
-        
+
         // Finally, call triggerEvent
         lua_call(luaVM, 2, 0);
     }
