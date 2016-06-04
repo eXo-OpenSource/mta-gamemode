@@ -7,7 +7,7 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId, texture, horn)
+function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId, texture, horn, neon)
 	self.m_Id = Id
 	self.m_Owner = owner
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
@@ -52,6 +52,13 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 
 	self:setCustomHorn(horn or 0)
 
+	if neon and fromJSON(neon) then
+		self:setNeon(1)
+		self:setNeonColor(fromJSON(neon))
+	else
+		self:setNeon(0)
+	end
+
 end
 
 function PermanentVehicle:destructor()
@@ -92,8 +99,8 @@ function PermanentVehicle:save()
 	local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
 	local tunings = getVehicleUpgrades(self) or {}
 	if self.m_Trunk then self.m_Trunk:save() end
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ?, TexturePath = ?, Horn = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, posX, posY, posZ, rotZ, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Texture, self.m_CustomHorn, self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ?, TexturePath = ?, Horn = ?, Neon = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, posX, posY, posZ, rotZ, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Id)
 end
 
 function PermanentVehicle:getId()
@@ -241,6 +248,23 @@ function Vehicle:setCustomHorn(id)
 				unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 			end
 		end
+	end
+end
+
+function Vehicle:setNeon(state)
+	self:setData("Neon", state, true)
+
+	if state == 1 then
+		self.m_Neon = {255, 0, 0}
+	else
+		self.m_Neon = false
+	end
+end
+
+function Vehicle:setNeonColor(colorTable)
+	if self.m_Neon then
+		self.m_Neon = colorTable
+		self:setData("NeonColor", colorTable, true)
 	end
 end
 

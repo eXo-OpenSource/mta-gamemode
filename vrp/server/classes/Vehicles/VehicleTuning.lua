@@ -200,6 +200,19 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
                 vehicle:setColor(r1, g1, b1, unpack(upgradeId))
             elseif slot == VehicleSpecialProperty.LightColor then
                 vehicle:setHeadLightColor(unpack(upgradeId))
+            elseif slot == VehicleSpecialProperty.Neon then
+                if instanceof(vehicle, PermanentVehicle, true) then -- Currently only for PlayerVehicles?
+                    vehicle:setNeon(upgradeId-1)
+                else
+                    client:sendError("Spezial-Hupen sind nur für Privat-Fahrzeuge verfügbar!")
+                    client:giveMoney(getVehicleUpgradePrice(VehicleSpecialProperty.Shader))
+                end
+            elseif slot == VehicleSpecialProperty.NeonColor then
+                if instanceof(vehicle, PermanentVehicle, true) then
+                    vehicle:setNeonColor(upgradeId)
+                else
+                    client:sendError("Neon-Röhren sind nur für Privat-Fahrzeuge verfügbar!")
+                end
             elseif slot == VehicleSpecialProperty.Horn then
                 if instanceof(vehicle, PermanentVehicle, true) then -- Currently only for PlayerVehicles?
                     vehicle:setCustomHorn(upgradeId-1)

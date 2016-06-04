@@ -12,7 +12,7 @@ function VehicleTuningGUI:constructor(vehicle)
 
     -- Part selection form
     do
-        self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Vehicle shop", false, true, self)
+        self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Tuning", false, true, self)
         self.m_PartsList = GUIGridList:new(0, self.m_Height*0.21, self.m_Width, self.m_Height*0.72, self.m_Window)
         self.m_PartsList:addColumn(_"Name", 1)
         GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/Shops/TuningHeader.png", self.m_Window)
@@ -59,6 +59,8 @@ function VehicleTuningGUI:constructor(vehicle)
     self.m_CurrentUpgrades[VehicleSpecialProperty.Color] = {r1, g1, b1}
     self.m_CurrentUpgrades[VehicleSpecialProperty.Color2] = {r2, g2, b2}
 	self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor] = {self.m_Vehicle:getHeadLightColor()}
+    self.m_CurrentUpgrades[VehicleSpecialProperty.Neon] = getElementData(self.m_Vehicle, "Neon") or 0
+    self.m_CurrentUpgrades[VehicleSpecialProperty.NeonColor] = getElementData(self.m_Vehicle, "NeonColor") or {0,0,0}
 
     self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
     self.m_Vehicle:setOverrideLights(2)
@@ -90,7 +92,7 @@ end
 
 function VehicleTuningGUI:initPartsList()
     -- Add 'special properties' (e.g. color)
-    local specialProperties = {{VehicleSpecialProperty.Color, _"Farbe"}, {VehicleSpecialProperty.Color2, _"2. Farbe"}, {VehicleSpecialProperty.LightColor, _"Licht-Farbe"}, {VehicleSpecialProperty.Shader, _"Fahrzeug-Textur"}, {VehicleSpecialProperty.Horn, _"Spezial-Hupe"}}
+    local specialProperties = {{VehicleSpecialProperty.Color, _"Farbe"}, {VehicleSpecialProperty.Color2, _"2. Farbe"}, {VehicleSpecialProperty.LightColor, _"Licht-Farbe"}, {VehicleSpecialProperty.Shader, _"Fahrzeug-Textur"}, {VehicleSpecialProperty.Horn, _"Spezial-Hupe"}, {VehicleSpecialProperty.Neon, _"Neon Röhren"}, {VehicleSpecialProperty.NeonColor, _"Neon Farbe"}}
     for k, v in pairs(specialProperties) do
         local partSlot, partName = unpack(v)
         local item = self.m_PartsList:addItem(partName)
@@ -276,6 +278,35 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
             self.m_ColorPicker = ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.LightColor, _"Licht-Farbe", {r, g, b}) end, function(r, g, b) self.m_Vehicle:setHeadLightColor(r, g, b) end)
             return
+        elseif item.PartSlot == VehicleSpecialProperty.Neon then
+            self.m_UpgradeChanger:setVisible(false)
+            self.m_AddToCartButton:setVisible(false)
+            self.m_TexturePicker = VehicleTuningItemGrid:new(
+                "Neonröhren ein/ausbauen",
+                {_"Keine Neonröhre", _"Neonröhre einbauen"},
+                function(neon)
+                    self:addPartToCart(VehicleSpecialProperty.Neon, _"Neon", neon)
+                end,
+                function(neon)
+                    if neon ~= 1 then
+                        ShortMessage:new("Neon Röhre eingebaut!", "Los Santos Customs", Color.LightBlue)
+                        setElementData(self.m_Vehicle, "Neon", 1)
+                        setElementData(self.m_Vehicle, "NeonColor", {255,0,0})
+                        Neon.Vehicles[self.m_Vehicle] = true
+                    else
+                        ShortMessage:new("Neon Röhre ausgebaut!", "Los Santos Customs", Color.LightBlue)
+                        setElementData(self.m_Vehicle, "Neon", 0)
+                        setElementData(self.m_Vehicle, "NeonColor", {0,0,0})
+                        Neon.Vehicles[veh] = nil
+                    end
+                end
+            )
+            return
+        elseif item.PartSlot == VehicleSpecialProperty.NeonColor then
+            self.m_UpgradeChanger:setVisible(false)
+            self.m_AddToCartButton:setVisible(false)
+            self.m_ColorPicker = ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.NeonColor, _"Neon-Farbe", {r, g, b}) end, function(r, g, b) setElementData(self.m_Vehicle, "NeonColor", {r, g, b}) end)
+            return
         elseif item.PartSlot == VehicleSpecialProperty.Horn then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
@@ -411,4 +442,7 @@ VehicleTuningGUI.CameraPositions = {
     [VehicleSpecialProperty.LightColor] = Vector3(3, -2, 2.1),
     [VehicleSpecialProperty.Shader] = Vector3(4.2, 2.1, 2.1),
     [VehicleSpecialProperty.Horn] = Vector3(4.2, 2.1, 2.1),
+    [VehicleSpecialProperty.Neon] = Vector3(4.2, 2.1, 2.1),
+    [VehicleSpecialProperty.NeonColor] = Vector3(4.2, 2.1, 2.1),
+
 }

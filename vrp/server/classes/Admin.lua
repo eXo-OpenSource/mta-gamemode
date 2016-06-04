@@ -27,6 +27,8 @@ function Admin:constructor()
     addCommandHandler("goto", bind(self.goToPlayer, self))
     addCommandHandler("gethere", bind(self.getHerePlayer, self))
     addCommandHandler("tp", bind(self.teleportTo, self))
+    addCommandHandler("getVeh", bind(self.getVehFromId, self))
+
     addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
@@ -442,4 +444,24 @@ function Admin:addCompanyVehicle(player, cmd, companyID)
 			player:sendError(_("Du sitzt in keinem Fahrzeug!", player))
 		end
 	end
+end
+
+function Admin:getVehFromId(player, cmd, vehId)
+    if player:getRank() >= RANK.Supporter then
+        if vehId then
+            for index, veh in ipairs(getElementsByType("vehicle")) do
+                if veh.getId then
+                    if veh:getId() == tonumber(vehId) then
+                        veh:setPosition(player:getPosition())
+                        veh:setDimension(player:getDimension())
+                        veh:setInterior(player:getInterior())
+                        return
+                    end
+                end
+            end
+            player:sendError(_("Keine Fahrzeug gefunden!", player))
+        else
+            player:sendError(_("Keine ID Angegeben!", player))
+        end
+    end
 end
