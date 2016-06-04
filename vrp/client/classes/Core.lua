@@ -64,6 +64,7 @@ function Core:ready()
 	DeathmatchManager:new()
 
 	PlantWeed.initalize()
+	Neon.initalize()
 end
 
 function Core:afterLogin()
@@ -125,6 +126,7 @@ function Core:afterLogin()
 
 	self:createBlips()
 	PlantGUI.load()
+
 end
 
 function Core:destructor()
