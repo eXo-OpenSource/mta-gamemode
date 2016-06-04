@@ -100,9 +100,8 @@ function Neon.Render()
 						local dist1 = getDistanceBetweenPoints3D(pos, middlex,middley,middlez)*1.5
 
 						local ap = 255/dist1
-						if (ap > 255) then ap = 255 end
 						if ap > 220 then ap = 220 end
-						state = dxDrawMaterialLine3D (rx,ry,ez1+0.05, rxy,ryy, ez+0.05, Neon.Image, 3, tocolor(r,g,b,ap), pos)
+						dxDrawMaterialLine3D (rx,ry,ez1+0.05, rxy,ryy, ez+0.05, Neon.Image, 3, tocolor(r,g,b,ap), pos)
 					end
 				end
 			end
