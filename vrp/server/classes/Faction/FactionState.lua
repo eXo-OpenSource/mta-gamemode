@@ -35,6 +35,7 @@ function FactionState:constructor()
 	addCommandHandler("su",bind(self.Command_suspect, self))
 	addCommandHandler("m",bind(self.Command_megaphone, self))
 	addCommandHandler("tie",bind(self.Command_tie, self))
+	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
 
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
@@ -304,6 +305,30 @@ function FactionState:Command_tie(player, cmd, tname, bool)
 		end
 	end
 end
+
+function FactionState:Command_needhelp(player)
+	local faction = player:getFaction()
+	if faction and faction:isStateFaction() then
+		if player:isFactionDuty() then
+			if player:getInterior() == 0 and player:getDimension() == 0 then
+				local rankName = faction:getRankName(faction:getPlayerRank(player))
+				local zoneName = getZoneName(player:getPosition()).."/"..getZoneName(player:getPosition(), true)
+				for k, onlineplayer in pairs(self:getOnlinePlayers()) do
+					onlineplayer:sendMessage(_("%s %s benötigt Unterstützung! Ort: %s", onlineplayer, rankName, player:getName(), zoneName), 50, 200, 255)
+					onlineplayer:sendMessage(_("Begib dich dort hin! Der Ort wird auf der Karte markiert!", onlineplayer), 50, 200, 255)
+					onlineplayer:triggerEvent("stateFactionNeedHelp", player)
+				end
+			else
+				player:sendError(_("Du kannst hier keine Hilfe anfordern!", player))
+			end
+		else
+			player:sendError(_("Du bist nicht im Dienst!", player))
+		end
+	else
+		player:sendError(_("Du bist in keiner Staatsfraktion!", player))
+	end
+end
+
 
 function FactionState:Event_JailPlayer(player, bail)
 	local policeman = client

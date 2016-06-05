@@ -11,12 +11,30 @@ FactionManager.Map = {}
 
 function FactionManager:constructor()
 	triggerServerEvent("getFactions", localPlayer)
-	addRemoteEvents{"loadClientFaction"}
+
+	self.m_NeedHelpBlip = {}
+
+	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
+	addEventHandler("stateFactionNeedHelp", root, bind(self.stateFactionNeedHelp, self))
+
 end
 
 function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color)
 	FactionManager.Map[Id] = Faction:new(Id, name, name_short, rankNames, factionType, color)
+end
+
+function FactionManager:stateFactionNeedHelp(player)
+	local pos = player:getPosition()
+
+	if self.m_NeedHelpBlip[player] then delete(self.m_NeedHelpBlip[player]) end
+	self.m_NeedHelpBlip[player] = Blip:new("NeedHelp.png", pos.x, pos.y)
+	self.m_NeedHelpBlip[player]:attachTo(player)
+	self.m_NeedHelpBlip[player]:setStreamDistance(2000)
+
+	setTimer(function(blip)
+		if blip then delete(blip) end
+	end, 20000, 1, self.m_NeedHelpBlip[player])
 end
 
 function FactionManager:getFromId(id)
