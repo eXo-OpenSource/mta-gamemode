@@ -39,6 +39,15 @@ function PlayerManager:constructor()
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
+	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
+	addCommandHandler("g", Player.staticStateFactionChatHandler)
+	addCommandHandler("Fraktion", Player.staticFactionChatHandler)
+	addCommandHandler("t", Player.staticFactionChatHandler)
+	addCommandHandler("Unternehmen", Player.staticCompanyChatHandler)
+	addCommandHandler("u", Player.staticCompanyChatHandler)
+	addCommandHandler("Firma/Gang", Player.staticGroupChatHandler)
+	addCommandHandler("f", Player.staticGroupChatHandler)
+
 
 	self.m_PaydayPulse = TimedPulse:new(60000)
 	self.m_PaydayPulse:registerHandler(bind(self.checkPayday, self))

@@ -181,6 +181,16 @@ function Company:getOnlinePlayers()
 	return players
 end
 
+function Company:sendChatMessage(sourcePlayer,text)
+	local playerId = sourcePlayer:getId()
+	local rank = self.m_Players[playerId]
+	local rankName = self.m_RankNames[rank]
+	local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), text)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, 255, 125, 0)
+	end
+end
+
 function Company:sendMessage(text, r, g, b, ...)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, r, g, b, ...)

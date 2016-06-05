@@ -125,10 +125,7 @@ function Player:loadCharacter()
 	-- Add binds
 	self:initialiseBinds()
 
-	-- Add command and event handler
-	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
-	addCommandHandler("Fraktion", Player.staticFactionChatHandler)
-	addCommandHandler("Firma/Gang", Player.staticGroupChatHandler)
+
 	self:setPublicSync("Rank", self:getRank())
 
 	if self:getRank() > 0 then
@@ -189,8 +186,10 @@ function Player:loadCharacterInfo()
 end
 
 function Player:initialiseBinds()
-	bindKey(self, "n", "down", "chatbox", "Firma/Gang")
+	bindKey(self, "1", "down", "chatbox", "Fraktion")
 	bindKey(self, "y", "down", "chatbox", "Fraktion")
+	bindKey(self, "2", "down", "chatbox", "Unternehmen")
+	bindKey(self, "3", "down", "chatbox", "Firma/Gang")
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 end
@@ -318,6 +317,12 @@ end
 function Player.staticFactionChatHandler(self, command, ...)
 	if self.m_Faction then
 		self.m_Faction:sendChatMessage(self,table.concat({...}, " "))
+	end
+end
+
+function Player.staticCompanyChatHandler(self, command, ...)
+	if self.m_Company then
+		self.m_Company:sendChatMessage(self,table.concat({...}, " "))
 	end
 end
 
