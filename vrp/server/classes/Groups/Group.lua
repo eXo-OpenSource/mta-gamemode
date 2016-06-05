@@ -264,6 +264,16 @@ function Group:getOnlinePlayers()
 	return players
 end
 
+function Group:sendChatMessage(sourcePlayer,text)
+	local playerId = sourcePlayer:getId()
+	local rank = self.m_Players[playerId]
+	local rankName = self.m_RankNames[tostring(rank)]
+	local text = ("[%s] %s %s: %s"):format(self.m_Type, rankName, sourcePlayer:getName(), text)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, 0, 255, 150)
+	end
+end
+
 function Group:sendMessage(text, r, g, b, ...)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, r, g, b, ...)

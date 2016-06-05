@@ -185,7 +185,7 @@ function Company:sendChatMessage(sourcePlayer,text)
 	local playerId = sourcePlayer:getId()
 	local rank = self.m_Players[playerId]
 	local rankName = self.m_RankNames[rank]
-	local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), text)
+	local text = ("%s %s: %s"):format(rankName, sourcePlayer:getName(), text)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, 255, 125, 0)
 	end

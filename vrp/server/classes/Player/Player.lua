@@ -122,8 +122,7 @@ function Player:loadCharacter()
 	-- Send initial sync
 	self:sendInitialSync()
 
-	-- Add binds
-	self:initialiseBinds()
+
 
 
 	self:setPublicSync("Rank", self:getRank())
@@ -136,6 +135,8 @@ function Player:loadCharacter()
 	self:setNextPayday()
 	self.m_Inventory = InventoryManager:getSingleton():loadInventory(self)
 
+	-- Add binds
+	self:initialiseBinds()
 	--// Gangwar
 	triggerEvent("onLoadCharacter",self)
 end
@@ -186,10 +187,16 @@ function Player:loadCharacterInfo()
 end
 
 function Player:initialiseBinds()
-	bindKey(self, "1", "down", "chatbox", "Fraktion")
-	bindKey(self, "y", "down", "chatbox", "Fraktion")
-	bindKey(self, "2", "down", "chatbox", "Unternehmen")
-	bindKey(self, "3", "down", "chatbox", "Firma/Gang")
+	if self:getFaction() then
+		bindKey(self, "1", "down", "chatbox", "Fraktion")
+		bindKey(self, "y", "down", "chatbox", "Fraktion")
+	end
+	if self:getCompany() then
+		bindKey(self, "2", "down", "chatbox", "Unternehmen")
+	end
+	if self:getGroup() then
+		bindKey(self, "3", "down", "chatbox", "Firma/Gang")
+	end
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 end
@@ -310,7 +317,7 @@ end
 
 function Player.staticGroupChatHandler(self, command, ...)
 	if self.m_Group then
-		self.m_Group:sendMessage(("[GROUP] %s: %s"):format(getPlayerName(self), table.concat({...}, " ")))
+		self.m_Group:sendChatMessage(self,table.concat({...}, " "))
 	end
 end
 
