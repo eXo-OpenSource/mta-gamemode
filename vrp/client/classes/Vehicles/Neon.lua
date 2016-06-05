@@ -9,34 +9,16 @@ function Neon.initalize()
     addEventHandler("onClientPreRender", getRootElement(), Neon.Render)
 end
 
-function Neon.getPositionFromElementAtOffset(element, x, y, z)
-  if not x or not y or not z then
-    return x, y, z
-  end
-  local matrix = getElementMatrix(element)
-  local offX = x * matrix[1][1] + y * matrix[2][1] + z * matrix[3][1] + matrix[4][1]
-  local offY = x * matrix[1][2] + y * matrix[2][2] + z * matrix[3][2] + matrix[4][2]
-  local offZ = x * matrix[1][3] + y * matrix[2][3] + z * matrix[3][3] + matrix[4][3]
-  return Vector3(offX, offY, offZ)
-end
-
-function Neon.findRotation (x,y,rz,dist,rot)
-    local x = x+dist*math.cos(math.rad(rz+rot))
-    local y = y+dist*math.sin(math.rad(rz+rot))
-
-    return x,y
-end
-
 function Neon.getVehicleWheelPositions(vehicle)
 	local minX, minY, minZ, maxX, maxY, maxZ = getElementBoundingBox(vehicle)
 	if minX and minY and minZ and maxX and maxY and maxZ then
-		local wheel1 = Neon.getPositionFromElementAtOffset(vehicle, minX, maxY, minZ)
-		local wheel2 = Neon.getPositionFromElementAtOffset(vehicle, minX, -maxY, minZ)
-		local wheel3 = Neon.getPositionFromElementAtOffset(vehicle, maxX, maxY, minZ)
-		local wheel4 = Neon.getPositionFromElementAtOffset(vehicle, maxX, -maxY, minZ)
+		local wheel1 = vehicle.matrix:transformPosition(minX, maxY, minZ)
+		local wheel2 = vehicle.matrix:transformPosition(minX, -maxY, minZ)
+		local wheel3 = vehicle.matrix:transformPosition(maxX, maxY, minZ)
+		local wheel4 = vehicle.matrix:transformPosition(maxX, -maxY, minZ)
 		return wheel1, wheel2, wheel3, wheel4
 	end
-	return Vector3(0, 0, 0, 0), Vector3(0, 0, 0, 0), Vector3(0, 0, 0, 0), Vector3(0, 0, 0, 0)
+	return false
 end
 
 function Neon.getNeonTable()
