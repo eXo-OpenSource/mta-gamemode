@@ -446,6 +446,7 @@ function FactionState:Event_toggleDuty()
 			client:setPublicSync("Faction:Duty",true)
 			client:getInventory():removeAllItem("Barrikade")
 			client:getInventory():giveItem("Barrikade", 10)
+			client:triggerEvent("showFactionWeaponShopGUI")			
 		end
 	else
 		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
