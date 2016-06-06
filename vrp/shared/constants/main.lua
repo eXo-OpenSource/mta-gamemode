@@ -32,6 +32,7 @@ ADMIN_RANK_PERMISSION = {
 	["warn"] = RANK.Supporter,
 	["addWarn"] = RANK.Supporter,
 	["timeban"] = RANK.Moderator,
+	["adminAnnounce"] = RANK.Moderator,
 	["permaban"] = RANK.SuperModerator,
 	["nickchange"] = RANK.SuperModerator,
 	["setFaction"] = RANK.SuperModerator,

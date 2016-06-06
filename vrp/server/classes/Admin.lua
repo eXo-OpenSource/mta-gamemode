@@ -167,6 +167,9 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:addPunishLog(admin, target, func, "", 0)
         elseif func == "supportMode" or func == "smode" then
             self:toggleSupportMode(admin)
+        elseif func == "adminAnnounce" then
+            local text = target
+            triggerClientEvent("announceText", admin, text)
         end
     else
         admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))

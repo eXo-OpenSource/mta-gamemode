@@ -15,7 +15,7 @@ end
 
 inherit(Singleton, AdminGUI)
 
-addRemoteEvents{"showAdminMenu"}
+addRemoteEvents{"showAdminMenu", "announceText"}
 
 function AdminGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-200, 600, 400, false, false)
@@ -36,8 +36,8 @@ function AdminGUI:constructor()
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
 	GUILabel:new(10, 10, 150, 30, _"Adminansage:", tabAllgemein):setColor(Color.White)
 	self.m_AdminAnnounceText = GUIEdit:new(150, 10, 330, 30,tabAllgemein)
-	self.m_AnnounceButton = GUIButton:new(490, 10, 100, 30, _"senden",  tabAllgemein)
-	self.m_AnnounceButton.onLeftClick = bind(self.AnnounceButton_Click, self)
+	self:addAdminButton("adminAnnounce", "senden", 490, 10, 100, 30, Color.LightBlue, tabAllgemein)
+
 	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", 10, 50, 250, 30, Color.Green, tabAllgemein)
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
 	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"N",  tabAllgemein):setBackgroundColor(Color.Orange)
@@ -214,31 +214,36 @@ function AdminGUI:onButtonClick(func)
 				end)
 	elseif func == "supportMode" then
 		triggerServerEvent("adminTriggerFunction", root, func)
+	elseif func == "adminAnnounce" then
+		local announceString = self.m_AdminAnnounceText:getText()
+		if announceString ~= "" and #announceString > 0 then
+			QuestionBox:new(
+					_"Admin-Ankündigung senden?",
+					function ()
+						triggerServerEvent("adminTriggerFunction", root, func, announceString)
+						self.m_AdminAnnounceText:setText(" ")
+					end)
+		else
+			ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
+		end
 	else
 		outputDebug("Under Developement", 255, 0 ,0)
 	end
 end
 
 function AdminGUI:AnnounceButton_Click()
-	local announceString = self.m_AdminAnnounceText:getText()
-	if announceString ~= "" and #announceString > 0 then
-		--triggerServerEvent("adminAnnounce", root, announceString)
-		self:AnnounceText( announceString )
-		self.m_AdminAnnounceText:setText(" ")
-	else
-		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
-	end
-end
 
-function AdminGUI:AnnounceText( message )
-	if self.m_MoveText == nil then
-		self.m_MoveText = GUIMovetext:new(0, 0, screenWidth, screenHeight*0.05,message,"",1,(screenWidth*0.1)*-1, self,"files/images/GUI/megafone.png",true)
-	end
 end
 
 addEventHandler("showAdminMenu", root,
 	function(...)
 		AdminGUI:new()
+	end
+)
+
+addEventHandler("announceText", root,
+	function(message)
+		AdminGUI.m_MoveText = GUIMovetext:new(0, 0, screenWidth, screenHeight*0.05,message,"",1,(screenWidth*0.1)*-1, "files/images/GUI/megafone.png",true)
 	end
 )
 

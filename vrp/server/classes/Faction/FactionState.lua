@@ -440,6 +440,8 @@ function FactionState:Event_toggleDuty()
 		else
 			faction:changeSkin(client)
 			client.m_FactionDuty = true
+			client:setHealth(100)
+			client:setArmor(100)
 			takeAllWeapons(client)
 			faction:updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nun im Dienst!", client))
@@ -447,6 +449,7 @@ function FactionState:Event_toggleDuty()
 			client:getInventory():removeAllItem("Barrikade")
 			client:getInventory():giveItem("Barrikade", 10)
 			client:triggerEvent("showFactionWeaponShopGUI")
+
 		end
 	else
 		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
