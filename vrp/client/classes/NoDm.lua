@@ -82,7 +82,9 @@ function NoDm:renderNoDmImage()
 
 	local px = screenWidth-self.m_currentImagePosition
 	local py = screenHeight/2
-	dxDrawImage(px,py,screenWidth*0.15,screenWidth*0.08,"files/images/Other/nodm.png",0, 0, 0, tocolor(255, 255, 255, 255))
+	if not Phone:getSingleton():isOpen() then
+		dxDrawImage(px,py,screenWidth*0.15,screenWidth*0.08,"files/images/Other/nodm.png")
+	end
 end
 
 function NoDm:unrenderNoDmImage()
@@ -91,7 +93,6 @@ function NoDm:unrenderNoDmImage()
 		removeEventHandler ( "onClientRender", getRootElement(), self.m_RenderBind)
 		removeEventHandler ( "onClientRender", getRootElement(), self.m_UnRenderBind)
 	end
-
 end
 
 function NoDm:isInNoDmZone()
