@@ -6,11 +6,15 @@
 -- *
 -- ****************************************************************************
 FactionRescue = inherit(Singleton)
-addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer", "factionRescueGetStretcher", "factionRescueRemoveStretcher", "factionRescueWastedFinished"}
+addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer", "factionRescueGetStretcher", "factionRescueRemoveStretcher", "factionRescueWastedFinished", "factionRescueChangeSkin"}
 
 function FactionRescue:constructor()
 	-- Duty Pickup
 	self:createDutyPickup(1720.80, -1772.05, 13.88,0)
+
+	self.m_Skins = {}
+	self.m_Skins["medic"] = {70, 71, 274, 275, 276}
+	self.m_Skins["fire"] = {260, 277, 278, 279}
 
 	-- Barriers
 	VehicleBarrier:new(Vector3(1743.09, -1742.30, 13.30), Vector3(0, 90, -180)).onBarrierHit = bind(self.onBarrierHit, self)
@@ -27,6 +31,9 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueGetStretcher", root, bind(self.Event_GetStretcher, self))
 	addEventHandler("factionRescueRemoveStretcher", root, bind(self.Event_RemoveStretcher, self))
 	addEventHandler("factionRescueWastedFinished", root, bind(self.Event_OnPlayerWastedFinish, self))
+	addEventHandler("factionRescueChangeSkin", root, bind(self.Event_changeSkin, self))
+
+
 end
 
 function FactionRescue:destructor()
@@ -83,6 +90,34 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 	)
 end
 
+function FactionRescue:Event_changeSkin(player)
+
+	if not player then player = client end
+
+	local type = player:getPublicSync("Rescue:Type")
+	local curskin = getElementModel(player)
+
+	local suc = false
+	for i = curskin+1, 313 do
+		if table.find(self.m_Skins[type], i) then
+			suc = true
+			player:setModel(i)
+			break
+		end
+	end
+	if suc == false then
+		for i = 0, curskin do
+			if table.find(self.m_Skins[type], i) then
+				suc = true
+				player:setModel(i)
+				break
+			end
+		end
+	end
+	player:triggerEvent("showRescueFactionDutyGUI", true)
+
+end
+
 function FactionRescue:Event_toggleDuty(type)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
@@ -98,9 +133,9 @@ function FactionRescue:Event_toggleDuty(type)
 			client:sendInfo(_("Du bist nun im Dienst!", client))
 			client:setPublicSync("Faction:Duty",true)
 			client:setPublicSync("Rescue:Type",type)
-			faction:changeSkin(client, type)
 			client:getInventory():removeAllItem("Barrikade")
 			client:getInventory():giveItem("Barrikade", 10)
+			self:Event_changeSkin(client)
 		end
 	else
 		client:sendError(_("Du bist in nicht im Rescue-Team!", client))

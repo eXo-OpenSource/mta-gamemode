@@ -6,23 +6,28 @@
 -- *
 -- ****************************************************************************
 RescueFactionDutyGUI = inherit(GUIButtonMenu)
+inherit(Singleton, RescueFactionDutyGUI)
 addRemoteEvents{"showRescueFactionDutyGUI"}
 
-function RescueFactionDutyGUI:constructor(text)
+function RescueFactionDutyGUI:constructor(text, forceDuty)
 	GUIButtonMenu.constructor(self, text)
 
-	if not localPlayer:getPublicSync("Faction:Duty") then
+	if localPlayer:getPublicSync("Faction:Duty") or forceDuty then
+		self:addItem(_"Skin wechseln", Color.LightBlue, bind(self.itemCallback, self, 3))
+		self:addItem(_"Dienst beenden", Color.Red, bind(self.itemCallback, self, 1))
+	else
 		self:addItem(_"Medic Dienst starten", Color.Green, bind(self.itemCallback, self, 1))
 		self:addItem(_"Feuerwehr Dienst starten", Color.Green, bind(self.itemCallback, self, 2))
-	else
-		self:addItem(_"Dienst beenden", Color.Green, bind(self.itemCallback, self, 1))
 	end
 	self:addItem(_"Schließen", Color.Red, bind(self.itemCallback, self))
 end
 
 addEventHandler("showRescueFactionDutyGUI", root,
-	function()
-		RescueFactionDutyGUI:new("Rescue-Team Duty Menü")
+	function(forceDuty)
+		if RescueFactionDutyGUI:isInstantiated() then
+			delete(RescueFactionDutyGUI:getSingleton())
+		end
+		RescueFactionDutyGUI:new("Rescue-Team Duty Menü", forceDuty)
 	end
 )
 
@@ -31,19 +36,8 @@ function RescueFactionDutyGUI:itemCallback(type)
 		triggerServerEvent("factionRescueToggleDuty", localPlayer, "medic")
 	elseif type == 2 then -- Duty: Fire
 		triggerServerEvent("factionRescueToggleDuty", localPlayer, "fire")
+	elseif type == 3 then -- Change Skin
+		triggerServerEvent("factionRescueChangeSkin", localPlayer)
 	end
-	self:close()
-end
-
-function RescueFactionDutyGUI:onShow()
-	Cursor:show()
-end
-
-function RescueFactionDutyGUI:onHide()
-	Cursor:hide()
-end
-
-
-function RescueFactionDutyGUI:hide()
-	GUIForm.hide(self)
+	delete(self)
 end

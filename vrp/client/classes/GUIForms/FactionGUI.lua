@@ -121,12 +121,18 @@ function FactionGUI:addLeaderTab()
 		self.m_LeaderRankName = GUILabel:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, tabLeader):setNumeric()
-		GUILabel:new(self.m_Width*0.69, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Skin:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		self.m_SkinLabel = GUILabel:new(self.m_Width*0.69, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Skin:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 
 		self.m_SkinPreviewBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, tabLeader)
 
 		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, tabLeader)
 		self.m_SkinChanger.onChange = function(text, index) self.m_SkinPreviewBrowser:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..text) end
+
+		if self.m_Id == 4 then -- If Rescue
+			self.m_SkinLabel:setVisible(false)
+			self.m_SkinChanger:setVisible(false)
+			self.m_SkinPreviewBrowser:setVisible(false)
+		end
 
 		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", true, tabLeader)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
@@ -257,6 +263,7 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players,ski
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
+			self.m_Id = id
 			local x, y = self.m_FactionNameLabel:getPosition()
 			self.m_RankNames = rankNames
 			self.m_FactionNameLabel:setText(name)
