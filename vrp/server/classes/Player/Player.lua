@@ -763,6 +763,7 @@ function Player:endPrison()
 	toggleControl(self, "aim_weapon", true)
 	self:triggerEvent("CountdownStop")
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
+	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
 	self.m_PrisonTime = 0
 end
 
