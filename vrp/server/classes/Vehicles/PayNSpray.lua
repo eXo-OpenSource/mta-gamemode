@@ -5,6 +5,8 @@ function PayNSpray:constructor(x, y, z, garageId)
 	self.m_Blip = Blip:new("PayNSpray.png", x, y)
 	if garageId then
 		setGarageOpen(garageId, true)
+	elseif isElement(self.m_CustomDoor) then
+		self:setCustomGarageOpen(true)
 	end
 
 	self.m_Company = CompanyManager:getSingleton():getFromId(2) -- Mechanic and Tow Id
@@ -30,6 +32,8 @@ function PayNSpray:constructor(x, y, z, garageId)
 
 				if garageId then
 					setGarageOpen(garageId, false)
+				elseif isElement(self.m_CustomDoor) then
+					self:setCustomGarageOpen(false)
 				end
 				setElementFrozen(vehicle, true)
 
@@ -42,6 +46,8 @@ function PayNSpray:constructor(x, y, z, garageId)
 						setElementFrozen(vehicle, false)
 						if garageId then
 							setGarageOpen(garageId, true)
+						elseif isElement(self.m_CustomDoor) then
+							self:setCustomGarageOpen(true)
 						end
 
 						hitElement:takeMoney(costs, "Pay'N'Spray")
@@ -55,6 +61,39 @@ function PayNSpray:constructor(x, y, z, garageId)
 	)
 end
 
+function PayNSpray:createCustomDoor(model, pos, rot)
+	self.m_CustomDoor = createObject(model, pos, rot)
+	self.m_CustomDoor.open = true
+	self.m_CustomDoor.moving = false
+end
+
+function PayNSpray:setCustomGarageOpen(state)
+	if not self.m_CustomDoor.moving then
+		local pos = self.m_CustomDoor:getPosition()
+		if state == true then
+			if not self.m_CustomDoor.open then
+				pos.z = pos.z+1.7
+				self.m_CustomDoor:move(2000, pos, Vector3(0, 90, 0))
+				self.m_CustomDoor.moving = true
+				setTimer(function()
+					self.m_CustomDoor.open = true
+					self.m_CustomDoor.moving = false
+				end, 2500, 1)
+			end
+		else
+			if self.m_CustomDoor.open then
+				pos.z = pos.z-1.7
+				self.m_CustomDoor:move(2000, pos, Vector3(0, -90, 0))
+				self.m_CustomDoor.moving = true
+				setTimer(function()
+					self.m_CustomDoor.open = false
+					self.m_CustomDoor.moving = false
+				end, 2500, 1)
+			end
+		end
+	end
+end
+
 function PayNSpray:destructor()
 	destroyElement(self.m_FixShape)
 	delete(self.m_Blip)
@@ -65,5 +104,6 @@ function PayNSpray.initializeAll()
 	PayNSpray:new(2063.2, -1831.3, 13.5, 8)
 	PayNSpray:new(487.4, -1742.8, 11.1, 12)
 	PayNSpray:new(1025.1, -1022, 32.1, 11)
-	PayNSpray:new(1444.860, -1785.127, 13.250)
+	local noobSpawn = PayNSpray:new(1444.860, -1785.127, 13.250)
+	noobSpawn:createCustomDoor(13028, Vector3(1445.09998,-1773.80005,16.1), Vector3(180,-90,90))
 end
