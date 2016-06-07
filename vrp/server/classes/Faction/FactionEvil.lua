@@ -29,6 +29,7 @@ function FactionEvil:createInterior(Id, faction)
 	self.m_WeaponPed[Id] = NPC:new(FactionManager:getFromId(Id):getRandomSkin(), 2819.20, -1166.77, 1025.58, 133.63)
 	setElementDimension(self.m_WeaponPed[Id], Id)
 	setElementInterior(self.m_WeaponPed[Id], 8)
+	self.m_WeaponPed[Id]:setImmortal(true)
 	self.m_WeaponPed[Id]:setData("clickable",true,true) -- Makes Ped clickable
 	self.m_WeaponPed[Id].Faction = faction
 	addEventHandler("onElementClicked", self.m_WeaponPed[Id], bind(self.onWeaponPedClicked, self))

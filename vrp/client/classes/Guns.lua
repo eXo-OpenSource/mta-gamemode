@@ -23,6 +23,10 @@ function Guns:constructor()
 	self.m_TaserRender = bind(self.Event_onTaserRender, self)
 	addEventHandler("onClientPlayerDamage", root, bind(self.Event_onClientPlayerDamage, self))
 	addEventHandler("onClientPlayerWeaponFire", root, bind(self.Event_onClientWeaponFire, self))
+	addEventHandler("onClientPedDamage", root, bind(self.Event_onClientPedDamage, self))
+
+
+
 end
 
 function Guns:destructor()
@@ -110,5 +114,11 @@ function Guns:drawBloodScreen()
 	if self.m_BloodAlpha <= 0 then
 	  removeEventHandler("onClientRender", root, self.m_BloodRender)
 	  self.m_Blood = false
+	end
+end
+
+function Guns:Event_onClientPedDamage()
+	if source:getData("NPC:Immortal") == true then
+		cancelEvent()
 	end
 end

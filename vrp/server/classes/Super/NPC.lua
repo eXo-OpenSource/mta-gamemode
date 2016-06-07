@@ -14,5 +14,9 @@ function NPC:new(skinId, x, y, z, rotation)
 end
 
 function NPC:constructor(skinId, x, y, z, rotation)
-	
+
+end
+
+function NPC:setImmortal(bool)
+	self:setData("NPC:Immortal", bool, true)
 end
