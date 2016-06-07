@@ -15,6 +15,14 @@ InventoryNew.Color = {
 	ItemBackground  = rgb(97, 129, 140);
 }
 
+InventoryNew.Tabs = {
+	[1] = "Items",
+	[2] = "Objekte",
+	[3] = "Essen",
+	[4] = "Drogen"
+}
+
+
 function InventoryNew:constructor()
 	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (106+100)/2, 330, (50+106))
 	self.m_Tabs = {}
@@ -25,15 +33,16 @@ function InventoryNew:constructor()
 	local tabX, tabY = tabArea:getSize()
 	GUIRectangle:new(0, 0, tabX, tabY, InventoryNew.Color.TabHover, tabArea)
 
+	self.m_Tabs = {}
 	-- Tabs
-	local tabItems = self:addTab("files/images/Inventory/items.png", tabArea)
-	self:addItemSlots(13, tabItems)
-	local tabObjects = self:addTab("files/images/Inventory/items/Objekte.png", tabArea)
-	self:addItemSlots(3, tabObjects)
-	local tabFood = self:addTab("files/images/Inventory/food.png", tabArea)
-	self:addItemSlots(5, tabFood)
-	local tabDrugs = self:addTab("files/images/Inventory/drogen.png", tabArea)
-	self:addItemSlots(7, tabDrugs)
+	self.m_Tabs[1] = self:addTab("files/images/Inventory/items.png", tabArea)
+	self:addItemSlots(13, self.m_Tabs[1])
+	self.m_Tabs[2] = self:addTab("files/images/Inventory/items/Objekte.png", tabArea)
+	self:addItemSlots(3, self.m_Tabs[2])
+	self.m_Tabs[3] = self:addTab("files/images/Inventory/food.png", tabArea)
+	self:addItemSlots(5, self.m_Tabs[3])
+	self.m_Tabs[4] = self:addTab("files/images/Inventory/drogen.png", tabArea)
+	self:addItemSlots(7, self.m_Tabs[4])
 
 	--[[
 	-- Lower Area (Items)
@@ -43,6 +52,30 @@ function InventoryNew:constructor()
 	GUIRectangle:new(0, 0, itemX, itemY, Color.LightBlue, itemArea)
 	GUIEmptyRectangle:new(0, 0, itemX, itemY, 2, Color.White, itemArea)
 	--]]
+
+	--Developement:
+	self.m_ItemData = Inventory:getSingleton():getItemData()
+    self.m_Items = Inventory:getSingleton():getItems()
+	self.m_Bag = Inventory:getSingleton():getBagData()
+
+	self:loadItems()
+
+end
+
+function InventoryNew:addItem(place, item)
+	place = place+1
+
+	local tab = self.m_Tabs[self.m_CurrentTab]
+	local itemData = self.m_ItemData[item["Objekt"]]
+	local slot = tab.m_ItemSlots[place]
+	GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
+	GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"], slot):setAlignX("right"):setAlignY("bottom")
+end
+
+function InventoryNew:loadItems()
+	for place, id in pairs(self.m_Bag[InventoryNew.Tabs[self.m_CurrentTab]]) do
+		self:addItem(place, self.m_Items[id])
+	end
 end
 
 function InventoryNew:addTab(img, parent)
@@ -101,8 +134,12 @@ function InventoryNew:setTab(Id)
 	self.m_Tabs[Id]:setVisible(true)
 	self.m_CurrentTab = Id
 	if self.onTabChanged then
-		self.onTabChanged(Id)
+		self:onTabChanged(Id)
 	end
+end
+
+function InventoryNew:onTabChanged()
+	self:loadItems()
 end
 
 function InventoryNew:addItemSlots(count, parent)
@@ -131,7 +168,6 @@ function InventoryNew:addItemToSlot(tabId, item)
 end
 
 function InventoryNew:onShow()
-
 end
 
 function InventoryNew:onHide()
