@@ -34,8 +34,6 @@
 	<map src="unternehmen/ltr.map" />
 	<map src="unternehmen/public_transport.map" />
 	
-	<map src="banken/bankLS.map" />
-	<map src="banken/bankSF.map" />
 	<map src="banken/bankPalomino.map" />
 
 	<map src="autohaus/9_bike.map" />
@@ -44,13 +42,9 @@
 	<map src="autohaus/billig_autohaus.map" />
 	<map src="autohaus/bootshop.map" />
 	
-	<map src="jobs/drug_job.map" />
-	<map src="jobs/drug_farm.map" />
 	<map src="jobs/cartransport.map" />
 	<map src="jobs/gaertnerei.map" />
 	<map src="jobs/gabelstapler.map" />
-	<map src="jobs/kiesgrube.map" />
-	<map src="jobs/kranjob.map" />
 	<map src="jobs/busjob.map" />
 	<map src="jobs/logistican.map" />
 	<map src="jobs/helitransport.map" />
@@ -62,15 +56,12 @@
 	<map src="noobroom.map" />
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
-	
-	<map src="paintball.map" />
-		
+			
 	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
   	<map src="hospital.map" />
 	<map src="airport.map" />
-	<map src="helm_shop.map" />
 	
 	<map src="tankstellen_removals.map" />
 	
