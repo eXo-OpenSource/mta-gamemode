@@ -33,11 +33,39 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
-	if (localPlayer:getFactionId() == 1 or localPlayer:getFactionId() == 2 or localPlayer:getFactionId() == 3) and localPlayer:getPublicSync("Faction:Duty") == true then
+	if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
 		self:addItem(_"Fraktion: ins Fahrzeug zerren",
 			function()
 				if self:getElement() then
 					triggerServerEvent("factionStateGrabPlayer", localPlayer, self:getElement())
+				end
+			end
+		)
+		self:addItem(_"Fraktion: Spieler durchsuchen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("factionStateFriskPlayer", localPlayer, self:getElement())
+				end
+			end
+		)
+		self:addItem(_"Fraktion: Lizenzen zeigen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("factionStateShowLicenses", localPlayer, self:getElement())
+				end
+			end
+		)
+		self:addItem(_"Fraktion: Drogen abnehmen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("factionStateTakeDrugs", localPlayer, self:getElement())
+				end
+			end
+		)
+		self:addItem(_"Fraktion: Waffen abnehmen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("factionStateTakeWeapons", localPlayer, self:getElement())
 				end
 			end
 		)

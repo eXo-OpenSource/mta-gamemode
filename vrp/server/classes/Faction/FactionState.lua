@@ -15,7 +15,8 @@ function FactionState:constructor()
 	self:loadFBI()
 	self:loadLSPD()
 
-	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds", "factionStateGrabPlayer"}
+	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
+	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -31,6 +32,10 @@ function FactionState:constructor()
 	addEventHandler("factionStateGiveWanteds", root, bind(self.Event_giveWanteds, self))
 	addEventHandler("factionStateClearWanteds", root, bind(self.Event_clearWanteds, self))
 	addEventHandler("factionStateGrabPlayer", root, bind(self.Event_grabPlayer, self))
+	addEventHandler("factionStateFriskPlayer", root, bind(self.Event_friskPlayer, self))
+	addEventHandler("factionStateShowLicenses", root, bind(self.Event_showLicenses, self))
+	addEventHandler("factionStateTakeDrugs", root, bind(self.Event_takeDrugs, self))
+	addEventHandler("factionStateTakeWeapons", root, bind(self.Event_takeWeapons, self))
 
 
 	-- Prepare the Area51
@@ -556,4 +561,68 @@ function FactionState:Event_grabPlayer(target)
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	end
+end
+
+function FactionState:Event_friskPlayer(target)
+	local faction = client:getFaction()
+	if faction and faction:isStateFaction() then
+		if client:isFactionDuty() then
+			target:sendMessage(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()), 255, 255, 0)
+			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
+			local inv = target:getInventory()
+			local targetDrugs = false
+			for index, item in pairs(DrugItems) do
+				if inv:getItemAmount(item) > 0 then
+					if not targetDrugs then targetDrugs = {} end
+					if not targetDrugs[item] then targetDrugs[item] = 0 end
+					targetDrugs[item] = targetDrugs[item] + inv:getItemAmount(item)
+				end
+			end
+			if targetDrugs then
+				client:sendMessage(_("%s hat folgende Drogen dabei:", client, target:getName()), 255, 255, 0)
+				target:sendMessage(_("Du hast folgende Drogen dabei:", target), 255, 255, 0)
+				for drug, amount in pairs(targetDrugs) do
+					client:sendMessage(_("%dg %s", client, amount, drug), 255, 125, 0)
+					target:sendMessage(_("%dg %s", target, amount, drug), 255, 125, 0)
+				end
+			else
+				client:sendMessage(_("%s hat keine Drogen dabei!", client, target:getName()), 0, 255, 0)
+				target:sendMessage(_("Du hast keine Drogen dabei!", target), 0, 255, 0)
+			end
+		else
+			client:sendError(_("Du bist nicht im Dienst!", client))
+		end
+	end
+end
+
+function FactionState:Event_showLicenses(target)
+
+end
+
+function FactionState:Event_takeDrugs(target)
+	local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
+	client:sendMessage(_("Du hast %s folgende Drogen abgenommen:", client, target:getName()), 255, 255, 0)
+	target:sendMessage(_("%s hat dir folgende Drogen abgenommen:", target, client:getName()), 255, 255, 0)
+	local drugsTaken = false
+	local amount = 0
+	local inv = target:getInventory()
+	for index, item in pairs(DrugItems) do
+		if inv:getItemAmount(item) > 0 then
+			amount = inv:getItemAmount(item)
+			drugsTaken = true
+			client:sendMessage(_("%dg %s", client, amount, item), 255, 125, 0)
+			target:sendMessage(_("%dg %s", target, amount, item), 255, 125, 0)
+			inv:removeAllItem(item)
+		end
+	end
+	if not drugsTaken then
+		client:sendMessage(_("Keine", client), 255, 125, 0)
+		target:sendMessage(_("Keine", target), 255, 125, 0)
+	end
+end
+
+function FactionState:Event_takeWeapons(target)
+	client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
+	target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
+	client:takeAllWeapons()
 end

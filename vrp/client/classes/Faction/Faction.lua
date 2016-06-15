@@ -56,12 +56,19 @@ function Faction:constructor(Id, name, name_short, rankNames, factionType, color
 	self.m_Name = name
 	self.m_NameShort = name_short
 	self.m_RankNames = rankNames
-	self.m_FactionType = factionTyp
+	self.m_Type = factionType
 	self.m_Color = color
 end
 
 function Faction:getId()
 	return self.m_Id
+end
+
+function Faction:isStateFaction()
+	if self.m_Type == "State" then
+		return true
+	end
+	return false
 end
 
 function Faction:getName()
