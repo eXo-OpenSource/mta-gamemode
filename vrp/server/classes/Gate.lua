@@ -17,6 +17,10 @@ function Gate:createColshapes(customOffset)
     if model == 980 then
         x1, y1 = getPointFromDistanceRotation(pos.x, pos.y, 4, -rot.z+180)
         x2, y2 = getPointFromDistanceRotation(pos.x, pos.y, 4, rot.z)
+    elseif model == 971 then
+        x1, y1 = getPointFromDistanceRotation(pos.x, pos.y, 4, -rot.z+180)
+        x2, y2 = getPointFromDistanceRotation(pos.x, pos.y, 4, rot.z)
+        pos.z = pos.z-1.5
     elseif model == 9093 then
         x1, y1 = getPointFromDistanceRotation(pos.x, pos.y, 4, -rot.z+80)
         x2, y2 = getPointFromDistanceRotation(pos.x, pos.y, 4, rot.z+60)

@@ -10,24 +10,10 @@ FactionState = inherit(Singleton)
   -- implement by children
 
 function FactionState:constructor()
-	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
-	self:createDutyPickup(1530.21, -1671.66, 6.22, 0) -- PD Garage
-
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
-	Blip:new("Police.png", 1552.278, -1675.725)
 
-	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
-	VehicleBarrier:new(Vector3(283.900390625, 1817.7998046875, 17.400001525879), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- Army Barrier
-	local gate = Gate:new(9093, Vector3(1588.80, -1638.30, 14.50), Vector3(0, 0, 270), Vector3(1598.80, -1638.30, 14.50))
-	gate.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
-	gate:setGateScale(1.25)
-	local door = Door:new(1499, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 180))
-	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
-	door:setDoorScale(1.1)
-
-
-	InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0) -- LSPD Garage
-	InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
+	self:loadFBI()
+	self:loadLSPD()
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds", "factionStateGrabPlayer"}
 
@@ -67,6 +53,38 @@ end
 function FactionState:destructor()
 end
 
+function FactionState:loadFBI()
+	self:createDutyPickup(1658.12, -1660.38, 22.51, 0) -- FBI Base
+
+	VehicleBarrier:new(Vector3(1621.9000244141, -1602.6999511719,13.300000190735), Vector3(0, 90, 180)).onBarrierHit = bind(self.onBarrierGateHit, self) -- FBI Barrier
+
+	Gate:new(971, Vector3(1629.1, -1722.90, 16.10), Vector3(0, 0, 180), Vector3(1629.1, -1722.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
+	Gate:new(971, Vector3(1618.2, -1643.90, 16.10), Vector3(0, 0, 0), Vector3(1618.2, -1643.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
+	Gate:new(971, Vector3(1618.7, -1728.30, 6.5), Vector3(0, 0, 180), Vector3(1618.7, -1728.30, -1.2)).onGateHit = bind(self.onBarrierGateHit, self)
+
+end
+
+function FactionState:loadLSPD()
+	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
+	self:createDutyPickup(1530.21, -1671.66, 6.22, 0) -- PD Garage
+
+	Blip:new("Police.png", 1552.278, -1675.725)
+
+	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
+	VehicleBarrier:new(Vector3(283.900390625, 1817.7998046875, 17.400001525879), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- Army Barrier
+
+	local gate = Gate:new(9093, Vector3(1588.80, -1638.30, 14.50), Vector3(0, 0, 270), Vector3(1598.80, -1638.30, 14.50))
+	gate.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
+	gate:setGateScale(1.25)
+
+	local door = Door:new(1499, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 180))
+	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
+	door:setDoorScale(1.1)
+
+	InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0) -- LSPD Garage
+	InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
+end
+
 function FactionState:countPlayers()
 	local factions = FactionManager:getSingleton():getAllFactions()
 	local amount = 0
@@ -103,13 +121,12 @@ function FactionState:getFactions()
 end
 
 function FactionState:onBarrierGateHit(player)
-    if not player:getFaction() or not player:getFaction():isStateFaction() then
-		if player:isInVehicle() then
-        	player:sendError(_("Zufahrt Verboten!", player))
-		end
-        return false
-    end
-    return true
+    if player:getFaction() and player:getFaction():isStateFaction() then
+		return true
+	else
+		return false
+	end
+
 end
 
 function FactionState:createDutyPickup(x,y,z,int)
