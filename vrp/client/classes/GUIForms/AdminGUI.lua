@@ -278,8 +278,8 @@ function AdminVehicleGUI:constructor(player, adminGui)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Fahrzeuge von %s", player:getName()), true, true, self)
 	self.m_Window:addBackButton(function () AdminGUI:getSingleton():show() end)
 	self.m_VehiclesGrid = GUIGridList:new(10, 40, 300, 250, self.m_Window)
-	self.m_VehiclesGrid:addColumn(_"Name", 0.3)
-	self.m_VehiclesGrid:addColumn(_"Standort", 0.7)
+	self.m_VehiclesGrid:addColumn(_"Name", 0.5)
+	self.m_VehiclesGrid:addColumn(_"Standort", 0.5)
 
 	self.m_portHere = GUIButton:new(320, 40, 170, 30, _"Fahrzeug her porten",  self):setBackgroundColor(Color.Orange):setFontSize(1)
 	self.m_portTo = GUIButton:new(320, 80, 170, 30, _"zum Fahrzeug porten",  self):setBackgroundColor(Color.Orange):setFontSize(1)
@@ -288,24 +288,14 @@ function AdminVehicleGUI:constructor(player, adminGui)
 			ErrorBox:new(_"Kein Fahrzeug ausgewählt!")
 			return
 		end
-		local veh = self.m_VehiclesGrid:getSelectedItem().VehicleElement
-		local pos = localPlayer:getPosition()
-		veh:setInterior(localPlayer:getInterior())
-		veh:setDimension(localPlayer:getDimension())
-		veh:setPosition(pos.x+1, pos.y+1, pos.z+1)
-		InfoBox:new(_"Das Fahrzeug wurde zu dir geportet!")
+		triggerServerEvent("adminPortVehicle", localPlayer, self.m_VehiclesGrid:getSelectedItem().VehicleElement)
 	end
 	self.m_portTo.onLeftClick = function()
 		if not self.m_VehiclesGrid:getSelectedItem() then
 			ErrorBox:new(_"Kein Fahrzeug ausgewählt!")
 			return
 		end
-		local veh = self.m_VehiclesGrid:getSelectedItem().VehicleElement
-		local pos = veh:getPosition()
-		localPlayer:setInterior(veh:getInterior())
-		localPlayer:setDimension(veh:getDimension())
-		localPlayer:setPosition(pos.x+1, pos.y+1, pos.z+1)
-		InfoBox:new(_"Du wurdest zum Fahrzeug geportet!")
+		triggerServerEvent("adminPortToVehicle", localPlayer, self.m_VehiclesGrid:getSelectedItem().VehicleElement)
 	end
 
 	addRemoteEvents{"adminVehicleRetrieveInfo"}

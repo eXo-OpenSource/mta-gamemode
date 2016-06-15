@@ -18,7 +18,6 @@ function Admin:constructor()
         [5] = "Projektleiter"
     }
 
-    addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction", "adminGetPlayerVehicles"}
 
     addCommandHandler("admins", bind(self.onlineList, self))
     addCommandHandler("a", bind(self.chat, self))
@@ -43,11 +42,16 @@ function Admin:constructor()
     addCommandHandler("rkick", adminCommandBind)
     addCommandHandler("warn", adminCommandBind)
 
+    addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
+    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
     addEventHandler("adminTriggerFunction", root, bind(self.Event_adminTriggerFunction, self))
     addEventHandler("adminGetPlayerVehicles", root, bind(self.Event_vehicleRequestInfo, self))
+    addEventHandler("adminPortVehicle", root, bind(self.Event_portVehicle, self))
+    addEventHandler("adminPortToVehicle", root, bind(self.Event_portToVehicle, self))
+
 
 
 
@@ -400,6 +404,27 @@ function Admin:Event_vehicleRequestInfo(target)
 	end
 
 	client:triggerEvent("adminVehicleRetrieveInfo", vehicles)
+end
+
+function Admin:Event_portVehicle(veh)
+    if client:getRank() >= RANK.Supporter then
+        local pos = client:getPosition()
+		veh:setInterior(client:getInterior())
+		veh:setDimension(client:getDimension())
+		veh:setPosition(pos.x+1, pos.y+1, pos.z+1)
+		client:sendInfo(_("Das Fahrzeug wurde zu dir geportet!", client))
+    end
+end
+
+function Admin:Event_portToVehicle(veh)
+    if client:getRank() >= RANK.Supporter then
+        local pos = client:getPosition()
+        local pos = veh:getPosition()
+		client:setInterior(veh:getInterior())
+		client:setDimension(veh:getDimension())
+		client:setPosition(pos.x+1, pos.y+1, pos.z+1)
+		client:sendInfo(_("Du wurdest zum Fahrzeug geportet!", client))
+    end
 end
 
 function Admin:addFactionVehicle(player, cmd, factionID)

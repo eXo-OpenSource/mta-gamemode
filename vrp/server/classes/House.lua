@@ -46,7 +46,7 @@ end
 
 function House:updatePickup()
 	if 	self.m_Pickup then self.m_Pickup:destroy() end
-	self.m_Pickup = createPickup(self.m_Pos, 3, (self.m_Owner == 0 and 1273 or 1272), 10, math.huge)
+	self.m_Pickup = createPickup(self.m_Pos, 3, (self.m_Owner == 0 and 1272 or 1273), 10, math.huge)
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
 end
 

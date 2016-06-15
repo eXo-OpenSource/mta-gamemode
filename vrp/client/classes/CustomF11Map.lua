@@ -68,9 +68,14 @@ function CustomF11Map:draw()
 
 	-- Draw blips
 	if core:get("HUD", "drawBlips", true) then
-		for i, v in pairs(Blip.Blips) do
-			local mapX, mapY = CustomF11Map.worldToMapPosition(v.m_WorldX, v.m_WorldY)
-			dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, v.m_ImagePath, 0)
+		for i, blip in pairs(Blip.Blips) do
+			local posX, posY = blip:getPosition()
+
+			if Blip.AttachedBlips[blip] then
+				posX, posY = getElementPosition(Blip.AttachedBlips[blip])
+			end
+			local mapX, mapY = CustomF11Map.worldToMapPosition(posX, posY)
+			dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, blip.m_ImagePath, 0)
 		end
 	end
 
