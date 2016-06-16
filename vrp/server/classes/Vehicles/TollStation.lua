@@ -31,6 +31,9 @@ function TollStation:checkRequirements(player)
 			player:sendShortMessage(("Willkommen bei der Maut-Station %s! Da du Staats-Dienstlich unterwegs bist, darfst du kostenlos passieren! Gute Fahrt."):format(self.m_Name), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
 			return true
 		end
+	elseif player:getInventory():getItemAmount("Mautpass") > 0 then
+		player:sendShortMessage(("Willkommen bei der Maut-Station %s! Da du einen Mautpass besitzt, darfst du kostenlos passieren! Gute Fahrt."):format(self.m_Name), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
+		return true
 	end
 
 	return false

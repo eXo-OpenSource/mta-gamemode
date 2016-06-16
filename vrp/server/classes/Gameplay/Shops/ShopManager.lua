@@ -107,6 +107,9 @@ function ShopManager:buyItem(shopId, item, amount)
 				client:getInventory():giveItem(item, amount)
 				if item == "Kanne" then
 					client:getInventory():setSpecialItemData(item, 10)
+				elseif item == "Mautpass" then
+					local validity = getRealTime().timestamp + 7*24*60*60
+					client:getInventory():setSpecialItemData(item, validity)
 				end
 				client:takeMoney(shop.m_Items[item]*amount, "Item-Einkauf")
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))

@@ -38,6 +38,14 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 				if row_special then
 					self.m_Items[id]["Special"] = row_special.Value
 				end
+				if row["Objekt"] == "Mautpass" then
+					if tonumber(row_special.Value) < getRealTime().timestamp then
+						self:removeAllItem("Mautpass")
+						if isElement(self.m_Owner) then
+							self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
+						end
+					end
+				end
 			end
 		else
 			removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
@@ -114,6 +122,10 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 			end
 		end
 	end
+	if itemName == "Mautpass" then
+		client:sendShortMessage(_("Dein Mautpass ist noch bis %s gültig!", client, getOpticalTimestamp(self.m_Items[itemId].Special)))
+	end
+
 	-- Possible issue: If Item:use fails, the item will never get removed
 
 
