@@ -8,7 +8,7 @@ function DrivingSchool:constructor()
 
     self.m_CurrentLessions = {}
 
-    InteriorEnterExit:new(Vector3(1364.14, -1669.00, 13.57), Vector3(-2026.87, -103.61, 1035.18), 0, 268, 3, 0, false)
+    InteriorEnterExit:new(Vector3(1364.77, -1668.93, 13.56), Vector3(-2027.05, -104.73, 1035.17), 0, 268, 3, 0, false)
 
     VehicleBarrier:new(Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 88)).onBarrierHit = bind(self.onBarrierHit, self)
     VehicleBarrier:new(Vector3(1345.19, -1722.80, 13.39), Vector3(0, 90, 0)).onBarrierHit = bind(self.onBarrierHit, self)
@@ -50,7 +50,6 @@ end
 
 function DrivingSchool:onBarrierHit(player)
     if player:getCompany() ~= self then
-        player:sendError(_("Zufahrt Verboten!", player))
         return false
     end
     return true

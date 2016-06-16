@@ -29,7 +29,6 @@ end
 
 function Guns:Event_onTaser(target)
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
-	target:setFrozen(true)
 	toggleAllControls(target,false)
 	target:sendInfo(_("Du wurdest von %s getazert!", target, client:getName()))
 	target.isTasered = true

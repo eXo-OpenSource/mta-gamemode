@@ -58,12 +58,23 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 			destroyElement(v)
 		end
 
+		local numTrees = hitElement:getData("lumberjack:Trees") or 0
+		if numTrees == 0 then
+			hitElement:sendMessage(_("Du musst erst Bäume fällen um welche aufladen zu können!", hitElement), 255, 0, 0)
+			return
+		end
+
+		local loadedTrees = 0
+
 		for i = 1, 4 do
 			for j = 1, 6 do
-				local x, y, z = getElementPosition(vehicle)
-				local object = createObject(837, x, y, z)
-				attachElements(object, vehicle, -1 + j * 0.3, -1.5, i * 0.2, 0, 0, 90)
-				setElementParent(object, vehicle) -- Deletes the object automatically when the vehicle will be destroyed (e.g. by spawn system)
+				if loadedTrees < numTrees then
+					local x, y, z = getElementPosition(vehicle)
+					local object = createObject(837, x, y, z)
+					attachElements(object, vehicle, -1 + j * 0.3, -1.5, i * 0.2, 0, 0, 90)
+					setElementParent(object, vehicle) -- Deletes the object automatically when the vehicle will be destroyed (e.g. by spawn system)
+					loadedTrees = loadedTrees+1
+				end
 			end
 		end
 
