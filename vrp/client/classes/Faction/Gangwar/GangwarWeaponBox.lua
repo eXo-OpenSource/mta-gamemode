@@ -23,24 +23,24 @@ function WeaponBoxGUI:constructor( pGangwarDisplay , pWeapons)
 	self.m_GangwarDisplay = pGangwarDisplay
 	self.m_GangwarDisplay.m_isBoxActive = true
 	self.m_Weapons = pWeapons
-	local item 
+	local item
 	for key, tbl in ipairs( self.m_Weapons ) do
 		local weaponID, ammu = tbl[1], tbl[2]
-		item = self.m_WeaponList:addItem(getWeaponNameFromID( weaponID ) .." ("..ammu..")")
+		item = self.m_WeaponList:addItem(WEAPON_NAMES[weaponID] .." ("..ammu..")")
 		item.Name = weaponID
 		item.onLeftDoubleClick = function () self:selectWeapon(key ) end
 	end
 end
 
-function WeaponBoxGUI:refreshItems( pWeapons ) 
+function WeaponBoxGUI:refreshItems( pWeapons )
 	self.m_WeaponList:destructor()
 	self.m_Weapons = pWeapons
 	self.m_WeaponList = GUIGridList:new(5, 35, self.m_Width-10, self.m_Height-60, self)
 	self.m_WeaponList:addColumn(_"Waffen", 1)
-	local item 
+	local item
 	for key, tbl in ipairs( self.m_Weapons ) do
 		local weaponID, ammu = tbl[1], tbl[2]
-		item = self.m_WeaponList:addItem(getWeaponNameFromID( weaponID ) .." ("..ammu..")")
+		item = self.m_WeaponList:addItem(WEAPON_NAMES[weaponID] .." ("..ammu..")")
 		item.Name = weaponID
 		item.onLeftDoubleClick = function () self:selectWeapon( key ) end
 	end
@@ -53,4 +53,4 @@ end
 
 function WeaponBoxGUI:selectWeapon( pID )
 	triggerServerEvent("ClientBox:takeWeaponFromBox", localPlayer, pID)
-end	
+end

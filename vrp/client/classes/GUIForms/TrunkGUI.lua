@@ -102,7 +102,7 @@ function TrunkGUI:loadItems()
     for i=2,12 do
 		local weaponId = getPedWeapon(localPlayer,i)
 		if weaponId and weaponId ~= 0 then
-            item = self.m_MyItemsGrid:addItem(getWeaponNameFromID(weaponId), getPedTotalAmmo(localPlayer, i))
+            item = self.m_MyItemsGrid:addItem(WEAPON_NAMES[weaponID], getPedTotalAmmo(localPlayer, i))
             item.onLeftClick = function()
                 self.m_SelectedItemType = "weapon"
                 self.m_SelectedItem = weaponId
@@ -135,7 +135,7 @@ function TrunkGUI:refreshTrunkData(id, items, weapons)
     end
     for index, weapon in pairs(weapons) do
         if weapon["WeaponId"] > 0 then
-            local weaponName = getWeaponNameFromID(weapon["WeaponId"])
+            local weaponName = WEAPON_NAMES[weapon["WeaponId"]]
             self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
             self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
             self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])

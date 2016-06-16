@@ -35,7 +35,7 @@ function FactionWTBoxHoverGUI:loadContent()
 				for typ,amount in pairs(weaponTable[weaponID]) do
 					if amount > 0 then
 						if typ == "Munition" then info = " Magazin/e" else info = "" end
-						self.m_ContentLabels[i] = GUILabel:new(5, 30+i*25, self.m_Width, 25, amount.." "..getWeaponNameFromID(weaponID)..info, self)
+						self.m_ContentLabels[i] = GUILabel:new(5, 30+i*25, self.m_Width, 25, amount.." "..WEAPON_NAMES[weaponID]..info, self)
 						i = i+1
 					end
 				end

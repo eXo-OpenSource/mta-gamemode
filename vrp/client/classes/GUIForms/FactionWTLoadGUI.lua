@@ -67,7 +67,7 @@ function FactionWTLoadGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 	local maxMagazine = self.m_DepotWeaponsMax[weaponID]["Magazine"]
 	local weaponPrice = self.m_DepotWeaponsMax[weaponID]["WaffenPreis"]
 	local magazinePrice = self.m_DepotWeaponsMax[weaponID]["MagazinPreis"]
-	self.m_WeaponsName[weaponID] = GUILabel:new(25+self.m_WaffenRow*125, 35+self.m_WaffenColumn*200, 105, 25, getWeaponNameFromID(weaponID), self.m_Window)
+	self.m_WeaponsName[weaponID] = GUILabel:new(25+self.m_WaffenRow*125, 35+self.m_WaffenColumn*200, 105, 25, WEAPON_NAMES[weaponID], self.m_Window)
 	self.m_WeaponsName[weaponID]:setAlignX("center")
 	self.m_WeaponsImage[weaponID] = GUIImage:new(45+self.m_WaffenRow*125, 70+self.m_WaffenColumn*200, 60, 60, WeaponIcons[weaponID], self.m_Window)
 	self.m_WeaponsMenge[weaponID] = GUILabel:new(25+self.m_WaffenRow*125, 135+self.m_WaffenColumn*200, 105, 20, "Waffen: "..Waffen.."/"..maxWeapon, self.m_Window)
@@ -140,10 +140,10 @@ function FactionWTLoadGUI:updateCart()
 		for typ,amount in pairs(self.m_Cart[weaponID]) do
 			if amount > 0 then
 				if typ == "Waffe" then
-					name = getWeaponNameFromID(weaponID)
+					name = WEAPON_NAMES[weaponID]
 					price = amount*self.m_DepotWeaponsMax[weaponID]["WaffenPreis"]
 				elseif typ == "Munition" then
-					name = getWeaponNameFromID(weaponID).." Magazin"
+					name = WEAPON_NAMES[weaponID].." Magazin"
 					price = amount*self.m_DepotWeaponsMax[weaponID]["MagazinPreis"]
 				end
 				totalCosts = totalCosts + price

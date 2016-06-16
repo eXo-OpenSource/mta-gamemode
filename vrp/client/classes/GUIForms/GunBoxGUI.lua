@@ -65,7 +65,7 @@ function GunBoxGUI:loadPlayerWeapons()
     for i=2,12 do
 		local weaponId = getPedWeapon(localPlayer,i)
 		if weaponId and weaponId ~= 0 then
-            item = self.m_MyWeaponsGrid:addItem(getWeaponNameFromID(weaponId), getPedTotalAmmo(localPlayer, i))
+            item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponID], getPedTotalAmmo(localPlayer, i))
             item.onLeftClick = function()
                 self.m_SelectedItem = weaponId
                 self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
@@ -83,7 +83,7 @@ function GunBoxGUI:refreshData(weapons)
 		index = tonumber(index)
 		if self.m_WeaponSlots[index] then
 			if weapon["WeaponId"] > 0 then
-	            local weaponName = getWeaponNameFromID(weapon["WeaponId"])
+	            local weaponName = WEAPON_NAMES[weapon["WeaponId"]]
 	            self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
 	            self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
 	            self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])

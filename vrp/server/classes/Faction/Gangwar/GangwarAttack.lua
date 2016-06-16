@@ -345,13 +345,13 @@ end
 
 function AttackSession:generateWeapons( )
 	self.m_BoxWeapons ={	}
-	for i = 1, 3 do 
+	for i = 1, 3 do
 		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {31,200}
 	end
-	for i = 1, 3 do 
+	for i = 1, 3 do
 		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {24,200}
 	end
-	for i = 1, 3 do 
+	for i = 1, 3 do
 		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {30,200}
 	end
 end
@@ -366,16 +366,16 @@ function AttackSession:onWeaponBoxClick( button, state, clicker)
 end
 
 function AttackSession:addToWeaponBoxUI( player )
-	if not self:isInWeaponBoxUI( player ) then 
+	if not self:isInWeaponBoxUI( player ) then
 		self.m_WeaponBoxAttendants[#self.m_WeaponBoxAttendants + 1] = player
 	end
 end
 
 function AttackSession:isInWeaponBoxUI( player )
-	if self.m_WeaponBoxAttendants then 
-		for i = 1, #self.m_WeaponBoxAttendants do 
-			if self.m_WeaponBoxAttendants[i] == player then 
-				return i 
+	if self.m_WeaponBoxAttendants then
+		for i = 1, #self.m_WeaponBoxAttendants do
+			if self.m_WeaponBoxAttendants[i] == player then
+				return i
 			end
 		end
 	end
@@ -385,23 +385,23 @@ end
 addEvent("ClientBox:onCloseWeaponBox", true)
 function AttackSession:removeFromWeaponBoxUI( player )
 	local key = self.isInWeaponBoxUI( player )
-	if key then 
+	if key then
 		table.remove( self.m_WeaponBoxAttendants, key )
 	end
 end
 
 addEvent("ClientBox:takeWeaponFromBox", true)
 function AttackSession:takeWeaponFromBox( key)
-	if self.m_BoxWeapons[key] then 
+	if self.m_BoxWeapons[key] then
 		giveWeapon( source, self.m_BoxWeapons[key][1], self.m_BoxWeapons[key][2], true )
 		table.remove( self.m_BoxWeapons, key )
-		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName( source ).." nahm sich eine "..getWeaponNameFromID( self.m_BoxWeapons[key][1] ).." aus der Box heraus.",0,204,204,true)
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName( source ).." nahm sich eine "..WEAPON_NAMES[self.m_BoxWeapons[key][1]].." aus der Box heraus.",0,204,204,true)
 		self:refreshWeaponBox(  )
 	end
 end
 
 function AttackSession:refreshWeaponBox(  )
-	for i = 1, # self.m_WeaponBoxAttendants do 
+	for i = 1, # self.m_WeaponBoxAttendants do
 		self.m_WeaponBoxAttendants[i]:triggerEvent( "ClientBox:refreshItems", self.m_BoxWeapons )
 	end
 end
@@ -410,7 +410,7 @@ end
 function AttackSession:destroyWeaponBox()
 	if self.m_WeaponBox then
 		destroyElement( self.m_WeaponBox )
-		for i = 1, #self.m_WeaponBoxAttendants do 
+		for i = 1, #self.m_WeaponBoxAttendants do
 			self.m_WeaponBoxAttendants[i]:triggerEvent( "ClientBox:forceClose")
 		end
 		self.m_WeaponBoxAttendants = {}

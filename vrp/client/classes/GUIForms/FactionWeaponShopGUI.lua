@@ -60,7 +60,7 @@ function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, dep
 end
 
 function FactionWeaponShopGUI:addWeaponToGUI(weaponID,Waffen,Munition)
-	self.m_WeaponsName[weaponID] = GUILabel:new(25+self.m_WaffenRow*120, 35+self.m_WaffenColumn*200, 100, 25, getWeaponNameFromID(weaponID), self.m_Window)
+	self.m_WeaponsName[weaponID] = GUILabel:new(25+self.m_WaffenRow*120, 35+self.m_WaffenColumn*200, 100, 25, WEAPON_NAMES[weaponID], self.m_Window)
 	self.m_WeaponsName[weaponID]:setAlignX("center")
 	self.m_WeaponsImage[weaponID] = GUIImage:new(45+self.m_WaffenRow*120, 70+self.m_WaffenColumn*200, 60, 60, WeaponIcons[weaponID], self.m_Window)
 	self.m_WeaponsMenge[weaponID] = GUILabel:new(25+self.m_WaffenRow*120, 135+self.m_WaffenColumn*200, 100, 20, "Waffenlager: "..Waffen, self.m_Window)
@@ -156,9 +156,9 @@ function FactionWeaponShopGUI:updateCart()
 		for typ,amount in pairs(self.m_Cart[weaponID]) do
 			if amount > 0 then
 				if typ == "Waffe" then
-					name = getWeaponNameFromID(weaponID)
+					name = WEAPON_NAMES[weaponID]
 				elseif typ == "Munition" then
-					name = getWeaponNameFromID(weaponID).." Magazin"
+					name = WEAPON_NAMES[weaponID].." Magazin"
 				end
 				item = self.m_CartGrid:addItem(name,amount)
 				item.typ = typ

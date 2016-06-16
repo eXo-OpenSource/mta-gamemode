@@ -269,3 +269,54 @@ AD_DURATIONS = {
 	["30 Sekunden"] = 30,
 	["45 Sekunden"] = 45
 }
+
+WEAPON_NAMES = {
+	[0] = "Faust",
+	[1] = "Schlagring",
+	[2] = "Golfschläger",
+	[3] = "Schlagstock",
+	[4] = "Messer",
+	[5] = "Baseball Schläger",
+	[6] = "Schaufel",
+	[7] = "Billiard Queue",
+	[8] = "Katana",
+	[9] = "Kettensäge",
+	[10] = "Langer Pinker Dildo",
+	[11] = "Kurzer Dildo",
+	[12] = "Vibrator",
+	[14] = "Blumen",
+	[15] = "Gehstock",
+	[16] = "Granaten",
+	[17] = "Tränengas",
+	[18] = "Molotov Cocktails",
+	[22] = "9mm Pistole",
+	[23] = "Taser",
+	[24] = "Desert Eagle",
+	[25] = "Schrotflinte",
+	[26] = "Abgesägte Schrotflinte",
+	[27] = "SPAZ-12 Spezialwaffe",
+	[28] = "Uzi",
+	[29] = "MP5",
+	[30] = "AK-47",
+	[31] = "M4",
+	[32] = "TEC-9",
+	[33] = "Jagd Gewehr",
+	[34] = "Sniper",
+	[35] = "Raketenwerfer",
+	[36] = "RPG",
+	[37] = "Flammenwerfer",
+	[38] = "Minigun",
+	[39] = "Rucksack-Bomben",
+	[40] = "Bomben Auslöser",
+	[41] = "Spray-Dose",
+	[42] = "Feuerlöscher",
+	[43] = "Kamera",
+	[44] = "Nachtsicht-Gerät",
+	[45] = "Wärmesicht-Gerät",
+	[46] = "Fallschrirm"
+}
+
+WEAPON_IDS = {}
+for id, name in pairs(WEAPON_NAMES) do
+	WEAPON_IDS[name] = id
+end

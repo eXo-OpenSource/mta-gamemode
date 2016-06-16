@@ -133,11 +133,11 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 			if amount > 0 then
 				if typ == "Waffe" then
 					if self.m_Weapons[weaponID]["Waffe"] >= amount then
-						outputChatBox(amount.." "..getWeaponNameFromID(weaponID),player,255,125,0)
+						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)
 						giveWeapon(player,weaponID,amount)
 						self:takeWeaponD(weaponID,amount)
 					else
-						outputChatBox("Es sind nicht genug "..getWeaponNameFromID(weaponID).." im Lager! ("..amount..")",player,255,0,0)
+						outputChatBox("Es sind nicht genug "..WEAPON_NAMES[weaponID].." im Lager! ("..amount..")",player,255,0,0)
 					end
 				elseif typ == "Munition" then
 					playerWeapons = self:getPlayerWeapons(player)
@@ -145,12 +145,12 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 						if self.m_Weapons[weaponID]["Munition"] >= amount then
 							self:takeMagazineD(weaponID,amount)
 							giveWeapon(player,weaponID,amount*getWeaponProperty(weaponID, "poor", "maximum_clip_ammo"))
-							outputChatBox(amount.." "..getWeaponNameFromID(weaponID).." Magazin/e",player,255,125,0)
+							outputChatBox(amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,125,0)
 						else
-							outputChatBox("Es sind nicht genug "..getWeaponNameFromID(weaponID).." Magazine im Lager! ("..amount..")",player,255,0,0)
+							outputChatBox("Es sind nicht genug "..WEAPON_NAMES[weaponID].." Magazine im Lager! ("..amount..")",player,255,0,0)
 						end
 					else
-						outputChatBox("Du hast keine "..getWeaponNameFromID(weaponID).." für ein Magazin!",player,255,0,0)
+						outputChatBox("Du hast keine "..WEAPON_NAMES[weaponID].." für ein Magazin!",player,255,0,0)
 					end
 				end
 			end

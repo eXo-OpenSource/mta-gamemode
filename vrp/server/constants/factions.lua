@@ -60,7 +60,7 @@ factionRankNames[1] = {
 }
 factionColors[1] = {["r"] = 11,["g"] = 102,["b"] = 8}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
-factionWeapons[1] = {[3]=true,[24]=true,[25]=true,[29]=true,[31]=true}
+factionWeapons[1] = {[3]=true,[23]=true,[24]=true,[25]=true,[29]=true,[31]=true}
 factionWTDestination[1] = Vector3(2716.21, -2413.49, 13)
 
 -- ID 2 = FBI:
@@ -75,7 +75,7 @@ factionRankNames[2] = {
 }
 factionColors[2] = {["r"] = 96,["g"] = 96,["b"] = 96}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
-factionWeapons[2] = {[24]=true,[27]=true,[29]=true,[31]=true}
+factionWeapons[2] = {[23]=true, [24]=true,[27]=true,[29]=true,[31]=true}
 factionWTDestination[2] = Vector3(2716.21, -2413.49, 13)
 
 -- ID 3 = Army:
@@ -90,7 +90,7 @@ factionRankNames[3] = {
 }
 factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
 factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true}
-factionWeapons[3] = {[6]=true,[24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true}
+factionWeapons[3] = {[6]=true,[23]=true, [24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true}
 factionWTDestination[3] = Vector3(2716.21, -2413.49, 13)
 
 -- ID 4 = Rescue Team:

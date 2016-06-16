@@ -391,16 +391,16 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 					client:takeWeapon(weaponId)
 					slot["WeaponId"] = weaponId
 					slot["Amount"] = muni
-					client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, getWeaponNameFromID(weaponId), muni, i))
+					client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponID], muni, i))
 					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 					return
 				else
-					client:sendInfo(_("Du hast nicht genug %s Munition!", client, getWeaponNameFromID(weaponId)))
+					client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponID]))
 					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 					return
 				end
 			else
-				client:sendInfo(_("Du hast keine/n %s!", client, getWeaponNameFromID(weaponId)))
+				client:sendInfo(_("Du hast keine/n %s!", client, WEAPON_NAMES[weaponID]))
 				client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 				return
 			end
@@ -420,7 +420,7 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 					slot["WeaponId"] = 0
 					slot["Amount"] = 0
 					client:giveWeapon(weaponId, amount)
-					client:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deiner Waffenbox (Slot %d) genommen!", client, getWeaponNameFromID(weaponId), amount, slotId))
+					client:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deiner Waffenbox (Slot %d) genommen!", client, WEAPON_NAMES[weaponID], amount, slotId))
 					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 					return
 				else

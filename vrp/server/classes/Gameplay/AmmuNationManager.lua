@@ -117,7 +117,7 @@ function AmmuNationManager:giveWeaponsFromOrder(player, weaponTable)
 			if amount > 0 then
 				if typ == "Waffe" then
 					if weaponID > 0 then
-						outputChatBox(amount.." "..getWeaponNameFromID(weaponID),player,255,125,0)
+						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)
 						giveWeapon(player,weaponID,amount)
 					else
 						outputChatBox("1 Schutzweste",player,255,125,0)
@@ -127,9 +127,9 @@ function AmmuNationManager:giveWeaponsFromOrder(player, weaponTable)
 					playerWeapons = self:getPlayerWeapons(player)
 					if playerWeapons[weaponID] then
 						giveWeapon(player,weaponID,amount*getWeaponProperty(weaponID, "poor", "maximum_clip_ammo"))
-						outputChatBox(amount.." "..getWeaponNameFromID(weaponID).." Magazin/e",player,255,125,0)
+						outputChatBox(amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,125,0)
 					else
-						outputChatBox("Du hast keine "..getWeaponNameFromID(weaponID).." für ein Magazin!",player,255,0,0)
+						outputChatBox("Du hast keine "..WEAPON_NAMES[weaponID].." für ein Magazin!",player,255,0,0)
 					end
 				end
 			end
