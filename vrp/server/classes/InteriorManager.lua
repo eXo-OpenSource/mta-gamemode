@@ -248,13 +248,5 @@ InteriorManager.InteriorData = {
     {enter = Vector3(1315.49, -897.843, 38.571), spawn = Vector3(-30.95, -91.71, 1002.55), dimension = 1, interior = 18, rotation = 180},
     {enter = Vector3(2546.71, 1972.28, 9.822), spawn = Vector3(-30.95, -91.71, 1002.55), dimension = 2, interior = 18, rotation = 180},
     {enter = Vector3(2884.83, 2453.28, 10.061), spawn = Vector3(-30.95, -91.71, 1002.55), dimension = 3, interior = 18, rotation = 224},
-    {enter = Vector3(-181.004, 1034.83, 18.8298), spawn = Vector3(-26.69, -57.81, 1002.55), dimension = 0, interior = 6, rotation = 381.648},
-    {enter = Vector3(-1562.63, -2732.98, 47.7435), spawn = Vector3(-26.69, -57.81, 1002.55), dimension = 1, interior = 6, rotation = 237},
-    --{enter = Vector3(1352.31, -1758.3, 12.5149), spawn = Vector3(-26.69, -57.81, 1002.55), dimension = 2, interior = 6, rotation = -2520.26}, -- Item shop
-    {enter = Vector3(2247.66, 2396.26, 9.8218), spawn = Vector3(-26.69, -57.81, 1002.55), dimension = 3, interior = 6, rotation = 0},
-    {enter = Vector3(2452.47, 2065.15, 9.8472), spawn = Vector3(-26.69, -57.81, 1002.55), dimension = 4, interior = 6, rotation = 180},
-    {enter = Vector3(2194.38, 1991.02, 11.301), spawn = Vector3(-26.69, -57.81, 1002.55), dimension = 5, interior = 6, rotation = 90},
-    {enter = Vector3(2097.76, 2224.2, 10.0579), spawn = Vector3(-26.69, -57.81, 1002.55), dimension = 6, interior = 6, rotation = 180},
-    {enter = Vector3(1937.25, 2307.17, 9.82222), spawn = Vector3(-26.69, -57.81, 1002.55), dimension = 7, interior = 6, rotation = 90},
     {enter = Vector3(1000.33, -919.924, 41.2368), spawn = Vector3(-27.31, -31.38, 1002.55), dimension = 0, interior = 4, rotation = 97},
 }
