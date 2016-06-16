@@ -9,10 +9,11 @@
 InventoryNew = inherit(GUIForm)
 inherit(Singleton, InventoryNew)
 InventoryNew.Color = {
-	TabHover  = rgb(77, 103, 110);
-	TabNormal = rgb(38, 158, 200);
-	ItemsBackground = rgb(50, 200, 255);
+	TabHover  = rgb(50, 200, 255);
+	TabNormal = rgb(50, 50, 50);
+	ItemsBackground = rgb(50, 50, 50);
 	ItemBackground  = rgb(97, 129, 140);
+	ItemBackgroundHover = rgb(50, 200, 255);
 }
 
 InventoryNew.Tabs = {
@@ -24,12 +25,13 @@ InventoryNew.Tabs = {
 
 
 function InventoryNew:constructor()
-	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (106+100)/2, 330, (50+106))
+	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106)/2, 330, (80+106))
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, true, self)
 	self.m_Tabs = {}
 	self.m_CurrentTab = 1
 
 	-- Upper Area (Tabs)
-	local tabArea = GUIElement:new(0, 0, self.m_Width, self.m_Height*(50/self.m_Height), self)
+	local tabArea = GUIElement:new(0, 30, self.m_Width, self.m_Height*(50/self.m_Height), self)
 	local tabX, tabY = tabArea:getSize()
 	GUIRectangle:new(0, 0, tabX, tabY, InventoryNew.Color.TabHover, tabArea)
 
@@ -68,8 +70,16 @@ function InventoryNew:addItem(place, item)
 	local tab = self.m_Tabs[self.m_CurrentTab]
 	local itemData = self.m_ItemData[item["Objekt"]]
 	local slot = tab.m_ItemSlots[place]
-	GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
-	GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"], slot):setAlignX("right"):setAlignY("bottom")
+
+	if slot.ItemImage then delete(slot.ItemImage) end
+	if slot.ItemLabel then delete(slot.ItemLabel) end
+
+	slot.Item = true
+	slot.Id = place-1
+	slot.Place = place
+	slot.ItemName = item["Objekt"]
+	slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
+	slot.ItemLabel = GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"], slot):setAlignX("right"):setAlignY("bottom")
 end
 
 function InventoryNew:loadItems()
@@ -110,10 +120,10 @@ function InventoryNew:addTab(img, parent)
 		tabButton.m_Background:setColor(InventoryNew.Color.TabHover)
 	end
 
-	local itemArea = GUIElement:new(0, self.m_Height*(50/self.m_Height), self.m_Width, self.m_Height - self.m_Height*(50/self.m_Height), self)
+	local itemArea = GUIElement:new(0, self.m_Height*(50/self.m_Height)+30, self.m_Width, self.m_Height - self.m_Height*(50/self.m_Height)-30, self)
 	local itemX, itemY = itemArea:getSize()
-	itemArea.m_Background = GUIRectangle:new(0, 0, itemX, itemY, InventoryNew.Color.ItemsBackground, itemArea)
-	itemArea.m_BackgroundRound = GUIEmptyRectangle:new(0, 0, itemX, itemY, 2, Color.White, itemArea)
+	--itemArea.m_Background = GUIRectangle:new(0, 0, itemX, itemY, InventoryNew.Color.ItemsBackground, itemArea)
+	--itemArea.m_BackgroundRound = GUIEmptyRectangle:new(0, 0, itemX, itemY, 2, Color.White, itemArea)
 
 	if Id ~= 1 then
 		itemArea:setVisible(false)
@@ -146,9 +156,12 @@ function InventoryNew:addItemSlots(count, parent)
 	parent.m_ItemSlots = {}
 	local x, y = parent:getSize()
 	local row = 0
+	id = 0
 	for i = 1, count, 1 do
-		local i = i - 7*row                                                  -- y
-		parent.m_ItemSlots[#parent.m_ItemSlots+1] = GUIRectangle:new(x*0.025 + math.floor(x*0.125)*(i-1) + (x*0.014)*(i-1), x*0.03 + math.floor(x*0.125)*(row) + (x*0.014)*(row), x*0.125, x*0.125, InventoryNew.Color.ItemBackground, parent)
+		local i = i - 7*row
+		id = #parent.m_ItemSlots+1                               -- y
+		parent.m_ItemSlots[id] = GUIRectangle:new(x*0.025 + math.floor(x*0.125)*(i-1) + (x*0.014)*(i-1), x*0.03 + math.floor(x*0.125)*(row) + (x*0.014)*(row), x*0.125, x*0.125, InventoryNew.Color.ItemBackground, parent)
+		self:addItemEvents(parent.m_ItemSlots[id])
 
 		if i == count then break; end
 		if i%7 == 0 then row = row + 1 end
@@ -156,8 +169,26 @@ function InventoryNew:addItemSlots(count, parent)
 
 	-- Calculate new parent size
 	parent:setSize(x, y + (y*0.455)*(row-1))
-	parent.m_Background:setSize(x, y + (y*0.455)*(row-1))
-	parent.m_BackgroundRound:setSize(x, y + (y*0.455)*(row-1))
+	self.m_Window:setSize(x, y + (y*0.455)*(row-1)+200)
+	--parent.m_Background:setSize(x, y + (y*0.455)*(row-1))
+	--parent.m_BackgroundRound:setSize(x, y + (y*0.455)*(row-1))
+end
+
+function InventoryNew:addItemEvents(item)
+	item.onHover = function()
+		item:setColor(InventoryNew.Color.ItemBackgroundHover)
+	end
+	item.onUnhover = function()
+		item:setColor(InventoryNew.Color.ItemBackground)
+	end
+	item.onLeftClick = function()
+		if item.Item then
+			local itemName = item.ItemName
+			local itemDelete = false
+			if self.m_ItemData[itemName]["Verbraucht"] == 1 then itemDelete = true end
+			triggerServerEvent("onPlayerItemUseServer", localPlayer, item.Id, self.m_Tabs[self.m_CurrentTab], itemName, item.Place, itemDelete)
+		end
+	end
 end
 
 function InventoryNew:addItemToSlot(tabId, item)
