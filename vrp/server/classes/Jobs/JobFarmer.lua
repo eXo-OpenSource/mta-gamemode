@@ -53,9 +53,15 @@ function JobFarmer:constructor()
 end
 
 function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
-	if vehicleModel == getVehicleModelFromName("Walton") then
-
-	end
+	addEventHandler("onVehicleExit", vehicle, function(player, seat)
+		if seat == 0 then
+			if player:getData("Farmer.Income") > 0 then
+				player:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
+				player:setData("Farmer.Income", 0)
+				player:triggerEvent("Job.updateIncome", 0)
+			end
+		end
+	end)
 end
 
 function JobFarmer:onVehicleDestroy(vehicle)
@@ -155,7 +161,7 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEYPERPLANT,0,255,0)
-		player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT)
+		player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT, "Farmer-Job")
 		player:givePoints(math.ceil(self.m_CurrentPlants[player]/10))
 		self.m_CurrentPlants[player] = 0
 		self:updatePrivateData(player)
@@ -184,7 +190,9 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 		if distance > 4 then return end
 		destroyElement (self.m_Plants[createColShape])
 		self.m_Plants[createColShape] = nil
-		hitElement:giveMoney(math.random(2, 3), "Farmer-Job")
+		if not hitElement:getData("Farmer.Income") then hitElement:setData("Farmer.Income", 0) end
+		hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + math.random(2, 3))
+		hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 		self:updateClientData()
 
@@ -199,8 +207,9 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			object.isFarmAble = false
 			setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
 			setElementVisibleTo(object, hitElement, true)
-			hitElement:giveMoney(math.random(1, 2), "Farmer Job")
-
+			if not hitElement:getData("Farmer.Income") then hitElement:setData("Farmer.Income", 0) end
+			hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + math.random(1, 2))
+			hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 			-- Give some points
 			if chance(4) then
 				hitElement:givePoints(1)

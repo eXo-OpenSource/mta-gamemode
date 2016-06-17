@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobFarmer = inherit(Job)
-addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants", "onReciveFarmerData"}
+addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants", "onReciveFarmerData", "Job.updateIncome"}
 
 function JobFarmer:constructor()
 	Job.constructor(self, -1059, -1206, 128, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
@@ -31,7 +31,7 @@ function JobFarmer:onInfo()
 	-- ### 3
 	setTimer(function()
 	setCameraMatrix(-1071.8698730469,-1220.8608398438,130.6183013916,-1071.9873046875,-1219.8944091797,130.38986206055,0,70)
-	outputChatBox(_"#0000FF[Farmer]#FFFFFF Mit dem Traktor kannst du das Korn ernten und mit dem Wagon",255,255,255,true)
+	outputChatBox(_"#0000FF[Farmer]#FFFFFF Mit dem Mähdrescher kannst du das Korn ernten und mit dem Walton",255,255,255,true)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF kannst du das Getreide zur Abgabe bringen.",255,255,255,true)
 	end, 12000, 1)
 	--- ### 4
@@ -53,6 +53,9 @@ function JobFarmer:start()
 	self.m_FarmerImage = GUIImage:new(screenWidth/2-200/2, 10, 200, 50, "files/images/Jobs/Farmerdisplay.png")
 	self.m_FarmLabel = GUILabel:new(55, 4, 55, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
 	self.m_TruckLabel = GUILabel:new(150, 4, 50, 40, "0", self.m_FarmerImage):setFont(VRPFont(40))
+	self.m_FarmerRectangle = GUIRectangle:new(screenWidth/2-200/2, 60, 200, 40, rgb(3, 17, 39))
+	self.m_EarnLabel = GUILabel:new(10, 5, 180, 17, _"Einkommen bisher: 0$", self.m_FarmerRectangle):setFont(VRPFont(20))
+	self.m_EarnInfoLabel = GUILabel:new(10, 25, 180, 15, "Steig aus um das Geld zu erhalten!", self.m_FarmerRectangle):setFont(VRPFont(15))
 
 	-- Register update events
 	addEventHandler("Job.updateFarmPlants", root, function (num)
@@ -60,6 +63,9 @@ function JobFarmer:start()
 	end)
 	addEventHandler("Job.updatePlayerPlants", root, function (num)
 		self.m_TruckLabel:setText(tostring(num))
+	end)
+	addEventHandler("Job.updateIncome", root, function (num)
+		self.m_EarnLabel:setText(_("Einkommen bisher: %d$", num))
 	end)
 end
 
@@ -69,4 +75,5 @@ function JobFarmer:stop()
 
 	-- delete infopanels
 	delete(self.m_FarmerImage)
+	delete(self.m_FarmerRectangle)
 end
