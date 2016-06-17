@@ -3,6 +3,7 @@ addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel
 
 function MechanicTow:constructor()
 	self.m_VehicleTakeMarker = Marker.create(920.614, -1176.063, 16.2, "cylinder", 1, 255, 255, 0)
+	self:createTowLot()
 	addEventHandler("onMarkerHit", self.m_VehicleTakeMarker, bind(self.VehicleTakeMarker_Hit, self))
 
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
@@ -111,6 +112,58 @@ function MechanicTow:Event_mechanicTakeVehicle()
 		client:warpIntoVehicle(source)
 	else
 		client:sendError(_("Du hast nicht genügend Geld!", client))
+	end
+end
+
+function MechanicTow:createTowLot()
+	self.m_TowColShape = createColRectangle( 809.78967, -1278.67761, 49, 49)
+	addEventHandler("onColShapeHit", self.m_TowColShape, bind( self.onEnterTowLot, self ))
+	addEventHandler("onColShapeLeave", self.m_TowColShape, bind( self.onLeaveTowLot, self ))
+	addEventHandler("onTrailerDetach", getRootElement(), bind( self.onDetachVehicleFromTow, self ))
+end
+
+function MechanicTow:onEnterTowLot( hElement )
+	local bType = getElementType(hElement) == "player"
+	if bType then
+		local veh = getPedOccupiedVehicle( hElement )
+		if veh then
+			if hElement:getCompany() == self then 
+				if veh:getCompany() == self then 
+					if getElementModel( veh ) == 525 then
+						hElement.m_InTowLot = true
+						hElement:sendInfo(_("Du kannst hier abgeschleppte Fahrzeuge abladen!", hElement))
+					end
+				end
+			end
+		end
+	end
+end
+
+function MechanicTow:onLeaveTowLot( hElement )
+	hElement.m_InTowLot = false
+end
+
+function MechanicTow:onDetachVehicleFromTow( towTruck )
+	local driver = getVehicleOccupant( towTruck ) 
+	if driver then 
+		if driver.m_InTowLot then 
+			if towTruck.getCompany then 
+				local comp = towTruck:getCompany() 
+				if comp == self then 
+					if source.getOwner then 
+						local owner = source:getOwner()
+						if type(owner) == "number" then
+							if not source.getCompany and not source.getFaction then
+								self:respawnVehicle( source )
+								driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
+							end
+						else driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+						end
+					else driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+					end
+				end
+			end
+		end
 	end
 end
 
