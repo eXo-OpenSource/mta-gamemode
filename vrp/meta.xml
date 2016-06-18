@@ -669,6 +669,7 @@
 	<vrpfile src="files/images/Speedo/main.png"/>
 	<vrpfile src="files/images/Speedo/main_needle.png"/>
 	<vrpfile src="files/images/Speedo/engine.png"/>
+	<vrpfile src="files/images/Speedo/handbrake.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
 
@@ -1043,7 +1044,8 @@
 	<vrpfile src="files/audio/onDoorClosed.mp3"/>
 	<vrpfile src="files/audio/onDoorOpened.mp3"/>
 	<vrpfile src="files/audio/carlock.mp3"/>
-
+	<vrpfile src="files/audio/hb_on.mp3"/>
+	<vrpfile src="files/audio/hb_off.mp3"/>
 
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>

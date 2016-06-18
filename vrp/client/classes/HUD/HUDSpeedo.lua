@@ -52,6 +52,7 @@ function HUDSpeedo:draw()
 	end
 
 	local vehicle = getPedOccupiedVehicle(localPlayer)
+	local handbrake = getElementData( vehicle, "Handbrake" )
 	if not vehicle:getFuel() then return end
 	local vx, vy, vz = getElementVelocity(vehicle)
 	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 161
@@ -75,6 +76,10 @@ function HUDSpeedo:draw()
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/engine.png")
 	end
 
+	if handbrake then
+		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png")
+	end
+	
 	-- draw the fuel-o-meter
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
