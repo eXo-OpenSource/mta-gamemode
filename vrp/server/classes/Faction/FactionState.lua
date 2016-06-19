@@ -23,7 +23,8 @@ function FactionState:constructor()
 	addCommandHandler("m",bind(self.Command_megaphone, self))
 	addCommandHandler("tie",bind(self.Command_tie, self))
 	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
-
+	addCommandHandler("bail",bind(self.Command_bail, self))
+	
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
@@ -365,7 +366,7 @@ function FactionState:Event_JailPlayer(player, bail)
 			player:toggleControl("fire", false)
 			player:toggleControl("jump", false)
 			player:toggleControl("aim_weapon ", false)
-
+			player:setJailBail( bail )
 			-- Pay some money, karma and xp to the policeman
 			policeman:giveMoney(player:getWantedLevel() * 100)
 			policeman:giveKarma(player:getWantedLevel() * 0.05)
@@ -412,6 +413,26 @@ function FactionState:Event_JailPlayer(player, bail)
 	end
 end
 
+function FactionState:Command_bail( player )
+	if player.m_JailTimer then 
+		if player.m_Bail then 
+			local money = player:getMoney()
+			if money >= player.m_Bail then 
+				player:setMoney( money - player.m_Bail )
+				player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+				player:setRotation(0, 0, 90)
+				player:setWantedLevel(0)
+				player:toggleControl("fire", true)
+				player:toggleControl("jump", true)
+				player:toggleControl("aim_weapon ", true)
+				player.m_JailTimer = nil
+				player.m_Bail = false
+				outputChatBox("Sie haben sich mit der Kaution von "..player.m_Bail.." freigekauft!", player, 200, 200, 0)
+			else player:sendError("Sie haben nicht genügend Geld!")
+			end
+		end
+	end
+end
 
 function FactionState:Event_toggleSwat()
 	if client:isFactionDuty() then

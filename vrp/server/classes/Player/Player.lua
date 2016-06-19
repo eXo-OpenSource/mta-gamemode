@@ -34,6 +34,7 @@ function Player:constructor()
 	self.m_AFKTime = 0
 	self.m_AFKStartTime = 0
 	self.m_Crimes = {}
+	self.m_Bail = false
 	self.m_LastPlayTime = 0
 	self:destroyChatColShapes( )
 	self:createChatColshapes( )
@@ -106,6 +107,10 @@ end
 
 function Player:stopNavigation()
 	self:triggerEvent("navigationStop")
+end
+
+function Player:setJailBail( bail )
+	self.m_Bail = bail
 end
 
 function Player:loadCharacter()
