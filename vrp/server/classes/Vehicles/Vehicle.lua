@@ -28,6 +28,7 @@ function Vehicle:virtual_constructor()
 	end
 
 	self.ms_CustomHornPlayBind = bind(self.playCustomHorn, self)
+	self.ms_CustomHornStopBind = bind(self.stopCustomHorn, self)
 end
 
 function Vehicle:virtual_destructor()
@@ -107,7 +108,9 @@ function Vehicle:onPlayerExit(player, seat)
 			unbindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
 		end
 		if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
+			triggerClientEvent("vehicleStopCustomHorn", self)
 			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+			unbindKey(player, "j", "up", self.ms_CustomHornStopBind)
 		end
 		if self.m_HandBrake then 
 			local ground = isVehicleOnGround( self )
@@ -125,6 +128,18 @@ function Vehicle:playCustomHorn(player)
 	if self.m_CustomHorn and self.m_CustomHorn > 0 then
 		if player:getOccupiedVehicle() == self and player:getOccupiedVehicleSeat() == 0 then
 			triggerClientEvent("vehiclePlayCustomHorn", self, self.m_CustomHorn)
+			bindKey(player, "j", "up", self.ms_CustomHornStopBind)
+			return
+		end
+	end
+	unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+end
+
+function Vehicle:stopCustomHorn(player)
+	if self.m_CustomHorn and self.m_CustomHorn > 0 then
+		if player:getOccupiedVehicle() == self and player:getOccupiedVehicleSeat() == 0 then
+			triggerClientEvent("vehicleStopCustomHorn", self)
+			unbindKey(player, "j", "up", self.ms_CustomHornStopBind)
 			return
 		end
 	end
