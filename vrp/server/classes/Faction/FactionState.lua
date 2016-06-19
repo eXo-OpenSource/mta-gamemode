@@ -416,9 +416,9 @@ end
 function FactionState:Command_bail( player )
 	if player.m_JailTimer then 
 		if player.m_Bail then 
-			local money = player:getMoney()
+			local money = player:getBankMoney()
 			if money >= player.m_Bail then 
-				player:setMoney( money - player.m_Bail )
+				player:addBankMoney(-1*player.m_Bail, "KAUTION")
 				player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 				player:setRotation(0, 0, 90)
 				player:setWantedLevel(0)

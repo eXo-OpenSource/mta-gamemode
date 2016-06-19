@@ -94,6 +94,7 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 	local veh = self.m_Vehicles[Model]
 	veh:setLocked(true)
 	veh:setFrozen(true)
+	setVehicleDamageProof( veh , true)
 	veh:setColor(math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255))
 end
 
