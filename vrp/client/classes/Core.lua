@@ -65,6 +65,8 @@ function Core:ready()
 
 	PlantWeed.initalize()
 	Neon.initalize()
+	AccessoireClothes:new()
+	AccessoireClothes:triggerMode()
 end
 
 function Core:afterLogin()

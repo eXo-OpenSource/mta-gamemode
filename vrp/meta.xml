@@ -299,7 +299,8 @@
 	<script src="client/classes/KeyBinds.lua" type="client"/>
 	<script src="client/classes/NoDm.lua" type="client"/>
 	<script src="client/classes/Tour.lua" type="client"/>
-
+	<script src="client/classes/AccessoireClothes.lua" type="client"/>
+	
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
 	<script src="client/classes/Color.lua" type="client"/>
@@ -347,6 +348,7 @@
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMiniMap.lua" type="client"/>
+	
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory2_0.lua" type="client"/>
@@ -477,8 +479,7 @@
 	<script src="client/classes/GUIForms/MinigameGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GunBoxGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
-
-
+	<script src="client/classes/GUIForms/AccessoireGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>

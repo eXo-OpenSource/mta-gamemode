@@ -110,7 +110,13 @@ function Vehicle:onPlayerExit(player, seat)
 			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 		end
 		if self.m_HandBrake then 
-			setElementFrozen( self, true)
+			local ground = isVehicleOnGround( self )
+			if ground then
+				setElementFrozen( self, true)
+			else 
+				self.m_HandBrake = false
+				self:setData( "Handbrake",  self.m_HandBrake , true )
+			end
 		end
 	end
 end
@@ -166,7 +172,7 @@ function Vehicle:toggleEngine(player)
 		return true
 	end
 
-	player:sendError(_("Du hast keinen SchlÃ¼ssel fÃ¼r dieses Fahrzeug!", player))
+	player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
 	return false
 end
 
@@ -176,8 +182,8 @@ function Vehicle:toggleHandBrake( player )
 		if ground then
 			setControlState ( player, "handbrake", true)
 			self.m_HandBrake = true
+			player:triggerEvent("vehicleHandbrake", true)
 		end
-		player:triggerEvent("vehicleHandbrake", true)
 	else 	
 		self.m_HandBrake = false
 		setControlState ( player, "handbrake", false )
