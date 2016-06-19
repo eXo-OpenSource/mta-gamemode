@@ -260,7 +260,7 @@ function HUDUI:drawExo()
 	local width = math.floor(sx_g*0.22)
 	local height = math.floor(sx_g*0.22)
 	local r_os = 1
-
+	local hudStartX = math.floor(screenWidth-width-r_os)
 	local lebensanzeige = getElementHealth(localPlayer)
 	local progressBarSpeed = 24000
 
@@ -274,7 +274,7 @@ function HUDUI:drawExo()
 		local prog = elapsed / duration
 		local scroll_ = interpolateBetween(207,0,0,-207,0,0,prog,'Linear')
 
-		dxDrawImage(math.floor(screenWidth-width-r_os),1,math.floor(width),math.floor(height),'files/images/HUD/exo/bg.png')
+		dxDrawImage(hudStartX,1,math.floor(width),math.floor(height),'files/images/HUD/exo/bg.png')
 		dxDrawText (localPlayer:getMoney(),screenWidth-width*0.7-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default-bold" ) --Money
 		dxDrawText (getRealTime().hour..":"..getRealTime().minute,screenWidth-width*0.22-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) -- Clock
 		dxDrawText (self:getZone(),screenWidth-width*0.7-r_os,width*0.372,width,height, tocolor ( 255, 255, 255, 255 ), 1.02*width*0.0039, "default" ) -- ORT
@@ -292,13 +292,13 @@ function HUDUI:drawExo()
 		local b_x = 100
 
 		b_x = localPlayer:getArmor()/100
-		dxDrawImageSection(screenWidth-width*0.687-r_os,sx*0.1051,sx*0.1485*b_x,sx*0.01,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
+		dxDrawImageSection(hudStartX+width*0.3162,height*0.478,sx*0.108*b_x,sx*0.0069,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
 
 		b_x = localPlayer:getHealth()/100
-		dxDrawImageSection(screenWidth-width*0.687-r_os,sx*0.1264,sx*0.1485*b_x,sx*0.01,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
+		dxDrawImageSection(hudStartX+width*0.3162,height*0.576,sx*0.108*b_x,sx*0.0069,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
 
 		b_x = localPlayer:getKarma()/150
-		dxDrawImageSection(screenWidth-width*0.687-r_os,sx*0.1484,sx*0.1485*b_x,sx*0.01,scroll_,0,207*b_x,15,'files/images/HUD/exo/green_b.png',0,0,0,tocolor(255,255,255,200))
+		dxDrawImageSection(hudStartX+width*0.3162,height*0.677,sx*0.108*b_x,sx*0.0069,scroll_,0,207*b_x,15,'files/images/HUD/exo/green_b.png',0,0,0,tocolor(255,255,255,200))
 
 		if prog >= 1 then
 			start_count = getTickCount()
@@ -313,8 +313,13 @@ function HUDUI:drawExo()
 		dxDrawText ("LEBEN: "..lebensanzeige.."%",screenWidth-width*0.5-r_os,width*0.58,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","right" ) --Money
 		dxDrawText ("KARMA: "..math.floor(localPlayer:getKarma()).."%",screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","right" ) --Money
 
-		dxDrawImage(screenWidth-width*0.3-r_os,(sx*0),sx*0.045,sx*0.045, WeaponIcons[localPlayer:getWeapon()])
+		dxDrawImage(screenWidth-width*0.3-r_os,(sx*0),sx*0.04,sx*0.04, WeaponIcons[localPlayer:getWeapon()])
+		
+		dxDrawText ( math.floor(localPlayer:getPlayTime()/60).." Std.",hudStartX+width*0.5, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
 
+		dxDrawText ( math.floor(localPlayer:getLevel()),hudStartX+width*0.9, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
+
+		
 		if getPedWeapon(localPlayer) > 9  then
 				firestate = getHudFirestate()
 				dxDrawText(getPedTotalAmmo ( localPlayer)-getPedAmmoInClip(localPlayer)..'-'..getPedAmmoInClip(localPlayer),screenWidth-width*0.57-r_os,width*0.14,width,height,tocolor(255,255,255,255),0.7,'pricedown')
