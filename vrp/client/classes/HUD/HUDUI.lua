@@ -314,13 +314,18 @@ function HUDUI:drawExo()
 		dxDrawText ("KARMA: "..math.floor(localPlayer:getKarma()).."%",screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","right" ) --Money
 
 		dxDrawImage(screenWidth-width*0.3-r_os,(sx*0),sx*0.04,sx*0.04, WeaponIcons[localPlayer:getWeapon()])
-		
+		local tAmmo = getPedTotalAmmo( localPlayer )
+		local iClip = getPedAmmoInClip( localPlayer )
+		local weaponSlot = getPedWeaponSlot(localPlayer)
+		if weaponSlot >= 2 then
+			dxDrawText ( iClip.."-"..tAmmo-iClip,hudStartX+width*0.5, height*0.125,width*0.5, height*0.28, tocolor ( 255,255,255,255 ), 1.1*width*0.0039, "sans","left","top" ) --Money
+		end
 		dxDrawText ( math.floor(localPlayer:getPlayTime()/60).." Std.",hudStartX+width*0.5, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
 
 		dxDrawText ( math.floor(localPlayer:getLevel()),hudStartX+width*0.9, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
 
 		
-		if getPedWeapon(localPlayer) > 9  then
+		--[[if getPedWeapon(localPlayer) > 9  then
 				firestate = getHudFirestate()
 				dxDrawText(getPedTotalAmmo ( localPlayer)-getPedAmmoInClip(localPlayer)..'-'..getPedAmmoInClip(localPlayer),screenWidth-width*0.57-r_os,width*0.14,width,height,tocolor(255,255,255,255),0.7,'pricedown')
 				dxDrawText(firestate,screenWidth-width*0.57-r_os,width*0.07,width,height,tocolor(255,255,255,255),0.8*width*0.0039,'pricedown')
@@ -331,7 +336,7 @@ function HUDUI:drawExo()
 					dxDrawRectangle ((screenWidth-width)*1.05,sx*0.218,sx*0.4,sx*0.02, tocolor ( 255,0,0,125 ))
 					dxDrawText ("Spezialmunition: "..ammo.."",screenWidth-width*0.687-r_os,sx*0.22,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
 				end
-		end
+		end]]
 
 		if isElementInWater(localPlayer) then
 			dxDrawRectangle ((screenWidth-width)*1.05,sx*0.218,sx*0.4,sx*0.02, tocolor ( 50,200,255,125 ))
