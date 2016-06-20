@@ -111,6 +111,13 @@ function VehicleTuning:closeFor(player, vehicle, doNotCallEvent)
         player:setPosition(position) -- Set player position also as it will not be updated automatically before quit
         player:setFrozen(false)
         player.m_VehicleTuningGarageId = nil
+
+        -- Hackfix for MTA issue #4658
+        if vehicle and getVehicleType(vehicle) == VehicleType.Bike then
+            teleportPlayerNextToVehicle(player, vehicle)
+            warpPedIntoVehicle(player, vehicle)
+        end
+
     end
 end
 

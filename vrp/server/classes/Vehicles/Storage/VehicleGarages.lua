@@ -219,7 +219,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				end
 
 				-- Hackfix for MTA issue #4658
-				if vehicle and getVehicleType(vehicle) == "Bike" then
+				if vehicle and getVehicleType(vehicle) == VehicleType.Bike then
 					teleportPlayerNextToVehicle(hitElement, vehicle)
 				end
 				fadeCamera(hitElement, true, 1)
@@ -262,7 +262,7 @@ function VehicleGarages:ExitShape_Hit(hitElement, matchingDimension)
 				setElementRotation(vehicle or hitElement, 0, 0, rotation or 0)
 
 				-- Hackfix for MTA issue #4658
-				if vehicle and getVehicleType(vehicle) == "Bike" then
+				if vehicle and getVehicleType(vehicle) == VehicleType.Bike then
 					teleportPlayerNextToVehicle(hitElement, vehicle)
 				end
 				fadeCamera(hitElement, true)
