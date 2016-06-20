@@ -24,12 +24,16 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) and not hitElement.m_DontTeleport then
 				hitElement.m_DontTeleport = true
-				hitElement:setInterior(interiorId)
-				hitElement:setPosition(interiorPosition)
-				hitElement:setDimension(dimension)
-				hitElement:setRotation(0, 0, enterRotation)
-				hitElement:setCameraTarget(hitElement)
-				setTimer(function() hitElement.m_DontTeleport = false end, 1000, 1) -- Todo: this is a temp fix
+				fadeCamera(hitElement,false,1,0,0,0)
+				setElementFrozen( hitElement, true)
+				setTimer( function() hitElement:setInterior(interiorId) end,1500,1)
+				setTimer( function() hitElement:setPosition(interiorPosition) end, 1500,1)
+				setTimer( function() fadeCamera( hitElement, true,1) end, 2500,1)
+				setTimer( function() hitElement:setDimension(dimension) end, 1500,1)
+				setTimer( function() hitElement:setRotation(0, 0, enterRotation) end, 1500,1)
+				setTimer( function() hitElement:setCameraTarget(hitElement) end, 1500,1)
+				setTimer(function() setElementFrozen( hitElement, false) end, 2500,1)
+				setTimer(function() hitElement.m_DontTeleport = false end, 2500, 1) -- Todo: this is a temp fix
 			end
 		end
 	)
@@ -37,12 +41,16 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 		function(hitElement, matchingDimension)
 			if getElementType(hitElement) == "player" and matchingDimension  and not hitElement.m_DontTeleport then
 				hitElement.m_DontTeleport = true
-				hitElement:setInterior(0, entryPosition.x, entryPosition.y, entryPosition.z)
-				hitElement:setPosition(entryPosition)
-				hitElement:setDimension(0)
-				hitElement:setRotation(0, 0, exitRotation)
-				hitElement:setCameraTarget(hitElement)
-				setTimer(function() hitElement.m_DontTeleport = false end, 1000, 1) -- Todo: this is a temp fix
+				fadeCamera(hitElement,false,1,0,0,0)
+				setElementFrozen( hitElement, true)
+				setTimer( function() hitElement:setInterior(0, entryPosition.x, entryPosition.y, entryPosition.z) end,1500,1)
+				setTimer(function() hitElement:setPosition(entryPosition) end,1500,1)
+				setTimer( function() fadeCamera( hitElement, true,1) end, 2500,1)
+				setTimer( function() hitElement:setDimension(0) end, 1500,1)
+				setTimer( function() hitElement:setRotation(0, 0, exitRotation) end, 1500,1)
+				setTimer( function() hitElement:setCameraTarget(hitElement) end, 1500,1)
+				setTimer(function() setElementFrozen( hitElement, false) end, 2500,1)
+				setTimer(function() hitElement.m_DontTeleport = false end, 2500, 1) -- Todo: this is a temp fix
 			end
 		end
 	)
