@@ -5,6 +5,7 @@
 -- *  PURPOSE:     VehicleShopGUI class
 -- *
 -- ****************************************************************************
+--[[
 VehicleSellGUI = inherit(GUIForm)
 inherit(Singleton, VehicleSellGUI)
 
@@ -33,6 +34,7 @@ end
 
 addEventHandler("vehicleStartSell",localPlayer, function()
 	if not VehicleSellGUI:getSingleton() then 
-		VehicleSellGUI:new()
+		
 	end
 )
+--]]

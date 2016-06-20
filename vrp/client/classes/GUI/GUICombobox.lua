@@ -5,6 +5,7 @@
 -- *  PURPOSE:     GUI combobox class
 -- *
 -- ****************************************************************************
+
 GUICombobox = inherit(GUIElement)
 local ITEM_HEIGHT = 30
 

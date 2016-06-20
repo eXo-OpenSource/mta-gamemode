@@ -943,8 +943,6 @@
 	<vrpfile src="files/images/Inventory/resetS.png" />
 	<vrpfile src="files/images/Inventory/infoblubf.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte.png" />
-	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
-	
 	<vrpfile src="files/images/Inventory/items/Drogen/Weed.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Shroom.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Samen.png" />
@@ -983,6 +981,8 @@
 	<vrpfile src="files/images/Inventory/items/Items/Barrikade.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Kanne.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
+	
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
