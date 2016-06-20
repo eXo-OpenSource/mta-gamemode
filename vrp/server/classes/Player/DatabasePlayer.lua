@@ -77,7 +77,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 
 	if not row then
 		return false
@@ -153,7 +153,7 @@ function DatabasePlayer:load()
 	self:setPrison(row.PrisonTime)
 	self:setWarns()
 	self:setBail( row.Bail )
-	self:setJailTime( row.JailTime or 0 )
+	self:setJailTime( row.JailTime or 0)
 	self.m_PhoneNumber = (PhoneNumber.load(1, self.m_Id) or PhoneNumber.generateNumber(1, self.m_Id))
 end
 
@@ -166,7 +166,7 @@ function DatabasePlayer:save()
 	if self.m_BankAccount then
 		delete(self.m_BankAccount)
 	end
-
+	self:setJailNewTime()
 	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? WHERE Id=?;", sql:getPrefix(),
 		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0,	self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, self:getId())
 end
@@ -522,4 +522,17 @@ function DatabasePlayer:loadMigratorData()
 		veh:destroy()
 	end
 	VehicleManager:loadPlayerVehicles(self)
+end
+
+function DatabasePlayer:setJailNewTime() 
+	if self.m_JailStart then 
+		local now = getRealTime().timestamp
+		if self.m_JailStart < now then 
+			local dif = now - self.m_JailStart
+			local minutes = math.floor((dif % 3600) / 60)
+			self.m_JailTime = self.m_JailTime - minutes
+			outputChatBox(self.m_JailTime..";"..dif..","..minutes)
+			if self.m_JailTime < 1 then self.m_JailTime = 1 end
+		end
+	end
 end

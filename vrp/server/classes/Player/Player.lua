@@ -286,6 +286,7 @@ function Player:spawn()
 				self:toggleControl("jump", false)
 				self:toggleControl("aim_weapon ", false)
 				self:setJailBail( self.m_Bail )
+				self.m_JailStart = getRealTime().timestamp
 				self.m_JailTimer = setTimer(
 				function()
 					if isElement(self) then
@@ -295,10 +296,11 @@ function Player:spawn()
 						self:toggleControl("fire", true)
 						self:toggleControl("jump", true)
 						self:toggleControl("aim_weapon ", true)
-
+						self.m_JailStart = nil
 						self.m_JailTimer = nil
 					end
-				end, self.m_JailTime*1000, 1)
+				end, self.m_JailTime*60000, 1)
+				self:triggerEvent("playerJailed", self.m_JailTime, false)
 			end
 		end
 		

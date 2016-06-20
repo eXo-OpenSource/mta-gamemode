@@ -384,7 +384,8 @@ function FactionState:Event_JailPlayer(player, bail)
 			end, 14000, 1)
 
 			-- Start freeing timer
-			local jailTime = player:getWantedLevel() * 360
+			local jailTime = player:getWantedLevel() * 8
+			player.m_JailStart = getRealTime().timestamp
 			player.m_JailTimer = setTimer(
 				function()
 					if isElement(player) then
@@ -394,17 +395,17 @@ function FactionState:Event_JailPlayer(player, bail)
 						player:toggleControl("fire", true)
 						player:toggleControl("jump", true)
 						player:toggleControl("aim_weapon ", true)
-
+						player.m_JailStart = nil
 						player.m_JailTimer = nil
 					end
-				end, jailTime * 1000, 1
+				end, jailTime * 60000, 1
 			)
-
+	
 			player:clearCrimes()
 
 			policeman:getFaction():sendMessage(_("%s wurde soeben von %s eingesperrt!", player, player:getName(), policeman:getName()), 255, 255, 0)
 
-			player:triggerEvent("playerJailed", jailTime)
+			player:triggerEvent("playerJailed", jailTime, true)
 		else
 			policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
 		end
