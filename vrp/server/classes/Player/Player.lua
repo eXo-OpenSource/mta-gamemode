@@ -34,7 +34,6 @@ function Player:constructor()
 	self.m_AFKTime = 0
 	self.m_AFKStartTime = 0
 	self.m_Crimes = {}
-	self.m_Bail = false
 	self.m_LastPlayTime = 0
 	self:destroyChatColShapes( )
 	self:createChatColshapes( )

@@ -416,19 +416,21 @@ end
 function FactionState:Command_bail( player )
 	if player.m_JailTimer then 
 		if player.m_Bail then 
-			local money = player:getBankMoney()
-			if money >= player.m_Bail then 
-				player:addBankMoney(-1*player.m_Bail, "KAUTION")
-				player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-				player:setRotation(0, 0, 90)
-				player:setWantedLevel(0)
-				player:toggleControl("fire", true)
-				player:toggleControl("jump", true)
-				player:toggleControl("aim_weapon ", true)
-				player.m_JailTimer = nil
-				player.m_Bail = false
-				outputChatBox("Sie haben sich mit der Kaution von "..player.m_Bail.." freigekauft!", player, 200, 200, 0)
-			else player:sendError("Sie haben nicht genügend Geld!")
+			if player.m_Bail > 0 then
+				local money = player:getBankMoney()
+				if money >= player.m_Bail then 
+					player:takeBankMoney( player.m_Bail, "KAUTION")
+					player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+					player:setRotation(0, 0, 90)
+					player:setWantedLevel(0)
+					player:toggleControl("fire", true)
+					player:toggleControl("jump", true)
+					player:toggleControl("aim_weapon ", true)
+					player.m_JailTimer = nil
+					player.m_Bail = 0
+					outputChatBox("Sie haben sich mit der Kaution von "..player.m_Bail.." freigekauft!", player, 200, 200, 0)
+				else player:sendError("Sie haben nicht genügend Geld!")
+				end
 			end
 		end
 	end
