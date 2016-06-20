@@ -4,7 +4,7 @@
 
 --// classlib
 --|| A library providing several tools to enhance OOP with MTA and Lua
---\\
+--\\ 
 SERVER = triggerServerEvent == nil
 CLIENT = not SERVER
 DEBUG = DEBUG or false
@@ -379,3 +379,4 @@ oop.initClasses = function()
 	oop.prepareClass("Resource")
 end
 oop.initClasses()
+--//CHANGE
