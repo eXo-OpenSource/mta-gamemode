@@ -13,7 +13,7 @@ function JailCountdownGUI:constructor(countFrom)
 
 	self.m_Background = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(0,0,0,180), self)
 	GUILabel:new(0, -self.m_Height*0.2, self.m_Width, self.m_Height, _"Frei in", self.m_Background):setAlignX("center"):setAlignY("top")
-	self.m_DigitLabel = GUILabel:new(0, self.m_Height*0.15, self.m_Width, self.m_Height, tostring(countFrom).." Minuten", self.m_Background):setAlignX("center"):setAlignY("bottom")
+	self.m_DigitLabel = GUILabel:new(0, self.m_Height*0.15, self.m_Width, self.m_Height, tostring(countFrom).." min", self.m_Background):setAlignX("center"):setAlignY("bottom")
 	self.m_DigitLabel:setColor(Color.Red)
 
 	self.m_CurrentNumber = countFrom
@@ -25,7 +25,7 @@ function JailCountdownGUI:constructor(countFrom)
 			end
 
 			self.m_CurrentNumber = self.m_CurrentNumber - 1
-			self.m_DigitLabel:setText(tostring(self.m_CurrentNumber).." Minuten")
+			self.m_DigitLabel:setText(tostring(self.m_CurrentNumber).." min")
 		end,
 		1000*60,
 		countFrom

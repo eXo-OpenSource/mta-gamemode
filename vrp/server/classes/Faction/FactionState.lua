@@ -397,6 +397,7 @@ function FactionState:Event_JailPlayer(player, bail)
 						player:toggleControl("aim_weapon ", true)
 						player.m_JailStart = nil
 						player.m_JailTimer = nil
+						self:triggerEvent("playerLeftJail")
 					end
 				end, jailTime * 60000, 1
 			)
@@ -416,7 +417,7 @@ end
 
 function FactionState:Command_bail( player )
 	if player.m_JailTimer then 
-		if player.m_Bail then 
+		if player.m_Bail and player.m_JailTime then 
 			if player.m_Bail > 0 then
 				local money = player:getBankMoney()
 				if money >= player.m_Bail then 
@@ -428,8 +429,10 @@ function FactionState:Command_bail( player )
 					player:toggleControl("jump", true)
 					player:toggleControl("aim_weapon ", true)
 					player.m_JailTimer = nil
+					player.m_JailTime = 0
+					outputChatBox("Sie haben sich mit der Kaution von "..player.m_Bail.." Dollar freigekauft!", player, 200, 200, 0)
 					player.m_Bail = 0
-					outputChatBox("Sie haben sich mit der Kaution von "..player.m_Bail.." freigekauft!", player, 200, 200, 0)
+					player:triggerEvent("playerLeftJail")
 				else player:sendError("Sie haben nicht genügend Geld!")
 				end
 			end

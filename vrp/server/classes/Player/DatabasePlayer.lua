@@ -161,12 +161,11 @@ function DatabasePlayer:save()
 	if self:isGuest() then
 		return false
 	end
-
+	self:setJailNewTime()
 	-- Unload stuff
 	if self.m_BankAccount then
 		delete(self.m_BankAccount)
 	end
-	self:setJailNewTime()
 	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? WHERE Id=?;", sql:getPrefix(),
 		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0,	self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, self:getId())
 end
@@ -531,8 +530,13 @@ function DatabasePlayer:setJailNewTime()
 			local dif = now - self.m_JailStart
 			local minutes = math.floor((dif % 3600) / 60)
 			self.m_JailTime = self.m_JailTime - minutes
-			outputChatBox(self.m_JailTime..";"..dif..","..minutes)
-			if self.m_JailTime < 1 then self.m_JailTime = 1 end
+			if self.m_JailTime <= 0 then 
+				self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+				self:setRotation(0, 0, 90)
+				self.m_JailTime = 0
+				self.m_Bail = 0
+				self:setWantedLevel(0)
+			end
 		end
 	end
 end

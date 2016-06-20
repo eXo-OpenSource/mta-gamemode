@@ -298,6 +298,7 @@ function Player:spawn()
 						self:toggleControl("aim_weapon ", true)
 						self.m_JailStart = nil
 						self.m_JailTimer = nil
+						self:triggerEvent("playerLeftJail")
 					end
 				end, self.m_JailTime*60000, 1)
 				self:triggerEvent("playerJailed", self.m_JailTime, false)
