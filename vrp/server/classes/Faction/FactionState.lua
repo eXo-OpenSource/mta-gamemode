@@ -366,7 +366,7 @@ function FactionState:Event_JailPlayer(player, bail)
 			player:toggleControl("fire", false)
 			player:toggleControl("jump", false)
 			player:toggleControl("aim_weapon ", false)
-			player:setJailBail( bail )
+			player:setJailBail( BAIL_PRICES[player:getWantedLevel()] )
 			-- Pay some money, karma and xp to the policeman
 			policeman:giveMoney(player:getWantedLevel() * 100)
 			policeman:giveKarma(player:getWantedLevel() * 0.05)

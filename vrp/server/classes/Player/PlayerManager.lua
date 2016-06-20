@@ -48,7 +48,6 @@ function PlayerManager:constructor()
 	addCommandHandler("Firma/Gang", Player.staticGroupChatHandler)
 	addCommandHandler("f", Player.staticGroupChatHandler)
 
-
 	self.m_PaydayPulse = TimedPulse:new(60000)
 	self.m_PaydayPulse:registerHandler(bind(self.checkPayday, self))
 

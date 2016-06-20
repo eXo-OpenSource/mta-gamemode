@@ -261,7 +261,7 @@ function Player:spawn()
 		else
 			outputServerLog("Invalid spawn location ("..self:getName()..")")
 		end
-
+	
 		-- Teleport player into a "unique interior"
 		if self.m_UniqueInterior ~= 0 then
 			InteriorManager:getSingleton():teleportPlayerToInterior(self, self.m_UniqueInterior)
@@ -274,7 +274,34 @@ function Player:spawn()
 		--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 
 		self:setPublicSync("Faction:Duty",false)
+		
+		if self.m_JailTime then
+			if self.m_JailTime > 0 then
+				local rnd = math.random(1, #Jail.Cells)
+				self:setPosition(Jail.Cells[rnd])
+				self:setInterior(0)
+				self:setDimension(0)
+				self:setRotation(0, 0, 90)
+				self:toggleControl("fire", false)
+				self:toggleControl("jump", false)
+				self:toggleControl("aim_weapon ", false)
+				self:setJailBail( self.m_Bail )
+				self.m_JailTimer = setTimer(
+				function()
+					if isElement(self) then
+						self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+						self:setRotation(0, 0, 90)
+						self:setWantedLevel(0)
+						self:toggleControl("fire", true)
+						self:toggleControl("jump", true)
+						self:toggleControl("aim_weapon ", true)
 
+						self.m_JailTimer = nil
+					end
+				end, self.m_JailTime*1000, 1)
+			end
+		end
+		
 		-- Give weapons
 		for k, info in pairs(self.m_Weapons) do
 			giveWeapon(self, info[1], info[2])

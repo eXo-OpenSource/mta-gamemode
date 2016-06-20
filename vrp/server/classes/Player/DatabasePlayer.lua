@@ -153,6 +153,7 @@ function DatabasePlayer:load()
 	self:setPrison(row.PrisonTime)
 	self:setWarns()
 	self:setBail( row.Bail )
+	self:setJailTime( row.JailTime or 0 )
 	self.m_PhoneNumber = (PhoneNumber.load(1, self.m_Id) or PhoneNumber.generateNumber(1, self.m_Id))
 end
 
@@ -166,8 +167,8 @@ function DatabasePlayer:save()
 		delete(self.m_BankAccount)
 	end
 
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PrisonTime=?, GunBox=?, Bail=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0,	self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0, self:getId())
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? WHERE Id=?;", sql:getPrefix(),
+		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, self.m_Job and self.m_Job:getId() or 0,	self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -201,6 +202,7 @@ function DatabasePlayer:getTutorialStage() return self.m_TutorialStage end
 function DatabasePlayer:getJobVehicle() return self.m_JobVehicle end
 function DatabasePlayer:getGroup()		return self.m_Group		end
 function DatabasePlayer:getFaction()	return self.m_Faction	end
+function DatabasePlayer:getJailTime() return self.m_JailTime end
 --function DatabasePlayer:getInventory()	return self.m_Inventory	end
 function DatabasePlayer:getSkin()		return self.m_Skin		end
 function DatabasePlayer:getGarageType() return self.m_GarageType end
@@ -227,6 +229,7 @@ function DatabasePlayer:setCollectables(t) self.m_Collectables = t end
 function DatabasePlayer:setHasPilotsLicense(s) self.m_HasPilotsLicense = s end
 function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if self:isActive() then self:setPrivateSync("LastPlayTime", self.m_LastPlayTime) end end
 function DatabasePlayer:setBail( bail ) self.m_Bail = bail end
+function DatabasePlayer:setJailTime( jail ) self.m_JailTime = jail end
 
 function DatabasePlayer:setWarns()
 	local rows = sql:queryFetch("SELECT * FROM ??_warns WHERE userId = ?;", sql:getPrefix(), self.m_Id)

@@ -9,9 +9,9 @@ VehicleMouseMenu = inherit(GUIMouseMenu)
 
 function VehicleMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
-
-	if getElementData(element, "OwnerName") then
-		self:addItem(_("Besitzer: %s", getElementData(element, "OwnerName"))):setTextColor(Color.Red)
+	local owner = getElementData(element, "OwnerName") 
+	if owner then
+		self:addItem(_("Besitzer: %s", owner)):setTextColor(Color.Red)
 	end
 
 	if element:getVehicleType() ~= VehicleType.Bike and element:getVehicleType() ~= VehicleType.Trailer then
@@ -49,7 +49,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-
+	
+	if owner == localPlayer.name then
+		self:addItem(_"Verkaufen",
+			function()
+				if self:getElement() then
+					outputChatBox("[I]Begebe dich zur Stadthalle und besorge dir einen Vertrag zum Verkaufen!",200,200,0,true)
+				end
+			end
+		)
+	end
 	if localPlayer:isInVehicle() then
 		self:addItem(_"Kurzschließen",
 			function()

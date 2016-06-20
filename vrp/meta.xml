@@ -396,6 +396,7 @@
 	<script src="client/classes/GUIForms/JobGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleShopGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleSellGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleKeyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
@@ -942,7 +943,8 @@
 	<vrpfile src="files/images/Inventory/resetS.png" />
 	<vrpfile src="files/images/Inventory/infoblubf.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte.png" />
-
+	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
+	
 	<vrpfile src="files/images/Inventory/items/Drogen/Weed.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Shroom.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Samen.png" />
