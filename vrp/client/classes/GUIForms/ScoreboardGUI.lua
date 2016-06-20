@@ -116,9 +116,9 @@ function ScoreboardGUI:insertPlayers()
 		end
 
 		if karma >= 5 then
-			item:setColumnColor(5, Color.Green)
+			item:setColumnColor(6, Color.Green)
 		elseif karma <= -5 then
-			item:setColumnColor(5, Color.Red)
+			item:setColumnColor(6, Color.Red)
 		end
 	end
 end

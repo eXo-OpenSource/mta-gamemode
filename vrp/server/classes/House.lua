@@ -198,6 +198,9 @@ function House:leaveHouse(player)
 	player:setPosition(self.m_Pos)
 	player:setInterior(0)
 	player:setDimension(0)
+	if self.m_CurrentRobber == player then
+		player:triggerEvent("CountdownStop")
+	end
 end
 
 function House:onPlayerFade()

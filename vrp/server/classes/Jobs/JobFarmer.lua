@@ -53,13 +53,15 @@ function JobFarmer:constructor()
 end
 
 function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
-	addEventHandler("onVehicleExit", vehicle, function(player, seat)
+	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
 		if seat == 0 then
-			if player:getData("Farmer.Income") > 0 then
-				player:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
-				player:setData("Farmer.Income", 0)
-				player:triggerEvent("Job.updateIncome", 0)
+			if vehPlayer:getData("Farmer.Income") > 0 then
+				vehPlayer:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
+				vehPlayer:setData("Farmer.Income", 0)
+				vehPlayer:triggerEvent("Job.updateIncome", 0)
 			end
+			vehicle:destroy()
+			self.m_CurrentPlants[vehPlayer] = 0
 		end
 	end)
 end

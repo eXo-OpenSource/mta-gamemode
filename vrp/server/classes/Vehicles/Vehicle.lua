@@ -90,7 +90,7 @@ function Vehicle:onPlayerEnter(player, seat)
 			player:sendShortMessage(_("Du kannst die Spezialhupe mit 'J' benutzen!", player))
 			bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 		end
-		if self.m_HandBrake then 
+		if self.m_HandBrake then
 			setControlState( player, "handbrake", true)
 		end
 	end
@@ -100,7 +100,7 @@ function Vehicle:onPlayerExit(player, seat)
 	self.m_LastUseTime = getTickCount()
 	local hbState = getControlState( player, "handbrake")
 	if seat == 0 then
-		if hbState then 
+		if hbState then
 			setControlState( player, "handbrake", false)
 		end
 		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
@@ -112,11 +112,11 @@ function Vehicle:onPlayerExit(player, seat)
 			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 			unbindKey(player, "j", "up", self.ms_CustomHornStopBind)
 		end
-		if self.m_HandBrake then 
+		if self.m_HandBrake then
 			local ground = isVehicleOnGround( self )
 			if ground then
 				setElementFrozen( self, true)
-			else 
+			else
 				self.m_HandBrake = false
 				self:setData( "Handbrake",  self.m_HandBrake , true )
 			end
@@ -187,11 +187,11 @@ function Vehicle:toggleEngine(player)
 		return true
 	end
 
-	player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
+	player:sendError(_("Du hast keinen Schlï¿½ssel fï¿½r dieses Fahrzeug!", player))
 	return false
 end
 
-function Vehicle:toggleHandBrake( player ) 
+function Vehicle:toggleHandBrake( player )
 	local ground = isVehicleOnGround ( self )
 	if not self.m_HandBrake then
 		if ground then
@@ -199,10 +199,10 @@ function Vehicle:toggleHandBrake( player )
 			self.m_HandBrake = true
 			player:triggerEvent("vehicleHandbrake", true)
 		end
-	else 	
+	else
 		self.m_HandBrake = false
 		setControlState ( player, "handbrake", false )
-		if isElementFrozen( self ) then 
+		if isElementFrozen( self ) then
 			setElementFrozen( self , false)
 		end
 		player:triggerEvent("vehicleHandbrake" )
