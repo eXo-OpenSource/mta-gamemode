@@ -273,10 +273,10 @@ function HUDUI:drawExo()
 		local duration = end_count - start_count
 		local prog = elapsed / duration
 		local scroll_ = interpolateBetween(207,0,0,-207,0,0,prog,'Linear')
-
+		local time =  string.format("%02d:%02d",getRealTime().hour,getRealTime().minute)
 		dxDrawImage(hudStartX,1,math.floor(width),math.floor(height),'files/images/HUD/exo/bg.png')
 		dxDrawText (localPlayer:getMoney(),screenWidth-width*0.7-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default-bold" ) --Money
-		dxDrawText (getRealTime().hour..":"..getRealTime().minute,screenWidth-width*0.22-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) -- Clock
+		dxDrawText (time,screenWidth-width*0.22-r_os,width*0.265,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) -- Clock
 		dxDrawText (self:getZone(),screenWidth-width*0.7-r_os,width*0.372,width,height, tocolor ( 255, 255, 255, 255 ), 1.02*width*0.0039, "default" ) -- ORT
 		--dxDrawText (getSpielzeit(),screenWidth-width*0.55-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
 		--dxDrawText (getLevel(),screenWidth-width*0.15-r_os,width*0.765,width,height, tocolor ( 255, 255, 255, 255 ), 1.2*width*0.0039, "default" ) --
@@ -292,17 +292,17 @@ function HUDUI:drawExo()
 		local b_x = 100
 
 		b_x = localPlayer:getArmor()/100
-		dxDrawImageSection(hudStartX+width*0.3162,height*0.478,(sx*0.145)*b_x,sx*0.0076,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
+		dxDrawImageSection(hudStartX+width*0.3162,height*0.478,(sx*0.145)*b_x,sx*0.0078,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
 
 		b_x = localPlayer:getHealth()/100
-		dxDrawImageSection(hudStartX+width*0.3162,height*0.576,sx*0.145*b_x,sx*0.0076,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
+		dxDrawImageSection(hudStartX+width*0.3162,height*0.576,sx*0.145*b_x,sx*0.0078,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
 
 		local karma = localPlayer:getKarma()
 		b_x = math.abs(karma)/150
 		if karma < 0 then
-			dxDrawImageSection(hudStartX+width*0.3162,height*0.677,sx*0.145*b_x,sx*0.0076,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200))
+			dxDrawImageSection(hudStartX+width*0.3162,height*0.677,sx*0.145*b_x,sx*0.0078,scroll_,0,207*b_x,15,'files/images/HUD/exo/cyan_b.png',0,0,0,tocolor(255,255,255,200))
 		elseif karma > 0 then
-			dxDrawImageSection(hudStartX+width*0.3162,height*0.677,sx*0.145*b_x,sx*0.0076,scroll_,0,207*b_x,15,'files/images/HUD/exo/green_b.png',0,0,0,tocolor(255,255,255,200))
+			dxDrawImageSection(hudStartX+width*0.3162,height*0.677,sx*0.145*b_x,sx*0.0078,scroll_,0,207*b_x,15,'files/images/HUD/exo/green_b.png',0,0,0,tocolor(255,255,255,200))
 		end
 		if prog >= 1 then
 			start_count = getTickCount()
