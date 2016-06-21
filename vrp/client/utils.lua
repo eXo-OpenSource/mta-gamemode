@@ -72,3 +72,13 @@ function dxDrawImage3D(x,y,z,w,h,m,c,r,...)
 	local lx, ly, lz = x+w, y+h, (z+tonumber(r or 0)) or z
 	return dxDrawMaterialLine3D(x,y,z, lx, ly, lz, m, h, c or tocolor(255,255,255,255), ...)
 end
+
+function getFreeSkinDimension() 
+	local dim = math.random(1, 60000)
+	for key, player in ipairs( getElementsByType("player") ) do
+		if getElementDimension( player ) == dim then 
+			return getFreeSkinDimension()
+		end
+	end
+	return dim
+end

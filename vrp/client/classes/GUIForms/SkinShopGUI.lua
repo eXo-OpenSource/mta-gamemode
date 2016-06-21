@@ -46,7 +46,7 @@ function SkinShopGUI:destructor()
 	localPlayer:setModel(localPlayer.m_OldSkin)
 	setCameraTarget(localPlayer, localPlayer)
 	showChat(true)
-
+	setElementDimension( localPlayer, localPlayer.m_OrigDim)
 	GUIForm.destructor(self)
 end
 
@@ -82,10 +82,13 @@ function SkinShopGUI.initializeAll()
 		addEventHandler("onClientMarkerHit", marker,
 			function(hitElement, matchingDimension)
 				if hitElement == localPlayer and matchingDimension then
+					localPlayer.m_OrigDim = getElementDimension( localPlayer )
+					local dim = getFreeSkinDimension()
+					setElementDimension( localPlayer, dim )
 					localPlayer:setPosition(v.PlayerPos)
 					localPlayer:setRotation(v.PlayerRot)
 					setCameraMatrix(unpack(v.CameraMatrix))
-
+					
 					SkinShopGUI:new()
 				end
 			end
