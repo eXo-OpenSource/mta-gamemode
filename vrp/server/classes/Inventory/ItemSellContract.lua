@@ -29,6 +29,7 @@ function ItemSellContract:Event_OnBuyPapers()
 	else source:sendError(_("Du besitzt zu viele Verkauspapiere!", source))
 	end
 end
+
 function ItemSellContract:Event_OnSellRequest( player, price, veh )
 	player = getPlayerFromName(player)
 	if isElement( player ) then 
