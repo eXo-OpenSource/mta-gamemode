@@ -11,11 +11,11 @@ inherit(Singleton, VehicleSellGUI)
 
 function VehicleSellGUI:constructor( ts, veh )
 	local veh = getPedOccupiedVehicle(localPlayer)
-	local width, height =  screenWidth/4/ASPECT_RATIO_MULTIPLIER, screenHeight/4
+	local width, height =  (screenWidth*0.4)/ASPECT_RATIO_MULTIPLIER, screenHeight*0.4
 	local model = getVehicleNameFromModel( getElementModel( veh ))
 	local date = ts[1].."/"..(ts[2]+1).."/"..ts[3]+1900
 	self.m_Veh = veh
-	GUIForm.constructor(self, (screenWidth*0.5 - (screenWidth/4)) /ASPECT_RATIO_MULTIPLIER , screenHeight*0.5, width, height)
+	GUIForm.constructor(self, (screenWidth*0.5 - width/2) /ASPECT_RATIO_MULTIPLIER , (screenHeight*0.5-height/2)/ASPECT_RATIO_MULTIPLIER, width, height)
 	self.m_Window = GUIWindow:new(0,0,width,height,_"Handelsvertrag - Autoverkauf",true,true,self)
 	self.m_LabelContract =	GUILabel:new(width*0.2,height*0.2,width*0.8, height*0.1,_"Vertragsfahrzeug: "..model, self.m_Window)
 	self.m_LabelContract2 =	GUILabel:new(width*0.2,height*0.32,width*0.8, height*0.1,_"Vertragsdatum: "..date, self.m_Window)

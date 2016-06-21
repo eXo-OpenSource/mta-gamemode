@@ -6,23 +6,33 @@
 -- *
 -- ****************************************************************************
 ItemSellContract = inherit(Item)
-addRemoteEvents{"VehicleSell_requestSell", "VehicleSell_tradeCar"}
+addRemoteEvents{"VehicleSell_requestSell", "VehicleSell_tradeCar", "VehicleTransaction_OnBuyPapers"}
 
 function ItemSellContract:constructor()
 	addEventHandler("VehicleSell_requestSell", root, bind( self.Event_OnSellRequest, self))
 	addEventHandler("VehicleSell_tradeCar", root, bind( self.Event_OnTradeSuceed, self))
+	addEventHandler("VehicleTransaction_OnBuyPapers", root, bind( self.Event_OnBuyPapers, self ))
 end
 
 function ItemSellContract:destructor()
 
 end
 
+function ItemSellContract:Event_OnBuyPapers()
+	local money = source:getMoney()
+	if money >= 300 then 
+		source:takeMoney( 300 )
+		InventoryManager:getSingleton():getPlayerInventory(source):giveItem("Handelsvertrag", 1)
+	end
+end
 function ItemSellContract:Event_OnSellRequest( player, price, veh )
 	player = getPlayerFromName(player)
 	if isElement( player ) then 
 		local car = getPedOccupiedVehicle( source) 
 		if car == veh then
+			source:triggerEvent("closeVehicleContract")
 			player:triggerEvent("vehicleConfirmSell", player, price, car)
+			source:sendInfo(_("Ein Anfrage zum Kauf wurde abgeschickt!", source))
 		else source:sendError(_("Du sitzt nicht im Fahrzeug!", source))
 		end
 	end
@@ -30,7 +40,20 @@ end
 
 function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 	if isElement( player ) then 
-		--player:triggerEvent("vehicleConfirmSell", player, price, car)
+		local money = source:getMoney()
+		price = tonumber( price )
+		if money >= price then
+			source:triggerEvent("closeVehicleAccept")
+			source:sendInfo(_("Der Handel wurde abgeschlossen!", source))
+			player:sendInfo(_("Der Handel wurde abgeschlossen!", player))
+			car:setOwner( source ) 
+			source:takeMoney( price ) 
+			player:giveMoney( price )
+			InventoryManager:getSingleton():getPlayerInventory( player ):removeItem("Handelsvertrag", 1)
+		else 
+			source:sendError(_("Du hast nicht genügend Geld!", source))
+			player:sendInfo(_("Der Käufer hat zu wenig Geld!", player))
+		end
 	end
 end
 
