@@ -64,6 +64,7 @@ function Core:ready()
 	DeathmatchManager:new()
 
 	PlantWeed.initalize()
+	ItemSellContract:new()
 	Neon.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()

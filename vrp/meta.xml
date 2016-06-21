@@ -114,6 +114,7 @@
 	<script src="server/classes/Inventory/Wearable.lua" type="server"/>
 	<script src="server/classes/Inventory/GrowableManager.lua" type="server"/>
 	<script src="server/classes/Inventory/Growable.lua" type="server"/>
+	<script src="server/classes/Inventory/ItemSellContract.lua" type="server"/>
 
 
 	<!-- Bank System -->
@@ -361,6 +362,7 @@
 	<script src="client/classes/Inventory/DrugsCocaine.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsHeroin.lua" type="client"/>
 	<script src="client/classes/Inventory/DrugsShroom.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemSellContract.lua" type="client"/>
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeOut.lua" type="client"/>
@@ -397,6 +399,7 @@
 	<script src="client/classes/GUIForms/RadioGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSellGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/VehicleSellAcceptGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleKeyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>

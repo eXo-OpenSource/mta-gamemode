@@ -163,6 +163,11 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
+	if VehicleSellGUI then
+		if VehicleSellGUI:isInstantiated() then
+			delete( self ) 
+		end
+	end
 end
 
 function VehicleMouseMenu:getAttachedElement(model, element)
