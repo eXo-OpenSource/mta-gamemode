@@ -42,6 +42,8 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
   self.m_Id = Id
   self.m_Company = company
   self.m_PositionType = positionType or VehiclePositionType.World
+  self.m_Position = self:getPosition()
+  self.m_Rotation = self:getRotation()
   setElementData(self, "OwnerName", self.m_Company:getName())
 
   self:setHealth(health)
@@ -161,6 +163,21 @@ function CompanyVehicle:canBeModified()
 end
 
 function CompanyVehicle:respawn()
-	-- Set inGarage flag and teleport to private dimension
+	if self:getHealth() <= 310 and not force then
+		self:getFaction():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
+		return false
+	end
+
+	-- Teleport to Spawnlocation
 	self.m_LastUseTime = math.huge
+
+	for _, player in pairs(getVehicleOccupants(self)) do
+		player:removeFromVehicle()
+	end
+	self:setEngineState(false)
+	self:setPosition(self.m_Position)
+	self:setRotation(self.m_Rotation)
+	self:fix()
+
+	return true
 end

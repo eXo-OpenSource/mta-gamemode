@@ -421,36 +421,45 @@ function VehicleManager:Event_vehicleRespawn()
 		client:sendError(_("Das ist kein permanentes Server Fahrzeug!", client))
 		return
 	end
-
-	-- Todo: (Re-)move this block
+	
 	if instanceof(source, FactionVehicle) then
-		if (not client:getFaction()) or source:getFaction():getId() ~= client:getFaction():getId() then
-			client:sendError(_("Dieses Fahrzeug ist nicht von deiner Fraktion!", client))
+		if client:getRank() >= RANK.Moderator then
+			source:respawn( true )
+			return
+		else 
+			if (not client:getFaction()) or source:getFaction():getId() ~= client:getFaction():getId() then
+				client:sendError(_("Dieses Fahrzeug ist nicht von deiner Fraktion!", client))
+				return
+			end
+			source:respawn()
 			return
 		end
-
-		source:respawn(client:getRank() >= RANK.Moderator)
-		return
 	end
-
 	if instanceof(source, CompanyVehicle) then
-		if (not client:getCompany()) or source:getCompany():getId() ~= client:getCompany():getId() then
-			client:sendError(_("Diese Fahrzeug ist nicht von deiner Firma!", client))
+		if client:getRank() >= RANK.Moderator then
+			source:respawn( true )
 			return
+		else 
+			if (not client:getCompany()) or source:getCompany():getId() ~= client:getCompany():getId() then
+				client:sendError(_("Diese Fahrzeug ist nicht von deiner Firma!", client))
+				return
+			end
+			source:respawn( )
 		end
-
-		source:respawn(client:getRank() >= RANK.Moderator)
-		return
 	end
 
 	if instanceof(source, GroupVehicle) then
-		if (not client:getGroup()) or source:getGroup():getId() ~= client:getGroup():getId() then
-			client:sendError(_("Diese Fahrzeug ist nicht von deiner Gruppe!", client))
+		if client:getRank() >= RANK.Moderator then
+			source:respawn( true )
+			return
+		else 
+			if (not client:getGroup()) or source:getGroup():getId() ~= client:getGroup():getId() then
+				client:sendError(_("Diese Fahrzeug ist nicht von deiner Gruppe!", client))
+				return
+			end
+			source:respawn()
 			return
 		end
-
-		source:respawn(client:getRank() >= RANK.Moderator)
-		return
 	end
 	--
 
