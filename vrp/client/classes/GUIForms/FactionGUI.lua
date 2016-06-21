@@ -142,10 +142,10 @@ function FactionGUI:addLeaderTab()
 
 		for weaponID,v in pairs(self.m_ValidWeapons) do
 			if v == true then
-				self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.42+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.1, self.m_Height*0.05, WEAPON_NAMES[weaponID], tabLeader)
+				self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.43+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.4+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.16, self.m_Height*0.04, WEAPON_NAMES[weaponID], tabLeader)
 				self.m_WeaponsName[weaponID]:setAlignX("center")
-				self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.46+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.08, self.m_Width*0.08, WeaponIcons[weaponID], tabLeader)
-				self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.58+self.m_WaffenColumn*self.m_Height*0.2, self.m_Width*0.12, self.m_Height*0.025, "aktiviert", tabLeader)
+				self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, WeaponIcons[weaponID], tabLeader)
+				self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.53+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.12, self.m_Height*0.02, "aktiviert", tabLeader)
 				self.m_WeaponsCheck[weaponID]:setFontSize(1)
 				self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
 				if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 then
