@@ -20,7 +20,7 @@ end
 
 function ItemSellContract:Event_OnBuyPapers()
 	local money = source:getMoney()
-	local amount = source:getInventory():getFreePlacesForItem("Handelsvertrag") < 3
+	local amount = source:getInventory():getFreePlacesForItem("Handelsvertrag") > 0	
 	if amount then
 		if money >= 300 then 
 			source:takeMoney( 300 )
