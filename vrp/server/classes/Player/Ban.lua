@@ -39,9 +39,9 @@ function Ban.addBan(who, author, reason, duration)
 	if player then
 		local reasonstr
 		if duration > 0 then
-			reasonstr = ("You were banned by %s for %s (Reason: %s"):format(author, string.duration(duration), reason)
+			reasonstr = ("You were banned by %s for %s (Reason: %s"):format(author.name, string.duration(duration), reason)
 		else
-			reasonstr = ("You were permanently banned by %s (Reason: %s"):format(author, reason)
+			reasonstr = ("You were permanently banned by %s (Reason: %s"):format(author.name, reason)
 		end
 		outputDebug(player)
 		kickPlayer(player, reasonstr)

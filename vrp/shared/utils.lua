@@ -245,10 +245,11 @@ end
 
 function string.duration(seconds)
 	local hours = math.floor(seconds / 3600)
+	local hrest = 0
 	local minutes = math.floor(seconds / 60)
-
 	if hours > 0 then
-		return string.format("%02dh:%02dm", hours)
+		hrest = ((seconds / 3600)%1)*60
+		return string.format("%02dh:%02dm", hours, hrest)
 	elseif minutes > 0 then
 		return string.format("%dmin", minutes)
 	else

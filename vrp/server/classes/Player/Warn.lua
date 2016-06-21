@@ -53,7 +53,7 @@ end
 function Warn.removeWarn(who, warnId)
 	if type(who) == "userdata" and getElementType(who) == "player" then
 		player = who
-		who = player:getId()
+		who = player.m_Id
 	end
 	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? AND Id = ?;", sql:getPrefix(), who, warnId)
 	if isElement(player) then
@@ -62,7 +62,7 @@ function Warn.removeWarn(who, warnId)
 end
 
 function Warn.checkWarn(player)
-	local id = player:getId()
+	local id = player.m_Id
 	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? AND expires < ?;", sql:getPrefix(), id, getRealTime().timestamp)
 
 	if Warn.getAmount(who) >= 3 then
