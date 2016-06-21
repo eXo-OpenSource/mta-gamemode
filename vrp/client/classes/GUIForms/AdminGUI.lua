@@ -15,11 +15,11 @@ end
 
 inherit(Singleton, AdminGUI)
 
-addRemoteEvents{"showAdminMenu", "announceText"}
+addRemoteEvents{"showAdminMenu", "announceText", "setDamageFree"}
 
 function AdminGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-200, 600, 400, false, false)
-
+	
 	self.m_adminButton = {}
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
@@ -236,6 +236,12 @@ function AdminGUI:AnnounceButton_Click()
 end
 
 addEventHandler("showAdminMenu", root,
+	function(...)
+		AdminGUI:new()
+	end
+)
+
+addEventHandler("setDamageFree", root,
 	function(...)
 		AdminGUI:new()
 	end
