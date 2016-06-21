@@ -155,10 +155,12 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
             Ban.addBan(target, admin, reason, duration*60*60)
             self:addPunishLog(admin, target, func, reason, duration*60*60)
+			target:kick(admin, reason)
         elseif func == "permaban" then
             self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
             Ban.addBan(target, admin, reason)
             self:addPunishLog(admin, target, func, reason, 0)
+			target:kick(admin, reason)
         elseif func == "addWarn" or func == "warn" then
             self:sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
             Warn.addWarn(target, admin, reason, duration*60*60*24)
