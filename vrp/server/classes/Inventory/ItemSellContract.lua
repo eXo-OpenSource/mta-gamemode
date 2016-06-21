@@ -20,9 +20,13 @@ end
 
 function ItemSellContract:Event_OnBuyPapers()
 	local money = source:getMoney()
-	if money >= 300 then 
-		source:takeMoney( 300 )
-		InventoryManager:getSingleton():getPlayerInventory(source):giveItem("Handelsvertrag", 1)
+	local amount =  if source:getInventory():getFreePlacesForItem("Handelsvertrag") < 3
+	if amount then
+		if money >= 300 then 
+			source:takeMoney( 300 )
+			InventoryManager:getSingleton():getPlayerInventory(source):giveItem("Handelsvertrag", 1)
+		end
+	else source:sendError(_("Du besitzt zu viele Verkauspapiere!", source))
 	end
 end
 function ItemSellContract:Event_OnSellRequest( player, price, veh )
