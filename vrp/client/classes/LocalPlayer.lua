@@ -83,6 +83,7 @@ end
 function LocalPlayer:playerWasted()
 	-- Play knock out effect
 	FadeOutShader:new()
+	
 	setTimer(function()
 			setCameraInterior(0)
 			localPlayer:setPosition(-2011.20, -61.22, 1047.65)
@@ -91,41 +92,38 @@ function LocalPlayer:playerWasted()
 			CutscenePlayer:getSingleton():playCutscene("Hospital",
 				function()
 					DeathGUI:new(30000)
+					fadeCamera(false,0.5,0,0,0)
 					setTimer(
 						function()
-
+							fadeCamera(true,0.5)
 							setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
-							setTimer(
-								function()
-									setCameraTarget(localPlayer)
-									localPlayer:setHeadless(false)
-									playSound("files/audio/Halleluja.mp3")
-									local x, y, z = 2028, -1405, 110
-
-									-- Disable damage while resurrecting
-									addEventHandler("onClientPlayerDamage", root, cancelEvent)
-
-									addEventHandler("onClientPreRender", root,
-										function(deltaTime)
-											z = z-0.005*deltaTime
-											localPlayer:setPosition(x, y, z)
-											localPlayer:setRotation(0, 0, 225)
-											if z <= 18 then
-												removeEventHandler("onClientPreRender", root, getThisFunction())
-												removeEventHandler("onClientPlayerDamage", root, cancelEvent)
-											end
-										end
-									)
-
-								end, 30000, 1
-							)
 						end, 5000, 1
 					)
 
 				end
 			)
 	end, 6000, 1)
+	 
+end
 
+function LocalPlayer:startHalleluja()
+	setCameraTarget(localPlayer)
+	localPlayer:setHeadless(false)
+	playSound("files/audio/Halleluja.mp3")
+	local x, y, z = 2028, -1405, 110
+	-- Disable damage while resurrecting
+	addEventHandler("onClientPlayerDamage", root, cancelEvent)
+	addEventHandler("onClientPreRender", root,
+	function(deltaTime)
+		z = z-0.005*deltaTime
+		localPlayer:setPosition(x, y, z)
+		localPlayer:setRotation(0, 0, 225)
+		if z <= 18 then
+			removeEventHandler("onClientPreRender", root, getThisFunction())
+			removeEventHandler("onClientPlayerDamage", root, cancelEvent)
+		end
+	end
+	)
 end
 
 function LocalPlayer:playerRescueWasted()
