@@ -43,13 +43,17 @@ end
 function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 	local attacker = client
 	if weapon == 34 and bodypart == 9 then
-		target:setHeadless(true)
-		target:kill(attacker, weapon, bodypart)
+		if not target.m_SupMode and not attacker.m_SupMode then
+			target:setHeadless(true)
+			target:kill(attacker, weapon, bodypart)
+		end
 	else
-		local basicDamage = WEAPON_DAMAGE[weapon]
-		local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
-		local realLoss = basicDamage*multiplier
-		self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+		if not target.m_SupMode and not attacker.m_SupMode then
+			local basicDamage = WEAPON_DAMAGE[weapon]
+			local multiplier = DAMAGE_MULTIPLIER[bodypart] and DAMAGE_MULTIPLIER[bodypart] or 1
+			local realLoss = basicDamage*multiplier
+			self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
+		end
 	end
 end
 

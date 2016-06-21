@@ -23,10 +23,14 @@ end]]
 
 function WantedSystem:playerWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
 	if killer and isElement(killer) and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
-		killer:reportCrime(Crime.Kill)
+		if killer:isFactionDuty() then 
+			
+		else
+			--killer:reportCrime(Crime.Kill)
 
-		-- Take karma
-		killer:giveKarma(-0.15)
+			-- Take karma
+			killer:giveKarma(-0.15)
+		end
 	end
 end
 

@@ -199,15 +199,15 @@ function Admin:toggleSupportMode(player)
         player:sendInfo(_("Support Modus aktiviert!", player))
         self:sendShortMessage(_("%s hat den Support Modus aktiviert!", player, player:getName()))
         player:setModel(260)
-        player:triggerEvent("playerToggleDamage", true)
         self:toggleSupportArrow(player, true)
+		player.m_SupMode = true
     else
         player:setPublicSync("supportMode", false)
         player:sendInfo(_("Support Modus deaktiviert!", player))
         self:sendShortMessage(_("%s hat den Support Modus deaktiviert!", player, player:getName()))
         player:setDefaultSkin()
-        player:triggerEvent("playerToggleDamage", false)
         self:toggleSupportArrow(player, false)
+		player.m_SupMode = false
     end
 end
 
