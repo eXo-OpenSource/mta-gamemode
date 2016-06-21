@@ -56,6 +56,8 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 			source:takeMoney( price ) 
 			player:giveMoney( price )
 			car.m_Keys = {}
+			VehicleManager:getSingleton():syncVehicleInfo( player )
+			VehicleManager:getSingleton():syncVehicleInfo( source )
 			player:getInventory():removeItem("Handelsvertrag", 1)
 		else 
 			source:sendError(_("Du hast nicht genügend Geld!", source))

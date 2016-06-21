@@ -331,6 +331,14 @@ function VehicleManager:setSpeedLimits()
 	setModelHandling(510, "maxVelocity", 50) -- Mountain Bike
 end
 
+function VehicleManager:syncVehicleInfo( player )
+	local vehicles = {}
+	for k, vehicle in pairs(self:getPlayerVehicles(player)) do
+		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
+	end
+	player:triggerEvent("vehicleRetrieveInfo", vehicles, player:getGarageType(), player:getHangarType())
+end
+
 function VehicleManager:Event_vehicleLock()
 	if not source or not isElement(source) then return end
 	self:checkVehicle(source)
