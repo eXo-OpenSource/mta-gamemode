@@ -49,10 +49,16 @@ function FireManager:loadFirePlaces()
 	end
 end
 
-function FireManager:startRandomFire()
+function FireManager:startRandomFire( source )
 	--PlayerManager:getSingleton():breakingNews(_("!", player))
 	local rnd = math.random(1, #self.m_Fires)
-	self:startFire(rnd)
+	if rnd == 9 then
+		if ActionsCheck:getSingleton().m_CurrentAction ~= "Banküberfall" then
+			self:startFire(rnd)
+		else source:sendError("Feuer könnte den Bankrob stören!")
+		end
+	else self:startFire(rnd)
+	end
 end
 
 function FireManager:startFire(id)
