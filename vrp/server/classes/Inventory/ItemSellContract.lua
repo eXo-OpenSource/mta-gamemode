@@ -31,7 +31,7 @@ function ItemSellContract:Event_OnSellRequest( player, price, veh )
 		local car = getPedOccupiedVehicle( source) 
 		if car == veh then
 			source:triggerEvent("closeVehicleContract")
-			player:triggerEvent("vehicleConfirmSell", player, price, car)
+			player:triggerEvent("vehicleConfirmSell", player, price, car, source)
 			source:sendInfo(_("Ein Anfrage zum Kauf wurde abgeschickt!", source))
 		else source:sendError(_("Du sitzt nicht im Fahrzeug!", source))
 		end

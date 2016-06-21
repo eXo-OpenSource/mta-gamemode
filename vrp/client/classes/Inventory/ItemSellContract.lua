@@ -38,9 +38,9 @@ function ItemSellContract:Event_CloseAccept( )
 	if VehicleSellAcceptGUI:isInstantiated() then delete( VehicleSellAcceptGUI:getSingleton() ) end
 end
 
-function ItemSellContract:Event_ConfirmSell( player, price, car)
+function ItemSellContract:Event_ConfirmSell( player, price, car, player2)
 	if VehicleSellAcceptGUI:isInstantiated() then return end
-	VehicleSellAcceptGUI:getSingleton( player, price, car )
+	VehicleSellAcceptGUI:getSingleton( player2, price, car )
 end
 function ItemSellContract:initSellGUI( timestamp )
 	local veh = getPedOccupiedVehicle( localPlayer )
