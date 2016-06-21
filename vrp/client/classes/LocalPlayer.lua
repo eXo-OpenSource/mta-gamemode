@@ -24,7 +24,8 @@ function LocalPlayer:constructor()
 	addEventHandler("playerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("playerRescueWasted", root, bind(self.playerRescueWasted, self))
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
-	addEventHandler("playerToggleDamage", self, bind(self.toggleDamage, self))
+	self.m_DamageFunc = function( bool ) self:toggleDamage( bool ) end
+	addEventHandler("playerToggleDamage", self, self.m_DamageFunc)
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
 end
@@ -83,9 +84,10 @@ end
 
 function LocalPlayer:toggleDamage(state)
 	if state == true then
-		addEventHandler("onClientPlayerDamage", localPlayer, cancelEvent)
+		self.m_CancelFunc = function() cancelEvent() end
+		addEventHandler("onClientPlayerDamage", localPlayer, self.m_CancelFunc)
 	else
-		removeEventHandler("onClientPlayerDamage", localPlayer, cancelEvent)
+		removeEventHandler("onClientPlayerDamage", localPlayer, self.m_CancelFunc)
 	end
 end
 
