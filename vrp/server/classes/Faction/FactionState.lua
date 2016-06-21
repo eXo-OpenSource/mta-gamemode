@@ -353,12 +353,13 @@ function FactionState:Command_needhelp(player)
 end
 
 
-function FactionState:Event_JailPlayer(player, bail)
-	local policeman = client
+function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
+	local policeman = client or police
 	if policeman:isFactionDuty() then
 		if player:getWantedLevel() > 0 then
 			-- Teleport to jail
 			local rnd = math.random(1, #Jail.Cells)
+			player:respawn()
 			player:setPosition(Jail.Cells[rnd])
 			player:setInterior(0)
 			player:setDimension(0)
@@ -406,7 +407,7 @@ function FactionState:Event_JailPlayer(player, bail)
 
 			policeman:getFaction():sendMessage(_("%s wurde soeben von %s eingesperrt!", player, player:getName(), policeman:getName()), 255, 255, 0)
 
-			player:triggerEvent("playerJailed", jailTime, true)
+			player:triggerEvent("playerJailed", jailTime, CUTSCENE)
 		else
 			policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
 		end

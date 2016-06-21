@@ -158,12 +158,23 @@ function PlayerManager:Event_playerReady()
 	end
 end
 
-function PlayerManager:playerWasted()
+function PlayerManager:playerWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
 	-- Call wasted hook
 	if self.m_WastedHook:call(source) then
 		return
 	end
-
+	if killer then
+		if killer ~= source then
+			if killer:isFactionDuty() then 
+				local wantedLevel = source:getWantedLevel()
+				if wantedLevel > 0 then
+					source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))
+					FactionState:Event_JailPlayer(source, bail, true, killer)
+					return
+				end
+			end
+		end
+	end
 	source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
 	source:triggerEvent("playerWasted")
 	setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, source)
