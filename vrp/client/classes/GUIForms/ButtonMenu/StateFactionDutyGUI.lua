@@ -10,7 +10,7 @@ StateFactionDutyGUI = inherit(GUIButtonMenu)
 addRemoteEvents{"showStateFactionDutyGUI","updateStateFactionDutyGUI"}
 
 function StateFactionDutyGUI:constructor()
-	GUIButtonMenu.constructor(self, "SAPD Duty Menü")
+	GUIButtonMenu.constructor(self, "Staatsfraktion Duty Menü")
 
 	-- Add the Items
 	self:addItems()

@@ -22,6 +22,7 @@ function DeathGUI:decreaseSeconds()
 	self.m_Seconds = self.m_Seconds-1
 	self.m_CountdownLabel:setText(_("%d Sekunden", self.m_Seconds))
 	if self.m_Seconds <= 0 then
+		localPlayer:startHalleluja()
 		delete(self)
 	end
 end

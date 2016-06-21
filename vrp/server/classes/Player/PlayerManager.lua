@@ -165,7 +165,7 @@ function PlayerManager:playerWasted(totalAmmo, killer, killerWeapon, bodypart, s
 	end
 	if killer then
 		if killer ~= source then
-			if killer:isFactionDuty() then 
+			if killer:isFactionDuty() and not source:isFactionDuty() then 
 				local wantedLevel = source:getWantedLevel()
 				if wantedLevel > 0 then
 					source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))

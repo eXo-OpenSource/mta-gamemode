@@ -75,7 +75,7 @@ factionRankNames[2] = {
 }
 factionColors[2] = {["r"] = 96,["g"] = 96,["b"] = 96}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
-factionWeapons[2] = {[23]=true, [24]=true,[27]=true,[29]=true,[31]=true}
+factionWeapons[2] = {[23]=true, [24]=true,[25]=true,[29]=true,[31]=true}
 factionWTDestination[2] = Vector3(2716.21, -2413.49, 13)
 
 -- ID 3 = Army:
