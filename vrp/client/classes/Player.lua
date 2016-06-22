@@ -53,6 +53,10 @@ function Player:getWanteds()
 	return self:getPublicSync("Wanteds") or 0
 end
 
+function Player:isPremium()
+	return self:getPublicSync("Premium") or false
+end
+
 function Player:getKarma()
 	return self:getPublicSync("Karma") or 0
 end

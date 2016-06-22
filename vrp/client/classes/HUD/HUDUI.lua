@@ -23,12 +23,14 @@ function HUDUI:constructor()
 		--showPlayerHudComponent("radar", false)
 		if design == 3 then
 			showPlayerHudComponent("radar",enabled)
+		else showPlayerHudComponent("radar",false)
 		end
 	else
 		showPlayerHudComponent("all", false)
 		showPlayerHudComponent("crosshair", true)
 		if design == 3 then
 			showPlayerHudComponent("radar",enabled)
+		else showPlayerHudComponent("radar",false)
 		end
 	end
 
@@ -73,12 +75,22 @@ function HUDUI:draw()
 end
 
 function HUDUI:setUIMode(uiMode)
+	local design = tonumber(core:getConfig():get("HUD", "RadarDesign"))
+	local enabled = core:get("HUD", "showRadar")
 	if uiMode == UIStyle.Default then
 		showPlayerHudComponent("all", true)
+		if design == 3 then
+			showPlayerHudComponent("radar",enabled)
+		else showPlayerHudComponent("radar",false)
+		end
 		--showPlayerHudComponent("radar", false)
 	elseif self.m_UIMode == UIStyle.Default then
 		showPlayerHudComponent("all", false)
 		showPlayerHudComponent("crosshair", true)
+		if design == 3 then
+			showPlayerHudComponent("radar",enabled)
+		else showPlayerHudComponent("radar",false)
+		end
 	end
 
 	self.m_UIMode = uiMode
@@ -94,10 +106,15 @@ function HUDUI:setEnabled(state)
 			showPlayerHudComponent("crosshair", true)
 			if design == 3 then
 				showPlayerHudComponent("radar",enabled)
+			else showPlayerHudComponent("radar",false)
 			end
 		else
 			showPlayerHudComponent("all", true)
 			--showPlayerHudComponent("radar", false)
+			if design == 3 then
+				showPlayerHudComponent("radar",enabled)
+			else showPlayerHudComponent("radar",false)
+			end
 		end
 	end
 end

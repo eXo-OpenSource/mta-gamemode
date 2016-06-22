@@ -4,6 +4,7 @@ MYSQL_USER	= "vRP"
 MYSQL_PW	= "kmd1581adf%%f"
 MYSQL_DB	= "vRP"
 BOARD_DB	= "exo_wbb_vrp"
+PREMIUM_DB	= "exo_premium"
 MYSQL_UNIX_SOCKET = "/var/run/mysqld/mysqld.sock"
 
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
@@ -111,7 +112,7 @@ AFK_POSITIONS = {
 	Vector2(458.787109375, -86.90234375)
 }
 
-BAIL_PRICES = 
+BAIL_PRICES =
 {
 	[1] = 1200,
 	[2] = 2000,
