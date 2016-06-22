@@ -29,6 +29,7 @@ function HUDRadar:constructor()
 	self.m_Enabled = core:get("HUD", "showRadar")
 	if self.m_DesignSet == RadarDesign.Default then 
 		showPlayerHudComponent("radar", self.m_Enabled )
+		self.m_DefaultBlips = {}
 	end
 	-- Set texture edge to border (no-repeat)
 	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
@@ -152,7 +153,6 @@ end
 
 function HUDRadar:update()
 	if not self.m_Visible or isPlayerMapVisible() then return end
-
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if vehicle and (getControlState("vehicle_look_behind") or
 		(getControlState("vehicle_look_left") and getControlState("vehicle_look_right")) or
@@ -221,7 +221,14 @@ end
 
 function HUDRadar:draw()
 	if not self.m_Enabled then return end
-	if self.m_DesignSet == RadarDesign.Default then return end
+	if self.m_DesignSet == RadarDesign.Default then 
+		if self.m_DefaultBlips then 
+			if #self.m_Blips > #self.m_DefaultBlips then 
+				HUDRadar:getSingleton():switchDefaultBlip( true ) 
+			end
+		end
+		return
+	end
 	if not self.m_Visible or isPlayerMapVisible() then return end
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
@@ -354,6 +361,12 @@ end
 
 function HUDRadar:addBlip(blip)
 	table.insert(Blip.Blips, blip)
+	self.m_Blips = Blip.Blips
+	if self.m_DesignSet == RadarDesign.Default then
+		if self.m_Enabled then 
+			HUDRadar:switchDefaultBlip( true ) 
+		end
+	end
 end
 
 function HUDRadar:removeBlip(blip)
