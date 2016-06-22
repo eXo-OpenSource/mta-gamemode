@@ -14,15 +14,22 @@ function HUDUI:constructor()
 	self.m_Enabled = core:get("HUD", "showUI", true)
 	self.m_RedDot = core:get("HUD", "reddot", false)
 	self.m_DefaultHealhArmor = core:get("HUD", "defaultHealthArmor", true)
-
+	local design = tonumber(core:getConfig():get("HUD", "RadarDesign"))
+	local enabled = core:get("HUD", "showRadar")
 	self.m_MunitionProgress = 0
 
 	if self.m_UIMode == UIStyle.Default and self.m_Enabled then
 		showPlayerHudComponent("all", true)
-		showPlayerHudComponent("radar", false)
+		--showPlayerHudComponent("radar", false)
+		if design == 3 then
+			showPlayerHudComponent("radar",enabled)
+		end
 	else
 		showPlayerHudComponent("all", false)
 		showPlayerHudComponent("crosshair", true)
+		if design == 3 then
+			showPlayerHudComponent("radar",enabled)
+		end
 	end
 
 	self.m_RenderHandler = bind(self.draw,self)
@@ -68,7 +75,7 @@ end
 function HUDUI:setUIMode(uiMode)
 	if uiMode == UIStyle.Default then
 		showPlayerHudComponent("all", true)
-		showPlayerHudComponent("radar", false)
+		--showPlayerHudComponent("radar", false)
 	elseif self.m_UIMode == UIStyle.Default then
 		showPlayerHudComponent("all", false)
 		showPlayerHudComponent("crosshair", true)
@@ -79,14 +86,18 @@ end
 
 function HUDUI:setEnabled(state)
 	self.m_Enabled = state
-
+	local design = tonumber(core:getConfig():get("HUD", "RadarDesign"))
+	local enabled = core:get("HUD", "showRadar")
 	if self.m_UIMode == UIStyle.Default then
 		if not state then
 			showPlayerHudComponent("all", false)
 			showPlayerHudComponent("crosshair", true)
+			if design == 3 then
+				showPlayerHudComponent("radar",enabled)
+			end
 		else
 			showPlayerHudComponent("all", true)
-			showPlayerHudComponent("radar", false)
+			--showPlayerHudComponent("radar", false)
 		end
 	end
 end

@@ -15,6 +15,9 @@ function HUDRadar:constructor()
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
 	if self.m_DesignSet == RadarDesign.Monochrome or self.m_DesignSet == RadarDesign.GTA then
 		CustomF11Map:getSingleton():enable()
+		showPlayerHudComponent("radar", false)
+	else 
+		CustomF11Map:getSingleton():disable()
 	end
 
 	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
@@ -23,8 +26,10 @@ function HUDRadar:constructor()
 	self.m_Blips = Blip.Blips
 	self.m_Areas = {}
 	self.m_Visible = false
-	self.m_Enabled = core:get("HUD", "showRadar", true)
-
+	self.m_Enabled = core:get("HUD", "showRadar")
+	if self.m_DesignSet == RadarDesign.Default then 
+		showPlayerHudComponent("radar", self.m_Enabled )
+	end
 	-- Set texture edge to border (no-repeat)
 	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
 
@@ -46,7 +51,6 @@ function HUDRadar:constructor()
 	addEventHandler("onClientPreRender", root, bind(self.update, self))
 	addEventHandler("onClientRender", root, bind(self.draw, self), true, "high+10")
 	addEventHandler("onClientRestore", root, bind(self.restore, self))
-	showPlayerHudComponent("radar", false)
 
 	addRemoteEvents{"HUDRadar:showRadar", "HUDRadar:hideRadar" }
 	addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
@@ -66,28 +70,30 @@ function HUDRadar:show()
 end
 
 function HUDRadar:updateMapTexture()
-	dxSetRenderTarget(self.m_Texture)
+	if self.m_DesignSet ~= RadarDesign.Default then
+		dxSetRenderTarget(self.m_Texture)
 
-	-- Draw actual map texture
-	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
+		-- Draw actual map texture
+		dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
 
-	-- Draw radar areas
-	if core:get("HUD", "drawGangAreas", true) then
-		for k, rect in pairs(self.m_Areas) do
-			local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
+		-- Draw radar areas
+		if core:get("HUD", "drawGangAreas", true) then
+			for k, rect in pairs(self.m_Areas) do
+				local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
 
-			local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
-
-			if rect.flashing then
-				dxDrawRectangle(mapX, mapY, width, height, Color.Red)
-				dxDrawRectangle(mapX+2, mapY+2, width-4, height-4, rect.color)
-			else
-				dxDrawRectangle(mapX, mapY, width, height, rect.color)
+				local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
+	
+				if rect.flashing then
+					dxDrawRectangle(mapX, mapY, width, height, Color.Red)
+					dxDrawRectangle(mapX+2, mapY+2, width-4, height-4, rect.color)
+				else
+					dxDrawRectangle(mapX, mapY, width, height, rect.color)
+				end
 			end
 		end
-	end
 
-	dxSetRenderTarget(nil)
+		dxSetRenderTarget(nil)
+	end
 end
 
 function HUDRadar:makePath(fileName, isBlip)
@@ -104,13 +110,22 @@ function HUDRadar:setDesignSet(design)
 	else
 		CustomF11Map:getSingleton():disable()
 	end
+	
+	if design ~= RadarDesign.Default then
+		HUDRadar:getSingleton():switchDefaultBlip( false ) 
+		showPlayerHudComponent("radar",false)
+		self.m_DesignSet = design
+		core:getConfig():set("HUD", "RadarDesign", design)
+		self:updateMapTexture()
 
-	self.m_DesignSet = design
-	core:getConfig():set("HUD", "RadarDesign", design)
-	self:updateMapTexture()
-
-	for k, blip in pairs(self.m_Blips) do
-		blip:updateDesignSet()
+		for k, blip in pairs(self.m_Blips) do
+			blip:updateDesignSet()
+		end
+	else 
+		self.m_DesignSet = design
+		core:getConfig():set("HUD", "RadarDesign", design)
+		showPlayerHudComponent("radar",true)
+		HUDRadar:getSingleton():switchDefaultBlip( true ) 
 	end
 end
 
@@ -120,6 +135,9 @@ end
 
 function HUDRadar:setEnabled(state)
 	self.m_Enabled = state
+	if self.m_DesignSet == RadarDesign.Default then 
+		showPlayerHudComponent("radar", state)
+	end
 end
 
 function HUDRadar:isEnabled()
@@ -177,8 +195,33 @@ function HUDRadar:update()
 	end
 end
 
+function HUDRadar:switchDefaultBlip( state ) 
+	if state then
+		self.m_DefaultBlips = {	}
+		for key, blip in ipairs( self.m_Blips ) do 
+			local path = blip.m_RawImagePath
+			local defaultID = BlipConversion[path] 
+			if defaultID then 
+				local pX, pY = blip:getPosition()
+				local sDist = blip:getStreamDistance()
+				if pX and pY and sDist then
+					self.m_DefaultBlips[key] = createBlip(pX,pY,1,defaultID,2,255,255,255,255,0,sDist)
+				end
+			end
+		end
+	else 
+		if self.m_DefaultBlips then
+			for key, blip in ipairs( self.m_DefaultBlips ) do 
+				destroyElement( blip )
+			end
+			self.m_DefaultBlips = nil
+		end
+	end
+end
+
 function HUDRadar:draw()
 	if not self.m_Enabled then return end
+	if self.m_DesignSet == RadarDesign.Default then return end
 	if not self.m_Visible or isPlayerMapVisible() then return end
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
