@@ -150,6 +150,7 @@ function HUDRadar:restore(clearedRenderTargets)
 end
 
 function HUDRadar:update()
+	if self.m_DesignSet == RadarDesign.Default then return end
 	if not self.m_Visible or isPlayerMapVisible() then return end
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if vehicle and (getControlState("vehicle_look_behind") or
