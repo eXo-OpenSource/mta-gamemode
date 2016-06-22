@@ -105,7 +105,7 @@ factionRankNames[4] = {
 }
 --factionColors[4] = {["r"] = 255,["g"] = 85,["b"] = 0}
 factionColors[4] = {["r"] = 187,["g"] = 0,["b"] = 0}
-factionSkins[4] = {[260]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true}
+factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true}
 factionWeapons[4] = {[9]=true}
 
 -- ID 5 = La Cosa Nostra:
