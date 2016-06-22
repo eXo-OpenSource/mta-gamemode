@@ -8,6 +8,7 @@
 Blip = inherit(Object)
 Blip.ServerBlips = {}
 Blip.Blips = {}
+Blip.DefaultBlips = {}
 Blip.AttachedBlips = {}
 
 function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
@@ -27,15 +28,25 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
 	end
 
 	Blip.Blips[self.m_ID] = self
+	local m_String = BlipConversion[imagePath] 
+	if m_String then
+		self.DefaultBlips[self.m_ID] = createBlip( worldX, worldY, 1,m_String, 1, 255, 255, 255, 255, 0, streamDistance)
+	end
 end
 
 function Blip:destructor()
 	if self.m_ID and Blip.Blips[self.m_ID] then
 		Blip.Blips[self.m_ID] = nil
+		if self.DefaultBlips[self.m_ID] then 
+			destroyElement( self.DefaultBlips[self.m_ID] )
+		end
 	else
 		local index = table.find(Blip.Blips, self)
 		if index then
 			Blip.Blips[idx] = nil
+			if self.DefaultBlips[idx] then 
+				destroyElement( self.DefaultBlips[idx] )
+			end
 		end
 	end
 

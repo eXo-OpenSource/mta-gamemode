@@ -113,7 +113,6 @@ function HUDRadar:setDesignSet(design)
 	end
 	
 	if design ~= RadarDesign.Default then
-		HUDRadar:getSingleton():switchDefaultBlip( false ) 
 		showPlayerHudComponent("radar",false)
 		self.m_DesignSet = design
 		core:getConfig():set("HUD", "RadarDesign", design)
@@ -126,7 +125,6 @@ function HUDRadar:setDesignSet(design)
 		self.m_DesignSet = design
 		core:getConfig():set("HUD", "RadarDesign", design)
 		showPlayerHudComponent("radar",true)
-		HUDRadar:getSingleton():switchDefaultBlip( true ) 
 	end
 end
 
@@ -195,40 +193,9 @@ function HUDRadar:update()
 	end
 end
 
-function HUDRadar:switchDefaultBlip( state ) 
-	if state then
-		self.m_DefaultBlips = {	}
-		for key, blip in ipairs( self.m_Blips ) do 
-			local path = blip.m_RawImagePath
-			local defaultID = BlipConversion[path] 
-			if defaultID then 
-				local pX, pY = blip:getPosition()
-				local sDist = blip:getStreamDistance()
-				if pX and pY and sDist then
-					self.m_DefaultBlips[key] = createBlip(pX,pY,1,defaultID,2,255,255,255,255,0,sDist)
-				end
-			end
-		end
-	else 
-		if self.m_DefaultBlips then
-			for key, blip in ipairs( self.m_DefaultBlips ) do 
-				destroyElement( blip )
-			end
-			self.m_DefaultBlips = nil
-		end
-	end
-end
-
 function HUDRadar:draw()
 	if not self.m_Enabled then return end
-	if self.m_DesignSet == RadarDesign.Default then 
-		if self.m_DefaultBlips then 
-			if #self.m_Blips > #self.m_DefaultBlips then 
-				HUDRadar:getSingleton():switchDefaultBlip( true ) 
-			end
-		end
-		return
-	end
+	if self.m_DesignSet == RadarDesign.Default then return end
 	if not self.m_Visible or isPlayerMapVisible() then return end
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
@@ -362,11 +329,6 @@ end
 function HUDRadar:addBlip(blip)
 	table.insert(Blip.Blips, blip)
 	self.m_Blips = Blip.Blips
-	if self.m_DesignSet == RadarDesign.Default then
-		if self.m_Enabled then 
-			HUDRadar:switchDefaultBlip( true ) 
-		end
-	end
 end
 
 function HUDRadar:removeBlip(blip)
@@ -376,7 +338,7 @@ function HUDRadar:removeBlip(blip)
 		end
 	else
 		local idx = table.find(self.m_Blips, blip)
-		if idx then
+		if idx then 	
 			table.remove(self.m_Blips, idx)
 		end
 	end
