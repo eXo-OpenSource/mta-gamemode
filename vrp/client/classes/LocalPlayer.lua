@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange" }
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage" }
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -24,6 +24,7 @@ function LocalPlayer:constructor()
 	addEventHandler("playerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("playerRescueWasted", root, bind(self.playerRescueWasted, self))
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
+	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
 end
@@ -78,6 +79,14 @@ end
 
 function LocalPlayer:playCashChange( )
 	playSound( "files/audio/cash_register.ogg" )
+end
+
+function LocalPlayer:toggleDamage( bstate )
+	if bstate then 
+		addEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
+	else 
+		removeEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
+	end
 end
 
 function LocalPlayer:playerWasted()
