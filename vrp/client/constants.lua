@@ -81,7 +81,7 @@ for i, v in pairs(RadarDesign) do RadarDesign[v] = i end
 
 BlipConversion = 
 {
-	["Ammunation.png"] = 6,
+	["AmmuNation.png"] = 6,
 	["Bank.png"] = 52,
 	["Bus.png"] = 56,
 	["Carshop.png"] = 55,
