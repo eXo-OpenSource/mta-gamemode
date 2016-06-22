@@ -187,11 +187,14 @@ end
 
 function WeaponTruck:Event_onBoxClick(button, state, player)
 	if button == "left" and state == "down" then
-		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
-			player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
-			player:attachPlayerObject(source)
-		else
-			player:sendError(_("Du bist zuweit von der Kiste entfernt!", player))
+		if not player.m_IsCarryingBox then
+			if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
+				player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
+				player:attachPlayerObject(source)
+				player.m_IsCarryingBox = true
+			else
+				player:sendError(_("Du bist zuweit von der Kiste entfernt!", player))
+			end
 		end
 	end
 end
@@ -200,6 +203,7 @@ function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 	table.insert(self.m_BoxesOnTruck,box)
 	box:setScale(1.6)
 	box:attach(self.m_Truck, WeaponTruck.attachCords[#self.m_BoxesOnTruck])
+	player.m_IsCarryingBox = false
 	if #self.m_BoxesOnTruck >= self.m_BoxesCount then
 		player:sendInfo(_("Alle Kisten aufgeladen! Der Truck ist bereit!",player))
 		self.m_Truck:setFrozen(false)
