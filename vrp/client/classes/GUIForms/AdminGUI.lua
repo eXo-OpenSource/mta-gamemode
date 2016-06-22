@@ -250,6 +250,7 @@ addEventHandler("setDamageFree", root,
 addEventHandler("announceText", root,
 	function(message)
 		AdminGUI.m_MoveText = GUIMovetext:new(0, 0, screenWidth, screenHeight*0.05,message,"",1,(screenWidth*0.1)*-1, "files/images/GUI/megafone.png",true)
+		playSound("files/audio/announcment.mp3")
 	end
 )
 
