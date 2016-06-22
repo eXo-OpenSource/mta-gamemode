@@ -15,15 +15,16 @@ function ScoreboardGUI:constructor()
 	self.m_Logo = GUIImage:new(self.m_Width/2-self.m_Width*0.25*0.5, self.m_Height*0.005, self.m_Width*0.275, self.m_Width*0.119, "files/images/LogoNoFont.png", self)
 
 
-	self.m_Grid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.14, self.m_Width*0.9, self.m_Height*0.45, self.m_Rect)
+	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.9, self.m_Height*0.45, self.m_Rect)
 	self.m_Grid:setColor(Color.Clear)
+	self.m_Grid:addColumn(_"VIP", 0.05)
 	self.m_Grid:addColumn(_"Name", 0.2)
 	self.m_Grid:addColumn(_"Fraktion", 0.15)
 	self.m_Grid:addColumn(_"Unternehmen", 0.15)
 	self.m_Grid:addColumn(_"Gang/Firma", 0.15)
 	self.m_Grid:addColumn(_"Spielstunden", 0.15)
 	self.m_Grid:addColumn(_"Karma", 0.1)
-	self.m_Grid:addColumn(_"Ping", 0.1)
+	self.m_Grid:addColumn(_"Ping", 0.05)
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, tocolor(50, 200, 255, 255), self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
@@ -101,6 +102,7 @@ function ScoreboardGUI:insertPlayers()
 		local karma = math.floor(player:getKarma() or 0)
 		local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
 		local item = self.m_Grid:addItem(
+			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Other/trans.png",
 			player:getName(),
 			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
 			player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
@@ -109,16 +111,17 @@ function ScoreboardGUI:insertPlayers()
 			karma >= 0 and "+"..karma or " "..tostring(karma),
 			player:getPing().."ms"
 		)
+		item:setColumnToImage(1, true)
 
 		if data[2] and player:getFaction() then
 			local color = player:getFaction():getColor()
-			item:setColumnColor(2, tocolor(color.r, color.g, color.b))
+			item:setColumnColor(3, tocolor(color.r, color.g, color.b))
 		end
 
 		if karma >= 5 then
-			item:setColumnColor(6, Color.Green)
+			item:setColumnColor(7, Color.Green)
 		elseif karma <= -5 then
-			item:setColumnColor(6, Color.Red)
+			item:setColumnColor(7, Color.Red)
 		end
 	end
 end

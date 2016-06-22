@@ -141,8 +141,14 @@ function Player:loadCharacter()
 
 	-- Add binds
 	self:initialiseBinds()
-	--// Gangwar
+
+	-- Gangwar
 	triggerEvent("onLoadCharacter",self)
+
+	-- Premium
+	setTimer(function(self)
+		Premium.constructor(self)
+	end, 1500, 1, self)
 end
 
 function Player:createCharacter()
@@ -261,7 +267,7 @@ function Player:spawn()
 		else
 			outputServerLog("Invalid spawn location ("..self:getName()..")")
 		end
-	
+
 		-- Teleport player into a "unique interior"
 		if self.m_UniqueInterior ~= 0 then
 			InteriorManager:getSingleton():teleportPlayerToInterior(self, self.m_UniqueInterior)
@@ -274,7 +280,7 @@ function Player:spawn()
 		--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 
 		self:setPublicSync("Faction:Duty",false)
-		
+
 		if self.m_JailTime then
 			if self.m_JailTime > 0 then
 				local rnd = math.random(1, #Jail.Cells)
@@ -304,7 +310,7 @@ function Player:spawn()
 				self:triggerEvent("playerJailed", self.m_JailTime, false)
 			end
 		end
-		
+
 		-- Give weapons
 		for k, info in pairs(self.m_Weapons) do
 			giveWeapon(self, info[1], info[2])

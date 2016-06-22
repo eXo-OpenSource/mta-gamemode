@@ -41,6 +41,12 @@ function GUIGridListItem:setColumnColor(columnIndex, color)
 	return self
 end
 
+function GUIGridListItem:setColumnToImage(columnIndex, state)
+	self.m_Columns[columnIndex].image = state
+	self:anyChange()
+	return self
+end
+
 function GUIGridListItem:setClickable(state)
 	self.m_Clickable = state
 
@@ -63,7 +69,11 @@ function GUIGridListItem:drawThis()
 	local currentXPos = 0
 	for columnIndex, columnValue in ipairs(self.m_Columns) do
 		local columnWidth = self:getGridList():getColumnWidth(columnIndex)
-		dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, self.m_Columns[columnIndex].color or self.m_Color, self.m_FontSize, self.m_Font, self.m_Columns[columnIndex].alignX)
+		if self.m_Columns[columnIndex].image then
+			dxDrawImage(self.m_AbsoluteX + currentXPos + 6, self.m_AbsoluteY + 3, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 10, self.m_Height - 6, self.m_Columns[columnIndex].text)
+		else
+			dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, self.m_Columns[columnIndex].color or self.m_Color, self.m_FontSize, self.m_Font, self.m_Columns[columnIndex].alignX)
+		end
 		currentXPos = currentXPos + columnWidth*self.m_Width + 5
 	end
 	dxSetBlendMode("blend")

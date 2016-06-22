@@ -90,6 +90,7 @@
 	<script src="server/classes/Player/Account.lua" type="server"/>
 	<script src="server/classes/Player/DatabasePlayer.lua" type="server"/>
 	<script src="server/classes/Player/Player.lua" type="server"/>
+	<script src="server/classes/Player/Premium.lua" type="server"/>
 	<script src="server/classes/Player/PlayerManager.lua" type="server"/>
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
@@ -301,7 +302,7 @@
 	<script src="client/classes/NoDm.lua" type="client"/>
 	<script src="client/classes/Tour.lua" type="client"/>
 	<script src="client/classes/AccessoireClothes.lua" type="client"/>
-	
+
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
 	<script src="client/classes/Color.lua" type="client"/>
@@ -349,7 +350,7 @@
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMiniMap.lua" type="client"/>
-	
+
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory2_0.lua" type="client"/>
@@ -875,6 +876,7 @@
 	<vrpfile src="files/images/Nametag/w6.png"/>
 	<vrpfile src="files/images/Nametag/chat.png"/>
 	<vrpfile src="files/images/Nametag/admin.png"/>
+	<vrpfile src="files/images/Nametag/premium.png"/>
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
@@ -986,7 +988,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Kanne.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
-	
+
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />
