@@ -362,7 +362,12 @@ end
 
 
 function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
-	local policeman = client or police
+	local policeman
+	if police then 
+		policeman = police
+	else
+		policeman = client
+	end
 	if policeman:isFactionDuty() then
 		if player:getWantedLevel() > 0 then
 			-- Teleport to jail
