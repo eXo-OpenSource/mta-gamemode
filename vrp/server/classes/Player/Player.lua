@@ -146,9 +146,7 @@ function Player:loadCharacter()
 	triggerEvent("onLoadCharacter",self)
 
 	-- Premium
-	setTimer(function(self)
-		Premium.constructor(self)
-	end, 1500, 1, self)
+	Premium.constructor(self)
 end
 
 function Player:createCharacter()
