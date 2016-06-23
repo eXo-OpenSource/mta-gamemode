@@ -1,4 +1,5 @@
 factionColors = {}
+factionCarColors = {}
 factionRankNames = {}
 factionSkins = {}
 factionWeapons = {}
@@ -59,6 +60,7 @@ factionRankNames[1] = {
 [6] = "Chief"
 }
 factionColors[1] = {["r"] = 11,["g"] = 102,["b"] = 8}
+factionCarColors[1] = {["r"] = 255,["g"] = 255,["b"] = 255}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
 factionWeapons[1] = {[3]=true,[23]=true,[24]=true,[25]=true,[29]=true,[31]=true}
 factionWTDestination[1] = Vector3(2716.21, -2413.49, 13)
@@ -74,6 +76,7 @@ factionRankNames[2] = {
 [6] = "FBI-Director"
 }
 factionColors[2] = {["r"] = 96,["g"] = 96,["b"] = 96}
+factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
 factionWeapons[2] = {[23]=true, [24]=true,[25]=true,[29]=true,[31]=true}
 factionWTDestination[2] = Vector3(2716.21, -2413.49, 13)

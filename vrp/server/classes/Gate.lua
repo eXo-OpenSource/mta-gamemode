@@ -4,7 +4,6 @@ function Gate:constructor(model, pos, rot, openPos, customOffset)
     self.m_ClosedPos = pos
     self.m_OpenPos = openPos
     self.m_Gate = createObject(model, pos, rot)
-
     self:createColshapes(customOffset)
 
     addEventHandler("onColShapeHit", self.m_ColShape1, bind(self.Event_onColShapeHit, self))
@@ -24,6 +23,9 @@ function Gate:createColshapes(customOffset)
     elseif model == 9093 then
         x1, y1 = getPointFromDistanceRotation(pos.x, pos.y, 4, -rot.z+80)
         x2, y2 = getPointFromDistanceRotation(pos.x, pos.y, 4, rot.z+60)
+	elseif model == 2938 then 
+		x1, y1 = getPointFromDistanceRotation(pos.x, pos.y, 4, rot.z-90)
+        x2, y2 = getPointFromDistanceRotation(pos.x, pos.y, 6, rot.z+90)
     end
     self.m_Marker1 = createMarker(Vector3(x1, y1, pos.z - 1.75) + self.m_Gate.matrix.forward*(customOffset and -customOffset or -2),"cylinder",1) -- Developement Test
     self.m_Marker2 = createMarker(Vector3(x2, y2, pos.z - 1.75) + self.m_Gate.matrix.forward*(customOffset or 2),"cylinder",1,255) -- Developement Test

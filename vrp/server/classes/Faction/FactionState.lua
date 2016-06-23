@@ -60,14 +60,21 @@ function FactionState:destructor()
 end
 
 function FactionState:loadFBI()
-	self:createDutyPickup(1658.12, -1660.38, 22.51, 0) -- FBI Base
-
+	self:createDutyPickup(234.04456, 111.82722, 1003.22571, 10, 23) -- FBI Base
+	self:createDutyPickup(1510.67871, -1479.12988, 9.50000, 0, 0)
+	--[[
 	VehicleBarrier:new(Vector3(1621.9000244141, -1602.6999511719,13.300000190735), Vector3(0, 90, 180)).onBarrierHit = bind(self.onBarrierGateHit, self) -- FBI Barrier
 
 	Gate:new(971, Vector3(1629.1, -1722.90, 16.10), Vector3(0, 0, 180), Vector3(1629.1, -1722.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
 	Gate:new(971, Vector3(1618.2, -1643.90, 16.10), Vector3(0, 0, 0), Vector3(1618.2, -1643.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
 	Gate:new(971, Vector3(1618.7, -1728.30, 6.5), Vector3(0, 0, 180), Vector3(1618.7, -1728.30, -1.2)).onGateHit = bind(self.onBarrierGateHit, self)
-
+	
+	Gate:new(971, Vector3(1618.7, -1728.30, 6.5), Vector3(0, 0, 180), Vector3(1618.7, -1728.30, -1.2)).onGateHit = bind(self.onBarrierGateHit, self)
+	]]--
+	Gate:new(2938, Vector3(1534.6999511719,-1451.5,15), Vector3(0, 0, 270), Vector3(1534.6999511719,-1451.5,20)).onGateHit = bind(self.onBarrierGateHit, self)
+	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23) 
+	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23) 
+	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23) 
 end
 
 function FactionState:loadLSPD()
@@ -135,9 +142,10 @@ function FactionState:onBarrierGateHit(player)
 
 end
 
-function FactionState:createDutyPickup(x,y,z,int)
+function FactionState:createDutyPickup(x,y,z,int, dim)
 	self.m_DutyPickup = createPickup(x,y,z, 3, 1275) --PD
 	setElementInterior(self.m_DutyPickup, int)
+	setElementDimension ( self.m_DutyPickup, dim or 0)
 	addEventHandler("onPickupHit", self.m_DutyPickup,
 		function(hitElement)
 			if getElementType(hitElement) == "player" then

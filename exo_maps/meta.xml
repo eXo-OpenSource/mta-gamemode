@@ -28,6 +28,7 @@
 	<map src="fraktionen/staattankstellen.map" />
 	<map src="fraktionen/fbi.map" />
 	<map src="fraktionen/exo_detectiveFbi.map" />
+	<map src="fraktionen/FBI_int.map" dimension="23" />
 	
 	<map src="unternehmen/fahrschule.map" />
 	<map src="unternehmen/mechanic.map" />
