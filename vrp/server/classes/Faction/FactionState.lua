@@ -1,4 +1,4 @@
--- ****************************************************************************
+﻿-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Faction/FactionState.lua
@@ -400,8 +400,8 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 			-- Start freeing timer
 			local jailTime = player:getWantedLevel() * 8
 			player.m_JailStart = getRealTime().timestamp
-			player.m_JailTimer = setTimer(
 			player.m_JailTime = jailtime
+			player.m_JailTimer = setTimer(
 				function()
 					if isElement(player) then
 						player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
