@@ -411,7 +411,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 						player:toggleControl("aim_weapon ", true)
 						player.m_JailStart = nil
 						player.m_JailTimer = nil
-						self:triggerEvent("playerLeftJail")
+						player:triggerEvent("playerLeftJail")
 					end
 				end, jailTime * 60000, 1
 			)

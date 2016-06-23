@@ -8,7 +8,7 @@
 PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
-"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon"}
+"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -18,7 +18,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
 	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
-	addEventHandler("onPlayerWasted", root, bind(self.playerWasted, self))
+	addEventHandler("Event_ClientNotifyWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
 	addEventHandler("playerReady", root, bind(self.Event_playerReady, self))
@@ -158,14 +158,14 @@ function PlayerManager:Event_playerReady()
 	end
 end
 
-function PlayerManager:playerWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
+function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	if killer then
 		if killer ~= source then
 			if killer:isFactionDuty() and not source:isFactionDuty() then
 				local wantedLevel = source:getWantedLevel()
 				if wantedLevel > 0 then
 					source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))
-					FactionState:getSingleton():Event_JailPlayer(source, true, true, killer)
+					FactionState:getSingleton():Event_JailPlayer(source, false, true, killer)
 					return
 				end
 			end
@@ -177,9 +177,10 @@ function PlayerManager:playerWasted(totalAmmo, killer, killerWeapon, bodypart, s
 	end
 	
 	source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
-	source:triggerEvent("playerWasted")
+	source:triggerEvent("playerSendToHospital")
 	setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, source)
 end
+
 
 function PlayerManager:playerChat(message, messageType)
 	if Player.getChatHook():call(source, message, messageType) then

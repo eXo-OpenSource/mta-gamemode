@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage" }
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage", "playerSendToHospital" }
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -21,7 +21,8 @@ function LocalPlayer:constructor()
 
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
-	addEventHandler("playerWasted", root, bind(self.playerWasted, self))
+	addEventHandler("onClientPlayerWasted", root, bind(self.playerWasted, self))
+	addEventHandler("playerSendToHospital", root, bind(self.Event_SendToHospital, self))
 	addEventHandler("playerRescueWasted", root, bind(self.playerRescueWasted, self))
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
 	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
@@ -89,10 +90,15 @@ function LocalPlayer:toggleDamage( bstate )
 	end
 end
 
-function LocalPlayer:playerWasted()
+function LocalPlayer:playerWasted( killer, weapon, bodypart)
+	if source == localPlayer then 
+		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
+	end
+end
+
+function LocalPlayer:Event_SendToHospital()
 	-- Play knock out effect
 	FadeOutShader:new()
-	
 	setTimer(function()
 			setCameraInterior(0)
 			localPlayer:setPosition(-2011.20, -61.22, 1047.65)
@@ -112,8 +118,8 @@ function LocalPlayer:playerWasted()
 				end
 			)
 	end, 6000, 1)
-	 
 end
+
 
 function LocalPlayer:startHalleluja()
 	setCameraTarget(localPlayer)
