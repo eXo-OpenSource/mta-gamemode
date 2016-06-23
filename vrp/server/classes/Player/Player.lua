@@ -292,6 +292,7 @@ function Player:spawn()
 				self:setJailBail( self.m_Bail )
 				self.m_JailStart = getRealTime().timestamp
 				self.m_JailTimer = setTimer(
+				self.m_JailTime = jailtime
 				function()
 					if isElement(self) then
 						self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
