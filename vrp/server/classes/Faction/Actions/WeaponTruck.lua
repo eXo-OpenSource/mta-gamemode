@@ -22,16 +22,16 @@ WeaponTruck.attachCords = {
 }
 WeaponTruck.boxSpawnCords = {
 	["evil"] = {
-					Vector3(-1875.75, 1416, 6.2), Vector3(-1875.75, 1416, 6.9),
-					Vector3(-1873.74, 1415, 6.2), Vector3(-1873.74, 1415, 6.9),
-					Vector3(-1875.27, 1414, 6.2), Vector3(-1875.27, 1414, 6.9),
-					Vector3(-1873.11, 1413, 6.2), Vector3(-1873.11, 1413, 6.9)
+		Vector3(-1875.75, 1416, 6.2), Vector3(-1875.75, 1416, 6.9),
+		Vector3(-1873.74, 1415, 6.2), Vector3(-1873.74, 1415, 6.9),
+		Vector3(-1875.27, 1414, 6.2), Vector3(-1875.27, 1414, 6.9),
+		Vector3(-1873.11, 1413, 6.2), Vector3(-1873.11, 1413, 6.9)
 				},
 	["state"] = {
-					Vector3(124.81, 1894.03, 17.5), Vector3(124.81, 1894.03, 18.2),
-					Vector3(123.61, 1897.85, 17.5), Vector3(123.61, 1897.85, 18.2),
-					Vector3(125.19, 1896.54, 17.5), Vector3(125.19, 1896.54, 18.2),
-					Vector3(125.37, 1892.65, 17.5), Vector3(125.37, 1892.65, 18.2)
+		Vector3(124.81, 1894.03, 17.5), Vector3(124.81, 1894.03, 18.2),
+		Vector3(123.61, 1897.85, 17.5), Vector3(123.61, 1897.85, 18.2),
+		Vector3(125.19, 1896.54, 17.5), Vector3(125.19, 1896.54, 18.2),
+		Vector3(125.37, 1892.65, 17.5), Vector3(125.37, 1892.65, 18.2)
 				}
 }
 
@@ -187,14 +187,18 @@ end
 
 function WeaponTruck:Event_onBoxClick(button, state, player)
 	if button == "left" and state == "down" then
-		if not player.m_IsCarryingBox then
-			if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
-				player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
-				player:attachPlayerObject(source)
-				player.m_IsCarryingBox = true
-			else
-				player:sendError(_("Du bist zuweit von der Kiste entfernt!", player))
+		if player:getFaction() then
+			if not player.m_IsCarryingBox then
+				if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
+					player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
+					player:attachPlayerObject(source)
+					player.m_IsCarryingBox = true
+				else
+					player:sendError(_("Du bist zuweit von der Kiste entfernt!", player))
+				end
 			end
+		else
+			player:sendError(_("Nur Fraktionisten können Kisten aufheben!",player))
 		end
 	end
 end

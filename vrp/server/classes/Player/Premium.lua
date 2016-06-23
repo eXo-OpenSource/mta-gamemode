@@ -21,7 +21,10 @@ function Premium:constructor()
 
 	if self.m_Premium then
 		setTimer(function()
-			self:sendShortMessage(_("Dein Premiumaccount ist gültig bis %s", self, getOpticalTimestamp(self.m_PremiumUntil)), _("Premium", self), {50, 200, 255})
+			self:sendShortMessage(_([[
+			Dein Premiumaccount ist gültig
+			bis %s
+			]], self, getOpticalTimestamp(self.m_PremiumUntil)), _("Premium", self), {50, 200, 255})
 		end, 1500, 1)
 	end
 end

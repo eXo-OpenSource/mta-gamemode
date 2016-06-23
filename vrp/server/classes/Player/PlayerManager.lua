@@ -165,7 +165,7 @@ function PlayerManager:playerWasted(totalAmmo, killer, killerWeapon, bodypart, s
 	end
 	if killer then
 		if killer ~= source then
-			if killer:isFactionDuty() and not source:isFactionDuty() then 
+			if killer:isFactionDuty() and not source:isFactionDuty() then
 				local wantedLevel = source:getWantedLevel()
 				if wantedLevel > 0 then
 					source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))
@@ -318,8 +318,8 @@ function PlayerManager:Event_playerRequestTrading()
 	client:startTrading(source)
 end
 
-function PlayerManager:Event_setPhoneStatus(status)
-	if status == 0 then	client:togglePhone(false) else client:togglePhone(true) end
+function PlayerManager:Event_setPhoneStatus(state)
+	client:togglePhone(state)
 end
 
 function PlayerManager:Event_toggleAFK(state, teleport)

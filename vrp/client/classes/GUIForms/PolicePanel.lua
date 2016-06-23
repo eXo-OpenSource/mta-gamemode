@@ -60,7 +60,7 @@ function PolicePanel:loadPlayers()
 	self.m_Players = {}
 	for i=0, 6 do
 		for Id, player in pairs(Element.getAllByType("player")) do
-			if player:getWantedLevel() == i then
+			if player:getPublicSync("Wanteds") == i then
 				if not self.m_Players[i] then self.m_Players[i] = {} end
 				self.m_Players[i][player] = true
 			end
@@ -103,7 +103,13 @@ function PolicePanel:locatePlayer()
 			PlayerLocateBlip = Blip:new("Locate.png", pos.x, pos.y)
 			PlayerLocateBlip:attachTo(player)
 			InfoBox:new(_"Spieler geortet! Folge dem Blip auf der Karte!")
-
+			PlayerLocateTimer = setTimer(function()
+				if not player:getPublicSync("Phone") == true then
+					if PlayerLocateBlip then delete(PlayerLocateBlip) end
+					ErrorBox:new(_"Der Spieler hat sein Handy ausgeschaltet!")
+					killTimer(PlayerLocateTimer)
+				end
+			end, 1000, 0)
 		else
 			ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Sein Handy ist ausgeschaltet!")
 		end
