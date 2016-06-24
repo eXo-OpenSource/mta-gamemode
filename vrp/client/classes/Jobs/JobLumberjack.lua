@@ -8,7 +8,7 @@
 JobLumberjack = inherit(Job)
 
 function JobLumberjack:constructor()
-	Job.constructor(self, 16, 1105.6, -299.6, 74.3, 0, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), _(HelpTexts.Jobs.Lumberjack))
+	Job.constructor(self, 16, 1104.27, -298.06, 73.99, 90, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), _(HelpTexts.Jobs.Lumberjack))
 
 	self.m_Trees = {}
 	self.m_StackedTrees = {}

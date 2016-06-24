@@ -9,7 +9,7 @@ JobFarmer = inherit(Job)
 addRemoteEvents{"Job.updateFarmPlants", "Job.updatePlayerPlants", "onReciveFarmerData", "Job.updateIncome"}
 
 function JobFarmer:constructor()
-	Job.constructor(self, 1, -1059, -1206, 128.8, 0, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
+	Job.constructor(self, 1, -1060.79, -1209.69, 129.22, 270, "Farmer.png", "files/images/Jobs/HeaderFarmer.png", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer), self.onInfo)
 
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer))
