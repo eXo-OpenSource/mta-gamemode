@@ -21,7 +21,7 @@ function Job:constructor(skin, posX, posY, posZ, rotZ, blipPath, headerImage, na
 	self.m_Ped:setData("Job", self)
 	self.m_Ped:setData("NPC:Immortal", true)
 	self.m_Ped:setFrozen(true)
-	JobInteraction:new(Vector3(posX, posY, posZ+1.5), Vector3(0, 0, rotZ), name)
+	SpeakBubble3D:new(self.m_Ped, "Job: "..name, "Klick mich an!")
 end
 
 function Job:onPedClick()
