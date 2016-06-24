@@ -486,6 +486,8 @@
 	<script src="client/classes/GUIForms/GunBoxGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AccessoireGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/JobInteraction3D.lua" type="client"/>
+
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
@@ -738,6 +740,7 @@
 	<vrpfile src="files/images/Other/Tour.png"/>
 	<vrpfile src="files/images/Other/blood.png"/>
 	<vrpfile src="files/images/Other/Neon.png"/>
+	<vrpfile src="files/images/Other/bubble.png"/>
 
 	<vrpfile src="files/images/Minigames/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Minigames/SniperGame.png"/>
