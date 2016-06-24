@@ -20,7 +20,7 @@ Color = {
     DarkLightBlue = {0, 50, 100, 255},
 	Brown     = {189, 109, 19},
 	BrownAlpha= {189, 109, 19, 180},
-	LightBlue = {6, 163, 212},
+	LightBlue = {50, 200, 255},
 	Orange    = {254, 138, 0},
 	LightRed  = {242, 0, 86},
 }

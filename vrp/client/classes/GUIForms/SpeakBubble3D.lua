@@ -13,6 +13,6 @@ end
 
 function SpeakBubble3D:onStreamIn(surface)
 	GUIImage:new(0, 0, 200, 70, "files/images/Other/bubble.png", surface)
-	GUILabel:new(5, 0, 200, 25, self.m_Text, surface):setColor(Color.Orange)
-	GUILabel:new(5, 25, 200, 20, self.m_Description, surface):setColor(Color.Black)
+	GUILabel:new(8, 2, 200, 25, self.m_Text, surface):setColor(Color.LightBlue)
+	GUILabel:new(8, 27, 200, 20, self.m_Description, surface)
 end
