@@ -136,8 +136,7 @@ function Core:destructor()
 	delete(InventoryManager:getSingleton())
 	delete(ShopManager:getSingleton())
 	delete(GrowableManager:getSingleton())
-
-	delete(sql)
+	--delete(sql) -- Very slow
 end
 
 function Core:runTests()
