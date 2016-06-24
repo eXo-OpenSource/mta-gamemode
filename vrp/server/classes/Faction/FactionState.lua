@@ -400,6 +400,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 			-- Start freeing timer
 			local jailTime = player:getWantedLevel() * 8
 			player.m_JailStart = getRealTime().timestamp
+			player:setData("inJail",true, true)
 			player.m_JailTimer = setTimer(
 				function()
 					if isElement(player) then
@@ -411,7 +412,9 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 						player:toggleControl("aim_weapon ", true)
 						player.m_JailStart = nil
 						player.m_JailTimer = nil
+						player.m_JailTime = 0
 						player:triggerEvent("playerLeftJail")
+						player:setData("inJail",false, true)
 					end
 				end, jailTime * 60000, 1
 			)

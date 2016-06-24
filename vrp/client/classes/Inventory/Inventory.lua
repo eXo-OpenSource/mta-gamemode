@@ -608,7 +608,9 @@ function Inventory:hide()
 	if self.Show == true then
 		self.Show = false
 		showCursor ( false )
-		toggleControl ( "fire",  true)
+		if not getElementData(localPlayer,"inJail") then
+			toggleControl ( "fire",  true)
+		end
 
 		removeEventHandler("onClientRender", root, self.m_RenderInventar)
 		removeEventHandler("onClientMouseEnter", root, self.m_onButtonInvEnter)
