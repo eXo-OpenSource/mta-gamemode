@@ -44,7 +44,7 @@
 	<map src="autohaus/billig_autohaus.map" />
 	<map src="autohaus/bootshop.map" />
 	
-	<map src="jobs/cartransport.map" />
+	<!--map src="jobs/cartransport.map" /-->
 	<map src="jobs/gaertnerei.map" />
 	<map src="jobs/gabelstapler.map" />
 	<map src="jobs/busjob.map" />
