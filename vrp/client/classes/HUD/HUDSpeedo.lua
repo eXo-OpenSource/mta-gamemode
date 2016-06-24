@@ -52,6 +52,7 @@ function HUDSpeedo:draw()
 	end
 
 	local vehicle = getPedOccupiedVehicle(localPlayer)
+	local vehicleType = getVehicleType(vehicle)
 	local handbrake = getElementData( vehicle, "Handbrake" )
 	if not vehicle:getFuel() then return end
 	local vx, vy, vz = getElementVelocity(vehicle)
@@ -59,15 +60,25 @@ function HUDSpeedo:draw()
 	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
 
 	-- Set maximum
-	if speed > 240 then
-		speed = 240
+	if vehicleType ~= 1 then
+		if speed > 240 then
+			speed = 240
+		end
+	else 
+		if speed > 220 then
+			speed = 220
+		end
 	end
 
 	--dxSetBlendMode("add")
 	-- draw the main speedo
-	dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
-	dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
-
+	if vehicleType ~= 1 then
+		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
+	else 
+		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_aviation.png", 0, 0, 0, tocolor(255, 255, 255, 150))
+		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
+	end
 	-- draw the gear level
 	--dxDrawText(getVehicleCurrentGear(vehicle), drawX+158, drawY+108, 20, 20, tocolor(255, 255, 255), 2.5, "default")
 
