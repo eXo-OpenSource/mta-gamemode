@@ -8,8 +8,8 @@
 JobLogistician = inherit(Job)
 
 function JobLogistician:constructor()
-	Job.constructor(self, -243.96, -248.57, 0.7, "Logistician.png", "files/images/Jobs/HeaderLogistician.png", _(HelpTextTitles.Jobs.Logistician):gsub("Job: ", ""), _(HelpTexts.Jobs.Logistician))
-	Job.constructor(self, 2411.75, -2445.84, 12.9, "Logistician.png", "files/images/Jobs/HeaderLogistician.png", _(HelpTextTitles.Jobs.Logistician):gsub("Job: ", ""), _(HelpTexts.Jobs.Logistician))
+	Job.constructor(self, 16, -243.96, -248.57, 1.5, 0, "Logistician.png", "files/images/Jobs/HeaderLogistician.png", _(HelpTextTitles.Jobs.Logistician):gsub("Job: ", ""), _(HelpTexts.Jobs.Logistician))
+	Job.constructor(self, 16, 2411.75, -2445.84, 13.7, 0, "Logistician.png", "files/images/Jobs/HeaderLogistician.png", _(HelpTextTitles.Jobs.Logistician):gsub("Job: ", ""), _(HelpTexts.Jobs.Logistician))
 
 	-- add job to help menu
 	--HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Logistician):gsub("Job: ", ""), _(HelpTexts.Jobs.Logistician))

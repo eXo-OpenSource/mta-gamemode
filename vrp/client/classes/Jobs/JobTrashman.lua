@@ -8,7 +8,7 @@
 JobTrashman = inherit(Job)
 
 function JobTrashman:constructor()
-	Job.constructor(self, 2090.5, -2097.4, 12.5, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman), self.onInfo)
+	Job.constructor(self, 260, 2090.5, -2097.4, 13.3, 0, "Trashman.png", "files/images/Jobs/HeaderTrashman.png", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman), self.onInfo)
 	self.m_DumpAreaTexture = dxCreateTexture("files/images/Jobs/TrashDumpArea.png")
 	self.m_ColShapes = {}
 	addEventHandler("onClientPreRender", root, bind(JobTrashman.renderArea, self)) -- Todo: Replace by 3d image class

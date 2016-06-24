@@ -8,7 +8,7 @@
 JobHeliTransport = inherit(Job)
 
 function JobHeliTransport:constructor()
-	Job.constructor(self, 1786.04, -2273.60, 26, "HeliTransport.png", "files/images/Jobs/HeaderHeliTransport.png", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))
+	Job.constructor(self, 16, 1786.04, -2273.60, 26.8, 0, "HeliTransport.png", "files/images/Jobs/HeaderHeliTransport.png", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))
 	self.m_Target = {}
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.HeliTransport):gsub("Job: ", ""), _(HelpTexts.Jobs.HeliTransport))

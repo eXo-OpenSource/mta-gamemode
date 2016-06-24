@@ -7,25 +7,29 @@
 -- ****************************************************************************
 Job = inherit(Singleton)
 
-function Job:constructor(posX, posY, posZ, blipPath, headerImage, name, description, tutorial)
+function Job:constructor(skin, posX, posY, posZ, rotZ, blipPath, headerImage, name, description, tutorial)
 	-- Create the customblip
 	Blip:new(blipPath, posX, posY)
 	self.m_Name = name
+	self.m_HeaderImage = headerImage
+	self.m_Description = description
+	self.m_Tutorial = tutorial
 
 	-- Create a job marker
-	self.m_Marker = createMarker(posX, posY, posZ, "cylinder", 1.5, 255, 255, 0, 200)
-	addEventHandler("onClientMarkerHit", self.m_Marker,
-		function(hitElement, matchingDimension)
-			if hitElement == localPlayer and matchingDimension and not isPedInVehicle(localPlayer) then
-				local jobGUI = JobGUI:getSingleton()
-				jobGUI:setDescription(description)
-				jobGUI:setHeaderImage(headerImage)
-				jobGUI:setAcceptCallback(bind(Job.acceptHandler, self))
-				jobGUI:setInfoCallback(bind(Job.InfoMessage, self, name, description, tutorial))
-				jobGUI:open()
-			end
-		end
-	)
+	self.m_Ped = createPed(skin, posX, posY, posZ, rotZ)
+	setElementData(self.m_Ped, "clickable", true)
+	self.m_Ped:setData("Job", self)
+	self.m_Ped:setData("NPC:Immortal", true)
+	self.m_Ped:setFrozen(true)
+end
+
+function Job:onPedClick()
+	local jobGUI = JobGUI:getSingleton()
+	jobGUI:setDescription(self.m_Description)
+	jobGUI:setHeaderImage(self.m_HeaderImage)
+	jobGUI:setAcceptCallback(bind(Job.acceptHandler, self))
+	jobGUI:setInfoCallback(bind(Job.InfoMessage, self, self.m_Name, self.m_Description, self.m_Tutorial))
+	jobGUI:open()
 end
 
 function Job:InfoMessage(name, description, tutorial)
