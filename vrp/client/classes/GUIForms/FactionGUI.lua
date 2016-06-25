@@ -22,7 +22,7 @@ function FactionGUI:constructor()
 	--self.m_BackButton.onUnhover = function () self.m_BackButton:setColor(Color.White) end
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
-	self.m_LeaderTab = false
+	self.m_Leader = false
 	self.m_LogTab = false
 
 	-- Tab: Allgemein
@@ -109,7 +109,7 @@ function FactionGUI:Event_factionRetrieveLog(players, logs)
 end
 
 function FactionGUI:addLeaderTab()
-	if self.m_LeaderTab == false then
+	if self.m_Leader == false then
 		self.m_TabLeader = self.m_TabPanel:addTab(_"Leader")
 		self.m_FactionRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, self.m_TabLeader)
 		self.m_FactionRangGrid:addColumn(_"Rang", 0.2)
@@ -140,7 +140,7 @@ function FactionGUI:addLeaderTab()
 
 		self:refreshLeaderTab()
 
-		self.m_LeaderTab = true
+		self.m_Leader = true
 	else
 		self:refreshLeaderTab()
 	end

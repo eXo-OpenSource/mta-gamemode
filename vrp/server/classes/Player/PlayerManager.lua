@@ -159,7 +159,7 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
-	if killer then
+	if killer and killer:getType() == "player" then
 		if killer ~= source then
 			if killer:isFactionDuty() and not source:isFactionDuty() then
 				local wantedLevel = source:getWantedLevel()
@@ -175,7 +175,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	if self.m_WastedHook:call(source) then
 		return
 	end
-	
+
 	source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
 	source:triggerEvent("playerSendToHospital")
 	setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, source)
