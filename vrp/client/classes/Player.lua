@@ -90,7 +90,7 @@ function Player:getCompany()
 end
 
 function Player:getPlayTime()
-	return (self:getPrivateSync("LastPlayTime") and self.m_JoinTime and math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self.m_JoinTime)/1000/60)) or 0
+	return self:getData("playingTime")
 end
 
 function Player:getJobName()

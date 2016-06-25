@@ -14,11 +14,10 @@ function LocalPlayer:constructor()
 	self.m_Rank = 0
 	self.m_LoggedIn = false
 	self.m_JoinTime = getTickCount()
-
 	self.m_AFKCheckCount = 0
 	self.m_LastPositon = Vector3(0, 0, 0)
 	self.m_AFKTimer = setTimer ( bind(self.checkAFK, self), 5000, 0)
-
+	self.m_PlayTime = setTimer(bind(self.setPlayTime, self), 60000, 0)
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
 	addEventHandler("onClientPlayerWasted", root, bind(self.playerWasted, self))
@@ -27,6 +26,8 @@ function LocalPlayer:constructor()
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
 	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
+
+	self:setPlayTime()
 
 end
 
@@ -48,6 +49,14 @@ end
 
 function LocalPlayer:getRank()
 	return self.m_Rank
+end
+
+function LocalPlayer:getPlayTime()
+	return (self:getPrivateSync("LastPlayTime") and self.m_JoinTime and math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self.m_JoinTime)/1000/60)) or 0
+end
+
+function LocalPlayer:setPlayTime()
+	self:setData("playingTime", self:getPlayTime())
 end
 
 function LocalPlayer:isLoggedIn()
@@ -83,15 +92,15 @@ function LocalPlayer:playCashChange( )
 end
 
 function LocalPlayer:toggleDamage( bstate )
-	if bstate then 
+	if bstate then
 		addEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
-	else 
+	else
 		removeEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
 	end
 end
 
 function LocalPlayer:playerWasted( killer, weapon, bodypart)
-	if source == localPlayer then 
+	if source == localPlayer then
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
 end
