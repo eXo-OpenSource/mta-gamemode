@@ -66,9 +66,7 @@ function FactionGUI:constructor()
 	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
 	self.m_FactionRankDownButton.onLeftClick = bind(self.FactionRankDownButton_Click, self)
 
-	self.m_WaffenRow = 0
-	self.m_WaffenColumn = 0
-	self.m_WaffenAnzahl = 0
+
 	self.m_WeaponsName = {}
 	self.m_WeaponsImage = {}
 	self.m_WeaponsCheck = {}
@@ -112,20 +110,20 @@ end
 
 function FactionGUI:addLeaderTab()
 	if self.m_LeaderTab == false then
-		local tabLeader = self.m_TabPanel:addTab(_"Leader")
-		self.m_FactionRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, tabLeader)
+		self.m_TabLeader = self.m_TabPanel:addTab(_"Leader")
+		self.m_FactionRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, self.m_TabLeader)
 		self.m_FactionRangGrid:addColumn(_"Rang", 0.2)
 		self.m_FactionRangGrid:addColumn(_"Name", 0.8)
 
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Ausgewählter Rang:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
-		self.m_LeaderRankName = GUILabel:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
-		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, tabLeader):setNumeric()
-		self.m_SkinLabel = GUILabel:new(self.m_Width*0.69, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Skin:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.06, _"Ausgewählter Rang:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		self.m_LeaderRankName = GUILabel:new(self.m_Width*0.45, self.m_Height*0.12, self.m_Width*0.4, self.m_Height*0.06, "", self.m_TabLeader)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.2, self.m_Height*0.06, self.m_TabLeader):setNumeric()
+		self.m_SkinLabel = GUILabel:new(self.m_Width*0.69, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Skin:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 
-		self.m_SkinPreviewBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, tabLeader)
+		self.m_SkinPreviewBrowser = GUIWebView:new(self.m_Width*0.82, self.m_Height*0.01, self.m_Width*0.2, self.m_Height*0.4, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabLeader)
 
-		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, tabLeader)
+		self.m_SkinChanger = GUIChanger:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.16, self.m_Height*0.06, self.m_TabLeader)
 		self.m_SkinChanger.onChange = function(text, index) self.m_SkinPreviewBrowser:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..text) end
 
 		if self.m_Id == 4 then -- If Rescue
@@ -134,45 +132,60 @@ function FactionGUI:addLeaderTab()
 			self.m_SkinPreviewBrowser:setVisible(false)
 		end
 
-		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", true, tabLeader)
+		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", true, self.m_TabLeader)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
 
-		GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"Waffen:", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"Waffen:", self.m_TabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 
-		for weaponID,v in pairs(self.m_ValidWeapons) do
-			if v == true then
-				self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.43+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.4+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.16, self.m_Height*0.04, WEAPON_NAMES[weaponID], tabLeader)
-				self.m_WeaponsName[weaponID]:setAlignX("center")
-				self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, WeaponIcons[weaponID], tabLeader)
-				self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.53+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.12, self.m_Height*0.02, "aktiviert", tabLeader)
-				self.m_WeaponsCheck[weaponID]:setFontSize(1)
-				self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
-				if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 then
-					self.m_WaffenRow = 0
-					self.m_WaffenColumn = self.m_WaffenColumn+1
-				else
-					self.m_WaffenRow = self.m_WaffenRow+1
-				end
-
-			end
-		end
-
-		for rank,name in pairs(self.m_RankNames) do
-			local item = self.m_FactionRangGrid:addItem(rank, name)
-			item.Id = rank
-			item.onLeftClick = function()
-				self.m_SelectedRank = rank
-				self:onSelectRank(name,rank)
-			end
-
-			if rank == 1 then
-				self.m_FactionRangGrid:onInternalSelectItem(item)
-				item.onLeftClick()
-			end
-		end
+		self:refreshLeaderTab()
 
 		self.m_LeaderTab = true
+	else
+		self:refreshLeaderTab()
+	end
+end
+
+function FactionGUI:refreshLeaderTab()
+	for i = 0, 46 do
+		if self.m_WeaponsName[i] then delete(self.m_WeaponsName[i]) end
+		if self.m_WeaponsImage[i] then delete(self.m_WeaponsImage[i]) end
+		if self.m_WeaponsCheck[i] then delete(self.m_WeaponsCheck[i]) end
+	end
+	self.m_WaffenAnzahl = 0
+	self.m_WaffenRow = 0
+	self.m_WaffenColumn = 0
+
+	for weaponID,v in pairs(self.m_ValidWeapons) do
+		if v == true then
+			self.m_WeaponsName[weaponID] = GUILabel:new(self.m_Width*0.43+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.4+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.16, self.m_Height*0.04, WEAPON_NAMES[weaponID], self.m_TabLeader)
+			self.m_WeaponsName[weaponID]:setAlignX("center")
+			self.m_WeaponsImage[weaponID] = GUIImage:new(self.m_Width*0.46+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.43+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.06, self.m_Width*0.06, WeaponIcons[weaponID], self.m_TabLeader)
+			self.m_WeaponsCheck[weaponID] = GUICheckbox:new(self.m_Width*0.45+self.m_WaffenRow*self.m_Width*0.14, self.m_Height*0.53+self.m_WaffenColumn*self.m_Height*0.16, self.m_Width*0.12, self.m_Height*0.02, "aktiviert", self.m_TabLeader)
+			self.m_WeaponsCheck[weaponID]:setFontSize(1)
+			self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
+			if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 then
+				self.m_WaffenRow = 0
+				self.m_WaffenColumn = self.m_WaffenColumn+1
+			else
+				self.m_WaffenRow = self.m_WaffenRow+1
+			end
+
+		end
+	end
+	self.m_FactionRangGrid:clear()
+	for rank,name in pairs(self.m_RankNames) do
+		local item = self.m_FactionRangGrid:addItem(rank, name)
+		item.Id = rank
+		item.onLeftClick = function()
+			self.m_SelectedRank = rank
+			self:onSelectRank(name,rank)
+		end
+
+		if rank == 1 then
+			self.m_FactionRangGrid:onInternalSelectItem(item)
+			item.onLeftClick()
+		end
 	end
 end
 
