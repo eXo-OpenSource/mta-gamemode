@@ -538,7 +538,6 @@ end
 
 function Player:payDay()
 	local time = getRealTime()
-	outputChatBox ( "PAYDAY: "..time.hour..":"..time.minute,self,255,0,0 )
 	self.m_paydayTexts = {}
 
 	local income, outgoing, total = 0, 0, 0
@@ -559,6 +558,11 @@ function Player:payDay()
 		income_group = self:getGroup():paydayPlayer(self)
 		income = income + income_group
 		self:addPaydayText("group","Gang/Firma: "..income_group.."$",255,255,255)
+	end
+
+	if self:getWantedLevel() > 0 then
+		self:sendShortMessage(_"Dir wurde ein Wanted erlassen!", self)
+		self:takeWantedLevel(1)
 	end
 
 	income_interest = math.floor(self:getBankMoney()*0.01)

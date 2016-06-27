@@ -11,8 +11,8 @@ function WantedSystem:constructor()
 	--addEventHandler("onPlayerDamage", root, bind(self.playerDamage, self))
 	addEventHandler("onPlayerWasted", root, bind(self.playerWasted, self))
 
-	self.m_WantedLevelLoosingPulse = TimedPulse:new(60*1000)
-	self.m_WantedLevelLoosingPulse:registerHandler(bind(self.updateWantedLevels, self))
+	--self.m_WantedLevelLoosingPulse = TimedPulse:new(60*1000)
+	--self.m_WantedLevelLoosingPulse:registerHandler(bind(self.updateWantedLevels, self))
 end
 
 --[[function WantedSystem:playerDamage(attacker, attackerWeapon, bodypart, loss)
