@@ -90,7 +90,7 @@ function Player:getCompany()
 end
 
 function Player:getPlayTime()
-	return self:getData("playingTime")
+	return getElementData(self, "playingTime") or 0
 end
 
 function Player:getJobName()

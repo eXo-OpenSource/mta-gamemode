@@ -56,7 +56,7 @@ function LocalPlayer:getPlayTime()
 end
 
 function LocalPlayer:setPlayTime()
-	self:setData("playingTime", self:getPlayTime())
+	setElementData(self, "playingTime", self:getPlayTime())
 end
 
 function LocalPlayer:isLoggedIn()

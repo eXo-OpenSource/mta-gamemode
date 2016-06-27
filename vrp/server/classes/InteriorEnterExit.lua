@@ -8,8 +8,8 @@
 InteriorEnterExit = inherit(Object)
 
 function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRotation, exitRotation, interiorId, dimension, isRed)
-	self.m_EnterMarker = createMarker(entryPosition, "corona", 2, 255, 255, 255, 200)
-	self.m_ExitMarker = createMarker(interiorPosition, "corona", 2, 255, 255, 255, 200)
+	self.m_EnterMarker = createMarker(entryPosition, "corona", 1.5, 255, 255, 255, 200)
+	self.m_ExitMarker = createMarker(interiorPosition, "corona", 1.5, 255, 255, 255, 200)
 	if isRed then -- Debug code
 		self.m_EnterMarker:setColor(255, 0, 0, 200)
 		self.m_ExitMarker:setColor(255, 0, 0, 200)
