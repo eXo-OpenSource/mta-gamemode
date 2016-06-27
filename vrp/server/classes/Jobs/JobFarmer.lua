@@ -55,7 +55,7 @@ end
 function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
 		if seat == 0 then
-			if vehPlayer:getData("Farmer.Income") > 0 then
+			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
 				vehPlayer:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
 				vehPlayer:setData("Farmer.Income", 0)
 				vehPlayer:triggerEvent("Job.updateIncome", 0)

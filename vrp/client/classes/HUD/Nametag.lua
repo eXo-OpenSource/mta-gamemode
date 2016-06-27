@@ -96,7 +96,7 @@ function Nametag:drawIcons(player)
 		iconI = iconI+1
 	end
 	if player:getWanteds() > 0 then
-		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/w"..getPlayerWantedLevel(player)..".png")
+		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/w"..player:getWanteds()..".png")
 		iconI = iconI+1
 	end
 	if player:getFaction() then
