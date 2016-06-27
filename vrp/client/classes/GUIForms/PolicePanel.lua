@@ -20,7 +20,7 @@ function PolicePanel:constructor()
 
 	self.m_TabSpieler = self.m_TabPanel:addTab(_"Spieler")
 
-	self.m_PlayersGrid = GUIGridList:new(10, 10, 300, 400, self.m_TabSpieler)
+	self.m_PlayersGrid = GUIGridList:new(10, 10, 300, 370, self.m_TabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 0.5)
 	self.m_PlayersGrid:addColumn(_"Fraktion", 0.3)
 
@@ -34,14 +34,17 @@ function PolicePanel:constructor()
 	self.m_PlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabSpieler)
 	self.m_PhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabSpieler)
 
-	self.m_LocatePlayerBtn = GUIButton:new(320, 300, 250, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green)
+	self.m_RefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabSpieler):setBackgroundColor(Color.LightBlue)
+	self.m_RefreshBtn.onLeftClick = function() self:loadPlayers() end
+
+	self.m_LocatePlayerBtn = GUIButton:new(320, 305, 250, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green)
 	self.m_LocatePlayerBtn.onLeftClick = function() self:locatePlayer() end
 
-	self.m_AddWantedsBtn = GUIButton:new(320, 335, 250, 30, "Wanteds geben", self.m_TabSpieler)
+	self.m_AddWantedsBtn = GUIButton:new(320, 340, 250, 30, "Wanteds geben", self.m_TabSpieler)
 	self.m_AddWantedsBtn.onLeftClick = function() self:giveWanteds() end
 
 
-	self.m_DeleteWantedsBtn = GUIButton:new(320, 370, 250, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red)
+	self.m_DeleteWantedsBtn = GUIButton:new(320, 375, 250, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red)
 	self.m_DeleteWantedsBtn.onLeftClick = function() QuestionBox:new(
 		_("Möchtest du wirklich alle Wanteds von %s löschen?", self.m_SelectedPlayer:getName()),
 		function() triggerServerEvent("factionStateClearWanteds", localPlayer, self.m_SelectedPlayer) end)
@@ -60,7 +63,7 @@ function PolicePanel:loadPlayers()
 	self.m_Players = {}
 	for i=0, 6 do
 		for Id, player in pairs(Element.getAllByType("player")) do
-			if player:getPublicSync("Wanteds") == i then
+			if player:getWanteds() == i then
 				if not self.m_Players[i] then self.m_Players[i] = {} end
 				self.m_Players[i][player] = true
 			end
