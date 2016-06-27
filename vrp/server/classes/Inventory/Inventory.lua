@@ -123,7 +123,7 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 		end
 	end
 	if itemName == "Mautpass" then
-		client:sendShortMessage(_("Dein Mautpass ist noch bis %s gültig!", client, getOpticalTimestamp(self.m_Items[itemId].Special)))
+		client:sendShortMessage(_("Dein Mautpass ist noch bis %s gültig!", client, getOpticalTimestamp(self.m_Items[itemId].Special)), "San Andreas Government")
 	end
 
 	-- Possible issue: If Item:use fails, the item will never get removed

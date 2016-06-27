@@ -64,7 +64,7 @@ function HUDSpeedo:draw()
 		if speed > 240 then
 			speed = 240
 		end
-	else 
+	else
 		if speed > 220 then
 			speed = 220
 		end
@@ -72,10 +72,10 @@ function HUDSpeedo:draw()
 
 	--dxSetBlendMode("add")
 	-- draw the main speedo
-	if vehicleType ~= 1 then
+	if vehicleType ~= VehicleTpye.Plane or vehicleType ~= VehicleTpye.Helicopter then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
-	else 
+	else
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_aviation.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
 	end
@@ -93,7 +93,7 @@ function HUDSpeedo:draw()
 			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png")
 		end
 	end
-	
+
 	-- draw the fuel-o-meter
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)

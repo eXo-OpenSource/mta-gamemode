@@ -46,7 +46,7 @@ function Tour:save(player)
 	end
 end
 
-function Tour:stop()
+function Tour:stop(client)
 	client:sendInfo(_("Du hast die Server-Tour erfolgreich beendet!", client))
 	client:triggerEvent("tourStop")
 	self:save(client)
