@@ -769,22 +769,6 @@ function Player:setModel( skin )
 	setElementModel( self, skin )
 end
 
-function Player:setPrison(duration)
-	self.m_PrisonTime = self.m_PrisonTime + duration
-	if isTimer(self.m_PrisonTimer) then killTimer(self.m_PrisonTimer) end
-	if self.m_PrisonTime > 0 then
-		if self:getOccupiedVehicle() then self:removeFromVehicle() end
-		toggleControl(self, "fire", false)
-		toggleControl(self, "jump", false)
-		toggleControl(self, "aim_weapon", false)
-		self:setDimension(0)
-		self:setInterior(0)
-		self:setPosition(Vector3(-224,2371.29,5688.73))
-		self:triggerEvent("Countdown", self.m_PrisonTime)
-		self.m_PrisonTimer = setTimer(bind(self.endPrison, self), self.m_PrisonTime*1000, 1, player)
-	end
-end
-
 function Player:getRemainingPrisonTime()
     local timerLeft = false
 	if isTimer(self.m_PrisonTimer) then
@@ -807,6 +791,24 @@ function Player:endPrison()
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
 	self.m_PrisonTime = 0
+end
+
+function Player:setJailNewTime()
+	if self.m_JailStart then
+		local now = getRealTime().timestamp
+		if self.m_JailStart < now then
+			local dif = now - self.m_JailStart
+			local minutes = math.floor((dif % 3600) / 60)
+			self.m_JailTime = self.m_JailTime - minutes
+			if self.m_JailTime <= 0 then
+				self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+				self:setRotation(0, 0, 90)
+				self.m_JailTime = 0
+				self.m_Bail = 0
+				self:setWantedLevel(0)
+			end
+		end
+	end
 end
 
 function Player:meChat(system, ...)

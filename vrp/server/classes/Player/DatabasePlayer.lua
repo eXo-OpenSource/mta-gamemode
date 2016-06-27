@@ -130,7 +130,7 @@ function DatabasePlayer:load()
 	self.m_HasDrivingLicense = toboolean(row.HasDrivingLicense)
 	self.m_HasBikeLicense = toboolean(row.HasBikeLicense)
 	self.m_HasTruckLicense = toboolean(row.HasTruckLicense)
-	
+
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
 	self.m_Skills["Flying"] 	= row.FlyingSkill
@@ -523,20 +523,21 @@ function DatabasePlayer:loadMigratorData()
 	VehicleManager:loadPlayerVehicles(self)
 end
 
-function DatabasePlayer:setJailNewTime() 
-	if self.m_JailStart then 
-		local now = getRealTime().timestamp
-		if self.m_JailStart < now then 
-			local dif = now - self.m_JailStart
-			local minutes = math.floor((dif % 3600) / 60)
-			self.m_JailTime = self.m_JailTime - minutes
-			if self.m_JailTime <= 0 then 
-				self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-				self:setRotation(0, 0, 90)
-				self.m_JailTime = 0
-				self.m_Bail = 0
-				self:setWantedLevel(0)
-			end
+
+function DatabasePlayer:setPrison(duration)
+	self.m_PrisonTime = self.m_PrisonTime + duration
+	if self:isActive() then
+		if isTimer(self.m_PrisonTimer) then killTimer(self.m_PrisonTimer) end
+		if self.m_PrisonTime > 0 then
+			if self:getOccupiedVehicle() then self:removeFromVehicle() end
+			toggleControl(self, "fire", false)
+			toggleControl(self, "jump", false)
+			toggleControl(self, "aim_weapon", false)
+			self:setDimension(0)
+			self:setInterior(0)
+			self:setPosition(Vector3(-224,2371.29,5688.73))
+			self:triggerEvent("Countdown", self.m_PrisonTime)
+			self.m_PrisonTimer = setTimer(bind(self.endPrison, self), self.m_PrisonTime*1000, 1, player)
 		end
 	end
 end
