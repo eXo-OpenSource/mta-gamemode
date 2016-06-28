@@ -12,7 +12,7 @@ function JobFarmer:constructor()
 	self.m_Plants = {}
 
 	local x,y,z,rotation = unpack ( VEHICLE_SPAWN )
-	self.m_Spawner = VehicleSpawner:new(x,y,z, {"Combine Harvester";"Tractor";"Walton"}, rotation, bind(Job.requireVehicle, self))
+	self.m_Spawner = VehicleSpawner:new(x,y,z, {"Tractor"; "Combine Harvester"; "Walton"}, rotation, bind(Job.requireVehicle, self))
 	self.m_Spawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
@@ -73,6 +73,9 @@ function JobFarmer:onVehicleDestroy(vehicle)
 end
 
 function JobFarmer:storeHit(hitElement,matchingDimension)
+	if getElementType(hitElement) == "player" then
+		player:sendShortMessage("Hier kannst du den Walton beladen!")
+	end
 	if getElementType(hitElement) ~= "vehicle" then
 		return
 	end
@@ -130,6 +133,7 @@ function JobFarmer:setJobElementVisibility (player,boolean)
 	if boolean then
 		local x, y = unpack(PLANT_DELIVERY)
 		self.m_DeliveryBlip = Blip:new("Waypoint.png", x, y, player)
+		self.m_DeliveryBlip:setStreamDistance(2000)
 	else
 		delete(self.m_DeliveryBlip)
 	end

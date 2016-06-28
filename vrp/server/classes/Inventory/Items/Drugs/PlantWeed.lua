@@ -27,7 +27,7 @@ end
 function PlantWeed:getClientCheck( bool, z_pos )
 	if bool then
 		local pos = client:getPosition()
-		client:getInventory():takeItem("Weed-Samen", 1)
+		client:getInventory():removeItem("Weed-Samen", 1)
 		GrowableManager:getSingleton():addNewPlant("Weed", Vector3(pos.x, pos.y, z_pos), client)
 	else
 		client:sendError("Dies ist kein guter Untergrund zum Anpflanzen!")

@@ -5,7 +5,6 @@
 -- *  PURPOSE:     Bank class (client)
 -- *
 -- ****************************************************************************
---RobableShop = inherit(Object)
 
 addEvent("bankAlarm", true)
 addEventHandler("bankAlarm", root,

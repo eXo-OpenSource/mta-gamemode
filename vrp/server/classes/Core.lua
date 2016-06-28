@@ -70,7 +70,6 @@ function Core:constructor()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
-	RobableShop.initalizeAll()
 	VehicleGarages.initalizeAll()
 	BankRobbery.initializeAll()
 	VehicleSpawner.initializeAll()
