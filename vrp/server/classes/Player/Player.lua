@@ -242,7 +242,7 @@ function Player:save()
 	DatabasePlayer.save(self)
 end
 
-function Player:spawn()
+function Player:spawn( firstSpawn )
 	if self:isGuest() then
 		-- set default data (fallback / guest)
 		self:setMoney(0)
@@ -321,7 +321,9 @@ function Player:spawn()
 	self:setFrozen(false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
-
+	if firstSpawn then 
+		self:triggerEvent("Event_StartScreen")
+	end
 	-- reAttach ChatCols
 	attachElements(self.chatCol_whisper, self)
 	attachElements(self.chatCol_talk, self)

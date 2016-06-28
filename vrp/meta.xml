@@ -474,6 +474,7 @@
 	<script src="client/classes/GUIForms/LogGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PolicePanel.lua" type="client"/>
 	<script src="client/classes/GUIForms/MostWanted3D.lua" type="client"/>
+	<script src="client/classes/GUIForms/MiamiSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/Advertisement.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordChangeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TrunkGUI.lua" type="client"/>
@@ -1192,7 +1193,9 @@
 	<vrpfile src="files/fonts/FontAwesome.otf"/>
 	<vrpfile src="files/fonts/JosefinSans-Thin.ttf"/>
 	<vrpfile src="files/fonts/JosefinSans-Regular.ttf"/>
-
+	<vrpfile src="files/fonts/digital-7.ttf"/>
+	<vrpfile src="files/fonts/bit_font.ttf"/>
+	
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Roadsweeper.map"/>

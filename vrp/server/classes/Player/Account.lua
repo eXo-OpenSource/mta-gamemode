@@ -79,7 +79,7 @@ function Account.login(player, username, password, pwhash)
 			end
 
 			player:loadCharacter()
-			player:spawn()
+			player:spawn( true )
 
 			triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 			return
@@ -128,7 +128,7 @@ function Account.login(player, username, password, pwhash)
 	end
 
 	player:loadCharacter()
-	player:spawn()
+	player:spawn( true )
 
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end

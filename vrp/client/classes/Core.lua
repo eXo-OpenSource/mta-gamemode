@@ -68,6 +68,7 @@ function Core:ready()
 	Neon.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
+	MiamiSpawnGUI:new()
 end
 
 function Core:afterLogin()
