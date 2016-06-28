@@ -42,5 +42,7 @@ FontAwesomeSymbols = {
 	Player = "",
 	Group = "",
 	Money = "",
-	Info = ""
+	Info = "",
+	Check = "",
+	Square = ""
 }

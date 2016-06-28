@@ -8,7 +8,7 @@
 PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
-"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted"}
+"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -36,6 +36,10 @@ function PlayerManager:constructor()
 	addEventHandler("requestGunBoxData", root, bind(self.Event_requestGunBoxData, self))
 	addEventHandler("gunBoxAddWeapon", root, bind(self.Event_gunBoxAddWeapon, self))
 	addEventHandler("gunBoxTakeWeapon", root, bind(self.Event_gunBoxTakeWeapon, self))
+	addEventHandler("Event_getIDCardData", root, bind(self.Event_getIDCardData, self))
+
+
+
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -451,4 +455,8 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 			return
 		end
 	end
+end
+
+function PlayerManager:Event_getIDCardData(target)
+	client:triggerEvent("Event_receiveIDCardData", target:hasDrivingLicense(), target:hasBikeLicense(), target:hasTruckLicense(), target:hasPilotsLicense())
 end

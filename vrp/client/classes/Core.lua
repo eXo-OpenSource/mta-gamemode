@@ -128,6 +128,8 @@ function Core:afterLogin()
 		HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 	end
 
+	localPlayer:setPlayTime()
+
 	self:createBlips()
 	PlantGUI.load()
 

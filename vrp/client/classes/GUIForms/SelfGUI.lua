@@ -270,7 +270,15 @@ function SelfGUI:constructor()
 		ShortMessage:new(_(HelpTexts.Settings.ShortMessageCTC), _(HelpTextTitles.Settings.ShortMessageCTC), nil, 25000)
 	end
 
-	self.m_LifeArmor = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.04, _"Leben/Weste am HUD", tabSettings)
+	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", tabSettings)
+	self.m_StartIntro:setFont(VRPFont(25))
+	self.m_StartIntro:setFontSize(1)
+	self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
+	self.m_StartIntro.onChange = function (state)
+		core:set("HUD", "startScreen", state)
+	end
+
+	self.m_LifeArmor = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.5, self.m_Width*0.35, self.m_Height*0.04, _"Leben/Weste am HUD", tabSettings)
 	self.m_LifeArmor:setFont(VRPFont(25))
 	self.m_LifeArmor:setFontSize(1)
 	self.m_LifeArmor:setChecked(core:get("HUD", "defaultHealthArmor", true))
@@ -279,15 +287,7 @@ function SelfGUI:constructor()
 		core:set("HUD", "defaultHealthArmor", state)
 		HUDUI:getSingleton():toggleDefaultHealthArmor(state)
 	end
-	
-	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", tabSettings)
-	self.m_StartIntro:setFont(VRPFont(25))
-	self.m_StartIntro:setFontSize(1)
-	self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
-	self.m_StartIntro.onChange = function (state)
-		core:set("HUD", "startScreen", state)
-	end
-	
+
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
 	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
 	self.m_RadarChange:addItem("Normal")

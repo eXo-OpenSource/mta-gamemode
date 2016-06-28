@@ -26,9 +26,6 @@ function LocalPlayer:constructor()
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
 	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
-
-	self:setPlayTime()
-
 end
 
 function LocalPlayer:destructor()

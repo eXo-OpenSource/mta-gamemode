@@ -488,6 +488,7 @@
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AccessoireGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SpeakBubble3D.lua" type="client"/>
+	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
@@ -803,6 +804,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Zombie.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Gardener.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/NeedHelp.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Stadthalle.png"/>
 
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
@@ -847,6 +849,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Zombie.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Gardener.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/NeedHelp.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Stadthalle.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -1195,7 +1198,7 @@
 	<vrpfile src="files/fonts/JosefinSans-Regular.ttf"/>
 	<vrpfile src="files/fonts/digital-7.ttf"/>
 	<vrpfile src="files/fonts/bit_font.ttf"/>
-	
+
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Roadsweeper.map"/>
