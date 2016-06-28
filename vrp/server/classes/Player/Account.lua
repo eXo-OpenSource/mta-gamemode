@@ -79,6 +79,7 @@ function Account.login(player, username, password, pwhash)
 			end
 
 			player:loadCharacter()
+			player:setRegistrationDate(row.registrationDate)
 			player:triggerEvent("Event_StartScreen")
 
 			triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
@@ -92,7 +93,7 @@ function Account.login(player, username, password, pwhash)
 	local Username = row.Name
 
 	-- Ask SQL to fetch the password from forum
-	board:queryFetchSingle(Async.waitFor(self), "SELECT password FROM wcf1_user WHERE userID = ?", ForumID)
+	board:queryFetchSingle(Async.waitFor(self), "SELECT password, registrationDate FROM wcf1_user WHERE userID = ?", ForumID)
 	local row = Async.wait()
 	if not row or not row.password then
 		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- "Error: Invalid username or password"
@@ -128,6 +129,7 @@ function Account.login(player, username, password, pwhash)
 	end
 
 	player:loadCharacter()
+	player:setRegistrationDate(row.registrationDate)
 	player:triggerEvent("Event_StartScreen")
 
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
@@ -187,6 +189,7 @@ function Account.register(player, username, password, email)
 			player.m_Account = Account:new(Id, username, player, false)
 			player:createCharacter()
 			player:loadCharacter()
+			player:setRegistrationDate(getRealTime().timestamp)
 			player:triggerEvent("Event_StartScreen")
 			player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
 
@@ -260,6 +263,7 @@ function Account:constructor(id, username, player, guest)
 	else
 		self.m_Rank = RANK.Guest
         player:loadCharacter()
+		player:setRegistrationDate(getRealTime().timestamp)
 	end
 end
 

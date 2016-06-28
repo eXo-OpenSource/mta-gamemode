@@ -1,4 +1,4 @@
-﻿-- ****************************************************************************
+-- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Faction/FactionState.lua
@@ -16,7 +16,7 @@ function FactionState:constructor()
 	self:loadLSPD()
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
-	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons"}
+	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -24,7 +24,7 @@ function FactionState:constructor()
 	addCommandHandler("tie",bind(self.Command_tie, self))
 	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
 	addCommandHandler("bail",bind(self.Command_bail, self))
-	
+
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
@@ -37,6 +37,8 @@ function FactionState:constructor()
 	addEventHandler("factionStateShowLicenses", root, bind(self.Event_showLicenses, self))
 	addEventHandler("factionStateTakeDrugs", root, bind(self.Event_takeDrugs, self))
 	addEventHandler("factionStateTakeWeapons", root, bind(self.Event_takeWeapons, self))
+	addEventHandler("factionStateAcceptShowLicense", root, bind(self.Event_acceptShowLicense, self))
+	addEventHandler("factionStateDeclineShowLicense", root, bind(self.Event_declineShowLicense, self))
 
 
 	-- Prepare the Area51
@@ -68,13 +70,13 @@ function FactionState:loadFBI()
 	Gate:new(971, Vector3(1629.1, -1722.90, 16.10), Vector3(0, 0, 180), Vector3(1629.1, -1722.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
 	Gate:new(971, Vector3(1618.2, -1643.90, 16.10), Vector3(0, 0, 0), Vector3(1618.2, -1643.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
 	Gate:new(971, Vector3(1618.7, -1728.30, 6.5), Vector3(0, 0, 180), Vector3(1618.7, -1728.30, -1.2)).onGateHit = bind(self.onBarrierGateHit, self)
-	
+
 	Gate:new(971, Vector3(1618.7, -1728.30, 6.5), Vector3(0, 0, 180), Vector3(1618.7, -1728.30, -1.2)).onGateHit = bind(self.onBarrierGateHit, self)
 	]]--
 	Gate:new(2938, Vector3(1534.6999511719,-1451.5,15), Vector3(0, 0, 270), Vector3(1534.6999511719,-1451.5,20)).onGateHit = bind(self.onBarrierGateHit, self)
-	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23) 
-	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23) 
-	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23) 
+	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
+	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
+	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
 end
 
 function FactionState:loadLSPD()
@@ -363,7 +365,7 @@ end
 
 function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 	local policeman
-	if police then 
+	if police then
 		policeman = police
 	else
 		policeman = client
@@ -418,7 +420,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 					end
 				end, jailTime * 60000, 1
 			)
-	
+
 			player:clearCrimes()
 
 			policeman:getFaction():sendMessage(_("%s wurde soeben von %s eingesperrt!", player, player:getName(), policeman:getName()), 255, 255, 0)
@@ -433,11 +435,11 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 end
 
 function FactionState:Command_bail( player )
-	if player.m_JailTimer then 
-		if player.m_Bail and player.m_JailTime then 
+	if player.m_JailTimer then
+		if player.m_Bail and player.m_JailTime then
 			if player.m_Bail > 0 then
 				local money = player:getBankMoney()
-				if money >= player.m_Bail then 
+				if money >= player.m_Bail then
 					player:takeBankMoney( player.m_Bail, "KAUTION")
 					player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 					player:setRotation(0, 0, 90)
@@ -643,22 +645,20 @@ function FactionState:Event_showLicenses(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
-			target:sendMessage(_("%s sieht sich deinen Führerschein an!", target, client:getName()), 255, 255, 0)
-			local licenseString = ""
-			if target:hasDrivingLicense() then licenseString = licenseString.."Auto-Führerschein / " end
-			if target:hasBikeLicense() then licenseString = licenseString.."Motorradschein / " end
-			if target:hasTruckLicense() then licenseString = licenseString.."LKW-Führerschein / " end
-			if target:hasPilotsLicense() then licenseString = licenseString.."Flugschein" end
-			if licenseString == ""  then
-				client:sendMessage(_("%s hat keine Führerscheine!", client), 255, 0, 0)
-			else
-				client:sendMessage(_("%s hat folgende Führerscheine:", client, target:getName()), 255, 255, 0)
-				client:sendMessage(licenseString, 255, 125, 0)
-			end
+			target:triggerEvent("questionBox", _("Staatsbeamter %s fordert dich auf deinen Führerschein zu zeigen! Zeigst du ihm deinen Führerschein?", client, getPlayerName(client)), "factionStateAcceptShowLicense", "factionStateDeclineShowLicense", client, target)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
 	end
+end
+
+function FactionState:Event_acceptShowLicense(player, target)
+	player:triggerEvent("showIDCard", target)
+	target:sendMessage(_("%s sieht sich deinen Führerschein an!", target, player:getName()), 255, 255, 0)
+end
+
+function FactionState:Event_declineShowLicense(player, target)
+	player:sendMessage(_("%s will dir seinen Führerschein nicht zeigen!", player, target:getName()), 255, 255, 0)
 end
 
 function FactionState:Event_takeDrugs(target)

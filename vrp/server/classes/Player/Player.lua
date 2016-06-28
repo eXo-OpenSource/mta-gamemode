@@ -322,7 +322,7 @@ function Player:spawn( )
 	self:setFrozen(false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
-	
+
 	-- reAttach ChatCols
 	attachElements(self.chatCol_whisper, self)
 	attachElements(self.chatCol_talk, self)
@@ -744,6 +744,14 @@ end
 
 function Player:detachPlayerObjectBind(presser, key, state, object)
 	self:detachPlayerObject(object)
+end
+
+function Player:setRegistrationDate(timestamp)
+	self.m_RegistrationTimestamp = timestamp
+end
+
+function Player:getRegistrationDate()
+	return self.m_RegistrationTimestamp
 end
 
 function Player:detachPlayerObject(object)
