@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Account = inherit(Object)
-
+addRemoteEvents{"remoteClientSpawn"}
 function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
 	if (not username or not password) and not pwhash then return false end
@@ -79,7 +79,7 @@ function Account.login(player, username, password, pwhash)
 			end
 
 			player:loadCharacter()
-			player:spawn( true )
+			player:triggerEvent("Event_StartScreen")
 
 			triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 			return
@@ -128,7 +128,7 @@ function Account.login(player, username, password, pwhash)
 	end
 
 	player:loadCharacter()
-	player:spawn( true )
+	player:triggerEvent("Event_StartScreen")
 
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
@@ -187,7 +187,7 @@ function Account.register(player, username, password, email)
 			player.m_Account = Account:new(Id, username, player, false)
 			player:createCharacter()
 			player:loadCharacter()
-			player:spawn()
+			player:triggerEvent("Event_StartScreen")
 			player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
 
 			-- TODO: Send validation mail via PHP
@@ -355,3 +355,8 @@ function Account.getIdFromName(name)
 	local row = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
 	return row and row.Id
 end
+
+addEventHandler("remoteClientSpawn", root, function()
+	source:spawn()
+end
+)

@@ -86,7 +86,7 @@ function Player:connect()
 end
 
 function Player:join()
-	setCameraMatrix(self,0,0,0,0,0,0) -- Untill new Login Scenes
+	setCameraMatrix(self,445.12222, -1886.34387, 22.368610,369.74289, -2036.1087, 7.67188) -- Untill new Login Scenes
 end
 
 function Player:sendNews()
@@ -243,7 +243,7 @@ function Player:save()
 	DatabasePlayer.save(self)
 end
 
-function Player:spawn( firstSpawn )
+function Player:spawn( )
 	if self:isGuest() then
 		-- set default data (fallback / guest)
 		self:setMoney(0)
@@ -322,9 +322,7 @@ function Player:spawn( firstSpawn )
 	self:setFrozen(false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
-	if firstSpawn then 
-		self:triggerEvent("Event_StartScreen")
-	end
+	
 	-- reAttach ChatCols
 	attachElements(self.chatCol_whisper, self)
 	attachElements(self.chatCol_talk, self)
