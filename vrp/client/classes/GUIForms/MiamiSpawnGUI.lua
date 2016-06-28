@@ -17,7 +17,10 @@ end
 function MiamiSpawnGUI:Event_InitScreen()
 	local bstate = 	core:get("HUD", "startScreen" )
 	setElementFrozen(localPlayer,true)
-	if not bstate then return end
+	if not bstate then 
+		triggerServerEvent("remoteClientSpawn", localPlayer)
+		return 
+	end
 	self.m_RadarEnabled = HUDRadar:getSingleton().m_Enabled
 	if self.m_RadarEnabled then 
 		HUDRadar:getSingleton():setEnabled(false)
@@ -72,6 +75,7 @@ function MiamiSpawnGUI:_Render()
 				showChat(true)
 				setCameraTarget(localPlayer)
 				setElementFrozen(localPlayer,false)
+				triggerServerEvent("remoteClientSpawn", localPlayer)
 			end
 		end
 	end
