@@ -86,7 +86,7 @@ function Player:connect()
 end
 
 function Player:join()
-	setCameraMatrix(self,0,0,0,0,0,0) -- Untill new Login Scenes
+	setCameraMatrix(self,445.12222, -1886.34387, 22.368610,369.74289, -2036.1087, 7.67188) -- Untill new Login Scenes
 end
 
 function Player:sendNews()

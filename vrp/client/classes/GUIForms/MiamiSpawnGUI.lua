@@ -54,7 +54,7 @@ function MiamiSpawnGUI:Event_InitScreen()
 end
 
 function MiamiSpawnGUI:_Render()
-	setCameraMatrix(0,0,0,0,0,0)
+	setCameraMatrix(445.12222, -1886.34387, 22.368610,369.74289, -2036.1087, 7.67188)
 	local now = getTickCount()
 	local elap = now - self.m_StartTick
 	local prog = elap / self.m_Duration
