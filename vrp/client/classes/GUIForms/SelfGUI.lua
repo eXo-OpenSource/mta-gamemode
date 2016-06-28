@@ -280,7 +280,7 @@ function SelfGUI:constructor()
 		HUDUI:getSingleton():toggleDefaultHealthArmor(state)
 	end
 	
-	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", tabSettings)
+	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm beim Login", tabSettings)
 	self.m_StartIntro:setFont(VRPFont(25))
 	self.m_StartIntro:setFontSize(1)
 	self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
