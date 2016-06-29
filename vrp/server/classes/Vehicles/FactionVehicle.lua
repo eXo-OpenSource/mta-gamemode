@@ -13,7 +13,11 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	self.m_PositionType = positionType or VehiclePositionType.World
 	self.m_Position = self:getPosition()
 	self.m_Rotation = self:getRotation()
-	setElementData(self, "OwnerName", faction:getName())
+	if #faction:getName() <= 29 then
+		setElementData(self, "OwnerName", faction:getName())
+	else
+		setElementData(self, "OwnerName", faction:getShortName())
+	end
 
 	self:setHealth(health)
 	if color then

@@ -60,7 +60,7 @@ function HUDSpeedo:draw()
 	local drawX, drawY = screenWidth - self.m_Size, screenHeight - self.m_Size - 10
 
 	-- Set maximum
-	if vehicleType ~= 1 then
+	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
 		if speed > 240 then
 			speed = 240
 		end
@@ -72,7 +72,7 @@ function HUDSpeedo:draw()
 
 	--dxSetBlendMode("add")
 	-- draw the main speedo
-	if vehicleType ~= VehicleType.Plane or vehicleType ~= VehicleType.Helicopter then
+	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
 	else

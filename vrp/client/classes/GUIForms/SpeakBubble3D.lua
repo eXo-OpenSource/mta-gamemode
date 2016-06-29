@@ -2,6 +2,8 @@
 SpeakBubble3D = inherit(GUIForm3D)
 
 function SpeakBubble3D:constructor(npc, text, description)
+	addEventHandler("onElementDestroy", npc, function () delete(self) end)
+
 	local pos = npc:getPosition()
 	pos.z = pos.z + 1.5
 

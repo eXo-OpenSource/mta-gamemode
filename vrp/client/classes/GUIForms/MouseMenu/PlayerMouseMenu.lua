@@ -10,7 +10,13 @@ PlayerMouseMenu = inherit(GUIMouseMenu)
 function PlayerMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 
-	self:addItem("Name: "..getPlayerName(element)):setTextColor(Color.Red)
+	if element:getFaction() then
+		local faction = element:getFaction()
+		local color = faction:getColor()
+		self:addItem(("Name: %s (%s)"):format(element:getName(), faction:getShortName())):setTextColor(rgb(color.r, color.g, color.b))
+	else
+		self:addItem(("Name: %s"):format(element:getName())):setTextColor(Color.Red)
+	end
 
 	self:addItem(_"Geld geben",
 		function()
@@ -34,13 +40,15 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 		end
 	)
 	if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
-		self:addItem(_"Fraktion: ins Fahrzeug zerren",
-			function()
-				if self:getElement() then
-					triggerServerEvent("factionStateGrabPlayer", localPlayer, self:getElement())
+		if localPlayer:isInVehicle() then
+			self:addItem(_"Fraktion: ins Fahrzeug zerren",
+				function()
+					if self:getElement() then
+						triggerServerEvent("factionStateGrabPlayer", localPlayer, self:getElement())
+					end
 				end
-			end
-		)
+			)
+		end
 		self:addItem(_"Fraktion: Spieler durchsuchen",
 			function()
 				if self:getElement() then
@@ -124,13 +132,12 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 		end
 	end
 
-	if localPlayer:getRank() >= RANK.Moderator then
+	if localPlayer:getRank() >= RANK.Supporter then
 		self:addItem(_"Admin: Kick",
 			function()
-				outputChatBox("Not implemented yet")
-				--[[if self:getElement() then
-					triggerServerEvent("vehicleRepair", self:getElement())
-				end]]
+				if self:getElement() then
+					triggerServerEvent("adminTriggerFunction", self:getElement(), "kick", self:getElement(), "You've been kicked!")
+				end
 			end
 		)
 	end
