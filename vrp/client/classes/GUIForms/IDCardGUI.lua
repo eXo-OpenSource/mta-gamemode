@@ -15,7 +15,7 @@ function IDCardGUI:constructor(player)
 
 	GUIForm.constructor(self, screenWidth/2-400/2, screenHeight/2-250/2, 400, 250)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Ausweis/Führerschein", true, true, self)
-	GUIWebView:new(10, 40, 160, 180, "http://exo-reallife.de/ingame/skinPreview/skinPreviewHead.php?skin="..player:getModel(), true, self)
+	GUIWebView:new(10, 10, 140, 160, "http://exo-reallife.de/ingame/skinPreview/skinPreviewHead.php?skin="..player:getModel(), true, self)
 
 	GUILabel:new(200, 40, 160, 30, player:getName(), self)
 
@@ -26,12 +26,25 @@ function IDCardGUI:constructor(player)
 	GUILabel:new(200, 140, 140, 20, _"LKW-Schein:", self)
 	GUILabel:new(200, 160, 140, 20, _"Flugschein:", self)
 
+
+
 	self.m_LicenseLabels = {}
 
 	self.m_LicenseLabels["car"] = GUILabel:new(370, 100, 40, 25, FontAwesomeSymbols.Square, self)
 	self.m_LicenseLabels["bike"] = GUILabel:new(370, 120, 40, 25, FontAwesomeSymbols.Square, self)
 	self.m_LicenseLabels["truck"] = GUILabel:new(370, 140, 40, 25, FontAwesomeSymbols.Square, self)
 	self.m_LicenseLabels["pilot"] = GUILabel:new(370, 160, 40, 25, FontAwesomeSymbols.Square, self)
+
+	GUILabel:new(10, 160, 140, 20, _"Job-Level:", self)
+	GUILabel:new(10, 180, 140, 20, _"Waffen-Level:", self)
+	GUILabel:new(10, 200, 140, 20, _"Fahrzeug-Level:", self)
+	GUILabel:new(10, 220, 140, 20, _"Skin-Level:", self)
+
+	self.m_LevelLabels = {}
+	self.m_LevelLabels["job"] = GUILabel:new(140, 160, 40, 20, "0", self)
+	self.m_LevelLabels["weapon"] = GUILabel:new(140, 180, 40, 20, "0", self)
+	self.m_LevelLabels["vehicle"] = GUILabel:new(140, 200, 40, 20, "0", self)
+	self.m_LevelLabels["skin"] = GUILabel:new(140, 220, 40, 20, "0", self)
 
 	self.m_RegistrationLabel = GUILabel:new(200, 215, 190, 18, _"Registriert seit: -", self)
 
@@ -47,7 +60,7 @@ function IDCardGUI:constructor(player)
 	addEventHandler("Event_receiveIDCardData", root, bind(self.Event_receiveIDCardData, self))
 end
 
-function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registrationDate)
+function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registrationDate, jobLevel, weaponLevel, vehicleLevel, skinLevel)
 	local carSymbol, carColor = self:getSymbol(car)
 	self.m_LicenseLabels["car"]:setText(carSymbol)
 	self.m_LicenseLabels["car"]:setColor(carColor)
@@ -60,6 +73,11 @@ function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registration
 	local pilotSymbol, pilotColor = self:getSymbol(pilot)
 	self.m_LicenseLabels["pilot"]:setText(pilotSymbol)
 	self.m_LicenseLabels["pilot"]:setColor(pilotColor)
+
+	self.m_LevelLabels["job"]:setText(tostring(jobLevel))
+	self.m_LevelLabels["weapon"]:setText(tostring(weaponLevel))
+	self.m_LevelLabels["vehicle"]:setText(tostring(vehicleLevel))
+	self.m_LevelLabels["skin"]:setText(tostring(skinLevel))
 
 	self.m_RegistrationLabel:setText(_("Registriert seit: %s", getOpticalTimestamp(registrationDate)))
 end

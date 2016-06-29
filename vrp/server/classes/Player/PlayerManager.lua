@@ -458,5 +458,9 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 end
 
 function PlayerManager:Event_getIDCardData(target)
-	client:triggerEvent("Event_receiveIDCardData", target:hasDrivingLicense(), target:hasBikeLicense(), target:hasTruckLicense(), target:hasPilotsLicense(), target:getRegistrationDate())
+	client:triggerEvent("Event_receiveIDCardData",
+		target:hasDrivingLicense(), target:hasBikeLicense(), target:hasTruckLicense(), target:hasPilotsLicense(),
+		target:getRegistrationDate(),
+		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel()
+	)
 end
