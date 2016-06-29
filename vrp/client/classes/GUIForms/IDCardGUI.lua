@@ -46,7 +46,7 @@ function IDCardGUI:constructor(player)
 	self.m_LevelLabels["vehicle"] = GUILabel:new(140, 200, 40, 20, "0", self)
 	self.m_LevelLabels["skin"] = GUILabel:new(140, 220, 40, 20, "0", self)
 
-	self.m_RegistrationLabel = GUILabel:new(200, 215, 190, 18, _"Registriert seit: -", self)
+	self.m_RegistrationLabel = GUILabel:new(200, 220, 190, 18, _"Registriert seit: -", self)
 
 
 	for index, label in pairs(self.m_LicenseLabels) do
