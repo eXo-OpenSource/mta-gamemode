@@ -58,7 +58,7 @@
 	<map src="noobroom.map" />
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
-			
+	
 	<map src="knast.map" />
 	<map src="premium.map" />
 	<map src="zollstationen.map" />
@@ -67,4 +67,5 @@
 	
 	<map src="tankstellen_removals.map" />
 	
+	<map src="stadthalle.map" />
 </meta>

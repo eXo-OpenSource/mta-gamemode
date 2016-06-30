@@ -67,6 +67,7 @@ function Core:constructor()
 	Tour:new()
 	GrowableManager:new()
 	MinigameManager:new()
+	Townhall:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()

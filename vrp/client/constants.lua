@@ -79,7 +79,7 @@ for k, v in pairs(WeaponIcons) do WeaponIcons[k] = "files/images/Weapons/"..v en
 RadarDesign = {Monochrome = 1, GTA = 2, Default = 3}
 for i, v in pairs(RadarDesign) do RadarDesign[v] = i end
 
-BlipConversion = 
+BlipConversion =
 {
 	["AmmuNation.png"] = 6,
 	["Bank.png"] = 52,
@@ -106,6 +106,7 @@ BlipConversion =
 	["Fire.png"] = 20,
 	["Needhelp.png"] = 19,
 	["Moneybag.png"] = 52,
+	["Stadthalle.png"] = 36,
 }
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
 for i, v in pairs(UIStyle) do UIStyle[v] = i end

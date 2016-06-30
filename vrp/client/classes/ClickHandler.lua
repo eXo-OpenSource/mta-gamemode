@@ -149,6 +149,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 						self:addMouseMenu(BeggarPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 					elseif element:getData("Job") then
 						element:getData("Job"):onPedClick()
+					elseif element:getData("Townhall:onClick") then
+						element:getData("Townhall:onClick")()
 					end
 				elseif getElementType(element) == "object" then
 					if getElementData(element, "bankPC") then
