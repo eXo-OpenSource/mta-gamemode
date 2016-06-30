@@ -335,6 +335,11 @@ function CompanyManager:Event_toggleDuty()
                 company:stop(client)
             end
 		else
+            if client:getPublicSync("Faction:Duty") and client:getFaction() then
+                client:sendWarning(_("Bitte beende zuerst deinen Fraktions-Dienst!", client))
+				return false
+			end
+
 			company:changeSkin(client)
 			client.m_CompanyDuty = true
 			company:updateCompanyDutyGUI(client)
@@ -347,6 +352,7 @@ function CompanyManager:Event_toggleDuty()
 		end
 	else
 		client:sendError(_("Du bist in keinem Unternehmen!", client))
+        return false
 	end
 end
 

@@ -118,7 +118,7 @@ function FactionRescue:Event_changeSkin(player)
 
 end
 
-function FactionRescue:Event_toggleDuty(type)
+function FactionRescue:Event_toggleDuty()
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
 		if client:isFactionDuty() then
@@ -129,6 +129,11 @@ function FactionRescue:Event_toggleDuty(type)
 			client:setPublicSync("Rescue:Type",false)
 			client:getInventory():removeAllItem("Barrikade")
 		else
+			if client:getPublicSync("Company:Duty") and client:getCompany() then
+				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
+				return false
+			end
+
 			client.m_FactionDuty = true
 			client:sendInfo(_("Du bist nun im Dienst!", client))
 			client:setPublicSync("Faction:Duty",true)
@@ -139,6 +144,7 @@ function FactionRescue:Event_toggleDuty(type)
 		end
 	else
 		client:sendError(_("Du bist in nicht im Rescue-Team!", client))
+		return false
 	end
 end
 

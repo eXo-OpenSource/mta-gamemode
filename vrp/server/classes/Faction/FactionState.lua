@@ -506,6 +506,11 @@ function FactionState:Event_toggleDuty()
 			client:setPublicSync("Faction:Duty",false)
 			client:getInventory():removeAllItem("Barrikade")
 		else
+			if client:getPublicSync("Company:Duty") and client:getCompany() then
+				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
+				return false
+			end
+
 			faction:changeSkin(client)
 			client.m_FactionDuty = true
 			client:setHealth(100)
@@ -521,6 +526,7 @@ function FactionState:Event_toggleDuty()
 		end
 	else
 		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
+		return false
 	end
 end
 
