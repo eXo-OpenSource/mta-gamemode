@@ -22,18 +22,21 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	self.m_Position = position
 
 	local interior, intPosition = unpack(typeData["Interior"])
-	local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
 
 	if interior > 0 then
 		InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
 	end
 
-	if robable == 1 then
-		RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)
-	else
-		local ped = createPed(pedSkin, pedPosition, pedRotation)
-		ped:setInterior(interior)
-		ped:setDimension(dimension)
+	if typeData["Ped"] then
+		local pedSkin, pedPosition, pedRotation = unpack(typeData["Ped"])
+
+		if robable == 1 then
+			RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)
+		else
+			local ped = createPed(pedSkin, pedPosition, pedRotation)
+			ped:setInterior(interior)
+			ped:setDimension(dimension)
+		end
 	end
 
 	self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 200)

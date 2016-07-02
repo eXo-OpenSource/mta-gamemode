@@ -40,6 +40,12 @@ SHOP_TYPES = {
 		["Ped"] = {202, Vector3(2426.27, 125.96, 26.48), 270},
 		["Marker"] = Vector3(2427.99, 126.00, 25.5),
 		["Class"] = ItemShop
+	},
+	[7] = {
+		["Name"] = "Stadthalle",
+		["Interior"] = {0, Vector3(0, 0, 0)},
+		["Marker"] = Vector3(1831.31, -1274.53, 119.5),
+		["Class"] = ItemShop
 	}
 }
 
@@ -54,6 +60,10 @@ SHOP_ITEMS = {
 		["Wuerfel"] = 10,
 		["Kanne"] = 500,
 		["Mautpass"] = 250
+	};
+	["Stadthalle"] = {
+		["Ausweis-Fuehrerschein"] = 400,
+		["Handelsvertrag"] = 200
 	};
 }
 
