@@ -45,10 +45,12 @@ function VehicleBarrier:toggleBarrier(player)
         self.m_Timer = setTimer(bind(self.Event_onColShapeHit, self, player, true, true), self.m_Timeout or 10000, 1)
         --outputDebug("Opening: "..(0-rot.y).." ["..rot.y.."; 0]")
     else
-        local rot = self.m_Barrier:getRotation()
-        self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, -rot.y+90, 0), "InQuad")
-        self.m_Closed = true
-        --outputDebug("Closing: "..(-rot.y+90).." ["..rot.y.."; 90]")
+        setTimer(function() -- Cause of long vehicles (trucks and bus)
+            local rot = self.m_Barrier:getRotation()
+            self.m_Barrier:move(1250, self.m_Barrier:getPosition(), Vector3(0, -rot.y+90, 0), "InQuad")
+            self.m_Closed = true
+            --outputDebug("Closing: "..(-rot.y+90).." ["..rot.y.."; 90]")
+        end, 2000, 1)
      end
 end
 
