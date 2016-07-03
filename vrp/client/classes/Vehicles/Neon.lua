@@ -53,6 +53,11 @@ function Neon.VehiclestreamedOut(veh)
 	end
 end
 
+function Neon.findRotation(x,y,rz,dist,rot)
+    local x = x+dist*math.cos(math.rad(rz+rot))
+    local y = y+dist*math.sin(math.rad(rz+rot))
+    return x,y
+ end
 
 function Neon.Render()
 	for veh in pairs(Neon.Vehicles) do
