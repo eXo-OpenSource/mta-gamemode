@@ -34,7 +34,7 @@ end
 function JobHeliTransport:createTarget(type)
 	local pos
 	if type == "pickup" then
-		pos = Vector3(2509.94, -2204.42, 15.22)
+		pos = Vector3(2322.13, -2078.09, 15.19)
 	elseif type == "delivery" then
 		pos = JobHeliTransport.m_Targets[math.random(1, #JobHeliTransport.m_Targets)]
 	end

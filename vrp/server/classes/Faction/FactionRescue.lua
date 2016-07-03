@@ -118,7 +118,7 @@ function FactionRescue:Event_changeSkin(player)
 
 end
 
-function FactionRescue:Event_toggleDuty()
+function FactionRescue:Event_toggleDuty(type)
 	local faction = client:getFaction()
 	if faction:isRescueFaction() then
 		if client:isFactionDuty() then
