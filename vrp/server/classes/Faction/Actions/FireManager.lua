@@ -7,8 +7,8 @@
 -- ****************************************************************************
 FireManager = inherit(Singleton)
 
-local FIRE_TIME_MIN = 60 -- in seconds
-local FIRE_TIME_MAX = 120 -- in seconds
+local FIRE_TIME_MIN = 10 -- in minutes
+local FIRE_TIME_MAX = 20 -- in minutes
 
 local FIRE_MESSAGES = {
 	[1] = "Der Los Santos Airport steht in Flammen! Position: %s",
@@ -24,9 +24,9 @@ local FIRE_MESSAGES = {
 }
 
 function FireManager:constructor()
-	local rnd = math.random(FIRE_TIME_MIN, FIRE_TIME_MAX)*1000
+	local rnd = math.random(FIRE_TIME_MIN, FIRE_TIME_MAX)*60*1000
 	self.m_StartFirePulse = TimedPulse:new(rnd)
-	self.m_StartFirePulse:registerHandler()
+	self.m_StartFirePulse:registerHandler(bind(self.checkFire, self))
 	self.m_CurrentFire = nil
 	self.m_Fires = {}
 
@@ -49,13 +49,22 @@ function FireManager:loadFirePlaces()
 	end
 end
 
+function FireManager:checkFire()
+	if FactionRescue:getSingleton():countPlayers() >= 3 then
+		self:startRandomFire()
+	end
+end
+
 function FireManager:startRandomFire( source )
 	--PlayerManager:getSingleton():breakingNews(_("!", player))
 	local rnd = math.random(1, #self.m_Fires)
 	if rnd == 9 then
 		if ActionsCheck:getSingleton().m_CurrentAction ~= "Banküberfall" then
 			self:startFire(rnd)
-		else source:sendError("Feuer könnte den Bankrob stören!")
+		else
+			if source then
+				source:sendError("Feuer könnte den Bankrob stören!")
+			end
 		end
 	else self:startFire(rnd)
 	end

@@ -100,6 +100,19 @@ end
 function FactionWeaponShopGUI:updateButtons()
 	for weaponID,v in pairs(self.m_validWeapons) do
 		if v == true then
+
+			if self.rankWeapons[tostring(weaponID)] == 1 then
+				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
+				if self.m_WeaponsBuyMunition[weaponID] then
+					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
+				end
+			else
+				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
+				if self.m_WeaponsBuyMunition[weaponID] then
+					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
+				end
+			end
+
 			if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 then
 				if self.m_WeaponsBuyMunition[weaponID] then
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
@@ -123,17 +136,7 @@ function FactionWeaponShopGUI:updateButtons()
 				end
 			end
 
-			if self.rankWeapons[tostring(weaponID)] == 1 then
-				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
-				if self.m_WeaponsBuyMunition[weaponID] then
-					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
-				end
-			else
-				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
-				if self.m_WeaponsBuyMunition[weaponID] then
-					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
-				end
-			end
+
 
 		end
 	end
