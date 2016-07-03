@@ -91,7 +91,7 @@ function DatabasePlayer:load()
 	self:setKarma(row.Karma)
 	self:setPoints(row.Points)
 	self.m_Money = row.Money
-	self:setWantedLevel(row.WantedLevel)
+	self:setWantedLevel(row.WantedLevel, true)
 	self.m_TutorialStage = row.TutorialStage
 
 	if not row.BankAccount or row.BankAccount == 0 then
@@ -247,14 +247,16 @@ function DatabasePlayer:getWarns()
 	return self.m_Warns
 end
 
-function DatabasePlayer:setWantedLevel(level)
+function DatabasePlayer:setWantedLevel(level, disableAchievment)
 	if level > 6 then level = 6 end
 	if level < 0 then level = 0 end
-	-- give Achievement
-	if level == 6 then
-		self:giveAchievement(46)
-	elseif level > 0 then
-		self:giveAchievement(45)
+	if not disableAchievment then
+		-- give Achievement
+		if level == 6 then
+			self:giveAchievement(46)
+		elseif level > 0 then
+			self:giveAchievement(45)
+		end
 	end
 
 	-- set data

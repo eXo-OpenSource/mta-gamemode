@@ -738,8 +738,10 @@ function Player:attachPlayerObject(object, allowWeapons)
 end
 
 function Player:refreshAttachedObject()
-	self:getPlayerAttachedObject():setInterior(self:getInterior())
-	self:getPlayerAttachedObject():setDimension(self:getDimension())
+	setTimer(function()
+		self:getPlayerAttachedObject():setInterior(self:getInterior())
+		self:getPlayerAttachedObject():setDimension(self:getDimension())
+	end, 2000 ,1)
 end
 
 function Player:detachPlayerObjectBind(presser, key, state, object)

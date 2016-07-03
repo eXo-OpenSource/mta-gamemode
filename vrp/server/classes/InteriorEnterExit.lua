@@ -34,6 +34,8 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				setTimer( function() hitElement:setCameraTarget(hitElement) end, 1500,1)
 				setTimer(function() setElementFrozen( hitElement, false) end, 2500,1)
 				setTimer(function() hitElement.m_DontTeleport = false end, 2500, 1) -- Todo: this is a temp fix
+				triggerEvent("onElementInteriorChange", hitElement, interiorId)
+				triggerEvent("onElementDimensionChange", hitElement, dimension)
 			end
 		end
 	)
@@ -51,6 +53,8 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				setTimer( function() hitElement:setCameraTarget(hitElement) end, 1500,1)
 				setTimer(function() setElementFrozen( hitElement, false) end, 2500,1)
 				setTimer(function() hitElement.m_DontTeleport = false end, 2500, 1) -- Todo: this is a temp fix
+				triggerEvent("onElementInteriorChange", hitElement, 0)
+				triggerEvent("onElementDimensionChange", hitElement, 0)
 			end
 		end
 	)
