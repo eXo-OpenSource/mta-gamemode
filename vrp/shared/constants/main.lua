@@ -229,7 +229,7 @@ SkinInfo = {
 	[180] = {"Basketball-Shirt", 60},
 	[184] = {"Blau weiß Schwarzes Shirt", 90},
 	[206] = {"Olives Shirt", 100},
-	
+
 }
 
 MAX_KARMA_LEVEL = 150
@@ -244,6 +244,8 @@ Tasks = {
 
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
 VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Trailer = 5}
+TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514, 423, 414, 443, 515, 531, 456, 433, 427, 407, 544, 432, 431, 437, 408}
+
 
 GROUP_RENAME_TIMEOUT = 60*60*24*30 -- 30 Days (in seconds)
 

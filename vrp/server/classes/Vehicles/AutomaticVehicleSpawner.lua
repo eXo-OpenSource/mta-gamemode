@@ -58,6 +58,7 @@ end
 
 function AutomaticVehicleSpawner:VehicleEnterHandler(player)
 	-- Cancel if the player does not have the correct job
+	
 	if self.m_ForJob and player:getJob() ~= self.m_ForJob then
 		player:sendWarning(_("Du kannst dieses Fahrzeug nicht fahren!", player))
 		cancelEvent()

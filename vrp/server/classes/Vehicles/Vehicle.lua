@@ -83,6 +83,9 @@ end
 
 function Vehicle:onPlayerEnter(player, seat)
 	if seat == 0 then
+		if not player:hasCorrectLicense(source) then
+			player:sendShortMessage(_("Achtung: Du hast keinen Führerschein für dieses Fahrzeug!", player))
+		end
 		if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 			bindKey(player, "sub_mission", "down", self.m_SpecialSmokeInternalToggle)
 		end

@@ -16,7 +16,7 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 	for k, v in ipairs(vehicles) do
 		self.m_Vehicles[type(v) == "number" and v or getVehicleModelFromName(v)] = true
 	end
-	
+
 	self.m_Position = Vector3(x, y, z)
 	self.m_Rotation = rotation or 0
 	self.m_ConditionFunc = spawnConditionFunc
@@ -29,10 +29,10 @@ end
 function VehicleSpawner:markerHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
 		if self.m_ConditionFunc and not self.m_ConditionFunc(hitElement) then
-			hitElement:sendMessage(_("Du bist nicht berechtigt dieses Fahrzeug zu erstellen!", hitElement), 255, 0, 0)
+			hitElement:sendError(_("Du bist nicht berechtigt dieses Fahrzeug zu erstellen!", hitElement))
 			return
 		end
-	
+
 		hitElement:triggerEvent("vehicleSpawnGUI", self.m_Id, self.m_Vehicles)
 	end
 end
@@ -42,25 +42,34 @@ addEventHandler("vehicleSpawn", root,
 	function(spawnerId, vehicleModel)
 		local shop = VehicleSpawner.Map[spawnerId]
 		if not shop then return end
-		
+
 		if not shop.m_Vehicles[vehicleModel] then
 			-- Todo: Report possible attack
 			return
 		end
-		
+
 		if client:getJobVehicle() and isElement(client:getJobVehicle()) then
 			destroyElement(client:getJobVehicle())
 		end
-		
+
+
+
 		local vehicle = TemporaryVehicle.create(vehicleModel, shop.m_Position.x, shop.m_Position.y, shop.m_Position.z + 1.5, shop.m_Rotation)
+
+		if not client:hasCorrectLicense(vehicle) then
+			client:sendWarning(_("Du hast nicht den passenden Führerschein!", client))
+			vehicle:destroy()
+			return
+		end
+
 		if shop.m_PostSpawnFunc then
 			shop.m_PostSpawnFunc(vehicle, client)
 		end
-		
+
 		if shop.m_Hook then
 			shop.m_Hook:call(client,vehicleModel,vehicle)
 		end
-		
+
 		warpPedIntoVehicle(client, vehicle)
 		client:setJobVehicle(vehicle)
 	end
