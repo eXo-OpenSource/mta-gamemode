@@ -46,8 +46,10 @@ function JobLogistician:onVehicleExit(player, seat)
 	end
 end
 
-function JobLogistician:onVehicleDestroy(player)
-	if player:getData("Logistician:LastCrane"):getVehicleAttachedContainer(source) then player:getData("Logistician:LastCrane"):getVehicleAttachedContainer(source):destroy() end
+function JobLogistician:onVehicleDestroy()
+	for key, obj in pairs(source:getAttachedElements()) do
+		obj:destroy()
+	end
 end
 
 function JobLogistician:setNewDestination(player, targetMarker, crane)
