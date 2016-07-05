@@ -426,6 +426,8 @@ function Admin:Event_portVehicle(veh)
 		veh:setInterior(client:getInterior())
 		veh:setDimension(client:getDimension())
 		veh:setPosition(pos.x+1, pos.y+1, pos.z+1)
+        veh:setInGarage(false)
+        veh:setPositionType(VehiclePositionType.World)
 		client:sendInfo(_("Das Fahrzeug wurde zu dir geportet!", client))
     end
 end
