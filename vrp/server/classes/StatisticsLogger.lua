@@ -35,7 +35,7 @@ function StatisticsLogger:getGroupLogs(groupType, groupId)
 end
 
 function StatisticsLogger:addPunishLog(admin, player, type, reason, duration)
-    local userId = 0
+    local userId = player
     local adminId = 0
     if isElement(admin) then adminId = admin:getId() end
     if isElement(player) then userId = player:getId() end

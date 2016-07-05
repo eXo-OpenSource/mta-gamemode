@@ -309,6 +309,16 @@ function Account.getSerialAmount(serial)
 	return #result
 end
 
+function Account.getLastSerialFromId(Id)
+	local row = sql:queryFetchSingle("SELECT LastSerial FROM ??_account WHERE Id = ?", sql:getPrefix(), Id)
+	return row.LastSerial or 0
+end
+
+function Account.getIdFromName(name)
+	local row = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
+	return row.Id or 0
+end
+
 function Account.MultiaccountCheck(player, Id)
 	if Account.getSerialAmount(player:getSerial()) > 1 then
 		if not Account.getMultiaccount(Id) then

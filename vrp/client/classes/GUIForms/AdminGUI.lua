@@ -91,6 +91,9 @@ function AdminGUI:constructor()
 
 	self.m_PlayersOfflineGrid = GUIGridList:new(10, 70, 200, 300, tabOffline)
 	self.m_PlayersOfflineGrid:addColumn(_"Spieler", 1)
+	self:addAdminButton("offlineTimeban", "Timeban", 220, 290, 180, 30, Color.Red, tabOffline)
+	self:addAdminButton("offlinePermaban", "Permaban", 410, 290, 180, 30, Color.Red, tabOffline)
+
 
 	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
 	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
@@ -124,8 +127,11 @@ end
 
 function AdminGUI:insertSearchResult(resultPlayers)
 	self.m_PlayersOfflineGrid:clear()
+	local item
+
 	for index, pname in pairs(resultPlayers) do
-		self.m_PlayersOfflineGrid:addItem(pname)
+		item = self.m_PlayersOfflineGrid:addItem(pname)
+		item.name = pname
 	end
 end
 
@@ -253,6 +259,27 @@ function AdminGUI:onButtonClick(func)
 					end)
 		else
 			ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
+		end
+	elseif func == "offlineTimeban" then
+		if self.m_PlayersOfflineGrid:getSelectedItem() then
+			AdminInputBox:new(
+				_("Spieler %s time bannen", self.m_PlayersOfflineGrid:getSelectedItem().name),
+				_"Dauer in Stunden:",
+				function (reason, duration)
+					triggerServerEvent("adminTriggerFunction", root, func, self.m_PlayersOfflineGrid:getSelectedItem().name, reason, duration)
+				end)
+		else
+			ErrorBox:new("Kein Spieler ausgewählt!")
+		end
+	elseif func == "offlinePermaban" then
+		if self.m_PlayersOfflineGrid:getSelectedItem() then
+			InputBox:new(_("Spieler %s permanent Bannen", self.m_PlayersOfflineGrid:getSelectedItem().name),
+					_("Aus welchem Grund möchtest du den Spieler %s permanent bannen?", self.m_PlayersOfflineGrid:getSelectedItem().name),
+					function (reason)
+						triggerServerEvent("adminTriggerFunction", root, func, self.m_PlayersOfflineGrid:getSelectedItem().name, reason)
+					end)
+		else
+			ErrorBox:new("Kein Spieler ausgewählt!")
 		end
 	else
 		outputDebug("Under Developement", 255, 0 ,0)

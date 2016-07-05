@@ -17,15 +17,21 @@ function Ban.addBan(who, author, reason, duration)
 	if not duration then duration = 0 end
 
 	local player = false
+	local playerId = 0
+	local serial = ""
 	if type(who) == "userdata" and getElementType(who) == "player" then
 		player = who
-		who = getPlayerSerial(who)
+		serial = getPlayerSerial(who)
+		playerId = player:getId()
+	else
+		playerId = who
+		serial = Account.getLastSerialFromId(playerId)
 	end
 
 	local expires = duration + getRealTime().timestamp
 	if duration == 0 then expires = 0 end
 
-	sql:queryExec("INSERT INTO ??_bans(serial, author, reason, expires) VALUES (?, ?, ?, ?)", sql:getPrefix(), who, authorId, reason, expires)
+	sql:queryExec("INSERT INTO ??_bans(serial, author, reason, expires, player_id) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), serial, authorId, reason, expires, playerId)
 
 	if not player then
 		for k, v in pairs(getElementsByType("player")) do

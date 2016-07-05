@@ -159,8 +159,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:addPunishLog(admin, target, func)
         elseif func == "timeban" then
             duration = tonumber(duration)
-			outputChatBox(duration)
-			--self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+			self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
             Ban.addBan(target, admin, reason, duration*60*60)
             self:addPunishLog(admin, target, func, reason, duration*60*60)
         elseif func == "permaban" then
@@ -182,6 +181,16 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
         elseif func == "adminAnnounce" then
             local text = target
             triggerClientEvent("announceText", admin, text)
+        elseif func == "offlinePermaban" then
+            self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
+            local targetId = Account.getIdFromName(target)
+            Ban.addBan(targetId, admin, reason)
+            self:addPunishLog(admin, targetId, func, reason, 0)
+        elseif func == "offlineTimeban" then
+            self:sendShortMessage(_("%s hat %s offline für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target, duration, reason))
+            local targetId = Account.getIdFromName(target)
+            Ban.addBan(targetId, admin, reason, duration*60*60)
+            self:addPunishLog(admin, targetId, func, reason, duration*60*60)
         end
     else
         admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))
