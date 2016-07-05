@@ -43,7 +43,7 @@ function Admin:constructor()
     addCommandHandler("warn", adminCommandBind)
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
-    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle"}
+    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -51,9 +51,7 @@ function Admin:constructor()
     addEventHandler("adminGetPlayerVehicles", root, bind(self.Event_vehicleRequestInfo, self))
     addEventHandler("adminPortVehicle", root, bind(self.Event_portVehicle, self))
     addEventHandler("adminPortToVehicle", root, bind(self.Event_portToVehicle, self))
-
-
-
+    addEventHandler("adminSeachPlayer", root, bind(self.Event_seachPlayer, self))
 
 end
 
@@ -94,6 +92,15 @@ function Admin:openAdminMenu( player )
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end
+end
+
+function Admin:Event_seachPlayer(name)
+    local resultPlayers = {}
+    local result = sql:queryFetch("SELECT Id, Name FROM ??_account WHERE Name LIKE ?;", sql:getPrefix(), "%"..name.."%")
+    for i, row in pairs(result) do
+        resultPlayers[row.Id] = row.Name
+    end
+    client:triggerEvent("adminReceiveSeachedPlayers", resultPlayers)
 end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)

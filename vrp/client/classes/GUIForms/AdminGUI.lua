@@ -15,11 +15,11 @@ end
 
 inherit(Singleton, AdminGUI)
 
-addRemoteEvents{"showAdminMenu", "announceText", "setDamageFree"}
+addRemoteEvents{"showAdminMenu", "announceText", "setDamageFree", "adminReceiveSeachedPlayers"}
 
 function AdminGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-200, 600, 400, false, false)
-	
+
 	self.m_adminButton = {}
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
@@ -77,6 +77,21 @@ function AdminGUI:constructor()
 	self:addAdminButton("setFaction", "in Fraktion setzen", 220, 330, 180, 30, Color.Blue, tabSpieler)
 	self:addAdminButton("setCompany", "in Unternehmen setzen", 410, 330, 180, 30, Color.Blue, tabSpieler)
 
+	local tabOffline = self.m_TabPanel:addTab(_"Offline")
+	GUILabel:new(10, 10, 200, 20, "Suche:", tabOffline)
+	self.m_SeachText = GUIEdit:new(10, 30, 170, 30, tabOffline)
+	self.m_SeachButton = GUIButton:new(180, 30, 30, 30, FontAwesomeSymbols.Search, tabOffline):setFont(FontAwesome(15))
+	self.m_SeachButton.onLeftClick = function ()
+		if #self.m_SeachText:getText() >= 3 then
+			triggerServerEvent("adminSeachPlayer", localPlayer, self.m_SeachText:getText())
+		else
+			ErrorBox:new(_"Bitte gib mindestens 3 Zeichen ein!")
+		end
+	end
+
+	self.m_PlayersOfflineGrid = GUIGridList:new(10, 70, 200, 300, tabOffline)
+	self.m_PlayersOfflineGrid:addColumn(_"Spieler", 1)
+
 	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
 	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
 	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, tabTicket)
@@ -89,6 +104,12 @@ function AdminGUI:constructor()
 		end
 	end
 
+	addEventHandler("adminReceiveSeachedPlayers", root,
+		function(resultPlayers)
+			AdminGUI:getSingleton():insertSearchResult(resultPlayers)
+		end
+	)
+
 	self:refreshButtons()
 end
 
@@ -98,6 +119,13 @@ function AdminGUI:addAdminButton(func, text, x, y, width, height, color, parent)
 	self.m_adminButton[func].onLeftClick = function () self:onButtonClick(func) end
 	if AdminGUI.playerFunctions[func] then
 		self.m_adminButton[func]:setEnabled(false)
+	end
+end
+
+function AdminGUI:insertSearchResult(resultPlayers)
+	self.m_PlayersOfflineGrid:clear()
+	for index, pname in pairs(resultPlayers) do
+		self.m_PlayersOfflineGrid:addItem(pname)
 	end
 end
 
