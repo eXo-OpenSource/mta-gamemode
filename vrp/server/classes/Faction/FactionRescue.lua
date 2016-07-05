@@ -44,7 +44,7 @@ function FactionRescue:countPlayers()
 	local amount = 0
 	for index,faction in pairs(factions) do
 		if faction:isRescueFaction() then
-			amount = amount+faction:getOnlinePlayers()
+			amount = amount + #faction:getOnlinePlayers()
 		end
 	end
 	return amount
