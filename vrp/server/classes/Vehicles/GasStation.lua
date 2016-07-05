@@ -28,6 +28,9 @@ end
 
 function GasStation.initializeAll()
 	GasStation:new(Vector3(1937.5, -1773, 12.5))
+	GasStation:new(Vector3(1005.48, -939.98, 41.5))
+
+
 end
 
 addEvent("gasStationFill", true)
