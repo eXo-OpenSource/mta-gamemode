@@ -263,7 +263,6 @@ PlayerAttachObjects = {
 	[2912] = {["model"] = 2912, ["name"] = "Waffenkiste", ["pos"] = Vector3(-0.09, 0.35, 0.45), ["rot"] = Vector3(10, 0, 0)}
 }
 
-PLAYER_DEATH_TIME = 3*60*1000
 VEHICLE_SPECIAL_SMOKE = {[512] = true, [513] = true}
 VEHICLE_SPECIAL_TEXTURE = {
 	[560] = "#emapsultanbody256",
@@ -352,3 +351,7 @@ WEAPON_IDS = {}
 for id, name in pairs(WEAPON_NAMES) do
 	WEAPON_IDS[name] = id
 end
+
+DEATH_TIME = 30000
+DEATH_TIME_PREMIUM = 15000
+DEATH_TIME_ADMIN = 5000

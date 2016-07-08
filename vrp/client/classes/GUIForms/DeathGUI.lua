@@ -11,7 +11,7 @@ function DeathGUI:constructor(time)
 	self.m_CountdownLabel = GUILabel:new(0, 80, self.m_Width-10, 50, _("%d Sekunden", self.m_Seconds), self):setAlignX("right")
 	HUDUI:getSingleton():hide()
 	setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
-	
+
 end
 
 function DeathGUI:destructor()
@@ -24,7 +24,6 @@ function DeathGUI:decreaseSeconds()
 	self.m_Seconds = self.m_Seconds-1
 	self.m_CountdownLabel:setText(_("%d Sekunden", self.m_Seconds))
 	if self.m_Seconds <= 0 then
-		localPlayer:startHalleluja()
 		delete(self)
 	end
 end
