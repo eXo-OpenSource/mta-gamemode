@@ -106,23 +106,10 @@ function LocalPlayer:Event_SendToHospital()
 	-- Play knock out effect
 	FadeOutShader:new()
 	setTimer(function()
-			setCameraInterior(0)
-			localPlayer:setPosition(-2011.20, -61.22, 1047.65)
-			localPlayer:setInterior(0, -2011.20, -61.22, 1047.65)
-			localPlayer:setDimension(0)
-			CutscenePlayer:getSingleton():playCutscene("Hospital",
-				function()
-					DeathGUI:new(30000)
-					fadeCamera(false,0.5,0,0,0)
-					setTimer(
-						function()
-							fadeCamera(true,0.5)
-							setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
-						end, 5000, 1
-					)
-
-				end
-			)
+			DeathGUI:new(30000)
+			fadeCamera(false,0.5,0,0,0)
+			fadeCamera(true,0.5)
+			setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
 	end, 6000, 1)
 end
 
@@ -153,15 +140,19 @@ function LocalPlayer:playerRescueWasted()
 			sound:destroy()
 		end
 		fadeCamera(false, 1)
-
+		local DEATH_TIME = 30000
 		setTimer( -- Todo: Remove later
 			function ()
-				HUDRadar:getSingleton():show()
-				HUDUI:getSingleton():show()
-				showChat(true)
+				fadeCamera(true,0.5)
+				DeathGUI:new(DEATH_TIME)
+				setTimer(function()
+					HUDRadar:getSingleton():show()
+					HUDUI:getSingleton():show()
+					showChat(true)
+					-- Trigger it back to the Server (TODO: Maybe is this Event unsafe..?)
+					triggerServerEvent("factionRescueWastedFinished", localPlayer)
+				end, DEATH_TIME, 1)
 
-				-- Trigger it back to the Server (TODO: Maybe is this Event unsafe..?)
-				triggerServerEvent("factionRescueWastedFinished", localPlayer)
 			end, 3000, 1
 		)
 	end
