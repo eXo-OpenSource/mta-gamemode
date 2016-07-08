@@ -57,7 +57,7 @@ function GunBoxGUI:addSlot(id, posX, posY)
     self.m_WeaponSlots[id].Amount = GUILabel:new(posX+60, posY+25, 70, 20, "", self.m_Window):setFontSize(1)
     self.m_WeaponSlots[id].TakeButton = GUIButton:new(posX+60, posY+45, 70, 20, "<<", self.m_Window):setFontSize(1):setBackgroundColor(self.ms_SlotsSettings["weapon"].btnColor)
     self.m_WeaponSlots[id].TakeButton:setEnabled(false)
-    self.m_WeaponSlots[id].TakeButton.onLeftClick = function() self:fromTrunk(id) end
+    self.m_WeaponSlots[id].TakeButton.onLeftClick = function() self:fromBox(id) end
 
     if id > 3 and not localPlayer:isPremium() then
         self.m_WeaponSlots[id].Image:setImage("files/images/Other/premium.png")
@@ -66,10 +66,10 @@ end
 
 function GunBoxGUI:loadPlayerWeapons()
     self.m_MyWeaponsGrid:clear()
-    for i=2,12 do
-		local weaponId = getPedWeapon(localPlayer,i)
+    for i=2, 12 do
+		local weaponId = getPedWeapon(localPlayer, i)
 		if weaponId and weaponId ~= 0 then
-            item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponID], getPedTotalAmmo(localPlayer, i))
+            item = self.m_MyWeaponsGrid:addItem(WEAPON_NAMES[weaponId], getPedTotalAmmo(localPlayer, i))
             item.onLeftClick = function()
                 self.m_SelectedItem = weaponId
                 self.m_SelectedItemAmount = getPedTotalAmmo(localPlayer, i)
@@ -102,6 +102,7 @@ function GunBoxGUI:refreshData(weapons)
             else
                 self.m_WeaponSlots[index].TakeButton:setEnabled(false)
                 self.m_WeaponSlots[index].Amount:setText("")
+                self.m_WeaponSlots[index].Label:setText("n/a")
                 self.m_WeaponSlots[index].Image:setImage("files/images/Other/premium.png")
             end
 		end
@@ -122,7 +123,7 @@ function GunBoxGUI:ToBox()
     triggerServerEvent("gunBoxAddWeapon", localPlayer, self.m_SelectedItem, self.m_SelectedItemAmount)
 end
 
-function GunBoxGUI:fromTrunk(id)
+function GunBoxGUI:fromBox(id)
     if self.m_WeaponSlots[id].Label:getText() ~= self.ms_SlotsSettings["weapon"].emptyText then
         triggerServerEvent("gunBoxTakeWeapon", localPlayer, id)
         self.m_MyWeaponsGrid:setVisible(false)

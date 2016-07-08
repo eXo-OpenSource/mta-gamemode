@@ -436,7 +436,7 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 					slot["WeaponId"] = 0
 					slot["Amount"] = 0
 					client:giveWeapon(weaponId, amount)
-					client:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deiner Waffenbox (Slot %d) genommen!", client, WEAPON_NAMES[weaponID], amount, slotId))
+					client:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deiner Waffenbox (Slot %d) genommen!", client, WEAPON_NAMES[weaponId], amount, slotId))
 					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 					return
 				else
