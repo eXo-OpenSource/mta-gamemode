@@ -748,6 +748,7 @@
 	<vrpfile src="files/images/Other/blood.png"/>
 	<vrpfile src="files/images/Other/Neon.png"/>
 	<vrpfile src="files/images/Other/bubble.png"/>
+	<vrpfile src="files/images/Other/premium.png"/>
 
 	<vrpfile src="files/images/Minigames/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Minigames/SniperGame.png"/>

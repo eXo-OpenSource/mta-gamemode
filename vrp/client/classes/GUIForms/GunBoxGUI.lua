@@ -58,6 +58,10 @@ function GunBoxGUI:addSlot(id, posX, posY)
     self.m_WeaponSlots[id].TakeButton = GUIButton:new(posX+60, posY+45, 70, 20, "<<", self.m_Window):setFontSize(1):setBackgroundColor(self.ms_SlotsSettings["weapon"].btnColor)
     self.m_WeaponSlots[id].TakeButton:setEnabled(false)
     self.m_WeaponSlots[id].TakeButton.onLeftClick = function() self:fromTrunk(id) end
+
+    if id > 3 and not localPlayer:isPremium() then
+        self.m_WeaponSlots[id].Image:setImage("files/images/Other/premium.png")
+    end
 end
 
 function GunBoxGUI:loadPlayerWeapons()
@@ -82,18 +86,24 @@ function GunBoxGUI:refreshData(weapons)
     for index, weapon in pairs(weapons) do
 		index = tonumber(index)
 		if self.m_WeaponSlots[index] then
-			if weapon["WeaponId"] > 0 then
-	            local weaponName = WEAPON_NAMES[weapon["WeaponId"]]
-	            self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
-	            self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
-	            self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])
-	            self.m_WeaponSlots[index].TakeButton:setEnabled(true)
-	        else
-	            self.m_WeaponSlots[index].Label:setText(self.ms_SlotsSettings["weapon"].emptyText)
-	            self.m_WeaponSlots[index].Amount:setText("")
-	            self.m_WeaponSlots[index].Image:setImage("files/images/Other/noImg.png")
-	            self.m_WeaponSlots[index].TakeButton:setEnabled(false)
-	        end
+            if index <= 3 or index > 3 and localPlayer:isPremium() then
+    			if weapon["WeaponId"] > 0 then
+    	            local weaponName = WEAPON_NAMES[weapon["WeaponId"]]
+    	            self.m_WeaponSlots[index].Label:setText(weaponName:len() <= 6 and weaponName or ("%s (...)"):format(weaponName:sub(1, 6)))
+    	            self.m_WeaponSlots[index].Amount:setText(_("%d Schuss", weapon["Amount"]))
+    	            self.m_WeaponSlots[index].Image:setImage(WeaponIcons[weapon.WeaponId])
+    	            self.m_WeaponSlots[index].TakeButton:setEnabled(true)
+    	        else
+    	            self.m_WeaponSlots[index].Label:setText(self.ms_SlotsSettings["weapon"].emptyText)
+    	            self.m_WeaponSlots[index].Amount:setText("")
+    	            self.m_WeaponSlots[index].Image:setImage("files/images/Other/noImg.png")
+    	            self.m_WeaponSlots[index].TakeButton:setEnabled(false)
+    	        end
+            else
+                self.m_WeaponSlots[index].TakeButton:setEnabled(false)
+                self.m_WeaponSlots[index].Amount:setText("")
+                self.m_WeaponSlots[index].Image:setImage("files/images/Other/premium.png")
+            end
 		end
     end
     setTimer(function()

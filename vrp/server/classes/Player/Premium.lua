@@ -29,6 +29,6 @@ function Premium:constructor()
 	end
 end
 
-function Premium:checkPremium()
-
+function Premium:isPremium()
+	return self.m_Premium
 end
