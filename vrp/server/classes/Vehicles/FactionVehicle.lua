@@ -23,8 +23,8 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
 		if factionCarColors[self.m_Faction:getId()] then
-			local fR, fB, fG = factionCarColors[self.m_Faction:getId()].r, factionCarColors[self.m_Faction:getId()].b, factionCarColors[self.m_Faction:getId()].g
-			setVehicleColor(self, r, g, b, fR, fG, fB)
+			local color = factionCarColors[self.m_Faction:getId()]
+			setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
 		else
 			setVehicleColor(self, r, g, b)
 		end
