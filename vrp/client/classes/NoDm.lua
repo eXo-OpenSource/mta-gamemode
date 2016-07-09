@@ -1,7 +1,7 @@
 NoDm = inherit(Singleton)
 NoDm.Zones = {
 	[1] = {Vector3(1399.1123046875,-1862.453125, 12), Vector3(160,120,15)},
-	[2] = {Vector3(1322.850219726,-1721.6591796875, 12), Vector3(92,120, 15)}
+	[2] = {Vector3(1322.850219726,-1721.6591796875, 12), Vector3(92,120, 15)},
 }
 
 function NoDm:constructor()

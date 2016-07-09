@@ -371,6 +371,6 @@ function Account.getIdFromName(name)
 end
 
 addEventHandler("remoteClientSpawn", root, function()
-	source:spawn()
+	client:spawn()
 end
 )

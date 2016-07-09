@@ -69,7 +69,7 @@ function Growable:getObject()
 end
 
 function Growable:harvest(player)
-	if player:getName() == self.m_Owner then
+	if player:getName() == self.m_Owner or (player:getFaction() and player:getFaction():isStateFaction()) then
 		local amount = self.m_Size*self.ms_ItemPerSize
 		if player:getInventory():getFreePlacesForItem(self.ms_Item) >= amount then
 			player:sendInfo(_("Du hast %d %s geerntet!", player, amount, self.ms_Item))

@@ -89,6 +89,9 @@ function Core:constructor()
 	--// Gangwar
 	Gangwar:new()
 
+	-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
+	setHeatHaze(0)
+
 	-- Generate Package
 	local xml = xmlLoadFile("meta.xml")
 	local files = {}
