@@ -20,9 +20,6 @@ function FactionRescue:constructor()
 	VehicleBarrier:new(Vector3(1743.09, -1742.30, 13.30), Vector3(0, 90, -180)).onBarrierHit = bind(self.onBarrierHit, self)
 	VehicleBarrier:new(Vector3(1740.59, -1807.80, 13.39), Vector3(0, 90, -15.75)).onBarrierHit = bind(self.onBarrierHit, self)
 
-	-- Register in Player Hook
-	PlayerManager:getSingleton():getWastedHook():register(bind(self.Event_OnPlayerWasted, self))
-
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("factionRescueHealPlayerQuestion", root, bind(self.Event_healPlayerQuestion, self))
@@ -288,7 +285,15 @@ end
 --]]
 
 function FactionRescue:createDeathPickup(player, ...)
-	player.m_DeathPickup = Pickup(player:getPosition(), 3, 1254, 0)
+	local pos = player:getPosition()
+
+	player.m_DeathPickup = Pickup(pos, 3, 1254, 0)
+
+	for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
+		rescuePlayer:sendShortMessage(("%s ist gestorben.\nPosition: %s - %s"):format(player:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
+		rescuePlayer:triggerEvent("rescueCreateDeathBlip", player)
+	end
+
 	nextframe(function () player:setPosition(player.m_DeathPickup:getPosition()) end)
 	--player:kill()
 
@@ -302,8 +307,20 @@ function FactionRescue:createDeathPickup(player, ...)
 		end
 	)
 
+	setTimer(
+		function ()
+			if player.m_DeathPickup then
+				player.m_DeathPickup:destroy()
+				player.m_DeathPickup = nil
+				for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
+					rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+				end
+			end
+		end,
+	player:getPublicSync("DeathTime"), 1)
 	-- Create PlayerDeathTimeout
-	self:createDeathTimeout(player, ...)
+	--self:createDeathTimeout(player, ...)
+
 end
 
 function FactionRescue:createDeathTimeout(player, callback)
@@ -318,24 +335,6 @@ function FactionRescue:createDeathTimeout(player, callback)
 		end, 5000, 1
 		-- PLAYER_DEATH_TIME
 	)
-end
-
-function FactionRescue:Event_OnPlayerWasted(player)
-	-- if we return true here, we have to handle the spawn in this function
-	-- if we retrun false here, we don't have to do this
-
-	local faction = FactionManager:getSingleton():getFromId(4)
-	if #faction:getOnlinePlayers() > 0 then
-		if not player.m_DeathPickup then
-			faction:sendShortMessage(("%s died.\nPosition: %s - %s"):format(player:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
-			self:createDeathPickup(player, function () player:triggerEvent("playerRescueWasted") end)
-			return true
-		else -- This should never never happen!
-			outputDebug("Internal Error! Player died while he is Dead. Dafuq?")
-		end
-	end
-
-	return false
 end
 
 function FactionRescue:Event_OnPlayerWastedFinish()

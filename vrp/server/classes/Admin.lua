@@ -70,7 +70,7 @@ end
 function Admin:addAdmin(player,rank)
 	outputDebug("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
-
+    player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
     if DEBUG then
         bindKey(player, "j", "down", function(player)
             if not doesPedHaveJetPack(player) then

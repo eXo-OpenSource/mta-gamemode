@@ -180,9 +180,21 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 		return
 	end
 
-	source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
-	source:triggerEvent("playerSendToHospital")
-	setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, source)
+	source:triggerEvent("playerWasted")
+
+	if FactionRescue:getSingleton():countPlayers() > 0 then
+		if not source.m_DeathPickup then
+			FactionRescue:getSingleton():createDeathPickup(source)
+			return true
+		else -- This should never never happen!
+			outputDebug("Internal Error! Player died while he is Dead. Dafuq?")
+		end
+	end
+
+	return false
+	--source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
+	--source:triggerEvent("playerSendToHospital")
+	--setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, source)
 end
 
 

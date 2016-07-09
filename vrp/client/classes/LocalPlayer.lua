@@ -21,8 +21,7 @@ function LocalPlayer:constructor()
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
 	addEventHandler("onClientPlayerWasted", root, bind(self.playerWasted, self))
-	addEventHandler("playerSendToHospital", root, bind(self.Event_SendToHospital, self))
-	addEventHandler("playerRescueWasted", root, bind(self.playerRescueWasted, self))
+	addEventHandler("playerWasted", root, bind(self.Event_playerWasted, self))
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
 	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
@@ -106,9 +105,7 @@ function LocalPlayer:Event_SendToHospital()
 	-- Play knock out effect
 	FadeOutShader:new()
 	setTimer(function()
-			local time = DEATH_TIME
-			if localPlayer:isPremium() then time = DEATH_TIME_PREMIUM end
-			if localPlayer:getRank() > 0 then time = DEATH_TIME_ADMIN end
+			local time = self:getPublicSync("DeathTime")-6000
 			DeathGUI:new(time)
 			fadeCamera(false,0.5,0,0,0)
 			fadeCamera(true,0.5)
@@ -137,15 +134,13 @@ function LocalPlayer:startHalleluja()
 	)
 end
 
-function LocalPlayer:playerRescueWasted()
+function LocalPlayer:Event_playerWasted()
 	local callback = function (sound)
 		if isElement(sound) then
 			sound:destroy()
 		end
 
-		local time = DEATH_TIME
-		if localPlayer:isPremium() then time = DEATH_TIME_PREMIUM end
-		if localPlayer:getRank() > 0 then time = DEATH_TIME_ADMIN end
+		local time = self:getPublicSync("DeathTime")-6000
 
 		fadeCamera(false, 1)
 		setTimer( -- Todo: Remove later

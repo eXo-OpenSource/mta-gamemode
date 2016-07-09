@@ -20,6 +20,9 @@ function Premium:constructor()
 	self:setPublicSync("Premium", self.m_Premium)
 
 	if self.m_Premium then
+		if self:getRank() > 0 then
+			self:setPublicSync("DeathTime", DEATH_TIME_PREMIUM)
+		end
 		setTimer(function()
 			self:sendShortMessage(_([[
 			Dein Premiumaccount ist gültig

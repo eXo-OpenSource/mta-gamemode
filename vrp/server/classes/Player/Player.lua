@@ -127,9 +127,7 @@ function Player:loadCharacter()
 	-- Send initial sync
 	self:sendInitialSync()
 
-
-
-
+	self:setPublicSync("DeathTime", DEATH_TIME)
 	self:setPublicSync("Rank", self:getRank())
 
 	if self:getRank() > 0 then
