@@ -218,6 +218,18 @@ function FactionRescue:Event_RemoveStretcher()
 							source:setDoorOpenRatio(4, 0)
 							source:setDoorOpenRatio(5, 0)
 
+							if client.m_RescueStretcher.player then
+								local deadPlayer = client.m_RescueStretcher.player
+								if deadPlayer:isDead() then
+									--TODO: Abort DeathGUI - Spawn player near vehicle
+									deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
+									client:sendShortMessage(_("Du hast den Spieler erfolgreich wiederbelebt!", client))
+
+								else
+									client:sendShortMessage(_("Der Spieler ist nicht Tod!", client))
+								end
+							end
+
 							client.m_RescueStretcher:destroy()
 							client.m_RescueStretcher = nil
 						end, 3000, 1, source, client
@@ -301,8 +313,15 @@ function FactionRescue:createDeathPickup(player, ...)
 		function (hitPlayer)
 			if hitPlayer:getFaction() and hitPlayer:getFaction():isRescueFaction() then
 				if hitPlayer:getPublicSync("Faction:Duty") and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
-					hitPlayer:sendShortMessage(("He's dead son.\nIn Memories of %s"):format(player:getName()))
+					if hitPlayer.m_RescueStretcher then
+						player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
+						hitPlayer.m_RescueStretcher.player = player
+					else
+						hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
+					end
 				end
+			else
+				hitPlayer:sendShortMessage(("He's dead son.\nIn Memories of %s"):format(player:getName()))
 			end
 		end
 	)
