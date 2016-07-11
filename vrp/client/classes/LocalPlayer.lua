@@ -99,6 +99,7 @@ function LocalPlayer:toggleDamage( bstate )
 end
 
 function LocalPlayer:abortDeathGUI()
+	if self.m_FadeOutShader then delete(self.m_FadeOutShader) end
 	if DeathGUI:isInstantiated() then
 		delete(DeathGUI:getSingleton())
 	end
@@ -112,7 +113,7 @@ end
 
 function LocalPlayer:Event_SendToHospital()
 	-- Play knock out effect
-	FadeOutShader:new()
+	self.m_FadeOutShader = FadeOutShader:new()
 	setTimer(function()
 			local time = self:getPublicSync("DeathTime")-6000
 			DeathGUI:new(time)
@@ -188,7 +189,7 @@ function LocalPlayer:Event_playerWasted()
 
 			if (getTickCount()-soundStart) >= (soundLength*1000) then
 				-- Play knock out effect
-				FadeOutShader:new()
+				self.m_FadeOutShader = FadeOutShader:new()
 				setTimer(callback, 4000, 1, sound, start)
 
 				removeEventHandler("onClientPreRender", root, getThisFunction())

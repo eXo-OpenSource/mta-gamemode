@@ -159,7 +159,7 @@ function FactionRescue:Event_GetStretcher()
 
 		local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
 		outputDebug(distance)
-		if distance >= 2.5 and distance <= 4 then
+		if distance >= 1.5 and distance <= 4 then
 			-- Open the doors
 			source:setDoorState(4, 0)
 			source:setDoorState(5, 0)
@@ -186,12 +186,6 @@ function FactionRescue:Event_GetStretcher()
 			)
 		else
 			client:sendWarning(_("Die Trage kann in dieser Position nicht ausgeladen werden!", client))
-			local tempMarker = createMarker(source:getPosition() + source.matrix.forward*-7.5, "corona", 1)
-			setTimer(
-				function ()
-					tempMarker:destroy()
-				end, 5000, 1
-			)
 		end
 	end
 end
@@ -202,7 +196,7 @@ function FactionRescue:Event_RemoveStretcher()
 		if client.m_RescueStretcher  then
 			if client.m_RescueStretcher.m_Vehicle == source then
 				local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
-				if distance >= 2.5 and distance <= 4 then
+				if distance >= 1.5 and distance <= 4 then
 					-- Move it into the Vehicle
 					client.m_RescueStretcher:detach()
 					client.m_RescueStretcher:setRotation(client:getRotation())
@@ -221,7 +215,6 @@ function FactionRescue:Event_RemoveStretcher()
 							if client.m_RescueStretcher.player then
 								local deadPlayer = client.m_RescueStretcher.player
 								if deadPlayer:isDead() then
-									--TODO: Abort DeathGUI - Spawn player near vehicle
 									local pos = source:getPosition()
 									pos.x = pos.x+3
 									deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
@@ -240,13 +233,7 @@ function FactionRescue:Event_RemoveStretcher()
 						end, 3000, 1, source, client
 					)
 				else
-					client:sendWarning(_("Die Trage kann in dieser Position nicht ausgeladen werden!", client))
-					local tempMarker = createMarker(source:getPosition() + source.matrix.forward*-7.5, "corona", 1)
-					setTimer(
-						function ()
-							tempMarker:destroy()
-						end, 5000, 1
-					)
+					client:sendWarning(_("Die Trage kann in dieser Position nicht eingeladen werden!", client))
 				end
 			else
 				client:sendError(_("In dieses Fahrzeug kannst du die Trage nicht einladen!", client))
