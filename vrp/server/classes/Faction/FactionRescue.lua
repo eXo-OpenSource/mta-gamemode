@@ -222,9 +222,14 @@ function FactionRescue:Event_RemoveStretcher()
 								local deadPlayer = client.m_RescueStretcher.player
 								if deadPlayer:isDead() then
 									--TODO: Abort DeathGUI - Spawn player near vehicle
+									local pos = source:getPosition()
+									pos.x = pos.x+3
 									deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
 									client:sendShortMessage(_("Du hast den Spieler erfolgreich wiederbelebt!", client))
-
+									deadPlayer:setCameraTarget(player)
+									deadPlayer:respawn(Vector3(pos))
+									deadPlayer:fadeCamera(true, 1)
+									deadPlayer:triggerEvent("abortDeathGUI")
 								else
 									client:sendShortMessage(_("Der Spieler ist nicht Tod!", client))
 								end

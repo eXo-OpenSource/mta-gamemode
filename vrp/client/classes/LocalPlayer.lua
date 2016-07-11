@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage", "playerSendToHospital" }
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage", "playerSendToHospital", "abortDeathGUI" }
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -24,6 +24,9 @@ function LocalPlayer:constructor()
 	addEventHandler("playerWasted", root, bind(self.Event_playerWasted, self))
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
 	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
+	addEventHandler("abortDeathGUI", self, bind( self.abortDeathGUI, self ))
+
+
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 end
 
@@ -92,6 +95,12 @@ function LocalPlayer:toggleDamage( bstate )
 		addEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
 	else
 		removeEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
+	end
+end
+
+function LocalPlayer:abortDeathGUI()
+	if DeathGUI:isInstantiated() then
+		delete(DeathGUI:getSingleton())
 	end
 end
 
