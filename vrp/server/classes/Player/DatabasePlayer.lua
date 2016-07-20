@@ -427,11 +427,11 @@ end
 
 function DatabasePlayer:setJob(job)
 	if self:isActive() then
-		--if job then
-		--	JobManager:getSingleton():startJobForPlayer(job, self)
-		--else
-		--	JobManager:getSingleton():stopJobForPlayer(self)
-		--end
+		if job then
+			JobManager:getSingleton():startJobForPlayer(job, self)
+		else
+			JobManager:getSingleton():stopJobForPlayer(self)
+		end
 		self:setPublicSync("JobId", job and job:getId() or 0)
 	end
 	self.m_Job = job
