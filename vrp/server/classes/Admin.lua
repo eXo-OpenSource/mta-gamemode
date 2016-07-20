@@ -43,7 +43,7 @@ function Admin:constructor()
     addCommandHandler("warn", adminCommandBind)
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
-    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer"}
+    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -52,7 +52,7 @@ function Admin:constructor()
     addEventHandler("adminPortVehicle", root, bind(self.Event_portVehicle, self))
     addEventHandler("adminPortToVehicle", root, bind(self.Event_portToVehicle, self))
     addEventHandler("adminSeachPlayer", root, bind(self.Event_seachPlayer, self))
-
+    addEventHandler("adminSeachPlayerInfo", root, bind(self.Event_getPlayerInfo, self))
 end
 
 function Admin:destructor()
@@ -95,12 +95,46 @@ function Admin:openAdminMenu( player )
 end
 
 function Admin:Event_seachPlayer(name)
-    local resultPlayers = {}
-    local result = sql:queryFetch("SELECT Id, Name FROM ??_account WHERE Name LIKE ?;", sql:getPrefix(), "%"..name.."%")
-    for i, row in pairs(result) do
-        resultPlayers[row.Id] = row.Name
+    if client:getRank() >= RANK.Supporter then
+        local resultPlayers = {}
+        local result = sql:queryFetch("SELECT Id, Name FROM ??_account WHERE Name LIKE ?;", sql:getPrefix(), ("%%%s%%"):format(name))
+        for i, row in pairs(result) do
+            resultPlayers[row.Id] = row.Name
+        end
+        client:triggerEvent("adminReceiveSeachedPlayers", resultPlayers)
     end
-    client:triggerEvent("adminReceiveSeachedPlayers", resultPlayers)
+end
+
+function Admin:Event_getPlayerInfo(Id, name)
+    local client = client
+    if client:getRank() >= RANK.Supporter then
+        Async.create( -- player:load() needs a aynchronous execution
+            function ()
+                local player, isOffline = DatabasePlayer.get(Id)
+                if player then
+                    if isOffline then
+                        player:load()
+                    end
+
+                    local data = {
+                        Name = name;
+                        PlayTime = player:getPlayTime();
+                        Job = player:getJob() and player:getJob():getId() or false;
+                        Money = player:getMoney();
+                        Faction = player:getFaction() and player:getFaction():getShortName() or false;
+                        Company = player:getCompany() and player:getCompany():getShortName() or false;
+                        Group = player:getGroup() and player:getGroup():getName() or false;
+                        Skin = player:getSkin() or false;
+                    }
+
+                    if isOffline then
+                        delete(player)
+                    end
+                    client:triggerEvent("adminReceiveSeachedPlayerInfo", data)
+                end
+            end
+        )()
+    end
 end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)

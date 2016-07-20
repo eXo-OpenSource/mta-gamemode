@@ -15,7 +15,7 @@ end
 
 inherit(Singleton, AdminGUI)
 
-addRemoteEvents{"showAdminMenu", "announceText", "setDamageFree", "adminReceiveSeachedPlayers"}
+addRemoteEvents{"showAdminMenu", "announceText", "setDamageFree", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo"}
 
 function AdminGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-200, 600, 400, false, false)
@@ -91,6 +91,13 @@ function AdminGUI:constructor()
 
 	self.m_PlayersOfflineGrid = GUIGridList:new(10, 70, 200, 300, tabOffline)
 	self.m_PlayersOfflineGrid:addColumn(_"Spieler", 1)
+	self.m_PlayerOfflineNameLabel = GUILabel:new(220, 10, 180, 20, _"Spieler: -", tabOffline)
+	self.m_PlayerOfflineTimeLabel = GUILabel:new(220, 35, 180, 20, _"Spielstunden: -", tabOffline)
+	self.m_PlayerOfflineJobLabel = GUILabel:new(220, 60, 180, 20, _"Job: -", tabOffline)
+	self.m_PlayerOfflineMoneyLabel = GUILabel:new(220, 85, 180, 20, _"Geld: -", tabOffline)
+	self.m_PlayerOfflineFactionLabel = GUILabel:new(410, 10, 180, 20, _"Fraktion: -", tabOffline)
+	self.m_PlayerOfflineCompanyLabel = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabOffline)
+	self.m_PlayerOfflineGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabOffline)
 	self:addAdminButton("offlineTimeban", "Timeban", 220, 290, 180, 30, Color.Red, tabOffline)
 	self:addAdminButton("offlinePermaban", "Permaban", 410, 290, 180, 30, Color.Red, tabOffline)
 
@@ -112,6 +119,11 @@ function AdminGUI:constructor()
 			AdminGUI:getSingleton():insertSearchResult(resultPlayers)
 		end
 	)
+	addEventHandler("adminReceiveSeachedPlayerInfo", root,
+		function(data)
+			AdminGUI:getSingleton():onOfflinePlayerInfo(data)
+		end
+	)
 
 	self:refreshButtons()
 end
@@ -127,12 +139,38 @@ end
 
 function AdminGUI:insertSearchResult(resultPlayers)
 	self.m_PlayersOfflineGrid:clear()
-	local item
-
 	for index, pname in pairs(resultPlayers) do
-		item = self.m_PlayersOfflineGrid:addItem(pname)
+		local item = self.m_PlayersOfflineGrid:addItem(pname)
 		item.name = pname
+		item.onLeftClick = function ()
+			self:onOfflinePlayerInfo() -- Reset
+			triggerServerEvent("adminSeachPlayerInfo", root, index, pname)
+		end
 	end
+end
+
+function AdminGUI:onOfflinePlayerInfo(info)
+	local info = info
+	if not info then
+		info = {
+			Name = false;
+			PlayTime = 0;
+			Faction = false;
+			Company = false;
+			Group = false;
+			Job = false;
+			Money = false;
+		}
+	end
+
+	self.m_PlayerOfflineNameLabel:setText(_("Spieler: %s", info.Name or "-"))
+	local hours, minutes = math.floor(info.PlayTime/60), (info.PlayTime - math.floor(info.PlayTime/60)*60)
+	self.m_PlayerOfflineTimeLabel:setText(_("Spielzeit: %s:%s h", hours, minutes))
+	self.m_PlayerOfflineFactionLabel:setText(_("Fraktion: %s", info.Faction or _"-"))
+	self.m_PlayerOfflineCompanyLabel:setText(_("Unternehmen: %s", info.Company or _"-"))
+	self.m_PlayerOfflineGroupLabel:setText(_("Gang/Firma: %s", info.Group or _"-"))
+	self.m_PlayerOfflineJobLabel:setText(_("Job: %s", info.Job and JobManager:getSingleton():getFromId(info.Job):getName() or _"-"))
+	self.m_PlayerOfflineMoneyLabel:setText(_("Geld: %s$", info.Money or "-"))
 end
 
 function AdminGUI:onSelectPlayer(player)

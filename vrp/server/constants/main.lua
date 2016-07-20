@@ -121,3 +121,8 @@ BAIL_PRICES =
 	[5] = 3600,
 	[6] = 4500,
 }
+
+RESOURCES_TO_STOP = {
+    "scoreboard";
+    "helpmanager";
+}

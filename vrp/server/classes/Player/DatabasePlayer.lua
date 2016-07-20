@@ -78,7 +78,6 @@ end
 
 function DatabasePlayer:load()
 	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
-
 	if not row then
 		return false
 	end
@@ -237,9 +236,11 @@ function DatabasePlayer:setWarns()
 	end
 	self.m_Warns = rows
 
-	self:setPublicSync("Warns", rows)
-	if #rows > 0 then
-		outputChatBox(_("Vorsicht du hast bereits %d Verwarnung/en!", self, #rows),self, 255,0,0)
+	if self:isActive() then
+		self:setPublicSync("Warns", rows)
+		if #rows > 0 then
+			outputChatBox(_("Vorsicht du hast bereits %d Verwarnung/en!", self, #rows),self, 255,0,0)
+		end
 	end
 end
 
@@ -261,8 +262,10 @@ function DatabasePlayer:setWantedLevel(level, disableAchievment)
 
 	-- set data
 	self.m_WantedLevel = level
-	self:setPublicSync("Wanteds", level)
-	setPlayerWantedLevel(self, level)
+	if self:isActive() then
+		self:setPublicSync("Wanteds", level)
+		setPlayerWantedLevel(self, level)
+	end
 end
 
 function DatabasePlayer:setCompany(company)
@@ -559,4 +562,38 @@ function DatabasePlayer:hasCorrectLicense(vehicle)
 		return self:hasPilotsLicense()
 	end
 	return true
+end
+
+function DatabasePlayer:setJailNewTime()
+	if self.m_JailStart then
+		local now = getRealTime().timestamp
+		if self.m_JailStart < now then
+			local dif = now - self.m_JailStart
+			local minutes = math.floor((dif % 3600) / 60)
+			self.m_JailTime = self.m_JailTime - minutes
+			if self.m_JailTime <= 0 then
+				if self:isActive() then
+					self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+					self:setRotation(0, 0, 90)
+				end
+				self.m_JailTime = 0
+				self.m_Bail = 0
+				self:setWantedLevel(0)
+			end
+		end
+	end
+end
+
+
+function DatabasePlayer:getRemainingPrisonTime()
+	if self:isActive() then
+		local timerLeft = false
+		if isTimer(self.m_PrisonTimer) then
+			timerLeft = getTimerDetails(self.m_PrisonTimer)/1000
+		end
+		if timerLeft then
+			self.m_PrisonTime = timerLeft
+		end
+	end
+	return self.m_PrisonTime
 end

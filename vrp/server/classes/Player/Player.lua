@@ -782,17 +782,6 @@ function Player:setModel( skin )
 	setElementModel( self, skin )
 end
 
-function Player:getRemainingPrisonTime()
-    local timerLeft = false
-	if isTimer(self.m_PrisonTimer) then
-		timerLeft = getTimerDetails(self.m_PrisonTimer)/1000
-	end
-	if timerLeft then
-		self.m_PrisonTime = timerLeft
-	end
-	return self.m_PrisonTime
-end
-
 function Player:endPrison()
 	self:setPosition(Vector3(1478.87, -1726.17, 13.55))
 	self:setDimension(0)
@@ -804,24 +793,6 @@ function Player:endPrison()
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
 	self.m_PrisonTime = 0
-end
-
-function Player:setJailNewTime()
-	if self.m_JailStart then
-		local now = getRealTime().timestamp
-		if self.m_JailStart < now then
-			local dif = now - self.m_JailStart
-			local minutes = math.floor((dif % 3600) / 60)
-			self.m_JailTime = self.m_JailTime - minutes
-			if self.m_JailTime <= 0 then
-				self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-				self:setRotation(0, 0, 90)
-				self.m_JailTime = 0
-				self.m_Bail = 0
-				self:setWantedLevel(0)
-			end
-		end
-	end
 end
 
 function Player:meChat(system, ...)

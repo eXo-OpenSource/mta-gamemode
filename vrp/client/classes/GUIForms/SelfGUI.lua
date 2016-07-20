@@ -287,7 +287,7 @@ function SelfGUI:constructor()
 		core:set("HUD", "defaultHealthArmor", state)
 		HUDUI:getSingleton():toggleDefaultHealthArmor(state)
 	end
-	
+
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
 	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
 	self.m_RadarChange:addItem("Normal")
@@ -375,8 +375,8 @@ function SelfGUI:onShow()
 	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
 
 	local x, y = self.m_JobNameLabel:getPosition()
-	if localPlayer:getJob() then
-		self.m_JobNameLabel:setText(localPlayer:getJob():getName())
+	if localPlayer:getJobName() ~= "-" then -- Tempfix (See: https://github.com/Jusonex/vRoleplay_Script/commit/fb4bfe8f12dc1da6896e1cddd8244f3c66b24ed3#commitcomment-18318712)
+		self.m_JobNameLabel:setText(localPlayer:getJobName())
 		self.m_JobQuitButton:setPosition(x + dxGetTextWidth(self.m_JobNameLabel:getText(), self.m_JobQuitButton:getFontSize(), self.m_JobQuitButton:getFont()) + 10, y)
 		self.m_JobQuitButton:setVisible(true)
 	else
