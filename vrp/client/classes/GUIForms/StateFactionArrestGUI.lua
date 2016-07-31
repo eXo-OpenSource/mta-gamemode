@@ -77,6 +77,8 @@ function StateFactionArrestGUI:factionArrestMitKaution()
 	local selectedItem = self.m_List:getSelectedItem()
 	if selectedItem and isElement(selectedItem.Player) then
 		triggerServerEvent("factionStateArrestPlayer", localPlayer,selectedItem.Player,true)
+		self.m_mitKaution:setEnabled(false)
+		self.m_ohneKaution:setEnabled(false)
 	else
 		ErrorBox:new(_"Du hast keinen Spieler ausgewählt!")
 	end
@@ -86,6 +88,8 @@ function StateFactionArrestGUI:factionArrestOhneKaution()
 	local selectedItem = self.m_List:getSelectedItem()
 	if selectedItem and isElement(selectedItem.Player) then
 		triggerServerEvent("factionStateArrestPlayer", localPlayer,selectedItem.Player,false)
+		self.m_mitKaution:setEnabled(false)
+		self.m_ohneKaution:setEnabled(false)
 	else
 		ErrorBox:new(_"Du hast keinen Spieler ausgewählt!")
 	end
