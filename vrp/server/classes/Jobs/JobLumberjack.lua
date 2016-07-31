@@ -16,9 +16,7 @@ function JobLumberjack:constructor()
 	self.m_DumpMarker = createMarker(-1969.8, -2432.6, 29.5, "corona", 4)
 	addEventHandler("onMarkerHit", self.m_DumpMarker, bind(JobLumberjack.dumpHit, self))
 
-	for i = 0, 5 do
-		AutomaticVehicleSpawner:new(455, 1089 - i*6, -299.9, 74.5, 0, 0, 180, function(v) setVehicleVariant(v, 255, 255) end, self)
-	end
+	self.m_Spawner = VehicleSpawner:new(1064.67, -300.79, 73, {"Flatbed"}, 180, bind(Job.requireVehicle, self))
 
 	addEvent("lumberjackTreeCut", true)
 	addEventHandler("lumberjackTreeCut", root, bind(JobLumberjack.Event_lumberjackTreeCut, self))
