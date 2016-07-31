@@ -550,6 +550,9 @@ function DatabasePlayer:setPrison(duration)
 end
 
 function DatabasePlayer:hasCorrectLicense(vehicle)
+	if table.find(NO_LICENSE_VEHICLES, vehicle:getModel()) then
+		return true
+	end
 	if vehicle:getVehicleType() == VehicleType.Automobile then
 		if table.find(TRUCK_MODELS, vehicle:getModel()) then
 			return self:hasTruckLicense()
