@@ -43,6 +43,7 @@ function JobHeliTransport:onCargoBobExplode()
 	player:setPosition(Vector3(1788.84, -2275.36, 26.78))
 	player:sendError(_("Dein Helikopter ist explodiert! Der Job wurde beendet!", player))
 	self.m_VehData[source] = nil
+	client:setData("JobHeliTransport:Money", 0)
 	player:triggerEvent("endHeliTransport")
 end
 
@@ -51,7 +52,7 @@ function JobHeliTransport:onCargoBobExit(player)
 	player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
 	source:destroy()
 	self.m_VehData[source] = nil
-
+	client:setData("JobHeliTransport:Money", 0)
 	player:triggerEvent("endHeliTransport")
 end
 
@@ -65,7 +66,13 @@ function JobHeliTransport:onPickupLoad()
 		self.m_VehData[vehicle].package:setAlpha(255)
 		self.m_VehData[vehicle].load = true
 		self.m_PickupPos = vehicle:getPosition()
-		client:sendInfo(_("Ladung aufgenommen! Liefere Sie nun ab!", client))
+		if client:getData("JobHeliTransport:Money") and client:getData("JobHeliTransport:Money") > 0 then
+			client:sendInfo(_("Du hast %d$ erhalten! Liefere die neue Ladung ab!", client, client:getData("JobHeliTransport:Money")))
+			client:giveMoney(client:getData("JobHeliTransport:Money"), "Helitransport-Job")
+			client:setData("JobHeliTransport:Money", 0)
+		else
+			client:sendInfo(_("Ladung aufgenommen! Liefere Sie nun ab!", client))
+		end
 		client:triggerEvent("jobHeliTransportCreateMarker", "delivery")
 	else
 		client:sendInfo(_("Falsches Fahrzeug!", client))
@@ -78,8 +85,8 @@ function JobHeliTransport:onDelivery()
 		self.m_VehData[vehicle].package:setAlpha(0)
 		self.m_VehData[vehicle].load = false
 		local distance = getDistanceBetweenPoints3D(self.m_PickupPos, vehicle:getPosition())
-		client:giveMoney(math.floor(distance/2), "Helitransport-Job")
-		client:sendInfo(_("Du hast die Ladung abgegeben und erhälst %d$! Hole eine neue am Ladepunkt!", client, math.floor(distance/2)))
+		client:setData("JobHeliTransport:Money", math.floor(distance/2))
+		client:sendInfo(_("Du hast die Ladung abgegeben! Flieg zurück und hole dir dein Geld ab!", client))
 		client:triggerEvent("jobHeliTransportCreateMarker", "pickup")
 	else
 		client:sendInfo(_("Falsches Fahrzeug!", client))
