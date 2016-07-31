@@ -18,7 +18,8 @@ function FactionRescue:constructor()
 
 	-- Barriers
 	VehicleBarrier:new(Vector3(1743.09, -1742.30, 13.30), Vector3(0, 90, -180)).onBarrierHit = bind(self.onBarrierHit, self)
-	VehicleBarrier:new(Vector3(1740.59, -1807.80, 13.39), Vector3(0, 90, -15.75)).onBarrierHit = bind(self.onBarrierHit, self)
+	VehicleBarrier:new(Vector3(1740.59, -1807.80, 13.40), Vector3(0, 90, -15.75)).onBarrierHit = bind(self.onBarrierHit, self)
+	VehicleBarrier:new(Vector3(1811.50, -1761.50, 13.40), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierHit, self)
 
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
@@ -194,49 +195,45 @@ function FactionRescue:Event_RemoveStretcher()
 	local faction = FactionManager:getSingleton():getFromId(4)
 	if client:getFaction() == faction then
 		if client.m_RescueStretcher  then
-			if client.m_RescueStretcher.m_Vehicle == source then
-				local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
-				if distance >= 1.5 and distance <= 4 then
-					-- Move it into the Vehicle
-					client.m_RescueStretcher:detach()
-					client.m_RescueStretcher:setRotation(client:getRotation())
-					client.m_RescueStretcher:setPosition(client:getPosition() + client.matrix.forward*1.4 + Vector3(0, 0, -0.5))
-					moveObject(client.m_RescueStretcher, 3000, source:getPosition() + source.matrix.forward*-2, Vector3(0, 0, source:getRotation().z - client:getRotation().z), "InOutQuad")
+			local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
+			if distance >= 1.5 and distance <= 4 then
+				-- Move it into the Vehicle
+				client.m_RescueStretcher:detach()
+				client.m_RescueStretcher:setRotation(client:getRotation())
+				client.m_RescueStretcher:setPosition(client:getPosition() + client.matrix.forward*1.4 + Vector3(0, 0, -0.5))
+				moveObject(client.m_RescueStretcher, 3000, source:getPosition() + source.matrix.forward*-2, Vector3(0, 0, source:getRotation().z - client:getRotation().z), "InOutQuad")
 
-					-- Enable Controls
-					client:toggleControlsWhileObjectAttached(true)
+				-- Enable Controls
+				client:toggleControlsWhileObjectAttached(true)
 
-					setTimer(
-						function(source, client)
-							-- Close the doors
-							source:setDoorOpenRatio(4, 0)
-							source:setDoorOpenRatio(5, 0)
+				setTimer(
+					function(source, client)
+						-- Close the doors
+						source:setDoorOpenRatio(4, 0)
+						source:setDoorOpenRatio(5, 0)
 
-							if client.m_RescueStretcher.player then
-								local deadPlayer = client.m_RescueStretcher.player
-								if deadPlayer:isDead() then
-									local pos = source:getPosition()
-									pos.x = pos.x+3
-									deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
-									client:sendShortMessage(_("Du hast den Spieler erfolgreich wiederbelebt!", client))
-									deadPlayer:setCameraTarget(player)
-									deadPlayer:respawn(Vector3(pos))
-									deadPlayer:fadeCamera(true, 1)
-									deadPlayer:triggerEvent("abortDeathGUI")
-								else
-									client:sendShortMessage(_("Der Spieler ist nicht Tod!", client))
-								end
+						if client.m_RescueStretcher.player then
+							local deadPlayer = client.m_RescueStretcher.player
+							if deadPlayer:isDead() then
+								local pos = source:getPosition()
+								pos.x = pos.x+3
+								deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
+								client:sendShortMessage(_("Du hast den Spieler erfolgreich wiederbelebt!", client))
+								deadPlayer:setCameraTarget(player)
+								deadPlayer:respawn(Vector3(pos))
+								deadPlayer:fadeCamera(true, 1)
+								deadPlayer:triggerEvent("abortDeathGUI")
+							else
+								client:sendShortMessage(_("Der Spieler ist nicht Tod!", client))
 							end
+						end
 
-							client.m_RescueStretcher:destroy()
-							client.m_RescueStretcher = nil
-						end, 3000, 1, source, client
-					)
-				else
-					client:sendWarning(_("Die Trage kann in dieser Position nicht eingeladen werden!", client))
-				end
+						client.m_RescueStretcher:destroy()
+						client.m_RescueStretcher = nil
+					end, 3000, 1, source, client
+				)
 			else
-				client:sendError(_("In dieses Fahrzeug kannst du die Trage nicht einladen!", client))
+				client:sendWarning(_("Die Trage kann in dieser Position nicht eingeladen werden!", client))
 			end
 		else
 			client:sendError(_("Du hast keine Trage!", client))

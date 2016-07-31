@@ -163,6 +163,15 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
+
+	if source:isFactionDuty() then
+		source:setDefaultSkin()
+		source.m_FactionDuty = false
+		takeAllWeapons(client)
+		source:setPublicSync("Faction:Duty",false)
+		source:getInventory():removeAllItem("Barrikade")
+	end
+
 	if killer and killer:getType() == "player" then
 		if killer ~= source then
 			if killer:isFactionDuty() and not source:isFactionDuty() then
@@ -190,6 +199,8 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 			outputDebug("Internal Error! Player died while he is Dead. Dafuq?")
 		end
 	end
+
+
 
 	return false
 	--source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
