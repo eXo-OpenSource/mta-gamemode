@@ -7,6 +7,8 @@
 -- ****************************************************************************
 CircuitBreaker = inherit(Singleton)
 
+six, siy = 400, 400 -- dev, todo: remove
+
 function CircuitBreaker:constructor()
 	self.WIDTH, self.HEIGHT = 1080, 650
 
@@ -52,6 +54,8 @@ function CircuitBreaker:loadImages()
 		"pcb",
 		"qfp44",
 		"sop8",
+		"LD1117",
+		"diode",
 		"smdcapacitor",
 		"smdresistor",
 	}
@@ -60,24 +64,7 @@ function CircuitBreaker:loadImages()
 		self[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
 	end
 
-	-- Precreate some collidable structures
-	local backgroundColor = tocolor(200, 0, 0, 150)
-	self.m_CollidableImages = {}
-	--self.m_CollidableImages.w350h100 =  DxRenderTarget(350, 100, true)
-	--self.m_CollidableImages.w150h300 =  DxRenderTarget(150, 300, true)
-
-	self.m_CollidableImages.w150h150 =  DxRenderTarget(150, 150, true)
-	self.m_CollidableImages.w150h150:setAsTarget()
-	dxDrawRectangle(0, 0, 150, 150, backgroundColor)
-	dxDrawImage(3, 3, 88, 88, self.qfp44)
-	dxDrawImage(52, 98, 39, 48, self.sop8)
-	self:createRandomResistor(8, 112, 30, 14)
-	self:createRandomResistor(8, 130, 30, 14)
-	self:createRandomResistor(115, 6, 30, 14)
-	self:createRandomResistor(115, 46, 30, 14)
-	dxDrawImage(109, 112, 46, 22, self.smdcapacitor, -90)
-	dxDrawImage(99, 22, 46, 22, self.smdcapacitor)
-	dxSetRenderTarget()
+	self:createCollidableStructures()
 end
 
 function CircuitBreaker:createGameplay()
@@ -389,15 +376,77 @@ function CircuitBreaker:onClientRender()
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
 
 	--dev
-	--dxDrawImage(screenWidth/2, screenHeight/2, 150, 150, self.m_CollidableImages.w150h150)
+	dxDrawImage(screenWidth/2 - six/2, screenHeight/2 - siy/2, six, siy, self.m_CollidableImages.w150h150)
 end
 
 function CircuitBreaker:collision(sx, sy, sw, sh, px, py, pw, ph)
-	local focusX, focusY = px - pw/2, py - ph/2
+	return (sx <= px and sy <= py and sx + sw > px and sy + sh > py)
+end
 
-	if focusX >= sx and focusY >= sy and focusX < sx + sw and focusY < sy + sh then
-		return true
+--local STRUCTUR_TYPES = {{"qfp44", 296, 296, true}, {"smdresistor", 46, 22, false}, {"smdcapacitor", 46, 22, true}, {"sop8", 82, 100, true}}
+local STRUCTUR_TYPES = {
+		{"qfp44", 296, 296, true, {1, 2, 3, 4}, {0, 90, 180, 270}},
+		{"smdresistor", 46, 22, false, {1}, {0}},
+		{"smdcapacitor", 46, 22, true, {1}, {0, 90}},
+		{"sop8", 82, 100, true, {1, 2}, {0, 90, 180}},
+		--{"LD1117", 81, 88, true, {2, 3}, {0, 90, 180}},
+		--{"diode", 72, 33, true, {3}, {0, 90, 180}},
+		}
+
+function CircuitBreaker:createCollidableStructures()
+	self.m_CollidableImages = {}
+
+	six, siy = math.random(150, 600), math.random(150, 600)
+
+	local WIDTH, HEIGHT = six, siy --math.random(150, 350), math.random(150, 350)
+	local collideImage = DxRenderTarget(WIDTH, HEIGHT, true)
+	local line = 5
+	local structures = {}
+
+	collideImage:setAsTarget()
+	dxDrawRectangle(0, 0, WIDTH, HEIGHT, tocolor(50, 160, 200, 150))
+
+	for posY = 0, HEIGHT, 10 do
+		for posX = 0, WIDTH, 10 do
+			local rnd_structur = STRUCTUR_TYPES[math.random(1, #STRUCTUR_TYPES)]
+			local sizeDivider = rnd_structur[5][math.random(1,#rnd_structur[5])]
+			local rotation = rnd_structur[6][math.random(1,#rnd_structur[6])]
+			local struct_width, struct_height = rnd_structur[2]/sizeDivider, rnd_structur[3]/sizeDivider
+			local rotationOffsetX, rotationOffsetY = 0, 0
+
+			local drawWidth, drawHeight = struct_width, struct_height
+			local rotFix_X, rotFix_Y = posX, posY
+
+			if rotation == 90 then
+				rotationOffsetX = -(struct_width/2)
+				rotationOffsetY = struct_height/2
+
+				rotFix_Y = rotFix_Y - struct_height
+
+				struct_width = drawHeight
+				struct_height = drawWidth
+			end
+
+			if (posX + struct_width < WIDTH) and (posY + struct_height < HEIGHT) then
+				if not self:rectangleCollision(structures, posX, posY, struct_width, struct_height) then
+					if math.random(1, 1) == 1 then
+						if rnd_structur[1] == "smdresistor" then
+							self:createRandomResistor(rotFix_X, rotFix_Y, struct_width, struct_height)
+						else
+							dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
+						end
+
+						table.insert(structures, {posX, posY, struct_width + math.random(2, 10), struct_height + math.random(2, 10)})
+					end
+				end
+			end
+		end
 	end
+
+	outputChatBox("Structures: " .. #structures)
+	dxSetRenderTarget()
+
+	self.m_CollidableImages.w150h150 = collideImage --todo
 end
 
 local E24 = {"1.0", "1.1", "1.2", "1.3", "1.5", "1.6", "1.8", "2.0", "2.2", "2.4", "2.7", "3.0", "3.3", "3.6", "3.9", "4.3", "4.7",	"5.1", "5.6", "6.2", "6.8", "7.5", "8.2", "9.1"}
@@ -421,10 +470,27 @@ function CircuitBreaker:createRandomResistor(posX, posY, width, height, labelTyp
 	dxDrawText(value, posX, posY, posX + width, posY + height, tocolor(255, 255, 255), .5/14*height, "clear", "center", "center")
 end
 
+function CircuitBreaker:rectangleCollision(structTable, posX, posY, width, height)
+	for _, v in pairs(structTable) do
+		local RectA = {X1 = posX, X2 = posX + width, Y1 = posY, Y2 = posY + height}
+		local RectB = {X1 = v[1], X2 = v[1] + v[3], Y1 = v[2], Y2 = v[2] + v[4]}
+
+		if RectA.X1 <= RectB.X2 and RectA.X2 > RectB.X1 and RectA.Y1 < RectB.Y2 and RectA.Y2 > RectB.Y1 then
+			return true
+		end
+	end
+end
+
 -- dev.. todo: remove when its done
 addCommandHandler("g",
-	function()
+	function(_, a, b)
 		CircuitBreaker:new()
+	end
+)
+-- dev.. todo: remove when its done
+addCommandHandler("gf",
+	function()
+		delete(CircuitBreaker:getSingleton())
 	end
 )
 

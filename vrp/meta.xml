@@ -1049,6 +1049,8 @@
 	<vrpfile src="files/images/CircuitBreaker/output.png" />
 	<vrpfile src="files/images/CircuitBreaker/qfp44.png" />
 	<vrpfile src="files/images/CircuitBreaker/sop8.png" />
+	<vrpfile src="files/images/CircuitBreaker/LD1117.png" />
+	<vrpfile src="files/images/CircuitBreaker/diode.png" />
 	<vrpfile src="files/images/CircuitBreaker/smdcapacitor.png" />
 	<vrpfile src="files/images/CircuitBreaker/smdresistor.png" />
 
