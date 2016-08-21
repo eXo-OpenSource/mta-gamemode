@@ -63,8 +63,6 @@ function CircuitBreaker:loadImages()
 	for _, img in pairs(self.m_Images) do
 		self[img] = DxTexture(("files/images/CircuitBreaker/%s.png"):format(img))
 	end
-
-	self:createCollidableStructures()
 end
 
 function CircuitBreaker:createGameplay()
@@ -72,29 +70,36 @@ function CircuitBreaker:createGameplay()
 	self.m_Levels = {
 		--Levels for level 1
 
+		-- minX = 125 ||  maxX = 760
 		[1] = {
 			{
-
-			},
-			{
-
-			},
-			{
-
+				{125, 10, 300, 300, self:createStructurGroup(300, 300)},
+				{140, 360, 300, 280, self:createStructurGroup(300, 280)},
+				{480, 50, 150, 150, self:createStructurGroup(150, 150)},
+				{660, 60, 120, 120, self:createStructurGroup(120, 120)},
+				{480, 240, 300, 300, self:createStructurGroup(300, 300)},
+				{440, 540, 500, 100, self:createStructurGroup(500, 100)},
+				{820, 10, 140, 500, self:createStructurGroup(140, 500)},
 			},
 		},
 
 		--Levels for level 2
 		[2] = {
 			{
+				{125, 10, 150, 500, self:createStructurGroup(150, 500)},
+				{275, 10, 400, 100, self:createStructurGroup(400, 100)},
+				{275, 360, 475, 150, self:createStructurGroup(475, 150)},
+				{275, 510, 100, 100, self:createStructurGroup(100, 100)},
+				{115, 560, 100, 80, self:createStructurGroup(100, 80)},
+				{450, 550, 300, 90, self:createStructurGroup(300, 90)},
+				{800, 300, 100, 340, self:createStructurGroup(100, 340)},
+				{600, 200, 400, 100, self:createStructurGroup(400, 100)},
+				{410, 200, 170, 100, self:createStructurGroup(170, 100)},
+				{275, 110, 80, 80, self:createStructurGroup(80, 80)},
+				{710, 30, 290, 170, self:createStructurGroup(290, 170)},
 
+				-- may one more..
 			},
-			{
-
-			},
-			{
-
-			}
 		},
 
 		--Levels for level 3
@@ -107,8 +112,8 @@ function CircuitBreaker:createGameplay()
 
 	-- Some definitions
 	self.m_DefaultLineColor = tocolor(70, 160, 255)
-	self.m_Level = 1
-	--self.m_RandomPattern = math.random(1, #self.m_Levels[self.m_Level])
+	self.m_Level = 2 --todo: reset to 1
+	self.m_RandomPattern = math.random(1, #self.m_Levels[self.m_Level])
 	self.m_State = "idle"
 	self.m_MoveDirection = "r"											--r = right | l = left | u = up | d = down
 
@@ -291,10 +296,10 @@ function CircuitBreaker:updateRenderTarget()
 	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.input)
 	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY, 56, 82, self.output)
 
-	--[[for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
+	for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
 		--dxDrawRectangle(v[1], v[2], v[3], v[4], tocolor(255, 0, 0, 100))
 		dxDrawImage(unpack(v))
-	end]]
+	end
 
 	dxSetRenderTarget()
 
@@ -334,16 +339,16 @@ function CircuitBreaker:onClientRender()
 
 		self:updateRenderTarget()
 
-		-- Out of screen detection
-		if not self:collision(8, 8, self.WIDTH-24, self.HEIGHT-24, self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
+		-- Out of pcb detection --todo: Needs improvements
+		if not rectangleCollision2D(10, 10, self.WIDTH-20, self.HEIGHT-20, self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
 			self:setState("failed")
 		end
 
-		--[[for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
-			if self:collision(v[1], v[2], v[3], v[4], self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
+		for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
+			if rectangleCollision2D(v[1], v[2], v[3], v[4], self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
 				self:setState("failed")
 			end
-		end]]
+		end
 
 		-- Collision detection
 		if self:collision(self.m_LevelEndPosX, self.m_LevelEndPosY, 56, 82, self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
@@ -374,79 +379,69 @@ function CircuitBreaker:onClientRender()
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_lineBG)
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
-
-	--dev
-	dxDrawImage(screenWidth/2 - six/2, screenHeight/2 - siy/2, six, siy, self.m_CollidableImages.w150h150)
 end
 
 function CircuitBreaker:collision(sx, sy, sw, sh, px, py, pw, ph)
 	return (sx <= px and sy <= py and sx + sw > px and sy + sh > py)
 end
 
---local STRUCTUR_TYPES = {{"qfp44", 296, 296, true}, {"smdresistor", 46, 22, false}, {"smdcapacitor", 46, 22, true}, {"sop8", 82, 100, true}}
 local STRUCTUR_TYPES = {
 		{"qfp44", 296, 296, true, {1, 2, 3, 4}, {0, 90, 180, 270}},
 		{"smdresistor", 46, 22, false, {1}, {0}},
-		{"smdcapacitor", 46, 22, true, {1}, {0, 90}},
-		{"sop8", 82, 100, true, {1, 2}, {0, 90, 180}},
+		{"smdcapacitor", 46, 22, true, {1, 1, 1, 1, 2}, {0, 0, 90}},
+		{"sop8", 82, 100, true, {1, 1, 2, 2, 2, 3}, {0, 90, 180}},
 		--{"LD1117", 81, 88, true, {2, 3}, {0, 90, 180}},
 		--{"diode", 72, 33, true, {3}, {0, 90, 180}},
 		}
 
-function CircuitBreaker:createCollidableStructures()
-	self.m_CollidableImages = {}
+function CircuitBreaker:createStructurGroup(width, height)
+		local WIDTH, HEIGHT = width, height
+		local collideImage = DxRenderTarget(WIDTH, HEIGHT, true)
+		local line = 5
+		local structures = {}
 
-	six, siy = math.random(150, 600), math.random(150, 600)
+		collideImage:setAsTarget()
+		dxDrawRectangle(0, 0, WIDTH, HEIGHT, tocolor(50, 160, 200, 170))
 
-	local WIDTH, HEIGHT = six, siy --math.random(150, 350), math.random(150, 350)
-	local collideImage = DxRenderTarget(WIDTH, HEIGHT, true)
-	local line = 5
-	local structures = {}
+		for posY = 0, HEIGHT, 4 do
+			for posX = 0, WIDTH, 4 do
+				local rnd_structur = STRUCTUR_TYPES[math.random(1, #STRUCTUR_TYPES)]
+				local sizeDivider = rnd_structur[5][math.random(1,#rnd_structur[5])]
+				local rotation = rnd_structur[6][math.random(1,#rnd_structur[6])]
+				local struct_width, struct_height = rnd_structur[2]/sizeDivider, rnd_structur[3]/sizeDivider
+				local rotationOffsetX, rotationOffsetY = 0, 0
 
-	collideImage:setAsTarget()
-	dxDrawRectangle(0, 0, WIDTH, HEIGHT, tocolor(50, 160, 200, 150))
+				local drawWidth, drawHeight = struct_width, struct_height
+				local rotFix_X, rotFix_Y = posX, posY
 
-	for posY = 0, HEIGHT, 10 do
-		for posX = 0, WIDTH, 10 do
-			local rnd_structur = STRUCTUR_TYPES[math.random(1, #STRUCTUR_TYPES)]
-			local sizeDivider = rnd_structur[5][math.random(1,#rnd_structur[5])]
-			local rotation = rnd_structur[6][math.random(1,#rnd_structur[6])]
-			local struct_width, struct_height = rnd_structur[2]/sizeDivider, rnd_structur[3]/sizeDivider
-			local rotationOffsetX, rotationOffsetY = 0, 0
+				if rotation == 90 then
+					rotationOffsetX = -(struct_width/2)
+					rotationOffsetY = struct_height/2
 
-			local drawWidth, drawHeight = struct_width, struct_height
-			local rotFix_X, rotFix_Y = posX, posY
+					rotFix_Y = rotFix_Y - struct_height
 
-			if rotation == 90 then
-				rotationOffsetX = -(struct_width/2)
-				rotationOffsetY = struct_height/2
+					struct_width = drawHeight
+					struct_height = drawWidth
+				end
 
-				rotFix_Y = rotFix_Y - struct_height
+				if (posX + struct_width < WIDTH) and (posY + struct_height < HEIGHT) then
+					if not self:rectangleCollision(structures, posX, posY, struct_width, struct_height) then
+						if math.random(1, 3) == 1 then
+							if rnd_structur[1] == "smdresistor" then
+								self:createRandomResistor(rotFix_X, rotFix_Y, struct_width, struct_height)
+							else
+								dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
+							end
 
-				struct_width = drawHeight
-				struct_height = drawWidth
-			end
-
-			if (posX + struct_width < WIDTH) and (posY + struct_height < HEIGHT) then
-				if not self:rectangleCollision(structures, posX, posY, struct_width, struct_height) then
-					if math.random(1, 1) == 1 then
-						if rnd_structur[1] == "smdresistor" then
-							self:createRandomResistor(rotFix_X, rotFix_Y, struct_width, struct_height)
-						else
-							dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
+							table.insert(structures, {posX, posY, struct_width + math.random(2, 10), struct_height + math.random(2, 10)})
 						end
-
-						table.insert(structures, {posX, posY, struct_width + math.random(2, 10), struct_height + math.random(2, 10)})
 					end
 				end
 			end
 		end
-	end
 
-	outputChatBox("Structures: " .. #structures)
-	dxSetRenderTarget()
-
-	self.m_CollidableImages.w150h150 = collideImage --todo
+		dxSetRenderTarget()
+		return collideImage
 end
 
 local E24 = {"1.0", "1.1", "1.2", "1.3", "1.5", "1.6", "1.8", "2.0", "2.2", "2.4", "2.7", "3.0", "3.3", "3.6", "3.9", "4.3", "4.7",	"5.1", "5.6", "6.2", "6.8", "7.5", "8.2", "9.1"}
@@ -472,10 +467,7 @@ end
 
 function CircuitBreaker:rectangleCollision(structTable, posX, posY, width, height)
 	for _, v in pairs(structTable) do
-		local RectA = {X1 = posX, X2 = posX + width, Y1 = posY, Y2 = posY + height}
-		local RectB = {X1 = v[1], X2 = v[1] + v[3], Y1 = v[2], Y2 = v[2] + v[4]}
-
-		if RectA.X1 <= RectB.X2 and RectA.X2 > RectB.X1 and RectA.Y1 < RectB.Y2 and RectA.Y2 > RectB.Y1 then
+		if rectangleCollision2D(posX, posY, width, height, v[1], v[2], v[3], v[4]) then
 			return true
 		end
 	end

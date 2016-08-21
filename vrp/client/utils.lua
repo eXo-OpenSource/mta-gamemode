@@ -73,12 +73,21 @@ function dxDrawImage3D(x,y,z,w,h,m,c,r,...)
 	return dxDrawMaterialLine3D(x,y,z, lx, ly, lz, m, h, c or tocolor(255,255,255,255), ...)
 end
 
-function getFreeSkinDimension() 
+function getFreeSkinDimension()
 	local dim = math.random(1, 60000)
 	for key, player in ipairs( getElementsByType("player") ) do
-		if getElementDimension( player ) == dim then 
+		if getElementDimension( player ) == dim then
 			return getFreeSkinDimension()
 		end
 	end
 	return dim
+end
+
+function rectangleCollision2D(rax, ray, raw, rah, rbx, rby, rbw, rbh)
+	local RectA = {X1 = rax, X2 = rax + raw, Y1 = ray, Y2 = ray + rah}
+	local RectB = {X1 = rbx, X2 = rbx + rbw, Y1 = rby, Y2 = rby + rbh}
+
+	if RectA.X1 <= RectB.X2 and RectA.X2 >= RectB.X1 and RectA.Y1 <= RectB.Y2 and RectA.Y2 >= RectB.Y1 then
+		return true
+	end
 end
