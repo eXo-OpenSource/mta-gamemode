@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
-GroupManager.GroupCosts = 30000
+GroupManager.GroupCosts = 20000
 GroupManager.GroupTypes = {[0] = "Gang", [1] = "Firma"}
 
 function GroupManager:constructor()
