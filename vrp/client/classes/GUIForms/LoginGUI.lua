@@ -192,7 +192,7 @@ function LoginGUI:showRegisterMultiaccountError(name)
 	]]
 	)
 
-	local text = _("Deine Serial wurde zuletzt vom Spieler '%s' benutzt! \n Jeder Spieler darf nur einen Account besitzen! Bitte melde dich bei einem Teamitglied!", name)
+	local text = _("Deine Serial wurde zuletzt vom Spieler '%s' benutzt! \n Jeder Spieler darf nur einen Account besitzen! Bitte melde dich bei einem Team-Mitglied!", name)
 	self.m_RegisterMultiaccountBox = GUIRectangle:new(screenWidth*0.6*0.75*0.15, (screenHeight*0.6-screenHeight*0.6*0.01)*0.5, width, height, tocolor(255, 0, 0, 128), self.m_RegisterTab)
 	self.m_RegisterMultiaccountText = GUILabel:new(0, 0, width, height, text, self.m_RegisterMultiaccountBox):setAlign("center", "center"):setMultiline(true):setFont(VRPFont(25))
 
