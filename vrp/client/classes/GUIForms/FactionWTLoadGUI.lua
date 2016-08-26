@@ -11,7 +11,7 @@ inherit(Singleton, FactionWTLoadGUI)
 addRemoteEvents{"showFactionWTLoadGUI", "updateFactionWeaponShopGUI"}
 
 function FactionWTLoadGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-390, screenHeight/2-230, 840, 460)
+	GUIForm.constructor(self, screenWidth/2-945/2, screenHeight/2-230, 945, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Waffentruck beladen", true, true, self)
 
 	self.m_Cart = {}
@@ -27,18 +27,18 @@ function FactionWTLoadGUI:constructor()
 	self.m_WaffenColumn = 0
 	self.m_TotalCosts = 0
 
-	GUILabel:new(540,30, 280, 35, "im Waffentruck:", self.m_Window)
-	self.m_CartGrid = GUIGridList:new(540, 65, 280, 300, self.m_Window)
+	GUILabel:new(645,30, 280, 35, "im Waffentruck:", self.m_Window)
+	self.m_CartGrid = GUIGridList:new(645, 65, 280, 300, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
 	self.m_CartGrid:addColumn(_"Anz.", 0.1)
 	self.m_CartGrid:addColumn(_"Preis", 0.3)
-	self.m_del = GUIButton:new(540, 430, 135, 20,_"entfernen", self.m_Window)
+	self.m_del = GUIButton:new(645, 430, 135, 20,_"entfernen", self.m_Window)
 	self.m_del:setBackgroundColor(Color.Red)
 	self.m_del:setEnabled(false)
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
-	self.m_buy = GUIButton:new(690, 430, 135, 20,_"Beladen", self.m_Window)
+	self.m_buy = GUIButton:new(795, 430, 135, 20,_"Beladen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponTruckLoad,self)
-	self.m_Sum = GUILabel:new(540,390, 280, 30, "Gesamtkosten: 0$/"..WEAPONTRUCK_MAX_LOAD.."$", self.m_Window)
+	self.m_Sum = GUILabel:new(645,390, 280, 30, "Gesamtkosten: 0$/"..WEAPONTRUCK_MAX_LOAD.."$", self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
 	self:factionReceiveWeaponShopInfos()
@@ -93,7 +93,7 @@ function FactionWTLoadGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 
 	self.m_WaffenAnzahl = self.m_WaffenAnzahl+1
 
-	if self.m_WaffenAnzahl == 4 or self.m_WaffenAnzahl == 8 or self.m_WaffenAnzahl == 12 then
+	if self.m_WaffenAnzahl == 5 or self.m_WaffenAnzahl == 10 or self.m_WaffenAnzahl == 15 then
 		self.m_WaffenRow = 0
 		self.m_WaffenColumn = self.m_WaffenColumn+1
 	else
