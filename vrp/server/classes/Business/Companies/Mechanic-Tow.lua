@@ -18,8 +18,7 @@ end
 
 function MechanicTow:respawnVehicle(vehicle)
 	outputDebug("Respawning vehicle in mechanic base")
-
-	vehicle:setPositionType(VehiclePositionType.Mechanic)
+	vehicle:setCurrentPositionAsSpawn(VehiclePositionType.Mechanic)
 	vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 	vehicle:fix()
 end
@@ -127,8 +126,8 @@ function MechanicTow:onEnterTowLot( hElement )
 	if bType then
 		local veh = getPedOccupiedVehicle( hElement )
 		if veh then
-			if hElement:getCompany() == self then 
-				if veh:getCompany() == self then 
+			if hElement:getCompany() == self then
+				if veh:getCompany() == self then
 					if getElementModel( veh ) == 525 then
 						hElement.m_InTowLot = true
 						hElement:sendInfo(_("Du kannst hier abgeschleppte Fahrzeuge abladen!", hElement))
@@ -144,13 +143,13 @@ function MechanicTow:onLeaveTowLot( hElement )
 end
 
 function MechanicTow:onDetachVehicleFromTow( towTruck )
-	local driver = getVehicleOccupant( towTruck ) 
-	if driver then 
-		if driver.m_InTowLot then 
-			if towTruck.getCompany then 
-				local comp = towTruck:getCompany() 
-				if comp == self then 
-					if source.getOwner then 
+	local driver = getVehicleOccupant( towTruck )
+	if driver then
+		if driver.m_InTowLot then
+			if towTruck.getCompany then
+				local comp = towTruck:getCompany()
+				if comp == self then
+					if source.getOwner then
 						local owner = source:getOwner()
 						if type(owner) == "number" then
 							if not source.getCompany and not source.getFaction then

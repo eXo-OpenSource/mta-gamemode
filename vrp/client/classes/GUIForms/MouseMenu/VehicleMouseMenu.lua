@@ -9,7 +9,7 @@ VehicleMouseMenu = inherit(GUIMouseMenu)
 
 function VehicleMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
-	local owner = getElementData(element, "OwnerName") 
+	local owner = getElementData(element, "OwnerName")
 	if owner then
 		self:addItem(_("Besitzer: %s", owner)):setTextColor(Color.Red)
 	end
@@ -38,6 +38,13 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		)
+		self:addItem(_"hier Parken",
+ 			function()
+ 				if self:getElement() then
+ 					triggerServerEvent("vehiclePark", self:getElement())
+ 				end
+ 			end
+ 		)
 	end
 
 	if element:getVehicleType() ~= VehicleType.Trailer then
@@ -49,7 +56,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-	
+
 	if owner == localPlayer.name then
 		self:addItem(_"Verkaufen",
 			function()
@@ -165,7 +172,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	end
 	if VehicleSellGUI then
 		if VehicleSellGUI:isInstantiated() then
-			delete( self ) 
+			delete( self )
 		end
 	end
 end
