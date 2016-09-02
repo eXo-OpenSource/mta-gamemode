@@ -689,6 +689,6 @@ function SelfGUI:VehicleSellButton_Click()
 		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
-
+	
 	triggerServerEvent("vehicleSell", item.VehicleElement)
 end

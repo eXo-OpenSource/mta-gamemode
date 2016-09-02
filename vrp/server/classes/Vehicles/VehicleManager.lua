@@ -18,7 +18,7 @@ function VehicleManager:constructor()
 
 	-- Add events
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
-		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleRequestInfo",
+		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
 		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark"}
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
@@ -29,6 +29,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleRespawnWorld", root, bind(self.Event_vehicleRespawnWorld, self))
 	addEventHandler("vehicleDelete", root, bind(self.Event_vehicleDelete, self))
 	addEventHandler("vehicleSell", root, bind(self.Event_vehicleSell, self))
+	addEventHandler("vehicleSellAccept", root, bind(self.Event_acceptVehicleSell, self))
 	addEventHandler("vehicleRequestInfo", root, bind(self.Event_vehicleRequestInfo, self))
 	addEventHandler("vehicleUpgradeGarage", root, bind(self.Event_vehicleUpgradeGarage, self))
 	addEventHandler("vehicleHotwire", root, bind(self.Event_vehicleHotwire, self))
@@ -576,10 +577,33 @@ function VehicleManager:Event_vehicleSell()
 
 	local price = getPrice(source:getModel())
 	if price then
-		source:purge()
+		client:triggerEvent("questionBox", _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
+	else
+		client:sendError("Beim verkauf dieses Fahrzeuges ist ein Fehler aufgetreten!")
+	end
+end
+
+function VehicleManager:Event_acceptVehicleSell(veh)
+	if not instanceof(veh, PermanentVehicle, true) then return end
+	if veh:getOwner() ~= client:getId() then	return end
+
+	-- Search for price in vehicle shops table
+	local getPrice = function(model)
+		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
+			if shop:getVehiclePrice(model) then
+				return shop:getVehiclePrice(model)
+			end
+		end
+		return false
+	end
+
+	local price = getPrice(veh:getModel())
+	if price then
+		veh:purge()
 		client:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")
 
 		self:Event_vehicleRequestInfo()
+
 	else
 		client:sendError("Beim verkauf dieses Fahrzeuges ist ein Fehler aufgetreten!")
 	end
