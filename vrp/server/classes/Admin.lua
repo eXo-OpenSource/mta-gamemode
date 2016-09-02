@@ -41,6 +41,7 @@ function Admin:constructor()
     addCommandHandler("smode", adminCommandBind)
     addCommandHandler("rkick", adminCommandBind)
     addCommandHandler("warn", adminCommandBind)
+    addCommandHandler("spect", adminCommandBind)
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo"}
@@ -63,6 +64,7 @@ function Admin:destructor()
     removeCommandHandler("smode", adminCommandBind)
     removeCommandHandler("rkick", adminCommandBind)
     removeCommandHandler("warn", adminCommandBind)
+    removeCommandHandler("spect", adminCommandBind)
 	removeCommandHandler("a", bind(self.chat, self))
 	removeCommandHandler("o", bind(self.ochat, self))
 end
@@ -140,6 +142,15 @@ end
 function Admin:command(admin, cmd, targetName, arg1, arg2)
     if cmd == "smode" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
+    elseif cmd == "spect" then
+        if targetName then
+            local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
+            if isElement(target) then
+                self:Event_adminTriggerFunction(cmd, target, nil, nil, admin)
+            end
+        else
+            admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
+        end
     else
         if targetName and arg1 then
             local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
@@ -215,6 +226,15 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
         elseif func == "adminAnnounce" then
             local text = target
             triggerClientEvent("announceText", admin, text)
+        elseif func == "spect" then
+            self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
+            admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
+            setCameraTarget(admin, target)
+            bindKey(admin, "space", "down", function()
+                setCameraTarget(admin, admin)
+                self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
+                unbindKey(admin, "space", "down")
+            end)
         elseif func == "offlinePermaban" then
             self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
             local targetId = Account.getIdFromName(target)

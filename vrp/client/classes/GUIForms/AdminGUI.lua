@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 AdminGUI = inherit(GUIForm)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -66,6 +66,7 @@ function AdminGUI:constructor()
 	self.m_PlayerGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabSpieler)
 
 	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", 220, 130, 180, 30, Color.LightBlue, tabSpieler)
+	self:addAdminButton("spect", "specten", 410, 130, 180, 30, Color.LightRed, tabSpieler)
 	self:addAdminButton("goto", "hin porten", 220, 170, 180, 30, Color.Green, tabSpieler)
 	self:addAdminButton("gethere", "her porten", 410, 170, 180, 30, Color.Green, tabSpieler)
 	self:addAdminButton("kick", "kicken", 220, 210, 180, 30, Color.Orange, tabSpieler)
@@ -232,7 +233,7 @@ function AdminGUI:onButtonClick(func)
 	if func == "showVehicles" then
 		AdminVehicleGUI:new(self.m_SelectedPlayer, self)
 		self:close()
-	elseif func == "gethere" or func == "goto" then
+	elseif func == "gethere" or func == "goto" or func == "spect" then
 		triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer)
 	elseif func == "kick" then
 		InputBox:new(_("Spieler %s kicken", self.m_SelectedPlayer:getName()),
