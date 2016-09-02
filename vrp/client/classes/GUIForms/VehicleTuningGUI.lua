@@ -169,6 +169,8 @@ function VehicleTuningGUI:updatePrices()
             if not price then
                 price = getVehicleUpgradePrice(slot)
             end
+            if slot == VehicleSpecialProperty.Neon and upgradeId == 1 then price = 0 end
+
             assert(price, "Invalid price for upgrade "..tostring(upgradeId))
             overallPrice = overallPrice + price
         end
@@ -194,6 +196,15 @@ function VehicleTuningGUI:resetUpgrades()
     end
     self.m_Vehicle:setColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color]), unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color2]))
     self.m_Vehicle:setHeadLightColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor]))
+    if self.m_CurrentUpgrades[VehicleSpecialProperty.Neon] == 1 then
+        Neon.Vehicles[self.m_Vehicle] = true
+    else
+        if Neon.Vehicles[self.m_Vehicle] then
+            Neon.Vehicles[self.m_Vehicle] = nil
+        end
+    end
+    setElementData(self.m_Vehicle, "Neon", self.m_CurrentUpgrades[VehicleSpecialProperty.Neon])
+    setElementData(self.m_Vehicle, "NeonColor", self.m_CurrentUpgrades[VehicleSpecialProperty.NeonColor])
 
     -- Finally, override with the upgrades from our shopping cart
     for slot, upgradeId in pairs(self.m_CartContent) do
@@ -237,6 +248,11 @@ function VehicleTuningGUI:addPartToCart(partId, partName, info, upgradeName)
     -- Standard parts are free
     if info == 0 then
         price = 0
+    end
+
+    if partId == VehicleSpecialProperty.Neon and info == 1 then
+        price = 0
+        partName = "Neon-Ausbau"
     end
 
     local name = upgradeName and partName..": "..upgradeName or partName
@@ -289,15 +305,15 @@ function VehicleTuningGUI:PartItem_Click(item)
                 end,
                 function(neon)
                     if neon ~= 1 then
-                        ShortMessage:new("Neon Röhre eingebaut!", "Los Santos Customs", Color.LightBlue)
                         setElementData(self.m_Vehicle, "Neon", 1)
                         setElementData(self.m_Vehicle, "NeonColor", {255,0,0})
                         Neon.Vehicles[self.m_Vehicle] = true
                     else
-                        ShortMessage:new("Neon Röhre ausgebaut!", "Los Santos Customs", Color.LightBlue)
                         setElementData(self.m_Vehicle, "Neon", 0)
                         setElementData(self.m_Vehicle, "NeonColor", {0,0,0})
-                        Neon.Vehicles[veh] = nil
+                        if Neon.Vehicles[veh] then
+                            Neon.Vehicles[veh] = nil
+                        end
                     end
                 end
             )
