@@ -3,7 +3,7 @@ MostWanted = inherit(GUIForm3D)
 inherit(Singleton, MostWanted)
 
 function MostWanted:constructor()
-	GUIForm3D.constructor(self, Vector3(1540.925, -1661.18, 15.24), Vector3(0, 0, 90), Vector2(3.73, 5), Vector2(900,1200), 50)
+	GUIForm3D.constructor(self, Vector3(1540.925, -1661.18, 15.9), Vector3(0, 0, 90), Vector2(3.73, 4.4), Vector2(900,1200), 50)
 end
 
 function MostWanted:onStreamIn(surface)

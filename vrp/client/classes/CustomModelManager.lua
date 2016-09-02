@@ -44,6 +44,9 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/waterCan.col", 1902)
 	self:loadImportDFF("files/models/waterCan.dff", 1902)
 
+	self:loadImportTXD("files/models/mostWanted.txd", 10823)
+	self:loadImportCOL("files/models/mostWanted.col", 10823)
+	self:loadImportDFF("files/models/mostWanted.dff", 10823)
 
 end
 
