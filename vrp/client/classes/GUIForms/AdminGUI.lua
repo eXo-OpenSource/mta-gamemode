@@ -54,8 +54,12 @@ function AdminGUI:constructor()
 	self.m_portDown.onLeftClick = function () self:portAdmin("D") end
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
-	self.m_PlayersGrid = GUIGridList:new(10, 10, 200, 380, tabSpieler)
+	self.m_PlayersGrid = GUIGridList:new(10, 10, 200, 320, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
+	self.m_RefreshButton = GUIButton:new(10, 335, 30, 30, FontAwesomeSymbols.Refresh, tabSpieler):setFont(FontAwesome(15))
+	self.m_RefreshButton.onLeftClick = function ()
+		self:refreshOnlinePlayers()
+	end
 
 	self.m_PlayerNameLabel = GUILabel:new(220, 10, 180, 20, _"Spieler: -", tabSpieler)
 	self.m_PlayerTimeLabel = GUILabel:new(220, 35, 180, 20, _"Spielstunden: -", tabSpieler)
@@ -107,13 +111,7 @@ function AdminGUI:constructor()
 	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
 	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, tabTicket)
 
-	for key, playeritem in ipairs(getElementsByType("player")) do
-		local item = self.m_PlayersGrid:addItem(playeritem:getName())
-		item.player = playeritem
-		item.onLeftClick = function()
-			self:onSelectPlayer(playeritem)
-		end
-	end
+	self:refreshOnlinePlayers()
 
 	addEventHandler("adminReceiveSeachedPlayers", root,
 		function(resultPlayers)
@@ -127,6 +125,17 @@ function AdminGUI:constructor()
 	)
 
 	self:refreshButtons()
+end
+
+function AdminGUI:refreshOnlinePlayers()
+	self.m_PlayersGrid:clear()
+	for key, playeritem in ipairs(getElementsByType("player")) do
+		local item = self.m_PlayersGrid:addItem(playeritem:getName())
+		item.player = playeritem
+		item.onLeftClick = function()
+			self:onSelectPlayer(playeritem)
+		end
+	end
 end
 
 function AdminGUI:addAdminButton(func, text, x, y, width, height, color, parent)

@@ -45,6 +45,6 @@ FontAwesomeSymbols = {
 	Info = "",
 	Check = "",
 	Square = "",
-	Search = ""
-
+	Search = "",
+	Refresh = ""
 }
