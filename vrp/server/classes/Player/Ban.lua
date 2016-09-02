@@ -56,6 +56,10 @@ end
 
 function Ban.checkBan(player)
 	local serial = getPlayerSerial(player)
+	return Ban.checkSerial(serial, player)
+end
+
+function Ban.checkSerial(serial, player)
 	sql:queryFetchSingle(Async.waitFor(), "SELECT reason, expires FROM ??_bans WHERE serial = ?;", sql:getPrefix(), serial)
 	local row = Async.wait()
 	if row then
@@ -69,8 +73,13 @@ function Ban.checkBan(player)
 			reasonstr = ("You are banned for %s (Reason: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
 		end
 
-		kickPlayer(player, reasonstr)
+		if player and isElement(player) then kickPlayer(player, reasonstr) end
 		return false
 	end
 	return true
+end
+
+function Ban.checkOfflineBan(playerId)
+	local serial = Account.getLastSerialFromId(playerId)
+	return Ban.checkSerial(serial)
 end

@@ -103,9 +103,11 @@ function AdminGUI:constructor()
 	self.m_PlayerOfflineFactionLabel = GUILabel:new(410, 10, 180, 20, _"Fraktion: -", tabOffline)
 	self.m_PlayerOfflineCompanyLabel = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabOffline)
 	self.m_PlayerOfflineGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabOffline)
+	self.m_PlayerOfflineBanLabel = GUILabel:new(410, 110, 180, 20, _"Gebannt: -", tabOffline)
+
 	self:addAdminButton("offlineTimeban", "Timeban", 220, 290, 180, 30, Color.Red, tabOffline)
 	self:addAdminButton("offlinePermaban", "Permaban", 410, 290, 180, 30, Color.Red, tabOffline)
-
+	self:addAdminButton("offlineUnban", "Unban", 220, 330, 180, 30, Color.Blue, tabOffline)
 
 	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
 	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
@@ -170,6 +172,7 @@ function AdminGUI:onOfflinePlayerInfo(info)
 			Group = false;
 			Job = false;
 			Money = false;
+			Ban = true;
 		}
 	end
 
@@ -181,6 +184,13 @@ function AdminGUI:onOfflinePlayerInfo(info)
 	self.m_PlayerOfflineGroupLabel:setText(_("Gang/Firma: %s", info.Group or _"-"))
 	self.m_PlayerOfflineJobLabel:setText(_("Job: %s", info.Job and JobManager:getSingleton():getFromId(info.Job):getName() or _"-"))
 	self.m_PlayerOfflineMoneyLabel:setText(_("Geld: %s$", info.Money or "-"))
+
+	local ban = "Nein"
+	if info.Ban == false then
+		ban = "Ja"
+	end
+	self.m_PlayerOfflineBanLabel:setText(_("Gebannt: %s", ban or "-"))
+
 end
 
 function AdminGUI:onSelectPlayer(player)
@@ -329,6 +339,17 @@ function AdminGUI:onButtonClick(func)
 		else
 			ErrorBox:new("Kein Spieler ausgewählt!")
 		end
+	elseif func == "offlineUnban" then
+		if self.m_PlayersOfflineGrid:getSelectedItem() then
+			QuestionBox:new(
+					_("Spieler %s entbannen", self.m_PlayersOfflineGrid:getSelectedItem().name),
+					function ()
+						triggerServerEvent("adminTriggerFunction", root, func, self.m_PlayersOfflineGrid:getSelectedItem().name)
+					end)
+		else
+			ErrorBox:new("Kein Spieler ausgewählt!")
+		end
+
 	else
 		outputDebug("Under Developement", 255, 0 ,0)
 	end

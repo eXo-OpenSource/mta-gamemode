@@ -37,6 +37,7 @@ ADMIN_RANK_PERMISSION = {
 	["adminAnnounce"] = RANK.Moderator,
 	["permaban"] = RANK.SuperModerator,
 	["offlinePermaban"] = RANK.SuperModerator,
+	["offlineUnban"] = RANK.SuperModerator,
 	["nickchange"] = RANK.SuperModerator,
 	["setFaction"] = RANK.SuperModerator,
 	["setCompany"] = RANK.SuperModerator,

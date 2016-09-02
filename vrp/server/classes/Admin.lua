@@ -127,6 +127,7 @@ function Admin:Event_getPlayerInfo(Id, name)
                         Company = player:getCompany() and player:getCompany():getShortName() or false;
                         Group = player:getGroup() and player:getGroup():getName() or false;
                         Skin = player:getSkin() or false;
+                        Ban = Ban.checkOfflineBan(Id);
                     }
 
                     if isOffline then
@@ -245,6 +246,11 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             local targetId = Account.getIdFromName(target)
             Ban.addBan(targetId, admin, reason, duration*60*60)
             self:addPunishLog(admin, targetId, func, reason, duration*60*60)
+        elseif func == "offlineUnban" then
+            self:sendShortMessage(_("%s hat %s offline entbannt!", admin, admin:getName(), target))
+            local targetId = Account.getIdFromName(target)
+            self:addPunishLog(admin, targetId, func, reason, 0)
+            sql:queryExec("DELETE FROM ??_bans WHERE serial = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId))
         end
     else
         admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))
