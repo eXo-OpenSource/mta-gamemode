@@ -314,8 +314,8 @@ end
 function Group:removePlayerMarkers()
   for k, player in ipairs(self:getOnlinePlayers()) do
     self.m_Markers[player]:destroy()
-    removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedMarker)
-    removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedMarker)
+    removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+    removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
   end
   self.m_Markers = {}
 end
