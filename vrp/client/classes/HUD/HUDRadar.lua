@@ -348,6 +348,10 @@ function HUDRadar:removeBlip(blip)
   end
 end
 
+function HUDRadar:syncBlips()
+  self.m_Blips = Blip.Blips
+end
+
 function HUDRadar:addArea(worldX, worldY, width, height, color)
   local area = Rect:new(worldX, worldY, width, height)
   if type(color) == "table" then

@@ -32,6 +32,8 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
   if m_String then
     self.DefaultBlips[self.m_ID] = createBlip( worldX, worldY, 1,m_String, 1, 255, 255, 255, 255, 0, streamDistance)
   end
+
+  HUDRadar:syncBlips()
 end
 
 function Blip:destructor()
@@ -51,7 +53,7 @@ function Blip:destructor()
       end
     end
   end
-
+  HUDRadar:syncBlips()
 end
 
 function Blip:getImagePath()
