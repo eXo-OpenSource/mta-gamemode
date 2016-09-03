@@ -116,11 +116,14 @@ function ShopManager:buyItem(shopId, item, amount)
 				shop:giveMoney(shop.m_Items[item]*amount, "Kunden-Einkauf")
 			else
 				client:sendError(_("Die maximale Anzahl dieses Items beträgt %d!", client, client:getInventory():getMaxItemAmount(item)))
+				return
 			end
 		else
 			client:sendError(_("Du hast nicht genug Geld dabei!", client))
+			return
 		end
 	else
 		client:sendError(_("Internal Error! Item not found!", client))
+		return
 	end
 end

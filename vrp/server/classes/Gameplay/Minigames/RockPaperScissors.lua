@@ -71,14 +71,20 @@ function RockPaperScissors:showResult(winner)
 		if winner then
 			if winner == playerItem then
 				playerItem:triggerEvent("rockPaperScissorsShowResult", "win", self.m_Players)
-				playerItem:giveAchievement(51)
+				setTimer(function()
+					playerItem:giveAchievement(51)
+				end, 9000, 1)
 			else
 				playerItem:triggerEvent("rockPaperScissorsShowResult", "loose", self.m_Players)
-				playerItem:giveAchievement(52)
+				setTimer(function()
+					playerItem:giveAchievement(52)
+				end, 9000, 1)
 			end
 		else
 			playerItem:triggerEvent("rockPaperScissorsShowResult", "draw", self.m_Players)
-			playerItem:giveAchievement(53)
+			setTimer(function()
+				playerItem:giveAchievement(53)
+			end, 9000, 1)
 		end
 	end
 end
