@@ -312,12 +312,12 @@ function Group:attachPlayerMarkers()
 end
 
 function Group:removePlayerMarkers()
-  self.m_Markers = {}
   for k, player in ipairs(self:getOnlinePlayers()) do
     self.m_Markers[player]:destroy()
     removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedMarker)
     removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedMarker)
   end
+  self.m_Markers = {}
 end
 
 function Group:refreshAttachedMarker(dimInt)
