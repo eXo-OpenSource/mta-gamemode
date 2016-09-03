@@ -89,7 +89,8 @@ function DatabasePlayer:load()
 	self:setXP(row.XP)
 	self:setKarma(row.Karma)
 	self:setPoints(row.Points)
-	self.m_Money = row.Money
+	self:setMoney(row.Money, true)
+
 	self:setWantedLevel(row.WantedLevel, true)
 	self.m_TutorialStage = row.TutorialStage
 
@@ -98,6 +99,8 @@ function DatabasePlayer:load()
 	else
 		self.m_BankAccount = BankAccount.load(row.BankAccount)
 	end
+	self.m_BankAccount:update()
+
 	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
 		self:updateAchievements(fromJSON(row.Achievements))
 	else
@@ -215,7 +218,7 @@ function DatabasePlayer:hasTruckLicense() return self.m_HasTruckLicense end
 function DatabasePlayer:getBail() return self.m_Bail end
 
 -- Short setters
-function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) end end
+function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) self:setPublicSync("Money", money) end end
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end

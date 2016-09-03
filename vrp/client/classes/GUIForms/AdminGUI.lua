@@ -64,6 +64,7 @@ function AdminGUI:constructor()
 	self.m_PlayerTimeLabel = GUILabel:new(220, 35, 180, 20, _"Spielstunden: -", tabSpieler)
 	self.m_PlayerJobLabel = GUILabel:new(220, 60, 180, 20, _"Job: -", tabSpieler)
 	self.m_PlayerMoneyLabel = GUILabel:new(220, 85, 180, 20, _"Geld: -", tabSpieler)
+	self.m_PlayerBankMoneyLabel = GUILabel:new(410, 85, 180, 20, _"Bank-Geld: -", tabSpieler)
 	self.m_PlayerFactionLabel = GUILabel:new(410, 10, 180, 20, _"Fraktion: -", tabSpieler)
 	self.m_PlayerCompanyLabel = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabSpieler)
 	self.m_PlayerGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabSpieler)
@@ -99,6 +100,7 @@ function AdminGUI:constructor()
 	self.m_PlayerOfflineTimeLabel = GUILabel:new(220, 35, 180, 20, _"Spielstunden: -", tabOffline)
 	self.m_PlayerOfflineJobLabel = GUILabel:new(220, 60, 180, 20, _"Job: -", tabOffline)
 	self.m_PlayerOfflineMoneyLabel = GUILabel:new(220, 85, 180, 20, _"Geld: -", tabOffline)
+	self.m_PlayerOfflineBankMoneyLabel = GUILabel:new(410, 85, 180, 20, _"Bank-Geld: -", tabOffline)
 	self.m_PlayerOfflineFactionLabel = GUILabel:new(410, 10, 180, 20, _"Fraktion: -", tabOffline)
 	self.m_PlayerOfflineCompanyLabel = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabOffline)
 	self.m_PlayerOfflineGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabOffline)
@@ -171,6 +173,7 @@ function AdminGUI:onOfflinePlayerInfo(info)
 			Group = false;
 			Job = false;
 			Money = false;
+			BankMoney = false;
 			Ban = true;
 		}
 	end
@@ -183,6 +186,7 @@ function AdminGUI:onOfflinePlayerInfo(info)
 	self.m_PlayerOfflineGroupLabel:setText(_("Gang/Firma: %s", info.Group or _"-"))
 	self.m_PlayerOfflineJobLabel:setText(_("Job: %s", info.Job and JobManager:getSingleton():getFromId(info.Job):getName() or _"-"))
 	self.m_PlayerOfflineMoneyLabel:setText(_("Geld: %s$", info.Money or "-"))
+	self.m_PlayerOfflineBankMoneyLabel:setText(_("Bank-Geld: %s$", info.BankMoney or "-"))
 	self.m_PlayerOfflineBanLabel:setText(_("Gebannt: %s", ban == true and "Nein" or "Ja"))
 
 end
@@ -199,8 +203,8 @@ function AdminGUI:onSelectPlayer(player)
 	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keine -"))
 	self.m_PlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
 	self.m_PlayerJobLabel:setText(_("Job: %s", player:getJobName()))
-	self.m_PlayerMoneyLabel:setText(_("Geld: %d$", player:getMoney()))
-
+	self.m_PlayerMoneyLabel:setText(_("Geld: %d$", player:getPublicSync("Money")))
+	self.m_PlayerBankMoneyLabel:setText(_("Bank-Geld: %d$", player:getPublicSync("BankMoney")))
 
 	self.m_SelectedPlayer = player
 	self:refreshButtons()

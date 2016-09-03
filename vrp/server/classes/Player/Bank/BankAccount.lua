@@ -53,7 +53,7 @@ function BankAccount:update()
     end
 
     if player:isActive() then
-        player:setPrivateSync("BankMoney", self:getMoney())
+        player:setPublicSync("BankMoney", self:getMoney())
     end
   elseif self.m_OwnerType == BankAccountTypes.Faction then
     return false

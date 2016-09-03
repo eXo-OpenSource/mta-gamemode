@@ -123,6 +123,7 @@ function Admin:Event_getPlayerInfo(Id, name)
                         PlayTime = player:getPlayTime();
                         Job = player:getJob() and player:getJob():getId() or false;
                         Money = player:getMoney();
+                        BankMoney = player:getBankMoney() or false;
                         Faction = player:getFaction() and player:getFaction():getShortName() or false;
                         Company = player:getCompany() and player:getCompany():getShortName() or false;
                         Group = player:getGroup() and player:getGroup():getName() or false;
