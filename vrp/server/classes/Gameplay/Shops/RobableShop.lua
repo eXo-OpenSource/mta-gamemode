@@ -115,20 +115,20 @@ function RobableShop:stopRob(player)
   self.m_EvilMarker:destroy()
   self.m_StateMarker:destroy()
 
-  self.removeBag(player)
+  player:detachPlayerObject(self.m_Bag)
 
   self.m_Bag:destroy()
   self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
   self.m_BagBlip:attach(self.m_Bag)
 
-  delete(self.m_EvilBlip)
-  delete(self.m_StateBlip)
-  delete(self.m_BagBlip)
-
   removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
   removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
   removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
   removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
+
+  delete(self.m_EvilBlip)
+  delete(self.m_StateBlip)
+  delete(self.m_BagBlip)
 
   self.m_Gang:removePlayerMarkers()
   removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
