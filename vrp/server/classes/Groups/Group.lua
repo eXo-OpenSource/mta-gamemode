@@ -320,12 +320,12 @@ function Group:removePlayerMarkers()
   end
 end
 
-function Group:refreshAttachedMarker()
-  outputDebugString("marker dimension / intererior wird aktualisert")
-  outputDebugString("int from "..tostring(self.m_Markers[source]:getInterior()).. " to "..tostring(source:getInterior()))
-  outputDebugString("dim from "..tostring(self.m_Markers[source]:getDimension()).. " to "..tostring(source:getDimension()))
-  self.m_Markers[source]:setInterior(source:getInterior())
-  self.m_Markers[source]:setDimension(source:getDimension())
+function Group:refreshAttachedMarker(dimInt)
+  if eventName == "onElementDimensionChange" then
+    self.m_Markers[source]:setDimension(dimInt)
+  elseif eventName == "onElementInteriorChange" then
+    self.m_Markers[source]:setInterior(dimInt)
+  end
 end
 
 function Group:phoneCall(caller)

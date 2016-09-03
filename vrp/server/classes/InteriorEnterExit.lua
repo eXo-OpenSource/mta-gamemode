@@ -36,7 +36,6 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
         setTimer(function() hitElement.m_DontTeleport = false end, 2500, 1) -- Todo: this is a temp fix
         triggerEvent("onElementInteriorChange", hitElement, interiorId)
         triggerEvent("onElementDimensionChange", hitElement, dimension)
-        outputDebugString("trigger int/dim change to "..tostring(interiorId).."/"..tostring(dimension))
       end
     end
   )
@@ -56,7 +55,6 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
         setTimer(function() hitElement.m_DontTeleport = false end, 2500, 1) -- Todo: this is a temp fix
         triggerEvent("onElementInteriorChange", hitElement, 0)
         triggerEvent("onElementDimensionChange", hitElement, 0)
-        outputDebugString("trigger int/dim change to 0/0")
       end
     end
   )
