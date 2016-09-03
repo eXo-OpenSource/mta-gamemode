@@ -188,6 +188,10 @@ function AdminGUI:onOfflinePlayerInfo(info)
 end
 
 function AdminGUI:onSelectPlayer(player)
+	if not isElement(player) then
+		ErrorBox:new(_"Der Spieler ist nicht mehr online!")
+		return
+	end
 	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
 	local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
 	self.m_PlayerTimeLabel:setText(_("Spielzeit: %s:%s h", hours, minutes))
