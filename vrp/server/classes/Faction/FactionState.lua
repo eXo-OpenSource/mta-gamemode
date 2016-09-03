@@ -364,73 +364,70 @@ end
 
 
 function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
-	local policeman
-	if police then
-		policeman = police
-	else
-		policeman = client
-	end
-	if policeman:isFactionDuty() then
-		if player:getWantedLevel() > 0 then
-			-- Teleport to jail
-			local rnd = math.random(1, #Jail.Cells)
-			player:respawn()
-			player:setPosition(Jail.Cells[rnd])
-			player:setInterior(0)
-			player:setDimension(0)
-			player:setRotation(0, 0, 90)
-			player:toggleControl("fire", false)
-			player:toggleControl("jump", false)
-			player:toggleControl("aim_weapon ", false)
-			player:setJailBail( BAIL_PRICES[player:getWantedLevel()] )
-			-- Pay some money, karma and xp to the policeman
-			policeman:giveMoney(player:getWantedLevel() * 100)
-			policeman:giveKarma(player:getWantedLevel() * 0.05)
-			policeman:givePoints(player:getWantedLevel())
+	local policeman = police or client
+	if policeman:getFaction() and policeman:getFaction():isStateFaction() then
+		if policeman:isFactionDuty() then
+			if player:getWantedLevel() > 0 then
+				-- Teleport to jail
+				local rnd = math.random(1, #Jail.Cells)
+				player:respawn()
+				player:setPosition(Jail.Cells[rnd])
+				player:setInterior(0)
+				player:setDimension(0)
+				player:setRotation(0, 0, 90)
+				player:toggleControl("fire", false)
+				player:toggleControl("jump", false)
+				player:toggleControl("aim_weapon ", false)
+				player:setJailBail( BAIL_PRICES[player:getWantedLevel()] )
+				-- Pay some money, karma and xp to the policeman
+				policeman:giveMoney(player:getWantedLevel() * 100)
+				policeman:giveKarma(player:getWantedLevel() * 0.05)
+				policeman:givePoints(player:getWantedLevel())
 
-			-- Give Achievements
-			if player:getWantedLevel() > 4 then
-				policeman:giveAchievement(48)
+				-- Give Achievements
+				if player:getWantedLevel() > 4 then
+					policeman:giveAchievement(48)
+				else
+					policeman:giveAchievement(47)
+				end
+
+				setTimer(function () -- (delayed)
+					player:giveAchievement(31)
+				end, 14000, 1)
+
+				-- Start freeing timer
+				local jailTime = player:getWantedLevel() * 8
+				player.m_JailStart = getRealTime().timestamp
+				player:setData("inJail",true, true)
+				player.m_JailTimer = setTimer(
+					function()
+						if isElement(player) then
+							player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+							player:setRotation(0, 0, 90)
+							player:setWantedLevel(0)
+							player:toggleControl("fire", true)
+							player:toggleControl("jump", true)
+							player:toggleControl("aim_weapon ", true)
+							player.m_JailStart = nil
+							player.m_JailTimer = nil
+							player.m_JailTime = 0
+							player:triggerEvent("playerLeftJail")
+							player:setData("inJail",false, true)
+						end
+					end, jailTime * 60000, 1
+				)
+
+				player:clearCrimes()
+
+				policeman:getFaction():sendMessage(_("%s wurde soeben von %s eingesperrt!", player, player:getName(), policeman:getName()), 255, 255, 0)
+
+				player:triggerEvent("playerJailed", jailTime, CUTSCENE)
 			else
-				policeman:giveAchievement(47)
+				policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
 			end
-
-			setTimer(function () -- (delayed)
-				player:giveAchievement(31)
-			end, 14000, 1)
-
-			-- Start freeing timer
-			local jailTime = player:getWantedLevel() * 8
-			player.m_JailStart = getRealTime().timestamp
-			player:setData("inJail",true, true)
-			player.m_JailTimer = setTimer(
-				function()
-					if isElement(player) then
-						player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-						player:setRotation(0, 0, 90)
-						player:setWantedLevel(0)
-						player:toggleControl("fire", true)
-						player:toggleControl("jump", true)
-						player:toggleControl("aim_weapon ", true)
-						player.m_JailStart = nil
-						player.m_JailTimer = nil
-						player.m_JailTime = 0
-						player:triggerEvent("playerLeftJail")
-						player:setData("inJail",false, true)
-					end
-				end, jailTime * 60000, 1
-			)
-
-			player:clearCrimes()
-
-			policeman:getFaction():sendMessage(_("%s wurde soeben von %s eingesperrt!", player, player:getName(), policeman:getName()), 255, 255, 0)
-
-			player:triggerEvent("playerJailed", jailTime, CUTSCENE)
 		else
-			policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
+			policeman:sendError(_("Du bist nicht im Dienst!", player))
 		end
-	else
-		policeman:sendError(_("Du bist nicht im Dienst!", player))
 	end
 end
 

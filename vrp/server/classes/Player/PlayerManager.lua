@@ -174,12 +174,14 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 
 	if killer and killer:getType() == "player" then
 		if killer ~= source then
-			if killer:isFactionDuty() and not source:isFactionDuty() then
-				local wantedLevel = source:getWantedLevel()
-				if wantedLevel > 0 then
-					source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))
-					FactionState:getSingleton():Event_JailPlayer(source, false, true, killer)
-					return
+			if killer:getFaction() and killer:getFaction():isStateFaction() then
+				if killer:isFactionDuty() and not source:isFactionDuty() then
+					local wantedLevel = source:getWantedLevel()
+					if wantedLevel > 0 then
+						source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))
+						FactionState:getSingleton():Event_JailPlayer(source, false, true, killer)
+						return
+					end
 				end
 			end
 		end

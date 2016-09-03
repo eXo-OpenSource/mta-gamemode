@@ -21,6 +21,8 @@ function FactionRescue:constructor()
 	VehicleBarrier:new(Vector3(1740.59, -1807.80, 13.40), Vector3(0, 90, -15.75)).onBarrierHit = bind(self.onBarrierHit, self)
 	VehicleBarrier:new(Vector3(1811.50, -1761.50, 13.40), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierHit, self)
 
+	self.m_Faction = FactionManager.Map[4]
+
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("factionRescueHealPlayerQuestion", root, bind(self.Event_healPlayerQuestion, self))
@@ -38,26 +40,16 @@ function FactionRescue:destructor()
 end
 
 function FactionRescue:countPlayers()
-	local factions = FactionManager:getSingleton():getAllFactions()
-	local amount = 0
-	for index,faction in pairs(factions) do
-		if faction:isRescueFaction() then
-			amount = amount + #faction:getOnlinePlayers()
-		end
-	end
-	return amount
+	return #self.m_Faction:getOnlinePlayers()
 end
 
 function FactionRescue:getOnlinePlayers()
-	local factions = FactionManager:getSingleton():getAllFactions()
 	local players = {}
-	for index,faction in pairs(factions) do
-		if faction:isRescueFaction() then
-			for index, value in pairs(faction:getOnlinePlayers()) do
-				table.insert(players, value)
-			end
-		end
+
+	for index, value in pairs(self.m_Faction:getOnlinePlayers()) do
+		table.insert(players, value)
 	end
+
 	return players
 end
 
@@ -148,8 +140,7 @@ end
 
 -- Death System
 function FactionRescue:Event_GetStretcher()
-	local faction = FactionManager:getSingleton():getFromId(4)
-	if client:getFaction() == faction then
+	if client:getFaction() == self.m_Faction then
 		-- Check for the correct Vehicle
 		if client.m_RescueStretcher then
 			if client.m_RescueStretcher.m_Vehicle ~= source then
@@ -192,8 +183,7 @@ function FactionRescue:Event_GetStretcher()
 end
 
 function FactionRescue:Event_RemoveStretcher()
-	local faction = FactionManager:getSingleton():getFromId(4)
-	if client:getFaction() == faction then
+	if client:getFaction() == self.m_Faction then
 		if client.m_RescueStretcher  then
 			local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
 			if distance >= 1.5 and distance <= 4 then
@@ -243,8 +233,7 @@ end
 
 --[[ Very buggy, i don't know why? TODO!
 function FactionRescue:Event_RemoveStretcher()
-	local faction = FactionManager:getSingleton():getFromId(4)
-	if client:getFaction() == faction then
+	if client:getFaction() == self.m_Faction then
 		if client.m_RescueStretcher and client.m_RescueStretcher.m_Vehicle == source then
 			local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
 			if distance >= 2.5 and distance <= 4 then
