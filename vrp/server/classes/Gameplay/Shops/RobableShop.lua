@@ -110,7 +110,7 @@ function RobableShop:startRob(shop, attacker, ped)
   )
 end
 
-function RobableShop:stopRob()
+function RobableShop:stopRob(player)
   ActionsCheck:getSingleton():endAction()
   self.m_EvilMarker:destroy()
   self.m_StateMarker:destroy()
@@ -118,6 +118,12 @@ function RobableShop:stopRob()
   delete(self.m_EvilBlip)
   delete(self.m_StateBlip)
   delete(self.m_BagBlip)
+
+  removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
+  removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
+  removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
+  removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
+
   self.m_Gang:removePlayerMarkers()
   removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
 
@@ -248,7 +254,7 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
         return
       end
       self.m_Bag.Money = 0
-      self:stopRob()
+      self:stopRob(hitElement)
     else
       hitElement:sendError(_("Du darfst die Beute nicht besitzen!", hitElement))
     end
