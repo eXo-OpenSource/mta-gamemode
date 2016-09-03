@@ -175,7 +175,7 @@ function RobableShop:removeBag(player)
 end
 
 function RobableShop:checkBagAllowed(player)
-  if player:getGroup() == self.m_Gang or player:getFaction():isStateFaction() then
+  if player:getGroup() == self.m_Gang or (player:getFaction() and player:getFaction():isStateFaction()) then
     return true
   end
   return false
@@ -232,17 +232,20 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
   if hitElement:getType() == "player" and dim then
     if hitElement:getPlayerAttachedObject() and hitElement:getPlayerAttachedObject() == self.m_Bag and self:checkBagAllowed(hitElement) then
       local money = self.m_Bag.Money
-      if source == self.m_EvilMarker then
+      if source == self.m_EvilMarker and player:getGroup() == self.m_Gang then
         hitElement:giveMoney(money, "Shop-Raub")
         hitElement:sendInfo(_("Du hast durch den Raub %d$ erhalten!", hitElement, money))
         PlayerManager:getSingleton():breakingNews("%s Überfall: Die Täter sind mit der Beute entkommen!", self.m_Shop:getName())
-      elseif source == self.m_StateMarker then
+      elseif source == self.m_StateMarker and player:getFaction() and player:getFaction():isStateFaction() then
         local stateMoney = math.floor(money/3)
         hitElement:giveMoney(stateMoney, "Shop Raub Sicherstellung")
         hitElement:getFaction():giveMoney(stateMoney, "Shop Raub Sicherstellung")
         self.m_Shop:giveMoney(stateMoney, "Shop Raub Sicherstellung")
         hitElement:sendInfo(_("Beute sichergestellt! Der Shop, du und die Staatskasse haben je %d$ erhalten!", hitElement, stateMoney))
         PlayerManager:getSingleton():breakingNews("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName())
+      else
+        player:sendError(_("Du darfst die Beute hier nicht abgeben!", hitElement))
+        return
       end
       self.m_Bag.Money = 0
       self:stopRob()
