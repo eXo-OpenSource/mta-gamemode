@@ -20,6 +20,7 @@ function ItemManager:constructor()
 		["Burger"] = ItemFood,
 		["Pizza"] = ItemFood,
 		["Pilz"] = ItemFood,
+		["Zigarette"] = ItemFood,
 		["Wuerfel"] = ItemDice,
 		["Weed-Samen"] = PlantWeed,
 		["Kanne"] = ItemCan,

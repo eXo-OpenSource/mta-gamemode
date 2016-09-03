@@ -8,9 +8,13 @@
 ItemFood = inherit(Item)
 
 ItemFood.Settings = {
-	["Burger"] = {["Health"] = 80, ["Model"] = 2880, ["Text"] = "einen Burger", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
-	["Pizza"] = {["Health"] = 80, ["Model"] = 2881, ["Text"] = "ein Stück Pizza", ["Animation"] = {"FOOD", "EAT_Pizza", 4500}},
-	["Pilz"] = {["Health"] = 10, ["Model"] = 1882, ["Text"] = "einen Pilz", ["Animation"] = {"FOOD", "EAT_Burger", 4500}}
+	["Burger"] = {["Health"] = 80, ["Model"] = 2880, ["Text"] = "isst einen Burger", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
+	["Pizza"] = {["Health"] = 80, ["Model"] = 2881, ["Text"] = "isst ein Stück Pizza", ["Animation"] = {"FOOD", "EAT_Pizza", 4500}},
+	["Pilz"] = {["Health"] = 10, ["Model"] = 1882, ["Text"] = "isst einen Pilz", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
+	["Zigarette"] = {["Health"] = 10, ["Model"] = 3027, ["Text"] = "raucht eine Zigarette", ["Animation"] = {"smoking", "M_smkstnd_loop", 13500},
+		["ModelScale"] = 2,
+		["Attach"] = {11, 0, 0, 0, 0, 0, 0}
+	}
 }
 
 function ItemFood:constructor()
@@ -25,14 +29,21 @@ function ItemFood:use(player)
 	local ItemSettings = ItemFood.Settings[self:getName()]
 
 	local item = createObject(ItemSettings["Model"], 0, 0, 0)
-	exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
+	if ItemSettings["ModelScale"] then item:setScale(ItemSettings["ModelScale"]) end
+	if ItemSettings["Attach"] then
+		exports.bone_attach:attachElementToBone(item, player, unpack(ItemSettings["Attach"]))
+	else
+		exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
+	end
 
-	player:meChat(true, "isst "..ItemSettings["Text"].."!")
+	player:meChat(true, " "..ItemSettings["Text"].."!")
 
 	local block, animation, time = unpack(ItemSettings["Animation"])
-	player:setAnimation(block, animation, time, false, false, false)
+	player:setAnimation(block, animation, time, true, false, false)
 	setTimer(function()
 		item:destroy()
 		player:setHealth(player:getHealth()+ItemSettings["Health"])
+		player:setAnimation()
 	end, time, 1)
+
 end
