@@ -115,7 +115,7 @@ function RobableShop:stopRob(player)
   self.m_EvilMarker:destroy()
   self.m_StateMarker:destroy()
 
-  player:removeBag()
+  self.removeBag(player)
 
   self.m_Bag:destroy()
   self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
