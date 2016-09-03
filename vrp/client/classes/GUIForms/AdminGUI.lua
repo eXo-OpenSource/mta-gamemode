@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 AdminGUI = inherit(GUIForm)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -184,12 +184,7 @@ function AdminGUI:onOfflinePlayerInfo(info)
 	self.m_PlayerOfflineGroupLabel:setText(_("Gang/Firma: %s", info.Group or _"-"))
 	self.m_PlayerOfflineJobLabel:setText(_("Job: %s", info.Job and JobManager:getSingleton():getFromId(info.Job):getName() or _"-"))
 	self.m_PlayerOfflineMoneyLabel:setText(_("Geld: %s$", info.Money or "-"))
-
-	local ban = "Nein"
-	if info.Ban == false then
-		ban = "Ja"
-	end
-	self.m_PlayerOfflineBanLabel:setText(_("Gebannt: %s", ban or "-"))
+	self.m_PlayerOfflineBanLabel:setText(_("Gebannt: %s", ban == true and "Nein" or "Ja"))
 
 end
 
