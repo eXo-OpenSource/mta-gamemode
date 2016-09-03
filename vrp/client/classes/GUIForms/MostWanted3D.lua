@@ -3,7 +3,7 @@ MostWanted = inherit(GUIForm3D)
 inherit(Singleton, MostWanted)
 
 function MostWanted:constructor()
-	GUIForm3D.constructor(self, Vector3(1540.925, -1661.18, 15.9), Vector3(0, 0, 90), Vector2(3.73, 4.4), Vector2(900,1200), 50)
+	GUIForm3D.constructor(self, Vector3(1540.925, -1661.2, 15.85), Vector3(0, 0, 90), Vector2(4.2, 2.1), Vector2(1200,600), 10)
 end
 
 function MostWanted:onStreamIn(surface)
@@ -12,7 +12,7 @@ function MostWanted:onStreamIn(surface)
 	self.m_Row = 0
 	self.m_Column = 0
 	self.m_Url = self:generateUrl()
-	GUIWebView:new(0, 0, 900, 1200, self.m_Url, true, surface)
+	GUIWebView:new(0, 0, 1200, 600, self.m_Url, true, surface)
 end
 
 function MostWanted:generateUrl()
@@ -28,3 +28,20 @@ function MostWanted:generateUrl()
 	end
 	return url
 end
+
+addEventHandler( "onClientRender", root,
+    function()
+        if isCursorShowing() then
+            local screenx, screeny, worldx, worldy, worldz = getCursorPosition()
+            local px, py, pz = getCameraMatrix()
+            local hit, x, y, z, elementHit = processLineOfSight ( px, py, pz, worldx, worldy, worldz )
+
+            if hit then
+                dxDrawText( "Cursor at " .. x .. " " .. y .. " " ..  z, 200, 200 )
+                if elementHit then
+                    dxDrawText( "Hit element " .. getElementType(elementHit), 200, 220 )
+                end
+            end
+        end
+    end
+)
