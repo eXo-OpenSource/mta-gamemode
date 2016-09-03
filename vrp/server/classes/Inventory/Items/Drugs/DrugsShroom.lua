@@ -17,6 +17,8 @@ function DrugsShroom:constructor()
 
 
     addCommandHandler("addMushroom", bind(self.addPosition, self))
+	addCommandHandler("removeMushroom", bind(self.removePosition, self))
+
 end
 
 function DrugsShroom:destructor()
@@ -52,6 +54,26 @@ function DrugsShroom:addPosition(player, cmd)
         table.insert(self.m_MushRoomTable, {pos.x, pos.y, pos.z})
         self:addMushroom(pos.x, pos.y, pos.z)
         player:sendInfo(_("Mushroom hinzugefügt!", player))
+        self:savePositions()
+    else
+        player:sendError(_("Du darfst in keinem Fahrzeug sitzen!", player))
+    end
+end
+
+function DrugsShroom:removePosition(player, cmd)
+    if not player:getOccupiedVehicle() then
+
+		local pos = player:getPosition()
+        pos.z = pos.z-1
+		local tempCol = createColSphere(pos, 5)
+		for index, element in pairs(getElementsWithinColShape(tempCol, "object")) do
+			if element:getModel() == self.m_MagicModel or element:getModel() == self.m_NormalModel then
+				local pos = element:getPosition()
+				table.remove(self.m_MushRoomTable, table.find(self.m_MushRoomTable, {pos.x, pos.y, pos.z}))
+				element:destroy()
+				player:sendInfo(_("Mushroom entfernt!", player))
+			end
+		end
         self:savePositions()
     else
         player:sendError(_("Du darfst in keinem Fahrzeug sitzen!", player))
