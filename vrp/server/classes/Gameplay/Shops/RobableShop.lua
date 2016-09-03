@@ -188,7 +188,7 @@ function RobableShop:onDamage(attacker, weapon)
         self:removeBag(source)
         self:giveBag(attacker)
       else
-        player:sendError(_("Du darfst die Beute nicht besitzen!", attacker))
+        attacker:sendError(_("Du darfst die Beute nicht besitzen!", attacker))
       end
     end
   end
@@ -250,7 +250,7 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
       self.m_Bag.Money = 0
       self:stopRob()
     else
-      player:sendError(_("Du darfst die Beute nicht besitzen!", hitElement))
+      hitElement:sendError(_("Du darfst die Beute nicht besitzen!", hitElement))
     end
   end
 end
