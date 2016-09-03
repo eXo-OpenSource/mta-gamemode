@@ -244,7 +244,7 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
         hitElement:sendInfo(_("Beute sichergestellt! Der Shop, du und die Staatskasse haben je %d$ erhalten!", hitElement, stateMoney))
         PlayerManager:getSingleton():breakingNews("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName())
       else
-        player:sendError(_("Du darfst die Beute hier nicht abgeben!", hitElement))
+        hitElement:sendError(_("Du darfst die Beute hier nicht abgeben!", hitElement))
         return
       end
       self.m_Bag.Money = 0
