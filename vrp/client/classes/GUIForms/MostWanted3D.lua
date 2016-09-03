@@ -18,7 +18,7 @@ end
 function MostWanted:generateUrl()
 	local url = "http://exo-reallife.de/ingame/other/mostWanted.php?size=1"
 	local i = 1
-	for index, player in pairs(getElementsByType("player")) do
+	for Id, player in pairs(Element.getAllByType("player")) do
 		if i < 8 then
 			if player:getWanteds() >= 4 then
 				url = url..("&name[%d]=%s&wanteds[%d]=%d&skin[%d]=%d"):format(i, player:getName(), i, player:getWantedLevel(), i, player:getModel())
@@ -28,20 +28,3 @@ function MostWanted:generateUrl()
 	end
 	return url
 end
-
-addEventHandler( "onClientRender", root,
-    function()
-        if isCursorShowing() then
-            local screenx, screeny, worldx, worldy, worldz = getCursorPosition()
-            local px, py, pz = getCameraMatrix()
-            local hit, x, y, z, elementHit = processLineOfSight ( px, py, pz, worldx, worldy, worldz )
-
-            if hit then
-                dxDrawText( "Cursor at " .. x .. " " .. y .. " " ..  z, 200, 200 )
-                if elementHit then
-                    dxDrawText( "Hit element " .. getElementType(elementHit), 200, 220 )
-                end
-            end
-        end
-    end
-)
