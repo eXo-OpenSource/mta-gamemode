@@ -7,13 +7,12 @@
 -- ****************************************************************************
 
 AdminGUI = inherit(GUIForm)
+inherit(Singleton, AdminGUI)
 AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
 end
-
-inherit(Singleton, AdminGUI)
 
 addRemoteEvents{"showAdminMenu", "announceText", "setDamageFree", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo"}
 

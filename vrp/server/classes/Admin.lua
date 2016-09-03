@@ -110,7 +110,7 @@ end
 function Admin:Event_getPlayerInfo(Id, name)
     local client = client
     if client:getRank() >= RANK.Supporter then
-        Async.create( -- player:load() needs a aynchronous execution
+        Async.create( -- player:load()/:save() needs a aynchronous execution
             function ()
                 local player, isOffline = DatabasePlayer.get(Id)
                 if player then

@@ -10,9 +10,15 @@ VendingMouseMenu = inherit(GUIMouseMenu)
 function VendingMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 
-	self:addItem(_"Vending Machine"):setTextColor(Color.Red)
+	if element:getModel() == 1775 then
+		self:addItem(_"Sprunk-Automat"):setTextColor(Color.Red)
+	elseif element:getModel() == 1776 then
+		self:addItem(_"Süßigkeiten-Automat"):setTextColor(Color.Red)
+	elseif element:getModel() == 1209 then
+		self:addItem(_"Soda-Automat"):setTextColor(Color.Red)
+	end
 
-	self:addItem(_"Snack kaufen (20$)",
+	self:addItem(_"Snack/Getränk kaufen (20$)",
 		function()
 			if self:getElement() then
 				triggerServerEvent("vendingBuySnack", self:getElement())
