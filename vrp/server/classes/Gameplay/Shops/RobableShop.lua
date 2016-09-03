@@ -114,7 +114,13 @@ function RobableShop:stopRob(player)
   ActionsCheck:getSingleton():endAction()
   self.m_EvilMarker:destroy()
   self.m_StateMarker:destroy()
+
+  player:removeBag()
+
   self.m_Bag:destroy()
+  self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
+  self.m_BagBlip:attach(self.m_Bag)
+
   delete(self.m_EvilBlip)
   delete(self.m_StateBlip)
   delete(self.m_BagBlip)
@@ -253,6 +259,7 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
         hitElement:sendError(_("Du darfst die Beute hier nicht abgeben!", hitElement))
         return
       end
+
       self.m_Bag.Money = 0
       self:stopRob(hitElement)
     else

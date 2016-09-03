@@ -271,46 +271,43 @@ function HUDRadar:drawBlips()
   for k, blip in pairs(self.m_Blips) do
     local blipX, blipY = blip:getPosition()
 
-    if blipX then -- TODO: hotfix, check if self.m_Blips is correctly synced when blip has destroyed
+    if Blip.AttachedBlips[blip] then
+      blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
+    end
 
-      if Blip.AttachedBlips[blip] then
-        blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
-      end
+    if getDistanceBetweenPoints2D(px, py, blipX, blipY) < blip:getStreamDistance() then
+      -- Do transformation
+      local pos = mat * math.matrix.three.hvector(blipX, blipY, 0, 1)
+      local x, y = pos[1][1], pos[2][1]
 
-      if getDistanceBetweenPoints2D(px, py, blipX, blipY) < blip:getStreamDistance() then
-        -- Do transformation
-        local pos = mat * math.matrix.three.hvector(blipX, blipY, 0, 1)
-        local x, y = pos[1][1], pos[2][1]
+      -- Check borders and fix position if necessary
+      if x < -self.m_Width/2 or x > self.m_Width/2 or y < -self.m_Height/2 or y > self.m_Height/2 then
+        -- Calculate angle
+        local rotation = math.atan2(y, x)
 
-        -- Check borders and fix position if necessary
-        if x < -self.m_Width/2 or x > self.m_Width/2 or y < -self.m_Height/2 or y > self.m_Height/2 then
-          -- Calculate angle
-          local rotation = math.atan2(y, x)
-
-          -- Identify and fix edges
-          -- Use the 2. intercept theorem (ger. Strahlensatz)
-          if rotation < -rotLimit and rotation > -math.pi+rotLimit then -- top
-            x = -self.m_Height/2 / y * x
-            y = -self.m_Height/2
-          elseif rotation > rotLimit and rotation < math.pi-rotLimit then -- bottom
-            x = self.m_Height/2 / y * x
-            y = self.m_Height/2
-          elseif rotation >= -rotLimit and rotation <= rotLimit then -- right
-            y = self.m_Width/2 / x * y
-            x = self.m_Width/2
-          else -- left
-            y = -self.m_Width/2 / x * y
-            x = -self.m_Width/2
-          end
+        -- Identify and fix edges
+        -- Use the 2. intercept theorem (ger. Strahlensatz)
+        if rotation < -rotLimit and rotation > -math.pi+rotLimit then -- top
+          x = -self.m_Height/2 / y * x
+          y = -self.m_Height/2
+        elseif rotation > rotLimit and rotation < math.pi-rotLimit then -- bottom
+          x = self.m_Height/2 / y * x
+          y = self.m_Height/2
+        elseif rotation >= -rotLimit and rotation <= rotLimit then -- right
+          y = self.m_Width/2 / x * y
+          x = self.m_Width/2
+        else -- left
+          y = -self.m_Width/2 / x * y
+          x = -self.m_Width/2
         end
-
-        -- Translate map to screen coordinates
-        local screenX, screenY = mapCenterX + x, mapCenterY + y
-
-        -- Finally, draw
-        local blipSize = blip:getSize()
-        dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath(), 0, 0, 0, blip:getColor())
       end
+
+      -- Translate map to screen coordinates
+      local screenX, screenY = mapCenterX + x, mapCenterY + y
+
+      -- Finally, draw
+      local blipSize = blip:getSize()
+      dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath(), 0, 0, 0, blip:getColor())
     end
   end
 end
