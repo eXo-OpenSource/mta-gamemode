@@ -165,7 +165,9 @@ function Faction:addPlayer(playerId, rank)
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(self)
-		self:changeSkin(player)
+		if self:isEvilFaction() then
+			self:changeSkin(player)
+		end
 	end
 
 	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
