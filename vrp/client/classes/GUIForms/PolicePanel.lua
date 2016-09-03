@@ -73,10 +73,12 @@ function PolicePanel:loadPlayers()
 		if self.m_Players[i] then
 			self.m_PlayersGrid:addItemNoClick(i.." Wanteds", "")
 			for player, bool in pairs(self.m_Players[i]) do
-				local item = self.m_PlayersGrid:addItem(player:getName(), player:getFaction():getShortName() or "- Keine -")
-				item.player = player
-				item.onLeftClick = function()
-					self:onSelectPlayer(player)
+				if isElement(player) then
+					local item = self.m_PlayersGrid:addItem(player:getName(), player:getFaction():getShortName() or "- Keine -")
+					item.player = player
+					item.onLeftClick = function()
+						self:onSelectPlayer(player)
+					end
 				end
 			end
 		end
