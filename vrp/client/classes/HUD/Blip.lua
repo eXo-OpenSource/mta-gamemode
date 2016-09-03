@@ -36,6 +36,7 @@ end
 
 function Blip:destructor()
   if self.m_ID and Blip.Blips[self.m_ID] then
+    Blip:dettach()
     Blip.Blips[self.m_ID] = nil
     if self.DefaultBlips[self.m_ID] then
       destroyElement( self.DefaultBlips[self.m_ID] )
@@ -43,6 +44,7 @@ function Blip:destructor()
   else
     local index = table.find(Blip.Blips, self)
     if index then
+      Blip:dettach()
       Blip.Blips[idx] = nil
       if self.DefaultBlips[idx] then
         destroyElement( self.DefaultBlips[idx] )
@@ -123,7 +125,9 @@ function Blip:attachTo(element)
 end
 
 function Blip:dettach()
-  if Blip.AttachedBlips[self] then table.remove(Blip.AttachedBlips, table.find(self)) end
+  if Blip.AttachedBlips[self] then
+    Blip.AttachedBlips[self] = nil
+  end
 end
 
 addEvent("blipCreate", true)
@@ -139,7 +143,6 @@ addEventHandler("blipDestroy", root,
   function(index)
     if Blip.ServerBlips[index] then
       outputDebug("Destroying blip: "..tostring(index))
-      Blip:dettach()
       delete(Blip.ServerBlips[index])
       Blip.ServerBlips[index] = nil
     end
