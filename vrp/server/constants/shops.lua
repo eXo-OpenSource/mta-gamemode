@@ -56,7 +56,7 @@ SHOP_ITEMS = {
 	};
 	["24/7"] = {
 		["Radio"] = 2000,
-		["Zigaretten"] = 10,
+		["Zigarette"] = 10,
 		["Wuerfel"] = 10,
 		["Kanne"] = 500,
 		["Mautpass"] = 250
