@@ -110,6 +110,11 @@ function Inventory:loadItem(id)
 end
 
 function Inventory:useItem(itemId, bag, itemName, place, delete)
+	if self:getItemAmount(itemName) <= 0 then
+		client:sendError(_("Inventar Fehler: Kein Item", client))
+		return
+	end
+
 	if delete == true then
 		self:removeItemFromPlace(bag, place, 1)
 	end
@@ -502,7 +507,7 @@ function Inventory:giveItem(item, amount)
 				local itemAmount = self.m_Items[id]["Menge"]
 				self.m_Items[id]["Menge"] = itemAmount + amount
 				self:saveItemAmount(id, self.m_Items[id]["Menge"])
-				triggerClientEvent(self.m_Owner, "setInventoryCoordinates", self.m_Owner, place, bag)
+				--triggerClientEvent(self.m_Owner, "setInventoryCoordinates", self.m_Owner, place, bag)
 				return true
 			elseif placeType == "new" then
 				if amount > 0 then

@@ -357,7 +357,6 @@
 
 
 	<!-- Inventory -->
-	<script src="client/classes/Inventory/Inventory2_0.lua" type="client"/>
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>
