@@ -47,7 +47,7 @@ function VehicleManager:constructor()
 
 				if not source:isLocked() then
 					local vehicleType = source:getVehicleType()
-					if (vehicleType == VehicleType.Plane or vehicleType == VehicleType.Helicopter) and not player:hasPilotsLicense() then
+					if (vehicleType == VehicleType.Plane or vehicleType == VehicleType.Helicopter) and not player:hasPilotsLicense() and not player:getPublicSync("inDrivingLession") == true then
 						player:removeFromVehicle(source)
 						player:setPosition(source.matrix:transformPosition(-1.5, 5, 0))
 						player:sendShortMessage(_("Du hast keinen Flugschein!", player))

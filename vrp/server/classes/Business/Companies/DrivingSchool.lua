@@ -41,7 +41,7 @@ function DrivingSchool:onVehicleSpawn(veh)
 end
 
 function DrivingSchool:onVehiceEnter(player)
-    if player:getCompany() ~= self then
+    if player:getCompany() ~= self or not player:getPublicSync("inDrivingLession") == true then
         player:sendError(_("Du darfst dieses Fahrzeug nicht fahren!", player))
         return false
     end
@@ -117,17 +117,17 @@ function DrivingSchool:checkPlayerLicense(player, type)
     end
 end
 
-function DrivingSchool:givePlayerLicense(player, type)
+function DrivingSchool:setPlayerLicense(player, type, bool)
     if type == "car" then
-        player.m_HasDrivingLicense = true
+        player.m_HasDrivingLicense = bool
     elseif type == "bike" then
-        player.m_HasBikeLicense = true
+        player.m_HasBikeLicense = bool
     elseif type == "truck" then
-        player.m_HasTruckLicense = true
+        player.m_HasTruckLicense = bool
     elseif type == "heli" then
-        player.m_HasPilotsLicense = true
+        player.m_HasPilotsLicense = bool
     elseif type == "plane" then
-        player.m_HasPilotsLicense = true
+        player.m_HasPilotsLicense = bool
     end
 end
 
@@ -227,7 +227,7 @@ function DrivingSchool:Event_endLession(target, success, clientServer)
     if not client and clientServer then client = clientServer end
     local type = self.m_CurrentLessions[client]["type"]
     if success == true then
-        self:givePlayerLicense(target, type)
+        self:setPlayerLicense(target, type, true)
         target:sendInfo(_("Du hast die %s Prüfung erfolgreich bestanden und den Schein erhalten!",target, DrivingSchool.TypeNames[type]))
         client:sendInfo(_("Du hast die %s Prüfung mit %s erfolgreich beendet!",client, DrivingSchool.TypeNames[type], target.name))
     else
