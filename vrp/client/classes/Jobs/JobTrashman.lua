@@ -13,8 +13,9 @@ function JobTrashman:constructor()
 	self.m_ColShapes = {}
 	addEventHandler("onClientPreRender", root, bind(JobTrashman.renderArea, self)) -- Todo: Replace by 3d image class
 
-	addEvent("trashcanReset", true)
+	addRemoteEvents{"trashcanReset", "jobTrashManStop"}
 	addEventHandler("trashcanReset", root, bind(JobTrashman.reset, self))
+	addEventHandler("jobTrashManStop", root, bind(JobTrashman.stop, self))
 
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Trashman):gsub("Job: ", ""), _(HelpTexts.Jobs.Trashman))

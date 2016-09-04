@@ -19,8 +19,10 @@ function JobTrashman:constructor()
 	self.m_DumpArea = createColRectangle(2096.9, -2081.6, 9.8, 10.5) -- 2096.9, -2071.1, 9.8, -10.5
 	addEventHandler("onColShapeHit", self.m_DumpArea, bind(JobTrashman.dumpCans, self))
 
-	addEvent("trashcanCollect", true)
+	addRemoteEvents{"trashcanCollect", "JobTrashmanAgain", "JobTrashmanStop"}
 	addEventHandler("trashcanCollect", root, bind(self.Event_trashcanCollect, self))
+	addEventHandler("JobTrashmanStop", root, bind(self.Event_stop, self))
+
 end
 
 function JobTrashman:start(player)
@@ -35,6 +37,14 @@ function JobTrashman:checkRequirements(player)
 	end
 	return true
 end
+
+function JobTrashman:Event_stop()
+	if client:getOccupiedVehicle() and client:getOccupiedVehicle():getModel() == 408 then
+		client:getOccupiedVehicle():destroy()
+	end
+	client:triggerEvent("jobTrashManStop")
+end
+
 
 function JobTrashman:Event_trashcanCollect(containerNum)
 	if not containerNum then return end
@@ -59,14 +69,21 @@ end
 function JobTrashman:dumpCans(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension and hitElement:getJob() == self then
 		local numCans = hitElement:getData("Trashman:Cans")
-		local moneyAmount = numCans * MONEY_PER_CAN
 
-		hitElement:giveMoney(moneyAmount, "Müll-Job")
-		hitElement:givePoints(math.ceil(numCans/3))
+		if numCans and numCans > 0 then
+			local moneyAmount = numCans * MONEY_PER_CAN
 
-		hitElement:sendInfoTimeout(_("Dein Lohn: %d$", hitElement, moneyAmount), 5000)
+			hitElement:giveMoney(moneyAmount, "Müll-Job")
+			hitElement:givePoints(math.ceil(numCans/3))
 
-		hitElement:setData("Trashman:Cans", 0)
-		hitElement:triggerEvent("trashcanReset")
+			hitElement:sendInfoTimeout(_("Dein Lohn: %d$", hitElement, moneyAmount), 5000)
+
+			hitElement:setData("Trashman:Cans", 0)
+			hitElement:triggerEvent("trashcanReset")
+			hitElement:triggerEvent("questionBox", _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop")
+
+		else
+			hitElement:sendInfoTimeout(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount), 5000)
+		end
 	end
 end
