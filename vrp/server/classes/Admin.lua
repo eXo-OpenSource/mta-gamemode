@@ -144,35 +144,40 @@ end
 function Admin:command(admin, cmd, targetName, arg1, arg2)
     if cmd == "smode" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
-    elseif cmd == "spect" then
+    else
         if targetName then
             local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
             if isElement(target) then
-                self:Event_adminTriggerFunction(cmd, target, nil, nil, admin)
-            end
-        else
-            admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
-        end
-    else
-        if targetName and arg1 then
-            local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
-            if isElement(target) then
-                if cmd == "rkick" then
-                    self:Event_adminTriggerFunction(cmd, target, arg1, 0, admin)
+                if cmd == "spect" then
+                    self:Event_adminTriggerFunction(cmd, target, nil, nil, admin)
+                    return
                 else
-                    if arg2 then
-                        self:Event_adminTriggerFunction(cmd, target, arg2, arg1, admin)
-                    else
-                        admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
+                    if arg1 then
+                        if cmd == "rkick" or cmd == "permaban" then
+                            self:Event_adminTriggerFunction(cmd, target, arg1, 0, admin)
+                            return
+                        else
+                            if arg2 then
+                                self:Event_adminTriggerFunction(cmd, target, arg2, arg1, admin)
+                                return
+                            else
+                                admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
+                                return
+                            end
+                        end
                     end
                 end
             end
+        end
+        if cmd == "spect" then
+            admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
+            return
+        elseif cmd == "rkick" or cmd == "permaban" then
+            admin:sendError(_("Befehl: /%s [Ziel] [Grund]", admin, cmd))
+            return
         else
-            if cmd == "rkick" then
-                admin:sendError(_("Befehl: /%s [Ziel] [Grund]", admin, cmd))
-            else
-                admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
-            end
+            admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
+            return
         end
     end
 end
