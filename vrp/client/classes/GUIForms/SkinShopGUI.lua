@@ -82,14 +82,22 @@ function SkinShopGUI.initializeAll()
 		addEventHandler("onClientMarkerHit", marker,
 			function(hitElement, matchingDimension)
 				if hitElement == localPlayer and matchingDimension then
-					localPlayer.m_OrigDim = getElementDimension( localPlayer )
-					local dim = getFreeSkinDimension()
-					setElementDimension( localPlayer, dim )
-					localPlayer:setPosition(v.PlayerPos)
-					localPlayer:setRotation(v.PlayerRot)
-					setCameraMatrix(unpack(v.CameraMatrix))
-					
-					SkinShopGUI:new()
+					if not hitElement:getFaction() or (hitElement:getFaction() and not hitElement:getFaction():isEvilFaction()) then
+						if localPlayer:getPublicSync("Company:Duty") == false and localPlayer:getPublicSync("Faction:Duty") == false then
+							localPlayer.m_OrigDim = getElementDimension( localPlayer )
+							local dim = getFreeSkinDimension()
+							setElementDimension( localPlayer, dim )
+							localPlayer:setPosition(v.PlayerPos)
+							localPlayer:setRotation(v.PlayerRot)
+							setCameraMatrix(unpack(v.CameraMatrix))
+
+							SkinShopGUI:new()
+						else
+							ErrorBox:new(_"Du kannst im Dienst nicht den Skin wechseln!")
+						end
+					else
+						ErrorBox:new(_"Du kannst in deiner Fraktion nicht den Skin wechseln!")
+					end
 				end
 			end
 		)

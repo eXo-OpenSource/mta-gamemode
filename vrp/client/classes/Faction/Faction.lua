@@ -65,10 +65,11 @@ function Faction:getId()
 end
 
 function Faction:isStateFaction()
-	if self.m_Type == "State" then
-		return true
-	end
-	return false
+	return self.m_Type == "State"
+end
+
+function Faction:isEvilFaction()
+	return self.m_Type == "Evil"
 end
 
 function Faction:getName()

@@ -269,6 +269,9 @@ function Player:spawn( )
 			outputServerLog("Invalid spawn location ("..self:getName()..")")
 		end
 
+		-- Update Skin
+		self:setDefaultSkin()
+
 		-- Teleport player into a "unique interior"
 		if self.m_UniqueInterior ~= 0 then
 			InteriorManager:getSingleton():teleportPlayerToInterior(self, self.m_UniqueInterior)
@@ -411,6 +414,12 @@ function Player:setJobDutySkin(skin)
 end
 
 function Player:setDefaultSkin()
+	if self:getFaction() then
+			if self:getFaction():isEvilFaction() then
+				self:getFaction():changeSkin(self)
+				return
+			end
+		end
 	self:setModel(self.m_Skin)
 end
 
