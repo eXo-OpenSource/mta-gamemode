@@ -66,7 +66,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-	if localPlayer:isInVehicle() then
+	--[[if localPlayer:isInVehicle() then
 		self:addItem(_"Kurzschließen",
 			function()
 				if self:getElement() then
@@ -75,7 +75,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-
+	]]
 	if getElementData(element,"WeaponTruck") or VEHICLE_BOX_LOAD[element.model] then
 		if #self:getAttachedElement(2912, element) > 0 then
 			self:addItem(_"Kiste abladen",
