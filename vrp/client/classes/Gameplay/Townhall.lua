@@ -61,6 +61,7 @@ end
 
 function Townhall:Event_OnPedClick(ped)
 	ShortMessage:new("Clicked-Ped: "..ped.Type)
+	TownhallInfoGUI:getSingleton():openTab(ped.Type)
 end
 
 --[[

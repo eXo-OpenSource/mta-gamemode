@@ -42,7 +42,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		end
 		cancelEvent()
 	else
-		if attacker and attacker == localPlayer then
+		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) then
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
 					triggerServerEvent("onClientDamage",attacker, source, weapon, bodypart, loss)

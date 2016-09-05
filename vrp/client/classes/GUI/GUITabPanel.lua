@@ -38,6 +38,7 @@ function GUITabPanel:addTab(tabName)
 
 	self.m_Tabs[id] = GUIElement:new(0, 30, self.m_Width, self.m_Height-30, self)
 	self.m_Tabs[id].TabIndex = id
+	self.m_Tabs[id].TabButton = tabButton
 	if id ~= 1 then
 		self.m_Tabs[id]:setVisible(false)
 	else
