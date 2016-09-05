@@ -17,7 +17,7 @@ end
 addRemoteEvents{"showAdminMenu", "announceText", "setDamageFree", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo"}
 
 function AdminGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-200, 600, 400, false, false)
+	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540, false, false)
 
 	self.m_adminButton = {}
 
@@ -53,9 +53,9 @@ function AdminGUI:constructor()
 	self.m_portDown.onLeftClick = function () self:portAdmin("D") end
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
-	self.m_PlayersGrid = GUIGridList:new(10, 10, 200, 320, tabSpieler)
+	self.m_PlayersGrid = GUIGridList:new(10, 10, 200, 460, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
-	self.m_RefreshButton = GUIButton:new(10, 335, 30, 30, FontAwesomeSymbols.Refresh, tabSpieler):setFont(FontAwesome(15))
+	self.m_RefreshButton = GUIButton:new(10, 470, 30, 30, FontAwesomeSymbols.Refresh, tabSpieler):setFont(FontAwesome(15))
 	self.m_RefreshButton.onLeftClick = function ()
 		self:refreshOnlinePlayers()
 	end
@@ -69,18 +69,22 @@ function AdminGUI:constructor()
 	self.m_PlayerCompanyLabel = GUILabel:new(410, 35, 180, 20, _"Unternehmen: -", tabSpieler)
 	self.m_PlayerGroupLabel = GUILabel:new(410, 60, 180, 20, _"Gang/Firma: -", tabSpieler)
 
-	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", 220, 130, 180, 30, Color.LightBlue, tabSpieler)
-	self:addAdminButton("spect", "specten", 410, 130, 180, 30, Color.LightRed, tabSpieler)
-	self:addAdminButton("goto", "hin porten", 220, 170, 180, 30, Color.Green, tabSpieler)
-	self:addAdminButton("gethere", "her porten", 410, 170, 180, 30, Color.Green, tabSpieler)
-	self:addAdminButton("kick", "kicken", 220, 210, 180, 30, Color.Orange, tabSpieler)
-	self:addAdminButton("warn", "Warns verwalten", 410, 210, 180, 30, Color.Orange, tabSpieler)
-	self:addAdminButton("prison", "ins Prison", 220, 250, 180, 30, Color.Orange, tabSpieler)
-	self:addAdminButton("unprison", "aus Prison entlassen", 410, 250, 180, 30, Color.Orange, tabSpieler)
-	self:addAdminButton("timeban", "Timeban", 220, 290, 180, 30, Color.Red, tabSpieler)
-	self:addAdminButton("permaban", "Permaban", 410, 290, 180, 30, Color.Red, tabSpieler)
-	self:addAdminButton("setFaction", "in Fraktion setzen", 220, 330, 180, 30, Color.Blue, tabSpieler)
-	self:addAdminButton("setCompany", "in Unternehmen setzen", 410, 330, 180, 30, Color.Blue, tabSpieler)
+	GUILabel:new(220, 130, 160, 30, _"Strafen:", tabSpieler)
+	self:addAdminButton("kick", "kicken", 220, 170, 160, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("prison", "ins Prison", 220, 210, 160, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("unprison", "aus Prison entlassen", 220, 250, 160, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("timeban", "Timeban", 220, 290, 160, 30, Color.Red, tabSpieler)
+	self:addAdminButton("permaban", "Permaban", 220, 330, 160, 30, Color.Red, tabSpieler)
+
+	GUILabel:new(440, 130, 160, 30, _"Sonstiges:", tabSpieler)
+	self:addAdminButton("spect", "specten", 440, 170, 160, 30, Color.LightRed, tabSpieler)
+	self:addAdminButton("goto", "hin porten", 440, 210, 160, 30, Color.Green, tabSpieler)
+	self:addAdminButton("gethere", "her porten", 440, 250, 160, 30, Color.Green, tabSpieler)
+
+	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", 610, 170, 160, 30, Color.LightBlue, tabSpieler)
+	self:addAdminButton("warn", "Warns verwalten", 610, 210, 160, 30, Color.Orange, tabSpieler)
+	self:addAdminButton("setFaction", "in Fraktion setzen", 610, 250, 160, 30, Color.Blue, tabSpieler)
+	self:addAdminButton("setCompany", "in Unternehmen setzen", 610, 290, 160, 30, Color.Blue, tabSpieler)
 
 	local tabOffline = self.m_TabPanel:addTab(_"Offline")
 	GUILabel:new(10, 10, 200, 20, "Suche:", tabOffline)
