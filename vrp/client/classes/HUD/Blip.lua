@@ -37,23 +37,30 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
 end
 
 function Blip:destructor()
-  if self.m_ID and Blip.Blips[self.m_ID] then
-    Blip.Blips[self.m_ID]:dettach()
-    Blip.Blips[self.m_ID] = nil
-    if self.DefaultBlips[self.m_ID] then
-      destroyElement( self.DefaultBlips[self.m_ID] )
-    end
-  else
-    local index = table.find(Blip.Blips, self)
-    if index then
-      Blip.Blips[idx]:dettach()
-      Blip.Blips[idx] = nil
-      if self.DefaultBlips[idx] then
-        destroyElement( self.DefaultBlips[idx] )
-      end
-    end
-  end
-  HUDRadar:syncBlips()
+	outputDebug("Destructor: Try destroy blip: "..self.m_RawImagePath.." - ID: "..tostring(self.m_ID))
+
+	if self.m_ID and Blip.Blips[self.m_ID] then
+		Blip.Blips[self.m_ID]:dettach()
+		Blip.Blips[self.m_ID] = nil
+
+		outputDebug("Destructor: Destroying blip: "..self.m_RawImagePath.." - ID: "..tostring(self.m_ID))
+
+		if self.DefaultBlips[self.m_ID] then
+		  destroyElement( self.DefaultBlips[self.m_ID] )
+		end
+	else
+		local index = table.find(Blip.Blips, self)
+		if index then
+			  Blip.Blips[index]:dettach()
+			  Blip.Blips[index] = nil
+			  if self.DefaultBlips[index] then
+			    destroyElement( self.DefaultBlips[index] )
+			  end
+			  outputDebug("Destructor: Destroying blip: "..self.m_RawImagePath.." - ID: "..tostring(index))
+
+		end
+	end
+	HUDRadar:syncBlips()
 end
 
 function Blip:getImagePath()
@@ -127,15 +134,16 @@ function Blip:attachTo(element)
 end
 
 function Blip:dettach()
-  if Blip.AttachedBlips[self] then
-    Blip.AttachedBlips[self] = nil
-  end
+	if Blip.AttachedBlips[self] then
+	  	outputChatBox("Destroy AttachedBlip")
+		table.remove(Blip.AttachedBlips, table.find(self))
+	end
 end
 
 addEvent("blipCreate", true)
 addEventHandler("blipCreate", root,
   function(index, path, x, y, streamDistance)
-    outputDebug("Creating blip: "..tostring(index))
+    outputDebug("Creating blip: "..path.." - ID:"..tostring(index))
     Blip.ServerBlips[index] = Blip:new(path, x, y, streamDistance)
   end
 )
@@ -144,8 +152,8 @@ addEvent("blipDestroy", true)
 addEventHandler("blipDestroy", root,
   function(index)
     if Blip.ServerBlips[index] then
-      outputDebug("Destroying blip: "..tostring(index))
-      delete(Blip.ServerBlips[index])
+	  outputDebug("Destroying blip: "..Blip.ServerBlips[index].m_RawImagePath.." - ID:"..tostring(index))
+	  delete(Blip.ServerBlips[index])
       Blip.ServerBlips[index] = nil
     end
   end
@@ -155,7 +163,9 @@ addEvent("blipsRetrieve", true)
 addEventHandler("blipsRetrieve", root,
   function(data)
     for k, v in pairs(data) do
-      Blip.ServerBlips[k] = Blip:new(unpack(v))
+		if not Blip.ServerBlips[k] then
+	  		Blip.ServerBlips[k] = Blip:new(unpack(v))
+		end
     end
   end
 )
