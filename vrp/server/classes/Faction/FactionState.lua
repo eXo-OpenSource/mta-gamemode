@@ -16,7 +16,8 @@ function FactionState:constructor()
 	self:loadLSPD()
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
-	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense"}
+	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
+	"factionStateGivePANote"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -39,6 +40,8 @@ function FactionState:constructor()
 	addEventHandler("factionStateTakeWeapons", root, bind(self.Event_takeWeapons, self))
 	addEventHandler("factionStateAcceptShowLicense", root, bind(self.Event_acceptShowLicense, self))
 	addEventHandler("factionStateDeclineShowLicense", root, bind(self.Event_declineShowLicense, self))
+	addEventHandler("factionStateGivePANote", root, bind(self.Event_givePANote, self))
+
 
 
 	-- Prepare the Area51
@@ -662,6 +665,24 @@ end
 
 function FactionState:Event_declineShowLicense(player, target)
 	player:sendMessage(_("%s will dir seinen Führerschein nicht zeigen!", player, target:getName()), 255, 255, 0)
+end
+
+function FactionState:Event_givePANote(target, note)
+	local faction = client:getFaction()
+	if faction and faction:isStateFaction() then
+		if client:isFactionDuty() then
+			if faction:getPlayerRank(client) < FactionRank.Manager then
+				client:sendError(_("Du bist nicht berechtig PA-Noten auszuteilen!", client))
+				return
+			end
+			target:sendInfo(_("%s hat dir eine PA-Note von %d gegeben!", target, client:getName(), note))
+			client:sendInfo(_("Du hast %s eine PA-Note von %d gegeben!", client, target:getName(), note))
+			outputChatBox("Todo: Save PA-Note", target)
+			outputChatBox("Todo: Save PA-Note", client)
+		else
+			client:sendError(_("Du bist nicht im Dienst!", client))
+		end
+	end
 end
 
 function FactionState:Event_takeDrugs(target)
