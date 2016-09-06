@@ -4,6 +4,7 @@ addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel
 function MechanicTow:constructor()
 	self.m_VehicleTakeMarker = Marker.create(920.614, -1176.063, 16.2, "cylinder", 1, 255, 255, 0)
 	self:createTowLot()
+	self.m_PendingQuestions = {}
 	addEventHandler("onMarkerHit", self.m_VehicleTakeMarker, bind(self.VehicleTakeMarker_Hit, self))
 
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
@@ -46,16 +47,20 @@ function MechanicTow:Event_mechanicRepair()
 	if client:getCompany() ~= self then
 		return
 	end
+	if not client:isCompanyDuty() then
+		client:sendError(_("Du bist nicht im Dienst!", client))
+		return
+	end
 
 	local driver = source:getOccupant(0)
 	if not driver then
 		client:sendError(_("Jemand muss sich auf dem Fahrersitz befinden!", client))
 		return
 	end
-	--[[if driver == client then
+	if driver == client then
 		client:sendError(_("Du kannst dein eigenes Fahrzeug nicht reparieren!", client))
 		return
-	end]]
+	end
 	if source:getHealth() > 950 then
 		client:sendError(_("Dieses Fahrzeug hat keine nennenswerten Beschädigungen!", client))
 		return
@@ -63,7 +68,15 @@ function MechanicTow:Event_mechanicRepair()
 
 	source.PendingMechanic = client
 	local price = math.floor((1000 - getElementHealth(source))*0.5)
+
+	if self.m_PendingQuestions[client] and not timestampCoolDown(self.m_PendingQuestions[client], 60) then
+		client:sendError(_("Du kannst nur jede Minute eine Reparatur-Anfrage stellen!", client))
+		return
+	end
+
+	self.m_PendingQuestions[client] = getRealTime().timestamp
 	driver:triggerEvent("questionBox", _("Darf %s dein Fahrzeug reparieren? Dies kostet dich zurzeit %d$!\nBeim nächsten Pay'n'Spray zahlst du einen Aufschlag von +33%%!", client, getPlayerName(client), price), "mechanicRepairConfirm", "mechanicRepairCancel", source)
+
 end
 
 function MechanicTow:Event_mechanicRepairConfirm(vehicle)

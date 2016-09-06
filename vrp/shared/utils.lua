@@ -588,3 +588,10 @@ function getVehicleType (...)
 	local type = _getVehicleType(...)
 	return (VehicleType[type] ~= nil and VehicleType[type] or VehicleType.Automobile)
 end
+
+function timestampCoolDown(last, seconds)
+	if last + seconds < getRealTime().timestamp then
+		return true
+	end
+	return false
+end
