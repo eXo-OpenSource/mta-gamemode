@@ -118,8 +118,6 @@ function RobableShop:stopRob(player)
   player:detachPlayerObject(self.m_Bag)
 
   self.m_Bag:destroy()
-  self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
-  self.m_BagBlip:attach(self.m_Bag)
 
   removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
   removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)

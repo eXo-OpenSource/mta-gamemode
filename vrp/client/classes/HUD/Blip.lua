@@ -37,13 +37,9 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
 end
 
 function Blip:destructor()
-	outputDebug("Destructor: Try destroy blip: "..self.m_RawImagePath.." - ID: "..tostring(self.m_ID))
-
 	if self.m_ID and Blip.Blips[self.m_ID] then
 		Blip.Blips[self.m_ID]:dettach()
 		Blip.Blips[self.m_ID] = nil
-
-		outputDebug("Destructor: Destroying blip: "..self.m_RawImagePath.." - ID: "..tostring(self.m_ID))
 
 		if self.DefaultBlips[self.m_ID] then
 		  destroyElement( self.DefaultBlips[self.m_ID] )
@@ -56,8 +52,6 @@ function Blip:destructor()
 			  if self.DefaultBlips[index] then
 			    destroyElement( self.DefaultBlips[index] )
 			  end
-			  outputDebug("Destructor: Destroying blip: "..self.m_RawImagePath.." - ID: "..tostring(index))
-
 		end
 	end
 	HUDRadar:syncBlips()
@@ -135,8 +129,7 @@ end
 
 function Blip:dettach()
 	if Blip.AttachedBlips[self] then
-	  	outputChatBox("Destroy AttachedBlip")
-		table.remove(Blip.AttachedBlips, table.find(self))
+	  	Blip.AttachedBlips[self] = nil
 	end
 end
 
