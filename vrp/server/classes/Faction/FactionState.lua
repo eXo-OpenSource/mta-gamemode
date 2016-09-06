@@ -675,10 +675,17 @@ function FactionState:Event_givePANote(target, note)
 				client:sendError(_("Du bist nicht berechtig PA-Noten auszuteilen!", client))
 				return
 			end
-			target:sendInfo(_("%s hat dir eine PA-Note von %d gegeben!", target, client:getName(), note))
-			client:sendInfo(_("Du hast %s eine PA-Note von %d gegeben!", client, target:getName(), note))
-			outputChatBox("Todo: Save PA-Note", target)
-			outputChatBox("Todo: Save PA-Note", client)
+			if client == target then
+				client:sendError(_("Du darfst dir nicht selber eine PA-Noten setzen!", client))
+				return
+			end
+			if note > 0 and note <= 100 then
+				target:sendInfo(_("%s hat dir eine PA-Note von %d gegeben!", target, client:getName(), note))
+				client:sendInfo(_("Du hast %s eine PA-Note von %d gegeben!", client, target:getName(), note))
+				client:setPaNote(note)
+			else
+				client:sendError(_("Ungültige PA-Note!", client))
+			end
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end

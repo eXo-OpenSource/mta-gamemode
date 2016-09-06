@@ -25,6 +25,7 @@ function IDCardGUI:constructor(player)
 	GUILabel:new(200, 120, 140, 20, _"Motorrad-Schein:", self)
 	GUILabel:new(200, 140, 140, 20, _"LKW-Schein:", self)
 	GUILabel:new(200, 160, 140, 20, _"Flugschein:", self)
+	GUILabel:new(200, 190, 140, 20, _"PA-Note:", self)
 
 
 
@@ -34,6 +35,8 @@ function IDCardGUI:constructor(player)
 	self.m_LicenseLabels["bike"] = GUILabel:new(370, 120, 40, 25, FontAwesomeSymbols.Square, self)
 	self.m_LicenseLabels["truck"] = GUILabel:new(370, 140, 40, 25, FontAwesomeSymbols.Square, self)
 	self.m_LicenseLabels["pilot"] = GUILabel:new(370, 160, 40, 25, FontAwesomeSymbols.Square, self)
+
+	self.m_PaNote = GUILabel:new(340, 190, 40, 20, "-keine-", self):setAlignX("right")
 
 	GUILabel:new(10, 160, 140, 20, _"Job-Level:", self)
 	GUILabel:new(10, 180, 140, 20, _"Waffen-Level:", self)
@@ -60,7 +63,7 @@ function IDCardGUI:constructor(player)
 	addEventHandler("Event_receiveIDCardData", root, bind(self.Event_receiveIDCardData, self))
 end
 
-function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registrationDate, jobLevel, weaponLevel, vehicleLevel, skinLevel)
+function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registrationDate, paNote, jobLevel, weaponLevel, vehicleLevel, skinLevel)
 	local carSymbol, carColor = self:getSymbol(car)
 	self.m_LicenseLabels["car"]:setText(carSymbol)
 	self.m_LicenseLabels["car"]:setColor(carColor)
@@ -78,6 +81,8 @@ function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registration
 	self.m_LevelLabels["weapon"]:setText(tostring(weaponLevel))
 	self.m_LevelLabels["vehicle"]:setText(tostring(vehicleLevel))
 	self.m_LevelLabels["skin"]:setText(tostring(skinLevel))
+
+	self.m_PaNote:setText(paNote == 0 and "-keine-" or paNote.."%")
 
 	self.m_RegistrationLabel:setText(_("Registriert seit: %s", getOpticalTimestamp(registrationDate)))
 end

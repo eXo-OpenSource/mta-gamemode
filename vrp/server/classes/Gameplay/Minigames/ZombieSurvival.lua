@@ -102,7 +102,7 @@ end
 
 function ZombieSurvival:removePlayer(player)
 	player:setHealth(100)
-	player:spawn(-35.72, 1380.00, 9.42)
+	--player:spawn(-35.72, 1380.00, 9.42)
 	player:setPosition(-35.72, 1380.00, 9.42)
 	player:setDimension(0)
 	player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
