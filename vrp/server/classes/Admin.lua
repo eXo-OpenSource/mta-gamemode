@@ -30,7 +30,6 @@ function Admin:constructor()
 
     addCommandHandler("addFactionVehicle", bind(self.addFactionVehicle, self))
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
-    addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
 
     local adminCommandBind = bind(self.command, self)
 
@@ -238,11 +237,17 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
             setCameraTarget(admin, target)
             admin:setFrozen(true)
+			if admin:isInVehicle() then
+				admin:getOccupiedVehicle():setFrozen(true)
+			end
             bindKey(admin, "space", "down", function()
                 setCameraTarget(admin, admin)
                 self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
                 unbindKey(admin, "space", "down")
                 admin:setFrozen(false)
+				if admin:isInVehicle() then
+					admin:getOccupiedVehicle():setFrozen(false)
+				end
             end)
         elseif func == "offlinePermaban" then
             self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
