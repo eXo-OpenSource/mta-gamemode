@@ -167,7 +167,7 @@ function HUDRadar:update()
     self.m_Rotation = 360 - math.deg(math.atan2(lookAtX - camX, lookAtY - camY)) % 360
   end
 
-  for i, v in pairs(getElementsByType("player")) do
+  for i, v in pairs(getElementsByType("player")) do -- Todo: find a other blip with karma!
     if v ~= localPlayer then
       if ((v:getPosition() - localPlayer:getPosition()).length < 30 or getPedTarget(localPlayer) == v) and v:getWantedLevel() == 0 then
         local pos = v:getPosition()
@@ -224,6 +224,12 @@ function HUDRadar:draw()
     dxDrawImageSection(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, self.m_Diagonal/2-self.m_Width/2, self.m_Diagonal/2-self.m_Height/2, self.m_Width, self.m_Height, self.m_RenderTarget)
   else
     dxDrawRectangle(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, tocolor(125, 168, 210))
+  end
+
+  -- Draw regino name (above health bar)
+  if core:get("HUD", "drawZone", true) and HUDUI:getSingleton().m_UIMode == UIStyle.vRoleplay then
+	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height-12, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
+	dxDrawText(getZoneName(localPlayer:getPosition(), false), self.m_PosX+3, self.m_PosY+self.m_Height-12, self.m_Width, self.m_PosY+self.m_Height+5, Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
   end
 
   -- Draw health bar (at the bottom)

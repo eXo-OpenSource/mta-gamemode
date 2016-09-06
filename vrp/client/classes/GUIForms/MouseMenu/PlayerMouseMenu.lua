@@ -68,7 +68,6 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-
 	if localPlayer:getRank() >= RANK.Supporter then
 		self:addItem(_"Admin: Kick",
 			function()

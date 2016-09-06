@@ -225,8 +225,10 @@ function SelfGUI:constructor()
 		HUDUI:getSingleton():setUIMode(index)
 		if index == UIStyle.vRoleplay then
 			self.m_LifeArmor:setVisible(true)
+			self.m_ZoneName:setVisible(true)
 		else
 			self.m_LifeArmor:setVisible(false)
+			self.m_ZoneName:setVisible(false)
 		end
 	end
 	self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.vRoleplay), true)
@@ -291,6 +293,15 @@ function SelfGUI:constructor()
 		HUDUI:getSingleton():toggleDefaultHealthArmor(state)
 	end
 
+	self.m_ZoneName = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.55, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", tabSettings)
+	self.m_ZoneName:setFont(VRPFont(25))
+	self.m_ZoneName:setFontSize(1)
+	self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
+	if core:get("HUD", "UIStyle") ~= UIStyle.vRoleplay then self.m_ZoneName:setVisible(false) end
+	self.m_ZoneName.onChange = function (state)
+		core:set("HUD", "drawZone", state)
+	end
+
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
 	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
 	self.m_RadarChange:addItem("Normal")
@@ -309,14 +320,14 @@ function SelfGUI:constructor()
 		core:set("Ad", "Chat", index - 1)
 	end
 
-	self.m_ServerTour = GUIButton:new(self.m_Width*0.6, self.m_Height*0.6, self.m_Width*0.35, self.m_Height*0.07, _"Server-Tour starten", tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
+	self.m_ServerTour = GUIButton:new(self.m_Width*0.6, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.07, _"Server-Tour starten", tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
 	self.m_ServerTour.onLeftClick = function()
 		QuestionBox:new(
 			_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
 			function() triggerServerEvent("tourStart", localPlayer, true) end)
 	end
 
-	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
+	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
 	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
 	--[[ TODO: Do we require this?
@@ -689,6 +700,6 @@ function SelfGUI:VehicleSellButton_Click()
 		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
-	
+
 	triggerServerEvent("vehicleSell", item.VehicleElement)
 end
