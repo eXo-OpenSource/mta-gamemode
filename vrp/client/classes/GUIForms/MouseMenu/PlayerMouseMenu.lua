@@ -43,8 +43,18 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 		self:addItem(_"Fraktion >>>",
 			function()
 				if self:getElement() then
-					local menu = PlayerMouseMenuFaction:new(posX, posY, element)
-					menu:setElement(element)
+					delete(self)
+					ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenuFaction:new(posX, posY, element), element)
+				end
+			end
+		)
+	end
+	if (localPlayer:getCompanyId() == 1 or localPlayer:getCompanyId() == 3) and localPlayer:getPublicSync("Company:Duty") == true then
+		self:addItem(_"Unternehmen >>>",
+			function()
+				if self:getElement() then
+					delete(self)
+					ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenuCompany:new(posX, posY, element), element)
 				end
 			end
 		)
@@ -57,50 +67,6 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		)
-	end
-	if localPlayer:getCompanyId() == 1 and localPlayer:getPublicSync("Company:Duty") == true then
-		if not element:getPublicSync("inDrivingLession") then
-			self:addItem(_"Fahrschule: Prüfung starten",
-				function()
-					if self:getElement() then
-						DrivingSchoolChooseLicenseGUI:new(self:getElement())
-					end
-				end
-			)
-		else
-			self:addItem(_"Fahrschule: Prüfung abbrechen",
-				function()
-					if self:getElement() then
-						triggerServerEvent("drivingSchoolEndLession", localPlayer, self:getElement(), false)
-					end
-				end
-			)
-			self:addItem(_"Fahrschule: Schein geben",
-				function()
-					if self:getElement() then
-						triggerServerEvent("drivingSchoolEndLession", localPlayer, self:getElement(), true)
-					end
-				end
-			)
-		end
-	elseif localPlayer:getCompanyId() == 3 and localPlayer:getPublicSync("Company:Duty") == true then
-		if not element:getPublicSync("inInterview") then
-			self:addItem(_"San News: Interview starten",
-				function()
-					if self:getElement() then
-						triggerServerEvent("sanNewsStartInterview", localPlayer, self:getElement())
-					end
-				end
-			)
-		else
-			self:addItem(_"San News: Interview beenden",
-				function()
-					if self:getElement() then
-						triggerServerEvent("sanNewsStopInterview", localPlayer, self:getElement())
-					end
-				end
-			)
-		end
 	end
 
 	if localPlayer:getRank() >= RANK.Supporter then

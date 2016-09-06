@@ -20,8 +20,8 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 	self:addItem(_"<<< Zurück",
 		function()
 			if self:getElement() then
-				local menu = PlayerMouseMenu:new(posX, posY, element)
-				menu:setElement(element)
+				delete(self)
+				ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenu:new(posX, posY, element), element)
 			end
 		end
 	)

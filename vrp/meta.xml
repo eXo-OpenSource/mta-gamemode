@@ -412,6 +412,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenuFaction.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenuCompany.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/BeggarPedMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/BankPcMouseMenu.lua" type="client"/>

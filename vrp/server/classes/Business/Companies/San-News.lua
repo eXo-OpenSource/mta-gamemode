@@ -45,7 +45,7 @@ function SanNews:Event_startInterview(target)
 
 				client:sendInfo(_("Du hast ein Interview mit %s gestartet!", client, target.name))
 				target:sendInfo(_("Reporter %s hat ein Interview mit dir gestartet!", target, client.name))
-				target:sendShortMessage(_("Interview: Alles was du im Chat schreibst ist nun öffentlich!", client))
+				target:sendShortMessage(_("Interview: Alles was du im Chat schreibst ist nun öffentlich! (Außnahme: @l [text])", client))
 				self:addInterviewPlayer(client)
 				self:addInterviewPlayer(target)
 			else
