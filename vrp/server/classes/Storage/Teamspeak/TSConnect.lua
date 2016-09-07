@@ -1,13 +1,13 @@
 TSConnect = inherit(Singleton)
 
 function TSConnect:constructor(url, user, pass, port, ip, tsport)
-	self.m_URL = url
+	self.m_URL = "https://exo-reallife.de/ingame/TSConnect/ts_connect.php"
 	self.m_Auth = {
-		qUser = user;
-		qPass = pass;
-		qPort = port;
-		tsIP  = ip;
-		tsPort = tsport;
+		qUser = "exoServerBot";
+		qPass = "wgCEAoO8";
+		qPort = 10011;
+		tsIP  = "46.105.96.223";
+		tsPort = 9999;
 	}
 end
 
