@@ -191,7 +191,7 @@ function AdminGUI:onOfflinePlayerInfo(info)
 	self.m_PlayerOfflineJobLabel:setText(_("Job: %s", info.Job and JobManager:getSingleton():getFromId(info.Job):getName() or _"-"))
 	self.m_PlayerOfflineMoneyLabel:setText(_("Geld: %s$", info.Money or "-"))
 	self.m_PlayerOfflineBankMoneyLabel:setText(_("Bank-Geld: %s$", info.BankMoney or "-"))
-	self.m_PlayerOfflineBanLabel:setText(_("Gebannt: %s", ban == true and "Nein" or "Ja"))
+	self.m_PlayerOfflineBanLabel:setText(_("Gebannt: %s", info.Ban == true and "Ja" or "Nein"))
 
 end
 

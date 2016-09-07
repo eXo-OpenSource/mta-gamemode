@@ -60,8 +60,8 @@ function Ban.checkBan(player)
 end
 
 function Ban.checkSerial(serial, player)
-	sql:queryFetchSingle(Async.waitFor(), "SELECT reason, expires FROM ??_bans WHERE serial = ?;", sql:getPrefix(), serial)
-	local row = Async.wait()
+	-- Note: true = not banned
+	local row = sql:queryFetchSingle("SELECT reason, expires FROM ??_bans WHERE serial = ?;", sql:getPrefix(), serial)
 	if row then
 		local duration = row.expires
 		if duration == 0 then
@@ -81,5 +81,9 @@ end
 
 function Ban.checkOfflineBan(playerId)
 	local serial = Account.getLastSerialFromId(playerId)
-	return Ban.checkSerial(serial)
+	if Ban.checkSerial(serial) == true then
+		return false
+	else
+		return true
+	end
 end
