@@ -80,14 +80,18 @@ function VehicleTuningGUI:destructor(closedByServer)
     delete(self.m_UpgradeChanger)
     delete(self.m_AddToCartButton)
     delete(self.m_ShoppingCartWindow)
-    if self.m_ColorPicker then delete(self.m_ColorPicker) end
-    if self.m_TexturePicker then delete(self.m_TexturePicker) end
-    if self.m_VehicleShader then delete(self.m_VehicleShader) end
-    if self.m_HornPicker then delete(self.m_HornPicker) end
+    self:closeAllWindows()
     self.m_Vehicle:setOverrideLights(0)
     showChat(true)
 
     GUIForm.destructor(self)
+end
+
+function VehicleTuningGUI:closeAllWindows()
+    if self.m_ColorPicker then delete(self.m_ColorPicker) end
+    if self.m_TexturePicker then delete(self.m_TexturePicker) end
+    if self.m_VehicleShader then delete(self.m_VehicleShader) end
+    if self.m_HornPicker then delete(self.m_HornPicker) end
 end
 
 function VehicleTuningGUI:initPartsList()
@@ -274,8 +278,7 @@ function VehicleTuningGUI:PartItem_Click(item)
     self:resetUpgrades()
     self.m_UpgradeChanger:setVisible(true)
     self.m_AddToCartButton:setVisible(true)
-    if self.m_ColorPicker then delete(self.m_ColorPicker) end
-    if self.m_TexturePicker then delete(self.m_TexturePicker) end
+    self:closeAllWindows()
     self:moveCameraToSlot(item.PartSlot)
     if item.PartSlot then
         -- Check for special properties
