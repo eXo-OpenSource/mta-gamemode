@@ -14,7 +14,7 @@ function JobManager:constructor()
 		JobRoadSweeper:new();
 		JobLumberjack:new();
 		JobFarmer:new();
-		JobServiceTechnician:new();
+		--JobServiceTechnician:new();
 		JobPizza:new();
 		JobHeliTransport:new();
 		JobLogistician:new();

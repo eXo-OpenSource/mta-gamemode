@@ -765,6 +765,14 @@
 	<vrpfile src="files/images/Shops/Bertrams.png"/>
 	<vrpfile src="files/images/Shops/HarrysBikes.png"/>
 	<vrpfile src="files/images/Shops/CouttSchutz.png"/>
+	<vrpfile src="files/images/Shops/FlyForYourSmile.jpg"/>
+	<vrpfile src="files/images/Shops/BlueberryCars.jpg"/>
+	<vrpfile src="files/images/Shops/Grotti.jpg"/>
+	<vrpfile src="files/images/Shops/SlowAndUsed.jpg"/>
+	<vrpfile src="files/images/Shops/SportCars.jpg"/>
+	<vrpfile src="files/images/Shops/Autobahn.jpg"/>
+	<vrpfile src="files/images/Shops/CouttAndSchutz.jpg"/>
+
 	<vrpfile src="files/images/Shops/BankHeader.png"/>
 
 	<vrpfile src="files/images/RockPaperScissors/paper.png"/>
