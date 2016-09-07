@@ -122,9 +122,9 @@ function PermanentVehicle:setSpecial(special)
 			self.speakers["Middle"] = createObject(1841, 0, 0, 0)
 			self.speakers["Middle"]:setScale(1.5)
 
-			self.speakers["Left"]:attachElements(veh, -0.3, -1.5, 0, -55, 0, 0)
-			self.speakers["Right"]:attachElements(veh, 1, -1.5, 0, -55, 0, 0)
-			self.speakers["Middle"]:attachElements(veh, 0, -0.8, 0.4, 0, 0, 90)
+			self.speakers["Left"]:attach(self, -0.3, -1.5, 0, -55, 0, 0)
+			self.speakers["Right"]:attach(self, 1, -1.5, 0, -55, 0, 0)
+			self.speakers["Middle"]:attach(self, 0, -0.8, 0.4, 0, 0, 90)
 
 			self.speakers["Left"]:setCollisionsEnabled(false)
 			self.speakers["Right"]:setCollisionsEnabled(false)

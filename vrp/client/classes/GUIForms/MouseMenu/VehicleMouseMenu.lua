@@ -45,6 +45,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
  				end
  			end
  		)
+		if getElementData(element, "Special") == VehicleSpecial.Soundvan then
+			self:addItem(_"Musik abspielen",
+				function()
+					if self:getElement() then
+						outputChatBox("In Development")
+					end
+				end
+			)
+		end
 	end
 
 	if element:getVehicleType() ~= VehicleType.Trailer then
