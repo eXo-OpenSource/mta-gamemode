@@ -595,3 +595,18 @@ function timestampCoolDown(last, seconds)
 	end
 	return false
 end
+
+function traceback ()
+      local level = 1
+      while true do
+        local info = debug.getinfo(level, "Sl")
+        if not info then break end
+        if info.what == "C" then   -- is a C function?
+          outputConsole(level, "C function")
+        else   -- a Lua function
+          outputConsole(string.format("[%s]:%d",
+                              info.short_src, info.currentline))
+        end
+        level = level + 1
+      end
+    end
