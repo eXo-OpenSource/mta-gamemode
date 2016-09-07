@@ -4,7 +4,7 @@ function TSConnect:constructor(url, user, pass, port, ip, tsport)
 	self.m_URL = "https://exo-reallife.de/ingame/TSConnect/ts_connect.php"
 	self.m_Auth = {
 		qUser = "exoServerBot";
-		qPass = "wgCEAoO8";
+		qPass = "wgCGAoO8";
 		qPort = 10011;
 		tsIP  = "46.105.96.223";
 		tsPort = 9999;
