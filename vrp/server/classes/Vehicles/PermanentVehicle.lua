@@ -7,7 +7,7 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId, texture, horn, neon)
+function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId, texture, horn, neon, special)
 	self.m_Id = Id
 	self.m_Owner = owner
 
@@ -62,6 +62,9 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 		self:setNeon(0)
 	end
 
+	if special > 0 then
+		self:setSpecial(special)
+	end
 end
 
 function PermanentVehicle:destructor()
@@ -100,12 +103,34 @@ function PermanentVehicle:save()
 	local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
 	local tunings = getVehicleUpgrades(self) or {}
 	if self.m_Trunk then self.m_Trunk:save() end
-	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ?, TexturePath = ?, Horn = ?, Neon = ? WHERE Id = ?", sql:getPrefix(),
-		self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Id)
+	return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ?, TexturePath = ?, Horn = ?, Neon = ?, Special = ? WHERE Id = ?", sql:getPrefix(),
+		self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Special or 0, self.m_Id)
 end
 
 function PermanentVehicle:getId()
 	return self.m_Id
+end
+
+function PermanentVehicle:setSpecial(special)
+	self.m_Special = special
+	self:setData("Special", special, true)
+	if special == VehicleSpecial.Soundvan then
+		if self:getModel() == 535 then
+			self.speakers = {}
+			self.speakers["Left"] = createObject(2229, 0, 0, 0)
+			self.speakers["Right"] = createObject(2229, 0, 0, 0)
+			self.speakers["Middle"] = createObject(1841, 0, 0, 0)
+			self.speakers["Middle"]:setScale(1.5)
+
+			self.speakers["Left"]:attachElements(veh, -0.3, -1.5, 0, -55, 0, 0)
+			self.speakers["Right"]:attachElements(veh, 1, -1.5, 0, -55, 0, 0)
+			self.speakers["Middle"]:attachElements(veh, 0, -0.8, 0.4, 0, 0, 90)
+
+			self.speakers["Left"]:setCollisionsEnabled(false)
+			self.speakers["Right"]:setCollisionsEnabled(false)
+			self.speakers["Middle"]:setCollisionsEnabled(false)
+		end
+	end
 end
 
 function PermanentVehicle:setCurrentPositionAsSpawn(type)
