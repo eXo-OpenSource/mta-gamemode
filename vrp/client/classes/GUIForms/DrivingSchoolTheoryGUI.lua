@@ -15,20 +15,20 @@ local width,height = screenWidth*0.4,screenHeight*0.4
 local TEXT_INFO = "Prüfungsablauf:\nWillkommen zur theoretischen Fahrprüfung für die Führerscheinklasse B. Es werden 10 Fragen folgen, welche mit einer maximal Fehlerpunktzahl von 10 beantwortet werden müssen. Das Ergebnis wird sofort danach angezeigt."
 local QUESTIONS =
 {
-	{"Wie schnell darf innerorts normalerweise auf einer Vorfahrtstraße gefahren werden?","30","60","120","50",3,4},
+	{"Wie schnell darf hier auf eXo-Reallife in Los Santos gefahren werden?","30 km/H","50 km/H","80 km/H","120 km/H",3,3},
 	{"Wann darf rechts überholt werden?","Auf einer Autobahn","Innerorts auf einer Mehrspurigen Straße","Überall","Außerorts",3,2},
-	{"Ab welchen Promille-Wert für Alkohol müssen Sie mit Strafen rechnen ( mit Probezeit )?","0.3","0.5","0.9","1.2",3,1},
+	{"In welchem Zustand dürfen Sie fahren?","alkholisiert","Nüchtern","auf Drogen",nil, 3,2},
 	{"Was gilt an einer Kreuzung ohne Beschilderung oder Ampel?","Wer zuerst kommt fährt","Wer am schnellsten ankommt fährt","Rechts vor Links","Wer hupt fährt zuerst",5,3},
-	{"Was gilt auf Parkplätzen?","Mittig fahren um sichtbar zu sein","Rechtsfahrgebot","Es gibt keine Regelung","Linksfahrgebot",4,2},
+	{"Wo darf auf eXo-Reallife geparkt werden?","Auf der Straße","Vor Gebäude-Eingängen","Es gibt keine Regelung","auf Parkplätzen",4,4},
 	{"Auf welche Verkehrsteilnehmer muss besonders geachtet werden?","LKW-Fahrer","PKW-Fahrer","Passanten",nil,5,3},
 	{"Was müssen Sie bei schlechten Lichtverhältnissen beachten?","Ausreichend Frühstücken","Ausreichende Beleuchtung am Fahrzeug","Laute Musik um wach zu bleiben","Schnell fahren",3,2},
-	{"Warum sollten Sie nicht zu langsam fahren?", "Um Auffahrunfälle zu vermeiden", "Um Sprit zu sparen", nil,nil,5,1},
-	{"Was gilt bei einem Stopp-Schild?","an der Sichtlinie halten","Durchfahren sofern keiner Sie behindert","An der Haltelinie komplett anhalten","Nicht an der Haltelinie halten wenn die Straße frei ist",4,3},
-	{"Wozu dienen Blinker?","Zur Beleuchtung des Fahrzeuges","Als Indikatoren der Fahrtrichtung","Als Sirene",nil,4,2},
-	{"Wo dürfen Sie parken?", "Auf Kraftfahrstraßen", "Außerorts auf der rechten Seite", "An gekennzeichneten Stellen",nil,4,3},
-	{"Wie viel Abstand müssen Sie beim Parken vor einem Stoppschild einhalten?","5 m","10 m","15 m","20 m",4,2},
-	{"Wie viel Abstand müssen Sie beim Parken vor einem Zebrastreifen einhalten?","5 m","10 m","15 m","20 m",4,1},
-	{"Wie viel Abstand müssen Sie beim Parken vor einer Haltestelle einhalten?","5 m","10 m","15 m","20 m",4,3},
+	{"Wie dürfen Sie Pesonen mit Ihrem Fahrzeug NICHT befördern?", "Auf dem Dach oder Motorhaube", "Auf Sitzplätzen im Fahrzeug", nil,nil,5,1},
+	{"Was gilt bei gefährlichen Kreuzungen?","schnell durchfahren","langsam und vorsichtig durchfahren","durchgehend hupen","keine Kreuzungen befahren",4,2},
+	{"Was ist in der STVO verboten?","rechts abbiegen","gemütlich fahren","hupen","Burn-outs (Räder durchdrehen)",4,4},
+	{"Was machen Sie bei einem Unfall?", "Ich bleibe stehen und kläre den Sachverhalt", "Ich fahre einfach weiter", "Ich beschimpfe den Unfallgegner",nil,4,1},
+	{"Was machen Sie wenn ein Streifenwagen Sie auffordert anzuhalten?","langsam weiter fahren","schneller Fahren","rechts anhalten","ignorieren",4,3},
+	{"Wie verhalten Sie sich bei einer Verkehrkontrolle?","höflich gegenüber dem Beamten","mit wüsten Beschimpfungen","Waffengebrauch","Ich laufe weg",4,1},
+	{"Was machen Sie wenn ein Beamter Sie auffordert Ihren Führerschein zu zeigen?","Ich lehne ab","Ich zeige ihm den Führerschein",nil,nil,4,2},
 }
 
 function DrivingSchoolTheoryGUI:constructor(type)
