@@ -99,11 +99,11 @@ function Highscore:getHighscoresFormated()
 	local realtime = MinigameManager.getRealTime()
 
 	local newTable = {}
-	newTable.Daily = self.m_Daily[realtime.yearday]
-	newTable.Weekly = self.m_Weekly[realtime.week]
-	newTable.Monthly = self.m_Monthly[realtime.month]
-	newTable.Yearly = self.m_Yearly[realtime.year]
-	newTable.Global = self.m_Global
+	newTable.Daily = table.deepcopy(self.m_Daily[realtime.yearday])
+	newTable.Weekly = table.deepcopy(self.m_Weekly[realtime.week])
+	newTable.Monthly = table.deepcopy(self.m_Monthly[realtime.month])
+	newTable.Yearly = table.deepcopy(self.m_Yearly[realtime.year])
+	newTable.Global = table.deepcopy(self.m_Global)
 
 	local name, score
 
