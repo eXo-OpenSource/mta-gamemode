@@ -71,6 +71,9 @@ end
 
 function ZombieSurvival:zombieWasted(ped, player)
 	if isElement(player) then
+		if not self.m_ZombieKills[player] then
+			self.m_ZombieKills[player] = 0
+		end
 		self.m_ZombieKills[player] = self.m_ZombieKills[player]+1
 		player:triggerEvent("setScore", self.m_ZombieKills[player])
 	end
@@ -93,16 +96,21 @@ function ZombieSurvival:addPlayer(player)
 
 	addEventHandler("onPlayerDamage", player, function(attacker, weapon, bodypart, loss)
 		if isElement(attacker) and getElementData(attacker, "zombie") == true then
+			if (source:getHealth()-loss*15) <= 0 then
+				source:fadeCamera(false, 0)
+				source:kill()
+				return
+			end
 			source:setHealth(source:getHealth()-loss*15)
 		end
 	end)
 
-
 end
 
 function ZombieSurvival:removePlayer(player)
+	player:spawn(0, 0, 0)
+	source:fadeCamera(true, 1)
 	player:setHealth(100)
-	--player:spawn(-35.72, 1380.00, 9.42)
 	player:setPosition(-35.72, 1380.00, 9.42)
 	player:setDimension(0)
 	player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
