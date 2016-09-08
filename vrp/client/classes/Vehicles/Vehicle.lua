@@ -7,7 +7,8 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 registerElementClass("vehicle", Vehicle)
-addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn"}
+addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn",
+"soundvanChangeURLClient", "soundvanStopSoundClient"}
 
 function Vehicle:constructor()
 	self.m_DiffMileage = 0
@@ -42,7 +43,6 @@ addEventHandler("vehicleEngineStart", root,
 	end
 )
 
-
 addEventHandler("vehicleCarlock", root,
 	function()
 		playSound3D("files/audio/carlock.mp3", source:getPosition())
@@ -53,10 +53,10 @@ addEventHandler("vehicleHandbrake", root,
 	function()
 		local vehicle = getPedOccupiedVehicle( localPlayer )
 		local bstate = getElementData( vehicle, "Handbrake")
-		if vehicle then 
-			if bstate then 
+		if vehicle then
+			if bstate then
 				playSound3D("files/audio/hb_off.mp3", source:getPosition())
-			else 
+			else
 				playSound3D("files/audio/hb_on.mp3", source:getPosition())
 			end
 		end
@@ -136,6 +136,30 @@ addEventHandler("onClientVehicleDamage", root,
 			end
 
 			source:setHealth(301)
+		end
+	end
+)
+
+
+addEventHandler("soundvanChangeURLClient", root,
+	function(url)
+		if isElement(source.Sound) then
+			source.Sound:destroy()
+		end
+		if url then
+			local sound = Sound3D.create(url, source:getPosition())
+			sound:setInterior(source:getInterior())
+			sound:setDimension(source:getDimension())
+			sound:attach(source)
+			source.Sound = sound
+		end
+	end
+)
+
+addEventHandler("soundvanStopSoundClient", root,
+	function()
+		if isElement(source.Sound) then
+			source.Sound:destroy()
 		end
 	end
 )

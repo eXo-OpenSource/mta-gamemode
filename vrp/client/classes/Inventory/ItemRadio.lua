@@ -12,6 +12,8 @@ addEventHandler("itemRadioChangeURLClient", root,
 			source.Sound:destroy()
 		end
 		local sound = Sound3D.create(url, source:getPosition())
+		sound:setInterior(source:getInterior())
+		sound:setDimension(source:getDimension())
 		sound:attach(source)
 		source.Sound = sound
 	end

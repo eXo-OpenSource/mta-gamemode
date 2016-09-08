@@ -126,9 +126,34 @@ function PermanentVehicle:setSpecial(special)
 			self.speakers["Right"]:attach(self, 1, -1.5, 0, -55, 0, 0)
 			self.speakers["Middle"]:attach(self, 0, -0.8, 0.4, 0, 0, 90)
 
-			self.speakers["Left"]:setCollisionsEnabled(false)
-			self.speakers["Right"]:setCollisionsEnabled(false)
-			self.speakers["Middle"]:setCollisionsEnabled(false)
+			for index, element in pairs(self.speakers) do
+				element:setCollisionsEnabled(false)
+			end
+
+			local refreshSpeaker = function()
+				for index, element in pairs(self.speakers) do
+					if isElement(self) then
+						element:setDimension(self:getDimension())
+						element:setInterior(self:getInterior())
+						if self.m_SoundURL then
+							triggerClientEvent("soundvanChangeURLClient", source, self.m_SoundURL)
+						end
+					else
+						element:destroy()
+						if self.m_SoundURL then
+							triggerClientEvent("soundvanStopSoundClient", self, url)
+						end
+					end
+				end
+			end
+
+			refreshSpeaker()
+
+			addEventHandler("onElementDimensionChange", self, refreshSpeaker)
+		    addEventHandler("onElementInteriorChange", self, refreshSpeaker)
+			addEventHandler("onVehicleExplode", self, refreshSpeaker)
+			addEventHandler("onVehicleRespawn", self, refreshSpeaker)
+			addEventHandler("onElementDestroy", self, refreshSpeaker)
 		end
 	end
 end

@@ -19,7 +19,8 @@ function VehicleManager:constructor()
 	-- Add events
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
-		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark"}
+		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
+		"soundvanChangeURL", "soundvanStopSound"}
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
@@ -38,6 +39,8 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
 	addEventHandler("vehicleUpgradeHangar", root, bind(self.Event_vehicleUpgradeHangar, self))
 	addEventHandler("vehiclePark", root, bind(self.Event_vehiclePark, self))
+	addEventHandler("soundvanChangeURL", root, bind(self.Event_soundvanChangeURL, self))
+	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
 
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
@@ -712,6 +715,18 @@ function VehicleManager:Event_vehicleBreak()
 	outputDebug("Vehicle has been broken by "..client:getName())
 	-- TODO: The following behavior is pretty bad in terms of security, so fix it asap (without breaking its behavior)
 	source:setBroken(true)
+end
 
+function VehicleManager:Event_soundvanChangeURL(url)
+	if source.m_Special and source.m_Special == VehicleSpecial.Soundvan then
+		source.m_SoundURL = url
+		triggerClientEvent("soundvanChangeURLClient", source, url)
+	end
+end
 
+function VehicleManager:Event_soundvanStopSound()
+	if source.m_Special and source.m_Special == VehicleSpecial.Soundvan then
+		source.m_SoundURL = nil
+		triggerClientEvent("soundvanStopSoundClient", source, url)
+	end
 end
