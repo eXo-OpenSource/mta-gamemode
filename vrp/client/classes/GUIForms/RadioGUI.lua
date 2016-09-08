@@ -111,7 +111,7 @@ function RadioGUI:setRadioStation(station)
 		removeEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
 		setRadioChannel(radioUrl)
 		addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
-		self.m_Radioname:setText(radioName)
+		self.m_Radioname:setText("[GTA] "..radioName)
 		self.m_ToggleSound:setImage("files/images/Radio/sound_stop.png")
 	end
 

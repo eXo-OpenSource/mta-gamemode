@@ -361,23 +361,24 @@ DEATH_TIME_PREMIUM = 21000
 DEATH_TIME_ADMIN = 11000
 
 VRP_RADIO = {
-	{"Di.fm Dubstep", "http://80.94.69.106:6374/"},
-	{"Di.fm Electro House", "http://scfire-ntc-aa02.stream.aol.com:80/stream/1025"},
+	{"You FM", "http://metafiles.gl-systemhaus.de/hr/youfm_2.m3u"},
+	{"181.FM", "http://www.181.fm/winamp.pls?station=181-power&style=mp3&description=Power%20181%20(Top%2040)&file=181-power.pls"},
 	{"RMF Dance", "http://files.kusmierz.be/rmf/rmfdance-3.mp3"},
-	{"Sky.fm Alternative", "http://u12.sky.fm:80/sky_altrock_aacplus"},
-	{"Sky.fm Roots Reggae", "http://u16b.sky.fm:80/sky_rootsreggae_aacplus"},
-	{"Sky.fm Classic Rap", "http://u17.sky.fm:80/sky_classicrap_aacplus"},
-	{"Sky.fm Top Hits", "http://u12b.sky.fm:80/sky_tophits_aacplus"},
-	{"89.0 RTL", "http://80.237.156.45/890rtl-128.mp3"},
+	{"Kronehit", "http://onair-ha1.krone.at/kronehit-hd.mp3.m3u"},
+	{"Life Radio", "http://94.136.28.10:8000/liferadio.m3u"},
+	{"OE3", "http://mp3stream7.apasf.apa.at:8000"},
+	{"FM 4", "http://mp3stream1.apasf.apa.at:8000/listen.pls"},
+	{"NSW-LiVE", "http://nsw-radio.de"},
 	{"Technobase.fm", "http://listen.technobase.fm/dsl.asx"},
-	{"N-Joy", "http://ndrstream.ic.llnwd.net/stream/ndrstream_n-joy_hi_mp3.m3u"},
 	{"Hardbase.fm", "http://listen.hardbase.fm/tunein-dsl-asx"},
 	{"Housetime.fm", "http://listen.housetime.fm/tunein-dsl-asx"},
 	{"Techno4Ever", "http://www.techno4ever.net/t4e/stream/dsl_listen.asx"},
 	{"ClubTime.fm", "http://listen.ClubTime.fm/dsl.pls"},
 	{"CoreTime.fm", "http://listen.CoreTime.fm/dsl.pls"},
-	{"RADIO METAL ON", "http://62.210.125.50:8000/mp3"},
-
+	{"Lounge FM Austria", "http://digital.lounge.fm"},
+	{"Rock Antenne", "http://www.rockantenne.de/webradio/rockantenne.m3u"},
+	{"Raute Musik Rock", "http://rock-high.rautemusik.fm/listen.pls"},
+	
 	-- GTA channels
 	{"Playback FM", 1},
 	{"K-Rose", 2},

@@ -96,21 +96,25 @@ function Highscore:getHighscores()
 end
 
 function Highscore:getHighscoresFormated()
-	local highscores = self:getHighscores()
 	local realtime = MinigameManager.getRealTime()
 
 	local newTable = {}
-	newTable.Daily = highscores.Daily[realtime.yearday]
-	newTable.Weekly = highscores.Weekly[realtime.week]
-	newTable.Monthly = highscores.Monthly[realtime.month]
-	newTable.Yearly = highscores.Yearly[realtime.year]
-	newTable.Global = highscores.Global
+	newTable.Daily = self.m_Daily[realtime.yearday]
+	newTable.Weekly = self.m_Weekly[realtime.week]
+	newTable.Monthly = self.m_Monthly[realtime.month]
+	newTable.Yearly = self.m_Yearly[realtime.year]
+	newTable.Global = self.m_Global
+
+	local name, score
+
 	for index, tbl in pairs(newTable) do
 		for i = 1, 10 do
 			if tbl[i] then
+				name = Account.getNameFromId(tbl[i].PlayerID)
+				score = tbl[i].Score
 				newTable[index][i] = {}
-				newTable[index][i].name = Account.getNameFromId(tbl[i].PlayerID) or "-"
-				newTable[index][i].score = tbl[i].Score or 0
+				newTable[index][i].name = name or "-"
+				newTable[index][i].score = score or 0
 			end
 		end
 
@@ -119,6 +123,7 @@ function Highscore:getHighscoresFormated()
 				return (a.score > b.score)
 			end
 		)
+
 	end
 
 	return newTable
@@ -179,13 +184,13 @@ function Highscore:addHighscore(Id, score)
 			if v.PlayerID == Id then
 				if v.Score < score then
 					v.Score = score
-					outputChatBox("Updated daily score")
+					outputChatBox("Updated daily score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert daily score")
+		outputChatBox("Insert daily score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Daily[realtime.yearday], insert)
 		doUpdate = true
 	end
@@ -195,13 +200,13 @@ function Highscore:addHighscore(Id, score)
 			if v.PlayerID == Id then
 				if v.Score < score then
 					v.Score = score
-					outputChatBox("Updated weekly score")
+					outputChatBox("Updated weekly score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert weekly score")
+		outputChatBox("Insert weekly score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Weekly[realtime.week], insert)
 		doUpdate = true
 	end
@@ -211,13 +216,13 @@ function Highscore:addHighscore(Id, score)
 			if v.PlayerID == Id then
 				if v.Score < score then
 					v.Score = score
-					outputChatBox("Updated monthly score")
+					outputChatBox("Updated monthly score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert monthly score")
+		outputChatBox("Insert monthly score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Monthly[realtime.month], insert)
 		doUpdate = true
 	end
@@ -227,13 +232,13 @@ function Highscore:addHighscore(Id, score)
 			if v.PlayerID == Id then
 				if v.Score < score then
 					v.Score = score
-					outputChatBox("Updated yearly score")
+					outputChatBox("Updated yearly score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert yearly score")
+		outputChatBox("Insert yearly score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Yearly[realtime.year], insert)
 		doUpdate = true
 	end
@@ -243,14 +248,14 @@ function Highscore:addHighscore(Id, score)
 		for _, v in pairs(self.m_Global) do
 			if v.PlayerID == Id then
 				if v.Score < score then
+					outputChatBox("Updated global score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					v.Score = score
-					outputChatBox("Updated global score")
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert global score")
+		outputChatBox("Insert global score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Global, insert)
 		doUpdate = true
 	end

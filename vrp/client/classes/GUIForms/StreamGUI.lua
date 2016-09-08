@@ -31,7 +31,7 @@ function StreamGUI:constructor(title, playCallback, stopCallback)
 		end
 	end
 
-	self.m_PlayButton.onLeftClick = function() if playCallback then playCallback(self.m_StreamUrl:getText()) outputChatBox(self.m_StreamUrl:getText()) end end
+	self.m_PlayButton.onLeftClick = function() if playCallback then playCallback(self.m_StreamUrl:getText()) end end
 	self.m_StopButton.onLeftClick = function() if stopCallback then stopCallback() end end
 
 	self.m_Streams = {}
