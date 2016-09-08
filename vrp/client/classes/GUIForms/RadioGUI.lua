@@ -8,38 +8,6 @@
 RadioGUI = inherit(GUIForm)
 inherit(Singleton, RadioGUI)
 
-local VRP_RADIO = {
-	{"Di.fm Dubstep", "http://80.94.69.106:6374/"},
-	{"Di.fm Electro House", "http://scfire-ntc-aa02.stream.aol.com:80/stream/1025"},
-	{"RMF Dance", "http://files.kusmierz.be/rmf/rmfdance-3.mp3"},
-	{"Sky.fm Alternative", "http://u12.sky.fm:80/sky_altrock_aacplus"},
-	{"Sky.fm Roots Reggae", "http://u16b.sky.fm:80/sky_rootsreggae_aacplus"},
-	{"Sky.fm Classic Rap", "http://u17.sky.fm:80/sky_classicrap_aacplus"},
-	{"Sky.fm Top Hits", "http://u12b.sky.fm:80/sky_tophits_aacplus"},
-	{"89.0 RTL", "http://80.237.156.45/890rtl-128.mp3"},
-	{"Technobase.fm", "http://listen.technobase.fm/dsl.asx"},
-	{"N-Joy", "http://ndrstream.ic.llnwd.net/stream/ndrstream_n-joy_hi_mp3.m3u"},
-	{"Hardbase.fm", "http://listen.hardbase.fm/tunein-dsl-asx"},
-	{"Housetime.fm", "http://listen.housetime.fm/tunein-dsl-asx"},
-	{"Techno4Ever", "http://www.techno4ever.net/t4e/stream/dsl_listen.asx"},
-	{"ClubTime.fm", "http://listen.ClubTime.fm/dsl.pls"},
-	{"CoreTime.fm", "http://listen.CoreTime.fm/dsl.pls"},
-	{"RADIO METAL ON", "http://62.210.125.50:8000/mp3"},
-
-	-- GTA channels
-	{"Playback FM", 1},
-	{"K-Rose", 2},
-	{"K-DST", 3},
-	{"Bounce FM", 4},
-	{"SF-UR", 5},
-	{"Radio Los Santos", 6},
-	{"Radio X", 7},
-	{"CSR 103.9", 8},
-	{"K-Jah West", 9},
-	{"Master Sounds 98.3", 10},
-	{"WCTR", 11},
-	{"User Track Player", 12}
-}
 
 function RadioGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.28)/2 / ASPECT_RATIO_MULTIPLIER, 0, screenWidth*0.28 / ASPECT_RATIO_MULTIPLIER, screenHeight*0.19)

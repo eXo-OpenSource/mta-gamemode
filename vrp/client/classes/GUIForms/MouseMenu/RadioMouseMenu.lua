@@ -10,10 +10,10 @@ RadioMouseMenu = inherit(GUIMouseMenu)
 function RadioMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 
-	self:addItem(_"URL ändern",
+	self:addItem(_"Musik ändern",
 		function()
 			if self:getElement() then
-				InputBox:new(_"Radio URL ändern", "Bitte gib eine neue Stream-URL ein:", function(url) triggerServerEvent("itemRadioChangeURL", self:getElement(), url) end)
+				StreamGUI:new("Radio Musik ändern", function(url) triggerServerEvent("itemRadioChangeURL", self:getElement(), url) end, function() triggerServerEvent("itemRadioStopSound", self:getElement()) end)
 			end
 		end
 	)

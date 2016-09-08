@@ -49,7 +49,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			self:addItem(_"Musik abspielen",
 				function()
 					if self:getElement() then
-						outputChatBox("In Development")
+						StreamGUI:new("Soundvan Musik ändern", function(url) triggerServerEvent("soundvanChangeURL", self:getElement(), url) end, function() triggerServerEvent("soundvanStopSound", self:getElement()) end)
 					end
 				end
 			)

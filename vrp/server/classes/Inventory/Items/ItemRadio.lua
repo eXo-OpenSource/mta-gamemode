@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 ItemRadio = inherit(Item)
-addEvent("itemRadioChangeURL", true)
+addRemoteEvents{"itemRadioChangeURL", "itemRadioStopSound"}
 
 function ItemRadio:constructor()
 
@@ -30,6 +30,11 @@ function ItemRadio:use(player)
 			addEventHandler("itemRadioChangeURL", worldItem:getObject(),
 				function(url)
 					triggerClientEvent("itemRadioChangeURLClient", worldItem:getObject(), url)
+				end
+			)
+			addEventHandler("itemRadioStopSound", worldItem:getObject(),
+				function(url)
+					triggerClientEvent("itemRadioRemove", worldItem:getObject())
 				end
 			)
 		end
