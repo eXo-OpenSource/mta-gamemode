@@ -113,10 +113,13 @@ function Core:constructor()
 		Async.create(Player.join)(v)
 	end
 
+	local realtime = getRealTime()
+   	setTime(realtime.hour, realtime.minute)
+	setMinuteDuration(60000)
+
 	setOcclusionsEnabled(false)
 
 	addEventHandler("Core.onClientInternalError", root, bind(self.onClientInternalError, self))
-
 
 	-- Prepare unit tests
 	if DEBUG then
