@@ -40,7 +40,6 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 
 end
 
-
 function Faction:destructor()
 	if self.m_BankAccount then
 		delete(self.m_BankAccount)
@@ -360,4 +359,16 @@ end
 
 function Faction:getLog()
 	return StatisticsLogger:getSingleton():getGroupLogs("faction", self.m_Id)
+end
+
+function Faction:setSafe(obj)
+	self.m_Safe = obj
+	self.m_Safe:setData("clickable",true,true)
+	addEventHandler("onElementClicked", self.m_Safe[Id], function(button, state, player)
+		if button == "left" and state == "down" then
+			if player:getFaction() == self then
+				
+			end
+		end
+	end)
 end

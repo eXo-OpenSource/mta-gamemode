@@ -66,6 +66,9 @@ function FactionEvil:createInterior(Id, faction)
 	for k,v in pairs(int) do
 		setElementDimension(v, Id)
 		setElementInterior(v, 8)
+		if v:getModel() == 2332 then
+			faction:setSafe(v)
+		end
 	end
 end
 
