@@ -38,8 +38,6 @@ function FactionGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, _"Inhalt:", tabAllgemein)
 	self.m_FactionMoneyLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.33, self.m_Width*0.25, self.m_Height*0.06, "", tabAllgemein)
 	self.m_FactionMoneyAmountEdit = GUIEdit:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.27, self.m_Height*0.07, tabAllgemein):setCaption(_"Betrag")
-	self.m_FactionMoneyDepositButton = VRPButton:new(self.m_Width*0.3, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Einzahlen", true, tabAllgemein)
-	self.m_FactionMoneyWithdrawButton = VRPButton:new(self.m_Width*0.56, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.07, _"Auszahlen", true, tabAllgemein)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.1, _"Funktionen:", tabAllgemein)
 	self.m_FactionRespawnVehicleButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.3, self.m_Height*0.07, _"Fahrzeuge respawnen", true, tabAllgemein)
@@ -59,8 +57,6 @@ function FactionGUI:constructor()
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 --	self.m_FactionQuitButton.onLeftClick = bind(self.FactionQuitButton_Click, self)
-	self.m_FactionMoneyDepositButton.onLeftClick = bind(self.FactionMoneyDepositButton_Click, self)
-	self.m_FactionMoneyWithdrawButton.onLeftClick = bind(self.FactionMoneyWithdrawButton_Click, self)
 	self.m_FactionAddPlayerButton.onLeftClick = bind(self.FactionAddPlayerButton_Click, self)
 	self.m_FactionRemovePlayerButton.onLeftClick = bind(self.FactionRemovePlayerButton_Click, self)
 	self.m_FactionRankUpButton.onLeftClick = bind(self.FactionRankUpButton_Click, self)
@@ -325,24 +321,6 @@ end
 
 function FactionGUI:FactionCreateButton_Click()
 	FactionCreationGUI:new()
-end
-
-function FactionGUI:FactionMoneyDepositButton_Click()
-	local amount = tonumber(self.m_FactionMoneyAmountEdit:getText())
-	if amount and amount > 0 then
-		triggerServerEvent("factionDeposit", root, amount)
-	else
-		ErrorBox:new(_"Bitte gebe einen gültigen Betrag ein!")
-	end
-end
-
-function FactionGUI:FactionMoneyWithdrawButton_Click()
-	local amount = tonumber(self.m_FactionMoneyAmountEdit:getText())
-	if amount and amount > 0 then
-		triggerServerEvent("factionWithdraw", root, amount)
-	else
-		ErrorBox:new(_"Bitte gebe einen gültigen Betrag ein!")
-	end
 end
 
 function FactionGUI:FactionAddPlayerButton_Click()

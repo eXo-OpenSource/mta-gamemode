@@ -364,11 +364,18 @@ end
 function Faction:setSafe(obj)
 	self.m_Safe = obj
 	self.m_Safe:setData("clickable",true,true)
-	addEventHandler("onElementClicked", self.m_Safe[Id], function(button, state, player)
+	addEventHandler("onElementClicked", self.m_Safe, function(button, state, player)
 		if button == "left" and state == "down" then
 			if player:getFaction() == self then
-				
+				player:triggerEvent("bankAccountGUIShow", self:getName(), "factionDeposit", "factionWithdraw")
+				self:refreshBankAccountGUI(player)
+			else
+				player:sendError(_("Du bist nicht in der richtigen Fraktion", player))
 			end
 		end
 	end)
+end
+
+function Faction:refreshBankAccountGUI(player)
+	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
 end
