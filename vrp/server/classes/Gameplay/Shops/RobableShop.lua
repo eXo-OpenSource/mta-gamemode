@@ -152,7 +152,7 @@ function RobableShop:giveBag(player)
   addEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
   addEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
   addEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
-  addEventHandler("onPlayerQuit", player, self.m_onPlayerQuit, self)
+  addEventHandler("onPlayerQuit", player, self.m_onPlayerQuit)
 
   player:sendShortMessage(_("Du hast die Beute erhalten!", player))
 
