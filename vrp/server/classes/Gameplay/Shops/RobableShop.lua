@@ -86,6 +86,8 @@ function RobableShop:startRob(shop, attacker, ped)
   addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
   self.m_onCrash = bind(self.onCrash, self)
   addEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
+  self.m_characterInitializedFunc = bind(self.characterInitialized, self)
+  addEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
   setTimer(
   function()
@@ -123,7 +125,8 @@ function RobableShop:stopRob(player)
   removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
   removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
   removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
-  removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuit, self)
+  removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
+  removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
   delete(self.m_EvilBlip)
   delete(self.m_StateBlip)
@@ -195,6 +198,12 @@ function RobableShop:checkBagAllowed(player)
   return false
 end
 
+function RobableShop:characterInitialized()
+  if self.m_Gang == source:getGroup() then
+    Group:attachPlayerMarker(source)
+  end
+end
+
 function RobableShop:onDamage(attacker, weapon)
   if isElement(attacker) and self:checkBagAllowed(attacker) then
     if weapon == 0 then
@@ -226,6 +235,7 @@ end
 
 function RobableShop:onPlayerQuit()
   self:removeBag(source)
+  self.m_Gang:removePlayerMarker(source)
 end
 
 function RobableShop:onCrash(player)

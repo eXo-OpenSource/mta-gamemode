@@ -13,6 +13,7 @@ registerElementClass("player", Player)
 Player.ms_QuitHook = Hook:new()
 Player.ms_ChatHook = Hook:new()
 
+addEvent("characterInitialized")
 addEvent("introFinished", true)
 addEventHandler("introFinished", root, function()
 	client.m_TutorialStage = 3 -- todo: character creation and tutorial mission
@@ -150,6 +151,7 @@ function Player:loadCharacter()
 
 	-- Premium
 	Premium.constructor(self)
+	triggerEvent("characterInitialized", self)
 end
 
 function Player:createCharacter()

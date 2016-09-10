@@ -311,6 +311,16 @@ function Group:attachPlayerMarkers()
   end
 end
 
+function Group:attachPlayerMarker(player)
+  self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
+  self.m_Markers[player]:setDimension(player:getDimension())
+  self.m_Markers[player]:setInterior(player:getInterior())
+  self.m_Markers[player]:attach(player,0,0,1.5)
+  self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+  addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+  addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+end
+
 function Group:removePlayerMarkers()
   for k, player in ipairs(self:getOnlinePlayers()) do
     self.m_Markers[player]:destroy()
@@ -318,6 +328,13 @@ function Group:removePlayerMarkers()
     removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
   end
   self.m_Markers = {}
+end
+
+function Group:removePlayerMarker(player)
+  self.m_Markers[player]:destroy()
+  removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+  removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+  self.m_Markers[player] = nil
 end
 
 function Group:refreshAttachedMarker(dimInt)
