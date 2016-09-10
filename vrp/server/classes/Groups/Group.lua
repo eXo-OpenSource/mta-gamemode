@@ -312,6 +312,7 @@ function Group:attachPlayerMarkers()
 end
 
 function Group:attachPlayerMarker(player)
+  if not self.m_Markers then self.m_Markers = {} end
   self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
   self.m_Markers[player]:setDimension(player:getDimension())
   self.m_Markers[player]:setInterior(player:getInterior())
