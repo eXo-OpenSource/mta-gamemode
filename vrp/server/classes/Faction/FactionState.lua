@@ -12,8 +12,12 @@ FactionState = inherit(Singleton)
 function FactionState:constructor()
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
 
-	self:loadLSPD(1)
-	self:loadFBI(2)
+	nextframe( -- Todo workaround
+		function ()
+			self:loadLSPD(1)
+			self:loadFBI(2)
+		end
+	)
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",

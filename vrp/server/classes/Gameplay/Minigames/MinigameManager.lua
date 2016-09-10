@@ -80,6 +80,8 @@ function MinigameManager:addPlayerDeathHook()
 			if match then
 				match:removePlayer(player)
 				return true
+			else
+				return false
 			end
 		end
 	)
@@ -87,10 +89,10 @@ end
 
 function MinigameManager:getPlayerDeathmatch(player)
 	for index, match in pairs(MinigameManager.Current) do
-		if match.m_ZombieKills[player] then --ZombieSurvival
+		if math.m_ZombieKills and match.m_ZombieKills[player] then --ZombieSurvival
 			return match
 		end
-		if match.m_PedKills[player] then --SniperGame
+		if match.m_PedKills and match.m_PedKills[player] then --SniperGame
 			return match
 		end
 	end
