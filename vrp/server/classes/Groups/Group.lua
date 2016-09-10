@@ -332,6 +332,7 @@ function Group:removePlayerMarkers()
 end
 
 function Group:removePlayerMarker(player)
+  if not self.m_Markers[player] then return end
   self.m_Markers[player]:destroy()
   removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
   removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
