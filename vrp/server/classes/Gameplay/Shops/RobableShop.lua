@@ -200,7 +200,9 @@ end
 
 function RobableShop:characterInitialized()
   outputDebugString("Player has been initialized "..tostring(source))
-    outputDebugString("Player has been initialized ... -> group "..tostring(source:getGroup()))
+  outputDebugString("Player has been initialized ... -> group "..tostring(source:getGroup()))
+  outputDebugString("Player has been initialized "..tostring(source:getGroup().m_Id).. " to rob -> "..tostring(self.m_Gang))
+
   if self.m_Gang == source:getGroup() then
     outputDebugString("Create marker stfu "..tostring(source:getGroup()))
     Group:attachPlayerMarker(source)
