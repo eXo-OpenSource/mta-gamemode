@@ -15,10 +15,10 @@ function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interi
 
   -- Respawn ped after a while (if necessary)
   addEventHandler("onPedWasted", self.m_Ped,
-    function()
-      setTimer(function() self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension) end, 5*60*1000, 1)
-    end
-  )
+  function()
+    setTimer(function() self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension) end, 5*60*1000, 1)
+  end
+)
 
 end
 
@@ -88,26 +88,26 @@ function RobableShop:startRob(shop, attacker, ped)
   addEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
 
   setTimer(
-    function()
-      if isElement(attacker) then
-        if attacker:getTarget() == ped then
-          local rnd = math.random(5, 10)
-          if shop:getMoney() >= rnd then
-            shop:takeMoney(rnd, "Raub")
-            self.m_Bag.Money = self.m_Bag.Money + rnd
-            attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
-          else
-            killTimer(sourceTimer)
-            attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
-          end
+  function()
+    if isElement(attacker) then
+      if attacker:getTarget() == ped then
+        local rnd = math.random(5, 10)
+        if shop:getMoney() >= rnd then
+          shop:takeMoney(rnd, "Raub")
+          self.m_Bag.Money = self.m_Bag.Money + rnd
+          attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
+        else
+          killTimer(sourceTimer)
+          attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
         end
-        return
       end
-      killTimer(sourceTimer)
-    end,
-    1000,
-    60
-  )
+      return
+    end
+    killTimer(sourceTimer)
+  end,
+  1000,
+  60
+)
 end
 
 function RobableShop:stopRob(player)
@@ -123,6 +123,7 @@ function RobableShop:stopRob(player)
   removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
   removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
   removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
+  removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuit, self)
 
   delete(self.m_EvilBlip)
   delete(self.m_StateBlip)
@@ -145,11 +146,13 @@ function RobableShop:giveBag(player)
   self.m_onWastedFunc = bind(self.onWasted, self)
   self.m_onVehicleEnterFunc = bind(self.onVehicleEnter, self)
   self.m_onVehicleExitFunc = bind(self.onVehicleExit, self)
+  self.m_onPlayerQuitFunc = bind(self.onPlayerQuit, self)
 
   addEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
   addEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
   addEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
-  addEventHandler("onPlayerVehicleExit", source, self.m_onVehicleExitFunc)
+  addEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
+  addEventHandler("onPlayerQuit", player, self.m_onPlayerQuit, self)
 
   player:sendShortMessage(_("Du hast die Beute erhalten!", player))
 
@@ -218,6 +221,10 @@ end
 
 function RobableShop:onVehicleExit(veh)
   triggerClientEvent(source, "robableShopDisableVehicleCollision", source, veh)
+end
+
+function RobableShop:onPlayerQuit()
+  self:removeBag(source)
 end
 
 function RobableShop:onCrash(player)
