@@ -12,8 +12,8 @@ FactionState = inherit(Singleton)
 function FactionState:constructor()
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
 
-	self:loadFBI()
-	self:loadLSPD()
+	self:loadLSPD(1)
+	self:loadFBI(2)
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
@@ -64,9 +64,13 @@ end
 function FactionState:destructor()
 end
 
-function FactionState:loadFBI()
+function FactionState:loadFBI(factionId)
 	self:createDutyPickup(234.04456, 111.82722, 1003.22571, 10, 23) -- FBI Base
 	self:createDutyPickup(1510.67871, -1479.12988, 9.50000, 0, 0)
+
+	local safe = createObject(2332, 226.80, 128.50, 1010.20)
+	safe:setInterior(10)
+	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
 	--[[
 	VehicleBarrier:new(Vector3(1621.9000244141, -1602.6999511719,13.300000190735), Vector3(0, 90, 180)).onBarrierHit = bind(self.onBarrierGateHit, self) -- FBI Barrier
 

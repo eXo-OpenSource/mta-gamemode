@@ -366,7 +366,7 @@ function Faction:setSafe(obj)
 	self.m_Safe:setData("clickable",true,true)
 	addEventHandler("onElementClicked", self.m_Safe, function(button, state, player)
 		if button == "left" and state == "down" then
-			if player:getFaction() == self then
+			if player:getFaction() and player:getFaction() == self or (player:getFaction():isStateFaction() and self:isStateFaction()) then
 				player:triggerEvent("bankAccountGUIShow", self:getName(), "factionDeposit", "factionWithdraw")
 				self:refreshBankAccountGUI(player)
 			else
