@@ -199,7 +199,10 @@ function RobableShop:checkBagAllowed(player)
 end
 
 function RobableShop:characterInitialized()
+  outputDebugString("Player has been initialized "..tostring(source))
+    outputDebugString("Player has been initialized ... -> group "..tostring(source:getGroup()))
   if self.m_Gang == source:getGroup() then
+    outputDebugString("Create marker stfu "..tostring(source:getGroup()))
     Group:attachPlayerMarker(source)
   end
 end
