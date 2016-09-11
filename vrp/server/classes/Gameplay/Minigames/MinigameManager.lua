@@ -89,7 +89,7 @@ end
 
 function MinigameManager:getPlayerDeathmatch(player)
 	for index, match in pairs(MinigameManager.Current) do
-		if math.m_ZombieKills and match.m_ZombieKills[player] then --ZombieSurvival
+		if match.m_ZombieKills and match.m_ZombieKills[player] then --ZombieSurvival
 			return match
 		end
 		if match.m_PedKills and match.m_PedKills[player] then --SniperGame

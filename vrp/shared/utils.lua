@@ -611,7 +611,7 @@ function timestampCoolDown(last, seconds)
 	return false
 end
 
-function traceback ()
+function traceback()
       local level = 1
       while true do
         local info = debug.getinfo(level, "Sl")

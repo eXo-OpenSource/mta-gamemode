@@ -29,7 +29,7 @@ end
 
 addEventHandler("onPlayerTarget", root,
     function(targetElement)
-        if targetElement and getElementType(targetElement) == "ped" and getPedWeapon(source) ~= 0 and instanceof(targetElement, Actor) then
+        if targetElement and getElementType(targetElement) == "ped" and getPedWeapon(source) ~= 0 and instanceof(targetElement, Actor) then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
             local task = targetElement:getTaskById(TaskWaitForGettingTargetted.getId())
             if task then
                 task:Actor_GettingTargetted(source)

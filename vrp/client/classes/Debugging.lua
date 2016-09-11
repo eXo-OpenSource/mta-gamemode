@@ -50,7 +50,7 @@ if DEBUG then
 				else
 					MapGUI:getSingleton(
 						function(posX, posY, posZ)
-							localPlayer:setpos("", posX, posY, posZ)
+							localPlayer:setPosition(posX, posY, posZ)
 							localPlayer:setInterior(0)
 							localPlayer:setDimension(0)
 						end

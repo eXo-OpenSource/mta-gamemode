@@ -42,7 +42,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		end
 		cancelEvent()
 	else
-		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) then
+		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
 					triggerServerEvent("onClientDamage",attacker, source, weapon, bodypart, loss)
