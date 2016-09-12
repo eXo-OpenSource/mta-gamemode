@@ -69,6 +69,12 @@ function VehicleInteraction:render()
 							self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Kofferraum zu durchsuchen!", self.m_actionButton), 1)
 						elseif door == 0 then
 							self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Motor zu reparieren!", self.m_actionButton), 1)
+						elseif self.m_lookAtVehicle:getModel() == 416 then
+							if door == 4 or door == 5 then
+								if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
+									self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum ein- oder ausladen der Trage!", self.m_actionButton), 1)
+								end
+							end
 						end
 					end
 				else
@@ -275,6 +281,10 @@ function VehicleInteraction:action()
 						triggerServerEvent("onActionVehicleDoor", localPlayer, door)
 					end
 				end
+			end
+		elseif (door == 4 or door == 5) and self.m_lookAtVehicle:getModel() == 416 then
+			if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getPublicSync("Rescue:Type") == "medic" then
+				triggerServerEvent("factionRescueToggleStretcher", localPlayer, self.m_lookAtVehicle)
 			end
 		end
     end

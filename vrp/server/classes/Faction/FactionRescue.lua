@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 FactionRescue = inherit(Singleton)
-addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer", "factionRescueGetStretcher", "factionRescueRemoveStretcher", "factionRescueWastedFinished", "factionRescueChangeSkin"}
+addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer", "factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher"}
 
 function FactionRescue:constructor()
 	-- Duty Pickup
@@ -15,6 +15,8 @@ function FactionRescue:constructor()
 	self.m_Skins = {}
 	self.m_Skins["medic"] = {70, 71, 274, 275, 276}
 	self.m_Skins["fire"] = {260, 277, 278, 279}
+
+	self.m_LastStrecher = {}
 
 	-- Barriers
 	VehicleBarrier:new(Vector3(1743.09, -1742.30, 13.30), Vector3(0, 90, -180)).onBarrierHit = bind(self.onBarrierHit, self)
@@ -28,10 +30,9 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueHealPlayerQuestion", root, bind(self.Event_healPlayerQuestion, self))
 	addEventHandler("factionRescueDiscardHealPlayer", root, bind(self.Event_discardHealPlayer, self))
 	addEventHandler("factionRescueHealPlayer", root, bind(self.Event_healPlayer, self))
-	addEventHandler("factionRescueGetStretcher", root, bind(self.Event_GetStretcher, self))
-	addEventHandler("factionRescueRemoveStretcher", root, bind(self.Event_RemoveStretcher, self))
 	addEventHandler("factionRescueWastedFinished", root, bind(self.Event_OnPlayerWastedFinish, self))
 	addEventHandler("factionRescueChangeSkin", root, bind(self.Event_changeSkin, self))
+	addEventHandler("factionRescueToggleStretcher", root, bind(self.Event_ToggleStretcher, self))
 
 
 end
@@ -139,96 +140,89 @@ function FactionRescue:Event_toggleDuty(type)
 end
 
 -- Death System
-function FactionRescue:Event_GetStretcher()
+function FactionRescue:Event_ToggleStretcher(vehicle)
 	if client:getFaction() == self.m_Faction then
-		-- Check for the correct Vehicle
-		if client.m_RescueStretcher then
-			if client.m_RescueStretcher.m_Vehicle ~= source then
-				client:sendError(_("Deine Trage befindet sich in einem anderen Fahrzeug!", client))
-				return
+		if client:isFactionDuty() and client:getPublicSync("Rescue:Type") == "medic" then
+			if not self.m_LastStrecher[client] or timestampCoolDown(self.m_LastStrecher[client], 6) then
+				if client.m_RescueStretcher then
+					self:removeStretcher(client, vehicle)
+				else
+					self:getStretcher(client, vehicle)
+				end
+			else
+				client:sendError(_("Du kannst die Trage nicht so oft hintereinander aus/einladen!", client))
 			end
-		end
-
-		local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
-		outputDebug(distance)
-		if distance >= 1.5 and distance <= 4 then
-			-- Open the doors
-			source:setDoorState(4, 0)
-			source:setDoorState(5, 0)
-			source:setDoorOpenRatio(4, 1)
-			source:setDoorOpenRatio(5, 1)
-
-			-- Create the Stretcher
-			if not client.m_RescueStretcher then
-				client.m_RescueStretcher = createObject(2146, source:getPosition() + source.matrix.forward*-3, source:getRotation())
-				client.m_RescueStretcher:setCollisionsEnabled(false)
-				client.m_RescueStretcher.m_Vehicle = source
-			end
-
-			-- Move the Stretcher to the Player
-			moveObject(client.m_RescueStretcher, 3000, client:getPosition() + client.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, client:getRotation().z - source:getRotation().z), "InOutQuad")
-			client:setFrozen(true)
-
-			setTimer(
-				function (client)
-					client.m_RescueStretcher:attach(client, Vector3(0, 1.4, -0.5))
-					client:toggleControlsWhileObjectAttached(false)
-					client:setFrozen(false)
-				end, 3000, 1, client
-			)
 		else
-			client:sendWarning(_("Die Trage kann in dieser Position nicht ausgeladen werden!", client))
+			client:sendError(_("Du bist nicht im Medic-Dienst!", client))
 		end
 	end
 end
 
-function FactionRescue:Event_RemoveStretcher()
-	if client:getFaction() == self.m_Faction then
-		if client.m_RescueStretcher  then
-			local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
-			if distance >= 1.5 and distance <= 4 then
-				-- Move it into the Vehicle
-				client.m_RescueStretcher:detach()
-				client.m_RescueStretcher:setRotation(client:getRotation())
-				client.m_RescueStretcher:setPosition(client:getPosition() + client.matrix.forward*1.4 + Vector3(0, 0, -0.5))
-				moveObject(client.m_RescueStretcher, 3000, source:getPosition() + source.matrix.forward*-2, Vector3(0, 0, source:getRotation().z - client:getRotation().z), "InOutQuad")
+function FactionRescue:getStretcher(player, vehicle)
+	-- Open the doors
+	self.m_LastStrecher[client] = getRealTime().timestamp
+	vehicle:setDoorState(4, 0)
+	vehicle:setDoorState(5, 0)
+	vehicle:setDoorOpenRatio(4, 1)
+	vehicle:setDoorOpenRatio(5, 1)
 
-				-- Enable Controls
-				client:toggleControlsWhileObjectAttached(true)
-
-				setTimer(
-					function(source, client)
-						-- Close the doors
-						source:setDoorOpenRatio(4, 0)
-						source:setDoorOpenRatio(5, 0)
-
-						if client.m_RescueStretcher.player then
-							local deadPlayer = client.m_RescueStretcher.player
-							if deadPlayer:isDead() then
-								local pos = source:getPosition()
-								pos.x = pos.x+3
-								deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
-								client:sendShortMessage(_("Du hast den Spieler erfolgreich wiederbelebt!", client))
-								deadPlayer:setCameraTarget(player)
-								deadPlayer:respawn(Vector3(pos))
-								deadPlayer:fadeCamera(true, 1)
-								deadPlayer:triggerEvent("abortDeathGUI")
-							else
-								client:sendShortMessage(_("Der Spieler ist nicht Tod!", client))
-							end
-						end
-
-						client.m_RescueStretcher:destroy()
-						client.m_RescueStretcher = nil
-					end, 3000, 1, source, client
-				)
-			else
-				client:sendWarning(_("Die Trage kann in dieser Position nicht eingeladen werden!", client))
-			end
-		else
-			client:sendError(_("Du hast keine Trage!", client))
-		end
+	-- Create the Stretcher
+	if not player.m_RescueStretcher then
+		player.m_RescueStretcher = createObject(2146, vehicle:getPosition() + vehicle.matrix.forward*-3, vehicle:getRotation())
+		player.m_RescueStretcher:setCollisionsEnabled(false)
+		player.m_RescueStretcher.m_Vehicle = vehicle
 	end
+
+	-- Move the Stretcher to the Player
+	moveObject(player.m_RescueStretcher, 3000, player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, player:getRotation().z - vehicle:getRotation().z), "InOutQuad")
+	player:setFrozen(true)
+
+	setTimer(
+		function (player)
+			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
+			player:toggleControlsWhileObjectAttached(false)
+			player:setFrozen(false)
+		end, 3000, 1, player
+	)
+end
+
+function FactionRescue:removeStretcher(player, vehicle)
+	-- Move it into the Vehicle
+	self.m_LastStrecher[client] = getRealTime().timestamp
+	player.m_RescueStretcher:detach()
+	player.m_RescueStretcher:setRotation(player:getRotation())
+	player.m_RescueStretcher:setPosition(player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5))
+	moveObject(player.m_RescueStretcher, 3000, vehicle:getPosition() + vehicle.matrix.forward*-2, Vector3(0, 0, vehicle:getRotation().z - player:getRotation().z), "InOutQuad")
+
+	-- Enable Controls
+	player:toggleControlsWhileObjectAttached(true)
+
+	setTimer(
+		function(vehicle, player)
+			-- Close the doors
+			vehicle:setDoorOpenRatio(4, 0)
+			vehicle:setDoorOpenRatio(5, 0)
+
+			if player.m_RescueStretcher.player then
+				local deadPlayer = player.m_RescueStretcher.player
+				if deadPlayer:isDead() then
+					local pos = vehicle:getPosition()
+					pos.x = pos.x+3
+					deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
+					player:sendShortMessage(_("Du hast den Spieler erfolgreich wiederbelebt!", player))
+					deadPlayer:setCameraTarget(player)
+					deadPlayer:respawn(Vector3(pos))
+					deadPlayer:fadeCamera(true, 1)
+					deadPlayer:triggerEvent("abortDeathGUI")
+				else
+					player:sendShortMessage(_("Der Spieler ist nicht Tod!", player))
+				end
+			end
+
+			player.m_RescueStretcher:destroy()
+			player.m_RescueStretcher = nil
+		end, 3000, 1, vehicle, player
+	)
 end
 
 --[[ Very buggy, i don't know why? TODO!

@@ -130,34 +130,6 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 	end
 
-	if localPlayer:getFactionId() == 4 and localPlayer:getPublicSync("Rescue:Type") == "medic" then
-		if element:getModel() == 416 then
-			self:addItem(_"Medic: Krankentrage ausladen",
-				function()
-					if self:getElement() then
-						outputDebug("TRUE")
-						triggerServerEvent("factionRescueGetStretcher", self:getElement())
-					end
-				end
-			)
-			self:addItem(_"Medic: Krankentrage einladen",
-				function()
-					if self:getElement() then
-						triggerServerEvent("factionRescueRemoveStretcher", self:getElement())
-					end
-				end
-			)
-		elseif element:getModel() == 599 then
-			self:addItem(_"Medic: Defibrillator ausladen",
-				function()
-					if self:getElement() then
-						triggerServerEvent("factionRescueGetStretcher", self:getElement())
-					end
-				end
-			)
-		end
-	end
-
 	if localPlayer:getRank() >= RANK.Moderator then
 		self:addItem(_"Admin: Reparieren",
 			function()
