@@ -294,7 +294,7 @@ end
 
 function Group:sendShortMessage(text, ...)
   for k, player in ipairs(self:getOnlinePlayers()) do
-    player:sendShortMessage(("%s:\n%s"):format(self:getName(), text), ...)
+    player:sendShortMessage(("%s"):format(text), self:getName(),...)
   end
 end
 
