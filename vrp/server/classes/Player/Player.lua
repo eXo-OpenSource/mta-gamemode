@@ -135,6 +135,10 @@ function Player:loadCharacter()
 		Admin:getSingleton():addAdmin(self,self:getRank())
 	end
 
+	if self:getGroup() then
+		self:getGroup():onPlayerJoin(self)
+	end
+
 	-- Add Payday
 	self:setNextPayday()
 	self.m_Inventory = InventoryManager:getSingleton():loadInventory(self)

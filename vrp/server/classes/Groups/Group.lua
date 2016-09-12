@@ -19,7 +19,7 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange, rank
   self.m_LastNameChange = lastNameChange or 0
   self.m_VehiclesCanBeModified = true
   self.m_Type = type
-
+  self.m_MarkersAttached = false
   local saveRanks = false
   if rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
   if rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
@@ -74,6 +74,19 @@ end
 
 function Group:getType()
   return self.m_Type
+end
+
+function Group:onPlayerJoin(player)
+    self:sendShortMessage(_("%s ist gejoint!", player, player:getName()))
+    if self.m_MarkersAttached == true then
+        self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
+        self.m_Markers[player]:setDimension(player:getDimension())
+        self.m_Markers[player]:setInterior(player:getInterior())
+        self.m_Markers[player]:attach(player,0,0,1.5)
+        self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+        addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+        addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+    end
 end
 
 function Group:getVehicles()
@@ -299,16 +312,17 @@ function Group:distributeMoney(amount)
 end
 
 function Group:attachPlayerMarkers()
-  self.m_Markers = {}
-  for k, player in ipairs(self:getOnlinePlayers()) do
-    self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
-    self.m_Markers[player]:setDimension(player:getDimension())
-    self.m_Markers[player]:setInterior(player:getInterior())
-    self.m_Markers[player]:attach(player,0,0,1.5)
-    self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
-    addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
-    addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
-  end
+    self.m_MarkersAttached = true
+    self.m_Markers = {}
+    for k, player in ipairs(self:getOnlinePlayers()) do
+        self.m_Markers[player] = createMarker(player:getPosition(),"arrow",0.4,255,0,0,125)
+        self.m_Markers[player]:setDimension(player:getDimension())
+        self.m_Markers[player]:setInterior(player:getInterior())
+        self.m_Markers[player]:attach(player,0,0,1.5)
+        self.m_RefreshAttachedMarker = bind(self.refreshAttachedMarker, self)
+        addEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+        addEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+    end
 end
 
 function Group:attachPlayerMarker(player)
@@ -323,12 +337,13 @@ function Group:attachPlayerMarker(player)
 end
 
 function Group:removePlayerMarkers()
-  for k, player in ipairs(self:getOnlinePlayers()) do
-    self.m_Markers[player]:destroy()
-    removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
-    removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
-  end
-  self.m_Markers = {}
+    self.m_MarkersAttached = false
+    for k, player in ipairs(self:getOnlinePlayers()) do
+        self.m_Markers[player]:destroy()
+        removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+        removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+    end
+    self.m_Markers = {}
 end
 
 function Group:removePlayerMarker(player)
