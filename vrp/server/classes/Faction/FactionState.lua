@@ -677,7 +677,7 @@ end
 
 function FactionState:Event_givePANote(target, note)
 	local faction = client:getFaction()
-	if faction and faction:isStateFaction() then
+	if faction and faction:getId() == 1 then
 		if client:isFactionDuty() then
 			if faction:getPlayerRank(client) < FactionRank.Manager then
 				client:sendError(_("Du bist nicht berechtig PA-Noten auszuteilen!", client))
@@ -697,6 +697,8 @@ function FactionState:Event_givePANote(target, note)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
+	else
+		client:sendError(_("Du bist nicht im SAPD!", client))
 	end
 end
 
