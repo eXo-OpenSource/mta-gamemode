@@ -39,7 +39,10 @@ function DrivingSchoolTheoryGUI:constructor(type)
 	self.m_Text:setAlignX( "left" )
 	self.m_Text:setAlignY( "top" )
 	self.m_StartButton = GUIButton:new( self.m_Width*0.3, self.m_Height*0.7 , self.m_Width*0.4,self.m_Height*0.1, "Starten", self)
-	self.m_StartButton.onLeftClick = function() self.m_Text:delete(); self.m_StartButton:delete(); self:nextQuestion(); end
+	self.m_StartButton.onLeftClick = function()
+		
+		self.m_Text:delete(); self.m_StartButton:delete(); self:nextQuestion();
+	end
 	self.m_QuestionsDone = {	}
 	self.m_QuestionCounter = 0
 	self.m_ErrPoints = 0

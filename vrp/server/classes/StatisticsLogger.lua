@@ -7,6 +7,12 @@
 -- ****************************************************************************
 StatisticsLogger = inherit(Singleton)
 
+function StatisticsLogger:constructor()
+	if not getResourceFromName("vrp_data") then createResource("vrp_data") end
+    if not getResourceState(getResourceFromName("vrp_data")) == "running" then startResource(getResourceFromName("vrp_data")) end
+	self.m_TextLogPath = ":vrp_data/logs/"
+end
+
 function StatisticsLogger:logMoney(player, amount, desc)
     if DEBUG then
         sql:queryExec("INSERT INTO ??_stats_money (UserId, Amount, Description, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), player:getId(), amount, desc or "")
@@ -51,4 +57,17 @@ function StatisticsLogger:getPunishLogs(userId)
         local result = sql:queryFetch("SELECT * FROM ??_logsPunish WHERE ORDER BY Id DESC", sql:getPrefix())
     end
     return result
+end
+
+function StatisticsLogger:addTextLog(logname, text)
+	local filePath = self.m_TextLogPath..logname..".log"
+
+	if not fileExists(filePath) then
+		fileClose(fileCreate(filePath))
+	end
+
+	local file = fileOpen(filePath, false)
+	fileSetPos(file, 0)
+	fileWrite(file, getOpticalTimestamp()..": "..text.."\n" )
+	fileClose(file)
 end
