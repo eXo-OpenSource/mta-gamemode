@@ -15,16 +15,16 @@ function ScoreboardGUI:constructor()
 	self.m_Logo = GUIImage:new(self.m_Width/2-self.m_Width*0.25*0.5, self.m_Height*0.005, self.m_Width*0.275, self.m_Width*0.119, "files/images/LogoNoFont.png", self)
 
 
-	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.9, self.m_Height*0.45, self.m_Rect)
+	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.96, self.m_Height*0.45, self.m_Rect)
 	self.m_Grid:setColor(Color.Clear)
 	self.m_Grid:addColumn(_"VIP", 0.05)
 	self.m_Grid:addColumn(_"Name", 0.2)
 	self.m_Grid:addColumn(_"Fraktion", 0.15)
 	self.m_Grid:addColumn(_"Unternehmen", 0.15)
 	self.m_Grid:addColumn(_"Gang/Firma", 0.15)
-	self.m_Grid:addColumn(_"Spielstunden", 0.15)
+	self.m_Grid:addColumn(_"Spielzeit", 0.1)
 	self.m_Grid:addColumn(_"Karma", 0.1)
-	self.m_Grid:addColumn(_"Ping", 0.05)
+	self.m_Grid:addColumn(_"Ping", 0.1)
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, tocolor(50, 200, 255, 255), self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
@@ -109,7 +109,7 @@ function ScoreboardGUI:insertPlayers()
 			player:getGroupName(),
 			hours..":"..minutes,
 			karma >= 0 and "+"..karma or " "..tostring(karma),
-			player:getPing().."ms"
+			player:getPing().."ms" or " - "
 		)
 		item:setColumnToImage(1, true)
 
