@@ -67,7 +67,7 @@ function StatisticsLogger:addTextLog(logname, text)
 	end
 
 	local file = fileOpen(filePath, false)
-	fileSetPos(file, 0)
+	fileSetPos(file, fileGetSize(file))
 	fileWrite(file, getOpticalTimestamp()..": "..text.."\n" )
 	fileClose(file)
 end
