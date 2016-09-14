@@ -237,6 +237,7 @@ function PlayerManager:playerChat(message, messageType)
 			-- Send handy message
 			outputChatBox(_("%s (Telefon): %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
 			outputChatBox(_("%s (Telefon): %s", source, getPlayerName(source), message), source, 0, 255, 0)
+			StatisticsLogger:getSingleton():addTextLog("phone", ("%s zu %s: %s"):format(source:getName(), phonePartner:getName(), message))
 		end
 		cancelEvent()
 	elseif messageType == 1 then

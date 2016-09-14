@@ -819,9 +819,15 @@ function Player:meChat(system, ...)
 	local text = table.concat ( argTable , " " )
 	local playersToSend = self:getPlayersInChatRange( 1 )
 	local systemText = ""
+	local receivedPlayers = ""
+	local message = ("%s %s"):format(self:getName(), text)
 	if system == true then systemText = " ** " end
 
 	for index = 1,#playersToSend do
-		outputChatBox(systemText..getPlayerName(self).." "..text..systemText, playersToSend[index], 100, 0, 255)
+		outputChatBox(("%s %s %s"):format(systemText, message, systemText), playersToSend[index], 100, 0, 255)
+		receivedPlayers = ("%s%s,"):format(receivedPlayers, playersToSend[index]:getName())
+	end
+	if not system == false then
+		StatisticsLogger:getSingleton():addTextLog("chat", "/me "..message.." -gehört von: "..receivedPlayers)
 	end
 end
