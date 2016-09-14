@@ -63,8 +63,8 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 	if armor > 0 then
 		if armor >= loss then
 			player:setArmor(armor-loss)
-			loss = armor-loss
 		else
+			loss = armor-loss
 			player:setArmor(0)
 			player:setHealth(health-loss)
 
@@ -78,4 +78,5 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 		end
 		player:setHealth(health-loss)
 	end
+	StatisticsLogger:getSingleton():addTextLog("damage", ("%s wurde von %s mit Waffe %s am %s getroffen! (Damage: %d)"):format(player:getName(), attacker:getName(), WEAPON_NAMES[weapon], BODYPART_NAMES[bodypart], loss))
 end
