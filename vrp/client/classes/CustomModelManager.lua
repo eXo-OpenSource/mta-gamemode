@@ -18,6 +18,11 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/zombie.txd", 310)
 	self:loadImportDFF("files/models/zombie.dff", 310)
 
+	-- Blitzer
+	self:loadImportTXD("files/models/blitzer.txd", 3902)
+	self:loadImportDFF("files/models/blitzer.dff", 3902)
+	self:loadImportCOL("files/models/blitzer.col", 3902)
+
 	-- vRP Logo
 	self:loadImportTXD("files/models/exo_logo.txd", 2836)
 	self:loadImportDFF("files/models/exo_logo.dff", 2836)
