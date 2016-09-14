@@ -532,11 +532,14 @@ function getWeekNumber()	--Maybe needs optimization
 end
 
 function getOpticalTimestamp(ts)
-	local time = getRealTime(ts)
-	local month = time.month+1
-	local year = time.year-100
-	return ("%s.%s.%s-%s:%s"):format(time.monthday, month, year, time.hour, time.minute)
-	--return tostring(time.monthday.."."..month.."."..year.."-"..time.hour..":"..time.minute)
+	local time = ts and getRealTime(ts) or getRealTime()
+	time.month = time.month+1
+	time.year = time.year-100
+	for index, value in pairs(time) do
+		value = tostring(value)
+		if #value == 1 then time[index] = "0"..value end
+	end
+	return ("%s.%s.%s-%s:%s"):format(time.monthday, time.month, time.year, time.hour, time.minute)
 end
 
 function timespanArray(seconds)

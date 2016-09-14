@@ -81,8 +81,7 @@ function DrugsShroom:removePosition(player, cmd)
 end
 
 function DrugsShroom:loadPositions()
-    if not getResourceFromName("vrp_data") then createResource("vrp_data") end
-    if not getResourceState(getResourceFromName("vrp_data")) == "running" then startResource(getResourceFromName("vrp_data")) end
+
     if not fileExists(self.m_Path) then
         local file = fileCreate(self.m_Path)
         fileSetPos(file, 0)

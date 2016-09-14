@@ -351,6 +351,16 @@ WEAPON_NAMES = {
 	[46] = "Fallschrirm"
 }
 
+BODYPART_NAMES = {
+	[3] = "Körper",
+	[4] =  "Arsch",
+	[5] =  "Linker Arm",
+	[6] =  "Rechter Arm",
+	[7] =  "Linkes Bein",
+	[8] =  "Rechtes Bein",
+	[9] =  "Kopf"
+}
+
 WEAPON_IDS = {}
 for id, name in pairs(WEAPON_NAMES) do
 	WEAPON_IDS[name] = id
@@ -378,7 +388,7 @@ VRP_RADIO = {
 	{"Lounge FM Austria", "http://digital.lounge.fm"},
 	{"Rock Antenne", "http://www.rockantenne.de/webradio/rockantenne.m3u"},
 	{"Raute Musik Rock", "http://rock-high.rautemusik.fm/listen.pls"},
-	
+
 	-- GTA channels
 	{"Playback FM", 1},
 	{"K-Rose", 2},

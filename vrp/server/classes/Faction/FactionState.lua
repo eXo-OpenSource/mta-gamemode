@@ -299,6 +299,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						target:giveWantedLevel(amount)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
+						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
 						player:getFaction():sendMessage(msg, 255,0,0)
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
@@ -430,7 +431,8 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 
 				player:clearCrimes()
 
-				policeman:getFaction():sendMessage(_("%s wurde soeben von %s eingesperrt!", player, player:getName(), policeman:getName()), 255, 255, 0)
+				policeman:getFaction():sendMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt!", player, player:getName(), policeman:getName(), jailTime), 255, 255, 0)
+				StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat %s soeben für %d Minuten eingesperrt!"):format(policeman:getName(), player:getName(), jailTime))
 
 				player:triggerEvent("playerJailed", jailTime, CUTSCENE)
 			else
@@ -459,8 +461,11 @@ function FactionState:Command_bail( player )
 					player.m_JailTime = 0
 					outputChatBox("Sie haben sich mit der Kaution von "..player.m_Bail.." Dollar freigekauft!", player, 200, 200, 0)
 					player.m_Bail = 0
+					StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat sich für %d Dollar freigekauft!"):format(player:getName(), player.m_Bail))
 					player:triggerEvent("playerLeftJail")
-				else player:sendError("Sie haben nicht genügend Geld!")
+
+				else
+					player:sendError("Sie haben nicht genügend Geld!")
 				end
 			end
 		end
@@ -577,6 +582,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 			target:giveWantedLevel(amount)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
+			StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
 			client:getFaction():sendMessage(msg, 255,0,0)
 		end
 	end
@@ -589,6 +595,7 @@ function FactionState:Event_clearWanteds(target)
 			target:takeWantedLevel(6)
 			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
+			StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
 			client:getFaction():sendMessage(msg, 255,0,0)
 		end
 	end
@@ -691,6 +698,7 @@ function FactionState:Event_givePANote(target, note)
 				target:sendInfo(_("%s hat dir eine PA-Note von %d gegeben!", target, client:getName(), note))
 				client:sendInfo(_("Du hast %s eine PA-Note von %d gegeben!", client, target:getName(), note))
 				client:setPaNote(note)
+				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine PA-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
 			else
 				client:sendError(_("Ungültige PA-Note!", client))
 			end

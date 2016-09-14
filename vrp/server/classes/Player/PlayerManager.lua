@@ -226,13 +226,18 @@ function PlayerManager:playerChat(message, messageType)
 		local phonePartner = source:getPhonePartner()
 		if not phonePartner then
 			local playersToSend = source:getPlayersInChatRange( 1 )
+			message = ("%s sagt: %s"):format(getPlayerName(source), message)
+			local receivedPlayers = ""
 			for index = 1,#playersToSend do
-				outputChatBox(getPlayerName(source).." sagt: #FFFFFF"..message, playersToSend[index], 220, 220, 220,true)
+				outputChatBox(message, playersToSend[index], 220, 220, 220)
+				receivedPlayers = ("%s%s,"):format(receivedPlayers, playersToSend[index]:getName())
 			end
+			StatisticsLogger:getSingleton():addTextLog("chat", message.." -gehört von: "..receivedPlayers)
 		else
 			-- Send handy message
 			outputChatBox(_("%s (Telefon): %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
 			outputChatBox(_("%s (Telefon): %s", source, getPlayerName(source), message), source, 0, 255, 0)
+			StatisticsLogger:getSingleton():addTextLog("phone", ("%s zu %s: %s"):format(source:getName(), phonePartner:getName(), message))
 		end
 		cancelEvent()
 	elseif messageType == 1 then
@@ -245,18 +250,26 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
 	local playersToSend = source:getPlayersInChatRange(2)
+	local receivedPlayers = ""
+	local message = ("%s schreit: %s"):format(getPlayerName(source), text)
 	for index = 1,#playersToSend do
-		outputChatBox(getPlayerName(source).." schreit: #FFFFFF"..text, playersToSend[index], 240, 240, 240,true)
+		outputChatBox(message, playersToSend[index], 240, 240, 240)
+		receivedPlayers = ("%s%s,"):format(receivedPlayers, playersToSend[index]:getName())
 	end
+	StatisticsLogger:getSingleton():addTextLog("chat", message.." -gehört von: "..receivedPlayers)
 end
 
 function PlayerManager:Command_playerWhisper(source , cmd, ...)
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
 	local playersToSend = source:getPlayersInChatRange(0)
+	local receivedPlayers = ""
+	local message = ("%s flüstert: %s"):format(getPlayerName(source), text)
 	for index = 1,#playersToSend do
-		outputChatBox(getPlayerName(source).." flüstert: #FFFFFF"..text, playersToSend[index], 140, 140, 140,true)
+		outputChatBox(message, playersToSend[index], 140, 140, 140)
+		receivedPlayers = ("%s%s,"):format(receivedPlayers, playersToSend[index]:getName())
 	end
+	StatisticsLogger:getSingleton():addTextLog("chat", message.." -gehört von: "..receivedPlayers)
 end
 
 function PlayerManager:Event_playerSendMoney(amount)
