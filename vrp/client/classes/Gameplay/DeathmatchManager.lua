@@ -37,3 +37,14 @@ addEventHandler("addPedDamageHandler", root, function(ped)
 		cancelEvent()
 	end)
 end)
+
+addEvent("playZombieCutscene", true)
+addEventHandler("playZombieCutscene", root, function()
+	if not core:get("Gameplay", "playedZombieCutscene", false) then
+		CutscenePlayer:getSingleton():playCutscene("ZombieSurvivalCutscene", function()
+			core:set("Gameplay", "playedZombieCutscene", true)
+			triggerServerEvent("startZombieSurvival", localPlayer)
+			fadeCamera(true)
+		end)
+	end
+end)
