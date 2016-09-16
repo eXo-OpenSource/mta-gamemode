@@ -17,7 +17,7 @@ function Achievement:constructor ()
 
 	self.ms_Achievements = {}
 	for i, v in ipairs(row) do
-		self.ms_Achievements[i] = v;
+		self.ms_Achievements[v.id] = v;
 	end
 
 	addRemoteEvents{"Achievement.onAchievementRequest", "Achievement.onPlayerReceiveAchievement"}

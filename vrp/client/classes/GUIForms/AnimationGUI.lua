@@ -42,7 +42,15 @@ function AnimationGUI:startAnimation()
 		if not self.m_InfoMessage then
 			self.m_InfoMessage = ShortMessage:new(_"Benutze 'Leertaste' zum beenden der Animation!", -1)
 		end
-		triggerServerEvent("startAnimation", localPlayer, self.m_AnimationList:getSelectedItem().Name)
+		local animation = self.m_AnimationList:getSelectedItem().Name
+		triggerServerEvent("startAnimation", localPlayer, animation)
+		for i, v in ipairs(Element.getAllByType("object", root, true)) do -- to short the loop use only streamedin objects
+			if v:getModel() == 656 and math.abs((localPlayer.position - v.position).length) <= 2 then
+				if animation == "Tanz 3" then
+					localPlayer:giveAchievement(43)
+				end
+			end
+		end
 	end
 end
 

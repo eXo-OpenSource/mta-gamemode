@@ -10,12 +10,11 @@ DeathmatchManager = inherit(Singleton)
 
 function DeathmatchManager:constructor()
 	-- Zombie Survival
-	local market = createObject ( 3863, -32.4, 1377.8, 9.3, 0, 0, 274 )
-
+	createObject ( 3863, -32.4, 1377.8, 9.3, 0, 0, 274 )
 	self:addSign(Vector3(-33.5, 1374.9, 8.2), 274, "files/images/Textures/ZombieSurvival.png")
 
 	-- Sniper Game
-	local market = createObject ( 3863, -531.09998, 1972.7, 60.8, 0, 0, 156 )
+	createObject ( 3863, -531.09998, 1972.7, 60.8, 0, 0, 156 )
 	self:addSign(Vector3(-534.09998, 1975.4, 59.5), 142, "files/images/Textures/SniperGame.png")
 
 end

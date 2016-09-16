@@ -36,9 +36,7 @@ function SniperGame.initalize()
 		instance:addPlayer(client)
 		local index = #MinigameManager.Current+1
 		MinigameManager.Current[index] = instance
-		MinigameManager.
-
-		Current[index].Type = "SniperGame"
+		MinigameManager.Current[index].Type = "SniperGame"
 	end)
 
 	addEventHandler("SniperGame:onPedDamage", root, function(ped, bodypart)
@@ -120,6 +118,7 @@ function SniperGame:getRandomPosition()
 end
 
 function SniperGame:addPlayer(player)
+	player:giveAchievement(55)
 	self.m_PedKills[player] = 0
 	player:setDimension(self.m_Dimension)
 	player:setPosition(-597.71, 2020.09, 77.90)
