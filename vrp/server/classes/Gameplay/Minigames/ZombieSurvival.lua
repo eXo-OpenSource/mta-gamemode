@@ -91,6 +91,7 @@ end
 
 function ZombieSurvival:addPlayer(player)
 	player:giveAchievement(54)
+
 	self.m_ZombieKills[player] = 0
 	player:setDimension(self.m_Dimension)
 	player:setPosition(self:getRandomPosition())
@@ -129,6 +130,11 @@ function ZombieSurvival:removePlayer(player)
 
 	if #self:getPlayers() == 0 then
 		delete(self)
+	end
+
+	-- Check for Freaks Achievement
+	if MinigameManager:getSingleton():checkForFreaks(player) then
+		player:giveAchievement(22)
 	end
 end
 

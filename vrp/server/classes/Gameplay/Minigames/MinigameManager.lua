@@ -29,6 +29,8 @@ function MinigameManager:constructor()
 
 	self:addPlayerDeathHook()
 
+	-- Freak AchievementIds
+	self.m_FreakIds = {54, 55}
 end
 
 function MinigameManager.getRealTime()
@@ -97,4 +99,16 @@ function MinigameManager:getPlayerDeathmatch(player)
 		end
 	end
 	return false
+end
+
+function MinigameManager:checkForFreaks(player)
+	local bool = true
+	for i, v in ipairs(self.m_FreakIds) do
+		bool = player:getAchievementStatus(v)
+		if not bool then
+			break;
+		end
+	end
+
+	return bool
 end

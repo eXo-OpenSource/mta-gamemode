@@ -119,6 +119,7 @@ end
 
 function SniperGame:addPlayer(player)
 	player:giveAchievement(55)
+
 	self.m_PedKills[player] = 0
 	player:setDimension(self.m_Dimension)
 	player:setPosition(-597.71, 2020.09, 77.90)
@@ -140,6 +141,11 @@ function SniperGame:removePlayer(player)
 	self.m_PedKills[player] = false
 	takeAllWeapons(player)
 	player:triggerEvent("hideScore")
+
+	-- Check for Freaks Achievement
+	if MinigameManager:getSingleton():checkForFreaks(player) then
+		player:giveAchievement(22)
+	end
 end
 
 function SniperGame:getPlayers()

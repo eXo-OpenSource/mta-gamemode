@@ -21,7 +21,7 @@ Achievments:
 [X]: 19 (Süßigkeiten Dieb, Man raubt einen Automaten aus, 5)
 [X]: 20 (Old McDonnald has a farm, Man wird Farmer, 5)
 [X]: 21 (Millionär, Man hat 1.000.000$ an Geld, 250)
-[ ]: 22 (Freak Collector, "Man hat alle Freaks durch", 5) (Zombie, Sniper, more.. [?])
+[X]: 22 (Freak Collector, "Man hat alle Freaks durch", 150) (Zombie, Sniper, more.. [?])
 [ ]: 23 (Check my new outfit, "Man hat seinen Skin gewechselt", 5)
 [?]: 24 (Tales of Johnny Walker, "Man telefoniert mit Johnny", 5)
 [?]: 25 (Die macht mit dir ist, junger ..Name.., "Man hat Yoda im Kampf besiegt", 5)
