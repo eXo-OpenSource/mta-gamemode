@@ -1,0 +1,318 @@
+diff --git a/vrp/client/classes/Events/MountChilladEvent.lua b/vrp/client/classes/Events/MountChilladEvent.lua
+new file mode 100644
+index 0000000..10b13e4
+--- /dev/null
++++ b/vrp/client/classes/Events/MountChilladEvent.lua
+@@ -0,0 +1,116 @@
++-- ****************************************************************************
++-- *
++-- *  PROJECT:     vRoleplay
++-- *  FILE:        server/classes/Events/MountChilladEvent.lua
++-- *  PURPOSE:     Streetrace event class
++-- *
++-- ****************************************************************************
++MountChilladEvent = inherit(Event)
++addRemoteEvents{"MountChilladEvent:destroyBlips", "MountChilladEvent:destroyBlip"}
++
++function MountChilladEvent:constructor()
++	-- Add to Helpmenu
++  	HelpTextManager:getSingleton():addText(_"Events", _(HelpTextTitles.Events.StreetRace):gsub("Event: ", ""), _(HelpTexts.Events.StreetRace))
++
++  	self.m_Blips = {}
++	self.m_Checkpoints = {}
++  	addEventHandler("MountChilladEvent:createBlips", root, bind(self.createBlips, self))
++  	addEventHandler("MountChilladEvent:destroyBlips", root, bind(self.destroyBlips, self))
++  	addEventHandler("MountChilladEvent:destroyBlip", root, bind(self.destroyBlip, self))
++end
++
++function MountChilladEvent:onStart()
++	self:createBlips()
++	self:createCheckPoints()
++	localPlayer.m_LastCheckPoint = 0
++end
++
++function MountChilladEvent:destructor()
++
++end
++
++function MountChilladEvent:createBlips()
++	for i, pos in ipairs(MountChilladEvent.Positions) do
++		if i ~= 1 then
++			self.m_Blips[i-1] = Blip:new("Waypoint.png", pos.x, pos.y)
++		end
++	end
++end
++
++function MountChilladEvent:createCheckPoints()
++	-- Create Checkpoints
++	for i, pos in ipairs(MountChilladEvent.Positions) do
++		if i ~= 1 then
++			local marker = Marker.create(pos, "checkpoint")
++			local arrow = Marker.create(pos + Vector3(0, 0, 10), "arrow", 3.0, 125, 0, 0)
++
++			self.m_Checkpoints[i-1] = {}
++			self.m_Checkpoints[i-1].Marker = marker
++			self.m_Checkpoints[i-1].Arrow = arrow
++			marker.Id = i-1
++
++			addEventHandler("onClientMarkerHit", marker, bind(self.onCheckPointHit,self))
++		end
++	end
++end
++
++function MountChilladEvent:destroyBlips()
++	for i, blip in pairs(positions) do
++		delete(blip)
++	end
++	delete(self)
++end
++
++function MountChilladEvent:destroyBlip(id)
++	if self.m_Blips[id] then
++		delete(self.m_Blips[id])
++	end
++end
++
++function MountChilladEvent:onCheckPointHit(hitElement, dim)
++	if dim then
++		local player = hitElement
++		outputDebug(self:isMember(player))
++		if player == localPlayer and self:isMember(player) then
++			outputDebug(localPlayer.m_LastCheckPoint + 1 == source.Id)
++			if localPlayer.m_LastCheckPoint + 1 == source.Id then
++				localPlayer.m_LastCheckPoint = source.Id
++				self:destroyBlip(source.Id)
++				self.m_Checkpoints[source.Id].Arrow:destroy()
++				source:destroy()
++			end
++		end
++	end
++end
++
++MountChilladEvent.Positions = {
++	Vector3(-2397.2021484375, -2205.220703125, 32.920463562012),
++	Vector3(-2376.1708984375, -2196.005859375, 33.010696411133),
++	Vector3(-2325.873046875, -2173.6982421875, 36.759483337402),
++	Vector3(-2401.181640625, -2137.9482421875, 54.527614593506),
++	Vector3(-2500.6494140625, -2130.5146484375, 53.048740386963),
++	Vector3(-2636.134765625, -2172.28515625, 69.867286682129),
++	Vector3(-2678.26171875, -2077.6845703125, 76.56575012207),
++	Vector3(-2707.5234375, -1926.513671875, 106.07904052734),
++	Vector3(-2773.5859375, -1905.8828125, 117.66533660889),
++	Vector3(-2822.2587890625, -1810.298828125, 138.0814666748),
++	Vector3(-2764.43359375, -1565.86328125, 140.82783508301),
++	Vector3(-2749.654296875, -1380.478515625, 143.37915039063),
++	Vector3(-2719.25, -1280.9072265625, 153.37892150879),
++	Vector3(-2625.1748046875, -1162.3564453125, 168.74160766602),
++	Vector3(-2559.9853515625, -1139.9423828125, 173.51329040527),
++	Vector3(-2524.6806640625, -1112.978515625, 176.97396850586),
++	Vector3(-2527.466796875, -1145.5498046875, 178.78622436523),
++	Vector3(-2613.1572265625, -1192.2626953125, 197.96615600586),
++	Vector3(-2609.39453125, -1278.7421875, 219.03079223633),
++	Vector3(-2654.1328125, -1323.767578125, 241.57290649414),
++	Vector3(-2678.9208984375, -1454.103515625, 274.14407348633),
++	Vector3(-2708.7197265625, -1482.22265625, 290.61767578125),
++	Vector3(-2689.5380859375, -1534.9921875, 302.94314575195),
++	Vector3(-2594.201171875, -1617.177734375, 343.05792236328),
++	Vector3(-2584.7060546875, -1668.623046875, 351.86727905273),
++	Vector3(-2529.7109375, -1804.0126953125, 376.12524414063),
++	Vector3(-2548.111328125, -1662.033203125, 399.97149658203),
++	Vector3(-2522.2578125, -1719.5751953125, 401.8772277832),
++	Vector3(-2525.9423828125, -1658.47265625, 400.8098449707)
++}
+diff --git a/vrp/server/classes/Events/MountChilladEvent.lua b/vrp/server/classes/Events/MountChilladEvent.lua
+new file mode 100644
+index 0000000..89bfbaf
+--- /dev/null
++++ b/vrp/server/classes/Events/MountChilladEvent.lua
+@@ -0,0 +1,117 @@
++-- ****************************************************************************
++-- *
++-- *  PROJECT:     vRoleplay
++-- *  FILE:        server/classes/Events/MountChilladEvent.lua
++-- *  PURPOSE:     Mount Chillad event class
++-- *
++-- ****************************************************************************
++MountChilladEvent = inherit(Event)
++
++function MountChilladEvent:constructor()
++	self.m_Positions = MountChilladEvent.getPositions()
++	self.m_Checkpoints = {}
++
++	-- Create Checkpoints
++	for i, pos in ipairs(self.m_Positions) do
++		if i ~= 1 then
++			local marker = createMarker(pos, "checkpoint")
++			local arrow = createMarker(pos + Vector3(0, 0, 10), "arrow", 3.0, 125, 0, 0)
++			setElementVisibleTo(marker, root, false)
++			setElementVisibleTo(arrow, root, false)
++
++			self.m_Checkpoints[i-1] = {}
++			self.m_Checkpoints[i-1].Marker = marker
++			self.m_Checkpoints[i-1].Arrow = arrow
++			marker.Id = i-1
++
++			addEventHandler("onMarkerHit", marker, bind(self.onCheckPointHit,self))
++		end
++	end
++end
++
++function MountChilladEvent:desturctor()
++	for i, v in pairs(self.m_Checkpoints) do
++		v.Arrow:destroy()
++		v.Marker:destroy()
++		self.m_Checkpoints[i] = nil
++	end
++end
++
++function MountChilladEvent:onStart()
++	-- Start the countdown
++	for k, player in pairs(self.m_Players) do
++		player:triggerEvent("countdownStart", 3)
++		player.m_LastCheckPoint = 0
++	end
++	setTimer(
++		function()
++			-- Tell player that we started the event
++			self:sendMessage("Das Event wurde gestartet!", 255, 255, 0)
++
++			-- Start the GPS for each player
++			for k, player in ipairs(self.m_Players) do
++				player:startNavigationTo(self.m_Positions[2])
++			end
++		end,
++		3000,
++		1
++	)
++end
++
++function MountChilladEvent:onCheckPointHit(hitElement, dim)
++	if dim then
++		local player = hitElement
++		if player:getType() == "player" and self:isMember(player) and self:hasStarted() then
++			if player.m_LastCheckPoint + 1 == source.Id then
++				player.m_LastCheckPoint = source.Id
++				outputDebug("Hit "..tostring(source.Id))
++			else
++				player:sendError(_("Du hast einen Checkpoint ausgelassen!", player))
++			end
++		end
++	end
++end
++
++function MountChilladEvent:getName()
++	return "Mount Chillard Cross Trial"
++end
++
++function MountChilladEvent:getDescription(player)
++	return _([[Cross Trial auf den Mount Chillad hoch und wieder zurück!]], player)
++end
++
++function MountChilladEvent:getPositions()
++	return MountChilladEvent.Positions, true
++end
++
++MountChilladEvent.Positions = {
++	Vector3(-2397.2021484375, -2205.220703125, 32.920463562012),
++	Vector3(-2376.1708984375, -2196.005859375, 33.010696411133),
++	Vector3(-2325.873046875, -2173.6982421875, 36.759483337402),
++	Vector3(-2401.181640625, -2137.9482421875, 54.527614593506),
++	Vector3(-2500.6494140625, -2130.5146484375, 53.048740386963),
++	Vector3(-2636.134765625, -2172.28515625, 69.867286682129),
++	Vector3(-2678.26171875, -2077.6845703125, 76.56575012207),
++	Vector3(-2707.5234375, -1926.513671875, 106.07904052734),
++	Vector3(-2773.5859375, -1905.8828125, 117.66533660889),
++	Vector3(-2822.2587890625, -1810.298828125, 138.0814666748),
++	Vector3(-2764.43359375, -1565.86328125, 140.82783508301),
++	Vector3(-2749.654296875, -1380.478515625, 143.37915039063),
++	Vector3(-2719.25, -1280.9072265625, 153.37892150879),
++	Vector3(-2625.1748046875, -1162.3564453125, 168.74160766602),
++	Vector3(-2559.9853515625, -1139.9423828125, 173.51329040527),
++	Vector3(-2524.6806640625, -1112.978515625, 176.97396850586),
++	Vector3(-2527.466796875, -1145.5498046875, 178.78622436523),
++	Vector3(-2613.1572265625, -1192.2626953125, 197.96615600586),
++	Vector3(-2609.39453125, -1278.7421875, 219.03079223633),
++	Vector3(-2654.1328125, -1323.767578125, 241.57290649414),
++	Vector3(-2678.9208984375, -1454.103515625, 274.14407348633),
++	Vector3(-2708.7197265625, -1482.22265625, 290.61767578125),
++	Vector3(-2689.5380859375, -1534.9921875, 302.94314575195),
++	Vector3(-2594.201171875, -1617.177734375, 343.05792236328),
++	Vector3(-2584.7060546875, -1668.623046875, 351.86727905273),
++	Vector3(-2529.7109375, -1804.0126953125, 376.12524414063),
++	Vector3(-2548.111328125, -1662.033203125, 399.97149658203),
++	Vector3(-2522.2578125, -1719.5751953125, 401.8772277832),
++	Vector3(-2525.9423828125, -1658.47265625, 400.8098449707)
++}
+diff --git a/vrp/client/classes/Events/EventManager.lua b/vrp/client/classes/Events/EventManager.lua
+index 7c9aadc..0201ac9 100644
+--- a/vrp/client/classes/Events/EventManager.lua
++++ b/vrp/client/classes/Events/EventManager.lua
+@@ -14,6 +14,7 @@ function EventManager:constructor()
+ 	-- Add events
+ 	self:addEvent(StreetRaceEvent)
+ 	self:addEvent(DMRaceEvent)
++	self:addEvent(MountChilladEvent)
+ 
+ 	addEventHandler("eventStart", root,
+ 		function(eventType, Id, players)
+diff --git a/vrp/meta.xml b/vrp/meta.xml
+index e7c29b9..6e39070 100644
+--- a/vrp/meta.xml
++++ b/vrp/meta.xml
+@@ -230,6 +230,7 @@
+ 	<script src="server/classes/Events/Event.lua" type="server"/>
+ 	<script src="server/classes/Events/EventManager.lua" type="server"/>
+ 	<script src="server/classes/Events/StreetRaceEvent.lua" type="server"/>
++	<script src="server/classes/Events/MountChilladEvent.lua" type="server"/>
+ 	<script src="server/classes/Events/DMRaceEvent.lua" type="server"/>
+ 	<script src="server/classes/Events/Deathmatch/DMEvent.lua" type="server"/>
+ 	<script src="server/classes/Events/Deathmatch/DMMatch.lua" type="server"/>
+@@ -580,6 +581,7 @@
+ 	<script src="client/classes/Events/EventManager.lua" type="client"/>
+ 	<script src="client/classes/Events/DMRaceEvent.lua" type="client"/>
+ 	<script src="client/classes/Events/StreetRaceEvent.lua" type="client"/>
++	<script src="client/classes/Events/MountChilladEvent.lua" type="client"/>
+ 
+ 	<!-- Factions -->
+ 	<script src="client/classes/Faction/Faction.lua" type="client"/>
+diff --git a/vrp/server/classes/Events/Event.lua b/vrp/server/classes/Events/Event.lua
+index e78c4a0..d5d8f6e 100644
+--- a/vrp/server/classes/Events/Event.lua
++++ b/vrp/server/classes/Events/Event.lua
+@@ -14,8 +14,13 @@ function Event:virtual_constructor(Id)
+ 	self.m_Ranks = {}
+ 	self.m_Started = false
+ 
+-	local positions = self:getPositions()
+-	local position = positions[math.random(1, #positions)]
++	local positions, notRandom = self:getPositions()
++	local position
++	if notRandom then
++		position = positions[1]
++	else
++		position = positions[math.random(1, #positions)]
++	end
+ 	self.m_EventBlip = Blip:new("Wheel.png", position.x, position.y)
+ 
+ 	-- Create the start marker
+@@ -99,7 +104,7 @@ function Event:start()
+ 		delete(self)
+ 		return
+ 	end
+-	if #self.m_Players <= 2 then
++	if #self.m_Players <= 0 then
+ 		for k, player in pairs(self.m_Players) do
+ 			player:sendShortMessage(_("Das Event wurde wegen zu weniger Spieler abgesagt!", player))
+ 		end
+diff --git a/vrp/server/classes/Events/EventManager.lua b/vrp/server/classes/Events/EventManager.lua
+index 37e550f..ff91fcb 100644
+--- a/vrp/server/classes/Events/EventManager.lua
++++ b/vrp/server/classes/Events/EventManager.lua
+@@ -17,6 +17,7 @@ function EventManager:constructor()
+ 	-- Add events (do it on the client as well)
+ 	self:addEvent(StreetRaceEvent)
+ 	self:addEvent(DMRaceEvent)
++	self:addEvent(MountChilladEvent)
+ 
+ 	-- Start timer that opens every 30min a random event
+ 	setTimer(bind(self.openRandomEvent, self), 30*60*1000, 0)
