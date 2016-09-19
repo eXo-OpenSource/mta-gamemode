@@ -22,8 +22,12 @@ end
 
 function SpeedCamera:onColShapeHit(element, dim)
   if dim then
-    if element:getType() == "player" then
-      PlayerManager:getSingleton():breakingNews("%s war zu schnell amk!", element:getName())
+    if element:getType() == "vehicle" then
+		if element:getSpeed() > 80 then
+			if element:getOccupant() then
+      			PlayerManager:getSingleton():breakingNews("%s war zu schnell amk!", element:getOccupant():getName())
+			end
+		end
     end
   end
 end

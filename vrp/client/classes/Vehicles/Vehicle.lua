@@ -30,6 +30,12 @@ function Vehicle:getTextureName()
 	return VEHICLE_SPECIAL_TEXTURE[self:getModel()] or "vehiclegrunge256"
 end
 
+function Vehicle:getSpeed()
+	local vx, vy, vz = getElementVelocity(self)
+	local speed = (vx^2 + vy^2 + vz^2) ^ 0.5 * 161
+	return speed
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)
