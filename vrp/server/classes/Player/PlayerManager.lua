@@ -163,6 +163,8 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
+	-- give a achievement
+	source:giveAchievement(37)
 
 	if source:isFactionDuty() then
 		source:setDefaultSkin()
@@ -186,7 +188,8 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 			end
 		end
 	end
-		-- Call wasted hook
+
+	-- Call wasted hook
 	if self.m_WastedHook:call(source) then
 		return
 	end

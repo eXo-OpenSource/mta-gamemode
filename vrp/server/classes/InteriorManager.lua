@@ -38,9 +38,11 @@ function InteriorManager:teleportPlayerToInterior(player, Id)
 end
 
 function InteriorManager:createDefaultInteriors()
+	--[[
     for k, info in pairs(self.InteriorData) do
         InteriorEnterExit:new(info.enter + Vector3(0, 0, 0.5), info.spawn + Vector3(0, 0, 0.5), info.rotation, 0, info.interior, info.dimension, true)
     end
+	--]]
 
     -- Copied over from InteriorEnterExit
 	local data = {

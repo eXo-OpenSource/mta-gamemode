@@ -13,8 +13,8 @@ Achievments:
 [X]: 11 (Harter Holzfäller, Man wird Holzfäller, 5)
 [X]: 12 (Meister des Mülls, Man wird Müllfahrer, 5)
 [X]: 13 (Müllehrling, Man wird Straࠥnkehrer, 5)
-[ ]: 14 (Meister der Diebe,
-[ ]: 15 (Kleinkrimineller,
+[ ]: 14 (Meister der Diebe, "Man hat einen Bankraub überstanden", 5)
+[ ]: 15 (Kleinkrimineller, "Man hat einen Laden überfallen", 5)
 [/]: 16 (Vettel für Arme, "Man hat ein Straࠥnrennen gewonnen", 5)
 [X]: 17 (Meiner ist 15 Meter lang, Man wird Busfahrer, 5)
 [ ]: 18 (Mülltonnen Kicker, "Man tritt eine Mülltonne", 5)
@@ -36,7 +36,7 @@ Achievments:
 [ ]: 34 (Grundbesitzer, "Man besitzt ein Haus", 5)
 [ ]: 35 (Born to be wild, "Man besitzt ein Motorrad", 5)
 [ ]: 36 (Das ertse Auto, "Man besitzt ein Auto", 5)
-[ ]: 37 (Geboren um zu sterben, "Man stirbt", 5)
+[X]: 37 (Geboren um zu sterben, "Man stirbt", 5)
 [?]: 38 (Like a Sir, "Man klickt Sarcasm an", 5)
 [?]: 39 (Carsten Stahl, Man wird von Revelse verprügelt oder von seinem Jeep (Huntley) überfahren, 5)
 [X]: 40 (Rich as fuck, Man besitzt 10.000.000 $, 1000)
