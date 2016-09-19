@@ -83,7 +83,7 @@ function SkinShopGUI.initializeAll()
 			function(hitElement, matchingDimension)
 				if hitElement == localPlayer and matchingDimension then
 					if not hitElement:getFaction() or (hitElement:getFaction() and not hitElement:getFaction():isEvilFaction()) then
-						if localPlayer:getPublicSync("Company:Duty") == false and localPlayer:getPublicSync("Faction:Duty") == false then
+						if (localPlayer:getPublicSync("Company:Duty") == nil or localPlayer:getPublicSync("Company:Duty") == false) and (localPlayer:getPublicSync("Faction:Duty") == nil or localPlayer:getPublicSync("Faction:Duty") == false) then
 							localPlayer.m_OrigDim = getElementDimension( localPlayer )
 							local dim = getFreeSkinDimension()
 							setElementDimension( localPlayer, dim )

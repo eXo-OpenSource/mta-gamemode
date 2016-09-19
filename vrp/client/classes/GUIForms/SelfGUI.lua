@@ -436,6 +436,7 @@ function SelfGUI:JobQuitButton_Click()
 	triggerServerEvent("jobQuit", root)
 	self.m_JobNameLabel:setText("-")
 	self.m_JobQuitButton:setVisible(false)
+	localPlayer:giveAchievement(26)
 end
 
 function SelfGUI:CompanyMenuButton_Click()

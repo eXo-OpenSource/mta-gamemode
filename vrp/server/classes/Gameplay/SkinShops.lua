@@ -26,6 +26,7 @@ function SkinShops:Event_skinBuy(skinId)
 		client:takeMoney(price, "Kleidungs-Kauf")
 
 		client:triggerEvent("skinBought", skinId)
+		client:giveAchievement(23)
 	else
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 	end

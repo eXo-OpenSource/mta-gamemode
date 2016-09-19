@@ -1,7 +1,7 @@
-Legend: [X] => Implemented, [ ] => Not Implemented. [?] => Should this be Implemented?
+Legend: [X] => Implemented, [ ] => Not Implemented, [/] = > Implemented but untested, [?] => Should this be Implemented?
 Achievments:
-[ ]: 1 (Evil Geddow Kid, "Man wird zum ersten mal von gut auf böse gestuft", 5)
-[ ]: 2 (Good Guy, "Man wird zum ersten mal von böse auf gut gestuft", 5)
+[X]: 1 (Evil Geddow Kid, "Man wird zum ersten mal von gut auf böse gestuft", 5)
+[X]: 2 (Good Guy, "Man wird zum ersten mal von böse auf gut gestuft", 5)
 [X]: 3 (Developerschelle, Man wird von einem Admin mit dem Rang "Developer" getötet, 5)
 [ ]: 4 (Giving Air, "Man drückt einen Anruf weg", 5)
 [ ]: 5 (Wandervogel, "Man hat alle Jobs durch", 5)
@@ -9,23 +9,23 @@ Achievments:
 [ ]: 7 (Boss aus dem Gettho, "Man gründet eine Gang", 5)
 [ ]: 8 (Kriminell und breit gebaut, "Man tritt einer Gang bei", 5)
 [X]: 9 (Gutes blaues Männchen, Man wird Polizist, 5)
-[ ]: 10 (Traumland, "Man ist völlig bekifft", 5)
+[X]: 10 (Traumland, "Man ist völlig bekifft", 5)
 [X]: 11 (Harter Holzfäller, Man wird Holzfäller, 5)
 [X]: 12 (Meister des Mülls, Man wird Müllfahrer, 5)
 [X]: 13 (Müllehrling, Man wird Straࠥnkehrer, 5)
 [ ]: 14 (Meister der Diebe,
 [ ]: 15 (Kleinkrimineller,
-[ ]: 16 (Vettel für Arme, "Man hat ein Straࠥnrennen gewonnen", 5)
+[/]: 16 (Vettel für Arme, "Man hat ein Straࠥnrennen gewonnen", 5)
 [X]: 17 (Meiner ist 15 Meter lang, Man wird Busfahrer, 5)
 [ ]: 18 (Mülltonnen Kicker, "Man tritt eine Mülltonne", 5)
 [X]: 19 (Süßigkeiten Dieb, Man raubt einen Automaten aus, 5)
 [X]: 20 (Old McDonnald has a farm, Man wird Farmer, 5)
 [X]: 21 (Millionär, Man hat 1.000.000$ an Geld, 250)
 [X]: 22 (Freak Collector, "Man hat alle Freaks durch", 150) (Zombie, Sniper, more.. [?])
-[ ]: 23 (Check my new outfit, "Man hat seinen Skin gewechselt", 5)
+[X]: 23 (Check my new outfit, "Man hat seinen Skin gewechselt", 5)
 [?]: 24 (Tales of Johnny Walker, "Man telefoniert mit Johnny", 5)
 [?]: 25 (Die macht mit dir ist, junger ..Name.., "Man hat Yoda im Kampf besiegt", 5)
-[ ]: 26 (Hartzer, "Man kündigt seinen Job", 5)
+[X]: 26 (Hartzer, "Man kündigt seinen Job", 5)
 [ ]: 27 (Wirtschaftsguru, "Man kauft eine Firma", 5)
 [ ]: 28 (Karrieremensch, "Man tritt einer Firma bei", 5)
 [ ]: 29 (Nicht den Kuchen klauen, "Man berührt den Kuchen auf dem Jusonexschen Platz", 5)

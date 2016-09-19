@@ -430,6 +430,13 @@ function Player:setDefaultSkin()
 end
 
 function Player:setKarma(karma)
+	if karma < 0 and self.m_Karma >= 0 then
+		self:giveAchievement(1)
+	end
+	if karma >= 0 and self.m_Karma < 0 then
+		self:giveAchievement(2)
+	end
+
 	DatabasePlayer.setKarma(self, karma)
 	self:setPublicSync("Karma", self.m_Karma)
 end

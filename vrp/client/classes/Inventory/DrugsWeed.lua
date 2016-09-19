@@ -35,6 +35,9 @@ function DrugsWeed:onUse(  )
   self.m_StartTick = getTickCount()
   self.m_EndTick = self.m_StartTick + 1000
   addEventHandler("onClientHUDRender", root, self.m_RenderBindFunc)
+
+  -- Give an Achievement
+  localPlayer:giveAchievement(10)
 end
 
 function DrugsWeed:onRender()

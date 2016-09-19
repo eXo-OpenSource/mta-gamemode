@@ -85,6 +85,9 @@ function StreetRaceEvent:colShapeHit(hitElement, matchingDimension)
 		if #self.m_Ranks == 1 then
 			self:sendMessage("Der erste Spieler hat das Ziel erreicht. Du hast du noch 1 Minute Zeit, um das Ziel zu erreichen!", 255, 255, 0)
 
+			-- Give him an Achievement
+			hitElement:giveAchievement(16)
+
 			-- Kill old timeout timer and restart
 			self.m_TimeoutTimer:destroy()
 			self.m_TimeoutTimer = setTimer(function() delete(self) end, 60*1000, 1)
