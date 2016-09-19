@@ -17,7 +17,7 @@ function Event:isMember(player)
 end
 
 function Event:start()
-	if self.onStart() then
+	if self.onStart then
 		self:onStart()
 	end
 end

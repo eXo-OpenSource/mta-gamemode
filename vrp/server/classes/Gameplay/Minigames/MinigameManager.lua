@@ -30,7 +30,7 @@ function MinigameManager:constructor()
 	self:addPlayerDeathHook()
 
 	-- Freak AchievementIds
-	self.m_FreakIds = {54, 55}
+	self.m_FreakIds = {54, 55} -- Todo: add more Achievements!
 end
 
 function MinigameManager.getRealTime()
