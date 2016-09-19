@@ -22,6 +22,7 @@ function VehicleTuning:constructor()
     createObject(11326, 2511.3999, -1775.7, 14.9, 0, 0, 180)
     createObject(5779, 1041.4, -1025.2, 35.5, 0, 19, 90)
     setGarageOpen(10, true)
+	setGarageOpen(33, true)
 
     -- Create garages
     self.m_GarageInfo = {
@@ -45,7 +46,12 @@ function VehicleTuning:constructor()
             Vector3(1041.4, -1017.5, 31.3),
             {Vector3(1041.9, -1031.5, 31.8), 180},
             Vector3(953.59998, -983.09998, 2454.8999) -- TODO: Add Toxsi's garage here
-        }
+        },
+		{
+			Vector3(2386.789, 1053.020, 10.747),
+			{Vector3(2393.525, 1040.242, 10.756), 270},
+			Vector3(953.59998, -983.09998, 2454.8999)
+		}
     }
     self.m_DimensionSlots = {}
 

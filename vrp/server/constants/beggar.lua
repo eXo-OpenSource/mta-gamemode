@@ -14,16 +14,6 @@ BeggarPositions = {
     {Vector3(2178.32, 1272.41, 10.82), Vector3(-0.00, 0.00, 193.39)};
 }
 
-BeggarTypes = {
-	Money = 1;
-	Food = 2;
-	Water = 3;
-    Ecstasy = 4;
-}
-for i, v in pairs(BeggarTypes) do
-	BeggarTypes[v] = i
-end
-
 BeggarPhraseTypes = {Help = 1, Thanks = 2, NoHelp = 3, Rob = 4}
 BeggarHelpPhrases = {
 	{ -- Type: Money

@@ -403,3 +403,13 @@ VRP_RADIO = {
 	{"WCTR", 11},
 	{"User Track Player", 12}
 }
+
+BeggarTypes = {
+	Money = 1;
+	Food = 2;
+	Water = 3;
+    Ecstasy = 4;
+}
+for i, v in pairs(BeggarTypes) do
+	BeggarTypes[v] = i
+end

@@ -213,7 +213,7 @@ function House:buyHouse(player)
 		return
 	end
 
-	if self.m_Owner > 0 then
+	if (self.m_Owner or 0) > 0 then
 		player:sendError(_("Dieses Haus hat schon einen Besitzer!", player))
 		return
 	end

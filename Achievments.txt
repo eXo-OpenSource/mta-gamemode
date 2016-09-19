@@ -55,4 +55,6 @@ Achievments:
 [X]: 53 (Schere Stein Papier Draw, "Man erreicht ein Unentschieden bei Schere Stein Papier", 5)
 [X]: 54 (Zombie Killer, "Man spielt Zombie-Survival", 100)
 [X]: 55 (Silent Killer, "Man spielt Sniper Game", 100)
+[X]: 56 (Soziales Engagement, "Man gibt einen Obdachlosen Geld", 100)
+[X]: 56 (..., "Man onaniert auf einen Obdachlosen", 250)
 ... add more!

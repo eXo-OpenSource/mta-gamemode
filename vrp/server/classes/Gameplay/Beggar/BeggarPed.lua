@@ -12,16 +12,14 @@ function BeggarPed:constructor(Id)
 	self.m_Id = Id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
 	self.m_ColShape = ColShape.Sphere(self:getPosition(), 10)
-	self.m_Type = math.random(1, 3)
+	self.m_Type = 1 --math.random(1, 3) Todo: Add more!
 	self.m_LastRobTime = 0
 
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
 	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.Event_onColShapeLeave, self))
 
 	if chance(50) then
-		outputDebug("setting animation")
 		local animation = Randomizer:getRandomTableValue(BeggarAnimations)
-		outputTable(animation)
 		self:setAnimation(unpack(animation))
 	end
 
@@ -29,6 +27,7 @@ function BeggarPed:constructor(Id)
 	self:setData("clickable", true, true)
 	self:setData("BeggarName", self.m_Name, true)
 	self:setData("BeggarId", self.m_Id, true)
+	self:setData("BeggarType", self.m_Type, true)
 end
 
 function BeggarPed:destructor()
@@ -57,13 +56,13 @@ function BeggarPed:despawn()
 end
 
 function BeggarPed:rob(player)
-	--if getTickCount() - self.m_LastRobTime < 5*60*1000 then
-	--	return
-	--end
+	if getTickCount() - self.m_LastRobTime < 10*60*1000 then
+		return
+	end
 
 	-- Give wage
 	client:giveMoney(math.random(1, 5), "Bettler-Raub")
-	client:giveKarma(-0.15)
+	client:giveKarma(-1/math.random(1, 5))
 	client:sendShortMessage(_("Well done. Du hast einen Bettler ausgeraubt!", player))
     self:sendMessage(client, BeggarPhraseTypes.Rob)
 
@@ -72,6 +71,25 @@ function BeggarPed:rob(player)
 
 	-- Update rob time
 	self.m_LastRobTime = getTickCount()
+end
+
+function BeggarPed:giveMoney(player, money)
+	-- give wage
+	local karma = 1/math.random(1, 3)
+	client:giveKarma(karma)
+	client:sendShortMessage(_("+%s Karma", player, math.floor(karma)))
+	client:givePoints(math.floor(10/math.random(1, 5)))
+	self:sendMessage(client, BeggarPhraseTypes.Thanks)
+
+	-- give Achievement
+	client:giveAchievement(56)
+
+	-- Despawn the Beggar
+	setTimer(
+		function ()
+			self:despawn()
+		end, 50, 1
+	)
 end
 
 function BeggarPed:sendMessage(player, type)
@@ -83,7 +101,7 @@ function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, 
 		killer:reportCrime(Crime.Kill)
 
 		-- Take karma
-		killer:giveKarma(-0.15)
+		killer:giveKarma(-1/math.random(1, 5))
 
 		-- Destory the Ped
 		self:despawn()

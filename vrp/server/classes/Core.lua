@@ -69,6 +69,7 @@ function Core:constructor()
 	GrowableManager:new()
 	MinigameManager:new()
 	Townhall:new()
+	BeggarPedManager:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()

@@ -48,6 +48,15 @@ function AnimationGUI:startAnimation()
 			if v:getModel() == 656 and math.abs((localPlayer.position - v.position).length) <= 2 then
 				if animation == "Tanz 3" then
 					localPlayer:giveAchievement(43)
+					return
+				end
+			end
+		end
+		for i, v in ipairs(Element.getAllByType("ped", root, true)) do
+			if v:getData("BeggarId") ~= nil and math.abs((localPlayer.position - v.position).length) <= 1 then
+				if animation == "Wichsen" then
+					localPlayer:giveAchievement(57)
+					return
 				end
 			end
 		end
