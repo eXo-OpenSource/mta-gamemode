@@ -43,6 +43,7 @@ function JobTrashman:Event_stop()
 		client:getOccupiedVehicle():destroy()
 	end
 	client:triggerEvent("jobTrashManStop")
+	client:setJob(nil)
 end
 
 
