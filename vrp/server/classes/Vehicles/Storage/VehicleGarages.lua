@@ -203,10 +203,7 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				end
 
 				local vehicle = getPedOccupiedVehicle(hitElement)
-				if vehicle then
-					vehicle:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
- 					hitElement:sendInfo(_("Das Fahrzeug wurde in der Garage geparkt!", hitElement))
-				end
+
 				-- Tell the player that we opened the garage session
 				hitElement:triggerEvent("vehicleGarageSessionOpen", session:getDimension())
 
@@ -223,6 +220,11 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 					teleportPlayerNextToVehicle(hitElement, vehicle)
 				end
 				fadeCamera(hitElement, true, 1)
+
+				if vehicle then
+					vehicle:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
+ 					hitElement:sendInfo(_("Das Fahrzeug wurde in der Garage geparkt!", hitElement))
+				end
 
 				setTimer(function() session:furnish() end, 1000, 1)
 			end, 1050, 1
