@@ -36,6 +36,8 @@ function AdminGUI:constructor()
 	GUILabel:new(10, 10, 150, 30, _"Adminansage:", tabAllgemein):setColor(Color.White)
 	self.m_AdminAnnounceText = GUIEdit:new(150, 10, 330, 30,tabAllgemein)
 	self:addAdminButton("adminAnnounce", "senden", 490, 10, 100, 30, Color.LightBlue, tabAllgemein)
+	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", 10, 100, 250, 30, Color.LightBlue, tabAllgemein)
+	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
 
 	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", 10, 50, 250, 30, Color.Green, tabAllgemein)
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
@@ -300,7 +302,7 @@ function AdminGUI:onButtonClick(func)
 		ChangerBox:new(_"Unternehmen setzten",
 				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable,
 				function (companyId)
-					triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer,companyId)
+					triggerServerEvent("adminSetPlayerCompany", root, self.m_SelectedPlayer, companyId)
 				end)
 	elseif func == "setFaction" then
 		local factionTable = FactionManager:getSingleton():getFactionNames()
@@ -308,7 +310,21 @@ function AdminGUI:onButtonClick(func)
 		ChangerBox:new(_"Fraktion setzten",
 				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
 				function (factionId)
-					triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer,factionId)
+					triggerServerEvent("adminSetPlayerFaction", root, self.m_SelectedPlayer, factionId)
+				end)
+	elseif func == "respawnCompany" then
+		local companyTable = {[1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
+		ChangerBox:new(_"Unternehmens-Fahrzeuge respawnen",
+				_"Bitte wähle das gewünschte Unternehmen aus:",companyTable,
+				function (companyId)
+					triggerServerEvent("adminRespawnCompanyVehicles", root, companyId)
+				end)
+	elseif func == "respawnFaction" then
+		local factionTable = FactionManager:getSingleton():getFactionNames()
+		ChangerBox:new(_"Fraktions-Fahrzeuge respawnen",
+				_"Bitte wähle die gewünschte Fraktion aus:",factionTable,
+				function (factionId)
+					triggerServerEvent("adminRespawnFactionVehicles", root, factionId)
 				end)
 	elseif func == "supportMode" then
 		triggerServerEvent("adminTriggerFunction", root, func)

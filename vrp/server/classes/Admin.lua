@@ -43,7 +43,8 @@ function Admin:constructor()
     addCommandHandler("spect", adminCommandBind)
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
-    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo"}
+    "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -53,6 +54,9 @@ function Admin:constructor()
     addEventHandler("adminPortToVehicle", root, bind(self.Event_portToVehicle, self))
     addEventHandler("adminSeachPlayer", root, bind(self.Event_seachPlayer, self))
     addEventHandler("adminSeachPlayerInfo", root, bind(self.Event_getPlayerInfo, self))
+    addEventHandler("adminRespawnFactionVehicles", root, bind(self.Event_respawnFactionVehicles, self))
+    addEventHandler("adminRespawnCompanyVehicles", root, bind(self.Event_respawnCompanyVehicles, self))
+
 end
 
 function Admin:destructor()
@@ -137,6 +141,22 @@ function Admin:Event_getPlayerInfo(Id, name)
                 end
             end
         )()
+    end
+end
+
+function Admin:Event_respawnFactionVehicles(Id)
+    local faction = FactionManager:getSingleton():getFromId(Id)
+    if faction then
+        faction:respawnVehicles()
+        client:sendShortMessage(_("%s Fahrzeuge respawnt", client, faction:getShortName()))
+    end
+end
+
+function Admin:Event_respawnCompanyVehicles(Id)
+    local company = CompanyManager:getSingleton():getFromId(Id)
+    if company then
+        company:respawnVehicles()
+        client:sendShortMessage(_("%s Fahrzeuge respawnt", client, company:getName()))
     end
 end
 
