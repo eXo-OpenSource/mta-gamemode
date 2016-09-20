@@ -72,16 +72,24 @@ function GroupGUI:constructor()
 
 
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
-	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.55, tabVehicles)
-	self.m_VehiclesGrid:addColumn(_"Fahrzeuge", 1)
-	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
-
-	self.m_VehicleLocateButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.07, _"Orten", true, tabVehicles)
-	self.m_VehicleRespawnButton = VRPButton:new(self.m_Width*0.695, self.m_Height*0.18, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", true, tabVehicles)
-	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.27, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug zur Firma/Gang hinzufügen", tabVehicles):setFontSize(1)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuge:", tabVehicles)
+	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.4, tabVehicles)
+	self.m_VehiclesGrid:addColumn(_"Name", 0.4)
+	self.m_VehiclesGrid:addColumn(_"Standort", 0.6)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.LightBlue)
+	self.m_VehicleLocateButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Orten", tabVehicles):setFontSize(1.2)
+	self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", tabVehicles):setFontSize(1.2)
 	self.m_VehicleLocateButton.onLeftClick = bind(self.VehicleLocateButton_Click, self)
 	self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.53, self.m_Width*0.25, self.m_Height*0.06, _"Privat-Fahrzeuge:", tabVehicles)
+	self.m_PrivateVehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.65, self.m_Height*0.31, tabVehicles)
+	self.m_PrivateVehiclesGrid:addColumn(_"Name", 0.4)
+	self.m_PrivateVehiclesGrid:addColumn(_"Standort", 0.6)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.6, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabVehicles):setColor(Color.LightBlue)
+	self.m_VehicleConvertToGroupButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.67, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug zur Firma/Gang hinzufügen", tabVehicles):setFontSize(1)
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
+	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
 
 	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
 
@@ -114,7 +122,7 @@ function GroupGUI:Event_groupRetrieveLog(players, logs)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles)
+function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, playerVehicles)
 	self:adjustGroupTab(rank or false)
 
 	if name then
@@ -138,12 +146,45 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 			self:refreshRankGrid()
 		end
 
+		-- Group Vehicles
 		self.m_VehiclesGrid:clear()
-
 		if vehicles then
 			for key, veh in pairs(vehicles) do
-				local item = self.m_VehiclesGrid:addItem(getVehicleName(veh))
+				local x, y, z = veh:getPosition()
+				local item = self.m_VehiclesGrid:addItem(getVehicleName(veh), getZoneName(x, y, z, false))
 				item.VehicleElement = veh
+			end
+		end
+
+		-- Private Vehicles
+		self.m_PrivateVehiclesGrid:clear()
+		if playerVehicles then
+			local vehInfo = {}
+			for vehicleId, vehicleInfo in pairs(playerVehicles) do
+				table.insert(vehInfo, {vehicleId, vehicleInfo})
+			end
+			table.sort(vehInfo, function (a, b) return (a[2][2] < b[2][2]) end)
+			for i, vehicleInfo in ipairs(vehInfo) do
+				local vehicleId, vehicleInfo = unpack(vehicleInfo)
+				local element, positionType = unpack(vehicleInfo)
+				local x, y, z = getElementPosition(element)
+				if positionType == VehiclePositionType.World then
+					positionType = getZoneName(x, y, z, false)
+				elseif positionType == VehiclePositionType.Garage then
+					positionType = _"Garage"
+				elseif positionType == VehiclePositionType.Mechanic then
+					positionType = _"Autohof"
+				elseif positionType == VehiclePositionType.Hangar then
+					positionType = _"Hangar"
+				elseif positionType == VehiclePositionType.Harbor then
+					positionType = _"Hafen"
+				else
+					positionType = _"Unbekannt"
+				end
+				local item = self.m_PrivateVehiclesGrid:addItem(element:getName(), positionType)
+				item.VehicleId = vehicleId
+				item.VehicleElement = element
+				item.PositionType = vehicleInfo[2]
 			end
 		end
 	end
@@ -319,25 +360,44 @@ end
 function GroupGUI:VehicleRespawnButton_Click()
 	local item = self.m_VehiclesGrid:getSelectedItem()
 	if not item then
-		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
 	triggerServerEvent("vehicleRespawn", item.VehicleElement)
 end
 
 function GroupGUI:VehicleConvertToGroupButton_Click()
-	triggerServerEvent("groupConvertVehicle", localPlayer)
+	local item = self.m_PrivateVehiclesGrid:getSelectedItem()
+	if not item then
+		ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		return
+	end
+	if item.PositionType == VehiclePositionType.Garage then
+		ErrorBox:new(_"Das Fahrzeug darf sich nicht in der Garage befinden!")
+		return
+	end
+	triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
 end
 
 function GroupGUI:VehicleLocateButton_Click()
 	local item = self.m_VehiclesGrid:getSelectedItem()
 	if not item then
-		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
+
 	local x, y, z = getElementPosition(item.VehicleElement)
 	local blip = Blip:new("Waypoint.png", x, y)
-	setTimer(function() HUDRadar:getSingleton():removeBlip(blip) end, 5000, 1)
-
-	ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)))
+	--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
+		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "¡Find.dat.Car!+", Color.DarkLightBlue, -1)
+		.callback = function (this)
+			if blip then
+				delete(blip)
+			end
+			delete(this)
+		end
+	--else
+		--setTimer(function () delete(blip) end, 5000, 1)
+		--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "¡Find.dat.Car!", Color.DarkLightBlue)
+	--end
 end

@@ -30,7 +30,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 						addVehicleUpgrade(vehicle, v)
 					end
 				end
-				return vehicle:save()
+				return vehicle:save(), vehicle
 			end
 		end
 	end

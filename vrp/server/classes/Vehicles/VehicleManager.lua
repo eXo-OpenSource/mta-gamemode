@@ -353,12 +353,16 @@ function VehicleManager:setSpeedLimits()
 	setModelHandling(510, "maxVelocity", 50) -- Mountain Bike
 end
 
-function VehicleManager:syncVehicleInfo( player )
+function VehicleManager:syncVehicleInfo(player)
+	player:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(player), player:getGarageType(), player:getHangarType())
+end
+
+function VehicleManager:getVehiclesFromPlayer()
 	local vehicles = {}
-	for k, vehicle in pairs(self:getPlayerVehicles(player)) do
+	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
 		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 	end
-	player:triggerEvent("vehicleRetrieveInfo", vehicles, player:getGarageType(), player:getHangarType())
+	return vehicles
 end
 
 function VehicleManager:Event_vehicleLock()
@@ -516,11 +520,7 @@ function VehicleManager:Event_vehicleRespawn()
 	source:fix()
 
 	-- Refresh location in the self menu
-	local vehicles = {}
-	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
-		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
-	end
-	client:triggerEvent("vehicleRetrieveInfo", vehicles)
+	client:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(client))
 end
 
 function VehicleManager:Event_vehicleRespawnWorld()
@@ -613,12 +613,7 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 end
 
 function VehicleManager:Event_vehicleRequestInfo()
-	local vehicles = {}
-	for k, vehicle in pairs(self:getPlayerVehicles(client)) do
-		vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
-	end
-
-	client:triggerEvent("vehicleRetrieveInfo", vehicles, client:getGarageType(), client:getHangarType())
+	client:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(client), client:getGarageType(), client:getHangarType())
 end
 
 function VehicleManager:Event_vehicleUpgradeGarage()

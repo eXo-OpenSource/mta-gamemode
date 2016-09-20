@@ -87,7 +87,7 @@ function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
 	if group then
-		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, group:getVehicles())
+		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, group:getVehicles(), VehicleManager:getSingleton():getVehiclesFromPlayer(player))
 	else
 		player:triggerEvent("groupRetrieveInfo")
 	end
@@ -422,21 +422,24 @@ function GroupManager:Event_groupSaveRank(rank,name,loan)
 	end
 end
 
-function GroupManager:Event_groupConvertVehicle()
+function GroupManager:Event_groupConvertVehicle(veh)
 	local group = client:getGroup()
 	if group then
-		if client.isInVehicle then
-			local veh = client.vehicle
+		if veh then
 			if veh:getOwner() == client:getId() then
-				client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
-				group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..veh.getNameFromModel(veh:getModel()).." hinzugefügt!")
-				GroupVehicle.convertVehicle(veh, group)
-				self:sendInfosToClient(client)
+				local status, newVeh = GroupVehicle.convertVehicle(veh, group)
+				if status then
+					client:sendInfo(_("Das Fahrzeug ist nun im Besitz der Firma/Gang!", client))
+					group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." hinzugefügt!")
+					self:sendInfosToClient(client)
+				else
+					client:sendError(_("Es ist ein Fehler aufgetreten!", client))
+				end
 			else
 				client:sendError(_("Das ist nicht dein Fahrzeug!", client))
 			end
 		else
-			client:sendError(_("Du sitzt in keinem Fahrzeug!", client))
+			client:sendError(_("Error no Vehicle!", client))
 		end
 	end
 end

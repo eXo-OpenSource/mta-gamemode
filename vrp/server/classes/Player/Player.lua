@@ -345,8 +345,21 @@ function Player:respawn(position, rotation)
 		return
 	end
 
-	position = position or Vector3(2028, -1405, 18)
-	rotation = rotation or 0
+	if not position then -- Search for nearest Spawnpoint
+		local currentPos = self.position
+		local nearestDist = math.huge
+		local nearestPoint = nil
+		for i, v in ipairs(HOSPITAL_POSITIONS) do
+			if (v-currentPos).length < nearestDist then
+				nearestDist = (currentPos-v).length
+				nearestPoint = i
+			end
+		end
+		position, rotation = HOSPITAL_POSITIONS[nearestPoint], HOSPITAL_ROTATIONS[nearestPoint]
+	else
+		position, rotation = position, rotation
+	end
+
 	self:setHeadless(false)
 	spawnPlayer(self, position, rotation, self.m_Skin)
 	setCameraTarget(self, self)
