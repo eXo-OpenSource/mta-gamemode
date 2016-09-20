@@ -16,7 +16,7 @@ function DrivingSchool:constructor()
 
     self.m_OnQuit = bind(self.Event_onQuit,self)
 
-    addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand","drivingSchoolPassTheory"}
+    addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand","drivingSchoolPassTheory", "drivingSchoolStartTheory"}
     addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))
     addEventHandler("drivingSchoolDiscardLession", root, bind(self.Event_discardLession, self))
     addEventHandler("drivingSchoolstartLessionQuestion", root, bind(self.Event_startLessionQuestion, self))
@@ -24,6 +24,9 @@ function DrivingSchool:constructor()
     addEventHandler("drivingSchoolEndLession", root, bind(self.Event_endLession, self))
     addEventHandler("drivingSchoolReceiveTurnCommand", root, bind(self.Event_receiveTurnCommand, self))
 	addEventHandler("drivingSchoolPassTheory", root, bind(self.Event_passTheory, self))
+    addEventHandler("drivingSchoolStartTheory", root, bind(self.Event_startTheory, self))
+
+
 end
 
 function DrivingSchool:destructor()
@@ -76,19 +79,26 @@ function DrivingSchool:createSchoolPed( pos )
 			if button == "left" and state == "up" then
 				if source == self.m_DrivingSchoolPed then
 					if not player.m_HasTheory then
-						if player.money >= 300 then
-							player:triggerEvent("showDrivingSchoolTest")
-							player:takeMoney(300, "Fahrschule")
-						else
-                            player:sendError("Du hast nicht genug Geld ( Kosten: 300)!")
-						end
-					else
-                        player:sendError("Du hast bereits die Theorieprüfung bestanden!")
+                        if not player.isInTheory then
+                            player:triggerEvent("questionBox", _("Möchtest du die Theorie-Prüfung starten? Kosten: 300$", player), "drivingSchoolStartTheory")
+                        end
+                    else
+                        player:sendInfo("Du hast bereits die Theorieprüfung bestanden!")
 					end
 				end
 			end
         end
     )
+end
+
+function DrivingSchool:Event_startTheory()
+    if client:getMoney() >= 300 then
+        client:triggerEvent("showDrivingSchoolTest")
+        client:takeMoney(300, "Fahrschule")
+        client.isInTheory = true
+    else
+        client:sendError(_("Du hast nicht genug Geld ( Kosten: 300)!", client))
+    end
 end
 
 function DrivingSchool:Event_drivingSchoolMenu(func)
@@ -250,7 +260,12 @@ function DrivingSchool:Event_receiveTurnCommand(turnCommand)
     end
 end
 
-function DrivingSchool:Event_passTheory( )
-	source.m_HasTheory = true
-	source:sendInfo(_("Gehe nun zur praktischen Prüfung!",client ))
+function DrivingSchool:Event_passTheory(pass)
+    client.isInTheory = false
+    if pass == true then
+        client.m_HasTheory = true
+        client:sendInfo(_("Gehe nun zur praktischen Prüfung!", client))
+    else
+        client:sendInfo(_("Du hast abgebrochen oder nicht bestanden! Versuche die Prüfung erneut!", client))
+    end
 end

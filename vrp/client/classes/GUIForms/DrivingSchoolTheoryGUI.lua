@@ -8,7 +8,7 @@
 DrivingSchoolTheoryGUI = inherit(GUIForm)
 inherit(Singleton, DrivingSchoolTheoryGUI)
 
-addRemoteEvents{ "showDrivingSchoolTest" }
+addRemoteEvents{"showDrivingSchoolTest"}
 
 --// CONSTANTS //
 local width,height = screenWidth*0.4,screenHeight*0.4
@@ -40,7 +40,7 @@ function DrivingSchoolTheoryGUI:constructor(type)
 	self.m_Text:setAlignY( "top" )
 	self.m_StartButton = GUIButton:new( self.m_Width*0.3, self.m_Height*0.7 , self.m_Width*0.4,self.m_Height*0.1, "Starten", self)
 	self.m_StartButton.onLeftClick = function()
-		
+
 		self.m_Text:delete(); self.m_StartButton:delete(); self:nextQuestion();
 	end
 	self.m_QuestionsDone = {	}
@@ -48,7 +48,12 @@ function DrivingSchoolTheoryGUI:constructor(type)
 	self.m_ErrPoints = 0
 end
 
-
+function DrivingSchoolTheoryGUI:destructor()
+	GUIForm.destructor(self)
+	if not self.m_Success then
+		triggerServerEvent("drivingSchoolPassTheory",localPlayer, false)
+	end
+end
 
 function DrivingSchoolTheoryGUI:submitQuestion( pQuestion )
 	self.m_QuestionsDone[pQuestion] = true
@@ -114,12 +119,14 @@ function DrivingSchoolTheoryGUI:showResult()
 		self.m_ResultText:setAlignX( "center" )
 		self.m_ResultText:setAlignY( "center" )
 		self.m_ResultText:setColor(Color.Green)
-		triggerServerEvent("drivingSchoolPassTheory",localPlayer)
+		triggerServerEvent("drivingSchoolPassTheory",localPlayer, true)
+		self.m_Success = true
 	else
 		self.m_ResultText = GUILabel:new( self.m_Width*0.05, self.m_Height*0, self.m_Width*0.9,self.m_Height,"Sie sind durchgefallen! Fehlerpunkte:".." "..self.m_ErrPoints,self ):setFont(VRPFont(30))
 		self.m_ResultText:setAlignX( "center" )
 		self.m_ResultText:setAlignY( "center" )
 		self.m_ResultText:setColor(Color.Red)
+		triggerServerEvent("drivingSchoolPassTheory",localPlayer, false)
 	end
 end
 
