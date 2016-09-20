@@ -95,7 +95,7 @@ function GroupGUI:constructor()
 
 	self.m_LeaderTab = false
 
-	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetrieveLog", "vehicleRetrieveInfo"}
+	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetrieveLog"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 	addEventHandler("groupRetrieveLog", root, bind(self.Event_groupRetrieveLog, self))
