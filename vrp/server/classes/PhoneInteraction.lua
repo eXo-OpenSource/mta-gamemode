@@ -8,13 +8,16 @@
 PhoneInteraction = inherit(Singleton)
 
 function PhoneInteraction:constructor()
-	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial"}
+	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial", "callAbbortSpecial"}
 
 	addEventHandler("callStart", root, bind(self.callStart, self))
 	addEventHandler("callBusy", root, bind(self.callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.callReplace, self))
 	addEventHandler("callStartSpecial", root, bind(self.callStartSpecial, self))
+	addEventHandler("callAbbortSpecial", root, bind(self.callAbbortSpecial, self))
+
+	self.m_LastSpecialCallNumber = {}
 end
 
 function PhoneInteraction:callStart(player, voiceEnabled)
@@ -48,7 +51,7 @@ end
 
 function PhoneInteraction:callReplace(callee)
 	if not callee then return end
-	if client:getPhonePartner() ~= callee then return end
+	--if client:getPhonePartner() ~= callee then return end
 
 	client:setPhonePartner(nil)
 	callee:setPhonePartner(nil)
@@ -57,12 +60,27 @@ function PhoneInteraction:callReplace(callee)
 
 	-- Todo: Notify the callee
 	callee:triggerEvent("callReplace", client)
+	client:triggerEvent("callReplace", callee)
+
 end
 
 function PhoneInteraction:callStartSpecial(number)
 	for index, instance in pairs(PhoneNumber.Map) do
 		if instance:getNumber() == number then
+			self.m_LastSpecialCallNumber[client] = number
 			instance:getOwner(instance):phoneCall(client)
+		end
+	end
+end
+
+function PhoneInteraction:callAbbortSpecial()
+	if self.m_LastSpecialCallNumber[client] then
+		for index, instance in pairs(PhoneNumber.Map) do
+			if instance:getNumber() == self.m_LastSpecialCallNumber[client] then
+				self.m_LastSpecialCallNumber[client] = false
+				instance:getOwner(instance):phoneCallAbbort(client)
+				client:triggerEvent("callReplace")
+			end
 		end
 	end
 end

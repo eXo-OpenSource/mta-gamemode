@@ -22,7 +22,6 @@ function AppCall:constructor()
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
 
-	self.m_InCall = false
 end
 
 function AppCall:onOpen(form)
@@ -130,6 +129,8 @@ function MainActivity:constructor(app)
 
 	addRemoteEvents{"receivePhoneNumbers"}
 	addEventHandler("receivePhoneNumbers", root, bind(self.Event_receivePhoneNumbers, self))
+
+	app.m_InCall = false
 
 end
 
@@ -253,6 +254,7 @@ function IncomingCallActivity:busy()
 		triggerServerEvent("callBusy", root, self.m_Caller)
 	end
 	self.m_Caller = nil
+	MainActivity:new(self:getApp())
 end
 
 function IncomingCallActivity:getCaller()
@@ -265,9 +267,10 @@ CallResultActivity = inherit(AppActivity)
 function CallResultActivity:constructor(app, calleeType, callee, resultType, voiceCall)
 	AppActivity.constructor(self, app)
 
-	self.m_InCall = true
+	app.m_InCall = true
 
 	self.m_Callee = callee
+	self.m_CalleeType = calleeType
 
 	self.m_ResultLabel = GUILabel:new(0, 10, self.m_Width, 40, "", self):setAlignX("center")
 	if resultType == CALL_RESULT_ANSWER then
@@ -289,7 +292,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 			function()
 				if self:isOpen() then
 					MainActivity:new(app)
-					self.m_InCall = false
+					app.m_InCall = false
 				end
 			end, 3000, 1
 		)
@@ -300,7 +303,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 			function()
 				if self:isOpen() then
 					MainActivity:new(app)
-					self.m_InCall = false
+					app.m_InCall = false
 				end
 			end, 3000, 1
 		)
@@ -312,13 +315,18 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 		else
 			GUILabel:new(0, 50, self.m_Width, 30, callee, self):setColor(Color.Black):setAlignX("center")
 		end
+		self.m_ButtonReplace = GUIButton:new(10, self.m_Height-50, self.m_Width-20, 40, _"Auflegen", self)
+		self.m_ButtonReplace:setBackgroundColor(Color.Red)
+		self.m_ButtonReplace.onLeftClick = bind(self.ButtonReplace_Click, self)
 	end
 end
 
 function CallResultActivity:ButtonReplace_Click()
-	if self.m_Callee and isElement(self.m_Callee) then
-		triggerServerEvent("callReplace", root, self.m_Callee)
+	if self.m_CalleeType == "player" then
+		if self.m_Callee and isElement(self.m_Callee) then
+			triggerServerEvent("callReplace", root, self.m_Callee)
+		end
+	else
+		triggerServerEvent("callAbbortSpecial", localPlayer)
 	end
-	self.m_InCall = false
-	MainActivity:new(self:getApp())
 end

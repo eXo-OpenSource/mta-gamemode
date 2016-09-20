@@ -334,6 +334,15 @@ function Company:phoneCall(caller)
 	end
 end
 
+function Company:phoneCallAbbort(caller)
+	for k, player in ipairs(self:getOnlinePlayers()) do
+		if not player:getPhonePartner() then
+			player:sendShortMessage(_("Der Spieler %s hat den Anruf abgebrochen.", player, caller:getName()))
+			unbindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+		end
+	end
+end
+
 function Company:phoneTakeOff(player, key, state, caller)
 	self:sendShortMessage(_("%s hat das Telefonat von %s angenommen!", player, player:getName(), caller:getName()))
 	caller:triggerEvent("callAnswer", player, voiceCall)
