@@ -21,8 +21,8 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange, rank
   self.m_Type = type
   self.m_MarkersAttached = false
   local saveRanks = false
-  if rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
-  if rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
+  if not rankNames or rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
+  if not rankLoans or rankLoans == "" then rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for group "..Id) saveRanks = true end
   self.m_RankNames = fromJSON(rankNames)
   self.m_RankLoans = fromJSON(rankLoans)
   if saveRanks == true then
