@@ -110,6 +110,10 @@ function VehicleManager:getFactionVehicles(factionId)
 	return self.m_FactionVehicles[factionId]
 end
 
+function VehicleManager:getCompanyVehicles(companyId)
+	return self.m_CompanyVehicles[companyId]
+end
+
 function VehicleManager:getGroupVehicles(groupId)
 	return self.m_GroupVehicles[groupId]
 end

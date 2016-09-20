@@ -325,6 +325,22 @@ function Company:createDutyMarker()
     	)
 end
 
+function Company:respawnVehicles()
+	local companyVehicles = VehicleManager:getSingleton():getCompanyVehicles(self.m_Id)
+	local fails = 0
+	local vehicles = 0
+	for companyId, vehicle in pairs(companyVehicles) do
+		if vehicle:getCompany() == self then
+			vehicles = vehicles + 1
+			if not vehicle:respawn() then
+				fails = fails + 1
+			end
+		end
+	end
+
+	self:sendShortMessage(("%s/%s Fahrzeuge wurden respawned!"):format(vehicles-fails, vehicles))
+end
+
 function Company:phoneCall(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		if not player:getPhonePartner() then
