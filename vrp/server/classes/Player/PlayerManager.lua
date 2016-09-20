@@ -18,6 +18,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerConnect", root, bind(self.playerConnect, self))
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
 	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
+	addEventHandler("onPlayerCommand", root,  bind(self.playerCommand, self))
 	addEventHandler("Event_ClientNotifyWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
@@ -141,6 +142,12 @@ function PlayerManager:playerJoin()
 	source:setName(getRandomUniqueNick())
 
 	source:join()
+end
+
+function PlayerManager:playerCommand()
+	if not source:isLoggedIn() then
+		cancelEvent()
+	end
 end
 
 function PlayerManager:playerQuit()
