@@ -3,6 +3,7 @@ MYSQL_PORT	= 6033
 MYSQL_USER	= "vRP"
 MYSQL_PW	= "kmd1581adf%%f"
 MYSQL_DB	= "vRP"
+LOGS_DB	= "vRP_logs"
 BOARD_DB	= "exo_wbb_vrp"
 PREMIUM_DB	= "exo_premium"
 MYSQL_UNIX_SOCKET = "/var/run/mysqld/mysqld.sock"

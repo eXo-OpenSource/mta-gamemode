@@ -13,17 +13,11 @@ function StatisticsLogger:constructor()
 	self.m_TextLogPath = ":vrp_data/logs/"
 end
 
-function StatisticsLogger:logMoney(player, amount, desc)
-    if DEBUG then
-        sql:queryExec("INSERT INTO ??_stats_money (UserId, Amount, Description, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), player:getId(), amount, desc or "")
-    end
-end
-
 function StatisticsLogger:addMoneyLog(type, element, money, reason)
     local elementId = 0
     if element then elementId = element:getId() end
-    sql:queryExec("INSERT INTO ??_logsMoney (ElementType, ElementId, Money, Reason, Timestamp) VALUES(?, ?, ?, ?, ?)",
-        sql:getPrefix(), type, elementId, money, reason, getRealTime().timestamp)
+    sqlLogs:queryExec("INSERT INTO ??_Money (ElementType, ElementId, Money, Reason, Timestamp) VALUES(?, ?, ?, ?, ?)",
+        sqlLogs:getPrefix(), type, elementId, money, reason, getRealTime().timestamp)
 end
 
 function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
@@ -31,12 +25,12 @@ function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
     local groupId = 0
     if isElement(player) then userId = player:getId() end
     if group then groupId = group:getId() end
-    sql:queryExec("INSERT INTO ??_logsGroups (UserId, GroupType, GroupId, Category, Description, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
-        sql:getPrefix(), userId, groupType, groupId, category, desc, getRealTime().timestamp)
+    sqlLogs:queryExec("INSERT INTO ??_Groups (UserId, GroupType, GroupId, Category, Description, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
+        sqlLogs:getPrefix(), userId, groupType, groupId, category, desc, getRealTime().timestamp)
 end
 
 function StatisticsLogger:getGroupLogs(groupType, groupId)
-    local result = sql:queryFetch("SELECT * FROM ??_logsGroups WHERE GroupType = ? AND GroupId = ? ORDER BY Id DESC", sql:getPrefix(), groupType, groupId)
+    local result = sqlLogs:queryFetch("SELECT * FROM ??_Groups WHERE GroupType = ? AND GroupId = ? ORDER BY Id DESC", sqlLogs:getPrefix(), groupType, groupId)
     return result
 end
 
@@ -46,17 +40,24 @@ function StatisticsLogger:addPunishLog(admin, player, type, reason, duration)
     if isElement(admin) then adminId = admin:getId() end
     if isElement(player) then userId = player:getId() end
 
-    sql:queryExec("INSERT INTO ??_logsPunish (UserId, AdminId, Type, Reason, Duration, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
-        sql:getPrefix(), userId, adminId, type, reason, duration, getRealTime().timestamp)
+    sqlLogs:queryExec("INSERT INTO ??_Punish (UserId, AdminId, Type, Reason, Duration, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
+        sqlLogs:getPrefix(), userId, adminId, type, reason, duration, getRealTime().timestamp)
 end
 
 function StatisticsLogger:getPunishLogs(userId)
     if userId then
-        local result = sql:queryFetch("SELECT * FROM ??_logsPunish WHERE UserId = ? ORDER BY Id DESC", sql:getPrefix(), userId)
+        local result = sqlLogs:queryFetch("SELECT * FROM ??_logsPunish WHERE UserId = ? ORDER BY Id DESC", sqlLogs:getPrefix(), userId)
     else
-        local result = sql:queryFetch("SELECT * FROM ??_logsPunish WHERE ORDER BY Id DESC", sql:getPrefix())
+        local result = sqlLogs:queryFetch("SELECT * FROM ??_logsPunish WHERE ORDER BY Id DESC", sqlLogs:getPrefix())
     end
     return result
+end
+
+function StatisticsLogger:addChatLog(player, type, text, heared)
+    if isElement(player) then userId = player:getId() end
+
+    sqlLogs:queryExec("INSERT INTO ??_Chat (UserId, Type, Text, Heared, Position, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
+        sqlLogs:getPrefix(), userId, type, text, heared, ("%s - %s"):format(player:getZoneName(), player:getZoneName(true)),getRealTime().timestamp)
 end
 
 function StatisticsLogger:addTextLog(logname, text)

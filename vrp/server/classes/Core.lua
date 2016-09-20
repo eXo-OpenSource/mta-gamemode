@@ -18,9 +18,11 @@ function Core:constructor()
 
 	-- Establish database connection
 	sql = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, MYSQL_DB, MYSQL_UNIX_SOCKET)
+	sql:setPrefix("vrp")
 	board = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, BOARD_DB, MYSQL_UNIX_SOCKET)
 	sqlPremium = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, PREMIUM_DB, MYSQL_UNIX_SOCKET)
-	sql:setPrefix("vrp")
+	sqlLogs = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, LOGS_DB, MYSQL_UNIX_SOCKET)
+	sqlLogs:setPrefix("vrpLogs")
 
 	-- Instantiate classes (Create objects)
 	TranslationManager:new()
