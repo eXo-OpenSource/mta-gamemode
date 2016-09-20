@@ -95,11 +95,11 @@ function GroupGUI:constructor()
 
 	self.m_LeaderTab = false
 
-	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetrieveLog"}
+	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetrieveLog", "vehicleRetrieveInfo"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 	addEventHandler("groupRetrieveLog", root, bind(self.Event_groupRetrieveLog, self))
-
+	addEventHandler("vehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
 end
 
 function GroupGUI:onShow()
@@ -122,7 +122,7 @@ function GroupGUI:Event_groupRetrieveLog(players, logs)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, playerVehicles)
+function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles)
 	self:adjustGroupTab(rank or false)
 
 	if name then
@@ -155,37 +155,38 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 				item.VehicleElement = veh
 			end
 		end
+	end
+end
 
-		-- Private Vehicles
+function GroupGUI:Event_vehicleRetrieveInfo(vehiclesInfo)
+	if vehiclesInfo then
 		self.m_PrivateVehiclesGrid:clear()
-		if playerVehicles then
-			local vehInfo = {}
-			for vehicleId, vehicleInfo in pairs(playerVehicles) do
-				table.insert(vehInfo, {vehicleId, vehicleInfo})
+		local vehInfo = {}
+		for vehicleId, vehicleInfo in pairs(vehiclesInfo) do
+			table.insert(vehInfo, {vehicleId, vehicleInfo})
+		end
+		table.sort(vehInfo, function (a, b) return (a[2][2] < b[2][2]) end)
+		for i, vehicleInfo in ipairs(vehInfo) do
+			local vehicleId, vehicleInfo = unpack(vehicleInfo)
+			local element, positionType = unpack(vehicleInfo)
+			local x, y, z = getElementPosition(element)
+			if positionType == VehiclePositionType.World then
+				positionType = getZoneName(x, y, z, false)
+			elseif positionType == VehiclePositionType.Garage then
+				positionType = _"Garage"
+			elseif positionType == VehiclePositionType.Mechanic then
+				positionType = _"Autohof"
+			elseif positionType == VehiclePositionType.Hangar then
+				positionType = _"Hangar"
+			elseif positionType == VehiclePositionType.Harbor then
+				positionType = _"Hafen"
+			else
+				positionType = _"Unbekannt"
 			end
-			table.sort(vehInfo, function (a, b) return (a[2][2] < b[2][2]) end)
-			for i, vehicleInfo in ipairs(vehInfo) do
-				local vehicleId, vehicleInfo = unpack(vehicleInfo)
-				local element, positionType = unpack(vehicleInfo)
-				local x, y, z = getElementPosition(element)
-				if positionType == VehiclePositionType.World then
-					positionType = getZoneName(x, y, z, false)
-				elseif positionType == VehiclePositionType.Garage then
-					positionType = _"Garage"
-				elseif positionType == VehiclePositionType.Mechanic then
-					positionType = _"Autohof"
-				elseif positionType == VehiclePositionType.Hangar then
-					positionType = _"Hangar"
-				elseif positionType == VehiclePositionType.Harbor then
-					positionType = _"Hafen"
-				else
-					positionType = _"Unbekannt"
-				end
-				local item = self.m_PrivateVehiclesGrid:addItem(element:getName(), positionType)
-				item.VehicleId = vehicleId
-				item.VehicleElement = element
-				item.PositionType = vehicleInfo[2]
-			end
+			local item = self.m_PrivateVehiclesGrid:addItem(element:getName(), positionType)
+			item.VehicleId = vehicleId
+			item.VehicleElement = element
+			item.PositionType = vehicleInfo[2]
 		end
 	end
 end

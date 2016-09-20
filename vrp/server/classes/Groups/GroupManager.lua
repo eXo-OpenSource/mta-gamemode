@@ -87,7 +87,8 @@ function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
 	if group then
-		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, group:getVehicles(), VehicleManager:getSingleton():getVehiclesFromPlayer(player))
+		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, group:getVehicles())
+		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
 		player:triggerEvent("groupRetrieveInfo")
 	end
