@@ -92,6 +92,7 @@ factionRankNames[3] = {
 [6] = "General"
 }
 factionColors[3] = {["r"] = 0,["g"] = 125,["b"] = 0}
+factionCarColors[3] = {["r"] = 215,["g"] = 200,["b"] = 100, ["r1"] = 215,["g1"] = 200,["b1"] = 100}
 factionSkins[3] = {[73]=true,[191]=true,[287]=true,[312]=true}
 factionWeapons[3] = {[6]=true,[23]=true, [24]=true,[29]=true,[31]=true,[16]=true,[17]=true,[45]=true}
 factionWTDestination[3] = Vector3(2716.21, -2413.49, 13)
@@ -107,6 +108,7 @@ factionRankNames[4] = {
 [6] = "Rescue-Chief"
 }
 factionColors[4] = {["r"] = 255, ["g"] = 120, ["b"] = 0}
+factionCarColors[4] = {["r"] = 255,["g"] = 120,["b"] = 0, ["r1"] = 255,["g1"] = 255,["b1"] = 255}
 factionSkins[4] = {[27]=true, [277]=true, [278]=true, [279]=true,[70]=true, [71]=true, [274]=true, [275]=true, [276]=true}
 factionWeapons[4] = {[9]=true}
 
@@ -121,6 +123,7 @@ factionRankNames[5] = {
 [6] = "Capo Crimini"
 }
 factionColors[5] = {["r"] = 100,["g"] = 100,["b"] = 100}
+factionCarColors[5] = {["r"] = 100,["g"] = 100,["b"] = 100, ["r1"] = 100,["g1"] = 100,["b1"] = 100}
 factionSkins[5] = {[111]=true, [112]=true, [113]=true, [124]=true, [125]=true, [126]=true, [127]=true,[237]=true,[272]=true}
 factionWeapons[5] = {[2]=true, [24]=true, [25]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[5] = Vector3(691.58, -1275.94, 13.56)
@@ -138,6 +141,7 @@ factionRankNames[6] = {
 [6] = "Shatei"
 }
 factionColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0}
+factionCarColors[6] = {["r"] = 140,["g"] = 20,["b"] = 0, ["r1"] = 140,["g1"] = 20,["b1"] = 0}
 factionSkins[6] = {[49]=true, [57]=true, [59]=true, [120]=true, [122]=true, [123]=true, [141]=true,[60]=true,[58]=true}
 factionWeapons[6] = {[1]=true, [8]=true, [24]=true, [25]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[6] = Vector3(683.59, -1435.49, 14.89)
@@ -154,6 +158,7 @@ factionRankNames[7] = {
 [6] = "Junkie"
 }
 factionColors[7] = {["r"] = 50,["g"] = 200,["b"] = 50}
+factionCarColors[7] = {["r"] = 50,["g"] = 200,["b"] = 50, ["r1"] = 50,["g1"] = 200,["b1"] = 50}
 factionSkins[7] = {[105]=true, [106]=true, [107]=true, [269]=true, [270]=true, [271]=true, [293]=true, [300]=true, [301]=true, [311]=true}
 factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[7] = Vector3(2459.54, -1690.76, 13.54)
@@ -170,6 +175,7 @@ factionRankNames[8] = {
 [6] = "Big Boss"
 }
 factionColors[8] = {["r"] = 200,["g"] = 0,["b"] = 255}
+factionCarColors[8] = {["r"] = 200,["g"] = 0,["b"] = 255, ["r1"] = 200,["g1"] = 0,["b1"] = 255}
 factionSkins[8] = {[13]=true, [102]=true, [103]=true, [104]=true, [195]=true, [296]=true, [297]=true, [304]=true}
 factionWeapons[8] = {[5]=true, [24]=true, [25]=true, [32]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[8] = Vector3(2635.52, -2013.99, 14.13)
