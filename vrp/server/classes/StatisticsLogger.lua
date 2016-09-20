@@ -60,6 +60,14 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
         sqlLogs:getPrefix(), userId, type, text, heared, ("%s - %s"):format(player:getZoneName(), player:getZoneName(true)),getRealTime().timestamp)
 end
 
+function StatisticsLogger:addKillLog(player, target, weapon)
+    if isElement(player) then userId = player:getId() end
+	if isElement(target) then targetId = target:getId() end
+	local range = getDistanceBetweenPoints3D(player:getPosition(), target:getPosition())
+    sqlLogs:queryExec("INSERT INTO ??_Kills (UserId, TargetId, Weapon, Range, Position, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
+        sqlLogs:getPrefix(), userId, targetId, weapon, range, ("%s - %s"):format(target:getZoneName(), target:getZoneName(true)),getRealTime().timestamp)
+end
+
 function StatisticsLogger:addTextLog(logname, text)
 	local filePath = self.m_TextLogPath..logname..".log"
 
