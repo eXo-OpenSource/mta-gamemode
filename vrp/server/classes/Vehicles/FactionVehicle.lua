@@ -151,9 +151,12 @@ function FactionVehicle:respawn(force)
 	-- Teleport to Spawnlocation
 	self.m_LastUseTime = math.huge
 
-	for _, player in pairs(getVehicleOccupants(self)) do
-		player:removeFromVehicle()
+	if self:getOccupants() then -- For Trailers
+		for _, player in pairs(self:getOccupants()) do
+			return false
+		end
 	end
+	
 	self:setEngineState(false)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
