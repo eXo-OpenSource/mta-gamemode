@@ -45,8 +45,6 @@ function GroupManager:constructor()
 	addEventHandler("groupChangeName", root, bind(self.Event_groupChangeName, self))
 	addEventHandler("groupSaveRank", root, bind(self.Event_groupSaveRank, self))
 	addEventHandler("groupConvertVehicle", root, bind(self.Event_groupConvertVehicle, self))
-
-
 end
 
 function GroupManager:destructor()
