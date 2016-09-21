@@ -281,7 +281,7 @@ function Group:sendChatMessage(sourcePlayer, message)
     local rank = self.m_Players[playerId]
     local rankName = self.m_RankNames[tostring(rank)]
     local receivedPlayers = {}
-    local text = ("[%s] %s %s: %s"):format(self.m_Type, rankName, sourcePlayer:getName(), message)
+    local text = ("[%s] %s %s: %s"):format(self:getName(), rankName, sourcePlayer:getName(), message)
     for k, player in ipairs(self:getOnlinePlayers()) do
         player:sendMessage(text, 0, 255, 150)
         if not sourcePlayer == player then

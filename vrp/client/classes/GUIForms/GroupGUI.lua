@@ -337,7 +337,14 @@ end
 
 function GroupGUI:refreshRankGrid()
 	self.m_FactionRangGrid:clear()
-	for rank,name in pairs(self.m_RankNames) do
+	-- Todo: tempfix
+	local tab = {}
+	for i, v in pairs(self.m_RankNames) do
+		tab[tonumber(i)+1] = v
+	end
+	for rank, name in ipairs(tab) do
+		local rank = rank - 1
+	--
 		local item = self.m_FactionRangGrid:addItem(rank, name)
 		item.Id = rank
 		item.onLeftClick = function()

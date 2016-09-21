@@ -57,7 +57,7 @@ function VehicleInteraction:render()
 
 					if doorRatio <= 0 and checkDoor ~= 4 then
 							self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum Öffnen %s#FFFFFF!", self.m_interactButton, doorName), 0)
-						if getElementData(self.m_lookAtVehicle,"OwnerName") == getPlayerName(localPlayer) then
+						if self:isOwner(self.m_lookAtVehicle) then
 							self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um das Fahrzeug abzuschließen!", self.m_lockButton), 1)
 						end
 					end
@@ -79,7 +79,7 @@ function VehicleInteraction:render()
 					end
 				else
 					self:drawTextBox(_("#FF0000 Fahrzeug ist verschlossen!", self.m_lockButton), 0)
-					if getElementData(self.m_lookAtVehicle,"OwnerName") == getPlayerName(localPlayer) then
+					if self:isOwner(self.m_lookAtVehicle) then
 						self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um das Fahrzeug aufzuschließen!", self.m_lockButton), 1)
 					end
 				end
@@ -292,7 +292,7 @@ end
 
 function VehicleInteraction:lock()
 	if (self.m_lookAtVehicle) and (getElementType(self.m_lookAtVehicle) == "vehicle") and (self:getDoor()) then
-		if getElementData(self.m_lookAtVehicle,"OwnerName") == getPlayerName(localPlayer) then
+		if self:isOwner(self.m_lookAtVehicle) then
 			if not isPedInVehicle(localPlayer) then
 				triggerServerEvent("onLockVehicleDoor", localPlayer, door)
 			end
@@ -308,4 +308,18 @@ end
 function VehicleInteraction:onDoorClosed(x, y, z)
     local sound = playSound3D("files/audio/onDoorClosed.mp3", x, y, z, false)
     setSoundMaxDistance(sound, 5)
+end
+
+function VehicleInteraction:isOwner(veh)
+	local ownerName = veh:getData("OwnerName")
+	if ownerName == localPlayer:getName() then
+		return true
+	elseif ownerName == localPlayer:getGroupName() then
+		return true
+	elseif localPlayer:getCompany() and ownerName == localPlayer:getCompany():getName() then
+		return true
+	elseif localPlayer:getFaction() and ownerName == localPlayer:getFaction():getName() then
+		return
+	end
+	return false
 end
