@@ -131,7 +131,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		self.m_GroupsNameChangeLabel:setPosition(x + dxGetTextWidth(name, self.m_GroupsNameLabel:getFontSize(), self.m_GroupsNameLabel:getFont()) + 10, y)
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
-		self.m_GroupsRankLabel:setText(GroupRank[rank])
+		self.m_GroupsRankLabel:setText(rankNames[tostring(rank)])
 		self.m_GroupMoneyLabel:setText(tostring(money).."$")
 
 		self.m_GroupPlayersGrid:clear()
