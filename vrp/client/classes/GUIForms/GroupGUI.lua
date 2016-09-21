@@ -377,6 +377,10 @@ function GroupGUI:VehicleConvertToGroupButton_Click()
 		ErrorBox:new(_"Das Fahrzeug darf sich nicht in der Garage befinden!")
 		return
 	end
+	if item.PositionType == VehiclePositionType.Mechanic then
+		ErrorBox:new(_"Das Fahrzeug darf sich nicht im Autohof befinden!")
+		return
+	end
 	triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
 end
 

@@ -10,7 +10,7 @@ GroupVehicle = inherit(PermanentVehicle)
 -- This function converts a normal (User/PermanentVehicle) to an GroupVehicle
 function GroupVehicle.convertVehicle(vehicle, Group)
 	if vehicle:isPermanent() then
-		if not vehicle:isInGarage() then
+		if vehicle:getPositionType() == VehiclePositionType.World then
 			local position = vehicle:getPosition()
 			local rotation = vehicle:getRotation()
 			local model = vehicle:getModel()

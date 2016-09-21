@@ -599,7 +599,7 @@ function Player:payDay()
 	end
 
 	if self:getWantedLevel() > 0 then
-		self:sendShortMessage(_"Dir wurde ein Wanted erlassen!", self)
+		self:sendShortMessage(_("Dir wurde ein Wanted erlassen!", self))
 		self:takeWantedLevel(1)
 	end
 
