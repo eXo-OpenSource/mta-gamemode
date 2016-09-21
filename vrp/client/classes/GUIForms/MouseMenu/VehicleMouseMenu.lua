@@ -141,10 +141,10 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		self:addItem(_"Admin: Löschen",
 			function()
 				if not self:getElement() then return end
-				QuestionBox:new(_"Möchtest du dieses Auto wirklich löschen?",
-					function()
+				InputBox:new(_"Fahrzeug löschen", _"Aus welchem Grund möchtest du das Fahrzeug löschen?",
+					function(reason)
 						if self:getElement() then
-							triggerServerEvent("vehicleDelete", self:getElement())
+							triggerServerEvent("vehicleDelete", self:getElement(), reason)
 						end
 					end
 				)

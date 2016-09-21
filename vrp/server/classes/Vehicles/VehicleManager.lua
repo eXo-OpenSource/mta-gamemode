@@ -553,7 +553,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
  	end
  end
 
-function VehicleManager:Event_vehicleDelete()
+function VehicleManager:Event_vehicleDelete(reason)
 	self:checkVehicle(source)
 
 	if client:getRank() < RANK.Moderator then
@@ -562,6 +562,8 @@ function VehicleManager:Event_vehicleDelete()
 	end
 
 	if source:isPermanent() then
+		client:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), source:getData("OwnerName"), client:getName(), reason))
+		-- Todo Add Log
 		source:purge()
 	else
 		destroyElement(source)
