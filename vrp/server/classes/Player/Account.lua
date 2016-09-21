@@ -61,7 +61,7 @@ function Account.login(player, username, password, pwhash)
 
 		local userID = Account.createForumAccount(Username, password, row.EMail)
 		if userID then
-			sql:queryExec("UPDATE ??_account SET LastSerial = ?, ForumID = ?, Password = 0, Salt = 0, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), getPlayerSerial(player), userID, Id)
+			sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, ForumID = ?, Password = 0, Salt = 0, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), userID, Id)
 
 			if DatabasePlayer.getFromId(Id) then
 				player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
@@ -116,7 +116,7 @@ function Account.login(player, username, password, pwhash)
 	end
 
 	-- Update last serial and last login
-	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), getPlayerSerial(player), Id)
+	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
 
 	if Account.MultiaccountCheck(player, Id) == false then
 		return false
@@ -184,7 +184,7 @@ function Account.register(player, username, password, email)
 
 	local userID = Account.createForumAccount(username, password, email)
 	if userID then
-		local result, _, Id = sql:queryFetch("INSERT INTO ??_account (ForumID, Name, EMail, Rank, LastSerial, LastLogin) VALUES (?, ?, ?, ?, ?, NOW());", sql:getPrefix(), userID, username, email, 0, getPlayerSerial(player))
+		local result, _, Id = sql:queryFetch("INSERT INTO ??_account (ForumID, Name, EMail, Rank, LastSerial, LastIP, LastLogin, RegisterDate) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW());", sql:getPrefix(), userID, username, email, 0, player:getSerial(), player:getIP())
 		if result then
 			player.m_Account = Account:new(Id, username, player, false)
 			player:createCharacter()

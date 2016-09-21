@@ -45,8 +45,8 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 	if weapon == 34 and bodypart == 9 then
 		if not target.m_SupMode and not attacker.m_SupMode then
 			target:setHeadless(true)
-			target:kill(attacker, weapon, bodypart)
 			StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
+			target:kill(attacker, weapon, bodypart)
 		end
 	else
 		if not target.m_SupMode and not attacker.m_SupMode then
@@ -70,14 +70,14 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 			player:setHealth(health-loss)
 
 			if player:getHealth()-loss <= 0 then
+				StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
 				player:kill(attacker, weapon, bodypart)
-				StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
 			end
 		end
 	else
 		if player:getHealth()-loss <= 0 then
+			StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
 			player:kill(attacker, weapon, bodypart)
-			StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
 		end
 		player:setHealth(health-loss)
 	end
