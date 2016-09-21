@@ -249,7 +249,7 @@ function FactionState:getFullReasonFromShortcut(reason)
 end
 
 
-function FactionState:sendStateChatMessage(sourcePlayer,text)
+function FactionState:sendStateChatMessage(sourcePlayer, message)
 	local faction = sourcePlayer:getFaction()
 	if faction and faction:isStateFaction() == true then
 		if sourcePlayer:isFactionDuty() then
@@ -257,10 +257,15 @@ function FactionState:sendStateChatMessage(sourcePlayer,text)
 			local rank = faction:getPlayerRank(playerId)
 			local rankName = faction:getRankName(rank)
 			local r,g,b = 200, 100, 100
-			local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), text)
+			local receivedPlayers = {}
+			local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), message)
 			for k, player in ipairs(self:getOnlinePlayers()) do
 				player:sendMessage(text, r, g, b)
+				if not sourcePlayer == player then
+		            table.insert(receivedPlayers, player:getName())
+		        end
 			end
+			StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "state", message, toJSON(receivedPlayers))
 		else
 			sourcePlayer:sendError(_("Du bist nicht im Dienst!", sourcePlayer))
 		end

@@ -840,10 +840,11 @@ function Player:meChat(system, ...)
 	local playersToSend = self:getPlayersInChatRange( 1 )
 	local systemText = ""
 	local receivedPlayers = {}
+	local message = ("%s %s"):format(self:getName(), text)
 	if system == true then systemText = " ** " end
 
 	for index = 1,#playersToSend do
-		outputChatBox(("%s %s %s"):format(systemText, ("%s %s"):format(self:getName(), text), systemText), playersToSend[index], 100, 0, 255)
+		outputChatBox(("%s %s %s"):format(systemText, message, systemText), playersToSend[index], 100, 0, 255)
 		if not playersToSend[index] == self then
 			table.insert(receivedPlayers, playersToSend[index]:getName())
 		end
