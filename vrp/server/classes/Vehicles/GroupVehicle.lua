@@ -22,7 +22,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			end
 
 			if vehicle:purge() then
-				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation)
+				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z)
 				vehicle:setHealth(health)
 				vehicle:setColor(r, g, b)
 				if Group:canVehiclesBeModified() then
@@ -148,7 +148,7 @@ function GroupVehicle:respawn()
 			return false
 		end
 	end
-	
+
 	self:setEngineState(false)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
