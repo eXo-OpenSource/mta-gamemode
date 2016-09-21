@@ -40,8 +40,8 @@ function StatisticsLogger:addPunishLog(admin, player, type, reason, duration)
     if isElement(admin) then adminId = admin:getId() end
     if isElement(player) then userId = player:getId() end
 
-    sqlLogs:queryExec("INSERT INTO ??_Punish (UserId, AdminId, Type, Reason, Duration, Timestamp) VALUES(?, ?, ?, ?, ?, ?)",
-        sqlLogs:getPrefix(), userId, adminId, type, reason, duration, getRealTime().timestamp)
+    sqlLogs:queryExec("INSERT INTO ??_Punish (UserId, AdminId, Type, Reason, Duration, Date) VALUES(?, ?, ?, ?, ?, now())",
+        sqlLogs:getPrefix(), userId, adminId, type, reason, duration)
 end
 
 function StatisticsLogger:getPunishLogs(userId)
@@ -56,8 +56,8 @@ end
 function StatisticsLogger:addChatLog(player, type, text, heared)
     if isElement(player) then userId = player:getId() end
 
-    sqlLogs:queryExec("INSERT INTO ??_Chat (UserId, Type, Text, Heared, Position, Timestamp) VALUES (?, ?, ?, ?, ?, ?)",
-        sqlLogs:getPrefix(), userId, type, text, heared, ("%s - %s"):format(player:getZoneName(), player:getZoneName(true)),getRealTime().timestamp)
+    sqlLogs:queryExec("INSERT INTO ??_Chat (UserId, Type, Text, Heared, Position, Date) VALUES (?, ?, ?, ?, ?, Now())",
+        sqlLogs:getPrefix(), userId, type, text, heared, ("%s - %s"):format(player:getZoneName(), player:getZoneName(true)))
 end
 
 function StatisticsLogger:addKillLog(player, target, weapon)
@@ -65,8 +65,8 @@ function StatisticsLogger:addKillLog(player, target, weapon)
 	if isElement(target) then targetId = target:getId() end
 	local range = getDistanceBetweenPoints3D(player:getPosition(), target:getPosition())
 	local position = ("%s - %s"):format(target:getZoneName(), target:getZoneName(true))
-    sqlLogs:queryExec("INSERT INTO ??_Kills (UserId, TargetId, Weapon, RangeBetween, Position, Timestamp) VALUES (?, ?, ?, ?, ?, ?)",
-        sqlLogs:getPrefix(), userId, targetId, weapon, range, position, getRealTime().timestamp)
+    sqlLogs:queryExec("INSERT INTO ??_Kills (UserId, TargetId, Weapon, RangeBetween, Position, Date) VALUES (?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, targetId, weapon, range, position)
 end
 
 function StatisticsLogger:addTextLog(logname, text)
