@@ -346,7 +346,7 @@ function Player:respawn(position, rotation)
 	end
 
 	if not position then -- Search for nearest Spawnpoint
-		local currentPos = self.position
+		--[[local currentPos = self.position
 		local nearestDist = math.huge
 		local nearestPoint = nil
 		for i, v in ipairs(HOSPITAL_POSITIONS) do
@@ -355,7 +355,10 @@ function Player:respawn(position, rotation)
 				nearestPoint = i
 			end
 		end
+
 		position, rotation = HOSPITAL_POSITIONS[nearestPoint], HOSPITAL_ROTATIONS[nearestPoint]
+		--]]
+		position, rotation = Vector3(1784.24, -1778.30, 13.60), Vector(0,0,90)
 	else
 		position, rotation = position, rotation
 	end
