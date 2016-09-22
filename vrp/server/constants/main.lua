@@ -123,6 +123,16 @@ BAIL_PRICES =
 	[6] = 4500,
 }
 
+JAIL_COSTS =
+{
+	[1] = 200,
+	[2] = 400,
+	[3] = 800,
+	[4] = 1600,
+	[5] = 3200,
+	[6] = 6400,
+}
+
 RESOURCES_TO_STOP = {
     "scoreboard";
     "helpmanager";

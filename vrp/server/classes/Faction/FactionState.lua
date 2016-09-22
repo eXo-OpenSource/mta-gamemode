@@ -396,10 +396,17 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				player:toggleControl("jump", false)
 				player:toggleControl("aim_weapon ", false)
 				if bail then
-					player:setJailBail( BAIL_PRICES[player:getWantedLevel()] )
+					player:setJailBail(BAIL_PRICES[player:getWantedLevel()])
 				end
-				-- Pay some money, karma and xp to the policeman
-				policeman:giveMoney(player:getWantedLevel() * 100)
+
+				local factionBonus = JAIL_COSTS[player:getWantedLevel()]
+
+				if player:getMoney() < JAIL_COSTS[player:getWantedLevel()] then
+					factionBonus = player:getMoney()
+				end
+				player:takeMoney(factionBonus)
+				-- Pay some money to faction and karma, xp to the policeman
+				policeman:getFaction():giveMoney(factionBonus, "Arrest")
 				policeman:giveKarma(player:getWantedLevel() * 0.05)
 				policeman:givePoints(player:getWantedLevel())
 
@@ -438,8 +445,8 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 
 				player:clearCrimes()
 
-				policeman:getFaction():sendMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt!", player, player:getName(), policeman:getName(), jailTime), 255, 255, 0)
-				StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat %s soeben für %d Minuten eingesperrt!"):format(policeman:getName(), player:getName(), jailTime))
+				policeman:getFaction():sendMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), 255, 255, 0)
+				StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat %s soeben für %d Minuten eingesperrt! Strafe: %d$"):format(policeman:getName(), player:getName(), jailTime, factionBonus))
 
 				player:triggerEvent("playerJailed", jailTime, CUTSCENE)
 			else
@@ -457,7 +464,8 @@ function FactionState:Command_bail( player )
 			if player.m_Bail > 0 then
 				local money = player:getBankMoney()
 				if money >= player.m_Bail then
-					player:takeBankMoney( player.m_Bail, "KAUTION")
+					player:takeBankMoney(player.m_Bail, "Kaution")
+					FactionManager:getSingleton():getFromId(1):giveMoney(player.m_Bail, "Kaution")
 					player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 					player:setRotation(0, 0, 90)
 					player:setWantedLevel(0)
@@ -466,7 +474,7 @@ function FactionState:Command_bail( player )
 					player:toggleControl("aim_weapon ", true)
 					player.m_JailTimer = nil
 					player.m_JailTime = 0
-					outputChatBox("Sie haben sich mit der Kaution von "..player.m_Bail.." Dollar freigekauft!", player, 200, 200, 0)
+					player:sendInfo(_("Sie haben sich mit der Kaution von %s$ freigekauft!", player, player.m_Bail))
 					player.m_Bail = 0
 					StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat sich für %d Dollar freigekauft!"):format(player:getName(), player.m_Bail))
 					player:triggerEvent("playerLeftJail")
