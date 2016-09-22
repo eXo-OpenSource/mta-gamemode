@@ -562,7 +562,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 	end
 
 	if source:isPermanent() then
-		client:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), source:getData("OwnerName"), client:getName(), reason))
+		client:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), source:getData("OwnerName") or "Unknown", client:getName(), reason))
 		-- Todo Add Log
 		source:purge()
 	else

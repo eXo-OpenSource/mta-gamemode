@@ -445,7 +445,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 
 				player:clearCrimes()
 
-				policeman:getFaction():sendMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), 255, 255, 0)
+				policeman:getFaction():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus))
 				StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat %s soeben für %d Minuten eingesperrt! Strafe: %d$"):format(policeman:getName(), player:getName(), jailTime, factionBonus))
 
 				player:triggerEvent("playerJailed", jailTime, CUTSCENE)
