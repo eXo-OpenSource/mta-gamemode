@@ -46,7 +46,7 @@ end
 
 function House:updatePickup()
 	if 	self.m_Pickup then self.m_Pickup:destroy() end
-	self.m_Pickup = createPickup(self.m_Pos, 3, (self.m_Owner == 0 and 1272 or 1273), 10, math.huge)
+	self.m_Pickup = createPickup(self.m_Pos, 3, (self.m_Owner == 0 and 1273 or 1272), 10, math.huge)
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onPickupHit, self))
 end
 
@@ -141,6 +141,9 @@ end
 
 function House:sellHouse(player)
 	if player:getId() == self.m_Owner then
+		-- destroy blip
+		HouseManager:getSingleton():destroyPlayerHouseBlip(player)
+
 		local price = math.floor(self.m_Price*0.75)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
 		player:giveMoney(price, "Haus-Verkauf")
@@ -223,6 +226,9 @@ function House:buyHouse(player)
 		self.m_Owner = player:getId()
 		self:updatePickup()
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
+
+		-- create blip
+		HouseManager:getSingleton():createPlayerHouseBlip(player)
 	else
 		player:sendError(_("Du hast nicht genügend Geld!", player))
 	end

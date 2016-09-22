@@ -110,6 +110,28 @@ function HouseManager:getPlayerHouse(player)
 	return false
 end
 
+function HouseManager:createPlayerHouseBlip(player)
+	outputDebug("Creating blip for "..player:getName())
+	local house = self:getPlayerHouse(player)
+	if house then
+		house.m_Blip = Blip:new("ServiceTechnician.png", house.m_Pos.x, house.m_Pos.y, player) -- Todo: Change blip!!!!!!!!!!!
+		return true
+	end
+	return false
+end
+
+function HouseManager:destroyPlayerHouseBlip(player)
+	outputDebug("Destorying blip for "..player:getName())
+	local house = self:getPlayerHouse(player)
+	if house then
+		if house.m_Blip then
+			delete(house.m_Blip)
+			return true
+		end
+	end
+	return false
+end
+
 function HouseManager:destructor ()
 	for key, house in pairs(self.m_Houses) do
 		house:save()

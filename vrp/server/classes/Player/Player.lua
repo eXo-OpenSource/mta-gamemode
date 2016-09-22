@@ -70,6 +70,7 @@ function Player:destructor()
 	self:save()
 
 	-- Unload stuff
+	HouseManager:getSingleton():destroyPlayerHouseBlip(self) -- Todo: do not on stop, cause of an error (annoying :P)
 	--if self.m_Inventory then
 	--	delete(self.m_Inventory)
 	--end
@@ -195,6 +196,8 @@ function Player:loadCharacterInfo()
 	RadarArea.sendAllToClient(self)
 	FactionManager:getSingleton():sendAllToClient(self)
 	VehicleManager:getSingleton():sendTexturesToClient(self)
+	HouseManager:getSingleton():createPlayerHouseBlip(self)
+
 	--if self.m_Inventory then
 	--	self.m_Inventory:setInteractingPlayer(self)
 	--	self.m_Inventory:sendFullSync()

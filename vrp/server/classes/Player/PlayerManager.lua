@@ -234,10 +234,10 @@ function PlayerManager:playerChat(message, messageType)
 
 	if messageType == 0 then
 		local phonePartner = source:getPhonePartner()
+		local playersToSend = source:getPlayersInChatRange(1)
 		if not phonePartner then
-			local playersToSend = source:getPlayersInChatRange( 1 )
 			local receivedPlayers = {}
-			for index = 1,#playersToSend do
+			for index = 1, #playersToSend do
 				outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
 				if not playersToSend[index] == source then
 					table.insert(receivedPlayers, playersToSend[index]:getName())
@@ -249,6 +249,12 @@ function PlayerManager:playerChat(message, messageType)
 			outputChatBox(_("%s (Telefon): %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
 			outputChatBox(_("%s (Telefon): %s", source, getPlayerName(source), message), source, 0, 255, 0)
 			StatisticsLogger:getSingleton():addTextLog("phone", ("%s zu %s: %s"):format(source:getName(), phonePartner:getName(), message))
+
+			for index = 1, #playersToSend do
+				if playersToSend[index] ~= source then
+					outputChatBox(("(Handy) %s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 204, 204, 0)
+				end
+			end
 		end
 		cancelEvent()
 	elseif messageType == 1 then
