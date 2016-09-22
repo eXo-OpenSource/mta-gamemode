@@ -95,6 +95,7 @@ function GUIGridList:getSelectedItem()
 end
 
 function GUIGridList:clear()
+	self.m_SelectedItem = nil
 	delete(self.m_ScrollArea)
 	self.m_ScrollArea = GUIScrollableArea:new(0, ITEM_HEIGHT, self.m_Width, self.m_Height-ITEM_HEIGHT, self.m_Width, 1, true, false, self, ITEM_HEIGHT)
 end

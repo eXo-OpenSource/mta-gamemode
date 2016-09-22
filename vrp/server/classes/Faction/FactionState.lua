@@ -184,7 +184,7 @@ function FactionState:createArrestZone(x,y,z,int)
 				local faction = hitElement:getFaction()
 				if faction:isStateFaction() == true then
 					if hitElement:isFactionDuty() then
-						hitElement:triggerEvent("showStateFactionArrestGUI",self.m_ArrestZoneCol)
+						hitElement:triggerEvent("showStateFactionArrestGUI", self.m_ArrestZoneCol)
 					end
 				end
 			end

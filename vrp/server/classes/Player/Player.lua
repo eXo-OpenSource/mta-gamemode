@@ -358,7 +358,7 @@ function Player:respawn(position, rotation)
 
 		position, rotation = HOSPITAL_POSITIONS[nearestPoint], HOSPITAL_ROTATIONS[nearestPoint]
 		--]]
-		position, rotation = Vector3(1784.24, -1778.30, 13.60), Vector(0,0,90)
+		position, rotation = Vector3(1784.24, -1778.30, 13.60), Vector3(0,0,90)
 	else
 		position, rotation = position, rotation
 	end
