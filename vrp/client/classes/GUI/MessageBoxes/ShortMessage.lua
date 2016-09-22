@@ -10,15 +10,15 @@ inherit(GUIFontContainer, ShortMessage)
 
 ShortMessage.MessageBoxes = {}
 
-function ShortMessage:new(text, title, tcolor, timeout)
+function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc)
 	if type(title) == "number" then
 		return new(ShortMessage, text, nil, nil, title)
 	else
-		return new(ShortMessage, text, title, tcolor, timeout)
+		return new(ShortMessage, text, title, tcolor, timeout, callback, timeoutFunc)
 	end
 end
 
-function ShortMessage:constructor(text, title, tcolor, timeout)
+function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc)
 	local x, y, w
 	if HUDRadar:getSingleton().m_Visible then
 		x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
@@ -26,10 +26,13 @@ function ShortMessage:constructor(text, title, tcolor, timeout)
 		x, y, w = 20, screenHeight - 5, 340*screenWidth/1600+6
 	end
 
-	-- Titlte Bar
+	-- Title Bar
 	self.m_HasTitleBar = title ~= nil
 	self.m_Title = title
 	self.m_TitleColor = (type(tcolor) == "table" and tcolor) or (type(tcolor) == "number" and {fromcolor(tcolor)}) or {125, 0, 0}
+
+	self.callback = callback or nil
+	self.timeoutFunc = timeoutFunc or nil
 
 	-- Font
 	GUIFontContainer.constructor(self, text, 1, VRPFont(24))
@@ -41,17 +44,23 @@ function ShortMessage:constructor(text, title, tcolor, timeout)
 	-- Instantiate GUIElement
 	GUIElement.constructor(self, x, y, w, h)
 	self.onLeftClick = function ()
-		if core:get("HUD", "shortMessageCTC", false) then
-			delete(self)
-		end
 		if self.callback then
 			self:callback()
+		end
+		if core:get("HUD", "shortMessageCTC", false) then
+			delete(self)
 		end
 	end
 
 	-- Calculate timeout
 	if timeout ~= -1 then
-		self.m_Timeout = setTimer(function () delete(self) end, ((type(timeout) == "number" and timeout > 50 and timeout) or 5000) + 500, 1)
+		self.m_Timeout = setTimer(
+		function ()
+			if self.timeoutFunc then
+				self:timeoutFunc()
+			end
+			delete(self)
+		end, ((type(timeout) == "number" and timeout > 50 and timeout) or 5000) + 500, 1)
 	end
 
 	-- Alpha
@@ -150,4 +159,19 @@ function ShortMessage.recalculatePositions ()
 end
 
 addEvent("shortMessageBox", true)
-addEventHandler("shortMessageBox", root, function(...) ShortMessage:new(...) end)
+addEventHandler("shortMessageBox", root,
+	function(text, title, tcolor, timeout, callback, onTimeout, ...)
+		local additionalParameters = {...}
+		ShortMessage:new(text, title, tcolor, timeout,
+		function()
+			if callback then
+				triggerServerEvent(callback, root, unpack(additionalParameters))
+			end
+		end,
+		function()
+			if onTimeout then
+				triggerServerEvent(onTimeout, root, unpack(additionalParameters))
+			end
+		end)
+	end
+)
