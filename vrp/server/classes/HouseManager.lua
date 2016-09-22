@@ -114,7 +114,7 @@ function HouseManager:createPlayerHouseBlip(player)
 	outputDebug("Creating blip for "..player:getName())
 	local house = self:getPlayerHouse(player)
 	if house then
-		house.m_Blip = Blip:new("ServiceTechnician.png", house.m_Pos.x, house.m_Pos.y, player) -- Todo: Change blip!!!!!!!!!!!
+		house.m_Blip = Blip:new("House.png", house.m_Pos.x, house.m_Pos.y, player)
 		return true
 	end
 	return false
