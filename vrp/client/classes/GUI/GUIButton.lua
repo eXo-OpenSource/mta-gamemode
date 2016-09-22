@@ -43,15 +43,19 @@ function GUIButton:performChecks(...)
 end
 
 function GUIButton:onInternalHover()
-	self.m_Color = self.m_HoverColor
-	self.m_BackgroundColor = self.m_BackgroundHoverColor	
-	self:anyChange()
+	if self.m_Enabled then
+		self.m_Color = self.m_HoverColor
+		self.m_BackgroundColor = self.m_BackgroundHoverColor
+		self:anyChange()
+	end
 end
 
 function GUIButton:onInternalUnhover()
-	self.m_Color = self.m_NormalColor
-	self.m_BackgroundColor = self.m_BackgroundNormalColor	
-	self:anyChange()
+	if self.m_Enabled then
+		self.m_Color = self.m_NormalColor
+		self.m_BackgroundColor = self.m_BackgroundNormalColor
+		self:anyChange()
+	end
 end
 
 function GUIButton:setColor(color)
@@ -64,13 +68,13 @@ function GUIButton:setColor(color)
 end
 
 function GUIButton:setAlpha(alpha)
-	
+
 	self.m_Alpha = alpha
 	local r,g,b,a = fromcolor(self.m_Color)
 	self.m_Color = tocolor(r, g, b, alpha)
 	local r1,g1,b1,a1 = fromcolor(self.m_BackgroundNormalColor)
 	self.m_BackgroundColor = tocolor(r1, g1, b1, alpha)
-	
+
 
 	self:anyChange()
 	return self
