@@ -5,6 +5,7 @@ function MechanicTow:constructor()
 	self.m_VehicleTakeMarker = Marker.create(920.614, -1176.063, 16.2, "cylinder", 1, 255, 255, 0)
 	self:createTowLot()
 	self.m_PendingQuestions = {}
+
 	addEventHandler("onMarkerHit", self.m_VehicleTakeMarker, bind(self.VehicleTakeMarker_Hit, self))
 
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
@@ -113,6 +114,7 @@ end
 function MechanicTow:Event_mechanicTakeVehicle()
 	if client:getMoney() >= 500 then
 		client:takeMoney(500, "Mech&Tow")
+		self:giveMoney(500, "Fahrzeug freikauf")
 		source:fix()
 
 		-- Spawn vehicle in non-collision zone
