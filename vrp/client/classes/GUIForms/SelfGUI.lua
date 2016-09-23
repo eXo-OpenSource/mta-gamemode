@@ -520,7 +520,7 @@ end
 
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
-	ShortMessage:new(_("Du wurdest in die Gruppe '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+	ShortMessage:new(_("Du wurdest in die Firma/Gang '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
 	self.m_GroupInvitationsLabel:setText("Du hast eine Einladungen für eine private Firma/Gang erhalten, öffne das Menü um diese anzunehmen!")
 	self.m_GroupInvitationsLabel:setVisible(true)
 	self.m_HasGroupInvation = true

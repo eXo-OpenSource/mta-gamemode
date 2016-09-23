@@ -193,7 +193,7 @@ function Group:removePlayer(playerId)
 end
 
 function Group:invitePlayer(player)
-  client:sendShortMessage(("Du hast %s erfolgreich in deine Gruppe eingeladen."):format(getPlayerName(player)))
+  client:sendShortMessage(("Du hast %s erfolgreich in deine %s eingeladen."):format(getPlayerName(player), self:getType()))
 
   player:triggerEvent("groupInvitationRetrieve", self:getId(), self:getName())
 
@@ -371,12 +371,12 @@ function Group:phoneCall(caller)
   if #self:getOnlinePlayers() > 0 then
     for k, player in ipairs(self:getOnlinePlayers()) do
       if not player:getPhonePartner() then
-        player:sendShortMessage(_("Der Spieler %s ruft eure Firma/Gang (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
+        player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
         bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
       end
     end
   else
-    caller:sendShortMessage(_("Es ist aktuell kein Spieler der Firma/Gang online!", caller))
+    caller:sendShortMessage(_("Es ist aktuell kein Spieler der %s online!", caller, self:getType()))
     caller:triggerEvent("callBusy", caller)
   end
 end

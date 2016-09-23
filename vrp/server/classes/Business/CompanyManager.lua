@@ -126,7 +126,7 @@ function CompanyManager:Event_companyWithdraw(amount)
 	end
 
 	if company.m_BankAccount:getMoney() < amount then
-		client:sendError(_("In der Gruppenkasse befindet sich nicht genügend Geld!", client))
+		client:sendError(_("In der Unternehmenskasse befindet sich nicht genügend Geld!", client))
 		return
 	end
 
@@ -247,7 +247,7 @@ function CompanyManager:Event_companyRankUp(playerId)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
 		self:sendInfosToClient(client)
 	else
-		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
+		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 setzen!", client))
 	end
 end
 

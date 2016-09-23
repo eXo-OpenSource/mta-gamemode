@@ -115,7 +115,7 @@ end
 function BankRobbery:startRob(player)
 	ActionsCheck:getSingleton():setAction("Banküberfall")
 	local faction = player:getFaction()
-	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Gruppe überfällt die Palomino-Creek Bank!")
+	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
 	self.m_RobPlayer = player
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
