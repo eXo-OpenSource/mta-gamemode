@@ -8,6 +8,7 @@
 
 Inventory = inherit(GUIForm)
 inherit(Singleton, Inventory)
+
 Inventory.Color = {
 	TabHover  = rgb(50, 200, 255);
 	TabNormal = rgb(50, 50, 50);
@@ -82,7 +83,6 @@ end
 function Inventory:Event_loadPlayerInventarClient(slots, itemData)
 	self.m_Slots = slots
 	self.m_ItemData = itemData
-
 end
 
 function Inventory:Event_forceInventoryRefresh(slots, itemData)
@@ -113,19 +113,21 @@ function Inventory:getBagData()
 end
 
 function Inventory:addItem(place, item)
-	local tab = self.m_Tabs[self.m_CurrentTab]
-	local itemData = self.m_ItemData[item["Objekt"]]
-	local slot = tab.m_ItemSlots[place+1]
+	if self.m_ItemData then
+		local tab = self.m_Tabs[self.m_CurrentTab]
+		local itemData = self.m_ItemData[item["Objekt"]]
+		local slot = tab.m_ItemSlots[place+1]
 
-	if slot.ItemImage then delete(slot.ItemImage) end
-	if slot.ItemLabel then delete(slot.ItemLabel) end
+		if slot.ItemImage then delete(slot.ItemImage) end
+		if slot.ItemLabel then delete(slot.ItemLabel) end
 
-	slot.Item = true
-	slot.Id = place-1
-	slot.Place = place
-	slot.ItemName = item["Objekt"]
-	slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
-	slot.ItemLabel = GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"], slot):setAlignX("right"):setAlignY("bottom")
+		slot.Item = true
+		slot.Id = place-1
+		slot.Place = place
+		slot.ItemName = item["Objekt"]
+		slot.ItemImage = GUIImage:new(0, 0, slot.m_Width, slot.m_Height, "files/images/Inventory/items/"..itemData["Icon"], slot)
+		slot.ItemLabel = GUILabel:new(0, slot.m_Height-15, slot.m_Width, 15, item["Menge"], slot):setAlignX("right"):setAlignY("bottom")
+	end
 end
 
 function Inventory:loadItems()
@@ -133,9 +135,14 @@ function Inventory:loadItems()
 		if slot.ItemImage then delete(slot.ItemImage) end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
 	end
-
-	for place, id in pairs(self.m_Bag[Inventory.Tabs[self.m_CurrentTab]]) do
-		self:addItem(place, self.m_Items[id])
+	if self.m_Bag then
+		for place, id in pairs(self.m_Bag[Inventory.Tabs[self.m_CurrentTab]]) do
+			self:addItem(place, self.m_Items[id])
+		end
+	else
+		setTimer(function()
+			self:loadItems()
+		end, 100 ,1)
 	end
 end
 
