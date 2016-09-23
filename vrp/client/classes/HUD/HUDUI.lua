@@ -320,20 +320,20 @@ function HUDUI:drawExo()
 		local b_x = 100
 		local bar_x = hudStartX+width*0.316
 		local bar_width = sx*0.145
-		local bar_height = sx*0.0095
+		local bar_height = sx*0.0098
 
 		b_x = localPlayer:getArmor()/100
 		dxDrawImageSection(bar_x, height*0.479,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
 
 		b_x = localPlayer:getHealth()/100
-		dxDrawImageSection(bar_x ,height*0.577,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
+		dxDrawImageSection(bar_x ,height*0.576,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
 
 		local karma = localPlayer:getKarma()
 		b_x = math.abs(karma)/150
 		if karma < 0 then
-			dxDrawImageSection(bar_x ,height*0.677,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200))
+			dxDrawImageSection(bar_x ,height*0.676,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200))
 		elseif karma > 0 then
-			dxDrawImageSection(bar_x ,height*0.677,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/green_b.png',0,0,0,tocolor(255,255,255,200))
+			dxDrawImageSection(bar_x ,height*0.676,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/green_b.png',0,0,0,tocolor(255,255,255,200))
 		end
 		if prog >= 1 then
 			start_count = getTickCount()
