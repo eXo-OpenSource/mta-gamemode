@@ -361,6 +361,8 @@ function FactionRescue:Event_healPlayer(medic, target)
 				medic:sendInfo(_("Du hast den Spieler %s für %d$ geheilt!", medic, target.name, costs ))
 				target:sendInfo(_("Du wurdest von medic %s für %d$ geheilt!", target, medic.name, costs ))
 				target:setHealth(100)
+				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team "..medic.name)
+
 				target:takeMoney(costs, "Rescue Team Heilung")
 				self.m_Faction:giveMoney(costs, "Rescue Team Heilung")
 			else

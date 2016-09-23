@@ -40,12 +40,14 @@ function ItemFood:use(player)
 	end
 
 	player:meChat(true, " "..ItemSettings["Text"].."!")
+	StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())
 
 	local block, animation, time = unpack(ItemSettings["Animation"])
 	player:setAnimation(block, animation, time, true, false, false)
 	setTimer(function()
 		item:destroy()
 		player:setHealth(player:getHealth()+ItemSettings["Health"])
+
 		player:setAnimation()
 	end, time, 1)
 

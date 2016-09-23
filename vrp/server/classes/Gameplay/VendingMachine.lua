@@ -55,6 +55,7 @@ function VendingMachine.Event_vendingBuySnack()
 	if client:getMoney() >= 20 then
 		client:setAnimation("VENDING", "vend_eat1_P", -1, false, true, false, false)
 		client:setHealth(client:getHealth() + 10)
+		StatisticsLogger:getSingleton():addHealLog(client, 10, "VendingMachine")
 		client:takeMoney(20, "Automat")
 	else
 		client:sendError(_("Du hast nicht genügend Geld!", client))

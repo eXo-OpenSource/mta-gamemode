@@ -13,6 +13,10 @@ function StatisticsLogger:constructor()
 	self.m_TextLogPath = ":vrp_data/logs/"
 end
 
+function StatisticsLogger:getZone(player)
+	return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
+end
+
 function StatisticsLogger:addMoneyLog(type, element, money, reason)
     local elementId = 0
     if element then elementId = element:getId() end
@@ -57,16 +61,21 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
     if isElement(player) then userId = player:getId() end
 
     sqlLogs:queryExec("INSERT INTO ??_Chat (UserId, Type, Text, Heared, Position, Date) VALUES (?, ?, ?, ?, ?, Now())",
-        sqlLogs:getPrefix(), userId, type, text, heared, ("%s - %s"):format(player:getZoneName(), player:getZoneName(true)))
+        sqlLogs:getPrefix(), userId, type, text, heared, self:getZone(player))
 end
 
 function StatisticsLogger:addKillLog(player, target, weapon)
     if isElement(player) then userId = player:getId() end
 	if isElement(target) then targetId = target:getId() end
 	local range = getDistanceBetweenPoints3D(player:getPosition(), target:getPosition())
-	local position = ("%s - %s"):format(target:getZoneName(), target:getZoneName(true))
     sqlLogs:queryExec("INSERT INTO ??_Kills (UserId, TargetId, Weapon, RangeBetween, Position, Date) VALUES (?, ?, ?, ?, ?, NOW())",
-        sqlLogs:getPrefix(), userId, targetId, weapon, range, position)
+        sqlLogs:getPrefix(), userId, targetId, weapon, range, self:getZone(target))
+end
+
+function StatisticsLogger:addHealLog(player, heal, reason)
+    if isElement(player) then userId = player:getId() end
+    sqlLogs:queryExec("INSERT INTO ??_Heal (UserId, Heal, Reason, Position, Date) VALUES (?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, heal, reason, self:getZone(player))
 end
 
 function StatisticsLogger:addTextLog(logname, text)
