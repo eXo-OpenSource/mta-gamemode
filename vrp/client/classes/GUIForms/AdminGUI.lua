@@ -123,7 +123,7 @@ function AdminGUI:constructor()
 	self:refreshOnlinePlayers()
 
 	local tabWeb = self.m_TabPanel:addTab(_"WebPanel")
-	local webPanelUrl = ("https://cp.exo-reallife.de/index.php?page=admin&site=ingame&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
+	local webPanelUrl = ("https://exo-reallife.de/index.php?page=admin&site=ingame&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
 	self.m_WebPanel = GUIWebView:new(0, 0, self.m_Width, self.m_Height, webPanelUrl, true, tabWeb)
 
 	addEventHandler("adminReceiveSeachedPlayers", root,

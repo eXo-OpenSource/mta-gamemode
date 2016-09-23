@@ -25,8 +25,7 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWeaponFire", root, bind(self.Event_onClientWeaponFire, self))
 	addEventHandler("onClientPedDamage", root, bind(self.Event_onClientPedDamage, self))
 
-
-
+	addEventHandler("onClientPlayerStealthKill", getLocalPlayer(), cancelEvent())
 end
 
 function Guns:destructor()
