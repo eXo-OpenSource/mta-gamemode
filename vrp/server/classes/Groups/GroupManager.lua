@@ -430,7 +430,7 @@ end
 function GroupManager:Event_groupUpdateVehicleTuning()
 	local group = client:getGroup()
 	if group and group:getPlayerRank(client) >= GroupRank.Manager then
-		if group:getKarma() <= -50 then
+	--	if group:getKarma() <= -50 then
 			if group:getMoney() >= 3000 then
 				group:takeMoney(3000)
 				group.m_VehiclesCanBeModified = not group.m_VehiclesCanBeModified
@@ -440,9 +440,9 @@ function GroupManager:Event_groupUpdateVehicleTuning()
 			else
 				client:sendError(_("Die %s hat zu wenig Geld! (3000$)", client, group:getType()))
 			end
-		else
-			client:sendError(_("Die %s hat zu wenig negatives Karma!", client, group:getType()))
-		end
+		--else
+		--	client:sendError(_("Die %s hat zu wenig negatives Karma!", client, group:getType()))
+		--end
 	end
 end
 
