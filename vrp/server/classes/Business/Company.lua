@@ -384,3 +384,18 @@ end
 function Company:getLog()
 	return StatisticsLogger:getSingleton():getGroupLogs("company", self.m_Id)
 end
+
+function Company:setSafe(obj)
+	self.m_Safe = obj
+	self.m_Safe:setData("clickable",true,true)
+	addEventHandler("onElementClicked", self.m_Safe, function(button, state, player)
+		if button == "left" and state == "down" then
+			if player:getCompany() and player:getCompany() == self then
+				player:triggerEvent("bankAccountGUIShow", self:getName(), "companyDeposit", "companyWithdraw")
+				self:refreshBankAccountGUI(player)
+			else
+				player:sendError(_("Du bist nicht in der richtigen Fraktion", player))
+			end
+		end
+	end)
+end
