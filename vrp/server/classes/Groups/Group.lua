@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, money, players, karma, lastNameChange, rankNames, rankLoans, type)
+function Group:constructor(Id, name, money, players, karma, lastNameChange, rankNames, rankLoans, type, vehicleTuning)
   self.m_Id = Id
 
   self.m_Players = players or {}
@@ -17,7 +17,7 @@ function Group:constructor(Id, name, money, players, karma, lastNameChange, rank
   self.m_Invitations = {}
   self.m_Karma = karma or 0
   self.m_LastNameChange = lastNameChange or 0
-  self.m_VehiclesCanBeModified = true
+  self.m_VehiclesCanBeModified = vehicleTuning or false
   self.m_Type = type
   self.m_MarkersAttached = false
   local saveRanks = false

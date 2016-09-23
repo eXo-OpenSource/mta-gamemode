@@ -122,7 +122,7 @@ function GroupGUI:Event_groupRetrieveLog(players, logs)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles)
+function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled)
 	self:adjustGroupTab(rank or false)
 
 	if name then
@@ -144,6 +144,12 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 			self.m_RankLoans = rankLoans
 			self:addLeaderTab()
 			self:refreshRankGrid()
+
+			-- Update options
+			local text = tuningEnabled and _"aktiviert" or _"deaktiviert"
+			local x, y = self.m_VehicleTuningStatus:getPosition()
+			self.m_VehicleTuningStatus:setText(text)
+			self.m_VehicleTuningStatusChange:setPosition(x + dxGetTextWidth(text, self.m_VehicleTuningStatus:getFontSize(), self.m_VehicleTuningStatus:getFont()) + 10, y)
 		end
 
 		-- Group Vehicles
@@ -310,7 +316,7 @@ end
 function GroupGUI:addLeaderTab()
 	if self.m_LeaderTab == false then
 		local tabLeader = self.m_TabPanel:addTab(_"Leader")
-		self.m_FactionRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.8, tabLeader)
+		self.m_FactionRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.025, self.m_Width*0.4, self.m_Height*0.95, tabLeader)
 		self.m_FactionRangGrid:addColumn(_"Rang", 0.2)
 		self.m_FactionRangGrid:addColumn(_"Name", 0.8)
 
@@ -319,12 +325,20 @@ function GroupGUI:addLeaderTab()
 		GUILabel:new(self.m_Width*0.45, self.m_Height*0.2, self.m_Width*0.4, self.m_Height*0.06, _"Gehalt: (in $)", tabLeader):setFont(VRPFont(30)):setColor(Color.LightBlue)
 		self.m_LeaderLoan = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.28, self.m_Width*0.1, self.m_Height*0.06, tabLeader):setNumeric()
 
-		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.8, self.m_Width*0.3, self.m_Height*0.07, _"Rang speichern", true, tabLeader)
+		self.m_SaveRank = VRPButton:new(self.m_Width*0.69, self.m_Height*0.28, self.m_Width*0.3, self.m_Height*0.06, _"Rang speichern", true, tabLeader)
 		self.m_SaveRank.onLeftClick = bind(self.saveRank, self)
 		self.m_SaveRank:setEnabled(false)
 
-		self:refreshRankGrid()
+		GUIRectangle:new(self.m_Width*0.45, self.m_Height*0.36, self.m_Width*0.525, 2, Color.LightBlue, tabLeader)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.38, self.m_Width*0.4, self.m_Height*0.09, _"Optionen:", tabLeader):setColor(Color.LightBlue)
+		GUILabel:new(self.m_Width*0.45, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, _"Fahrzeug-Tuning:", tabLeader)
+		self.m_VehicleTuningStatus = GUILabel:new(self.m_Width*0.7, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, "", tabLeader)
+		self.m_VehicleTuningStatusChange = GUILabel:new(self.m_Width*0.7, self.m_Height*0.48, self.m_Width*0.4, self.m_Height*0.06, _"(ändern)", tabLeader):setColor(Color.LightBlue)
+		self.m_VehicleTuningStatusChange.onLeftClick = function () triggerServerEvent("groupUpdateVehicleTuning", root) end
+		self.m_VehicleTuningStatusChange.onHover = function () self.m_VehicleTuningStatusChange:setColor(Color.White) end
+		self.m_VehicleTuningStatusChange.onUnhover = function () self.m_VehicleTuningStatusChange:setColor(Color.LightBlue) end
 
+		self:refreshRankGrid()
 		self.m_LeaderTab = true
 	end
 end

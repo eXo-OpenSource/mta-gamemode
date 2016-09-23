@@ -12,7 +12,7 @@ GroupManager.GroupTypes = {[0] = "Gang", [1] = "Firma"}
 
 function GroupManager:constructor()
 	outputServerLog("Loading groups...")
-	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans FROM ??_groups", sql:getPrefix())
+	local result = sql:queryFetch("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups", sql:getPrefix())
 	for k, row in ipairs(result) do
 
 
@@ -22,13 +22,13 @@ function GroupManager:constructor()
 			players[groupRow.Id] = groupRow.GroupRank
 		end
 
-		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, self.GroupTypes[row.Type])
+		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, self.GroupTypes[row.Type], toboolean(row.VehicleTuning))
 		GroupManager.Map[row.Id] = group
 	end
 
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
-		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName", "groupSaveRank", "groupConvertVehicle"}
+		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName", "groupSaveRank", "groupConvertVehicle", "groupUpdateVehicleTuning"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_groupRequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_groupRequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_groupCreate, self))
@@ -45,6 +45,7 @@ function GroupManager:constructor()
 	addEventHandler("groupChangeName", root, bind(self.Event_groupChangeName, self))
 	addEventHandler("groupSaveRank", root, bind(self.Event_groupSaveRank, self))
 	addEventHandler("groupConvertVehicle", root, bind(self.Event_groupConvertVehicle, self))
+	addEventHandler("groupUpdateVehicleTuning", root, bind(self.Event_groupUpdateVehicleTuning, self))
 end
 
 function GroupManager:destructor()
@@ -85,7 +86,7 @@ function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
 	if group then
-		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, group:getVehicles())
+		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, group:getVehicles(), group:canVehiclesBeModified())
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
 		player:triggerEvent("groupRetrieveInfo")
@@ -411,13 +412,32 @@ end
 
 function GroupManager:Event_groupSaveRank(rank,name,loan)
 	local group = client:getGroup()
-	if group then
+	if group and group:getPlayerRank(client) >= GroupRank.Manager then
 		group:setRankName(rank,name)
 		group:setRankLoan(rank,loan)
 		group:saveRankSettings()
 		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
 		group:addLog(client, "Gang/Firma", "hat die Einstellungen für Rang "..rank.." geändert!")
 		self:sendInfosToClient(client)
+	end
+end
+
+function GroupManager:Event_groupUpdateVehicleTuning()
+	local group = client:getGroup()
+	if group and group:getPlayerRank(client) >= GroupRank.Manager then
+		if group:getKarma() <= -50 then
+			if group:getMoney() >= 3000 then
+				group:takeMoney(3000)
+				group.m_VehiclesCanBeModified = not group.m_VehiclesCanBeModified
+				sql:queryExec("UPDATE ??_groups SET VehicleTuning = ? WHERE Id = ?", sql:getPrefix(), group.m_VehiclesCanBeModified and 1 or 0, group.m_Id)
+
+				self:sendInfosToClient(client)
+			else
+				client:sendError(_("Die Gruppe hat zu wenig Geld! (3000$)", client))
+			end
+		else
+			client:sendError(_("Die Gruppe hat zu wenig negatives Karma!", client))
+		end
 	end
 end
 
