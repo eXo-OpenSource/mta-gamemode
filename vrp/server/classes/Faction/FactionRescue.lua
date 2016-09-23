@@ -25,6 +25,9 @@ function FactionRescue:constructor()
 
 	self.m_Faction = FactionManager.Map[4]
 
+	local safe = createObject(2332, 1783.90, -1773.70, 13.60)
+	FactionManager:getSingleton():getFromId(4):setSafe(safe)
+
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("factionRescueHealPlayerQuestion", root, bind(self.Event_healPlayerQuestion, self))
