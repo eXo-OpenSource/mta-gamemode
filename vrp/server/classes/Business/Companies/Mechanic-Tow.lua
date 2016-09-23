@@ -6,6 +6,9 @@ function MechanicTow:constructor()
 	self:createTowLot()
 	self.m_PendingQuestions = {}
 
+	local safe = createObject(2332, 732.40, -1339.90, 15.30, 0, 0, 90)
+	self:setSafe(safe)
+
 	addEventHandler("onMarkerHit", self.m_VehicleTakeMarker, bind(self.VehicleTakeMarker_Hit, self))
 
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
