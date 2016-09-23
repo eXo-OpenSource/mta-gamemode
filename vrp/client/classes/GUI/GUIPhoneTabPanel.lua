@@ -79,6 +79,10 @@ function GUIPhoneTabPanel:addTab(tabName, symbol)
 end
 
 function GUIPhoneTabPanel:drawThis()
+	dxSetBlendMode("modulate_add")
+	
 	-- Draw the background
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(0, 0, 0, 150) --[[tocolor(255, 255, 255, 40)]])
+	
+	dxSetBlendMode("blend")
 end

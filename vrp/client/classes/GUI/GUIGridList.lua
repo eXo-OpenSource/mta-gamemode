@@ -113,6 +113,8 @@ end
 
 function GUIGridList:draw(incache) -- Swap render order
 	if self.m_Visible then
+		dxSetBlendMode("modulate_add")
+		
 		-- Draw background
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_Color)
 
@@ -125,6 +127,8 @@ function GUIGridList:draw(incache) -- Swap render order
 
 		-- Draw i.a. the header line
 		self:drawThis()
+		
+		dxSetBlendMode("blend")
 	end
 end
 
