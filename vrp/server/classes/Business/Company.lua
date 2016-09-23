@@ -394,8 +394,12 @@ function Company:setSafe(obj)
 				player:triggerEvent("bankAccountGUIShow", self:getName(), "companyDeposit", "companyWithdraw")
 				self:refreshBankAccountGUI(player)
 			else
-				player:sendError(_("Du bist nicht in der richtigen Fraktion", player))
+				player:sendError(_("Du bist nicht im richtigen Unternehmen!", player))
 			end
 		end
 	end)
+end
+
+function Company:refreshBankAccountGUI(player)
+	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
 end

@@ -111,6 +111,7 @@ function FactionState:loadLSPD(factionId)
 	InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
 
 	local safe = createObject(2332, 241, 77.70, 1004.50)
+	safe:setInterior(6)
 	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
 end
 
