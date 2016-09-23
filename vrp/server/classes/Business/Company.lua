@@ -189,9 +189,9 @@ function Company:sendChatMessage(sourcePlayer,message)
 	local text = ("%s %s: %s"):format(rankName, sourcePlayer:getName(), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, 255, 125, 0)
-        if not sourcePlayer == player then
-			table.insert(receivedPlayers, player:getName())
-		end
+        if playersToSend[index] ~= sourcePlayer then
+            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+        end
 	end
     StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "company:"..self.m_Id, message, toJSON(receivedPlayers))
 end

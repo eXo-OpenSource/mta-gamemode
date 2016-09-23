@@ -239,22 +239,27 @@ function PlayerManager:playerChat(message, messageType)
 			local receivedPlayers = {}
 			for index = 1, #playersToSend do
 				outputChatBox(("%s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
-				if not playersToSend[index] == source then
-					table.insert(receivedPlayers, playersToSend[index]:getName())
+				if playersToSend[index] ~= source then
+					receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
 				end
 			end
 			StatisticsLogger:getSingleton():addChatLog(source, "chat", message, toJSON(receivedPlayers))
 		else
 			-- Send handy message
-			outputChatBox(_("%s (Telefon): %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
-			outputChatBox(_("%s (Telefon): %s", source, getPlayerName(source), message), source, 0, 255, 0)
-			StatisticsLogger:getSingleton():addTextLog("phone", ("%s zu %s: %s"):format(source:getName(), phonePartner:getName(), message))
-
+			outputChatBox(_("%s (Handy) sagt: %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
+			outputChatBox(_("%s (Handy) sagt: %s", source, getPlayerName(source), message), source, 0, 255, 0)
+			StatisticsLogger:getSingleton():addChatLog(source, "phone", message, toJSON({phonePartner:getName()}))
+			local receivedPlayers = {}
 			for index = 1, #playersToSend do
 				if playersToSend[index] ~= source then
-					outputChatBox(("(Handy) %s sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 204, 204, 0)
+					outputChatBox(("%s (Handy) sagt: %s"):format(getPlayerName(source), message), playersToSend[index], 220, 220, 220)
+					--if not playersToSend[index] == source then
+						receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+					--end
 				end
 			end
+			StatisticsLogger:getSingleton():addChatLog(source, "chat", ("(Handy) %s"):format(message), toJSON(receivedPlayers))
+
 		end
 		cancelEvent()
 	elseif messageType == 1 then
@@ -270,9 +275,9 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
 		outputChatBox(("%s schreit: %s"):format(getPlayerName(source), text), playersToSend[index], 240, 240, 240)
-		if not playersToSend[index] == source then
-			table.insert(receivedPlayers, playersToSend[index]:getName())
-		end
+		if playersToSend[index] ~= source then
+            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+        end
 	end
 	StatisticsLogger:getSingleton():addChatLog(source, "scream", text, toJSON(receivedPlayers))
 end
@@ -284,8 +289,8 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 	local receivedPlayers = {}
 	for index = 1,#playersToSend do
 		outputChatBox(("%s flüstert: %s"):format(getPlayerName(source), text), playersToSend[index], 140, 140, 140)
-		if not playersToSend[index] == source then
-			table.insert(receivedPlayers, playersToSend[index]:getName())
+		if playersToSend[index] ~= source then
+			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
 		end
 	end
 	StatisticsLogger:getSingleton():addChatLog(source, "whisper", text, toJSON(receivedPlayers))

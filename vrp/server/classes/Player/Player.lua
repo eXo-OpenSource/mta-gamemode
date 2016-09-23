@@ -851,9 +851,10 @@ function Player:meChat(system, ...)
 
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s %s"):format(systemText, message, systemText), playersToSend[index], 100, 0, 255)
-		if not playersToSend[index] == self then
-			table.insert(receivedPlayers, playersToSend[index]:getName())
-		end
+		if playersToSend[index] ~= self then
+            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+        end
+
 	end
 	if not system then
 		StatisticsLogger:getSingleton():addChatLog(self, "me", text, toJSON(receivedPlayers))
