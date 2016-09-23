@@ -31,8 +31,8 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	self.m_Title = title
 	self.m_TitleColor = (type(tcolor) == "table" and tcolor) or (type(tcolor) == "number" and {fromcolor(tcolor)}) or {125, 0, 0}
 
-	self.callback = callback or nil
-	self.timeoutFunc = timeoutFunc or nil
+	self.m_Callback = callback or nil
+	self.m_TimeoutFunc = timeoutFunc or nil
 
 	-- Font
 	GUIFontContainer.constructor(self, text, 1, VRPFont(24))
@@ -44,8 +44,8 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	-- Instantiate GUIElement
 	GUIElement.constructor(self, x, y, w, h)
 	self.onLeftClick = function ()
-		if self.callback then
-			self:callback()
+		if self.m_Callback then
+			self:m_Callback()
 		end
 		if core:get("HUD", "shortMessageCTC", false) then
 			delete(self)
@@ -56,8 +56,8 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	if timeout ~= -1 then
 		self.m_Timeout = setTimer(
 		function ()
-			if self.timeoutFunc then
-				self:timeoutFunc()
+			if self.m_TimeoutFunc then
+				self:m_TimeoutFunc()
 			end
 			delete(self)
 		end, ((type(timeout) == "number" and timeout > 50 and timeout) or 5000) + 500, 1)

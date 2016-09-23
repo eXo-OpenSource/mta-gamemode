@@ -401,8 +401,8 @@ function GroupGUI:VehicleLocateButton_Click()
 	local x, y, z = getElementPosition(item.VehicleElement)
 	local blip = Blip:new("Waypoint.png", x, y)
 	--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
-		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "¡Find.dat.Car!+", Color.DarkLightBlue, -1)
-		.callback = function (this)
+		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung+", Color.DarkLightBlue, -1)
+		.m_Callback = function (this)
 			if blip then
 				delete(blip)
 			end
@@ -410,6 +410,6 @@ function GroupGUI:VehicleLocateButton_Click()
 		end
 	--else
 		--setTimer(function () delete(blip) end, 5000, 1)
-		--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "¡Find.dat.Car!", Color.DarkLightBlue)
+		--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung", Color.DarkLightBlue)
 	--end
 end

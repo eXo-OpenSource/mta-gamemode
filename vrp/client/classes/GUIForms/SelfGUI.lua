@@ -653,7 +653,7 @@ function SelfGUI:VehicleLocateButton_Click()
 		local x, y, z = getElementPosition(item.VehicleElement)
 		local blip = Blip:new("Waypoint.png", x, y)
 		--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
-			ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "¡Find.dat.Car!+", Color.DarkLightBlue, -1)
+			ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung+", Color.DarkLightBlue, -1)
 			.callback = function (this)
 				if blip then
 					delete(blip)
@@ -662,16 +662,16 @@ function SelfGUI:VehicleLocateButton_Click()
 			end
 		--else
 			--setTimer(function () delete(blip) end, 5000, 1)
-			--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "¡Find.dat.Car!", Color.DarkLightBlue)
+			--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung", Color.DarkLightBlue)
 		--end
 	elseif item.PositionType == VehiclePositionType.Garage then
- 		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!", "¡Find.dat.Car!", Color.DarkLightBlue)
+ 		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!", "Fahrzeug-Ortung", Color.DarkLightBlue)
 	elseif item.PositionType == VehiclePositionType.Mechanic then
-		ShortMessage:new(_"Dieses Fahrzeug befindet sich im Autohof (Mechanic Base)!", "¡Find.dat.Car!", Color.DarkLightBlue)
+		ShortMessage:new(_"Dieses Fahrzeug befindet sich im Autohof (Mechanic Base)!", "Fahrzeug-Ortung", Color.DarkLightBlue)
 	elseif item.PositionType == VehiclePositionType.Hangar then
-		ShortMessage:new(_"Dieses Flugzeug befindet sich im Hangar!", "¡Find.dat.Car!", Color.DarkLightBlue)
+		ShortMessage:new(_"Dieses Flugzeug befindet sich im Hangar!", "Fahrzeug-Ortung", Color.DarkLightBlue)
 	elseif item.PositionType == VehiclePositionType.Harbor then
-		ShortMessage:new(_"Dieses Boot befindet sich im Industrie-Hafen (Logistik-Job)!", "¡Find.dat.Car!", Color.DarkLightBlue)
+		ShortMessage:new(_"Dieses Boot befindet sich im Industrie-Hafen (Logistik-Job)!", "Fahrzeug-Ortung", Color.DarkLightBlue)
 	else
 		ErrorBox:new(_"Es ist ein interner Fehler aufgetreten!")
 	end
