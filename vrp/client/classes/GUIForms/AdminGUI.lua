@@ -238,16 +238,6 @@ function AdminGUI:portAdmin(direction)
 	local element = localPlayer
 
 	if localPlayer:getOccupiedVehicle() then element = localPlayer:getOccupiedVehicle()	end
-	--[[
-	if direction == "N" then pos.y = pos.y+2
-	elseif direction == "O" then pos.x = pos.x+2
-	elseif direction == "S" then pos.y = pos.y-2
-	elseif direction == "W" then pos.x = pos.x-2
-	elseif direction == "U" then pos.z = pos.z+2
-	elseif direction == "D" then pos.z = pos.z-2
-	end
-	--]]
-
 	element:setPosition(
 		switch(direction) {
 			case "F" (element.position + element.matrix.forward*1);
