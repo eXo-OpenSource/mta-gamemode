@@ -8,7 +8,7 @@
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
 GroupManager.GroupCosts = 20000
-GroupManager.GroupTypes = {[0] = "Gang", [1] = "Firma"}
+GroupManager.GroupTypes = {[1] = "Gang", [2] = "Firma"}
 for i, v in pairs(GroupManager.GroupTypes) do
 	GroupManager.GroupTypes[v] = i
 end
@@ -25,7 +25,7 @@ function GroupManager:constructor()
 			players[groupRow.Id] = groupRow.GroupRank
 		end
 
-		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, self.GroupTypes[row.Type], toboolean(row.VehicleTuning))
+		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
 		GroupManager.Map[row.Id] = group
 	end
 
@@ -118,18 +118,19 @@ function GroupManager:Event_groupCreate(name, type)
 	end
 
 	-- Check Group Type
-	if not self.GroupTypes[type] then
+	if not GroupManager.GroupTypes[type] then
 		client:sendError(_("Ungültiger Typ!", client))
 		return false
 	end
+	local typeInt = GroupManager.GroupTypes[type]
 
 	-- Create the group and the the client as leader (rank 2)
-	local group = Group.create(name,typeInt)
+	local group = Group.create(name, typeInt)
 	if group then
 		group:addPlayer(client, GroupRank.Leader)
 		client:takeMoney(GroupManager.GroupCosts, "Firmen/Gang Gründung")
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
-		group:addLog(client, "Gang/Firma", "hat die "..self.GroupTypes[typeInt].." "..name.." erstellt!")
+		group:addLog(client, "Gang/Firma", "hat die "..type.." "..name.." erstellt!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Interner Fehler beim Erstellen der %s", client, type))

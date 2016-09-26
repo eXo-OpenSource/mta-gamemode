@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, money, players, karma, lastNameChange, rankNames, rankLoans, type, vehicleTuning)
+function Group:constructor(Id, name, type, money, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
   self.m_Id = Id
 
   self.m_Players = players or {}
@@ -38,7 +38,7 @@ end
 
 function Group.create(name, type)
   if sql:queryExec("INSERT INTO ??_groups (Name,Type) VALUES(?,?)", sql:getPrefix(), name,type) then
-    local group = Group:new(sql:lastInsertId(), name)
+    local group = Group:new(sql:lastInsertId(), name, GroupManager.GroupTypes[type])
 
     -- Add refernece
     GroupManager:getSingleton():addRef(group)
