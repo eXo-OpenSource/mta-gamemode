@@ -41,20 +41,6 @@ function AdminGUI:constructor()
 
 	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", 10, 50, 250, 30, Color.Green, tabAllgemein)
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
-	--[[
-	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"N",  tabAllgemein):setBackgroundColor(Color.Orange)
-	self.m_portNorth.onLeftClick = function () self:portAdmin("N") end
-	self.m_portEast = GUIButton:new(self.m_Width-70, 110, 30, 30, _"O",  tabAllgemein):setBackgroundColor(Color.Orange)
-	self.m_portEast.onLeftClick = function () self:portAdmin("O") end
-	self.m_portSouth = GUIButton:new(self.m_Width-105, 145, 30, 30, _"S",  tabAllgemein):setBackgroundColor(Color.Orange)
-	self.m_portSouth.onLeftClick = function () self:portAdmin("S") end
-	self.m_portWest = GUIButton:new(self.m_Width-140, 110, 30, 30, _"W",  tabAllgemein):setBackgroundColor(Color.Orange)
-	self.m_portWest.onLeftClick = function () self:portAdmin("W") end
-	self.m_portUp = GUIButton:new(self.m_Width-70, 75, 60, 30, _"Rauf",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
-	self.m_portUp.onLeftClick = function () self:portAdmin("U") end
-	self.m_portDown = GUIButton:new(self.m_Width-70, 145, 60, 30, _"Runter",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
-	self.m_portDown.onLeftClick = function () self:portAdmin("D") end
-	--]]
 	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"↑",  tabAllgemein):setBackgroundColor(Color.Orange)
 	self.m_portNorth.onLeftClick = function () self:portAdmin("F") end
 	self.m_portEast = GUIButton:new(self.m_Width-70, 110, 30, 30, _"→",  tabAllgemein):setBackgroundColor(Color.Orange)
@@ -240,10 +226,10 @@ function AdminGUI:portAdmin(direction)
 	if localPlayer:getOccupiedVehicle() then element = localPlayer:getOccupiedVehicle()	end
 	element:setPosition(
 		switch(direction) {
-			case "F" (element.position + element.matrix.forward*1);
-			case "B" (element.position - element.matrix.forward*1);
-			case "R" (element.position + element.matrix.right*1);
-			case "L" (element.position - element.matrix.right*1);
+			case "F" (element.position + element.matrix.forward);
+			case "B" (element.position - element.matrix.forward);
+			case "R" (element.position + element.matrix.right);
+			case "L" (element.position - element.matrix.right);
 			case "U" (element.position + Vector3(0, 0, 1));
 			case "D" (element.position - Vector3(0, 0, 1));
 		}
