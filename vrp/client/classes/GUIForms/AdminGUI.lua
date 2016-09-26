@@ -41,6 +41,7 @@ function AdminGUI:constructor()
 
 	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", 10, 50, 250, 30, Color.Green, tabAllgemein)
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
+	--[[
 	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"N",  tabAllgemein):setBackgroundColor(Color.Orange)
 	self.m_portNorth.onLeftClick = function () self:portAdmin("N") end
 	self.m_portEast = GUIButton:new(self.m_Width-70, 110, 30, 30, _"O",  tabAllgemein):setBackgroundColor(Color.Orange)
@@ -49,6 +50,19 @@ function AdminGUI:constructor()
 	self.m_portSouth.onLeftClick = function () self:portAdmin("S") end
 	self.m_portWest = GUIButton:new(self.m_Width-140, 110, 30, 30, _"W",  tabAllgemein):setBackgroundColor(Color.Orange)
 	self.m_portWest.onLeftClick = function () self:portAdmin("W") end
+	self.m_portUp = GUIButton:new(self.m_Width-70, 75, 60, 30, _"Rauf",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_portUp.onLeftClick = function () self:portAdmin("U") end
+	self.m_portDown = GUIButton:new(self.m_Width-70, 145, 60, 30, _"Runter",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
+	self.m_portDown.onLeftClick = function () self:portAdmin("D") end
+	--]]
+	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"↑",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portNorth.onLeftClick = function () self:portAdmin("F") end
+	self.m_portEast = GUIButton:new(self.m_Width-70, 110, 30, 30, _"→",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portEast.onLeftClick = function () self:portAdmin("R") end
+	self.m_portSouth = GUIButton:new(self.m_Width-105, 145, 30, 30, _"↓",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portSouth.onLeftClick = function () self:portAdmin("B") end
+	self.m_portWest = GUIButton:new(self.m_Width-140, 110, 30, 30, _"←",  tabAllgemein):setBackgroundColor(Color.Orange)
+	self.m_portWest.onLeftClick = function () self:portAdmin("L") end
 	self.m_portUp = GUIButton:new(self.m_Width-70, 75, 60, 30, _"Rauf",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
 	self.m_portUp.onLeftClick = function () self:portAdmin("U") end
 	self.m_portDown = GUIButton:new(self.m_Width-70, 145, 60, 30, _"Runter",  tabAllgemein):setBackgroundColor(Color.Red):setFontSize(1)
@@ -224,16 +238,50 @@ function AdminGUI:portAdmin(direction)
 	local element = localPlayer
 
 	if localPlayer:getOccupiedVehicle() then element = localPlayer:getOccupiedVehicle()	end
-
-	local pos = element:getPosition()
-		if direction == "N" then pos.y = pos.y+2
+	--[[
+	if direction == "N" then pos.y = pos.y+2
 	elseif direction == "O" then pos.x = pos.x+2
 	elseif direction == "S" then pos.y = pos.y-2
 	elseif direction == "W" then pos.x = pos.x-2
 	elseif direction == "U" then pos.z = pos.z+2
 	elseif direction == "D" then pos.z = pos.z-2
 	end
-	element:setPosition(pos)
+	--]]
+
+	element:setPosition(
+		switch(direction) {
+			case "F" (
+				function ()
+					return element.position + element.matrix.forward*1
+				end
+			);
+			case "B" (
+				function ()
+					return element.position - element.matrix.forward*1
+				end
+			);
+			case "R" (
+				function ()
+					return element.position + element.matrix.right*1
+				end
+			);
+			case "L" (
+				function ()
+					return element.position - element.matrix.right*1
+				end
+			);
+			case "U" (
+				function ()
+					return element.position + Vector3(0, 0, 1)
+				end
+			);
+			case "D" (
+				function ()
+					return element.position - Vector3(0, 0, 1)
+				end
+			)
+		}
+	)
 end
 
 function AdminGUI:refreshButtons()

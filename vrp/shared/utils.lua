@@ -628,3 +628,32 @@ function traceback()
         level = level + 1
       end
     end
+
+-- https://gist.github.com/StiviiK/9736d02a1163ea746e04
+function case_internal (name, func)
+    return {key = name, func = func}
+end
+
+case = setmetatable({}, {
+    __call = function(self, name)
+        return function(func)
+            return case_internal(name, func)
+        end
+    end
+})
+
+function switch_internal (searchFor, elements, ...)
+    for i, v in ipairs(elements) do
+        if tostring(v.key) == tostring(searchFor) then
+            return v.func(...)
+        end
+    end
+end
+
+switch = setmetatable({}, {
+    __call = function(self, searchFor)
+        return function(elements, ...)
+            return switch_internal (searchFor, elements, ...)
+        end
+    end
+})
