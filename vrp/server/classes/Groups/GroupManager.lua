@@ -435,7 +435,11 @@ function GroupManager:Event_groupUpdateVehicleTuning()
 				group:takeMoney(3000)
 				group.m_VehiclesCanBeModified = not group.m_VehiclesCanBeModified
 				sql:queryExec("UPDATE ??_groups SET VehicleTuning = ? WHERE Id = ?", sql:getPrefix(), group.m_VehiclesCanBeModified and 1 or 0, group.m_Id)
-
+				if group.m_VehiclesCanBeModified == true then
+					client:sendInfo(_("Eure Fahrzeuge können nun getuned werden!", client))
+				else
+					client:sendInfo(_("Eure Fahrzeuge können nun nicht mehr getuned werden!", client))
+				end
 				self:sendInfosToClient(client)
 			else
 				client:sendError(_("Die %s hat zu wenig Geld! (3000$)", client, group:getType()))
