@@ -53,6 +53,8 @@ function Jail:constructor()
 	InteriorEnterExit:new(Vector3(-507.75, -533.01, 25.52), Vector3(246.43, 107.30, 1003.22), 0, 270, 10, 2) -- Frontdoor
 	InteriorEnterExit:new(Vector3(-550.63, -496.07, 25.53), Vector3(215.85, 126.73, 1003.22), 180, 0, 10, 2) -- Backdoor
 
+	self.m_Colshape = createColSphere(164.21, 359.71, 7983.66, 200)
+	
 end
 
 function Jail:createGate(gatePos, gateRot, keypad1Pos, keypad1Rot, keypad2Pos, keypad2Rot)

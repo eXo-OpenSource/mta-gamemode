@@ -30,7 +30,7 @@ function TradeGUI:constructor(target)
     GUILabel:new(340, 240, 220, 30, "gewünschtes Geld:", self.m_Window)
     self.m_Money = GUIEdit:new(340, 270, 205, 30, self.m_Window)
     GUILabel:new(550, 270, 20, 30, "$", self.m_Window)
-    self.m_Money:setNumeric(true)
+    self.m_Money:setNumeric(true, true)
     self.m_LabelError = GUILabel:new(340, 310, 225, 25, "", self.m_Window)
     self.m_LabelError:setColor(Color.Red)
 
