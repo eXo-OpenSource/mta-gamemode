@@ -9,6 +9,9 @@ GroupManager = inherit(Singleton)
 GroupManager.Map = {}
 GroupManager.GroupCosts = 20000
 GroupManager.GroupTypes = {[0] = "Gang", [1] = "Firma"}
+for i, v in pairs(GroupManager.GroupTypes) do
+	GroupManager.GroupTypes[v] = i
+end
 
 function GroupManager:constructor()
 	outputServerLog("Loading groups...")
@@ -97,7 +100,7 @@ function GroupManager:Event_groupRequestInfo()
 	self:sendInfosToClient(client)
 end
 
-function GroupManager:Event_groupCreate(name,type)
+function GroupManager:Event_groupCreate(name, type)
 	if client:getMoney() < GroupManager.GroupCosts then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
@@ -115,11 +118,7 @@ function GroupManager:Event_groupCreate(name,type)
 	end
 
 	-- Check Group Type
-	for i, v in pairs(GroupManager.GroupTypes) do
-		GroupManager.GroupTypes[v] = i
-	end
-	local typeInt = self.GroupTypes[type]
-	if not typeInt then
+	if not self.GroupTypes[type] then
 		client:sendError(_("Ungültiger Typ!", client))
 		return false
 	end

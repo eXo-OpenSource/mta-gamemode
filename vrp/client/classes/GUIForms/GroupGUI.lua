@@ -28,12 +28,15 @@ function GroupGUI:constructor()
 	self.m_TypeLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Firma / Gang:", tabGroups)
 	self.m_GroupsNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	self.m_GroupsNameChangeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.1, self.m_Height*0.06, _"(ändern)", tabGroups):setColor(Color.LightBlue)
-	self.m_GroupsNameChangeLabel.onLeftClick = function() InputBox:new(_"Namen ändern", _"Bitte gib einen neuen Name für deine Firma / Gang ein! Dies kostet dich 20000$!", function (name) triggerServerEvent("groupChangeName", root, name) end) end
+	self.m_GroupsNameChangeLabel.onLeftClick = function()
+		InputBox:new(_"Namen ändern", _"Bitte gib einen neuen Name für deine Firma / Gang ein! Dies kostet dich 5000$!", function (name) triggerServerEvent("groupChangeName", root, name) end)
+		WarningBox:new(_"Achtung: Der Name ist nur alle 30 Tage änderbar!")
+	end
 	self.m_GroupsNameChangeLabel.onHover = function () self.m_GroupsNameChangeLabel:setColor(Color.White) end
 	self.m_GroupsNameChangeLabel.onUnhover = function () self.m_GroupsNameChangeLabel:setColor(Color.LightBlue) end
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGroups)
 	self.m_GroupsKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"dein Rang:", tabGroups)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"Dein Rang:", tabGroups)
 	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	self.m_GroupCreateButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Erstellen", true, tabGroups):setBarColor(Color.Green)
 	self.m_GroupQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.07, _"Verlassen", true, tabGroups):setBarColor(Color.Red)
@@ -72,6 +75,7 @@ function GroupGUI:constructor()
 
 
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
+	self.m_TabVehicles = tabVehicles
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuge:", tabVehicles)
 	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.4, tabVehicles)
 	self.m_VehiclesGrid:addColumn(_"Name", 0.4)
@@ -220,7 +224,9 @@ function GroupGUI:adjustGroupTab(rank)
 	self.m_GroupInvitationsDeclineButton:setVisible(false)
 
 	if rank then
-		if rank ~= GroupRank.Leader then
+		if rank == GroupRank.Leader then
+			self.m_GroupDeleteButton:setVisible(true)
+		else
 			self.m_GroupDeleteButton:setVisible(false)
 		end
 		if rank < GroupRank.Manager then
@@ -236,6 +242,11 @@ function GroupGUI:adjustGroupTab(rank)
 		self.m_GroupInvitationsGrid:setVisible(true)
 		self.m_GroupInvitationsAcceptButton:setVisible(true)
 		self.m_GroupInvitationsDeclineButton:setVisible(true)
+		self.m_TabVehicles:setVisible(false)
+		self.m_TabLogs:setVisible(false)
+		if self.m_LeaderTab then
+			self.m_TabLeader:setVisible(false)
+		end
 	end
 end
 
@@ -322,6 +333,7 @@ end
 function GroupGUI:addLeaderTab()
 	if self.m_LeaderTab == false then
 		local tabLeader = self.m_TabPanel:addTab(_"Leader")
+		self.m_TabLeader = tabLeader
 		self.m_FactionRangGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.025, self.m_Width*0.4, self.m_Height*0.95, tabLeader)
 		self.m_FactionRangGrid:addColumn(_"Rang", 0.2)
 		self.m_FactionRangGrid:addColumn(_"Name", 0.8)

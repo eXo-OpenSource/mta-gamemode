@@ -26,7 +26,7 @@ function GroupCreationGUI:CreateButton_Click()
 	local text = self.m_NameEdit:getText()
 	local typ = self.m_Type:getIndex()
 	if text ~= "" then
-		triggerServerEvent("groupCreate", root, text,typ)
+		triggerServerEvent("groupCreate", root, text, typ)
 		delete(self)
 	else
 		ErrorBox:new(_"Bitte gib zuerst einen Namen ein!")
