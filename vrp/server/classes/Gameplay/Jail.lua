@@ -75,24 +75,28 @@ end
 function Jail:onKeypadClick(button, state, player)
 	if button == "left" and state == "down" then
 		if source.Id and isElement(self.m_Gates[source.Id]) then
-			local gate = self.m_Gates[source.Id]
-			local pos = gate:getPosition()
-			local rot = gate:getRotation()
-			local offset = self.ms_OffsetFromRotation[math.floor(rot.z)]
-			if not gate.moving == true then
-				if gate.closed == true then
-					gate:move(1500, pos.x + offset["x"], pos.y + offset["y"], pos.z)
-					gate.closed = false
-					--outputChatBox("Gate "..source.Id.." geöffnet", player, 255, 0, 0)
-				else
-					gate:move(1500, pos.x - offset["x"], pos.y - offset["y"], pos.z)
-					gate.closed = true
-					--outputChatBox("Gate "..source.Id.." geschlossen", player, 255, 0, 0)
+			if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
+				local gate = self.m_Gates[source.Id]
+				local pos = gate:getPosition()
+				local rot = gate:getRotation()
+				local offset = self.ms_OffsetFromRotation[math.floor(rot.z)]
+				if not gate.moving == true then
+					if gate.closed == true then
+						gate:move(1500, pos.x + offset["x"], pos.y + offset["y"], pos.z)
+						gate.closed = false
+						--outputChatBox("Gate "..source.Id.." geöffnet", player, 255, 0, 0)
+					else
+						gate:move(1500, pos.x - offset["x"], pos.y - offset["y"], pos.z)
+						gate.closed = true
+						--outputChatBox("Gate "..source.Id.." geschlossen", player, 255, 0, 0)
+					end
+					gate.moving = true
+					setTimer(function(gate)
+						gate.moving = false
+					end,1500, 1, gate)
 				end
-				gate.moving = true
-				setTimer(function(gate)
-					gate.moving = false
-				end,1500, 1, gate)
+			else
+				player:sendError(_("Du bist nicht befugt!", player))
 			end
 		else
 			player:sendError("Internal Error! No Id!")
