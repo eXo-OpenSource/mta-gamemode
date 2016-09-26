@@ -16,6 +16,10 @@ function DrivingSchool:constructor()
 
     self.m_OnQuit = bind(self.Event_onQuit,self)
 
+    local safe = createObject(2332, -2032.70, -113.70, 1036.20)
+    safe:setInterior(3)
+	self:setSafe(safe)
+
     addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand","drivingSchoolPassTheory", "drivingSchoolStartTheory"}
     addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))
     addEventHandler("drivingSchoolDiscardLession", root, bind(self.Event_discardLession, self))
@@ -25,7 +29,6 @@ function DrivingSchool:constructor()
     addEventHandler("drivingSchoolReceiveTurnCommand", root, bind(self.Event_receiveTurnCommand, self))
 	addEventHandler("drivingSchoolPassTheory", root, bind(self.Event_passTheory, self))
     addEventHandler("drivingSchoolStartTheory", root, bind(self.Event_startTheory, self))
-
 
 end
 

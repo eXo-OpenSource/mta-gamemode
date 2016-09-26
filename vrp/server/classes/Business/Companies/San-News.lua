@@ -7,6 +7,9 @@ function SanNews:constructor()
 	self.m_onInterviewColshapeLeaveFunc = bind(self.onInterviewColshapeLeave, self)
 	self.m_onPlayerChatFunc = bind(self.Event_onPlayerChat, self)
 
+	local safe = createObject(2332, 732.40, -1339.90, 15.30, 0, 0, 90)
+ 	self:setSafe(safe)
+
 	-- Register in Player Hooks
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	Player.getChatHook():register(bind(self.Event_onPlayerChat, self))

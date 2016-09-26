@@ -227,6 +227,7 @@ function IncomingCallActivity:constructor(app, caller, voiceEnabled)
 
 	-- Play ring sound
 	self.m_RingSound = playSound(core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3"), true)
+	showCursor(false)
 end
 
 function IncomingCallActivity:ButtonAnswer_Click()

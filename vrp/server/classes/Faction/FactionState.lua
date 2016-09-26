@@ -90,7 +90,7 @@ function FactionState:loadFBI(factionId)
 	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
 end
 
-function FactionState:loadLSPD()
+function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
 	self:createDutyPickup(1530.21, -1671.66, 6.22, 0) -- PD Garage
 
@@ -109,6 +109,10 @@ function FactionState:loadLSPD()
 
 	InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0) -- LSPD Garage
 	InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
+
+	local safe = createObject(2332, 241, 77.70, 1004.50, 0, 0, 270)
+	safe:setInterior(6)
+	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
 end
 
 function FactionState:countPlayers()

@@ -841,6 +841,10 @@ function Player:endPrison()
 end
 
 function Player:meChat(system, ...)
+	if self:isDead() then
+		return
+	end
+
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
 	local playersToSend = self:getPlayersInChatRange( 1 )

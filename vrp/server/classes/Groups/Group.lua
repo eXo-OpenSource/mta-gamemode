@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Group = inherit(Object)
 
-function Group:constructor(Id, name, money, players, karma, lastNameChange, rankNames, rankLoans, type, vehicleTuning)
+function Group:constructor(Id, name, type, money, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
   self.m_Id = Id
 
   self.m_Players = players or {}
@@ -38,7 +38,7 @@ end
 
 function Group.create(name, type)
   if sql:queryExec("INSERT INTO ??_groups (Name,Type) VALUES(?,?)", sql:getPrefix(), name,type) then
-    local group = Group:new(sql:lastInsertId(), name)
+    local group = Group:new(sql:lastInsertId(), name, GroupManager.GroupTypes[type])
 
     -- Add refernece
     GroupManager:getSingleton():addRef(group)
@@ -193,7 +193,7 @@ function Group:removePlayer(playerId)
 end
 
 function Group:invitePlayer(player)
-  client:sendShortMessage(("Du hast %s erfolgreich in deine Gruppe eingeladen."):format(getPlayerName(player)))
+  client:sendShortMessage(("Du hast %s erfolgreich in deine %s eingeladen."):format(getPlayerName(player), self:getType()))
 
   player:triggerEvent("groupInvitationRetrieve", self:getId(), self:getName())
 
@@ -284,8 +284,8 @@ function Group:sendChatMessage(sourcePlayer, message)
     local text = ("[%s] %s %s: %s"):format(self:getName(), rankName, sourcePlayer:getName(), message)
     for k, player in ipairs(self:getOnlinePlayers()) do
         player:sendMessage(text, 0, 255, 150)
-        if playersToSend[index] ~= sourcePlayer then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+        if player ~= sourcePlayer then
+            receivedPlayers[#receivedPlayers+1] = player:getName()
         end
     end
     StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "group:"..self.m_Id, message, toJSON(receivedPlayers))
@@ -371,12 +371,12 @@ function Group:phoneCall(caller)
   if #self:getOnlinePlayers() > 0 then
     for k, player in ipairs(self:getOnlinePlayers()) do
       if not player:getPhonePartner() then
-        player:sendShortMessage(_("Der Spieler %s ruft eure Firma/Gang (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
+        player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
         bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
       end
     end
   else
-    caller:sendShortMessage(_("Es ist aktuell kein Spieler der Firma/Gang online!", caller))
+    caller:sendShortMessage(_("Es ist aktuell kein Spieler der %s online!", caller, self:getType()))
     caller:triggerEvent("callBusy", caller)
   end
 end

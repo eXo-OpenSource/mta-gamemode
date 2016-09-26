@@ -189,8 +189,8 @@ function Company:sendChatMessage(sourcePlayer,message)
 	local text = ("%s %s: %s"):format(rankName, sourcePlayer:getName(), message)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, 255, 125, 0)
-        if playersToSend[index] ~= sourcePlayer then
-            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+        if player ~= sourcePlayer then
+            receivedPlayers[#receivedPlayers+1] = player:getName()
         end
 	end
     StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "company:"..self.m_Id, message, toJSON(receivedPlayers))
@@ -383,4 +383,23 @@ end
 
 function Company:getLog()
 	return StatisticsLogger:getSingleton():getGroupLogs("company", self.m_Id)
+end
+
+function Company:setSafe(obj)
+	self.m_Safe = obj
+	self.m_Safe:setData("clickable",true,true)
+	addEventHandler("onElementClicked", self.m_Safe, function(button, state, player)
+		if button == "left" and state == "down" then
+			if player:getCompany() and player:getCompany() == self then
+				player:triggerEvent("bankAccountGUIShow", self:getName(), "companyDeposit", "companyWithdraw")
+				self:refreshBankAccountGUI(player)
+			else
+				player:sendError(_("Du bist nicht im richtigen Unternehmen!", player))
+			end
+		end
+	end)
+end
+
+function Company:refreshBankAccountGUI(player)
+	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
 end

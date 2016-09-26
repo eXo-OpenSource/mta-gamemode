@@ -227,6 +227,10 @@ function PlayerManager:playerChat(message, messageType)
 		return
 	end
 
+	if source:isDead() then
+		return
+	end
+
 	-- Look for special Chars (e.g. '@l': Local Chat, at Interview)
 	if message:sub(1, 2):lower() == "@l" then
 		message = message:sub(3, #message)
@@ -269,6 +273,10 @@ function PlayerManager:playerChat(message, messageType)
 end
 
 function PlayerManager:Command_playerScream(source , cmd, ...)
+	if source:isDead() then
+		return
+	end
+
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
 	local playersToSend = source:getPlayersInChatRange(2)
@@ -283,6 +291,10 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
 end
 
 function PlayerManager:Command_playerWhisper(source , cmd, ...)
+	if source:isDead() then
+		return
+	end
+
 	local argTable = { ... }
 	local text = table.concat(argTable , " ")
 	local playersToSend = source:getPlayersInChatRange(0)

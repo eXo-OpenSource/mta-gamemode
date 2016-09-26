@@ -8,7 +8,10 @@
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
 GroupManager.GroupCosts = 20000
-GroupManager.GroupTypes = {[0] = "Gang", [1] = "Firma"}
+GroupManager.GroupTypes = {[1] = "Gang", [2] = "Firma"}
+for i, v in pairs(GroupManager.GroupTypes) do
+	GroupManager.GroupTypes[v] = i
+end
 
 function GroupManager:constructor()
 	outputServerLog("Loading groups...")
@@ -22,7 +25,7 @@ function GroupManager:constructor()
 			players[groupRow.Id] = groupRow.GroupRank
 		end
 
-		local group = Group:new(row.Id, row.Name, row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, self.GroupTypes[row.Type], toboolean(row.VehicleTuning))
+		local group = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
 		GroupManager.Map[row.Id] = group
 	end
 
@@ -97,9 +100,14 @@ function GroupManager:Event_groupRequestInfo()
 	self:sendInfosToClient(client)
 end
 
-function GroupManager:Event_groupCreate(name,type)
+function GroupManager:Event_groupCreate(name, type)
 	if client:getMoney() < GroupManager.GroupCosts then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
+		return
+	end
+
+	if client:getGroup() then
+		client:sendError(_("Du bist bereits in einer Firma/Gang!", client))
 		return
 	end
 
@@ -110,22 +118,19 @@ function GroupManager:Event_groupCreate(name,type)
 	end
 
 	-- Check Group Type
-	for i, v in pairs(GroupManager.GroupTypes) do
-		GroupManager.GroupTypes[v] = i
-	end
-	local typeInt = self.GroupTypes[type]
-	if not typeInt then
+	if not GroupManager.GroupTypes[type] then
 		client:sendError(_("Ungültiger Typ!", client))
 		return false
 	end
+	local typeInt = GroupManager.GroupTypes[type]
 
 	-- Create the group and the the client as leader (rank 2)
-	local group = Group.create(name,typeInt)
+	local group = Group.create(name, typeInt)
 	if group then
 		group:addPlayer(client, GroupRank.Leader)
 		client:takeMoney(GroupManager.GroupCosts, "Firmen/Gang Gründung")
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))
-		group:addLog(client, "Gang/Firma", "hat die "..self.GroupTypes[type].." "..name.." erstellt!")
+		group:addLog(client, "Gang/Firma", "hat die "..type.." "..name.." erstellt!")
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Interner Fehler beim Erstellen der %s", client, type))
@@ -137,12 +142,12 @@ function GroupManager:Event_groupQuit()
 	if not group then return end
 
 	if group:getPlayerRank(client) == GroupRank.Leader then
-		client:sendWarning(_("Bitte übertrage den Leiter-Status erst auf ein anderes Mitglied der Gruppe!", client))
+		client:sendWarning(_("Bitte übertrage den Leiter-Status erst auf ein anderes Mitglied der Firma/Gang!", client))
 		return
 	end
 	group:removePlayer(client)
-	client:sendSuccess(_("Du hast die Gruppe erfolgreich verlassen!", client))
-	group:addLog(client, "Gang/Firma", "hat die Gang/Firma verlassen!")
+	client:sendSuccess(_("Du hast die Firma/Gang erfolgreich verlassen!", client))
+	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." verlassen!")
 	self:sendInfosToClient(client)
 end
 
@@ -151,7 +156,7 @@ function GroupManager:Event_groupDelete()
 	if not group then return end
 
 	if group:getPlayerRank(client) ~= GroupRank.Leader then
-		client:sendError(_("Du bist nicht berechtigt die Gruppe zu löschen!", client))
+		client:sendError(_("Du bist nicht berechtigt die Firma/Gang zu löschen!", client))
 		-- Todo: Report possible cheat attempt
 		return
   end
@@ -186,10 +191,10 @@ function GroupManager:Event_groupDelete()
           delete(player)
       end
   end
-  	group:addLog(client, "Gang/Firma", "hat die Gang/Firma gelöscht!")
-	group:purge()
-	client:sendShortMessage(_("Deine Gruppe wurde soeben gelöscht", client))
+  	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." gelöscht!")
 
+	client:sendShortMessage(_("Deine "..group:getType().." wurde soeben gelöscht", client))
+	group:purge()
 	client:triggerEvent("groupRetrieveInfo")
 end
 
@@ -219,7 +224,7 @@ function GroupManager:Event_groupWithdraw(amount)
 	end
 
 	if group:getMoney() < amount then
-		client:sendError(_("In der Gruppenkasse befindet sich nicht genügend Geld!", client))
+		client:sendError(_("In der Firma/Gangkasse befindet sich nicht genügend Geld!", client))
 		return
 	end
 
@@ -236,27 +241,27 @@ function GroupManager:Event_groupAddPlayer(player)
 	if not group then return end
 
 	if group:getPlayerRank(client) < GroupRank.Manager then
-		client:sendError(_("Du bist nicht berechtigt Gruppenmitglieder hinzuzufügen!", client))
+		client:sendError(_("Du bist nicht berechtigt Firmen/Gang Mitglieder hinzuzufügen!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
 
 	if player:getGroup() then
-		client:sendError(_("Dieser Benutzer ist bereits in einer Gruppe!", client))
+		client:sendError(_("Dieser Benutzer ist bereits in einer Firma oder Gang!", client))
 		return
 	end
 
 	if not group:isPlayerMember(player) then
 		if not group:hasInvitation(player) then
 			group:invitePlayer(player)
-			group:addLog(client, "Gang/Firma", "hat den Spieler "..player:getName().." in die Gang/Firma eingeladen!")
+			group:addLog(client, "Gang/Firma", "hat den Spieler "..player:getName().." in die "..group:getType().." eingeladen!")
 		else
 			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!", client))
 		end
 		--group:addPlayer(player)
 		--client:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(client), group:getMoney(), group:getPlayers(), group:getKarma())
 	else
-		client:sendError(_("Dieser Spieler ist bereits in der Gruppe!", client))
+		client:sendError(_("Dieser Spieler ist bereits in deiner Firma/Gang!", client))
 	end
 end
 
@@ -272,12 +277,12 @@ function GroupManager:Event_groupDeleteMember(playerId)
 	end
 
 	if group:getPlayerRank(playerId) == GroupRank.Leader then
-		client:sendError(_("Du kannst den Gruppenleiter nicht rauswerfen!", client))
+		client:sendError(_("Du kannst den Firmen/Gang Leader nicht rauswerfen!", client))
 		return
 	end
 
 	group:removePlayer(playerId)
-	group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." aus der Gang/Firma geworfen!")
+	group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." aus der "..group:getType().." geworfen!")
 
 	self:sendInfosToClient(client)
 end
@@ -289,11 +294,11 @@ function GroupManager:Event_groupInvitationAccept(groupId)
 	if group:hasInvitation(client) then
 		group:addPlayer(client)
 		group:removeInvitation(client)
-		group:sendMessage(_("%s ist soeben der Gruppe beigetreten", client, getPlayerName(client)))
-		group:addLog(client, "Gang/Firma", "ist der Gang/Firma beigetreten!")
+		group:sendMessage(_("%s ist soeben der %s beigetreten", client, getPlayerName(client), group:getType()))
+		group:addLog(client, "Gang/Firma", "ist der "..group:getType().." beigetreten!")
 		self:sendInfosToClient(client)
 	else
-		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
+		client:sendError(_("Du hast keine Einladung für diese %s", client, group:getType()))
 	end
 end
 
@@ -303,11 +308,11 @@ function GroupManager:Event_groupInvitationDecline(groupId)
 
 	if group:hasInvitation(client) then
 		group:removeInvitation(client)
-		group:sendMessage(_("%s hat die Gruppeneinladung abgelehnt", client, getPlayerName(client)))
+		group:sendMessage(_("%s hat die Einladung in die %s abgelehnt", client, getPlayerName(client), group:getType()))
 		group:addLog(client, "Gang/Firma", "hat die Einladung abgelehnt!")
 
 	else
-		client:sendError(_("Du hast keine Einladung für diese Gruppe", client))
+		client:sendError(_("Du hast keine Einladung für diese %s", client, group:getType()))
 	end
 end
 
@@ -331,7 +336,7 @@ function GroupManager:Event_groupRankUp(playerId)
 		group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." befördert!")
 		self:sendInfosToClient(client)
 	else
-		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 'Manager' setzen!", client))
+		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 setzen!", client))
 	end
 end
 
@@ -374,7 +379,7 @@ function GroupManager:Event_groupChangeName(name)
 	end
 
 	if self:getByName(name) then
-		client:sendError(_("Es existiert bereits eine Gruppe mit diesem Namen!", client))
+		client:sendError(_("Es existiert bereits eine Firma/Gang mit diesem Namen!", client))
 		return
 	end
 
@@ -395,14 +400,14 @@ function GroupManager:Event_groupChangeName(name)
 
 
 	if (getRealTime().timestamp - group.m_LastNameChange) < GROUP_RENAME_TIMEOUT then
-		client:sendError(_("Du kannst deine Gruppe nur alle "..(GROUP_RENAME_TIMEOUT/24/60/60).." Tage umbennen!", client))
+		client:sendError(_("Du kannst deine %s nur alle %d Tage umbennen!", client, group:getType(), GROUP_RENAME_TIMEOUT/24/60/60))
 		return
 	end
 
 	if group:setName(name) then
 		client:takeMoney(20000, "Firmen/Gang Änderung")
-		client:sendSuccess(_("Deine Gruppe heißt nun\n%s!", client, group:getName()))
-		group:addLog(client, "Gang/Firma", "hat die Gang Firma in "..group:getName().." umbenannt!")
+		client:sendSuccess(_("Deine %s heißt nun\n%s!", client, group:getType(), group:getName()))
+		group:addLog(client, "Gang/Firma", "hat die "..group:getType().." in "..group:getName().." umbenannt!")
 
 		self:sendInfosToClient(client)
 	else
@@ -425,19 +430,23 @@ end
 function GroupManager:Event_groupUpdateVehicleTuning()
 	local group = client:getGroup()
 	if group and group:getPlayerRank(client) >= GroupRank.Manager then
-		if group:getKarma() <= -50 then
+	--	if group:getKarma() <= -50 then
 			if group:getMoney() >= 3000 then
 				group:takeMoney(3000)
 				group.m_VehiclesCanBeModified = not group.m_VehiclesCanBeModified
 				sql:queryExec("UPDATE ??_groups SET VehicleTuning = ? WHERE Id = ?", sql:getPrefix(), group.m_VehiclesCanBeModified and 1 or 0, group.m_Id)
-
+				if group.m_VehiclesCanBeModified == true then
+					client:sendInfo(_("Eure Fahrzeuge können nun getuned werden!", client))
+				else
+					client:sendInfo(_("Eure Fahrzeuge können nun nicht mehr getuned werden!", client))
+				end
 				self:sendInfosToClient(client)
 			else
-				client:sendError(_("Die Gruppe hat zu wenig Geld! (3000$)", client))
+				client:sendError(_("Die %s hat zu wenig Geld! (3000$)", client, group:getType()))
 			end
-		else
-			client:sendError(_("Die Gruppe hat zu wenig negatives Karma!", client))
-		end
+		--else
+		--	client:sendError(_("Die %s hat zu wenig negatives Karma!", client, group:getType()))
+		--end
 	end
 end
 
