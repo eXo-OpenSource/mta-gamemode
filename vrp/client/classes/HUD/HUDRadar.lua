@@ -56,6 +56,15 @@ function HUDRadar:constructor()
   addRemoteEvents{"HUDRadar:showRadar", "HUDRadar:hideRadar" }
   addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
   addEventHandler("HUDRadar:hideRadar", root, bind(self.hide, self))
+
+  self.m_NoRadarColShapes = {
+      createColSphere(164.21, 359.71, 7983.66, 200)
+  }
+  for index, col in pairs(self.m_NoRadarColShapes) do
+      addEventHandler("onClientColShapeHit", col, bind(self.hide, self))
+      addEventHandler("onClientColShapeLeave", col, bind(self.show, self))
+  end
+
 end
 
 function HUDRadar:hide()
