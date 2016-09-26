@@ -630,8 +630,8 @@ function traceback()
     end
 
 -- https://gist.github.com/StiviiK/9736d02a1163ea746e04
-function case_internal (name, func)
-    return {key = name, func = func}
+function case_internal (name, value)
+    return {key = name, value = value}
 end
 
 case = setmetatable({}, {
@@ -645,7 +645,11 @@ case = setmetatable({}, {
 function switch_internal (searchFor, elements, ...)
     for i, v in ipairs(elements) do
         if tostring(v.key) == tostring(searchFor) then
-            return v.func(...)
+            if type(v.value) ~= "function" then
+                return v.value
+            else
+                return v.value()
+            end
         end
     end
 end
@@ -657,3 +661,4 @@ switch = setmetatable({}, {
         end
     end
 })
+

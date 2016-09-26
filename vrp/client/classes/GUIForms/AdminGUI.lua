@@ -250,36 +250,12 @@ function AdminGUI:portAdmin(direction)
 
 	element:setPosition(
 		switch(direction) {
-			case "F" (
-				function ()
-					return element.position + element.matrix.forward*1
-				end
-			);
-			case "B" (
-				function ()
-					return element.position - element.matrix.forward*1
-				end
-			);
-			case "R" (
-				function ()
-					return element.position + element.matrix.right*1
-				end
-			);
-			case "L" (
-				function ()
-					return element.position - element.matrix.right*1
-				end
-			);
-			case "U" (
-				function ()
-					return element.position + Vector3(0, 0, 1)
-				end
-			);
-			case "D" (
-				function ()
-					return element.position - Vector3(0, 0, 1)
-				end
-			)
+			case "F" (element.position + element.matrix.forward*1);
+			case "B" (element.position - element.matrix.forward*1);
+			case "R" (element.position + element.matrix.right*1);
+			case "L" (element.position - element.matrix.right*1);
+			case "U" (element.position + Vector3(0, 0, 1));
+			case "D" (element.position - Vector3(0, 0, 1));
 		}
 	)
 end
