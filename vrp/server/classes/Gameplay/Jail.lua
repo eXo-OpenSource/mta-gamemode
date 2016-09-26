@@ -49,8 +49,9 @@ function Jail:constructor()
 	self:createGate(Vector3(169.60, 369.50, 7985.24), 270,  Vector3(171.50, 369.40, 7984.10), 0)
 	self:createGate(Vector3(173.43, 369.50, 7985.24), 270,  Vector3(175.30, 369.40, 7984.10), 0)
 
-	InteriorEnterExit:new(Vector3(-589.67, -489.02, 25.53), Vector3(183.25, 372.91, 7983.66), 180, 0)
-
+	InteriorEnterExit:new(Vector3(-589.67, -489.02, 25.53), Vector3(183.25, 372.91, 7983.66), 0, 180) -- Cells
+	InteriorEnterExit:new(Vector3(-507.75, -533.01, 25.52), Vector3(246.43, 107.30, 1003.22), 0, 270, 10, 2) -- Frontdoor
+	InteriorEnterExit:new(Vector3(-550.63, -496.07, 25.53), Vector3(215.85, 126.73, 1003.22), 180, 0, 10, 2) -- Backdoor
 
 end
 
