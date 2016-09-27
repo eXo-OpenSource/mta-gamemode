@@ -195,13 +195,23 @@ function FactionManager:Event_factionAddPlayer(player)
 
 	if not faction:isPlayerMember(player) then
 		if not faction:hasInvitation(player) then
+			if faction:isEvilFaction() then
+				if player:getKarma() > -NEEDED_RANK_KARMA[1] then
+					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -NEEDED_RANK_KARMA[1]))
+					return
+				end
+			else
+				if player:getKarma() < NEEDED_RANK_KARMA[1] then
+					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, NEEDED_RANK_KARMA[1]))
+					return
+				end
+			end
+
 			faction:invitePlayer(player)
 			faction:addLog(client, "Fraktion", "hat den Spieler "..player:getName().." in die Fraktion eingeladen!")
 		else
 			client:sendError(_("Dieser Benutzer hat bereits eine Einladung!", client))
 		end
-		--faction:addPlayer(player)
-		--client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers())
 	else
 		client:sendError(_("Dieser Spieler ist bereits in der Fraktion!", client))
 	end
