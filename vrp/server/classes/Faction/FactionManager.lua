@@ -269,27 +269,51 @@ function FactionManager:Event_factionInvitationDecline(factionId)
 end
 
 function FactionManager:Event_factionRankUp(playerId)
-	if not playerId then return end
-	local faction = client:getFaction()
-	if not faction then return end
+	Async.create(
+		function ()
+			if not playerId then return end
+			local faction = client:getFaction()
+			if not faction then return end
 
-	if not faction:isPlayerMember(client) or not faction:isPlayerMember(playerId) then
-		return
-	end
+			if not faction:isPlayerMember(client) or not faction:isPlayerMember(playerId) then
+				return
+			end
 
-	if faction:getPlayerRank(client) < FactionRank.Leader then
-		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
-		-- Todo: Report possible cheat attempt
-		return
-	end
+			if faction:getPlayerRank(client) < FactionRank.Leader then
+				client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
+				-- Todo: Report possible cheat attempt
+				return
+			end
 
-	if faction:getPlayerRank(playerId) < FactionRank.Manager then
-		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) + 1)
-		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." befördert!")
-		self:sendInfosToClient(client)
-	else
-		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 setzen!", client))
-	end
+			local playerRank = faction:getPlayerRank(playerId)
+			local player, isOffline = DatabasePlayer.get(playerId)
+			if isOffline then
+				player:load()
+			end
+			if faction:isEvilFaction() then
+				if player:getKarma() > -NEEDED_RANK_KARMA[playerRank + 1] then
+					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -NEEDED_RANK_KARMA[playerRank + 1]))
+					return
+				end
+			else
+				if player:getKarma() < NEEDED_RANK_KARMA[playerRank + 1] then
+					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, NEEDED_RANK_KARMA[playerRank + 1]))
+					return
+				end
+			end
+			if isOffline then
+				player:save()
+			end
+
+			if playerRank < FactionRank.Manager then
+				faction:setPlayerRank(playerId, playerRank + 1)
+				faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
+				self:sendInfosToClient(client)
+			else
+				client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 setzen!", client))
+			end
+		end
+	)()
 end
 
 function FactionManager:Event_factionRankDown(playerId)
