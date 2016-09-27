@@ -64,7 +64,7 @@ addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 
 			if currentEdit:isNumeric() then
 				if currentEdit:isIntegerOnly() then
-					if text == "" or (tonumber(text) and tonumber(text) == math.abs(math.floor(tonumber(text))) and not string.find(text, ".", 1, true)) then
+					if text == "" or pregFind(text, '^[0-9]*$') then
 						GUIInputControl.ms_PreviousInput = text
 						currentEdit:setText(text)
 					else

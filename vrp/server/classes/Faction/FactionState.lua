@@ -409,9 +409,11 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 					factionBonus = player:getMoney()
 				end
 				player:takeMoney(factionBonus)
+				player:giveKarma(-player:getWantedLevel())
+
 				-- Pay some money to faction and karma, xp to the policeman
 				policeman:getFaction():giveMoney(factionBonus, "Arrest")
-				policeman:giveKarma(player:getWantedLevel() * 0.05)
+				policeman:giveKarma(player:getWantedLevel())
 				policeman:givePoints(player:getWantedLevel())
 
 				-- Give Achievements
