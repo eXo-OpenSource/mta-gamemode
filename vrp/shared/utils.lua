@@ -660,14 +660,3 @@ function switch (searchFor)
 		return result
 	end
 end
-
-
-
-local random = "C"
-print(
- switch(random) {
-  case "A" ("Hello");
-  case "B" ("Hi!");
-  case "default" ("Default");
- }
-)
