@@ -196,13 +196,13 @@ function FactionManager:Event_factionAddPlayer(player)
 	if not faction:isPlayerMember(player) then
 		if not faction:hasInvitation(player) then
 			if faction:isEvilFaction() then
-				if player:getKarma() > -NEEDED_RANK_KARMA[1] then
-					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -NEEDED_RANK_KARMA[1]))
+				if player:getKarma() > -FACTION_MIN_RANK_KARMA[1] then
+					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -FACTION_MIN_RANK_KARMA[1]))
 					return
 				end
 			else
-				if player:getKarma() < NEEDED_RANK_KARMA[1] then
-					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, NEEDED_RANK_KARMA[1]))
+				if player:getKarma() < FACTION_MIN_RANK_KARMA[1] then
+					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, FACTION_MIN_RANK_KARMA[1]))
 					return
 				end
 			end
@@ -301,13 +301,13 @@ function FactionManager:Event_factionRankUp(playerId)
 				player:load()
 			end
 			if faction:isEvilFaction() then
-				if player:getKarma() > -NEEDED_RANK_KARMA[playerRank + 1] then
-					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -NEEDED_RANK_KARMA[playerRank + 1]))
+				if player:getKarma() > -FACTION_MIN_RANK_KARMA[playerRank + 1] then
+					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -FACTION_MIN_RANK_KARMA[playerRank + 1]))
 					return
 				end
 			else
-				if player:getKarma() < NEEDED_RANK_KARMA[playerRank + 1] then
-					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, NEEDED_RANK_KARMA[playerRank + 1]))
+				if player:getKarma() < FACTION_MIN_RANK_KARMA[playerRank + 1] then
+					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, FACTION_MIN_RANK_KARMA[playerRank + 1]))
 					return
 				end
 			end

@@ -19,6 +19,15 @@ FACTION_MAX_RANK_LOANS ={
 	[6] = 3000
 }
 
+FACTION_MIN_RANK_KARMA = {
+	[1] = 25;
+	[2] = 50;
+	[3] = 75;
+	[4] = 100;
+	[5] = 125;
+	[6] = 150;
+}
+
 -- Vehicle Shaders
 factionVehicleShaders = {
 	-- SAPD
