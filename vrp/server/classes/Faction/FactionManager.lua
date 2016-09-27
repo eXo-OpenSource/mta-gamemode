@@ -280,7 +280,7 @@ end
 
 function FactionManager:Event_factionRankUp(playerId)
 	Async.create(
-		function ()
+		function (client)
 			if not playerId then return end
 			local faction = client:getFaction()
 			if not faction then return end
@@ -323,7 +323,7 @@ function FactionManager:Event_factionRankUp(playerId)
 				client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 setzen!", client))
 			end
 		end
-	)()
+	)(client)
 end
 
 function FactionManager:Event_factionRankDown(playerId)
