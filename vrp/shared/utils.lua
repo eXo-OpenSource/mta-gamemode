@@ -630,35 +630,44 @@ function traceback()
     end
 
 -- https://gist.github.com/StiviiK/9736d02a1163ea746e04
-function case_internal (name, value)
-    return {key = name, value = value}
+local function search (key, elements)
+	for i, v in ipairs(elements) do
+		if tostring(v.key) == tostring(key) then
+			if type(v.value) ~= "function" then
+				return v.value
+			else
+				return v.value()
+			end
+		end
+	end
+
+	return false
 end
 
-case = setmetatable({}, {
-    __call = function(self, name)
-        return function(func)
-            return case_internal(name, func)
-        end
-    end
-})
-
-function switch_internal (searchFor, elements, ...)
-    for i, v in ipairs(elements) do
-        if tostring(v.key) == tostring(searchFor) then
-            if type(v.value) ~= "function" then
-                return v.value
-            else
-                return v.value()
-            end
-        end
-    end
+function case (name)
+	return function(value)
+		return {key = name, value = value}
+	end
 end
 
-switch = setmetatable({}, {
-    __call = function(self, searchFor)
-        return function(elements, ...)
-            return switch_internal (searchFor, elements, ...)
-        end
-    end
-})
+function switch (searchFor)
+	return function(elements)
+		local result = search(searchFor, elements)
+		if not result then
+			return search("default", elements)
+		end
 
+		return result
+	end
+end
+
+
+
+local random = "C"
+print(
+ switch(random) {
+  case "A" ("Hello");
+  case "B" ("Hi!");
+  case "default" ("Default");
+ }
+)
