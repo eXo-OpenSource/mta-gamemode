@@ -44,7 +44,7 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -56,6 +56,8 @@ function Admin:constructor()
     addEventHandler("adminSeachPlayerInfo", root, bind(self.Event_getPlayerInfo, self))
     addEventHandler("adminRespawnFactionVehicles", root, bind(self.Event_respawnFactionVehicles, self))
     addEventHandler("adminRespawnCompanyVehicles", root, bind(self.Event_respawnCompanyVehicles, self))
+    addEventHandler("adminVehicleDespawn", root, bind(self.Event_vehicleDespawn, self))
+
 
 end
 
@@ -633,6 +635,15 @@ function Admin:getVehFromId(player, cmd, vehId)
             player:sendError(_("Keine Fahrzeug gefunden!", player))
         else
             player:sendError(_("Keine ID Angegeben!", player))
+        end
+    end
+end
+
+function Admin:Event_vehicleDespawn()
+    if client:getRank() >= RANK.Supporter then
+        if isElement(source) then
+            client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
+            source:destroy()
         end
     end
 end

@@ -54,6 +54,13 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			)
 		end
+		self:addItem(_"Verkaufen",
+			function()
+				if self:getElement() then
+					outputChatBox("[I]Begebe dich zur Stadthalle und besorge dir einen Vertrag zum Verkaufen!",200,200,0,true)
+				end
+			end
+		)
 	end
 
 	if element:getVehicleType() ~= VehicleType.Trailer then
@@ -61,16 +68,6 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			function()
 				if self:getElement() then
 					triggerServerEvent("vehicleEmpty", self:getElement())
-				end
-			end
-		)
-	end
-
-	if owner == localPlayer.name then
-		self:addItem(_"Verkaufen",
-			function()
-				if self:getElement() then
-					outputChatBox("[I]Begebe dich zur Stadthalle und besorge dir einen Vertrag zum Verkaufen!",200,200,0,true)
 				end
 			end
 		)
@@ -136,6 +133,12 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				if self:getElement() then
 					triggerServerEvent("vehicleRepair", self:getElement())
 				end
+			end
+		)
+		self:addItem(_"Admin: despawnen",
+			function()
+				if not self:getElement() then return end
+				triggerServerEvent("adminVehicleDespawn", self:getElement())
 			end
 		)
 		self:addItem(_"Admin: Löschen",
