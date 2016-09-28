@@ -49,6 +49,7 @@ function WeedTruck:destructor()
 	removeEventHandler("onElementDestroy",self.m_Truck,self.m_DestroyFunc)
 	ActionsCheck:getSingleton():endAction()
 	self.m_Truck:destroy()
+	StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "stop", self.m_StartPlayer, self.m_StartFaction, "faction")
 
 	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
 	if isElement(self.m_Blip) then delete(self.m_Blip) end

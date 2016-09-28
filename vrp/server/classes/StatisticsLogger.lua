@@ -65,17 +65,24 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
 end
 
 function StatisticsLogger:addKillLog(player, target, weapon)
-    if isElement(player) then userId = player:getId() end
-	if isElement(target) then targetId = target:getId() end
+    if isElement(player) then userId = player:getId() else userId = player end
+	if isElement(target) then targetId = target:getId() else targetId = target end
 	local range = getDistanceBetweenPoints3D(player:getPosition(), target:getPosition())
     sqlLogs:queryExec("INSERT INTO ??_Kills (UserId, TargetId, Weapon, RangeBetween, Position, Date) VALUES (?, ?, ?, ?, ?, NOW())",
         sqlLogs:getPrefix(), userId, targetId, weapon, range, self:getZone(target))
 end
 
 function StatisticsLogger:addHealLog(player, heal, reason)
-    if isElement(player) then userId = player:getId() end
+	if isElement(player) then userId = player:getId() else userId = player end
     sqlLogs:queryExec("INSERT INTO ??_Heal (UserId, Heal, Reason, Position, Date) VALUES (?, ?, ?, ?, NOW())",
         sqlLogs:getPrefix(), userId, heal, reason, self:getZone(player))
+end
+
+function StatisticsLogger:addActionLog(action, type, player, group, groupType)
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+    if group then groupId = group:getId() end
+    sqlLogs:queryExec("INSERT INTO ??_Actions (Action, UserId, Group, GroupType, Type, Date) VALUES(?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), action, userId, group, groupType, type)
 end
 
 function StatisticsLogger:addTextLog(logname, text)

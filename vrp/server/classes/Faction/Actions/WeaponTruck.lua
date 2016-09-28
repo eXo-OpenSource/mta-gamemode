@@ -82,6 +82,7 @@ end
 function WeaponTruck:destructor()
 	removeEventHandler("onElementDestroy",self.m_Truck,self.m_DestroyFunc)
 	ActionsCheck:getSingleton():endAction()
+	StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_Type], "stop", self.m_StartPlayer, self.m_StartFaction, "faction")
 	self.m_Truck:destroy()
 
 	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end

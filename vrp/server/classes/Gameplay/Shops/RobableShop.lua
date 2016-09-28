@@ -89,6 +89,9 @@ function RobableShop:startRob(shop, attacker, ped)
   self.m_characterInitializedFunc = bind(self.characterInitialized, self)
   addEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
+  StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "start", attacker, self.m_Gang, "group")
+
+
   setTimer(
   function()
     if isElement(attacker) then
@@ -131,6 +134,7 @@ function RobableShop:stopRob(player)
   delete(self.m_EvilBlip)
   delete(self.m_StateBlip)
   delete(self.m_BagBlip)
+  StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
 
   self.m_Gang:removePlayerMarkers()
   removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)

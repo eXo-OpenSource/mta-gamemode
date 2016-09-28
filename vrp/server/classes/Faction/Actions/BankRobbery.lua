@@ -97,6 +97,7 @@ function BankRobbery:destructor()
 	end
 
 	ActionsCheck:getSingleton():endAction()
+	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
 	self:initializeAll()
 end
 
@@ -120,6 +121,8 @@ function BankRobbery:startRob(player)
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
 	self.m_BackDoor:setFrozen(false)
+
+	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "start", self.m_RobPlayer, self.m_RobFaction, "faction")
 
 	faction:sendMessage(_("Euer Spieler %s startet einen Banküberfall! Der Truck wurde gespawnt!", player, player.name), 0, 255, 0)
 	triggerClientEvent("bankAlarm", root, 2318.43, 11.37, 26.48)

@@ -66,6 +66,8 @@ function MWeedTruck:Event_weedTruckStart()
 				if client:getMoney() >= MWeedTruck.Settings["costs"] then
 					self.m_CurrentWeedTruck = WeedTruck:new(client)
 					ActionsCheck:getSingleton():setAction("Weed-Truck")
+					StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "start", client, faction, "faction")
+
 				else
 					hitElement:sendError(_("Du hast nicht genug Geld dabei!",hitElement))
 				end

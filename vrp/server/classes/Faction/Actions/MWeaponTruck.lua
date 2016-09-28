@@ -98,6 +98,8 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 					self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
 					PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
 					ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
+					StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_CurrentType], "start", client, client:getFaction(), "faction")
+
 				end
 			else
 				client:sendError(_("Du hast zuwenig augeladen! Mindestens: %d$",client,self.m_AmountPerBox))
