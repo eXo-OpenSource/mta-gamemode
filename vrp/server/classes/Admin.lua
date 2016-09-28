@@ -643,7 +643,7 @@ function Admin:Event_vehicleDespawn()
     if client:getRank() >= RANK.Supporter then
         if isElement(source) then
             client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
-            source:destroy()
+            source:setDimension(2)
         end
     end
 end
