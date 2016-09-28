@@ -8,6 +8,8 @@
 KeyBindings = inherit(GUIForm)
 inherit(Singleton, KeyBindings)
 
+KeyBindings.DisallowedKeys = {"mouse1", "mouse2", "mouse3", "mouse4", "escape", "arrow_l", "arrow_u", "arrow_r", "arrow_d"}
+
 function KeyBindings:constructor()
   GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
@@ -33,6 +35,16 @@ function KeyBindings:constructor()
    end
 
   self.m_onKeyBind = bind(self.onKeyPressed, self)
+  self:showDefault()
+end
+
+function KeyBindings:showDefault()
+	self.m_SelectedLabel:setText(" ")
+	self.m_SelectedButton:setText(" ")
+	self.m_DefaultButton:setText(" ")
+	self.m_SelectedLabel:setVisible(false)
+	self.m_SelectedButton:setVisible(false)
+	self.m_DefaultButton:setVisible(false)
 end
 
 function KeyBindings:loadGridList()
@@ -64,9 +76,16 @@ end
 
 function KeyBindings:onKeyPressed(key, press)
     if press == false then
-        local item = self.m_KeyGridList:getSelectedItem()
-        self:changeKey(item.index, key)
-        removeEventHandler("onClientKey", root, self.m_onKeyBind)
+		if not table.find(KeyBindings.DisallowedKeys, key:lower()) then
+			local item = self.m_KeyGridList:getSelectedItem()
+			if item and item.index then
+	        	self:changeKey(item.index, key)
+			else
+				ErrorBox:new(_"Keine Belegung in der Liste ausgewählt!")
+			end
+			self:showDefault()
+			removeEventHandler("onClientKey", root, self.m_onKeyBind)
+		end
     end
 end
 

@@ -44,8 +44,13 @@ end
 
 function KeyBinds:unloadBinds()
 	for index, key in pairs(self.m_Keys) do
-		unbindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"])
+	--	local trigger = key["trigger"] or "down"
+	--	local keyName = core:get("KeyBindings", index, key["defaultKey"])
+	--	outputChatBox("Unbind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"]))
+		unbindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"], key["extra"])
 	end
+	--outputChatBox("-------------", 255,0,0)
+
 end
 
 function KeyBinds:changeKey(keyName, newKey)
