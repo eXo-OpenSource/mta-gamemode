@@ -25,10 +25,11 @@ function KeyBindings:constructor()
   self.m_SelectedButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1.2):setVisible(false)
   self.m_SelectedButton.onLeftClick = function () self:waitForKey() end
   self.m_DefaultButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.5, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.Red):setFontSize(1.2):setVisible(false)
-  self.m_DefaultButton.onLeftClick =
-  function ()
+  self.m_DefaultButton.onLeftClick = function ()
       local item = self.m_KeyGridList:getSelectedItem()
-      self:changeKey(item.index, self.ms_Keys[item.index]["defaultKey"])
+	  if item then
+      	self:changeKey(item.index, self.ms_Keys[item.index]["defaultKey"])
+	  end
    end
 
   self.m_onKeyBind = bind(self.onKeyPressed, self)
