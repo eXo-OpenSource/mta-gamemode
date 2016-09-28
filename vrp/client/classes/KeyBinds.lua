@@ -37,19 +37,30 @@ function KeyBinds:constructor()
 end
 
 function KeyBinds:loadBinds()
+	outputChatBox("-------------", 0,255,0)
 	for index, key in pairs(self.m_Keys) do
+		if key["func"] == "chatbox" then
+			local trigger = key["trigger"] or "down"
+			local keyName = core:get("KeyBindings", index, key["defaultKey"])
+			outputChatBox("Bind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
+		end
 		bindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"], key["extra"])
 	end
+	outputChatBox("-------------", 0,255,0)
+
 end
 
 function KeyBinds:unloadBinds()
+	outputChatBox("-------------", 255,0,0)
 	for index, key in pairs(self.m_Keys) do
-	--	local trigger = key["trigger"] or "down"
-	--	local keyName = core:get("KeyBindings", index, key["defaultKey"])
-	--	outputChatBox("Unbind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"]))
-		unbindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"], key["extra"])
+		if key["func"] == "chatbox" then
+			local trigger = key["trigger"] or "down"
+			local keyName = core:get("KeyBindings", index, key["defaultKey"])
+			outputChatBox("Unbind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
+		end
+		unbindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"])
 	end
-	--outputChatBox("-------------", 255,0,0)
+	outputChatBox("-------------", 255,0,0)
 
 end
 
@@ -140,3 +151,24 @@ function KeyBinds:scoreboardGUI(_, keyState)
 		ScoreboardGUI:getSingleton():setVisible(false)
 	end
 end
+
+
+addCommandHandler("checkKeys",function()
+	local keyTable = { "mouse1", "mouse2", "mouse3", "mouse4", "mouse5", "mouse_wheel_up", "mouse_wheel_down", "arrow_l", "arrow_u",
+	 "arrow_r", "arrow_d", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
+	 "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "num_0", "num_1", "num_2", "num_3", "num_4", "num_5",
+	 "num_6", "num_7", "num_8", "num_9", "num_mul", "num_add", "num_sep", "num_sub", "num_div", "num_dec", "F1", "F2", "F3", "F4", "F5",
+	 "F6", "F7", "F8", "F9", "F10", "F11", "F12", "backspace", "tab", "lalt", "ralt", "enter", "space", "pgup", "pgdn", "end", "home",
+	 "insert", "delete", "lshift", "rshift", "lctrl", "rctrl", "[", "]", "pause", "capslock", "scroll", ";", ",", "-", ".", "/", "#", "\\", "=" }
+	 outputChatBox("Bounded chatbox command keys: ", 255, 255, 0)
+	for _,key in ipairs(keyTable)do --loop through keyTable
+		local commands = getCommandsBoundToKey(key, "down")
+		if commands and type(commands) == "table" then
+			for command, state in pairs (commands) do
+				if command == "chatbox" then
+					outputChatBox(key..": "..command)
+				end
+			end
+		end
+	end
+end)
