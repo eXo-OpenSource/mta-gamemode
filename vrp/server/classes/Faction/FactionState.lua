@@ -399,8 +399,10 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				player:toggleControl("fire", false)
 				player:toggleControl("jump", false)
 				player:toggleControl("aim_weapon ", false)
+				local bailcosts = 0
 				if bail then
-					player:setJailBail(BAIL_PRICES[player:getWantedLevel()])
+					bailcosts = BAIL_PRICES[player:getWantedLevel()]
+					player:setJailBail(bailcosts)
 				end
 
 				local factionBonus = JAIL_COSTS[player:getWantedLevel()]
@@ -429,6 +431,9 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 
 				-- Start freeing timer
 				local jailTime = player:getWantedLevel() * 8
+
+				StatisticsLogger:getSingleton():addArrestLog(player, player:getWantedLevel(), jailTime, policeman, bailcosts)
+
 				player.m_JailStart = getRealTime().timestamp
 				player:setData("inJail",true, true)
 				player.m_JailTimer = setTimer(
