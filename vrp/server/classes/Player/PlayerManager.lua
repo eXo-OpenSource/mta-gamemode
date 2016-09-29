@@ -222,12 +222,13 @@ end
 
 
 function PlayerManager:playerChat(message, messageType)
-	if Player.getChatHook():call(source, message, messageType) then
+	if source:isDead() then
 		cancelEvent()
 		return
 	end
 
-	if source:isDead() then
+	if Player.getChatHook():call(source, message, messageType) then
+		cancelEvent()
 		return
 	end
 
