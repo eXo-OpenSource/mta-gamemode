@@ -207,6 +207,15 @@ function Player:loadCharacterInfo()
 end
 
 function Player:initialiseBinds()
+	if self:getFaction() then
+ 		bindKey(self, "1", "down", "chatbox", "Fraktion")
+ 	end
+ 	if self:getCompany() then
+ 		bindKey(self, "2", "down", "chatbox", "Unternehmen")
+ 	end
+ 	if self:getGroup() then
+ 		bindKey(self, "3", "down", "chatbox", "Firma/Gang")
+ 	end
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 	bindKey(self, "g", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleHandBrake( player ) end end)

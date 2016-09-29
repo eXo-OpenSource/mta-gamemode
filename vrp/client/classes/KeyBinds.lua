@@ -28,40 +28,41 @@ function KeyBinds:constructor()
 	  ["KeyToggleCustomMap"]     = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
 	  ["KeyToggleWebPanel"]      = {["defaultKey"] = "F9", ["name"] = "Webpanel", ["func"] = self.m_WebPanel};
 	  ["KeyToggleInventory"]     = {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
-	  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
-	  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
-	  ["KeyChatGroup"]           = {["defaultKey"] = "3", ["name"] = "Chat: Firma/Gang", ["func"] = "chatbox", ["extra"] = "Firma/Gang"};
+
+	  --Disabled cause of MTA Bug #9178
+	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
+	--  ["KeyChatCompany"]         = {["defaultKey"] = "2", ["name"] = "Chat: Unternehmen", ["func"] = "chatbox", ["extra"] = "Unternehmen"};
+	--  ["KeyChatGroup"]           = {["defaultKey"] = "3", ["name"] = "Chat: Firma/Gang", ["func"] = "chatbox", ["extra"] = "Firma/Gang"};
 	}
 
 	self:loadBinds()
 end
 
 function KeyBinds:loadBinds()
-	outputChatBox("-------------", 0,255,0)
+	--outputChatBox("-------------", 0,255,0)
 	for index, key in pairs(self.m_Keys) do
-		if key["func"] == "chatbox" then
-			local trigger = key["trigger"] or "down"
-			local keyName = core:get("KeyBindings", index, key["defaultKey"])
-			outputChatBox("Bind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
-		end
+		--if key["func"] == "chatbox" then
+			--local trigger = key["trigger"] or "down"
+			--local keyName = core:get("KeyBindings", index, key["defaultKey"])
+			--outputChatBox("Bind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
+		--end
 		bindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"], key["extra"])
 	end
-	outputChatBox("-------------", 0,255,0)
+	--outputChatBox("-------------", 0,255,0)
 
 end
 
 function KeyBinds:unloadBinds()
-	outputChatBox("-------------", 255,0,0)
+	--outputChatBox("-------------", 255,0,0)
 	for index, key in pairs(self.m_Keys) do
-		if key["func"] == "chatbox" then
-			local trigger = key["trigger"] or "down"
-			local keyName = core:get("KeyBindings", index, key["defaultKey"])
-			outputChatBox("Unbind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
-		end
+		--if key["func"] == "chatbox" then
+		--	local trigger = key["trigger"] or "down"
+		--	local keyName = core:get("KeyBindings", index, key["defaultKey"])
+		--	outputChatBox("Unbind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
+		--end
 		unbindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"])
 	end
-	outputChatBox("-------------", 255,0,0)
-
+--	outputChatBox("-------------", 255,0,0)
 end
 
 function KeyBinds:changeKey(keyName, newKey)
@@ -152,7 +153,7 @@ function KeyBinds:scoreboardGUI(_, keyState)
 	end
 end
 
-
+--[[
 addCommandHandler("checkKeys",function()
 	local keyTable = { "mouse1", "mouse2", "mouse3", "mouse4", "mouse5", "mouse_wheel_up", "mouse_wheel_down", "arrow_l", "arrow_u",
 	 "arrow_r", "arrow_d", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k",
@@ -172,3 +173,4 @@ addCommandHandler("checkKeys",function()
 		end
 	end
 end)
+]]
