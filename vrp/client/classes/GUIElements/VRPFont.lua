@@ -46,5 +46,6 @@ FontAwesomeSymbols = {
 	Check = "",
 	Square = "",
 	Search = "",
-	Refresh = ""
+	Refresh = "",
+	Expand = ""
 }
