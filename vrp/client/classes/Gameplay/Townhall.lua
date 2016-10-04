@@ -23,9 +23,10 @@ function Townhall:constructor()
 	-- Groups
 	local groupInfoPed = Ped.create(9, Vector3(1828.3, -1271.6, 120.3))
 	groupInfoPed:setRotation(Vector3(0, 0, 182.754))
-	groupInfoPed.Name = _"Stadthalle: Gangs"
+	groupInfoPed.Name = _"private Firma/Gang"
 	groupInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	groupInfoPed.Type = 3
+	groupInfoPed.Func = function() GroupCreationGUI:new() end
 	self.m_Peds[#self.m_Peds + 1] = groupInfoPed
 
 	-- Items
@@ -60,8 +61,12 @@ function Townhall:initalizePeds()
 end
 
 function Townhall:Event_OnPedClick(ped)
-	ShortMessage:new("Clicked-Ped: "..ped.Type)
-	TownhallInfoGUI:getSingleton():openTab(ped.Type)
+	if ped.Func then
+		ped.Func()
+	else
+		ShortMessage:new("Clicked-Ped: "..ped.Type)
+		TownhallInfoGUI:getSingleton():openTab(ped.Type)
+	end
 end
 
 --[[

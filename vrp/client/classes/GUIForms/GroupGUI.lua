@@ -38,7 +38,7 @@ function GroupGUI:constructor()
 	self.m_GroupsKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.25, self.m_Height*0.06, _"Dein Rang:", tabGroups)
 	self.m_GroupsRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.14, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
-	self.m_GroupCreateButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.07, _"Erstellen", true, tabGroups):setBarColor(Color.Green)
+	self.m_GroupCreateLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.14, self.m_Width*0.5, self.m_Height*0.06, _"Du kannst in der Stadthalle eine neue Firma oder Gang gründen!", tabGroups):setMultiline(true)
 	self.m_GroupQuitButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.07, _"Verlassen", true, tabGroups):setBarColor(Color.Red)
 	self.m_GroupDeleteButton = VRPButton:new(self.m_Width*0.74, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.07, _"Löschen", true, tabGroups):setBarColor(Color.Red)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Kasse:", tabGroups)
@@ -61,7 +61,6 @@ function GroupGUI:constructor()
 	self.m_GroupInvitationsDeclineButton = GUIButton:new(self.m_Width*0.225, self.m_Height*0.7, self.m_Width*0.195, self.m_Height*0.06, "✕", tabGroups):setBackgroundColor(Color.Red)
 
 	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
-	self.m_GroupCreateButton.onLeftClick = bind(self.GroupCreateButton_Click, self)
 	self.m_GroupQuitButton.onLeftClick = bind(self.GroupQuitButton_Click, self)
 	self.m_GroupDeleteButton.onLeftClick = bind(self.GroupDeleteButton_Click, self)
 	self.m_GroupMoneyDepositButton.onLeftClick = bind(self.GroupMoneyDepositButton_Click, self)
@@ -137,7 +136,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 		self.m_GroupsRankLabel:setText(rankNames[tostring(rank)])
 		self.m_GroupMoneyLabel:setText(tostring(money).."$")
-		self.m_GroupCreateButton:setVisible(false)
+		self.m_GroupCreateLabel:setVisible(false)
 		self.m_TypeLabel:setText(type..":")
 
 		self.m_GroupPlayersGrid:clear()
@@ -168,7 +167,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 			end
 		end
 	else
-		self.m_GroupCreateButton:setVisible(true)
+		self.m_GroupCreateLabel:setVisible(true)
 	end
 end
 
@@ -214,7 +213,7 @@ function GroupGUI:adjustGroupTab(rank)
 	local isInGroup = rank ~= false
 
 	for k, element in ipairs(self.m_TabGroups:getChildren()) do
-		if element ~= self.m_GroupCreateButton then
+		if element ~= self.m_GroupCreateLabel then
 			element:setVisible(isInGroup)
 		end
 	end
@@ -248,11 +247,6 @@ function GroupGUI:adjustGroupTab(rank)
 			self.m_TabLeader:setVisible(false)
 		end
 	end
-end
-
-function GroupGUI:GroupCreateButton_Click()
-	self:close()
-	GroupCreationGUI:new()
 end
 
 function GroupGUI:GroupQuitButton_Click()
