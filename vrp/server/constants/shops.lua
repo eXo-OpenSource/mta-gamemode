@@ -44,7 +44,6 @@ SHOP_TYPES = {
 	[7] = {
 		["Name"] = "Stadthalle",
 		["Interior"] = {0, Vector3(0, 0, 0)},
-		["Marker"] = Vector3(1831.31, -1274.53, 119.5),
 		["Class"] = ItemShop
 	}
 }

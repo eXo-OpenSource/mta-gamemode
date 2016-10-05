@@ -16,11 +16,18 @@ local BURGER_SHOT_DIMS = {0, 1, 2, 3, 4, 5}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy"}
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI"}
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
 	addEventHandler("shopBuyItem", root, bind(self.buyItem, self))
 	addEventHandler("vehicleBuy", root, bind(self.vehicleBuy, self))
 
+	addEventHandler("shopOpenGUI", root, function(id)
+		if ShopManager.Map[id] then
+			ShopManager.Map[id]:onItemMarkerHit(client, true)
+		else
+			client:sendError(_("Invalid Shop ID!", client))
+		end
+	end)
 end
 
 function ShopManager:destructor()

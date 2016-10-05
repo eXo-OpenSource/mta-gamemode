@@ -19,7 +19,7 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	self.m_LastRob = lastRob
 	self.m_OwnerId = owner
 	self.m_Money = money
-	self.m_Position = position
+	self.m_Position = position or nil
 
 	local interior, intPosition = unpack(typeData["Interior"])
 
@@ -39,9 +39,11 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		end
 	end
 
-	self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 200)
-	self.m_Marker:setInterior(interior)
-	self.m_Marker:setDimension(dimension)
+	if typeData["Marker"] then
+		self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 200)
+		self.m_Marker:setInterior(interior)
+		self.m_Marker:setDimension(dimension)
+	end
 end
 
 function Shop:onFoodMarkerHit(hitElement, dim)

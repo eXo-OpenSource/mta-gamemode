@@ -7,23 +7,24 @@ function Townhall:constructor()
 	-- Job Info
 	local jobInfoPed = Ped.create(12, Vector3(1819.6, -1272.9, 120.3))
 	jobInfoPed:setRotation(Vector3(0, 0, 212.004))
-	jobInfoPed.Name = _"Stadthalle: Jobs"
+	jobInfoPed.Name = _"Spielhilfe"
 	jobInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	jobInfoPed.Type = 1
+	jobInfoPed.Func = function() HelpGUI:new() end
 	self.m_Peds[#self.m_Peds + 1] = jobInfoPed
 
-	-- Activities
+	--[[ Activities
 	local activitiesInfoPed = Ped.create(9, Vector3(1824, -1271.5, 120.3))
 	activitiesInfoPed:setRotation(Vector3(0, 0, 182.754))
 	activitiesInfoPed.Name = _"Stadthalle: Aktivitäten"
 	activitiesInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	activitiesInfoPed.Type = 2
 	self.m_Peds[#self.m_Peds + 1] = activitiesInfoPed
-
+	]]
 	-- Groups
 	local groupInfoPed = Ped.create(9, Vector3(1828.3, -1271.6, 120.3))
 	groupInfoPed:setRotation(Vector3(0, 0, 182.754))
-	groupInfoPed.Name = _"private Firma/Gang"
+	groupInfoPed.Name = _"Private Firmen und Gangs"
 	groupInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	groupInfoPed.Type = 3
 	groupInfoPed.Func = function() GroupCreationGUI:new() end
@@ -32,9 +33,10 @@ function Townhall:constructor()
 	-- Items
 	local itemInfoPed = Ped.create(9, Vector3(1832.8, -1273.5, 120.3))
 	itemInfoPed:setRotation(Vector3(0, 0, 132.754))
-	itemInfoPed.Name = _"Stadthalle: Inventar/Items"
+	itemInfoPed.Name = _"Ausweis / Kaufvertrag"
 	itemInfoPed.Description = _"Für mehr Infos klicke mich an!"
 	itemInfoPed.Type = 4
+	itemInfoPed.Func = function() triggerServerEvent("shopOpenGUI", localPlayer, 50) end
 	self.m_Peds[#self.m_Peds + 1] = itemInfoPed
 
 	-- Initialize
