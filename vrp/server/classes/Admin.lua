@@ -473,28 +473,32 @@ local tpTable = {
         ["ls"] =              {["x"]=1507.3977, ["y"]=-959.6733, ["z"]=36.24750,["typ"] = "Städte"}
     }
 	local x,y,z = 0,0,0
-	if ort then
-		for k,v in pairs(tpTable) do
-			if ort == k then
-                if player:isInVehicle() then
-                    player:getOccupiedVehicle():setPosition(v["x"], v["y"], v["z"])
-                else
-				    player:setPosition(v["x"], v["y"], v["z"])
-                end
-				return
+	if player:getRank() >= ADMIN_RANK_PERMISSION["tp"] then
+		if ort then
+			for k,v in pairs(tpTable) do
+				if ort == k then
+					if player:isInVehicle() then
+						player:getOccupiedVehicle():setPosition(v["x"], v["y"], v["z"])
+					else
+						player:setPosition(v["x"], v["y"], v["z"])
+					end
+					return
+				end
+			end
+			player:sendError(_("Ungültiger Ort! Tippe /tp um alle Orte zu sehen!", player))
+		else
+			outputChatBox("Hier sind alle Orte aufgelistet:", player, 255, 255, 255 )
+			local strings = {}
+			for k,v in pairs(tpTable) do
+				if not strings[v["typ"]] then strings[v["typ"]] = "" end
+				strings[v["typ"]] = strings[v["typ"]]..k.."|"
+			end
+			for v in pairs(strings) do
+				outputChatBox(v..": "..strings[v], player, 0, 125, 0 )
 			end
 		end
-		player:sendError(_("Ungültiger Ort! Tippe /tp um alle Orte zu sehen!", player))
 	else
-		outputChatBox("Hier sind alle Orte aufgelistet:", player, 255, 255, 255 )
-		local strings = {}
-		for k,v in pairs(tpTable) do
-			if not strings[v["typ"]] then strings[v["typ"]] = "" end
-			strings[v["typ"]] = strings[v["typ"]]..k.."|"
-		end
-		for v in pairs(strings) do
-			outputChatBox(v..": "..strings[v], player, 0, 125, 0 )
-		end
+		player:sendError(_("Du bist kein Admin!", player))
 	end
 end
 
