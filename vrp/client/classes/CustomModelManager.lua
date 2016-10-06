@@ -53,6 +53,14 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/mostWanted.col", 1903)
 	self:loadImportDFF("files/models/mostWanted.dff", 1903)
 
+	self:loadImportTXD("files/models/medic.txd", 5708)
+	self:loadImportCOL("files/models/medic.col", 5708)
+	self:loadImportDFF("files/models/medic.dff", 5708)
+
+	self:loadImportTXD("files/models/medicStreetFix.txd", 5810)
+	self:loadImportCOL("files/models/medicStreetFix.col", 5810)
+	self:loadImportDFF("files/models/medicStreetFix.dff", 5810)
+
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

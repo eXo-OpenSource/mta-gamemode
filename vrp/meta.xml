@@ -1208,7 +1208,12 @@
 	<vrpfile src="files/models/mostWanted.txd" />
 	<vrpfile src="files/models/mostWanted.dff" />
 	<vrpfile src="files/models/mostWanted.col" />
-
+	<vrpfile src="files/models/medic.txd" />
+	<vrpfile src="files/models/medic.dff" />
+	<vrpfile src="files/models/medic.col" />
+	<vrpfile src="files/models/medicStreetFix.txd" />
+	<vrpfile src="files/models/medicStreetFix.dff" />
+	<vrpfile src="files/models/medicStreetFix.col" />
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
