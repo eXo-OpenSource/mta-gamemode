@@ -342,10 +342,12 @@ function FactionManager:Event_factionRankDown(playerId)
 		return
 	end
 
-	if faction:getPlayerRank(playerId) >= FactionRank.Manager then
+	if faction:getPlayerRank(playerId)-1 >= FactionRank.Normal then
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
 		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
 		self:sendInfosToClient(client)
+	else
+		client:sendError(_("Du kannst Spieler nicht niedriger als auf Rang 0 setzen!", client))
 	end
 end
 

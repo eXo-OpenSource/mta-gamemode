@@ -270,7 +270,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 		return
 	end
 
-	if company:getPlayerRank(playerId) >= CompanyRank.Manager then
+    if company:getPlayerRank(playerId)-1 >= CompanyRank.Normal then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
 		self:sendInfosToClient(client)

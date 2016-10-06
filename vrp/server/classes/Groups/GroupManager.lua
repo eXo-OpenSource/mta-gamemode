@@ -355,7 +355,7 @@ function GroupManager:Event_groupRankDown(playerId)
 		return
 	end
 
-	if group:getPlayerRank(playerId) == GroupRank.Manager then
+	if group:getPlayerRank(playerId)-1 >= GroupRank.Normal then
 		group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
 		group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." degradiert!")
 		self:sendInfosToClient(client)
