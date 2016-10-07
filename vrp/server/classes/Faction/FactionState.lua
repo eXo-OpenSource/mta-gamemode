@@ -389,26 +389,35 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 		if policeman:isFactionDuty() then
 			if player:getWantedLevel() > 0 then
 				local bailcosts = 0
+				local wantedLevel = player:getWantedLevel()
+				local jailTime = wantedLevel * 8
+				local factionBonus = JAIL_COSTS[wantedLevel]
+
 				if bail then
-					bailcosts = BAIL_PRICES[player:getWantedLevel()]
+					bailcosts = BAIL_PRICES[wantedLevel]
 					player:setJailBail(bailcosts)
 				end
 
-				local factionBonus = JAIL_COSTS[player:getWantedLevel()]
-
-				if player:getMoney() < JAIL_COSTS[player:getWantedLevel()] then
+				if player:getMoney() < JAIL_COSTS[wantedLevel] then
 					factionBonus = player:getMoney()
 				end
+
 				player:takeMoney(factionBonus)
-				player:giveKarma(-player:getWantedLevel())
+				player:giveKarma(-wantedLevel)
+				player:setJailTime(jailTime)
+				player:setWantedLevel(0)
+				player:moveToJail(CUTSCENE)
+				player:clearCrimes()
 
 				-- Pay some money to faction and karma, xp to the policeman
 				policeman:getFaction():giveMoney(factionBonus, "Arrest")
-				policeman:giveKarma(player:getWantedLevel())
-				policeman:givePoints(player:getWantedLevel())
+				policeman:giveKarma(wantedLevel)
+				policeman:givePoints(wantedLevel)
+				policeman:getFaction():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus))
+				StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
 
 				-- Give Achievements
-				if player:getWantedLevel() > 4 then
+				if wantedLevel > 4 then
 					policeman:giveAchievement(48)
 				else
 					policeman:giveAchievement(47)
@@ -417,20 +426,6 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				setTimer(function () -- (delayed)
 					player:giveAchievement(31)
 				end, 14000, 1)
-
-				-- Start freeing timer
-				local jailTime = player:getWantedLevel() * 8
-				player:setJailTime(jailTime)
-				StatisticsLogger:getSingleton():addArrestLog(player, player:getWantedLevel(), jailTime, policeman, bailcosts)
-
-				player:setWantedLevel(0)
-				player:moveToJail(CUTSCENE)
-
-				player:clearCrimes()
-
-				policeman:getFaction():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus))
-				StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat %s soeben für %d Minuten eingesperrt! Strafe: %d$"):format(policeman:getName(), player:getName(), jailTime, factionBonus))
-
 
 			else
 				policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
