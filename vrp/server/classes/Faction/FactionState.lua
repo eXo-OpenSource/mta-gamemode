@@ -423,6 +423,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				player:setJailTime(jailTime)
 				StatisticsLogger:getSingleton():addArrestLog(player, player:getWantedLevel(), jailTime, policeman, bailcosts)
 
+				player:setWantedLevel(0)
 				player:moveToJail(CUTSCENE)
 
 				player:clearCrimes()
