@@ -295,34 +295,7 @@ function Player:spawn( )
 
 		if self.m_JailTime then
 			if self.m_JailTime > 0 then
-				local rnd = math.random(1, #Jail.Cells)
-				self:setPosition(Jail.Cells[rnd])
-				self:setInterior(0)
-				self:setDimension(0)
-				self:setRotation(0, 0, 90)
-				self:toggleControl("fire", false)
-				self:toggleControl("jump", false)
-				self:toggleControl("aim_weapon ", false)
-				self:setJailBail( self.m_Bail )
-				self.m_JailStart = getRealTime().timestamp
-				self:setData("inJail",true, true)
-				self.m_JailTimer = setTimer(
-				function()
-					if isElement(self) then
-						self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-						self:setRotation(0, 0, 90)
-						self:setWantedLevel(0)
-						self:toggleControl("fire", true)
-						self:toggleControl("jump", true)
-						self:toggleControl("aim_weapon ", true)
-						self.m_JailStart = nil
-						self.m_JailTimer = nil
-						self.m_JailTime = 0
-						self:triggerEvent("playerLeftJail")
-						self:setData("inJail",false, true)
-					end
-				end, self.m_JailTime*60000, 1)
-				self:triggerEvent("playerJailed", self.m_JailTime, false)
+				self:moveToJail(false)
 			end
 		end
 
@@ -861,5 +834,41 @@ function Player:meChat(system, ...)
 	end
 	if not system then
 		StatisticsLogger:getSingleton():addChatLog(self, "me", text, toJSON(receivedPlayers))
+	end
+end
+
+function Player:moveToJail(CUTSCENE)
+	if self.m_JailTime > 0 then
+		local rnd = math.random(1, #Jail.Cells)
+		self:respawn()
+		self:setPosition(Jail.Cells[rnd])
+		self:setInterior(0)
+		self:setDimension(0)
+		self:setRotation(0, 0, 90)
+		self:toggleControl("fire", false)
+		self:toggleControl("jump", false)
+		self:toggleControl("aim_weapon ", false)
+
+		self.m_JailStart = getRealTime().timestamp
+		self:setData("inJail",true, true)
+		self.m_JailTimer = setTimer(
+			function()
+				if isElement(self) then
+					self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+					self:setRotation(0, 0, 90)
+					self:setWantedLevel(0)
+					self:toggleControl("fire", true)
+					self:toggleControl("jump", true)
+					self:toggleControl("aim_weapon ", true)
+					self.m_JailStart = nil
+					self.m_JailTimer = nil
+					self:setJailTime(0)
+					self:triggerEvent("playerLeftJail")
+					self:setData("inJail",false, true)
+				end
+			end, self.m_JailTime * 60000, 1
+		)
+
+		self:triggerEvent("playerJailed", self.m_JailTime, CUTSCENE)
 	end
 end

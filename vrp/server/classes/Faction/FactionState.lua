@@ -383,26 +383,15 @@ function FactionState:Command_needhelp(player)
 	end
 end
 
-
 function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 	local policeman = police or client
 	if policeman:getFaction() and policeman:getFaction():isStateFaction() then
 		if policeman:isFactionDuty() then
 			if player:getWantedLevel() > 0 then
-				-- Teleport to jail
-				local rnd = math.random(1, #Jail.Cells)
-				player:respawn()
-				player:setPosition(Jail.Cells[rnd])
-				player:setInterior(0)
-				player:setDimension(0)
-				player:setRotation(0, 0, 90)
-				player:toggleControl("fire", false)
-				player:toggleControl("jump", false)
-				player:toggleControl("aim_weapon ", false)
 				local bailcosts = 0
 				if bail then
 					bailcosts = BAIL_PRICES[player:getWantedLevel()]
-					player:setJailBail(bailcosts)
+					self:setJailBail(bailcosts)
 				end
 
 				local factionBonus = JAIL_COSTS[player:getWantedLevel()]
@@ -431,35 +420,17 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 
 				-- Start freeing timer
 				local jailTime = player:getWantedLevel() * 8
-
+				player:setJailTime(jailTime)
 				StatisticsLogger:getSingleton():addArrestLog(player, player:getWantedLevel(), jailTime, policeman, bailcosts)
 
-				player.m_JailStart = getRealTime().timestamp
-				player:setData("inJail",true, true)
-				player.m_JailTimer = setTimer(
-					function()
-						if isElement(player) then
-							player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-							player:setRotation(0, 0, 90)
-							player:setWantedLevel(0)
-							player:toggleControl("fire", true)
-							player:toggleControl("jump", true)
-							player:toggleControl("aim_weapon ", true)
-							player.m_JailStart = nil
-							player.m_JailTimer = nil
-							player.m_JailTime = 0
-							player:triggerEvent("playerLeftJail")
-							player:setData("inJail",false, true)
-						end
-					end, jailTime * 60000, 1
-				)
+				player:moveToJail(CUTSCENE)
 
 				player:clearCrimes()
 
 				policeman:getFaction():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus))
 				StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat %s soeben für %d Minuten eingesperrt! Strafe: %d$"):format(policeman:getName(), player:getName(), jailTime, factionBonus))
 
-				player:triggerEvent("playerJailed", jailTime, CUTSCENE)
+
 			else
 				policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
 			end
@@ -484,7 +455,7 @@ function FactionState:Command_bail( player )
 					player:toggleControl("jump", true)
 					player:toggleControl("aim_weapon ", true)
 					player.m_JailTimer = nil
-					player.m_JailTime = 0
+					player:setJailTime(0)
 					player:sendInfo(_("Sie haben sich mit der Kaution von %s$ freigekauft!", player, player.m_Bail))
 					player.m_Bail = 0
 					StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat sich für %d Dollar freigekauft!"):format(player:getName(), player.m_Bail))
