@@ -129,7 +129,8 @@ function AdminGUI:constructor()
 	self.m_FullScreen = GUIButton:new(self.m_Width-50, 5, 30, 30, FontAwesomeSymbols.Expand, tabWeb):setFont(FontAwesome(15))
 	self.m_FullScreen.onLeftClick = function ()
 		self:close()
-		WebBrowser:new(webPanelUrl)
+		local url = self.m_WebPanel:getUnderlyingBrowser():getURL()
+		WebBrowser:new(url)
 	end
 
 
