@@ -258,7 +258,9 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 		faction:removeInvitation(client)
 		faction:addLog(client, "Fraktion", "ist der Fraktion beigetreten!")
 		faction:sendMessage(_("%s ist soeben der Fraktion beigetreten", client, getPlayerName(client)))
-		faction:changeSkin(client)
+		if faction:isEvilFaction() then
+			faction:changeSkin(client)
+		end
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
