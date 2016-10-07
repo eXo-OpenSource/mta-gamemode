@@ -37,6 +37,7 @@ function JobLumberjack:start()
 	for k, v in ipairs(JobLumberjack.Trees) do
 		local x, y, z, rotation = unpack(v)
 		local object = createObject(656, x, y, z, 0, 0, rotation)
+		object.Blip = Blip:new("SmallPoint.png", x, y)
 		table.insert(self.m_Trees, object)
 		addEventHandler("onClientObjectDamage", object, func)
 	end
@@ -48,13 +49,14 @@ function JobLumberjack:start()
 	end
 
 	self.m_SawMillBlip = Blip:new("RedSaw.png", -1969.8, -2432.6)
-
+	ShortMessage:new(_"Säge die auf der Karte markierten Bäume mit der Motorsäge um.")
 	-- Show text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Lumberjack), _(HelpTexts.Jobs.Lumberjack))
 end
 
 function JobLumberjack:stop()
 	for k, v in ipairs(self.m_Trees) do
+		if v and v.Blip then delete(v.Blip) end
 		if v and isElement(v) then
 			destroyElement(v)
 		end
@@ -92,7 +94,7 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 
 					-- Add tree to stack
 					if not self:addStackedTree() then
-						localPlayer:sendMessage(_"The wood pile is full. Please transport the trees first to earn more money")
+						localPlayer:sendMessage(_"Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk! (rote Säge auf der Map)")
 					end
 
 					-- "Respawn" the tree after a while
