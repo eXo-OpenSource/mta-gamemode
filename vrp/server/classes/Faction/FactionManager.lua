@@ -142,6 +142,7 @@ end
 function FactionManager:Event_factionDeposit(amount)
 	local faction = client:getFaction()
 	if not faction then return end
+	if not amount then return end
 
 	if client:getMoney() < amount then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
@@ -158,6 +159,7 @@ end
 function FactionManager:Event_factionWithdraw(amount)
 	local faction = client:getFaction()
 	if not faction then return end
+	if not amount then return end
 
 	if faction:getPlayerRank(client) < FactionRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))

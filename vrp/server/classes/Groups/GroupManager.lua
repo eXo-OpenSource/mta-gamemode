@@ -201,6 +201,7 @@ end
 function GroupManager:Event_groupDeposit(amount)
 	local group = client:getGroup()
 	if not group then return end
+	if not amount then return end
 
 	if client:getMoney() < amount then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
@@ -216,6 +217,7 @@ end
 function GroupManager:Event_groupWithdraw(amount)
 	local group = client:getGroup()
 	if not group then return end
+	if not amount then return end
 
 	if group:getPlayerRank(client) < GroupRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))

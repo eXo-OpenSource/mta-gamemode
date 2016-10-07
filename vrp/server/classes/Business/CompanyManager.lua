@@ -103,6 +103,7 @@ end
 function CompanyManager:Event_companyDeposit(amount)
 	local company = client:getCompany()
 	if not company then return end
+    if not amount then return end
 
 	if client:getMoney() < amount then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
@@ -120,6 +121,7 @@ end
 function CompanyManager:Event_companyWithdraw(amount)
 	local company = client:getCompany()
 	if not company then return end
+    if not amount then return end
 
 	if company:getPlayerRank(client) < CompanyRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))
