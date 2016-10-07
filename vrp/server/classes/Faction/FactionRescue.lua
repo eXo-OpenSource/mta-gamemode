@@ -10,7 +10,7 @@ addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "f
 
 function FactionRescue:constructor()
 	-- Duty Pickup
-	self:createDutyPickup(1720.80, -1772.05, 13.88,0)
+	self:createDutyPickup(1184.31, -1391.28, 6.28, 0)
 
 	self.m_Skins = {}
 	self.m_Skins["medic"] = {70, 71, 274, 275, 276}
@@ -19,15 +19,15 @@ function FactionRescue:constructor()
 	self.m_LastStrecher = {}
 
 	-- Barriers
-	VehicleBarrier:new(Vector3(1743.09, -1742.30, 13.30), Vector3(0, 90, -180)).onBarrierHit = bind(self.onBarrierHit, self)
-	VehicleBarrier:new(Vector3(1740.59, -1807.80, 13.40), Vector3(0, 90, -15.75)).onBarrierHit = bind(self.onBarrierHit, self)
-	VehicleBarrier:new(Vector3(1811.50, -1761.50, 13.40), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierHit, self)
+	--VehicleBarrier:new(Vector3(1743.09, -1742.30, 13.30), Vector3(0, 90, -180)).onBarrierHit = bind(self.onBarrierHit, self)
+	--VehicleBarrier:new(Vector3(1740.59, -1807.80, 13.40), Vector3(0, 90, -15.75)).onBarrierHit = bind(self.onBarrierHit, self)
+	--VehicleBarrier:new(Vector3(1811.50, -1761.50, 13.40), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierHit, self)
 
 	self.m_Faction = FactionManager.Map[4]
 
 	nextframe( -- Todo workaround
 		function ()
-			local safe = createObject(2332, 1783.90, -1773.70, 13.60)
+			local safe = createObject(2332, 1187.70, -1396.50, 6.4, 0, 0, 180)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
 		end
 	)
