@@ -391,7 +391,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				local bailcosts = 0
 				if bail then
 					bailcosts = BAIL_PRICES[player:getWantedLevel()]
-					self:setJailBail(bailcosts)
+					player:setJailBail(bailcosts)
 				end
 
 				local factionBonus = JAIL_COSTS[player:getWantedLevel()]
