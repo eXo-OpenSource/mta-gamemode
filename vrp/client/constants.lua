@@ -305,7 +305,7 @@ HelpTexts = {
 			Dein Ziel wird dir auf der Karte markiert.
 		]];
 		Lumberjack = [[
-			Als Holzfäller musst du die Bäume am Hügel fällen und sie zum Sägewerk fahren.
+			Als Holzfäller musst du die Bäume am Hügel (gelb markiert auf der Karte) fällen und sie zum Sägewerk fahren.
 			Sofern du genug Bäume gefällt hast schnappst du dir einen Flatbed und fährst in den
 			blauen Marker, neben welchem sich ein Haufen von Bäumen angesammelt hat (deine gefällten Bäume).
 			Nun werden diese Bäume aufgeladen. Nachdem sie aufgeladen wurden musst du zum Sägewerk fahren (die rote Säge auf der Karte).

@@ -92,6 +92,12 @@ function StatisticsLogger:addArrestLog(player, wanteds, duration, policeMan, bai
         sqlLogs:getPrefix(), userId, wanteds, duration, policeId, bail)
 end
 
+function StatisticsLogger:addAmmunationLog(player, type, weapons, costs)
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_Ammunation (UserId, Type, Weapons, Costs, Position, Date) VALUES(?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, type, weapons, costs, self:getZone(player))
+end
+
 function StatisticsLogger:addTextLog(logname, text)
 	local filePath = self.m_TextLogPath..logname..".log"
 

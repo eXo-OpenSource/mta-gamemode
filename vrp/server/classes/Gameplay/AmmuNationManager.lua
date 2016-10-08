@@ -77,6 +77,7 @@ function AmmuNationManager:onAmmunationAppOrder(weaponTable)
 		if client:getMoney() >= totalAmount then
 			if totalAmount > 0 then
 				client:takeMoney(totalAmount, "AmmuNation Bestellung")
+				StatisticsLogger:getSingleton():addAmmunationLog(client, "Bestellung", toJSON(weaponTable), totalAmount)
 				self:createOrder(client, weaponTable)
 			else
 				client:sendError(_("Du hast keine Artikel im Warenkorb!",client))
@@ -102,6 +103,7 @@ function AmmuNationManager:createOrder(player, weaponTable)
 		addEventHandler("onPickupHit", pickup, function(hitElement)
 			if hitElement:getType() == "player" and not hitElement:getOccupiedVehicle() then
 				self:giveWeaponsFromOrder(hitElement, weaponTable)
+				StatisticsLogger:getSingleton():addAmmunationLog(hitElement, "Pickup", toJSON(weaponTable), 0)
 				source:destroy()
 			end
 		end)
@@ -144,6 +146,8 @@ function AmmuNationManager:buyWeapon(id)
 				giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
 				client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
 				client:sendShortMessage(_("Waffe erhalten.",client))
+				local weaponTable = toJSON({[id] = AmmuNationInfo[id].Magazine.amount})
+				StatisticsLogger:addAmmunationLog(client, "Shop", weaponTable, AmmuNationInfo[id].Weapon)
 				return
 			else
 				if id == 0 then
@@ -170,6 +174,8 @@ function AmmuNationManager:buyMagazine(id)
 		giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
 		client:takeMoney(AmmuNationInfo[id].Magazine.price, "Ammunation")
 		client:sendShortMessage(_("Munition erhalten.",client))
+		local weaponTable = toJSON({[id] = AmmuNationInfo[id].Magazine.amount})
+		StatisticsLogger:addAmmunationLog(client, "Shop", weaponTable, AmmuNationInfo[id].Magazine.price)
 		return
 	end
 	client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
