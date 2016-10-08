@@ -56,6 +56,7 @@ function VehicleTuningGUI:constructor(vehicle)
         self.m_CurrentUpgrades[slot] = getVehicleUpgradeOnSlot(self.m_Vehicle, slot)
     end
     local r1, g1, b1, r2, g2, b2 = self.m_Vehicle:getColor(true)
+
     self.m_CurrentUpgrades[VehicleSpecialProperty.Color] = {r1, g1, b1}
     self.m_CurrentUpgrades[VehicleSpecialProperty.Color2] = {r2, g2, b2}
 	self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor] = {self.m_Vehicle:getHeadLightColor()}
@@ -198,7 +199,10 @@ function VehicleTuningGUI:resetUpgrades()
             self.m_Vehicle:addUpgrade(upgradeId)
         end
     end
-    self.m_Vehicle:setColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color]), unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color2]))
+    local r1, g1, b1 = unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color])
+    local r2, g2, b2 = unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.Color2])
+    self.m_Vehicle:setColor(r1, g1, b1, r2, g2, b2)
+
     self.m_Vehicle:setHeadLightColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor]))
     if self.m_CurrentUpgrades[VehicleSpecialProperty.Neon] == 1 then
         Neon.Vehicles[self.m_Vehicle] = true
@@ -217,8 +221,9 @@ function VehicleTuningGUI:resetUpgrades()
         end
 
         if slot == VehicleSpecialProperty.Color then
+            local r1, g1, b1, r2, g2, b2 = self.m_Vehicle:getColor(true)
             local r, g, b = unpack(upgradeId)
-            self.m_Vehicle:setColor(r, g, b)
+            self.m_Vehicle:setColor(r, g, b, r2, g2, b2)
         end
         if slot == VehicleSpecialProperty.Color2 then
             local r1, g1, b1 = self.m_Vehicle:getColor(true)
@@ -278,24 +283,41 @@ function VehicleTuningGUI:PartItem_Click(item)
     self:resetUpgrades()
     self.m_UpgradeChanger:setVisible(true)
     self.m_AddToCartButton:setVisible(true)
+
     self:closeAllWindows()
     self:moveCameraToSlot(item.PartSlot)
+    local r1, g1, b1, r2, g2, b2 = self.m_Vehicle:getColor(true)
     if item.PartSlot then
         -- Check for special properties
         if item.PartSlot == VehicleSpecialProperty.Color then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
-            self.m_ColorPicker = ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.Color, _"Farbe", {r, g, b}) end, function(r, g, b) self.m_Vehicle:setColor(r, g, b) end)
+            self.m_ColorPicker = ColorPickerGUI:new(
+            function(r, g, b)
+                self:addPartToCart(VehicleSpecialProperty.Color, _"Farbe", {r, g, b}) end,
+                    function(r, g, b)
+                        self.m_Vehicle:setColor(r, g, b, r2, g2, b2)
+                    end
+            )
+            self.m_ColorPicker:setColor(r1, g1, b1)
             return
         elseif item.PartSlot == VehicleSpecialProperty.Color2 then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
-            self.m_ColorPicker = ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.Color2, _"2. Farbe", {r, g, b}) end, function(r, g, b) local r1, g1, b1 = self.m_Vehicle:getColor(true) self.m_Vehicle:setColor(r1, g1, b1, r, g, b) end)
+            self.m_ColorPicker = ColorPickerGUI:new(
+            function(r, g, b)
+                self:addPartToCart(VehicleSpecialProperty.Color2, _"2. Farbe", {r, g, b}) end,
+                    function(r, g, b)
+                        self.m_Vehicle:setColor(r1, g1, b1, r, g, b)
+                    end
+            )
+            self.m_ColorPicker:setColor(r2, g2, b2)
             return
         elseif item.PartSlot == VehicleSpecialProperty.LightColor then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
             self.m_ColorPicker = ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.LightColor, _"Licht-Farbe", {r, g, b}) end, function(r, g, b) self.m_Vehicle:setHeadLightColor(r, g, b) end)
+            self.m_ColorPicker:setColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor]))
             return
         elseif item.PartSlot == VehicleSpecialProperty.Neon then
             self.m_UpgradeChanger:setVisible(false)
@@ -325,6 +347,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
             self.m_ColorPicker = ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.NeonColor, _"Neon-Farbe", {r, g, b}) end, function(r, g, b) setElementData(self.m_Vehicle, "NeonColor", {r, g, b}) end)
+            self.m_ColorPicker:setColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.NeonColor]))
             return
         elseif item.PartSlot == VehicleSpecialProperty.Horn then
             self.m_UpgradeChanger:setVisible(false)
