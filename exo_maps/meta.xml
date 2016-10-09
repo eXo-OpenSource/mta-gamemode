@@ -63,7 +63,8 @@
 	<map src="zollstationen.map" />
   	<map src="hospital.map" />
 	<map src="airport.map" />
-	
+	<map src="shootingranch.map" />
+
 	<map src="tankstellen_removals.map" />
 	
 	<map src="stadthalle.map" />

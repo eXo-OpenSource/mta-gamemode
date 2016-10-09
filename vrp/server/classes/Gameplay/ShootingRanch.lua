@@ -7,6 +7,7 @@
 -- ****************************************************************************
 
 ShootingRanch = inherit(Singleton)
+addRemoteEvents{"ShootingRanch:onTargetHit", "ShootingRanch:Finish"}
 
 ShootingRanch.Weapons = {
 	[22] = {["Time"] = 120, ["Hit"] = 35, ["Price"] = 2000, ["Ammo"] = 90},
@@ -21,6 +22,8 @@ function ShootingRanch:constructor()
 		[3] = createColSphere(-7186.60, -2474.8, 31.5, 2)
 	}
 	self:addTargets()
+
+	addEventHandler("ShootingRanch:onTargetHit", root, bind(self.onTargetHit, self))
 end
 
 function ShootingRanch:startLession(player, weapon)
@@ -39,8 +42,10 @@ function ShootingRanch:startLession(player, weapon)
 			return
 		end
 		setElementData(player, "hits", 0)
+		setElementData(player,"firstmuni", weaponData["Ammo"])
 
-		player:giveWeapon(weapon, weaponData["Ammo"])
+		takeAllWeapons(player)
+		giveWeapon(player, weapon, weaponData["Ammo"], true)
 
 		toggleAllControls(player,false)
 		toggleControl(player,"fire",true)
@@ -56,10 +61,10 @@ function ShootingRanch:warpPlayerWaffenbox(player)
 		player:setDimension(0)
 		player:setInterior(0)
 		player:setPosition(freesphere:getPosition())
-		player:setRotation(270)
+		player:setRotation(0, 0, 270)
 		setElementData(player, "isInShootingRange", true)
 		setElementData(player, "shootingFrom", "sf")
-		triggerClientEvent(player,"shootingRangeShowStats", player)
+		player:triggerEvent("startClientShootingRanch")
 		return true
 	else
 		player:sendError(_("Keine freie Waffenbox! Bitte warte ein wenig!", player))
@@ -127,13 +132,11 @@ function ShootingRanch:onTargetHit(object)
 	if isTimer(getElementData(object, "timer")) then killTimer(getElementData(object, "timer")) end
 	setElementData(object, "hitAble", false)
 end
-addEvent("onTargetHit", true)
-addEventHandler("onTargetHit", getRootElement(), onTargetHit)
 
 function ShootingRanch:reactivateTarget(object)
 	if not isElement(object) then return false end
 	object:stop()
-	object:move(moveTime, object:getPosition(), -90)
+	object:move(200, object:getPosition(), -90)
 	setTimer(bind(self.moveTargetOtherSide, self), 201, 1, object, math.random(0,1))
 	setTimer(setElementData, 202, 1, object, "hitAble", true)
 end

@@ -145,6 +145,7 @@
 	<script src="server/classes/Gameplay/Slotmachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/Townhall.lua" type="server"/>
 	<script src="server/classes/Gameplay/SpeedCamera.lua" type="server"/>
+	<script src="server/classes/Gameplay/ShootingRanch.lua" type="server"/>
 
 	<!--<script src="server/classes/Gameplay/Police.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
@@ -609,6 +610,7 @@
 	<script src="client/classes/Gameplay/Slotmachine.lua" type="client"/>
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
+	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 
 	<!-- Minigames -->
 	<script src="client/classes/Gameplay/Minigames/Animations.lua" type="client"/>
