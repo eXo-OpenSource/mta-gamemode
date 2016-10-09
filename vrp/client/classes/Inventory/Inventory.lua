@@ -225,9 +225,9 @@ function Inventory:addItemSlots(count, parent)
 		if i%7 == 0 then row = row + 1 end
 	end
 
-	-- Calculate new parent size
-	parent:setSize(x, y + (y*0.455)*(row-1))
-	self.m_Window:setSize(x, y + (y*0.455)*(row-1)+200)
+	--Calculate new parent size
+	--parent:setSize(x, y + (y*0.455)*(row-1))
+	--self.m_Window:setSize(x, y + (y*0.455)*(row-1)+200)
 	--parent.m_Background:setSize(x, y + (y*0.455)*(row-1))
 	--parent.m_BackgroundRound:setSize(x, y + (y*0.455)*(row-1))
 end
@@ -259,6 +259,7 @@ end
 
 function Inventory:onShow()
 	showCursor(true)
+	self:setAbsolutePosition(screenWidth/2 - 330/2, screenHeight/2 - (160+106)/2, 330, (80+106))
 	triggerServerEvent("refreshInventory", localPlayer)
 	self:loadItems()
 end
