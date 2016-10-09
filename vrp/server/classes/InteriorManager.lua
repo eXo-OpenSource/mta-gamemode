@@ -47,6 +47,7 @@ function InteriorManager:createDefaultInteriors()
     -- Copied over from InteriorEnterExit
 	local data = {
 		{1554.8, -1675.7, 16, 246.7, 63, 1003.64, 0, 90, 6},
+        {1567.91, -1898.01, 13.56, 460.56, -88.65, 999.55, 90, 0, 4}
 	}
 
 	for k, info in pairs(data) do
