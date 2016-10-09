@@ -41,6 +41,7 @@ function Admin:constructor()
     addCommandHandler("rkick", adminCommandBind)
     addCommandHandler("warn", adminCommandBind)
     addCommandHandler("spect", adminCommandBind)
+    addCommandHandler("clearchat", adminCommandBind)
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
@@ -70,6 +71,7 @@ function Admin:destructor()
     removeCommandHandler("rkick", adminCommandBind)
     removeCommandHandler("warn", adminCommandBind)
     removeCommandHandler("spect", adminCommandBind)
+    removeCommandHandler("clearchat", adminCommandBind)
 	removeCommandHandler("a", bind(self.chat, self))
 	removeCommandHandler("o", bind(self.ochat, self))
 end
@@ -164,7 +166,7 @@ function Admin:Event_respawnCompanyVehicles(Id)
 end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)
-    if cmd == "smode" then
+    if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
     else
         if targetName then
@@ -252,6 +254,14 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:addPunishLog(admin, target, func, "", 0)
         elseif func == "supportMode" or func == "smode" then
             self:toggleSupportMode(admin)
+        elseif func == "clearchat" or func == "clearChat" then
+            for index, player in pairs(Element.getAllByType("player")) do
+                for i=0, 2100 do
+                    player:outputChat(" ")
+                end
+                self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
+                player:triggerEvent("closeAd")
+            end
         elseif func == "adminAnnounce" then
             local text = target
             triggerClientEvent("announceText", admin, text)

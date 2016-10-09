@@ -33,6 +33,7 @@ ADMIN_RANK_PERMISSION = {
 	["warn"] = RANK.Supporter,
 	["respawnFaction"] = RANK.Supporter,
 	["respawnCompany"] = RANK.Supporter,
+	["clearChat"] = RANK.Supporter,
 	["addWarn"] = RANK.Supporter,
 	["tp"] = RANK.Supporter,
 	["timeban"] = RANK.Moderator,

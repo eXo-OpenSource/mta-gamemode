@@ -36,10 +36,11 @@ function AdminGUI:constructor()
 	GUILabel:new(10, 10, 150, 30, _"Adminansage:", tabAllgemein):setColor(Color.White)
 	self.m_AdminAnnounceText = GUIEdit:new(150, 10, 330, 30,tabAllgemein)
 	self:addAdminButton("adminAnnounce", "senden", 490, 10, 100, 30, Color.LightBlue, tabAllgemein)
+	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", 10, 50, 250, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", 10, 100, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
+	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 190, 250, 30, Color.Red, tabAllgemein)
 
-	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", 10, 50, 250, 30, Color.Green, tabAllgemein)
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
 	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"↑",  tabAllgemein):setBackgroundColor(Color.Orange)
 	self.m_portNorth.onLeftClick = function () self:portAdmin("F") end
@@ -342,6 +343,8 @@ function AdminGUI:onButtonClick(func)
 					triggerServerEvent("adminRespawnFactionVehicles", root, factionId)
 				end)
 	elseif func == "supportMode" then
+		triggerServerEvent("adminTriggerFunction", root, func)
+	elseif func == "clearChat" then
 		triggerServerEvent("adminTriggerFunction", root, func)
 	elseif func == "adminAnnounce" then
 		local announceString = self.m_AdminAnnounceText:getText()

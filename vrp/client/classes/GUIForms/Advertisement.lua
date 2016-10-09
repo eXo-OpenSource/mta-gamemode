@@ -9,6 +9,8 @@
 AdvertisementBox = inherit(GUIForm)
 inherit(Singleton, AdvertisementBox)
 
+addRemoteEvents{"showAd", "closeAd"}
+
 function AdvertisementBox:constructor()
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.24/2, screenWidth*0.4, screenHeight*0.24)
 
@@ -78,6 +80,17 @@ local ColorTable = {
 	["Hell-Blau"] = {0, 125, 125},
 }
 
+local currentAd
+
+addEventHandler("showAd", root, function(player, text, color, duration)
+	currentAd = ShortMessage:new(("Werbung:\n%s"):format(text), player:getName(), ColorTable[color], AD_DURATIONS[duration]*1000)
+end)
+
+addEventHandler("closeAd", root, function()
+	if currentAd then
+		delete(currentAd)
+	end
+end)
 --[[
 Advertisement = inherit(GUIForm)
 inherit(Singleton, Advertisement)
@@ -110,8 +123,3 @@ function Advertisement:FadeOut()
 	setTimer(function() delete(self) end, 750, 1)
 end
 --]]
-
-addEvent("showAd", true)
-addEventHandler("showAd", root, function(player, text, color, duration)
-	ShortMessage:new(("Werbung:\n%s"):format(text), player:getName(), ColorTable[color], AD_DURATIONS[duration]*1000)
-end)
