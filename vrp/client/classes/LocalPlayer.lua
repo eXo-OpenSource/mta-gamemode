@@ -15,7 +15,7 @@ function LocalPlayer:constructor()
 	self.m_LoggedIn = false
 	self.m_JoinTime = getTickCount()
 	self.m_AFKCheckCount = 0
-	self.m_LastPositon = Vector3(0, 0, 0)
+	self.m_LastPositon = self:getPosition()
 	self.m_AFKTimer = setTimer ( bind(self.checkAFK, self), 5000, 0)
 	self.m_PlayTime = setTimer(bind(self.setPlayTime, self), 60000, 0)
 	-- Since the local player exist only once, we can add the events here
@@ -201,6 +201,8 @@ end
 function LocalPlayer:checkAFK()
 	if not self:getPublicSync("AFK") == true then
 		local pos = self:getPosition()
+		local distance = getDistanceBetweenPoints3D(pos, self.m_LastPositon) or 0
+		self.m_LastPositon = pos
 
 		if self:getInterior() == 4 and getDistanceBetweenPoints3D(pos, Vector3(449.03, -88.86, 999.55)) < 50 then
 			self:toggleAFK(true, false)
@@ -208,7 +210,7 @@ function LocalPlayer:checkAFK()
 		end
 
 		self.m_AFKCheckCount = self.m_AFKCheckCount + 1
-		if getDistanceBetweenPoints3D(pos, self.m_LastPositon) > 15 then
+		if distance > 15 then
 			self.m_AFKCheckCount = 0
 			triggerServerEvent("toggleAFK", localPlayer, false)
 			removeEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
@@ -222,7 +224,7 @@ function LocalPlayer:checkAFK()
 			self:toggleAFK(true, true)
 			return
 		end
-		self.m_LastPositon = pos
+
 	else
 		if self:getInterior() == 0 then
 			self:toggleAFK(false)
