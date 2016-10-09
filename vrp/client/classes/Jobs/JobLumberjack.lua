@@ -49,6 +49,7 @@ function JobLumberjack:start()
 	end
 
 	self.m_SawMillBlip = Blip:new("RedSaw.png", -1969.8, -2432.6)
+	self.m_SawMillBlip:setStreamDistance(2000)
 	ShortMessage:new(_"Säge die auf der Karte markierten Bäume mit der Motorsäge um.")
 	-- Show text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Lumberjack), _(HelpTexts.Jobs.Lumberjack))
