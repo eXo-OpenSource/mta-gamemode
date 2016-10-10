@@ -12,10 +12,7 @@ AmmuNation.ENTERPOS = { X = 315.15640, Y = -142.49582, Z = 999.60156 }
 
 function AmmuNation:constructor(name)
 	self.m_Name = name or "NO NAME"
-
-
 end
-
 
 function AmmuNation:addEnter(x, y, z, dimension)
 	local interiorEnter = InteriorEnterExit:new(Vector3(x, y, z), Vector3(AmmuNation.ENTERPOS.X, AmmuNation.ENTERPOS.Y, AmmuNation.ENTERPOS.Z), 0, 0, AmmuNation.INTERIORID, dimension)

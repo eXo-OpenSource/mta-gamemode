@@ -499,6 +499,7 @@
 	<script src="client/classes/GUIForms/IDCardGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TownHallInfoGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/StreamGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/WeaponLevelGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>

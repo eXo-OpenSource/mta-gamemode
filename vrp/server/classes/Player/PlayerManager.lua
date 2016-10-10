@@ -38,6 +38,7 @@ function PlayerManager:constructor()
 	addEventHandler("gunBoxAddWeapon", root, bind(self.Event_gunBoxAddWeapon, self))
 	addEventHandler("gunBoxTakeWeapon", root, bind(self.Event_gunBoxTakeWeapon, self))
 	addEventHandler("Event_getIDCardData", root, bind(self.Event_getIDCardData, self))
+	addEventHandler("startWeaponLevelTraining", root, bind(self.Event_weaponLevelTraining, self))
 
 
 
@@ -538,4 +539,23 @@ function PlayerManager:Event_getIDCardData(target)
 		target:getRegistrationDate(), target:getPaNote(),
 		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel()
 	)
+end
+
+function PlayerManager:Event_weaponLevelTraining()
+	local currentLevel = client:getWeaponLevel()
+	local nextLevel = currentLevel+1
+	if WEAPON_LEVEL[nextLevel] then
+		if client:getMoney() >= WEAPON_LEVEL[nextLevel]["costs"] then
+			if math.floor(client:getPlayTime()/60) >= WEAPON_LEVEL[nextLevel]["hours"] then
+				ShootingRanch:getSingleton():startLession(client, 22)
+				outputChatBox("Work in Progress", client, 255, 0, 0)
+			else
+				client:sendError(_("Du hast nicht genug Spielstunden!", client))
+			end
+		else
+			client:sendError(_("Du hast nicht genug Geld dabei!", client))
+		end
+	else
+		client:sendError(_("Du hast bereits das maximale Waffenlevel!", client))
+	end
 end

@@ -436,3 +436,16 @@ HOSPITAL_ROTATIONS = {
 	Vector3(0, 0, 145);
 	Vector3(0, 0, 0);
 }
+
+WEAPON_LEVEL = {
+	[1] = {["costs"] = 500, ["hours"] = 1},
+	[2] = {["costs"] = 750, ["hours"] = 2},
+	[3] = {["costs"] = 1000, ["hours"] = 3},
+	[4] = {["costs"] = 1500, ["hours"] = 6},
+	[5] = {["costs"] = 2000, ["hours"] = 8},
+	[6] = {["costs"] = 2500, ["hours"] = 10},
+	[7] = {["costs"] = 3250, ["hours"] = 14},
+	[8] = {["costs"] = 4000, ["hours"] = 18},
+	[9] = {["costs"] = 4750, ["hours"] = 22},
+	[10] = {["costs"] = 5500, ["hours"] = 30}
+}
