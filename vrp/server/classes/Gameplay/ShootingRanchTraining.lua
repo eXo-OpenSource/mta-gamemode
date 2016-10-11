@@ -88,6 +88,9 @@ function ShootingRanchTraining:finish(successHits)
 			self.m_Player:sendInfo(_("Sehr gut! Du hast bestanden! Dein Waffenlevel wurde erhöht!", self.m_Player))
 			self.m_Player:setWeaponLevel(self.m_TargetLevel)
 			delete(self)
+		else
+			self.m_Player:sendError(_("Ohje! Du hast nicht genug getroffen! Versuche besser zu zielen!", self.m_Player))
+			delete(self)
 		end
 	else
 		self.m_Player:sendError(_("Die Zeit ist abgelaufen! Du hast nicht bestanden!", self.m_Player))
