@@ -7,12 +7,21 @@
 -- ****************************************************************************
 
 ShootingRanch = inherit(Singleton)
-addRemoteEvents{"ShootingRanch:onTargetHit", "ShootingRanch:Finish"}
+addRemoteEvents{"ShootingRanch:onTargetHit"}
 
-ShootingRanch.Weapons = {
-	[22] = {["Time"] = 120, ["Hit"] = 35, ["Price"] = 2000, ["Ammo"] = 90},
-	[25] = {["Time"] = 120, ["Hit"] = 30, ["Price"] = 4000, ["Ammo"] = 90},
-	[31] = {["Time"] = 60, ["Hit"] = 20, ["Price"] = 6000, ["Ammo"] = 500}
+ShootingRanch.Map = {}
+
+ShootingRanch.Trainings = {
+	[1] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 10,  ["Accuracy"] = 20, ["Ammo"] = 90},
+	[2] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 20, ["Accuracy"] = 40, ["Ammo"] = 90},
+	[3] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 40, ["Accuracy"] = 60, ["Ammo"] = 90},
+	[4] = {["Weapon"] = 25, ["Time"] = 120, ["Hits"] = 15, ["Accuracy"] = 40, ["Ammo"] = 90},
+	[5] = {["Weapon"] = 25, ["Time"] = 120, ["Hits"] = 30, ["Accuracy"] = 50, ["Ammo"] = 90},
+	[6] = {["Weapon"] = 25, ["Time"] = 120, ["Hits"] = 45, ["Accuracy"] = 70, ["Ammo"] = 90},
+	[7] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 20,  ["Accuracy"] = 30, ["Ammo"] = 500},
+	[8] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 25,  ["Accuracy"] = 40, ["Ammo"] = 500},
+	[9] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 30,  ["Accuracy"] = 50, ["Ammo"] = 500},
+	[10] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 40, ["Accuracy"] = 70, ["Ammo"] = 500}
 }
 
 function ShootingRanch:constructor()
@@ -26,33 +35,8 @@ function ShootingRanch:constructor()
 	addEventHandler("ShootingRanch:onTargetHit", root, bind(self.onTargetHit, self))
 end
 
-function ShootingRanch:startLession(player, weapon)
-	if not weapon or not ShootingRanch.Weapons[weapon] then
-		player:sendError(_("Unbekannte Waffe", player))
-		return
-	end
-	local weaponData = ShootingRanch.Weapons[weapon]
-	if player:getMoney() >= weaponData["Price"] then
-		player:takeMoney(weaponData["Price"], "Schießstand")
-
-		player:sendInfo(_("Treffe 25x eines der Bewegenden Ziele!", player))
-		player:sendShortMessage(_("Schaffe die Prüfung in unter %d Sekunden mit einer Trefferquote von mind. %d Prozent!", player, weaponData["Time"], weaponData["Hit"]), _("Schießstand", player))
-
-		if self:warpPlayerWaffenbox(player) == false then
-			return
-		end
-		setElementData(player, "hits", 0)
-		setElementData(player,"firstmuni", weaponData["Ammo"])
-
-		takeAllWeapons(player)
-		giveWeapon(player, weapon, weaponData["Ammo"], true)
-
-		toggleAllControls(player,false)
-		toggleControl(player,"fire",true)
-		toggleControl(player,"aim_weapon",true)
-	else
-		player:sendError(_("Du hast nicht genug Geld dabei! (%d$)", player, costs))
-	end
+function ShootingRanch:startTraining(player, level)
+	ShootingRanch.Map[player] = ShootingRanchTraining:new(player, level)
 end
 
 function ShootingRanch:warpPlayerWaffenbox(player)
@@ -62,9 +46,6 @@ function ShootingRanch:warpPlayerWaffenbox(player)
 		player:setInterior(0)
 		player:setPosition(freesphere:getPosition())
 		player:setRotation(0, 0, 270)
-		setElementData(player, "isInShootingRange", true)
-		setElementData(player, "shootingFrom", "sf")
-		player:triggerEvent("startClientShootingRanch")
 		return true
 	else
 		player:sendError(_("Keine freie Waffenbox! Bitte warte ein wenig!", player))
@@ -99,38 +80,19 @@ end
 
 function ShootingRanch:onTargetHit(object)
 	if not isElement(object) then return false end
-	if client ~= source then return false end
 	if getElementData(object, "hitAble") == false then return false end
-	setElementData(object, "hitAble", true)
 
-	local times = getRealTime()
-	local hits = getElementData(source, "hits")
-	if hits==nil then hits = 0 end
-	if hits==false then hits = 0 end
-	hits = hits + 1
+	if ShootingRanch.Map[client] then
+		object:stop()
+		object:move(200, object:getPosition(), 90)
+		setTimer(bind(self.reactivateTarget, self), 2000, 1, object)
+		if isTimer(getElementData(object, "timer")) then killTimer(getElementData(object, "timer")) end
+		setElementData(object, "hitAble", false)
 
-	if hits == 25 then
-		local time = times.timestamp-getElementData(source, "sTime")
-		--setElementData(source, "hits", 0)
-		local totalammo2 = getPedTotalAmmo(source)
-		local firstmuni = getElementData(source,"firstmuni")
-		local acc = 25*100/(firstmuni-totalammo2)
-
-		--endWaffenscheinPruefung(source,time,math.floor(acc))
-
-		setElementData(source, "hits", hits)
-	elseif(hits==1)then
-		setElementData(source, "sTime", times.timestamp)
-		setElementData(source, "hits", hits)
+		ShootingRanch.Map[client]:onTargetHit()
 	else
-		setElementData(source, "hits", hits)
+		client:sendError("Invalid ShootingRanch Instance")
 	end
-
-	object:stop()
-	object:move(200, object:getPosition(), 90)
-	setTimer(bind(self.reactivateTarget, self), 2000, 1, object)
-	if isTimer(getElementData(object, "timer")) then killTimer(getElementData(object, "timer")) end
-	setElementData(object, "hitAble", false)
 end
 
 function ShootingRanch:reactivateTarget(object)

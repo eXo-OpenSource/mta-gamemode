@@ -8,7 +8,7 @@
 PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
-"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData"}
+"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData", "startWeaponLevelTraining"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -547,7 +547,7 @@ function PlayerManager:Event_weaponLevelTraining()
 	if WEAPON_LEVEL[nextLevel] then
 		if client:getMoney() >= WEAPON_LEVEL[nextLevel]["costs"] then
 			if math.floor(client:getPlayTime()/60) >= WEAPON_LEVEL[nextLevel]["hours"] then
-				ShootingRanch:getSingleton():startLession(client, 22)
+				ShootingRanch:getSingleton():startTraining(client, nextLevel)
 				outputChatBox("Work in Progress", client, 255, 0, 0)
 			else
 				client:sendError(_("Du hast nicht genug Spielstunden!", client))

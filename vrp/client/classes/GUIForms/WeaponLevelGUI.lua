@@ -31,6 +31,7 @@ function WeaponLevelGUI:constructor()
 		self.m_TrainButton = GUIButton:new(10, 260, 280, 30, "Trainieren", self):setBackgroundColor(Color.LightBlue)
 		self.m_TrainButton.onLeftClick = function()
 			triggerServerEvent("startWeaponLevelTraining", localPlayer)
+			delete(self)
 		end
 	else
 		GUILabel:new(10, 285, 280, 25, _"Du hast das maximale Waffenlevel bereits erreicht!", self):setMultiline(true)
