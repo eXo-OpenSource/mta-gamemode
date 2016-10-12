@@ -28,6 +28,7 @@ function KeyBinds:constructor()
 	  ["KeyToggleCustomMap"]     = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
 	  ["KeyToggleWebPanel"]      = {["defaultKey"] = "F9", ["name"] = "Webpanel", ["func"] = self.m_WebPanel};
 	  ["KeyToggleInventory"]     = {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
+	  ["KeyToggleCursor"]        = {["defaultKey"] = "b", ["name"] = "Cursor", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
 
 	  --Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
@@ -46,7 +47,11 @@ function KeyBinds:loadBinds()
 			--local keyName = core:get("KeyBindings", index, key["defaultKey"])
 			--outputChatBox("Bind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
 		--end
-		bindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"], key["extra"])
+		if not key["load"] then
+			bindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"], key["extra"])
+		else
+			key["load"]()
+		end
 	end
 	--outputChatBox("-------------", 0,255,0)
 
@@ -60,7 +65,11 @@ function KeyBinds:unloadBinds()
 		--	local keyName = core:get("KeyBindings", index, key["defaultKey"])
 		--	outputChatBox("Unbind: Key: "..keyName.." Trigger: "..trigger.." Func: "..tostring(key["func"].." Extra: "..key["extra"]))
 		--end
-		unbindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"])
+		if not key["unload"] then
+			unbindKey(core:get("KeyBindings", index, key["defaultKey"]), key["trigger"] or "down", key["func"])
+		else
+			key["unload"]()
+		end
 	end
 --	outputChatBox("-------------", 255,0,0)
 end
