@@ -369,7 +369,12 @@ end
 
 function DatabasePlayer:setWeaponLevel (level)
 	self.m_WeaponLevel = level
-	if self:isActive() then self:setPrivateSync("WeaponLevel", self.m_WeaponLevel) end
+	if self:isActive() then
+		self:setPrivateSync("WeaponLevel", self.m_WeaponLevel)
+		for _, stat in ipairs({ 69, 70, 71, 72, 73, 74, 76, 77, 78, 79 }) do
+		  setPedStat(self, stat, self.m_WeaponLevel*100)
+	   end
+	end
 end
 
 function DatabasePlayer:setVehicleLevel (level)

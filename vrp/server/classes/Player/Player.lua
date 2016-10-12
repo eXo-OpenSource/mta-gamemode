@@ -150,9 +150,7 @@ function Player:loadCharacter()
 	-- Gangwar
 	triggerEvent("onLoadCharacter",self)
 
-	for _, stat in ipairs({ 69, 70, 71, 72, 73, 74, 76, 77, 78, 79 }) do
-      setPedStat(self, stat, 1000)
-   end
+
 
 	-- Premium
 	Premium.constructor(self)
