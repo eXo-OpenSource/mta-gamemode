@@ -57,6 +57,8 @@ function Jail:constructor()
 
 end
 
+--test
+
 function Jail:createGate(gatePos, gateRot, keypad1Pos, keypad1Rot, keypad2Pos, keypad2Rot)
 	local Id = #self.m_Gates+1
 	self.m_Gates[Id] = createObject(2930, gatePos, 0, 0, gateRot)
