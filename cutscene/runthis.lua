@@ -5,6 +5,6 @@ function filePut(path, stuff)
 	fileClose(fh)
 end
 PRIVATE_DIMENSION_CLIENT = 0
-showPlayerHudComponent("all", false)
+setPlayerHudComponentVisible("all", false)
 showChat(false)
 Cutscene:new(SceneZombieSurvival):play()

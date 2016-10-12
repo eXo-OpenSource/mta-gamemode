@@ -15,7 +15,7 @@ function HUDRadar:constructor()
   self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
   if self.m_DesignSet == RadarDesign.Monochrome or self.m_DesignSet == RadarDesign.GTA then
     CustomF11Map:getSingleton():enable()
-    showPlayerHudComponent("radar", false)
+    setPlayerHudComponentVisible("radar", false)
   else
     CustomF11Map:getSingleton():disable()
   end
@@ -28,7 +28,7 @@ function HUDRadar:constructor()
   self.m_Visible = false
   self.m_Enabled = core:get("HUD", "showRadar")
   if self.m_DesignSet == RadarDesign.Default then
-    showPlayerHudComponent("radar", self.m_Enabled )
+    setPlayerHudComponentVisible("radar", self.m_Enabled )
     self.m_DefaultBlips = {}
   end
   -- Set texture edge to border (no-repeat)
@@ -122,7 +122,7 @@ function HUDRadar:setDesignSet(design)
   end
 
   if design ~= RadarDesign.Default then
-    showPlayerHudComponent("radar",false)
+    setPlayerHudComponentVisible("radar",false)
     self.m_DesignSet = design
     core:getConfig():set("HUD", "RadarDesign", design)
     self:updateMapTexture()
@@ -133,7 +133,7 @@ function HUDRadar:setDesignSet(design)
   else
     self.m_DesignSet = design
     core:getConfig():set("HUD", "RadarDesign", design)
-    showPlayerHudComponent("radar",true)
+    setPlayerHudComponentVisible("radar",true)
   end
 end
 
@@ -144,7 +144,7 @@ end
 function HUDRadar:setEnabled(state)
   self.m_Enabled = state
   if self.m_DesignSet == RadarDesign.Default then
-    showPlayerHudComponent("radar", state)
+    setPlayerHudComponentVisible("radar", state)
   end
 end
 

@@ -19,18 +19,18 @@ function HUDUI:constructor()
 	self.m_MunitionProgress = 0
 
 	if self.m_UIMode == UIStyle.Default and self.m_Enabled then
-		showPlayerHudComponent("all", true)
+		setPlayerHudComponentVisible("all", true)
 		--showPlayerHudComponent("radar", false)
 		if design == 3 then
-			showPlayerHudComponent("radar",enabled)
-		else showPlayerHudComponent("radar",false)
+			setPlayerHudComponentVisible("radar",enabled)
+		else setPlayerHudComponentVisible("radar",false)
 		end
 	else
-		showPlayerHudComponent("all", false)
-		showPlayerHudComponent("crosshair", true)
+		setPlayerHudComponentVisible("all", false)
+		setPlayerHudComponentVisible("crosshair", true)
 		if design == 3 then
-			showPlayerHudComponent("radar",enabled)
-		else showPlayerHudComponent("radar",false)
+			setPlayerHudComponentVisible("radar",enabled)
+		else setPlayerHudComponentVisible("radar",false)
 		end
 	end
 
@@ -78,18 +78,18 @@ function HUDUI:setUIMode(uiMode)
 	local design = tonumber(core:getConfig():get("HUD", "RadarDesign"))
 	local enabled = core:get("HUD", "showRadar")
 	if uiMode == UIStyle.Default then
-		showPlayerHudComponent("all", true)
+		setPlayerHudComponentVisible("all", true)
 		if design == 3 then
-			showPlayerHudComponent("radar",enabled)
-		else showPlayerHudComponent("radar",false)
+			setPlayerHudComponentVisible("radar",enabled)
+		else setPlayerHudComponentVisible("radar",false)
 		end
 		--showPlayerHudComponent("radar", false)
 	elseif self.m_UIMode == UIStyle.Default then
-		showPlayerHudComponent("all", false)
-		showPlayerHudComponent("crosshair", true)
+		setPlayerHudComponentVisible("all", false)
+		setPlayerHudComponentVisible("crosshair", true)
 		if design == 3 then
-			showPlayerHudComponent("radar",enabled)
-		else showPlayerHudComponent("radar",false)
+			setPlayerHudComponentVisible("radar",enabled)
+		else setPlayerHudComponentVisible("radar",false)
 		end
 	end
 
@@ -102,18 +102,18 @@ function HUDUI:setEnabled(state)
 	local enabled = core:get("HUD", "showRadar")
 	if self.m_UIMode == UIStyle.Default then
 		if not state then
-			showPlayerHudComponent("all", false)
-			showPlayerHudComponent("crosshair", true)
+			setPlayerHudComponentVisible("all", false)
+			setPlayerHudComponentVisible("crosshair", true)
 			if design == 3 then
-				showPlayerHudComponent("radar",enabled)
-			else showPlayerHudComponent("radar",false)
+				setPlayerHudComponentVisible("radar",enabled)
+			else setPlayerHudComponentVisible("radar",false)
 			end
 		else
-			showPlayerHudComponent("all", true)
+			setPlayerHudComponentVisible("all", true)
 			--showPlayerHudComponent("radar", false)
 			if design == 3 then
-				showPlayerHudComponent("radar",enabled)
-			else showPlayerHudComponent("radar",false)
+				setPlayerHudComponentVisible("radar",enabled)
+			else setPlayerHudComponentVisible("radar",false)
 			end
 		end
 	end
