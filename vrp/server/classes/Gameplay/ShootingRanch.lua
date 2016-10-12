@@ -14,21 +14,21 @@ ShootingRanch.Map = {}
 ShootingRanch.Trainings = {
 	[1] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 10,  ["Accuracy"] = 20, ["Ammo"] = 90},
 	[2] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 20, ["Accuracy"] = 40, ["Ammo"] = 90},
-	[3] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 40, ["Accuracy"] = 60, ["Ammo"] = 90},
-	[4] = {["Weapon"] = 25, ["Time"] = 120, ["Hits"] = 15, ["Accuracy"] = 40, ["Ammo"] = 90},
-	[5] = {["Weapon"] = 25, ["Time"] = 120, ["Hits"] = 30, ["Accuracy"] = 50, ["Ammo"] = 90},
-	[6] = {["Weapon"] = 25, ["Time"] = 120, ["Hits"] = 45, ["Accuracy"] = 70, ["Ammo"] = 90},
+	[3] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 30, ["Accuracy"] = 60, ["Ammo"] = 90},
+	[4] = {["Weapon"] = 25, ["Time"] = 60, ["Hits"] = 15, ["Accuracy"] = 40, ["Ammo"] = 90},
+	[5] = {["Weapon"] = 25, ["Time"] = 60, ["Hits"] = 20, ["Accuracy"] = 50, ["Ammo"] = 90},
+	[6] = {["Weapon"] = 25, ["Time"] = 60, ["Hits"] = 30, ["Accuracy"] = 70, ["Ammo"] = 90},
 	[7] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 20,  ["Accuracy"] = 30, ["Ammo"] = 500},
-	[8] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 25,  ["Accuracy"] = 40, ["Ammo"] = 500},
-	[9] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 30,  ["Accuracy"] = 50, ["Ammo"] = 500},
-	[10] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 40, ["Accuracy"] = 70, ["Ammo"] = 500}
+	[8] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 30,  ["Accuracy"] = 40, ["Ammo"] = 500},
+	[9] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 40,  ["Accuracy"] = 50, ["Ammo"] = 500},
+	[10] = {["Weapon"] = 31, ["Time"] = 60, ["Hits"] = 50, ["Accuracy"] = 70, ["Ammo"] = 500}
 }
 
 function ShootingRanch:constructor()
 	self.m_WeaponSpheres = {
-		[1] = createColSphere(-7186.60, -2463.6, 31.5, 2),
-		[2] = createColSphere(-7186.60, -2455.5, 31.5, 2),
-		[3] = createColSphere(-7186.60, -2474.8, 31.5, 2)
+		[1] = createColSphere(-7185.4, -2463.60, 31.5, 2),
+		[2] = createColSphere(-7185.4, -2468.36, 31.5, 2),
+		[3] = createColSphere(-7185.4, -2463.43, 31.5, 2)
 	}
 	self:addTargets()
 
@@ -45,7 +45,7 @@ function ShootingRanch:warpPlayerWaffenbox(player)
 		player:setDimension(0)
 		player:setInterior(0)
 		player:setPosition(freesphere:getPosition())
-		player:setRotation(0, 0, 270)
+		player:setRotation(0, 0, 270, "default", true)
 		return true
 	else
 		player:sendError(_("Keine freie Waffenbox! Bitte warte ein wenig!", player))

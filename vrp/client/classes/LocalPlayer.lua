@@ -261,7 +261,7 @@ end
 function LocalPlayer:onAFKCodeInput(cmd, code)
 	if self.m_AFKCode then
 		if self.m_AFKCode == code then
-			infoBox:new(_"Der eingegeben Code wurde akzeptiert!")
+			InfoBox:new(_"Der eingegeben Code wurde akzeptiert!")
 			self.m_AFKCheckCount = 0
 			self.m_AFKCode = false
 		else

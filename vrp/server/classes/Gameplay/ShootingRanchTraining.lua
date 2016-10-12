@@ -50,6 +50,7 @@ function ShootingRanchTraining:destructor()
 	removeElementData(self.m_Player, "ShootingRanch:Data")
 	self.m_Player:triggerEvent("stopClientShootingRanch")
 	toggleAllControls(self.m_Player, true)
+	takeAllWeapons(self.m_Player)
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 end
 

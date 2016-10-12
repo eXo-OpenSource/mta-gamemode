@@ -548,7 +548,6 @@ function PlayerManager:Event_weaponLevelTraining()
 		if client:getMoney() >= WEAPON_LEVEL[nextLevel]["costs"] then
 			if math.floor(client:getPlayTime()/60) >= WEAPON_LEVEL[nextLevel]["hours"] then
 				ShootingRanch:getSingleton():startTraining(client, nextLevel)
-				outputChatBox("Work in Progress", client, 255, 0, 0)
 			else
 				client:sendError(_("Du hast nicht genug Spielstunden!", client))
 			end

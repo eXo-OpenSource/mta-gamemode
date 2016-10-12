@@ -24,7 +24,7 @@ function WeaponLevelGUI:constructor()
 	self.m_ProgressBar:setForegroundColor(tocolor(50,200,255))
 	self.m_ProgressBar:setBackgroundColor(tocolor(180,240,255))
 	GUILabel:new(10, 150, 280, 20, _("%d/10", currentLevel), self):setAlignX("center"):setColor(Color.Black)
-	if nextLevel < 10 then
+	if nextLevel <= 10 then
 		GUILabel:new(10, 185, 280, 25, _("Nächstes Level:", nextLevel), self)
 		GUILabel:new(10, 210, 280, 20, _("Kosten: %d$", WEAPON_LEVEL[nextLevel]["costs"]), self)
 		GUILabel:new(10, 230, 280, 20, _("Benötigte Spielstunden: %d", WEAPON_LEVEL[nextLevel]["hours"]), self)
