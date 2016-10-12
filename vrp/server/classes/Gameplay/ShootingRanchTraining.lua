@@ -44,11 +44,15 @@ function ShootingRanchTraining:constructor(player, level)
 end
 
 function ShootingRanchTraining:destructor()
+	self.m_Player:triggerEvent("stopClientShootingRanch")
+
+	local data = self:updateClient()
+	self.m_Player:triggerEvent("showShootingRanchResult", data, self.m_Success)
+
 	self.m_Player:setInterior(6)
 	self.m_Player:setDimension(0)
 	self.m_Player:setPosition(245.20, 69.44, 1003.64)
 	removeElementData(self.m_Player, "ShootingRanch:Data")
-	self.m_Player:triggerEvent("stopClientShootingRanch")
 	toggleAllControls(self.m_Player, true)
 	takeAllWeapons(self.m_Player)
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
@@ -79,15 +83,18 @@ function ShootingRanchTraining:updateClient()
 		["TargetAccuracy"] = self.m_TargetAccuracy
 	}
 	setElementData(self.m_Player, "ShootingRanch:Data", data)
+	return data
 end
 
 function ShootingRanchTraining:finish(successHits)
 	if successHits then
+		self.m_Success = false
 		local time = getRealTime().timestamp - self.m_StartTime
 		local acc = self.m_Hits*100/(self.m_StartMuni - self.m_Player:getTotalAmmo())
 		if acc >= self.m_TargetAccuracy then
 			self.m_Player:sendInfo(_("Sehr gut! Du hast bestanden! Dein Waffenlevel wurde erhöht!", self.m_Player))
 			self.m_Player:setWeaponLevel(self.m_TargetLevel)
+			self.m_Success = true
 			delete(self)
 		else
 			self.m_Player:sendError(_("Ohje! Du hast nicht genug getroffen! Versuche besser zu zielen!", self.m_Player))

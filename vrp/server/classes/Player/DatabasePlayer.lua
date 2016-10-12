@@ -82,6 +82,12 @@ function DatabasePlayer:load()
 		return false
 	end
 
+	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
+		self:updateAchievements(fromJSON(row.Achievements))
+	else
+		self:updateAchievements({[0] = false}) -- Dummy element, otherwise the JSON string is built wrong
+	end
+
 	self.m_SavedPosition = Vector3(row.PosX, row.PosY, row.PosZ)
 	self.m_SavedInterior = row.Interior
 	self.m_SavedDimension = row.Dimension
@@ -100,12 +106,6 @@ function DatabasePlayer:load()
 		self.m_BankAccount = BankAccount.load(row.BankAccount)
 	end
 	self.m_BankAccount:update()
-
-	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
-		self:updateAchievements(fromJSON(row.Achievements))
-	else
-		self:updateAchievements({[0] = false}) -- Dummy element, otherwise the JSON string is built wrong
-	end
 
 	if row.Job > 0 then
 		self:setJob(JobManager:getSingleton():getFromId(row.Job))
