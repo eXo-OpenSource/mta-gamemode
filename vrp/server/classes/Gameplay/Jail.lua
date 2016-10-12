@@ -54,7 +54,7 @@ function Jail:constructor()
 	InteriorEnterExit:new(Vector3(-550.63, -496.07, 25.53), Vector3(215.85, 126.73, 1003.22), 180, 0, 10, 2) -- Backdoor
 
 	self.m_Colshape = createColSphere(164.21, 359.71, 7983.66, 200)
-	
+
 end
 
 function Jail:createGate(gatePos, gateRot, keypad1Pos, keypad1Rot, keypad2Pos, keypad2Rot)
@@ -66,7 +66,7 @@ function Jail:createGate(gatePos, gateRot, keypad1Pos, keypad1Rot, keypad2Pos, k
 	self.m_Keypad1[Id] = createObject(2886, keypad1Pos, 0, 0, keypad1Rot)
 	self.m_Keypad1[Id].Id = Id
 	addEventHandler( "onElementClicked", self.m_Keypad1[Id], self.m_onKeypadClicked)
-	createMarker(keypad1Pos.x, keypad1Pos.y, keypad1Pos.z, 3, "corona")
+	createMarker(keypad1Pos.x, keypad1Pos.y, keypad1Pos.z, "corona", 3)
 	if keypad2Pos then
 		self.m_Keypad2[Id] = createObject(2886, keypad2Pos, 0, 0, keypad2Rot)
 		self.m_Keypad2[Id].Id = Id
