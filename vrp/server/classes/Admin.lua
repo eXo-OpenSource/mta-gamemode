@@ -11,11 +11,15 @@ function Admin:constructor()
     self.m_OnlineAdmins = {}
     self.m_SupportArrow = {}
     self.m_RankNames = {
-        [1] = "Supporter",
-        [2] = "Moderator",
-        [3] = "Super-Moderator",
-        [4] = "Administrator",
-        [5] = "Projektleiter"
+        [1] = "Ticketsupporter",
+        [2] = "Clanmember",
+        [3] = "Supporter",
+        [4] = "Moderator",
+        [5] = "Administrator",
+        [6] = "Servermanager",
+        [7] = "Developer",
+        [8] = "StellvProjektleiter",
+        [9] = "Projektleiter"
     }
 
 
