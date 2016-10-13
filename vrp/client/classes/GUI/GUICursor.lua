@@ -9,24 +9,14 @@ GUICursor = inherit(Object)
 
 function GUICursor:constructor()
 	self.m_Counter = 0
-	self.m_CursorFunc = function(button, state)
-		if self.m_CursorMode then -- is instant?
-			showCursor(state == "down")
-		else
-			if isCursorShowing() then
-				self.m_Counter = 0
-				showCursor(false)
-			else
-				showCursor(true)
-			end
-		end
-	end
+	self.m_CursorFunc = bind(self.toggleCursor, self)
 
 	if not core:get("HUD", "CursorMode", false) then
 		core:set("HUD", "CursorMode", 1)
 	end
 
 	self:setCursorMode(toboolean(core:get("HUD", "CursorMode", false)))
+
 end
 
 function GUICursor:destructor()
@@ -39,6 +29,19 @@ function GUICursor:draw()
 	if cursorX then
 		cursorX, cursorY = cursorX*screenWidth, cursorY*screenHeight
 		dxDrawImage(cursorX, cursorY, 12, 20, "files/images/GUI/Cursor.png", 0, 0, 0, Color.White, true)
+	end
+end
+
+function GUICursor:toggleCursor(button, state)
+	if self.m_CursorMode then -- is instant?
+		showCursor(state == "down")
+	else
+		if isCursorShowing() then
+			self.m_Counter = 0
+			showCursor(false)
+		else
+			showCursor(true)
+		end
 	end
 end
 
@@ -104,4 +107,3 @@ function GUICursor:unloadBind()
 		unbindKey(core:get("KeyBindings", "KeyToggleCursor", "b"), "down", self.m_CursorFunc)
 	end
 end
-
