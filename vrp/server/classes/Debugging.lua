@@ -16,7 +16,7 @@ if DEBUG then
 	end
 
 	function Debugging:runString(player, cmd, ...)
-		if getPlayerName(player) == "Console" or player:getRank() == RANK.Developer then
+		if getPlayerName(player) == "Console" or player:getRank() >= RANK.Developer then
 			local codeString = table.concat({...}, " ")
 			runString(codeString, player)
 		end
