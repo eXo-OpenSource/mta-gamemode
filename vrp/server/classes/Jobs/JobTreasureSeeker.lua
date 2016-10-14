@@ -16,29 +16,39 @@ function JobTreasureSeeker:constructor()
 	self.m_KeyBind = bind(self.takeUp, self)
 
 	self.m_Treasures = {}
+	self.m_Vehicles = {}
+
+	self.m_DeliverMarker = createMarker(725.30, -1692.62, -1, "cylinder", 7, 0, 0, 255, 200)
+	addEventHandler("onMarkerHit", self.m_DeliverMarker, bind(self.onDeliveryHit, self))
+	setElementVisibleTo(self.m_DeliverMarker, root, false)
 
 	self.m_TreasureTypes = {
-		[1208] = {["Name"] = "Waschmaschine", ["Min"] = 50, ["Max"] = 100},
-		[2912] = {["Name"] = "Holzkiste", ["Min"] = 200, ["Max"] = 400},
-		[1291] = {["Name"] = "Briefkasten", ["Min"] = 100, ["Max"] = 200},
-		[2040] = {["Name"] = "wertvolle Kiste", ["Min"] = 400, ["Max"] = 600},
-		[2972] = {["Name"] = "Fracht Container", ["Min"] = 200, ["Max"] = 400},
-		[3015] = {["Name"] = "Waffen Kiste", ["Min"] = 200, ["Max"] = 400}
+		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 50, ["Max"] = 100},
+		[2912] = {["Name"] = " Holzkiste", ["Min"] = 200, ["Max"] = 400},
+		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 100, ["Max"] = 200},
+		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 400, ["Max"] = 600},
+		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 200, ["Max"] = 400},
+		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 200, ["Max"] = 400, ["Scale"] = 2}
 	}
 end
 
 function JobTreasureSeeker:start(player)
-
 	self:generateRandomTreasures(player)
 	bindKey(player, "space", "down", self.m_KeyBind)
+	setElementVisibleTo(self.m_DeliverMarker, player, true)
 end
 
 function JobTreasureSeeker:stop(player)
-	self:removeTreasures()
+	self:removeTreasures(player)
 	unbindKey(player, "space", "down", self.m_KeyBind)
+	setElementVisibleTo(self.m_DeliverMarker, player, false)
+	if self.m_Vehicles[player] and isElement(self.m_Vehicles[player]) then
+		self.m_Vehicles[player]:destroy()
+	end
 end
 
 function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
+	self.m_Vehicles[player] = vehicle
 	vehicle.Engine = createObject(3013, 0, 0, 0)
 	vehicle.Engine:setScale(1.5)
 	vehicle.Engine:attach(vehicle, 0, -6.2, 3.5)
@@ -46,8 +56,41 @@ function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
 	vehicle.Magnet = createObject(1301, 0, 0, 0)
 	vehicle.Magnet:setScale(0.5)
 	vehicle.Magnet:attach(vehicle, 0, -6.2, 2)
-
+	addEventHandler("onElementDestroy", vehicle, function()
+		if source.Magnet.Object and isElement(source.Magnet.Object) then
+			source.Magnet.Object:destroy()
+		end
+		if source.Magnet and isElement(source.Magnet) then
+			source.Magnet:destroy()
+		end
+	end)
 	triggerClientEvent(root, "jobTreasureDrawRope", root, vehicle.Engine, vehicle.Magnet)
+end
+
+function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
+	if dim and hitElement:getType() == "player" then
+		if hitElement:getJob() == self then
+			if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle() == self.m_Vehicles[hitElement] then
+				local veh = hitElement:getOccupiedVehicle()
+				if veh.Magnet and isElement(veh.Magnet) then
+					if veh.Magnet.Object and isElement(veh.Magnet.Object) then
+						local model = veh.Magnet.Object:getModel()
+						if not self.m_TreasureTypes[model] then return end
+						local loan = math.random(self.m_TreasureTypes[model]["Min"], self.m_TreasureTypes[model]["Max"])
+						hitElement:giveMoney(loan, "Schatzsucher-Job")
+						hitElement:sendShortMessage(_("Du hast eine%s für %d$ verkauft!", hitElement, self.m_TreasureTypes[model]["Name"], loan))
+						hitElement:getOccupiedVehicle().Magnet.Object:destroy()
+					else
+						hitElement:sendError(_("Du hast kein Objekt dabei!", hitElement))
+					end
+				else
+					hitElement:sendError(_("Du benutzt ein falsches Boot!", hitElement))
+				end
+			else
+				hitElement:sendError(_("Du bist im falschen Fahrzeug!", hitElement))
+			end
+		end
+	end
 end
 
 function JobTreasureSeeker:generateRandomTreasures(player)
@@ -63,11 +106,17 @@ function JobTreasureSeeker:generateRandomTreasures(player)
 end
 
 function JobTreasureSeeker:takeUp(player, key, keyState)
-	if player:getOccupiedVehicle() and player:getOccupiedVehicle():getModel() == 453 then
+	if player:getOccupiedVehicle() and player:getOccupiedVehicle() == self.m_Vehicles[player] then
 		for index, col in pairs(self.m_Treasures[player]) do
-			if player:isWithinColShape(col) then
-				player:sendInfo(_("Das gefundene Objekt wird angehoben!", player))
+			if col and isElement(col) and player:isWithinColShape(col) then
 				local veh = player:getOccupiedVehicle()
+				if veh.Magnet and veh.Magnet.Object and isElement(veh.Magnet.Object) then
+					player:sendError(_("Du hast bereits ein Objekt am Schiff!\nLade es erst am Startpunkt ab!", player))
+					return
+				end
+
+				player:sendShortMessage(_("Das gefundene Objekt wird angehoben! Bitte warten!", player))
+				local objectModel = self:getRandomTreasureModel()
 				veh:setFrozen(true)
 				veh.Magnet:detach(veh)
 				local x, y, z = getElementPosition(veh.Magnet)
@@ -76,15 +125,17 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 
 				setTimer(function()
 					x, y, z = getElementPosition(veh.Magnet)
-					veh.Magnet.Object = createObject(1208, 0, 0, 0)
+					veh.Magnet.Object = createObject(objectModel, 0, 0, 0)
+					if self.m_TreasureTypes[objectModel]["Scale"] then veh.Magnet.Object:setScale(self.m_TreasureTypes[objectModel]["Scale"]) end
 					veh.Magnet.Object:attach(veh.Magnet, 0, 0, -0.9)
 					veh.Magnet:move(15000, x, y, z+15)
 				end, 15000, 1)
 
 				setTimer(function()
 					veh.Magnet:attach(veh, 0, -6.2, 2)
-					player:sendInfo(_("Glückwunsch du hast eine Waschmaschine gefunden!", player))
+					player:sendShortMessage(_("Glückwunsch du hast eine%s gefunden!\nBringe das Fundstück zum Startpunkt!", player, self.m_TreasureTypes[objectModel]["Name"]), _("Schatzsucher-Job", player))
 					veh:setFrozen(false)
+					self:generateRandomTreasures(player)
 				end, 30000, 1)
 				return
 			end
@@ -99,13 +150,21 @@ function JobTreasureSeeker:loadTreasure(player)
 		self:loadTreasure(player)
 	else
 		local x, y = unpack(JobTreasureSeeker.Positions[rnd])
-		Blip:new("Waypoint.png", x, y) -- Dev
-		self.m_Treasures[player][rnd] = createColCircle(x, y, 12)
+		--Blip:new("Waypoint.png", x, y) -- Dev
+		self.m_Treasures[player][rnd] = createColCircle(x, y, 14)
 		self.m_Treasures[player][rnd].DummyObject = createObject(1337, x, y, -200)
 		self.m_Treasures[player][rnd].Player = player
 		setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", true)
 		addEventHandler("onColShapeHit", self.m_Treasures[player][rnd], bind(self.onTreasureHit, self))
 	end
+end
+
+function JobTreasureSeeker:getRandomTreasureModel()
+	local models = {}
+	for modelId, key in pairs(self.m_TreasureTypes) do
+		table.insert(models, modelId)
+	end
+	return models[math.random(1, #models)]
 end
 
 function JobTreasureSeeker:removeTreasures(player)
@@ -119,7 +178,7 @@ end
 
 function JobTreasureSeeker:onTreasureHit(hitElement, dim)
 	if dim and hitElement == source.Player then
-		hitElement:sendInfo(_("Du bist über einen Schatz! Drücke Leertaste um ihn hochzuheben!", hitElement))
+		hitElement:sendInfo(_("Du bist über einem Objekt! Drücke Leertaste um es hochzuheben!", hitElement))
 	end
 end
 

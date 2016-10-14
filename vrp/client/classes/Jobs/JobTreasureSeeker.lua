@@ -21,7 +21,7 @@ function JobTreasureSeeker:start()
 end
 
 function JobTreasureSeeker:stop()
-
+	delete(TreasureRadar:getSingleton())
 end
 
 addRemoteEvents{"jobTreasureDrawRope"}

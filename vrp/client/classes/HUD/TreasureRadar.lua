@@ -49,7 +49,7 @@ function TreasureRadar:render()
 				local alpha = linear(elapsedTime, 255, -255, 3000)
 
 				local hip = (radar.r*b[3])/self.m_Radius
-				local x, y = math.cos(b[2]) * hip, math.sin(b[2]) * hip
+				local x, y = math.cos(b[2]) / hip, math.sin(b[2]) * hip
 
 				dxDrawImage(centerX-8+x, centerY-8-y, 16, 16, "files/images/Other/TreasureRadarBlip.png", 0, 0, 0, tocolor(255, 255, 255, alpha))
 			else
