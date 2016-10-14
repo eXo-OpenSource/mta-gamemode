@@ -56,6 +56,9 @@ function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
 	vehicle.Magnet = createObject(1301, 0, 0, 0)
 	vehicle.Magnet:setScale(0.5)
 	vehicle.Magnet:attach(vehicle, 0, -6.2, 2)
+
+	vehicle:addCountdownDestroy(10)
+
 	addEventHandler("onElementDestroy", vehicle, function()
 		if source.Magnet.Object and isElement(source.Magnet.Object) then
 			source.Magnet.Object:destroy()
@@ -140,8 +143,9 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 				return
 			end
 		end
+		player:sendError(_("Hier ist kein Objekt!", player))
+
 	end
-	player:sendError(_("Hier ist kein Objekt!", player))
 end
 
 function JobTreasureSeeker:loadTreasure(player)
@@ -178,7 +182,9 @@ end
 
 function JobTreasureSeeker:onTreasureHit(hitElement, dim)
 	if dim and hitElement == source.Player then
-		hitElement:sendInfo(_("Du bist über einem Objekt! Drücke Leertaste um es hochzuheben!", hitElement))
+		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle() == self.m_Vehicles[hitElement] then
+			hitElement:sendInfo(_("Der Radar registriert ein Objekt unter dir!\nDrücke Leertaste um es hochzuheben!", hitElement))
+		end
 	end
 end
 

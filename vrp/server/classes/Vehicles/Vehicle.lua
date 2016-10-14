@@ -96,6 +96,9 @@ function Vehicle:onPlayerEnter(player, seat)
 		if self.m_HandBrake then
 			setControlState( player, "handbrake", true)
 		end
+		if self.m_CountdownDestroy then
+			self:countdownDestroyAbort(player)
+		end
 	end
 end
 
@@ -123,6 +126,9 @@ function Vehicle:onPlayerExit(player, seat)
 				self.m_HandBrake = false
 				self:setData( "Handbrake",  self.m_HandBrake , true )
 			end
+		end
+		if self.m_CountdownDestroy then
+			self:countdownDestroyStart(player)
 		end
 	end
 end
@@ -190,7 +196,7 @@ function Vehicle:toggleEngine(player)
 		return true
 	end
 
-	player:sendError(_("Du hast keinen Schl�ssel f�r dieses Fahrzeug!", player))
+	player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
 	return false
 end
 
@@ -283,6 +289,34 @@ end
 
 function Vehicle:isSmokeEnabled()
 	return self.m_SpecialSmokeEnabled
+end
+
+function Vehicle:addCountdownDestroy(seconds)
+	self.m_CountdownDestroy = seconds
+end
+
+function Vehicle:removeCountdownDestroy()
+	self.m_CountdownDestroy = nil
+end
+
+function Vehicle:countdownDestroyStart(player)
+	if self.m_CountdownDestroyTimer and isTimer(self.m_CountdownDestroyTimer) then
+		killTimer(self.m_CountdownDestroyTimer)
+	end
+	player:sendWarning(_("Vorsicht: Steig innerhalb von %d Sekunden wieder ein, oder das Fahrzeug wird gelöscht!", player, self.m_CountdownDestroy))
+	player:triggerEvent("Countdown", self.m_CountdownDestroy)
+	self.m_CountdownDestroyTimer = setTimer(function()
+		player:sendInfo(_("Zeit abgelaufen! Das Fahrzeug wurde gelöscht!", player))
+		self:destroy()
+		player:triggerEvent("CountdownStop")
+	end, self.m_CountdownDestroy*1000, 1)
+end
+
+function Vehicle:countdownDestroyAbort(player)
+	if self.m_CountdownDestroyTimer and isTimer(self.m_CountdownDestroyTimer) then
+		player:triggerEvent("CountdownStop")
+		killTimer(self.m_CountdownDestroyTimer)
+	end
 end
 
 -- Override it

@@ -36,7 +36,7 @@ function JobTreasureSeeker:drawRopes()
 			local pos2 = magnet:getPosition()
 			dxDrawLine3D(pos1, pos2, tocolor(0, 0, 0), 2)
 		else
-			JobTreasureSeeker.Rope[veh] = nil
+			JobTreasureSeeker.Rope[engine] = nil
 		end
 	end
 end

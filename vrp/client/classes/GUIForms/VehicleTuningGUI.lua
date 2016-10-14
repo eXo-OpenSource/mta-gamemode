@@ -56,10 +56,10 @@ function VehicleTuningGUI:constructor(vehicle)
         self.m_CurrentUpgrades[slot] = getVehicleUpgradeOnSlot(self.m_Vehicle, slot)
     end
     local r1, g1, b1, r2, g2, b2 = self.m_Vehicle:getColor(true)
-
+    local lightR, lightG, lightB = self.m_Vehicle:getHeadLightColor()
     self.m_CurrentUpgrades[VehicleSpecialProperty.Color] = {r1, g1, b1}
     self.m_CurrentUpgrades[VehicleSpecialProperty.Color2] = {r2, g2, b2}
-	self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor] = {self.m_Vehicle:getHeadLightColor()}
+	self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor] = {lightR, lightG, lightB}
     self.m_CurrentUpgrades[VehicleSpecialProperty.Neon] = getElementData(self.m_Vehicle, "Neon") or 0
     self.m_CurrentUpgrades[VehicleSpecialProperty.NeonColor] = getElementData(self.m_Vehicle, "NeonColor") or {0,0,0}
 
