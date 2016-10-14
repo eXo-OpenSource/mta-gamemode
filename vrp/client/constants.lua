@@ -200,6 +200,7 @@ HelpTextTitles = {
 		PizzaDelivery = "Job: Pizza-Lieferant";
 		HeliTransport = "Job: Helikopter-Pilot";
 		ForkLift = "Job: Gabelstapler-Fahrer";
+		TreasureSeeker = "Job: Schatz Sucher";
 	};
 	Events = {
 		Deathmatch = "Event: Deathmatch";
@@ -352,6 +353,9 @@ HelpTexts = {
 			Diese musst du anschließend bei den LKW's abliefern.
 			Deinen Forklift kannst du dir am roten Marker erstellen.
 		]];
+		TreasureSeeker = [[
+			TODO
+		]]
 	};
 	Events = {
 		Deathmatch = [[Todo]];

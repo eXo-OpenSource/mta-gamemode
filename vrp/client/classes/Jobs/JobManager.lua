@@ -19,6 +19,7 @@ function JobManager:constructor()
 		JobHeliTransport:new();
 		JobLogistician:new();
 		JobForkLift:new();
+		JobTreasureSeeker:new();
 	}
 	for k, v in ipairs(self.m_Jobs) do
 		v:setId(k)

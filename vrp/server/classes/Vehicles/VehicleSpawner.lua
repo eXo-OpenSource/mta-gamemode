@@ -75,6 +75,12 @@ addEventHandler("vehicleSpawn", root,
 	end
 )
 
+function VehicleSpawner:setSpawnPosition(pos, rot)
+	self.m_Position = pos
+	self.m_Rotation = rot or 0
+end
+
+
 function VehicleSpawner:initializeAll()
 	-- Create 'general' vehicle spawners
 	VehicleSpawner:new(2004.63, -1449.6, 12.5, {"Bike", "BMX", "Faggio"}, 135)

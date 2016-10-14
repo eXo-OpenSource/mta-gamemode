@@ -250,7 +250,7 @@
 	<script src="server/classes/Jobs/JobPizzaDelivery.lua" type="server"/>
 	<script src="server/classes/Jobs/JobHeliTransport.lua" type="server"/>
 	<script src="server/classes/Jobs/JobForkLift.lua" type="server"/>
-
+	<script src="server/classes/Jobs/JobTreasureSeeker.lua" type="server"/>
 
 	<!-- AI -->
 	<script src="server/classes/AI/ActorManager.lua" type="server"/>
@@ -397,6 +397,7 @@
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
 	<script src="client/classes/HUD/HUDUI.lua" type="client"/>
+	<script src="client/classes/HUD/TreasureRadar.lua" type="client"/>
 
 	<!-- Forms -->
 	<script src="client/classes/GUIForms/GUIWebWindowForm.lua" type="client"/>
@@ -559,6 +560,7 @@
 	<script src="client/classes/Jobs/JobPizzaDelivery.lua" type="client"/>
 	<script src="client/classes/Jobs/JobHeliTransport.lua" type="client"/>
 	<script src="client/classes/Jobs/JobForkLift.lua" type="client"/>
+	<script src="client/classes/Jobs/JobTreasureSeeker.lua" type="client"/>
 
 	<!-- Groups -->
 	<!--<script src="client/classes/Groups/GangArea.lua" type="client"/>-->
@@ -762,6 +764,8 @@
 	<vrpfile src="files/images/Other/Neon.png"/>
 	<vrpfile src="files/images/Other/bubble.png"/>
 	<vrpfile src="files/images/Other/premium.png"/>
+	<vrpfile src="files/images/Other/TreasureRadar.png"/>
+	<vrpfile src="files/images/Other/TreasureRadarBlip.png"/>
 
 	<vrpfile src="files/images/Minigames/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Minigames/SniperGame.png"/>
@@ -835,6 +839,8 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Stadthalle.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/House.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/SniperGame.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/TreasureSeeker.png"/>
+
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -882,6 +888,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Stadthalle.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/House.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/SniperGame.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/TreasureSeeker.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>

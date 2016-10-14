@@ -498,6 +498,10 @@ function math.round(num, idp)
   return math.floor(num * mult + 0.5) / mult
 end
 
+function linear(t, b, c, d)
+  return c * t / d + b
+end
+
 function getWeekNumber()	--Maybe needs optimization
 	local function isLeapYear(year)
 		if year then year = math.floor(year)
