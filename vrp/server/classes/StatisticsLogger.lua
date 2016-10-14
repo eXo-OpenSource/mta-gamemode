@@ -110,3 +110,27 @@ function StatisticsLogger:addTextLog(logname, text)
 	fileWrite(file, getOpticalTimestamp()..": "..text.."\n" )
 	fileClose(file)
 end
+
+function StatisticsLogger:addDrugPlantLog( player, type )
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_DrugPlants (UserId, Type, Date ) VALUES(?, ?,  NOW())",
+        sqlLogs:getPrefix(), userId, type)
+end
+
+function StatisticsLogger:addDrugHarvestLog( player, type )
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_DrugHarvest (UserId, Type, Date ) VALUES(?, ?,  NOW())",
+        sqlLogs:getPrefix(), userId, type)
+end
+
+function StatisticsLogger:addDrugUse( player, type )
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_DrugUse (UserId, Type, Date ) VALUES(?, ?,  NOW())",
+        sqlLogs:getPrefix(), userId, type)
+end
+
+function StatisticsLogger:addHouse( player, action, house )
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_House (UserId, Aktion, HouseId,  Date ) VALUES(?, ?, ?,  NOW())",
+        sqlLogs:getPrefix(), userId, action, house)
+end

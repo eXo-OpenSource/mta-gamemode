@@ -26,6 +26,7 @@ function DrugsCocaine:use( player )
     end
     player.m_CocaineExpireFunc = bind( DrugsCocaine.expire, self )
     player.m_CocaineExpireTimer = setTimer( player.m_CocaineExpireFunc, COCAINE_EXPIRETIME, 1, player )
+	StatisticsLogger:getSingleton():addDrugUse( player, "Kokain" )
 end
 
 

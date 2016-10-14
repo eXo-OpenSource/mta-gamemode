@@ -26,6 +26,7 @@ function DrugsHeroin:use( player )
     end
     player.m_HeroinExpireFunc = bind( DrugsHeroin.expire, self )
     player.m_HeroinExpireTimer = setTimer( player.m_HeroinExpireFunc, HEROIN_EXPIRETIME, 1, player )
+	StatisticsLogger:getSingleton():addDrugUse( player, "Heroin" )
 end
 
 function DrugsHeroin:expire( player )

@@ -37,8 +37,7 @@ function DrugsShroom:use( player )
     end
     player.m_ShroomExpireFunc = bind( DrugsShroom.expire, self )
     player.m_ShroomExpireTimer = setTimer( player.m_ShroomExpireFunc, SHROOM_EXPIRETIME, 1, player )
-
-
+	StatisticsLogger:getSingleton():addDrugUse( player, "Shrooms" )
 end
 
 function DrugsShroom:expire( player )

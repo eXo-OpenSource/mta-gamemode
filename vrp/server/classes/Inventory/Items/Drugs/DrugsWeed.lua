@@ -30,6 +30,7 @@ function DrugsWeed:use( player )
     local healSteps = math.floor( WEED_EXPIRETIME / DrugsWeed.m_HealInterval )
     player.m_WeedExpireTimer = setTimer( player.m_WeedExpireFunc, WEED_EXPIRETIME, 1, player )
     player.m_WeedHealTimer = setTimer( player.m_WeedHealFunc, DrugsWeed.m_HealInterval , healSteps , player )
+	StatisticsLogger:getSingleton():addDrugUse( player, "Weed" )
 end
 
 function DrugsWeed:expire( player )

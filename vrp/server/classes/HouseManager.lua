@@ -74,11 +74,13 @@ end
 function HouseManager:buyHouse()
 	if not client then return end
 	self.m_Houses[client.visitingHouse]:buyHouse(client)
+	StatisticsLogger:getSingleton():addHouse( client, "BUY", client.visitingHouse)
 end
 
 function HouseManager:sellHouse()
 	if not client then return end
 	self.m_Houses[client.visitingHouse]:sellHouse(client)
+	StatisticsLogger:getSingleton():addHouse( client, "SELL", client.visitingHouse)
 end
 
 function HouseManager:rentHouse()

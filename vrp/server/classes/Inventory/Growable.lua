@@ -77,6 +77,7 @@ function Growable:harvest(player)
 			player:triggerEvent("hidePlantGUI")
 			self.m_Size = 0
 			sql:queryExec("DELETE FROM ??_plants WHERE Id = ?", sql:getPrefix(), self.m_Id)
+			StatisticsLogger:getSingleton():addDrugHarvestLog( owner, type )
 			delete(self)
 		else
 			player:sendError(_("Du hast in deinem Inventar nicht Platz für %d %s!", player, amount, self.ms_Item))
