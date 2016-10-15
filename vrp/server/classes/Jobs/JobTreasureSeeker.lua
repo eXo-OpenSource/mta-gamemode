@@ -144,7 +144,6 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 			end
 		end
 		player:sendError(_("Hier ist kein Objekt!", player))
-
 	end
 end
 
@@ -155,7 +154,7 @@ function JobTreasureSeeker:loadTreasure(player)
 	else
 		local x, y = unpack(JobTreasureSeeker.Positions[rnd])
 		--Blip:new("Waypoint.png", x, y) -- Dev
-		self.m_Treasures[player][rnd] = createColCircle(x, y, 14)
+		self.m_Treasures[player][rnd] = createColCircle(x, y, 18)
 		self.m_Treasures[player][rnd].DummyObject = createObject(1337, x, y, -200)
 		self.m_Treasures[player][rnd].Player = player
 		setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", true)
