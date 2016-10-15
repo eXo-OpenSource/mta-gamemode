@@ -18,15 +18,23 @@ function JobLogistician:constructor()
 	self.m_Marker1 = self:createCraneMarker(Crane1, Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.26), 0)
 	self.m_Marker2 = self:createCraneMarker(Crane2, Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2.05), 0)
 
-	self.m_Spawner1 = VehicleSpawner:new(2405.45, -2445.40, 13, {"DFT-30"}, 230, bind(Job.requireVehicle, self))
-	self.m_Spawner1.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner1 = VehicleSpawner:new(2405.45, -2445.40, 13, {"DFT-30"}, 230, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner1.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner1:disable()
 
-	self.m_Spawner2 = VehicleSpawner:new(-209.97, -273.92, 0.7, {"DFT-30"}, 180, bind(Job.requireVehicle, self))
-	self.m_Spawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner2 = VehicleSpawner:new(-209.97, -273.92, 0.7, {"DFT-30"}, 180, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner2:disable()
 end
 
 function JobLogistician:start(player)
+	self.m_VehicleSpawner1:toggleForPlayer(player, true)
+	self.m_VehicleSpawner2:toggleForPlayer(player, true)
+end
 
+function JobLogistician:stop(player)
+	self.m_VehicleSpawner1:toggleForPlayer(player, false)
+	self.m_VehicleSpawner2:toggleForPlayer(player, false)
 end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)

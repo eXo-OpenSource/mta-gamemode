@@ -12,6 +12,7 @@ function JobTreasureSeeker:constructor()
 	local availableVehicles = {"Reefer"}
 	self.m_VehicleSpawner = VehicleSpawner:new(715.41, -1706.50, 1.8, availableVehicles, 135, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner:setSpawnPosition(Vector3(719.79, -1705.18, -0.34), 180)
+	self.m_VehicleSpawner:disable()
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_KeyBind = bind(self.takeUp, self)
 
@@ -36,12 +37,15 @@ function JobTreasureSeeker:start(player)
 	self:generateRandomTreasures(player)
 	bindKey(player, "space", "down", self.m_KeyBind)
 	setElementVisibleTo(self.m_DeliverMarker, player, true)
+	self.m_VehicleSpawner:toggleForPlayer(player, true)
 end
 
 function JobTreasureSeeker:stop(player)
 	self:removeTreasures(player)
 	unbindKey(player, "space", "down", self.m_KeyBind)
 	setElementVisibleTo(self.m_DeliverMarker, player, false)
+	self.m_VehicleSpawner:toggleForPlayer(player, false)
+
 	if self.m_Vehicles[player] and isElement(self.m_Vehicles[player]) then
 		self.m_Vehicles[player]:destroy()
 	end
@@ -154,7 +158,7 @@ function JobTreasureSeeker:loadTreasure(player)
 	else
 		local x, y = unpack(JobTreasureSeeker.Positions[rnd])
 		--Blip:new("Waypoint.png", x, y) -- Dev
-		self.m_Treasures[player][rnd] = createColCircle(x, y, 20)
+		self.m_Treasures[player][rnd] = createColCircle(x, y, 30)
 		self.m_Treasures[player][rnd].DummyObject = createObject(1337, x, y, -200)
 		self.m_Treasures[player][rnd].Player = player
 		setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", true)

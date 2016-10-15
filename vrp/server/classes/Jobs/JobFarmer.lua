@@ -12,8 +12,10 @@ function JobFarmer:constructor()
 	self.m_Plants = {}
 
 	local x,y,z,rotation = unpack ( VEHICLE_SPAWN )
-	self.m_Spawner = VehicleSpawner:new(x,y,z, {"Tractor"; "Combine Harvester"; "Walton"}, rotation, bind(Job.requireVehicle, self))
-	self.m_Spawner.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner = VehicleSpawner:new(x,y,z, {"Tractor"; "Combine Harvester"; "Walton"}, rotation, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner:disable()
+
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
 	self.m_CurrentPlantsFarm = 0
@@ -124,6 +126,7 @@ end
 function JobFarmer:start(player)
 	self:setJobElementVisibility (player,true)
 	self.m_CurrentPlants[player] = 0
+	self.m_VehicleSpawner:toggleForPlayer(player, true)
 
 	-- give Achievement
 	player:giveAchievement(20)
@@ -147,6 +150,8 @@ function JobFarmer:stop(player)
 	self.m_CurrentPlants[player] = nil
 	self:setJobElementVisibility(player,false)
 	self.m_Plants[player] = nil
+	self.m_VehicleSpawner:toggleForPlayer(player, false)
+
 end
 
 function JobFarmer:checkRequirements(player)

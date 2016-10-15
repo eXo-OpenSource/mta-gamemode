@@ -10,7 +10,8 @@ JobRoadSweeper = inherit(Job)
 function JobRoadSweeper:constructor()
 	Job.constructor(self)
 
-	VehicleSpawner:new(205.7, -1442.8, 12.3, {"Sweeper"}, 315, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner = VehicleSpawner:new(205.7, -1442.8, 12.3, {"Sweeper"}, 315, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner:disable()
 
 	addEvent("sweeperGarbageCollect", true)
 	addEventHandler("sweeperGarbageCollect", root, bind(self.Event_sweeperGarbageCollect, self))
@@ -18,6 +19,11 @@ end
 
 function JobRoadSweeper:start(player)
 	player:giveAchievement(13)
+	self.m_VehicleSpawner:toggleForPlayer(player, true)
+end
+
+function JobRoadSweeper:stop(player)
+	self.m_VehicleSpawner:toggleForPlayer(player, false)
 end
 
 function JobRoadSweeper:Event_sweeperGarbageCollect()

@@ -10,8 +10,10 @@ JobHeliTransport = inherit(Job)
 function JobHeliTransport:constructor()
 	Job.constructor(self)
 
-	self.m_Spawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 26, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
-	self.m_Spawner.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 26, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner:disable()
+
 	self.m_VehData = {}
 
 	addRemoteEvents{"jobHeliTransportOnPickupLoad", "jobHeliTransportOnDelivery"}
@@ -21,7 +23,11 @@ function JobHeliTransport:constructor()
 end
 
 function JobHeliTransport:start(player)
+	self.m_VehicleSpawner:toggleForPlayer(player, true)
+end
 
+function JobHeliTransport:stop(player)
+	self.m_VehicleSpawner:toggleForPlayer(player, false)
 end
 
 function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)

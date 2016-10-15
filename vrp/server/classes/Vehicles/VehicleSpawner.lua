@@ -17,6 +17,8 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 		self.m_Vehicles[type(v) == "number" and v or getVehicleModelFromName(v)] = true
 	end
 
+	self.m_Allowed = {}
+
 	self.m_Position = Vector3(x, y, z)
 	self.m_Rotation = rotation or 0
 	self.m_ConditionFunc = spawnConditionFunc
@@ -27,13 +29,15 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 end
 
 function VehicleSpawner:markerHit(hitElement, matchingDimension)
-	if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
-		if self.m_ConditionFunc and not self.m_ConditionFunc(hitElement) then
-			hitElement:sendError(_("Du bist nicht berechtigt dieses Fahrzeug zu erstellen!", hitElement))
-			return
-		end
+	if not self.m_Disabled or (self.m_Disabled and self.m_Allowed[hitElement]) then
+		if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
+			if self.m_ConditionFunc and not self.m_ConditionFunc(hitElement) then
+				hitElement:sendError(_("Du bist nicht berechtigt dieses Fahrzeug zu erstellen!", hitElement))
+				return
+			end
 
-		hitElement:triggerEvent("vehicleSpawnGUI", self.m_Id, self.m_Vehicles)
+			hitElement:triggerEvent("vehicleSpawnGUI", self.m_Id, self.m_Vehicles)
+		end
 	end
 end
 
@@ -74,6 +78,21 @@ addEventHandler("vehicleSpawn", root,
 		client:setJobVehicle(vehicle)
 	end
 )
+
+function VehicleSpawner:disable()
+	setElementVisibleTo(self.m_Marker, root, false)
+	self.m_Disabled = true
+end
+
+function VehicleSpawner:toggleForPlayer(player, state)
+	if state then
+		setElementVisibleTo(self.m_Marker, player, true)
+		self.m_Allowed[player] = true
+	else
+		setElementVisibleTo(self.m_Marker, player, false)
+		self.m_Allowed[player] = false
+	end
+end
 
 function VehicleSpawner:setSpawnPosition(pos, rot)
 	self.m_Position = pos

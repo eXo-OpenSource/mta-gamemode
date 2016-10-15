@@ -12,9 +12,13 @@ function JobTrashman:constructor()
 	Job.constructor(self)
 
 	local availableVehicles = {"Trashmaster"}
-	VehicleSpawner:new(2118.38, -2076.78, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
-	VehicleSpawner:new(2127.3, -2083.91, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
-	VehicleSpawner:new(2134.1, -2091.1, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner1 = VehicleSpawner:new(2118.38, -2076.78, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner2 = VehicleSpawner:new(2127.3, -2083.91, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner3 = VehicleSpawner:new(2134.1, -2091.1, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
+
+	self.m_VehicleSpawner1:disable()
+	self.m_VehicleSpawner2:disable()
+	self.m_VehicleSpawner3:disable()
 
 	self.m_DumpArea = createColRectangle(2096.9, -2081.6, 9.8, 10.5) -- 2096.9, -2071.1, 9.8, -10.5
 	addEventHandler("onColShapeHit", self.m_DumpArea, bind(JobTrashman.dumpCans, self))
@@ -28,6 +32,15 @@ end
 function JobTrashman:start(player)
 	player:setData("Trashman:Cans", 0)
 	player:giveAchievement(12)
+	self.m_VehicleSpawner1:toggleForPlayer(player, true)
+	self.m_VehicleSpawner2:toggleForPlayer(player, true)
+	self.m_VehicleSpawner3:toggleForPlayer(player, true)
+end
+
+function JobTrashman:stop(player)
+	self.m_VehicleSpawner1:toggleForPlayer(player, false)
+	self.m_VehicleSpawner2:toggleForPlayer(player, false)
+	self.m_VehicleSpawner3:toggleForPlayer(player, false)
 end
 
 function JobTrashman:checkRequirements(player)
