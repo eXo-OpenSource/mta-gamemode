@@ -47,13 +47,23 @@ function PhoneNumber.create(Number, OwnerType, OwnerId)
 end
 
 function PhoneNumber.load(OwnerType, OwnerId)
-    local row = sql:queryFetchSingle("SELECT Id, OwnerType, OwnerId, Number FROM ??_phone_numbers WHERE OwnerType = ? AND OwnerId = ?;", sql:getPrefix(), OwnerType, OwnerId)
+    local row = sql:queryFetchSingle("SELECT Id, Number FROM ??_phone_numbers WHERE OwnerType = ? AND OwnerId = ?;", sql:getPrefix(), OwnerType, OwnerId)
     if not row then
       return false
     end
 
-    PhoneNumber.Map[row.Id] = PhoneNumber:new(row.Id, row.Number, row.OwnerType, row.OwnerId)
+    PhoneNumber.Map[row.Id] = PhoneNumber:new(row.Id, row.Number, OwnerType, OwnerId)
     return PhoneNumber.Map[row.Id]
+end
+
+function PhoneNumber.unload(OwnerType, OwnerId)
+    local row = sql:queryFetchSingle("SELECT Id, Number FROM ??_phone_numbers WHERE OwnerType = ? AND OwnerId = ?;", sql:getPrefix(), OwnerType, OwnerId)
+    if not row then
+      return false
+    end
+	if PhoneNumber.Map[row.Id] then
+    	PhoneNumber.Map[row.Id] = nil
+	end
 end
 
 function PhoneNumber:constructor(Id, Number, OwnerType, OwnerId)
@@ -61,10 +71,6 @@ function PhoneNumber:constructor(Id, Number, OwnerType, OwnerId)
 	self.m_Number = Number
 	self.m_OwnerType = OwnerType
 	self.m_OwnerId = OwnerId
-end
-
-function PhoneNumber:Event_RequestPhoneNumbers()
-
 end
 
 function PhoneNumber:destructor()

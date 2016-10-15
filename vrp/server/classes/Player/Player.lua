@@ -41,6 +41,7 @@ function Player:constructor()
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
+
 end
 
 function Player:destructor()
@@ -74,6 +75,7 @@ function Player:destructor()
 	--if self.m_Inventory then
 	--	delete(self.m_Inventory)
 	--end
+	PhoneNumber.unload(1, self.m_Id)
 
 	--// gangwar
 	triggerEvent("onDeloadCharacter",self)
@@ -140,6 +142,8 @@ function Player:loadCharacter()
 		self:getGroup():onPlayerJoin(self)
 	end
 
+	self.m_PhoneNumber = (PhoneNumber.load(1, self.m_Id) or PhoneNumber.generateNumber(1, self.m_Id))
+
 	-- Add Payday
 	self:setNextPayday()
 	self.m_Inventory = InventoryManager:getSingleton():loadInventory(self)
@@ -149,8 +153,6 @@ function Player:loadCharacter()
 
 	-- Gangwar
 	triggerEvent("onLoadCharacter",self)
-
-
 
 	-- Premium
 	Premium.constructor(self)

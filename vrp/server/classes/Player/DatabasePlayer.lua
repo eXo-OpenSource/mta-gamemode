@@ -157,7 +157,6 @@ function DatabasePlayer:load()
 	self:setWarns()
 	self:setBail( row.Bail )
 	self:setJailTime( row.JailTime or 0)
-	self.m_PhoneNumber = (PhoneNumber.load(1, self.m_Id) or PhoneNumber.generateNumber(1, self.m_Id))
 end
 
 function DatabasePlayer:save()

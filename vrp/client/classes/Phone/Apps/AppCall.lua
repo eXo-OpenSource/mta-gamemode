@@ -110,6 +110,12 @@ function MainActivity:constructor(app)
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
 	self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
+	self.m_TabPanel.onTabChanged = function(tabId)
+		if tabId == self.m_Tabs["Players"].TabIndex then
+			triggerServerEvent("requestPhoneNumbers", localPlayer)
+		end
+	end
+
 
 	self.m_Tabs["Service"] = self.m_TabPanel:addTab(_"Service", FontAwesomeSymbols.Book)
 	self.m_ServiceListGrid = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-110, self.m_Tabs["Service"])
