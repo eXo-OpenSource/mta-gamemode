@@ -154,7 +154,7 @@ function JobTreasureSeeker:loadTreasure(player)
 	else
 		local x, y = unpack(JobTreasureSeeker.Positions[rnd])
 		--Blip:new("Waypoint.png", x, y) -- Dev
-		self.m_Treasures[player][rnd] = createColCircle(x, y, 18)
+		self.m_Treasures[player][rnd] = createColCircle(x, y, 20)
 		self.m_Treasures[player][rnd].DummyObject = createObject(1337, x, y, -200)
 		self.m_Treasures[player][rnd].Player = player
 		setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", true)
@@ -174,7 +174,7 @@ function JobTreasureSeeker:removeTreasures(player)
 	if not self.m_Treasures[player] then return end
 	for index, col in pairs(self.m_Treasures[player]) do
 		if col.DummyObject and isElement(col.DummyObject) then col.DummyObject:destroy() end
-		col:destroy()
+		if isElement(col) then col:destroy() end
 		table.remove(self.m_Treasures, index)
 	end
 end
