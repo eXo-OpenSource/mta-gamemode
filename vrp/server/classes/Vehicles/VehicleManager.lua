@@ -337,17 +337,16 @@ end
 function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
-
- 	if not source:hasKey(client) or client:getRank() <= RANK.User then
- 		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
- 		return
- 	end
- if source:getInterior() == 0 then
- 		source:setCurrentPositionAsSpawn(VehiclePositionType.World)
- 		client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
- 	else
- 		client:sendError(_("Du kannst dein Fahrzeug hier nicht parken!", client))
- 	end
+	if source:hasKey(client) or player:getRank() >= RANK.Moderator then
+		if source:getInterior() == 0 then
+			source:setCurrentPositionAsSpawn(VehiclePositionType.World)
+			client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
+		else
+			client:sendError(_("Du kannst dein Fahrzeug hier nicht parken!", client))
+		end
+	else
+		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
+	end
  end
 
 function VehicleManager:setSpeedLimits()
