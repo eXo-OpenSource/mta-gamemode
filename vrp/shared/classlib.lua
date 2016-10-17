@@ -376,6 +376,6 @@ oop.initClasses = function()
 	oop.prepareClass("XML")
 	oop.prepareClass("Timer")
 	oop.prepareClass("Team")
-	oop.prepareClass("Resource")
+	--oop.prepareClass("Resource")
 end
 oop.initClasses()

@@ -37,7 +37,6 @@ ADMIN_RANK_PERMISSION = {
 	["respawnFaction"] = RANK.Supporter,
 	["respawnCompany"] = RANK.Supporter,
 	["clearChat"] = RANK.Supporter,
-	["clearchat"] = RANK.Supporter,
 	["addWarn"] = RANK.Supporter,
 	["tp"] = RANK.Supporter,
 	["timeban"] = RANK.Moderator,
@@ -263,7 +262,6 @@ VehicleType = {Automobile = 0, Plane = 1, Bike = 2, Helicopter = 3, Boat = 4, Tr
 VehicleSpecial = {Soundvan = 1}
 NO_LICENSE_VEHICLES = {509, 481, 462, 510, 448}
 TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514, 423, 414, 443, 515, 531, 456, 433, 427, 407, 544, 432, 431, 437, 408}
-
 
 GROUP_RENAME_TIMEOUT = 60*60*24*30 -- 30 Days (in seconds)
 

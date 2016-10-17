@@ -261,7 +261,7 @@ end
 function LocalPlayer:onAFKCodeInput(cmd, code)
 	if self.m_AFKCode then
 		if self.m_AFKCode == code then
-			InfoBox:new(_"Der eingegeben Code wurde akzeptiert!")
+			outputChatBox("Vorgang abgebrochen.", 255, 0, 0)
 			self.m_AFKCheckCount = 0
 			self.m_AFKCode = false
 		else
