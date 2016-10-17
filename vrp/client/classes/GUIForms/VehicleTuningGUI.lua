@@ -287,6 +287,7 @@ function VehicleTuningGUI:PartItem_Click(item)
     self:closeAllWindows()
     self:moveCameraToSlot(item.PartSlot)
     local r1, g1, b1, r2, g2, b2 = self.m_Vehicle:getColor(true)
+    local lightR, lightG, lightB = self.m_Vehicle:getHeadLightColor() or 0, 0, 0
     if item.PartSlot then
         -- Check for special properties
         if item.PartSlot == VehicleSpecialProperty.Color then
@@ -316,8 +317,14 @@ function VehicleTuningGUI:PartItem_Click(item)
         elseif item.PartSlot == VehicleSpecialProperty.LightColor then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
-            self.m_ColorPicker = ColorPickerGUI:new(function(r, g, b) self:addPartToCart(VehicleSpecialProperty.LightColor, _"Licht-Farbe", {r, g, b}) end, function(r, g, b) self.m_Vehicle:setHeadLightColor(r, g, b) end)
-            self.m_ColorPicker:setColor(unpack(self.m_CurrentUpgrades[VehicleSpecialProperty.LightColor]))
+            self.m_ColorPicker = ColorPickerGUI:new(
+                function(r, g, b)
+                    self:addPartToCart(VehicleSpecialProperty.LightColor, _"Licht-Farbe", {r, g, b}) end,
+                    function(r, g, b)
+                        self.m_Vehicle:setHeadLightColor(r, g, b)
+                    end
+            )
+            --self.m_ColorPicker:setColor(lightR, lightG, lightB)
             return
         elseif item.PartSlot == VehicleSpecialProperty.Neon then
             self.m_UpgradeChanger:setVisible(false)
@@ -481,7 +488,7 @@ VehicleTuningGUI.CameraPositions = {
     -- Special properties
     [VehicleSpecialProperty.Color] = Vector3(4.2, 2.1, 2.1),
     [VehicleSpecialProperty.Color2] = Vector3(4.2, 2.1, 2.1),
-    [VehicleSpecialProperty.LightColor] = Vector3(3, -2, 2.1),
+    [VehicleSpecialProperty.LightColor] = Vector3(0, 5.6, 1),
     [VehicleSpecialProperty.Shader] = Vector3(4.2, 2.1, 2.1),
     [VehicleSpecialProperty.Horn] = Vector3(4.2, 2.1, 2.1),
     [VehicleSpecialProperty.Neon] = Vector3(4.2, 2.1, 2.1),
