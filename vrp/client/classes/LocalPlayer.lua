@@ -103,6 +103,9 @@ function LocalPlayer:abortDeathGUI()
 	if DeathGUI:isInstantiated() then
 		delete(DeathGUI:getSingleton())
 	end
+	if self.m_WastedTimer1 and isTimer(self.m_WastedTimer1) then killTimer(self.m_WastedTimer1) end
+	if self.m_WastedTimer2 and isTimer(self.m_WastedTimer2) then killTimer(self.m_WastedTimer2) end
+	if self.m_WastedTimer3 and isTimer(self.m_WastedTimer3) then killTimer(self.m_WastedTimer3) end
 end
 
 function LocalPlayer:playerWasted( killer, weapon, bodypart)
@@ -153,11 +156,11 @@ function LocalPlayer:Event_playerWasted()
 		local time = self:getPublicSync("DeathTime")-6000
 
 		fadeCamera(false, 1)
-		setTimer( -- Todo: Remove later
+		self.m_WastedTimer2 = setTimer( -- Todo: Remove later
 			function ()
 				fadeCamera(true,0.5)
 				DeathGUI:new(time)
-				setTimer(function()
+				self.m_WastedTimer3 = setTimer(function()
 					HUDRadar:getSingleton():show()
 					HUDUI:getSingleton():show()
 					showChat(true)
@@ -190,7 +193,7 @@ function LocalPlayer:Event_playerWasted()
 			if (getTickCount()-soundStart) >= (soundLength*1000) then
 				-- Play knock out effect
 				self.m_FadeOutShader = FadeOutShader:new()
-				setTimer(callback, 4000, 1, sound, start)
+				self.m_WastedTimer1 = setTimer(callback, 4000, 1, sound, start)
 
 				removeEventHandler("onClientPreRender", root, getThisFunction())
 			end

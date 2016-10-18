@@ -222,6 +222,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 					deadPlayer:respawn(Vector3(pos))
 					deadPlayer:fadeCamera(true, 1)
 					deadPlayer:triggerEvent("abortDeathGUI")
+
 				else
 					player:sendShortMessage(_("Der Spieler ist nicht Tod!", player))
 				end
