@@ -289,18 +289,30 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
         elseif func == "offlinePermaban" then
             self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
             local targetId = Account.getIdFromName(target)
-            Ban.addBan(targetId, admin, reason)
-            self:addPunishLog(admin, targetId, func, reason, 0)
+            if targetId and targetId > 0 then
+                Ban.addBan(targetId, admin, reason)
+                self:addPunishLog(admin, targetId, func, reason, 0)
+            else
+                admin:sendError(_("Spieler nicht gefunden!", admin))
+            end
         elseif func == "offlineTimeban" then
             self:sendShortMessage(_("%s hat %s offline für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target, duration, reason))
             local targetId = Account.getIdFromName(target)
-            Ban.addBan(targetId, admin, reason, duration*60*60)
-            self:addPunishLog(admin, targetId, func, reason, duration*60*60)
+            if targetId and targetId > 0 then
+                Ban.addBan(targetId, admin, reason, duration*60*60)
+                self:addPunishLog(admin, targetId, func, reason, duration*60*60)
+            else
+                admin:sendError(_("Spieler nicht gefunden!", admin))
+            end
         elseif func == "offlineUnban" then
             self:sendShortMessage(_("%s hat %s offline entbannt!", admin, admin:getName(), target))
             local targetId = Account.getIdFromName(target)
-            self:addPunishLog(admin, targetId, func, reason, 0)
-            sql:queryExec("DELETE FROM ??_bans WHERE serial = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId))
+            if targetId and targetId > 0 then
+                self:addPunishLog(admin, targetId, func, reason, 0)
+                sql:queryExec("DELETE FROM ??_bans WHERE serial = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId))
+            else
+                admin:sendError(_("Spieler nicht gefunden!", admin))
+            end
         end
     else
         admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))

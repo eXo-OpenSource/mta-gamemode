@@ -32,7 +32,7 @@ function BankManager:Event_Withdraw(amount)
 		return
 	end
 
-	if client:takeBankMoney(amount, BankStat.Withdrawal) then
+	if client:takeBankMoney(amount, "Bank Auszahlung") then
 		client:giveMoney(amount, "Bank Auszahlung")
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
@@ -47,42 +47,49 @@ function BankManager:Event_Deposit(amount)
 		return
 	end
 
-	if client:addBankMoney(amount, BankStat.Deposit) then
+	if client:addBankMoney(amount, "Bank Einzahlung") then
 		client:takeMoney(amount, "Bank Einzahlung")
 		client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
 	end
 end
 
 function BankManager:Event_Transfer(toPlayerName, amount)
+	local client = client
 	if tonumber(amount) and amount > 0 then
 		if client:getBankMoney() < amount then
 			client:sendError(_("Nicht genügend Geld!", client))
 			return
 		end
+		Async.create(
+			function()
+				local id = Account.getIdFromName(toPlayerName)
+				if not id or id == 0 then
+					client:sendError(_("Dieser Spieler existiert nicht!", client))
+					return
+				end
 
-		Async.create(function(player)
-			local id = Account.getIdFromName(toPlayerName)
-			if not id then
-				player:sendError(_("Dieser Spieler existiert nicht!", player))
-				return
+				local toPlayer, offline = DatabasePlayer.get(id)
+				if offline then
+					toPlayer:load()
+				end
+
+				if client:takeBankMoney(amount, "Überweisung (an "..toPlayerName..")") then
+					toPlayer:addBankMoney(amount, "Überweisung (von "..client:getName()..")")
+
+
+					if offline then
+						toPlayer:save()
+					else
+						toPlayer:triggerEvent("bankMoneyBalanceRetrieve", toPlayer:getBankMoney())
+						toPlayer:sendShortMessage(_("%s hat dir %d$ überwiesen!", toPlayer, client:getName(), amount))
+					end
+					client:sendShortMessage(_("Du hast an %s %d$ überwiesen!", client, toPlayerName, amount))
+					client:triggerEvent("bankMoneyBalanceRetrieve", client:getBankMoney())
+				end
 			end
-
-			local toPlayer, offline = DatabasePlayer.get(id)
-			if offline then
-				toPlayer:load()
-			end
-
-			toPlayer:addBankMoney(amount)
-			player:takeBankMoney(amount)
-
-			if offline then
-				toPlayer:save()
-			else
-				toPlayer:triggerEvent("bankMoneyBalanceRetrieve", toPlayer:getBankMoney())
-			end
-
-			player:triggerEvent("bankMoneyBalanceRetrieve", player:getBankMoney())
-		end)(client)
+		)()
+	else
+		client:sendError(_("Ungültiger Betrag!", client))
 	end
 end
 

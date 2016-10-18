@@ -365,11 +365,6 @@ function Account.isAcceptetMultiaccount(id1, id2)
 	if row then return true else return false end
 end
 
-function Account.getIdFromName(name)
-	local row = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
-	return row and row.Id
-end
-
 addEventHandler("remoteClientSpawn", root, function()
 	client:spawn()
 end

@@ -17,11 +17,14 @@ function StatisticsLogger:getZone(player)
 	return 	("%s - %s"):format(player:getZoneName(), player:getZoneName(true))
 end
 
-function StatisticsLogger:addMoneyLog(type, element, money, reason)
+function StatisticsLogger:addMoneyLog(type, element, money, reason, bankaccount)
     local elementId = 0
     if element then elementId = element:getId() end
-    sqlLogs:queryExec("INSERT INTO ??_Money (ElementType, ElementId, Money, Reason, Timestamp) VALUES(?, ?, ?, ?, ?)",
-        sqlLogs:getPrefix(), type, elementId, money, reason, getRealTime().timestamp)
+    if sqlLogs:queryExec("INSERT INTO ??_Money (ElementType, ElementId, Money, Reason, BankAccount, Date) VALUES(?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), type, elementId, money, reason, bankaccount or 0) then
+		return true
+	end
+	return false
 end
 
 function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)

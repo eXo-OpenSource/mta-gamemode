@@ -51,15 +51,6 @@ ADMIN_RANK_PERMISSION = {
 	["removeWarn"] = RANK.Administrator
 }
 
-BankStat = {
-	Transfer = 0,
-	Income = 1,
-	Payment = 2,
-	Withdrawal = 3,
-	Deposit = 4,
-	Job = 5,
-}
-
 GroupRank = {
 	Normal = 0,
 	Rank1 = 1,

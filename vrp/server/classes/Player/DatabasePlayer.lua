@@ -391,24 +391,21 @@ function DatabasePlayer:setJobLevel (level)
 	if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
 end
 
-function DatabasePlayer:addBankMoney(amount, logType)
-	logType = logType or BankStat.Income
-	if sql:queryExec("INSERT INTO ??_bank_statements (UserId, Type, Amount, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), self.m_Id, logType, amount) then
+function DatabasePlayer:addBankMoney(amount, reason)
+	if StatisticsLogger:getSingleton():addMoneyLog("player", self, amount, reason or "Unbekannt", 1) then
 		self:getBankAccount():addMoney(amount)
 		if self.m_BankMoney >= 10000000 then
 			self:giveAchievement(40)
 		elseif self.m_BankMoney >= 1000000 then
 			self:giveAchievement(21)
 		end
-
 		return true
 	end
 	return false
 end
 
-function DatabasePlayer:takeBankMoney(amount, logType)
-	logType = logType or BankStat.Payment
-	if sql:queryExec("INSERT INTO ??_bank_statements (UserId, Type, Amount, Date) VALUES(?, ?, ?, NOW())", sql:getPrefix(), self.m_Id, logType, amount) then
+function DatabasePlayer:takeBankMoney(amount, reason)
+	if StatisticsLogger:getSingleton():addMoneyLog("player", self, -amount, reason or "Unbekannt", 1) then
 		self:getBankAccount():takeMoney(amount)
 		return true
 	end
