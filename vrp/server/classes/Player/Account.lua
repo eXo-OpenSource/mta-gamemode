@@ -5,6 +5,8 @@
 -- *  PURPOSE:     Account class
 -- *
 -- ****************************************************************************
+local MULTIACCOUNT_CHECK = false -- TODO: Activate on production use
+
 Account = inherit(Object)
 addRemoteEvents{"remoteClientSpawn"}
 function Account.login(player, username, password, pwhash)
@@ -46,7 +48,7 @@ function Account.login(player, username, password, pwhash)
 		end
 
 		-- Validate email
-		if not row.EMail:match("^[%w._-]+@[%w._-]+%.%w+$") or #row.EMail > 50 then
+		if not row.EMail:match("^[%w._-]+@[%w._-]+%.%w+$") or #row.EMail > 75 then
 			player:triggerEvent("loginfailed", "Internal error while creating forum account #2. Please contact an admin. ID: " .. tostring(Id))
 			return false
 		end
@@ -67,9 +69,10 @@ function Account.login(player, username, password, pwhash)
 				player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
 				return false
 			end
-
-			if Account.MultiaccountCheck(player, Id) == false then
-				return false
+			if MULTIACCOUNT_CHECK then
+				if Account.MultiaccountCheck(player, Id) == false then
+					return false
+				end
 			end
 
 			player.m_Account = Account:new(Id, Username, player, false)
@@ -118,8 +121,10 @@ function Account.login(player, username, password, pwhash)
 	-- Update last serial and last login
 	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
 
-	if Account.MultiaccountCheck(player, Id) == false then
-		return false
+	if MULTIACCOUNT_CHECK then
+		if Account.MultiaccountCheck(player, Id) == false then
+			return false
+		end
 	end
 
 	player.m_Account = Account:new(Id, Username, player, false)
@@ -139,8 +144,8 @@ addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(
 
 addEvent("checkRegisterAllowed", true)
 addEventHandler("checkRegisterAllowed", root, function()
-	local name = Account.getNameFromSerial(client:getSerial())
-	if name then
+	local name = Account.getNameFromSerial(client:getSerial()) -- Todo Activate on production use
+	if name and MULTIACCOUNT_CHECK then
 		client:triggerEvent("receiveRegisterAllowed", false, name)
 	else
 		client:triggerEvent("receiveRegisterAllowed", true)
