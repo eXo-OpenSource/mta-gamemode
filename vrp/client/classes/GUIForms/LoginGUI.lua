@@ -12,6 +12,11 @@ function LoginGUI:constructor()
 
 	self.m_NewsTab 			= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.25, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
 	self.m_NewsTabBar		= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.010, sh*0.6-sh*0.6*0.01, tocolor(230, 230, 230, 200), self)
+							  GUILabel:new(sw*0.01, sh*0.01, self.m_Width/0.02, self.m_Height*0.2, "News:", self.m_NewsTab):setFont(VRPFont(sh*0.06)):setColor(Color.LightBlue)
+	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
+		self.m_Width/0.02, self.m_Height*0.6,
+		[[Hier ist Platz für
+		aktuelle News!]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
 
 	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
 	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
@@ -37,7 +42,7 @@ function LoginGUI:constructor()
 	self.m_RegisterTab:setVisible(false)
 
 	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.1, sh*0.03, "Benutzername oder E-Mail", self.m_RegisterTab) -- 1.75
+	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.1, sh*0.03, "Benutzername", self.m_RegisterTab) -- 1.75
 	self.m_RegisterEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
 	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.1, sh*0.03, "Passwort", self.m_RegisterTab) -- 1.75
 

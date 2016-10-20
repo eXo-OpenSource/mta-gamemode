@@ -202,6 +202,8 @@ function LocalPlayer:Event_playerWasted()
 end
 
 function LocalPlayer:checkAFK()
+	if not self:isLoggedIn() then return end
+
 	if not self:getPublicSync("AFK") == true then
 		local pos = self:getPosition()
 		local distance = getDistanceBetweenPoints3D(pos, self.m_LastPositon) or 0
@@ -236,6 +238,8 @@ function LocalPlayer:checkAFK()
 end
 
 function LocalPlayer:toggleAFK(state, teleport)
+	if not self:isLoggedIn() then return end
+
 	if state == true then
 		self.m_AFKCode = false
 		InfoBox:new(_"Du wurdest ins AFK-Cafe teleportiert!")
