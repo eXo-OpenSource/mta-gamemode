@@ -259,25 +259,27 @@ HelpTexts = {
 
 			stellv. Projektleitung:
 			[eXo]Clausus
-			[eXo]LAURIIST4AR
-			StiviK
+			[eXo]StiviK
 
-			Administration:
+			Servermanagement:
 			[eXo]xXKing
 			[eXo]Chris
 
-			Moderation (+S.Mod):
+			Administration:
+			[eXo]Luka
+			[eXo]John_Rambo
 			[eXo]StrongVan
-			[eXo]Don_Leone
-			[eXo]High5
+
+			Moderation:
 			[eXo]Phil
+			[eXo]High5
+			[eXo]Gamer64
 
 			Support:
-			[eXo]Gamer64
-			[eXo]Creo
 			[eXo]Bonez
 			[eXo]Janni_Morita
 			[eXo]AfGun
+			[eXo]Burmtim
 
 			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
 		]];
