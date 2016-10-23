@@ -35,6 +35,7 @@ end
 function JobLogistician:stop(player)
 	self.m_VehicleSpawner1:toggleForPlayer(player, false)
 	self.m_VehicleSpawner2:toggleForPlayer(player, false)
+	if isElement(player.LogisticanContainer) then player.LogisticanContainer:destroy() end
 end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
@@ -96,12 +97,12 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 				veh:setRotation(source:getData("VehicleRotation"))
 				if crane:getVehicleAttachedContainer(veh) then
 					if source == hitElement:getData("Logistician:TargetMarker") then
-						crane:dropContainer(veh, function() hitElement:giveMoney(MONEY_PER_TRANSPORT, "Logistiker Job") end)
+						crane:dropContainer(veh, hitElement, function() hitElement:giveMoney(MONEY_PER_TRANSPORT, "Logistiker Job") end)
 					else
 						hitElement:sendError(_("Du bist am falschen Kran!", hitElement))
 					end
 				else
-					crane:loadContainer(veh)
+					crane:loadContainer(veh, hitElement)
 					if source == self.m_Marker1 then
 						self:setNewDestination(hitElement, self.m_Marker2, crane)
 					elseif source == self.m_Marker2 then
@@ -139,7 +140,7 @@ function Crane:destructor()
 	destroyElement(self.m_Tow)
 end
 
-function Crane:dropContainer(vehicle, callback)
+function Crane:dropContainer(vehicle, player, callback)
 	if self.m_Busy then
 		return false
 	end
@@ -189,13 +190,15 @@ function Crane:dropContainer(vehicle, callback)
 	return true
 end
 
-function Crane:loadContainer(vehicle, callback)
+function Crane:loadContainer(vehicle, player, callback)
 	if self.m_Busy then
 		return false
 	end
 	self.m_Busy = true
 
 	local container = createObject(math.random(2934, 2935), self.m_EndX, self.m_EndY-0.5, self.m_EndZ-4, 0, 0, self.m_Rotation)
+	player.LogisticanContainer = container
+
 	vehicle:setFrozen(true)
 	-- Move Crane to the "container platform"
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
