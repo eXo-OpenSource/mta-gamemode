@@ -23,13 +23,30 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-	self:addItem(_"Respawn",
-		function()
-			if self:getElement() then
-				triggerServerEvent("vehicleRespawn", self:getElement())
+	if getElementData(element, "OwnerName") == localPlayer.name or localPlayer:getRank() >= RANK.Ticketsupporter then
+		self:addItem(_"Respawn in Garage",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleRespawn", self:getElement())
+				end
 			end
-		end
-	)
+		)
+		self:addItem(_"Respawn an Parkposition",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleRespawnWorld", self:getElement())
+				end
+			end
+		)
+
+		self:addItem(_"hier Parken",
+ 			function()
+ 				if self:getElement() then
+ 					triggerServerEvent("vehiclePark", self:getElement())
+ 				end
+ 			end
+ 		)
+	end
 	if getElementData(element, "OwnerName") == localPlayer.name then
 		self:addItem(_"Schlüssel",
 			function()
@@ -38,13 +55,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		)
-		self:addItem(_"hier Parken",
- 			function()
- 				if self:getElement() then
- 					triggerServerEvent("vehiclePark", self:getElement())
- 				end
- 			end
- 		)
+
 		if getElementData(element, "Special") == VehicleSpecial.Soundvan then
 			self:addItem(_"Musik abspielen",
 				function()
