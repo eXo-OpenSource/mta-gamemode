@@ -119,7 +119,6 @@ function Core:afterLogin()
 	MigratorPanel:getSingleton():close()
 	KeyBindings:new()
 	KeyBindings:getSingleton():close()
-	NoDm:getSingleton():checkNoDm()
 	Tour:new()
 
 	if not localPlayer:getJob() then
@@ -128,6 +127,8 @@ function Core:afterLogin()
 	end
 
 	localPlayer:setPlayTime()
+
+	setTimer(function()	NoDm:getSingleton():checkNoDm() end, 2500, 1)
 
 	self:createBlips()
 	PlantGUI.load()

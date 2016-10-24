@@ -2,6 +2,8 @@ NoDm = inherit(Singleton)
 NoDm.Zones = {
 	[1] = {Vector3(1399.1123046875,-1862.453125, 12), Vector3(160,120,15)},
 	[2] = {Vector3(1322.850219726,-1721.6591796875, 12), Vector3(92,120, 15)},
+	[3] = {Vector3(430,-100, 998), Vector3(50, 40, 10), 4},
+
 }
 
 function NoDm:constructor()
@@ -14,8 +16,11 @@ function NoDm:constructor()
 
 	for index, koords in pairs(NoDm.Zones) do
 		self.m_NoDmZones[index] = createColCuboid(koords[1], koords[2])
-		self.m_NoDmRadarAreas[index] = HUDRadar:getSingleton():addArea(koords[1].x, koords[1].y, koords[2].x, -1*koords[2].y, {0, 255, 0, 200})
-
+		if koords[3] and koords[3] > 0 then
+			self.m_NoDmZones[index]:setInterior(koords[3])
+		else
+			self.m_NoDmRadarAreas[index] = HUDRadar:getSingleton():addArea(koords[1].x, koords[1].y, koords[2].x, -1*koords[2].y, {0, 255, 0, 200})
+		end
 		addEventHandler ("onClientColShapeHit", self.m_NoDmZones[index], bind(self.onNoDmZoneHit, self))
 		addEventHandler ("onClientColShapeLeave", self.m_NoDmZones[index], bind(self.onNoDmZoneLeave, self))
 	end
