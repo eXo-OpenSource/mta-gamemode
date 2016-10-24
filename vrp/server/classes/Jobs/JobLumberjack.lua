@@ -17,6 +17,7 @@ function JobLumberjack:constructor()
 	addEventHandler("onMarkerHit", self.m_DumpMarker, bind(JobLumberjack.dumpHit, self))
 
 	self.m_VehicleSpawner = VehicleSpawner:new(1064.67, -300.79, 73, {"Flatbed"}, 180, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
 	addEvent("lumberjackTreeCut", true)
@@ -33,7 +34,10 @@ end
 function JobLumberjack:stop(player)
 	takeWeapon(player, 9)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
+end
 
+function JobLumberjack:onVehicleSpawn(player, vehicleModel, vehicle)
+	vehicle:setVariant(255, 255)
 end
 
 function JobLumberjack:checkRequirements(player)

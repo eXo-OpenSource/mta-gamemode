@@ -80,36 +80,42 @@ end
 
 function JobLumberjack:processTreeDamage(loss, attacker)
 	if attacker == localPlayer and not source.broken then
-		-- Apply new health manually since our tree object is not a breakable/damageable object
-		setElementHealth(source, getElementHealth(source) - loss/5)
+		if localPlayer:getWeapon() and localPlayer:getWeapon() == 9 then
 
-		if getElementHealth(source) <= 0 then
-			source.broken = true
-			local x, y, z = getElementPosition(source)
-			moveObject(source, 4000, x, y, z + 0.5, 88, math.random(0, 88), 0, "InQuad")
-			setElementCollisionsEnabled(source, false)
+			-- Apply new health manually since our tree object is not a breakable/damageable object
+			setElementHealth(source, getElementHealth(source) - loss/10)
 
-			setTimer(
-				function(object)
-					moveObject(object, 8000, x, y, z - 10)
+			if getElementHealth(source) <= 0 then
+				source.broken = true
+				local x, y, z = getElementPosition(source)
+				moveObject(source, 4000, x, y, z + 0.5, 88, math.random(0, 88), 0, "InQuad")
+				setElementCollisionsEnabled(source, false)
 
-					-- Add tree to stack
-					if not self:addStackedTree() then
-						localPlayer:sendMessage(_"Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk! (rote Säge auf der Map)")
-					end
+				setTimer(
+					function(object)
+						moveObject(object, 8000, x, y, z - 10)
 
-					-- "Respawn" the tree after a while
-					setTimer(
-						function(object)
-							-- Reset rotation and move up again
-							setElementRotation(object, 0, 0, 0)
-							moveObject(object, 8000, x, y, z)
-							setElementCollisionsEnabled(object, true)
-							object.broken = nil
-						end, 20000, 1, object
-					)
-				end, 6000, 1, source
-			)
+						-- Add tree to stack
+						if not self:addStackedTree() then
+							localPlayer:sendMessage(_"Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk! (rote Säge auf der Map)")
+						end
+
+						-- "Respawn" the tree after a while
+						setTimer(
+							function(object)
+								-- Reset rotation and move up again
+								setElementRotation(object, 0, 0, 0)
+								moveObject(object, 8000, x, y, z)
+								setElementCollisionsEnabled(object, true)
+								object.broken = nil
+							end, 20000, 1, object
+						)
+					end, 6000, 1, source
+				)
+			end
+		else
+			ErrorBox:new(_"Bitte verwende die Motorsäge!")
+			return
 		end
 	end
 end
