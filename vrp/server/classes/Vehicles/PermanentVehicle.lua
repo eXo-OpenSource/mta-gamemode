@@ -41,6 +41,7 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
     setVehicleHeadLightColor(self, r, g, b)
   end
 
+  if not type(tunings) == "table" then tunings = {} end
   for k, v in pairs(tunings or {}) do
     addVehicleUpgrade(self, v)
   end
