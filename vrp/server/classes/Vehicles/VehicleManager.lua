@@ -446,6 +446,11 @@ function VehicleManager:Event_vehicleRepair()
 end
 
 function VehicleManager:Event_vehicleRespawn()
+	if source:getOccupantsCount() > 0 then
+		client:sendError(_("Das Fahrzeug ist nicht leer!", client))
+		return
+	end
+
 	if not instanceof(source, PermanentVehicle) then
 		client:sendError(_("Das ist kein permanentes Server Fahrzeug!", client))
 		return
@@ -527,6 +532,11 @@ function VehicleManager:Event_vehicleRespawn()
 end
 
 function VehicleManager:Event_vehicleRespawnWorld()
+	if source:getOccupantsCount() > 0 then
+		client:sendError(_("Das Fahrzeug ist nicht leer!", client))
+		return
+	end
+
  	if not instanceof(source, PermanentVehicle, true) then
  		client:sendError(_("Das ist kein permanentes Server Fahrzeug!", client))
  		return

@@ -51,6 +51,14 @@ function Vehicle:getOwner()
 	return self.m_Owner
 end
 
+function Vehicle:getOccupantsCount()
+	local i = 0
+	for seat, player in pairs(self:getOccupants()) do
+		i = i+1
+	end
+	return i
+end
+
 function Vehicle:hasKey(player)
 	if type(player) == "userdata" then
 		player = player:getId()
