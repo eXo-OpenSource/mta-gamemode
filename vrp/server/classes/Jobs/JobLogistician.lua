@@ -36,28 +36,23 @@ function JobLogistician:stop(player)
 	self.m_VehicleSpawner1:toggleForPlayer(player, false)
 	self.m_VehicleSpawner2:toggleForPlayer(player, false)
 	if isElement(player.LogisticanContainer) then player.LogisticanContainer:destroy() end
+	if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
+	player:setData("Logistician:TargetMarker", nil)
 end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
 	vehicle:setData("LogisticanVehicle", true)
 	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
 	addEventHandler("onElementDestroy", vehicle, bind(self.onVehicleDestroy, self))
-	addEventHandler("onVehicleExit", vehicle, bind(self.onVehicleExit, self))
-end
-
-function JobLogistician:onVehicleExit(player, seat)
-	if seat == 0 then
-		player:setPosition(player:getData("Logistican:VehicleSpawn"))
-		player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
-		source:destroy()
-		if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
-		player:setData("Logistician:TargetMarker", nil)
-	end
+	vehicle:addCountdownDestroy(10)
 end
 
 function JobLogistician:onVehicleDestroy()
 	for key, obj in pairs(source:getAttachedElements()) do
 		obj:destroy()
+	end
+	if source:getOccupant() then
+		self:stop(source:getOccupant())
 	end
 end
 
