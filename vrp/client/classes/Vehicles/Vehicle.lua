@@ -129,19 +129,21 @@ setTimer(
 -- The following code prevents vehicle from exploding "fully"
 addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss)
-		if source:getHealth() - loss < 310 then
-			cancelEvent()
+		if source:getVehicleType() == VehicleType.Automobile or source:getVehicleType() == VehicleType.Bike then
+			if source:getHealth() - loss < 310 then
+				cancelEvent()
 
-			if isElementSyncer(source) and source:getHealth() >= 310 then
-				triggerServerEvent("vehicleBreak", source)
-				source.m_Broken = true
+				if isElementSyncer(source) and source:getHealth() >= 310 then
+					triggerServerEvent("vehicleBreak", source)
+					source.m_Broken = true
 
-				if localPlayer:getOccupiedVehicle() == source then
-					WarningBox:new(_"Dein Fahrzeug ist kaputt und muss repariert werden!")
+					if localPlayer:getOccupiedVehicle() == source then
+						WarningBox:new(_"Dein Fahrzeug ist kaputt und muss repariert werden!")
+					end
 				end
-			end
 
-			source:setHealth(301)
+				source:setHealth(301)
+			end
 		end
 	end
 )
