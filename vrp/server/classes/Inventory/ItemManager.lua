@@ -25,7 +25,7 @@ function ItemManager:constructor()
 		["Weed-Samen"] = PlantWeed,
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,
-		["Ausweis-Fuehrerschein"] = ItemIDCard
+		["Ausweis"] = ItemIDCard
 	}
 
 	self.m_SpecialItems = {

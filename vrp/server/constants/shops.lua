@@ -61,7 +61,7 @@ SHOP_ITEMS = {
 		["Mautpass"] = 250
 	};
 	["Stadthalle"] = {
-		["Ausweis-Fuehrerschein"] = 400,
+		["Ausweis"] = 400,
 		["Handelsvertrag"] = 200
 	};
 }
