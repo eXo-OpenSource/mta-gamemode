@@ -196,17 +196,17 @@ end
 function AttackSession:notifyFactions()
 	if self.endReason == 1 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Gegner sind eleminiert!",v))
+			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
 		end
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
+			v:sendInfo(_("Alle Gegner sind eleminiert!",v))
 		end
 	elseif self.endReason == 2 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
+			v:sendInfo(_("Alle Gegner sind eleminiert!",v))
 		end
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Gegner sind eleminiert!",v))
+			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
 		end
 	elseif self.endReason == 3 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
@@ -263,7 +263,6 @@ function AttackSession:attackLose() --// loose for team1
 end
 
 function AttackSession:attackWin() --// win for team1
-	outputChatBox("calling win")
 	self:notifyFactions()
 	self.m_AreaObj.m_Owner = self.m_Faction1.m_Id
 	self.m_AreaObj:update()
@@ -398,8 +397,8 @@ addEvent("ClientBox:takeWeaponFromBox", true)
 function AttackSession:takeWeaponFromBox( key )
 	if self.m_BoxWeapons[key] then
 		giveWeapon( source, self.m_BoxWeapons[key][1], self.m_BoxWeapons[key][2], true )
-		table.remove( self.m_BoxWeapons, key )
 		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName( source ).." nahm sich eine "..WEAPON_NAMES[self.m_BoxWeapons[key][1]].." aus der Box heraus.",0,204,204,true)
+		table.remove( self.m_BoxWeapons, key )
 		self:refreshWeaponBox(  )
 	end
 end
