@@ -11,7 +11,7 @@ AttackSession = inherit(Object)
 --// @param_desc: faction1: attacker-faction, faction2: defender-faction
 function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_AreaObj = pAreaObj
-	self.m_Faction1 = faction1
+	self.m_Faction1 = faction1 
 	self.m_Faction2 = faction2
 	self.m_Disqualified = {	} --//
 	self.m_Participants = {	}
@@ -110,7 +110,6 @@ function AttackSession:disqualifyPlayer( player )
 			attackSession:removeParticipant( player )
 		end
 	end
-	self:sessionCheck()
 end
 
 function AttackSession:joinPlayer( player )
@@ -197,24 +196,24 @@ end
 function AttackSession:notifyFactions()
 	if self.endReason == 1 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Gegner sind eleminiert!", v))
+			v:sendInfo(_("Alle Gegner sind eleminiert!",v))
 		end
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Mitglieder sind gefallen!", v))
+			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
 		end
 	elseif self.endReason == 2 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Mitglieder sind gefallen!", v))
+			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
 		end
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
-			v:sendInfo(_("Alle Gegner sind eleminiert!", v))
+			v:sendInfo(_("Alle Gegner sind eleminiert!",v))
 		end
-	else
+	elseif self.endReason == 3 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
-			v:sendInfo(_("Die Flagge wurde nicht gehalten!", v))
+			v:sendInfo(_("Die Flagge wurde nicht gehalten!",v))
 		end
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
-			v:sendInfo(_("Die Gegner haben die Flagge nicht gehalten!", v))
+			v:sendInfo(_("Die Gegner haben die Flagge nicht gehalten!",v))
 		end
 	end
 end
@@ -264,6 +263,7 @@ function AttackSession:attackLose() --// loose for team1
 end
 
 function AttackSession:attackWin() --// win for team1
+	outputChatBox("calling win")
 	self:notifyFactions()
 	self.m_AreaObj.m_Owner = self.m_Faction1.m_Id
 	self.m_AreaObj:update()
