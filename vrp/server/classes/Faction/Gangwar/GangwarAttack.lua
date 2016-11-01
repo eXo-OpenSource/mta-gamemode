@@ -105,6 +105,10 @@ function AttackSession:disqualifyPlayer( player )
 	local bIsDisqualifed = self:isPlayerDisqualified( player )
 	if not bIsDisqualifed then
 		self.m_Disqualified[ #self.m_Disqualified + 1] = player.name
+		local attackSession = player.m_RefAttackSession
+		if attackSession then
+			attackSession:removeParticipant( player )
+		end
 	end
 	self:sessionCheck()
 end
