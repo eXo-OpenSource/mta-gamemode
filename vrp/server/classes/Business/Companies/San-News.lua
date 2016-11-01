@@ -134,6 +134,7 @@ function SanNews:Event_advertisement(text, color, duration)
 				client:takeMoney(costs, "San News Ad")
 				self:giveMoney(costs, "San News Ad")
 				self.m_NextAd = getRealTime().timestamp + AD_DURATIONS[duration] + AD_BREAK_TIME
+				StatisticsLogger:getSingleton():addAdvert(client, text)
 				triggerClientEvent("showAd", client, client, text, color, duration)
 			else
 				local next = self.m_NextAd - getRealTime().timestamp

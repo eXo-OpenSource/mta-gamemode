@@ -73,7 +73,7 @@ end
 
 function AttackClient:destructor() 
 	if self.m_Display then 
-		self.m_Display:destructor()
+		self.m_Display:delete()
 	end
 end 
 
@@ -174,7 +174,7 @@ end
 addEvent("ClientBox:forceClose",true)
 function AttackClient:forceClose( )
 	if self.m_WeaponBoxUI then 
-		self.m_WeaponBoxUI:destructor()
+		self.m_WeaponBoxUI:delete()
 	end
 end
 

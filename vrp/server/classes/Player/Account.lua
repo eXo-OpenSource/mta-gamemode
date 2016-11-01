@@ -86,6 +86,7 @@ function Account.login(player, username, password, pwhash)
 			player:triggerEvent("Event_StartScreen")
 
 			triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
+			StatisticsLogger:addLogin( player, username, "Login")
 			return
 		end
 	end
@@ -136,7 +137,7 @@ function Account.login(player, username, password, pwhash)
 	player:loadCharacter()
 	player:setRegistrationDate(row.registrationDate)
 	player:triggerEvent("Event_StartScreen")
-
+	StatisticsLogger:addLogin( player, username, "Login")
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
 addEvent("accountlogin", true)
@@ -197,7 +198,7 @@ function Account.register(player, username, password, email)
 			player:setRegistrationDate(getRealTime().timestamp)
 			player:triggerEvent("Event_StartScreen")
 			player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
-
+			StatisticsLogger:addLogin( player, username, "Login")
 			-- TODO: Send validation mail via PHP
 		end
 	end

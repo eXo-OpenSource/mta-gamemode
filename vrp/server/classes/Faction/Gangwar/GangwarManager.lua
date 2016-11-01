@@ -187,9 +187,11 @@ function Gangwar:attackArea( player )
 									acFaction1, acFaction2 = acGangwar.m_AttackSession:getFactions()
 									if acFaction1 ~= faction and acFaction2 ~= faction then
 										if acFaction2 ~= faction2 and acFaction2 ~= faction2 then
-										else return player:sendError(_("Die gegnerische Fraktion ist bereits in einem Gangwar!",  player))
+										else 
+											return player:sendError(_("Die gegnerische Fraktion ist bereits in einem Gangwar!",  player))
 										end
-									else return player:sendError(_("Deine Fraktion ist bereits in einem Gangwar!",  player))
+									else 
+										return player:sendError(_("Deine Fraktion ist bereits in einem Gangwar!",  player))
 									end
 								end
 							end
@@ -198,18 +200,25 @@ function Gangwar:attackArea( player )
 							local nextAttack = lastAttack + ( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS)
 							if nextAttack <= currentTimestamp then
 								mArea:attack(faction, faction2)
-							else player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
+							else 
+								player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
 							end
-						else player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus der Gegner-Fraktion online sein!",  player))
+						else 
+							player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus der Gegner-Fraktion online sein!",  player))
 						end
-					else player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus deiner Fraktion online sein!",  player))
+					else 
+						player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus deiner Fraktion online sein!",  player))
 					end
-				else player:sendError(_("Du kannst dich nicht selbst angreifen!",  player))
+				else 
+					player:sendError(_("Du kannst dich nicht selbst angreifen!",  player))
 				end
-			else player:sendError(_("Du bist an keinem Gebiet!",  player))
+			else 
+				player:sendError(_("Du bist an keinem Gebiet!",  player))
 			end
-		else player:sendError(_("Du bist an keinem Gebiet!",  player))
+		else 
+			player:sendError(_("Du bist an keinem Gebiet!",  player))
 		end
-	else player:sendError(_("Du bist in keiner Fraktion!",  player))
+	else 
+		player:sendError(_("Du bist in keiner Fraktion!",  player))
 	end
 end

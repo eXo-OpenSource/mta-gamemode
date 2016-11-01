@@ -137,3 +137,21 @@ function StatisticsLogger:addHouse( player, action, house )
 	sqlLogs:queryExec("INSERT INTO ??_House (UserId, Aktion, HouseId,  Date ) VALUES(?, ?, ?,  NOW())",
         sqlLogs:getPrefix(), userId, action, house)
 end
+
+function StatisticsLogger:addAdvert( player, text )
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_Advert (UserId, Text,  Date ) VALUES(?, ?,  NOW())",
+        sqlLogs:getPrefix(), userId, text)
+end
+
+function StatisticsLogger:addCasino( player, wintype, prize)
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_Casino (UserId, WinType,  Prize, Date ) VALUES(?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, wintype, prize)
+end
+
+function StatisticsLogger:addLogin( player, name, logintype)
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_Login (UserId, Name, Type, Date ) VALUES(?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, name, logintype)
+end

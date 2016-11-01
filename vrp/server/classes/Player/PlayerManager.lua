@@ -156,6 +156,9 @@ function PlayerManager:playerQuit()
 	if index then
 		table.remove(self.m_ReadyPlayers, index)
 	end
+	if source:isLoggedIn() then
+		StatisticsLogger:addLogin( source, getPlayerName( source ) , "Logout")
+	end
 end
 
 function PlayerManager:Event_playerReady()

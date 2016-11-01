@@ -391,7 +391,7 @@ function AttackSession:removeFromWeaponBoxUI( player )
 end
 
 addEvent("ClientBox:takeWeaponFromBox", true)
-function AttackSession:takeWeaponFromBox( key)
+function AttackSession:takeWeaponFromBox( key )
 	if self.m_BoxWeapons[key] then
 		giveWeapon( source, self.m_BoxWeapons[key][1], self.m_BoxWeapons[key][2], true )
 		table.remove( self.m_BoxWeapons, key )
@@ -408,7 +408,7 @@ end
 
 
 function AttackSession:destroyWeaponBox()
-	if self.m_WeaponBox then
+	if isElement( self.m_WeaponBox ) then
 		destroyElement( self.m_WeaponBox )
 		for i = 1, #self.m_WeaponBoxAttendants do
 			self.m_WeaponBoxAttendants[i]:triggerEvent( "ClientBox:forceClose")

@@ -265,19 +265,21 @@ function Slotmachine:giveWin(player, name, x, y, z, id)
 		local rnd = math.random(0, self.m_Prices.maxNormalRandomPrice)
 		player:giveMoney(self.m_Prices.normalPrice+rnd, "Slotmaschine")
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.normalPrice+rnd))
-
+		StatisticsLogger:addCasino( player, name, rnd)
 	elseif name == "win" then
 		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
 		local rnd = math.random(0, self.m_Prices.maxNormalRandomPrice2)
 		player:giveMoney(self.m_Prices.normalPrice2+rnd, "Slotmaschine")
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.normalPrice2+rnd))
+		StatisticsLogger:addCasino( player, name, rnd)
 	elseif name == "jackpot" then
 		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_jackpot", int, dim)
 		player:giveMoney(self.m_Prices.jackpot, "Slotmaschine")
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.jackpot))
 		triggerClientEvent(getRootElement(), "onSlotmachineJackpot", getRootElement(), x, y, z)
+		StatisticsLogger:addCasino( player, name, self.m_Prices.jackpot)
 	elseif name == "rare" then
 		local int, dim = self.m_Objects.slotmachine:getInterior(), self.m_Objects.slotmachine:getDimension()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_jackpot", int, dim)
@@ -285,16 +287,19 @@ function Slotmachine:giveWin(player, name, x, y, z, id)
 		outputChatBox(getPlayerName(player).." WON THE RARE JACKPOT!!!", getRootElement(), 0, 255, 0)
 		player:sendInfo(_("Du hast %d$ gewonnen!", player, self.m_Prices.rareJackpot))
 		player:giveMoney(self.m_Prices.rareJackpot, "Slotmaschine")
+		StatisticsLogger:addCasino( player, name, self.m_Prices.rareJackpot)
 	elseif name == "drogen" then
 		player:sendInfo(_("Du hast 5 Gramm Weed gewonnen!", player))
 		player:getInventory():giveItem("Weed", 5)
 		player:refreshInventory()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
+		StatisticsLogger:addCasino( player, name, 5)
 	elseif name == "drogenselten" then
 		player:sendInfo(_("Du hast einen Magic Mushroom gewonnen!", player))
 		player:getInventory():giveItem("Shroom", 1)
 		player:refreshInventory()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
+		StatisticsLogger:addCasino( player, name, 1)
 	end
 end
 

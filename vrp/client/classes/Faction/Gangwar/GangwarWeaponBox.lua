@@ -33,7 +33,7 @@ function WeaponBoxGUI:constructor( pGangwarDisplay , pWeapons)
 end
 
 function WeaponBoxGUI:refreshItems( pWeapons )
-	self.m_WeaponList:destructor()
+	self.m_WeaponList:delete()
 	self.m_Weapons = pWeapons
 	self.m_WeaponList = GUIGridList:new(5, 35, self.m_Width-10, self.m_Height-60, self)
 	self.m_WeaponList:addColumn(_"Waffen", 1)
