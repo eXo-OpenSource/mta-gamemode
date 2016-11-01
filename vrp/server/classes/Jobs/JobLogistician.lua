@@ -45,14 +45,15 @@ function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
 	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
 	addEventHandler("onElementDestroy", vehicle, bind(self.onVehicleDestroy, self))
 	vehicle:addCountdownDestroy(10)
+	vehicle.player = player
 end
 
 function JobLogistician:onVehicleDestroy()
 	for key, obj in pairs(source:getAttachedElements()) do
 		obj:destroy()
 	end
-	if source:getOccupant() then
-		self:stop(source:getOccupant())
+	if source.player and isElement(source.player) then
+		self:stop(source.player)
 	end
 end
 
