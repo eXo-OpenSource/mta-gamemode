@@ -47,7 +47,6 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			target:setHeadless(true)
 			StatisticsLogger:getSingleton():addKillLog(attacker, target, weapon)
 			target:kill(attacker, weapon, bodypart)
-			triggerEvent("onClientKill", attacker, target, weapon, bodypart, loss)
 		end
 	else
 		if not target.m_SupMode and not attacker.m_SupMode then
@@ -57,6 +56,10 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
 		end
 	end
+end
+
+function Guns:Event_onClientKill(target, weapon, bodypart, loss) 
+	local attacker = client
 end
 
 function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)

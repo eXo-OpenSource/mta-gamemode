@@ -38,7 +38,7 @@ function AttackSession:destructor()
 	end
 	removeEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 	removeEventHandler("onPlayerDamage", root, self.m_DamageFunc)
-	removeEventHandler("onClientKill", root, self.m_WastedFunc)
+	removeEventHandler("onPlayerWasted", root, self.m_WastedFunc)
 end
 
 function AttackSession:setupSession ( )
@@ -157,7 +157,8 @@ function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 	end
 end
 
-function AttackSession:onGangwarWasted( target, weapon, bpart  )
+function AttackSession:onGangwarWasted( tAmmo, target, weapon, bpart  )
+	outputChatBox("wasted")
 	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then 
 		triggerClientEvent("onGangwarKill", source, target, weapon, bpart)
 	end
