@@ -121,6 +121,12 @@ addEventHandler("GangwarQuestion:new",localPlayer,function()
 	PseudoObj = GangwarQuestion:new()
 end)
 
+function destroyQuestionBox() 
+	if PseudoObj then 
+		PseudoObj:delete()
+	end
+end
+
 function GangwarQuestion:dxDrawBoxText( text , x, y , w , h , ... ) 
 	dxDrawText( text , x , y , x + w , y + h , ... ) 
 end

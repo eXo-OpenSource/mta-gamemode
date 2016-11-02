@@ -8,6 +8,7 @@
 local w,h = guiGetScreenSize()
 AttackClient = inherit(Object)
 local pseudoSingleton
+addRemoteEvents{"onGangwarDamage", "onGangwarKill"}
 
 function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqualified, pInitTime, pPos, bIsNoRush) 
 	self.m_Faction = faction1 
@@ -19,10 +20,10 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	self.m_GangwarKill = 0
 	self.m_NoRush = bIsNoRush
 	self.m_Display = GangwarDisplay:new( faction1, faction2, self, pInitTime, pPos )
-	self.m_DamageFunc = bind( self.addDamage, self)
-	addEventHandler("onClientPlayerDamage",root, self.m_DamageFunc)
-	self.m_KillFunc = bind( self.addKill, self)
-	addEventHandler("onClientPlayerWasted",root, self.m_KillFunc)
+	self.m_DamageFunc = bind( AttackClient.addDamage, self)
+	addEventHandler("onGangwarDamage", localPlayer, self.m_DamageFunc)
+	self.m_KillFunc = bind( AttackClient.addKill, self)
+	addEventHandler("onGangwarKill", localPlayer, self.m_KillFunc)
 	self.m_bindWeaponBoxFunc = bind( AttackClient.showWeaponBox, self )
 	addEventHandler( "Gangwar:showWeaponBox", localPlayer, self.m_bindWeaponBoxFunc)
 	self.m_bindWeaponBoxRefreshFunc = bind( AttackClient.onRefreshItems, self )
@@ -30,24 +31,28 @@ function AttackClient:constructor( faction1 , faction2 , pParticipants, pDisqual
 	self.m_bindWeaponBoxCloseFunc = bind( AttackClient.forceClose, self )
 	addEventHandler( "ClientBox:forceClose", localPlayer, self.m_bindWeaponBoxCloseFunc)
 	self.m_BindNoRushFunc = bind( AttackClient.onDamage, self )
-	addEventHandler("onClientPlayerDamage",root, self.m_BindNoRushFunc)
+	--addEventHandler("onClientPlayerDamage",root, self.m_BindNoRushFunc)
 end
 
 function AttackClient:onDamage( attacker )
 	if self.m_NoRush then 
-	
+		--cancelEvent()
 	end
 end
 
-function AttackClient:addDamage( attacker, weapon, bodypart, loss )
-	if source ~= localPlayer then 
-		local facSource = source:getFaction()
-		local facAttacker = attacker:getFaction()
-		if facSource ~= facAttacker then 
-			if facSource == self.m_Faction or facSource == self.m_Faction2 then 
-				if facAttacker == self.m_Faction or facAttacker == self.m_Faction2 then 
-					if attacker == localPlayer then 
-						localPlayer.m_GangwarDamage = localPlayer.m_GangwarDamage + loss
+function AttackClient:addDamage( target, weapon, bodypart, loss )
+	if target ~= localPlayer then 
+		local facSource = source:getFactionId()
+		local facTarget = target:getFactionId()
+		if facSource ~= facTarget then 
+			if facSource == self.m_Faction.m_Id or facSource == self.m_Faction2.m_Id then 
+				if facTarget == self.m_Faction.m_Id or facTarget == self.m_Faction2.m_Id then 
+					if source == localPlayer then 
+						if not localPlayer.m_GangwarDamage then 
+							localPlayer.m_GangwarDamage = 0 
+						end
+						self.m_GangwarDamage = math.floor( self.m_GangwarDamage + loss )
+						playSound("files/audio/hitsound.wav")
 					end
 				end
 			end
@@ -55,15 +60,15 @@ function AttackClient:addDamage( attacker, weapon, bodypart, loss )
 	end
 end
 
-function AttackClient:addKill( attacker, weapon, bodypart)
-	if source ~= localPlayer then 
-		local facSource = source:getFaction()
-		local facAttacker = attacker:getFaction()
-		if facSource ~= facAttacker then 
-			if facSource == self.m_Faction or facSource == self.m_Faction2 then 
-				if facAttacker == self.m_Faction or facAttacker == self.m_Faction2 then 
-					if attacker == localPlayer then 
-						localPlayer.m_GangwarKill = localPlayer.m_GangwarKill + 1
+function AttackClient:addKill( target, weapon, bodypart)
+	if target ~= localPlayer then 
+		local facSource = source:getFactionId()
+		local facTarget = target:getFactionId()
+		if facTarget ~= facSource then 
+			if facSource == self.m_Faction.m_Id or facSource == self.m_Faction2.m_Id then 
+				if facTarget == self.m_Faction.m_Id or facTarget == self.m_Faction2.m_Id then 
+					if source == localPlayer then 
+						self.m_GangwarKill = math.floor( self.m_GangwarKill + 1 )
 					end
 				end
 			end
@@ -73,8 +78,10 @@ end
 
 function AttackClient:destructor() 
 	if self.m_Display then 
-		self.m_Display:delete()
+		local func = function() self.m_Display:delete() end 
+		setTimer( func, 5000, 1)
 	end
+	destroyQuestionBox() 
 end 
 
 function AttackClient:synchronizeLists( pParticipants, pDisqualified )

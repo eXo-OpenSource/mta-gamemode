@@ -914,6 +914,7 @@
 	<vrpfile src="files/images/Nametag/ARMY.png"/>
 	<vrpfile src="files/images/Nametag/LCN.png"/>
 	<vrpfile src="files/images/Nametag/Yakuza.png"/>
+	<vrpfile src="files/images/Nametag/Grove.png"/>
 	<vrpfile src="files/images/Nametag/RT.png"/>
 	<vrpfile src="files/images/Nametag/w1.png"/>
 	<vrpfile src="files/images/Nametag/w2.png"/>
@@ -1127,7 +1128,7 @@
 
 	<!-- SideSwipe -->
 	<vrpfile src="files/audio/SideSwipe/blop.mp3" />
-
+	
 	<!-- Custom Horns -->
 	<file src='files/audio/Horns/1.mp3'/>
 	<file src='files/audio/Horns/10.mp3'/>
@@ -1189,7 +1190,10 @@
 	<file src='files/audio/Horns/7.mp3'/>
 	<file src='files/audio/Horns/8.mp3'/>
 	<file src='files/audio/Horns/9.mp3'/>
-
+	
+	<!-- Gangwar -->
+	<vrpfile src="files/audio/hitsound.wav"/>
+	
 	<!-- Models -->
 	<vrpfile src="files/models/dead_tree_18.dff"/>
 	<vrpfile src="files/models/yoda.dff"/>

@@ -19,6 +19,10 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self:createBarricadeCars( )
 	self.m_BreakFunc = bind(  AttackSession.onBreakCMD , self)
 	addEventHandler("onPlayerCommand", root, self.m_BreakFunc)
+	self.m_DamageFunc = bind(  AttackSession.onGangwarDamage , self)
+	addEventHandler("onClientDamage", root, self.m_DamageFunc)
+	self.m_WastedFunc = bind(  AttackSession.onGangwarWasted , self)
+	addEventHandler("onPlayerWasted", root, self.m_WastedFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
 	self:createWeaponBox()
 end
@@ -32,6 +36,9 @@ function AttackSession:destructor()
 	if isTimer( self.m_WeaponBoxTimer ) then
 		killTimer( self.m_WeaponBoxTimer )
 	end
+	removeEventHandler("onPlayerCommand", root, self.m_BreakFunc)
+	removeEventHandler("onPlayerDamage", root, self.m_DamageFunc)
+	removeEventHandler("onPlayerWasted", root, self.m_WastedFunc)
 end
 
 function AttackSession:setupSession ( )
@@ -63,11 +70,19 @@ function AttackSession:synchronizeLists( )
 end
 
 
-function AttackSession:addParticipantToList( player )
+function AttackSession:addParticipantToList( player, bLateJoin )
 	local bInList = self:isParticipantInList( player )
 	if not bInList then
 		self.m_Participants[#self.m_Participants + 1] = player
-		player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position)
+		if not bLateJoin then
+			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position)
+		else 
+			if isTimer( self.m_BattleTime ) then
+				local timeLeft = getTimerDetails( self.m_BattleTime )
+				timeLeft = math.ceil(timeLeft /1000)
+				player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position)
+			end
+		end
 		player:triggerEvent("GangwarQuestion:new")
 		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
 		self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
@@ -113,7 +128,7 @@ function AttackSession:disqualifyPlayer( player )
 end
 
 function AttackSession:joinPlayer( player )
-	self:addParticipantToList( player )
+	self:addParticipantToList( player , true)
 	player.m_RefAttackSession = self
 end
 
@@ -133,6 +148,18 @@ function AttackSession:onPlayerLeaveCenter( player )
 			self:setCenterCountdown()
 			--// Notify team 1
 		end
+	end
+end
+
+function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
+	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then 
+		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, loss)
+	end
+end
+
+function AttackSession:onGangwarWasted( tAmmo, target, weapon, bpart  )
+	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then 
+		triggerClientEvent("onGangwarKill", source, target, weapon, bpart)
 	end
 end
 
