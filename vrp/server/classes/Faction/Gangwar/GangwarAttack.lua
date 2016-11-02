@@ -22,7 +22,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_DamageFunc = bind(  AttackSession.onGangwarDamage , self)
 	addEventHandler("onClientDamage", root, self.m_DamageFunc)
 	self.m_WastedFunc = bind(  AttackSession.onGangwarWasted , self)
-	addEventHandler("onPlayerWasted", root, self.m_WastedFunc)
+	addEventHandler("onClientKill", root, self.m_WastedFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
 	self:createWeaponBox()
 end
@@ -38,7 +38,7 @@ function AttackSession:destructor()
 	end
 	removeEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 	removeEventHandler("onPlayerDamage", root, self.m_DamageFunc)
-	removeEventHandler("onPlayerWasted", root, self.m_WastedFunc)
+	removeEventHandler("onClientKill", root, self.m_WastedFunc)
 end
 
 function AttackSession:setupSession ( )
@@ -157,7 +157,7 @@ function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 	end
 end
 
-function AttackSession:onGangwarWasted( tAmmo, target, weapon, bpart  )
+function AttackSession:onGangwarWasted( target, weapon, bpart  )
 	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then 
 		triggerClientEvent("onGangwarKill", source, target, weapon, bpart)
 	end
