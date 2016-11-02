@@ -152,6 +152,8 @@ end
 
 function StatisticsLogger:addLogin( player, name, logintype)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
-	sqlLogs:queryExec("INSERT INTO ??_Login (UserId, Name, Type, Date ) VALUES(?, ?, ?, NOW())",
-        sqlLogs:getPrefix(), userId, name, logintype)
+	local ip = getPlayerIP( player )
+	local serial = getPlayerSerial( player )
+	sqlLogs:queryExec("INSERT INTO ??_Login (UserId, Name, Type, Ip, Serial, Date ) VALUES(?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, name, logintype, ip, serial)
 end
