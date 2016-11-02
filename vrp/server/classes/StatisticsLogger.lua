@@ -84,8 +84,8 @@ end
 function StatisticsLogger:addActionLog(action, type, player, group, groupType)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
     if group then groupId = group:getId() end
-    sqlLogs:queryExec("INSERT INTO ??_Actions (Action, UserId, Group, GroupType, Type, Date) VALUES(?, ?, ?, ?, ?, NOW())",
-        sqlLogs:getPrefix(), action, userId, group, groupType, type)
+    sqlLogs:queryExec("INSERT INTO ??_Actions (Action, UserId, GroupId, GroupType, Type, Date) VALUES(?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), action, userId, groupId, groupType, type)
 end
 
 function StatisticsLogger:addArrestLog(player, wanteds, duration, policeMan, bail)
