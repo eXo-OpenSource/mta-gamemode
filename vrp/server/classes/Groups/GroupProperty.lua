@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GroupProperty = inherit(Object)
 
-function GroupProperty:constructor(Id, Name, Position, Price, OwnerId, Open, Interior, InteriorPosition)
+function GroupProperty:constructor(Id, Name, OwnerId, Price, Interior, Position , Open)
 	self.m_Id = Id
 	self.m_Name = Name
 	self.m_Price = Price
@@ -71,8 +71,3 @@ function GroupProperty:hasOwner() return self.m_Owner ~= false end
 function GroupProperty:getOwner() return self:hasOwner() and self.m_Owner or false end
 
 
-
-
-
-
-GroupProperty:new(23, "Vinyl Countdown", Vector3(815.9998, -1387.0383, 13.6087), 600000, false, true, 5, Vector3(318.689, 1115.171, 1083.883))

@@ -13,6 +13,7 @@
 	<script src="shared/constants/factions.lua" type="shared"/>
 	<script src="shared/constants/animations.lua" type="shared"/>
 	<script src="shared/constants/guns.lua" type="shared"/>
+	<script src="shared/constants/groupInteriors.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
 	<script src="shared/version.lua" type="shared"/>
@@ -176,8 +177,8 @@
 	<script src="server/classes/Groups/GroupManager.lua" type="server"/>
 	<!--<script src="server/classes/Groups/GangArea.lua" type="server"/>-->
 	<!--<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>-->
-	<!--<script src="server/classes/Groups/GroupProperty.lua" type="server"/>-->
-
+	<script src="server/classes/Groups/GroupProperty.lua" type="server"/>
+	<script src="server/classes/Groups/GroupPropertyManager.lua" type="server" />
 	<!-- Business -->
 	<script src="server/classes/Business/Company.lua" type="server"/>
 	<script src="server/classes/Business/Companies/DrivingSchool.lua" type="server"/>
