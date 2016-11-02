@@ -175,10 +175,17 @@ function Vehicle:isBeingUsed()
 end
 
 function Vehicle:toggleLight()
+	local occ = getVehicleOccupant(self)
 	if getVehicleOverrideLights(self) == 1 then
 		setVehicleOverrideLights(self, 2)
+		if occ then 
+			occ:triggerEvent("playLightSFX",false)
+		end
 	else
 		setVehicleOverrideLights(self, 1)
+		if occ then 
+			occ:triggerEvent("playLightSFX",true)
+		end
 	end
 end
 
@@ -194,7 +201,7 @@ function Vehicle:toggleEngine(player)
 				player:sendError(_("Das Fahrzeug ist kaputt und muss erst repariert werden!", player))
 				return false
 			end
-		else
+		else 
 			if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 				self:toggleInternalSmoke()
 			end
