@@ -39,10 +39,12 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 					self.m_Items[id]["Special"] = row_special.Value
 				end
 				if row["Objekt"] == "Mautpass" then
-					if tonumber(row_special.Value) < getRealTime().timestamp then
-						self:removeAllItem("Mautpass")
-						if isElement(self.m_Owner) then
-							self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
+					if row_special then --// Workaround
+						if tonumber(row_special.Value) < getRealTime().timestamp then
+							self:removeAllItem("Mautpass")
+							if isElement(self.m_Owner) then
+								self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
+							end
 						end
 					end
 				end
