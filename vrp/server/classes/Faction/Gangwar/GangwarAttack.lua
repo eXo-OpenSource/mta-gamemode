@@ -122,7 +122,7 @@ function AttackSession:disqualifyPlayer( player )
 	if not bIsDisqualifed then
 		self.m_Disqualified[ #self.m_Disqualified + 1] = player.name
 		self:removeParticipant( player )
-		self:synchronizePlayerList( player )
+		self:synchronizeLists( )
 	end
 end
 
@@ -182,12 +182,10 @@ function AttackSession:onPlayerWasted( player, killer,  kWeapon, bodyP )
 			local bParticipant2 = self:isParticipantInList( killer )
 			if bParticipant2 then
 				self:disqualifyPlayer( player )
-				self:synchronizePlayerList( player ) --Synchronisiere diesen spieler da er nicht mehr automatisch synct wird weil er aus dem gangwar raus ist
 				triggerClientEvent("onGangwarKill", player, killer, weapon, bpart)
 			end
 		else
 			self:disqualifyPlayer( player )
-			self:synchronizePlayerList( player ) -- Synchronisiere diesen spieler da er nicht mehr automatisch synct wird weil er aus dem gangwar raus ist
 		end
 		player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 	end
