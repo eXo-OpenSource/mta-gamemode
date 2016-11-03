@@ -38,7 +38,7 @@ function HelpBar:constructor()
 	self.m_TutorialButton.onUnhover = function () self.m_TutorialButton:setColor(Color.LightBlue) end
 	self.m_TutorialButton:setVisible(false)
 
-	self.m_TicketButton = VRPButton:new(self.m_Width*0.05, self.m_Height*0.93, self.m_Width, self.m_Height*0.05, _"Ticket erstellen", true, self.m_Rectangle):setColor(Color.LightBlue)
+	self.m_TicketButton = VRPButton:new(self.m_Width*0.05, self.m_Height*0.93, self.m_Width*0.9, self.m_Height*0.05, _"Ticket erstellen", true, self.m_Rectangle)
 	self.m_TicketButton.onLeftClick = function() TicketGUI:getSingleton():open() end
 
 	self.m_Visible = false
