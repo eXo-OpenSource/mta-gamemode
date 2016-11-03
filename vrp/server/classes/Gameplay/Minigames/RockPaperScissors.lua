@@ -91,14 +91,21 @@ end
 
 addEventHandler("rockPaperScissorsQuestion", root, function(target)
 	target:sendShortMessage(_("Der Spieler %s möchte mit dir spielen. Klicke hier um anzunehmen!", target, client.name), _("Schere Stein Papier", target), {50, 200, 255}, 10000, "rockPaperScissorsStart", "rockPaperScissorsDecline", client)
+	target.rockPaperScissorsQuestion = true
 end)
 
 addEventHandler("rockPaperScissorsStart", root, function(target)
-	RockPaperScissors:new(client, target)
+	if client.rockPaperScissorsQuestion then
+		RockPaperScissors:new(client, target)
+		client.rockPaperScissorsQuestion = false
+	end
 end)
 
 addEventHandler("rockPaperScissorsDecline", root, function(target)
-	client:sendError(_("Der Spieler %s hat das Schere Stein Papier abgelehnt oder nicht geantwortet!", client, target.name))
+	if client.rockPaperScissorsQuestion then
+		client:sendError(_("Der Spieler %s hat das Schere Stein Papier abgelehnt oder nicht geantwortet!", client, target.name))
+		client.rockPaperScissorsQuestion = false
+	end
 end)
 
 addEventHandler("rockPaperScissorsSelect", root, function(selection)
