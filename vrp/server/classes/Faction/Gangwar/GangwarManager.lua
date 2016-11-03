@@ -44,7 +44,7 @@ function Gangwar:constructor( )
 	addEventHandler("onLoadCharacter", root, bind(self.onPlayerJoin, self))
 	addEventHandler("onDeloadCharacter", root, bind(self.onPlayerQuit, self))
 	addEventHandler("Gangwar:onClientRequestAttack", root, bind(self.attackReceiveCMD, self))
-	addEventHandler("onPlayerWasted", root, bind( self.onPlayerWasted, self))
+	addEventHandler("onClientKill", root, bind( self.onPlayerWasted, self))
 	addEventHandler("GangwarQuestion:disqualify", root, bind(self.onPlayerAbort, self))
 	addEventHandler("gangwarGetAreas", root, bind(self.getAreas, self))
 
@@ -99,7 +99,7 @@ end
 function Gangwar:onPlayerWasted(  ... )
 	local attackSession = source.m_RefAttackSession
 	if attackSession then
-		attackSession:onPlayerWasted( source,  ... )
+		attackSession:onPlayerWasted( ... )
 	end
 end
 
