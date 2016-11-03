@@ -7,7 +7,8 @@
 -- ****************************************************************************
 GroupProperty = inherit(Object)
 
-function GroupProperty:constructor(Id, Name, OwnerId, Price, Interior, Position , Open)
+function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open)
+
 	self.m_Id = Id
 	self.m_Name = Name
 	self.m_Price = Price
@@ -16,17 +17,18 @@ function GroupProperty:constructor(Id, Name, OwnerId, Price, Interior, Position 
 	self.m_Position = Position
 	self.m_Interior = Interior
 	self.m_InteriorPosition = InteriorPosition
-	self.m_Dimension = math.random(10000, 20000)
+	self.m_Dimension = Id+1000
+	self.m_CamMatrix = Cam
 
-	self.m_Pickup = Pickup(Position, 3, 1272, 0)
+	self.m_Pickup = createPickup(Pickup, 3, 1272, 0)
 	addCommandHandler("enter",
 		function(player)
 			self:openForPlayer(player)
 		end
 	)
 
-	self.m_ExitMarker = createMarker(InteriorPosition, "corona", 2, 255, 255, 255, 200)
-	self.m_ExitMarker:setInterior(Interior)
+	self.m_ExitMarker = createMarker(InteriorSpawn, "corona", 2, 255, 255, 255, 200)
+	self.m_ExitMarker:setInterior(InteriorId)
 	self.m_ExitMarker:setDimension(self.m_Dimension)
 	addEventHandler("onMarkerHit", self.m_ExitMarker,
 		function(hitElement, matchingDimension)
