@@ -21,8 +21,6 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	addEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 	self.m_DamageFunc = bind(  AttackSession.onGangwarDamage , self)
 	addEventHandler("onClientDamage", root, self.m_DamageFunc)
-	self.m_WastedFunc = bind(  AttackSession.onGangwarWasted , self)
-	addEventHandler("onClientKill", root, self.m_WastedFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
 	self:createWeaponBox()
 end
@@ -38,7 +36,6 @@ function AttackSession:destructor()
 	end
 	removeEventHandler("onPlayerCommand", root, self.m_BreakFunc)
 	removeEventHandler("onClientDamage", root, self.m_DamageFunc)
-	removeEventHandler("onClientKill", root, self.m_WastedFunc)
 end
 
 function AttackSession:setupSession ( )
@@ -67,6 +64,10 @@ function AttackSession:synchronizeLists( )
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
 		v:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
 	end
+end
+
+function AttackSession:synchronizePlayerList( player )
+	player:triggerEvent("AttackClient:synchronizeLists",self.m_Participants,self.m_Disqualified)
 end
 
 
@@ -120,10 +121,8 @@ function AttackSession:disqualifyPlayer( player )
 	local bIsDisqualifed = self:isPlayerDisqualified( player )
 	if not bIsDisqualifed then
 		self.m_Disqualified[ #self.m_Disqualified + 1] = player.name
-		local attackSession = player.m_RefAttackSession
-		if attackSession then
-			attackSession:removeParticipant( player )
-		end
+		self:removeParticipant( player )
+		self:synchronizePlayerList( player )
 	end
 end
 
@@ -157,12 +156,6 @@ function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 	end
 end
 
-function AttackSession:onGangwarWasted( target, attacker, weapon, bpart  )
-	if self:isParticipantInList( target ) and self:isParticipantInList( attacker ) then 
-		triggerClientEvent("onGangwarKill", attacker, target, weapon, bpart)
-	end
-end
-
 function AttackSession:sessionCheck()
 	local factionCount1 = 0
 	local factionCount2 = 0
@@ -182,19 +175,19 @@ function AttackSession:sessionCheck()
 	end
 end
 
-function AttackSession:onPlayerWasted( tAmmo, player, kWeapon, bodyP )
-	local killer = source
+function AttackSession:onPlayerWasted( player, killer,  kWeapon, bodyP )
 	local bParticipant = self:isParticipantInList( player )
 	if bParticipant then
 		if killer then
 			local bParticipant2 = self:isParticipantInList( killer )
 			if bParticipant2 then
-				self:removeParticipant( player )
 				self:disqualifyPlayer( player )
+				self:synchronizePlayerList( player ) --Synchronisiere diesen spieler da er nicht mehr automatisch synct wird weil er aus dem gangwar raus ist
+				triggerClientEvent("onGangwarKill", player, killer, weapon, bpart)
 			end
 		else
-			self:removeParticipant( player )
 			self:disqualifyPlayer( player )
+			self:synchronizePlayerList( player ) -- Synchronisiere diesen spieler da er nicht mehr automatisch synct wird weil er aus dem gangwar raus ist
 		end
 		player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 	end

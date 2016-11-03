@@ -60,7 +60,7 @@ end
 
 function Guns:Event_onClientPlayerWasted( killer, weapon, bodypart)
 	if source == localPlayer then 
-		triggerServerEvent("onClientWasted", source, killer, weapon, bodypart)
+		triggerServerEvent("onClientWasted", localPlayer, killer, weapon, bodypart)
 	end
 end
 
