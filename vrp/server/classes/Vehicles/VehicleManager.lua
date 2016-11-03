@@ -310,8 +310,8 @@ function VehicleManager:loadPlayerVehicles(player)
 	if player:getId() then
 		local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), player:getId())
 		for i, row in pairs(result) do
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-			enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.LightColor)
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
+			enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		end
 	end
