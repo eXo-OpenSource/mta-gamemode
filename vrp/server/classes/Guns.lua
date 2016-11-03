@@ -18,9 +18,10 @@ function Guns:constructor()
 		setWeaponProperty (23, skill, "anim_loop_stop", 0 )
 	end
 
-	addRemoteEvents{"onTaser", "onClientDamage"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
+	addEventHandler("onClientWasted", root, bind(self.Event_onClientKill, self))
 end
 
 function Guns:destructor()
@@ -58,8 +59,8 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 	end
 end
 
-function Guns:Event_onClientKill(target, weapon, bodypart, loss) 
-	local attacker = client
+function Guns:Event_onClientKill(kill, weapon, bodypart, loss) 
+
 end
 
 function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)

@@ -24,7 +24,7 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerDamage", root, bind(self.Event_onClientPlayerDamage, self))
 	addEventHandler("onClientPlayerWeaponFire", root, bind(self.Event_onClientWeaponFire, self))
 	addEventHandler("onClientPedDamage", root, bind(self.Event_onClientPedDamage, self))
-
+	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 end
 
@@ -55,6 +55,12 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 				end
 			end
 		end
+	end
+end
+
+function Guns:Event_onClientPlayerWasted( killer, weapon, bodypart)
+	if source == localPlayer then 
+		triggerServerEvent("onClientWasted", source, killer, weapon, bodypart)
 	end
 end
 

@@ -157,9 +157,9 @@ function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
 	end
 end
 
-function AttackSession:onGangwarWasted( tAmmo, target, weapon, bpart  )
-	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then 
-		triggerClientEvent("onGangwarKill", source, target, weapon, bpart)
+function AttackSession:onGangwarWasted( target, attacker, weapon, bpart  )
+	if self:isParticipantInList( target ) and self:isParticipantInList( attacker ) then 
+		triggerClientEvent("onGangwarKill", attacker, target, weapon, bpart)
 	end
 end
 
