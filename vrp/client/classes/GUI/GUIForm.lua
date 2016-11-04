@@ -6,14 +6,17 @@
 -- *
 -- ****************************************************************************
 GUIForm = inherit(CacheArea)
+GUIForm.Map = {}
 
 function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, postGUI)
 	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true, postGUI)
 	self.m_KeyBinds = {}
-
 	if incrementCursorCounter ~= false then
 		Cursor:show()
 	end
+
+	self.m_Id = #GUIForm.Map+1
+	GUIForm.Map[self.m_Id] = self
 end
 
 function GUIForm:destructor()
@@ -26,6 +29,7 @@ function GUIForm:destructor()
 
 	-- Todo: Replace this by virtual_destructor
 	CacheArea.destructor(self)
+	GUIForm.Map[self.m_Id] = nil
 end
 
 function GUIForm:open(hiddenCursor)
@@ -90,4 +94,12 @@ function GUIForm:unbind(key, fn)
 	end
 
 	unbindKey(key, "down", self.m_KeyBinds[key])
+end
+
+function GUIForm.closeAll()
+	for id, form in pairs(GUIForm.Map) do
+		if form then
+			form:close(false)
+		end
+	end
 end

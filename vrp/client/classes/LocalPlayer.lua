@@ -242,6 +242,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 
 	if state == true then
 		self.m_AFKCode = false
+		GUIForm.closeAll()
 		InfoBox:new(_"Du wurdest ins AFK-Cafe teleportiert!")
 		triggerServerEvent("toggleAFK", localPlayer, true, teleport)
 		addEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)

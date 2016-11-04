@@ -44,7 +44,7 @@ function PerformanceStatsGUI:onShow()
 end
 
 function PerformanceStatsGUI:onHide()
-	killTimer(self.m_RefreshTimer)
+	if isTimer(self.m_RefreshTimer) then killTimer(self.m_RefreshTimer) end
 	self.m_RefreshTimer = false
 end
 
