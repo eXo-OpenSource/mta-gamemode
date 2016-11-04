@@ -328,6 +328,9 @@ function SelfGUI:constructor()
 	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
 	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
+	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Shader-Einstellungen", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
+	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
+
 	--[[ TODO: Do we require this?
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.8, self.m_Height*0.07, _"Tipps", tabSettings)
 	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren?", tabSettings)
@@ -475,6 +478,11 @@ end
 function SelfGUI:KeyBindsButton_Click()
 	self:close()
 	KeyBindings:getSingleton():open()
+end
+
+function SelfGUI:ShaderButton_Click()
+	self:close()
+	ShaderPanel:getSingleton():open()
 end
 
 function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
