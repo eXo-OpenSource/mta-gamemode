@@ -214,6 +214,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 			if player.m_RescueStretcher.player then
 				local deadPlayer = player.m_RescueStretcher.player
 				if deadPlayer:isDead() then
+					deadPlayer:triggerEvent("abortDeathGUI")
 					local pos = vehicle:getPosition()
 					pos.x = pos.x+3
 					deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
@@ -221,8 +222,6 @@ function FactionRescue:removeStretcher(player, vehicle)
 					deadPlayer:setCameraTarget(player)
 					deadPlayer:respawn(Vector3(pos))
 					deadPlayer:fadeCamera(true, 1)
-					deadPlayer:triggerEvent("abortDeathGUI")
-
 				else
 					player:sendShortMessage(_("Der Spieler ist nicht Tod!", player))
 				end
@@ -339,8 +338,8 @@ end
 
 function FactionRescue:Event_OnPlayerWastedFinish()
 	source:setCameraTarget(player)
-	source:respawn()
 	source:fadeCamera(true, 1)
+	source:respawn()
 end
 
 function FactionRescue:Event_healPlayerQuestion(target)

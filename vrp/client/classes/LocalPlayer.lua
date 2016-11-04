@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage", "playerSendToHospital", "abortDeathGUI" }
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage", "playerSendToHospital", "abortDeathGUI", "sendTrayNotification" }
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -25,7 +25,7 @@ function LocalPlayer:constructor()
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
 	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
 	addEventHandler("abortDeathGUI", self, bind( self.abortDeathGUI, self ))
-
+	addEventHandler("sendTrayNotification", self, bind( self.sendTrayNotification, self ))
 
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 end
@@ -98,34 +98,11 @@ function LocalPlayer:toggleDamage( bstate )
 	end
 end
 
-function LocalPlayer:abortDeathGUI()
-	if self.m_FadeOutShader then delete(self.m_FadeOutShader) end
-	if DeathGUI:isInstantiated() then
-		delete(DeathGUI:getSingleton())
-	end
-	if self.m_WastedTimer1 and isTimer(self.m_WastedTimer1) then killTimer(self.m_WastedTimer1) end
-	if self.m_WastedTimer2 and isTimer(self.m_WastedTimer2) then killTimer(self.m_WastedTimer2) end
-	if self.m_WastedTimer3 and isTimer(self.m_WastedTimer3) then killTimer(self.m_WastedTimer3) end
-end
-
 function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
 end
-
-function LocalPlayer:Event_SendToHospital()
-	-- Play knock out effect
-	self.m_FadeOutShader = FadeOutShader:new()
-	setTimer(function()
-			local time = self:getPublicSync("DeathTime")-6000
-			DeathGUI:new(time)
-			fadeCamera(false,0.5,0,0,0)
-			fadeCamera(true,0.5)
-			setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
-	end, 6000, 1)
-end
-
 
 function LocalPlayer:startHalleluja()
 	setCameraTarget(localPlayer)
@@ -201,6 +178,16 @@ function LocalPlayer:Event_playerWasted()
 	)
 end
 
+function LocalPlayer:abortDeathGUI()
+	if self.m_FadeOutShader then delete(self.m_FadeOutShader) end
+	if self.m_WastedTimer1 and isTimer(self.m_WastedTimer1) then killTimer(self.m_WastedTimer1) end
+	if self.m_WastedTimer2 and isTimer(self.m_WastedTimer2) then killTimer(self.m_WastedTimer2) end
+	if self.m_WastedTimer3 and isTimer(self.m_WastedTimer3) then killTimer(self.m_WastedTimer3) end
+	HUDUI:getSingleton():show()
+	showChat(true)
+	delete(DeathGUI:getSingleton())
+end
+
 function LocalPlayer:checkAFK()
 	if not self:isLoggedIn() then return end
 
@@ -223,6 +210,7 @@ function LocalPlayer:checkAFK()
 		end
 		if self.m_AFKCheckCount == 60 then
 			outputChatBox ( "WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
+			self:sendTrayNotification("WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", "warning", true)
 			self:generateAFKCode()
 			return
 		elseif self.m_AFKCheckCount == 72 then
@@ -284,4 +272,8 @@ end
 function LocalPlayer:Event_retrieveInfo(info)
 	self.m_Rank = info.Rank
 	self.m_LoggedIn = true
+end
+
+function LocalPlayer:sendTrayNotification(text, icon, sound)
+	createTrayNotification("eXo-RL: "..text, icon, sound)
 end

@@ -20,6 +20,8 @@ function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, 
 end
 
 function GUIForm:destructor()
+	GUIForm.Map[self.m_Id] = nil
+
 	for k, v in pairs(self.m_KeyBinds) do
 		unbindKey(k, "down", v)
 	end
@@ -29,7 +31,6 @@ function GUIForm:destructor()
 
 	-- Todo: Replace this by virtual_destructor
 	CacheArea.destructor(self)
-	GUIForm.Map[self.m_Id] = nil
 end
 
 function GUIForm:open(hiddenCursor)
