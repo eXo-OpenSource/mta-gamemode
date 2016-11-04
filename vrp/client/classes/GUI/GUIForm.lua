@@ -20,7 +20,9 @@ function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, 
 end
 
 function GUIForm:destructor()
-	GUIForm.Map[self.m_Id] = nil
+	if self.m_Id and GUIForm.Map[self.m_Id] then
+		GUIForm.Map[self.m_Id] = nil
+	end
 
 	for k, v in pairs(self.m_KeyBinds) do
 		unbindKey(k, "down", v)
