@@ -525,11 +525,18 @@ function DatabasePlayer:getPlayTime() -- This function is overriden by Player:ge
 end
 
 function DatabasePlayer:loadMigratorData()
-	local row = sql:queryFetchSingle("SELECT Money, PlayTime, Points FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:queryFetchSingle("SELECT Money, PlayTime, Points, HasDrivingLicense, HasPilotsLicense, HasBikeLicense, HasTruckLicense, HasTheory, PaNote FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then return false end
 	self:setMoney(row.Money)
 	self:setPoints(row.Points)
 	self:setPlayTime(row.PlayTime)
+	self.m_HasPilotsLicense = toboolean(row.HasPilotsLicense)
+	self.m_HasTheory = toboolean(row.HasTheory)
+	self.m_HasDrivingLicense = toboolean(row.HasDrivingLicense)
+	self.m_HasBikeLicense = toboolean(row.HasBikeLicense)
+	self.m_HasTruckLicense = toboolean(row.HasTruckLicense)
+	self.m_PaNote = row.PaNote
+
 	for index, veh in pairs(VehicleManager:getSingleton():getPlayerVehicles(self)) do
 		VehicleManager:getSingleton():removeRef(veh, false)
 		veh:destroy()
