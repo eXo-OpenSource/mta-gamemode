@@ -477,3 +477,11 @@ SkinShops = {
 		CameraMatrix = {177.40980529785, -87.031700134277, 1003.7614746094, 178.3257598877, -87.35213470459, 1003.5198974609, 0, 70}
 	};
 }
+
+SHADERS = {
+	["Detail"] = {["enableFunc"] = "", ["disableFunc"] = ""},
+	["Contrast"] = {["enableFunc"] = "", ["disableFunc"] = ""},
+	["Carpaint"] = {["enableFunc"] = "", ["disableFunc"] = ""},
+	["Radialblur"] = {["enableFunc"] = "", ["disableFunc"] = ""},
+	["DynamicSky"] = {["enableFunc"] = "", ["disableFunc"] = ""}
+}
