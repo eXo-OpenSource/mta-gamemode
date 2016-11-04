@@ -215,12 +215,11 @@ function FactionRescue:removeStretcher(player, vehicle)
 				local deadPlayer = player.m_RescueStretcher.player
 				if deadPlayer:isDead() then
 					deadPlayer:triggerEvent("abortDeathGUI")
-					local pos = vehicle:getPosition()
-					pos.x = pos.x+3
+					local pos = vehicle.position - vehicle.matrix.forward
 					deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
 					player:sendShortMessage(_("Du hast den Spieler erfolgreich wiederbelebt!", player))
 					deadPlayer:setCameraTarget(player)
-					deadPlayer:respawn(Vector3(pos))
+					deadPlayer:respawn(pos)
 					deadPlayer:fadeCamera(true, 1)
 				else
 					player:sendShortMessage(_("Der Spieler ist nicht Tod!", player))
@@ -232,49 +231,6 @@ function FactionRescue:removeStretcher(player, vehicle)
 		end, 3000, 1, vehicle, player
 	)
 end
-
---[[ Very buggy, i don't know why? TODO!
-function FactionRescue:Event_RemoveStretcher()
-	if client:getFaction() == self.m_Faction then
-		if client.m_RescueStretcher and client.m_RescueStretcher.m_Vehicle == source then
-			local distance = math.abs(((source:getPosition() + source.matrix.forward*-4.5) - client:getPosition()).length)
-			if distance >= 2.5 and distance <= 4 then
-				-- Move it into the Vehicle
-				client.m_RescueStretcher:setPosition(client:getPosition() + Vector3(0, 1.4, -0.5))
-				client.m_RescueStretcher:setRotation(client:getRotation())
-				client.m_RescueStretcher:detach()
-				moveObject(client.m_RescueStretcher, 3000, source:getPosition() + source.matrix.forward*-2, 0, 0, 0, "InOutQuad")
-
-				-- Enable Controls
-				client:toggleControlsWhileObjectAttached(true)
-
-				setTimer(
-					function(source, client)
-						-- Close the doors
-						source:setDoorOpenRatio(4, 0)
-						source:setDoorOpenRatio(5, 0)
-
-						-- Attach to the Vehicle
-						client.m_RescueStretcher:setPosition(source:getPosition() + source.matrix.forward*-2)
-						client.m_RescueStretcher:setRotation(source:getRotation())
-						outputDebug(client.m_RescueStretcher:attach(source, source:getPosition() + source.matrix.forward*-2))
-					end, 3000, 1, source, client
-				)
-			else
-				client:sendWarning(_("Die Trage kann in dieser Position nicht ausgeladen werden!", client))
-				local tempMarker = createMarker(source:getPosition() + source.matrix.forward*-7.5, "corona", 1)
-				setTimer(
-					function ()
-						tempMarker:destroy()
-					end, 5000, 1
-				)
-			end
-		else
-			client:sendError(_("In dieses Fahrzeug kannst du die Trage nicht einladen!", client))
-		end
-	end
-end
---]]
 
 function FactionRescue:createDeathPickup(player, ...)
 	local pos = player:getPosition()

@@ -136,7 +136,7 @@ function LocalPlayer:Event_playerWasted()
 		self.m_WastedTimer2 = setTimer( -- Todo: Remove later
 			function ()
 				fadeCamera(true,0.5)
-				DeathGUI:new(time)
+				self.m_DeathGUI = DeathGUI:new(time)
 				self.m_WastedTimer3 = setTimer(function()
 					HUDRadar:getSingleton():show()
 					HUDUI:getSingleton():show()
@@ -171,7 +171,7 @@ function LocalPlayer:Event_playerWasted()
 				-- Play knock out effect
 				self.m_FadeOutShader = FadeOutShader:new()
 				self.m_WastedTimer1 = setTimer(callback, 4000, 1, sound, start)
-
+				self.m_DeathRender = getThisFunction()
 				removeEventHandler("onClientPreRender", root, getThisFunction())
 			end
 		end
@@ -185,7 +185,8 @@ function LocalPlayer:abortDeathGUI()
 	if self.m_WastedTimer3 and isTimer(self.m_WastedTimer3) then killTimer(self.m_WastedTimer3) end
 	HUDUI:getSingleton():show()
 	showChat(true)
-	delete(DeathGUI:getSingleton())
+	if self.m_DeathGUI then delete(self.m_DeathGUI) end
+	removeEventHandler("onClientPreRender", root, self.m_DeathRender)
 end
 
 function LocalPlayer:checkAFK()
