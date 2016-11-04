@@ -23,6 +23,7 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	addEventHandler("onClientDamage", root, self.m_DamageFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
 	self:createWeaponBox()
+	GangwarStatistics:getSingleton():newCollector( pAreaObj.m_ID )
 end
 
 function AttackSession:destructor()
@@ -50,7 +51,7 @@ end
 
 function AttackSession:synchronizeAllParticipants( )
 	for k,v in ipairs( self.m_Participants ) do
-		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position )
+		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID )
 		v.m_RefAttackSession = self
 		v:triggerEvent("GangwarQuestion:new")
 	end
@@ -76,12 +77,12 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 	if not bInList then
 		self.m_Participants[#self.m_Participants + 1] = player
 		if not bLateJoin then
-			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position)
+			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
 		else 
 			if isTimer( self.m_BattleTime ) then
 				local timeLeft = getTimerDetails( self.m_BattleTime )
 				timeLeft = math.ceil(timeLeft /1000)
-				player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position)
+				player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
 			end
 		end
 		player:triggerEvent("GangwarQuestion:new")
@@ -238,14 +239,18 @@ function AttackSession:notifyFactions()
 end
 
 function AttackSession:stopClients()
-		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
-			v:triggerEvent("AttackClient:stopClient")
-			v.m_RefAttackSession = nil
-		end
-		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
-			v:triggerEvent("AttackClient:stopClient")
-			v.m_RefAttackSession = nil
-		end
+	local receiveTimeout = 0
+	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
+		v:triggerEvent("AttackClient:stopClient")
+		v.m_RefAttackSession = nil
+		receiveTimeout = receiveTimeout +1
+	end
+	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
+		v:triggerEvent("AttackClient:stopClient")
+		v.m_RefAttackSession = nil
+		receiveTimeout = receiveTimeout + 1
+	end
+	GangwarStatistics:getSingleton():setCollectorTimeout( self.m_AreaObj.m_ID, receiveTimeout )	
 end
 
 function AttackSession:notifyFaction1( )

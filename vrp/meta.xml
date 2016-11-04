@@ -205,8 +205,9 @@
 	<script src="server/classes/Faction/FactionManager.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/GangwarManager.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/Area.lua" type="server"/>
-	<script src="server/classes/Faction/Gangwar/GangwarAttack.lua" type="server"/>
-
+	<script src="server/classes/Faction/Gangwar/AttackSession.lua" type="server"/>
+	<script src="server/classes/Faction/Gangwar/GangwarStatistics.lua" type="server"/>
+	
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/PermanentVehicle.lua" type="server"/>
@@ -598,6 +599,7 @@
 	<script src="client/classes/Faction/Gangwar/GangwarDisplay.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarQuestion.lua" type="client"/>
 	<script src="client/classes/Faction/Gangwar/GangwarWeaponBox.lua" type="client"/>
+	<script src="client/classes/Faction/Gangwar/GangwarStatistics.lua" type="client"/>
 
 	<!-- Missions -->
 	<script src="client/classes/Mission/Tutorial.lua" type="client"/>
@@ -953,7 +955,8 @@
 	<vrpfile src="files/images/Gangwar/gw_damage.png"/>
 	<vrpfile src="files/images/Gangwar/gw_kill.png"/>
 	<vrpfile src="files/images/Gangwar/gw_time.png"/>
-
+	<vrpfile src="files/images/Gangwar/trophy.png"/>
+	
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>

@@ -93,7 +93,7 @@ function Core:constructor()
 
 	--// Gangwar
 	Gangwar:new()
-
+	GangwarStatistics:new()
 	-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 	setHeatHaze(0)
 
@@ -147,6 +147,7 @@ function Core:destructor()
 	delete(InventoryManager:getSingleton())
 	delete(ShopManager:getSingleton())
 	delete(GrowableManager:getSingleton())
+	delete(GangwarStatistics:getSingleton())
 	--delete(sql) -- Very slow
 end
 

@@ -55,6 +55,8 @@ function Core:ready()
 	ItemManager:new();
 	--// Gangwar
 	GangwarClient:new()
+	GangwarStatistics:new()
+	
 	MostWanted:new()
 	NoDm:new()
 	FactionManager:new()
