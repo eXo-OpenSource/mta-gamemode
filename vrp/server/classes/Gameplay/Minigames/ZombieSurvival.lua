@@ -116,11 +116,12 @@ function ZombieSurvival:addPlayer(player)
 end
 
 function ZombieSurvival:removePlayer(player)
-	player:spawn(0, 0, 0)
+	player:spawn()
 	source:fadeCamera(true, 1)
 	player:setHealth(100)
-	player:setPosition(-35.72, 1380.00, 9.42)
 	player:setDimension(0)
+	player:setInterior(0)
+	player:setPosition(-35.72, 1380.00, 9.42)
 	player:sendInfo(_("Du bist gestorben! Das Zombie Survival wurde beendet! Score: %d", player, self.m_ZombieKills[player]))
 
 	MinigameManager:getSingleton().m_ZombieSurvivalHighscore:addHighscore(player:getId(), self.m_ZombieKills[player])
