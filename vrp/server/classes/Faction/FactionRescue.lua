@@ -215,7 +215,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 				local deadPlayer = player.m_RescueStretcher.player
 				if deadPlayer:isDead() then
 					deadPlayer:triggerEvent("abortDeathGUI")
-					local pos = vehicle.position - vehicle.matrix.forward
+					local pos = vehicle.position - vehicle.matrix.forward*4
 					deadPlayer:sendInfo(_("Du wurdest erfolgreich wiederbelebt!", deadPlayer))
 					player:sendShortMessage(_("Du hast den Spieler erfolgreich wiederbelebt!", player))
 					deadPlayer:setCameraTarget(player)

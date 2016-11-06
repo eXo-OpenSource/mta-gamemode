@@ -167,6 +167,7 @@ function LocalPlayer:abortDeathGUI()
 	if self.m_WastedTimer3 and isTimer(self.m_WastedTimer3) then killTimer(self.m_WastedTimer3) end
 	if self.m_WastedTimer4 and isTimer(self.m_WastedTimer4) then killTimer(self.m_WastedTimer4) end
 	if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
+	HUDRadar:getSingleton():show()
 	HUDUI:getSingleton():show()
 	showChat(true)
 	if self.m_DeathGUI then delete(self.m_DeathGUI) end
