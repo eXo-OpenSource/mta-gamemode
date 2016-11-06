@@ -28,6 +28,10 @@ function LocalPlayer:constructor()
 	addEventHandler("sendTrayNotification", self, bind( self.sendTrayNotification, self ))
 
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
+
+
+	self.m_DeathRenderBind = bind(self.deathRender, self)
+
 end
 
 function LocalPlayer:destructor()
@@ -104,26 +108,6 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	end
 end
 
-function LocalPlayer:startHalleluja()
-	setCameraTarget(localPlayer)
-	localPlayer:setHeadless(false)
-	playSound("files/audio/Halleluja.mp3")
-	local x, y, z = 2028, -1405, 110
-	-- Disable damage while resurrecting
-	addEventHandler("onClientPlayerDamage", root, cancelEvent)
-	addEventHandler("onClientPreRender", root,
-	function(deltaTime)
-		z = z-0.005*deltaTime
-		localPlayer:setPosition(x, y, z)
-		localPlayer:setRotation(0, 0, 225)
-		if z <= 18 then
-			removeEventHandler("onClientPreRender", root, getThisFunction())
-			removeEventHandler("onClientPlayerDamage", root, cancelEvent)
-		end
-	end
-	)
-end
-
 function LocalPlayer:Event_playerWasted()
 	local callback = function (sound)
 		if isElement(sound) then
@@ -156,26 +140,24 @@ function LocalPlayer:Event_playerWasted()
 
 	-- Move camera into the Sky
 	setCameraInterior(0)
-	local pos = self:getPosition()
-	local add = 0
-	local sound = Sound("files/audio/Halleluja.mp3")
-	local soundStart = getTickCount()
-	local soundLength = sound:getLength()
-	ShortMessage:new(_"Dir konnte leider niemand mehr helfen..! Du bist Tod.\n\nBut... have a good flight into the Heaven!", (soundLength-1)*1000)
-	addEventHandler("onClientPreRender", root,
-		function(deltaTime)
-			add = add+0.005*deltaTime
-			setCameraMatrix(pos.x, pos.y, pos.z + add, pos)
 
-			if (getTickCount()-soundStart) >= (soundLength*1000) then
-				-- Play knock out effect
-				self.m_FadeOutShader = FadeOutShader:new()
-				self.m_WastedTimer1 = setTimer(callback, 4000, 1, sound, start)
-				self.m_DeathRender = getThisFunction()
-				removeEventHandler("onClientPreRender", root, getThisFunction())
-			end
-		end
-	)
+	self.m_DeathPosition = self:getPosition()
+	self.m_Add = 0
+	self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
+	local soundLength = self.m_Halleluja:getLength()
+	ShortMessage:new(_"Dir konnte leider niemand mehr helfen..! Du bist Tod.\n\nBut... have a good flight into the Heaven!", (soundLength-1)*1000)
+	addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
+	self.m_WastedTimer4 = setTimer(function()
+		self.m_FadeOutShader = FadeOutShader:new()
+		self.m_WastedTimer1 = setTimer(callback, 4000, 1, self.m_Halleluja, start)
+		removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
+	end, soundLength*1000, 1)
+end
+
+function LocalPlayer:deathRender(deltaTime)
+	local pos = self.m_DeathPosition
+	self.m_Add = self.m_Add+0.005*deltaTime
+	setCameraMatrix(pos.x, pos.y, pos.z + self.m_Add, pos)
 end
 
 function LocalPlayer:abortDeathGUI()
@@ -183,10 +165,12 @@ function LocalPlayer:abortDeathGUI()
 	if self.m_WastedTimer1 and isTimer(self.m_WastedTimer1) then killTimer(self.m_WastedTimer1) end
 	if self.m_WastedTimer2 and isTimer(self.m_WastedTimer2) then killTimer(self.m_WastedTimer2) end
 	if self.m_WastedTimer3 and isTimer(self.m_WastedTimer3) then killTimer(self.m_WastedTimer3) end
+	if self.m_WastedTimer4 and isTimer(self.m_WastedTimer4) then killTimer(self.m_WastedTimer4) end
+	if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
 	HUDUI:getSingleton():show()
 	showChat(true)
 	if self.m_DeathGUI then delete(self.m_DeathGUI) end
-	removeEventHandler("onClientPreRender", root, self.m_DeathRender)
+	removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 end
 
 function LocalPlayer:checkAFK()
