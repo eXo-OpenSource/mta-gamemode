@@ -11,17 +11,19 @@ function Core:constructor()
 		Debugging:new()
 	end
 
+	Config:new()
+
 	-- Update MySQL DB if this is not the testserver/releaseserver
 	if not IS_TESTSERVER then
 		--MYSQL_DB = "vrp_local"
 	end
 
 	-- Establish database connection
-	sql = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, MYSQL_DB, MYSQL_UNIX_SOCKET)
+	sql = MySQL:new(Config.get('mysql')['main']['host'], Config.get('mysql')['main']['port'], Config.get('mysql')['main']['username'], Config.get('mysql')['main']['password'], Config.get('mysql')['main']['database'], Config.get('mysql')['main']['socket'])
 	sql:setPrefix("vrp")
-	board = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, BOARD_DB, MYSQL_UNIX_SOCKET)
-	sqlPremium = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, PREMIUM_DB, MYSQL_UNIX_SOCKET)
-	sqlLogs = MySQL:new(MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PW, LOGS_DB, MYSQL_UNIX_SOCKET)
+	board = MySQL:new(Config.get('mysql')['board']['host'], Config.get('mysql')['board']['port'], Config.get('mysql')['board']['username'], Config.get('mysql')['board']['password'], Config.get('mysql')['board']['database'], Config.get('mysql')['board']['socket'])
+	sqlPremium = MySQL:new(Config.get('mysql')['premium']['host'], Config.get('mysql')['premium']['port'], Config.get('mysql')['premium']['username'], Config.get('mysql')['premium']['password'], Config.get('mysql')['premium']['database'], Config.get('mysql')['premium']['socket'])
+	sqlLogs = MySQL:new(Config.get('mysql')['logs']['host'], Config.get('mysql')['logs']['port'], Config.get('mysql')['logs']['username'], Config.get('mysql')['logs']['password'], Config.get('mysql')['logs']['database'], Config.get('mysql')['logs']['socket'])
 	sqlLogs:setPrefix("vrpLogs")
 
 	-- Instantiate classes (Create objects)

@@ -1,13 +1,18 @@
-MYSQL_HOST	= "87.98.241.93"
-MYSQL_PORT	= 6033
-MYSQL_USER	= "vRP"
-MYSQL_PW	= "kmd1581adf%%f"
-MYSQL_DB	= "vRP"
-LOGS_DB	= "vRP_logs"
-BOARD_DB	= "exo_wbb_vrp"
-PREMIUM_DB	= "exo_premium"
-MYSQL_UNIX_SOCKET = "/var/run/mysqld/mysqld.sock"
+-- Dirty way to set globals i guess
+--[[
+if fileExists(':vrp/server/constants/config.json') then
+  local file = fileOpen(':vrp/server/constants/config.json', true)
+  local data = fileRead(file, fileGetSize(file))
+  data = fromJSON(data)
 
+  MYSQL_CONFIG = data['mysql']
+
+else
+  outputDebugString("Trump did this to us")
+  -- Even dirtier way to prevent running without config
+  -- shutdown('No config no server')
+end
+]]
 API_URL = "http://v-roleplay.net/forum/wcf/lib/data/vrp/api/api.php?"
 IS_TESTSERVER = getServerName():find("Script") ~= nil
 

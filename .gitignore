@@ -3,6 +3,8 @@ vrp_build
 /tools/ml_gps/*.sdf
 /tools/ml_gps/*.suo
 
+vrp/server/constants/config.json
+
 # IntelliJ IDEA 15 files
 .idea/
 *.db
