@@ -207,7 +207,7 @@
 	<script src="server/classes/Faction/Gangwar/Area.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/AttackSession.lua" type="server"/>
 	<script src="server/classes/Faction/Gangwar/GangwarStatistics.lua" type="server"/>
-	
+
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/PermanentVehicle.lua" type="server"/>
@@ -958,7 +958,7 @@
 	<vrpfile src="files/images/Gangwar/gw_kill.png"/>
 	<vrpfile src="files/images/Gangwar/gw_time.png"/>
 	<vrpfile src="files/images/Gangwar/trophy.png"/>
-	
+
 	<vrpfile src="files/images/Textures/JetDoorFront.jpg"/>
 	<vrpfile src="files/images/Textures/JetDoorBack.jpg"/>
 	<vrpfile src="files/images/Textures/CoachTexture.png"/>
@@ -1281,6 +1281,16 @@
 	<!-- Includes -->
 	<include resource="exo_maps" />
 	<include resource="bone_attach" />
+
+	<!-- Shaders -->
+	<include resource="Bloom" />
+	<include resource="Contrast" />
+	<include resource="Detail" />
+	<include resource="RoadShine" />
+	<include resource="SkyBox" />
+	<include resource="VehicleReflections" />
+	<include resource="Water" />
+	<include resource="WetRoads" />
 
 	<!-- ACL Request -->
 	<aclrequest>

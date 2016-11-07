@@ -479,9 +479,12 @@ SkinShops = {
 }
 
 SHADERS = {
-	["Detail"] = {["enableFunc"] = "", ["disableFunc"] = ""},
-	["Contrast"] = {["enableFunc"] = "", ["disableFunc"] = ""},
-	["Carpaint"] = {["enableFunc"] = "", ["disableFunc"] = ""},
-	["Radialblur"] = {["enableFunc"] = "", ["disableFunc"] = ""},
-	["DynamicSky"] = {["enableFunc"] = "", ["disableFunc"] = ""}
+	["SkyBox"] = {["event"] = "switchSkyBox" },
+	["Detail"] = {["event"] = "switchDetail" },
+	["Contrast"] = {["event"] = "switchContrast" },
+	["Carpaint"] = {["event"] = "switchCarPaint" },
+	["Roadshine"] = {["event"] = "switchRoadshine" },
+	["Water"] = {["event"] = "switchWaterRefract" },
+	["WetRoads"] = {["event"] = "switchWetRoads" },
+	["Bloom"] = {["event"] = "switchBloom" }
 }

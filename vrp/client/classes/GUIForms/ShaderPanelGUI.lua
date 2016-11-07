@@ -20,9 +20,9 @@ function ShaderPanel:constructor()
   self:loadGridList()
 
   GUILabel:new(self.m_Width*0.45, self.m_Height*0.07, self.m_Width*0.55, self.m_Height*0.08, _"Shader", self.m_Window)
-  GUILabel:new(self.m_Width*0.45, self.m_Height*0.15, self.m_Width*0.55, self.m_Height*0.05, _"Hier kannst du Shader aktivieren oder deaktivieren. Zuviele aktivierte Shader können sich möglicherweise auf die Performance auswirken.\nProbiere einfach ein wenig herum um die ideale Einstellung für dich zu finden.", self.m_Window):setMultiline(true)
-  self.m_SelectedLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.35, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setVisible(false)
-  self.m_SelectedButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1.2):setVisible(false)
+  GUILabel:new(self.m_Width*0.45, self.m_Height*0.15, self.m_Width*0.55, self.m_Height*0.05, _"Hier kannst du Shader aktivieren oder deaktivieren. Zu viele aktivierte Shader können sich möglicherweise auf die Performance auswirken.\nProbiere einfach ein wenig herum um die ideale Einstellung für dich zu finden.", self.m_Window):setMultiline(true)
+  self.m_SelectedLabel = GUILabel:new(self.m_Width*0.45, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setVisible(false)
+  self.m_SelectedButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.52, self.m_Width*0.35, self.m_Height*0.07, " ", self.m_Window):setBackgroundColor(Color.LightBlue):setFontSize(1.2):setVisible(false)
   self.m_SelectedButton.onLeftClick = function () self:toggleShader() end
 end
 
@@ -30,21 +30,39 @@ function ShaderPanel:loadGridList()
     self.m_ShaderGridList:clear()
 	local setting, state
     for name, key in pairs(SHADERS) do
-        setting = core:get("Shaders", name) or 0
-		state = setting == 0 and "Nein" or "Ja"
+        setting = core:get("Shaders", name) or false
+		state = setting == false and "Nein" or "Ja"
         item = self.m_ShaderGridList:addItem(name, state)
         item.index = name
-        item.onLeftClick = function() self:onShaderSelect(name, setting) end
+        item.onLeftClick = function() self:onShaderSelect(name) end
     end
 end
 
-function ShaderPanel:onShaderSelect(name, setting)
-    self.m_SelectedLabel:setVisible(true)
+function ShaderPanel:onShaderSelect(name)
+    local setting = core:get("Shaders", name) or false
+
+	self.m_SelectedLabel:setVisible(true)
     self.m_SelectedButton:setVisible(true)
     self.m_SelectedLabel:setText(name)
-    self.m_SelectedButton:setText(setting == 0 and "Aktivieren" or "Deaktivieren")
+    self.m_SelectedButton:setText(setting == false and "Aktivieren" or "Deaktivieren")
+	self.m_SelectedShader = name
+	self.m_SelectedActive = setting
+
 end
 
 function ShaderPanel:toggleShader()
-	outputChatBox("Todo")
+	self.m_SelectedActive = not self.m_SelectedActive
+	triggerEvent(SHADERS[self.m_SelectedShader]["event"], root, self.m_SelectedActive)
+	core:set("Shaders", self.m_SelectedShader, self.m_SelectedActive)
+    self.m_SelectedButton:setText(self.m_SelectedActive == false and "Aktivieren" or "Deaktivieren")
+	self:loadGridList()
+end
+
+Shaders = {}
+function Shaders.load()
+	local setting
+	for name, key in pairs(SHADERS) do
+       	setting = core:get("Shaders", name) or false
+		triggerEvent(key["event"], root, setting)
+	end
 end

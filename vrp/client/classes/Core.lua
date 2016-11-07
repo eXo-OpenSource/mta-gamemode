@@ -56,7 +56,7 @@ function Core:ready()
 	--// Gangwar
 	GangwarClient:new()
 	GangwarStatistics:new()
-	
+
 	MostWanted:new()
 	NoDm:new()
 	FactionManager:new()
@@ -70,6 +70,8 @@ function Core:ready()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
 	MiamiSpawnGUI:new()
+
+	Shaders.load()
 end
 
 function Core:afterLogin()

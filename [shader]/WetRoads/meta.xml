@@ -1,0 +1,10 @@
+<meta>
+	<info name="Shader wet roads" author="Various" version="0.0.1" type="script" />
+	<min_mta_version client="1.3.4" server="1.3.4" />
+	<script src="c_wet_roads.lua" type="client" />
+	<file src="shader_wet_roads.fx" type="client" />
+	<file src="mta-helper.fx" type="client" />
+	<file src="blurH.fx" type="client" />
+	<file src="blurV.fx" type="client" />
+	<file src="images/wet_amount.png" type="client" />
+</meta>
