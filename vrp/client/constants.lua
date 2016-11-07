@@ -486,5 +486,6 @@ SHADERS = {
 	["Roadshine"] = {["event"] = "switchRoadshine" },
 	["Water"] = {["event"] = "switchWaterRefract" },
 	["WetRoads"] = {["event"] = "switchWetRoads" },
-	["Bloom"] = {["event"] = "switchBloom" }
+	["Bloom"] = {["event"] = "switchBloom" },
+	["Sun"] = {["event"] = "switchSunShader"}
 }

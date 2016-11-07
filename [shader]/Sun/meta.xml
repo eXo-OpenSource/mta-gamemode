@@ -1,0 +1,27 @@
+<meta>
+	<info name="SunShaderTest" description="SunShaderTest" version="1.2.2" type="script" author="Sam@ke" />
+	<min_mta_version client="1.3.5" server="1.3.5"/>
+	
+	<!-- client scripts  -->
+	<script src="Client/SunShader.lua" type="client" cache="false"/>
+	<script src="Client/Sun.lua" type="client" cache="false"/>
+
+	<!-- shared scripts  -->
+	<script src="Shared/classlib.lua" type="shared" cache="false"/>
+	<script src="Shared/async.lua" type="shared" cache="false"/>
+	<script src="Shared/Utils.lua" type="shared" cache="false"/>
+	
+	<!-- shaders  -->	
+	<file src="Shaders/godRayBase.fx" type="client" cache="false"/>
+	<file src="Shaders/sun.fx" type="client" cache="false"/>
+	<file src="Shaders/bw.fx" type="client" cache="false"/>
+	<file src="Shaders/godrays.fx" type="client" cache="false"/>
+	<file src="Shaders/lensflares.fx" type="client" cache="false"/>
+	<file src="Shaders/dynamiclight.fx" type="client" cache="false"/>
+	<file src="Shaders/vehicle.fx" type="client" cache="false"/>
+	<file src="Shaders/mta-helper.fx" type="client" cache="false"/>
+	
+	<!-- textures  -->
+	<file src="Textures/lensflare_dirt.png" type="client" cache="false"/>
+	<file src="Textures/lensflare_chroma.png" type="client" cache="false"/>
+</meta>
