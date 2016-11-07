@@ -57,6 +57,21 @@ function GroupManager:destructor()
 	end
 end
 
+function GroupManager:loadFromId(Id)
+	if not GroupManager.Map[Id] then
+		local row = sql:queryFetchSingle("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups WHERE Id = ?", sql:getPrefix(), Id)
+		if row then
+			local result2 = sql:queryFetch("SELECT Id, GroupRank FROM ??_character WHERE GroupId = ?", sql:getPrefix(), row.Id)
+			local players = {}
+			for i, groupRow in ipairs(result2) do
+				players[groupRow.Id] = groupRow.GroupRank
+			end
+
+			GroupManager.Map[row.Id] = Group:new(row.Id, row.Name, GroupManager.GroupTypes[row.Type], row.Money, players, row.Karma, row.lastNameChange, row.RankNames, row.RankLoans, toboolean(row.VehicleTuning))
+		end
+	end
+end
+
 function GroupManager:getFromId(Id)
 	return GroupManager.Map[Id]
 end
