@@ -30,3 +30,11 @@ function phpSDKLoadCharacterInfo(targetName) -- Cause of Migrator
 		target:loadMigratorData()
 	end
 end
+
+function phpSDKSendActivationMailCallback(answer)
+	outputChatBox("phpSDKSendActivationMailCallback: "..answer)
+end
+
+function phpSDKSendActivationMail(userID, username)
+	callRemote("http://exo-reallife.de/ingame/boardActivation.php", phpSDKSendActivationMailCallback, userID, username)
+end

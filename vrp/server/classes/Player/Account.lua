@@ -239,6 +239,9 @@ function Account.createForumAccount(username, password, email)
 			board:queryExec("INSERT INTO wcf1_user_to_language (userID, languageID) VALUES (?,?)", userID, nLanguageID)
 
 			board:queryFetch("COMMIT;")
+
+			phpSDKSendActivationMail(userID, username)
+
 			return userID
 		end
 	end
