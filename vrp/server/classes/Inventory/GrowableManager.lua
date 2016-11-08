@@ -55,7 +55,11 @@ end
 
 function GrowableManager:harvest(id)
 	if id and id > 0 then
-		GrowableManager.Map[id]:harvest(client)
+		if GrowableManager.Map[id] then
+			GrowableManager.Map[id]:harvest(client)
+		else
+			client:sendError(_("Harvest Error! Plant not found! (%d)", client, id))
+		end
 	end
 end
 
@@ -65,7 +69,7 @@ function GrowableManager:addNewPlant(type, position, owner)
 	sql:getPrefix(), type, owner:getName(), position.x, position.y, position.z, 0, ts, ts, 0)
 	StatisticsLogger:getSingleton():addDrugPlantLog( owner, type )
 	local id = sql:lastInsertId()
-	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner:getName(), 0, ts, ts, 0)
+	GrowableManager.Map[id] = Growable:new(id, type, GrowableManager.Types[type], position, owner:getId(), 0, ts, ts, 0)
 	GrowableManager.Map[id]:onColShapeHit(owner, true)
 end
 
