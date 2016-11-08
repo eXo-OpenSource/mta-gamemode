@@ -139,7 +139,7 @@ function SunShader:update()
 			
 			dxUpdateScreenSource(self.screenSource)	
 			
-			showPlayerHudComponent("all", false)
+			setPlayerHudComponentVisible("all", false)
 			setSunSize(0)
 			setSunColor (0, 0, 0, 0, 0, 0)
 			setSkyGradient(90, 85, 120, 120, 130, 175)

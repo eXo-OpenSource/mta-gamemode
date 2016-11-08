@@ -72,9 +72,6 @@ function Player:destructor()
 
 	-- Unload stuff
 	HouseManager:getSingleton():destroyPlayerHouseBlip(self) -- Todo: do not on stop, cause of an error (annoying :P)
-	--if self.m_Inventory then
-	--	delete(self.m_Inventory)
-	--end
 	PhoneNumber.unload(1, self.m_Id)
 
 	--// gangwar
