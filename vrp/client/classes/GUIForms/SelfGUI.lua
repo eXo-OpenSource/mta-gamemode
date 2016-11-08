@@ -39,6 +39,9 @@ function SelfGUI:constructor()
 	self.m_JobQuitButton.onUnhover = function () self.m_JobQuitButton:setColor(Color.Red) end
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
 
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.35, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle AFK-Zeit:", tabGeneral)
+	self.m_AFKTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"0 Minute(n)", tabGeneral)
+
 	self.m_AdButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, _"Werbung schalten", true, tabGeneral)
 	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)
 
@@ -387,6 +390,7 @@ function SelfGUI:onShow()
 
 	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
 	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
+	self.m_AFKTimeLabel:setText(_("%s Minute(n)", math.floor((localPlayer.m_AFKTime + localPlayer.m_CurrentAFKTime)/60/1000)))
 
 	local x, y = self.m_JobNameLabel:getPosition()
 	if localPlayer:getJob() then

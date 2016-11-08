@@ -14,9 +14,14 @@ function LocalPlayer:constructor()
 	self.m_Rank = 0
 	self.m_LoggedIn = false
 	self.m_JoinTime = getTickCount()
-	self.m_AFKCheckCount = 0
-	self.m_LastPositon = self:getPosition()
+
 	self.m_AFKTimer = setTimer ( bind(self.checkAFK, self), 5000, 0)
+	self.m_AFKCheckCount = 0
+	self.m_CurrentAFKTime = 0
+	self.m_AFKTime = 0
+	self.m_AFKStartTime = 0
+
+	self.m_LastPositon = self:getPosition()
 	self.m_PlayTime = setTimer(bind(self.setPlayTime, self), 60000, 0)
 	-- Since the local player exist only once, we can add the events here
 	addEventHandler("retrieveInfo", root, bind(self.Event_retrieveInfo, self))
@@ -54,8 +59,18 @@ function LocalPlayer:getRank()
 	return self.m_Rank
 end
 
+function LocalPlayer:setAFKTime()
+	if self.m_AFKStartTime > 0 then
+		self.m_CurrentAFKTime = (getTickCount() - self.m_AFKStartTime)
+	else
+		self.m_AFKTime = self.m_AFKTime + self.m_CurrentAFKTime
+		self.m_CurrentAFKTime = 0
+	end
+end
+
 function LocalPlayer:getPlayTime()
-	return (self:getPrivateSync("LastPlayTime") and self.m_JoinTime and math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self.m_JoinTime)/1000/60)) or 0
+	self:setAFKTime()
+	return (self:getPrivateSync("LastPlayTime") and self.m_JoinTime and math.floor(self:getPrivateSync("LastPlayTime") + (getTickCount()-self.m_JoinTime-self.m_CurrentAFKTime-self.m_AFKTime)/1000/60)) or 0
 end
 
 function LocalPlayer:setPlayTime()
@@ -220,10 +235,14 @@ function LocalPlayer:toggleAFK(state, teleport)
 		InfoBox:new(_"Du wurdest ins AFK-Cafe teleportiert!")
 		triggerServerEvent("toggleAFK", localPlayer, true, teleport)
 		addEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
+		self.m_AFKStartTime = getTickCount()
 	else
 		InfoBox:new(_("Willkommen zurück, %s!", localPlayer:getName()))
 		triggerServerEvent("toggleAFK", localPlayer, false)
 		removeEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
+		self:setAFKTime() -- Set CurrentAFKTime
+		self.m_AFKStartTime = 0
+		self:setAFKTime() -- Add CurrentAFKTime to AFKTime + Reset CurrentAFKTime
 	end
 end
 
