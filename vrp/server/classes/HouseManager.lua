@@ -58,38 +58,45 @@ end
 
 function HouseManager:breakHouse()
 	if not client then return end
+	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:breakHouse(client)
 end
 
 function HouseManager:enterHouse()
 	if not client then return end
+	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:enterHouseTry(client)
 end
 
 function HouseManager:leaveHouse()
 	if not client then return end
+	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:leaveHouse(client)
 end
 
 function HouseManager:buyHouse()
 	if not client then return end
+	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:buyHouse(client)
 	StatisticsLogger:getSingleton():addHouse( client, "BUY", client.visitingHouse)
 end
 
 function HouseManager:sellHouse()
 	if not client then return end
+	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:sellHouse(client)
 	StatisticsLogger:getSingleton():addHouse( client, "SELL", client.visitingHouse)
 end
 
 function HouseManager:rentHouse()
 	if not client then return end
+	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:rentHouse(client)
 end
 
 function HouseManager:unrentHouse()
 	if not client then return end
+	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:unrentHouse(client)
 end
 

@@ -28,6 +28,7 @@ Inventory.Tabs = {
 function Inventory:constructor()
 	GUIForm.constructor(self, screenWidth/2 - 330/2, screenHeight/2 - (160+106)/2, 330, (80+106))
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Inventar", true, true, self)
+	self.m_Window:disableMoving()
 	self.m_Tabs = {}
 	self.m_CurrentTab = 1
 

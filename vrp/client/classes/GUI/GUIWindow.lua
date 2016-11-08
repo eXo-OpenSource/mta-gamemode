@@ -109,6 +109,11 @@ function GUIWindow:addBackButton(callback)
 	end
 end
 
+function GUIWindow:disableMoving()
+	self.m_TitlebarDummy.onLeftClickDown = function() end
+	self.m_TitlebarDummy.onLeftClick = function() end
+end
+
 function GUIWindow:removeBackButton()
 	if self.m_BackButton then
 		delete(self.m_BackButton)

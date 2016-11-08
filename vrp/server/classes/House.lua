@@ -93,6 +93,7 @@ end
 
 function House:onMarkerHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
+		if hitElement.vehicle then return end
 		hitElement.visitingHouse = self.m_Id
 		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice)
 	end
@@ -156,6 +157,7 @@ end
 
 function House:onPickupHit(hitElement)
 	if hitElement:getType() == "player" and (hitElement:getDimension() == source:getDimension()) then
+		if hitElement.vehicle then return end
 		hitElement.visitingHouse = self.m_Id
 		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(hitElement))
 	end
