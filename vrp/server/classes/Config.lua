@@ -37,7 +37,8 @@ function Config.check(distFile, configFile)
 	local checkSource = Config.load(distFile)
 	local checkTarget = Config.load(configFile)
 	-- Run check
-	Config.checkInternal(checkSource, checkTarget, "#")
+	Config.checkInternal(checkSource, checkTarget, "#normal")
+	Config.checkInternal(checkTarget, checkSource, "#dist")
 
 	return checkTarget
 end
@@ -46,17 +47,15 @@ function Config.checkInternal(dist, config, preString)
 	for i, v in pairs(dist) do
 		if not config[i] then
 			preString = ("%s.%s"):format(preString, i)
-			error(('Element \'%s\' is missing in config.json!'):format(preString))
+			error(('Element \'%s\' is missing!'):format(preString))
 		end
 		if type(v) ~= type(config[i]) then
 			preString = ("%s.%s"):format(preString, i)
-			error(('Element-Typo of \'%s\' is incorrect in config.json! [Expected: %s, got: %s]'):format(preString, type(v), type(config[i])))
+			outputDebugString(('Element-Typo of \'%s\' is incorrect! [Expected: %s, got: %s]'):format(preString, type(v), type(config[i])), 2)
 		end
 		if type(v) == "table" then
 			preString = ("%s.%s"):format(preString, i)
-			if not Config.checkInternal(v, config[i], preString) then
-				error(('Element \'%s\' is missing in config.json!'):format(preString))
-			else
+			if Config.checkInternal(v, config[i], preString) then
 				preString = preString:gsub((".%s"):format(i), "")
 			end
 		end
