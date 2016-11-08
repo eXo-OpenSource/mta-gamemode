@@ -329,7 +329,7 @@ function Inventory:removeItem(item, amount)
 				if self.m_Items[id]["Objekt"] then
 					if self.m_Items[id]["Objekt"] == item then
 						if self.m_Items[id]["Menge"] >= amount then
-							self:removeItemFromPlace(bag, place, self.m_Items[id]["Menge"])
+							self:removeItemFromPlace(bag, place, amount)
 							return
 						end
 					end
