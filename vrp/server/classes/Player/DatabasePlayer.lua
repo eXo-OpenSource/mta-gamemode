@@ -40,8 +40,8 @@ function DatabasePlayer:virtual_constructor()
 	self.m_XP 	 = 0
 	self.m_Karma = 0
 	self.m_Points = 0
-	self.m_Money = 0
-	self.m_BankMoney = 0
+	self.m_Money = 3000
+	self.m_BankMoney = 4000
 	self.m_WantedLevel = 0
 	self.m_WeaponLevel = 0
 	self.m_VehicleLevel = 0
