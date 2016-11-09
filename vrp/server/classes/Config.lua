@@ -52,13 +52,7 @@ function Config.checkInternal(dist, config, preString)
 			outputDebugString(('Element-Typo of \'%s\' is incorrect! [Expected: %s, got: %s]'):format(("%s.%s"):format(preString, i), type(v), type(config[i])), 2)
 		end
 		if type(v) == "table" then
-			if v.flags then
-				if not v.flags.noCompare then
-					Config.checkInternal(v, config[i], ("%s.%s"):format(preString, i))
-				end
-			else
-				Config.checkInternal(v, config[i], ("%s.%s"):format(preString, i))
-			end
+			Config.checkInternal(v, config[i], ("%s.%s"):format(preString, i))
 		end
 	end
 	return true;
