@@ -54,7 +54,7 @@ function Depot.load(Id, Owner)
 		outputDebugString("Creating new Item-Table for Depot "..Id)
 	end
 
-	Depot.Map[Id] = Depot:new(Id,weapons,items)
+	Depot.Map[Id] = Depot:new(Id, weapons, items)
 
 	if DepotSave == true then Depot.Map[Id]:save() end
 
