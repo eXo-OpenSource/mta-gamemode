@@ -120,10 +120,10 @@ function StatisticsLogger:addDrugPlantLog( player, type )
         sqlLogs:getPrefix(), userId, type)
 end
 
-function StatisticsLogger:addDrugHarvestLog( player, type )
+function StatisticsLogger:addDrugHarvestLog(player, type, owner, amount, state )
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
-	sqlLogs:queryExec("INSERT INTO ??_DrugHarvest (UserId, Type, Date ) VALUES(?, ?,  NOW())",
-        sqlLogs:getPrefix(), userId, type)
+	sqlLogs:queryExec("INSERT INTO ??_DrugHarvest (UserId, OwnerId, Type, Amount, State, Date ) VALUES(?, ?, ?, ?, ?,  NOW())",
+        sqlLogs:getPrefix(), userId, owner, type, amount, state)
 end
 
 function StatisticsLogger:addDrugUse( player, type )

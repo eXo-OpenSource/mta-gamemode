@@ -47,7 +47,7 @@ function FactionWeaponShopGUI:destuctor()
 	GUIForm.destructor(self)
 end
 
-function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, depotWeaponsMax, depotWeapons,rankWeapons)
+function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, depotWeaponsMax, depotWeapons, rankWeapons)
 	self.m_validWeapons = validWeapons
 	for k,v in pairs(self.m_validWeapons) do
 		if v == true then

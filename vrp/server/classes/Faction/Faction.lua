@@ -21,7 +21,9 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_Skins = factionSkins[Id]
 	self.m_ValidWeapons = factionWeapons[Id]
 	self.m_Color = factionColors[Id]
-	self.m_WeaponDepotInfo = factionWeaponDepotInfo
+
+	self.m_WeaponDepotInfo = factionType == "State" and factionWeaponDepotInfoState or factionWeaponDepotInfo
+
 	self.m_Vehicles = {}
 
 	if rankLoans == "" then	rankLoans = {} for i=0,6 do rankLoans[i] = 0 end rankLoans = toJSON(rankLoans) outputDebug("Created RankLoans for faction "..Id) end
@@ -33,7 +35,7 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_RankSkins = fromJSON(rankSkins)
 	self.m_Type = factionType
 
-	self.m_Depot = Depot.load(depotId,Id)
+	self.m_Depot = Depot.load(depotId, self)
 
 	self.m_PhoneNumber = (PhoneNumber.load(2, self.m_Id) or PhoneNumber.generateNumber(2, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)

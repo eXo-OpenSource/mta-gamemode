@@ -46,18 +46,13 @@ end
 function Config.checkInternal(dist, config, preString)
 	for i, v in pairs(dist) do
 		if not config[i] then
-			preString = ("%s.%s"):format(preString, i)
-			error(('Element \'%s\' is missing!'):format(preString))
+			error(('Element \'%s\' is missing!'):format(("%s.%s"):format(preString, i)))
 		end
 		if type(v) ~= type(config[i]) then
-			preString = ("%s.%s"):format(preString, i)
-			outputDebugString(('Element-Typo of \'%s\' is incorrect! [Expected: %s, got: %s]'):format(preString, type(v), type(config[i])), 2)
+			outputDebugString(('Element-Typo of \'%s\' is incorrect! [Expected: %s, got: %s]'):format(("%s.%s"):format(preString, i), type(v), type(config[i])), 2)
 		end
 		if type(v) == "table" then
-			preString = ("%s.%s"):format(preString, i)
-			if Config.checkInternal(v, config[i], preString) then
-				preString = preString:gsub((".%s"):format(i), "")
-			end
+			Config.checkInternal(v, config[i], ("%s.%s"):format(preString, i))
 		end
 	end
 	return true;

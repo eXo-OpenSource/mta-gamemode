@@ -39,13 +39,13 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 					self.m_Items[id]["Special"] = row_special.Value
 				end
 				if row["Objekt"] == "Mautpass" then
-					if row_special then --// Workaround
-						if tonumber(row_special.Value) < getRealTime().timestamp then
-							self:removeAllItem("Mautpass")
-							if isElement(self.m_Owner) then
-								self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
-							end
+					if row_special and tonumber(row_special.Value) > getRealTime().timestamp then
+					else
+						self:removeAllItem("Mautpass")
+						if isElement(self.m_Owner) then
+							self.m_Owner:sendMessage(_("Dein Mautpass ist abgelaufen und wurde entfernt!", self.m_Owner), 255, 0, 0)
 						end
+						sql:queryExec("DELETE FROM ??_inventory_items_special WHERE Id = ?", sql:getPrefix(), row_special.ID)
 					end
 				end
 			end
@@ -130,7 +130,12 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 		end
 	end
 	if itemName == "Mautpass" then
-		client:sendShortMessage(_("Dein Mautpass ist noch bis %s gültig!", client, getOpticalTimestamp(self.m_Items[itemId].Special)), "San Andreas Government")
+		if self.m_Items[itemId].Special then
+			client:sendShortMessage(_("Dein Mautpass ist noch bis %s gültig!", client, getOpticalTimestamp(self.m_Items[itemId].Special)), "San Andreas Government")
+		else
+			client:sendShortMessage(_("Dein Mautpass ist abgelaufen!", client), client)
+			self:removeItemFromPlace(bag, place, 1)
+		end
 	end
 
 	-- Possible issue: If Item:use fails, the item will never get removed
@@ -329,7 +334,7 @@ function Inventory:removeItem(item, amount)
 				if self.m_Items[id]["Objekt"] then
 					if self.m_Items[id]["Objekt"] == item then
 						if self.m_Items[id]["Menge"] >= amount then
-							self:removeItemFromPlace(bag, place, self.m_Items[id]["Menge"])
+							self:removeItemFromPlace(bag, place, amount)
 							return
 						end
 					end

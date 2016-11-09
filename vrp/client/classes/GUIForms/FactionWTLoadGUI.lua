@@ -27,6 +27,8 @@ function FactionWTLoadGUI:constructor()
 	self.m_WaffenColumn = 0
 	self.m_TotalCosts = 0
 
+	self.m_MaxLoad = localPlayer:getFaction():isStateFaction() and WEAPONTRUCK_MAX_LOAD_STATE or WEAPONTRUCK_MAX_LOAD
+
 	GUILabel:new(645,30, 280, 35, "im Waffentruck:", self.m_Window)
 	self.m_CartGrid = GUIGridList:new(645, 65, 280, 300, self.m_Window)
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
@@ -38,7 +40,7 @@ function FactionWTLoadGUI:constructor()
 	self.m_del.onLeftClick = bind(self.deleteItemFromCart,self)
 	self.m_buy = GUIButton:new(795, 430, 135, 20,_"Beladen", self.m_Window)
 	self.m_buy.onLeftClick = bind(self.factionWeaponTruckLoad,self)
-	self.m_Sum = GUILabel:new(645,390, 280, 30, "Gesamtkosten: 0$/"..WEAPONTRUCK_MAX_LOAD.."$", self.m_Window)
+	self.m_Sum = GUILabel:new(645,390, 280, 30, _("Gesamtkosten: 0$/%d$", self.m_MaxLoad), self.m_Window)
 	addEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWTLoadGUI, self))
 
 	self:factionReceiveWeaponShopInfos()
@@ -106,7 +108,7 @@ function FactionWTLoadGUI:updateButtons()
 	for weaponID,v in pairs(self.m_validWeapons) do
 		if v == true then
 			if self.depot[weaponID]["Waffe"]+self.m_Cart[weaponID]["Waffe"] < self.m_DepotWeaponsMax[weaponID]["Waffe"] then
-				if self.m_TotalCosts + self.m_DepotWeaponsMax[weaponID]["WaffenPreis"] < WEAPONTRUCK_MAX_LOAD then
+				if self.m_TotalCosts + self.m_DepotWeaponsMax[weaponID]["WaffenPreis"] < self.m_MaxLoad then
 					self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
 				else
 					self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
@@ -117,7 +119,7 @@ function FactionWTLoadGUI:updateButtons()
 
 			if self.m_WeaponsBuyMunition[weaponID] then
 				if self.depot[weaponID]["Munition"]+self.m_Cart[weaponID]["Munition"] < self.m_DepotWeaponsMax[weaponID]["Magazine"] then
-					if self.m_TotalCosts + self.m_DepotWeaponsMax[weaponID]["MagazinPreis"] < WEAPONTRUCK_MAX_LOAD then
+					if self.m_TotalCosts + self.m_DepotWeaponsMax[weaponID]["MagazinPreis"] < self.m_MaxLoad then
 						self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
 					else
 						self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
