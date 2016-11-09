@@ -46,8 +46,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_Truck:setEngineState(true)
 	self.m_StartTime = getTickCount()
 
-
-	self.m_AmountPerBox = 1250
+	self.m_AmountPerBox = type == "state" and 2500 or 1250
 	self.m_BoxesCount = math.ceil(totalAmount/self.m_AmountPerBox)
 
 	self.m_Boxes = {}

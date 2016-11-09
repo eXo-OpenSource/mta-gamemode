@@ -158,7 +158,7 @@ function FactionWTLoadGUI:updateCart()
 	end
 
 	self.m_TotalCosts = totalCosts
-	self.m_Sum:setText("Gesamtkosten: "..totalCosts.."$/"..WEAPONTRUCK_MAX_LOAD.."$")
+	self.m_Sum:setText(_("Gesamtkosten: %d$/%d$", totalCosts, self.m_MaxLoad))
 end
 
 function FactionWTLoadGUI:deleteItemFromCart()
