@@ -130,10 +130,11 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 		end
 	end
 	if itemName == "Mautpass" then
-		if self.m_Items[itemId].Special then
-			client:sendShortMessage(_("Dein Mautpass ist noch bis %s gültig!", client, getOpticalTimestamp(self.m_Items[itemId].Special)), "San Andreas Government")
+		local id = self:getItemID(bag, place)
+		if self.m_Items[id] and self.m_Items[id].Special then
+			client:sendShortMessage(_("Dein Mautpass ist noch bis %s gültig!", client, getOpticalTimestamp(self.m_Items[id].Special)), "San Andreas Government")
 		else
-			client:sendShortMessage(_("Dein Mautpass ist abgelaufen!", client), client)
+			client:sendShortMessage(_("Dein Mautpass ist abgelaufen!", client), "San Andreas Government")
 			self:removeItemFromPlace(bag, place, 1)
 		end
 	end
