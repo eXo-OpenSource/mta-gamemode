@@ -64,6 +64,8 @@ function VehicleTuningGUI:constructor(vehicle)
     self.m_CurrentUpgrades[VehicleSpecialProperty.NeonColor] = getElementData(self.m_Vehicle, "NeonColor") or {0,0,0}
 
     self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
+	self.m_CarRadioVolume = RadioGUI:getSingleton():getVolume() or 0
+	RadioGUI:getSingleton():setVolume(0)
     self.m_Vehicle:setOverrideLights(2)
 end
 
@@ -84,6 +86,7 @@ function VehicleTuningGUI:destructor(closedByServer)
     self:closeAllWindows()
     self.m_Vehicle:setOverrideLights(0)
     showChat(true)
+	RadioGUI:getSingleton():setVolume(self.m_CarRadioVolume)
 
     GUIForm.destructor(self)
 end
