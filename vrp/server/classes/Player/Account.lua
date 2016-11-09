@@ -217,10 +217,10 @@ addEventHandler("accountguest", root, function() Async.create(Account.guest)(cli
 function Account.createForumAccount(username, password, email)
 	local nTimestamp = getRealTime().timestamp
 	local pwhash = WBBC.getDoubleSaltedHash(password)
-	local nLanguageID = 1
+	local nLanguageID = 4
 
 	board:queryFetch("START TRANSACTION;")
-	local result, _, userID = board:queryFetch("INSERT INTO wcf1_user (username, email, password, languageID, registrationDate, userOnlineGroupID, activationCode) VALUES (?, ?, ?, ?, ?, 1, 1)", username, email, pwhash, nLanguageID, nTimestamp)
+	local result, _, userID = board:queryFetch("INSERT INTO wcf1_user (username, email, password, languageID, registrationDate, userOnlineGroupID, activationCode) VALUES (?, ?, ?, ?, ?, 1, 0)", username, email, pwhash, nLanguageID, nTimestamp)
 	if result then
 		local result = board:queryFetch("SELECT optionID, defaultValue FROM wcf1_user_option")
 		if result then
@@ -240,7 +240,7 @@ function Account.createForumAccount(username, password, email)
 
 			board:queryFetch("COMMIT;")
 
-			phpSDKSendActivationMail(userID, username)
+			--phpSDKSendActivationMail(userID, username) -- Does not work
 
 			return userID
 		end
