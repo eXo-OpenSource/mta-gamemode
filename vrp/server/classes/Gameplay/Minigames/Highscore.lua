@@ -184,13 +184,13 @@ function Highscore:addHighscore(Id, score)
 			if v.PlayerID == Id then
 				if v.Score < score then
 					v.Score = score
-					outputChatBox("Updated daily score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
+				--	outputChatBox("Updated daily score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert daily score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
+	--	outputChatBox("Insert daily score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Daily[realtime.yearday], insert)
 		doUpdate = true
 	end
@@ -200,13 +200,13 @@ function Highscore:addHighscore(Id, score)
 			if v.PlayerID == Id then
 				if v.Score < score then
 					v.Score = score
-					outputChatBox("Updated weekly score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
+				--	outputChatBox("Updated weekly score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert weekly score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
+	--	outputChatBox("Insert weekly score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Weekly[realtime.week], insert)
 		doUpdate = true
 	end
@@ -216,13 +216,13 @@ function Highscore:addHighscore(Id, score)
 			if v.PlayerID == Id then
 				if v.Score < score then
 					v.Score = score
-					outputChatBox("Updated monthly score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
+				--	outputChatBox("Updated monthly score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert monthly score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
+	--	outputChatBox("Insert monthly score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Monthly[realtime.month], insert)
 		doUpdate = true
 	end
@@ -232,13 +232,13 @@ function Highscore:addHighscore(Id, score)
 			if v.PlayerID == Id then
 				if v.Score < score then
 					v.Score = score
-					outputChatBox("Updated yearly score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
+				--	outputChatBox("Updated yearly score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert yearly score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
+	--	outputChatBox("Insert yearly score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Yearly[realtime.year], insert)
 		doUpdate = true
 	end
@@ -248,14 +248,14 @@ function Highscore:addHighscore(Id, score)
 		for _, v in pairs(self.m_Global) do
 			if v.PlayerID == Id then
 				if v.Score < score then
-					outputChatBox("Updated global score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
+			--		outputChatBox("Updated global score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					v.Score = score
 					doUpdate = true
 				end
 			end
 		end
 	else
-		outputChatBox("Insert global score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
+	--	outputChatBox("Insert global score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Global, insert)
 		doUpdate = true
 	end
