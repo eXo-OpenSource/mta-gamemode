@@ -1240,9 +1240,12 @@
 	<vrpfile src="files/models/medic.txd" />
 	<vrpfile src="files/models/medic.dff" />
 	<vrpfile src="files/models/medic.col" />
-	<vrpfile src="files/models/medicStreetFix.txd" />
-	<vrpfile src="files/models/medicStreetFix.dff" />
-	<vrpfile src="files/models/medicStreetFix.col" />
+	<vrpfile src="files/models/medicInterior.txd" />
+	<vrpfile src="files/models/medicInterior.dff" />
+	<vrpfile src="files/models/medicInterior.col" />
+	<vrpfile src="files/models/medicLOD.txd" />
+	<vrpfile src="files/models/medicLOD.dff" />
+	<vrpfile src="files/models/medicLOD.col" />
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>

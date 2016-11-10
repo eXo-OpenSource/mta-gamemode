@@ -53,13 +53,18 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/mostWanted.col", 1903)
 	self:loadImportDFF("files/models/mostWanted.dff", 1903)
 
-	self:loadImportTXD("files/models/medic.txd", 5708)
-	self:loadImportCOL("files/models/medic.col", 5708)
-	self:loadImportDFF("files/models/medic.dff", 5708)
+	self:loadImportTXD("files/models/medic.txd", 4027)
+	self:loadImportCOL("files/models/medic.col", 4027)
+	self:loadImportDFF("files/models/medic.dff", 4027)
+	self:setLODDistance(4027, 500)
 
-	self:loadImportTXD("files/models/medicStreetFix.txd", 5810)
-	self:loadImportCOL("files/models/medicStreetFix.col", 5810)
-	self:loadImportDFF("files/models/medicStreetFix.dff", 5810)
+	self:loadImportCOL("files/models/medicLOD.col", 4076)
+	self:loadImportDFF("files/models/medicLOD.dff", 4076)
+	self:loadImportTXD("files/models/medicLOD.txd", 4076)
+
+	self:loadImportCOL("files/models/medicInterior.col", 3986)
+	self:loadImportDFF("files/models/medicInterior.dff", 3986)
+	self:loadImportTXD("files/models/medicInterior.txd", 3986)
 
 end
 
@@ -76,4 +81,8 @@ end
 function CustomModelManager:loadImportCOL(filePath, modelId)
 	local col = engineLoadCOL(filePath)
 	engineReplaceCOL(col, modelId)
+end
+
+function CustomModelManager:setLODDistance(modelId, distance)
+	engineSetModelLODDistance(modelId, distance)
 end
