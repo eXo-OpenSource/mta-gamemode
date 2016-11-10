@@ -28,30 +28,15 @@ function VehicleTuning:constructor()
     self.m_GarageInfo = {
         -- Entrance - Exit (pos, rot) - Interior
         {
-            Vector3(2644.8999, -2044, 12.6),
-            {Vector3(2644.1, -2035, 13.5), 0},
-            Vector3(990.70001, -1032, 2433.5)
-        },
-        {
-            Vector3(1851, -1856.4, 12.4),
+            Vector3(1851, -1856.4, 12.4), -- LS El Corona
             {Vector3(1839.3, -1856.7, 13.2), 90},
             Vector3(1010.9, -982.59998, 2436.1001)
         },
         {
-            Vector3(2496.3, -1778.8, 12.9),
-            {Vector3(2496.3, -1788, 13.3), 180},
-            Vector3(953.59998, -983.09998, 2454.8999)
-        },
-        {
-            Vector3(1041.4, -1017.5, 31.3),
+            Vector3(1041.4, -1017.5, 31.3), -- LS Temple
             {Vector3(1041.9, -1031.5, 31.8), 180},
             Vector3(953.59998, -983.09998, 2454.8999) -- TODO: Add Toxsi's garage here
-        },
-		{
-			Vector3(2386.789, 1053.020, 10.747),
-			{Vector3(2393.525, 1040.242, 10.756), 270},
-			Vector3(953.59998, -983.09998, 2454.8999)
-		}
+        }
     }
     self.m_DimensionSlots = {}
 
