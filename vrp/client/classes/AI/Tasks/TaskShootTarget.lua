@@ -53,24 +53,25 @@ function TaskShootTarget:stopShooting()
 end
 
 function TaskShootTarget:update()
-    if not self.m_Target then
-        return
-    end
+    if self.m_Target and isElement(self.m_Target:getPosition()) then
 
-    local actorPosition = self.m_Actor:getPosition()
-    local targetPosition = self.m_Target:getPosition()
-    self.m_Actor:setRotation(0, 0, findRotation(actorPosition.x, actorPosition.y, targetPosition.x, targetPosition.y))
+		local actorPosition = self.m_Actor:getPosition()
+		local targetPosition = self.m_Target:getPosition()
+		self.m_Actor:setRotation(0, 0, findRotation(actorPosition.x, actorPosition.y, targetPosition.x, targetPosition.y))
 
-    -- Stop if target is too far away
-    if self.m_Actor:getWeapon() ~= 34 then
-        if (actorPosition-targetPosition).length > MAX_SHOOT_DISTANCE then
-            triggerServerEvent("taskShootTargetTooFarAway", self.m_Actor)
-            self:stopUpdating()
-        end
-    else
-        if (actorPosition-targetPosition).length > MAX_SHOOT_DISTANCE_SNIPER then
-            triggerServerEvent("taskShootTargetTooFarAway", self.m_Actor)
-            self:stopUpdating()
-        end
-    end
+		-- Stop if target is too far away
+		if self.m_Actor:getWeapon() ~= 34 then
+			if (actorPosition-targetPosition).length > MAX_SHOOT_DISTANCE then
+				triggerServerEvent("taskShootTargetTooFarAway", self.m_Actor)
+				self:stopUpdating()
+			end
+		else
+			if (actorPosition-targetPosition).length > MAX_SHOOT_DISTANCE_SNIPER then
+				triggerServerEvent("taskShootTargetTooFarAway", self.m_Actor)
+				self:stopUpdating()
+			end
+		end
+	else
+		return
+	end
 end
