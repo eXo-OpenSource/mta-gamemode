@@ -235,12 +235,6 @@ function HUDRadar:draw()
     dxDrawRectangle(self.m_PosX+3, self.m_PosY+3, self.m_Width, self.m_Height, tocolor(125, 168, 210))
   end
 
-  -- Draw regino name (above health bar)
-  if core:get("HUD", "drawZone", true) and HUDUI:getSingleton().m_UIMode == UIStyle.vRoleplay then
-	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height-12, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
-	dxDrawText(getZoneName(localPlayer:getPosition(), false), self.m_PosX+3, self.m_PosY+self.m_Height-12, self.m_Width, self.m_PosY+self.m_Height+5, Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
-  end
-
   -- Draw health bar (at the bottom)
   dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2, self.m_Height/20, tocolor(71, 86, 75))
   dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height+6, self.m_Width/2 * getElementHealth(localPlayer)/100, self.m_Height/20, tocolor(100, 121, 105))
@@ -262,6 +256,12 @@ function HUDRadar:draw()
 
   if isNotInInterior and core:get("HUD", "drawBlips", true) then
     self:drawBlips()
+  end
+
+  -- Draw regino name (above health bar)
+  if core:get("HUD", "drawZone", true) and HUDUI:getSingleton().m_UIMode == UIStyle.vRoleplay then
+	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height-12, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
+	dxDrawText(getZoneName(localPlayer:getPosition(), false), self.m_PosX+3, self.m_PosY+self.m_Height-12, self.m_Width, self.m_PosY+self.m_Height+5, Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
   end
 
   -- Draw the player blip
