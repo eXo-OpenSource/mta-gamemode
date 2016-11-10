@@ -175,32 +175,34 @@ function HUDRadar:update()
     local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
     self.m_Rotation = 360 - math.deg(math.atan2(lookAtX - camX, lookAtY - camY)) % 360
   end
+	--[[
+	for i, v in pairs(getElementsByType("player")) do -- Todo: find a other blip with karma!
+		if v ~= localPlayer then
+			if ((v:getPosition() - localPlayer:getPosition()).length < 30 or getPedTarget(localPlayer) == v) and v:getWantedLevel() == 0 then
+				local pos = v:getPosition()
+				if not v.m_Blip then
+				v.m_Blip = {}
+				v.m_Blip[1] = Blip:new("PlayerMarker/in.png", pos.x, pos.y):setSize(20)
+				v.m_Blip[2] = Blip:new("PlayerMarker/4.png", pos.x, pos.y):setSize(20)
+				-- Todo: Position is on the Radar not correct! @Jusonex
+				end
 
-  for i, v in pairs(getElementsByType("player")) do -- Todo: find a other blip with karma!
-    if v ~= localPlayer then
-      if ((v:getPosition() - localPlayer:getPosition()).length < 30 or getPedTarget(localPlayer) == v) and v:getWantedLevel() == 0 then
-        local pos = v:getPosition()
-        if not v.m_Blip then
-          v.m_Blip = {}
-          v.m_Blip[1] = Blip:new("PlayerMarker/in.png", pos.x, pos.y):setSize(20)
-          v.m_Blip[2] = Blip:new("PlayerMarker/4.png", pos.x, pos.y):setSize(20)
-          -- Todo: Position is on the Radar not correct! @Jusonex
-        end
+				local k = v:getKarma()
+				v.m_Blip[1]:setColor(tocolor(255-(k+150)*(255/300), (k+150)*(255/300), -math.abs(k*(127/150))+127))
+				v.m_Blip[1]:setPosition(pos.x, pos.y)
+				v.m_Blip[2]:setPosition(pos.x, pos.y)
+			else
+				if v.m_Blip then
+				for i, v in pairs(v.m_Blip) do
+					delete(v)
+				end
+				v.m_Blip = nil
+				end
+			end
+		end
+	end
+	--]]
 
-        local k = v:getKarma()
-        v.m_Blip[1]:setColor(tocolor(255-(k+150)*(255/300), (k+150)*(255/300), -math.abs(k*(127/150))+127))
-        v.m_Blip[1]:setPosition(pos.x, pos.y)
-        v.m_Blip[2]:setPosition(pos.x, pos.y)
-      else
-        if v.m_Blip then
-          for i, v in pairs(v.m_Blip) do
-            delete(v)
-          end
-          v.m_Blip = nil
-        end
-      end
-    end
-  end
 end
 
 function HUDRadar:draw()
