@@ -12,6 +12,7 @@ six, siy = 400, 400 -- dev, todo: remove
 function CircuitBreaker:constructor()
 	self.WIDTH, self.HEIGHT = 1080, 650
 
+	self.m_HeaderHeight = screenHeight/8
 	--Render targets
 	self.m_RT_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
 	self.m_RT_PCB = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- PCB - MCUs, resistors, capacitors
@@ -112,7 +113,7 @@ function CircuitBreaker:createGameplay()
 
 	-- Some definitions
 	self.m_DefaultLineColor = tocolor(70, 160, 255)
-	self.m_Level = 2 --todo: reset to 1
+	self.m_Level = 1 --todo: reset to 1
 	self.m_RandomPattern = math.random(1, #self.m_Levels[self.m_Level])
 	self.m_State = "idle"
 	self.m_MoveDirection = "r"											--r = right | l = left | u = up | d = down
@@ -216,6 +217,14 @@ function CircuitBreaker:setState(state)		--Todo: freaky function.. need improvem
 
 		if self.m_Level > 3 then
 			self:setState("done")
+		else
+			setTimer(function()
+				self:setState("failed")
+				self:createNextLevel()
+				--self:updateRenderTarget()
+
+				--self:setState("play")
+			end, 5000, 1)
 		end
 	end
 
@@ -273,15 +282,10 @@ function CircuitBreaker:updateRenderTarget()
 	---
 	self.m_RT_background:setAsTarget()
 
-	local headerWidth = screenHeight/7
-
 	--dxDrawImage(0, 0, screenWidth, screenHeight, self.bg)
 	dxDrawRectangle(0, 0, screenWidth, screenHeight, tocolor(50, 50, 50)) -- 323232
-	dxDrawRectangle(0, 0, screenWidth, headerWidth, tocolor(0, 0, 0, 170))
-	dxDrawText("VLSI Circuit Breaker 2.0", 0, 0, screenWidth, headerWidth, self.m_DefaultLineColor, 3, "default-bold", "center", "center")
-	dxDrawText("- WE DGAF ABOUT YOUR PCB -", 0, 0, screenWidth, headerWidth - headerWidth/4, self.m_DefaultLineColor, 1, "default-bold", "center", "bottom")
-	dxDrawText("RELAUNCHING: Failed\nERROR CODE: 0x53686974\n\nERROR CODE: 0x54697473\nfx42756c6c73686974\nfx42756c6c73686974\nRELAUNCHING: Proxy\nWARNING: Protocol Changed\nCall: Override_F\nERROR CODE:0x54697473\nDETECTED: Lag\nWARNING: Memory Leak\nCALL: Override_E\n\nWARNING: Protocol Changed\nWARNING: Port 69 Unavailable\nERROR CODE: 0x41727365",
-		50, 0, screenWidth, screenHeight, tocolor(255, 255, 255, 220), 1, "default", "left", "center")
+	dxDrawRectangle(0, 0, screenWidth, self.m_HeaderHeight, tocolor(0, 0, 0, 170))
+	dxDrawText("eXo Circuit Breaker", 0, 0, screenWidth, self.m_HeaderHeight, self.m_DefaultLineColor, 3, "default-bold", "center", "center")
 
 	dxSetRenderTarget()
 
@@ -356,18 +360,16 @@ function CircuitBreaker:onClientRender()
 		end
 	end
 
-	-- Draw render targets
-	local headerWidth = screenHeight/6
 
 	-- Render endscreen
 	if self.m_State == "done" then
 		dxDrawImage(0, 0, screenWidth, screenHeight, self.m_RT_background)
 
 		for i = 1, 3 do
-			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), headerWidth, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].pcb)
-			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), headerWidth, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].lineBG2)
-			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), headerWidth, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].lineBG)
-			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), headerWidth, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].line, 0, 0, 0, self.m_LineColor)
+			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), self.m_HeaderHeight, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].pcb)
+			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), self.m_HeaderHeight, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].lineBG2)
+			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), self.m_HeaderHeight, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].lineBG)
+			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), self.m_HeaderHeight, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].line, 0, 0, 0, self.m_LineColor)
 		end
 
 		return
@@ -375,10 +377,10 @@ function CircuitBreaker:onClientRender()
 
 	-- Render game
 	dxDrawImage(0, 0, screenWidth, screenHeight, self.m_RT_background)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_PCB)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_lineBG)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, headerWidth, self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
+	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_PCB)
+	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
+	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_lineBG)
+	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
 end
 
 function CircuitBreaker:collision(sx, sy, sw, sh, px, py, pw, ph)
