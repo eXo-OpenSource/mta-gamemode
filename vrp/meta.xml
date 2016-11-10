@@ -159,6 +159,7 @@
 	<script src="server/classes/Gameplay/Beggar/BeggarPedManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Train/TrainManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Train/Train.lua" type="server"/>
+	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Shops/ShopManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/Shop.lua" type="server"/>
@@ -428,6 +429,7 @@
 	<script src="client/classes/GUIForms/ButtonMenu/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/CompanyDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
 
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
