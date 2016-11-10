@@ -58,9 +58,9 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/medic.dff", 4027)
 	self:setLODDistance(4027, 500)
 
+	self:loadImportTXD("files/models/medicLOD.txd", 4076)
 	self:loadImportCOL("files/models/medicLOD.col", 4076)
 	self:loadImportDFF("files/models/medicLOD.dff", 4076)
-	self:loadImportTXD("files/models/medicLOD.txd", 4076)
 
 	self:loadImportTXD("files/models/medicInterior.txd", 3986)
 	self:loadImportCOL("files/models/medicInterior.col", 3986)

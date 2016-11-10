@@ -48,7 +48,6 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 end
 
 function FactionVehicle:destructor()
-	outputChatBox("destructed")
 	if self.m_VehELSObj then
 		self.m_VehELSObj:delete()
 	end
@@ -156,7 +155,7 @@ function FactionVehicle:respawn(force)
 			return false
 		end
 	end
-	
+
 	self:setEngineState(false)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
