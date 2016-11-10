@@ -160,7 +160,7 @@ addEventHandler("soundvanChangeURLClient", root,
 			sound:setDimension(source:getDimension())
 			sound:attach(source)
 			source.Sound = sound
-		end 
+		end
 	end
 )
 
@@ -173,11 +173,11 @@ addEventHandler("soundvanStopSoundClient", root,
 )
 
 
-addEventHandler("playLightSFX", localPlayer, 
-function( dir ) 
-	if dir then 
+addEventHandler("playLightSFX", localPlayer,
+function( dir )
+	if dir then
 		playSound("files/audio/headlight_up.mp3")
-	else 
+	else
 		playSound("files/audio/headlight_down.mp3")
 	end
 end)

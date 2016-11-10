@@ -7,7 +7,7 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, lightColor, trunkId, texture, horn, neon, special)
+function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, fuel, lightColor, trunkId, texture, horn, neon, special)
   self.m_Id = Id
   self.m_Owner = owner
 
@@ -25,6 +25,7 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
   self.m_TrunkId = trunkId
 
   self:setHealth(health or 1000)
+  self:setFuel(fuel or 100)
   self:setLocked(true)
   if color then
     local a, r, g, b = getBytesInInt32(color)
@@ -103,8 +104,8 @@ function PermanentVehicle:save()
   local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
   local tunings = getVehicleUpgrades(self) or {}
   if self.m_Trunk then self.m_Trunk:save() end
-  return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, LightColor = ?, TrunkId = ?, TexturePath = ?, Horn = ?, Neon = ?, Special = ? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), lightColor, self.m_TrunkId, self.m_Texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Special or 0, self.m_Id)
+  return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, Fuel = ?, LightColor = ?, TrunkId = ?, TexturePath = ?, Horn = ?, Neon = ?, Special = ? WHERE Id = ?", sql:getPrefix(),
+    self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), self:getFuel(), lightColor, self.m_TrunkId, self.m_Texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Special or 0, self.m_Id)
 end
 
 function PermanentVehicle:getId()
