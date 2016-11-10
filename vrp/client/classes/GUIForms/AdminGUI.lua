@@ -14,7 +14,7 @@ for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
 end
 
-addRemoteEvents{"showAdminMenu", "announceText", "setDamageFree", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo"}
+addRemoteEvents{"showAdminMenu", "announceText", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo"}
 
 function AdminGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540, false, false)
@@ -22,6 +22,8 @@ function AdminGUI:constructor()
 	self.m_adminButton = {}
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
+	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
+
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
 	--self.m_CloseButton.onHover = function () self.m_CloseButton:setColor(Color.LightRed) end
 	--self.m_CloseButton.onUnhover = function () self.m_CloseButton:setColor(Color.White) end
@@ -56,6 +58,7 @@ function AdminGUI:constructor()
 	self.m_portDown.onLeftClick = function () self:portAdmin("D") end
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
+	self.m_TabSpieler = tabSpieler
 	self.m_PlayersGrid = GUIGridList:new(10, 10, 200, 460, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
 	self.m_RefreshButton = GUIButton:new(10, 470, 30, 30, FontAwesomeSymbols.Refresh, tabSpieler):setFont(FontAwesome(15))
@@ -134,8 +137,6 @@ function AdminGUI:constructor()
 		WebBrowser:new(url)
 	end
 
-
-
 	addEventHandler("adminReceiveSeachedPlayers", root,
 		function(resultPlayers)
 			AdminGUI:getSingleton():insertSearchResult(resultPlayers)
@@ -148,6 +149,16 @@ function AdminGUI:constructor()
 	)
 
 	self:refreshButtons()
+end
+
+function AdminGUI:onShow()
+	self:refreshOnlinePlayers()
+end
+
+function AdminGUI:TabPanel_TabChanged(tabId)
+	if tabId == self.m_TabSpieler.TabIndex then
+		self:refreshOnlinePlayers()
+	end
 end
 
 function AdminGUI:refreshOnlinePlayers()
@@ -400,12 +411,6 @@ function AdminGUI:AnnounceButton_Click()
 end
 
 addEventHandler("showAdminMenu", root,
-	function(...)
-		AdminGUI:new()
-	end
-)
-
-addEventHandler("setDamageFree", root,
 	function(...)
 		AdminGUI:new()
 	end
