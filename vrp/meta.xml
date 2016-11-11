@@ -1106,6 +1106,7 @@
 	<vrpfile src="files/audio/Siren.ogg"/>
 	<vrpfile src="files/audio/Alarm.mp3"/>
 	<vrpfile src="files/audio/ElevatorMusic.ogg"/>
+	<vrpfile src="files/audio/ElevatorDing.mp3"/>
 	<vrpfile src="files/audio/Message.mp3"/>
 	<vrpfile src="files/audio/Payday.mp3"/>
 	<vrpfile src="files/audio/cash_register.ogg"/>

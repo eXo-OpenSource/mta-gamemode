@@ -31,16 +31,26 @@ function Elevator:addStation(name, position)
 	self.m_Stations[stationID].marker.id = stationID
 
 	addEventHandler("onMarkerHit", self.m_Stations[stationID].marker, bind(self.onStationMarkerHit, self) )
+	addEventHandler("onMarkerLeave", self.m_Stations[stationID].marker, bind(self.onStationMarkerLeave, self) )
 end
 
 function Elevator:onStationMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if not hitElement.vehicle then
-			hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations)
+			if not hitElement.elevatorUsed then
+				hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations)
+			end
 		end
 	end
 end
 
+function Elevator:onStationMarkerLeave(hitElement, dim)
+	if hitElement:getType() == "player" and dim then
+		hitElement.elevatorUsed = false
+	end
+end
+
 function Elevator:driveToStation(player, stationID)
+	player.elevatorUsed = true
 	player:setPosition(self.m_Stations[stationID].position)
 end

@@ -22,8 +22,22 @@ function ElevatorGUI:constructor(elevatorId, stationName, stations)
 end
 
 function ElevatorGUI:itemCallback(stationId)
-	triggerServerEvent("elevatorDrive", localPlayer, self.m_ElevatorId, stationId)
-	self:close()
+	local music = Sound.create("files/audio/ElevatorMusic.ogg")
+	fadeCamera(false,1,0,0,0)
+    setTimer( function() localPlayer:setPosition(1800.19, -1723.73, 5.89) end, 1250,1)
+	outputChatBox("Todo: Port to elevator interior, (made by krox)")
+    setTimer(function() fadeCamera(true,1) end, 1500, 1)
+
+	setTimer(function()
+		Sound.create("files/audio/ElevatorDing.mp3")
+		music:destroy()
+		fadeCamera(false,1,0,0,0)
+    	setTimer(function() fadeCamera(true,1) end, 1500, 1)
+		setTimer(function()
+			triggerServerEvent("elevatorDrive", localPlayer, self.m_ElevatorId, stationId)
+		end, 1250, 1)
+	end, 8000, 1)
+	delete(self)
 end
 
 addEventHandler("showElevatorGUI", root,
