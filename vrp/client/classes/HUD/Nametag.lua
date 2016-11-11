@@ -92,15 +92,15 @@ end
 function Nametag:drawIcons(player)
 	iconI = 0
 	if (player:getPublicSync("Rank") or 0) > 0 then
-		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/admin.png")
+		dxDrawImage(10+iconI*34, 60, 32, 32, "files/images/Nametag/admin.png")
 		iconI = iconI+1
 	end
 	if player:getWanteds() > 0 then
-		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/w"..player:getWanteds()..".png")
+		dxDrawImage(10+iconI*34, 60, 32, 32, "files/images/Nametag/w"..player:getWanteds()..".png")
 		iconI = iconI+1
 	end
 	if player:getFaction() then
-		dxDrawImage(10+iconI*30, 60, 28, 28, "files/images/Nametag/"..player:getFaction():getShortName()..".png")
+		dxDrawImage(10+iconI*34, 60, 32, 32, "files/images/Nametag/"..player:getFaction():getShortName()..".png")
 		iconI = iconI+1
 	end
 end
