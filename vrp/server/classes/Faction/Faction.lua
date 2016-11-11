@@ -312,7 +312,7 @@ function Faction:sendShortMessage(text, ...)
 end
 
 function Faction:sendChatMessage(sourcePlayer, message)
-	if self:isEvilFaction() or (self:isStateFaction() or self:isRescueFaction() and sourcePlayer:isFactionDuty()) then
+	--if self:isEvilFaction() or (self:isStateFaction() or self:isRescueFaction() and sourcePlayer:isFactionDuty()) then
 		local playerId = sourcePlayer:getId()
 		local rank = self.m_Players[playerId]
 		local rankName = self.m_RankNames[rank]
@@ -326,9 +326,9 @@ function Faction:sendChatMessage(sourcePlayer, message)
 	        end
 		end
 		StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "faction:"..self.m_Id, message, toJSON(receivedPlayers))
-	else
-		sourcePlayer:sendError(_("Du bist nicht im Dienst!", sourcePlayer))
-	end
+	--else
+	--	sourcePlayer:sendError(_("Du bist nicht im Dienst!", sourcePlayer))
+	--end
 end
 
 function Faction:respawnVehicles()
