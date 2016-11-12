@@ -265,7 +265,7 @@ end
 function FactionState:sendStateChatMessage(sourcePlayer, message)
 	local faction = sourcePlayer:getFaction()
 	if faction and faction:isStateFaction() == true then
-		if sourcePlayer:isFactionDuty() then
+	--	if sourcePlayer:isFactionDuty() then
 			local playerId = sourcePlayer:getId()
 			local rank = faction:getPlayerRank(playerId)
 			local rankName = faction:getRankName(rank)
@@ -279,9 +279,9 @@ function FactionState:sendStateChatMessage(sourcePlayer, message)
 				end
 			end
 			StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "state", message, toJSON(receivedPlayers))
-		else
-			sourcePlayer:sendError(_("Du bist nicht im Dienst!", sourcePlayer))
-		end
+	--	else
+	--		sourcePlayer:sendError(_("Du bist nicht im Dienst!", sourcePlayer))
+	--	end
 	end
 end
 
