@@ -72,6 +72,8 @@ function Core:ready()
 	MiamiSpawnGUI:new()
 
 	Shaders.load()
+	
+	GroupProperty:new()
 end
 
 function Core:afterLogin()

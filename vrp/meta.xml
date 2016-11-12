@@ -572,7 +572,7 @@
 	<!-- Groups -->
 	<!--<script src="client/classes/Groups/GangArea.lua" type="client"/>-->
 	<!--<script src="client/classes/Groups/GangAreaManager.lua" type="client"/>-->
-
+	<script src="client/classes/Groups/GroupProperty.lua" type="client"/>
 	<!-- AI -->
 	<script src="client/classes/AI/Actor.lua" type="client"/>
 	<script src="client/classes/AI/Zombie.lua" type="client"/>
@@ -947,7 +947,11 @@
 	<vrpfile src="files/images/HUD/exo/red_b.png"/>
 	<vrpfile src="files/images/HUD/exo/cyan_b.png"/>
 	<vrpfile src="files/images/HUD/exo/wanted.png"/>
-
+	
+	<!-- group -->
+	<vrpfile src="files/images/other/Enter.png"/>
+	<vrpfile src="files/images/other/Close.png"/>
+	
 	<!-- Gangwar -->
 	<vrpfile src="files/images/Gangwar/tile.png"/>
 	<vrpfile src="files/images/Gangwar/tilefade.png"/>
