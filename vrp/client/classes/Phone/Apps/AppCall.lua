@@ -70,6 +70,11 @@ function PhoneApp:Event_callAnswer(callee, voiceCall)
 end
 
 function PhoneApp:Event_callReplace(responsiblePlayer)
+	for k, activity in ipairs(self.m_Activities) do
+		if instanceof(activity, IncomingCallActivity, true) then
+			activity:busy()
+		end
+	end
 	CallResultActivity:new(self, "player", callee, CALL_RESULT_REPLACE)
 end
 
