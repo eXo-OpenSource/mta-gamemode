@@ -32,7 +32,6 @@ end
 function PhoneInteraction:callBusy(caller)
 	if not caller or not isElement(caller) then return end
 	caller:triggerEvent("callBusy", client)
-	client:triggerEvent("callBusy", caller)
 end
 
 function PhoneInteraction:callAnswer(caller, voiceCall)
