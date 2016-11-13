@@ -53,7 +53,7 @@ function TaskShootTarget:stopShooting()
 end
 
 function TaskShootTarget:update()
-    if self.m_Target and isElement(self.m_Target:getPosition()) then
+    if self.m_Target and isElement(self.m_Target) then
 
 		local actorPosition = self.m_Actor:getPosition()
 		local targetPosition = self.m_Target:getPosition()
