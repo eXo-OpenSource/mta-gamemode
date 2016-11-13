@@ -372,7 +372,28 @@ function WeaponTruck:Event_onStateMarkerHit(hitElement, matchingDimension)
 		local faction = hitElement:getFaction()
 		if faction then
 			if faction:isStateFaction() then
-
+				if (isPedInVehicle(hitElement) and #getAttachedElements(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
+					local boxes
+					if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+						boxes = getAttachedElements(self.m_Truck)
+						outputChatBox(_("Der %s wurde sichergestellt!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
+						hitElement:sendInfo(_("Truck erfolgreich sichergestellt",hitElement))
+						self:Event_OnWeaponTruckExit(hitElement,0)
+					elseif hitElement:getPlayerAttachedObject() then
+						boxes = getAttachedElements(hitElement)
+						outputChatBox(_("Eine Waffenkiste wurde am PD sichergestellt! (%d/%d)",hitElement,self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
+						hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Das Geld wurde in die Fraktionskasse überwiesen!",hitElement))
+					end
+					for key, value in pairs (boxes) do
+						if value:getModel() == 2912 then
+							hitElement:getFaction():giveMoney(value.sum, "Waffentruck Kiste")
+							value:destroy()
+						end
+					end
+					if self:getRemainingBoxAmount() == 0 then
+						self:delete()
+					end
+				end
 			end
 		end
 	end
