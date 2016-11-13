@@ -455,7 +455,7 @@ function BankRobbery:statePeopleClickBag(player, bag)
 	player:sendInfo(_("Geldsack sichergestellt, es wurden %d$ in die Staatskasse gelegt!", player, amount))
 	FactionManager:getSingleton():getFromId(1):giveMoney(amount, "Bankrob-Geldsack")
 	table.remove(self.m_MoneyBags, table.find(self.m_MoneyBags, bag))
-	bag:destoy()
+	bag:destroy()
 end
 
 function BankRobbery:addMoneyToBag(player, money)
