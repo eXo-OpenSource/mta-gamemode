@@ -341,7 +341,7 @@ function WeaponTruck:Event_LoadBox(veh)
 			if getDistanceBetweenPoints3D(veh.position,client.position) < 7 then
 				if not client.vehicle then
 					local box = client:getPlayerAttachedObject()
-					if #getAttachedElements(veh) < VEHICLE_BOX_LOAD[veh.model]["count"] then
+					if getAttachedElements(veh) and #getAttachedElements(veh) < VEHICLE_BOX_LOAD[veh.model]["count"] then
 						if box then
 							local count = #getAttachedElements(veh)
 							client:detachPlayerObject(box)

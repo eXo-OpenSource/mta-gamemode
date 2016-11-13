@@ -6,7 +6,7 @@ factionWeapons = {}
 evilFactionInteriorEnter = {}
 factionWTDestination = {}
 
-FACTION_STATE_WT_DESTINATION = Vector3(1598.78064, -1611.63953, 13.44956)
+FACTION_STATE_WT_DESTINATION = Vector3(1598.78064, -1611.63953, 12.5)
 WEAPONTRUCK_NAME = {["evil"] = "Waffentruck", ["state"] = "Staats-Waffentruck"}
 
 FACTION_MAX_RANK_LOANS ={
