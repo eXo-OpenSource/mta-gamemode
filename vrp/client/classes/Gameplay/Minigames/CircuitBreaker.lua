@@ -7,8 +7,6 @@
 -- ****************************************************************************
 CircuitBreaker = inherit(Singleton)
 
-six, siy = 400, 400 -- dev, todo: remove
-
 function CircuitBreaker:constructor()
 	self.WIDTH, self.HEIGHT = 1080, 650
 
@@ -16,11 +14,9 @@ function CircuitBreaker:constructor()
 	--Render targets
 	self.m_RT_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
 	self.m_RT_PCB = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- PCB - MCUs, resistors, capacitors
-	--self.m_Blockades = DxRenderTarget(self.WIDTH, self.HEIGHT, true)		-- MCUs, resistors, capacitor
 	self.m_RT_lineBG = DxRenderTarget(self.WIDTH, self.HEIGHT, true)		-- First Line Background
 	self.m_RT_lineBG2 = DxRenderTarget(self.WIDTH, self.HEIGHT, true)		-- Seccond Line Background
 	self.m_RT_line = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- Main Line
-
 
 	self:loadImages()
 	self:createGameplay()
@@ -49,7 +45,6 @@ end
 
 function CircuitBreaker:loadImages()
 	self.m_Images = {
-		"bg",
 		"input",
 		"output",
 		"pcb",
@@ -69,23 +64,30 @@ end
 function CircuitBreaker:createGameplay()
 	-- Level patterns - {startX, startY, sizeX, sizeY, material}
 	self.m_Levels = {
-		--Levels for level 1
+        --Leveldesign 1
 
 		-- minX = 125 ||  maxX = 760
-		[1] = {
+		[1] =
 			{
-				{125, 10, 300, 300, self:createStructurGroup(300, 300)},
-				{140, 360, 300, 280, self:createStructurGroup(300, 280)},
-				{480, 50, 150, 150, self:createStructurGroup(150, 150)},
-				{660, 60, 120, 120, self:createStructurGroup(120, 120)},
-				{480, 240, 300, 300, self:createStructurGroup(300, 300)},
-				{440, 540, 500, 100, self:createStructurGroup(500, 100)},
-				{820, 10, 140, 500, self:createStructurGroup(140, 500)},
-			},
-		},
+                {10, 10, 250, 400, self:createStructurGroup(250, 400)},
+                {260, 330, 350, 130, self:createStructurGroup(350, 130)},
+                {200, 520, 200, 120, self:createStructurGroup(200, 120)},
+                {460, 460, 150, 120, self:createStructurGroup(150, 120)},
+                {610, 380, 200, 100, self:createStructurGroup(200, 100)},
+                {670, 540, 400, 100, self:createStructurGroup(400, 100)},
+                {870, 200, 200, 340, self:createStructurGroup(200, 340)},
 
-		--Levels for level 2
-		[2] = {
+                --[[{125, 10, 300, 300, self:createStructurGroup(300, 300)},
+                {140, 360, 300, 280, self:createStructurGroup(300, 280)},
+                {480, 50, 150, 150, self:createStructurGroup(150, 150)},
+                {660, 60, 120, 120, self:createStructurGroup(120, 120)},
+                {480, 240, 300, 300, self:createStructurGroup(300, 300)},
+                {440, 540, 500, 100, self:createStructurGroup(500, 100)},
+                {820, 10, 140, 500, self:createStructurGroup(140, 500)},]]
+			},
+
+        --Leveldesign 2
+		[2] =
 			{
 				{125, 10, 150, 500, self:createStructurGroup(150, 500)},
 				{275, 10, 400, 100, self:createStructurGroup(400, 100)},
@@ -99,32 +101,26 @@ function CircuitBreaker:createGameplay()
 				{275, 110, 80, 80, self:createStructurGroup(80, 80)},
 				{710, 30, 290, 170, self:createStructurGroup(290, 170)},
 
-				-- may one more..
+				-- may one more.. todo: subd9 fix end position
 			},
-		},
 
-		--Levels for level 3
-		[3] = {
-				{
-
-				}
-		}
+        --Leveldesign 3
+		[3] = {}--todo
 	}
 
 	-- Some definitions
 	self.m_DefaultLineColor = tocolor(70, 160, 255)
 	self.m_Level = 1 --todo: reset to 1
-	self.m_RandomPattern = math.random(1, #self.m_Levels[self.m_Level])
 	self.m_State = "idle"
 	self.m_MoveDirection = "r"											--r = right | l = left | u = up | d = down
 
 	-- Set D-Sub9 start pos
 	self.m_LevelStartPosX = 0
-	self.m_LevelStartPosY = math.random(0, self.HEIGHT - 82)
+	self.m_LevelStartPosY = 500 --math.random(0, self.HEIGHT - 82)
 
 	-- Set D-Sub9 end pos
 	self.m_LevelEndPosX = self.WIDTH - 56 								--56 is the with of the d-sub 9 connector
-	self.m_LevelEndPosY = math.random(0, self.HEIGHT - 82)
+	self.m_LevelEndPosY = 50 --math.random(0, self.HEIGHT - 82)
 
 	-- Set line pos
 	self.m_LinePosX = 56 - 5
@@ -140,7 +136,6 @@ end
 
 function CircuitBreaker:createNextLevel()
 	self.m_MoveDirection = "r"
-	--self.m_RandomPattern = math.random(1, #self.m_Levels[self.m_Level])
 
 	-- Set D-Sub9 start pos
 	self.m_LevelStartPosX = 0
@@ -158,7 +153,7 @@ function CircuitBreaker:createNextLevel()
 	self.m_LineWidth = 0
 end
 
-function CircuitBreaker:setState(state)		--Todo: freaky function.. need improvements lel
+function CircuitBreaker:setState(state)
 	if state == "play" then
 		self.m_State = "play"
 		self.m_LineWidth = 5
@@ -177,7 +172,7 @@ function CircuitBreaker:setState(state)		--Todo: freaky function.. need improvem
 			self:setState("play")
 		end
 
-		-- If the user failed, try to play  the level again
+		-- If the user failed, try to play the level again
 		if self.m_State == "failed" then
 			self.m_RT_line:setAsTarget(true) dxSetRenderTarget()		--Clear render targets
 			self.m_RT_lineBG:setAsTarget(true) dxSetRenderTarget()		--Clear render targets
@@ -217,14 +212,6 @@ function CircuitBreaker:setState(state)		--Todo: freaky function.. need improvem
 
 		if self.m_Level > 3 then
 			self:setState("done")
-		else
-			setTimer(function()
-				self:setState("failed")
-				self:createNextLevel()
-				--self:updateRenderTarget()
-
-				--self:setState("play")
-			end, 5000, 1)
 		end
 	end
 
@@ -282,7 +269,6 @@ function CircuitBreaker:updateRenderTarget()
 	---
 	self.m_RT_background:setAsTarget()
 
-	--dxDrawImage(0, 0, screenWidth, screenHeight, self.bg)
 	dxDrawRectangle(0, 0, screenWidth, screenHeight, tocolor(50, 50, 50)) -- 323232
 	dxDrawRectangle(0, 0, screenWidth, self.m_HeaderHeight, tocolor(0, 0, 0, 170))
 	dxDrawText("eXo Circuit Breaker", 0, 0, screenWidth, self.m_HeaderHeight, self.m_DefaultLineColor, 3, "default-bold", "center", "center")
@@ -300,7 +286,7 @@ function CircuitBreaker:updateRenderTarget()
 	dxDrawImage(self.m_LevelStartPosX, self.m_LevelStartPosY, 56, 82, self.input)
 	dxDrawImage(self.m_LevelEndPosX, self.m_LevelEndPosY, 56, 82, self.output)
 
-	for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
+	for _, v in pairs(self.m_Levels[self.m_Level]) do
 		--dxDrawRectangle(v[1], v[2], v[3], v[4], tocolor(255, 0, 0, 100))
 		dxDrawImage(unpack(v))
 	end
@@ -343,12 +329,12 @@ function CircuitBreaker:onClientRender()
 
 		self:updateRenderTarget()
 
-		-- Out of pcb detection --todo: Needs improvements
+		-- Out of pcb detection
 		if not rectangleCollision2D(10, 10, self.WIDTH-20, self.HEIGHT-20, self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
 			self:setState("failed")
 		end
 
-		for _, v in pairs(self.m_Levels[self.m_Level][self.m_RandomPattern]) do
+		for _, v in pairs(self.m_Levels[self.m_Level]) do
 			if rectangleCollision2D(v[1], v[2], v[3], v[4], self.m_LinePosX, self.m_LinePosY, self.m_LineWidth, self.m_LineWidth) then
 				self:setState("failed")
 			end
