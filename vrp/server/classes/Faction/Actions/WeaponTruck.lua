@@ -304,20 +304,25 @@ function WeaponTruck:Event_DeloadBox(veh)
 	if client:getFaction() then
 		if getElementData(veh,"WeaponTruck") or VEHICLE_BOX_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
-				if not client.vehicle then
-					for key, box in pairs (getAttachedElements(veh)) do
-						if box.model == 2912 then
-							box:setScale(1)
-							box:detach(self.m_Truck)
-							client:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
-							client:attachPlayerObject(box)
-							return
+				if not client:getPlayerAttachedObject() then
+					if not client.vehicle then
+						for key, box in pairs (getAttachedElements(veh)) do
+							if box.model == 2912 then
+								box:setScale(1)
+								box:detach(self.m_Truck)
+								client:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
+								client:attachPlayerObject(box)
+								addEventHandler("onElementClicked", box, self.m_Event_onBoxClickFunc)
+								return
+							end
 						end
+						client:sendError(_("Es befindet sich keine Kiste auf dem Truck!",client))
+						return
+					else
+						client:sendError(_("Du darfst in keinem Fahrzeug sitzen!",client))
 					end
-					client:sendError(_("Es befindet sich keine Kiste auf dem Truck!",client))
-					return
 				else
-					client:sendError(_("Du darfst in keinem Fahrzeug sitzen!",client))
+					client:sendError(_("Du hast bereits ein Objekt dabei!",client))
 				end
 			else
 				client:sendError(_("Du bist zuweit vom Truck entfernt!",client))
@@ -341,7 +346,7 @@ function WeaponTruck:Event_LoadBox(veh)
 							local count = #getAttachedElements(veh)
 							client:detachPlayerObject(box)
 							box:attach(veh, VEHICLE_BOX_LOAD[veh.model][count+1])
-
+							removeEventHandler("onElementClicked", box, self.m_Event_onBoxClickFunc)
 						else
 							client:sendError(_("Du hast keine Kiste dabei!",client))
 						end
