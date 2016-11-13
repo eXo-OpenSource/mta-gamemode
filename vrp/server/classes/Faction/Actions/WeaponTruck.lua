@@ -123,6 +123,9 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 						boxes = getAttachedElements(hitElement)
 						outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
 						hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
+					elseif hitElement:getOccupiedVehicle() then
+						hitElement:sendInfo(_("Du musst die Kisten per Hand oder mit dem Waffentruck abladen!", hitElement))
+						return
 					end
 					outputChatBox("Es wurden folgende Waffen und Magazine in das Lager gelegt:",hitElement,255,255,255)
 					for key, value in pairs (boxes) do
@@ -383,6 +386,9 @@ function WeaponTruck:Event_onStateMarkerHit(hitElement, matchingDimension)
 						boxes = getAttachedElements(hitElement)
 						outputChatBox(_("Eine Waffenkiste wurde am PD sichergestellt! (%d/%d)",hitElement,self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
 						hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Das Geld wurde in die Fraktionskasse überwiesen!",hitElement))
+					elseif hitElement:getOccupiedVehicle() then
+						hitElement:sendInfo(_("Du musst die Kisten per Hand oder mit dem Waffentruck abladen!", hitElement))
+						return
 					end
 					for key, value in pairs (boxes) do
 						if value:getModel() == 2912 then
