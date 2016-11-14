@@ -293,6 +293,10 @@ function Player:spawn( )
 
 		self:setPublicSync("Faction:Duty",false)
 
+		if self:getFaction() and self:getFaction():isEvilFaction() then
+			self:getFaction():changeSkin(self)
+		end
+
 		if self.m_JailTime then
 			if self.m_JailTime > 0 then
 				self:moveToJail(false)
