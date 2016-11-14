@@ -53,7 +53,7 @@ function FireManager:checkFire()
 	if FactionRescue:getSingleton():countPlayers() >= 3 then
 		self:startRandomFire()
 	else
-		outputDebug("checkFire - Not enough Rescue Players on! ("..FactionRescue:getSingleton():countPlayers().."/3)")
+		--outputDebug("checkFire - Not enough Rescue Players on! ("..FactionRescue:getSingleton():countPlayers().."/3)")
 	end
 end
 
