@@ -321,11 +321,18 @@ function SelfGUI:constructor()
 		core:set("Ad", "Chat", index - 1)
 	end
 
-	self.m_ServerTour = GUIButton:new(self.m_Width*0.6, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.07, _"Server-Tour starten", tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
+	local tourText = Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten"
+
+	self.m_ServerTour = GUIButton:new(self.m_Width*0.6, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.07, tourText, tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
 	self.m_ServerTour.onLeftClick = function()
+		if not Tour:getSingleton():isActive() then
 		QuestionBox:new(
 			_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
 			function() triggerServerEvent("tourStart", localPlayer, true) end)
+			self:close()
+		else
+			triggerServerEvent("tourStop", localPlayer)
+		end
 	end
 
 	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
@@ -391,6 +398,8 @@ function SelfGUI:onShow()
 	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
 	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
 	self.m_AFKTimeLabel:setText(_("%s Minute(n)", math.floor((localPlayer.m_AFKTime + localPlayer.m_CurrentAFKTime)/60/1000)))
+
+	self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten")
 
 	local x, y = self.m_JobNameLabel:getPosition()
 	if localPlayer:getJob() then

@@ -9,9 +9,11 @@
 Tour = inherit(Singleton)
 
 function Tour:constructor()
-	addRemoteEvents{"tourStart", "tourSuccess"}
+	addRemoteEvents{"tourStart", "tourStop", "tourSuccess"}
 	addEventHandler("tourStart", root, bind(self.start, self))
+	addEventHandler("tourStop", root, bind(self.stop, self))
 	addEventHandler("tourSuccess", root, bind(self.successStep, self))
+
 	self.m_showStep = bind(self.showStep, self)
 	self.m_TourPlayerData = {}
 	Player.getQuitHook():register(bind(self.save, self))
@@ -36,7 +38,7 @@ function Tour:start(forceNew)
 			end
 		end
 	end
-
+	client:sendShortMessage(_("Du kannst die Tour jederzeit im self-Menü (F2) unter Einstellungen beenden!", client), "Servertour")
 	self:showStep(client, step)
 end
 
@@ -46,10 +48,11 @@ function Tour:save(player)
 	end
 end
 
-function Tour:stop(client)
-	client:sendInfo(_("Du hast die Server-Tour erfolgreich beendet!", client))
-	client:triggerEvent("tourStop")
-	self:save(client)
+function Tour:stop(player)
+	if client and isElement(client) then player = client end
+	player:sendInfo(_("Du hast die Server-Tour erfolgreich beendet!", client))
+	player:triggerEvent("tourStop")
+	self:save(player)
 end
 
 function Tour:showStep(player, id)

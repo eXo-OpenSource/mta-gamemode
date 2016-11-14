@@ -9,6 +9,7 @@
 Tour = inherit(Singleton)
 
 function Tour:constructor()
+  self.m_Active = false
   if core:get("Tour", "done", false) == false then
     QuestionBox:new(
       _("Möchtest du eine Server-Tour starten? Die Server-Tour bringt dir Erfahrung und eine kleine Anzahl an Belohnungen!"),
@@ -22,14 +23,20 @@ function Tour:constructor()
 end
 
 function Tour:stop()
-  if isElement(self.m_Arrow) then self.m_Arrow:destroy() end
-  if isElement(self.m_TargetMarker) then self.m_TargetMarker:destroy() end
-  if TourGUI:isInstantiated() then delete(TourGUI:getSingleton()) end
-  removeEventHandler("onClientPreRender", root, self.m_updateArrow)
-  core:set("Tour", "done", true)
+	if isElement(self.m_Arrow) then self.m_Arrow:destroy() end
+	if isElement(self.m_TargetMarker) then self.m_TargetMarker:destroy() end
+	if TourGUI:isInstantiated() then delete(TourGUI:getSingleton()) end
+	removeEventHandler("onClientPreRender", root, self.m_updateArrow)
+	core:set("Tour", "done", true)
+	self.m_Active = false
+end
+
+function Tour:isActive()
+	return self.m_Active
 end
 
 function Tour:show(id, title, description, success, x, y, z)
+  self.m_Active = true
   self.m_TargetPos = Vector3(x, y, z)
   self.m_CurrentId = id
   self.m_TargetMarker = createMarker(self.m_TargetPos, "cylinder", 2, 50, 200, 255)
