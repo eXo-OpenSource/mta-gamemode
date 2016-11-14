@@ -508,7 +508,7 @@
 	<script src="client/classes/GUIForms/StreamGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/WeaponLevelGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShaderPanelGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/GroupPropertyBuy.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
@@ -573,6 +573,7 @@
 	<!--<script src="client/classes/Groups/GangArea.lua" type="client"/>-->
 	<!--<script src="client/classes/Groups/GangAreaManager.lua" type="client"/>-->
 	<script src="client/classes/Groups/GroupProperty.lua" type="client"/>
+
 	<!-- AI -->
 	<script src="client/classes/AI/Actor.lua" type="client"/>
 	<script src="client/classes/AI/Zombie.lua" type="client"/>

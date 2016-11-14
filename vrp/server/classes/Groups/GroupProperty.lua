@@ -12,13 +12,14 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_Id = Id
 	self.m_Name = Name
 	self.m_Price = Price
+	self.m_OwnerID = OwnerId
 	self.m_Owner = GroupManager.getFromId(OwnerId) or false
 	self.m_Open = Open
 	self.m_Position = Pickup
 	self.m_Interior = InteriorId
 	self.m_InteriorPosition = InteriorSpawn
 	self.m_Dimension = Id+1000
-	self.m_CamMatrix = Cam
+	self.m_CamMatrix = {self.m_InteriorPosition.x, self.m_InteriorPosition.y, self.m_InteriorPosition.z}
 
 	self.m_Pickup = createPickup(Pickup, 3, 1272, 0)
 	self.m_EnterFunc = bind( GroupProperty.onEnter, self)
@@ -77,7 +78,11 @@ function GroupProperty:closeForPlayer(player)
 	end
 end
 
--- Short setters
+
+function GroupProperty:setOwner( id ) 
+	self.m_Owner = GroupManager.getFromId(OwnerId) or false 
+	return self.m_Owner
+end
 
 -- Short getters
 function GroupProperty:getId() return self.m_Id end

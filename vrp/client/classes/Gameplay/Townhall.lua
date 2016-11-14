@@ -22,6 +22,7 @@ function Townhall:constructor()
 	self.m_Peds[#self.m_Peds + 1] = activitiesInfoPed
 	]]
 	-- Groups
+	--// Group create ped
 	local groupInfoPed = Ped.create(9, Vector3(1828.3, -1271.6, 120.3))
 	groupInfoPed:setRotation(Vector3(0, 0, 182.754))
 	groupInfoPed.Name = _"Private Firmen und Gangs"
@@ -29,7 +30,20 @@ function Townhall:constructor()
 	groupInfoPed.Type = 3
 	groupInfoPed.Func = function() GroupCreationGUI:new() end
 	self.m_Peds[#self.m_Peds + 1] = groupInfoPed
-
+	
+	--// Group property ped 
+	local groupImmoPed = Ped.create(290, Vector3(1824.02, -1271.87, 120.26))
+	groupImmoPed:setRotation(Vector3(0, 0, 182.754))
+	groupImmoPed.Name = _"Firmen-/Gangimmobilien"
+	groupImmoPed.Description = _"Für mehr Infos klicke mich an!"
+	groupImmoPed.Type = 5
+	groupImmoPed.Func = function() 
+		if localPlayer:getGroupName() ~= "" then
+			GroupPropertyBuy:new() 
+		else ErrorBox:new(_"Du hast keine Firma/Gang!")
+		end
+	end
+	self.m_Peds[#self.m_Peds + 1] = groupImmoPed
 	-- Items
 	local itemInfoPed = Ped.create(9, Vector3(1832.8, -1273.5, 120.3))
 	itemInfoPed:setRotation(Vector3(0, 0, 132.754))
@@ -41,6 +55,7 @@ function Townhall:constructor()
 
 	-- Initialize
 	self:initalizePeds()
+	
 end
 
 function Townhall:destructor()

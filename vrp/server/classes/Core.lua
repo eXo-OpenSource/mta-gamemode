@@ -150,7 +150,8 @@ function Core:destructor()
 	delete(ShopManager:getSingleton())
 	delete(GrowableManager:getSingleton())
 	delete(GangwarStatistics:getSingleton())
-	--delete(sql) -- Very slow
+	delete(GroupPropertyManager:getSingleton())
+	delete(sql) -- Very slow
 end
 
 function Core:runTests()
