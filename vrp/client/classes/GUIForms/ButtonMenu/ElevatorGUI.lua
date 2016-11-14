@@ -27,10 +27,10 @@ function ElevatorGUI:itemCallback(stationId)
 	local music = Sound.create("files/audio/ElevatorMusic.ogg")
 	fadeCamera(false,1,0,0,0)
     setTimer( function()
-		localPlayer:setPosition(1783.68, -1750.25, 13.554)
+		localPlayer:setPosition(1744.80, -1746.90, 13.30)
+		localPlayer:setRotation(0, 0, 170)
 		localPlayer:setFrozen(true)
 	end, 1250,1)
-	outputChatBox("Todo: Port to elevator interior, (made by krox)")
     setTimer(function() fadeCamera(true,1) end, 1500, 1)
 	setTimer(function() addEventHandler("onClientPreRender", root, self.m_CamBind) end, 1800 ,1)
 
@@ -51,15 +51,17 @@ function ElevatorGUI:itemCallback(stationId)
 end
 
 function ElevatorGUI:renderCam()
-	local pos1 = localPlayer:getPosition()
+	local posPlayer = localPlayer.position
 
 	if not self.m_Object then
-		self.m_Object = createObject(1337, pos1.x+4, pos1.y, pos1.z-1)
+		local posObject = posPlayer + localPlayer.matrix.forward*2
+		posObject.z = posObject.z-0.5
+		self.m_Object = createObject(1337, posObject)
 		self.m_Object:setAlpha(0)
-		self.m_Object:move(4000, pos1.x+4, pos1.y, pos1.z+3, 0, 0, 0, "InOutQuad")
+		self.m_Object:move(4000, posObject.x, posObject.y, posObject.z+1, 0, 0, 0, "InOutQuad")
 	end
-	local pos2 = self.m_Object:getPosition()
-	setCameraMatrix(pos1, pos2)
+	local pos2 = self.m_Object.position
+	setCameraMatrix(posPlayer, pos2)
 end
 
 addEventHandler("showElevatorGUI", root,
