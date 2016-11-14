@@ -272,10 +272,10 @@ function FactionState:sendStateChatMessage(sourcePlayer, message)
 			local r,g,b = 200, 100, 100
 			local receivedPlayers = {}
 			local text = ("%s %s: %s"):format(rankName,getPlayerName(sourcePlayer), message)
-			for k, player in ipairs(self:getOnlinePlayers()) do
+			for k, player in pairs(self:getOnlinePlayers()) do
 				player:sendMessage(text, r, g, b)
-				if playersToSend[index] ~= sourcePlayer then
-					receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+				if player ~= sourcePlayer then
+					receivedPlayers[#receivedPlayers+1] = player:getName()
 				end
 			end
 			StatisticsLogger:getSingleton():addChatLog(sourcePlayer, "state", message, toJSON(receivedPlayers))
