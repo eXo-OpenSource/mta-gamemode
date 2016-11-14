@@ -6,16 +6,16 @@
 -- *
 -- ****************************************************************************
 local MULTIACCOUNT_CHECK = false -- TODO: Activate on production use
-local INVATION = true -- TODO: Activate on production use
+local INVITATION = true -- TODO: Activate on production use
 
 Account = inherit(Object)
-addRemoteEvents{"remoteClientSpawn", "checkInvationCode"}
+addRemoteEvents{"remoteClientSpawn", "checkInvitationCode"}
 function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
 	if (not username or not password) and not pwhash then return false end
 
 	-- Ask SQL to fetch ForumID
-	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, InvationId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
+	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, InvitationId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
 	if not row or not row.Id then
 		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort")
@@ -25,7 +25,7 @@ function Account.login(player, username, password, pwhash)
 	local Id = row.Id
 	local ForumID = row.ForumID
 	local Username = row.Name
-	local InvationId = row.InvationId
+	local InvitationId = row.InvitationId
 
 	-- Ask SQL to fetch the password from forum
 	board:queryFetchSingle(Async.waitFor(self), "SELECT password, registrationDate FROM wcf1_user WHERE userID = ?", ForumID)
@@ -59,8 +59,8 @@ function Account.login(player, username, password, pwhash)
 		end
 	end
 
-	if INVATION then
-		if not Account.checkInvation(player, Id, InvationId) then
+	if INVITATION then
+		if not Account.checkInvitation(player, Id, InvitationId) then
 			return
 		end
 	end
@@ -132,8 +132,8 @@ function Account.register(player, username, password, email)
 			player:createCharacter()
 			player:setRegistrationDate(getRealTime().timestamp)
 
-			if INVATION then
-				if not Account.checkInvation(player, Id, 0) then
+			if INVITATION then
+				if not Account.checkInvitation(player, Id, 0) then
 					return
 				end
 			end
@@ -290,53 +290,53 @@ function Account.MultiaccountCheck(player, Id)
 	return true
 end
 
-function Account.checkInvation(player, Id, InvationId)
-	if InvationId and InvationId > 0 then
-		local row = sql:queryFetchSingle("SELECT * FROM ??_invations WHERE Id = ?", sql:getPrefix(), InvationId)
+function Account.checkInvitation(player, Id, InvitationId)
+	if InvitationId and InvitationId > 0 then
+		local row = sql:queryFetchSingle("SELECT * FROM ??_invitations WHERE Id = ?", sql:getPrefix(), InvitationId)
 		if row then
 			if row.UserId == Id then
 				if row.Active == 1 then
 					return true
 				else
-					player:sendError(_("Der Invation-Code wurde deaktiviert!", player))
+					player:sendError(_("Der Invitation-Code wurde deaktiviert!", player))
 				end
 			else
-				player:sendError(_("Der Invation-Code wird von einem anderen Spieler verwendet!", player))
+				player:sendError(_("Der Invitation-Code wird von einem anderen Spieler verwendet!", player))
 			end
 		else
-			player:sendError(_("Der Invation-Code wurde gelöscht!", player))
+			player:sendError(_("Der Invitation-Code wurde gelöscht!", player))
 		end
 	end
 	player:triggerEvent("closeLogin")
-	player:triggerEvent("inputBox", "Invation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invation-Code spielbar! Bitte gib diesen hier ein:", "checkInvationCode", Id)
+	player:triggerEvent("inputBox", "Invitation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invitation-Code spielbar! Bitte gib diesen hier ein:", "checkInvitationCode", Id)
 	return false
 end
 
-function Account.checkInvationCode(code, AccountId)
-	local row = sql:queryFetchSingle("SELECT * FROM ??_invations WHERE InvationKey = ?", sql:getPrefix(), code)
+function Account.checkInvitationCode(code, AccountId)
+	local row = sql:queryFetchSingle("SELECT * FROM ??_invitations WHERE InvitationKey = ?", sql:getPrefix(), code)
 	if row then
 		if row.UserId == 0 then
 			if row.Active == 1 then
 				--local AccountId = Account.getIdFromName(client:getName())
-				sql:queryExec("UPDATE ??_invations SET Serial = ?, UserId = ?, Used = NOW() WHERE Id = ? ", sql:getPrefix(), client:getSerial(), AccountId, row.Id)
-				sql:queryExec("UPDATE ??_account SET InvationId = ? WHERE Id = ? ", sql:getPrefix(), row.Id, AccountId)
+				sql:queryExec("UPDATE ??_invitations SET Serial = ?, UserId = ?, Used = NOW() WHERE Id = ? ", sql:getPrefix(), client:getSerial(), AccountId, row.Id)
+				sql:queryExec("UPDATE ??_account SET InvitationId = ? WHERE Id = ? ", sql:getPrefix(), row.Id, AccountId)
 				client:sendSuccess(_("Der Code wurde angenommen!\nDu wirst nun reconnected!", client))
 				setTimer(function(player)
 					redirectPlayer(player, "", 0)
 				end, 5000, 1, client)
 				return true
 			else
-				client:sendError(_("Der Invation-Code wurde deaktiviert!", client))
+				client:sendError(_("Der Invitation-Code wurde deaktiviert!", client))
 			end
 		else
-			client:sendError(_("Der Invation-Code wurde bereits benützt!", client))
+			client:sendError(_("Der Invitation-Code wurde bereits benützt!", client))
 		end
 	else
-		client:sendError(_("Ungültiger Invation-Code!", client))
+		client:sendError(_("Ungültiger Invitation-Code!", client))
 	end
-	client:triggerEvent("inputBox", "Invation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invation-Code spielbar! Bitte gib diesen hier ein:", "checkInvationCode")
+	client:triggerEvent("inputBox", "Invitation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invitation-Code spielbar! Bitte gib diesen hier ein:", "checkInvitationCode")
 end
-addEventHandler("checkInvationCode", root, Account.checkInvationCode)
+addEventHandler("checkInvitationCode", root, Account.checkInvitationCode)
 
 function Account.getIdsFromSerial(serial)
 	local result = sql:queryFetch("SELECT Id, LastSerial FROM ??_account WHERE LastSerial = ?", sql:getPrefix(), serial)
