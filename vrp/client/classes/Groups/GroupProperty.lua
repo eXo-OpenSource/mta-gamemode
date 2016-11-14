@@ -50,8 +50,8 @@ function GroupProperty:render()
 			end
 			dxDrawRectangle( sx, sy-fontHeight, width, fontHeight,tocolor(50,50,50,150))
 			dxDrawText(string.upper(self.m_Table.m_Name.." - "..self.m_Name),sx, sy-fontHeight,width,height, tocolor(200,200,200,255),1,"default-bold","center")
-			dxDrawImage( sx+width*0.1,sy+height*0.1, width*0.35, height*0.8, "files/images/other/Enter.png", 0, 0, 0, color1)
-			dxDrawImage( sx+width*0.5,sy+height*0.1, width*0.35, height*0.8, "files/images/other/Close.png", 0, 0, 0, color2)
+			dxDrawImage( sx+width*0.1,sy+height*0.1, width*0.35, height*0.8, "files/images/Other/Enter.png", 0, 0, 0, color1)
+			dxDrawImage( sx+width*0.5,sy+height*0.1, width*0.35, height*0.8, "files/images/Other/Close.png", 0, 0, 0, color2)
 			
 			if getKeyState("mouse1") then 
 				if bCol1 then 
