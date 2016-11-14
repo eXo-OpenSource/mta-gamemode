@@ -261,6 +261,13 @@ addEventHandler("registerfailed", root,
 	end
 )
 
+addEvent("closeLogin", true)
+addEventHandler("closeLogin", root,
+	function(text)
+		delete(LoginGUI:getSingleton())
+	end
+)
+
 
 addEvent("loginsuccess", true)
 addEventHandler("loginsuccess", root,
@@ -279,14 +286,14 @@ addEventHandler("loginsuccess", root,
 		-- Maybe start tutorial
 		if tutorialstage == 0 then
 			-- Play Intro
-			CutscenePlayer:getSingleton():playCutscene("Intro",
-				function()
+			--CutscenePlayer:getSingleton():playCutscene("Intro",
+			--	function()
 					setElementPosition(localPlayer, 0, 0, 5)
 
 					-- Temp fix?
 					triggerServerEvent("introFinished", root)
-				end
-			)
+			--	end
+			--)
 		elseif tutorialstage == 1 then
 			-- Create Character
 		elseif tutorialstage == 2 then

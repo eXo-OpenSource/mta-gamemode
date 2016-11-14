@@ -6,95 +6,26 @@
 -- *
 -- ****************************************************************************
 local MULTIACCOUNT_CHECK = false -- TODO: Activate on production use
+local INVATION = true -- TODO: Activate on production use
 
 Account = inherit(Object)
-addRemoteEvents{"remoteClientSpawn"}
+addRemoteEvents{"remoteClientSpawn", "checkInvationCode"}
 function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
 	if (not username or not password) and not pwhash then return false end
 
 	-- Ask SQL to fetch ForumID
-	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
+	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, InvationId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
 	if not row or not row.Id then
 		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort")
 		return false
 	end
 
-	-- Todo: Remove this workaround when done?
-	-- -- -- -- -- -- Workaround -- -- -- -- -- --
-	if row.ForumID == 0 then
-		local Id = row.Id
-		local Username = row.Name
-
-		sql:queryFetchSingle(Async.waitFor(self), ("SELECT Salt, Password, EMail FROM ??_account WHERE Id = ?"), sql:getPrefix(), Id)
-		local row = Async.wait()
-		if not row or not row.Salt or not row.Password or not row.EMail then
-			player:triggerEvent("loginfailed", "Internal error while creating forum account #1. Please contact an admin. ID: " .. tostring(Id))
-			return false
-		end
-
-		-- Need password in plaintext
-		if pwhash then
-			player:triggerEvent("loginfailed", "Bitte gib dein Passwort erneut ein")
-			return false
-		else
-			pwhash = sha256(("%s%s"):format(row.Salt, password))
-		end
-
-		if pwhash ~= row.Password then
-			player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- "Error: Invalid username or password"
-			return false
-		end
-
-		-- Validate email
-		if not row.EMail:match("^[%w._-]+@[%w._-]+%.%w+$") or #row.EMail > 75 then
-			player:triggerEvent("loginfailed", "Internal error while creating forum account #2. Please contact an admin. ID: " .. tostring(Id))
-			return false
-		end
-
-		-- Check if someone uses this username already
-		board:queryFetchSingle(Async.waitFor(self), "SELECT userID, username, email FROM wcf1_user WHERE username = ? OR email = ?", Username, row.EMail)
-		local result = Async.wait()
-		if result then
-			player:triggerEvent("loginfailed", "Internal error while creating forum account #3. Please contact an admin. ID: " .. tostring(Id))
-			return false
-		end
-
-		local userID = Account.createForumAccount(Username, password, row.EMail)
-		if userID then
-			sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, ForumID = ?, Password = 0, Salt = 0, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), userID, Id)
-
-			if DatabasePlayer.getFromId(Id) then
-				player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
-				return false
-			end
-			if MULTIACCOUNT_CHECK then
-				if Account.MultiaccountCheck(player, Id) == false then
-					return false
-				end
-			end
-
-			player.m_Account = Account:new(Id, Username, player, false)
-
-			if player:getTutorialStage() == 1 then
-				player:createCharacter()
-			end
-
-			player:loadCharacter()
-			player:setRegistrationDate(row.registrationDate)
-			player:triggerEvent("Event_StartScreen")
-
-			triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
-			StatisticsLogger:addLogin( player, username, "Login")
-			return
-		end
-	end
-	-- -- -- -- -- -- Workaround end -- -- -- -- -- --
-
 	local Id = row.Id
 	local ForumID = row.ForumID
 	local Username = row.Name
+	local InvationId = row.InvationId
 
 	-- Ask SQL to fetch the password from forum
 	board:queryFetchSingle(Async.waitFor(self), "SELECT password, registrationDate FROM wcf1_user WHERE userID = ?", ForumID)
@@ -128,6 +59,12 @@ function Account.login(player, username, password, pwhash)
 		end
 	end
 
+	if INVATION then
+		if not Account.checkInvation(player, Id, InvationId) then
+			return
+		end
+	end
+
 	player.m_Account = Account:new(Id, Username, player, false)
 
 	if player:getTutorialStage() == 1 then
@@ -135,7 +72,6 @@ function Account.login(player, username, password, pwhash)
 	end
 
 	player:loadCharacter()
-	player:setRegistrationDate(row.registrationDate)
 	player:triggerEvent("Event_StartScreen")
 	StatisticsLogger:addLogin( player, username, "Login")
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
@@ -194,8 +130,15 @@ function Account.register(player, username, password, email)
 		if result then
 			player.m_Account = Account:new(Id, username, player, false)
 			player:createCharacter()
-			player:loadCharacter()
 			player:setRegistrationDate(getRealTime().timestamp)
+
+			if INVATION then
+				if not Account.checkInvation(player, Id, 0) then
+					return
+				end
+			end
+
+			player:loadCharacter()
 			player:triggerEvent("Event_StartScreen")
 			player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
 			StatisticsLogger:addLogin( player, username, "Login")
@@ -346,6 +289,54 @@ function Account.MultiaccountCheck(player, Id)
 	end
 	return true
 end
+
+function Account.checkInvation(player, Id, InvationId)
+	if InvationId and InvationId > 0 then
+		local row = sql:queryFetchSingle("SELECT * FROM ??_invations WHERE Id = ?", sql:getPrefix(), InvationId)
+		if row then
+			if row.UserId == Id then
+				if row.Active == 1 then
+					return true
+				else
+					player:sendError(_("Der Invation-Code wurde deaktiviert!", player))
+				end
+			else
+				player:sendError(_("Der Invation-Code wird von einem anderen Spieler verwendet!", player))
+			end
+		else
+			player:sendError(_("Der Invation-Code wurde gelöscht!", player))
+		end
+	end
+	player:triggerEvent("closeLogin")
+	player:triggerEvent("inputBox", "Invation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invation-Code spielbar! Bitte gib diesen hier ein:", "checkInvationCode", Id)
+	return false
+end
+
+function Account.checkInvationCode(code, AccountId)
+	local row = sql:queryFetchSingle("SELECT * FROM ??_invations WHERE InvationKey = ?", sql:getPrefix(), code)
+	if row then
+		if row.UserId == 0 then
+			if row.Active == 1 then
+				--local AccountId = Account.getIdFromName(client:getName())
+				sql:queryExec("UPDATE ??_invations SET Serial = ?, UserId = ?, Used = NOW() WHERE Id = ? ", sql:getPrefix(), client:getSerial(), AccountId, row.Id)
+				sql:queryExec("UPDATE ??_account SET InvationId = ? WHERE Id = ? ", sql:getPrefix(), row.Id, AccountId)
+				client:sendSuccess(_("Der Code wurde angenommen!\nDu wirst nun reconnected!", client))
+				setTimer(function(player)
+					redirectPlayer(player, "", 0)
+				end, 5000, 1, client)
+				return true
+			else
+				client:sendError(_("Der Invation-Code wurde deaktiviert!", client))
+			end
+		else
+			client:sendError(_("Der Invation-Code wurde bereits benützt!", client))
+		end
+	else
+		client:sendError(_("Ungültiger Invation-Code!", client))
+	end
+	client:triggerEvent("inputBox", "Invation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invation-Code spielbar! Bitte gib diesen hier ein:", "checkInvationCode")
+end
+addEventHandler("checkInvationCode", root, Account.checkInvationCode)
 
 function Account.getIdsFromSerial(serial)
 	local result = sql:queryFetch("SELECT Id, LastSerial FROM ??_account WHERE LastSerial = ?", sql:getPrefix(), serial)
