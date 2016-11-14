@@ -45,10 +45,10 @@ function GroupPropertyBuy:PreviewButton_Click()
 			local matrix = self.m_ImmoTable[selected.Id].m_CamMatrix
 			local interior = self.m_ImmoTable[selected.Id].m_Interior
 			local dimension = self.m_ImmoTable[selected.Id].m_Dimension
-			setElementInterior(localPlayer,interior)
-			setElementDimension( localPlayer, dimension)
-			setCameraInterior(interior)
-			setCameraMatrix(matrix[1], matrix[2], matrix[3],matrix[1], matrix[2], matrix[3])
+			--setElementInterior(localPlayer,interior)
+			--setElementDimension( localPlayer, dimension)
+			--setCameraInterior(interior)
+			setCameraMatrix(matrix[1], matrix[2], matrix[3],matrix[4], matrix[5], matrix[6])
 		end
 	end
 end

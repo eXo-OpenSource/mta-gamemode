@@ -19,7 +19,7 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_Interior = InteriorId
 	self.m_InteriorPosition = InteriorSpawn
 	self.m_Dimension = Id+1000
-	self.m_CamMatrix = {self.m_InteriorPosition.x, self.m_InteriorPosition.y, self.m_InteriorPosition.z}
+	self.m_CamMatrix = {tonumber(gettok(Cam,1,",")), tonumber(gettok(Cam,2,",")), tonumber(gettok(Cam,3,",")), Pickup.x, Pickup.y, Pickup.z}
 
 	self.m_Pickup = createPickup(Pickup, 3, 1272, 0)
 	self.m_EnterFunc = bind( GroupProperty.onEnter, self)

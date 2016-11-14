@@ -51,7 +51,7 @@ function GroupPropertyManager:BuyProperty( Id )
 			local newOwner = client:getGroup()
 			if not oldOwner then 
 				property.m_Owner = newOwner or false
-				property.m_OwnerID = newOwner.m_Id
+				property.m_OwnerID = newOwner.m_Id or false
 				GroupPropertyManager.ChangeMap[Id] = newOwner
 				client:takeMoney(price, "Immobilie "..property.m_Name.." gekauft!")
 				client:sendInfo("Du hast die Immobilie geklaut!")
