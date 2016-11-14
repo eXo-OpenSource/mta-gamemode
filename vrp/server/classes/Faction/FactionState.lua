@@ -308,7 +308,7 @@ end
 function FactionState:Command_suspect(player,cmd,target,amount,...)
 	if player:isFactionDuty() and player:getFaction() and player:getFaction():isStateFaction() == true then
 		local amount = tonumber(amount)
-		if amount >= 1 and amount <= 6 then
+		if amount and amount >= 1 and amount <= 6 then
 			local reason = self:getFullReasonFromShortcut(table.concat({...}, " "))
 			local target = PlayerManager:getSingleton():getPlayerFromPartOfName(target,player)
 			if isElement(target) then
