@@ -170,7 +170,7 @@ function CircuitBreaker:setState(state)
 	if state == "done" then
 		self.m_RT_endscreen = DxRenderTarget(self.WIDTH*3, self.HEIGHT, true)
 		self.m_State = "done"
-		outputChatBox("all levels done")
+		outputDebug("all levels done")
 
 		--Todo: Show completed PCB (end screen)
 	end
@@ -211,7 +211,7 @@ function CircuitBreaker:setState(state)
 
 	if state == "complete" then	--Todo: Call next level via 5 sec. timer?
 		self.m_State = "complete"
-		outputChatBox("level complete")
+		outputDebug("level complete")
 		self.m_LineColor = self.m_DefaultLineColor
 		self:updateRenderTarget()
 
