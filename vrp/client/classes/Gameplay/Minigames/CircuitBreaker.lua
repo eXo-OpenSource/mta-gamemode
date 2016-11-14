@@ -105,7 +105,15 @@ function CircuitBreaker:createGameplay()
 			},
 
         --Leveldesign 3
-		[3] = {}--todo
+		[3] = {
+				{125, 10, 300, 300, self:createStructurGroup(300, 300)},
+				{140, 360, 300, 280, self:createStructurGroup(300, 280)},
+				{480, 50, 150, 150, self:createStructurGroup(150, 150)},
+				{660, 60, 120, 120, self:createStructurGroup(120, 120)},
+				{480, 240, 300, 300, self:createStructurGroup(300, 300)},
+				{440, 540, 500, 100, self:createStructurGroup(500, 100)},
+				{820, 10, 140, 500, self:createStructurGroup(140, 500)},
+		}--todo
 	}
 
 	-- Some definitions
