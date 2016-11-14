@@ -945,8 +945,8 @@
 	
 
 		<!-- group -->
-	<vrpfile src="files/images/other/Enter.png"/>
-	<vrpfile src="files/images/other/Close.png"/>
+	<vrpfile src="files/images/Other/Enter.png"/>
+	<vrpfile src="files/images/Other/Close.png"/>
 	
 	<!-- Gangwar -->
 	<vrpfile src="files/images/Gangwar/tile.png"/>
