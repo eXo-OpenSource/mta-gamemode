@@ -11,7 +11,7 @@ BankRobbery.FinishMarker = {Vector3(2766.84, 84.98, 19.39), Vector3(2561.50, -94
 local BOMB_TIME = 15*1000
 local MONEY_PER_SAFE_MIN = 400
 local MONEY_PER_SAFE_MAX = 600
-local MAX_MONEY_PER_BAG = 2500
+local MAX_MONEY_PER_BAG = 5000
 local BANKROB_TIME = 10*60*1000
 
 function BankRobbery:constructor()
