@@ -8,11 +8,11 @@
 VehicleInteraction = inherit(Singleton)
 inherit(GUIFontContainer, VehicleInteraction)
 addRemoteEvents{"onDoorOpened", "onDoorClosed"}
-
+local fontHeight = dxGetFontHeight(1,"default-bold")
 function VehicleInteraction:constructor()
 	self.sWidth, self.sHeight = guiGetScreenSize()
 	self.m_minDistance = 10
-	self.m_minDistance2 = 15
+	self.m_minDistance2 = 8
 	self.m_interactButton = "O"
 	self.m_actionButton = "K"
 	self.m_lockButton = "L"
@@ -88,6 +88,7 @@ function VehicleInteraction:render()
 	        end
 		end
     end
+	--[[ --// Scrapped until new tunings are implemented
 	local ownerText, vehiclePos
 	for key, vehicle in ipairs(getElementsByType("vehicle", true)) do
 		vehiclePos = vehicle:getPosition()
@@ -95,14 +96,15 @@ function VehicleInteraction:render()
 			x,y = getScreenFromWorldPosition( vehiclePos)
 			if x and y then
 				if getKeyState("lalt") then
-					ownerText = getElementData(vehicle,"Owner") or _"Unbekannter Besitzer"
-					dxDrawLine(x,y,x+self.sWidth*0.1,y+self.sHeight*0.1)
-					dxDrawLine(x+self.sWidth*0.1,y+self.sHeight*0.1,x+self.sWidth*0.3,y+self.sHeight*0.1)
-					dxDrawText(ownerText,x+self.sWidth*0.1,y+self.sHeight*0.1,x+self.sWidth*0.3,y+self.sHeight*0.1)
+					ownerText = getElementData(vehicle,"OwnerName") or _"Unbekannter Besitzer"
+					dxDrawLine(x,y,x+self.sWidth*0.1,y-self.sHeight*0.05)
+					dxDrawLine(x+self.sWidth*0.1,y-self.sHeight*0.05,x+self.sWidth*0.2,y-self.sHeight*0.05)
+					dxDrawText("Besitzer: "..ownerText,x+self.sWidth*0.1,y-self.sHeight*0.05-fontHeight,x+self.sWidth*0.2,y-self.sHeight*0.05,tocolor(200,220,220,255),1,"default-bold")
 				end
 			end
 		end
 	end
+	--]]
 end
 
 function VehicleInteraction:drawTextBox(text, count)

@@ -45,13 +45,16 @@ function ELSSystem:onLeaveVehicle( controller, seat )
 end
 
 function ELSSystem:onEnterVehicle( controller, seat)
-    self.m_BindLight = bind( ELSSystem.setLightPeriod, self)
-    bindKey(controller, "z","up",  self.m_BindLight , 400)
+	local type_ = getVehicleType(getPedOccupiedVehicle(controller))
+	if type_ ~= VehicleType.Boat and type_ ~= VehicleType.Helicopter and type_ ~= VehicleType.Plane then
+		self.m_BindLight = bind( ELSSystem.setLightPeriod, self)
+		bindKey(controller, "z","up",  self.m_BindLight , 400)
 		bindKey(controller, "z","down", self.m_BindLight, 100)
-    self.m_BindBlink = bind( ELSSystem.setBlink, self)
+		self.m_BindBlink = bind( ELSSystem.setBlink, self)
 		bindKey(controller, ",","up", self.m_BindBlink, "left")
 		bindKey(controller, ".","up", self.m_BindBlink, "right")
 		bindKey(controller, "-","up", self.m_BindBlink, "off")
+	end
 end
 
 function ELSSystem:setLightPeriod( _, _, state, period)
