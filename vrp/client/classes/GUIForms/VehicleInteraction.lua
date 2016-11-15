@@ -91,11 +91,11 @@ function VehicleInteraction:render()
 	local ownerText, vehiclePos
 	for key, vehicle in ipairs(getElementsByType("vehicle", true)) do
 		vehiclePos = vehicle:getPosition()
-		if getDistanceBetweenPoints2D(vehiclePos, playerPos) < self.m_minDistance2 then 
+		if getDistanceBetweenPoints2D(vehiclePos, playerPos) < self.m_minDistance2 then
 			x,y = getScreenFromWorldPosition( vehiclePos)
 			if x and y then
 				if getKeyState("lalt") then
-					ownerText = getElementData(vehicle,"Owner")
+					ownerText = getElementData(vehicle,"Owner") or _"Unbekannter Besitzer"
 					dxDrawLine(x,y,x+self.sWidth*0.1,y+self.sHeight*0.1)
 					dxDrawLine(x+self.sWidth*0.1,y+self.sHeight*0.1,x+self.sWidth*0.3,y+self.sHeight*0.1)
 					dxDrawText(ownerText,x+self.sWidth*0.1,y+self.sHeight*0.1,x+self.sWidth*0.3,y+self.sHeight*0.1)
