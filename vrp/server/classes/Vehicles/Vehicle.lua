@@ -44,6 +44,7 @@ function Vehicle:setOwner(owner)
 		return false
 	end
 	self:save()
+	vehicle:setPublicSync("Owner",owner)
 	return true
 end
 

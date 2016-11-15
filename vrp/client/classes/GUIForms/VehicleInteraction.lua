@@ -10,7 +10,9 @@ inherit(GUIFontContainer, VehicleInteraction)
 addRemoteEvents{"onDoorOpened", "onDoorClosed"}
 
 function VehicleInteraction:constructor()
+	self.sWidth, self.sHeight = guiGetScreenSize()
 	self.m_minDistance = 10
+	self.m_minDistance2 = 15
 	self.m_interactButton = "O"
 	self.m_actionButton = "K"
 	self.m_lockButton = "L"
@@ -40,12 +42,12 @@ function VehicleInteraction:constructor()
 end
 
 function VehicleInteraction:render()
+	local playerPos = localPlayer:getPosition()
 	self.m_lookAtVehicle = getPedTarget(localPlayer)
     if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" then
 		if not isPedInVehicle(localPlayer) and not GUIElement.getHoveredElement() then
 			local vehPos = self.m_lookAtVehicle:getPosition()
 			local vehRot = self.m_lookAtVehicle:getRotation()
-			local playerPos = localPlayer:getPosition()
 			if getDistanceBetweenPoints3D(vehPos, playerPos) < self.m_minDistance and self:getDoor() then
 				if not isVehicleLocked(self.m_lookAtVehicle) then
 					local checkDoor = getVehicleDoorState(self.m_lookAtVehicle, self:getDoor())
@@ -86,6 +88,21 @@ function VehicleInteraction:render()
 	        end
 		end
     end
+	local ownerText, vehiclePos
+	for key, vehicle in ipairs(getElementsByType("vehicle", true)) do
+		vehiclePos = vehicle:getPosition()
+		if getDistanceBetweenPoints2D(vehiclePos, playerPos) < self.m_minDistance2 then 
+			x,y = getScreenFromWorldPosition( vehiclePos)
+			if x and y then
+				if getKeyState("lalt") then
+					ownerText = getElementData(vehicle,"Owner")
+					dxDrawLine(x,y,x+self.sWidth*0.1,y+self.sHeight*0.1)
+					dxDrawLine(x+self.sWidth*0.1,y+self.sHeight*0.1,x+self.sWidth*0.3,y+self.sHeight*0.1)
+					dxDrawText(ownerText,x+self.sWidth*0.1,y+self.sHeight*0.1,x+self.sWidth*0.3,y+self.sHeight*0.1)
+				end
+			end
+		end
+	end
 end
 
 function VehicleInteraction:drawTextBox(text, count)
