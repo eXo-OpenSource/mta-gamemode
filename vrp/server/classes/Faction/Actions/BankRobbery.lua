@@ -23,7 +23,11 @@ BankRobbery.BagSpawns = {
 	Vector3(2311.57, 18.95, 26),
 	Vector3(2311.55, 17.89, 26),
 	Vector3(2312.69, 17.80, 26),
-	Vector3(2312.73, 19.90, 26)
+	Vector3(2312.73, 19.90, 26),
+	Vector3(2313.57, 20.89, 26),
+	Vector3(2313.59, 17.27, 26),
+	Vector3(2312.19, 18.31, 26),
+	Vector3(2309.27, 19.14, 26),
 }
 
 local BOMB_TIME = 15*1000
@@ -139,6 +143,7 @@ function BankRobbery:startRob(player)
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
 	self.m_BackDoor:setFrozen(false)
+	self.m_RobFaction:giveKarmaToOnlineMembers(-5, "Banküberfall gestartet")
 
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "start", self.m_RobPlayer, self.m_RobFaction, "faction")
 
@@ -194,8 +199,9 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 end
 
 function BankRobbery:timeUp()
-	self:delete()
+	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Banküberfall verhindert")
 	PlayerManager:getSingleton():breakingNews("Der Banküberfall ist beendet! Die Täter haben sich zuviel Zeit gelassen!")
+	self:delete()
 end
 
 function BankRobbery:updateBreakingNews()
@@ -399,6 +405,8 @@ end
 
 function BankRobbery:Event_onHackSuccessful()
 	client:sendSuccess(_("Du hast das Sicherheitssystem geknackt! Die Safetür ist offen", client))
+	client:giveKarma(-5)
+
 	local pos = self.m_SafeDoor:getPosition()
 	self.m_SafeDoor:move(3000, pos.x, pos.y+1.5, pos.z, 0, 0, 0)
 end
@@ -472,6 +480,7 @@ function BankRobbery:statePeopleClickBag(player, bag)
 	PlayerManager:getSingleton():breakingNews("Das SAPD hat einen Geldsack sichergestellt!")
 	player:sendInfo(_("Geldsack sichergestellt, es wurden %d$ in die Staatskasse gelegt!", player, amount))
 	FactionManager:getSingleton():getFromId(1):giveMoney(amount, "Bankrob-Geldsack")
+	player:giveKarma(5)
 	table.remove(self.m_MoneyBags, table.find(self.m_MoneyBags, bag))
 	bag:destroy()
 end
@@ -601,6 +610,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 
 						if self:getRemainingBagAmount() == 0 or getPedOccupiedVehicle(hitElement) == self.m_Truck then
 							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
+							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich")
 							source:destroy()
 							self:delete()
 						end

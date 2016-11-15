@@ -148,6 +148,13 @@ function FactionState:getOnlinePlayers()
 	return players
 end
 
+function FactionState:giveKarmaToOnlineMembers(karma, reason)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:giveKarma(karma)
+		player:sendShortMessage(_("Du hast %d erhalten! (Grund: %s)", player, karma, reason))
+	end
+end
+
 function FactionState:getFactions()
 	local factions = FactionManager:getSingleton():getAllFactions()
 	local returnFactions = {}

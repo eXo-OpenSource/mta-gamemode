@@ -78,6 +78,13 @@ function Faction:isEvilFaction()
 	return false
 end
 
+function Faction:giveKarmaToOnlineMembers(karma, reason)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:giveKarma(karma)
+		player:sendShortMessage(_("Du hast %d erhalten! (Grund: %s)", player, karma, reason))
+	end
+end
+
 function Faction:getType()
 	return self.m_Type
 end
@@ -300,13 +307,13 @@ function Faction:getOnlinePlayers()
 end
 
 function Faction:sendMessage(text, r, g, b, ...)
-	for k, player in ipairs(self:getOnlinePlayers()) do
+	for k, player in pairs(self:getOnlinePlayers()) do
 		player:sendMessage(text, r, g, b, ...)
 	end
 end
 
 function Faction:sendShortMessage(text, ...)
-	for k, player in ipairs(self:getOnlinePlayers()) do
+	for k, player in pairs(self:getOnlinePlayers()) do
 		player:sendShortMessage(_(text, player), self:getName(), {11, 102, 8}, ...)
 	end
 end
