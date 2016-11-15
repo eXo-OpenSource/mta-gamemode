@@ -9,7 +9,6 @@ BreakingNews = inherit(GUIForm)
 inherit(Singleton, BreakingNews)
 
 function BreakingNews:constructor(text)
-	self.m_Cursor = isCursorShowing()
 	GUIForm.constructor(self, 0, 0, screenWidth*0.6, 50, false, true)
 	GUIImage:new(0, 0, self.m_Width-24, self.m_Height, "files/images/Other/BreakingNewsBG.png", self):setAlpha(220)
 	GUIImage:new(self.m_Width-24, 0, 24, self.m_Height, "files/images/Other/BreakingNewsEnd.png", self):setAlpha(220)
@@ -17,12 +16,10 @@ function BreakingNews:constructor(text)
 	self.m_Label = GUILabel:new(85, 0, self.m_Width-85, self.m_Height, text, self):setAlignY("center"):setFont(VRPFont(32)):setFontSize(1)
 	self:setVisible(false)
 	self:FadeIn()
-	showCursor(self.m_Cursor)
 end
 
 function BreakingNews:destructor()
 	GUIForm.destructor(self)
-	showCursor(self.m_Cursor)
 end
 
 function BreakingNews:FadeIn()

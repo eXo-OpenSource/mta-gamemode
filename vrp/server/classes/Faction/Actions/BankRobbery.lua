@@ -9,9 +9,9 @@ BankRobbery = inherit(Object)
 BankRobbery.Map = {}
 BankRobbery.FinishMarker = {Vector3(2766.84, 84.98, 19.39), Vector3(2561.50, -949.89, 82.77), Vector3(1935.24, 169.98, 37.28)}
 local BOMB_TIME = 15*1000
-local MONEY_PER_SAFE_MIN = 400
-local MONEY_PER_SAFE_MAX = 600
-local MAX_MONEY_PER_BAG = 5000
+local MONEY_PER_SAFE_MIN = 200
+local MONEY_PER_SAFE_MAX = 400
+local MAX_MONEY_PER_BAG = 4000
 local BANKROB_TIME = 10*60*1000
 
 function BankRobbery:constructor()

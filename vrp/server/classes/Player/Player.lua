@@ -749,18 +749,21 @@ end
 function Player:attachPlayerObject(object, allowWeapons)
 	local model = object.model
 	if PlayerAttachObjects[model] then
-		local settings = PlayerAttachObjects[model]
-		object:setCollisionsEnabled(false)
-		object:attach(self, settings["pos"], settings["rot"])
-		if not allowWeapons then
-			self:toggleControlsWhileObjectAttached(false)
+		if not self:getPlayerAttachedObject() then
+			local settings = PlayerAttachObjects[model]
+			object:setCollisionsEnabled(false)
+			object:attach(self, settings["pos"], settings["rot"])
+			if not allowWeapons then
+				self:toggleControlsWhileObjectAttached(false)
+			end
+			self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
+			bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
+			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
+			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
+			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
+		else
+			self:sendError(_("Du hast bereits ein Objekt dabei!", self))
 		end
-		self:sendShortMessage(_("Drücke 'n' um den/die %s abzulegen!", self, settings["name"]))
-		bindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc, object)
-		self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
-		addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
-		addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
-
 	else
 		self:sendError("Internal Error: attachPlayerObject: Wrong Object")
 	end
