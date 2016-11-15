@@ -150,6 +150,12 @@ function StatisticsLogger:addCasino( player, wintype, prize)
         sqlLogs:getPrefix(), userId, wintype, prize)
 end
 
+function StatisticsLogger:addItemDepotLog(player, depot, item, amount)
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	sqlLogs:queryExec("INSERT INTO ??_ItemDepot (UserId, DepotId,  Item, Amount, Date) VALUES(?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, depot, item, amount)
+end
+
 function StatisticsLogger:addLogin( player, name, logintype)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	local ip = getPlayerIP( player )

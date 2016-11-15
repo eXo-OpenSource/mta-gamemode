@@ -184,6 +184,7 @@ function Depot:addItem(player, item, amount)
 				self.m_Items[i]["Amount"] = amount
 				player:sendInfo(_("Du hast %d %s ins Depot (Slot %d) gelegt!", player, amount, item, i))
 				player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
+				StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, amount)
 				return
 			else
 				player:sendError(_("Du hast nicht genug %s!", player, item))
@@ -205,6 +206,7 @@ function Depot:takeItem(player, slotId)
 					player:getInventory():giveItem(item, amount)
 					player:sendInfo(_("Du hast %d %s aus dem Depot (Slot %d) genommen!", player, amount, item, slotId))
 					player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
+					StatisticsLogger:getSingleton():addItemDepotLog(player, self.m_Id, item, -amount)
 					return
 				else
 					player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
