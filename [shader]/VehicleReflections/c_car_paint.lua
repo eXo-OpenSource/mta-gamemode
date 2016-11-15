@@ -14,15 +14,17 @@
 	end
 
 
-local enabled = false
+local enabled = true
 function setShaderEnabled ( b )
 	if not b and enabled then
 		enabled = false
-		engineRemoveShaderFromWorldTexture ( myShader, "vehiclegrunge256" )
-		engineRemoveShaderFromWorldTexture ( myShader, "?emap" )
-		destroyElement ( myShader )
-		destroyElement ( textureVol )
-		destroyElement ( textureCube )
+		if textureVol and textureCube and myShader then
+			engineRemoveShaderFromWorldTexture ( myShader, "vehiclegrunge256" )
+			engineRemoveShaderFromWorldTexture ( myShader, "?emap" )
+			destroyElement ( myShader )
+			destroyElement ( textureVol )
+			destroyElement ( textureCube )
+		end
 	else
 		doTheShaderStuff ( )
 		enabled = true
