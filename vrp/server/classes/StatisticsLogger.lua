@@ -68,11 +68,19 @@ function StatisticsLogger:addChatLog(player, type, text, heared)
 end
 
 function StatisticsLogger:addKillLog(player, target, weapon)
-    if isElement(player) then userId = player:getId() else userId = player end
-	if isElement(target) then targetId = target:getId() else targetId = target end
+    if isElement(player) then userId = player:getId() else userId = player or 0 end
+	if isElement(target) then targetId = target:getId() else targetId = target or 0 end
 	local range = getDistanceBetweenPoints3D(player:getPosition(), target:getPosition())
     sqlLogs:queryExec("INSERT INTO ??_Kills (UserId, TargetId, Weapon, RangeBetween, Position, Date) VALUES (?, ?, ?, ?, ?, NOW())",
         sqlLogs:getPrefix(), userId, targetId, weapon, range, self:getZone(target))
+end
+
+function StatisticsLogger:addDamageLog(player, target, weapon, bodypart, damage)
+    if isElement(player) then userId = player:getId() else userId = player or 0 end
+	if isElement(target) then targetId = target:getId() else targetId = target or 0 end
+
+	sqlLogs:queryExec("INSERT INTO ??_Damage (UserId, TargetId,  Weapon, Bodypart, Damage, Position, Date) VALUES (?, ?, ?, ?, ?, NOW())",
+        sqlLogs:getPrefix(), userId, targetId, weapon, bodypart, damage, self:getZone(target))
 end
 
 function StatisticsLogger:addHealLog(player, heal, reason)

@@ -89,5 +89,6 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 		end
 		player:setHealth(health-loss)
 	end
-	StatisticsLogger:getSingleton():addTextLog("damage", ("%s wurde von %s mit Waffe %s am %s getroffen! (Damage: %d)"):format(player:getName(), attacker:getName(), WEAPON_NAMES[weapon], BODYPART_NAMES[bodypart], loss))
+	StatisticsLogger:getSingleton():addDamageLog(attacker, player, weapon, bodypart, loss)
+	--StatisticsLogger:getSingleton():addTextLog("damage", ("%s wurde von %s mit Waffe %s am %s getroffen! (Damage: %d)"):format(player:getName(), attacker:getName(), WEAPON_NAMES[weapon], BODYPART_NAMES[bodypart], loss))
 end
