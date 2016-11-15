@@ -143,7 +143,7 @@ function BankRobbery:startRob(player)
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true
 	self.m_BackDoor:setFrozen(false)
-	self.m_RobFaction:giveKarmaToOnlineMembers(-5, "Banküberfall gestartet")
+	self.m_RobFaction:giveKarmaToOnlineMembers(-5, "Banküberfall gestartet!")
 
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "start", self.m_RobPlayer, self.m_RobFaction, "faction")
 
@@ -199,7 +199,7 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 end
 
 function BankRobbery:timeUp()
-	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Banküberfall verhindert")
+	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Banküberfall verhindert!")
 	PlayerManager:getSingleton():breakingNews("Der Banküberfall ist beendet! Die Täter haben sich zuviel Zeit gelassen!")
 	self:delete()
 end
@@ -610,7 +610,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 
 						if self:getRemainingBagAmount() == 0 or getPedOccupiedVehicle(hitElement) == self.m_Truck then
 							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
-							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich")
+							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
 							source:destroy()
 							self:delete()
 						end

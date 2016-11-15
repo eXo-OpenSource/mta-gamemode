@@ -53,7 +53,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_BoxesOnTruck = {}
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
-	self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet")
+	self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
 
 	self.m_WeaponLoad = weaponTable
 	self.m_Event_onBoxClickFunc =bind(self.Event_onBoxClick,self)
@@ -99,7 +99,7 @@ end
 
 function WeaponTruck:timeUp()
 	outputChatBox(_("Der %s ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
-	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Waffentruck verhindert")
+	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Waffentruck verhindert!")
 	self:delete()
 end
 
@@ -122,7 +122,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 						outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 						hitElement:sendInfo(_("Truck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 						self:Event_OnWeaponTruckExit(hitElement,0)
-						faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben")
+						faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
 					elseif hitElement:getPlayerAttachedObject() then
 						boxes = getAttachedElements(hitElement)
 						outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
