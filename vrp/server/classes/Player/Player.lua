@@ -344,6 +344,11 @@ function Player:respawn(position, rotation)
 
 	self:setHeadless(false)
 	spawnPlayer(self, position, rotation, self.m_Skin)
+
+	if self:getFaction() and self:getFaction():isEvilFaction() then
+		self:getFaction():changeSkin(self)
+	end
+
 	setCameraTarget(self, self)
 end
 
