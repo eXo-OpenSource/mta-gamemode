@@ -8,10 +8,28 @@
 BankRobbery = inherit(Object)
 BankRobbery.Map = {}
 BankRobbery.FinishMarker = {Vector3(2766.84, 84.98, 19.39), Vector3(2561.50, -949.89, 82.77), Vector3(1935.24, 169.98, 37.28)}
+
+BankRobbery.BagSpawns = {
+	Vector3(2307.25, 17.90, 26),
+	Vector3(2306.88, 19.09, 26),
+	Vector3(2306.97, 20.38, 26),
+	Vector3(2308.34, 20.20, 26),
+	Vector3(2308.46, 19.16, 26),
+	Vector3(2308.46, 17.92, 26),
+	Vector3(2309.82, 17.77, 26),
+	Vector3(2310.09, 18.91, 26),
+	Vector3(2310.11, 20.13, 26),
+	Vector3(2311.48, 20.26, 26),
+	Vector3(2311.57, 18.95, 26),
+	Vector3(2311.55, 17.89, 26),
+	Vector3(2312.69, 17.80, 26),
+	Vector3(2312.73, 19.90, 26)
+}
+
 local BOMB_TIME = 15*1000
-local MONEY_PER_SAFE_MIN = 200
-local MONEY_PER_SAFE_MAX = 400
-local MAX_MONEY_PER_BAG = 4000
+local MONEY_PER_SAFE_MIN = 300
+local MONEY_PER_SAFE_MAX = 500
+local MAX_MONEY_PER_BAG = 2500
 local BANKROB_TIME = 10*60*1000
 
 function BankRobbery:constructor()
@@ -466,8 +484,7 @@ function BankRobbery:addMoneyToBag(player, money)
 			return
 		end
 	end
-
-	local pos = Vector3(2307 + #self.m_MoneyBags, 18.87, 26)
+	local pos = BankRobbery.BagSpawns[#self.m_MoneyBags+1]
 	local newBag = createObject(1550, pos)
 	table.insert(self.m_MoneyBags, newBag)
 	newBag:setData("Money", money, true)
