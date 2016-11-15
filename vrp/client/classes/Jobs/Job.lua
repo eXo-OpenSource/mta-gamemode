@@ -9,7 +9,7 @@ Job = inherit(Singleton)
 
 function Job:constructor(skin, posX, posY, posZ, rotZ, blipPath, headerImage, name, description, tutorial)
 	-- Create the customblip
-	Blip:new(blipPath, posX, posY)
+	Blip:new(blipPath, posX, posY,500)
 	self.m_Name = name
 	self.m_HeaderImage = headerImage
 	self.m_Description = description

@@ -19,7 +19,7 @@ function AmmuNation:addEnter(x, y, z, dimension)
 	local guiMarker = createMarker(308.3, -141.1, 998.6, "cylinder", 1.2, 255, 0, 0, 125)
 	guiMarker:setInterior(AmmuNation.INTERIORID)
 	guiMarker:setDimension(dimension)
-	Blip:new("AmmuNation.png", x, y)
+	Blip:new("AmmuNation.png", x, y,root,400)
 
 	addEventHandler ("onMarkerHit", interiorEnter:getEnterMarker(),
 		function(hitElement, matchingDimension)

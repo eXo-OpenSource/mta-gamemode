@@ -83,7 +83,7 @@ function Area:attack( faction1, faction2)
 		self.m_LastAttack = getRealTime().timestamp
 		self.m_RadarArea:setFlashing(true)
 		self.m_RadarArea:delete()
-		self.m_BlipImage = Blip:new("gangwar.png", self.m_Position[1], self.m_Position[2])
+		self.m_BlipImage = Blip:new("gangwar.png", self.m_Position[1], self.m_Position[2], root, 9999)
 		self:createRadar()
 		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)
 		self.m_GangwarManager:addAreaToAttacks( self )

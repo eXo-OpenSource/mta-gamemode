@@ -20,7 +20,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	local markerPos = split(marker,",")
 	self.m_Marker = createMarker(markerPos[1], markerPos[2], markerPos[3]+0.5, "cylinder", 1, 255, 255, 0, 200)
 	addEventHandler("onMarkerHit", self.m_Marker, bind(self.onMarkerHit, self))
-	self.m_Blip = Blip:new("CarShop.png", markerPos[1], markerPos[2])
+	self.m_Blip = Blip:new("CarShop.png", markerPos[1], markerPos[2],root,400)
 	local npcData = split(npc,",")
 	self.m_NPC = createPed(npcData[1], npcData[2], npcData[3], npcData[4], npcData[5])
 	local spawnPos = split(spawn,",")

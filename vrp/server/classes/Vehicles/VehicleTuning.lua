@@ -45,7 +45,7 @@ function VehicleTuning:constructor()
         local colshape = createColSphere(position, 3)
         addEventHandler("onColShapeHit", colshape, bind(self.EntryColShape_Hit, self, garageId))
 
-        Blip:new("TuningGarage.png", position.x, position.y)
+        Blip:new("TuningGarage.png", position.x, position.y,root,600)
     end
 
     -- Register quit hook that moves the player out of the garage before saving

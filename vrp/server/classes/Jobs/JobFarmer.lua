@@ -135,7 +135,7 @@ end
 function JobFarmer:setJobElementVisibility (player,boolean)
 	if boolean then
 		local x, y = unpack(PLANT_DELIVERY)
-		self.m_DeliveryBlip = Blip:new("Waypoint.png", x, y, player)
+		self.m_DeliveryBlip = Blip:new("Waypoint.png", x, y, player,600)
 		self.m_DeliveryBlip:setStreamDistance(2000)
 	else
 		delete(self.m_DeliveryBlip)

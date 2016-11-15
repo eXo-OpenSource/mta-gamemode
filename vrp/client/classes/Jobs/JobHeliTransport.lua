@@ -44,7 +44,7 @@ function JobHeliTransport:createTarget(type)
 
 	self.m_Target["type"] = type
 	self.m_Target["marker"] = createMarker(pos, "corona", 3, 0, 0, 255, 255)
-	self.m_Target["blip"] = Blip:new("Waypoint.png", pos.x, pos.y)
+	self.m_Target["blip"] = Blip:new("Waypoint.png", pos.x, pos.y,9999)
 	self.m_Target["blip"]:setStreamDistance(10000)
 	addEventHandler("onClientMarkerHit", self.m_Target["marker"], function(hitElement, dim)
 		if hitElement == localPlayer and dim then

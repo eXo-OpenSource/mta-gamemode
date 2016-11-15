@@ -65,7 +65,7 @@ function Shop:getName()
 end
 
 function Shop:addBlip(blip)
-	return Blip:new(blip, self.m_Position.x, self.m_Position.y)
+	return Blip:new(blip, self.m_Position.x, self.m_Position.y,root, 600)
 end
 
 function Shop:giveMoney(amount, reason)

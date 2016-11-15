@@ -94,7 +94,7 @@ function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
 	self:createDutyPickup(1530.21, -1671.66, 6.22, 0) -- PD Garage
 
-	Blip:new("Police.png", 1552.278, -1675.725)
+	Blip:new("Police.png", 1552.278, -1675.725, root, 400)
 
 	VehicleBarrier:new(Vector3(1544.70, -1630.90, 13.10), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- PD Barrier
 	VehicleBarrier:new(Vector3(283.900390625, 1817.7998046875, 17.400001525879), Vector3(0, 90, 90)).onBarrierHit = bind(self.onBarrierGateHit, self) -- Army Barrier

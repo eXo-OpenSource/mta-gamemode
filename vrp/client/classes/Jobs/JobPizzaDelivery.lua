@@ -274,7 +274,7 @@ function JobPizza:nextDeliver( )
 	self.m_PizzaJobMarker = createMarker(x, y, z,"checkpoint", 2, 0, 200, 200, 255)
 	self.m_DeliverDistance = math.floor( getDistanceBetweenPoints2D( px, py, x, y) )
 	addEventHandler("onClientMarkerHit",self.m_PizzaJobMarker,bind( JobPizza.onMarkerHit, self))
-	self.m_PizzaJobBlip = Blip:new("Waypoint.png",x , y)
+	self.m_PizzaJobBlip = Blip:new("Waypoint.png",x , y,9999)
 	self.m_PizzaTick = getTickCount()
 end
 
@@ -299,7 +299,7 @@ function JobPizza:pickupDeliver( )
 	triggerEvent("infoBox", localPlayer,"Fahre zurück zum Pizza-Stack !")
 	self:throwPizza()
 	self.m_PizzaPickupMarker = createMarker( PickupX, PickupY, PickupZ , "checkpoint", 2, 200, 200, 0, 255)
-	self.m_PizzaJobBlip = Blip:new("Waypoint.png",PickupX , PickupY)
+	self.m_PizzaJobBlip = Blip:new("Waypoint.png",PickupX , PickupY,9999)
 	addEventHandler("onClientMarkerHit",self.m_PizzaPickupMarker,bind( JobPizza.onNextDeliver, self))
 end
 

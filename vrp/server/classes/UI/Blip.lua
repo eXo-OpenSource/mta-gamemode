@@ -8,11 +8,11 @@
 Blip = inherit(Object)
 Blip.Map = {}
 
-function Blip:constructor(imagePath, x, y, visibleTo)
+function Blip:constructor(imagePath, x, y, visibleTo, streamDistance)
 	self.m_ImagePath = imagePath
 	self.m_PosX, self.m_PosY = x, y
 	self.m_VisibleTo = visibleTo or root
-	self.m_StreamDistance = 800
+	self.m_StreamDistance = streamDistance or 400
 	self.m_Color = Vector4(255, 255, 255, 255)
 
 	self.m_Id = #Blip.Map + 1

@@ -105,7 +105,7 @@ function PolicePanel:locatePlayer()
 		if player:getPublicSync("Phone") == true then
 			if PlayerLocateBlip then delete(PlayerLocateBlip) end
 			local pos = player:getPosition()
-			PlayerLocateBlip = Blip:new("Locate.png", pos.x, pos.y)
+			PlayerLocateBlip = Blip:new("Locate.png", pos.x, pos.y,9999)
 			PlayerLocateBlip:attachTo(player)
 			InfoBox:new(_"Spieler geortet! Folge dem Blip auf der Karte!")
 			PlayerLocateTimer = setTimer(function()

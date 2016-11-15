@@ -288,7 +288,7 @@ function WeaponTruck:Event_OnWeaponTruckEnter(player,seat)
 		self.m_Driver = player
 		player:triggerEvent("Countdown", math.floor((WeaponTruck.Time-(getTickCount()-self.m_StartTime))/1000))
 		player:triggerEvent("VehicleHealth")
-		self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, player)
+		self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, player,9999)
 		self.m_DestinationMarker = createMarker(destination,"cylinder",8)
 		addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
 	end

@@ -19,7 +19,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
   self.m_WorldY = worldY
   self.m_Alpha = 255
   self.m_Size = 24
-  self.m_StreamDistance = streamDistance or 800
+  self.m_StreamDistance = streamDistance or 100
 
   if color then
     self.m_Color = tocolor(color)

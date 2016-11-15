@@ -123,7 +123,7 @@ function HouseManager:createPlayerHouseBlip(player)
 	outputDebug("Creating blip for "..player:getName())
 	local house = self:getPlayerHouse(player)
 	if house then
-		house.m_Blip = Blip:new("House.png", house.m_Pos.x, house.m_Pos.y, player)
+		house.m_Blip = Blip:new("House.png", house.m_Pos.x, house.m_Pos.y, player, 9999)
 		return true
 	end
 	return false

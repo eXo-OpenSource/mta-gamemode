@@ -179,7 +179,7 @@ function PublicTransport:Event_setTargetFromMap(posX, posY)
 		local driver = self.m_TaxiCustomer[client]["driver"]
 		driver:sendInfo(_("Der Kunde %s hat sein Ziel auf der Karte markiert! Ziel: %s/%s", driver, client:getName(), getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))
 		client:sendInfo(_("Du hast dein Ziel auf der Karte markiert! Ziel: %s/%s", client, getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))
-		self.m_TaxiCustomer[client]["blip"] = Blip:new("Waypoint.png", posX, posY)
+		self.m_TaxiCustomer[client]["blip"] = Blip:new("Waypoint.png", posX, posY,root,600)
 	end
 end
 
@@ -246,7 +246,7 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		local stopId = self.m_Lines[line][newDestination]
 		local x, y, z = getElementPosition(self.m_BusStops[stopId].object)
 		delete(player.Bus_Blip)
-		player.Bus_Blip = Blip:new("Waypoint.png", x, y, player)
+		player.Bus_Blip = Blip:new("Waypoint.png", x, y, player,9999)
 
 		-- Tell other players that we reached a bus stop (to adjust the bus display labels)
 		triggerClientEvent("busReachNextStop", root, vehicle, self.m_BusStops[stopId].name)

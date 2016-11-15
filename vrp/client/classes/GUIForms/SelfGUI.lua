@@ -669,7 +669,7 @@ function SelfGUI:VehicleLocateButton_Click()
 
 	if item.PositionType == VehiclePositionType.World then
 		local x, y, z = getElementPosition(item.VehicleElement)
-		local blip = Blip:new("Waypoint.png", x, y)
+		local blip = Blip:new("Waypoint.png", x, y,9999)
 		--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
 			ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung+", Color.DarkLightBlue, -1)
 			.m_Callback = function (this)
