@@ -32,10 +32,12 @@ FACTION_MIN_RANK_KARMA = {
 factionVehicleShaders = {
 	-- SAPD
 	[1] = {
+		[560] = {shaderEnabled = true, textureName = "#emapsultanbody256", texturePath = "files/images/Textures/PoliceTexture.png"};
 		[596] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
 		[598] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
 		[599] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
 		[497] = {shaderEnabled = true, textureName = "vehiclepoldecals128", texturePath = "files/images/Textures/PoliceTexture.png"};
+		
 	};
 
 	-- FBI

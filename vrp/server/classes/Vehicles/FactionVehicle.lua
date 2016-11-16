@@ -27,6 +27,8 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		if factionCarColors[self.m_Faction:getId()] then
 			if getElementModel(self) == 420 and faction.m_Id == 2 then 
 				setVehicleColor(self, 255, 255, 0)
+			elseif getElementModel(self) == 560 and faction.m_Id == 1 then
+				setVehicleColor(self, 255, 255, 255)
 			else 
 				local color = factionCarColors[self.m_Faction:getId()]
 				setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)

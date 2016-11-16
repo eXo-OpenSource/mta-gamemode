@@ -387,7 +387,6 @@ function FactionManager:sendAllToClient(client)
 							vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
 						end
 					else 
-						outputChatBox("optional"..v.m_Decal)
 						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = v.m_Decal}
 					end
 				end
