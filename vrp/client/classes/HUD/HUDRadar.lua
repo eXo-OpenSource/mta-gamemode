@@ -26,7 +26,7 @@ function HUDRadar:constructor()
   self.m_Blips = Blip.Blips
   self.m_Areas = {}
   self.m_Visible = false
-  self.m_Enabled = core:get("HUD", "showRadar")
+  self.m_Enabled = core:get("HUD", "showRadar", true)
   if self.m_DesignSet == RadarDesign.Default then
     setPlayerHudComponentVisible("radar", self.m_Enabled )
     self.m_DefaultBlips = {}
