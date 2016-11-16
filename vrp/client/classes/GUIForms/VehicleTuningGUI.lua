@@ -327,7 +327,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                         self.m_Vehicle:setHeadLightColor(r, g, b)
                     end
             )
-            --self.m_ColorPicker:setColor(lightR, lightG, lightB)
+            self.m_ColorPicker:setColor(lightR, lightG, lightB)
             return
         elseif item.PartSlot == VehicleSpecialProperty.Neon then
             self.m_UpgradeChanger:setVisible(false)
