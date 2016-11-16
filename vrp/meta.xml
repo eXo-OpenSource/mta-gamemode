@@ -969,6 +969,7 @@
 	<vrpfile src="files/images/Textures/FBITexture.png"/>
 	<vrpfile src="files/images/Textures/MechanicTexture.png"/>
 	<vrpfile src="files/images/Textures/MechanicTexture2.png"/>
+	<vrpfile src="files/images/Textures/PoliceHPTexture.png"/>
 	<vrpfile src="files/images/Textures/PoliceTexture.png"/>
 	<vrpfile src="files/images/Textures/RescueTexture.png"/>
 	<vrpfile src="files/images/Textures/RescueTexture2.png"/>

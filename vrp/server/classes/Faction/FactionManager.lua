@@ -378,6 +378,9 @@ function FactionManager:sendAllToClient(client)
 	for i, faction in pairs(self:getAllFactions()) do
 		if faction:isStateFaction() or faction:isRescueFaction() then
 			for i, v in pairs(faction.m_Vehicles) do
+				if v.m_Decal then
+					outputChatBox(v.m_Decal)
+				end
 				if not factionVehicleShaders[faction:getId()] or not factionVehicleShaders[faction:getId()][v:getModel()] then
 					--outputDebug(("[%s] ShaderInfo for Vehicle Model %d not found!"):format(faction:getName(), v:getModel()))
 				else

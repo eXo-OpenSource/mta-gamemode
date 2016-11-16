@@ -74,6 +74,7 @@ function Core:ready()
 	Shaders.load()
 	
 	GroupProperty:new()
+
 end
 
 function Core:afterLogin()
