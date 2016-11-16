@@ -32,12 +32,14 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				hitElement:setInterior(interiorId)
 				hitElement:setDimension(dimension)
 				hitElement:setCameraTarget(hitElement)
+
+				fadeCamera( hitElement, true,1)
+				hitElement:setFrozen(false)
 			end, 1500, 1
 		)
 		setTimer(
 			function()
-				fadeCamera( hitElement, true,1)
-				hitElement:setFrozen(false)
+
 			end, 2500, 1
 		)
         triggerEvent("onElementInteriorChange", hitElement, interiorId)
@@ -58,12 +60,14 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 				hitElement:setPosition(entryPosition + hitElement.matrix.forward*2)
 				hitElement:setDimension(0)
 				hitElement:setCameraTarget(hitElement)
+
+				fadeCamera(hitElement, true)
+				hitElement:setFrozen(false)
 			end, 1500, 1
 		)
 		setTimer(
 			function()
-				fadeCamera(hitElement, true)
-				hitElement:setFrozen(false)
+
 			end, 2500, 1
 		)
 
