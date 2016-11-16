@@ -7,13 +7,14 @@
 -- ****************************************************************************
 FactionVehicle = inherit(PermanentVehicle)
 
-function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor)
+function FactionVehicle:constructor(Id, faction, color, health, posionType, tunings, mileage, handlingFaktor, decal)
 	self.m_Id = Id
 	self.m_Faction = faction
 	self.m_PositionType = positionType or VehiclePositionType.World
 	self.m_Position = self:getPosition()
 	self.m_Rotation = self:getRotation()
 	self.m_HandlingFactor = handlingFaktor
+	self.m_Decal = tostring(decal)
 	if #faction:getName() <= 29 then
 		setElementData(self, "OwnerName", faction:getName())
 	else

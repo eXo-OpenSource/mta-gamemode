@@ -378,15 +378,17 @@ function FactionManager:sendAllToClient(client)
 	for i, faction in pairs(self:getAllFactions()) do
 		if faction:isStateFaction() or faction:isRescueFaction() then
 			for i, v in pairs(faction.m_Vehicles) do
-				if v.m_Decal then
-					outputChatBox(v.m_Decal)
-				end
 				if not factionVehicleShaders[faction:getId()] or not factionVehicleShaders[faction:getId()][v:getModel()] then
 					--outputDebug(("[%s] ShaderInfo for Vehicle Model %d not found!"):format(faction:getName(), v:getModel()))
 				else
 					local shaderInfo = factionVehicleShaders[faction:getId()][v:getModel()]
-					if shaderInfo.shaderEnabled then
-						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
+					if v.m_Decal == "" then
+						if shaderInfo.shaderEnabled then
+							vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
+						end
+					else 
+						outputChatBox("optional"..v.m_Decal)
+						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = v.m_Decal}
 					end
 				end
 			end
