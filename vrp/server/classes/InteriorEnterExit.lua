@@ -22,37 +22,51 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
 
   addEventHandler("onMarkerHit", self.m_EnterMarker,
     function(hitElement, matchingDimension)
-      if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) and not hitElement.m_DontTeleport then
-        hitElement.m_DontTeleport = true
+      if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
         fadeCamera(hitElement,false,1,0,0,0)
         setElementFrozen( hitElement, true)
-        setTimer( function() hitElement:setInterior(interiorId) end,1500,1)
-        setTimer( function() hitElement:setPosition(interiorPosition) end, 1500,1)
-        setTimer( function() fadeCamera( hitElement, true,1) end, 2500,1)
-        setTimer( function() hitElement:setDimension(dimension) end, 1500,1)
-        setTimer( function() hitElement:setRotation(0, 0, enterRotation) end, 1500,1)
-        setTimer( function() hitElement:setCameraTarget(hitElement) end, 1500,1)
-        setTimer(function() setElementFrozen( hitElement, false) end, 2500,1)
-        setTimer(function() hitElement.m_DontTeleport = false end, 2500, 1) -- Todo: this is a temp fix
+		setTimer(
+			function()
+				hitElement:setRotation(0, 0, enterRotation)
+				hitElement:setPosition(interiorPosition + hitElement.matrix.forward*2)
+				hitElement:setInterior(interiorId)
+				hitElement:setDimension(dimension)
+				hitElement:setCameraTarget(hitElement)
+			end, 1500, 1
+		)
+		setTimer(
+			function()
+				fadeCamera( hitElement, true,1)
+				hitElement:setFrozen(false)
+			end, 2500, 1
+		)
         triggerEvent("onElementInteriorChange", hitElement, interiorId)
         triggerEvent("onElementDimensionChange", hitElement, dimension)
       end
     end
   )
+
   addEventHandler("onMarkerHit", self.m_ExitMarker,
     function(hitElement, matchingDimension)
-      if getElementType(hitElement) == "player" and matchingDimension and not hitElement.m_DontTeleport then
-        hitElement.m_DontTeleport = true
+      if getElementType(hitElement) == "player" and matchingDimension then
         fadeCamera(hitElement,false,1,0,0,0)
         setElementFrozen( hitElement, true)
-        setTimer( function() hitElement:setInterior(0, entryPosition.x, entryPosition.y, entryPosition.z) end,1500,1)
-        setTimer(function() hitElement:setPosition(entryPosition) end,1500,1)
-        setTimer( function() fadeCamera( hitElement, true,1) end, 2500,1)
-        setTimer( function() hitElement:setDimension(0) end, 1500,1)
-        setTimer( function() hitElement:setRotation(0, 0, exitRotation) end, 1500,1)
-        setTimer( function() hitElement:setCameraTarget(hitElement) end, 1500,1)
-        setTimer(function() setElementFrozen( hitElement, false) end, 2500,1)
-        setTimer(function() hitElement.m_DontTeleport = false end, 2500, 1) -- Todo: this is a temp fix
+		setTimer(
+			function()
+				hitElement:setInterior(0, entryPosition)
+				hitElement:setRotation(0, 0, exitRotation)
+				hitElement:setPosition(entryPosition + hitElement.matrix.forward*2)
+				hitElement:setDimension(0)
+				hitElement:setCameraTarget(hitElement)
+			end, 1500, 1
+		)
+		setTimer(
+			function()
+				fadeCamera(hitElement, true)
+				hitElement:setFrozen(false)
+			end, 2500, 1
+		)
+
         triggerEvent("onElementInteriorChange", hitElement, 0)
         triggerEvent("onElementDimensionChange", hitElement, 0)
       end
