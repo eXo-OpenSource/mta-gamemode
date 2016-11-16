@@ -385,7 +385,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
             self.m_TexturePicker = VehicleTuningItemGrid:new(
                 "Select Texture",
-                {"None", _"Österreich", _"Deutschland", _"Schweden", _"Frankreich", _"Russland", _"Camouflage", _"Türkei", _"Hipster", _"Metall", _"Italien", _"Pepe (?)", _"", _"Space", _"Cherry", _"Fire"},
+                {"None", _"Österreich", _"Deutschland", _"Schweden", _"Frankreich", _"Russland", _"Camouflage", _"Türkei", _"Hipster", _"Metall", _"Italien", _"Froggy", _"Sandy", _"Space", _"Cherry", _"Fire"},
                 function (texture)
                     self:addPartToCart(VehicleSpecialProperty.Shader, _"Fahrzeug-Textur", texture)
                 end,
