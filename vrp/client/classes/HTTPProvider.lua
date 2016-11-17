@@ -60,6 +60,16 @@ function HTTPProvider:start()
 			end
 		end
 
+		for i, v in ipairs(files) do
+			self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the packages... (%d / %d packages)"):format(i, table.getn(files)))
+
+			local callback = Async.waitFor()
+			setTimer(function ()
+				callback()
+			end, 1500, 1)
+			Async.wait()
+		end
+
 		-- remove temp file
 		fileDelete("files.tmp")
 

@@ -9,8 +9,7 @@ function HTTPDownloadGUI:constructor()
 	GUIForm.constructor(self, 0, 0, screenWidth, screenHeight)
 	self.m_Logo = GUIImage:new(screenWidth/2 - 350/2, screenHeight/2 - 200/2 - 120, 350, 167, "files/images/Logo.png", self)
 	self.m_Text = GUILabel:new(0, screenHeight - 150 - 60/2, screenWidth, 60, "downloading files...", self):setAlignX("center")
-	self.m_DownloadBar = GUIRectangle:new(screenWidth/6, screenHeight - 75 - 25/2, screenWidth - screenWidth/3, 25, self)
-	self.m_DownloadBar:setColor(tocolor(0, 125, 255, 150))
+	self.m_DownloadBar = GUIRectangle:new(screenWidth/6, screenHeight - 75 - 25/2, screenWidth - screenWidth/3, 25, tocolor(0, 125, 255, 150), self)
 	self.m_CurrentState = GUILabel:new(screenWidth/6 + 10, screenHeight - 75 - 20/2, screenWidth - screenWidth/3, 20, "", self)
 	self.m_CurrentState:setFont(FontAwesome(20))
 end
@@ -41,5 +40,9 @@ function HTTPDownloadGUI:setStatus(status, arg)
 		self.m_FileCount = arg
 	elseif status == "current file" then
 		self:setCurrentFile(arg)
+	elseif status == "unpacking" then
+		self:setStateText(arg)
+		self.m_DownloadBar:setColor(tocolor(0, 125, 0, 255))
+		self.m_Text:setText("unpacking packages...")
 	end
 end
