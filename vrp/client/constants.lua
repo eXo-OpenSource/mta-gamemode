@@ -9,6 +9,8 @@ screenWidth, screenHeight = guiGetScreenSize()
 screenSize = Vector2(screenWidth, screenHeight)
 ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 
+FILE_HTTP_SERVER_URL = "192.168.178.102:80/mtasa/" -- Todo: move to config
+
 NO_MUNITION_ITEMS = {
 	[0] = true;
 	[1] = true;

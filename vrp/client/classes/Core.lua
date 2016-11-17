@@ -13,9 +13,46 @@ function Core:constructor()
 
 	Cursor = GUICursor:new()
 
-	DownloadGUI:new()
-	local dgi = DownloadGUI:getSingleton()
-	Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
+	if DEBUG then -- In debug mode use old Provider
+		DownloadGUI:new()
+		local dgi = DownloadGUI:getSingleton()
+		Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
+		setAmbientSoundEnabled( "gunfire", false )
+		showChat(true)
+	else
+		Async.create( -- HTTPProvider needs asynchronous "context"
+			function()
+				fadeCamera(true)
+
+				local dgi = HTTPDownloadGUI:getSingleton()
+				local provider = HTTPProvider:new(FILE_HTTP_SERVER_URL, dgi)
+				if provider:start() then -- did the download succeed
+					delete(dgi)
+					self:onDownloadComplete()
+				end
+			end
+		)()
+	end
+end
+
+function Core:onDownloadComplete()
+	-- Instantiate all classes
+	self:ready()
+
+	-- create login gui
+	lgi = LoginGUI:new()
+	lgi:setVisible(false)
+	lgi:fadeIn(750)
+
+	local pwhash = core:get("Login", "password", "")
+	local username = core:get("Login", "username", "")
+	lgi.m_LoginEditUser:setText(username)
+	lgi.m_LoginEditPass:setText(pwhash)
+	lgi.usePasswordHash = pwhash
+	lgi.m_LoginCheckbox:setChecked(pwhash ~= "")
+	lgi:anyChange()
+
+	-- other
 	setAmbientSoundEnabled( "gunfire", false )
 	showChat(true)
 end
