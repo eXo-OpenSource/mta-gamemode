@@ -8,13 +8,13 @@ function GroupPropertyManager:constructor( )
 	for k, row in ipairs(result) do
 		GroupPropertyManager.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open)
 	end
-	
-	addEventHandler("GroupPropertyClientInput",root,function() 
-		if client.m_LastPropertyPickup then 
+
+	addEventHandler("GroupPropertyClientInput",root,function()
+		if client.m_LastPropertyPickup then
 			client.m_LastPropertyPickup:openForPlayer(client)
 		end
 	end)
-	
+
 	addEventHandler("GroupPropertyBuy", root, bind( GroupPropertyManager.BuyProperty, self))
 	addEventHandler("GroupPropertySell", root, bind( GroupPropertyManager.SellProperty, self))
 	addEventHandler("RequestImmoForSale", root, bind( GroupPropertyManager.OnRequestImmo, self))
@@ -23,8 +23,8 @@ end
 function GroupPropertyManager:destructor()
 	local propCount = 0
 	for id, owner in pairs( GroupPropertyManager.ChangeMap ) do
-		if not owner then 
-			owner = 0 
+		if not owner then
+			owner = 0
 		end
 		propCount = propCount + 1
 		outputChatBox(id..","..owner.m_Id)
@@ -38,18 +38,18 @@ function GroupPropertyManager:addNewProperty( )
         sql:getPrefix(), userId, type, weapons, costs, self:getZone(player))
 end
 
-function GroupPropertyManager:OnRequestImmo() 
+function GroupPropertyManager:OnRequestImmo()
 	client:triggerEvent("GetImmoForSale", GroupPropertyManager.Map )
 end
 
 function GroupPropertyManager:BuyProperty( Id )
-	local property = GroupPropertyManager.Map[Id] 
-	if property then 
+	local property = GroupPropertyManager.Map[Id]
+	if property then
 		local price = property.m_Price
-		if price <= client:getMoney() then  
+		if price <= client:getMoney() then
 			local oldOwner = property.m_Owner
 			local newOwner = client:getGroup()
-			if not oldOwner then 
+			if not oldOwner then
 				property.m_Owner = newOwner or false
 				property.m_OwnerID = newOwner.m_Id or false
 				GroupPropertyManager.ChangeMap[Id] = newOwner
@@ -62,14 +62,14 @@ function GroupPropertyManager:BuyProperty( Id )
 end
 
 function GroupPropertyManager:SellProperty( Id )
-	local property = GroupPropertyManager.Map[Id] 
-	if property then 
+	local property = GroupPropertyManager.Map[Id]
+	if property then
 		local price = property.m_Price
 		local sellMoney = math.floor(price * 0.66)
 		local pOwner = property.m_Owner
 		local clientGroup = client:getGroup()
-		if pOwner == clientGroup then 
-			property.m_Owner = false 
+		if pOwner == clientGroup then
+			property.m_Owner = false
 			GroupPropertyManager.ChangeMap[Id] = 0
 			client:giveMoney(sellMoney, "Immobilie "..property.m_Name.." verkauft!")
 		end
@@ -77,10 +77,12 @@ function GroupPropertyManager:SellProperty( Id )
 end
 
 function GroupPropertyManager:getPropsForPlayer( player )
-	local playerProps ={	} 
-	for k,v in pairs(GroupPropertyManager:getSingleton().Map) do 
-		if v.m_OwnerID == player:getGroup().m_Id then 
-			playerProps[#playerProps+1] = v
+	local playerProps = {}
+	if player:getGroup() then
+		for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
+			if v.m_OwnerID == player:getGroup():getId() then
+				playerProps[#playerProps+1] = v
+			end
 		end
 	end
 	return playerProps
