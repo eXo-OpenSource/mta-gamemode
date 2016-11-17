@@ -195,7 +195,15 @@ function Player:loadCharacterInfo()
 	FactionManager:getSingleton():sendAllToClient(self)
 	VehicleManager:getSingleton():sendTexturesToClient(self)
 	HouseManager:getSingleton():createPlayerHouseBlip(self)
-
+	
+	-- Group blips
+	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
+	local x,y,z
+	for k,v in ipairs( props ) do 
+		x,y,z= getElementPosition( v.m_Pickup )
+		createMarker(x,y,z,"checkpoint",1,0,200,200,200,self)
+		createBlip(x,y,z,0,2,0,200,200,255,0,500,self)
+	end
 	--if self.m_Inventory then
 	--	self.m_Inventory:setInteractingPlayer(self)
 	--	self.m_Inventory:sendFullSync()

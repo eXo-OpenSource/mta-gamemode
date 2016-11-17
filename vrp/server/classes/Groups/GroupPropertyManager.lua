@@ -75,3 +75,13 @@ function GroupPropertyManager:SellProperty( Id )
 		end
 	end
 end
+
+function GroupPropertyManager:getPropsForPlayer( player )
+	local playerProps ={	} 
+	for k,v in pairs(GroupPropertyManager:getSingleton().Map) do 
+		if v.m_OwnerID == player:getGroup().m_Id then 
+			playerProps[#playerProps+1] = v
+		end
+	end
+	return playerProps
+end
