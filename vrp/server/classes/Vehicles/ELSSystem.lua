@@ -8,10 +8,23 @@
 
 ELSSystem = inherit( Object )
 
+local CustomSirens = 
+{
+	[560] = {0.7,0.2},
+	[426] = {0.6,0.2},
+	[420] = {0.6,0.2},
+}
+
 function ELSSystem:constructor( vehicle , type )
   self.m_Vehicle = vehicle
   self:createBlinkMarkers( )
   self.m_LightSystem = false
+  local model = getElementModel(vehicle)
+  if CustomSirens[model] then   
+	addVehicleSirens(vehicle,2,3,true)
+	setVehicleSirens ( vehicle, 1, 0-CustomSirens[model][2]/2, 0.000, CustomSirens[model][1], 255,0, 0, 255, 255 )
+	setVehicleSirens ( vehicle, 2, 0+CustomSirens[model][2]/2, 0.000, CustomSirens[model][1], 0,0, 255, 255, 255 )
+  end
   addEventHandler("onVehicleEnter", vehicle, bind( ELSSystem.onEnterVehicle, self))
   addEventHandler("onVehicleExit", vehicle, bind( ELSSystem.onLeaveVehicle, self))
 end
@@ -53,6 +66,7 @@ function ELSSystem:onEnterVehicle( controller, seat)
 		self.m_BindBlink = bind( ELSSystem.setBlink, self)
 		bindKey(controller, ",","up", self.m_BindBlink, "left")
 		bindKey(controller, ".","up", self.m_BindBlink, "right")
+		bindKey(controller, "horn","up", self.m_BindBlink, "blink")
 		bindKey(controller, "-","up", self.m_BindBlink, "off")
 	end
 end
@@ -97,7 +111,7 @@ function ELSSystem:createBlinkMarkers( )
     attachElements(self.m_Markers[i],self.m_Vehicle, -1+(i*0.3), oy, oz)
   end
   self.m_Markers[7] = createMarker(x,y,z,"corona",0.1,200, 0, 0, 0)
-  attachElements(self.m_Markers[7],self.m_Vehicle, -1+0.3, oy, oz)
+  attachElements(self.m_Markers[7],self.m_Vehicle, -1+0.1, oy, oz)
 
   self.m_Markers[8] = createMarker(x, y, z,"corona", 0.1, 200, 0, 0, 0)
   attachElements(self.m_Markers[8],self.m_Vehicle, -1+(6*0.3), oy, oz)
