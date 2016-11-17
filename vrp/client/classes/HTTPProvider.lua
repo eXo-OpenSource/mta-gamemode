@@ -18,7 +18,7 @@ end
 
 function HTTPProvider:start()
 	self.ms_GUIInstance:setStatus("current file", "index.xml")
-    local responseData, errno = self:fetch(Async.waitFor(), "index.xml")
+    local responseData, errno = self:fetchAsync("index.xml")
 	if errno ~= 0 then
 		self.ms_GUIInstance:setStatus("failed", ("HTTP-Error got returned! (%d)"):format(errno))
 		return false
@@ -41,7 +41,7 @@ function HTTPProvider:start()
 		self.ms_GUIInstance:setStatus("file count", table.getn(files))
 		for i, v in ipairs(files) do
 			self.ms_GUIInstance:setStatus("current file", v.name)
-			local responseData, errno = self:fetch(Async.waitFor(), v.path)
+			local responseData, errno = self:fetchAsync(v.path)
 			if errno ~= 0 then
 				self.ms_GUIInstance:setStatus("failed", ("HTTP-Error got returned! (%d)"):format(errno))
 				return false
@@ -70,14 +70,17 @@ end
 
 function HTTPProvider:fetch(callback, file)
     self.ms_GUIInstance:setCurrentFile(file)
-    fetchRemote( ("%s/%s"):format(self.ms_URL, file),
+    return fetchRemote( ("%s/%s"):format(self.ms_URL, file),
         function(responseData, errno)
             local args = {responseData, errno}
             callback(args)
         end
     )
+end
 
-    return Async.wait()
+function HTTPProvider:fetchAsync(...)
+	self:fetch(Async.waitFor(), ...)
+	return Async.wait()
 end
 
 addCommandHandler( "http", function()
