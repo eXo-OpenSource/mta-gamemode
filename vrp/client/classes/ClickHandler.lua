@@ -151,6 +151,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 						element:getData("Job"):onPedClick()
 					elseif element:getData("Townhall:onClick") then
 						element:getData("Townhall:onClick")()
+					elseif element:getData("onClickEvent") then
+						element:getData("onClickEvent")()
 					end
 				elseif getElementType(element) == "object" then
 					if getElementData(element, "bankPC") then

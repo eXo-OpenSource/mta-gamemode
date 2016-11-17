@@ -139,7 +139,7 @@ function Core:afterLogin()
 
 	self:createBlips()
 	PlantGUI.load()
-
+	Fishing.load()
 end
 
 function Core:destructor()
