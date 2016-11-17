@@ -52,7 +52,7 @@ function Core:ready()
 	ELSSystem:new()
 	GasStationGUI:new()
 	SkinShopGUI.initializeAll()
-	ItemManager:new();
+	ItemManager:new()
 	--// Gangwar
 	GangwarClient:new()
 	GangwarStatistics:new()
@@ -72,7 +72,7 @@ function Core:ready()
 	MiamiSpawnGUI:new()
 
 	Shaders.load()
-	
+
 	GroupProperty:new()
 
 end

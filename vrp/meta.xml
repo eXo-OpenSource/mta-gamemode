@@ -313,6 +313,7 @@
 	<script src="client/classes/NoDm.lua" type="client"/>
 	<script src="client/classes/Tour.lua" type="client"/>
 	<script src="client/classes/AccessoireClothes.lua" type="client"/>
+	<script src="client/classes/HTTPProvider.lua" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
@@ -509,6 +510,7 @@
 	<script src="client/classes/GUIForms/WeaponLevelGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShaderPanelGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyBuy.lua" type="client"/>
+	<script src="client/classes/GUIForms/HTTPDownloadGUI.lua" type="client"/>
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
@@ -942,12 +944,12 @@
 	<vrpfile src="files/images/HUD/exo/red_b.png"/>
 	<vrpfile src="files/images/HUD/exo/cyan_b.png"/>
 	<vrpfile src="files/images/HUD/exo/wanted.png"/>
-	
+
 
 		<!-- group -->
 	<vrpfile src="files/images/Other/Enter.png"/>
 	<vrpfile src="files/images/Other/Close.png"/>
-	
+
 	<!-- Gangwar -->
 	<vrpfile src="files/images/Gangwar/tile.png"/>
 	<vrpfile src="files/images/Gangwar/tilefade.png"/>
