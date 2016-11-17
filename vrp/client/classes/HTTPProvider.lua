@@ -53,7 +53,7 @@ function HTTPProvider:start()
 				file:close()
 				-- continue
 			else
-				self.ms_GUIInstance:setStatus(("ignored", "Empty file %s"):format(v.path))
+				self.ms_GUIInstance:setStatus("ignored" ,("Empty file %s"):format(v.path))
 				-- continue
 			end
 		end
