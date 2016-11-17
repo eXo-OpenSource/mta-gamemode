@@ -45,18 +45,31 @@ end
 
 function Fishing:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim and not hitElement.vehicle then
-		hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde angeln? Ein Köder kostet 10$!", hitElement), "startFishing", nil, source)
+		if not hitElment.win then
+			hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde angeln? Ein Köder kostet 10$!", hitElement), "startFishing", nil, source)
+		else
+			client:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", client))
+		end
 	end
 end
 
 function Fishing:start(marker)
-	setPedAnimation(client, "Gun_stand", "ped", 0, true, true, true)
-	local pos = marker:getPosition()
-	client:setPosition(pos)
-	client:setRotation(0, 0, 90, "default", true)
-	client:setFrozen(true)
-	client:triggerEvent("startFishingClient", 1, marker.id)
-	self.m_Players[client] = {}
+	if client:getMoney() > 10 then
+		if not hitElment.win then
+			client:takeMoney(10, "Angeln")
+			setPedAnimation(client, "Gun_stand", "ped", 0, true, true, true)
+			local pos = marker:getPosition()
+			client:setPosition(pos)
+			client:setRotation(0, 0, 90, "default", true)
+			client:setFrozen(true)
+			client:triggerEvent("startFishingClient", 1, marker.id)
+			self.m_Players[client] = {}
+		else
+			client:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", client))
+		end
+	else
+		client:sendError(_("Du hast keine 10$ dabei!", client))
+	end
 end
 
 function Fishing:stepFinished(id, step, value)
