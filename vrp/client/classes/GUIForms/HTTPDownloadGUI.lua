@@ -8,36 +8,30 @@ function HTTPDownloadGUI:constructor()
 
 	GUIForm.constructor(self, 0, 0, screenWidth, screenHeight)
 	self.m_Logo = GUIImage:new(screenWidth/2 - 350/2, screenHeight/2 - 200/2 - 120, 350, 167, "files/images/Logo.png", self)
-	self.m_Text = GUILabel:new(0, screenHeight/2 - 150/2 + 50, screenWidth, 50, "Bitte warte, bis die erforderlichen Spielinhalte bereit sind...", self):setAlignX("center"):setFont(VRPFont(40))
-	if screenWidth < 1024 then
-		self.m_ResolutionWarning = GUILabel:new(0, screenHeight - 200, screenWidth, 20, "Bitte erhöhe deine Auflösung, um Darstellungsfehler zu vermeiden!", self):setAlignX("center"):setFont(VRPFont(30)):setColor(Color.Red)
-	end
-	self.m_CurrentState = GUILabel:new(0, screenHeight/2 - 150/2 + 150, screenWidth, 50, "", self):setAlignX("center"):setFont(VRPFont(30))
-	self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center")
-	self.m_ProgressBar = GUIProgressBar:new(screenWidth/2 - 500/2, screenHeight/2 - 150/2 + 110, 500, 30, self)
+	self.m_Text = GUILabel:new(0, screenHeight - 150 - 60/2, screenWidth, 60, "downloading files...", self):setAlignX("center")
+	self.m_DownloadBar = GUIRectangle:new(screenWidth/6, screenHeight - 75 - 25/2, screenWidth - screenWidth/3, 25, self)
+	self.m_DownloadBar:setColor(tocolor(0, 125, 255, 150))
+	self.m_CurrentState = GUILabel:new(screenWidth/6 + 10, screenHeight - 75 - 20/2, screenWidth - screenWidth/3, 20, "", self)
+	self.m_CurrentState:setFont(FontAwesome(20))
 end
 
-function HTTPDownloadGUI:destructor()
-
-end
-
-function DownloadGUI:setStateText(text)
+function HTTPDownloadGUI:setStateText(text)
 	self.m_CurrentState:setText(text)
 end
 
 function HTTPDownloadGUI:setCurrentFile(file)
 	if file == "index.xml" then
-		self:setStatus("Lade Datei-Index: index.xml...")
+		self:setStateText("downloading file-index")
 	else
+		self:setStateText(("downloaded %d of %d files. current file: %s"):format(self.m_CurrentFile, self.m_FileCount, file))
 		self.m_CurrentFile = self.m_CurrentFile + 1
-		self:setStatus(("Lade Datei: %s... (%d/%d)"):format(file, self.m_CurrentFile, self.m_FileCount))
-		self.m_ProgressBar:setProgress((self.m_CurrentFile/self.m_FileCount)*100)
 	end
 end
 
 function HTTPDownloadGUI:markAsFailed(reason)
 	self.m_Failed = true
-	self:setStateText(("A error occured while download: %s"):format(reason))
+	self:setStateText(("A error occured while downloading files: %s"):format(reason))
+	self.m_DownloadBar:setColor(tocolor(125, 0, 0, 255))
 end
 
 function HTTPDownloadGUI:setStatus(status, arg)

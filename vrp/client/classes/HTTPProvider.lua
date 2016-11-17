@@ -17,10 +17,11 @@ end
 ]]
 
 function HTTPProvider:start()
-	self.ms_GUIInstance:setStatus("current file", "index.xml")
+	self.ms_GUIInstance:setStatus("current file", self.ms_URL.."index.xml")
     local responseData, errno = self:fetchAsync("index.xml")
 	if errno ~= 0 then
-		self.ms_GUIInstance:setStatus("failed", ("HTTP-Error got returned! (%d)"):format(errno))
+		outputDebug(errno)
+		self.ms_GUIInstance:setStatus("failed", ("HTTP-Error #%d"):format(errno))
 		return false
 	end
 
@@ -29,21 +30,22 @@ function HTTPProvider:start()
 		tempFile:write(responseData)
 		tempFile:close()
 
-		local xml = xmlLoadFile("meta.xml")
+		local xml = xmlLoadFile("files.tmp")
 		local files = {}
-		for k, v in pairs(xml:getChildren()) do
-			if v:getName() == "file" then
-				files[#files+1] = {name = v:getAttribute(v, "name"), path = v:getAttribute(v, "path"), target_path = v:getAttribute(v, "target_path")}
+		for k, v in pairs(xmlNodeGetChildren(xml)) do
+			if xmlNodeGetName(v) == "file" then
+				files[#files+1] = {name = xmlNodeGetAttribute(v, "name"), path = xmlNodeGetAttribute(v, "path"), target_path = xmlNodeGetAttribute(v, "target_path")}
+				outputTable(files[#files])
 			end
 		end
-		xml:unload()
+		xmlUnloadFile(xml)
 
 		self.ms_GUIInstance:setStatus("file count", table.getn(files))
 		for i, v in ipairs(files) do
-			self.ms_GUIInstance:setStatus("current file", v.name)
+			self.ms_GUIInstance:setStatus("current file", self.ms_URL..v.path)
 			local responseData, errno = self:fetchAsync(v.path)
 			if errno ~= 0 then
-				self.ms_GUIInstance:setStatus("failed", ("HTTP-Error got returned! (%d)"):format(errno))
+				self.ms_GUIInstance:setStatus("failed", ("HTTP-Error #%d"):format(errno))
 				return false
 			end
 
@@ -53,7 +55,7 @@ function HTTPProvider:start()
 				file:close()
 				-- continue
 			else
-				self.ms_GUIInstance:setStatus("ignored" ,("Empty file %s"):format(v.path))
+				self.ms_GUIInstance:setStatus("ignored", ("Empty file %s"):format(v.path))
 				-- continue
 			end
 		end
@@ -69,11 +71,9 @@ function HTTPProvider:start()
 end
 
 function HTTPProvider:fetch(callback, file)
-    self.ms_GUIInstance:setCurrentFile(file)
     return fetchRemote( ("%s/%s"):format(self.ms_URL, file),
         function(responseData, errno)
-            local args = {responseData, errno}
-            callback(args)
+            callback(responseData, errno)
         end
     )
 end
@@ -83,15 +83,27 @@ function HTTPProvider:fetchAsync(...)
 	return Async.wait()
 end
 
-addCommandHandler( "http", function()
-	local instance = HTTPProvider:new("localhost", HTTPDownloadGUI:new())
+addCommandHandler("http", function()
+	HUDUI:getSingleton():hide()
+	HUDRadar:getSingleton():hide()
+	showChat(false)
+	fadeCamera(false, 0.05)
+
+	local dgi = HTTPDownloadGUI:getSingleton()
+	local instance = HTTPProvider:new("192.168.178.102:80/mtasa/", dgi)
 	Async.create(
 		function()
 			if instance:start() then
 				outputDebug("download succeded")
+				delete(dgi)
+
+				HUDUI:getSingleton():show()
+				HUDRadar:getSingleton():show()
+				showChat(true)
+				fadeCamera(true, 0.05)
 			else
 				outputDebug("download failed (see gui)")
 			end
 		end
-	)
+	)()
 end)
