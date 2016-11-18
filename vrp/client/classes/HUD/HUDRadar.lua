@@ -162,9 +162,8 @@ function HUDRadar:update()
   if self.m_DesignSet == RadarDesign.Default then return end
   if not self.m_Visible or isPlayerMapVisible() then return end
   local vehicle = getPedOccupiedVehicle(localPlayer)
-  if vehicle and (getControlState("vehicle_look_behind") or
-    (getControlState("vehicle_look_left") and getControlState("vehicle_look_right")) or
-    (getVehicleType(vehicle) ~= "Plane" and getVehicleType(vehicle) ~= "Helicopter" and (getControlState("vehicle_look_left") or getControlState("vehicle_look_right")))) then
+  if vehicle and getVehicleType(vehicle) ~= "Plane" and getVehicleType(vehicle) ~= "Helicopter"
+	and (getControlState("vehicle_look_behind") or getControlState("vehicle_look_left") or getControlState("vehicle_look_right")) then
 
     local element = vehicle or localPlayer
     local _, _, rotation = getElementRotation(element)
