@@ -13,6 +13,7 @@ function HUDUI:constructor()
 	self.m_UIMode = core:get("HUD", "UIStyle", UIStyle.vRoleplay)
 	self.m_Enabled = core:get("HUD", "showUI", true)
 	self.m_RedDot = core:get("HUD", "reddot", false)
+	self.m_Scale = core:get("HUD", "hudScale", 1)
 	self.m_DefaultHealhArmor = core:get("HUD", "defaultHealthArmor", true)
 	local design = tonumber(core:getConfig():get("HUD", "RadarDesign"))
 	local enabled = core:get("HUD", "showRadar")
@@ -284,9 +285,9 @@ function HUDUI:drawExo()
 	sx_g = screenWidth
 	local sx = screenWidth
 	--if sx_g > 1400 then sx_g = 1400 end
-
-	local width = math.floor(sx_g*0.22)
-	local height = math.floor(sx_g*0.22)
+	
+	local width = math.floor(sx_g*0.22)*self.m_Scale
+	local height = math.floor(sx_g*0.22)*self.m_Scale
 	local r_os = 1
 	local hudStartX = math.floor(screenWidth-width-r_os)
 	local lebensanzeige = getElementHealth(localPlayer)
@@ -319,8 +320,8 @@ function HUDUI:drawExo()
 
 		local b_x = 100
 		local bar_x = hudStartX+width*0.316
-		local bar_width = sx*0.145
-		local bar_height = sx*0.0098
+		local bar_width = width* ((203*self.m_Scale)/width)*1.35
+		local bar_height = height*((13*self.m_Scale)/height)*1.14
 
 		b_x = localPlayer:getArmor()/100
 		dxDrawImageSection(bar_x, height*0.479,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
@@ -331,9 +332,9 @@ function HUDUI:drawExo()
 		local karma = localPlayer:getKarma()
 		b_x = math.abs(karma)/150
 		if karma < 0 then
-			dxDrawImageSection(bar_x ,height*0.676,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200))
+			dxDrawImageSection(bar_x ,height*0.676,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/cyan_b.png',0,0,0,tocolor(255,255,255,200))
 		elseif karma > 0 then
-			dxDrawImageSection(bar_x ,height*0.676,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/green_b.png',0,0,0,tocolor(255,255,255,200))
+			dxDrawImageSection(bar_x ,height*0.676,bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/cyan_b.png',0,0,0,tocolor(255,255,255,200))
 		end
 		if prog >= 1 then
 			start_count = getTickCount()
@@ -344,11 +345,11 @@ function HUDUI:drawExo()
 		if lebensanzeige > 0 and lebensanzeige < 1 then lebensanzeige = 1 end
 		lebensanzeige = math.floor(lebensanzeige)
 
-		dxDrawText ("SCHUTZWESTE: "..math.floor(getPedArmor(localPlayer)).."%",screenWidth-width*0.5-r_os,width*0.475,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","right" ) --Money
-		dxDrawText ("LEBEN: "..lebensanzeige.."%",screenWidth-width*0.5-r_os,width*0.57,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","right" ) --Money
-		dxDrawText ("KARMA: "..math.floor(localPlayer:getKarma()),screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","right" ) --Money
+		dxDrawText ("SCHUTZWESTE: "..math.floor(getPedArmor(localPlayer)).."%",screenWidth-width*0.5-r_os,width*0.475,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
+		dxDrawText ("LEBEN: "..lebensanzeige.."%",screenWidth-width*0.5-r_os,width*0.57,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
+		dxDrawText ("KARMA: "..math.floor(localPlayer:getKarma()),screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
 
-		dxDrawImage(screenWidth-width*0.3-r_os,(sx*0),sx*0.04,sx*0.04, WeaponIcons[localPlayer:getWeapon()])
+		dxDrawImage(screenWidth-width*0.3-r_os,0,width*0.24,width*0.24, WeaponIcons[localPlayer:getWeapon()])
 		local tAmmo = getPedTotalAmmo( localPlayer )
 		local iClip = getPedAmmoInClip( localPlayer )
 		local weaponSlot = getPedWeaponSlot(localPlayer)
@@ -397,4 +398,10 @@ end
 
 function HUDUI:drawAFK()
 	dxDrawText ("- AFK - ",0,0,screenWidth, 100,  Color.Orange, 5, "sans","center" )
+end
+
+function HUDUI:setScale( scale ) 
+	scale = scale*1.25
+	self.m_Scale = 0.5 + math.floor( ((1.5 * scale))*10)/10
+	core:set("HUD", "hudScale", self.m_Scale)
 end

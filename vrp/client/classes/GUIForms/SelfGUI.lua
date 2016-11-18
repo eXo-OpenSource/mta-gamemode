@@ -227,9 +227,24 @@ function SelfGUI:constructor()
 		if index == UIStyle.vRoleplay then
 			self.m_LifeArmor:setVisible(true)
 			self.m_ZoneName:setVisible(true)
+			self.m_LabelHUDScale1:setVisible(false);
+			self.m_LabelHUDScale2:setVisible(false);
+			self.m_LabelHUDScale3:setVisible(false);
+			self.m_HUDScale:setVisible(false);
+		elseif index == UIStyle.eXo then 
+			self.m_LabelHUDScale1:setVisible(true);
+			self.m_LabelHUDScale2:setVisible(true);
+			self.m_LabelHUDScale3:setVisible(true);
+			self.m_HUDScale:setVisible(true);
+			self.m_LifeArmor:setVisible(false)
+			self.m_ZoneName:setVisible(false)
 		else
 			self.m_LifeArmor:setVisible(false)
 			self.m_ZoneName:setVisible(false)
+			self.m_LabelHUDScale1:setVisible(false);
+			self.m_LabelHUDScale2:setVisible(false);
+			self.m_LabelHUDScale3:setVisible(false);
+			self.m_HUDScale:setVisible(false);
 		end
 	end
 	self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.vRoleplay), true)
@@ -302,7 +317,16 @@ function SelfGUI:constructor()
 	self.m_ZoneName.onChange = function (state)
 		core:set("HUD", "drawZone", state)
 	end
-
+	
+	
+	self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.5, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, tabSettings)
+	self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
+	self.m_HUDScale.onScroll = function() local scale = self.m_HUDScale:getScrollPosition(); HUDUI:getSingleton():setScale( scale ); core:set("HUD","scaleScroll",scale*0.75) end
+	self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.5, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, _"HUD-Skalierung", tabSettings):setAlignX("center")
+	self.m_LabelHUDScale2 = GUILabel:new(self.m_Width*0.5, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, _"0", tabSettings):setAlignX("left")
+	self.m_LabelHUDScale3 = GUILabel:new(self.m_Width*0.5, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, _"1", tabSettings):setAlignX("right")
+	if core:get("HUD", "UIStyle") ~= UIStyle.eXo then self.m_HUDScale:setVisible(false); self.m_LabelHUDScale1:setVisible(false); self.m_LabelHUDScale2:setVisible(false); self.m_LabelHUDScale3:setVisible(false); end
+	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
 	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
 	self.m_RadarChange:addItem("Normal")
