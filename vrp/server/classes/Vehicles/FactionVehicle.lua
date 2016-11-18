@@ -25,11 +25,11 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
 		if factionCarColors[self.m_Faction:getId()] then
-			if getElementModel(self) == 420 and faction.m_Id == 2 then 
+			if getElementModel(self) == 420 and faction.m_Id == 2 then
 				setVehicleColor(self, 255, 255, 0)
 			elseif getElementModel(self) == 560 and faction.m_Id == 1 then
 				setVehicleColor(self, 255, 255, 255)
-			else 
+			else
 				local color = factionCarColors[self.m_Faction:getId()]
 				setVehicleColor(self, color.r, color.g, color.b, color.r1, color.g1, color.b1)
 			end
@@ -53,16 +53,16 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	if faction:isStateFaction() then
 			self.m_VehELSObj = ELSSystem:new(self)
 	end
-	if handlingFaktor ~= "" then 
+	if handlingFaktor ~= "" then
 		local handling = getVehicleHandling(self)
 		local tHandlingTable = split(handlingFaktor, ";")
-		for k,v in ipairs( tHandlingTable ) do 
+		for k,v in ipairs( tHandlingTable ) do
 			local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
-			local oldValue = handling[property] 
+			local oldValue = handling[property]
 			if oldValue then
 				if type( oldValue) == "number" then
 					setVehicleHandling(self,property,oldValue*faktor)
-				else 
+				else
 					setVehicleHandling(self,property,faktor)
 				end
 			end
@@ -88,11 +88,11 @@ function FactionVehicle:isStateVehicle()
   	return self.m_Faction:isStateFaction()
 end
 
-function FactionVehicle:onStartEnter(player,seat)
+function FactionVehicle:onStartEnter(player, seat)
 	if seat == 0 then
 		if player:getFaction() == self.m_Faction then
 
-		elseif player:getFaction() and player:getFaction():isStateFaction() == true	and self.m_Faction:isStateFaction() == true then
+		elseif player:getFaction() and player:getFaction():isStateFaction() == true	and self.m_Faction:isStateFaction() == true and player:isFactionDuty() then
 
 		else
 			cancelEvent()
@@ -183,15 +183,15 @@ function FactionVehicle:respawn(force)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
 	self:fix()
-	if self.m_HandlingFactor ~= "" then 
+	if self.m_HandlingFactor ~= "" then
 		local handling = getVehicleHandling(self)
 		local tHandlingTable = split(self.m_HandlingFactor, ";")
-		for k,v in ipairs( tHandlingTable ) do 
+		for k,v in ipairs( tHandlingTable ) do
 			local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
-			local oldValue = handling[property] 
+			local oldValue = handling[property]
 			if type( oldValue) == "number" then
 				setVehicleHandling(self,property,oldValue*faktor)
-			else 
+			else
 				setVehicleHandling(self,property,faktor)
 			end
 		end
