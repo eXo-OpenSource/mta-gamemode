@@ -41,6 +41,8 @@ function HTTPProvider:start()
 		xmlUnloadFile(xml)
 
 		self.ms_GUIInstance:setStatus("file count", table.getn(files))
+
+		local dataPackages = {}
 		for i, v in ipairs(files) do
 			self.ms_GUIInstance:setStatus("current file", self.ms_URL..v.path)
 			local responseData, errno = self:fetchAsync(v.path)
@@ -50,6 +52,9 @@ function HTTPProvider:start()
 			end
 
 			if responseData ~= "" then
+				if v.target_path:sub(#v.target_path, #v.target_path-5) == ".data" then
+					dataPackages[#dataPackages+1] = ("files/%s"):format(v.target_path)
+				end
 				local file = fileCreate(("files/%s"):format(v.target_path))
 				file:write(responseData)
 				file:close()
@@ -60,14 +65,9 @@ function HTTPProvider:start()
 			end
 		end
 
-		for i, v in ipairs(files) do
+		for i, path in ipairs(dataPackages) do
 			self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the packages... (%d / %d packages)"):format(i, table.getn(files)))
-
-			local callback = Async.waitFor()
-			setTimer(function ()
-				callback()
-			end, 1500, 1)
-			Async.wait()
+			Package.load(path)
 		end
 
 		-- remove temp file

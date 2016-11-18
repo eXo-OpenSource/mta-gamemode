@@ -76,11 +76,28 @@ end
 
 if SERVER then
 	function _(message, player, ...)
-		if not player then outputServerLog(debug.traceback()) end
-		return TranslationManager:getSingleton():translate(message, player:getLocale()):format(...)
+		if DEBUG then
+			local status, errOrReturn = pcall(function(...) return TranslationManager:getSingleton():translate(message, player:getLocale()):format(...) end, ...)
+			if not status then
+				outputDebug(errOrReturn)
+				outputDebug(debug.traceback())
+			end
+			return errOrReturn
+		else
+			return TranslationManager:getSingleton():translate(message, player:getLocale()):format(...)
+		end
 	end
 else
 	function _(message, ...)
-		return TranslationManager:getSingleton():translate(message, localPlayer:getLocale()):format(...)
+		if DEBUG then
+			local status, errOrReturn = pcall(function(...) return TranslationManager:getSingleton():translate(message, localPlayer:getLocale()):format(...) end, ...)
+			if not status then
+				outputDebug(errOrReturn)
+				outputDebug(debug.traceback())
+			end
+			return errOrReturn
+		else
+			return TranslationManager:getSingleton():translate(message, localPlayer:getLocale()):format(...)
+		end
 	end
 end

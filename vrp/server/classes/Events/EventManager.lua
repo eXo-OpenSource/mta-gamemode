@@ -78,6 +78,8 @@ function EventManager:openEvent(eventClass)
 	end
 
 	-- Start the event in 5min
+	local startTime = getRealTime().timestamp + 5*60
+	event:setStartTime(startTime)
 	setTimer(bind(event.start, event), 5*60*1000, 1)
 end
 
@@ -128,6 +130,8 @@ function EventManager:Event_eventJoin(eventId)
 
 	event:join(client)
 	client:sendShortMessage(_("Du hast dich erfolgreich für dieses Event eingetragen. Bleibe in der Nähe!", client))
+	client:triggerEvent("Countdown", event:getStartTime() - getRealTime().timestamp)
+
 end
 
 function EventManager:Event_playerQuit()

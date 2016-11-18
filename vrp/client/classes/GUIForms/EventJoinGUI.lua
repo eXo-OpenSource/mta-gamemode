@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 EventJoinGUI = inherit(GUIForm)
+inherit(Singleton, EventJoinGUI)
 
 function EventJoinGUI:constructor(eventId)
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.35/2, screenHeight/2 - screenHeight*0.45/2, screenWidth*0.35, screenHeight*0.45)
