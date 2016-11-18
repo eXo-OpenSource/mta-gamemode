@@ -355,15 +355,27 @@ function WeaponTruck:Event_DeloadBox(veh)
 	end
 end
 
+function WeaponTruck:getAttachedBoxes(element)
+	local count = 0
+	if getAttachedElements(element) then
+		for index, ele in pairs(getAttachedElements(element)) do
+			if ele:getModel() == 2912 then
+				count = count + 1
+			end
+		end
+	end
+	return count
+end
+
 function WeaponTruck:Event_LoadBox(veh)
 	if client:getFaction() then
 		if getElementData(veh,"WeaponTruck") or VEHICLE_BOX_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position,client.position) < 7 then
 				if not client.vehicle then
 					local box = client:getPlayerAttachedObject()
-					if getAttachedElements(veh) and #getAttachedElements(veh) < VEHICLE_BOX_LOAD[veh.model]["count"] then
+					if self:getAttachedBoxes(veh) < VEHICLE_BOX_LOAD[veh.model]["count"] then
 						if box then
-							local count = #getAttachedElements(veh)
+							local count = self:getAttachedBoxes(veh)
 							client:detachPlayerObject(box)
 							box:attach(veh, VEHICLE_BOX_LOAD[veh.model][count+1])
 							removeEventHandler("onElementClicked", box, self.m_Event_onBoxClickFunc)
@@ -392,7 +404,7 @@ function WeaponTruck:Event_onStateMarkerHit(hitElement, matchingDimension)
 		local faction = hitElement:getFaction()
 		if faction then
 			if faction:isStateFaction() then
-				if (isPedInVehicle(hitElement) and #getAttachedElements(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
+				if (isPedInVehicle(hitElement) and self:getAttachedBoxes(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
 					local boxes
 					if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 						boxes = getAttachedElements(self.m_Truck)
