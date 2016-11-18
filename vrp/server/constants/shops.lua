@@ -58,7 +58,8 @@ SHOP_ITEMS = {
 		["Zigarette"] = 10,
 		["Wuerfel"] = 10,
 		["Kanne"] = 500,
-		["Mautpass"] = 250
+		["Mautpass"] = 250,
+		["Benzinkanister"] = 250
 	};
 	["Stadthalle"] = {
 		["Ausweis"] = 400,
