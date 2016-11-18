@@ -829,11 +829,6 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/TuningGarage.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Shop.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/ServiceTechnician.png"/>
-	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/in.png"/>
-	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/1.png"/>
-	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/2.png"/>
-	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/3.png"/>
-	<vrpfile src="files/images/Radar_Monochrome/Blips/PlayerMarker/4.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/gangwar.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Fire.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Train.png"/>
@@ -849,7 +844,9 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/SniperGame.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/TreasureSeeker.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Fishing.png"/>
-
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Marker.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Marker_up.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Marker_down.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -879,11 +876,6 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/TuningGarage.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Shop.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/ServiceTechnician.png"/>
-	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/in.png"/>
-	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/1.png"/>
-	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/2.png"/>
-	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/3.png"/>
-	<vrpfile src="files/images/Radar_GTA/Blips/PlayerMarker/4.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/gangwar.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Fire.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Train.png"/>
@@ -899,6 +891,9 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/SniperGame.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/TreasureSeeker.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Fishing.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Marker.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Marker_up.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Marker_down.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
