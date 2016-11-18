@@ -75,6 +75,5 @@
     <object id="object (fencesmallb) (4)" breakable="true" interior="1" alpha="255" model="970" doublesided="false" scale="1" dimension="0" posX="678.1377" posY="-477.84766" posZ="19.18691" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (fencesmallb) (5)" breakable="true" interior="1" alpha="255" model="970" doublesided="false" scale="1" dimension="0" posX="665.30243" posY="-475.77664" posZ="19.18691" rotX="0" rotY="0" rotZ="90"></object>
     <object id="object (fencesmallb) (6)" breakable="true" interior="1" alpha="255" model="970" doublesided="false" scale="1" dimension="0" posX="680.23975" posY="-475.77637" posZ="19.18691" rotX="0" rotY="0" rotZ="90"></object>
-    <marker id="marker (corona) (1)" type="corona" color="#43251CFF" size="1" interior="0" dimension="0" alpha="255" posX="662.06848" posY="-464.93033" posZ="15.73005" rotX="0" rotY="0" rotZ="0"></marker>
     <object id="object (vgsSstairs04_lvs) (1)" breakable="true" interior="0" alpha="255" model="8615" doublesided="false" scale="1" dimension="0" posX="658.32269" posY="-470.4588" posZ="17.94774" rotX="0" rotY="0" rotZ="270"></object>
 </map>
