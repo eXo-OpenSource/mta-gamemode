@@ -179,6 +179,7 @@ function Core:afterLogin()
 	self:createBlips()
 	PlantGUI.load()
 	Fishing.load()
+	GUIForm3D.load()
 end
 
 function Core:destructor()
