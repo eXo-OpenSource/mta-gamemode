@@ -325,7 +325,15 @@ function HUDRadar:drawBlips()
 
         -- Finally, draw
         local blipSize = blip:getSize()
-        dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, blip:getImagePath(), 0, 0, 0, blip:getColor())
+		local imagePath = blip:getImagePath()
+
+		if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
+			if math.abs(pz - blip:getZ()) > 3 then
+				markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
+				imagePath = HUDRadar:getSingleton():makePath(markerImage, true)
+			end
+		end
+        dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, blip:getColor())
       end
     end
   end

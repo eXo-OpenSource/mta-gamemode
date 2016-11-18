@@ -17,6 +17,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
   self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
   self.m_WorldX = worldX
   self.m_WorldY = worldY
+  self.m_WorldZ = false
   self.m_Alpha = 255
   self.m_Size = 24
   self.m_StreamDistance = streamDistance or 100
@@ -69,11 +70,11 @@ function Blip:setImagePath(path)
 end
 
 function Blip:getPosition()
-  return self.m_WorldX, self.m_WorldY
+  return self.m_WorldX, self.m_WorldY, self.m_WorldZ
 end
 
-function Blip:setPosition(x, y)
-  self.m_WorldX, self.m_WorldY = x, y
+function Blip:setPosition(x, y, z)
+  self.m_WorldX, self.m_WorldY, self.m_WorldZ = x, y, z or false
 
   return self
 end
@@ -86,6 +87,14 @@ function Blip:setAlpha(alpha)
   self.m_Alpha = alpha
 
   return self
+end
+
+function Blip:setZ(z)
+	self.m_WorldZ = z
+end
+
+function Blip:getZ()
+	return self.m_WorldZ
 end
 
 function Blip:getSize()
