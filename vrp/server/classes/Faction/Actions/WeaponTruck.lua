@@ -53,8 +53,11 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_BoxesOnTruck = {}
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
-	self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
-
+	if self.m_Type == "evil" then
+		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
+	elseif self.m_Type == "state" then
+		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
+	end
 	self.m_WeaponLoad = weaponTable
 	self.m_Event_onBoxClickFunc =bind(self.Event_onBoxClick,self)
 
@@ -99,7 +102,13 @@ end
 
 function WeaponTruck:timeUp()
 	outputChatBox(_("Der %s ist fehlgeschlagen! (Zeit abgelaufen)",self.m_StartPlayer, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
-	FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Waffentruck verhindert!")
+
+	if self.m_Type == "evil" then
+		FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Waffentruck verhindert!")
+	elseif self.m_Type == "state" then
+		FactionEvil:getSingleton():giveKarmaToOnlineMembers(-10, "Staats-Waffentruck verhindert!")
+	end
+
 	self:delete()
 end
 
@@ -122,7 +131,11 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 						outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 						hitElement:sendInfo(_("Truck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 						self:Event_OnWeaponTruckExit(hitElement,0)
-						faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
+						if self.m_Type == "evil" then
+							faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
+						elseif self.m_Type == "state" then
+							FactionEvil:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
+						end
 					elseif hitElement:getPlayerAttachedObject() then
 						boxes = getAttachedElements(hitElement)
 						outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
