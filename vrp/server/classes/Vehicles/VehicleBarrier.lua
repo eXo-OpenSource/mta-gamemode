@@ -20,7 +20,7 @@ function VehicleBarrier:Event_onColShapeHit(hitEle, matchingDimension, force)
     if hitEle:getType() == "player" and matchingDimension then
         local player = hitEle
         if not force then
-            if player:isInVehicle() and player:getOccupiedVehicleSeat() ~= 0 then
+            if player:isInVehicle() then
                 return
             end
             if self.m_Timer and isTimer(self.m_Timer) then
