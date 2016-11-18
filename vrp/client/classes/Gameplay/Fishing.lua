@@ -9,7 +9,7 @@ function Fishing.load()
 	local ped = Ped.create(161, Vector3(368.27, -2072.03, 8.02), 180)
 	ped:setData("NPC:Immortal", true)
 	ped:setFrozen(true)
-	ped.SpeakBubble = SpeakBubble3D:new(ped, "Angeler Lutz", "Verkaufe mir deinen Fang!")
+	ped.SpeakBubble = SpeakBubble3D:new(ped, "Angler Lutz", "Verkaufe mir deinen Fang!")
 	setElementData(ped, "clickable", true)
 	ped:setData("onClickEvent", function ()
 		triggerServerEvent("fishingPedClick", localPlayer)
@@ -79,7 +79,7 @@ function Fishing:render()
 	end
 
 	dxDrawText(self.m_Text, left, top-35, left+250, top-5, tocolor(255, 255, 255, 255), 2, "center")
-	dxDrawRectangle(left, top , 250, 30, tocolor ( 255, 0, 0, 200 ) )
+	dxDrawImage(left, top , 250, 30, "files/images/Other/RedGreenRed.png")
 	dxDrawRectangle(left+self.m_Current, top-5 , 5, 40, tocolor ( 255, 255, 255, 255 ) )
 	dxDrawText(_"Versuche die Mitte zu treffen!", left, top+35, left+250, top+65, tocolor(255, 255, 255, 255), 1, "center")
 end

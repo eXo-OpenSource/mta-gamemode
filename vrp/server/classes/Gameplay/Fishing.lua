@@ -1,6 +1,10 @@
 Fishing = inherit(Singleton)
 Fishing.Positions = {
-	Vector3(350.64, -2072.44, 7.2)
+	Vector3(350.65, -2072.44, 7.1),
+	Vector3(350.65, -2067.23, 7.1),
+	Vector3(350.65, -2064.79, 7.1),
+	Vector3(350.65, -2059.79, 7.1),
+	Vector3(350.65, -2052.15, 7.1)
 }
 
 Fishing.Result = {
@@ -30,6 +34,7 @@ function Fishing:constructor()
 
 		self.m_Markers[index].id = index
 		addEventHandler("onMarkerHit", self.m_Markers[index], bind(self.onMarkerHit, self))
+		addEventHandler("onMarkerLeave", self.m_Markers[index], bind(self.onMarkerLeave, self))
 	end
 
 	self.m_Players = {}
@@ -45,11 +50,19 @@ end
 
 function Fishing:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim and not hitElement.vehicle then
-		if not hitElement.win then
-			hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde angeln? Ein Köder kostet 10$!", hitElement), "startFishing", nil, source)
-		else
-			hitElement:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", hitElement))
+		if not source.player then
+			if not hitElement.win then
+				hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde angeln? Ein Köder kostet 10$!", hitElement), "startFishing", nil, source)
+			else
+				hitElement:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", hitElement))
+			end
 		end
+	end
+end
+
+function Fishing:onMarkerLeave(hitElement, dim)
+	if source.player and  source.player == hitElement then
+		source.player = false
 	end
 end
 
@@ -63,6 +76,7 @@ function Fishing:start(marker)
 			client:setRotation(0, 0, 90, "default", true)
 			client:setFrozen(true)
 			client:triggerEvent("startFishingClient", 1, marker.id)
+			marker.player = client
 			self.m_Players[client] = {}
 		else
 			client:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", client))
@@ -83,7 +97,7 @@ function Fishing:stepFinished(id, step, value)
 	self.m_Players[client][step] = value
 
 	if step == 1 then
-		client:sendShortMessage(_("Du hast %s ausgeworfen! Warte bis etwas anbeißt", client, text), _("Angeln", client))
+		client:sendShortMessage(_("Du hast %s ausgeworfen! Warte bis etwas anbeißt...", client, text), _("Angeln", client))
 		setTimer(function(client)
 			client:sendShortMessage(_("Es hat etwas angebissen!", client, text), _("Angeln", client))
 			client:triggerEvent("startFishingClient", 2, id)
