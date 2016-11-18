@@ -29,7 +29,7 @@ end
 
 function HTTPDownloadGUI:markAsFailed(reason)
 	self.m_Failed = true
-	self:setStateText(("A error occured while downloading files: %s"):format(reason))
+	self:setStateText(("A error occured while downloading files: %s (Please try again later, or contact an Administrator)"):format(reason))
 	self.m_DownloadBar:setColor(tocolor(125, 0, 0, 255))
 end
 

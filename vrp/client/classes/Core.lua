@@ -20,6 +20,8 @@ function Core:constructor()
 		setAmbientSoundEnabled( "gunfire", false )
 		showChat(true)
 	else
+		showChat(false)
+
 		Async.create( -- HTTPProvider needs asynchronous "context"
 			function()
 				fadeCamera(true)
