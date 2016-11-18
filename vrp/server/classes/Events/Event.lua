@@ -14,6 +14,8 @@ function Event:virtual_constructor(Id)
 	self.m_Ranks = {}
 	self.m_Started = false
 
+	self.m_StartTime = 0
+
 	local positions = self:getPositions()
 	local position = positions[math.random(1, #positions)]
 	self.m_EventBlip = Blip:new("Wheel.png", position.x, position.y)
@@ -151,6 +153,14 @@ end
 
 function Event:hasStarted()
 	return self.m_Started
+end
+
+function Event:setStartTime(timestamp)
+	self.m_StartTime = timestamp
+end
+
+function Event:getStartTime()
+	return self.m_StartTime
 end
 
 Event.getName = pure_virtual
