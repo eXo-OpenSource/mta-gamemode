@@ -847,6 +847,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/House.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/SniperGame.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/TreasureSeeker.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Fishing.png"/>
 
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
@@ -896,6 +897,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/House.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/SniperGame.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/TreasureSeeker.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Fishing.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
