@@ -19,7 +19,7 @@ function HTTPDownloadGUI:setStateText(text)
 end
 
 function HTTPDownloadGUI:setCurrentFile(file)
-	if file == "index.xml" then
+	if file:sub(-9, #file) == "index.xml" then
 		self:setStateText("downloading file-index")
 	else
 		self:setStateText(("downloaded %d of %d files. current file: %s"):format(self.m_CurrentFile, self.m_FileCount, file))

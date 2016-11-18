@@ -21,7 +21,7 @@ function HTTPProvider:start()
     local responseData, errno = self:fetchAsync("index.xml")
 	if errno ~= 0 then
 		outputDebug(errno)
-		self.ms_GUIInstance:setStatus("failed", ("HTTP-Error #%d"):format(errno))
+		self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
 		return false
 	end
 
@@ -47,12 +47,12 @@ function HTTPProvider:start()
 			self.ms_GUIInstance:setStatus("current file", self.ms_URL..v.path)
 			local responseData, errno = self:fetchAsync(v.path)
 			if errno ~= 0 then
-				self.ms_GUIInstance:setStatus("failed", ("HTTP-Error #%d"):format(errno))
+				self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
 				return false
 			end
 
 			if responseData ~= "" then
-				if v.target_path:sub(#v.target_path, #v.target_path-5) == ".data" then
+				if v.target_path:sub(-5, #v.target_path) == ".data" then
 					dataPackages[#dataPackages+1] = ("files/%s"):format(v.target_path)
 				end
 				local file = fileCreate(("files/%s"):format(v.target_path))
@@ -81,7 +81,7 @@ function HTTPProvider:start()
 end
 
 function HTTPProvider:fetch(callback, file)
-    return fetchRemote( ("%s/%s"):format(self.ms_URL, file),
+    return fetchRemote(("%s/%s"):format(self.ms_URL, file), HTTP_CONNECT_ATTEMPTS,
         function(responseData, errno)
             callback(responseData, errno)
         end

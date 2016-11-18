@@ -45,6 +45,7 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
   self.m_Position = self:getPosition()
   self.m_Rotation = self:getRotation()
   setElementData(self, "OwnerName", self.m_Company:getName())
+  setElementData(self, "OwnerType", "company")
 
   self:setHealth(health)
   self:setLocked(true)

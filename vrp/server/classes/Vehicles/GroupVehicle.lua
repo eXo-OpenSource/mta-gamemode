@@ -45,6 +45,7 @@ function GroupVehicle:constructor(Id, Group, color, health, posionType, tunings,
   self.m_Position = self:getPosition()
   self.m_Rotation = self:getRotation()
   setElementData(self, "OwnerName", self.m_Group:getName())
+  setElementData(self, "OwnerType", "group")
 
   self:setHealth(health)
   self:setLocked(true)

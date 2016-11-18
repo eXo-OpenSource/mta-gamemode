@@ -10,6 +10,7 @@ screenSize = Vector2(screenWidth, screenHeight)
 ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 
 FILE_HTTP_SERVER_URL = "192.168.178.102:80/mtasa/" -- Todo: move to config
+HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
 NO_MUNITION_ITEMS = {
 	[0] = true;
