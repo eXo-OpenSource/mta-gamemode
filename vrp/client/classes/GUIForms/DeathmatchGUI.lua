@@ -192,10 +192,10 @@ function LobbyDeathmatchGUI:constructor ()
 	)
 	self.m_StartButton.onLeftClick = (
 		function()
-			--triggerServerEvent("Deathmatch.setMatchStatus", root, localPlayer:getMatchID(), 2)
 			local instance = DeathmatchEvent:getSingleton()
 			local matchData = instance:getMatchData(localPlayer:getMatchID())
 			if #matchData["players"] == matchData["type"]*2 then
+				triggerServerEvent("Deathmatch.setMatchStatus", root, localPlayer:getMatchID(), 2)
 			else
 				WarningBox:new(_"Es sind zu wenige spieler zum starten!")
 			end
