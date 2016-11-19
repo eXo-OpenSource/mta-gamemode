@@ -17,24 +17,54 @@ function ItemSpeedCam:destructor()
 end
 
 function ItemSpeedCam:use(player)
-	local result = self:startObjectPlacing(player,
-		function(item, position, rotation)
-			if item ~= self then return end
-			if (position - player:getPosition()).length > 20 then
-				player:sendError(_("Du musst in der Nähe der Zielposition sein!", player))
-				return
-			end
-
-			local worldItem = self:place(player, position, rotation)
-			player:getInventory():removeItem(self:getName(), 1)
-
-			addEventHandler("ItemSpeedCamRemove", worldItem:getObject(),
-				function()
-					source:destroy()
+	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
+		local result = self:startObjectPlacing(player,
+			function(item, position, rotation)
+				if item ~= self then return end
+				if (position - player:getPosition()).length > 20 then
+					player:sendError(_("Du musst in der Nähe der Zielposition sein!", player))
+					return
 				end
-			)
+
+				local worldItem = self:place(player, position, rotation)
+				player:getInventory():removeItem(self:getName(), 1)
+
+				local object = worldItem:getObject()
+
+				object.col = createColSphere(position, 8)
+				addEventHandler("onColShapeHit", object.col, bind(self.onColShapeHit, self))
+
+				addEventHandler("ItemSpeedCamRemove", worldItem:getObject(),
+					function()
+						source:destroy()
+					end
+				)
+			end
+		)
+	else
+		player:sendError(_("Du bist nicht berechtigt! Das Item wurde abgenommen!", player))
+		player:getInventory():removeItem(self:getName(), 1)
+	end
+end
+
+function ItemSpeedCam:onColShapeHit(element, dim)
+  if dim then
+    if element:getType() == "vehicle" then
+		if element:getSpeed() > 85 then
+			if element:getOccupant() then
+				local player = element:getOccupant()
+
+				if player:isFactionDuty() then return end
+
+				local speed = math.floor(element:getSpeed())
+				local costs = (speed-80)*50
+				player:takeBankMoney(costs, "Blitzer-Strafe")
+				FactionManager:getSingleton():getFromId(1):giveMoney(costs, "Blitzer-Strafe")
+      			player:sendShortMessage(_("Du wurdest mit %d km/H geblitzt!\nStrafe: %d$", player, speed, costs), "SA Police Department")
+			end
 		end
-	)
+    end
+  end
 end
 
 function ItemSpeedCam:onClick(player, worldItem)
