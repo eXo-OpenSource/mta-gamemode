@@ -259,11 +259,11 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
         elseif func == "supportMode" or func == "smode" then
             self:toggleSupportMode(admin)
         elseif func == "clearchat" or func == "clearChat" then
+			self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
             for index, player in pairs(Element.getAllByType("player")) do
                 for i=0, 2100 do
                     player:outputChat(" ")
                 end
-                self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
                 player:triggerEvent("closeAd")
             end
         elseif func == "adminAnnounce" then
