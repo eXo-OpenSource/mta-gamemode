@@ -27,8 +27,9 @@ Fishing.Win = {
 }
 
 function Fishing:constructor()
-
+	self.m_Players = {}
 	self.m_Markers = {}
+
 	for index, pos in pairs(Fishing.Positions) do
 		self.m_Markers[index] = createMarker(pos, "cylinder", 1, 0,255, 0, 125)
 
@@ -37,21 +38,16 @@ function Fishing:constructor()
 		addEventHandler("onMarkerLeave", self.m_Markers[index], bind(self.onMarkerLeave, self))
 	end
 
-	self.m_Players = {}
-
 	addRemoteEvents{"startFishing", "fishingStepFinished", "fishingPedClick"}
 	addEventHandler("startFishing", root, bind(self.start, self))
 	addEventHandler("fishingStepFinished", root, bind(self.stepFinished, self))
 	addEventHandler("fishingPedClick", root, bind(self.pedClicked, self))
-
-
-
 end
 
 function Fishing:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim and not hitElement.vehicle then
 		if not source.player then
-			if not hitElement.win then
+			if not hitElement.win and not self.m_Players[hitElement] then
 				hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde angeln? Ein Köder kostet 10$!", hitElement), "startFishing", nil, source)
 			else
 				hitElement:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", hitElement))
@@ -132,6 +128,7 @@ function Fishing:stepFinished(id, step, value)
 			end, 5000, 1, client, winObject, text, win, winIndex)
 		else
 			client:sendInfo(_("Deine Schnur ist gerissen!", client))
+			self:stop(client)
 		end
 	end
 end

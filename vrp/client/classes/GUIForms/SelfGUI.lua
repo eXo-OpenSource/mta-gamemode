@@ -164,6 +164,8 @@ function SelfGUI:constructor()
 	self.m_VehicleLevelButton.onLeftClick = function() triggerServerEvent("requestVehicleLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("VehicleLevel", function(value)
 		self.m_VehicleLevelLabel:setText(tostring(value))
+		outputDebug(value)
+		outputDebug(value >= MAX_VEHICLE_LEVEL)
 		if value >= MAX_VEHICLE_LEVEL then
 			self.m_VehicleLevelButton:setText("Max. Level"):setEnabled(false)
 		else
@@ -427,9 +429,21 @@ function SelfGUI:onShow()
 	self:TabPanel_TabChanged(self.m_TabVehicles.TabIndex)
 
 	-- Initialize all the stuff
-	self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
-	self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())))
-	self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
+	if value >= MAX_JOB_LEVEL then
+		self.m_JobLevelButton:setText("Max. Level"):setEnabled(false)
+	else
+		self.m_JobLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())))
+	end
+	if value >= MAX_SKIN_LEVEL then
+		self.m_SkinLevelButton:setText("Max. Level"):setEnabled(false)
+	else
+		self.m_SkinLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
+	end
+	if value >= MAX_VEHICLE_LEVEL then
+		self.m_VehicleLevelButton:setText("Max. Level"):setEnabled(false)
+	else
+		self.m_VehicleLevelButton:setText(("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())))
+	end
 
 	local hours, minutes = math.floor(localPlayer:getPlayTime()/60), (localPlayer:getPlayTime() - math.floor(localPlayer:getPlayTime()/60)*60)
 	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
