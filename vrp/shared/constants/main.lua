@@ -2,6 +2,12 @@ PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playin
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
 							 -- happen while the player is in PRIVATE_DIMENSION on the server
 
+-- TODO: Change before release
+MAX_JOB_LEVEL = 10
+MAX_WEAPON_LEVEL = 10
+MAX_VEHICLE_LEVEL = 10
+MAX_SKIN_LEVEL = 10
+
 RANK = {}
 RANK[-1] = "Banned"
 RANK[0] = "User"
@@ -14,6 +20,7 @@ RANK[6] = "Servermanager"
 RANK[7] = "Developer"
 RANK[8] = "StellvProjektleiter"
 RANK[9] = "Projektleiter"
+
 
 local r2 = {}
 for k, v in pairs(RANK) do
