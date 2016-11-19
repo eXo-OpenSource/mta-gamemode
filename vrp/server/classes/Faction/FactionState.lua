@@ -21,7 +21,7 @@ function FactionState:constructor()
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
-	"factionStateGivePANote"}
+	"factionStateGivePANote", "factionStateTakeSpeedCam"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -45,6 +45,8 @@ function FactionState:constructor()
 	addEventHandler("factionStateAcceptShowLicense", root, bind(self.Event_acceptShowLicense, self))
 	addEventHandler("factionStateDeclineShowLicense", root, bind(self.Event_declineShowLicense, self))
 	addEventHandler("factionStateGivePANote", root, bind(self.Event_givePANote, self))
+	addEventHandler("factionStateTakeSpeedCam", root, bind(self.Event_takeSpeedCam, self))
+
 
 
 
@@ -710,6 +712,29 @@ function FactionState:Event_givePANote(target, note)
 				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine PA-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
 			else
 				client:sendError(_("Ungültige PA-Note!", client))
+			end
+		else
+			client:sendError(_("Du bist nicht im Dienst!", client))
+		end
+	else
+		client:sendError(_("Du bist nicht im SAPD!", client))
+	end
+end
+
+function FactionState:Event_takeSpeedCam()
+	local faction = client:getFaction()
+	if faction and faction:getId() == 1 then
+		if client:isFactionDuty() then
+			if faction:getPlayerRank(client) > 3 then
+				if client:getInventory():getFreePlacesForItem("Blitzer") >= 1 then
+					client:getInventory():giveItem("Blitzer", 1)
+					client:sendSuccess(_("Du hast einen Blitzer aus dem Fahrzeug genommen!", client))
+				else
+					client:sendError(_("Du hast bereits einen Blitzer im Inventar!", client))
+
+				end
+			else
+				client:sendError(_("Du bist nicht berechtig Blitzer zu verwenden!", client))
 			end
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))

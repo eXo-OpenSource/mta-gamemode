@@ -26,7 +26,8 @@ function ItemManager:constructor()
 		["Kanne"] = ItemCan,
 		["Handelsvertrag"] = ItemSellContract,
 		["Ausweis"] = ItemIDCard,
-		["Benzinkanister"] = ItemFuelcan
+		["Benzinkanister"] = ItemFuelcan,
+		["Blitzer"] = ItemSpeedCam
 	}
 
 	self.m_SpecialItems = {

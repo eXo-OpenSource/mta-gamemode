@@ -84,6 +84,18 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 	end
 
+	if element:getModel() == 427 then
+		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+			self:addItem(_"Blitzer nehmen",
+					function()
+						if self:getElement() then
+							triggerServerEvent("factionStateTakeSpeedCam", localPlayer)
+						end
+					end
+				)
+		end
+	end
+
 	if element:getVehicleType() ~= VehicleType.Trailer then
 		self:addItem(_"Fahrzeug leeren",
 			function()
