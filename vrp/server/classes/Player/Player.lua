@@ -200,9 +200,8 @@ function Player:loadCharacterInfo()
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
 	local x,y,z
 	for k,v in ipairs( props ) do 
-		x,y,z= getElementPosition( v.m_Pickup )
-		createMarker(x,y,z,"checkpoint",1,0,200,200,200,self)
-		createBlip(x,y,z,0,2,0,200,200,255,0,500,self)
+		x,y,z = getElementPosition( v.m_Pickup )
+		self:triggerEvent("createGroupBlip",x,y,z)
 	end
 	--if self.m_Inventory then
 	--	self.m_Inventory:setInteractingPlayer(self)

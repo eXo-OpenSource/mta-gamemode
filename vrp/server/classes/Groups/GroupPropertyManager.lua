@@ -1,7 +1,7 @@
 GroupPropertyManager = inherit(Singleton)
 GroupPropertyManager.Map = {}
 GroupPropertyManager.ChangeMap = {}
-addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale"}
+addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale","KeyChangeAction"}
 function GroupPropertyManager:constructor( )
 	outputServerLog("Loading group-propertys...")
 	local result = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
@@ -18,6 +18,7 @@ function GroupPropertyManager:constructor( )
 	addEventHandler("GroupPropertyBuy", root, bind( GroupPropertyManager.BuyProperty, self))
 	addEventHandler("GroupPropertySell", root, bind( GroupPropertyManager.SellProperty, self))
 	addEventHandler("RequestImmoForSale", root, bind( GroupPropertyManager.OnRequestImmo, self))
+	addEventHandler("KeyChangeAction", root, bind( GroupPropertyManager.OnKeyChange, self))
 end
 
 function GroupPropertyManager:destructor()
@@ -31,6 +32,9 @@ function GroupPropertyManager:destructor()
 		sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), owner.m_Id, id)
 	end
 	outputDebugString("[GroupProperties] Saved properties #"..propCount.."!")
+	for id, obj in pairs( self.Map ) do 
+		obj:delete()
+	end
 end
 
 function GroupPropertyManager:addNewProperty( )
@@ -40,6 +44,14 @@ end
 
 function GroupPropertyManager:OnRequestImmo()
 	client:triggerEvent("GetImmoForSale", GroupPropertyManager.Map )
+end
+
+function GroupPropertyManager:OnKeyChange( player,action) 
+	if client then 
+		if client.m_LastPropertyPickup then
+			client.m_LastPropertyPickup:Event_keyChange( player, action, client )
+		end
+	end
 end
 
 function GroupPropertyManager:BuyProperty( Id )

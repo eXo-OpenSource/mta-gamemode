@@ -117,7 +117,6 @@
 	<script src="server/classes/Inventory/Items/ItemSellContract.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemIDCard.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFuelcan.lua" type="server"/>
-	<script src="server/classes/Inventory/Items/ItemSpeedCam.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Drugs/DrugsWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
@@ -420,7 +419,6 @@
 	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankAccountGUI.lua" type="client"/>
-
 	<script src="client/classes/GUIForms/MouseMenu/VehicleMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/PlayerMouseMenu.lua" type="client"/>
@@ -429,8 +427,6 @@
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/BeggarPedMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/BankPcMouseMenu.lua" type="client"/>
-	<script src="client/classes/GUIForms/MouseMenu/SpeedCamMouseMenu.lua" type="client"/>
-
 	<script src="client/classes/GUIForms/ButtonMenu/StateFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/RescueFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
@@ -517,7 +513,8 @@
 	<script src="client/classes/GUIForms/ShaderPanelGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyBuy.lua" type="client"/>
 	<script src="client/classes/GUIForms/HTTPDownloadGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/GroupPropertyGUI.lua" type="client"/>
+	
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -1023,6 +1020,9 @@
 	<vrpfile src="files/images/Inventory/items/Drogen/Ecstasy.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Heroin.png" />
 	<vrpfile src="files/images/Inventory/items/Drogen/Koks.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Crystal-Meth-1.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Crystal-Meth-2.png" />
+	<vrpfile src="files/images/Inventory/items/Drogen/Crystal-Meth-3.png" />
 
 	<vrpfile src="files/images/Inventory/items/Items/Benzinkanister.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Chips.png" />
@@ -1035,6 +1035,12 @@
 	<vrpfile src="files/images/Inventory/items/Items/Ausweis.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Munition.png" />
 	<vrpfile src="files/images/Inventory/items/Items/eXoPad.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Fische.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Mats.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Zeitung.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Frostschutzmittel.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Batterie.png" />
+	<vrpfile src="files/images/Inventory/items/Items/Badesalz.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Reparaturkit.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Kuerbis.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Paeckchen.png" />
@@ -1047,7 +1053,7 @@
 	<vrpfile src="files/images/Inventory/items/Items/Sprengstoff.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Kanne.png" />
 	<vrpfile src="files/images/Inventory/items/Items/Contract.png" />
-	<vrpfile src="files/images/Inventory/items/Items/Blitzer.png" />
+
 
 	<vrpfile src="files/images/Inventory/items/Essen/Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pizza.png" />

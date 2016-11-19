@@ -212,7 +212,9 @@ function bind(func, ...)
 	if not func then
 		if DEBUG then
 			outputConsole(debug.traceback())
-			outputServerLog(debug.traceback())
+			if outputServerLog then
+				outputServerLog(debug.traceback())
+			end
 		end
 		error("Bad function pointer @ bind. See console for more details")
 	end

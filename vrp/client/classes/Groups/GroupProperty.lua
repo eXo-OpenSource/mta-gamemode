@@ -12,8 +12,12 @@ local height = h*0.12
 local sx = 0
 local sy = h*0.5-height/2
 local fontHeight = dxGetFontHeight(1,"default-bold")
-addRemoteEvents{"showGroupEntrance", "hideGroupEntrance"}
+addRemoteEvents{"showGroupEntrance", "hideGroupEntrance","createGroupBlip"}
 function GroupProperty:constructor( )
+	self.m_BlipProperties = {}
+	self.m_BlipProperties2 = {}
+	self.m_MarkerProperties = {}
+	addEventHandler("createGroupBlip", localPlayer, bind( GroupProperty.createBlips, self) )
 	addEventHandler("showGroupEntrance", localPlayer, bind( GroupProperty.showWindow, self) )
 	addEventHandler("hideGroupEntrance", localPlayer, bind( GroupProperty.hideWindow, self) )
 	self.m_Render = bind( GroupProperty.render, self)
@@ -82,4 +86,11 @@ function GroupProperty:isMouseOver( startX, startY, wi, he)
 		end
 	end
 	return false
+end
+
+function GroupProperty:createBlips( x, y, z) 
+	self.m_BlipProperties[#self.m_BlipProperties+1] =  Blip:new("Marker.png",x,y, 500, tocolor(0,200,200))
+	self.m_BlipProperties[#self.m_BlipProperties]:setZ(z)
+	self.m_BlipProperties2[#self.m_BlipProperties2+1] = createBlip(x,y,z,0,2,0,200,200,255,0,500)
+	self.m_MarkerProperties[#self.m_MarkerProperties+1] = createMarker(x,y,z,"checkpoint",1,0,200,200,200)
 end
