@@ -14,7 +14,7 @@ function Fishing.load()
 	ped:setData("onClickEvent", function ()
 		triggerServerEvent("fishingPedClick", localPlayer)
 	 end)
-	 Blip:new("Fishing.png", 368.27, -2072.03, 200)
+	 Blip:new("Fishing.png", 368.27, -2072.03, 600)
 end
 
 addRemoteEvents{"startFishingClient"}
