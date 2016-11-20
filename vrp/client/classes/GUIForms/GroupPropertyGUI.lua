@@ -18,7 +18,7 @@ function GroupPropertyGUI:constructor( tObj )
 	self.m_TabManage = tabManage
 	self.m_CreateButton = GUIButton:new(self.m_Width*0.25, self.m_Height*0.2, self.m_Width*0.5, self.m_Height*0.1, _"Auf-/Abschließen", tabManage):setBackgroundColor(Color.Orange)
 	self.m_CreateButton = GUIButton:new(self.m_Width*0.25, self.m_Height*0.36, self.m_Width*0.5, self.m_Height*0.1, _"Eingangsnachricht", tabManage):setBackgroundColor(Color.Orange)
-	self.m_CreateButton = GUIButton:new(self.m_Width*0.25, self.m_Height*0.36, self.m_Width*0.5, self.m_Height*0.1, _"Eingangsnachricht", tabManage):setBackgroundColor(Color.Orange)
+	self.m_CreateButton = GUIButton:new(self.m_Width*0.25, self.m_Height*0.52, self.m_Width*0.5, self.m_Height*0.1, _"Verkaufen", tabManage):setBackgroundColor(Color.Red)
 	
 	local tabAccess = self.m_TabPanel:addTab(_("Berechtigung"))
 	self.m_TabAccess = tabAccess
