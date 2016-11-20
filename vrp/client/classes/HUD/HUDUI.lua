@@ -329,8 +329,12 @@ function HUDUI:drawExo()
 		dxDrawImageSection(bar_x, height*(155/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
 
 		b_x = localPlayer:getHealth()/100
-		dxDrawImageSection(bar_x ,height*(186/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
-
+		if b_x > 15 then
+			dxDrawImageSection(bar_x ,height*(186/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200))
+		elseif b_x <= 15 and ( getTickCount() % 1000 > 500 ) then
+			dxDrawImageSection(bar_x ,height*(186/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
+		end
+		
 		local karma = localPlayer:getKarma()
 		b_x = math.abs(karma)/150
 		if karma < 0 then
