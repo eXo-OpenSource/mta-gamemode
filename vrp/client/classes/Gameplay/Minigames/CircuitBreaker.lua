@@ -69,30 +69,55 @@ function CircuitBreaker:createGameplay()
 	self.m_Levels = {
         --Leveldesign 1
 		[1] = {
-                {10, 10, 250, 400, self:createStructurGroup(250, 400)},
-                {260, 330, 350, 130, self:createStructurGroup(350, 130)},
-                {200, 520, 200, 120, self:createStructurGroup(200, 120)},
-                {460, 460, 150, 120, self:createStructurGroup(150, 120)},
-                {610, 380, 200, 100, self:createStructurGroup(200, 100)},
-                {670, 540, 400, 100, self:createStructurGroup(400, 100)},
-                {870, 200, 200, 340, self:createStructurGroup(200, 340)},
+				{10, 10, 255, 410, self:createStructurGroup(255, 410)},
+				{190, 550, 170, 90, self:createStructurGroup(170, 90)},
+				{265, 320, 350, 160, self:createStructurGroup(350, 160)},
+				{615, 390, 235, 90, self:createStructurGroup(235, 90)},
+				{420, 480, 195, 115, self:createStructurGroup(195, 115)},
+				{240, 420, 25, 60, self:createStructurGroup(25, 60)},
+				{670, 535, 400, 105, self:createStructurGroup(400, 105)},
+				{925, 315, 145, 220, self:createStructurGroup(145, 220)},
+				{670, 210, 300, 105, self:createStructurGroup(300, 105)},
+				{970, 235, 100, 80, self:createStructurGroup(100, 80)},
+				{775, 80, 75, 130, self:createStructurGroup(75, 130)},
+				{340, 70, 85, 205, self:createStructurGroup(85, 205)},
+				{425, 160, 245, 90, self:createStructurGroup(245, 90)},
+				{670, 160, 75, 50, self:createStructurGroup(75, 50)},
+				{310, 70, 30, 75, self:createStructurGroup(30, 75)},
+				{485, 10, 220, 105, self:createStructurGroup(220, 105)},
+				{905, 10, 90, 105, self:createStructurGroup(90, 105)},
 			},
 
         --Leveldesign 2
 		[2] = {
-				{125, 10, 150, 500, self:createStructurGroup(150, 500)},
-				{275, 10, 400, 100, self:createStructurGroup(400, 100)},
-				{275, 360, 475, 150, self:createStructurGroup(475, 150)},
-				{275, 510, 100, 100, self:createStructurGroup(100, 100)},
-				{115, 560, 100, 80, self:createStructurGroup(100, 80)},
-				{450, 550, 300, 90, self:createStructurGroup(300, 90)},
-				{800, 300, 100, 340, self:createStructurGroup(100, 340)},
-				{600, 200, 400, 100, self:createStructurGroup(400, 100)},
-				{410, 200, 170, 100, self:createStructurGroup(170, 100)},
-				{275, 110, 80, 80, self:createStructurGroup(80, 80)},
-				{710, 30, 290, 170, self:createStructurGroup(290, 170)},
-
-				-- may one more..
+				{60, 275, 95, 75, self:createStructurGroup(95, 75)},
+				{155, 10, 120, 355, self:createStructurGroup(120, 355)},
+				{155, 365, 190, 160, self:createStructurGroup(190, 160)},
+				{10, 410, 90, 50, self:createStructurGroup(90, 50)},
+				{120, 575, 120, 65, self:createStructurGroup(120, 65)},
+				{345, 365, 445, 95, self:createStructurGroup(445, 95)},
+				{290, 525, 55, 80, self:createStructurGroup(55, 80)},
+				{390, 460, 115, 40, self:createStructurGroup(115, 40)},
+				{540, 315, 250, 50, self:createStructurGroup(250, 50)},
+				{715, 460, 75, 50, self:createStructurGroup(75, 50)},
+				{275, 10, 180, 100, self:createStructurGroup(180, 100)},
+				{405, 110, 50, 95, self:createStructurGroup(50, 95)},
+				{455, 10, 265, 85, self:createStructurGroup(265, 85)},
+				{600, 95, 75, 60, self:createStructurGroup(75, 60)},
+				{360, 250, 130, 80, self:createStructurGroup(130, 80)},
+				{415, 560, 380, 80, self:createStructurGroup(380, 80)},
+				{540, 525, 90, 35, self:createStructurGroup(90, 35)},
+				{520, 210, 130, 60, self:createStructurGroup(130, 60)},
+				{520, 150, 45, 60, self:createStructurGroup(45, 60)},
+				{675, 210, 335, 60, self:createStructurGroup(335, 60)},
+				{800, 50, 80, 160, self:createStructurGroup(80, 160)},
+				{950, 270, 85, 115, self:createStructurGroup(85, 115)},
+				{855, 330, 95, 55, self:createStructurGroup(95, 55)},
+				{855, 385, 115, 85, self:createStructurGroup(115, 85)},
+				{855, 470, 85, 170, self:createStructurGroup(85, 170)},
+				{950, 10, 40, 65, self:createStructurGroup(40, 65)},
+				{1030, 105, 40, 70, self:createStructurGroup(40, 70)},
+				{1020, 440, 50, 90, self:createStructurGroup(50, 90)},
 			},
 
         --Leveldesign 3
@@ -145,7 +170,7 @@ function CircuitBreaker:createGameplay()
 
 	-- Set D-Sub9 end pos
 	self.m_LevelEndPosX = self.WIDTH - 56 								--56 is the with of the d-sub 9 connector
-	self.m_LevelEndPosY = {50, 530, 530}
+	self.m_LevelEndPosY = {100, 545, 530}
 
 	-- Set line pos
 	self.m_LinePosX = 56 - 5
