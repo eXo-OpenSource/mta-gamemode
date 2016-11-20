@@ -284,7 +284,6 @@ end
 function HUDUI:drawExo()
 	sx_g = screenWidth
 	local sx = screenWidth
-	sx_g = 1920
 	--if sx_g > 1400 then sx_g = 1400 end
 	
 	local width = math.floor(sx_g*0.22)*self.m_Scale
