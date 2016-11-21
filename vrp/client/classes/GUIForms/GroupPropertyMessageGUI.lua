@@ -14,6 +14,9 @@ function GroupPropertyMessageGUI:constructor( superClass )
 	GUIForm.constructor(self, (screenWidth*0.5 - width/2) /ASPECT_RATIO_MULTIPLIER , screenHeight*0, width, height)
 	self.m_Window = GUIWindow:new(0,0,width,height,_"Eingangsnachricht",true,true,self)
 	self.m_Edit = GUIEdit:new(width*0.1, height*0.25, width*0.8, height*0.4, self.m_Window )
+	if superClass.m_Message then 
+		self.m_Edit:setCaption(superClass.m_Message or "")
+	end
 	self.m_AcceptButton = GUIButton:new(width*0.3, height*0.7, width*0.4, height*0.25, "Weiter", self.m_Window)
 	self.m_AcceptButton.onLeftClick = bind(GroupPropertyMessageGUI.AcceptButton_message, self)
 	self.m_Window:setCloseOnClose(true)

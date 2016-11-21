@@ -197,6 +197,7 @@ function GroupProperty:setOutside( player )
 		player:setCameraTarget(player)
 		fadeCamera(player, true)
 		setElementFrozen( player, false)
+		player:triggerEvent("forceGroupPropertyClose")
 	end
 end
 
