@@ -396,6 +396,7 @@
 	<script src="client/classes/GUI/MessageBoxes/ShortMessage.lua" type="client"/>
 
 	<script src="client/classes/GUIElements/VRPFont.lua" type="client"/>
+	<script src="client/classes/GUIElements/RageFont.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPButton.lua" type="client"/>
 	<script src="client/classes/GUIElements/VRPItem.lua" type="client"/>
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
@@ -516,7 +517,8 @@
 	<script src="client/classes/GUIForms/GroupPropertyBuy.lua" type="client"/>
 	<script src="client/classes/GUIForms/HTTPDownloadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/GroupPropertyMessageGUI.lua" type="client"/>
+	
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -950,9 +952,10 @@
 	<vrpfile src="files/images/HUD/exo/wanted.png"/>
 
 
-		<!-- group -->
+	<!-- group -->
 	<vrpfile src="files/images/Other/Enter.png"/>
 	<vrpfile src="files/images/Other/Close.png"/>
+	<vrpfile src="files/images/Other/KeyIcon.png"/>
 
 	<!-- Gangwar -->
 	<vrpfile src="files/images/Gangwar/tile.png"/>
@@ -1276,7 +1279,7 @@
 	<vrpfile src="files/fonts/JosefinSans-Regular.ttf"/>
 	<vrpfile src="files/fonts/digital-7.ttf"/>
 	<vrpfile src="files/fonts/bit_font.ttf"/>
-
+	<vrpfile src="files/fonts/rage.ttf"/>
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Roadsweeper.map"/>

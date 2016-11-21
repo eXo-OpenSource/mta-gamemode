@@ -65,6 +65,7 @@ function GroupPropertyBuy:destructor()
 	setTimer(setElementFrozen, 3000,1,localPlayer,false)
 end
 
+
 function GroupPropertyBuy:updateList( _table )
 	self.m_ImmoTable = _table
 	if _table then 

@@ -1,12 +1,12 @@
 GroupPropertyManager = inherit(Singleton)
-GroupPropertyManager.Map = {}
-GroupPropertyManager.ChangeMap = {}
-addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale","KeyChangeAction"}
+addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale","KeyChangeAction","requestRefresh","switchGroupDoorState","requestImmoPanel","updatePropertyText"}
 function GroupPropertyManager:constructor( )
+	self.Map = {}
+	self.ChangeMap = {}
 	outputServerLog("Loading group-propertys...")
 	local result = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
 	for k, row in ipairs(result) do
-		GroupPropertyManager.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open)
+		self.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open, row.Message)
 	end
 
 	addEventHandler("GroupPropertyClientInput",root,function()
@@ -18,22 +18,30 @@ function GroupPropertyManager:constructor( )
 	addEventHandler("GroupPropertyBuy", root, bind( GroupPropertyManager.BuyProperty, self))
 	addEventHandler("GroupPropertySell", root, bind( GroupPropertyManager.SellProperty, self))
 	addEventHandler("RequestImmoForSale", root, bind( GroupPropertyManager.OnRequestImmo, self))
+	addEventHandler("requestImmoPanel", root, bind( GroupPropertyManager.OnRequestImmoPanel, self))
+	addEventHandler("switchGroupDoorState", root, bind( GroupPropertyManager.OnDrooStateSwitch, self))
 	addEventHandler("KeyChangeAction", root, bind( GroupPropertyManager.OnKeyChange, self))
+	addEventHandler("requestRefresh", root, bind( GroupPropertyManager.OnRefreshRequest, self))
+	addEventHandler("updatePropertyText",root,bind(GroupPropertyManager.OnMessageTextChange,self))
 end
 
-function GroupPropertyManager:destructor()
-	local propCount = 0
-	for id, owner in pairs( GroupPropertyManager.ChangeMap ) do
-		if not owner then
-			owner = 0
+function GroupPropertyManager:OnMessageTextChange( text ) 
+	if text then 
+		if client then 
+			if client.m_LastPropertyPickup then 
+				client.m_LastPropertyPickup.m_Message = text 
+				client:sendInfo("Die Eingangsnachricht wurde aktualisiert!")
+			end
 		end
-		propCount = propCount + 1
-		outputChatBox(id..","..owner.m_Id)
-		sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), owner.m_Id, id)
 	end
-	outputDebugString("[GroupProperties] Saved properties #"..propCount.."!")
-	for id, obj in pairs( self.Map ) do 
-		obj:delete()
+end
+
+function GroupPropertyManager:OnRequestImmoPanel( id ) 
+	if client then 
+		if GroupPropertyManager:getSingleton().Map[id] then
+			GroupPropertyManager:getSingleton().Map[id]:Event_requestImmoPanel( client )
+			client.m_LastPropertyPickup = GroupPropertyManager:getSingleton().Map[id]
+		end
 	end
 end
 
@@ -43,7 +51,7 @@ function GroupPropertyManager:addNewProperty( )
 end
 
 function GroupPropertyManager:OnRequestImmo()
-	client:triggerEvent("GetImmoForSale", GroupPropertyManager.Map )
+	client:triggerEvent("GetImmoForSale", GroupPropertyManager:getSingleton().Map )
 end
 
 function GroupPropertyManager:OnKeyChange( player,action) 
@@ -54,8 +62,24 @@ function GroupPropertyManager:OnKeyChange( player,action)
 	end
 end
 
+function GroupPropertyManager:OnRefreshRequest() 
+	if client then 
+		if client.m_LastPropertyPickup then
+			client.m_LastPropertyPickup:Event_RefreshPlayer( client )
+		end
+	end
+end
+
+function GroupPropertyManager:OnDrooStateSwitch( ) 
+	if client then 
+		if client.m_LastPropertyPickup then
+			client.m_LastPropertyPickup:Event_ChangeDoor( client )
+		end
+	end
+end
+
 function GroupPropertyManager:BuyProperty( Id )
-	local property = GroupPropertyManager.Map[Id]
+	local property = GroupPropertyManager:getSingleton().Map[Id]
 	if property then
 		local price = property.m_Price
 		if price <= client:getMoney() then
@@ -64,27 +88,60 @@ function GroupPropertyManager:BuyProperty( Id )
 			if not oldOwner then
 				property.m_Owner = newOwner or false
 				property.m_OwnerID = newOwner.m_Id or false
-				GroupPropertyManager.ChangeMap[Id] = newOwner
+				GroupPropertyManager:getSingleton().ChangeMap[Id] = newOwner
+				property.m_Open = 1
 				client:takeMoney(price, "Immobilie "..property.m_Name.." gekauft!")
-				client:sendInfo("Du hast die Immobilie geklaut!")
+				client:sendInfo("Du hast die Immobilie gekauft!")
 				client:triggerEvent("ForceClose")
+				for key, player in ipairs( newOwner:getOnlinePlayers() ) do 
+					player:triggerEvent("addPickupToGroupStream",property.m_ExitMarker, property.m_Id)
+					x,y,z = getElementPosition( property.m_Pickup )
+					player:triggerEvent("createGroupBlip",x,y,z,property.m_Id)
+				end
 			end
 		end
 	end
 end
 
-function GroupPropertyManager:SellProperty( Id )
-	local property = GroupPropertyManager.Map[Id]
-	if property then
-		local price = property.m_Price
-		local sellMoney = math.floor(price * 0.66)
-		local pOwner = property.m_Owner
-		local clientGroup = client:getGroup()
-		if pOwner == clientGroup then
-			property.m_Owner = false
-			GroupPropertyManager.ChangeMap[Id] = 0
-			client:giveMoney(sellMoney, "Immobilie "..property.m_Name.." verkauft!")
+function GroupPropertyManager:SellProperty(  )
+	if client then
+		local property = client.m_LastPropertyPickup
+		if property then
+			outputChatBox("check2")
+			local price = property.m_Price
+			local sellMoney = math.floor(price * 0.66)
+			local pOwner = property.m_Owner
+			local clientGroup = client:getGroup()
+			if pOwner == clientGroup then
+				property.m_Owner = false
+				GroupPropertyManager:getSingleton().ChangeMap[property.m_Id] = 0
+				outputChatBox(property.m_Id)
+				property.m_Open = 1
+				client:giveMoney(sellMoney, "Immobilie "..property.m_Name.." verkauft!")
+				client:sendInfo("Sie haben die Immobilie verkauft!")
+				for key, player in ipairs( pOwner:getOnlinePlayers() ) do 
+					player:triggerEvent("destroyGroupBlip",pOwner.m_Id)
+					player:triggerEvent("forceGroupPropertyClose")
+				end
+			end
 		end
+	end
+end
+
+function GroupPropertyManager:destructor()
+	local propCount = 0
+	for id, owner in pairs( GroupPropertyManager:getSingleton().ChangeMap ) do
+		outputChatBox("owner destrcuto"..owner)
+		local oId = 0
+		if owner ~= 0 then
+			oId = owner.m_Id 
+		end
+		propCount = propCount + 1
+		sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), oId, id)
+	end
+	outputDebugString("[GroupProperties] Saved properties #"..propCount.."!")
+	for id, obj in pairs( self.Map ) do 
+		obj:delete()
 	end
 end
 

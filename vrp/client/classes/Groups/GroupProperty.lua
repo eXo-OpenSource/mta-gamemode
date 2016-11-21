@@ -12,15 +12,30 @@ local height = h*0.12
 local sx = 0
 local sy = h*0.5-height/2
 local fontHeight = dxGetFontHeight(1,"default-bold")
-addRemoteEvents{"showGroupEntrance", "hideGroupEntrance","createGroupBlip"}
+addRemoteEvents{"showGroupEntrance", "hideGroupEntrance","createGroupBlip","destroyGroupBlip","addPickupToGroupStream","groupEntryMessage"}
 function GroupProperty:constructor( )
 	self.m_BlipProperties = {}
 	self.m_BlipProperties2 = {}
 	self.m_MarkerProperties = {}
+	self.m_StreamCheckPickups = {}
 	addEventHandler("createGroupBlip", localPlayer, bind( GroupProperty.createBlips, self) )
+	addEventHandler("destroyGroupBlip", localPlayer, bind( GroupProperty.destroyBlips, self) )
 	addEventHandler("showGroupEntrance", localPlayer, bind( GroupProperty.showWindow, self) )
 	addEventHandler("hideGroupEntrance", localPlayer, bind( GroupProperty.hideWindow, self) )
+	addEventHandler("addPickupToGroupStream", localPlayer, bind( GroupProperty.addPickupToStream, self) )
+	addEventHandler("groupEntryMessage",localPlayer,bind(GroupProperty.showEntryMessage,self))
 	self.m_Render = bind( GroupProperty.render, self)
+end
+
+function GroupProperty:addPickupToStream( pickup, id ) 
+	self.m_StreamCheckPickups[pickup] = id
+	addEventHandler("onClientElementStreamIn",pickup,bind(GroupProperty.requestImmoPanel,self))
+end
+
+function GroupProperty:requestImmoPanel( ) 
+	if self.m_StreamCheckPickups[source] then
+		triggerServerEvent("requestImmoPanel",localPlayer,self.m_StreamCheckPickups[source])
+	end
 end
 
 function GroupProperty:showWindow( tInfo, tPickup, tName )
@@ -88,9 +103,27 @@ function GroupProperty:isMouseOver( startX, startY, wi, he)
 	return false
 end
 
-function GroupProperty:createBlips( x, y, z) 
-	self.m_BlipProperties[#self.m_BlipProperties+1] =  Blip:new("Marker.png",x,y, 500, tocolor(0,200,200))
-	self.m_BlipProperties[#self.m_BlipProperties]:setZ(z)
-	self.m_BlipProperties2[#self.m_BlipProperties2+1] = createBlip(x,y,z,0,2,0,200,200,255,0,500)
-	self.m_MarkerProperties[#self.m_MarkerProperties+1] = createMarker(x,y,z,"checkpoint",1,0,200,200,200)
+function GroupProperty:createBlips( x, y, z, id) 
+	self.m_BlipProperties[id] =  Blip:new("Marker.png",x,y, 500, tocolor(0,200,200))
+	self.m_BlipProperties[id]:setZ(z)
+	self.m_BlipProperties2[id] = createBlip(x,y,z,0,2,0,200,200,255,0,500)
+	self.m_MarkerProperties[id] = createMarker(x,y,z,"checkpoint",1,0,200,200,200)
+end
+
+function GroupProperty:destroyBlips( id ) 
+	if self.m_BlipProperties[id] then 
+		destroyElement(self.m_BlipProperties[id])
+	end
+	if self.m_MarkerProperties[id] then 
+		destroyElement(self.m_MarkerProperties[id])
+	end
+end
+
+function GroupProperty:showEntryMessage( text ) 
+	if not self.m_MessageDisplayed then
+		self.m_Message = GUILabel:new( 0,0,w*0.9,h*0.9, text, nil):setAlignX("right"):setAlignY("bottom"):setFont(RageFont(h*0.1))
+		Animation.FadeAlpha:constructor(self.m_Message, 1000, 0, 255)
+		setTimer(bind( GroupPropertyGUI.destroyMessage,self),2500,1)
+		self.m_MessageDisplayed = true
+	end
 end

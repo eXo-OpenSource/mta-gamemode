@@ -200,8 +200,9 @@ function Player:loadCharacterInfo()
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
 	local x,y,z
 	for k,v in ipairs( props ) do 
+		self:triggerEvent("addPickupToGroupStream",v.m_ExitMarker, v.m_Id)
 		x,y,z = getElementPosition( v.m_Pickup )
-		self:triggerEvent("createGroupBlip",x,y,z)
+		self:triggerEvent("createGroupBlip",x,y,z,v.m_Id)
 	end
 	--if self.m_Inventory then
 	--	self.m_Inventory:setInteractingPlayer(self)
