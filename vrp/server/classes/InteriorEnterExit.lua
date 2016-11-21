@@ -23,58 +23,81 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
   addEventHandler("onMarkerHit", self.m_EnterMarker,
     function(hitElement, matchingDimension)
       if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
-        fadeCamera(hitElement,false,1,0,0,0)
-        setElementFrozen( hitElement, true)
-		setTimer(
-			function()
-				hitElement:setRotation(0, 0, enterRotation)
-				hitElement:setPosition(interiorPosition + hitElement.matrix.forward*2)
-				hitElement:setInterior(interiorId)
-				hitElement:setDimension(dimension)
-				hitElement:setCameraTarget(hitElement)
+        if not hitElement.interiorBlock then
+			fadeCamera(hitElement,false,1,0,0,0)
+			setElementFrozen( hitElement, true)
+			setTimer(
+				function()
+					hitElement:setRotation(0, 0, enterRotation)
+					hitElement:setPosition(interiorPosition)
+					hitElement:setInterior(interiorId)
+					hitElement:setDimension(dimension)
+					hitElement:setCameraTarget(hitElement)
 
-				fadeCamera( hitElement, true,1)
-				hitElement:setFrozen(false)
-			end, 1500, 1
-		)
-		setTimer(
-			function()
+					fadeCamera( hitElement, true,1)
+					hitElement:setFrozen(false)
+				end, 1500, 1
+			)
+			setTimer(
+				function()
 
-			end, 2500, 1
-		)
-        triggerEvent("onElementInteriorChange", hitElement, interiorId)
-        triggerEvent("onElementDimensionChange", hitElement, dimension)
+				end, 2500, 1
+			)
+			triggerEvent("onElementInteriorChange", hitElement, interiorId)
+			triggerEvent("onElementDimensionChange", hitElement, dimension)
+			hitElement.interiorBlock = true
+		end
       end
     end
+  )
+
+   addEventHandler("onMarkerLeave", self.m_EnterMarker,
+		function(hitElement, matchingDimension)
+		      if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
+			  	hitElement.interiorBlock = false
+			  end
+ 		end
   )
 
   addEventHandler("onMarkerHit", self.m_ExitMarker,
     function(hitElement, matchingDimension)
       if getElementType(hitElement) == "player" and matchingDimension then
-        fadeCamera(hitElement,false,1,0,0,0)
-        setElementFrozen( hitElement, true)
-		setTimer(
-			function()
-				hitElement:setInterior(0, entryPosition)
-				hitElement:setRotation(0, 0, exitRotation)
-				hitElement:setPosition(entryPosition + hitElement.matrix.forward*2)
-				hitElement:setDimension(0)
-				hitElement:setCameraTarget(hitElement)
+       if not hitElement.interiorBlock then
 
-				fadeCamera(hitElement, true)
-				hitElement:setFrozen(false)
-			end, 1500, 1
-		)
-		setTimer(
-			function()
+			fadeCamera(hitElement,false,1,0,0,0)
+			setElementFrozen( hitElement, true)
+			setTimer(
+				function()
+					hitElement:setInterior(0, entryPosition)
+					hitElement:setRotation(0, 0, exitRotation)
+					hitElement:setPosition(entryPosition)
+					hitElement:setDimension(0)
+					hitElement:setCameraTarget(hitElement)
 
-			end, 2500, 1
-		)
+					fadeCamera(hitElement, true)
+					hitElement:setFrozen(false)
+				end, 1500, 1
+			)
+			setTimer(
+				function()
 
-        triggerEvent("onElementInteriorChange", hitElement, 0)
-        triggerEvent("onElementDimensionChange", hitElement, 0)
+				end, 2500, 1
+			)
+
+			triggerEvent("onElementInteriorChange", hitElement, 0)
+			triggerEvent("onElementDimensionChange", hitElement, 0)
+			hitElement.interiorBlock = true
+		end
       end
     end
+  )
+
+     addEventHandler("onMarkerLeave", self.m_ExitMarker,
+		function(hitElement, matchingDimension)
+		      if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
+			  	hitElement.interiorBlock = false
+			  end
+ 		end
   )
 end
 
