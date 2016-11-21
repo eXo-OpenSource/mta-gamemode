@@ -261,8 +261,8 @@ function HUDRadar:draw()
 
   -- Draw regino name (above health bar)
   if core:get("HUD", "drawZone", true) and HUDUI:getSingleton().m_UIMode == UIStyle.vRoleplay then
-	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height-12, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
-	dxDrawText(getZoneName(localPlayer:getPosition(), false), self.m_PosX+3, self.m_PosY+self.m_Height-12, self.m_Width, self.m_PosY+self.m_Height+5, Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
+	dxDrawRectangle(self.m_PosX+3, self.m_PosY+self.m_Height-14, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
+	dxDrawText(getZoneName(localPlayer:getPosition(), false), self.m_PosX+3, self.m_PosY+self.m_Height-14, self.m_Width, self.m_PosY+self.m_Height+5, Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
   end
 
   -- Draw the player blip
