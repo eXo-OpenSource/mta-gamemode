@@ -148,7 +148,6 @@
 	<script src="server/classes/Gameplay/Jail.lua" type="server"/>
 	<script src="server/classes/Gameplay/Slotmachine.lua" type="server"/>
 	<script src="server/classes/Gameplay/Townhall.lua" type="server"/>
-	<script src="server/classes/Gameplay/SpeedCamera.lua" type="server"/>
 	<script src="server/classes/Gameplay/ShootingRanch.lua" type="server"/>
 	<script src="server/classes/Gameplay/ShootingRanchTraining.lua" type="server"/>
 	<script src="server/classes/Gameplay/Fishing.lua" type="server"/>
@@ -518,7 +517,7 @@
 	<script src="client/classes/GUIForms/HTTPDownloadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupPropertyMessageGUI.lua" type="client"/>
-	
+
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/WebPanel.lua" type="client"/>
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
