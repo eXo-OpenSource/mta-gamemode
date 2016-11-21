@@ -1,5 +1,5 @@
 GroupPropertyManager = inherit(Singleton)
-addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale","KeyChangeAction","requestRefresh","switchGroupDoorState","requestImmoPanel","updatePropertyText"}
+addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale","KeyChangeAction","requestRefresh","switchGroupDoorState","requestImmoPanel","updatePropertyText","requestImmoPanelClose"}
 function GroupPropertyManager:constructor( )
 	self.Map = {}
 	self.ChangeMap = {}
@@ -19,6 +19,7 @@ function GroupPropertyManager:constructor( )
 	addEventHandler("GroupPropertySell", root, bind( GroupPropertyManager.SellProperty, self))
 	addEventHandler("RequestImmoForSale", root, bind( GroupPropertyManager.OnRequestImmo, self))
 	addEventHandler("requestImmoPanel", root, bind( GroupPropertyManager.OnRequestImmoPanel, self))
+	addEventHandler("requestImmoPanelClose", root, bind( GroupPropertyManager.OnRequestImmoPanelClose, self))
 	addEventHandler("switchGroupDoorState", root, bind( GroupPropertyManager.OnDrooStateSwitch, self))
 	addEventHandler("KeyChangeAction", root, bind( GroupPropertyManager.OnKeyChange, self))
 	addEventHandler("requestRefresh", root, bind( GroupPropertyManager.OnRefreshRequest, self))
@@ -41,6 +42,14 @@ function GroupPropertyManager:OnRequestImmoPanel( id )
 		if GroupPropertyManager:getSingleton().Map[id] then
 			GroupPropertyManager:getSingleton().Map[id]:Event_requestImmoPanel( client )
 			client.m_LastPropertyPickup = GroupPropertyManager:getSingleton().Map[id]
+		end
+	end
+end
+
+function GroupPropertyManager:OnRequestImmoPanelClose( id ) 
+	if client then 
+		if GroupPropertyManager:getSingleton().Map[id] then
+			client:triggerEvent("forceGroupPropertyClose")
 		end
 	end
 end

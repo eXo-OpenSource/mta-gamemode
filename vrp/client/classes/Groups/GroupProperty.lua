@@ -30,11 +30,18 @@ end
 function GroupProperty:addPickupToStream( pickup, id ) 
 	self.m_StreamCheckPickups[pickup] = id
 	addEventHandler("onClientElementStreamIn",pickup,bind(GroupProperty.requestImmoPanel,self))
+	addEventHandler("onClientElementStreamOut",pickup,bind(GroupProperty.requestImmoPanelClose,self))
 end
 
 function GroupProperty:requestImmoPanel( ) 
 	if self.m_StreamCheckPickups[source] then
 		triggerServerEvent("requestImmoPanel",localPlayer,self.m_StreamCheckPickups[source])
+	end
+end
+
+function GroupProperty:requestImmoPanelClose( ) 
+	if self.m_StreamCheckPickups[source] then
+		triggerServerEvent("requestImmoPanelClose",localPlayer,self.m_StreamCheckPickups[source])
 	end
 end
 
