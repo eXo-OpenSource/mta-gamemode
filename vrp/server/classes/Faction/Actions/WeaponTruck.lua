@@ -134,7 +134,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 						if self.m_Type == "evil" then
 							faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
 						elseif self.m_Type == "state" then
-							FactionEvil:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
+							FactonState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
 						end
 					elseif hitElement:getPlayerAttachedObject() then
 						boxes = getAttachedElements(hitElement)
