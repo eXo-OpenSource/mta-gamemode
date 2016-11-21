@@ -40,9 +40,7 @@ function GroupProperty:requestImmoPanel( )
 end
 
 function GroupProperty:requestImmoPanelClose( ) 
-	if self.m_StreamCheckPickups[source] then
-		triggerServerEvent("requestImmoPanelClose",localPlayer,self.m_StreamCheckPickups[source])
-	end
+	GroupPropertyGUI:forceClose() 
 end
 
 function GroupProperty:showWindow( tInfo, tPickup, tName )

@@ -183,3 +183,11 @@ addEventHandler("forceGroupPropertyClose",localPlayer,function()
 		cObject = nil
 	end
 end)
+
+function GroupPropertyGUI:forceClose() 
+	if cObject then 
+		unbindKey("f6","up",cObject.m_toggleFunc)
+		cObject:delete()
+		cObject = nil
+	end
+end
