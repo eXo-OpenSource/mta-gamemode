@@ -41,16 +41,16 @@ function Blip:destructor()
 	if self.m_ID and Blip.Blips[self.m_ID] then
 
 		self:dettach()
-		Blip.Blips[self.m_ID] = false
+		Blip.Blips[self.m_ID] = nil
 
 		if self.DefaultBlips[self.m_ID] then
-		  destroyElement( self.DefaultBlips[self.m_ID] )
+		  destroyElement(self.DefaultBlips[self.m_ID] )
 		end
 	else
 		local index = table.find(Blip.Blips, self)
 		if index then
 			  self:dettach()
-			  Blip.Blips[index] = false
+			  Blip.Blips[index] = nil
 			  if self.DefaultBlips[index] then
 			    destroyElement( self.DefaultBlips[index] )
 			  end

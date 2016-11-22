@@ -32,9 +32,9 @@ function FactionManager:stateFactionNeedHelp(player)
 	self.m_NeedHelpBlip[player]:attachTo(player)
 	self.m_NeedHelpBlip[player]:setStreamDistance(2000)
 
-	setTimer(function(blip)
-		if blip then delete(blip) end
-	end, 20000, 1, self.m_NeedHelpBlip[player])
+	setTimer(function(player)
+		if self.m_NeedHelpBlip[player] then delete(self.m_NeedHelpBlip[player]) end
+	end, 20000, 1, player)
 end
 
 function FactionManager:getFromId(id)
