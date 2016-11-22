@@ -8,7 +8,7 @@ function DrivingSchool:constructor()
 
     self.m_CurrentLessions = {}
 
-    InteriorEnterExit:new(Vector3(1364.90, -1666.51, 13.55), Vector3(-2027.02, -105.10, 1035.17), 90, 270, 3, 0, false)
+    InteriorEnterExit:new(Vector3(1364.14, -1669.10, 13.55), Vector3(-2026.93, -103.89, 1035.17), 90, 180, 3, 0, false)
 
     VehicleBarrier:new(Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 88)).onBarrierHit = bind(self.onBarrierHit, self)
     VehicleBarrier:new(Vector3(1345.19, -1722.80, 13.39), Vector3(0, 90, 0)).onBarrierHit = bind(self.onBarrierHit, self)
