@@ -29,6 +29,7 @@ function GroupPropertyGUI:constructor( tObj )
 	self.m_SellButton.onLeftClick = bind(GroupPropertyGUI.OnSellClick,self)
 	
 	local x,y,z = getElementPosition( tObj.m_Pickup)
+	GUIRectangle:new(self.m_Width*0.59, self.m_Height*0.29, self.m_Width*0.37, self.m_Height*0.36, tocolor(179,89,0,255),self.m_TabManage)
 	self.m_Map = GUIMiniMap:new(self.m_Width*0.6, self.m_Height*0.3, self.m_Width*0.35, self.m_Height*0.34, "Radar_Monochrome", self.m_TabManage)
 	self.m_Map:setPosition(x, y)
 	self.m_Map:addBlip("Waypoint.png", x, y)

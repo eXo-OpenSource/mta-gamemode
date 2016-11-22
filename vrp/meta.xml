@@ -183,6 +183,7 @@
 	<!--<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>-->
 	<script src="server/classes/Groups/GroupProperty.lua" type="server"/>
 	<script src="server/classes/Groups/GroupPropertyManager.lua" type="server" />
+
 	<!-- Business -->
 	<script src="server/classes/Business/Company.lua" type="server"/>
 	<script src="server/classes/Business/Companies/DrivingSchool.lua" type="server"/>
