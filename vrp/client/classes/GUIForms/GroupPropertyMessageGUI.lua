@@ -11,7 +11,7 @@ inherit(Object, GroupPropertyMessageGUI)
 
 function GroupPropertyMessageGUI:constructor( superClass )
 	local width, height = ( screenWidth*0.4)/ASPECT_RATIO_MULTIPLIER, (screenHeight*0.2)/ASPECT_RATIO_MULTIPLIER
-	GUIForm.constructor(self, (screenWidth*0.5 - width/2) /ASPECT_RATIO_MULTIPLIER , screenHeight*0, width, height)
+	GUIForm.constructor(self, (screenWidth*0.5 - width/2) /ASPECT_RATIO_MULTIPLIER , screenHeight*0, width, height,true)
 	self.m_Window = GUIWindow:new(0,0,width,height,_"Eingangsnachricht",true,true,self)
 	self.m_Edit = GUIEdit:new(width*0.1, height*0.25, width*0.8, height*0.4, self.m_Window )
 	if superClass.m_Message then 

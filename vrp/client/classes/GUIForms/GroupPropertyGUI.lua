@@ -11,7 +11,7 @@ local cObject
 addRemoteEvents{"setPropGUIActive","sendGroupKeyList","updateGroupDoorState","forceGroupPropertyClose"}
 function GroupPropertyGUI:constructor( tObj ) 
 	self.m_PropertyTable = tObj
-	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.5/2, screenWidth*0.4, screenHeight*0.5)
+	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.5/2, screenWidth*0.4, screenHeight*0.5, true)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Immobilienpanel", true, false, self)
 	self.m_TabPanel = GUITabPanel:new(0, self.m_Height*0.1, self.m_Width, self.m_Height*0.8, self.m_Window)
 	local tabManage = self.m_TabPanel:addTab(_("Verwaltung"))

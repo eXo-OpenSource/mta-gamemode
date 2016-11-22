@@ -113,6 +113,7 @@ function Core:ready()
 	Shaders.load()
 
 	GroupProperty:new()
+	GUIWindowsFocus:new()
 
 end
 

@@ -17,6 +17,7 @@ function GUIMovable:startMoving()
 	local element = self.m_CacheArea or self
 
 	self.m_CursorOffsetX, self.m_CursorOffsetY = cursorX - element.m_AbsoluteX, cursorY - element.m_AbsoluteY
+	removeEventHandler("onClientCursorMove", root, self.m_CursorMoveHandler)
 	addEventHandler("onClientCursorMove", root, self.m_CursorMoveHandler)
 end
 

@@ -10,7 +10,7 @@ inherit(GUIMovable, GUIWindow)
 
 function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, hasCloseButton, parent)
 	checkArgs("GUIWindow:constructor", "number", "number", "number", "number", "string")
-
+	GUIWindowsFocus:getSingleton():setCurrentFocus( self )
 	-- Call base class ctors
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 
@@ -22,8 +22,15 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	if self.m_HasTitlebar then
 		--self.m_TitlebarDummy = GUIElement:new(0, 0, self.m_Width, 30, self)
 		self.m_TitlebarDummy = GUIRectangle:new(0, 0, self.m_Width, 30, Color.Grey, self)
-		self.m_TitlebarDummy.onLeftClickDown = function() self:startMoving() end
-		self.m_TitlebarDummy.onLeftClick = function() self:stopMoving() end
+		self.m_TitlebarDummy.onLeftClickDown = function() 
+			if GUIWindowsFocus:getSingleton():getCurrentFocus() == self or  GUIWindowsFocus:getSingleton():getCurrentFocus() == nil then
+				GUIWindowsFocus:getSingleton():setCurrentFocus( self )
+				self:startMoving() 
+			end
+		end
+		self.m_TitlebarDummy.onLeftClick = function() 
+			self:stopMoving() 
+		end
 
 		self.m_TitleLabel = GUILabel:new(0, 0, self.m_Width, 30, title, self)
 			:setAlignX("center")
@@ -87,6 +94,7 @@ end
 function GUIWindow:close()
 	-- Jusonex: Destroy or close, I dunno what's better
 	delete(self.m_Parent or self)
+	GUIWindowsFocus:getSingleton():On_WindowOff( self )
 end
 
 function GUIWindow:setCloseOnClose(close) -- Todo: Find a better name
