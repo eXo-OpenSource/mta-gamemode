@@ -17,7 +17,7 @@ end
 function ItemFuelcan:use(player)
 	if player.vehicle then
 		if player.vehicle:getFuel() and player.vehicle:getFuel() <= 100-50 then
-			player.vehicle:setFuel(vehicle:getFuel() + 50)
+			player.vehicle:setFuel(player.vehicle:getFuel() + 50)
 			player:sendSuccess(_("Dein Fahrzeug wurde betankt!", player))
 			player:getInventory():removeItem(self:getName(), 1)
 		else
