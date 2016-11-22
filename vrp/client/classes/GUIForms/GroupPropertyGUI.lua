@@ -18,19 +18,23 @@ function GroupPropertyGUI:constructor( tObj )
 	self.m_TabManage = tabManage
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.05, self.m_Width*0.99, self.m_Height*0.14, _"Verwaltung", tabManage):setFont(VRPFont(self.m_Height*0.14))
 	GUIRectangle:new(self.m_Width*0.01, self.m_Height*0.19, self.m_Width*0.98, self.m_Height*0.01, tocolor(200,200,200,255),tabManage)
-	self.m_LockButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.3, self.m_Width*0.4, self.m_Height*0.08, _"Auf-/Abschließen", tabManage):setBackgroundColor(Color.Orange)
+	self.m_LockButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.3, self.m_Width*0.35, self.m_Height*0.08, _"Auf-/Abschließen", tabManage):setBackgroundColor(Color.Orange)
 	self.m_KeyImage = GUIImage:new(self.m_Width*0.09-(self.m_Height*0.1), self.m_Height*0.3, self.m_Height*0.1, self.m_Height*0.1,"files/images/Other/KeyIcon.png", self.m_TabManage)
 	self.m_LockButton.onLeftClick = function() triggerServerEvent("switchGroupDoorState",localPlayer) end
 	self:setGroupDoorState( tObj.m_Open ) 
-	self.m_MessageButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.43, self.m_Width*0.4, self.m_Height*0.08, _"Eingangsnachricht", tabManage):setBackgroundColor(Color.Orange)
+	self.m_DepotButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.08, _"Depot", tabManage):setBackgroundColor(Color.Orange)
+	self.m_DepotBtnFunc = function() self:openDepot() end
+	self.m_DepotButton.onLeftClick = self.m_DepotBtnFunc
+	
+	self.m_MessageButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.56, self.m_Width*0.35, self.m_Height*0.08, _"Eingangsnachricht", tabManage):setBackgroundColor(Color.Orange)
 	self.m_MessageFunc = function() self:newMessageWindow() end
 	self.m_MessageButton.onLeftClick = self.m_MessageFunc
-	self.m_SellButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.56, self.m_Width*0.4, self.m_Height*0.08, _"Verkaufen", tabManage):setBackgroundColor(Color.Red)
+	self.m_SellButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.69, self.m_Width*0.35, self.m_Height*0.08, _"Verkaufen", tabManage):setBackgroundColor(Color.Red)
 	self.m_SellButton.onLeftClick = bind(GroupPropertyGUI.OnSellClick,self)
 	
 	local x,y,z = getElementPosition( tObj.m_Pickup)
-	GUIRectangle:new(self.m_Width*0.59, self.m_Height*0.29, self.m_Width*0.37, self.m_Height*0.36, tocolor(179,89,0,255),self.m_TabManage)
-	self.m_Map = GUIMiniMap:new(self.m_Width*0.6, self.m_Height*0.3, self.m_Width*0.35, self.m_Height*0.34, "Radar_Monochrome", self.m_TabManage)
+	GUIRectangle:new(self.m_Width*0.59, self.m_Height*0.29, self.m_Width*0.37, self.m_Height*0.49, tocolor(179,89,0,255),self.m_TabManage)
+	self.m_Map = GUIMiniMap:new(self.m_Width*0.6, self.m_Height*0.3, self.m_Width*0.35, self.m_Height*0.47, "Radar_Monochrome", self.m_TabManage)
 	self.m_Map:setPosition(x, y)
 	self.m_Map:addBlip("Waypoint.png", x, y)
 	
@@ -62,6 +66,9 @@ function GroupPropertyGUI:constructor( tObj )
 	GUILabel:new(self.m_Width*0.1, self.m_Height*0.48, self.m_Width*0.65, self.m_Height*0.10, "Lage: "..getZoneName(tObj.m_CamMatrix[1],tObj.m_CamMatrix[2],tObj.m_CamMatrix[3]), tabInfo):setFont(VRPFont(self.m_Height*0.08))
 end
 
+function GroupPropertyGUI:openDepot( )
+	triggerServerEvent("requestPropertyItemDepot", localPlayer)
+end
 
 function GroupPropertyGUI:destructor()
 	self.m_Window:delete()

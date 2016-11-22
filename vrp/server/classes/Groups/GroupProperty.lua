@@ -64,7 +64,7 @@ function GroupProperty:destructor()
 			end
 		end
 	end
-	sql:queryExec("UPDATE ??_group_property SET open=?, DepotId=? WHERE Id=?", sql:getPrefix(), self.m_Open, self.m_Id, self.m_DepotId)
+	sql:queryExec("UPDATE ??_group_property SET open=?, DepotId=? WHERE Id=?", sql:getPrefix(), self.m_Open, self.m_DepotId, self.m_Id)
 end
 
 function GroupProperty:setDepotId(Id)

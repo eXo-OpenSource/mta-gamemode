@@ -1,5 +1,5 @@
 GroupPropertyManager = inherit(Singleton)
-addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale","KeyChangeAction","requestRefresh","switchGroupDoorState","requestImmoPanel","updatePropertyText","requestImmoPanelClose"}
+addRemoteEvents{"GroupPropertyClientInput", "GroupPropertyBuy", "GroupPropertySell", "RequestImmoForSale","KeyChangeAction","requestRefresh","switchGroupDoorState","requestImmoPanel","updatePropertyText","requestImmoPanelClose","requestPropertyItemDepot"}
 function GroupPropertyManager:constructor( )
 	self.Map = {}
 	self.ChangeMap = {}
@@ -40,7 +40,11 @@ function GroupPropertyManager:OnMessageTextChange( text )
 end
 
 function GroupPropertyManager:OnRequestPropertyItemDepot(id)
-	GroupPropertyManager:getSingleton().Map[id]:getDepot():showItemDepot(client)
+	if client then
+		if client.m_LastPropertyPickup then
+			client.m_LastPropertyPickup:getDepot():showItemDepot(client)
+		end
+	end
 end
 
 function GroupPropertyManager:OnRequestImmoPanel( id )
