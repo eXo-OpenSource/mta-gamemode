@@ -16,20 +16,20 @@ function GroupPropertyGUI:constructor( tObj )
 	self.m_TabPanel = GUITabPanel:new(0, self.m_Height*0.1, self.m_Width, self.m_Height*0.8, self.m_Window)
 	local tabManage = self.m_TabPanel:addTab(_("Verwaltung"))
 	self.m_TabManage = tabManage
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.05, self.m_Width*0.99, self.m_Height*0.14, _"Verwaltung", tabManage):setFont(VRPFont(self.m_Height*0.14))
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.05, self.m_Width*0.99, self.m_Height*0.14, _"Verwaltung", tabManage):setFont(VRPFont(self.m_Height*0.14)):setFont(VRPFont(self.m_Height*0.06))
 	GUIRectangle:new(self.m_Width*0.01, self.m_Height*0.19, self.m_Width*0.98, self.m_Height*0.01, tocolor(200,200,200,255),tabManage)
-	self.m_LockButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.3, self.m_Width*0.35, self.m_Height*0.08, _"Auf-/Abschließen", tabManage):setBackgroundColor(Color.Orange)
+	self.m_LockButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.3, self.m_Width*0.35, self.m_Height*0.08, _"Auf-/Abschließen", tabManage):setBackgroundColor(Color.Orange):setFont(VRPFont(self.m_Height*0.06))
 	self.m_KeyImage = GUIImage:new(self.m_Width*0.09-(self.m_Height*0.1), self.m_Height*0.3, self.m_Height*0.1, self.m_Height*0.1,"files/images/Other/KeyIcon.png", self.m_TabManage)
 	self.m_LockButton.onLeftClick = function() triggerServerEvent("switchGroupDoorState",localPlayer) end
 	self:setGroupDoorState( tObj.m_Open ) 
-	self.m_DepotButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.08, _"Depot", tabManage):setBackgroundColor(Color.Orange)
+	self.m_DepotButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.08, _"Depot", tabManage):setBackgroundColor(Color.Orange):setFont(VRPFont(self.m_Height*0.06))
 	self.m_DepotBtnFunc = function() self:openDepot() end
 	self.m_DepotButton.onLeftClick = self.m_DepotBtnFunc
 	
-	self.m_MessageButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.56, self.m_Width*0.35, self.m_Height*0.08, _"Eingangsnachricht", tabManage):setBackgroundColor(Color.Orange)
+	self.m_MessageButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.56, self.m_Width*0.35, self.m_Height*0.08, _"Eingangsnachricht", tabManage):setBackgroundColor(Color.Orange):setFont(VRPFont(self.m_Height*0.06))
 	self.m_MessageFunc = function() self:newMessageWindow() end
 	self.m_MessageButton.onLeftClick = self.m_MessageFunc
-	self.m_SellButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.69, self.m_Width*0.35, self.m_Height*0.08, _"Verkaufen", tabManage):setBackgroundColor(Color.Red)
+	self.m_SellButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.69, self.m_Width*0.35, self.m_Height*0.08, _"Verkaufen", tabManage):setBackgroundColor(Color.Red):setFont(VRPFont(self.m_Height*0.06))
 	self.m_SellButton.onLeftClick = bind(GroupPropertyGUI.OnSellClick,self)
 	
 	local x,y,z = getElementPosition( tObj.m_Pickup)
@@ -45,10 +45,10 @@ function GroupPropertyGUI:constructor( tObj )
 	GUIRectangle:new(self.m_Width*0.01, self.m_Height*0.2, self.m_Width*0.98, self.m_Height*0.01, tocolor(200,200,200,255),tabAccess)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.25, self.m_Width*0.45, self.m_Height*0.1, _"Name des Spielers:", tabAccess)
 	self.m_PlayerEdit = GUIEdit:new(self.m_Width*0.45, self.m_Height*0.25, self.m_Width*0.5, self.m_Height*0.08, tabAccess)
-	self.m_KeyAddButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.37, self.m_Width*0.3, self.m_Height*0.08, _"Vergeben", tabAccess):setBackgroundColor(Color.Green)
-	self.m_KeyRemoveButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.47, self.m_Width*0.3, self.m_Height*0.08, _"Abnehmen", tabAccess):setBackgroundColor(Color.Red)
-	self.m_KeyRemoveAllButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.57, self.m_Width*0.3, self.m_Height*0.08, _"Alle Abnehmen", tabAccess):setBackgroundColor(Color.Red)
-	self.m_KeyRefreshButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.67, self.m_Width*0.3, self.m_Height*0.08, _"Aktualisieren", tabAccess):setBackgroundColor(Color.Orange)
+	self.m_KeyAddButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.37, self.m_Width*0.3, self.m_Height*0.08, _"Vergeben", tabAccess):setBackgroundColor(Color.Green):setFont(VRPFont(self.m_Height*0.06))
+	self.m_KeyRemoveButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.47, self.m_Width*0.3, self.m_Height*0.08, _"Abnehmen", tabAccess):setBackgroundColor(Color.Red):setFont(VRPFont(self.m_Height*0.06))
+	self.m_KeyRemoveAllButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.57, self.m_Width*0.3, self.m_Height*0.08, _"Alle Abnehmen", tabAccess):setBackgroundColor(Color.Red):setFont(VRPFont(self.m_Height*0.06))
+	self.m_KeyRefreshButton = GUIButton:new(self.m_Width*0.65, self.m_Height*0.67, self.m_Width*0.3, self.m_Height*0.08, _"Aktualisieren", tabAccess):setBackgroundColor(Color.Orange):setFont(VRPFont(self.m_Height*0.06))
 	self.m_KeyAddButton.onLeftClick = function() triggerServerEvent("KeyChangeAction",localPlayer, self.m_PlayerEdit:getDrawnText(),"add") end
 	self.m_KeyRemoveButton.onLeftClick = function() triggerServerEvent("KeyChangeAction", localPlayer, self.m_PlayerEdit:getDrawnText(),"remove") end
 	self.m_KeyRemoveAllButton.onLeftClick = function() triggerServerEvent("KeyChangeAction", localPlayer, false, "all") end
