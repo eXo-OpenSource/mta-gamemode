@@ -270,6 +270,11 @@ function FactionState:getFullReasonFromShortcut(reason)
 	return reason
 end
 
+function FactionState:sendShortMessage(text, ...)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:sendShortMessage(_(text, player), "Staat", {11, 102, 8}, ...)
+	end
+end
 
 function FactionState:sendStateChatMessage(sourcePlayer, message)
 	local faction = sourcePlayer:getFaction()

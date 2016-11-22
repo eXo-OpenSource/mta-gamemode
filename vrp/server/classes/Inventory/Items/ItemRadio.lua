@@ -41,6 +41,13 @@ function ItemRadio:use(player)
 	)
 end
 
+function ItemRadio:isCollectAllowed(player, worlditem)
+	if worlditem:getOwner() == player then
+		return true
+	end
+	return false
+end
+
 function ItemRadio:onClick(player, worldItem)
 	if worldItem:getOwner() == player then
 		-- TODO: It might be better to do this clientside to avoid the relay
@@ -51,6 +58,6 @@ function ItemRadio:onClick(player, worldItem)
 	end
 end
 
-function ItemRadio:removeFromWorld(worldItem)
+function ItemRadio:removeFromWorld(player, worldItem)
 	triggerClientEvent("itemRadioRemove", worldItem:getObject())
 end

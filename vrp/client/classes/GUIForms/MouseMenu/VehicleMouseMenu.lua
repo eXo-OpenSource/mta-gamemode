@@ -84,7 +84,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 		)
 	end
 
-	if element:getModel() == 427 then
+	if element:getModel() == 427 or element:getModel() == 598 or element:getModel() == 596 then
 		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
 			self:addItem(_"Blitzer nehmen",
 					function()
