@@ -12,7 +12,7 @@ addRemoteEvents{"setPropGUIActive","sendGroupKeyList","updateGroupDoorState","fo
 function GroupPropertyGUI:constructor( tObj ) 
 	self.m_PropertyTable = tObj
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.5/2, screenWidth*0.4, screenHeight*0.5)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Immobilienpanel", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Immobilienpanel", true, false, self)
 	self.m_TabPanel = GUITabPanel:new(0, self.m_Height*0.1, self.m_Width, self.m_Height*0.8, self.m_Window)
 	local tabManage = self.m_TabPanel:addTab(_("Verwaltung"))
 	self.m_TabManage = tabManage
@@ -63,6 +63,7 @@ end
 
 
 function GroupPropertyGUI:destructor()
+	self.m_Window:delete()
 end
 
 function GroupPropertyGUI:OnMotDClick( )
@@ -130,7 +131,6 @@ end
 addEventHandler("setPropGUIActive",localPlayer,function( tObj) 
 	if not cObject then 
 		cObject = GroupPropertyGUI:new( tObj )
-		cObject.m_Window:setCloseOnClose(true)
 		cObject:setVisible(false)
 	else 
 		unbindKey("f6","up",cObject.m_toggleFunc)
@@ -184,7 +184,7 @@ addEventHandler("forceGroupPropertyClose",localPlayer,function()
 	end
 end)
 
-function GroupPropertyGUI:forceClose() 
+function GroupPropertyGUI:OnStreamOutClose() 
 	if cObject then 
 		unbindKey("f6","up",cObject.m_toggleFunc)
 		cObject:delete()

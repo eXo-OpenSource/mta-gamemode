@@ -40,7 +40,7 @@ function GroupProperty:requestImmoPanel( )
 end
 
 function GroupProperty:requestImmoPanelClose( ) 
-	GroupPropertyGUI:forceClose() 
+	GroupPropertyGUI:OnStreamOutClose() 
 end
 
 function GroupProperty:showWindow( tInfo, tPickup, tName )
