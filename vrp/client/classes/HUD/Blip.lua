@@ -11,7 +11,7 @@ Blip.Blips = {}
 Blip.DefaultBlips = {}
 Blip.AttachedBlips = {}
 
-function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
+function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, color2) --quick workaround
   self.m_ID = #Blip.Blips + 1
   self.m_RawImagePath = imagePath
   self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
@@ -21,9 +21,10 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color)
   self.m_Alpha = 255
   self.m_Size = 24
   self.m_StreamDistance = streamDistance or 100
-
   if color then
     self.m_Color = tocolor(color)
+  elseif color2 then 
+	self.m_Color = color2
   else
     self.m_Color = tocolor(255, 255, 255, 255)
   end

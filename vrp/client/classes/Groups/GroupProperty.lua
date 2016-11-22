@@ -109,7 +109,7 @@ function GroupProperty:isMouseOver( startX, startY, wi, he)
 end
 
 function GroupProperty:createBlips( x, y, z, id) 
-	self.m_BlipProperties[id] =  Blip:new("Marker.png",x,y, 500, tocolor(0,200,200))
+	self.m_BlipProperties[id] =  Blip:new("Marker.png",x,y, 500, false, tocolor(200,0,0,255))
 	self.m_BlipProperties[id]:setZ(z)
 	self.m_BlipProperties2[id] = createBlip(x,y,z,0,2,0,200,200,255,0,500)
 	self.m_MarkerProperties[id] = createMarker(x,y,z,"checkpoint",1,0,200,200,200)
