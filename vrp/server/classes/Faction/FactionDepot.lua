@@ -24,8 +24,13 @@ function Depot.initalize()
 	end)
 end
 
-function Depot.load(Id, Owner)
+function Depot.load(Id, Owner, type)
 	if Depot.Map[Id] then return Depot.Map[Id] end
+	if Id == 0 then
+		sql:queryExec("INSERT INTO ??_depot (OwnerType) VALUES (?)", sql:getPrefix(), type or "GroupProperty")
+		Id = sql:lastInsertId()
+		Owner:setDepotId(Id)
+	end
 	local row = sql:queryFetchSingle("SELECT Weapons, Items FROM ??_depot WHERE Id = ?;", sql:getPrefix(), Id)
 	local weapons = row.Weapons
 	local items = row.Items
@@ -71,8 +76,6 @@ function Depot:destructor()
   self:save()
 end
 
-
-
 function Depot:save()
 	return sql:queryExec("UPDATE ??_depot SET Weapons = ?, Items = ? WHERE Id = ?", sql:getPrefix(), toJSON(self.m_Weapons), toJSON(self.m_Items), self.m_Id)
 end
@@ -103,11 +106,6 @@ end
 
 function Depot:addMagazineD(id,amount)
 	self.m_Weapons[id]["Munition"] = self.m_Weapons[id]["Munition"] + amount
-end
-
-function Depot:showItemDepot(player)
-	player:triggerEvent("ItemDepotOpen")
-	player:triggerEvent("ItemDepotRefresh", self.m_Id, self.m_Items)
 end
 
 function Depot:showItemDepot(player)
