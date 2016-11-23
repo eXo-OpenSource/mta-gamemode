@@ -46,7 +46,9 @@ function Admin:constructor()
     addCommandHandler("warn", adminCommandBind)
     addCommandHandler("spect", adminCommandBind)
     addCommandHandler("clearchat", adminCommandBind)
-
+	addCommandHandler("mark", adminCommandBind)
+	addCommandHandler("gotomark", adminCommandBind)
+	
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
     "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn"}
@@ -172,6 +174,10 @@ end
 function Admin:command(admin, cmd, targetName, arg1, arg2)
     if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
+	elseif cmd == "mark" then 
+		self:markPosFunc(admin, false)
+	elseif cmd == "gotomark" then 
+		self:markPosFunc(admin, true)
     else
         if targetName then
             local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
@@ -207,7 +213,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
             admin:sendError(_("Befehl: /%s [Ziel] [Dauer] [Grund]", admin, cmd))
             return
         end
-    end
+	end
 end
 
 function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
@@ -512,6 +518,8 @@ local tpTable = {
 					if player:isInVehicle() then
 						player:getOccupiedVehicle():setPosition(v["x"], v["y"], v["z"])
 					else
+						setElementInterior(player,0)
+						setElementDimension(player,0)
 						player:setPosition(v["x"], v["y"], v["z"])
 					end
 					return
@@ -683,3 +691,25 @@ function Admin:Event_vehicleDespawn()
         end
     end
 end
+
+function Admin:markPosFunc( player, goto ) 
+	if goto then 
+		local markPos = getElementData( player, "Admin_MarkPos")
+		if markPos then 
+			setElementInterior(player, markPos[4])
+			setElementDimension(player, markPos[5])
+			setElementPosition( player, markPos[1], markPos[2], markPos[3])
+			setCameraTarget(player,player)
+			player:sendInfo("Du hast dich zur Markierung geportet!")
+		else 
+			player:sendError("Du hast keine Markierung /mark")
+		end
+	else
+		local x,y,z = getElementPosition(player)
+		local dim = getElementDimension(player)
+		local interior = getElementInterior(player)
+		setElementData(player, "Admin_MarkPos",{x,y,z,interior,dim})
+		player:sendInfo("Markierung gesetzt!")
+	end
+end
+
