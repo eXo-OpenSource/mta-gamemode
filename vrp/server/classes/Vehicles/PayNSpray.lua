@@ -104,6 +104,6 @@ function PayNSpray.initializeAll()
 	PayNSpray:new(2063.2, -1831.3, 13.5, 8)
 	PayNSpray:new(487.4, -1742.8, 11.1, 12)
 	PayNSpray:new(1025.1, -1022, 32.1, 11)
-	local noobSpawn = PayNSpray:new(1444.860, -1785.127, 13.250)
-	noobSpawn:createCustomDoor(13028, Vector3(1445.09998,-1773.80005,16.1), Vector3(180,-90,90))
+	local noobSpawn = PayNSpray:new(1444.860, -1790.127, 13.250)
+	noobSpawn:createCustomDoor(13028, Vector3(1445.5998,-1781.0005,16.1), Vector3(180,-90,90))
 end
