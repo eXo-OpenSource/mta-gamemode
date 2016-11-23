@@ -69,7 +69,7 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	if not player.m_DoNotSave then -- Cause of Invation System
+	if not self.m_DoNotSave then -- Cause of Invation System
 		self:save()
 	end
 
