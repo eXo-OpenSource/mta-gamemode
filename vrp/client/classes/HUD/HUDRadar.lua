@@ -21,50 +21,63 @@ function HUDRadar:constructor()
   end
 
   self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
-  self.m_Zoom = 1
-  self.m_Rotation = 0
-  self.m_Blips = Blip.Blips
-  self.m_Areas = {}
-  self.m_Visible = false
-  self.m_Enabled = core:get("HUD", "showRadar", true)
-  if self.m_DesignSet == RadarDesign.Default then
-    setPlayerHudComponentVisible("radar", self.m_Enabled )
-    self.m_DefaultBlips = {}
-  end
-  -- Set texture edge to border (no-repeat)
-  dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
+  if self.m_Texture then
+		outputConsole("Success@HUDRadar - m_RenderTarget was created!")
+		outputDebugString("Success@HUDRadar - m_Texture was created!",0,0,200,200)
+		self.m_Zoom = 1
+		self.m_Rotation = 0
+		self.m_Blips = Blip.Blips
+		self.m_Areas = {}
+		self.m_Visible = false
+		self.m_Enabled = core:get("HUD", "showRadar", true)
+		if self.m_DesignSet == RadarDesign.Default then
+			setPlayerHudComponentVisible("radar", self.m_Enabled )
+			self.m_DefaultBlips = {}
+		end
+		-- Set texture edge to border (no-repeat)
+		dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
 
-  -- Create a renderTarget that has the size of the diagonal of the actual image
-  self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
-  self:updateMapTexture()
+		-- Create a renderTarget that has the size of the diagonal of the actual image
+		self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
+		if self.m_RenderTarget then
+			outputConsole("Success@HUDRadar - m_RenderTarget was created!")
+			outputDebugString("Success@HUDRadar - m_RenderTarget was created!",0,0,200,200)
+			self:updateMapTexture()
 
-  -- Settings
-  if core:get("HUD", "showRadar", nil) == nil then
-    core:set("HUD", "showRadar", true)
-  end
-  if core:get("HUD", "drawGangAreas", nil) == nil then
-    core:set("HUD", "drawGangAreas", true)
-  end
-  if core:get("HUD", "drawBlips", nil) == nil then
-    core:set("HUD", "drawBlips", true)
-  end
+			-- Settings
+			if core:get("HUD", "showRadar", nil) == nil then
+				core:set("HUD", "showRadar", true)
+			end
+			if core:get("HUD", "drawGangAreas", nil) == nil then
+				core:set("HUD", "drawGangAreas", true)
+			end
+			if core:get("HUD", "drawBlips", nil) == nil then
+				core:set("HUD", "drawBlips", true)
+			end
 
-  addEventHandler("onClientPreRender", root, bind(self.update, self))
-  addEventHandler("onClientRender", root, bind(self.draw, self), true, "high+10")
-  addEventHandler("onClientRestore", root, bind(self.restore, self))
+			addEventHandler("onClientPreRender", root, bind(self.update, self))
+			addEventHandler("onClientRender", root, bind(self.draw, self), true, "high+10")
+			addEventHandler("onClientRestore", root, bind(self.restore, self))
 
-  addRemoteEvents{"HUDRadar:showRadar", "HUDRadar:hideRadar" }
-  addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
-  addEventHandler("HUDRadar:hideRadar", root, bind(self.hide, self))
+			addRemoteEvents{"HUDRadar:showRadar", "HUDRadar:hideRadar" }
+			addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
+			addEventHandler("HUDRadar:hideRadar", root, bind(self.hide, self))
 
-  self.m_NoRadarColShapes = {
-      createColSphere(164.21, 359.71, 7983.66, 200)
-  }
-  for index, col in pairs(self.m_NoRadarColShapes) do
-      addEventHandler("onClientColShapeHit", col, bind(self.hide, self))
-      addEventHandler("onClientColShapeLeave", col, bind(self.show, self))
-  end
-
+			self.m_NoRadarColShapes = {
+				createColSphere(164.21, 359.71, 7983.66, 200)
+			}
+			for index, col in pairs(self.m_NoRadarColShapes) do
+				addEventHandler("onClientColShapeHit", col, bind(self.hide, self))
+				addEventHandler("onClientColShapeLeave", col, bind(self.show, self))
+			end
+		else 
+			outputConsole("Warning@HUDRadar - m_RenderTarget was not created!")
+			outputDebugString("Warning@HUDRadar - m_RenderTarget was not created!",0,200,0,0)
+		end
+	else 
+		outputConsole("Warning@HUDRadar - m_Texture was not created!")
+		outputDebugString("Warning@HUDRadar - m_Texture was not created!",0,200,0,0)
+	end
 end
 
 function HUDRadar:hide()
@@ -81,6 +94,9 @@ end
 
 function HUDRadar:updateMapTexture()
   if self.m_DesignSet ~= RadarDesign.Default then
+	destroyElement(self.m_Texture)
+	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
+	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
     dxSetRenderTarget(self.m_Texture)
     -- Draw actual map texture
     dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
@@ -228,7 +244,13 @@ function HUDRadar:draw()
   -- Render (rotated) image section to renderTarget
   if isNotInInterior then
     dxSetRenderTarget(self.m_RenderTarget, true)
-    dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
+	if self.m_Texture then 
+		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
+	else 
+		self:updateMapTexture()	
+		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
+		outputDebugString("Warning@HUDRadar had to recreate self.m_Texture!")
+	end
     dxSetRenderTarget(nil)
   end
 
