@@ -321,8 +321,8 @@ function Account.checkInvitationCode(code, AccountId)
 				sql:queryExec("UPDATE ??_invitations SET Serial = ?, UserId = ?, Used = NOW() WHERE Id = ? ", sql:getPrefix(), client:getSerial(), AccountId, row.Id)
 				sql:queryExec("UPDATE ??_account SET InvitationId = ? WHERE Id = ? ", sql:getPrefix(), row.Id, AccountId)
 				client:sendSuccess(_("Der Code wurde angenommen!\nDu wirst nun reconnected!", client))
+				client.m_DoNotSave = true
 				setTimer(function(player)
-					player.m_DoNotSave = true
 					redirectPlayer(player, "", 0)
 				end, 5000, 1, client)
 				return true

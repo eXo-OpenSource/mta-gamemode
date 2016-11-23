@@ -252,7 +252,9 @@ function Player:save()
 	local dimension = 0
 
 	if interior > 0 then dimension = self:getDimension() end
-
+	if self.m_DoNotSave then 
+		x, y, z = NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z
+	end
 	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
 		x, y, z, interior, dimension, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), self.m_Id)
 
