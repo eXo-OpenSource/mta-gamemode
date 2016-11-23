@@ -280,6 +280,12 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
             setCameraTarget(admin, target)
             admin:setFrozen(true)
+			admin.m_PreSpectInt = getElementInterior(admin)
+			admin.m_PreSpectDim = getElementDimension(admin)
+			admin.m_SpectInteriorFunc = function ( int ) setElementInterior(admin,int); setCameraInterior(admin, int) end
+			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+			admin.m_SpectDimensionFunc = function ( dim ) setElementDimension(admin,dim) end
+			addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 			if admin:isInVehicle() then
 				admin:getOccupiedVehicle():setFrozen(true)
 			end
@@ -291,6 +297,10 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 				if admin:isInVehicle() then
 					admin:getOccupiedVehicle():setFrozen(false)
 				end
+				setElementInterior(admin, admin.m_PreSpectInt)
+				setElementDimension(admin, admin.m_PreSpectDim)
+				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
             end)
         elseif func == "offlinePermaban" then
             self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
@@ -696,11 +706,14 @@ function Admin:markPosFunc( player, goto )
 	if goto then 
 		local markPos = getElementData( player, "Admin_MarkPos")
 		if markPos then 
+			player:sendInfo("Du hast dich zur Markierung geportet!")
+			if getPedOccupiedVehicle(player) then 
+				player = getPedOccupiedVehicle(player)
+			end
 			setElementInterior(player, markPos[4])
 			setElementDimension(player, markPos[5])
 			setElementPosition( player, markPos[1], markPos[2], markPos[3])
 			setCameraTarget(player,player)
-			player:sendInfo("Du hast dich zur Markierung geportet!")
 		else 
 			player:sendError("Du hast keine Markierung /mark")
 		end
