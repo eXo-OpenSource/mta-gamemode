@@ -69,7 +69,9 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	self:save()
+	if not player.m_DoNotSave then -- Cause of Invation System
+		self:save()
+	end
 
 	-- Unload stuff
 	HouseManager:getSingleton():destroyPlayerHouseBlip(self) -- Todo: do not on stop, cause of an error (annoying :P)
