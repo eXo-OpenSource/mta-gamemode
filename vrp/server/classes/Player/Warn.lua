@@ -70,7 +70,7 @@ function Warn.checkWarn(player)
 		local row = Async.wait()
 		if row then
 			local days = math.floor((row.expires - getRealTime().timestamp)/60/60/24)
-			kickPlayer(player, _("Du hast 3 Wans! Der nächste läuft in %d Tagen ab!", player, days))
+			kickPlayer(player, _("Du hast 3 Warns! Der nächste läuft in %d Tagen ab!", player, days))
 			return false
 		end
 		return true

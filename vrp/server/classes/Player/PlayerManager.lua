@@ -134,8 +134,7 @@ end
 --------       Event zone       ---------
 -----------------------------------------
 function PlayerManager:playerConnect(name)
-	local player = getPlayerFromName(name)
-	Async.create(Player.connect)(player)
+
 end
 
 function PlayerManager:playerJoin()

@@ -80,14 +80,13 @@ function Player:destructor()
 end
 
 function Player:connect()
-	if not Ban.checkBan(self) then
-		if not Warn.checkWarn(self) then
-			return
-		end
-	end
+
 end
 
 function Player:join()
+	Ban.checkBan(self)
+	Warn.checkWarn(self)
+
 	setCameraMatrix(self,445.12222, -1886.34387, 22.368610,369.74289, -2036.1087, 7.67188) -- Untill new Login Scenes
 end
 
@@ -195,11 +194,11 @@ function Player:loadCharacterInfo()
 	FactionManager:getSingleton():sendAllToClient(self)
 	VehicleManager:getSingleton():sendTexturesToClient(self)
 	HouseManager:getSingleton():createPlayerHouseBlip(self)
-	
+
 	-- Group blips
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
 	local x,y,z
-	for k,v in ipairs( props ) do 
+	for k,v in ipairs( props ) do
 		self:triggerEvent("addPickupToGroupStream",v.m_ExitMarker, v.m_Id)
 		x,y,z = getElementPosition( v.m_Pickup )
 		self:triggerEvent("createGroupBlip",x,y,z,v.m_Id)
