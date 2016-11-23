@@ -277,7 +277,7 @@ function Player:spawn( )
 		self:setRotation(0, 0, 180)
 	else
 		if self.m_SpawnLocation == SPAWN_LOCATION_DEFAULT then
-			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin, self.m_SavedInterior, self.m_SavedDimension)
+			spawnPlayer(self, self.m_SavedPosition.x, self.m_SavedPosition.y, self.m_SavedPosition.z, 0, self.m_Skin or 0, self.m_SavedInterior, self.m_SavedDimension)
 		elseif self.m_SpawnLocation == SPAWN_LOCATION_GARAGE and self.m_LastGarageEntrance ~= 0 then
 			VehicleGarages:getSingleton():spawnPlayerInGarage(self, self.m_LastGarageEntrance)
 		else
@@ -294,6 +294,7 @@ function Player:spawn( )
 		end
 
 		-- Apply and delete health data
+		if self.m_Health == 0 then self.m_Health = 1 end
 		self:setHealth(self.m_Health)
 		self:setArmor(self.m_Armor)
 		--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
@@ -350,7 +351,7 @@ function Player:respawn(position, rotation)
 	end
 
 	self:setHeadless(false)
-	spawnPlayer(self, position, rotation, self.m_Skin)
+	spawnPlayer(self, position, rotation, self.m_Skin or 0)
 
 	if self:getFaction() and self:getFaction():isEvilFaction() then
 		self:getFaction():changeSkin(self)
@@ -820,7 +821,7 @@ function Player:getPlayerAttachedObject()
 end
 
 function Player:setModel( skin )
-	setElementModel( self, skin )
+	setElementModel( self, skin or 0)
 end
 
 function Player:endPrison()
