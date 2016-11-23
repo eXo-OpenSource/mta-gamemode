@@ -48,6 +48,7 @@ function Fishing:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim and not hitElement.vehicle then
 		if not source.player then
 			if not hitElement.win and not self.m_Players[hitElement] then
+				source.player = hitElement
 				hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde angeln? Ein Köder kostet 10$!", hitElement), "startFishing", nil, source)
 			else
 				hitElement:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", hitElement))
@@ -59,6 +60,7 @@ end
 function Fishing:onMarkerLeave(hitElement, dim)
 	if source.player and  source.player == hitElement then
 		source.player = false
+		hitElement:triggerEvent("questionBoxClose")
 	end
 end
 
@@ -72,7 +74,6 @@ function Fishing:start(marker)
 			client:setRotation(0, 0, 90, "default", true)
 			client:setFrozen(true)
 			client:triggerEvent("startFishingClient", 1, marker.id)
-			marker.player = client
 			self.m_Players[client] = {}
 		else
 			client:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", client))
