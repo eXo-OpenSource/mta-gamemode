@@ -27,6 +27,7 @@ CHAT_SCREAM_RANGE = 30
 CheatSeverity = {Low = 1, Middle = 2, High = 3, Brutal = 4}
 
 NOOB_SPAWN = Vector3(1798.417, -1303.119, 120.255)
+NOOB_SKIN = 78
 
 Interiors = {
     -- Name -- Dimension ("Allocate" a block of dimensions)
