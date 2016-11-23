@@ -171,3 +171,29 @@ function StatisticsLogger:addLogin( player, name, logintype)
 	sqlLogs:queryExec("INSERT INTO ??_Login (UserId, Name, Type, Ip, Serial, Date ) VALUES(?, ?, ?, ?, ?, NOW())",
         sqlLogs:getPrefix(), userId, name, logintype, ip, serial)
 end
+
+function StatisticsLogger:addAdminAction( player, action, target)
+	if isElement(player) then userId = player:getId() else userId = player or 0 end
+	if target then 
+		if isElement(target) then 
+			if getElementType(target) == "player" then
+				target = getPlayerName(target)
+			elseif getElementType(target) == "vehicle" then
+				target = target.m_Id or 0
+			end
+		end
+	end
+	if action == "spect" then
+		sqlLogs:queryExec("INSERT INTO ??_AdminActionSpect (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
+			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
+	elseif action == "goto" or action == "gethere" or action == "gotomark" or action == "mark" then 
+		sqlLogs:queryExec("INSERT INTO ??_AdminActionPort (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
+			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
+	elseif action == "adminAnnounce" or string.upper(action) == "CLEARCHAT" then 
+		sqlLogs:queryExec("INSERT INTO ??_AdminActionChat (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
+			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
+	else
+		sqlLogs:queryExec("INSERT INTO ??_AdminActionOther (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
+			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
+	end
+end

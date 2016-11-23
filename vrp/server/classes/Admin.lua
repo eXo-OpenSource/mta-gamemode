@@ -176,8 +176,10 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then 
 		self:markPosFunc(admin, false)
+		StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
 	elseif cmd == "gotomark" then 
 		self:markPosFunc(admin, true)
+		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
     else
         if targetName then
             local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
@@ -229,8 +231,10 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
     if admin:getRank() >= ADMIN_RANK_PERMISSION[func] then
         if func == "goto" then
             self:goToPlayer(admin, func, target:getName())
+			StatisticsLogger:getSingleton():addAdminAction( admin, "goto", target)
         elseif func == "gethere" then
             self:getHerePlayer(admin, func, target:getName())
+			StatisticsLogger:getSingleton():addAdminAction( admin, "gethere", target)
         elseif func == "kick" or func == "rkick" then
             self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
             target:kick(admin, reason)
@@ -264,6 +268,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:addPunishLog(admin, target, func, "", 0)
         elseif func == "supportMode" or func == "smode" then
             self:toggleSupportMode(admin)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "supportMode", false)
         elseif func == "clearchat" or func == "clearChat" then
 			self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
             for index, player in pairs(Element.getAllByType("player")) do
@@ -272,10 +277,13 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
                 end
                 player:triggerEvent("closeAd")
             end
+			StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
         elseif func == "adminAnnounce" then
             local text = target
             triggerClientEvent("announceText", admin, text)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
+			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
             self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
             admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
             setCameraTarget(admin, target)
