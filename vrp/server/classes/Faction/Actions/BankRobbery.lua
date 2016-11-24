@@ -41,8 +41,8 @@ function BankRobbery:constructor()
 end
 
 function BankRobbery:spawnPed()
-	if self.m_Ped then 
-		delete( self.m_Ped)
+	if isElement(self.m_Ped) then 
+		destroyElement(self.m_Ped)
 	end
 	self.m_Ped = ShopNPC:new(295, 2310.28, -10.87, 26.74, 180)
 	self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
