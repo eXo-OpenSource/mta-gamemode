@@ -222,8 +222,9 @@ function VehicleGarages:EntranceShape_Hit(hitElement, matchingDimension)
 				fadeCamera(hitElement, true, 1)
 
 				if vehicle then
-					vehicle:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
- 					hitElement:sendInfo(_("Das Fahrzeug wurde in der Garage geparkt!", hitElement))
+					vehicle:setInGarage(true)
+				--	vehicle:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
+ 				--	hitElement:sendInfo(_("Das Fahrzeug wurde in der Garage geparkt!", hitElement))
 				end
 
 				setTimer(function() session:furnish() end, 1000, 1)
