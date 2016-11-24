@@ -243,7 +243,7 @@ function HUDRadar:draw()
 
   -- Render (rotated) image section to renderTarget
   if isNotInInterior then
-    dxSetRenderTarget(self.m_RenderTarget, true)
+    dxSetRenderTarget(self.m_RenderTarget)
 	if self.m_Texture then 
 		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
 	else 
