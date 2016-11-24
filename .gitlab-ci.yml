@@ -9,7 +9,7 @@ build_job:
   stage: build
   script:
     - "echo 'TODO: Set configs'"
-    - "'GIT_VERSION = $(git rev-parse HEAD)-$(git rev-parse --abbrev-ref HEAD)' > vrp/buildinfo.lua"
+    - 'echo "GIT_VERSION = $(git rev-parse HEAD)-$(git rev-parse --abbrev-ref HEAD)" > vrp/buildinfo.lua'
     - python3 buildscript.py
     - "echo 'TODO: Create asset archives'"
     - "tar czf artifacts.tar.gz [shader] bone_attach exo_maps vrp_build"
