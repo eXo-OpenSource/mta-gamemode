@@ -38,13 +38,15 @@ function ItemShopGUI:refreshItemShopGUI(shopId, items)
 	self.m_Shop = shopId
 	local item
 	local itemData = Inventory:getSingleton():getItemData()
-	self.m_Grid:clear()
-	for name, price in pairs(items) do
-		item = self.m_Grid:addItem(name, tostring(price.."$"))
-		item.Id = name
-		item.onLeftClick = function()
-			self.m_Preview:setImage("files/images/Inventory/items/"..itemData[name]["Icon"])
-			self.m_LabelDescription:setText(itemData[name]["Info"])
+	if itemData then
+		self.m_Grid:clear()
+		for name, price in pairs(items) do
+			item = self.m_Grid:addItem(name, tostring(price.."$"))
+			item.Id = name
+				item.onLeftClick = function()
+				self.m_Preview:setImage("files/images/Inventory/items/"..itemData[name]["Icon"])
+				self.m_LabelDescription:setText(itemData[name]["Info"])
+			end
 		end
 	end
 end

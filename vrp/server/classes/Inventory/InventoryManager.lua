@@ -30,7 +30,17 @@ function InventoryManager:constructor()
 	addEventHandler("requestTrade", root, bind(self.Event_requestTrade, self))
 	addEventHandler("acceptTrade", root, bind(self.Event_acceptTrade, self))
 	addEventHandler("declineTrade", root, bind(self.Event_declineTrade, self))
+	addCommandHandler("flushInventory",bind(self.Event_cmdFlush,self),false,false)
 
+end
+
+function InventoryManager:Event_cmdFlush( player ) 
+	if self.Map[player] then
+		delete( self:getPlayerInventory(player) )
+	end
+	local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,ItemManager:getSingleton():getClassItems())
+	self.Map[player] = instance
+	outputChatBox("Dein Inventar wurde erneuert!",player,0,200,200)
 end
 
 function InventoryManager:destructor()

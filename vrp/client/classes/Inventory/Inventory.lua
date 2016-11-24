@@ -8,7 +8,7 @@
 
 Inventory = inherit(GUIForm)
 inherit(Singleton, Inventory)
-
+addRemoteEvents{"loadPlayerInventarClient", "syncInventoryFromServer","forceInventoryRefresh", "closeInventory", "flushInventory"}
 Inventory.Color = {
 	TabHover  = rgb(50, 200, 255);
 	TabNormal = rgb(50, 50, 50);
@@ -63,11 +63,15 @@ function Inventory:constructor()
 	--self.m_Bag = Inventory:getSingleton():getBagData()
 
 
-	addRemoteEvents{"loadPlayerInventarClient", "syncInventoryFromServer","forceInventoryRefresh", "closeInventory"}
-	addEventHandler("loadPlayerInventarClient",  root,  bind(self.Event_loadPlayerInventarClient,  self))
-	addEventHandler("syncInventoryFromServer",  root,  bind(self.Event_syncInventoryFromServer,  self))
-	addEventHandler("forceInventoryRefresh",  root,  bind(self.Event_forceInventoryRefresh,  self))
-	addEventHandler("closeInventory",  root,  bind(self.hide, self))
+
+	self.m_func1 = bind(self.Event_loadPlayerInventarClient,  self)
+	self.m_func2 = bind(self.Event_syncInventoryFromServer,  self)
+	self.m_func3 = bind(self.Event_forceInventoryRefresh,  self)
+	self.m_func4 = bind(self.hide, self)
+	addEventHandler("loadPlayerInventarClient",  root, self.m_func1 )
+	addEventHandler("syncInventoryFromServer",  root,  self.m_func2)
+	addEventHandler("forceInventoryRefresh",  root, self.m_func3 )
+	addEventHandler("closeInventory",  root,  self.m_func4)
 
 	self:hide()
 	self.Show = false
@@ -268,3 +272,13 @@ end
 function Inventory:onHide()
 	showCursor(false)
 end
+
+addEventHandler("flushInventory",localPlayer, function( obj1, obj2)
+	if obj1 and obj2 then 
+		if Inventory:getSingleton() then 
+			delete( Inventory:getSingleton())
+			Inventory:new()
+			Inventory:getSingleton():Event_loadPlayerInventarClient(obj1, obj2)
+		end
+	end
+end)
