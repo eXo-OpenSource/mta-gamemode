@@ -38,7 +38,9 @@ function Guns:destructor()
 end
 
 function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
-	if weapon == 23 then -- Taser
+	if weapon == 9 then -- Chainsaw
+		cancelEvent()
+	elseif weapon == 23 then -- Taser
 		if getDistanceBetweenPoints3D(attacker:getPosition(),source:getPosition()) < 10 then
 			if attacker == localPlayer then
 				triggerServerEvent("onTaser",attacker,source)

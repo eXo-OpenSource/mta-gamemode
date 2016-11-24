@@ -14,15 +14,6 @@ function JobLumberjack:constructor()
 	self.m_StackedTrees = {}
 	self.m_NumTrees = 0
 
-	-- Disable chainsaw damage
-	addEventHandler("onClientPlayerDamage", localPlayer,
-		function()
-			if weapon == 9 then
-				cancelEvent()
-			end
-		end
-	)
-
 	addEvent("lumberjackTreesLoadUp", true)
 	addEventHandler("lumberjackTreesLoadUp", root, bind(JobLumberjack.Event_lumberjackTreesLoadUp, self))
 
