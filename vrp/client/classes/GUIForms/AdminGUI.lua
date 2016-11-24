@@ -511,7 +511,7 @@ WarnManagement = inherit(GUIForm)
 function WarnManagement:constructor(player, adminGui)
 	self.m_Player = player
 	self.m_AdminGui = adminGui
-	GUIForm.constructor(self, screenWidth/2-500/2, screenHeight/2-270/2, 500, 270)
+	GUIForm.constructor(self, screenWidth/2-750/2, screenHeight/2-270/2, 750, 270)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Warns von %s", player:getName()), true, true, self)
 	self.m_Window:addBackButton(function () AdminGUI:getSingleton():show() end)
 
@@ -550,8 +550,8 @@ function WarnManagement:loadWarns()
 
 	if #self.m_Player:getPublicSync("Warns") > 0 then
 		self.m_WarnGrid = GUIGridList:new(10, 30, self.m_Width-20, 200, self)
-		self.m_WarnGrid:addColumn(_"Grund", 0.3)
-		self.m_WarnGrid:addColumn(_"Admin", 0.2)
+		self.m_WarnGrid:addColumn(_"Grund", 0.25)
+		self.m_WarnGrid:addColumn(_"Admin", 0.25)
 		self.m_WarnGrid:addColumn(_"Datum", 0.25)
 		self.m_WarnGrid:addColumn(_"Ablauf", 0.25)
 		local item
