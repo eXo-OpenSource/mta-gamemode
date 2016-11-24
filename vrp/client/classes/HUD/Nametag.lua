@@ -81,6 +81,7 @@ function Nametag:draw()
 			local distance = getDistanceBetweenPoints3D(px,py,pz,lx,ly,lz)
 
 			local scale = 0.4 + ( 15 - distance ) * 0.02
+			if scale < 0 then scale = 0.1 end
 			dxDrawImage(x-240*scale/2,y-60, 240*scale, 120*scale, self.m_RenderTarget)
 
 			end
