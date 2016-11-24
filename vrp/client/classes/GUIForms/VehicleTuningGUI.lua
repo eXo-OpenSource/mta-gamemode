@@ -394,7 +394,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                     if texture ~= 1 then
                         self.m_VehicleShader = TextureReplace:new(self.m_Vehicle:getTextureName(), "files/images/Textures/Special/"..(texture-1)..".png", false, 250, 250, self.m_Vehicle)
                     else
-                        ShortMessage:new("Note: The Texture will be removed when you exit the TuningShop!", "Los Santos Customs", Color.LightBlue)
+                        ShortMessage:new("Note: Die Textur wird entfernt wenn du den Tuningshop verlässt!", "Los Santos Customs", Color.LightBlue)
                     end
                 end
             )
