@@ -74,8 +74,10 @@ function DrivingSchool:createDrivingSchoolMarker(pos)
 end
 
 function DrivingSchool:createSchoolPed( pos )
-	self.m_DrivingSchoolPed = createPed(295, pos,-90 )
+	self.m_DrivingSchoolPed = NPC:new(295, pos.x, pos.y, pos.z, -90)
     self.m_DrivingSchoolPed:setData("clickable", true, true)
+	self.m_DrivingSchoolPed:setImmortal(true)
+
 	setElementInterior(self.m_DrivingSchoolPed, 3, pos)
     addEventHandler("onElementClicked", self.m_DrivingSchoolPed,
         function(button ,state ,player )
