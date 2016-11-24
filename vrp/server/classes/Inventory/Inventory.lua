@@ -59,7 +59,9 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 end
 
 function Inventory:flush( player ) 
-	player:triggerEvent("flushInventory",self.m_Bag, self.m_Items)
+	player:triggerEvent("loadPlayerInventarClient",self.m_InventorySlots, self.m_ItemData)
+	triggerClientEvent(self.m_Owner, "loadPlayerInventarClient", self.m_Owner, self.m_InventorySlots, self.m_ItemData)
+	self:syncClient()
 end
 
 function Inventory:destructor()

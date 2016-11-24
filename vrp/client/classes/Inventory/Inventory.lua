@@ -7,7 +7,8 @@
 -- ****************************************************************************
 
 Inventory = inherit(GUIForm)
-inherit(Singleton, Inventory)
+inherit(Object, Inventory)
+local dummySingleton
 addRemoteEvents{"loadPlayerInventarClient", "syncInventoryFromServer","forceInventoryRefresh", "closeInventory", "flushInventory"}
 Inventory.Color = {
 	TabHover  = rgb(50, 200, 255);
@@ -47,7 +48,7 @@ function Inventory:constructor()
 	self:addItemSlots(5, self.m_Tabs[3])
 	self.m_Tabs[4] = self:addTab("files/images/Inventory/drogen.png", tabArea)
 	self:addItemSlots(7, self.m_Tabs[4])
-
+	self.m_TabArea = tabArea
 	--[[
 	-- Lower Area (Items)
 	local itemArea = GUIElement:new(0, self.m_Height*(50/self.m_Height), self.m_Width, self.m_Height - self.m_Height*(50/self.m_Height), self)
@@ -78,6 +79,15 @@ function Inventory:constructor()
 
 end
 
+function Inventory:destructor() 
+	self.m_Window:delete()
+	for i = 1, 4 do 
+		if self.m_Tabs[i] then 
+			delete(self.m_Tabs[i])
+		end
+	end
+	delete( self.m_TabArea )
+end
 
 function Inventory:Event_syncInventoryFromServer(bag, items)
 	self.m_Bag = bag
@@ -273,11 +283,19 @@ function Inventory:onHide()
 	showCursor(false)
 end
 
+function Inventory.initialize() 
+	dummySingleton = Inventory:new()
+end
+
+function Inventory.getCurrent()
+	return dummySingleton
+end
 addEventHandler("flushInventory",localPlayer, function( obj1, obj2)
 	if obj1 and obj2 then 
-		if Inventory:getSingleton() then 
-			triggerServerEvent("refreshInventory", localPlayer)
-			Inventory:getSingleton():loadItems()
+		if dummySingleton then 
+			delete( dummySingleton )
 		end
+		dummySingleton = Inventory:new()
+		dummySingleton:Event_loadPlayerInventarClient( obj1, obj2)
 	end
 end)
