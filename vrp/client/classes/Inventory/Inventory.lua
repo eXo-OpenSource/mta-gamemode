@@ -277,7 +277,7 @@ addEventHandler("flushInventory",localPlayer, function( obj1, obj2)
 	if obj1 and obj2 then 
 		if Inventory:getSingleton() then 
 			triggerServerEvent("refreshInventory", localPlayer)
-			self:loadItems()
+			Inventory:getSingleton():loadItems()
 		end
 	end
 end)
