@@ -35,7 +35,7 @@ function Inventory:constructor()
 	-- Upper Area (Tabs)
 	local tabArea = GUIElement:new(0, 30, self.m_Width, self.m_Height*(50/self.m_Height), self)
 	local tabX, tabY = tabArea:getSize()
-	GUIRectangle:new(0, 0, tabX, tabY, Inventory.Color.TabHover, tabArea)
+	self.m_Rect = GUIRectangle:new(0, 0, tabX, tabY, Inventory.Color.TabHover, tabArea)
 
 	self.m_Tabs = {}
 	-- Tabs
@@ -78,11 +78,11 @@ function Inventory:constructor()
 
 end
 
+
 function Inventory:Event_syncInventoryFromServer(bag, items)
 	self.m_Bag = bag
 	self.m_Items = items
 	self:loadItems()
-
 end
 
 function Inventory:Event_loadPlayerInventarClient(slots, itemData)
@@ -276,9 +276,8 @@ end
 addEventHandler("flushInventory",localPlayer, function( obj1, obj2)
 	if obj1 and obj2 then 
 		if Inventory:getSingleton() then 
-			delete( Inventory:getSingleton())
-			Inventory:new()
-			Inventory:getSingleton():Event_loadPlayerInventarClient(obj1, obj2)
+			triggerServerEvent("refreshInventory", localPlayer)
+			self:loadItems()
 		end
 	end
 end)

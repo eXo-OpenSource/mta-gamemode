@@ -39,7 +39,8 @@ function InventoryManager:Event_cmdFlush( player )
 		delete( self:getPlayerInventory(player) )
 	end
 	local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,ItemManager:getSingleton():getClassItems())
-	self.Map[player] = instance
+	self.Map[player] = instance	
+	instance:flush( player )
 	outputChatBox("Dein Inventar wurde erneuert!",player,0,200,200)
 end
 

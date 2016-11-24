@@ -58,6 +58,10 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 	self:syncClient()
 end
 
+function Inventory:flush( player ) 
+	player:triggerEvent("flushInventory",self.m_Bag, self.m_Items)
+end
+
 function Inventory:destructor()
 	self.m_Items = nil
 	self.m_Bag = nil
