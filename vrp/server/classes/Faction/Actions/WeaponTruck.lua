@@ -397,7 +397,7 @@ function WeaponTruck:Event_LoadBox(veh)
 end
 
 function WeaponTruck:Event_onStateMarkerHit(hitElement, matchingDimension)
-	if hitElement:getType() == "player" and matchingDimension then
+	if hitElement and isElement(hitElement) and hitElement:getType() == "player" and matchingDimension then
 		local faction = hitElement:getFaction()
 		if faction then
 			if faction:isStateFaction() then

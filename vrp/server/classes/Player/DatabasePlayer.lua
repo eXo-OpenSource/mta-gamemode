@@ -168,7 +168,7 @@ function DatabasePlayer:save()
 	if self.m_BankAccount then
 		delete(self.m_BankAccount)
 	end
-	
+
 	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? WHERE Id=?;", sql:getPrefix(),
 		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, self:getId())
 end
@@ -313,23 +313,19 @@ end
 
 function DatabasePlayer:setKarma(karma)
 	self.m_Karma = karma
+	if self.m_Karma > MAX_KARMA_LEVEL then self.m_Karma = MAX_KARMA_LEVEL end
+	if self.m_Karma < -MAX_KARMA_LEVEL then self.m_Karma = -MAX_KARMA_LEVEL end
+
 	if self:isActive() then self:setPrivateSync("KarmaLevel", self.m_Karma) end
 end
 
-function DatabasePlayer:giveKarma(value, factor, addDirectly)
-	factor = factor or 1
-	if not addDirectly and value < 0 then
-		factor = -factor
-	end
-
-	local changekarma = addDirectly and value*factor or Karma.calcKarma(self.m_Karma, self.m_Karma+value, factor)
-
-	self:setXP(self.m_XP + math.abs(changekarma) * 10)
-	self:setKarma(self.m_Karma + changekarma)
+function DatabasePlayer:giveKarma(value)
+	self:setXP(self.m_XP + value)
+	self:setKarma(self.m_Karma + value)
 
 	local group = self:getGroup()
 	if group then
-		group:giveKarma(changekarma)
+		group:giveKarma(value)
 	end
 end
 

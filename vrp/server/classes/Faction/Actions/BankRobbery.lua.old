@@ -61,7 +61,7 @@ end
 function BankRobbery:destroyRob()
 	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape)
 	for key, player in ipairs( tooLatePlayers) do 
-		killPed(player)
+		killPlayer(player)
 		player:sendInfo("Du bist im abgeschlossenen Raum verendet!")
 	end
 	triggerClientEvent("bankAlarmStop", root)
