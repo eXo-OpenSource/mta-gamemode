@@ -34,7 +34,7 @@ local BOMB_TIME = 15*1000
 local MONEY_PER_SAFE_MIN = 300
 local MONEY_PER_SAFE_MAX = 500
 local MAX_MONEY_PER_BAG = 2500
-local BANKROB_TIME = 20000
+local BANKROB_TIME = 60*1000*5
 
 function BankRobbery:constructor()
 	self:build()

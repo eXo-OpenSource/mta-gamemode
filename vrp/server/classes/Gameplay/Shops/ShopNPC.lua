@@ -14,16 +14,18 @@ function ShopNPC:constructor(skinId, x, y, z, rotation)
 
 	addEventHandler("onPlayerTarget", root,
 		function(targettedElement)
-			if targettedElement == self and not self.m_InTarget and source:getWeapon() ~= 0 then
-				self:setAnimation("ped", "handsup", -1, false)
-				self.m_InTarget = true
+			if isElement(self) then
+				if targettedElement == self and not self.m_InTarget and source:getWeapon() ~= 0 then
+					self:setAnimation("ped", "handsup", -1, false)
+					self.m_InTarget = true
 
-				if self.onTargetted then
-					self:onTargetted(source)
+					if self.onTargetted then
+						self:onTargetted(source)
+					end
+
+					-- Block inTarget for a while | TODO: Optimize this
+					setTimer(function() self.m_InTarget = false self:setAnimation(nil) end, 30*1000, 1)
 				end
-
-				-- Block inTarget for a while | TODO: Optimize this
-				setTimer(function() self.m_InTarget = false self:setAnimation(nil) end, 30*1000, 1)
 			end
 		end
 	)
