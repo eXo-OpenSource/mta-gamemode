@@ -43,14 +43,14 @@ tree = ET.parse(rootdir + "meta.xml")
 root = tree.getroot()
 
 for child in root.findall("script"):
-	if child.attrib["type"] == "server": 
+	if child.attrib["type"] == "server":
 		files["server"].append(rootdir+child.attrib["src"])
-	if child.attrib["type"] == "client": 
+	if child.attrib["type"] == "client":
 		files["client"].append(rootdir+child.attrib["src"])
-	if child.attrib["type"] == "shared": 
+	if child.attrib["type"] == "shared":
 		files["server"].append(rootdir+child.attrib["src"])
 		files["client"].append(rootdir+child.attrib["src"])
-		
+
 	root.remove(child)
 
 serverNode = ET.SubElement(root, "script")
@@ -61,6 +61,9 @@ clientNode = ET.SubElement(root, "script")
 clientNode.set("src", "client.luac")
 clientNode.set("type", "client")
 
+buildInfoNode = ET.SubElement(root, "script")
+buildInfoNode.set("src", "buildinfo.lua")
+buildInfoNode.set("type", "shared")
 
 tree.write(outdir+"meta.xml")
 

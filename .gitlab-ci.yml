@@ -1,0 +1,20 @@
+before_script:
+  - apt-get update -qq && apt-get install -y -qq python3
+
+stages:
+  - build
+  - deploy
+
+build_job:
+  stage: build
+  script:
+    - "echo 'TODO: Set configs'"
+    - "'GIT_VERSION = $(git rev-parse HEAD)-$(git rev-parse --abbrev-ref HEAD)' > vrp/buildinfo.lua"
+    - python3 buildscript.py
+    - "echo 'TODO: Create asset archives'"
+    - "tar czf artifacts.tar.gz [shader] bone_attach exo_maps vrp_build"
+
+deploy_job:
+  stage: deploy
+  script:
+    - "echo 'TODO: Upload artifacts'"
