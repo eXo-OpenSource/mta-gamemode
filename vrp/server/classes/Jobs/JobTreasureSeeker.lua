@@ -64,11 +64,14 @@ function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
 	vehicle:addCountdownDestroy(10)
 
 	addEventHandler("onElementDestroy", vehicle, function()
-		if source.Magnet.Object and isElement(source.Magnet.Object) then
-			source.Magnet.Object:destroy()
-		end
-		if source.Magnet and isElement(source.Magnet) then
-			source.Magnet:destroy()
+		for index, ele in pairs(source:getAttachedElements()) do
+			for index, ele1 in pairs(ele:getAttachedElements()) do
+				for index, ele2 in pairs(ele1:getAttachedElements()) do
+					ele2:destroy()
+				end
+				ele1:destroy()
+			end
+			ele:destroy()
 		end
 	end)
 	triggerClientEvent(root, "jobTreasureDrawRope", root, vehicle.Engine, vehicle.Magnet)
