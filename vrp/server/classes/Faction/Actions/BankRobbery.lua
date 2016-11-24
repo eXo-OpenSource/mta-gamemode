@@ -34,7 +34,7 @@ local BOMB_TIME = 15*1000
 local MONEY_PER_SAFE_MIN = 300
 local MONEY_PER_SAFE_MAX = 500
 local MAX_MONEY_PER_BAG = 2500
-local BANKROB_TIME = 60*1000*5
+local BANKROB_TIME = 20000
 
 function BankRobbery:constructor()
 	self:build()
@@ -59,6 +59,11 @@ function BankRobbery:destructor()
 end
 
 function BankRobbery:destroyRob()
+	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape)
+	for key, player in ipairs( tooLatePlayers) do 
+		killPlayer(player)
+		player:sendInfo("Du bist im abgeschlossenen Raum verendet!")
+	end
 	triggerClientEvent("bankAlarmStop", root)
 	for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then	marker:destroy() end end
 	for index, safe in pairs(self.m_Safes) do if isElement(safe) then safe:destroy() end	end
@@ -72,6 +77,7 @@ function BankRobbery:destroyRob()
 	if isElement(self.m_Truck) then destroyElement(self.m_Truck) end
 	if isElement(self.m_BackDoor) then destroyElement(self.m_BackDoor) end
 	if isElement(self.m_HackMarker) then destroyElement(self.m_HackMarker) end
+	if isElement(self.m_SecurityRoomShape) then destroyElement( self.m_SecurityRoomShape) end
 	self.m_HackableComputer:setData("clickable", false, true)
 	self.m_HackableComputer:setData("bankPC", false, true)
 	if isElement(self.m_HackableComputer) then destroyElement(self.m_HackableComputer) end
@@ -119,7 +125,7 @@ function BankRobbery:build()
 	self.m_BombAreaTarget = createObject(3108, 2317.8, 11.3, 26.8, 0, 90, 0):setScale(0.2)
 	self.m_BombArea = BombArea:new(self.m_BombAreaPosition, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), BOMB_TIME)
 	self.m_BombColShape = createColSphere(self.m_BombAreaPosition, 10)
-
+	self.m_SecurityRoomShape = createColCuboid( 2305.5, 16.4, 25.5,8.4,5,4)
 	self.m_Timer = false
 	self.m_ColShape = createColSphere(self.m_BombAreaPosition, 60)
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
