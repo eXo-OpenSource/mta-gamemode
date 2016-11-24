@@ -97,7 +97,20 @@ end
 
 function VehicleShopGUI:Event_VehicleBought()
 	delete(self)
+	self.m_BuyVehicle = getPedOccupiedVehicle(localPlayer)
+	setElementAlpha(self.m_BuyVehicle,150)
+	for key, vehicle in ipairs(getElementsByType("vehicle")) do
+		setElementCollidableWith(self.m_BuyVehicle,vehicle,false)
+	end
+	setTimer(bind(VehicleShopGUI.setColBack,self),15000,1,self.m_BuyVehicle)
 	SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!", 0, 255, 0)
+end
+
+function VehicleShopGUI:setColBack() 
+	setElementAlpha(self.m_BuyVehicle,255)
+	for key, vehicle in ipairs(getElementsByType("vehicle")) do
+		setElementCollidableWith(self.m_BuyVehicle,vehicle,true)
+	end
 end
 
 addEventHandler("showVehicleShopMenu", root, function(id, name, image, vehicles)

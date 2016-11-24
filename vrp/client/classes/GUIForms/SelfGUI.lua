@@ -200,7 +200,7 @@ function SelfGUI:constructor()
 		self.m_RadarChange:addItem(v)
 	end
 	self.m_RadarChange.onChange = function(text, index) HUDRadar:getSingleton():setDesignSet(index) end
-	self.m_RadarChange:setIndex(core:get("HUD", "RadarDesign") or 1, true)
+	self.m_RadarChange:setIndex(core:get("HUD", "RadarDesign") or 2, true)
 
 	self.m_RadarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Radar aktivieren?", tabSettings)
 	self.m_RadarCheckBox:setFont(VRPFont(25))
