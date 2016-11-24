@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 GangwarClient = inherit( Singleton )
-addRemoteEvents{"Gangwar:show_AttackGUI"}
+addRemoteEvents{"Gangwar:show_AttackGUI","Gangwar_shortMessageAttack"}
 
  
 --// CONSTANTS 
@@ -18,7 +18,19 @@ local width ,height = w*0.4,h*0.3
 
 function GangwarClient:constructor( ) 
 	self.m_ShowBind = bind( self.show_AttackRequest, self)	
+	addEventHandler("Gangwar_shortMessageAttack",localPlayer, bind(GangwarClient.Event_shortMessageAttack,self))
 	addEventHandler("Gangwar:show_AttackGUI", root, self.m_ShowBind)
+end
+
+function GangwarClient:Event_shortMessageAttack( pArea )
+	self.m_LastArea = pArea
+	self.m_ShortCallback = function (this)
+		if GangwarClient:getSingleton().m_LastArea then
+			GangwarClient:show_AttackRequest( GangwarClient:getSingleton().m_LastArea )
+			delete(this)
+		end
+	end
+	ShortMessage:new("Dies ist ein Gangwar-Gebiet, klicke hier um anzugreifen!", "Gangwar", Color.DarkLightBlue, 5000, self.m_ShortCallback)
 end
 
 function GangwarClient:show_AttackRequest( pArea )

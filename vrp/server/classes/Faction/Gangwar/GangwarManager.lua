@@ -37,16 +37,26 @@ function Gangwar:constructor( )
 	if rows then
 		for i, row in ipairs( rows ) do
 			self.m_Areas[#self.m_Areas+1] = Area:new(row, self)
+			addEventHandler("onPickupHit", self.m_Areas[#self.m_Areas].m_Pickup, bind(Gangwar.Event_OnPickupHit, self))
 		end
 	end
-
-	addCommandHandler("attack", bind(self.onAttackCMD , self))
 	addEventHandler("onLoadCharacter", root, bind(self.onPlayerJoin, self))
 	addEventHandler("onDeloadCharacter", root, bind(self.onPlayerQuit, self))
 	addEventHandler("Gangwar:onClientRequestAttack", root, bind(self.attackReceiveCMD, self))
 	addEventHandler("onClientWasted", root, bind( Gangwar.onPlayerWasted, self))
 	addEventHandler("GangwarQuestion:disqualify", root, bind(self.onPlayerAbort, self))
 	addEventHandler("gangwarGetAreas", root, bind(self.getAreas, self))
+end
+
+function Gangwar:Event_OnPickupHit( player )
+	local dim = getElementDimension(source)
+	local pDim = getElementDimension(player)
+	local mArea = player.m_InsideArea
+	if dim == pDim then 
+		if mArea then
+			player:triggerEvent("Gangwar_shortMessageAttack" , mArea)
+		end
+	end
 end
 
 function Gangwar:RESET()
@@ -145,14 +155,6 @@ function Gangwar:getCurrentGangwars( )
 		end
 	end
 	return objTable
-end
-
-
-function Gangwar:onAttackCMD( player )
-	local mArea = player.m_InsideArea
-	if mArea then
-		player:triggerEvent("Gangwar:show_AttackGUI",  mArea)
-	end
 end
 
 function Gangwar:attackReceiveCMD( )
