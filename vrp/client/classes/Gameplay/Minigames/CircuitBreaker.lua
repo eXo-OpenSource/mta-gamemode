@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 CircuitBreaker = inherit(Singleton)
-
+addRemoteEvents{"forceCircuitBreakerClose"}
 function CircuitBreaker:constructor()
 	self.WIDTH, self.HEIGHT = 1080, 650
 
@@ -26,8 +26,12 @@ function CircuitBreaker:constructor()
 
 	self.m_fnRender = bind(CircuitBreaker.onClientRender, self)
 	self.m_fnRestore = bind(CircuitBreaker.onClientRestore, self)
+	removeEventHandler("onClientRender", root, self.m_fnRender)
+	removeEventHandler("onClientRestore", root, self.m_fnRestore)
+	removeEventHandler("forceCircuitBreakerClose", localPlayer, self.fn_StopGame)
 	addEventHandler("onClientRender", root, self.m_fnRender)
 	addEventHandler("onClientRestore", root, self.m_fnRestore)
+	addEventHandler("forceCircuitBreakerClose", localPlayer, self.fn_StopGame)
 	localPlayer:setFrozen(true)
 end
 
@@ -36,7 +40,7 @@ function CircuitBreaker:destructor()
 	unbindKey("arrow_r", "down", self.fn_changeDirection)			unbindKey("d", "down", self.fn_changeDirection)
 	unbindKey("arrow_u", "down", self.fn_changeDirection)			unbindKey("w", "down", self.fn_changeDirection)
 	unbindKey("arrow_d", "down", self.fn_changeDirection)			unbindKey("s", "down", self.fn_changeDirection)
-
+	unbindKey("space", "down", self.fn_StopGame)
 	removeEventHandler("onClientRender", root, self.m_fnRender)
 	removeEventHandler("onClientRestore", root, self.m_fnRestore)
 	localPlayer:setFrozen(false)
@@ -290,6 +294,11 @@ function CircuitBreaker:bindKeys()
 	bindKey("arrow_d", "down", self.fn_changeDirection)			bindKey("s", "down", self.fn_changeDirection)
 
 	bindKey("enter", "down", self.fn_StartGame)
+	bindKey("space", "down", self.fn_StopGame)
+end
+
+function CircuitBreaker:fn_StopGame() 
+	delete(CircuitBreaker:getSingleton())
 end
 
 function CircuitBreaker:changeDirection(key)
@@ -411,6 +420,7 @@ function CircuitBreaker:onClientRender()
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_lineBG)
 	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
+	dxDrawText("Enter - Start | Space - Zurück", 0, 0, screenWidth, screenHeight*0.9, tocolor(255,255,255,255),2,"default-bold","center","bottom")
 end
 
 function CircuitBreaker:onClientRestore(didClearRenderTargets)
@@ -535,6 +545,7 @@ addCommandHandler("gf",
 addEvent("startCircuitBreaker", true)
 addEventHandler("startCircuitBreaker", root,
     function(callbackEvent)
+		delete(CircuitBreaker:getSingleton())
         local instance = CircuitBreaker:new()
 		instance:setCallBackEvent(callbackEvent)
     end

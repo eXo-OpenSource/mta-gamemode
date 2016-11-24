@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 ActionsCheck = inherit(Singleton)
-ActionsCheck.Pause = 5*60 -- Amount in Minutes
+ActionsCheck.Pause = 5*60 -- Amount in Seconds
 
 function ActionsCheck:constructor()
 	self:reset()

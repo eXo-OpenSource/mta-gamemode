@@ -80,13 +80,14 @@ function Core:constructor()
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
 	VehicleGarages.initalizeAll()
-	BankRobbery.initializeAll()
 	VehicleSpawner.initializeAll()
 	PayNSpray.initializeAll()
 	GasStation.initializeAll()
 	TollStation.initializeAll()
 	Depot.initalize()
 
+	BankRobbery:new()
+	
 	-- Generate Missions
 	MStealWeaponTruck:new()
 

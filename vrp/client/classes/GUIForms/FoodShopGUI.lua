@@ -17,7 +17,7 @@ local CLUCKIN_BELL = {
 }
 
 local PIZZA_STACK = {
-	["Pos"] = Vector3(375.9, -118.2, 1001.6),
+	["Pos"] = Vector3(375.9, -118.2, 1001.5),
 	["Rot"] = Vector3(334, 25, 73),
 	["CameraMatrixPos"] =  Vector3(375.52822875977, -119.26042175293, 1002.2143554688),
 	["CameraMatrixLookAt"] = Vector3(382.27285766602, -31.187650680542, 955.33477783203),
