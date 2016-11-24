@@ -13,6 +13,10 @@ build_job:
     - python3 buildscript.py
     - "echo 'TODO: Create asset archives'"
     - "tar czf artifacts.tar.gz [shader] bone_attach exo_maps vrp_build"
+  artifacts:
+    name: "$CI_BUILD_NAME"
+    paths:
+      - artifacts.tar.gz
 
 deploy_job:
   stage: deploy
