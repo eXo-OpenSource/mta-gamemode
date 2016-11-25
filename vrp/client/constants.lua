@@ -492,3 +492,14 @@ SHADERS = {
 	["Bloom"] = {["event"] = "switchBloom" },
 	["Sun"] = {["event"] = "switchSunShader"}
 }
+
+
+GUNBOX_CRATES = {
+	createObject(2977, 1366.06, -1286.34, 12.4),
+	createObject(2977, 2397.80, -1980.82, 12.4),
+}
+
+for i = 1,#GUNBOX_CRATES do 
+	setElementFrozen( GUNBOX_CRATES[i], true)
+	setObjectBreakable( GUNBOX_CRATES[i], false)
+end
