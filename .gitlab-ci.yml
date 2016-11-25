@@ -13,13 +13,13 @@ build_job:
     - python3 build/buildscript.py
     - python3 build/packAssets.py
     - "tar czf artifacts.tar.gz [shader] bone_attach exo_maps vrp_build"
-	- "tar czf assets.tar.gz vrp_assets"
-	- rm -rf vrp_assets
+    - "tar czf assets.tar.gz vrp_assets"
+    - rm -rf vrp_assets
   artifacts:
     name: "$CI_BUILD_NAME"
     paths:
       - artifacts.tar.gz
-	  - assets.tar.gz
+      - assets.tar.gz
 
 deploy_job:
   stage: deploy
