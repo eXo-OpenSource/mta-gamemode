@@ -8,6 +8,7 @@
 BankRobbery = inherit(Singleton)
 BankRobbery.Map = {}
 BankRobbery.FinishMarker = {Vector3(2766.84, 84.98, 19.39), Vector3(2561.50, -949.89, 82.77), Vector3(1935.24, 169.98, 37.28)}
+
 addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
 BankRobbery.BagSpawns = {
 	Vector3(2307.25, 17.90, 26),
@@ -34,14 +35,14 @@ local BOMB_TIME = 15*1000
 local MONEY_PER_SAFE_MIN = 300
 local MONEY_PER_SAFE_MAX = 500
 local MAX_MONEY_PER_BAG = 2500
-local BANKROB_TIME = 60*1000*5
+local BANKROB_TIME = 60*1000*12
 
 function BankRobbery:constructor()
 	self:build()
 end
 
 function BankRobbery:spawnPed()
-	if isElement(self.m_Ped) then 
+	if isElement(self.m_Ped) then
 		destroyElement(self.m_Ped)
 	end
 	self.m_Ped = ShopNPC:new(295, 2310.28, -10.87, 26.74, 180)
@@ -55,12 +56,12 @@ function BankRobbery:spawnPed()
 end
 
 function BankRobbery:destructor()
-	
+
 end
 
 function BankRobbery:destroyRob()
 	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape)
-	for key, player in ipairs( tooLatePlayers) do 
+	for key, player in ipairs( tooLatePlayers) do
 		killPed(player)
 		player:sendInfo("Du bist im abgeschlossenen Raum verendet!")
 	end
@@ -82,7 +83,7 @@ function BankRobbery:destroyRob()
 	self.m_HackableComputer:setData("bankPC", false, true)
 	if isElement(self.m_HackableComputer) then destroyElement(self.m_HackableComputer) end
 	if self.m_GuardPed1 then destroyElement( self.m_GuardPed1 ) end
-	
+
 	killTimer(self.m_Timer)
 	killTimer(self.m_UpdateBreakingNewsTimer)
 
@@ -90,9 +91,14 @@ function BankRobbery:destroyRob()
 		playeritem:triggerEvent("CountdownStop")
 		playeritem:triggerEvent("forceCircuitBreakerClose")
 	end
-		
+
+	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
+		player:triggerEvent("forceCircuitBreakerClose")
+		self.m_CircuitBreakerPlayers[player] = nil
+	end
+
 	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
-	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)	
+	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
 	removeEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
 	removeEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
 	removeEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
@@ -131,6 +137,8 @@ function BankRobbery:build()
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
 
+	self.m_CircuitBreakerPlayers = {}
+
 	self:spawnPed()
 	self:spawnGuards()
 	self:createSafes()
@@ -143,7 +151,7 @@ function BankRobbery:build()
 	self.m_OnDisarm = bind(self.Event_onDisarmAlarm, self)
 	self.m_OnSuccess = bind(self.Event_onHackSuccessful, self)
 	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
-	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)	
+	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
 	addEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
 	addEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
 	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
@@ -431,7 +439,12 @@ function BankRobbery:BombArea_Explode(bombArea, player)
 end
 
 function BankRobbery:Event_onHackSuccessful()
-	client:sendSuccess(_("Du hast das Sicherheitssystem geknackt! Die Safetür ist offen", client))
+	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
+		player:triggerEvent("forceCircuitBreakerClose")
+		player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
+		self.m_CircuitBreakerPlayers[player] = nil
+	end
+
 	client:giveKarma(-5)
 
 	local pos = self.m_SafeDoor:getPosition()
@@ -441,6 +454,7 @@ end
 function BankRobbery:Event_onStartHacking()
 	if client:getFaction() and client:getFaction():isEvilFaction() then
 		if self.m_IsBankrobRunning then
+			self.m_CircuitBreakerPlayers[client] = true
 			triggerClientEvent(client, "startCircuitBreaker", client, "bankRobberyPcHackSuccess")
 		else
 			client:sendError(_("Derzeit läuft kein Bankraub!", client))
@@ -649,5 +663,5 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 end
 
 function BankRobbery.initializeAll()
-	
+
 end
