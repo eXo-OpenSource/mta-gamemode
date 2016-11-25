@@ -14,6 +14,7 @@ def rm_r(path):
     elif os.path.exists(path):
         os.remove(path)
 rm_r(outdir)
+os.mkdir(outdir)
 
 # Copy files
 main_tree = ET.parse(rootdir + "meta.xml")
