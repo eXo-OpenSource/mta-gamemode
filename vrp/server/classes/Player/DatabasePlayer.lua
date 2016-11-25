@@ -93,7 +93,7 @@ function DatabasePlayer:load()
 	self.m_SavedDimension = row.Dimension
 	self.m_Skin = row.Skin
 	self.m_AltSkin = row.AltSkin
-	if self.m_AltSkin == 0 then 
+	if self.m_AltSkin == 0 then
 		self.m_AltSkin = self.m_Skin
 	end
 	self:setXP(row.XP)
@@ -101,9 +101,9 @@ function DatabasePlayer:load()
 	self:setPoints(row.Points)
 	self:setMoney(row.Money, true)
 	if tonumber(row.SpawnWithFacSkin) == 1 then
-		self.m_SpawnWithFactionSkin = true 
-	else 
-		self.m_SpawnWithFactionSkin = false 
+		self.m_SpawnWithFactionSkin = true
+	else
+		self.m_SpawnWithFactionSkin = false
 	end
 	self:setWantedLevel(row.WantedLevel, true)
 	self.m_TutorialStage = row.TutorialStage
@@ -177,10 +177,10 @@ function DatabasePlayer:save()
 		delete(self.m_BankAccount)
 	end
 
-	local spawnFac 
-	if self.m_SpawnWithFactionSkin then 
-		spawnFac = 1 
-	else 
+	local spawnFac
+	if self.m_SpawnWithFactionSkin then
+		spawnFac = 1
+	else
 		spawnFac = 0
 	end
 	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=? WHERE Id=?", sql:getPrefix(),
@@ -582,7 +582,7 @@ function DatabasePlayer:setPrison(duration)
 			self:setDimension(0)
 			self:setInterior(0)
 			self:setPosition(Vector3(-224,2371.29,5688.73))
-			self:triggerEvent("Countdown", self.m_PrisonTime)
+			self:triggerEvent("Countdown", self.m_PrisonTime, "Prison")
 			self.m_PrisonTimer = setTimer(bind(self.endPrison, self), self.m_PrisonTime*1000, 1, player)
 		end
 	end

@@ -32,7 +32,7 @@ function WeedTruck:constructor(driver)
 	self.m_Destroyed = false
 	self.m_DestroyFunc = bind(self.Event_OnWeedTruckDestroy,self)
 
-	driver:triggerEvent("Countdown", math.floor(WeedTruck.LoadTime/1000))
+	driver:triggerEvent("Countdown", math.floor(WeedTruck.LoadTime/1000), "Beladung")
 	self.m_LoadTimer = setTimer(bind(self.truckLoaded, self), WeedTruck.LoadTime, 1)
 	self.m_StartPlayer:sendInfo(_("Der Weed-Truck wird beladen! Bitte warten!", self.m_StartPlayer))
 
@@ -95,7 +95,7 @@ function WeedTruck:Event_OnWeedTruckEnter(player, seat)
 		local factionId = player:getFaction():getId()
 		local destination = WeedTruck.Destination
 		self.m_Driver = player
-		player:triggerEvent("Countdown", math.floor((WeedTruck.Time-(getTickCount()-self.m_StartTime))/1000))
+		player:triggerEvent("Countdown", math.floor((WeedTruck.Time-(getTickCount()-self.m_StartTime))/1000), "Waffen-Truck")
 		player:triggerEvent("VehicleHealth")
 		self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, player)
 		self.m_DestinationMarker = createMarker(destination,"cylinder",8)

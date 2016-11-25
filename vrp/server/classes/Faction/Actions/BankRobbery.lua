@@ -205,7 +205,7 @@ function BankRobbery:startRob(player)
 	end
 
 	for index, playeritem in pairs(faction:getOnlinePlayers()) do
-		playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000))
+		playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000), "Bank-Überfall")
 	end
 
 	addRemoteEvents{"bankRobberyLoadBag", "bankRobberyDeloadBag"}
@@ -420,7 +420,7 @@ function BankRobbery:BombArea_Place(bombArea, player)
 	end
 
 	for k, player in pairs(getElementsWithinColShape(self.m_BombColShape, "player")) do
-		player:triggerEvent("Countdown", BOMB_TIME/1000)
+		player:triggerEvent("Countdown", BOMB_TIME/1000, "Bombe zündet")
 
 		local faction = player:getFaction()
 		if faction and faction:isEvilFaction() then
