@@ -98,21 +98,22 @@ function Core:constructor()
 	--// Gangwar
 	Gangwar:new()
 	GangwarStatistics:new()
+
 	-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 	setHeatHaze(0)
 
 	-- Generate Package
-	local xml = xmlLoadFile("meta.xml")
-	local files = {}
-	for k, v in pairs(xmlNodeGetChildren(xml)) do
-		if xmlNodeGetName(v) == "vrpfile" then
-			files[#files+1] = xmlNodeGetAttribute(v, "src")
+	if DEBUG then -- not required in release mode
+		local xml = xmlLoadFile("meta.xml")
+		local files = {}
+		for k, v in pairs(xmlNodeGetChildren(xml)) do
+			if xmlNodeGetName(v) == "vrpfile" then
+				files[#files+1] = xmlNodeGetAttribute(v, "src")
+			end
 		end
+		Package.save("vrp.data", files)
+		Provider:getSingleton():offerFile("vrp.data")
 	end
-
-	Package.save("vrp.data", files)
-
-	Provider:getSingleton():offerFile("vrp.data")
 
 	-- Refresh all players
 	for k, v in pairs(getElementsByType("player")) do

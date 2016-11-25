@@ -8,11 +8,11 @@
 Config = inherit(Singleton)
 
 function Config:constructor()
-  if fileExists(':vrp/server/constants/config.json') then
-  	local config = Config.check(':vrp/server/constants/config.json.dist', ':vrp/server/constants/config.json')
+  if fileExists('/server/constants/config.json') then
+  	local config = Config.check('/server/constants/config.json.dist', '/server/constants/config.json')
 	Config.data = config
   else
-    error('No config to load. Please add a config at \':vrp/server/constants/config.json\'')
+    error('No config to load. Please add a config at \'/server/constants/config.json\'')
   end
 end
 
