@@ -8,7 +8,7 @@
 PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
-"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData", "startWeaponLevelTraining"}
+"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData", "startWeaponLevelTraining","switchSpawnWithFactionSkin"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -39,7 +39,7 @@ function PlayerManager:constructor()
 	addEventHandler("gunBoxTakeWeapon", root, bind(self.Event_gunBoxTakeWeapon, self))
 	addEventHandler("Event_getIDCardData", root, bind(self.Event_getIDCardData, self))
 	addEventHandler("startWeaponLevelTraining", root, bind(self.Event_weaponLevelTraining, self))
-
+	addEventHandler("switchSpawnWithFactionSkin", root, bind(self.Event_switchSpawnWithFaction, self))
 
 
 
@@ -61,6 +61,10 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+end
+
+function PlayerManager:Event_switchSpawnWithFaction( state )
+	client.m_SpawnWithFactionSkin = state
 end
 
 function PlayerManager:destructor()

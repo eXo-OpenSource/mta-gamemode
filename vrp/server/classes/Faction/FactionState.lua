@@ -507,7 +507,11 @@ end
 
 function FactionState:Event_FactionChangeSkin()
 	if client:isFactionDuty() then
-		client:getFaction():changeSkin(client)
+		if client.m_SpawnWithFactionSkin then
+			client:getFaction():changeSkin(client)
+		else 
+			setElementModel( self, self.m_AltSkin or self.m_Skin)
+		end
 	end
 end
 

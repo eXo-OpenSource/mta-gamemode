@@ -124,9 +124,6 @@ end
 function HUDRadar:makePath(fileName, isBlip)
   if self.m_DesignSet == RadarDesign.Monochrome then
 	local path = (isBlip and "files/images/Radar_Monochrome/Blips/"..fileName) or "files/images/Radar_Monochrome/"..fileName
-	if not isBlip then
-		outputDebugString("[RADAR-BUGTRACK] Got path:"..path.."!",0,200,200,0)
-	end
     return path
   elseif self.m_DesignSet == RadarDesign.GTA then
     return (isBlip and "files/images/Radar_GTA/Blips/"..fileName) or "files/images/Radar_GTA/"..fileName

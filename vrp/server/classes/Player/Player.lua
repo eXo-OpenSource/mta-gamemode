@@ -39,7 +39,7 @@ function Player:constructor()
 	self.m_LastPlayTime = 0
 	self:destroyChatColShapes( )
 	self:createChatColshapes( )
-
+	
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
 
@@ -259,8 +259,14 @@ function Player:save()
 	if self.m_DoNotSave then
 		x, y, z = NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z
 	end
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
-		x, y, z, interior, dimension, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), self.m_Id)
+	local spawnWithFac 
+	if self.m_SpawnWithFactionSkin then 
+		spawnWithFac = 1
+	else 
+		spawnWithFac = 0
+	end
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ? WHERE Id = ?", sql:getPrefix(),
+		x, y, z, interior, dimension, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_Id)
 
 	--if self:getInventory() then
 	--	self:getInventory():save()
@@ -310,7 +316,11 @@ function Player:spawn( )
 		self:setPublicSync("Faction:Duty",false)
 
 		if self:getFaction() and self:getFaction():isEvilFaction() then
-			self:getFaction():changeSkin(self)
+			if self.m_SpawnWithFactionSkin then
+				self:getFaction():changeSkin(self)
+			else 
+				setElementModel( self, self.m_AltSkin or self.m_Skin)
+			end
 		end
 
 		if self.m_JailTime then
@@ -360,9 +370,12 @@ function Player:respawn(position, rotation)
 
 	self:setHeadless(false)
 	spawnPlayer(self, position, rotation, self.m_Skin or 0)
-
 	if self:getFaction() and self:getFaction():isEvilFaction() then
-		self:getFaction():changeSkin(self)
+		if self.m_SpawnWithFactionSkin then
+			self:getFaction():changeSkin(self)
+		else 
+			setElementModel( self, self.m_AltSkin or self.m_Skin)
+		end
 	end
 
 	setCameraTarget(self, self)
@@ -442,11 +455,19 @@ end
 function Player:setDefaultSkin()
 	if self:getFaction() then
 			if self:getFaction():isEvilFaction() then
-				self:getFaction():changeSkin(self)
+				if self.m_SpawnWithFactionSkin then
+					self:getFaction():changeSkin(self)
+				else 
+					setElementModel( self, self.m_AltSkin or self.m_Skin)
+				end
 				return
 			end
 		end
-	self:setModel(self.m_Skin)
+	if self.m_SpawnWithFactionSkin then
+		self:setModel(self.m_Skin)
+	else 
+		setElementModel( self, self.m_AltSkin or self.m_Skin)
+	end
 end
 
 function Player:setKarma(karma)
