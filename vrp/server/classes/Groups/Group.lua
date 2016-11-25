@@ -198,6 +198,7 @@ function Group:invitePlayer(player)
   player:triggerEvent("groupInvitationRetrieve", self:getId(), self:getName())
 
   self.m_Invitations[player] = true
+  
 end
 
 function Group:removeInvitation(player)
