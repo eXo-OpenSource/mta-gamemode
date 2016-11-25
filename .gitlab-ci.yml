@@ -1,0 +1,27 @@
+before_script:
+  - sudo apt-get update -qq && sudo apt-get install -y -qq python3 git
+
+stages:
+  - build
+  - deploy
+
+build_job:
+  stage: build
+  script:
+    - "echo 'TODO: Set configs'"
+    - 'echo "GIT_VERSION = $(git rev-parse HEAD)-$(git rev-parse --abbrev-ref HEAD)" > vrp/buildinfo.lua'
+    - python3 build/buildscript.py
+    - python3 build/packAssets.py
+    - "tar czf artifacts.tar.gz [shader] bone_attach exo_maps vrp_build"
+    - "tar czf assets.tar.gz vrp_assets"
+    - rm -rf vrp_assets
+  artifacts:
+    name: "$CI_BUILD_NAME"
+    paths:
+      - artifacts.tar.gz
+      - assets.tar.gz
+
+deploy_job:
+  stage: deploy
+  script:
+    - "echo 'TODO: Upload artifacts'"
