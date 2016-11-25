@@ -46,6 +46,7 @@ function NoDm:setPlayerNoDm(player, state)
 			toggleControl ("previous_weapon", false)
 			toggleControl ("aim_weapon", false)
 			toggleControl ("vehicle_fire", false)
+			setElementData(player, "no_driveby", true)
 			setPedWeaponSlot(localPlayer, 0)
 			if getPedWeapon ( player, 9 ) == 43 then
 				if not isPedInVehicle(localPlayer) then
@@ -64,6 +65,7 @@ function NoDm:setPlayerNoDm(player, state)
 			toggleControl ("previous_weapon", true)
 			toggleControl ("aim_weapon", true)
 			toggleControl ("vehicle_fire", true)
+			setElementData(player, "no_driveby", false)
 			setElementData(player,"schutzzone",false)
 		end
 		self:toggleNoDmImage(false)
