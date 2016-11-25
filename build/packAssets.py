@@ -7,7 +7,6 @@ rootdir = "vrp/"
 outdir = "vrp_assets/"
 
 # Remove existing vrp_assets dir
-os.chdir("..")
 def rm_r(path):
     if os.path.isdir(path):
         shutil.rmtree(path)
