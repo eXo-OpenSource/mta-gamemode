@@ -425,6 +425,9 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 		if client.m_IsSpecting then 
 			return 
 		end
+		if client.m_InCircuitBreak then 
+			return
+		end
 	end
 	client:setPublicSync("AFK", state)
 	if state == true then

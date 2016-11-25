@@ -95,6 +95,7 @@ function BankRobbery:destroyRob()
 	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
 		player:triggerEvent("forceCircuitBreakerClose")
 		self.m_CircuitBreakerPlayers[player] = nil
+		player.m_InCircuitBreak = false
 	end
 
 	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
@@ -455,6 +456,7 @@ function BankRobbery:Event_onStartHacking()
 	if client:getFaction() and client:getFaction():isEvilFaction() then
 		if self.m_IsBankrobRunning then
 			self.m_CircuitBreakerPlayers[client] = true
+			client.m_InCircuitBreak = true
 			triggerClientEvent(client, "startCircuitBreaker", client, "bankRobberyPcHackSuccess")
 		else
 			client:sendError(_("Derzeit läuft kein Bankraub!", client))
