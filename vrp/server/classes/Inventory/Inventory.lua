@@ -248,19 +248,20 @@ function Inventory:setItemPlace(bag, placeOld, placeNew)
 end
 
 function Inventory:removeItemFromPlace(bag, place, amount)
-	outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount.."!",0,200,0,200)
-	local id = self.m_Bag[bag][place]
-	if(not id) then
-		return false
-	end
 
-	if(not amount) then
-		amount = self.m_Items[id]["Menge"]
+	local id = self.m_Bag[bag][place]
+	if not id then return false end
+
+	local ItemAmount = self.m_Items[id]["Menge"]
+
+	if not amount then
+		amount = ItemAmount
 	elseif(amount < 0) then
 		error("removeItem > You cant remove less then 0 items!", 2)
 		return false
 	end
-	local ItemAmount = self.m_Items[id]["Menge"]
+
+	outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount.."!",0,200,0,200)
 
 	if(ItemAmount - amount < 0) then
 		return false
