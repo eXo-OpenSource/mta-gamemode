@@ -101,7 +101,9 @@ function Player:sendNews()
 end
 
 function Player:triggerEvent(ev, ...)
-	triggerClientEvent(self, ev, self, ...)
+	if self then 
+		triggerClientEvent(self, ev, self, ...)
+	end
 end
 
 function Player:sendMessage(text, r, g, b, ...)
@@ -464,9 +466,9 @@ function Player:setDefaultSkin()
 			end
 		end
 	if self.m_SpawnWithFactionSkin then
-		self:setModel(self.m_Skin)
+		self:setModel(self.m_Skin or self.m_AltSkin or 0)
 	else 
-		setElementModel( self, self.m_AltSkin or self.m_Skin)
+		setElementModel( self, self.m_AltSkin or self.m_Skin or 0)
 	end
 end
 
