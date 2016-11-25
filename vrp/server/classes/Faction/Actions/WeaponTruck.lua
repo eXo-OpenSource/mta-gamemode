@@ -264,17 +264,21 @@ function WeaponTruck:setBoxContent(boxId)
 end
 
 function WeaponTruck:outputBoxContent(player,boxId)
-	local weaponTable = self.m_Boxes[boxId].content
-	for weaponID,v in pairs(weaponTable) do
-		for typ,amount in pairs(weaponTable[weaponID]) do
-			if amount > 0 then
-				if typ == "Waffe" then
-					outputChatBox("Kiste: "..boxId..": "..amount.." "..WEAPON_NAMES[weaponID].." Waffe/n",player,255,255,0)
-				elseif typ == "Munition" then
-					outputChatBox("Kiste: "..boxId..": "..amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,255,0)
+	if self.m_Boxes[boxId] and self.m_Boxes[boxId].content then
+		local weaponTable = self.m_Boxes[boxId].content
+		for weaponID,v in pairs(weaponTable) do
+			for typ,amount in pairs(weaponTable[weaponID]) do
+				if amount > 0 then
+					if typ == "Waffe" then
+						outputChatBox("Kiste: "..boxId..": "..amount.." "..WEAPON_NAMES[weaponID].." Waffe/n",player,255,255,0)
+					elseif typ == "Munition" then
+						outputChatBox("Kiste: "..boxId..": "..amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,255,0)
+					end
 				end
 			end
 		end
+	else
+		outputDebug("Error WT:outputBoxContent BoxId: "..boxId)
 	end
 end
 

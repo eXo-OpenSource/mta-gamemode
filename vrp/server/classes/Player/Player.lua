@@ -69,6 +69,10 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
+	if self:isFactionDuty() then
+		takeAllWeapons(self)
+	end
+
 	if not self.m_DoNotSave then -- Cause of Invation System
 		self:save()
 	end
@@ -252,7 +256,7 @@ function Player:save()
 	local dimension = 0
 
 	if interior > 0 then dimension = self:getDimension() end
-	if self.m_DoNotSave then 
+	if self.m_DoNotSave then
 		x, y, z = NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z
 	end
 	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
