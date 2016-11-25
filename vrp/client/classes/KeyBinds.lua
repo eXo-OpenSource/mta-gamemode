@@ -89,7 +89,7 @@ function KeyBinds:webPanel()
 end
 
 function KeyBinds:inventory()
-	Inventory.getCurrent():toggle()
+	Inventory:getSingleton():toggle()
 end
 
 function KeyBinds:togglePhone()

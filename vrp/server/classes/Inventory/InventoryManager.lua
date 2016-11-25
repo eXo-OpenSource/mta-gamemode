@@ -20,7 +20,7 @@ function InventoryManager:constructor()
 	self.m_ItemData = self:loadItems()
 	self.Map = {}
 
-	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "throwItem", "c_setItemPlace", "refreshInventory", "requestTrade", "acceptTrade", "declineTrade"}
+	addRemoteEvents{"changePlaces", "onPlayerItemUseServer", "c_stackItems", "throwItem", "c_setItemPlace", "refreshInventory", "requestTrade", "acceptTrade", "declineTrade","syncAfterChange"}
 	addEventHandler("changePlaces", root, bind(self.Event_changePlaces, self))
 	addEventHandler("onPlayerItemUseServer", root, bind(self.Event_onItemUse, self))
 	addEventHandler("c_stackItems", root, bind(self.Event_c_stackItems, self))
@@ -30,18 +30,9 @@ function InventoryManager:constructor()
 	addEventHandler("requestTrade", root, bind(self.Event_requestTrade, self))
 	addEventHandler("acceptTrade", root, bind(self.Event_acceptTrade, self))
 	addEventHandler("declineTrade", root, bind(self.Event_declineTrade, self))
-	addCommandHandler("flushInventory",bind(self.Event_cmdFlush,self),false,false)
+	--/workaround/
+	addEventHandler("syncAfterChange", root, bind(self.Event_syncAfterChange, self))
 
-end
-
-function InventoryManager:Event_cmdFlush( player ) 
-	if self.Map[player] then
-		delete( self:getPlayerInventory(player) )
-	end
-	local instance = Inventory:new(player, self.m_Slots, self.m_ItemData,ItemManager:getSingleton():getClassItems())
-	self.Map[player] = instance	
-	instance:flush( player )
-	outputChatBox("Dein Inventar wurde erneuert!",player,0,200,200)
 end
 
 function InventoryManager:destructor()
@@ -54,6 +45,12 @@ end
 
 function InventoryManager:getItemDataForItem(itemName)
 	return self.m_ItemData[itemName]
+end
+
+function InventoryManager:Event_syncAfterChange() 
+	if client then 
+		self:getPlayerInventory(client):syncClient()
+	end
 end
 
 function InventoryManager:loadItems()

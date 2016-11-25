@@ -7,8 +7,7 @@
 -- ****************************************************************************
 
 Inventory = inherit(GUIForm)
-inherit(Object, Inventory)
-local dummySingleton
+inherit(Singleton, Inventory)
 addRemoteEvents{"loadPlayerInventarClient", "syncInventoryFromServer","forceInventoryRefresh", "closeInventory", "flushInventory"}
 Inventory.Color = {
 	TabHover  = rgb(50, 200, 255);
@@ -48,7 +47,7 @@ function Inventory:constructor()
 	self:addItemSlots(5, self.m_Tabs[3])
 	self.m_Tabs[4] = self:addTab("files/images/Inventory/drogen.png", tabArea)
 	self:addItemSlots(7, self.m_Tabs[4])
-	self.m_TabArea = tabArea
+
 	--[[
 	-- Lower Area (Items)
 	local itemArea = GUIElement:new(0, self.m_Height*(50/self.m_Height), self.m_Width, self.m_Height - self.m_Height*(50/self.m_Height), self)
@@ -79,23 +78,17 @@ function Inventory:constructor()
 
 end
 
-function Inventory:destructor() 
-	self.m_Window:delete()
-	for i = 1, 4 do 
-		if self.m_Tabs[i] then 
-			delete(self.m_Tabs[i])
-		end
-	end
-	delete( self.m_TabArea )
-end
+
 
 function Inventory:Event_syncInventoryFromServer(bag, items)
+	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
 	self.m_Bag = bag
 	self.m_Items = items
 	self:loadItems()
 end
 
 function Inventory:Event_loadPlayerInventarClient(slots, itemData)
+	outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
 	self.m_Slots = slots
 	self.m_ItemData = itemData
 end
@@ -147,7 +140,11 @@ end
 
 function Inventory:loadItems()
 	for slotId, slot in pairs (self.m_Tabs[self.m_CurrentTab].m_ItemSlots) do
-		if slot.ItemImage then delete(slot.ItemImage) end
+		outputChatBox("here")
+		if slot.ItemImage then 
+			delete(slot.ItemImage) 
+			outputChatBox("deleted")
+		end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
 	end
 	if self.m_Bag then
@@ -282,20 +279,3 @@ end
 function Inventory:onHide()
 	showCursor(false)
 end
-
-function Inventory.initialize() 
-	dummySingleton = Inventory:new()
-end
-
-function Inventory.getCurrent()
-	return dummySingleton
-end
-addEventHandler("flushInventory",localPlayer, function( obj1, obj2)
-	if obj1 and obj2 then 
-		if dummySingleton then 
-			delete( dummySingleton )
-		end
-		dummySingleton = Inventory:new()
-		dummySingleton:Event_loadPlayerInventarClient( obj1, obj2)
-	end
-end)
