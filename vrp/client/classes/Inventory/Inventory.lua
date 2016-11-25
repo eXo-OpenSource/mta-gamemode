@@ -140,10 +140,8 @@ end
 
 function Inventory:loadItems()
 	for slotId, slot in pairs (self.m_Tabs[self.m_CurrentTab].m_ItemSlots) do
-		outputChatBox("here")
 		if slot.ItemImage then 
 			delete(slot.ItemImage) 
-			outputChatBox("deleted")
 		end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
 	end
