@@ -158,6 +158,7 @@ function AmmuNationManager:buyWeapon(id)
 				else
 					client:takeMoney(AmmuNationInfo[id].Weapon, "Ammunation")
 					giveWeapon(client,id,1)
+					reloadPedWeapon(client)
 					client:sendShortMessage(_("Schlagwaffe erhalten.",client))
 					return
 				end
@@ -176,6 +177,7 @@ function AmmuNationManager:buyMagazine(id)
 		client:sendShortMessage(_("Munition erhalten.",client))
 		local weaponTable = toJSON({[id] = AmmuNationInfo[id].Magazine.amount})
 		StatisticsLogger:addAmmunationLog(client, "Shop", weaponTable, AmmuNationInfo[id].Magazine.price)
+		reloadPedWeapon(client)
 		return
 	end
 	client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)

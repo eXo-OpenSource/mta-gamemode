@@ -91,6 +91,7 @@ end
 
 function AppAmmunation:order()
 	triggerServerEvent("onAmmunationAppOrder",root,self.m_Cart)
+	self:clearCart() 
 end
 
 function AppAmmunation:deleteItemFromCart()
@@ -139,10 +140,10 @@ function AppAmmunation:updateButtons()
 		if localPlayer:getWeaponLevel() >= AmmuNationInfo[weaponID].MinLevel then
 			self.m_MagazineBuyBtn:setEnabled(true)
 		end
-	else
-		if localPlayer:getWeaponLevel() >= AmmuNationInfo[weaponID].MinLevel then
-			self.m_WeaponBuyBtn:setEnabled(true)
-		end
+	end
+	
+	if localPlayer:getWeaponLevel() >= AmmuNationInfo[weaponID].MinLevel then
+		self.m_WeaponBuyBtn:setEnabled(true)
 	end
 end
 
@@ -195,4 +196,13 @@ end
 
 function AppAmmunation:onClose()
 
+end
+
+function AppAmmunation:clearCart() 
+	for key, item in ipairs(self.m_CartGrid:getItems()) do 
+		if item then
+			self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
+			self:updateCart()
+		end
+	end
 end
