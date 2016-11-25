@@ -179,7 +179,12 @@ end
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	-- give a achievement
 	source:giveAchievement(37)
-
+	for key, obj in ipairs( getAttachedElements(client)) 
+		if obj:getData("MoneyBag") then 
+			detachElements(obj, client)
+			client:meChat(true, "lies einen Geldbeutel fallen")
+		end
+	end
 	if source:isFactionDuty() then
 		source:setDefaultSkin()
 		source.m_FactionDuty = false

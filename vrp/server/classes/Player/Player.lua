@@ -879,7 +879,7 @@ function Player:meChat(system, ...)
 	local systemText = ""
 	local receivedPlayers = {}
 	local message = ("%s %s"):format(self:getName(), text)
-	if system == true then systemText = " ** " end
+	if system == true then systemText = "* " end
 
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s %s"):format(systemText, message, systemText), playersToSend[index], 100, 0, 255)
