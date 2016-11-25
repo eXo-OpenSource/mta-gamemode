@@ -163,7 +163,7 @@ function Player:loadCharacter()
 end
 
 function Player:createCharacter()
-	sql:queryExec("INSERT INTO ??_character(Id, Skin, PosX, PosY, PosZ) VALUES(?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Id, NOOB_SKIN, NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z)
+	sql:queryExec("INSERT INTO ??_character(Id, Skin, PosX, PosY, PosZ, Money ) VALUES(?, ?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Id, NOOB_SKIN, NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z, START_MONEY_BAR)
 	--self.m_Inventory = Inventory.create()
 end
 
