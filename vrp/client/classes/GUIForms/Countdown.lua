@@ -23,6 +23,7 @@ function Countdown:startCountdown(seconds, text)
 	self.m_Seconds = seconds
 	self:updateTime()
 	self.m_Timer = setTimer(bind(self.updateTime, self), 1000, 0)
+	return self
 end
 
 function Countdown:updateTime()
