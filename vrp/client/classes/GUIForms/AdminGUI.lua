@@ -229,6 +229,12 @@ function AdminGUI:onSelectPlayer(player)
 		ErrorBox:new(_"Der Spieler ist nicht mehr online!")
 		return
 	end
+
+	if not player:getPublicSync("Money") then
+		ErrorBox:new(_"Der Spieler ist nicht eingeloggt!")
+		return
+	end
+
 	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
 	local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
 	self.m_PlayerTimeLabel:setText(_("Spielzeit: %s:%s h", hours, minutes))
@@ -236,8 +242,8 @@ function AdminGUI:onSelectPlayer(player)
 	self.m_PlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keine -"))
 	self.m_PlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
 	self.m_PlayerJobLabel:setText(_("Job: %s", player:getJobName()))
-	self.m_PlayerMoneyLabel:setText(_("Geld: %d$", player:getPublicSync("Money")))
-	self.m_PlayerBankMoneyLabel:setText(_("Bank-Geld: %d$", player:getPublicSync("BankMoney")))
+	self.m_PlayerMoneyLabel:setText(_("Geld: %d$", player:getPublicSync("Money") or 0))
+	self.m_PlayerBankMoneyLabel:setText(_("Bank-Geld: %d$", player:getPublicSync("BankMoney") or 0))
 
 	self.m_SelectedPlayer = player
 	self:refreshButtons()
