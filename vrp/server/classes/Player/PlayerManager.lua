@@ -179,7 +179,7 @@ end
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	-- give a achievement
 	source:giveAchievement(37)
-	for key, obj in ipairs( getAttachedElements(client)) 
+	for key, obj in ipairs( getAttachedElements(client)) do
 		if obj:getData("MoneyBag") then 
 			detachElements(obj, client)
 			client:meChat(true, "lies einen Geldbeutel fallen")

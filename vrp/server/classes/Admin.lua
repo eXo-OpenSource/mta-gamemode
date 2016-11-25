@@ -546,13 +546,28 @@ local tpTable = {
 			player:sendError(_("Ungültiger Ort! Tippe /tp um alle Orte zu sehen!", player))
 		else
 			outputChatBox("Hier sind alle Orte aufgelistet:", player, 255, 255, 255 )
-			local strings = {}
-			for k,v in pairs(tpTable) do
-				if not strings[v["typ"]] then strings[v["typ"]] = "" end
-				strings[v["typ"]] = strings[v["typ"]]..k.."|"
-			end
-			for v in pairs(strings) do
-				outputChatBox(v..": "..strings[v], player, 0, 125, 0 )
+			local strings = false
+			local counter = 0
+			local currentTyp = false
+			local already = {}
+			for i = 1,4 do
+				currentTyp = false
+				strings = false
+				for k,v in pairs(tpTable) do
+					if not already[v["typ"]] then
+						if not currentTyp then currentTyp = v["typ"] end 
+						if v["typ"] == currentTyp then 
+							if not strings then strings = "#009900"..currentTyp..": #FFFFFF" end 
+							strings = strings..k.." | "
+							if #strings > 90 then 
+								outputChatBox(strings,player,255, 255, 255, true)
+								strings = ""
+							end
+						end
+					end
+				end
+				already[currentTyp] = true 
+				outputChatBox(strings,player,255,255,255,true)
 			end
 		end
 	else
