@@ -25,3 +25,4 @@ deploy_job:
   stage: deploy
   script:
     - "echo 'TODO: Upload artifacts'"
+    - "echo 'TODO: Upload assets to http server'"
