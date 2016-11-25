@@ -411,6 +411,13 @@ function PlayerManager:Event_setPhoneStatus(state)
 end
 
 function PlayerManager:Event_toggleAFK(state, teleport)
+	if state == true then
+		if client.m_JailTime then 
+			if client.m_JailTime > 0 then 
+				return
+			end
+		end
+	end
 	client:setPublicSync("AFK", state)
 	if state == true then
 		client:startAFK()
