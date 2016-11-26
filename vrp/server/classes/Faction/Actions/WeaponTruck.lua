@@ -419,7 +419,7 @@ function WeaponTruck:onEvilMarkerHit(hitElement)
 		end
 	elseif hitElement:getPlayerAttachedObject() then
 		boxes = getAttachedElements(hitElement)
-		outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
+		outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount()+1,self.m_BoxesCount),rootElement,255,0,0)
 		hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 		hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 	elseif hitElement:getOccupiedVehicle() then
@@ -449,7 +449,7 @@ function WeaponTruck:onStateMarkerHit(hitElement)
 		self:Event_OnWeaponTruckExit(hitElement,0)
 	elseif hitElement:getPlayerAttachedObject() then
 		boxes = getAttachedElements(hitElement)
-		outputChatBox(_("Eine Waffenkiste wurde am PD sichergestellt! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount(),self.m_BoxesCount),rootElement,255,0,0)
+		outputChatBox(_("Eine Waffenkiste wurde am PD sichergestellt! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount()+1,self.m_BoxesCount),rootElement,255,0,0)
 		hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Das Geld wurde in die Fraktionskasse überwiesen!",hitElement))
 		hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 	elseif hitElement:getOccupiedVehicle() then

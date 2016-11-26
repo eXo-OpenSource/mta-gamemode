@@ -815,8 +815,10 @@ end
 
 function Player:refreshAttachedObject()
 	setTimer(function()
-		self:getPlayerAttachedObject():setInterior(self:getInterior())
-		self:getPlayerAttachedObject():setDimension(self:getDimension())
+		if self:getPlayerAttachedObject() then
+			self:getPlayerAttachedObject():setInterior(self:getInterior())
+			self:getPlayerAttachedObject():setDimension(self:getDimension())
+		end
 	end, 2000 ,1)
 end
 
