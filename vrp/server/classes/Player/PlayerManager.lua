@@ -498,29 +498,36 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 			client.m_GunBox[tostring(i)] = {}
 			client.m_GunBox[tostring(i)]["WeaponId"] = 0
 			client.m_GunBox[tostring(i)]["Amount"] = 0
+			if i >= 4 then
+				client.m_GunBox[tostring(i)]["VIP"] = true
+			else 
+				client.m_GunBox[tostring(i)]["VIP"] = false
+			end
 		end
 		local slot = client.m_GunBox[tostring(i)]
 		if slot["WeaponId"] == 0 then
-			local weaponSlot = getSlotFromWeapon(weaponId)
-			if client:getWeapon(weaponSlot) > 0 then
-				if client:getTotalAmmo(weaponSlot) >= muni then
-					if client:getTotalAmmo( weaponSlot) >= 1 then
-						client:takeWeapon(weaponId)
-						slot["WeaponId"] = weaponId
-						slot["Amount"] = muni
-						client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], muni, i))
+			if not slot["VIP"] then
+				local weaponSlot = getSlotFromWeapon(weaponId)
+				if client:getWeapon(weaponSlot) > 0 then
+					if client:getTotalAmmo(weaponSlot) >= muni then
+						if client:getTotalAmmo( weaponSlot) >= 1 then
+							client:takeWeapon(weaponId)
+							slot["WeaponId"] = weaponId
+							slot["Amount"] = muni
+							client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], muni, i))
+							client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+							return
+						end
+					else
+						client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponID]))
 						client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 						return
 					end
 				else
-					client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponID]))
+					client:sendInfo(_("Du hast keine/n %s!", client, WEAPON_NAMES[weaponID]))
 					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 					return
 				end
-			else
-				client:sendInfo(_("Du hast keine/n %s!", client, WEAPON_NAMES[weaponID]))
-				client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-				return
 			end
 		end
 	end

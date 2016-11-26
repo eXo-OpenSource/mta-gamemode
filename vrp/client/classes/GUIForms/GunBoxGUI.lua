@@ -102,7 +102,7 @@ function GunBoxGUI:refreshData(weapons)
             else
                 self.m_WeaponSlots[index].TakeButton:setEnabled(false)
                 self.m_WeaponSlots[index].Amount:setText("")
-                self.m_WeaponSlots[index].Label:setText("n/a")
+                self.m_WeaponSlots[index].Label:setText("Keine Waffe")
                 self.m_WeaponSlots[index].Image:setImage("files/images/Other/premium.png")
             end
 		end
