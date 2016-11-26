@@ -26,8 +26,7 @@ def rm_r(path):
         os.remove(path)
 rm_r(outdir)
 os.mkdir(outdir)
-shutil.copytree(rootdir+"files", outdir+"files")
-shutil.copyfile(rootdir+"whitelist.xml", outdir+"whitelist.xml")
+shutil.copytree(rootdir+"files/maps", outdir+"files/maps")
 os.mkdir(outdir+"server")
 os.mkdir(outdir+"server/http")
 shutil.copyfile(rootdir+"server/http/api.lua", outdir+"server/http/api.lua")
@@ -49,6 +48,16 @@ for child in root.findall("script"):
 		files["server"].append(rootdir+child.attrib["src"])
 		files["client"].append(rootdir+child.attrib["src"])
 
+	root.remove(child)
+
+for child in root.findall("file"):
+	filename = child.attrib["src"]
+	if not os.path.exists(outdir+os.path.dirname(filename)):
+		os.makedirs(outdir+os.path.dirname(filename))
+
+	shutil.copyfile(rootdir+filename, outdir+filename)
+
+for child in root.findall("vrpfile"):
 	root.remove(child)
 
 serverNode = ET.SubElement(root, "script")

@@ -20,7 +20,7 @@ main_tree = ET.parse(rootdir + "meta.xml")
 main_root = main_tree.getroot()
 asset_root = ET.Element("files")
 
-for child in main_root.findall("http_asset"):
+for child in main_root.findall("vrpfile"):
 	# copy the files
 	filename = child.attrib["src"]
 	assetpath = filename[6:]
