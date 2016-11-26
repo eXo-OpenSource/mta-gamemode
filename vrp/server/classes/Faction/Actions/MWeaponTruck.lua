@@ -92,6 +92,10 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 					if self.m_CurrentType == "evil" then
 						client:takeMoney(totalAmount, "Waffen-Truck")
 					elseif self.m_CurrentType == "state" then
+						if not client:isFactionDuty() then
+							client:sendError(_("Du bist nicht im Dienst!",client))
+							return
+						end
 						faction:takeMoney(totalAmount, "Waffen-Truck")
 					end
 					client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
