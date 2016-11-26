@@ -191,8 +191,11 @@ end
 
 function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 	table.insert(self.m_BoxesOnTruck,box)
+	player:detachPlayerObject(box:getModel())
 	box:setScale(1.6)
 	box:attach(self.m_Truck, WeaponTruck.attachCords[#self.m_BoxesOnTruck])
+	box:setCollisionsEnabled(false)
+
 	if #self.m_BoxesOnTruck >= self.m_BoxesCount then
 		player:sendInfo(_("Alle Kisten aufgeladen! Der Truck ist bereit!",player))
 		self.m_Truck:setFrozen(false)

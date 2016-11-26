@@ -369,8 +369,8 @@ function Player:respawn(position, rotation)
 	else
 		position, rotation = position, rotation
 	end
-	if self.m_JailTime == 0 or not self.m_JailTime then 
-	
+	if self.m_JailTime == 0 or not self.m_JailTime then
+
 		self:setHeadless(false)
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 		if self:getFaction() and self:getFaction():isEvilFaction() then
@@ -380,7 +380,7 @@ function Player:respawn(position, rotation)
 				setElementModel( self, self.m_AltSkin or self.m_Skin)
 			end
 		end
-	else 
+	else
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 		self:setHeadless(false)
 		self:moveToJail(false,true)
@@ -840,9 +840,6 @@ function Player:detachPlayerObject(object)
 		object:setCollisionsEnabled(true)
 		unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
 		self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-		local pos = self:getPosition()
-		pos.z = pos.z+0.01
-		self:setPosition(pos)
 		self:toggleControlsWhileObjectAttached(true)
 		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
