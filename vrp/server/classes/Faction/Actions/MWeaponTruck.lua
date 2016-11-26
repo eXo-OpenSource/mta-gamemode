@@ -53,7 +53,8 @@ function MWeaponTruck:onStartPointHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		local faction = hitElement:getFaction()
 		if faction then
-			if (faction:isEvilFaction() and source.type == "evil") or (faction:isStateFaction() and source.type == "state") then
+			if (faction:isEvilFaction() and source.type == "evil") or (faction:isStateFaction() and source.type == "state" and hitElement:isFactionDuty()) then
+
 				if ActionsCheck:getSingleton():isActionAllowed(hitElement) then
 					hitElement:triggerEvent("showFactionWTLoadGUI")
 					self.m_CurrentType = source.type
@@ -62,7 +63,7 @@ function MWeaponTruck:onStartPointHit(hitElement, matchingDimension)
 				if source.type == "evil" then
 					hitElement:sendError(_("Den Waffentruck können nur Mitglieder böser Fraktionen starten!",hitElement))
 				elseif source.type == "state" then
-					hitElement:sendError(_("Den Staats-Waffentruck können nur Mitglieder von Staats-Fraktionen starten!",hitElement))
+					hitElement:sendError(_("Den Staats-Waffentruck können nur Mitglieder von Staats-Fraktionen im Dienst starten!",hitElement))
 				end
 			end
 		else
