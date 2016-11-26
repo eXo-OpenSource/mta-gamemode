@@ -397,9 +397,13 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			if faction then
 				if (isPedInVehicle(hitElement) and #getAttachedElements(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
 					if faction:isEvilFaction() and source.type == "evil" and (source.factionId == faction:getId()) then
-						self:onEvilMarkerHit(hitElement)
+						self:onDestinationMarkerHit(hitElement)
 					elseif faction:isStateFaction() and source.type == "state" then
-						self:onStateMarkerHit(hitElement)
+						if self.m_Type == "state" then
+							self:onDestinationMarkerHit(hitElement)
+						else
+							self:onStateMarkerHit(hitElement)
+						end
 					else
 						hitElement:sendError(_("Du kannst hier nicht abgeben!",hitElement))
 
@@ -410,7 +414,7 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 	end
 end
 
-function WeaponTruck:onEvilMarkerHit(hitElement)
+function WeaponTruck:onDestinationMarkerHit(hitElement)
 	local faction = hitElement:getFaction()
 	local depot = faction.m_Depot
 	local boxes
