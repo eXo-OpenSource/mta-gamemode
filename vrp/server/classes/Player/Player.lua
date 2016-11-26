@@ -39,7 +39,7 @@ function Player:constructor()
 	self.m_LastPlayTime = 0
 	self:destroyChatColShapes( )
 	self:createChatColshapes( )
-	
+
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
 
@@ -101,7 +101,7 @@ function Player:sendNews()
 end
 
 function Player:triggerEvent(ev, ...)
-	if self then 
+	if self then
 		triggerClientEvent(self, ev, self, ...)
 	end
 end
@@ -261,10 +261,10 @@ function Player:save()
 	if self.m_DoNotSave then
 		x, y, z = NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z
 	end
-	local spawnWithFac 
-	if self.m_SpawnWithFactionSkin then 
+	local spawnWithFac
+	if self.m_SpawnWithFactionSkin then
 		spawnWithFac = 1
-	else 
+	else
 		spawnWithFac = 0
 	end
 	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ? WHERE Id = ?", sql:getPrefix(),
@@ -320,7 +320,7 @@ function Player:spawn( )
 		if self:getFaction() and self:getFaction():isEvilFaction() then
 			if self.m_SpawnWithFactionSkin then
 				self:getFaction():changeSkin(self)
-			else 
+			else
 				setElementModel( self, self.m_AltSkin or self.m_Skin)
 			end
 		end
@@ -375,7 +375,7 @@ function Player:respawn(position, rotation)
 	if self:getFaction() and self:getFaction():isEvilFaction() then
 		if self.m_SpawnWithFactionSkin then
 			self:getFaction():changeSkin(self)
-		else 
+		else
 			setElementModel( self, self.m_AltSkin or self.m_Skin)
 		end
 	end
@@ -459,7 +459,7 @@ function Player:setDefaultSkin()
 			if self:getFaction():isEvilFaction() then
 				if self.m_SpawnWithFactionSkin then
 					self:getFaction():changeSkin(self)
-				else 
+				else
 					setElementModel( self, self.m_AltSkin or self.m_Skin)
 				end
 				return
@@ -467,7 +467,7 @@ function Player:setDefaultSkin()
 		end
 	if self.m_SpawnWithFactionSkin then
 		self:setModel(self.m_Skin or self.m_AltSkin or 0)
-	else 
+	else
 		setElementModel( self, self.m_AltSkin or self.m_Skin or 0)
 	end
 end
@@ -831,9 +831,13 @@ function Player:detachPlayerObject(object)
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		object:detach(self)
+		object:setPosition(self.position + self.matrix.forward)
 		object:setCollisionsEnabled(true)
 		unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
-		self:setAnimation(false)
+		self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+		local pos = self:getPosition()
+		pos.z = pos.z+0.01
+		self:setPosition(pos)
 		self:toggleControlsWhileObjectAttached(true)
 		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
