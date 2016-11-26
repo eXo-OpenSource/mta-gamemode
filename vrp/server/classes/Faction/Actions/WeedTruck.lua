@@ -11,7 +11,7 @@ WeedTruck.LoadTime = 30*1000 -- in ms
 WeedTruck.Time = 10*60*1000 -- in ms
 WeedTruck.spawnPos = Vector3(-1105.76, -1621.55, 76.54)
 WeedTruck.spawnRot = Vector3(0, 0, 270)
-WeedTruck.Destination = Vector3(2181.59, -2626.35, 13.55)
+WeedTruck.Destination = Vector3(2181.59, -2626.35, 12)
 WeedTruck.Weed = 2500
 
 function WeedTruck:constructor(driver)
