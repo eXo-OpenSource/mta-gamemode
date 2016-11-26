@@ -1,12 +1,16 @@
 import os
 import xml.etree.ElementTree as ET
 import shutil
+import time
 
+start = time.time()
 # Dir Settings
 rootdir = "vrp/"
 outdir = "vrp_assets/"
 
 # Remove existing vrp_assets dir
+print("Creating assets structure...")
+
 def rm_r(path):
     if os.path.isdir(path):
         shutil.rmtree(path)
@@ -16,6 +20,8 @@ rm_r(outdir)
 os.mkdir(outdir)
 
 # Copy files
+print("Copying required files...")
+
 main_tree = ET.parse(rootdir + "meta.xml")
 main_root = main_tree.getroot()
 asset_root = ET.Element("files")
@@ -37,3 +43,4 @@ asset_tree = ET.ElementTree(asset_root)
 asset_tree.write(outdir+"index.xml")
 
 # Pack assets
+print("Done. (took %.2f seconds)" % (time.time() - start))

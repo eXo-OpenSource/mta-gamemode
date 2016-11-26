@@ -5,7 +5,9 @@ import xml.etree.ElementTree as ET
 import shutil
 from subprocess import call
 import platform
+import time
 
+start = time.time()
 compiler = "tools/luac_mta"
 if platform.system() == "Windows":
 	compiler = "tools/luac_mta.exe"
@@ -19,6 +21,8 @@ else:
 	call(["python3", "build/removeUTF8BOM.py"])
 
 # Build vrp_build structure
+print("Creating build structure...")
+
 def rm_r(path):
     if os.path.isdir(path):
         shutil.rmtree(path)
@@ -32,6 +36,8 @@ os.mkdir(outdir+"server/http")
 shutil.copyfile(rootdir+"server/http/api.lua", outdir+"server/http/api.lua")
 
 # Get files
+print("Copying required files...")
+
 files = {}
 files["server"] = []
 files["client"] = []
@@ -68,16 +74,19 @@ clientNode = ET.SubElement(root, "script")
 clientNode.set("src", "client.luac")
 clientNode.set("type", "client")
 
-
 tree.write(outdir+"meta.xml")
 
 # We now have all our files in the correct order in 'files'
 
 # Call the compiler
-serverCall = [ compiler, "-o", outdir+"server.luac" ]
+print("Compiling source...")
+
+serverCall = [ compiler, "-s", "-o", outdir+"server.luac" ]
 serverCall.extend(files["server"])
 call(serverCall)
 
-clientCall = [ compiler, "-o", outdir+"client.luac" ]
+clientCall = [ compiler, "-s", "-o", outdir+"client.luac" ]
 clientCall.extend(files["client"])
 call(clientCall)
+
+print("Done. (took %.2f seconds)" % (time.time() - start))
