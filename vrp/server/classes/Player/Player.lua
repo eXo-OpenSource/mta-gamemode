@@ -73,6 +73,8 @@ function Player:destructor()
 		takeAllWeapons(self)
 	end
 
+	if self.m_DeathPickup and isElement(self.m_DeathPickup) then self.m_DeathPickup:destroy() end
+
 	if not self.m_DoNotSave then -- Cause of Invation System
 		self:save()
 	end
@@ -784,7 +786,7 @@ function Player:getPlayersInChatRange( irange)
 end
 
 function Player:toggleControlsWhileObjectAttached(bool)
-	if bool then 
+	if bool then
 		if not getElementData(self,"schutzzone") then
 			toggleControl(self, "jump", bool )
 			toggleControl(self, "fire", bool )
@@ -793,7 +795,7 @@ function Player:toggleControlsWhileObjectAttached(bool)
 			toggleControl(self, "previous_weapon", bool )
 			toggleControl(self, "enter_exit", bool )
 		end
-	else 
+	else
 		toggleControl(self, "jump", bool )
 		toggleControl(self, "fire", bool )
 		toggleControl(self, "sprint", bool )
