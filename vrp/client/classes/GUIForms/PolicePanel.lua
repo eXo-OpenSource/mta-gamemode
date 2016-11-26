@@ -9,7 +9,7 @@
 PolicePanel = inherit(GUIForm)
 inherit(Singleton, PolicePanel)
 
-local PlayerLocateBlip
+local PlayerLocateBlip, PlayerLocateTimer
 
 function PolicePanel:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
@@ -104,17 +104,20 @@ function PolicePanel:locatePlayer()
 	if isElement(player) then
 		if player:getPublicSync("Phone") == true then
 			if PlayerLocateBlip then delete(PlayerLocateBlip) end
+			if isTimer(PlayerLocateTimer) then killTimer(PlayerLocateTimer) end
+
 			local pos = player:getPosition()
 			PlayerLocateBlip = Blip:new("Locate.png", pos.x, pos.y,9999)
 			PlayerLocateBlip:attachTo(player)
 			InfoBox:new(_"Spieler geortet! Folge dem Blip auf der Karte!")
-			PlayerLocateTimer = setTimer(function()
+
+			PlayerLocateTimer = setTimer(function(selfTimer)
 				if not player:getPublicSync("Phone") == true then
 					if PlayerLocateBlip then delete(PlayerLocateBlip) end
 					ErrorBox:new(_"Der Spieler hat sein Handy ausgeschaltet!")
-					killTimer(PlayerLocateTimer)
+					killTimer(selfTimer)
 				end
-			end, 1000, 0)
+			end, 1000, 0, PlayerLocateTimer)
 		else
 			ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Sein Handy ist ausgeschaltet!")
 		end
