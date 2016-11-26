@@ -204,6 +204,7 @@ function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 	box:setScale(1.6)
 	box:attach(self.m_Truck, WeaponTruck.attachCords[#self.m_BoxesOnTruck])
 	box:setCollisionsEnabled(false)
+	removeEventHandler("onElementClicked", box, self.m_Event_onBoxClickFunc)
 
 	if #self.m_BoxesOnTruck >= self.m_BoxesCount then
 		player:sendInfo(_("Alle Kisten aufgeladen! Der Truck ist bereit!",player))
