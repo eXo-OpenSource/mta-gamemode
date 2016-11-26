@@ -119,7 +119,7 @@ end
 function FactionEvil:loadLCNGates(factionId)
 	local lcnGates = {}
 	lcnGates[1] = Gate:new(980, Vector3(783.60, -1152.40, 25.20), Vector3(0, 0, 90), Vector3(783.60, -1152.40, 19.80))
-	lcnGates[2] = Gate:new(980, Vector3(661.20, -1228.00, 17.50), Vector3(0, 0, 241.25), Vector3(661.20, -1228.00, 17.12))
+	lcnGates[2] = Gate:new(980, Vector3(661.20, -1228.00, 17.50), Vector3(0, 0, 241.25), Vector3(661.20, -1228.00, 12))
 	lcnGates[3] = Gate:new(980, Vector3(664.90, -1307.90, 15.20), Vector3(0, 0, 0), Vector3(664.90, -1307.90, 9.20))
 	lcnGates[3]:addCustomShapes(Vector3(664.80, -1302.78, 13.46), Vector3(664.64, -1313.76, 13.46))
 	for index, gate in pairs(lcnGates) do
