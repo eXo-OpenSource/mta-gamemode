@@ -45,6 +45,8 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_Truck:setVariant(255, 255)
 	self.m_Truck:setEngineState(true)
 	self.m_StartTime = getTickCount()
+	self.m_DestinationBlips = {}
+	self.m_DestinationMarkers = {}
 
 	self.m_AmountPerBox = type == "state" and 2500 or 1250
 	self.m_BoxesCount = math.ceil(totalAmount/self.m_AmountPerBox)
@@ -98,10 +100,16 @@ function WeaponTruck:destructor()
 	StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_Type], "stop", self.m_StartPlayer, self.m_StartFaction, "faction")
 	self.m_Truck:destroy()
 
-	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
-	if self.m_Blip then delete(self.m_Blip) end
 	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 	if isTimer(self.m_Timer) then self.m_Timer:destroy() end
+
+	for index, value in pairs(self.m_DestinationMarkers) do
+		if isElement(value) then value:destroy() end
+	end
+
+	for index, value in pairs(self.m_DestinationBlips) do
+		if value then delete(value) end
+	end
 
 	for index, value in pairs(self.m_Boxes) do
 		if isElement(value) then value:destroy() end
@@ -191,7 +199,7 @@ end
 
 function WeaponTruck:loadBoxOnWeaponTruck(player,box)
 	table.insert(self.m_BoxesOnTruck,box)
-	player:detachPlayerObject(box:getModel())
+	player:detachPlayerObject(box)
 	box:setScale(1.6)
 	box:attach(self.m_Truck, WeaponTruck.attachCords[#self.m_BoxesOnTruck])
 	box:setCollisionsEnabled(false)
@@ -279,12 +287,17 @@ function WeaponTruck:Event_OnWeaponTruckEnter(player,seat)
 end
 
 function WeaponTruck:addDestinationMarker(factionId, blip)
+	local markerId = #self.m_DestinationMarkers+1
+
 	local destination = factionWTDestination[factionId]
+	self.m_DestinationMarkers[markerId] = createMarker(destination,"cylinder",8)
+	addEventHandler("onMarkerHit", self.m_DestinationMarkers[markerId], bind(self.Event_onDestinationMarkerHit, self))
+
 	if blip then
-		self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, root, 9999)
+		local blipId = #self.m_DestinationBlips+1
+		self.m_DestinationBlips[blipId] = Blip:new("Waypoint.png", destination.x, destination.y, root, 9999)
 	end
-	self.m_DestinationMarker = createMarker(destination,"cylinder",8)
-	addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
+
 end
 
 function WeaponTruck:Event_OnWeaponTruckExit(player,seat)
