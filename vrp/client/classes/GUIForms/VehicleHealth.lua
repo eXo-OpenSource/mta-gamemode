@@ -9,7 +9,7 @@ VehicleHealth = inherit(GUIForm)
 inherit(Singleton, VehicleHealth)
 
 function VehicleHealth:constructor()
-	GUIForm.constructor(self, screenWidth/2-200/2, 115, 200, 30, false)
+	GUIForm.constructor(self, screenWidth/2-187/2, 150, 187, 30, false)
 	self.m_Progress = GUIProgressBar:new(0,0,self.m_Width, self.m_Height,self)
 	self.m_Progress:setForegroundColor(tocolor(50,200,255))
 	self.m_Progress:setBackgroundColor(tocolor(180,240,255))

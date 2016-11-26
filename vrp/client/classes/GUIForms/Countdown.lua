@@ -9,7 +9,7 @@ Countdown = inherit(GUIForm)
 inherit(Singleton, Countdown)
 
 function Countdown:constructor()
-	GUIForm.constructor(self, screenWidth/2-250/2, 60, 187, 90, false)
+	GUIForm.constructor(self, screenWidth/2-187/2, 60, 187, 90, false)
 	self.m_Seconds = 0
 	self.m_Rect = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 125), self)
 	self.m_Text = GUILabel:new(0, 0, self.m_Width, 30, "Countdown...", self):setColor(Color.Red):setFont(VRPFont(self.m_Height*0.4)):setAlignX("center")
