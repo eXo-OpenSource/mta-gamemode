@@ -290,6 +290,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             admin:setFrozen(true)
 			admin.m_PreSpectInt = getElementInterior(admin)
 			admin.m_IsSpecting = true
+			admin:setPrivateSync("isSpecting",target)
 			admin.m_PreSpectDim = getElementDimension(admin)
 			admin.m_SpectInteriorFunc = function ( int ) setElementInterior(admin,int); setCameraInterior(admin, int) end
 			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
@@ -311,6 +312,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
 				admin.m_IsSpecting = false
+				admin:setPrivateSync("isSpecting",false)
             end)
         elseif func == "offlinePermaban" then
             self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
