@@ -16,6 +16,7 @@ function FactionState:constructor()
 		function ()
 			self:loadLSPD(1)
 			self:loadFBI(2)
+			self:loadArmy(3)
 		end
 	)
 
@@ -70,31 +71,9 @@ end
 function FactionState:destructor()
 end
 
-function FactionState:loadFBI(factionId)
-	self:createDutyPickup(234.04456, 111.82722, 1003.22571, 10, 23) -- FBI Base
-	self:createDutyPickup(1510.67871, -1479.12988, 9.50000, 0, 0)
-
-	local safe = createObject(2332, 226.80, 128.50, 1010.20)
-	safe:setInterior(10)
-	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
-	--[[
-	VehicleBarrier:new(Vector3(1621.9000244141, -1602.6999511719,13.300000190735), Vector3(0, 90, 180)).onBarrierHit = bind(self.onBarrierGateHit, self) -- FBI Barrier
-
-	Gate:new(971, Vector3(1629.1, -1722.90, 16.10), Vector3(0, 0, 180), Vector3(1629.1, -1722.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
-	Gate:new(971, Vector3(1618.2, -1643.90, 16.10), Vector3(0, 0, 0), Vector3(1618.2, -1643.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
-	Gate:new(971, Vector3(1618.7, -1728.30, 6.5), Vector3(0, 0, 180), Vector3(1618.7, -1728.30, -1.2)).onGateHit = bind(self.onBarrierGateHit, self)
-
-	Gate:new(971, Vector3(1618.7, -1728.30, 6.5), Vector3(0, 0, 180), Vector3(1618.7, -1728.30, -1.2)).onGateHit = bind(self.onBarrierGateHit, self)
-	]]--
-	Gate:new(2938, Vector3(1534.6999511719,-1451.5,15), Vector3(0, 0, 270), Vector3(1534.6999511719,-1451.5,20)).onGateHit = bind(self.onBarrierGateHit, self)
-	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
-	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
-	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
-end
-
 function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
-	self:createDutyPickup(1530.21, -1671.66, 6.22, 0) -- PD Garage
+	self:createDutyPickup(1530.21, -1671.66, 6.22) -- PD Garage
 
 	Blip:new("Police.png", 1552.278, -1675.725, root, 400)
 
@@ -114,7 +93,7 @@ function FactionState:loadLSPD(factionId)
 
 	local safe = createObject(2332, 241, 77.70, 1004.50, 0, 0, 270)
 	safe:setInterior(6)
-	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
+	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
 	self.m_ShootingRanchMarker = createMarker(249.78, 66.77, 1002.7, "cylinder", 1, 0, 255, 0, 200)
 	self.m_ShootingRanchMarker:setInterior(6)
@@ -125,6 +104,43 @@ function FactionState:loadLSPD(factionId)
 	end)
 
 end
+
+function FactionState:loadFBI(factionId)
+	self:createDutyPickup(234.04456, 111.82722, 1003.22571, 10, 23) -- FBI Base
+	self:createDutyPickup(1510.67871, -1479.12988, 9.50000)
+
+	local safe = createObject(2332, 226.80, 128.50, 1010.20)
+	safe:setInterior(10)
+	FactionManager:getSingleton():getFromId(1):setSafe(safe)
+
+	Gate:new(2938, Vector3(1534.6999511719,-1451.5,15), Vector3(0, 0, 270), Vector3(1534.6999511719,-1451.5,20)).onGateHit = bind(self.onBarrierGateHit, self)
+	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
+	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
+	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
+end
+
+function FactionState:loadArmy(factionId)
+	self:createDutyPickup(2743.75, -2453.81, 13.86) -- Army-LS
+	self:createDutyPickup(247.05, 1859.38, 14.08) -- Army Area
+
+	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 180 )
+	FactionManager:getSingleton():getFromId(1):setSafe(safe)
+
+	local areaGate = Gate:new(971, Vector3(130.3, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(130.3, 1934.8, 13.7))
+	areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
+	areaGate:addCustomShapes(Vector3(134.93, 1927.58, 19.20), Vector3(135.27, 1941.85, 19.32))
+	areaGate.onGateHit = bind(self.onBarrierGateHit, self)
+
+	local areaGarage = Gate:new(7657, Vector3(208, 1875.90, 13.86), Vector3(0, 0, 180), Vector3(200, 1875.90, 13.86))
+	areaGarage:addCustomShapes(Vector3(213.97, 1872.14, 13.14), Vector3(213.92, 1880.12, 13.14))
+	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+
+
+	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
+	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
+	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
+end
+
 
 function FactionState:countPlayers()
 	local factions = FactionManager:getSingleton():getAllFactions()
@@ -179,7 +195,7 @@ end
 
 function FactionState:createDutyPickup(x,y,z,int, dim)
 	self.m_DutyPickup = createPickup(x,y,z, 3, 1275) --PD
-	setElementInterior(self.m_DutyPickup, int)
+	setElementInterior(self.m_DutyPickup, int or 0)
 	setElementDimension ( self.m_DutyPickup, dim or 0)
 	addEventHandler("onPickupHit", self.m_DutyPickup,
 		function(hitElement)
@@ -509,7 +525,7 @@ function FactionState:Event_FactionChangeSkin()
 	if client:isFactionDuty() then
 		if client.m_SpawnWithFactionSkin then
 			client:getFaction():changeSkin(client)
-		else 
+		else
 			setElementModel( self, self.m_AltSkin or self.m_Skin)
 		end
 	end
