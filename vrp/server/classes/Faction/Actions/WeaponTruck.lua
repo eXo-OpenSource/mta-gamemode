@@ -313,7 +313,7 @@ end
 
 function WeaponTruck:Event_DeloadBox(veh)
 	if client:getFaction() then
-		if getElementData(veh,"WeaponTruck") or VEHICLE_BOX_LOAD[veh.model] then
+		if veh == self.m_Truck or VEHICLE_BOX_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then
 				if not client:getPlayerAttachedObject() then
 					if not client.vehicle then
@@ -360,10 +360,14 @@ end
 
 function WeaponTruck:Event_LoadBox(veh)
 	if client:getFaction() then
-		if getElementData(veh,"WeaponTruck") or VEHICLE_BOX_LOAD[veh.model] then
+		if veh == self.m_Truck or VEHICLE_BOX_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position,client.position) < 7 then
 				if not client.vehicle then
 					local box = client:getPlayerAttachedObject()
+					if veh == self.m_Truck then
+						self:loadBoxOnWeaponTruck(client,box)
+						return
+					end
 					if self:getAttachedBoxes(veh) < VEHICLE_BOX_LOAD[veh.model]["count"] then
 						if box then
 							local count = self:getAttachedBoxes(veh)
