@@ -93,7 +93,7 @@ function WeaponTruck:destructor()
 	self.m_Truck:destroy()
 
 	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
-	if self.m_Blip then delete(self.m_Blip:delete) end
+	if self.m_Blip then delete(self.m_Blip) end
 	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 	if isTimer(self.m_Timer) then self.m_Timer:destroy() end
 
