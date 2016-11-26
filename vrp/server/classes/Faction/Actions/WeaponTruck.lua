@@ -53,6 +53,8 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_BoxesOnTruck = {}
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
+
+
 	if self.m_Type == "evil" then
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
 	elseif self.m_Type == "state" then
@@ -81,6 +83,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 
 	self:spawnBoxes()
 	self:createLoadMarker()
+	self:addDestinationMarker()
 end
 
 function WeaponTruck:destructor()
@@ -90,7 +93,7 @@ function WeaponTruck:destructor()
 	self.m_Truck:destroy()
 
 	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
-	if isElement(self.m_Blip) then self.m_Blip:delete() end
+	if self.m_Blip then delete(self.m_Blip) end
 	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 	if isTimer(self.m_Timer) then self.m_Timer:destroy() end
 
@@ -301,23 +304,24 @@ end
 
 function WeaponTruck:Event_OnWeaponTruckEnter(player,seat)
 	if seat == 0 and player:getFaction() then
-		local factionId = player:getFaction():getId()
-		local destination = factionWTDestination[factionId]
 		self.m_Driver = player
 		player:triggerEvent("Countdown", math.floor((WeaponTruck.Time-(getTickCount()-self.m_StartTime))/1000), "Waffen-Truck")
 		player:triggerEvent("VehicleHealth")
-		self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, player,9999)
-		self.m_DestinationMarker = createMarker(destination,"cylinder",8)
-		addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
 	end
+end
+
+function WeaponTruck:addDestinationMarker()
+	local destination = factionWTDestination[self.m_StartFaction]
+	self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, root, 9999)
+	self.m_DestinationMarker = createMarker(destination,"cylinder",8)
+	addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
 end
 
 function WeaponTruck:Event_OnWeaponTruckExit(player,seat)
 	if seat == 0 then
 		player:triggerEvent("CountdownStop")
 		player:triggerEvent("VehicleHealthStop")
-		self.m_Blip:delete()
-		if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
+		self:removeDestinationMarker()
 	end
 end
 
