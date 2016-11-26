@@ -278,7 +278,11 @@ function GroupGUI:GroupMoneyWithdrawButton_Click()
 end
 
 function GroupGUI:GroupAddPlayerButton_Click()
-	GroupInviteGUI:new()
+	InviteGUI:new(
+		function(player)
+			triggerServerEvent("groupAddPlayer", root, player)
+		end
+	)
 end
 
 function GroupGUI:GroupRemovePlayerButton_Click()

@@ -325,7 +325,11 @@ function FactionGUI:FactionCreateButton_Click()
 end
 
 function FactionGUI:FactionAddPlayerButton_Click()
-	FactionInviteGUI:new()
+	InviteGUI:new(
+		function(player)
+			triggerServerEvent("factionAddPlayer", root, player)
+		end
+	)
 end
 
 function FactionGUI:FactionRemovePlayerButton_Click()
