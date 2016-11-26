@@ -292,6 +292,12 @@ function FactionState:sendShortMessage(text, ...)
 	end
 end
 
+function FactionState:sendMessage(text, r, g, b, ...)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b, ...)
+	end
+end
+
 function FactionState:sendStateChatMessage(sourcePlayer, message)
 	local faction = sourcePlayer:getFaction()
 	if faction and faction:isStateFaction() == true then
@@ -348,7 +354,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
-						player:getFaction():sendMessage(msg, 255,0,0)
+						self:sendMessage(msg, 255,0,0)
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
 					end
