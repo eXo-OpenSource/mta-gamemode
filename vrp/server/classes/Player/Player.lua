@@ -381,7 +381,6 @@ function Player:respawn(position, rotation)
 			end
 		end
 	else 
-		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 		self:moveToJail(CUTSCENE)
 	end
 	setCameraTarget(self, self)
