@@ -53,6 +53,24 @@ function Townhall:constructor()
 	itemInfoPed.Func = function() triggerServerEvent("shopOpenGUI", localPlayer, 50) end
 	self.m_Peds[#self.m_Peds + 1] = itemInfoPed
 
+	
+	--// VEHICLE SPAWNER PEDS 
+	local itemSpawnerPed = Ped.create(171, Vector3(1806.72, -1293.27, 13.61))
+	itemSpawnerPed:setRotation(Vector3(0, 0, 65))
+	itemSpawnerPed.Name = _"Fahrzeugverleih"
+	itemSpawnerPed.Description = _"Leih hier ein Fahrzeug aus!"
+	itemSpawnerPed.Type = 6
+	itemSpawnerPed.Func = function() end
+	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed
+	
+	local itemSpawnerPed2 = Ped.create(171, Vector3(1509.99, -1749.29, 13.55))
+	itemSpawnerPed2:setRotation(Vector3(0, 0, 97.13))
+	itemSpawnerPed2.Name = _"Fahrzeugverleih"
+	itemSpawnerPed2.Description = _"Leih hier ein Fahrzeug aus!"
+	itemSpawnerPed2.Type = 7
+	itemSpawnerPed2.Func = function() end
+	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed2
+	
 	-- Initialize
 	self:initalizePeds()
 	
