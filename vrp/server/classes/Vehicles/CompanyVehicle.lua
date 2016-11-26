@@ -51,7 +51,7 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
   self:setLocked(true)
   if color then
     local a, r, g, b = getBytesInInt32(color)
-    setVehicleColor(self, r, g, b)
+    setVehicleColor(self, r, g, b, r, g, b)
   end
 
   for k, v in pairs(tunings or {}) do
@@ -116,7 +116,7 @@ end
 
 function CompanyVehicle:create(Company, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
-	if sql:queryExec("INSERT INTO ??_company_vehicles (Company, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), Company:getId(), model, posX, posY, posZ, rotation) then
+	if sql:queryExec("INSERT INTO ??_company_vehicles (Company, Model, PosX, PosY, PosZ, Rotation, Health) VALUES(?, ?, ?, ?, ?, ?, 1000)", sql:getPrefix(), Company:getId(), model, posX, posY, posZ, rotation) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
 		enew(vehicle, CompanyVehicle, sql:lastInsertId(), Company, nil, 1000)
     VehicleManager:getSingleton():addRef(vehicle)
