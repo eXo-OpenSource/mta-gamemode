@@ -20,8 +20,10 @@ end
 
 function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc)
 	local x, y, w
-	--if HUDRadar:getSingleton().m_Visible then
-		x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
+	x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
+	if HUDRadar:getSingleton().m_DesignSet == RadarDesign.Default then
+		y = screenHeight - screenHeight*0.365
+	end
 	--else
 	--	x, y, w = 20, screenHeight - 5, 340*screenWidth/1600+6
 	--end
