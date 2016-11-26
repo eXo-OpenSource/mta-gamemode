@@ -38,9 +38,8 @@ function WeedTruck:constructor(driver)
 
 	PlayerManager:getSingleton():breakingNews("Ein Weed-Transport wurde soeben gestartet!")
 
-	local destination = factionWTDestination[self.m_StartFaction:getId()]
-	self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, root, 999)
-	self.m_DestinationMarker = createMarker(destination,"cylinder",8)
+	self.m_Blip = Blip:new("Waypoint.png", WeedTruck.Destination.x, WeedTruck.Destination.y, root, 9999)
+	self.m_DestinationMarker = createMarker(WeedTruck.Destination,"cylinder",8)
 	addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
 
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnWeedTruckStartEnter,self))
