@@ -18,11 +18,11 @@ addEventHandler("playerJailed", root,
 			CutscenePlayer:getSingleton():playCutscene("Arrest",
 			function()
 				InfoBox:new(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %d Minuten verweilen!", jailTime))
-				jailCountdownGUI = Countdown:getSingleton():startCountdown(jailtime*60, "Frei in:")
+				jailCountdownGUI = Countdown:getSingleton():startCountdown(jailTime*60, "Frei in:")
 			end)
 		else
 			InfoBox:new(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %d Minuten verweilen!", jailTime))
-			jailCountdownGUI = Countdown:getSingleton():startCountdown(jailtime*60, "Frei in:")
+			jailCountdownGUI = Countdown:getSingleton():startCountdown(jailTime*60, "Frei in:")
 		end
 	end
 )

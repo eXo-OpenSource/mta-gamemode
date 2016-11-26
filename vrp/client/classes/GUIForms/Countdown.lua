@@ -28,8 +28,8 @@ end
 
 function Countdown:updateTime()
 	self.m_Seconds = self.m_Seconds - 1
-	local mins = string.format("%02.f", math.floor(self.m_Seconds/60));
-	local secs = string.format("%02.f", math.floor(self.m_Seconds - mins *60));
+	local mins = string.format("%02.f", math.floor(self.m_Seconds/60)) or "0";
+	local secs = string.format("%02.f", math.floor(self.m_Seconds - mins *60)) or "0";
 
 	self.m_MinutesLabel:setText(mins)
 	self.m_SecondLabel:setText(secs)
