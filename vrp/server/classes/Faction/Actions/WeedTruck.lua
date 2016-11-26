@@ -38,6 +38,9 @@ function WeedTruck:constructor(driver)
 
 	PlayerManager:getSingleton():breakingNews("Ein Weed-Transport wurde soeben gestartet!")
 
+	self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, root, 999)
+	self.m_DestinationMarker = createMarker(destination,"cylinder",8)
+	addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
 
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnWeedTruckStartEnter,self))
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnWeedTruckEnter,self))
@@ -52,7 +55,7 @@ function WeedTruck:destructor()
 	StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "stop", self.m_StartPlayer, self.m_StartFaction, "faction")
 
 	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
-	if isElement(self.m_Blip) then delete(self.m_Blip) end
+	if self.m_Blip then delete(self.m_Blip) end
 	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 	TollStation.closeAll()
@@ -95,11 +98,9 @@ function WeedTruck:Event_OnWeedTruckEnter(player, seat)
 		local factionId = player:getFaction():getId()
 		local destination = WeedTruck.Destination
 		self.m_Driver = player
-		player:triggerEvent("Countdown", math.floor((WeedTruck.Time-(getTickCount()-self.m_StartTime))/1000), "Waffen-Truck")
+		player:triggerEvent("Countdown", math.floor((WeedTruck.Time-(getTickCount()-self.m_StartTime))/1000), "Weed-Truck")
 		player:triggerEvent("VehicleHealth")
-		self.m_Blip = Blip:new("Waypoint.png", destination.x, destination.y, player)
-		self.m_DestinationMarker = createMarker(destination,"cylinder",8)
-		addEventHandler("onMarkerHit", self.m_DestinationMarker, bind(self.Event_onDestinationMarkerHit, self))
+
 	end
 end
 
@@ -107,8 +108,6 @@ function WeedTruck:Event_OnWeedTruckExit(player,seat)
 	if seat == 0 then
 		player:triggerEvent("CountdownStop")
 		player:triggerEvent("VehicleHealthStop")
-		delete(self.m_Blip)
-		if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
 	end
 end
 
