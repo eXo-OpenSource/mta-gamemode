@@ -59,11 +59,11 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 
 	if self.m_Type == "evil" then
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
-		self:addDestinationMarker(self.m_StartFaction:getId(), true)
+		self:addDestinationMarker(self.m_StartFaction:getId(), "evil", true)
 	elseif self.m_Type == "state" then
 		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
-			self:addDestinationMarker(faction:getId(), false)
+			self:addDestinationMarker(faction:getId(), "evil", false)
 		end
 	end
 
@@ -90,7 +90,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 
 	self:spawnBoxes()
 	self:createLoadMarker()
-	self:addDestinationMarker(1, true) -- State
+	self:addDestinationMarker(1, "state", true) -- State
 
 end
 
@@ -286,11 +286,14 @@ function WeaponTruck:Event_OnWeaponTruckEnter(player,seat)
 	end
 end
 
-function WeaponTruck:addDestinationMarker(factionId, blip)
+function WeaponTruck:addDestinationMarker(factionId, type, blip)
 	local markerId = #self.m_DestinationMarkers+1
 
 	local destination = factionWTDestination[factionId]
 	self.m_DestinationMarkers[markerId] = createMarker(destination,"cylinder",8)
+	self.m_DestinationMarkers[markerId].type = type
+	self.m_DestinationMarkers[markerId].factionId = factionId
+
 	addEventHandler("onMarkerHit", self.m_DestinationMarkers[markerId], bind(self.Event_onDestinationMarkerHit, self))
 
 	if blip then
@@ -392,10 +395,13 @@ function WeaponTruck:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if (isPedInVehicle(hitElement) and #getAttachedElements(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
-					if faction:isEvilFaction() then
+					if faction:isEvilFaction() and source.type == "evil" and (source.factionId == faction:getId()) then
 						self:onEvilMarkerHit(hitElement)
-					elseif faction:isStateFaction() then
+					elseif faction:isStateFaction() and source.type == "state" then
 						self:onStateMarkerHit(hitElement)
+					else
+						hitElement:sendError(_("Du kannst hier nicht abgeben!",hitElement))
+
 					end
 				end
 			end
