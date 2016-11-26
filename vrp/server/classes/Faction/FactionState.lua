@@ -11,6 +11,8 @@ FactionState = inherit(Singleton)
 
 function FactionState:constructor()
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
+	self:createArrestZone(255.19, 84.75, 1002.45, 6)-- PD Zellen
+	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 
 	nextframe( -- Todo workaround
 		function ()
@@ -213,16 +215,25 @@ function FactionState:createDutyPickup(x,y,z,int, dim)
 	)
 end
 
-function FactionState:createArrestZone(x,y,z,int)
-	self.m_ArrestZone = createPickup(x,y,z, 3, 1318) --PD
-	self.m_ArrestZoneCol = createColSphere(x,y,z, 4) --PD
-	addEventHandler("onPickupHit", self.m_ArrestZone,
+function FactionState:createArrestZone(x, y, z, int, dim)
+	local pickup = createPickup(x,y,z, 3, 1318)
+	local col = createColSphere(x,y,z, 4)
+	if int then
+		pickup:setInterior(int)
+		col:setInterior(int)
+	end
+
+	if dim then
+		pickup:setDimension(dim)
+		col:setDimension(dim)
+	end
+	addEventHandler("onPickupHit", pickup,
 		function(hitElement)
 			if getElementType(hitElement) == "player" then
 				local faction = hitElement:getFaction()
 				if faction:isStateFaction() == true then
 					if hitElement:isFactionDuty() then
-						hitElement:triggerEvent("showStateFactionArrestGUI", self.m_ArrestZoneCol)
+						hitElement:triggerEvent("showStateFactionArrestGUI", col)
 					end
 				end
 			end
