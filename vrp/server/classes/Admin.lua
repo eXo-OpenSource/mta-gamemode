@@ -244,9 +244,12 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             target:setPrison(duration*60)
             self:addPunishLog(admin, target, func, reason, duration*60)
         elseif func == "unprison" then
-            self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
-            target:endPrison()
-            self:addPunishLog(admin, target, func)
+			if target.m_PrisonTime > 0 then
+				self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
+				target:endPrison()
+				self:addPunishLog(admin, target, func)
+			else admin:sendError("Spieler ist nicht im Prison!")
+			end
         elseif func == "timeban" then
             duration = tonumber(duration)
 			self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
