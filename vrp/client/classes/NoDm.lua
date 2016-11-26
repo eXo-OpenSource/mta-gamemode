@@ -1,4 +1,5 @@
 NoDm = inherit(Singleton)
+addRemoteEvents{"checkNoDm"}
 NoDm.Zones = {
 	[1] = {Vector3(1399.1123046875,-1862.453125, 12), Vector3(160,120,15)},
 	[2] = {Vector3(1322.850219726,-1721.6591796875, 12), Vector3(92,120, 15)},
@@ -92,6 +93,9 @@ function NoDm:renderNoDmImage()
 	if not Phone:getSingleton():isOpen() then
 		dxDrawImage(px,py,screenWidth*0.15,screenWidth*0.08,"files/images/Other/nodm.png")
 	end
+	if getPedWeapon ( localPlayer, 9 ) ~= 43 then
+		setPedWeaponSlot(localPlayer,0)
+	end
 end
 
 function NoDm:unrenderNoDmImage()
@@ -119,11 +123,11 @@ function NoDm:checkNoDm()
 	end
 end
 
-addEventHandler("onClientPlayerSpawn", localPlayer, function() 	
-	for index, koords in pairs(NoDm.Zones) do
+addEventHandler("checkNoDm", localPlayer, function() 	
+	for index, koords in pairs(NoDm:getSingleton().Zones) do
 		local cols = NoDm:getSingleton().m_NoDmZones[index]
 		if isElementWithinColShape(localPlayer, cols) then 
-			NoDm:getSingleton():setPlayerNoDm(localPlayr, true)
+			NoDm:getSingleton():setPlayerNoDm(localPlayer, true)
 		end
 	end
 end)

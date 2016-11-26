@@ -345,6 +345,7 @@ function Player:spawn( )
 	attachElements(self.chatCol_whisper, self)
 	attachElements(self.chatCol_talk, self)
 	attachElements(self.chatCol_scream, self)
+	self:triggerEvent("checkNoDm")
 end
 
 function Player:respawn(position, rotation)
@@ -386,6 +387,7 @@ function Player:respawn(position, rotation)
 		self:moveToJail(false,true)
 	end
 	setCameraTarget(self, self)
+	self:triggerEvent("checkNoDm")
 end
 
 
@@ -782,12 +784,23 @@ function Player:getPlayersInChatRange( irange)
 end
 
 function Player:toggleControlsWhileObjectAttached(bool)
-	toggleControl(self, "jump", bool )
-	toggleControl(self, "fire", bool )
-	toggleControl(self, "sprint", bool )
-	toggleControl(self, "next_weapon", bool )
-	toggleControl(self, "previous_weapon", bool )
-	toggleControl(self, "enter_exit", bool )
+	if bool then 
+		if not getElementData(self,"schutzzone") then
+			toggleControl(self, "jump", bool )
+			toggleControl(self, "fire", bool )
+			toggleControl(self, "sprint", bool )
+			toggleControl(self, "next_weapon", bool )
+			toggleControl(self, "previous_weapon", bool )
+			toggleControl(self, "enter_exit", bool )
+		end
+	else 
+		toggleControl(self, "jump", bool )
+		toggleControl(self, "fire", bool )
+		toggleControl(self, "sprint", bool )
+		toggleControl(self, "next_weapon", bool )
+		toggleControl(self, "previous_weapon", bool )
+		toggleControl(self, "enter_exit", bool )
+	end
 end
 
 function Player:attachPlayerObject(object, allowWeapons)
@@ -870,6 +883,7 @@ function Player:endPrison()
 	toggleControl(self, "fire", true)
 	toggleControl(self, "jump", true)
 	toggleControl(self, "aim_weapon", true)
+	self:triggerEvent("checkNoDm")
 	self:triggerEvent("CountdownStop")
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
@@ -931,6 +945,7 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 					self:setJailTime(0)
 					self:triggerEvent("playerLeftJail")
 					self:setData("inJail",false, true)
+					self:triggerEvent("checkNoDm")
 				end
 			end, self.m_JailTime * 60000, 1
 		)
