@@ -11,13 +11,13 @@ inherit(Singleton, HouseGUI)
 addRemoteEvents{"showHouseMenu","hideHouseMenu"}
 
 function HouseGUI:constructor(owner,price,rentprice,isValidRob)
-	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(500/2), 300, 500)
-	self.m_Window = GUIWindow:new(0,0,300,500,_"Hausmenü",true,true,self)
+	GUIForm.constructor(self, screenWidth/2-(400/2), screenHeight/2-(500/2), 400, 500)
+	self.m_Window = GUIWindow:new(0, 0, 300, 500, _"Hausmenü", true, true, self)
 	self.m_Window:setCloseOnClose( true )
 
-	self.m_LabelOwner =     GUILabel:new(30,40,200,30,_"s", self.m_Window)
-	self.m_LabelPrice =     GUILabel:new(30,70,200,30,_"s", self.m_Window)
-	self.m_LabelRentPrice = GUILabel:new(30,100,200,30,_"s", self.m_Window)
+	self.m_LabelOwner =     GUILabel:new(30, 40, self.m_Width-60, 30,_"s", self.m_Window)
+	self.m_LabelPrice =     GUILabel:new(30, 70, self.m_Width-60, 30,_"s", self.m_Window)
+	self.m_LabelRentPrice = GUILabel:new(30, 100,self.m_Width-60, 30,_"s", self.m_Window)
 
 	self.m_Rent = GUIButton:new(30, 135, self.m_Width-60, 35, _("Einmieten"), self)
 	self.m_Rent:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
