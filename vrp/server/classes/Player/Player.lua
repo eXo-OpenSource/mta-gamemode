@@ -369,17 +369,21 @@ function Player:respawn(position, rotation)
 	else
 		position, rotation = position, rotation
 	end
-
-	self:setHeadless(false)
-	spawnPlayer(self, position, rotation, self.m_Skin or 0)
-	if self:getFaction() and self:getFaction():isEvilFaction() then
-		if self.m_SpawnWithFactionSkin then
-			self:getFaction():changeSkin(self)
-		else
-			setElementModel( self, self.m_AltSkin or self.m_Skin)
+	if self.m_JailTime == 0 or not self.m_JailTime then 
+	
+		self:setHeadless(false)
+		spawnPlayer(self, position, rotation, self.m_Skin or 0)
+		if self:getFaction() and self:getFaction():isEvilFaction() then
+			if self.m_SpawnWithFactionSkin then
+				self:getFaction():changeSkin(self)
+			else
+				setElementModel( self, self.m_AltSkin or self.m_Skin)
+			end
 		end
+	else 
+		spawnPlayer(self, position, rotation, self.m_Skin or 0)
+		self:moveToJail(CUTSCENE)
 	end
-
 	setCameraTarget(self, self)
 end
 
