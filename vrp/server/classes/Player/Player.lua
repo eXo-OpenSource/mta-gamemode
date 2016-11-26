@@ -381,7 +381,9 @@ function Player:respawn(position, rotation)
 			end
 		end
 	else 
-		self:moveToJail(CUTSCENE)
+		spawnPlayer(self, position, rotation, self.m_Skin or 0)
+		self:setHeadless(false)
+		self:moveToJail(false,true)
 	end
 	setCameraTarget(self, self)
 end
@@ -900,10 +902,12 @@ function Player:meChat(system, ...)
 	end
 end
 
-function Player:moveToJail(CUTSCENE)
+function Player:moveToJail(CUTSCENE, alreadySpawned)
 	if self.m_JailTime > 0 then
 		local rnd = math.random(1, #Jail.Cells)
-		self:respawn()
+		if not alreadySpawned then
+			self:respawn()
+		end
 		self:setPosition(Jail.Cells[rnd])
 		self:setInterior(0)
 		self:setDimension(0)
