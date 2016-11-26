@@ -76,6 +76,17 @@ function FactionEvil:createInterior(Id, faction)
 	end
 end
 
+function FactionEvil:getFactions()
+	local factions = FactionManager:getSingleton():getAllFactions()
+	local returnFactions = {}
+	for i, faction in pairs(factions) do
+		if faction:isEvilFaction() then
+			table.insert(returnFactions, faction)
+		end
+	end
+	return returnFactions
+end
+
 function FactionEvil:getOnlinePlayers()
 	local factions = FactionManager:getSingleton():getAllFactions()
 	local players = {}
