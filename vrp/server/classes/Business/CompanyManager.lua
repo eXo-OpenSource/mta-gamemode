@@ -147,13 +147,13 @@ function CompanyManager:Event_companyAddPlayer(player)
 	if not company then return end
 
 	if company:getPlayerRank(client) < CompanyRank.Manager then
-		client:sendError(_("Du bist nicht berechtigt Fraktionnmitglieder hinzuzufügen!", client))
+		client:sendError(_("Du bist nicht berechtigt Mitglieder hinzuzufügen!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
 
 	if player:getCompany() then
-		client:sendError(_("Dieser Benutzer ist bereits in einer Fraktion!", client))
+		client:sendError(_("Dieser Benutzer ist bereits in einem Unternehmen!", client))
 		return
 	end
 

@@ -440,7 +440,6 @@
 
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GroupInviteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CharacterCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
@@ -481,7 +480,7 @@
 	<script src="client/classes/GUIForms/CompanyInfoGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/FactionInviteGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/InviteGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionWeaponShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionWTLoadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/FactionWTHoverGUI.lua" type="client"/>

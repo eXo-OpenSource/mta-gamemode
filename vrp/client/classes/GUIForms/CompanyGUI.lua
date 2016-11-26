@@ -229,7 +229,11 @@ function CompanyGUI:CompanyMoneyWithdrawButton_Click()
 end
 
 function CompanyGUI:CompanyAddPlayerButton_Click()
-	CompanyInviteGUI:new()
+	InviteGUI:new(
+		function(player)
+			triggerServerEvent("companyAddPlayer", root, player)
+		end
+	)
 end
 
 function CompanyGUI:CompanyRemovePlayerButton_Click()
