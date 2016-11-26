@@ -8,7 +8,7 @@ SHOP_TYPES = {
 	},
 	[2] = {
 		["Name"] = "Cluckin Bell",
-		["Interior"] = {9, Vector3(365.67, -11.61, 1000.87)},
+		["Interior"] = {9, Vector3(365.67, -11.61, 1001.87)},
 		["Ped"] = {167, Vector3(368.62, -4.49, 1001.85), 180},
 		["Marker"] = Vector3(368.36, -6.42, 1000.9),
 		["Class"] = CluckinBell
