@@ -72,6 +72,26 @@ function FactionEvil:createInterior(Id, faction)
 	end
 end
 
+function FactionEvil:getOnlinePlayers()
+	local factions = FactionManager:getSingleton():getAllFactions()
+	local players = {}
+	for index,faction in pairs(factions) do
+		if faction:isEvilFaction() then
+			for index, value in pairs(faction:getOnlinePlayers()) do
+				table.insert(players, value)
+			end
+		end
+	end
+	return players
+end
+
+function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:giveKarma(karma)
+		player:sendShortMessage(_("%s\nDu hast %d Karma erhalten!", player, reason, karma), "Karma")
+	end
+end
+
 function FactionEvil:onWeaponPedClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction() == source.Faction then
