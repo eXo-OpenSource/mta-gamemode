@@ -25,7 +25,7 @@ function FactionRescue:constructor()
 
 	local elevator = Elevator:new()
 
-	elevator:addStation("UG Garage", Vector3(1784.20, -1746.78, 6.22))
+	elevator:addStation("UG Garage", Vector3(1756.40, -1747.44, 6.22))
 	elevator:addStation("Erdgeschoss", Vector3(1744.63, -1752.17, 13.57))
 	elevator:addStation("1.Obergeschoss", Vector3(1744.63, -1751.69, 18.81))
 	elevator:addStation("3.OG Heliport 1", Vector3(1778.19, -1786.69, 46.18))
