@@ -174,6 +174,7 @@ function WeaponTruck:spawnBox(i, position)
 	addEventHandler("onElementClicked", self.m_Boxes[i], self.m_Event_onBoxClickFunc)
 	self.m_Boxes[i].content = {}
 	self.m_Boxes[i].sum = 0
+	self.m_Boxes[i].id = i
 	self:setBoxContent(i)
 	self.m_Boxes[i]:setData("weaponBox", true, true)
 	self.m_Boxes[i]:setData("content", self.m_Boxes[i].content, true)
@@ -242,22 +243,22 @@ function WeaponTruck:setBoxContent(boxId)
 	end
 end
 
-function WeaponTruck:outputBoxContent(player,boxId)
-	if self.m_Boxes[boxId] and self.m_Boxes[boxId].content then
-		local weaponTable = self.m_Boxes[boxId].content
+function WeaponTruck:outputBoxContent(player, box)
+	if box and isElement(box) and box.content then
+		local weaponTable = box.content
 		for weaponID,v in pairs(weaponTable) do
 			for typ,amount in pairs(weaponTable[weaponID]) do
 				if amount > 0 then
 					if typ == "Waffe" then
-						outputChatBox("Kiste: "..boxId..": "..amount.." "..WEAPON_NAMES[weaponID].." Waffe/n",player,255,255,0)
+						outputChatBox("Kiste: "..box.id..": "..amount.." "..WEAPON_NAMES[weaponID].." Waffe/n",player,255,255,0)
 					elseif typ == "Munition" then
-						outputChatBox("Kiste: "..boxId..": "..amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,255,0)
+						outputChatBox("Kiste: "..box.id..": "..amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,255,0)
 					end
 				end
 			end
 		end
 	else
-		outputDebug("Error WT:outputBoxContent BoxId: "..boxId)
+		outputDebug("Error WT:outputBoxContent BoxId: "..box.id)
 	end
 end
 
@@ -436,7 +437,7 @@ function WeaponTruck:onEvilMarkerHit(hitElement)
 	for key, value in pairs (boxes) do
 		if value:getModel() == 2912 then
 			depot:addWeaponsToDepot(value.content)
-			self:outputBoxContent(hitElement,key)
+			self:outputBoxContent(hitElement, value)
 			value:destroy()
 		end
 	end
