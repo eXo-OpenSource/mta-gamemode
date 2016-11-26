@@ -8,7 +8,7 @@
 DrivingSchoolTheoryGUI = inherit(GUIForm)
 inherit(Singleton, DrivingSchoolTheoryGUI)
 
-addRemoteEvents{"showDrivingSchoolTest"}
+addRemoteEvents{"showDrivingSchoolTest","addDrivingSchoolSpeechBubble"}
 
 --// CONSTANTS //
 local width,height = screenWidth*0.4,screenHeight*0.4
@@ -31,9 +31,10 @@ local QUESTIONS =
 	{"Was machen Sie wenn ein Beamter Sie auffordert Ihren Führerschein zu zeigen?","Ich lehne ab","Ich zeige ihm den Führerschein",nil,nil,4,2},
 }
 
-function DrivingSchoolTheoryGUI:constructor(type)
+function DrivingSchoolTheoryGUI:constructor(type )
 	GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2 - height/2, width,height, false)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Theoretische Prüfung"), true, true, self)
+	self.m_Window:disableMoving()
 	self.m_Window:setCloseOnClose(true)
 	self.m_Text = GUILabel:new( self.m_Width*0.05, self.m_Height*0.2, self.m_Width*0.9,self.m_Height, TEXT_INFO, self):setFont(VRPFont(24))
 	self.m_Text:setAlignX( "left" )
@@ -46,6 +47,7 @@ function DrivingSchoolTheoryGUI:constructor(type)
 	self.m_QuestionsDone = {	}
 	self.m_QuestionCounter = 0
 	self.m_ErrPoints = 0
+
 end
 
 function DrivingSchoolTheoryGUI:destructor()
@@ -89,10 +91,10 @@ function DrivingSchoolTheoryGUI:nextQuestion()
 		self.m_QuestionButtons = {	}
 		self.m_QuestionCounter = self.m_QuestionCounter + 1
 		local question = QUESTIONS[randomInt][1]
-		self.m_QuestionPoints = GUILabel:new( self.m_Width*0.025, self.m_Height*0.15, self.m_Width*0.9,self.m_Height, QUESTIONS[randomInt][6].." Punkte" ,self):setFont(VRPFont(22))
+		self.m_QuestionPoints = GUILabel:new( self.m_Width*0.025, self.m_Height*0.15, self.m_Width*0.9,self.m_Height, QUESTIONS[randomInt][6].." Punkte" ,self.m_Window):setFont(VRPFont(22))
 		self.m_QuestionPoints:setAlignX( "left" )
 		self.m_QuestionPoints:setAlignY( "top" )
-		self.m_QuestionText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.2, self.m_Width*0.9,self.m_Height, self.m_QuestionCounter..". "..question ,self):setFont(VRPFont(28))
+		self.m_QuestionText = GUILabel:new( self.m_Width*0.05, self.m_Height*0.2, self.m_Width*0.9,self.m_Height, self.m_QuestionCounter..". "..question ,self.m_Window):setFont(VRPFont(28))
 		self.m_QuestionText:setAlignX( "center" )
 		self.m_QuestionText:setAlignY( "top" )
 		self.m_RBGroup = GUIRadioButtonGroup:new(self.m_Width*0.1, self.m_Height*0.4, self.m_Width*0.09, self.m_Height*0.4 ,self)
@@ -131,14 +133,22 @@ function DrivingSchoolTheoryGUI:showResult()
 end
 
 
-addEventHandler("showDrivingSchoolTest", root,
-	function(type)
-		DrivingSchoolTheoryGUI:new(type)
+addEventHandler("showDrivingSchoolTest", localPlayer,
+	function(type )
+		DrivingSchoolTheoryGUI:new(type, ped)
 	end
 )
 
-addEventHandler("hideDrivingSchoolTheoryGUI", root,
+addEventHandler("hideDrivingSchoolTheoryGUI", localPlayer,
 	function()
 		DrivingSchoolTheoryGUI:getSingleton():delete()
+	end
+)
+
+addEventHandler("addDrivingSchoolSpeechBubble", localPlayer,
+	function( ped )
+		local name = _"Fahrschule Theorietest"
+		local description = _"Für mehr Infos klicke mich an!"
+		ped.SpeakBubble = SpeakBubble3D:new(ped, name, description, -90)
 	end
 )

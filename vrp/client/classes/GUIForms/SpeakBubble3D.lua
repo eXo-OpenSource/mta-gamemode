@@ -1,7 +1,7 @@
 
 SpeakBubble3D = inherit(GUIForm3D)
 
-function SpeakBubble3D:constructor(npc, text, description)
+function SpeakBubble3D:constructor(npc, text, description, rotPlus)
 	addEventHandler("onElementDestroy", npc, function () delete(self) end)
 
 	local pos = npc:getPosition()
@@ -9,8 +9,8 @@ function SpeakBubble3D:constructor(npc, text, description)
 
 	self.m_Text = text
 	self.m_Description = description
-
-	GUIForm3D.constructor(self, pos, npc:getRotation(), Vector2(1, 0.34), Vector2(200,70), 30)
+	rotPlus = rotPlus or 0
+	GUIForm3D.constructor(self, pos, npc:getRotation()+Vector3(0,0,rotPlus), Vector2(1, 0.34), Vector2(200,70), 30)
 end
 
 function SpeakBubble3D:onStreamIn(surface)
