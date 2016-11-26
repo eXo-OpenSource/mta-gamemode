@@ -118,3 +118,12 @@ function NoDm:checkNoDm()
 		self:setPlayerNoDm(localPlayer, false)
 	end
 end
+
+addEventHandler("onClientPlayerSpawn", localPlayer, function() 	
+	for index, koords in pairs(NoDm.Zones) do
+		local cols = NoDm:getSingleton().m_NoDmZones[index]
+		if isElementWithinColShape(localPlayer, cols) then 
+			NoDm:getSingleton():setPlayerNoDm(localPlayr, true)
+		end
+	end
+end)
