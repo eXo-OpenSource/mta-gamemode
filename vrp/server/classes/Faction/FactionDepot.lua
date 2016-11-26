@@ -186,6 +186,7 @@ function Depot:addItem(player, item, amount)
 				return
 			else
 				player:sendError(_("Du hast nicht genug %s!", player, item))
+				return
 			end
 		end
 	end
