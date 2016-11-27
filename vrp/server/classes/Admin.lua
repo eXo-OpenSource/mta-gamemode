@@ -286,37 +286,40 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             triggerClientEvent("announceText", admin, text)
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
-			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
-            self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
-            admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
-            setCameraTarget(admin, target)
-            admin:setFrozen(true)
-			admin.m_PreSpectInt = getElementInterior(admin)
-			admin.m_IsSpecting = true
-			admin:setPrivateSync("isSpecting",target)
-			admin.m_PreSpectDim = getElementDimension(admin)
-			admin.m_SpectInteriorFunc = function ( int ) setElementInterior(admin,int); setCameraInterior(admin, int) end
-			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
-			admin.m_SpectDimensionFunc = function ( dim ) setElementDimension(admin,dim) end
-			addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
-			if admin:isInVehicle() then
-				admin:getOccupiedVehicle():setFrozen(true)
-			end
-            bindKey(admin, "space", "down", function()
-                setCameraTarget(admin, admin)
-                self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
-                unbindKey(admin, "space", "down")
-                admin:setFrozen(false)
+			if target ~= admin then
+				StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
+				self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
+				admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
+				setCameraTarget(admin, target)
+				admin:setFrozen(true)
+				admin.m_PreSpectInt = getElementInterior(admin)
+				admin.m_IsSpecting = true
+				admin:setPrivateSync("isSpecting",target)
+				admin.m_PreSpectDim = getElementDimension(admin)
+				admin.m_SpectInteriorFunc = function ( int ) setElementInterior(admin,int); setCameraInterior(admin, int) end
+				addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+				admin.m_SpectDimensionFunc = function ( dim ) setElementDimension(admin,dim) end
+				addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				if admin:isInVehicle() then
-					admin:getOccupiedVehicle():setFrozen(false)
+					admin:getOccupiedVehicle():setFrozen(true)
 				end
-				setElementInterior(admin, admin.m_PreSpectInt)
-				setElementDimension(admin, admin.m_PreSpectDim)
-				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
-				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
-				admin.m_IsSpecting = false
-				admin:setPrivateSync("isSpecting",false)
-            end)
+					bindKey(admin, "space", "down", function()
+						setCameraTarget(admin, admin)
+					self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
+					unbindKey(admin, "space", "down")
+					admin:setFrozen(false)
+					if admin:isInVehicle() then
+						admin:getOccupiedVehicle():setFrozen(false)
+					end
+					setElementInterior(admin, admin.m_PreSpectInt)
+					setElementDimension(admin, admin.m_PreSpectDim)
+					removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+					removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+					admin.m_IsSpecting = false
+					admin:setPrivateSync("isSpecting",false)
+				end)
+			else admin:sendError("Sie können sich nicht selbst specten!")
+			end
         elseif func == "offlinePermaban" then
             self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
             local targetId = Account.getIdFromName(target)

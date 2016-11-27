@@ -171,6 +171,15 @@ function FactionWeaponShopGUI:updateCart()
 	end
 end
 
+function FactionWeaponShopGUI:clearCart()
+	for key, item in ipairs( self.m_CartGrid:getItems()) do
+		self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
+		self:updateCart()
+		self:updateButtons()
+	end
+	self.m_CartGrid:clear()
+end
+
 function FactionWeaponShopGUI:deleteItemFromCart()
 	local item = self.m_CartGrid:getSelectedItem()
 	if item then
@@ -200,6 +209,7 @@ end
 
 function FactionWeaponShopGUI:factionWeaponShopBuy()
 	triggerServerEvent("factionWeaponShopBuy",root,self.m_Cart)
+	FactionWeaponShopGUI:getSingleton():clearCart()
 end
 
 addEventHandler("showFactionWeaponShopGUI", root,

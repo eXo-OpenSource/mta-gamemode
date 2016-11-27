@@ -132,6 +132,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 				if typ == "Waffe" then
 					if self.m_Weapons[weaponID]["Waffe"] >= amount then
 						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)
+						if weaponID == 24 then amount = amount * 6 end
 						giveWeapon(player,weaponID,amount)
 						self:takeWeaponD(weaponID,amount)
 					else
