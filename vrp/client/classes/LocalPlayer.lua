@@ -152,7 +152,7 @@ function LocalPlayer:Event_playerWasted()
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
 	showChat(false)
-
+	triggerServerEvent("Event_setPlayerWasted", localPlayer)
 	-- Move camera into the Sky
 	setCameraInterior(0)
 

@@ -178,7 +178,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -205,6 +205,8 @@ function Player:loadCharacterInfo()
 	VehicleManager:getSingleton():sendTexturesToClient(self)
 	HouseManager:getSingleton():createPlayerHouseBlip(self)
 
+	self.m_IsDead = row.IsDead or 0
+	
 	-- Group blips
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
 	local x,y,z
@@ -269,8 +271,8 @@ function Player:save()
 	else
 		spawnWithFac = 0
 	end
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ? WHERE Id = ?", sql:getPrefix(),
-		x, y, z, interior, dimension, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_Id)
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+		x, y, z, interior, dimension, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
 
 	--if self:getInventory() then
 	--	self:getInventory():save()
@@ -348,6 +350,9 @@ function Player:spawn( )
 	attachElements(self.chatCol_talk, self)
 	attachElements(self.chatCol_scream, self)
 	self:triggerEvent("checkNoDm")
+	if self.m_IsDead == 1 then 
+		killPlayer(self)
+	end
 end
 
 function Player:respawn(position, rotation)
@@ -390,6 +395,7 @@ function Player:respawn(position, rotation)
 	end
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
+	self.m_IsDead = 0
 end
 
 
@@ -876,6 +882,10 @@ end
 
 function Player:setModel( skin )
 	setElementModel( self, skin or 0)
+end
+
+function Player:setIsDead( int )
+	self.m_IsDead = int or 0
 end
 
 function Player:endPrison()

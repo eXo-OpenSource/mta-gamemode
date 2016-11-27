@@ -375,7 +375,7 @@ function GroupManager:Event_groupRankDown(playerId)
 		-- Todo: Report possible cheat attempt
 		return
 	end
-
+ 
 	if group:getPlayerRank(playerId)-1 >= GroupRank.Normal then
 		if group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
 			group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)

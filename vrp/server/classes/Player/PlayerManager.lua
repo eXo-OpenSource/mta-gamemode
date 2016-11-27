@@ -8,7 +8,7 @@
 PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
-"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData", "startWeaponLevelTraining","switchSpawnWithFactionSkin"}
+"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData", "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -40,7 +40,7 @@ function PlayerManager:constructor()
 	addEventHandler("Event_getIDCardData", root, bind(self.Event_getIDCardData, self))
 	addEventHandler("startWeaponLevelTraining", root, bind(self.Event_weaponLevelTraining, self))
 	addEventHandler("switchSpawnWithFactionSkin", root, bind(self.Event_switchSpawnWithFaction, self))
-
+	addEventHandler("Event_setPlayerWasted", root, bind(self.Event_setPlayerWasted, self))
 
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
@@ -589,5 +589,11 @@ function PlayerManager:Event_weaponLevelTraining()
 		end
 	else
 		client:sendError(_("Du hast bereits das maximale Waffenlevel!", client))
+	end
+end
+
+function PlayerManager:Event_setPlayerWasted()
+	if client then 
+		client.m_IsDead = 1
 	end
 end
