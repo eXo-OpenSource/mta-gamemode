@@ -99,6 +99,10 @@ end
 
 function GroupPropertyManager:BuyProperty( Id )
 	local property = GroupPropertyManager:getSingleton().Map[Id]
+	local propCount = self:getPropsForPlayer( client )
+	if #propCount > 0 then 
+		return client:sendError("Sie haben bereits eine Immobilie")
+	end
 	if property then
 		local price = property.m_Price
 		if price <= client:getMoney() then
