@@ -342,16 +342,20 @@ function GroupManager:Event_groupRankUp(playerId)
 		return
 	end
 
-	if group:getPlayerRank(client) < GroupRank.Leader then
+	if group:getPlayerRank(client) < GroupRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
 
 	if group:getPlayerRank(playerId) < GroupRank.Manager then
-		group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
-		group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." befördert!")
-		self:sendInfosToClient(client)
+		if group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
+			group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
+			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." befördert!")
+			self:sendInfosToClient(client)
+		else 
+			client:sendError(_("Du kannst den Spieler nicht up-ranken!", client))
+		end
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 setzen!", client))
 	end
@@ -373,9 +377,13 @@ function GroupManager:Event_groupRankDown(playerId)
 	end
 
 	if group:getPlayerRank(playerId)-1 >= GroupRank.Normal then
-		group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
-		group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." degradiert!")
-		self:sendInfosToClient(client)
+		if group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
+			group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
+			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." degradiert!")
+			self:sendInfosToClient(client)
+		else 
+			client:sendError(_("Du kannst den Spieler nicht down-ranken!", client))
+		end
 	end
 end
 
