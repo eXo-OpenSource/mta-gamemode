@@ -180,7 +180,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	-- give a achievement
 	source:giveAchievement(37)
 	for key, obj in ipairs( getAttachedElements(client)) do
-		if obj:getData("MoneyBag") then 
+		if obj:getData("MoneyBag") then
 			detachElements(obj, client)
 			client:meChat(true, "lies einen Geldbeutel fallen")
 		end
@@ -417,15 +417,15 @@ end
 
 function PlayerManager:Event_toggleAFK(state, teleport)
 	if state == true then
-		if client.m_JailTime then 
-			if client.m_JailTime > 0 then 
+		if client.m_JailTime then
+			if client.m_JailTime > 0 then
 				return
 			end
 		end
-		if client.m_IsSpecting then 
-			return 
+		if client.m_IsSpecting then
+			return
 		end
-		if client.m_InCircuitBreak then 
+		if client.m_InCircuitBreak then
 			return
 		end
 	end
@@ -493,6 +493,10 @@ function PlayerManager:Event_requestGunBoxData()
 end
 
 function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
+	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
+		return
+	end
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
 			client.m_GunBox[tostring(i)] = {}
@@ -500,7 +504,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 			client.m_GunBox[tostring(i)]["Amount"] = 0
 			if i >= 4 then
 				client.m_GunBox[tostring(i)]["VIP"] = true
-			else 
+			else
 				client.m_GunBox[tostring(i)]["VIP"] = false
 			end
 		end
@@ -535,6 +539,10 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 end
 
 function PlayerManager:Event_gunBoxTakeWeapon(slotId)
+	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
+		return
+	end
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then
@@ -593,7 +601,7 @@ function PlayerManager:Event_weaponLevelTraining()
 end
 
 function PlayerManager:Event_setPlayerWasted()
-	if client then 
+	if client then
 		client.m_IsDead = 1
 	end
 end
