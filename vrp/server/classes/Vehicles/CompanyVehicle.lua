@@ -49,10 +49,15 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 
   self:setHealth(health)
   self:setLocked(true)
-  if color then
-    local a, r, g, b = getBytesInInt32(color)
-    setVehicleColor(self, r, g, b, r, g, b)
+
+  local a, r, g, b
+  if color and color > 0 then
+  	a, r, g, b = getBytesInInt32(color)
+  else
+  	local companyId = self.m_Company:getId()
+	r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
   end
+  setVehicleColor(self, r, g, b, r, g, b)
 
   for k, v in pairs(tunings or {}) do
     addVehicleUpgrade(self, v)
