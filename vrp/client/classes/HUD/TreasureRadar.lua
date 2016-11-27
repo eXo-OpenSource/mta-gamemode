@@ -10,7 +10,7 @@ TreasureRadar = inherit(Singleton)
 function TreasureRadar:constructor()
 	self.m_Angle = 0
 	self.m_ElementsDetected = {}
-	self.m_Radius = 300
+	self.m_Radius = 200
 	self.m_Radars = {}
 
 	self.m_RadarColshape = createColCircle(0 ,0 , self.m_Radius)
