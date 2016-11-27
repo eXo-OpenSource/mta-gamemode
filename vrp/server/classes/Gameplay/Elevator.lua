@@ -30,7 +30,7 @@ function Elevator:addStation(name, position, rot, int, dim)
 	self.m_Stations[stationID].interior = int or 0
 	self.m_Stations[stationID].dimension = dim or 0
 	self.m_Stations[stationID].rotation = rot or 0
-	self.m_Stations[stationID].marker = createMarker(position, "corona", 1.5, 255, 255, 0)
+	self.m_Stations[stationID].marker = createMarker(position, "corona", 1, 255, 255, 0, 125)
 	self.m_Stations[stationID].marker.id = stationID
 	if int then
 		self.m_Stations[stationID].marker:setInterior(int)
