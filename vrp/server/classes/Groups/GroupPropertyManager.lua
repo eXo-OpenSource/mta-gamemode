@@ -107,7 +107,7 @@ function GroupPropertyManager:BuyProperty( Id )
 			if not oldOwner then
 				property.m_Owner = newOwner or false
 				property.m_OwnerID = newOwner.m_Id or false
-				GroupPropertyManager:getSingleton().ChangeMap[Id] = newOwner
+				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), newOwner.m_Id, property.m_Id)
 				property.m_Open = 1
 				client:takeMoney(price, "Immobilie "..property.m_Name.." gekauft!")
 				client:sendInfo("Du hast die Immobilie gekauft!")
@@ -133,8 +133,8 @@ function GroupPropertyManager:SellProperty(  )
 			local clientGroup = client:getGroup()
 			if pOwner == clientGroup then
 				property.m_Owner = false
-				GroupPropertyManager:getSingleton().ChangeMap[property.m_Id] = 0
-				outputChatBox(property.m_Id)
+				property.m_OwnerID = false
+				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), 0, property.m_Id)
 				property.m_Open = 1
 				client:giveMoney(sellMoney, "Immobilie "..property.m_Name.." verkauft!")
 				client:sendInfo("Sie haben die Immobilie verkauft!")
@@ -148,17 +148,6 @@ function GroupPropertyManager:SellProperty(  )
 end
 
 function GroupPropertyManager:destructor()
-	local propCount = 0
-	for id, owner in pairs( GroupPropertyManager:getSingleton().ChangeMap ) do
-		outputChatBox("owner destrcuto"..owner)
-		local oId = 0
-		if owner ~= 0 then
-			oId = owner.m_Id
-		end
-		propCount = propCount + 1
-		sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), oId, id)
-	end
-	outputDebugString("[GroupProperties] Saved properties #"..propCount.."!")
 	for id, obj in pairs( self.Map ) do
 		obj:delete()
 	end
