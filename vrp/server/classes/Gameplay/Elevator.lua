@@ -22,14 +22,22 @@ function Elevator:constructor()
 	Elevator.Map[self.m_Id] = self
 end
 
-function Elevator:addStation(name, position)
+function Elevator:addStation(name, position, rot, int, dim)
 	local stationID = #self.m_Stations+1
 	self.m_Stations[stationID] = {}
 	self.m_Stations[stationID].name = name
 	self.m_Stations[stationID].position = position
+	self.m_Stations[stationID].interior = int or 0
+	self.m_Stations[stationID].dimension = dim or 0
+	self.m_Stations[stationID].rotation = rot or 0
 	self.m_Stations[stationID].marker = createMarker(position, "corona", 1.5, 255, 255, 0)
 	self.m_Stations[stationID].marker.id = stationID
-
+	if int then
+		self.m_Stations[stationID].marker:setInterior(int)
+	end
+	if dim then
+		self.m_Stations[stationID].marker:setDimension(dim)
+	end
 	addEventHandler("onMarkerHit", self.m_Stations[stationID].marker, bind(self.onStationMarkerHit, self) )
 	addEventHandler("onMarkerLeave", self.m_Stations[stationID].marker, bind(self.onStationMarkerLeave, self) )
 end
@@ -53,4 +61,7 @@ end
 function Elevator:driveToStation(player, stationID)
 	player.elevatorUsed = true
 	player:setPosition(self.m_Stations[stationID].position)
+	player:setRotation(0, 0, self.m_Stations[stationID].rotation, "default", true)
+	player:setInterior(self.m_Stations[stationID].interior)
+	player:setDimension(self.m_Stations[stationID].dimension)
 end
