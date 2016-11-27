@@ -510,7 +510,7 @@ local tpTable = {
 		["schatzsucher"] =  {["pos"] = Vector3(706.22, -1699.38, 3.12),  	["typ"] = "Jobs"},
         ["gabelstabler"] = 	{["pos"] = Vector3(93.67, -205.68,  1.23),  	["typ"] = "Jobs"},
         ["bikeshop"] =      {["pos"] = Vector3(2857.96, -1536.69, 10.73),  	["typ"] = "Shops"},
-        ["bootshop"] =      {["pos"] = Vector3(1629.65, 582.17, 11.44),  	["typ"] = "Shops"},
+        ["bootshop"] =      {["pos"] = Vector3(1628.25, 597.11, 1.76),  	["typ"] = "Shops"},
         ["sultanshop"] =    {["pos"] = Vector3(2127.09, -1135.96, 25.20),  	["typ"] = "Shops"},
         ["lvshop"] =        {["pos"] = Vector3(2198.23, 1386.43,  10.55),  	["typ"] = "Shops"},
         ["quadshop"] =      {["pos"] = Vector3(117.53, -165.56,  1.31),  	["typ"] = "Shops"},
