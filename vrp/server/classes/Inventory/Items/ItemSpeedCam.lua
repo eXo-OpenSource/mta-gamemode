@@ -96,11 +96,18 @@ end
 
 function ItemSpeedCam:isCollectAllowed(player, worlditem)
 	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
-		return true
+		if player:getInventory():getFreePlacesForItem("Blitzer") >= 1 then
+			return true
+		else
+			client:sendError(_("Du hast bereits einen Blitzer im Inventar!", client))
+		end
 	end
 	return false
 end
 
 function ItemSpeedCam:removeFromWorld(player, worlditem)
+	local object = worldItem:getObject()
+	local col = object.col
+	col:destroy()
 	player:sendInfo(_("Du hast den Blitzer abgebaut!", player))
 end
