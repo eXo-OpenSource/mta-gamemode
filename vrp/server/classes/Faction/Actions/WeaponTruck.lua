@@ -52,7 +52,6 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_BoxesCount = math.ceil(totalAmount/self.m_AmountPerBox)
 
 	self.m_Boxes = {}
-	self.m_BoxesOnTruck = {}
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
 
@@ -199,20 +198,20 @@ function WeaponTruck:Event_onBoxClick(button, state, player)
 end
 
 function WeaponTruck:loadBoxOnWeaponTruck(player,box)
-	table.insert(self.m_BoxesOnTruck,box)
+	local boxesOnTruck = self:getAttachedBoxes(self.m_Truck) + 1
 	player:detachPlayerObject(box)
 	box:setScale(1.6)
-	box:attach(self.m_Truck, WeaponTruck.attachCords[#self.m_BoxesOnTruck])
+	box:attach(self.m_Truck, WeaponTruck.attachCords[boxesOnTruck])
 	box:setCollisionsEnabled(false)
 	removeEventHandler("onElementClicked", box, self.m_Event_onBoxClickFunc)
 
-	if #self.m_BoxesOnTruck >= self.m_BoxesCount then
+	if boxesOnTruck >= self.m_BoxesCount then
 		player:sendInfo(_("Alle Kisten aufgeladen! Der Truck ist bereit!",player))
 		self.m_Truck:setFrozen(false)
 		self.m_Truck:setLocked(false)
 		self.m_LoadMarker:destroy()
 	else
-		player:sendInfo(_("%d/%d Kisten aufgeladen!", player, #self.m_BoxesOnTruck, self.m_BoxesCount))
+		player:sendInfo(_("%d/%d Kisten aufgeladen!", player, boxesOnTruck, self.m_BoxesCount))
 	end
 end
 
@@ -423,6 +422,7 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 	local faction = hitElement:getFaction()
 	local depot = faction.m_Depot
 	local boxes
+	local finish = false
 	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 		boxes = getAttachedElements(self.m_Truck)
 		outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
@@ -433,6 +433,7 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 		elseif self.m_Type == "state" then
 			FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
 		end
+		finish = true
 	elseif hitElement:getPlayerAttachedObject() then
 		boxes = getAttachedElements(hitElement)
 		outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount()+1,self.m_BoxesCount),rootElement,255,0,0)
@@ -450,7 +451,7 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 			value:destroy()
 		end
 	end
-	if self:getRemainingBoxAmount() == 0 then
+	if self:getRemainingBoxAmount() == 0 or finish == true then
 		delete(self)
 	end
 end
@@ -465,7 +466,7 @@ function WeaponTruck:onStateMarkerHit(hitElement)
 		self:Event_OnWeaponTruckExit(hitElement,0)
 	elseif hitElement:getPlayerAttachedObject() then
 		boxes = getAttachedElements(hitElement)
-		outputChatBox(_("Eine Waffenkiste wurde am PD sichergestellt! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount()+1,self.m_BoxesCount),rootElement,255,0,0)
+		outputChatBox(_("Eine Waffenkiste wurde sichergestellt! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount()+1,self.m_BoxesCount),rootElement,255,0,0)
 		hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Das Geld wurde in die Fraktionskasse überwiesen!",hitElement))
 		hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 	elseif hitElement:getOccupiedVehicle() then
