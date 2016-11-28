@@ -21,8 +21,11 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		setElementData(self, "OwnerName", faction:getShortName())
 	end
 	setElementData(self, "OwnerType", "faction")
-
-	self:setHealth(health)
+	if health then
+		if health <= 300 then 
+			self:setHealth(health or 1000)
+		end
+	end
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
 		if factionCarColors[self.m_Faction:getId()] then

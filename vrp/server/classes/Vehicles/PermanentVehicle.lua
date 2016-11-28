@@ -23,7 +23,11 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 
   self.m_Trunk = Trunk.load(trunkId)
   self.m_TrunkId = trunkId
-
+  if health then 
+	if health <= 300 then 
+		health = 300
+	end
+  end
   self:setHealth(health or 1000)
   self:setFuel(fuel or 100)
   self:setLocked(true)
