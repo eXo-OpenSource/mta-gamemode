@@ -229,7 +229,7 @@ function GroupGUI:adjustGroupTab(rank)
 			self.m_GroupDeleteButton:setVisible(false)
 		end
 		if rank < GroupRank.Manager then
-			self.m_GroupMoneyWithdrawButton:setVisible(false)
+			--self.m_GroupMoneyWithdrawButton:setVisible(false)
 			self.m_GroupAddPlayerButton:setVisible(false)
 			self.m_GroupRemovePlayerButton:setVisible(false)
 			self.m_GroupRankUpButton:setVisible(false)
