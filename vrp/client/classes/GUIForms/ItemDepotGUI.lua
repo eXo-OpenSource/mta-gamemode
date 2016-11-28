@@ -93,15 +93,21 @@ function ItemDepotGUI:refreshData(id, items)
     self.m_Id = id
     for index, item in pairs(items) do
         if item["Item"] ~= 0 then
-            self.m_ItemSlots[index].Label:setText(item["Item"])
-            self.m_ItemSlots[index].Amount:setText(_("%d Stk.", item["Amount"]))
-            self.m_ItemSlots[index].Image:setImage("files/images/Inventory/items/"..self.m_ItemData[item.Item]["Icon"])
-            self.m_ItemSlots[index].TakeButton:setEnabled(true)
+         	if self.m_ItemSlots[index] then  
+				self.m_ItemSlots[index].Label:setText(item["Item"])
+				self.m_ItemSlots[index].Amount:setText(_("%d Stk.", item["Amount"]))
+				if self.m_ItemSlots[index].Image and self.m_ItemData[item.Item] then
+					self.m_ItemSlots[index].Image:setImage("files/images/Inventory/items/"..self.m_ItemData[item.Item]["Icon"])
+					self.m_ItemSlots[index].TakeButton:setEnabled(true)
+				end
+			end
         else
-            self.m_ItemSlots[index].Label:setText(self.ms_SlotsSettings["item"].emptyText)
-            self.m_ItemSlots[index].Amount:setText("")
-            self.m_ItemSlots[index].Image:setImage("files/images/Other/noImg.png")
-            self.m_ItemSlots[index].TakeButton:setEnabled(false)
+			if self.m_ItemSlots[index] then
+				self.m_ItemSlots[index].Label:setText(self.ms_SlotsSettings["item"].emptyText)
+				self.m_ItemSlots[index].Amount:setText("")
+				self.m_ItemSlots[index].Image:setImage("files/images/Other/noImg.png")
+				self.m_ItemSlots[index].TakeButton:setEnabled(false)
+			end
         end
     end
     triggerServerEvent("refreshInventory", localPlayer)

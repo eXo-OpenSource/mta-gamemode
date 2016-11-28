@@ -30,8 +30,8 @@ function RadioGUI:constructor()
 	-- Add click events
 	self.m_Last.onLeftClick = function() self:previousStation() end
 	self.m_Next.onLeftClick = function() self:nextStation() end
-	self.m_VolumeUp.onLeftClick = function() self:setVolume(self:getVolume() + 0.1) end
-	self.m_VolumeDown.onLeftClick = function() self:setVolume(self:getVolume() - 0.1) end
+	self.m_VolumeUp.onLeftClick = function() self:setVolume((self:getVolume() or 0) + 0.1) end
+	self.m_VolumeDown.onLeftClick = function() self:setVolume((self:getVolume() or 0.1) - 0.1) end
 	self.m_ToggleSound.onLeftClick = function() self:toggle() end
 
 	-- First of all, set radio off
