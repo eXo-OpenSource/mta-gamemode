@@ -282,7 +282,7 @@ end
 function WeaponTruck:Event_OnWeaponTruckEnter(player,seat)
 	if seat == 0 and player:getFaction() then
 		self.m_Driver = player
-		player:triggerEvent("Countdown", math.floor((WeaponTruck.Time-(getTickCount()-self.m_StartTime))/1000), "Waffen-Truck")
+		player:triggerEvent("Countdown", math.floor((WeaponTruck.Time-(getTickCount()-self.m_StartTime))/1000), WEAPONTRUCK_NAME[self.m_Type])
 		player:triggerEvent("VehicleHealth")
 	end
 end
