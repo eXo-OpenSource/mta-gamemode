@@ -143,6 +143,7 @@ function RadioGUI:getVolume()
 end
 
 function RadioGUI:nextStation()
+	if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
 	self.m_CurrentStation = self.m_CurrentStation + 1
 	if self.m_CurrentStation > #VRP_RADIO then
 		self.m_CurrentStation = 0
@@ -151,11 +152,12 @@ function RadioGUI:nextStation()
 
 	if not self:isVisible() then
 		self:fadeIn(1000)
-		setTimer(function() self:fadeOut(1000) end, 5000, 1)
 	end
+	self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
 end
 
 function RadioGUI:previousStation()
+	if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
 	self.m_CurrentStation = self.m_CurrentStation - 1
 	if self.m_CurrentStation < 0 then
 		self.m_CurrentStation = #VRP_RADIO
@@ -164,8 +166,8 @@ function RadioGUI:previousStation()
 
 	if not self:isVisible() then
 		self:fadeIn(1000)
-		setTimer(function() self:fadeOut(1000) end, 5000, 1)
 	end
+	self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
 end
 
 function RadioGUI:getStation()
