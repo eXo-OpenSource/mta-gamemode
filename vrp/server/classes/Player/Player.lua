@@ -206,7 +206,7 @@ function Player:loadCharacterInfo()
 	HouseManager:getSingleton():createPlayerHouseBlip(self)
 
 	self.m_IsDead = row.IsDead or 0
-	
+
 	-- Group blips
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
 	local x,y,z
@@ -350,8 +350,8 @@ function Player:spawn( )
 	attachElements(self.chatCol_talk, self)
 	attachElements(self.chatCol_scream, self)
 	self:triggerEvent("checkNoDm")
-	if self.m_IsDead == 1 then 
-		killPlayer(self)
+	if self.m_IsDead == 1 then
+		killPed(self)
 	end
 end
 
