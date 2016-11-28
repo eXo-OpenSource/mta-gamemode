@@ -46,8 +46,11 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
   self.m_Rotation = self:getRotation()
   setElementData(self, "OwnerName", self.m_Company:getName())
   setElementData(self, "OwnerType", "company")
-
-  self:setHealth(health)
+  if health then 
+	if health <= 300 then
+		self:setHealth(health)
+	end
+  end
   self:setLocked(true)
 
   local a, r, g, b

@@ -159,6 +159,9 @@ function PlayerManager:playerQuit()
 	if index then
 		table.remove(self.m_ReadyPlayers, index)
 	end
+	if source.curEl then
+		source.curEl:driveToStation(source,1)
+	end
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin( source, getPlayerName( source ) , "Logout")
 	end
