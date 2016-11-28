@@ -512,6 +512,9 @@ function FactionState:Command_bail( player )
 					player:toggleControl("fire", true)
 					player:toggleControl("jump", true)
 					player:toggleControl("aim_weapon ", true)
+					if isTimer(player.m_JailTimer) then 
+						killTimer( player.m_JailTime )
+					end
 					player.m_JailTimer = nil
 					player:setJailTime(0)
 					player:sendInfo(_("Sie haben sich mit der Kaution von %s$ freigekauft!", player, player.m_Bail))
