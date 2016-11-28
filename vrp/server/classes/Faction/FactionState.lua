@@ -19,7 +19,7 @@ function FactionState:constructor()
 			self:loadLSPD(1)
 			self:loadFBI(2)
 			self:loadArmy(3)
-			self:loadMedic( 4 ) 
+			self:loadMedic( 4 )
 		end
 	)
 
@@ -131,7 +131,7 @@ end
 function FactionState:loadArmy(factionId)
 	self:createDutyPickup(2743.75, -2453.81, 13.86) -- Army-LS
 	self:createDutyPickup(247.05, 1859.38, 14.08) -- Army Area
-	
+
 	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 180 )
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
@@ -150,30 +150,22 @@ function FactionState:loadArmy(factionId)
 	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
 end
 
-function FactionState:loadMedic( factionId ) 
+function FactionState:loadMedic( factionId )
 	self:createDutyPickup(1760.72, -1744.20, 6) -- garage
-	self:createDutyPickup(1721.04, -1752.75, 13) 
-	
+	self:createDutyPickup(1721.04, -1752.75, 13)
+
 end
 function FactionState:countPlayers()
-	local factions = FactionManager:getSingleton():getAllFactions()
-	local amount = 0
-	for index,faction in pairs(factions) do
-		if faction:isStateFaction() then
-			amount = amount + #faction:getOnlinePlayers()
-		end
-	end
-	return amount
+	local count = #self:getOnlinePlayers()
+	return count
 end
 
 function FactionState:getOnlinePlayers()
-	local factions = FactionManager:getSingleton():getAllFactions()
+	local factions = self:getFactions()
 	local players = {}
 	for index,faction in pairs(factions) do
-		if faction:isStateFaction() then
-			for index, value in pairs(faction:getOnlinePlayers()) do
-				table.insert(players, value)
-			end
+		for index, value in pairs(faction:getOnlinePlayers()) do
+			table.insert(players, value)
 		end
 	end
 	return players
@@ -517,7 +509,7 @@ function FactionState:Command_bail( player )
 					player:toggleControl("fire", true)
 					player:toggleControl("jump", true)
 					player:toggleControl("aim_weapon ", true)
-					if isTimer(player.m_JailTimer) then 
+					if isTimer(player.m_JailTimer) then
 						killTimer( player.m_JailTimer )
 					end
 					player.m_JailTimer = nil
@@ -650,7 +642,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
 			StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
-			client:getFaction():sendMessage(msg, 255,0,0)
+			self:sendMessage(msg, 255,0,0)
 		end
 	end
 end
@@ -663,7 +655,7 @@ function FactionState:Event_clearWanteds(target)
 			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
 			StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
-			client:getFaction():sendMessage(msg, 255,0,0)
+			self:sendMessage(msg, 255,0,0)
 		end
 	end
 end
