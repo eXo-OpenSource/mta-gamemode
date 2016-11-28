@@ -10,7 +10,7 @@ inherit(Singleton, RadioGUI)
 
 
 function RadioGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.28)/2 / ASPECT_RATIO_MULTIPLIER, 0, screenWidth*0.28 / ASPECT_RATIO_MULTIPLIER, screenHeight*0.19)
+	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.28)/2 / ASPECT_RATIO_MULTIPLIER, 0, screenWidth*0.28 / ASPECT_RATIO_MULTIPLIER, screenHeight*0.19, false, true)
 
 	self.m_CurrentStation = 0
 	setPlayerHudComponentVisible("radio", false)
