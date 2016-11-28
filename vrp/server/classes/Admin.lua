@@ -532,7 +532,7 @@ local tpTable = {
         ["pd"] =            {["pos"] = Vector3(1536.06, -1675.63, 13.11),  	["typ"] = "Fraktionen"},
         ["pdgarage"] =      {["pos"] = Vector3(1543.18, -1698.22, 5.57),  	["typ"] = "Fraktionen"},
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
-        ["ballas"] =        {["pos"] = Vector3(2685.32, -2003.91, 13.40),  	["typ"] = "Fraktionen"},
+        ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["army"] =          {["pos"] = Vector3(2711.48, -2405.28, 13.49),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
@@ -558,10 +558,9 @@ local tpTable = {
 		else
 			outputChatBox("Hier sind alle Orte aufgelistet:", player, 255, 255, 0 )
 			local strings = false
-			local counter = 0
 			local currentTyp = false
 			local already = {}
-			for i = 1,4 do
+			for _, _ in pairs(tpTable) do
 				currentTyp = false
 				strings = false
 				for k,v in pairs(tpTable) do
@@ -578,7 +577,9 @@ local tpTable = {
 					end
 				end
 				already[currentTyp] = true
-				outputChatBox(strings,player,255,255,255,true)
+				if strings then
+					outputChatBox(strings,player,255,255,255,true)
+				end
 			end
 		end
 	else
