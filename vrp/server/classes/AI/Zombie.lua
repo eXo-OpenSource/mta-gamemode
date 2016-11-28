@@ -123,7 +123,7 @@ function Zombie:SetZombieIdle(bool)
 end
 
 function Zombie:UpdateSprint()
-	if not(isElement(self.m_target)) then
+	if not isElement(self.m_target) or not isElement(self.m_ped) then
 		killTimer(self.m_updateRunTimer)
 		self:SetZombieIdle(true)
 		self.m_state = "waiting"
