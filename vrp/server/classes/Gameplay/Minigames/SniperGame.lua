@@ -25,7 +25,7 @@ function SniperGame.initalize()
 	Blip:new("SniperGame.png", -530.19, 1974.61) -- Todo: Change Blip
 
 	addEventHandler("onMarkerHit", sniperMarker, function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
+		if hitElement:getType() == "player" and dim and not hitElement.vehicle then
 			hitElement:triggerEvent("showMinigameGUI", "SniperGame")
 		end
 	end)

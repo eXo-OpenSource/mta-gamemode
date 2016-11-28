@@ -22,7 +22,7 @@ function ZombieSurvival.initalize()
 	end)
 
 	addEventHandler("onMarkerHit", zombieMarker, function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
+		if hitElement:getType() == "player" and dim and not hitElement.vehicle then
 			hitElement:triggerEvent("showMinigameGUI", "ZombieSurvival")
 		end
 	end)
