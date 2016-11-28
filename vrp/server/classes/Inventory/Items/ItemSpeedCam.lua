@@ -40,7 +40,8 @@ function ItemSpeedCam:use(player)
 
 					object.col = createColSphere(position, 8)
 					object.col.object = object
-					addEventHandler("onColShapeHit", object.col, bind(self.onColShapeHit, self))
+					self.m_func = bind(self.onColShapeHit, self)
+					addEventHandler("onColShapeHit", object.col, self.m_func )
 					local pos = player:getPosition()
 					FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 
