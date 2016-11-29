@@ -12,30 +12,33 @@ Blip.DefaultBlips = {}
 Blip.AttachedBlips = {}
 
 function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, color2) --quick workaround
-  self.m_ID = #Blip.Blips + 1
-  self.m_RawImagePath = imagePath
-  self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
-  self.m_WorldX = worldX
-  self.m_WorldY = worldY
-  self.m_WorldZ = false
-  self.m_Alpha = 255
-  self.m_Size = 24
-  self.m_StreamDistance = streamDistance or 100
-  if color then
-    self.m_Color = tocolor(color)
-  elseif color2 then 
+	self.m_ID = #Blip.Blips + 1
+	self.m_RawImagePath = imagePath
+	self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
+	self.m_WorldX = worldX
+	self.m_WorldY = worldY
+	self.m_WorldZ = false
+	self.m_Alpha = 255
+	self.m_Size = 24
+	self.m_StreamDistance = streamDistance or 100
+	if color then
+	self.m_Color = tocolor(color)
+	elseif color2 then
 	self.m_Color = color2
-  else
-    self.m_Color = tocolor(255, 255, 255, 255)
-  end
+	else
+	self.m_Color = tocolor(255, 255, 255, 255)
+	end
 
-  Blip.Blips[self.m_ID] = self
-  local m_String = BlipConversion[imagePath]
-  if m_String then
-    self.DefaultBlips[self.m_ID] = createBlip( worldX, worldY, 1,m_String, 1, 255, 255, 255, 255, 0, streamDistance)
-  end
+	Blip.Blips[self.m_ID] = self
 
-  HUDRadar:syncBlips()
+	local m_String = BlipConversion[imagePath]
+	if m_String and type(m_string.type) == "string" then
+		self.DefaultBlips[self.m_ID] = createBlip(worldX, worldY, 1,m_String, 1, 255, 255, 255, 255, 0, streamDistance)
+	else
+		outputDebug("Missing Standard Blip for "..imagePath)
+	end
+
+	HUDRadar:syncBlips()
 end
 
 function Blip:destructor()
