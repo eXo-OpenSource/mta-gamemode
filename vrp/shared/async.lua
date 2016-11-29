@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Async = { id = false; threads = {}}
-f
+
 function Async.create(func)
 	local t = setmetatable({}, { __index = Async, __call = Async.__call })
 
