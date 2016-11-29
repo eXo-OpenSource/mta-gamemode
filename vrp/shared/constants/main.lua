@@ -59,8 +59,7 @@ ADMIN_RANK_PERMISSION = {
 }
 
 GroupRank = {
-	Normal = 0,
-	Rank1 = 1,
+	Normal = 1,
 	Rank2 = 2,
 	Rank3 = 3,
 	Rank4 = 4,
