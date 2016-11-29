@@ -14,7 +14,6 @@ build_job:
     - 'echo "GIT_VERSION = \"$(git rev-parse HEAD)-$(git rev-parse --abbrev-ref HEAD)\"" > vrp_build/buildinfo.lua'
     - "tar czf artifacts.tar.gz [shader] bone_attach exo_maps vrp_build"
     - "tar czf assets.tar.gz vrp_assets"
-    - echo $HTTP_ASSETS_SECRET_UPLOAD
     - rm -rf vrp_assets
   artifacts:
     name: "$CI_BUILD_NAME"
@@ -26,4 +25,4 @@ deploy_job:
   stage: deploy
   script:
     - "echo 'TODO: Upload artifacts'"
-    - "echo 'TODO: Upload assets to http server'"
+    - "echo 'TODO: Upload assets to http server with secret-key $HTTP_ASSETS_SECRET_UPLOAD'"
