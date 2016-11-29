@@ -46,7 +46,7 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
   self.m_Rotation = self:getRotation()
   setElementData(self, "OwnerName", self.m_Company:getName())
   setElementData(self, "OwnerType", "company")
-  if health then 
+  if health then
 	if health <= 300 then
 		self:setHealth(health)
 	end
@@ -171,9 +171,9 @@ function CompanyVehicle:canBeModified()
   return self:getCompany():canVehiclesBeModified()
 end
 
-function CompanyVehicle:respawn()
+function CompanyVehicle:respawn(force)
 	if self:getHealth() <= 310 and not force then
-		self:getFaction():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
+		self:getCompany():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end
 

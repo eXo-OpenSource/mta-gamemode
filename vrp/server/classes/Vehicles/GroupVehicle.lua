@@ -46,7 +46,7 @@ function GroupVehicle:constructor(Id, Group, color, health, posionType, tunings,
   self.m_Rotation = self:getRotation()
   setElementData(self, "OwnerName", self.m_Group:getName())
   setElementData(self, "OwnerType", "group")
-  if health then 
+  if health then
 	if health <= 300 then
 		health = 300
 	end
@@ -139,9 +139,9 @@ function GroupVehicle:canBeModified()
   return self:getGroup():canVehiclesBeModified()
 end
 
-function GroupVehicle:respawn()
+function GroupVehicle:respawn(force)
 	if self:getHealth() <= 310 and not force then
-		self:getFaction():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
+		self:getGroup():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end
 
