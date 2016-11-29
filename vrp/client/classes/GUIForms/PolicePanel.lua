@@ -111,13 +111,13 @@ function PolicePanel:locatePlayer()
 			PlayerLocateBlip:attachTo(player)
 			InfoBox:new(_"Spieler geortet! Folge dem Blip auf der Karte!")
 
-			PlayerLocateTimer = setTimer(function(selfTimer)
+			PlayerLocateTimer = setTimer(function()
 				if not player:getPublicSync("Phone") == true then
 					if PlayerLocateBlip then delete(PlayerLocateBlip) end
 					ErrorBox:new(_"Der Spieler hat sein Handy ausgeschaltet!")
-					killTimer(selfTimer)
+					killTimer(PlayerLocateTimer)
 				end
-			end, 1000, 0, PlayerLocateTimer)
+			end, 1000, 0)
 		else
 			ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Sein Handy ist ausgeschaltet!")
 		end
