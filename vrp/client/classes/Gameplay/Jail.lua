@@ -21,8 +21,10 @@ addEventHandler("playerJailed", root,
 				jailCountdownGUI = Countdown:getSingleton():startCountdown(jailTime*60, "Frei in:")
 			end)
 		else
-			InfoBox:new(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %d Minuten verweilen!", jailTime))
-			jailCountdownGUI = Countdown:getSingleton():startCountdown(jailTime*60, "Frei in:")
+			if not jailCountdownGUI then
+				InfoBox:new(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %d Minuten verweilen!", jailTime))
+				jailCountdownGUI = Countdown:getSingleton():startCountdown(jailTime*60, "Frei in:")
+			end
 		end
 	end
 )
