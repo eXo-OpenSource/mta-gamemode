@@ -419,7 +419,11 @@ function GroupGUI:VehicleConvertToGroupButton_Click()
 		ErrorBox:new(_"Das Fahrzeug darf sich nicht im Autohof befinden!")
 		return
 	end
-	triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
+
+	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen! Dieser Vorgang kann nicht rückgänging gemacht werden", function()
+		triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
+	end)
+
 end
 
 function GroupGUI:VehicleLocateButton_Click()
