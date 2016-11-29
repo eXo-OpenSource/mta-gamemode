@@ -9,3 +9,5 @@ vrp/server/constants/config.json
 .idea/
 *.db
 *.iml
+
+.vscode
