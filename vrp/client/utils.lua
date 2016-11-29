@@ -63,8 +63,6 @@ end
 function rgb(r, g, b)
 	return tocolor(r, g, b)
 end
-^
-
 
 function rgba(r, g, b, a)
 	return tocolor(r, g, b, a*255)

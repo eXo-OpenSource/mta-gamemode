@@ -8,7 +8,7 @@ import sys
 
 start = time.time()
 linter = "luac"
-linter_length = 10
+linter_length = 4
 if platform.system() == "Windows":
 	linter = "tools/luac.exe"
 	linter_length = 14
