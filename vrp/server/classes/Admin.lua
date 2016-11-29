@@ -719,9 +719,9 @@ function Admin:markPosFunc(player, goto)
 			if getPedOccupiedVehicle(player) then
 				player = getPedOccupiedVehicle(player)
 			end
-			setElementInterior(player, markPos[4])
-			setElementDimension(player, markPos[5])
-			setElementPosition( player, markPos[1], markPos[2], markPos[3])
+			setElementInterior(player, markPos[2])
+			setElementDimension(player, markPos[3])
+			setElementPosition( player, markPos[1])
 			setCameraTarget(player,player)
 		else
 			player:sendError("Du hast keine Markierung /mark")
@@ -735,3 +735,27 @@ function Admin:markPosFunc(player, goto)
 	end
 end
 --]]
+
+function Admin:markPosFunc(player, goto)
+	if goto then
+		local markPos = getElementData(player, "Admin_MarkPos")
+		if markPos then
+			player:sendInfo("Du hast dich zu Makierung geportet!")
+			if getPedOccupiedVehicle(player) then
+				player = getPedOccupiedVehicle(player)
+			end
+			player:setInterior(markPos[4])
+			player:setDimension(markPos[5])
+			player:setPosition(Vector3(markPos[1], markPos[2], markPos[3]))
+			player:setCameraTarget(player)
+		else
+			player:sendError("Du hast keine Makierung /mark")
+		end
+	else
+		local pos = player:getPosition()
+		local dim = player:getDimension()
+		local interior = palyer:getInterior()
+		setElementData(player, "Admin_MarkPos", {pos, interior, dim})
+		player:sendInfo("Makierung gesetzt!")
+	end
+end
