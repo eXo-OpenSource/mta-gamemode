@@ -45,6 +45,7 @@ for child in root.findall("script"):
 # Call the linter
 print("Linting source...")
 
+exit_status = 0
 for file in files["server"]:
 	process = subprocess.Popen([ linter, "-p", file ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 	output, error = process.communicate()

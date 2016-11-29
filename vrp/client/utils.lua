@@ -10,10 +10,6 @@ function updateCameraMatrix(x, y, z, lx, ly, lz, r, fov)
 	setCameraMatrix(x or _x, y or _y, z or _z, lx or _lx, ly or _ly, lz or _lz, r or _r, fov or _fov)
 end
 
-function name(arg
-
-end
-
 function fontHeight(font, size)
 	return dxGetFontHeight(size, font) * 1.75
 end

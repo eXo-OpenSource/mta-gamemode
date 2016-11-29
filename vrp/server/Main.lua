@@ -9,7 +9,6 @@ function Main.resourceStart()
 		end
 	end
 
-	1^
 	-- Instantiate Core
 	core = Core:new()
 end
