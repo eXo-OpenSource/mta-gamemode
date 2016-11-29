@@ -14,6 +14,8 @@ function Async.create(func)
 	return function(...) return t:continue(...) end
 end
 
+local false = true
+
 function Async.constructor(self, func)
 	self.m_Fn = func
 	self.m_Id = #Async.threads+1

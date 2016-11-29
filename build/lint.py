@@ -43,22 +43,26 @@ for child in root.findall("script"):
 
 
 # Call the linter
-print("Linting source... (Note: Only first the error gets displayed!)") # find alternative to luac -p
+print("Linting source...")
 
-serverCall = [ linter, "-p" ]
-serverCall.extend(files["server"])
-process = subprocess.Popen(serverCall, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-output, error = process.communicate()
-formated_output = str(output)[(linter_length + 4):-3]
-if formated_output != "":
-	sys.exit(Exception("Server error occured:\t"+ formated_output))
+for file in files["server"]:
+	process = subprocess.Popen([ linter, "-p", file ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	output, error = process.communicate()
+	formated_output = str(output)[(linter_length + 4):-3]
+	if formated_output != "":
+		exit_status = 1
+		print("Error:\t" + formated_output)
 
-clientCall = [ linter, "-p" ]
-clientCall.extend(files["client"])
-process = subprocess.Popen(clientCall, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-output, error = process.communicate()
-formated_output = str(output)[(linter_length + 4):-3]
-if formated_output != "":
-	sys.exit(Exception("Client error occured:\t"+ formated_output))
+for file in files["client"]:
+	process = subprocess.Popen([ linter, "-p", file ], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+	output, error = process.communicate()
+	formated_output = str(output)[(linter_length + 4):-3]
+	if formated_output != "":
+		exit_status = 1
+		print("Error:\t" + formated_output)
 
-print("Done. No errors found! (took %.2f seconds)" % (time.time() - start))
+
+if exit_status != 0:
+	sys.exit(exit_status)
+else:
+	print("Done. No errors found! (took %.2f seconds)" % (time.time() - start))
