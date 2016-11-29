@@ -946,18 +946,20 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 		self.m_JailTimer = setTimer(
 			function()
 				if isElement(self) then
-					self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-					self:setRotation(0, 0, 90)
-					self:setWantedLevel(0)
-					self:toggleControl("fire", true)
-					self:toggleControl("jump", true)
-					self:toggleControl("aim_weapon ", true)
-					self.m_JailStart = nil
-					self.m_JailTimer = nil
-					self:setJailTime(0)
-					self:triggerEvent("playerLeftJail")
-					self:setData("inJail",false, true)
-					self:triggerEvent("checkNoDm")
+					if self:getData("inJail") then 
+						self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+						self:setRotation(0, 0, 90)
+						self:setWantedLevel(0)
+						self:toggleControl("fire", true)
+						self:toggleControl("jump", true)
+						self:toggleControl("aim_weapon ", true)
+						self.m_JailStart = nil
+						self.m_JailTimer = nil
+						self:setJailTime(0)
+						self:triggerEvent("playerLeftJail")
+						self:setData("inJail",false, true)
+						self:triggerEvent("checkNoDm")
+					end
 				end
 			end, self.m_JailTime * 60000, 1
 		)
