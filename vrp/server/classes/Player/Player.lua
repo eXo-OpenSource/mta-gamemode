@@ -331,7 +331,7 @@ function Player:spawn( )
 
 		if self.m_JailTime then
 			if self.m_JailTime > 0 then
-				self:moveToJail(false)
+				self:moveToJail(false, true)
 			end
 		end
 
@@ -355,7 +355,7 @@ function Player:spawn( )
 	end
 end
 
-function Player:respawn(position, rotation)
+function Player:respawn(position, rotation, bPrisonSpawn)
 	if not self:isLoggedIn() then
 		return
 	end
@@ -391,7 +391,9 @@ function Player:respawn(position, rotation)
 	else
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 		self:setHeadless(false)
-		self:moveToJail(false,true)
+		if not bPrisonSpawn then
+			self:moveToJail(false,true)
+		end
 	end
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
@@ -914,7 +916,6 @@ function Player:meChat(system, ...)
 	local receivedPlayers = {}
 	local message = ("%s %s"):format(self:getName(), text)
 	if system == true then systemText = "* " end
-
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s %s"):format(systemText, message, systemText), playersToSend[index], 100, 0, 255)
 		if playersToSend[index] ~= self then
@@ -931,7 +932,7 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 	if self.m_JailTime > 0 then
 		local rnd = math.random(1, #Jail.Cells)
 		if not alreadySpawned then
-			self:respawn()
+			self:respawn(false, false, true)
 		end
 		self:setPosition(Jail.Cells[rnd])
 		self:setInterior(0)
