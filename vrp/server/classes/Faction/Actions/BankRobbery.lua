@@ -61,16 +61,29 @@ end
 
 function BankRobbery:destroyRob()
 	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape)
-	for key, player in ipairs( tooLatePlayers) do
-		killPed(player)
-		player:sendInfo("Du bist im abgeschlossenen Raum verendet!")
+	if tooLatePlayers then
+		for key, player in ipairs( tooLatePlayers) do
+			killPed(player)
+			player:sendInfo("Du bist im abgeschlossenen Raum verendet!")
+		end
 	end
 	triggerClientEvent("bankAlarmStop", root)
-	for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then	marker:destroy() end end
-	for index, safe in pairs(self.m_Safes) do if isElement(safe) then safe:destroy() end	end
-	for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then brick:destroy() end end
-	for index, bag in pairs(self.m_MoneyBags) do	if isElement(bag) then bag:destroy() end end
-	for index, blip in pairs(self.m_Blip) do blip:delete() end
+	if self.m_DestinationMarker then
+		for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then destroyElement(marker) end end
+	end
+	if self.m_Safes then 
+		for index, safe in pairs(self.m_Safes) do if isElement(safe) then destroyElement(safe) end	end
+	end
+	if self.m_BombableBricks then
+		for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then destroyElement(brick) end end
+	end
+	if self.m_MoneyBags then
+		for index, bag in pairs(self.m_MoneyBags) do	if isElement(bag) then destroyElement(bag) end end
+	end
+	
+	if self.m_Blip then
+		for index, blip in pairs(self.m_Blip) do blip:delete() end
+	end
 	if isElement(self.m_BankDoor) then destroyElement(self.m_BankDoor) end
 	if isElement(self.m_SafeDoor) then destroyElement(self.m_SafeDoor) end
 	if isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
@@ -86,16 +99,20 @@ function BankRobbery:destroyRob()
 
 	killTimer(self.m_Timer)
 	killTimer(self.m_UpdateBreakingNewsTimer)
-
-	for index, playeritem in pairs(self.m_RobFaction:getOnlinePlayers()) do
-		playeritem:triggerEvent("CountdownStop")
-		playeritem:triggerEvent("forceCircuitBreakerClose")
+	
+	local onlinePlayers = self.m_RobFaction:getOnlinePlayers()
+	if onlinePlayers then
+		for index, playeritem in pairs(self.m_RobFaction:getOnlinePlayers()) do
+			playeritem:triggerEvent("CountdownStop")
+			playeritem:triggerEvent("forceCircuitBreakerClose")
+		end
 	end
-
-	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
-		player:triggerEvent("forceCircuitBreakerClose")
-		self.m_CircuitBreakerPlayers[player] = nil
-		player.m_InCircuitBreak = false
+	if self.m_CircuitBreakerPlayers then
+		for player, bool in pairs(self.m_CircuitBreakerPlayers) do
+			player:triggerEvent("forceCircuitBreakerClose")
+			self.m_CircuitBreakerPlayers[player] = nil
+			player.m_InCircuitBreak = false
+		end
 	end
 
 	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
@@ -629,36 +646,39 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if faction:isEvilFaction() then
-					local attachedElements = getAttachedElements(getPedOccupiedVehicle(hitElement)) 
-					if attachedElements then 
-						attachedElements = #attachedElements 
-					else 
-						attachedElements = 0
-					end
-					if (isPedInVehicle(hitElement) and attachedElements > 0 ) or hitElement:getPlayerAttachedObject() then
+					local veh = getPedOccupiedVehicle( hitElement )
+					if veh then
+						local attachedElements = getAttachedElements(getPedOccupiedVehicle(hitElement)) 
+						if attachedElements then 
+							attachedElements = #attachedElements 
+						else 
+							attachedElements = 0
+						end
 						local bags, amount
 						local totalAmount = 0
-						if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
-							bags = getAttachedElements(self.m_Truck)
-							hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-						elseif hitElement:getPlayerAttachedObject() then
-							bags = getAttachedElements(hitElement)
-							outputChatBox(_("Ein Geldsack wurde abgegeben! (%d übrig)", hitElement, self:getRemainingBagAmount()), rootElement, 255, 0, 0)
-							hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-							Key(hitElement, "n")
-							hitElement:toggleControlsWhileObjectAttached(true)
-						end
-						for key, value in pairs (bags) do
-							if value:getModel() == 1550 then
-								amount = value:getData("Money")
-								totalAmount = totalAmount + amount
-								faction:giveMoney(amount, "Bankraub")
-								value:destroy()
+						if (veh and attachedElements > 0 ) or hitElement:getPlayerAttachedObject() then
+							
+							if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+								bags = getAttachedElements(self.m_Truck)
+								hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
+							elseif hitElement:getPlayerAttachedObject() then
+								bags = getAttachedElements(hitElement)
+								outputChatBox(_("Ein Geldsack wurde abgegeben! (%d übrig)", hitElement, self:getRemainingBagAmount()), rootElement, 255, 0, 0)
+								hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
+								Key(hitElement, "n")
+								hitElement:toggleControlsWhileObjectAttached(true)
+							end
+							for key, value in pairs (bags) do
+								if value:getModel() == 1550 then
+									amount = value:getData("Money")
+									totalAmount = totalAmount + amount
+									faction:giveMoney(amount, "Bankraub")
+									value:destroy()
+								end
 							end
 						end
 						outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
-
-						if self:getRemainingBagAmount() == 0 or getPedOccupiedVehicle(hitElement) == self.m_Truck then
+						if self:getRemainingBagAmount() == 0 or veh == self.m_Truck then
 							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
 							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
 							source:destroy()
