@@ -74,7 +74,7 @@ function PolicePanel:loadPlayers()
 			self.m_PlayersGrid:addItemNoClick(i.." Wanteds", "")
 			for player, bool in pairs(self.m_Players[i]) do
 				if isElement(player) then
-					local item = self.m_PlayersGrid:addItem(player:getName(), player:getFaction():getShortName() or "- Keine -")
+					local item = self.m_PlayersGrid:addItem(player:getName(), player:getFaction() and player:getFaction():getShortName() or "- Keine -")
 					item.player = player
 					item.onLeftClick = function()
 						self:onSelectPlayer(player)
@@ -128,8 +128,12 @@ end
 
 function PolicePanel:giveWanteds()
 	local item = self.m_PlayersGrid:getSelectedItem()
-	local player = item.player
-	GiveWantedBox:new(player)
+	if item then
+		local player = item.player
+		GiveWantedBox:new(player)
+	else
+		ErrorBox:new(_"Kein Spieler ausgewählt!")
+	end
 end
 
 GiveWantedBox = inherit(GUIForm)
