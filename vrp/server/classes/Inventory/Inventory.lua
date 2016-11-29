@@ -58,10 +58,6 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 	self:syncClient()
 end
 
-function Inventory:flush( player ) 
-	player:triggerEvent("flushInventory",self.m_Bag, self.m_Items)
-end
-
 function Inventory:destructor()
 	self.m_Items = nil
 	self.m_Bag = nil
@@ -69,11 +65,11 @@ function Inventory:destructor()
 end
 
 function Inventory:syncClient()
-	triggerClientEvent(self.m_Owner, "syncInventoryFromServer", self.m_Owner, self.m_Bag, self.m_Items)
+	self.m_Owner:triggerEvent( "syncInventoryFromServer", self.m_Bag, self.m_Items,self.m_ItemData)
 end
 
 function Inventory:forceRefresh()
-	triggerClientEvent(self.m_Owner, "forceInventoryRefresh", self.m_Owner, self.m_Bag, self.m_Items)
+	self.m_Owner:triggerEvent( "forceInventoryRefresh", self.m_Bag, self.m_Items,self.m_ItemData)
 end
 
 function Inventory:isSpecialItem(item)
@@ -147,25 +143,26 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 
 
 	--outputChatBox("Du benutzt das Item "..itemName.." aus der Tasche "..bag.."!", self.m_Owner, 0, 255, 0) -- in Developement
+	self:syncClient()
 end
 
 function Inventory:saveSpecialItem(id, amount)
-	sql:queryExec("UPDATE ??_inventory_slots SET Menge = ?? WHERE id = ??", sql:getPrefix(), amount, id )
+	sql:queryExec("UPDATE ??_inventory_slots SET Menge = ?? WHERE id = ?", sql:getPrefix(), amount, id )
 	self:syncClient()
 end
 
 function Inventory:saveItemAmount(id, amount)
-	sql:queryExec("UPDATE ??_inventory_slots SET Menge = ?? WHERE id = ??", sql:getPrefix(), amount, id )
+	sql:queryExec("UPDATE ??_inventory_slots SET Menge = ?? WHERE id = ?", sql:getPrefix(), amount, id )
 	self:syncClient()
 end
 
 function Inventory:saveItemPlace(id, place)
-	sql:queryExec("UPDATE ??_inventory_slots SET Platz = ?? WHERE id = ??", sql:getPrefix(), place, id )
+	sql:queryExec("UPDATE ??_inventory_slots SET Platz = ?? WHERE id = ?", sql:getPrefix(), place, id )
 	self:syncClient()
 end
 
 function Inventory:deleteItem(id)
-	sql:queryExec("DELETE FROM ??_inventory_slots WHERE `id`= ??", sql:getPrefix(), id )
+	sql:queryExec("DELETE FROM ??_inventory_slots WHERE id= ?", sql:getPrefix(), id )
 	self:syncClient()
 end
 
@@ -251,18 +248,20 @@ function Inventory:setItemPlace(bag, placeOld, placeNew)
 end
 
 function Inventory:removeItemFromPlace(bag, place, amount)
-	local id = self.m_Bag[bag][place]
-	if(not id) then
-		return false
-	end
 
-	if(not amount) then
-		amount = self.m_Items[id]["Menge"]
+	local id = self.m_Bag[bag][place]
+	if not id then return false end
+
+	local ItemAmount = self.m_Items[id]["Menge"]
+
+	if not amount then
+		amount = ItemAmount
 	elseif(amount < 0) then
 		error("removeItem > You cant remove less then 0 items!", 2)
 		return false
 	end
-	local ItemAmount = self.m_Items[id]["Menge"]
+
+	outputDebugString("RemoveItemFromPlace: Parameters->"..tostring(bag)..", place:"..place..", amount:"..amount.."!",0,200,0,200)
 
 	if(ItemAmount - amount < 0) then
 		return false

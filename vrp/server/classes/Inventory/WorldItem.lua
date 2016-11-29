@@ -20,6 +20,7 @@ function WorldItem:constructor(item, player, pos, rotation)
 end
 
 function WorldItem:destructor()
+	WorldItem.Map[self.m_Object] = nil
 	self.m_Object:destroy()
 end
 

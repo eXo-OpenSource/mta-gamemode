@@ -46,13 +46,21 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
   self.m_Rotation = self:getRotation()
   setElementData(self, "OwnerName", self.m_Company:getName())
   setElementData(self, "OwnerType", "company")
-
-  self:setHealth(health)
-  self:setLocked(true)
-  if color then
-    local a, r, g, b = getBytesInInt32(color)
-    setVehicleColor(self, r, g, b)
+  if health then 
+	if health <= 300 then
+		self:setHealth(health)
+	end
   end
+  self:setLocked(true)
+
+  local a, r, g, b
+  if color and color > 0 then
+  	a, r, g, b = getBytesInInt32(color)
+  else
+  	local companyId = self.m_Company:getId()
+	r, g, b = companyColors[companyId]["r"], companyColors[companyId]["g"], companyColors[companyId]["b"]
+  end
+  setVehicleColor(self, r, g, b, r, g, b)
 
   for k, v in pairs(tunings or {}) do
     addVehicleUpgrade(self, v)
@@ -116,7 +124,7 @@ end
 
 function CompanyVehicle:create(Company, model, posX, posY, posZ, rotation)
 	rotation = tonumber(rotation) or 0
-	if sql:queryExec("INSERT INTO ??_company_vehicles (Company, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), Company:getId(), model, posX, posY, posZ, rotation) then
+	if sql:queryExec("INSERT INTO ??_company_vehicles (Company, Model, PosX, PosY, PosZ, Rotation, Health) VALUES(?, ?, ?, ?, ?, ?, 1000)", sql:getPrefix(), Company:getId(), model, posX, posY, posZ, rotation) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
 		enew(vehicle, CompanyVehicle, sql:lastInsertId(), Company, nil, 1000)
     VehicleManager:getSingleton():addRef(vehicle)

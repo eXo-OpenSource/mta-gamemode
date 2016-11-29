@@ -364,7 +364,7 @@ function HUDUI:drawExo()
 		end
 		dxDrawText ( math.floor(localPlayer:getPlayTime()/60).." Std.",hudStartX+width*0.5, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
 
-		dxDrawText ( math.floor(localPlayer:getLevel()),hudStartX+width*0.9, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
+		dxDrawText ( math.floor(localPlayer:getLevel() or 0) or 0,hudStartX+width*0.9, height*0.77,width*0.5, height*0.08, tocolor ( 255,255,255,255 ), 0.9*width*0.0039, "sans","left","top" ) --Money
 
 
 		--[[if getPedWeapon(localPlayer) > 9  then

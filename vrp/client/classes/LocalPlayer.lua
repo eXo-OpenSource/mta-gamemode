@@ -152,7 +152,7 @@ function LocalPlayer:Event_playerWasted()
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
 	showChat(false)
-
+	triggerServerEvent("Event_setPlayerWasted", localPlayer)
 	-- Move camera into the Sky
 	setCameraInterior(0)
 
@@ -209,12 +209,17 @@ function LocalPlayer:checkAFK()
 			removeEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
 			return
 		end
-		if self.m_AFKCheckCount == 60 then
-			outputChatBox ( "WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
-			self:sendTrayNotification("WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", "warning", true)
+		local afkMinutes = self.m_AFKCheckCount*12
+		if afkMinutes == 7 then
+			outputChatBox ( "WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", 255, 0, 0 )
+			self:sendTrayNotification("WARNUNG: Du wirst in 5 Minuten zum AFK-Cafe befördert!", "warning", true)
 			self:generateAFKCode()
 			return
-		elseif self.m_AFKCheckCount == 72 then
+		elseif afkMinutes == 9 then
+			outputChatBox ( "WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
+			self:sendTrayNotification("WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", "warning", true)
+			return
+		elseif afkMinutes == 10 then
 			self:toggleAFK(true, true)
 			return
 		end

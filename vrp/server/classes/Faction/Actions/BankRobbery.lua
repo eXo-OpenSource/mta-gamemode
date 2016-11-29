@@ -8,6 +8,7 @@
 BankRobbery = inherit(Singleton)
 BankRobbery.Map = {}
 BankRobbery.FinishMarker = {Vector3(2766.84, 84.98, 19.39), Vector3(2561.50, -949.89, 82.77), Vector3(1935.24, 169.98, 37.28)}
+
 addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
 BankRobbery.BagSpawns = {
 	Vector3(2307.25, 17.90, 26),
@@ -34,14 +35,14 @@ local BOMB_TIME = 15*1000
 local MONEY_PER_SAFE_MIN = 300
 local MONEY_PER_SAFE_MAX = 500
 local MAX_MONEY_PER_BAG = 2500
-local BANKROB_TIME = 60*1000*5
+local BANKROB_TIME = 60*1000*12
 
 function BankRobbery:constructor()
 	self:build()
 end
 
 function BankRobbery:spawnPed()
-	if isElement(self.m_Ped) then 
+	if isElement(self.m_Ped) then
 		destroyElement(self.m_Ped)
 	end
 	self.m_Ped = ShopNPC:new(295, 2310.28, -10.87, 26.74, 180)
@@ -55,21 +56,34 @@ function BankRobbery:spawnPed()
 end
 
 function BankRobbery:destructor()
-	
+
 end
 
 function BankRobbery:destroyRob()
 	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape)
-	for key, player in ipairs( tooLatePlayers) do 
-		killPed(player)
-		player:sendInfo("Du bist im abgeschlossenen Raum verendet!")
+	if tooLatePlayers then
+		for key, player in ipairs( tooLatePlayers) do
+			killPed(player)
+			player:sendInfo("Du bist im abgeschlossenen Raum verendet!")
+		end
 	end
 	triggerClientEvent("bankAlarmStop", root)
-	for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then	marker:destroy() end end
-	for index, safe in pairs(self.m_Safes) do if isElement(safe) then safe:destroy() end	end
-	for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then brick:destroy() end end
-	for index, bag in pairs(self.m_MoneyBags) do	if isElement(bag) then bag:destroy() end end
-	for index, blip in pairs(self.m_Blip) do blip:delete() end
+	if self.m_DestinationMarker then
+		for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then destroyElement(marker) end end
+	end
+	if self.m_Safes then 
+		for index, safe in pairs(self.m_Safes) do if isElement(safe) then destroyElement(safe) end	end
+	end
+	if self.m_BombableBricks then
+		for index, brick in pairs(self.m_BombableBricks) do	if isElement(brick) then destroyElement(brick) end end
+	end
+	if self.m_MoneyBags then
+		for index, bag in pairs(self.m_MoneyBags) do	if isElement(bag) then destroyElement(bag) end end
+	end
+	
+	if self.m_Blip then
+		for index, blip in pairs(self.m_Blip) do blip:delete() end
+	end
 	if isElement(self.m_BankDoor) then destroyElement(self.m_BankDoor) end
 	if isElement(self.m_SafeDoor) then destroyElement(self.m_SafeDoor) end
 	if isElement(self.m_ColShape) then destroyElement(self.m_ColShape) end
@@ -82,24 +96,34 @@ function BankRobbery:destroyRob()
 	self.m_HackableComputer:setData("bankPC", false, true)
 	if isElement(self.m_HackableComputer) then destroyElement(self.m_HackableComputer) end
 	if self.m_GuardPed1 then destroyElement( self.m_GuardPed1 ) end
-	
+
 	killTimer(self.m_Timer)
 	killTimer(self.m_UpdateBreakingNewsTimer)
-
-	for index, playeritem in pairs(self.m_RobFaction:getOnlinePlayers()) do
-		playeritem:triggerEvent("CountdownStop")
-		playeritem:triggerEvent("forceCircuitBreakerClose")
+	
+	local onlinePlayers = self.m_RobFaction:getOnlinePlayers()
+	if onlinePlayers then
+		for index, playeritem in pairs(self.m_RobFaction:getOnlinePlayers()) do
+			playeritem:triggerEvent("CountdownStop")
+			playeritem:triggerEvent("forceCircuitBreakerClose")
+		end
 	end
-		
+	if self.m_CircuitBreakerPlayers then
+		for player, bool in pairs(self.m_CircuitBreakerPlayers) do
+			player:triggerEvent("forceCircuitBreakerClose")
+			self.m_CircuitBreakerPlayers[player] = nil
+			player.m_InCircuitBreak = false
+		end
+	end
+
 	removeEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
-	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)	
+	removeEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
 	removeEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
 	removeEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
 	removeEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
 
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
-	self:build()
+	BankRobbery:getSingleton():build()
 end
 
 function BankRobbery:build()
@@ -112,10 +136,14 @@ function BankRobbery:build()
 	self.m_HackableComputer:setData("bankPC", true, true)
 
 	self.m_SafeDoor = createObject(2634, 2314.1, 18.94, 26.7, 0, 0, 270)
+
 	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
 	self.m_BankDoor:setScale(0.88)
+	local pos = self.m_BankDoor:getPosition()
+	self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
 	self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
 	self.m_BackDoor:setFrozen(true)
+
 
 	self.m_Blip = {}
 	self.m_DestinationMarker = {}
@@ -131,6 +159,8 @@ function BankRobbery:build()
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
 	self.m_Event_onBagClickFunc = bind(self.Event_onBagClick, self)
 
+	self.m_CircuitBreakerPlayers = {}
+
 	self:spawnPed()
 	self:spawnGuards()
 	self:createSafes()
@@ -143,7 +173,7 @@ function BankRobbery:build()
 	self.m_OnDisarm = bind(self.Event_onDisarmAlarm, self)
 	self.m_OnSuccess = bind(self.Event_onHackSuccessful, self)
 	addEventHandler("onColShapeHit", self.m_HelpColShape, self.m_ColFunc)
-	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)	
+	addEventHandler("onColShapeLeave", self.m_HelpColShape, self.m_HelpCol)
 	addEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
 	addEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
 	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
@@ -197,10 +227,10 @@ function BankRobbery:startRob(player)
 	end
 
 	for index, playeritem in pairs(faction:getOnlinePlayers()) do
-		playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000))
+		playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000), "Bank-Überfall")
 	end
 
-	addRemoteEvents{"bankRobberyLoadBag", "bankRobberyDeloadBag"}
+	addRemoteEvents{"bankRobberyLoadBag", "bankRobberyDeloadBag"} --// TODO CONTINUE FIXING THIS PART
 
 	addEventHandler("bankRobberyLoadBag", root, bind(self.Event_LoadBag, self))
 	addEventHandler("bankRobberyDeloadBag", root, bind(self.Event_DeloadBag, self))
@@ -216,8 +246,6 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 			return false
 		end
 		self:startRob(attacker)
-		local pos = self.m_BankDoor:getPosition()
-		self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
 		outputChatBox(_("Bankangestellter sagt: Hilfe! Ich öffne Ihnen die Tür zum Tresorraum!", attacker), attacker, 255, 255, 255)
 		outputChatBox(_("Bankangestellter sagt: Bitte tun sie mir nichts!", attacker), attacker, 255, 255, 255)
 	else
@@ -412,7 +440,7 @@ function BankRobbery:BombArea_Place(bombArea, player)
 	end
 
 	for k, player in pairs(getElementsWithinColShape(self.m_BombColShape, "player")) do
-		player:triggerEvent("Countdown", BOMB_TIME/1000)
+		player:triggerEvent("Countdown", BOMB_TIME/1000, "Bombe zündet")
 
 		local faction = player:getFaction()
 		if faction and faction:isEvilFaction() then
@@ -431,7 +459,13 @@ function BankRobbery:BombArea_Explode(bombArea, player)
 end
 
 function BankRobbery:Event_onHackSuccessful()
-	client:sendSuccess(_("Du hast das Sicherheitssystem geknackt! Die Safetür ist offen", client))
+	for player, bool in pairs(self.m_CircuitBreakerPlayers) do
+		player:triggerEvent("forceCircuitBreakerClose")
+		player:sendSuccess(_("Das Sicherheitssystem wurde von %s geknackt! Die Safetür ist offen", player, client:getName()))
+		player.m_InCircuitBreak = false
+		self.m_CircuitBreakerPlayers[player] = nil
+	end
+	self.m_CircuitBreakerPlayers = {	}
 	client:giveKarma(-5)
 
 	local pos = self.m_SafeDoor:getPosition()
@@ -441,6 +475,8 @@ end
 function BankRobbery:Event_onStartHacking()
 	if client:getFaction() and client:getFaction():isEvilFaction() then
 		if self.m_IsBankrobRunning then
+			self.m_CircuitBreakerPlayers[client] = true
+			client.m_InCircuitBreak = true
 			triggerClientEvent(client, "startCircuitBreaker", client, "bankRobberyPcHackSuccess")
 		else
 			client:sendError(_("Derzeit läuft kein Bankraub!", client))
@@ -612,30 +648,39 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if faction:isEvilFaction() then
-					if (isPedInVehicle(hitElement) and #getAttachedElements(getPedOccupiedVehicle(hitElement)) > 0 ) or hitElement:getPlayerAttachedObject() then
+					local veh = getPedOccupiedVehicle( hitElement )
+					if veh then
+						local attachedElements = getAttachedElements(getPedOccupiedVehicle(hitElement)) 
+						if attachedElements then 
+							attachedElements = #attachedElements 
+						else 
+							attachedElements = 0
+						end
 						local bags, amount
 						local totalAmount = 0
-						if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
-							bags = getAttachedElements(self.m_Truck)
-							hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-						elseif hitElement:getPlayerAttachedObject() then
-							bags = getAttachedElements(hitElement)
-							outputChatBox(_("Ein Geldsack wurde abgegeben! (%d übrig)", hitElement, self:getRemainingBagAmount()), rootElement, 255, 0, 0)
-							hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-							Key(hitElement, "n")
-							hitElement:toggleControlsWhileObjectAttached(true)
-						end
-						for key, value in pairs (bags) do
-							if value:getModel() == 1550 then
-								amount = value:getData("Money")
-								totalAmount = totalAmount + amount
-								faction:giveMoney(amount, "Bankraub")
-								value:destroy()
+						if (veh and attachedElements > 0 ) or hitElement:getPlayerAttachedObject() then
+							
+							if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+								bags = getAttachedElements(self.m_Truck)
+								hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
+							elseif hitElement:getPlayerAttachedObject() then
+								bags = getAttachedElements(hitElement)
+								outputChatBox(_("Ein Geldsack wurde abgegeben! (%d übrig)", hitElement, self:getRemainingBagAmount()), rootElement, 255, 0, 0)
+								hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
+								Key(hitElement, "n")
+								hitElement:toggleControlsWhileObjectAttached(true)
+							end
+							for key, value in pairs (bags) do
+								if value:getModel() == 1550 then
+									amount = value:getData("Money")
+									totalAmount = totalAmount + amount
+									faction:giveMoney(amount, "Bankraub")
+									value:destroy()
+								end
 							end
 						end
 						outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
-
-						if self:getRemainingBagAmount() == 0 or getPedOccupiedVehicle(hitElement) == self.m_Truck then
+						if self:getRemainingBagAmount() == 0 or veh == self.m_Truck then
 							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
 							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
 							source:destroy()
@@ -649,5 +694,5 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 end
 
 function BankRobbery.initializeAll()
-	
+
 end

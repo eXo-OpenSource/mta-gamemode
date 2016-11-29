@@ -10,6 +10,9 @@ function SanNews:constructor()
 	local safe = createObject(2332, 732.40, -1339.90, 15.30, 0, 0, 90)
  	self:setSafe(safe)
 
+    VehicleBarrier:new(Vector3(781.40, -1384.60, 13.50), Vector3(0, 90, 180), 0).onBarrierHit = bind(self.onBarrierHit, self)
+    VehicleBarrier:new(Vector3(781.30, -1330.30, 13.40), Vector3(0, 90, 180), 0).onBarrierHit = bind(self.onBarrierHit, self)
+
 	-- Register in Player Hooks
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	Player.getChatHook():register(bind(self.Event_onPlayerChat, self))
@@ -24,6 +27,13 @@ end
 
 function SanNews:destuctor()
 
+end
+
+function SanNews:onBarrierHit(player)
+    if player:getCompany() ~= self then
+        return false
+    end
+    return true
 end
 
 function SanNews:Event_news(player, cmd, ...)

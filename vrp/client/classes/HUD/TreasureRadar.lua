@@ -10,7 +10,7 @@ TreasureRadar = inherit(Singleton)
 function TreasureRadar:constructor()
 	self.m_Angle = 0
 	self.m_ElementsDetected = {}
-	self.m_Radius = 300
+	self.m_Radius = 200
 	self.m_Radars = {}
 
 	self.m_RadarColshape = createColCircle(0 ,0 , self.m_Radius)
@@ -44,17 +44,10 @@ function TreasureRadar:render()
 			dxDrawLine(lineX, lineY, endX + lineX, endY + lineY, tocolor(0, 255, 0, alpha), 7)
 		end
 		for element, b in pairs(self.m_ElementsDetected) do
-			local elapsedTime = now - b[1]
-			if elapsedTime < 3000 then
-				local alpha = linear(elapsedTime, 255, -255, 3000)
+			local hip = (radar.r*b[3])/self.m_Radius
+			local x, y = math.cos(b[2]) / hip, math.sin(b[2]) * hip
 
-				local hip = (radar.r*b[3])/self.m_Radius
-				local x, y = math.cos(b[2]) / hip, math.sin(b[2]) * hip
-
-				dxDrawImage(centerX-8+x, centerY-8-y, 16, 16, "files/images/Other/TreasureRadarBlip.png", 0, 0, 0, tocolor(255, 255, 255, alpha))
-			else
-				self.m_ElementsDetected[element] = nil
-			end
+			dxDrawImage(centerX-8+x, centerY-8-y, 16, 16, "files/images/Other/TreasureRadarBlip.png", 0, 0, 0, tocolor(255, 255, 255, 255))
 		end
 
 		local rot = localPlayer:getOccupiedVehicle():getRotation()

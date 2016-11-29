@@ -130,7 +130,7 @@ function EventManager:Event_eventJoin(eventId)
 
 	event:join(client)
 	client:sendShortMessage(_("Du hast dich erfolgreich für dieses Event eingetragen. Bleibe in der Nähe!", client))
-	client:triggerEvent("Countdown", event:getStartTime() - getRealTime().timestamp)
+	client:triggerEvent("Countdown", event:getStartTime() - getRealTime().timestamp, "Event")
 
 end
 

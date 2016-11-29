@@ -100,7 +100,7 @@ end
 function FactionWeaponShopGUI:updateButtons()
 	for weaponID,v in pairs(self.m_validWeapons) do
 		if v == true then
-
+			local skip = false
 			if self.rankWeapons[tostring(weaponID)] == 1 then
 				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
 				if self.m_WeaponsBuyMunition[weaponID] then
@@ -111,33 +111,32 @@ function FactionWeaponShopGUI:updateButtons()
 				if self.m_WeaponsBuyMunition[weaponID] then
 					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
 				end
+				skip = true
 			end
-
-			if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 then
-				if self.m_WeaponsBuyMunition[weaponID] then
-					self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
+			if not skip then
+				if self.m_playerWeapons[weaponID] or self.m_Cart[weaponID]["Waffe"] > 0 then
+					if self.m_WeaponsBuyMunition[weaponID] then
+						self.m_WeaponsBuyMunition[weaponID]:setEnabled(true)
+					end
+					self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
+				else
+					self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
+					if self.m_WeaponsBuyMunition[weaponID] then
+						self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
+						self.m_Cart[weaponID]["Munition"] = 0
+					end
 				end
-				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
-			else
-				self.m_WeaponsBuyGun[weaponID]:setEnabled(true)
-				if self.m_WeaponsBuyMunition[weaponID] then
-					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
-					self.m_Cart[weaponID]["Munition"] = 0
+
+				if self.depot[weaponID]["Waffe"]-self.m_Cart[weaponID]["Waffe"] <= 0 then
+					self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
+				end
+
+				if self.depot[weaponID]["Munition"]-self.m_Cart[weaponID]["Munition"] <= 0 then
+					if self.m_WeaponsBuyMunition[weaponID] then
+						self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
+					end
 				end
 			end
-
-			if self.depot[weaponID]["Waffe"]-self.m_Cart[weaponID]["Waffe"] <= 0 then
-				self.m_WeaponsBuyGun[weaponID]:setEnabled(false)
-			end
-
-			if self.depot[weaponID]["Munition"]-self.m_Cart[weaponID]["Munition"] <= 0 then
-				if self.m_WeaponsBuyMunition[weaponID] then
-					self.m_WeaponsBuyMunition[weaponID]:setEnabled(false)
-				end
-			end
-
-
-
 		end
 	end
 	self:updateCart()
@@ -171,6 +170,15 @@ function FactionWeaponShopGUI:updateCart()
 	end
 end
 
+function FactionWeaponShopGUI:clearCart()
+	for key, item in ipairs( self.m_CartGrid:getItems()) do
+		self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
+		self:updateCart()
+		self:updateButtons()
+	end
+	self.m_CartGrid:clear()
+end
+
 function FactionWeaponShopGUI:deleteItemFromCart()
 	local item = self.m_CartGrid:getSelectedItem()
 	if item then
@@ -200,6 +208,7 @@ end
 
 function FactionWeaponShopGUI:factionWeaponShopBuy()
 	triggerServerEvent("factionWeaponShopBuy",root,self.m_Cart)
+	FactionWeaponShopGUI:getSingleton():clearCart()
 end
 
 addEventHandler("showFactionWeaponShopGUI", root,

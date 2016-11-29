@@ -191,7 +191,7 @@ function JailBreak:GuardPed2_Wasted(totalAmmo, killer)
 end
 
 function JailBreak:Bomb_Place(bombArea, player)
-	player:triggerEvent("Countdown", 10)
+	player:triggerEvent("Countdown", 10, "Bombe zündet")
 end
 
 function JailBreak:Bomb_Explode()

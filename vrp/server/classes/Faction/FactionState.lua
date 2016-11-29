@@ -11,11 +11,15 @@ FactionState = inherit(Singleton)
 
 function FactionState:constructor()
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
+	self:createArrestZone(255.19, 84.75, 1002.45, 6)-- PD Zellen
+	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 
 	nextframe( -- Todo workaround
 		function ()
 			self:loadLSPD(1)
 			self:loadFBI(2)
+			self:loadArmy(3)
+			self:loadMedic( 4 )
 		end
 	)
 
@@ -70,31 +74,9 @@ end
 function FactionState:destructor()
 end
 
-function FactionState:loadFBI(factionId)
-	self:createDutyPickup(234.04456, 111.82722, 1003.22571, 10, 23) -- FBI Base
-	self:createDutyPickup(1510.67871, -1479.12988, 9.50000, 0, 0)
-
-	local safe = createObject(2332, 226.80, 128.50, 1010.20)
-	safe:setInterior(10)
-	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
-	--[[
-	VehicleBarrier:new(Vector3(1621.9000244141, -1602.6999511719,13.300000190735), Vector3(0, 90, 180)).onBarrierHit = bind(self.onBarrierGateHit, self) -- FBI Barrier
-
-	Gate:new(971, Vector3(1629.1, -1722.90, 16.10), Vector3(0, 0, 180), Vector3(1629.1, -1722.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
-	Gate:new(971, Vector3(1618.2, -1643.90, 16.10), Vector3(0, 0, 0), Vector3(1618.2, -1643.90, 7.9)).onGateHit = bind(self.onBarrierGateHit, self)
-	Gate:new(971, Vector3(1618.7, -1728.30, 6.5), Vector3(0, 0, 180), Vector3(1618.7, -1728.30, -1.2)).onGateHit = bind(self.onBarrierGateHit, self)
-
-	Gate:new(971, Vector3(1618.7, -1728.30, 6.5), Vector3(0, 0, 180), Vector3(1618.7, -1728.30, -1.2)).onGateHit = bind(self.onBarrierGateHit, self)
-	]]--
-	Gate:new(2938, Vector3(1534.6999511719,-1451.5,15), Vector3(0, 0, 270), Vector3(1534.6999511719,-1451.5,20)).onGateHit = bind(self.onBarrierGateHit, self)
-	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
-	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
-	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
-end
-
 function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
-	self:createDutyPickup(1530.21, -1671.66, 6.22, 0) -- PD Garage
+	self:createDutyPickup(1530.21, -1671.66, 6.22) -- PD Garage
 
 	Blip:new("Police.png", 1552.278, -1675.725, root, 400)
 
@@ -109,12 +91,18 @@ function FactionState:loadLSPD(factionId)
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	door:setDoorScale(1.1)
 
-	InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0) -- LSPD Garage
-	InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
+	--InteriorEnterExit:new(Vector3(1525.16, -1678.17, 5.89), Vector3(259.22, 73.73, 1003.64), 0, 0, 6, 0) -- LSPD Garage
+	--InteriorEnterExit:new(Vector3(1564.84, -1666.84, 28.40), Vector3(226.65, 75.95, 1005.04), 0, 0, 6, 0) -- LSPD Roof
+
+	local elevator = Elevator:new()
+	elevator:addStation("UG Garage", Vector3(1525.16, -1678.17, 5.89), 270)
+	elevator:addStation("Erdgeschoss", Vector3(259.22, 73.73, 1003.64), 84, 6)
+	elevator:addStation("Dach - Heliports", Vector3(1564.84, -1666.84, 28.40), 90)
+
 
 	local safe = createObject(2332, 241, 77.70, 1004.50, 0, 0, 270)
 	safe:setInterior(6)
-	FactionManager:getSingleton():getFromId(factionId):setSafe(safe)
+	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
 	self.m_ShootingRanchMarker = createMarker(249.78, 66.77, 1002.7, "cylinder", 1, 0, 255, 0, 200)
 	self.m_ShootingRanchMarker:setInterior(6)
@@ -126,25 +114,58 @@ function FactionState:loadLSPD(factionId)
 
 end
 
+function FactionState:loadFBI(factionId)
+	self:createDutyPickup(234.04456, 111.82722, 1003.22571, 10, 23) -- FBI Base
+	self:createDutyPickup(1510.67871, -1479.12988, 9.50000)
+
+	local safe = createObject(2332, 226.80, 128.50, 1010.20)
+	safe:setInterior(10)
+	FactionManager:getSingleton():getFromId(1):setSafe(safe)
+
+	Gate:new(2938, Vector3(1534.6999511719,-1451.5,15), Vector3(0, 0, 270), Vector3(1534.6999511719,-1451.5,20)).onGateHit = bind(self.onBarrierGateHit, self)
+	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
+	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
+	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
+end
+
+function FactionState:loadArmy(factionId)
+	self:createDutyPickup(2743.75, -2453.81, 13.86) -- Army-LS
+	self:createDutyPickup(247.05, 1859.38, 14.08) -- Army Area
+
+	local safe = createObject(2332, 242.38, 1862.32, 14.08, 0, 0, 180 )
+	FactionManager:getSingleton():getFromId(1):setSafe(safe)
+
+	local areaGate = Gate:new(971, Vector3(130.3, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(130.3, 1934.8, 13.7))
+	areaGate:addGate(971, Vector3(139.2, 1934.8, 19.1), Vector3(0, 0, 180), Vector3(139.3, 1934.8, 13.7))
+	areaGate:addCustomShapes(Vector3(134.93, 1927.58, 19.20), Vector3(135.27, 1941.85, 19.32))
+	areaGate.onGateHit = bind(self.onBarrierGateHit, self)
+
+	local areaGarage = Gate:new(7657, Vector3(208, 1875.90, 13.86), Vector3(0, 0, 180), Vector3(200, 1875.90, 13.86))
+	areaGarage:addCustomShapes(Vector3(213.97, 1872.14, 13.14), Vector3(213.92, 1880.12, 13.14))
+	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
+
+
+	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
+	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
+	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
+end
+
+function FactionState:loadMedic( factionId )
+	self:createDutyPickup(1760.72, -1744.20, 6) -- garage
+	self:createDutyPickup(1721.04, -1752.75, 13)
+
+end
 function FactionState:countPlayers()
-	local factions = FactionManager:getSingleton():getAllFactions()
-	local amount = 0
-	for index,faction in pairs(factions) do
-		if faction:isStateFaction() then
-			amount = amount + #faction:getOnlinePlayers()
-		end
-	end
-	return amount
+	local count = #self:getOnlinePlayers()
+	return count
 end
 
 function FactionState:getOnlinePlayers()
-	local factions = FactionManager:getSingleton():getAllFactions()
+	local factions = self:getFactions()
 	local players = {}
 	for index,faction in pairs(factions) do
-		if faction:isStateFaction() then
-			for index, value in pairs(faction:getOnlinePlayers()) do
-				table.insert(players, value)
-			end
+		for index, value in pairs(faction:getOnlinePlayers()) do
+			table.insert(players, value)
 		end
 	end
 	return players
@@ -179,7 +200,7 @@ end
 
 function FactionState:createDutyPickup(x,y,z,int, dim)
 	self.m_DutyPickup = createPickup(x,y,z, 3, 1275) --PD
-	setElementInterior(self.m_DutyPickup, int)
+	setElementInterior(self.m_DutyPickup, int or 0)
 	setElementDimension ( self.m_DutyPickup, dim or 0)
 	addEventHandler("onPickupHit", self.m_DutyPickup,
 		function(hitElement)
@@ -197,16 +218,25 @@ function FactionState:createDutyPickup(x,y,z,int, dim)
 	)
 end
 
-function FactionState:createArrestZone(x,y,z,int)
-	self.m_ArrestZone = createPickup(x,y,z, 3, 1318) --PD
-	self.m_ArrestZoneCol = createColSphere(x,y,z, 4) --PD
-	addEventHandler("onPickupHit", self.m_ArrestZone,
+function FactionState:createArrestZone(x, y, z, int, dim)
+	local pickup = createPickup(x,y,z, 3, 1318)
+	local col = createColSphere(x,y,z, 4)
+	if int then
+		pickup:setInterior(int)
+		col:setInterior(int)
+	end
+
+	if dim then
+		pickup:setDimension(dim)
+		col:setDimension(dim)
+	end
+	addEventHandler("onPickupHit", pickup,
 		function(hitElement)
 			if getElementType(hitElement) == "player" then
 				local faction = hitElement:getFaction()
 				if faction:isStateFaction() == true then
 					if hitElement:isFactionDuty() then
-						hitElement:triggerEvent("showStateFactionArrestGUI", self.m_ArrestZoneCol)
+						hitElement:triggerEvent("showStateFactionArrestGUI", col)
 					end
 				end
 			end
@@ -276,6 +306,12 @@ function FactionState:sendShortMessage(text, ...)
 	end
 end
 
+function FactionState:sendMessage(text, r, g, b, ...)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:sendMessage(text, r, g, b, ...)
+	end
+end
+
 function FactionState:sendStateChatMessage(sourcePlayer, message)
 	local faction = sourcePlayer:getFaction()
 	if faction and faction:isStateFaction() == true then
@@ -332,7 +368,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
-						player:getFaction():sendMessage(msg, 255,0,0)
+						self:sendMessage(msg, 255,0,0)
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
 					end
@@ -473,6 +509,9 @@ function FactionState:Command_bail( player )
 					player:toggleControl("fire", true)
 					player:toggleControl("jump", true)
 					player:toggleControl("aim_weapon ", true)
+					if isTimer(player.m_JailTimer) then
+						killTimer( player.m_JailTimer )
+					end
 					player.m_JailTimer = nil
 					player:setJailTime(0)
 					player:sendInfo(_("Sie haben sich mit der Kaution von %s$ freigekauft!", player, player.m_Bail))
@@ -507,7 +546,11 @@ end
 
 function FactionState:Event_FactionChangeSkin()
 	if client:isFactionDuty() then
-		client:getFaction():changeSkin(client)
+		if client.m_SpawnWithFactionSkin then
+			client:getFaction():changeSkin(client)
+		else
+			setElementModel( self, self.m_AltSkin or self.m_Skin)
+		end
 	end
 end
 
@@ -599,7 +642,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
 			StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
-			client:getFaction():sendMessage(msg, 255,0,0)
+			self:sendMessage(msg, 255,0,0)
 		end
 	end
 end
@@ -612,7 +655,7 @@ function FactionState:Event_clearWanteds(target)
 			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
 			StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
-			client:getFaction():sendMessage(msg, 255,0,0)
+			self:sendMessage(msg, 255,0,0)
 		end
 	end
 end

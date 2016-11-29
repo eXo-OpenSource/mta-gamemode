@@ -20,7 +20,7 @@ function DrivingSchool:constructor()
     safe:setInterior(3)
 	self:setSafe(safe)
 
-    addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand","drivingSchoolPassTheory", "drivingSchoolStartTheory"}
+    addRemoteEvents{"drivingSchoolMenu", "drivingSchoolstartLessionQuestion", "drivingSchoolDiscardLession", "drivingSchoolStartLession", "drivingSchoolEndLession", "drivingSchoolReceiveTurnCommand","drivingSchoolPassTheory", "drivingSchoolStartTheory","drivingSchoolRequestSpeechBubble"}
     addEventHandler("drivingSchoolMenu", root, bind(self.Event_drivingSchoolMenu, self))
     addEventHandler("drivingSchoolDiscardLession", root, bind(self.Event_discardLession, self))
     addEventHandler("drivingSchoolstartLessionQuestion", root, bind(self.Event_startLessionQuestion, self))
@@ -29,7 +29,7 @@ function DrivingSchool:constructor()
     addEventHandler("drivingSchoolReceiveTurnCommand", root, bind(self.Event_receiveTurnCommand, self))
 	addEventHandler("drivingSchoolPassTheory", root, bind(self.Event_passTheory, self))
     addEventHandler("drivingSchoolStartTheory", root, bind(self.Event_startTheory, self))
-
+	addEventHandler("drivingSchoolRequestSpeechBubble", root, bind(self.requestSpeechBubble, self))
 end
 
 function DrivingSchool:destructor()
@@ -73,9 +73,14 @@ function DrivingSchool:createDrivingSchoolMarker(pos)
     )
 end
 
+function DrivingSchool:requestSpeechBubble( )
+	client:triggerEvent("addDrivingSchoolSpeechBubble", self.m_DrivingSchoolPed)
+end
+
 function DrivingSchool:createSchoolPed( pos )
-	self.m_DrivingSchoolPed = createPed(295, pos,-90 )
+	self.m_DrivingSchoolPed = NPC:new(295, pos.x, pos.y, pos.z, -90)
     self.m_DrivingSchoolPed:setData("clickable", true, true)
+	self.m_DrivingSchoolPed:setImmortal(true)
 	setElementInterior(self.m_DrivingSchoolPed, 3, pos)
     addEventHandler("onElementClicked", self.m_DrivingSchoolPed,
         function(button ,state ,player )
@@ -83,7 +88,7 @@ function DrivingSchool:createSchoolPed( pos )
 				if source == self.m_DrivingSchoolPed then
 					if not player.m_HasTheory then
                         if not player.isInTheory then
-                            player:triggerEvent("questionBox", _("Möchtest du die Theorie-Prüfung starten? Kosten: 300$", player), "drivingSchoolStartTheory")
+                            player:triggerEvent("questionBox", _("Möchtest du die Theorie-Prüfung starten? Kosten: 300$", player), "drivingSchoolStartTheory",self.m_DrivingSchoolPed)
                         end
                     else
                         player:sendInfo("Du hast bereits die Theorieprüfung bestanden!")
@@ -96,7 +101,7 @@ end
 
 function DrivingSchool:Event_startTheory()
     if client:getMoney() >= 300 then
-        client:triggerEvent("showDrivingSchoolTest")
+        client:triggerEvent("showDrivingSchoolTest", self.m_DrivingSchoolPed)
         client:takeMoney(300, "Fahrschule")
         client.isInTheory = true
     else

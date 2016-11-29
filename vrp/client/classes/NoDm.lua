@@ -1,4 +1,5 @@
 NoDm = inherit(Singleton)
+addRemoteEvents{"checkNoDm"}
 NoDm.Zones = {
 	[1] = {Vector3(1399.1123046875,-1862.453125, 12), Vector3(160,120,15)},
 	[2] = {Vector3(1322.850219726,-1721.6591796875, 12), Vector3(92,120, 15)},
@@ -46,6 +47,7 @@ function NoDm:setPlayerNoDm(player, state)
 			toggleControl ("previous_weapon", false)
 			toggleControl ("aim_weapon", false)
 			toggleControl ("vehicle_fire", false)
+			setElementData(player, "no_driveby", true)
 			setPedWeaponSlot(localPlayer, 0)
 			if getPedWeapon ( player, 9 ) == 43 then
 				if not isPedInVehicle(localPlayer) then
@@ -64,6 +66,7 @@ function NoDm:setPlayerNoDm(player, state)
 			toggleControl ("previous_weapon", true)
 			toggleControl ("aim_weapon", true)
 			toggleControl ("vehicle_fire", true)
+			setElementData(player, "no_driveby", false)
 			setElementData(player,"schutzzone",false)
 		end
 		self:toggleNoDmImage(false)
@@ -89,6 +92,9 @@ function NoDm:renderNoDmImage()
 	local py = screenHeight/2
 	if not Phone:getSingleton():isOpen() then
 		dxDrawImage(px,py,screenWidth*0.15,screenWidth*0.08,"files/images/Other/nodm.png")
+	end
+	if getPedWeapon ( localPlayer, 9 ) ~= 43 then
+		setPedWeaponSlot(localPlayer,0)
 	end
 end
 
@@ -116,3 +122,12 @@ function NoDm:checkNoDm()
 		self:setPlayerNoDm(localPlayer, false)
 	end
 end
+
+addEventHandler("checkNoDm", localPlayer, function() 	
+	for index, koords in pairs(NoDm:getSingleton().Zones) do
+		local cols = NoDm:getSingleton().m_NoDmZones[index]
+		if isElementWithinColShape(localPlayer, cols) then 
+			NoDm:getSingleton():setPlayerNoDm(localPlayer, true)
+		end
+	end
+end)

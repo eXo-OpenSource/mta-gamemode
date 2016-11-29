@@ -10,7 +10,7 @@ function DeathGUI:constructor(time)
 	self.m_Timer = setTimer(bind(self.decreaseSeconds, self), 1000, 0)
 	self.m_CountdownLabel = GUILabel:new(0, 80, self.m_Width-10, 50, _("%d Sekunden", self.m_Seconds), self):setAlignX("right")
 	HUDUI:getSingleton():hide()
-	setCameraMatrix(1963.7, -1483.8, 101, 2038.2, -1408.4, 23)
+	setCameraMatrix(1735.42, -1749.98, 18.81, 1739.40, -1745.78, 19.65)
 
 end
 

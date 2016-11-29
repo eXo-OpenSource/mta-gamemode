@@ -117,8 +117,8 @@ end
 
 function RobableShop:stopRob(player)
   ActionsCheck:getSingleton():endAction()
-  self.m_EvilMarker:destroy()
-  self.m_StateMarker:destroy()
+  if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
+  if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
 
   player:detachPlayerObject(self.m_Bag)
 

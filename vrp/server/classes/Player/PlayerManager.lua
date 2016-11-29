@@ -8,7 +8,7 @@
 PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
-"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData", "startWeaponLevelTraining"}
+"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData", "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -39,8 +39,8 @@ function PlayerManager:constructor()
 	addEventHandler("gunBoxTakeWeapon", root, bind(self.Event_gunBoxTakeWeapon, self))
 	addEventHandler("Event_getIDCardData", root, bind(self.Event_getIDCardData, self))
 	addEventHandler("startWeaponLevelTraining", root, bind(self.Event_weaponLevelTraining, self))
-
-
+	addEventHandler("switchSpawnWithFactionSkin", root, bind(self.Event_switchSpawnWithFaction, self))
+	addEventHandler("Event_setPlayerWasted", root, bind(self.Event_setPlayerWasted, self))
 
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
@@ -61,6 +61,10 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+end
+
+function PlayerManager:Event_switchSpawnWithFaction( state )
+	client.m_SpawnWithFactionSkin = state
 end
 
 function PlayerManager:destructor()
@@ -155,6 +159,9 @@ function PlayerManager:playerQuit()
 	if index then
 		table.remove(self.m_ReadyPlayers, index)
 	end
+	if source.curEl then
+		source.curEl:driveToStation(source,1)
+	end
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin( source, getPlayerName( source ) , "Logout")
 	end
@@ -175,7 +182,12 @@ end
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	-- give a achievement
 	source:giveAchievement(37)
-
+	for key, obj in ipairs( getAttachedElements(client)) do
+		if obj:getData("MoneyBag") then
+			detachElements(obj, client)
+			client:meChat(true, "lies einen Geldbeutel fallen")
+		end
+	end
 	if source:isFactionDuty() then
 		source:setDefaultSkin()
 		source.m_FactionDuty = false
@@ -407,6 +419,19 @@ function PlayerManager:Event_setPhoneStatus(state)
 end
 
 function PlayerManager:Event_toggleAFK(state, teleport)
+	if state == true then
+		if client.m_JailTime then
+			if client.m_JailTime > 0 then
+				return
+			end
+		end
+		if client.m_IsSpecting then
+			return
+		end
+		if client.m_InCircuitBreak then
+			return
+		end
+	end
 	client:setPublicSync("AFK", state)
 	if state == true then
 		client:startAFK()
@@ -471,32 +496,45 @@ function PlayerManager:Event_requestGunBoxData()
 end
 
 function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
+	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
+		return
+	end
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
 			client.m_GunBox[tostring(i)] = {}
 			client.m_GunBox[tostring(i)]["WeaponId"] = 0
 			client.m_GunBox[tostring(i)]["Amount"] = 0
+			if i >= 4 then
+				client.m_GunBox[tostring(i)]["VIP"] = true
+			else
+				client.m_GunBox[tostring(i)]["VIP"] = false
+			end
 		end
 		local slot = client.m_GunBox[tostring(i)]
 		if slot["WeaponId"] == 0 then
-			local weaponSlot = getSlotFromWeapon(weaponId)
-			if client:getWeapon(weaponSlot) > 0 then
-				if client:getTotalAmmo(weaponSlot) >= muni then
-					client:takeWeapon(weaponId)
-					slot["WeaponId"] = weaponId
-					slot["Amount"] = muni
-					client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], muni, i))
-					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-					return
+			if not slot["VIP"] then
+				local weaponSlot = getSlotFromWeapon(weaponId)
+				if client:getWeapon(weaponSlot) > 0 then
+					if client:getTotalAmmo(weaponSlot) >= muni then
+						if client:getTotalAmmo( weaponSlot) >= 1 then
+							client:takeWeapon(weaponId)
+							slot["WeaponId"] = weaponId
+							slot["Amount"] = muni
+							client:sendInfo(_("Du hast eine/n %s mit %d Schuss in deine Waffenbox (Slot %d) gelegt!", client, WEAPON_NAMES[weaponId], muni, i))
+							client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+							return
+						end
+					else
+						client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponID]))
+						client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+						return
+					end
 				else
-					client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponID]))
+					client:sendInfo(_("Du hast keine/n %s!", client, WEAPON_NAMES[weaponID]))
 					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 					return
 				end
-			else
-				client:sendInfo(_("Du hast keine/n %s!", client, WEAPON_NAMES[weaponID]))
-				client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-				return
 			end
 		end
 	end
@@ -504,10 +542,14 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 end
 
 function PlayerManager:Event_gunBoxTakeWeapon(slotId)
+	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
+		return
+	end
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then
-			if slot["Amount"] > 0 then
+			if slot["Amount"] >= 0 then
 				local weaponId = slot["WeaponId"]
 				local amount = slot["Amount"]
 				if client:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
@@ -558,5 +600,11 @@ function PlayerManager:Event_weaponLevelTraining()
 		end
 	else
 		client:sendError(_("Du hast bereits das maximale Waffenlevel!", client))
+	end
+end
+
+function PlayerManager:Event_setPlayerWasted()
+	if client then
+		client.m_IsDead = 1
 	end
 end

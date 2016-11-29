@@ -46,7 +46,11 @@ function GroupVehicle:constructor(Id, Group, color, health, posionType, tunings,
   self.m_Rotation = self:getRotation()
   setElementData(self, "OwnerName", self.m_Group:getName())
   setElementData(self, "OwnerType", "group")
-
+  if health then 
+	if health <= 300 then
+		health = 300
+	end
+  end
   self:setHealth(health)
   self:setLocked(true)
   if color then

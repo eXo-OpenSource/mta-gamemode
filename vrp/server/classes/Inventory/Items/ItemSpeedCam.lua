@@ -40,9 +40,10 @@ function ItemSpeedCam:use(player)
 
 					object.col = createColSphere(position, 8)
 					object.col.object = object
-					addEventHandler("onColShapeHit", object.col, bind(self.onColShapeHit, self))
+					self.m_func = bind(self.onColShapeHit, self)
+					addEventHandler("onColShapeHit", object.col, self.m_func )
 					local pos = player:getPosition()
-					FactionState:getSingleton():sendShortMessage(_("%s hat einen Radar bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
+					FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 
 				end
 			)
@@ -95,11 +96,18 @@ end
 
 function ItemSpeedCam:isCollectAllowed(player, worlditem)
 	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
-		return true
+		if player:getInventory():getFreePlacesForItem("Blitzer") >= 1 then
+			return true
+		else
+			client:sendError(_("Du hast bereits einen Blitzer im Inventar!", client))
+		end
 	end
 	return false
 end
 
 function ItemSpeedCam:removeFromWorld(player, worlditem)
+	local object = worldItem:getObject()
+	local col = object.col
+	col:destroy()
 	player:sendInfo(_("Du hast den Blitzer abgebaut!", player))
 end

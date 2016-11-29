@@ -66,7 +66,7 @@ function House:breakHouse(player)
 		self:enterHouse(player)
 		player:reportCrime(Crime.HouseRob)
 		player:sendMessage("Halte die Stellung für %d Minuten!", 125, 0, 0, ROB_NEEDED_TIME/1000/60)
-		player:triggerEvent("Countdown", ROB_NEEDED_TIME/1000)
+		player:triggerEvent("Countdown", ROB_NEEDED_TIME/1000, "Haus-Raub")
 
 		setTimer(
 			function(unit)

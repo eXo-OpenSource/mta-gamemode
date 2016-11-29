@@ -79,13 +79,16 @@ function Inventory:constructor()
 end
 
 
+
 function Inventory:Event_syncInventoryFromServer(bag, items)
+	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
 	self.m_Bag = bag
 	self.m_Items = items
 	self:loadItems()
 end
 
 function Inventory:Event_loadPlayerInventarClient(slots, itemData)
+	outputDebugString("Loaded: "..tostring(slots).." and "..tostring(itemData).."!",0,200,0,200)
 	self.m_Slots = slots
 	self.m_ItemData = itemData
 end
@@ -137,7 +140,9 @@ end
 
 function Inventory:loadItems()
 	for slotId, slot in pairs (self.m_Tabs[self.m_CurrentTab].m_ItemSlots) do
-		if slot.ItemImage then delete(slot.ItemImage) end
+		if slot.ItemImage then 
+			delete(slot.ItemImage) 
+		end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
 	end
 	if self.m_Bag then
@@ -272,12 +277,3 @@ end
 function Inventory:onHide()
 	showCursor(false)
 end
-
-addEventHandler("flushInventory",localPlayer, function( obj1, obj2)
-	if obj1 and obj2 then 
-		if Inventory:getSingleton() then 
-			triggerServerEvent("refreshInventory", localPlayer)
-			self:loadItems()
-		end
-	end
-end)

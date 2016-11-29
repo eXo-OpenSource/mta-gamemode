@@ -142,6 +142,9 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 					if playerWeapons[weaponID] then
 						if self.m_Weapons[weaponID]["Munition"] >= amount then
 							self:takeMagazineD(weaponID,amount)
+							if weaponID == 25 then amount = amount * 6 end 
+							if weaponID == 33 then amount = amount * 5 end
+							if weaponID == 34 then amount = amount * 4 end
 							giveWeapon(player,weaponID,amount*getWeaponProperty(weaponID, "poor", "maximum_clip_ammo"))
 							outputChatBox(amount.." "..WEAPON_NAMES[weaponID].." Magazin/e",player,255,125,0)
 						else
@@ -164,6 +167,9 @@ function Depot:addWeaponsToDepot(weaponTable)
 				if typ == "Waffe" then
 					self:addWeaponD(weaponID,amount)
 				elseif typ == "Munition" then
+					if weaponID == 25 then amount = amount * 6 end
+					if weaponID == 33 then amount = amount * 5 end
+					if weaponID == 34 then amount = amount * 4 end
 					self:addMagazineD(weaponID,amount)
 				end
 			end
@@ -186,6 +192,7 @@ function Depot:addItem(player, item, amount)
 				return
 			else
 				player:sendError(_("Du hast nicht genug %s!", player, item))
+				return
 			end
 		end
 	end

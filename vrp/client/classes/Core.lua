@@ -115,6 +115,7 @@ function Core:ready()
 	GroupProperty:new()
 	GUIWindowsFocus:new()
 
+	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 end
 
 function Core:afterLogin()

@@ -48,7 +48,7 @@ function Admin:constructor()
     addCommandHandler("clearchat", adminCommandBind)
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
-	
+
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
     "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn"}
@@ -174,10 +174,10 @@ end
 function Admin:command(admin, cmd, targetName, arg1, arg2)
     if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
-	elseif cmd == "mark" then 
+	elseif cmd == "mark" then
 		self:markPosFunc(admin, false)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
-	elseif cmd == "gotomark" then 
+	elseif cmd == "gotomark" then
 		self:markPosFunc(admin, true)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
     else
@@ -244,9 +244,12 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             target:setPrison(duration*60)
             self:addPunishLog(admin, target, func, reason, duration*60)
         elseif func == "unprison" then
-            self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
-            target:endPrison()
-            self:addPunishLog(admin, target, func)
+			if target.m_PrisonTime > 0 then
+				self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
+				target:endPrison()
+				self:addPunishLog(admin, target, func)
+			else admin:sendError("Spieler ist nicht im Prison!")
+			end
         elseif func == "timeban" then
             duration = tonumber(duration)
 			self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
@@ -283,33 +286,40 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             triggerClientEvent("announceText", admin, text)
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
-			StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
-            self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
-            admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
-            setCameraTarget(admin, target)
-            admin:setFrozen(true)
-			admin.m_PreSpectInt = getElementInterior(admin)
-			admin.m_PreSpectDim = getElementDimension(admin)
-			admin.m_SpectInteriorFunc = function ( int ) setElementInterior(admin,int); setCameraInterior(admin, int) end
-			addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
-			admin.m_SpectDimensionFunc = function ( dim ) setElementDimension(admin,dim) end
-			addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
-			if admin:isInVehicle() then
-				admin:getOccupiedVehicle():setFrozen(true)
-			end
-            bindKey(admin, "space", "down", function()
-                setCameraTarget(admin, admin)
-                self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
-                unbindKey(admin, "space", "down")
-                admin:setFrozen(false)
+			if target ~= admin then
+				StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
+				self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
+				admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
+				setCameraTarget(admin, target)
+				admin:setFrozen(true)
+				admin.m_PreSpectInt = getElementInterior(admin)
+				admin.m_IsSpecting = true
+				admin:setPrivateSync("isSpecting",target)
+				admin.m_PreSpectDim = getElementDimension(admin)
+				admin.m_SpectInteriorFunc = function ( int ) setElementInterior(admin,int); setCameraInterior(admin, int) end
+				addEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+				admin.m_SpectDimensionFunc = function ( dim ) setElementDimension(admin,dim) end
+				addEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
 				if admin:isInVehicle() then
-					admin:getOccupiedVehicle():setFrozen(false)
+					admin:getOccupiedVehicle():setFrozen(true)
 				end
-				setElementInterior(admin, admin.m_PreSpectInt)
-				setElementDimension(admin, admin.m_PreSpectDim)
-				removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
-				removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
-            end)
+					bindKey(admin, "space", "down", function()
+						setCameraTarget(admin, admin)
+					self:sendShortMessage(_("%s hat das specten von %s beendet!", admin, admin:getName(), target:getName()))
+					unbindKey(admin, "space", "down")
+					admin:setFrozen(false)
+					if admin:isInVehicle() then
+						admin:getOccupiedVehicle():setFrozen(false)
+					end
+					setElementInterior(admin, admin.m_PreSpectInt)
+					setElementDimension(admin, admin.m_PreSpectDim)
+					removeEventHandler("onElementDimensionChange", target, admin.m_SpectDimensionFunc)
+					removeEventHandler("onElementInteriorChange", target, admin.m_SpectInteriorFunc)
+					admin.m_IsSpecting = false
+					admin:setPrivateSync("isSpecting",false)
+				end)
+			else admin:sendError("Sie können sich nicht selbst specten!")
+			end
         elseif func == "offlinePermaban" then
             self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
             local targetId = Account.getIdFromName(target)
@@ -471,62 +481,63 @@ end
 
 function Admin:teleportTo(player,cmd,ort)
 local tpTable = {
-        ["noobspawn"] =     {["x"]= 1479.99,  ["y"]=-1747.69,  ["z"]=13.55,   ["typ"] = "Orte"},
-        ["mountchilliad"]=  {["x"]=-2321.659, ["y"]=-1638.790, ["z"]=483.7031,["typ"] = "Orte"},
-        ["startower"] =     {["x"]=1544.0634, ["y"]=-1352.865, ["z"]=329.4750,["typ"] = "Orte"},
-        ["strand"] =        {["x"]=333.79,    ["y"]=-1799.40,  ["z"]=4.37,    ["typ"] = "Orte"},
-        ["casino"] =        {["x"]=1471.12,   ["y"]=-1166.35,  ["z"]=23.63,   ["typ"] = "Orte"},
-        ["flughafenls"] =   {["x"]=1993.06,   ["y"]=-2187.38,  ["z"]=13.23,   ["typ"] = "Orte"},
-        ["flughafenlv"] =   {["x"]=1427.05,   ["y"]=1558.48,   ["z"]=10.50,   ["typ"] = "Orte"},
-        ["flughafensf"] =   {["x"]=-1559.40,  ["y"]=-445.55,   ["z"]=5.73,    ["typ"] = "Orte"},
-        ["stadthalle"] =    {["x"]=1802.17,   ["y"]=-1284.10,  ["z"]=13.33,   ["typ"] = "Orte"},
-        ["ammunation"] =    {["x"]=1357.5644, ["y"]=-1280.081, ["z"]=13.29938,["typ"] = "Orte"},
-        ["bank"] =          {["x"]=2294.48,   ["y"]=-11.43,    ["z"]=26.02,   ["typ"] = "Orte"},
-        ["garten"] =        {["x"]=2450.16,   ["y"]=110.44,    ["z"]=26.16,   ["typ"] = "Orte"},
-        ["premium"] =       {["x"]=1246.52,   ["y"]=-2055.33,  ["z"]=59.53,   ["typ"] = "Orte"},
-        ["pizzajob"] =      {["x"]=2096.89,   ["y"]=-1826.28,  ["z"]=13.24,   ["typ"] = "Orte"},
-        ["helijob"] =       {["x"]=1796.39,   ["y"]=-2318.27,  ["z"]=13.11,   ["typ"] = "Orte"},
-        ["mülljob"] =       {["x"]=2102.45,   ["y"]=-2094.60,  ["z"]=13.23,   ["typ"] = "Orte"},
-        ["lkwjob1"] =       {["x"]=2409.07,   ["y"]=-2471.10,  ["z"]=13.30,   ["typ"] = "Orte"},
-        ["lkwjob2"] =       {["x"]=-234.96,   ["y"]=-254.46,   ["z"]=1.11,    ["typ"] = "Orte"},
-        ["holzfällerjob"] = {["x"]=1041.02,   ["y"]=-343.88,   ["z"]=73.67,   ["typ"] = "Orte"},
-        ["farmerjob"] =     {["x"]=-1049.75,  ["y"]=-1205.90,  ["z"]=128.66,  ["typ"] = "Orte"},
-        ["sweeperjob"] =    {["x"]=219.49,    ["y"]=-1429.61,  ["z"]=13.01,   ["typ"] = "Orte"},
-        ["drogentruck"] =   {["x"]=-1079.60,  ["y"]=-1620.10,  ["z"]=76.19,   ["typ"] = "Orte"},
-        ["waffentruck"] =   {["x"]=-1864.28,  ["y"]=1407.51,   ["z"]=6.91,    ["typ"] = "Orte"},
-        ["gabelstablerjob"] = {["x"]=93.67,   ["y"]=-205.68,   ["z"]=1.23,    ["typ"] = "Orte"},
-        ["zombiesurvival"] =  {["x"]=-49.47,  ["y"]=1375.64,   ["z"]=9.86,    ["typ"] = "Orte"},
-        ["snipergame"] =      {["x"]=-525.74, ["y"]=1972.69,   ["z"]=60.17,   ["typ"] = "Orte"},
-        ["bikeshop"] =        {["x"]=2857.96, ["y"]=-1536.69,  ["z"]=10.73,   ["typ"] = "Orte"},
-        ["bootshop"] =        {["x"]=1629.65, ["y"]=582.17,    ["z"]=11.44,    ["typ"] = "Orte"},
-        ["sultanshop"] =      {["x"]=2127.09, ["y"]=-1135.96,  ["z"]=25.20,   ["typ"] = "Orte"},
-        ["lvshop"] =          {["x"]=2198.23, ["y"]=1386.43,   ["z"]=10.55,   ["typ"] = "Orte"},
-        ["quadshop"] =        {["x"]=117.53,  ["y"]=-165.56,   ["z"]=1.31,    ["typ"] = "Orte"},
-        ["infernusshop"] =    {["x"]=545.20,  ["y"]=-1278.90,  ["z"]=16.97,   ["typ"] = "Orte"},
-        ["tampashop"] =       {["x"]=1098.83, ["y"]=-1240.20,  ["z"]=15.55,   ["typ"] = "Orte"},
-        ["bulletshop"] =      {["x"]=1135.19,   ["y"]=-1688.71,  ["z"]=13.51, ["typ"] = "Orte"},
-        ["race"] =            {["x"]=2723.40,   ["y"]=-1851.72,  ["z"]=9.29,  ["typ"] = "Orte"},
-        ["afk"] =             {["x"]=1567.72,   ["y"]=-1886.07,  ["z"]=13.24, ["typ"] = "Orte"},
-        ["24-7"] =            {["x"]=1352.43,   ["y"]=-1752.75,  ["z"]=13.04, ["typ"] = "Orte"},
-        ["tankstelle"] =      {["x"]=1944.21,   ["y"]=-1772.91,  ["z"]=13.07, ["typ"] = "Orte"},
-        ["schatzsucher"] =    {["x"]=706.22,    ["y"]=-1699.38,  ["z"]=3.12,  ["typ"] = "Orte"},
-        ["burgershot"] =      {["x"]=1187.46,   ["y"]=-924.68,   ["z"]=42.83, ["typ"] = "Orte"},
-        ["sannews"] =         {["x"]=762.05,    ["y"]=-1343.33,  ["z"]=13.20,   ["typ"] = "Unternehmen"},
-        ["fahrschule"] =      {["x"]=1372.3007, ["y"]=-1655.556, ["z"]=13.38281,["typ"] = "Unternehmen"},
-        ["mechaniker"] =      {["x"]=886.21777, ["y"]=-1220.473, ["z"]=16.97656,["typ"] = "Unternehmen"},
-        ["ept"] = 				{["x"]=1791.10,   ["y"]=-1901.46,  ["z"]=13.08,   ["typ"] = "Unternehmen"},
-        ["grove"] =           {["x"]=2492.4296, ["y"]=-1664.581, ["z"]=13.34375,["typ"] = "Fraktionen"},
-        ["lcn"] =             {["x"]=722.83886, ["y"]=-1196.875, ["z"]=19.12306,["typ"] = "Fraktionen"},
-        ["rescue"] =          {["x"]=1727.42,   ["y"]=-1738.01,  ["z"]=13.14,   ["typ"] = "Fraktionen"},
-        ["fbi"] =             {["x"]=1534.83,   ["y"]=-1440.72,  ["z"]=13.16,   ["typ"] = "Fraktionen"},
-        ["pd"] =              {["x"]=1536.06,   ["y"]=-1675.63,  ["z"]=13.11,   ["typ"] = "Fraktionen"},
-        ["pdgarage"] =        {["x"]=1543.18,    ["y"]=-1698.22,  ["z"]=5.57,    ["typ"] = "Fraktionen"},
-        ["area"] =            {["x"]=134.53,    ["y"]=1929.06,   ["z"]=18.89,   ["typ"] = "Fraktionen"},
-        ["ballas"] =          {["x"]=2685.32,   ["y"]=-2003.91,  ["z"]=13.40,   ["typ"] = "Fraktionen"},
-        ["lv"] =              {["x"]=2078.15,   ["y"]=1005.51,   ["z"]=10.43,   ["typ"] = "Städte"},
-        ["sf"] =              {["x"]=-1988.09,  ["y"]=148.66,    ["z"]=27.22,   ["typ"] = "Städte"},
-        ["bayside"] =         {["x"]=-2504.66,  ["y"]=2420.90,   ["z"]=16.33,   ["typ"] = "Städte"},
-        ["ls"] =              {["x"]=1507.3977, ["y"]=-959.6733, ["z"]=36.24750,["typ"] = "Städte"},
+        ["noobspawn"] =     {["pos"] = Vector3(1479.99, -1747.69, 13.55),  	["typ"] = "Orte"},
+        ["mountchilliad"]=  {["pos"] = Vector3(-2321.6, -1638.79, 483.70),  ["typ"] = "Orte"},
+        ["startower"] =     {["pos"] = Vector3(1544.06, -1352.86, 329.47),  ["typ"] = "Orte"},
+        ["strand"] =        {["pos"] = Vector3(333.79, -1799.40, 4.37),  	["typ"] = "Orte"},
+        ["casino"] =        {["pos"] = Vector3(1471.12, -1166.35, 23.63),  	["typ"] = "Orte"},
+        ["flughafenls"] =   {["pos"] = Vector3(1993.06, -2187.38, 13.23),  	["typ"] = "Orte"},
+        ["flughafenlv"] =   {["pos"] = Vector3(1427.05, 1558.48,  10.50),  	["typ"] = "Orte"},
+        ["flughafensf"] =   {["pos"] = Vector3(-1559.40, -445.55,  5.73),  	["typ"] = "Orte"},
+        ["stadthalle"] =    {["pos"] = Vector3(1802.17, -1284.10, 13.33),  	["typ"] = "Orte"},
+        ["bank"] =          {["pos"] = Vector3(2294.48, -11.43, 26.02),  	["typ"] = "Orte"},
+        ["garten"] =        {["pos"] = Vector3(2450.16, 110.44, 26.16),  	["typ"] = "Orte"},
+        ["premium"] =       {["pos"] = Vector3(1246.52, -2055.33, 59.53),  	["typ"] = "Orte"},
+		["race"] =          {["pos"] = Vector3(2723.40, -1851.72, 9.29),  	["typ"] = "Orte"},
+        ["afk"] =           {["pos"] = Vector3(1567.72, -1886.07, 13.24),  	["typ"] = "Orte"},
+        ["drogentruck"] =   {["pos"] = Vector3(-1079.60, -1620.10, 76.19),  ["typ"] = "Orte"},
+        ["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
+        ["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
+        ["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
+        ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
+        ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
+        ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},
+        ["lkw1"] =       	{["pos"] = Vector3(2409.07, -2471.10, 13.30),  	["typ"] = "Jobs"},
+        ["lkw2"] =       	{["pos"] = Vector3(-234.96, -254.46,  1.11),  	["typ"] = "Jobs"},
+        ["holzfäller"] = 	{["pos"] = Vector3(1041.02, -343.88,  73.67),  	["typ"] = "Jobs"},
+        ["farmer"] =     	{["pos"] = Vector3(-1049.75, -1205.90, 128.66), ["typ"] = "Jobs"},
+        ["sweeper"] =    	{["pos"] = Vector3(219.49, -1429.61, 13.01),  	["typ"] = "Jobs"},
+		["schatzsucher"] =  {["pos"] = Vector3(706.22, -1699.38, 3.12),  	["typ"] = "Jobs"},
+        ["gabelstabler"] = 	{["pos"] = Vector3(93.67, -205.68,  1.23),  	["typ"] = "Jobs"},
+        ["bikeshop"] =      {["pos"] = Vector3(2857.96, -1536.69, 10.73),  	["typ"] = "Shops"},
+        ["bootshop"] =      {["pos"] = Vector3(1628.25, 597.11, 1.76),  	["typ"] = "Shops"},
+        ["sultanshop"] =    {["pos"] = Vector3(2127.09, -1135.96, 25.20),  	["typ"] = "Shops"},
+        ["lvshop"] =        {["pos"] = Vector3(2198.23, 1386.43,  10.55),  	["typ"] = "Shops"},
+        ["quadshop"] =      {["pos"] = Vector3(117.53, -165.56,  1.31),  	["typ"] = "Shops"},
+        ["infernusshop"] =  {["pos"] = Vector3(545.20, -1278.90, 16.97),  	["typ"] = "Shops"},
+        ["tampashop"] =     {["pos"] = Vector3(1098.83, -1240.20, 15.55),  	["typ"] = "Shops"},
+        ["bulletshop"] =    {["pos"] = Vector3(1135.19, -1688.71, 13.51),  	["typ"] = "Shops"},
+        ["ammunation"] =    {["pos"] = Vector3(1357.56, -1280.08, 13.30),  	["typ"] = "Shops"},
+        ["24-7"] =          {["pos"] = Vector3(1352.43, -1752.75, 13.04),  	["typ"] = "Shops"},
+        ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
+        ["burgershot"] =    {["pos"] = Vector3(1187.46, -924.68,  42.83),  	["typ"] = "Shops"},
+        ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
+        ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
+        ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
+        ["ept"] = 			{["pos"] = Vector3(1791.10, -1901.46, 13.08),  	["typ"] = "Unternehmen"},
+        ["grove"] =         {["pos"] = Vector3(2492.43, -1664.58, 13.34),  	["typ"] = "Fraktionen"},
+        ["lcn"] =           {["pos"] = Vector3(722.84, -1196.875, 19.123),	["typ"] = "Fraktionen"},
+        ["rescue"] =        {["pos"] = Vector3(1727.42, -1738.01, 13.14),  	["typ"] = "Fraktionen"},
+        ["fbi"] =           {["pos"] = Vector3(1534.83, -1440.72, 13.16),  	["typ"] = "Fraktionen"},
+        ["pd"] =            {["pos"] = Vector3(1536.06, -1675.63, 13.11),  	["typ"] = "Fraktionen"},
+        ["pdgarage"] =      {["pos"] = Vector3(1543.18, -1698.22, 5.57),  	["typ"] = "Fraktionen"},
+        ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
+        ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
+		["army"] =          {["pos"] = Vector3(2711.48, -2405.28, 13.49),  	["typ"] = "Fraktionen"},
+        ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
+        ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
+        ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
+        ["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
     }
 	local x,y,z = 0,0,0
 	if player:getRank() >= ADMIN_RANK_PERMISSION["tp"] then
@@ -534,25 +545,41 @@ local tpTable = {
 			for k,v in pairs(tpTable) do
 				if ort == k then
 					if player:isInVehicle() then
-						player:getOccupiedVehicle():setPosition(v["x"], v["y"], v["z"])
+						player:getOccupiedVehicle():setPosition(v["pos"])
 					else
 						setElementInterior(player,0)
 						setElementDimension(player,0)
-						player:setPosition(v["x"], v["y"], v["z"])
+						player:setPosition(v["pos"])
 					end
 					return
 				end
 			end
 			player:sendError(_("Ungültiger Ort! Tippe /tp um alle Orte zu sehen!", player))
 		else
-			outputChatBox("Hier sind alle Orte aufgelistet:", player, 255, 255, 255 )
-			local strings = {}
-			for k,v in pairs(tpTable) do
-				if not strings[v["typ"]] then strings[v["typ"]] = "" end
-				strings[v["typ"]] = strings[v["typ"]]..k.."|"
-			end
-			for v in pairs(strings) do
-				outputChatBox(v..": "..strings[v], player, 0, 125, 0 )
+			outputChatBox("Hier sind alle Orte aufgelistet:", player, 255, 255, 0 )
+			local strings = false
+			local currentTyp = false
+			local already = {}
+			for _, _ in pairs(tpTable) do
+				currentTyp = false
+				strings = false
+				for k,v in pairs(tpTable) do
+					if not already[v["typ"]] then
+						if not currentTyp then currentTyp = v["typ"] end
+						if v["typ"] == currentTyp then
+							if not strings then strings = "#009900"..currentTyp..": #FFFFFF" end
+							strings = strings..k.." | "
+							if #strings > 90 then
+								outputChatBox(strings,player,255, 255, 255, true)
+								strings = ""
+							end
+						end
+					end
+				end
+				already[currentTyp] = true
+				if strings then
+					outputChatBox(strings,player,255,255,255,true)
+				end
 			end
 		end
 	else
@@ -710,19 +737,19 @@ function Admin:Event_vehicleDespawn()
     end
 end
 
-function Admin:markPosFunc( player, goto ) 
-	if goto then 
+function Admin:markPosFunc( player, goto )
+	if goto then
 		local markPos = getElementData( player, "Admin_MarkPos")
-		if markPos then 
+		if markPos then
 			player:sendInfo("Du hast dich zur Markierung geportet!")
-			if getPedOccupiedVehicle(player) then 
+			if getPedOccupiedVehicle(player) then
 				player = getPedOccupiedVehicle(player)
 			end
 			setElementInterior(player, markPos[4])
 			setElementDimension(player, markPos[5])
 			setElementPosition( player, markPos[1], markPos[2], markPos[3])
 			setCameraTarget(player,player)
-		else 
+		else
 			player:sendError("Du hast keine Markierung /mark")
 		end
 	else

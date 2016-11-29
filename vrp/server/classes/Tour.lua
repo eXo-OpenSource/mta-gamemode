@@ -78,86 +78,72 @@ end
 Tour.Data = {
 	[1] = {
 		["Title"] = "Herzlich Willkommen",
-		["Description"] = "Ich werde dich hier ein wenig durch eXo-Reallife führen. Halte dich an meine Tipps und ein super Start ist dir sicher. Gelegentlich wartet auch eine großzügige Belohnung für eine abgeschlossene Aufgabe auf dich!",
-		["Success"] = "Sehr gut! Du hast die erste Haltestelle erreicht! Hier ist das Los Santos Police Department. Hier verrichten unsere Polizisten ihren Job",
-		["Position"] = Vector3(1544.79, -1675.15, 13),
-		["Money"] = 50
+		["Description"] = "Ich werde dich hier ein wenig durch eXo-Reallife führen. Halte dich an meine Tipps und ein super Start ist dir sicher. Gelegentlich wartet auch eine großzügige Belohnung für eine abgeschlossene Aufgabe auf dich! Folge dem Pfeil über deinem Kopf zur ersten Station!",
+		["Success"] = "Sehr gut! Du kannst nun mit der Taste 'B' das Klickmenü öffnen. Wenn du damit auf den NPC vor dir klickst, kannst du dir deinen Personalausweis beantragen.",
+		["Position"] = Vector3(1832.01, -1276.67, 119.26),
+		["Money"] = 400
 	},
 	[2] = {
-		["Title"] = "Besuche die Fahrschule",
-		["Description"] = "Finde die Fahrschule, diese wird mit einem roten Auto auf der Minimap angezeigt, du kannst die große Karte mit der F11 Taste öffnen oder folge einfach dem Pfeil über deinem Kopf!!",
-		["Success"] = "Herzlichen Glückwunsch du hast die Fahrschule gefunden! Du erhälst als Belohnung 200$ \nRufe am gelben i-Punkt einen Fahrlehrer oder starte die autmatische Prüfung!",
-		["Position"] = Vector3(1371.26,-1653.54,13.38),
-		["Money"] = 200
+		["Title"] = "Verlasse das Gebäude",
+		["Description"] = "Verlasse nun das Gebäude über den Aufzug.",
+		["Success"] = "Sehr gut, und gib nicht alles auf einmal aus!",
+		["Position"] = Vector3(1788.62, -1293.71, 12.54),
+		["Money"] = 50
 	},
 	[3] = {
-		["Title"] = "Winner Winner Chicken Dinner",
-		["Description"] = "Besuche das Casino in Los Santos!\n Du findest es am rosafarbenen C-Icon auf der Karte! Folge einfach dem Pfeil über deinem Kopf! Dort gibt es Spiele wie Flappy Birds, Slot Maschinen, Roulette, Black Jack und viele andere!",
-		["Success"] = "Super du hast das Casino gefunden! \nSpiele mit der Belohnung eine Runde auf der Slot-Maschine!",
-		["Position"] = Vector3(1833.00,-1682.61,13.49),
-		["Money"] = 150
+		["Title"] = "Usertreff / Spawn",
+		["Description"] = "Besuche nun den Usertreff / Spawn. Dazu kannst du dir über dein Handy (Taste U) ein Taxi rufen oder dir am Stand einen Faggio leihen.",
+		["Success"] = "Dies ist der Bahnhof, auch bekannt als ein beliebter Treffpunkt unter der Community. Ein Vorteil am Bahnhof ist, dass der Ort nie schläft und somit stets Spaß und Action bietet!",
+		["Position"] = Vector3(1480.41, -1749.80, 12.55),
+		["Money"] = 50
 	},
 	[4] = {
-		["Title"] = "Werde Mobil",
-		["Description"] = "Kauf dir nun dein erstes Fahrzeug! Immer der Pfeilspitze nach, dort befindet sich der günstige Gebrauchtwagen-Händler!",
-		["Success"] = "Du hast ihn gefunden, du kannst dir hier ein Auto kaufen! Hier hast du etwas Geld zum Start! Damit geht sich ein zerdellter Glendale aus! Mal sehen was sich mit ein wenig Tunings aus den Fahrzeugen machen lässt!",
-		["Position"] = Vector3(1117.98,-1232.32,16.15),
-		["Money"] = 900
+		["Title"] = "Fahrschule",
+		["Description"] = "Du solltest nun die Fahrschule absolvieren. Folge dem Pfeil!",
+		["Success"] = "Zunächst musst du im Gebäude die Theorie Prüfung absolvieren, indem du auf den NPC klickst. Anschließend kannst du hier im gelben Info-Marker einen Fahrlehrer kontaktieren.",
+		["Position"] = Vector3(1376.02, -1658.39, 12.38),
+		["Money"] = 1500
 	},
 	[5] = {
-		["Title"] = "Tuning",
-		["Description"] = "Der Los Santos Tuningshop ist mit einem roten Schraubenschlüssel markiert, besuche Ihn um dein Fahrzeug zu lackieren oder Tunen. Du kannst auch einfach dem Pfeil über deinem Kopf folgen! Angefangen von Neonröhren bis hin zu Spoilern ist alles vorrätig!",
-		["Success"] = "Mal sehen was sich mit ein wenig Tunings aus den Fahrzeugen machen lässt! Fahr in die Garage und tob dich aus!",
-		["Position"] = Vector3(1041.98,-1028.30,32.10),
-		["Money"] = 900
+		["Title"] = "Fahrbahrer Untersatz",
+		["Description"] = "Sobald du deinen Führerschein gemacht hast, solltest du dich um einen Fahrbahren Untersatz kümmern. Folge dem Pfeil zum Billig-Autohändler!",
+		["Success"] = "Hier hast du einen kleinen Bonus, kaufe dir davon ein Fahrzeug!",
+		["Position"] = Vector3(1116.31, -1220.24, 16.93),
+		["Money"] = 2500
 	},
 	[6] = {
-		["Title"] = "I'm a Sexy Bitch",
-		["Description"] = "Wie läufst du den rum? Es wird Zeit für ein geiles Outfit! Ab in den Skinladen und was vernünftiges zum Anziehen kaufen!\n\n Folge dem Pfeil!",
-		["Success"] = "Kauf dir da drinnen mit dem Geld einen schönen Skin. Wer weiß, vielleicht wird das dann doch noch was mit uns beiden.",
-		["Position"] = Vector3(2244.78,-1660.79,15.46),
-		["Money"] = 500
+		["Title"] = "Tuning",
+		["Description"] = "Dein Fahrzeug ist dir zu langsam oder dir gefällt die Farbe nicht? Kein Problem, im Tuningshop kannst du es aufmotzen.",
+		["Success"] = "Fahre einfach in die Garage und gönn dir ein paar Tuningteile!",
+		["Position"] = Vector3(1041.85, -1031.00, 32.07),
+		["Money"] = 10000
 	},
 	[7] = {
-		["Title"] = "Fastfood FTW",
-		["Description"] = "Hast du schon rechts oben die Hungerleiste gesehen? Du musst immer mal wieder was essen um nicht vom Fleisch zu fallen. Besorgen wir uns doch einen richtig geilen Burger. Der Pfeil zeit dir wo lang!",
-		["Success"] = "Du hast den Burger-Shop gefunden, kauf dir entweder am Drive-In einen Burger zum mitnehmen oder iss im Restaurant ein herzhaftes Menü!",
-		["Position"] = Vector3(1216.47,-920.08,42.92),
+		["Title"] = "Fahrzeug verschwunden",
+		["Description"] = "Kommen wir nun zur Mechanic & Tow. Fahre zum Abschlepphof!",
+		["Success"] = "Hier können abgeschleppte Fahrzeuge freigekauft werden. Schaue dazu rechts ins Glashaus.",
+		["Position"] = Vector3(925.55, -1221.33, 15.98),
 		["Money"] = 500
 	},
 	[8] = {
-		["Title"] = "Pizza Pizza",
-		["Description"] = "Es wird nun Zeit das erste Geld zu verdienen, am besten wir fangen mit dem austragen von Pizza an. Folge den Pfeil um zum Job zu kommen!",
-		["Success"] = "Du hast die Hauptfiliale von Well Stacked Pizza gefunden. Frag den Chef am besten ob er einen Job für dich hat. Du erreichst Ihn am gelben i Punkt!",
-		["Position"] = Vector3(2100.125,-1804.69,13.55),
-		["Money"] = 500
+		["Title"] = "Hier müffelt was",
+		["Description"] = "Riechst du das auch? Du solltest dringend deine Kleidung wechseln!",
+		["Success"] = "Dies ist der billige Kleidungsshop. Wenn du willst kannst natürlich auch gehobene Kleidung im Westen der Stadt kaufen...",
+		["Position"] = Vector3(2245.26, -1662.27, 14.47),
+		["Money"] = 100
 	},
 	[9] = {
-		["Title"] = "Trockener Hals",
-		["Description"] = "Überall auf der Karte verteilt findest du Sprunk-Automaten. Ich zeig dir am besten einmal ein Beispiel. Folge den Pfeil!",
-		["Success"] = "Genau hier ist ein Automat, du kannst dir eine Dose leckerer Sprunk-Limonade mit einem Klick holen. Du öffnest die Maus mit ALT-GR.\nSollte dies nicht funktionieren tippe /rebind und versuchs nochmal!",
-		["Position"] = Vector3(1510.09,-1767.99,13.54),
+		["Title"] = "Pizza Pizza",
+		["Description"] = "Es wird nun Zeit das erste Geld zu verdienen, am besten wir fangen mit dem Austragen von Pizza an. Folge den Pfeil um zum Job zu kommen!",
+		["Success"] = "Du hast die Hauptfiliale von Well Stacked Pizza gefunden. Frag den Chef am besten ob er einen Job für dich hat. Öffne mit Taste 'B' das Klicksystem und nimm den Job an. Anschließend kannst du im roten Marker ein Fahrzeug zum Austragen spawnen.",
+		["Position"] = Vector3(2108.83, -1786.57, 12.56),
 		["Money"] = 500
 	},
 	[10] = {
-		["Title"] = "Formel 1 war gestern",
-		["Description"] = "Du kannst hier auf eXo-Reallife in einem Unternehmen und einer Fraktion zu gleich sein. Eines davon ist die Race N Drift. Sehen wir uns mal die Rennstrecke an. Ab gehts folge dem Pfeil! Dort gibts massenhaft PS, quietschende Räder und geile Boxenluder!",
-		["Success"] = "So nur noch die Brücke rüber und schon sind wir da, der eXo Circuit. Zusätzlich zur modernen Rennstrecke findest du hier einen Derby-Bereich eine Dragstrecke und eine Kartstrecke.",
-		["Position"] = Vector3(2915.00,-773.27,10.73),
-		["Money"] = 500
-	},
-	[11] = {
-		["Title"] = "Fahrzeug verschwunden",
-		["Description"] = "Nun zum nächsten Unternehmen, der Mechanic and Tow Company! Hier werden Motorentunings vorgenommen und falsch geparkte Autos abgeschleppt. Folge dem Pfeil.",
-		["Success"] = "So gut angekommen? Solltest du einmal dein Auto vermissen, schau hier auf dem Abschlepphof nach. Rufe die Mitarbeiter mit /call 500 an und bitte Sie dieses wieder frei zu machen.",
-		["Position"] = Vector3(914.29,-1227.14,16.98),
-		["Money"] = 500
-	},
-	[12] = {
-		["Title"] = "Ab in den Süden",
-		["Description"] = "Strandparty gefällig? Ich zeige dir wo es bei Events richtig ab geht, ab in den Süden den Pfeil hinter her.",
-		["Success"] = "Das ist unsere fette Strandbühne, hier sind gelegentlich DJ´s, Stripperinnen und Bodyguards onduty wenn es wieder heißt 'The Party goes on!'",
-		["Position"] = Vector3(306.15,-1813.20,4.39),
-		["Money"] = 500
+		["Title"] = "Money, Money, Money",
+		["Description"] = "Nachdem du gejobbt hast solltest du dein Geld in die Bank einzahlen. Fahre zum ATM beim PD!",
+		["Success"] = "Öffne nun das Klickmenü mit 'B' und klicke auf den ATM. Im Tab 'Einzahlen' kannst du nun einen beliebigen Betrag auf dein Bankkonto transferieren. Falls du weitere Fragen zum Server hast kannst du dich gerne im Forum (forum.eXo-reallife,de) mit dem StartGuide vertraut machen oder ein Ticket im F2-Menü schreiben.",
+		["Position"] = Vector3(1508.89, -1673.20, 13.05),
+		["Money"] = 2500
 	}
 }

@@ -36,16 +36,18 @@ function ColorPickerGUI:setColor(r, g, b)
 	g = g >= 255 and 254 or g
 	b = b >= 255 and 254 or b
 
-	self.m_ScrollbarRed:setScrollPosition(r/255)
-	self.m_ScrollbarGreen:setScrollPosition(g/255)
-	self.m_ScrollbarBlue:setScrollPosition(b/255)
+	self.m_ScrollbarRed:setScrollPosition(0.8)
+	self.m_ScrollbarGreen:setScrollPosition((g/255)*0.75)
+	self.m_ScrollbarBlue:setScrollPosition((b/255)*0.75)
 	self.m_PreviewRect:setColorRGB(r, g, b)
 end
 
-function ColorPickerGUI:Color_Change()
-    local r = self.m_ScrollbarRed:getScrollPosition() * 255
-    local g = self.m_ScrollbarGreen:getScrollPosition() * 255
-    local b = self.m_ScrollbarBlue:getScrollPosition() * 255
+function ColorPickerGUI:Color_Change()	
+	local max = 0.834375	--// quick workaround -> on long-term: edit scrollbar-class in order to not get fucked up scrollPosition-max values!!!
+	local scale = 1.198501872659176 --// you see?
+    local r = (self.m_ScrollbarRed:getScrollPosition()*scale) * 255
+    local g = (self.m_ScrollbarGreen:getScrollPosition()*scale) * 255
+    local b = (self.m_ScrollbarBlue:getScrollPosition()*scale) * 255
 
     self.m_PreviewRect:setColorRGB(r, g, b)
 

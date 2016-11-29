@@ -77,7 +77,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime, SpawnWithFacSkin, AltSkin FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -92,11 +92,19 @@ function DatabasePlayer:load()
 	self.m_SavedInterior = row.Interior
 	self.m_SavedDimension = row.Dimension
 	self.m_Skin = row.Skin
+	self.m_AltSkin = row.AltSkin
+	if self.m_AltSkin == 0 then
+		self.m_AltSkin = self.m_Skin
+	end
 	self:setXP(row.XP)
 	self:setKarma(row.Karma)
 	self:setPoints(row.Points)
 	self:setMoney(row.Money, true)
-
+	if tonumber(row.SpawnWithFacSkin) == 1 then
+		self.m_SpawnWithFactionSkin = true
+	else
+		self.m_SpawnWithFactionSkin = false
+	end
 	self:setWantedLevel(row.WantedLevel, true)
 	self.m_TutorialStage = row.TutorialStage
 
@@ -169,8 +177,14 @@ function DatabasePlayer:save()
 		delete(self.m_BankAccount)
 	end
 
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? WHERE Id=?;", sql:getPrefix(),
-		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, self:getId())
+	local spawnFac
+	if self.m_SpawnWithFactionSkin then
+		spawnFac = 1
+	else
+		spawnFac = 0
+	end
+	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=? WHERE Id=?", sql:getPrefix(),
+		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self:getId())
 end
 
 function DatabasePlayer.getFromId(id)
@@ -568,7 +582,7 @@ function DatabasePlayer:setPrison(duration)
 			self:setDimension(0)
 			self:setInterior(0)
 			self:setPosition(Vector3(-224,2371.29,5688.73))
-			self:triggerEvent("Countdown", self.m_PrisonTime)
+			self:triggerEvent("Countdown", self.m_PrisonTime, "Prison")
 			self.m_PrisonTimer = setTimer(bind(self.endPrison, self), self.m_PrisonTime*1000, 1, player)
 		end
 	end

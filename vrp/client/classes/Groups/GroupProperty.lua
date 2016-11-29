@@ -31,15 +31,21 @@ function GroupProperty:addPickupToStream( pickup, id )
 	self.m_StreamCheckPickups[pickup] = id
 	addEventHandler("onClientElementStreamIn",pickup,bind(GroupProperty.requestImmoPanel,self))
 	addEventHandler("onClientElementStreamOut",pickup,bind(GroupProperty.requestImmoPanelClose,self))
+	if isElementStreamedIn( pickup ) then 
+		self:requestImmoPanel( pickup ) 
+	end
 end
 
-function GroupProperty:requestImmoPanel( ) 
+function GroupProperty:requestImmoPanel( pickup )
+	if not source then source = pickup end
 	if self.m_StreamCheckPickups[source] then
+		localPlayer:setData("insideGroupInterior",true) -- setData not syncing
 		triggerServerEvent("requestImmoPanel",localPlayer,self.m_StreamCheckPickups[source])
 	end
 end
 
 function GroupProperty:requestImmoPanelClose( ) 
+	localPlayer:setData("insideGroupInterior",false, true)
 	GroupPropertyGUI:OnStreamOutClose() 
 end
 
@@ -117,7 +123,7 @@ end
 
 function GroupProperty:destroyBlips( id ) 
 	if self.m_BlipProperties[id] then 
-		destroyElement(self.m_BlipProperties[id])
+		delete(self.m_BlipProperties[id])
 	end
 	if self.m_MarkerProperties[id] then 
 		destroyElement(self.m_MarkerProperties[id])

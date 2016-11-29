@@ -111,6 +111,18 @@ BlipConversion =
 	["Moneybag.png"] = 52,
 	["Stadthalle.png"] = 36,
 	["House.png"] = 32,
+	["Zombie.png"] = 23,
+	["SniperGame.png"] = 47,
+	["Train.png"] = 56,
+	["RoadSweeper.png"] = 11,
+	["ServiceTechnician.png"] = 11,
+	["Lumberjack.png"] = 11,
+	["Trashman.png"] = 11,
+	["Fishing.png"] = 37,
+	["Locate.png"] = 0,
+	["Needhelp.png"] = 0,
+	["HeliTransport.png"] = 5
+
 }
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
 for i, v in pairs(UIStyle) do UIStyle[v] = i end
@@ -492,3 +504,14 @@ SHADERS = {
 	["Bloom"] = {["event"] = "switchBloom" },
 	["Sun"] = {["event"] = "switchSunShader"}
 }
+
+
+GUNBOX_CRATES = {
+	createObject(2977, 1366.06, -1286.34, 12.4),
+	createObject(2977, 2397.80, -1980.82, 12.4),
+}
+
+for i = 1,#GUNBOX_CRATES do
+	setElementFrozen( GUNBOX_CRATES[i], true)
+	setObjectBreakable( GUNBOX_CRATES[i], false)
+end

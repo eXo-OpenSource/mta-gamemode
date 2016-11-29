@@ -9,7 +9,6 @@ Group = inherit(Object)
 
 function Group:constructor(Id, name, type, money, players, karma, lastNameChange, rankNames, rankLoans, vehicleTuning)
   self.m_Id = Id
-
   self.m_Players = players or {}
   self.m_Name = name
   self.m_Money = money or 0
@@ -176,28 +175,40 @@ function Group:addPlayer(playerId, rank)
   end
 
   sql:queryExec("UPDATE ??_character SET GroupId = ?, GroupRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
+  local props = GroupPropertyManager:getSingleton():getPropsForPlayer( player )
+  local x,y,z
+  for k,v in ipairs( props ) do
+	player:triggerEvent("addPickupToGroupStream",v.m_ExitMarker, v.m_Id)
+	x,y,z = getElementPosition( v.m_Pickup )
+	player:triggerEvent("createGroupBlip",x,y,z,v.m_Id)
+  end
 end
 
 function Group:removePlayer(playerId)
   if type(playerId) == "userdata" then
     playerId = playerId:getId()
   end
-
   self.m_Players[playerId] = nil
   local player = Player.getFromId(playerId)
+  local props = GroupPropertyManager:getSingleton():getPropsForPlayer( player )
+  for k,v in ipairs( props ) do
+	player:triggerEvent("destroyGroupBlip",v.m_Id)
+	player:triggerEvent("forceGroupPropertyClose")
+  end
   if player then
     player:setGroup(nil)
   end
-
   sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
+
 end
 
 function Group:invitePlayer(player)
   client:sendShortMessage(("Du hast %s erfolgreich in deine %s eingeladen."):format(getPlayerName(player), self:getType()))
 
   player:triggerEvent("groupInvitationRetrieve", self:getId(), self:getName())
-
+  
   self.m_Invitations[player] = true
+  
 end
 
 function Group:removeInvitation(player)
@@ -228,9 +239,20 @@ function Group:setPlayerRank(playerId, rank)
   if type(playerId) == "userdata" then
     playerId = playerId:getId()
   end
-
   self.m_Players[playerId] = rank
   sql:queryExec("UPDATE ??_character SET GroupRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
+  local player = Player.getFromId(playerId)
+  if player then
+	if player.m_LastPropertyPickup then
+		if rank < 1 then 
+			player:triggerEvent("forceGroupPropertyClose")
+		else 
+			if player:getData("insideGroupInterior") then
+				player:triggerEvent("setPropGUIActive", player.m_LastPropertyPickup)
+			end
+		end
+	end
+  end
 end
 
 function Group:getMoney()

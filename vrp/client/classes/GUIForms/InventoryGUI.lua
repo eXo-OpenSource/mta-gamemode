@@ -66,6 +66,10 @@ function InventoryGUI:setInventory(inv, loadContent)
 	end
 end
 
+function InventoryGUI:destructor() 
+	self:clear() 
+end
+
 function InventoryGUI:getInventory()
 	return self.m_Inventory
 end

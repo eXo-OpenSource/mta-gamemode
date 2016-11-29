@@ -124,9 +124,6 @@ end
 function HUDRadar:makePath(fileName, isBlip)
   if self.m_DesignSet == RadarDesign.Monochrome then
 	local path = (isBlip and "files/images/Radar_Monochrome/Blips/"..fileName) or "files/images/Radar_Monochrome/"..fileName
-	if not isBlip then
-		outputDebugString("[RADAR-BUGTRACK] Got path:"..path.."!",0,200,200,0)
-	end
     return path
   elseif self.m_DesignSet == RadarDesign.GTA then
     return (isBlip and "files/images/Radar_GTA/Blips/"..fileName) or "files/images/Radar_GTA/"..fileName
@@ -240,7 +237,14 @@ function HUDRadar:draw()
   -- Draw the map
   local posX, posY, posZ = getElementPosition(localPlayer)
   local mapX, mapY = self:worldToMapPosition(posX, posY)
-
+  local obj = localPlayer:getPrivateSync("isSpecting")
+  if obj then 
+		posX, posY, posZ = getElementPosition(obj)
+		mapX, mapY = self:worldToMapPosition(posX, posY)
+  else 
+	posX, posY, posZ = getElementPosition(localPlayer)
+	mapX, mapY = self:worldToMapPosition(posX, posY)
+  end
   -- Render (rotated) image section to renderTarget
   if isNotInInterior then
     dxSetRenderTarget(self.m_RenderTarget, true)
@@ -308,7 +312,11 @@ function HUDRadar:drawBlips()
   local mapCenterX, mapCenterY = self.m_PosX + self.m_Width/2, self.m_PosY + self.m_Height/2
   local mat = math.matrix.three.rotate_z(math.rad(self.m_Rotation)) * math.matrix.three.scale(self.m_ImageSize/6000, -self.m_ImageSize/6000, 1) * math.matrix.three.translate(-px, -py, -pz)
   local rotLimit = math.atan2(self.m_Height, self.m_Width)
-
+  local obj = localPlayer:getPrivateSync("isSpecting")
+  if obj then 
+	px, py, pz = getElementPosition(obj)
+	mapCenterX, mapCenterY = self:worldToMapPosition(posX, posY)
+  end
   for k, blip in pairs(self.m_Blips) do
     local blipX, blipY = blip:getPosition()
 

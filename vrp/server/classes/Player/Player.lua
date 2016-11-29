@@ -69,6 +69,12 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
+	if self:isFactionDuty() then
+		takeAllWeapons(self)
+	end
+
+	if self.m_DeathPickup and isElement(self.m_DeathPickup) then self.m_DeathPickup:destroy() end
+
 	if not self.m_DoNotSave then -- Cause of Invation System
 		self:save()
 	end
@@ -97,7 +103,9 @@ function Player:sendNews()
 end
 
 function Player:triggerEvent(ev, ...)
-	triggerClientEvent(self, ev, self, ...)
+	if self then
+		triggerClientEvent(self, ev, self, ...)
+	end
 end
 
 function Player:sendMessage(text, r, g, b, ...)
@@ -159,7 +167,7 @@ function Player:loadCharacter()
 end
 
 function Player:createCharacter()
-	sql:queryExec("INSERT INTO ??_character(Id, Skin, PosX, PosY, PosZ) VALUES(?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Id, NOOB_SKIN, NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z)
+	sql:queryExec("INSERT INTO ??_character(Id, Skin, PosX, PosY, PosZ, Money ) VALUES(?, ?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Id, NOOB_SKIN, NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z, START_MONEY_BAR)
 	--self.m_Inventory = Inventory.create()
 end
 
@@ -170,7 +178,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -196,6 +204,8 @@ function Player:loadCharacterInfo()
 	FactionManager:getSingleton():sendAllToClient(self)
 	VehicleManager:getSingleton():sendTexturesToClient(self)
 	HouseManager:getSingleton():createPlayerHouseBlip(self)
+
+	self.m_IsDead = row.IsDead or 0
 
 	-- Group blips
 	local props = GroupPropertyManager:getSingleton():getPropsForPlayer( self )
@@ -252,11 +262,17 @@ function Player:save()
 	local dimension = 0
 
 	if interior > 0 then dimension = self:getDimension() end
-	if self.m_DoNotSave then 
+	if self.m_DoNotSave then
 		x, y, z = NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z
 	end
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ? WHERE Id = ?;", sql:getPrefix(),
-		x, y, z, interior, dimension, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), self.m_Id)
+	local spawnWithFac
+	if self.m_SpawnWithFactionSkin then
+		spawnWithFac = 1
+	else
+		spawnWithFac = 0
+	end
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+		x, y, z, interior, dimension, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
 
 	--if self:getInventory() then
 	--	self:getInventory():save()
@@ -306,7 +322,11 @@ function Player:spawn( )
 		self:setPublicSync("Faction:Duty",false)
 
 		if self:getFaction() and self:getFaction():isEvilFaction() then
-			self:getFaction():changeSkin(self)
+			if self.m_SpawnWithFactionSkin then
+				self:getFaction():changeSkin(self)
+			else
+				setElementModel( self, self.m_AltSkin or self.m_Skin)
+			end
 		end
 
 		if self.m_JailTime then
@@ -329,6 +349,10 @@ function Player:spawn( )
 	attachElements(self.chatCol_whisper, self)
 	attachElements(self.chatCol_talk, self)
 	attachElements(self.chatCol_scream, self)
+	self:triggerEvent("checkNoDm")
+	if self.m_IsDead == 1 then
+		killPed(self)
+	end
 end
 
 function Player:respawn(position, rotation)
@@ -353,15 +377,25 @@ function Player:respawn(position, rotation)
 	else
 		position, rotation = position, rotation
 	end
+	if self.m_JailTime == 0 or not self.m_JailTime then
 
-	self:setHeadless(false)
-	spawnPlayer(self, position, rotation, self.m_Skin or 0)
-
-	if self:getFaction() and self:getFaction():isEvilFaction() then
-		self:getFaction():changeSkin(self)
+		self:setHeadless(false)
+		spawnPlayer(self, position, rotation, self.m_Skin or 0)
+		if self:getFaction() and self:getFaction():isEvilFaction() then
+			if self.m_SpawnWithFactionSkin then
+				self:getFaction():changeSkin(self)
+			else
+				setElementModel( self, self.m_AltSkin or self.m_Skin)
+			end
+		end
+	else
+		spawnPlayer(self, position, rotation, self.m_Skin or 0)
+		self:setHeadless(false)
+		self:moveToJail(false,true)
 	end
-
 	setCameraTarget(self, self)
+	self:triggerEvent("checkNoDm")
+	self.m_IsDead = 0
 end
 
 
@@ -438,11 +472,19 @@ end
 function Player:setDefaultSkin()
 	if self:getFaction() then
 			if self:getFaction():isEvilFaction() then
-				self:getFaction():changeSkin(self)
+				if self.m_SpawnWithFactionSkin then
+					self:getFaction():changeSkin(self)
+				else
+					setElementModel( self, self.m_AltSkin or self.m_Skin)
+				end
 				return
 			end
 		end
-	self:setModel(self.m_Skin)
+	if self.m_SpawnWithFactionSkin then
+		self:setModel(self.m_Skin or self.m_AltSkin or 0)
+	else
+		setElementModel( self, self.m_AltSkin or self.m_Skin or 0)
+	end
 end
 
 function Player:setKarma(karma)
@@ -750,12 +792,23 @@ function Player:getPlayersInChatRange( irange)
 end
 
 function Player:toggleControlsWhileObjectAttached(bool)
-	toggleControl(self, "jump", bool )
-	toggleControl(self, "fire", bool )
-	toggleControl(self, "sprint", bool )
-	toggleControl(self, "next_weapon", bool )
-	toggleControl(self, "previous_weapon", bool )
-	toggleControl(self, "enter_exit", bool )
+	if bool then
+		if not getElementData(self,"schutzzone") then
+			toggleControl(self, "jump", bool )
+			toggleControl(self, "fire", bool )
+			toggleControl(self, "sprint", bool )
+			toggleControl(self, "next_weapon", bool )
+			toggleControl(self, "previous_weapon", bool )
+			toggleControl(self, "enter_exit", bool )
+		end
+	else
+		toggleControl(self, "jump", bool )
+		toggleControl(self, "fire", bool )
+		toggleControl(self, "sprint", bool )
+		toggleControl(self, "next_weapon", bool )
+		toggleControl(self, "previous_weapon", bool )
+		toggleControl(self, "enter_exit", bool )
+	end
 end
 
 function Player:attachPlayerObject(object, allowWeapons)
@@ -783,8 +836,10 @@ end
 
 function Player:refreshAttachedObject()
 	setTimer(function()
-		self:getPlayerAttachedObject():setInterior(self:getInterior())
-		self:getPlayerAttachedObject():setDimension(self:getDimension())
+		if self:getPlayerAttachedObject() then
+			self:getPlayerAttachedObject():setInterior(self:getInterior())
+			self:getPlayerAttachedObject():setDimension(self:getDimension())
+		end
 	end, 2000 ,1)
 end
 
@@ -804,9 +859,10 @@ function Player:detachPlayerObject(object)
 	local model = object.model
 	if PlayerAttachObjects[model] then
 		object:detach(self)
+		object:setPosition(self.position + self.matrix.forward)
 		object:setCollisionsEnabled(true)
 		unbindKey(self, "n", "down", self.m_detachPlayerObjectBindFunc)
-		self:setAnimation(false)
+		self:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
 		self:toggleControlsWhileObjectAttached(true)
 		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
@@ -828,6 +884,10 @@ function Player:setModel( skin )
 	setElementModel( self, skin or 0)
 end
 
+function Player:setIsDead( int )
+	self.m_IsDead = int or 0
+end
+
 function Player:endPrison()
 	self:setPosition(Vector3(1478.87, -1726.17, 13.55))
 	self:setDimension(0)
@@ -835,6 +895,7 @@ function Player:endPrison()
 	toggleControl(self, "fire", true)
 	toggleControl(self, "jump", true)
 	toggleControl(self, "aim_weapon", true)
+	self:triggerEvent("checkNoDm")
 	self:triggerEvent("CountdownStop")
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
@@ -852,7 +913,7 @@ function Player:meChat(system, ...)
 	local systemText = ""
 	local receivedPlayers = {}
 	local message = ("%s %s"):format(self:getName(), text)
-	if system == true then systemText = " ** " end
+	if system == true then systemText = "* " end
 
 	for index = 1,#playersToSend do
 		outputChatBox(("%s %s %s"):format(systemText, message, systemText), playersToSend[index], 100, 0, 255)
@@ -866,10 +927,12 @@ function Player:meChat(system, ...)
 	end
 end
 
-function Player:moveToJail(CUTSCENE)
+function Player:moveToJail(CUTSCENE, alreadySpawned)
 	if self.m_JailTime > 0 then
 		local rnd = math.random(1, #Jail.Cells)
-		self:respawn()
+		if not alreadySpawned then
+			self:respawn()
+		end
 		self:setPosition(Jail.Cells[rnd])
 		self:setInterior(0)
 		self:setDimension(0)
@@ -894,6 +957,7 @@ function Player:moveToJail(CUTSCENE)
 					self:setJailTime(0)
 					self:triggerEvent("playerLeftJail")
 					self:setData("inJail",false, true)
+					self:triggerEvent("checkNoDm")
 				end
 			end, self.m_JailTime * 60000, 1
 		)

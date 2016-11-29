@@ -14,6 +14,10 @@ function FactionEvil:constructor()
 	self.m_WeaponPed = {}
 	self.m_ItemDepot = {}
 
+	nextframe(function()
+		self:loadLCNGates(5)
+	end)
+
 	for Id, faction in pairs(FactionManager:getAllFactions()) do
 		if faction:isEvilFaction() then
 			self:createInterior(Id, faction)
@@ -72,6 +76,37 @@ function FactionEvil:createInterior(Id, faction)
 	end
 end
 
+function FactionEvil:getFactions()
+	local factions = FactionManager:getSingleton():getAllFactions()
+	local returnFactions = {}
+	for i, faction in pairs(factions) do
+		if faction:isEvilFaction() then
+			table.insert(returnFactions, faction)
+		end
+	end
+	return returnFactions
+end
+
+function FactionEvil:getOnlinePlayers()
+	local factions = FactionManager:getSingleton():getAllFactions()
+	local players = {}
+	for index,faction in pairs(factions) do
+		if faction:isEvilFaction() then
+			for index, value in pairs(faction:getOnlinePlayers()) do
+				table.insert(players, value)
+			end
+		end
+	end
+	return players
+end
+
+function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
+	for k, player in pairs(self:getOnlinePlayers()) do
+		player:giveKarma(karma)
+		player:sendShortMessage(_("%s\nDu hast %d Karma erhalten!", player, reason, karma), "Karma")
+	end
+end
+
 function FactionEvil:onWeaponPedClicked(button, state, player)
 	if button == "left" and state == "down" then
 		if player:getFaction() and player:getFaction() == source.Faction then
@@ -90,4 +125,25 @@ function FactionEvil:onDepotClicked(button, state, player)
 			player:sendError(_("Dieses Depot gehört nicht deiner Fraktion!", player))
 		end
 	end
+end
+
+function FactionEvil:loadLCNGates(factionId)
+	local lcnGates = {}
+	lcnGates[1] = Gate:new(980, Vector3(783.60, -1152.40, 25.20), Vector3(0, 0, 90), Vector3(783.60, -1152.40, 19.80))
+	lcnGates[2] = Gate:new(980, Vector3(661.20, -1228.00, 17.50), Vector3(0, 0, 241.25), Vector3(661.20, -1228.00, 12))
+	lcnGates[3] = Gate:new(980, Vector3(664.90, -1307.90, 15.20), Vector3(0, 0, 0), Vector3(664.90, -1307.90, 9.20))
+	lcnGates[3]:addCustomShapes(Vector3(664.80, -1302.78, 13.46), Vector3(664.64, -1313.76, 13.46))
+	for index, gate in pairs(lcnGates) do
+		gate:setOwner(FactionManager:getSingleton():getFromId(factionId))
+		gate.onGateHit = bind(self.onBarrierGateHit, self)
+	end
+end
+
+function FactionEvil:onBarrierGateHit(player, gate)
+    if player:getFaction() == gate:getOwner() then
+		return true
+	else
+		return false
+	end
+
 end

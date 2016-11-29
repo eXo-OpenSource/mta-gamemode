@@ -21,8 +21,11 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		setElementData(self, "OwnerName", faction:getShortName())
 	end
 	setElementData(self, "OwnerType", "faction")
-
-	self:setHealth(health)
+	if health then
+		if health <= 300 then 
+			self:setHealth(health or 1000)
+		end
+	end
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
 		if factionCarColors[self.m_Faction:getId()] then
@@ -91,14 +94,20 @@ end
 
 function FactionVehicle:onStartEnter(player, seat)
 	if seat == 0 then
-		if player:getFaction() == self.m_Faction then
-
-		elseif player:getFaction() and player:getFaction():isStateFaction() == true	and self.m_Faction:isStateFaction() == true and player:isFactionDuty() then
-
-		else
-			cancelEvent()
-			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
+		if self.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true then
+			if player:isFactionDuty() then
+				return true
+			else
+				player:sendError(_("Du bist nicht im Dienst!", player))
+				cancelEvent()
+				return false
+			end
+		elseif player:getFaction() == self.m_Faction then
+			return true
 		end
+		player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
+		cancelEvent()
+		return false
 	end
 end
 
