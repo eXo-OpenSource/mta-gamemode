@@ -80,9 +80,11 @@ function GroupProperty:Event_requestImmoPanel( client )
 	if self.m_Owner then
 		rank = self.m_Owner:getPlayerRank(client:getId())
 	end
-	if rank >= 1 then
-		client:triggerEvent("setPropGUIActive", self)
-		client:triggerEvent("sendGroupKeyList",self.m_Keys, self.m_ChangeKeyMap)
+	if rank then
+		if rank >= 1 then
+			client:triggerEvent("setPropGUIActive", self)
+			client:triggerEvent("sendGroupKeyList",self.m_Keys, self.m_ChangeKeyMap)
+		end
 	end
 end
 

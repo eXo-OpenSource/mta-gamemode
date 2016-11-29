@@ -130,7 +130,6 @@ function GroupPropertyManager:SellProperty(  )
 	if client then
 		local property = client.m_LastPropertyPickup
 		if property then
-			outputChatBox("check2")
 			local price = property.m_Price
 			local sellMoney = math.floor(price * 0.66)
 			local pOwner = property.m_Owner
