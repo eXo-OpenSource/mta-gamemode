@@ -231,17 +231,19 @@ function FactionState:createArrestZone(x, y, z, int, dim)
 		col:setDimension(dim)
 	end
 	addEventHandler("onPickupHit", pickup,
-		function(hitElement)
-			if getElementType(hitElement) == "player" then
-				local faction = hitElement:getFaction()
+	function(hitElement)
+		if getElementType(hitElement) == "player" then
+			local faction = hitElement:getFaction()
+			if faction then
 				if faction:isStateFaction() == true then
 					if hitElement:isFactionDuty() then
 						hitElement:triggerEvent("showStateFactionArrestGUI", col)
 					end
 				end
 			end
-			cancelEvent()
 		end
+		cancelEvent()
+	end
 	)
 end
 
