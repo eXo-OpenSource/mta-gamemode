@@ -710,6 +710,7 @@ function Admin:Event_vehicleDespawn()
     end
 end
 
+--[[
 function Admin:markPosFunc(player, goto)
 	if goto then
 		local markPos = getElementData( player, "Admin_MarkPos")
@@ -733,4 +734,4 @@ function Admin:markPosFunc(player, goto)
 		player:sendInfo("Markierung gesetzt!")
 	end
 end
-
+--]]
