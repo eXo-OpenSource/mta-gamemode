@@ -70,11 +70,11 @@ function HUDRadar:constructor()
 				addEventHandler("onClientColShapeHit", col, bind(self.hide, self))
 				addEventHandler("onClientColShapeLeave", col, bind(self.show, self))
 			end
-		else 
+		else
 			outputConsole("Warning@HUDRadar - m_RenderTarget was not created!")
 			outputDebugString("Warning@HUDRadar - m_RenderTarget was not created!",0,200,0,0)
 		end
-	else 
+	else
 		outputConsole("Warning@HUDRadar - m_Texture was not created!")
 		outputDebugString("Warning@HUDRadar - m_Texture was not created!",0,200,0,0)
 	end
@@ -238,20 +238,20 @@ function HUDRadar:draw()
   local posX, posY, posZ = getElementPosition(localPlayer)
   local mapX, mapY = self:worldToMapPosition(posX, posY)
   local obj = localPlayer:getPrivateSync("isSpecting")
-  if obj then 
+  if obj then
 		posX, posY, posZ = getElementPosition(obj)
 		mapX, mapY = self:worldToMapPosition(posX, posY)
-  else 
+  else
 	posX, posY, posZ = getElementPosition(localPlayer)
 	mapX, mapY = self:worldToMapPosition(posX, posY)
   end
   -- Render (rotated) image section to renderTarget
   if isNotInInterior then
     dxSetRenderTarget(self.m_RenderTarget, true)
-	if self.m_Texture then 
+	if self.m_Texture then
 		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
-	else 
-		self:updateMapTexture()	
+	else
+		self:updateMapTexture()
 		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
 		outputDebugString("Warning@HUDRadar had to recreate self.m_Texture!")
 	end
@@ -313,7 +313,7 @@ function HUDRadar:drawBlips()
   local mat = math.matrix.three.rotate_z(math.rad(self.m_Rotation)) * math.matrix.three.scale(self.m_ImageSize/6000, -self.m_ImageSize/6000, 1) * math.matrix.three.translate(-px, -py, -pz)
   local rotLimit = math.atan2(self.m_Height, self.m_Width)
   local obj = localPlayer:getPrivateSync("isSpecting")
-  if obj then 
+  if obj then
 	px, py, pz = getElementPosition(obj)
 	mapCenterX, mapCenterY = self:worldToMapPosition(posX, posY)
   end
@@ -321,7 +321,8 @@ function HUDRadar:drawBlips()
     local blipX, blipY = blip:getPosition()
 
     if Blip.AttachedBlips[blip] then
-      blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
+		if not isElement(Blip.AttachedBlips[blip]) then Blip.AttachedBlips[blip] = nil end
+     	blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
     end
 
     if blipX then -- TODO: hotfix for #236

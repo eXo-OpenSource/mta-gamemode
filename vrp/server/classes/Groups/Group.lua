@@ -167,7 +167,7 @@ function Group:addPlayer(playerId, rank)
     playerId = playerId:getId()
   end
 
-  rank = rank or 0
+  rank = rank or GroupRank.Normal
   self.m_Players[playerId] = rank
   local player = Player.getFromId(playerId)
   if player then
@@ -206,9 +206,9 @@ function Group:invitePlayer(player)
   client:sendShortMessage(("Du hast %s erfolgreich in deine %s eingeladen."):format(getPlayerName(player), self:getType()))
 
   player:triggerEvent("groupInvitationRetrieve", self:getId(), self:getName())
-  
+
   self.m_Invitations[player] = true
-  
+
 end
 
 function Group:removeInvitation(player)
@@ -244,9 +244,9 @@ function Group:setPlayerRank(playerId, rank)
   local player = Player.getFromId(playerId)
   if player then
 	if player.m_LastPropertyPickup then
-		if rank < 1 then 
+		if rank < 1 then
 			player:triggerEvent("forceGroupPropertyClose")
-		else 
+		else
 			if player:getData("insideGroupInterior") then
 				player:triggerEvent("setPropGUIActive", player.m_LastPropertyPickup)
 			end

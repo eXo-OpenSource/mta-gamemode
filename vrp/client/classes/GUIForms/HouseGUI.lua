@@ -44,9 +44,9 @@ function HouseGUI:constructor(owner,price,rentprice,isValidRob)
 	self.m_Leave:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Leave.onLeftClick = bind(self.leaveHouse,self)
 
-	self.m_Break = GUIButton:new(30*4, 325, self.m_Width-(60*4), 35, _("Einbrechen"), self)
-	self.m_Break:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
-	self.m_Break.onLeftClick = bind(self.breakHouse,self)
+	--self.m_Break = GUIButton:new(30*4, 325, self.m_Width-(60*4), 35, _("Einbrechen"), self)
+	--self.m_Break:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
+	--self.m_Break.onLeftClick = bind(self.breakHouse,self)
 
 	self.m_Close = GUIButton:new(30*4, 450, self.m_Width-(60*4), 35, _("Schließen"), self)
 	self.m_Close:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
@@ -55,7 +55,7 @@ function HouseGUI:constructor(owner,price,rentprice,isValidRob)
 	self.m_LabelOwner:setText(_("Besitzer: %s",owner or "-"))
 	self.m_LabelPrice:setText(_("Preis: $%d",price))
 	self.m_LabelRentPrice:setText(_("Mietpreis: $%d",rentprice))
-	self.m_Break:setVisible(isValidRob)
+	--self.m_Break:setVisible(isValidRob)
 
 	if owner == localPlayer:getName() then
 		self.m_Buy:setVisible(false)
@@ -106,8 +106,8 @@ function HouseGUI:onUnrent()
 end
 
 function HouseGUI:breakHouse()
-	triggerServerEvent("breakHouse",root)
-	delete(self)
+	--triggerServerEvent("breakHouse",root)
+	--delete(self)
 end
 
 addEventHandler("showHouseMenu", root,

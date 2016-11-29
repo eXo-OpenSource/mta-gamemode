@@ -419,7 +419,11 @@ function GroupGUI:VehicleConvertToGroupButton_Click()
 		ErrorBox:new(_"Das Fahrzeug darf sich nicht im Autohof befinden!")
 		return
 	end
-	triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
+
+	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen! Dieser Vorgang kann nicht rückgänging gemacht werden", function()
+		triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
+	end)
+
 end
 
 function GroupGUI:VehicleLocateButton_Click()
@@ -430,7 +434,7 @@ function GroupGUI:VehicleLocateButton_Click()
 	end
 
 	local x, y, z = getElementPosition(item.VehicleElement)
-	local blip = Blip:new("Waypoint.png", x, y,root,500)
+	local blip = Blip:new("Waypoint.png", x, y, 800)
 	--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
 		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung+", Color.DarkLightBlue, -1)
 		.m_Callback = function (this)

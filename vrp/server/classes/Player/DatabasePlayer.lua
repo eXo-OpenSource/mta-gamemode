@@ -259,7 +259,11 @@ function DatabasePlayer:setWarns()
 	if self:isActive() then
 		self:setPublicSync("Warns", rows)
 		if #rows > 0 then
-			outputChatBox(_("Vorsicht du hast bereits %d Verwarnung/en!", self, #rows),self, 255,0,0)
+			if #rows < 3 then
+				outputChatBox(_("Vorsicht du hast bereits %d Verwarnung/en!", self, #rows),self, 255,0,0)
+			else
+				self:kick("Du hast 3 Warns! Melde dich bei einem Admin!")
+			end
 		end
 	end
 end

@@ -49,7 +49,7 @@ companyRankNames[3] = {
 [4] = "Journalist",
 [5] = "Chefredakteur"
 }
-companyColors[3] = {["r"] = 255,["g"] = 255,["b"] = 0}
+companyColors[3] = {["r"] = 255, ["g"] = 170, ["b"] = 0}
 companySkins[3] = {[59]=true,[141]=true,[186]=true,[187]=true,[188]=true,[189]=true}
 companyDutyMarker[3] = Vector3(735.65, -1348.45, 13.51)
 
@@ -62,6 +62,6 @@ companyRankNames[4] = {
 [4] = "Fahrzeugverwalter",
 [5] = "Transportmanager"
 }
-companyColors[4] = {["r"] = 255,["g"] = 190,["b"] = 0}
+companyColors[4] = {["r"] = 255, ["g"] = 210, ["b"] = 0}
 companySkins[4] = {[61]=true, [147]=true, [240]=true, [253]=true,[255]=true, [275]=true}
 companyDutyMarker[4] = Vector3(1755.45, -1896.06, 13.56)

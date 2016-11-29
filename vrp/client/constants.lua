@@ -120,7 +120,6 @@ BlipConversion =
 	["Trashman.png"] = 11,
 	["Fishing.png"] = 37,
 	["Locate.png"] = 0,
-	["Needhelp.png"] = 0,
 	["HeliTransport.png"] = 5
 
 }

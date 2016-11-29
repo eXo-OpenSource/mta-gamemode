@@ -251,11 +251,7 @@ function RobableShop:onCrash(player)
       else
         player:sendError(_("Du darfst die Beute nicht besitzen!", player))
       end
-    else
-      outputChatBox("Spieler "..client:getName().." hat keine Beute")
     end
-  else
-    outputChatBox("No Player")
   end
 
 end

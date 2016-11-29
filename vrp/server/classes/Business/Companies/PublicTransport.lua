@@ -6,8 +6,8 @@ function PublicTransport:constructor()
 	self.m_TaxoMeter = bind(self.updateTaxometer, self)
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	addRemoteEvents{"publicTransportSetTargetMap", "publicTransportSetTargetTell"}
-	addEventHandler("publicTransportSetTargetMap", root, bind(self.Event_setTargetFromMap))
-	addEventHandler("publicTransportSetTargetTell", root, bind(self.Event_sendTargetTellMessage))
+	addEventHandler("publicTransportSetTargetMap", root, bind(self.Event_setTargetFromMap, self))
+	addEventHandler("publicTransportSetTargetTell", root, bind(self.Event_sendTargetTellMessage, self))
 
 	VehicleBarrier:new(Vector3(1811.2,-1893,13.2,0), Vector3(0, 90, 90), 0).onBarrierHit = bind(self.onBarrierHit, self)
 
@@ -134,7 +134,7 @@ function PublicTransport:endTaxiDrive(customer)
 		if self.m_TaxiCustomer[customer]["blip"] then delete(self.m_TaxiCustomer[customer]["blip"]) end
 		self.m_TaxiCustomer[customer] = nil
 		triggerClientEvent(customer, "hideTaxoMeter", customer)
-		updateDriverTaxometer(vehicle, driver)
+		self:updateDriverTaxometer(vehicle, driver)
 	end
 end
 
