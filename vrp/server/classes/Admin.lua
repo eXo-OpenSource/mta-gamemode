@@ -48,7 +48,7 @@ function Admin:constructor()
     addCommandHandler("clearchat", adminCommandBind)
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
-	
+
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
     "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn"}
@@ -174,10 +174,10 @@ end
 function Admin:command(admin, cmd, targetName, arg1, arg2)
     if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
-	elseif cmd == "mark" then 
+	elseif cmd == "mark" then
 		self:markPosFunc(admin, false)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
-	elseif cmd == "gotomark" then 
+	elseif cmd == "gotomark" then
 		self:markPosFunc(admin, true)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
     else
@@ -710,19 +710,19 @@ function Admin:Event_vehicleDespawn()
     end
 end
 
-function Admin:markPosFunc( player, goto ) 
-	if goto then 
+function Admin:markPosFunc(player, goto)
+	if goto then
 		local markPos = getElementData( player, "Admin_MarkPos")
-		if markPos then 
+		if markPos then
 			player:sendInfo("Du hast dich zur Markierung geportet!")
-			if getPedOccupiedVehicle(player) then 
+			if getPedOccupiedVehicle(player) then
 				player = getPedOccupiedVehicle(player)
 			end
 			setElementInterior(player, markPos[4])
 			setElementDimension(player, markPos[5])
 			setElementPosition( player, markPos[1], markPos[2], markPos[3])
 			setCameraTarget(player,player)
-		else 
+		else
 			player:sendError("Du hast keine Markierung /mark")
 		end
 	else
