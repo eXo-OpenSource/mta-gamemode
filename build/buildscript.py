@@ -14,12 +14,6 @@ if platform.system() == "Windows":
 rootdir = "vrp/"
 outdir = "vrp_build/"
 
-# At first remove UTF8BOM
-if platform.system() == "Windows":
-	call(["py", "-3", "build/removeUTF8BOM.py"])
-else:
-	call(["python3", "build/removeUTF8BOM.py"])
-
 # Build vrp_build structure
 print("Creating build structure...")
 
@@ -81,11 +75,11 @@ tree.write(outdir+"meta.xml")
 # Call the compiler
 print("Compiling source...")
 
-serverCall = [ compiler, "-s", "-o", outdir+"server.luac" ]
+serverCall = [ compiler, "-s", "-e2", "-o", outdir+"server.luac" ]
 serverCall.extend(files["server"])
 call(serverCall)
 
-clientCall = [ compiler, "-s", "-o", outdir+"client.luac" ]
+clientCall = [ compiler, "-s", "-e2", "-o", outdir+"client.luac" ]
 clientCall.extend(files["client"])
 call(clientCall)
 

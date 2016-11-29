@@ -9,6 +9,7 @@ build_job:
   stage: build
   script:
     - "echo 'TODO: Set configs'"
+    - python3 build/lint.py
     - python3 build/buildscript.py
     - python3 build/packAssets.py
     - 'echo "GIT_VERSION = \"$(git rev-parse HEAD)-$(git rev-parse --abbrev-ref HEAD)\"" > vrp_build/buildinfo.lua'
