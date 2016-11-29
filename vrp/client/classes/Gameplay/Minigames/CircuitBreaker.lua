@@ -6,11 +6,11 @@
 -- *
 -- ****************************************************************************
 CircuitBreaker = inherit(Singleton)
-addRemoteEvents{"forceCircuitBreakerClose"}
+
 function CircuitBreaker:constructor()
 	self.WIDTH, self.HEIGHT = 1080, 650
 
-	self.m_HeaderHeight = screenHeight/8
+	self.m_HeaderHeight = screenHeight/10
 	--Render targets
 	self.m_RT_background = DxRenderTarget(screenWidth, screenHeight, false)	-- background
 	self.m_RT_PCB = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- PCB - MCUs, resistors, capacitors
@@ -28,10 +28,8 @@ function CircuitBreaker:constructor()
 	self.m_fnRestore = bind(CircuitBreaker.onClientRestore, self)
 	removeEventHandler("onClientRender", root, self.m_fnRender)
 	removeEventHandler("onClientRestore", root, self.m_fnRestore)
-	removeEventHandler("forceCircuitBreakerClose", localPlayer, self.fn_StopGame)
 	addEventHandler("onClientRender", root, self.m_fnRender)
 	addEventHandler("onClientRestore", root, self.m_fnRestore)
-	addEventHandler("forceCircuitBreakerClose", localPlayer, self.fn_StopGame)
 	localPlayer:setFrozen(true)
 end
 
@@ -274,6 +272,19 @@ function CircuitBreaker:setState(state)
 end
 
 function CircuitBreaker:bindKeys()
+	if self.fn_changeDirection then
+		unbindKey("arrow_l", "down", self.fn_changeDirection)			unbindKey("a", "down", self.fn_changeDirection)
+		unbindKey("arrow_r", "down", self.fn_changeDirection)			unbindKey("d", "down", self.fn_changeDirection)
+		unbindKey("arrow_u", "down", self.fn_changeDirection)			unbindKey("w", "down", self.fn_changeDirection)
+		unbindKey("arrow_d", "down", self.fn_changeDirection)			unbindKey("s", "down", self.fn_changeDirection)
+	end
+	if self.fn_StartGame then
+		unbindKey("enter", "down", self.fn_StartGame)
+	end
+	if self.fn_StopGame then
+		unbindKey("space", "down", self.fn_StopGame)
+	end
+	
 	self.fn_changeDirection = bind(CircuitBreaker.changeDirection, self)
 
 	self.fn_StartGame =
@@ -287,7 +298,9 @@ function CircuitBreaker:bindKeys()
 				self:setState("tryPlay")
 			end
 		end
+		
 
+	
 	bindKey("arrow_l", "down", self.fn_changeDirection)			bindKey("a", "down", self.fn_changeDirection)
 	bindKey("arrow_r", "down", self.fn_changeDirection)			bindKey("d", "down", self.fn_changeDirection)
 	bindKey("arrow_u", "down", self.fn_changeDirection)			bindKey("w", "down", self.fn_changeDirection)
@@ -325,9 +338,8 @@ function CircuitBreaker:updateRenderTarget()
 	---
 	self.m_RT_background:setAsTarget()
 
-	dxDrawRectangle(0, 0, screenWidth, screenHeight, tocolor(50, 50, 50)) -- 323232
+	dxDrawRectangle(0, 0, screenWidth, screenHeight, tocolor(0, 0, 0,100)) -- 323232
 	dxDrawRectangle(0, 0, screenWidth, self.m_HeaderHeight, tocolor(0, 0, 0, 170))
-	dxDrawText("eXo Circuit Breaker", 0, 0, screenWidth, self.m_HeaderHeight, self.m_DefaultLineColor, 3, "default-bold", "center", "center")
 
 	dxSetRenderTarget()
 
@@ -400,27 +412,40 @@ function CircuitBreaker:onClientRender()
 	end
 
 
+	local scale = 0.8
+	local origWidth,origHeight = self.WIDTH, self.HEIGHT
+	local origHeader = self.m_HeaderHeight
+	local origSWidth, origSHeight = screenWidth, screenHeight
+	self.WIDTH = self.WIDTH *scale
+	local screenWidth = screenWidth *scale
+	local screenHeight = screenHeight * scale
+	self.HEIGHT = self.HEIGHT *scale
+	self.m_HeaderHeight = self.m_HeaderHeight *scale
 	-- Render endscreen
 	if self.m_State == "done" then
 		dxDrawImage(0, 0, screenWidth, screenHeight, self.m_RT_background)
 
 		for i = 1, 3 do
-			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), self.m_HeaderHeight, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].pcb)
-			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), self.m_HeaderHeight, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].lineBG2)
-			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), self.m_HeaderHeight, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].lineBG)
-			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), self.m_HeaderHeight, self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].line, 0, 0, 0, self.m_LineColor)
+			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), (screenHeight/2 - self.HEIGHT/2), self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].pcb)
+			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)),(screenHeight/2 - self.HEIGHT/2), self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].lineBG2)
+			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), (screenHeight/2 - self.HEIGHT/2), self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].lineBG)
+			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), (screenHeight/2 - self.HEIGHT/2), self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].line, 0, 0, 0, self.m_LineColor)
 		end
 
 		return
 	end
 
 	-- Render game
-	dxDrawImage(0, 0, screenWidth, screenHeight, self.m_RT_background)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_PCB)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_lineBG)
-	dxDrawImage(screenWidth/2 - self.WIDTH/2, self.m_HeaderHeight, self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
+	dxDrawImage((screenWidth/2 - self.WIDTH/2) ,(screenHeight/2 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_PCB)
+	dxDrawImage((screenWidth/2 - self.WIDTH/2),(screenHeight/2 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
+	dxDrawImage((screenWidth/2 - self.WIDTH/2), (screenHeight/2 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_lineBG)
+	dxDrawImage((screenWidth/2 - self.WIDTH/2), (screenHeight/2 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
 	dxDrawText("Enter - Start | Space - Zurück", 0, 0, screenWidth, screenHeight*0.9, tocolor(255,255,255,255),2,"default-bold","center","bottom")
+	self.WIDTH = origWidth
+	self.HEIGHT = origHeight
+	self.m_HeaderHeight = origHeader
+	screenWidth = origSWidth
+	screenHeight = origSHeight
 end
 
 function CircuitBreaker:onClientRestore(didClearRenderTargets)
@@ -547,6 +572,13 @@ addEventHandler("startCircuitBreaker", root,
     function(callbackEvent)
 		delete(CircuitBreaker:getSingleton())
         local instance = CircuitBreaker:new()
+		instance:setState("idle")
 		instance:setCallBackEvent(callbackEvent)
     end
 )
+
+addEvent("forceCircuitBreakerClose", true)
+addEventHandler("forceCircuitBreakerClose", root, function() 
+	CircuitBreaker:getSingleton():setState("idle")
+	delete(CircuitBreaker:getSingleton())
+end)

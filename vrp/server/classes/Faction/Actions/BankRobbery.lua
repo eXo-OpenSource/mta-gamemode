@@ -123,7 +123,7 @@ function BankRobbery:destroyRob()
 
 	ActionsCheck:getSingleton():endAction()
 	StatisticsLogger:getSingleton():addActionLog("BankRobbery", "stop", self.m_RobPlayer, self.m_RobFaction, "faction")
-	self:build()
+	BankRobbery:getSingleton():build()
 end
 
 function BankRobbery:build()
@@ -136,10 +136,14 @@ function BankRobbery:build()
 	self.m_HackableComputer:setData("bankPC", true, true)
 
 	self.m_SafeDoor = createObject(2634, 2314.1, 18.94, 26.7, 0, 0, 270)
+
 	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
 	self.m_BankDoor:setScale(0.88)
+	local pos = self.m_BankDoor:getPosition()
+	self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
 	self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
 	self.m_BackDoor:setFrozen(true)
+
 
 	self.m_Blip = {}
 	self.m_DestinationMarker = {}
@@ -226,7 +230,7 @@ function BankRobbery:startRob(player)
 		playeritem:triggerEvent("Countdown", math.floor(BANKROB_TIME/1000), "Bank-Überfall")
 	end
 
-	addRemoteEvents{"bankRobberyLoadBag", "bankRobberyDeloadBag"}
+	addRemoteEvents{"bankRobberyLoadBag", "bankRobberyDeloadBag"} --// TODO CONTINUE FIXING THIS PART
 
 	addEventHandler("bankRobberyLoadBag", root, bind(self.Event_LoadBag, self))
 	addEventHandler("bankRobberyDeloadBag", root, bind(self.Event_DeloadBag, self))
@@ -242,8 +246,6 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 			return false
 		end
 		self:startRob(attacker)
-		local pos = self.m_BankDoor:getPosition()
-		self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
 		outputChatBox(_("Bankangestellter sagt: Hilfe! Ich öffne Ihnen die Tür zum Tresorraum!", attacker), attacker, 255, 255, 255)
 		outputChatBox(_("Bankangestellter sagt: Bitte tun sie mir nichts!", attacker), attacker, 255, 255, 255)
 	else
@@ -463,7 +465,7 @@ function BankRobbery:Event_onHackSuccessful()
 		player.m_InCircuitBreak = false
 		self.m_CircuitBreakerPlayers[player] = nil
 	end
-
+	self.m_CircuitBreakerPlayers = {	}
 	client:giveKarma(-5)
 
 	local pos = self.m_SafeDoor:getPosition()
