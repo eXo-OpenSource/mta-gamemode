@@ -106,7 +106,7 @@ function ItemSpeedCam:isCollectAllowed(player, worlditem)
 end
 
 function ItemSpeedCam:removeFromWorld(player, worlditem)
-	local object = worldItem:getObject()
+	local object = worlditem:getObject()
 	local col = object.col
 	col:destroy()
 	player:sendInfo(_("Du hast den Blitzer abgebaut!", player))
