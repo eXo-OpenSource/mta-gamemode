@@ -32,7 +32,7 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, colo
 	Blip.Blips[self.m_ID] = self
 
 	local m_String = BlipConversion[imagePath]
-	if m_String and type(m_string.type) == "string" then
+	if m_String and type(m_string) == "string" then
 		self.DefaultBlips[self.m_ID] = createBlip(worldX, worldY, 1,m_String, 1, 255, 255, 255, 255, 0, streamDistance)
 	else
 		outputDebug("Missing Standard Blip for "..imagePath)
