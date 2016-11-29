@@ -42,6 +42,7 @@ function TradeGUI:constructor(target)
 end
 
 function TradeGUI:loadItems()
+   	triggerServerEvent("refreshInventory", localPlayer)
     self.m_ItemData = Inventory:getSingleton():getItemData()
     self.m_Items = Inventory:getSingleton():getItems()
 

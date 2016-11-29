@@ -78,8 +78,6 @@ function Inventory:constructor()
 
 end
 
-
-
 function Inventory:Event_syncInventoryFromServer(bag, items)
 	outputDebugString("Inventory: Received "..tostring(bag).." and "..tostring(items).."!",0,200,0,200)
 	self.m_Bag = bag
@@ -140,8 +138,8 @@ end
 
 function Inventory:loadItems()
 	for slotId, slot in pairs (self.m_Tabs[self.m_CurrentTab].m_ItemSlots) do
-		if slot.ItemImage then 
-			delete(slot.ItemImage) 
+		if slot.ItemImage then
+			delete(slot.ItemImage)
 		end
 		if slot.ItemLabel then delete(slot.ItemLabel) end
 	end
