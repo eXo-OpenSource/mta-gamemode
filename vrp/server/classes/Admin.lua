@@ -175,10 +175,10 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
     if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
-		self:Command_MarkPos(admin, false)
+		self:Command_MarkPos(admin, true)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
 	elseif cmd == "gotomark" then
-		self:Command_MarkPos(admin, true)
+		self:Command_MarkPos(admin, false)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
     else
         if targetName then
@@ -710,8 +710,8 @@ function Admin:Event_vehicleDespawn()
     end
 end
 
-function Admin:Command_MarkPos(player, goto)
-	if goto then
+function Admin:Command_MarkPos(player, add)
+	if not add then
 		local markPos = getElementData(player, "Admin_MarkPos")
 		if markPos then
 			player:sendInfo("Du hast dich zu Makierung geportet!")
