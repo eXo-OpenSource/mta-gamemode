@@ -450,7 +450,7 @@ function VehicleManager:Event_vehicleRepair()
 	fixVehicle(source)
 end
 
-function VehicleManager:Event_vehicleRespawn()
+function VehicleManager:Event_vehicleRespawn(garageOnly)
 	if source:getOccupantsCount() > 0 then
 		client:sendError(_("Das Fahrzeug ist nicht leer!", client))
 		return
@@ -526,7 +526,7 @@ function VehicleManager:Event_vehicleRespawn()
 		removePedFromVehicle(player)
 	end
 
-	source:respawn()
+	source:respawn(garageOnly)
 	if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
 		client:takeMoney(100, "Fahrzeug-Respawn")
 	end

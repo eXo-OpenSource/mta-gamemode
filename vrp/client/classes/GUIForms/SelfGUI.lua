@@ -766,7 +766,7 @@ function SelfGUI:VehicleRespawnButton_Click()
 		WarningBox:new(_"Bitte wähle ein Fahrzeug aus!")
 		return
 	end
-	triggerServerEvent("vehicleRespawn", item.VehicleElement)
+	triggerServerEvent("vehicleRespawn", item.VehicleElement, true)
 end
 
 function SelfGUI:VehicleSellButton_Click()

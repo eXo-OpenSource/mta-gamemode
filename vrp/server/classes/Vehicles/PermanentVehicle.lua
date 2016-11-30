@@ -23,8 +23,8 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 
   self.m_Trunk = Trunk.load(trunkId)
   self.m_TrunkId = trunkId
-  if health then 
-	if health <= 300 then 
+  if health then
+	if health <= 300 then
 		health = 300
 	end
   end
@@ -245,7 +245,7 @@ function PermanentVehicle:setPositionType(type)
   self.m_PositionType = type
 end
 
-function PermanentVehicle:respawn()
+function PermanentVehicle:respawn(garageOnly)
   -- Set inGarage flag and teleport to private dimension
   self.m_LastUseTime = math.huge
   local vehicleType = self:getVehicleType()
@@ -282,23 +282,27 @@ function PermanentVehicle:respawn()
     end
   end
 
-  -- Respawn at mechanic base
-  if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
-    CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
-    if owner and isElement(owner) then
-      owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
-    end
-    return
-  end
+  if garageOnly then
+  	owner:sendShortMessage(_("Du hast keinen Platz in deiner Garage!", owner))
+  else
+	-- Respawn at mechanic base
+		if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
+			CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
+			if owner and isElement(owner) then
+			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
+			end
+			return
+		end
 
-  -- Respawn at Harbor
-  if vehicleType == VehicleType.Boat or (vehicleType == VehicleType.Plane and self:getModel() == 460) or (vehicleType == VehicleType.Helicopter and self:getModel() == 447) then
-    VehicleHarbor:getSingleton():respawnVehicle(self)
-    if owner and isElement(owner) then
-      owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt", owner, self:getName()))
-    end
-    return
-  end
+		-- Respawn at Harbor
+		if vehicleType == VehicleType.Boat or (vehicleType == VehicleType.Plane and self:getModel() == 460) or (vehicleType == VehicleType.Helicopter and self:getModel() == 447) then
+			VehicleHarbor:getSingleton():respawnVehicle(self)
+			if owner and isElement(owner) then
+			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt", owner, self:getName()))
+			end
+			return
+		end
+	end
 end
 
 function Vehicle:setTexture(texturePath)

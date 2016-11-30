@@ -28,7 +28,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			self:addItem(_"Respawn in Garage",
 				function()
 					if self:getElement() then
-						triggerServerEvent("vehicleRespawn", self:getElement())
+						triggerServerEvent("vehicleRespawn", self:getElement(), true)
 					end
 				end
 			)
