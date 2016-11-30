@@ -530,7 +530,7 @@ end
 
 function SelfGUI:AdminButton_Click()
 	self:close()
-	AdminGUI:getSingleton():open()
+	triggerServerEvent("openAdminGUI", localPlayer)
 end
 
 function SelfGUI:MigratorButton_Click()

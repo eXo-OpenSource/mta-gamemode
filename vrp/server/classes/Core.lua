@@ -87,7 +87,7 @@ function Core:constructor()
 	Depot.initalize()
 
 	BankRobbery:new()
-	
+
 	-- Generate Missions
 	MStealWeaponTruck:new()
 
@@ -154,6 +154,7 @@ function Core:destructor()
 	delete(GrowableManager:getSingleton())
 	delete(GangwarStatistics:getSingleton())
 	delete(GroupPropertyManager:getSingleton())
+	delete(Admin:getSingleton())
 	delete(sql) -- Very slow
 end
 

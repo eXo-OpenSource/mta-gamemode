@@ -59,6 +59,8 @@ function BankAccount:update()
     return false
   elseif self.m_OwnerType == BankAccountTypes.Company then
     return false
+  elseif self.m_OwnerType == BankAccountTypes.Admin then
+    return false
   end
 end
 
@@ -73,6 +75,8 @@ function BankAccount:setMoney(amount)
     CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("%s$"):format(self.m_Money))
   elseif self.m_OwnerType == BankAccountTypes.Faction then
     FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("%s$"):format(self.m_Money))
+  elseif self.m_OwnerType == BankAccountTypes.Admin then
+    Admin:getSingleton():sendShortMessage(("%s$"):format(self.m_Money), "Admin-Eventkasse")
   end
   self:update()
 end
@@ -88,6 +92,8 @@ function BankAccount:addMoney(money)
     CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("+%s$ (%s$)"):format(money, self.m_Money))
   elseif self.m_OwnerType == BankAccountTypes.Faction then
     FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("+%s$ (%s$)"):format(money, self.m_Money))
+  elseif self.m_OwnerType == BankAccountTypes.Admin then
+    Admin:getSingleton():sendShortMessage(("+%s$ (%s$)"):format(money, self.m_Money), "Admin-Eventkasse")
   end
   self:update()
 end
@@ -99,6 +105,8 @@ function BankAccount:takeMoney(money)
     CompanyManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("-%s$ (%s$)"):format(money, self.m_Money))
   elseif self.m_OwnerType == BankAccountTypes.Faction then
     FactionManager:getSingleton():getFromId(self.m_OwnerId):sendShortMessage(("-%s$ (%s$)"):format(money, self.m_Money))
+  elseif self.m_OwnerType == BankAccountTypes.Admin then
+    Admin:getSingleton():sendShortMessage(("-%s$ (%s$)"):format(money, self.m_Money), "Admin-Eventkasse")
   end
   self:update()
 end

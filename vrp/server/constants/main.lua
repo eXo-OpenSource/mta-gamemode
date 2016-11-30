@@ -42,6 +42,7 @@ BankAccountTypes = {
   Player = 1;
   Faction = 2;
   Company = 3;
+  Admin = 4;
 }
 
 AFK_POSITIONS = {

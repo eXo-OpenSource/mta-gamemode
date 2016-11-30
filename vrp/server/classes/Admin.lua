@@ -21,7 +21,8 @@ function Admin:constructor()
         [8] = "StellvProjektleiter",
         [9] = "Projektleiter"
     }
-
+	local bankAccountId = 1
+	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Admin, bankAccountId)
 
     addCommandHandler("admins", bind(self.onlineList, self))
     addCommandHandler("a", bind(self.chat, self))
@@ -51,7 +52,7 @@ function Admin:constructor()
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
-    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn"}
+    "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI"}
 
     addEventHandler("adminSetPlayerFaction", root, bind(self.Event_adminSetPlayerFaction, self))
     addEventHandler("adminSetPlayerCompany", root, bind(self.Event_adminSetPlayerCompany, self))
@@ -64,6 +65,7 @@ function Admin:constructor()
     addEventHandler("adminRespawnFactionVehicles", root, bind(self.Event_respawnFactionVehicles, self))
     addEventHandler("adminRespawnCompanyVehicles", root, bind(self.Event_respawnCompanyVehicles, self))
     addEventHandler("adminVehicleDespawn", root, bind(self.Event_vehicleDespawn, self))
+    addEventHandler("openAdminGUI", root, bind(self.openAdminMenu, self))
 
 
 end
@@ -80,6 +82,8 @@ function Admin:destructor()
     removeCommandHandler("clearchat", adminCommandBind)
 	removeCommandHandler("a", bind(self.chat, self))
 	removeCommandHandler("o", bind(self.ochat, self))
+
+	delete(self.m_BankAccount)
 end
 
 function Admin:addAdmin(player,rank)
@@ -101,9 +105,10 @@ function Admin:removeAdmin(player)
 	self.m_OnlineAdmins[player] = nil
 end
 
-function Admin:openAdminMenu( player )
+function Admin:openAdminMenu(player)
+	if client then player = client end
 	if self.m_OnlineAdmins[player] > 0 then
-		triggerClientEvent(player,"showAdminMenu",player)
+		triggerClientEvent(player,"showAdminMenu",player, self.m_BankAccount:getMoney())
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end
@@ -346,6 +351,33 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
                 sql:queryExec("DELETE FROM ??_bans WHERE serial = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId))
             else
                 admin:sendError(_("Spieler nicht gefunden!", admin))
+            end
+		 elseif func == "eventMoneyDeposit" or func == "eventMoneyWithdraw" then
+            local amount = tonumber(target)
+            if amount and amount > 0 and reason then
+				if func == "eventMoneyDeposit" then
+					if admin:getMoney() >= amount then
+						self.m_BankAccount:addMoney(amount)
+						self.m_BankAccount:save()
+						admin:takeMoney(amount, "Admin-Event-Kasse")
+						StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("+"..amount))
+						self:openAdminMenu(admin)
+					else
+						admin:sendError(_("Du hast nicht genug Geld dabei!", admin))
+					end
+				else
+					if self.m_BankAccount:getMoney() >= amount then
+						self.m_BankAccount:takeMoney(amount)
+						self.m_BankAccount:save()
+						admin:giveMoney(amount, "Admin-Event-Kasse")
+						StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("-"..amount))
+						self:openAdminMenu(admin)
+					else
+						admin:sendError(_("In der Kasse ist nicht soviel Geld!", admin))
+					end
+				end
+            else
+                admin:sendError(_("Betrag oder Grund ungültig!", admin))
             end
         end
     else

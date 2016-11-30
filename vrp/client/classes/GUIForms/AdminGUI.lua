@@ -16,8 +16,8 @@ end
 
 addRemoteEvents{"showAdminMenu", "announceText", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo"}
 
-function AdminGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540, false, false)
+function AdminGUI:constructor(money)
+	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540, true, false)
 
 	self.m_adminButton = {}
 
@@ -42,6 +42,15 @@ function AdminGUI:constructor()
 	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", 10, 100, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 190, 250, 30, Color.Red, tabAllgemein)
+
+	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.LightBlue)
+	self.m_EventCurrentMoney = GUILabel:new(340, 90, 200, 25, _("Momentan: %d$", money or 0), tabAllgemein)
+	GUILabel:new(340, 120, 60, 30, _"Betrag:", tabAllgemein)
+	self.m_EventMoneyEdit = GUIEdit:new(410, 120, 140, 30, tabAllgemein):setNumeric(true, true)
+	GUILabel:new(340, 160, 60, 30, _"Grund:", tabAllgemein)
+	self.m_EventReasonEdit = GUIEdit:new(410, 160, 140, 30, tabAllgemein)
+	self:addAdminButton("eventMoneyDeposit", "Einzahlen", 340, 200, 100, 30, Color.Green, tabAllgemein)
+	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", 450, 200, 100, 30, Color.Red, tabAllgemein)
 
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
 	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"↑",  tabAllgemein):setBackgroundColor(Color.Orange)
@@ -406,7 +415,14 @@ function AdminGUI:onButtonClick(func)
 		else
 			ErrorBox:new("Kein Spieler ausgewählt!")
 		end
-
+	elseif func == "eventMoneyDeposit" or func == "eventMoneyWithdraw" then
+		local reason = self.m_EventReasonEdit:getText()
+		local amount = tonumber(self.m_EventMoneyEdit:getText())
+		if reason and string.len(reason) >= 3 and amount and amount > 0 then
+			triggerServerEvent("adminTriggerFunction", root, func, amount, reason)
+		else
+			ErrorBox:new("Kein Grund oder Betrag angegeben!")
+		end
 	else
 		outputDebug("Under Developement", 255, 0 ,0)
 	end
@@ -418,7 +434,8 @@ end
 
 addEventHandler("showAdminMenu", root,
 	function(...)
-		AdminGUI:new()
+		if AdminGUI:getSingleton() then delete(AdminGUI:getSingleton()) end
+		AdminGUI:new(...)
 	end
 )
 

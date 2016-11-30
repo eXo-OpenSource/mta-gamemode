@@ -30,6 +30,7 @@ end
 RANK = r2
 
 ADMIN_RANK_PERMISSION = {
+	["eventMoneyDeposit"] = RANK.Supporter,
 	["gethere"] = RANK.Supporter,
 	["goto"] = RANK.Supporter,
 	["showVehicles"] = RANK.Supporter,
@@ -51,6 +52,7 @@ ADMIN_RANK_PERMISSION = {
 	["permaban"] = RANK.Supporter,
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
+	["eventMoneyWithdraw"] = RANK.Moderator,
 	["offlineUnban"] = RANK.Administrator,
 	["nickchange"] = RANK.Moderator,
 	["setFaction"] = RANK.Administrator,
