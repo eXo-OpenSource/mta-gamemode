@@ -8,7 +8,8 @@
 PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
-"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData", "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted"}
+"requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
+"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -41,6 +42,8 @@ function PlayerManager:constructor()
 	addEventHandler("startWeaponLevelTraining", root, bind(self.Event_weaponLevelTraining, self))
 	addEventHandler("switchSpawnWithFactionSkin", root, bind(self.Event_switchSpawnWithFaction, self))
 	addEventHandler("Event_setPlayerWasted", root, bind(self.Event_setPlayerWasted, self))
+	addEventHandler("Event_moveToJail", root, bind(self.Event_moveToJail, self))
+
 
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
@@ -608,3 +611,8 @@ function PlayerManager:Event_setPlayerWasted()
 		client.m_IsDead = 1
 	end
 end
+
+function PlayerManager:Event_moveToJail()
+	client:moveToJail(false,true)
+end
+

@@ -6,8 +6,7 @@
 -- *
 -- ****************************************************************************
 
-local jailCountdownGUI
-
+local JailCenter = Vector3(161.80, 359.28, 7983.66)
 local Jail = {}
 
 addEvent("playerJailed", true)
@@ -27,20 +26,20 @@ addEventHandler("playerJailed", root,
 
 function Jail.startCountdown(jailTime)
 	InfoBox:new(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %d Minuten verweilen!", jailTime))
-	jailCountdownGUI = Countdown:getSingleton():startCountdown(jailTime*60, "Frei in:")
-	jailCountdownGUI:addTickEvent(function()
+	Countdown:new(jailTime*60, "Frei in:")
+	Countdown:getSingleton():addTickEvent(function()
 			toggleControl("fire", false)
 			toggleControl("aim_weapon", false)
 			toggleControl("jump", false)
+			if getDistanceBetweenPoints3D(localPlayer:getPosition(), JailCenter) > 100 then
+				triggerServerEvent("Event_moveToJail", localPlayer)
+			end
 		end)
 end
 
 addEvent("playerLeftJail", true)
 addEventHandler("playerLeftJail", root,
 	function()
-		if jailCountdownGUI then
-			delete(jailCountdownGUI)
-			jailCountdownGUI = nil
-		end
+		delete(Countdown:getSingleton())
 	end
 )
