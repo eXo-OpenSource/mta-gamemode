@@ -44,7 +44,7 @@ function Countdown:updateTime()
 end
 
 function Countdown:addTickEvent(callBack)
-	self.m_TickEvent = callBack()
+	self.m_TickEvent = callBack
 end
 
 function Countdown:stopCountdown()
