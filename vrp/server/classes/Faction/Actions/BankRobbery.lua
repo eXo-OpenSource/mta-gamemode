@@ -139,8 +139,7 @@ function BankRobbery:build()
 
 	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
 	self.m_BankDoor:setScale(0.88)
-	local pos = self.m_BankDoor:getPosition()
-	self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
+	
 	self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
 	self.m_BackDoor:setFrozen(true)
 
@@ -196,6 +195,8 @@ function BankRobbery:startRob(player)
 	ActionsCheck:getSingleton():setAction("Banküberfall")
 	local faction = player:getFaction()
 	PlayerManager:getSingleton():breakingNews("Eine derzeit unbekannte Fraktion überfällt die Palomino-Creek Bank!")
+	local pos = self.m_BankDoor:getPosition()
+	self.m_BankDoor:move(3000, pos.x+1.1, pos.y, pos.z)
 	self.m_RobPlayer = player
 	self.m_RobFaction = faction
 	self.m_IsBankrobRunning = true

@@ -18,6 +18,7 @@ function CircuitBreaker:constructor()
 	self.m_RT_lineBG2 = DxRenderTarget(self.WIDTH, self.HEIGHT, true)		-- Seccond Line Background
 	self.m_RT_line = DxRenderTarget(self.WIDTH, self.HEIGHT, true)			-- Main Line
 
+	self.m_HelpFontHeight = dxGetFontHeight(2,"default-bold")
 	self:loadImages()
 	self:createGameplay()
 	self:updateRenderTarget()
@@ -31,6 +32,11 @@ function CircuitBreaker:constructor()
 	addEventHandler("onClientRender", root, self.m_fnRender)
 	addEventHandler("onClientRestore", root, self.m_fnRestore)
 	localPlayer:setFrozen(true)
+	toggleControl("left",false)
+	toggleControl("right",false)
+	toggleControl("forwards",false)
+	toggleControl("backwards",false)
+	showChat(false)
 end
 
 function CircuitBreaker:destructor()
@@ -39,9 +45,15 @@ function CircuitBreaker:destructor()
 	unbindKey("arrow_u", "down", self.fn_changeDirection)			unbindKey("w", "down", self.fn_changeDirection)
 	unbindKey("arrow_d", "down", self.fn_changeDirection)			unbindKey("s", "down", self.fn_changeDirection)
 	unbindKey("space", "down", self.fn_StopGame)
+	unbindKey("enter", "down", self.fn_StartGame)
 	removeEventHandler("onClientRender", root, self.m_fnRender)
 	removeEventHandler("onClientRestore", root, self.m_fnRestore)
 	localPlayer:setFrozen(false)
+	toggleControl("left",true)
+	toggleControl("right",true)
+	toggleControl("forwards",true)
+	toggleControl("backwards",true)
+	showChat(true)
 end
 
 function CircuitBreaker:setCallBackEvent(callbackEvent)
@@ -411,19 +423,9 @@ function CircuitBreaker:onClientRender()
 		end
 	end
 
-
-	local scale = 0.8
-	local origWidth,origHeight = self.WIDTH, self.HEIGHT
-	local origHeader = self.m_HeaderHeight
-	local origSWidth, origSHeight = screenWidth, screenHeight
-	self.WIDTH = self.WIDTH *scale
-	local screenWidth = screenWidth *scale
-	local screenHeight = screenHeight * scale
-	self.HEIGHT = self.HEIGHT *scale
-	self.m_HeaderHeight = self.m_HeaderHeight *scale
 	-- Render endscreen
 	if self.m_State == "done" then
-		dxDrawImage(0, 0, screenWidth, screenHeight, self.m_RT_background)
+		dxDrawRectangle(0, 0, screenWidth, screenHeight, tocolor(0,0,0,150))
 
 		for i = 1, 3 do
 			dxDrawImage(screenWidth/2 - self.WIDTH/2 + (self.WIDTH/3*(i-1)), (screenHeight/2 - self.HEIGHT/2), self.WIDTH/3, self.HEIGHT/3, self.m_Lines[i].pcb)
@@ -436,11 +438,24 @@ function CircuitBreaker:onClientRender()
 	end
 
 	-- Render game
-	dxDrawImage((screenWidth/2 - self.WIDTH/2) ,(screenHeight/2 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_PCB)
-	dxDrawImage((screenWidth/2 - self.WIDTH/2),(screenHeight/2 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
-	dxDrawImage((screenWidth/2 - self.WIDTH/2), (screenHeight/2 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_lineBG)
-	dxDrawImage((screenWidth/2 - self.WIDTH/2), (screenHeight/2 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
-	dxDrawText("Enter - Start | Space - Zurück", 0, 0, screenWidth, screenHeight*0.9, tocolor(255,255,255,255),2,"default-bold","center","bottom")
+	local scale = 0.8
+	local origWidth,origHeight = self.WIDTH, self.HEIGHT
+	local origHeader = self.m_HeaderHeight
+	local origSWidth, origSHeight = screenWidth, screenHeight
+	self.WIDTH = self.WIDTH *scale
+	local screenWidth = screenWidth *scale
+	local screenHeight = screenHeight * scale
+	self.HEIGHT = self.HEIGHT *scale
+	self.m_HeaderHeight = self.m_HeaderHeight *scale
+	
+	dxDrawImage(0, 0, origSWidth, origSHeight, "files/images/Other/focus.png")
+	dxDrawImage((screenWidth/2 - self.WIDTH/4) ,(screenHeight*0.6 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_PCB)
+	dxDrawImage((screenWidth/2 - self.WIDTH/4),(screenHeight*0.6 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
+	dxDrawImage((screenWidth/2 - self.WIDTH/4), (screenHeight*0.6 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_lineBG)
+	dxDrawImage((screenWidth/2 - self.WIDTH/4), (screenHeight*0.6 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
+	dxDrawRectangle((screenWidth/2 - self.WIDTH/4), (screenHeight*0.6 - self.HEIGHT/2)+self.HEIGHT, self.WIDTH, self.m_HelpFontHeight, self.m_DefaultLineColor)
+	dxDrawText("ENTER = START       SPACE = ZURÜCK",(screenWidth/2 - self.WIDTH/4), (screenHeight*0.6 - self.HEIGHT/2)+self.HEIGHT, (screenWidth/2 - self.WIDTH/4)+self.WIDTH, screenHeight, tocolor(255,255,255,255),2,"default-bold","center","top")
+	
 	self.WIDTH = origWidth
 	self.HEIGHT = origHeight
 	self.m_HeaderHeight = origHeader
@@ -572,7 +587,6 @@ addEventHandler("startCircuitBreaker", root,
     function(callbackEvent)
 		delete(CircuitBreaker:getSingleton())
         local instance = CircuitBreaker:new()
-		instance:setState("idle")
 		instance:setCallBackEvent(callbackEvent)
     end
 )
