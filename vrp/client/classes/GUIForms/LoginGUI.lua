@@ -41,13 +41,14 @@ function LoginGUI:constructor()
 	self.m_RegisterTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
 	self.m_RegisterTab:setVisible(false)
 
-	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.41, sw*0.1, sh*0.03, "Benutzername", self.m_RegisterTab) -- 1.75
-	self.m_RegisterEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.49, sw*0.1, sh*0.03, "Passwort", self.m_RegisterTab) -- 1.75
-
-	self.m_RegisterEditMail	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.57, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextMail	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.57, sw*0.1, sh*0.03, "E-Mail", self.m_RegisterTab) -- 1.75
+	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.35, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.35, sw*0.1, sh*0.03, "Benutzername", self.m_RegisterTab) -- 1.75
+	self.m_RegisterEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.43, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.43, sw*0.1, sh*0.03, "Passwort", self.m_RegisterTab) -- 1.75
+	self.m_RegisterEditPass2 = GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.51, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextPass2 = GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.51, sw*0.1, sh*0.03, "Erneut Passwort", self.m_RegisterTab) -- 1.75
+	self.m_RegisterEditMail	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.59, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextMail	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.59, sw*0.1, sh*0.03, "E-Mail", self.m_RegisterTab) -- 1.75
 
 	self.m_RegisterErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_RegisterTab)
 	self.m_RegisterErrorBox:hide()
@@ -58,6 +59,7 @@ function LoginGUI:constructor()
 	self.m_RegisterLogo = GUIImage:new(sw*0.6*0.75*0.05, sh*0.06, sh*0.175, sh*0.084, "files/images/Logo.png", self.m_RegisterTab)
 
 	self.m_RegisterEditPass:setMasked("*")
+	self.m_RegisterEditPass2:setMasked("*")
 	self.m_RegisterInfoText = GUILabel:new(sw*0.6*0.75*0.05+sh*0.175, sh*0.04,
 
 	sw*0.6*0.75-sw*0.6*0.75*0.05-1.25*sh*0.175, sh, [[Willkommen auf eXo-Reallife!
@@ -98,7 +100,10 @@ function LoginGUI:constructor()
 	end, self)
 
 	self.m_RegisterRegisterButton.onLeftClick = bind(function(self)
-		triggerServerEvent("accountregister", root, self.m_RegisterEditUser:getText(), self.m_RegisterEditPass:getText(), self.m_RegisterEditMail:getText())
+		if self.m_RegisterEditPass:getText() == self.m_RegisterEditPass2:getText() then
+			triggerServerEvent("accountregister", root, self.m_RegisterEditUser:getText(), self.m_RegisterEditPass:getText(), self.m_RegisterEditMail:getText())
+		else triggerEvent("registerfailed",localPlayer,"Passwörter stimmen nicht überein!")
+		end
 	end, self)
 
 
