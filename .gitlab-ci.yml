@@ -26,7 +26,7 @@ deploy_job:
   script:
     - "echo 'TODO: Upload artifacts'"
     - "echo 'Uploading assets to http-server...'"
-    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$(git rev-parse --abbrev-ref HEAD)" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
+    - curl -s -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$(git rev-parse --abbrev-ref HEAD)" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
   only:
     - feature/ci-build
     - release
