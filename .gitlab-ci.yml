@@ -25,8 +25,8 @@ deploy_job:
   stage: deploy
   script:
     - "echo 'TODO: Upload artifacts'"
-    - "echo 'TODO: Upload assets to http server with secret-key' $ASSETS_UPLOAD_SECRET_KEY"
-    - curl -i -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F asset_archive=@assets.tar.gz https://exo-reallife.de/ingame/upload/upload.php
+    - "echo 'Uploading assets to http-server...'"
+    - curl -i -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$(git rev-parse --abbrev-ref HEAD)" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
   only:
     - feature/ci-build
     - release
