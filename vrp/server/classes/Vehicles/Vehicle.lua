@@ -18,7 +18,7 @@ function Vehicle:virtual_constructor()
 	self.m_EngineState = false
 	self.m_Fuel = 100
 	self.m_Mileage = 0
-
+	self.m_RepairAllowed = true
 	self.m_BrokenHook = Hook:new()
 
 
@@ -339,6 +339,15 @@ function Vehicle:countdownDestroyAbort(player)
 		killTimer(self.m_CountdownDestroyTimer)
 	end
 end
+
+function Vehicle:setRepairAllowed(state)
+	self.m_RepairAllowed = state
+end
+
+function Vehicle:isRepairAllowed()
+	return self.m_RepairAllowed
+end
+
 
 -- Override it
 function Vehicle:getVehicleType()
