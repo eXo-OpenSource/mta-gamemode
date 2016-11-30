@@ -317,7 +317,10 @@ function Account.checkInvitationCode(code, AccountId)
 	if row then
 		if row.UserId == 0 then
 			if row.Active == 1 then
-				--local AccountId = Account.getIdFromName(client:getName())
+				if not AccountId or AccountId == 0 then
+					AccountId = Account.getIdFromName(client:getName())
+				end
+				--outputServerLog("AccountID: "..AccountId)
 				sql:queryExec("UPDATE ??_invitations SET Serial = ?, UserId = ?, Used = NOW() WHERE Id = ? ", sql:getPrefix(), client:getSerial(), AccountId, row.Id)
 				sql:queryExec("UPDATE ??_account SET InvitationId = ? WHERE Id = ? ", sql:getPrefix(), row.Id, AccountId)
 				client:sendSuccess(_("Der Code wurde angenommen!\nDu wirst nun reconnected!", client))
