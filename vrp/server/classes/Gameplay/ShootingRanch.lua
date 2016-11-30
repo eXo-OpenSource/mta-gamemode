@@ -12,9 +12,9 @@ addRemoteEvents{"ShootingRanch:onTargetHit"}
 ShootingRanch.Map = {}
 
 ShootingRanch.Trainings = {
-	[1] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 10,  ["Accuracy"] = 20, ["Ammo"] = 90},
-	[2] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 20, ["Accuracy"] = 40, ["Ammo"] = 90},
-	[3] = {["Weapon"] = 22, ["Time"] = 60, ["Hits"] = 30, ["Accuracy"] = 60, ["Ammo"] = 90},
+	[1] = {["Weapon"] = 24, ["Time"] = 60, ["Hits"] = 10,  ["Accuracy"] = 20, ["Ammo"] = 90},
+	[2] = {["Weapon"] = 24, ["Time"] = 60, ["Hits"] = 20, ["Accuracy"] = 40, ["Ammo"] = 90},
+	[3] = {["Weapon"] = 24, ["Time"] = 60, ["Hits"] = 25, ["Accuracy"] = 60, ["Ammo"] = 90},
 	[4] = {["Weapon"] = 25, ["Time"] = 60, ["Hits"] = 15, ["Accuracy"] = 40, ["Ammo"] = 90},
 	[5] = {["Weapon"] = 25, ["Time"] = 60, ["Hits"] = 20, ["Accuracy"] = 50, ["Ammo"] = 90},
 	[6] = {["Weapon"] = 25, ["Time"] = 60, ["Hits"] = 30, ["Accuracy"] = 70, ["Ammo"] = 90},
