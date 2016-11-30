@@ -44,6 +44,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
     self.m_Truck:setLocked(true)
 	self.m_Truck:setVariant(255, 255)
 	self.m_Truck:setEngineState(true)
+	self.m_Truck:setRepairAllowed(false)
 	self.m_StartTime = getTickCount()
 	self.m_DestinationBlips = {}
 	self.m_DestinationMarkers = {}

@@ -70,6 +70,11 @@ function MechanicTow:Event_mechanicRepair()
 		return
 	end
 
+	if not source:isRepairAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht repariert werden!", client))
+		return
+	end
+
 	source.PendingMechanic = client
 	local price = math.floor((1000 - getElementHealth(source))*0.5)
 
