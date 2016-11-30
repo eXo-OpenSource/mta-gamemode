@@ -15,8 +15,12 @@ end
 
 function StreetRaceEvent:onStart()
 	-- Start the countdown
+	self.m_onExitFunc = bind(StreetRaceEvent.onPlayerExit, self)
 	for k, player in pairs(self.m_Players) do
 		player:triggerEvent("countdownStart", 3)
+		player:setData("inEvent", true)
+		removeEventHandler("onPlayerVehicleExit",source,self.m_onExitFunc)
+		addEventHandler("onPlayerVehicleExit",player,self.m_onExitFunc)
 	end
 
 	setTimer(
@@ -47,6 +51,14 @@ function StreetRaceEvent:onStart()
 		3000,
 		1
 	)
+end
+
+function StreetRaceEvent:onPlayerExit() 
+	if source:getData("inEvent") then 
+		source:sendError("Du wurdest disqualifiziert!")
+		self:quit(source)
+		removeEventHandler("onPlayerVehicleExit",source,self.m_onExitFunc)
+	end
 end
 
 function StreetRaceEvent:destructor()
