@@ -47,8 +47,8 @@ BeggarThanksPhrases = {
 
 BeggarNoHelpPhrases = {
 	"You mofugga!",
-    "Fck1ng F4gg0t.",
-    "1337 h4x0r! Gesegnet seist du.",
+    "Dann halt nicht.",
+    "Ja lauf ruhig weg!",
     "Einen schönen Tag noch."
 }
 
@@ -107,12 +107,12 @@ BeggarAnimations = {
         "crack", "crckdeth2", -1, false, true, false
     };
     {
-        "beach", "ParkSit_M_loop", -1, true, true, true
+        "dealer", "dealer_idle", -1, true, true, true
     };
     {
-        "beach", "SitnWait_loop_W", -1, true, false, true
+        "dealer", "dealer_idle", -1, true, false, true
     };
     {
-        "beach", "bather", -1, true, false, true
+        "dealer", "dealer_idle", -1, true, false, true
     };
 }
