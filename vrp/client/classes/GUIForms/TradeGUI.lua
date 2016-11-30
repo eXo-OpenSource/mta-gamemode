@@ -47,20 +47,23 @@ function TradeGUI:loadItems()
     self.m_Items = Inventory:getSingleton():getItems()
 
     local item
-    for index, itemInv in pairs(self.m_Items) do
-        if self.m_ItemData[itemInv["Objekt"]]["Handel"] == 1 then
-            item = self.m_MyItemsGrid:addItem(itemInv["Objekt"], itemInv["Menge"])
-            item.onLeftClick = function()
-                self.m_SelectedItem = itemInv["Objekt"]
-                self.m_SelectedItemAmount = itemInv["Menge"]
-                self.m_ButtonTrade:setEnabled(true)
-                self.m_Preview:setImage("files/images/Inventory/items/"..self.m_ItemData[itemInv["Objekt"]]["Icon"])
-                self.m_LabelDescription:setText(self.m_ItemData[itemInv["Objekt"]]["Info"])
-                self:checkAmount()
-            end
+	if self.m_Items then
+		for index, itemInv in pairs(self.m_Items) do
+			if self.m_ItemData then
+				if self.m_ItemData[itemInv["Objekt"]]["Handel"] == 1 then
+					item = self.m_MyItemsGrid:addItem(itemInv["Objekt"], itemInv["Menge"])
+					item.onLeftClick = function()
+						self.m_SelectedItem = itemInv["Objekt"]
+						self.m_SelectedItemAmount = itemInv["Menge"]
+						self.m_ButtonTrade:setEnabled(true)
+						self.m_Preview:setImage("files/images/Inventory/items/"..self.m_ItemData[itemInv["Objekt"]]["Icon"])
+						self.m_LabelDescription:setText(self.m_ItemData[itemInv["Objekt"]]["Info"])
+						self:checkAmount()
+					end
+				end
+			end
         end
     end
-
 end
 
 function TradeGUI:checkAmount(text)

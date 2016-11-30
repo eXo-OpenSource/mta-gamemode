@@ -327,6 +327,9 @@ function CompanyManager:Event_changeSkin()
 end
 
 function CompanyManager:Event_toggleDuty()
+	if getPedOccupiedVehicle(client) then 
+		return client:sendError("Steige erst aus dem Fahrzeug aus!")
+	end
 	local company = client:getCompany()
 	if company then
 		if client:isCompanyDuty() then

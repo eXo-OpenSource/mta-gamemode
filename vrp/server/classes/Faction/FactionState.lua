@@ -570,6 +570,9 @@ function FactionState:Event_FactionRearm()
 end
 
 function FactionState:Event_toggleDuty()
+	if getPedOccupiedVehicle(client) then 
+		return client:sendError("Steige erst aus dem Fahrzeug aus!")
+	end
 	local faction = client:getFaction()
 	if faction:isStateFaction() then
 		if client:isFactionDuty() then
