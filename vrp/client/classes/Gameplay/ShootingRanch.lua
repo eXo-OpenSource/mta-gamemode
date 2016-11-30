@@ -3,7 +3,7 @@ inherit(Singleton, ShootingRanch)
 
 addRemoteEvents{"startClientShootingRanch", "stopClientShootingRanch", "showShootingRanchResult"}
 
-function ShootingRanch:constructor()
+function ShootingRanch:constructor( time )
 	GUIForm.constructor(self, screenWidth-220, screenHeight/2-100/2, 180, 200, false)
 
 	self.m_Background = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(0,0,0,150), self)
@@ -12,7 +12,7 @@ function ShootingRanch:constructor()
 	self.m_Hits = GUILabel:new(5, 30, self.m_Width-10, 25, _"Bitte schieße auf die Ziele!", self)
 	self.m_Time = GUILabel:new(5, 60, self.m_Width-10, 25, "", self)
 	self.m_Accuracy = GUILabel:new(5, 90, self.m_Width-10, 25, "", self)
-
+	self.m_TimeMax = time
 	self.m_Timer = setTimer(bind(self.updateLabels, self), 500, 0)
 
 	self.m_WeaponFireBind = bind(self.onWeaponFire, self)
@@ -28,11 +28,11 @@ end
 function ShootingRanch:updateLabels()
 	if getElementData(localPlayer, "ShootingRanch:Data") then
 		local data = getElementData(localPlayer, "ShootingRanch:Data")
-		local time = getRealTime().timestamp - data["StartTime"]
+		self.m_TimeMax = self.m_TimeMax - 0.5
 		local acc =  data["Hits"]*100/(data["StartMuni"] - localPlayer:getTotalAmmo())
 
 		self.m_Hits:setText(_("Treffer: %d/%d", data["Hits"], data["TargetHits"]))
-		self.m_Time:setText(_("Zeit: %d/%d", time, data["Time"]))
+		self.m_Time:setText(_("Zeit: %d/%d", math.floor(self.m_TimeMax), data["Time"]))
 		self.m_Accuracy:setText(_("Genauigkeit: %d/%d", acc, data["TargetAccuracy"]))
 	end
 end
@@ -48,8 +48,8 @@ function ShootingRanch:onWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hitZ, 
 end
 
 
-addEventHandler("startClientShootingRanch", root, function()
-	ShootingRanch:new()
+addEventHandler("startClientShootingRanch", root, function(time)
+	ShootingRanch:new(time)
 end)
 
 addEventHandler("stopClientShootingRanch", root, function()
