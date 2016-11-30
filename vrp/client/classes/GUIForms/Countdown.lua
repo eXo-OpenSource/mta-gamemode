@@ -28,6 +28,9 @@ end
 
 function Countdown:updateTime()
 	self.m_Seconds = self.m_Seconds - 1
+	if self.m_TickEvent then
+		self.m_TickEvent()
+	end
 	local mins = string.format("%02.f", math.floor(self.m_Seconds/60)) or "0";
 	local secs = string.format("%02.f", math.floor(self.m_Seconds - mins *60)) or "0";
 
@@ -38,6 +41,10 @@ function Countdown:updateTime()
 		self:stopCountdown()
 	end
 
+end
+
+function Countdown:addTickEvent(callBack)
+	self.m_TickEvent = callBack()
 end
 
 function Countdown:stopCountdown()
