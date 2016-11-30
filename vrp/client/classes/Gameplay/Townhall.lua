@@ -71,6 +71,27 @@ function Townhall:constructor()
 	itemSpawnerPed2.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed2
 	
+	
+	--// WT PED AREA
+	local itemSpawnerPed3 = Ped.create(267, Vector3(117.39, 1883.09, 17.88))
+	itemSpawnerPed3:setRotation(Vector3(0, 0, 0))
+	itemSpawnerPed3.Name = _"Ausrüstungsfahrzeug"
+	itemSpawnerPed3.Description = _"Hier startet der Waffentruck!"
+	itemSpawnerPed3.Type = 8
+	itemSpawnerPed3.Func = function() end
+	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed3
+	
+	
+	--// WT PED SF
+	local itemSpawnerPed4 = Ped.create(307, Vector3(-1869.94, 1422.34, 7.18))
+	itemSpawnerPed4:setRotation(Vector3(0, 0, 220))
+	itemSpawnerPed4.Name = _"Illegaler Waffentruck"
+	itemSpawnerPed4.Description = _"Hier startet der Waffentruck!"
+	itemSpawnerPed4.Type = 9
+	itemSpawnerPed4.Func = function() end
+	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed4
+	
+	
 	-- Initialize
 	self:initalizePeds()
 	

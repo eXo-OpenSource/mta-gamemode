@@ -82,7 +82,7 @@ function FactionWTLoadGUI:addWeaponToGUI(weaponID,Waffen,Munition)
 		self.m_WeaponsBuyMunition[weaponID] = GUIButton:new(25+self.m_WaffenRow*125, 195+self.m_WaffenColumn*200, 105, 20,"+Magazin ("..magazinePrice.."$)", self)
 		self.m_WeaponsBuyMunition[weaponID]:setBackgroundColor(Color.Blue):setFontSize(1)
 		self.m_WeaponsBuyMunition[weaponID].onLeftClick = bind(self.addItemToCart,self,"munition",weaponID)
-		self.m_WeaponsMunition[weaponID] = GUILabel:new(25+self.m_WaffenRow*125, 150+self.m_WaffenColumn*200, 105, 20, "Mag.: "..Munition.."/"..maxMagazine, self.m_Window)
+		self.m_WeaponsMunition[weaponID] = GUILabel:new(25+self.m_WaffenRow*125, 150+self.m_WaffenColumn*200, 105, 20, "Magazine: "..Munition.."/"..maxMagazine, self.m_Window):setFontSize(0.8)
 		self.m_WeaponsMunition[weaponID]:setAlignX("center")
 
 	end
