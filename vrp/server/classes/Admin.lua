@@ -235,11 +235,9 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 
     if admin:getRank() >= ADMIN_RANK_PERMISSION[func] then
         if func == "goto" then
-            self:goToPlayer(admin, func, target:getName())
-			StatisticsLogger:getSingleton():addAdminAction( admin, "goto", target:getName())
+            self:goToPlayer(admin, func, target)
         elseif func == "gethere" then
             self:getHerePlayer(admin, func, target:getName())
-			StatisticsLogger:getSingleton():addAdminAction( admin, "gethere", target:getName())
         elseif func == "kick" or func == "rkick" then
             self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
             target:kick(admin, reason)
@@ -486,6 +484,7 @@ function Admin:goToPlayer(player,cmd,target)
 				player:setPosition(pos)
 				player:setDimension(dim)
 				player:setInterior(int)
+				StatisticsLogger:getSingleton():addAdminAction( admin, "goto", target:getName())
 			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
@@ -508,6 +507,7 @@ function Admin:getHerePlayer(player, cmd, target)
 				target:setPosition(pos)
 				target:setDimension(dim)
 				target:setInterior(int)
+				StatisticsLogger:getSingleton():addAdminAction( admin, "gethere", target:getName())
 			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
