@@ -24,7 +24,7 @@ function FactionState:constructor()
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
-	"factionStateGivePANote", "factionStateTakeSpeedCam"}
+	"factionStateGivePANote", "factionStateTakeSpeedCam","factionStatePutSpeedCam"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -49,7 +49,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateDeclineShowLicense", root, bind(self.Event_declineShowLicense, self))
 	addEventHandler("factionStateGivePANote", root, bind(self.Event_givePANote, self))
 	addEventHandler("factionStateTakeSpeedCam", root, bind(self.Event_takeSpeedCam, self))
-
+	addEventHandler("factionStatePutSpeedCam", root, bind(self.Event_putSpeedCam, self))
 	-- Prepare the Area51
 	self:createDefendActors(
 		{
@@ -776,6 +776,29 @@ function FactionState:Event_takeSpeedCam()
 					client:sendSuccess(_("Du hast einen Blitzer aus dem Fahrzeug genommen!", client))
 				else
 					client:sendError(_("Du hast bereits einen Blitzer im Inventar!", client))
+
+				end
+			else
+				client:sendError(_("Du bist nicht berechtig Blitzer zu verwenden!", client))
+			end
+		else
+			client:sendError(_("Du bist nicht im Dienst!", client))
+		end
+	else
+		client:sendError(_("Du bist nicht im SAPD!", client))
+	end
+end
+
+function FactionState:Event_putSpeedCam()
+	local faction = client:getFaction()
+	if faction and faction:getId() == 1 then
+		if client:isFactionDuty() then
+			if faction:getPlayerRank(client) > 3 then
+				if client:getInventory():getItemAmount("Blitzer") > 0 then
+					client:getInventory():removeItem("Blitzer",1)
+					client:sendSuccess(_("Du hast einen Blitzer ins Fahrzeug gelegt!", client))
+				else
+					client:sendError(_("Du hast keinen Blitzer im Inventar!", client))
 
 				end
 			else
