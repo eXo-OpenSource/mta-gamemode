@@ -19,7 +19,6 @@ function FactionState:constructor()
 			self:loadLSPD(1)
 			self:loadFBI(2)
 			self:loadArmy(3)
-			self:loadMedic( 4 )
 		end
 	)
 
@@ -150,11 +149,6 @@ function FactionState:loadArmy(factionId)
 	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
 end
 
-function FactionState:loadMedic( factionId )
-	self:createDutyPickup(1760.72, -1744.20, 6) -- garage
-	self:createDutyPickup(1721.04, -1752.75, 13)
-
-end
 function FactionState:countPlayers()
 	local count = #self:getOnlinePlayers()
 	return count

@@ -10,7 +10,9 @@ addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "f
 
 function FactionRescue:constructor()
 	-- Duty Pickup
-	self:createDutyPickup(1184.31, -1391.28, 6.28, 0)
+	self:createDutyPickup(1721.06, -1752.76, 13.55, 0) -- Base
+	self:createDutyPickup(1760.72, -1744.20, 6, 0) -- Garage
+
 
 	self.m_Skins = {}
 	self.m_Skins["medic"] = {70, 71, 274, 275, 276}
