@@ -337,7 +337,7 @@ end
 function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
-	if source:hasKey(client) or player:getRank() >= RANK.Moderator then
+	if source:hasKey(client) or source:getRank() >= RANK.Moderator then
 		if source:isInGarage() then
 			source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
 			client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
