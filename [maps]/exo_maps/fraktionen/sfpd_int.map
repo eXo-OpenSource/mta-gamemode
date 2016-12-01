@@ -1,7 +1,7 @@
 <map edf:definitions="editor_main">
 	<object id="object (lift_dr) (1)" dimension="0" interior="10" model="3051" posX="213.63087463379" posY="120.5499420166" posZ="1003.5720825195" rotX="0" rotY="0" rotZ="46.299987792969" />
     <object id="object (lift_dr) (2)" dimension="0" interior="10" model="3051" posX="213.63191223145" posY="119.34184265137" posZ="1003.5720825195" rotX="0" rotY="0" rotZ="46.499633789063" />
-    <object id="object (CJ_SPRUNK1) (1)" dimension="0" interior="10" model="1775" posX="240.31813049316" posY="115.2924041748" posZ="1003.3157958984" rotX="0" rotY="0" rotZ="90" />	
+    <object id="object (CJ_SPRUNK1) (1)" dimension="0" interior="10" model="1775" posX="240.31813049316" posY="115.2924041748" posZ="1003.3157958984" rotX="0" rotY="0" rotZ="90" />
 	<object id="object (sec_keypad) (1)" dimension="0" interior="10" model="2886" posX="232.68119812012" posY="119.375" posZ="1010.8142089844" rotX="0" rotY="0" rotZ="0" />
 	<object id="object (kb_couch02) (1)" dimension="0" interior="10" model="1703" posX="228.1905670166" posY="127.86888122559" posZ="1009.21875" rotX="0" rotY="0" rotZ="0" />
 	<object id="object (propashtray1) (1)" dimension="0" interior="10" model="1665" posX="228.29745483398" posY="125.06440734863" posZ="1010.1512451172" rotX="0" rotY="0" rotZ="0" />
@@ -37,11 +37,7 @@
 	<object id="object (PC_1) (2)" doublesided="false" model="2190" interior="2" dimension="0" posX="200.30732727051" posY="168.04348754883" posZ="1002.8935546875" rotX="0" rotY="0" rotZ="270" />
     <object id="object (PC_1) (3)" doublesided="false" model="2190" interior="2" dimension="0" posX="200.03273010254" posY="167.86624145508" posZ="1002.8935546875" rotX="0" rotY="0" rotZ="221.99450683594" />
     <object id="object (PC_1) (4)" doublesided="false" model="2190" interior="2" dimension="0" posX="199.7806854248" posY="167.92646789551" posZ="1002.8935546875" rotX="0" rotY="0" rotZ="185.98974609375" />
-	<object id="object (lhouse_barrier3) (2)" doublesided="false" model="997" interior="0" dimension="0" posX="1544.5999755859" posY="-1636.6999511719" posZ="12.699999809265" rotX="0" rotY="0" rotZ="90"></object>
-    <object id="object (bar_barrier16) (1)" doublesided="false" model="995" interior="0" dimension="0" posX="1544.5999755859" posY="-1622.5999755859" posZ="13.300000190735" rotX="90" rotY="0" rotZ="90"></object>
-    <object id="object (Gen_doorEXT02) (1)" doublesided="false" model="1497" interior="0" dimension="0" posX="1564.0999755859" posY="-1667.3000488281" posZ="27.39999961853" rotX="0" rotY="0" rotZ="0"></object>
-
-	 <object id="object (Gen_doorINT01) (2)" interior="10" collisions="true" alpha="255" doublesided="false" model="1491" scale="1" dimension="0" posX="235.89999389648" posY="116" posZ="1002.200012207" rotX="0" rotY="0" rotZ="0"></object>
+	<object id="object (Gen_doorINT01) (2)" interior="10" collisions="true" alpha="255" doublesided="false" model="1491" scale="1" dimension="0" posX="235.89999389648" posY="116" posZ="1002.200012207" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (Gen_doorINT01) (3)" interior="10" collisions="true" alpha="255" doublesided="false" model="1491" scale="1" dimension="0" posX="238.89999389648" posY="116" posZ="1002.200012207" rotX="0" rotY="0" rotZ="179"></object>
     <object id="object (Gen_doorINT01) (4)" interior="10" collisions="true" alpha="255" doublesided="false" model="1491" scale="1" dimension="0" posX="233.10000610352" posY="119.19999694824" posZ="1002.200012207" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (Gen_doorINT01) (6)" interior="10" collisions="true" alpha="255" doublesided="false" model="1491" scale="1" dimension="0" posX="226.60000610352" posY="116" posZ="1002.200012207" rotX="0" rotY="0" rotZ="179.99475097656"></object>
