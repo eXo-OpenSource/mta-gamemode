@@ -782,7 +782,7 @@
 	<vrpfile src="files/images/Other/TreasureRadarBlip.png"/>
 	<vrpfile src="files/images/Other/RedGreenRed.png"/>
 	<vrpfile src="files/images/Other/focus.png"/>
-	
+
 	<vrpfile src="files/images/Minigames/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Minigames/SniperGame.png"/>
 	<vrpfile src="files/images/Minigames/SideSwipe.png"/>
@@ -933,6 +933,7 @@
 	<vrpfile src="files/images/Nametag/w1.png"/>
 	<vrpfile src="files/images/Nametag/w2.png"/>
 	<vrpfile src="files/images/Nametag/w3.png"/>
+	<vrpfile src="files/images/Nametag/w4.png"/>
 	<vrpfile src="files/images/Nametag/w5.png"/>
 	<vrpfile src="files/images/Nametag/w6.png"/>
 	<vrpfile src="files/images/Nametag/chat.png"/>
