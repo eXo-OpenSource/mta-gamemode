@@ -8,19 +8,19 @@ function LoginGUI:constructor()
 	self.usePasswordHash = false
 
 	GUIForm.constructor(self, sw*0.2, sh*0.2, sw*0.6, sh*0.6)
-	self.m_LoginButton 		= VRPButton:new(0, 0, sw*0.6/2, sh*0.6*0.1, "Login", false, self)
-	self.m_RegisterButton 	= VRPButton:new(sw*0.6/2, 0, sw*0.6/2, sh*0.6*0.1, "Registrieren", false, self)
+	self.m_LoginButton 		= VRPButton:new(0, 0, sw*0.6/2, sh*0.6*0.1, "Login", false, self):setColor(tocolor(0x07, 0x07, 0x07))
+	self.m_RegisterButton 	= VRPButton:new(sw*0.6/2, 0, sw*0.6/2, sh*0.6*0.1, "Registrieren", false, self):setColor(tocolor(0x07, 0x07, 0x07))
 --	self.m_GuestButton 		= VRPButton:new(sw*0.6/3*2, 0, sw*0.6/3, sh*0.6*0.1, "Als Gast spielen", false, self)
 
-	self.m_NewsTab 			= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.25, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
-	self.m_NewsTabBar		= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.010, sh*0.6-sh*0.6*0.01, tocolor(230, 230, 230, 200), self)
+	self.m_NewsTab 			= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.25, sh*0.6-sh*0.6*0.01, tocolor(30, 50, 50, 128), self)
+	self.m_NewsTabBar		= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.010, sh*0.6-sh*0.6*0.01, tocolor(50, 70, 70, 128), self)
 							  GUILabel:new(sw*0.01, sh*0.01, self.m_Width/0.02, self.m_Height*0.2, "News:", self.m_NewsTab):setFont(VRPFont(sh*0.06)):setColor(Color.LightBlue)
 	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
 		self.m_Width/0.02, self.m_Height*0.6,
 		[[Hier ist Platz für
 		aktuelle News!]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
 
-	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(0, 0, 0, 128), self)
+	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(30, 50, 50, 128), self)
 	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
 	self.m_LoginTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.1, sh*0.03, "Benutzername", self.m_LoginTab) -- 1.75
 	self.m_LoginEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.54, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
