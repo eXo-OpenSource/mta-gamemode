@@ -126,6 +126,7 @@ function PublicTransport:endTaxiDrive(customer)
 		local driver = self.m_TaxiCustomer[customer]["driver"]
 		local price = self.m_TaxiCustomer[customer]["price"]
 		local vehicle = self.m_TaxiCustomer[customer]["vehicle"]
+		if price > customer:getMoney() then price = customer:getMoney() end
 		customer:takeMoney(price, "Public Transport Taxi")
 		driver:giveMoney(price, "Public Transport Taxi")
 		customer:sendInfo(_("Du bist aus dem Taxi ausgestiegen! Die Fahrt hat dich %d$ gekostet!", customer, price))
@@ -146,7 +147,6 @@ function PublicTransport:updateTaxometer(customer)
 		customer:removeFromVehicle()
 		self:endTaxiDrive(customer)
 	end
-	triggerClientEvent(customer, "syncTaxoMeter", customer, self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
 
 	self:updateDriverTaxometer(self.m_TaxiCustomer[customer]["vehicle"], self.m_TaxiCustomer[customer]["driver"])
 end
