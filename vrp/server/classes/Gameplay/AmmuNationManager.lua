@@ -57,6 +57,11 @@ function AmmuNationManager:getPlayerWeapons(player)
 end
 
 function AmmuNationManager:onAmmunationAppOrder(weaponTable)
+	if client:getInterior() > 0 or client:getDimension() > 0 then
+		client:sendError(_("Du kannst hier nicht bestellen!",client))
+		return
+	end
+
 	local totalAmount = 0
 	local canBuyWeapons = true
 	for weaponID,v in pairs(weaponTable) do
