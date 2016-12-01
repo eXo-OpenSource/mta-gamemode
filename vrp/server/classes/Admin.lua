@@ -480,11 +480,12 @@ function Admin:goToPlayer(player,cmd,target)
                 local dim,int = target:getDimension(), target:getInterior()
 				local pos = target:getPosition()
 				pos.x = pos.x + 0.01
+				local player2 = player
 				if player:isInVehicle() then player = player:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				player:setPosition(pos)
 				player:setDimension(dim)
 				player:setInterior(int)
-				StatisticsLogger:getSingleton():addAdminAction( player, "goto", target:getName())
+				StatisticsLogger:getSingleton():addAdminAction( player2, "goto", target:getName())
 			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
@@ -503,11 +504,12 @@ function Admin:getHerePlayer(player, cmd, target)
                 local dim,int = player:getDimension(), player:getInterior()
 				local pos = player:getPosition()
 				pos.x = pos.x + 0.1
+				local target2 = target
 				if target:isInVehicle() then target = target:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				target:setPosition(pos)
 				target:setDimension(dim)
 				target:setInterior(int)
-				StatisticsLogger:getSingleton():addAdminAction( player, "gethere", target:getName())
+				StatisticsLogger:getSingleton():addAdminAction( player, "gethere", target2:getName())
 			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
