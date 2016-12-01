@@ -99,7 +99,7 @@ function ItemSpeedCam:isCollectAllowed(player, worlditem)
 		if player:getInventory():getFreePlacesForItem("Blitzer") >= 1 then
 			return true
 		else
-			client:sendError(_("Du hast bereits einen Blitzer im Inventar!", client))
+			client:sendError(_("Du hast keinen Platz im Inventar!", client))
 		end
 	end
 	return false
