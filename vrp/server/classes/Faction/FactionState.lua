@@ -570,7 +570,7 @@ function FactionState:Event_FactionRearm()
 end
 
 function FactionState:Event_toggleDuty()
-	if getPedOccupiedVehicle(client) then 
+	if getPedOccupiedVehicle(client) then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
 	end
 	local faction = client:getFaction()
@@ -833,7 +833,7 @@ function FactionState:Event_takeWeapons(target)
 		if client:isFactionDuty() then
 			client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
 			target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
-			client:takeAllWeapons()
+			takeAllWeapons(client)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
