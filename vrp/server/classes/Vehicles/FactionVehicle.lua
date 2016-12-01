@@ -181,7 +181,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 	if FACTION_TRUNK_MAX_ITEMS[itemName] then
 		if FACTION_TRUNK_MAX_ITEMS[itemName] >= self.m_FactionTrunk[itemName]+amount then
 			if inventory then
-				if not player:getInventory():getItemAmount(itemName) >= amount then
+				if player:getInventory():getItemAmount(itemName) < amount then
 					player:sendShortMessage(_("Du hast keine %d Stk. von diesem Item dabei! (%s)", player, amount, itemName))
 					return
 				end
