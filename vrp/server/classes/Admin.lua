@@ -484,7 +484,7 @@ function Admin:goToPlayer(player,cmd,target)
 				player:setPosition(pos)
 				player:setDimension(dim)
 				player:setInterior(int)
-				StatisticsLogger:getSingleton():addAdminAction( admin, "goto", target:getName())
+				StatisticsLogger:getSingleton():addAdminAction( player, "goto", target:getName())
 			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))
@@ -507,7 +507,7 @@ function Admin:getHerePlayer(player, cmd, target)
 				target:setPosition(pos)
 				target:setDimension(dim)
 				target:setInterior(int)
-				StatisticsLogger:getSingleton():addAdminAction( admin, "gethere", target:getName())
+				StatisticsLogger:getSingleton():addAdminAction( player, "gethere", target:getName())
 			end
 		else
 			player:sendError(_("Kein Ziel eingegeben!", player))

@@ -283,7 +283,9 @@ function PermanentVehicle:respawn(garageOnly)
   end
 
   if garageOnly then
-	owner:sendShortMessage(_("Du hast keinen Platz in deiner Garage!", owner))
+	if owner then
+		owner:sendShortMessage(_("Du hast keinen Platz in deiner Garage!", owner))
+	end
 	return false
   else
 	-- Respawn at mechanic base
