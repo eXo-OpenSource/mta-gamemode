@@ -50,9 +50,6 @@ function FactionState:constructor()
 	addEventHandler("factionStateGivePANote", root, bind(self.Event_givePANote, self))
 	addEventHandler("factionStateTakeSpeedCam", root, bind(self.Event_takeSpeedCam, self))
 
-
-
-
 	-- Prepare the Area51
 	self:createDefendActors(
 		{
