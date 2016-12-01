@@ -7,7 +7,8 @@
 -- ****************************************************************************
 ItemBarricade = inherit(Item)
 
-function ItemBarricade:constructor()
+function ItemBarricade:constructor( )
+
 end
 
 function ItemBarricade:destructor()
@@ -23,8 +24,9 @@ function ItemBarricade:use(player)
 					player:sendError(_("Du musst in der Nähe der Zielposition sein!", player))
 					return
 				end
-
+				
 				local worldItem = self:place(player, position, rotation)
+				worldItem.m_Breakable = self.m_Breakable
 				player:getInventory():removeItem(self:getName(), 1)
 			end
 		)
