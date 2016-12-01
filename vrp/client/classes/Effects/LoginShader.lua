@@ -24,7 +24,7 @@ function LoginShader:update()
 		self.m_ScreenSource:update()
 
 		self.m_LoginShader:setValue("ScreenTexture", self.m_ScreenSource)
-
+		
 		dxDrawImage(0, 0, screenWidth, screenHeight, self.m_LoginShader)
 
 	end
