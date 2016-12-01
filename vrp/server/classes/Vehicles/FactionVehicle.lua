@@ -184,7 +184,7 @@ function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
 				if player:getInventory():getItemAmount(itemName) >= amount then
 					player:getInventory():removeItem(itemName, amount)
 				else
-					player:sendShortMessage(_("Du hast keine %d Stk. von diesem Item dabei! (%s)", player, amount, itemName))
+					player:sendError(_("Du hast keine %d Stk. von diesem Item dabei! (%s)", player, amount, itemName))
 					return
 				end
 			end
