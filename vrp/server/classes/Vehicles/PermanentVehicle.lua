@@ -276,14 +276,15 @@ function PermanentVehicle:respawn(garageOnly)
           end
 
           owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in deiner Garage respawnt", owner, self:getName()))
-          return
+          return true
         end
       end
     end
   end
 
   if garageOnly then
-  	owner:sendShortMessage(_("Du hast keinen Platz in deiner Garage!", owner))
+	owner:sendShortMessage(_("Du hast keinen Platz in deiner Garage!", owner))
+	return false
   else
 	-- Respawn at mechanic base
 		if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
@@ -291,7 +292,7 @@ function PermanentVehicle:respawn(garageOnly)
 			if owner and isElement(owner) then
 			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
 			end
-			return
+			return true
 		end
 
 		-- Respawn at Harbor
@@ -300,9 +301,10 @@ function PermanentVehicle:respawn(garageOnly)
 			if owner and isElement(owner) then
 			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt", owner, self:getName()))
 			end
-			return
+			return true
 		end
 	end
+	return false
 end
 
 function Vehicle:setTexture(texturePath)

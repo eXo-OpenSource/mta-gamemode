@@ -526,11 +526,12 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		removePedFromVehicle(player)
 	end
 
-	source:respawn(garageOnly)
-	if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
-		client:takeMoney(100, "Fahrzeug-Respawn")
+	if source:respawn(garageOnly) then
+		if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
+			client:takeMoney(100, "Fahrzeug-Respawn")
+		end
+		source:fix()
 	end
-	source:fix()
 
 	-- Refresh location in the self menu
 	client:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(client))
