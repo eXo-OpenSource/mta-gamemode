@@ -338,8 +338,14 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:sendShortMessage(_("%s hat %s offline für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target, duration, reason))
             local targetId = Account.getIdFromName(target)
             if targetId and targetId > 0 then
-                Ban.addBan(targetId, admin, reason, duration*60*60)
-                self:addPunishLog(admin, targetId, func, reason, duration*60*60)
+				if tonumber(duration) then
+					if type(reason) == "string" then
+						Ban.addBan(targetId, admin, reason, duration*60*60)
+						self:addPunishLog(admin, targetId, func, reason, duration*60*60)
+					else admin:sendError("Keinen Grund angegeben!")
+					end
+				else admin:sendError("Keine Dauer angegeben!")
+				end
             else
                 admin:sendError(_("Spieler nicht gefunden!", admin))
             end
