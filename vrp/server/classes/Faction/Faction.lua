@@ -190,6 +190,12 @@ function Faction:removePlayer(playerId)
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(nil)
+		if player:isFactionDuty() then
+			takeAllWeapons(player)
+			player:setDefaultSkin()
+			player.m_FactionDuty = false
+			player:setPublicSync("Faction:Duty",false)
+		end
 	end
 	unbindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)

@@ -44,6 +44,7 @@ function CustomF11Map:disable()
 end
 
 function CustomF11Map:draw()
+	local display, dim, int
 	local height = screenHeight
 	local mapPosX, mapPosY = screenWidth/2-height/2, 0
 
@@ -69,13 +70,23 @@ function CustomF11Map:draw()
 	-- Draw blips
 	if core:get("HUD", "drawBlips", true) then
 		for i, blip in pairs(Blip.Blips) do
+			display = true
 			local posX, posY = blip:getPosition()
 
 			if Blip.AttachedBlips[blip] then
-				posX, posY = getElementPosition(Blip.AttachedBlips[blip])
+				if not isElement(Blip.AttachedBlips[blip]) then Blip.AttachedBlips[blip] = nil end
+				int, dim = Blip.AttachedBlips[blip]:getInterior(), Blip.AttachedBlips[blip]:getDimension()
+				if int == 0 and dim == 0 then
+					posX, posY = getElementPosition(Blip.AttachedBlips[blip])
+				else
+					display = false
+				end
 			end
-			local mapX, mapY = CustomF11Map.worldToMapPosition(posX, posY)
-			dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, blip.m_ImagePath, 0)
+
+			if display then
+				local mapX, mapY = CustomF11Map.worldToMapPosition(posX, posY)
+				dxDrawImage(mapPosX + mapX - 9, mapPosY + mapY - 9, 18, 18, blip.m_ImagePath, 0)
+			end
 		end
 	end
 

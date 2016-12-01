@@ -268,7 +268,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 end
 
 function FactionManager:Event_factionInvitationDecline(factionId)
-	local faction = self.getFromId(factionId)
+	local faction = self:getFromId(factionId)
 	if not faction then return end
 
 	if faction:hasInvitation(client) then
@@ -386,7 +386,7 @@ function FactionManager:sendAllToClient(client)
 						if shaderInfo.shaderEnabled then
 							vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
 						end
-					else 
+					else
 						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = v.m_Decal}
 					end
 				end

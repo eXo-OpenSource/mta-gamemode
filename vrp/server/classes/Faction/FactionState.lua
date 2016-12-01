@@ -50,9 +50,6 @@ function FactionState:constructor()
 	addEventHandler("factionStateGivePANote", root, bind(self.Event_givePANote, self))
 	addEventHandler("factionStateTakeSpeedCam", root, bind(self.Event_takeSpeedCam, self))
 
-
-
-
 	-- Prepare the Area51
 	self:createDefendActors(
 		{
@@ -756,7 +753,7 @@ function FactionState:Event_givePANote(target, note)
 			if note > 0 and note <= 100 then
 				target:sendInfo(_("%s hat dir eine PA-Note von %d gegeben!", target, client:getName(), note))
 				client:sendInfo(_("Du hast %s eine PA-Note von %d gegeben!", client, target:getName(), note))
-				client:setPaNote(note)
+				target:setPaNote(note)
 				StatisticsLogger:getSingleton():addTextLog("paNote", ("%s hat %s eine PA-Note von %d gegeben!"):format(client:getName(), target:getName(), note))
 			else
 				client:sendError(_("Ungültige PA-Note!", client))
@@ -827,7 +824,7 @@ function FactionState:Event_takeWeapons(target)
 		if client:isFactionDuty() then
 			client:sendMessage(_("Du hast %s entwaffnet!", client, target:getName()), 255, 255, 0)
 			target:sendMessage(_("%s hat dich entwaffnet!", target, client:getName()), 255, 255, 0)
-			takeAllWeapons(client)
+			takeAllWeapons(target)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end

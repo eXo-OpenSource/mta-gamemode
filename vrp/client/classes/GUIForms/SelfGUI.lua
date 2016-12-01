@@ -477,7 +477,7 @@ function SelfGUI:onShow()
 	end
 end
 
-function SelfGUI:onHide() 
+function SelfGUI:onHide()
 	if localPlayer.m_SelfShader then
 		delete(localPlayer.m_SelfShader)
 	end
@@ -564,7 +564,7 @@ function SelfGUI:ShaderButton_Click()
 end
 
 function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
-	if rank and rank > 0 then
+	if rank then
 		self.m_FactionNameLabel:setText(_("%s - Rang: %d", name, rank))
 		self.m_FactionInvationLabel:setVisible(false)
 		self.m_FactionMenuButton:setVisible(true)

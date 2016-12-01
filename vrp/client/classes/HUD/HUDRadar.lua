@@ -313,19 +313,28 @@ function HUDRadar:drawBlips()
   local mat = math.matrix.three.rotate_z(math.rad(self.m_Rotation)) * math.matrix.three.scale(self.m_ImageSize/6000, -self.m_ImageSize/6000, 1) * math.matrix.three.translate(-px, -py, -pz)
   local rotLimit = math.atan2(self.m_Height, self.m_Width)
   local obj = localPlayer:getPrivateSync("isSpecting")
+  local display, dim, int
+
   if obj then
 	px, py, pz = getElementPosition(obj)
 	mapCenterX, mapCenterY = self:worldToMapPosition(posX, posY)
   end
+
   for k, blip in pairs(self.m_Blips) do
-    local blipX, blipY = blip:getPosition()
+    display = true
+	local blipX, blipY = blip:getPosition()
 
     if Blip.AttachedBlips[blip] then
 		if not isElement(Blip.AttachedBlips[blip]) then Blip.AttachedBlips[blip] = nil end
-     	blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
-    end
+		int, dim = Blip.AttachedBlips[blip]:getInterior(), Blip.AttachedBlips[blip]:getDimension()
+		if int == 0 and dim == 0 then
+			blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
+		else
+			display = false
+		end
+	end
 
-    if blipX then -- TODO: hotfix for #236
+    if blipX and display == true then -- TODO: hotfix for #236
 
       if getDistanceBetweenPoints2D(px, py, blipX, blipY) < blip:getStreamDistance() then
         -- Do transformation

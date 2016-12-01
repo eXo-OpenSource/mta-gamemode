@@ -203,7 +203,7 @@ function Company:sendMessage(text, r, g, b, ...)
 end
 
 function Company:invitePlayer(player)
-  client:sendShortMessage(("Du hast %s erfolgreich in deine Firma eingeladen."):format(getPlayerName(player)))
+  client:sendShortMessage(("Du hast %s erfolgreich in dein Unternehmen eingeladen."):format(getPlayerName(player)))
 	player:triggerEvent("companyInvitationRetrieve", self:getId(), self:getName())
 
 	self.m_Invitations[player] = true
