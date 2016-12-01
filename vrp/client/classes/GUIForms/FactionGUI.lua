@@ -83,7 +83,17 @@ function FactionGUI:destructor()
 end
 
 function FactionGUI:onShow()
+	if localPlayer.m_SelfShader then
+		delete(localPlayer.m_SelfShader)
+	end
+	localPlayer.m_SelfShader =  RadialShader:new()
 	triggerServerEvent("factionRequestInfo", root)
+end
+
+function FactionGUI:onHide() 
+	if localPlayer.m_SelfShader then
+		delete(localPlayer.m_SelfShader)
+	end
 end
 
 function FactionGUI:TabPanel_TabChanged(tabId)
