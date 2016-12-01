@@ -15,7 +15,7 @@ function IDCardGUI:constructor(player)
 
 	GUIForm.constructor(self, screenWidth/2-400/2, screenHeight/2-250/2, 400, 250)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Ausweis/Führerschein", true, true, self)
-	GUIWebView:new(10, 10, 140, 160, "http://exo-reallife.de/ingame/skinPreview/skinPreviewHead.php?skin="..player:getModel(), true, self)
+	GUIWebView:new(10, 30, 140, 160, "http://exo-reallife.de/ingame/skinPreview/skinPreviewHead.php?skin="..player:getModel(), true, self)
 
 	GUILabel:new(200, 40, 160, 30, player:getName(), self)
 
