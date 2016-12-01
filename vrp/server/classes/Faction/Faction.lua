@@ -177,7 +177,7 @@ function Faction:addPlayer(playerId, rank)
 			self:changeSkin(player)
 		end
 	end
-
+	bindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = ?, FactionRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)
 end
 
@@ -191,7 +191,7 @@ function Faction:removePlayer(playerId)
 	if player then
 		player:setFaction(nil)
 	end
-
+	unbindKey(player, "y", "down", "chatbox", "Fraktion")
 	sql:queryExec("UPDATE ??_character SET FactionId = 0, FactionRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 end
 
