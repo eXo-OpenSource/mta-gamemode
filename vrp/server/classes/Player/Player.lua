@@ -94,9 +94,9 @@ end
 function Player:join()
 	Ban.checkBan(self)
 	Warn.checkWarn(self)
-
-	setCameraMatrix(self,445.12222, -1886.34387, 22.368610,369.74289, -2036.1087, 7.67188) -- Untill new Login Scenes
+	--setCameraMatrix(self,445.12222, -1886.34387, 22.368610,369.74289, -2036.1087, 7.67188) -- Untill new Login Scenes
 end
+
 
 function Player:sendNews()
 	self:triggerEvent("ingamenews", Forum:getSingleton():getNews())

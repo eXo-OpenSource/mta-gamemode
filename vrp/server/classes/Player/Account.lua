@@ -72,6 +72,7 @@ function Account.login(player, username, password, pwhash)
 	end
 
 	player:loadCharacter()
+	player:triggerEvent("stopLoginCameraDrive") 
 	player:triggerEvent("Event_StartScreen")
 	StatisticsLogger:addLogin( player, username, "Login")
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
@@ -139,6 +140,7 @@ function Account.register(player, username, password, email)
 			end
 
 			player:loadCharacter()
+			player:triggerEvent("stopLoginCameraDrive") 
 			player:triggerEvent("Event_StartScreen")
 			player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
 			StatisticsLogger:addLogin( player, username, "Login")

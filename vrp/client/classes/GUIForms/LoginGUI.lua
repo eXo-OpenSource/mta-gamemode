@@ -2,6 +2,8 @@ LoginGUI = inherit(GUIForm)
 inherit(Singleton, LoginGUI)
 
 function LoginGUI:constructor()
+	triggerEvent("startLoginCameraDrive", localPlayer)
+	showChat(false)
 	local sw, sh = guiGetScreenSize()
 	self.usePasswordHash = false
 
@@ -310,3 +312,27 @@ addEventHandler("loginsuccess", root,
 		end
 	end
 )
+
+addEvent("startLoginCameraDrive", true)
+addEventHandler("startLoginCameraDrive", localPlayer, function() 
+	local rand = math.random(1,5)
+	if rand == 1 then
+		localPlayer.m_LoginDriveObject = cameraDrive:new(1128.01, -2092.81, 75, 1400.67, -833.45, 116.82,1366.10, -935.57, 75,1400.67, -833.45, 100, 60*1000, "Linear" )
+	elseif rand == 2 then 
+		localPlayer.m_LoginDriveObject = cameraDrive:new(1620.98, -1539.92, 53.34, 1477.86, -1757.46, 13.55,1401.78, -1735.55, 49.53,1477.86, -1757.46, 13.55, 120*1000, "Linear" )
+	else
+		localPlayer.m_LoginDriveObject = cameraDrive:new(414.43, -1841.55, 56.27, 418.78, -1634.52, 56.27,987.92, -1917.45, 56.27,978.85, -1787.63, 56.27, 120*1000, "Linear" )
+	end
+	localPlayer.m_LoginShader =  LoginShader:new()
+end)
+
+addEvent("stopLoginCameraDrive",true)
+addEventHandler("stopLoginCameraDrive", localPlayer, function() 
+	if localPlayer.m_LoginDriveObject then 
+		delete(localPlayer.m_LoginDriveObject)
+		showChat(true)
+	end
+	if localPlayer.m_LoginShader then 
+		delete(localPlayer.m_LoginShader)
+	end
+end)

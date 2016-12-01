@@ -620,6 +620,7 @@
 
 	<!-- Effects -->
 	<script src="client/classes/Effects/FadeOutShader.lua" type="client"/>
+	<script src="client/classes/Effects/LoginShader.lua" type="client"/>
 	<script src="client/classes/Effects/AnimateOutInBack.lua" type="client"/>
 
 	<!-- Gameplay -->
@@ -1267,7 +1268,8 @@
 	<vrpfile src="files/shader/drug-heroinshader.fx"/>
 	<vrpfile src="files/shader/drug-shroomshader.fx"/>
 	<vrpfile src="files/shader/drug-cocaineshader.fx"/>
-
+	<vrpfile src="files/shader/loginShader.fx"/>
+	
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
 	<file src="files/fonts/Segoe/segoeui.ttf"/>
