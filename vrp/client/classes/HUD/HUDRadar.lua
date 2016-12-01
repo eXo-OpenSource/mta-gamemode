@@ -383,9 +383,12 @@ function HUDRadar:drawBlips()
 end
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
-  local mapX = worldX / ( 6000/self.m_ImageSize) + self.m_ImageSize/2
-  local mapY = worldY / (-6000/self.m_ImageSize) + self.m_ImageSize/2
-  return mapX, mapY
+  if worldX and worldY then
+	local mapX = worldX / ( 6000/self.m_ImageSize) + self.m_ImageSize/2
+	local mapY = worldY / (-6000/self.m_ImageSize) + self.m_ImageSize/2
+	return mapX, mapY
+  end
+  return 0,0
 end
 
 function HUDRadar:setZoom(zoom)
