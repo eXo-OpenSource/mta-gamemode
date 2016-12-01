@@ -236,10 +236,10 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
     if admin:getRank() >= ADMIN_RANK_PERMISSION[func] then
         if func == "goto" then
             self:goToPlayer(admin, func, target:getName())
-			StatisticsLogger:getSingleton():addAdminAction( admin, "goto", target)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "goto", target:getName())
         elseif func == "gethere" then
             self:getHerePlayer(admin, func, target:getName())
-			StatisticsLogger:getSingleton():addAdminAction( admin, "gethere", target)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "gethere", target:getName())
         elseif func == "kick" or func == "rkick" then
             self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
             target:kick(admin, reason)
