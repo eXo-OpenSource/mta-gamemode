@@ -33,13 +33,15 @@ function PlantGUI:constructor(id, type, lastGrow, size, maxSize, item, itemsPerS
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, type, true, false, self)
 	local ts = getRealTime().timestamp
-	local nextGrow = math.floor((ts-lastGrow)/60)
+
 	self.m_Progress = GUIProgressBar:new(10, 40, self.m_Width-20, 25, self)
 	self.m_Progress:setProgress(size/maxSize*100)
 	self.m_Progress:setForegroundColor(tocolor(50,200,255))
 	self.m_Progress:setBackgroundColor(tocolor(180,240,255))
 	GUILabel:new(10, 40, self.m_Width-20, 25, _("Größe: %d/%d", size, maxSize), self):setAlignX("center")
 	if size < maxSize then
+		local nextGrow = lastGrow+60*60
+		nextGrow = math.floor((nextGrow-ts)/60)
 		GUILabel:new(10, 70, self.m_Width-20, 20, _("Nächster Wachstum in ~%d Minuten", nextGrow), self):setAlignX("center")
 	end
 	GUILabel:new(10, 90, self.m_Width-20, 20, _("Derzeitige Ernte: %d/%d %s", size*itemsPerSize, maxSize*itemsPerSize, item), self):setAlignX("center")
