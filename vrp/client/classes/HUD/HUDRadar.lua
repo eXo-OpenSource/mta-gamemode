@@ -66,9 +66,11 @@ function HUDRadar:constructor()
 			self.m_NoRadarColShapes = {
 				createColSphere(164.21, 359.71, 7983.66, 200)
 			}
+			self.m_HitColFunc = bind(self.Event_colEnter,self)
+			self.m_LeaveColFunc = bind(self.Event_colLeave,self)
 			for index, col in pairs(self.m_NoRadarColShapes) do
-				addEventHandler("onClientColShapeHit", col, bind(self.hide, self))
-				addEventHandler("onClientColShapeLeave", col, bind(self.show, self))
+				addEventHandler("onClientColShapeHit", col, self.m_HitColFunc)
+				addEventHandler("onClientColShapeLeave", col,  self.m_LeaveColFunc)
 			end
 		else
 			outputConsole("Warning@HUDRadar - m_RenderTarget was not created!")
@@ -77,6 +79,22 @@ function HUDRadar:constructor()
 	else
 		outputConsole("Warning@HUDRadar - m_Texture was not created!")
 		outputDebugString("Warning@HUDRadar - m_Texture was not created!",0,200,0,0)
+	end
+end
+
+function HUDRadar:Event_colEnter( elem, dim)
+	if elem == localPlayer then 
+		if dim then
+			self:hide()
+		end
+	end
+end
+
+function HUDRadar:Event_colLeave(elem, dim)
+	if elem == localPlayer then 
+		if dim then
+			self:show()
+		end
 	end
 end
 
