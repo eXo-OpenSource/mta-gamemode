@@ -275,3 +275,15 @@ end
 function Inventory:onHide()
 	showCursor(false)
 end
+
+function Inventory:getItemAmount(item)
+	triggerServerEvent("refreshInventory", localPlayer)
+	for index, itemInv in pairs(self.m_Items) do
+		if self.m_ItemData then
+			if itemInv["Objekt"] == item then
+				return itemInv["Menge"]
+			end
+		end
+	end
+	return 0
+end
