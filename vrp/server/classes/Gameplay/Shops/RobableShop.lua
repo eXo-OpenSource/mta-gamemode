@@ -196,7 +196,7 @@ function RobableShop:removeBag(player)
 end
 
 function RobableShop:checkBagAllowed(player)
-  if player:getGroup() == self.m_Gang or (player:getFaction() and player:getFaction():isStateFaction()) then
+  if player:getGroup() == self.m_Gang or (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
     return true
   end
   return false
