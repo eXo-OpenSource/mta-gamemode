@@ -23,7 +23,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 
 	local id, place
 
-	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE Name = ?", sql:getPrefix(), self.m_Owner:getName())
+	local result = sql:queryFetch("SELECT * FROM ??_inventory_slots WHERE PlayerId = ?", sql:getPrefix(), self.m_Owner:getId())
 	for i, row in ipairs(result) do
 		if tonumber(row["Menge"]) > 0 then
 			id = tonumber(row["id"])
@@ -167,7 +167,7 @@ function Inventory:deleteItem(id)
 end
 
 function Inventory:insertItem(amount, item, place, bag)
-	sql:queryExec("INSERT INTO ??_inventory_slots (Name, Menge, Objekt, Platz, Tasche) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getName(), amount, item, place, bag ) -- ToDo add Prefix
+	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag ) -- ToDo add Prefix
 	return sql:lastInsertId()
 end
 
