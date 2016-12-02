@@ -214,7 +214,7 @@ function LocalPlayer:checkAFK()
 			removeEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
 			return
 		end
-		local afkMinutes = math.floor(self.m_AFKCheckCount*5/60)
+		local afkMinutes = self.m_AFKCheckCount*5/60
 		if afkMinutes == 7 then
 			outputChatBox ( "WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", 255, 0, 0 )
 			self:sendTrayNotification("WARNUNG: Du wirst in 5 Minuten zum AFK-Cafe befördert!", "warning", true)
