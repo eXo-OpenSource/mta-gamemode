@@ -83,31 +83,38 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
+	if getElementData(element, "StateVehicle") then
+		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+			if getElementData(element, "factionTrunk") then
+				local trunk = getElementData(element, "factionTrunk")
+				for item, amount in pairs(trunk) do
+					if amount > 0 then
+						self:addItem(_("%s nehmen", item),
+							function()
+								if self:getElement() then
+									triggerServerEvent("factionStateTakeItemFromVehicle", self:getElement(), item)
+								end
+							end
+						)
+					end
+				end
+			end
+			for item, amount in pairs(FACTION_TRUNK_MAX_ITEMS) do
+				if Inventory:getSingleton():getItemAmount(item) > 0 then
+					self:addItem(_("%s reinlegen", item),
+						function()
+							if self:getElement() then
+								triggerServerEvent("factionStatePutItemInVehicle", self:getElement(), item, 1, true)
+							end
+						end
+					)
+				end
+			end
+		end
+	end
 
-	if element:getModel() == 427 or element:getModel() == 598 or element:getModel() == 596 then
-		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
-			self:addItem(_"Blitzer nehmen",
-					function()
-						if self:getElement() then
-							triggerServerEvent("factionStateTakeSpeedCam", localPlayer)
-						end
-					end
-				)
-		end
-	end
-	
-	
-	if element:getModel() == 427 or element:getModel() == 598 or element:getModel() == 596 then
-		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
-			self:addItem(_"Blitzer reinlegen",
-					function()
-						if self:getElement() then
-							triggerServerEvent("factionStatePutSpeedCam", localPlayer)
-						end
-					end
-				)
-		end
-	end
+
+
 
 	if element:getVehicleType() ~= VehicleType.Trailer then
 		self:addItem(_"Fahrzeug leeren",

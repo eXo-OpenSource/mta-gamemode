@@ -21,8 +21,9 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 		setElementData(self, "OwnerName", faction:getShortName())
 	end
 	setElementData(self, "OwnerType", "faction")
+	setElementData(self, "StateVehicle", faction:isStateFaction())
 	if health then
-		if health <= 300 then 
+		if health <= 300 then
 			self:setHealth(health or 1000)
 		end
 	end
@@ -172,6 +173,49 @@ end
 function FactionVehicle:canBeModified()
   --return self:getFaction():canVehiclesBeModified()
   return false
+end
+
+function FactionVehicle:loadFactionItem(player, itemName, amount, inventory)
+	if not self.m_FactionTrunk then self.m_FactionTrunk = {} end
+	if not self.m_FactionTrunk[itemName] then self.m_FactionTrunk[itemName] = 0 end
+	if FACTION_TRUNK_MAX_ITEMS[itemName] then
+		if FACTION_TRUNK_MAX_ITEMS[itemName] >= self.m_FactionTrunk[itemName]+amount then
+			if inventory then
+				if player:getInventory():getItemAmount(itemName) >= amount then
+					player:getInventory():removeItem(itemName, amount)
+				else
+					player:sendError(_("Du hast keine %d Stk. von diesem Item dabei! (%s)", player, amount, itemName))
+					return
+				end
+			end
+
+			self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]+amount
+			player:sendShortMessage(_("Du hast %d %s in das Fahrzeug geladen!", player, amount, itemName))
+			self:setData("factionTrunk", self.m_FactionTrunk, true)
+		else
+			player:sendError(_("In dieses Fahrzeug passen maximal %d Stk. dieses Items! (%s)", player, FACTION_TRUNK_MAX_ITEMS[itemName], itemName))
+		end
+	else
+		player:sendError("Ungültiges Element!")
+	end
+end
+
+function FactionVehicle:takeFactionItem(player, itemName)
+	if self.m_FactionTrunk and self.m_FactionTrunk[itemName] then
+		if self.m_FactionTrunk[itemName] >= 1 then
+			if player:getInventory():getFreePlacesForItem(itemName) >= 1 then
+				self.m_FactionTrunk[itemName] = self.m_FactionTrunk[itemName]-1
+				player:getInventory():giveItem(itemName, 1)
+				player:sendShortMessage(_("Du hast 1 %s aus dem Fahrzeug in dein Inventar gepackt!", player, itemName))
+			else
+				player:sendError(_("Kein Platz in deinem Inventar! (%s)", player, itemName))
+			end
+		else
+			player:sendError(_("Dieses Item ist nicht mehr im Fahrzeug! (%s)", player, itemName))
+		end
+	else
+		player:sendError("Ungültiges Element!")
+	end
 end
 
 function FactionVehicle:respawn(force)

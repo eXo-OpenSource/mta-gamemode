@@ -8,9 +8,9 @@
 ItemShopGUI = inherit(GUIForm)
 inherit(Singleton, ItemShopGUI)
 
-addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI"}
+addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI", "showStateItemGUI"}
 
-function ItemShopGUI:constructor()
+function ItemShopGUI:constructor(callback)
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.5*0.5, screenHeight/2-screenHeight*0.6*0.5, screenWidth*0.5, screenHeight*0.6)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Shop", true, true, self)
@@ -27,15 +27,15 @@ function ItemShopGUI:constructor()
 	self.m_EditAmount:setNumeric(true, true)
 	self.m_EditAmount:setText("1")
 
-	self.m_ButtonBuy = VRPButton:new(self.m_Width*0.78, self.m_Height*0.9, self.m_Width*0.2, self.m_Height*0.06, _"Kaufen", true, self.m_Window):setBarColor(Color.Green)
+	self.m_ButtonBuy = VRPButton:new(self.m_Width*0.78, self.m_Height*0.9, self.m_Width*0.2, self.m_Height*0.06, _"auswählen", true, self.m_Window):setBarColor(Color.Green)
 	self.m_ButtonBuy.onLeftClick = bind(self.ButtonBuy_Click, self)
 
 	addEventHandler("refreshItemShopGUI", root, bind(self.refreshItemShopGUI, self))
-
+	self.m_CallBack = callback
 end
 
 function ItemShopGUI:refreshItemShopGUI(shopId, items)
-	self.m_Shop = shopId
+	self.m_Shop = shopId or 0
 	local item
 	local itemData = Inventory:getSingleton():getItemData()
 	if itemData then
@@ -68,12 +68,25 @@ function ItemShopGUI:ButtonBuy_Click()
 		return
 	end
 
-	triggerServerEvent("shopBuyItem", root, self.m_Shop, itemName, amount)
+	self.m_CallBack(self.m_Shop, itemName, amount)
 end
 
 addEventHandler("showItemShopGUI", root,
 	function()
 		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
-		ItemShopGUI:getSingleton():new()
+		local callback = function(shop, itemName, amount)
+			triggerServerEvent("shopBuyItem", root, shop, itemName, amount)
+		end
+		ItemShopGUI:new(callback)
+	end
+)
+
+addEventHandler("showStateItemGUI", root,
+	function()
+		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
+		local callback = function(shop, itemName, amount)
+			triggerServerEvent("factionStatePutItemInVehicle", root, itemName, amount)
+		end
+		ItemShopGUI:new(callback)
 	end
 )

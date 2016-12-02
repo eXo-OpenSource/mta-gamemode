@@ -14,6 +14,12 @@ function FactionState:constructor()
 	self:createArrestZone(255.19, 84.75, 1002.45, 6)-- PD Zellen
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 
+	self.m_Items = {
+		["Barrikade"] = 0,
+		["Nagel-Band"] = 0,
+		["Blitzer"] = 0
+	}
+
 	nextframe( -- Todo workaround
 		function ()
 			self:loadLSPD(1)
@@ -24,7 +30,7 @@ function FactionState:constructor()
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
-	"factionStateGivePANote", "factionStateTakeSpeedCam","factionStatePutSpeedCam"}
+	"factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -48,8 +54,9 @@ function FactionState:constructor()
 	addEventHandler("factionStateAcceptShowLicense", root, bind(self.Event_acceptShowLicense, self))
 	addEventHandler("factionStateDeclineShowLicense", root, bind(self.Event_declineShowLicense, self))
 	addEventHandler("factionStateGivePANote", root, bind(self.Event_givePANote, self))
-	addEventHandler("factionStateTakeSpeedCam", root, bind(self.Event_takeSpeedCam, self))
-	addEventHandler("factionStatePutSpeedCam", root, bind(self.Event_putSpeedCam, self))
+	addEventHandler("factionStatePutItemInVehicle", root, bind(self.Event_putItemInVehicle, self))
+	addEventHandler("factionStateTakeItemFromVehicle", root, bind(self.Event_takeItemFromVehicle, self))
+
 	-- Prepare the Area51
 	self:createDefendActors(
 		{
@@ -73,6 +80,8 @@ end
 function FactionState:loadLSPD(factionId)
 	self:createDutyPickup(252.6, 69.4, 1003.64, 6) -- PD Interior
 	self:createDutyPickup(1530.21, -1671.66, 6.22) -- PD Garage
+
+	self:createTakeItemsPickup(Vector3(1543.96, -1707.26, 5.89))
 
 	Blip:new("Police.png", 1552.278, -1675.725, root, 400)
 
@@ -144,6 +153,30 @@ function FactionState:loadArmy(factionId)
 	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
 	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
 	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
+end
+
+function FactionState:createTakeItemsPickup(pos)
+	local pickup = createPickup(pos, 3, 1239, 0)
+	addEventHandler("onPickupHit", pickup, function(hitElement)
+		if hitElement:getType() == "player" then
+			if hitElement.vehicle then
+				if hitElement:isFactionDuty() and hitElement:getFaction() and hitElement:getFaction():isStateFaction() == true then
+					local veh = hitElement.vehicle
+					if veh:getFaction() and veh:getFaction():isStateFaction() then
+						hitElement:triggerEvent("showStateItemGUI")
+						triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, 0, self.m_Items)
+					else
+						hitElement:sendError(_("Ungültiges Fahrzeug!", hitElement))
+					end
+				else
+					hitElement:sendError(_("Du bist nicht im Dienst!", hitElement))
+				end
+			else
+				hitElement:sendError(_("Du brauchst ein Fahrzeug zum einladen!", hitElement))
+			end
+		end
+	end)
+
 end
 
 function FactionState:countPlayers()
@@ -766,52 +799,6 @@ function FactionState:Event_givePANote(target, note)
 	end
 end
 
-function FactionState:Event_takeSpeedCam()
-	local faction = client:getFaction()
-	if faction and faction:getId() == 1 then
-		if client:isFactionDuty() then
-			if faction:getPlayerRank(client) > 3 then
-				if client:getInventory():getFreePlacesForItem("Blitzer") >= 1 then
-					client:getInventory():giveItem("Blitzer", 1)
-					client:sendSuccess(_("Du hast einen Blitzer aus dem Fahrzeug genommen!", client))
-				else
-					client:sendError(_("Du hast bereits einen Blitzer im Inventar!", client))
-
-				end
-			else
-				client:sendError(_("Du bist nicht berechtig Blitzer zu verwenden!", client))
-			end
-		else
-			client:sendError(_("Du bist nicht im Dienst!", client))
-		end
-	else
-		client:sendError(_("Du bist nicht im SAPD!", client))
-	end
-end
-
-function FactionState:Event_putSpeedCam()
-	local faction = client:getFaction()
-	if faction and faction:getId() == 1 then
-		if client:isFactionDuty() then
-			if faction:getPlayerRank(client) > 3 then
-				if client:getInventory():getItemAmount("Blitzer") > 0 then
-					client:getInventory():removeItem("Blitzer",1)
-					client:sendSuccess(_("Du hast einen Blitzer ins Fahrzeug gelegt!", client))
-				else
-					client:sendError(_("Du hast keinen Blitzer im Inventar!", client))
-
-				end
-			else
-				client:sendError(_("Du bist nicht berechtig Blitzer zu verwenden!", client))
-			end
-		else
-			client:sendError(_("Du bist nicht im Dienst!", client))
-		end
-	else
-		client:sendError(_("Du bist nicht im SAPD!", client))
-	end
-end
-
 function FactionState:Event_takeDrugs(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
@@ -851,5 +838,36 @@ function FactionState:Event_takeWeapons(target)
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
 		end
+	end
+end
+
+function FactionState:Event_putItemInVehicle(itemName, amount, inventory)
+	if client.vehicle or inventory then
+		if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() == true then
+			local veh = inventory and source or client.vehicle
+			if veh:getFaction() and veh:getFaction():isStateFaction() then
+				veh:loadFactionItem(client, itemName, amount, inventory)
+			else
+				client:sendError(_("Ungültiges Fahrzeug!", client))
+			end
+		else
+			client:sendError(_("Du bist nicht im Dienst!", client))
+		end
+	else
+		client:sendError(_("Du brauchst ein Fahrzeug zum einladen!", client))
+	end
+end
+
+
+function FactionState:Event_takeItemFromVehicle(itemName)
+	if client:isFactionDuty() and client:getFaction() and client:getFaction():isStateFaction() == true then
+		local veh = source
+		if veh:getFaction() and veh:getFaction():isStateFaction() then
+			veh:takeFactionItem(client, itemName)
+		else
+			client:sendError(_("Ungültiges Fahrzeug!", client))
+		end
+	else
+		client:sendError(_("Du bist nicht im Dienst!", client))
 	end
 end
