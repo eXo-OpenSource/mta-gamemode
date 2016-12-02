@@ -72,7 +72,11 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 		self:addItem(_"Admin: Kick",
 			function()
 				if self:getElement() then
-					triggerServerEvent("adminTriggerFunction", self:getElement(), "kick", self:getElement(), "You've been kicked!")
+					InputBox:new(_("Spieler %s kicken", self:getElement():getName()),
+						_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", self:getElement():getName()),
+						function (reason)
+							triggerServerEvent("adminTriggerFunction", root, func, self:getElement(), reason)
+						end)
 				end
 			end
 		)
