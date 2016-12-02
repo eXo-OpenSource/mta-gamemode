@@ -103,23 +103,36 @@ function PolicePanel:locatePlayer()
 	local player = item.player
 	if isElement(player) then
 		if player:getPublicSync("Phone") == true then
-			if PlayerLocateBlip then delete(PlayerLocateBlip) end
-			if isTimer(PlayerLocateTimer) then killTimer(PlayerLocateTimer) end
+			if getElementDimension(player) == 0 and getElementInterior(player) == 0 then
+				if PlayerLocateBlip then delete(PlayerLocateBlip) end
+				if isTimer(PlayerLocateTimer) then killTimer(PlayerLocateTimer) end
 
-			local pos = player:getPosition()
-			PlayerLocateBlip = Blip:new("Locate.png", pos.x, pos.y,9999)
-			PlayerLocateBlip:attachTo(player)
-			InfoBox:new(_"Spieler geortet! Folge dem Blip auf der Karte!")
-
-			PlayerLocateTimer = setTimer(function()
-				if not player:getPublicSync("Phone") == true then
-					if PlayerLocateBlip then delete(PlayerLocateBlip) end
-					ErrorBox:new(_"Der Spieler hat sein Handy ausgeschaltet!")
-					killTimer(PlayerLocateTimer)
-				end
-			end, 1000, 0)
-		else
-			ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Sein Handy ist ausgeschaltet!")
+				local pos = player:getPosition()
+				PlayerLocateBlip = Blip:new("Locate.png", pos.x, pos.y,9999)
+				PlayerLocateBlip:attachTo(player)
+				InfoBox:new(_"Spieler geortet! Folge dem Blip auf der Karte!")
+				localPlayer.m_LocatingPlayer = player
+				PlayerLocateTimer = setTimer(function()
+					if localPlayer.m_LocatingPlayer then
+						local int = getElementInterior(localPlayer.m_LocatingPlayer)
+						local dim = getElementDimension(localPlayer.m_LocatingPlayer)
+						if int > 0 or dim > 0 then
+							if PlayerLocateBlip then delete(PlayerLocateBlip) end
+							ErrorBox:new(_"Der Spieler ist in einem Gebäude!")
+							killTimer(PlayerLocateTimer)
+							localPlayer.m_LocatingPlayer = false
+						end
+						if not player:getPublicSync("Phone") == true then
+							if PlayerLocateBlip then delete(PlayerLocateBlip) end
+							ErrorBox:new(_"Der Spieler hat sein Handy ausgeschaltet!")
+							killTimer(PlayerLocateTimer)
+							localPlayer.m_LocatingPlayer = false
+						end
+					end
+				end, 1000, 0)
+			else ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Er ist in einem Gebäude!")
+			end
+		else ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Sein Handy ist ausgeschaltet!")
 		end
 	else
 		ErrorBox:new(_"Spieler nicht mehr online!")
