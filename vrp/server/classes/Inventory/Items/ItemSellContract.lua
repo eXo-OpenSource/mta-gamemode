@@ -15,7 +15,7 @@ function ItemSellContract:constructor()
 end
 
 function ItemSellContract:destructor()
-
+	
 end
 
 function ItemSellContract:Event_OnBuyPapers()
@@ -35,6 +35,7 @@ function ItemSellContract:Event_OnSellRequest( player, price, veh )
 	if isElement( player ) then 
 		local car = getPedOccupiedVehicle( source) 
 		if car == veh then
+			source.lastContract = player
 			source:triggerEvent("closeVehicleContract")
 			player:triggerEvent("vehicleConfirmSell", player, price, car, source)
 			source:sendInfo(_("Ein Anfrage zum Kauf wurde abgeschickt!", source))
@@ -45,25 +46,34 @@ end
 
 function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 	if isElement( player ) then 
-		local money = source:getMoney()
+		local money = client:getMoney()
 		price = tonumber( price )
-		if money >= price then
-			source:triggerEvent("closeVehicleAccept")
-			source:sendInfo(_("Der Handel wurde abgeschlossen!", source))
-			player:sendInfo(_("Der Handel wurde abgeschlossen!", player))
-			VehicleManager:getSingleton():removeRef( car, false)
-			car:setOwner( source ) 
-			car:setData("OwnerName", source.name, true)
-			VehicleManager:getSingleton():addRef( car, false)
-			source:takeMoney( price ) 
-			player:giveMoney( price )
-			car.m_Keys = {}
-			VehicleManager:getSingleton():syncVehicleInfo( player )
-			VehicleManager:getSingleton():syncVehicleInfo( source )
-			player:getInventory():removeItem("Handelsvertrag", 1)
-		else 
-			source:sendError(_("Du hast nicht genügend Geld!", source))
-			player:sendInfo(_("Der Käufer hat zu wenig Geld!", player))
+		if price > 0 then
+			if player ~= client then
+				if client.lastContract == player then
+					if money >= price then
+						client:triggerEvent("closeVehicleAccept")
+						client:sendInfo(_("Der Handel wurde abgeschlossen!", client))
+						player:sendInfo(_("Der Handel wurde abgeschlossen!", player))
+						VehicleManager:getSingleton():removeRef( car, false)
+						car:setOwner( client ) 
+						car:setData("OwnerName", source.name, true)
+						VehicleManager:getSingleton():addRef( car, false)
+						client:takeMoney( price ) 
+						player:giveMoney( price )
+						car.m_Keys = {}
+						VehicleManager:getSingleton():syncVehicleInfo( player )
+						VehicleManager:getSingleton():syncVehicleInfo( client )
+						player:getInventory():removeItem("Handelsvertrag", 1)
+					else 
+						source:sendError(_("Du hast nicht genügend Geld!", client))
+						player:sendInfo(_("Der Käufer hat zu wenig Geld!", player))
+					end
+				player:sendError(_("Vertrag abgelaufen!", player))
+				end
+			else client:sendError(_("Sie können nicht selbst ihr Fahrzeug kaufen!", client))
+			end
+		else client:sendError(_("Ungültiger Betrag!", client))
 		end
 	end
 end
