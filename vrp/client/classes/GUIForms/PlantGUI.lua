@@ -58,14 +58,15 @@ function PlantGUI:constructor(id, type, lastGrow, size, maxSize, item, itemsPerS
 end
 
 function PlantGUI:destructor()
-	GUIForm.destructor(self)
 	unbindKey("e", "down", self.m_HarvestBind)
+	GUIForm.destructor(self)
 end
 
 function PlantGUI:harvest(key, state)
 	if state == "down" then
 		if self.m_Id and self.m_Id > 0 then
 			triggerServerEvent("plant:harvest", localPlayer, self.m_Id)
+			delete(self)
 		end
 	end
 end
