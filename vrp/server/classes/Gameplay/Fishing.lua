@@ -147,7 +147,7 @@ function Fishing:pedClicked()
 		client.win = false
 		client.winObject:destroy()
 	else
-		client:sendInfo(_("Hallo, du hast nichts gefangen, bitte Angle erst etwas!", client))
+		client:sendInfo(_("Hallo, du hast nichts gefangen, bitte angel dir erst etwas!", client))
 	end
 end
 
