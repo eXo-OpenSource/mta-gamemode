@@ -142,7 +142,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 					if playerWeapons[weaponID] then
 						if self.m_Weapons[weaponID]["Munition"] >= amount then
 							self:takeMagazineD(weaponID,amount)
-							if weaponID == 25 then amount = amount * 6 end 
+							if weaponID == 25 then amount = amount * 6 end
 							if weaponID == 33 then amount = amount * 5 end
 							if weaponID == 34 then amount = amount * 4 end
 							giveWeapon(player,weaponID,amount*getWeaponProperty(weaponID, "poor", "maximum_clip_ammo"))
@@ -202,7 +202,7 @@ end
 function Depot:takeItem(player, slotId)
 	if self.m_Items[slotId] then
 		if self.m_Items[slotId]["Item"] ~= 0 then
-			if self.m_Items[slotId]["Amount"] > 0 then
+			--if self.m_Items[slotId]["Amount"] > 0 then
 				local item = self.m_Items[slotId]["Item"]
 				local amount = self.m_Items[slotId]["Amount"]
 				if player:getInventory():getFreePlacesForItem(item) >= amount then
@@ -216,9 +216,9 @@ function Depot:takeItem(player, slotId)
 				else
 					player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
 				end
-			else
-				player:sendError("Internal Error Amount to low", player)
-			end
+			--else
+			--	player:sendError("Internal Error Amount to low", player)
+			--end
 		else
 			player:sendError(_("Du hast kein Item in diesem Slot!", player))
 		end

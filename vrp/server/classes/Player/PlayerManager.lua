@@ -563,7 +563,7 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then
-			if slot["Amount"] >= 0 then
+			--if slot["Amount"] >= 0 then
 				local weaponId = slot["WeaponId"]
 				local amount = slot["Amount"]
 				if client:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
@@ -578,11 +578,11 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 					return
 				end
-			else
-				client:sendError("Internal Error Amount to low", client)
-				client:triggerEvent("receiveGunBoxData", client.m_GunBox)
-				return
-			end
+			--else
+			--	client:sendError("Internal Error Amount to low", client)
+			--	client:triggerEvent("receiveGunBoxData", client.m_GunBox)
+			--	return
+			--end
 		else
 			client:sendError(_("Du hast keine Waffe in diesem Slot!", client))
 			client:triggerEvent("receiveGunBoxData", client.m_GunBox)

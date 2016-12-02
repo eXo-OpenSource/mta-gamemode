@@ -118,7 +118,7 @@ end
 function Trunk:takeItem(player, slot)
 	if self.m_ItemSlot[slot] then
 		if self.m_ItemSlot[slot]["Item"] ~= "none" then
-			if self.m_ItemSlot[slot]["Amount"] > 0 then
+			--if self.m_ItemSlot[slot]["Amount"] > 0 then
 				local item = self.m_ItemSlot[slot]["Item"]
 				local amount = self.m_ItemSlot[slot]["Amount"]
 				if player:getInventory():getFreePlacesForItem(item) >= amount then
@@ -131,9 +131,9 @@ function Trunk:takeItem(player, slot)
 				else
 					player:sendError(_("Du hast nicht genug Platz in deinem Inventar!", player))
 				end
-			else
-				player:sendError("Internal Error Amount to low", player)
-			end
+			--else
+			--	player:sendError("Internal Error Amount to low", player)
+			--end
 		else
 			player:sendError(_("Du hast kein Item in diesem Slot!", player))
 		end
@@ -143,7 +143,7 @@ end
 function Trunk:takeWeapon(player, slot)
 	if self.m_WeaponSlot[slot] then
 		if self.m_WeaponSlot[slot]["WeaponId"] > 0 then
-			if self.m_ItemSlot[slot]["Amount"] > 0 then
+			--if self.m_ItemSlot[slot]["Amount"] > 0 then
 				local weaponId = self.m_WeaponSlot[slot]["WeaponId"]
 				local amount = self.m_WeaponSlot[slot]["Amount"]
 				if player:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
@@ -156,9 +156,9 @@ function Trunk:takeWeapon(player, slot)
 				else
 					player:sendError(_("Du hast bereits eine Waffe dieser Art dabei!", player))
 				end
-			else
-				player:sendError("Internal Error Amount to low", player)
-			end
+			--else
+			--	player:sendError("Internal Error Amount to low", player)
+			--end
 		else
 			player:sendError(_("Du hast kein Item in diesem Slot!", player))
 		end
