@@ -160,9 +160,10 @@ function GroupManager:Event_groupQuit()
 		client:sendWarning(_("Bitte übertrage den Leiter-Status erst auf ein anderes Mitglied der Firma/Gang!", client))
 		return
 	end
+	group:sendMessage(_("%s hat soeben eure %s verlassen!", client, getPlayerName(client), group:getType()))
+	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." verlassen!")
 	group:removePlayer(client)
 	client:sendSuccess(_("Du hast die Firma/Gang erfolgreich verlassen!", client))
-	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." verlassen!")
 	self:sendInfosToClient(client)
 end
 
