@@ -93,7 +93,7 @@ function NoDm:renderNoDmImage()
 	if not Phone:getSingleton():isOpen() then
 		dxDrawImage(px,py,screenWidth*0.15,screenWidth*0.08,"files/images/Other/nodm.png")
 	end
-	if getPedWeapon ( localPlayer, 9 ) ~= 43 then
+	if localPlayer:getFactionId() ~= 1 or localPlayer:getFactionId() ~= 2 or getPedWeapon ( localPlayer, 9 ) ~= 43 then
 		setPedWeaponSlot(localPlayer,0)
 	end
 end
