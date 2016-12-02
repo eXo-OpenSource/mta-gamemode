@@ -155,16 +155,19 @@ function VehicleTuningGUI:moveCameraToSlot(slot, noAnimation)
 
     addEventHandler("onClientPreRender", root,
         function(deltaTime)
-            progress = progress + deltaTime * 0.0006
-            local x, y, z = interpolateBetween(oldX, oldY, oldZ, self.m_Vehicle.matrix:transformPosition(targetPosition), progress, "InOutBack")
-            local lx, ly, lz = interpolateBetween(oldLookX, oldLookY, oldLookZ, targetLookAtPosition, progress, "Linear")
-            setCameraMatrix(x, y, z, lx, ly, lz)
+			if localPlayer.m_inTuning  then
+				progress = progress + deltaTime * 0.0006
+				local x, y, z = interpolateBetween(oldX, oldY, oldZ, self.m_Vehicle.matrix:transformPosition(targetPosition), progress, "InOutBack")
+				local lx, ly, lz = interpolateBetween(oldLookX, oldLookY, oldLookZ, targetLookAtPosition, progress, "Linear")
+				setCameraMatrix(x, y, z, lx, ly, lz)
 
-            if progress >= 1 then
-                removeEventHandler("onClientPreRender", root, getThisFunction())
-            end
-        end
-    )
+				if progress >= 1 then
+					removeEventHandler("onClientPreRender", root, getThisFunction())
+				end
+			else 
+				removeEventHandler("onClientPreRender", root, getThisFunction())
+			end
+		end)
 end
 
 function VehicleTuningGUI:updatePrices()
@@ -448,11 +451,12 @@ addEventHandler("vehicleTuningShopEnter", root,
         if vehicleTuningShop then
             delete(vehicleTuningShop)
         end
-
+		
         vehicleTuningShop = VehicleTuningGUI:new(vehicle)
 
         vehicle:setDimension(PRIVATE_DIMENSION_CLIENT)
         localPlayer:setDimension(PRIVATE_DIMENSION_CLIENT)
+		localPlayer.m_inTuning = true
     end
 )
 
@@ -465,6 +469,8 @@ addEventHandler("vehicleTuningShopExit", root,
 
             delete(vehicleTuningShop, true)
             vehicleTuningShop = false
+			localPlayer.m_inTuning = false
+			setCameraTarget(localPlayer)
         end
     end
 )
