@@ -142,7 +142,7 @@ Tour.Data = {
 	[10] = {
 		["Title"] = "Money, Money, Money",
 		["Description"] = "Nachdem du gejobbt hast solltest du dein Geld in die Bank einzahlen. Fahre zum ATM beim PD!",
-		["Success"] = "Öffne nun das Klickmenü mit 'B' und klicke auf den ATM. Im Tab 'Einzahlen' kannst du nun einen beliebigen Betrag auf dein Bankkonto transferieren. Falls du weitere Fragen zum Server hast kannst du dich gerne im Forum (forum.eXo-reallife,de) mit dem StartGuide vertraut machen oder ein Ticket im F2-Menü schreiben.",
+		["Success"] = "Öffne nun das Klickmenü mit 'B', klicke auf den ATM. Falls du weitere Fragen zum Server hast kannst du dich gerne im Forum (forum.eXo-reallife.de) mit dem StartGuide vertraut machen oder ein Ticket im F2-Menü schreiben.",
 		["Position"] = Vector3(1508.89, -1673.20, 13.05),
 		["Money"] = 2500
 	}
