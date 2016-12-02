@@ -20,7 +20,7 @@ function ItemSpeedCam:destructor()
 end
 
 function ItemSpeedCam:use(player)
-	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
+	if player:getFaction() and player:getFaction():getId() == 1 and player:isFactionDuty() then
 		if self:count() < MAX_SPEEDCAMS then
 			local result = self:startObjectPlacing(player,
 				function(item, position, rotation)
@@ -87,7 +87,7 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 end
 
 function ItemSpeedCam:onClick(player, worldItem)
-	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
+	if player:getFaction() and player:getFaction():getId() == 1 and player:isFactionDuty() then
 		triggerClientEvent(player, "ItemSpeedCamMenu", worldItem:getObject())
 	else
 		player:sendError(_("Du hast keine Befugnisse dieses Item zu nutzen!", player))
@@ -95,7 +95,7 @@ function ItemSpeedCam:onClick(player, worldItem)
 end
 
 function ItemSpeedCam:isCollectAllowed(player, worlditem)
-	if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
+	if player:getFaction() and player:getFaction():getId() == 1 and player:isFactionDuty() then
 		if player:getInventory():getFreePlacesForItem("Blitzer") >= 1 then
 			return true
 		else
@@ -110,7 +110,7 @@ function ItemSpeedCam:removeFromWorld(player, worlditem)
 	local col = object.col
 	col:destroy()
 	for index, cam in pairs(ItemSpeedCam.Map) do
-		if cam == object then 
+		if cam == object then
 			table.remove(ItemSpeedCam.Map, index)
 		end
 	end
