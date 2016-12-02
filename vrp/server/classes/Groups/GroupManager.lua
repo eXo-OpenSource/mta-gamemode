@@ -352,8 +352,12 @@ function GroupManager:Event_groupRankUp(playerId)
 		if group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
 			group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." befördert!")
+			local player, isOffline = DatabasePlayer.getFromId(playerId)
+			if not isOffline and player:isActive() then
+				player:sendShortMessage(_("Du wurdest von %d auf Rang %d befördert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
+			end
 			self:sendInfosToClient(client)
-		else 
+		else
 			client:sendError(_("Du kannst den Spieler nicht up-ranken!", client))
 		end
 	else
@@ -375,13 +379,17 @@ function GroupManager:Event_groupRankDown(playerId)
 		-- Todo: Report possible cheat attempt
 		return
 	end
- 
+
 	if group:getPlayerRank(playerId)-1 >= GroupRank.Normal then
 		if group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
 			group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." degradiert!")
+			local player, isOffline = DatabasePlayer.getFromId(playerId)
+			if not isOffline and player:isActive() then
+				player:sendShortMessage(_("Du wurdest von %d auf Rang %d degradiert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
+			end
 			self:sendInfosToClient(client)
-		else 
+		else
 			client:sendError(_("Du kannst den Spieler nicht down-ranken!", client))
 		end
 	end
