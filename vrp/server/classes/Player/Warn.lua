@@ -65,7 +65,7 @@ function Warn.checkWarn(player)
 	local id = player.m_Id
 	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? AND expires < ?;", sql:getPrefix(), id, getRealTime().timestamp)
 
-	if Warn.getAmount(who) >= 3 then
+	if Warn.getAmount(id) >= 3 then
 		sql:queryFetchSingle(Async.waitFor(), "SELECT expires FROM ??_warns WHERE userId = ? ORDER BY expires;", sql:getPrefix(), id)
 		local row = Async.wait()
 		if row then
@@ -74,5 +74,7 @@ function Warn.checkWarn(player)
 			return false
 		end
 		return true
+	elseif Warn.getAmount(id) > 0 then
+		outputChatBox(_("Vorsicht du hast bereits %d Verwarnung/en!", player, Warn.getAmount(id)),player, 255,0,0)
 	end
 end
