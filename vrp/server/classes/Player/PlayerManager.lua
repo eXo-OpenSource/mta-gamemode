@@ -169,7 +169,7 @@ function PlayerManager:playerQuit()
 	if ItemManager.Map["Kanne"] then 
 		if ItemManager.Map["Kanne"].m_Cans then 
 			if ItemManager.Map["Kanne"].m_Cans[source] then
-				destroyElement(self.m_Cans[source])
+				destroyElement(ItemManager.Map["Kanne"].m_Cans[source])
 			end
 		end
 	end
