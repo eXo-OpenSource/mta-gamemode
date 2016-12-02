@@ -42,7 +42,7 @@ function Player:constructor()
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
-
+	
 end
 
 function Player:destructor()
@@ -89,6 +89,11 @@ end
 
 function Player:connect()
 
+end
+
+
+function Player:Event_requestTime() 
+	self:triggerEvent("setClientTime",getRealTime())
 end
 
 function Player:join()

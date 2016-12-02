@@ -9,7 +9,7 @@ PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
-"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail"}
+"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -43,7 +43,7 @@ function PlayerManager:constructor()
 	addEventHandler("switchSpawnWithFactionSkin", root, bind(self.Event_switchSpawnWithFaction, self))
 	addEventHandler("Event_setPlayerWasted", root, bind(self.Event_setPlayerWasted, self))
 	addEventHandler("Event_moveToJail", root, bind(self.Event_moveToJail, self))
-
+	addEventHandler("onClientRequestTime",root, bind(self.Event_ClientRequestTime, self))
 
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
@@ -64,6 +64,10 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+end
+
+function PlayerManager:Event_ClientRequestTime()
+	client:Event_requestTime() 
 end
 
 function PlayerManager:Event_switchSpawnWithFaction( state )

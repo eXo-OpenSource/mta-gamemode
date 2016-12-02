@@ -9,8 +9,8 @@ function LoginGUI:constructor()
 	self.usePasswordHash = false
 
 	GUIForm.constructor(self, sw*0.2, sh*0.2, sw*0.6, sh*0.6)
-	self.m_LoginButton 		= VRPButton:new(0, 0, sw*0.6/2, sh*0.6*0.1, "Login", false, self):setColor(tocolor(0x07, 0x07, 0x07))
-	self.m_RegisterButton 	= VRPButton:new(sw*0.6/2, 0, sw*0.6/2, sh*0.6*0.1, "Registrieren", false, self):setColor(tocolor(0x07, 0x07, 0x07))
+	self.m_LoginButton 		= VRPButton:new(0, 0, sw*0.6/2, sh*0.6*0.1, "Login", false, self):setColor(tocolor(5, 10, 10))
+	self.m_RegisterButton 	= VRPButton:new(sw*0.6/2, 0, sw*0.6/2, sh*0.6*0.1, "Registrieren", false, self):setColor(tocolor(5, 10, 10))
 --	self.m_GuestButton 		= VRPButton:new(sw*0.6/3*2, 0, sw*0.6/3, sh*0.6*0.1, "Als Gast spielen", false, self)
 
 	self.m_NewsTab 			= GUIRectangle:new(sw*0.6*0.75, sh*0.6*0.1, sw*0.6*0.25, sh*0.6-sh*0.6*0.01,  tocolor(10, 20, 20, 190), self)
@@ -21,7 +21,7 @@ function LoginGUI:constructor()
 		[[Hier ist Platz für
 		aktuelle News!]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
 
-	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 20, 20, 190), self)
+	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
 	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
 	self.m_LoginTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.1, sh*0.03, "Benutzername", self.m_LoginTab) -- 1.75
 	self.m_LoginEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.54, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
@@ -41,7 +41,7 @@ function LoginGUI:constructor()
 	Wenn du bereits registriert bist, kannst du dich hier einloggen. Solltest du noch keinen Account besitzen so kannst du dich im "Registrieren"-Tab registrieren.
 	]], self.m_LoginTab):setFont(VRPFont(sh*0.03))
 
-	self.m_RegisterTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 20, 20, 190), self)
+	self.m_RegisterTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
 	self.m_RegisterTab:setVisible(false)
 
 	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.35, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
@@ -164,7 +164,9 @@ end
 
 function LoginGUI:showLogin()
 	self.m_LoginButton:light()
+	self.m_LoginButton:setColor(tocolor(10,15, 15))
 	self.m_RegisterButton:dark()
+	self.m_RegisterButton:setColor(tocolor(2, 5, 5))
 --	self.m_GuestButton:dark()
 
 	self.m_LoginTab:setVisible(true)
@@ -179,7 +181,9 @@ end
 
 function LoginGUI:showRegister()
 	self.m_RegisterButton:light()
+	self.m_RegisterButton:setColor(tocolor(10,15, 15))
 	self.m_LoginButton:dark()
+	self.m_LoginButton:setColor(tocolor(2, 5, 5))
 	--	self.m_GuestButton:dark()
 	self.m_LoginTab:setVisible(false)
 	--	self.m_GuestTab:setVisible(false)
@@ -316,13 +320,14 @@ addEventHandler("loginsuccess", root,
 
 addEvent("startLoginCameraDrive", true)
 addEventHandler("startLoginCameraDrive", localPlayer, function() 
-	local rand = math.random(1,5)
+	setTime(0,0)
+	local rand = math.random(1,2)
 	if rand == 1 then
-		localPlayer.m_LoginDriveObject = cameraDrive:new(1128.01, -2092.81, 75, 1400.67, -833.45, 116.82,1366.10, -935.57, 75,1400.67, -833.45, 100, 60*1000, "Linear" )
-	elseif rand == 2 then 
-		localPlayer.m_LoginDriveObject = cameraDrive:new(1620.98, -1539.92, 53.34, 1477.86, -1757.46, 13.55,1401.78, -1735.55, 49.53,1477.86, -1757.46, 13.55, 120*1000, "Linear" )
+		localPlayer.m_LoginDriveObject = cameraDrive:new(1773.43, -1139.05, 185.85, 1545.51, -1346.14, 180.48, 1621.89, -1516.79, 175.44, 1545.51, -1346.14, 180.48, 200*1000, "Linear" )
 	else
-		localPlayer.m_LoginDriveObject = cameraDrive:new(414.43, -1841.55, 56.27, 418.78, -1634.52, 56.27,987.92, -1917.45, 56.27,978.85, -1787.63, 56.27, 120*1000, "Linear" )
+		localPlayer.m_LoginDriveObject = cameraDrive:new(1620.98, -1539.92, 53.34, 1477.86, -1757.46, 13.55,1401.78, -1735.55, 49.53,1477.86, -1757.46, 13.55, 200*1000, "Linear" )
+	--else -- currently disabled
+		--localPlayer.m_LoginDriveObject = cameraDrive:new(414.43, -1841.55, 56.27, 418.78, -1634.52, 56.27,987.92, -1917.45, 56.27,978.85, -1787.63, 56.27, 120*1000, "Linear" )
 	end
 	localPlayer.m_LoginShader =  LoginShader:new()
 end)
@@ -335,5 +340,7 @@ addEventHandler("stopLoginCameraDrive", localPlayer, function()
 	end
 	if localPlayer.m_LoginShader then 
 		delete(localPlayer.m_LoginShader)
+		localPlayer.m_LoginShader = nil
 	end
+	triggerServerEvent("onClientRequestTime", localPlayer)
 end)

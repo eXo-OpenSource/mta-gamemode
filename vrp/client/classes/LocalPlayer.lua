@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage", "playerSendToHospital", "abortDeathGUI", "sendTrayNotification" }
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage", "playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime"}
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -31,7 +31,7 @@ function LocalPlayer:constructor()
 	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
 	addEventHandler("abortDeathGUI", self, bind( self.abortDeathGUI, self ))
 	addEventHandler("sendTrayNotification", self, bind( self.sendTrayNotification, self ))
-
+	addEventHandler("setClientTime", self, bind(self.Event_onGetTime, self))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
 
@@ -57,6 +57,11 @@ end
 
 function LocalPlayer:getRank()
 	return self.m_Rank
+end
+
+function LocalPlayer:Event_onGetTime( realtime )
+	setTime(realtime.hour, realtime.minute)
+	setMinuteDuration(60000)
 end
 
 function LocalPlayer:setAFKTime()
