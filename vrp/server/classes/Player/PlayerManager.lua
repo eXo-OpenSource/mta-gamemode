@@ -50,11 +50,11 @@ function PlayerManager:constructor()
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
 	addCommandHandler("BeamtenChat", Player.staticStateFactionChatHandler)
 	addCommandHandler("g", Player.staticStateFactionChatHandler)
-	addCommandHandler("Fraktion", Player.staticFactionChatHandler,false,false)
+	addCommandHandler("Fraktion", Player.staticFactionChatHandler,false)
 	addCommandHandler("t", Player.staticFactionChatHandler)
-	addCommandHandler("Unternehmen", Player.staticCompanyChatHandler,false,false)
+	addCommandHandler("Unternehmen", Player.staticCompanyChatHandler,false)
 	addCommandHandler("u", Player.staticCompanyChatHandler)
-	addCommandHandler("Gruppe", Player.staticGroupChatHandler,false,false)
+	addCommandHandler("Gruppe", Player.staticGroupChatHandler,false)
 	addCommandHandler("f", Player.staticGroupChatHandler)
 
 	self.m_PaydayPulse = TimedPulse:new(60000)
@@ -67,7 +67,7 @@ function PlayerManager:constructor()
 end
 
 function PlayerManager:Event_ClientRequestTime()
-	client:Event_requestTime() 
+	client:Event_requestTime()
 end
 
 function PlayerManager:Event_switchSpawnWithFaction( state )
@@ -166,8 +166,8 @@ function PlayerManager:playerQuit()
 	if index then
 		table.remove(self.m_ReadyPlayers, index)
 	end
-	if ItemManager.Map["Kanne"] then 
-		if ItemManager.Map["Kanne"].m_Cans then 
+	if ItemManager.Map["Kanne"] then
+		if ItemManager.Map["Kanne"].m_Cans then
 			if ItemManager.Map["Kanne"].m_Cans[source] then
 				destroyElement(ItemManager.Map["Kanne"].m_Cans[source])
 			end
