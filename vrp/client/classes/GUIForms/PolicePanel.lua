@@ -183,7 +183,7 @@ function PolicePanel:locatePlayer()
 				InfoBox:new(_"Spieler geortet! Folge dem Blip auf der Karte!")
 				localPlayer.m_LocatingPlayer = player
 				PlayerLocateTimer = setTimer(function()
-					if localPlayer.m_LocatingPlayer then
+					if localPlayer.m_LocatingPlayer and isElement(localPlayer.m_LocatingPlayer) then
 						local int = getElementInterior(localPlayer.m_LocatingPlayer)
 						local dim = getElementDimension(localPlayer.m_LocatingPlayer)
 						if int > 0 or dim > 0 then
