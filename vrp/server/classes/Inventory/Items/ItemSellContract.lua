@@ -50,7 +50,7 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 		price = tonumber( price )
 		if price > 0 then
 			if player ~= client then
-				if client.lastContract == player then
+				if player.lastContract == client then
 					if money >= price then
 						client:triggerEvent("closeVehicleAccept")
 						client:sendInfo(_("Der Handel wurde abgeschlossen!", client))
