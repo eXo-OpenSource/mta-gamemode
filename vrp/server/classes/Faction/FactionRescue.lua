@@ -143,7 +143,9 @@ function FactionRescue:Event_toggleDuty(type)
 				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
 				return false
 			end
-
+			if type == "fire" then
+				giveWeapon(client,42,200,true)
+			end
 			client.m_FactionDuty = true
 			client:sendInfo(_("Du bist nun im Dienst!", client))
 			client:setPublicSync("Faction:Duty",true)
