@@ -13,6 +13,7 @@ function ItemManager:constructor()
 	self.m_ClassItems = {
 		["Barrikade"] = ItemBarricade,
 		["Blitzer"] = ItemSpeedCam,
+		["Nagel-Band"] = ItemNails,
 		["Radio"] = ItemRadio,
 		["Sprengstoff"] = ItemBomb,
 		["Weed"] = DrugsWeed,
@@ -32,7 +33,7 @@ function ItemManager:constructor()
 	}
 
 	self.m_Properties = {
-	["Barrikade"] = {true} --// breakable,  
+	["Barrikade"] = {true} --// breakable,
 }
 	self.m_SpecialItems = {
 		["Mautpass"] = true,
@@ -41,7 +42,7 @@ function ItemManager:constructor()
 
 	for name, class in pairs(self.m_ClassItems) do
 		local breakable = false
-		if self.m_Properties[name] then 
+		if self.m_Properties[name] then
 			breakable = true
 		end
 		local instance = class:new( )
@@ -54,8 +55,8 @@ function ItemManager:constructor()
 end
 
 function ItemManager:Event_onItemBreak(wObj)
-	if client then 
-		if wObj then 
+	if client then
+		if wObj then
 			if wObj.m_Super then
 				if wObj.m_Super.m_Breakable then
 					delete( wObj.m_Super )
