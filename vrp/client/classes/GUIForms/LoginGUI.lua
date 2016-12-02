@@ -164,9 +164,9 @@ end
 
 function LoginGUI:showLogin()
 	self.m_LoginButton:light()
-	self.m_LoginButton:setColor(tocolor(10,15, 15))
+	self.m_LoginButton:setColor(tocolor(0,0, 0))
 	self.m_RegisterButton:dark()
-	self.m_RegisterButton:setColor(tocolor(2, 5, 5))
+	self.m_RegisterButton:setColor(tocolor(10, 15, 15))
 --	self.m_GuestButton:dark()
 
 	self.m_LoginTab:setVisible(true)
@@ -181,9 +181,9 @@ end
 
 function LoginGUI:showRegister()
 	self.m_RegisterButton:light()
-	self.m_RegisterButton:setColor(tocolor(10,15, 15))
+	self.m_RegisterButton:setColor(tocolor(0,0, 0))
 	self.m_LoginButton:dark()
-	self.m_LoginButton:setColor(tocolor(2, 5, 5))
+	self.m_LoginButton:setColor(tocolor(10, 15, 15))
 	--	self.m_GuestButton:dark()
 	self.m_LoginTab:setVisible(false)
 	--	self.m_GuestTab:setVisible(false)
