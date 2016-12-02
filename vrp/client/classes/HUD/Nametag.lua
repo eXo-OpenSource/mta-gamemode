@@ -91,7 +91,17 @@ function Nametag:draw()
 end
 
 function Nametag:drawIcons(player)
+	if isChatBoxInputActive() then
+		setElementData(localPlayer, "writing", true)
+	else
+		setElementData(localPlayer, "writing", false)
+	end
+
 	iconI = 0
+	if getElementData(player,"writing") == true then
+		dxDrawImage(10+iconI*34, 60, 32, 32, "files/images/Nametag/chat.png")
+		iconI = iconI+1
+	end
 	if (player:getPublicSync("Rank") or 0) > 0 then
 		dxDrawImage(10+iconI*34, 60, 32, 32, "files/images/Nametag/admin.png")
 		iconI = iconI+1
@@ -104,4 +114,5 @@ function Nametag:drawIcons(player)
 		dxDrawImage(10+iconI*34, 60, 32, 32, "files/images/Nametag/"..player:getFaction():getShortName()..".png")
 		iconI = iconI+1
 	end
+
 end
