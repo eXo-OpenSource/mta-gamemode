@@ -11,7 +11,7 @@ Blip.Blips = {}
 Blip.DefaultBlips = {}
 Blip.AttachedBlips = {}
 
-function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, color2) --quick workaround
+function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, color2, defaultSize, defaultColor) --quick workaround
 	self.m_ID = #Blip.Blips + 1
 	self.m_RawImagePath = imagePath
 	self.m_ImagePath = HUDRadar:getSingleton():makePath(imagePath, true)
@@ -21,6 +21,8 @@ function Blip:constructor(imagePath, worldX, worldY, streamDistance, color, colo
 	self.m_Alpha = 255
 	self.m_Size = 24
 	self.m_StreamDistance = streamDistance or 100
+	self.m_DefaultSize = defaultSize or 2
+	self.m_DefaultColor = defaultColor or {255,0,0,255}
 	if color then
 	self.m_Color = tocolor(color)
 	elseif color2 then
@@ -139,11 +141,19 @@ end
 function Blip:attachTo(element)
   if Blip.AttachedBlips[self] then table.remove(Blip.AttachedBlips, table.find(self)) end
   Blip.AttachedBlips[self] = element
+  if self.DefaultBlips[self.m_ID] then 
+	local r,g,b,a = unpack(self.m_DefaultColor)
+	destroyElement(self.DefaultBlips[self.m_ID])
+	self.DefaultBlips[self.m_ID] = createBlipAttachedTo(element,0,self.m_DefaultSize,r,g,b,a)
+  end
 end
 
 function Blip:dettach()
 	if Blip.AttachedBlips[self] then
 	  	Blip.AttachedBlips[self] = nil
+		if self.DefaultBlips[self.m_ID] then 
+			detachElements(self.DefaultBlips[self.m_ID])
+		end
 	end
 end
 
