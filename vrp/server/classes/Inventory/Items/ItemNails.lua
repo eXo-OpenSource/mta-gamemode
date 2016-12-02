@@ -46,7 +46,7 @@ function ItemNails:use(player)
 					addEventHandler("onColShapeHit", object.col, self.m_func )
 					addEventHandler("onColShapeLeave", object.col, bind(self.onColShapeLeave, self) )
 					local pos = player:getPosition()
-					FactionState:getSingleton():sendShortMessage(_("%s hat eine Nagelband bei %s/%s hingelegt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
+					FactionState:getSingleton():sendShortMessage(_("%s hat ein Nagelband bei %s/%s hingelegt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 
 				end
 			)
