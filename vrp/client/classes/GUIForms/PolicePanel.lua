@@ -11,10 +11,14 @@ inherit(Singleton, PolicePanel)
 
 local PlayerLocateBlip, PlayerLocateTimer
 
+addRemoteEvents{"receiveJailPlayers"}
+
 function PolicePanel:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
+	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
+
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
@@ -50,12 +54,54 @@ function PolicePanel:constructor()
 		function() triggerServerEvent("factionStateClearWanteds", localPlayer, self.m_SelectedPlayer) end)
 	end
 
+	self.m_TabJail = self.m_TabPanel:addTab(_"Knast")
+
+	self.m_JailPlayersGrid = GUIGridList:new(10, 10, 300, 370, self.m_TabJail)
+	self.m_JailPlayersGrid:addColumn(_"Spieler", 0.5)
+	self.m_JailPlayersGrid:addColumn(_"Knastzeit", 0.3)
+
+	GUIWebView:new(360, 10, 100, 135, "http://exo-reallife.de/images/fraktionen/"..localPlayer:getFactionId().."-logo.png", true, self.m_TabJail)
+
+	self.m_JailSkin = GUIWebView:new(490, 10, 100, 220, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php", true, self.m_TabJail)
+
+	self.m_JailPlayerNameLabel = 	GUILabel:new(320, 150, 180, 20, _"Spieler: -", self.m_TabJail)
+	self.m_JailPlayerFactionLabel = GUILabel:new(320, 175, 180, 20, _"Fraktion: -", self.m_TabJail)
+	self.m_JailPlayerCompanyLabel = GUILabel:new(320, 200, 180, 20, _"Unternehmen: -", self.m_TabJail)
+	self.m_JailPlayerGroupLabel = 	GUILabel:new(320, 225, 180, 20, _"Gang/Firma: -", self.m_TabJail)
+	self.m_JailPhoneStatus = 		GUILabel:new(320, 250, 180, 20, _"Handy: -", self.m_TabJail)
+
+	self.m_JailRefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabJail):setBackgroundColor(Color.LightBlue)
+	self.m_JailRefreshBtn.onLeftClick = function()
+		triggerServerEvent("factionStateLoadJailPlayers", root)
+	end
+
+	self.m_FreePlayerBtn = GUIButton:new(320, 305, 250, 30, "Spieler frei lassen", self.m_TabJail):setBackgroundColor(Color.Green)
+	self.m_FreePlayerBtn.onLeftClick = function()
+		if self.m_JailSelectedPlayer and isElement(self.m_JailSelectedPlayer) then
+			QuestionBox:new(
+				_("Möchtest du %s wirklich aus dem Knast befreien?", self.m_JailSelectedPlayer:getName()),
+				function()
+					triggerServerEvent("factionStateFreePlayer", localPlayer, self.m_JailSelectedPlayer)
+				end
+			)
+		else
+			ErrorBox:new(_"Der Spieler ist nicht mehr online!")
+		end
+	end
+
 	self:loadPlayers()
 
 	self.m_TabWantedRules = self.m_TabPanel:addTab(_"Wantedregeln")
 	GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
 
+	addEventHandler("receiveJailPlayers", root, bind(self.receiveJailPlayers, self))
 
+end
+
+function PolicePanel:TabPanel_TabChanged(tabId)
+	if tabId == self.m_TabJail.TabIndex then
+		triggerServerEvent("factionStateLoadJailPlayers", root)
+	end
 end
 
 function PolicePanel:loadPlayers()
@@ -85,6 +131,17 @@ function PolicePanel:loadPlayers()
 	end
 end
 
+function PolicePanel:receiveJailPlayers(playerTable)
+	self.m_JailPlayersGrid:clear()
+	for player, jailtime in pairs(playerTable) do
+		local item = self.m_JailPlayersGrid:addItem(player:getName(), jailtime.." min.")
+		item.player = player
+		item.onLeftClick = function()
+			self:onSelectJailPlayer(player)
+		end
+	end
+end
+
 function PolicePanel:onSelectPlayer(player)
 	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
 	self.m_PlayerFactionLabel:setText(_("Fraktion: %s", player:getFaction() and player:getFaction():getShortName() or "- Keine -"))
@@ -96,6 +153,19 @@ function PolicePanel:onSelectPlayer(player)
 	self.m_PhoneStatus:setText(_("Handy: %s", phone))
 
 	self.m_Skin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
+end
+
+function PolicePanel:onSelectJailPlayer(player)
+	self.m_JailPlayerNameLabel:setText(_("Spieler: %s", player:getName()))
+	self.m_JailPlayerFactionLabel:setText(_("Fraktion: %s", player:getFaction() and player:getFaction():getShortName() or "- Keine -"))
+	self.m_JailPlayerCompanyLabel:setText(_("Unternehmen: %s", player:getCompany() and player:getCompany():getShortName() or "- Keine -"))
+	self.m_JailPlayerGroupLabel:setText(_("Gang/Firma: %s", player:getGroupName()))
+	self.m_JailSelectedPlayer = player
+	local phone = "Ausgeschaltet"
+	if player:getPublicSync("Phone") == true then phone = "Eingeschaltet" end
+	self.m_JailPhoneStatus:setText(_("Handy: %s", phone))
+
+	self.m_JailSkin:loadURL("http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..player:getModel())
 end
 
 function PolicePanel:locatePlayer()

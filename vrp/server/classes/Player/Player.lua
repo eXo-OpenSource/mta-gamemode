@@ -42,7 +42,7 @@ function Player:constructor()
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
-	
+
 end
 
 function Player:destructor()
@@ -92,7 +92,7 @@ function Player:connect()
 end
 
 
-function Player:Event_requestTime() 
+function Player:Event_requestTime()
 	self:triggerEvent("setClientTime",getRealTime())
 end
 
@@ -333,7 +333,7 @@ function Player:spawn( )
 				setElementModel( self, self.m_AltSkin or self.m_Skin)
 			end
 		end
-		if self.m_PrisonTime > 0 then 
+		if self.m_PrisonTime > 0 then
 			self:setPrison(self.m_PrisonTime)
 		end
 		if self.m_JailTime then
@@ -384,7 +384,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	else
 		position, rotation = position, rotation
 	end
-	if self.m_PrisonTime > 0 then 
+	if self.m_PrisonTime > 0 then
 		self:setPrison(self.m_PrisonTime)
 	end
 	if self.m_JailTime == 0 or not self.m_JailTime then
@@ -961,19 +961,8 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 		self.m_JailTimer = setTimer(
 			function()
 				if isElement(self) then
-					if self:getData("inJail") then 
-						self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-						self:setRotation(0, 0, 90)
-						self:setWantedLevel(0)
-						self:toggleControl("fire", true)
-						self:toggleControl("jump", true)
-						self:toggleControl("aim_weapon ", true)
-						self.m_JailStart = nil
-						self.m_JailTimer = nil
-						self:setJailTime(0)
-						self:triggerEvent("playerLeftJail")
-						self:setData("inJail",false, true)
-						self:triggerEvent("checkNoDm")
+					if self:getData("inJail") then
+						FactionState:getSingleton():freePlayer(self)
 					end
 				end
 			end, self.m_JailTime * 60000, 1

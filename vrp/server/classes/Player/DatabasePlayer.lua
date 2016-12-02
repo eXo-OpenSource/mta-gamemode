@@ -620,12 +620,12 @@ function DatabasePlayer:setJailNewTime()
 			self.m_JailTime = self.m_JailTime - minutes
 			if self.m_JailTime <= 0 then
 				if self:isActive() then
-					self:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-					self:setRotation(0, 0, 90)
+					FactionState:getSingleton():freePlayer(self)
+				else
+					self.m_JailTime = 0
+					self.m_Bail = 0
+					self:setWantedLevel(0)
 				end
-				self.m_JailTime = 0
-				self.m_Bail = 0
-				self:setWantedLevel(0)
 			end
 		end
 	end

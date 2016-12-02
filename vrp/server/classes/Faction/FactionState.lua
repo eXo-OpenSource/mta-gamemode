@@ -30,7 +30,7 @@ function FactionState:constructor()
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
-	"factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle"}
+	"factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle", "factionStateLoadJailPlayers", "factionStateFreePlayer"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -56,6 +56,11 @@ function FactionState:constructor()
 	addEventHandler("factionStateGivePANote", root, bind(self.Event_givePANote, self))
 	addEventHandler("factionStatePutItemInVehicle", root, bind(self.Event_putItemInVehicle, self))
 	addEventHandler("factionStateTakeItemFromVehicle", root, bind(self.Event_takeItemFromVehicle, self))
+	addEventHandler("factionStateLoadJailPlayers", root, bind(self.Event_loadJailPlayers, self))
+	addEventHandler("factionStateFreePlayer", root, bind(self.Event_freePlayer, self))
+
+
+
 
 	-- Prepare the Area51
 	self:createDefendActors(
@@ -521,31 +526,20 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 	end
 end
 
-function FactionState:Command_bail( player )
+function FactionState:Command_bail(player)
 	if player.m_JailTimer then
 		if player.m_Bail and player.m_JailTime then
 			if player.m_Bail > 0 then
 				local money = player:getBankMoney()
 				if money >= player.m_Bail then
-					player:setData("inJail",false, true)
+
 					player:takeBankMoney(player.m_Bail, "Kaution")
 					FactionManager:getSingleton():getFromId(1):giveMoney(player.m_Bail, "Kaution")
-					player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
-					player:setRotation(0, 0, 90)
-					player:setWantedLevel(0)
-					player:toggleControl("fire", true)
-					player:toggleControl("jump", true)
-					player:toggleControl("aim_weapon ", true)
-					if isTimer(player.m_JailTimer) then
-						killTimer( player.m_JailTimer )
-					end
-					player.m_JailTimer = nil
-					player:setJailTime(0)
+
 					player:sendInfo(_("Sie haben sich mit der Kaution von %s$ freigekauft!", player, player.m_Bail))
 					player.m_Bail = 0
 					StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat sich für %d Dollar freigekauft!"):format(player:getName(), player.m_Bail))
-					player:triggerEvent("playerLeftJail")
-
+					self:freePlayer(player)
 				else
 					player:sendError("Sie haben nicht genügend Geld!")
 				end
@@ -553,6 +547,27 @@ function FactionState:Command_bail( player )
 		end
 	end
 end
+
+function FactionState:freePlayer(player)
+	player:setData("inJail",false, true)
+	player:setDimension(0)
+	player:setInterior(0)
+	player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
+	player:setRotation(0, 0, 90)
+	player:setWantedLevel(0)
+	player:toggleControl("fire", true)
+	player:toggleControl("jump", true)
+	player:toggleControl("aim_weapon ", true)
+	if isTimer(player.m_JailTimer) then
+		killTimer( player.m_JailTimer )
+	end
+	player.m_JailTimer = nil
+	player:setJailTime(0)
+	player.m_Bail = 0
+	player:triggerEvent("playerLeftJail")
+	player:triggerEvent("checkNoDm")
+end
+
 
 function FactionState:Event_toggleSwat()
 	if client:isFactionDuty() then
@@ -869,5 +884,32 @@ function FactionState:Event_takeItemFromVehicle(itemName)
 		end
 	else
 		client:sendError(_("Du bist nicht im Dienst!", client))
+	end
+end
+
+function FactionState:Event_loadJailPlayers()
+	local players = {}
+	for index, playeritem in pairs(getElementsByType("player")) do
+		if playeritem.m_JailTime and playeritem.m_JailTime > 0 then
+			players[playeritem] = playeritem.m_JailTime
+		end
+	end
+	client:triggerEvent("receiveJailPlayers", players)
+end
+
+function FactionState:Event_freePlayer(target)
+	local faction = client:getFaction()
+	if faction and faction:isStateFaction() then
+		if client:isFactionDuty() then
+			if target and isElement(target) then
+				outputChatBox(("Du wurdest von %s aus dem Knast entlassen!"):format(client:getName()), target, 255, 255, 0 )
+				local msg = ("%s hat %s aus dem Kanst entlassen!"):format(client:getName(), target:getName())
+				StatisticsLogger:getSingleton():addTextLog("jail", msg)
+				self:sendMessage(msg, 255,0,0)
+				self:freePlayer(target)
+			else
+				client:sendError(_("Spieler nicht gefunden!", client))
+			end
+		end
 	end
 end
