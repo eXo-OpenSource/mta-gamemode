@@ -35,10 +35,13 @@ function ItemSellContract:Event_OnSellRequest( player, price, veh )
 	if isElement( player ) then 
 		local car = getPedOccupiedVehicle( source) 
 		if car == veh then
-			source.lastContract = player
-			source:triggerEvent("closeVehicleContract")
-			player:triggerEvent("vehicleConfirmSell", player, price, car, source)
-			source:sendInfo(_("Ein Anfrage zum Kauf wurde abgeschickt!", source))
+			if tonumber(price) > 0 then
+				client.lastContract = player
+				client:triggerEvent("closeVehicleContract")
+				player:triggerEvent("vehicleConfirmSell", player, price, car, source)
+				source:sendInfo(_("Ein Anfrage zum Kauf wurde abgeschickt!", source))
+			else client:sendError(_("Ungültiger Betrag!", client))
+			end
 		else source:sendError(_("Du sitzt nicht im Fahrzeug!", source))
 		end
 	end

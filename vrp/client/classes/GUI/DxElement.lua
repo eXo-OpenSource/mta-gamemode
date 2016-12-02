@@ -52,8 +52,8 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 		self.m_AbsoluteY = self.m_AbsoluteY - self.m_CacheArea.m_AbsoluteY
 	end
 	self.m_RestoreFunc = bind( DxElement.onRestore, self)
-	removeEventHandler("onClientRender",root, self.m_RestoreFunc)
-	addEventHandler("onClientRender",root, self.m_RestoreFunc)
+	removeEventHandler("onClientRestore",root, self.m_RestoreFunc)
+	addEventHandler("onClientRestore",root, self.m_RestoreFunc)
 end
 
 function DxElement:onRestore( bClear )
@@ -81,7 +81,7 @@ function DxElement:destructor()
 	end
 
 	self:anyChange()
-	removeEventHandler("onClientRender",root, self.m_RestoreFunc)
+	removeEventHandler("onClientRestore",root, self.m_RestoreFunc)
 end
 
 function DxElement:anyChange()
