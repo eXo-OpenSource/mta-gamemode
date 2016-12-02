@@ -684,8 +684,8 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
 			target:giveWantedLevel(amount)
-			outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
-			local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
+			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
+			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
 			StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
 			self:sendMessage(msg, 255,0,0)
 		end
