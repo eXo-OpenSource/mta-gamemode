@@ -69,11 +69,11 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 						source:sendError(_("Du hast nicht genügend Geld!", client))
 						player:sendInfo(_("Der Käufer hat zu wenig Geld!", player))
 					end
-				player:sendError(_("Vertrag abgelaufen!", player))
+				else client:sendError(_("Vertrag abgelaufen!", client))
 				end
-			else client:sendError(_("Sie können nicht selbst ihr Fahrzeug kaufen!", client))
+			else player:sendError(_("Sie können nicht selbst ihr Fahrzeug kaufen!", player))
 			end
-		else client:sendError(_("Ungültiger Betrag!", client))
+		else player:sendError(_("Ungültiger Betrag!", player))
 		end
 	end
 end
