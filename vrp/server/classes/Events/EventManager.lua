@@ -74,7 +74,7 @@ function EventManager:openEvent(eventClass)
 	self.m_RunningEvents[self.m_EventIdCounter] = event
 
 	for k, player in pairs(getElementsByType("player")) do
-		player:sendShortMessage(_("In 5min startet das Event '%s'! Begib dich zum Reifen-Blip, um daran teilzunehmen.", player, event:getName()), "San News - Event", {0, 32, 63}, 15000)
+		player:sendShortMessage(_("In 5min startet das Event '%s'! Begib dich zum Reifen-Blip ( bzw. zur Diskette), um daran teilzunehmen.", player, event:getName()), "San News - Event", {0, 32, 63}, 15000)
 	end
 
 	-- Start the event in 5min
