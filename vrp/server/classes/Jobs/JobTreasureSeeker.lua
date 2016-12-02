@@ -75,6 +75,12 @@ function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
 		end
 	end)
 	triggerClientEvent(root, "jobTreasureDrawRope", root, vehicle.Engine, vehicle.Magnet)
+	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+		if vehPlayer ~= player then
+			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+			cancelEvent()
+		end
+	end)
 end
 
 function JobTreasureSeeker:onDeliveryHit(hitElement, dim)

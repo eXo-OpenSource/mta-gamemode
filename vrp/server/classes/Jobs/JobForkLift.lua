@@ -28,7 +28,12 @@ function JobForkLift:stop(player)
 end
 
 function JobForkLift:onVehicleSpawn(player,vehicleModel,vehicle)
-
+	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+		if vehPlayer ~= player then
+			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+			cancelEvent()
+		end
+	end)
 end
 
 function JobForkLift:onBoxLoad(box)

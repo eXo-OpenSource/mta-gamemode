@@ -41,7 +41,12 @@ function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)
 	addEventHandler("onVehicleExplode", vehicle, bind(self.onCargoBobExplode, self))
 	addEventHandler("onVehicleExit", vehicle, bind(self.onCargoBobExit, self))
 	addEventHandler("onVehicleDestroy", vehicle, bind(self.onCargoBobDestroy, self))
-
+	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+		if vehPlayer ~= player then
+			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+			cancelEvent()
+		end
+	end)
 end
 
 function JobHeliTransport:onCargoBobExplode()

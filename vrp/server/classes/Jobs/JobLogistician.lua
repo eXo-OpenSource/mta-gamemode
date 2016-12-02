@@ -46,6 +46,12 @@ function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
 	addEventHandler("onElementDestroy", vehicle, bind(self.onVehicleDestroy, self))
 	vehicle:addCountdownDestroy(10)
 	vehicle.player = player
+	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+		if vehPlayer ~= player then
+			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+			cancelEvent()
+		end
+	end)
 end
 
 function JobLogistician:onVehicleDestroy()

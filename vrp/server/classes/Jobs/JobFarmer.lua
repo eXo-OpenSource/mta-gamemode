@@ -66,6 +66,10 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 			self.m_CurrentPlants[vehPlayer] = 0
 		end
 	end)
+	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+		vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+		cancelEvent()
+	end)
 end
 
 function JobFarmer:onVehicleDestroy(vehicle)

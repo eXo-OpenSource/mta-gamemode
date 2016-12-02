@@ -11,10 +11,20 @@ function JobRoadSweeper:constructor()
 	Job.constructor(self)
 
 	self.m_VehicleSpawner = VehicleSpawner:new(205.7, -1442.8, 12.3, {"Sweeper"}, 315, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
 	addEvent("sweeperGarbageCollect", true)
 	addEventHandler("sweeperGarbageCollect", root, bind(self.Event_sweeperGarbageCollect, self))
+end
+
+function JobRoadSweeper:onVehicleSpawn(player,vehicleModel,vehicle)
+	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+		if vehPlayer ~= player then
+			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+			cancelEvent()
+		end
+	end)
 end
 
 function JobRoadSweeper:start(player)

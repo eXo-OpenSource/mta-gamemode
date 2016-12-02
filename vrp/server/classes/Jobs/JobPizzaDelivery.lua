@@ -37,6 +37,12 @@ function JobPizza:onVehicleSpawn( vehicle, player )
 	addEventHandler("onVehicleDamage", vehicle, bind(JobPizza.onDamageVehicle, self) )
 	addEventHandler("onVehicleExplode", vehicle, bind(JobPizza.onExplodeVehicle, self) )
 	addEventHandler("onPlayerDisconnect", player, bind(JobPizza.onPlayerDisconnect, self) )
+	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+		if vehPlayer ~= player then
+			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+			cancelEvent()
+		end
+	end)
 	player:triggerEvent("nextPizzaDelivery")
 end
 

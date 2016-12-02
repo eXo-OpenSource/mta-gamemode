@@ -15,7 +15,10 @@ function JobTrashman:constructor()
 	self.m_VehicleSpawner1 = VehicleSpawner:new(2118.38, -2076.78, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner2 = VehicleSpawner:new(2127.3, -2083.91, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner3 = VehicleSpawner:new(2134.1, -2091.1, 12.5, availableVehicles, 135, bind(Job.requireVehicle, self))
-
+	self.m_VehicleSpawner1.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_VehicleSpawner3.m_Hook:register(bind(self.onVehicleSpawn,self))
+	
 	self.m_VehicleSpawner1:disable()
 	self.m_VehicleSpawner2:disable()
 	self.m_VehicleSpawner3:disable()
@@ -28,6 +31,16 @@ function JobTrashman:constructor()
 	addEventHandler("JobTrashmanStop", root, bind(self.Event_stop, self))
 
 end
+
+function JobTrashman:onVehicleSpawn(player,vehicleModel,vehicle)
+	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
+		if vehPlayer ~= player then
+			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
+			cancelEvent()
+		end
+	end)
+end
+
 
 function JobTrashman:start(player)
 	player:setData("Trashman:Cans", 0)
