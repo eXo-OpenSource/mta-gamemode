@@ -63,16 +63,19 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 		player:sendError(_("Du hast nicht genügend Geld!", player), 255, 0, 0)
 		return
 	end
-
-	local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
-	local vehicle = PermanentVehicle.create(player, vehicleModel, spawnX, spawnY, spawnZ, rotation)
-	if vehicle then
-		player:takeMoney(price, "Fahrzeug-Kauf")
-		self:giveMoney(price, "Fahrzeug-Verkauf")
-		warpPedIntoVehicle(player, vehicle)
-		player:triggerEvent("vehicleBought")
-	else
-		player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
+	if #player:getVehicles() < 5 then
+		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
+		local vehicle = PermanentVehicle.create(player, vehicleModel, spawnX, spawnY, spawnZ, rotation)
+		if vehicle then
+			player:takeMoney(price, "Fahrzeug-Kauf")
+			self:giveMoney(price, "Fahrzeug-Verkauf")
+			warpPedIntoVehicle(player, vehicle)
+			player:triggerEvent("vehicleBought")
+		else
+			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
+		end
+	else 
+		player:sendError(_("Maximaler Fahrzeug-Slot erreicht!", player), 255, 0, 0)
 	end
 end
 
