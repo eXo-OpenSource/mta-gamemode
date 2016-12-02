@@ -129,5 +129,6 @@ function ItemNails:removeFromWorld(player, worlditem)
 			table.remove(ItemNails.Map, index)
 		end
 	end
-	player:sendInfo(_("Du hast den Nagel-Band abgebaut!", player))
+	player:sendInfo(_("Du hast das Nagel-Band abgebaut!", player))
+	unbindKey(player, "backspace", "down", self.m_RemoveBind)
 end
