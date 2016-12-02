@@ -903,7 +903,7 @@ function FactionState:Event_freePlayer(target)
 		if client:isFactionDuty() then
 			if target and isElement(target) then
 				outputChatBox(("Du wurdest von %s aus dem Knast entlassen!"):format(client:getName()), target, 255, 255, 0 )
-				local msg = ("%s hat %s aus dem Kanst entlassen!"):format(client:getName(), target:getName())
+				local msg = ("%s hat %s aus dem Knast entlassen!"):format(client:getName(), target:getName())
 				StatisticsLogger:getSingleton():addTextLog("jail", msg)
 				self:sendMessage(msg, 255,0,0)
 				self:freePlayer(target)
