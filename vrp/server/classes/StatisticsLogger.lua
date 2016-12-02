@@ -189,7 +189,7 @@ function StatisticsLogger:addAdminAction( player, action, target)
 	elseif action == "goto" or action == "gethere" or action == "gotomark" or action == "mark" then 
 		sqlLogs:queryExec("INSERT INTO ??_AdminActionPort (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
-	elseif action == "adminAnnounce" or string.upper(action) == "CLEARCHAT" then 
+	elseif action == "adminAnnounce" or string.upper(action) == "CLEARCHAT" or action == "a" or action == "o" then 
 		sqlLogs:queryExec("INSERT INTO ??_AdminActionChat (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
 	else

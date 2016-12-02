@@ -395,6 +395,7 @@ function Admin:chat(player,cmd,...)
 		if self.m_RankNames[player:getRank()] then
 			local text = ("[ %s %s ]: %s"):format(_(self.m_RankNames[player:getRank()], player), player:getName(), msg)
 			self:sendMessage(text,255,255,0)
+			StatisticsLogger:getSingleton():addAdminAction( player, "a", text)
 		end
 	else
 		player:sendError(_("Du bist kein Admin!", player))
@@ -459,6 +460,7 @@ function Admin:ochat(player,cmd,...)
 		local rankName = self.m_RankNames[player:getRank()]
 		local msg = table.concat( {...}, " " )
 		outputChatBox(("[ %s %s ]: %s"):format(_(rankName, player), player:getName(), msg), root, 50, 200, 255)
+		StatisticsLogger:getSingleton():addAdminAction( player, "o", ("[ %s %s ]: %s"):format(_(rankName, player), player:getName(), msg))
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end
