@@ -617,6 +617,8 @@ function PlayerManager:Event_setPlayerWasted()
 end
 
 function PlayerManager:Event_moveToJail()
-	client:moveToJail(false,true)
+	if not client:getData("inAdminPrison") then
+		client:moveToJail(false,true)
+	end
 end
 

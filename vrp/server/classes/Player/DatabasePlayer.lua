@@ -579,6 +579,7 @@ function DatabasePlayer:setPrison(duration)
 		if isTimer(self.m_PrisonTimer) then killTimer(self.m_PrisonTimer) end
 		if self.m_PrisonTime > 0 then
 			if self:getOccupiedVehicle() then self:removeFromVehicle() end
+			self:setData("inAdminPrison",true,true)
 			toggleControl(self, "fire", false)
 			toggleControl(self, "jump", false)
 			toggleControl(self, "aim_weapon", false)

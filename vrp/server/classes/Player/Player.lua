@@ -333,7 +333,9 @@ function Player:spawn( )
 				setElementModel( self, self.m_AltSkin or self.m_Skin)
 			end
 		end
-
+		if self.m_PrisonTime > 0 then 
+			self:setPrison(self.m_PrisonTime)
+		end
 		if self.m_JailTime then
 			if self.m_JailTime > 0 then
 				self:moveToJail(false, true)
@@ -360,7 +362,7 @@ function Player:spawn( )
 	end
 end
 
-function Player:respawn(position, rotation, bPrisonSpawn)
+function Player:respawn(position, rotation, bJailSpawn)
 	if not self:isLoggedIn() then
 		return
 	end
@@ -382,6 +384,9 @@ function Player:respawn(position, rotation, bPrisonSpawn)
 	else
 		position, rotation = position, rotation
 	end
+	if self.m_PrisonTime > 0 then 
+		self:setPrison(self.m_PrisonTime)
+	end
 	if self.m_JailTime == 0 or not self.m_JailTime then
 
 		self:setHeadless(false)
@@ -396,7 +401,7 @@ function Player:respawn(position, rotation, bPrisonSpawn)
 	else
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 		self:setHeadless(false)
-		if not bPrisonSpawn then
+		if not bJailSpawn then
 			self:moveToJail(false,true)
 		end
 	end
@@ -904,9 +909,13 @@ function Player:endPrison()
 	toggleControl(self, "aim_weapon", true)
 	self:triggerEvent("checkNoDm")
 	self:triggerEvent("CountdownStop")
+	self:setData("inAdminPrison",false,true)
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end
 	self.m_PrisonTime = 0
+	if self.m_JailTime > 0 then
+		self:moveToJail(false,false)
+	end
 end
 
 function Player:meChat(system, ...)
