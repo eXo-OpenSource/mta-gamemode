@@ -274,13 +274,13 @@ end
 
 function VehicleManager:removeUnusedVehicles()
 	-- ToDo: Lateron, do not loop through all vehicles
-	for ownerid, data in pairs(self.m_Vehicles) do
-		for k, vehicle in pairs(data) do
-			if vehicle:getLastUseTime() < getTickCount() - 30*1000*60 then
-				vehicle:respawn()
-			end
-		end
-	end
+	--for ownerid, data in pairs(self.m_Vehicles) do
+	--	for k, vehicle in pairs(data) do
+	--		if vehicle:getLastUseTime() < getTickCount() - 30*1000*60 then
+	--			vehicle:respawn()
+	--		end
+	--	end
+	--end
 
 	for k, vehicle in pairs(self.m_TemporaryVehicles) do
 		if vehicle and vehicle:getHealth() < 0.1 and vehicle:getLastUseTime() < getTickCount() - 1*60*1000 then
