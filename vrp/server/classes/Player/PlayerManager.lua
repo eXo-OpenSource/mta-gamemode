@@ -166,6 +166,13 @@ function PlayerManager:playerQuit()
 	if index then
 		table.remove(self.m_ReadyPlayers, index)
 	end
+	if ItemManager.Map["Kanne"] then 
+		if ItemManager.Map["Kanne"].m_Cans then 
+			if ItemManager.Map["Kanne"].m_Cans[source] then
+				destroyElement(self.m_Cans[source])
+			end
+		end
+	end
 	if source.curEl then
 		source.curEl:driveToStation(source,1)
 	end
