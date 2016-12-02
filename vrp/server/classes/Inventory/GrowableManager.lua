@@ -58,7 +58,7 @@ function GrowableManager:harvest(id)
 		if GrowableManager.Map[id] then
 			GrowableManager.Map[id]:harvest(client)
 		else
-			client:sendError(_("Harvest Error! Plant not found! (%d)", client, id))
+		--	client:sendError(_("Harvest Error! Plant not found! (%d)", client, id))
 		end
 	end
 end

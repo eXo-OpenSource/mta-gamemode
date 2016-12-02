@@ -66,7 +66,6 @@ function PlantGUI:harvest(key, state)
 	if state == "down" then
 		if self.m_Id and self.m_Id > 0 then
 			triggerServerEvent("plant:harvest", localPlayer, self.m_Id)
-			delete(self)
 		end
 	end
 end
