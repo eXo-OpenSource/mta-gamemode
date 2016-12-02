@@ -33,10 +33,11 @@ end
 
 function RadialShader:destructor()
 	if self.m_RadialShader then
-		self.m_RadialShader:destroy()
+		destroyElement(self.m_RadialShader)
 	end
 	if self.m_ScreenSource then
-		self.m_ScreenSource:destroy()
+		destroyElement(self.m_ScreenSource)
 	end
 	removeEventHandler("onClientHUDRender", root, self.m_Update)
+	self.m_Update = nil
 end

@@ -31,7 +31,12 @@ function LoginShader:update()
 end
 
 function LoginShader:destructor()
-	self.m_LoginShader:destroy()
-	self.m_ScreenSource:destroy()
+	if self.m_LoginShader then
+		destroyElement(self.m_LoginShader)
+	end
+	if self.m_ScreenSource then
+		destroyElement(self.m_ScreenSource)
+	end
 	removeEventHandler("onClientPreRender", root, self.m_Update)
+	self.m_Update = nil
 end

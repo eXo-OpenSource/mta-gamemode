@@ -433,6 +433,7 @@ function SelfGUI:onShow()
 	-- Update VehicleTab
 	if localPlayer.m_SelfShader then
 		delete(localPlayer.m_SelfShader)
+		localPlayer.m_SelfShader = nil
 	end
 	localPlayer.m_SelfShader =  RadialShader:new()
 	self:TabPanel_TabChanged(self.m_TabGeneral.TabIndex)
@@ -480,6 +481,7 @@ end
 function SelfGUI:onHide()
 	if localPlayer.m_SelfShader then
 		delete(localPlayer.m_SelfShader)
+		localPlayer.m_SelfShader = nil
 	end
 end
 
