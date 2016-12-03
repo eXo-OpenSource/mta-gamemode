@@ -122,8 +122,12 @@ function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 			if getPlayerName(v) == name then
 				return v
 			end
-			if string.find(string.lower(getPlayerName(v)), string.lower(name), 0, false) then
-				table.insert(matches, v)
+			if type(getPlayerName(v)) == "string" then
+				if type(name) == "string" then
+					if string.find(string.lower(getPlayerName(v)), string.lower(name), 0, false) then
+						table.insert(matches, v)
+					end
+				end
 			end
 		end
 		if #matches == 1 then
