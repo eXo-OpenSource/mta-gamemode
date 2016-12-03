@@ -9,7 +9,7 @@ Async = { id = false; threads = {}}
 
 function Async.create(func)
 	local t = setmetatable({}, { __index = Async, __call = Async.__call })
-	
+
 	t:constructor(func)
 	return function(...) return t:continue(...) end
 end
@@ -44,7 +44,7 @@ end
 
 function Async:continue(...)
 	Async.id = self.m_Id
-	
+
 	if not self.m_IsRunning then
 		self.m_Coroutine = coroutine.create(self.m_Fn)
 		self.m_IsRunning = true

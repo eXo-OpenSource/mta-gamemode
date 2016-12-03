@@ -192,10 +192,10 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
     if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
-		self:markPosFunc(admin, false)
+		self:Command_MarkPos(admin, true)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
 	elseif cmd == "gotomark" then
-		self:markPosFunc(admin, true)
+		self:Command_MarkPos(admin, false)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
     else
         if targetName then
@@ -797,27 +797,26 @@ function Admin:Event_vehicleDespawn()
     end
 end
 
-function Admin:markPosFunc( player, goto )
-	if goto then
-		local markPos = getElementData( player, "Admin_MarkPos")
+function Admin:Command_MarkPos(player, add)
+	if not add then
+		local markPos = getElementData(player, "Admin_MarkPos")
 		if markPos then
-			player:sendInfo("Du hast dich zur Markierung geportet!")
+			player:sendInfo("Du hast dich zu Makierung geportet!")
 			if getPedOccupiedVehicle(player) then
 				player = getPedOccupiedVehicle(player)
 			end
-			setElementInterior(player, markPos[4])
-			setElementDimension(player, markPos[5])
-			setElementPosition( player, markPos[1], markPos[2], markPos[3])
-			setCameraTarget(player,player)
+			player:setInterior(markPos[4])
+			player:setDimension(markPos[5])
+			player:setPosition(Vector3(markPos[1], markPos[2], markPos[3]))
+			player:setCameraTarget(player)
 		else
-			player:sendError("Du hast keine Markierung /mark")
+			player:sendError("Du hast keine Makierung /mark")
 		end
 	else
-		local x,y,z = getElementPosition(player)
-		local dim = getElementDimension(player)
-		local interior = getElementInterior(player)
-		setElementData(player, "Admin_MarkPos",{x,y,z,interior,dim})
-		player:sendInfo("Markierung gesetzt!")
+		local pos = player:getPosition()
+		local dim = player:getDimension()
+		local interior = palyer:getInterior()
+		setElementData(player, "Admin_MarkPos", {pos, interior, dim})
+		player:sendInfo("Makierung gesetzt!")
 	end
 end
-
