@@ -67,6 +67,18 @@ function Admin:constructor()
     addEventHandler("adminVehicleDespawn", root, bind(self.Event_vehicleDespawn, self))
     addEventHandler("openAdminGUI", root, bind(self.openAdminMenu, self))
 
+	setTimer(function()
+		for player, marker in pairs(self.m_SupportArrow) do
+			if player and isElement(marker) and isElement(player) then
+				local dim, int = player:getDimension(), player:getInterior()
+				marker:attach(player, 0, 0, 1.5)
+				marker:setDimension(dim)
+				marker:setInterior(int)
+			else
+				marker:destroy()
+			end
+		end
+	end, 10000, 0)
 
 end
 
