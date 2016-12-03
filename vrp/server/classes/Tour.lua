@@ -115,7 +115,7 @@ Tour.Data = {
 		["Title"] = "Tuning",
 		["Description"] = "Dein Fahrzeug ist dir zu langsam oder dir gefällt die Farbe nicht? Kein Problem, im Tuningshop kannst du es aufmotzen.",
 		["Success"] = "Fahre einfach in die Garage und gönn dir ein paar Tuningteile!",
-		["Position"] = Vector3(1041.85, -1031.00, 31.6),
+		["Position"] = Vector3(1041.85, -1031.00, 31),
 		["Money"] = 10000
 	},
 	[7] = {
