@@ -51,7 +51,11 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
     addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
     addEventHandler("onVehicleExplode",self,
 		function()
-			source:respawn(true)
+			setTimer(function()
+				source:setHealth(1000)
+				source:respawn(true)
+			end, 5000, 1)
+
 		end)
 
 	if self.m_Faction.m_Vehicles then
