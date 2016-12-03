@@ -51,8 +51,11 @@ function SelfGUI:constructor()
 	self.m_MigrationButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.21, self.m_Width*0.25, self.m_Height*0.07, _"Account-Migration", true, tabGeneral):setBarColor(Color.Yellow)
 	self.m_MigrationButton.onLeftClick = bind(self.MigratorButton_Click, self)
 
+	self.m_WarnButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Warns anzeigen", true, tabGeneral):setBarColor(Color.Yellow)
+	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
+
 	if localPlayer:getRank() > 0 then
-		self.m_AdminButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
+		self.m_AdminButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
 		self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
 	end
 

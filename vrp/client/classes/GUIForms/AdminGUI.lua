@@ -533,37 +533,38 @@ WarnManagement = inherit(GUIForm)
 
 function WarnManagement:constructor(player, adminGui)
 	self.m_Player = player
-	self.m_AdminGui = adminGui
+	self.m_AdminGui = adminGui or false
 	GUIForm.constructor(self, screenWidth/2-750/2, screenHeight/2-270/2, 750, 270)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Warns von %s", player:getName()), true, true, self)
-	self.m_Window:addBackButton(function () AdminGUI:getSingleton():show() end)
 
-	self.m_addWarn = GUIButton:new(10, 235, self.m_Width/2-15, 30, _"Verwarnen",  self):setBackgroundColor(Color.Orange):setFontSize(1)
-	self.m_removeWarn = GUIButton:new(self.m_Width/2+5, 235, self.m_Width/2-15, 30, _"Warn löschen",  self):setBackgroundColor(Color.Red):setFontSize(1)
+	if self.m_AdminGui then
+		self.m_Window:addBackButton(function () AdminGUI:getSingleton():show() end)
+		self.m_addWarn = GUIButton:new(10, 235, self.m_Width/2-15, 30, _"Verwarnen",  self):setBackgroundColor(Color.Orange):setFontSize(1)
+		self.m_removeWarn = GUIButton:new(self.m_Width/2+5, 235, self.m_Width/2-15, 30, _"Warn löschen",  self):setBackgroundColor(Color.Red):setFontSize(1)
 
-	self.m_removeWarn.onLeftClick = function()
-		if not self.m_WarnGrid:getSelectedItem() then
-			ErrorBox:new(_"Kein Warn ausgewählt!")
-			return
+		self.m_removeWarn.onLeftClick = function()
+			if not self.m_WarnGrid:getSelectedItem() then
+				ErrorBox:new(_"Kein Warn ausgewählt!")
+				return
+			end
+			triggerServerEvent("adminTriggerFunction", root, "removeWarn", player, self.m_WarnGrid:getSelectedItem().Id)
+			setTimer(function()
+				self:loadWarns()
+			end	,500, 1)
 		end
-		triggerServerEvent("adminTriggerFunction", root, "removeWarn", player, self.m_WarnGrid:getSelectedItem().Id)
-		setTimer(function()
-			self:loadWarns()
-		end	,500, 1)
+
+		self.m_addWarn.onLeftClick = function()
+			AdminInputBox:new(
+				_("Spieler %s verwarnen", player:getName()),
+				_"Dauer in Tagen:",
+				function (reason, duration)
+					triggerServerEvent("adminTriggerFunction", root, "addWarn", player, reason, duration)
+					setTimer(function()
+						self:loadWarns()
+					end	,500, 1)
+				end)
+			end
 	end
-
-	self.m_addWarn.onLeftClick = function()
-		AdminInputBox:new(
-			_("Spieler %s verwarnen", player:getName()),
-			_"Dauer in Tagen:",
-			function (reason, duration)
-				triggerServerEvent("adminTriggerFunction", root, "addWarn", player, reason, duration)
-				setTimer(function()
-					self:loadWarns()
-				end	,500, 1)
-			end)
-		end
-
 	self:loadWarns()
 end
 
@@ -582,9 +583,13 @@ function WarnManagement:loadWarns()
 			item = self.m_WarnGrid:addItem(row.reason, row.adminName, getOpticalTimestamp(row.created), getOpticalTimestamp(row.expires))
 			item.Id = row.Id
 		end
-		self.m_removeWarn:setEnabled(true)
+		if self.m_AdminGui then
+			self.m_removeWarn:setEnabled(true)
+		end
 	else
 		self.m_NoWarnLabel = GUILabel:new(10,115,self.m_Width-20,30, _("Der Spieler %s hat keine Warns!", self.m_Player:getName()), self):setAlignX("center")
-		self.m_removeWarn:setEnabled(false)
+		if self.m_AdminGui then
+			self.m_removeWarn:setEnabled(false)
+		end
 	end
 end
