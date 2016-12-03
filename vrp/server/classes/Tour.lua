@@ -50,7 +50,7 @@ end
 
 function Tour:stop(player)
 	if client and isElement(client) then player = client end
-	player:sendInfo(_("Du hast die Server-Tour erfolgreich beendet!", client))
+	player:sendInfo(_("Du hast die Server-Tour erfolgreich beendet!", player))
 	player:triggerEvent("tourStop")
 	self:save(player)
 end
