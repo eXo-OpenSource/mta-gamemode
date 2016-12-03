@@ -29,4 +29,6 @@ function ShopNPC:constructor(skinId, x, y, z, rotation)
 			end
 		end
 	)
+
+	self:toggleWanteds(true)
 end

@@ -30,8 +30,10 @@ function RobableShop:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorI
   self.m_Ped = ShopNPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
   self.m_Ped:setInterior(interiorId)
   self.m_Ped:setDimension(dimension)
+  self.m_Ped:toggleWanteds(true)
   self.m_Ped.Shop = shop
   self.m_Ped.onTargetted = bind(self.Ped_Targetted, self)
+
 end
 
 function RobableShop:Ped_Targetted(ped, attacker)
@@ -56,63 +58,65 @@ function RobableShop:Ped_Targetted(ped, attacker)
 end
 
 function RobableShop:startRob(shop, attacker, ped)
-  PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
-  ActionsCheck:getSingleton():setAction("Shop-Überfall")
+	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
+	ActionsCheck:getSingleton():setAction("Shop-Überfall")
 
-  -- Play an alarm
-  local pos = ped:getPosition()
-  triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z, ped:getDimension())
+	-- Play an alarm
+	local pos = ped:getPosition()
+	triggerClientEvent("shopRobbed", attacker, pos.x, pos.y, pos.z, ped:getDimension())
 
-  -- Report the crime
-  attacker:reportCrime(Crime.ShopRob)
+	-- Report the crime
+	--attacker:reportCrime(Crime.ShopRob)
+	attacker:giveWantedLevel(3)
+	attacker:sendMessage("Verbrechen begangen: Shop-Überfall, 3 Wanteds", 255, 255, 0)
 
-  self.m_Bag = createObject(1550, pos)
-  self.m_Bag.Money = 0
-  addEventHandler("onElementClicked", self.m_Bag, bind(self.onBagClick, self))
+	self.m_Bag = createObject(1550, pos)
+	self.m_Bag.Money = 0
+	addEventHandler("onElementClicked", self.m_Bag, bind(self.onBagClick, self))
 
-  self:giveBag(attacker)
+	self:giveBag(attacker)
 
-  local evilPos = ROBABLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_SHOP_EVIL_TARGETS)]
-  local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
+	local evilPos = ROBABLE_SHOP_EVIL_TARGETS[math.random(1, #ROBABLE_SHOP_EVIL_TARGETS)]
+	local statePos = ROBABLE_SHOP_STATE_TARGETS[math.random(1, #ROBABLE_SHOP_STATE_TARGETS)]
 
-  self.m_Gang = attacker:getGroup()
-  self.m_Gang:attachPlayerMarkers()
-  self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y)
-  self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y)
-  self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
-  self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
-  self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
-  addEventHandler("onMarkerHit", self.m_EvilMarker, self.m_onDeliveryMarkerHit)
-  addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
-  self.m_onCrash = bind(self.onCrash, self)
-  addEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
-  self.m_characterInitializedFunc = bind(self.characterInitialized, self)
-  addEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
+	self.m_Gang = attacker:getGroup()
+	self.m_Gang:attachPlayerMarkers()
+	self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y)
+	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y)
+	self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
+	self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
+	self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
+	addEventHandler("onMarkerHit", self.m_EvilMarker, self.m_onDeliveryMarkerHit)
+	addEventHandler("onMarkerHit", self.m_StateMarker, self.m_onDeliveryMarkerHit)
+	self.m_onCrash = bind(self.onCrash, self)
+	addEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
+	self.m_characterInitializedFunc = bind(self.characterInitialized, self)
+	addEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
-  StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "start", attacker, self.m_Gang, "group")
+	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "start", attacker, self.m_Gang, "group")
 
 
-  setTimer(
-  function()
-    if isElement(attacker) then
-      if attacker:getTarget() == ped then
-        local rnd = math.random(5, 10)
-        if shop:getMoney() >= rnd then
-          shop:takeMoney(rnd, "Raub")
-          self.m_Bag.Money = self.m_Bag.Money + rnd
-          attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
-        else
-          killTimer(sourceTimer)
-          attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
-        end
-      end
-      return
-    end
-    killTimer(sourceTimer)
-  end,
-  1000,
-  60
-)
+	setTimer(
+	function()
+	if isElement(attacker) then
+		if attacker:getTarget() == ped then
+		local rnd = math.random(5, 10)
+		if shop:getMoney() >= rnd then
+			shop:takeMoney(rnd, "Raub")
+			self.m_Bag.Money = self.m_Bag.Money + rnd
+			attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
+		else
+			killTimer(sourceTimer)
+			attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
+		end
+		end
+		return
+	end
+	killTimer(sourceTimer)
+	end,
+	1000,
+	60
+	)
 end
 
 function RobableShop:stopRob(player)

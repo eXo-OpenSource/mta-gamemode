@@ -28,6 +28,13 @@ function BeggarPed:constructor(Id)
 	self:setData("BeggarName", self.m_Name, true)
 	self:setData("BeggarId", self.m_Id, true)
 	self:setData("BeggarType", self.m_Type, true)
+
+	addEventHandler("onPedWasted", self, bind(self.onWasted, self) )
+end
+
+function BeggarPed:onWasted(ammo, killer, weapon, bodypart, stealth)
+	killer:giveWantedLevel(3)
+	killer:sendMessage("Verbrechen begangen: Mord, 3 Wanteds", 255, 255, 0)
 end
 
 function BeggarPed:destructor()

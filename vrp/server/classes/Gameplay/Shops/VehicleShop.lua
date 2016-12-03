@@ -24,6 +24,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	local npcData = split(npc,",")
 	self.m_NPC = NPC:new(npcData[1], npcData[2], npcData[3], npcData[4], npcData[5] or 0)
 	self.m_NPC:setImmortal(true)
+	self.m_NPC:toggleWanteds(true)
 	local spawnPos = split(spawn,",")
 	self.m_Spawn = {spawnPos[1], spawnPos[2], spawnPos[3], spawnPos[4]}
 end
@@ -74,7 +75,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 		else
 			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
 		end
-	else 
+	else
 		player:sendError(_("Maximaler Fahrzeug-Slot erreicht!", player), 255, 0, 0)
 	end
 end
