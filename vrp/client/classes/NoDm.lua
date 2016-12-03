@@ -76,9 +76,11 @@ end
 function NoDm:toggleNoDmImage(state)
 	if state == true and self.m_NoDm == false then
 		self.m_currentImagePosition = 0
+		removeEventHandler ( "onClientRender", getRootElement(), self.m_RenderBind)
 		addEventHandler ( "onClientRender", getRootElement(), self.m_RenderBind)
 		self.m_NoDm = true
 	elseif state == false and self.m_NoDm == true then
+		removeEventHandler ( "onClientRender", getRootElement(), self.m_UnRenderBind)
 		addEventHandler ( "onClientRender", getRootElement(), self.m_UnRenderBind)
 		self.m_NoDm = false
 	end
