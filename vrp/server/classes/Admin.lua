@@ -159,7 +159,7 @@ function Admin:Event_getPlayerInfo(Id, name)
                         Group = player:getGroup() and player:getGroup():getName() or false;
                         Skin = player:getSkin() or false;
                         Ban = Ban.checkOfflineBan(Id);
-						Warn = Warn.getAmount(id) 
+						Warn = Warn.getAmount(id);
 						Karma = player:getKarma();
                     }
 
