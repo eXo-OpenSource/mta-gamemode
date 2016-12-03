@@ -173,11 +173,14 @@ function PlayerManager:playerQuit()
 			end
 		end
 	end
+	if source:getWantedLevel() > 0 then
+		FactionState:getSingleton():checkLogout(source)
+	end
 	if source.curEl then
 		source.curEl:driveToStation(source,1)
 	end
 	if source:isLoggedIn() then
-		StatisticsLogger:addLogin( source, getPlayerName( source ) , "Logout")
+		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
 end
 

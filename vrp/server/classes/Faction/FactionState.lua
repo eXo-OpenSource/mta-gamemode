@@ -678,6 +678,20 @@ function FactionState:createDefendActors(Actors)
 	end
 end
 
+function FactionState:checkLogout(player)
+	local pos = player:getPosition()
+	local col = createColSphere(20, pos)
+	local colPlayers = getElementsWithinColShape(col, "player")
+	col:destroy()
+	for index, cop in pairs(colPlayers) do
+		if cop:getFaction() and cop:getFaction():isStateFaction() and cop:isFactionDuty() then
+			self:Event_JailPlayer(player, false, false, cop)
+			return
+		end
+	end
+
+end
+
 
 function FactionState:Event_giveWanteds(target, amount, reason)
 	local faction = client:getFaction()
