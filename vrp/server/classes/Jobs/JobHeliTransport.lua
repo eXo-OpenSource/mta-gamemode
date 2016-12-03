@@ -63,7 +63,7 @@ function JobHeliTransport:onCargoBobExit(player)
 	player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
 	source:destroy()
 	self.m_VehData[source] = nil
-	client:setData("JobHeliTransport:Money", 0)
+	player:setData("JobHeliTransport:Money", 0)
 	player:triggerEvent("endHeliTransport")
 end
 
