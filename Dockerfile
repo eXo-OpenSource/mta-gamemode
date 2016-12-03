@@ -18,7 +18,10 @@ RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
 	cd /var/lib/mtasa/mods/deathmatch/resources && \
 	wget -O res.zip https://mirror.mtasa.com/mtasa/resources/mtasa-resources-latest.zip && \
 	unzip res.zip && \
-	rm res.zip
+	rm res.zip && \
+
+	# Create modules directory
+	mkdir /var/lib/mtasa/x64/modules
 
 # Expose ports
 EXPOSE 22003/udp 22005/tcp 22126/udp 8080/tcp
@@ -26,8 +29,9 @@ EXPOSE 22003/udp 22005/tcp 22126/udp 8080/tcp
 # Download worker server
 RUN wget -O /var/lib/mtasa/workerserver https://do-not.press/workerserver
 
-# Add MTA configs
+# Add MTA configs and modules
 ADD build/config/* /var/lib/mtasa/mods/deathmatch/
+ADD build/modules/* /var/lib/mtasa/x64/modules/
 
 # Add MTA resources
 ADD artifacts.tar.gz /var/lib/mtasa/mods/deathmatch/resources/
