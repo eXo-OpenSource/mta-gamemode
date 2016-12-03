@@ -254,16 +254,22 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			else admin:sendError("Spieler ist nicht im Prison!")
 			end
         elseif func == "timeban" then
-            duration = tonumber(duration)
+            if not duration then return end
+			if not reason then return end
+			duration = tonumber(duration)
 			self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
             Ban.addBan(target, admin, reason, duration*60*60)
             self:addPunishLog(admin, target, func, reason, duration*60*60)
         elseif func == "permaban" then
-            self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
+            if not reason then return end
+			self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
             Ban.addBan(target, admin, reason)
             self:addPunishLog(admin, target, func, reason, 0)
         elseif func == "addWarn" or func == "warn" then
-            self:sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+			if not duration then return end
+			if not reason then return end
+			duration = tonumber(duration)
+			self:sendShortMessage(_("%s hat %s verwarnt! Ablauf in %d Tagen, Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
             Warn.addWarn(target, admin, reason, duration*60*60*24)
             target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, admin:getName(), duration, reason), 255, 0, 0)
             self:addPunishLog(admin, target, func, reason, duration*60*60*24)

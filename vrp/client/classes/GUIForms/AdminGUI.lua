@@ -558,10 +558,14 @@ function WarnManagement:constructor(player, adminGui)
 				_("Spieler %s verwarnen", player:getName()),
 				_"Dauer in Tagen:",
 				function (reason, duration)
-					triggerServerEvent("adminTriggerFunction", root, "addWarn", player, reason, duration)
-					setTimer(function()
-						self:loadWarns()
-					end	,500, 1)
+					if reason and duration then
+						triggerServerEvent("adminTriggerFunction", root, "addWarn", player, reason, duration)
+						setTimer(function()
+							self:loadWarns()
+						end	,500, 1)
+					else
+						ErrorBox:new("Ungültige Dauer oder Grund!")
+					end
 				end)
 			end
 	end
