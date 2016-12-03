@@ -22,7 +22,7 @@ end
 
 function Tour:start(forceNew)
 	if self.m_TourPlayerData[client] then
-		self:save()
+		self:save(player)
 		client:triggerEvent("tourStop")
 	end
 
