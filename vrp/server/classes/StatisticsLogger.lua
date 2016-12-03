@@ -37,7 +37,9 @@ function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
 end
 
 function StatisticsLogger:getGroupLogs(groupType, groupId)
-    local result = sqlLogs:queryFetch("SELECT * FROM ??_Groups WHERE GroupType = ? AND GroupId = ? ORDER BY Id DESC", sqlLogs:getPrefix(), groupType, groupId)
+    local days = 7
+	local since = getRealTime().timestamp-days*24*60*60
+	local result = sqlLogs:queryFetch("SELECT * FROM ??_Groups WHERE GroupType = ? AND GroupId = ? AND Timestamp > ? ORDER BY Id DESC", sqlLogs:getPrefix(), groupType, groupId, since)
     return result
 end
 
@@ -174,8 +176,8 @@ end
 
 function StatisticsLogger:addAdminAction( player, action, target)
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
-	if target then 
-		if isElement(target) then 
+	if target then
+		if isElement(target) then
 			if getElementType(target) == "player" then
 				target = getPlayerName(target)
 			elseif getElementType(target) == "vehicle" then
@@ -186,10 +188,10 @@ function StatisticsLogger:addAdminAction( player, action, target)
 	if action == "spect" then
 		sqlLogs:queryExec("INSERT INTO ??_AdminActionSpect (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
-	elseif action == "goto" or action == "gethere" or action == "gotomark" or action == "mark" then 
+	elseif action == "goto" or action == "gethere" or action == "gotomark" or action == "mark" then
 		sqlLogs:queryExec("INSERT INTO ??_AdminActionPort (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
-	elseif action == "adminAnnounce" or string.upper(action) == "CLEARCHAT" or action == "a" or action == "o" then 
+	elseif action == "adminAnnounce" or string.upper(action) == "CLEARCHAT" or action == "a" or action == "o" then
 		sqlLogs:queryExec("INSERT INTO ??_AdminActionChat (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
 	else
