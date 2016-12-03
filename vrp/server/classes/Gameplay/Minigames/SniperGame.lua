@@ -132,10 +132,11 @@ function SniperGame:addPlayer(player)
 end
 
 function SniperGame:removePlayer(player)
+	source:fadeCamera(true, 1)
 	player:setHealth(100)
-	player:spawn(-526.94, 1974.63, 60.41)
-	player:setPosition(-526.94, 1974.63, 60.41)
 	player:setDimension(0)
+	player:setInterior(0)
+	player:setPosition(-526.94, 1974.63, 60.41)
 
 	MinigameManager:getSingleton().m_SniperGameHighscore:addHighscore(player:getId(), self.m_PedKills[player])
 	self.m_PedKills[player] = false

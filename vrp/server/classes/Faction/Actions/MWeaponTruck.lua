@@ -36,9 +36,13 @@ end
 function MWeaponTruck:onHelpColHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		if source.type == "evil" then
-			hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.WeaponTruck", "HelpTexts.Actions.WeaponTruck", true)
+			if hitElement:getFaction() and hitElement:getFaction():isEvilFaction() then
+				hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.WeaponTruck", "HelpTexts.Actions.WeaponTruck", true)
+			end
 		elseif source.type == "state" then
-			hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.StateWeaponTruck", "HelpTexts.Actions.StateWeaponTruck", true)
+			if hitElement:getFaction() and hitElement:getFaction():isStateFaction() then
+				hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.StateWeaponTruck", "HelpTexts.Actions.StateWeaponTruck", true)
+			end
 		end
 	end
 end
