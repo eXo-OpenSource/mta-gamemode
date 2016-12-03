@@ -1,5 +1,5 @@
 before_script:
-  - docker info
+  - sudo docker info
   - sudo dpkg --add-architecture i386
   - sudo apt-get update -qq
   - sudo apt-get install -y -qq python3 git lua5.1 libc6:i386 libz1:i386 libstdc++6:i386
@@ -27,11 +27,11 @@ build_app_job:
 build_docker_job:
   stage: build_docker
   script:
-    - docker build -t exo-rl-mta .
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-    - docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest-$CI_BUILD_REF_NAME
-    - '[ "$CI_BUILD_REF_NAME" == "master" ] && docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest'
-    - docker push $DOCKER_USER/exo-rl-mta
+    - sudo docker build -t exo-rl-mta .
+    - sudo docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+    - sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest-$CI_BUILD_REF_NAME
+    - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest'
+    - sudo docker push $DOCKER_USER/exo-rl-mta
 
 deploy_job:
   stage: deploy
