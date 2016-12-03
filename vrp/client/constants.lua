@@ -374,7 +374,8 @@ HelpTexts = {
 			Deinen Forklift kannst du dir am roten Marker erstellen.
 		]];
 		TreasureSeeker = [[
-			TODO
+			Als Schatzsucher fährst du hinaus aufs Meer um den Grund des Meeres nach Wertgegenständen
+			abzusuchen. Anschließend hebst du diese in dein Schiff und entlädst sie am Hafen!
 		]]
 	};
 	Events = {
@@ -383,7 +384,11 @@ HelpTexts = {
 		StreetRace = [[Todo]];
 	};
 	Gameplay = {
-		Beggar = [[Todo]];
+		Beggar = [[
+			Wenn du einen Bettler antriffst, kann es passieren, dass dieser dich nach Geld fragt. Es liegt
+			an dir ob du ihn ignorierst, bezahlst oder ausraubst. Bedenke jedoch, dass solche Aktionen einen
+			Einfluss auf dein Karma haben.
+		]];
 	};
 	Minigames = {
 		ZombieSurvival = [[
@@ -414,7 +419,11 @@ HelpTexts = {
 			Die Bösen Fraktionisten werden versuchen den SWT zu zerstören.
 			Falls ihnen das gelingt, könnt ihr die Waffen mit einem Enforcer vom LSPD weitertransportieren.
 		]];
-		WeedTruck = [[Todo]];
+		WeedTruck = [[
+			Dieser illegale Transport versorgt eure Fraktion mit Drogen (Cannabis). Gegen eine Bezahlung von 10000$ 
+			erhaltet ihr den Truck. Er wird beladen und anschließend bereit gestellt. Fahrt zu eurem Versteck um ihn
+			dann zu entladen!
+		]];
 		Bankrob = [[
 		Nachdem ihr den Kassierer mit einer Waffe bedroht oder ein Loch in die Wand gesprengt habt, müsst ihr
 		zum Kontrollraum laufen und die Tresortür knacken. Außerdem könnt ihr dort den Alarm ausschalten.
