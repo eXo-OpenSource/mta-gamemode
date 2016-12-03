@@ -159,6 +159,7 @@ function Admin:Event_getPlayerInfo(Id, name)
                         Group = player:getGroup() and player:getGroup():getName() or false;
                         Skin = player:getSkin() or false;
                         Ban = Ban.checkOfflineBan(Id);
+						Warn = Warn.getAmount(id) 
 						Karma = player:getKarma();
                     }
 
@@ -649,7 +650,6 @@ end
 
 function Admin:addPunishLog(admin, player, type, reason, duration)
     StatisticsLogger:getSingleton():addPunishLog(admin, player, type, reason, duration)
-
 end
 
 function Admin:Event_adminSetPlayerFaction(targetPlayer,Id)
