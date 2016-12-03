@@ -58,8 +58,8 @@ function InteriorEnterExit:teleport(player, pos, rotation, interior, dimension)
 		end, 1500, 1
 	)
 
-	--triggerEvent("onElementInteriorChange", player, interior)
-	--triggerEvent("onElementDimensionChange", player, dimension)
+	triggerEvent("onElementInteriorChange", player, interior)
+	triggerEvent("onElementDimensionChange", player, dimension)
 	player.LastPort = getRealTime().timestamp
 
 end
