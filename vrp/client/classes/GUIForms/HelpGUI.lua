@@ -22,6 +22,10 @@ function HelpGUI:constructor()
 		for title, text in pairs(texts) do
 			local item = self.m_Grid:addItem("  "..title)
 			item.onLeftClick = function()
+					if HUDUI:getSingleton().m_Visible then 
+						HUDUI:getSingleton():refreshHandler()
+						HUDUI:setEnabled(false)
+					end
 				self.m_Window:setTitleBarText(title.." - Hilfe")
 				self.m_ContentLabel:setText(text)
 			end

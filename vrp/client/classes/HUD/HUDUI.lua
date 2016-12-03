@@ -48,6 +48,10 @@ function HUDUI:hide()
 	self.m_IsVisible = false
 end
 
+function HUDUI:refreshHandler()
+	removeEventHandler("onClientRender",root,self.m_RenderHandler)
+	addEventHandler("onClientRender",root,self.m_RenderHandler)
+end
 function HUDUI:draw()
 	if not self.m_Enabled then return end
 	if not self.m_IsVisible then return end

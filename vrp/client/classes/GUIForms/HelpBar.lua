@@ -51,6 +51,7 @@ function HelpBar:fadeIn()
 
 	self.m_Icon.onUnhover()
 	self.m_Icon:setVisible(false)
+	
 end
 
 function HelpBar:fadeOut()
@@ -61,6 +62,8 @@ function HelpBar:fadeOut()
 		self.m_Icon:setVisible(true)
 		self.m_Visible = false
 	end, 500, 1)
+	HUDUI:getSingleton():show()
+	HUDUI:getSingleton():setEnabled(true)
 end
 
 function HelpBar:blink()
@@ -139,6 +142,8 @@ function HelpBar:addTempText(title, text, blink, tutorial, timeout, anim)
 end
 
 function HelpBar:HelpIcon_Click()
+	HUDUI:getSingleton():hide()
+	HUDUI:getSingleton():setEnabled(false)
 	self:fadeIn()
 end
 
