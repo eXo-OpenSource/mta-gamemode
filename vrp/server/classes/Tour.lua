@@ -33,7 +33,7 @@ function Tour:start(forceNew)
 	local step = 1
 	if not forceNew == true then
 		for id, data in pairs(Tour.Data) do
-			if not self.m_TourPlayerData[client][tostring(id)] then
+			if not self.m_TourPlayerData[client][tostring(id)] == true then
 				step = id
 			end
 		end
