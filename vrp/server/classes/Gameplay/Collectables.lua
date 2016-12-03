@@ -17,6 +17,7 @@ end
 
 function Collectables:checkCollectable(collectableID)
 	if not client then return end
+	if client:getDimension() == PRIVATE_DIMENSION_SERVER then return end
 	local x,y,z = getElementPosition(client)
 	local px,py,pz = unpack(Collectables.POSITIONS[collectableID])
 	if getDistanceBetweenPoints3D (x,y,z,px,py,pz) >= 10 then

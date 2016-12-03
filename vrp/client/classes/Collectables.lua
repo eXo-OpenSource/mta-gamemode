@@ -25,6 +25,7 @@ function Collectables:onCollectableHit(hitElement)
 
 	for key, value in ipairs(self.m_Pickups) do
 		if value == source then
+			if localPlayer:getDimension() == PRIVATE_DIMENSION_SERVER then return end
 			triggerServerEvent("checkCollectableHit",localPlayer,key)
 			setElementDimension(value,PRIVATE_DIMENSION_SERVER)
 		end
