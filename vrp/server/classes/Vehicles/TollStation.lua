@@ -26,10 +26,13 @@ end
 
 function TollStation:checkRequirements(player)
 	-- Step 1: Check for State Duty
-	if player:getFaction() and (player:getFaction():isStateFaction() or player:getFaction():isRescueFaction()) then
-		if player:isFactionDuty() then
-			player:sendShortMessage(("Willkommen bei der Maut-Station %s! Da du Staats-Dienstlich unterwegs bist, darfst du kostenlos passieren! Gute Fahrt."):format(self.m_Name), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
-			return true
+	if player:getFaction() then
+		local faction = player:getFaction()
+		if faction:isStateFaction() or faction:isRescueFaction() then
+			if player:isFactionDuty() then
+				player:sendShortMessage(("Willkommen bei der Maut-Station %s! Da du Staats-Dienstlich unterwegs bist, darfst du kostenlos passieren! Gute Fahrt."):format(self.m_Name), ("Maut-Station: %s"):format(self.m_Name), {125, 0, 0})
+				return true
+			end
 		end
 	end
 

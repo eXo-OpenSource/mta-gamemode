@@ -11,21 +11,6 @@ FactionManager.Map = {}
 
 
 function FactionManager:constructor()
-	self.StateFactions = {
-	[1] = true,
-	[2] = true,
-	[3] = true
-	}
-	self.EvilFactions = {
-	[5] = true,
-	[6] = true,
-	[7] = true,
-	[8] = true
-	}
-	self.RescueFactions = {
-	[4] = true
-	}
-
 	self:loadFactions()
 
   -- Events
@@ -71,10 +56,7 @@ function FactionManager:loadFactions()
       players[factionRow.Id] = factionRow.FactionRank
     end
 
-	local FactionType = "Default"
-	if self.StateFactions[row.Id] == true then FactionType = "State" elseif self.EvilFactions[row.Id] == true then FactionType = "Evil" elseif self.RescueFactions[row.Id] == true then FactionType = "Rescue" end
-
-	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players,row.RankLoans,row.RankSkins,row.RankWeapons,row.Depot,FactionType)
+	local instance = Faction:new(row.Id, row.Name_Short, row.Name, row.BankAccount, players, row.RankLoans, row.RankSkins, row.RankWeapons, row.Depot, row.Type)
     FactionManager.Map[row.Id] = instance
   end
 end
