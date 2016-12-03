@@ -21,30 +21,29 @@ function Tour:constructor()
 end
 
 function Tour:start(forceNew)
-	if self.m_TourPlayerData[client] then
-		self:save(player)
-		client:triggerEvent("tourStop")
-	end
-
-	local row = sql:queryFetchSingle("SELECT Tour FROM ??_character WHERE Id = ?;", sql:getPrefix(), client:getId())
-	local tbl = (row.Tour ~= nil and row.Tour) or toJSON({})
-	self.m_TourPlayerData[client]  = fromJSON(tbl)
-
-	local step = 1
-	if not forceNew == true then
-		for id, data in pairs(Tour.Data) do
-			if not self.m_TourPlayerData[client][tostring(id)] == true then
-				step = id
-			end
+	if self.m_TourStep then
+		if self.m_TourStep  > 11 then
+			self:save(client)
+			client:triggerEvent("tourStop")
 		end
 	end
+	if not self.m_TourStep or type(self.m_TourStep) ~= "number" then
+		local row = sql:queryFetchSingle("SELECT TourStep FROM ??_character WHERE Id = ?;", sql:getPrefix(), client:getId())
+		client.m_TourStep = tonumber(row.TourStep)
+	end
+	if forceNew then
+		client.m_TourStep = 1
+	end
+	if client.m_TourStep == 0 then 
+		client.m_TourStep = 1
+	end
 	client:sendShortMessage(_("Du kannst die Tour jederzeit im self-Menü (F2) unter Einstellungen beenden!", client), "Servertour")
-	self:showStep(client, step)
+	self:showStep(client, client.m_TourStep)
 end
 
 function Tour:save(player)
-	if self.m_TourPlayerData[player] then
-		sql:queryExec("UPDATE ??_character SET Tour = ? WHERE Id = ?;", sql:getPrefix(), toJSON(self.m_TourPlayerData[player]), player:getId())
+	if player.m_TourStep then
+		sql:queryExec("UPDATE ??_character SET TourStep = ? WHERE Id = ?;", sql:getPrefix(), player.m_TourStep, player:getId())
 	end
 end
 
@@ -65,9 +64,10 @@ end
 
 function Tour:successStep(id)
 	if Tour.Data[id] then
-		if not self.m_TourPlayerData[client][tostring(id)] then
-			self.m_TourPlayerData[client][tostring(id)] = true
+		if client.m_TourStep > id then
+			client.m_TourStep = client.m_TourStep + 1
 			client:giveMoney(Tour.Data[id].Money, "Tour")
+			self:save(client)
 		else
 			client:sendShortMessage(_("Du hast bereits die Belohnung für diesen Schritt erhalten!", client))
 		end
