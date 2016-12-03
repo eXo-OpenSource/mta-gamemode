@@ -4,7 +4,7 @@ FROM debian:jessie
 RUN apt-get -y update && apt-get install -y wget unzip
 
 # Setup user and change to its home
-RUN useradd -m -d /var/lib/mtasa/ mtasa && \
+RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
 	cd /var/lib/mtasa && \
 
 	# Download and install MTA Server

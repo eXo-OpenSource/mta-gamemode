@@ -1,4 +1,5 @@
-#!/bin/python
+#!/bin/python3
+
 import os
 import io
 import xml.etree.ElementTree as ET
@@ -22,6 +23,7 @@ def rm_r(path):
         shutil.rmtree(path)
     elif os.path.exists(path):
         os.remove(path)
+
 rm_r(outdir)
 os.mkdir(outdir)
 shutil.copytree(rootdir+"files/maps", outdir+"files/maps")

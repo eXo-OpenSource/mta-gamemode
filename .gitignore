@@ -12,3 +12,6 @@ vrp/server/constants/config.json
 *.iml
 
 .vscode
+
+artifacts.tar.gz
+assets.tar.gz
