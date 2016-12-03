@@ -75,9 +75,8 @@ function Player:destructor()
 
 	if self.m_DeathPickup and isElement(self.m_DeathPickup) then self.m_DeathPickup:destroy() end
 
-	if not self.m_DoNotSave then -- Cause of Invation System
-		self:save()
-	end
+	self:save()
+		
 
 	-- Unload stuff
 	HouseManager:getSingleton():destroyPlayerHouseBlip(self) -- Todo: do not on stop, cause of an error (annoying :P)
@@ -265,10 +264,15 @@ function Player:save()
 		end
 	end
 	local dimension = 0
-
+	local sHealth = self:getHealth()
+	local sArmor = self:getArmor()
+	local sSkin = getElementModel(self)
 	if interior > 0 then dimension = self:getDimension() end
 	if self.m_DoNotSave then
 		x, y, z = NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z
+		sHealth = 100
+		sArmor = 0
+		sSkin = NOOB_SKIN
 	end
 	local spawnWithFac
 	if self.m_SpawnWithFactionSkin then
@@ -276,8 +280,8 @@ function Player:save()
 	else
 		spawnWithFac = 0
 	end
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
-		x, y, z, interior, dimension, self.m_UniqueInterior, math.floor(self:getHealth()), math.floor(self:getArmor()), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
+	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+		x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
 
 	--if self:getInventory() then
 	--	self:getInventory():save()
