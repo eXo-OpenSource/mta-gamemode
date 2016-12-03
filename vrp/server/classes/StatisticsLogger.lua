@@ -11,6 +11,8 @@ function StatisticsLogger:constructor()
 	if not getResourceFromName("vrp_data") then createResource("vrp_data") end
     if not getResourceState(getResourceFromName("vrp_data")) == "running" then startResource(getResourceFromName("vrp_data")) end
 	self.m_TextLogPath = ":vrp_data/logs/"
+
+	--addEventHandler("onDebugMessage", getRootElement(), bind(self.onDebugMessageLog, self)) MTA:Bug - only outputDebugString is working, no MTA Errors/Warnings
 end
 
 function StatisticsLogger:getZone(player)
@@ -198,4 +200,9 @@ function StatisticsLogger:addAdminAction( player, action, target)
 		sqlLogs:queryExec("INSERT INTO ??_AdminActionOther (UserId, Type, Arg, Date ) VALUES(?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), userId, action, tostring(target) or "")
 	end
+end
+
+function StatisticsLogger:onDebugMessageLog(message, level, file, line)
+sqlLogs:queryExec("INSERT INTO ??_Errors (Message, Level, File, Line, Date) VALUES(?, ?, ?, ?, NOW())",
+			sqlLogs:getPrefix(), message, level, file, line)
 end
