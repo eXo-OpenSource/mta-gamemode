@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 HouseManager = inherit(Singleton)
-addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse"}
+addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse","lockHouse"}
 
 local ROB_DELAY = 1000*60*15
 
@@ -29,7 +29,7 @@ function HouseManager:constructor()
 	addEventHandler("sellHouse",root,bind(self.sellHouse,self))
 	addEventHandler("enterHouse",root,bind(self.enterHouse,self))
 	addEventHandler("leaveHouse",root,bind(self.leaveHouse,self))
-
+	addEventHandler("lockHouse",root,bind(self.lockHouse,self))
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
 
 end
@@ -54,6 +54,12 @@ end
 
 function HouseManager:isCharacterAllowedToRob (player)
 	return self.m_RobPlayers[player:getId()] == nil and true or false
+end
+
+function HouseManager:lockHouse()
+	if not client then return end
+	if client.vehicle then return end
+	self.m_Houses[client.visitingHouse]:toggleLockState(client)
 end
 
 function HouseManager:breakHouse()

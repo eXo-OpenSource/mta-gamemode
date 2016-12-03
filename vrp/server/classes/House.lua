@@ -20,7 +20,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_PlayersInterior = {}
 	self.m_Price = price
 	self.m_RentPrice = rentPrice
-	self.m_LockStatus = toboolean(lockStatus)
+	self.m_LockStatus = true
 	self.m_Pos = position
 	self.m_Keys = fromJSON(keys)
 	self.m_InteriorID = interiorID
@@ -52,6 +52,16 @@ end
 
 function House:getOwner()
 	return self.m_Owner
+end
+
+function House:toggleLockState( player )
+	self.m_LockStatus = not self.m_LockStatus
+	local info = "abgeschlossen" 
+	if self.m_LockStatus then 
+		info = "aufgeschlossen"
+	end
+	player:sendInfo("Das Haus wurde "..info.."!")
+	
 end
 
 function House:breakHouse(player)
@@ -199,12 +209,16 @@ function House:removePlayerFromList(player)
 end
 
 function House:leaveHouse(player)
-	self:removePlayerFromList(player)
-	player:setPosition(self.m_Pos)
-	player:setInterior(0)
-	player:setDimension(0)
-	if self.m_CurrentRobber == player then
-		player:triggerEvent("CountdownStop")
+	if self.m_Keys[player:getId()] or not self.m_LockStatus  then
+		self:removePlayerFromList(player)
+		player:setPosition(self.m_Pos)
+		player:setInterior(0)
+		player:setDimension(0)
+		if self.m_CurrentRobber == player then
+			player:triggerEvent("CountdownStop")
+		end
+	else
+		player:sendError(_("Das Tür ist verschlossen!", player))
 	end
 end
 
