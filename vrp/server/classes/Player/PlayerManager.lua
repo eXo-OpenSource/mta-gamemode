@@ -540,12 +540,12 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 							return
 						end
 					else
-						client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponID]))
+						client:sendInfo(_("Du hast nicht genug %s Munition!", client, WEAPON_NAMES[weaponId]))
 						client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 						return
 					end
 				else
-					client:sendInfo(_("Du hast keine/n %s!", client, WEAPON_NAMES[weaponID]))
+					client:sendInfo(_("Du hast keine/n %s!", client, WEAPON_NAMES[weaponId]))
 					client:triggerEvent("receiveGunBoxData", client.m_GunBox)
 					return
 				end

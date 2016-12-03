@@ -150,7 +150,7 @@ function Trunk:takeWeapon(player, slot)
 					self.m_WeaponSlot[slot]["WeaponId"] = 0
 					self.m_WeaponSlot[slot]["Amount"] = 0
 					player:giveWeapon(weaponId, amount)
-					player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", player, WEAPON_NAMES[weaponID], amount, slot))
+					player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", player, WEAPON_NAMES[weaponId], amount, slot))
 					self:refreshClient(player)
 					return
 				else
@@ -175,14 +175,14 @@ function Trunk:addWeapon(player, weaponId, muni)
 					player:takeWeapon(weaponId)
 					slot["WeaponId"] = weaponId
 					slot["Amount"] = muni
-					player:sendInfo(_("Du hast eine/n %s mit %d Schuss in den Kofferraum (Slot %d) gelegt!", player, WEAPON_NAMES[weaponID], muni, index))
+					player:sendInfo(_("Du hast eine/n %s mit %d Schuss in den Kofferraum (Slot %d) gelegt!", player, WEAPON_NAMES[weaponId], muni, index))
 					self:refreshClient(player)
 					return
 				else
-					player:sendInfo(_("Du hast nicht genug %s Munition!", player, WEAPON_NAMES[weaponID]))
+					player:sendInfo(_("Du hast nicht genug %s Munition!", player, WEAPON_NAMES[weaponId]))
 				end
 			else
-				player:sendInfo(_("Du hast keine/n %s!", player, WEAPON_NAMES[weaponID]))
+				player:sendInfo(_("Du hast keine/n %s!", player, WEAPON_NAMES[weaponId]))
 			end
 		end
 	end
