@@ -31,7 +31,9 @@ end
 
 function MWeedTruck:onHelpColHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
-		hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.WeedTruck", "HelpTexts.Actions.WeedTruck", true)
+		if hitElement:getFaction() and hitElement:getFaction():isEvilFaction() then
+			hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.WeedTruck", "HelpTexts.Actions.WeedTruck", true)
+		end
 	end
 end
 

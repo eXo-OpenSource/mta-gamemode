@@ -71,7 +71,7 @@ function BankRobbery:destroyRob()
 	if self.m_DestinationMarker then
 		for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then destroyElement(marker) end end
 	end
-	if self.m_Safes then 
+	if self.m_Safes then
 		for index, safe in pairs(self.m_Safes) do if isElement(safe) then destroyElement(safe) end	end
 	end
 	if self.m_BombableBricks then
@@ -80,7 +80,7 @@ function BankRobbery:destroyRob()
 	if self.m_MoneyBags then
 		for index, bag in pairs(self.m_MoneyBags) do	if isElement(bag) then destroyElement(bag) end end
 	end
-	
+
 	if self.m_Blip then
 		for index, blip in pairs(self.m_Blip) do blip:delete() end
 	end
@@ -99,7 +99,7 @@ function BankRobbery:destroyRob()
 
 	killTimer(self.m_Timer)
 	killTimer(self.m_UpdateBreakingNewsTimer)
-	
+
 	local onlinePlayers = self.m_RobFaction:getOnlinePlayers()
 	if onlinePlayers then
 		for index, playeritem in pairs(self.m_RobFaction:getOnlinePlayers()) do
@@ -139,7 +139,7 @@ function BankRobbery:build()
 
 	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
 	self.m_BankDoor:setScale(0.88)
-	
+
 	self.m_BackDoor = createObject(1492, 2316.95, 22.90, 25.5, 0, 0, 180)
 	self.m_BackDoor:setFrozen(true)
 
@@ -181,7 +181,9 @@ end
 
 function BankRobbery:onHelpColHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
-		hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.Bankrob", "HelpTexts.Actions.Bankrob", true)
+		if hitElement:getFaction() then
+			hitElement:triggerEvent("setManualHelpBarText", "HelpTextTitles.Actions.Bankrob", "HelpTexts.Actions.Bankrob", true)
+		end
 	end
 end
 
@@ -651,16 +653,16 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 				if faction:isEvilFaction() then
 					local veh = getPedOccupiedVehicle( hitElement )
 					if veh then
-						local attachedElements = getAttachedElements(getPedOccupiedVehicle(hitElement)) 
-						if attachedElements then 
-							attachedElements = #attachedElements 
-						else 
+						local attachedElements = getAttachedElements(getPedOccupiedVehicle(hitElement))
+						if attachedElements then
+							attachedElements = #attachedElements
+						else
 							attachedElements = 0
 						end
 						local bags, amount
 						local totalAmount = 0
 						if (veh and attachedElements > 0 ) or hitElement:getPlayerAttachedObject() then
-							
+
 							if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 								bags = getAttachedElements(self.m_Truck)
 								hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
