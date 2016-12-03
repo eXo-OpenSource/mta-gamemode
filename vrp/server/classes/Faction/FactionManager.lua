@@ -323,7 +323,7 @@ function FactionManager:Event_factionRankUp(playerId)
 				faction:setPlayerRank(playerId, playerRank + 1)
 				faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
 				local player, isOffline = DatabasePlayer.getFromId(playerId)
-				if not isOffline and player:isActive() then
+				if player and isElement(player) and player:isActive() then
 					player:sendShortMessage(_("Du wurdest von %d auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
 				end
 				self:sendInfosToClient(client)
@@ -354,7 +354,7 @@ function FactionManager:Event_factionRankDown(playerId)
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
 		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
 		local player, isOffline = DatabasePlayer.getFromId(playerId)
-		if not isOffline and player:isActive() then
+		if player and isElement(player) and player:isActive() then
 			player:sendShortMessage(_("Du wurdest von %d auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
 		end
 		self:sendInfosToClient(client)

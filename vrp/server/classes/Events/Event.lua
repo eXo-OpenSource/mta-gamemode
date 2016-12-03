@@ -43,6 +43,8 @@ function Event:virtual_constructor(Id)
 					self:quit(hitElement)
 
 					hitElement:sendWarning(_("Du hast die Eventzone verlassen und nimmst deshalb nicht mehr am Event teil!", hitElement))
+						hitElement:triggerEvent("Countdown", event:getStartTime() - getRealTime().timestamp, "Event")
+
 				end
 			end
 		end
