@@ -54,7 +54,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 			setTimer(function(veh)
 				veh:setHealth(1000)
 				veh:respawn(true)
-			end, 5000, 1, source)
+			end, 10000, 1, source)
 
 		end)
 
