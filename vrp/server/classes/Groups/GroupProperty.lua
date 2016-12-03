@@ -26,14 +26,13 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_CamMatrix = {tonumber(gettok(Cam,1,",")), tonumber(gettok(Cam,2,",")), tonumber(gettok(Cam,3,",")), Pickup.x, Pickup.y, Pickup.z}
 
 	self.m_Pickup = createPickup(Pickup, 3, 1272, 0)
-	self.m_EnterFunc = bind( GroupProperty.onEnter, self)
 
 	self.m_DepotId = depotId
 	self.m_Depot = Depot.load(depotId, self)
 
 	self:getKeysFromSQL()
 
-	addEventHandler("onPickupHit", self.m_Pickup, self.m_EnterFunc)
+	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onEnter, self))
 
 	self.m_ExitMarker = createMarker(InteriorSpawn, "corona", 2, 255, 255, 255, 200)
 	self.m_ExitMarker:setInterior(InteriorId)
@@ -297,7 +296,7 @@ end
 
 function GroupProperty:onEnter( player )
 	local bDim = getElementDimension(player) == getElementDimension( source)
-	if bDim then
+	if bDim and player:getType() == "player" and not player.vehicle then
 		local name = "Kein Besitzer"
 		if self.m_Owner then
 			name = self.m_Owner.m_Name
