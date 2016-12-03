@@ -141,6 +141,12 @@ function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 	return false
 end
 
+function PlayerManager:sendShortMessage(text, ...)
+	for k, player in pairs(getElementsByType("player")) do
+		player:sendShortMessage(_(text, player), ...)
+	end
+end
+
 -----------------------------------------
 --------       Event zone       ---------
 -----------------------------------------
