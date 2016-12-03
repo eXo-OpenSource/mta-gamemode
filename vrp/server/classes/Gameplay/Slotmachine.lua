@@ -291,13 +291,11 @@ function Slotmachine:giveWin(player, name, x, y, z, id)
 	elseif name == "drogen" then
 		player:sendInfo(_("Du hast 5 Gramm Weed gewonnen!", player))
 		player:getInventory():giveItem("Weed", 5)
-		player:refreshInventory()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
 		StatisticsLogger:addCasino( player, name, 5)
 	elseif name == "drogenselten" then
 		player:sendInfo(_("Du hast einen Magic Mushroom gewonnen!", player))
 		player:getInventory():giveItem("Shroom", 1)
-		player:refreshInventory()
 		triggerClientEvent(getRootElement(), "onSlotmachineSoundPlay", getRootElement(), x, y, z, "win_stuff", int, dim)
 		StatisticsLogger:addCasino( player, name, 1)
 	end
