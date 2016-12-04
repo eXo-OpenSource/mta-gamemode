@@ -15,6 +15,8 @@ function WorldItem:constructor(item, player, pos, rotation, breakable)
 	self.m_Object = createObject(item:getModelId(), pos, 0, 0, rotation)
 	setElementData(self.m_Object, "worlditem", true) -- Tell the client that this is a world item (to be able to handle clicks properly)
 	self.m_Object.m_Super = self
+	self.m_Object:setData("Owner", player:getName() or "Unknown", true)
+
 	-- Add an entry to the map
 	WorldItem.Map[self.m_Object] = self
 end
