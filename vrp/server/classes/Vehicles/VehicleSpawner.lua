@@ -104,4 +104,5 @@ function VehicleSpawner:initializeAll()
 	-- Create 'general' vehicle spawners
 	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0)
 	VehicleSpawner:new(1805.58, -1292.58, 12.58, {"Bike", "BMX", "Faggio"}, 65)
+	VehicleSpawner:new(1742.06, -1742.61, 13.55, {"Bike", "BMX", "Faggio"}, 0)
 end

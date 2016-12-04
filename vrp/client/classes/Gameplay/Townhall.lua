@@ -92,6 +92,15 @@ function Townhall:constructor()
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed4
 	
 	
+	local itemSpawnerPed5 = Ped.create(171, Vector3(1742.90, -1743.96, 13.55))
+	itemSpawnerPed5:setRotation(Vector3(0, 0, 0))
+	itemSpawnerPed5.Name = _"Fahrzeugverleih"
+	itemSpawnerPed5.Description = _"Leih hier ein Fahrzeug aus!"
+	itemSpawnerPed5.Type = 10
+	itemSpawnerPed5.Func = function() end
+	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed5
+	
+	
 	-- Initialize
 	self:initalizePeds()
 	
