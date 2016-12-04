@@ -101,6 +101,16 @@ function ScoreboardGUI:insertPlayers()
 		local player = data[1]
 		local karma = math.floor(player:getKarma() or 0)
 		local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
+		local ping
+		if player:isAFK() then
+			ping = "AFK"
+		elseif player:isInJail() then
+			ping = "Knast"
+		else
+			ping = player:getPing().."ms"
+		end
+
+
 		local item = self.m_Grid:addItem(
 			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Other/trans.png",
 			player:getName(),
@@ -109,13 +119,27 @@ function ScoreboardGUI:insertPlayers()
 			player:getGroupName(),
 			hours..":"..minutes,
 			karma >= 0 and "+"..karma or " "..tostring(karma),
-			player:getPing().."ms" or " - "
+			ping or " - "
 		)
 		item:setColumnToImage(1, true)
 
 		if data[2] and player:getFaction() then
 			local color = player:getFaction():getColor()
 			item:setColumnColor(3, tocolor(color.r, color.g, color.b))
+		end
+
+		if player:getGroupType() then
+			if player:getGroupType() == "Gang" then
+				item:setColumnColor(5, Color.Red)
+			elseif player:getGroupType() == "Firma" then
+				item:setColumnColor(5, Color.LightBlue)
+			end
+		end
+
+		if ping == "AFK" then
+			item:setColumnColor(8, Color.Red)
+		elseif ping == "Knast" then
+			item:setColumnColor(8, Color.Yellow)
 		end
 
 		if karma >= 5 then

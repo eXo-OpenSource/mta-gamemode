@@ -65,12 +65,24 @@ function Player:getGroupName()
 	return self:getPublicSync("GroupName") or ""
 end
 
+function Player:getGroupType()
+	return self:getPublicSync("GroupType") or false
+end
+
 function Player:getFactionId()
 	return self:getPublicSync("FactionId") or 0
 end
 
 function Player:getCompanyId()
 	return self:getPublicSync("CompanyId") or 0
+end
+
+function Player:isAFK()
+	return self:getPublicSync("AFK") or false
+end
+
+function Player:isInJail()
+	return self:getData("inJail") or false
 end
 
 function Player:getFaction()

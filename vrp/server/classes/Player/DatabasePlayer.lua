@@ -183,8 +183,8 @@ function DatabasePlayer:save()
 	else
 		spawnFac = 0
 	end
-	
-	if self.m_DoNotSave then 
+
+	if self.m_DoNotSave then
 		self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
 		self.m_Skin = NOOB_SKIN
 	end
@@ -243,7 +243,6 @@ function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:is
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
 function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
-function DatabasePlayer:setGroup(group)	self.m_Group = group if self:isActive() then self:setPublicSync("GroupName", group and group:getName() or "") end end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end
@@ -253,6 +252,14 @@ function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if 
 function DatabasePlayer:setPaNote(note) self.m_PaNote = note end
 function DatabasePlayer:setBail( bail ) self.m_Bail = bail end
 function DatabasePlayer:setJailTime( jail ) self.m_JailTime = jail end
+
+function DatabasePlayer:setGroup(group)
+	self.m_Group = group
+	if self:isActive() then
+		self:setPublicSync("GroupName", group and group:getName() or "")
+		self:setPublicSync("GroupType", group and group:getType() or "")
+	end
+end
 
 function DatabasePlayer:setWarns()
 	local rows = sql:queryFetch("SELECT * FROM ??_warns WHERE userId = ?;", sql:getPrefix(), self.m_Id)
