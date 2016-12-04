@@ -1,7 +1,7 @@
 FROM debian:jessie
 
 # Prerequisites
-RUN apt-get -y update && apt-get install -y wget unzip liblua5.1
+RUN apt-get -y update && apt-get install -y wget unzip liblua5.1-0
 
 # Setup user and change to its home
 RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
