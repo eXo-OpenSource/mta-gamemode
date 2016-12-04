@@ -34,14 +34,18 @@ build_docker_job:
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest'
     - sudo docker push $DOCKER_USER/exo-rl-mta
 
-deploy_job:
+deploy_job_develop:
   stage: deploy
   script:
     - "echo 'TODO: Upload artifacts'"
     - "echo 'Uploading assets to http-server...'"
     - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$(git rev-parse --abbrev-ref HEAD)" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
+    - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
+  environment:
+    name: development
+    url: mtasa://mta.exo-reallife.de:20000
   only:
-    - release
+    - master
 
 clean_env_job:
   stage: clean_env
