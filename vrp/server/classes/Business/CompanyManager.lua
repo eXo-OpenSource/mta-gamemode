@@ -252,7 +252,7 @@ function CompanyManager:Event_companyRankUp(playerId)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
 		local player, isOffline = DatabasePlayer.getFromId(playerId)
 		if player and isElement(player) and player:isActive() then
-			player:sendShortMessage(_("Du wurdest von %d auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
+			player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
 		end
 		self:sendInfosToClient(client)
 	else
@@ -281,7 +281,7 @@ function CompanyManager:Event_companyRankDown(playerId)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
 		local player, isOffline = DatabasePlayer.getFromId(playerId)
 		if player and isElement(player) and player:isActive() then
-			player:sendShortMessage(_("Du wurdest von %d auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
+			player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
 		end
 		self:sendInfosToClient(client)
 	end

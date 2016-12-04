@@ -31,7 +31,15 @@ function SelfGUI:constructor()
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
 	self.m_CompanyEditLabel.onLeftClick = bind(self.CompanyMenuButton_Click, self)
-
+	self.m_CompanyInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.9, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
+	self.m_CompanyInvationLabel:setVisible(false)
+	self.m_CompanyInvitationsAcceptButton = GUIButton:new(self.m_Width*0.8, self.m_Height*0.9, self.m_Width*0.08, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
+	self.m_CompanyInvitationsAcceptButton:setVisible(false)
+	self.m_CompanyInvitationsDeclineButton = GUIButton:new(self.m_Width*0.9, self.m_Height*0.9, self.m_Width*0.08, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
+	self.m_CompanyInvitationsDeclineButton:setVisible(false)
+	self.m_CompanyInvitationsAcceptButton.onLeftClick = bind(self.CompanyInvitationsAcceptButton_Click, self)
+	self.m_CompanyInvitationsDeclineButton.onLeftClick = bind(self.CompanyInvitationsDeclineButton_Click, self)
+	
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
 	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
 	self.m_JobQuitButton = GUILabel:new(self.m_Width*0.7, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"(Job kündigen)", tabGeneral):setColor(Color.Red)
@@ -62,7 +70,7 @@ function SelfGUI:constructor()
 	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
 	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
 
-	--addEventHandler("companyInvitationRetrieve", root, bind(self.Event_companyInvitationRetrieve, self))
+	addEventHandler("companyInvitationRetrieve", root, bind(self.Event_CompanyInvitationRetrieve, self))
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.25, self.m_Height*0.10, _"Fraktion", tabGeneral)
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
@@ -606,6 +614,61 @@ function SelfGUI:Event_factionInvitationRetrieve(factionId, name)
 	end
 end
 
+function SelfGUI:FactionInvitationsAcceptButton_Click()
+	if self.m_InvationFactionId then
+		triggerServerEvent("factionInvitationAccept", resourceRoot, self.m_InvationFactionId)
+		self.m_FactionInvationLabel:setVisible(false)
+		self.m_FactionInvitationsAcceptButton:setVisible(false)
+		self.m_FactionInvitationsDeclineButton:setVisible(false)
+		self.m_FactionInvationLabel:setText("")
+		self.m_InvationFactionId = 0
+	end
+end
+
+function SelfGUI:FactionInvitationsDeclineButton_Click()
+	if self.m_InvationFactionId then
+		triggerServerEvent("factionInvitationDecline", resourceRoot, self.m_InvationFactionId)
+		self.m_FactionInvationLabel:setVisible(false)
+		self.m_FactionInvitationsAcceptButton:setVisible(false)
+		self.m_FactionInvitationsDeclineButton:setVisible(false)
+		self.m_FactionInvationLabel:setText("")
+		self.m_InvationFactionId = 0
+	end
+end
+
+
+function SelfGUI:Event_CompanyInvitationRetrieve(CompanyId, name)
+	if companyId > 0 then
+		ShortMessage:new(_("Du wurdest in das Unternehmen '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+		self.m_CompanyInvationLabel:setVisible(true)
+		self.m_CompanyInvitationsAcceptButton:setVisible(true)
+		self.m_CompanyInvitationsDeclineButton:setVisible(true)
+		self.m_CompanyInvationLabel:setText("Du wurdest in das Unternehmen \""..name.."\" eingeladen!")
+		self.m_InvationCompanyId = CompanyId
+	end
+end
+
+function SelfGUI:CompanyInvitationsAcceptButton_Click()
+	if self.m_InvationCompanyId then
+		triggerServerEvent("companyInvitationAccept", resourceRoot, self.m_InvationCompanyId)
+		self.m_CompanyInvationLabel:setVisible(false)
+		self.m_CompanyInvitationsAcceptButton:setVisible(false)
+		self.m_CompanyInvitationsDeclineButton:setVisible(false)
+		self.m_CompanyInvationLabel:setText("")
+		self.m_InvationCompanyId = 0
+	end
+end
+
+function SelfGUI:CompanyInvitationsDeclineButton_Click()
+	if self.m_InvationFactionId then
+		triggerServerEvent("companyInvitationDecline", resourceRoot, self.m_InvationCompanyId)
+		self.m_CompanyInvationLabel:setVisible(false)
+		self.m_CompanyInvitationsAcceptButton:setVisible(false)
+		self.m_CompanyInvitationsDeclineButton:setVisible(false)
+		self.m_CompanyInvationLabel:setText("")
+		self.m_InvationCompanyId = 0
+	end
+end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
 	ShortMessage:new(_("Du wurdest in die Firma/Gang '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
@@ -632,30 +695,6 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 		end
 	end
 end
-
-function SelfGUI:FactionInvitationsAcceptButton_Click()
-	if self.m_InvationFactionId then
-		triggerServerEvent("factionInvitationAccept", resourceRoot, self.m_InvationFactionId)
-		self.m_FactionInvationLabel:setVisible(false)
-		self.m_FactionInvitationsAcceptButton:setVisible(false)
-		self.m_FactionInvitationsDeclineButton:setVisible(false)
-		self.m_FactionInvationLabel:setText("")
-		self.m_InvationFactionId = 0
-	end
-end
-
-function SelfGUI:FactionInvitationsDeclineButton_Click()
-	if self.m_InvationFactionId then
-		triggerServerEvent("factionInvitationDecline", resourceRoot, self.m_InvationFactionId)
-		self.m_FactionInvationLabel:setVisible(false)
-		self.m_FactionInvitationsAcceptButton:setVisible(false)
-		self.m_FactionInvitationsDeclineButton:setVisible(false)
-		self.m_FactionInvationLabel:setText("")
-		self.m_InvationFactionId = 0
-	end
-end
-
-
 
 function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 	if vehiclesInfo then
