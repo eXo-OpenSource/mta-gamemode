@@ -148,8 +148,8 @@ function AdminGUI:constructor(money)
 
 	local tabDev = self.m_TabPanel:addTab(_"DevPanel")
 	local devPanelUrl = "http://exo-reallife.de/dev"
-	self.m_DevPanel = GUIWebView:new(0, 0, self.m_Width, self.m_Height, devPanelUrl, true, tabWeb)
-	self.m_FullScreenDev = GUIButton:new(self.m_Width-50, 5, 30, 30, FontAwesomeSymbols.Expand, tabWeb):setFont(FontAwesome(15))
+	self.m_DevPanel = GUIWebView:new(0, 0, self.m_Width, self.m_Height, devPanelUrl, true, tabDev)
+	self.m_FullScreenDev = GUIButton:new(self.m_Width-50, 5, 30, 30, FontAwesomeSymbols.Expand, tabDev):setFont(FontAwesome(15))
 	self.m_FullScreenDev.onLeftClick = function ()
 		self:close()
 		local url = self.m_DevPanel:getUnderlyingBrowser():getURL()
