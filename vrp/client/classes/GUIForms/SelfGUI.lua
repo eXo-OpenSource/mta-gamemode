@@ -638,7 +638,7 @@ end
 
 
 function SelfGUI:Event_CompanyInvitationRetrieve(CompanyId, name)
-	if companyId > 0 then
+	if CompanyId > 0 then
 		ShortMessage:new(_("Du wurdest in das Unternehmen '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
 		self.m_CompanyInvationLabel:setVisible(true)
 		self.m_CompanyInvitationsAcceptButton:setVisible(true)
