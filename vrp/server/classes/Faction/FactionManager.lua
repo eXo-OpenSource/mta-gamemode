@@ -239,7 +239,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 		faction:addPlayer(client)
 		faction:removeInvitation(client)
 		faction:addLog(client, "Fraktion", "ist der Fraktion beigetreten!")
-		faction:sendMessage(_("%s ist soeben der Fraktion beigetreten", client, getPlayerName(client)))
+		faction:sendMessage(_("%s ist soeben der Fraktion beigetreten!", client, getPlayerName(client)))
 		if faction:isEvilFaction() then
 			faction:changeSkin(client)
 		end
@@ -287,12 +287,12 @@ function FactionManager:Event_factionRankUp(playerId)
 				player:load()
 			end
 			if faction:isEvilFaction() then
-				if player:getKarma() > -FACTION_MIN_RANK_KARMA[playerRank + 1] then
+				if player:getKarma() > ( -FACTION_MIN_RANK_KARMA[playerRank + 1] or -100000) then
 					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -FACTION_MIN_RANK_KARMA[playerRank + 1]))
 					return
 				end
 			else
-				if player:getKarma() < FACTION_MIN_RANK_KARMA[playerRank + 1] then
+				if player:getKarma() < (FACTION_MIN_RANK_KARMA[playerRank + 1] or 10000) then
 					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, FACTION_MIN_RANK_KARMA[playerRank + 1]))
 					return
 				end

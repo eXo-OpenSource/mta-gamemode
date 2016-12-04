@@ -312,7 +312,7 @@ function GroupManager:Event_groupInvitationAccept(groupId)
 	if group:hasInvitation(client) then
 		group:addPlayer(client)
 		group:removeInvitation(client)
-		group:sendMessage(_("%s ist soeben der %s beigetreten", client, getPlayerName(client), group:getType()))
+		group:sendMessage(_("%s ist soeben der %s beigetreten!", client, getPlayerName(client), group:getType()))
 		group:addLog(client, "Gang/Firma", "ist der "..group:getType().." beigetreten!")
 		self:sendInfosToClient(client)
 	else
