@@ -239,7 +239,7 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 		faction:addPlayer(client)
 		faction:removeInvitation(client)
 		faction:addLog(client, "Fraktion", "ist der Fraktion beigetreten!")
-		faction:sendMessage(_("%s ist soeben der Fraktion beigetreten!", client, getPlayerName(client)))
+		faction:sendMessage(_("#008888Fraktion: #FFFFFF%s ist soeben der Fraktion beigetreten!", client, getPlayerName(client)),200,200,200,true)
 		if faction:isEvilFaction() then
 			faction:changeSkin(client)
 		end

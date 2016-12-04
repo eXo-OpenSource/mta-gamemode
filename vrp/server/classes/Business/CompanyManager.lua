@@ -209,7 +209,7 @@ function CompanyManager:Event_companyInvitationAccept(companyId)
 	if company:hasInvitation(client) then
 		company:addPlayer(client)
 		company:removeInvitation(client)
-		company:sendMessage(_("%s ist soeben dem Unternehmen beigetreten", client, getPlayerName(client)))
+		company:sendMessage(_("#008888Unternehmen: #FFFFFF%s ist soeben dem Unternehmen beigetreten!", client, getPlayerName(client)),200,200,200,true)
         company:addLog(client, "Unternehmen", "ist dem Unternehmen beigetreten!")
 
 		self:sendInfosToClient(client)
