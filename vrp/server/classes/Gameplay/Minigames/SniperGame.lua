@@ -132,7 +132,8 @@ function SniperGame:addPlayer(player)
 end
 
 function SniperGame:removePlayer(player)
-	source:fadeCamera(true, 1)
+	player:spawn()
+	player:fadeCamera(true, 1)
 	player:setHealth(100)
 	player:setDimension(0)
 	player:setInterior(0)
