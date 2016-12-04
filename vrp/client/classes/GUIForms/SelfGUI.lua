@@ -440,7 +440,6 @@ function SelfGUI:constructor()
 end
 
 function SelfGUI:onShow()
-	outputChatBox("hallo2")
 	-- Update VehicleTab
 	if localPlayer.m_SelfShader then
 		delete(localPlayer.m_SelfShader)

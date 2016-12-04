@@ -90,7 +90,7 @@ function CompanyManager:Event_companyQuit()
 	if not company then return end
 
 	if company:getPlayerRank(client) == CompanyRank.Leader then
-		client:sendWarning(_("Bitte übertrage den Leader-Status erst auf ein anderes Mitglied der Fraktion!", client))
+		client:sendWarning(_("Bitte übertrage den Leader-Status erst auf ein anderes Mitglied des Unternehmen!", client))
 		return
 	end
 	company:removePlayer(client)
@@ -167,7 +167,7 @@ function CompanyManager:Event_companyAddPlayer(player)
 		--company:addPlayer(player)
 		--client:triggerEvent("companyRetrieveInfo", company:getId(),company:getName(), company:getPlayerRank(client), company:getMoney(), company:getPlayers())
 	else
-		client:sendError(_("Dieser Spieler ist bereits in der Fraktion!", client))
+		client:sendError(_("Dieser Spieler ist bereits im Unternehmen!", client))
 	end
 end
 
@@ -177,7 +177,7 @@ function CompanyManager:Event_companyDeleteMember(playerId)
 	if not company then return end
 
 	if client:getId() == playerId then
-		client:sendError(_("Du kannst dich nicht selbst aus der Fraktion werfen!", client))
+		client:sendError(_("Du kannst dich nicht selbst aus der Unternehmen werfen!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
@@ -189,7 +189,7 @@ function CompanyManager:Event_companyDeleteMember(playerId)
 	end
 
 	if company:getPlayerRank(playerId) == CompanyRank.Leader then
-		client:sendError(_("Du kannst den Fraktionnleiter nicht rauswerfen!", client))
+		client:sendError(_("Du kannst den Unternehmensleiter nicht rauswerfen!", client))
 		return
 	end
 
@@ -209,12 +209,12 @@ function CompanyManager:Event_companyInvitationAccept(companyId)
 	if company:hasInvitation(client) then
 		company:addPlayer(client)
 		company:removeInvitation(client)
-		company:sendMessage(_("%s ist soeben der Fraktion beigetreten", client, getPlayerName(client)))
+		company:sendMessage(_("%s ist soeben dem Unternehmen beigetreten", client, getPlayerName(client)))
         company:addLog(client, "Unternehmen", "ist dem Unternehmen beigetreten!")
 
 		self:sendInfosToClient(client)
 	else
-		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
+		client:sendError(_("Du hast keine Einladung für dieses Unternehmen", client))
 	end
 end
 
@@ -224,11 +224,11 @@ function CompanyManager:Event_companyInvitationDecline(companyId)
 
 	if company:hasInvitation(client) then
 		company:removeInvitation(client)
-		company:sendMessage(_("%s hat die Fraktionneinladung abgelehnt", client, getPlayerName(client)))
+		company:sendMessage(_("%s hat die Unternehmenseinladung abgelehnt", client, getPlayerName(client)))
         company:addLog(client, "Unternehmen", "hat die Einladung abgelehnt!")
 		self:sendInfosToClient(client)
 	else
-		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
+		client:sendError(_("Du hast keine Einladung für dieses Unternehmen", client))
 	end
 end
 
@@ -266,7 +266,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 	if not company then return end
 
 	if not company:isPlayerMember(client) or not company:isPlayerMember(playerId) then
-		client:sendError(_("Du oder das Ziel sind nicht mehr in der Fraktion!", client))
+		client:sendError(_("Du oder das Ziel sind nicht mehr im Unternehmen!", client))
 		return
 	end
 
@@ -352,7 +352,7 @@ function CompanyManager:Event_toggleDuty()
             end
 		else
             if client:getPublicSync("Faction:Duty") and client:getFaction() then
-                client:sendWarning(_("Bitte beende zuerst deinen Fraktions-Dienst!", client))
+                client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
 				return false
 			end
 
