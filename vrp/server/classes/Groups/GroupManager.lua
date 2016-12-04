@@ -355,7 +355,7 @@ function GroupManager:Event_groupRankUp(playerId)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." befördert!")
 			local player, isOffline = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
-				player:sendShortMessage(_("Du wurdest von %d auf Rang %d befördert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
+				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
 			self:sendInfosToClient(client)
 		else
@@ -387,7 +387,7 @@ function GroupManager:Event_groupRankDown(playerId)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." degradiert!")
 			local player, isOffline = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
-				player:sendShortMessage(_("Du wurdest von %d auf Rang %d degradiert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
+				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
 			self:sendInfosToClient(client)
 		else
