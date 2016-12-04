@@ -43,7 +43,7 @@ deploy_job_develop:
     - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
   environment:
     name: development
-    url: mtasa://mta.exo-reallife.de:20000
+    url: http://mta.exo-reallife.de:20002/
   only:
     - master
 
