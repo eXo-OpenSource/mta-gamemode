@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/WebForms/WebPanel.lua
+-- *  FILE:        client/classes/WebForms/WebBrowser.lua
 -- *  PURPOSE:     Web panel GUI class
 -- *
 -- ****************************************************************************
