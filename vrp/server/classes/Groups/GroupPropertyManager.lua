@@ -143,7 +143,7 @@ function GroupPropertyManager:SellProperty(  )
 				client:giveMoney(sellMoney, "Immobilie "..property.m_Name.." verkauft!")
 				client:sendInfo("Sie haben die Immobilie verkauft!")
 				for key, player in ipairs( pOwner:getOnlinePlayers() ) do
-					player:triggerEvent("destroyGroupBlip",pOwner.m_Id)
+					player:triggerEvent("destroyGroupBlip",property.m_Id)
 					player:triggerEvent("forceGroupPropertyClose")
 				end
 				StatisticsLogger:GroupBuyImmoLog( pOwner.m_Id or 0, "SELL", property.m_Id or 0)
