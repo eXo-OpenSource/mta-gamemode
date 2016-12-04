@@ -138,7 +138,7 @@ function PlayerManager:getPlayerFromPartOfName(name, sourcePlayer,noOutput)
 			end
 		else
 			if not noOutput then
-				outputChatBox('Es wurden kein Spieler gefunden!', sourcePlayer, 255, 0, 0)
+				outputChatBox('Es wurde kein Spieler gefunden!', sourcePlayer, 255, 0, 0)
 			end
 		end
 	end

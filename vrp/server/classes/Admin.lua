@@ -248,7 +248,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 
     if admin:getRank() >= ADMIN_RANK_PERMISSION[func] then
         if func == "goto" then
-            self:goToPlayer(admin, func, target)
+            self:goToPlayer(admin, func, target:getName())
         elseif func == "gethere" then
             self:getHerePlayer(admin, func, target:getName())
         elseif func == "kick" or func == "rkick" then
