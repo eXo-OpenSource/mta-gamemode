@@ -815,7 +815,7 @@ function Admin:Command_MarkPos(player, add)
 	else
 		local pos = player:getPosition()
 		local dim = player:getDimension()
-		local interior = palyer:getInterior()
+		local interior = player:getInterior()
 		setElementData(player, "Admin_MarkPos", {pos, interior, dim})
 		player:sendInfo("Makierung gesetzt!")
 	end
