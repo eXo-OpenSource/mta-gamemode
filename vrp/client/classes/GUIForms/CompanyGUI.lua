@@ -242,7 +242,7 @@ function CompanyGUI:CompanyAddPlayerButton_Click()
 	InviteGUI:new(
 		function(player)
 			triggerServerEvent("companyAddPlayer", root, player)
-		end
+		end,"company"
 	)
 end
 

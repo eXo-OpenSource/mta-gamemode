@@ -338,7 +338,7 @@ function FactionGUI:FactionAddPlayerButton_Click()
 	InviteGUI:new(
 		function(player)
 			triggerServerEvent("factionAddPlayer", root, player)
-		end
+		end,"faction"
 	)
 end
 

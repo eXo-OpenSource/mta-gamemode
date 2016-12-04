@@ -7,7 +7,7 @@
 -- ****************************************************************************
 InviteGUI = inherit(GUIForm)
 
-function InviteGUI:constructor(callback)
+function InviteGUI:constructor(callback,filter)
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.2/2, screenHeight/2 - screenHeight*0.5/2, screenWidth*0.2, screenHeight*0.5)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Spieler einladen", true, true, self)
@@ -18,8 +18,24 @@ function InviteGUI:constructor(callback)
 
 	self.m_InviteButton.onLeftClick = bind(self.InviteButton_Click, self)
 
-	for k, player in ipairs(getElementsByType("player")) do
-		self.m_PlayersGrid:addItem(getPlayerName(player))
+	if filter == "group" then
+		for k, player in ipairs(getElementsByType("player")) do
+			if not player:getGroupType() then
+				self.m_PlayersGrid:addItem(getPlayerName(player))
+			end
+		end
+	elseif filter == "faction" then 
+		for k, player in ipairs(getElementsByType("player")) do
+			if player:getFactionId() == 0 then
+				self.m_PlayersGrid:addItem(getPlayerName(player))
+			end
+		end
+	elseif filter == "company" then 
+		for k, player in ipairs(getElementsByType("player")) do
+			if player:getCompanyId() == 0 then
+				self.m_PlayersGrid:addItem(getPlayerName(player))
+			end
+		end
 	end
 	self.m_Callback = callback
 end

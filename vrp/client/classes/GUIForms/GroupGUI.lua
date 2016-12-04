@@ -291,7 +291,7 @@ function GroupGUI:GroupAddPlayerButton_Click()
 	InviteGUI:new(
 		function(player)
 			triggerServerEvent("groupAddPlayer", root, player)
-		end
+		end,"group"
 	)
 end
 
