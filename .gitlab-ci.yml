@@ -8,6 +8,7 @@ stages:
   - build
   - build_docker
   - deploy
+  - clean_env
 
 build_app_job:
   stage: build
@@ -41,3 +42,10 @@ deploy_job:
     - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$(git rev-parse --abbrev-ref HEAD)" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
   only:
     - release
+
+clean_env_job:
+  stage: clean_env
+  script:
+    - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest-$CI_BUILD_REF_NAME
+    - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker rmi $DOCKER_USER/exo-rl-mta:latest'
+    - sudo docker rmi exo-rl-mta
