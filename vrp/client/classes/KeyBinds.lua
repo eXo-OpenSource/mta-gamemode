@@ -15,7 +15,6 @@ function KeyBinds:constructor()
 	self.m_SelfMenu = bind(self.selfMenu, self)
 	self.m_ScoreboardTrigger = bind(self.scoreboardGUI, self)
 	self.m_CustomMap = bind(self.customMap, self)
-	self.m_WebPanel = bind(self.webPanel, self)
 	self.m_Inventory = bind(self.inventory, self)
 
 	self.m_Keys = {
@@ -26,7 +25,6 @@ function KeyBinds:constructor()
 	  ["KeyToggleAnimationMenu"] = {["defaultKey"] = "F3", ["name"] = "Animations-Menü", ["func"] = self.m_AnimationMenu};
 	  ["KeyToggleScoreboard"]    = {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
 	  ["KeyToggleCustomMap"]     = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
-	  ["KeyToggleWebPanel"]      = {["defaultKey"] = "F9", ["name"] = "Webpanel", ["func"] = self.m_WebPanel};
 	  ["KeyToggleInventory"]     = {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
 	  ["KeyToggleCursor"]        = {["defaultKey"] = "b", ["name"] = "Cursor", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
 
@@ -82,10 +80,6 @@ end
 
 function KeyBinds:getBindsList()
 	return self.m_Keys
-end
-
-function KeyBinds:webPanel()
-	WebPanel:getSingleton():toggle()
 end
 
 function KeyBinds:inventory()
