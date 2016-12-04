@@ -7,37 +7,39 @@
 -- ****************************************************************************
 GUIGridList = inherit(GUIElement)
 inherit(GUIColorable, GUIGridList)
-local ITEM_HEIGHT = 30
+inherit(GUIFontContainer, GUIGridList)
 
 function GUIGridList:constructor(posX, posY, width, height, parent)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self, tocolor(0, 0, 0, 180))
+	GUIFontContainer.constructor(self, "", 1, VRPFont(28))
 
+	self.m_ItemHeight = 30
 	self.m_Columns = {}
-	self.m_ScrollArea = GUIScrollableArea:new(0, ITEM_HEIGHT, self.m_Width, self.m_Height-ITEM_HEIGHT, self.m_Width, 1, true, false, self, ITEM_HEIGHT)
+	self.m_ScrollArea = GUIScrollableArea:new(0, self.m_ItemHeight, self.m_Width, self.m_Height-self.m_ItemHeight, self.m_Width, 1, true, false, self, self.m_ItemHeight)
 	self.m_SelectedItem = nil
 end
 
 function GUIGridList:addItem(...)
-	local listItem = GUIGridListItem:new(0, #self:getItems() * ITEM_HEIGHT, self.m_Width, ITEM_HEIGHT, self.m_ScrollArea)
+	local listItem = GUIGridListItem:new(0, #self:getItems() * self.m_ItemHeight, self.m_Width, self.m_ItemHeight, self.m_ScrollArea)
 	for k, arg in ipairs({...}) do
 		listItem:setColumnText(k, arg)
 	end
 
 	-- Resize the document
-	self.m_ScrollArea:resize(self.m_Width, #self:getItems() * ITEM_HEIGHT)
+	self.m_ScrollArea:resize(self.m_Width, #self:getItems() * self.m_ItemHeight)
 
 	return listItem
 end
 
 function GUIGridList:addItemNoClick(...)
-	local listItem = GUIGridListItem:new(0, #self:getItems() * ITEM_HEIGHT, self.m_Width, ITEM_HEIGHT, self.m_ScrollArea):setClickable(false)
+	local listItem = GUIGridListItem:new(0, #self:getItems() * self.m_ItemHeight, self.m_Width, self.m_ItemHeight, self.m_ScrollArea):setClickable(false)
 	for k, arg in ipairs({...}) do
 		listItem:setColumnText(k, arg)
 	end
 
 	-- Resize the document
-	self.m_ScrollArea:resize(self.m_Width, #self:getItems() * ITEM_HEIGHT)
+	self.m_ScrollArea:resize(self.m_Width, #self:getItems() * self.m_ItemHeight)
 
 	return listItem
 end
@@ -51,7 +53,7 @@ function GUIGridList:removeItem(itemIndex)
 		-- Since we do not have proper item rows, we've to check each height
 		local x, y = v:getPosition()
 		if y > itemY then
-			v:setPosition(x, y - ITEM_HEIGHT)
+			v:setPosition(x, y - self.m_ItemHeight)
 		end
 	end
 
@@ -70,6 +72,10 @@ end
 
 function GUIGridList:getItems()
 	return self.m_ScrollArea.m_Children
+end
+
+function GUIGridList:setItemHeight(height)
+	self.m_ItemHeight = height
 end
 
 function GUIGridList:getColumnWidth(columnIndex)
@@ -97,7 +103,7 @@ end
 function GUIGridList:clear()
 	self.m_SelectedItem = nil
 	delete(self.m_ScrollArea)
-	self.m_ScrollArea = GUIScrollableArea:new(0, ITEM_HEIGHT, self.m_Width, self.m_Height-ITEM_HEIGHT, self.m_Width, 1, true, false, self, ITEM_HEIGHT)
+	self.m_ScrollArea = GUIScrollableArea:new(0, self.m_ItemHeight, self.m_Width, self.m_Height-self.m_ItemHeight, self.m_Width, 1, true, false, self, self.m_ItemHeight)
 end
 
 function GUIGridList:onInternalSelectItem(item)
@@ -114,7 +120,7 @@ end
 function GUIGridList:draw(incache) -- Swap render order
 	if self.m_Visible then
 		dxSetBlendMode("modulate_add")
-		
+
 		-- Draw background
 		dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_Color)
 
@@ -127,7 +133,7 @@ function GUIGridList:draw(incache) -- Swap render order
 
 		-- Draw i.a. the header line
 		self:drawThis()
-		
+
 		dxSetBlendMode("blend")
 	end
 end
@@ -136,8 +142,8 @@ function GUIGridList:drawThis()
 	-- Draw column header
 	local currentXPos = 0
 	for k, column in ipairs(self.m_Columns) do
-		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, 1, VRPFont(28))
+		dxDrawText(column.text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + column.width*self.m_Width, self.m_AbsoluteY + 10, Color.White, self.m_FontSize, self.m_Font)
 		currentXPos = currentXPos + column.width*self.m_Width + 5
 	end
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + ITEM_HEIGHT - 2, self.m_Width, 2, Color.LightBlue) -- tocolor(255, 255, 255, 150)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ItemHeight - 2, self.m_Width, 2, Color.LightBlue) -- tocolor(255, 255, 255, 150)
 end

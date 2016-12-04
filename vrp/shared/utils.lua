@@ -116,6 +116,15 @@ function table.copy(tab)
 	return temp
 end
 
+function table.reverse(tab)
+    local reversedTable = {}
+    local itemCount = #tab
+    for k, v in ipairs(tab) do
+        reversedTable[itemCount + 1 - k] = v
+    end
+    return reversedTable
+end
+
 function table.deepcopy(orig)
     local orig_type = type(orig)
     local copy

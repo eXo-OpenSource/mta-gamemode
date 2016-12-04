@@ -452,7 +452,7 @@
 	<script src="client/classes/GUIForms/CountdownGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AmmuNationGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/PerformanceStatsGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DebugGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GasStationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HouseGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JailBreakGUI.lua" type="client"/>

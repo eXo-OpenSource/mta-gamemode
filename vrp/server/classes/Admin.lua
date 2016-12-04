@@ -80,6 +80,14 @@ function Admin:constructor()
 		end
 	end, 10000, 0)
 
+	addEventHandler("onDebugMessage", root, function(message, level, file, line)
+		for player, rank in pairs(self.m_OnlineAdmins) do
+			if rank >= RANK.Supporter then
+				player:triggerEvent("receiveServerDebug", message, level, file, line)
+			end
+		end
+	end)
+
 end
 
 function Admin:destructor()
