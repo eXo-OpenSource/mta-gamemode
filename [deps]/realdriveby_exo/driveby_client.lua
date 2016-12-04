@@ -8,7 +8,7 @@ settings = {}
 --This function simply sets up the driveby upon vehicle entry
 local function setupDriveby( player, seat )
 	--If his seat is 0, store the fact that he's a driver
-	if seat == 0 then 
+	if seat == 0 then
 		driver = true
 	else
 		driver = false
@@ -112,6 +112,7 @@ function toggleDriveby()
 		toggleControl ( "vehicle_look_right",false )
 		toggleControl ( "vehicle_secondary_fire",false )
 		toggleTurningKeys(vehicleID,false)
+		removeEventHandler ( "onClientPlayerVehicleExit",localPlayer,removeKeyToggles )
 		addEventHandler ( "onClientPlayerVehicleExit",localPlayer,removeKeyToggles )
 		local prevw,nextw = next(getBoundKeys ( "Previous driveby weapon" )),next(getBoundKeys ( "Next driveby weapon" ))
 		if prevw and nextw then
@@ -204,16 +205,17 @@ addCommandHandler ( "Previous driveby weapon", switchDrivebyWeapon )
 local limiterTimer
 function limitDrivebySpeed ( weaponID )
 	local speed = settings.shotdelay[tostring(weaponID)]
-	if not speed then 
-		if not isControlEnabled ( "vehicle_fire" ) then 
+	if not speed then
+		if not isControlEnabled ( "vehicle_fire" ) then
 			toggleControl ( "vehicle_fire", true )
 		end
 		removeEventHandler("onClientPlayerVehicleExit",localPlayer,unbindFire)
 		removeEventHandler("onClientPlayerWasted",localPlayer,unbindFire)
 		unbindKey ( "vehicle_fire", "both", limitedKeyPress )
 	else
-		if isControlEnabled ( "vehicle_fire" ) then 
+		if isControlEnabled ( "vehicle_fire" ) then
 			toggleControl ( "vehicle_fire", false )
+			removeEventHandler("onClientPlayerVehicleExit",localPlayer,unbindFire)
 			addEventHandler("onClientPlayerVehicleExit",localPlayer,unbindFire)
 			addEventHandler("onClientPlayerWasted",localPlayer,unbindFire)
 			bindKey ( "vehicle_fire","both",limitedKeyPress,speed)
@@ -223,7 +225,7 @@ end
 
 function unbindFire()
 	unbindKey ( "vehicle_fire", "both", limitedKeyPress )
-	if not isControlEnabled ( "vehicle_fire" ) then 
+	if not isControlEnabled ( "vehicle_fire" ) then
 			toggleControl ( "vehicle_fire", true )
 	end
 	removeEventHandler("onClientPlayerVehicleExit",localPlayer,unbindFire)
@@ -271,7 +273,7 @@ function toggleTurningKeys(vehicleID, state)
 		end
 	end
 end
-	
+
 function fadeInHelp()
 	if helpAnimation then helpAnimation:remove() end
 	local _,_,_,a = helpText:color()
@@ -289,7 +291,7 @@ function fadeOutHelp()
 end
 
 local function onWeaponSwitchWhileDriveby (prevSlot, curSlot)
-	if isPedDoingGangDriveby(source) then	
+	if isPedDoingGangDriveby(source) then
 		limitDrivebySpeed(getPedWeapon(source, curSlot))
 	end
 end
