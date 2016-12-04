@@ -27,8 +27,8 @@ RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
 # Expose ports
 EXPOSE 22003/udp 22005/tcp 22126/udp 8080/tcp
 
-# Download worker server
-RUN wget -O /var/lib/mtasa/workerserver https://do-not.press/workerserver
+# Add worker server
+ADD build/workerserver /var/lib/mtasa/workerserver
 
 # Add MTA configs and modules
 ADD build/config/* /var/lib/mtasa/mods/deathmatch/
