@@ -110,8 +110,10 @@ function LocalPlayer:getSessionId()
 	return self:getPrivateSync("SessionID") or ""
 end
 
-function LocalPlayer:playCashChange( )
-	playSound( "files/audio/cash_register.ogg" )
+function LocalPlayer:playCashChange( bNoSound )
+	if not bNoSound then
+		playSound( "files/audio/cash_register.ogg" )
+	end
 end
 
 function LocalPlayer:toggleDamage( bstate )
