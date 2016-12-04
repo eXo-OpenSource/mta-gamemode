@@ -48,15 +48,19 @@ end
 
 function Shop:onFoodMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		hitElement:triggerEvent("showFoodShopMenu")
-		triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self.m_Id, self.m_Type, self.m_Menues, self.m_Items)
+		if not self.m_Marker.m_Disable then
+			hitElement:triggerEvent("showFoodShopMenu")
+			triggerClientEvent(hitElement, "refreshFoodShopMenu", hitElement, self.m_Id, self.m_Type, self.m_Menues, self.m_Items)
+		end
 	end
 end
 
 function Shop:onItemMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		hitElement:triggerEvent("showItemShopGUI")
-		triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
+		if not self.m_Marker.m_Disable then
+			hitElement:triggerEvent("showItemShopGUI")
+			triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
+		end
 	end
 end
 

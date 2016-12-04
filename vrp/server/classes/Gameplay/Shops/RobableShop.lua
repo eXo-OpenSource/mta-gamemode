@@ -9,8 +9,10 @@ RobableShop = inherit(Object)
 
 addRemoteEvents{"robableShopGiveBagFromCrash"}
 
+local ROBSHOP_TIME = 15*60*1000
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
   -- Create NPC(s)
+  self.m_shop = shop
   self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 
   -- Respawn ped after a while (if necessary)
@@ -58,6 +60,8 @@ function RobableShop:Ped_Targetted(ped, attacker)
 end
 
 function RobableShop:startRob(shop, attacker, ped)
+	self.m_shop.m_Marker.m_Disable = true
+	setElementAlpha(self.m_shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
 	ActionsCheck:getSingleton():setAction("Shop-Überfall")
 
@@ -117,9 +121,19 @@ function RobableShop:startRob(shop, attacker, ped)
 	1000,
 	60
 	)
+	
+	self.m_ExpireTimer = setTimer(self.m_onExpire, ROBSHOP_TIME,1)
+end
+
+function RobableShop:m_onExpire() 
+	self:stopRob()
+	self.m_Gang:sendMessage("[Shop-Rob] Die Zeit für den Rob ist ausgelaufen!",200,0,0,true)
+	FactionManager:getSingleton():getFromId(1):sendMessage("[Shop-Rob] #EEEEEEDie Zeit für den Rob ist ausgelaufen!",200,200,0,true)
 end
 
 function RobableShop:stopRob(player)
+  self.m_shop.m_Marker.m_Disable = false
+  setElementAlpha(self.m_shop.m_Marker,255)
   ActionsCheck:getSingleton():endAction()
   if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
   if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
