@@ -29,6 +29,11 @@ Fishing.Win = {
 function Fishing:constructor()
 	self.m_Players = {}
 	self.m_Markers = {}
+	self.m_PlayerTimers = {}
+
+	self.m_ColShape = createColSphere(350.65, -2072.44, 60)
+	addEventHandler("onColShapeLeave", root, bind(self.onColShapeLeave, self))
+	addEventHandler("onColShapeHit", root, bind(self.onColShapeHit, self))
 
 	for index, pos in pairs(Fishing.Positions) do
 		self.m_Markers[index] = createMarker(pos, "cylinder", 1, 0,255, 0, 125)
@@ -54,6 +59,34 @@ function Fishing:onMarkerHit(hitElement, dim)
 				hitElement:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", hitElement))
 			end
 		end
+	end
+end
+
+function Fishing:onColShapeLeave(hitElement, dim)
+	if dim and hitElement:getType() == "player" then
+		if hitElement.winObject and isElement(hitElement.winObject) then
+			hitElement:sendWarning(_("Achtung: Gehe zurück oder dein Fang wird gelöscht!", player))
+			self.m_PlayerTimers[hitElement] = setTimer(bind(self.destroyWin, self), 10000, 1)
+			hitElement:triggerEvent("Countdown", 10, "Fischfang")
+		end
+	end
+end
+
+function Fishing:onColShapeHit(hitElement, dim)
+	if dim and hitElement:getType() == "player" then
+		if self.m_PlayerTimers[hitElement] and isTimer(self.m_PlayerTimers[hitElement]) then
+			killTimer(self.m_PlayerTimers[hitElement])
+			hitElement:triggerEvent("CountdownStop")
+		end
+	end
+end
+
+function Fishing:destroyWin(player)
+	if player.winObject and isElement(player.winObject) then
+		player.winObject:destroy()
+		player.winObject = nil
+		player.win = nil
+		player:sendInfo(_("Dein Fang wurde entfernt!", player))
 	end
 end
 
