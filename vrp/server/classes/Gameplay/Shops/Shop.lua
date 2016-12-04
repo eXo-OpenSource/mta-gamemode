@@ -57,7 +57,12 @@ end
 
 function Shop:onItemMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
-		if not self.m_Marker.m_Disable then
+		if self.m_Marker then
+			if not self.m_Marker.m_Disable then
+				hitElement:triggerEvent("showItemShopGUI")
+				triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
+			end
+		else 
 			hitElement:triggerEvent("showItemShopGUI")
 			triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, self.m_Id, self.m_Items)
 		end
