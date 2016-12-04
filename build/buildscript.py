@@ -30,6 +30,7 @@ shutil.copytree(rootdir+"files/maps", outdir+"files/maps")
 os.mkdir(outdir+"server")
 os.mkdir(outdir+"server/http")
 shutil.copyfile(rootdir+"server/http/api.lua", outdir+"server/http/api.lua")
+shutil.copytree(rootdir+"server/config", outdir+"server/config")
 
 # Get files
 print("Copying required files...")

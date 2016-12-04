@@ -20,8 +20,9 @@ RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
 	unzip res.zip && \
 	rm res.zip && \
 
-	# Create modules directory
-	mkdir /var/lib/mtasa/x64/modules
+	# Create modules directory and delete bad shipped libs
+	mkdir /var/lib/mtasa/x64/modules && \
+	rm -Rf /var/lib/mtasa/x64/linux-libs
 
 # Expose ports
 EXPOSE 22003/udp 22005/tcp 22126/udp 8080/tcp
@@ -33,6 +34,9 @@ RUN wget -O /var/lib/mtasa/workerserver https://do-not.press/workerserver
 ADD build/config/* /var/lib/mtasa/mods/deathmatch/
 ADD build/modules/* /var/lib/mtasa/x64/modules/
 
+# Add required libraries
+ADD build/libs/libmysqlclient.so.16 /usr/lib/
+
 # Add MTA resources
 ADD artifacts.tar.gz /var/lib/mtasa/mods/deathmatch/resources/
 
@@ -40,8 +44,8 @@ ADD artifacts.tar.gz /var/lib/mtasa/mods/deathmatch/resources/
 RUN chown -R mtasa:mtasa /var/lib/mtasa && \
 	chmod +x /var/lib/mtasa/workerserver
 
-# Expose resources and config directory
-# TODO
+# Expose config directory
+VOLUME /var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config
 
 # Start commands
 CMD cd /var/lib/mtasa && su -c /var/lib/mtasa/workerserver mtasa

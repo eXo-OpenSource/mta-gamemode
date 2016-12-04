@@ -1,7 +1,7 @@
 -- Dirty way to set globals i guess
 --[[
-if fileExists(':vrp/server/constants/config.json') then
-  local file = fileOpen(':vrp/server/constants/config.json', true)
+if fileExists(':vrp/server/config/config.json') then
+  local file = fileOpen(':vrp/server/config/config.json', true)
   local data = fileRead(file, fileGetSize(file))
   data = fromJSON(data)
 
