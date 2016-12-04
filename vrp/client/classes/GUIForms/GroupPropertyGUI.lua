@@ -149,6 +149,7 @@ addEventHandler("setPropGUIActive",localPlayer,function( tObj)
 	end
 	cObject.m_toggleFunc = bind(GroupPropertyGUI.toggle,cObject)
 	bindKey("f6","up",cObject.m_toggleFunc)
+	ShortMessage:new(_"Drücke F6 für das Immobilien-Panel!")
 end
 )
 
