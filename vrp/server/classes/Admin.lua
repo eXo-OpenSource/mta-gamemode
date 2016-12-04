@@ -253,7 +253,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:getHerePlayer(admin, func, target:getName())
         elseif func == "kick" or func == "rkick" then
             self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
-            target:kick(admin, reason)
+			kickPlayer(target, admin, reason)
         elseif func == "prison" then
             duration = tonumber(duration)
             self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))

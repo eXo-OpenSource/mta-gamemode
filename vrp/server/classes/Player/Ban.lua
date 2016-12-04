@@ -50,7 +50,7 @@ function Ban.addBan(who, author, reason, duration)
 			reasonstr = ("You were permanently banned by %s (Reason: %s"):format(author.name, reason)
 		end
 		outputDebug(player)
-		kickPlayer(player, reasonstr)
+		kickPlayer(player, author, reasonstr)
 	end
 end
 
