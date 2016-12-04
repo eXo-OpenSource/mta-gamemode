@@ -31,7 +31,7 @@ function Fishing:constructor()
 	self.m_Markers = {}
 	self.m_PlayerTimers = {}
 
-	self.m_ColShape = createColSphere(350.65, -2072.44, 60)
+	self.m_ColShape = createColSphere(350.65, -2072.44, 7.1, 60)
 	addEventHandler("onColShapeLeave", root, bind(self.onColShapeLeave, self))
 	addEventHandler("onColShapeHit", root, bind(self.onColShapeHit, self))
 
