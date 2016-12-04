@@ -680,7 +680,7 @@ end
 
 function FactionState:checkLogout(player)
 	local pos = player:getPosition()
-	local col = createColSphere(20, pos)
+	local col = createColSphere(pos, 20)
 	local colPlayers = getElementsWithinColShape(col, "player")
 	col:destroy()
 	for index, cop in pairs(colPlayers) do
