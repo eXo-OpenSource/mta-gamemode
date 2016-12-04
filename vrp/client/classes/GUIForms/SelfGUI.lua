@@ -7,7 +7,6 @@
 -- ****************************************************************************
 SelfGUI = inherit(GUIForm)
 inherit(Singleton, SelfGUI)
-
 function SelfGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
@@ -441,6 +440,7 @@ function SelfGUI:constructor()
 end
 
 function SelfGUI:onShow()
+	outputChatBox("hallo")
 	-- Update VehicleTab
 	if localPlayer.m_SelfShader then
 		delete(localPlayer.m_SelfShader)
@@ -649,7 +649,7 @@ function SelfGUI:Event_CompanyInvitationRetrieve(CompanyId, name)
 end
 
 function SelfGUI:CompanyInvitationsAcceptButton_Click()
-	if self.m_InvationCompanyId then
+	if self.m_InvationCompanyId > 0 then
 		triggerServerEvent("companyInvitationAccept", resourceRoot, self.m_InvationCompanyId)
 		self.m_CompanyInvationLabel:setVisible(false)
 		self.m_CompanyInvitationsAcceptButton:setVisible(false)
@@ -660,7 +660,7 @@ function SelfGUI:CompanyInvitationsAcceptButton_Click()
 end
 
 function SelfGUI:CompanyInvitationsDeclineButton_Click()
-	if self.m_InvationCompanyId then
+	if self.m_InvationCompanyId > 0 then
 		triggerServerEvent("companyInvitationDecline", resourceRoot, self.m_InvationCompanyId)
 		self.m_CompanyInvationLabel:setVisible(false)
 		self.m_CompanyInvitationsAcceptButton:setVisible(false)
