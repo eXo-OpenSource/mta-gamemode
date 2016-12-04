@@ -4,7 +4,7 @@ inherit(Singleton, LoginGUI)
 function LoginGUI:constructor()
 	triggerEvent("startLoginCameraDrive", localPlayer)
 	showChat(false)
-	showPlayerHudComponent("radar",false)
+	setPlayerHudComponentVisible("radar",false)
 	local sw, sh = guiGetScreenSize()
 	self.usePasswordHash = false
 
@@ -319,7 +319,7 @@ addEventHandler("loginsuccess", root,
 )
 
 addEvent("startLoginCameraDrive", true)
-addEventHandler("startLoginCameraDrive", localPlayer, function() 
+addEventHandler("startLoginCameraDrive", localPlayer, function()
 	setTime(0,0)
 	local rand = math.random(1,2)
 	if rand == 1 then
@@ -333,12 +333,12 @@ addEventHandler("startLoginCameraDrive", localPlayer, function()
 end)
 
 addEvent("stopLoginCameraDrive",true)
-addEventHandler("stopLoginCameraDrive", localPlayer, function() 
-	if localPlayer.m_LoginDriveObject then 
+addEventHandler("stopLoginCameraDrive", localPlayer, function()
+	if localPlayer.m_LoginDriveObject then
 		delete(localPlayer.m_LoginDriveObject)
 		showChat(true)
 	end
-	if localPlayer.m_LoginShader then 
+	if localPlayer.m_LoginShader then
 		delete(localPlayer.m_LoginShader)
 		localPlayer.m_LoginShader = nil
 	end
