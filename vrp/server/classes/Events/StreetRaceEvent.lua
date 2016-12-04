@@ -21,6 +21,7 @@ function StreetRaceEvent:onStart()
 		player:setData("inEvent", true)
 		removeEventHandler("onPlayerVehicleExit",source,self.m_onExitFunc)
 		addEventHandler("onPlayerVehicleExit",player,self.m_onExitFunc)
+		player:setFrozen(true)
 	end
 
 	setTimer(
@@ -40,6 +41,7 @@ function StreetRaceEvent:onStart()
 			-- Start the GPS for each player
 			for k, player in ipairs(self.m_Players) do
 				player:startNavigationTo(pos)
+				player:setFrozen(false)
 			end
 
 			-- Tell player that we started the event
@@ -53,8 +55,8 @@ function StreetRaceEvent:onStart()
 	)
 end
 
-function StreetRaceEvent:onPlayerExit() 
-	if source:getData("inEvent") then 
+function StreetRaceEvent:onPlayerExit()
+	if source:getData("inEvent") then
 		source:sendError("Du wurdest disqualifiziert!")
 		self:quit(source)
 		removeEventHandler("onPlayerVehicleExit",source,self.m_onExitFunc)
