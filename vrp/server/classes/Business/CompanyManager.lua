@@ -219,7 +219,7 @@ function CompanyManager:Event_companyInvitationAccept(companyId)
 end
 
 function CompanyManager:Event_companyInvitationDecline(companyId)
-	local company = self.getFromId(companyId)
+	local company = self:getFromId(companyId)
 	if not company then return end
 
 	if company:hasInvitation(client) then
