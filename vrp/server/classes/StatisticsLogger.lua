@@ -206,3 +206,9 @@ function StatisticsLogger:onDebugMessageLog(message, level, file, line)
 sqlLogs:queryExec("INSERT INTO ??_Errors (Message, Level, File, Line, Date) VALUES(?, ?, ?, ?, NOW())",
 			sqlLogs:getPrefix(), message, level, file, line)
 end
+
+function StatisticsLogger:GroupBuyImmoLog( groupId, action, immo)
+	if not tonumber(groupId) then return end
+	sqlLogs:queryExec("INSERT INTO ??_GroupImmo (GroupId, Aktion, ImmoId,  Date ) VALUES(?, ?, ?,  NOW())",
+        sqlLogs:getPrefix(), groupId, action, immo)
+end

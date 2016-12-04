@@ -121,6 +121,7 @@ function GroupPropertyManager:BuyProperty( Id )
 					x,y,z = getElementPosition( property.m_Pickup )
 					player:triggerEvent("createGroupBlip",x,y,z,property.m_Id)
 				end
+				StatisticsLogger:GroupBuyImmoLog( property.m_OwnerID or 0, "BUY", property.m_Id)
 			end
 		end
 	end
@@ -145,6 +146,7 @@ function GroupPropertyManager:SellProperty(  )
 					player:triggerEvent("destroyGroupBlip",pOwner.m_Id)
 					player:triggerEvent("forceGroupPropertyClose")
 				end
+				StatisticsLogger:GroupBuyImmoLog( pOwner.m_Id or 0, "SELL", property.m_Id or 0)
 			end
 		end
 	end
