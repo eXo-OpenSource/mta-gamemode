@@ -306,7 +306,7 @@ function FactionManager:Event_factionRankUp(playerId)
 				faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
 				if not isOffline then
 					if isElement(player) then
-						player:sendShortMessage(_("Du wurdest von %d auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
+						player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
 					end
 				end
 				self:sendInfosToClient(client)
