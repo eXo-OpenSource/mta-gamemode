@@ -229,7 +229,7 @@ function AdminGUI:onOfflinePlayerInfo(info)
 	self.m_PlayerOfflineMoneyLabel:setText(_("Geld: %s$", info.Money or "-"))
 	self.m_PlayerOfflineBankMoneyLabel:setText(_("Bank-Geld: %s$", info.BankMoney or "-"))
 	local banString = "Nein"
-	if info.Ban == true or tonumber(info.Warn) >= 3 then 
+	if info.Ban == true or tonumber(info.Warn) >= 3 then
 		banString = "Ja"
 	end
 	self.m_PlayerOfflineBanLabel:setText(_("Gebannt: %s",  banString))
@@ -312,14 +312,22 @@ function AdminGUI:onButtonClick(func)
 		InputBox:new(_("Spieler %s kicken", self.m_SelectedPlayer:getName()),
 				_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", self.m_SelectedPlayer:getName()),
 				function (reason)
-					triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason)
+					if reason then
+						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason)
+					else
+						ErrorBox:new("Kein Grund angegeben!")
+					end
 				end)
 	elseif func == "prison" then
 		AdminInputBox:new(
 				_("Spieler %s ins Prison schicken", self.m_SelectedPlayer:getName()),
 				_"Dauer in Minuten:",
 				function (reason, duration)
-					triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason, duration)
+					if reason and duration then
+						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason, duration)
+					else
+						ErrorBox:new("Kein Grund oder Dauer angegeben!")
+					end
 				end)
 	elseif func == "unprison" then
 		QuestionBox:new(
@@ -332,7 +340,11 @@ function AdminGUI:onButtonClick(func)
 				_("Spieler %s time bannen", self.m_SelectedPlayer:getName()),
 				_"Dauer in Stunden:",
 				function (reason, duration)
-					triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason, duration)
+					if reason and duration then
+						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason, duration)
+					else
+						ErrorBox:new("Kein Grund oder Dauer angegeben!")
+					end
 				end)
 	elseif func == "warn" then
 				WarnManagement:new(self.m_SelectedPlayer, self)
@@ -341,7 +353,9 @@ function AdminGUI:onButtonClick(func)
 		InputBox:new(_("Spieler %s permanent Bannen", self.m_SelectedPlayer:getName()),
 				_("Aus welchem Grund möchtest du den Spieler %s permanent bannen?", self.m_SelectedPlayer:getName()),
 				function (reason)
-					triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason)
+					if reason then
+						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, reason)
+					end
 				end)
 	elseif func == "setCompany" then
 		local companyTable = {[0] = "Kein Unternehmen", [1] = "Fahrschule", [2] = "Mech & Tow", [3] = "San News", [4] = "Public Transport"}
