@@ -262,11 +262,15 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
         elseif func == "kick" or func == "rkick" then
             self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
 			kickPlayer(target, admin, reason)
+			outputChat("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." gekickt!",root, 200, 0, 0)
+			outputChat("Grund: "..reason,root, 200, 0, 0)
         elseif func == "prison" then
             duration = tonumber(duration)
             self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
             target:setPrison(duration*60)
             self:addPunishLog(admin, target, func, reason, duration*60)
+			outputChat("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." ins Pirson gesteckt!",root, 200, 0, 0)
+			outputChat("Grund: "..reason,root, 200, 0, 0)
         elseif func == "unprison" then
 			if target.m_PrisonTime > 0 then
 				self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
@@ -281,11 +285,15 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
             Ban.addBan(target, admin, reason, duration*60*60)
             self:addPunishLog(admin, target, func, reason, duration*60*60)
+			outputChat("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
+			outputChat("Grund: "..reason,root, 200, 0, 0)
         elseif func == "permaban" then
             if not reason or #reason == 0 then return end
 			self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
             Ban.addBan(target, admin, reason)
             self:addPunishLog(admin, target, func, reason, 0)
+			outputChat("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
+			outputChat("Grund: "..reason,root, 200, 0, 0)
         elseif func == "addWarn" or func == "warn" then
 			if not duration then return end
 			if not reason then return end
@@ -311,6 +319,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
                 player:triggerEvent("closeAd")
             end
 			StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
+			outputChat("Der Chat wurde von "..getPlayerName(admin).." geleert!",root, 200, 0, 0)
         elseif func == "adminAnnounce" then
             local text = target
             triggerClientEvent("announceText", admin, text)
@@ -358,6 +367,8 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					if targetId and targetId > 0 then
 						Ban.addBan(targetId, admin, reason)
 						self:addPunishLog(admin, targetId, func, reason, 0)
+						outputChat("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
+						outputChat("Grund: "..reason,root, 200, 0, 0)
 					else
 						admin:sendError(_("Spieler nicht gefunden!", admin))
 					end
@@ -371,6 +382,8 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					if type(reason) == "string" then
 						Ban.addBan(targetId, admin, reason, duration*60*60)
 						self:addPunishLog(admin, targetId, func, reason, duration*60*60)
+						outputChat("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
+						outputChat("Grund: "..reason,root, 200, 0, 0)
 					else admin:sendError("Keinen Grund angegeben!")
 					end
 				else admin:sendError("Keine Dauer angegeben!")
@@ -384,6 +397,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             if targetId and targetId > 0 then
                 self:addPunishLog(admin, targetId, func, reason, 0)
                 sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
+				outputChat("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
             else
                 admin:sendError(_("Spieler nicht gefunden!", admin))
             end
