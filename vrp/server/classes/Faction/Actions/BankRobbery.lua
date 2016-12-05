@@ -7,7 +7,10 @@
 -- ****************************************************************************
 BankRobbery = inherit(Singleton)
 BankRobbery.Map = {}
-BankRobbery.FinishMarker = {Vector3(2766.84, 84.98, 19.39), Vector3(2561.50, -949.89, 82.77), Vector3(1935.24, 169.98, 37.28)}
+BankRobbery.FinishMarker = {
+	Vector3(2766.84, 84.98, 18.39),
+	Vector3(2561.50, -949.89, 81.77),
+	Vector3(1935.24, 169.98, 36.28)}
 
 addRemoteEvents{"bankRobberyPcHack", "bankRobberyPcDisarm", "bankRobberyPcHackSuccess"}
 BankRobbery.BagSpawns = {
