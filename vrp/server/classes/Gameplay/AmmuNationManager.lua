@@ -168,22 +168,29 @@ function AmmuNationManager:buyWeapon(id)
 					return
 				end
 			end
+		else
+			client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
 		end
-		client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
+	else
+		client:sendWarning(_("Dein Waffenlevel ist zu niedrig!",client),125,0,0)
 	end
-	client:sendWarning(_("Dein Waffenlevel ist zu niedrig!",client),125,0,0)
 end
 
 function AmmuNationManager:buyMagazine(id)
-	if not hasPedThisWeaponInSlots (client,id) then return false end
-	if client:getMoney() >= AmmuNationInfo[id].Magazine.price then
-		giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
-		client:takeMoney(AmmuNationInfo[id].Magazine.price, "Ammunation")
-		client:sendShortMessage(_("Munition erhalten.",client))
-		local weaponTable = toJSON({[id] = AmmuNationInfo[id].Magazine.amount})
-		StatisticsLogger:addAmmunationLog(client, "Shop", weaponTable, AmmuNationInfo[id].Magazine.price)
-		reloadPedWeapon(client)
-		return
+	if AmmuNationInfo[id].MinLevel <= client:getWeaponLevel() then
+		if not hasPedThisWeaponInSlots (client,id) then return false end
+		if client:getMoney() >= AmmuNationInfo[id].Magazine.price then
+			giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
+			client:takeMoney(AmmuNationInfo[id].Magazine.price, "Ammunation")
+			client:sendShortMessage(_("Munition erhalten.",client))
+			local weaponTable = toJSON({[id] = AmmuNationInfo[id].Magazine.amount})
+			StatisticsLogger:addAmmunationLog(client, "Shop", weaponTable, AmmuNationInfo[id].Magazine.price)
+			reloadPedWeapon(client)
+			return
+		else
+			client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
+		end
+	else
+		client:sendWarning(_("Dein Waffenlevel ist zu niedrig!",client),125,0,0)
 	end
-	client:sendMessage(_("Du hast nicht genuegend Geld.",client),125,0,0)
 end
