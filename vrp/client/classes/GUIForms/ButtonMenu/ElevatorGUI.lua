@@ -9,49 +9,59 @@ ElevatorGUI = inherit(GUIButtonMenu)
 
 addRemoteEvents{"showElevatorGUI"}
 
-function ElevatorGUI:constructor(elevatorId, stationName, stations)
+function ElevatorGUI:constructor(elevatorId, stationName, stations, pos, int)
 	GUIButtonMenu.constructor(self, "Aufzug "..stationName)
-
 	self.m_ElevatorId = elevatorId
-
+	
+	self.m_Pos = pos
+	self.m_Int = int
 	self.m_CamBind = bind(self.renderCam, self)
 
 	for stationId, data in pairs(stations) do
 		if data.name ~= stationName then
-			self:addItem(data.name, Color.LightBlue, bind(self.itemCallback, self, stationId))
+			self:addItem(data.name, Color.LightBlue, bind(self.itemCallback, self, stationId, stations))
 		end
 	end
 end
 
-function ElevatorGUI:itemCallback(stationId)
-	local music = Sound.create("files/audio/ElevatorMusic.ogg")
-	fadeCamera(false,1,0,0,0)
-    setTimer( function()
-		localPlayer:setDimension(0)
-		localPlayer:setInterior(0)
-		localPlayer:setPosition(1744.80, -1746.90, 13.30)
-		localPlayer:setRotation(0, 0, 170)
-		localPlayer:setFrozen(true)
-		HUDRadar:getSingleton():setEnabled(false)
-	end, 1500,1)
-    setTimer(function() fadeCamera(true,1) end, 1500, 1)
-	setTimer(function() addEventHandler("onClientPreRender", root, self.m_CamBind) end, 1500 ,1)
-
-
-	setTimer(function()
-		Sound.create("files/audio/ElevatorDing.mp3")
-		music:destroy()
+function ElevatorGUI:itemCallback(stationId, station)
+	local check1 = self.m_Int == getElementInterior(localPlayer)
+	local mx,my,mz = unpack(self.m_Pos)
+	local px,py,pz = getElementPosition(localPlayer)
+	local check2 = getDistanceBetweenPoints3D(mx,my,mz,px,py,pz ) <= 5
+	if not check1 or not check2 then return delete(self) end
+	if not localPlayer.m_inElevator then
+		localPlayer.m_inElevator = true
+		local music = Sound.create("files/audio/ElevatorMusic.ogg")
 		fadeCamera(false,1,0,0,0)
-    	setTimer(function() fadeCamera(true,1) end, 1500, 1)
+		setTimer( function()
+			localPlayer:setDimension(0)
+			localPlayer:setInterior(0)
+			localPlayer:setPosition(1744.80, -1746.90, 13.30)
+			localPlayer:setRotation(0, 0, 170)
+			localPlayer:setFrozen(true)
+			HUDRadar:getSingleton():setEnabled(false)
+		end, 1500,1)
+		setTimer(function() fadeCamera(true,1) end, 1500, 1)
+		setTimer(function() addEventHandler("onClientPreRender", root, self.m_CamBind) end, 1500 ,1)
+
+
 		setTimer(function()
-			localPlayer:setFrozen(false)
-			HUDRadar:getSingleton():setEnabled(true)
-			removeEventHandler("onClientPreRender", root, self.m_CamBind)
-			triggerServerEvent("elevatorDrive", localPlayer, self.m_ElevatorId, stationId)
-			setCameraTarget(localPlayer)
-		end, 1250, 1)
-	end, 8000, 1)
-	delete(self)
+			Sound.create("files/audio/ElevatorDing.mp3")
+			music:destroy()
+			fadeCamera(false,1,0,0,0)
+			setTimer(function() fadeCamera(true,1) end, 1500, 1)
+			setTimer(function()
+				localPlayer:setFrozen(false)
+				HUDRadar:getSingleton():setEnabled(true)
+				removeEventHandler("onClientPreRender", root, self.m_CamBind)
+				triggerServerEvent("elevatorDrive", localPlayer, self.m_ElevatorId, stationId)
+				localPlayer.m_inElevator = false
+				setCameraTarget(localPlayer)
+			end, 1250, 1)
+		end, 8000, 1)
+		delete(self)
+	end
 end
 
 function ElevatorGUI:renderCam()
@@ -69,7 +79,9 @@ function ElevatorGUI:renderCam()
 end
 
 addEventHandler("showElevatorGUI", root,
-		function(elevatorId, stationName, stations)
-			ElevatorGUI:new(elevatorId, stationName, stations)
+		function(elevatorId, stationName, stations, posTable , int)
+			if not localPlayer.m_inElevator then
+				ElevatorGUI:new(elevatorId, stationName, stations, posTable, int)
+			end
 		end
 	)

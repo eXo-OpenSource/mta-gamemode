@@ -47,7 +47,8 @@ function Elevator:onStationMarkerHit(hitElement, dim)
 		if not hitElement.vehicle then
 			if not hitElement.elevatorUsed then
 				hitElement.curEl = self
-				hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations)
+				local pVec = self.m_Stations[source.id].position
+				hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[source.id].interior)
 			end
 		end
 	end
@@ -66,4 +67,5 @@ function Elevator:driveToStation(player, stationID)
 	player:setRotation(0, 0, self.m_Stations[stationID].rotation, "default", true)
 	player:setInterior(self.m_Stations[stationID].interior)
 	player:setDimension(self.m_Stations[stationID].dimension)
+	setElementFrozen(player, false)
 end
