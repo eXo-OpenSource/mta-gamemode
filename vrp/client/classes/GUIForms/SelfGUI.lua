@@ -604,7 +604,7 @@ end
 
 function SelfGUI:Event_factionInvitationRetrieve(factionId, name)
 	if factionId > 0 then
-		ShortMessage:new(_("Du wurdest in die Fraktion '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+		ShortMessage:new(_("Du wurdest in die Fraktion '%s' eingeladen. Einladung im Spielermenü!", name))
 		self.m_FactionInvationLabel:setVisible(true)
 		self.m_FactionInvitationsAcceptButton:setVisible(true)
 		self.m_FactionInvitationsDeclineButton:setVisible(true)
@@ -638,7 +638,7 @@ end
 
 function SelfGUI:Event_CompanyInvitationRetrieve(CompanyId, name)
 	if CompanyId > 0 then
-		ShortMessage:new(_("Du wurdest in das Unternehmen '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+		ShortMessage:new(_("Du wurdest in das Unternehmen '%s' eingeladen. Einladung im Spielermenü!", name))
 		self.m_CompanyInvationLabel:setVisible(true)
 		self.m_CompanyInvitationsAcceptButton:setVisible(true)
 		self.m_CompanyInvitationsDeclineButton:setVisible(true)
@@ -670,7 +670,7 @@ function SelfGUI:CompanyInvitationsDeclineButton_Click()
 end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
-	ShortMessage:new(_("Du wurdest in die Firma/Gang '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+	ShortMessage:new(_("Du wurdest in die Firma/Gang '%s' eingeladen. Einladung im Spielermenü!", name))
 	self.m_GroupInvitationsLabel:setText("Du hast eine Einladungen für eine private Firma/Gang erhalten, öffne das Menü um diese anzunehmen!")
 	self.m_GroupInvitationsLabel:setVisible(true)
 	self.m_HasGroupInvation = true
