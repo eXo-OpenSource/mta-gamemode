@@ -51,7 +51,7 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 		self:setHealth(health)
 	end
   end
-  self:setLocked(true)
+  self:setLocked(false)
 
   local a, r, g, b
   if color and color > 0 then
