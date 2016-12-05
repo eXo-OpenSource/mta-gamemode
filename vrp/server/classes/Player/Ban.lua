@@ -61,16 +61,17 @@ end
 
 function Ban.checkSerial(serial, player)
 	-- Note: true = not banned
-	local row = sql:queryFetchSingle("SELECT reason, expires FROM ??_bans WHERE serial = ?;", sql:getPrefix(), serial)
+	local id = player and player:getId() or "false"
+	local row = sql:queryFetchSingle("SELECT reason, expires FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
 	if row then
 		local duration = row.expires
 		if duration == 0 then
-			reasonstr = ("You are permanently banned (Reason: %s"):format(row.reason)
+			reasonstr = ("Du wurdest permanent gebannt (Grund: %s"):format(row.reason)
 		elseif duration - getRealTime().timestamp < 0 then
-			sql:queryExec("DELETE FROM ??_bans WHERE serial = ?;", sql:getPrefix(), serial)
+			sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
 			return true
 		elseif duration > 0 then
-			reasonstr = ("You are banned for %s (Reason: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
+			reasonstr = ("Du bist noch für %s gebannt! (Grund: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
 		end
 
 		if player and isElement(player) then kickPlayer(player, reasonstr) end

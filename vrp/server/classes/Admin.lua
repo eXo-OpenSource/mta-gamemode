@@ -383,7 +383,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             local targetId = Account.getIdFromName(target)
             if targetId and targetId > 0 then
                 self:addPunishLog(admin, targetId, func, reason, 0)
-                sql:queryExec("DELETE FROM ??_bans WHERE serial = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId))
+                sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
             else
                 admin:sendError(_("Spieler nicht gefunden!", admin))
             end

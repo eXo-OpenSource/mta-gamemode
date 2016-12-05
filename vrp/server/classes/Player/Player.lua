@@ -76,7 +76,7 @@ function Player:destructor()
 	if self.m_DeathPickup and isElement(self.m_DeathPickup) then self.m_DeathPickup:destroy() end
 
 	self:save()
-		
+
 
 	-- Unload stuff
 	HouseManager:getSingleton():destroyPlayerHouseBlip(self) -- Todo: do not on stop, cause of an error (annoying :P)
@@ -130,6 +130,7 @@ end
 function Player:loadCharacter()
 	DatabasePlayer.Map[self.m_Id] = self
 	Warn.checkWarn(self)
+	Ban.checkBan(self)
 	self:loadCharacterInfo()
 
 	-- Send infos to client
