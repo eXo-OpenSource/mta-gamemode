@@ -352,8 +352,10 @@ end
 function Company:phoneCall(caller)
 	for k, player in ipairs(self:getOnlinePlayers()) do
 		if not player:getPhonePartner() then
-			player:sendShortMessage(_("Der Spieler %s ruft euer Unternehmen (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
-			bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+			if player ~= caller then
+				player:sendShortMessage(_("Der Spieler %s ruft euer Unternehmen (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getName()))
+				bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+			end
 		end
 	end
 end

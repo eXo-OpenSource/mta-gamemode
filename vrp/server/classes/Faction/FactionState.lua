@@ -13,7 +13,8 @@ function FactionState:constructor()
 	self:createArrestZone(1564.92, -1693.55, 5.89) -- PD Garage
 	self:createArrestZone(255.19, 84.75, 1002.45, 6)-- PD Zellen
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
-
+	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
+	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -399,6 +400,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
+						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
@@ -505,7 +507,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				policeman:givePoints(wantedLevel)
 				PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
 				StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
-
+				policeman:getFaction():addLog(policeman, "Knast", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
 				-- Give Achievements
 				if wantedLevel > 4 then
 					policeman:giveAchievement(48)
@@ -538,7 +540,6 @@ function FactionState:Command_bail(player)
 
 					player:sendInfo(_("Sie haben sich mit der Kaution von %s$ freigekauft!", player, player.m_Bail))
 					player.m_Bail = 0
-					StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat sich für %d Dollar freigekauft!"):format(player:getName(), player.m_Bail))
 					self:freePlayer(player)
 				else
 					player:sendError("Sie haben nicht genügend Geld!")
@@ -700,7 +701,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 			target:giveWantedLevel(amount)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
-			StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
+			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds gegeben! Grund: "..reason)
 			self:sendMessage(msg, 255,0,0)
 		end
 	end
@@ -713,7 +714,7 @@ function FactionState:Event_clearWanteds(target)
 			target:takeWantedLevel(6)
 			outputChatBox(("Dir wurden alle Wanteds von %s erlassen"):format(client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s alle Wanteds erlassen!"):format(client:getName(), target:getName())
-			StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
+			faction:addLog(client, "Wanteds", "hat "..target:getName().." alle Wanteds erlassen!")
 			self:sendMessage(msg, 255,0,0)
 		end
 	end
@@ -914,16 +915,18 @@ end
 function FactionState:Event_freePlayer(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
-		if client:isFactionDuty() then
+		if client:isFactionDuty() and faction:getPlayerRank(client) >= FactionRank.Rank3 then
 			if target and isElement(target) then
 				outputChatBox(("Du wurdest von %s aus dem Knast entlassen!"):format(client:getName()), target, 255, 255, 0 )
 				local msg = ("%s hat %s aus dem Knast entlassen!"):format(client:getName(), target:getName())
-				StatisticsLogger:getSingleton():addTextLog("jail", msg)
 				self:sendMessage(msg, 255,0,0)
+				faction:addLog(client, "Knast", "hat "..target:getName().." aus dem Knast entlassen!")
 				self:freePlayer(target)
 			else
 				client:sendError(_("Spieler nicht gefunden!", client))
 			end
+		else
+			client:sendError(_("Du bist nicht berechtigt! Ab Rang %d!", client, FactionRank.Rank3))
 		end
 	end
 end

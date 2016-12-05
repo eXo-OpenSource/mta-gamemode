@@ -65,11 +65,13 @@ function LocalPlayer:Event_onGetTime( realtime )
 end
 
 function LocalPlayer:setAFKTime()
-	if self.m_AFKStartTime > 0 then
-		self.m_CurrentAFKTime = (getTickCount() - self.m_AFKStartTime)
-	else
-		self.m_AFKTime = self.m_AFKTime + self.m_CurrentAFKTime
-		self.m_CurrentAFKTime = 0
+	if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then
+		if self.m_AFKStartTime > 0 then
+			self.m_CurrentAFKTime = (getTickCount() - self.m_AFKStartTime)
+		else
+			self.m_AFKTime = self.m_AFKTime + self.m_CurrentAFKTime
+			self.m_CurrentAFKTime = 0
+		end
 	end
 end
 

@@ -325,6 +325,7 @@ function GroupGUI:GroupInvitationsAcceptButton_Click()
 			triggerServerEvent("groupInvitationAccept", resourceRoot, selectedItem.GroupId)
 		end
 		self.m_GroupInvitationsGrid:removeItemByItem(selectedItem)
+		self.m_GroupInvitationsGrid:clear()
 	end
 end
 
@@ -335,6 +336,7 @@ function GroupGUI:GroupInvitationsDeclineButton_Click()
 			triggerServerEvent("groupInvitationDecline", resourceRoot, selectedItem.GroupId)
 		end
 		self.m_GroupInvitationsGrid:removeItemByItem(selectedItem)
+		self.m_GroupInvitationsGrid:clear()
 	end
 end
 
@@ -444,7 +446,8 @@ function GroupGUI:VehicleLocateButton_Click()
 	end
 
 	local x, y, z = getElementPosition(item.VehicleElement)
-	local blip = Blip:new("Waypoint.png", x, y, 800)
+	local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+	blip:setZ(z)
 	--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
 		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung+", Color.DarkLightBlue, -1)
 		.m_Callback = function (this)

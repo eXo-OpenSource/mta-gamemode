@@ -40,7 +40,7 @@ function GUIMovetext:renderThis()
 	if self.m_Icon then
 		dxDrawImage((self.m_AbsoluteX+self.m_Width)- self.m_Width*0.03, self.m_AbsoluteY,self.m_Width*0.03,self.m_FontHeight,self.m_Icon,0,0,0,tocolor(255,255,255,255),self.m_PostGUI)
 	end
-	dxDrawText(self.m_Text,self.m_AbsoluteX+ self.m_Start, self.m_AbsoluteY,self.m_AbsoluteX+self.m_Width,self.m_AbsoluteY+self.m_FontHeight,self.m_Color,self:getFontSize(), self:getFont(),"left","top",false,false,self.m_PostGUI)
+	dxDrawText(self.m_Text,self.m_Width - (self.m_AbsoluteX+ self.m_Start), self.m_AbsoluteY,(self.m_AbsoluteX+ self.m_Start),self.m_AbsoluteY+self.m_FontHeight,self.m_Color,self:getFontSize(), self:getFont(),"left","top",false,false,self.m_PostGUI)
 	if self.m_Start >= self.m_AbsoluteX+(self.m_Width*1.5) then
 		self:removeEvents( )
 		self:anyChange()

@@ -160,10 +160,12 @@ end
 
 function GroupPropertyManager:getPropsForPlayer( player )
 	local playerProps = {}
-	if player:getGroup() then
-		for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
-			if v.m_OwnerID == player:getGroup():getId() then
-				playerProps[#playerProps+1] = v
+	if player then
+		if player:getGroup() then
+			for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
+				if v.m_OwnerID == player:getGroup():getId() then
+					playerProps[#playerProps+1] = v
+				end
 			end
 		end
 	end

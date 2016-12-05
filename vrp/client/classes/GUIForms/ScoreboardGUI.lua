@@ -121,6 +121,7 @@ function ScoreboardGUI:addPlayerCount(name, value, color)
 end
 
 function ScoreboardGUI:insertPlayers()
+	local gname
 	for index, data in ipairs(self.m_Players) do
 		local player = data[1]
 		local karma = math.floor(player:getKarma() or 0)
@@ -134,13 +135,16 @@ function ScoreboardGUI:insertPlayers()
 			ping = player:getPing().."ms"
 		end
 
-
+		gname = player:getGroupName()
+		if gname == "" or #gname == 0 then 
+			gname = "-Keine-"
+		end
 		local item = self.m_Grid:addItem(
 			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Other/trans.png",
 			player:getName(),
 			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
 			player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
-			player:getGroupName(),
+			gname,
 			hours..":"..minutes,
 			karma >= 0 and "+"..karma or " "..tostring(karma),
 			ping or " - "

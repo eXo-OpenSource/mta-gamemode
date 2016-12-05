@@ -143,8 +143,17 @@ end
 function KeyBinds:helpMenu()
 	if not HelpGUI:isInstantiated() then
 		HelpGUI:new()
+		if localPlayer.m_SelfShader then
+			delete(localPlayer.m_SelfShader)
+			localPlayer.m_SelfShader = nil
+		end
+		localPlayer.m_SelfShader =  RadialShader:new()
 	else
 		delete(HelpGUI:getSingleton())
+		if localPlayer.m_SelfShader then
+			delete(localPlayer.m_SelfShader)
+			localPlayer.m_SelfShader = nil
+		end
 	end
 end
 

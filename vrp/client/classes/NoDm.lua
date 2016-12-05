@@ -130,6 +130,9 @@ addEventHandler("checkNoDm", localPlayer, function()
 		local cols = NoDm:getSingleton().m_NoDmZones[index]
 		if isElementWithinColShape(localPlayer, cols) then 
 			NoDm:getSingleton():setPlayerNoDm(localPlayer, true)
+			break
+		else 
+			toggleControl("aim_weapon",true)
 		end
 	end
 end)

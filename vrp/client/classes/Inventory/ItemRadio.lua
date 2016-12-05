@@ -22,7 +22,9 @@ addEventHandler("itemRadioChangeURLClient", root,
 addEvent("itemRadioRemove", true)
 addEventHandler("itemRadioRemove", root,
 	function()
-		source.Sound:destroy()
+		if source.Sound then 
+			source.Sound:destroy()
+		end
 	end
 )
 

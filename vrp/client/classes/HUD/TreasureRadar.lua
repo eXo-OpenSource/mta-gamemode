@@ -43,9 +43,10 @@ function TreasureRadar:render()
 			local lineX, lineY = centerX, centerY
 			dxDrawLine(lineX, lineY, endX + lineX, endY + lineY, tocolor(0, 255, 0, alpha), 7)
 		end
-		for element, b in pairs(self.m_ElementsDetected) do
-			local hip = (radar.r*b[3])/self.m_Radius
-			local x, y = math.cos(b[2]) / hip, math.sin(b[2]) * hip
+		for element, data in pairs(self.m_ElementsDetected) do
+			local eAngle, hipotenusa = unpack(data)
+			local hip = (radar.r*hipotenusa)/self.m_Radius
+			local x, y = math.cos(eAngle) / hip, math.sin(eAngle) * hip
 
 			dxDrawImage(centerX-8+x, centerY-8-y, 16, 16, "files/images/Other/TreasureRadarBlip.png", 0, 0, 0, tocolor(255, 255, 255, 255))
 		end
@@ -60,22 +61,14 @@ function TreasureRadar:preRender()
 	if localPlayer:getOccupiedVehicle() and localPlayer:getOccupiedVehicle():getModel() == 453 then
 		local centerX, centerY, centerZ = getElementPosition(localPlayer)
 		local elements = getElementsWithinColShape(self.m_RadarColshape, "object")
-		for e = 1, #elements do
-			if getElementData(elements[e], "Treasure") then
-				local x, y, z = getElementPosition(elements[e])
+		for index, element in pairs(elements) do
+			if isElement(element) and getElementData(element, "Treasure") then
+				local x, y, z = getElementPosition(element)
 				local hipotenusa = ( (x-centerX)^2 + (y-centerY)^2 ) ^ .5
 				local eAngle = math.acos( (x-centerX) / hipotenusa )
 				eAngle = (y-centerY) < 0 and math.pi*2 - eAngle or eAngle
+				self.m_ElementsDetected[element] = {eAngle, hipotenusa}
 
-				--local xFrom, yFrom = math.cos(eAngle)*hipotenusa, math.sin(eAngle)*hipotenusa
-				--dxDrawLine3D(centerX, centerY, 7, xFrom + centerX, yFrom + centerY, z, tocolor(0, 255, 0, 150), 3) -- To see where the element is supposed to be
-
-				if eAngle >= math.rad( self.m_Angle - 10 ) and eAngle <= math.rad ( self.m_Angle ) then
-					if visible and not self.m_ElementsDetected[elements[e]] then
-						playSoundFrontEnd(5)
-					end
-					self.m_ElementsDetected[elements[e]] = {getTickCount(), eAngle, hipotenusa}
-				end
 			end
 		end
 	end

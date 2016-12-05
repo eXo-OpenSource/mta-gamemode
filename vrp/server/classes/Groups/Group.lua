@@ -50,6 +50,11 @@ end
 function Group:purge()
   if sql:queryExec("DELETE FROM ??_groups WHERE Id = ?", sql:getPrefix(), self.m_Id) then
     -- Remove all players
+	for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
+		if v.m_OwnerID == self.m_Id then
+			v.m_Owner = false
+		end
+	end
     for playerId in pairs(self.m_Players) do
       self:removePlayer(playerId)
     end
@@ -203,7 +208,7 @@ function Group:removePlayer(playerId)
 	self:sendShortMessage(_("%s hat deine %s verlassen!", player, player:getName(), self:getType()))
   end
   sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
-
+  self:removePlayerMarker(player)
 end
 
 function Group:invitePlayer(player)
@@ -397,8 +402,10 @@ function Group:phoneCall(caller)
   if #self:getOnlinePlayers() > 0 then
     for k, player in ipairs(self:getOnlinePlayers()) do
       if not player:getPhonePartner() then
-        player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
-        bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+		if player ~= caller then
+			player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
+			bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+		end
       end
     end
   else

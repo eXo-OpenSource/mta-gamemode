@@ -68,8 +68,12 @@ end
 function PhoneInteraction:callStartSpecial(number)
 	for index, instance in pairs(PhoneNumber.Map) do
 		if instance:getNumber() == number then
-			self.m_LastSpecialCallNumber[client] = number
-			instance:getOwner(instance):phoneCall(client)
+			if instance:getOwner(instance) ~= client then
+				self.m_LastSpecialCallNumber[client] = number
+				instance:getOwner(instance):phoneCall(client)
+			else 
+				client:sendError("Du kannst dich nicht selbst anrufen!")
+			end
 		end
 	end
 end

@@ -141,7 +141,7 @@ end
 function Blip:attachTo(element)
   if Blip.AttachedBlips[self] then table.remove(Blip.AttachedBlips, table.find(self)) end
   Blip.AttachedBlips[self] = element
-  if self.DefaultBlips[self.m_ID] then 
+  if self.DefaultBlips[self.m_ID] then
 	local r,g,b,a = unpack(self.m_DefaultColor)
 	destroyElement(self.DefaultBlips[self.m_ID])
 	self.DefaultBlips[self.m_ID] = createBlipAttachedTo(element,0,self.m_DefaultSize,r,g,b,a)
@@ -151,7 +151,7 @@ end
 function Blip:dettach()
 	if Blip.AttachedBlips[self] then
 	  	Blip.AttachedBlips[self] = nil
-		if self.DefaultBlips[self.m_ID] then 
+		if self.DefaultBlips[self.m_ID] then
 			detachElements(self.DefaultBlips[self.m_ID])
 		end
 	end

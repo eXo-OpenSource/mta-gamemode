@@ -16,6 +16,13 @@ function JobPizza:constructor( )
 	self.m_VehicleSpawner:disable()
 
 	addEventHandler("onPizzaDelivered", root, bind( JobPizza.onPizzaDeliver, self ) )
+	addEventHandler("onPlayerDisconnect", root, bind(JobPizza.onPlayerDisconnect, self) )
+end
+
+function JobRoadSweeper:onPlayerDisconnect()
+	if isElement(source.m_PizzaVeh) then
+		destroyElement( source.m_PizzaVeh)
+	end
 end
 
 function JobPizza:start(player)
@@ -24,6 +31,7 @@ end
 
 function JobPizza:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
+	if player.m_PizzaVeh and isElement(player.m_PizzaVeh) then player.m_PizzaVeh:destroy() end
 end
 
 function JobPizza:onVehicleSpawn( vehicle, player )
@@ -44,6 +52,8 @@ function JobPizza:onVehicleSpawn( vehicle, player )
 		end
 	end)
 	player:triggerEvent("nextPizzaDelivery")
+	vehicle:addCountdownDestroy(10)
+	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
 end
 
 function JobPizza:additionalCheck( player )

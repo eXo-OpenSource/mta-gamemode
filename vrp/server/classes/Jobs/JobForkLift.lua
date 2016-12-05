@@ -17,7 +17,15 @@ function JobForkLift:constructor()
 
 	addRemoteEvents{"JobForkLiftonBoxLoad"}
 	addEventHandler("JobForkLiftonBoxLoad", root, bind(self.onBoxLoad, self))
+	addEventHandler("onPlayerDisconnect", root, bind(JobForkLift.onPlayerDisconnect, self) )
 end
+
+function JobForkLift:onPlayerDisconnect(  )
+	if isElement(source.vehFork) then
+		destroyElement( source.vehFork )
+	end
+end
+
 
 function JobForkLift:start(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
@@ -25,6 +33,7 @@ end
 
 function JobForkLift:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
+	if player.vehFork and isElement(player.vehFork) then destroyElement(player.vehFork) end
 end
 
 function JobForkLift:onVehicleSpawn(player,vehicleModel,vehicle)
@@ -34,6 +43,12 @@ function JobForkLift:onVehicleSpawn(player,vehicleModel,vehicle)
 			cancelEvent()
 		end
 	end)
+	if isElement(player.vehFork) then
+		destroyElement(player.vehFork)
+	end
+
+	vehicle:addCountdownDestroy(10)
+	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
 end
 
 function JobForkLift:onBoxLoad(box)

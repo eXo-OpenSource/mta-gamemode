@@ -359,7 +359,8 @@ function SelfGUI:constructor()
 	end
 	self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
 
-	self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", tabSettings)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.07, _"Fraktion", tabSettings)
+	self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.62, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", tabSettings)
 	self.m_SkinSpawn:setFont(VRPFont(25))
 	self.m_SkinSpawn:setFontSize(1)
 	self.m_SkinSpawn:setChecked(core:get("HUD", "spawnFactionSkin", true))
@@ -604,7 +605,7 @@ end
 
 function SelfGUI:Event_factionInvitationRetrieve(factionId, name)
 	if factionId > 0 then
-		ShortMessage:new(_("Du wurdest in die Fraktion '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+		ShortMessage:new(_("Du wurdest in die Fraktion '%s' eingeladen. Einladung im Spielermenü!", name))
 		self.m_FactionInvationLabel:setVisible(true)
 		self.m_FactionInvitationsAcceptButton:setVisible(true)
 		self.m_FactionInvitationsDeclineButton:setVisible(true)
@@ -638,7 +639,7 @@ end
 
 function SelfGUI:Event_CompanyInvitationRetrieve(CompanyId, name)
 	if CompanyId > 0 then
-		ShortMessage:new(_("Du wurdest in das Unternehmen '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+		ShortMessage:new(_("Du wurdest in das Unternehmen '%s' eingeladen. Einladung im Spielermenü!", name))
 		self.m_CompanyInvationLabel:setVisible(true)
 		self.m_CompanyInvitationsAcceptButton:setVisible(true)
 		self.m_CompanyInvitationsDeclineButton:setVisible(true)
@@ -670,7 +671,7 @@ function SelfGUI:CompanyInvitationsDeclineButton_Click()
 end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
-	ShortMessage:new(_("Du wurdest in die Firma/Gang '%s' eingeladen. Öffne das Spielermenü, um die Einladung anzunehmen", name))
+	ShortMessage:new(_("Du wurdest in die Firma/Gang '%s' eingeladen. Einladung im Spielermenü!", name))
 	self.m_GroupInvitationsLabel:setText("Du hast eine Einladungen für eine private Firma/Gang erhalten, öffne das Menü um diese anzunehmen!")
 	self.m_GroupInvitationsLabel:setVisible(true)
 	self.m_HasGroupInvation = true
@@ -776,20 +777,25 @@ function SelfGUI:VehicleLocateButton_Click()
 	end
 
 	if item.PositionType == VehiclePositionType.World then
-		local x, y, z = getElementPosition(item.VehicleElement)
-		local blip = Blip:new("Waypoint.png", x, y,9999)
+
+			if not isVehicleBlown(item.VehicleElement) then
+					local x, y, z = getElementPosition(item.VehicleElement)
+					local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+					blip:setZ(z)
 		--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
 			ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung+", Color.DarkLightBlue, -1)
-			.m_Callback = function (this)
-				if blip then
-					delete(blip)
+				.m_Callback = function (this)
+					if blip then
+						delete(blip)
+					end
+					delete(this)
 				end
-				delete(this)
-			end
-		--else
-			--setTimer(function () delete(blip) end, 5000, 1)
+			--else
+				--setTimer(function () delete(blip) end, 5000, 1)
 			--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung", Color.DarkLightBlue)
 		--end
+		else ShortMessage:new(_("Dieses Fahrzeug ist zerstört respawne es!"))
+		end
 	elseif item.PositionType == VehiclePositionType.Garage then
  		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!", "Fahrzeug-Ortung", Color.DarkLightBlue)
 	elseif item.PositionType == VehiclePositionType.Mechanic then
