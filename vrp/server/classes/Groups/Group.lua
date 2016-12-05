@@ -108,6 +108,8 @@ function Group:setName(name)
 
   for i, player in pairs(self:getOnlinePlayers()) do
     player:setPublicSync("GroupName", self:getName())
+	player:setPublicSync("GroupType", self:getType())
+
   end
 
   return true

@@ -126,6 +126,11 @@ function GroupManager:Event_groupCreate(name, type)
 		return
 	end
 
+	if string.len(name) > 24 then
+		client:sendError(_("Dein eingegebener Name ist zu lang! (Max. 24 Zeichen)", client))
+		return
+	end
+
 	-- Does the group already exist?
 	if self:getByName(name) then
 		client:sendError(_("Eine Gang oder Firma mit diesem Namen existiert bereits!", client))
@@ -349,7 +354,7 @@ function GroupManager:Event_groupRankUp(playerId)
 		return
 	end
 
-	if group:getPlayerRank(playerId) < GroupRank.Manager then
+	if group:getPlayerRank(playerId) < GroupRank.Leader then
 		if group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
 			group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." befördert!")

@@ -257,7 +257,7 @@ function DatabasePlayer:setGroup(group)
 	self.m_Group = group
 	if self:isActive() then
 		self:setPublicSync("GroupName", group and group:getName() or "")
-		self:setPublicSync("GroupType", group and group:getType() or "")
+		self:setPublicSync("GroupType", group and group:getType() or false)
 	end
 end
 
