@@ -139,7 +139,7 @@ function Company:addPlayer(playerId, rank)
 		playerId = playerId:getId()
 	end
 
-	rank = rank or 1
+	rank = rank or 0
 	self.m_Players[playerId] = rank
 	local player = Player.getFromId(playerId)
 	if player then
