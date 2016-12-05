@@ -915,7 +915,7 @@ end
 function FactionState:Event_freePlayer(target)
 	local faction = client:getFaction()
 	if faction and faction:isStateFaction() then
-		if client:isFactionDuty() and faction:getRank(client) >= FactionRank.Rank3 then
+		if client:isFactionDuty() and faction:getPlayerRank(client) >= FactionRank.Rank3 then
 			if target and isElement(target) then
 				outputChatBox(("Du wurdest von %s aus dem Knast entlassen!"):format(client:getName()), target, 255, 255, 0 )
 				local msg = ("%s hat %s aus dem Knast entlassen!"):format(client:getName(), target:getName())
