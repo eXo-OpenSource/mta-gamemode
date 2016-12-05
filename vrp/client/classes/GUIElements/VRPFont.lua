@@ -48,5 +48,7 @@ FontAwesomeSymbols = {
 	Search = "",
 	Refresh = "",
 	Expand = "",
-	Copy = ""
+	Copy = "",
+	Trash = ""
+
 }

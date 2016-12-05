@@ -18,7 +18,7 @@ DebugGUI.Level = {
 }
 
 function DebugGUI:constructor()
-	GUIForm.constructor(self, 5, screenHeight*0.2, 350, screenHeight*0.6, true, true)
+	GUIForm.constructor(self, 5, screenHeight*0.2, 350, screenHeight*0.62, true, true)
 
 	self.m_Fields = {}
 
@@ -42,14 +42,15 @@ function DebugGUI:constructor()
 	self.m_DebugLabels["File"] = GUILabel:new(5, 30+self.m_Height*0.855, self.m_Width, self.m_Height*0.035, "", self.m_Window)
 	self.m_DebugLabels["Msge"] = GUILabel:new(5, 30+self.m_Height*0.89, self.m_Width, self.m_Height*0.035, "", self.m_Window)
 
-	self.m_DebugCheckBoxes["Server"]:setChecked(true)
-	self.m_DebugCheckBoxes["Client"]:setChecked(true)
-	self.m_DebugCheckBoxes[1]:setChecked(true)
-	self.m_DebugCheckBoxes[2]:setChecked(true)
-
+	self.m_ClearButton = GUIButton:new(self.m_Width-35, 30+self.m_Height*0.81, 30, 30, FontAwesomeSymbols.Trash, self.m_Window):setFont(FontAwesome(15)):setBackgroundColor(Color.Red)
+	self.m_ClearButton.onLeftClick = function ()
+		self.m_DebugLogTable = {}
+		self:refreshDebugGrid()
+	end
 
 
 	for index, box in pairs(self.m_DebugCheckBoxes) do
+		box:setChecked(true)
 		box.onChange = function() self:refreshDebugGrid() end
 	end
 
@@ -118,7 +119,7 @@ function DebugGUI:addLine(id, type, level, message, file, x)
 		self.m_DebugLabels["Type"]:setColor(DebugGUI.Level[table.Level].Color)
 		self.m_DebugLabels["File"]:setText("File: "..table.File)
 		self.m_DebugLabels["Msge"]:setText("Message: "..table.Message)
-		self.m_CopyButton = GUIButton:new(self.m_Width-35, 30+self.m_Height*0.81, 30, 30, FontAwesomeSymbols.Copy, self.m_Window):setFont(FontAwesome(15))
+		self.m_CopyButton = GUIButton:new(self.m_Width-70, 30+self.m_Height*0.81, 30, 30, FontAwesomeSymbols.Copy, self.m_Window):setFont(FontAwesome(15))
 		self.m_CopyButton.onLeftClick = function ()
 			local string = self.m_DebugLabels["Type"]:getText().."\r\n"..self.m_DebugLabels["File"]:getText().."\r\n"..self.m_DebugLabels["Msge"]:getText()
 			setClipboard(string)
