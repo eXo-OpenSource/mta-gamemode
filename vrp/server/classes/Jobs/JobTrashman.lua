@@ -18,7 +18,7 @@ function JobTrashman:constructor()
 	self.m_VehicleSpawner1.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner3.m_Hook:register(bind(self.onVehicleSpawn,self))
-	
+
 	self.m_VehicleSpawner1:disable()
 	self.m_VehicleSpawner2:disable()
 	self.m_VehicleSpawner3:disable()
@@ -37,9 +37,6 @@ function JobTrashman:onPlayerDisconnect(  )
 	if isElement(source.vehTrashM) then
 		destroyElement( source.vehTrashM )
 	end
-	if isTimer(source.m_EndTrashJobTimer) then
-		killTimer( source.m_EndTrashJobTimer )
-	end
 end
 
 
@@ -50,24 +47,16 @@ function JobTrashman:onVehicleSpawn(player,vehicleModel,vehicle)
 			cancelEvent()
 		end
 	end)
-	if isElement(player.vehTrashM) then 
+	if isElement(player.vehTrashM) then
 		destroyElement(player.vehTrashM)
-		if isTimer(player.m_EndTrashJobTimer) then 
-			killTimer(player.m_EndTrashJobTimer)
-		end
 	end
-	addEventHandler("onVehicleExit",vehicle, function(vehPlayer, seat)
-		if vehPlayer == player then
-			player.vehTrashM = source
-			player:sendWarning(_("Du hast noch 20 Sekunden um wieder in den Müllwagen einzusteigen!" , player ))
-			player.m_EndTrashJobTimer = setTimer( bind(JobTrashman.endShift,self),20000,1, player )
-		end
-	end)
+	vehicle:addCountdownDestroy(10)
+	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
 end
 
 function JobTrashman:endShift( player )
 	if isElement(player) then
-		if isElement(player.vehTrashM) then 
+		if isElement(player.vehTrashM) then
 			destroyElement(player.vehTrashM)
 			player:sendInfo("Dein Müllwagen wurde entfernt!")
 		end
@@ -86,6 +75,7 @@ function JobTrashman:stop(player)
 	self.m_VehicleSpawner1:toggleForPlayer(player, false)
 	self.m_VehicleSpawner2:toggleForPlayer(player, false)
 	self.m_VehicleSpawner3:toggleForPlayer(player, false)
+	if player.vehTrashM and isElement(player.vehTrashM) then destroyElement(player.vehTrashM) end
 end
 
 function JobTrashman:checkRequirements(player)
