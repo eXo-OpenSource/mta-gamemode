@@ -776,20 +776,23 @@ function SelfGUI:VehicleLocateButton_Click()
 	end
 
 	if item.PositionType == VehiclePositionType.World then
-		local x, y, z = getElementPosition(item.VehicleElement)
-		local blip = Blip:new("Waypoint.png", x, y,9999)
-		--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
-			ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung+", Color.DarkLightBlue, -1)
-			.m_Callback = function (this)
-				if blip then
-					delete(blip)
+		if not isVehicleBlown(item.VehicleElement) then
+			local x, y, z = getElementPosition(item.VehicleElement)
+			local blip = Blip:new("Waypoint.png", x, y,9999)
+			--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
+				ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung+", Color.DarkLightBlue, -1)
+				.m_Callback = function (this)
+					if blip then
+						delete(blip)
+					end
+					delete(this)
 				end
-				delete(this)
-			end
-		--else
-			--setTimer(function () delete(blip) end, 5000, 1)
+			--else
+				--setTimer(function () delete(blip) end, 5000, 1)
 			--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung", Color.DarkLightBlue)
 		--end
+		else ShortMessage:new(_("Dieses Fahrzeug ist zerstört respawne es!"))
+		end
 	elseif item.PositionType == VehiclePositionType.Garage then
  		ShortMessage:new(_"Dieses Fahrzeug befindet sich in deiner Garage!", "Fahrzeug-Ortung", Color.DarkLightBlue)
 	elseif item.PositionType == VehiclePositionType.Mechanic then
