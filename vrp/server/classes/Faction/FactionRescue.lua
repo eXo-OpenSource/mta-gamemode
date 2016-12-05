@@ -247,11 +247,13 @@ end
 
 function FactionRescue:createDeathPickup(player, ...)
 	local pos = player:getPosition()
+	local gw = ""
+	if player:isInGangwar() then gw = "(Gangwar)" end
 
 	player.m_DeathPickup = Pickup(pos, 3, 1254, 0)
 
 	for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-		rescuePlayer:sendShortMessage(("%s ist gestorben.\nPosition: %s - %s"):format(player:getName(), getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
+		rescuePlayer:sendShortMessage(("%s ist gestorben. %s \nPosition: %s - %s"):format(player:getName(), gw, getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
 		rescuePlayer:triggerEvent("rescueCreateDeathBlip", player)
 	end
 

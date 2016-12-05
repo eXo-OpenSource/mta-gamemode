@@ -52,7 +52,7 @@ function Gangwar:Event_OnPickupHit( player )
 	local dim = getElementDimension(source)
 	local pDim = getElementDimension(player)
 	local mArea = player.m_InsideArea
-	if dim == pDim then 
+	if dim == pDim then
 		if mArea then
 			player:triggerEvent("Gangwar_shortMessageAttack" , mArea)
 		end
@@ -69,6 +69,28 @@ function Gangwar:destructor( )
 	for index = 1,  #self.m_Areas do
 		self.m_Areas[index]:delete()
 	end
+end
+
+function Gangwar:isPlayerInGangwar(player)
+	for index, gwPlayer in pairs(self:getCurrentGangwarPlayers()) do
+		if gwPlayer and player and player == gwPlayer then
+			return true
+		end
+	end
+	return false
+end
+
+function Gangwar:getCurrentGangwarPlayers()
+	local currentPlayers = {}
+	for index, area in pairs(self:getCurrentGangwars()) do
+		if area.m_AttackSession then
+			local attackSession = area.m_AttackSession
+			for index, gwPlayer in pairs(attackSession.m_Participants) do
+				currentPlayers[#currentPlayers+1] = gwPlayer
+			end
+		end
+	end
+	return currentPlayers
 end
 
 function Gangwar:getAreas()
@@ -188,10 +210,10 @@ function Gangwar:attackArea( player )
 									acFaction1, acFaction2 = acGangwar.m_AttackSession:getFactions()
 									if acFaction1 ~= faction and acFaction2 ~= faction then
 										if acFaction2 ~= faction2 and acFaction2 ~= faction2 then
-										else 
+										else
 											return player:sendError(_("Die gegnerische Fraktion ist bereits in einem Gangwar!",  player))
 										end
-									else 
+									else
 										return player:sendError(_("Deine Fraktion ist bereits in einem Gangwar!",  player))
 									end
 								end
@@ -201,25 +223,25 @@ function Gangwar:attackArea( player )
 							local nextAttack = lastAttack + ( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS)
 							if nextAttack <= currentTimestamp then
 								mArea:attack(faction, faction2)
-							else 
+							else
 								player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
 							end
-						else 
+						else
 							player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus der Gegner-Fraktion online sein!",  player))
 						end
-					else 
+					else
 						player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus deiner Fraktion online sein!",  player))
 					end
-				else 
+				else
 					player:sendError(_("Du kannst dich nicht selbst angreifen!",  player))
 				end
-			else 
+			else
 				player:sendError(_("Du bist an keinem Gebiet!",  player))
 			end
-		else 
+		else
 			player:sendError(_("Du bist an keinem Gebiet!",  player))
 		end
-	else 
+	else
 		player:sendError(_("Du bist in keiner Fraktion!",  player))
 	end
 end

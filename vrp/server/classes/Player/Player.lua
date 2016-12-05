@@ -979,3 +979,7 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 		self:triggerEvent("playerJailed", self.m_JailTime, CUTSCENE)
 	end
 end
+
+function Player:isInGangwar()
+	 return Gangwar:getSingleton():isPlayerInGangwar(self)
+end
