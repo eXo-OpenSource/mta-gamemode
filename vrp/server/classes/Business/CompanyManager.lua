@@ -309,7 +309,14 @@ function CompanyManager:Event_companyWeaponShopBuy(weaponTable)
 end
 
 function CompanyManager:Event_companyRespawnVehicles()
-	client:getCompany():respawnVehicles()
+	if client:getCompany() then
+		local company = client:getCompany()
+		if company:getPlayerRank(client) >= CompanyRank.Manager then
+			company:respawnVehicles()
+		else
+			client:sendError(_("Die Fahrzeuge können erst ab Rang %d respawnt werden!", client, CompanyRank.Manager))
+		end
+	end
 end
 
 function CompanyManager:Event_companySaveRank(rank,skinId,loan)

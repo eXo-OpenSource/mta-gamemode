@@ -363,7 +363,14 @@ function FactionManager:Event_factionWeaponShopBuy(weaponTable)
 end
 
 function FactionManager:Event_factionRespawnVehicles()
-	client:getFaction():respawnVehicles()
+	if client:getFaction() then
+		local faction = client:getFaction()
+		if faction:getPlayerRank(client) >= FactionRank.Manager then
+			faction:respawnVehicles()
+		else
+			client:sendError(_("Die Fahrzeuge können erst ab Rang %d respawnt werden!", client, FactionRank.Manager))
+		end
+	end
 end
 
 function FactionManager:sendAllToClient(client)
