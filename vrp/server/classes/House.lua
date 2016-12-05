@@ -56,12 +56,13 @@ end
 
 function House:toggleLockState( player )
 	self.m_LockStatus = not self.m_LockStatus
-	local info = "abgeschlossen" 
-	if self.m_LockStatus then 
+	local info = "abgeschlossen"
+	if self.m_LockStatus then
 		info = "aufgeschlossen"
 	end
 	player:sendInfo("Das Haus wurde "..info.."!")
-	
+	player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus)
+
 end
 
 function House:breakHouse(player)
@@ -105,7 +106,7 @@ function House:onMarkerHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		if hitElement.vehicle then return end
 		hitElement.visitingHouse = self.m_Id
-		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice)
+		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self.m_LockStatus)
 	end
 end
 
@@ -169,7 +170,7 @@ function House:onPickupHit(hitElement)
 	if hitElement:getType() == "player" and (hitElement:getDimension() == source:getDimension()) then
 		if hitElement.vehicle then return end
 		hitElement.visitingHouse = self.m_Id
-		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(hitElement))
+		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(hitElement), self.m_LockStatus)
 	end
 end
 
