@@ -72,6 +72,7 @@ GroupRank = {
 
 FactionRank = {
 	Normal = 0,
+	Rank3 = 3,
 	Manager = 5,
 	Leader = 6
 }
