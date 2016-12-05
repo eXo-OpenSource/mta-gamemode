@@ -506,7 +506,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				policeman:givePoints(wantedLevel)
 				PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
 				StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
-				faction:addLog(policeman, "Jail", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
+				policeman:getFaction():addLog(policeman, "Jail", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
 				-- Give Achievements
 				if wantedLevel > 4 then
 					policeman:giveAchievement(48)
