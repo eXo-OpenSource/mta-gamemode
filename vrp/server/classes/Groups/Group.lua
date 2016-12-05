@@ -199,6 +199,8 @@ function Group:removePlayer(playerId)
   end
   if player then
     player:setGroup(nil)
+	player:sendShortMessage(_("Du wurdest aus deiner %s entlassen!", player, self:getType()))
+	self:sendShortMessage(_("%s hat deine %s verlassen!", player, player:getName(), self:getType()))
   end
   sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
 

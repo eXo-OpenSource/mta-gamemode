@@ -161,6 +161,8 @@ function Company:removePlayer(playerId)
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setCompany(nil)
+		player:sendShortMessage(_("Du wurdest aus deinem Unternehmen entlassen!", player))
+		self:sendShortMessage(_("%s hat dein Unternehmen verlassen!", player, player:getName()))
 	end
 
 	sql:queryExec("UPDATE ??_character SET CompanyId = 0, CompanyRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
