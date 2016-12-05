@@ -50,6 +50,11 @@ end
 function Group:purge()
   if sql:queryExec("DELETE FROM ??_groups WHERE Id = ?", sql:getPrefix(), self.m_Id) then
     -- Remove all players
+	for k,v in pairs(GroupPropertyManager:getSingleton().Map) do
+		if v.m_OwnerID == self.m_Id then
+			v.m_Owner = false
+		end
+	end
     for playerId in pairs(self.m_Players) do
       self:removePlayer(playerId)
     end
