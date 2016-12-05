@@ -16,15 +16,47 @@ function JobRoadSweeper:constructor()
 
 	addEvent("sweeperGarbageCollect", true)
 	addEventHandler("sweeperGarbageCollect", root, bind(self.Event_sweeperGarbageCollect, self))
+	addEventHandler("onPlayerDisconnect", root, bind(JobRoadSweeper.onPlayerDisconnect, self) )
+end
+
+function JobRoadSweeper:onPlayerDisconnect(  )
+	if isElement(source.vehRoadSweeper) then
+		destroyElement( source.vehRoadSweeper )
+	end
+	if isTimer(source.m_EndRoadSweeperJobTimer) then
+		killTimer( source.m_EndRoadSweeperJobTimer )
+	end
 end
 
 function JobRoadSweeper:onVehicleSpawn(player,vehicleModel,vehicle)
+	if isElement(player.vehRoadSweeper) then 
+		destroyElement(player.vehRoadSweeper)
+		if isTimer(player.m_EndRoadSweeperJobTimer) then 
+			killTimer(player.m_EndRoadSweeperJobTimer)
+		end
+	end
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		if vehPlayer ~= player then
 			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
 			cancelEvent()
 		end
 	end)
+	addEventHandler("onVehicleExit",vehicle, function(vehPlayer, seat)
+		if vehPlayer == player then
+			player.vehRoadSweeper = source
+			player:sendWarning(_("Du hast noch 20 Sekunden um wieder in den Sweeper einzusteigen!" , player ))
+			player.m_EndRoadSweeperJobTimer = setTimer( bind(JobRoadSweeper.endShift,self),20000,1, player )
+		end
+	end)
+end
+
+function JobRoadSweeper:endShift( player )
+	if isElement(player) then
+		if isElement(player.vehRoadSweeper) then 
+			destroyElement(player.vehRoadSweeper)
+			player:sendInfo("Dein Sweeper wurde entfernt!")
+		end
+	end
 end
 
 function JobRoadSweeper:start(player)

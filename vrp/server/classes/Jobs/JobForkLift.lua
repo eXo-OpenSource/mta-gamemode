@@ -17,7 +17,18 @@ function JobForkLift:constructor()
 
 	addRemoteEvents{"JobForkLiftonBoxLoad"}
 	addEventHandler("JobForkLiftonBoxLoad", root, bind(self.onBoxLoad, self))
+	addEventHandler("onPlayerDisconnect", root, bind(JobForkLift.onPlayerDisconnect, self) )
 end
+
+function JobForkLift:onPlayerDisconnect(  )
+	if isElement(source.vehFork) then
+		destroyElement( source.vehFork )
+	end
+	if isTimer(source.m_EndForkJobTimer) then
+		killTimer( source.m_EndForkJobTimer )
+	end
+end
+
 
 function JobForkLift:start(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
@@ -34,6 +45,28 @@ function JobForkLift:onVehicleSpawn(player,vehicleModel,vehicle)
 			cancelEvent()
 		end
 	end)
+	if isElement(player.vehFork) then 
+		destroyElement(player.vehFork)
+		if isTimer(player.m_EndForkJobTimer) then 
+			killTimer(player.m_EndForkJobTimer)
+		end
+	end
+	addEventHandler("onVehicleExit",vehicle, function(vehPlayer, seat)
+		if vehPlayer == player then
+			player.vehFork = source
+			player:sendWarning(_("Du hast noch 20 Sekunden um wieder in den Gabelstapler einzusteigen!" , player ))
+			player.m_EndForkJobTimer = setTimer( bind(JobForkLift.endShift,self),20000,1, player )
+		end
+	end)
+end
+
+function JobForkLift:endShift( player )
+	if isElement(player) then
+		if isElement(player.vehFork) then 
+			destroyElement(player.vehFork)
+			player:sendInfo("Dein Gabelstapler wurde entfernt!")
+		end
+	end
 end
 
 function JobForkLift:onBoxLoad(box)

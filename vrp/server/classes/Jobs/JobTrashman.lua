@@ -29,8 +29,19 @@ function JobTrashman:constructor()
 	addRemoteEvents{"trashcanCollect", "JobTrashmanAgain", "JobTrashmanStop"}
 	addEventHandler("trashcanCollect", root, bind(self.Event_trashcanCollect, self))
 	addEventHandler("JobTrashmanStop", root, bind(self.Event_stop, self))
+	addEventHandler("onPlayerDisconnect", root, bind(JobTrashman.onPlayerDisconnect, self) )
 
 end
+
+function JobTrashman:onPlayerDisconnect(  )
+	if isElement(source.vehTrashM) then
+		destroyElement( source.vehTrashM )
+	end
+	if isTimer(source.m_EndTrashJobTimer) then
+		killTimer( source.m_EndTrashJobTimer )
+	end
+end
+
 
 function JobTrashman:onVehicleSpawn(player,vehicleModel,vehicle)
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
@@ -39,8 +50,29 @@ function JobTrashman:onVehicleSpawn(player,vehicleModel,vehicle)
 			cancelEvent()
 		end
 	end)
+	if isElement(player.vehTrashM) then 
+		destroyElement(player.vehTrashM)
+		if isTimer(player.m_EndTrashJobTimer) then 
+			killTimer(player.m_EndTrashJobTimer)
+		end
+	end
+	addEventHandler("onVehicleExit",vehicle, function(vehPlayer, seat)
+		if vehPlayer == player then
+			player.vehTrashM = source
+			player:sendWarning(_("Du hast noch 20 Sekunden um wieder in den Müllwagen einzusteigen!" , player ))
+			player.m_EndTrashJobTimer = setTimer( bind(JobTrashman.endShift,self),20000,1, player )
+		end
+	end)
 end
 
+function JobTrashman:endShift( player )
+	if isElement(player) then
+		if isElement(player.vehTrashM) then 
+			destroyElement(player.vehTrashM)
+			player:sendInfo("Dein Müllwagen wurde entfernt!")
+		end
+	end
+end
 
 function JobTrashman:start(player)
 	player:setData("Trashman:Cans", 0)
