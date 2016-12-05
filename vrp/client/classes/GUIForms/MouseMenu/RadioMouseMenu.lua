@@ -24,4 +24,15 @@ function RadioMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
+	if localPlayer:getRank() >= RANK.Supporter then
+		self:addItem(_"Admin: löschen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("worldItemDelete", self:getElement())
+				end
+			end
+		)
+	end
+
+
 end

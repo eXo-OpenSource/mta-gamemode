@@ -90,4 +90,19 @@ addEventHandler("worldItemCollect", root,
 	end
 )
 
+addEvent("worldItemDelete", true)
+addEventHandler("worldItemDelete", root,
+	function()
+		if client:getRank() > RANK.Supporter then
+			local worldItem = WorldItem.Map[source]
+			if not worldItem then return end
+
+			if worldItem.m_Item.removeFromWorld then
+				worldItem.m_Item:removeFromWorld(client, worldItem)
+			end
+			delete(worldItem)
+		end
+	end
+)
+
 -- TODO: Automatically collect all items when the player disconnects (do we actually have to?)

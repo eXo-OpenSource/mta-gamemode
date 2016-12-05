@@ -29,7 +29,11 @@ function ItemRadio:use(player)
 			player:getInventory():removeItem(self:getName(), 1)
 			addEventHandler("itemRadioChangeURL", worldItem:getObject(),
 				function(url)
-					triggerClientEvent("itemRadioChangeURLClient", worldItem:getObject(), url)
+					if worldItem:getOwner() == player or player:getRank() > RANK.Supporter then
+						triggerClientEvent("itemRadioChangeURLClient", worldItem:getObject(), url)
+					else
+						client:sendError(_("Du hast keine Befugnisse dieses Item zu nutzen!", client))
+					end
 				end
 			)
 			addEventHandler("itemRadioStopSound", worldItem:getObject(),
@@ -42,7 +46,7 @@ function ItemRadio:use(player)
 end
 
 function ItemRadio:isCollectAllowed(player, worlditem)
-	if worlditem:getOwner() == player or player:getRank() > RANK.Supporter then
+	if worlditem:getOwner() == player then
 		return true
 	end
 	return false
