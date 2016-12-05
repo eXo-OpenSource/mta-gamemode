@@ -400,8 +400,10 @@ function Group:phoneCall(caller)
   if #self:getOnlinePlayers() > 0 then
     for k, player in ipairs(self:getOnlinePlayers()) do
       if not player:getPhonePartner() then
-        player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
-        bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+		if player ~= caller then
+			player:sendShortMessage(_("Der Spieler %s ruft eure %s (%s) an!\nDrücke 'F5' um abzuheben.", player, caller:getName(), self:getType(), self:getName()))
+			bindKey(player, "F5", "down", self.m_PhoneTakeOff, caller)
+		end
       end
     end
   else
