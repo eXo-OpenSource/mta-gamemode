@@ -32,9 +32,31 @@ function ScoreboardGUI:constructor()
 	self.m_Ping = GUILabel:new(self.m_Width/2, self.m_Height*0.65, self.m_Width/2-self.m_Width*0.05, self.m_Height*0.05, "", self.m_Rect)
 	self.m_Ping:setColor(Color.Black):setFont(VRPFont(self.m_Height*0.05)):setAlignX("right")
 
+	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
+
 	self:refresh()
 	setTimer(bind(self.refresh, self), 1000, 0)
 end
+
+-- Right Click Shoot Bugfix
+
+function ScoreboardGUI:onShow()
+	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
+	localPlayer:setWeaponSlot(0)
+	toggleControl("next_weapon", false)
+	toggleControl("previous_weapon", false)
+end
+
+function ScoreboardGUI:onHide()
+	if not getElementData(localPlayer,"no_driveby") == true then
+		toggleControl("next_weapon", true)
+		toggleControl("previous_weapon", true)
+		setTimer(setPedWeaponSlot, 500, 1, localPlayer, self.m_OldWeaponSlot)
+	end
+end
+
+-- //Right Click Shoot Bugfix
+
 
 function ScoreboardGUI:refresh()
 	self.m_Grid:clear()
@@ -77,6 +99,8 @@ function ScoreboardGUI:refresh()
 
 	self.m_PlayerCount:setText(_("Derzeit %d Spieler online", #getElementsByType("player")))
 	self.m_Ping:setText(_("eigener Ping: %dms", localPlayer:getPing()))
+
+
 end
 
 function ScoreboardGUI:addPlayerCount(name, value, color)
