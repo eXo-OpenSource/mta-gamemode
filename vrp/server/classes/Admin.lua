@@ -283,17 +283,17 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			if not reason then return end
 			duration = tonumber(duration)
 			self:sendShortMessage(_("%s hat %s für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
-            Ban.addBan(target, admin, reason, duration*60*60)
             self:addPunishLog(admin, target, func, reason, duration*60*60)
 			outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
 			outputChatBox("Grund: "..reason,root, 200, 0, 0)
+			Ban.addBan(target, admin, reason, duration*60*60)
         elseif func == "permaban" then
             if not reason or #reason == 0 then return end
 			self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
-            Ban.addBan(target, admin, reason)
             self:addPunishLog(admin, target, func, reason, 0)
 			outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
 			outputChatBox("Grund: "..reason,root, 200, 0, 0)
+			Ban.addBan(target, admin, reason)
         elseif func == "addWarn" or func == "warn" then
 			if not duration then return end
 			if not reason then return end
