@@ -27,7 +27,7 @@ function JobTreasureSeeker:constructor()
 		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 50, ["Max"] = 100},
 		[2912] = {["Name"] = " Holzkiste", ["Min"] = 200, ["Max"] = 400},
 		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 100, ["Max"] = 200},
-		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 400, ["Max"] = 600},
+		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 400, ["Max"] = 600, ["Scale"] = 5.5},
 		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 200, ["Max"] = 400},
 		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 200, ["Max"] = 400, ["Scale"] = 2}
 	}
@@ -135,9 +135,11 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 				local objectModel = self:getRandomTreasureModel()
 				veh:setFrozen(true)
 				veh.Magnet:detach(veh)
-				local x, y, z = getElementPosition(veh.Magnet)
 
-				veh.Magnet:move(15000, x, y, z-15)
+				local matrix = veh.matrix
+				local newPos = matrix:transformPosition(Vector3(0, -6.2, 2))
+				veh.Magnet:setPosition(newPos)
+				veh.Magnet:move(15000, newPos.x, newPos.y, newPos.z-15)
 
 				setTimer(function()
 					x, y, z = getElementPosition(veh.Magnet)
