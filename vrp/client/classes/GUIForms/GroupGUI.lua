@@ -325,6 +325,7 @@ function GroupGUI:GroupInvitationsAcceptButton_Click()
 			triggerServerEvent("groupInvitationAccept", resourceRoot, selectedItem.GroupId)
 		end
 		self.m_GroupInvitationsGrid:removeItemByItem(selectedItem)
+		self.m_GroupInvitationsGrid:clear()
 	end
 end
 
@@ -335,6 +336,7 @@ function GroupGUI:GroupInvitationsDeclineButton_Click()
 			triggerServerEvent("groupInvitationDecline", resourceRoot, selectedItem.GroupId)
 		end
 		self.m_GroupInvitationsGrid:removeItemByItem(selectedItem)
+		self.m_GroupInvitationsGrid:clear()
 	end
 end
 
