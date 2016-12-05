@@ -107,7 +107,9 @@ end
 
 function ItemSpeedCam:removeFromWorld(player, worlditem)
 	local object = worlditem:getObject()
+	local pos = object:getPosition()
 	local col = object.col
+	FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s abgebaut!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
 	col:destroy()
 	for index, cam in pairs(ItemSpeedCam.Map) do
 		if cam == object then
