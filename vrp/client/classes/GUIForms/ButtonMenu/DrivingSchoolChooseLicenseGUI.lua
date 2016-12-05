@@ -29,12 +29,12 @@ function DrivingSchoolChooseLicenseGUI:constructor(target)
 			self:delete()
 		end
 	)
-	self:addItem(_"Helikopter-Schein",Color.Orange ,
-		function()
-			triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "heli")
-			self:delete()
-		end
-	)
+	--self:addItem(_"Helikopter-Schein",Color.Orange ,
+	--	function()
+	--		triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "heli")
+	--		self:delete()
+	--	end
+	--)
 	self:addItem(_"Flug-Schein",Color.LightBlue ,
 		function()
 			triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "plane")
