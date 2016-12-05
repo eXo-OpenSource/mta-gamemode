@@ -282,7 +282,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             Ban.addBan(target, admin, reason, duration*60*60)
             self:addPunishLog(admin, target, func, reason, duration*60*60)
         elseif func == "permaban" then
-            if not reason then return end
+            if not reason or #reason == 0 then return end
 			self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
             Ban.addBan(target, admin, reason)
             self:addPunishLog(admin, target, func, reason, 0)
@@ -351,14 +351,18 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			else admin:sendError("Sie können sich nicht selbst specten!")
 			end
         elseif func == "offlinePermaban" then
-            self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
-            local targetId = Account.getIdFromName(target)
-            if targetId and targetId > 0 then
-                Ban.addBan(targetId, admin, reason)
-                self:addPunishLog(admin, targetId, func, reason, 0)
-            else
-                admin:sendError(_("Spieler nicht gefunden!", admin))
-            end
+			if type(reason) == "string" then
+				if #reason == 0 then
+					self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
+					local targetId = Account.getIdFromName(target)
+					if targetId and targetId > 0 then
+						Ban.addBan(targetId, admin, reason)
+						self:addPunishLog(admin, targetId, func, reason, 0)
+					else
+						admin:sendError(_("Spieler nicht gefunden!", admin))
+					end
+				end
+			end
         elseif func == "offlineTimeban" then
             self:sendShortMessage(_("%s hat %s offline für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target, duration, reason))
             local targetId = Account.getIdFromName(target)
