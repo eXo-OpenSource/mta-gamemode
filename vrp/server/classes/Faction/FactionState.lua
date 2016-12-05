@@ -400,6 +400,7 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
 						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
+						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
 					else
 						player:sendError(_("Der Grund ist ungültig!", player))
@@ -506,7 +507,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				policeman:givePoints(wantedLevel)
 				PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
 				StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
-				policeman:getFaction():addLog(policeman, "Jail", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
+				policeman:getFaction():addLog(policeman, "Knast", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
 				-- Give Achievements
 				if wantedLevel > 4 then
 					policeman:giveAchievement(48)
@@ -539,7 +540,6 @@ function FactionState:Command_bail(player)
 
 					player:sendInfo(_("Sie haben sich mit der Kaution von %s$ freigekauft!", player, player.m_Bail))
 					player.m_Bail = 0
-					StatisticsLogger:getSingleton():addTextLog("jail", ("%s hat sich für %d Dollar freigekauft!"):format(player:getName(), player.m_Bail))
 					self:freePlayer(player)
 				else
 					player:sendError("Sie haben nicht genügend Geld!")
@@ -919,9 +919,8 @@ function FactionState:Event_freePlayer(target)
 			if target and isElement(target) then
 				outputChatBox(("Du wurdest von %s aus dem Knast entlassen!"):format(client:getName()), target, 255, 255, 0 )
 				local msg = ("%s hat %s aus dem Knast entlassen!"):format(client:getName(), target:getName())
-				StatisticsLogger:getSingleton():addTextLog("jail", msg)
 				self:sendMessage(msg, 255,0,0)
-				faction:addLog(client, "Knast", "hat "..target:getName().." aus dem Kanst entlassen!")
+				faction:addLog(client, "Knast", "hat "..target:getName().." aus dem Knast entlassen!")
 				self:freePlayer(target)
 			else
 				client:sendError(_("Spieler nicht gefunden!", client))

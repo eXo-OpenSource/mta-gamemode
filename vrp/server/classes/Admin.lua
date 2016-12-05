@@ -75,7 +75,10 @@ function Admin:constructor()
 				marker:setDimension(dim)
 				marker:setInterior(int)
 			else
-				marker:destroy()
+				if marker and isElement(marker) then marker:destroy() end
+				if player then
+					self.m_SupportArrow[player] = nil
+				end
 			end
 		end
 	end, 10000, 0)
