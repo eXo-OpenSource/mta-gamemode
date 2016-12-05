@@ -206,7 +206,7 @@ function Group:removePlayer(playerId)
     player:setGroup(nil)
   end
   sql:queryExec("UPDATE ??_character SET GroupId = 0, GroupRank = 0 WHERE Id = ?", sql:getPrefix(), playerId)
-
+  self:removePlayerMarker(player)
 end
 
 function Group:invitePlayer(player)
