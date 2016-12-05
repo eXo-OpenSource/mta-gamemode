@@ -10,6 +10,7 @@ inherit(GUIPaydayBox)
 GUIPaydayBox.GUIPaydayBoxes = {}
 
 function GUIPaydayBox:constructor(texts)
+	localPlayer.m_PaydayShowing = true
 	DxElement.constructor(self, screenWidth/2-400/2, -200, 400, 200)
 
 	self.m_PaydayTexts = texts
@@ -27,6 +28,7 @@ end
 
 function GUIPaydayBox:endPayday()
 	unbindKey("space", "down", self.m_Close)
+	localPlayer.m_PaydayShowing = false
 	self.m_Animation = Animation.Move:new(self, 1500, self.m_AbsoluteX, -200)
 	setTimer(function() delete(self) end, 2000, 1)
 end

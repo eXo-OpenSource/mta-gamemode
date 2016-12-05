@@ -28,6 +28,11 @@ function Countdown:destructor()
 end
 
 function Countdown:updateTime()
+	if localPlayer.m_PaydayShowing then 
+		self:setVisible(false)
+	else 
+		self:setVisible(true)
+	end
 	self.m_Seconds = self.m_Seconds - 1
 
 	local mins = string.format("%02.f", math.floor(self.m_Seconds/60)) or "0";
