@@ -146,15 +146,19 @@ function Trunk:takeWeapon(player, slot)
 			--if self.m_ItemSlot[slot]["Amount"] > 0 then
 				local weaponId = self.m_WeaponSlot[slot]["WeaponId"]
 				local amount = self.m_WeaponSlot[slot]["Amount"]
-				if player:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
-					self.m_WeaponSlot[slot]["WeaponId"] = 0
-					self.m_WeaponSlot[slot]["Amount"] = 0
-					player:giveWeapon(weaponId, amount)
-					player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", player, WEAPON_NAMES[weaponId], amount, slot))
-					self:refreshClient(player)
-					return
+				if AmmuNationInfo[weaponId].MinLevel <= player:getWeaponLevel() then
+					if player:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
+						self.m_WeaponSlot[slot]["WeaponId"] = 0
+						self.m_WeaponSlot[slot]["Amount"] = 0
+						player:giveWeapon(weaponId, amount)
+						player:sendInfo(_("Du hast eine/n %s mit %d Schuss aus deinem Kofferraum (Slot %d) genommen!", player, WEAPON_NAMES[weaponId], amount, slot))
+						self:refreshClient(player)
+						return
+					else
+						player:sendError(_("Du hast bereits eine Waffe dieser Art dabei!", player))
+					end
 				else
-					player:sendError(_("Du hast bereits eine Waffe dieser Art dabei!", player))
+					player:sendError(_("Dein Waffenlevel ist zu niedrig!", player))
 				end
 			--else
 			--	player:sendError("Internal Error Amount to low", player)
