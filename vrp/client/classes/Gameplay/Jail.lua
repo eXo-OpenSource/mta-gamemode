@@ -40,6 +40,8 @@ end
 addEvent("playerLeftJail", true)
 addEventHandler("playerLeftJail", root,
 	function()
-		delete(Countdown:getSingleton())
+		if Countdown.Map["Frei in:"] then
+			delete(Countdown.Map["Frei in:"])
+		end
 	end
 )
