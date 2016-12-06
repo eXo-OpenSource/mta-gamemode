@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Faction Client
 -- *
 -- ****************************************************************************
-
+local w,h = guiGetScreenSize()
 FactionManager = inherit(Singleton)
 FactionManager.Map = {}
 
@@ -14,11 +14,13 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp", "factionStateStartCuff","stateFactionOfferTicket"}
+	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("stateFactionNeedHelp", root, bind(self.stateFactionNeedHelp, self))
 	addEventHandler("stateFactionOfferTicket", root, bind(self.stateFactionOfferTicket, self))
+	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
+	self.m_DrawCuffFunc = bind(self.drawCuff, self)
 end
 
 function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color)
@@ -34,8 +36,19 @@ function FactionManager:stateFactionStartCuff( target )
 			end
 		end
 		localPlayer.m_CuffTarget = target
-		localPlayer.stateCuffTimer = setTimer( self.endStateFactionCuff, 5000, 1)
+		localPlayer.stateCuffTimer = setTimer( self.endStateFactionCuff, 10000, 1)
 	end
+end
+
+function FactionManager:Event_onPlayerCuff( bool )
+	removeEventHandler("onClientRender",root, self.m_DrawCuffFunc)
+	if bool then
+		addEventHandler("onClientRender",root, self.m_DrawCuffFunc)
+	end
+end
+
+function FactionManager:drawCuff()
+	dxDrawImage(w*0.75, h*0.8, w*0.15,w*0.15,"files/images/Other/cuff.png")
 end
 
 function FactionManager:stateFactionOfferTicket( cop )

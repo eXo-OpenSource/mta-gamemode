@@ -786,7 +786,8 @@
 	<vrpfile src="files/images/Other/TreasureRadarBlip.png"/>
 	<vrpfile src="files/images/Other/RedGreenRed.png"/>
 	<vrpfile src="files/images/Other/focus.png"/>
-
+	<vrpfile src="files/images/Other/cuff.png"/>
+	
 	<vrpfile src="files/images/Minigames/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Minigames/SniperGame.png"/>
 	<vrpfile src="files/images/Minigames/SideSwipe.png"/>

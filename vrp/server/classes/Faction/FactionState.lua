@@ -244,12 +244,16 @@ function FactionState:Command_cuff( source, cmd, target )
 						if faction:isStateFaction() then 
 							if source ~= targetPlayer then
 								if source:isFactionDuty() then
-									source.m_CurrentCuff = targetPlayer
-									source:triggerEvent("factionStateStartCuff", targetPlayer)
-									targetPlayer:triggerEvent("CountdownStop",  5, "Gefesselt in")
-									targetPlayer:triggerEvent("Countdown", 5, "Gefesselt in")
-									source:triggerEvent("CountdownStop", 5, "Gefesselt in")
-									source:triggerEvent("Countdown", 5, "Gefesselt in")
+									if getPedOccupiedVehicleSeat ( targetPlayer ) ~= 0 and getPedOccupiedVehicleSeat ( targetPlayer ) ~= false then
+										source.m_CurrentCuff = targetPlayer
+										source:triggerEvent("factionStateStartCuff", targetPlayer)
+										targetPlayer:triggerEvent("CountdownStop",  5, "Gefesselt in")
+										targetPlayer:triggerEvent("Countdown", 5, "Gefesselt in")
+										source:triggerEvent("CountdownStop", 5, "Gefesselt in")
+										source:triggerEvent("Countdown", 5, "Gefesselt in")
+									else 
+										source:sendError("Du kommst nicht an den Spieler heran!")
+									end
 								else 
 									source:sendError("Du bist nicht im Dienst!")
 								end
@@ -284,6 +288,7 @@ function FactionState:Command_uncuff( source, cmd, target )
 								if source:isFactionDuty() then
 									self:uncuffPlayer( targetPlayer )
 									source:meChat(true,"nimmt die Handschellen von "..targetPlayer:getName().." ab!")
+									targetPlayer:triggerEvent("updateCuffImage", false)
 								else 
 									source:sendError("Du hast keine Handschellen dabei!")
 								end
@@ -301,13 +306,16 @@ function FactionState:Command_uncuff( source, cmd, target )
 				source:sendError("Ziel nicht gefunden!")
 			end
 		end
-	else outputChatBox("Syntax: /cuff [ziel]", source, 200, 0,0)
+	else outputChatBox("Syntax: /uncuff [ziel]", source, 200, 0,0)
 	end
 end
 
 function FactionState:uncuffPlayer( player) 
 	toggleControl(player, "sprint", true)
 	toggleControl(player, "jump", true)
+	toggleControl(player, "fire", true)
+	toggleControl(player, "aim_weapon", true)
+	player:triggerEvent("updateCuffImage", false)
 	setPedWalkingStyle(player, 0)
 end
 
@@ -315,12 +323,17 @@ function FactionState:Event_CuffSuccess( target )
 	if client then 
 		if client.m_CurrentCuff == target then 
 			if getDistanceBetweenPoints3D(target:getPosition() , client:getPosition()) <= 5 then 
-				toggleControl(target, "sprint", false)
-				toggleControl(target, "jump", false)
-				setPedWalkingStyle(target, 123)
-				source:meChat(true,"legt "..target:getName().." Handschellen an!")
-				source:triggerEvent("CountdownStop", "Gefesselt in", 5)
-				target:triggerEvent("CountdownStop", "Gefesselt in", 5)
+				if getPedOccupiedVehicleSeat ( target ) ~= 0 and getPedOccupiedVehicleSeat ( target ) ~= false then
+					toggleControl(target, "sprint", false)
+					toggleControl(target, "jump", false)
+					toggleControl(target, "fire", false)
+					toggleControl(target, "aim_weapon", false)
+					setPedWalkingStyle(target, 123)
+					source:meChat(true,"legt "..target:getName().." Handschellen an!")
+					source:triggerEvent("CountdownStop", "Gefesselt in", 10)
+					target:triggerEvent("CountdownStop", "Gefesselt in", 10)
+					target:triggerEvent("updateCuffImage", true)
+				end
 			end
 		end
 	end
