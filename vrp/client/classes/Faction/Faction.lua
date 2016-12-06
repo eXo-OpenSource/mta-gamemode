@@ -14,14 +14,42 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp"}
+	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp", "factionStateStartCuff","stateFactionOfferTicket"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
+	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("stateFactionNeedHelp", root, bind(self.stateFactionNeedHelp, self))
-
+	addEventHandler("stateFactionOfferTicket", root, bind(self.stateFactionOfferTicket, self))
 end
 
 function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType, color)
 	FactionManager.Map[Id] = Faction:new(Id, name, name_short, rankNames, factionType, color)
+end
+
+function FactionManager:stateFactionStartCuff( target )
+	if target then 
+		local timer = localPlayer.stateCuffTimer 
+		if timer then
+			if isTimer(timer) then 
+				killTimer(timer)
+			end
+		end
+		localPlayer.m_CuffTarget = target
+		localPlayer.stateCuffTimer = setTimer( self.endStateFactionCuff, 5000, 1)
+	end
+end
+
+function FactionManager:stateFactionOfferTicket( cop )
+	ShortMessage:new(_(cop:getName().." bietet dir ein Ticket für den Erlass eines Wanteds für $2000 an!"), "Wanted-Ticket", Color.DarkLightBlue, 15000)
+	.m_Callback = function (this)	triggerServerEvent("factionStateAcceptTicket", localPlayer); delete(this)	end
+
+end
+
+function FactionManager:endStateFactionCuff( )
+	if localPlayer.m_CuffTarget then 
+		if getDistanceBetweenPoints3D( localPlayer.m_CuffTarget:getPosition(), localPlayer:getPosition()) <= 5 then 
+			triggerServerEvent("stateFactionSuccessCuff", localPlayer,localPlayer.m_CuffTarget)
+		end
+	end
 end
 
 function FactionManager:stateFactionNeedHelp(player)

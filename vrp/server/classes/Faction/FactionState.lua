@@ -31,7 +31,7 @@ function FactionState:constructor()
 
 	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
-	"factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle", "factionStateLoadJailPlayers", "factionStateFreePlayer"}
+	"factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle", "factionStateLoadJailPlayers", "factionStateFreePlayer", "stateFactionSuccessCuff","factionStateAcceptTicket"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -39,7 +39,10 @@ function FactionState:constructor()
 	addCommandHandler("tie",bind(self.Command_tie, self))
 	addCommandHandler("needhelp",bind(self.Command_needhelp, self))
 	addCommandHandler("bail",bind(self.Command_bail, self))
-
+	addCommandHandler("cuff",bind(self.Command_cuff, self))
+	addCommandHandler("uncuff",bind(self.Command_uncuff, self))
+	addCommandHandler("ticket",bind(self.Command_ticket, self))
+	
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
@@ -59,8 +62,8 @@ function FactionState:constructor()
 	addEventHandler("factionStateTakeItemFromVehicle", root, bind(self.Event_takeItemFromVehicle, self))
 	addEventHandler("factionStateLoadJailPlayers", root, bind(self.Event_loadJailPlayers, self))
 	addEventHandler("factionStateFreePlayer", root, bind(self.Event_freePlayer, self))
-
-
+	addEventHandler("stateFactionSuccessCuff", root, bind(self.Event_CuffSuccess, self))
+	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 
 
 	-- Prepare the Area51
@@ -190,6 +193,128 @@ function FactionState:countPlayers()
 	return count
 end
 
+function FactionState:Command_ticket( source, cmd, target )
+	if target then
+		if type(target) == "string" then 
+			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
+			if targetPlayer then 
+				local faction = source:getFaction()
+				if not faction then return end
+				if not faction:isStateFaction() then return end
+				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then 
+					if source ~= targetPlayer then
+						if targetPlayer:getWantedLevel() == 1 then
+							source.m_CurrentTicket = targetPlayer
+							targetPlayer:triggerEvent("stateFactionOfferTicket", source)
+						else 
+							source:sendError("Der Spieler hat kein oder ein zu hohes Fahndungslevel!")
+						end
+					else 
+						source:sendError("Du kannst dir kein Ticket anbieten!")
+					end
+				else 
+					source:sendError("Du bist zu weit weg!")
+				end
+			else 
+				source:sendError("Ziel nicht gefunden!")
+			end
+		end
+	else outputChatBox("Syntax: Für Staatsbeamte -> /ticket [ziel]", source, 200, 0,0)
+	end
+end
+
+function FactionState:Event_OnTicketAccept( )
+	if client then 
+		if client:getMoney() >= 2000 then
+			if client:getWantedLevel() == 1 then 
+				client:setWantedLevel(0)
+				client:takeMoney(2000, "[SAPD] Kautionsticket")
+			end
+		end
+	end
+end
+function FactionState:Command_cuff( source, cmd, target )
+	if target then
+		if type(target) == "string" then 
+			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
+			if targetPlayer then 
+				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then 
+					local faction = source:getFaction()
+					if faction then 
+						if faction:isStateFaction() then 
+							if source ~= targetPlayer then
+								source.m_CurrentCuff = targetPlayer
+								source:triggerEvent("factionStateStartCuff", targetPlayer)
+								targetPlayer:triggerEvent("CountdownStop",  5, "Gefesselt in")
+								targetPlayer:triggerEvent("Countdown", 5, "Gefesselt in")
+								source:triggerEvent("CountdownStop", 5, "Gefesselt in")
+								source:triggerEvent("Countdown", 5, "Gefesselt in")
+							else 
+								source:sendError("Du kannst dich nicht selbst fesseln!")
+							end
+						else 
+							source:sendError("Du hast keine Handschellen dabei!")
+						end
+					end
+				else 
+					source:sendError("Du bist zu weit weg!")
+				end
+			else 
+				source:sendError("Ziel nicht gefunden!")
+			end
+		end
+	else outputChatBox("Syntax: /cuff [ziel]", source, 200, 0,0)
+	end
+end
+
+function FactionState:Command_uncuff( source, cmd, target )
+	if target then
+		if type(target) == "string" then 
+			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
+			if targetPlayer then 
+				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then 
+					local faction = source:getFaction()
+					if faction then 
+						if source ~= targetPlayer then
+							if faction:isStateFaction() then 
+								self:uncuffPlayer( targetPlayer )
+								source:meChat(true,"nimmt die Handschellen von "..targetPlayer:getName().." ab!")
+							else 
+								source:sendError("Du hast keine Handschellen dabei!")
+							end
+						end
+					else
+						source:sendError("Du kannst dich nicht selbst entfesseln!")
+					end
+				else 
+					source:sendError("Du bist zu weit weg!")
+				end
+			else 
+				source:sendError("Ziel nicht gefunden!")
+			end
+		end
+	else outputChatBox("Syntax: /cuff [ziel]", source, 200, 0,0)
+	end
+end
+
+function FactionState:uncuffPlayer( player) 
+	toggleControl(player, "sprint", true)
+	setPedWalkingStyle(player, 0)
+end
+
+function FactionState:Event_CuffSuccess( target )
+	if client then 
+		if client.m_CurrentCuff == target then 
+			if getDistanceBetweenPoints3D(target:getPosition() , client:getPosition()) <= 5 then 
+				toggleControl(target, "sprint", false)
+				setPedWalkingStyle(target, 123)
+				source:meChat(true,"legt "..target:getName().." Handschellen an!")
+				source:triggerEvent("CountdownStop", "Gefesselt in", 5)
+				target:triggerEvent("CountdownStop", "Gefesselt in", 5)
+			end
+		end
+	end
+end
 function FactionState:getOnlinePlayers()
 	local factions = self:getFactions()
 	local players = {}
