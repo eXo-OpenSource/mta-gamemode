@@ -7,6 +7,7 @@ import shutil
 from subprocess import call
 import platform
 import time
+import sys
 
 start = time.time()
 compiler = "tools/luac_mta"
@@ -14,6 +15,7 @@ if platform.system() == "Windows":
 	compiler = "tools/luac_mta.exe"
 rootdir = "vrp/"
 outdir = "vrp_build/"
+branch = sys.argv[1] if len(sys.argv) > 1 else ""
 
 # Build vrp_build structure
 print("Creating build structure...")
@@ -78,12 +80,20 @@ tree.write(outdir+"meta.xml")
 # Call the compiler
 print("Compiling source...")
 
-serverCall = [ compiler, "-e2", "-o", outdir+"server.luac" ]
+serverCall = [ compiler, "-o", outdir+"server.luac" ]
 serverCall.extend(files["server"])
-call(serverCall)
+clientCall = [ compiler ]
 
-clientCall = [ compiler, "-e2", "-o", outdir+"client.luac" ]
+if branch != "" and branch != "develop" and branch != "master":
+	print("Building release build")
+	clientCall.extend([ "-e2", "-s" ])
+else:
+	print("WARNING: Building debug build")
+
+clientCall.extend([ "-o", outdir+"client.luac" ])
 clientCall.extend(files["client"])
+
+call(serverCall)
 call(clientCall)
 
 print("Done. (took %.2f seconds)" % (time.time() - start))

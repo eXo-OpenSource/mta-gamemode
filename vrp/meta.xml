@@ -5,6 +5,7 @@
 	<sync_map_element_data>false</sync_map_element_data>
 
 	<!-- Shared -->
+	<script src="buildinfo.lua" type="shared"/>
 	<script src="shared/classlib.lua" type="shared"/>
 	<script src="shared/classes/Object.lua" type="shared"/>
 	<script src="shared/classes/Singleton.lua" type="shared"/>

@@ -13,10 +13,10 @@ stages:
 build_app_job:
   stage: build
   script:
+    - 'echo "GIT_VERSION=\"$(git rev-parse HEAD)\" ; GIT_BRANCH=\"$CI_BUILD_REF_NAME\"" >> vrp/buildinfo.lua'
     - python3 build/lint.py
-    - python3 build/buildscript.py
+    - python3 build/buildscript.py $CI_BUILD_REF_NAME
     - python3 build/packAssets.py
-    - 'echo "GIT_VERSION = \"$(git rev-parse HEAD)-$(git rev-parse --abbrev-ref HEAD)\"" > vrp_build/buildinfo.lua'
     - ./build/make_archives.sh
     - rm -rf vrp_assets
   artifacts:
@@ -37,8 +37,6 @@ build_docker_job:
 deploy_job_develop:
   stage: deploy
   script:
-    - "echo 'TODO: Upload artifacts'"
-    - "echo 'Uploading assets to http-server...'"
     - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$(git rev-parse --abbrev-ref HEAD)" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
     - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
   environment:

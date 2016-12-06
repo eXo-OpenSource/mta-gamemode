@@ -5,12 +5,17 @@
 -- *  PURPOSE:     Debug stuff
 -- *
 -- ****************************************************************************
-DEBUG = true
+DEBUG = GIT_BRANCH == nil or GIT_BRANCH == "master" or GIT_BRANCH == "develop"
 
 --- Validates the parameters of a function
 -- @param funcName The name of the function
 -- @param ... The parameters' types
 function checkArgs(funcName, ...)
+	-- Ignore this in non-debug mode
+	if not DEBUG then
+		return
+	end
+
 	local argTypes = {...}
 	local isMethodCall = false
 
