@@ -81,6 +81,7 @@ end
 
 function DebugGUI:addDebug(type, message, level, file, line)
 	id = #self.m_DebugLogTable+1
+	line = line or ""
 	file = file..":"..line
 	local last = lastDebug[type]
 	if last.Message == message and last.File == file then
