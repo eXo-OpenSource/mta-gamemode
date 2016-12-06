@@ -16,6 +16,7 @@ if platform.system() == "Windows":
 rootdir = "vrp/"
 outdir = "vrp_build/"
 branch = sys.argv[1] if len(sys.argv) > 1 else ""
+externalFiles = False
 
 # Build vrp_build structure
 print("Creating build structure...")
@@ -28,7 +29,6 @@ def rm_r(path):
 
 rm_r(outdir)
 os.mkdir(outdir)
-shutil.copytree(rootdir+"files/maps", outdir+"files/maps")
 os.mkdir(outdir+"server")
 os.mkdir(outdir+"server/http")
 shutil.copyfile(rootdir+"server/http/api.lua", outdir+"server/http/api.lua")
@@ -55,15 +55,24 @@ for child in root.findall("script"):
 
 	root.remove(child)
 
-for child in root.findall("file"):
-	filename = child.attrib["src"]
-	if not os.path.exists(outdir+os.path.dirname(filename)):
-		os.makedirs(outdir+os.path.dirname(filename))
+if externalFiles:
+	# Copy maps
+	shutil.copytree(rootdir+"files/maps", outdir+"files/maps")
+	
+	# Copy only files with <file> tag
+	for child in root.findall("file"):
+		filename = child.attrib["src"]
+		if not os.path.exists(outdir+os.path.dirname(filename)):
+			os.makedirs(outdir+os.path.dirname(filename))
 
-	shutil.copyfile(rootdir+filename, outdir+filename)
+		shutil.copyfile(rootdir+filename, outdir+filename)
 
-for child in root.findall("vrpfile"):
-	root.remove(child)
+	# Ignore <vrpfile> tags
+	for child in root.findall("vrpfile"):
+		root.remove(child)
+else:
+	# Copy all files
+	shutil.copytree(rootdir+"files", outdir+"files")
 
 serverNode = ET.SubElement(root, "script")
 serverNode.set("src", "server.luac")

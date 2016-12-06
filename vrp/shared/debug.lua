@@ -7,6 +7,10 @@
 -- ****************************************************************************
 DEBUG = GIT_BRANCH == nil or GIT_BRANCH == "master" or GIT_BRANCH == "develop"
 
+if triggerClientEvent then
+	outputServerLog(("\n\nDebug information:\nDEBUG = %s\nBRANCH = %s\nVERSION = %s\n"):format(tostring(DEBUG), tostring(GIT_BRANCH), tostring(GIT_VERSION)))
+end
+
 --- Validates the parameters of a function
 -- @param funcName The name of the function
 -- @param ... The parameters' types
