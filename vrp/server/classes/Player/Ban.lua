@@ -48,7 +48,7 @@ function Ban.addBan(who, author, reason, duration)
 			author = DatabasePlayer.getFromId(author)
 		end
 		if duration > 0 then
-			reasonstr = ("+Timeban für %s von %s (Grund: %s)"):format( string.duration(duration), author.name, reason)
+			reasonstr = ("+Timeban: %s von %s (Grund: %s)"):format( string.duration(duration), author.name, reason)
 		else
 			reasonstr = ("+Permanenter Bann von %s (Grund: %s)"):format(author.name, reason)
 		end
@@ -73,7 +73,7 @@ function Ban.checkSerial(serial, player)
 			sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
 			return true
 		elseif duration > 0 then
-			reasonstr = ("Du bist noch für %s gebannt! (Grund: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
+			reasonstr = ("Du bist noch %s gebannt! (Grund: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
 		end
 
 		if player and isElement(player) then kickPlayer(player, reasonstr) end
