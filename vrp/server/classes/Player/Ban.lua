@@ -6,6 +6,8 @@
 -- *
 -- ****************************************************************************
 Ban = {}
+
+
 function Ban.addBan(who, author, reason, duration)
 	local authorId = 0
 	if type(author) == "userdata" and getElementType(author) == "player" then
@@ -61,22 +63,26 @@ function Ban.checkBan(player)
 	return Ban.checkSerial(serial, player)
 end
 
-function Ban.checkSerial(serial, player)
+function Ban.checkSerial(serial, player, cancel)
 	-- Note: true = not banned
 	local id = player and player:getId() or "false"
 	local row = sql:queryFetchSingle("SELECT reason, expires FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
 	if row then
 		local duration = row.expires
 		if duration == 0 then
-			reasonstr = ("Du wurdest permanent gebannt (Grund: %s"):format(row.reason)
+			reasonstr = ("Du wurdest permanent gebannt (Grund: %s)"):format(row.reason)
 		elseif duration - getRealTime().timestamp < 0 then
 			sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
 			return true
 		elseif duration > 0 then
-			reasonstr = ("Du bist noch %s gebannt! (Grund: %s"):format(string.duration(duration - getRealTime().timestamp), row.reason)
+			reasonstr = ("Du bist noch %s gebannt! (Grund: %s)"):format(string.duration(duration - getRealTime().timestamp), row.reason)
 		end
 
-		if player and isElement(player) then kickPlayer(player, reasonstr) end
+		if cancel then
+			if player and isElement(player) then cancelEvent(true, reasonstr) end
+		else
+			if player and isElement(player) then kickPlayer(player, reasonstr) end
+		end
 		return false
 	end
 	return true
@@ -90,3 +96,7 @@ function Ban.checkOfflineBan(playerId)
 		return true
 	end
 end
+
+addEventHandler("onPlayerConnect", root, function(nick, ip, username, serial ) 
+	Ban.checkSerial(serial, source, true)
+end)

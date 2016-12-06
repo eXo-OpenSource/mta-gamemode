@@ -96,9 +96,9 @@ function Player:Event_requestTime()
 end
 
 function Player:join()
-	setTimer(function()
-		Ban.checkBan(self)
-	end, 500, 1)
+	--[[setTimer(function()
+		
+	end, 500, 1)]]
 
 	--setCameraMatrix(self,445.12222, -1886.34387, 22.368610,369.74289, -2036.1087, 7.67188) -- Untill new Login Scenes
 end
