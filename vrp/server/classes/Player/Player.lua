@@ -406,6 +406,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
+	FactionState:getSingleton():uncuffPlayer( self ) 
 end
 
 

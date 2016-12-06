@@ -243,12 +243,16 @@ function FactionState:Command_cuff( source, cmd, target )
 					if faction then 
 						if faction:isStateFaction() then 
 							if source ~= targetPlayer then
-								source.m_CurrentCuff = targetPlayer
-								source:triggerEvent("factionStateStartCuff", targetPlayer)
-								targetPlayer:triggerEvent("CountdownStop",  5, "Gefesselt in")
-								targetPlayer:triggerEvent("Countdown", 5, "Gefesselt in")
-								source:triggerEvent("CountdownStop", 5, "Gefesselt in")
-								source:triggerEvent("Countdown", 5, "Gefesselt in")
+								if source:isFactionDuty() then
+									source.m_CurrentCuff = targetPlayer
+									source:triggerEvent("factionStateStartCuff", targetPlayer)
+									targetPlayer:triggerEvent("CountdownStop",  5, "Gefesselt in")
+									targetPlayer:triggerEvent("Countdown", 5, "Gefesselt in")
+									source:triggerEvent("CountdownStop", 5, "Gefesselt in")
+									source:triggerEvent("Countdown", 5, "Gefesselt in")
+								else 
+									source:sendError("Du bist nicht im Dienst!")
+								end
 							else 
 								source:sendError("Du kannst dich nicht selbst fesseln!")
 							end
@@ -276,9 +280,13 @@ function FactionState:Command_uncuff( source, cmd, target )
 					local faction = source:getFaction()
 					if faction then 
 						if source ~= targetPlayer then
-							if faction:isStateFaction() then 
-								self:uncuffPlayer( targetPlayer )
-								source:meChat(true,"nimmt die Handschellen von "..targetPlayer:getName().." ab!")
+							if faction:isStateFaction() then
+								if source:isFactionDuty() then
+									self:uncuffPlayer( targetPlayer )
+									source:meChat(true,"nimmt die Handschellen von "..targetPlayer:getName().." ab!")
+								else 
+									source:sendError("Du hast keine Handschellen dabei!")
+								end
 							else 
 								source:sendError("Du hast keine Handschellen dabei!")
 							end
@@ -299,7 +307,7 @@ end
 
 function FactionState:uncuffPlayer( player) 
 	toggleControl(player, "sprint", true)
-	toggleControl(target, "jump", true)
+	toggleControl(player, "jump", true)
 	setPedWalkingStyle(player, 0)
 end
 
