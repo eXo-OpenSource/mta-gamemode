@@ -171,6 +171,8 @@ function Player:loadCharacter()
 
 	-- Premium
 	Premium.constructor(self)
+	
+	VehicleManager:getSingleton():createVehiclesForPlayer( self )
 	triggerEvent("characterInitialized", self)
 end
 
