@@ -10,7 +10,7 @@ JobRoadSweeper = inherit(Job)
 function JobRoadSweeper:constructor()
 	Job.constructor(self)
 
-	self.m_VehicleSpawner = VehicleSpawner:new(205.7, -1442.8, 12.3, {"Sweeper"}, 315, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner = VehicleSpawner:new(205.7, -1442.8, 12.1, {"Sweeper"}, 315, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 

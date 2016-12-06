@@ -2,7 +2,7 @@ MechanicTow = inherit(Company)
 addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicTakeVehicle"}
 
 function MechanicTow:constructor()
-	self.m_VehicleTakeMarker = Marker.create(920.614, -1176.063, 16.2, "cylinder", 1, 255, 255, 0)
+	self.m_VehicleTakeMarker = Marker.create(920.614, -1176.063, 16.1, "cylinder", 1, 255, 255, 0)
 	self:createTowLot()
 	self.m_PendingQuestions = {}
 

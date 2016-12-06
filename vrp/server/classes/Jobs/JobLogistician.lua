@@ -15,14 +15,14 @@ function JobLogistician:constructor()
 	local Crane1 = Crane:new(2387.30, -2492.40, 19.6, 2387.30, -2625.60, 19.6)
 	local Crane2 = Crane:new(-219.70, -269.30, 7.30, -219.70, -200.30, 7.30)
 
-	self.m_Marker1 = self:createCraneMarker(Crane1, Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.26), 0)
-	self.m_Marker2 = self:createCraneMarker(Crane2, Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2.05), 0)
+	self.m_Marker1 = self:createCraneMarker(Crane1, Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.1), 0)
+	self.m_Marker2 = self:createCraneMarker(Crane2, Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2), 0)
 
-	self.m_VehicleSpawner1 = VehicleSpawner:new(2405.45, -2445.40, 13, {"DFT-30"}, 230, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner1 = VehicleSpawner:new(2405.45, -2445.40, 12.6, {"DFT-30"}, 230, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner1.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner1:disable()
 
-	self.m_VehicleSpawner2 = VehicleSpawner:new(-209.97, -273.92, 0.7, {"DFT-30"}, 180, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner2 = VehicleSpawner:new(-209.97, -273.92, 0.5, {"DFT-30"}, 180, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner2:disable()
 end

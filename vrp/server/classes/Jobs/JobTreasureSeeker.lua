@@ -10,7 +10,7 @@ JobTreasureSeeker = inherit(Job)
 function JobTreasureSeeker:constructor()
 	Job.constructor(self)
 	local availableVehicles = {"Reefer"}
-	self.m_VehicleSpawner = VehicleSpawner:new(715.41, -1706.50, 1.5, availableVehicles, 135, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner = VehicleSpawner:new(715.41, -1706.50, 1.3, availableVehicles, 135, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner:setSpawnPosition(Vector3(719.79, -1705.18, -0.34), 180)
 	self.m_VehicleSpawner:disable()
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))

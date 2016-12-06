@@ -10,7 +10,7 @@ JobHeliTransport = inherit(Job)
 function JobHeliTransport:constructor()
 	Job.constructor(self)
 
-	self.m_VehicleSpawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 26, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 25.6, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
