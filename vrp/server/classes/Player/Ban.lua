@@ -41,15 +41,17 @@ function Ban.addBan(who, author, reason, duration)
 			end
 		end
 	end
-
+	
 	if player then
 		local reasonstr
-		if duration > 0 then
-			reasonstr = ("You were banned by %s for %s (Reason: %s"):format(author.name, string.duration(duration), reason)
-		else
-			reasonstr = ("You were permanently banned by %s (Reason: %s"):format(author.name, reason)
+		if type(author) == "number" then 
+			author = DatabasePlayer.getFromId(author)
 		end
-		outputDebug(player)
+		if duration > 0 then
+			reasonstr = ("+Timeban für %s von %s (Grund: %s)"):format( string.duration(duration), author.name, reason)
+		else
+			reasonstr = ("+Permanenter Bann von %s (Grund: %s)"):format(author.name, reason)
+		end
 		kickPlayer(player, author, reasonstr)
 	end
 end
