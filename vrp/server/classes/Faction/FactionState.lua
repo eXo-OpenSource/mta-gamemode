@@ -299,6 +299,7 @@ end
 
 function FactionState:uncuffPlayer( player) 
 	toggleControl(player, "sprint", true)
+	toggleControl(target, "jump", true)
 	setPedWalkingStyle(player, 0)
 end
 
@@ -307,6 +308,7 @@ function FactionState:Event_CuffSuccess( target )
 		if client.m_CurrentCuff == target then 
 			if getDistanceBetweenPoints3D(target:getPosition() , client:getPosition()) <= 5 then 
 				toggleControl(target, "sprint", false)
+				toggleControl(target, "jump", false)
 				setPedWalkingStyle(target, 123)
 				source:meChat(true,"legt "..target:getName().." Handschellen an!")
 				source:triggerEvent("CountdownStop", "Gefesselt in", 5)
@@ -624,6 +626,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				player:setJailTime(jailTime)
 				player:setWantedLevel(0)
 				player:moveToJail(CUTSCENE)
+				self:uncuffPlayer( player) 
 				player:clearCrimes()
 
 				-- Pay some money to faction and karma, xp to the policeman
