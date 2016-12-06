@@ -426,20 +426,8 @@ for i, v in pairs(BeggarTypes) do
 	BeggarTypes[v] = i
 end
 
-HOSPITAL_POSITIONS = {
-	Vector3(2028, -1405, 18);
-	Vector3(-2655.1171875, 635.38671875, 14.453125);
-	Vector3(1607.6171875, 1820.962890625, 10.8203125);
-	Vector3(-2163.189453125, -2387.3095703125, 30.625);
-	Vector3(-1514.7373046875, 2522.0703125, 55.839172363281);
-}
-HOSPITAL_ROTATIONS = {
-	Vector3(0, 0, 0);
-	Vector3(0, 0, 180);
-	Vector3(0, 0, 360);
-	Vector3(0, 0, 145);
-	Vector3(0, 0, 0);
-}
+HOSPITAL_POSITION = Vector3(1739.09, -1747.98, 18.81)
+HOSPITAL_ROTATION = Vector3(0, 0, 180)
 
 WEAPON_LEVEL = {
 	[1] = {["costs"] = 500, ["hours"] = 1},

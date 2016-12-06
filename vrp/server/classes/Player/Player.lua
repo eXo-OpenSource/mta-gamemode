@@ -375,20 +375,8 @@ function Player:respawn(position, rotation, bJailSpawn)
 		return
 	end
 
-	if not position then -- Search for nearest Spawnpoint
-		--[[local currentPos = self.position
-		local nearestDist = math.huge
-		local nearestPoint = nil
-		for i, v in ipairs(HOSPITAL_POSITIONS) do
-			if (v-currentPos).length < nearestDist then
-				nearestDist = (currentPos-v).length
-				nearestPoint = i
-			end
-		end
-
-		position, rotation = HOSPITAL_POSITIONS[nearestPoint], HOSPITAL_ROTATIONS[nearestPoint]
-		--]]
-		position, rotation = Vector3(1739.09, -1747.98, 18.81), Vector3(0, 0, 180)
+	if not position then
+		position, rotation = HOSPITAL_POSITION, HOSPITAL_ROTATION
 	else
 		position, rotation = position, rotation
 	end

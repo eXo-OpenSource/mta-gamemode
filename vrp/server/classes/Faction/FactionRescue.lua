@@ -44,6 +44,8 @@ function FactionRescue:constructor()
 	)
 
 
+	self:createNoCollissionSpawn()
+
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
 	addEventHandler("factionRescueHealPlayerQuestion", root, bind(self.Event_healPlayerQuestion, self))
@@ -98,6 +100,15 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 			cancelEvent()
 		end
 	)
+end
+
+function FactionRescue:createNoCollissionSpawn()
+	local col = createColSphere(HOSPITAL_POSITION, 3)
+	addEventHandler("onColShapeLeave", col, function(hitElement, dim)
+		if dim and hitElement:getType() == "player" then
+			hitElement:setCollisionsEnabled(true)
+		end
+	end)
 end
 
 function FactionRescue:Event_changeSkin(player)
@@ -310,6 +321,7 @@ end
 function FactionRescue:Event_OnPlayerWastedFinish()
 	source:setCameraTarget(player)
 	source:fadeCamera(true, 1)
+	source:setCollisionsEnabled(false)
 	source:respawn()
 end
 
