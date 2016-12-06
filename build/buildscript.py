@@ -78,11 +78,11 @@ tree.write(outdir+"meta.xml")
 # Call the compiler
 print("Compiling source...")
 
-serverCall = [ compiler, "-s", "-e2", "-o", outdir+"server.luac" ]
+serverCall = [ compiler, "-e2", "-o", outdir+"server.luac" ]
 serverCall.extend(files["server"])
 call(serverCall)
 
-clientCall = [ compiler, "-s", "-e2", "-o", outdir+"client.luac" ]
+clientCall = [ compiler, "-e2", "-o", outdir+"client.luac" ]
 clientCall.extend(files["client"])
 call(clientCall)
 
