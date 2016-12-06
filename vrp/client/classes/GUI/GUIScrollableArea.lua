@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 GUIScrollableArea = inherit(GUIElement)
-local SCROLL_DISTANCE = 14
+local SCROLL_DISTANCE = 30
 
 function GUIScrollableArea:constructor(posX, posY, width, height, documentWidth, documentHeight, verticalScrollbar, horizontalScrollbar, parent, space)
 	GUIElement.constructor(self, posX, posY, width, height, parent)
