@@ -48,4 +48,4 @@ RUN chown -R mtasa:mtasa /var/lib/mtasa && \
 VOLUME /var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config
 
 # Start commands
-CMD cd /var/lib/mtasa && su -c /var/lib/mtasa/workerserver mtasa
+CMD cd /var/lib/mtasa && su -m -c /var/lib/mtasa/workerserver mtasa
