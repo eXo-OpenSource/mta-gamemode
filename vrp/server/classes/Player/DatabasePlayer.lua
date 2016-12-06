@@ -141,6 +141,7 @@ function DatabasePlayer:load()
 	self.m_HasBikeLicense = toboolean(row.HasBikeLicense)
 	self.m_HasTruckLicense = toboolean(row.HasTruckLicense)
 	self.m_PaNote = row.PaNote
+	self.m_PrisonTime = row.PrisonTime
 
 	self.m_Skills["Driving"] 	= row.DrivingSkill
 	self.m_Skills["Gun"] 		= row.GunSkill
@@ -161,7 +162,7 @@ function DatabasePlayer:load()
 	self:setSkinLevel(row.SkinLevel)
 	self:setJobLevel(row.JobLevel)
 	self:setPlayTime(row.PlayTime)
-	self:setPrison(row.PrisonTime)
+	self:setPrison(0)
 	self:setWarns()
 	self:setBail( row.Bail )
 	self:setJailTime( row.JailTime or 0)
@@ -592,7 +593,7 @@ function DatabasePlayer:setPrison(duration)
 			self:setDimension(0)
 			self:setInterior(0)
 			self:setPosition(Vector3(-224,2371.29,5688.73))
-			self:triggerEvent("Countdown", self.m_PrisonTime, "Prison")
+			self:triggerEvent("playerPrisoned", self.m_PrisonTime/60)
 			self.m_PrisonTimer = setTimer(bind(self.endPrison, self), self.m_PrisonTime*1000, 1, player)
 		end
 	end

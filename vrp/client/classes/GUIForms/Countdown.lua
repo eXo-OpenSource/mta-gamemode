@@ -10,6 +10,12 @@ Countdown = inherit(GUIForm)
 Countdown.Map = {}
 
 function Countdown:constructor(seconds, title)
+	if Countdown.Map[title] then
+		outputDebugString("Countdown with title "..title.." already exists!")
+		delete(self)
+		return
+	end
+
 	local offset = Countdown.getCurrentCountdowns()*90
 	GUIForm.constructor(self, screenWidth/2-187/2, 60+offset, 187, 90, false)
 	self.m_Title = title
@@ -27,9 +33,12 @@ function Countdown:constructor(seconds, title)
 end
 
 function Countdown:destructor()
-	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
-	Countdown.Map[self.m_Title] = nil
-	GUIForm.destructor(self)
+	if Countdown.Map[self.m_Title] then
+		Countdown.Map[self.m_Title] = nil
+		if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+		GUIForm.destructor(self)
+	end
+
 end
 
 function Countdown:updateTime()
@@ -46,7 +55,7 @@ function Countdown:updateTime()
 	self.m_MinutesLabel:setText(mins)
 	self.m_SecondLabel:setText(secs)
 
-	if self.m_Seconds == 0 then
+	if self.m_Seconds <= 0 then
 		delete(self)
 	else
 		if self.m_TickEvent then

@@ -272,7 +272,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
             target:setPrison(duration*60)
             self:addPunishLog(admin, target, func, reason, duration*60)
-			outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." ins Pirson gesteckt!",root, 200, 0, 0)
+			outputChatBox(getPlayerName(target).." hat "..getPlayerName(admin).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
 			outputChatBox("Grund: "..reason,root, 200, 0, 0)
         elseif func == "unprison" then
 			if target.m_PrisonTime > 0 then
