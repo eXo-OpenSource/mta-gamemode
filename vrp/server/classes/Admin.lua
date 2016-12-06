@@ -213,7 +213,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
         if targetName then
             local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
             if isElement(target) then
-                if cmd == "spect" then
+                if cmd == "spect" or "unprison" then
                     self:Event_adminTriggerFunction(cmd, target, nil, nil, admin)
                     return
                 else
@@ -234,7 +234,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                 end
             end
         end
-        if cmd == "spect" then
+        if cmd == "spect" or "unprison" then
             admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
             return
         elseif cmd == "rkick" or cmd == "permaban" then
