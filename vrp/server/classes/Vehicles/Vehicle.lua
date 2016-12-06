@@ -329,13 +329,13 @@ function Vehicle:countdownDestroyStart(player)
 	self.m_CountdownDestroyTimer = setTimer(function()
 		player:sendInfo(_("Zeit abgelaufen! Das Fahrzeug wurde gelöscht!", player))
 		self:destroy()
-		player:triggerEvent("CountdownStop")
+		player:triggerEvent("CountdownStop", "Fahrzeug")
 	end, self.m_CountdownDestroy*1000, 1)
 end
 
 function Vehicle:countdownDestroyAbort(player)
 	if self.m_CountdownDestroyTimer and isTimer(self.m_CountdownDestroyTimer) then
-		player:triggerEvent("CountdownStop")
+		player:triggerEvent("CountdownStop", "Fahrzeug")
 		killTimer(self.m_CountdownDestroyTimer)
 	end
 end

@@ -107,7 +107,7 @@ end
 
 function WeedTruck:Event_OnWeedTruckExit(player,seat)
 	if seat == 0 then
-		player:triggerEvent("CountdownStop")
+		player:triggerEvent("CountdownStop", "Weed-Truck")
 		player:triggerEvent("VehicleHealthStop")
 	end
 end

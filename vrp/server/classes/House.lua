@@ -90,7 +90,7 @@ function House:breakHouse(player)
 					local loot = math.floor(self.m_Price/20*(math.random(75, 100)/100))
 					unit:giveMoney(loot, "Haus-Überfall")
 					unit:sendMessage("Du hast den Raub erfolgreich abgeschlossen! Dafür erhälst du $%s.", 0, 125, 0, loot)
-					unit:triggerEvent("CountdownStop")
+					unit:triggerEvent("CountdownStop", "Haus-Raub")
 					self:leaveHouse(unit)
 				end
 
@@ -216,7 +216,7 @@ function House:leaveHouse(player)
 		player:setInterior(0)
 		player:setDimension(0)
 		if self.m_CurrentRobber == player then
-			player:triggerEvent("CountdownStop")
+			player:triggerEvent("CountdownStop", "Haus-Raub")
 		end
 	else
 		player:sendError(_("Das Tür ist verschlossen!", player))

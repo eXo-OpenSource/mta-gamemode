@@ -6,13 +6,16 @@
 -- *
 -- ****************************************************************************
 Countdown = inherit(GUIForm)
-inherit(Singleton, Countdown)
 
-function Countdown:constructor(seconds, text)
-	GUIForm.constructor(self, screenWidth/2-187/2, 60, 187, 90, false)
+Countdown.Map = {}
+
+function Countdown:constructor(seconds, title)
+	local offset = Countdown.getCurrentCountdowns()*90
+	GUIForm.constructor(self, screenWidth/2-187/2, 60+offset, 187, 90, false)
+	self.m_Title = title
 	self.m_Seconds = 0
 	self.m_Rect = GUIRectangle:new(0, 0, self.m_Width, self.m_Height, tocolor(0, 0, 0, 125), self)
-	self.m_Text = GUILabel:new(0, 0, self.m_Width, 30, text or "Countdown...", self):setColor(Color.Red):setFont(VRPFont(self.m_Height*0.4)):setAlignX("center")
+	self.m_Text = GUILabel:new(0, 0, self.m_Width, 30, self.m_Title, self):setColor(Color.Red):setFont(VRPFont(self.m_Height*0.4)):setAlignX("center")
 	self.m_Background = GUIImage:new(10, 30, self.m_Width-20, 60, "files/images/Other/Countdown.png", self)
 	self.m_MinutesLabel = GUILabel:new(14, 14, 60, 20, "", self.m_Background):setAlignX("center"):setAlignY("center"):setFont(VRPFont(self.m_Height*0.52))
 	self.m_SecondLabel = GUILabel:new(95, 14, 60, 20, "", self.m_Background):setAlignX("center"):setAlignY("center"):setFont(VRPFont(self.m_Height*0.52))
@@ -20,17 +23,19 @@ function Countdown:constructor(seconds, text)
 	self.m_Seconds = seconds
 	self:updateTime()
 	self.m_Timer = setTimer(bind(self.updateTime, self), 1000, 0)
+	Countdown.Map[title] = self
 end
 
 function Countdown:destructor()
 	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+	Countdown.Map[self.m_Title] = nil
 	GUIForm.destructor(self)
 end
 
 function Countdown:updateTime()
-	if localPlayer.m_PaydayShowing then 
+	if localPlayer.m_PaydayShowing then
 		self:setVisible(false)
-	else 
+	else
 		self:setVisible(true)
 	end
 	self.m_Seconds = self.m_Seconds - 1
@@ -56,16 +61,26 @@ end
 
 addEvent("Countdown", true)
 addEventHandler("Countdown", root,
-	function(seconds, text)
-		Countdown:new(seconds, text)
+	function(seconds, title)
+		Countdown:new(seconds, title)
 	end
 )
 
 addEvent("CountdownStop", true)
 addEventHandler("CountdownStop", root,
-	function()
-		if Countdown:isInstantiated() then
-			delete(Countdown:getSingleton())
+	function(title)
+		if Countdown.Map[title] then
+			delete(Countdown.Map[title])
 		end
 	end
 )
+
+function Countdown.getCurrentCountdowns()
+	local count = 0
+	for index, countdown in pairs(Countdown.Map) do
+		if countdown and countdown:isVisible() then
+			count = count+1
+		end
+	end
+	return count
+end

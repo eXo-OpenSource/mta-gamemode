@@ -33,7 +33,7 @@ function MStealWeaponTruck:onZoneHit(ele, matchingDimension)
     if not matchingDimension then return end
     if ele:getType() == "player" then
         if self.m_CloseStarted then
-            ele:triggerEvent("Countdown", math.floor((TIME_UNTIL_CLOSE-(getTickCount()-self.m_CloseStarted))/1000))
+            ele:triggerEvent("Countdown", math.floor((TIME_UNTIL_CLOSE-(getTickCount()-self.m_CloseStarted))/1000), "Truck Diebstahl")
         end
     end
 end
@@ -41,7 +41,7 @@ end
 function MStealWeaponTruck:onZoneLeft(ele, matchingDimension)
     if not matchingDimension then return end
     if ele:getType() == "player" then
-        ele:triggerEvent("CountdownStop")
+        ele:triggerEvent("CountdownStop", "Truck Diebstahl")
 
         local Truck = ele:getOccupiedVehicle()
         if Truck then

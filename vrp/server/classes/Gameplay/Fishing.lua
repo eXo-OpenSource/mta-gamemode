@@ -76,7 +76,7 @@ function Fishing:onColShapeHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		if self.m_PlayerTimers[hitElement] and isTimer(self.m_PlayerTimers[hitElement]) then
 			killTimer(self.m_PlayerTimers[hitElement])
-			hitElement:triggerEvent("CountdownStop")
+			hitElement:triggerEvent("CountdownStop", "Fischfang")
 		end
 	end
 end

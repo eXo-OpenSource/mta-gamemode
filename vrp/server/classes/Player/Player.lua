@@ -904,7 +904,7 @@ function Player:endPrison()
 	toggleControl(self, "jump", true)
 	toggleControl(self, "aim_weapon", true)
 	self:triggerEvent("checkNoDm")
-	self:triggerEvent("CountdownStop")
+	self:triggerEvent("CountdownStop", "Prison")
 	self:setData("inAdminPrison",false,true)
 	self:sendInfo(_("Du wurdest aus dem Prison entlassen! Benimm dich nun besser!", self))
 	if self.m_PrisonTimer then killTimer(self.m_PrisonTimer) end

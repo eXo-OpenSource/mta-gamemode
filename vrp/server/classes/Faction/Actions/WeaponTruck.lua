@@ -307,7 +307,7 @@ end
 
 function WeaponTruck:Event_OnWeaponTruckExit(player,seat)
 	if seat == 0 then
-		player:triggerEvent("CountdownStop")
+		player:triggerEvent("CountdownStop", WEAPONTRUCK_NAME_SHORT[self.m_Type])
 		player:triggerEvent("VehicleHealthStop")
 	end
 end

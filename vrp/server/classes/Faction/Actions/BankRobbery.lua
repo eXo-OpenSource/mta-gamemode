@@ -106,7 +106,7 @@ function BankRobbery:destroyRob()
 	local onlinePlayers = self.m_RobFaction:getOnlinePlayers()
 	if onlinePlayers then
 		for index, playeritem in pairs(self.m_RobFaction:getOnlinePlayers()) do
-			playeritem:triggerEvent("CountdownStop")
+			playeritem:triggerEvent("CountdownStop", "Bank-Überfall")
 			playeritem:triggerEvent("forceCircuitBreakerClose")
 		end
 	end
