@@ -247,10 +247,10 @@ function FactionState:Command_cuff( source, cmd, target )
 									if not targetPlayer.vehicle then
 										source.m_CurrentCuff = targetPlayer
 										source:triggerEvent("factionStateStartCuff", targetPlayer)
-										targetPlayer:triggerEvent("CountdownStop",  5, "Gefesselt in")
-										targetPlayer:triggerEvent("Countdown", 5, "Gefesselt in")
-										source:triggerEvent("CountdownStop", 5, "Gefesselt in")
-										source:triggerEvent("Countdown", 5, "Gefesselt in")
+										targetPlayer:triggerEvent("CountdownStop",  10, "Gefesselt in")
+										targetPlayer:triggerEvent("Countdown", 10, "Gefesselt in")
+										source:triggerEvent("CountdownStop", 10, "Gefesselt in")
+										source:triggerEvent("Countdown", 10, "Gefesselt in")
 									else 
 										source:sendError("Du kommst nicht an den Spieler heran!")
 									end

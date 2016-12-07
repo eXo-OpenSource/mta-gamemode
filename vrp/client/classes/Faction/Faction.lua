@@ -48,7 +48,7 @@ function FactionManager:Event_onPlayerCuff( bool )
 end
 
 function FactionManager:drawCuff()
-	dxDrawImage(w*0.75, h*0.8, w*0.15,w*0.15,"files/images/Other/cuff.png")
+	dxDrawImage(w*0.88, h - w*0.1, w*0.08,w*0.08,"files/images/Other/cuff.png")
 end
 
 function FactionManager:stateFactionOfferTicket( cop )
