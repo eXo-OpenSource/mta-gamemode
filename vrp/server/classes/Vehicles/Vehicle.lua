@@ -214,9 +214,12 @@ function Vehicle:toggleEngine(player)
 		if not INVALID_MODEL_FOR_START[getElementModel(self)] then
 			if state == true then
 				if player and not getVehicleEngineState(self) then
-					for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do 
-						if getElementType(other) == "player" then
-							other:triggerEvent("vehicleEngineStart", self)
+					if not self.m_StartingEnginePhase then	
+						self.m_StartingEnginePhase = true
+						for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do 
+							if getElementType(other) == "player" then
+								other:triggerEvent("vehicleEngineStart", self)
+							end
 						end
 					end
 				end
@@ -258,6 +261,7 @@ function Vehicle:setEngineState(state)
 		setVehicleEngineState(self, state)
 		self.m_EngineState = state
 	end
+	self.m_StartingEnginePhase = false
 end
 
 function Vehicle:getEngineState()
