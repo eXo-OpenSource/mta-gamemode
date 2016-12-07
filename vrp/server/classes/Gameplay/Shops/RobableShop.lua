@@ -122,11 +122,35 @@ function RobableShop:startRob(shop, attacker, ped)
 	60
 	)
 	self.m_Func = bind(RobableShop.m_onExpire, self)
-	self.m_ExpireTimer = setTimer(self.m_Func, ROBSHOP_TIME,1)
+	self.m_ExpireTimer = setTimer(self.m_Func, ROBSHOP_TIME,1, )
 end
 
 function RobableShop:m_onExpire() 
-	self:stopRob()
+	self.m_shop.m_Marker.m_Disable = false
+	setElementAlpha(self.m_shop.m_Marker,255)
+	ActionsCheck:getSingleton():endAction()
+	if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
+	if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
+	for key, player in ipairs(getElementsByType("player")) do 
+		player:detachPlayerObject(self.m_Bag)
+		removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
+		removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
+		removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
+		removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
+		removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
+	end
+	self.m_Bag:destroy()
+
+
+	removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
+
+	delete(self.m_EvilBlip)	
+	delete(self.m_StateBlip)
+	delete(self.m_BagBlip)
+	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
+
+	self.m_Gang:removePlayerMarkers()
+	removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
 	self.m_Gang:sendMessage("[Shop-Rob] Die Zeit für den Rob ist ausgelaufen!",200,0,0,true)
 	FactionManager:getSingleton():getFromId(1):sendMessage("[Shop-Rob] #EEEEEEDie Zeit für den Rob ist ausgelaufen!",200,200,0,true)
 end
@@ -137,7 +161,7 @@ function RobableShop:stopRob(player)
   ActionsCheck:getSingleton():endAction()
   if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
   if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
-
+  
   player:detachPlayerObject(self.m_Bag)
 
   self.m_Bag:destroy()
