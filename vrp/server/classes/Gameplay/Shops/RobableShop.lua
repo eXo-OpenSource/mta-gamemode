@@ -122,7 +122,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	60
 	)
 	self.m_Func = bind(RobableShop.m_onExpire, self)
-	self.m_ExpireTimer = setTimer(self.m_Func, ROBSHOP_TIME,1, )
+	self.m_ExpireTimer = setTimer(self.m_Func, ROBSHOP_TIME,1)
 end
 
 function RobableShop:m_onExpire() 

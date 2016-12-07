@@ -489,15 +489,18 @@ local STRUCTUR_TYPES = {
 		--{"diode", 72, 33, true, {3}, {0, 90, 180}},
 		}
 
-function CircuitBreaker:createStructurGroup(width, height)
-		local WIDTH, HEIGHT = width, height
-		local collideImage = DxRenderTarget(WIDTH, HEIGHT, true)
-		local line = 5
-		local structures = {}
-
+function CircuitBreaker:createStructurGroup(width, height, count)
+	if not count then count = 0 end
+	if count > 3 then 
+		return outputConsole("Zu wenig Videospeicher in MTA-Memory!")
+	end
+	local WIDTH, HEIGHT = width, height
+	local collideImage = DxRenderTarget(WIDTH, HEIGHT, true)
+	local line = 5
+	local structures = {}
+	if collideImage then
 		collideImage:setAsTarget()
 		dxDrawRectangle(0, 0, WIDTH, HEIGHT, tocolor(120, 160, 200, 170))
-
 		for posY = 0, HEIGHT, 4 do
 			for posX = 0, WIDTH, 4 do
 				local rnd_structur = STRUCTUR_TYPES[math.random(1, #STRUCTUR_TYPES)]
@@ -512,7 +515,7 @@ function CircuitBreaker:createStructurGroup(width, height)
 				if rotation == 90 then
 					rotationOffsetX = -(struct_width/2)
 					rotationOffsetY = struct_height/2
-
+	
 					rotFix_Y = rotFix_Y - struct_height
 
 					struct_width = drawHeight
@@ -527,16 +530,17 @@ function CircuitBreaker:createStructurGroup(width, height)
 							else
 								dxDrawImage(rotFix_X, rotFix_Y, drawWidth, drawHeight, self[rnd_structur[1]], rotation, rotationOffsetX, rotationOffsetY)
 							end
-
 							table.insert(structures, {posX, posY, struct_width + math.random(2, 10), struct_height + math.random(2, 10)})
 						end
 					end
 				end
 			end
 		end
-
-		dxSetRenderTarget()
-		return collideImage
+	else 
+		return self:createStructurGroup(width,height,count+1)
+	end
+	dxSetRenderTarget()
+	return collideImage
 end
 
 local E24 = {"1.0", "1.1", "1.2", "1.3", "1.5", "1.6", "1.8", "2.0", "2.2", "2.4", "2.7", "3.0", "3.3", "3.6", "3.9", "4.3", "4.7",	"5.1", "5.6", "6.2", "6.8", "7.5", "8.2", "9.1"}
