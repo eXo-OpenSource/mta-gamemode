@@ -844,7 +844,7 @@ function FactionState:Event_storageWeapons()
 			for i= 1, 12 do
 				if client:getWeapon(i) > 0 then
 					local weaponId = client:getWeapon(i)
-					local magazines = math.floor(client:getTotalAmmo(i)/getWeaponProperty(weaponId, "poor", "maximum_clip_ammo"))
+					local magazines = math.floor((client:getTotalAmmo(i) or 1)/( getWeaponProperty(weaponId, "poor", "maximum_clip_ammo") or 1))
 					depot:addWeaponD(weaponId, 1)
 					if magazines > 0 then
 						depot:addWeaponD(weaponId, magazines)
