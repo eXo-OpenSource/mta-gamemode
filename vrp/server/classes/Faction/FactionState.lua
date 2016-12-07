@@ -854,7 +854,7 @@ function FactionState:Event_storageWeapons()
 					if magazines > 0 then
 						depot:addWeaponD(weaponId, magazines)
 					end
-					takeWeapon(client, weaponId)
+					takeWeapon(client, weaponId) 
 					client:sendMessage(_("Du hast eine/n %s mit %s Magazin/e ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines), 0, 255, 0)
 				end
 			end
