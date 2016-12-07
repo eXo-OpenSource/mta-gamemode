@@ -32,8 +32,8 @@ function Fishing:constructor()
 	self.m_PlayerTimers = {}
 
 	self.m_ColShape = createColSphere(350.65, -2072.44, 7.1, 60)
-	addEventHandler("onColShapeLeave", root, bind(self.onColShapeLeave, self))
-	addEventHandler("onColShapeHit", root, bind(self.onColShapeHit, self))
+	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave, self))
+	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.onColShapeHit, self))
 
 	for index, pos in pairs(Fishing.Positions) do
 		self.m_Markers[index] = createMarker(pos, "cylinder", 1, 0,255, 0, 125)
