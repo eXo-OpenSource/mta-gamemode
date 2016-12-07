@@ -21,6 +21,7 @@ function ClickHandler:constructor()
 		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
+		
 	}
 
 	self.m_ClickInfo = false
@@ -126,7 +127,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		--	elseif button == "right" then
 		--	end
 		--end
-		return true
+		return false
 	end
 
 	-- Phase 2: Check for world items
