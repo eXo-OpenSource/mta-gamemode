@@ -53,6 +53,7 @@ function TaskShootTarget:stopShooting()
 end
 
 function TaskShootTarget:update()
+	if not isElementStreamedIn(self.m_Target) then return end
     if self.m_Target and isElement(self.m_Target) and not isPedDead( self.m_Actor ) then
 
 		local actorPosition = self.m_Actor:getPosition()
