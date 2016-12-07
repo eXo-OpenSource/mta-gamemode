@@ -94,14 +94,14 @@ function FactionState:destructor()
 end
 
 
-function FactionState:createSelfArrestMarker( x,y,z, int, dim ) 
+function FactionState:createSelfArrestMarker( x,y,z, int, dim )
 	local marker = createPickup(x,y,z,3,1247,10)
 	setElementInterior(marker, int)
 	setElementDimension(marker, dim)
 	self.m_SelfBailMarker[#self.m_SelfBailMarker+1] = marker
 	addEventHandler("onPickupHit",marker, function(hE, bDim)
-		if getElementDimension(hE) == getElementDimension(source) then 
-			if getElementType(hE) == "player" then 
+		if getElementDimension(hE) == getElementDimension(source) then
+			if getElementType(hE) == "player" then
 				if hE:getWantedLevel() > 0 then
 					hE:triggerEvent("playerSelfArrest")
 				end
@@ -844,7 +844,8 @@ function FactionState:Event_storageWeapons()
 			for i= 1, 12 do
 				if client:getWeapon(i) > 0 then
 					local weaponId = client:getWeapon(i)
-					local magazines = math.floor(client:getTotalAmmo(i)/getWeaponProperty(weaponId, "poor", "maximum_clip_ammo"))
+					local clipAmmo = getWeaponProperty(weaponId, "poor", "maximum_clip_ammo") or 0
+					local magazines = math.floor(client:getTotalAmmo(i)/clipAmmo)
 					depot:addWeaponD(weaponId, 1)
 					if magazines > 0 then
 						depot:addWeaponD(weaponId, magazines)
