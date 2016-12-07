@@ -755,7 +755,9 @@ function VehicleManager:Event_vehicleSyncMileage(diff)
 
 	local vehicle = client:getOccupiedVehicle()
 	if vehicle then
-		vehicle:setMileage((vehicle:getMileage() or 0) + diff)
+		if vehicle.setMileage and vehicle.setMileage then
+			vehicle:setMileage((vehicle:getMileage() or 0) + diff)
+		end
 	end
 end
 
