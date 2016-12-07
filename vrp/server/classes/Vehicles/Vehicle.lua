@@ -6,6 +6,11 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
+local INVALID_MODEL_FOR_START = {
+[481] = true,
+[509] = true,
+[510] = true,
+}
 
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
@@ -206,7 +211,7 @@ function Vehicle:toggleEngine(player)
 				self:toggleInternalSmoke()
 			end
 		end
-		if getVehicleType(self) == VehicleType.Automobile then
+		if not INVALID_MODEL_FOR_START[getElementModle(self)] then
 			if state == true then
 				if player and not getVehicleEngineState(self) then
 					for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do 
