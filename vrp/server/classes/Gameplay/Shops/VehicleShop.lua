@@ -64,7 +64,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 		player:sendError(_("Du hast nicht genügend Geld!", player), 255, 0, 0)
 		return
 	end
-	if #player:getVehicles() < 5 then
+	if #player:getVehicles() < math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
 		local spawnX, spawnY, spawnZ, rotation = unpack(self.m_Spawn)
 		local vehicle = PermanentVehicle.create(player, vehicleModel, spawnX, spawnY, spawnZ, rotation)
 		if vehicle then
