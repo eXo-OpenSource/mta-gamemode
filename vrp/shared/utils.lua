@@ -673,3 +673,14 @@ function switch (searchFor)
 		return result
 	end
 end
+
+function string.random(length)
+	local char = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z","0","1","2","3","4","5","6","7","8","9"}
+	local code = {}
+	for z = 1, length do
+		a = math.random(1, #char)
+		x = string.lower(char[a])
+		table.insert(code, x)
+	end
+	return table.concat(code)
+end

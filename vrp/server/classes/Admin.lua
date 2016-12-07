@@ -9,6 +9,8 @@ Admin = inherit(Singleton)
 
 function Admin:constructor()
     self.m_OnlineAdmins = {}
+    self.m_MtaAccounts = {}
+
     self.m_SupportArrow = {}
     self.m_RankNames = {
         [1] = "Ticketsupporter",
@@ -114,7 +116,15 @@ function Admin:addAdmin(player,rank)
 	self.m_OnlineAdmins[player] = rank
     player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
     if DEBUG then
-        bindKey(player, "j", "down", function(player)
+		local pw = string.random(15)
+		local user = player:getName().."-eXo"
+		local acc = addAccount(user, pw)
+		player:logIn(acc, pw)
+		ACLGroup.get("Admin"):addObject("user."..user)
+		self.m_MtaAccounts[player] = acc
+
+
+		bindKey(player, "j", "down", function(player)
             if not doesPedHaveJetPack(player) then
               givePedJetPack(player)
            else
@@ -126,6 +136,10 @@ end
 
 function Admin:removeAdmin(player)
 	self.m_OnlineAdmins[player] = nil
+	if self.m_MtaAccounts[player] then
+		removeAccount(self.m_MtaAccounts[player])
+		self.m_MtaAccounts[player] = nil
+	end
 end
 
 function Admin:openAdminMenu(player)
