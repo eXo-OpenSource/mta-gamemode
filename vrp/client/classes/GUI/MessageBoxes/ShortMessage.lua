@@ -86,6 +86,10 @@ function ShortMessage:destructor()
 			table.removevalue(ShortMessage.MessageBoxes, self)
 			ShortMessage.resortPositions()
 			end
+	else 
+		GUIElement.destructor(self)
+		table.removevalue(ShortMessage.MessageBoxes, self)
+		ShortMessage.resortPositions()
 	end
 end
 
@@ -150,7 +154,7 @@ function ShortMessage.resortPositions ()
 			ShortMessage.MessageBoxes[i].m_ForceDestroy = true
 			delete(ShortMessage.MessageBoxes[i])
 		end
-		outputDebugString("Forced destroy of MessageBoxe!",0, 255,0,150)
+		outputDebugString("Forced destroy of MessageBoxes!",0, 255,0,150)
 	end
 end
 
