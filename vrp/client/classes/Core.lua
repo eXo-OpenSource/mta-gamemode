@@ -13,13 +13,7 @@ function Core:constructor()
 
 	Cursor = GUICursor:new()
 
-	if DEBUG then -- In debug mode use old Provider
-		DownloadGUI:new()
-		local dgi = DownloadGUI:getSingleton()
-		Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
-		setAmbientSoundEnabled( "gunfire", false )
-		showChat(true)
-	else
+	if HTTP_DOWNLOAD then -- In debug mode use old Provider
 		showChat(false)
 
 		Async.create( -- HTTPProvider needs asynchronous "context"
@@ -34,6 +28,12 @@ function Core:constructor()
 				end
 			end
 		)()
+	else
+		DownloadGUI:new()
+		local dgi = DownloadGUI:getSingleton()
+		Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
+		setAmbientSoundEnabled( "gunfire", false )
+		showChat(true)
 	end
 end
 

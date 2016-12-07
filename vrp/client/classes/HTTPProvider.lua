@@ -100,7 +100,7 @@ addCommandHandler("http", function()
 	fadeCamera(false, 0.05)
 
 	local dgi = HTTPDownloadGUI:getSingleton()
-	local instance = HTTPProvider:new("192.168.178.102:80/mtasa/", dgi)
+	local instance = HTTPProvider:new("164.132.153.219:21002/files/assets_HEAD/vrp_assets/", dgi)
 	Async.create(
 		function()
 			if instance:start() then
