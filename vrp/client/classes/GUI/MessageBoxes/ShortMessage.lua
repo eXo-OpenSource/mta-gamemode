@@ -9,7 +9,7 @@ ShortMessage = inherit(GUIElement)
 inherit(GUIFontContainer, ShortMessage)
 
 ShortMessage.MessageBoxes = {}
-
+local TIMEOUT_LIMIT = 20
 function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc)
 	if type(title) == "number" then
 		return new(ShortMessage, text, nil, nil, title)
@@ -117,31 +117,37 @@ function ShortMessage:drawThis()
 end
 
 function ShortMessage.resortPositions ()
-	for i = #ShortMessage.MessageBoxes, 1, -1 do
-		local obj = ShortMessage.MessageBoxes[i]
-		local prevObj = ShortMessage.MessageBoxes[i + 1]
+	if #ShortMessage.MessageBoxes <= TIMEOUT_LIMIT then
+		for i = #ShortMessage.MessageBoxes, 1, -1 do
+			local obj = ShortMessage.MessageBoxes[i]
+			local prevObj = ShortMessage.MessageBoxes[i + 1]
 
-		if obj.m_Animation then
-			delete(obj.m_Animation)
-		end
-
-		if prevObj then
-			local y
-			if not prevObj.m_Animation then
-				y = prevObj.m_AbsoluteY
-			else
-				y = prevObj.m_Animation.m_TY
+			if obj.m_Animation then
+				delete(obj.m_Animation)
 			end
-			obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, y - obj.m_Height - 5)
-		elseif not obj.m_AlphaFaded then
-			Animation.FadeAlpha:new(obj, 500, 0, 200)
-			obj.m_AlphaFaded = true
-		else
-			--if HUDRadar:getSingleton().m_Visible then
-				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
-			--else
-				--obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 25 - obj.m_Height)
-			--end
+
+			if prevObj then
+				local y
+				if not prevObj.m_Animation then
+					y = prevObj.m_AbsoluteY
+				else
+					y = prevObj.m_Animation.m_TY
+				end
+				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, y - obj.m_Height - 5)
+			elseif not obj.m_AlphaFaded then
+				Animation.FadeAlpha:new(obj, 500, 0, 200)
+				obj.m_AlphaFaded = true
+			else
+				--if HUDRadar:getSingleton().m_Visible then
+					obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
+				--else
+					--obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 25 - obj.m_Height)
+				--end
+			end
+		end
+	else 
+		for i = 1, #ShortMessage.MessageBoxes do 
+			delete(ShortMessage.MessageBoxes[i])
 		end
 	end
 end
