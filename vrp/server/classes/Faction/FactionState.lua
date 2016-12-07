@@ -121,6 +121,8 @@ function FactionState:Event_OnConfirmSelfArrest()
 	client:moveToJail(CUTSCENE)
 	self:uncuffPlayer( client)
 	client:clearCrimes()
+	bailcosts = BAIL_PRICES[wantedLevel]
+	client:setJailBail(bailcosts)
 	StatisticsLogger:getSingleton():addArrestLog(client, wantedLevel, jailTime, client, bailcosts)
 	self:sendMessage("Der Spieler "..client:getName().." hat sich gestellt!", 0, 0,200)
 end
