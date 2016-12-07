@@ -220,7 +220,13 @@ function RobableShop:checkBagAllowed(player)
   return false
 end
 
-function RobableShop:characterInitialized()
+function RobableShop:characterInitialized()	
+  if not self.m_Gang then 
+	return 
+  end
+  if not source:getGroup() then 
+	return
+  end
   if self.m_Gang.m_Id == source:getGroup().m_Id then
     Group:attachPlayerMarker(source)
   end
