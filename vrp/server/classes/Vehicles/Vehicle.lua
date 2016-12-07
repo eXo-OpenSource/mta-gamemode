@@ -211,7 +211,7 @@ function Vehicle:toggleEngine(player)
 				self:toggleInternalSmoke()
 			end
 		end
-		if not INVALID_MODEL_FOR_START[getElementModle(self)] then
+		if not INVALID_MODEL_FOR_START[getElementModel(self)] then
 			if state == true then
 				if player and not getVehicleEngineState(self) then
 					for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do 
