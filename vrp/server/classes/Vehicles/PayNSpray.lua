@@ -101,9 +101,15 @@ end
 
 function PayNSpray.initializeAll()
 	-- Todo
-	PayNSpray:new(2063.2, -1831.3, 13.5, 8)
-	PayNSpray:new(487.4, -1742.8, 11.1, 12)
-	PayNSpray:new(1025.1, -1022, 32.1, 11)
+	PayNSpray:new(2063.2, -1831.3, 13.5, 8) -- LS Idlewood
+	PayNSpray:new(487.4, -1742.8, 11.1, 12) -- LS Santa Maria Beach
+	PayNSpray:new(1025.1, -1022, 32.1, 11) -- LS Temple
+	PayNSpray:new(1976.60, 2162.41, 9.57, 36) -- LV City
+	PayNSpray:new(-99.77, 1118.37, 18.29, 41) -- Fort Carson
+	PayNSpray:new(-1904.47, 289.47, 4, 19) -- SF Wang Cars
+	PayNSpray:new(-2425.84, 1020.08, 4, 27) -- SF Juniper Hill
+	PayNSpray:new(720.26, -455.14, 16.34, 47) -- Dillimore
+
 	local noobSpawn = PayNSpray:new(1444.860, -1790.127, 13.250)
 	noobSpawn:createCustomDoor(13028, Vector3(1445.5998,-1781.0005,16.1), Vector3(180,-90,90))
 end
