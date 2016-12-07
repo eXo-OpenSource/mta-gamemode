@@ -29,15 +29,9 @@ function FactionState:constructor()
 		end
 	)
 
-	addRemoteEvents{
-		"factionStateArrestPlayer", "factionStateGiveWanteds", "factionStateClearWanteds", "factionStateLoadJailPlayers", "factionStateFreePlayer",
-		"factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateStorageWeapons",
-		"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket",
-		"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
-		"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle"
-		}
-
-
+	addRemoteEvents{"factionStateArrestPlayer","factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateGiveWanteds", "factionStateClearWanteds",
+	"factionStateGrabPlayer", "factionStateFriskPlayer", "factionStateShowLicenses", "factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
+	"factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle", "factionStateLoadJailPlayers", "factionStateFreePlayer", "stateFactionSuccessCuff","factionStateAcceptTicket"}
 
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -48,13 +42,12 @@ function FactionState:constructor()
 	addCommandHandler("cuff",bind(self.Command_cuff, self))
 	addCommandHandler("uncuff",bind(self.Command_uncuff, self))
 	addCommandHandler("ticket",bind(self.Command_ticket, self))
-
+	
 	addEventHandler("factionStateArrestPlayer", root, bind(self.Event_JailPlayer, self))
 	addEventHandler("factionStateChangeSkin", root, bind(self.Event_FactionChangeSkin, self))
 	addEventHandler("factionStateRearm", root, bind(self.Event_FactionRearm, self))
 	addEventHandler("factionStateSwat", root, bind(self.Event_toggleSwat, self))
 	addEventHandler("factionStateToggleDuty", root, bind(self.Event_toggleDuty, self))
-	addEventHandler("factionStateStorageWeapons", root, bind(self.Event_storageWeapons, self))
 	addEventHandler("factionStateGiveWanteds", root, bind(self.Event_giveWanteds, self))
 	addEventHandler("factionStateClearWanteds", root, bind(self.Event_clearWanteds, self))
 	addEventHandler("factionStateGrabPlayer", root, bind(self.Event_grabPlayer, self))
@@ -202,27 +195,27 @@ end
 
 function FactionState:Command_ticket( source, cmd, target )
 	if target then
-		if type(target) == "string" then
+		if type(target) == "string" then 
 			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
-			if targetPlayer then
+			if targetPlayer then 
 				local faction = source:getFaction()
 				if not faction then return end
 				if not faction:isStateFaction() then return end
-				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
+				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then 
 					if source ~= targetPlayer then
 						if targetPlayer:getWantedLevel() == 1 then
 							source.m_CurrentTicket = targetPlayer
 							targetPlayer:triggerEvent("stateFactionOfferTicket", source)
-						else
+						else 
 							source:sendError("Der Spieler hat kein oder ein zu hohes Fahndungslevel!")
 						end
-					else
+					else 
 						source:sendError("Du kannst dir kein Ticket anbieten!")
 					end
-				else
+				else 
 					source:sendError("Du bist zu weit weg!")
 				end
-			else
+			else 
 				source:sendError("Ziel nicht gefunden!")
 			end
 		end
@@ -231,9 +224,9 @@ function FactionState:Command_ticket( source, cmd, target )
 end
 
 function FactionState:Event_OnTicketAccept( )
-	if client then
+	if client then 
 		if client:getMoney() >= 2000 then
-			if client:getWantedLevel() == 1 then
+			if client:getWantedLevel() == 1 then 
 				client:setWantedLevel(0)
 				client:takeMoney(2000, "[SAPD] Kautionsticket")
 			end
@@ -242,39 +235,39 @@ function FactionState:Event_OnTicketAccept( )
 end
 function FactionState:Command_cuff( source, cmd, target )
 	if target then
-		if type(target) == "string" then
+		if type(target) == "string" then 
 			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
-			if targetPlayer then
-				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
+			if targetPlayer then 
+				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then 
 					local faction = source:getFaction()
-					if faction then
-						if faction:isStateFaction() then
+					if faction then 
+						if faction:isStateFaction() then 
 							if source ~= targetPlayer then
 								if source:isFactionDuty() then
-									if getPedOccupiedVehicleSeat ( targetPlayer ) ~= 0 and getPedOccupiedVehicleSeat ( targetPlayer ) ~= false then
+									if not targetPlayer.vehicle then
 										source.m_CurrentCuff = targetPlayer
 										source:triggerEvent("factionStateStartCuff", targetPlayer)
 										targetPlayer:triggerEvent("CountdownStop",  5, "Gefesselt in")
 										targetPlayer:triggerEvent("Countdown", 5, "Gefesselt in")
 										source:triggerEvent("CountdownStop", 5, "Gefesselt in")
 										source:triggerEvent("Countdown", 5, "Gefesselt in")
-									else
+									else 
 										source:sendError("Du kommst nicht an den Spieler heran!")
 									end
-								else
+								else 
 									source:sendError("Du bist nicht im Dienst!")
 								end
-							else
+							else 
 								source:sendError("Du kannst dich nicht selbst fesseln!")
 							end
-						else
+						else 
 							source:sendError("Du hast keine Handschellen dabei!")
 						end
 					end
-				else
+				else 
 					source:sendError("Du bist zu weit weg!")
 				end
-			else
+			else 
 				source:sendError("Ziel nicht gefunden!")
 			end
 		end
@@ -284,32 +277,32 @@ end
 
 function FactionState:Command_uncuff( source, cmd, target )
 	if target then
-		if type(target) == "string" then
+		if type(target) == "string" then 
 			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
-			if targetPlayer then
-				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
+			if targetPlayer then 
+				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then 
 					local faction = source:getFaction()
-					if faction then
+					if faction then 
 						if source ~= targetPlayer then
 							if faction:isStateFaction() then
 								if source:isFactionDuty() then
 									self:uncuffPlayer( targetPlayer )
 									source:meChat(true,"nimmt die Handschellen von "..targetPlayer:getName().." ab!")
 									targetPlayer:triggerEvent("updateCuffImage", false)
-								else
+								else 
 									source:sendError("Du hast keine Handschellen dabei!")
 								end
-							else
+							else 
 								source:sendError("Du hast keine Handschellen dabei!")
 							end
 						end
 					else
 						source:sendError("Du kannst dich nicht selbst entfesseln!")
 					end
-				else
+				else 
 					source:sendError("Du bist zu weit weg!")
 				end
-			else
+			else 
 				source:sendError("Ziel nicht gefunden!")
 			end
 		end
@@ -317,7 +310,7 @@ function FactionState:Command_uncuff( source, cmd, target )
 	end
 end
 
-function FactionState:uncuffPlayer( player)
+function FactionState:uncuffPlayer( player) 
 	toggleControl(player, "sprint", true)
 	toggleControl(player, "jump", true)
 	toggleControl(player, "fire", true)
@@ -327,10 +320,10 @@ function FactionState:uncuffPlayer( player)
 end
 
 function FactionState:Event_CuffSuccess( target )
-	if client then
-		if client.m_CurrentCuff == target then
-			if getDistanceBetweenPoints3D(target:getPosition() , client:getPosition()) <= 5 then
-				if getPedOccupiedVehicleSeat ( target ) ~= 0 and getPedOccupiedVehicleSeat ( target ) ~= false then
+	if client then 
+		if client.m_CurrentCuff == target then 
+			if getDistanceBetweenPoints3D(target:getPosition() , client:getPosition()) <= 5 then 
+				if not target.vehicle then
 					toggleControl(target, "sprint", false)
 					toggleControl(target, "jump", false)
 					toggleControl(target, "fire", false)
@@ -654,7 +647,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				player:setJailTime(jailTime)
 				player:setWantedLevel(0)
 				player:moveToJail(CUTSCENE)
-				self:uncuffPlayer( player)
+				self:uncuffPlayer( player) 
 				player:clearCrimes()
 
 				-- Pay some money to faction and karma, xp to the policeman
@@ -801,27 +794,6 @@ function FactionState:Event_toggleDuty()
 	else
 		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
 		return false
-	end
-end
-
-function FactionState:Event_storageWeapons()
-	local faction = client:getFaction()
-	if faction and faction:isStateFaction() then
-		if client:isFactionDuty() then
-			local depot = faction:getDepot()
-			for i= 1, 12 do
-				if client:getWeapon(i) > 0 then
-					local weaponId = client:getWeapon(i)
-					local magazines = math.floor(client:getTotalAmmo(i)/getWeaponProperty(weaponId, "poor", "maximum_clip_ammo"))
-					depot:addWeaponD(weaponId, 1)
-					if magazines > 0 then
-						depot:addWeaponD(weaponId, magazines)
-					end
-					takeWeapon(client, weaponId)
-					client:sendMessage(_("Du hast eine/n %s mit %s Magazin/e ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines), 0, 255, 0)
-				end
-			end
-		end
 	end
 end
 
