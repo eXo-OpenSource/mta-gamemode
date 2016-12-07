@@ -6,6 +6,18 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
+
+VEHICLE_ALT_SOUND = 
+{
+	[568] = true,
+	[411] = true,
+	[477] = true,
+	[451] = true,
+	[560] = true,
+	[598] = true,
+	[522] = true,
+	[603] = true,
+}
 registerElementClass("vehicle", Vehicle)
 addRemoteEvents{"vehicleEngineStart", "vehicleOnSmokeStateChange", "vehicleCarlock", "vehiclePlayCustomHorn", "vehicleHandbrake", "vehicleStopCustomHorn",
 "soundvanChangeURLClient", "soundvanStopSoundClient", "playLightSFX"}
@@ -42,10 +54,13 @@ function Vehicle:getVehicleType()
 end
 
 addEventHandler("vehicleEngineStart", root,
-	function()
-		if chance(10) then
-			playSound("files/audio/Enginestart.mp3")
+	function(  veh )
+		local sound = "files/audio/Enginestart.ogg"
+		if VEHICLE_ALT_SOUND[getElementModel(veh)] then 
+			sound = "files/audio/Enginestart2.ogg"
 		end
+		local x,y,z = getElementPosition(veh)
+		attachElements(playSound3D(sound,x,y,z), veh)
 	end
 )
 

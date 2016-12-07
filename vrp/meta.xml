@@ -1124,7 +1124,8 @@
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/Halleluja.mp3"/>
 	<vrpfile src="files/audio/Win.mp3"/>
-	<vrpfile src="files/audio/Enginestart.mp3"/>
+	<vrpfile src="files/audio/Enginestart.ogg"/>
+	<vrpfile src="files/audio/Enginestart2.ogg"/>
 	<vrpfile src="files/audio/Siren.ogg"/>
 	<vrpfile src="files/audio/Alarm.mp3"/>
 	<vrpfile src="files/audio/ElevatorMusic.ogg"/>

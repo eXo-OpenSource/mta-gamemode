@@ -206,11 +206,19 @@ function Vehicle:toggleEngine(player)
 				self:toggleInternalSmoke()
 			end
 		end
-
-		self:setEngineState(state)
+		if state == true then
+			if player and not getVehicleEngineState(self) then
+				for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do 
+					if getElementType(other) == "player" then
+						other:triggerEvent("vehicleEngineStart", self)
+					end
+				end
+			end
+			setTimer(bind(self.setEngineState,self), 2000,1,state)
+		end
+		self:setEngineState(false)
 		return true
 	end
-
 	player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
 	return false
 end
@@ -235,12 +243,10 @@ function Vehicle:toggleHandBrake( player )
 end
 
 function Vehicle:setEngineState(state)
-	setVehicleEngineState(self, state)
-	self.m_EngineState = state
-
 	local player = getVehicleOccupant(self, 0)
-	if player and getVehicleEngineState(self) then
-		player:triggerEvent("vehicleEngineStart")
+	if player then
+		setVehicleEngineState(self, state)
+		self.m_EngineState = state
 	end
 end
 
