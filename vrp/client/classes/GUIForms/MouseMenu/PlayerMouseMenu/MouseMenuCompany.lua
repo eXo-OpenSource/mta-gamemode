@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        client/classes/GUIForms/MouseMenu/PlayerMouseMenuCompany.lua
+-- *  FILE:        client/classes/GUIForms/MouseMenu/PlayerMouseMenu/MouseMenuCompany.lua
 -- *  PURPOSE:     Player mouse menu - faction class
 -- *
 -- ****************************************************************************
