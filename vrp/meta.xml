@@ -441,7 +441,7 @@
 	<script src="client/classes/GUIForms/ButtonMenu/CompanyDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
-
+	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>

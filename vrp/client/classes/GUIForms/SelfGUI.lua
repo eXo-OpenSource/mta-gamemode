@@ -105,7 +105,18 @@ function SelfGUI:constructor()
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
-
+	
+	self.m_ShortMessageLog = GUIButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"ShortMessage-Log", tabGeneral):setBackgroundColor(Color.Orange):setFontSize(1.2)
+	ShortMessageLogGUI:new()
+	self.m_ShortMessageLog.onLeftClick = function() 
+		if ShortMessageLogGUI then 
+			if not ShortMessageLogGUI:getSingleton():isVisible() then 
+				ShortMessageLogGUI:getSingleton():show()
+				self:close()
+			end
+		end
+	end
+	
 	-- Tab: Statistics
 	local tabStatistics = self.m_TabPanel:addTab(_"Statistiken")
 	self.m_TabStatistics = tabStatistics
@@ -487,6 +498,9 @@ function SelfGUI:onShow()
 		local karma = localPlayer:getKarma()
 		self.m_GeneralKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 	end
+	if ShortMessageLogGUI:getSingleton():isVisible() then 
+		ShortMessageLogGUI:getSingleton():hide()
+	end	
 end
 
 function SelfGUI:onHide()
