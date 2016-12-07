@@ -16,6 +16,8 @@ function ScoreboardGUI:constructor()
 
 
 	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.96, self.m_Height*0.45, self.m_Rect)
+	self.m_Grid:setFont(VRPFont(24))
+	self.m_Grid:setItemHeight(24)
 	self.m_Grid:setColor(Color.Clear)
 	self.m_Grid:addColumn(_"VIP", 0.05)
 	self.m_Grid:addColumn(_"Name", 0.2)
@@ -136,7 +138,7 @@ function ScoreboardGUI:insertPlayers()
 		end
 
 		gname = player:getGroupName()
-		if gname == "" or #gname == 0 then 
+		if gname == "" or #gname == 0 then
 			gname = "-Keine-"
 		end
 		local item = self.m_Grid:addItem(
@@ -149,8 +151,8 @@ function ScoreboardGUI:insertPlayers()
 			karma >= 0 and "+"..karma or " "..tostring(karma),
 			ping or " - "
 		)
-		item:setColumnToImage(1, true)
-
+		item:setColumnToImage(1, true, item.m_Height)
+		item:setFont(VRPFont(24))
 		if data[2] and player:getFaction() then
 			local color = player:getFaction():getColor()
 			item:setColumnColor(3, tocolor(color.r, color.g, color.b))

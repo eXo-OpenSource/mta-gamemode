@@ -41,8 +41,9 @@ function GUIGridListItem:setColumnColor(columnIndex, color)
 	return self
 end
 
-function GUIGridListItem:setColumnToImage(columnIndex, state)
+function GUIGridListItem:setColumnToImage(columnIndex, state, width)
 	self.m_Columns[columnIndex].image = state
+	self.m_Columns[columnIndex].imageWidth = width or getColumnWidth(columnIndex)*self.m_Width - 10
 	self:anyChange()
 	return self
 end
@@ -70,7 +71,7 @@ function GUIGridListItem:drawThis()
 	for columnIndex, columnValue in ipairs(self.m_Columns) do
 		local columnWidth = self:getGridList():getColumnWidth(columnIndex)
 		if self.m_Columns[columnIndex].image then
-			dxDrawImage(self.m_AbsoluteX + currentXPos + 6, self.m_AbsoluteY + 3, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 10, self.m_Height - 6, self.m_Columns[columnIndex].text)
+			dxDrawImage(self.m_AbsoluteX + currentXPos + 6, self.m_AbsoluteY + 3, self.m_AbsoluteX + currentXPos + self.m_Columns[columnIndex].imageWidth, self.m_Height - 6, self.m_Columns[columnIndex].text)
 		else
 			dxDrawText(self.m_Columns[columnIndex].text, self.m_AbsoluteX + currentXPos + 4, self.m_AbsoluteY + 1, self.m_AbsoluteX + currentXPos + columnWidth*self.m_Width - 4, self.m_Height, self.m_Columns[columnIndex].color or self.m_Color, self.m_FontSize, self.m_Font, self.m_Columns[columnIndex].alignX)
 		end
