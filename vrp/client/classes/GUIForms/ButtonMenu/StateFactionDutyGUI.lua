@@ -24,7 +24,8 @@ function StateFactionDutyGUI:addItems()
 		self:addItem(_"Dienst beenden", Color.Green, bind(self.itemCallback, self, 1))
 		self:addItem(_"Neu ausrüsten", Color.Green, bind(self.itemCallback, self, 2))
 		self.m_Swat = self:addItem(_"Zum Swat-Modus wechseln",Color.Blue, bind(self.itemCallback, self, 3))
-		self:addItem(_"Skin wechseln", Color.Blue, bind(self.itemCallback, self, 4))
+		--self:addItem(_"Skin wechseln", Color.Blue, bind(self.itemCallback, self, 4))
+		self:addItem(_"Waffen einlagern", Color.Red, bind(self.itemCallback, self, 5))
 	else
 		self:addItem(_"In den Dienst gehen", Color.Green, bind(self.itemCallback, self, 1))
 	end
@@ -40,6 +41,8 @@ function StateFactionDutyGUI:itemCallback(type)
 		triggerServerEvent("factionStateSwat", localPlayer)
 	elseif type == 4 then
 		triggerServerEvent("factionStateChangeSkin", localPlayer)
+	elseif type == 5 then
+		triggerServerEvent("factionStateStorageWeapons", localPlayer)
 	end
 	self:close()
 end
