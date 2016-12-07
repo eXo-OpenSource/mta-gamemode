@@ -55,11 +55,12 @@ function Blip:destructor()
 	else
 		local index = table.find(Blip.Blips, self)
 		if index then
-			  self:dettach()
-			  Blip.Blips[index] = nil
-			  if self.DefaultBlips[index] then
-			    destroyElement( self.DefaultBlips[index] )
-			  end
+			self:dettach()
+			Blip.Blips[index] = nil
+			if isElement(self.DefaultBlips[index] ) then
+				destroyElement( self.DefaultBlips[index] )	
+				self.DefaultBlips[index] = nil
+			end
 		end
 	end
 	HUDRadar:syncBlips()
@@ -141,7 +142,8 @@ end
 function Blip:attachTo(element)
   if Blip.AttachedBlips[self] then table.remove(Blip.AttachedBlips, table.find(self)) end
   Blip.AttachedBlips[self] = element
-  if self.DefaultBlips[self.m_ID] then
+  if isElement(self.DefaultBlips[self.m_ID] ) then
+	self.DefaultBlips[self.m_ID] = nil
 	local r,g,b,a = unpack(self.m_DefaultColor)
 	destroyElement(self.DefaultBlips[self.m_ID])
 	self.DefaultBlips[self.m_ID] = createBlipAttachedTo(element,0,self.m_DefaultSize,r,g,b,a)
