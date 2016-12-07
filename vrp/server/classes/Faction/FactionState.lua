@@ -15,6 +15,8 @@ function FactionState:constructor()
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
+	self.m_SelfBailMarker = {}
+	self:createSelfArrestMarker(249.67, 69.19, 1003.64, 6,0)
 	self.m_Items = {
 		["Barrikade"] = 0,
 		["Nagel-Band"] = 0,
@@ -34,7 +36,8 @@ function FactionState:constructor()
 	"factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateStorageWeapons",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket",
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
-	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle"
+	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
+	"playerSelfArrestConfirm"
 	}
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -68,7 +71,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateFreePlayer", root, bind(self.Event_freePlayer, self))
 	addEventHandler("stateFactionSuccessCuff", root, bind(self.Event_CuffSuccess, self))
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
-
+	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
 
 	-- Prepare the Area51
 	self:createDefendActors(
@@ -88,6 +91,41 @@ function FactionState:constructor()
 end
 
 function FactionState:destructor()
+end
+
+
+function FactionState:createSelfArrestMarker( x,y,z, int, dim ) 
+	local marker = createPickup(x,y,z,3,1247,10)
+	setElementInterior(marker, int)
+	setElementDimension(marker, dim)
+	self.m_SelfBailMarker[#self.m_SelfBailMarker+1] = marker
+	addEventHandler("onPickupHit",marker, function(hE, bDim)
+		if getElementDimension(hE) == getElementDimension(source) then 
+			if getElementType(hE) == "player" then 
+				if hE:getWantedLevel() > 0 then
+					hE:triggerEvent("playerSelfArrest")
+				end
+			end
+		end
+	end)
+end
+
+function FactionState:Event_OnConfirmSelfArrest()
+	local bailcosts = 0
+	local wantedLevel = client:getWantedLevel()
+	local jailTime = wantedLevel * 8
+	local factionBonus = JAIL_COSTS[wantedLevel]
+	bailcosts = BAIL_PRICES[wantedLevel]
+	client:setJailTime(jailTime)
+	client:setWantedLevel(0)
+	client:moveToJail(CUTSCENE)
+	self:uncuffPlayer( client)
+	client:clearCrimes()
+	StatisticsLogger:getSingleton():addArrestLog(client, wantedLevel, jailTime, client, bailcosts)
+	setTimer(function () -- (delayed)
+		client:giveAchievement(31)
+	end, 14000, 1)
+	self:sendMessage("Der Spieler "..client:getName().." hat sich gestellt!", 0, 0,200)
 end
 
 function FactionState:loadLSPD(factionId)

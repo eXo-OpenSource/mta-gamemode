@@ -14,12 +14,13 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage"}
+	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
 	addEventHandler("stateFactionNeedHelp", root, bind(self.stateFactionNeedHelp, self))
 	addEventHandler("stateFactionOfferTicket", root, bind(self.stateFactionOfferTicket, self))
 	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
+	addEventHandler("playerSelfArrest", localPlayer, bind(self.Event_selfArrestMarker, self))
 	self.m_DrawCuffFunc = bind(self.drawCuff, self)
 end
 
@@ -49,6 +50,21 @@ end
 
 function FactionManager:drawCuff()
 	dxDrawImage(w*0.88, h - w*0.1, w*0.08,w*0.0436,"files/images/Other/cuff.png")
+end
+
+function FactionManager:Event_selfArrestMarker( client )
+	if not localPlayer.m_selfArrest then 
+		localPlayer.m_selfArrest = true
+		QuestionBox:new(
+			_"Möchtest du dich mit Kaution stellen?",
+			function ()
+				triggerServerEvent("playerSelfArrestConfirm", root )
+				localPlayer.m_selfArrest = false
+			end,
+			function ()
+				localPlayer.m_selfArrest = false
+			end)
+	end
 end
 
 function FactionManager:stateFactionOfferTicket( cop )
