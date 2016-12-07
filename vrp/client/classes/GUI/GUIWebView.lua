@@ -93,12 +93,10 @@ function GUIWebView:onInternalMouseWheelUp()
 end
 
 function GUIWebView:onCursorMove(relX, relY, absX, absY)
-    if not isCursorShowing() then
-        return
-    end
-
-    local guiX, guiY = self:getPosition(true)
-    self.m_Browser:injectMouseMove(absX - guiX, absY - guiY)
+    if isCursorShowing() then
+		local guiX, guiY = self:getPosition(true)
+		self.m_Browser:injectMouseMove(absX - guiX, absY - guiY)
+	end
 end
 
 function GUIWebView:setPausingOnHide(state)
