@@ -295,12 +295,8 @@ function FactionState:Command_uncuff( source, cmd, target )
 								if source:isFactionDuty() then
 									self:uncuffPlayer( targetPlayer )
 									source:meChat(true,"nimmt die Handschellen von "..targetPlayer:getName().." ab!")
-<<<<<<< HEAD
 									targetPlayer:triggerEvent("updateCuffImage", false)
 								else
-=======
-								else
->>>>>>> Added Feature #499 - Weapon Storage
 									source:sendError("Du hast keine Handschellen dabei!")
 								end
 							else
@@ -331,7 +327,6 @@ function FactionState:uncuffPlayer( player)
 end
 
 function FactionState:Event_CuffSuccess( target )
-<<<<<<< HEAD
 	if client then
 		if client.m_CurrentCuff == target then
 			if getDistanceBetweenPoints3D(target:getPosition() , client:getPosition()) <= 5 then
@@ -346,17 +341,6 @@ function FactionState:Event_CuffSuccess( target )
 					target:triggerEvent("CountdownStop", "Gefesselt in", 10)
 					target:triggerEvent("updateCuffImage", true)
 				end
-=======
-	if client then
-		if client.m_CurrentCuff == target then
-			if getDistanceBetweenPoints3D(target:getPosition() , client:getPosition()) <= 5 then
-				toggleControl(target, "sprint", false)
-				toggleControl(target, "jump", false)
-				setPedWalkingStyle(target, 123)
-				source:meChat(true,"legt "..target:getName().." Handschellen an!")
-				source:triggerEvent("CountdownStop", "Gefesselt in", 5)
-				target:triggerEvent("CountdownStop", "Gefesselt in", 5)
->>>>>>> Added Feature #499 - Weapon Storage
 			end
 		end
 	end
