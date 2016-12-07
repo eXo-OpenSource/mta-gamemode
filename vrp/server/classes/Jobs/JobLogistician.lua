@@ -225,6 +225,7 @@ function Crane:loadContainer(vehicle, player, callback)
 									-- Roll tow down and load up the truck
 									self:rollTowDown(
 										function()
+											if not isElement(container ) or not isElement(vehicle) then return end
 											detachElements(container, self.m_Tow)
 											attachElements(container, vehicle, 0, -1.7, 1.1)
 											vehicle:setFrozen(false)
