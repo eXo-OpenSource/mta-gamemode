@@ -120,7 +120,8 @@
 	<script src="server/classes/Inventory/Items/ItemSellContract.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemIDCard.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFuelcan.lua" type="server"/>
-
+	<script src="server/classes/Inventory/Items/ItemRepairKit.lua" type="server"/>
+	
 	<script src="server/classes/Inventory/Items/Drugs/DrugsWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsShroom.lua" type="server"/>

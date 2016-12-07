@@ -122,9 +122,6 @@ function FactionState:Event_OnConfirmSelfArrest()
 	self:uncuffPlayer( client)
 	client:clearCrimes()
 	StatisticsLogger:getSingleton():addArrestLog(client, wantedLevel, jailTime, client, bailcosts)
-	setTimer(function () -- (delayed)
-		client:giveAchievement(31)
-	end, 14000, 1)
 	self:sendMessage("Der Spieler "..client:getName().." hat sich gestellt!", 0, 0,200)
 end
 
