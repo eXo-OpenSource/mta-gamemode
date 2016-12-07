@@ -17,7 +17,6 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen)
 
 	self.m_LabelOwner =     GUILabel:new(30, 40, self.m_Width-60, 30,_"s", self.m_Window)
 	self.m_LabelPrice =     GUILabel:new(30, 70, self.m_Width-60, 30,_"s", self.m_Window)
-	self.m_LabelRentPrice = GUILabel:new(30, 100,self.m_Width-60, 30,_"s", self.m_Window)
 
 	self.m_Rent = GUIButton:new(30, 135, self.m_Width-60, 35, _("Einmieten"), self)
 	self.m_Rent:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
@@ -55,10 +54,25 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen)
 
 	self.m_LabelOwner:setText(_("Besitzer: %s",owner or "-"))
 	self.m_LabelPrice:setText(_("Preis: $%d",price))
-	self.m_LabelRentPrice:setText(_("Mietpreis: $%d",rentprice))
+
 	--self.m_Break:setVisible(isValidRob)
 
 	if owner == localPlayer:getName() then
+		GUILabel:new(30, 100, self.m_Width/2-30, 30, _"Mietpreis:" , self.m_Window)
+		self.m_RentPrice = GUIChanger:new(self.m_Width/2-30, 100, self.m_Width/2-35, 30, self.m_Window)
+		self.m_SaveRent = GUIButton:new(self.m_Width-60, 100, 30, 30, FontAwesomeSymbols.Save, self.m_Window):setFont(FontAwesome(15))
+		self.m_SaveRent.onLeftClick = bind(self.saveRent,self)
+
+		local item
+		self.m_RentTable = {}
+		for i = 0, 500, 50 do
+			item = self.m_RentPrice:addItem(i.."$")
+			self.m_RentTable[item] = i
+			if rentprice == i then
+				self.m_RentPrice:setIndex(item)
+			end
+		end
+
 		self.m_Buy:setVisible(false)
 		self.m_Sell:setVisible(true)
 		self.m_Rent:setVisible(false)
@@ -69,6 +83,8 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen)
 		else
 			self.m_Lock:setText(_"Aufschließen")
 		end
+	else
+		GUILabel:new(30, 100,self.m_Width-60, 30, _("Mietpreis: $%d",rentprice) , self.m_Window)
 	end
 
 	if localPlayer:getDimension() > 0 or localPlayer:getInterior() > 0 then
@@ -106,6 +122,16 @@ end
 
 function HouseGUI:onRent()
 	triggerServerEvent("rentHouse",root)
+end
+
+function HouseGUI:saveRent()
+	local _, id = self.m_RentPrice:getIndex()
+	local rent = self.m_RentTable[id]
+	if rent then
+		triggerServerEvent("houseSetRent",root, rent)
+	else
+		ErrorBox:new("Ungültige Auswahl!")
+	end
 end
 
 function HouseGUI:onUnrent()

@@ -49,6 +49,6 @@ FontAwesomeSymbols = {
 	Refresh = "",
 	Expand = "",
 	Copy = "",
-	Trash = ""
-
+	Trash = "",
+	Save = ""
 }

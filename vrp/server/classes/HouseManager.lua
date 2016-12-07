@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 HouseManager = inherit(Singleton)
-addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse","lockHouse"}
+addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse","lockHouse", "houseSetRent"}
 
 local ROB_DELAY = 1000*60*15
 
@@ -30,6 +30,10 @@ function HouseManager:constructor()
 	addEventHandler("enterHouse",root,bind(self.enterHouse,self))
 	addEventHandler("leaveHouse",root,bind(self.leaveHouse,self))
 	addEventHandler("lockHouse",root,bind(self.lockHouse,self))
+	addEventHandler("houseSetRent",root,bind(self.setRent,self))
+
+
+
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
 
 end
@@ -60,6 +64,12 @@ function HouseManager:lockHouse()
 	if not client then return end
 	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:toggleLockState(client)
+end
+
+function HouseManager:setRent(rent)
+	if not client then return end
+	if client.vehicle then return end
+	self.m_Houses[client.visitingHouse]:setRent(client, rent)
 end
 
 function HouseManager:breakHouse()

@@ -183,6 +183,13 @@ function House:unrentHouse(player)
 	end
 end
 
+function House:setRent(player, rent)
+	if player:getId() == self.m_Owner then
+		player:sendInfo(_("Du hast die Miete auf %d$ gesetzt!", player, rent))
+		self.m_RentPrice = rent
+	end
+end
+
 function House:enterHouseTry(player)
 	if self.m_Keys[player:getId()] or not self.m_LockStatus or player:getId() == self.m_Owner or ( self.m_CurrentRobber and player:getJob() == 4 ) then
 		self:enterHouse(player)
