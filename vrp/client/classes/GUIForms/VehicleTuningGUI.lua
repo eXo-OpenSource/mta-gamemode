@@ -63,7 +63,7 @@ function VehicleTuningGUI:constructor(vehicle)
     self.m_CurrentUpgrades[VehicleSpecialProperty.Neon] = getElementData(self.m_Vehicle, "Neon") or 0
     self.m_CurrentUpgrades[VehicleSpecialProperty.NeonColor] = getElementData(self.m_Vehicle, "NeonColor") or {0,0,0}
 
-    self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
+    --self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
 	self.m_CarRadioVolume = RadioGUI:getSingleton():getVolume() or 0
 	RadioGUI:getSingleton():setVolume(0)
     self.m_Vehicle:setOverrideLights(2)
@@ -77,9 +77,9 @@ function VehicleTuningGUI:destructor(closedByServer)
     end
 
     setCameraTarget(localPlayer)
-    if self.m_Music then
+    --[[if self.m_Music then
         self.m_Music:destroy()
-    end
+    end]]
     delete(self.m_UpgradeChanger)
     delete(self.m_AddToCartButton)
     delete(self.m_ShoppingCartWindow)

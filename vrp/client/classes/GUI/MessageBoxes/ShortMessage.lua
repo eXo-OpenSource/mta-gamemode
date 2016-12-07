@@ -84,11 +84,12 @@ function ShortMessage:destructor()
 	if self.m_Timeout and isTimer(self.m_Timeout) then
 		killTimer(self.m_Timeout)
 	end
-
-	Animation.FadeAlpha:new(self, 200, 200, 0).onFinish = function ()
-		GUIElement.destructor(self)
-		table.removevalue(ShortMessage.MessageBoxes, self)
-		ShortMessage.resortPositions()
+	if not self.m_ForceDestroy then
+		Animation.FadeAlpha:new(self, 200, 200, 0).onFinish = function ()
+			GUIElement.destructor(self)
+			table.removevalue(ShortMessage.MessageBoxes, self)
+			ShortMessage.resortPositions()
+			end
 	end
 end
 
@@ -147,8 +148,13 @@ function ShortMessage.resortPositions ()
 		end
 	else 
 		for i = 1, #ShortMessage.MessageBoxes do 
+			if ShortMessage.MessageBoxes[i].m_Animation then 
+				delete(ShortMessage.MessageBoxes[i].m_Animation)
+			end
+			ShortMessage.MessageBoxes[i].m_ForceDestroy = true
 			delete(ShortMessage.MessageBoxes[i])
 		end
+		outputDebugString("Forced destroy of MessageBoxe!",0, 255,0,150)
 	end
 end
 
