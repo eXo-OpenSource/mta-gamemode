@@ -26,17 +26,18 @@ function GUIMovable:stopMoving()
 end
 
 function GUIMovable:Event_CursorMove(cursorX, cursorY, absoluteX, absoluteY)
-	local moveElement = self.m_CacheArea or self
-	if moveElement == GUIRenderer.cacheroot then
-		--moveElement = self
-		-- TODO: Move self instead of window
-		return
-	end
+	if isCursorShowing() then
+		local moveElement = self.m_CacheArea or self
+		if moveElement == GUIRenderer.cacheroot then
+			--moveElement = self
+			-- TODO: Move self instead of window
+			return
+		end
 
-	-- TODO: Fix moving for noncached windows (disable moving in a hacky way)
-	if instanceof(self.m_Parent, CacheArea) and not self.m_Parent:isCachingEnabled() then
-		return
+		-- TODO: Fix moving for noncached windows (disable moving in a hacky way)
+		if instanceof(self.m_Parent, CacheArea) and not self.m_Parent:isCachingEnabled() then
+			return
+		end
+		moveElement:setAbsolutePosition(absoluteX - self.m_CursorOffsetX, absoluteY - self.m_CursorOffsetY)
 	end
-
-	moveElement:setAbsolutePosition(absoluteX - self.m_CursorOffsetX, absoluteY - self.m_CursorOffsetY)
 end

@@ -34,18 +34,20 @@ function GUIVerticalScrollbar:onInternalLeftClick()
 end
 
 function GUIVerticalScrollbar:Event_onClientCursorMove(_, _, cursorX, cursorY)
-	local currentY = self.m_ScrollPosition * self.m_Height
-	local cursorOffY = cursorY - self.m_AbsoluteY
-	local diff = cursorOffY - currentY
-	self.m_CursorOffset = self.m_CursorOffset or diff
-	local newY = currentY + diff - self.m_CursorOffset
+	if isCursorShowing() then
+		local currentY = self.m_ScrollPosition * self.m_Height
+		local cursorOffY = cursorY - self.m_AbsoluteY
+		local diff = cursorOffY - currentY
+		self.m_CursorOffset = self.m_CursorOffset or diff
+		local newY = currentY + diff - self.m_CursorOffset
 
-	if newY < self.m_Height-self.m_ScrollerSize then
-		self:setScrollPosition(newY / self.m_Height)
-
-		-- Call scroll handler
-		if self.m_ScrollHandler then
-			self.m_ScrollHandler(self:getScrollPosition())
+		if newY < self.m_Height-self.m_ScrollerSize then
+			self:setScrollPosition(newY / self.m_Height)
+	
+			-- Call scroll handler
+			if self.m_ScrollHandler then
+				self.m_ScrollHandler(self:getScrollPosition())
+			end
 		end
 	end
 end

@@ -37,17 +37,19 @@ function GUIHorizontalScrollbar:onInternalLeftClick()
 end
 
 function GUIHorizontalScrollbar:Event_onClientCursorMove(_, _, cursorX, cursorY)
-	local currentX = self.m_ScrollPosition * self.m_Width
-	local cursorOffX = cursorX - self.m_AbsoluteX
-	local diff = cursorOffX - currentX
-	self.m_CursorOffset = self.m_CursorOffset or diff
-	local newX = currentX + diff - self.m_CursorOffset
-	if newX < self.m_Width-49-GUI_SCROLLBAR_ELEMENT_MARGIN then
-		self:setScrollPosition(newX / self.m_Width)
+	if isCursorShowing() then
+		local currentX = self.m_ScrollPosition * self.m_Width
+		local cursorOffX = cursorX - self.m_AbsoluteX
+		local diff = cursorOffX - currentX
+		self.m_CursorOffset = self.m_CursorOffset or diff
+		local newX = currentX + diff - self.m_CursorOffset
+		if newX < self.m_Width-49-GUI_SCROLLBAR_ELEMENT_MARGIN then
+			self:setScrollPosition(newX / self.m_Width)
 
-		-- Call scroll handler
-		if self.m_ScrollHandler then
-			self.m_ScrollHandler(self:getScrollPosition())
+			-- Call scroll handler
+			if self.m_ScrollHandler then
+				self.m_ScrollHandler(self:getScrollPosition())
+			end
 		end
 	end
 end

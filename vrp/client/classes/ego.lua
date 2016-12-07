@@ -47,6 +47,7 @@ function ego:destructor()
 end
 
 function ego:freeCamFrame()
+	if not ego.Active then return end
     local camPosX, camPosY, camPosZ = getPedBonePosition(localPlayer, 8)
 
 	local angleZ = math.sin(self.m_RotY)
@@ -61,6 +62,7 @@ function ego:freeCamFrame()
 end
 
 function ego:freeCamMouse(_, _, aX, aY)
+	if not ego.Active then return end
 	if isCursorShowing() then
 		self.m_Delay = 5
 		return
