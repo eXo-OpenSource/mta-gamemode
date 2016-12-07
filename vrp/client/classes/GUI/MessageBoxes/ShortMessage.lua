@@ -20,7 +20,11 @@ end
 
 function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc)
 	if ShortMessageLogGUI.m_Log then 
-		table.insert(ShortMessageLogGUI.m_Log, title.." - "..text)
+		if not title then 
+			table.insert(ShortMessageLogGUI.m_Log, text)
+		else 
+			table.insert(ShortMessageLogGUI.m_Log, title.." - "..text)
+		end
 	end
 	local x, y, w
 	x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
