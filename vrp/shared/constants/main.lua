@@ -1,4 +1,4 @@
-HTTP_DOWNLOAD = true
+HTTP_DOWNLOAD = false
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
