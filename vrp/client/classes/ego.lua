@@ -35,6 +35,7 @@ function ego:constructor()
 	addEventHandler("onClientCursorMove", root, self.m_FreeCamMouseBind)
 	addEventHandler("onClientPlayerWasted", localPlayer, function()
 		delete(self)
+		ego.Active = false
 	end)
 end
 
@@ -43,7 +44,6 @@ function ego:destructor()
 	removeEventHandler("onClientRender", root, self.m_FreeCamFrameBind)
 	removeEventHandler("onClientCursorMove", root, self.m_FreeCamMouseBind)
 	setCameraTarget(localPlayer)
-	ego.Active = false
 end
 
 function ego:freeCamFrame()
@@ -56,30 +56,6 @@ function ego:freeCamFrame()
 	local camTargetX = camPosX + ( angleX ) * 100
     local camTargetY = camPosY + angleY * 100
     local camTargetZ = camPosZ + angleZ * 100
-
-	if localPlayer.vehicle then
-		local rot = localPlayer.vehicle:getRotation()
-		self.m_CurVehRot = rot.z
-		local changedRotation = self.m_OldVehRot - self.m_CurVehRot
-
-		self.m_OldVehRot = self.m_CurVehRot
-
-		if not self.m_TotalRot then
-			self.m_TotalRot = self.m_CurVehRot
-		end
-
-		self.m_TotalRot = changedRotation * 2 + self.m_TotalRot
-
-		self.m_RotX = ( ( self.m_RotX * 360 / ego.Pi ) + self.m_TotalRot ) / 360 * ego.Pi
-		if self.m_RotX > ego.Pi then
-			self.m_RotX = self.m_RotX - 2 * ego.Pi
-		elseif self.m_RotX < - ego.Pi then
-			self.m_RotX = self.m_RotX + 2 * ego.Pi
-		end
-
-		camTargetX = camPosX + ( math.cos(self.m_RotY) * math.sin(self.m_RotX) ) * 100
-		camTargetY = camPosY + ( math.cos(self.m_RotY) * math.cos(self.m_RotX) ) * 100
-	end
 
     setCameraMatrix(camPosX, camPosY, camPosZ, camTargetX, camTargetY, camTargetZ)
 end
@@ -122,9 +98,24 @@ end
 function ego.toggle()
 	if ego.Active then
 		delete(ego:getSingleton())
+		ego.Active = false
 	else
 		ego:new()
 	end
 end
-
 addCommandHandler("ego", ego.toggle)
+
+
+function ego.enterVehicle()
+	if ego.Active then
+		delete(ego:getSingleton())
+	end
+end
+addEventHandler("onClientVehicleStartEnter", root, ego.enterVehicle)
+
+function ego.exitVehicle()
+	if ego.Active then
+		ego:new()
+	end
+end
+addEventHandler("onClientVehicleExit", root, ego.exitVehicle)
