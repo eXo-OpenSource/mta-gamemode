@@ -54,9 +54,8 @@ function onRender()
 		local x, y, z, lx, ly, lz = getCameraMatrix()
 		local playerPos = player:getPosition()
 		local viewDistance = getDistanceBetweenPoints3D(x, y, z, playerPos.x, playerPos.y, playerPos.z)
-		if player.vehicle then
-			playerPos = player.vehicle:getPosition()
-			viewDistance = getDistanceBetweenPoints3D(playerPos.x, playerPos.y, playerPos.z,Vector3(lx,ly,lz))
+		if player.vehicle then 
+			viewDistance = 2
 		end
 		distance = 10 - viewDistance
 		 
