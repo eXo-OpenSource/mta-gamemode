@@ -1,10 +1,10 @@
 local screenWidth, screenHeight = guiGetScreenSize()
 local player = getLocalPlayer()
-local blurStrength = 20000
+local blurStrength = 5000
 local saturation = 1.25
 local brightness = 0.63
 local contrast = 1
-local distance = -1500
+local distance = 5
 local testMode = "false"
 
 local bEffectEnabled
