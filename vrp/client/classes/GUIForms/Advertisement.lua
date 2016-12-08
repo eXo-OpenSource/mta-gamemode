@@ -15,6 +15,8 @@ function AdvertisementBox:constructor()
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.24/2, screenWidth*0.4, screenHeight*0.24)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Werbung schalten", true, true, self)
+	self.m_Window:addBackButton(function () SelfGUI:getSingleton():show() end)
+
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.17, self.m_Width*0.98, self.m_Height*0.15, "Bitte gib deinen gewünschten Werbe-Text ein:", self.m_Window)
 	self.m_EditBox = GUIEdit:new(self.m_Width*0.01, self.m_Height*0.32, self.m_Width*0.98, self.m_Height*0.15, self.m_Window)
 	self.m_EditBox.onChange = function () self:calcCosts() end
