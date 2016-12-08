@@ -4,7 +4,7 @@ local blurStrength = 20000
 local saturation = 1.25
 local brightness = 0.63
 local contrast = 1
-local distance = -150
+local distance = -1500
 local testMode = "false"
 
 local bEffectEnabled
