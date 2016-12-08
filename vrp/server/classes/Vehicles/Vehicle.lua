@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
-local INVALID_MODEL_FOR_START = {
+local INVALID_MODEL_FOR_START = { -- Bikes
 [481] = true,
 [509] = true,
 [510] = true,
@@ -213,10 +213,10 @@ function Vehicle:toggleEngine(player)
 		end
 		if state == true then
 			if player and not getVehicleEngineState(self) then
-				if not INVALID_MODEL_FOR_START[getElementModel(self)] then
-					if not self.m_StartingEnginePhase then	
+				if not INVALID_MODEL_FOR_START[getElementModel(self)] then -- Bikes
+					if not self.m_StartingEnginePhase then
 						self.m_StartingEnginePhase = true
-						for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do 
+						for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do
 							if getElementType(other) == "player" then
 								other:triggerEvent("vehicleEngineStart", self)
 							end
@@ -224,13 +224,13 @@ function Vehicle:toggleEngine(player)
 						setTimer(bind(self.setEngineState,self), 2000,1,true)
 						return true
 					end
-				else 
+				else
 					self:setEngineState(state)
 					return true
 				end
 			end
 			return false
-		else 
+		else
 			self:setEngineState(state)
 			return true
 		end
