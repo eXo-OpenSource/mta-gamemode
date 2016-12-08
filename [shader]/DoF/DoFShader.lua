@@ -62,7 +62,11 @@ function onRender()
 		if (distance <= 0) then
 			distance = 0
 		end
-		
+		if getControlState("aim_weapon") and not player.vehicle then 
+			distance = 2
+		else 
+			distance = 5
+		end
 		blurStrength = 6 - viewDistance
 		
 		if (blurStrength <= 0) then
