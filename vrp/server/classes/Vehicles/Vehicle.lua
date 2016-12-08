@@ -211,9 +211,9 @@ function Vehicle:toggleEngine(player)
 				self:toggleInternalSmoke()
 			end
 		end
-		if not INVALID_MODEL_FOR_START[getElementModel(self)] then
-			if state == true then
-				if player and not getVehicleEngineState(self) then
+		if state == true then
+			if player and not getVehicleEngineState(self) then
+				if not INVALID_MODEL_FOR_START[getElementModel(self)] then
 					if not self.m_StartingEnginePhase then	
 						self.m_StartingEnginePhase = true
 						for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do 
@@ -221,12 +221,15 @@ function Vehicle:toggleEngine(player)
 								other:triggerEvent("vehicleEngineStart", self)
 							end
 						end
+						setTimer(bind(self.setEngineState,self), 2000,1,true)
+						return true
 					end
+				else 
+					self:setEngineState(state)
+					return true
 				end
-				setTimer(bind(self.setEngineState,self), 2000,1,true)
 			end
-			self:setEngineState(false)
-			return true
+			return false
 		else 
 			self:setEngineState(state)
 			return true
