@@ -86,7 +86,7 @@ function BankAccount:getMoney()
 end
 
 function BankAccount:addMoney(money, reason)
-  	if amount > 0 then
+  	if money > 0 then
 		self.m_Money = self.m_Money + money
 
 		if self.m_OwnerType == BankAccountTypes.Company then
@@ -101,7 +101,7 @@ function BankAccount:addMoney(money, reason)
 end
 
 function BankAccount:takeMoney(money, reason)
-  if amount > 0 then
+  if money > 0 then
 		self.m_Money = self.m_Money - money
 
 		if self.m_OwnerType == BankAccountTypes.Company then
