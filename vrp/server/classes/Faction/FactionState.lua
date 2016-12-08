@@ -15,6 +15,17 @@ function FactionState:constructor()
 	self:createArrestZone(163.05, 1904.10, 18.67) -- Area
 	self:createArrestZone(-1589.91, 715.65, -5.24) -- SF
 	self:createArrestZone(2281.71, 2431.59, 3.27) --lv
+
+	self:createGasStation(Vector3(2295.80, 2460.90, 2.30)) -- LVT
+	self:createGasStation(Vector3(124.90, 1908.10, 17.9)) -- Area
+	self:createGasStation(Vector3(-1623.30, 662.30, -5.80)) -- SF PD
+	self:createGasStation(Vector3(-1528.10, 458.10, 6.20)) -- SF Army
+	self:createGasStation(Vector3(-1609.10,286.10,6.20), 5) -- SF Army Flug
+	self:createGasStation(Vector3(2763.88,-2386.90,13.0), 5) -- LS Army
+	self:createGasStation(Vector3(1563.98,-1614.40, 12.5)) -- LS PD
+	self:createGasStation(Vector3(1552.93,-1614.40, 12.5)) -- LS PD
+
+
 	self.m_SelfBailMarker = {}
 	self:createSelfArrestMarker(249.67, 69.19, 1003.64, 6,0)
 	self.m_Items = {
@@ -32,12 +43,12 @@ function FactionState:constructor()
 	)
 
 	addRemoteEvents{
-	"factionStateArrestPlayer", "factionStateGiveWanteds", "factionStateClearWanteds", "factionStateLoadJailPlayers", "factionStateFreePlayer",
+	"factionStateArrestPlayer", "factionStateGiveWanteds", "factionStateClearWanteds", "factionStateLoadJailPlayers", "factionStateFreePlayer", "playerSelfArrestConfirm",
 	"factionStateChangeSkin", "factionStateRearm", "factionStateSwat","factionStateToggleDuty", "factionStateStorageWeapons",
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket",
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
-	"playerSelfArrestConfirm"
+	"factionStateFillRepairVehicle"
 	}
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -72,6 +83,7 @@ function FactionState:constructor()
 	addEventHandler("stateFactionSuccessCuff", root, bind(self.Event_CuffSuccess, self))
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
+	addEventHandler("factionStateFillRepairVehicle", root, bind(self.Event_fillRepairVehicle, self))
 
 	-- Prepare the Area51
 	self:createDefendActors(
@@ -466,6 +478,60 @@ function FactionState:createArrestZone(x, y, z, int, dim)
 	)
 end
 
+function FactionState:createGasStation(pos, size)
+	local marker = createMarker(pos, "cylinder", size or 2, 255, 255, 0, 170)
+	addEventHandler("onMarkerHit", marker , function(hitElement, dim)
+		if hitElement:getType() == "player" and dim then
+			if hitElement.vehicle then
+				if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
+					if hitElement.vehicle and hitElement.vehicle:getFaction() and hitElement.vehicle:getFaction():isStateFaction() then
+						hitElement.stateGasStation = source
+						hitElement:triggerEvent("showStateFactionGasStationGUI")
+					else
+						hitElement:sendError(_("Nur für Fahrzeuge des Staates!", hitElement))
+					end
+				else
+					hitElement:sendError(_("Nur für Staatsfraktionisten im Dienst!", hitElement))
+				end
+			else
+				hitElement:sendError(_("Du musst in einem Fahrzeug sitzen!", hitElement))
+			end
+		end
+	end)
+end
+
+function FactionState:Event_fillRepairVehicle(type)
+	if client.vehicle then
+		if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+			if client.vehicle and client.vehicle:getFaction() and client.vehicle:getFaction():isStateFaction() then
+				if client.stateGasStation and getDistanceBetweenPoints3D(client:getPosition(), client.stateGasStation:getPosition()) <= 3 then
+					local costs
+					if type == "fill" then
+						costs = math.floor((100-client.vehicle:getFuel())*5)
+						client.vehicle:setFuel(100)
+						client:sendShortMessage(_("Das Fahrzeug wurde für %d$ betankt!", client, costs))
+						client:getFaction():takeMoney(costs, "Fahrzeug-Betankung")
+					elseif type == "repair" then
+						costs = math.floor((1000-client.vehicle:getHealth()))
+						fixVehicle(client.vehicle)
+						client:sendShortMessage(_("Das Fahrzeug wurde für %d$ repariert!", client, costs))
+						client:getFaction():takeMoney(costs, "Fahrzeug-Reparatur")
+					end
+				else
+					client:sendError(_("Du bist zuweit entfernt!", client))
+				end
+			else
+				client:sendError(_("Nur für Fahrzeuge des Staates!", client))
+			end
+		else
+			client:sendError(_("Nur für Staatsfraktionisten im Dienst!", client))
+		end
+	else
+		client:sendError(_("Du musst in einem Fahrzeug sitzen!", client))
+	end
+end
+
+
 function FactionState:getFullReasonFromShortcut(reason)
 	if string.lower(reason) == "bs" or string.lower(reason) == "wn" then
 		reason = "Beschuss/Waffennutzung"
@@ -853,7 +919,7 @@ function FactionState:Event_storageWeapons()
 					if magazines > 0 then
 						depot:addWeaponD(weaponId, magazines)
 					end
-					takeWeapon(client, weaponId) 
+					takeWeapon(client, weaponId)
 					client:sendMessage(_("Du hast eine/n %s mit %s Magazin/e ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines), 0, 255, 0)
 				end
 			end

@@ -255,16 +255,16 @@ end
 
 function Faction:giveMoney(amount, reason)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, amount, reason or "Unbekannt")
-	return self.m_BankAccount:addMoney(amount)
+	return self.m_BankAccount:addMoney(amount, reason)
 end
 
 function Faction:takeMoney(amount, reason)
 	StatisticsLogger:getSingleton():addMoneyLog("faction", self, -amount, reason or "Unbekannt")
-	return self.m_BankAccount:takeMoney(amount)
+	return self.m_BankAccount:takeMoney(amount, reason)
 end
 
 function Faction:setMoney(amount)
-	return self.m_BankAccount:setMoney(amount)
+	return self.m_BankAccount:setMoney(amount, reason)
 end
 
 function Faction:setRankLoan(rank,amount)
