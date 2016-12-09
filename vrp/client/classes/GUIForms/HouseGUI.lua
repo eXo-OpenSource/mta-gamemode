@@ -24,7 +24,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen)
 	self.m_Rent:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Rent.onLeftClick = bind(self.onRent,self)
 
-	self.m_Unrent = GUIButton:new(columnWidth/2+5, 135, columnWidth-35, 35, _("Ausmieten"), self)
+	self.m_Unrent = GUIButton:new(columnWidth/2+5, 135, columnWidth/2-35, 35, _("Ausmieten"), self)
 	self.m_Unrent:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Unrent.onLeftClick = bind(self.onUnrent,self)
 
