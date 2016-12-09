@@ -11,44 +11,51 @@ inherit(Singleton, HouseGUI)
 addRemoteEvents{"showHouseMenu","hideHouseMenu"}
 
 function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen)
-	GUIForm.constructor(self, screenWidth/2-(400/2), screenHeight/2-(500/2), screenWidth*0.25, 500)
+	GUIForm.constructor(self, screenWidth/2-(400/2), screenHeight/2-(500/2), screenWidth*0.4, 500)
 	self.m_Window = GUIWindow:new(0, 0, screenWidth*0.25, 500, _"Hausmenü", true, true, self)
 	self.m_Window:setCloseOnClose( true )
 
-	self.m_LabelOwner =     GUILabel:new(30, 40, self.m_Width-60, 30,_"s", self.m_Window)
-	self.m_LabelPrice =     GUILabel:new(30, 70, self.m_Width-60, 30,_"s", self.m_Window)
+	local columnWidth = self.m_Width*0.5
 
-	self.m_Rent = GUIButton:new(30, 135, self.m_Width-60, 35, _("Einmieten"), self)
+	self.m_LabelOwner =     GUILabel:new(30, 40, columnWidth-60, 30,_"s", self.m_Window)
+	self.m_LabelPrice =     GUILabel:new(30, 70, columnWidth-60, 30,_"s", self.m_Window)
+
+	self.m_Rent = GUIButton:new(30, 135, columnWidth/2-35, 35, _("Einmieten"), self)
 	self.m_Rent:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Rent.onLeftClick = bind(self.onRent,self)
 
-	self.m_Unrent = GUIButton:new(30, 180, self.m_Width-60, 35, _("Ausmieten"), self)
+	self.m_Unrent = GUIButton:new(columnWidth/2+5, 135, columnWidth-35, 35, _("Ausmieten"), self)
 	self.m_Unrent:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Unrent.onLeftClick = bind(self.onUnrent,self)
 
-	self.m_Buy = GUIButton:new(30, 225, self.m_Width-60, 35, _("Haus kaufen"), self)
+	self.m_Buy = GUIButton:new(30, 180, columnWidth-60, 35, _("Haus kaufen"), self)
 	self.m_Buy:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Buy.onLeftClick = bind(self.buyHouse,self)
 
-	self.m_Sell = GUIButton:new(30, 225, self.m_Width-60, 35, _("Haus verkaufen"), self)
+	self.m_Sell = GUIButton:new(30, 180, columnWidth-60, 35, _("Haus verkaufen"), self)
 	self.m_Sell:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Sell.onLeftClick = bind(self.sellHouse,self)
 	self.m_Sell:setVisible(false)
 
-	self.m_Enter = GUIButton:new(30, 280, self.m_Width-60, 35, _("Betreten"), self)
+	self.m_Enter = GUIButton:new(30, 225, columnWidth-60, 35, _("Betreten"), self)
 	self.m_Enter:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Enter.onLeftClick = bind(self.enterHouse,self)
 
-	self.m_Leave = GUIButton:new(30, 280, self.m_Width-60, 35, _("Verlassen"), self)
+	self.m_Leave = GUIButton:new(30, 225, columnWidth-60, 35, _("Verlassen"), self)
 	self.m_Leave:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Leave.onLeftClick = bind(self.leaveHouse,self)
 
-	self.m_Lock = GUIButton:new(30, 325, self.m_Width-60, 35, _("Abschließen"), self)
+	self.m_Lock = GUIButton:new(30, 280, columnWidth-60, 35, _("Abschließen"), self)
 	self.m_Lock:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Lock.onLeftClick = bind(self.lockHouse,self)
 	self.m_Lock:setVisible(false)
 
-	self.m_Close = GUIButton:new(30, 450, self.m_Width-60, 35, _("Schließen"), self)
+	self.m_Tenants = GUIButton:new(30, 325, columnWidth-60, 35, _("Mieter anzeigen"), self)
+	self.m_Tenants:setBackgroundColor(Color.LightBlue):setFont(VRPFont(28)):setFontSize(1)
+	self.m_Tenants.onLeftClick = bind(self.lockHouse,self)
+	self.m_Tenants:setVisible(false)
+
+	self.m_Close = GUIButton:new(30, 450, columnWidth-60, 35, _("Schließen"), self)
 	self.m_Close:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 	self.m_Close.onLeftClick = function () delete(self) end
 
