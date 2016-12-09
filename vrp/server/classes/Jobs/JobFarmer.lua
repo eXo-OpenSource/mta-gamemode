@@ -58,16 +58,17 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 	if vehicleModel == 531 then
 		vehicle.trailer = createVehicle(610, vehicle:getPosition())
 		vehicle:attachTrailer(vehicle.trailer)
-		addEventHandler("onElementDestroy", vehicle, function()
-			if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
-		end)
+
+		addEventHandler("onElementDestroy", vehicle,
+			function()
+				if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
+			end)
+
 		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
 			tractor:attachTrailer(source)
 		end)
-end
-
-
 	end
+
 	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
 		if seat == 0 then
 			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
