@@ -58,8 +58,8 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 	if vehicleModel == 531 then
 		vehicle.trailer = createVehicle(610, vehicle:getPosition())
 		vehicle:attachTrailer(vehicle.trailer)
-		addEventHandler("onElementDestroy", vehicle function()
-			if source.trailer and isElement(source.trailer) then source:trailer:destroy() end
+		addEventHandler("onElementDestroy", vehicle, function()
+			if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
 		end)
 		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
 			tractor:attachTrailer(source)
