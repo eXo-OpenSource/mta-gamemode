@@ -95,9 +95,8 @@ function KeyBinds:customMap()
 end
 
 function KeyBinds:selfMenu()
-	if SelfGUI:getSingleton():isVisible() then
-		SelfGUI:getSingleton():close()
-	elseif CompanyGUI:getSingleton():isVisible() then
+	--[[
+			elseif CompanyGUI:getSingleton():isVisible() then
 		CompanyGUI:getSingleton():close()
 	elseif FactionGUI:getSingleton():isVisible() then
 		FactionGUI:getSingleton():close()
@@ -111,8 +110,26 @@ function KeyBinds:selfMenu()
 		MigratorPanel:getSingleton():close()
 	elseif KeyBindings:getSingleton():isVisible() then
 		KeyBindings:getSingleton():close()
-	else
-		SelfGUI:getSingleton():open()
+	]]
+
+	local doNotOpen = false
+	local selfGUI = SelfGUI:getSingleton()
+	for i, instance in pairs(selfGUI.m_OpenWindows) do
+		if instance:isVisible() then
+			instance:close()
+			doNotOpen = true
+		else -- in this case the player used the back button, so we just can remove it
+			SelfGUI:getSingleton():removeWindow(self)
+		end
+	end
+
+	if not doNotOpen then
+		local selfGUI = SelfGUI:getSingleton()
+		if selfGUI:isVisible() then
+			selfGUI:close()
+		else
+			selfGUI:open()
+		end
 	end
 end
 
@@ -143,16 +160,16 @@ end
 function KeyBinds:helpMenu()
 	if not HelpGUI:isInstantiated() then
 		HelpGUI:new()
-		if localPlayer.m_SelfShader then
-			delete(localPlayer.m_SelfShader)
-			localPlayer.m_SelfShader = nil
+		if localPlayer.m_RadialShader then
+			delete(localPlayer.m_RadialShader)
+			localPlayer.m_RadialShader = nil
 		end
-		localPlayer.m_SelfShader =  RadialShader:new()
+		localPlayer.m_RadialShader = RadialShader:new()
 	else
 		delete(HelpGUI:getSingleton())
-		if localPlayer.m_SelfShader then
-			delete(localPlayer.m_SelfShader)
-			localPlayer.m_SelfShader = nil
+		if localPlayer.m_RadialShader then
+			delete(localPlayer.m_RadialShader)
+			localPlayer.m_RadialShader = nil
 		end
 	end
 end

@@ -17,7 +17,7 @@ end
 addRemoteEvents{"showAdminMenu", "announceText", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo"}
 
 function AdminGUI:constructor(money)
-	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540, true, false)
+	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540)
 
 	self.m_adminButton = {}
 
@@ -171,7 +171,18 @@ function AdminGUI:constructor(money)
 end
 
 function AdminGUI:onShow()
+	outputDebug("AdminGUI:onShow")
+	self:refreshButtons()
 	self:refreshOnlinePlayers()
+
+	SelfGUI:getSingleton():addWindow(self)
+end
+
+function AdminGUI:onHide()
+	outputDebug("AdminGUI:onHide")
+	self.m_SelectedPlayer = nil
+
+	SelfGUI:getSingleton():removeWindow(self)
 end
 
 function AdminGUI:TabPanel_TabChanged(tabId)
@@ -462,8 +473,8 @@ end
 
 addEventHandler("showAdminMenu", root,
 	function(...)
-		if AdminGUI:getSingleton() then delete(AdminGUI:getSingleton()) end
-		AdminGUI:new(...)
+		--if AdminGUI:getSingleton() then delete(AdminGUI:getSingleton()) end
+		AdminGUI:getSingleton(...):show()
 	end
 )
 
@@ -624,4 +635,12 @@ function WarnManagement:loadWarns()
 			self.m_removeWarn:setEnabled(false)
 		end
 	end
+end
+
+function WarnManagement:onShow()
+	SelfGUI:getSingleton():addWindow(self)
+end
+
+function WarnManagement:onHide()
+	SelfGUI:getSingleton():removeWindow(self)
 end

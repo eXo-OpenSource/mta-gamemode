@@ -21,9 +21,9 @@ function MigratorPanel:destructor()
 end
 
 function MigratorPanel:onShow()
-
+	SelfGUI:getSingleton():addWindow(self)
 end
 
 function MigratorPanel:onHide()
-
+	SelfGUI:getSingleton():removeWindow(self)
 end

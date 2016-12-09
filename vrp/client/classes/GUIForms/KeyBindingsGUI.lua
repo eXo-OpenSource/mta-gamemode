@@ -98,3 +98,11 @@ function KeyBindings:changeKey (keyName, newKey)
   self:loadGridList()
   -- Todo: for bindings updates without a reconnect, we need a bindins class
 end
+
+function KeyBindings:onShow()
+	SelfGUI:getSingleton():addWindow(self)
+end
+
+function KeyBindings:onHide()
+	SelfGUI:getSingleton():removeWindow(self)
+end

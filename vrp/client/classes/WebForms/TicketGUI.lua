@@ -21,9 +21,9 @@ function TicketGUI:destructor()
 end
 
 function TicketGUI:onShow()
-
+	SelfGUI:getSingleton():addWindow(self)
 end
 
 function TicketGUI:onHide()
-
+	SelfGUI:getSingleton():removeWindow(self)
 end

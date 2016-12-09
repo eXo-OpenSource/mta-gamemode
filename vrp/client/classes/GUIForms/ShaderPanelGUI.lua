@@ -58,6 +58,14 @@ function ShaderPanel:toggleShader()
 	self:loadGridList()
 end
 
+function ShaderPanel:onShow()
+	SelfGUI:getSingleton():addWindow(self)
+end
+
+function ShaderPanel:onHide()
+	SelfGUI:getSingleton():removeWindow(self)
+end
+
 Shaders = {}
 function Shaders.load()
 	local setting

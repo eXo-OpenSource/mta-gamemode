@@ -106,17 +106,13 @@ function GroupGUI:constructor()
 end
 
 function GroupGUI:onShow()
-	if localPlayer.m_SelfShader then
-		delete(localPlayer.m_SelfShader)
-	end
-	localPlayer.m_SelfShader =  RadialShader:new()
 	self:TabPanel_TabChanged()
+
+	SelfGUI:getSingleton():addWindow(self)
 end
 
 function GroupGUI:onHide()
-	if localPlayer.m_SelfShader then
-		delete(localPlayer.m_SelfShader)
-	end
+	SelfGUI:getSingleton():removeWindow(self)
 end
 
 function GroupGUI:TabPanel_TabChanged(tabId)

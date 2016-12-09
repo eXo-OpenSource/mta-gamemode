@@ -9,6 +9,7 @@ SelfGUI = inherit(GUIForm)
 inherit(Singleton, SelfGUI)
 function SelfGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+	self.m_OpenWindows = {}
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
@@ -105,18 +106,18 @@ function SelfGUI:constructor()
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
-	
+
 	self.m_ShortMessageLog = GUIButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"ShortMessage-Log", tabGeneral):setBackgroundColor(Color.Orange):setFontSize(1.2)
 	ShortMessageLogGUI:new()
-	self.m_ShortMessageLog.onLeftClick = function() 
-		if ShortMessageLogGUI then 
-			if not ShortMessageLogGUI:getSingleton():isVisible() then 
+	self.m_ShortMessageLog.onLeftClick = function()
+		if ShortMessageLogGUI then
+			if not ShortMessageLogGUI:getSingleton():isVisible() then
 				ShortMessageLogGUI:getSingleton():show()
 				self:close()
 			end
 		end
 	end
-	
+
 	-- Tab: Statistics
 	local tabStatistics = self.m_TabPanel:addTab(_"Statistiken")
 	self.m_TabStatistics = tabStatistics
@@ -453,11 +454,11 @@ end
 
 function SelfGUI:onShow()
 	-- Update VehicleTab
-	if localPlayer.m_SelfShader then
-		delete(localPlayer.m_SelfShader)
-		localPlayer.m_SelfShader = nil
+	if localPlayer.m_RadialShader then
+		delete(localPlayer.m_RadialShader)
+		localPlayer.m_RadialShader = nil
 	end
-	localPlayer.m_SelfShader =  RadialShader:new()
+	localPlayer.m_RadialShader = RadialShader:new()
 	self:TabPanel_TabChanged(self.m_TabGeneral.TabIndex)
 	self:TabPanel_TabChanged(self.m_TabVehicles.TabIndex)
 
@@ -498,15 +499,15 @@ function SelfGUI:onShow()
 		local karma = localPlayer:getKarma()
 		self.m_GeneralKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
 	end
-	if ShortMessageLogGUI:getSingleton():isVisible() then 
+	if ShortMessageLogGUI:getSingleton():isVisible() then
 		ShortMessageLogGUI:getSingleton():hide()
-	end	
+	end
 end
 
 function SelfGUI:onHide()
-	if localPlayer.m_SelfShader then
-		delete(localPlayer.m_SelfShader)
-		localPlayer.m_SelfShader = nil
+	if localPlayer.m_RadialShader then
+		delete(localPlayer.m_RadialShader)
+		localPlayer.m_RadialShader = nil
 	end
 end
 
@@ -850,4 +851,32 @@ function SelfGUI:VehicleSellButton_Click()
 	end
 
 	triggerServerEvent("vehicleSell", item.VehicleElement)
+end
+
+function SelfGUI:addWindow(instance)
+	if not table.find(self.m_OpenWindows, instance) then
+		table.insert(self.m_OpenWindows, instance)
+	end
+
+	if true then -- Setting?
+		if localPlayer.m_RadialShader then
+			delete(localPlayer.m_RadialShader)
+		end
+
+		localPlayer.m_RadialShader = RadialShader:new()
+	end
+end
+
+function SelfGUI:removeWindow(instance)
+	local idx = table.find(self.m_OpenWindows, instance)
+	if idx then
+		table.remove(self.m_OpenWindows, idx)
+
+		if true then -- Setting
+			if localPlayer.m_RadialShader then
+				delete(localPlayer.m_RadialShader)
+				localPlayer.m_RadialShader = nil
+			end
+		end
+	end
 end

@@ -7,7 +7,7 @@
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
 
-VEHICLE_ALT_SOUND = 
+VEHICLE_ALT_SOUND =
 {
 	[568] = true,
 	[411] = true,
@@ -56,11 +56,13 @@ end
 addEventHandler("vehicleEngineStart", root,
 	function(  veh )
 		local sound = "files/audio/Enginestart.ogg"
-		if VEHICLE_ALT_SOUND[getElementModel(veh)] then 
+		if VEHICLE_ALT_SOUND[getElementModel(veh)] then
 			sound = "files/audio/Enginestart2.ogg"
 		end
-		local x,y,z = getElementPosition(veh)
-		attachElements(playSound3D(sound,x,y,z), veh)
+		local sound = playSound3D(sound, veh.position)
+		sound:setMinDistance(0)
+		sound:setMaxDistance(30)
+		sound:attach(veh)
 	end
 )
 

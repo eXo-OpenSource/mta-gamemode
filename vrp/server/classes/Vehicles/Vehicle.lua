@@ -221,7 +221,7 @@ function Vehicle:toggleEngine(player)
 								other:triggerEvent("vehicleEngineStart", self)
 							end
 						end
-						setTimer(bind(self.setEngineState,self), 2000,1,true)
+						setTimer(bind(self.setEngineState, self), 2000, 1, true)
 						return true
 					end
 				else

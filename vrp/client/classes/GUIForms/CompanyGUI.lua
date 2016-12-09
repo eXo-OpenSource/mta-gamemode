@@ -77,17 +77,12 @@ function CompanyGUI:destructor()
 end
 
 function CompanyGUI:onShow()
-	if localPlayer.m_SelfShader then
-		delete(localPlayer.m_SelfShader)
-	end
-	localPlayer.m_SelfShader =  RadialShader:new()
+	SelfGUI:getSingleton():addWindow(self)
 	triggerServerEvent("companyRequestInfo", root)
 end
 
 function CompanyGUI:onHide()
-	if localPlayer.m_SelfShader then
-		delete(localPlayer.m_SelfShader)
-	end
+	SelfGUI:getSingleton():removeWindow(self)
 end
 
 function CompanyGUI:TabPanel_TabChanged(tabId)
