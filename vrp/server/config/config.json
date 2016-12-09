@@ -21,7 +21,7 @@
       "port": 3306,
       "username": "root",
       "password": "",
-      "database": "vrp",
+      "database": "exo_wbb_vrp",
       "socket": "/var/run/mysqld/mysqld.sock"
     },
     "premium": {
