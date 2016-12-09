@@ -166,31 +166,35 @@ function DatabasePlayer:load()
 	self:setWarns()
 	self:setBail( row.Bail )
 	self:setJailTime( row.JailTime or 0)
+	self.m_LoggedIn = true
 end
 
 function DatabasePlayer:save()
 	if self:isGuest() then
 		return false
 	end
-	self:setJailNewTime()
-	-- Unload stuff
-	if self.m_BankAccount then
-		delete(self.m_BankAccount)
-	end
+	if self.m_LoggedIn then
+		self:setJailNewTime()
+		-- Unload stuff
+		if self.m_BankAccount then
+			delete(self.m_BankAccount)
+		end
+	
+		local spawnFac
+		if self.m_SpawnWithFactionSkin then
+			spawnFac = 1
+		else
+			spawnFac = 0
+		end
 
-	local spawnFac
-	if self.m_SpawnWithFactionSkin then
-		spawnFac = 1
-	else
-		spawnFac = 0
+		if self.m_DoNotSave then
+			self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
+			self.m_Skin = NOOB_SKIN
+		end
+		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=? WHERE Id=?", sql:getPrefix(),
+			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self:getId())
 	end
-
-	if self.m_DoNotSave then
-		self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
-		self.m_Skin = NOOB_SKIN
-	end
-	return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=? WHERE Id=?", sql:getPrefix(),
-		self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self:getId())
+	return false
 end
 
 function DatabasePlayer.getFromId(id)
