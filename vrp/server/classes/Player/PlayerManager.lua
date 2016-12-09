@@ -365,7 +365,9 @@ end
 
 function PlayerManager:Event_requestPointsToKarma(positive)
 	if client:getPoints() >= 200 then
-		client:giveKarma(1, (positive and 1 or -1), true)
+		outputDebug(positive)
+
+		client:giveKarma((positive and 1 or -1))
 		client:givePoints(-200)
 		client:sendInfo(_("Punkte eingetauscht!", client))
 	else
