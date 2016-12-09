@@ -607,6 +607,8 @@ function WarnManagement:constructor(player, adminGui)
 					end
 				end)
 			end
+	else
+		self.m_Window:addBackButton(function () SelfGUI:getSingleton():show() end)
 	end
 	self:loadWarns()
 end
