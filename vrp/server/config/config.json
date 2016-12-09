@@ -1,34 +1,34 @@
 {
   "mysql": {
     "main": {
-      "host": "87.98.241.93",
-      "port": 6033,
-      "username": "vRP",
-      "password": "kmd1581adf%%f",
+      "host": "localhost",
+      "port": 3306,
+      "username": "root",
+      "password": "",
       "database": "vRP",
       "socket": "/var/run/mysqld/mysqld.sock"
     },
     "logs": {
-      "host": "87.98.241.93",
-      "port": 6033,
-      "username": "vRP",
-      "password": "kmd1581adf%%f",
+      "host": "localhost",
+      "port": 3306,
+      "username": "root",
+      "password": "",
       "database": "vRP_logs",
       "socket": "/var/run/mysqld/mysqld.sock"
     },
     "board": {
-      "host": "87.98.241.93",
-      "port": 6033,
-      "username": "vRP",
-      "password": "kmd1581adf%%f",
-      "database": "exo_wbb_vrp",
+      "host": "localhost",
+      "port": 3306,
+      "username": "root",
+      "password": "",
+      "database": "vrp",
       "socket": "/var/run/mysqld/mysqld.sock"
     },
     "premium": {
-      "host": "87.98.241.93",
-      "port": 6033,
-      "username": "vRP",
-      "password": "kmd1581adf%%f",
+      "host": "localhost",
+      "port": 3306,
+      "username": "root",
+      "password": "",
       "database": "exo_premium",
       "socket": "/var/run/mysqld/mysqld.sock"
     }
