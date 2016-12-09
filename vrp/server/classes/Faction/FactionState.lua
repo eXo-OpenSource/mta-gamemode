@@ -107,6 +107,9 @@ end
 
 
 function FactionState:createSelfArrestMarker( x,y,z, int, dim )
+	local ped = createPed(280, Vector3(251.257, 69.094, 1003.641))
+	ped:setRotation(0, 0, 90)
+	ped:setInterior(int)
 	local marker = createPickup(x,y,z,3,1247,10)
 	setElementInterior(marker, int)
 	setElementDimension(marker, dim)

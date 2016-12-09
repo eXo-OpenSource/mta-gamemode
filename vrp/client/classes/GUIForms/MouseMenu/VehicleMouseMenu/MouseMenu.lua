@@ -53,6 +53,18 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
+	if getElementData(element, "StateVehicle") then
+		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+			self:addItem(_("Items >>>", item),
+				function()
+					if self:getElement() then
+						delete(self)
+						ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuFactionItems:new(posX, posY, element), element)
+					end
+				end
+			)
+		end
+	end
 	if getElementData(element, "OwnerName") == localPlayer.name then
 		self:addItem(_"Schlüssel",
 			function()
@@ -79,38 +91,6 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-	if getElementData(element, "StateVehicle") then
-		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
-			if getElementData(element, "factionTrunk") then
-				local trunk = getElementData(element, "factionTrunk")
-				for item, amount in pairs(trunk) do
-					if amount > 0 then
-						self:addItem(_("%s nehmen", item),
-							function()
-								if self:getElement() then
-									triggerServerEvent("factionStateTakeItemFromVehicle", self:getElement(), item)
-								end
-							end
-						)
-					end
-				end
-			end
-			for item, amount in pairs(FACTION_TRUNK_MAX_ITEMS) do
-				if Inventory:getSingleton():getItemAmount(item) > 0 then
-					self:addItem(_("%s reinlegen", item),
-						function()
-							if self:getElement() then
-								triggerServerEvent("factionStatePutItemInVehicle", self:getElement(), item, 1, true)
-							end
-						end
-					)
-				end
-			end
-		end
-	end
-
-
-
 
 	if element:getVehicleType() ~= VehicleType.Trailer then
 		self:addItem(_"Fahrzeug leeren",
