@@ -66,7 +66,7 @@ end
 function JobHeliTransport:onCargoBobDestroy()
 	if isElement(self.m_VehData[source].package) then self.m_VehData[source].package:destroy() end
 	self.m_VehData[source] = nil
-	self:stop(vehicle.player)
+	self:stop(source.player)
 end
 
 function JobHeliTransport:onPickupLoad()
