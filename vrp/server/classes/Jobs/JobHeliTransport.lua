@@ -39,14 +39,14 @@ function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)
 	player:triggerEvent("jobHeliTransportCreateMarker", "pickup")
 	client:sendInfo(_("Bitte belade deinen Helikopter am Ladepunkt!", client))
 	addEventHandler("onVehicleExplode", vehicle, bind(self.onCargoBobExplode, self))
-	addEventHandler("onVehicleExit", vehicle, bind(self.onCargoBobExit, self))
-	addEventHandler("onVehicleDestroy", vehicle, bind(self.onCargoBobDestroy, self))
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		if vehPlayer ~= player then
 			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
 			cancelEvent()
 		end
 	end)
+	vehicle:addCountdownDestroy(10)
+	addEventHandler("onElementDestroy", vehicle, bind(self.onCargoBobDestroy, self))
 end
 
 function JobHeliTransport:onCargoBobExplode()
@@ -69,6 +69,9 @@ end
 
 function JobHeliTransport:onCargoBobDestroy()
 	if isElement(self.m_VehData[source].package) then self.m_VehData[source].package:destroy() end
+	self.m_VehData[source] = nil
+	player:setData("JobHeliTransport:Money", 0)
+	player:triggerEvent("endHeliTransport")
 end
 
 function JobHeliTransport:onPickupLoad()

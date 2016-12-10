@@ -69,21 +69,14 @@ function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
 		end)
 	end
 
-	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
-		if seat == 0 then
-			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
-				vehPlayer:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
-				vehPlayer:setData("Farmer.Income", 0)
-				vehPlayer:triggerEvent("Job.updateIncome", 0)
-			end
-			vehicle:destroy()
-			self.m_CurrentPlants[vehPlayer] = 0
-		end
-	end)
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
 		cancelEvent()
 	end)
+
+	player.farmerVehicle = vehicle
+	vehicle:addCountdownDestroy(10)
+	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
 end
 
 function JobFarmer:onVehicleDestroy(vehicle)
@@ -150,6 +143,7 @@ function JobFarmer:start(player)
 	player:giveAchievement(20)
 end
 
+
 function JobFarmer:setJobElementVisibility(player, state)
 	if state then
 		local x, y = unpack(PLANT_DELIVERY)
@@ -170,6 +164,12 @@ function JobFarmer:stop(player)
 	self.m_Plants[player] = nil
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 
+	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
+		player:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
+		player:setData("Farmer.Income", 0)
+		player:triggerEvent("Job.updateIncome", 0)
+	end
+	if player.farmerVehicle and isElement(player.farmerVehicle) then player.farmerVehicle:destroy() end
 end
 
 function JobFarmer:checkRequirements(player)
