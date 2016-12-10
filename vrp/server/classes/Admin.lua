@@ -215,7 +215,8 @@ function Admin:Event_respawnCompanyVehicles(Id)
 end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)
-    if cmd == "smode" or cmd == "clearchat" then
+
+	if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
 		self:Command_MarkPos(admin, true)
@@ -224,10 +225,10 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
 		self:Command_MarkPos(admin, false)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
     else
-        if targetName then
+		if targetName then
             local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
             if isElement(target) then
-                if cmd == "spect" or "unprison" then
+                if cmd == "spect" or cmd == "unprison" then
                     self:Event_adminTriggerFunction(cmd, target, nil, nil, admin)
                     return
                 else
@@ -248,7 +249,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                 end
             end
         end
-        if cmd == "spect" or "unprison" then
+        if cmd == "spect" or cmd == "unprison" then
             admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
             return
         elseif cmd == "rkick" or cmd == "permaban" then
@@ -290,7 +291,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 				outputChatBox(getPlayerName(target).." hat "..getPlayerName(admin).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
 				outputChatBox("Grund: "..reason,root, 200, 0, 0)
 			else
-			outputChatBox("Syntax: /prison [ziel] [zeit in stunden]",admin,200,0,0)
+			outputChatBox("Syntax: /prison [ziel] [Zeit in Minuten] [Grund]",admin,200,0,0)
 			end
 		elseif func == "unprison" then
 			if target then
