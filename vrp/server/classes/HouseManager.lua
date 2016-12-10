@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 HouseManager = inherit(Singleton)
-addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse","lockHouse", "houseSetRent"}
+addRemoteEvents{"enterHouse", "leaveHouse", "buyHouse", "sellHouse", "rentHouse", "unrentHouse", "breakHouse","lockHouse", "houseSetRent", "houseDeposit", "houseWithdraw", "houseRemoveTenant"}
 
 local ROB_DELAY = 1000*60*15
 
@@ -19,7 +19,7 @@ function HouseManager:constructor()
 	local query = sql:queryFetch("SELECT * FROM ??_houses", sql:getPrefix())
 
 	for key, value in pairs(query) do
-		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"])
+		self.m_Houses[value["Id"]] = House:new(value["Id"], Vector3(value["x"], value["y"], value["z"]), value["interiorID"], value["keys"], value["owner"], value["price"], value["lockStatus"], value["rentPrice"], value["elements"], value["money"])
 	end
 
 	addEventHandler("breakHouse",root,bind(self.breakHouse,self))
@@ -31,6 +31,9 @@ function HouseManager:constructor()
 	addEventHandler("leaveHouse",root,bind(self.leaveHouse,self))
 	addEventHandler("lockHouse",root,bind(self.lockHouse,self))
 	addEventHandler("houseSetRent",root,bind(self.setRent,self))
+	addEventHandler("houseDeposit",root,bind(self.deposit,self))
+	addEventHandler("houseWithdraw",root,bind(self.withdraw,self))
+	addEventHandler("houseRemoveTenant",root,bind(self.removeTenant,self))
 
 
 
@@ -70,6 +73,24 @@ function HouseManager:setRent(rent)
 	if not client then return end
 	if client.vehicle then return end
 	self.m_Houses[client.visitingHouse]:setRent(client, rent)
+end
+
+function HouseManager:deposit(amount)
+	if not client then return end
+	if client.vehicle then return end
+	self.m_Houses[client.visitingHouse]:deposit(client, amount)
+end
+
+function HouseManager:withdraw(amount)
+	if not client then return end
+	if client.vehicle then return end
+	self.m_Houses[client.visitingHouse]:withdraw(client, amount)
+end
+
+function HouseManager:removeTenant(id)
+	if not client then return end
+	if client.vehicle then return end
+	self.m_Houses[client.visitingHouse]:removeTenant(client, id)
 end
 
 function HouseManager:breakHouse()
