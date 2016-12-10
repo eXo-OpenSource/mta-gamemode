@@ -289,7 +289,8 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 				self:addPunishLog(admin, target, func, reason, duration*60)
 				outputChatBox(getPlayerName(target).." hat "..getPlayerName(admin).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
 				outputChatBox("Grund: "..reason,root, 200, 0, 0)
-			else outputChat("Syntax: /prison [ziel] [zeit in stunden]",admin,200,0,0)
+			else
+			outputChatBox("Syntax: /prison [ziel] [zeit in stunden]",admin,200,0,0)
 			end
 		elseif func == "unprison" then
 			if target then
@@ -299,8 +300,8 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					self:addPunishLog(admin, target, func)
 				else admin:sendError("Spieler ist nicht im Prison!")
 				end
-			else 
-				outputChat("Syntax: /unprison [ziel]",admin,200,0,0)
+			else
+				outputChatBox("Syntax: /unprison [ziel]",admin,200,0,0)
 			end
         elseif func == "timeban" then
 			if not target then return end
@@ -342,7 +343,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
             for index, player in pairs(Element.getAllByType("player")) do
                 for i=0, 2100 do
-                    player:outputChat(" ")
+                    player:outputChatBox(" ")
                 end
                 player:triggerEvent("closeAd")
             end
