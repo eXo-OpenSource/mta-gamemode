@@ -64,7 +64,7 @@ function JobHeliTransport:onCargoBobExplode()
 end
 
 function JobHeliTransport:onCargoBobDestroy()
-	if isElement(self.m_VehData[source].package) then self.m_VehData[source].package:destroy() end
+	if self.m_VehData[source] and self.m_VehData[source].package and isElement(self.m_VehData[source].package) then self.m_VehData[source].package:destroy() end
 	self.m_VehData[source] = nil
 	self:stop(source.player)
 end
