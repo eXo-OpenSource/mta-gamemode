@@ -677,7 +677,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 								hitElement:toggleControlsWhileObjectAttached(true)
 							end
 							for key, value in pairs (bags) do
-								if value:getModel() == 1550 then
+								if value and isElement(value) and value:getModel() == 1550 then
 									amount = value:getData("Money")
 									totalAmount = totalAmount + amount
 									faction:giveMoney(amount, "Bankraub")
