@@ -67,6 +67,8 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/medicInterior.dff", 3986)
 	self:setLODDistance(3986, 500)
 
+	self:loadShader("files/images/Other/parking1.png", "noparking2_128")
+	self:loadShader("files/images/Other/parking2.png", "roadsign01_128")
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
@@ -86,4 +88,11 @@ end
 
 function CustomModelManager:setLODDistance(modelId, distance)
 	engineSetModelLODDistance(modelId, distance)
+end
+
+function CustomModelManager:loadShader(filePath, textureName)
+	local shader = dxCreateShader("files/shader/texreplace.fx")
+	local texture = dxCreateTexture(filePath)
+	dxSetShaderValue(shader, "gTexture", texture)
+	engineApplyShaderToWorldTexture(shader, textureName)
 end
