@@ -125,13 +125,13 @@ function RobableShop:startRob(shop, attacker, ped)
 	self.m_ExpireTimer = setTimer(self.m_Func, ROBSHOP_TIME,1)
 end
 
-function RobableShop:m_onExpire() 
+function RobableShop:m_onExpire()
 	self.m_shop.m_Marker.m_Disable = false
 	setElementAlpha(self.m_shop.m_Marker,255)
 	ActionsCheck:getSingleton():endAction()
 	if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
 	if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
-	for key, player in ipairs(getElementsByType("player")) do 
+	for key, player in ipairs(getElementsByType("player")) do
 		player:detachPlayerObject(self.m_Bag)
 		removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
 		removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
@@ -144,7 +144,7 @@ function RobableShop:m_onExpire()
 
 	removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
-	delete(self.m_EvilBlip)	
+	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
 	delete(self.m_BagBlip)
 	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
@@ -161,7 +161,7 @@ function RobableShop:stopRob(player)
   ActionsCheck:getSingleton():endAction()
   if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
   if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
-  
+
   player:detachPlayerObject(self.m_Bag)
 
   self.m_Bag:destroy()
@@ -176,6 +176,7 @@ function RobableShop:stopRob(player)
   delete(self.m_EvilBlip)
   delete(self.m_StateBlip)
   delete(self.m_BagBlip)
+
   StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
 
   self.m_Gang:removePlayerMarkers()
@@ -187,7 +188,7 @@ function RobableShop:giveBag(player)
   self.m_Bag:setInterior(player:getInterior())
   self.m_Bag:setDimension(player:getDimension())
   player:attachPlayerObject(self.m_Bag, true)
-  if isElement(self.m_BagBlip) then self.m_BagBlip:destroy() end
+  if self.m_BagBlip then delete(self.m_BagBlip) end
   self.m_BagBlip = Blip:new("MoneyBag.png", 0, 0)
   self.m_BagBlip:attach(self.m_Bag)
 
@@ -244,11 +245,11 @@ function RobableShop:checkBagAllowed(player)
   return false
 end
 
-function RobableShop:characterInitialized()	
-  if not self.m_Gang then 
-	return 
+function RobableShop:characterInitialized()
+  if not self.m_Gang then
+	return
   end
-  if not source:getGroup() then 
+  if not source:getGroup() then
 	return
   end
   if self.m_Gang.m_Id == source:getGroup().m_Id then
