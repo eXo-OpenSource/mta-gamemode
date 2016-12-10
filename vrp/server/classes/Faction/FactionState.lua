@@ -915,12 +915,19 @@ function FactionState:Event_storageWeapons()
 					local magazines = math.floor((client:getTotalAmmo(i) or 1)/( getWeaponProperty(weaponId, "poor", "maximum_clip_ammo") or 1))
 					local clipAmmo = getWeaponProperty(weaponId, "poor", "maximum_clip_ammo") or 0
 					local magazines = math.floor(client:getTotalAmmo(i)/clipAmmo)
-					depot:addWeaponD(weaponId, 1)
-					if magazines > 0 then
-						depot:addWeaponD(weaponId, magazines)
+
+					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
+					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
+					if depotWeapons+1 <= depotMaxWeapons and depotMagazines+magazines <= depotMaxMagazines then
+						depot:addWeaponD(weaponId, 1)
+						if magazines > 0 then
+							depot:addWeaponD(weaponId, magazines)
+						end
+						takeWeapon(client, weaponId)
+						client:sendMessage(_("Du hast eine/n %s mit %s Magazin/e ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines), 0, 255, 0)
+					else
+						client:sendError(_("Im Depot ist nicht Platz für eine/n %s mit %s Magazin/e!", client, WEAPON_NAMES[weaponId], magazines), 0, 255, 0)
 					end
-					takeWeapon(client, weaponId)
-					client:sendMessage(_("Du hast eine/n %s mit %s Magazin/e ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines), 0, 255, 0)
 				end
 			end
 		end
