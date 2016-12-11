@@ -580,8 +580,13 @@ function BankRobbery:Event_DeloadBag(veh)
 					for key, bag in pairs (getAttachedElements(veh)) do
 						if bag.model == 1550 then
 							bag:detach(self.m_Truck)
-							client:attachPlayerObject(bag)
-							return
+							if client:getFaction():isStateFaction() then
+								self:statePeopleClickBag(client, bag)
+								return
+							else
+								client:attachPlayerObject(bag)
+								return
+							end
 						end
 					end
 					client:sendError(_("Es befindet sich kein Geldsack im Truck!", client))
