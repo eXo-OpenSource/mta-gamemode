@@ -29,7 +29,16 @@ function VendingMachine.initializeAll()
 end
 
 function VendingMachine.Event_vendingRob()
-	local vendingMachine = VendingMachine.Map[source]
+	local vendingMachine
+	if VendingMachine.Map[source] then
+		vendingMachine = VendingMachine.Map[source]
+	else
+		local pos = source:getPosition()
+		local rot = source:getRotation()
+		vendingMachine = VendingMachine:new(source:getModel(), pos.x, pos.y, pos.z, rot.z)
+		source:destroy()
+	end
+
 	if not vendingMachine then return end
 
 	if getTickCount() - vendingMachine.m_LastRobTime < 5*60*1000 then
@@ -41,6 +50,8 @@ function VendingMachine.Event_vendingRob()
 	client:setAnimation("BOMBER", "BOM_Plant", -1, false, true, false, false)
 
 	-- Give wage
+	client:giveWantedLevel(2)
+	client:sendMessage("Verbrechen begangen: Automaten-Raub, 2 Wanteds", 255, 255, 0)
 	client:giveMoney(math.random(10, 100), "Automaten-Raub")
 	client:giveKarma(-1)
 
