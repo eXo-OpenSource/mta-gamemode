@@ -19,16 +19,26 @@ end)
 
 function ItemFood.attachEffect(effect, element)
 	ItemFood.attachedEffects[effect] = {effect = effect, element = element}
-	addEventHandler("onClientElementDestroy", effect, function() ItemFood.attachedEffects[effect] = nil end)
-	addEventHandler("onClientElementDestroy", element, function() ItemFood.attachedEffects[effect] = nil end)
+	addEventHandler("onClientElementDestroy", effect, function()
+		ItemFood.attachedEffects[effect] = nil
+	end)
+	addEventHandler("onClientElementDestroy", element, function()
+		ItemFood.attachedEffects[effect] = nil
+		effect:destroy()
+	end)
 	return true
 end
 
 addEventHandler("onClientPreRender", root,
 	function()
 		for fx, info in pairs(ItemFood.attachedEffects) do
-			local x, y, z = getElementPosition(info.element)
-			setElementPosition(fx, x, y, z)
+			if isElement(info.element) then
+				local x, y, z = getElementPosition(info.element)
+				setElementPosition(fx, x, y, z)
+			else
+				ItemFood.attachedEffects[info.effect]:destroy()
+				ItemFood.attachedEffects[info.effect] = nil
+			end
 		end
 	end
 )
