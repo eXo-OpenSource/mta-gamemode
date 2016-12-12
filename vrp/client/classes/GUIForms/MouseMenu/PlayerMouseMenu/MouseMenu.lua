@@ -39,16 +39,27 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
-	if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
-		self:addItem(_"Fraktion >>>",
-			function()
-				if self:getElement() then
-					delete(self)
-					ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenuFaction:new(posX, posY, element), element)
+	if localPlayer:getFaction() then
+		if localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true  then
+			self:addItem(_"Fraktion >>>",
+				function()
+					if self:getElement() then
+						delete(self)
+						ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenuFaction:new(posX, posY, element), element)
+					end
 				end
-			end
-		)
+			)
+		elseif localPlayer:getFaction() and localPlayer:getFaction():isEvilFaction() then
+			self:addItem(_"Fraktion: Spieler überfallen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("factionEvilStartRaid", localPlayer, self:getElement())
+					end
+				end
+			)
+		end
 	end
+
 	if (localPlayer:getCompanyId() == 1 or localPlayer:getCompanyId() == 3) and localPlayer:getPublicSync("Company:Duty") == true then
 		self:addItem(_"Unternehmen >>>",
 			function()
