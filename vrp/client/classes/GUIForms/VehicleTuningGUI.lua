@@ -15,7 +15,20 @@ function VehicleTuningGUI:constructor(vehicle)
         self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Tuning", false, true, self)
         self.m_PartsList = GUIGridList:new(0, self.m_Height*0.21, self.m_Width, self.m_Height*0.72, self.m_Window)
         self.m_PartsList:addColumn(_"Name", 1)
-        GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/Shops/TuningHeader.png", self.m_Window)
+        self.m_MuteSound = GUILabel:new(self.m_Width-55, 5, 28, 28, FontAwesomeSymbols.SoundOff, self):setFont(FontAwesome(22))
+		self.m_MuteSound.onLeftClick = function()
+			if self.m_Music then
+				self.m_Music:destroy()
+				self.m_Music = nil
+				self.m_MuteSound:setText(FontAwesomeSymbols.SoundOn)
+			else
+				self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
+				self.m_MuteSound:setText(FontAwesomeSymbols.SoundOff)
+			end
+
+		end
+
+		GUIImage:new(0, 30, self.m_Width, self.m_Height/7, "files/images/Shops/TuningHeader.png", self.m_Window)
         GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
         GUIRectangle:new(0, self.m_Height*0.93, self.m_Width, self.m_Height*0.005, Color.LightBlue, self.m_Window)
     end
@@ -63,7 +76,7 @@ function VehicleTuningGUI:constructor(vehicle)
     self.m_CurrentUpgrades[VehicleSpecialProperty.Neon] = getElementData(self.m_Vehicle, "Neon") or 0
     self.m_CurrentUpgrades[VehicleSpecialProperty.NeonColor] = getElementData(self.m_Vehicle, "NeonColor") or {0,0,0}
 
-    --self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
+    self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
 	self.m_CarRadioVolume = RadioGUI:getSingleton():getVolume() or 0
 	RadioGUI:getSingleton():setVolume(0)
     self.m_Vehicle:setOverrideLights(2)
@@ -77,9 +90,9 @@ function VehicleTuningGUI:destructor(closedByServer)
     end
 
     setCameraTarget(localPlayer)
-    --[[if self.m_Music then
+    if self.m_Music then
         self.m_Music:destroy()
-    end]]
+    end
     delete(self.m_UpgradeChanger)
     delete(self.m_AddToCartButton)
     delete(self.m_ShoppingCartWindow)
@@ -164,7 +177,7 @@ function VehicleTuningGUI:moveCameraToSlot(slot, noAnimation)
 				if progress >= 1 then
 					removeEventHandler("onClientPreRender", root, getThisFunction())
 				end
-			else 
+			else
 				removeEventHandler("onClientPreRender", root, getThisFunction())
 			end
 		end)
@@ -451,7 +464,7 @@ addEventHandler("vehicleTuningShopEnter", root,
         if vehicleTuningShop then
             delete(vehicleTuningShop)
         end
-		
+
         vehicleTuningShop = VehicleTuningGUI:new(vehicle)
 
         vehicle:setDimension(PRIVATE_DIMENSION_CLIENT)

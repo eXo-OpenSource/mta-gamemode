@@ -50,5 +50,7 @@ FontAwesomeSymbols = {
 	Expand = "",
 	Copy = "",
 	Trash = "",
-	Save = ""
+	Save = "",
+	SoundOff = "",
+	SoundOn = ""
 }
