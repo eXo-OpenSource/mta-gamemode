@@ -25,49 +25,59 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 			end
 		end
 	)
-	if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
-		if localPlayer:isInVehicle() then
-			self:addItem(_"Fraktion: ins Fahrzeug zerren",
+	if localPlayer:getFaction() then
+		if localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+			if localPlayer:isInVehicle() then
+				self:addItem(_"Fraktion: ins Fahrzeug zerren",
+					function()
+						if self:getElement() then
+							triggerServerEvent("factionStateGrabPlayer", localPlayer, self:getElement())
+						end
+					end
+				)
+			end
+			self:addItem(_"Fraktion: Spieler durchsuchen",
 				function()
 					if self:getElement() then
-						triggerServerEvent("factionStateGrabPlayer", localPlayer, self:getElement())
+						triggerServerEvent("factionStateFriskPlayer", localPlayer, self:getElement())
 					end
 				end
 			)
-		end
-		self:addItem(_"Fraktion: Spieler durchsuchen",
-			function()
-				if self:getElement() then
-					triggerServerEvent("factionStateFriskPlayer", localPlayer, self:getElement())
-				end
-			end
-		)
-		self:addItem(_"Fraktion: Lizenzen zeigen",
-			function()
-				if self:getElement() then
-					triggerServerEvent("factionStateShowLicenses", localPlayer, self:getElement())
-				end
-			end
-		)
-		self:addItem(_"Fraktion: Drogen abnehmen",
-			function()
-				if self:getElement() then
-					triggerServerEvent("factionStateTakeDrugs", localPlayer, self:getElement())
-				end
-			end
-		)
-		self:addItem(_"Fraktion: Waffen abnehmen",
-			function()
-				if self:getElement() then
-					triggerServerEvent("factionStateTakeWeapons", localPlayer, self:getElement())
-				end
-			end
-		)
-		if localPlayer:getFaction():getId() == 1 then
-			self:addItem(_"Fraktion: PA-Note vergeben",
+			self:addItem(_"Fraktion: Lizenzen zeigen",
 				function()
 					if self:getElement() then
-						StateFactionNoteGUI:new(self:getElement())
+						triggerServerEvent("factionStateShowLicenses", localPlayer, self:getElement())
+					end
+				end
+			)
+			self:addItem(_"Fraktion: Drogen abnehmen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("factionStateTakeDrugs", localPlayer, self:getElement())
+					end
+				end
+			)
+			self:addItem(_"Fraktion: Waffen abnehmen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("factionStateTakeWeapons", localPlayer, self:getElement())
+					end
+				end
+			)
+			if localPlayer:getFaction():getId() == 1 then
+				self:addItem(_"Fraktion: PA-Note vergeben",
+					function()
+						if self:getElement() then
+							StateFactionNoteGUI:new(self:getElement())
+						end
+					end
+				)
+			end
+		elseif localPlayer:getFaction():isEvilFaction() then
+			self:addItem(_"Fraktion: Spieler überfallen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("factionEvilStartRaid", localPlayer, self:getElement())
 					end
 				end
 			)

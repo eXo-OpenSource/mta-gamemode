@@ -14,6 +14,8 @@ function FactionEvil:constructor()
 	self.m_WeaponPed = {}
 	self.m_ItemDepot = {}
 
+	self.m_Raids = {}
+
 	nextframe(function()
 		self:loadLCNGates(5)
 	end)
@@ -23,6 +25,12 @@ function FactionEvil:constructor()
 			self:createInterior(Id, faction)
 		end
 	end
+
+	addRemoteEvents{"factionEvilStartRaid", "factionEvilSuccessRaid"}
+	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
+	addEventHandler("factionEvilSuccessRaid", root, bind(self.Event_SuccessRaid, self))
+
+
 end
 
 function FactionEvil:destructor()
@@ -148,3 +156,47 @@ function FactionEvil:onBarrierGateHit(player, gate)
 	end
 
 end
+
+function FactionEvil:Event_StartRaid(target)
+	if client:getFaction() and client:getFaction():isEvilFaction() then
+		if not target:isFactionDuty() and not target:isCompanyDuty() then
+			if target:getMoney() > 0 then
+
+				local targetName = target:getName()
+				if self.m_Raids[targetName] and timestampCoolDown(self.m_Raids[targetName], 2*60*60) then
+					client:sendError(_("Dieser Spieler wurde innerhalb der letzten 2 Stunden bereits überfallen!", client))
+					return
+				end
+				target:sendMessage(_("Du wirst von %s (%s) überfallen!", target, client:getName(), client:getFaction():getShortName()))
+				target:sendMessage(_("Lauf weg oder bleibe bis der Überfall beendet ist!", target))
+				target:triggerEvent("CountdownStop",  10, "Überfallen in")
+				target:triggerEvent("Countdown", 10, "Überfallen in")
+				client:triggerEvent("Countdown", 10, "Überfallen in")
+				client:triggerEvent("factionEvilStartRaid", target)
+				self.m_Raids[targetName] = getRealTime().timestamp
+			else
+				client:sendError(_("Der Spieler hat kein Geld dabei!", client))
+			end
+		else
+			client:sendError(_("Du kannst keine Spieler im Dienst überfallen!", client))
+		end
+	else
+		client:sendError(_("Nur Spieler böser Fraktionen können andere Spieler überfallen!", client))
+	end
+end
+
+function FactionEvil:Event_SuccessRaid(target)
+	local money = target:getMoney()
+	if money > 750 then money = 750 end
+	if money > 0 then
+		client:meChat(true,"überfällt "..target:getName().." erfolgreich!")
+		target:takeMoney(500, "Überfall")
+		client:giveMoney(500, "Überfall")
+		client:triggerEvent("CountdownStop", "Überfallen in", 10)
+		target:triggerEvent("CountdownStop", "Überfallen in", 10)
+	else
+		client:sendError(_("Der Spieler hat kein Geld dabei!", client))
+	end
+end
+
+
