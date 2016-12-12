@@ -36,8 +36,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 				if self.m_IsSpraying then
 					self:resetTag(true)
 				end
-								self.m_IsSpraying = false
-
+				self.m_IsSpraying = false
 			end
 		end
 	)
