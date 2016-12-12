@@ -150,39 +150,26 @@ AmmuNationInfo = {
 }
 
 DEFAULT_GANGAREA_RESOURCES = 500
-GangAreaData = {
-	{wallPosition = Vector3(2512.3999, -1683.4, 13.9), wallRotation = 129, areaPosition = Vector3(2419.7507, -1627.7887, 15), width = 122, height = 99},
-	{wallPosition = Vector3(2080.5, -1597.1, 13.8), wallRotation = 269.5, areaPosition = Vector3(2052.886, -1538.6737, 30), width = 52, height = 70},
-	{wallPosition = Vector3(1758.7, -1938.9, 14), wallRotation = 0, areaPosition = Vector3(1683.1904, -1828.8699, 30), width = 125, height = 179},
-	{wallPosition = Vector3(1761.5, -1350.2, 16), wallRotation = 0, areaPosition = Vector3(1720.04, -1306.9941, 30), width = 120, height = 150},
-	{wallPosition = Vector3(1913.1, -1361.5, 14), wallRotation = 267, areaPosition = Vector3(1854.2794, -1344.212, 30), width = 131, height = 112},
-	{wallPosition = Vector3(1959.6, -1173.6, 20.4), wallRotation = 179.5, areaPosition = Vector3(1860.3521, -1140.6764, 30), width = 208, height = 117},
-	{wallPosition = Vector3(2215.5, -1173.9, 26.1), wallRotation = 89.75, areaPosition = Vector3(2185.2979, -1130.2002, 30), width = 82, height = 85},
-	{wallPosition = Vector3(2768.2, -1625, 11.3), wallRotation = 0, areaPosition = Vector3(2743.6201, -1495.0059, 30), width = 111, height = 155},
-	--{wallPosition = Vector3(920.29999, -1231.7, 17.3), wallRotation = 87, areaPosition = Vector3(801.5957, -1154.6094, 30), width = 139, height = 155},
-	{wallPosition = Vector3(1237.9, -916.40002, 43.1), wallRotation = 280, areaPosition = Vector3(1156.7124, -850.0401, 30), width = 185, height = 75},
-	{wallPosition = Vector3(382.70001, -1875.7, 8.2), wallRotation = 92, areaPosition = Vector3(342.92822, -1796.2261, 30), width = 75, height = 320},
-	{wallPosition = Vector3(1065.2, -1617.6, 21.1), wallRotation = 0, areaPosition = Vector3(1035.9404, -1575.9678, 30), width = 111, height = 90},
-	{wallPosition = Vector3(474.60001, -1517.6, 20.8), wallRotation = 0, areaPosition = Vector3(425.46933, -1443.4115, 30), width = 102, height = 135},
-	{wallPosition = Vector3(2808.8999, -1426.1, 40.5), wallRotation = 270.75, areaPosition = Vector3(2786.498, -1422.0381, 30), width = 43, height = 55},
-	{wallPosition = Vector3(2822.2, -2383.2, 12.5), wallRotation = 180.25, areaPosition = Vector3(2805.8359, -2314.9021, 30), width = 53, height = 230},
-	{wallPosition = Vector3(2274.7, -68.9, 27), wallRotation = 0, areaPosition = Vector3(2221.5364, -25.009064, 30), width = 122, height = 75},
-	{wallPosition = Vector3(731.29999, -1337.2, 13.9), wallRotation = 0, areaPosition = Vector3(636.13751, -1316.6031, 30), width = 162, height = 80},
-	{wallPosition = Vector3(1084.5, -1219.5, 18.2), wallRotation = 0, areaPosition = Vector3(1061.6533, -1147.5967, 30), width = 160, height = 135},
-	{wallPosition = Vector3(2761.8999, -2015.6, 13.9), wallRotation = 0, areaPosition = Vector3(2720.2043, -1893.7759, 30), width = 100, height = 155},
-
-
-	-- Regex to get table from map file
-	--[[
-		areaY=(.*) height=(.*) areaX=(.*) maxZ=(.*) width=(.*) posX=(.*) posY=(.*) posZ=(.*) rotX=(.*) rotY=(.*) rotZ=(.*)
-		1			2			3			4			5		6			7			8		9			10		11
-		{wallPosition = Vector3\(\6, \7, \8\), wallRotation = \11, areaPosition = Vector3\(\3, \1, \4\), width = \5, height = \2},
-	]]
+SprayWallData = {
+	{wallPosition = Vector3(2512.3999, -1683.4, 13.9), 	wallRotation = 129},
+	{wallPosition = Vector3(2080.5, -1597.1, 13.8), 	wallRotation = 269.5},
+	{wallPosition = Vector3(1758.7, -1938.9, 14), 		wallRotation = 0},
+	{wallPosition = Vector3(1761.5, -1350.2, 16), 		wallRotation = 0},
+	{wallPosition = Vector3(1913.1, -1361.5, 14), 		wallRotation = 267},
+	{wallPosition = Vector3(1959.6, -1173.6, 20.4), 	wallRotation = 179.5},
+	{wallPosition = Vector3(2215.5, -1173.9, 26.1), 	wallRotation = 89.75},
+	{wallPosition = Vector3(2768.2, -1625, 11.3), 		wallRotation = 0},
+	{wallPosition = Vector3(1237.9, -916.40002, 43.1), 	wallRotation = 280},
+	{wallPosition = Vector3(382.70001, -1875.7, 8.2), 	wallRotation = 92},
+	{wallPosition = Vector3(1065.2, -1617.6, 21.1), 	wallRotation = 0},
+	{wallPosition = Vector3(474.60001, -1517.6, 20.8), 	wallRotation = 0},
+	{wallPosition = Vector3(2808.8999, -1426.1, 40.5), 	wallRotation = 270.75},
+	{wallPosition = Vector3(2822.2, -2383.2, 12.5), 	wallRotation = 180.25},
+	{wallPosition = Vector3(2274.7, -68.9, 27), 		wallRotation = 0},
+	{wallPosition = Vector3(731.29999, -1337.2, 13.9), 	wallRotation = 0},
+	{wallPosition = Vector3(1084.5, -1219.5, 18.2), 	wallRotation = 0},
+	{wallPosition = Vector3(2761.8999, -2015.6, 13.9), 	wallRotation = 0},
 }
--- Fix positions (creation tool is wrong, but I'm too lazy to fix the coordinates manually)
-for k, v in pairs(GangAreaData) do
-	GangAreaData[k].areaPosition = Vector3(v.areaPosition.x, v.areaPosition.y - v.height, v.areaPosition.z)
-end
 
 TURFING_STOPREASON_LEAVEAREA = 1
 TURFING_STOPREASON_NEWOWNER = 2

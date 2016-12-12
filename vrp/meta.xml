@@ -186,6 +186,10 @@
 	<!--<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>-->
 	<script src="server/classes/Groups/GroupProperty.lua" type="server"/>
 	<script src="server/classes/Groups/GroupPropertyManager.lua" type="server" />
+	<script src="server/classes/Groups/SprayWall.lua" type="server" />
+	<script src="server/classes/Groups/SprayWallManager.lua" type="server" />
+
+
 
 	<!-- Business -->
 	<script src="server/classes/Business/Company.lua" type="server"/>
@@ -594,6 +598,9 @@
 	<!--<script src="client/classes/Groups/GangArea.lua" type="client"/>-->
 	<!--<script src="client/classes/Groups/GangAreaManager.lua" type="client"/>-->
 	<script src="client/classes/Groups/GroupProperty.lua" type="client"/>
+	<script src="client/classes/Groups/SprayWall.lua" type="client"/>
+	<script src="client/classes/Groups/SprayWallManager.lua" type="client"/>
+
 
 	<!-- AI -->
 	<script src="client/classes/AI/Actor.lua" type="client"/>
