@@ -55,15 +55,6 @@ function StatisticsLogger:addPunishLog(admin, player, type, reason, duration)
         sqlLogs:getPrefix(), userId, adminId, type, reason, duration)
 end
 
-function StatisticsLogger:getPunishLogs(userId)
-    if userId then
-        local result = sqlLogs:queryFetch("SELECT * FROM ??_logsPunish WHERE UserId = ? ORDER BY Id DESC", sqlLogs:getPrefix(), userId)
-    else
-        local result = sqlLogs:queryFetch("SELECT * FROM ??_logsPunish WHERE ORDER BY Id DESC", sqlLogs:getPrefix())
-    end
-    return result
-end
-
 function StatisticsLogger:addChatLog(player, type, text, heared)
     if isElement(player) then userId = player:getId() end
 
