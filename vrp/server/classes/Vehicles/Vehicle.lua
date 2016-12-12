@@ -37,6 +37,9 @@ function Vehicle:virtual_constructor()
 end
 
 function Vehicle:virtual_destructor()
+	if self.m_CountdownDestroyTimer and isTimer(self.m_CountdownDestroyTimer) then
+		self:countdownDestroyAbort(player)
+	end
 	VehicleManager:getSingleton():removeRef(self, not self:isPermanent())
 end
 
@@ -347,6 +350,7 @@ function Vehicle:countdownDestroyStart(player)
 	if self.m_CountdownDestroyTimer and isTimer(self.m_CountdownDestroyTimer) then
 		killTimer(self.m_CountdownDestroyTimer)
 	end
+	self.m_CountdownDestroyPlayer = player
 	player:sendWarning(_("Vorsicht: Steig innerhalb von %d Sekunden wieder ein, oder das Fahrzeug wird gelöscht!", player, self.m_CountdownDestroy))
 	player:triggerEvent("Countdown", self.m_CountdownDestroy, "Fahrzeug")
 	self.m_CountdownDestroyTimer = setTimer(function()
@@ -357,10 +361,12 @@ function Vehicle:countdownDestroyStart(player)
 end
 
 function Vehicle:countdownDestroyAbort(player)
+	if not player then player = self.m_CountdownDestroyPlayer end
 	if self.m_CountdownDestroyTimer and isTimer(self.m_CountdownDestroyTimer) then
 		player:triggerEvent("CountdownStop", "Fahrzeug")
 		killTimer(self.m_CountdownDestroyTimer)
 	end
+	self.m_CountdownDestroyPlayer = nil
 end
 
 function Vehicle:setRepairAllowed(state)

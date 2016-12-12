@@ -39,7 +39,9 @@ end
 function JobLumberjack:onVehicleSpawn(player, vehicleModel, vehicle)
 	vehicle:setVariant(255, 255)
 	vehicle:addCountdownDestroy(10)
-	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
+	addEventHandler("onElementDestroy", vehicle, function()
+		self:stop(player)
+	end)
 end
 
 function JobLumberjack:checkRequirements(player)
