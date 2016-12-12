@@ -24,14 +24,14 @@ function GroupPropertyBuy:constructor()
 	addEventHandler("ForceClose", localPlayer, self.m_ForceCloseFunc)
 end
 
-function GroupPropertyBuy:forceClose() 
+function GroupPropertyBuy:forceClose()
 	delete( GroupPropertyBuy:getSingleton())
 end
 
 function GroupPropertyBuy:BuyButton_Click()
 	local selected = self.m_ImmoGrid:getSelectedItem()
 	if selected then
-		if self.m_ImmoTable then 
+		if self.m_ImmoTable then
 			triggerServerEvent("GroupPropertyBuy",localPlayer, selected.Id)
 		end
 	end
@@ -40,11 +40,13 @@ end
 function GroupPropertyBuy:PreviewButton_Click()
 	if self.m_ImmoGrid then
 		local selected = self.m_ImmoGrid:getSelectedItem()
-		if self.m_ImmoTable then 
+		if self.m_ImmoTable then
 			setElementFrozen(localPlayer,true)
 			local matrix = self.m_ImmoTable[selected.Id].m_CamMatrix
 			local interior = self.m_ImmoTable[selected.Id].m_Interior
 			local dimension = self.m_ImmoTable[selected.Id].m_Dimension
+			self:setVisible(false)
+			setTimer(function() self:setVisible(true) end, 5000, 1)
 			--setElementInterior(localPlayer,interior)
 			--setElementDimension( localPlayer, dimension)
 			--setCameraInterior(interior)
@@ -68,10 +70,10 @@ end
 
 function GroupPropertyBuy:updateList( _table )
 	self.m_ImmoTable = _table
-	if _table then 
+	if _table then
 		self.m_ImmoGrid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.28, self.m_Width*0.9, self.m_Height*0.5, self.m_Window)
 		self.m_ImmoGrid:addColumn(_"Verfügbare Immobilien", 1)
-		for id, obj in pairs( _table ) do 
+		for id, obj in pairs( _table ) do
 			if obj.m_OwnerID == 0 then
 				item = self.m_ImmoGrid:addItem(obj.m_Price.."$ - "..obj.m_Name)
 				item.Id = id
