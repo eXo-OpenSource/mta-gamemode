@@ -383,6 +383,8 @@
 	<script src="client/classes/Inventory/DrugsShroom.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemDestructable.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemSellContract.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemFood.lua" type="client"/>
+
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeOut.lua" type="client"/>

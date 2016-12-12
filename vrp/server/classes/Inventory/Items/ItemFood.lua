@@ -13,7 +13,8 @@ ItemFood.Settings = {
 	["Pilz"] = {["Health"] = 10, ["Model"] = 1882, ["Text"] = "isst einen Pilz", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
 	["Zigarette"] = {["Health"] = 10, ["Model"] = 3027, ["Text"] = "raucht eine Zigarette", ["Animation"] = {"smoking", "M_smkstnd_loop", 13500},
 		["ModelScale"] = 2,
-		["Attach"] = {11, 0, 0, 0, 0, 0, 0}
+		["Attach"] = {11, 0, 0, 0, 0, 0, 0},
+		["CustomEvent"] = "smokeEffect"
 	}
 }
 
@@ -42,12 +43,15 @@ function ItemFood:use(player)
 	player:meChat(true, " "..ItemSettings["Text"].."!")
 	StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())
 
+	if ItemSettings["CustomEvent"] then
+		triggerClientEvent(ItemSettings["CustomEvent"], player, item)
+	end
+
 	local block, animation, time = unpack(ItemSettings["Animation"])
 	player:setAnimation(block, animation, time, true, false, false)
 	setTimer(function()
 		item:destroy()
 		player:setHealth(player:getHealth()+ItemSettings["Health"])
-
 		player:setAnimation()
 	end, time, 1)
 
