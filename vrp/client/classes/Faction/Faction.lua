@@ -43,7 +43,7 @@ function FactionManager:stateFactionStartCuff( target )
 end
 
 
-function FactionEvil:factionEvilStartRaid(target)
+function FactionManager:factionEvilStartRaid(target)
 	if target then
 		local timer = localPlayer.evilRaidTimer
 		if timer then
