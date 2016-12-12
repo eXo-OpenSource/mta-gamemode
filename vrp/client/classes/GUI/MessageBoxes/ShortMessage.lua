@@ -19,8 +19,8 @@ function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc)
 end
 
 function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc)
-	if ShortMessageLogGUI.m_Log then 
-		table.insert(ShortMessageLogGUI.m_Log, title.." - "..text)
+	if ShortMessageLogGUI.m_Log then
+		table.insert(ShortMessageLogGUI.m_Log, title or "".." - "..text)
 	end
 	local x, y, w
 	x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
@@ -86,7 +86,7 @@ function ShortMessage:destructor()
 			table.removevalue(ShortMessage.MessageBoxes, self)
 			ShortMessage.resortPositions()
 			end
-	else 
+	else
 		GUIElement.destructor(self)
 		table.removevalue(ShortMessage.MessageBoxes, self)
 		ShortMessage.resortPositions()
@@ -146,9 +146,9 @@ function ShortMessage.resortPositions ()
 				--end
 			end
 		end
-	else 
-		for i = 1, #ShortMessage.MessageBoxes do 
-			if ShortMessage.MessageBoxes[i].m_Animation then 
+	else
+		for i = 1, #ShortMessage.MessageBoxes do
+			if ShortMessage.MessageBoxes[i].m_Animation then
 				delete(ShortMessage.MessageBoxes[i].m_Animation)
 			end
 			ShortMessage.MessageBoxes[i].m_ForceDestroy = true
