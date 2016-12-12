@@ -30,16 +30,16 @@ function Townhall:constructor()
 	groupInfoPed.Type = 3
 	groupInfoPed.Func = function() GroupCreationGUI:new() end
 	self.m_Peds[#self.m_Peds + 1] = groupInfoPed
-	
-	--// Group property ped 
+
+	--// Group property ped
 	local groupImmoPed = Ped.create(290, Vector3(1824.02, -1271.87, 120.26))
 	groupImmoPed:setRotation(Vector3(0, 0, 182.754))
 	groupImmoPed.Name = _"Firmen-/Gangimmobilien"
 	groupImmoPed.Description = _"Für mehr Infos klicke mich an!"
 	groupImmoPed.Type = 5
-	groupImmoPed.Func = function() 
+	groupImmoPed.Func = function()
 		if localPlayer:getGroupName() ~= "" then
-			GroupPropertyBuy:new() 
+			GroupPropertyBuy:new()
 		else ErrorBox:new(_"Du hast keine Firma/Gang!")
 		end
 	end
@@ -53,57 +53,58 @@ function Townhall:constructor()
 	itemInfoPed.Func = function() triggerServerEvent("shopOpenGUI", localPlayer, 50) end
 	self.m_Peds[#self.m_Peds + 1] = itemInfoPed
 
-	
-	--// VEHICLE SPAWNER PEDS 
+	--// VEHICLE SPAWNER PEDS
 	local itemSpawnerPed = Ped.create(171, Vector3(1806.72, -1293.27, 13.61))
 	itemSpawnerPed:setRotation(Vector3(0, 0, 65))
 	itemSpawnerPed.Name = _"Fahrzeugverleih"
 	itemSpawnerPed.Description = _"Leih hier ein Fahrzeug aus!"
-	itemSpawnerPed.Type = 6
 	itemSpawnerPed.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed
-	
+
 	local itemSpawnerPed2 = Ped.create(171, Vector3(1509.99, -1749.29, 13.55))
 	itemSpawnerPed2:setRotation(Vector3(0, 0, 97.13))
 	itemSpawnerPed2.Name = _"Fahrzeugverleih"
 	itemSpawnerPed2.Description = _"Leih hier ein Fahrzeug aus!"
-	itemSpawnerPed2.Type = 7
 	itemSpawnerPed2.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed2
-	
-	
+
+
 	--// WT PED AREA
 	local itemSpawnerPed3 = Ped.create(267, Vector3(117.39, 1883.09, 17.88))
 	itemSpawnerPed3:setRotation(Vector3(0, 0, 0))
 	itemSpawnerPed3.Name = _"Ausrüstungsfahrzeug"
 	itemSpawnerPed3.Description = _"Hier startet der Waffentruck!"
-	itemSpawnerPed3.Type = 8
 	itemSpawnerPed3.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed3
-	
-	
+
+
 	--// WT PED SF
 	local itemSpawnerPed4 = Ped.create(307, Vector3(-1869.94, 1422.34, 7.18))
 	itemSpawnerPed4:setRotation(Vector3(0, 0, 220))
 	itemSpawnerPed4.Name = _"Illegaler Waffentruck"
 	itemSpawnerPed4.Description = _"Hier startet der Waffentruck!"
-	itemSpawnerPed4.Type = 9
 	itemSpawnerPed4.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed4
-	
-	
+
+
 	local itemSpawnerPed5 = Ped.create(171, Vector3(1742.07, -1744.15, 13.55))
 	itemSpawnerPed5:setRotation(Vector3(0, 0, 0))
 	itemSpawnerPed5.Name = _"Fahrzeugverleih"
 	itemSpawnerPed5.Description = _"Leih hier ein Fahrzeug aus!"
-	itemSpawnerPed5.Type = 10
 	itemSpawnerPed5.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed5
-	
-	
+
+	--// RESCUE BASE HEAL PED
+	local itemSpawnerPed6 = Ped.create(70, Vector3(1723.081, -1751.388, 13.555))
+	itemSpawnerPed6:setRotation(Vector3(0, 0, 0))
+	itemSpawnerPed6.Name = _"Rescue Base Heilung"
+	itemSpawnerPed6.Description = _"Klicke mich für Heilung an!"
+	itemSpawnerPed6.Func = function() triggerServerEvent("factionRescuePlayerHealBase", localPlayer) end
+	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed6
+
 	-- Initialize
 	self:initalizePeds()
-	
+
 end
 
 function Townhall:destructor()

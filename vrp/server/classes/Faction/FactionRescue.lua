@@ -6,7 +6,10 @@
 -- *
 -- ****************************************************************************
 FactionRescue = inherit(Singleton)
-addRemoteEvents{"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer", "factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher"}
+addRemoteEvents{
+	"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer",
+	"factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher", "factionRescuePlayerHealBase"
+}
 
 function FactionRescue:constructor()
 	-- Duty Pickup
@@ -54,8 +57,7 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueWastedFinished", root, bind(self.Event_OnPlayerWastedFinish, self))
 	addEventHandler("factionRescueChangeSkin", root, bind(self.Event_changeSkin, self))
 	addEventHandler("factionRescueToggleStretcher", root, bind(self.Event_ToggleStretcher, self))
-
-
+	addEventHandler("factionRescuePlayerHealBase", root, bind(self.Event_healPlayerHospital, self))
 end
 
 function FactionRescue:destructor()
@@ -366,5 +368,25 @@ function FactionRescue:Event_healPlayer(medic, target)
 		end
 	else
 		medic:sendError(_("Interner Fehler: Argumente falsch @FactionRescue:Event_healPlayer!", medic))
+	end
+end
+
+function FactionRescue:Event_healPlayerHospital()
+	if isElement(client) then
+		if client:getHealth() < 100 then
+			local costs = math.floor(100-client:getHealth())
+			if client:getMoney() >= costs then
+				client:setHealth(100)
+				StatisticsLogger:getSingleton():addHealLog(client, 100, "Rescue Team [Heal-Bot]")
+				client:sendInfo(_("Du wurdest für %s$ von dem Arzt geheilt!", client, costs))
+
+				client:takeMoney(costs, "Rescue Team Heilung")
+				self.m_Faction:giveMoney(costs, "Rescue Team Heilung")
+			else
+				client:sendError(_("Du hast zu wenig Geld dabei! (%s$)", client, costs))
+			end
+		else
+			client:sendError(_("Du hast bereits volles Leben.", client))
+		end
 	end
 end
