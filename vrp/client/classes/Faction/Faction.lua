@@ -56,7 +56,7 @@ function FactionManager:factionEvilStartRaid(target)
 	end
 end
 
-function FactionEvil:endEvilFactionRaid()
+function FactionManager:endEvilFactionRaid()
 	if localPlayer.m_evilRaidTarget then
 		if getDistanceBetweenPoints3D( localPlayer.m_evilRaidTarget:getPosition(), localPlayer:getPosition()) <= 5 then
 			triggerServerEvent("factionEvilSuccessRaid", localPlayer,localPlayer.m_evilRaidTarget)
