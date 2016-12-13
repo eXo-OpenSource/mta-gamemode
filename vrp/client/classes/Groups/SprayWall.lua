@@ -61,6 +61,15 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 			end
 		end
 	)
+
+	addEventHandler("onClientElementDataChange", SprayWallShape, function()
+		if dataName == "OwnerName" then
+			self:setTagText(getElementData(SprayWallShape, "OwnerName") or "")
+		end
+	end)
+
+
+
 end
 
 function SprayWall:destructor()
