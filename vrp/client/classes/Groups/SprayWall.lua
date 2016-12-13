@@ -117,7 +117,7 @@ function SprayWall:renderTagTexture()
 end
 
 function SprayWall:setTagText(text)
-	self.m_OldTagText = self.m_TagText
+	self.m_OldTagText = ""
 	self.m_TagText = text
 end
 
