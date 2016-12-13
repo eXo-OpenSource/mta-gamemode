@@ -24,8 +24,6 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeHit", self.m_Shape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				self.m_IsSpraying = false
-				self:refresh()
 				addEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
 			end
 		end
@@ -34,7 +32,9 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
 				removeEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
-				self:refresh()
+				if self.m_IsSpraying then
+					self:refresh()
+				end
 				self.m_IsSpraying = false
 			end
 		end
@@ -45,8 +45,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeHit", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				self:setTagText(getElementData(self.m_SprayWallShape, "OwnerName") or "")
-
+				self:refresh()
 				self:createTextures()
 				addEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
