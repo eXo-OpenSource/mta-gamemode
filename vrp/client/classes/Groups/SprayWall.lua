@@ -62,7 +62,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 		end
 	)
 
-	addEventHandler("onClientElementDataChange", SprayWallShape, function()
+	addEventHandler("onClientElementDataChange", SprayWallShape, function(dataName)
 		if dataName == "OwnerName" then
 			local text = getElementData(SprayWallShape, "OwnerName") or ""
 			self.m_OldTagText = text
