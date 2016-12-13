@@ -24,7 +24,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
 				self.m_IsSpraying = false
-				self:setTagText(localPlayer:getGroupName())
+				self:refresh()
 				addEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
 			end
 		end
@@ -33,9 +33,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
 				removeEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
-				if self.m_IsSpraying then
-					self:resetTag(true)
-				end
+				self:refresh()
 				self.m_IsSpraying = false
 			end
 		end
@@ -64,10 +62,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 
 	addEventHandler("onClientElementDataChange", SprayWallShape, function(dataName)
 		if dataName == "OwnerName" then
-			local text = getElementData(SprayWallShape, "OwnerName") or ""
-			self.m_OldTagText = text
-			self.m_TagText = text
-			self:setTagInstantly(text)
+			self:refresh()
 		end
 	end)
 
@@ -79,6 +74,13 @@ function SprayWall:destructor()
 	destroyElement(self.m_Wall)
 	destroyElement(self.m_Shape)
 	self:destroyTextures()
+end
+
+function SprayWall:refresh()
+	local text = getElementData(SprayWallShape, "OwnerName") or ""
+	self.m_OldTagText = text
+	self.m_TagText = text
+	self:setTagInstantly(text)
 end
 
 function SprayWall:spray(hitX, hitY, hitZ, startX, startY, startZ)
