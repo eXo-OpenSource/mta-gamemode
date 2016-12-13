@@ -65,7 +65,7 @@ end
 function BankRobbery:destroyRob()
 	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape)
 	if tooLatePlayers then
-		for key, player in ipairs( tooLatePlayers) do
+		for key, player in pairs( tooLatePlayers) do
 			killPed(player)
 			player:sendInfo("Du bist im abgeschlossenen Raum verendet!")
 		end
@@ -155,7 +155,7 @@ function BankRobbery:build()
 	self.m_BombAreaTarget = createObject(3108, 2317.8, 11.3, 26.8, 0, 90, 0):setScale(0.2)
 	self.m_BombArea = BombArea:new(self.m_BombAreaPosition, bind(self.BombArea_Place, self), bind(self.BombArea_Explode, self), BOMB_TIME)
 	self.m_BombColShape = createColSphere(self.m_BombAreaPosition, 10)
-	self.m_SecurityRoomShape = createColCuboid( 2305.5, 16.4, 25.5,8.4,5,4)
+	self.m_SecurityRoomShape = createColCuboid(2305.5, 5.3, 25.5, 11.5, 17, 4)
 	self.m_Timer = false
 	self.m_ColShape = createColSphere(self.m_BombAreaPosition, 60)
 	self.m_OnSafeClickFunction = bind(self.Event_onSafeClicked, self)
@@ -580,8 +580,13 @@ function BankRobbery:Event_DeloadBag(veh)
 					for key, bag in pairs (getAttachedElements(veh)) do
 						if bag.model == 1550 then
 							bag:detach(self.m_Truck)
-							client:attachPlayerObject(bag)
-							return
+							if client:getFaction():isStateFaction() then
+								self:statePeopleClickBag(client, bag)
+								return
+							else
+								client:attachPlayerObject(bag)
+								return
+							end
 						end
 					end
 					client:sendError(_("Es befindet sich kein Geldsack im Truck!", client))
@@ -677,7 +682,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 								hitElement:toggleControlsWhileObjectAttached(true)
 							end
 							for key, value in pairs (bags) do
-								if value:getModel() == 1550 then
+								if value and isElement(value) and value:getModel() == 1550 then
 									amount = value:getData("Money")
 									totalAmount = totalAmount + amount
 									faction:giveMoney(amount, "Bankraub")
@@ -686,7 +691,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							end
 						end
 						outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
-						if self:getRemainingBagAmount() == 0 or veh == self.m_Truck then
+						if self:getRemainingBagAmount() == 0 then
 							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
 							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
 							source:destroy()

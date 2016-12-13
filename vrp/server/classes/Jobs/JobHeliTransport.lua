@@ -28,6 +28,11 @@ end
 
 function JobHeliTransport:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
+	player:setData("JobHeliTransport:Money", 0)
+	player:triggerEvent("endHeliTransport")
+	if player.heliJobVehicle and isElement(player.heliJobVehicle) then
+		player.heliJobVehicle:destroy()
+	end
 end
 
 function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)
@@ -36,39 +41,34 @@ function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)
 	self.m_VehData[vehicle].package:attach(vehicle, -0.5, -1.5, -1)
 	self.m_VehData[vehicle].package:setAlpha(0)
 	self.m_VehData[vehicle].load = false
+	vehicle.player = player
+	player.heliJobVehicle = vehicle
 	player:triggerEvent("jobHeliTransportCreateMarker", "pickup")
 	client:sendInfo(_("Bitte belade deinen Helikopter am Ladepunkt!", client))
 	addEventHandler("onVehicleExplode", vehicle, bind(self.onCargoBobExplode, self))
-	addEventHandler("onVehicleExit", vehicle, bind(self.onCargoBobExit, self))
-	addEventHandler("onVehicleDestroy", vehicle, bind(self.onCargoBobDestroy, self))
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		if vehPlayer ~= player then
 			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
 			cancelEvent()
 		end
 	end)
+	vehicle:addCountdownDestroy(10)
+	addEventHandler("onElementDestroy", vehicle, bind(self.onCargoBobDestroy, self))
 end
 
 function JobHeliTransport:onCargoBobExplode()
 	local player = source:getOccupant()
 	player:setPosition(Vector3(1788.84, -2275.36, 26.78))
 	player:sendError(_("Dein Helikopter ist explodiert! Der Job wurde beendet!", player))
-	self.m_VehData[source] = nil
-	client:setData("JobHeliTransport:Money", 0)
-	player:triggerEvent("endHeliTransport")
-end
-
-function JobHeliTransport:onCargoBobExit(player)
-	player:setPosition(Vector3(1788.84, -2275.36, 26.78))
-	player:sendError(_("Du bist ausgestiegen! Der Job wurde beendet!", player))
-	source:destroy()
-	self.m_VehData[source] = nil
-	player:setData("JobHeliTransport:Money", 0)
-	player:triggerEvent("endHeliTransport")
+	self:stop(player)
 end
 
 function JobHeliTransport:onCargoBobDestroy()
-	if isElement(self.m_VehData[source].package) then self.m_VehData[source].package:destroy() end
+	if self.m_VehData[source] and self.m_VehData[source].package and isElement(self.m_VehData[source].package) then self.m_VehData[source].package:destroy() end
+	self.m_VehData[source] = nil
+	player:setData("JobHeliTransport:Money", 0)
+	player:triggerEvent("endHeliTransport")
+	self.m_VehicleSpawner:toggleForPlayer(player, false)
 end
 
 function JobHeliTransport:onPickupLoad()

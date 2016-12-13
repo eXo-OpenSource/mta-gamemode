@@ -114,6 +114,7 @@ function Core:ready()
 
 	GroupProperty:new()
 	GUIWindowsFocus:new()
+	SprayWallManager:new()
 
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 end

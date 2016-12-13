@@ -118,26 +118,26 @@ function VehicleManager:getGroupVehicles(groupId)
 	return self.m_GroupVehicles[groupId]
 end
 
-function VehicleManager:createVehiclesForPlayer( player ) 
-	if player then 
-		local id = player:getId() 
+function VehicleManager:createVehiclesForPlayer( player )
+	if player then
+		local id = player:getId()
 		if id then
 			if not self.m_Vehicles[id] then
 				self.m_Vehicles[id] = {}
-			end	
+			end
 			local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner=?", sql:getPrefix(), id)
 			local vehicleObj
 			local skip = false
-			for i, row in pairs( result ) do 
-				for i = 1, #self.m_Vehicles[id] do 
+			for i, row in pairs( result ) do
+				for i = 1, #self.m_Vehicles[id] do
 					vehicleObj = self.m_Vehicles[id][i]
-					if vehicleObj then 
+					if vehicleObj then
 						if vehicleObj.m_Id == row.Id then
 							skip = true
 						end
 					end
 				end
-				if not skip then 
+				if not skip then
 					local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
 					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
 					VehicleManager:getSingleton():addRef(vehicle, false)
@@ -370,20 +370,24 @@ end
 function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
-	if source:hasKey(client) or client:getRank() >= RANK.Moderator then
-		if source:isInGarage() then
-			source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
-			client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
-			return
-		end
-		if source:getInterior() == 0 then
-			source:setCurrentPositionAsSpawn(VehiclePositionType.World)
-			client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
+	if source:isPermanent() then
+		if source:hasKey(client) or client:getRank() >= RANK.Moderator then
+			if source:isInGarage() then
+				source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
+				client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
+				return
+			end
+			if source:getInterior() == 0 then
+				source:setCurrentPositionAsSpawn(VehiclePositionType.World)
+				client:sendInfo(_("Du hast das Fahrzeug erfolgreich geparkt!", client))
+			else
+				client:sendError(_("Du kannst dein Fahrzeug hier nicht parken!", client))
+			end
 		else
-			client:sendError(_("Du kannst dein Fahrzeug hier nicht parken!", client))
+			client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
 		end
 	else
-		client:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug", client))
+		client:sendError(_("Dieses Fahrzeug kann nicht geparkt werden!", client))
 	end
  end
 

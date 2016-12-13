@@ -98,6 +98,7 @@ function Core:constructor()
 	--// Gangwar
 	Gangwar:new()
 	GangwarStatistics:new()
+	SprayWallManager:new()
 
 	-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 	setHeatHaze(0)

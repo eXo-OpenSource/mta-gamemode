@@ -55,21 +55,28 @@ function JobFarmer:constructor()
 end
 
 function JobFarmer:onVehicleSpawn(player,vehicleModel,vehicle)
-	addEventHandler("onVehicleExit", vehicle, function(vehPlayer, seat)
-		if seat == 0 then
-			if vehPlayer:getData("Farmer.Income") and vehPlayer:getData("Farmer.Income") > 0 then
-				vehPlayer:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
-				vehPlayer:setData("Farmer.Income", 0)
-				vehPlayer:triggerEvent("Job.updateIncome", 0)
-			end
-			vehicle:destroy()
-			self.m_CurrentPlants[vehPlayer] = 0
-		end
-	end)
+	if vehicleModel == 531 then
+		vehicle.trailer = createVehicle(610, vehicle:getPosition())
+		vehicle:attachTrailer(vehicle.trailer)
+
+		addEventHandler("onElementDestroy", vehicle,
+			function()
+				if source.trailer and isElement(source.trailer) then source.trailer:destroy() end
+			end)
+
+		addEventHandler("onTrailerDetach", vehicle.trailer, function(tractor)
+			tractor:attachTrailer(source)
+		end)
+	end
+
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
 		cancelEvent()
 	end)
+
+	player.farmerVehicle = vehicle
+	vehicle:addCountdownDestroy(10)
+	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
 end
 
 function JobFarmer:onVehicleDestroy(vehicle)
@@ -80,7 +87,7 @@ end
 
 function JobFarmer:storeHit(hitElement,matchingDimension)
 	if getElementType(hitElement) == "player" then
-		player:sendShortMessage("Hier kannst du den Walton beladen!")
+		hitElement:sendShortMessage(_("Hier kannst du den Walton beladen!",hitElement))
 	end
 	if getElementType(hitElement) ~= "vehicle" then
 		return
@@ -91,7 +98,7 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] ~= 0 then
-			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Pflanzen auf deinem Walton !",player,255,0,0)
+			outputChatBox("Du hast schon "..self.m_CurrentPlants[player].." Getreide auf deinem Walton !",player,255,0,0)
 			return
 		end
 		if self.m_CurrentPlantsFarm >= PLANTSONWALTON then
@@ -116,19 +123,19 @@ function JobFarmer:storeHit(hitElement,matchingDimension)
 				end,3500,1,hitElement
 			)
 		else
-			player:sendMessage("Es gibt momentan nicht genug Pflanzen auf der Farm. Momentane Pflanzen : "..self.m_CurrentPlantsFarm,255,0,0)
+			player:sendMessage(_("Zum Aufladen werden mindestens %d Getreide benötigt. Momentanes Getreide: %d!", player, PLANTSONWALTON  ,self.m_CurrentPlantsFarm),255,0,0)
 		end
 	end
 end
 
 function JobFarmer:createJobElement (element)
-	setElementVisibleTo (element,root,false)
+	setElementVisibleTo(element, root, false)
 	table.insert (self.m_JobElements,element)
 	return element
 end
 
 function JobFarmer:start(player)
-	self:setJobElementVisibility (player,true)
+	self:setJobElementVisibility(player,true)
 	self.m_CurrentPlants[player] = 0
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
 
@@ -136,8 +143,9 @@ function JobFarmer:start(player)
 	player:giveAchievement(20)
 end
 
-function JobFarmer:setJobElementVisibility (player,boolean)
-	if boolean then
+
+function JobFarmer:setJobElementVisibility(player, state)
+	if state then
 		local x, y = unpack(PLANT_DELIVERY)
 		self.m_DeliveryBlip = Blip:new("Waypoint.png", x, y, player,600)
 		self.m_DeliveryBlip:setStreamDistance(2000)
@@ -145,17 +153,23 @@ function JobFarmer:setJobElementVisibility (player,boolean)
 		delete(self.m_DeliveryBlip)
 	end
 
-	for key, value in ipairs (self.m_JobElements) do
-		setElementVisibleTo (value,player,boolean)
+	for key, element in pairs (self.m_JobElements) do
+		setElementVisibleTo(element, player, state)
 	end
 end
 
 function JobFarmer:stop(player)
 	self.m_CurrentPlants[player] = nil
-	self:setJobElementVisibility(player,false)
+	self:setJobElementVisibility(player, false)
 	self.m_Plants[player] = nil
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 
+	if player:getData("Farmer.Income") and player:getData("Farmer.Income") > 0 then
+		player:giveMoney(player:getData("Farmer.Income"), "Farmer-Job")
+		player:setData("Farmer.Income", 0)
+		player:triggerEvent("Job.updateIncome", 0)
+	end
+	if player.farmerVehicle and isElement(player.farmerVehicle) then player.farmerVehicle:destroy() end
 end
 
 function JobFarmer:checkRequirements(player)

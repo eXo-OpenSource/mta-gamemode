@@ -72,6 +72,5 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 				end
 			)
 		end
-
 	end
 end

@@ -215,7 +215,8 @@ function Admin:Event_respawnCompanyVehicles(Id)
 end
 
 function Admin:command(admin, cmd, targetName, arg1, arg2)
-    if cmd == "smode" or cmd == "clearchat" then
+
+	if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
 		self:Command_MarkPos(admin, true)
@@ -224,10 +225,10 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
 		self:Command_MarkPos(admin, false)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
     else
-        if targetName then
+		if targetName then
             local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
             if isElement(target) then
-                if cmd == "spect" or "unprison" then
+                if cmd == "spect" or cmd == "unprison" then
                     self:Event_adminTriggerFunction(cmd, target, nil, nil, admin)
                     return
                 else
@@ -248,7 +249,7 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
                 end
             end
         end
-        if cmd == "spect" or "unprison" then
+        if cmd == "spect" or cmd == "unprison" then
             admin:sendError(_("Befehl: /%s [Ziel]", admin, cmd))
             return
         elseif cmd == "rkick" or cmd == "permaban" then
@@ -283,19 +284,28 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			outputChatBox("Grund: "..reason,root, 200, 0, 0)
         elseif func == "prison" then
             duration = tonumber(duration)
-            self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
-            target:setPrison(duration*60)
-            self:addPunishLog(admin, target, func, reason, duration*60)
-			outputChatBox(getPlayerName(target).." hat "..getPlayerName(admin).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
-			outputChatBox("Grund: "..reason,root, 200, 0, 0)
-        elseif func == "unprison" then
-			if target.m_PrisonTime > 0 then
-				self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
-				target:endPrison()
-				self:addPunishLog(admin, target, func)
-			else admin:sendError("Spieler ist nicht im Prison!")
+			if duration then
+				self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
+				target:setPrison(duration*60)
+				self:addPunishLog(admin, target, func, reason, duration*60)
+				outputChatBox(getPlayerName(target).." hat "..getPlayerName(admin).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
+				outputChatBox("Grund: "..reason,root, 200, 0, 0)
+			else
+			outputChatBox("Syntax: /prison [ziel] [Zeit in Minuten] [Grund]",admin,200,0,0)
+			end
+		elseif func == "unprison" then
+			if target then
+				if target.m_PrisonTime > 0 then
+					self:sendShortMessage(_("%s hat %s aus dem Prison gelassen!", admin, admin:getName(), target:getName()))
+					target:endPrison()
+					self:addPunishLog(admin, target, func)
+				else admin:sendError("Spieler ist nicht im Prison!")
+				end
+			else
+				outputChatBox("Syntax: /unprison [ziel]",admin,200,0,0)
 			end
         elseif func == "timeban" then
+			if not target then return end
             if not duration then return end
 			if not reason then return end
 			duration = tonumber(duration)
@@ -305,6 +315,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			outputChatBox("Grund: "..reason,root, 200, 0, 0)
 			Ban.addBan(target, admin, reason, duration*60*60)
         elseif func == "permaban" then
+			if not target then return end
             if not reason or #reason == 0 then return end
 			self:sendShortMessage(_("%s hat %s permanent gebannt! Grund: %s", admin, admin:getName(), target:getName(), reason))
             self:addPunishLog(admin, target, func, reason, 0)
@@ -312,6 +323,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			outputChatBox("Grund: "..reason,root, 200, 0, 0)
 			Ban.addBan(target, admin, reason)
         elseif func == "addWarn" or func == "warn" then
+			if not target then return end
 			if not duration then return end
 			if not reason then return end
 			duration = tonumber(duration)
@@ -320,6 +332,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             target:sendMessage(_("Du wurdest von %s verwarnt! Ablauf in %s Tagen, Grund: %s", target, admin:getName(), duration, reason), 255, 0, 0)
             self:addPunishLog(admin, target, func, reason, duration*60*60*24)
         elseif func == "removeWarn" then
+			if not target then return end
             self:sendShortMessage(_("%s hat einen Warn von %s entfernt!", admin, admin:getName(), target:getName()))
             local id = reason
             Warn.removeWarn(target, id)
@@ -331,7 +344,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
             for index, player in pairs(Element.getAllByType("player")) do
                 for i=0, 2100 do
-                    player:outputChat(" ")
+                    player:outputChatBox(" ")
                 end
                 player:triggerEvent("closeAd")
             end
@@ -342,6 +355,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             triggerClientEvent("announceText", admin, text)
 			StatisticsLogger:getSingleton():addAdminAction( admin, "adminAnnounce", text)
         elseif func == "spect" then
+			if not target then return end
 			if target ~= admin then
 				StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
 				self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
@@ -377,6 +391,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			else admin:sendError("Sie können sich nicht selbst specten!")
 			end
         elseif func == "offlinePermaban" then
+			if not target then return end
 			if type(reason) == "string" then
 				if #reason == 0 then
 					self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
@@ -392,6 +407,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 				end
 			end
         elseif func == "offlineTimeban" then
+			if not target then return end
             self:sendShortMessage(_("%s hat %s offline für %d Stunden gebannt! Grund: %s", admin, admin:getName(), target, duration, reason))
             local targetId = Account.getIdFromName(target)
             if targetId and targetId > 0 then
@@ -409,6 +425,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
                 admin:sendError(_("Spieler nicht gefunden!", admin))
             end
         elseif func == "offlineUnban" then
+			if not target then return end
             self:sendShortMessage(_("%s hat %s offline entbannt!", admin, admin:getName(), target))
             local targetId = Account.getIdFromName(target)
             if targetId and targetId > 0 then

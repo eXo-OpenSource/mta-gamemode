@@ -63,6 +63,8 @@ function AppAmmunation:onOpen(form)
 	self.m_Tabs["Basket"] = self.m_TabPanel:addTab(_"Warenkorb", FontAwesomeSymbols.Money)
 	GUILabel:new(10, 10, 200, 50, _"Warenkorb", self.m_Tabs["Basket"])
 	self.m_CartGrid = GUIGridList:new(0, 60, 260, 285, self.m_Tabs["Basket"])
+	self.m_CartGrid:setItemHeight(20)
+	self.m_CartGrid:setFont(VRPFont(20))
 	self.m_CartGrid:addColumn(_"Ware", 0.6)
 	self.m_CartGrid:addColumn(_"Anzahl", 0.4)
 	self.m_SumLabelCart = GUILabel:new(10, 350, 240, 20, _"Gesamtsumme:", self.m_Tabs["Basket"])
@@ -91,7 +93,7 @@ end
 
 function AppAmmunation:order()
 	triggerServerEvent("onAmmunationAppOrder",root,self.m_Cart)
-	self:clearCart() 
+	self:clearCart()
 end
 
 function AppAmmunation:deleteItemFromCart()
@@ -119,6 +121,7 @@ function AppAmmunation:updateCart()
 				if weaponID == 0 then name = "Schutzweste" end
 				totalCosts = totalCosts + price
 				item = self.m_CartGrid:addItem(name,amount)
+				item:setFont(VRPFont(20))
 				item.typ = typ
 				item.id = weaponID
 			end
@@ -141,7 +144,7 @@ function AppAmmunation:updateButtons()
 			self.m_MagazineBuyBtn:setEnabled(true)
 		end
 	end
-	
+
 	if localPlayer:getWeaponLevel() >= AmmuNationInfo[weaponID].MinLevel then
 		self.m_WeaponBuyBtn:setEnabled(true)
 	end
@@ -198,11 +201,11 @@ function AppAmmunation:onClose()
 
 end
 
-function AppAmmunation:clearCart() 
-	for key, item in ipairs(self.m_CartGrid:getItems()) do 
+function AppAmmunation:clearCart()
+	for key, item in pairs(self.m_CartGrid:getItems()) do
 		if item then
-			self.m_Cart[item.id][item.typ] = self.m_Cart[item.id][item.typ]-1
-			self:updateCart()
+			self.m_Cart[item.id][item.typ] = 0
 		end
 	end
+	self:updateCart()
 end

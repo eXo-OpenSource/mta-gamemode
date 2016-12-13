@@ -14,9 +14,10 @@ function FactionManager:constructor()
 
 	self.m_NeedHelpBlip = {}
 
-	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest"}
+	addRemoteEvents{"loadClientFaction", "stateFactionNeedHelp", "factionStateStartCuff","stateFactionOfferTicket"; "updateCuffImage","playerSelfArrest", "factionEvilStartRaid"}
 	addEventHandler("loadClientFaction", root, bind(self.loadFaction, self))
 	addEventHandler("factionStateStartCuff", root, bind(self.stateFactionStartCuff, self))
+	addEventHandler("factionEvilStartRaid", root, bind(self.factionEvilStartRaid, self))
 	addEventHandler("stateFactionNeedHelp", root, bind(self.stateFactionNeedHelp, self))
 	addEventHandler("stateFactionOfferTicket", root, bind(self.stateFactionOfferTicket, self))
 	addEventHandler("updateCuffImage", root, bind(self.Event_onPlayerCuff, self))
@@ -29,15 +30,37 @@ function FactionManager:loadFaction(Id, name, name_short, rankNames, factionType
 end
 
 function FactionManager:stateFactionStartCuff( target )
-	if target then 
-		local timer = localPlayer.stateCuffTimer 
+	if target then
+		local timer = localPlayer.stateCuffTimer
 		if timer then
-			if isTimer(timer) then 
+			if isTimer(timer) then
 				killTimer(timer)
 			end
 		end
 		localPlayer.m_CuffTarget = target
 		localPlayer.stateCuffTimer = setTimer( self.endStateFactionCuff, 10000, 1)
+	end
+end
+
+
+function FactionManager:factionEvilStartRaid(target)
+	if target then
+		local timer = localPlayer.evilRaidTimer
+		if timer then
+			if isTimer(timer) then
+				killTimer(timer)
+			end
+		end
+		localPlayer.m_evilRaidTarget = target
+		localPlayer.evilRaidTimer = setTimer(self.endEvilFactionRaid, 10000, 1)
+	end
+end
+
+function FactionManager:endEvilFactionRaid()
+	if localPlayer.m_evilRaidTarget then
+		if getDistanceBetweenPoints3D( localPlayer.m_evilRaidTarget:getPosition(), localPlayer:getPosition()) <= 5 then
+			triggerServerEvent("factionEvilSuccessRaid", localPlayer,localPlayer.m_evilRaidTarget)
+		end
 	end
 end
 
@@ -53,7 +76,7 @@ function FactionManager:drawCuff()
 end
 
 function FactionManager:Event_selfArrestMarker( client )
-	if not localPlayer.m_selfArrest then 
+	if not localPlayer.m_selfArrest then
 		localPlayer.m_selfArrest = true
 		QuestionBox:new(
 			_"Möchtest du dich mit Kaution stellen?",
@@ -74,8 +97,8 @@ function FactionManager:stateFactionOfferTicket( cop )
 end
 
 function FactionManager:endStateFactionCuff( )
-	if localPlayer.m_CuffTarget then 
-		if getDistanceBetweenPoints3D( localPlayer.m_CuffTarget:getPosition(), localPlayer:getPosition()) <= 5 then 
+	if localPlayer.m_CuffTarget then
+		if getDistanceBetweenPoints3D( localPlayer.m_CuffTarget:getPosition(), localPlayer:getPosition()) <= 5 then
 			triggerServerEvent("stateFactionSuccessCuff", localPlayer,localPlayer.m_CuffTarget)
 		end
 	end

@@ -162,17 +162,17 @@ function SelfGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabPoints)
 	self.m_KarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.1, self.m_Width*0.4, self.m_Height*0.06, "+0", tabPoints)
 	localPlayer:setPrivateSyncChangeHandler("KarmaLevel", function(value) self.m_KarmaLabel:setText(tostring(math.floor(value))) end)
-	self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.1, self.m_Width*0.15, self.m_Height*0.06, "+ (200P)", tabPoints):setBackgroundColor(Color.Green)
-	self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot, true) end
-	self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.55, self.m_Height*0.1, self.m_Width*0.15, self.m_Height*0.06, "- (200P)", tabPoints):setBackgroundColor(Color.Red)
-	self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot, false) end
+	--self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.1, self.m_Width*0.15, self.m_Height*0.06, "+ (200P)", tabPoints):setBackgroundColor(Color.Green)
+	--self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot, true) end
+	--self.m_KarmaLevelButton = GUIButton:new(self.m_Width*0.60, self.m_Height*0.1, self.m_Width*0.15, self.m_Height*0.06, "- (200P)", tabPoints):setBackgroundColor(Color.Red)
+	--self.m_KarmaLevelButton.onLeftClick = function() triggerServerEvent("requestPointsToKarma", resourceRoot, false) end
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.25, self.m_Height*0.06, _"Skinlevel:", tabPoints)
 	self.m_SkinLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.18, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getSkinLevel(), tabPoints)
-	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_SkinLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.18, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getSkinLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_SkinLevelButton.onLeftClick = function() triggerServerEvent("requestSkinLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("SkinLevel", function(value)
-		self.m_SkinLevelLabel:setText(tostring(value))
+		self.m_SkinLevelLabel:setText(_("%d/%d", value, MAX_SKIN_LEVEL))
 		if value >= MAX_SKIN_LEVEL then
 			self.m_SkinLevelButton:setText("Max. Level"):setEnabled(false)
 		else
@@ -182,10 +182,10 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuglevel:", tabPoints)
 	self.m_VehicleLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.26, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getVehicleLevel(), tabPoints)
-	self.m_VehicleLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.26, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_VehicleLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.26, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getVehicleLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_VehicleLevelButton.onLeftClick = function() triggerServerEvent("requestVehicleLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("VehicleLevel", function(value)
-		self.m_VehicleLevelLabel:setText(tostring(value))
+		self.m_VehicleLevelLabel:setText(_("%d/%d", value, MAX_VEHICLE_LEVEL))
 		if value >= MAX_VEHICLE_LEVEL then
 			self.m_VehicleLevelButton:setText("Max. Level"):setEnabled(false)
 		else
@@ -195,17 +195,17 @@ function SelfGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Waffenlevel:", tabPoints)
 	self.m_WeaponLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.42, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getWeaponLevel(), tabPoints)
-	GUILabel:new(self.m_Width*0.4, self.m_Height*0.42, self.m_Width*0.6, self.m_Height*0.06, "Trainiere dein Waffenlevel im LSPD", tabPoints)
+	GUILabel:new(self.m_Width*0.45, self.m_Height*0.42, self.m_Width*0.6, self.m_Height*0.06, "Trainiere dein Waffenlevel im LSPD", tabPoints)
 	localPlayer:setPrivateSyncChangeHandler("WeaponLevel", function(value)
-		self.m_WeaponLevelLabel:setText(tostring(value))
+		self.m_WeaponLevelLabel:setText(_("%d/%d", value, MAX_WEAPON_LEVEL))
 	end)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.34, self.m_Width*0.25, self.m_Height*0.06, _"Joblevel:", tabPoints)
 	self.m_JobLevelLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.34, self.m_Width*0.4, self.m_Height*0.06, localPlayer:getJobLevel(), tabPoints)
-	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.4, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
+	self.m_JobLevelButton = GUIButton:new(self.m_Width*0.45, self.m_Height*0.34, self.m_Width*0.3, self.m_Height*0.06, ("+ (%sP)"):format(calculatePointsToNextLevel(localPlayer:getJobLevel())), tabPoints):setBackgroundColor(Color.LightBlue)
 	self.m_JobLevelButton.onLeftClick = function() triggerServerEvent("requestJobLevelUp", resourceRoot) end
 	localPlayer:setPrivateSyncChangeHandler("JobLevel", function(value)
-		self.m_JobLevelLabel:setText(tostring(value))
+		self.m_JobLevelLabel:setText(_("%d/%d", value, MAX_JOB_LEVEL))
 		if value >= MAX_JOB_LEVEL then
 			self.m_JobLevelButton:setText("Max. Level"):setEnabled(false)
 		else

@@ -10,7 +10,7 @@ House = inherit(Object)
 local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
 
-function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements)
+function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money)
 	if owner == 0 then
 		owner = false
 	end
@@ -27,6 +27,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_Owner = owner
 	self.m_Id = id
 	self.m_Elements = fromJSON(elements or "")
+	self.m_Money = money or 0
 
 	local int, ix, iy, iz  = unpack(House.interiorTable[self.m_InteriorID])
 	self.m_HouseMarker = createMarker(ix, iy, iz-0.8, "cylinder", 1.2, 255, 255, 255, 125)
@@ -61,8 +62,19 @@ function House:toggleLockState( player )
 		info = "aufgeschlossen"
 	end
 	player:sendInfo("Das Haus wurde "..info.."!")
-	player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus)
+	self:showGUI(player)
+end
 
+function House:showGUI(player)
+	if player:getId() == self.m_Owner then
+		local tenants = {}
+		for playerId, timestamp in pairs(self.m_Keys) do
+			tanants[playerId] = Account.getNameFromId(playerId)
+		end
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money)
+	else
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus)
+	end
 end
 
 function House:breakHouse(player)
@@ -106,7 +118,7 @@ function House:onMarkerHit(hitElement, matchingDimension)
 	if hitElement:getType() == "player" and matchingDimension then
 		if hitElement.vehicle then return end
 		hitElement.visitingHouse = self.m_Id
-		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self.m_LockStatus)
+		self:showGUI(hitElement)
 	end
 end
 
@@ -143,12 +155,54 @@ function House:rentHouse(player)
 	end
 end
 
+function House:deposit(player, amount)
+	amount = tonumber(amount)
+	if player:getId() == self.m_Owner then
+		if player:getMoney() >= amount then
+			player:takeMoney(amount, "Hauskasse")
+			self.m_Money = self.m_Money + amount
+			self:showGUI(player)
+		else
+			player:sendError(_("Du hast nicht genug Geld dabei!", player))
+		end
+	else
+		player:sendError(_("Das ist nicht dein Haus!", player))
+	end
+end
+
+function House:withdraw(player, amount)
+	amount = tonumber(amount)
+	if player:getId() == self.m_Owner then
+		if self.m_Money >= amount then
+			self.m_Money = self.m_Money - amount
+			player:giveMoney(amount, "Hauskasse")
+			self:showGUI(player)
+		else
+			player:sendError(_("In der Hauskasse ist nicht genug Geld!", player))
+		end
+	else
+		player:sendError(_("Das ist nicht dein Haus!", player))
+	end
+end
+
+function House:removeTenant(player, id)
+	if player:getId() == self.m_Owner then
+		if self.m_Keys[id] then
+			self.m_Keys[id] = nil
+			player:sendSuccess(_("Du hast den Mietvertrag mit %s gekündigt!", player, Account.getNameFromId(id)), 255, 0, 0)
+			self:showGUI(player)
+		end
+	else
+		player:sendError(_("Das ist nicht dein Haus!", player))
+	end
+end
+
 function House:save()
 	local houseID = self.m_Owner or 0
 	if not self.m_Keys then self.m_Keys = {} end
 	if not self.m_Elements then self.m_Elements = {} end
-	return sql:queryExec("UPDATE ??_houses SET interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ?, elements = ? WHERE id = ?;", sql:getPrefix(),
-		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Id)
+	return sql:queryExec("UPDATE ??_houses SET interiorID = ?, `keys` = ?, owner = ?, price = ?, lockStatus = ?, rentPrice = ?, elements = ?, money = ? WHERE id = ?;", sql:getPrefix(),
+		self.m_InteriorID, toJSON(self.m_Keys), houseID, self.m_Price, self.m_LockStatus and 1 or 0, self.m_RentPrice, toJSON(self.m_Elements), self.m_Money, self.m_Id)
 end
 
 function House:sellHouse(player)
@@ -170,7 +224,7 @@ function House:onPickupHit(hitElement)
 	if hitElement:getType() == "player" and (hitElement:getDimension() == source:getDimension()) then
 		if hitElement.vehicle then return end
 		hitElement.visitingHouse = self.m_Id
-		hitElement:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(hitElement), self.m_LockStatus)
+		self:showGUI(hitElement)
 	end
 end
 

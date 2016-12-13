@@ -219,18 +219,24 @@ function LocalPlayer:checkAFK()
 			return
 		end
 		local afkMinutes = self.m_AFKCheckCount*5/60
-		if afkMinutes == 7 then
-			outputChatBox ( "WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", 255, 0, 0 )
-			self:sendTrayNotification("WARNUNG: Du wirst in 5 Minuten zum AFK-Cafe befördert!", "warning", true)
-			self:generateAFKCode()
-			return
-		elseif afkMinutes == 9 then
-			outputChatBox ( "WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
-			self:sendTrayNotification("WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", "warning", true)
-			return
-		elseif afkMinutes == 10 then
-			self:toggleAFK(true, true)
-			return
+		if afkMinutes == 12 then
+			if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then
+				outputChatBox ( "WARNUNG: Du wirst in 3 Minuten zum AFK-Cafe befördert!", 255, 0, 0 )
+				self:sendTrayNotification("WARNUNG: Du wirst in 5 Minuten zum AFK-Cafe befördert!", "warning", true)
+				self:generateAFKCode()
+				return
+			end
+		elseif afkMinutes == 14 then
+			if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then
+				outputChatBox ( "WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", 255, 0, 0 )
+				self:sendTrayNotification("WARNUNG: Du wirst in einer Minute zum AFK-Cafe befördert!", "warning", true)
+				return
+			end
+		elseif afkMinutes >= 15 then
+			if not localPlayer:getData("inJail") and not localPlayer:getData("inAdminPrison") then
+				self:toggleAFK(true, true)
+				return
+			end
 		end
 
 	else

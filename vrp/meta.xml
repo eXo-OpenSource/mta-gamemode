@@ -186,6 +186,10 @@
 	<!--<script src="server/classes/Groups/GangAreaManager.lua" type="server"/>-->
 	<script src="server/classes/Groups/GroupProperty.lua" type="server"/>
 	<script src="server/classes/Groups/GroupPropertyManager.lua" type="server" />
+	<script src="server/classes/Groups/SprayWall.lua" type="server" />
+	<script src="server/classes/Groups/SprayWallManager.lua" type="server" />
+
+
 
 	<!-- Business -->
 	<script src="server/classes/Business/Company.lua" type="server"/>
@@ -383,6 +387,8 @@
 	<script src="client/classes/Inventory/DrugsShroom.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemDestructable.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemSellContract.lua" type="client"/>
+	<script src="client/classes/Inventory/ItemFood.lua" type="client"/>
+
 	<!-- Animations -->
 	<script src="client/classes/GUI/Animations/Animation.lua" type="client"/>
 	<script src="client/classes/GUI/Animations/FadeOut.lua" type="client"/>
@@ -593,6 +599,9 @@
 	<!--<script src="client/classes/Groups/GangArea.lua" type="client"/>-->
 	<!--<script src="client/classes/Groups/GangAreaManager.lua" type="client"/>-->
 	<script src="client/classes/Groups/GroupProperty.lua" type="client"/>
+	<script src="client/classes/Groups/SprayWall.lua" type="client"/>
+	<script src="client/classes/Groups/SprayWallManager.lua" type="client"/>
+
 
 	<!-- AI -->
 	<script src="client/classes/AI/Actor.lua" type="client"/>
@@ -796,6 +805,8 @@
 	<vrpfile src="files/images/Other/RedGreenRed.png"/>
 	<vrpfile src="files/images/Other/focus.png"/>
 	<vrpfile src="files/images/Other/cuff.png"/>
+	<vrpfile src="files/images/Other/parking1.png"/>
+	<vrpfile src="files/images/Other/parking2.png"/>
 
 	<vrpfile src="files/images/Minigames/ZombieSurvival.png"/>
 	<vrpfile src="files/images/Minigames/SniperGame.png"/>
