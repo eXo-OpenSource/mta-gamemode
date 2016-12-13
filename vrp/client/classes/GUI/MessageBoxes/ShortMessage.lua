@@ -110,7 +110,8 @@ function ShortMessage:destructor(force)
 			GUIElement.destructor(self)
 			table.removevalue(ShortMessage.MessageBoxes, self)
 			ShortMessage.resortPositions()
-	else 
+		end
+	else
 		GUIElement.destructor(self)
 		table.removevalue(ShortMessage.MessageBoxes, self)
 		ShortMessage.resortPositions()
