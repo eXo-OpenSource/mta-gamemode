@@ -24,6 +24,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeHit", self.m_Shape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
+				self:setTagText(localPlayer:getGroupName())
 				addEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
 			end
 		end
@@ -45,8 +46,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeHit", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				self:setTagText(getElementData(self.m_SprayWallShape, "OwnerName") or "")
-
+				self:refresh()
 				self:createTextures()
 				addEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
