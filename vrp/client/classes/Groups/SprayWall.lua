@@ -67,8 +67,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 			local text = getElementData(SprayWallShape, "OwnerName") or ""
 			self.m_OldTagText = text
 			self.m_TagText = text
-			outputChatBox(text)
-
+			self:setTagInstantly(text)
 		end
 	end)
 
