@@ -110,10 +110,10 @@ function SprayWall:renderTagTexture()
 	dxSetRenderTarget(nil)
 
 	-- Next, render the text as section to the actual tag texture
-	dxSetRenderTarget(self.m_TagTexture, true)
-	dxDrawText(self.m_OldTagText, 5, 5, 128-5*2, 128-5*2, Color.White, 1, SprayWallManager:getSingleton():getFont(), "center", "center", false, true)
-	dxDrawImageSection(0, 0, 128, math.floor(self.m_TagProgress), 0, 0, 128, math.floor(self.m_TagProgress), self.m_TagSectionTexture)
-	dxSetRenderTarget(nil)
+	--dxSetRenderTarget(self.m_TagTexture, true)
+	--dxDrawText(self.m_OldTagText, 5, 5, 128-5*2, 128-5*2, Color.White, 1, SprayWallManager:getSingleton():getFont(), "center", "center", false, true)
+	--dxDrawImageSection(0, 0, 128, math.floor(self.m_TagProgress), 0, 0, 128, math.floor(self.m_TagProgress), self.m_TagSectionTexture)
+	--dxSetRenderTarget(nil)
 end
 
 function SprayWall:setTagText(text)
