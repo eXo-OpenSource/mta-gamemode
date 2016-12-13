@@ -28,7 +28,6 @@ function AdvertisementBox:constructor()
 	end
 	self.m_ColorChanger.onChange = function () self:calcCosts() end
 
-
 	GUILabel:new(self.m_Width*0.5, self.m_Height*0.5, self.m_Width*0.20, self.m_Height*0.15, "Dauer:", self.m_Window)
 	self.m_DurationChanger = GUIChanger:new(self.m_Width*0.62, self.m_Height*0.5, self.m_Width*0.35, self.m_Height*0.15, self.m_Window)
 	for name, duration in pairs(AD_DURATIONS) do
@@ -36,10 +35,18 @@ function AdvertisementBox:constructor()
 	end
 	self.m_DurationChanger.onChange = function () self:calcCosts() end
 
-	self.m_InfoLabel = GUILabel:new(self.m_Width*0.01, self.m_Height*0.65, self.m_Width*0.98, self.m_Height*0.15, "Kosten: 0$", self.m_Window)
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.65, self.m_Width*0.2, self.m_Height*0.15, "Sender:", self.m_Window)
+	self.m_SenderNameChanger = GUIChanger:new(self.m_Width*0.15, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.15, self.m_Window)
+	self.m_SenderNameChanger:addItem(localPlayer:getName())
+	if localPlayer:getGroupName() then
+		self.m_SenderNameChanger:addItem(localPlayer:getGroupName())
+	end
+
+	self.m_InfoLabel = GUILabel:new(self.m_Width*0.01, self.m_Height*0.8, self.m_Width*0.75, self.m_Height*0.15, "Kosten: 0$", self.m_Window):setFontSize(0.8)
 
 	self.m_SubmitButton = VRPButton:new(self.m_Width*0.64, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.15, _"Werbung schalten", true, self.m_Window):setBarColor(Color.Green)
-	self.m_SubmitButton.onLeftClick = function() triggerServerEvent("sanNewsAdvertisement", localPlayer, self.m_EditBox:getText(), self.m_ColorChanger:getIndex(), self.m_DurationChanger:getIndex()) end
+
+	self.m_SubmitButton.onLeftClick = function() delete(self) triggerServerEvent("sanNewsAdvertisement", localPlayer, self.m_SenderNameChanger:getIndex(), self.m_EditBox:getText(), self.m_ColorChanger:getIndex(), self.m_DurationChanger:getIndex()) end
 	self:calcCosts()
 end
 
@@ -80,12 +87,13 @@ local ColorTable = {
 	["Orange"] = Color.Orange,
 	["Grün"] = Color.Green,
 	["Hell-Blau"] = {0, 125, 125},
+	["Red"] = Color.Red,
 }
 
 local currentAd
 
-addEventHandler("showAd", root, function(player, text, color, duration)
-	currentAd = ShortMessage:new(("Werbung:\n%s"):format(text), player:getName(), ColorTable[color], AD_DURATIONS[duration]*1000)
+addEventHandler("showAd", root, function(senderString, text, color, duration)
+	currentAd = ShortMessage:new(("%s"):format(text), ("Werbung von %s"):format(senderString), ColorTable[color], AD_DURATIONS[duration]*1000)
 end)
 
 addEventHandler("closeAd", root, function()

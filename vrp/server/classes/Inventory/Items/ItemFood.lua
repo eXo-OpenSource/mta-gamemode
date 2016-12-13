@@ -13,7 +13,7 @@ ItemFood.Settings = {
 	["Pilz"] = {["Health"] = 10, ["Model"] = 1882, ["Text"] = "isst einen Pilz", ["Animation"] = {"FOOD", "EAT_Burger", 4500}},
 	["Zigarette"] = {["Health"] = 10, ["Model"] = 3027, ["Text"] = "raucht eine Zigarette", ["Animation"] = {"smoking", "M_smkstnd_loop", 13500},
 		["ModelScale"] = 2,
-		["Attach"] = {11, 0, 0, 0, 0, 0, 0}
+		["Attach"] = {11, 0, -0.02, 0.15, 0, -90, 90}
 	}
 }
 

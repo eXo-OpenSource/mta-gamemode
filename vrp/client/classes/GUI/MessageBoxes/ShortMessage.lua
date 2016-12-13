@@ -9,14 +9,34 @@ ShortMessage = inherit(GUIElement)
 inherit(GUIFontContainer, ShortMessage)
 
 ShortMessage.MessageBoxes = {}
-local TIMEOUT_LIMIT = 20
+local MAX_BOX_LIMIT = 20
 function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc)
+	-- close old when above MAX_BOX_LIMIT
+	-- if #ShortMessage.MessageBoxes + 1 > 20 then
+	--	for i, v in pairs(ShortMessage.MessageBoxes) do
+	--		setTimer(
+	--			function()
+	--				outputDebug(i)
+
+	--				if v.m_Animation then
+	--					delete(v.m_Animation)
+	--				end
+
+	--				delete(v, true)
+	--			end, 500, 1
+	--		)
+	--	end
+
+	--	outputDebug("foce destroy")
+	--end
+	-- not working!
+
 	if type(title) == "number" then
 		return new(ShortMessage, text, nil, nil, title)
 	else
 		return new(ShortMessage, text, title, tcolor, timeout, callback, timeoutFunc)
 	end
-	if ShortMessageLogGUI.m_Log then 
+	if ShortMessageLogGUI.m_Log then
 		table.insert(ShortMessageLogGUI.m_Log, title.." - "..text)
 	end
 end
@@ -32,16 +52,21 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	--end
 
 	-- Title Bar
-	self.m_HasTitleBar = title ~= nil
+	local hasTitleBar = title ~= nil
 	self.m_Title = title
 	self.m_TitleColor = (type(tcolor) == "table" and tcolor) or (type(tcolor) == "number" and {fromcolor(tcolor)}) or {125, 0, 0}
 
 	self.m_Callback = callback or nil
 	self.m_TimeoutFunc = timeoutFunc or nil
 
-	-- Font
+	-- Font and height calc
 	GUIFontContainer.constructor(self, text, 1, VRPFont(24))
-	local h = textHeight(self.m_Text, w - 8, self.m_Font, self.m_FontSize) + (self.m_HasTitleBar and 24 or 4)
+	local h = textHeight(self.m_Text, w - 8, self.m_Font, self.m_FontSize)
+	if hasTitleBar then
+		self.m_TitleHeight = textHeight(self.m_Title, w - 8, self.m_Font, self.m_FontSize)
+		h = h + self.m_TitleHeight
+	end
+	h = h + 4
 
 	-- Calculate y position
 	y = y - h - 20
@@ -76,17 +101,19 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 	ShortMessage.resortPositions()
 end
 
-function ShortMessage:destructor()
+function ShortMessage:destructor(force)
 	if self.m_Timeout and isTimer(self.m_Timeout) then
 		killTimer(self.m_Timeout)
 	end
-	if not self.m_ForceDestroy then
+	if not force then
 		Animation.FadeAlpha:new(self, 200, 200, 0).onFinish = function ()
 			GUIElement.destructor(self)
 			table.removevalue(ShortMessage.MessageBoxes, self)
 			ShortMessage.resortPositions()
-			end
-	else 
+		end
+	else
+		outputDebug("GUIElement.destructor")
+
 		GUIElement.destructor(self)
 		table.removevalue(ShortMessage.MessageBoxes, self)
 		ShortMessage.resortPositions()
@@ -95,11 +122,12 @@ end
 
 function ShortMessage:drawThis()
 	local x, y, w, h = self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height
+	local hasTitleBar = self.m_TitleHeight ~= nil
 
 	-- Draw background
-	if self.m_HasTitleBar then
-		dxDrawRectangle(x, y, w, 20, tocolor(self.m_TitleColor[1], self.m_TitleColor[2], self.m_TitleColor[3], self.m_Alpha))
-		dxDrawRectangle(x, y + 20, w, h - 20, tocolor(0, 0, 0, self.m_Alpha))
+	if hasTitleBar then
+		dxDrawRectangle(x, y, w, self.m_TitleHeight, tocolor(self.m_TitleColor[1], self.m_TitleColor[2], self.m_TitleColor[3], self.m_Alpha))
+		dxDrawRectangle(x, y + self.m_TitleHeight, w, h - self.m_TitleHeight, tocolor(0, 0, 0, self.m_Alpha))
 	else
 		dxDrawRectangle(x, y, w, h, tocolor(0, 0, 0, self.m_Alpha))
 	end
@@ -109,52 +137,41 @@ function ShortMessage:drawThis()
 	w = w - 8
 
 	-- Draw message text
-	if self.m_HasTitleBar then
-		dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", true, false)
-		dxDrawText(self.m_Text, x, y + 20, x + w, y + (h - 20), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+	if hasTitleBar then
+		dxDrawText(self.m_Title, x, y - 2, x + w, y + 16, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
+		dxDrawText(self.m_Text, x, y + self.m_TitleHeight, x + w, y + (h - self.m_TitleHeight), tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 	else
 		dxDrawText(self.m_Text, x, y, x + w, y + h, tocolor(255, 255, 255, self.m_Alpha), self.m_FontSize, self.m_Font, "left", "top", false, true)
 	end
 end
 
 function ShortMessage.resortPositions ()
-	if #ShortMessage.MessageBoxes <= TIMEOUT_LIMIT then
-		for i = #ShortMessage.MessageBoxes, 1, -1 do
-			local obj = ShortMessage.MessageBoxes[i]
-			local prevObj = ShortMessage.MessageBoxes[i + 1]
+	for i = #ShortMessage.MessageBoxes, 1, -1 do
+		local obj = ShortMessage.MessageBoxes[i]
+		local prevObj = ShortMessage.MessageBoxes[i + 1]
 
-			if obj.m_Animation then
-				delete(obj.m_Animation)
-			end
+		if obj.m_Animation then
+			delete(obj.m_Animation)
+		end
 
-			if prevObj then
-				local y
-				if not prevObj.m_Animation then
-					y = prevObj.m_AbsoluteY
-				else
-					y = prevObj.m_Animation.m_TY
-				end
-				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, y - obj.m_Height - 5)
-			elseif not obj.m_AlphaFaded then
-				Animation.FadeAlpha:new(obj, 500, 0, 200)
-				obj.m_AlphaFaded = true
+		if prevObj then
+			local y
+			if not prevObj.m_Animation then
+				y = prevObj.m_AbsoluteY
 			else
-				--if HUDRadar:getSingleton().m_Visible then
-					obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
-				--else
-					--obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 25 - obj.m_Height)
-				--end
+				y = prevObj.m_Animation.m_TY
 			end
+			obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, y - obj.m_Height - 5)
+		elseif not obj.m_AlphaFaded then
+			Animation.FadeAlpha:new(obj, 500, 0, 200)
+			obj.m_AlphaFaded = true
+		else
+			--if HUDRadar:getSingleton().m_Visible then
+				obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, (screenHeight - screenHeight*0.265) - 20 - obj.m_Height)
+			--else
+				--obj.m_Animation = Animation.Move:new(obj, 250, obj.m_AbsoluteX, screenHeight - 25 - obj.m_Height)
+			--end
 		end
-	else 
-		for i = 1, #ShortMessage.MessageBoxes do 
-			if ShortMessage.MessageBoxes[i].m_Animation then 
-				delete(ShortMessage.MessageBoxes[i].m_Animation)
-			end
-			ShortMessage.MessageBoxes[i].m_ForceDestroy = true
-			delete(ShortMessage.MessageBoxes[i])
-		end
-		outputDebugString("Forced destroy of MessageBoxes!",0, 255,0,150)
 	end
 end
 
