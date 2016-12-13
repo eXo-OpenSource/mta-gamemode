@@ -45,7 +45,8 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeHit", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				self:refresh()
+				self:setTagText(getElementData(self.m_SprayWallShape, "OwnerName") or "")
+
 				self:createTextures()
 				addEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
