@@ -52,6 +52,7 @@ ADMIN_RANK_PERMISSION = {
 	["tp"] = RANK.Supporter,
 	["timeban"] = RANK.Supporter,
 	["adminAnnounce"] = RANK.Supporter,
+	["gotocords"] = RANK.Supporter,
 	["permaban"] = RANK.Supporter,
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,

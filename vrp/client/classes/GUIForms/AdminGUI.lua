@@ -35,23 +35,34 @@ function AdminGUI:constructor(money)
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
 
 	local tabAllgemein = self.m_TabPanel:addTab(_"Allgemein")
+
 	GUILabel:new(10, 10, 150, 30, _"Adminansage:", tabAllgemein):setColor(Color.White)
 	self.m_AdminAnnounceText = GUIEdit:new(150, 10, 330, 30,tabAllgemein)
+
+	--Column 1
 	self:addAdminButton("adminAnnounce", "senden", 490, 10, 100, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", 10, 50, 250, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", 10, 100, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 190, 250, 30, Color.Red, tabAllgemein)
 
-	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.LightBlue)
-	self.m_EventCurrentMoney = GUILabel:new(340, 90, 200, 25, _("Momentan: %d$", money or 0), tabAllgemein)
-	GUILabel:new(340, 120, 60, 30, _"Betrag:", tabAllgemein)
-	self.m_EventMoneyEdit = GUIEdit:new(410, 120, 140, 30, tabAllgemein):setNumeric(true, true)
-	GUILabel:new(340, 160, 60, 30, _"Grund:", tabAllgemein)
-	self.m_EventReasonEdit = GUIEdit:new(410, 160, 140, 30, tabAllgemein)
-	self:addAdminButton("eventMoneyDeposit", "Einzahlen", 340, 200, 100, 30, Color.Green, tabAllgemein)
-	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", 450, 200, 100, 30, Color.Red, tabAllgemein)
+	GUILabel:new(10, 230, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
+	self.m_EditPosX = GUIEdit:new(10, 260, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosY = GUIEdit:new(95, 260, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosZ = GUIEdit:new(180, 260, 80, 25, tabAllgemein):setNumeric(true, false)
+	self:addAdminButton("gotocords", "zu Koordinaten porten", 10, 285, 250, 30, Color.Orange, tabAllgemein)
 
+	--Column 2
+	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.LightBlue)
+	self.m_EventCurrentMoney = GUILabel:new(340, 80, 200, 25, _("Momentan: %d$", money or 0), tabAllgemein)
+	GUILabel:new(340, 110, 60, 30, _"Betrag:", tabAllgemein)
+	self.m_EventMoneyEdit = GUIEdit:new(410, 110, 140, 30, tabAllgemein):setNumeric(true, true)
+	GUILabel:new(340, 150, 60, 30, _"Grund:", tabAllgemein)
+	self.m_EventReasonEdit = GUIEdit:new(410, 150, 140, 30, tabAllgemein)
+	self:addAdminButton("eventMoneyDeposit", "Einzahlen", 340, 190, 100, 30, Color.Green, tabAllgemein)
+	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", 450, 190, 100, 30, Color.Red, tabAllgemein)
+
+	--Column 3
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
 	self.m_portNorth = GUIButton:new(self.m_Width-105, 75, 30, 30, _"↑",  tabAllgemein):setBackgroundColor(Color.Orange)
 	self.m_portNorth.onLeftClick = function () self:portAdmin("F") end
@@ -461,6 +472,14 @@ function AdminGUI:onButtonClick(func)
 			triggerServerEvent("adminTriggerFunction", root, func, amount, reason)
 		else
 			ErrorBox:new("Kein Grund oder Betrag angegeben!")
+		end
+	elseif func == "gotocords" then
+		local x, y, z = self.m_EditPosX:getText(), self.m_EditPosY:getText(), self.m_EditPosZ:getText()
+		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then
+			local pos = {x, y, z}
+			triggerServerEvent("adminTriggerFunction", root, func, pos)
+		else
+			ErrorBox("Ungültige Koordinaten-Angabe")
 		end
 	else
 		outputDebug("Under Developement", 255, 0 ,0)

@@ -51,6 +51,7 @@ function Admin:constructor()
     addCommandHandler("clearchat", adminCommandBind)
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
+	addCommandHandler("gotocords", adminCommandBind)
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
@@ -107,6 +108,7 @@ function Admin:destructor()
     removeCommandHandler("clearchat", adminCommandBind)
 	removeCommandHandler("a", bind(self.chat, self))
 	removeCommandHandler("o", bind(self.ochat, self))
+	removeCommandHandler("gotocords", adminCommandBind)
 
 	delete(self.m_BankAccount)
 end
@@ -224,6 +226,14 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
 	elseif cmd == "gotomark" then
 		self:Command_MarkPos(admin, false)
 		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
+	elseif cmd == "gotocords" then
+		local x, y, z = targetName, arg1, arg2
+		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then
+			local pos = {x, y, z}
+			self:Event_adminTriggerFunction(cmd, pos, nil, nil, admin)
+		else
+			admin:sendError("Ungültige Koordinaten: /gotocords [x] [y] [z]")
+		end
     else
 		if targetName then
             local target = PlayerManager:getSingleton():getPlayerFromPartOfName(targetName, admin)
@@ -344,7 +354,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
             for index, player in pairs(Element.getAllByType("player")) do
                 for i=0, 2100 do
-                    player:outputChatBox(" ")
+                    player:sendMessage(" ")
                 end
                 player:triggerEvent("closeAd")
             end
@@ -444,6 +454,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 						self.m_BankAccount:save()
 						admin:takeMoney(amount, "Admin-Event-Kasse")
 						StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("+"..amount))
+						self:sendShortMessage(_("%s hat %d$ in die Eventkasse gelegt!", admin, admin:getName(), amount))
 						self:openAdminMenu(admin)
 					else
 						admin:sendError(_("Du hast nicht genug Geld dabei!", admin))
@@ -454,6 +465,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 						self.m_BankAccount:save()
 						admin:giveMoney(amount, "Admin-Event-Kasse")
 						StatisticsLogger:getSingleton():addAdminAction( admin, "eventKasse", tostring("-"..amount))
+						self:sendShortMessage(_("%s hat %d$ aus der Eventkasse genommen!", admin, admin:getName(), amount))
 						self:openAdminMenu(admin)
 					else
 						admin:sendError(_("In der Kasse ist nicht soviel Geld!", admin))
@@ -462,6 +474,12 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             else
                 admin:sendError(_("Betrag oder Grund ungültig!", admin))
             end
+		elseif func == "gotocords" then
+			local x, y, z = unpack(target)
+			admin:setInterior(0)
+			admin:setDimension(0)
+			admin:setPosition(x, y, z)
+			self:sendShortMessage(_("%s hat sich zu Koordinaten geportet!", admin, admin:getName()))
         end
     else
         admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))
