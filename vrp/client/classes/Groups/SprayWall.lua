@@ -67,8 +67,16 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 		end
 	end)
 
-
-
+	addEventHandler("onClientRestore", root,
+		function(didClearRenderTargets)
+			if didClearRenderTargets then
+				if localPlayer:isWithinColShape(self.m_SprayWallShape) then
+					outputDebug("Recreating tag textures")
+					self:renderTagTexture()
+				end
+			end
+		end
+	)
 end
 
 function SprayWall:destructor()
@@ -120,14 +128,14 @@ end
 function SprayWall:renderTagTexture()
 	-- Render the text to the texture
 	dxSetRenderTarget(self.m_TagSectionTexture, true)
-	--dxDrawRectangle(0, 0, 128, 128, Color.Yellow)
-	dxDrawText(self.m_TagText, 5, 5, 128-5*2, 128-5*2, Color.Red, 1, SprayWallManager:getSingleton():getFont(), "center", "center", false, true)
-	dxSetRenderTarget(nil)
+		--dxDrawRectangle(0, 0, 128, 128, Color.Yellow)
+		dxDrawText(self.m_TagText, 5, 5, 128-5*2, 128-5*2, Color.Red, 1, SprayWallManager:getSingleton():getFont(), "center", "center", false, true)
+		dxSetRenderTarget(nil)
 
-	-- Next, render the text as section to the actual tag texture
-	dxSetRenderTarget(self.m_TagTexture, true)
-	dxDrawText(self.m_OldTagText, 5, 5, 128-5*2, 128-5*2, Color.White, 1, SprayWallManager:getSingleton():getFont(), "center", "center", false, true)
-	dxDrawImageSection(0, 0, 128, math.floor(self.m_TagProgress), 0, 0, 128, math.floor(self.m_TagProgress), self.m_TagSectionTexture)
+		-- Next, render the text as section to the actual tag texture
+		dxSetRenderTarget(self.m_TagTexture, true)
+		dxDrawText(self.m_OldTagText, 5, 5, 128-5*2, 128-5*2, Color.White, 1, SprayWallManager:getSingleton():getFont(), "center", "center", false, true)
+		dxDrawImageSection(0, 0, 128, math.floor(self.m_TagProgress), 0, 0, 128, math.floor(self.m_TagProgress), self.m_TagSectionTexture)
 	dxSetRenderTarget(nil)
 end
 
