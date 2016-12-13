@@ -64,7 +64,11 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 
 	addEventHandler("onClientElementDataChange", SprayWallShape, function()
 		if dataName == "OwnerName" then
-			self:setTagText(getElementData(SprayWallShape, "OwnerName") or "")
+			local text = getElementData(SprayWallShape, "OwnerName") or ""
+			self.m_OldTagText = text
+			self.m_TagText = text
+			outputChatBox(text)
+
 		end
 	end)
 
@@ -126,7 +130,7 @@ function SprayWall:renderTagTexture()
 end
 
 function SprayWall:setTagText(text)
-	self.m_OldTagText = ""
+	self.m_OldTagText = self.m_TagText
 	self.m_TagText = text
 end
 
