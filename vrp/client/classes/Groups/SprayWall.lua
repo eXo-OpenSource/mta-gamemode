@@ -18,6 +18,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	self.m_TagText = ""
 	self.m_OldTagText = ""
 	self.m_RenderTagFunc = bind(self.renderTag, self)
+	self.m_SprayWallShape = getElementByID("SprayWall"..Id)
 
 	local funcSpray = function(weapon,ammo,clip,hitX,hitY, hitZ,element,startX,startY,startZ) if weapon == 41 then self:spray(hitX,hitY,hitZ,startX,startY,startZ) end end
 	addEventHandler("onClientColShapeHit", self.m_Shape,
@@ -39,19 +40,19 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 		end
 	)
 
+
 	-- Streaming funcs
-	local SprayWallShape = getElementByID("SprayWall"..Id)
-	addEventHandler("onClientColShapeHit", SprayWallShape,
+	addEventHandler("onClientColShapeHit", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				self:setTagText(getElementData(SprayWallShape, "OwnerName") or "")
+				self:setTagText(getElementData(self.m_SprayWallShape, "OwnerName") or "")
 
 				self:createTextures()
 				addEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
 		end
 	)
-	addEventHandler("onClientColShapeLeave", SprayWallShape,
+	addEventHandler("onClientColShapeLeave", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
 				self:destroyTextures()
@@ -77,7 +78,7 @@ function SprayWall:destructor()
 end
 
 function SprayWall:refresh()
-	local text = getElementData(SprayWallShape, "OwnerName") or ""
+	local text = getElementData(self.m_SprayWallShape, "OwnerName") or ""
 	self.m_OldTagText = text
 	self.m_TagText = text
 	self:setTagInstantly(text)
