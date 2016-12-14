@@ -480,11 +480,43 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			admin:setDimension(0)
 			admin:setPosition(x, y, z)
 			self:sendShortMessage(_("%s hat sich zu Koordinaten geportet!", admin, admin:getName()))
+		elseif func == "nickchange" or func == "offlineNickchange" then
+			local changeTarget = false
+			if target then
+				if isElement(target) and func == "nickchange" then
+					local oldName = target:getName()
+					changeTarget = target
+					if changeTarget:setNewNick(admin, reason) then
+						self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), oldName, reason))
+					end
+				elseif func == "offlineNickchange" then
+					local targetId = Account.getIdFromName(target)
+            		if targetId and targetId > 0 then
+						Async.create( -- player:load()/:save() needs a aynchronous execution
+							function ()
+								local changeTarget, isOffline = DatabasePlayer.get(targetId)
+								if changeTarget then
+									if isOffline then
+										changeTarget:load()
+										if changeTarget:setNewNick(admin, reason) then
+											self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), target, reason))
+											return
+										end
+									end
+								end
+							end
+						)
+					end
+				end
+			else
+      		  admin:sendError(_("Ungültiges Ziel!", admin))
+			end
         end
     else
         admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))
     end
 end
+
 
 function Admin:chat(player,cmd,...)
 	if player:getRank() >= RANK.Supporter then

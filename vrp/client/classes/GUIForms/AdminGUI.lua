@@ -8,7 +8,7 @@
 
 AdminGUI = inherit(GUIForm)
 inherit(Singleton, AdminGUI)
-AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect"}
+AdminGUI.playerFunctions = {"gethere", "goto", "kick", "prison", "unprison", "warn", "timeban", "permaban", "setCompany", "setFaction", "showVehicles", "unban", "spect", "nickchange"}
 
 for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
@@ -106,6 +106,7 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("spect", "specten", 440, 170, 160, 30, Color.LightRed, tabSpieler)
 	self:addAdminButton("goto", "hin porten", 440, 210, 160, 30, Color.Green, tabSpieler)
 	self:addAdminButton("gethere", "her porten", 440, 250, 160, 30, Color.Green, tabSpieler)
+	self:addAdminButton("nickchange", "Nick ändern", 440, 290, 160, 30, Color.Orange, tabSpieler)
 
 	self:addAdminButton("showVehicles", "Fahrzeuge anzeigen", 610, 170, 160, 30, Color.LightBlue, tabSpieler)
 	self:addAdminButton("warn", "Warns verwalten", 610, 210, 160, 30, Color.Orange, tabSpieler)
@@ -140,6 +141,8 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("offlineTimeban", "Timeban", 220, 290, 180, 30, Color.Red, tabOffline)
 	self:addAdminButton("offlinePermaban", "Permaban", 410, 290, 180, 30, Color.Red, tabOffline)
 	self:addAdminButton("offlineUnban", "Unban", 220, 330, 180, 30, Color.Blue, tabOffline)
+	self:addAdminButton("offlineNickchange", "NickChange", 410, 330, 180, 30, Color.Orange, tabOffline)
+
 
 	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
 	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
@@ -481,9 +484,30 @@ function AdminGUI:onButtonClick(func)
 		else
 			ErrorBox("Ungültige Koordinaten-Angabe")
 		end
+	elseif func == "nickchange" then
+		InputBox:new(_("Spieler %s umbenennen", self.m_SelectedPlayer:getName()),
+				_("Welchen Usernamen möchtest du dem Spieler %s geben?", self.m_SelectedPlayer:getName()),
+				function (newName)
+					if newName then
+						triggerServerEvent("adminTriggerFunction", root, func, self.m_SelectedPlayer, newName)
+					end
+				end)
+	elseif func == "offlineNickchange" then
+		if self.m_PlayersOfflineGrid:getSelectedItem() then
+			InputBox:new(_("Spieler %s umbenennen", self.m_PlayersOfflineGrid:getSelectedItem().name),
+					_("Welchen Usernamen möchtest du dem Spieler %s geben?", self.m_PlayersOfflineGrid:getSelectedItem().name),
+					function (newName)
+						if newName then
+							triggerServerEvent("adminTriggerFunction", root, func, self.m_PlayersOfflineGrid:getSelectedItem().name, newName)
+						end
+					end)
+		else
+			ErrorBox:new("Kein Spieler ausgewählt!")
+		end
 	else
 		outputDebug("Under Developement", 255, 0 ,0)
 	end
+
 end
 
 function AdminGUI:AnnounceButton_Click()
