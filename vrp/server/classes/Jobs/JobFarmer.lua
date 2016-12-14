@@ -230,7 +230,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 		destroyElement (self.m_Plants[createColShape])
 		self.m_Plants[createColShape] = nil
 		if not hitElement:getData("Farmer.Income") then hitElement:setData("Farmer.Income", 0) end
-		hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + 1)
+		hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + 2)
 		hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 		self:updateClientData()
