@@ -93,21 +93,25 @@ function SprayWall:refresh()
 end
 
 function SprayWall:spray(hitX, hitY, hitZ, startX, startY, startZ)
-	self:createTextures()
+	if localPlayer:getGroupName() then -- does the player have a group?
+		if self.m_TagText ~= localPlayer:getGroupName() then -- is its already its own?
+			self:createTextures()
 
-	if not self.m_IsSpraying then
-		self.m_TagProgress = 0
-	end
+			if not self.m_IsSpraying then
+				self.m_TagProgress = 0
+			end
 
-	if self.m_TagProgress < 128 then
-		self.m_TagProgress = self.m_TagProgress + 0.5
-		self:renderTagTexture()
-		self.m_IsSpraying = true
-	else
-		self.m_TagProgress = 128
-		if self.m_IsSpraying then
-			triggerServerEvent("sprayWallTagSprayed", root, self.m_Id)
-			self.m_IsSpraying = false
+			if self.m_TagProgress < 128 then
+				self.m_TagProgress = self.m_TagProgress + 0.5
+				self:renderTagTexture()
+				self.m_IsSpraying = true
+			else
+				self.m_TagProgress = 128
+				if self.m_IsSpraying then
+					triggerServerEvent("sprayWallTagSprayed", root, self.m_Id)
+					self.m_IsSpraying = false
+				end
+			end
 		end
 	end
 end

@@ -6,38 +6,54 @@
 -- *
 -- ****************************************************************************
 GUIMiniMap = inherit(GUIElement)
+inherit(GUIColorable, GUIMiniMap)
 
-function GUIMiniMap:constructor(posX, posY, width, height, mapType, parent)
-	self.m_MapType = mapType
+function GUIMiniMap:constructor(posX, posY, width, height, parent)
 	self.m_PosX = 0
 	self.m_PosY = 0
-	self.m_ImageSize = 3072, 3072 --3072, 3072
-	self.m_Image = "files/images/"..self.m_MapType.."/Radar.jpg"
+	self.m_ImageSize = 3072/2, 3072/2 --3072, 3072
+	self.m_Image = self:makePath("Radar.jpg", false)
 	self.m_Blips = {}
+
 	GUIElement.constructor(self, posX, posY, width, height, parent)
+	GUIColorable.constructor(self, Color.White)
 	self:setPosition(0, 0)
 end
 
 function GUIMiniMap:drawThis()
 	dxSetBlendMode("modulate_add")
-	if self.m_Image then
-		dxDrawImageSection(math.floor(self.m_AbsoluteX), math.floor(self.m_AbsoluteY),
-		self.m_Width, self.m_Height,
-		self.m_MapX, self.m_MapY,
-		self.m_Width, self.m_Height,
-		self.m_Image,
-		self.m_Rotation or 0, self.m_RotationCenterOffsetX or 0,
-		self.m_RotationCenterOffsetY or 0)
-		for index, blip in pairs(self.m_Blips) do
-			dxDrawImage(blip["posX"], blip["posY"], 32, 32, "files/images/"..self.m_MapType.."/Blips/"..blip["Icon"])
+		if self.m_Image then
+			dxDrawImageSection(math.floor(self.m_AbsoluteX), math.floor(self.m_AbsoluteY),
+				self.m_Width, self.m_Height,
+				self.m_MapX, self.m_MapY,
+				self.m_Width, self.m_Height,
+				self.m_Image,
+				self.m_Rotation or 0, self.m_RotationCenterOffsetX or 0,
+				self.m_RotationCenterOffsetY or 0,
+				self.m_Color
+			)
+			for index, blip in pairs(self.m_Blips) do
+				dxDrawImage(blip["posX"] + self.m_AbsoluteX, blip["posY"] + self.m_AbsoluteY, 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)
+			end
 		end
-	end
+
+		if GUI_DEBUG then
+			dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, tocolor(math.random(0, 255), math.random(0, 255), math.random(0, 255), 150))
+		end
 	dxSetBlendMode("blend")
 end
 
 function GUIMiniMap:worldToMapPosition(posX, posY)
 	local mapX = (posX / ( 6000/self.m_ImageSize) + self.m_ImageSize/2)
 	local mapY = (posY / (-6000/self.m_ImageSize) + self.m_ImageSize/2)
+	return mapX, mapY
+end
+
+function GUIMiniMap:bla(posX, posY)
+	-- (0, 0)
+	local mapX = (self.m_ImageSize/2)
+	local mapY = (self.m_ImageSize/2)
+	outputDebug(mapX)
 	return mapX, mapY
 end
 
@@ -54,9 +70,20 @@ function GUIMiniMap:setPosition(posX, posY)
 	return self
 end
 
-function GUIMiniMap:addBlip(icon, posX, posY)
-	local posX, posY = self:worldToMapPosition(posX, posY)
-	self.m_Blips[#self.m_Blips+1] = {["Icon"] = icon, ["posX"] = posX, ["posY"] = posY}
+function GUIMiniMap:addBlip(icon, posX, posY) -- todo fix position, its wrong
+	local posX, posY = self:worldToMiniMapPosition(posX, posY)
+	self.m_Blips[#self.m_Blips+1] = {["icon"] = icon, ["posX"] = posX, ["posY"] = posY}
 	self:anyChange()
 	return self
+end
+
+function GUIMiniMap:makePath(fileName, isBlip)
+	-- if HUDRadar:getSingleton():getDesignSet() == RadarDesign.Monochrome then
+	-- 	local path = (isBlip and "files/images/Radar_Monochrome/Blips/"..fileName) or "files/images/Radar_Monochrome/"..fileName
+	-- 	return path
+	--else
+	-- Monochrome causes problems
+	if true then -- HUDRadar:getSingleton():getDesignSet() == RadarDesign.GTA
+		return (isBlip and "files/images/Radar_GTA/Blips/"..fileName) or "files/images/Radar_GTA/"..fileName
+	end
 end
