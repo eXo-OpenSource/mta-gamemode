@@ -244,6 +244,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 		return
 	end
 
+	-- Start death
 	source:triggerEvent("playerWasted")
 
 	if FactionRescue:getSingleton():countPlayers() > 0 then

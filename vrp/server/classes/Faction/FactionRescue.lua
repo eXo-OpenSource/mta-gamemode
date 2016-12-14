@@ -8,7 +8,8 @@
 FactionRescue = inherit(Singleton)
 addRemoteEvents{
 	"factionRescueToggleDuty", "factionRescueHealPlayerQuestion", "factionRescueDiscardHealPlayer", "factionRescueHealPlayer",
-	"factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher", "factionRescuePlayerHealBase"
+	"factionRescueWastedFinished", "factionRescueChangeSkin", "factionRescueToggleStretcher", "factionRescuePlayerHealBase",
+	"factionRescueReviveAbort"
 }
 
 function FactionRescue:constructor()
@@ -58,6 +59,7 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueChangeSkin", root, bind(self.Event_changeSkin, self))
 	addEventHandler("factionRescueToggleStretcher", root, bind(self.Event_ToggleStretcher, self))
 	addEventHandler("factionRescuePlayerHealBase", root, bind(self.Event_healPlayerHospital, self))
+	addEventHandler("factionRescueReviveAbort", root, bind(self.destroyDeathBlip, self))
 end
 
 function FactionRescue:destructor()
@@ -271,7 +273,6 @@ function FactionRescue:createDeathPickup(player, ...)
 	end
 
 	nextframe(function () player:setPosition(player.m_DeathPickup:getPosition()) end)
-	--player:kill()
 
 	addEventHandler("onPickupHit", player.m_DeathPickup,
 		function (hitPlayer)
@@ -292,18 +293,20 @@ function FactionRescue:createDeathPickup(player, ...)
 
 	setTimer(
 		function ()
-			if player.m_DeathPickup then
-				player.m_DeathPickup:destroy()
-				player.m_DeathPickup = nil
-				for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-					rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
-				end
-			end
-		end,
-	player:getPublicSync("DeathTime"), 1)
+			self:destroyDeathBlip(player)
+		end, MEDIC_TIME, 1)
 	-- Create PlayerDeathTimeout
 	--self:createDeathTimeout(player, ...)
+end
 
+function FactionRescue:destroyDeathBlip(player)
+	if player.m_DeathPickup then
+		player.m_DeathPickup:destroy()
+		player.m_DeathPickup = nil
+		for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
+			rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+		end
+	end
 end
 
 function FactionRescue:createDeathTimeout(player, callback)

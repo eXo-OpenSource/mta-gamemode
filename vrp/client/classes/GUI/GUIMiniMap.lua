@@ -33,7 +33,7 @@ function GUIMiniMap:drawThis()
 				self.m_Color
 			)
 			for index, blip in pairs(self.m_Blips) do
-				dxDrawImage(blip["posX"] + self.m_AbsoluteX, blip["posY"] + self.m_AbsoluteY, 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)
+				dxDrawImage(blip["posX"], blip["posY"], 32, 32, self:makePath(blip["icon"], true), 0, 0, 0, self.m_Color)
 			end
 		end
 
@@ -46,14 +46,6 @@ end
 function GUIMiniMap:worldToMapPosition(posX, posY)
 	local mapX = (posX / ( 6000/self.m_ImageSize) + self.m_ImageSize/2)
 	local mapY = (posY / (-6000/self.m_ImageSize) + self.m_ImageSize/2)
-	return mapX, mapY
-end
-
-function GUIMiniMap:bla(posX, posY)
-	-- (0, 0)
-	local mapX = (self.m_ImageSize/2)
-	local mapY = (self.m_ImageSize/2)
-	outputDebug(mapX)
 	return mapX, mapY
 end
 
@@ -71,7 +63,9 @@ function GUIMiniMap:setPosition(posX, posY)
 end
 
 function GUIMiniMap:addBlip(icon, posX, posY) -- todo fix position, its wrong
-	local posX, posY = self:worldToMiniMapPosition(posX, posY)
+
+	outputDebug(posX..", "..posY)
+	outputDebug(self.m_MapX..", "..self.m_MapY)
 	self.m_Blips[#self.m_Blips+1] = {["icon"] = icon, ["posX"] = posX, ["posY"] = posY}
 	self:anyChange()
 	return self

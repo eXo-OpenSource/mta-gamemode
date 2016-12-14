@@ -133,69 +133,82 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 end
 
 function LocalPlayer:Event_playerWasted()
-	local callback = function (sound)
-		if isElement(sound) then
-			sound:destroy()
-		end
-
-		local time = self:getPublicSync("DeathTime")-6000
-
-		fadeCamera(false, 1)
-		self.m_WastedTimer2 = setTimer( -- Todo: Remove later
-			function ()
-				fadeCamera(true,0.5)
-				self.m_DeathGUI = DeathGUI:new(time)
-				self.m_WastedTimer3 = setTimer(function()
-					HUDRadar:getSingleton():show()
-					HUDUI:getSingleton():show()
-					showChat(true)
-					-- Trigger it back to the Server (TODO: Maybe is this Event unsafe..?)
-					triggerServerEvent("factionRescueWastedFinished", localPlayer)
-				end, time, 1)
-
-			end, 3000, 1
-		)
-	end
-
 	-- Hide UI Elements
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
 	showChat(false)
-	triggerServerEvent("Event_setPlayerWasted", localPlayer)
-	-- Move camera into the Sky
-	setCameraInterior(0)
+	triggerServerEvent("Event_setPlayerWasted", self)
 
-	self.m_DeathPosition = self:getPosition()
-	self.m_Add = 0
-	self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
-	local soundLength = self.m_Halleluja:getLength()
-	ShortMessage:new(_"Dir konnte leider niemand mehr helfen..! Du bist Tod.\n\nBut... have a good flight into the Heaven!", (soundLength-1)*1000)
-	addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
-	self.m_WastedTimer4 = setTimer(function()
-		self.m_FadeOutShader = FadeOutShader:new()
-		self.m_WastedTimer1 = setTimer(callback, 4000, 1, self.m_Halleluja, start)
-		removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
-	end, soundLength*1000, 1)
+	local funcA = function()
+		if isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
+		self.m_CanBeRevived = false
+
+		self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
+		local soundLength = self.m_Halleluja:getLength()
+		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
+
+		-- render camera drive
+		addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
+		fadeCamera(false, soundLength)
+
+		setTimer(
+			function()
+				-- stop moving
+				removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
+				fadeCamera(true, 0.5)
+
+				-- now death gui
+				DeathGUI:new(self:getPublicSync("DeathTime"),
+					function()
+						HUDRadar:getSingleton():show()
+						HUDUI:getSingleton():show()
+						showChat(true)
+						-- Trigger it back to the Server (TODO: Maybe is this Event unsafe..?)
+						triggerServerEvent("factionRescueWastedFinished", localPlayer)
+					end
+				)
+			end, soundLength*1000, 1
+		)
+	end
+
+	Camera.setMatrix(self.position + self.matrix.up*10, self.position)
+	local deathTime = MEDIC_TIME
+	local start = getTickCount()
+	local deathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime,
+		function()
+			triggerServerEvent("factionRescueReviveAbort", self, self)
+			funcA()
+		end
+	)
+	self.m_CanBeRevived = true
+	self.m_WastedTimer = setTimer(
+		function()
+			local timeGone = getTickCount() - start
+			if timeGone >= deathTime-500 then
+				funcA()
+			else
+				deathMessage.m_Text = _("Du verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
+				deathMessage:anyChange()
+			end
+		end, 1000, deathTime/1000
+	)
 end
 
 function LocalPlayer:deathRender(deltaTime)
-	local pos = self.m_DeathPosition
-	self.m_Add = self.m_Add+0.005*deltaTime
+	local pos = self.position + self.matrix.up*11
+	self.m_Add = (self.m_Add or 0)+0.005*deltaTime
 	setCameraMatrix(pos.x, pos.y, pos.z + self.m_Add, pos)
 end
 
 function LocalPlayer:abortDeathGUI()
-	if self.m_FadeOutShader then delete(self.m_FadeOutShader) end
-	if self.m_WastedTimer1 and isTimer(self.m_WastedTimer1) then killTimer(self.m_WastedTimer1) end
-	if self.m_WastedTimer2 and isTimer(self.m_WastedTimer2) then killTimer(self.m_WastedTimer2) end
-	if self.m_WastedTimer3 and isTimer(self.m_WastedTimer3) then killTimer(self.m_WastedTimer3) end
-	if self.m_WastedTimer4 and isTimer(self.m_WastedTimer4) then killTimer(self.m_WastedTimer4) end
-	if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
-	HUDRadar:getSingleton():show()
-	HUDUI:getSingleton():show()
-	showChat(true)
-	if self.m_DeathGUI then delete(self.m_DeathGUI) end
-	removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
+	if self.m_CanBeRevived then
+		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
+		if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
+		HUDRadar:getSingleton():show()
+		HUDUI:getSingleton():show()
+		showChat(true)
+		removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
+	end
 end
 
 function LocalPlayer:checkAFK()
