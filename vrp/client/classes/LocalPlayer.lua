@@ -187,7 +187,7 @@ function LocalPlayer:Event_playerWasted()
 			if timeGone >= deathTime-500 then
 				funcA()
 			else
-				deathMessage.m_Text = _("Du verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
+				deathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
 				deathMessage:anyChange()
 			end
 		end, 1000, deathTime/1000
@@ -195,7 +195,7 @@ function LocalPlayer:Event_playerWasted()
 end
 
 function LocalPlayer:deathRender(deltaTime)
-	local pos = self.position + self.matrix.up*11
+	local pos = localPlayer.position + localPlayer.matrix.up*11
 	self.m_Add = (self.m_Add or 0)+0.005*deltaTime
 	setCameraMatrix(pos.x, pos.y, pos.z + self.m_Add, pos)
 end
