@@ -13,7 +13,7 @@ end
 
 function ChessSessionManager:Event_newGame( player1, player2)
 	if not self:getPlayerGame( player1 ) and not self:getPlayerGame( player2 ) then 
-		self.m_Map[#self.m_Map+1] = ChessSession:new(#self.m_Map+1, {player1,player2}, true)
+		self.m_Map[#self.m_Map+1] = ChessSession:new(#self.m_Map+1, {player1,player2}, true, 6*60)
 	end
 end
 
