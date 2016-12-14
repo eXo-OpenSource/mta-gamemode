@@ -35,6 +35,8 @@ build_docker_job:
     - sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest-$CI_BUILD_REF_NAME
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest'
     - sudo docker push $DOCKER_USER/exo-rl-mta
+  except:
+    - /^bugfix\/.*$/
 
 deploy_job_bugfixes:
   stage: fast_deploy
