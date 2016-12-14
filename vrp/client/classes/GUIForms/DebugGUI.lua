@@ -65,6 +65,7 @@ lastDebug["Client"] = {["Id"] = 0, ["Message"] = "", ["File"] = ""}
 
 function DebugGUI:onShow()
 	showCursor(true)
+	self:refreshDebugGrid()
 end
 
 function DebugGUI:onHide()
@@ -93,7 +94,9 @@ function DebugGUI:addDebug(type, message, level, file, line)
 		lastDebug[type]["Message"] = message
 		lastDebug[type]["File"] = file
 	end
-	self:refreshDebugGrid()
+	if self:isVisible() then
+		self:refreshDebugGrid()
+	end
 end
 
 function DebugGUI:refreshDebugGrid()
