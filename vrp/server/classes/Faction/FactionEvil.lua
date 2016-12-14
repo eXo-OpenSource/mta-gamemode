@@ -26,9 +26,11 @@ function FactionEvil:constructor()
 		end
 	end
 
-	addRemoteEvents{"factionEvilStartRaid", "factionEvilSuccessRaid"}
+	addRemoteEvents{"factionEvilStartRaid", "factionEvilSuccessRaid", "factionEvilFailedRaid"}
 	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
 	addEventHandler("factionEvilSuccessRaid", root, bind(self.Event_SuccessRaid, self))
+	addEventHandler("factionEvilFailedRaid", root, bind(self.Event_FailedRaid, self))
+
 
 
 end
@@ -198,5 +200,12 @@ function FactionEvil:Event_SuccessRaid(target)
 		client:sendError(_("Der Spieler hat kein Geld dabei!", client))
 	end
 end
+
+function FactionEvil:Event_FailedRaid(target)
+	target:sendSuccess(_("Du bist dem Überfall entkommen!", target))
+	client:sendWarning(_("Der Spieler ist dem Überfall entkommen!", client))
+end
+
+
 
 
