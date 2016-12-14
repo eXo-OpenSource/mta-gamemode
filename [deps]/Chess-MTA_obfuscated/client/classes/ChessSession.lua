@@ -29,11 +29,11 @@ function ChessSession:nextMove( toIndex, fromIndex )
 	end
 end
 
-function ChessSession:Event_endGame( endReason, winner)
+function ChessSession:Event_endGame( endReason, loser)
 	if self.m_ChessGraphics then 
 		self.m_ChessGraphics.m_GameOver = true
 		self.m_ChessGraphics.m_EndReason = endReason
-		self.m_ChessGraphics.m_Winner = winner
+		self.m_ChessGraphics.m_Loser = loser
 	end	
 end
 
