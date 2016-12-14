@@ -65,14 +65,14 @@ function Account.login(player, username, password, pwhash)
 		end
 	end
 
-	player.m_Account = Account:new(Id, Username, player, false)
+	player.m_Account = Account:new(Id, Username, player, false, ForumID)
 
 	if player:getTutorialStage() == 1 then
 		player:createCharacter()
 	end
 
 	player:loadCharacter()
-	player:triggerEvent("stopLoginCameraDrive") 
+	player:triggerEvent("stopLoginCameraDrive")
 	player:triggerEvent("Event_StartScreen")
 	StatisticsLogger:addLogin( player, username, "Login")
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
@@ -140,7 +140,7 @@ function Account.register(player, username, password, email)
 			end
 
 			player:loadCharacter()
-			player:triggerEvent("stopLoginCameraDrive") 
+			player:triggerEvent("stopLoginCameraDrive")
 			player:triggerEvent("Event_StartScreen")
 			player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
 			StatisticsLogger:addLogin( player, username, "Login")
@@ -195,13 +195,15 @@ function Account.createForumAccount(username, password, email)
 	return false
 end
 
-function Account:constructor(id, username, player, guest)
+function Account:constructor(id, username, player, guest, ForumID)
 	-- Account Information
 	self.m_Id = id
 	self.m_Username = username
 	self.m_Player = player
+	self.m_ForumId = ForumID
 	player.m_IsGuest = guest;
 	player.m_Id = self.m_Id
+
 
 	if not guest then
 		sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, LastLogin FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
@@ -253,6 +255,19 @@ function Account.getNameFromId(id)
 	return row and row.Name
 end
 
+
+function Account.getBoardIdFromId(id)
+	--[[sql:queryFetchSingle(Async.waitFor(self), "SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
+	local row = Async.wait()]]
+	local player = Player.getFromId(id)
+	if player and isElement(player) then
+		return player:getAccount().m_ForumId
+	end
+
+	local row = sql:queryFetchSingle("SELECT ForumID FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
+	return row and row.ForumID
+end
+
 function Account.getNameFromSerial(serial)
 	local row = sql:queryFetchSingle("SELECT Name FROM ??_account WHERE LastSerial = ?", sql:getPrefix(), serial)
 	return row and row.Name
@@ -271,6 +286,11 @@ end
 function Account.getIdFromName(name)
 	local row = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
 	return row.Id or 0
+end
+
+function Account.getBoardIdFromName(name)
+	local row = sql:queryFetchSingle("SELECT ForumID FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
+	return row.ForumID or 0
 end
 
 function Account.MultiaccountCheck(player, Id)

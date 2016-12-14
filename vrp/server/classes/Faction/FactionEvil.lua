@@ -26,9 +26,11 @@ function FactionEvil:constructor()
 		end
 	end
 
-	addRemoteEvents{"factionEvilStartRaid", "factionEvilSuccessRaid"}
+	addRemoteEvents{"factionEvilStartRaid", "factionEvilSuccessRaid", "factionEvilFailedRaid"}
 	addEventHandler("factionEvilStartRaid", root, bind(self.Event_StartRaid, self))
 	addEventHandler("factionEvilSuccessRaid", root, bind(self.Event_SuccessRaid, self))
+	addEventHandler("factionEvilFailedRaid", root, bind(self.Event_FailedRaid, self))
+
 
 
 end
@@ -163,7 +165,7 @@ function FactionEvil:Event_StartRaid(target)
 			if target:getMoney() > 0 then
 
 				local targetName = target:getName()
-				if self.m_Raids[targetName] and timestampCoolDown(self.m_Raids[targetName], 2*60*60) then
+				if self.m_Raids[targetName] and not timestampCoolDown(self.m_Raids[targetName], 2*60*60) then
 					client:sendError(_("Dieser Spieler wurde innerhalb der letzten 2 Stunden bereits überfallen!", client))
 					return
 				end
@@ -190,13 +192,20 @@ function FactionEvil:Event_SuccessRaid(target)
 	if money > 750 then money = 750 end
 	if money > 0 then
 		client:meChat(true,"überfällt "..target:getName().." erfolgreich!")
-		target:takeMoney(500, "Überfall")
-		client:giveMoney(500, "Überfall")
+		target:takeMoney(money, "Überfall")
+		client:giveMoney(money, "Überfall")
 		client:triggerEvent("CountdownStop", "Überfallen in", 10)
 		target:triggerEvent("CountdownStop", "Überfallen in", 10)
 	else
 		client:sendError(_("Der Spieler hat kein Geld dabei!", client))
 	end
 end
+
+function FactionEvil:Event_FailedRaid(target)
+	target:sendSuccess(_("Du bist dem Überfall entkommen!", target))
+	client:sendWarning(_("Der Spieler ist dem Überfall entkommen!", client))
+end
+
+
 
 

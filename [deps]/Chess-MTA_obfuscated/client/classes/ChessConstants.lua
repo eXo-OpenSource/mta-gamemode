@@ -47,6 +47,6 @@ if w >= 1600 and h >= 720 then
 else 
 	CHESS_CONSTANT.FONT_CHAPAZA = dxCreateFont(CHESS_CONSTANT.FONT_PATH.."Chapaza.ttf",16)
 end
-
+CHESS_CONSTANT.FONT_CHAPAZA_HEIGHT = dxGetFontHeight(1,CHESS_CONSTANT.FONT_CHAPAZA)
 
 CHESS_CONSTANT.AUDIO_PATH = "files/audio/chess/"

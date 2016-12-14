@@ -68,6 +68,12 @@
 	<file src="files/images/Chess/board.jpg" />
 	<file src="files/images/Chess/tile.png" />
 	
+	<!-- icons -->
+	<file src="files/images/Chess/white-flag.png" />
+	<file src="files/images/Chess/exit.png" />
+	<file src="files/images/Chess/feed.png" />
+	<file src="files/images/Chess/crown.png" />
+	
 	<!-- font file -->
 	<file src="files/fonts/Chapaza.ttf" />
 	

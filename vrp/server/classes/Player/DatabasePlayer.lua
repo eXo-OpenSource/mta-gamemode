@@ -179,7 +179,7 @@ function DatabasePlayer:save()
 		if self.m_BankAccount then
 			delete(self.m_BankAccount)
 		end
-	
+
 		local spawnFac
 		if self.m_SpawnWithFactionSkin then
 			spawnFac = 1
@@ -653,4 +653,38 @@ function DatabasePlayer:getRemainingPrisonTime()
 		end
 	end
 	return self.m_PrisonTime
+end
+
+
+function DatabasePlayer:setNewNick(admin, newNick)
+	if not self:getId() or self:getId() <= 0 then
+		admin:sendError(_("Id nicht gefunden!", admin))
+		return false
+	end
+
+	if not newNick:match("[a-zA-Z]") or #newNick < 3 then
+		admin:sendError(_("Ungültiger Nickname!", admin))
+		return false
+	end
+
+	local row = board:queryFetchSingle("SELECT username FROM wcf1_user WHERE username LIKE ?", newNick)
+	if row then
+		admin:sendError(_("Nickname bereits vergeben!", admin))
+		return false
+	end
+
+	local oldNick = Account.getNameFromId(self.m_Id)
+	local boardId = Account.getBoardIdFromId(self.m_Id)
+
+	sql:queryExec("UPDATE ??_account SET Name = ? WHERE Id = ?", sql:getPrefix(), newNick, self.m_Id)
+	board:queryExec("UPDATE wcf1_user SET username = ? WHERE UserID = ?", newNick, boardId)
+	StatisticsLogger:getSingleton():addPunishLog(admin, self.m_Id, func, "von "..oldNick.." zu "..newNick, 0)
+
+	if self:isActive() then
+		self:getAccount().m_Username = newNick
+		self:setName(self:getAccount():getName())
+		self:sendMessage(_("%s hat dein Nickname von %s in %s geändert!", self, admin:getName(), oldNick, newNick), 255, 0, 0)
+	end
+
+	return true
 end
