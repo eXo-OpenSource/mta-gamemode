@@ -148,6 +148,7 @@ function LocalPlayer:Event_playerWasted()
 		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
 
 		-- render camera drive
+		self.m_Add = 0
 		addEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
 		fadeCamera(false, soundLength)
 
@@ -196,8 +197,8 @@ end
 
 function LocalPlayer:deathRender(deltaTime)
 	local pos = localPlayer.position + localPlayer.matrix.up*11
-	self.m_Add = (self.m_Add or 0)+0.005*deltaTime
-	setCameraMatrix(pos.x, pos.y, pos.z + self.m_Add, pos)
+	self.m_Add = self.m_Add+0.005*deltaTime
+	Camera.setMatrix(Vector3(pos.x, pos.y, pos.z + self.m_Add), pos)
 end
 
 function LocalPlayer:abortDeathGUI()

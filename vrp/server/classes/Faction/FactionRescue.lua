@@ -294,7 +294,8 @@ function FactionRescue:createDeathPickup(player, ...)
 	setTimer(
 		function ()
 			self:destroyDeathBlip(player)
-		end, MEDIC_TIME, 1)
+		end, MEDIC_TIME, 1
+	)
 	-- Create PlayerDeathTimeout
 	--self:createDeathTimeout(player, ...)
 end
