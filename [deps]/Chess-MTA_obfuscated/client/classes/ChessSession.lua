@@ -50,6 +50,7 @@ function ChessSession:Event_startGame( players , initMatrix, localTeam, isSpeed)
 	self.m_Team = localTeam
 	self.m_Players = players
 	self:initialiseGame( initMatrix , isSpeed)
+	showChat(false)
 end
 
 function ChessSession:Event_updateGame( fMatrix , bSound, from, to, team)

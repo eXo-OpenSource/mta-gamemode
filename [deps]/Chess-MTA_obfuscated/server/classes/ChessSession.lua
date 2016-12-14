@@ -134,7 +134,11 @@ function ChessSession:Timer_syncTime()
 end
 
 function ChessSession:onTimeEnd( player )
-	self:endGame( player, "Zeit ausgelaufen!" )
+	local winner = self.m_Players[1]
+	if player == winner then 
+		winner = self.m_Players[2]
+	end
+	self:endGame( winner , "Zeit ausgelaufen!" )
 end
 
 function ChessSession:isThisPlayer( player )
@@ -157,6 +161,11 @@ function ChessSession:destructor()
 end
 function ChessSession:onKingFall( team )
 	if team >= 1 then 
+		if team == 1 then 
+			team = 2 
+		else 
+			team = 1
+		end
 		self:endGame( self.m_Players[team] , "Schachmatt!")
 	end
 end

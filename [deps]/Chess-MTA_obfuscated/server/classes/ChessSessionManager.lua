@@ -13,7 +13,7 @@ end
 
 function ChessSessionManager:Event_newGame( player1, player2)
 	if not self:getPlayerGame( player1 ) and not self:getPlayerGame( player2 ) then 
-		self.m_Map[#self.m_Map+1] = ChessSession:new(#self.m_Map+1, {player1,player2}, true, 5*60)
+		self.m_Map[#self.m_Map+1] = ChessSession:new(#self.m_Map+1, {player1,player2}, true)
 	end
 end
 
@@ -41,10 +41,10 @@ function ChessSessionManager:Event_GetSurrender()
 			local gObject = self:getPlayerGame( client )
 			if gObject then 
 				local winner 
-				if gObject.m_Players[1] == winner then 
-					winner = gObject.m_Players[1]
-				else 
+				if gObject.m_Players[1] == client then 
 					winner = gObject.m_Players[2]
+				else 
+					winner = gObject.m_Players[1]
 				end
 				gObject:endGame( winner, "Kapitulation!" )
 			end
@@ -74,10 +74,9 @@ end
 addEventHandler("onResourceStart", resourceRoot, coreCopy, true, "high+99999")
 
 addCommandHandler("chess",function( source , cmd, player) 	
-	if player then
+	if player then 
 		if getPlayerFromName(player) then
-			return ChessSessionManager:getSingleton():Event_newGame( source, getPlayerFromName(player) or source)
+			ChessSessionManager:getSingleton():Event_newGame( source, getPlayerFromName(player) or source)
 		end
 	end
-	outputChatBox("Syntax: /chess [Ziel]", source, 200, 0, 0)
 end)

@@ -67,6 +67,9 @@
 	<!-- board piece -->
 	<file src="files/images/Chess/board.jpg" />
 	<file src="files/images/Chess/tile.png" />
+	<file src="files/images/Chess/table.jpg" />
+	<file src="files/images/Chess/cup.png" />
+	<file src="files/images/Chess/glass2.png" />
 	
 	<!-- icons -->
 	<file src="files/images/Chess/white-flag.png" />
