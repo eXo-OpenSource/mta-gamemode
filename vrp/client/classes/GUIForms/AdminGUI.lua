@@ -50,7 +50,7 @@ function AdminGUI:constructor(money)
 	self.m_EditPosX = GUIEdit:new(10, 260, 80, 25, tabAllgemein):setNumeric(true, false)
 	self.m_EditPosY = GUIEdit:new(95, 260, 80, 25, tabAllgemein):setNumeric(true, false)
 	self.m_EditPosZ = GUIEdit:new(180, 260, 80, 25, tabAllgemein):setNumeric(true, false)
-	self:addAdminButton("gotocords", "zu Koordinaten porten", 10, 285, 250, 30, Color.Orange, tabAllgemein)
+	self:addAdminButton("gotocords", "zu Koordinaten porten", 10, 290, 250, 30, Color.Orange, tabAllgemein)
 
 	--Column 2
 	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.LightBlue)
