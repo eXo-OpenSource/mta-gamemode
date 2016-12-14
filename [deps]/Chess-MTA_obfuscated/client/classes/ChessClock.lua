@@ -22,8 +22,10 @@ function ChessClock:destructor()
 
 end
 function ChessClock:update( turn, timeData )
-	self.m_TimeData = timeData
-	self.m_Turn = turn
+	if isElement(timeData[1][1]) and isElement(timeData[2][1]) then
+		self.m_TimeData = timeData
+		self.m_Turn = turn
+	end
 end
 function ChessClock:draw()
 	if self.m_TimeData and self.m_Turn then
@@ -43,7 +45,11 @@ function ChessClock:drawTime()
 	for i = 1,#self.m_TimeData do 
 		active, time = self.m_TimeData[i][1] == self.m_Turn, self.m_TimeData[i][2]
 		time = string.format("%.2d:%.2d", time/60%60, time%60)
-		name = getPlayerName(self.m_TimeData[i][1])
+		if isElement( self.m_TimeData[i][1] ) then
+			name = getPlayerName(self.m_TimeData[i][1])
+		else 
+			name = "-/-"
+		end
 		if #name >= 8 then 
 			name = string.sub(name,1,8).."."
 		end
@@ -57,7 +63,6 @@ function ChessClock:drawTime()
 		if active then
 			dxDrawText(name,x, y, x+self.m_Width*0.4, y+self.m_Height*0.8,tocolor(200,200,200,255),1,CHESS_CONSTANT.FONT_CHAPAZA,"center","top")
 			dxDrawText(time,x, y, x+self.m_Width*0.4, y+self.m_Height*0.8,tocolor(200,200,200,255),self.m_FontScale,"default-bold","center","bottom")
-			
 		else 
 			dxDrawText(name,x, y, x+self.m_Width*0.4, y+self.m_Height*0.8,tocolor(0,0,0,255),1,CHESS_CONSTANT.FONT_CHAPAZA,"center","top")
 			dxDrawText(time,x, y, x+self.m_Width*0.4, y+self.m_Height*0.8,tocolor(0,0,0,255),self.m_FontScale,"default-bold","center","bottom")

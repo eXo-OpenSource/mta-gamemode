@@ -29,12 +29,20 @@ function ChessSession:nextMove( toIndex, fromIndex )
 	end
 end
 
-function ChessSession:Event_endGame()
-	self:clear()	
+function ChessSession:Event_endGame( endReason, winner)
+	if self.m_ChessGraphics then 
+		self.m_ChessGraphics.m_GameOver = true
+		self.m_ChessGraphics.m_EndReason = endReason
+		self.m_ChessGraphics.m_Winner = winner
+	end	
+end
+
+function ChessSession:onSurrenderClick()
+	triggerServerEvent("onServerGetSurrender", localPlayer)
 end
 
 function ChessSession:Event_onClockUpdate( turn, mTable )
-	if self.m_ChessGraphics then 
+	if self.m_ChessGraphics and not self.m_ChessGraphics.m_GameOver then 
 		self.m_ChessGraphics.m_Clock:update( turn, mTable)
 	end
 end
@@ -44,21 +52,49 @@ function ChessSession:Event_startGame( players , initMatrix, localTeam, isSpeed)
 	self:initialiseGame( initMatrix , isSpeed)
 end
 
-function ChessSession:Event_updateGame( fMatrix , bSound)
+function ChessSession:Event_updateGame( fMatrix , bSound, from, to, team)
 	if self.m_ChessGraphics then 
 		self.m_ChessGraphics:update( fMatrix )
 		if bSound then
 			playSound(CHESS_CONSTANT.AUDIO_PATH.."/move.ogg")
+			self.m_ChessGraphics.m_MoveLineAlpha = 255
+			if team == self.m_Team then 
+				self.m_ChessGraphics.m_MoveCol1 = 0 
+				self.m_ChessGraphics.m_MoveCol2 = 200
+			else 
+				self.m_ChessGraphics.m_MoveCol1 = 200
+				self.m_ChessGraphics.m_MoveCol2 = 0
+			end
+			if team == 2 then
+				if self.m_Team == 2 then
+					from = math.abs(from-65)
+					to = math.abs( to-65)
+				end
+			else 
+				if team == 1 then 
+					if self.m_Team == 2 then
+						from = 65- from
+						to = 65- to
+					end
+				end
+			end
+			self.m_ChessGraphics.m_MoveLineFrom = from 
+			self.m_ChessGraphics.m_MoveLineTo = to
 		end
 	end
 end
 
-function ChessSession:Event_onBeatPiece( piece, team)
+function ChessSession:Event_onBeatPiece( piece, team, piece2, team2)
 	if not self.m_BeatList[team][piece] then 
 		self.m_BeatList[team][piece] = 0
 	end
 	self.m_BeatList[team][piece] = self.m_BeatList[team][piece] + 1
+	self.m_ChessGraphics.m_DrawBeatFeed = true
+	self.m_ChessGraphics.m_BeatDrawTick = getTickCount()
+	self.m_ChessGraphics.m_BeatenPiece = {piece, team}
+	self.m_ChessGraphics.m_BeatingPiece = {piece2, team2}
 end
+
 
 function ChessSession:destructor()
 

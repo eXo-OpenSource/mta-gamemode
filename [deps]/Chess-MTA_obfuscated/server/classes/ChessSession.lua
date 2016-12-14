@@ -43,27 +43,28 @@ function ChessSession:movePlayerPiece( player, fromIndex, toIndex, team)
 	end
 end
 
-function ChessSession:onUpdateField( fMatrix, sound ) 
+function ChessSession:onUpdateField( fMatrix, sound , from, to, team) 
 	if DEBUG then 
 		triggerClientEvent("onClientChessUpdate", self.m_Players[1], fMatrix)
 	else
 		if self.m_Players then
 			if self.m_Players[1] ~= self.m_Players[2] then 
-				triggerClientEvent("onClientChessUpdate", self.m_Players[1], fMatrix, sound)
-				triggerClientEvent("onClientChessUpdate", self.m_Players[2], fMatrix, sound)
+				triggerClientEvent("onClientChessUpdate", self.m_Players[1], fMatrix, sound, from, to, team)
+				triggerClientEvent("onClientChessUpdate", self.m_Players[2], fMatrix, sound, from, to, team)
 			end
 		end
 	end
 end
 
-function ChessSession:onPieceBeaten( piece, team) 
-	triggerClientEvent("onClientChessPieceBeat", self.m_Players[1], piece, team)
-	triggerClientEvent("onClientChessPieceBeat", self.m_Players[2], piece, team)
+function ChessSession:onPieceBeaten( piece, team, piece2, team2) 
+	triggerClientEvent("onClientChessPieceBeat", self.m_Players[1], piece, team, piece2, team2)
+	triggerClientEvent("onClientChessPieceBeat", self.m_Players[2], piece, team, piece2, team2)
 end
 
-function ChessSession:endGame( winner )
-	triggerClientEvent("onClientChessStop", self.m_Players[1], winner)
-	triggerClientEvent("onClientChessStop", self.m_Players[2], winner)
+function ChessSession:endGame( winner, reason )
+	triggerClientEvent("onClientChessStop", self.m_Players[1], reason, winner)
+	triggerClientEvent("onClientChessStop", self.m_Players[2], reason, winner)
+	self.m_End = true
 	delete(self)
 end
 
@@ -82,7 +83,7 @@ function ChessSession:nextTurn()
 	else 
 		self.m_Turn = self.m_Players[1]
 		if self.m_IsSpeedChess then
-			if self.m_Players then
+			if self.m_Players and not self.m_End then
 				if self.m_Players[1] then
 					triggerClientEvent("onClientChessClockUpdate", self.m_Players[1], self.m_Turn , self.m_TimeTable)
 				end
@@ -133,7 +134,7 @@ function ChessSession:Timer_syncTime()
 end
 
 function ChessSession:onTimeEnd( player )
-	self:endGame()
+	self:endGame( player, "Zeit ausgelaufen!" )
 end
 
 function ChessSession:isThisPlayer( player )
@@ -148,15 +149,22 @@ function ChessSession:destructor()
 	removeEventHandler("onPlayerQuit", self.m_Players[1], self.m_QuitEvent)
 	removeEventHandler("onPlayerQuit", self.m_Players[2], self.m_QuitEvent)
 	delete(self.m_LogicHandler)
+	if isTimer(self.m_TurnTimer) then 
+		killTimer(self.m_TurnTimer)
+	end
 	self.m_Players = nil
 	
 end
 function ChessSession:onKingFall( team )
 	if team >= 1 then 
-		self:endGame()
+		self:endGame( self.m_Players[team] , "Schachmatt!")
 	end
 end
 
 function ChessSession:Event_onPlayerQuit( )
-	self:endGame()
+	local winner = self.m_Players[1] 
+	if source == self.m_Players[1] then 
+		winner = self.m_Players[2] 
+	end
+	self:endGame( winner, "Gegner hat verlassen!")
 end
