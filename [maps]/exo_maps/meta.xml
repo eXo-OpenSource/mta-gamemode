@@ -68,4 +68,6 @@
 	<map src="tankstellen_removals.map" />
 
 	<map src="stadthalle.map" />
+	
+	<map src="minigamescafe.map" dimension="2" />
 </meta>
