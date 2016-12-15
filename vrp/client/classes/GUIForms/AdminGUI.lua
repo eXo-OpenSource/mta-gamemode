@@ -40,17 +40,22 @@ function AdminGUI:constructor(money)
 	self.m_AdminAnnounceText = GUIEdit:new(150, 10, 330, 30,tabAllgemein)
 
 	--Column 1
+	self.m_RespawnRadius = GUIEdit:new(10, 180, 60, 30, tabAllgemein)
+	self.m_RespawnRadius:setNumeric(true, true)
+	self.m_RespawnRadius:setText("50")
+
 	self:addAdminButton("adminAnnounce", "senden", 490, 10, 100, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("supportMode", "Support-Modus aktivieren/deaktivieren", 10, 50, 250, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("respawnFaction", "Fraktionsfahrzeuge respawnen", 10, 100, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
-	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 190, 250, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("respawnRadius", "im Umkreis respawnen", 75, 180, 185, 30, Color.LightBlue, tabAllgemein)
+	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 230, 250, 30, Color.Red, tabAllgemein)
 
-	GUILabel:new(10, 230, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
-	self.m_EditPosX = GUIEdit:new(10, 260, 80, 25, tabAllgemein):setNumeric(true, false)
-	self.m_EditPosY = GUIEdit:new(95, 260, 80, 25, tabAllgemein):setNumeric(true, false)
-	self.m_EditPosZ = GUIEdit:new(180, 260, 80, 25, tabAllgemein):setNumeric(true, false)
-	self:addAdminButton("gotocords", "zu Koordinaten porten", 10, 290, 250, 30, Color.Orange, tabAllgemein)
+	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
+	self.m_EditPosX = GUIEdit:new(10, 300, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosY = GUIEdit:new(95, 300, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosZ = GUIEdit:new(180, 300, 80, 25, tabAllgemein):setNumeric(true, false)
+	self:addAdminButton("gotocords", "zu Koordinaten porten", 10, 330, 250, 30, Color.Orange, tabAllgemein)
 
 	--Column 2
 	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.LightBlue)
@@ -421,10 +426,15 @@ function AdminGUI:onButtonClick(func)
 				function (factionId)
 					triggerServerEvent("adminRespawnFactionVehicles", root, factionId)
 				end)
-	elseif func == "supportMode" then
+	elseif func == "supportMode" or func == "clearChat" then
 		triggerServerEvent("adminTriggerFunction", root, func)
-	elseif func == "clearChat" then
-		triggerServerEvent("adminTriggerFunction", root, func)
+	elseif func == "respawnRadius" then
+		local radius = self.m_RespawnRadius:getText()
+		if radius and tonumber(radius) and tonumber(radius) > 0 then
+			triggerServerEvent("adminTriggerFunction", root, func, radius)
+		else
+			ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
+		end
 	elseif func == "adminAnnounce" then
 		local announceString = self.m_AdminAnnounceText:getText()
 		if announceString ~= "" and #announceString > 0 then

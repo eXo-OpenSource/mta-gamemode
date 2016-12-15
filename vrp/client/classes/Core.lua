@@ -115,6 +115,8 @@ function Core:ready()
 	GroupProperty:new()
 	GUIWindowsFocus:new()
 	SprayWallManager:new()
+	
+	ChessSession:new()
 
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 end

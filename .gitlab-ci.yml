@@ -6,6 +6,7 @@ before_script:
 
 stages:
   - build
+  - fast_deploy
   - build_docker
   - deploy
   - clean_env
@@ -34,6 +35,19 @@ build_docker_job:
     - sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest-$CI_BUILD_REF_NAME
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest'
     - sudo docker push $DOCKER_USER/exo-rl-mta
+  except:
+    - /^bugfix\/.*$/
+
+deploy_job_bugfixes:
+  stage: fast_deploy
+  script:
+    - curl -F "file=@artifacts.tar.gz" -H "API_SECRET:$WORKER_API_SECRET_DEVELOP" http://mta.exo-reallife.de:20002/upload
+    #- curl -F "command=restart vrp_build" -H "API_SECRET:$WORKER_API_SECRET_DEVELOP" http://mta.exo-reallife.de:20002/command
+  environment:
+    name: development
+    url: http://mta.exo-reallife.de:20002/
+  only:
+    - /^bugfix\/.*$/
 
 deploy_job_develop:
   stage: deploy
@@ -46,9 +60,11 @@ deploy_job_develop:
   only:
     - master
 
-clean_env_job:
+clean_env_job_docker:
   stage: clean_env
   script:
     - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest-$CI_BUILD_REF_NAME
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker rmi $DOCKER_USER/exo-rl-mta:latest'
     - sudo docker rmi exo-rl-mta
+  except:
+    - /^bugfix\/.*$/

@@ -69,6 +69,10 @@ function CustomModelManager:constructor()
 
 	self:loadShader("files/images/Other/parking1.png", "noparking2_128")
 	self:loadShader("files/images/Other/parking2.png", "roadsign01_128")
+
+	self:loadShader("files/images/Other/trans.png", "txgrass0_1")
+	self:loadShader("files/images/Other/trans.png", "txgrass1_1")
+
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)
