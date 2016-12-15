@@ -141,6 +141,7 @@ function LocalPlayer:Event_playerWasted()
 
 	local funcA = function()
 		if isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
+		triggerServerEvent("factionRescueReviveAbort", self, self)
 		self.m_CanBeRevived = false
 
 		self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
@@ -175,12 +176,7 @@ function LocalPlayer:Event_playerWasted()
 	Camera.setMatrix(self.position + self.matrix.up*10, self.position)
 	local deathTime = MEDIC_TIME
 	local start = getTickCount()
-	local deathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime,
-		function()
-			triggerServerEvent("factionRescueReviveAbort", self, self)
-			funcA()
-		end
-	)
+	local deathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, funcA)
 	self.m_CanBeRevived = true
 	self.m_WastedTimer = setTimer(
 		function()

@@ -368,7 +368,7 @@ WEAPON_IDS = {}
 for id, name in pairs(WEAPON_NAMES) do
 	WEAPON_IDS[name] = id
 end
-
+	
 MEDIC_TIME = 60000
 DEATH_TIME = 36000
 DEATH_TIME_PREMIUM = 21000

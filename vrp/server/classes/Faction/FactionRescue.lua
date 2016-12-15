@@ -290,22 +290,16 @@ function FactionRescue:createDeathPickup(player, ...)
 			end
 		end
 	)
-
-	setTimer(
-		function ()
-			self:destroyDeathBlip(player)
-		end, MEDIC_TIME, 1
-	)
 	-- Create PlayerDeathTimeout
 	--self:createDeathTimeout(player, ...)
 end
 
-function FactionRescue:destroyDeathBlip(player)
-	if player.m_DeathPickup then
-		player.m_DeathPickup:destroy()
-		player.m_DeathPickup = nil
+function FactionRescue:destroyDeathBlip()
+	if client.m_DeathPickup then
+		client.m_DeathPickup:destroy()
+		client.m_DeathPickup = nil
 		for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-			rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+			rescuePlayer:triggerEvent("rescueRemoveDeathBlip", client)
 		end
 	end
 end
