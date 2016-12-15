@@ -46,6 +46,7 @@ ADMIN_RANK_PERMISSION = {
 	["smode"] = RANK.Supporter,
 	["respawnFaction"] = RANK.Supporter,
 	["respawnCompany"] = RANK.Supporter,
+	["respawnRadius"] = RANK.Supporter,
 	["clearChat"] = RANK.Supporter,
 	["clearchat"] = RANK.Supporter,
 	["addWarn"] = RANK.Supporter,
