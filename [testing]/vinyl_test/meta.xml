@@ -1,0 +1,6 @@
+<meta>
+	<oop>true</oop>
+	<file src="files/images/test.png" />
+	<file src="files/shader/texreplace.fx" />
+	<script src="client.lua" type="client" />
+</meta>
