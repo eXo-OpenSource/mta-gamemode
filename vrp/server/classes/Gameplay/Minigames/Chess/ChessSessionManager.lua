@@ -68,11 +68,6 @@ function ChessSessionManager:getPlayerGame( player )
 	return false
 end
 
-function coreCopy()
-	ChessSessionManager:new()
-end
-addEventHandler("onResourceStart", resourceRoot, coreCopy, true, "high+99999")
-
 addCommandHandler("chess",function( source , cmd, player) 	
 	if player then 
 		if getPlayerFromName(player) then

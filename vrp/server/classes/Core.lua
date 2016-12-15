@@ -87,7 +87,8 @@ function Core:constructor()
 	Depot.initalize()
 
 	BankRobbery:new()
-
+	
+	ChessSessionManager:new()
 	-- Generate Missions
 	MStealWeaponTruck:new()
 
@@ -136,6 +137,8 @@ function Core:constructor()
 	if DEBUG then
 		addCommandHandler("runtests", bind(self.runTests, self))
 	end
+	
+	
 end
 
 function Core:onClientInternalError (msg)

@@ -666,6 +666,52 @@
 	<script src="client/classes/Gameplay/Minigames/RockPaperScissors.lua" type="client"/>
 
 
+	<!-- serverside -->
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.luac" type="server"/>
+
+	<!-- CHESS -->
+	<script src="client/classes/Gameplay/Minigames/Chess/ChessConstants.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Minigames/Chess/ChessTile.luac" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Minigames/Chess/ChessGraphics.luac" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.luac" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
+	<!-- white pieces -->
+	<file src="files/images/Chess/Rook.png" />
+	<file src="files/images/Chess/Bishop.png" />
+	<file src="files/images/Chess/King.png" />
+	<file src="files/images/Chess/Queen.png" />
+	<file src="files/images/Chess/Pawn.png" />
+	<file src="files/images/Chess/Knight.png" />
+	<!-- black pieces -->
+	<vrpfile src="files/images/Chess/RookB.png" />
+	<vrpfile src="files/images/Chess/BishopB.png" />
+	<vrpfile src="files/images/Chess/KingB.png" />
+	<vrpfile src="files/images/Chess/QueenB.png" />
+	<vrpfile src="files/images/Chess/PawnB.png" />
+	<vrpfile src="files/images/Chess/KnightB.png" />
+	
+	<!-- board piece -->
+	<vrpfile src="files/images/Chess/board.jpg" />
+	<vrpfile src="files/images/Chess/tile.png" />
+	<vrpfile src="files/images/Chess/table.jpg" />
+	<vrpfile src="files/images/Chess/cup.png" />
+	<vrpfile src="files/images/Chess/glass2.png" />
+	
+	<!-- icons -->
+	<vrpfile src="files/images/Chess/white-flag.png" />
+	<vrpfile src="files/images/Chess/exit.png" />
+	<vrpfile src="files/images/Chess/feed.png" />
+	<vrpfile src="files/images/Chess/crown.png" />
+	
+	<!-- font file -->
+	<file src="files/fonts/Chapaza.ttf" />
+	
+	<!-- audio files -->
+	<vrpfile src="files/audio/chess/move.ogg" />
+	
 	<!-- Business -->
 
 

@@ -100,8 +100,3 @@ end
 function ChessSession:destructor()
 
 end
-
-function coreCopy()
-	ChessSession:new()
-end
-addEventHandler("onClientResourceStart", resourceRoot, coreCopy, true, "high+99999")
