@@ -14,7 +14,7 @@ function AntiClickSpam:constructor()
 	self.m_Counter = 0
 	addEventHandler("onClientClick",root, bind(self.onClick, self))
 
-	setTimer(bind(self.reset, self), 2000, 0)
+	setTimer(bind(self.reset, self), 1000, 0)
 end
 
 function AntiClickSpam:onClick(button, state)
