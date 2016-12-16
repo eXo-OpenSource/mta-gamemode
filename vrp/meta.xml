@@ -670,14 +670,14 @@
 	<!-- serverside -->
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="server"/>
-	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.luac" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Chess/ChessLogic.lua" type="server"/>
 
 	<!-- CHESS -->
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessConstants.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessSession.lua" type="client" cache="true" />
-	<script src="client/classes/Gameplay/Minigames/Chess/ChessTile.luac" type="client" cache="true" />
-	<script src="client/classes/Gameplay/Minigames/Chess/ChessGraphics.luac" type="client" cache="true" />
-	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.luac" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Minigames/Chess/ChessTile.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Minigames/Chess/ChessGraphics.lua" type="client" cache="true" />
+	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
