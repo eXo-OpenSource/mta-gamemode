@@ -186,7 +186,7 @@ function FactionState:loadFBI(factionId)
 
 	local elevator = Elevator:new()
 	elevator:addStation("UG Garage", Vector3(1513.28772, -1461.14819, 9.50), 180)
-	elevator:addStation("Erdgeschoss", Vector3(221.10, 118.12, 1010.22), 270, 10, 23)
+	elevator:addStation("Erdgeschoss", Vector3(266.70, 107.80, 1008.80), 270, 10, 23)
 	elevator:addStation("Dach - Heliports", Vector3(1536.08386,-1460.68518,63.8593), 90)
 
 
