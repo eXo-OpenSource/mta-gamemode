@@ -184,10 +184,14 @@ function FactionState:loadFBI(factionId)
 	safe:setInterior(10)
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
+	local elevator = Elevator:new()
+	elevator:addStation("UG Garage", Vector3(1513.28772, -1461.14819, 9.50), 180)
+	elevator:addStation("Erdgeschoss", Vector3(221.10, 118.12, 1010.22), 270, 10, 23)
+	elevator:addStation("Dach - Heliports", Vector3(1536.08386,-1460.68518,63.8593), 90)
+
+
 	Gate:new(2938, Vector3(1534.6999511719,-1451.5,15), Vector3(0, 0, 270), Vector3(1534.6999511719,-1451.5,20)).onGateHit = bind(self.onBarrierGateHit, self)
-	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
-	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
-	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
+	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(238.30, 114.9, 1010.207), 0, 0, 10, 23)
 end
 
 function FactionState:loadArmy(factionId)
@@ -206,10 +210,6 @@ function FactionState:loadArmy(factionId)
 	areaGarage:addCustomShapes(Vector3(213.97, 1872.14, 13.14), Vector3(213.92, 1880.12, 13.14))
 	areaGarage.onGateHit = bind(self.onBarrierGateHit, self)
 
-
-	InteriorEnterExit:new(Vector3(1518.55298,-1452.88684,14.20313), Vector3(246.82773,108.65514,1003.21875), 0, 0, 10, 23)
-	InteriorEnterExit:new( Vector3(1513.28772, -1461.14819, 9.50000),Vector3(214.93469,120.06063,1003.21875), -90, -180, 10, 23)
-	InteriorEnterExit:new( Vector3(1536.08386,-1460.68518,63.8593),Vector3(228.63806,124.87337,1003.21875), 270, 90, 10, 23)
 end
 
 function FactionState:createTakeItemsPickup(pos)
