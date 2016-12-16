@@ -22,6 +22,7 @@ FACTION_MAX_RANK_LOANS ={
 }
 
 FACTION_MIN_RANK_KARMA = {
+	[0] = 1;
 	[1] = 25;
 	[2] = 50;
 	[3] = 75;
