@@ -7,6 +7,7 @@
 -- ****************************************************************************
 GUIForm = inherit(CacheArea)
 GUIForm.Map = {}
+GUIForm.BlurCounter = 0
 
 function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, postGUI)
 	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true, postGUI)
@@ -17,6 +18,12 @@ function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, 
 
 	self.m_Id = #GUIForm.Map+1
 	GUIForm.Map[self.m_Id] = self
+
+	-- Enable blur shader maybe
+	if self:isBackgroundBlurred() then
+		GUIForm.BlurCounter = GUIForm.BlurCounter + 1
+		RadialShader:getSingleton():setEnabled(true)
+	end
 end
 
 function GUIForm:destructor()
@@ -28,8 +35,8 @@ function GUIForm:destructor()
 		unbindKey(k, "down", v)
 	end
 	self.m_KeyBinds = {}
-	self:setVisible(false)
-	Cursor:hide()
+
+	self:close(false)
 
 	-- Todo: Replace this by virtual_destructor
 	CacheArea.destructor(self)
@@ -39,6 +46,13 @@ function GUIForm:open(hiddenCursor)
 	if not hiddenCursor and not self:isVisible() then
 		Cursor:show()
 	end
+
+	-- Enable blur shader maybe
+	if self:isBackgroundBlurred() then
+		GUIForm.BlurCounter = GUIForm.BlurCounter + 1
+		RadialShader:getSingleton():setEnabled(true)
+	end
+
 	return self:setVisible(true)
 end
 
@@ -46,6 +60,16 @@ function GUIForm:close(decrementedCursorCounter)
 	if not decrementedCursorCounter and self:isVisible() then
 		Cursor:hide()
 	end
+
+	-- Disable blur shader if it has been enabled before
+	if self:isBackgroundBlurred() then
+		GUIForm.BlurCounter = GUIForm.BlurCounter - 1
+
+		if GUIForm.BlurCounter <= 0 then
+			RadialShader:getSingleton():setEnabled(false)
+		end
+	end
+
 	return self:setVisible(false)
 end
 
@@ -105,4 +129,12 @@ function GUIForm.closeAll()
 			form:close(false)
 		end
 	end
+end
+
+--- Return true to show a blurry background
+-- This enables the Radialshader internally
+-- Override this in derived classes
+-- @return true to enable blur, false otherwise
+function GUIForm:isBackgroundBlurred()
+	return false
 end

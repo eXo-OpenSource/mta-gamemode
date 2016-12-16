@@ -7,6 +7,7 @@
 -- ****************************************************************************
 SelfGUI = inherit(GUIForm)
 inherit(Singleton, SelfGUI)
+
 function SelfGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 	self.m_OpenWindows = {}
@@ -454,11 +455,6 @@ end
 
 function SelfGUI:onShow()
 	-- Update VehicleTab
-	if localPlayer.m_RadialShader then
-		delete(localPlayer.m_RadialShader)
-		localPlayer.m_RadialShader = nil
-	end
-	localPlayer.m_RadialShader = RadialShader:new()
 	self:TabPanel_TabChanged(self.m_TabGeneral.TabIndex)
 	self:TabPanel_TabChanged(self.m_TabVehicles.TabIndex)
 
@@ -505,10 +501,7 @@ function SelfGUI:onShow()
 end
 
 function SelfGUI:onHide()
-	if localPlayer.m_RadialShader then
-		delete(localPlayer.m_RadialShader)
-		localPlayer.m_RadialShader = nil
-	end
+
 end
 
 function SelfGUI:TabPanel_TabChanged(tabId)
@@ -857,26 +850,15 @@ function SelfGUI:addWindow(instance)
 	if not table.find(self.m_OpenWindows, instance) then
 		table.insert(self.m_OpenWindows, instance)
 	end
-
-	if true then -- Setting?
-		if localPlayer.m_RadialShader then
-			delete(localPlayer.m_RadialShader)
-		end
-
-		localPlayer.m_RadialShader = RadialShader:new()
-	end
 end
 
 function SelfGUI:removeWindow(instance)
 	local idx = table.find(self.m_OpenWindows, instance)
 	if idx then
 		table.remove(self.m_OpenWindows, idx)
-
-		if true then -- Setting
-			if localPlayer.m_RadialShader then
-				delete(localPlayer.m_RadialShader)
-				localPlayer.m_RadialShader = nil
-			end
-		end
 	end
+end
+
+function SelfGUI:isBackgroundBlurred()
+	return true
 end

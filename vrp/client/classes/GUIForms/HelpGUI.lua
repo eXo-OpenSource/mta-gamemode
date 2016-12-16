@@ -22,7 +22,7 @@ function HelpGUI:constructor()
 		for title, text in pairs(texts) do
 			local item = self.m_Grid:addItem("  "..title)
 			item.onLeftClick = function()
-					if HUDUI:getSingleton().m_Visible then 
+					if HUDUI:getSingleton().m_Visible then
 						HUDUI:getSingleton():refreshHandler()
 						HUDUI:setEnabled(false)
 					end
@@ -35,4 +35,8 @@ function HelpGUI:constructor()
 	local item = self.m_Grid:getItems()[2]
 	self.m_Grid:onInternalSelectItem(item)
 	item.onLeftClick()
+end
+
+function HelpGUI:isBackgroundBlurred()
+	return true
 end
