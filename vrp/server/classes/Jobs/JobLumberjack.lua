@@ -12,8 +12,10 @@ function JobLumberjack:constructor()
 
 	self.m_LoadUpMarker = createMarker(1038.9, -354.2, 72.9, "corona", 4)
 	addEventHandler("onMarkerHit", self.m_LoadUpMarker, bind(JobLumberjack.loadUpHit, self))
+	self.m_LoadUpMarker:setVisibleTo(root, false)
 
 	self.m_DumpMarker = createMarker(-1969.8, -2432.6, 29.5, "corona", 4)
+	self.m_DumpMarker:setVisibleTo(root, false)
 	addEventHandler("onMarkerHit", self.m_DumpMarker, bind(JobLumberjack.dumpHit, self))
 
 	self.m_VehicleSpawner = VehicleSpawner:new(1064.67, -300.79, 73, {"Flatbed"}, 180, bind(Job.requireVehicle, self))
@@ -28,12 +30,15 @@ function JobLumberjack:start(player)
 	giveWeapon(player, 9, 1, true)
 	player:giveAchievement(11)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
-
+	self.m_LoadUpMarker:setVisibleTo(player, true)
+	self.m_DumpMarker:setVisibleTo(player, true)
 end
 
 function JobLumberjack:stop(player)
 	takeWeapon(player, 9)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
+	self.m_LoadUpMarker:setVisibleTo(player, false)
+	self.m_DumpMarker:setVisibleTo(player, false)
 end
 
 function JobLumberjack:onVehicleSpawn(player, vehicleModel, vehicle)

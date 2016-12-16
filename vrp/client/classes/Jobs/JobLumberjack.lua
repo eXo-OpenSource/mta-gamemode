@@ -53,6 +53,9 @@ function JobLumberjack:stop()
 			destroyElement(v)
 		end
 	end
+	for k, v in ipairs(self.m_StackedTrees) do
+		destroyElement(v)
+	end
 
 	-- Restore removed objects
 	for k, v in ipairs(JobLumberjack.Removals) do
