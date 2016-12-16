@@ -2,10 +2,7 @@ TrainManager = inherit(Singleton)
 addRemoteEvents{"onTrainSync"}
 
 function TrainManager:constructor()
-	-- Debug
-	if DEBUG then
-		self.m_Blips = {}
-	end
+	self.m_Blips = {}
 
 	-- Add some events
 	self.m_OnTrainSync = bind(self.onTrainSync, self)
@@ -25,12 +22,10 @@ end
 
 function TrainManager:onTrainSync(x, y, z, speed)
 	local pos = Vector3(x, y, z) -- Convert to a vector
-	if DEBUG then
 		if not self.m_Blips[source] then
 			self.m_Blips[source] = Blip:new("Train.png", 0, 0)
 		end
 		self.m_Blips[source]:setPosition(pos.x, pos.y)
-	end
 	if not isElementStreamedIn(source) then
 		source:setPosition(pos)
 	else

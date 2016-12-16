@@ -134,6 +134,7 @@ function TrainManager:createNode(trackIndex, nodeIndex, pos)
 	local node = {index = nodeIndex, track = trackIndex, pos = pos}
 	self.m_Tracks[trackIndex][nodeIndex] = node
 
+	--[[
 	if DEBUG then
 		local marker = Marker.create(node.pos, "cylinder", 2)
 		marker:setColor(6, 163, 212, 150)
@@ -146,7 +147,7 @@ function TrainManager:createNode(trackIndex, nodeIndex, pos)
 
 		node.DEBUG = {Marker = marker}
 	end
-
+	]]
 	return node
 end
 
@@ -259,7 +260,7 @@ function TrainManager.onInitFinished()
 	--]]
 end
 
--- DEBUG
+--[[ DEBUG
 function TrainManager:outputNodeInfo(trackIndex, nodeIndex, hitElement)
 	local node = self:getNode(trackIndex, nodeIndex)
 	if node then
@@ -267,3 +268,4 @@ function TrainManager:outputNodeInfo(trackIndex, nodeIndex, hitElement)
 		hitElement:getOccupant():sendShortMessage(("TrainTrack Node:\nNode: %s\nNodeDistanceData: %s\nTrack: %s"):format(tostring(node.index), tostring(node.distance), tostring(node.track)), "TrainManager - Nerd Statistics", nil, 5000)
 	end
 end
+--]]
