@@ -36,17 +36,17 @@ function Gate:createColshapes(model, pos, rot, customOffset)
 		x1, y1 = getPointFromDistanceRotation(pos.x+4, pos.y, 4, rot.z-90)
         x2, y2 = getPointFromDistanceRotation(pos.x-2, pos.y, 4, rot.z+90)
     end
-    self.m_Marker1 = createMarker(Vector3(x1, y1, pos.z - 1.75) + self.m_Gates[1].matrix.forward*(customOffset and -customOffset or -2),"cylinder",1) -- Developement Test
-    self.m_Marker2 = createMarker(Vector3(x2, y2, pos.z - 1.75) + self.m_Gates[1].matrix.forward*(customOffset or 2),"cylinder",1,255) -- Developement Test
+   -- self.m_Marker1 = createMarker(Vector3(x1, y1, pos.z - 1.75) + self.m_Gates[1].matrix.forward*(customOffset and -customOffset or -2),"cylinder",1) -- Developement Test
+    --self.m_Marker2 = createMarker(Vector3(x2, y2, pos.z - 1.75) + self.m_Gates[1].matrix.forward*(customOffset or 2),"cylinder",1,255) -- Developement Test
     self.m_ColShape1 = ColShape.Sphere(Vector3(x1, y1, pos.z - 1.75) + self.m_Gates[1].matrix.forward*(customOffset and -customOffset or -2), 5)
     self.m_ColShape2 = ColShape.Sphere(Vector3(x2, y2, pos.z - 1.75) + self.m_Gates[1].matrix.forward*(customOffset or 2), 5)
 end
 
 function Gate:addCustomShapes(pos1, pos2)
 	self.m_ColShape1:setPosition(pos1)
-	self.m_Marker1:setPosition(pos1)
+	--self.m_Marker1:setPosition(pos1)
 	self.m_ColShape2:setPosition(pos2)
-	self.m_Marker2:setPosition(pos2)
+	--self.m_Marker2:setPosition(pos2)
 end
 
 function Gate:Event_onColShapeHit(hitEle, matchingDimension)
