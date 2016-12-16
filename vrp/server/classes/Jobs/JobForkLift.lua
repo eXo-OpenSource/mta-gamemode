@@ -54,7 +54,7 @@ end
 function JobForkLift:onBoxLoad(box)
 	if isElement(box) and table.find(self.m_Boxes, box) then
 		box:destroy()
-		client:giveMoney(50, "Gabelstapler-Job")
+		client:giveMoney(30, "Gabelstapler-Job")
 		if chance(50) then
 			client:givePoints(1)
 		end

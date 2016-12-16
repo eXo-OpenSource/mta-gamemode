@@ -9,7 +9,7 @@
 JobPizza = inherit(Job)
 addRemoteEvents{ "onPizzaDelivered"}
 
-local BASE_LOAN = 10
+local BASE_LOAN = 15
 function JobPizza:constructor( )
 	Job.constructor(self)
 	self.m_VehicleSpawner = VehicleSpawner:new(2102.41, -1785.12, 12.39, {509,448}, 90,  bind(JobPizza.additionalCheck, self),bind(JobPizza.onVehicleSpawn, self))
