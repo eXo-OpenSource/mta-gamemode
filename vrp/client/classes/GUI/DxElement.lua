@@ -270,18 +270,16 @@ function DxElement:setAbsolutePosition(posX, posY)
 	return self
 end
 
-function DxElement:isCursorWithinBox(x1, y1, x2, y2)
+function DxElement:isCursorWithinBox(left, top, right, bottom)
 	local relCursorX, relCursorY = getCursorPosition()
 	if not relCursorX then
 		return false
 	end
 
 	local cursorX, cursorY = relCursorX * screenWidth, relCursorY * screenHeight
-	if cursorX >= (self.m_AbsoluteX + x1) and cursorY >= (self.m_AbsoluteY + y1) and cursorX < (self.m_AbsoluteX + x2) and cursorY < (self.m_AbsoluteY + y2) then
-		return true
-	end
+	local absoluteX, absoluteY = self:getPosition(true)
 
-	return false
+	return cursorX >= absoluteX + left and cursorY >= absoluteY + top and cursorX < absoluteX + right and cursorY < absoluteY + bottom
 end
 
 function DxElement:setAlpha(alpha)

@@ -90,7 +90,7 @@ function GUIScrollableArea:setScrollPosition(x, y)
 		self.m_HorizontalScrollbar:setScrollPosition(self.m_ScrollX / self.m_DocumentWidth)
 	end
 
-	local refreshAbsolutePosition;
+	local refreshAbsolutePosition
 	refreshAbsolutePosition = function(element)
 		for k, v in ipairs(element.m_Children) do
 			v.m_AbsoluteX = element.m_AbsoluteX + v.m_PosX
@@ -139,6 +139,12 @@ function GUIScrollableArea:createScrollbars(verticalScrollbar, horizontalScrollb
 
 	if verticalScrollbar then
 		self.m_VerticalScrollbar = GUIVerticalScrollbar:new(self.m_PosX + self.m_Width - 4, space or 0, 4, self.m_Height, self.m_Parent)
+		self.m_VerticalScrollbar.m_ScrollHandler =
+			function(scrollPosition)
+				local scrollY = -scrollPosition * (self.m_DocumentHeight - self.m_Height)
+
+				self:setScrollPosition(self.m_ScrollX, scrollY)
+			end
 
 		if self.m_DocumentHeight <= self.m_Height then
 			self.m_VerticalScrollbar:setVisible(false)

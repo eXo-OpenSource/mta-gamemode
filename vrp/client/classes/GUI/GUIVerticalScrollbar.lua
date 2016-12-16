@@ -12,11 +12,10 @@ function GUIVerticalScrollbar:constructor(posX, posY, width, height, parent)
 end
 
 function GUIVerticalScrollbar:onInternalLeftClickDown()
-	local scrollerX = self.m_AbsoluteX
-	local scrollerY = self.m_AbsoluteY + self.m_ScrollPosition * (self.m_Height-self.m_ScrollerSize)
+	local scrollerY = self.m_ScrollPosition * (self.m_Height - self.m_ScrollerSize)
 
 	-- Is the cursor on top of the slider?
-	if self:isCursorWithinBox(0, scrollerY - self.m_AbsoluteY, self.m_Width, scrollerY - self.m_AbsoluteY + self.m_ScrollerSize) then
+	if self:isCursorWithinBox(0, scrollerY, self.m_Width, scrollerY + self.m_ScrollerSize) then
 		-- Attach moving event
 		addEventHandler("onClientCursorMove", root, self.m_CursorMoveHandler)
 		self.m_Scrolling = true
@@ -34,27 +33,32 @@ function GUIVerticalScrollbar:onInternalLeftClick()
 end
 
 function GUIVerticalScrollbar:Event_onClientCursorMove(_, _, cursorX, cursorY)
-	if isCursorShowing() then
-		local currentY = self.m_ScrollPosition * self.m_Height
-		local cursorOffY = cursorY - self.m_AbsoluteY
-		local diff = cursorOffY - currentY
-		self.m_CursorOffset = self.m_CursorOffset or diff
-		local newY = currentY + diff - self.m_CursorOffset
+	if not isCursorShowing() then
+		self:onInternalLeftClick()
+		return
+	end
 
-		if newY < self.m_Height-self.m_ScrollerSize then
-			self:setScrollPosition(newY / self.m_Height)
-	
-			-- Call scroll handler
-			if self.m_ScrollHandler then
-				self.m_ScrollHandler(self:getScrollPosition())
-			end
+	local absoluteX, absoluteY = self:getPosition(true)
+	local scrollerY = absoluteY + self.m_ScrollPosition * (self.m_Height - self.m_ScrollerSize)
+
+	local offset = cursorY - scrollerY
+	self.m_CursorOffset = self.m_CursorOffset or offset
+
+	local newY = cursorY - self.m_CursorOffset - absoluteY
+
+	if newY < self.m_Height - self.m_ScrollerSize then
+		self:setScrollPosition(newY / (self.m_Height - self.m_ScrollerSize))
+
+		-- Call scroll handler
+		if self.m_ScrollHandler then
+			self.m_ScrollHandler(self:getScrollPosition())
 		end
 	end
 end
 
 function GUIVerticalScrollbar:drawThis()
 	-- Draw scroller
-	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ScrollPosition * (self.m_Height-self.m_ScrollerSize), self.m_Width, self.m_ScrollerSize)
+	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + self.m_ScrollPosition * (self.m_Height - self.m_ScrollerSize), self.m_Width, self.m_ScrollerSize)
 
 	-- Draw scroll bar (rectangle)
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/scrollbar.png")
