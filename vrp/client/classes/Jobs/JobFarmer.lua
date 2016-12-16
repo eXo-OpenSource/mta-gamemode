@@ -14,36 +14,36 @@ function JobFarmer:constructor()
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Farmer):gsub("Job: ", ""), _(HelpTexts.Jobs.Farmer))
 end
-
 function JobFarmer:onInfo()
-	setCameraMatrix(-1091.6918945313,-1176.2930908203,130.55819702148,-1092.5964355469,-1176.6628417969,130.34576416016,0,70)
+	setCameraMatrix(-1.8428000211716, 135.26879882813, 35.644901275635, -2.3047368526459, 134.49794006348, 35.206272125244, 0, 70)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Es gibt verschiedene Aufgaben auf der Farm.",255,255,255,true)
 	-- ### 1
 	setTimer(function()
-	setCameraMatrix(-1091.8424072266,-1210.099609375,150.94630432129,-1092.6723632813,-1209.7435302734,150.51698303223,0,70)
+	setCameraMatrix(-98.922798156738, 65.984901428223, 44.70890045166, -99.658416748047, 65.534629821777, 44.202819824219, 0, 70)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Eine davon ist es mit dem Traktor die Saat auszulegen.",255,255,255,true)
 	end, 3500, 1)
 	-- ### 2
 	setTimer(function()
-	setCameraMatrix(-1052.7027587891,-1232.0666503906,130.13720703125,-1053.5568847656,-1231.6258544922,129.86116027832,0,70)
+	setCameraMatrix(-110.18440246582, 59.231700897217, 25.98390007019, -109.43939208984, 59.41569519043, 25.342723846436, 0, 70)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Die Fahrzeuge kannst du dir bei diesem Marker holen.",255,255,255,true)
 	end, 7000, 1)
 	-- ### 3
 	setTimer(function()
-	setCameraMatrix(-1071.8698730469,-1220.8608398438,130.6183013916,-1071.9873046875,-1219.8944091797,130.38986206055,0,70)
+	setCameraMatrix(-44.745899200439, 84.956596374512, 24.216800689697, -44.504783630371, 84.290466308594, 23.511016845703, 0, 70)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Mit dem Mähdrescher kannst du das Korn ernten und mit dem Walton",255,255,255,true)
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF kannst du das Getreide zur Abgabe bringen.",255,255,255,true)
 	end, 12000, 1)
 	--- ### 4
 	setTimer(function()
 	setCameraMatrix(-1050.2618408203,-1637.7829589844,85.58869934082,-1051.2099609375,-1637.5382080078,85.385673522949,0,70)
-	outputChatBox(_"#0000FF[Farmer]#FFFFFF Diese musste du zu diesem Punkt bringen.",255,255,255,true)
+	outputChatBox(_"#0000FF[Farmer]#FFFFFF Bringe das Getreide zu diesem Punkt!",255,255,255,true)
 	end, 18000, 1)
 	-- ### LAST
 	setTimer(function()
 	setCameraTarget(localPlayer,localPlayer)
 	end, 21500,1)
 end
+
 
 function JobFarmer:start()
 	-- Show text in help menu
