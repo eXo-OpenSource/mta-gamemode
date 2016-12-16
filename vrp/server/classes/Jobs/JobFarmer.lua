@@ -199,16 +199,20 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 		return
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
-		player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEYPERPLANT,0,255,0)
-		player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT, "Farmer-Job")
-		player:givePoints(math.ceil(self.m_CurrentPlants[player]/10))
-		self.m_CurrentPlants[player] = 0
-		self:updatePrivateData(player)
+		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
+			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEYPERPLANT,0,255,0)
+			player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT, "Farmer-Job")
+			player:givePoints(math.ceil(self.m_CurrentPlants[player]/10))
+			self.m_CurrentPlants[player] = 0
+			self:updatePrivateData(player)
 
-		for i, v in pairs(getAttachedElements(hitElement)) do
-			if v:getModel() == 2968 then -- only destroy crates
-				destroyElement(v)
+			for i, v in pairs(getAttachedElements(hitElement)) do
+				if v:getModel() == 2968 then -- only destroy crates
+					destroyElement(v)
+				end
 			end
+		else
+			player:sendError(_("Du hast keine Ladung dabei!", player), 255, 0, 0)
 		end
 	end
 end
