@@ -96,6 +96,7 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 						hitElement:giveMoney(loan, "Schatzsucher-Job")
 						hitElement:sendShortMessage(_("Du hast eine%s für %d$ verkauft!", hitElement, self.m_TreasureTypes[model]["Name"], loan))
 						hitElement:getOccupiedVehicle().Magnet.Object:destroy()
+						hitElement:givePoints(5)
 					else
 						hitElement:sendError(_("Du hast kein Objekt dabei!", hitElement))
 					end

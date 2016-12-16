@@ -81,6 +81,7 @@ function JobHeliTransport:onPickupLoad()
 			client:sendInfo(_("Du hast %d$ erhalten! Liefere die neue Ladung ab!", client, client:getData("JobHeliTransport:Money")))
 			client:giveMoney(client:getData("JobHeliTransport:Money"), "Helitransport-Job")
 			client:setData("JobHeliTransport:Money", 0)
+			client:givePoints(10)
 		else
 			client:sendInfo(_("Ladung aufgenommen! Liefere Sie nun ab!", client))
 		end
