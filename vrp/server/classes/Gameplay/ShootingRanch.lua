@@ -25,6 +25,15 @@ ShootingRanch.Trainings = {
 }
 
 function ShootingRanch:constructor()
+	InteriorEnterExit:new(Vector3(-7188.08, -2488.68, 32.36), Vector3(242.27, 66.40, 1003.64), 0, 270, 6)
+
+	self.m_ShootingRanchMarker = createMarker(-7190.96, -2482.61, 32.36, "cylinder", 1, 0, 255, 0, 200)
+	addEventHandler("onMarkerHit", self.m_ShootingRanchMarker, function(hitElement, dim)
+		if hitElement:getType() == "player" and dim then
+			hitElement:triggerEvent("openWeaponLevelGUI")
+		end
+	end)
+
 	self.m_WeaponSpheres = {
 		[1] = createColSphere(-7185.4, -2463.60, 31.5, 2),
 		[2] = createColSphere(-7185.4, -2468.36, 31.5, 2),
@@ -89,7 +98,7 @@ function ShootingRanch:onTargetHit(object)
 		if isTimer(getElementData(object, "timer")) then killTimer(getElementData(object, "timer")) end
 		setElementData(object, "hitAble", false)
 
-		ShootingRanch.Map[client]:onTargetHit()
+		ShootingRanch.Map[client]:onTargetHit(client)
 	else
 		client:sendError("Invalid ShootingRanch Instance")
 	end

@@ -58,7 +58,8 @@ function ShootingRanchTraining:destructor()
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 end
 
-function ShootingRanchTraining:onTargetHit()
+function ShootingRanchTraining:onTargetHit(player)
+	if not self.m_Player == player then end
 	self.m_Hits = self.m_Hits + 1
 
 	if not self.m_StartTime then

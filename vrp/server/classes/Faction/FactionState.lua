@@ -174,14 +174,6 @@ function FactionState:loadLSPD(factionId)
 	safe:setInterior(6)
 	FactionManager:getSingleton():getFromId(1):setSafe(safe)
 
-	self.m_ShootingRanchMarker = createMarker(249.78, 66.77, 1002.7, "cylinder", 1, 0, 255, 0, 200)
-	self.m_ShootingRanchMarker:setInterior(6)
-	addEventHandler("onMarkerHit", self.m_ShootingRanchMarker, function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
-			hitElement:triggerEvent("openWeaponLevelGUI")
-		end
-	end)
-
 end
 
 function FactionState:loadFBI(factionId)

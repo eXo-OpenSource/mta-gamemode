@@ -76,6 +76,7 @@ function Core:constructor()
 	Townhall:new()
 	BeggarPedManager:new()
 	Fishing:new()
+	ShootingRanch:new()
 
 	VehicleManager.loadVehicles()
 	VendingMachine.initializeAll()
@@ -87,7 +88,7 @@ function Core:constructor()
 	Depot.initalize()
 
 	BankRobbery:new()
-	
+
 	ChessSessionManager:new()
 	-- Generate Missions
 	MStealWeaponTruck:new()
@@ -137,8 +138,8 @@ function Core:constructor()
 	if DEBUG then
 		addCommandHandler("runtests", bind(self.runTests, self))
 	end
-	
-	
+
+
 end
 
 function Core:onClientInternalError (msg)
