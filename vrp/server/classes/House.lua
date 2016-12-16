@@ -272,7 +272,7 @@ function House:onPickupHit(hitElement)
 end
 
 function House:enterHouseTry(player)
-	if self.m_Keys[player:getId()] or not self.m_LockStatus or player:getId() == self.m_Owner or self.m_CurrentRobber == player then
+	if (self.m_Keys[player:getId()] or player:getId() == self.m_Owner or self.m_CurrentRobber == player) or not self.m_LockStatus then
 		self:enterHouse(player)
 	else
 		player:sendError(_("Du darfst dieses Haus nicht betreten!", player))

@@ -11,7 +11,7 @@ inherit(Singleton, HouseGUI)
 
 addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBlip"}
 
-function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen, tenants, money)
+function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, tenants, money)
 	local columnWidth
 	if owner == localPlayer:getName() then
 		GUIForm.constructor(self, screenWidth/2-(screenWidth*0.35/2), screenHeight/2-(370/2), screenWidth*0.35, 370)
@@ -118,10 +118,10 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen, tenan
 		self.m_Unrent:setVisible(false)
 		self.m_Lock:setVisible(true)
 
-		if isOpen then
-			self.m_Lock:setText(_"Abschließen")
-		else
+		if isClosed then
 			self.m_Lock:setText(_"Aufschließen")
+		else
+			self.m_Lock:setText(_"Abschließen")
 		end
 	else
 		GUILabel:new(10, 100,self.m_Width-20, 30, _("Mietpreis: $%d",rentprice) , self.m_Window)
@@ -212,11 +212,11 @@ function HouseGUI:lockHouse()
 end
 
 addEventHandler("showHouseMenu", root,
-	function(owner, price, rentprice, isValidRob, isOpen, tenants, money)
+	function(owner, price, rentprice, isValidRob, isClosed, tenants, money)
 		if HouseGUI:isInstantiated() then
 			delete(HouseGUI:getSingleton())
 		end
-		HouseGUI:new(owner, price, rentprice, isValidRob, isOpen, tenants, money)
+		HouseGUI:new(owner, price, rentprice, isValidRob, isClosed, tenants, money)
 	end
 )
 
