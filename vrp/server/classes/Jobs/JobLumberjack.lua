@@ -30,15 +30,15 @@ function JobLumberjack:start(player)
 	giveWeapon(player, 9, 1, true)
 	player:giveAchievement(11)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
-	self.m_LoadUpMarker:setVisibleTo(player, true)
-	self.m_DumpMarker:setVisibleTo(player, true)
+	setElementVisibleTo(self.m_LoadUpMarker, player, true)
+	setElementVisibleTo(self.m_DumpMarker, player, true)
 end
 
 function JobLumberjack:stop(player)
 	takeWeapon(player, 9)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
-	self.m_LoadUpMarker:setVisibleTo(player, false)
-	self.m_DumpMarker:setVisibleTo(player, false)
+	setElementVisibleTo(self.m_LoadUpMarker, player, false)
+	setElementVisibleTo(self.m_DumpMarker, player, false)
 end
 
 function JobLumberjack:onVehicleSpawn(player, vehicleModel, vehicle)
