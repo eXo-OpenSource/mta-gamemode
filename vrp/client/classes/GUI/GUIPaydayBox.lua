@@ -60,7 +60,7 @@ function GUIPaydayBox:drawThis()
 	top = top+15
 	self:outputPaydayLine("vehicleTax",left,top,1,"default")
 	top = top+15
-	self:outputPaydayLine("miete",left,top,1,"default")
+	self:outputPaydayLine("houseRent",left,top,1,"default")
 	top = top+15
 	self:outputPaydayLine("einkommenssteuer",left,top,1,"default")
 	top = top+15

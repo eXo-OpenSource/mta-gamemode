@@ -6,9 +6,10 @@
 -- *
 -- ****************************************************************************
 HouseGUI = inherit(GUIForm)
+HouseGUI.Blips = {}
 inherit(Singleton, HouseGUI)
 
-addRemoteEvents{"showHouseMenu","hideHouseMenu"}
+addRemoteEvents{"showHouseMenu","hideHouseMenu", "addHouseBlip", "removeHouseBlip"}
 
 function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen, tenants, money)
 	local columnWidth
@@ -88,7 +89,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen, tenan
 
 		self.m_Tenants = GUIGridList:new(left, 165, columnWidth-20, 150, self)
 		self.m_Tenants:addColumn(_"Mieter", 1)
-		self.m_RemoveTenant = GUIButton:new(left, 320, columnWidth-20, 35, _("Mieter enfernen"), self)
+		self.m_RemoveTenant = GUIButton:new(left, 320, columnWidth-20, 35, _("Mieter entfernen"), self)
 		self.m_RemoveTenant:setBackgroundColor(Color.Red):setFont(VRPFont(28)):setFontSize(1)
 		self.m_RemoveTenant.onLeftClick = bind(self.removeTenant, self)
 
@@ -123,7 +124,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isOpen, tenan
 			self.m_Lock:setText(_"Aufschließen")
 		end
 	else
-		GUILabel:new(10, 100,self.m_Width/2-20, 30, _("Mietpreis: $%d",rentprice) , self.m_Window)
+		GUILabel:new(10, 100,self.m_Width-20, 30, _("Mietpreis: $%d",rentprice) , self.m_Window)
 	end
 
 	if localPlayer:getDimension() > 0 or localPlayer:getInterior() > 0 then
@@ -154,14 +155,12 @@ function HouseGUI:withdraw()
 end
 
 function HouseGUI:removeTenant()
-	local tanant = self.m_Tenants:getSelectedItem()
+	local tenant = self.m_Tenants:getSelectedItem()
 	if tenant and tenant.Id then
 		triggerServerEvent("houseRemoveTenant", root, tenant.Id)
 	else
-		if not item then
-			WarningBox:new(_"Bitte wähle einen Mieter aus!")
-			return
-		end
+		WarningBox:new(_"Bitte wähle einen Mieter aus!")
+		return
 	end
 
 end
@@ -225,6 +224,22 @@ addEventHandler("hideHouseMenu", root,
 	function()
 		if HouseGUI:isInstantiated() then
 			delete(HouseGUI:getSingleton())
+		end
+	end
+)
+
+addEventHandler("addHouseBlip", root,
+	function(id, x, y)
+		if not HouseGUI.Blips[id] then
+			HouseGUI.Blips[id] = Blip:new("House.png", x, y, 2000)
+		end
+	end
+)
+
+addEventHandler("removeHouseBlip", root,
+	function(id)
+		 if HouseGUI.Blips[id] then
+		 	delete(HouseGUI.Blips[id])
 		end
 	end
 )

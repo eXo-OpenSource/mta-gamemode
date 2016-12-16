@@ -79,7 +79,6 @@ function Player:destructor()
 
 
 	-- Unload stuff
-	HouseManager:getSingleton():destroyPlayerHouseBlip(self) -- Todo: do not on stop, cause of an error (annoying :P)
 	PhoneNumber.unload(1, self.m_Id)
 
 	--// gangwar
@@ -97,7 +96,7 @@ end
 
 function Player:join()
 	--[[setTimer(function()
-		
+
 	end, 500, 1)]]
 
 	--setCameraMatrix(self,445.12222, -1886.34387, 22.368610,369.74289, -2036.1087, 7.67188) -- Untill new Login Scenes
@@ -171,7 +170,7 @@ function Player:loadCharacter()
 
 	-- Premium
 	Premium.constructor(self)
-	
+
 	VehicleManager:getSingleton():createVehiclesForPlayer( self )
 	triggerEvent("characterInitialized", self)
 end
@@ -213,7 +212,7 @@ function Player:loadCharacterInfo()
 	RadarArea.sendAllToClient(self)
 	FactionManager:getSingleton():sendAllToClient(self)
 	VehicleManager:getSingleton():sendTexturesToClient(self)
-	HouseManager:getSingleton():createPlayerHouseBlip(self)
+	HouseManager:getSingleton():loadBlips(self)
 
 	self.m_IsDead = row.IsDead or 0
 
@@ -406,7 +405,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
-	FactionState:getSingleton():uncuffPlayer( self ) 
+	FactionState:getSingleton():uncuffPlayer( self )
 end
 
 
@@ -637,7 +636,8 @@ function Player:payDay()
 
 	local income, outgoing, total = 0, 0, 0
 	local income_faction, income_company, income_group, income_interest = 0, 0, 0, 0
-	local outgoing_vehicles = 0
+	local outgoing_vehicles, outgoing_house = 0, 0
+	local houseAmount = 0
 	--Income:
 	if self:getFaction() then
 		income_faction = self:getFaction():paydayPlayer(self)
@@ -666,9 +666,19 @@ function Player:payDay()
 	self:addPaydayText("interest","Bank-Zinsen: "..income_interest.."$",255,255,255)
 
 	--Outgoing
+	local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
+	--if #houses > 0 then
+		for index, house in pairs(houses) do
+			outgoing_house = outgoing_house + house:getRent()
+			house.m_Money = house.m_Money + outgoing_house
+			houseAmount = houseAmount + 1
+		end
+	--end
+
 	outgoing_vehicles = #self:getVehicles()*75
-	outgoing = outgoing + outgoing_vehicles
+	outgoing = outgoing + outgoing_vehicles + outgoing_house
 	self:addPaydayText("vehicleTax","Fahrzeugsteuer: "..outgoing_vehicles.."$",255,255,255)
+	self:addPaydayText("houseRent","Mieten ("..houseAmount.." Häuser): "..outgoing_house.."$",255,255,255)
 
 	total = income - outgoing
 	self:addPaydayText("totalIncome","Gesamteinkommen: "..income.." $",255,255,255)

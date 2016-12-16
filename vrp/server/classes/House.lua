@@ -36,6 +36,15 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 
 	self.m_ColShape = createColSphere(position, 1)
 
+	for playerId, timestamp in pairs(self.m_Keys) do -- Work-Arround: JSON saves Index as String
+		self.m_Keys[tonumber(playerId)] = timestamp
+		self.m_Keys[tostring(playerId)] = nil
+	end
+
+	if owner == false then
+		self.m_Keys = {}
+	end
+
 	--addEventHandler ("onPlayerJoin", root, bind(self.checkContractMonthly, self))
 	addEventHandler("onPlayerQuit", root, bind(self.onPlayerFade, self))
 	addEventHandler("onPlayerWasted", root, bind(self.onPlayerFade, self))
@@ -149,10 +158,36 @@ function House:rentHouse(player)
 		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
 			player:sendSuccess(_("Sie wurden erfolgreich eingemietet", player), 0, 255, 0)
+			player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 		else
 			player:sendError(_("Du kannst dich nicht in dein eigenes Haus einmieten!", player))
 		end
+	else
+		player:sendError(_("Du bist bereits in diesem Haus eingemietet!", player))
 	end
+end
+
+function House:unrentHouse(player)
+	if self.m_Keys[player:getId()] then
+		self.m_Keys[player:getId()] = nil
+		if player and isElement(player) then
+			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player), 255, 0, 0)
+			player:triggerEvent("removeHouseBlip", self.m_Id)
+		end
+	else
+		player:sendError(_("Du bist in diesem Haus nicht eingemietet!", player))
+	end
+end
+
+function House:setRent(player, rent)
+	if player:getId() == self.m_Owner then
+		player:sendInfo(_("Du hast die Miete auf %d$ gesetzt!", player, rent))
+		self.m_RentPrice = rent
+	end
+end
+
+function House:getRent()
+	return self.m_RentPrice
 end
 
 function House:deposit(player, amount)
@@ -197,6 +232,13 @@ function House:removeTenant(player, id)
 	end
 end
 
+function House:isTenant(id)
+	if self.m_Keys[id] then
+		return true
+	end
+	return false
+end
+
 function House:save()
 	local houseID = self.m_Owner or 0
 	if not self.m_Keys then self.m_Keys = {} end
@@ -208,12 +250,13 @@ end
 function House:sellHouse(player)
 	if player:getId() == self.m_Owner then
 		-- destroy blip
-		HouseManager:getSingleton():destroyPlayerHouseBlip(player)
+		player:triggerEvent("removeHouseBlip", self.m_Id)
 
 		local price = math.floor(self.m_Price*0.75)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
 		player:giveMoney(price, "Haus-Verkauf")
 		self.m_Owner = 0
+		self.m_Keys = 0
 		self:updatePickup()
 	else
 		player:sendError(_("Das ist nicht dein Haus!", player))
@@ -228,24 +271,8 @@ function House:onPickupHit(hitElement)
 	end
 end
 
-function House:unrentHouse(player)
-	if self.m_Keys[player:getId()] then
-		self.m_Keys[player:getId()] = nil
-		if player and isElement(player) then
-			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player), 255, 0, 0)
-		end
-	end
-end
-
-function House:setRent(player, rent)
-	if player:getId() == self.m_Owner then
-		player:sendInfo(_("Du hast die Miete auf %d$ gesetzt!", player, rent))
-		self.m_RentPrice = rent
-	end
-end
-
 function House:enterHouseTry(player)
-	if self.m_Keys[player:getId()] or not self.m_LockStatus or player:getId() == self.m_Owner or ( self.m_CurrentRobber and player:getJob() == 4 ) then
+	if self.m_Keys[player:getId()] or not self.m_LockStatus or player:getId() == self.m_Owner or self.m_CurrentRobber == player then
 		self:enterHouse(player)
 	else
 		player:sendError(_("Du darfst dieses Haus nicht betreten!", player))
@@ -306,7 +333,7 @@ function House:buyHouse(player)
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
 
 		-- create blip
-		HouseManager:getSingleton():createPlayerHouseBlip(player)
+		player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 	else
 		player:sendError(_("Du hast nicht genügend Geld!", player))
 	end

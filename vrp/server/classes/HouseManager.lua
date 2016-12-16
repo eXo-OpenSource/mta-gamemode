@@ -156,26 +156,27 @@ function HouseManager:getPlayerHouse(player)
 	return false
 end
 
-function HouseManager:createPlayerHouseBlip(player)
-	outputDebug("Creating blip for "..player:getName())
-	local house = self:getPlayerHouse(player)
-	if house then
-		house.m_Blip = Blip:new("House.png", house.m_Pos.x, house.m_Pos.y, player, 9999)
-		return true
-	end
-	return false
-end
-
-function HouseManager:destroyPlayerHouseBlip(player)
-	outputDebug("Destorying blip for "..player:getName())
-	local house = self:getPlayerHouse(player)
-	if house then
-		if house.m_Blip then
-			delete(house.m_Blip)
-			return true
+function HouseManager:getPlayerRentedHouses(player)
+	local houses = {}
+	local playerId = player:getId()
+	for key, house in pairs(self.m_Houses) do
+		if house:isTenant(playerId) then
+			houses[#houses+1] = house
 		end
 	end
-	return false
+	return houses
+end
+
+function HouseManager:loadBlips(player)
+	local house = self:getPlayerHouse(player)
+	if house then
+		player:triggerEvent("addHouseBlip", house.m_Id, house.m_Pos.x, house.m_Pos.y)
+	end
+	for index, rentHouse in pairs(self:getPlayerRentedHouses(player)) do
+		if rentHouse then
+			player:triggerEvent("addHouseBlip", rentHouse.m_Id, rentHouse.m_Pos.x, rentHouse.m_Pos.y)
+		end
+	end
 end
 
 function HouseManager:destructor ()
