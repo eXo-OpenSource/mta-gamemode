@@ -11,12 +11,12 @@ function JobLumberjack:constructor()
 	Job.constructor(self)
 
 	self.m_LoadUpMarker = createMarker(1038.9, -354.2, 72.9, "corona", 4)
-	addEventHandler("onMarkerHit", self.m_LoadUpMarker, bind(JobLumberjack.loadUpHit, self))
 	setElementVisibleTo(self.m_LoadUpMarker, root, false)
+	addEventHandler("onMarkerHit", self.m_LoadUpMarker, bind(JobLumberjack.loadUpHit, self))
 
 	self.m_DumpMarker = createMarker(-1969.8, -2432.6, 29.5, "corona", 4)
-	self.m_DumpMarker:setVisibleTo(root, false)
 	setElementVisibleTo(self.m_DumpMarker, root, false)
+	addEventHandler("onMarkerHit", self.m_DumpMarker, bind(JobLumberjack.dumpHit, self))
 
 	self.m_VehicleSpawner = VehicleSpawner:new(1064.67, -300.79, 73, {"Flatbed"}, 180, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
