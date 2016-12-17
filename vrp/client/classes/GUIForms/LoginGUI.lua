@@ -158,7 +158,17 @@ function LoginGUI:constructor()
 end
 
 function LoginGUI:destructor()
-	delete(DownloadGUI:getSingleton())
+	local music = DownloadGUI:getSingleton().m_Music
+	setTimer(function(music)
+		if isElement(music) then
+			music:setVolume(music:getVolume()-0.05)
+		end
+	end, 100, 20, music)
+
+	setTimer(function()
+		delete(DownloadGUI:getSingleton())
+	end, 2000, 1)
+
 	Cursor:hide(true)
 	GUIForm.destructor(self)
 end
