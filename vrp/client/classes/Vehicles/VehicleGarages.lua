@@ -26,7 +26,7 @@ function VehicleGarages:constructor()
 			if self.m_CurrentMapIndex then
 				self.m_MapParser:destroy(self.m_CurrentMapIndex)
 				self.m_CurrentMapIndex = false
-			end	self:loadShader("files/images/Other/garage.jpg", "alleydoor9b")
+			end
 
 		end
 	)
