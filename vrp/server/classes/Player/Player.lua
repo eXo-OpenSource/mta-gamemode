@@ -230,7 +230,14 @@ function Player:loadCharacterInfo()
 	--else
 	--	outputDebugString("Inventory has not been instantiated successfully!")
 	--end
+	self:getOfflineMessages()
+	if self.m_OfflineMessages then
+		for key, msg in ipairs( self.m_OfflineMessages ) do 
+			self:sendShortMessage(msg[1], "Offlinenachricht" )
+		end
+	end
 end
+
 
 function Player:initialiseBinds()
 	if self:getFaction() then

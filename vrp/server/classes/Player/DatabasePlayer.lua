@@ -688,3 +688,24 @@ function DatabasePlayer:setNewNick(admin, newNick)
 
 	return true
 end
+
+function DatabasePlayer:addOfflineMessage( text, typ) 
+	local id = self:getId()
+	if id then 
+		sql:queryExec("INSERT INTO ??_offlineMessage ( PlayerId, Text, Typ, Time ) VALUES(?, ?, ?, ?)", sql:getPrefix(), id, text or "" , typ or 1 , getRealTime().timestamp )
+	end
+end
+
+function DatabasePlayer:getOfflineMessages( text, typ) 
+	local id = self:getId()
+	if id then 
+		self.m_OfflineMessages = {}
+		local row = sql:queryFetch("SELECT * FROM ??_offlineMessage WHERE PlayerId = ?", sql:getPrefix(), id)
+		if row then 
+			for k, d in pairs( row ) do 
+				self.m_OfflineMessages[#self.m_OfflineMessages+1] = {d["Text"], d["Typ"], d["Time"]}
+				sql:queryExec("DELETE FROM ??_offlineMessage WHERE Id = ?", sql:getPrefix(), d["Id"])
+			end
+		end	
+	end
+end

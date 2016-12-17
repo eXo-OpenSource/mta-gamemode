@@ -968,6 +968,7 @@ function FactionState:checkLogout(player)
 	for index, cop in pairs(colPlayers) do
 		if cop:getFaction() and cop:getFaction():isStateFaction() and cop:isFactionDuty() then
 			self:Event_JailPlayer(player, false, false, cop)
+			player:addOfflineMessage( "Sie wurden offline eingesperrt!", 1) 
 			return
 		end
 	end
