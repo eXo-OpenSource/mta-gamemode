@@ -17,7 +17,7 @@ function CompanyGUI:constructor()
 	--self.m_CloseButton.onUnhover = function () self.m_CloseButton:setColor(Color.White) end
 	self.m_CloseButton.onLeftClick = function() self:close() end
 
-	self.m_BackButton = GUILabel:new(self.m_Width-58, 0, 30, 28, "[←]", self):setFont(VRPFont(35))
+	self.m_BackButton = GUILabel:new(self.m_Width-58, 0, 30, 28, "[<]", self):setFont(VRPFont(35))
 	--self.m_BackButton.onHover = function () self.m_BackButton:setColor(Color.LightBlue) end
 	--self.m_BackButton.onUnhover = function () self.m_BackButton:setColor(Color.White) end
 	self.m_BackButton.onLeftClick = function() self:close() SelfGUI:getSingleton():show() Cursor:show() end
