@@ -66,6 +66,7 @@ end
 function JobHeliTransport:onCargoBobDestroy()
 	if self.m_VehData[source] and self.m_VehData[source].package and isElement(self.m_VehData[source].package) then self.m_VehData[source].package:destroy() end
 	self.m_VehData[source] = nil
+	local player = source.player
 	player:setData("JobHeliTransport:Money", 0)
 	player:triggerEvent("endHeliTransport")
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
