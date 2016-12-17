@@ -277,7 +277,9 @@ oop.prepareClass = function(name)
 	mt.__index = function(self, key)
 		if not oop.handled then
 			if not oop.elementInfo[self] then
-				enew(self, oop.elementClasses[getElementType(self)] or {})
+				local userdataType = getUserdataType(self)
+				local elementType = userdataType == "element" and getElementType(self) or userdataType
+				enew(self, oop.elementClasses[elementType] or {})
 			end
 			if oop.elementInfo[self][key] ~= nil  then
 				oop.handled = false
@@ -298,7 +300,9 @@ oop.prepareClass = function(name)
 		end
 
 		if not oop.elementInfo[self] then
-			enew(self, oop.elementClasses[getElementType(self)] or {})
+			local userdataType = getUserdataType(self)
+			local elementType = userdataType == "element" and getElementType(self) or userdataType
+			enew(self, oop.elementClasses[elementType] or {})
 		end
 
 		oop.elementInfo[self][key] = value
