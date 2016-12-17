@@ -83,7 +83,7 @@ function HUDRadar:constructor()
 end
 
 function HUDRadar:Event_colEnter( elem, dim)
-	if elem == localPlayer then 
+	if elem == localPlayer then
 		if dim then
 			self:hide()
 		end
@@ -91,7 +91,7 @@ function HUDRadar:Event_colEnter( elem, dim)
 end
 
 function HUDRadar:Event_colLeave(elem, dim)
-	if elem == localPlayer then 
+	if elem == localPlayer then
 		if dim then
 			self:show()
 		end
@@ -203,7 +203,7 @@ function HUDRadar:update()
     local _, _, rotation = getElementRotation(element)
     self.m_Rotation = rotation
   elseif getControlState("look_behind") then
-    self.m_Rotation = -math.rad(getPedRotation(localPlayer))
+    self.m_Rotation = -getPedRotation(localPlayer)
   else
     local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
     self.m_Rotation = 360 - math.deg(math.atan2(lookAtX - camX, lookAtY - camY)) % 360
