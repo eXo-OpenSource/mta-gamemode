@@ -72,8 +72,14 @@ function Gangwar:destructor( )
 end
 
 function Gangwar:isPlayerInGangwar(player)
-	for index, gwPlayer in pairs(self:getCurrentGangwarPlayers()) do
+	local active, disq = self:getCurrentGangwarPlayers()
+	for index, gwPlayer in pairs(active) do
 		if gwPlayer and player and player == gwPlayer then
+			return true
+		end
+	end
+	for index, gwPlayerName in pairs(disq) do
+		if gwPlayerName and player and player.name == gwPlayerName then
 			return true
 		end
 	end
@@ -82,15 +88,25 @@ end
 
 function Gangwar:getCurrentGangwarPlayers()
 	local currentPlayers = {}
+	local attackSession
 	for index, area in pairs(self:getCurrentGangwars()) do
 		if area.m_AttackSession then
-			local attackSession = area.m_AttackSession
+			attackSession = area.m_AttackSession
 			for index, gwPlayer in pairs(attackSession.m_Participants) do
 				currentPlayers[#currentPlayers+1] = gwPlayer
 			end
 		end
 	end
-	return currentPlayers
+	local disqualifiedPlayers = {}
+	for index, area in pairs(self:getCurrentGangwars()) do
+		if area.m_AttackSession then
+			attackSession = area.m_AttackSession
+			for index, gwPlayer in pairs(attackSession.m_Disqualified) do
+				disqualifiedPlayers[#disqualifiedPlayers+1] = gwPlayer
+			end
+		end
+	end
+	return currentPlayers, disqualifiedPlayers
 end
 
 function Gangwar:getAreas()
