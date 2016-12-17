@@ -1348,7 +1348,7 @@
 	<vrpfile src="files/shader/radialFog.fx"/>
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
-	<file src="files/fonts/Segoe/segoeui.ttf"/>
+	<file src="files/fonts/PT_Sans-Regular.ttf"/>
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
 	<vrpfile src="files/fonts/Gasalt_Black.ttf"/>

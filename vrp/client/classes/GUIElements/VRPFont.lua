@@ -9,9 +9,9 @@
 -- This rescales our font to look good on a certain pixel height
 local VRPFonts = {}
 function VRPFont(height)
-	local fontsize = math.floor(height/2)
+	local fontsize = math.floor(height/2.3)
 	if not VRPFonts[fontsize] then
-		VRPFonts[fontsize] = dxCreateFont("files/fonts/Segoe/segoeui.ttf", fontsize)
+		VRPFonts[fontsize] = dxCreateFont("files/fonts/PT_Sans-Regular.ttf", fontsize)
 	end
 
 	return VRPFonts[fontsize]
