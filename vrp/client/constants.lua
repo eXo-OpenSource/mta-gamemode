@@ -379,9 +379,16 @@ HelpTexts = {
 		]]
 	};
 	Events = {
-		Deathmatch = [[Todo]];
-		DMRace = [[Todo]];
-		StreetRace = [[Todo]];
+		Deathmatch = [[
+		In diesem Event geht es darum, die anderen Teilnehmer mit Waffengewalt zu eliminieren. Wer die meisten Spieler 
+		eleminiert gewinnt. ]];
+		DMRace = [[
+		Der von Race Servern bekannte Gamemode mit DM Maps.
+		Ziel ist es, das Ziel vor allen anderen zu erreichen während sich auf dem Weg viele Hindernisse befinden.
+		Einmal ein kaputtes Auto führt und du hast verloren.]];
+		StreetRace = [[
+		Dieses Event ist ein Sprint-Rennen, welches gewonnen werden kann, indem als Erster das Ziel erreicht wird. 
+		]];
 	};
 	Gameplay = {
 		Beggar = [[
