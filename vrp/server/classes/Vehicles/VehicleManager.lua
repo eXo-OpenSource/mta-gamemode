@@ -612,9 +612,21 @@ function VehicleManager:Event_vehicleDelete(reason)
 		-- Todo: Report cheat attempt
 		return
 	end
-
 	if source:isPermanent() then
 		client:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
+		if getElementData(source, "OwnerName") then
+			local targetId = Account.getIdFromName(getElementData(source, "OwnerName"))
+			if targetId and targetId > 0 then
+				local delTarget, isOffline = DatabasePlayer.get(targetId)
+				if delTarget then
+					if isOffline then
+						delTarget:addOfflineMessage("Dein Fahrzeug ("..source:getName().." wurde von "..client:getName().." gelöscht. ("..reason..")!",1)
+					else 
+						delTarget:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
+					end
+				end
+			end
+		end
 		-- Todo Add Log
 		source:purge()
 	else

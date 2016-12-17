@@ -519,6 +519,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 										changeTarget:load()
 										if changeTarget:setNewNick(admin, reason) then
 											self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), target, reason))
+											changeTarget:addOfflineMessage("Du wurdest von "..target.name.." zu "..reason.." umgenannt!",1)
 											return
 										end
 									end
