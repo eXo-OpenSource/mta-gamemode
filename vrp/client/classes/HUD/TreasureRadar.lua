@@ -48,7 +48,7 @@ function TreasureRadar:render()
 		-- Draw blips
 		local localX, localY = getElementPosition(localPlayer)
 		for k, blip in pairs(self.m_Blips) do
-			if isElement(element) and getElementData(element, "Treasure") then
+			if isElement(blip) then
 				local blipX, blipY = getElementPosition(blip)
 				local angle = math.deg(math.atan2(blipY - localY, blipX - localX))
 				local distance = math.sqrt((blipX - localX)^2 + (blipY - localY)^2)
