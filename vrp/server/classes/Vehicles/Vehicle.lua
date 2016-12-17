@@ -115,6 +115,7 @@ function Vehicle:onPlayerEnter(player, seat)
 		if self.m_CountdownDestroy then
 			self:countdownDestroyAbort(player)
 		end
+		player.m_InVehicle = self
 	end
 end
 
@@ -146,6 +147,7 @@ function Vehicle:onPlayerExit(player, seat)
 		if self.m_CountdownDestroy then
 			self:countdownDestroyStart(player)
 		end
+		player.m_InVehicle = nil
 	end
 end
 
