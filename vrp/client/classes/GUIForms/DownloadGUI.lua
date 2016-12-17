@@ -22,6 +22,7 @@ end
 function DownloadGUI:launchMusic()
 	if not self:isVisible() then return end
 	self.m_Music = playSound("http://exo-reallife.de/ingame/DownloadMusic.mp3", true)
+	self.m_Music:setVolume(0.3)
 	self.m_StopMusicFunc = function()
 		if self.m_Music then
 			destroyElement(self.m_Music)
@@ -32,6 +33,7 @@ function DownloadGUI:launchMusic()
 	self.m_StartMusicFunc = function()
 		if not self.m_Music then
 			self.m_Music = playSound("http://exo-reallife.de/ingame/DownloadMusic.mp3", true)
+			self.m_Music:setVolume(0.3)
 			self:bind("m", self.m_StopMusicFunc)
 		end
 	end

@@ -163,7 +163,7 @@ function LoginGUI:destructor()
 		if isElement(music) then
 			music:setVolume(music:getVolume()-0.05)
 		end
-	end, 100, 20, music)
+	end, 100, 6, music)
 
 	setTimer(function()
 		delete(DownloadGUI:getSingleton())
