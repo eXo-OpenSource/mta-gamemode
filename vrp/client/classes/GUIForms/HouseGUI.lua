@@ -240,6 +240,7 @@ addEventHandler("removeHouseBlip", root,
 	function(id)
 		 if HouseGUI.Blips[id] then
 		 	delete(HouseGUI.Blips[id])
+			HouseGUI.Blips[id] = nil
 		end
 	end
 )

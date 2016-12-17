@@ -224,7 +224,13 @@ function House:removeTenant(player, id)
 	if player:getId() == self.m_Owner then
 		if self.m_Keys[id] then
 			self.m_Keys[id] = nil
-			player:sendSuccess(_("Du hast den Mietvertrag mit %s gekündigt!", player, Account.getNameFromId(id)), 255, 0, 0)
+			local name = Account.getNameFromId(id)
+			player:sendSuccess(_("Du hast den Mietvertrag mit %s gekündigt!", player, name), 255, 0, 0)
+			if getPlayerFromName(name) then
+				local target = getPlayerFromName(name)
+				target:sendSuccess(_("%s hat den Mietvertrag mit dir gekündigt!", target, player:getName()), 255, 0, 0)
+				player:triggerEvent("removeHouseBlip", self.m_Id)
+			end
 			self:showGUI(player)
 		end
 	else
