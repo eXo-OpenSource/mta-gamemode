@@ -158,6 +158,7 @@ function LoginGUI:constructor()
 end
 
 function LoginGUI:destructor()
+	delete(DownloadGUI:getSingleton())
 	Cursor:hide(true)
 	GUIForm.destructor(self)
 end

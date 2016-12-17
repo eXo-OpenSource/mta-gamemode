@@ -69,7 +69,7 @@ function DownloadGUI:onComplete()
 	self:fadeOut(750)
 	setTimer(
 		function()
-			delete(self)
+			self:setVisible(false)
 			lgi = LoginGUI:new()
 			lgi:setVisible(false)
 			lgi:fadeIn(750)
