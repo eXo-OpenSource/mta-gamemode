@@ -48,14 +48,18 @@ function TreasureRadar:render()
 		-- Draw blips
 		local localX, localY = getElementPosition(localPlayer)
 		for k, blip in pairs(self.m_Blips) do
-			local blipX, blipY = getElementPosition(blip)
-			local angle = math.deg(math.atan2(blipY - localY, blipX - localX))
-			local distance = math.sqrt((blipX - localX)^2 + (blipY - localY)^2)
+			if isElement(element) and getElementData(element, "Treasure") then
+				local blipX, blipY = getElementPosition(blip)
+				local angle = math.deg(math.atan2(blipY - localY, blipX - localX))
+				local distance = math.sqrt((blipX - localX)^2 + (blipY - localY)^2)
 
-			local x = math.cos(math.rad(self.m_Rotation - angle)) * distance / TREASURE_ZOOM
-			local y = math.sin(math.rad(self.m_Rotation - angle)) * distance / TREASURE_ZOOM
+				local x = math.cos(math.rad(self.m_Rotation - angle)) * distance / TREASURE_ZOOM
+				local y = math.sin(math.rad(self.m_Rotation - angle)) * distance / TREASURE_ZOOM
 
-			dxDrawImage(centerX - 8 + x, centerY - 8 + y, 16, 16, "files/images/Other/TreasureRadarBlip.png", 0, 0, 0, Color.White)
+				dxDrawImage(centerX - 8 + x, centerY - 8 + y, 16, 16, "files/images/Other/TreasureRadarBlip.png", 0, 0, 0, Color.White)
+			else
+				self.m_Blips[k] = nil
+			end
 		end
 
 		local rot = getPedRotation(localPlayer)
