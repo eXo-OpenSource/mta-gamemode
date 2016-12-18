@@ -232,7 +232,7 @@ function Player:loadCharacterInfo()
 	--end
 	self:getOfflineMessages()
 	if self.m_OfflineMessages then
-		for key, msg in ipairs( self.m_OfflineMessages ) do 
+		for key, msg in ipairs( self.m_OfflineMessages ) do
 			self:sendShortMessage(msg[1], "Offlinenachricht" )
 		end
 	end
@@ -677,7 +677,7 @@ function Player:payDay()
 	--if #houses > 0 then
 		for index, house in pairs(houses) do
 			outgoing_house = outgoing_house + house:getRent()
-			house.m_Money = house.m_Money + outgoing_house
+			house.m_Money = house.m_Money + house:getRent()
 			houseAmount = houseAmount + 1
 		end
 	--end
