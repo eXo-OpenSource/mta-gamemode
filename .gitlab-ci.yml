@@ -11,6 +11,7 @@ stages:
   - deploy
   - clean_env
 
+# Build jobs
 build_app_job:
   stage: build
   script:
@@ -35,9 +36,11 @@ build_docker_job:
     - sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest-$CI_BUILD_REF_NAME
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest'
     - sudo docker push $DOCKER_USER/exo-rl-mta
+    - sudo docker logout
   except:
     - /^bugfix\/.*$/
 
+# Deploy jobs
 deploy_job_bugfixes:
   stage: fast_deploy
   script:
@@ -52,14 +55,35 @@ deploy_job_bugfixes:
 deploy_job_develop:
   stage: deploy
   script:
-    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$(git rev-parse --abbrev-ref HEAD)" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
+    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
     - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_DEVELOP
   environment:
     name: development
-    url: http://mta.exo-reallife.de:20002/
+    url: http://mta.exo-reallife.de:5002/
   only:
     - master
 
+deploy_job_testing:
+  stage: deploy
+  script:
+    - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_TESTING
+  environment:
+    name: testing
+    url: http://mta.exo-reallife.de:5001/
+  only:
+    - release/testing
+
+deploy_job_production:
+  stage: deploy
+  script:
+    - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_PRODUCTION
+  environment:
+    name: production
+    url: http://mta.exo-reallife.de:5000/
+  only:
+    - release/production
+
+# Cleanup jobs
 clean_env_job_docker:
   stage: clean_env
   script:
