@@ -125,7 +125,7 @@ function AmmuNationManager:giveWeaponsFromOrder(player, weaponTable)
 				if typ == "Waffe" then
 					if weaponID > 0 then
 						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)
-						giveWeapon(player,weaponID,amount)
+						giveWeapon(player, weaponID, getWeaponProperty(weaponID, "poor", "maximum_clip_ammo"))
 					else
 						outputChatBox("1 Schutzweste",player,255,125,0)
 						player:setArmor(100)
