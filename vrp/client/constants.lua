@@ -9,6 +9,7 @@ screenWidth, screenHeight = guiGetScreenSize()
 screenSize = Vector2(screenWidth, screenHeight)
 ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 
+HTTP_DOWNLOAD = false
 FILE_HTTP_SERVER_URL = "192.168.178.102:80/mtasa/" -- Todo: move to config
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
@@ -380,14 +381,14 @@ HelpTexts = {
 	};
 	Events = {
 		Deathmatch = [[
-		In diesem Event geht es darum, die anderen Teilnehmer mit Waffengewalt zu eliminieren. Wer die meisten Spieler 
+		In diesem Event geht es darum, die anderen Teilnehmer mit Waffengewalt zu eliminieren. Wer die meisten Spieler
 		eleminiert gewinnt. ]];
 		DMRace = [[
 		Der von Race Servern bekannte Gamemode mit DM Maps.
 		Ziel ist es, das Ziel vor allen anderen zu erreichen während sich auf dem Weg viele Hindernisse befinden.
 		Einmal ein kaputtes Auto führt und du hast verloren.]];
 		StreetRace = [[
-		Dieses Event ist ein Sprint-Rennen, welches gewonnen werden kann, indem als Erster das Ziel erreicht wird. 
+		Dieses Event ist ein Sprint-Rennen, welches gewonnen werden kann, indem als Erster das Ziel erreicht wird.
 		]];
 	};
 	Gameplay = {
@@ -427,7 +428,7 @@ HelpTexts = {
 			Falls ihnen das gelingt, könnt ihr die Waffen mit einem Enforcer vom LSPD weitertransportieren.
 		]];
 		WeedTruck = [[
-			Dieser illegale Transport versorgt eure Fraktion mit Drogen (Cannabis). Gegen eine Bezahlung von 10000$ 
+			Dieser illegale Transport versorgt eure Fraktion mit Drogen (Cannabis). Gegen eine Bezahlung von 10000$
 			erhaltet ihr den Truck. Er wird beladen und anschließend bereit gestellt. Fahrt zu eurem Versteck um ihn
 			dann zu entladen!
 		]];
