@@ -31,11 +31,19 @@ end
 
 function JobPizza:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
+
 	if player.m_PizzaVeh and isElement(player.m_PizzaVeh) then player.m_PizzaVeh:destroy() end
+	player.m_PizzaVeh = nil
+	player:setModel(player.m_OldSkin)
+	player:triggerEvent("stopPizzaShift")
+	player:sendInfo(_("Schicht beendet!" , player ))
+	if isTimer(player.m_EndPizzaJobTimer) then
+		killTimer( player.m_EndPizzaJobTimer )
+	end
 end
 
 function JobPizza:onVehicleSpawn( vehicle, player )
-	if player.m_PizzaVeh then cancelEvent(); self:endPizzaShift( player ) end
+	if player.m_PizzaVeh then cancelEvent() self:stop(player) end
 	player.m_PizzaVeh = vehicle
 	vehicle.m_PizzaOwner = player
 	player.m_OldSkin = player:getModel()
@@ -69,29 +77,12 @@ end
 function JobPizza:onDamageVehicle( )
 	local vehHealth = getElementHealth( source )
 	if vehHealth <= 310 then
-		self:endPizzaShift ( source.m_PizzaOwner )
+		self:stop(source.m_PizzaOwner)
 	end
 end
 
 function JobPizza:onExplodeVehicle( )
-	self:endPizzaShift ( source.m_PizzaOwner )
-end
-
-function JobPizza:startPlayerShift( player )
-
-end
-
-function JobPizza:endPizzaShift ( player )
-	if isElement( player.m_PizzaVeh ) then
-		destroyElement( player.m_PizzaVeh )
-	end
-	player.m_PizzaVeh = nil
-	player:setModel( player.m_OldSkin )
-	player:triggerEvent("stopPizzaShift")
-	player:sendInfo(_("Schicht beendet!" , player ))
-	if isTimer(player.m_EndPizzaJobTimer) then
-		killTimer( player.m_EndPizzaJobTimer )
-	end
+	self:stop(source.m_PizzaOwner)
 end
 
 function JobPizza:onPlayerDisconnect(  )
@@ -112,7 +103,7 @@ end
 
 function JobPizza:onExitVehicle( player )
 	player:sendWarning(_("Du hast noch 20 Sekunden um wieder in den Pizza-Boy einzusteigen!" , player ))
-	player.m_EndPizzaJobTimer = setTimer( bind(JobPizza.endPizzaShift,self),20000,1, player )
+	player.m_EndPizzaJobTimer = setTimer(bind(JobPizza.stop, self),20000,1, player)
 end
 
 --// Loan-Formula = BASE_LOAN * ( distance / time )
