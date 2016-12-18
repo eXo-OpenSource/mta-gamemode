@@ -183,6 +183,7 @@ function House:setRent(player, rent)
 	if player:getId() == self.m_Owner then
 		player:sendInfo(_("Du hast die Miete auf %d$ gesetzt!", player, rent))
 		self.m_RentPrice = rent
+		self:sendTenantsMessage(_("%s hat die Miete für sein Haus auf %d$ gesetzt!", player, player:getName(), rent))
 	end
 end
 
@@ -243,6 +244,21 @@ function House:isTenant(id)
 		return true
 	end
 	return false
+end
+
+function House:sendTenantsMessage(msg)
+	for targetId, timestamp in pairs(self.m_Keys) do
+		if targetId and targetId > 0 then
+			local target, isOffline = DatabasePlayer.get(targetId)
+			if target then
+				if isOffline then
+					target:addOfflineMessage(msg, 1)
+				else
+					target:sendInfo(msg)
+				end
+			end
+		end
+	end
 end
 
 function House:save()
