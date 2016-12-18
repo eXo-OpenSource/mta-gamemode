@@ -229,7 +229,7 @@ function House:removeTenant(player, id)
 			if getPlayerFromName(name) then
 				local target = getPlayerFromName(name)
 				target:sendSuccess(_("%s hat den Mietvertrag mit dir gekündigt!", target, player:getName()), 255, 0, 0)
-				player:triggerEvent("removeHouseBlip", self.m_Id)
+				target:triggerEvent("removeHouseBlip", self.m_Id)
 			end
 			self:showGUI(player)
 		end
