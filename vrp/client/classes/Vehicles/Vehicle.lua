@@ -54,7 +54,7 @@ function Vehicle:getVehicleType()
 end
 
 addEventHandler("vehicleEngineStart", root,
-	function(  veh )
+	function(veh)
 		local sound = "files/audio/Enginestart.ogg"
 		if VEHICLE_ALT_SOUND[getElementModel(veh)] then
 			sound = "files/audio/Enginestart2.ogg"
@@ -63,6 +63,10 @@ addEventHandler("vehicleEngineStart", root,
 		sound:setMinDistance(0)
 		sound:setMaxDistance(30)
 		sound:attach(veh)
+		veh.EngineStart = true
+		setTimer(function()
+			veh.EngineStart = false
+		end, 2050 ,1)
 	end
 )
 

@@ -84,6 +84,8 @@ function HUDSpeedo:draw()
 
 	-- draw the engine icon
 	if getVehicleEngineState(vehicle) then
+		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/engine.png", 0, 0, 0, Color.Green)
+	elseif vehicle.EngineStart then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/engine.png")
 	end
 
