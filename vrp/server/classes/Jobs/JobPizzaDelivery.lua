@@ -48,10 +48,7 @@ function JobPizza:onVehicleSpawn( vehicle, player )
 	vehicle.m_PizzaOwner = player
 	player.m_OldSkin = player:getModel()
 	player:setModel( 155 )
-	addEventHandler("onVehicleExit", vehicle, bind(JobPizza.onExitVehicle, self) )
-	addEventHandler("onVehicleEnter", vehicle, bind(JobPizza.onEnterVehicle, self) )
 	addEventHandler("onVehicleDamage", vehicle, bind(JobPizza.onDamageVehicle, self) )
-	addEventHandler("onVehicleExplode", vehicle, bind(JobPizza.onExplodeVehicle, self) )
 	addEventHandler("onPlayerDisconnect", player, bind(JobPizza.onPlayerDisconnect, self) )
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		if vehPlayer ~= player then
@@ -61,7 +58,9 @@ function JobPizza:onVehicleSpawn( vehicle, player )
 	end)
 	player:triggerEvent("nextPizzaDelivery")
 	vehicle:addCountdownDestroy(10)
-	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
+
+	addEventHandler("onVehicleExplode", vehicle, bind(JobPizza.onVehicleAction, self) )
+	addEventHandler("onElementDestroy", vehicle, bind(self.onVehicleAction, self))
 end
 
 function JobPizza:additionalCheck( player )
@@ -81,7 +80,7 @@ function JobPizza:onDamageVehicle( )
 	end
 end
 
-function JobPizza:onExplodeVehicle( )
+function JobPizza:onVehicleAction()
 	self:stop(source.m_PizzaOwner)
 end
 
@@ -94,22 +93,12 @@ function JobPizza:onPlayerDisconnect(  )
 	end
 end
 
-function JobPizza:onEnterVehicle( player )
-	if isTimer(player.m_EndPizzaJobTimer) then
-		killTimer( player.m_EndPizzaJobTimer )
-	end
-end
-
-
-function JobPizza:onExitVehicle( player )
-	player:sendWarning(_("Du hast noch 20 Sekunden um wieder in den Pizza-Boy einzusteigen!" , player ))
-	player.m_EndPizzaJobTimer = setTimer(bind(JobPizza.stop, self),20000,1, player)
-end
-
 --// Loan-Formula = BASE_LOAN * ( distance / time )
 function JobPizza:onPizzaDeliver( player, distance, time)
-	local workFactor = distance / time
-	local pay = math.floor( BASE_LOAN * workFactor )
-	player:giveMoney(pay, "Pizza-Job")
-	player:givePoints(2)
+	if player.vehicle and player.vehicle.m_PizzaOwner and player.vehicle.m_PizzaOwner == player then
+		local workFactor = distance / time
+		local pay = math.floor( BASE_LOAN * workFactor )
+		player:giveMoney(pay, "Pizza-Job")
+		player:givePoints(2)
+	end
 end
