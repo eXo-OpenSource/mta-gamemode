@@ -253,6 +253,7 @@ function House:sendTenantsMessage(msg)
 			if target then
 				if isOffline then
 					target:addOfflineMessage(msg, 1)
+					delete(target)
 				else
 					target:sendInfo(msg)
 				end

@@ -78,7 +78,7 @@ function BankManager:Event_Transfer(toPlayerName, amount)
 
 
 					if offline then
-						toPlayer:save()
+						delete(toPlayer)
 					else
 						toPlayer:triggerEvent("bankMoneyBalanceRetrieve", toPlayer:getBankMoney())
 						toPlayer:sendShortMessage(_("%s hat dir %d$ überwiesen!", toPlayer, client:getName(), amount))

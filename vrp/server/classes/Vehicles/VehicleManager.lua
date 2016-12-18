@@ -621,7 +621,8 @@ function VehicleManager:Event_vehicleDelete(reason)
 				if delTarget then
 					if isOffline then
 						delTarget:addOfflineMessage("Dein Fahrzeug ("..source:getName().." wurde von "..client:getName().." gelöscht. ("..reason..")!",1)
-					else 
+						delete(delTarget)
+					else
 						delTarget:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 					end
 				end
