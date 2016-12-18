@@ -66,7 +66,7 @@ deploy_job_develop:
 deploy_job_testing:
   stage: deploy
   script:
-    - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_TESTING
+    - curl http://192.168.122.20:6000/deploy/mta_testing?APISecret=$DEPLOY_API_SECRET_TESTING
   environment:
     name: testing
     url: http://mta.exo-reallife.de:5001/
@@ -76,7 +76,7 @@ deploy_job_testing:
 deploy_job_production:
   stage: deploy
   script:
-    - curl http://192.168.122.20:6000/deploy/mta_develop?APISecret=$DEPLOY_API_SECRET_PRODUCTION
+    - curl http://192.168.122.20:6000/deploy/mta_production?APISecret=$DEPLOY_API_SECRET_PRODUCTION
   environment:
     name: production
     url: http://mta.exo-reallife.de:5000/
@@ -87,7 +87,7 @@ deploy_job_production:
 clean_env_job_docker:
   stage: clean_env
   script:
-    - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest-$CI_BUILD_REF_NAME
+    - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
     - '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker rmi $DOCKER_USER/exo-rl-mta:latest'
     - sudo docker rmi exo-rl-mta
   except:
