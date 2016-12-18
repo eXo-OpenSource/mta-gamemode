@@ -32,7 +32,10 @@ end
 function JobPizza:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 
-	if player.m_PizzaVeh and isElement(player.m_PizzaVeh) then player.m_PizzaVeh:destroy() end
+	if player.m_PizzaVeh and isElement(player.m_PizzaVeh) then
+		removeEventHandler("onElementDestroy", player.m_PizzaVeh, self.m_OnVehicleAction)
+		player.m_PizzaVeh:destroy()
+	end
 	player.m_PizzaVeh = nil
 	player:setModel(player.m_OldSkin)
 	player:triggerEvent("stopPizzaShift")
@@ -58,9 +61,10 @@ function JobPizza:onVehicleSpawn( vehicle, player )
 	end)
 	player:triggerEvent("nextPizzaDelivery")
 	vehicle:addCountdownDestroy(10)
+	self.m_OnVehicleAction = bind(self.onVehicleAction, self)
+	addEventHandler("onVehicleExplode", vehicle, self.m_OnVehicleAction)
+	addEventHandler("onElementDestroy", vehicle, self.m_OnVehicleAction)
 
-	addEventHandler("onVehicleExplode", vehicle, bind(JobPizza.onVehicleAction, self) )
-	addEventHandler("onElementDestroy", vehicle, bind(self.onVehicleAction, self))
 end
 
 function JobPizza:additionalCheck( player )
