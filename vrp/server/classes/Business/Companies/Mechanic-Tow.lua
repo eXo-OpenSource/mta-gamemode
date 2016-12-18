@@ -1,20 +1,18 @@
 MechanicTow = inherit(Company)
-addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicTakeVehicle"}
+addRemoteEvents{"mechanicRepair", "mechanicRepairConfirm", "mechanicRepairCancel", "mechanicTakeVehicle", "mechanicOpenTakeGUI"}
 
 function MechanicTow:constructor()
-	self.m_VehicleTakeMarker = Marker.create(920.614, -1176.063, 16.1, "cylinder", 1, 255, 255, 0)
 	self:createTowLot()
 	self.m_PendingQuestions = {}
 
 	local safe = createObject(2332, 923.60, -1166.50, 17.70, 0, 0, 270)
 	self:setSafe(safe)
 
-	addEventHandler("onMarkerHit", self.m_VehicleTakeMarker, bind(self.VehicleTakeMarker_Hit, self))
-
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
 	addEventHandler("mechanicTakeVehicle", root, bind(self.Event_mechanicTakeVehicle, self))
+	addEventHandler("mechanicOpenTakeGUI", root, bind(self.VehicleTakeGUI, self))
 end
 
 function MechanicTow:destuctor()
@@ -28,22 +26,20 @@ function MechanicTow:respawnVehicle(vehicle)
 	vehicle:fix()
 end
 
-function MechanicTow:VehicleTakeMarker_Hit(hitElement, matchingDimension)
-	if hitElement:getType() == "player" and matchingDimension then
-		-- Get a list of vehicles that need manual repairing
-		local vehicles = {}
-		for k, vehicle in pairs(VehicleManager:getSingleton():getPlayerVehicles(hitElement)) do
-			if vehicle:getPositionType() == VehiclePositionType.Mechanic then
-				vehicles[#vehicles + 1] = vehicle
-			end
+function MechanicTow:VehicleTakeGUI()
+	-- Get a list of vehicles that need manual repairing
+	local vehicles = {}
+	for k, vehicle in pairs(VehicleManager:getSingleton():getPlayerVehicles(client)) do
+		if vehicle:getPositionType() == VehiclePositionType.Mechanic then
+			vehicles[#vehicles + 1] = vehicle
 		end
+	end
 
-		if #vehicles > 0 then
-			-- Open "vehicle take GUI"
-			hitElement:triggerEvent("vehicleTakeMarkerGUI", vehicles, "mechanicTakeVehicle")
-		else
-			hitElement:sendWarning(_("Keine abholbaren Fahrzeuge vorhanden!", hitElement))
-		end
+	if #vehicles > 0 then
+		-- Open "vehicle take GUI"
+		client:triggerEvent("vehicleTakeMarkerGUI", vehicles, "mechanicTakeVehicle")
+	else
+		client:sendWarning(_("Keine abholbaren Fahrzeuge vorhanden!", client))
 	end
 end
 

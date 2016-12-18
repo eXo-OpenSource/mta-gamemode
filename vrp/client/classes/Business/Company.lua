@@ -10,6 +10,9 @@ CompanyManager = inherit(Singleton)
 CompanyManager.Map = {}
 
 function CompanyManager:constructor()
+	PublicTransport:new()
+	MechanicTow:new()
+
 	triggerServerEvent("getCompanies", localPlayer)
 	addRemoteEvents{"loadClientCompany"}
 	addEventHandler("loadClientCompany", root, bind(self.loadCompany, self))
