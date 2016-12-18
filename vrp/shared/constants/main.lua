@@ -1,4 +1,4 @@
-HTTP_DOWNLOAD = false
+
 
 PRIVATE_DIMENSION_SERVER = 65535 -- This dimension should not be used for playing
 PRIVATE_DIMENSION_CLIENT = 2 -- This dimension should be used for things which
@@ -369,7 +369,7 @@ WEAPON_IDS = {}
 for id, name in pairs(WEAPON_NAMES) do
 	WEAPON_IDS[name] = id
 end
-	
+
 MEDIC_TIME = 60000
 DEATH_TIME = 36000
 DEATH_TIME_PREMIUM = 21000
