@@ -22,8 +22,8 @@ BeggarHelpPhrases = {
 	{ -- Type: Food
 		"I.. Ic.. Ich hab so Hunger... Hast du einen Burger?"
 	};
-	{ -- Type: Water
-		"Du da! Willste mich hier verdursten lassen?"
+	{ -- Type: Transport
+		"Du da! Ich hab kein Geld für ein Taxi! Kannst du mich fahren?"
 	};
     { -- Type: Ecstasy
 		"Hey! Bock auf nen Ecstasy Trip?"
@@ -38,7 +38,7 @@ BeggarThanksPhrases = {
 		"Danke Meister, meine Ratte wäre fast verhungert."
 	};
 	{
-		"Ouhh tut die Dusche gut!"
+		"Vielen Dank, genau da musste ich hin!"
 	};
     {
 		"Schön mit dir Geschäfte zu machen. Wenn du wieder Stoff brauchst, komm vorbei!"
@@ -55,6 +55,11 @@ BeggarNoHelpPhrases = {
 BeggarRobPhrases = {
 	"Ich habe eh schon nichts. Und da willst du mir noch mehr nehmen?"
 }
+
+BeggarTransportPositions = {
+	Vector3(1481.20, -1763.65, 12.5) -- Noobspawn
+}
+
 
 BeggarSkins = {
     200,
