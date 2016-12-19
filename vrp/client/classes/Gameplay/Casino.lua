@@ -7,6 +7,7 @@
 -- ****************************************************************************
 Casino = inherit(Singleton)
 
+
 function Casino:constructor()
 	--Todo: Make game console clickable instead of markers
 
@@ -18,6 +19,11 @@ function Casino:constructor()
 	--self.m_TetrisMarker = Vector3(2252.187, 1589.773, 1005.225)		--temp	(Todo: Tetris (multiplayer up to 6 players))
 
 	self:createGameMarker()
+
+	addRemoteEvents{"openChessGui"}
+	addEventHandler("openChessGui", root, function(col)
+		MultiPlayerGameGUI:new("chess", col)
+	end)
 end
 
 function Casino:createGameMarker()
