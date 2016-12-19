@@ -25,9 +25,9 @@ function BeggarPedMouseMenu:constructor(posX, posY, element)
 	end
 
 	if element:getData("BeggarType") == BeggarTypes.Food then
-		self:addItem("Essen geben",
+		self:addItem("Burger geben",
 			function ()
-
+				triggerServerEvent("giveBeggarItem", self:getElement(), "Burger")
 			end
 		)
 	end

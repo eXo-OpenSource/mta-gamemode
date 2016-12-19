@@ -20,7 +20,7 @@ BeggarHelpPhrases = {
 		"Ey du! Haste mal nen Euro?";
 	};
 	{ -- Type: Food
-		"I.. Ic.. Ich hab so Hunger... Haste was?"
+		"I.. Ic.. Ich hab so Hunger... Hast du einen Burger?"
 	};
 	{ -- Type: Water
 		"Du da! Willste mich hier verdursten lassen?"

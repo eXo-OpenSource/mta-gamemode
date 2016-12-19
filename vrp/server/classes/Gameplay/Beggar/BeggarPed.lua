@@ -12,7 +12,7 @@ function BeggarPed:constructor(Id)
 	self.m_Id = Id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
 	self.m_ColShape = ColShape.Sphere(self:getPosition(), 10)
-	self.m_Type = 1 --math.random(1, 3) Todo: Add more!
+	self.m_Type = math.random(1, 2)
 	self.m_LastRobTime = 0
 
 	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.Event_onColShapeHit, self))
@@ -74,27 +74,51 @@ function BeggarPed:rob(player)
 end
 
 function BeggarPed:giveMoney(player, money)
-	-- give wage
-	local karma = 1/math.random(1, 3)
-	client:giveKarma(karma)
-	client:sendShortMessage(_("+%s Karma", player, math.floor(karma)))
-	client:givePoints(math.floor(10/math.random(1, 5)))
-	self:sendMessage(client, BeggarPhraseTypes.Thanks)
+	if player:getMoney() >= money then
+		-- give wage
+		player:takeMoney(money, "Bettler")
+		local karma = math.random(1, 5)
+		player:giveKarma(karma)
+		player:sendShortMessage(_("+%s Karma", player, math.floor(karma)))
+		player:givePoints(1)
+		self:sendMessage(player, BeggarPhraseTypes.Thanks)
 
-	-- give Achievement
-	client:giveAchievement(56)
+		-- give Achievement
+		player:giveAchievement(56)
 
-	-- Despawn the Beggar
-	setTimer(
-		function ()
-			self:despawn()
-		end, 50, 1
-	)
+		-- Despawn the Beggar
+		setTimer(
+			function ()
+				self:despawn()
+			end, 50, 1
+		)
+	else
+		player:sendError(_("Du hast nicht soviel Geld dabei!", player))
+	end
+end
+
+function BeggarPed:giveItem(player, item)
+	if player:getInventory():getItemAmount(item) >= 1 then
+		player:getInventory():removeItem(item, 1)
+		local karma = 5
+		player:giveKarma(karma)
+		player:sendShortMessage(_("+%s Karma", player, math.floor(karma)))
+		player:givePoints(1)
+		self:sendMessage(player, BeggarPhraseTypes.Thanks)
+		setTimer(
+			function ()
+				self:despawn()
+			end, 50, 1
+		)
+	else
+		player:sendError(_("Du hast kein/en %s dabei!", player, item))
+	end
 end
 
 function BeggarPed:sendMessage(player, type)
     player:sendMessage(_("#FE8A00%s: #FFFFFF%s", player, self.m_Name, BeggarPedManager:getSingleton():getPhrase(self.m_Type, type)))
 end
+
 
 function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
 	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
