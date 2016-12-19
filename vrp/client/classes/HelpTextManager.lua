@@ -13,6 +13,7 @@ function HelpTextManager:constructor()
 	-- General purpose texts here
 	self:addText("Allgemein", HelpTextTitles.General.Main, HelpTexts.General.Main)
 	self:addText("Allgemein", HelpTextTitles.General.Team, HelpTexts.General.Team)
+	self:addText("Gameplay", HelpTextTitles.Gameplay.Cars, HelpTexts.Gameplay.Cars)
 	self:addText("Credits", HelpTextTitles.Credits.OldVRPTeam, HelpTexts.Credits.OldVRPTeam)
 	self:addText("Credits", HelpTextTitles.Credits.Other, HelpTexts.Credits.Other)
 
