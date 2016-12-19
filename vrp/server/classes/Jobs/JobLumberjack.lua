@@ -118,7 +118,7 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 		hitElement:setData("lumberjack:Trees", 0)
 
 		-- Give money and experience points
-		hitElement:giveMoney(numTrees * 40, "Holzfäller-Job")
+		hitElement:giveMoney(numTrees * 20, "Holzfäller-Job")
 		hitElement:givePoints(numTrees)
 
 		for k, v in pairs(getAttachedElements(vehicle)) do
