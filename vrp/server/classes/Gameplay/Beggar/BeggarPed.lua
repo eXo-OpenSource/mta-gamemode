@@ -170,22 +170,11 @@ function BeggarPed:acceptTransport(player)
 				end)
 
 				return
-			else
-				player:sendError(_("Dein Fahrzeug hat keinen freien Sitzplatz!", player))
 			end
 		end
 
-
-		local karma = 5
-		player:giveKarma(karma)
-		player:sendShortMessage(_("+%s Karma", player, math.floor(karma)))
-		player:givePoints(1)
-		self:sendMessage(player, BeggarPhraseTypes.Thanks)
-		setTimer(
-			function ()
-				self:despawn()
-			end, 50, 1
-		)
+		player:sendError(_("Dein Fahrzeug hat keinen freien Sitzplatz!", player))
+		return
 
 	else
 		player:sendError(_("Du sitzt in keinem Fahrzeug!", player))
