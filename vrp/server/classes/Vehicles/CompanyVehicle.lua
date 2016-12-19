@@ -100,7 +100,7 @@ end
 function CompanyVehicle:onStartEnter(player,seat)
 	if seat == 0 then
 		if player:getCompany() == self.m_Company or (self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
-			if not player:isCompanyDuty() then 
+			if not player:isCompanyDuty() and player:getPublicSync("inDrivingLession") == false then 
 				cancelEvent() 
 				player:sendError(_("Du bist nicht im Dienst!", player))
 			end
