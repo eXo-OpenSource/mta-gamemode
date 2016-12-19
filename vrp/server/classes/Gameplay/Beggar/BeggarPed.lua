@@ -142,13 +142,12 @@ function BeggarPed:acceptTransport(player)
 					if exitPlayer == player or exitPlayer == self then
 						player:sendError(_("Bettler-Transport fehlgeschlagen", player))
 						deleteBeggarTransport(player, self)
-
 					end
 				end)
 
 				addEventHandler("onVehicleDestroy", veh, function()
 					player:sendError(_("Bettler-Transport fehlgeschlagen", player))
-						deleteBeggarTransport(player, self)
+					deleteBeggarTransport(player, self)
 				end)
 
 				addEventHandler("onMarkerHit", player.beggarTransportMarker, function(hitElement, dim)
