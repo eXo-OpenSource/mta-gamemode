@@ -49,6 +49,7 @@ function BeggarPed:despawn()
         if newAlpha < 10 then newAlpha = 0 end
         if newAlpha == 0 then
             self:destroy()
+			delete(self)
         else
             self:setAlpha(newAlpha)
         end
