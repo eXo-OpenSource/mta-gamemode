@@ -11,23 +11,23 @@ inherit(Singleton, ItemShopGUI)
 addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI", "showStateItemGUI"}
 
 function ItemShopGUI:constructor(callback)
-	GUIForm.constructor(self, screenWidth/2-screenWidth*0.5*0.5, screenHeight/2-screenHeight*0.6*0.5, screenWidth*0.5, screenHeight*0.6)
+	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3*0.5, screenHeight/2-screenHeight*0.4*0.5, screenWidth*0.3, screenHeight*0.4)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Shop", true, true, self)
-	self.m_Preview = GUIImage:new(self.m_Width*0.02, self.m_Height*0.08, self.m_Width*0.2, self.m_Width*0.2, false, self.m_Window)
-	self.m_LabelDescription = GUILabel:new(self.m_Width*0.02, self.m_Width*0.3, self.m_Width*0.3, self.m_Height-self.m_Width*0.76, "", self.m_Window) -- use width to align correctly
-	self.m_LabelDescription:setFont(VRPFont(self.m_Height*0.05))
+	self.m_Preview = GUIImage:new(self.m_Height*0.08, self.m_Height*0.12, self.m_Width*0.2, self.m_Width*0.2, false, self.m_Window)
+	self.m_LabelDescription = GUILabel:new(self.m_Width*0.02, self.m_Width*0.38, self.m_Width*0.45, self.m_Height-self.m_Width*0.76, "", self.m_Window) -- use width to align correctly
+	self.m_LabelDescription:setFont(VRPFont(self.m_Height*0.07)):setMultiline(true)
 
-	self.m_Grid = GUIGridList:new(self.m_Width*0.3, self.m_Height*0.08, self.m_Width*0.68, self.m_Height*0.8, self.m_Window)
-	self.m_Grid:addColumn(_"Name", 0.7)
+	self.m_Grid = GUIGridList:new(self.m_Width*0.5, self.m_Height*0.12, self.m_Width*0.48, self.m_Height*0.7, self.m_Window)
+	self.m_Grid:addColumn(_"Name", 0.8)
 	self.m_Grid:addColumn(_"Preis", 0.2)
 
-	GUILabel:new(self.m_Width*0.3, self.m_Height*0.9, self.m_Width*0.1, self.m_Height*0.06, "Anzahl:", self.m_Window)
-	self.m_EditAmount = GUIEdit:new(self.m_Width*0.42, self.m_Height*0.9, self.m_Width*0.1, self.m_Height*0.06, self.m_Window)
+	GUILabel:new(self.m_Width*0.08, self.m_Height*0.8, self.m_Width*0.2, self.m_Height*0.1, "Anzahl:", self.m_Window)
+	self.m_EditAmount = GUIEdit:new(self.m_Width*0.26, self.m_Height*0.8, self.m_Width*0.1, self.m_Height*0.1, self.m_Window)
 	self.m_EditAmount:setNumeric(true, true)
 	self.m_EditAmount:setText("1")
 
-	self.m_ButtonBuy = VRPButton:new(self.m_Width*0.78, self.m_Height*0.9, self.m_Width*0.2, self.m_Height*0.06, _"auswählen", true, self.m_Window):setBarColor(Color.Green)
+	self.m_ButtonBuy = VRPButton:new(self.m_Width*0.65, self.m_Height*0.85, self.m_Width*0.33, self.m_Height*0.12, _"auswählen", true, self.m_Window):setBarColor(Color.Green)
 	self.m_ButtonBuy.onLeftClick = bind(self.ButtonBuy_Click, self)
 
 	addEventHandler("refreshItemShopGUI", root, bind(self.refreshItemShopGUI, self))
