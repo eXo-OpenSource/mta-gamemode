@@ -136,6 +136,7 @@ function Core:afterLogin()
 
 	if DEBUG then
 		Debugging:new()
+		DebugGUI.initalize()
 	end
 
 	SelfGUI:new()

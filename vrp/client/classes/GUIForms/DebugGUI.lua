@@ -8,6 +8,9 @@
 DebugGUI = inherit(GUIForm)
 inherit(Singleton, DebugGUI)
 
+addEvent("receiveServerDebug", true)
+
+
 DebugGUI.Colors = {["Server"] = tocolor(255, 204, 0), ["Client"] = tocolor(50, 200, 255)}
 
 DebugGUI.Level = {
@@ -140,20 +143,17 @@ function DebugGUI:addField(name, parent, getFunc)
 	self.m_Fields[#self.m_Fields].label = GUILabel:new(self.m_Width*0.65, #self.m_Fields*self.m_Height*0.05, self.m_Width*0.32, self.m_Height*0.045, "", parent):setAlignX("right")
 end
 
-addEventHandler("onClientResourceStart", resourceRoot,
-	function()
-		DebugGUI:new():setVisible(false)
-		bindKey(core:get("KeyBindings", "KeyToggleDebugGUI", "F9"), "down",
-			function()
-				DebugGUI:getSingleton():setVisible(not DebugGUI:getSingleton():isVisible())
-			end
-		)
-	end
-)
+function DebugGUI.initalize()
+	DebugGUI:new():setVisible(false)
+			bindKey(core:get("KeyBindings", "KeyToggleDebugGUI", "F9"), "down",
+				function()
+					DebugGUI:getSingleton():setVisible(not DebugGUI:getSingleton():isVisible())
+				end
+			)
 
-addEvent("receiveServerDebug", true)
-addEventHandler("receiveServerDebug", root,
-	function(message, level, file, line)
-		DebugGUI:getSingleton():onServerDebug(message, level, file, line)
-	end
-)
+	addEventHandler("receiveServerDebug", root,
+		function(message, level, file, line)
+			DebugGUI:getSingleton():onServerDebug(message, level, file, line)
+		end
+	)
+end
