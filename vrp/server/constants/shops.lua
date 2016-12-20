@@ -45,6 +45,13 @@ SHOP_TYPES = {
 		["Name"] = "Stadthalle",
 		["Interior"] = {0, Vector3(0, 0, 0)},
 		["Class"] = ItemShop
+	},
+	[8] = {
+		["Name"] = "Alhambra",
+		["Marker"] = Vector3(1207.23, -28.55, 1000),
+		["Ped"] = {202, Vector3(1206.23, -28.63, 1000.95), 270},
+		["Interior"] = {3, Vector3(1212.27, -25.88, 1000.95)},
+		["Class"] = BarShop
 	}
 }
 
@@ -65,6 +72,9 @@ SHOP_ITEMS = {
 	["Stadthalle"] = {
 		["Ausweis"] = 400,
 		["Handelsvertrag"] = 200
+	};
+	["Bar"] = {
+		["Bier"] = 7
 	};
 }
 
