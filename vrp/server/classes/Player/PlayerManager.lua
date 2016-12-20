@@ -9,7 +9,7 @@ PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
-"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime"}
+"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -44,6 +44,8 @@ function PlayerManager:constructor()
 	addEventHandler("Event_setPlayerWasted", root, bind(self.Event_setPlayerWasted, self))
 	addEventHandler("Event_moveToJail", root, bind(self.Event_moveToJail, self))
 	addEventHandler("onClientRequestTime",root, bind(self.Event_ClientRequestTime, self))
+	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
+
 
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
@@ -68,6 +70,10 @@ end
 
 function PlayerManager:Event_ClientRequestTime()
 	client:Event_requestTime()
+end
+
+function PlayerManager:Event_DecreaseAlcoholLevel()
+	client:decreaseAlcoholLevel(ALCOHOL_LOSS)
 end
 
 function PlayerManager:Event_switchSpawnWithFaction( state )

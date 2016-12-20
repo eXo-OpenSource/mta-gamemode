@@ -116,6 +116,7 @@
 	<script src="server/classes/Inventory/Items/ItemRadio.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemDrugs.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFood.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemAlcohol.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemCan.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemSellContract.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemIDCard.lua" type="server"/>

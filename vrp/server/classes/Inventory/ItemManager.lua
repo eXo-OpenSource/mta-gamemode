@@ -30,7 +30,8 @@ function ItemManager:constructor()
 		["Handelsvertrag"] = ItemSellContract,
 		["Ausweis"] = ItemIDCard,
 		["Benzinkanister"] = ItemFuelcan,
-		["Reparaturkit"] = ItemRepairKit
+		["Reparaturkit"] = ItemRepairKit,
+		["Bier"] = ItemAlcohol
 	}
 
 	self.m_Properties = {

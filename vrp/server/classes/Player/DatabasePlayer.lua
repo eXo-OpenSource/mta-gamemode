@@ -46,6 +46,7 @@ function DatabasePlayer:virtual_constructor()
 	self.m_WeaponLevel = 0
 	self.m_VehicleLevel = 0
 	self.m_SkinLevel = 0
+	self.m_AlcoholLevel = 0
 	self.m_FactionDuty = false
 	self.m_CompanyDuty = false
 	--[[
@@ -77,7 +78,7 @@ function DatabasePlayer:virtual_destructor()
 end
 
 function DatabasePlayer:load()
-	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime, SpawnWithFacSkin, AltSkin FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT PosX, PosY, PosZ, Interior, Dimension, Skin, XP, Karma, Points, WeaponLevel, VehicleLevel, SkinLevel, JobLevel, Money, WantedLevel, Job, GroupId, GroupRank, FactionId, FactionRank, DrivingSkill, GunSkill, FlyingSkill, SneakingSkill, EnduranceSkill, TutorialStage, InventoryId, GarageType, LastGarageEntrance, HangarType, LastHangarEntrance, SpawnLocation, Collectables, HasPilotsLicense, HasTheory, HasDrivingLicense, HasBikeLicense, HasTruckLicense, PaNote, Achievements, PlayTime, BankAccount, CompanyId, PrisonTime, GunBox, Bail, JailTime, SpawnWithFacSkin, AltSkin, AlcoholLevel FROM ??_character WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -161,6 +162,7 @@ function DatabasePlayer:load()
 	self:setVehicleLevel(row.VehicleLevel)
 	self:setSkinLevel(row.SkinLevel)
 	self:setJobLevel(row.JobLevel)
+	self:setAlcoholLevel(row.AlcoholLevel)
 	self:setPlayTime(row.PlayTime)
 	self:setPrison(0)
 	self:setWarns()
@@ -191,8 +193,8 @@ function DatabasePlayer:save()
 			self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
 			self.m_Skin = NOOB_SKIN
 		end
-		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=? WHERE Id=?", sql:getPrefix(),
-			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self:getId())
+		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ? WHERE Id=?", sql:getPrefix(),
+			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, self:getId())
 	end
 	return false
 end
@@ -418,6 +420,42 @@ end
 function DatabasePlayer:setJobLevel (level)
 	self.m_JobLevel = level
 	if self:isActive() then self:setPrivateSync("JobLevel", self.m_JobLevel) end
+end
+
+function DatabasePlayer:setAlcoholLevel(level, oldLevel)
+	self.m_AlcoholLevel = level
+
+	if level > MAX_ALCOHOL_LEVEL then
+		self.m_AlcoholLevel = MAX_ALCOHOL_LEVEL
+	elseif level < 0 then
+		self.m_AlcoholLevel = 0
+	end
+
+	if self:isActive() then
+		if level == MAX_ALCOHOL_LEVEL then
+			self:sendShortMessage(_("Du wurdest wegen einer Alkoholvergiftung ins Krankenhaus befördert!", self))
+			self:kill()
+			self:setAlcoholLevel(MAX_ALCOHOL_LEVEL-1)
+		end
+		if oldLevel then
+			local diff = self.m_AlcoholLevel - oldLevel
+			self:sendShortMessage(_("Aktueller Alkoholgehalt: %s ‰ (%s)", self, tostring(self.m_AlcoholLevel), tostring(diff > 0 and "+"..diff or diff)), "Alkoholgehalt")
+		end
+
+		self:setPrivateSync("AlcoholLevel", self.m_AlcoholLevel)
+	end
+end
+
+function DatabasePlayer:incrementAlcoholLevel(value)
+	local oldLevel = self.m_AlcoholLevel
+	local newLevel = oldLevel + value
+	self:setAlcoholLevel(newLevel, oldLevel)
+end
+
+function DatabasePlayer:decreaseAlcoholLevel(value)
+	local oldLevel = self.m_AlcoholLevel
+	local newLevel = oldLevel - value
+	self:setAlcoholLevel(newLevel, oldLevel)
 end
 
 function DatabasePlayer:addBankMoney(amount, reason)
@@ -689,23 +727,23 @@ function DatabasePlayer:setNewNick(admin, newNick)
 	return true
 end
 
-function DatabasePlayer:addOfflineMessage( text, typ) 
+function DatabasePlayer:addOfflineMessage( text, typ)
 	local id = self:getId()
-	if id then 
+	if id then
 		sql:queryExec("INSERT INTO ??_offlineMessage ( PlayerId, Text, Typ, Time ) VALUES(?, ?, ?, ?)", sql:getPrefix(), id, text or "" , typ or 1 , getRealTime().timestamp )
 	end
 end
 
-function DatabasePlayer:getOfflineMessages( text, typ) 
+function DatabasePlayer:getOfflineMessages( text, typ)
 	local id = self:getId()
-	if id then 
+	if id then
 		self.m_OfflineMessages = {}
 		local row = sql:queryFetch("SELECT * FROM ??_offlineMessage WHERE PlayerId = ?", sql:getPrefix(), id)
-		if row then 
-			for k, d in pairs( row ) do 
+		if row then
+			for k, d in pairs( row ) do
 				self.m_OfflineMessages[#self.m_OfflineMessages+1] = {d["Text"], d["Typ"], d["Time"]}
 				sql:queryExec("DELETE FROM ??_offlineMessage WHERE Id = ?", sql:getPrefix(), d["Id"])
 			end
-		end	
+		end
 	end
 end

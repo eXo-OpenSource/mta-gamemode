@@ -37,6 +37,10 @@ function LocalPlayer:constructor()
 
 	self.m_DeathRenderBind = bind(self.deathRender, self)
 
+	--Alcoholsystem
+	self.m_AlcoholDecreaseBind = bind(self.alcoholDecrease, self)
+	self:setPrivateSyncChangeHandler("AlcoholLevel", bind(self.onAlcoholLevelChange, self))
+
 end
 
 function LocalPlayer:destructor()
@@ -62,6 +66,35 @@ end
 function LocalPlayer:Event_onGetTime( realtime )
 	setTime(realtime.hour, realtime.minute)
 	setMinuteDuration(60000)
+end
+
+function LocalPlayer:onAlcoholLevelChange()
+	if self:getPrivateSync("AlcoholLevel") > 0 then
+
+		if not isTimer(self.m_AlcoholDecreaseTimer) then
+			self.m_AlcoholDecreaseTimer = setTimer(self.m_AlcoholDecreaseBind, ALCOHOL_LOSS_INTERVAL*1000, 0)
+		end
+		self:setAlcoholEffect()
+	end
+end
+
+function LocalPlayer:alcoholDecrease()
+	if self:getPrivateSync("AlcoholLevel") > 0 then
+		local newAlcoholLevel = self:getPrivateSync("AlcoholLevel") - ALCOHOL_LOSS
+		if newAlcoholLevel < 0 then	newAlcoholLevel = 0	end
+
+		if newAlcoholLevel == 0 then
+			if isTimer(self.m_AlcoholDecreaseTimer) then killTimer(self.m_AlcoholDecreaseTimer) end
+		end
+
+		triggerServerEvent("playerDecreaseAlcoholLevel", localPlayer)
+	else
+		if isTimer(self.m_AlcoholDecreaseTimer) then killTimer(self.m_AlcoholDecreaseTimer) end
+	end
+end
+
+function LocalPlayer:setAlcoholEffect()
+	--TODO
 end
 
 function LocalPlayer:setAFKTime()
