@@ -423,7 +423,7 @@ function DatabasePlayer:setJobLevel (level)
 end
 
 function DatabasePlayer:setAlcoholLevel(level, oldLevel)
-	self.m_AlcoholLevel = level
+	self.m_AlcoholLevel = math.round(level, 2)
 
 	if level > MAX_ALCOHOL_LEVEL then
 		self.m_AlcoholLevel = MAX_ALCOHOL_LEVEL

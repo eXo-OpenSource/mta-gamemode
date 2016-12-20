@@ -8,7 +8,7 @@
 ItemShopGUI = inherit(GUIForm)
 inherit(Singleton, ItemShopGUI)
 
-addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI", "showStateItemGUI"}
+addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI", "showStateItemGUI", "showBarGUI"}
 
 function ItemShopGUI:constructor(callback)
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3*0.5, screenHeight/2-screenHeight*0.4*0.5, screenWidth*0.3, screenHeight*0.4)
@@ -70,6 +70,26 @@ function ItemShopGUI:ButtonBuy_Click()
 
 	self.m_CallBack(self.m_Shop, itemName, amount)
 end
+
+addEventHandler("showItemShopGUI", root,
+	function()
+		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
+		local callback = function(shop, itemName, amount)
+			triggerServerEvent("shopBuyItem", root, shop, itemName, amount)
+		end
+		ItemShopGUI:new(callback)
+	end
+)
+
+addEventHandler("showBarGUI", root,
+	function()
+		if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
+		local callback = function(shop, itemName, amount)
+			triggerServerEvent("barBuyDrink", root, shop, itemName, amount)
+		end
+		ItemShopGUI:new(callback)
+	end
+)
 
 addEventHandler("showItemShopGUI", root,
 	function()

@@ -16,9 +16,10 @@ local BURGER_SHOT_DIMS = {0, 1, 2, 3, 4, 5}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI"}
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "barBuyDrink"}
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
 	addEventHandler("shopBuyItem", root, bind(self.buyItem, self))
+	addEventHandler("barBuyDrink", root, bind(self.barBuyDrink, self))
 	addEventHandler("vehicleBuy", root, bind(self.vehicleBuy, self))
 
 	addEventHandler("shopOpenGUI", root, function(id)
@@ -135,3 +136,31 @@ function ShopManager:buyItem(shopId, item, amount)
 		return
 	end
 end
+
+function ShopManager:barBuyDrink(shopId, item, amount)
+	if not item then return end
+	if not amount then amount = 1 end
+	local shop = self:getFromId(shopId)
+	if shop.m_Items[item] then
+		if client:getMoney() >= shop.m_Items[item]*amount then
+			client:takeMoney(shop.m_Items[item]*amount, "Item-Einkauf")
+			client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
+			shop:giveMoney(shop.m_Items[item]*amount, "Kunden-Einkauf")
+
+			local instance = ItemManager.Map[item]
+			if instance.use then
+				if instance:use(client, itemId, bag, place, item) == false then
+					return false
+				end
+			end
+
+		else
+			client:sendError(_("Du hast nicht genug Geld dabei!", client))
+			return
+		end
+	else
+		client:sendError(_("Internal Error! Item not found!", client))
+		return
+	end
+end
+
