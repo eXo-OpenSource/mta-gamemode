@@ -30,9 +30,13 @@ EXPOSE 22003/udp 22126/udp 8080/tcp
 # Add worker server
 ADD build/workerserver /var/lib/mtasa/workerserver
 
+# Add entrypoint script
+ADD build/docker-entrypoint.sh /docker-entrypoint.sh
+
 # Add MTA configs and modules
 ADD build/config/* /var/lib/mtasa/mods/deathmatch/
 ADD build/modules/* /var/lib/mtasa/x64/modules/
+ADD vrp/server/config/config.json.dist /var/lib/mtasa/config.json.dist
 
 # Add required libraries
 ADD build/libs/libmysqlclient.so.16 /usr/lib/
@@ -40,12 +44,16 @@ ADD build/libs/libmysqlclient.so.16 /usr/lib/
 # Add MTA resources
 ADD artifacts.tar.gz /var/lib/mtasa/mods/deathmatch/resources/
 
+# Remove config files to ensure they are copied to the exposed volume on start
+RUN rm /var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config/*
+
 # Update permissions
 RUN chown -R mtasa:mtasa /var/lib/mtasa && \
-	chmod +x /var/lib/mtasa/workerserver
+	chmod +x /var/lib/mtasa/workerserver && \
+	chmod +x /docker-entrypoint.sh
 
 # Expose config directory
 VOLUME /var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config
 
 # Start commands
-CMD cd /var/lib/mtasa && su -m -c /var/lib/mtasa/workerserver mtasa
+CMD ["/docker-entrypoint.sh"]
