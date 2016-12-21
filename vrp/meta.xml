@@ -1147,12 +1147,15 @@
 	<vrpfile src="files/images/Inventory/items/Essen/Suessigkeiten.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Gluehwein.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Lebkuchen.png" />
-	<vrpfile src="files/images/Inventory/items/Essen/Schnaps.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Shot.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Wuerstchen.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Kaffee.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Kuheuter mit Pommes.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Zombie-Burger.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Pilz.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Long Drink Brown.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Cocktail.png" />
+
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />
 	<vrpfile src="files/images/GoJump/howto.png" />

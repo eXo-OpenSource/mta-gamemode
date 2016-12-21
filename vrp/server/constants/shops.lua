@@ -98,7 +98,13 @@ SHOP_ITEMS = {
 		["Handelsvertrag"] = 200
 	};
 	["Bar"] = {
-		["Bier"] = 7
+		["Bier"] = 7,
+		["Whiskey"] = 9,
+		["Sex on the Beach"] = 15,
+		["Pina Colada"] = 15,
+		["Monster"] = 25,
+		["Shot"] = 8,
+		["Cuba-Libre"] = 12
 	};
 }
 

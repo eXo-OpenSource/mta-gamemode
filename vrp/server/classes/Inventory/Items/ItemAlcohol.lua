@@ -8,7 +8,18 @@
 ItemAlcohol = inherit(Item)
 
 ItemAlcohol.Settings = {
-	["Bier"] = {["Health"] = 0, ["Model"] = 1486, ["Text"] = "trinkt ein Bier", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 0.25},
+	["Bier"] =
+		{	["Health"] = 0, ["Model"] = 1486, ["Text"] = "trinkt ein Bier", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 0.25,
+			["Attach"] = {12, -0.05, 0.05, 0.09, 0, -90, 0},
+		},
+	["Whiskey"] =			{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Whiskey", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 1.2},
+	["Sex on the Beach"] =	{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Sex on the Beach", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 0.5,},
+	["Whiskey"] =		{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Whiskey", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 1.2},
+	["Pina Colada"] =	{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Pina Colada", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 0.7},
+	["Monster"] =		{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Monster Cocktail", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 2.1},
+	["Shot"] =			{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Shot", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 1.4},
+	["Cuba-Libre"] =	{["Health"] = 0, ["Model"] = 1455, ["Text"] = "trinkt einen Cuba Libre", ["Animation"] = {"BAR", "dnk_stndM_loop", 4500}, ["Alcohol"] = 0.8},
+
 }
 
 function ItemAlcohol:constructor()
@@ -30,7 +41,7 @@ function ItemAlcohol:use(player)
 	if ItemSettings["Attach"] then
 		exports.bone_attach:attachElementToBone(item, player, unpack(ItemSettings["Attach"]))
 	else
-		exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
+		exports.bone_attach:attachElementToBone(item, player, 12, 0, 0.05, 0.1, 0, -90, 0)
 	end
 
 	player:meChat(true, " "..ItemSettings["Text"].."!")
