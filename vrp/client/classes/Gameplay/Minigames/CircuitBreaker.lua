@@ -296,7 +296,7 @@ function CircuitBreaker:bindKeys()
 	if self.fn_StopGame then
 		unbindKey("space", "down", self.fn_StopGame)
 	end
-	
+
 	self.fn_changeDirection = bind(CircuitBreaker.changeDirection, self)
 
 	self.fn_StartGame =
@@ -310,9 +310,9 @@ function CircuitBreaker:bindKeys()
 				self:setState("tryPlay")
 			end
 		end
-		
 
-	
+
+
 	bindKey("arrow_l", "down", self.fn_changeDirection)			bindKey("a", "down", self.fn_changeDirection)
 	bindKey("arrow_r", "down", self.fn_changeDirection)			bindKey("d", "down", self.fn_changeDirection)
 	bindKey("arrow_u", "down", self.fn_changeDirection)			bindKey("w", "down", self.fn_changeDirection)
@@ -322,7 +322,7 @@ function CircuitBreaker:bindKeys()
 	bindKey("space", "down", self.fn_StopGame)
 end
 
-function CircuitBreaker:fn_StopGame() 
+function CircuitBreaker:fn_StopGame()
 	delete(CircuitBreaker:getSingleton())
 end
 
@@ -447,7 +447,7 @@ function CircuitBreaker:onClientRender()
 	local screenHeight = screenHeight * scale
 	self.HEIGHT = self.HEIGHT *scale
 	self.m_HeaderHeight = self.m_HeaderHeight *scale
-	
+
 	dxDrawImage(0, 0, origSWidth, origSHeight, "files/images/Other/focus.png")
 	dxDrawImage((screenWidth/2 - self.WIDTH/4) ,(screenHeight*0.6 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_PCB)
 	dxDrawImage((screenWidth/2 - self.WIDTH/4),(screenHeight*0.6 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_lineBG2)
@@ -455,7 +455,7 @@ function CircuitBreaker:onClientRender()
 	dxDrawImage((screenWidth/2 - self.WIDTH/4), (screenHeight*0.6 - self.HEIGHT/2), self.WIDTH, self.HEIGHT, self.m_RT_line, 0, 0, 0, self.m_LineColor)
 	dxDrawRectangle((screenWidth/2 - self.WIDTH/4), (screenHeight*0.6 - self.HEIGHT/2)+self.HEIGHT, self.WIDTH, self.m_HelpFontHeight, self.m_DefaultLineColor)
 	dxDrawText("ENTER = START       SPACE = ZURÜCK",(screenWidth/2 - self.WIDTH/4), (screenHeight*0.6 - self.HEIGHT/2)+self.HEIGHT, (screenWidth/2 - self.WIDTH/4)+self.WIDTH, screenHeight, tocolor(255,255,255,255),2,"default-bold","center","top")
-	
+
 	self.WIDTH = origWidth
 	self.HEIGHT = origHeight
 	self.m_HeaderHeight = origHeader
@@ -491,7 +491,7 @@ local STRUCTUR_TYPES = {
 
 function CircuitBreaker:createStructurGroup(width, height, count)
 	if not count then count = 0 end
-	if count > 3 then 
+	if count > 3 then
 		return outputConsole("Zu wenig Videospeicher in MTA-Memory!")
 	end
 	local WIDTH, HEIGHT = width, height
@@ -515,7 +515,7 @@ function CircuitBreaker:createStructurGroup(width, height, count)
 				if rotation == 90 then
 					rotationOffsetX = -(struct_width/2)
 					rotationOffsetY = struct_height/2
-	
+
 					rotFix_Y = rotFix_Y - struct_height
 
 					struct_width = drawHeight
@@ -536,7 +536,7 @@ function CircuitBreaker:createStructurGroup(width, height, count)
 				end
 			end
 		end
-	else 
+	else
 		return self:createStructurGroup(width,height,count+1)
 	end
 	dxSetRenderTarget()
@@ -572,20 +572,6 @@ function CircuitBreaker:rectangleCollision(structTable, posX, posY, width, heigh
 	end
 end
 
-
--- dev.. todo: remove when its done
-addCommandHandler("g",
-	function(_, a, b)
-		CircuitBreaker:new()
-	end
-)
--- dev.. todo: remove when its done
-addCommandHandler("gf",
-	function()
-		delete(CircuitBreaker:getSingleton())
-	end
-)
-
 addEvent("startCircuitBreaker", true)
 addEventHandler("startCircuitBreaker", root,
     function(callbackEvent)
@@ -596,7 +582,7 @@ addEventHandler("startCircuitBreaker", root,
 )
 
 addEvent("forceCircuitBreakerClose", true)
-addEventHandler("forceCircuitBreakerClose", root, function() 
+addEventHandler("forceCircuitBreakerClose", root, function()
 	CircuitBreaker:getSingleton():setState("idle")
 	delete(CircuitBreaker:getSingleton())
 end)
