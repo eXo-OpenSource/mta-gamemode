@@ -302,6 +302,20 @@ function FactionRescue:destroyDeathBlip()
 			rescuePlayer:triggerEvent("rescueRemoveDeathBlip", client)
 		end
 	end
+
+	-- Create Pickup (TOOD: dunno if its correct here, test it ^^)
+	local money = client:getMoney()*0.5
+	client:takeMoney(money)
+
+	addEventHandler("onPickupHit",
+		Pickup(client.position, 3, 1210, math.huge, 0),
+		function(ele)
+			if ele:getType() == "player" then
+				ele:giveMoney(money)
+				source:destroy()
+			end
+		end
+	)
 end
 
 function FactionRescue:createDeathTimeout(player, callback)

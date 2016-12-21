@@ -3,8 +3,7 @@ vrp_assets
 /vrp/vrp.data
 /tools/ml_gps/*.sdf
 /tools/ml_gps/*.suo
-
-vrp/server/config/config.json
+/vrp/server/config/config.json
 
 # IntelliJ IDEA 15 files
 .idea/

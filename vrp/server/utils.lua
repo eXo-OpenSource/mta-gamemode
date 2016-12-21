@@ -3,6 +3,7 @@ function critical_error(errmsg)
 	outputDebugString("[CRITICAL ERROR] vRoleplay Script will now halt")
 	outputDebugString("[CRITICAL ERROR] If you cannot solve this issue please report at fixme: forumurl ") -- Todo: Fixme URL
 	stopResource(getThisResource())
+	core.m_Failed = true
 	error("Critical Error")
 end
 
