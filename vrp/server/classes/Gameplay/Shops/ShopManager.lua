@@ -16,7 +16,8 @@ local BURGER_SHOT_DIMS = {0, 1, 2, 3, 4, 5}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "barBuyDrink", "barShopMusicChange", "barShopMusicStop", "shopBuy", "shopSell"}
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "barBuyDrink", "barShopMusicChange", "barShopMusicStop", "shopBuy", "shopSell",
+	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw"}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
 	addEventHandler("shopBuyItem", root, bind(self.buyItem, self))
@@ -26,6 +27,9 @@ function ShopManager:constructor()
 	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
 	addEventHandler("shopBuy", root, bind(self.buy, self))
 	addEventHandler("shopSell", root, bind(self.sell, self))
+	addEventHandler("shopOpenBankGUI", root, bind(self.openBankGui, self))
+	addEventHandler("shopBankDeposit", root, bind(self.deposit, self))
+	addEventHandler("shopBankWithdraw", root, bind(self.withdraw, self))
 
 	addEventHandler("shopOpenGUI", root, function(id)
 		if ShopManager.Map[id] then
@@ -198,6 +202,59 @@ function ShopManager:sell(shopId)
 	local shop = self:getFromId(shopId)
 	if shop then
 		shop:sell(client)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end
+
+function ShopManager:deposit(amount, shopId)
+	local shop = self:getFromId(shopId)
+	if shop then
+    	if not amount then return end
+
+		if client:getMoney() < amount then
+			client:sendError(_("Du hast nicht genügend Geld!", client))
+			return
+		end
+
+		client:takeMoney(amount, "Shop-Einlage")
+		shop:giveMoney(amount, "Shop-Einlage")
+		shop.m_Owner:addLog(client, "Kasse", "hat "..amount.."$ in die Shop-Kasse gelegt! ("..shop:getName()..")")
+		shop:refreshBankGui(client)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end
+
+function ShopManager:withdraw(amount, shopId)
+	local shop = self:getFromId(shopId)
+	if shop then
+		if not amount then return end
+
+		if not shop:isManageAllowed(client) then
+			client:sendError(_("Du bist nicht berechtigt Geld abzuheben!", client))
+			-- Todo: Report possible cheat attempt
+			return
+		end
+
+		if shop:getMoney() < amount then
+			client:sendError(_("In der Shop-Kasse befindet sich nicht genügend Geld!", client))
+			return
+		end
+
+		shop:takeMoney(amount, "Shop-Auslage")
+		client:giveMoney(amount, "Shop-Auslage")
+		shop.m_Owner:addLog(client, "Kasse", "hat "..amount.."$ aus der Shop-Kasse genommen! ("..shop:getName()..")")
+		shop:refreshBankGui(client)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end
+
+function ShopManager:openBankGui(shopId)
+	local shop = self:getFromId(shopId)
+	if shop then
+		shop:openBankGui(client)
 	else
 		client:sendError(_("Internal Error! Shop not found!", client))
 	end

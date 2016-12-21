@@ -10,11 +10,12 @@ inherit(Singleton, BankAccountGUI)
 
 addRemoteEvents{"bankAccountGUIShow", "bankAccountGUIRefresh"}
 
-function BankAccountGUI:constructor(name, depositEvent, withdrawEvent)
+function BankAccountGUI:constructor(name, depositEvent, withdrawEvent, additionalParameters)
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.3, screenHeight*0.4)
 
 	self.m_DepositEvent = depositEvent
 	self.m_WithdrawEvent = withdrawEvent
+	self.m_AdditionalParameters = additionalParameters or {}
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, name.." Konto", true, true, self)
 	self.m_HeaderImage = GUIImage:new(self.m_Width*0.01, self.m_Height*0.11, self.m_Width*0.98, self.m_Height*0.25, "files/images/Shops/BankHeader.png", self.m_Window)
@@ -41,14 +42,15 @@ function BankAccountGUI:constructor(name, depositEvent, withdrawEvent)
 	end)
 end
 
-addEventHandler("bankAccountGUIShow", root, function(name, depositEvent, withdrawEvent)
-	BankAccountGUI:new(name, depositEvent, withdrawEvent)
+addEventHandler("bankAccountGUIShow", root, function(name, depositEvent, withdrawEvent, ...)
+	local additionalParameters = {...}
+	BankAccountGUI:new(name, depositEvent, withdrawEvent, additionalParameters)
 end)
 
 function BankAccountGUI:WithdrawButton_Click()
 	local amount = tonumber(self.m_WithdrawAmountEdit:getText())
 	if amount and amount > 0 then
-		triggerServerEvent(self.m_WithdrawEvent, root, amount)
+		triggerServerEvent(self.m_WithdrawEvent, root, amount, unpack(self.m_AdditionalParameters))
 		self.m_WithdrawAmountEdit:setText("0")
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
@@ -58,7 +60,7 @@ end
 function BankAccountGUI:DepositButton_Click()
 	local amount = tonumber(self.m_DepositAmountEdit:getText())
 	if amount and amount > 0 then
-		triggerServerEvent(self.m_DepositEvent, root, amount)
+		triggerServerEvent(self.m_DepositEvent, root, amount, unpack(self.m_AdditionalParameters))
 		self.m_DepositAmountEdit:setText("0")
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")

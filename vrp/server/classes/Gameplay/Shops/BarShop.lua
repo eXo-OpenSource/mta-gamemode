@@ -45,8 +45,8 @@ end
 
 function BarShop:onEnter(hitElement, dim)
 	if dim and hitElement:getType() == "player" and source:getInterior() == hitElement:getInterior() then
-		hitElement:sendInfo(_("Drücke 'b' um das Bar-Menü zu öffnen!", hitElement))
-		bindKey(hitElement, "b", "down", self.m_BarGUIBind)
+		hitElement:sendInfo(_("Drücke 'm' um das Bar-Menü zu öffnen!", hitElement))
+		bindKey(hitElement, "m", "down", self.m_BarGUIBind)
 		if self.m_SoundUrl ~= "" then
 			hitElement:triggerEvent("barUpdateMusic", self.m_SoundUrl)
 		end
@@ -55,7 +55,7 @@ end
 
 function BarShop:onExit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then -- and source:getInterior() == hitElement:getInterior() then
-		unbindKey(hitElement, "b", "down", self.m_BarGUIBind)
+		unbindKey(hitElement, "m", "down", self.m_BarGUIBind)
 		hitElement:triggerEvent("barUpdateMusic")
 		hitElement:triggerEvent("barCloseManageGUI")
 	end

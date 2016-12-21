@@ -90,6 +90,18 @@ function Shop:getName()
 	return self.m_Name
 end
 
+function Shop:isManageAllowed(player)
+	if self.m_OwnerType == SHOP_OWNER_TYPES.Group then
+		if player:getGroup() and player:getGroup() == self.m_Owner then
+			local group = player:getGroup()
+			if group:getPlayerRank(player) >= GroupRank.Manager then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 function Shop:buy(player)
 	if self.m_BuyAble == true and self.m_OwnerId == 0 then
 		if self.m_OwnerType == SHOP_OWNER_TYPES.Group then
@@ -159,6 +171,15 @@ end
 
 function Shop:getMoney()
 	return self.m_Money
+end
+
+function Shop:openBankGui(player)
+	player:triggerEvent("bankAccountGUIShow", self:getName(), "shopBankDeposit", "shopBankWithdraw", self.m_Id)
+	self:refreshBankGui(player)
+end
+
+function Shop:refreshBankGui(player)
+	player:triggerEvent("bankAccountGUIRefresh", self:getMoney())
 end
 
 function Shop:save()

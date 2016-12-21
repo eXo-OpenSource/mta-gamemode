@@ -36,6 +36,7 @@ function BarManageGUI:addItems()
 	if self.m_OwnerId == localPlayer:getGroupId() then
 		self:addItem(_"Bar verkaufen", Color.Red, bind(self.itemCallback, self, 3))
 		self:addItem(_"Musik verwalten", Color.Green, bind(self.itemCallback, self, 1))
+		self:addItem(_"Kasse verwalten", Color.Blue, bind(self.itemCallback, self, 4))
 	end
 	self:addItem(_"Schließen", Color.Red, bind(self.itemCallback, self))
 end
@@ -59,6 +60,8 @@ function BarManageGUI:itemCallback(type)
 		QuestionBox:new(_("Möchtest du wirklich diese Bar deiner Firma um %d$ verkaufen?", math.floor(self.m_Price*0.75)),
 		function() 	triggerServerEvent("shopSell", localPlayer, self.m_BarId) end
 		)
+	elseif type == 4 then
+		triggerServerEvent("shopOpenBankGUI", localPlayer, self.m_BarId)
 	end
 	delete(self)
 end
