@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 StreamGUI = inherit(GUIForm)
+inherit(Singleton, StreamGUI)
 
 function StreamGUI:constructor(title, playCallback, stopCallback, stream)
 	GUIForm.constructor(self, screenWidth/2 - 400/2, screenHeight/2 - 240/2, 400, 240)
