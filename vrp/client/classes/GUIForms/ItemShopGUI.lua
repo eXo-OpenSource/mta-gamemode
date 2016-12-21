@@ -15,7 +15,7 @@ function ItemShopGUI:constructor(callback)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Shop", true, true, self)
 	self.m_Preview = GUIImage:new(self.m_Height*0.08, self.m_Height*0.12, self.m_Width*0.2, self.m_Width*0.2, false, self.m_Window)
-	self.m_LabelDescription = GUILabel:new(self.m_Width*0.02, self.m_Width*0.38, self.m_Width*0.45, self.m_Height-self.m_Width*0.76, "", self.m_Window) -- use width to align correctly
+	self.m_LabelDescription = GUILabel:new(self.m_Width*0.02, self.m_Width*0.3, self.m_Width*0.45, self.m_Height-self.m_Width*0.76, "", self.m_Window) -- use width to align correctly
 	self.m_LabelDescription:setFont(VRPFont(self.m_Height*0.07)):setMultiline(true)
 
 	self.m_Grid = GUIGridList:new(self.m_Width*0.5, self.m_Height*0.12, self.m_Width*0.48, self.m_Height*0.7, self.m_Window)

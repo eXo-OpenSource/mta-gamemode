@@ -54,7 +54,7 @@ function BarShop:onEnter(hitElement, dim)
 end
 
 function BarShop:onExit(hitElement, dim)
-	if dim and hitElement:getType() == "player" and source:getInterior() == hitElement:getInterior() then
+	if dim and hitElement:getType() == "player" then -- and source:getInterior() == hitElement:getInterior() then
 		unbindKey(hitElement, "b", "down", self.m_BarGUIBind)
 		hitElement:triggerEvent("barUpdateMusic")
 		hitElement:triggerEvent("barCloseManageGUI")

@@ -31,7 +31,15 @@ function ItemManager:constructor()
 		["Ausweis"] = ItemIDCard,
 		["Benzinkanister"] = ItemFuelcan,
 		["Reparaturkit"] = ItemRepairKit,
-		["Bier"] = ItemAlcohol
+		--Alcohol
+		["Bier"] = ItemAlcohol,
+		["Whiskey"] = ItemAlcohol,
+		["Sex on the Beach"] = ItemAlcohol,
+		["Pina Colada"] = ItemAlcohol,
+		["Monster"] = ItemAlcohol,
+		["Shot"] = ItemAlcohol,
+		["Cuba-Libre"] = ItemAlcohol
+
 	}
 
 	self.m_Properties = {
