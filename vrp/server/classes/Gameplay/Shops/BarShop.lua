@@ -44,7 +44,7 @@ function BarShop:onBarMarkerHit(hitElement, dim)
 end
 
 function BarShop:onEnter(hitElement, dim)
-	if dim and hitElement:getType() == "player" then
+	if dim and hitElement:getType() == "player" and source:getInterior() == hitElement:getInterior() then
 		hitElement:sendInfo(_("Drücke 'm' um das Musikpanel zu öffnen!", hitElement))
 		bindKey(hitElement, "m", "down", self.m_MusicGUIBind)
 		if self.m_SoundUrl ~= "" then
@@ -57,6 +57,7 @@ function BarShop:onExit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		unbindKey(hitElement, "m", "down", self.m_MusicGUIBind)
 		hitElement:triggerEvent("barUpdateMusic")
+		hitElement:triggerEvent("barCloseMusicGUI")
 	end
 end
 
@@ -71,16 +72,20 @@ end
 function BarShop:changeMusic(player, stream)
 	self.m_SoundUrl = stream
 	for index, playerItem in pairs(self:getPlayerInBar()) do
-		playerItem:sendShortMessage(_("%s hat die Musik in der Bar gewechselt!", playerItem, player:getName()))
-		playerItem:triggerEvent("barUpdateMusic", self.m_SoundUrl)
+		if playerItem:getDimension() == self.m_Dimension and playerItem:getInterior() == self.m_Interior then
+			playerItem:sendShortMessage(_("%s hat die Musik in der Bar gewechselt!", playerItem, player:getName()))
+			playerItem:triggerEvent("barUpdateMusic", self.m_SoundUrl)
+		end
 	end
 end
 
 function BarShop:stopMusic(player)
 	self.m_SoundUrl = ""
 	for index, playerItem in pairs(self:getPlayerInBar()) do
-		playerItem:sendShortMessage(_("%s hat die Musik in der Bar gestoppt!", playerItem, player:getName()))
-		playerItem:triggerEvent("barUpdateMusic")
+		if playerItem:getDimension() == self.m_Dimension and playerItem:getInterior() == self.m_Interior then
+			playerItem:sendShortMessage(_("%s hat die Musik in der Bar gestoppt!", playerItem, player:getName()))
+			playerItem:triggerEvent("barUpdateMusic")
+		end
 	end
 end
 

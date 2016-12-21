@@ -36,14 +36,15 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		if robable == 1 then
 			RobableShop:new(self, pedPosition, pedRotation, pedSkin, interior, dimension)
 		else
-			local ped = createPed(pedSkin, pedPosition, pedRotation)
-			ped:setInterior(interior)
-			ped:setDimension(dimension)
+			self.m_NPC = NPC:new(pedSkin, pedPosition.x, pedPosition.y, pedPosition.z, pedRotation)
+			self.m_NPC:setImmortal(true)
+			self.m_NPC:setInterior(interior)
+			self.m_NPC:setDimension(dimension)
 		end
 	end
 
 	if typeData["Marker"] then
-		self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 200)
+		self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 175)
 		self.m_Marker:setInterior(interior)
 		self.m_Marker:setDimension(dimension)
 	end

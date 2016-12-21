@@ -1,6 +1,7 @@
 local Bar = {}
 
-addEvent("barOpenMusicGUI", true)
+addRemoteEvents{"barOpenMusicGUI", "barCloseMusicGUI", "barUpdateMusic"}
+
 addEventHandler("barOpenMusicGUI", root, function(barId, stream)
 	StreamGUI:new("Bar Musik ändern",
 		function(url)
@@ -14,7 +15,10 @@ addEventHandler("barOpenMusicGUI", root, function(barId, stream)
 
 end)
 
-addEvent("barUpdateMusic", true)
+addEventHandler("barCloseMusicGUI", root, function()
+	delete(StreamGUI:getSingleton())
+end)
+
 addEventHandler("barUpdateMusic", root, function(stream)
 	if Bar.Music then Bar.Music:destroy() end
 	if stream then
