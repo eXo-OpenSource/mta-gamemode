@@ -125,8 +125,8 @@ BlipConversion =
 	["Trashman.png"] = 11,
 	["Fishing.png"] = 37,
 	["Locate.png"] = 0,
-	["HeliTransport.png"] = 5
-
+	["HeliTransport.png"] = 5,
+	["Bar.png"] = 49
 }
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
 for i, v in pairs(UIStyle) do UIStyle[v] = i end
@@ -394,26 +394,26 @@ HelpTexts = {
 	Gameplay = {
 		Cars = [[
 			Fahrzeuge können in folgende Kategorien unterteilt werden.
-			
+
 			Leihfahrzeuge:
-			Du kannst Fahrzeuge an bestimmten Stellen wie zB. dem Krankenhaus oder der Stadthalle ausleihen. 
-			Hierzu musst du lediglich in den blauen Marker vor dem Fahrzeugverleih-NPC treten und das 
-			auszuleihende Fahrzeug auswählen. 
-			
+			Du kannst Fahrzeuge an bestimmten Stellen wie zB. dem Krankenhaus oder der Stadthalle ausleihen.
+			Hierzu musst du lediglich in den blauen Marker vor dem Fahrzeugverleih-NPC treten und das
+			auszuleihende Fahrzeug auswählen.
+
 			Private Fahrzeuge:
 			Private Fahrzeuge kannst du an Autohäusern oder durch Handel mit anderen Usern erwerben. Autohäuser
 			sind auf der Karte mit einem Auto-Blip markiert.
-			Du bist selbst verantwortlich für den Zustand des Fahrzeuges und musst es ggf. reparieren, betanken. 
-			Unter F2 kann das Fahrzeug kostenpflichtig respawnt werden, wobei ausgewählt werden kann ob es an der 
+			Du bist selbst verantwortlich für den Zustand des Fahrzeuges und musst es ggf. reparieren, betanken.
+			Unter F2 kann das Fahrzeug kostenpflichtig respawnt werden, wobei ausgewählt werden kann ob es an der
 			Parkposition oder, falls vorhanden, in deiner Garage respawnt werden soll. Sollte dein Fahrzeug einen
-			Totalschaden erleiden, so musst du entweder selbst mit einem Reperaturset versuchen dein Fahrzeug 
-			zum Laufen zu bringen oder du verständigst das Mech&Tow, welches einen Mechaniker zur ersten Hilfe 
+			Totalschaden erleiden, so musst du entweder selbst mit einem Reperaturset versuchen dein Fahrzeug
+			zum Laufen zu bringen oder du verständigst das Mech&Tow, welches einen Mechaniker zur ersten Hilfe
 			sendet.
-			
+
 			Fraktionsfahrzeuge:
 			Fraktionsfahrzeuge sind wie im Namen erwähnt Eigentum der jeweiligen Fraktionen und ihr Zustand wird
 			vom Fraktionsanführer verwaltet.
-			
+
 			Firmen-/Gangfahrzeuge:
 			Du kannst falls du einen Firma oder eine Gang besitzt, deine privaten Fahrzeuge in den Bestand dieser aufnehmen.
 			Drücke hierzu F2 und navigiere zu deinem Firmen-/Gangpanel. Unter dem Reiter Fahrzeuge findest du einen blauen

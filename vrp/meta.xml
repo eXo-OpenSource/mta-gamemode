@@ -933,6 +933,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Marker.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Marker_up.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Marker_down.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Bar.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -980,6 +981,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Marker.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Marker_up.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Marker_down.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Bar.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
