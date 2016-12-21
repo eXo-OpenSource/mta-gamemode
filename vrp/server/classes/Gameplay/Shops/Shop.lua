@@ -23,6 +23,9 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 
 	local interior, intPosition = unpack(typeData["Interior"])
 
+	self.m_Interior = interior
+	self.m_Dimension = dimension
+
 	if interior > 0 then
 		InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
 	end

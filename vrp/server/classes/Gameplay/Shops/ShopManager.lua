@@ -16,11 +16,14 @@ local BURGER_SHOT_DIMS = {0, 1, 2, 3, 4, 5}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "barBuyDrink"}
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "barBuyDrink", "barShopMusicChange", "barShopMusicStop"}
+
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
 	addEventHandler("shopBuyItem", root, bind(self.buyItem, self))
 	addEventHandler("barBuyDrink", root, bind(self.barBuyDrink, self))
 	addEventHandler("vehicleBuy", root, bind(self.vehicleBuy, self))
+	addEventHandler("barShopMusicChange", root, bind(self.barMusicChange, self))
+	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
 
 	addEventHandler("shopOpenGUI", root, function(id)
 		if ShopManager.Map[id] then
@@ -164,3 +167,20 @@ function ShopManager:barBuyDrink(shopId, item, amount)
 	end
 end
 
+function ShopManager:barMusicChange(shopId, stream)
+	local shop = self:getFromId(shopId)
+	if shop then
+		shop:changeMusic(client, stream)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end
+
+function ShopManager:barMusicStop(shopId)
+	local shop = self:getFromId(shopId)
+	if shop then
+		shop:stopMusic(client)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end
