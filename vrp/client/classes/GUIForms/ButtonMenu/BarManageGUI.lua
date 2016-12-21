@@ -10,7 +10,7 @@ inherit(Singleton, BarManageGUI)
 
 addRemoteEvents{"barOpenManageGUI", "barCloseManageGUI", "updateBarManageGUI"}
 
-function BarManageGUI:constructor(barId, name, ownerId, ownerName, price, streamUrl)
+function BarManageGUI:constructor(barId, name, ownerId, ownerName, price, streamUrl, stripper)
 	GUIButtonMenu.constructor(self, "Bar: "..name)
 
 	self.m_BarId = barId
@@ -18,6 +18,7 @@ function BarManageGUI:constructor(barId, name, ownerId, ownerName, price, stream
 	self.m_OwnerName = ownerName
 	self.m_Stream = streamUrl
 	self.m_Price = price
+	self.m_Stripper = stripper
 
 	-- Add the Items
 	self:addItems()
@@ -37,6 +38,11 @@ function BarManageGUI:addItems()
 		self:addItem(_"Bar verkaufen", Color.Red, bind(self.itemCallback, self, 3))
 		self:addItem(_"Musik verwalten", Color.Green, bind(self.itemCallback, self, 1))
 		self:addItem(_"Kasse verwalten", Color.Blue, bind(self.itemCallback, self, 4))
+		if self.m_Stripper then
+			self:addItem(_"Stripperinnen entlassen", Color.Red, bind(self.itemCallback, self, 6))
+		else
+			self:addItem(_"Stripperinnen engagieren", Color.Red, bind(self.itemCallback, self, 5))
+		end
 	end
 	self:addItem(_"Schließen", Color.Red, bind(self.itemCallback, self))
 end
@@ -62,6 +68,12 @@ function BarManageGUI:itemCallback(type)
 		)
 	elseif type == 4 then
 		triggerServerEvent("shopOpenBankGUI", localPlayer, self.m_BarId)
+	elseif type == 5 then
+		QuestionBox:new(_("Möchtest du wirklich Stripperinnen engagieren? (Kosten 15$ pro 15 Minuten!)"),
+		function() 	triggerServerEvent("barShopStartStripper", localPlayer, self.m_BarId) end
+		)
+	elseif type == 6 then
+		triggerServerEvent("barShopStopStripper", localPlayer, self.m_BarId)
 	end
 	delete(self)
 end
@@ -74,8 +86,8 @@ function BarManageGUI:Event_close()
 end
 
 addEventHandler("barOpenManageGUI", root,
-		function(barId, name, ownerId, ownerName, price, streamUrl)
-			BarManageGUI:new(barId, name, ownerId, ownerName, price, streamUrl)
+		function(barId, name, ownerId, ownerName, price, streamUrl, stripper)
+			BarManageGUI:new(barId, name, ownerId, ownerName, price, streamUrl, stripper)
 		end
 	)
 

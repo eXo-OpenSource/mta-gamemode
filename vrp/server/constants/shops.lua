@@ -70,15 +70,6 @@ SHOP_TYPES = {
 
 }
 
-SHOP_OWNER_TYPES = {
-	[1] = "Player",
-	[2] = "Group"
-}
-
-for i, k in pairs(SHOP_OWNER_TYPES) do
-	SHOP_OWNER_TYPES[k] = i
-end
-
 SHOP_ITEMS = {
 	["Gärtnerei"] = {
 		["Weed-Samen"] = 20,
@@ -107,6 +98,41 @@ SHOP_ITEMS = {
 		["Cuba-Libre"] = 12
 	};
 }
+
+SHOP_OWNER_TYPES = {
+	[1] = "Player",
+	[2] = "Group"
+}
+
+for i, k in pairs(SHOP_OWNER_TYPES) do
+	SHOP_OWNER_TYPES[k] = i
+end
+
+SHOP_BAR_STRIP = {
+	["Alhambra"] = {
+		["Skins"] = {63, 92, 138, 139, 140, 152, 243, 238, 244, 178},
+		[1] = { ["Pos"] = Vector3(1215.25, -33.73, 1001.39), ["Rot"] = 74 },
+		[2] = { ["Pos"] = Vector3(1209.24, -35.90, 1001.48), ["Rot"] = 10 },
+		[3] = { ["Pos"] = Vector3(1212.53, -40.42, 1001.48), ["Rot"] = 323 },
+	},
+	["The Pig Pen"] = {
+		["Skins"] = {63, 92, 138, 139, 140, 152, 243, 238, 244, 178},
+		[1] = { ["Pos"] = Vector3(1208.21, -7.46, 1001.33), ["Rot"] = 170 },
+		[2] = { ["Pos"] = Vector3(1215.50, -7.15, 1001.33), ["Rot"] = 126 },
+		[3] = { ["Pos"] = Vector3(1213.87, -4.31, 1001.33), ["Rot"] = 25 },
+		[4] = { ["Pos"] = Vector3(1222.97, -2.31, 1001.33), ["Rot"] = 25 },
+		[5] = { ["Pos"] = Vector3(1222.97, -11.57, 1001.33), ["Rot"] = 135 },
+		[6] = { ["Pos"] = Vector3(1221.21, 8.31, 1001.34), ["Rot"] = 129 }
+	},
+	["Green Bottle"] = {
+		["Skins"] = {246, 245, 64, 87, 257, 199},
+		[1] = { ["Pos"] = Vector3(510.23, -84.41, 999.83), ["Rot"] = 18 },
+		[2] = { ["Pos"] = Vector3(489.81, -79.76, 999.63), ["Rot"] = 342 },
+		[3] = { ["Pos"] = Vector3(496.41, -73.17, 999.67), ["Rot"] = 196 },
+	}
+}
+
+SHOP_BAR_STRIP_ANIMATIONS = {"STR_Loop_A", "STR_Loop_A", "STR_Loop_C"}
 
 ROBABLE_SHOP_STATE_TARGETS = {Vector3(1580, -1632.17, 12.4)}
 ROBABLE_SHOP_EVIL_TARGETS = {

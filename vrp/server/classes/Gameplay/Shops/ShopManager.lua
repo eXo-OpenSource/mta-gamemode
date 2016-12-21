@@ -16,20 +16,27 @@ local BURGER_SHOT_DIMS = {0, 1, 2, 3, 4, 5}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "barBuyDrink", "barShopMusicChange", "barShopMusicStop", "shopBuy", "shopSell",
-	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw"}
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell",
+	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
+	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw"
+	}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
 	addEventHandler("shopBuyItem", root, bind(self.buyItem, self))
 	addEventHandler("barBuyDrink", root, bind(self.barBuyDrink, self))
 	addEventHandler("vehicleBuy", root, bind(self.vehicleBuy, self))
-	addEventHandler("barShopMusicChange", root, bind(self.barMusicChange, self))
-	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
+
 	addEventHandler("shopBuy", root, bind(self.buy, self))
 	addEventHandler("shopSell", root, bind(self.sell, self))
 	addEventHandler("shopOpenBankGUI", root, bind(self.openBankGui, self))
 	addEventHandler("shopBankDeposit", root, bind(self.deposit, self))
 	addEventHandler("shopBankWithdraw", root, bind(self.withdraw, self))
+
+	addEventHandler("barShopMusicChange", root, bind(self.barMusicChange, self))
+	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
+	addEventHandler("barShopStartStripper", root, bind(self.barStartStripper, self))
+	addEventHandler("barShopStopStripper", root, bind(self.barStopStripper, self))
+
 
 	addEventHandler("shopOpenGUI", root, function(id)
 		if ShopManager.Map[id] then
@@ -184,6 +191,24 @@ function ShopManager:barMusicStop(shopId)
 	local shop = self:getFromId(shopId)
 	if shop then
 		shop:stopMusic(client)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end
+
+function ShopManager:barStartStripper(shopId)
+	local shop = self:getFromId(shopId)
+	if shop then
+		shop:startStripper(client)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+	end
+end
+
+function ShopManager:barStopStripper(shopId)
+	local shop = self:getFromId(shopId)
+	if shop then
+		shop:stopStripper(client)
 	else
 		client:sendError(_("Internal Error! Shop not found!", client))
 	end

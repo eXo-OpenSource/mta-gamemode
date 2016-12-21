@@ -22,6 +22,8 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	self.m_Money = money
 	self.m_Position = position or nil
 
+	self.m_TypeDataName = typeData["Name"]
+
 	if self.m_BuyAble == true and self.m_OwnerId > 0 then
 		self:loadOwner()
 	end
@@ -97,6 +99,15 @@ function Shop:isManageAllowed(player)
 			if group:getPlayerRank(player) >= GroupRank.Manager then
 				return true
 			end
+		end
+	end
+	return false
+end
+
+function Shop:isOwnerMember(player)
+	if self.m_OwnerType == SHOP_OWNER_TYPES.Group then
+		if player:getGroup() and player:getGroup() == self.m_Owner then
+			return true
 		end
 	end
 	return false
