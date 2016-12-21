@@ -10,9 +10,9 @@ addEvent("onClientRequestFile", true)
 local DOWNLOAD_SPEED = 8 * 1024 * 1024 -- 8MiB/s
 
 -- Unlimited speed if in debug mode
-if DEBUG then
+--if DEBUG then
 	DOWNLOAD_SPEED = 1000000000000
-end
+--end
 
 function Provider:constructor()
 	addEventHandler("onClientRequestFile", resourceRoot, bind(Provider.onClientRequestFile, self))
