@@ -172,8 +172,10 @@ function PlayerManager:playerJoin()
 end
 
 function PlayerManager:playerCommand()
-	if not source:isLoggedIn() then
-		cancelEvent()
+	if not DEBUG then
+		if not source:isLoggedIn() then
+			cancelEvent()
+		end
 	end
 end
 

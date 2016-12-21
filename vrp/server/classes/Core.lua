@@ -108,7 +108,7 @@ function Core:constructor()
 		setHeatHaze(0)
 
 		-- Generate Package
-		if DEBUG then -- not required in release mode
+		if not HTTP_DOWNLOAD then -- not required in HTTP-Download mode
 			local xml = xmlLoadFile("meta.xml")
 			local files = {}
 			for k, v in pairs(xmlNodeGetChildren(xml)) do
