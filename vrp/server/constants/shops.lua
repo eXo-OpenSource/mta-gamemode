@@ -70,6 +70,15 @@ SHOP_TYPES = {
 
 }
 
+SHOP_OWNER_TYPES = {
+	[1] = "Player",
+	[2] = "Group"
+}
+
+for i, k in pairs(SHOP_OWNER_TYPES) do
+	SHOP_OWNER_TYPES[k] = i
+end
+
 SHOP_ITEMS = {
 	["Gärtnerei"] = {
 		["Weed-Samen"] = 20,

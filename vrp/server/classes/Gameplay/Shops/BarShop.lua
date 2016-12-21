@@ -7,15 +7,15 @@
 -- ****************************************************************************
 BarShop = inherit(Shop)
 
-function BarShop:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price)
-	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price)
+function BarShop:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
+	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 
 	self.m_Type = "Bar"
 	self.m_Items = SHOP_ITEMS["Bar"]
 
 	self.m_SoundUrl = ""
 
-	self.m_MusicGUIBind = bind(self.openMusicGUI, self)
+	self.m_BarGUIBind = bind(self.openManageGUI, self)
 
 	if self.m_Marker then
 		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onBarMarkerHit, self))
@@ -45,8 +45,8 @@ end
 
 function BarShop:onEnter(hitElement, dim)
 	if dim and hitElement:getType() == "player" and source:getInterior() == hitElement:getInterior() then
-		hitElement:sendInfo(_("Drücke 'm' um das Musikpanel zu öffnen!", hitElement))
-		bindKey(hitElement, "m", "down", self.m_MusicGUIBind)
+		hitElement:sendInfo(_("Drücke 'b' um das Bar-Menü zu öffnen!", hitElement))
+		bindKey(hitElement, "b", "down", self.m_BarGUIBind)
 		if self.m_SoundUrl ~= "" then
 			hitElement:triggerEvent("barUpdateMusic", self.m_SoundUrl)
 		end
@@ -54,10 +54,10 @@ function BarShop:onEnter(hitElement, dim)
 end
 
 function BarShop:onExit(hitElement, dim)
-	if dim and hitElement:getType() == "player" then
-		unbindKey(hitElement, "m", "down", self.m_MusicGUIBind)
+	if dim and hitElement:getType() == "player" and source:getInterior() == hitElement:getInterior() then
+		unbindKey(hitElement, "b", "down", self.m_BarGUIBind)
 		hitElement:triggerEvent("barUpdateMusic")
-		hitElement:triggerEvent("barCloseMusicGUI")
+		hitElement:triggerEvent("barCloseManageGUI")
 	end
 end
 
@@ -65,8 +65,8 @@ function BarShop:getPlayerInBar()
 	return self.m_SoundCol:getElementsWithin("player")
 end
 
-function BarShop:openMusicGUI(player)
-	player:triggerEvent("barOpenMusicGUI", self.m_Id, self.m_SoundUrl)
+function BarShop:openManageGUI(player)
+	player:triggerEvent("barOpenManageGUI", self.m_Id, self.m_Name, self.m_OwnerId, self:getOwnerName(), self.m_Price, self.m_SoundUrl)
 end
 
 function BarShop:changeMusic(player, stream)

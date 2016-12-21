@@ -61,6 +61,10 @@ function Player:getKarma()
 	return self:getPublicSync("Karma") or 0
 end
 
+function Player:getGroupId()
+	return self:getPublicSync("GroupId") or 0
+end
+
 function Player:getGroupName()
 	return self:getPublicSync("GroupName") or ""
 end

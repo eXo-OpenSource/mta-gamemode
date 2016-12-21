@@ -14,6 +14,16 @@ function GUIButtonMenu:constructor(text)
 	self.m_Items = {}
 end
 
+function GUIButtonMenu:addItemNoClick(text, color)
+	self.m_Window:setSize(self.m_Width, 5+40+(#self.m_Items+1)*45)
+
+	local item = GUILabel:new(10, 40 + #self.m_Items*45, self.m_Width - 20, 40, text, self)
+	item:setColor(color):setFont(VRPFont(28)):setFontSize(1)
+	table.insert(self.m_Items, item)
+
+	return item
+end
+
 function GUIButtonMenu:addItem(text, color, callback)
 	self.m_Window:setSize(self.m_Width, 5+40+(#self.m_Items+1)*45)
 
