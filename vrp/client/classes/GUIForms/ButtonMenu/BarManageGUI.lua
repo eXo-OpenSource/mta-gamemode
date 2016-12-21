@@ -11,7 +11,7 @@ inherit(Singleton, BarManageGUI)
 addRemoteEvents{"barOpenManageGUI", "barCloseManageGUI", "updateBarManageGUI"}
 
 function BarManageGUI:constructor(barId, name, ownerId, ownerName, price, streamUrl)
-	GUIButtonMenu.constructor(self, name.." Menü")
+	GUIButtonMenu.constructor(self, "Bar: "..name)
 
 	self.m_BarId = barId
 	self.m_OwnerId = ownerId
