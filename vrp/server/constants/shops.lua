@@ -49,10 +49,25 @@ SHOP_TYPES = {
 	[8] = {
 		["Name"] = "Alhambra",
 		["Marker"] = Vector3(1207.23, -28.55, 1000),
-		["Ped"] = {202, Vector3(1206.23, -28.63, 1000.95), 270},
+		["Ped"] = {256, Vector3(1206.23, -28.63, 1000.95), 270},
 		["Interior"] = {3, Vector3(1212.27, -25.88, 1000.95)},
 		["Class"] = BarShop
+	},
+	[9] = {
+		["Name"] = "Green Bottle",
+		["Marker"] = Vector3(496.88, -75.49, 997.9),
+		["Ped"] = {201, Vector3(497.23, -77.57, 998.77), 0},
+		["Interior"] = {11, Vector3(502.01, -67.75, 998.76)},
+		["Class"] = BarShop
+	},
+	[10] = {
+		["Name"] = "The Pig Pen",
+		["Marker"] = Vector3(1214.61, -12.98, 1000),
+		["Ped"] = {214, Vector3(1214.70, -15.26, 1000.92), 0},
+		["Interior"] = {2, Vector3(1204.69, -13.85, 1000.92)},
+		["Class"] = BarShop
 	}
+
 }
 
 SHOP_ITEMS = {
