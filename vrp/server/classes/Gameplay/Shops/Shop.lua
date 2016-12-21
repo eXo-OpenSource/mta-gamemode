@@ -119,7 +119,7 @@ end
 
 function Shop:sell(player)
 	if self.m_OwnerType == SHOP_OWNER_TYPES.Group then
-		if player:getGroup() and player:getGroup() == self.Owner then
+		if player:getGroup() and player:getGroup() == self.m_Owner then
 			local group = player:getGroup()
 			if group:getPlayerRank(player) >= GroupRank.Manager then
 				local money = math.floor((self.m_Price*0.75))
