@@ -38,10 +38,12 @@ function ShootingRanch:updateLabels()
 end
 
 function ShootingRanch:onWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hitZ, hitElement)
-	if(isElement(hitElement))then
-		if(getElementData(hitElement, "target") == true)then
-			if(getElementData(hitElement, "hitAble")==true)then
-				triggerServerEvent("ShootingRanch:onTargetHit", localPlayer, hitElement)
+	if source == localPlayer then
+		if(isElement(hitElement))then
+			if(getElementData(hitElement, "target") == true)then
+				if(getElementData(hitElement, "hitAble")==true)then
+					triggerServerEvent("ShootingRanch:onTargetHit", localPlayer, hitElement)
+				end
 			end
 		end
 	end
