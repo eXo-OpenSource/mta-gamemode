@@ -14,3 +14,5 @@ vrp_assets
 
 artifacts.tar.gz
 assets.tar.gz
+
+build/workerserver
