@@ -31,24 +31,26 @@ function GroupManager:constructor()
 
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
-		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName", "groupSaveRank", "groupConvertVehicle", "groupUpdateVehicleTuning"}
-	addEventHandler("groupRequestInfo", root, bind(self.Event_groupRequestInfo, self))
-	addEventHandler("groupRequestLog", root, bind(self.Event_groupRequestLog, self))
-	addEventHandler("groupCreate", root, bind(self.Event_groupCreate, self))
-	addEventHandler("groupQuit", root, bind(self.Event_groupQuit, self))
-	addEventHandler("groupDelete", root, bind(self.Event_groupDelete, self))
-	addEventHandler("groupDeposit", root, bind(self.Event_groupDeposit, self))
-	addEventHandler("groupWithdraw", root, bind(self.Event_groupWithdraw, self))
-	addEventHandler("groupAddPlayer", root, bind(self.Event_groupAddPlayer, self))
-	addEventHandler("groupDeleteMember", root, bind(self.Event_groupDeleteMember, self))
-	addEventHandler("groupInvitationAccept", root, bind(self.Event_groupInvitationAccept, self))
-	addEventHandler("groupInvitationDecline", root, bind(self.Event_groupInvitationDecline, self))
-	addEventHandler("groupRankUp", root, bind(self.Event_groupRankUp, self))
-	addEventHandler("groupRankDown", root, bind(self.Event_groupRankDown, self))
-	addEventHandler("groupChangeName", root, bind(self.Event_groupChangeName, self))
-	addEventHandler("groupSaveRank", root, bind(self.Event_groupSaveRank, self))
-	addEventHandler("groupConvertVehicle", root, bind(self.Event_groupConvertVehicle, self))
-	addEventHandler("groupUpdateVehicleTuning", root, bind(self.Event_groupUpdateVehicleTuning, self))
+		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
+		"groupSaveRank", "groupConvertVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui"}
+	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
+	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
+	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
+	addEventHandler("groupQuit", root, bind(self.Event_Quit, self))
+	addEventHandler("groupDelete", root, bind(self.Event_Delete, self))
+	addEventHandler("groupDeposit", root, bind(self.Event_Deposit, self))
+	addEventHandler("groupWithdraw", root, bind(self.Event_Withdraw, self))
+	addEventHandler("groupAddPlayer", root, bind(self.Event_AddPlayer, self))
+	addEventHandler("groupDeleteMember", root, bind(self.Event_DeleteMember, self))
+	addEventHandler("groupInvitationAccept", root, bind(self.Event_InvitationAccept, self))
+	addEventHandler("groupInvitationDecline", root, bind(self.Event_InvitationDecline, self))
+	addEventHandler("groupRankUp", root, bind(self.Event_RankUp, self))
+	addEventHandler("groupRankDown", root, bind(self.Event_RankDown, self))
+	addEventHandler("groupChangeName", root, bind(self.Event_ChangeName, self))
+	addEventHandler("groupSaveRank", root, bind(self.Event_SaveRank, self))
+	addEventHandler("groupConvertVehicle", root, bind(self.Event_ConvertVehicle, self))
+	addEventHandler("groupUpdateVehicleTuning", root, bind(self.Event_UpdateVehicleTuning, self))
+	addEventHandler("groupOpenBankGui", root, bind(self.Event_OpenBankGui, self))
 end
 
 function GroupManager:destructor()
@@ -93,7 +95,7 @@ function GroupManager:getByName(groupName)
 	return false
 end
 
-function GroupManager:Event_groupRequestLog()
+function GroupManager:Event_RequestLog()
 	local group = client:getGroup()
 	if group then
 		client:triggerEvent("groupRetrieveLog", group:getPlayers(), group:getLog())
@@ -111,11 +113,11 @@ function GroupManager:sendInfosToClient(player)
 	end
 end
 
-function GroupManager:Event_groupRequestInfo()
+function GroupManager:Event_RequestInfo()
 	self:sendInfosToClient(client)
 end
 
-function GroupManager:Event_groupCreate(name, type)
+function GroupManager:Event_Create(name, type)
 	if client:getMoney() < GroupManager.GroupCosts then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
@@ -157,7 +159,7 @@ function GroupManager:Event_groupCreate(name, type)
 	end
 end
 
-function GroupManager:Event_groupQuit()
+function GroupManager:Event_Quit()
 	local group = client:getGroup()
 	if not group then return end
 
@@ -172,7 +174,7 @@ function GroupManager:Event_groupQuit()
 	self:sendInfosToClient(client)
 end
 
-function GroupManager:Event_groupDelete()
+function GroupManager:Event_Delete()
 	local group = client:getGroup()
 	if not group then return end
 
@@ -219,7 +221,7 @@ function GroupManager:Event_groupDelete()
 	client:triggerEvent("groupRetrieveInfo")
 end
 
-function GroupManager:Event_groupDeposit(amount)
+function GroupManager:Event_Deposit(amount)
 	local group = client:getGroup()
 	if not group then return end
 	if not amount then return end
@@ -233,9 +235,10 @@ function GroupManager:Event_groupDeposit(amount)
 	group:giveMoney(amount, "Firmen/Gang Auszahlung")
 	group:addLog(client, "Kasse", "hat "..amount.."$ in die Kasse gelegt!")
 	self:sendInfosToClient(client)
+	group:refreshBankGui(client)
 end
 
-function GroupManager:Event_groupWithdraw(amount)
+function GroupManager:Event_Withdraw(amount)
 	local group = client:getGroup()
 	if not group then return end
 	if not amount then return end
@@ -256,9 +259,10 @@ function GroupManager:Event_groupWithdraw(amount)
 	group:addLog(client, "Kasse", "hat "..amount.."$ aus der Kasse genommen!")
 
 	self:sendInfosToClient(client)
+	group:refreshBankGui(client)
 end
 
-function GroupManager:Event_groupAddPlayer(player)
+function GroupManager:Event_AddPlayer(player)
 	if not player then return end
 	local group = client:getGroup()
 	if not group then return end
@@ -288,7 +292,7 @@ function GroupManager:Event_groupAddPlayer(player)
 	end
 end
 
-function GroupManager:Event_groupDeleteMember(playerId)
+function GroupManager:Event_DeleteMember(playerId)
 	if not playerId then return end
 	local group = client:getGroup()
 	if not group then return end
@@ -310,7 +314,7 @@ function GroupManager:Event_groupDeleteMember(playerId)
 	self:sendInfosToClient(client)
 end
 
-function GroupManager:Event_groupInvitationAccept(groupId)
+function GroupManager:Event_InvitationAccept(groupId)
 	local group = self:getFromId(groupId)
 	if not group then return end
 
@@ -325,7 +329,7 @@ function GroupManager:Event_groupInvitationAccept(groupId)
 	end
 end
 
-function GroupManager:Event_groupInvitationDecline(groupId)
+function GroupManager:Event_InvitationDecline(groupId)
 	local group = self:getFromId(groupId)
 	if not group then return end
 
@@ -339,7 +343,7 @@ function GroupManager:Event_groupInvitationDecline(groupId)
 	end
 end
 
-function GroupManager:Event_groupRankUp(playerId)
+function GroupManager:Event_RankUp(playerId)
 	if not playerId then return end
 	local group = client:getGroup()
 	if not group then return end
@@ -371,7 +375,7 @@ function GroupManager:Event_groupRankUp(playerId)
 	end
 end
 
-function GroupManager:Event_groupRankDown(playerId)
+function GroupManager:Event_RankDown(playerId)
 	if not playerId then return end
 	local group = client:getGroup()
 	if not group then return end
@@ -401,7 +405,7 @@ function GroupManager:Event_groupRankDown(playerId)
 	end
 end
 
-function GroupManager:Event_groupChangeName(name)
+function GroupManager:Event_ChangeName(name)
 	if not name then return end
 	local group = client:getGroup()
 	if not group then return end
@@ -454,7 +458,7 @@ function GroupManager:Event_groupChangeName(name)
 	end
 end
 
-function GroupManager:Event_groupSaveRank(rank,name,loan)
+function GroupManager:Event_SaveRank(rank,name,loan)
 	local group = client:getGroup()
 	if group and group:getPlayerRank(client) >= GroupRank.Manager then
 		group:setRankName(rank,name)
@@ -466,7 +470,7 @@ function GroupManager:Event_groupSaveRank(rank,name,loan)
 	end
 end
 
-function GroupManager:Event_groupUpdateVehicleTuning()
+function GroupManager:Event_UpdateVehicleTuning()
 	local group = client:getGroup()
 	if true then -- Todo: Tuning Shop needs rework on this
 		client:sendInfo(_("Derzeit ist dies nicht möglich!", client))
@@ -493,7 +497,7 @@ function GroupManager:Event_groupUpdateVehicleTuning()
 	end
 end
 
-function GroupManager:Event_groupConvertVehicle(veh)
+function GroupManager:Event_ConvertVehicle(veh)
 	local group = client:getGroup()
 	if group then
 		if veh then
@@ -514,3 +518,12 @@ function GroupManager:Event_groupConvertVehicle(veh)
 		end
 	end
 end
+
+function GroupManager:Event_OpenBankGui()
+	local group = client:getGroup()
+	if group then
+		group:openBankGui(client)
+	end
+end
+
+
