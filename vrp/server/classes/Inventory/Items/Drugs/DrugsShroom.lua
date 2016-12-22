@@ -86,7 +86,6 @@ function DrugsShroom:loadPositions()
         fileSetPos(file, 0)
         fileWrite(file, toJSON(self.m_MushRoomTable))
         fileClose(file)
-        fileClose()
     end
 
     local file = fileOpen (self.m_Path, false)
