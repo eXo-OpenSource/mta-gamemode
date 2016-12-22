@@ -72,9 +72,6 @@ deploy_job_testing:
   stage: deploy
   script:
     - curl http://192.168.122.20:6000/deploy/mta_testing?APISecret=$DEPLOY_API_SECRET_TESTING
-    - curl -H "API_SECRET:$WORKER_API_SECRET_TESTING" http://mta.exo-reallife.de:5001/start
-  environment:
-  environment:
   environment:
     name: testing
     url: http://mta.exo-reallife.de:5001/
