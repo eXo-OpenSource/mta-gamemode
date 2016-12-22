@@ -8,7 +8,7 @@
 GUIButtonMenu = inherit(GUIForm)
 
 function GUIButtonMenu:constructor(text)
-	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(150/2), 300, 300)
+	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(190/2), 300, 380)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, text, true, true, self)
 	self.m_Window:setCloseOnClose(true)
 	self.m_Items = {}

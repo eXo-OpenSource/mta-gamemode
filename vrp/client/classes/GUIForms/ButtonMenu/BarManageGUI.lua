@@ -44,7 +44,6 @@ function BarManageGUI:addItems()
 			self:addItem(_"Stripperinnen engagieren", Color.Red, bind(self.itemCallback, self, 5))
 		end
 	end
-	self:addItem(_"Schließen", Color.Red, bind(self.itemCallback, self))
 end
 
 function BarManageGUI:itemCallback(type)
