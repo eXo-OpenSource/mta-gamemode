@@ -20,8 +20,9 @@ addEventHandler("barCloseMusicGUI", root, function()
 end)
 
 addEventHandler("barUpdateMusic", root, function(stream)
-	if Bar.Music then Bar.Music:destroy() end
+	if Bar.Music then Bar.Music:destroy() setInteriorSoundsEnabled(true) end
 	if stream then
+		setInteriorSoundsEnabled(false)
 		Bar.Music = playSound(stream)
 	end
 end)
