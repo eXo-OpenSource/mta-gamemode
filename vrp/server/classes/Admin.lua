@@ -53,6 +53,8 @@ function Admin:constructor()
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
 
+	addCommandHandler("drun", bind(self.runString, self))
+
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
     "adminGetPlayerVehicles", "adminPortVehicle", "adminPortToVehicle", "adminSeachPlayer", "adminSeachPlayerInfo",
     "adminRespawnFactionVehicles", "adminRespawnCompanyVehicles", "adminVehicleDespawn", "openAdminGUI"}
@@ -125,14 +127,20 @@ function Admin:addAdmin(player,rank)
 		player:logIn(self.m_MtaAccounts[player], pw)
 		ACLGroup.get("Admin"):addObject("user."..user)
 
+		player:triggerEvent("setClientAdmin", player, rank)
 
-		bindKey(player, "j", "down", function(player)
-            if not doesPedHaveJetPack(player) then
-              givePedJetPack(player)
-           else
-              removePedJetPack ( player )
-           end
-        end)
+		if DEBUG then
+			bindKey(player, "j", "down", function(player)
+				if not doesPedHaveJetPack(player) then
+					givePedJetPack(player)
+				else
+					removePedJetPack ( player )
+				end
+			end)
+		end
+
+
+
     end
 end
 
@@ -950,3 +958,11 @@ function Admin:Command_MarkPos(player, add)
 		player:sendInfo("Makierung gesetzt!")
 	end
 end
+
+function Admin:runString(player, cmd, ...)
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() == RANK.Projektleiter or player:getRank() == RANK.Developer then
+		local codeString = table.concat({...}, " ")
+		runString(codeString, player)
+	end
+end
+

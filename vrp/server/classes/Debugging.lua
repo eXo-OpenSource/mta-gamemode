@@ -10,16 +10,8 @@ if DEBUG then
 	Debugging = inherit(Singleton)
 
 	function Debugging:constructor()
-		addCommandHandler("drun", bind(Debugging.runString, self))
 		addCommandHandler("vehicle", bind(Debugging.vehicle, self))
 		addCommandHandler("karma", bind(Debugging.karma, self))
-	end
-
-	function Debugging:runString(player, cmd, ...)
-		if getPlayerName(player) == "Console" or player:getRank() >= RANK.Supporter then
-			local codeString = table.concat({...}, " ")
-			runString(codeString, player)
-		end
 	end
 
 	function Debugging:vehicle(player, cmd, model)

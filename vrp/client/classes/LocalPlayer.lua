@@ -6,7 +6,8 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage", "playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime"}
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage",
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin"}
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -32,6 +33,9 @@ function LocalPlayer:constructor()
 	addEventHandler("abortDeathGUI", self, bind( self.abortDeathGUI, self ))
 	addEventHandler("sendTrayNotification", self, bind( self.sendTrayNotification, self ))
 	addEventHandler("setClientTime", self, bind(self.Event_onGetTime, self))
+	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
+
+
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
 
@@ -340,6 +344,63 @@ end
 function LocalPlayer:Event_retrieveInfo(info)
 	self.m_Rank = info.Rank
 	self.m_LoggedIn = true
+end
+
+function LocalPlayer:Event_setAdmin(player, rank)
+	if self:getRank() == rank then
+
+		bindKey("lshift", "down",
+			function()
+				if self:getRank() >= RANK.Moderator and self:getPublicSync("supportMode") == true then
+					local vehicle = getPedOccupiedVehicle(self)
+					if vehicle then
+						local vx, vy, vz = getElementVelocity(vehicle)
+						setElementVelocity(vehicle, vx, vy, 0.3)
+					end
+				end
+			end
+		)
+		bindKey("lalt", "down",
+			function()
+				if self:getRank() >= RANK.Moderator and self:getPublicSync("supportMode") == true then
+					local vehicle = getPedOccupiedVehicle(self)
+					if vehicle then
+						local vx, vy, vz = getElementVelocity(vehicle)
+						setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
+					end
+				end
+			end
+		)
+		bindKey("f5", "down",
+			function()
+				if self:getRank() >= RANK.Moderator then
+					if MapGUI:isInstantiated() then
+						delete(MapGUI:getSingleton())
+					else
+						MapGUI:getSingleton(
+							function(posX, posY, posZ)
+								localPlayer:setPosition(posX, posY, posZ)
+								localPlayer:setInterior(0)
+								localPlayer:setDimension(0)
+							end
+							)
+					end
+				end
+			end
+		)
+
+		if rank == RANK.Projektleiter or rank == RANK.Developer then
+			addCommandHandler("dcrun", function(...)
+				if rank == RANK.Projektleiter or rank == RANK.Developer then
+					local codeString = table.concat({...}, " ")
+					runString(codeString, localPlayer)
+				end
+			end)
+
+		end
+	else
+		ErrorBox:new(_"Clientside Admin konnte nicht verifiziert werden!")
+	end
 end
 
 function LocalPlayer:sendTrayNotification(text, icon, sound)

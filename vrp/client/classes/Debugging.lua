@@ -14,57 +14,12 @@ if DEBUG then
 
 	function Debugging:constructor()
 		setDevelopmentMode(true)
-		addCommandHandler("dcrun", bind(Debugging.runString, self))
 		addCommandHandler("dcreload", bind(Debugging.reloadClass, self))
 		addCommandHandler("gp", bind(Debugging.getpos, self))
 		addCommandHandler("sp", bind(Debugging.setpos, self))
 		addCommandHandler("gui_debug", bind(Debugging.gui_debug, self))
 		addCommandHandler("cef_debug", bind(Debugging.cef_debug, self))
 
-		bindKey("lshift", "down",
-			function()
-				if localPlayer:getRank() >= RANK.Moderator then
-					local vehicle = getPedOccupiedVehicle(localPlayer)
-					if vehicle then
-						local vx, vy, vz = getElementVelocity(vehicle)
-						setElementVelocity(vehicle, vx, vy, 0.3)
-					end
-				end
-			end
-		)
-		bindKey("lalt", "down",
-			function()
-				if localPlayer:getRank() >= RANK.Moderator then
-					local vehicle = getPedOccupiedVehicle(localPlayer)
-					if vehicle then
-						local vx, vy, vz = getElementVelocity(vehicle)
-						setElementVelocity(vehicle, vx*1.5, vy*1.5, vz)
-					end
-				end
-			end
-		)
-		bindKey("f5", "down",
-			function()
-				if MapGUI:isInstantiated() then
-					delete(MapGUI:getSingleton())
-				else
-					MapGUI:getSingleton(
-						function(posX, posY, posZ)
-							localPlayer:setPosition(posX, posY, posZ)
-							localPlayer:setInterior(0)
-							localPlayer:setDimension(0)
-						end
-						)
-				end
-			end
-		)
-	end
-
-	function Debugging:runString(cmd, ...)
-		if localPlayer:getRank() >= RANK.Developer  then
-			local codeString = table.concat({...}, " ")
-			runString(codeString, localPlayer)
-		end
 	end
 
 	function Debugging:reloadClass(cmd, file)
