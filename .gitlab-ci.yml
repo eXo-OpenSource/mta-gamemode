@@ -44,11 +44,11 @@ build_docker_job:
 deploy_job_bugfixes:
   stage: fast_deploy
   script:
-    - curl -F "file=@artifacts.tar.gz" -H "API_SECRET:$WORKER_API_SECRET_DEVELOP" http://mta.exo-reallife.de:20002/upload
-    #- curl -F "command=restart vrp_build" -H "API_SECRET:$WORKER_API_SECRET_DEVELOP" http://mta.exo-reallife.de:20002/command
+    - curl -F "file=@artifacts.tar.gz" -H "API_SECRET:$WORKER_API_SECRET_DEVELOP" http://mta.exo-reallife.de:5002/upload
+    #- curl -F "command=restart vrp_build" -H "API_SECRET:$WORKER_API_SECRET_DEVELOP" http://mta.exo-reallife.de:5002/command
   environment:
     name: development
-    url: http://mta.exo-reallife.de:20002/
+    url: http://mta.exo-reallife.de:5002/
   only:
     - /^bugfix\/.*$/
 
@@ -67,6 +67,9 @@ deploy_job_testing:
   stage: deploy
   script:
     - curl http://192.168.122.20:6000/deploy/mta_testing?APISecret=$DEPLOY_API_SECRET_TESTING
+    - curl -H "API_SECRET:$WORKER_API_SECRET_TESTING" http://mta.exo-reallife.de:5001/start
+  environment:
+  environment:
   environment:
     name: testing
     url: http://mta.exo-reallife.de:5001/
