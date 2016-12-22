@@ -67,6 +67,10 @@ function CustomModelManager:constructor()
 	self:loadImportDFF("files/models/medicInterior.dff", 3986)
 	self:setLODDistance(3986, 500)
 
+	self:loadImportTXD("files/models/holzstamm.txd", 837)
+	self:loadImportCOL("files/models/holzstamm.col", 837)
+	self:loadImportDFF("files/models/holzstamm.dff", 837)
+
 	self:loadShader("files/images/Other/parking1.png", "noparking2_128")
 	self:loadShader("files/images/Other/parking2.png", "roadsign01_128")
 
