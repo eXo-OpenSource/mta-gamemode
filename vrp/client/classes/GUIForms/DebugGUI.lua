@@ -144,12 +144,14 @@ function DebugGUI:addField(name, parent, getFunc)
 end
 
 function DebugGUI.initalize()
-	DebugGUI:new():setVisible(false)
-			bindKey(core:get("KeyBindings", "KeyToggleDebugGUI", "F9"), "down",
-				function()
-					DebugGUI:getSingleton():setVisible(not DebugGUI:getSingleton():isVisible())
-				end
-			)
+	DebugGUI:new()
+	DebugGUI:getSingleton():close()
+
+	bindKey(core:get("KeyBindings", "KeyToggleDebugGUI", "F9"), "down",
+		function()
+			DebugGUI:getSingleton():setVisible(not DebugGUI:getSingleton():isVisible())
+		end
+	)
 
 	addEventHandler("receiveServerDebug", root,
 		function(message, level, file, line)
