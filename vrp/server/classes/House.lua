@@ -22,7 +22,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_RentPrice = rentPrice
 	self.m_LockStatus = true
 	self.m_Pos = position
-	self.m_Keys = fromJSON(keys)
+	self.m_Keys = fromJSON(keys) or {}
 	self.m_InteriorID = interiorID
 	self.m_Owner = owner
 	self.m_Id = id
