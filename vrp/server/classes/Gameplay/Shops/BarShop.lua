@@ -141,7 +141,7 @@ function BarShop:startStripper(player)
 				end, 15*60*1000, 0)
 
 				self.m_StripperEnabled = true
-				self:sendShortMessage(_("%s hat Stripperinnen für diese Bar engagiert!", playerItem, player:getName()))
+				self:sendShortMessage(_("%s hat Stripperinnen für diese Bar engagiert!", player, player:getName()))
 			else
 				player:sendError(_("Es ist nicht genug Geld in der Bar-Kasse!", player))
 			end
@@ -164,7 +164,7 @@ function BarShop:stopStripper(player, force)
 
 	if self.m_StripperEnabled then
 		for id, npc in pairs(self.m_StripperCurrent) do
-			delete(npc)
+			npc:destroy()
 		end
 
 		self.m_StripperCurrent = {}
@@ -172,9 +172,9 @@ function BarShop:stopStripper(player, force)
 		if self.m_StripperTimer and isTimer(self.m_StripperTimer) then killTimer(self.m_StripperTimer) end
 
 		if force then
-			self:sendShortMessage("Die Stripperinnen sind gegangen, es war nicht genug Geld in der Bar-Kasse!", playerItem, player:getName())
+			self:sendShortMessage("Die Stripperinnen sind gegangen, es war nicht genug Geld in der Bar-Kasse!", player, player:getName())
 		else
-			self:sendShortMessage(_("%s hat Stripperinnen für diese Bar entlassen!", playerItem, player:getName()))
+			self:sendShortMessage(_("%s hat Stripperinnen für diese Bar entlassen!", player, player:getName()))
 		end
 	else
 		if not force then

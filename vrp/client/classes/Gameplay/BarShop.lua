@@ -23,7 +23,6 @@ addEventHandler("barUpdateMusic", root, function(stream)
 	if Bar.Music then Bar.Music:destroy() end
 	if stream then
 		Bar.Music = playSound(stream)
-		Bar.Music:setVolume(0.5)
 	end
 end)
 
