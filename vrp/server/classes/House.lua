@@ -22,7 +22,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_RentPrice = rentPrice
 	self.m_LockStatus = true
 	self.m_Pos = position
-	self.m_Keys = fromJSON(keys) or {}
+	self.m_Keys = fromJSON(keys)
 	self.m_InteriorID = interiorID
 	self.m_Owner = owner
 	self.m_Id = id
@@ -279,7 +279,7 @@ function House:sellHouse(player)
 		player:sendInfo(_("Du hast dein Haus für %d$ verkauft!", player, price))
 		player:giveMoney(price, "Haus-Verkauf")
 		self.m_Owner = 0
-		self.m_Keys = 0
+		self.m_Keys = {}
 		self:updatePickup()
 	else
 		player:sendError(_("Das ist nicht dein Haus!", player))
