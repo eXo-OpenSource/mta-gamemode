@@ -31,12 +31,7 @@ function BeggarPed:constructor(Id)
 end
 
 function BeggarPed:destructor()
-	if self.m_ColShape and isElement(self.m_Colshape) then
-		self.m_ColShape:destroy()
-	end
 
-	-- Remove ref
-	BeggarPedManager:getSingleton():removeRef(self)
 end
 
 function BeggarPed:getId()
@@ -49,7 +44,9 @@ function BeggarPed:despawn()
         if newAlpha < 10 then newAlpha = 0 end
         if newAlpha == 0 then
             self:destroy()
-			delete(self)
+			if self.m_ColShape and isElement(self.m_Colshape) then self.m_ColShape:destroy() end
+			-- Remove ref
+			BeggarPedManager:getSingleton():removeRef(self)
         else
             self:setAlpha(newAlpha)
         end
