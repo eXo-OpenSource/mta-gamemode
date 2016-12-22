@@ -15,8 +15,6 @@ env_setup_job:
    - sudo apt-get update -qq
    - sudo apt-get install -y -qq python3 git lua5.1 libc6:i386 libz1:i386 libstdc++6:i386
 
-   - cp /builddata/workerserver build/workerserver # Built by deploy-workerunit project
-   - ls -la build/
 # Build jobs
 build_app_job:
   stage: build
@@ -37,7 +35,7 @@ build_app_job:
 build_docker_job:
   stage: build_docker
   script:
-    - ls -la build/
+    - cp /builddata/workerserver build/workerserver # Built by deploy-workerunit project
     - sudo docker build -t exo-rl-mta .
     - sudo docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
