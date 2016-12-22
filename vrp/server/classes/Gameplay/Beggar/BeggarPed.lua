@@ -120,6 +120,7 @@ function BeggarPed:acceptTransport(player)
 			if not veh:getOccupant(seat) then
 				local pos = Randomizer:getRandomTableValue(BeggarTransportPositions)
 				self:warpIntoVehicle(veh, seat)
+				player.beggarTransportVehicle = veh
 				player.beggarTransportMarker = createMarker(pos, "cylinder", 2)
 				player.beggarTransportMarker.player = player
 				setElementVisibleTo(player.beggarTransportMarker, root, false)
@@ -128,25 +129,11 @@ function BeggarPed:acceptTransport(player)
 				player.beggarTransportBlip = Blip:new("Waypoint.png", pos.x, pos.y, player, 9999)
 				if self.m_ColShape then self.m_ColShape:destroy() end
 
-				local function deleteBeggarTransport(player, ped)
-					player.beggarTransportMarker:destroy()
-					delete(player.beggarTransportBlip)
+				self.m_onTransportExitBind = bind(self.onTransportExit, self)
+				self.m_onTransportDestroyBind = bind(self.onTransportDestroy, self)
 
-					ped:removeFromVehicle()
-					setTimer(function() ped:despawn() end, 50, 1)
-				end
-
-				addEventHandler("onVehicleExit", veh, function(exitPlayer)
-					if exitPlayer == player or exitPlayer == self then
-						player:sendError(_("Bettler-Transport fehlgeschlagen", player))
-						deleteBeggarTransport(player, self)
-					end
-				end)
-
-				addEventHandler("onVehicleDestroy", veh, function()
-					player:sendError(_("Bettler-Transport fehlgeschlagen", player))
-					deleteBeggarTransport(player, self)
-				end)
+				addEventHandler("onVehicleExit", veh, self.m_onTransportExitBind)
+				addEventHandler("onVehicleDestroy", veh, self.m_onTransportDestroyBind)
 
 				addEventHandler("onMarkerHit", player.beggarTransportMarker, function(hitElement, dim)
 					if hitElement:getType() == "player" and dim and source.player == hitElement then
@@ -157,7 +144,7 @@ function BeggarPed:acceptTransport(player)
 							player:sendShortMessage(_("+%s Karma", player, math.floor(karma)))
 							player:givePoints(1)
 							self:sendMessage(player, BeggarPhraseTypes.Thanks)
-							deleteBeggarTransport(player, self)
+							self:deleteBeggarTransport(player)
 							return
 						else
 							player:sendError(_("Du hast den Bettler nicht dabei", player))
@@ -178,8 +165,33 @@ function BeggarPed:acceptTransport(player)
 	end
 end
 
+function BeggarPed:onTransportExit(exitPlayer)
+	if exitPlayer.beggarTransportMarker or exitPlayer == self then
+		exitPlayer:sendError(_("Bettler-Transport fehlgeschlagen", exitPlayer))
+		self:deleteBeggarTransport(exitPlayer)
+	end
+end
+
+function BeggarPed:onTransportDestroy()
+	local player = vehicle:getOccupant()
+	player:sendError(_("Bettler-Transport fehlgeschlagen", player))
+	self:deleteBeggarTransport(player)
+end
+
 function BeggarPed:sendMessage(player, type)
     player:sendMessage(_("#FE8A00%s: #FFFFFF%s", player, self.m_Name, BeggarPedManager:getSingleton():getPhrase(self.m_Type, type)))
+end
+
+function BeggarPed:deleteTransport(player)
+	local veh = player.beggarTransportVehicle
+	removeEventHandler("onVehicleExit", veh, self.m_onTransportExitBind)
+	removeEventHandler("onVehicleDestroy", veh, self.m_onTransportExitBind)
+
+	player.beggarTransportMarker:destroy()
+	delete(player.beggarTransportBlip)
+
+	self:removeFromVehicle()
+	setTimer(function() self:despawn() end, 50, 1)
 end
 
 
