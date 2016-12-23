@@ -12,7 +12,7 @@ addRemoteEvents{"showElevatorGUI"}
 function ElevatorGUI:constructor(elevatorId, stationName, stations, pos, int)
 	GUIButtonMenu.constructor(self, "Aufzug "..stationName)
 	self.m_ElevatorId = elevatorId
-	
+
 	self.m_Pos = pos
 	self.m_Int = int
 	self.m_CamBind = bind(self.renderCam, self)
@@ -37,7 +37,7 @@ function ElevatorGUI:itemCallback(stationId, station)
 		setTimer( function()
 			localPlayer:setDimension(0)
 			localPlayer:setInterior(0)
-			localPlayer:setPosition(1744.80, -1746.90, 13.30)
+			localPlayer:setPosition(1751.20, -1746.90, 13.30)
 			localPlayer:setRotation(0, 0, 170)
 			localPlayer:setFrozen(true)
 			HUDRadar:getSingleton():setEnabled(false)
