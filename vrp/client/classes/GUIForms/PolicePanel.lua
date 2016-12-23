@@ -198,16 +198,16 @@ function PolicePanel:receiveBugs(bugTable)
 end
 
 function PolicePanel:onSelectBug(id)
-	outputChatBox(id)
 	self.m_CurrentSelectedBugId = id
-
-	if self.m_BugData and self.m_BugData[id] and self.m_BugData[id]["active"] and self.m_BugData[id]["active"] == true then
+	if self.m_BugData and self.m_BugData[id] and self.m_BugData[id]["element"] and isElement(self.m_BugData[id]["element"]) then
 		self.m_BugState:setText(_"Status: aktiv")
 		self.m_BugState:setColor(Color.Green)
 
+	else
+		self.m_BugState:setText(_"Status: deaktiviert")
+		self.m_BugState:setColor(Color.Red)
 	end
-	self.m_BugState:setText(_"Status: deaktiviert")
-	self.m_BugState:setColor(Color.Red)
+
 end
 
 function PolicePanel:bugAction(func)

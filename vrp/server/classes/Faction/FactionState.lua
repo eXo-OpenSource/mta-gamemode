@@ -1226,8 +1226,7 @@ function FactionState:Event_freePlayer(target)
 end
 
 function FactionState:addBugLog(player, func, msg)
-	if #self.m_Bugs == 0 then return end
-
+	if not self:isBugActive() then return end
 	local colSize = CHAT_TALK_RANGE
 
 	if func == "flüstert" then
@@ -1237,7 +1236,7 @@ function FactionState:addBugLog(player, func, msg)
 	end
 
 	local col = createColSphere(player:getPosition(), colSize)
-	local elements = col:getElementsWithin("object")
+	local elements = col:getElementsWithin()
 	col:destroy()
 
 	for i=1, #elements do
@@ -1246,8 +1245,8 @@ function FactionState:addBugLog(player, func, msg)
 
 			if self.m_Bugs[id] then
 				local logId = #self.m_Bugs[id]["log"]+1
-				self.m_Bugs[id]["log"][logId] = player.." "..func..": "..msg
-				self:sendShortMessage("Wanze "..id.." hat etwas empfangen! (Drücke F4)")
+				self.m_Bugs[id]["log"][logId] = player:getName().." "..func..": "..msg
+				self:sendShortMessage("Wanze "..id.." hat etwas empfangen!\n(Drücke F4)")
 
 			end
 		end
@@ -1262,6 +1261,15 @@ function FactionState:getFreeBug()
 	for id, bugData in ipairs(self.m_Bugs) do
 		if not bugData["active"] or bugData["active"] == false then
 			return id
+		end
+	end
+	return false
+end
+
+function FactionState:isBugActive()
+	for id, bugData in pairs(self.m_Bugs) do
+		if bugData["active"] and bugData["active"] == true then
+			return true
 		end
 	end
 	return false
@@ -1282,6 +1290,7 @@ function FactionState:Event_attachBug()
 		self.m_Bugs[id]["object"]:setCollisionsEnabled(false)
 		self.m_Bugs[id]["object"]:attach(source, 0, 0, 0)
 		self.m_Bugs[id]["object"].BugId = id
+		source.BugId = id
 		client:triggerEvent("receiveBugs", self.m_Bugs)
 
 		client:sendSuccess(_("Du hast Wanze %d an diesem %s angebracht!", client, id, typeName))
@@ -1293,6 +1302,7 @@ end
 function FactionState:Event_bugAction(action, id)
 	if not self.m_Bugs[id] then
 		if action == "disable" then
+			self.m_Bugs[id]["element"].BugId = nil
 			self.m_Bugs[id] = false
 			client:sendSuccess(_("Du hast Wanze %d deaktiviert!", client, id))
 		elseif action == "clearLog" then
