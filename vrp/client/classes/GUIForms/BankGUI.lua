@@ -17,15 +17,8 @@ function BankGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Kontostand:", self.m_Window):setColor(Color.Green)
 	self.m_AccountBalanceLabel = GUILabel:new(self.m_Width*0.25, self.m_Height*0.37, self.m_Width*0.34, self.m_Height*0.07, "Loading...", self.m_Window)
 
-	if localPlayer:getGroupId() and localPlayer:getGroupId() > 0 then
-		self.m_GroupGUI = GUIButton:new(self.m_Width-self.m_Width*0.52,  self.m_Height*0.37, self.m_Width*0.5, self.m_Height*0.07, _("Zum %s-Konto wechseln >>>", localPlayer:getGroupType()), self.m_Window):setFontSize(1):setBackgroundColor(Color.LightBlue)
-		self.m_GroupGUI.onLeftClick = function()
-			self:close()
-			triggerServerEvent("groupOpenBankGui", localPlayer)
-		end
-	end
-
 	self.m_TabPanel = GUITabPanel:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width-2*self.m_Width*0.02, self.m_Height*0.52, self.m_Window)
+	self.m_TabPanel.onTabChanged = bind(self.TabPanel_TabChanged, self)
 	local tabWidth, tabHeight = self.m_TabPanel:getSize()
 
 	self.m_TabWithdraw = self.m_TabPanel:addTab(_"Auszahlen")
@@ -47,11 +40,23 @@ function BankGUI:constructor()
 	self.m_TransferAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.28, tabWidth*0.5, tabHeight*0.15, self.m_TabTransfer)
 	self.m_TransferButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Überweisen", true, self.m_TabTransfer)
 	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
+
+	if localPlayer:getGroupId() and localPlayer:getGroupId() > 0 then
+		self.m_TabGroup = self.m_TabPanel:addTab(_("%s-Konto", localPlayer:getGroupType()))
+	end
+
+	-- add money receiv event
+	addEventHandler("bankMoneyBalanceRetrieve", root, bind(self.Event_OnMoneyReceive, self))
 end
 
 function BankGUI:onShow()
 	triggerServerEvent("bankMoneyBalanceRequest", root)
-	addEventHandler("bankMoneyBalanceRetrieve", root, function(amount) self.m_AccountBalanceLabel:setText(tostring(amount).."$") end)
+
+	self.m_TabPanel:forceTab(self.m_TabWithdraw.TabIndex)
+end
+
+function BankGUI:Event_OnMoneyReceive(amount)
+	self.m_AccountBalanceLabel:setText(tostring(amount).."$")
 end
 
 function BankGUI:WithdrawButton_Click()
@@ -81,5 +86,14 @@ function BankGUI:TransferButton_Click()
 		triggerServerEvent("bankTransfer", root, toCharName, amount)
 	else
 		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
+	end
+end
+
+function BankGUI:TabPanel_TabChanged(tabId)
+	if self.m_TabGroup then
+		if tabId == self.m_TabGroup.TabIndex then
+			self:close()
+			triggerServerEvent("groupOpenBankGui", localPlayer)
+		end
 	end
 end

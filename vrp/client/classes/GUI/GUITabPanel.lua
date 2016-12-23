@@ -9,8 +9,8 @@ GUITabPanel = inherit(GUITabControl)
 
 function GUITabPanel:constructor(posX, posY, width, height, parent)
 	checkArgs("GUITabControl:constructor", "number", "number", "number", "number")
-	GUITabControl.constructor(self, posX, posY, width, height, parent)
 
+	GUITabControl.constructor(self, posX, posY, width, height, parent)
 end
 
 function GUITabPanel:addTab(tabName)
@@ -23,17 +23,18 @@ function GUITabPanel:addTab(tabName)
 
 	local id = #self.m_Tabs+1
 	tabButton.onLeftClick = function()
-		self:setTab(id)
+		-- self:setTab(id)
 
-		for k, v in ipairs(self.m_Children) do
-			if instanceof(v, GUIButton) then
-				v:setColor(Color.White)
-				v:setBackgroundColor(Color.Grey)
-			end
-		end
+		-- for k, v in ipairs(self.m_Children) do
+		-- 	if instanceof(v, GUIButton) then
+		-- 		v:setColor(Color.White)
+		-- 		v:setBackgroundColor(Color.Grey)
+		-- 	end
+		-- end
 
-		tabButton:setColor(Color.Grey)
-		tabButton:setBackgroundColor(Color.LightBlue)
+		-- tabButton:setColor(Color.Grey)
+		-- tabButton:setBackgroundColor(Color.LightBlue)
+		self:forceTab(id)
 	end
 
 	self.m_Tabs[id] = GUIElement:new(0, 30, self.m_Width, self.m_Height-30, self)
@@ -56,4 +57,22 @@ function GUITabPanel:drawThis()
 
 	-- Draw a seperator line
 	dxDrawRectangle(self.m_AbsoluteX, self.m_AbsoluteY + 30, self.m_Width, 2, Color.White)
+end
+
+function GUITabPanel:forceTab(tabId)
+	if not self.m_Tabs[tabId] then return false end
+	local tab = self.m_Tabs[tabId]
+	self:setTab(tabId)
+
+	for k, v in ipairs(self.m_Children) do
+		if instanceof(v, GUIButton) then
+			v:setColor(Color.White)
+			v:setBackgroundColor(Color.Grey)
+		end
+	end
+
+	tab.TabButton:setColor(Color.Grey)
+	tab.TabButton:setBackgroundColor(Color.LightBlue)
+
+	return tab
 end
