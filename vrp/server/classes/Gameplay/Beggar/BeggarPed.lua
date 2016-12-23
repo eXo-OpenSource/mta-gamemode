@@ -11,7 +11,7 @@ end
 function BeggarPed:constructor(Id)
 	self.m_Id = Id
 	self.m_Name = Randomizer:getRandomTableValue(BeggarNames)
-	self.m_ColShape = ColShape.Sphere(self:getPosition(), 10)
+	self.m_ColShape = createColSphere(self:getPosition(), 10)
 	self.m_Type = math.random(1, 3)
 	self.m_LastRobTime = 0
 
@@ -31,7 +31,7 @@ function BeggarPed:constructor(Id)
 end
 
 function BeggarPed:destructor()
-	if self.m_ColShape and isElement(self.m_Colshape) then self.m_ColShape:destroy() end
+	if self.m_ColShape then	self.m_ColShape:destroy() end
 	-- Remove ref
 	BeggarPedManager:getSingleton():removeRef(self)
 end
@@ -143,7 +143,7 @@ function BeggarPed:acceptTransport(player)
 							player:sendShortMessage(_("+%s Karma", player, math.floor(karma)))
 							player:givePoints(1)
 							self:sendMessage(player, BeggarPhraseTypes.Thanks)
-							self:deleteBeggarTransport(player)
+							self:deleteTransport(player)
 							return
 						else
 							player:sendError(_("Du hast den Bettler nicht dabei", player))
@@ -167,14 +167,14 @@ end
 function BeggarPed:onTransportExit(exitPlayer)
 	if exitPlayer.beggarTransportMarker or exitPlayer == self then
 		exitPlayer:sendError(_("Bettler-Transport fehlgeschlagen", exitPlayer))
-		self:deleteBeggarTransport(exitPlayer)
+		self:deleteTransport(exitPlayer)
 	end
 end
 
 function BeggarPed:onTransportDestroy()
 	local player = vehicle:getOccupant()
 	player:sendError(_("Bettler-Transport fehlgeschlagen", player))
-	self:deleteBeggarTransport(player)
+	self:deleteTransport(player)
 end
 
 function BeggarPed:sendMessage(player, type)
