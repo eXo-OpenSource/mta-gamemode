@@ -98,23 +98,34 @@ function PolicePanel:constructor()
 	self.m_BugsGrid:addColumn(_"Aktiv", 0.5)
 
 	self.m_BugState = GUILabel:new(170, 10, 240, 25, _"Status: -", self.m_TabBugs)
-	self.m_BugType = GUILabel:new(170, 35, 240, 25, _"angebracht an: -", self.m_TabBugs)
-	self.m_BugOwner = GUILabel:new(170, 60, 240, 25, _"Name: -", self.m_TabBugs)
+	self.m_BugType = GUILabel:new(170, 35, 350, 25, _"angebracht an: -", self.m_TabBugs)
+	self.m_BugOwner = GUILabel:new(170, 60, 350, 25, _"Besitzer: -", self.m_TabBugs)
 
-	self.m_BugLogGrid = GUIGridList:new(170, 100, 390, 270, self.m_TabBugs)
+	self.m_BugLogGrid = GUIGridList:new(170, 100, 390, 275, self.m_TabBugs)
 	self.m_BugLogGrid:setItemHeight(20)
+	self.m_BugLogGrid:setFont(VRPFont(20))
 	self.m_BugLogGrid:addColumn(_"Log", 1)
 
-	self.m_BugLocate = GUIButton:new(420, 10, 160, 30, _"orten", self.m_TabBugs)
+	self.m_BugLocate = GUIButton:new(430, 10, 140, 25, _"orten", self.m_TabBugs)
 	self.m_BugLocate:setBackgroundColor(Color.Green)
+	self.m_BugLocate:setEnabled(false)
 	self.m_BugLocate.onLeftClick = function() self:bugAction("locate") end
 
-	self.m_BugClearLog = GUIButton:new(420, 50, 160, 25, _"Log löschen", self.m_TabBugs)
+	self.m_BugClearLog = GUIButton:new(430, 40, 140, 25, _"Log löschen", self.m_TabBugs)
 	self.m_BugClearLog:setBackgroundColor(Color.Blue)
+	self.m_BugClearLog:setEnabled(false)
 	self.m_BugClearLog.onLeftClick = function() self:bugAction("clearLog") end
 
-	self.m_BugDisable = GUIButton:new(420, 50, 160, 25, _"deaktivieren", self.m_TabBugs)
+	self.m_BugRefresh = GUIButton:new(400, 70, 25, 25, FontAwesomeSymbols.Refresh, self.m_TabBugs):setFont(FontAwesome(12))
+	self.m_BugRefresh:setBackgroundColor(Color.LightBlue)
+	self.m_BugRefresh:setEnabled(false)
+	self.m_BugRefresh.onLeftClick = function()
+		triggerServerEvent("factionStateLoadBugs", root)
+	end
+
+	self.m_BugDisable = GUIButton:new(430, 70, 140, 25, _"deaktivieren", self.m_TabBugs)
 	self.m_BugDisable:setBackgroundColor(Color.Red)
+	self.m_BugDisable:setEnabled(false)
 	self.m_BugDisable.onLeftClick = function() self:bugAction("disable") end
 
 	self.m_TabWantedRules = self.m_TabPanel:addTab(_"W. Regeln")
@@ -188,6 +199,7 @@ function PolicePanel:receiveBugs(bugTable)
 
 		if id == self.m_CurrentSelectedBugId  then
 			item:onInternalLeftClick()
+			self:onSelectBug(id)
 		end
 
 		item.onLeftClick = function()
@@ -200,12 +212,41 @@ end
 function PolicePanel:onSelectBug(id)
 	self.m_CurrentSelectedBugId = id
 	if self.m_BugData and self.m_BugData[id] and self.m_BugData[id]["element"] and isElement(self.m_BugData[id]["element"]) then
+		local owner, ownerType, item
+		local element = self.m_BugData[id]["element"]
+
+		if element:getType() == "vehicle" then
+			owner = element:getData("OwnerName") or "Unbekannt"
+			ownerType = "Fahrzeug"
+		elseif element:getType() == "player" then
+			owner = element:getName() or "Unbekannt"
+			ownerType = "Spieler"
+		end
+
+		self.m_BugOwner:setText("angebracht an: "..ownerType)
+		self.m_BugType:setText("Besitzer: "..owner)
 		self.m_BugState:setText(_"Status: aktiv")
 		self.m_BugState:setColor(Color.Green)
 
+		self.m_BugLogGrid:clear()
+		for index, msg in pairs(self.m_BugData[id]["log"]) do
+			item = self.m_BugLogGrid:addItem(msg)
+			item:setFont(VRPFont(20))
+		end
+
+		self.m_BugDisable:setEnabled(true)
+		self.m_BugClearLog:setEnabled(true)
+		self.m_BugLocate:setEnabled(true)
+		self.m_BugRefresh:setEnabled(true)
+
 	else
+		self.m_BugLogGrid:clear()
 		self.m_BugState:setText(_"Status: deaktiviert")
 		self.m_BugState:setColor(Color.Red)
+		self.m_BugDisable:setEnabled(false)
+		self.m_BugClearLog:setEnabled(false)
+		self.m_BugLocate:setEnabled(false)
+		self.m_BugRefresh:setEnabled(false)
 	end
 
 end
@@ -216,8 +257,8 @@ function PolicePanel:bugAction(func)
 
 		if self.m_BugData and self.m_BugData[id] and self.m_BugData[id]["active"] and self.m_BugData[id]["active"] == true then
 			if func == "locate" then
-				if self.m_BugData[id]["object"] and isElement(self.m_BugData[id]["object"]) then
-					self:locateElement(self.m_BugData[id]["object"])
+				if self.m_BugData[id]["element"] and isElement(self.m_BugData[id]["element"]) then
+					self:locateElement(self.m_BugData[id]["element"])
 				else
 					ErrorBox:new(_"Die Wanze wurde nicht gefunden!")
 				end

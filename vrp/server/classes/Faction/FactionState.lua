@@ -1281,30 +1281,24 @@ function FactionState:Event_attachBug()
 		local typeName = source:getType() == "vehicle" and "Fahrzeug" or "Spieler"
 
 		self.m_Bugs[id] = {
-			["object"] = createObject(2886, 0, 0, 0),
 			["element"] = source,
 			["log"] = {},
 			["active"] = true
 		}
-		self.m_Bugs[id]["object"]:setAlpha(0)
-		self.m_Bugs[id]["object"]:setCollisionsEnabled(false)
-		self.m_Bugs[id]["object"]:attach(source, 0, 0, 0)
-		self.m_Bugs[id]["object"].BugId = id
 		source.BugId = id
 		client:triggerEvent("receiveBugs", self.m_Bugs)
-
-		client:sendSuccess(_("Du hast Wanze %d an diesem %s angebracht!", client, id, typeName))
+		self:sendShortMessage(client:getName().." hat Wanze "..id.." an ein/en "..typeName.." angebracht!")
 	else
 		client:sendError(_("Alle verfügbaren Wanzen sind aktiv!", client))
 	end
 end
 
 function FactionState:Event_bugAction(action, id)
-	if not self.m_Bugs[id] then
+	if self.m_Bugs[id] then
 		if action == "disable" then
 			self.m_Bugs[id]["element"].BugId = nil
-			self.m_Bugs[id] = false
-			client:sendSuccess(_("Du hast Wanze %d deaktiviert!", client, id))
+			self.m_Bugs[id] = {}
+			self:sendShortMessage(client:getName().." hat Wanze "..id.." deaktiviert!")
 		elseif action == "clearLog" then
 			self.m_Bugs[id]["log"] = {}
 			client:sendSuccess(_("Du hast den Log der Wanze %d gelöscht!", client, id))
