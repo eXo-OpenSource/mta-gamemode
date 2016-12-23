@@ -301,6 +301,7 @@ function PlayerManager:playerChat(message, messageType)
 				end
 			end
 			StatisticsLogger:getSingleton():addChatLog(source, "chat", message, toJSON(receivedPlayers))
+			FactionState:getSingleton():addBugLog(source, "sagt", message)
 		else
 			-- Send handy message
 			outputChatBox(_("%s (Handy) sagt: %s", phonePartner, getPlayerName(source), message), phonePartner, 0, 255, 0)
@@ -316,7 +317,7 @@ function PlayerManager:playerChat(message, messageType)
 				end
 			end
 			StatisticsLogger:getSingleton():addChatLog(source, "chat", ("(Handy) %s"):format(message), toJSON(receivedPlayers))
-
+			FactionState:getSingleton():addBugLog(source, "(Handy)", message)
 		end
 		cancelEvent()
 	elseif messageType == 1 then
@@ -340,6 +341,7 @@ function PlayerManager:Command_playerScream(source , cmd, ...)
             receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
         end
 	end
+	FactionState:getSingleton():addBugLog(source, "schreit", text)
 	StatisticsLogger:getSingleton():addChatLog(source, "scream", text, toJSON(receivedPlayers))
 end
 
@@ -358,6 +360,7 @@ function PlayerManager:Command_playerWhisper(source , cmd, ...)
 			receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
 		end
 	end
+	FactionState:getSingleton():addBugLog(source, "flüstert", text)
 	StatisticsLogger:getSingleton():addChatLog(source, "whisper", text, toJSON(receivedPlayers))
 end
 

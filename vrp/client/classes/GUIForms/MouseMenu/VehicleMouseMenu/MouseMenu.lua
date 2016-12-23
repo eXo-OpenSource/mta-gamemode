@@ -53,8 +53,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-	if getElementData(element, "StateVehicle") then
-		if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+	if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+		if getElementData(element, "StateVehicle") then
 			self:addItem(_("Items >>>", item),
 				function()
 					if self:getElement() then
@@ -64,6 +64,15 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			)
 		end
+		if localPlayer:getFaction():getId() == 2 then
+			self:addItem(_"Wanze anbringen",
+					function()
+						if self:getElement() then
+							triggerServerEvent("factionStateAttachBug", self:getElement())
+						end
+					end
+				)
+			end
 	end
 	if getElementData(element, "OwnerName") == localPlayer.name then
 		self:addItem(_"Schlüssel",

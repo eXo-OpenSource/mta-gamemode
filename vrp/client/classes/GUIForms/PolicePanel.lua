@@ -9,9 +9,9 @@
 PolicePanel = inherit(GUIForm)
 inherit(Singleton, PolicePanel)
 
-local PlayerLocateBlip, PlayerLocateTimer
+local ElementLocateBlip, ElementLocateTimer
 
-addRemoteEvents{"receiveJailPlayers"}
+addRemoteEvents{"receiveJailPlayers", "receiveBugs"}
 
 function PolicePanel:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
@@ -91,16 +91,44 @@ function PolicePanel:constructor()
 
 	self:loadPlayers()
 
-	self.m_TabWantedRules = self.m_TabPanel:addTab(_"Wantedregeln")
+
+	self.m_TabBugs = self.m_TabPanel:addTab(_"Wanzen")
+	self.m_BugsGrid = GUIGridList:new(10, 10, 150, 370, self.m_TabBugs)
+	self.m_BugsGrid:addColumn(_"Wanze", 0.5)
+	self.m_BugsGrid:addColumn(_"Aktiv", 0.5)
+
+	self.m_BugState = GUILabel:new(170, 10, 240, 25, _"Status: -", self.m_TabBugs)
+	self.m_BugType = GUILabel:new(170, 35, 240, 25, _"angebracht an: -", self.m_TabBugs)
+	self.m_BugOwner = GUILabel:new(170, 60, 240, 25, _"Name: -", self.m_TabBugs)
+
+	self.m_BugLogGrid = GUIGridList:new(170, 100, 390, 270, self.m_TabBugs)
+	self.m_BugLogGrid:setItemHeight(20)
+	self.m_BugLogGrid:addColumn(_"Log", 1)
+
+	self.m_BugLocate = GUIButton:new(420, 10, 160, 30, _"orten", self.m_TabBugs)
+	self.m_BugLocate:setBackgroundColor(Color.Green)
+	self.m_BugLocate.onLeftClick = function() self:bugAction("locate") end
+
+	self.m_BugClearLog = GUIButton:new(420, 50, 160, 25, _"Log löschen", self.m_TabBugs)
+	self.m_BugClearLog:setBackgroundColor(Color.Blue)
+	self.m_BugClearLog.onLeftClick = function() self:bugAction("clearLog") end
+
+	self.m_BugDisable = GUIButton:new(420, 50, 160, 25, _"deaktivieren", self.m_TabBugs)
+	self.m_BugDisable:setBackgroundColor(Color.Red)
+	self.m_BugDisable.onLeftClick = function() self:bugAction("disable") end
+
+	self.m_TabWantedRules = self.m_TabPanel:addTab(_"W. Regeln")
 	GUIWebView:new(10, 10, self.m_Width-20, self.m_Height-20, "http://exo-reallife.de/ingame/other/wanteds.php", true, self.m_TabWantedRules)
 
 	addEventHandler("receiveJailPlayers", root, bind(self.receiveJailPlayers, self))
-
+	addEventHandler("receiveBugs", root, bind(self.receiveBugs, self))
 end
 
 function PolicePanel:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabJail.TabIndex then
 		triggerServerEvent("factionStateLoadJailPlayers", root)
+	elseif tabId == self.m_TabBugs.TabIndex then
+		triggerServerEvent("factionStateLoadBugs", root)
 	end
 end
 
@@ -142,6 +170,68 @@ function PolicePanel:receiveJailPlayers(playerTable)
 	end
 end
 
+
+function PolicePanel:receiveBugs(bugTable)
+	self.m_BugsGrid:clear()
+	self.m_BugData = bugTable
+
+	local pos, active = ""
+
+	for id, bugData in ipairs(bugTable) do
+
+		active = _"Nein"
+		if bugData["element"] and isElement(bugData["element"]) then
+			active = "Ja"
+		end
+
+		local item = self.m_BugsGrid:addItem(id, active)
+
+		if id == self.m_CurrentSelectedBugId  then
+			item:onInternalLeftClick()
+		end
+
+		item.onLeftClick = function()
+			triggerServerEvent("factionStateLoadBugs", root)
+			self:onSelectBug(id)
+		end
+	end
+end
+
+function PolicePanel:onSelectBug(id)
+	outputChatBox(id)
+	self.m_CurrentSelectedBugId = id
+
+	if self.m_BugData and self.m_BugData[id] and self.m_BugData[id]["active"] and self.m_BugData[id]["active"] == true then
+		self.m_BugState:setText(_"Status: aktiv")
+		self.m_BugState:setColor(Color.Green)
+
+	end
+	self.m_BugState:setText(_"Status: deaktiviert")
+	self.m_BugState:setColor(Color.Red)
+end
+
+function PolicePanel:bugAction(func)
+	if self.m_CurrentSelectedBugId and self.m_CurrentSelectedBugId > 0 then
+		local id = self.m_CurrentSelectedBugId
+
+		if self.m_BugData and self.m_BugData[id] and self.m_BugData[id]["active"] and self.m_BugData[id]["active"] == true then
+			if func == "locate" then
+				if self.m_BugData[id]["object"] and isElement(self.m_BugData[id]["object"]) then
+					self:locateElement(self.m_BugData[id]["object"])
+				else
+					ErrorBox:new(_"Die Wanze wurde nicht gefunden!")
+				end
+			else
+				triggerServerEvent("factionStateBugAction", localPlayer, func, id)
+			end
+		else
+			ErrorBox:new("Diese Wanze ist nicht aktiviert!")
+		end
+	else
+		ErrorBox:new("Keine Wanze ausgewählt!")
+	end
+end
+
 function PolicePanel:onSelectPlayer(player)
 	self.m_PlayerNameLabel:setText(_("Spieler: %s", player:getName()))
 	self.m_PlayerFactionLabel:setText(_("Fraktion: %s", player:getFaction() and player:getFaction():getShortName() or "- Keine -"))
@@ -173,39 +263,47 @@ function PolicePanel:locatePlayer()
 	local player = item.player
 	if isElement(player) then
 		if player:getPublicSync("Phone") == true then
-			if getElementDimension(player) == 0 and getElementInterior(player) == 0 then
-				if PlayerLocateBlip then delete(PlayerLocateBlip) end
-				if isTimer(PlayerLocateTimer) then killTimer(PlayerLocateTimer) end
-
-				local pos = player:getPosition()
-				PlayerLocateBlip = Blip:new("Locate.png", pos.x, pos.y,9999)
-				PlayerLocateBlip:attachTo(player)
-				InfoBox:new(_"Spieler geortet! Folge dem Blip auf der Karte!")
-				localPlayer.m_LocatingPlayer = player
-				PlayerLocateTimer = setTimer(function()
-					if localPlayer.m_LocatingPlayer and isElement(localPlayer.m_LocatingPlayer) then
-						local int = getElementInterior(localPlayer.m_LocatingPlayer)
-						local dim = getElementDimension(localPlayer.m_LocatingPlayer)
-						if int > 0 or dim > 0 then
-							if PlayerLocateBlip then delete(PlayerLocateBlip) end
-							ErrorBox:new(_"Der Spieler ist in einem Gebäude!")
-							killTimer(PlayerLocateTimer)
-							localPlayer.m_LocatingPlayer = false
-						end
-						if not player:getPublicSync("Phone") == true then
-							if PlayerLocateBlip then delete(PlayerLocateBlip) end
-							ErrorBox:new(_"Der Spieler hat sein Handy ausgeschaltet!")
-							killTimer(PlayerLocateTimer)
-							localPlayer.m_LocatingPlayer = false
-						end
-					end
-				end, 1000, 0)
-			else ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Er ist in einem Gebäude!")
-			end
-		else ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Sein Handy ist ausgeschaltet!")
+			self:locateElement(player)
+		else
+			ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Sein Handy ist ausgeschaltet!")
 		end
 	else
 		ErrorBox:new(_"Spieler nicht mehr online!")
+	end
+end
+
+function PolicePanel:locateElement(element)
+	local elementText = element:getType() == "player" and _"Der Spieler" or _"Die Wanze"
+
+	if getElementDimension(element) == 0 and getElementInterior(element) == 0 then
+		if ElementLocateBlip then delete(ElementLocateBlip) end
+		if isTimer(ElementLocateTimer) then killTimer(ElementLocateTimer) end
+
+		local pos = element:getPosition()
+		ElementLocateBlip = Blip:new("Locate.png", pos.x, pos.y,9999)
+		ElementLocateBlip:attachTo(element)
+		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
+		localPlayer.m_LocatingElement = element
+		ElementLocateTimer = setTimer(function()
+			if localPlayer.m_LocatingElement and isElement(localPlayer.m_LocatingElement) then
+				local int = getElementInterior(localPlayer.m_LocatingElement)
+				local dim = getElementDimension(localPlayer.m_LocatingElement)
+				if int > 0 or dim > 0 then
+					if ElementLocateBlip then delete(ElementLocateBlip) end
+					ErrorBox:new(_("%s ist in einem Gebäude!", elementText))
+					killTimer(ElementLocateTimer)
+					localPlayer.m_LocatingElement = false
+				end
+				if element:getType() == "player" and not element:getPublicSync("Phone") == true then
+					if ElementLocateBlip then delete(ElementLocateBlip) end
+					ErrorBox:new(_"Der Spieler hat sein Handy ausgeschaltet!")
+					killTimer(ElementLocateTimer)
+					localPlayer.m_LocatingElement = false
+				end
+			end
+		end, 1000, 0)
+	else
+		ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Er ist in einem Gebäude!")
 	end
 end
 

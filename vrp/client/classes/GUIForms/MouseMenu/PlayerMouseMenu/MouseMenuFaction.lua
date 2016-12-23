@@ -71,6 +71,14 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 					end
 				end
 			)
+		elseif localPlayer:getFaction():getId() == 2 then
+			self:addItem(_"Fraktion: Wanze verstecken",
+				function()
+					if self:getElement() then
+						triggerServerEvent("factionStateAttachBug", self:getElement())
+					end
+				end
+			)
 		end
 	end
 end

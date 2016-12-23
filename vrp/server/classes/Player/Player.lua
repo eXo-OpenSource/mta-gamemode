@@ -955,6 +955,7 @@ function Player:meChat(system, ...)
 	end
 	if not system then
 		StatisticsLogger:getSingleton():addChatLog(self, "me", text, toJSON(receivedPlayers))
+		FactionState:getSingleton():addBugLog(self, "", text)
 	end
 end
 

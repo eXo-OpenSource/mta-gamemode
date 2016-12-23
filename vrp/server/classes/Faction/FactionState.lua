@@ -26,6 +26,12 @@ function FactionState:constructor()
 	self:createGasStation(Vector3(1552.93,-1614.40, 12.5)) -- LS PD
 
 
+	self.m_Bugs = {}
+
+	for i = 1, FACTION_FBI_BUGS do
+		self.m_Bugs[i] = {}
+	end
+
 	self.m_SelfBailMarker = {}
 	self:createSelfArrestMarker(249.67, 69.19, 1003.64, 6,0)
 	self.m_Items = {
@@ -48,7 +54,7 @@ function FactionState:constructor()
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket",
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
-	"factionStateFillRepairVehicle"
+	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction"
 	}
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -80,6 +86,12 @@ function FactionState:constructor()
 	addEventHandler("factionStateTakeItemFromVehicle", root, bind(self.Event_takeItemFromVehicle, self))
 	addEventHandler("factionStateLoadJailPlayers", root, bind(self.Event_loadJailPlayers, self))
 	addEventHandler("factionStateFreePlayer", root, bind(self.Event_freePlayer, self))
+	addEventHandler("factionStateLoadBugs", root, bind(self.Event_loadBugs, self))
+	addEventHandler("factionStateAttachBug", root, bind(self.Event_attachBug, self))
+	addEventHandler("factionStateBugAction", root, bind(self.Event_bugAction, self))
+
+
+
 	addEventHandler("stateFactionSuccessCuff", root, bind(self.Event_CuffSuccess, self))
 	addEventHandler("factionStateAcceptTicket", root, bind(self.Event_OnTicketAccept, self))
 	addEventHandler("playerSelfArrestConfirm", root, bind(self.Event_OnConfirmSelfArrest, self))
@@ -968,7 +980,7 @@ function FactionState:checkLogout(player)
 	for index, cop in pairs(colPlayers) do
 		if cop:getFaction() and cop:getFaction():isStateFaction() and cop:isFactionDuty() then
 			self:Event_JailPlayer(player, false, false, cop)
-			player:addOfflineMessage( "Sie wurden offline eingesperrt!", 1) 
+			player:addOfflineMessage( "Sie wurden offline eingesperrt!", 1)
 			return
 		end
 	end
@@ -1210,5 +1222,85 @@ function FactionState:Event_freePlayer(target)
 		else
 			client:sendError(_("Du bist nicht berechtigt! Ab Rang %d!", client, FactionRank.Rank3))
 		end
+	end
+end
+
+function FactionState:addBugLog(player, func, msg)
+	if #self.m_Bugs == 0 then return end
+
+	local colSize = CHAT_TALK_RANGE
+
+	if func == "flüstert" then
+		colSize = CHAT_WHISPER_RANGE
+	elseif func == "schreit" then
+		colSize = CHAT_SCREAM_RANGE
+	end
+
+	local col = createColSphere(player:getPosition(), colSize)
+	local elements = col:getElementsWithin("object")
+	col:destroy()
+
+	for i=1, #elements do
+		if elements[i] and isElement(elements[i]) and elements[i].BugId then
+			local id = elements[i].BugId
+
+			if self.m_Bugs[id] then
+				local logId = #self.m_Bugs[id]["log"]+1
+				self.m_Bugs[id]["log"][logId] = player.." "..func..": "..msg
+				self:sendShortMessage("Wanze "..id.." hat etwas empfangen! (Drücke F4)")
+
+			end
+		end
+	end
+end
+
+function FactionState:Event_loadBugs()
+	client:triggerEvent("receiveBugs", self.m_Bugs)
+end
+
+function FactionState:getFreeBug()
+	for id, bugData in ipairs(self.m_Bugs) do
+		if not bugData["active"] or bugData["active"] == false then
+			return id
+		end
+	end
+	return false
+end
+
+function FactionState:Event_attachBug()
+	local id = self:getFreeBug()
+	if id then
+		local typeName = source:getType() == "vehicle" and "Fahrzeug" or "Spieler"
+
+		self.m_Bugs[id] = {
+			["object"] = createObject(2886, 0, 0, 0),
+			["element"] = source,
+			["log"] = {},
+			["active"] = true
+		}
+		self.m_Bugs[id]["object"]:setAlpha(0)
+		self.m_Bugs[id]["object"]:setCollisionsEnabled(false)
+		self.m_Bugs[id]["object"]:attach(source, 0, 0, 0)
+		self.m_Bugs[id]["object"].BugId = id
+		client:triggerEvent("receiveBugs", self.m_Bugs)
+
+		client:sendSuccess(_("Du hast Wanze %d an diesem %s angebracht!", client, id, typeName))
+	else
+		client:sendError(_("Alle verfügbaren Wanzen sind aktiv!", client))
+	end
+end
+
+function FactionState:Event_bugAction(action, id)
+	if not self.m_Bugs[id] then
+		if action == "disable" then
+			self.m_Bugs[id] = false
+			client:sendSuccess(_("Du hast Wanze %d deaktiviert!", client, id))
+		elseif action == "clearLog" then
+			self.m_Bugs[id]["log"] = {}
+			client:sendSuccess(_("Du hast den Log der Wanze %d gelöscht!", client, id))
+		end
+		client:triggerEvent("receiveBugs", self.m_Bugs)
+	else
+		client:sendError(_("Wanze nicht verfügbar!", client))
 	end
 end
