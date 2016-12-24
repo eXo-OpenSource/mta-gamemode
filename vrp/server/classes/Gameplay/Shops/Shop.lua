@@ -21,8 +21,11 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	self.m_OwnerType = ownerType or 0
 	self.m_Money = money
 	self.m_Position = position or nil
-
+	self.m_TypeName = "Shop"
 	self.m_TypeDataName = typeData["Name"]
+
+
+	self.m_ShopGUIBind = bind(self.openManageGUI, self)
 
 	if self.m_BuyAble == true and self.m_OwnerId > 0 then
 		self:loadOwner()
@@ -54,6 +57,12 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 175)
 		self.m_Marker:setInterior(interior)
 		self.m_Marker:setDimension(dimension)
+
+		self.m_ShopCol = createColSphere(typeData["Marker"], 50)
+		self.m_ShopCol:setDimension(dimension)
+		self.m_ShopCol:setInterior(interior)
+		addEventHandler("onColShapeHit", self.m_ShopCol, bind(self.onEnter, self))
+		addEventHandler("onColShapeLeave", self.m_ShopCol, bind(self.onExit, self))
 	end
 end
 
@@ -63,6 +72,30 @@ function Shop:loadOwner()
 	else
 		self.m_Owner = nil
 	end
+end
+
+function Shop:onEnter(hitElement, dim)
+	if dim and hitElement:getType() == "player" and source:getInterior() == hitElement:getInterior() then
+		if self.m_BuyAble then
+			hitElement:sendInfo(_("Drücke 'm' um das %s-Menü zu öffnen!", hitElement, self.m_TypeName))
+			bindKey(hitElement, "m", "down", self.m_ShopGUIBind)
+		end
+		if self.onShopEnter then self:onShopEnter(hitElement) end
+	end
+end
+
+function Shop:onExit(hitElement, dim)
+	if dim and hitElement:getType() == "player" then -- and source:getInterior() == hitElement:getInterior() then
+		if self.m_BuyAble then
+			unbindKey(hitElement, "m", "down", self.m_ShopGUIBind)
+			hitElement:triggerEvent("shopCloseManageGUI")
+		end
+		if self.onShopExit then self:onShopExit(hitElement) end
+	end
+end
+
+function Shop:openManageGUI(player)
+	player:triggerEvent("shopOpenManageGUI", self.m_Id, self.m_Name, self.m_TypeName, self.m_OwnerId, self:getOwnerName(), self.m_Price, self.m_SoundUrl, self.m_StripperEnabled)
 end
 
 function Shop:onFoodMarkerHit(hitElement, dim)
@@ -87,6 +120,8 @@ function Shop:onItemMarkerHit(hitElement, dim)
 		end
 	end
 end
+
+
 
 function Shop:getName()
 	return self.m_Name
