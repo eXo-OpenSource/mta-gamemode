@@ -108,16 +108,7 @@ function SelfGUI:constructor()
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 
-	self.m_ShortMessageLog = GUIButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"ShortMessage-Log", tabGeneral):setBackgroundColor(Color.Orange):setFontSize(1.2)
-	ShortMessageLogGUI:new()
-	self.m_ShortMessageLog.onLeftClick = function()
-		if ShortMessageLogGUI then
-			if not ShortMessageLogGUI:getSingleton():isVisible() then
-				ShortMessageLogGUI:getSingleton():show()
-				self:close()
-			end
-		end
-	end
+
 
 	-- Tab: Statistics
 	local tabStatistics = self.m_TabPanel:addTab(_"Statistiken")
@@ -409,6 +400,16 @@ function SelfGUI:constructor()
 	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Shader-Einstellungen", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
 	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
 
+	self.m_ShortMessageLog = GUIButton:new(self.m_Width*0.02, self.m_Height*0.72, self.m_Width*0.35, self.m_Height*0.07, _"ShortMessage-Log", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
+	ShortMessageLogGUI:new()
+	self.m_ShortMessageLog.onLeftClick = function()
+		if ShortMessageLogGUI then
+			if not ShortMessageLogGUI:getSingleton():isVisible() then
+				ShortMessageLogGUI:getSingleton():show()
+				self:close()
+			end
+		end
+	end
 	--[[ TODO: Do we require this?
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.8, self.m_Height*0.07, _"Tipps", tabSettings)
 	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren?", tabSettings)
