@@ -33,15 +33,16 @@ function BarManageGUI:addItems()
 	self:addItemNoClick("Wert: "..self.m_Price.."$", Color.White)
 	if self.m_OwnerId == 0 then
 		self:addItem(_"Bar kaufen", Color.Blue, bind(self.itemCallback, self, 2))
-	end
-	if self.m_OwnerId == localPlayer:getGroupId() then
-		self:addItem(_"Bar verkaufen", Color.Red, bind(self.itemCallback, self, 3))
-		self:addItem(_"Musik verwalten", Color.Green, bind(self.itemCallback, self, 1))
-		self:addItem(_"Kasse verwalten", Color.Blue, bind(self.itemCallback, self, 4))
-		if self.m_Stripper then
-			self:addItem(_"Stripperinnen entlassen", Color.Red, bind(self.itemCallback, self, 6))
-		else
-			self:addItem(_"Stripperinnen engagieren", Color.Red, bind(self.itemCallback, self, 5))
+	else
+		if self.m_OwnerId == localPlayer:getGroupId() then
+			self:addItem(_"Bar verkaufen", Color.Red, bind(self.itemCallback, self, 3))
+			self:addItem(_"Musik verwalten", Color.Green, bind(self.itemCallback, self, 1))
+			self:addItem(_"Kasse verwalten", Color.Blue, bind(self.itemCallback, self, 4))
+			if self.m_Stripper then
+				self:addItem(_"Stripperinnen entlassen", Color.Red, bind(self.itemCallback, self, 6))
+			else
+				self:addItem(_"Stripperinnen engagieren", Color.Red, bind(self.itemCallback, self, 5))
+			end
 		end
 	end
 end
