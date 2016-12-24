@@ -25,12 +25,13 @@ function SideSwipe:constructor()
 	self:loadColors()
 	self:loadDropPositions()
 	self:bindKeys()
-
 	--Update the render target
 	self:updateRenderTarget()
 
 	self._onClientRender = bind(SideSwipe.onClientRender, self)
 	addEventHandler("onClientRender", root, self._onClientRender)
+
+	localPlayer:setFrozen(true)
 end
 
 function SideSwipe:destructor()
@@ -40,8 +41,8 @@ function SideSwipe:destructor()
 
 	--unbind keys
 	unbindKey("backspace", "down", self._closeFunc)
-	unbindKey("num_4", "down", self._swipeFunc)
-	unbindKey("num_6", "down", self._swipeFunc)
+	unbindKey("arrow_l", "down", self._swipeFunc)
+	unbindKey("arrow_r", "down", self._swipeFunc)
 
 	--Stop/delete animations
 	delete(self.anim_swipeRight)
@@ -57,6 +58,8 @@ function SideSwipe:destructor()
 	end
 
 	collectgarbage()
+	localPlayer:setFrozen(false)
+
 end
 
 ----
@@ -123,8 +126,8 @@ function SideSwipe:bindKeys()
 
 	bindKey("backspace", "down", self._closeFunc)
 	--bindKey("arrow_l", "down", self._swipeFunc)
-	bindKey("num_4", "down", self._swipeFunc)
-	bindKey("num_6", "down", self._swipeFunc)
+	bindKey("arrow_l", "down", self._swipeFunc)
+	bindKey("arrow_r", "down", self._swipeFunc)
 	--bindKey("arrow_r", "down", self._swipeFunc)
 end
 
@@ -141,41 +144,41 @@ function SideSwipe:swipe(sKey)
 	end
 
 	if sKey == "arrow_r" or sKey == "num_6" then    --Blue
-	--if self.swipeToRightWidth ~= 0 then return end
-	if not self.dropsFalling then return end
-	self.swipeToRightWidth = 0
+		--if self.swipeToRightWidth ~= 0 then return end
+		if not self.dropsFalling then return end
+		self.swipeToRightWidth = 0
 
-	for ID, drop in ipairs(self.Drops) do
-		if not drop.killed and drop.type == "b" then
-			self.anim_swipeRight:startAnimation(150, "Linear", self.width + 200) -- + 200 looks better
-			drop.anim:stopAnimation()
-			drop.killed = true
-			self:explode(drop.startX, self[("DropY_%s"):format(ID)], "b")
+		for ID, drop in ipairs(self.Drops) do
+			if not drop.killed and drop.type == "b" then
+				self.anim_swipeRight:startAnimation(150, "Linear", self.width + 200) -- + 200 looks better
+				drop.anim:stopAnimation()
+				drop.killed = true
+				self:explode(drop.startX, self[("DropY_%s"):format(ID)], "b")
 
-			self:checkDrops()
-			return
+				self:checkDrops()
+				return
+			end
 		end
-	end
 
-	self:failed()
+		self:failed()
 	elseif sKey == "arrow_l" or sKey == "num_4" then   --Orange
-	--if self.swipeToLeftWidth ~= 0 then return end
-	if not self.dropsFalling then return end
-	self.swipeToLeftWidth = 0
+		--if self.swipeToLeftWidth ~= 0 then return end
+		if not self.dropsFalling then return end
+		self.swipeToLeftWidth = 0
 
-	for ID, drop in ipairs(self.Drops) do
-		if not drop.killed and drop.type == "o" then
-			self.anim_swipeLeft:startAnimation(150, "Linear", self.width + 200) -- + 200 looks better
-			drop.anim:stopAnimation()
-			drop.killed = true
-			self:explode(drop.startX, self[("DropY_%s"):format(ID)], "o")
+		for ID, drop in ipairs(self.Drops) do
+			if not drop.killed and drop.type == "o" then
+				self.anim_swipeLeft:startAnimation(150, "Linear", self.width + 200) -- + 200 looks better
+				drop.anim:stopAnimation()
+				drop.killed = true
+				self:explode(drop.startX, self[("DropY_%s"):format(ID)], "o")
 
-			self:checkDrops()
-			return
+				self:checkDrops()
+				return
+			end
 		end
-	end
 
-	self:failed()
+		self:failed()
 	end
 end
 
@@ -221,7 +224,10 @@ function SideSwipe:failed(type)
 	self.state = "Died"
 	self.blackY = self.height
 	self.blackWidth = 0
-	self.anim_failMove:startAnimation(450, "OutQuad", 0, self.width)
+
+	if self.anim_failMove then
+		self.anim_failMove:startAnimation(450, "OutQuad", 0, self.width)
+	end
 
 	for ID, drop in ipairs(self.Drops) do
 		if not drop.killed then
@@ -319,7 +325,6 @@ function SideSwipe:createDrops()
 		function()
 			--Calc speed
 			local speed = 1500 - (self.Score/10*75)
-			outputChatBox(speed)
 
 			for _, drop in ipairs(self.Drops) do
 				drop.anim:startAnimation(speed, "Linear", self.height)
