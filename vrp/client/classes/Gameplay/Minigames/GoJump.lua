@@ -51,7 +51,7 @@ function GoJump:constructor()
 end
 
 function GoJump:destructor()
-	--local st = getTickCount()
+	local st = getTickCount()
 	--Save stats
     --self:saveStatistics()
 
@@ -81,14 +81,6 @@ function GoJump:destructor()
     end
 
 	--local step2 = getTickCount()
-
-    for k, v in pairs(self) do
-       if isElement(v) and v.destroy then
-           v:destroy()
-       end
-
-       self[k] = nil
-    end
 
 	--local step3 = getTickCount()
 
