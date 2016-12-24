@@ -256,7 +256,9 @@ function GroupGUI:adjustGroupTab(rank)
 end
 
 function GroupGUI:GroupQuitButton_Click()
-	triggerServerEvent("groupQuit", root)
+	QuestionBox:new(_"Möchtest du deine Firma/Gang wirklich verlassen?", function()
+		triggerServerEvent("groupQuit", root)
+	end)
 end
 
 function GroupGUI:GroupDeleteButton_Click()
