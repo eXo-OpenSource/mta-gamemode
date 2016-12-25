@@ -18,7 +18,20 @@ function Account.login(player, username, password, pwhash)
 	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, InvitationId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
 	if not row or not row.Id then
-		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort")
+		board:queryFetchSingle(Async.waitFor(self), "SELECT password FROM wcf1_user WHERE username LIKE ?", username)
+		local row2 = Async.wait()
+		if row2 and row2.password then
+			if not pwhash then
+				local salt = string.sub(row2.password, 1, 29)
+				pwhash = WBBC.getDoubleSaltedHash(password, salt)
+			end
+			if pwhash == row.password then
+				Account.createAccount(player, boardId, username, email)
+				return
+			end
+		end
+
+		player:triggerEvent("loginfailed", "Fehler: Account nicht gefunden")
 		return false
 	end
 
@@ -125,31 +138,35 @@ function Account.register(player, username, password, email)
 		return false
 	end
 
-	local userID = Account.createForumAccount(username, password, email)
-	if userID then
-		local result, _, Id = sql:queryFetch("INSERT INTO ??_account (ForumID, Name, EMail, Rank, LastSerial, LastIP, LastLogin, RegisterDate) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW());", sql:getPrefix(), userID, username, email, 0, player:getSerial(), player:getIP())
-		if result then
-			player.m_Account = Account:new(Id, username, player, false)
-			player:createCharacter()
-			player:setRegistrationDate(getRealTime().timestamp)
-
-			if INVITATION then
-				if not Account.checkInvitation(player, Id, 0) then
-					return
-				end
-			end
-
-			player:loadCharacter()
-			player:triggerEvent("stopLoginCameraDrive")
-			player:triggerEvent("Event_StartScreen")
-			player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
-			StatisticsLogger:addLogin( player, username, "Login")
-			-- TODO: Send validation mail via PHP
-		end
+	local boardId = Account.createForumAccount(username, password, email)
+	if boardId then
+		Account.createAccount(player, boardId, username, email)
 	end
 end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(...) Async.create(Account.register)(client, ...) end)
+
+function Account.createAccount(player, boardId, username, email)
+	local result, _, Id = sql:queryFetch("INSERT INTO ??_account (ForumID, Name, EMail, Rank, LastSerial, LastIP, LastLogin, RegisterDate) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW());", sql:getPrefix(), boardId, username, email, 0, player:getSerial(), player:getIP())
+	if result then
+		player.m_Account = Account:new(Id, username, player, false)
+		player:createCharacter()
+		player:setRegistrationDate(getRealTime().timestamp)
+
+		if INVITATION then
+			if not Account.checkInvitation(player, Id, 0) then
+				return
+			end
+		end
+
+		player:loadCharacter()
+		player:triggerEvent("stopLoginCameraDrive")
+		player:triggerEvent("Event_StartScreen")
+		player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
+		StatisticsLogger:addLogin(player, username, "Login")
+		-- TODO: Send validation mail via PHP
+	end
+end
 
 function Account.guest(player)
 	player.m_Account = Account:new(0, "Guest", player, true)
