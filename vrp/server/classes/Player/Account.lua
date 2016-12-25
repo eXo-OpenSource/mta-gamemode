@@ -25,7 +25,7 @@ function Account.login(player, username, password, pwhash)
 				local salt = string.sub(row2.password, 1, 29)
 				pwhash = WBBC.getDoubleSaltedHash(password, salt)
 			end
-			if pwhash == row.password then
+			if pwhash == row2.password then
 				Account.createAccount(player, boardId, username, email)
 				return
 			end
