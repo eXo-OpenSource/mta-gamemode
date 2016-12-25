@@ -26,6 +26,7 @@ function Account.login(player, username, password, pwhash)
 				pwhash = WBBC.getDoubleSaltedHash(password, salt)
 			end
 			if pwhash == row2.password then
+				outputConsole("Creating Account for "..username)
 				Account.createAccount(player, row2.userID, row2.username, row2.email)
 				return
 			end
