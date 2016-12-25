@@ -18,7 +18,7 @@ function Account.login(player, username, password, pwhash)
 	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, InvitationId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
 	if not row or not row.Id then
-		board:queryFetchSingle(Async.waitFor(self), "SELECT password FROM wcf1_user WHERE username LIKE ?", username)
+		board:queryFetchSingle(Async.waitFor(self), "SELECT password, userID, email FROM wcf1_user WHERE username LIKE ?", username)
 		local row2 = Async.wait()
 		if row2 and row2.password then
 			if not pwhash then
@@ -26,7 +26,7 @@ function Account.login(player, username, password, pwhash)
 				pwhash = WBBC.getDoubleSaltedHash(password, salt)
 			end
 			if pwhash == row2.password then
-				Account.createAccount(player, boardId, username, email)
+				Account.createAccount(player, row2.userID, row2.username, row2.email)
 				return
 			end
 		end
