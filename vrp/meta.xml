@@ -178,6 +178,7 @@
 	<script src="server/classes/Gameplay/Shops/CluckinBell.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/RustyBrown.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/GasStation.lua" type="server"/>
 
 	<script src="server/constants/shops.lua" type="server"/>
 
@@ -234,7 +235,6 @@
 	<script src="server/classes/Vehicles/Storage/VehicleGarages.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleGarageSession.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleHarbor.lua" type="server"/>
-	<script src="server/classes/Vehicles/GasStation.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/AutomaticVehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/PayNSpray.lua" type="server"/>

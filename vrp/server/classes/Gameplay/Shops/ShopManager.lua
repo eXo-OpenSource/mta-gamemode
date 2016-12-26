@@ -16,7 +16,7 @@ local BURGER_SHOT_DIMS = {0, 1, 2, 3, 4, 5}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell",
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell", "gasStationFill",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
 	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw"
 	}
@@ -37,6 +37,7 @@ function ShopManager:constructor()
 	addEventHandler("barShopStartStripper", root, bind(self.barStartStripper, self))
 	addEventHandler("barShopStopStripper", root, bind(self.barStopStripper, self))
 
+	addEventHandler("gasStationFill", root, bind(self.onGasStationFill, self))
 
 	addEventHandler("shopOpenGUI", root, function(id)
 		if ShopManager.Map[id] then
@@ -117,6 +118,33 @@ function ShopManager:foodShopBuyMenu(shopId, menu)
 		end
 	else
 		client:sendError(_("Internal Error! Menu not found!", client))
+	end
+end
+
+function ShopManager:onGasStationFill(shopId)
+	local shop = self:getFromId(shopId)
+	if not shop then
+		client:sendError(_("Internal Error! Shop not found!", client))
+		return
+	end
+
+	local vehicle = getPedOccupiedVehicle(client)
+	if not vehicle then return end
+	if not instanceof(vehicle, PermanentVehicle, true) then
+		client:sendWarning(_("Nicht-permanente Fahrzeuge können nicht betankt werden!", client))
+		return
+	end
+
+	if client:getMoney() > 10 then
+		if vehicle:getFuel() <= 100-10 then
+			vehicle:setFuel(vehicle:getFuel() + 10)
+			client:takeMoney(10, "Tanken")
+			shop:giveMoney(5, "Betankung")
+		else
+			client:sendError(_("Dein Tank ist bereits voll", client))
+		end
+	else
+		client:sendError(_("Du hast nicht genügend Geld!", client))
 	end
 end
 

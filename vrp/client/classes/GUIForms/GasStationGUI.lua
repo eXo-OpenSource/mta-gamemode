@@ -19,14 +19,14 @@ function GasStationGUI:constructor()
 
 	addEvent("gasStationGUIOpen", true)
 	addEventHandler("gasStationGUIOpen", root,
-		function()
+		function(shopId)
 			self:setVisible(true)
 
 			if not self.m_FillTimer then
 				self.m_FillTimer = setTimer(
 					function()
 						if getKeyState("space") then
-							triggerServerEvent("gasStationFill", root)
+							triggerServerEvent("gasStationFill", root, shopId)
 						end
 					end,
 					1000,

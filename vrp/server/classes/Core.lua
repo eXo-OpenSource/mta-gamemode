@@ -85,7 +85,6 @@ function Core:constructor()
 		VehicleGarages.initalizeAll()
 		VehicleSpawner.initializeAll()
 		PayNSpray.initializeAll()
-		GasStation.initializeAll()
 		TollStation.initializeAll()
 		Depot.initalize()
 
