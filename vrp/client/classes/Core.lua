@@ -88,7 +88,6 @@ function Core:ready()
 	StreetRaceEvent:new()
 	VehicleGarages:new()
 	ELSSystem:new()
-	GasStationGUI:new()
 	SkinShopGUI.initializeAll()
 	ItemManager:new()
 	--// Gangwar
@@ -115,6 +114,7 @@ function Core:ready()
 	GUIWindowsFocus:new()
 	SprayWallManager:new()
 	AntiClickSpam:new()
+	GasStation:new()
 
 	ChessSession:new()
 

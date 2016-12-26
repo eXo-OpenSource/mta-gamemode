@@ -25,22 +25,25 @@ function GasStation:constructor(id, name, position, rotation, typeData, dimensio
 		local x, y, z, rot = unpack(SHOP_FUEL[self.m_Name]["FuelStation"])
 		self.m_GasStation = createObject(1676, x, y, z,0,0, rot)
 		self.m_GasStation:setCollisionsEnabled(false)
-		--self.m_GasStation:setData("GasStation", true, true)
 	else
 		outputDebugString("Shoperror: Gas-Station Data for "..self.m_Id.." not found!")
 	end
 
 end
 
+function GasStation:getFuelStation()
+	return self.m_GasStation
+end
+
 function GasStation:onFillMarkerHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension and getPedOccupiedVehicleSeat(hitElement) == 0 then
-		hitElement:triggerEvent("gasStationGUIOpen", self.m_Id)
+		hitElement:triggerEvent("gasStationStart", self.m_Id)
 	end
 end
 
 function GasStation:onFillMarkerLeave(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
-		hitElement:triggerEvent("gasStationGUIClose")
+		hitElement:triggerEvent("gasStationReset")
 	end
 end
 
