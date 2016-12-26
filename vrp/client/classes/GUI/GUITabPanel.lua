@@ -23,17 +23,6 @@ function GUITabPanel:addTab(tabName)
 
 	local id = #self.m_Tabs+1
 	tabButton.onLeftClick = function()
-		-- self:setTab(id)
-
-		-- for k, v in ipairs(self.m_Children) do
-		-- 	if instanceof(v, GUIButton) then
-		-- 		v:setColor(Color.White)
-		-- 		v:setBackgroundColor(Color.Grey)
-		-- 	end
-		-- end
-
-		-- tabButton:setColor(Color.Grey)
-		-- tabButton:setBackgroundColor(Color.LightBlue)
 		self:forceTab(id)
 	end
 
