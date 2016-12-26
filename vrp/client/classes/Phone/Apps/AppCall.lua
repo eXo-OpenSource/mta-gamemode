@@ -98,7 +98,7 @@ function MainActivity:constructor(app)
 
 	self.m_ButtonCallNumpad = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Keyboard"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallNumpad.onLeftClick = bind(self.ButtonCallNumpad_Click, self)
-	self.m_CheckVoiceNumpad = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
+	--self.m_CheckVoiceNumpad = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Keyboard"]):setFontSize(1.2)
 	self.m_NumpadButton = {}
 	self:addNumpadButton("1", 1, 0)
 	self:addNumpadButton("2", 2, 0)
@@ -119,7 +119,7 @@ function MainActivity:constructor(app)
 	self.m_PlayerListGrid:addColumn(_"Num.", 0.3)
 	self.m_ButtonCallPlayers = GUIButton:new(self.m_Width-110, 370, 100, 30, _"Anrufen", self.m_Tabs["Players"]):setBackgroundColor(Color.Green)
 	self.m_ButtonCallPlayers.onLeftClick = bind(self.ButtonCallPlayer_Click, self)
-	self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
+	--self.m_CheckVoicePlayers = GUICheckbox:new(10, 375, 120, 20, _"Sprachanruf", self.m_Tabs["Players"]):setFontSize(1.2)
 	self.m_TabPanel.onTabChanged = function(tabId)
 		if tabId == self.m_Tabs["Players"].TabIndex then
 			triggerServerEvent("requestPhoneNumbers", localPlayer)
@@ -206,8 +206,12 @@ function MainActivity:ButtonCallPlayer_Click()
 		return
 	end
 
-	CallResultActivity:new(self:getApp(), "player", player, CALL_RESULT_CALLING, self.m_CheckVoicePlayers:isChecked())
-	triggerServerEvent("callStart", root, player, self.m_CheckVoicePlayers:isChecked())
+	--CallResultActivity:new(self:getApp(), "player", player, CALL_RESULT_CALLING, self.m_CheckVoicePlayers:isChecked())
+	CallResultActivity:new(self:getApp(), "player", player, CALL_RESULT_CALLING, false)
+
+	--triggerServerEvent("callStart", root, player, self.m_CheckVoicePlayers:isChecked())
+	triggerServerEvent("callStart", root, player, false)
+
 end
 
 function MainActivity:Event_receivePhoneNumbers(list)
