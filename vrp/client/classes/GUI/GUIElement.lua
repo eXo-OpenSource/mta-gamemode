@@ -9,7 +9,7 @@
 GUIElement = inherit(DxElement)
 
 function GUIElement:constructor(posX, posY, width, height, parent)
-	checkArgs("CGUIElement:constructor", "number", "number", "number", "number")
+	--checkArgs("CGUIElement:constructor", "number", "number", "number", "number")
 	if not (type(parent) == "table" or parent == nil) then -- temp debug
 		outputConsole(debug.traceback())
 	end

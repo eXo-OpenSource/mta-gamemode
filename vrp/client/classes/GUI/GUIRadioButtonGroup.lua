@@ -8,7 +8,7 @@
 GUIRadioButtonGroup = inherit(GUIElement)
 
 function GUIRadioButtonGroup:constructor(posX, posY, width, height, parent)
-	--checkArgs("GUIRadioButtonGroup:constructor", "number", "number", "number", "number")
+	----checkArgs("GUIRadioButtonGroup:constructor", "number", "number", "number", "number")
 	
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	

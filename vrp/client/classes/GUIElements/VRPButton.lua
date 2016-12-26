@@ -10,7 +10,7 @@
 VRPButton = inherit(GUIRectangle)
 
 function VRPButton:constructor(posX, posY, width, height, text, barOnTop, parent)
-	checkArgs("VRPButton:constructor", "number", "number", "number", "number", "string")
+	--checkArgs("VRPButton:constructor", "number", "number", "number", "number", "string")
 	
 	GUIRectangle.constructor(self, posX, posY, width, height, tocolor(0x23, 0x23, 0x23, 230), parent)
 	

@@ -10,7 +10,7 @@
 GUITabControl = inherit(GUIElement)
 
 function GUITabControl:constructor(posX, posY, width, height, parent)
-	checkArgs("GUITabControl:constructor", "number", "number", "number", "number")
+	--checkArgs("GUITabControl:constructor", "number", "number", "number", "number")
 	self.m_CurrentTab = false
 	self.m_Tabs = {}
 	GUIElement.constructor(self, posX, posY, width, height, parent)

@@ -491,7 +491,7 @@ end
 
 
 function Inventory:giveItem(item, amount)
-	checkArgs("Inventory:giveItem", "string", "number")
+	--checkArgs("Inventory:giveItem", "string", "number")
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
 	end

@@ -13,7 +13,7 @@ inherit(GUIColorable, GUIEdit)
 local GUI_EDITBOX_BORDER_MARGIN = 6
 
 function GUIEdit:constructor(posX, posY, width, height, parent)
-	checkArgs("GUIEdit:constructor", "number", "number", "number", "number")
+	--checkArgs("GUIEdit:constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(height))
