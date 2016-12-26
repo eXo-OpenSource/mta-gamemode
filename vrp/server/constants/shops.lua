@@ -80,6 +80,13 @@ SHOP_TYPES = {
 		["Ped"] = {214, Vector3(-2655.51, 1407.74, 906.27), 270},
 		["Interior"] = {3, Vector3(-2636.64, 1402.46, 906.46)},
 		["Class"] = BarShop
+	},
+	[13] = {
+		["Name"] = "Tankstelle",
+		["Marker"] = Vector3(-23.37, -55.63, 1002.6),
+		["Ped"] = {160, Vector3(-23.46, -57.32, 1003.55), 0},
+		["Interior"] = {6, Vector3(-27.48, -58.27, 1003.55)},
+		["Class"] = ItemShop
 	}
 
 
@@ -95,6 +102,11 @@ SHOP_ITEMS = {
 		["Zigarette"] = 10,
 		["Wuerfel"] = 10,
 		["Kanne"] = 500,
+		["Mautpass"] = 250,
+		["Reparaturkit"] = 1000
+	};
+	["Tankstelle"] = {
+		["Zigarette"] = 10,
 		["Mautpass"] = 250,
 		["Benzinkanister"] = 250,
 		["Reparaturkit"] = 1000

@@ -23,8 +23,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
   addEventHandler("onMarkerHit", self.m_EnterMarker,
     function(hitElement, matchingDimension)
       if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
-	  	if self.m_EnterEvent then self.m_EnterEvent(hitElement) end
-    	self:teleport(hitElement, interiorPosition, enterRotation, interiorId, dimension)
+    	self:teleport(hitElement, "enter", interiorPosition, enterRotation, interiorId, dimension)
       end
     end
   )
@@ -32,18 +31,19 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
    addEventHandler("onMarkerHit", self.m_ExitMarker,
     function(hitElement, matchingDimension)
       if getElementType(hitElement) == "player" and matchingDimension then
-  	  	if self.m_ExitEvent then self.m_ExitEvent(hitElement) end
-	  	self:teleport(hitElement, entryPosition, exitRotation, 0, 0)
+	  	self:teleport(hitElement, "exit", entryPosition, exitRotation, 0, 0)
       end
     end
   )
 
 end
 
-function InteriorEnterExit:teleport(player, pos, rotation, interior, dimension)
+function InteriorEnterExit:teleport(player, type, pos, rotation, interior, dimension)
 	if player.LastPort and not timestampCoolDown(player.LastPort, 4) then
 		return
 	end
+
+
 
 	fadeCamera(player,false,1,0,0,0)
 	setElementFrozen(player, true)
@@ -57,6 +57,12 @@ function InteriorEnterExit:teleport(player, pos, rotation, interior, dimension)
 
 			fadeCamera(player, true)
 			player:setFrozen(false)
+
+			if type == "enter" then
+				if self.m_EnterEvent then self.m_EnterEvent(player) end
+			elseif type == "exit" then
+				if self.m_ExitEvent then self.m_ExitEvent(player) end
+			end
 		end, 1500, 1
 	)
 
