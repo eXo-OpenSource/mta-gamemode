@@ -22,6 +22,9 @@ function BarShop:constructor(id, name, position, rotation, typeData, dimension, 
 
 
 	if self.m_Marker then
+		self.m_SoundCol = createColSphere(self.m_Marker:getPosition(), 50)
+		self.m_SoundCol:setDimension(dimension)
+		self.m_SoundCol:setInterior(interior)
 		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onBarMarkerHit, self))
 	end
 
@@ -52,7 +55,7 @@ function BarShop:onShopExit(player)
 end
 
 function BarShop:getPlayerInBar()
-	return self.m_ShopCol:getElementsWithin("player")
+	return self.m_SoundCol:getElementsWithin("player")
 end
 
 function BarShop:changeMusic(player, stream)

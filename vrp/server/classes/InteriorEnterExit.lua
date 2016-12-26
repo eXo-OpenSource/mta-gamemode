@@ -23,6 +23,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
   addEventHandler("onMarkerHit", self.m_EnterMarker,
     function(hitElement, matchingDimension)
       if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
+	  	if self.m_EnterEvent then self.m_EnterEvent(hitElement) end
     	self:teleport(hitElement, interiorPosition, enterRotation, interiorId, dimension)
       end
     end
@@ -31,6 +32,7 @@ function InteriorEnterExit:constructor(entryPosition, interiorPosition, enterRot
    addEventHandler("onMarkerHit", self.m_ExitMarker,
     function(hitElement, matchingDimension)
       if getElementType(hitElement) == "player" and matchingDimension then
+  	  	if self.m_ExitEvent then self.m_ExitEvent(hitElement) end
 	  	self:teleport(hitElement, entryPosition, exitRotation, 0, 0)
       end
     end
@@ -70,4 +72,12 @@ end
 
 function InteriorEnterExit:getExitMarker()
   return self.m_ExitMarker
+end
+
+function InteriorEnterExit:addEnterEvent(event)
+	self.m_EnterEvent = event
+end
+
+function InteriorEnterExit:addExitEvent(event)
+	self.m_ExitEvent = event
 end

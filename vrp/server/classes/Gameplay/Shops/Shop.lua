@@ -37,7 +37,9 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 	self.m_Dimension = dimension
 
 	if interior > 0 then
-		InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
+		local teleporter = InteriorEnterExit:new(position, intPosition, 0, rotation, interior, dimension)
+		teleporter:addEnterEvent(bind(self.onEnter, self))
+		teleporter:addExitEvent(bind(self.onExit, self))
 	end
 
 	if typeData["Ped"] then
@@ -57,12 +59,6 @@ function Shop:create(id, name, position, rotation, typeData, dimension, robable,
 		self.m_Marker = createMarker(typeData["Marker"], "cylinder", 1, 255, 255, 0, 175)
 		self.m_Marker:setInterior(interior)
 		self.m_Marker:setDimension(dimension)
-
-		self.m_ShopCol = createColSphere(typeData["Marker"], 50)
-		self.m_ShopCol:setDimension(dimension)
-		self.m_ShopCol:setInterior(interior)
-		addEventHandler("onColShapeHit", self.m_ShopCol, bind(self.onEnter, self))
-		addEventHandler("onColShapeLeave", self.m_ShopCol, bind(self.onExit, self))
 	end
 end
 
@@ -74,24 +70,20 @@ function Shop:loadOwner()
 	end
 end
 
-function Shop:onEnter(hitElement, dim)
-	if dim and hitElement:getType() == "player" and source:getInterior() == hitElement:getInterior() then
-		if self.m_BuyAble then
-			hitElement:sendInfo(_("Drücke 'm' um das %s-Menü zu öffnen!", hitElement, self.m_TypeName))
-			bindKey(hitElement, "m", "down", self.m_ShopGUIBind)
-		end
-		if self.onShopEnter then self:onShopEnter(hitElement) end
+function Shop:onEnter(player)
+	if self.m_BuyAble then
+		player:sendInfo(_("Drücke 'm' um das %s-Menü zu öffnen!", player, self.m_TypeName))
+		bindKey(player, "m", "down", self.m_ShopGUIBind)
 	end
+	if self.onShopEnter then self:onShopEnter(player) end
 end
 
-function Shop:onExit(hitElement, dim)
-	if dim and hitElement:getType() == "player" then -- and source:getInterior() == hitElement:getInterior() then
-		if self.m_BuyAble then
-			unbindKey(hitElement, "m", "down", self.m_ShopGUIBind)
-			hitElement:triggerEvent("shopCloseManageGUI")
-		end
-		if self.onShopExit then self:onShopExit(hitElement) end
+function Shop:onExit(player)
+	if self.m_BuyAble then
+		unbindKey(player, "m", "down", self.m_ShopGUIBind)
+		player:triggerEvent("shopCloseManageGUI")
 	end
+	if self.onShopExit then self:onShopExit(player) end
 end
 
 function Shop:openManageGUI(player)
