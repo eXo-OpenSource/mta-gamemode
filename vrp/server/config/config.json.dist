@@ -29,7 +29,7 @@
       "port": 6033,
       "username": "vRP",
       "password": "kmd1581adf%%f",
-      "database": "exo_premium",
+      "database": "vrp_premium",
       "socket": "/var/run/mysqld/mysqld.sock"
     }
   }
