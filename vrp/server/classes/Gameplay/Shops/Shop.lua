@@ -161,6 +161,8 @@ function Shop:buy(player)
 			else
 				player:sendError(_("Dieser Shop kann nur von privaten Firmen gekauft werden!", player))
 			end
+		else
+			player:sendError(_("Dieser Shop kann nur von privaten Firmen gekauft werden!", player))
 		end
 	else
 		player:sendError(_("Dieser Shop kann nicht gekauft werden!", player))
