@@ -183,6 +183,7 @@ function LocalPlayer:Event_playerWasted()
 	triggerServerEvent("Event_setPlayerWasted", self)
 
 	local funcA = function()
+		if self.m_DeathMessage then delete(self.m_DeathMessage) end
 		if isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		triggerServerEvent("factionRescueReviveAbort", self, self)
 		self.m_CanBeRevived = false
@@ -217,9 +218,16 @@ function LocalPlayer:Event_playerWasted()
 	end
 
 	Camera.setMatrix(self.position + self.matrix.up*10, self.position)
+
+	if localPlayer:getInterior() > 0 then
+		funcA()
+		return
+	end
+
 	local deathTime = MEDIC_TIME
 	local start = getTickCount()
-	local deathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, funcA)
+
+	self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, funcA)
 	self.m_CanBeRevived = true
 	self.m_WastedTimer = setTimer(
 		function()
@@ -227,8 +235,8 @@ function LocalPlayer:Event_playerWasted()
 			if timeGone >= deathTime-500 then
 				funcA()
 			else
-				deathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
-				deathMessage:anyChange()
+				self.m_DeathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
+				self.m_DeathMessage:anyChange()
 			end
 		end, 1000, deathTime/1000
 	)

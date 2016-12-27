@@ -549,7 +549,6 @@ function SelfGUI:loadStatistics()
 
 		i = i+1
 	end
-	outputChatBox("Reload")
 end
 
 function SelfGUI:Event_companyRetrieveInfo(id, name)
