@@ -431,7 +431,6 @@
 	<script src="client/classes/GUIForms/VehicleShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSellGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSellAcceptGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleTransactionPapersGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleKeyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>

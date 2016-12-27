@@ -87,6 +87,13 @@ SHOP_TYPES = {
 		["Ped"] = {160, Vector3(-23.46, -57.32, 1003.55), 0},
 		["Interior"] = {6, Vector3(-27.48, -58.27, 1003.55)},
 		["Class"] = GasStation
+	},
+	[14] = {
+		["Name"] = "Bank",
+		["Marker"] = Vector3(809.09, 4231.10, 15),
+		["Ped"] = {17, Vector3(808.28339, 4233.49902, 15.7443), 200},
+		["Interior"] = {1, Vector3(802.9, 4225.1, 15.8)},
+		["Class"] = ItemShop
 	}
 
 
@@ -113,6 +120,9 @@ SHOP_ITEMS = {
 	};
 	["Stadthalle"] = {
 		["Ausweis"] = 400,
+		["Handelsvertrag"] = 200
+	};
+	["Bank"] = {
 		["Handelsvertrag"] = 200
 	};
 	["Bar"] = {

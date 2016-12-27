@@ -178,7 +178,6 @@ function Core:afterLogin()
 
 	setTimer(function()	NoDm:getSingleton():checkNoDm() end, 2500, 1)
 
-	self:createBlips()
 	PlantGUI.load()
 	Fishing.load()
 	GUIForm3D.load()
@@ -199,10 +198,6 @@ end
 
 function Core:set(...)
 	return self.m_Config:set(...)
-end
-
-function Core:createBlips()
-	Blip:new("Bank.png", 1660.4, -1272.8, 500)
 end
 
 function Core:throwInternalError(message)
