@@ -364,7 +364,6 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:addPunishLog(admin, target, func, "", 0)
         elseif func == "supportMode" or func == "smode" then
             self:toggleSupportMode(admin)
-			StatisticsLogger:getSingleton():addAdminAction( admin, "supportMode", false)
         elseif func == "clearchat" or func == "clearChat" then
 			self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
             for index, player in pairs(Element.getAllByType("player")) do
@@ -507,6 +506,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			admin:setDimension(0)
 			admin:setPosition(x, y, z)
 			self:sendShortMessage(_("%s hat sich zu Koordinaten geportet!", admin, admin:getName()))
+			StatisticsLogger:getSingleton():addAdminAction(admin, "goto", "Coords ("..x..","..y..","..z..")")
 		elseif func == "nickchange" or func == "offlineNickchange" then
 			local changeTarget = false
 			if target then
@@ -569,6 +569,7 @@ function Admin:toggleSupportMode(player)
         self:toggleSupportArrow(player, true)
 		player.m_SupMode = true
 		player:triggerEvent("setSupportDamage", true )
+		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "aktiviert")
     else
         player:setPublicSync("supportMode", false)
         player:sendInfo(_("Support Modus deaktiviert!", player))
@@ -577,6 +578,8 @@ function Admin:toggleSupportMode(player)
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
 		player:triggerEvent("setSupportDamage", false)
+		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
+
     end
 end
 
@@ -749,6 +752,8 @@ local tpTable = {
 						setElementInterior(player,0)
 						setElementDimension(player,0)
 						player:setPosition(v["pos"])
+						StatisticsLogger:getSingleton():addAdminAction(player, "goto", "TP "..ort)
+						self:sendShortMessage(_("%s hat sich zu %s geportet!", player, player:getName(), ort))
 					end
 					return
 				end
