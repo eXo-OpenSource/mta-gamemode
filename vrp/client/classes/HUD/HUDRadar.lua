@@ -394,7 +394,11 @@ function HUDRadar:drawBlips()
 				imagePath = HUDRadar:getSingleton():makePath(markerImage, true)
 			end
 		end
-        dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, blip:getColor())
+		if fileExists(imagePath) then
+      	  	dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, blip:getColor())
+		else
+			outputDebugString("Blip not found: "..imagePath)
+		end
       end
     end
   end
@@ -416,24 +420,6 @@ end
 
 function HUDRadar:getZoom()
   return self.m_Zoom
-end
-
-function HUDRadar:addBlip(blip)
-  table.insert(Blip.Blips, blip)
-  self.m_Blips = Blip.Blips
-end
-
-function HUDRadar:removeBlip(blip)
-  if blip.m_ID then
-    if self.m_Blips[blip.m_ID] then
-      table.remove(self.m_Blips, blip.m_ID)
-    end
-  else
-    local idx = table.find(self.m_Blips, blip)
-    if idx then
-      table.remove(self.m_Blips, idx)
-    end
-  end
 end
 
 function HUDRadar:syncBlips()

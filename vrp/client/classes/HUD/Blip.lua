@@ -58,7 +58,7 @@ function Blip:destructor()
 			self:dettach()
 			Blip.Blips[index] = nil
 			if isElement(self.DefaultBlips[index] ) then
-				destroyElement( self.DefaultBlips[index] )	
+				destroyElement( self.DefaultBlips[index] )
 				self.DefaultBlips[index] = nil
 			end
 		end
@@ -145,7 +145,7 @@ function Blip:attachTo(element)
   if isElement(self.DefaultBlips[self.m_ID] ) then
 	self.DefaultBlips[self.m_ID] = nil
 	local r,g,b,a = unpack(self.m_DefaultColor)
-	destroyElement(self.DefaultBlips[self.m_ID])
+	if isElement(self.DefaultBlips[self.m_ID]) then destroyElement(self.DefaultBlips[self.m_ID]) end
 	self.DefaultBlips[self.m_ID] = createBlipAttachedTo(element,0,self.m_DefaultSize,r,g,b,a)
   end
 end
