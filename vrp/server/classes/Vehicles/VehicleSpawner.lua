@@ -22,6 +22,7 @@ function VehicleSpawner:constructor(x, y, z, vehicles, rotation, spawnConditionF
 	self.m_Position = Vector3(x, y, z)
 	self.m_Rotation = rotation or 0
 	self.m_ConditionFunc = spawnConditionFunc
+	self.m_ConditionError = true
 	self.m_PostSpawnFunc = postSpawnFunc
 
 	self.m_Marker = createMarker(x, y, z, "cylinder", 1.2, 255, 0, 0)
@@ -32,7 +33,9 @@ function VehicleSpawner:markerHit(hitElement, matchingDimension)
 	if not self.m_Disabled or (self.m_Disabled and self.m_Allowed[hitElement]) then
 		if getElementType(hitElement) == "player" and matchingDimension and not isPedInVehicle(hitElement) then
 			if self.m_ConditionFunc and not self.m_ConditionFunc(hitElement) then
-				hitElement:sendError(_("Du bist nicht berechtigt dieses Fahrzeug zu erstellen!", hitElement))
+				if self.m_ConditionError then
+					hitElement:sendError(_("Du bist nicht berechtigt dieses Fahrzeug zu erstellen!", hitElement))
+				end
 				return
 			end
 
@@ -99,10 +102,32 @@ function VehicleSpawner:setSpawnPosition(pos, rot)
 	self.m_Rotation = rot or 0
 end
 
+function VehicleSpawner:toggleConditionError(state)
+	self.m_ConditionError = state
+end
+
 
 function VehicleSpawner:initializeAll()
 	-- Create 'general' vehicle spawners
-	VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0)
-	VehicleSpawner:new(1805.58, -1292.58, 12.58, {"Bike", "BMX", "Faggio"}, 65)
-	VehicleSpawner:new(1742.06, -1742.61, 12.55, {"Bike", "BMX", "Faggio"}, 0)
+	local function spawnCondition(player)
+		if player:getMoney() >= 200 then
+			return true
+		else
+			player:sendError(_("Du hast nicht genug Geld dabei! (200$)", player))
+		end
+	end
+
+	local function postSpawn(vehicle, player)
+		player:takeMoney(200, "Fahrzeugverleih")
+		CompanyManager:getSingleton():getFromId(4):giveMoney(100, "Fahrzeugverleih")
+	end
+
+	local spawners = {}
+	spawners[1] = VehicleSpawner:new( 1508.79, -1749.41, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn)
+	spawners[2] = VehicleSpawner:new(1805.58, -1292.58, 12.58, {"Bike", "BMX", "Faggio"}, 65, spawnCondition, postSpawn)
+	spawners[3] = VehicleSpawner:new(1742.06, -1742.61, 12.55, {"Bike", "BMX", "Faggio"}, 0, spawnCondition, postSpawn)
+
+	for index, spawner in pairs(spawners) do
+		spawner:toggleConditionError(false)
+	end
 end
