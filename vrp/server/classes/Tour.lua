@@ -34,7 +34,7 @@ function Tour:start(forceNew)
 	if forceNew then
 		client.m_TourStep = 1
 	end
-	if client.m_TourStep == 0 then 
+	if client.m_TourStep == 0 then
 		client.m_TourStep = 1
 	end
 	client:sendShortMessage(_("Du kannst die Tour jederzeit im self-Menü (F2) unter Einstellungen beenden!", client), "Servertour")
@@ -78,7 +78,7 @@ end
 Tour.Data = {
 	[1] = {
 		["Title"] = "Herzlich Willkommen",
-		["Description"] = "Ich werde dich hier ein wenig durch eXo-Reallife führen. Halte dich an meine Tipps und ein super Start ist dir sicher. Gelegentlich wartet auch eine großzügige Belohnung für eine abgeschlossene Aufgabe auf dich! Folge dem Pfeil über deinem Kopf zur ersten Station!",
+		["Description"] = "Ich führe dich ein wenig durch eXo-Reallife. Halte dich an meine Tipps und ein super Start ist dir sicher. Gelegentlich wartet auch eine Belohnung für eine Aufgabe auf dich! Folge dem Pfeil über deinem Kopf zur ersten Station!",
 		["Success"] = "Sehr gut! Du kannst nun mit der Taste 'B' das Klickmenü öffnen. Wenn du damit auf den NPC vor dir klickst, kannst du dir deinen Personalausweis beantragen.",
 		["Position"] = Vector3(1832.01, -1276.67, 119.26),
 		["Money"] = 400

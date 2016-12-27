@@ -19,8 +19,8 @@ function ItemShopGUI:constructor(callback)
 	self.m_LabelDescription:setFont(VRPFont(self.m_Height*0.07)):setMultiline(true)
 
 	self.m_Grid = GUIGridList:new(self.m_Width*0.5, self.m_Height*0.12, self.m_Width*0.48, self.m_Height*0.7, self.m_Window)
-	self.m_Grid:addColumn(_"Name", 0.8)
-	self.m_Grid:addColumn(_"Preis", 0.2)
+	self.m_Grid:addColumn(_"Name", 0.7)
+	self.m_Grid:addColumn(_"Preis", 0.3)
 
 	GUILabel:new(self.m_Width*0.08, self.m_Height*0.8, self.m_Width*0.2, self.m_Height*0.1, "Anzahl:", self.m_Window)
 	self.m_EditAmount = GUIEdit:new(self.m_Width*0.26, self.m_Height*0.8, self.m_Width*0.1, self.m_Height*0.1, self.m_Window)
