@@ -929,7 +929,14 @@ end
 function Admin:Event_vehicleDespawn()
     if client:getRank() >= RANK.Supporter then
         if isElement(source) then
-            client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
+
+			VehicleManager:getSingleton():checkVehicle(source)
+			if not source:isRespawnAllowed() then
+				client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+				return
+			end
+
+			client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
             source:setDimension(PRIVATE_DIMENSION_SERVER)
         end
     end

@@ -488,6 +488,13 @@ function VehicleManager:Event_vehicleRepair()
 end
 
 function VehicleManager:Event_vehicleRespawn(garageOnly)
+	self:checkVehicle(source)
+
+	if not source:isRespawnAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+		return
+	end
+
 	if source:getOccupantsCount() > 0 then
 		client:sendError(_("Das Fahrzeug ist nicht leer!", client))
 		return
@@ -575,6 +582,13 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 end
 
 function VehicleManager:Event_vehicleRespawnWorld()
+	self:checkVehicle(source)
+
+	if not source:isRespawnAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+		return
+	end
+
 	if source:getOccupantsCount() > 0 then
 		client:sendError(_("Das Fahrzeug ist nicht leer!", client))
 		return
@@ -607,6 +621,11 @@ function VehicleManager:Event_vehicleRespawnWorld()
 
 function VehicleManager:Event_vehicleDelete(reason)
 	self:checkVehicle(source)
+
+	if not source:isRespawnAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+		return
+	end
 
 	if client:getRank() < RANK.Moderator then
 		-- Todo: Report cheat attempt

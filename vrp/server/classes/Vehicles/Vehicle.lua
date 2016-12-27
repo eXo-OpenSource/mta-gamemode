@@ -24,6 +24,7 @@ function Vehicle:virtual_constructor()
 	self.m_Fuel = 100
 	self.m_Mileage = 0
 	self.m_RepairAllowed = true
+	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
 
 
@@ -377,6 +378,14 @@ end
 
 function Vehicle:isRepairAllowed()
 	return self.m_RepairAllowed
+end
+
+function Vehicle:toggleRespawn(state)
+	self.m_RespawnAllowed = state
+end
+
+function Vehicle:isRespawnAllowed()
+	return self.m_RespawnAllowed
 end
 
 
