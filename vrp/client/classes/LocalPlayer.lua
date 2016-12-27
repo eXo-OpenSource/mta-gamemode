@@ -125,6 +125,12 @@ function LocalPlayer:isLoggedIn()
 	return self.m_LoggedIn
 end
 
+function LocalPlayer:getStatistics(stat)
+	if stat then
+		return self:getPrivateSync("Stat_"..stat)
+	end
+end
+
 function LocalPlayer:getPoints()
 	return self:getPrivateSync("Points")
 end
@@ -390,8 +396,8 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 
 		if rank == RANK.Projektleiter or rank == RANK.Developer then
-			addCommandHandler("dcrun", function(...)
-				if rank == RANK.Projektleiter or rank == RANK.Developer then
+			addCommandHandler("dcrun", function(cmd, ...)
+				if self:getRank() == RANK.Projektleiter or self:getRank() == RANK.Developer then
 					local codeString = table.concat({...}, " ")
 					runString(codeString, localPlayer)
 				end

@@ -216,6 +216,7 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
+	client:increaseStatistics("Deaths", 1)
 	-- give a achievement
 	source:giveAchievement(37)
 	for key, obj in ipairs( getAttachedElements(client)) do
@@ -234,6 +235,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 
 	if killer and killer:getType() == "player" then
 		if killer ~= source then
+			client:increaseStatistics("Kills", 1)
 			if killer:getFaction() and killer:getFaction():isStateFaction() then
 				if killer:isFactionDuty() and not source:isFactionDuty() then
 					local wantedLevel = source:getWantedLevel()

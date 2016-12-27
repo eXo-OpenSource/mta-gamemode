@@ -8,7 +8,16 @@
 SelfGUI = inherit(GUIForm)
 inherit(Singleton, SelfGUI)
 
+SelfGUI.Stats = {
+	["AFK"] = "gesamte AFK-Zeit",
+	["Driven"] = "gefahrene Kilometer",
+	["Deaths"] = "Tode",
+	["Kills"] = "Morde"
+}
+
 function SelfGUI:constructor()
+
+
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 	self.m_OpenWindows = {}
 
@@ -113,6 +122,12 @@ function SelfGUI:constructor()
 	-- Tab: Statistics
 	local tabStatistics = self.m_TabPanel:addTab(_"Statistiken")
 	self.m_TabStatistics = tabStatistics
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.10, _"Statistiken", self.m_TabStatistics)
+	self.m_StatDescription = {}
+	self.m_StatValue = {}
+
+	self:loadStatistics()
 
 	-- Tab: Vehicles
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
@@ -518,6 +533,23 @@ end
 function SelfGUI:adjustGeneralTab(name)
 	local isInCompany = name ~= nil
 	self.m_CompanyEditLabel:setVisible(isInCompany)
+end
+
+function SelfGUI:loadStatistics()
+	local i = 0
+	local value
+	for index, text in pairs(SelfGUI.Stats) do
+		value = localPlayer:getStatistics(index) or " - "
+		self.m_StatDescription[index] = GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _("%s:", text), self.m_TabStatistics)
+		self.m_StatValue[index] = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, value, self.m_TabStatistics)
+
+		localPlayer:setPrivateSyncChangeHandler("Stat_"..index, function(value)
+			self.m_StatValue[index]:setText(tostring(value))
+		end)
+
+		i = i+1
+	end
+	outputChatBox("Reload")
 end
 
 function SelfGUI:Event_companyRetrieveInfo(id, name)

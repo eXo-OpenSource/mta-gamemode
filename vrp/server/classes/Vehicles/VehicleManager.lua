@@ -793,6 +793,7 @@ function VehicleManager:Event_vehicleSyncMileage(diff)
 	if vehicle then
 		if vehicle.setMileage and vehicle.setMileage then
 			vehicle:setMileage((vehicle:getMileage() or 0) + diff)
+			client:increaseStatistics("Driven", diff)
 		end
 	end
 end

@@ -613,6 +613,7 @@ function Player:setAFKTime()
 		self.m_CurrentAFKTime = (getTickCount() - self.m_AFKStartTime)
 	else
 		self.m_AFKTime = self.m_AFKTime + self.m_CurrentAFKTime
+		self:increaseStatistics("AFK", self.m_CurrentAFKTime)
 		self.m_CurrentAFKTime = 0
 	end
 end
