@@ -8,7 +8,7 @@
 VRPItem = inherit(GUIRectangle)
 
 function VRPItem:constructor(posX, posY, width, height, item, parent)
-	--checkArgs("VRPItem:constructor", "number", "number", "number", "number")
+	checkArgs("VRPItem:constructor", "number", "number", "number", "number")
 	GUIRectangle.constructor(self, posX, posY, width, height, Color.Grey, parent)
 
 	self.m_Item = item

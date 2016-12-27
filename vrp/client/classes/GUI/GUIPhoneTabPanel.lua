@@ -9,7 +9,7 @@
 GUIPhoneTabPanel = inherit(GUIElement)
 
 function GUIPhoneTabPanel:constructor(posX, posY, width, height, parent)
-	--checkArgs("GUIPhoneTabPanel:constructor", "number", "number", "number", "number")
+	checkArgs("GUIPhoneTabPanel:constructor", "number", "number", "number", "number")
 	self.m_CurrentTab = false
 	self.m_Tabs = {}
 	GUIElement.constructor(self, posX, posY, width, height, parent)

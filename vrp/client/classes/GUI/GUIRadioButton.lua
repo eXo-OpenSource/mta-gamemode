@@ -12,7 +12,7 @@ inherit(GUIFontContainer, GUIRadioButton)
 local GUI_RADIO_TEXT_MARGIN = 5
 
 function GUIRadioButton:constructor(posX, posY, width, height, text, parent)
-	--checkArgs("GUIRadioButton.constructor", "number", "number", "number", "number")
+	checkArgs("GUIRadioButton.constructor", "number", "number", "number", "number")
 
 	if not instanceof(parent, GUIRadioButtonGroup) then
 		error("GUIRadioButton's parent should be a GUIRadioButtonGroup")

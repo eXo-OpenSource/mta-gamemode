@@ -14,7 +14,7 @@ function GUIScrollbar:constructor()
 end
 
 function GUIScrollbar:virtual_constructor(posX, posY, width, height, parent, scrollerSize)
-	--checkArgs("GUIScrollbar:virtual_constructor", "number", "number", "number", "number")
+	checkArgs("GUIScrollbar:virtual_constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIColorable.constructor(self, Color.LightBlue)

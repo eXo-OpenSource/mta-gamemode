@@ -12,7 +12,7 @@ inherit(GUIColorable, GUICheckbox)
 local GUI_CHECKBOX_TEXT_MARGIN = 5
 
 function GUICheckbox:constructor(posX, posY, width, height, text, parent)
-	--checkArgs("GUICheckbox:constructor", "number", "number", "number", "number", "string")
+	checkArgs("GUICheckbox:constructor", "number", "number", "number", "number", "string")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, text, 1.5)
@@ -45,7 +45,7 @@ function GUICheckbox:isChecked()
 end
 
 function GUICheckbox:setChecked(checked)
-	--checkArgs("GUICheckbox:setChecked", "boolean")
+	checkArgs("GUICheckbox:setChecked", "boolean")
 	self.m_Checked = checked
 
 	self:anyChange()
