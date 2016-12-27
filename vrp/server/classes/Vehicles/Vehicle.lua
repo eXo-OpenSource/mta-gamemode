@@ -6,11 +6,6 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
-local INVALID_MODEL_FOR_START = { -- Bikes
-[481] = true,
-[509] = true,
-[510] = true,
-}
 
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
@@ -204,13 +199,15 @@ function Vehicle:toggleEngine(player)
 	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() then
 		local state = not getVehicleEngineState(self)
 		if state == true then
-			if self.m_Fuel <= 0 then
-				player:sendError(_("Dein Tank ist leer!", player))
-				return false
-			end
-			if self:isBroken() then
-				player:sendError(_("Das Fahrzeug ist kaputt und muss erst repariert werden!", player))
-				return false
+			if not VEHICLE_BIKES[self:getModel()] then
+				if self.m_Fuel <= 0 then
+					player:sendError(_("Dein Tank ist leer!", player))
+					return false
+				end
+				if self:isBroken() then
+					player:sendError(_("Das Fahrzeug ist kaputt und muss erst repariert werden!", player))
+					return false
+				end
 			end
 		else
 			if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
@@ -219,7 +216,11 @@ function Vehicle:toggleEngine(player)
 		end
 		if state == true then
 			if player and not getVehicleEngineState(self) then
-				if not INVALID_MODEL_FOR_START[getElementModel(self)] then -- Bikes
+				if VEHICLE_BIKES[self:getModel()] then -- Bikes
+					player:meChat(true, "öffnet sein Fahrradschloss!")
+					self:setEngineState(state)
+					return true
+				else
 					if not self.m_StartingEnginePhase then
 						self.m_StartingEnginePhase = true
 						for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do
@@ -230,18 +231,22 @@ function Vehicle:toggleEngine(player)
 						setTimer(bind(self.setEngineState, self), 2000, 1, true)
 						return true
 					end
-				else
-					self:setEngineState(state)
-					return true
 				end
 			end
 			return false
 		else
+			if VEHICLE_BIKES[self:getModel()] then -- Bikes
+				player:meChat(true, "verschließt sein Fahrradschloss!")
+			end
 			self:setEngineState(state)
 			return true
 		end
 	end
-	player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
+	if VEHICLE_BIKES[self:getModel()] then -- Bikes
+		player:sendError(_("Du hast keinen Schlüssel für das Fahrradschloss!", player))
+	else
+		player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
+	end
 	return false
 end
 

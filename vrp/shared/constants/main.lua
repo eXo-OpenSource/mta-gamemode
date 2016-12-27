@@ -14,6 +14,8 @@ MAX_ALCOHOL_LEVEL = 6
 ALCOHOL_LOSS_INTERVAL =  5*60 -- IN SECONDS
 ALCOHOL_LOSS = 0.5 -- every 10 Minutes
 
+
+
 RANK = {}
 RANK[-1] = "Banned"
 RANK[0] = "User"
@@ -290,6 +292,12 @@ VEHICLE_SPECIAL_TEXTURE = {
 	[562] = "#emapelegybody128",
 	[535] = "#emapslamvan92body128",
 	[559] = "#emapjesterbody256",
+}
+
+VEHICLE_BIKES = {
+[481] = true,
+[509] = true,
+[510] = true,
 }
 
 COROUTINE_STATUS_RUNNING = "running"

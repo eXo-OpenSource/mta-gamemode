@@ -17,15 +17,20 @@ function HUDSpeedo:constructor()
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
 		function(vehicle, seat)
 			if seat == 0 then
-				--if vehicle.m_Fuel == nil then vehicle.m_Fuel = 100 end
-				self:show()
+				if VEHICLE_BIKES[vehicle:getModel()] then
+					ShortMessage:new(_"Öffne das Fahrradschloss mit 'X'!")
+				else
+					self:show()
+				end
 			end
 		end
 	)
 	addEventHandler("onClientPlayerVehicleExit", localPlayer,
 		function(vehicle, seat)
 			if seat == 0 then
-				self:hide()
+				if not VEHICLE_BIKES[vehicle:getModel()] then
+					self:hide()
+				end
 			end
 		end
 	)
