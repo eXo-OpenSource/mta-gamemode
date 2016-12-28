@@ -47,6 +47,7 @@ function phpSDKSendOnlinePlayers()
 		if player:isActive() then
 			players[i]= {
 				["Name"] = player:getName(),
+				["Id"] = player:getID() or 0,
 				["Faction"] = player:getFaction() and player:getFaction():getId() or 0,
 				["Company"] = player:getCompany() and player:getCompany():getId() or 0,
 				["GroupId"] = player:getGroup() and player:getGroup():getId() or 0,
