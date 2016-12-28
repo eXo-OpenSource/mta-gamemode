@@ -752,9 +752,9 @@ local tpTable = {
 						setElementInterior(player,0)
 						setElementDimension(player,0)
 						player:setPosition(v["pos"])
-						StatisticsLogger:getSingleton():addAdminAction(player, "goto", "TP "..ort)
-						self:sendShortMessage(_("%s hat sich zu %s geportet!", player, player:getName(), ort))
 					end
+					StatisticsLogger:getSingleton():addAdminAction(player, "goto", "TP "..ort)
+					self:sendShortMessage(_("%s hat sich zu %s geportet!", player, player:getName(), ort))
 					return
 				end
 			end
