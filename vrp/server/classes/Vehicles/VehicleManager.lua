@@ -339,13 +339,22 @@ function VehicleManager:getPlayerVehicles(player)
 	return self.m_Vehicles[player] or {}
 end
 
-function VehicleManager:loadPlayerVehicles(player)
-	if player:getId() then
-		local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), player:getId())
-		for i, row in pairs(result) do
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
-			enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
+function VehicleManager:refreshGroupVehicles(groupId)
+	-- Delete old Group Vehicles
+	if self.m_GroupVehicles[groupId] then
+		for index, veh in pairs(self.m_GroupVehicles[groupId]) do
+			veh:destroy()
+		end
+	end
+	-- Reload Group Vehicles from DB
+	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles WHERE Group = ?", sql:getPrefix(), groupId)
+	for i, row in pairs(result) do
+		if GroupManager:getFromId(row.Group) then
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 			VehicleManager:getSingleton():addRef(vehicle, false)
+		else
+			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
 		end
 	end
 end

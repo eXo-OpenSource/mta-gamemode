@@ -656,17 +656,15 @@ function DatabasePlayer:loadMigratorData()
 	if row.GroupId and row.GroupId ~= 0 then
 		if GroupManager:getSingleton():getFromId(row.GroupId) then
 			self:setGroup(GroupManager:getSingleton():getFromId(row.GroupId))
+			VehicleManager:getSingleton():refreshGroupVehicles(row.GroupId)
 		else
 			GroupManager:getSingleton():loadFromId(row.GroupId)
 			self:setGroup(GroupManager:getSingleton():getFromId(row.GroupId))
+			VehicleManager:getSingleton():refreshGroupVehicles(row.GroupId)
 		end
 	end
 
-	for index, veh in pairs(VehicleManager:getSingleton():getPlayerVehicles(self)) do
-		VehicleManager:getSingleton():removeRef(veh, false)
-		veh:destroy()
-	end
-	VehicleManager:loadPlayerVehicles(self)
+	VehicleManager:getSingleton():createVehiclesForPlayer(self)
 end
 
 
