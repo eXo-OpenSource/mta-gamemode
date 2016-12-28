@@ -26,7 +26,7 @@ function Phone:constructor()
 	-- Register web apps
 	self:registerApp(PhoneApp.makeWebApp("YouTube", "IconYouTube.png", "https://youtube.com/tv", false))
 	self:registerApp(AppOnOff)
-	self:registerApp(PhoneApp.makeWebApp("SanNews",  "IconSanNews.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sanNews&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
+	--self:registerApp(PhoneApp.makeWebApp("SanNews",  "IconSanNews.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sanNews&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(AppAmmunation)
 
