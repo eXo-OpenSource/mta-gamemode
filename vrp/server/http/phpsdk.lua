@@ -38,3 +38,23 @@ end
 function phpSDKSendActivationMail(userID, username)
 	callRemote("http://exo-reallife.de/ingame/boardActivation.php", phpSDKSendActivationMailCallback, userID, username)
 end
+
+function phpSDKSendOnlinePlayers()
+	local players = {}
+	local i = 1
+
+	for index, player in pairs(getElementsByType("player")) do
+		if player:isActive() then
+			players[i]= {
+				["Name"] = player:getName(),
+				["Faction"] = player:getFaction() and player:getFaction():getId() or 0,
+				["Company"] = player:getCompany() and player:getCompany():getId() or 0,
+				["GroupId"] = player:getGroup() and player:getGroup():getId() or 0,
+				["GroupName"] = player:getGroup() and player:getGroup():getName() or "-keine-",
+			}
+			i = i+1
+		end
+	end
+	outputDebugString("PHP-Request Playerlist")
+	return players
+end
