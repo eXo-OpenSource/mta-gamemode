@@ -294,6 +294,7 @@ function DatabasePlayer:saveStatistics()
 end
 
 function DatabasePlayer:increaseStatistics(stat, value)
+	if not self.m_Statistics then return end
 	value = value and value or 1
 	if self.m_Statistics[stat] then
 		self.m_Statistics[stat] = self.m_Statistics[stat] + value
