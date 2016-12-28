@@ -13,4 +13,13 @@ function MechanicTow:constructor()
 
 	NonCollidingArea:new(894.25, -1188.40, 16.98, 10)
 	NonCollidingArea:new(924.76, -1192.84, 16.72, 10)
+
+
+	self.m_BugPed = createPed(50, 885.95, -1176.06, 16.98, 270)
+	setElementData(self.m_BugPed, "clickable", true)
+	self.m_BugPed:setData("BugChecker", true)
+	self.m_BugPed:setData("NPC:Immortal", true)
+	self.m_BugPed:setFrozen(true)
+
+	SpeakBubble3D:new(self.m_BugPed, _"Ich kann Wanzen aufspüren", _"Klicke mich an!")
 end

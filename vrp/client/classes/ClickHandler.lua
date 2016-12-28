@@ -21,7 +21,7 @@ function ClickHandler:constructor()
 		[1775] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1776] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
 		[1209] = function(element, clickInfo) self:addMouseMenu(VendingMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element) end;
-		
+
 	}
 
 	self.m_ClickInfo = false
@@ -148,6 +148,8 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 				if getElementType(element) == "ped" then
 					if getElementData(element, "BeggarId") then
 						self:addMouseMenu(BeggarPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+					elseif element:getData("BugChecker") then
+						self:addMouseMenu(BugCheckerPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 					elseif element:getData("Job") then
 						element:getData("Job"):onPedClick()
 					elseif element:getData("Townhall:onClick") then
