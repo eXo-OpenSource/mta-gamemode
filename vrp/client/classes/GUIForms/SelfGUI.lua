@@ -9,10 +9,22 @@ SelfGUI = inherit(GUIForm)
 inherit(Singleton, SelfGUI)
 
 SelfGUI.Stats = {
-	["AFK"] = "gesamte AFK-Zeit",
-	["Driven"] = "gefahrene Kilometer",
-	["Deaths"] = "Tode",
-	["Kills"] = "Morde"
+	["AFK"] = {
+			["text"] = "gesamte AFK-Zeit",
+			["value"] = function(value) return math.floor(value/60).." min" end
+			},
+	["Driven"] = {
+			["text"] = "gefahrene Kilometer",
+			["value"] = function(value) return math.floor(value/100).." km" end
+			},
+	["Deaths"] = {
+			["text"] = "Tode",
+			["value"] = function(value) return value end
+			},
+	["Kills"] =	{
+			["text"] = "Kills",
+			["value"] = function(value) return value end
+			},
 }
 
 function SelfGUI:constructor()
@@ -31,13 +43,12 @@ function SelfGUI:constructor()
 	local tabGeneral = self.m_TabPanel:addTab(_"Allgemein")
 	self.m_TabGeneral = tabGeneral
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.10, _"Allgemein", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.11, self.m_Width*0.25, self.m_Height*0.06, _"Spielzeit:", tabGeneral)
-	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.17, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGeneral)
-	self.m_GeneralKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.17, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Unternehmen:", tabGeneral)
-	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.125, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.11, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGeneral)
+	self.m_GeneralKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.17, self.m_Width*0.25, self.m_Height*0.06, _"Unternehmen:", tabGeneral)
+	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.17, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.17, self.m_Width*0.125, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
 	self.m_CompanyEditLabel.onLeftClick = bind(self.CompanyMenuButton_Click, self)
@@ -50,15 +61,12 @@ function SelfGUI:constructor()
 	self.m_CompanyInvitationsAcceptButton.onLeftClick = bind(self.CompanyInvitationsAcceptButton_Click, self)
 	self.m_CompanyInvitationsDeclineButton.onLeftClick = bind(self.CompanyInvitationsDeclineButton_Click, self)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
-	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_JobQuitButton = GUILabel:new(self.m_Width*0.7, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"(Job kündigen)", tabGeneral):setColor(Color.Red)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
+	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_JobQuitButton = GUILabel:new(self.m_Width*0.7, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"(Job kündigen)", tabGeneral):setColor(Color.Red)
 	self.m_JobQuitButton.onHover = function () self.m_JobQuitButton:setColor(Color.White) end
 	self.m_JobQuitButton.onUnhover = function () self.m_JobQuitButton:setColor(Color.Red) end
 	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
-
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.35, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle AFK-Zeit:", tabGeneral)
-	self.m_AFKTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"0 Minute(n)", tabGeneral)
 
 	self.m_AdButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, _"Werbung schalten", true, tabGeneral)
 	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)
@@ -537,14 +545,21 @@ end
 
 function SelfGUI:loadStatistics()
 	local i = 0
+	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"Spielzeit:", self.m_TabStatistics)
+	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", self.m_TabStatistics)
+	i = i+1
+	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"Aktuelle AFK-Zeit:", self.m_TabStatistics)
+	self.m_AFKTimeLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, _"0 Minute(n)", self.m_TabStatistics)
+	i = i+1
+
 	local value
-	for index, text in pairs(SelfGUI.Stats) do
+	for index, data in pairs(SelfGUI.Stats) do
 		value = localPlayer:getStatistics(index) or " - "
-		self.m_StatDescription[index] = GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _("%s:", text), self.m_TabStatistics)
-		self.m_StatValue[index] = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, value, self.m_TabStatistics)
+		self.m_StatDescription[index] = GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _("%s:", data["text"]), self.m_TabStatistics)
+		self.m_StatValue[index] = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, data["value"](value), self.m_TabStatistics)
 
 		localPlayer:setPrivateSyncChangeHandler("Stat_"..index, function(value)
-			self.m_StatValue[index]:setText(tostring(value))
+			self.m_StatValue[index]:setText(tostring(data["value"](value)))
 		end)
 
 		i = i+1
