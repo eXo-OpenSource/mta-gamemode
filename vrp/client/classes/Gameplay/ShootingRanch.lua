@@ -28,6 +28,7 @@ end
 function ShootingRanch:updateLabels()
 	if getElementData(localPlayer, "ShootingRanch:Data") then
 		if not self.m_TimeIncrease then
+			setElementData(localPlayer, "ShootingRanch:ClientStartTime", getRealTime().timestamp)
 			 self.m_TimeIncrease = setTimer(function()
 			 	self.m_Time = self.m_Time + 1
 			 end, 1000, 0)
@@ -78,7 +79,8 @@ function ShootingRanchResult:constructor(data, success)
 	self.m_Time = GUILabel:new(10, 70, self.m_Width-20, 25, "", self)
 	self.m_Accuracy = GUILabel:new(10, 100, self.m_Width-20, 25, "", self)
 
-	local time = getRealTime().timestamp - data["StartTime"]
+	local startTime = getElementData(localPlayer, "ShootingRanch:ClientStartTime") or getRealTime().timestamp + data["Time"]
+	local time = getRealTime().timestamp - startTime
 	local acc =  data["Hits"]*100/(data["StartMuni"] - localPlayer:getTotalAmmo())
 
 	self.m_Hits:setText(_("Treffer: %d von benötigten %d", data["Hits"], data["TargetHits"]))
