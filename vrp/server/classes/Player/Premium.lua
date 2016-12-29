@@ -13,7 +13,7 @@ function Premium:constructor()
 end
 
 function Premium:loadPremium()
-	local row = sqlPremium:asyncQueryFetchSingle("SELECT * FROM user WHERE UserId = ?", self:getId())
+	local row = sqlPremium:queryFetchSingle("SELECT * FROM user WHERE UserId = ?", self:getId())
 	if row then
 		self.m_Premium = toboolean(row.premium)
 		self.m_PremiumUntil = row.premium_bis
