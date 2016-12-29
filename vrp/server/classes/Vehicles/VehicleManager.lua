@@ -118,14 +118,14 @@ function VehicleManager:getGroupVehicles(groupId)
 	return self.m_GroupVehicles[groupId]
 end
 
-function VehicleManager:createVehiclesForPlayer( player )
+function VehicleManager:createVehiclesForPlayer(player)
 	if player then
 		local id = player:getId()
 		if id then
 			if not self.m_Vehicles[id] then
 				self.m_Vehicles[id] = {}
 			end
-			local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner=?", sql:getPrefix(), id)
+			local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), id)
 			local vehicleObj
 			local skip = false
 			for i, row in pairs( result ) do
@@ -347,7 +347,7 @@ function VehicleManager:refreshGroupVehicles(groupId)
 		end
 	end
 	-- Reload Group Vehicles from DB
-	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles WHERE Group = ?", sql:getPrefix(), groupId)
+	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles WHERE `Group` = ?", sql:getPrefix(), groupId)
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
