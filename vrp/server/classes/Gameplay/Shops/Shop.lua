@@ -89,6 +89,8 @@ end
 function Shop:openManageGUI(player)
 	if player:getInterior() > 0 or player:getDimension() > 0 then
 		player:triggerEvent("shopOpenManageGUI", self.m_Id, self.m_Name, self.m_TypeName, self.m_OwnerId, self:getOwnerName(), self.m_Price, self.m_SoundUrl, self.m_StripperEnabled)
+	else
+		unbindKey(player, "m", "down", self.m_ShopGUIBind)
 	end
 end
 
