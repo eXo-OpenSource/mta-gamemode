@@ -29,7 +29,9 @@ function Core:constructor()
 
 	-- Create ACL user for web-access
 	self.m_ACLAccount = addAccount("exo_web", "tp&Qy?d{SbS*~By]")
-	ACLGroup.get("Admin"):addObject("user.exo_web")
+	local group = aclCreateGroup("web")
+	group:setRight("general.http", true)
+	ACLGroup.get("web"):addObject("user.exo_web")
 
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
