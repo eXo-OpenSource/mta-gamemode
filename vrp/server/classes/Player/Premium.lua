@@ -9,6 +9,10 @@ Premium = inherit(Object)
 inherit(DatabasePlayer, Premium)
 
 function Premium:constructor()
+	self:loadPremium()
+end
+
+function Premium:loadPremium()
 	local row = sqlPremium:asyncQueryFetchSingle("SELECT * FROM user WHERE UserId = ?", self:getId())
 	if row then
 		self.m_Premium = toboolean(row.premium)
