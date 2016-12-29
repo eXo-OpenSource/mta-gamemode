@@ -41,6 +41,20 @@ function ShootingRanch:constructor()
 	}
 	self:addTargets()
 
+	self.m_Col = createColSphere(-7191.44, -2473.93, 32.36, 50)
+	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
+		if dim then
+			hitElement:setCollisionsEnabled(false)
+		end
+	end)
+
+	addEventHandler("onColShapeLeave", self.m_Col, function(hitElement, dim)
+		if dim then
+			hitElement:setCollisionsEnabled(true)
+		end
+	end)
+
+
 	addEventHandler("ShootingRanch:onTargetHit", root, bind(self.onTargetHit, self))
 	addEventHandler("ShootingRanch:onTimeUp", root, bind(self.onTimeUp, self))
 
