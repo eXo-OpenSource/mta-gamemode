@@ -568,7 +568,7 @@ function Admin:toggleSupportMode(player)
         player:setModel(260)
         self:toggleSupportArrow(player, true)
 		player.m_SupMode = true
-		player:triggerEvent("setSupportDamage", true )
+		player:triggerEvent("disableDamage", true )
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "aktiviert")
     else
         player:setPublicSync("supportMode", false)
@@ -577,7 +577,7 @@ function Admin:toggleSupportMode(player)
         player:setModel(player:getPublicSync("Admin:OldSkin"))
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
-		player:triggerEvent("setSupportDamage", false)
+		player:triggerEvent("disableDamage", false)
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
 
     end

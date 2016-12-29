@@ -44,13 +44,13 @@ function ShootingRanch:constructor()
 	self.m_Col = createColSphere(-7191.44, -2473.93, 32.36, 50)
 	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
 		if dim then
-			hitElement:setCollisionsEnabled(false)
+			hitElement:triggerEvent("disableDamage", true)
 		end
 	end)
 
 	addEventHandler("onColShapeLeave", self.m_Col, function(hitElement, dim)
 		if dim then
-			hitElement:setCollisionsEnabled(true)
+			hitElement:triggerEvent("disableDamage", false)
 		end
 	end)
 

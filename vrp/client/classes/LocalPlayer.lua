@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage",
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
 "playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin"}
 
 function LocalPlayer:constructor()
@@ -29,7 +29,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onClientPlayerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("playerWasted", root, bind(self.Event_playerWasted, self))
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
-	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
+	addEventHandler("disableDamage", self, bind( self.disableDamage, self ))
 	addEventHandler("abortDeathGUI", self, bind( self.abortDeathGUI, self ))
 	addEventHandler("sendTrayNotification", self, bind( self.sendTrayNotification, self ))
 	addEventHandler("setClientTime", self, bind(self.Event_onGetTime, self))
@@ -161,7 +161,7 @@ function LocalPlayer:playCashChange( bNoSound )
 	end
 end
 
-function LocalPlayer:toggleDamage( bstate )
+function LocalPlayer:disableDamage( bstate )
 	if bstate then
 		addEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
 	else
