@@ -38,6 +38,8 @@ function Core:constructor()
 
 	aclGroupAddACL(aclGroup, acl)
 	acl:setRight("general.http", true)
+	acl:setRight("function.callRemote", true)
+	acl:setRight("function.fetchRemote", true)
 
 	aclGroup:addObject("user.exo_web")
 
