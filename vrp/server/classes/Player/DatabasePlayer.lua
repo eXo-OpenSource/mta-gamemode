@@ -664,7 +664,7 @@ function DatabasePlayer:loadMigratorData()
 	end
 
 	VehicleManager:getSingleton():createVehiclesForPlayer(self)
-	self:loadPremium()
+	Premium.constructor(self)
 end
 
 
