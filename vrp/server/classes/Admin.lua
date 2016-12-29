@@ -435,7 +435,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					if targetId and targetId > 0 then
 						Ban.addBan(targetId, admin, reason)
 						self:addPunishLog(admin, targetId, func, reason, 0)
-						outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
+						outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
 						outputChatBox("Grund: "..reason,root, 200, 0, 0)
 					else
 						admin:sendError(_("Spieler nicht gefunden!", admin))
@@ -451,7 +451,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					if type(reason) == "string" then
 						Ban.addBan(targetId, admin, reason, duration*60*60)
 						self:addPunishLog(admin, targetId, func, reason, duration*60*60)
-						outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
+						outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
 						outputChatBox("Grund: "..reason,root, 200, 0, 0)
 					else admin:sendError("Keinen Grund angegeben!")
 					end
@@ -467,7 +467,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             if targetId and targetId > 0 then
                 self:addPunishLog(admin, targetId, func, reason, 0)
                 sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
-				outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
+				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
             else
                 admin:sendError(_("Spieler nicht gefunden!", admin))
             end
