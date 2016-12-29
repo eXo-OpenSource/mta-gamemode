@@ -120,7 +120,7 @@ function Admin:addAdmin(player,rank)
 	outputDebug("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
     player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
-    if DEBUG then
+    --if DEBUG then
 		local pw = string.random(15)
 		local user = player:getName().."-eXo"
 		self.m_MtaAccounts[player] = addAccount(user, pw)
@@ -141,7 +141,7 @@ function Admin:addAdmin(player,rank)
 
 
 
-    end
+    --end
 end
 
 function Admin:removeAdmin(player)
