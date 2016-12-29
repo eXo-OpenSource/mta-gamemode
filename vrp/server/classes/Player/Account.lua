@@ -303,7 +303,7 @@ end
 
 function Account.getIdFromName(name)
 	local row = sql:queryFetchSingle("SELECT Id FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
-	return row.Id or 0
+	return row and row.Id or 0
 end
 
 function Account.getBoardIdFromName(name)
