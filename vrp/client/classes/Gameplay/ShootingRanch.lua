@@ -34,6 +34,9 @@ function ShootingRanch:updateLabels()
 		self.m_Hits:setText(_("Treffer: %d/%d", data["Hits"], data["TargetHits"]))
 		self.m_Time:setText(_("Zeit: %d/%d", math.floor(self.m_TimeMax), data["Time"]))
 		self.m_Accuracy:setText(_("Genauigkeit: %d/%d", acc, data["TargetAccuracy"]))
+		if self.m_TimeMax < 0 then
+			triggerServerEvent("ShootingRanch:onTimeUp", localPlayer)
+		end
 	end
 end
 
