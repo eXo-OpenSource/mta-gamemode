@@ -660,7 +660,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 					end
 				end
 			else
-				delTarget:sendInfo(_("Fahrzeug %s wurde gelöscht! Besitzer: %s Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
+				client:sendInfo(_("Fahrzeug %s wurde gelöscht! Besitzer: %s Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 			end
 		end
 		-- Todo Add Log
