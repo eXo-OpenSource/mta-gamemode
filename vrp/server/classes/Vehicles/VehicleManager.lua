@@ -339,7 +339,12 @@ function VehicleManager:getPlayerVehicles(player)
 	return self.m_Vehicles[player] or {}
 end
 
-function VehicleManager:refreshGroupVehicles(groupId)
+function VehicleManager:refreshGroupVehicles(group)
+	local groupId = group:getId()
+	if not groupId then
+		outputDebug("VehicleManager:refreshGroupVehicles: Group-Id Not Found!")
+		return
+	end
 	-- Delete old Group Vehicles
 	if self.m_GroupVehicles[groupId] then
 		for index, veh in pairs(self.m_GroupVehicles[groupId]) do

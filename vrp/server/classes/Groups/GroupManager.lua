@@ -59,8 +59,7 @@ function GroupManager:destructor()
 	end
 end
 
-function GroupManager:loadFromId(group)
-	local groupId = group:getId()
+function GroupManager:loadFromId(Id)
 	if not GroupManager.Map[Id] then
 		local row = sql:queryFetchSingle("SELECT Id, Name, Money, Karma, lastNameChange, Type, RankNames, RankLoans, VehicleTuning FROM ??_groups WHERE Id = ?", sql:getPrefix(), Id)
 		if row then
