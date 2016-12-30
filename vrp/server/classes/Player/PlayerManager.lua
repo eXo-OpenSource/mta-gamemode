@@ -235,7 +235,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 
 	if killer and killer:getType() == "player" then
 		if killer ~= source then
-			client:increaseStatistics("Kills", 1)
+			killer:increaseStatistics("Kills", 1)
 			if killer:getFaction() and killer:getFaction():isStateFaction() then
 				if killer:isFactionDuty() and not source:isFactionDuty() then
 					local wantedLevel = source:getWantedLevel()
