@@ -45,6 +45,9 @@ function LocalPlayer:constructor()
 	self.m_AlcoholDecreaseBind = bind(self.alcoholDecrease, self)
 	self:setPrivateSyncChangeHandler("AlcoholLevel", bind(self.onAlcoholLevelChange, self))
 
+
+	self.m_CancelEvent = function()	cancelEvent() end
+
 end
 
 function LocalPlayer:destructor()
@@ -161,11 +164,13 @@ function LocalPlayer:playCashChange( bNoSound )
 	end
 end
 
-function LocalPlayer:disableDamage( bstate )
+function LocalPlayer:disableDamage(bstate)
 	if bstate then
-		addEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
+		Guns:getSingleton():disableDamage(bstate)
+		addEventHandler("onClientPlayerDamage", localPlayer, self.m_CancelEvent, true, "high")
 	else
-		removeEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
+		Guns:getSingleton():disableDamage(bstate)
+		removeEventHandler("onClientPlayerDamage", localPlayer, self.m_CancelEvent)
 	end
 end
 

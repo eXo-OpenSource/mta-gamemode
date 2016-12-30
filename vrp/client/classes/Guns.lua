@@ -19,18 +19,19 @@ function Guns:constructor()
 	engineImportTXD (engineLoadTXD ( "files/models/taser.txd" ), 347 )
 	engineReplaceModel ( engineLoadDFF ( "files/models/taser.dff", 347 ), 347 )
 
+	self.m_ClientDamageBind = bind(self.Event_onClientPlayerDamage, self)
+
 	self.m_TaserImage = dxCreateTexture("files/images/Other/thunder.png")
 	self.m_TaserRender = bind(self.Event_onTaserRender, self)
-	addEventHandler("onClientPlayerDamage", root, bind(self.Event_onClientPlayerDamage, self))
+	addEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
 	addEventHandler("onClientPlayerWeaponFire", root, bind(self.Event_onClientWeaponFire, self))
-	addEventHandler("onClientPedDamage", root, bind(self.Event_onClientPedDamage, self))
+	addEventHandler("onClientPedDamage", root, bind(self.Event_onClientPedDamage))
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 
 	addRemoteEvents{"clientBloodScreen"}
 
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
-
 end
 
 function Guns:destructor()
@@ -132,5 +133,13 @@ end
 function Guns:Event_onClientPedDamage()
 	if source:getData("NPC:Immortal") == true then
 		cancelEvent()
+	end
+end
+
+function Guns:disableDamage(state)
+	if state then
+		removeEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
+	else
+		addEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
 	end
 end
