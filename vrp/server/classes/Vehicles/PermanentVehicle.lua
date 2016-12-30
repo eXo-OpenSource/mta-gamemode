@@ -171,15 +171,15 @@ function PermanentVehicle:setCurrentPositionAsSpawn(type)
 end
 
 function PermanentVehicle:respawnOnSpawnPosition()
-  if self.m_PositionType == VehiclePositionType.World then
-    self:setPosition(self.m_SpawnPos)
-    self:setRotation(0, 0, self.m_SpawnRot)
-    fixVehicle(self)
-    local owner = Player.getFromId(self.m_Owner)
-    if owner and isElement(owner) then
-      owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
-    end
-  end
+	if self.m_PositionType == VehiclePositionType.World then
+		self:setPosition(self.m_SpawnPos)
+		self:setRotation(0, 0, self.m_SpawnRot)
+		fixVehicle(self)
+		local owner = Player.getFromId(self.m_Owner)
+		if owner and isElement(owner) then
+			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
+		end
+	end
 end
 
 function PermanentVehicle:getTrunk()
@@ -287,26 +287,32 @@ function PermanentVehicle:respawn(garageOnly)
 		owner:sendShortMessage(_("Du hast keinen Platz in deiner Garage!", owner))
 	end
 	return false
-  else
-	-- Respawn at mechanic base
-		if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
-			CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
-			if owner and isElement(owner) then
-			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
-			end
-			return true
-		end
 
-		-- Respawn at Harbor
-		if vehicleType == VehicleType.Boat or (vehicleType == VehicleType.Plane and self:getModel() == 460) or (vehicleType == VehicleType.Helicopter and self:getModel() == 447) then
-			VehicleHarbor:getSingleton():respawnVehicle(self)
-			if owner and isElement(owner) then
-			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt", owner, self:getName()))
-			end
+  	else
+		if self:respawnOnSpawnPosition() then
 			return true
+		else
+		-- Respawn at mechanic base
+			if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
+				CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
+				if owner and isElement(owner) then
+				owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
+				end
+				return true
+			end
+
+			-- Respawn at Harbor
+			if vehicleType == VehicleType.Boat or (vehicleType == VehicleType.Plane and self:getModel() == 460) or (vehicleType == VehicleType.Helicopter and self:getModel() == 447) then
+				VehicleHarbor:getSingleton():respawnVehicle(self)
+				if owner and isElement(owner) then
+				owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt", owner, self:getName()))
+				end
+				return true
+			end
 		end
 	end
 	return false
+
 end
 
 function Vehicle:setTexture(texturePath)
