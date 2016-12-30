@@ -101,38 +101,45 @@ function JobTrashman:Event_trashcanCollect(containerNum)
 		-- Possible cheat attempt | Todo: Add to anticheat
 		return
 	end
+	if hitElement.vehicle and hitElement.vehicle:getModel() == 408 then
+		-- Prevent the player from calling this event too often per specified interval -> Anticheat
+		-- Note: It's bad to create the huge amount of trashcans on the server - but...we should do it probably?
+		local lastTime = client:getData("Trashman:LastCan") or -math.huge
+		if getTickCount() - lastTime < 2500 then
+			AntiCheat:getSingleton():report("Trashman:TooMuchTrash", CheatSeverity.Low)
+			return
+		end
+		client:setData("Trashman:LastCan", getTickCount())
 
-	-- Prevent the player from calling this event too often per specified interval -> Anticheat
-	-- Note: It's bad to create the huge amount of trashcans on the server - but...we should do it probably?
-	local lastTime = client:getData("Trashman:LastCan") or -math.huge
-	if getTickCount() - lastTime < 2500 then
-		AntiCheat:getSingleton():report("Trashman:TooMuchTrash", CheatSeverity.Low)
-		return
+		-- Increment the can counter now
+		client:setData("Trashman:Cans", client:getData("Trashman:Cans") + containerNum)
+	else
+		client:sendError(_("Du musst im Müll-Fahrzeug sitzen!", client), 255, 0, 0)
 	end
-	client:setData("Trashman:LastCan", getTickCount())
-
-	-- Increment the can counter now
-	client:setData("Trashman:Cans", client:getData("Trashman:Cans") + containerNum)
 end
 
 function JobTrashman:dumpCans(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension and hitElement:getJob() == self then
-		local numCans = hitElement:getData("Trashman:Cans")
+		if hitElement.vehicle and hitElement.vehicle:getModel() == 408 then
+			local numCans = hitElement:getData("Trashman:Cans")
 
-		if numCans and numCans > 0 then
-			local moneyAmount = numCans * MONEY_PER_CAN
+			if numCans and numCans > 0 then
+				local moneyAmount = numCans * MONEY_PER_CAN
 
-			hitElement:giveMoney(moneyAmount, "Müll-Job")
-			hitElement:givePoints(math.ceil(numCans/3))
+				hitElement:giveMoney(moneyAmount, "Müll-Job")
+				hitElement:givePoints(math.ceil(numCans/3))
 
-			hitElement:sendInfoTimeout(_("Dein Lohn: %d$", hitElement, moneyAmount), 5000)
+				hitElement:sendInfoTimeout(_("Dein Lohn: %d$", hitElement, moneyAmount), 5000)
 
-			hitElement:setData("Trashman:Cans", 0)
-			hitElement:triggerEvent("trashcanReset")
-			hitElement:triggerEvent("questionBox", _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop")
+				hitElement:setData("Trashman:Cans", 0)
+				hitElement:triggerEvent("trashcanReset")
+				hitElement:triggerEvent("questionBox", _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop")
 
+			else
+				hitElement:sendInfoTimeout(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount), 5000)
+			end
 		else
-			hitElement:sendInfoTimeout(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount), 5000)
+			hitElement:sendError(_("Du musst im Müll-Fahrzeug sitzen!", hitElement), 255, 0, 0)
 		end
 	end
 end
