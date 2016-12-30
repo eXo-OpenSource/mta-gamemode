@@ -164,7 +164,7 @@ function GroupManager:Event_Quit()
 	if not group then return end
 
 	if group:getPlayerRank(client) == GroupRank.Leader then
-		client:sendWarning(_("Bitte übertrage den Leiter-Status erst auf ein anderes Mitglied der Firma/Gang!", client))
+		client:sendWarning(_("Als Leader kannst du nicht die %s verlassen!", client, group:getType()))
 		return
 	end
 	group:sendMessage(_("%s hat soeben eure %s verlassen!", client, getPlayerName(client), group:getType()))
