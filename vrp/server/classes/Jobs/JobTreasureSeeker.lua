@@ -131,7 +131,6 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 					player:sendError(_("Du hast bereits ein Objekt am Schiff!\nLade es erst am Startpunkt ab!", player))
 					return
 				end
-
 				player:sendShortMessage(_("Das gefundene Objekt wird angehoben! Bitte warten!", player))
 				local objectModel = self:getRandomTreasureModel()
 				veh:setFrozen(true)
@@ -142,10 +141,11 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 				veh.Magnet:setPosition(newPos)
 				veh.Magnet:move(15000, newPos.x, newPos.y, newPos.z-15)
 
+				veh.Magnet.Object = createObject(objectModel, newPos.x, newPos.y, newPos.z-100)
+				if self.m_TreasureTypes[objectModel]["Scale"] then veh.Magnet.Object:setScale(self.m_TreasureTypes[objectModel]["Scale"]) end
+
 				setTimer(function()
 					x, y, z = getElementPosition(veh.Magnet)
-					veh.Magnet.Object = createObject(objectModel, 0, 0, 0)
-					if self.m_TreasureTypes[objectModel]["Scale"] then veh.Magnet.Object:setScale(self.m_TreasureTypes[objectModel]["Scale"]) end
 					veh.Magnet.Object:attach(veh.Magnet, 0, 0, -0.9)
 					veh.Magnet:move(15000, x, y, z+15)
 				end, 15000, 1)
