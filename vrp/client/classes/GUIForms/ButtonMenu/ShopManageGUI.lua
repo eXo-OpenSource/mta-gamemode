@@ -96,6 +96,9 @@ end
 
 addEventHandler("shopOpenManageGUI", root,
 		function(shopId, name, type, ownerId, ownerName, price, streamUrl, stripper)
+			if ShopManageGUI:isInstantiated() then
+				delete(ShopManageGUI:getSingleton())
+			end
 			ShopManageGUI:new(shopId, name, type, ownerId, ownerName, price, streamUrl, stripper)
 		end
 	)
