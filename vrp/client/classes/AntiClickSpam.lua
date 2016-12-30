@@ -12,13 +12,17 @@ function AntiClickSpam:constructor()
 	self.m_Warn = 4
 	self.m_Block = 8
 	self.m_Counter = 0
+	self.m_Enabled = true
 	addEventHandler("onClientClick",root, bind(self.onClick, self))
+
+	addRemoteEvents{"clickSpamSetEnabled"}
+	addEventHandler("clickSpamSetEnabled",root, bind(self.setEnabled, self))
 
 	setTimer(bind(self.reset, self), 1000, 0)
 end
 
 function AntiClickSpam:onClick(button, state)
-	if state == "down" then
+	if state == "down" and self.m_Enabled then
 		self.m_Counter = self.m_Counter + 1
 		self:checkSpam()
 	end
@@ -47,3 +51,8 @@ end
 function AntiClickSpam:reset()
 	self.m_Counter = 0
 end
+
+function AntiClickSpam:setEnabled(state)
+	self.m_Enabled = state
+end
+

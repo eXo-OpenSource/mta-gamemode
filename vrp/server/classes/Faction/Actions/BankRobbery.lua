@@ -179,6 +179,18 @@ function BankRobbery:build()
 	addEventHandler("bankRobberyPcHack", root, self.m_OnStartHack)
 	addEventHandler("bankRobberyPcDisarm", root,self.m_OnDisarm )
 	addEventHandler("bankRobberyPcHackSuccess", root, self.m_OnSuccess)
+
+	addEventHandler("onColShapeHit", self.m_SecurityRoomShape, function(hitElement, dim)
+		if hitElement:getType() == "player" and dim then
+			hitElement:triggerEvent("clickSpamSetEnabled", false)
+		end
+	end)
+
+	addEventHandler("onColShapeLeave", self.m_SecurityRoomShape, function(hitElement, dim)
+		if hitElement:getType() == "player" and dim then
+			hitElement:triggerEvent("clickSpamSetEnabled", true)
+		end
+	end)
 end
 
 
