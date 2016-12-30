@@ -25,7 +25,7 @@ RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
 	rm -Rf /var/lib/mtasa/x64/linux-libs
 
 # Expose ports (22005/tcp is exposed dynamically)
-EXPOSE 22003/udp 22126/udp 8080/tcp
+EXPOSE 8080/tcp
 
 # Add worker server
 ADD build/workerserver /var/lib/mtasa/workerserver
