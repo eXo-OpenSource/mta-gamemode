@@ -63,7 +63,7 @@ function BankRobbery:destructor()
 end
 
 function BankRobbery:destroyRob()
-	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape)
+	local tooLatePlayers = getElementsWithinColShape(self.m_SecurityRoomShape, "player")
 	if tooLatePlayers then
 		for key, player in pairs( tooLatePlayers) do
 			killPed(player)
