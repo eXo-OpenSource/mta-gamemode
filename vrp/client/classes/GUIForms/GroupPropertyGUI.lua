@@ -29,6 +29,7 @@ function GroupPropertyGUI:constructor( tObj )
 	self.m_MessageButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.56, self.m_Width*0.35, self.m_Height*0.08, _"Eingangsnachricht", tabManage):setBackgroundColor(Color.Orange):setFontSize(1)
 	self.m_MessageFunc = function() self:newMessageWindow() end
 	self.m_MessageButton.onLeftClick = self.m_MessageFunc
+	self.m_MessageButton:setVisible(false) -- nicht fertig
 	self.m_SellButton = GUIButton:new(self.m_Width*0.1, self.m_Height*0.69, self.m_Width*0.35, self.m_Height*0.08, _"Verkaufen", tabManage):setBackgroundColor(Color.Red):setFontSize(1)
 	self.m_SellButton.onLeftClick = bind(GroupPropertyGUI.OnSellClick,self)
 
