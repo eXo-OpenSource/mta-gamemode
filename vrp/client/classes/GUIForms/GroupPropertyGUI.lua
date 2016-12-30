@@ -6,8 +6,8 @@
 -- *
 -- ****************************************************************************
 GroupPropertyGUI = inherit(GUIForm)
-inherit(Object, GroupPropertyGUI)
-local cObject
+inherit(Singleton, GroupPropertyGUI)
+
 addRemoteEvents{"setPropGUIActive","sendGroupKeyList","updateGroupDoorState","forceGroupPropertyClose"}
 function GroupPropertyGUI:constructor( tObj )
 	self.m_PropertyTable = tObj
@@ -65,6 +65,15 @@ function GroupPropertyGUI:constructor( tObj )
 	GUILabel:new(self.m_Width*0.1, self.m_Height*0.24, self.m_Width*0.65, self.m_Height*0.10, "Kaufpreis: "..self.m_PropertyTable.m_Price.."$", tabInfo):setFont(VRPFont(self.m_Height*0.08))
 	GUILabel:new(self.m_Width*0.1, self.m_Height*0.36, self.m_Width*0.65, self.m_Height*0.10, "Verkaufpreis (System): "..math.floor(self.m_PropertyTable.m_Price*0.66).."$", tabInfo):setFont(VRPFont(self.m_Height*0.08))
 	GUILabel:new(self.m_Width*0.1, self.m_Height*0.48, self.m_Width*0.65, self.m_Height*0.10, "Lage: "..getZoneName(tObj.m_CamMatrix[1],tObj.m_CamMatrix[2],tObj.m_CamMatrix[3]), tabInfo):setFont(VRPFont(self.m_Height*0.08))
+
+	addEventHandler("sendGroupKeyList", root, function(tList, tChangeList)
+		self:refreshGrid(tList,tChangeList)
+	end)
+
+	addEventHandler("updateGroupDoorState", root, function(iState)
+		self:setGroupDoorState(iState)
+	end)
+
 end
 
 function GroupPropertyGUI:openDepot( )
@@ -75,13 +84,11 @@ function GroupPropertyGUI:destructor()
 	self.m_Window:delete()
 end
 
-function GroupPropertyGUI:OnMotDClick( )
-
-end
-
 function GroupPropertyGUI:OnSellClick()
-	outputChatBox("Bist du dir sicher, dass du diese Immobilie verkaufen möchtest? /immoverkauf ja",200,0,0)
-	cObject.m_ConfirmSellState = true
+	QuestionBox:new(
+		_"Bist du dir sicher, dass du diese Immobilie verkaufen möchtest?",
+		function() 	triggerServerEvent("GroupPropertySell",localPlayer) end
+	)
 end
 
 function GroupPropertyGUI:newMessageWindow()
@@ -92,7 +99,7 @@ function GroupPropertyGUI:newMessageWindow()
 end
 
 function GroupPropertyGUI:forceClose()
-	delete( cObject )
+	delete(self)
 end
 
 function GroupPropertyGUI:triggerRefresh()
@@ -133,71 +140,27 @@ function GroupPropertyGUI:setMessage( text )
 	end
 end
 
-function GroupPropertyGUI:sellProperty()
-	triggerServerEvent("GroupPropertySell",localPlayer)
+addEventHandler("forceGroupPropertyClose",localPlayer,function()
+	GroupPropertyGUI.disable()
+end)
+
+function GroupPropertyGUI.disable()
+	if GroupPropertyGUI:isInstantiated() then
+		delete(GroupPropertyGUI:getSingleton())
+	end
+	unbindKey("f6","up", GroupPropertyGUI.toggle)
 end
 
-addEventHandler("setPropGUIActive",localPlayer,function( tObj)
-	if not cObject then
-		cObject = GroupPropertyGUI:new( tObj )
-		cObject:setVisible(false)
+function GroupPropertyGUI.toggle(key, state, pickup)
+	if GroupPropertyGUI:isInstantiated() then
+		delete(GroupPropertyGUI:getSingleton())
 	else
-		unbindKey("f6","up",cObject.m_toggleFunc)
-		cObject:delete()
-		cObject = nil
-		cObject = GroupPropertyGUI:new( tObj )
-		cObject:setVisible(false)
+		GroupPropertyGUI:new(pickup)
 	end
-	cObject.m_toggleFunc = bind(GroupPropertyGUI.toggle,cObject)
-	bindKey("f6","up",cObject.m_toggleFunc)
+end
+
+addEventHandler("setPropGUIActive",localPlayer,function(pickup)
+	bindKey("f6","up", GroupPropertyGUI.toggle, pickup)
 	ShortMessage:new(_"Drücke F6 für das Immobilien-Panel!")
 end
 )
-
-addEventHandler("sendGroupKeyList",localPlayer,function( tList, tChangeList)
-	if cObject then
-		cObject:refreshGrid(tList,tChangeList)
-	end
-end
-)
-
-addEventHandler("updateGroupDoorState",localPlayer,function( iState )
-	if cObject then
-		cObject:setGroupDoorState(iState)
-	end
-end
-)
-
-function GroupPropertyGUI:toggle( )
-	self:setVisible(not self:isVisible())
-end
-
-addCommandHandler("immoverkauf", function( cmd, var1)
-	if string.upper(var1) == "JA" then
-		if cObject then
-			if cObject.m_ConfirmSellState then
-				triggerServerEvent("GroupPropertySell",localPlayer)
-			end
-		end
-	else
-		cObject.m_ConfirmSellState = false
-		outputChatBox("Verkauf abgebrochen!",200,200,0)
-		cObject:sellProperty()
-	end
-end,false)
-
-addEventHandler("forceGroupPropertyClose",localPlayer,function()
-	if cObject then
-		unbindKey("f6","up",cObject.m_toggleFunc)
-		cObject:delete()
-		cObject = nil
-	end
-end)
-
-function GroupPropertyGUI:OnStreamOutClose()
-	if cObject then
-		unbindKey("f6","up",cObject.m_toggleFunc)
-		cObject:delete()
-		cObject = nil
-	end
-end

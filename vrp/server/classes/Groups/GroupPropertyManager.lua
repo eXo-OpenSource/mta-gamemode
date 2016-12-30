@@ -127,10 +127,10 @@ function GroupPropertyManager:BuyProperty( Id )
 					client:sendError(_("Diese Immobilie ist bereits vergeben!", client))
 				end
 			else
-				client:sendError(_("Du bist in keiner Firma oder Gang!", client))
+				client:sendError(_("In deiner Firmen/Gang-Kasse befindet sich nicht genug Geld!", client))
 			end
 		else
-			client:sendError(_("In deiner Firmen/Gang-Kasse befindet sich nicht genug Geld!", client))
+			client:sendError(_("Du bist in keiner Firma oder Gang!", client))
 		end
 	else
 		client:sendError(_("Immobilie nicht gefunden!", client))
