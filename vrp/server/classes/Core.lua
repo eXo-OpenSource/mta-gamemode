@@ -108,7 +108,7 @@ function Core:constructor()
 
 		ChessSessionManager:new()
 		-- Generate Missions
-		MStealWeaponTruck:new()
+		--MStealWeaponTruck:new()
 
 		-- Missions
 		MWeaponTruck:new()
