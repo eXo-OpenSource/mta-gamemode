@@ -72,6 +72,8 @@ function JobTrashman:start(player)
 end
 
 function JobTrashman:stop(player)
+	player:triggerEvent("jobTrashManStop")
+
 	self.m_VehicleSpawner1:toggleForPlayer(player, false)
 	self.m_VehicleSpawner2:toggleForPlayer(player, false)
 	self.m_VehicleSpawner3:toggleForPlayer(player, false)
@@ -87,11 +89,7 @@ function JobTrashman:checkRequirements(player)
 end
 
 function JobTrashman:Event_stop()
-	if client:getOccupiedVehicle() and client:getOccupiedVehicle():getModel() == 408 then
-		client:getOccupiedVehicle():destroy()
-	end
-	client:triggerEvent("jobTrashManStop")
-	client:setJob(nil)
+	self:stop(client)
 end
 
 
@@ -101,7 +99,7 @@ function JobTrashman:Event_trashcanCollect(containerNum)
 		-- Possible cheat attempt | Todo: Add to anticheat
 		return
 	end
-	if hitElement.vehicle and hitElement.vehicle:getModel() == 408 then
+	if client.vehicle and client.vehicle:getModel() == 408 then
 		-- Prevent the player from calling this event too often per specified interval -> Anticheat
 		-- Note: It's bad to create the huge amount of trashcans on the server - but...we should do it probably?
 		local lastTime = client:getData("Trashman:LastCan") or -math.huge
@@ -133,7 +131,7 @@ function JobTrashman:dumpCans(hitElement, matchingDimension)
 
 				hitElement:setData("Trashman:Cans", 0)
 				hitElement:triggerEvent("trashcanReset")
-				hitElement:triggerEvent("questionBox", _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop")
+				hitElement:triggerEvent("questionBox", _("Möchtest du weiter arbeiten?", hitElement), "JobTrashmanAgain", "JobTrashmanStop", hitElement)
 
 			else
 				hitElement:sendInfoTimeout(_("Du hast keinen Müll aufgeladen!", hitElement, moneyAmount), 5000)
