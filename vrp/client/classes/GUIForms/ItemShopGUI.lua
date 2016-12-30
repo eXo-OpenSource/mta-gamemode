@@ -8,7 +8,7 @@
 ItemShopGUI = inherit(GUIForm)
 inherit(Singleton, ItemShopGUI)
 
-addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI", "showStateItemGUI", "showBarGUI"}
+addRemoteEvents{"showItemShopGUI", "refreshItemShopGUI", "showStateItemGUI", "showBarGUI", "shopCloseGUI"}
 
 function ItemShopGUI:constructor(callback)
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3*0.5, screenHeight/2-screenHeight*0.4*0.5, screenWidth*0.3, screenHeight*0.4)
@@ -110,3 +110,9 @@ addEventHandler("showStateItemGUI", root,
 		ItemShopGUI:new(callback)
 	end
 )
+
+addEventHandler("shopCloseGUI", root,
+		function()
+			if ItemShopGUI:isInstantiated() then delete(ItemShopGUI:getSingleton()) end
+		end
+	)

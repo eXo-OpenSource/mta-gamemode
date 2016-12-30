@@ -82,6 +82,7 @@ function Shop:onExit(player)
 	if self.m_BuyAble then
 		unbindKey(player, "m", "down", self.m_ShopGUIBind)
 		player:triggerEvent("shopCloseManageGUI")
+		player:triggerEvent("shopCloseGUI")
 	end
 	if self.onShopExit then self:onShopExit(player) end
 end
