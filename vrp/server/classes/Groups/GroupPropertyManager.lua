@@ -100,30 +100,41 @@ end
 function GroupPropertyManager:BuyProperty( Id )
 	local property = GroupPropertyManager:getSingleton().Map[Id]
 	local propCount = self:getPropsForPlayer( client )
-	if #propCount > 0 then 
+	if #propCount > 0 then
 		return client:sendError("Sie haben bereits eine Immobilie")
 	end
 	if property then
 		local price = property.m_Price
-		if price <= client:getMoney() then
-			local oldOwner = property.m_Owner
-			local newOwner = client:getGroup()
-			if not oldOwner then
-				property.m_Owner = newOwner or false
-				property.m_OwnerID = newOwner.m_Id or false
-				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), newOwner.m_Id, property.m_Id)
-				property.m_Open = 1
-				client:takeMoney(price, "Immobilie "..property.m_Name.." gekauft!")
-				client:sendInfo("Du hast die Immobilie gekauft!")
-				client:triggerEvent("ForceClose")
-				for key, player in ipairs( newOwner:getOnlinePlayers() ) do
-					player:triggerEvent("addPickupToGroupStream",property.m_ExitMarker, property.m_Id)
-					x,y,z = getElementPosition( property.m_Pickup )
-					player:triggerEvent("createGroupBlip",x,y,z,property.m_Id)
+		local newOwner = client:getGroup()
+		if newOwner then
+			if price <= newOwner:getMoney() then
+				local oldOwner = property.m_Owner
+				if not oldOwner then
+					property.m_Owner = newOwner or false
+					property.m_OwnerID = newOwner.m_Id or false
+					sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), newOwner.m_Id, property.m_Id)
+					property.m_Open = 1
+					newOwner:takeMoney(price, "Immobilie "..property.m_Name.." gekauft!")
+					client:sendInfo("Du hast die Immobilie gekauft!")
+					client:triggerEvent("ForceClose")
+					for key, player in ipairs( newOwner:getOnlinePlayers() ) do
+						player:triggerEvent("addPickupToGroupStream",property.m_ExitMarker, property.m_Id)
+						x,y,z = getElementPosition( property.m_Pickup )
+						player:triggerEvent("createGroupBlip",x,y,z,property.m_Id)
+					end
+					StatisticsLogger:GroupBuyImmoLog( property.m_OwnerID or 0, "BUY", property.m_Id)
+				else
+					client:sendError(_("Diese Immobilie ist bereits vergeben!", client))
 				end
-				StatisticsLogger:GroupBuyImmoLog( property.m_OwnerID or 0, "BUY", property.m_Id)
+			else
+				client:sendError(_("Du bist in keiner Firma oder Gang!", client))
 			end
+		else
+			client:sendError(_("In deiner Firmen/Gang-Kasse befindet sich nicht genug Geld!", client))
 		end
+	else
+		client:sendError(_("Immobilie nicht gefunden!", client))
+		outputDebugString("GroupPropertyManager:BuyProperty: Immobile ID "..Id.." not found!")
 	end
 end
 
