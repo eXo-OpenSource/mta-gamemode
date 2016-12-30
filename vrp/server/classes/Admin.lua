@@ -530,7 +530,11 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 											changeTarget:addOfflineMessage("Du wurdest von "..target.name.." zu "..reason.." umgenannt!",1)
 											return
 										end
+									else
+										admin:sendError(_("Der Spieler ist online!", admin))
 									end
+								else
+									admin:sendError(_("Spieler nicht gefunden!", admin))
 								end
 							end
 						)
