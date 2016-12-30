@@ -70,6 +70,7 @@ function RobableShop:startRob(shop, attacker, ped)
 
 	-- Report the crime
 	--attacker:reportCrime(Crime.ShopRob)
+	accacker:giveKarma(-5)
 	attacker:giveWantedLevel(3)
 	attacker:sendMessage("Verbrechen begangen: Shop-Überfall, 3 Wanteds", 255, 255, 0)
 
@@ -319,6 +320,7 @@ function RobableShop:onDeliveryMarkerHit(hitElement, dim)
         self.m_Shop:giveMoney(stateMoney, "Shop Raub Sicherstellung")
         hitElement:sendInfo(_("Beute sichergestellt! Der Shop, du und die Staatskasse haben je %d$ erhalten!", hitElement, stateMoney))
         PlayerManager:getSingleton():breakingNews("Die Beute des %s Überfall wurde sichergestellt!", self.m_Shop:getName())
+		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Shop Raub Beute sichergestellt!")
       else
         hitElement:sendError(_("Du darfst die Beute hier nicht abgeben!", hitElement))
         return
