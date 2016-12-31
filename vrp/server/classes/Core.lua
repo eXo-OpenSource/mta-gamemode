@@ -1,3 +1,5 @@
+--Happy New Year
+
 Core = inherit(Object)
 addEvent("Core.onClientInternalError", true)
 
