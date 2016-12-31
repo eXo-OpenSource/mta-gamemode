@@ -56,6 +56,7 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeHit", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
+				outputChatBox("spray StreamIn "..Id)
 				self:createTextures()
 				self:refresh()
 				addEventHandler("onClientRender", root, self.m_RenderTagFunc)
@@ -65,6 +66,8 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeLeave", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
+								outputChatBox("spray StreamOut")
+
 				self:destroyTextures()
 				removeEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
