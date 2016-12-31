@@ -91,3 +91,12 @@ function rectangleCollision2D(rax, ray, raw, rah, rbx, rby, rbw, rbh)
 		return true
 	end
 end
+
+function calcDxFontSize(text, width, font, max)
+	for i = max, 0.1, -0.1 do
+		if dxGetTextWidth(text, i, font) <= width then
+			return i
+		end
+	end
+	return max
+end

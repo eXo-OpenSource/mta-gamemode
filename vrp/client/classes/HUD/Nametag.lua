@@ -67,7 +67,10 @@ function Nametag:draw()
 			--local name = getPlayerName(player):gsub("#%d%d%d%d","")
 			dxSetRenderTarget(self.m_RenderTarget,true)
 
-			dxDrawText(getPlayerName(player), 10, 5, 145, 60,AdminColor[player:getPublicSync("Rank") or 0],2,"default-bold")
+			local pname = player:getName()
+			local size = calcDxFontSize(pname, 240, "default-bold", 2)
+
+			dxDrawText(getPlayerName(player), 10, 5, 250, 60,AdminColor[player:getPublicSync("Rank") or 0], size,"default-bold")
 
 			self:drawIcons(player)
 
