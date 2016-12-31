@@ -50,8 +50,9 @@ function JobTrashman:onVehicleSpawn(player,vehicleModel,vehicle)
 	if isElement(player.vehTrashM) then
 		destroyElement(player.vehTrashM)
 	end
+	vehicle.m_TrashmanOwner = player
 	vehicle:addCountdownDestroy(10)
-	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
+	addEventHandler("onElementDestroy", vehicle, bind(self.m_OnVehicleAction, self))
 end
 
 function JobTrashman:endShift( player )
@@ -69,6 +70,10 @@ function JobTrashman:start(player)
 	self.m_VehicleSpawner1:toggleForPlayer(player, true)
 	self.m_VehicleSpawner2:toggleForPlayer(player, true)
 	self.m_VehicleSpawner3:toggleForPlayer(player, true)
+end
+
+function JobTrashman:onVehicleAction()
+	self:stop(source.m_TrashmanOwner)
 end
 
 function JobTrashman:stop(player)
