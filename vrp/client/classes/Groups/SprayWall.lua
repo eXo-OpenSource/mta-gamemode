@@ -24,6 +24,9 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeHit", self.m_Shape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
+				if player:getGroupType() == "Gang" then
+					InfoBox:new(_"Du kannst diese Wand mit der Spraydose besprühen!")
+				end
 				self:setTagText(localPlayer:getGroupName())
 				addEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
 			end
