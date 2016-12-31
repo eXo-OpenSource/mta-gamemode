@@ -56,8 +56,8 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeHit", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				self:refresh()
 				self:createTextures()
+				self:refresh()
 				addEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
 		end
