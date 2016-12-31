@@ -156,7 +156,8 @@ end
 function Admin:openAdminMenu(player)
 	if client then player = client end
 	if self.m_OnlineAdmins[player] > 0 then
-		triggerClientEvent(player,"showAdminMenu",player, self.m_BankAccount:getMoney())
+		player:triggerEvent("showAdminMenu", self.m_BankAccount:getMoney())
+		player:triggerEvent("adminRefreshEventMoney", self.m_BankAccount:getMoney())
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end
