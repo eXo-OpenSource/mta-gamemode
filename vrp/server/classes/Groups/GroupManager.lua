@@ -472,10 +472,10 @@ end
 
 function GroupManager:Event_UpdateVehicleTuning()
 	local group = client:getGroup()
-	if true then -- Todo: Tuning Shop needs rework on this
-		client:sendInfo(_("Derzeit ist dies nicht möglich!", client))
-		return
-	end
+	--if true then -- Todo: Tuning Shop needs rework on this
+	--	client:sendInfo(_("Derzeit ist dies nicht möglich!", client))
+	--	return
+	--end
 	if group and group:getPlayerRank(client) >= GroupRank.Manager then
 	--	if group:getKarma() <= -50 then
 			if group:getMoney() >= 3000 then

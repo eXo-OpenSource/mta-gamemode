@@ -23,8 +23,8 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 	end
-	if getElementData(element, "OwnerName") == localPlayer.name or localPlayer:getRank() >= RANK.Ticketsupporter then
-		if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" and getElementData(element, "OwnerType") ~= "group" then
+	if getElementData(element, "OwnerName") == localPlayer.name or localPlayer:getGroupName() == getElementData(element, "OwnerName") or localPlayer:getRank() >= RANK.Supporter then
+		if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
 			self:addItem(_"Respawnen / Parken >>>",
 				function()
 					if self:getElement() then
