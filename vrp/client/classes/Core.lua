@@ -7,7 +7,7 @@ function Core:constructor()
 	-- Instantiate the localPlayer instance right now
 	enew(localPlayer, LocalPlayer)
 
-	self.m_Config = ConfigXML:new("config.xml")
+	self.m_Config = ConfigXML:new("@config.xml")
 	Version:new()
 	Provider:new()
 
