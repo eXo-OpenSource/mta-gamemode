@@ -10,4 +10,4 @@ if [ ! -f "$CONFIG_DIR/config.json" ]; then
 fi
 
 # Start worker server
-cd /var/lib/mtasa && su -m -c /var/lib/mtasa/workerserver mtasa
+cd /var/lib/mtasa && exec su -m -c /var/lib/mtasa/workerserver mtasa
