@@ -38,8 +38,10 @@ function HelpBar:constructor()
 	self.m_TutorialButton.onUnhover = function () self.m_TutorialButton:setColor(Color.LightBlue) end
 	self.m_TutorialButton:setVisible(false)
 
-	self.m_TicketButton = GUIButton:new(self.m_Width*0.05, self.m_Height*0.93, self.m_Width*0.9, self.m_Height*0.05, _"Ticket erstellen", self.m_Rectangle):setFontSize(1.2):setBackgroundColor(Color.LightBlue)
-	self.m_TicketButton.onLeftClick = function() TicketGUI:getSingleton():open() end
+	if self:isLoggedIn() then
+		self.m_TicketButton = GUIButton:new(self.m_Width*0.05, self.m_Height*0.93, self.m_Width*0.9, self.m_Height*0.05, _"Ticket erstellen", self.m_Rectangle):setFontSize(1.2):setBackgroundColor(Color.LightBlue)
+		self.m_TicketButton.onLeftClick = function() TicketGUI:getSingleton():open() end
+	end
 
 	self.m_Visible = false
 end
@@ -51,7 +53,7 @@ function HelpBar:fadeIn()
 
 	self.m_Icon.onUnhover()
 	self.m_Icon:setVisible(false)
-	
+
 end
 
 function HelpBar:fadeOut()
