@@ -207,12 +207,6 @@ function PlayerManager:Event_playerReady()
 	local player = client
 
 	self.m_ReadyPlayers[#self.m_ReadyPlayers + 1] = player
-
-	-- Send server version info
-	local version = core:getVersion()
-	if version then
-		player:triggerEvent("versionReceive", version)
-	end
 end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )

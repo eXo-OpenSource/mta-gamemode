@@ -14,7 +14,7 @@ MAX_ALCOHOL_LEVEL = 6
 ALCOHOL_LOSS_INTERVAL =  5*60 -- IN SECONDS
 ALCOHOL_LOSS = 0.5 -- every 10 Minutes
 
-
+PROJECT_NAME = "eXo Reallife"
 
 RANK = {}
 RANK[-1] = "Banned"

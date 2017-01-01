@@ -17,7 +17,6 @@
 	<script src="shared/constants/groupInteriors.lua" type="shared"/>
 	<script src="shared/async.lua" type="shared"/>
 	<script src="shared/utils.lua" type="shared"/>
-	<script src="shared/version.lua" type="shared"/>
 	<script src="shared/debug.lua" type="shared"/>
 	<script src="shared/matrix.lua" type="shared"/>
 	<script src="shared/math.lua" type="shared"/>
