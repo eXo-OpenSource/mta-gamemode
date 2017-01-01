@@ -162,9 +162,8 @@ end
 
 function HUDUI:drawDefault()
 	local f = math.floor
-
-	dxDrawRectangle(screenWidth-0.195*screenWidth,0.04*screenHeight,0.195*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
-	dxDrawText("$"..localPlayer:getMoney(), screenWidth-0.14*screenWidth, 0.097*screenHeight/2, screenWidth-screenWidth*0.007, 0.097*screenHeight, Color.White, 1, self.m_Font, "right")
+	dxDrawRectangle(screenWidth-0.195*screenWidth, 0.04*screenHeight, 0.195*screenWidth, 0.092*screenHeight,tocolor(0,0,0,150))
+	dxDrawText("$"..localPlayer:getMoney(), screenWidth-0.14*screenWidth, 0.04*screenHeight, screenWidth-screenWidth*0.007, 0.04*screenHeight+0.092*screenHeight, Color.White, 1, self.m_Font, "right", "center")
 
 	local munitionWindowActive = true
 
@@ -289,7 +288,7 @@ function HUDUI:drawExo()
 	sx_g = screenWidth
 	local sx = screenWidth
 	--if sx_g > 1400 then sx_g = 1400 end
-	
+
 	local width = math.floor(sx_g*0.22)*self.m_Scale
 	local height = math.floor(sx_g*0.22)*self.m_Scale
 	local r_os = 0
@@ -331,14 +330,14 @@ function HUDUI:drawExo()
 
 		b_x = localPlayer:getArmor()/100
 		dxDrawImageSection(bar_x, height*(155/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/blue_b.png',0,0,0,tocolor(255,255,255,200)) -- erster Balken
-		
+
 		b_x = localPlayer:getHealth()/100
 		if b_x > (15*0.01) then
 			dxDrawImageSection(bar_x ,height*(186/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200))
 		elseif b_x <= (15*0.01) and ( getTickCount() % 1000 > 500 ) then
 			dxDrawImageSection(bar_x ,height*(186/imageHeight),bar_width*b_x,bar_height,scroll_,0,207*b_x,15,'files/images/HUD/exo/red_b.png',0,0,0,tocolor(255,255,255,200)) -- zweiter Balken
 		end
-		
+
 		local karma = localPlayer:getKarma()
 		b_x = math.abs(karma)/150
 		if karma < 0 then
@@ -410,7 +409,7 @@ function HUDUI:drawAFK()
 	dxDrawText ("- AFK - ",0,0,screenWidth, 100,  Color.Orange, 5, "sans","center" )
 end
 
-function HUDUI:setScale( scale ) 
+function HUDUI:setScale( scale )
 	scale = scale*1.25
 	self.m_Scale = 0.5 + math.floor( ((1.5 * scale))*10)/10
 	core:set("HUD", "hudScale", self.m_Scale)
