@@ -19,7 +19,7 @@ function AppOnOff:onOpen(form)
 
 		self.m_switchOffImage = GUIImage:new(form.m_Width/2-64/2, 120, 64, 64, "files/images/Phone/Apps_iPhone/IconOff.png", form)
 		self.m_switchOffImage.onLeftClick = function() self:switchOff() end
-		self.m_switchOffLabel = GUILabel:new(0, 190, form.m_Width, 20, _"Ja ausschalten", form):setColor(Color.Black):setAlignX("center")
+		self.m_switchOffLabel = GUILabel:new(0, 190, form.m_Width, 20, _"Ja, ausschalten", form):setColor(Color.Black):setAlignX("center")
 		self.m_switchOffLabel.onLeftClick = function() self:switchOff() end
 	else
 		GUIRectangle:new(0, 0, form.m_Width, form.m_Height, Color.Black, form)

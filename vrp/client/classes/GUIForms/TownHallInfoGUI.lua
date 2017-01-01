@@ -15,7 +15,7 @@ function TownhallInfoGUI:constructor()
 	self.m_TabJobs = tabJobs
 
 	-- Aktivitäten
-	local tabActivities = self.m_TabPanel:addTab(_"Aktivitätwen")
+	local tabActivities = self.m_TabPanel:addTab(_"Aktivitäten")
 	self.m_TabActivities = tabActivities
 
 	-- Gangs

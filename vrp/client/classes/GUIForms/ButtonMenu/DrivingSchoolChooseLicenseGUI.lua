@@ -11,7 +11,7 @@ function DrivingSchoolChooseLicenseGUI:constructor(target)
 	self.m_Target = target
 	GUIButtonMenu.constructor(self, "Führerschein auswählen")
 
-	self:addItem(_"Auto-Führerschein",Color.Green ,
+	self:addItem(_"Autoführerschein",Color.Green ,
 		function()
 			triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "car")
 			self:delete()
@@ -29,13 +29,13 @@ function DrivingSchoolChooseLicenseGUI:constructor(target)
 			self:delete()
 		end
 	)
-	--self:addItem(_"Helikopter-Schein",Color.Orange ,
+	--self:addItem(_"Helikopterschein",Color.Orange ,
 	--	function()
 	--		triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "heli")
 	--		self:delete()
 	--	end
 	--)
-	self:addItem(_"Flug-Schein",Color.LightBlue ,
+	self:addItem(_"Flugschein",Color.LightBlue ,
 		function()
 			triggerServerEvent("drivingSchoolstartLessionQuestion", localPlayer, self.m_Target, "plane")
 			self:delete()

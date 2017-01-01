@@ -570,7 +570,7 @@ addEventHandler("onClientColShapeHit",AREA51_WARNING,function(hE)
 	if hE == localPlayer then
 		if ShortMessage then
 			if localPlayer:getFactionId() ~= 1 or localPlayer:getFactionId() ~= 2 then
-				ShortMessage:new(_"Du betrittst ein militärisches Sperrgebiet! Sei Vorsichtig!")
+				ShortMessage:new(_"Du betrittst ein militärisches Sperrgebiet! Sei vorsichtig!")
 			end
 		end
 	end

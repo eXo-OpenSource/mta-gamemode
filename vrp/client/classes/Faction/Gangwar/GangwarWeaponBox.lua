@@ -17,7 +17,7 @@ function WeaponBoxGUI:constructor( pGangwarDisplay , pWeapons)
 	self.m_WeaponList = GUIGridList:new(5, 35, self.m_Width-10, self.m_Height-60, self)
 	self.m_WeaponList:addColumn(_"Waffen", 1)
 	GUILabel:new(6, self.m_Height-self.m_Height/16.5, self.m_Width-12, self.m_Height/15.5, "?", self.m_Window):setAlignX("right")
-	GUILabel:new(6, self.m_Height-self.m_Height/16.5, self.m_Width-12, self.m_Height/15.5, _"Doppelklick zum nehmen", self.m_Window):setFont(VRPFont(self.m_Height*0.04)):setAlignY("center"):setColor(Color.Red)
+	GUILabel:new(6, self.m_Height-self.m_Height/16.5, self.m_Width-12, self.m_Height/15.5, _"Doppelklick zum Nehmen", self.m_Window):setFont(VRPFont(self.m_Height*0.04)):setAlignY("center"):setColor(Color.Red)
 
 	self.m_Window:setCloseOnClose( true )
 	self.m_GangwarDisplay = pGangwarDisplay

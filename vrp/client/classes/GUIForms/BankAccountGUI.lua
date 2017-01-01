@@ -53,7 +53,7 @@ function BankAccountGUI:WithdrawButton_Click()
 		triggerServerEvent(self.m_WithdrawEvent, root, amount, unpack(self.m_AdditionalParameters))
 		self.m_WithdrawAmountEdit:setText("0")
 	else
-		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
+		ErrorBox:new(_"Bitte gib einen gültigen Wert ein!")
 	end
 end
 
@@ -63,6 +63,6 @@ function BankAccountGUI:DepositButton_Click()
 		triggerServerEvent(self.m_DepositEvent, root, amount, unpack(self.m_AdditionalParameters))
 		self.m_DepositAmountEdit:setText("0")
 	else
-		ErrorBox:new(_"Bitte geben einen gültigen Wert ein!")
+		ErrorBox:new(_"Bitte gib einen gültigen Wert ein!")
 	end
 end
