@@ -16,7 +16,13 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 
 	self.m_Shader = dxCreateShader("files/shader/texreplace.fx")
 	if not self.m_Shader then
-		error("Loading the shader failed")
+		outputDebugString("Loading the shader failed")
+		return
+	end
+
+	if not self.m_Texture then
+		outputDebugString("Loading the texture failed! "..textureName)
+		return
 	end
 
 	dxSetShaderValue(self.m_Shader, "gTexture", self.m_Texture)
