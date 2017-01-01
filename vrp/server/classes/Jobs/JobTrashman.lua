@@ -77,6 +77,7 @@ function JobTrashman:onVehicleAction()
 end
 
 function JobTrashman:stop(player)
+	if client and isElement(client) then player = client end
 	player:triggerEvent("jobTrashManStop")
 
 	self.m_VehicleSpawner1:toggleForPlayer(player, false)
