@@ -20,7 +20,7 @@ ConfigXML = inherit(Object)
 -- *
 local onConfigChangeEvent = CLIENT and "onClientConfigChange" or
 							SERVER and "onConfigChange"
-							
+
 addEvent(onConfigChangeEvent, false)
 
 
@@ -31,13 +31,12 @@ addEvent(onConfigChangeEvent, false)
 function ConfigXML:constructor(configfile)
 	assert(type(configfile) == "string")
 	self.m_File = configfile
-	self.m_Name = configfile:sub(0, -5) -- remove .xml
 	self.m_Cache = setmetatable({}, {
-		__index = function(self, k) 
-			return {} 
+		__index = function(self, k)
+			return {}
 		end
 	})
-	
+
 	self:_open()
 end
 
@@ -48,10 +47,10 @@ end
 function ConfigXML:_open()
 	if not self.m_Root then
 		if not fileExists(self.m_File) then
-			self.m_Root = xmlCreateFile(self.m_File, self.m_Name)
+			self.m_Root = xmlCreateFile(self.m_File, "config")
 		else
 			self.m_Root = xmlLoadFile(self.m_File)
-			assert(self.m_Root, "ConfigXML - Cannot load config file") 
+			assert(self.m_Root, "ConfigXML - Cannot load config file")
 		end
 	end
 end
@@ -78,13 +77,13 @@ function ConfigXML:get(group, key, default)
 	-- If not yet Cached, cache!
 	if self.m_Cache[group][key] == nil then
 		local cnode = xmlFindChild(self.m_Root, group, 0)
-		
+
 		if not cnode then return default end
-		
+
 		local knode = xmlFindChild(cnode, key, 0)
-		
+
 		if not knode then return default end
-		
+
 		self.m_Cache[group] = self.m_Cache[group] or {}
 		self.m_Cache[group][key] = ConfigXML._readNode(knode)
 	end
@@ -94,7 +93,7 @@ function ConfigXML:get(group, key, default)
 	if value == nil then
 		return default
 	end
-	
+
 	return value
 end
 
@@ -107,23 +106,23 @@ end
 -- *
 function ConfigXML:set(group, key, value)
 	local ev = triggerEvent(onConfigChangeEvent, root, self, group, key, self.m_Cache[group][key], value)
-	
+
 	if ev == false then return end
 	self.m_Cache[group][key] = value
-	
+
 	local cnode = xmlFindChild(self.m_Root, group, 0)
-	if not cnode then 
+	if not cnode then
 		cnode = xmlCreateChild(self.m_Root, group)
 	end
-	
+
 	local knode = xmlFindChild(cnode, key, 0)
-	if not knode then 
+	if not knode then
 		knode = xmlCreateChild(cnode, key)
 	end
-	
+
 	ConfigXML._writeNode(knode, value)
 	xmlSaveFile(self.m_Root)
-	
+
 	return value
 end
 
@@ -132,11 +131,11 @@ end
 -- *
 function ConfigXML._readNode(node)
 	local attrtype = xmlNodeGetAttribute(node, "type") or "string"
-	
+
 	if attrtype == "number" then 	return tonumber(xmlNodeGetValue(node)) end
 	if attrtype == "boolean" then 	return xmlNodeGetValue(node) == "true" end
 	if attrtype == "string" then 	return xmlNodeGetValue(node) end
-	
+
 	if attrtype == "table" then
 		local value = {}
 		local ival
@@ -159,12 +158,12 @@ function ConfigXML._writeNode(node, data)
 
 	local attrtype = type(data)
 	xmlNodeSetAttribute(node, "type", attrtype)
-	
-	if attrtype == "number" or 
+
+	if attrtype == "number" or
 		attrtype == "boolean" or
 		attrtype == "string" then
 		xmlNodeSetValue(node, tostring(data))
-		
+
 	elseif attrtype == "table" then
 		xmlNodeSetValue(node, "")
 		local newnode
