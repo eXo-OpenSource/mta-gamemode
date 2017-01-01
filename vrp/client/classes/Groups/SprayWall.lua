@@ -20,19 +20,29 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	self.m_RenderTagFunc = bind(self.renderTag, self)
 	self.m_SprayWallShape = getElementByID("SprayWall"..Id)
 
-	local funcSpray = function(weapon,ammo,clip,hitX,hitY, hitZ,element,startX,startY,startZ) if weapon == 41 then self:spray(hitX,hitY,hitZ,startX,startY,startZ) end end
+
+	self.m_SprayFunc =
+		function(weapon,ammo,clip,hitX,hitY, hitZ,element,startX,startY,startZ)
+			if weapon == 41 then
+				self:spray(hitX,hitY,hitZ,startX,startY,startZ)
+			end
+		end
+
 	addEventHandler("onClientColShapeHit", self.m_Shape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
+				if hitElement:getGroupType() == "Gang" then
+					InfoBox:new(_"Du kannst diese Wand mit der Spraydose besprühen!")
+				end
 				self:setTagText(localPlayer:getGroupName())
-				addEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
+				addEventHandler("onClientPlayerWeaponFire", localPlayer, self.m_SprayFunc)
 			end
 		end
 	)
 	addEventHandler("onClientColShapeLeave", self.m_Shape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				removeEventHandler("onClientPlayerWeaponFire", localPlayer, funcSpray)
+				removeEventHandler("onClientPlayerWeaponFire", localPlayer, self.m_SprayFunc)
 				if self.m_IsSpraying then
 					self:refresh()
 				end
@@ -46,8 +56,9 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeHit", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
-				self:refresh()
+				outputChatBox("spray StreamIn "..Id)
 				self:createTextures()
+				self:refresh()
 				addEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
 		end
@@ -55,6 +66,8 @@ function SprayWall:constructor(Id, wallPosition, rotation)
 	addEventHandler("onClientColShapeLeave", self.m_SprayWallShape,
 		function(hitElement, matchingDimension)
 			if hitElement == localPlayer and matchingDimension then
+								outputChatBox("spray StreamOut")
+
 				self:destroyTextures()
 				removeEventHandler("onClientRender", root, self.m_RenderTagFunc)
 			end
@@ -96,7 +109,6 @@ function SprayWall:spray(hitX, hitY, hitZ, startX, startY, startZ)
 	if localPlayer:getGroupName() then -- does the player have a group?
 		if self.m_TagText ~= localPlayer:getGroupName() then -- is its already its own?
 			self:createTextures()
-
 			if not self.m_IsSpraying then
 				self.m_TagProgress = 0
 			end
@@ -112,6 +124,9 @@ function SprayWall:spray(hitX, hitY, hitZ, startX, startY, startZ)
 					self.m_IsSpraying = false
 				end
 			end
+		else
+			InfoBox:new(_"Diese Wand ist bereits mit eurem Ganglogo besprayt!")
+			removeEventHandler("onClientPlayerWeaponFire", localPlayer, self.m_SprayFunc)
 		end
 	end
 end

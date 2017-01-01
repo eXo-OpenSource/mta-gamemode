@@ -118,14 +118,14 @@ function VehicleManager:getGroupVehicles(groupId)
 	return self.m_GroupVehicles[groupId]
 end
 
-function VehicleManager:createVehiclesForPlayer( player )
+function VehicleManager:createVehiclesForPlayer(player)
 	if player then
 		local id = player:getId()
 		if id then
 			if not self.m_Vehicles[id] then
 				self.m_Vehicles[id] = {}
 			end
-			local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner=?", sql:getPrefix(), id)
+			local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), id)
 			local vehicleObj
 			local skip = false
 			for i, row in pairs( result ) do
@@ -180,7 +180,7 @@ function VehicleManager.loadVehicles()
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TexturePath, row.Horn, row.Neon, row.Special)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
@@ -339,13 +339,27 @@ function VehicleManager:getPlayerVehicles(player)
 	return self.m_Vehicles[player] or {}
 end
 
-function VehicleManager:loadPlayerVehicles(player)
-	if player:getId() then
-		local result = sql:queryFetch("SELECT * FROM ??_vehicles WHERE Owner = ?", sql:getPrefix(), player:getId())
-		for i, row in pairs(result) do
-			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
-			enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
+function VehicleManager:refreshGroupVehicles(group)
+	local groupId = group:getId()
+	if not groupId then
+		outputDebug("VehicleManager:refreshGroupVehicles: Group-Id Not Found!")
+		return
+	end
+	-- Delete old Group Vehicles
+	if self.m_GroupVehicles[groupId] then
+		for index, veh in pairs(self.m_GroupVehicles[groupId]) do
+			veh:destroy()
+		end
+	end
+	-- Reload Group Vehicles from DB
+	local result = sql:queryFetch("SELECT * FROM ??_group_vehicles WHERE `Group` = ?", sql:getPrefix(), groupId)
+	for i, row in pairs(result) do
+		if GroupManager:getFromId(row.Group) then
+			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage)
 			VehicleManager:getSingleton():addRef(vehicle, false)
+		else
+			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
 		end
 	end
 end
@@ -370,8 +384,8 @@ end
 function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
-	if source:isPermanent() then
-		if source:hasKey(client) or client:getRank() >= RANK.Moderator then
+	if source:isPermanent() or instanceof(source, GroupVehicle) then
+		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup()) then
 			if source:isInGarage() then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
@@ -488,6 +502,13 @@ function VehicleManager:Event_vehicleRepair()
 end
 
 function VehicleManager:Event_vehicleRespawn(garageOnly)
+	self:checkVehicle(source)
+
+	if not source:isRespawnAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+		return
+	end
+
 	if source:getOccupantsCount() > 0 then
 		client:sendError(_("Das Fahrzeug ist nicht leer!", client))
 		return
@@ -575,12 +596,19 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 end
 
 function VehicleManager:Event_vehicleRespawnWorld()
+	self:checkVehicle(source)
+
+	if not source:isRespawnAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+		return
+	end
+
 	if source:getOccupantsCount() > 0 then
 		client:sendError(_("Das Fahrzeug ist nicht leer!", client))
 		return
 	end
 
- 	if not instanceof(source, PermanentVehicle, true) then
+ 	if not instanceof(source, PermanentVehicle, true) and not instanceof(source, GroupVehicle) then
  		client:sendError(_("Das ist kein permanentes Server Fahrzeug!", client))
  		return
  	end
@@ -608,6 +636,11 @@ function VehicleManager:Event_vehicleRespawnWorld()
 function VehicleManager:Event_vehicleDelete(reason)
 	self:checkVehicle(source)
 
+	if not source:isRespawnAllowed() then
+		client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+		return
+	end
+
 	if client:getRank() < RANK.Moderator then
 		-- Todo: Report cheat attempt
 		return
@@ -626,6 +659,8 @@ function VehicleManager:Event_vehicleDelete(reason)
 						delTarget:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 					end
 				end
+			else
+				client:sendInfo(_("Fahrzeug %s wurde gelöscht! Besitzer: %s Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
 			end
 		end
 		-- Todo Add Log
@@ -774,6 +809,7 @@ function VehicleManager:Event_vehicleSyncMileage(diff)
 	if vehicle then
 		if vehicle.setMileage and vehicle.setMileage then
 			vehicle:setMileage((vehicle:getMileage() or 0) + diff)
+			client:increaseStatistics("Driven", diff)
 		end
 	end
 end

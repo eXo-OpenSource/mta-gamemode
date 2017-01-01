@@ -9,7 +9,7 @@ JobForkLift = inherit(Job)
 
 function JobForkLift:constructor()
 	Job.constructor(self)
-	self.m_VehicleSpawner = VehicleSpawner:new( 89.82, -248.20, 0.6, {"Forklift"}, 90, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner = VehicleSpawner:new(87.50, -221.35, 0.9, {"Forklift"}, 90, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 

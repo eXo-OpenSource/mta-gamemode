@@ -8,7 +8,7 @@
 GUITabPanel = inherit(GUITabControl)
 
 function GUITabPanel:constructor(posX, posY, width, height, parent)
-	--checkArgs("GUITabControl:constructor", "number", "number", "number", "number")
+	checkArgs("GUITabControl:constructor", "number", "number", "number", "number")
 
 	GUITabControl.constructor(self, posX, posY, width, height, parent)
 end

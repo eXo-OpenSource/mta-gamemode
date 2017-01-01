@@ -71,7 +71,7 @@ function MWeedTruck:Event_weedTruckStart()
 					StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "start", client, faction, "faction")
 
 				else
-					hitElement:sendError(_("Du hast nicht genug Geld dabei!",hitElement))
+					client:sendError(_("Du hast nicht genug Geld dabei! (%d$)", client, MWeedTruck.Settings["costs"]))
 				end
 			end
 		end

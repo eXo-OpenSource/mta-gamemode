@@ -431,7 +431,6 @@
 	<script src="client/classes/GUIForms/VehicleShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSellGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSellAcceptGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/VehicleTransactionPapersGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleKeyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleSpawnGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/BankGUI.lua" type="client"/>
@@ -449,6 +448,7 @@
 	<script src="client/classes/GUIForms/MouseMenu/VendingMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/RadioMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/BeggarPedMouseMenu.lua" type="client"/>
+	<script src="client/classes/GUIForms/MouseMenu/BugCheckerPedMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/BankPcMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/MouseMenu/SpeedCamMouseMenu.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/StateFactionGasStationGUI.lua" type="client"/>
@@ -474,7 +474,6 @@
 	<script src="client/classes/GUIForms/AmmuNationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DebugGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PerformanceStatsGUI.lua" type="client"/>
-	<script src="client/classes/GUIForms/GasStationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HouseGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/JailBreakGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SendMoneyGUI.lua" type="client"/>
@@ -664,6 +663,7 @@
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/Fishing.lua" type="client"/>
+	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 
 	<!-- Minigames -->
 	<script src="client/classes/Gameplay/Minigames/Animations.lua" type="client"/>
@@ -735,6 +735,7 @@
 	<export function="phpSDKGetPlayers" type="server" http="true" />
 	<export function="phpSDKSendChatBox" type="server" http="true" />
 	<export function="phpSDKLoadCharacterInfo" type="server" http="true" />
+	<export function="phpSDKSendOnlinePlayers" type="server" http="true" />
 
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->
@@ -1372,6 +1373,8 @@
 	<vrpfile src="files/fonts/digital-7.ttf"/>
 	<vrpfile src="files/fonts/bit_font.ttf"/>
 	<vrpfile src="files/fonts/rage.ttf"/>
+	<vrpfile src="files/fonts/fuelstation.ttf"/>
+
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
 	<map src="files/maps/Roadsweeper.map"/>

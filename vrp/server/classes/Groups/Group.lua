@@ -18,6 +18,7 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
   self.m_LastNameChange = lastNameChange or 0
   self.m_VehiclesCanBeModified = vehicleTuning or false
   self.m_Type = type
+  self.m_Markers = {}
   self.m_MarkersAttached = false
   local saveRanks = false
   if not rankNames or rankNames == "" then rankNames = {} for i=0,6 do rankNames[i] = "Rang "..i end rankNames = toJSON(rankNames) outputDebug("Created RankNames for group "..Id) saveRanks = true end
@@ -383,11 +384,12 @@ function Group:removePlayerMarkers()
 end
 
 function Group:removePlayerMarker(player)
-  if not self.m_Markers[player] then return end
-  self.m_Markers[player]:destroy()
-  removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
-  removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
-  self.m_Markers[player] = nil
+	if not self.m_Markers then return end
+	if not self.m_Markers[player] then return end
+	self.m_Markers[player]:destroy()
+	removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
+	removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
+	self.m_Markers[player] = nil
 end
 
 function Group:refreshAttachedMarker(dimInt)

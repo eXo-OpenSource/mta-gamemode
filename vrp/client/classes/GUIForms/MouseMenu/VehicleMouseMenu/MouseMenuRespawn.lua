@@ -22,14 +22,15 @@ function VehicleMouseMenuRespawn:constructor(posX, posY, element)
 			end
 		end
 	)
-
-	self:addItem(_"Respawn @ Garage",
-		function()
-			if self:getElement() then
-				triggerServerEvent("vehicleRespawn", self:getElement(), true)
+	if getElementData(element, "OwnerType") ~= "group" then
+		self:addItem(_"Respawn @ Garage",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleRespawn", self:getElement(), true)
+				end
 			end
-		end
-	)
+		)
+	end
 
 	self:addItem(_"Respawn @ Parkposition",
 		function()

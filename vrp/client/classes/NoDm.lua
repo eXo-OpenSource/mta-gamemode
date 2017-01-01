@@ -4,7 +4,8 @@ NoDm.Zones = {
 	[1] = {Vector3(1399.1123046875,-1862.453125, 12), Vector3(160,120,15)},
 	[2] = {Vector3(1322.850219726,-1721.6591796875, 12), Vector3(92,120, 15)},
 	[3] = {Vector3(430,-100, 998), Vector3(50, 40, 10), 4},
-	[4] = {Vector3{ 1770, -1342.12, 20.77},Vector3{65, 72, 123}},
+	[4] = {Vector3{1770, -1342.12, 20.77},Vector3{65, 72, 123}},
+	[5] = {Vector3(1700, -1800, 0), Vector3{111, 60, 100}} -- Rescue
 }
 
 function NoDm:constructor()
@@ -125,13 +126,13 @@ function NoDm:checkNoDm()
 	end
 end
 
-addEventHandler("checkNoDm", localPlayer, function() 	
+addEventHandler("checkNoDm", localPlayer, function()
 	for index, koords in pairs(NoDm:getSingleton().Zones) do
 		local cols = NoDm:getSingleton().m_NoDmZones[index]
-		if isElementWithinColShape(localPlayer, cols) then 
+		if isElementWithinColShape(localPlayer, cols) then
 			NoDm:getSingleton():setPlayerNoDm(localPlayer, true)
 			break
-		else 
+		else
 			toggleControl("aim_weapon",true)
 		end
 	end

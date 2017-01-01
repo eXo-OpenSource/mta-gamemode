@@ -93,12 +93,13 @@ function VehicleShop:getMoney()
 end
 
 function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Rot)
-	self.m_Vehicles[Model] = createVehicle(Model, Pos, Rot)
+	self.m_Vehicles[Model] = TemporaryVehicle.create(Model, Pos, Rot)
 	self.m_Vehicles[Model].price = Price
 	self.m_Vehicles[Model].level = Level
 	local veh = self.m_Vehicles[Model]
 	veh:setLocked(true)
 	veh:setFrozen(true)
+	veh:toggleRespawn(false)
 	setVehicleDamageProof( veh , true)
 	veh:setColor(math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255), math.random(0,255))
 end

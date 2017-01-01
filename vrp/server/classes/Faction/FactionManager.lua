@@ -112,7 +112,7 @@ function FactionManager:Event_factionQuit()
 	if not faction then return end
 
 	if faction:getPlayerRank(client) == FactionRank.Leader then
-		client:sendWarning(_("Bitte übertrage den Leader-Status erst auf ein anderes Mitglied der Fraktion!", client))
+		client:sendWarning(_("Als Leader kannst du nicht die Fraktion verlassen!", client))
 		return
 	end
 	faction:removePlayer(client)

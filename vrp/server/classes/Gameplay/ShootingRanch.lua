@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 ShootingRanch = inherit(Singleton)
-addRemoteEvents{"ShootingRanch:onTargetHit"}
+addRemoteEvents{"ShootingRanch:onTargetHit", "ShootingRanch:onTimeUp"}
 
 ShootingRanch.Map = {}
 
@@ -41,7 +41,23 @@ function ShootingRanch:constructor()
 	}
 	self:addTargets()
 
+	self.m_Col = createColSphere(-7191.44, -2473.93, 32.36, 50)
+	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
+		if dim then
+			hitElement:triggerEvent("disableDamage", true)
+		end
+	end)
+
+	addEventHandler("onColShapeLeave", self.m_Col, function(hitElement, dim)
+		if dim then
+			hitElement:triggerEvent("disableDamage", false)
+		end
+	end)
+
+
 	addEventHandler("ShootingRanch:onTargetHit", root, bind(self.onTargetHit, self))
+	addEventHandler("ShootingRanch:onTimeUp", root, bind(self.onTimeUp, self))
+
 end
 
 function ShootingRanch:startTraining(player, level)
@@ -99,6 +115,14 @@ function ShootingRanch:onTargetHit(object)
 		setElementData(object, "hitAble", false)
 
 		ShootingRanch.Map[client]:onTargetHit(client)
+	else
+		client:sendError("Invalid ShootingRanch Instance")
+	end
+end
+
+function ShootingRanch:onTimeUp()
+	if ShootingRanch.Map[client] then
+		ShootingRanch.Map[client]:finish()
 	else
 		client:sendError("Invalid ShootingRanch Instance")
 	end

@@ -8,7 +8,28 @@
 SelfGUI = inherit(GUIForm)
 inherit(Singleton, SelfGUI)
 
+SelfGUI.Stats = {
+	["AFK"] = {
+			["text"] = "gesamte AFK-Zeit",
+			["value"] = function(value) return math.floor(value/60).." min" end
+			},
+	["Driven"] = {
+			["text"] = "gefahrene Kilometer",
+			["value"] = function(value) return math.floor(value/100).." km" end
+			},
+	["Deaths"] = {
+			["text"] = "Tode",
+			["value"] = function(value) return value end
+			},
+	["Kills"] =	{
+			["text"] = "Kills",
+			["value"] = function(value) return value end
+			},
+}
+
 function SelfGUI:constructor()
+
+
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 	self.m_OpenWindows = {}
 
@@ -22,97 +43,113 @@ function SelfGUI:constructor()
 	local tabGeneral = self.m_TabPanel:addTab(_"Allgemein")
 	self.m_TabGeneral = tabGeneral
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.10, _"Allgemein", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.11, self.m_Width*0.25, self.m_Height*0.06, _"Spielzeit:", tabGeneral)
-	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.17, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGeneral)
-	self.m_GeneralKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.17, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.11, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGeneral)
+	self.m_GeneralKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.17, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
+	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.17, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
+	self.m_JobQuitButton = GUILabel:new(self.m_Width*0.7, self.m_Height*0.17, self.m_Width*0.25, self.m_Height*0.06, _"(Job kündigen)", tabGeneral):setColor(Color.Red)
+	self.m_JobQuitButton.onHover = function () self.m_JobQuitButton:setColor(Color.White) end
+	self.m_JobQuitButton.onUnhover = function () self.m_JobQuitButton:setColor(Color.Red) end
+	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
+
+	-- COMPANY
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Unternehmen:", tabGeneral)
 	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
 	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.125, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
 	self.m_CompanyEditLabel.onLeftClick = bind(self.CompanyMenuButton_Click, self)
-	self.m_CompanyInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
+	self.m_CompanyInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
 	self.m_CompanyInvationLabel:setVisible(false)
-	self.m_CompanyInvitationsAcceptButton = GUIButton:new(self.m_Width*0.8, self.m_Height*0.8, self.m_Width*0.08, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
+	self.m_CompanyInvitationsAcceptButton = GUIButton:new(self.m_Width*0.8, self.m_Height*0.29, self.m_Width*0.08, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
 	self.m_CompanyInvitationsAcceptButton:setVisible(false)
-	self.m_CompanyInvitationsDeclineButton = GUIButton:new(self.m_Width*0.9, self.m_Height*0.8, self.m_Width*0.08, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
+	self.m_CompanyInvitationsDeclineButton = GUIButton:new(self.m_Width*0.9, self.m_Height*0.29, self.m_Width*0.08, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
 	self.m_CompanyInvitationsDeclineButton:setVisible(false)
 	self.m_CompanyInvitationsAcceptButton.onLeftClick = bind(self.CompanyInvitationsAcceptButton_Click, self)
 	self.m_CompanyInvitationsDeclineButton.onLeftClick = bind(self.CompanyInvitationsDeclineButton_Click, self)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"Aktueller Job:", tabGeneral)
-	self.m_JobNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_JobQuitButton = GUILabel:new(self.m_Width*0.7, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.06, _"(Job kündigen)", tabGeneral):setColor(Color.Red)
-	self.m_JobQuitButton.onHover = function () self.m_JobQuitButton:setColor(Color.White) end
-	self.m_JobQuitButton.onUnhover = function () self.m_JobQuitButton:setColor(Color.Red) end
-	self.m_JobQuitButton.onLeftClick = bind(self.JobQuitButton_Click, self)
-
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.35, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle AFK-Zeit:", tabGeneral)
-	self.m_AFKTimeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.35, self.m_Width*0.4, self.m_Height*0.06, _"0 Minute(n)", tabGeneral)
-
-	self.m_AdButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.05, self.m_Width*0.25, self.m_Height*0.07, _"Werbung schalten", true, tabGeneral)
-	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)
-
-	self.m_TicketButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.13, self.m_Width*0.25, self.m_Height*0.07, _"Tickets", true, tabGeneral):setBarColor(Color.Green)
-	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
-
-	self.m_MigrationButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.21, self.m_Width*0.25, self.m_Height*0.07, _"Account-Migration", true, tabGeneral):setBarColor(Color.Yellow)
-	self.m_MigrationButton.onLeftClick = bind(self.MigratorButton_Click, self)
-
-	self.m_WarnButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.29, self.m_Width*0.25, self.m_Height*0.07, _"Warns anzeigen", true, tabGeneral):setBarColor(Color.Yellow)
-	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
-
-	if localPlayer:getRank() > 0 then
-		self.m_AdminButton = VRPButton:new(self.m_Width*0.73, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
-		self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
-	end
-
 	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
 	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
-
 	addEventHandler("companyInvitationRetrieve", root, bind(self.Event_CompanyInvitationRetrieve, self))
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.4, self.m_Width*0.25, self.m_Height*0.10, _"Fraktion", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
-	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.49, self.m_Width*0.64, self.m_Height*0.06, "", tabGeneral)
-	self.m_FactionMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.49, self.m_Width*0.4, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
+	-- FACTION
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
+	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.39, self.m_Width*0.64, self.m_Height*0.06, "", tabGeneral)
+	self.m_FactionMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.39, self.m_Width*0.4, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_FactionMenuButton.onHover = function () self.m_FactionMenuButton:setColor(Color.White) end
 	self.m_FactionMenuButton.onUnhover = function () self.m_FactionMenuButton:setColor(Color.LightBlue) end
-	--self.m_FactionMenuButton = GUIButton:new(self.m_Width*0.7, self.m_Height*0.49, self.m_Width*0.25, self.m_Height*0.06, _"Fraktions-Menü", tabGeneral):setBackgroundColor(Color.Blue)
-	--self.m_FactionMenuButton:setFontSize(1.2)
+
 	self.m_FactionMenuButton:setVisible(false)
 	self.m_FactionMenuButton.onLeftClick = bind(self.FactionMenuButton_Click, self)
-	self.m_FactionInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
+	self.m_FactionInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
 	self.m_FactionInvationLabel:setVisible(false)
-	self.m_FactionInvitationsAcceptButton = GUIButton:new(self.m_Width*0.8, self.m_Height*0.55, self.m_Width*0.08, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
+	self.m_FactionInvitationsAcceptButton = GUIButton:new(self.m_Width*0.8, self.m_Height*0.45, self.m_Width*0.08, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
 	self.m_FactionInvitationsAcceptButton:setVisible(false)
-	self.m_FactionInvitationsDeclineButton = GUIButton:new(self.m_Width*0.9, self.m_Height*0.55, self.m_Width*0.08, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
-	self.m_FactionInvitationsDeclineButton:setVisible(false)
 	self.m_FactionInvitationsAcceptButton.onLeftClick = bind(self.FactionInvitationsAcceptButton_Click, self)
+
+	self.m_FactionInvitationsDeclineButton = GUIButton:new(self.m_Width*0.9, self.m_Height*0.45, self.m_Width*0.08, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
+	self.m_FactionInvitationsDeclineButton:setVisible(false)
 	self.m_FactionInvitationsDeclineButton.onLeftClick = bind(self.FactionInvitationsDeclineButton_Click, self)
+
 	addRemoteEvents{"factionRetrieveInfo", "factionInvitationRetrieve"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 	addEventHandler("factionInvitationRetrieve", root, bind(self.Event_factionInvitationRetrieve, self))
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.9, self.m_Height*0.10, _"Private Firma / Gang:", tabGeneral)
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.69, self.m_Width*0.25, self.m_Height*0.06, _"Firma / Gang:", tabGeneral)
-	self.m_GroupNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.69, self.m_Width*0.35, self.m_Height*0.06, "", tabGeneral)
-	self.m_GroupMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.69, self.m_Width*0.135, self.m_Height*0.06, _"(verwalten)", tabGeneral):setColor(Color.LightBlue)
+	-- GROUP
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.25, self.m_Height*0.06, _"Firma / Gang:", tabGeneral)
+	self.m_GroupNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.54, self.m_Width*0.35, self.m_Height*0.06, "", tabGeneral)
+	self.m_GroupMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.54, self.m_Width*0.135, self.m_Height*0.06, _"(verwalten)", tabGeneral):setColor(Color.LightBlue)
 	self.m_GroupMenuButton.onHover = function () self.m_GroupMenuButton:setColor(Color.White) end
 	self.m_GroupMenuButton.onUnhover = function () self.m_GroupMenuButton:setColor(Color.LightBlue) end
 	self.m_GroupMenuButton.onLeftClick = bind(self.GroupMenuButton_Click, self)
-	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.79, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
+	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
 	self.m_GroupInvitationsLabel:setVisible(false)
+
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.10, _"Funktionen:", tabGeneral)
 
+	self.m_AdButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Werbung schalten", true, tabGeneral)
+	self.m_AdButton.onLeftClick = bind(self.AdButton_Click, self)
+
+	self.m_TicketButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Tickets", true, tabGeneral):setBarColor(Color.Green)
+	self.m_TicketButton.onLeftClick = bind(self.TicketButton_Click, self)
+
+	self.m_MigrationButton = VRPButton:new(self.m_Width*0.62, self.m_Height*0.75, self.m_Width*0.27, self.m_Height*0.07, _"Account-Migration", true, tabGeneral):setBarColor(Color.Yellow)
+	self.m_MigrationButton.onLeftClick = bind(self.MigratorButton_Click, self)
+
+	self.m_WarnButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", true, tabGeneral):setBarColor(Color.Yellow)
+	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
+
+	if localPlayer:getRank() > 0 then
+		self.m_AdminButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
+		self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
+	end
+
+	self.m_ShortMessageLog = VRPButton:new(self.m_Width*0.62, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"ShortMessage-Log", true, tabGeneral):setBarColor(Color.Orange)
+	ShortMessageLogGUI:new()
+	self.m_ShortMessageLog.onLeftClick = function()
+		if ShortMessageLogGUI then
+			if not ShortMessageLogGUI:getSingleton():isVisible() then
+				ShortMessageLogGUI:getSingleton():show()
+				self:close()
+			end
+		end
+	end
 
 	-- Tab: Statistics
 	local tabStatistics = self.m_TabPanel:addTab(_"Statistiken")
 	self.m_TabStatistics = tabStatistics
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.10, _"Statistiken", self.m_TabStatistics)
+	self.m_StatDescription = {}
+	self.m_StatValue = {}
+
+	self:loadStatistics()
 
 	-- Tab: Vehicles
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
@@ -400,16 +437,7 @@ function SelfGUI:constructor()
 	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Shader-Einstellungen", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
 	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
 
-	self.m_ShortMessageLog = GUIButton:new(self.m_Width*0.02, self.m_Height*0.72, self.m_Width*0.35, self.m_Height*0.07, _"ShortMessage-Log", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
-	ShortMessageLogGUI:new()
-	self.m_ShortMessageLog.onLeftClick = function()
-		if ShortMessageLogGUI then
-			if not ShortMessageLogGUI:getSingleton():isVisible() then
-				ShortMessageLogGUI:getSingleton():show()
-				self:close()
-			end
-		end
-	end
+
 	--[[ TODO: Do we require this?
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.49, self.m_Width*0.8, self.m_Height*0.07, _"Tipps", tabSettings)
 	self.m_EnableTippsBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.04, _"Tipps aktivieren?", tabSettings)
@@ -520,6 +548,29 @@ function SelfGUI:adjustGeneralTab(name)
 	self.m_CompanyEditLabel:setVisible(isInCompany)
 end
 
+function SelfGUI:loadStatistics()
+	local i = 0
+	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"Spielzeit:", self.m_TabStatistics)
+	self.m_PlayTimeLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, _"0 Stunde(n) 0 Minute(n)", self.m_TabStatistics)
+	i = i+1
+	GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _"Aktuelle AFK-Zeit:", self.m_TabStatistics)
+	self.m_AFKTimeLabel = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, _"0 Minute(n)", self.m_TabStatistics)
+	i = i+1
+
+	local value
+	for index, data in pairs(SelfGUI.Stats) do
+		value = localPlayer:getStatistics(index) or " - "
+		self.m_StatDescription[index] = GUILabel:new(self.m_Width*0.02, self.m_Height*(0.11+i*0.06), self.m_Width*0.3, self.m_Height*0.06, _("%s:", data["text"]), self.m_TabStatistics)
+		self.m_StatValue[index] = GUILabel:new(self.m_Width*0.4, self.m_Height*(0.11+i*0.06), self.m_Width*0.4, self.m_Height*0.06, data["value"](value), self.m_TabStatistics)
+
+		localPlayer:setPrivateSyncChangeHandler("Stat_"..index, function(value)
+			self.m_StatValue[index]:setText(tostring(data["value"](value)))
+		end)
+
+		i = i+1
+	end
+end
+
 function SelfGUI:Event_companyRetrieveInfo(id, name)
 	self:adjustGeneralTab(name)
 
@@ -587,8 +638,9 @@ end
 
 function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
 	if rank then
-		self.m_FactionNameLabel:setText(_("%s - Rang: %d", name, rank))
-		self.m_FactionInvationLabel:setVisible(false)
+		local faction = FactionManager:getSingleton():getFromId(id)
+		self.m_FactionNameLabel:setText(_("%s - Rang: %d", faction:getShortName(), rank))
+		--self.m_FactionInvationLabel:setVisible(false)
 		self.m_FactionMenuButton:setVisible(true)
 		self.m_InvationFactionId = 0
 
@@ -598,7 +650,7 @@ function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
 			self.m_FactionMenuButton:setText(_"(anzeigen)")
 		end
 		local x, y = self.m_FactionNameLabel:getPosition()
-		self.m_FactionMenuButton:setPosition(x + dxGetTextWidth(_("%s - Rang: %d", name, rank), self.m_FactionNameLabel:getFontSize(), self.m_FactionNameLabel:getFont()) + 10, y)
+		self.m_FactionMenuButton:setPosition(x + dxGetTextWidth(self.m_FactionNameLabel:getText(), self.m_FactionNameLabel:getFontSize(), self.m_FactionNameLabel:getFont()) + 10, y)
 	else
 		self.m_FactionNameLabel:setText(_"- keine Fraktion -")
 		self.m_FactionInvationLabel:setVisible(true)

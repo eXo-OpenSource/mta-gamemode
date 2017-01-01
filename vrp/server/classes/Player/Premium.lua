@@ -9,7 +9,7 @@ Premium = inherit(Object)
 inherit(DatabasePlayer, Premium)
 
 function Premium:constructor()
-	local row = sqlPremium:asyncQueryFetchSingle("SELECT * FROM user WHERE Name LIKE ?", self:getName()) -- Todo change to ID
+	local row = sqlPremium:queryFetchSingle("SELECT * FROM user WHERE UserId = ?", self:getId())
 	if row then
 		self.m_Premium = toboolean(row.premium)
 		self.m_PremiumUntil = row.premium_bis

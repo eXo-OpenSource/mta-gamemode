@@ -10,7 +10,7 @@ inherit(GUIFontContainer, GUIMouseMenuItem)
 inherit(GUIColorable, GUIMouseMenuItem)
 
 function GUIMouseMenuItem:constructor(posX, posY, width, height, text, parent)
-	--checkArgs("GUIMouseMenuItem:constructor", "number", "number", "number", "number")
+	checkArgs("GUIMouseMenuItem:constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(self.m_Height))

@@ -120,7 +120,7 @@ function Admin:addAdmin(player,rank)
 	outputDebug("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
     player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
-    if DEBUG then
+    --if DEBUG then
 		local pw = string.random(15)
 		local user = player:getName().."-eXo"
 		self.m_MtaAccounts[player] = addAccount(user, pw)
@@ -141,7 +141,7 @@ function Admin:addAdmin(player,rank)
 
 
 
-    end
+    --end
 end
 
 function Admin:removeAdmin(player)
@@ -156,7 +156,8 @@ end
 function Admin:openAdminMenu(player)
 	if client then player = client end
 	if self.m_OnlineAdmins[player] > 0 then
-		triggerClientEvent(player,"showAdminMenu",player, self.m_BankAccount:getMoney())
+		player:triggerEvent("showAdminMenu", self.m_BankAccount:getMoney())
+		player:triggerEvent("adminRefreshEventMoney", self.m_BankAccount:getMoney())
 	else
 		player:sendError(_("Du bist kein Admin!", player))
 	end
@@ -364,7 +365,6 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:addPunishLog(admin, target, func, "", 0)
         elseif func == "supportMode" or func == "smode" then
             self:toggleSupportMode(admin)
-			StatisticsLogger:getSingleton():addAdminAction( admin, "supportMode", false)
         elseif func == "clearchat" or func == "clearChat" then
 			self:sendShortMessage(_("%s den aktuellen Chat gelöscht!", admin, admin:getName()))
             for index, player in pairs(Element.getAllByType("player")) do
@@ -436,7 +436,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					if targetId and targetId > 0 then
 						Ban.addBan(targetId, admin, reason)
 						self:addPunishLog(admin, targetId, func, reason, 0)
-						outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
+						outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
 						outputChatBox("Grund: "..reason,root, 200, 0, 0)
 					else
 						admin:sendError(_("Spieler nicht gefunden!", admin))
@@ -452,7 +452,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 					if type(reason) == "string" then
 						Ban.addBan(targetId, admin, reason, duration*60*60)
 						self:addPunishLog(admin, targetId, func, reason, duration*60*60)
-						outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
+						outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." für "..duration.." Stunden gebannt!",root, 200, 0, 0)
 						outputChatBox("Grund: "..reason,root, 200, 0, 0)
 					else admin:sendError("Keinen Grund angegeben!")
 					end
@@ -468,7 +468,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             if targetId and targetId > 0 then
                 self:addPunishLog(admin, targetId, func, reason, 0)
                 sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
-				outputChatBox("Der Spieler "..getPlayerName(target).." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
+				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
             else
                 admin:sendError(_("Spieler nicht gefunden!", admin))
             end
@@ -507,6 +507,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			admin:setDimension(0)
 			admin:setPosition(x, y, z)
 			self:sendShortMessage(_("%s hat sich zu Koordinaten geportet!", admin, admin:getName()))
+			StatisticsLogger:getSingleton():addAdminAction(admin, "goto", "Coords ("..x..","..y..","..z..")")
 		elseif func == "nickchange" or func == "offlineNickchange" then
 			local changeTarget = false
 			if target then
@@ -530,7 +531,11 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 											changeTarget:addOfflineMessage("Du wurdest von "..target.name.." zu "..reason.." umgenannt!",1)
 											return
 										end
+									else
+										admin:sendError(_("Der Spieler ist online!", admin))
 									end
+								else
+									admin:sendError(_("Spieler nicht gefunden!", admin))
 								end
 							end
 						)
@@ -568,7 +573,8 @@ function Admin:toggleSupportMode(player)
         player:setModel(260)
         self:toggleSupportArrow(player, true)
 		player.m_SupMode = true
-		player:triggerEvent("setSupportDamage", true )
+		player:triggerEvent("disableDamage", true )
+		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "aktiviert")
     else
         player:setPublicSync("supportMode", false)
         player:sendInfo(_("Support Modus deaktiviert!", player))
@@ -576,7 +582,9 @@ function Admin:toggleSupportMode(player)
         player:setModel(player:getPublicSync("Admin:OldSkin"))
         self:toggleSupportArrow(player, false)
 		player.m_SupMode = false
-		player:triggerEvent("setSupportDamage", false)
+		player:triggerEvent("disableDamage", false)
+		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
+
     end
 end
 
@@ -750,6 +758,8 @@ local tpTable = {
 						setElementDimension(player,0)
 						player:setPosition(v["pos"])
 					end
+					StatisticsLogger:getSingleton():addAdminAction(player, "goto", "TP "..ort)
+					self:sendShortMessage(_("%s hat sich zu %s geportet!", player, player:getName(), ort))
 					return
 				end
 			end
@@ -929,7 +939,14 @@ end
 function Admin:Event_vehicleDespawn()
     if client:getRank() >= RANK.Supporter then
         if isElement(source) then
-            client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
+
+			VehicleManager:getSingleton():checkVehicle(source)
+			if not source:isRespawnAllowed() then
+				client:sendError(_("Dieses Fahrzeug kann nicht respawnt werden!", client))
+				return
+			end
+
+			client:sendInfo(_("Du hast das Fahrzeug %s despawnt!", client, source:getName()))
             source:setDimension(PRIVATE_DIMENSION_SERVER)
         end
     end

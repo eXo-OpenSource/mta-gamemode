@@ -199,34 +199,34 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
             elseif slot == VehicleSpecialProperty.LightColor then
                 vehicle:setHeadLightColor(unpack(upgradeId))
             elseif slot == VehicleSpecialProperty.Neon then
-                if instanceof(vehicle, PermanentVehicle, true) then -- Currently only for PlayerVehicles?
+                if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
                     vehicle:setNeon(upgradeId-1)
                 else
-                    client:sendError("Spezial-Hupen sind nur für Privat-Fahrzeuge verfügbar!")
+                    client:sendError("Spezial-Hupen sind nur für Privat und Firmen/Gang-Fahrzeuge verfügbar!")
                     client:giveMoney(getVehicleUpgradePrice(VehicleSpecialProperty.Shader))
                 end
             elseif slot == VehicleSpecialProperty.NeonColor then
-                if instanceof(vehicle, PermanentVehicle, true) then
+                if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
                     vehicle:setNeonColor(upgradeId)
                 else
-                    client:sendError("Neon-Röhren sind nur für Privat-Fahrzeuge verfügbar!")
+                    client:sendError("Neon-Röhren sind nur für Privat und Firmen/Gang-Fahrzeuge verfügbar!")
                 end
             elseif slot == VehicleSpecialProperty.Horn then
-                if instanceof(vehicle, PermanentVehicle, true) then -- Currently only for PlayerVehicles?
+                if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
                     vehicle:setCustomHorn(upgradeId-1)
                 else
-                    client:sendError("Spezial-Hupen sind nur für Privat-Fahrzeuge verfügbar!")
+                    client:sendError("Spezial-Hupen sind nur für Privat und Firmen/Gang-Fahrzeuge verfügbar!")
                     client:giveMoney(getVehicleUpgradePrice(VehicleSpecialProperty.Shader))
                 end
             elseif slot == VehicleSpecialProperty.Shader then
-                if instanceof(vehicle, PermanentVehicle, true) then -- Currently only for PlayerVehicles?
+                if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
                     if upgradeId ~= 1 then
                         vehicle:setTexture(("files/images/Textures/Special/%s.png"):format(upgradeId-1))
                     else
                         vehicle:removeTexture()
                     end
                 else
-                    client:sendError("Speziallackierungen sind nur für Privat-Fahrzeuge verfügbar!")
+                    client:sendError("Speziallackierungen sind nur für Privat und Firmen/Gang-Fahrzeuge verfügbar!")
                     client:giveMoney(getVehicleUpgradePrice(VehicleSpecialProperty.Shader))
                 end
             end

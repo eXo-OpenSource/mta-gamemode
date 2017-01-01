@@ -14,7 +14,7 @@ for i, v in pairs(AdminGUI.playerFunctions) do
 	AdminGUI.playerFunctions[v] = i
 end
 
-addRemoteEvents{"showAdminMenu", "announceText", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo"}
+addRemoteEvents{"showAdminMenu", "announceText", "adminReceiveSeachedPlayers", "adminReceiveSeachedPlayerInfo", "adminRefreshEventMoney"}
 
 function AdminGUI:constructor(money)
 	GUIForm.constructor(self, screenWidth/2-400, screenHeight/2-540/2, 800, 540)
@@ -177,14 +177,21 @@ function AdminGUI:constructor(money)
 
 	addEventHandler("adminReceiveSeachedPlayers", root,
 		function(resultPlayers)
-			AdminGUI:getSingleton():insertSearchResult(resultPlayers)
+			self:insertSearchResult(resultPlayers)
 		end
 	)
 	addEventHandler("adminReceiveSeachedPlayerInfo", root,
 		function(data)
-			AdminGUI:getSingleton():onOfflinePlayerInfo(data)
+			self:onOfflinePlayerInfo(data)
 		end
 	)
+
+	addEventHandler("adminRefreshEventMoney", root,
+		function(money)
+			self.m_EventCurrentMoney:setText(_("Momentan: %d$", money or 0))
+		end
+	)
+
 
 	self:refreshButtons()
 end

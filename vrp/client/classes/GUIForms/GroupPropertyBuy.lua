@@ -34,6 +34,8 @@ function GroupPropertyBuy:BuyButton_Click()
 		if self.m_ImmoTable then
 			triggerServerEvent("GroupPropertyBuy",localPlayer, selected.Id)
 		end
+	else
+		ErrorBox:new(_"Du hast keine Immobilie ausgewählt!")
 	end
 end
 

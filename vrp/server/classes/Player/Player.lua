@@ -176,7 +176,7 @@ function Player:loadCharacter()
 end
 
 function Player:createCharacter()
-	sql:queryExec("INSERT INTO ??_character(Id, Skin, PosX, PosY, PosZ, Money ) VALUES(?, ?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Id, NOOB_SKIN, NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z, START_MONEY_BAR)
+	sql:queryExec("INSERT INTO ??_character(Id, Skin, PosX, PosY, PosZ, Money, Health) VALUES(?, ?, ?, ?, ?, ?, 100)", sql:getPrefix(), self.m_Id, NOOB_SKIN, NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z, START_MONEY_BAR)
 	--self.m_Inventory = Inventory.create()
 end
 
@@ -613,6 +613,7 @@ function Player:setAFKTime()
 		self.m_CurrentAFKTime = (getTickCount() - self.m_AFKStartTime)
 	else
 		self.m_AFKTime = self.m_AFKTime + self.m_CurrentAFKTime
+		self:increaseStatistics("AFK", self.m_CurrentAFKTime)
 		self.m_CurrentAFKTime = 0
 	end
 end

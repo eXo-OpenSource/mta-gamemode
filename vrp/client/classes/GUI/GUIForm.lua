@@ -14,6 +14,7 @@ function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, 
 	self.m_KeyBinds = {}
 	if incrementCursorCounter ~= false then
 		Cursor:show()
+		self:toggleKeys(false)
 	end
 
 	self.m_Id = #GUIForm.Map+1
@@ -59,6 +60,7 @@ end
 function GUIForm:close(decrementedCursorCounter)
 	if not decrementedCursorCounter and self:isVisible() then
 		Cursor:hide()
+		self:toggleKeys(true)
 	end
 
 	-- Disable blur shader if it has been enabled before
@@ -79,6 +81,10 @@ function GUIForm:toggle(cursor)
 	else
 		self:open(cursor)
 	end
+end
+
+function GUIForm:toggleKeys(state)
+	toggleAllControls(state)
 end
 
 function GUIForm:fadeIn(time)

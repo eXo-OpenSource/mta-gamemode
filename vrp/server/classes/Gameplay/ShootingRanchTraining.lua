@@ -33,7 +33,7 @@ function ShootingRanchTraining:constructor(player, level)
 		toggleAllControls(player,false)
 		toggleControl(player,"fire",true)
 		toggleControl(player,"aim_weapon",true)
-		player:triggerEvent("startClientShootingRanch",self.m_Time)
+		player:triggerEvent("startClientShootingRanch")
 
 		player:sendInfo(_("Treffe %dx eines der Bewegenden Ziele!", player, self.m_TargetHits))
 		player:sendShortMessage(_("Schaffe die Prüfung in unter %d Sekunden mit einer Trefferquote von mind. %d Prozent!", player, self.m_Time, self.m_TargetAccuracy), _("Schießstand", player))

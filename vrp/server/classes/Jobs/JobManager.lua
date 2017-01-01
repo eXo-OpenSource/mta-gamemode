@@ -29,6 +29,12 @@ function JobManager:constructor()
 	addEvent("jobQuit", true)
 	addEventHandler("jobAccepted", root, bind(self.Event_jobAccepted, self))
 	addEventHandler("jobQuit", root, bind(self.Event_jobQuit, self))
+
+	PlayerManager:getSingleton():getWastedHook():register(
+		function(player)
+			self:stopJobForPlayer(player)
+		end
+	)
 end
 
 function JobManager:getFromId(jobId)

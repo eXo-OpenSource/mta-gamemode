@@ -8,68 +8,37 @@
 PermanentVehicle = inherit(Vehicle)
 
 function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, fuel, lightColor, trunkId, texture, horn, neon, special)
-  self.m_Id = Id
-  self.m_Owner = owner
+	self.m_Id = Id
+	self.m_Owner = owner
 
-  self:setCurrentPositionAsSpawn(positionType)
+	self:setCurrentPositionAsSpawn(positionType)
 
-  setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
-  self.m_Keys = keys or {}
-  self.m_PositionType = positionType or VehiclePositionType.World
+	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
+	self.m_Keys = keys or {}
+	self.m_PositionType = positionType or VehiclePositionType.World
 
-  if trunkId == 0 or trunkId == nil then
-    trunkId = Trunk.create()
-  end
-
-  self.m_Trunk = Trunk.load(trunkId)
-  self.m_TrunkId = trunkId
-  if health then
-	if health <= 300 then
-		health = 300
+	if trunkId == 0 or trunkId == nil then
+		trunkId = Trunk.create()
 	end
-  end
-  self:setHealth(health or 1000)
-  self:setFuel(fuel or 100)
-  self:setLocked(true)
-  if color then
-    local a, r, g, b = getBytesInInt32(color)
-    if color2 then
-      local a2, r2, g2, b2 = getBytesInInt32(color2)
-      setVehicleColor(self, r, g, b, r2, g2, b2)
-    else
-      setVehicleColor(self, r, g, b)
-    end
 
-  end
-  if lightColor then
-    local a, r, g, b = getBytesInInt32(lightColor)
-    setVehicleHeadLightColor(self, r, g, b)
-  end
+	if self.m_PositionType ~= VehiclePositionType.World then
+		-- Move to unused dimension | Todo: That's probably a bad solution
+		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	end
 
-  if not type(tunings) == "table" then tunings = {} end
-  for k, v in pairs(tunings or {}) do
-    addVehicleUpgrade(self, v)
-  end
-  self:setTexture(texture or "")
+	self.m_Trunk = Trunk.load(trunkId)
+	self.m_TrunkId = trunkId
 
-  if self.m_PositionType ~= VehiclePositionType.World then
-    -- Move to unused dimension | Todo: That's probably a bad solution
-    setElementDimension(self, PRIVATE_DIMENSION_SERVER)
-  end
-  self:setMileage(mileage)
+	if health and health <= 300 then
+		health = 300
+  	end
 
-  self:setCustomHorn(horn or 0)
+	self:setHealth(health or 1000)
+	self:setFuel(fuel or 100)
+	self:setLocked(true)
+	self:setMileage(mileage)
+	self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 
-  if neon and fromJSON(neon) then
-    self:setNeon(1)
-    self:setNeonColor(fromJSON(neon))
-  else
-    self:setNeon(0)
-  end
-
-  if special and special > 0 then
-    self:setSpecial(special)
-  end
 end
 
 function PermanentVehicle:destructor()
@@ -163,24 +132,7 @@ function PermanentVehicle:setSpecial(special)
   end
 end
 
-function PermanentVehicle:setCurrentPositionAsSpawn(type)
-  self.m_PositionType = type
-  self.m_SpawnPos = self:getPosition()
-  local rot = self:getRotation()
-  self.m_SpawnRot = rot.z
-end
 
-function PermanentVehicle:respawnOnSpawnPosition()
-  if self.m_PositionType == VehiclePositionType.World then
-    self:setPosition(self.m_SpawnPos)
-    self:setRotation(0, 0, self.m_SpawnRot)
-    fixVehicle(self)
-    local owner = Player.getFromId(self.m_Owner)
-    if owner and isElement(owner) then
-      owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
-    end
-  end
-end
 
 function PermanentVehicle:getTrunk()
   if self.m_Trunk then return self.m_Trunk end
@@ -287,71 +239,31 @@ function PermanentVehicle:respawn(garageOnly)
 		owner:sendShortMessage(_("Du hast keinen Platz in deiner Garage!", owner))
 	end
 	return false
-  else
-	-- Respawn at mechanic base
-		if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
-			CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
-			if owner and isElement(owner) then
-			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
-			end
-			return true
-		end
 
-		-- Respawn at Harbor
-		if vehicleType == VehicleType.Boat or (vehicleType == VehicleType.Plane and self:getModel() == 460) or (vehicleType == VehicleType.Helicopter and self:getModel() == 447) then
-			VehicleHarbor:getSingleton():respawnVehicle(self)
-			if owner and isElement(owner) then
-			owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt", owner, self:getName()))
-			end
+  	else
+		if self:respawnOnSpawnPosition() then
 			return true
+		else
+		-- Respawn at mechanic base
+			if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
+				CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
+				if owner and isElement(owner) then
+				owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
+				end
+				return true
+			end
+
+			-- Respawn at Harbor
+			if vehicleType == VehicleType.Boat or (vehicleType == VehicleType.Plane and self:getModel() == 460) or (vehicleType == VehicleType.Helicopter and self:getModel() == 447) then
+				VehicleHarbor:getSingleton():respawnVehicle(self)
+				if owner and isElement(owner) then
+				owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde im Industrie-Hafen (Logistik-Job) respawnt", owner, self:getName()))
+				end
+				return true
+			end
 		end
 	end
 	return false
+
 end
 
-function Vehicle:setTexture(texturePath)
-  if fileExists(texturePath) then
-    self.m_Texture = texturePath
-
-    for i, v in pairs(getElementsByType("player")) do
-      if v:isLoggedIn() then
-        triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = false, texturePath = self.m_Texture}})
-      end
-    end
-  end
-end
-
-function Vehicle:setCustomHorn(id)
-  self.m_CustomHorn = id
-  if self:getOccupant() then
-    if id > 0 then
-      bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-    else
-      if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
-        unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-      end
-    end
-  end
-end
-
-function Vehicle:setNeon(state)
-  self:setData("Neon", state, true)
-
-  if state == 1 then
-    self.m_Neon = {255, 0, 0}
-  else
-    self.m_Neon = false
-  end
-end
-
-function Vehicle:setNeonColor(colorTable)
-  if self.m_Neon then
-    self.m_Neon = colorTable
-    self:setData("NeonColor", colorTable, true)
-  end
-end
-
-function Vehicle:removeTexture()
-  self.m_Texture = nil
-  triggerClientEvent(root, "removeElementTexture", root, self)
-end

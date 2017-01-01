@@ -46,7 +46,7 @@ end
 
 function GroupProperty:requestImmoPanelClose( )
 	localPlayer:setData("insideGroupInterior",false, true)
-	GroupPropertyGUI:OnStreamOutClose()
+	GroupPropertyGUI.disable()
 end
 
 function GroupProperty:showWindow( tInfo, tPickup, tName )

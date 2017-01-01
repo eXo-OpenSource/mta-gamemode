@@ -7,8 +7,8 @@
 -- ****************************************************************************
 BurgerShot = inherit(Shop)
 
-function BurgerShot:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price)
-	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price)
+function BurgerShot:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
+	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 
 	self.m_Type = "BurgerShot"
 	self.m_Menues = {

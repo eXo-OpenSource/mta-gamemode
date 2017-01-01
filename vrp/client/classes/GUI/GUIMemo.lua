@@ -18,7 +18,7 @@ inherit(GUIScrollableArea, GUIMemo)
 -- @param text Predefined text
 -- @param (parent) Optional parent
 function GUIMemo:constructor(posX, posY, width, height, text, parent)
-	--checkArgs("GUIMemo:constructor", "number", "number", "number", "number", "string")
+	checkArgs("GUIMemo:constructor", "number", "number", "number", "number", "string")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIScrollableArea.constructor(self, self.m_Width + 100, self.m_Height)

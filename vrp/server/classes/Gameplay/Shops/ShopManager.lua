@@ -9,10 +9,6 @@ ShopManager = inherit(Singleton)
 ShopManager.Map = {}
 ShopManager.VehicleShopsMap = {}
 
-local PIZZA_STACK_DIMS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-local CLUCKIN_BELL_DIMS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
-local BURGER_SHOT_DIMS = {0, 1, 2, 3, 4, 5}
-
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
@@ -139,6 +135,7 @@ function ShopManager:onGasStationFill(shopId)
 		if vehicle:getFuel() <= 100-10 then
 			vehicle:setFuel(vehicle:getFuel() + 10)
 			client:takeMoney(10, "Tanken")
+			client:triggerEvent("gasStationUpdate", 10, 10)
 			shop:giveMoney(5, "Betankung")
 		else
 			client:sendError(_("Dein Tank ist bereits voll", client))

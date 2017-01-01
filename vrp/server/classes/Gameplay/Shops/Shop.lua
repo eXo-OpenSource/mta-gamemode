@@ -82,12 +82,17 @@ function Shop:onExit(player)
 	if self.m_BuyAble then
 		unbindKey(player, "m", "down", self.m_ShopGUIBind)
 		player:triggerEvent("shopCloseManageGUI")
+		player:triggerEvent("shopCloseGUI")
 	end
 	if self.onShopExit then self:onShopExit(player) end
 end
 
 function Shop:openManageGUI(player)
-	player:triggerEvent("shopOpenManageGUI", self.m_Id, self.m_Name, self.m_TypeName, self.m_OwnerId, self:getOwnerName(), self.m_Price, self.m_SoundUrl, self.m_StripperEnabled)
+	if player:getInterior() > 0 or player:getDimension() > 0 then
+		player:triggerEvent("shopOpenManageGUI", self.m_Id, self.m_Name, self.m_TypeName, self.m_OwnerId, self:getOwnerName(), self.m_Price, self.m_SoundUrl, self.m_StripperEnabled)
+	else
+		unbindKey(player, "m", "down", self.m_ShopGUIBind)
+	end
 end
 
 function Shop:onFoodMarkerHit(hitElement, dim)
@@ -159,8 +164,10 @@ function Shop:buy(player)
 					player:sendError(_("Nur Leader und Co-Leader deiner Firma können den Shop kaufen!", player))
 				end
 			else
-				player:sendError(_("Dieser Shop kann nur von privaten Firmen gekauft werden!", player))
+				player:sendError(_("Du bist in keiner privaten Firma!", player))
 			end
+		else
+			player:sendError(_("Dieser Shop kann nur von privaten Firmen gekauft werden!", player))
 		end
 	else
 		player:sendError(_("Dieser Shop kann nicht gekauft werden!", player))

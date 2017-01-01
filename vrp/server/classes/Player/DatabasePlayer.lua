@@ -169,6 +169,9 @@ function DatabasePlayer:load()
 	self:setBail( row.Bail )
 	self:setJailTime( row.JailTime or 0)
 	self.m_LoggedIn = true
+
+	self.m_Statistics = {}
+	self:loadStatistics()
 end
 
 function DatabasePlayer:save()
@@ -177,6 +180,7 @@ function DatabasePlayer:save()
 	end
 	if self.m_LoggedIn then
 		self:setJailNewTime()
+		self:saveStatistics()
 		-- Unload stuff
 		if self.m_BankAccount then
 			delete(self.m_BankAccount)
@@ -193,6 +197,7 @@ function DatabasePlayer:save()
 			self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
 			self.m_Skin = NOOB_SKIN
 		end
+
 		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ? WHERE Id=?", sql:getPrefix(),
 			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, self:getId())
 	end
@@ -259,6 +264,49 @@ function DatabasePlayer:setPlayTime(playTime) self.m_LastPlayTime = playTime if 
 function DatabasePlayer:setPaNote(note) self.m_PaNote = note end
 function DatabasePlayer:setBail( bail ) self.m_Bail = bail end
 function DatabasePlayer:setJailTime( jail ) self.m_JailTime = jail end
+
+function DatabasePlayer:loadStatistics()
+	local row = sql:queryFetchSingle("SELECT * FROM ??_stats WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	if not row then
+		local row = sql:queryExec("INSERT INTO ??_stats (Id) VALUES (?)", sql:getPrefix(), self.m_Id)
+		self:loadStatistics()
+		return
+	end
+	for index, value in pairs(row) do
+		if index ~= "Id" then
+			self.m_Statistics[index] = value
+			if self:isActive() then
+				self:setPrivateSync("Stat_"..index, value)
+			end
+		end
+	end
+end
+
+function DatabasePlayer:saveStatistics()
+	local string = ""
+	for index, value in pairs(self.m_Statistics) do
+		string = string..index.." = "..value..", "
+	end
+	string = string:sub(1, -3) -- Removed last ", " cause of sql error
+
+	sql:queryExec("UPDATE ??_stats SET ?? WHERE Id = ?", sql:getPrefix(), string ,self.m_Id)
+
+end
+
+function DatabasePlayer:increaseStatistics(stat, value)
+	if not self.m_Statistics then return end
+	value = value and value or 1
+	if self.m_Statistics[stat] then
+		self.m_Statistics[stat] = self.m_Statistics[stat] + value
+
+		if self:isActive() then
+			self:setPrivateSync("Stat_"..stat, self.m_Statistics[stat])
+		end
+	else
+		outputDebug("Error increasing Stat. "..stat.." for Player Id: "..self.m_Id.."! DB-Column missing!")
+	end
+
+end
 
 function DatabasePlayer:setGroup(group)
 	self.m_Group = group
@@ -612,13 +660,11 @@ function DatabasePlayer:loadMigratorData()
 			GroupManager:getSingleton():loadFromId(row.GroupId)
 			self:setGroup(GroupManager:getSingleton():getFromId(row.GroupId))
 		end
+		VehicleManager:getSingleton():refreshGroupVehicles(self:getGroup())
 	end
 
-	for index, veh in pairs(VehicleManager:getSingleton():getPlayerVehicles(self)) do
-		VehicleManager:getSingleton():removeRef(veh, false)
-		veh:destroy()
-	end
-	VehicleManager:loadPlayerVehicles(self)
+	VehicleManager:getSingleton():createVehiclesForPlayer(self)
+	Premium.constructor(self)
 end
 
 

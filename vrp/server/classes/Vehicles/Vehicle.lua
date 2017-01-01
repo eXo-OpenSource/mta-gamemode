@@ -6,11 +6,6 @@
 -- *
 -- ****************************************************************************
 Vehicle = inherit(MTAElement)
-local INVALID_MODEL_FOR_START = { -- Bikes
-[481] = true,
-[509] = true,
-[510] = true,
-}
 
 Vehicle.constructor = pure_virtual -- Use PermanentVehicle / TemporaryVehicle instead
 function Vehicle:virtual_constructor()
@@ -24,6 +19,7 @@ function Vehicle:virtual_constructor()
 	self.m_Fuel = 100
 	self.m_Mileage = 0
 	self.m_RepairAllowed = true
+	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
 
 
@@ -203,13 +199,15 @@ function Vehicle:toggleEngine(player)
 	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() then
 		local state = not getVehicleEngineState(self)
 		if state == true then
-			if self.m_Fuel <= 0 then
-				player:sendError(_("Dein Tank ist leer!", player))
-				return false
-			end
-			if self:isBroken() then
-				player:sendError(_("Das Fahrzeug ist kaputt und muss erst repariert werden!", player))
-				return false
+			if not VEHICLE_BIKES[self:getModel()] then
+				if self.m_Fuel <= 0 then
+					player:sendError(_("Dein Tank ist leer!", player))
+					return false
+				end
+				if self:isBroken() then
+					player:sendError(_("Das Fahrzeug ist kaputt und muss erst repariert werden!", player))
+					return false
+				end
 			end
 		else
 			if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
@@ -218,7 +216,11 @@ function Vehicle:toggleEngine(player)
 		end
 		if state == true then
 			if player and not getVehicleEngineState(self) then
-				if not INVALID_MODEL_FOR_START[getElementModel(self)] then -- Bikes
+				if VEHICLE_BIKES[self:getModel()] then -- Bikes
+					player:meChat(true, "öffnet sein Fahrradschloss!")
+					self:setEngineState(state)
+					return true
+				else
 					if not self.m_StartingEnginePhase then
 						self.m_StartingEnginePhase = true
 						for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do
@@ -229,18 +231,22 @@ function Vehicle:toggleEngine(player)
 						setTimer(bind(self.setEngineState, self), 2000, 1, true)
 						return true
 					end
-				else
-					self:setEngineState(state)
-					return true
 				end
 			end
 			return false
 		else
+			if VEHICLE_BIKES[self:getModel()] then -- Bikes
+				player:meChat(true, "verschließt sein Fahrradschloss!")
+			end
 			self:setEngineState(state)
 			return true
 		end
 	end
-	player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
+	if VEHICLE_BIKES[self:getModel()] then -- Bikes
+		player:sendError(_("Du hast keinen Schlüssel für das Fahrradschloss!", player))
+	else
+		player:sendError(_("Du hast keinen Schlüssel für dieses Fahrzeug!", player))
+	end
 	return false
 end
 
@@ -379,6 +385,116 @@ function Vehicle:isRepairAllowed()
 	return self.m_RepairAllowed
 end
 
+function Vehicle:toggleRespawn(state)
+	self.m_RespawnAllowed = state
+end
+
+function Vehicle:isRespawnAllowed()
+	return self.m_RespawnAllowed
+end
+
+function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
+	if color then
+		local a, r, g, b = getBytesInInt32(color)
+	if color2 then
+		local a2, r2, g2, b2 = getBytesInInt32(color2)
+		setVehicleColor(self, r, g, b, r2, g2, b2)
+	else
+		setVehicleColor(self, r, g, b)
+	end
+
+	end
+	if lightColor then
+		local a, r, g, b = getBytesInInt32(lightColor)
+		setVehicleHeadLightColor(self, r, g, b)
+	end
+
+	if not type(tunings) == "table" then tunings = {} end
+	for k, v in pairs(tunings or {}) do
+		addVehicleUpgrade(self, v)
+	end
+	self:setTexture(texture or "")
+
+	if neon and fromJSON(neon) then
+		self:setNeon(1)
+		self:setNeonColor(fromJSON(neon))
+	else
+		self:setNeon(0)
+	end
+
+	if special and special > 0 then
+		self:setSpecial(special)
+	end
+	self:setCustomHorn(horn or 0)
+end
+
+
+function Vehicle:setTexture(texturePath)
+  self.m_Texture = ""
+  if fileExists(texturePath) then
+    self.m_Texture = texturePath
+
+    for i, v in pairs(getElementsByType("player")) do
+      if v:isLoggedIn() then
+        triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = false, texturePath = self.m_Texture}})
+      end
+    end
+  end
+end
+
+function Vehicle:setCustomHorn(id)
+  self.m_CustomHorn = id
+  if self:getOccupant() then
+    if id > 0 then
+      bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+    else
+      if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
+        unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+      end
+    end
+  end
+end
+
+function Vehicle:setNeon(state)
+  self:setData("Neon", state, true)
+
+  if state == 1 then
+    self.m_Neon = {255, 0, 0}
+  else
+    self.m_Neon = false
+  end
+end
+
+function Vehicle:setNeonColor(colorTable)
+  if self.m_Neon then
+    self.m_Neon = colorTable
+    self:setData("NeonColor", colorTable, true)
+  end
+end
+
+function Vehicle:removeTexture()
+  self.m_Texture = nil
+  triggerClientEvent(root, "removeElementTexture", root, self)
+end
+
+function Vehicle:setCurrentPositionAsSpawn(type)
+  self.m_PositionType = type
+  self.m_SpawnPos = self:getPosition()
+  local rot = self:getRotation()
+  self.m_SpawnRot = rot.z
+end
+
+function Vehicle:respawnOnSpawnPosition()
+	if self.m_PositionType == VehiclePositionType.World then
+		self:setPosition(self.m_SpawnPos)
+		self:setRotation(0, 0, self.m_SpawnRot)
+		fixVehicle(self)
+		local owner = Player.getFromId(self.m_Owner)
+		if owner and isElement(owner) then
+			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
+		end
+	end
+end
 
 -- Override it
 function Vehicle:getVehicleType()

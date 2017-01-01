@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
-addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "setSupportDamage",
+addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
 "playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin"}
 
 function LocalPlayer:constructor()
@@ -29,7 +29,7 @@ function LocalPlayer:constructor()
 	addEventHandler("onClientPlayerWasted", root, bind(self.playerWasted, self))
 	addEventHandler("playerWasted", root, bind(self.Event_playerWasted, self))
 	addEventHandler("playerCashChange", self, bind(self.playCashChange, self))
-	addEventHandler("setSupportDamage", self, bind( self.toggleDamage, self ))
+	addEventHandler("disableDamage", self, bind( self.disableDamage, self ))
 	addEventHandler("abortDeathGUI", self, bind( self.abortDeathGUI, self ))
 	addEventHandler("sendTrayNotification", self, bind( self.sendTrayNotification, self ))
 	addEventHandler("setClientTime", self, bind(self.Event_onGetTime, self))
@@ -44,6 +44,9 @@ function LocalPlayer:constructor()
 	--Alcoholsystem
 	self.m_AlcoholDecreaseBind = bind(self.alcoholDecrease, self)
 	self:setPrivateSyncChangeHandler("AlcoholLevel", bind(self.onAlcoholLevelChange, self))
+
+
+	self.m_CancelEvent = function()	cancelEvent() end
 
 end
 
@@ -125,6 +128,12 @@ function LocalPlayer:isLoggedIn()
 	return self.m_LoggedIn
 end
 
+function LocalPlayer:getStatistics(stat)
+	if stat then
+		return self:getPrivateSync("Stat_"..stat)
+	end
+end
+
 function LocalPlayer:getPoints()
 	return self:getPrivateSync("Points")
 end
@@ -155,11 +164,13 @@ function LocalPlayer:playCashChange( bNoSound )
 	end
 end
 
-function LocalPlayer:toggleDamage( bstate )
+function LocalPlayer:disableDamage(bstate)
 	if bstate then
-		addEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
+		Guns:getSingleton():disableDamage(bstate)
+		addEventHandler("onClientPlayerDamage", localPlayer, self.m_CancelEvent, true, "high")
 	else
-		removeEventHandler( "onClientPlayerDamage", localPlayer, cancelEvent)
+		Guns:getSingleton():disableDamage(bstate)
+		removeEventHandler("onClientPlayerDamage", localPlayer, self.m_CancelEvent)
 	end
 end
 
@@ -177,6 +188,7 @@ function LocalPlayer:Event_playerWasted()
 	triggerServerEvent("Event_setPlayerWasted", self)
 
 	local funcA = function()
+		if self.m_DeathMessage then delete(self.m_DeathMessage) end
 		if isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		triggerServerEvent("factionRescueReviveAbort", self, self)
 		self.m_CanBeRevived = false
@@ -211,9 +223,16 @@ function LocalPlayer:Event_playerWasted()
 	end
 
 	Camera.setMatrix(self.position + self.matrix.up*10, self.position)
+
+	if localPlayer:getInterior() > 0 then
+		funcA()
+		return
+	end
+
 	local deathTime = MEDIC_TIME
 	local start = getTickCount()
-	local deathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, funcA)
+
+	self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, funcA)
 	self.m_CanBeRevived = true
 	self.m_WastedTimer = setTimer(
 		function()
@@ -221,8 +240,8 @@ function LocalPlayer:Event_playerWasted()
 			if timeGone >= deathTime-500 then
 				funcA()
 			else
-				deathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
-				deathMessage:anyChange()
+				self.m_DeathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
+				self.m_DeathMessage:anyChange()
 			end
 		end, 1000, deathTime/1000
 	)
@@ -390,8 +409,8 @@ function LocalPlayer:Event_setAdmin(player, rank)
 		)
 
 		if rank == RANK.Projektleiter or rank == RANK.Developer then
-			addCommandHandler("dcrun", function(...)
-				if rank == RANK.Projektleiter or rank == RANK.Developer then
+			addCommandHandler("dcrun", function(cmd, ...)
+				if self:getRank() == RANK.Projektleiter or self:getRank() == RANK.Developer then
 					local codeString = table.concat({...}, " ")
 					runString(codeString, localPlayer)
 				end

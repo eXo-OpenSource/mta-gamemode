@@ -317,35 +317,46 @@ function PolicePanel:locateElement(element)
 	local elementText = element:getType() == "player" and _"Der Spieler" or _"Die Wanze"
 
 	if getElementDimension(element) == 0 and getElementInterior(element) == 0 then
-		if ElementLocateBlip then delete(ElementLocateBlip) end
-		if isTimer(ElementLocateTimer) then killTimer(ElementLocateTimer) end
+		self:stopLocating()
 
 		local pos = element:getPosition()
-		ElementLocateBlip = Blip:new("Locate.png", pos.x, pos.y,9999)
+		ElementLocateBlip = Blip:new("Locate.png", pos.x, pos.y, 9999)
 		ElementLocateBlip:attachTo(element)
-		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
 		localPlayer.m_LocatingElement = element
+		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
+
 		ElementLocateTimer = setTimer(function()
 			if localPlayer.m_LocatingElement and isElement(localPlayer.m_LocatingElement) then
 				local int = getElementInterior(localPlayer.m_LocatingElement)
 				local dim = getElementDimension(localPlayer.m_LocatingElement)
 				if int > 0 or dim > 0 then
-					if ElementLocateBlip then delete(ElementLocateBlip) end
 					ErrorBox:new(_("%s ist in einem Gebäude!", elementText))
-					killTimer(ElementLocateTimer)
-					localPlayer.m_LocatingElement = false
+					self:stopLocating()
 				end
-				if element:getType() == "player" and not element:getPublicSync("Phone") == true then
-					if ElementLocateBlip then delete(ElementLocateBlip) end
-					ErrorBox:new(_"Der Spieler hat sein Handy ausgeschaltet!")
-					killTimer(ElementLocateTimer)
-					localPlayer.m_LocatingElement = false
+				if element:getType() == "player" then
+					if not not element:getPublicSync("Phone") == true then
+						ErrorBox:new(_"Ortung beendet: Der Spieler hat sein Handy ausgeschaltet!")
+						self:stopLocating()
+					end
+				else
+					if not element:getData("Wanze") == true then
+						ErrorBox:new(_"Ortung beendet: Die Wanze ist nicht mehr verfügbar!")
+						self:stopLocating()
+					end
 				end
+			else
+				self:stopLocating()
 			end
 		end, 1000, 0)
 	else
 		ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Er ist in einem Gebäude!")
 	end
+end
+
+function PolicePanel:stopLocating(type)
+	if ElementLocateBlip then delete(ElementLocateBlip) end
+	if isTimer(ElementLocateTimer) then killTimer(ElementLocateTimer) end
+	localPlayer.m_LocatingElement = false
 end
 
 function PolicePanel:giveWanteds()

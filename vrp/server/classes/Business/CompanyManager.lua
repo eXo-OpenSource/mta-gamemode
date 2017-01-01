@@ -90,7 +90,7 @@ function CompanyManager:Event_companyQuit()
 	if not company then return end
 
 	if company:getPlayerRank(client) == CompanyRank.Leader then
-		client:sendWarning(_("Bitte übertrage den Leader-Status erst auf ein anderes Mitglied des Unternehmen!", client))
+		client:sendWarning(_("Als Leader kannst du nicht das Unternehmen verlassen!", client))
 		return
 	end
 	company:removePlayer(client)

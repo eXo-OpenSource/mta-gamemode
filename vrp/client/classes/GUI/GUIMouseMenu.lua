@@ -8,7 +8,7 @@
 GUIMouseMenu = inherit(GUIElement)
 
 function GUIMouseMenu:constructor(posX, posY, width, height, parent)
-	--checkArgs("GUIMouseMenu:constructor", "number", "number", "number", "number")
+	checkArgs("GUIMouseMenu:constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	

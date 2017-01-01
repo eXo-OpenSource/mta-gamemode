@@ -8,7 +8,7 @@
 GUIMouseMenuNoClickItem = inherit(GUIMouseMenuItem)
 
 function GUIMouseMenuNoClickItem:constructor(posX, posY, width, height, text, parent)
-	--checkArgs("GUIMouseMenuNoClickItem:constructor", "number", "number", "number", "number")
+	checkArgs("GUIMouseMenuNoClickItem:constructor", "number", "number", "number", "number")
 
 	GUIElement.constructor(self, posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, text, 1, VRPFont(self.m_Height))

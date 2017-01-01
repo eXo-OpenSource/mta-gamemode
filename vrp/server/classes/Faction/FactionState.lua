@@ -25,7 +25,6 @@ function FactionState:constructor()
 	self:createGasStation(Vector3(1563.98,-1614.40, 12.5)) -- LS PD
 	self:createGasStation(Vector3(1552.93,-1614.40, 12.5)) -- LS PD
 
-
 	self.m_Bugs = {}
 
 	for i = 1, FACTION_FBI_BUGS do
@@ -54,7 +53,7 @@ function FactionState:constructor()
 	"factionStateGrabPlayer", "factionStateFriskPlayer", "stateFactionSuccessCuff", "factionStateAcceptTicket",
 	"factionStateShowLicenses", "factionStateAcceptShowLicense", "factionStateDeclineShowLicense",
 	"factionStateTakeDrugs", "factionStateTakeWeapons", "factionStateGivePANote", "factionStatePutItemInVehicle", "factionStateTakeItemFromVehicle",
-	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction"
+	"factionStateFillRepairVehicle", "factionStateLoadBugs", "factionStateAttachBug", "factionStateBugAction", "factionStateCheckBug"
 	}
 	addCommandHandler("suspect",bind(self.Command_suspect, self))
 	addCommandHandler("su",bind(self.Command_suspect, self))
@@ -89,6 +88,7 @@ function FactionState:constructor()
 	addEventHandler("factionStateLoadBugs", root, bind(self.Event_loadBugs, self))
 	addEventHandler("factionStateAttachBug", root, bind(self.Event_attachBug, self))
 	addEventHandler("factionStateBugAction", root, bind(self.Event_bugAction, self))
+	addEventHandler("factionStateCheckBug", root, bind(self.Event_checkBug, self))
 
 
 
@@ -1286,6 +1286,7 @@ function FactionState:Event_attachBug()
 			["active"] = true
 		}
 		source.BugId = id
+		source:setData("Wanze", true, true)
 		client:triggerEvent("receiveBugs", self.m_Bugs)
 		self:sendShortMessage(client:getName().." hat Wanze "..id.." an ein/en "..typeName.." angebracht!")
 	else
@@ -1297,6 +1298,8 @@ function FactionState:Event_bugAction(action, id)
 	if self.m_Bugs[id] then
 		if action == "disable" then
 			self.m_Bugs[id]["element"].BugId = nil
+			self.m_Bugs[id]["element"]:setData("Wanze", false, true)
+
 			self.m_Bugs[id] = {}
 			self:sendShortMessage(client:getName().." hat Wanze "..id.." deaktiviert!")
 		elseif action == "clearLog" then
@@ -1308,3 +1311,31 @@ function FactionState:Event_bugAction(action, id)
 		client:sendError(_("Wanze nicht verfügbar!", client))
 	end
 end
+
+function FactionState:Event_checkBug(element)
+	local checkElement = client
+	local text = _("deinem Körper", client)
+	local price = 50
+	if element then
+		checkElement = element
+		text = _("deinem Fahrzeug", client)
+		price = 100
+	end
+	if client:getMoney() >= price then
+		client:takeMoney(price, "Wanzen-Check")
+		CompanyManager:getSingleton():getFromId(2):giveMoney(math.floor(price/2), "Wanzen-Check")
+		if checkElement:getData("Wanze") == true and checkElement.BugId then
+			local id = checkElement.BugId
+			self.m_Bugs[id]["element"].BugId = nil
+			self.m_Bugs[id]["element"]:setData("Wanze", false, true)
+			self.m_Bugs[id] = {}
+			self:sendShortMessage("Wanze "..id.." wurde entdeckt und entfernt!")
+			client:sendShortMessage(_("Oha! Ich habe eine Wanze von %s entfernt!", client, text))
+		else
+			client:sendShortMessage(_("Ich habe keine Wanze an %s gefunden!", client, text))
+		end
+	else
+		client:sendError(_("Du hast nicht genug Geld dabei! (%d$)", client, price))
+	end
+end
+

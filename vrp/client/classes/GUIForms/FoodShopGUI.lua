@@ -125,3 +125,9 @@ addEventHandler("showFoodShopMenu", root,
 			FoodShopGUI:getSingleton():new()
 		end
 	)
+
+addEventHandler("shopCloseGUI", root,
+		function()
+			if FoodShopGUI:isInstantiated() then delete(FoodShopGUI:getSingleton()) end
+		end
+	)

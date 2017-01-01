@@ -1,3 +1,5 @@
+--Happy New Year
+
 Core = inherit(Object)
 addEvent("Core.onClientInternalError", true)
 
@@ -26,6 +28,22 @@ function Core:constructor()
 	sqlPremium = MySQL:new(Config.get('mysql')['premium']['host'], Config.get('mysql')['premium']['port'], Config.get('mysql')['premium']['username'], Config.get('mysql')['premium']['password'], Config.get('mysql')['premium']['database'], Config.get('mysql')['premium']['socket'])
 	sqlLogs = MySQL:new(Config.get('mysql')['logs']['host'], Config.get('mysql')['logs']['port'], Config.get('mysql')['logs']['username'], Config.get('mysql')['logs']['password'], Config.get('mysql')['logs']['database'], Config.get('mysql')['logs']['socket'])
 	sqlLogs:setPrefix("vrpLogs")
+
+	-- Create ACL user for web-access
+	self.m_ACLAccount = addAccount("exo_web", "tp&Qy?d{SbS*~By]")
+
+	local aclGroup = aclGetGroup("web")
+    if not aclGroup then aclGroup = aclCreateGroup("web") end
+
+	local acl = aclGet("web")
+    if not acl then acl = aclCreate("web") end
+
+	aclGroupAddACL(aclGroup, acl)
+	acl:setRight("general.http", true)
+	acl:setRight("function.callRemote", true)
+	acl:setRight("function.fetchRemote", true)
+
+	aclGroup:addObject("user.exo_web")
 
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
@@ -92,7 +110,7 @@ function Core:constructor()
 
 		ChessSessionManager:new()
 		-- Generate Missions
-		MStealWeaponTruck:new()
+		--MStealWeaponTruck:new()
 
 		-- Missions
 		MWeaponTruck:new()
@@ -149,6 +167,9 @@ end
 
 function Core:destructor()
 	if not self.m_Failed then
+		ACLGroup.get("Admin"):removeObject("user.exo_web")
+		removeAccount(self.m_ACLAccount)
+
 		delete(VehicleManager:getSingleton())
 		delete(PlayerManager:getSingleton())
 		delete(GroupManager:getSingleton())

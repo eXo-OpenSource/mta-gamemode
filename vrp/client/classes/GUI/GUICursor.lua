@@ -12,7 +12,7 @@ function GUICursor:constructor()
 	self.m_CursorFunc = bind(self.toggleCursor, self)
 
 	if not core:get("HUD", "CursorMode", false) then
-		core:set("HUD", "CursorMode", 1)
+		core:set("HUD", "CursorMode", 0)
 	end
 
 	self:setCursorMode(toboolean(core:get("HUD", "CursorMode", false)))
