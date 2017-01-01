@@ -126,22 +126,22 @@ function ShopManager:onGasStationFill(shopId)
 
 	local vehicle = getPedOccupiedVehicle(client)
 	if not vehicle then return end
-	if not instanceof(vehicle, PermanentVehicle, true) then
-		client:sendWarning(_("Nicht-permanente Fahrzeuge können nicht betankt werden!", client))
-		return
-	end
-
-	if client:getMoney() > 10 then
-		if vehicle:getFuel() <= 100-10 then
-			vehicle:setFuel(vehicle:getFuel() + 10)
-			client:takeMoney(10, "Tanken")
-			client:triggerEvent("gasStationUpdate", 10, 10)
-			shop:giveMoney(5, "Betankung")
+	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
+		if client:getMoney() > 10 then
+			if vehicle:getFuel() <= 100-10 then
+				vehicle:setFuel(vehicle:getFuel() + 10)
+				client:takeMoney(10, "Tanken")
+				client:triggerEvent("gasStationUpdate", 10, 10)
+				shop:giveMoney(5, "Betankung")
+			else
+				client:sendError(_("Dein Tank ist bereits voll", client))
+			end
 		else
-			client:sendError(_("Dein Tank ist bereits voll", client))
+			client:sendError(_("Du hast nicht genügend Geld!", client))
 		end
 	else
-		client:sendError(_("Du hast nicht genügend Geld!", client))
+		client:sendWarning(_("Nicht-permanente Fahrzeuge können nicht betankt werden!", client))
+		return
 	end
 end
 
