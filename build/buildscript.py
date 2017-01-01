@@ -95,7 +95,7 @@ clientCall = [ compiler ]
 
 if branch != "" and branch != "develop" and branch != "master":
 	print("Building release build")
-	clientCall.extend([ "-e2", "-s" ])
+	clientCall.extend([ "-e2" ]) # TODO: Readd '-s' once the script is more stable
 else:
 	print("WARNING: Building debug build")
 
