@@ -106,7 +106,7 @@ function Core:ready()
 	Neon.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
-	MiamiSpawnGUI:new()
+	--MiamiSpawnGUI:new() -- Miami Spawn deactivated
 
 	Shaders.load()
 
@@ -119,6 +119,9 @@ function Core:ready()
 	ChessSession:new()
 
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
+
+	triggerServerEvent("remoteClientSpawn", localPlayer) -- Miami Spawn deactivated
+
 end
 
 function Core:afterLogin()
