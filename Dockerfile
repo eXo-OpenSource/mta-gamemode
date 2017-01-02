@@ -1,7 +1,7 @@
 FROM debian:jessie
 
 # Prerequisites
-RUN apt-get -y update && apt-get install -y --no-install-recommends wget unzip liblua5.1-0
+RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip liblua5.1-0
 
 # Setup user and change to its home
 RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
