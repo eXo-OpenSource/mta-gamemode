@@ -13,6 +13,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
+	self.m_QuitHook = Hook:new()
 	self.m_ReadyPlayers = {}
 
 	-- Register events
@@ -106,6 +107,10 @@ function PlayerManager:getWastedHook()
 	return self.m_WastedHook
 end
 
+function PlayerManager:getQuitHook()
+	return self.m_QuitHook
+end
+
 function PlayerManager:getReadyPlayers()
 	return self.m_ReadyPlayers
 end
@@ -180,6 +185,8 @@ function PlayerManager:playerCommand()
 end
 
 function PlayerManager:playerQuit()
+	self.m_QuitHook:call(source)
+
 	if getPedWeapon(source,1) == 9 then takeWeapon(source,9) end
 	local index = table.find(self.m_ReadyPlayers, source)
 	if index then
@@ -201,6 +208,7 @@ function PlayerManager:playerQuit()
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
+
 end
 
 function PlayerManager:Event_playerReady()
