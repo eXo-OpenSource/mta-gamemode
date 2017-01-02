@@ -12,8 +12,8 @@ function JobLogistician:constructor()
 	Job.constructor(self)
 
 	-- Create Cranes
-	local Crane1 = Crane:new(2387.30, -2492.40, 19.6, 2387.30, -2625.60, 19.6)
-	local Crane2 = Crane:new(-219.70, -269.30, 7.30, -219.70, -200.30, 7.30)
+	self.m_Crane1 = Crane:new(2387.30, -2492.40, 19.6, 2387.30, -2625.60, 19.6)
+	self.m_Crane2 = Crane:new(-219.70, -269.30, 7.30, -219.70, -200.30, 7.30)
 
 	self.m_Marker1 = self:createCraneMarker(Crane1, Vector3(2386.92, -2494.24, 13), Vector3(2387.60, -2490.87, 14.1), 0)
 	self.m_Marker2 = self:createCraneMarker(Crane2, Vector3(-219.35, -268.77, 0.6), Vector3(-219.70, -270.80, 2), 180)
@@ -152,6 +152,7 @@ function Crane:dropContainer(vehicle, player, callback)
 	end
 	self.m_Busy = true
 	vehicle:setFrozen(true)
+	toggleAllControls(player, false)
 	-- First, roll down the tow
 	self:rollTowDown(
 		function()
@@ -162,6 +163,8 @@ function Crane:dropContainer(vehicle, player, callback)
 			detachElements(container)
 			attachElements(container, self.m_Tow, 0, 0, -4.1, 0, 0)
 			vehicle:setFrozen(false)
+			toggleAllControls(player, true)
+
 			-- Roll up the tow
 			self:rollTowUp(
 				function()
@@ -206,6 +209,8 @@ function Crane:loadContainer(vehicle, player, callback)
 	player.LogisticanContainer = container
 
 	vehicle:setFrozen(true)
+	toggleAllControls(player, false)
+
 	-- Move Crane to the "container platform"
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
 	moveObject(self.m_Tow, 10000, self.m_EndX+0.5, self.m_EndY-0.7, self.m_EndZ+5)
@@ -233,6 +238,8 @@ function Crane:loadContainer(vehicle, player, callback)
 											detachElements(container, self.m_Tow)
 											attachElements(container, vehicle, 0, -1.7, 1.1)
 											vehicle:setFrozen(false)
+											toggleAllControls(player, true)
+
 											-- Roll up the tow a last time
 											self:rollTowUp(
 												function()
