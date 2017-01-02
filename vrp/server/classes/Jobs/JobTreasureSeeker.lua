@@ -118,7 +118,9 @@ function JobTreasureSeeker:generateRandomTreasures(player)
 	end
 	local rnd
 	for i=1, 5 do
-		self:loadTreasure(player)
+		if not self:loadTreasure(player) then
+			player:sendError("Internal Error, cannot find Treasure (possible stack overflow)")
+		end
 	end
 end
 
@@ -164,18 +166,22 @@ function JobTreasureSeeker:takeUp(player, key, keyState)
 end
 
 function JobTreasureSeeker:loadTreasure(player)
-	local rnd = math.random(1, #JobTreasureSeeker.Positions)
-	if self.m_Treasures[player][rnd] then
-		self:loadTreasure(player)
-	else
-		local x, y = unpack(JobTreasureSeeker.Positions[rnd])
-		--Blip:new("Waypoint.png", x, y) -- Dev
-		self.m_Treasures[player][rnd] = createColCircle(x, y, 25)
-		self.m_Treasures[player][rnd].DummyObject = createObject(1337, x, y, -20)
-		self.m_Treasures[player][rnd].Player = player
-		setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", true)
-		addEventHandler("onColShapeHit", self.m_Treasures[player][rnd], bind(self.onTreasureHit, self))
-	end
+	local runs = 0
+	repeat
+		local rnd = math.random(1, #JobTreasureSeeker.Positions)
+		runs = runs + 1
+		if runs == #JobTreasureSeeker.Positions then
+			return false;
+		end
+	until not self.m_Treasures[player][rnd]
+
+	local x, y = unpack(JobTreasureSeeker.Positions[rnd])
+	--Blip:new("Waypoint.png", x, y) -- Dev
+	self.m_Treasures[player][rnd] = createColCircle(x, y, 25)
+	self.m_Treasures[player][rnd].DummyObject = createObject(1337, x, y, -20)
+	self.m_Treasures[player][rnd].Player = player
+	setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", true)
+	addEventHandler("onColShapeHit", self.m_Treasures[player][rnd], bind(self.onTreasureHit, self))
 end
 
 function JobTreasureSeeker:getRandomTreasureModel()
