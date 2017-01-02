@@ -43,6 +43,7 @@ end
 -- Right Click Shoot Bugfix
 
 function ScoreboardGUI:onShow()
+	self:refresh()
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
 	localPlayer:setWeaponSlot(0)
 	toggleControl("next_weapon", false)
