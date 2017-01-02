@@ -120,7 +120,14 @@ function Core:ready()
 
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
-	triggerServerEvent("remoteClientSpawn", localPlayer) -- Miami Spawn deactivated
+
+	-- Miami Spawn deactivated:
+	HUDRadar:getSingleton():setEnabled(true)
+	showChat(true)
+	setCameraTarget(localPlayer)
+	setElementFrozen(localPlayer,false)
+	triggerServerEvent("remoteClientSpawn", localPlayer)
+	-- //Miami Spawn deactivated:
 
 end
 
