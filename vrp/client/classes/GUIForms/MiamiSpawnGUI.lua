@@ -17,9 +17,9 @@ end
 function MiamiSpawnGUI:Event_InitScreen()
 	local bstate = 	core:get("HUD", "startScreen" )
 	setElementFrozen(localPlayer,true)
-	if not bstate then 
+	if not bstate then
 		triggerServerEvent("remoteClientSpawn", localPlayer)
-		return 
+		return
 	end
 	self.m_RadarEnabled = HUDRadar:getSingleton().m_Enabled
 	if self.m_RadarEnabled then

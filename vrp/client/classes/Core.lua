@@ -106,7 +106,7 @@ function Core:ready()
 	Neon.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
-	MiamiSpawnGUI:new()
+	--MiamiSpawnGUI:new() -- Miami Spawn deactivated
 
 	Shaders.load()
 
@@ -119,6 +119,10 @@ function Core:ready()
 	ChessSession:new()
 
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
+
+
+
+
 end
 
 function Core:afterLogin()
@@ -147,8 +151,8 @@ function Core:afterLogin()
 	FactionGUI:getSingleton():close()
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 
-	--ScoreboardGUI:new()
-	--ScoreboardGUI:getSingleton():close()
+	ScoreboardGUI:new()
+	ScoreboardGUI:getSingleton():close()
 
 	Phone:new()
 	Phone:getSingleton():close()
@@ -181,6 +185,14 @@ function Core:afterLogin()
 	PlantGUI.load()
 	Fishing.load()
 	GUIForm3D.load()
+
+	-- Miami Spawn deactivated:
+	HUDRadar:getSingleton():setEnabled(true)
+	showChat(true)
+	setCameraTarget(localPlayer)
+	setElementFrozen(localPlayer,false)
+	triggerServerEvent("remoteClientSpawn", localPlayer)
+	-- //Miami Spawn deactivated:
 end
 
 function Core:destructor()
