@@ -20,7 +20,7 @@ function MinigameManager:constructor()
 	self.m_SideSwipe.ms_Highscore = Highscore:new("SideSwipe")
 
 	-- Zombie Survival
-	ZombieSurvival.initalize()
+	--ZombieSurvival.initalize()
 	self.m_ZombieSurvivalHighscore = Highscore:new("ZombieSurvival")
 
 	-- Sniper Game
