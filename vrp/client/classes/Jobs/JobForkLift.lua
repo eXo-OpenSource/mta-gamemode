@@ -27,7 +27,7 @@ function JobForkLift:generateLoadMarkers()
 end
 
 function JobForkLift:onLoadMarkerHit(hitElement, dim)
-	if getElementType(hitElement) == "player" and dim then
+	if getElementType(hitElement) == "player" and hitElement == localPlayer and dim then
 		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle():getModel() == 530 then
 			local box
 			for index, boxItem in pairs(source:getElementsWithin()) do

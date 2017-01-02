@@ -16,13 +16,6 @@ function JobPizza:constructor( )
 	self.m_VehicleSpawner:disable()
 
 	addEventHandler("onPizzaDelivered", root, bind( JobPizza.onPizzaDeliver, self ) )
-	addEventHandler("onPlayerDisconnect", root, bind(JobPizza.onPlayerDisconnect, self) )
-end
-
-function JobRoadSweeper:onPlayerDisconnect()
-	if isElement(source.m_PizzaVeh) then
-		destroyElement( source.m_PizzaVeh)
-	end
 end
 
 function JobPizza:start(player)
@@ -52,7 +45,6 @@ function JobPizza:onVehicleSpawn( vehicle, player )
 	player.m_OldSkin = player:getModel()
 	player:setModel( 155 )
 	addEventHandler("onVehicleDamage", vehicle, bind(JobPizza.onDamageVehicle, self) )
-	addEventHandler("onPlayerDisconnect", player, bind(JobPizza.onPlayerDisconnect, self) )
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		if vehPlayer ~= player then
 			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
@@ -86,15 +78,6 @@ end
 
 function JobPizza:onVehicleAction()
 	self:stop(source.m_PizzaOwner)
-end
-
-function JobPizza:onPlayerDisconnect(  )
-	if player.m_PizzaVeh then
-		destroyElement( player.m_PizzaVeh )
-	end
-	if isTimer(player.m_EndPizzaJobTimer) then
-		killTimer( player.m_EndPizzaJobTimer )
-	end
 end
 
 --// Loan-Formula = BASE_LOAN * ( distance / time )

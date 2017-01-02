@@ -9,7 +9,7 @@ JobForkLift = inherit(Job)
 
 function JobForkLift:constructor()
 	Job.constructor(self)
-	self.m_VehicleSpawner = VehicleSpawner:new(87.50, -221.35, 0.9, {"Forklift"}, 90, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner = VehicleSpawner:new(88.162, -250.316, 0.85, {"Forklift"}, 90, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
@@ -17,15 +17,7 @@ function JobForkLift:constructor()
 
 	addRemoteEvents{"JobForkLiftonBoxLoad"}
 	addEventHandler("JobForkLiftonBoxLoad", root, bind(self.onBoxLoad, self))
-	addEventHandler("onPlayerDisconnect", root, bind(JobForkLift.onPlayerDisconnect, self) )
 end
-
-function JobForkLift:onPlayerDisconnect(  )
-	if isElement(source.vehFork) then
-		destroyElement( source.vehFork )
-	end
-end
-
 
 function JobForkLift:start(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
