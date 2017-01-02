@@ -199,6 +199,7 @@ function Account.createForumAccount(username, password, email)
 
 			board:queryExec(("INSERT INTO wcf1_user_option_value (userID, %s) VALUES (?, '%s')"):format(table.concat(columns, ","), table.concat(values, "','")), userID)
 			board:queryExec("INSERT INTO wcf1_user_to_group (userID, groupID) VALUES (?,?)", userID, 1)
+			board:queryExec("INSERT INTO wcf1_user_to_group (userID, groupID) VALUES (?,?)", userID, 3)
 			board:queryExec("INSERT INTO wcf1_user_to_language (userID, languageID) VALUES (?,?)", userID, nLanguageID)
 
 			board:queryFetch("COMMIT;")
