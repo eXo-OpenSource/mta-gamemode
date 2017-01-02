@@ -116,11 +116,14 @@ function JobTreasureSeeker:generateRandomTreasures(player)
 	else
 		self.m_Treasures[player] = {}
 	end
-	local rnd
-	for i=1, 5 do
-		if not self:loadTreasure(player) then
-			player:sendError("Internal Error, cannot find Treasure (possible stack overflow)")
-		end
+	for i = 1, 5 do
+		Thread:new(
+			bind(self.loadTreasure, self, player),
+			THREAD_PRIORITY_HIGHEST
+		).done(
+			function() end,
+			function() end
+		)
 	end
 end
 
@@ -170,8 +173,8 @@ function JobTreasureSeeker:loadTreasure(player)
 	repeat
 		local rnd = math.random(1, #JobTreasureSeeker.Positions)
 		runs = runs + 1
-		if runs == #JobTreasureSeeker.Positions then
-			return false;
+		if runs%100 then
+			Thread.pause()
 		end
 	until not self.m_Treasures[player][rnd]
 
