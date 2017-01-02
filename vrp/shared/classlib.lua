@@ -221,6 +221,7 @@ function bind(func, ...)
 
 	local boundParams = {...}
 	return
+		--[[
 		function(...)
 			local params = {}
 			local boundParamSize = #boundParams
@@ -233,6 +234,10 @@ function bind(func, ...)
 				params[boundParamSize + i] = funcParams[i]
 			end
 			return func(unpack(params))
+		end
+		--]]
+		function(...)
+			return func(unpack(boundParams), unpack({...}))
 		end
 end
 
