@@ -52,6 +52,7 @@ function JobTrashman:onVehicleSpawn(player,vehicleModel,vehicle)
 	end
 	vehicle.m_TrashmanOwner = player
 	vehicle:addCountdownDestroy(10)
+	self.m_OnVehicleAction = bind(self.onVehicleAction, self)
 	addEventHandler("onElementDestroy", vehicle, bind(self.m_OnVehicleAction, self))
 end
 
