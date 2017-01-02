@@ -121,13 +121,7 @@ function Core:ready()
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
 
-	-- Miami Spawn deactivated:
-	HUDRadar:getSingleton():setEnabled(true)
-	showChat(true)
-	setCameraTarget(localPlayer)
-	setElementFrozen(localPlayer,false)
-	triggerServerEvent("remoteClientSpawn", localPlayer)
-	-- //Miami Spawn deactivated:
+
 
 end
 
@@ -191,6 +185,14 @@ function Core:afterLogin()
 	PlantGUI.load()
 	Fishing.load()
 	GUIForm3D.load()
+
+	-- Miami Spawn deactivated:
+	HUDRadar:getSingleton():setEnabled(true)
+	showChat(true)
+	setCameraTarget(localPlayer)
+	setElementFrozen(localPlayer,false)
+	triggerServerEvent("remoteClientSpawn", localPlayer)
+	-- //Miami Spawn deactivated:
 end
 
 function Core:destructor()
