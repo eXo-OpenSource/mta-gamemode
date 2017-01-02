@@ -176,7 +176,7 @@ y=y+B  aTab1.VehicleHealth	= guiCreateLabel ( 0.26, y, 0.25, 0.04, "Vehicle Heal
 						  guiLabelSetColor ( aTab2.ExecuteAdvanced, 255, 0, 0 )
 		aLogLines = 1
 
-		createMapTab()
+		--createMapTab()
 		
 		aTab3 = {}
 		aTab3.Tab			= guiCreateTab ( "Server", aTabPanel, "server" )
