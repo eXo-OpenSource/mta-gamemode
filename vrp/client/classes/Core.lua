@@ -147,8 +147,8 @@ function Core:afterLogin()
 	FactionGUI:getSingleton():close()
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 
-	--ScoreboardGUI:new()
-	--ScoreboardGUI:getSingleton():close()
+	ScoreboardGUI:new()
+	ScoreboardGUI:getSingleton():close()
 
 	Phone:new()
 	Phone:getSingleton():close()

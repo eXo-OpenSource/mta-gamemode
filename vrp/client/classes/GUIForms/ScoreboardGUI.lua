@@ -14,7 +14,6 @@ function ScoreboardGUI:constructor()
 	self.m_Rect = GUIRectangle:new(0, self.m_Width*0.06 , self.m_Width, self.m_Height - self.m_Width*0.06, tocolor(0, 0, 0, 200), self)
 	self.m_Logo = GUIImage:new(self.m_Width/2-self.m_Width*0.25*0.5, self.m_Height*0.005, self.m_Width*0.275, self.m_Width*0.119, "files/images/LogoNoFont.png", self)
 
-
 	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.96, self.m_Height*0.45, self.m_Rect)
 	self.m_Grid:setFont(VRPFont(24))
 	self.m_Grid:setItemHeight(24)
@@ -35,9 +34,6 @@ function ScoreboardGUI:constructor()
 	self.m_Ping:setColor(Color.Black):setFont(VRPFont(self.m_Height*0.05)):setAlignX("right")
 
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
-
-	self:refresh()
-	setTimer(bind(self.refresh, self), 1000, 0)
 end
 
 -- Right Click Shoot Bugfix
@@ -47,20 +43,24 @@ function ScoreboardGUI:onShow()
 	localPlayer:setWeaponSlot(0)
 	toggleControl("next_weapon", false)
 	toggleControl("previous_weapon", false)
+	self:refresh()
+	self.m_Timer = setTimer(bind(self.refresh, self), 15000, 0)
 end
 
 function ScoreboardGUI:onHide()
+	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+
+	-- //Right Click Shoot Bugfix
 	if not getElementData(localPlayer,"no_driveby") == true then
 		toggleControl("next_weapon", true)
 		toggleControl("previous_weapon", true)
 		setTimer(setPedWeaponSlot, 500, 1, localPlayer, self.m_OldWeaponSlot)
 	end
+
 end
 
--- //Right Click Shoot Bugfix
-
-
 function ScoreboardGUI:refresh()
+	outputChatBox("refresh")
 	self.m_Grid:clear()
 	self.m_Players = {}
 	self.m_CompanyCount = {}
