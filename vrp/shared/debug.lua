@@ -101,16 +101,18 @@ end
 
 -- Hacked in from runcode
 function runString(commandstring, source)
-	local sourceName, output
+	local sourceName, output, outputPlayer
 	if getPlayerName(source) ~= "Console" then
 		sourceName = getPlayerName(source)
 		output = outputChatBox
+		outputPlayer = source
 	else
 		sourceName = "Console"
 		output = outputDebugString
+		outputPlayer = nil
 
 	end
-	output(sourceName.." executed command: "..commandstring)
+	output(sourceName.." executed command: "..commandstring, outputPlayer)
 	local notReturned
 	--First we test with return
 	local commandFunction,errorMsg = loadstring("return "..commandstring)
@@ -121,14 +123,14 @@ function runString(commandstring, source)
 	end
 	if errorMsg then
 		--It still failed.  Print the error message and stop the function
-		output("Error: "..errorMsg)
+		output("Error: "..errorMsg, outputPlayer)
 		return
 	end
 	--Finally, lets execute our function
 	results = { pcall(commandFunction) }
 	if not results[1] then
 		--It failed.
-		output("Error: "..results[2])
+		output("Error: "..results[2], outputPlayer)
 		return
 	end
 
@@ -147,9 +149,9 @@ function runString(commandstring, source)
 			end
 			resultsString = resultsString..tostring(results[i]).." ["..resultType.."]"
 		end
-		output("Command results: "..resultsString)
+		output("Command results: "..resultsString, outputPlayer)
 	elseif not errorMsg then
-		output("Command executed!")
+		output("Command executed!", outputPlayer)
 	end
 end
 
