@@ -42,6 +42,7 @@ function Core:constructor()
 	acl:setRight("function.fetchRemote", true)
 
 	aclGroup:addObject("user.exo_web")
+	ACLGroup.get("Admin"):addObject("resource.admin_exo")
 
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
