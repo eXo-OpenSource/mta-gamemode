@@ -8,7 +8,7 @@
 
 ELSSystem = inherit( Object )
 
-local CustomSirens = 
+local CustomSirens =
 {
 	[560] = {0.7,0.2},
 	[426] = {0.6,0.2},
@@ -20,7 +20,7 @@ function ELSSystem:constructor( vehicle , type )
   self:createBlinkMarkers( )
   self.m_LightSystem = false
   local model = getElementModel(vehicle)
-  if CustomSirens[model] then   
+  if CustomSirens[model] then
 	addVehicleSirens(vehicle,2,3,true)
 	setVehicleSirens ( vehicle, 1, 0-CustomSirens[model][2]/2, 0.000, CustomSirens[model][1], 255,0, 0, 255, 255 )
 	setVehicleSirens ( vehicle, 2, 0+CustomSirens[model][2]/2, 0.000, CustomSirens[model][1], 0,0, 255, 255, 255 )
@@ -48,16 +48,20 @@ function ELSSystem:destructor( )
 end
 
 function ELSSystem:onLeaveVehicle( controller, seat )
-  if seat == 0 then
-    unbindKey(controller, "z","up",  self.m_BindLight , 400)
-    unbindKey(controller, "z","down", self.m_BindLight, 100)
-    unbindKey(controller, ",","up", self.m_BindBlink, "left")
+	if not controller:getType() == "player" then return end
+
+	if seat == 0 then
+		unbindKey(controller, "z","up",  self.m_BindLight , 400)
+		unbindKey(controller, "z","down", self.m_BindLight, 100)
+		unbindKey(controller, ",","up", self.m_BindBlink, "left")
 		unbindKey(controller, ".","up", self.m_BindBlink, "right")
 		unbindKey(controller, "-","up", self.m_BindBlink, "off")
-  end
+	end
 end
 
 function ELSSystem:onEnterVehicle( controller, seat)
+	if not controller:getType() == "player" then return end
+
 	local type_ = getVehicleType(getPedOccupiedVehicle(controller))
 	if type_ ~= VehicleType.Boat and type_ ~= VehicleType.Helicopter and type_ ~= VehicleType.Plane then
 		self.m_BindLight = bind( ELSSystem.setLightPeriod, self)
