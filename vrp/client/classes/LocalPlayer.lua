@@ -408,14 +408,13 @@ function LocalPlayer:Event_setAdmin(player, rank)
 			end
 		)
 
-		if rank == RANK.Projektleiter or rank == RANK.Developer then
+		if rank >= RANK.Developer then
 			addCommandHandler("dcrun", function(cmd, ...)
-				if self:getRank() == RANK.Projektleiter or self:getRank() == RANK.Developer then
+				if self:getRank() >= RANK.Developer then
 					local codeString = table.concat({...}, " ")
 					runString(codeString, localPlayer)
 				end
 			end)
-
 		end
 	else
 		ErrorBox:new(_"Clientside Admin konnte nicht verifiziert werden!")

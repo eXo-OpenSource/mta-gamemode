@@ -979,9 +979,10 @@ function Admin:Command_MarkPos(player, add)
 end
 
 function Admin:runString(player, cmd, ...)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() == RANK.Projektleiter or player:getRank() == RANK.Developer then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Developer then
 		local codeString = table.concat({...}, " ")
 		runString(codeString, player)
+		self:sendShortMessage(_("%s hat /drun benutzt!\n %s", admin, admin:getName(), target:getName(), codeString))
 	end
 end
 
