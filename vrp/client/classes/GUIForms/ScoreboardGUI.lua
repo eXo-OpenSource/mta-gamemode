@@ -60,7 +60,6 @@ function ScoreboardGUI:onHide()
 end
 
 function ScoreboardGUI:refresh()
-	outputChatBox("refresh")
 	self.m_Grid:clear()
 	self.m_Players = {}
 	self.m_CompanyCount = {}
