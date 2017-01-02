@@ -104,11 +104,19 @@ function runString(commandstring, source)
 	local sourceName, output, outputPlayer
 	if getPlayerName(source) ~= "Console" then
 		sourceName = getPlayerName(source)
-		output = outputChatBox
+		output = function (msg)
+			if SERVER then
+				Admin:getSingleton():sendMessage(msg, 255, 51, 51)
+			else
+				outputChatBox(msg, 255, 51, 51)
+			end
+		end
 		outputPlayer = source
 	else
 		sourceName = "Console"
-		output = outputDebugString
+		output = function (msg)
+			Admin:getSingleton():sendMessage(msg, 255, 51, 51)
+		end
 		outputPlayer = nil
 
 	end

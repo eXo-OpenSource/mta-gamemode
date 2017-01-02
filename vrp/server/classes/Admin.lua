@@ -982,7 +982,7 @@ function Admin:runString(player, cmd, ...)
 	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Developer then
 		local codeString = table.concat({...}, " ")
 		runString(codeString, player)
-		self:sendShortMessage(_("%s hat /drun benutzt!\n %s", admin, admin:getName(), target:getName(), codeString))
+		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))
 	end
 end
 

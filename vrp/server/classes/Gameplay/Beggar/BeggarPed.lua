@@ -32,6 +32,8 @@ end
 
 function BeggarPed:destructor()
 	if self.m_ColShape then	self.m_ColShape:destroy() end
+	self:destroy()
+
 	-- Remove ref
 	BeggarPedManager:getSingleton():removeRef(self)
 end
@@ -45,7 +47,7 @@ function BeggarPed:despawn()
         local newAlpha = self:getAlpha() - 10
         if newAlpha < 10 then newAlpha = 0 end
         if newAlpha == 0 then
-            self:destroy()
+            delete(self)
         else
             self:setAlpha(newAlpha)
         end
