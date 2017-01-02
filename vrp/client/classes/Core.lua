@@ -112,7 +112,7 @@ function Core:ready()
 
 	GroupProperty:new()
 	GUIWindowsFocus:new()
-	SprayWallManager:new()
+	--SprayWallManager:new()
 	AntiClickSpam:new()
 	GasStation:new()
 
