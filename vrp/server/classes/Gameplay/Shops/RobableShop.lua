@@ -70,7 +70,7 @@ function RobableShop:startRob(shop, attacker, ped)
 
 	-- Report the crime
 	--attacker:reportCrime(Crime.ShopRob)
-	accacker:giveKarma(-5)
+	attacker:giveKarma(-5)
 	attacker:giveWantedLevel(3)
 	attacker:sendMessage("Verbrechen begangen: Shop-Überfall, 3 Wanteds", 255, 255, 0)
 
