@@ -72,15 +72,15 @@ end
 
 function Shop:onEnter(player)
 	if self.m_BuyAble then
-		player:sendInfo(_("Drücke 'm' um das %s-Menü zu öffnen!", player, self.m_TypeName))
-		bindKey(player, "m", "down", self.m_ShopGUIBind)
+		player:sendInfo(_("Drücke 'F6' um das %s-Menü zu öffnen!", player, self.m_TypeName))
+		bindKey(player, "f6", "down", self.m_ShopGUIBind)
 	end
 	if self.onShopEnter then self:onShopEnter(player) end
 end
 
 function Shop:onExit(player)
 	if self.m_BuyAble then
-		unbindKey(player, "m", "down", self.m_ShopGUIBind)
+		unbindKey(player, "f6", "down", self.m_ShopGUIBind)
 		player:triggerEvent("shopCloseManageGUI")
 		player:triggerEvent("shopCloseGUI")
 	end
@@ -91,7 +91,7 @@ function Shop:openManageGUI(player)
 	if player:getInterior() > 0 or player:getDimension() > 0 then
 		player:triggerEvent("shopOpenManageGUI", self.m_Id, self.m_Name, self.m_TypeName, self.m_OwnerId, self:getOwnerName(), self.m_Price, self.m_SoundUrl, self.m_StripperEnabled)
 	else
-		unbindKey(player, "m", "down", self.m_ShopGUIBind)
+		unbindKey(player, "f6", "down", self.m_ShopGUIBind)
 	end
 end
 
