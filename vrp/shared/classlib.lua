@@ -224,13 +224,13 @@ function bind(func, ...)
 		--[[
 		function(...)
 			local params = {}
-			local boundParamSize = #boundParams
+			local boundParamSize = select("#", unpack(boundParams))
 			for i = 1, boundParamSize do
 				params[i] = boundParams[i]
 			end
 
 			local funcParams = {...}
-			for i = 1, #funcParams do
+			for i = 1, select("#", ...) do
 				params[boundParamSize + i] = funcParams[i]
 			end
 			return func(unpack(params))
