@@ -5,7 +5,7 @@
 -- *  PURPOSE:     Account class
 -- *
 -- ****************************************************************************
-local MULTIACCOUNT_CHECK = false -- TODO: Activate on production use
+local MULTIACCOUNT_CHECK = true -- TODO: Activate on production use
 local INVITATION = true -- TODO: Activate on production use
 
 Account = inherit(Object)
