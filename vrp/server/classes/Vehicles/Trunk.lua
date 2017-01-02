@@ -146,7 +146,7 @@ function Trunk:takeWeapon(player, slot)
 			--if self.m_ItemSlot[slot]["Amount"] > 0 then
 				local weaponId = self.m_WeaponSlot[slot]["WeaponId"]
 				local amount = self.m_WeaponSlot[slot]["Amount"]
-				if AmmuNationInfo[weaponId].MinLevel <= player:getWeaponLevel() then
+				if MIN_WEAPON_LEVELS[weaponId] <= player:getWeaponLevel() then
 					if player:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
 						self.m_WeaponSlot[slot]["WeaponId"] = 0
 						self.m_WeaponSlot[slot]["Amount"] = 0

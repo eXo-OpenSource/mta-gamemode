@@ -115,46 +115,37 @@ Crime = {
 AmmuNationInfo = {
 	[30] = { -- AK-47
 		Magazine = {price=30,amount=30},
-		Weapon = 1850,
-		MinLevel = 7,
+		Weapon = 1850
 	},
 	[31] = { -- M4A1
 		Magazine = {price=60,amount=50},
-		Weapon = 2500,
-		MinLevel = 7,
+		Weapon = 2500
 	},
 	[29] = { -- MP5
 		Magazine = {price=40,amount=30},
-		Weapon = 1000,
-		MinLevel = 6,
+		Weapon = 1000
 	},
 	[25] = { -- Shotgun
 		Magazine = {price=2,amount=1},
-		Weapon = 900,
-		MinLevel = 5,
+		Weapon = 900
 	},
 	[33] = { -- Rifle
 		Magazine = {price=4,amount=1},
-		Weapon = 1250,
-		MinLevel = 6,
+		Weapon = 1250
 	},
 	[22] = { -- Pistol
 		Magazine = {price=15,amount=17},
-		Weapon = 450,
-		MinLevel = 3,
+		Weapon = 450
 	},
 	[24] = { -- Desert Eagle
 		Magazine = {price=7,amount=7},
-		Weapon = 1150,
-		MinLevel = 3,
+		Weapon = 1150
 	},
 	[1] = { -- Brass Knuckles
-		Weapon = 50,
-		MinLevel = 0,
+		Weapon = 50
 	},
 	[0] = { -- Armor
-		Weapon = 150,
-		MinLevel = 0,
+		Weapon = 150
 	},
 }
 
@@ -365,6 +356,53 @@ WEAPON_NAMES = {
 	[44] = "Nachtsicht-Gerät",
 	[45] = "Wärmesicht-Gerät",
 	[46] = "Fallschrirm"
+}
+
+
+MIN_WEAPON_LEVELS = {
+	[0] = 0, -- Faust
+	[1] = 0, -- Schlagring
+	[2] = 0, -- Golfschläger
+	[3] = 0, -- Schlagstock
+	[4] = 0, -- Messer
+	[5] = 0, -- Baseball Schläger
+	[6] = 0, -- Schaufel
+	[7] = 0, -- Billiard Queue
+	[8] = 1, -- Katana
+	[9] = 1, -- Kettensäge
+	[10] = 0, -- Langer Pinker Dildo
+	[11] = 0, -- Kurzer Dildo
+	[12] = 0, -- Vibrator
+	[14] = 0, -- Blumen
+	[15] = 0, -- Gehstock
+	[16] = 6, -- Granaten
+	[17] = 6, -- Tränengas
+	[18] = 6, -- Molotov Cocktails
+	[22] = 3, -- 9mm Pistole
+	[23] = 3, -- Taser
+	[24] = 4, -- Desert Eagle
+	[25] = 5, -- Schrotflinte
+	[26] = 6, -- Abgesägte Schrotflinte
+	[27] = 7, -- SPAZ-12 Spezialwaffe
+	[28] = 7, -- Uzi
+	[29] = 7, -- MP5
+	[30] = 8, -- AK-47
+	[31] = 8, -- M4
+	[32] = 7, -- TEC-9
+	[33] = 7, -- Jagd Gewehr
+	[34] = 8, -- Sniper
+	[35] = 8, -- Raketenwerfer
+	[36] = 8, -- RPG
+	[37] = 8, -- Flammenwerfer
+	[38] = 10, -- Minigun
+	[39] = 8, -- Rucksack-Bomben
+	[40] = 8, -- Bomben Auslöser
+	[41] = 1, -- Spray-Dose
+	[42] = 0, -- Feuerlöscher
+	[43] = 0, -- Kamera
+	[44] = 0, -- Nachtsicht-Gerät
+	[45] = 0, -- Wärmesicht-Gerät
+	[46] = 0, -- Fallschrirm"
 }
 
 BODYPART_NAMES = {

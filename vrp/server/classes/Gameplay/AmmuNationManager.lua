@@ -72,7 +72,7 @@ function AmmuNationManager:onAmmunationAppOrder(weaponTable)
 				elseif typ == "Munition" then
 					totalAmount = totalAmount + AmmuNationInfo[weaponID].Magazine.price * amount
 				end
-				if client:getWeaponLevel() < AmmuNationInfo[weaponID].MinLevel then
+				if client:getWeaponLevel() < MIN_WEAPON_LEVELS[weaponID] then
 					canBuyWeapons = false
 				end
 			end
@@ -145,7 +145,7 @@ function AmmuNationManager:giveWeaponsFromOrder(player, weaponTable)
 end
 
 function AmmuNationManager:buyWeapon(id)
-	if AmmuNationInfo[id].MinLevel <= client:getWeaponLevel() then
+	if MIN_WEAPON_LEVELS[id] <= client:getWeaponLevel() then
 		if client:getMoney() >= AmmuNationInfo[id].Weapon then
 			if AmmuNationInfo[id].Magazine then
 				giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
@@ -177,7 +177,7 @@ function AmmuNationManager:buyWeapon(id)
 end
 
 function AmmuNationManager:buyMagazine(id)
-	if AmmuNationInfo[id].MinLevel <= client:getWeaponLevel() then
+	if MIN_WEAPON_LEVELS[id] <= client:getWeaponLevel() then
 		if not hasPedThisWeaponInSlots (client,id) then return false end
 		if client:getMoney() >= AmmuNationInfo[id].Magazine.price then
 			giveWeapon(client,id,AmmuNationInfo[id].Magazine.amount)
