@@ -16,13 +16,6 @@ function JobRoadSweeper:constructor()
 
 	addEvent("sweeperGarbageCollect", true)
 	addEventHandler("sweeperGarbageCollect", root, bind(self.Event_sweeperGarbageCollect, self))
-	addEventHandler("onPlayerDisconnect", root, bind(JobRoadSweeper.onPlayerDisconnect, self) )
-end
-
-function JobRoadSweeper:onPlayerDisconnect(  )
-	if isElement(source.vehRoadSweeper) then
-		destroyElement( source.vehRoadSweeper )
-	end
 end
 
 function JobRoadSweeper:onVehicleSpawn(player,vehicleModel,vehicle)

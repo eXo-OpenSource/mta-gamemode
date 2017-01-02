@@ -17,15 +17,7 @@ function JobForkLift:constructor()
 
 	addRemoteEvents{"JobForkLiftonBoxLoad"}
 	addEventHandler("JobForkLiftonBoxLoad", root, bind(self.onBoxLoad, self))
-	addEventHandler("onPlayerDisconnect", root, bind(JobForkLift.onPlayerDisconnect, self) )
 end
-
-function JobForkLift:onPlayerDisconnect(  )
-	if isElement(source.vehFork) then
-		destroyElement( source.vehFork )
-	end
-end
-
 
 function JobForkLift:start(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
