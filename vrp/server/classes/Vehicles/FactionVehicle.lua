@@ -66,7 +66,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	if faction:isStateFaction() then
 			self.m_VehELSObj = ELSSystem:new(self)
 	end
-	if handlingFaktor ~= "" then
+	if handlingFaktor and handlingFaktor ~= "" then
 		local handling = getVehicleHandling(self)
 		local tHandlingTable = split(handlingFaktor, ";")
 		for k,v in ipairs( tHandlingTable ) do
