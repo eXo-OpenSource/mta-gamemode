@@ -1,7 +1,7 @@
 FROM debian:jessie
 
 # Prerequisites
-RUN apt-get -y update && apt-get install -y wget unzip liblua5.1-0
+RUN apt-get -y update && apt-get install -y --no-install-recommends wget unzip liblua5.1-0
 
 # Setup user and change to its home
 RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
@@ -56,4 +56,5 @@ RUN chown -R mtasa:mtasa /var/lib/mtasa && \
 VOLUME /var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config
 
 # Start commands
+USER mtasa
 CMD ["/docker-entrypoint.sh"]
