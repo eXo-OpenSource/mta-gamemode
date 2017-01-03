@@ -6,5 +6,5 @@ end
 
 
 function ItemDestructable:Event_OnBreak()
-	triggerServerEvent("onClientBreakItem", localPlayer, source)
+	triggerServerEvent("onClientBreakItem", source)
 end

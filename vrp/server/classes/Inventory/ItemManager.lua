@@ -64,14 +64,10 @@ function ItemManager:constructor()
 	addEventHandler("onClientBreakItem",root, bind(self.Event_onItemBreak,self))
 end
 
-function ItemManager:Event_onItemBreak(wObj)
-	if client then
-		if wObj then
-			if wObj.m_Super then
-				if wObj.m_Super.m_Breakable then
-					delete( wObj.m_Super )
-				end
-			end
+function ItemManager:Event_onItemBreak()
+	if source and isElement(source) then
+		if source.m_Super and source.m_Super.m_Breakable then
+			delete(source.m_Super)
 		end
 	end
 end
