@@ -22,7 +22,7 @@ addEventHandler("onResourceStop", resourceRoot, Main.resourceStop, true, "low-99
 -- Slack Error logger (for release/production branch)
 addEventHandler("onDebugMessage", root,
 	function (msg, level, file, line)
-		if GIT_BRANCH == "release/production" then
+		--if GIT_BRANCH == "release/testing" then
 			if level == 2 or level == 1 then
 				local json = toJSON({
 					color = ("%s"):format(level == 2 and "ffcc00" or "ff0000"),
@@ -58,7 +58,7 @@ addEventHandler("onDebugMessage", root,
 					outputDebugString("[Error-Listener] Reporting Error to Slack failed!", 3)
 				end
 			end
-		end
+		--end
 	end
 )
 
