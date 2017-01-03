@@ -376,7 +376,7 @@ end
 function Group:removePlayerMarkers()
     self.m_MarkersAttached = false
     for k, player in ipairs(self:getOnlinePlayers()) do
-        self.m_Markers[player]:destroy()
+        if self.m_Markers[player] then self.m_Markers[player]:destroy() end
         removeEventHandler("onElementDimensionChange", player, self.m_RefreshAttachedMarker)
         removeEventHandler("onElementInteriorChange", player, self.m_RefreshAttachedMarker)
     end
@@ -393,11 +393,13 @@ function Group:removePlayerMarker(player)
 end
 
 function Group:refreshAttachedMarker(dimInt)
-  if eventName == "onElementDimensionChange" then
-    self.m_Markers[source]:setDimension(dimInt)
-  elseif eventName == "onElementInteriorChange" then
-    self.m_Markers[source]:setInterior(dimInt)
-  end
+	if not self.m_Markers then return end
+	if not self.m_Markers[player] then return end
+	if eventName == "onElementDimensionChange" then
+		self.m_Markers[source]:setDimension(dimInt)
+	elseif eventName == "onElementInteriorChange" then
+		self.m_Markers[source]:setInterior(dimInt)
+	end
 end
 
 function Group:phoneCall(caller)

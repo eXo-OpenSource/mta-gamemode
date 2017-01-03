@@ -156,32 +156,35 @@ function RobableShop:m_onExpire()
 end
 
 function RobableShop:stopRob(player)
-  self.m_shop.m_Marker.m_Disable = false
-  setElementAlpha(self.m_shop.m_Marker,255)
-  ActionsCheck:getSingleton():endAction()
-  if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
-  if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
+	if self.m_ExpireTimer and isTimer(self.m_ExpireTimer) then
+		killTimer(self.m_ExpireTimer)
+	end
 
-  player:detachPlayerObject(self.m_Bag)
+	self.m_shop.m_Marker.m_Disable = false
+	setElementAlpha(self.m_shop.m_Marker,255)
+	ActionsCheck:getSingleton():endAction()
+	if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
+	if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
 
-  self.m_Bag:destroy()
+	player:detachPlayerObject(self.m_Bag)
 
-  removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
-  removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
-  removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
-  removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
-  removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
-  removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
+	self.m_Bag:destroy()
 
-  delete(self.m_EvilBlip)
-  delete(self.m_StateBlip)
-  delete(self.m_BagBlip)
+	removeEventHandler("onPlayerWasted", player, self.m_onWastedFunc)
+	removeEventHandler("onPlayerDamage", player, self.m_onDamageFunc)
+	removeEventHandler("onPlayerVehicleEnter", player, self.m_onVehicleEnterFunc)
+	removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
+	removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
+	removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
-  StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
+	delete(self.m_EvilBlip)
+	delete(self.m_StateBlip)
+	delete(self.m_BagBlip)
 
-  self.m_Gang:removePlayerMarkers()
-  removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
+	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
 
+	self.m_Gang:removePlayerMarkers()
+	removeEventHandler("robableShopGiveBagFromCrash", root, self.m_onCrash)
 end
 
 function RobableShop:giveBag(player)
