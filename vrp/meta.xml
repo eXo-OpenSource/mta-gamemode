@@ -1401,6 +1401,7 @@
 	<include resource="Water" />
 	<include resource="WetRoads" />
 	<include resource="Sun" />
+	<include resource="reload" />
 
 	<!-- ACL Request -->
 	<aclrequest>
