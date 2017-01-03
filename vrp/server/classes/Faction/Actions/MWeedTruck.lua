@@ -66,6 +66,7 @@ function MWeedTruck:Event_weedTruckStart()
 		if faction:isEvilFaction() then
 			if ActionsCheck:getSingleton():isActionAllowed(client) then
 				if client:getMoney() >= MWeedTruck.Settings["costs"] then
+					client:takeMoney(MWeedTruck.Settings["costs"], "Weed-Truck")
 					self.m_CurrentWeedTruck = WeedTruck:new(client)
 					ActionsCheck:getSingleton():setAction("Weed-Truck")
 					StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "start", client, faction, "faction")
