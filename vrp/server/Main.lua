@@ -23,13 +23,13 @@ addEventHandler("onResourceStop", resourceRoot, Main.resourceStop, true, "low-99
 addEventHandler("onDebugMessage", root,
 	function (msg, level, file, line)
 		if GIT_BRANCH == "release/production" then
-			if level == ERROR_LEVEL.Warning or level == ERROR_LEVEL.Error then
+			if level == 2 or level == 1 then
 				local json = toJSON({
-					color = ("%s"):format(level == ERROR_LEVEL.Warning and "ffcc00" or "ff0000"),
-					pretext = ("%s occured on mta.exo-reallife.de:%d"):format(level == ERROR_LEVEL.Warning and "Warning" or "Error", getServerPort()),
+					color = ("%s"):format(level == 2 and "ffcc00" or "ff0000"),
+					pretext = ("%s occured on mta.exo-reallife.de:%d"):format(level == 2 and "Warning" or "Error", getServerPort()),
 					fields = {
 						{
-							title = ("Source"):format(level == ERROR_LEVEL.Warning and "Warning" or "Error"),
+							title = ("Source"):format(level == 2 and "Warning" or "Error"),
 							value = ("%s:%d"):format(file, line),
 							short = false
 						},
@@ -43,11 +43,25 @@ addEventHandler("onDebugMessage", root,
 				json = json:sub(3, #json-2)
 
 				local url = ('https://exo-reallife.de/slack.php?json=%s'):format(json)
-				local status = fetchRemote(url, function () end)
+				local status = fetchRemote(url, function (...)
+					outputDebugString("[Error-Listener] Showing debug infos", 3)
+					local args = {...}
+					outputDebugString(("[Error-Listener] Got %d strings response from the server.."):format(#args), 3)
+					for i, v in pairs(args) do
+						outputDebugString(v, 3)
+					end
+					outputDebugString("[Error-Listener] End of debug infos", 3)
+				end)
 				if status then
 					outputDebugString("[Error-Listener] Reported Error to Slack!", 3)
+				else
+					outputDebugString("[Error-Listener] Reporting Error to Slack failed!", 3)
 				end
 			end
 		end
 	end
+)
+
+addCommandHandler("err",
+	function() bsdgj() end
 )
