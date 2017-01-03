@@ -206,6 +206,9 @@ end
 function Gangwar:attackArea( player )
 	local faction = player.m_Faction
 	if faction then
+		if faction:isStateFaction() == true and faction.m_Id == 4 then 
+			return player:sendError(_("Du bist nicht berechtigt am Gangwar teilzunehmen!",  player))
+		end
 		local id = player.m_Faction.m_Id
 		local mArea = player.m_InsideArea
 		if mArea then
