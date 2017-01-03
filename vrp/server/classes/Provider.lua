@@ -28,7 +28,6 @@ function Provider:destructor()
 end
 
 function Provider:refreshProgress()
-	local activedl = {}
 	for k, v in pairs(self.m_ActiveDL) do
 		local player = v.player
 		if isElement(player) then
@@ -36,8 +35,9 @@ function Provider:refreshProgress()
 			local status = getLatentEventStatus(player, handle)
 
 			if status and status.percentComplete < 100 then
-				activedl[k] = v
 				triggerClientEvent(player, "onDownloadProgressUpdate", resourceRoot, k, status.percentComplete)
+			else
+				self.m_ActiveDL[k] = nil
 			end
 		end
 	end
