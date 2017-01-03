@@ -34,6 +34,9 @@ function ScoreboardGUI:constructor()
 	self.m_Ping:setColor(Color.Black):setFont(VRPFont(self.m_Height*0.05)):setAlignX("right")
 
 	self.m_OldWeaponSlot = localPlayer:getWeaponSlot()
+
+	self.m_ScrollBind = bind(self.onScoreBoardScroll, self)
+
 end
 
 -- Right Click Shoot Bugfix
@@ -45,6 +48,10 @@ function ScoreboardGUI:onShow()
 	toggleControl("previous_weapon", false)
 	self:refresh()
 	self.m_Timer = setTimer(bind(self.refresh, self), 15000, 0)
+
+	bindKey("mouse_wheel_up", "down", self.m_ScrollBind)
+	bindKey("mouse_wheel_down", "down", self.m_ScrollBind)
+
 end
 
 function ScoreboardGUI:onHide()
@@ -57,6 +64,16 @@ function ScoreboardGUI:onHide()
 		setTimer(setPedWeaponSlot, 500, 1, localPlayer, self.m_OldWeaponSlot)
 	end
 
+	unbindKey("mouse_wheel_up", "down", self.m_ScrollBind)
+	unbindKey("mouse_wheel_down", "down", self.m_ScrollBind)
+end
+
+function ScoreboardGUI:onScoreBoardScroll(key)
+	if key == "mouse_wheel_up" then
+		self.m_Grid.m_ScrollArea:onInternalMouseWheelUp()
+	elseif key == "mouse_wheel_down" then
+		self.m_Grid.m_ScrollArea:onInternalMouseWheelDown()
+	end
 end
 
 function ScoreboardGUI:refresh()
