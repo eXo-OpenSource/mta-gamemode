@@ -153,6 +153,7 @@ function FactionRescue:Event_toggleDuty(type)
 			client:setPublicSync("Faction:Duty",false)
 			client:setPublicSync("Rescue:Type",false)
 			client:getInventory():removeAllItem("Barrikade")
+			takeWeapon(client,42)
 		else
 			if client:getPublicSync("Company:Duty") and client:getCompany() then
 				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
