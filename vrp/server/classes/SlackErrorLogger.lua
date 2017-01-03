@@ -46,7 +46,7 @@ function SlackErrorLogger:check(msg, level, file, line)
 				end
 			end
 
-			self.m_ErrorStack[hash].timer = setTimer(bind(self.sendMessage, self, json))
+			self.m_ErrorStack[hash].timer = setTimer(bind(self.sendMessage, self, json), 550, 1)
 		end
 	end
 end
