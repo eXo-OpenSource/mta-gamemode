@@ -27,7 +27,7 @@ function aAdminMenu ()
 						  guiSetText ( aAdminForm, "Admin Panel   -   v".._version )
 						  guiCreateLabel ( 0.75, 0.05, 0.45, 0.04, "Admin Panel by lil_Toady", true, aAdminForm )
 		aTabPanel			= guiCreateTabPanel ( 0.01, 0.05, 0.98, 0.95, true, aAdminForm )
-		aTab1 = {}	
+		aTab1 = {}
 		aTab1.Tab			= guiCreateTab ( "Players", aTabPanel, "players" )
 		aTab1.Messages		= guiCreateButton ( 0.75, 0.02, 0.23, 0.04, "0/0 unread messages", true, aTab1.Tab )
 		aTab1.ScreenShots		= guiCreateButton ( 0.75, 0.065, 0.23, 0.04, "screenshots", true, aTab1.Tab )
@@ -52,7 +52,7 @@ function aAdminMenu ()
 		aTab1.Nick			= guiCreateButton ( 0.71, 0.260, 0.13, 0.04, "Set Nick", true, aTab1.Tab )
 		aTab1.Shout			= guiCreateButton ( 0.85, 0.260, 0.13, 0.04, "Shout!", true, aTab1.Tab, "shout" )
 		aTab1.Admin			= guiCreateButton ( 0.71, 0.305, 0.27, 0.04, "Give admin rights", true, aTab1.Tab, "setgroup" )
-	
+
 		local y = 0.03		-- Start y coord
 		local A = 0.045		-- Large line gap
 		local B = 0.035		-- Small line gap
@@ -177,7 +177,7 @@ y=y+B  aTab1.VehicleHealth	= guiCreateLabel ( 0.26, y, 0.25, 0.04, "Vehicle Heal
 		aLogLines = 1
 
 		--createMapTab()
-		
+
 		aTab3 = {}
 		aTab3.Tab			= guiCreateTab ( "Server", aTabPanel, "server" )
 		aTab3.Server		= guiCreateLabel ( 0.05, 0.05, 0.70, 0.05, "Server: Unknown", true, aTab3.Tab )
@@ -223,36 +223,11 @@ y=y+B  aTab1.VehicleHealth	= guiCreateLabel ( 0.26, y, 0.25, 0.04, "Vehicle Heal
 		aTab3.Waves			= guiCreateEdit ( 0.35, 0.60, 0.135, 0.04, "0", true, aTab3.Tab )
 		aTab3.WavesSet		= guiCreateButton ( 0.50, 0.60, 0.10, 0.04, "Set", true, aTab3.Tab, "setwaveheight" )
 					 	 guiCreateLabel ( 0.63, 0.60, 0.09, 0.04, "( 0-100 )", true, aTab3.Tab )
-		
+
 		aTab3.FPSCurrent	= guiCreateLabel ( 0.05, 0.65, 0.25, 0.04, "FPS Limit: 38", true, aTab3.Tab )
 		aTab3.FPS			= guiCreateEdit ( 0.35, 0.65, 0.135, 0.04, "38", true, aTab3.Tab )
 		aTab3.FPSSet		= guiCreateButton ( 0.50, 0.65, 0.10, 0.04, "Set", true, aTab3.Tab, "setfpslimit" )
 					 	 guiCreateLabel ( 0.63, 0.65, 0.1, 0.04, "( 25-100 )", true, aTab3.Tab )
-					 	 
-
-		aTab4 = {}
-		aTab4.Tab			= guiCreateTab ( "Bans", aTabPanel, "bans" )
-		aTab4.BansList		= guiCreateGridList ( 0.03, 0.05, 0.80, 0.87, true, aTab4.Tab )
-						  guiGridListAddColumn( aTab4.BansList, "Name", 0.22 )
-						  guiGridListAddColumn( aTab4.BansList, "IP", 0.22 )
-						  guiGridListAddColumn( aTab4.BansList, "Serial", 0.22 )
-						  guiGridListAddColumn( aTab4.BansList, "By", 0.22 )
-						  guiGridListAddColumn( aTab4.BansList, "Date", 0.17 )
-						  guiGridListAddColumn( aTab4.BansList, "Time", 0.13 )
-						  guiGridListAddColumn( aTab4.BansList, "Unban Date", 0.25 )
-						  guiGridListAddColumn( aTab4.BansList, "Reason", 0.8 )
-						
-						  guiGridListSetSortingEnabled( aTab4.BansList, false )
-		aTab4.Details		= guiCreateButton ( 0.85, 0.10, 0.13, 0.04, "Details", true, aTab4.Tab )
-		aTab4.Unban			= guiCreateButton ( 0.85, 0.20, 0.13, 0.04, "Unban", true, aTab4.Tab, "unban" )
-		aTab4.UnbanIP		= guiCreateButton ( 0.85, 0.25, 0.13, 0.04, "Unban IP", true, aTab4.Tab, "unbanip" )
-		aTab4.UnbanSerial		= guiCreateButton ( 0.85, 0.30, 0.13, 0.04, "Unban Serial", true, aTab4.Tab, "unbanserial" )
-		aTab4.BanIP			= guiCreateButton ( 0.85, 0.40, 0.13, 0.04, "Ban IP", true, aTab4.Tab, "banip" )
-		aTab4.BanSerial		= guiCreateButton ( 0.85, 0.45, 0.13, 0.04, "Ban Serial", true, aTab4.Tab, "banserial" )
-		aTab4.BansRefresh		= guiCreateButton ( 0.85, 0.85, 0.13, 0.04, "Refresh", true, aTab4.Tab, "listbans" )
-
-		aTab4.BansTotal		= guiCreateLabel ( 0.20, 0.94, 0.31, 0.04, "Showing  0 / 0  bans", true, aTab4.Tab )
-		aTab4.BansMore		= guiCreateButton ( 0.50, 0.94, 0.13, 0.04, "Get more...", true, aTab4.Tab, "listbans" )
 
 		aTab5 = {}
 		aTab5.Tab			= guiCreateTab ( "Admin Chat", aTabPanel, "adminchat" )
@@ -570,7 +545,7 @@ function aClientSync ( type, table )
 			playSoundFrontEnd ( 18 )
 		end
 		guiSetText ( aTab1.Messages, table["unread"].."/"..table["total"].." unread messages" )
-		
+
 	end
 end
 
@@ -579,24 +554,12 @@ function aClientGUITabSwitched( selectedTab )
 		if selectedTab == aTab2.Tab then
 			-- Handle initial update of resources list
 			if guiGridListGetRowCount( aTab2.ResourceList ) == 0 then
-				if ( hasPermissionTo ( "command.listresources" ) ) then 
-					triggerServerEvent ( "aSync", localPlayer, "resources" ) 
+				if ( hasPermissionTo ( "command.listresources" ) ) then
+					triggerServerEvent ( "aSync", localPlayer, "resources" )
 				end
 			end
-		elseif selectedTab == aTabMap.Tab then
-			-- Handle initial update of map list
-			if guiGridListGetRowCount( aTabMap.MapList ) == 0 then
-				if ( hasPermissionTo ( "command.listresources" ) ) then 
-					triggerServerEvent ( "getMaps_s", localPlayer, localPlayer, true ) 
-				end
-			end
-		elseif selectedTab == aTab4.Tab then
-			if not g_GotLatestBansList then
-				-- Request full bans list if bans tab is selected and current list is out of date
-				triggerServerEvent ( "aSync", localPlayer, "bans" )
-			end
-		end	
-	end 
+		end
+	end
 end
 
 function aMessage ( )
@@ -718,7 +681,7 @@ end
 function aClientLog ( text )
 	if text == "deleted" then
 		guiGridListClear ( aTab2.ResourceList )
-		triggerServerEvent ( "aSync", localPlayer, "resources" )	
+		triggerServerEvent ( "aSync", localPlayer, "resources" )
 	end
 	text = "#"..aLogLines..": "..text
 	if ( guiGetText ( aTab2.LogLine1 ) == "" ) then guiSetText ( aTab2.LogLine1, text )
@@ -733,7 +696,7 @@ function aClientLog ( text )
 		guiSetText ( aTab2.LogLine4, guiGetText ( aTab2.LogLine5 ) )
 		guiSetText ( aTab2.LogLine5, text )
 	end
-	
+
 	aLogLines = aLogLines + 1
 end
 
@@ -756,7 +719,7 @@ end
 function aClientGUIAccepted ( element )
 	if ( element == aTab5.AdminText ) then
 		local message = guiGetText ( aTab5.AdminText )
-		if ( ( message ) and ( message ~= "" ) ) then 
+		if ( ( message ) and ( message ~= "" ) ) then
 			if ( gettok ( message, 1, 32 ) == "/clear" ) then guiSetText ( aTab5.AdminChat, "" )
 			else triggerServerEvent ( "aAdminChat", localPlayer, message ) end
 			guiSetText ( aTab5.AdminText, "" )
@@ -820,7 +783,7 @@ function aClientScroll ( element )
 end
 
 function aClientCursorMove ( rx, ry, x, y )
-	
+
 end
 
 function aClientMouseEnter ( element )
@@ -879,7 +842,7 @@ function aClientClick ( button )
 			elseif ( source == aTab1.ScreenShots ) then
 				aPlayerScreenShot()
 			elseif ( source == aTab1.PlayerListSearch ) then
-				
+
 			elseif ( source == aTab1.HideColorCodes ) then
 				updateColorCodes()
 			elseif ( source == aTab1.AnonAdmin ) then
@@ -986,7 +949,7 @@ function aClientClick ( button )
 					guiSetText ( aTab1.Mute, "Mute" )
 					guiSetText ( aTab1.Freeze, "Freeze" )
 					guiSetText ( aTab1.Admin, "Give admin rights" )
-					guiSetText ( aTab1.Health, "Health: 0%" ) 
+					guiSetText ( aTab1.Health, "Health: 0%" )
 					guiSetText ( aTab1.Armour, "Armour: 0%" )
 					guiSetText ( aTab1.Skin, "Skin: N/A" )
 					guiSetText ( aTab1.Team, "Team: None" )
@@ -1009,7 +972,7 @@ function aClientClick ( button )
 		-- TAB 2, RESOURCES
 		elseif ( getElementParent ( source ) == aTab2.Tab ) then
 			if ( source == aTab2.ResourceListSearch ) then
-				
+
 			elseif ( ( source == aTab2.ResourceStart ) or ( source == aTab2.ResourceRestart ) or ( source == aTab2.ResourceStop ) or ( source == aTab2.ResourceDelete ) or ( source == aTab2.ResourceSettings ) ) then
 				if ( guiGridListGetSelectedItem ( aTab2.ResourceList ) == -1 ) then
 					aMessageBox ( "error", "No resource selected!" )
@@ -1020,7 +983,7 @@ function aClientClick ( button )
 					elseif ( source == aTab2.ResourceDelete ) then aMessageBox ( "warning", "Are you sure you want to stop and delete resource '" .. guiGridListGetItemText ( aTab2.ResourceList, guiGridListGetSelectedItem( aTab2.ResourceList ), 1 ) .. "' ?", "stopDelete", guiGridListGetItemText ( aTab2.ResourceList, guiGridListGetSelectedItem( aTab2.ResourceList ), 1 ) )
 					elseif ( source == aTab2.ResourceSettings ) then aManageSettings ( guiGridListGetItemText ( aTab2.ResourceList, guiGridListGetSelectedItem( aTab2.ResourceList ) ) )
 					end
-				end				
+				end
 			elseif ( source == aTab2.ResourcesStopAll ) then aMessageBox ( "warning", "Are you sure you want to stop all resources? This will also stop 'admin' resource.", "stopAll" )
 			elseif ( source == aTab2.ResourceList ) then
 				guiSetVisible ( aTab2.ResourceFailture, false )
@@ -1042,7 +1005,7 @@ function aClientClick ( button )
 			elseif ( source == aTab2.ExecuteServer ) then
 				if ( ( guiGetText ( aTab2.Command ) ) and ( guiGetText ( aTab2.Command ) ~= "" ) ) then triggerServerEvent ( "aExecute", localPlayer, guiGetText ( aTab2.Command ), true ) end
 			elseif ( source == aTab2.Command ) then
-				
+
 				guiSetVisible ( aTab2.ExecuteAdvanced, false )
 			elseif ( source == aTab2.ExecuteAdvanced ) then
 				guiSetVisible ( aTab2.ExecuteAdvanced, false )
@@ -1061,7 +1024,7 @@ function aClientClick ( button )
 					if ( ( source == aTab3.WeatherInc ) and ( id < _weathers_max ) ) then guiSetText ( aTab3.Weather, ( id + 1 ).." ("..getWeatherNameFromID ( id + 1 )..")" )
 					elseif ( ( source == aTab3.WeatherDec ) and ( id > 0 ) ) then guiSetText ( aTab3.Weather, ( id - 1 ).." ("..getWeatherNameFromID ( id - 1 )..")" ) end
 				else
-					guiSetText ( aTab3.Weather, ( 14 ).." ("..getWeatherNameFromID ( 14 )..")" ) 
+					guiSetText ( aTab3.Weather, ( 14 ).." ("..getWeatherNameFromID ( 14 )..")" )
 				end
 			elseif ( source == aTab3.WeatherSet ) then triggerServerEvent ( "aServer", localPlayer, "setweather", gettok ( guiGetText ( aTab3.Weather ), 1, 32 ) )
 			elseif ( source == aTab3.WeatherBlend ) then triggerServerEvent ( "aServer", localPlayer, "blendweather", gettok ( guiGetText ( aTab3.Weather ), 1, 32 ) )
@@ -1072,47 +1035,14 @@ function aClientClick ( button )
 					if ( ( source == aTab3.SpeedInc ) and ( value < 10 ) ) then guiSetText ( aTab3.Speed, tostring ( value + 1 ) )
 					elseif ( ( source == aTab3.SpeedDec ) and ( value > 0 ) ) then guiSetText ( aTab3.Speed, tostring ( value - 1 ) ) end
 				else
-					guiSetText ( aTab3.Speed, "1" ) 
+					guiSetText ( aTab3.Speed, "1" )
 				end
 			elseif ( source == aTab3.SpeedSet ) then triggerServerEvent ( "aServer", localPlayer, "setgamespeed", guiGetText ( aTab3.Speed ) )
 			elseif ( source == aTab3.GravitySet ) then triggerServerEvent ( "aServer", localPlayer, "setgravity", guiGetText ( aTab3.Gravity ) )
 			elseif ( source == aTab3.WavesSet ) then triggerServerEvent ( "aServer", localPlayer, "setwaveheight", guiGetText ( aTab3.Waves ) )
-			elseif ( source == aTab3.FPSSet ) then 
+			elseif ( source == aTab3.FPSSet ) then
 			triggerServerEvent ( "aServer", localPlayer, "setfpslimit", guiGetText ( aTab3.FPS ) )
 			triggerServerEvent ( "aSync", localPlayer, "server" )
-			end
-		-- TAB 4, BANS
-		elseif ( getElementParent ( source ) == aTab4.Tab ) then
-			if ( source == aTab4.Details ) then
-				if ( guiGridListGetSelectedItem ( aTab4.BansList ) == -1 ) then
-					aMessageBox ( "error", "No ban row selected!" )
-				else
-					local selip = guiGridListGetItemText ( aTab4.BansList, guiGridListGetSelectedItem( aTab4.BansList ), 2 )
-					local selserial = guiGridListGetItemText ( aTab4.BansList, guiGridListGetSelectedItem( aTab4.BansList ), 3 )
-					aBanDetails ( aBans["Serial"][selserial] and selserial or selip )
-				end
-			elseif ( source == aTab4.Unban ) then
-				if ( guiGridListGetSelectedItem ( aTab4.BansList ) == -1 ) then
-					aMessageBox ( "error", "No ban row selected!" )
-				else
-					local selip = guiGridListGetItemText ( aTab4.BansList, guiGridListGetSelectedItem( aTab4.BansList ), 2 )
-					local selserial = guiGridListGetItemText ( aTab4.BansList, guiGridListGetSelectedItem( aTab4.BansList ), 3 )
-					if ( aBans["Serial"][selserial] ) then aMessageBox ( "question", "Unban Serial "..selserial.."?", "unbanSerial", selserial )
-					else aMessageBox ( "question", "Unban IP "..selip.."?", "unbanIP", selip ) end
-				end
-			elseif ( source == aTab4.UnbanIP ) then
-				aInputBox ( "Unban IP", "Enter IP to be unbanned", "", "unbanIP" )
-			elseif ( source == aTab4.UnbanSerial ) then
-				aInputBox ( "Unban Serial", "Enter Serial to be unbanned", "", "unbanSerial" )
-			elseif ( source == aTab4.BanIP ) then
-				aInputBox ( "Add IP Ban", "Enter IP to be banned", "", "banIP")
-			elseif ( source == aTab4.BanSerial ) then
-				aInputBox ( "Add Serial Ban", "Enter Serial to be banned", "", "banSerial" )
-			elseif ( source == aTab4.BansRefresh ) then
-				guiGridListClear ( aTab4.BansList )
-				triggerServerEvent ( "aSync", localPlayer, "bans" )
-			elseif ( source == aTab4.BansMore ) then
-				triggerServerEvent ( "aSync", localPlayer, "bansmore", guiGridListGetRowCount( aTab4.BansList ) )
 			end
 		-- TAB 5, ADMIN CHAT
 		elseif ( getElementParent ( source ) == aTab5.Tab ) then
@@ -1124,7 +1054,7 @@ function aClientClick ( button )
 					guiSetText ( aTab5.AdminText, "" )
 				end
 			elseif ( source == aTab5.AdminText ) then
-				
+
 			end
 		-- TAB 6, OPTIONS
 		elseif ( getElementParent ( source ) == aTab6.Tab ) then
@@ -1145,11 +1075,11 @@ function aClientClick ( button )
 			elseif ( source == aTab6.AutoLogin ) then
 				triggerServerEvent ( "aAdmin", localPlayer, "autologin", guiCheckBoxGetSelected ( aTab6.AutoLogin ) )
 			elseif ( source == aTab6.PasswordOld ) then
-				
+
 			elseif ( source == aTab6.PasswordNew ) then
-				
+
 			elseif ( source == aTab6.PasswordConfirm ) then
-				
+
 			elseif ( source == aTab6.PasswordChange ) then
 				local passwordNew, passwordConf = guiGetText ( aTab6.PasswordNew ), guiGetText ( aTab6.PasswordConfirm )
 				if ( passwordNew == "" ) then aMessageBox ( "error", "Enter the new password" )
