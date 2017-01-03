@@ -39,7 +39,7 @@ function SlackErrorLogger:check(msg, level, file, line)
 					currStackElement.lastOccured = getTickCount()
 					currStackElement.count = currStackElement.count + 1
 
-					if currStackElement.timer and isTimer(currStackElement) then
+					if currStackElement.timer and isTimer(currStackElement.timer) then
 						resetTimer(currStackElement.timer)
 						return
 					end
