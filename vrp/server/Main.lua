@@ -22,7 +22,7 @@ addEventHandler("onResourceStop", resourceRoot, Main.resourceStop, true, "low-99
 -- Slack Error logger (for release/production branch)
 addEventHandler("onDebugMessage", root,
 	function (msg, level, file, line)
-		--if GIT_BRANCH == "release/production" then
+		if GIT_BRANCH == "release/production" then
 			if level == 2 or level == 1 then
 				local json = toJSON({
 					color = ("%s"):format(level == 2 and "ffcc00" or "ff0000"),
@@ -43,8 +43,9 @@ addEventHandler("onDebugMessage", root,
 				json = json:sub(2, #json-1)
 
 				local url = ('https://exo-reallife.de/slack.php')
-				outputConsole(url)
+				--outputConsole(url)
 				local status = callRemote(url, function (...)
+					--[[
 					outputDebugString("[Error-Listener] Showing debug infos", 3)
 					local args = {...}
 					outputDebugString(("[Error-Listener] Got %d strings response from the server.."):format(#args), 3)
@@ -56,6 +57,7 @@ addEventHandler("onDebugMessage", root,
 						end
 					end
 					outputDebugString("[Error-Listener] End of debug infos", 3)
+					--]]
 				end, json)
 				if status then
 					outputDebugString("[Error-Listener] Reported Error to Slack!", 3)
@@ -63,7 +65,7 @@ addEventHandler("onDebugMessage", root,
 					outputDebugString("[Error-Listener] Reporting Error to Slack failed!", 3)
 				end
 			end
-		--end
+		end
 	end
 )
 
