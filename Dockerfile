@@ -60,6 +60,10 @@ RUN chown -R mtasa:mtasa /var/lib/mtasa && \
 # Expose config directory
 VOLUME /var/lib/mtasa/mods/deathmatch/resources/vrp_build/server/config
 
+# Expose server data dirs
+VOLUME /var/lib/mtasa/mods/deathmatch/logs
+VOLUME /var/lib/mtasa/mods/deathmatch/dumps
+
 # Start commands
 USER mtasa
 CMD ["/docker-entrypoint.sh"]
