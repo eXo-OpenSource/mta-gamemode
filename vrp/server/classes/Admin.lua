@@ -126,23 +126,22 @@ function Admin:addAdmin(player,rank)
 		local pw = string.random(15)
 		local user = player:getName().."-eXo"
 		self.m_MtaAccounts[player] = addAccount(user, pw)
-		player:logIn(self.m_MtaAccounts[player], pw)
-		ACLGroup.get("Admin"):addObject("user."..user)
+		if self.m_MtaAccounts[player] then
+			player:logIn(self.m_MtaAccounts[player], pw)
+			ACLGroup.get("Admin"):addObject("user."..user)
 
-		player:triggerEvent("setClientAdmin", player, rank)
+			player:triggerEvent("setClientAdmin", player, rank)
 
-		if DEBUG then
-			bindKey(player, "j", "down", function(player)
-				if not doesPedHaveJetPack(player) then
-					givePedJetPack(player)
-				else
-					removePedJetPack ( player )
-				end
-			end)
+			if DEBUG then
+				bindKey(player, "j", "down", function(player)
+					if not doesPedHaveJetPack(player) then
+						givePedJetPack(player)
+					else
+						removePedJetPack ( player )
+					end
+				end)
+			end
 		end
-
-
-
     --end
 end
 
@@ -955,26 +954,28 @@ function Admin:Event_vehicleDespawn()
 end
 
 function Admin:Command_MarkPos(player, add)
-	if not add then
-		local markPos = getElementData(player, "Admin_MarkPos")
-		if markPos then
-			player:sendInfo("Du hast dich zu Makierung geportet!")
-			if getPedOccupiedVehicle(player) then
-				player = getPedOccupiedVehicle(player)
+	if isElement(player) then
+		if not add then
+			local markPos = getElementData(player, "Admin_MarkPos")
+			if markPos then
+				player:sendInfo("Du hast dich zu Makierung geportet!")
+				if getPedOccupiedVehicle(player) then
+					player = getPedOccupiedVehicle(player)
+				end
+				player:setInterior(markPos[2])
+				player:setDimension(markPos[3])
+				player:setPosition(markPos[1])
+				player:setCameraTarget(player)
+			else
+				player:sendError("Du hast keine Makierung /mark")
 			end
-			player:setInterior(markPos[4])
-			player:setDimension(markPos[5])
-			player:setPosition(Vector3(markPos[1], markPos[2], markPos[3]))
-			player:setCameraTarget(player)
 		else
-			player:sendError("Du hast keine Makierung /mark")
+			local pos = player:getPosition()
+			local dim = player:getDimension()
+			local interior = player:getInterior()
+			setElementData(player, "Admin_MarkPos", {pos, interior, dim})
+			player:sendInfo("Makierung gesetzt!")
 		end
-	else
-		local pos = player:getPosition()
-		local dim = player:getDimension()
-		local interior = player:getInterior()
-		setElementData(player, "Admin_MarkPos", {pos, interior, dim})
-		player:sendInfo("Makierung gesetzt!")
 	end
 end
 
