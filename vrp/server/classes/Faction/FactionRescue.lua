@@ -282,6 +282,7 @@ function FactionRescue:createDeathPickup(player, ...)
 					if hitPlayer.m_RescueStretcher then
 						player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
 						hitPlayer.m_RescueStretcher.player = player
+						source:destroy()
 					else
 						hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
 					end
