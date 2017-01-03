@@ -10,7 +10,7 @@ function SlackErrorLogger:destructor()
 end
 
 function SlackErrorLogger:check(msg, level, file, line)
-	if GIT_BRANCH == "release/production" then
+	--if GIT_BRANCH == "release/production" then
 		if level == 2 or level == 1 then
 			local json = toJSON({
 				color = ("%s"):format(level == 2 and "ffcc00" or "ff0000"),
@@ -46,15 +46,22 @@ function SlackErrorLogger:check(msg, level, file, line)
 				end
 			end
 
-			self.m_ErrorStack[hash].timer = setTimer(bind(self.sendMessage, self, json), 550, 1)
+			self.m_ErrorStack[hash].timer = setTimer(bind(self.sendMessage, self, json, hash), 550, 1)
 		end
-	end
+	--end
 end
 
-function SlackErrorLogger:sendMessage(json)
+function SlackErrorLogger:sendMessage(json, hash)
 	if json then
 		local url = ('https://exo-reallife.de/slack.php')
 		--outputConsole(url)
+		if hash then
+			if self.m_ErrorStack[hash].count > 1 then
+				local new_json = fromJSON(json)
+				new_json.pretext = ("%s [DUP %dx]"):format(new_json.pretext, self.m_ErrorStack[hash].count)
+				json = toJSON(new_json, true)
+			end
+		end
 		local status = callRemote(url, function (...)
 			--[[
 			outputDebugString("[Error-Listener] Showing debug infos", 3)
@@ -70,6 +77,7 @@ function SlackErrorLogger:sendMessage(json)
 			outputDebugString("[Error-Listener] End of debug infos", 3)
 			--]]
 		end, json)
+		self.m_ErrorStack[hash] = nil
 
 		if status then
 			outputDebugString("[Error-Listener] Reported Error to Slack!", 3)
@@ -81,6 +89,6 @@ end
 
 function SlackErrorLogger:sendStackedMessages()
 	for hash, data in pairs(self.m_ErrorStack) do
-		self:sendMessage(data.json)
+		self:sendMessage(data.json, hash)
 	end
 end
