@@ -3,6 +3,11 @@ FROM debian:jessie
 # Prerequisites
 RUN apt-get -y update && apt-get install -y --no-install-recommends ca-certificates wget unzip liblua5.1-0
 
+# Set timezone
+ENV TZ=Europe/Berlin
+RUN echo $TZ | tee /etc/timezone && \
+	dpkg-reconfigure --frontend noninteractive tzdata
+
 # Setup user and change to its home
 RUN useradd -u 5000 -m -d /var/lib/mtasa/ mtasa && \
 	cd /var/lib/mtasa && \
