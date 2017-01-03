@@ -146,7 +146,7 @@ function MechanicTow:onEnterTowLot( hElement )
 		local veh = getPedOccupiedVehicle( hElement )
 		if veh then
 			if hElement:getCompany() == self then
-				if veh:getCompany() == self then
+				if instanceof(veh, CompanyVehicle) and veh:getCompany() == self then
 					if getElementModel( veh ) == 525 then
 						hElement.m_InTowLot = true
 						hElement:sendInfo(_("Du kannst hier abgeschleppte Fahrzeuge abladen!", hElement))
