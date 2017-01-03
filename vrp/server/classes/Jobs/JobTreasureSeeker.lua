@@ -170,8 +170,9 @@ end
 
 function JobTreasureSeeker:loadTreasure(player)
 	local runs = 0
+	local rnd
 	repeat
-		local rnd = math.random(1, #JobTreasureSeeker.Positions)
+		rnd = math.random(1, #JobTreasureSeeker.Positions)
 		runs = runs + 1
 		if runs%100 == 0 then
 			Thread.pause()
