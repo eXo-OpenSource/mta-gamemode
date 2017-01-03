@@ -334,7 +334,7 @@ function PolicePanel:locateElement(element)
 					self:stopLocating()
 				end
 				if element:getType() == "player" then
-					if not not element:getPublicSync("Phone") == true then
+					if not element:getPublicSync("Phone") == true then
 						ErrorBox:new(_"Ortung beendet: Der Spieler hat sein Handy ausgeschaltet!")
 						self:stopLocating()
 					end
