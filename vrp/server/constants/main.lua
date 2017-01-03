@@ -143,3 +143,12 @@ RESOURCES_TO_STOP = {
 }
 
 MAX_VEHICLES_PER_LEVEL = 1.5 -- Todo: improve this
+
+ERROR_LEVEL = {}
+ERROR_LEVEL[0] = "Custom"
+ERROR_LEVEL[1] = "Errro"
+ERROR_LEVEL[2] = "Warning"
+ERROR_LEVEL[3] = "Info"
+for i, v in pairs(ERROR_LEVEL) do
+	ERROR_LEVEL[v] = i
+end
