@@ -38,9 +38,17 @@ function JobForkLift:onVehicleSpawn(player,vehicleModel,vehicle)
 	if isElement(player.vehFork) then
 		destroyElement(player.vehFork)
 	end
+	vehicle.m_ForkliftOwner = player
 
 	vehicle:addCountdownDestroy(10)
-	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
+
+	self.m_OnVehicleAction = bind(self.onVehicleAction, self)
+	addEventHandler("onVehicleExplode", vehicle, self.m_OnVehicleAction)
+	addEventHandler("onElementDestroy", vehicle, self.m_OnVehicleAction)
+end
+
+function JobForkLift:onVehicleAction()
+	self:stop(source.m_ForkliftOwner)
 end
 
 function JobForkLift:onBoxLoad(box)
