@@ -42,7 +42,7 @@ function PlayerMouseMenuFaction:constructor(posX, posY, element)
 				end
 			end
 		)
-		self:addItem(_"Fraktion: Lizenzen zeigen",
+		self:addItem(_"Fraktion: nach Lizenz fragen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("factionStateShowLicenses", localPlayer, self:getElement())
