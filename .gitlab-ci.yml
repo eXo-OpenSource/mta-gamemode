@@ -97,3 +97,4 @@ clean_env_job_docker:
     - sudo docker rmi exo-rl-mta
   except:
     - /^bugfix\/.*$/
+  when: always
