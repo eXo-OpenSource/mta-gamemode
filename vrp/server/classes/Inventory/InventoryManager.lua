@@ -47,8 +47,8 @@ function InventoryManager:getItemDataForItem(itemName)
 	return self.m_ItemData[itemName]
 end
 
-function InventoryManager:Event_syncAfterChange() 
-	if client then 
+function InventoryManager:Event_syncAfterChange()
+	if client then
 		self:getPlayerInventory(client):syncClient()
 	end
 end
@@ -125,7 +125,7 @@ end
 function InventoryManager:Event_requestTrade(target, item, amount, money)
 	if self:getPlayerInventory(client):getItemAmount(item) >= amount then
 		local text = _("%s möchte dir %d %s schenken! Geschenk annehmen?", target, client.name, amount, item)
-		if money > 0 then
+		if money and money > 0 then
 			text = _("%s möchte dir %d %s für %d$ verkaufen! Handel annehmen?", target, client.name, amount, item, money)
 		end
 		target:triggerEvent("questionBox", text, "acceptTrade", "declineTrade", client, target, item, amount, money)

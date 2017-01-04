@@ -94,7 +94,7 @@ end
 
 function FactionManager:stateFactionOfferTicket( cop )
 	ShortMessage:new(_(cop:getName().." bietet dir ein Ticket für den Erlass eines Wanteds für $2000 an. Klicke hier um es anzunehmen!"), "Wanted-Ticket", Color.DarkLightBlue, 15000)
-	.m_Callback = function (this)	triggerServerEvent("factionStateAcceptTicket", localPlayer); delete(this)	end
+	.m_Callback = function (this)	triggerServerEvent("factionStateAcceptTicket", localPlayer, cop); delete(this)	end
 
 end
 

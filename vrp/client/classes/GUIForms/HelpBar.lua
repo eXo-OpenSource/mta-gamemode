@@ -64,8 +64,10 @@ function HelpBar:fadeOut()
 		self.m_Icon:setVisible(true)
 		self.m_Visible = false
 	end, 500, 1)
-	HUDUI:getSingleton():show()
-	HUDUI:getSingleton():setEnabled(true)
+	if getCameraTarget(localPlayer) == localPlayer then
+		HUDUI:getSingleton():show()
+		HUDUI:getSingleton():setEnabled(true)
+	end
 end
 
 function HelpBar:blink()

@@ -14,8 +14,8 @@ ELSSystem.CustomSirens ={
 }
 ELSSystem.BlinkMarkers ={
 	[490] = {["y"] = -3 },
-	[426] = {["y"] = -2.7},
-	[420] = {["y"] = -3.87, ["z"] = 1.5},
+	[599] = {["y"] = -2.7},
+	[427] = {["y"] = -3.87, ["z"] = 1.5},
 }
 
 function ELSSystem:constructor(vehicle)

@@ -298,14 +298,14 @@ function Group:getPlayers(getIDsOnly)
 end
 
 function Group:getOnlinePlayers()
-  local players = {}
-  for playerId in pairs(self.m_Players) do
-    local player = Player.getFromId(playerId)
-    if player then
-      players[#players + 1] = player
-    end
-  end
-  return players
+	local players = {}
+	for playerId in pairs(self.m_Players) do
+		local player = Player.getFromId(playerId)
+		if player and isElement(player) and player:isLoggedIn() then
+			players[#players + 1] = player
+		end
+	end
+	return players
 end
 
 function Group:sendChatMessage(sourcePlayer, message)

@@ -47,8 +47,11 @@ function Slotmachine:constructor(x, y, z, rx, ry, rz, int, dim)
 	self.m_ResetFunc = bind(self.reset, self)
 	self.m_StartFunc = bind(self.startPlayer, self)
 	self.m_HebelClickFunc = function(btn, state, player)
-		if btn == "left" and state == "down" then
-			self:startPlayer(player)
+		local dist = getDistanceBetweenPoints3D(source, player)
+		if dist <= 5 then 
+			if btn == "left" and state == "down" then
+				self:startPlayer(player)
+			end
 		end
 	end;
 	-- Instances

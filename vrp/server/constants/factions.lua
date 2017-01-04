@@ -6,6 +6,8 @@ factionWeapons = {}
 evilFactionInteriorEnter = {}
 factionWTDestination = {}
 
+TICKET_PRICE = 2000
+
 FACTION_STATE_WT_DESTINATION = Vector3(1598.78064, -1611.63953, 12.5)
 WEAPONTRUCK_NAME = {["evil"] = "Waffentruck", ["state"] = "Staats-Waffentruck"}
 WEAPONTRUCK_NAME_SHORT = {["evil"] = "Waffentruck", ["state"] = "Staats-WT"}
