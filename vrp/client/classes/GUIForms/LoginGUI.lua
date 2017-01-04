@@ -18,8 +18,8 @@ function LoginGUI:constructor()
 							  GUILabel:new(sw*0.01, sh*0.01, self.m_Width/0.02, self.m_Height*0.2, "News:", self.m_NewsTab):setFont(VRPFont(sh*0.06)):setColor(Color.LightBlue)
 	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
 		self.m_Width/0.02, self.m_Height*0.6,
-		[[Hier ist Platz für
-		aktuelle News!]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
+		[[eXo-Reallife
+		Closed Beta!]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
 
 	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
 	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
@@ -209,7 +209,11 @@ function LoginGUI:showRegisterMultiaccountError(name)
 	self.m_RegisterEditMail:setVisible(false)
 	self.m_RegisterTextMail:setVisible(false)
 	self.m_RegisterEditPass:setVisible(false)
+	self.m_RegisterEditPass2:setVisible(false)
 	self.m_RegisterTextPass:setVisible(false)
+	self.m_RegisterTextPass2:setVisible(false)
+
+
 	self.m_RegisterRegisterButton:setVisible(false)
 	local width, height = screenWidth*0.6*0.75*0.7, (screenHeight*0.6-screenHeight*0.6*0.01)*0.2
 
