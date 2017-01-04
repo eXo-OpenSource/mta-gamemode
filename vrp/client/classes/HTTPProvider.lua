@@ -50,6 +50,7 @@ function HTTPProvider:start()
 							if hash("md5", file:read(file:getSize())) ~= expectedHash then
 								forceFileDownload = true
 							end
+							fileClose(file)
 						else
 							forceFileDownload = true
 						end
