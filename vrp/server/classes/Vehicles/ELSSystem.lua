@@ -64,10 +64,10 @@ function ELSSystem:onEnterVehicle( controller, seat)
 
 	local type_ = getVehicleType(getPedOccupiedVehicle(controller))
 	if type_ ~= VehicleType.Boat and type_ ~= VehicleType.Helicopter and type_ ~= VehicleType.Plane then
-		self.m_BindLight = bind( ELSSystem.setLightPeriod, self)
+		self.m_BindLight = bind(self.setLightPeriod, self)
 		bindKey(controller, "z","up",  self.m_BindLight , 400)
 		bindKey(controller, "z","down", self.m_BindLight, 100)
-		self.m_BindBlink = bind( ELSSystem.setBlink, self)
+		self.m_BindBlink = bind(self.setBlinkBind, self)
 		bindKey(controller, ",","up", self.m_BindBlink, "left")
 		bindKey(controller, ".","up", self.m_BindBlink, "right")
 		bindKey(controller, "horn","up", self.m_BindBlink, "blink")
@@ -76,29 +76,26 @@ function ELSSystem:onEnterVehicle( controller, seat)
 end
 
 function ELSSystem:setLightPeriod( _, _, state, period)
-  local yelp = false
-  if state == "up" then
-    self.m_LightSystem = not self.m_LightSystem
-  else
-      yelp = true
-  end
-  local all = getElementsByType( "player" )
-  for key, player in ipairs( all ) do
-    player:triggerEvent("updateVehicleELS", self.m_Vehicle, self.m_LightSystem , period)
-  end
-  if yelp then
+  	local yelp = false
+	if state == "up" then
+		self.m_LightSystem = not self.m_LightSystem
+	else
+		yelp = true
+	end
 
-    for key, player in ipairs( all ) do
-      player:triggerEvent( "onVehicleYelp", self.m_Vehicle )
-    end
-  end
+  	triggerClientEvent(root, "updateVehicleELS", root, self.m_Vehicle, self.m_LightSystem , period)
+
+  	if yelp then
+		triggerClientEvent(root, "onVehicleYelp", root, self.m_Vehicle )
+	end
 end
 
-function ELSSystem:setBlink( _,_, state, dir )
-  local all = getElementsByType( "player" )
-  for key, player in ipairs( all ) do
-    player:triggerEvent("updateVehicleBlink", self.m_Vehicle, self.m_Markers , dir)
-  end
+function ELSSystem:setBlinkBind(_, _, _, dir )
+   	self:setBlink(dir)
+end
+
+function ELSSystem:setBlink(dir)
+    triggerClientEvent(root, "updateVehicleBlink", root, self.m_Vehicle, self.m_Markers , dir)
 end
 
 function ELSSystem:createBlinkMarkers( )

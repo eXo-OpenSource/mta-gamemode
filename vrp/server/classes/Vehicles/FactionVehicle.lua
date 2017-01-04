@@ -81,6 +81,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 			end
 		end
 	end
+
 end
 
 function FactionVehicle:destructor()
@@ -124,10 +125,6 @@ function FactionVehicle:onEnter(player)
 	if player:getFaction() and player:getFaction() == source.m_Faction then
 
 	end
-end
-
-function FactionVehicle:respawn()
-	respawnVehicle(self)
 end
 
 function FactionVehicle:create(Faction, model, posX, posY, posZ, rotation)
@@ -241,10 +238,14 @@ function FactionVehicle:respawn(force)
 		end
 	end
 
+	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
+	self:setSirensOn(false)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
+	self.m_VehELSObj:setBlink("off")
 	self:fix()
+
 	if self.m_HandlingFactor ~= "" then
 		local handling = getVehicleHandling(self)
 		local tHandlingTable = split(self.m_HandlingFactor, ";")
