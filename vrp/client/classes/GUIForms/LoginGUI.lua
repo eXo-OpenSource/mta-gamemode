@@ -158,6 +158,7 @@ function LoginGUI:constructor()
 end
 
 function LoginGUI:destructor()
+	--[[
 	local music = DownloadGUI:getSingleton().m_Music
 	setTimer(function(music)
 		if isElement(music) then
@@ -168,6 +169,7 @@ function LoginGUI:destructor()
 	setTimer(function()
 		delete(DownloadGUI:getSingleton())
 	end, 2000, 1)
+	--]]
 
 	Cursor:hide(true)
 	GUIForm.destructor(self)
