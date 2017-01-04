@@ -15,7 +15,7 @@ function Account.login(player, username, password, pwhash)
 	if (not username or not password) and not pwhash then return false end
 
 	-- Ask SQL to fetch ForumID
-	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, InvitationId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
+	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, RegisterDate, InvitationId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
 	if not row or not row.Id then
 		board:queryFetchSingle(Async.waitFor(self), "SELECT username, password, userID, email FROM wcf1_user WHERE username LIKE ?", username)
@@ -40,6 +40,7 @@ function Account.login(player, username, password, pwhash)
 	local ForumID = row.ForumID
 	local Username = row.Name
 	local InvitationId = row.InvitationId
+	local RegisterDate = row.RegisterDate
 
 	-- Ask SQL to fetch the password from forum
 	board:queryFetchSingle(Async.waitFor(self), "SELECT password, registrationDate FROM wcf1_user WHERE userID = ?", ForumID)
@@ -79,7 +80,7 @@ function Account.login(player, username, password, pwhash)
 		end
 	end
 
-	player.m_Account = Account:new(Id, Username, player, false, ForumID)
+	player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
 
 	if player:getTutorialStage() == 1 then
 		player:createCharacter()
@@ -88,6 +89,7 @@ function Account.login(player, username, password, pwhash)
 	player:loadCharacter()
 	player:triggerEvent("stopLoginCameraDrive")
 	player:triggerEvent("Event_StartScreen")
+
 	StatisticsLogger:addLogin( player, username, "Login")
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
@@ -152,7 +154,6 @@ function Account.createAccount(player, boardId, username, email)
 	if result then
 		player.m_Account = Account:new(Id, username, player, false)
 		player:createCharacter()
-		player:setRegistrationDate(getRealTime().timestamp)
 
 		if INVITATION then
 			if not Account.checkInvitation(player, Id, 0) then
@@ -214,12 +215,13 @@ function Account.createForumAccount(username, password, email)
 	return false
 end
 
-function Account:constructor(id, username, player, guest, ForumID)
+function Account:constructor(id, username, player, guest, ForumID, RegisterDate)
 	-- Account Information
 	self.m_Id = id
 	self.m_Username = username
 	self.m_Player = player
 	self.m_ForumId = ForumID
+	self.m_RegisterDate = RegisterDate or "Unbekannt"
 	player.m_IsGuest = guest;
 	player.m_Id = self.m_Id
 
@@ -238,7 +240,7 @@ function Account:constructor(id, username, player, guest, ForumID)
 	else
 		self.m_Rank = RANK.Guest
         player:loadCharacter()
-		player:setRegistrationDate(getRealTime().timestamp)
+		self.m_RegisterDate = "Gast"
 	end
 end
 
@@ -252,6 +254,10 @@ end
 
 function Account:getRank()
 	return self.m_Rank
+end
+
+function Account:getRegistrationDate()
+	return self.m_RegisterDate
 end
 
 function Account:getLastLogin()

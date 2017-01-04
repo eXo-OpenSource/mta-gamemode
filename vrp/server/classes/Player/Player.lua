@@ -876,14 +876,6 @@ function Player:detachPlayerObjectBind(presser, key, state, object)
 	self:detachPlayerObject(object)
 end
 
-function Player:setRegistrationDate(timestamp)
-	self.m_RegistrationTimestamp = timestamp
-end
-
-function Player:getRegistrationDate()
-	return self.m_RegistrationTimestamp
-end
-
 function Player:detachPlayerObject(object)
 	local model = object.model
 	if PlayerAttachObjects[model] then

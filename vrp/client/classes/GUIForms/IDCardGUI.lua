@@ -84,7 +84,7 @@ function IDCardGUI:Event_receiveIDCardData(car, bike, truck, pilot, registration
 
 	self.m_PaNote:setText(paNote == 0 and "-keine-" or paNote.."%")
 
-	self.m_RegistrationLabel:setText(_("Registriert seit: %s", getOpticalTimestamp(registrationDate)))
+	self.m_RegistrationLabel:setText(_("Registriert seit: %s", registrationDate))
 end
 
 function IDCardGUI:getSymbol(bool)
