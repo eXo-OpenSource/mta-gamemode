@@ -17,66 +17,99 @@ end
 ]]
 
 function HTTPProvider:start()
-	self.ms_GUIInstance:setStatus("current file", self.ms_URL.."index.xml")
-    local responseData, errno = self:fetchAsync("index.xml")
-	if errno ~= 0 then
-		outputDebug(errno)
-		self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
-		return false
-	end
-
-	if responseData ~= "" then
-		local tempFile = fileCreate("files.tmp")
-		tempFile:write(responseData)
-		tempFile:close()
-
-		local xml = xmlLoadFile("files.tmp")
-		local files = {}
-		for k, v in pairs(xmlNodeGetChildren(xml)) do
-			if xmlNodeGetName(v) == "file" then
-				files[#files+1] = {name = xmlNodeGetAttribute(v, "name"), path = xmlNodeGetAttribute(v, "path"), target_path = xmlNodeGetAttribute(v, "target_path")}
-				outputTable(files[#files])
-			end
+	-- request url access for download
+	if self:requestAccessAsync() then
+		self.ms_GUIInstance:setStatus("current file", self.ms_URL.."index.xml")
+		outputDebug(self.ms_URL.."index.xml")
+		local responseData, errno = self:fetchAsync("index.xml")
+		if errno ~= 0 then
+			outputDebug(errno)
+			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+			return false
 		end
-		xmlUnloadFile(xml)
 
-		self.ms_GUIInstance:setStatus("file count", table.getn(files))
+		outputDebug(responseData)
+		if responseData ~= "" then
+			local tempFile = fileCreate("files.tmp")
+			tempFile:write(responseData)
+			tempFile:close()
 
-		local dataPackages = {}
-		for i, v in ipairs(files) do
-			self.ms_GUIInstance:setStatus("current file", self.ms_URL..v.path)
-			local responseData, errno = self:fetchAsync(v.path)
-			if errno ~= 0 then
-				self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
-				return false
-			end
+			local xml = xmlLoadFile("files.tmp")
+			local files = {}
+			for k, v in pairs(xmlNodeGetChildren(xml)) do
+				if xmlNodeGetName(v) == "file" then
+					--files[#files+1] = {name = xmlNodeGetAttribute(v, "name"), path = xmlNodeGetAttribute(v, "path"), target_path = xmlNodeGetAttribute(v, "target_path")}
+					--outputTable(files[#files])
+					local filePath = xmlNodeGetAttribute(v, "target_path")
+					local expectedHash = xmlNodeGetAttribute(v, "hash")
+					local forceFileDownload = false
+					if fileExists(filePath) and expectedHash ~= nil then
+						outputDebug("checking file hash")
+						local file = fileOpen(filePath, true)
+						if file then
+							if hash("md5", file:read(file:getSize())) ~= expectedHash then
+								forceFileDownload = true
+							end
+						else
+							forceFileDownload = true
+						end
+					else
+						forceFileDownload = true
+					end
 
-			if responseData ~= "" then
-				if v.target_path:sub(-5, #v.target_path) == ".data" then
-					dataPackages[#dataPackages+1] = ("files/%s"):format(v.target_path)
+					if forceFileDownload then
+						files[#files+1] = {name = xmlNodeGetAttribute(v, "name"), path = xmlNodeGetAttribute(v, "path"), target_path = xmlNodeGetAttribute(v, "target_path")}
+					end
 				end
-				local file = fileCreate(("files/%s"):format(v.target_path))
-				file:write(responseData)
-				file:close()
-				-- continue
-			else
-				self.ms_GUIInstance:setStatus("ignored", ("Empty file %s"):format(v.path))
-				-- continue
 			end
+			xmlUnloadFile(xml)
+
+			self.ms_GUIInstance:setStatus("file count", table.getn(files))
+
+			local dataPackages = {}
+			for i, v in ipairs(files) do
+				self.ms_GUIInstance:setStatus("current file", v.path)
+				local responseData, errno = self:fetchAsync(v.path)
+				if errno ~= 0 then
+					self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+					return false
+				end
+
+				if responseData ~= "" then
+					local filePath = v.target_path
+					if v.target_path:sub(-5, #v.target_path) == ".data" then
+						dataPackages[#dataPackages+1] = filePath
+					end
+					if fileExists(filePath) then
+						fileDelete(filePath)
+					end
+					local file = fileCreate(filePath)
+					if file then
+						file:write(responseData)
+						file:close()
+					end
+					-- continue
+				else
+					self.ms_GUIInstance:setStatus("ignored", ("Empty file %s"):format(v.path))
+					-- continue
+				end
+			end
+
+			for i, path in ipairs(dataPackages) do
+				self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the packages... (%d / %d packages)"):format(i, table.getn(files)))
+				Package.load(path)
+			end
+
+			-- remove temp file
+			fileDelete("files.tmp")
+
+			-- success
+			return true
+		else
+			self.ms_GUIInstance:setStatus("failed", "Got empty index file!")
 		end
-
-		for i, path in ipairs(dataPackages) do
-			self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the packages... (%d / %d packages)"):format(i, table.getn(files)))
-			Package.load(path)
-		end
-
-		-- remove temp file
-		fileDelete("files.tmp")
-
-		-- success
-		return true
 	else
-		self.ms_GUIInstance:setStatus("failed", "Got empty index file!")
+		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
 	end
 end
 
@@ -93,27 +126,24 @@ function HTTPProvider:fetchAsync(...)
 	return Async.wait()
 end
 
-addCommandHandler("http", function()
-	HUDUI:getSingleton():hide()
-	HUDRadar:getSingleton():hide()
-	showChat(false)
-	fadeCamera(false, 0.05)
+function HTTPProvider:requestAccess(callback)
+	self.ms_GUIInstance:setStatus("waiting", "Please accept the prompt, to download the required files!")
 
-	local dgi = HTTPDownloadGUI:getSingleton()
-	local instance = HTTPProvider:new("http://164.132.153.219:21002/files/assets_HEAD/vrp_assets/", dgi)
-	Async.create(
-		function()
-			if instance:start() then
-				outputDebug("download succeded")
-				delete(dgi)
-
-				HUDUI:getSingleton():show()
-				HUDRadar:getSingleton():show()
-				showChat(true)
-				fadeCamera(true, 0.05)
-			else
-				outputDebug("download failed (see gui)")
+	if Browser.isDomainBlocked(self.ms_URL, true) then
+		-- hack fix, requestDomains callback isnt working (so we cant detect a deny)
+		addEventHandler("onClientBrowserWhitelistChange", root,
+			function(domains)
+				removeEventHandler( "onClientBrowserWhitelistChange", root, getThisFunction())
+				callback(not Browser.isDomainBlocked(self.ms_URL, true))
 			end
-		end
-	)()
-end)
+		)
+		Browser.requestDomains({ self.ms_URL }, true)
+	else
+		nextframe(function () callback(true) end)
+	end
+end
+
+function HTTPProvider:requestAccessAsync()
+	self:requestAccess(Async.waitFor())
+	return Async.wait()
+end

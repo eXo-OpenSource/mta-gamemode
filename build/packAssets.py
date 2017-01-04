@@ -2,6 +2,14 @@ import os
 import xml.etree.ElementTree as ET
 import shutil
 import time
+import hashlib
+
+def md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 start = time.time()
 # Dir Settings
@@ -36,7 +44,7 @@ for child in main_root.findall("vrpfile"):
 	shutil.copyfile(rootdir+filename, outdir+assetpath)
 
 	# write file index
-	ET.SubElement(asset_root, "file", name=os.path.basename(filename), path=assetpath, target_path=filename)
+	ET.SubElement(asset_root, "file", name=os.path.basename(filename), path=assetpath, target_path=filename, hash=md5(outdir+assetpath))
 
 
 asset_tree = ET.ElementTree(asset_root)

@@ -1,6 +1,6 @@
 <meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
-	<min_mta_version server="1.5.3" client="1.5.3"/>
+	<min_mta_version server="1.5.3" client="1.5.3-9.11011.0"/>
 	<oop>true</oop>
 	<sync_map_element_data>false</sync_map_element_data>
 
@@ -1362,11 +1362,11 @@
 	<vrpfile src="files/shader/radialFog.fx"/>
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
-	<file src="files/fonts/EkMukta.ttf"/>
+	<file src="files/fonts/EkMukta.ttf"/><!-- do not replace the file tag -->
+	<file src="files/fonts/FontAwesome.otf"/><!-- do not replace the file tag -->
 	<vrpfile src="files/fonts/Ghetto.ttf"/>
 	<vrpfile src="files/fonts/Gasalt.ttf"/>
 	<vrpfile src="files/fonts/Gasalt_Black.ttf"/>
-	<vrpfile src="files/fonts/FontAwesome.otf"/>
 	<vrpfile src="files/fonts/JosefinSans-Thin.ttf"/>
 	<vrpfile src="files/fonts/JosefinSans-Regular.ttf"/>
 	<vrpfile src="files/fonts/digital-7.ttf"/>

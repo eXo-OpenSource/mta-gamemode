@@ -9,8 +9,8 @@ screenWidth, screenHeight = guiGetScreenSize()
 screenSize = Vector2(screenWidth, screenHeight)
 ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 
-HTTP_DOWNLOAD = false
-FILE_HTTP_SERVER_URL = "192.168.178.102:80/mtasa/" -- Todo: move to config
+HTTP_DOWNLOAD = true
+FILE_HTTP_SERVER_URL = "https://download.exo-reallife.de/files/master/vrp_assets/" -- Todo: move to config
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
 NO_MUNITION_ITEMS = {

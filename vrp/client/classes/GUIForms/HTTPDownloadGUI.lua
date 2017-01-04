@@ -12,6 +12,13 @@ function HTTPDownloadGUI:constructor()
 	self.m_DownloadBar = GUIRectangle:new(screenWidth/6, screenHeight - 75 - 25/2, screenWidth - screenWidth/3, 25, tocolor(0, 125, 255, 150), self)
 	self.m_CurrentState = GUILabel:new(screenWidth/6 + 10, screenHeight - 75 - 20/2, screenWidth - screenWidth/3, 20, "", self)
 	self.m_CurrentState:setFont(FontAwesome(20))
+
+	fadeCamera(false, 0.1)
+end
+
+function HTTPDownloadGUI:destructor()
+	GUIForm.destructor(self)
+	fadeCamera(true)
 end
 
 function HTTPDownloadGUI:setStateText(text)
@@ -44,5 +51,9 @@ function HTTPDownloadGUI:setStatus(status, arg)
 		self:setStateText(arg)
 		self.m_DownloadBar:setColor(tocolor(0, 125, 0, 255))
 		self.m_Text:setText("unpacking packages...")
+	elseif status == "waiting" then
+		self.m_DownloadBar:setColor(tocolor(0, 125, 0, 255))
+		self:setStateText(arg)
+		--self.m_Text:setText("")
 	end
 end
