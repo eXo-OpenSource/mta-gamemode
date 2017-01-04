@@ -30,6 +30,11 @@ function Vehicle:virtual_constructor()
 
 	self.ms_CustomHornPlayBind = bind(self.playCustomHorn, self)
 	self.ms_CustomHornStopBind = bind(self.stopCustomHorn, self)
+
+	addEventHandler("onVehicleRespawn", self, function()
+		source:setEngineState(false)
+		source:setSirensOn(false)
+	end)
 end
 
 function Vehicle:virtual_destructor()
