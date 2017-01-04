@@ -42,7 +42,8 @@ function PayNSpray:constructor(x, y, z, garageId)
 
 				setTimer(
 					function()
-						fixVehicle(vehicle)
+						vehicle:fix()
+						vehicle:setWheelStates(1, 1, 1, 1)
 						setElementFrozen(vehicle, false)
 						if garageId then
 							setGarageOpen(garageId, true)
