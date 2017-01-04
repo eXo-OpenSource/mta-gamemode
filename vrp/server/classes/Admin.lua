@@ -396,7 +396,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			if not target then return end
 			if target ~= admin then
 				local preTarget = admin:getPrivateSync("isSpecting")
-				if preTarget and admin.m_SpectDimensionFunc and admin.m_SpectInteriorFuncFunc then 
+				if preTarget and admin.m_SpectDimensionFunc and admin.m_SpectInteriorFuncFunc then
 					removeEventHandler("onElementDimensionChange", preTarget, admin.m_SpectDimensionFunc)
 					removeEventHandler("onElementInteriorChange", preTarget, admin.m_SpectInteriorFunc)
 				end
@@ -558,7 +558,7 @@ end
 
 
 function Admin:chat(player,cmd,...)
-	if player:getRank() >= RANK.Supporter then
+	if player:getRank() > RANK.Ticketsupporter then
 		local msg = table.concat( {...}, " " )
 		if self.m_RankNames[player:getRank()] then
 			local text = ("[ %s %s ]: %s"):format(_(self.m_RankNames[player:getRank()], player), player:getName(), msg)
