@@ -862,13 +862,9 @@ end
 
 function FactionState:Event_FactionRearm()
 	if client:isFactionDuty() then
-		client:getFaction():rearm(client)
-	end
-end
-
-function FactionState:Event_FactionRearm()
-	if client:isFactionDuty() then
 		client:triggerEvent("showFactionWeaponShopGUI",client:getFaction().m_ValidWeapons)
+		client:setHealth(100)
+		client:setArmor(100)
 	end
 end
 

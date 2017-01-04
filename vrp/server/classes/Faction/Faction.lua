@@ -155,10 +155,6 @@ function Faction:changeSkin_old(player)
 	end
 end
 
-function Faction:rearm(player)
-	return self.m_Name
-end
-
 function Faction:updateStateFactionDutyGUI(player)
 	player:triggerEvent("updateStateFactionDutyGUI", player:isFactionDuty(),player:getPublicSync("Fraktion:Swat"))
 end
