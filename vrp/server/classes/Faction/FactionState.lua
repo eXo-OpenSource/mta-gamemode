@@ -882,6 +882,8 @@ function FactionState:Event_toggleDuty()
 			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
 			client:setPublicSync("Faction:Duty",false)
 			client:getInventory():removeAllItem("Barrikade")
+			client:getInventory():removeAllItem("Nagel-Band")
+			client:getInventory():removeAllItem("Blitzer")
 		else
 			if client:getPublicSync("Company:Duty") and client:getCompany() then
 				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
