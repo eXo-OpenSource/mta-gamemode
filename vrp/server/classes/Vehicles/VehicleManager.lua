@@ -576,7 +576,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	if source:isInGarage() then
 		fixVehicle(source)
 		setVehicleOverrideLights(source, 1)
-		source:setEngineState(false)
+		setVehicleEngineState(source, false)
 		source:setSirensOn(false)
 		client:takeMoney(100, "Fahrzeug-Respawn")
 		client:sendShortMessage(_("Fahrzeug repariert!", client))

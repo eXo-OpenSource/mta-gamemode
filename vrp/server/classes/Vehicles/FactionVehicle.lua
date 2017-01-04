@@ -243,7 +243,9 @@ function FactionVehicle:respawn(force)
 	self:setSirensOn(false)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
-	self.m_VehELSObj:setBlink("off")
+	if self.m_VehELSObj then
+		self.m_VehELSObj:setBlink("off")
+	end
 	self:fix()
 
 	if self.m_HandlingFactor ~= "" then
