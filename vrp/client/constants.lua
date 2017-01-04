@@ -10,7 +10,7 @@ screenSize = Vector2(screenWidth, screenHeight)
 ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 
 HTTP_DOWNLOAD = true
-FILE_HTTP_SERVER_URL = "https://download.exo-reallife.de/files/release/testing/vrp_assets/" -- Todo: move to config
+FILE_HTTP_SERVER_URL = "https://download.exo-reallife.de/files/master/vrp_assets/" -- Todo: move to config
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
 NO_MUNITION_ITEMS = {
