@@ -67,7 +67,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 			self.m_VehELSObj = ELSSystem:new(self)
 	end
 	if handlingFaktor and handlingFaktor ~= "" then
-		local handling = getVehicleHandling(self)
+		local handling = getOriginalHandling(getElementModel(self))
 		local tHandlingTable = split(handlingFaktor, ";")
 		for k,v in ipairs( tHandlingTable ) do
 			local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
@@ -249,7 +249,7 @@ function FactionVehicle:respawn(force)
 	self:fix()
 
 	if self.m_HandlingFactor ~= "" then
-		local handling = getVehicleHandling(self)
+		local handling = getOriginalHandling(getElementModel(self))
 		local tHandlingTable = split(self.m_HandlingFactor, ";")
 		for k,v in ipairs( tHandlingTable ) do
 			local property,faktor = gettok( v, 1, ":"),gettok( v, 2, ":")
