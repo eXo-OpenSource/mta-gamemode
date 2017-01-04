@@ -395,6 +395,11 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
         elseif func == "spect" then
 			if not target then return end
 			if target ~= admin then
+				local preTarget = admin:getPrivateSync("isSpecting")
+				if preTarget and admin.m_SpectDimensionFunc and admin.m_SpectInteriorFuncFunc then 
+					removeEventHandler("onElementDimensionChange", preTarget, admin.m_SpectDimensionFunc)
+					removeEventHandler("onElementInteriorChange", preTarget, admin.m_SpectInteriorFunc)
+				end
 				StatisticsLogger:getSingleton():addAdminAction( admin, "spect", target)
 				self:sendShortMessage(_("%s spected %s!", admin, admin:getName(), target:getName()))
 				admin:sendInfo(_("Drücke Leertaste um das specten zu beenden!", admin))
