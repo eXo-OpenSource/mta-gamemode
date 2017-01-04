@@ -34,6 +34,7 @@ function Vehicle:virtual_constructor()
 	addEventHandler("onVehicleRespawn", self, function()
 		source:setEngineState(false)
 		source:setSirensOn(false)
+		setVehicleOverrideLights(self, 1)
 	end)
 end
 
@@ -494,6 +495,9 @@ function Vehicle:respawnOnSpawnPosition()
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(0, 0, self.m_SpawnRot)
 		fixVehicle(self)
+		self:toggleEngine(false)
+		setVehicleOverrideLights(self, 1)
+		self:setSirensOn(false)
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then
 			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))

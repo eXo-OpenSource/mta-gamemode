@@ -218,17 +218,19 @@ function PermanentVehicle:respawn(garageOnly)
         end
 
         if maxSlots > numVehiclesInGarage then
-          self:setInGarage(true)
-          self:setDimension(PRIVATE_DIMENSION_SERVER)
-          fixVehicle(self)
+			self:setInGarage(true)
+			self:setDimension(PRIVATE_DIMENSION_SERVER)
+			fixVehicle(self)
+			setVehicleOverrideLights(self, 1)
+			self:setEngineState(false)
+			self:setSirensOn(false)
+         	local garageSession = owner.m_GarageSession
+          	if garageSession then
+            	garageSession:addVehicle(self)
+          	end
 
-          local garageSession = owner.m_GarageSession
-          if garageSession then
-            garageSession:addVehicle(self)
-          end
-
-          owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in deiner Garage respawnt", owner, self:getName()))
-          return true
+          	owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in deiner Garage respawnt", owner, self:getName()))
+          	return true
         end
       end
     end

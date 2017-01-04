@@ -162,6 +162,8 @@ function GroupVehicle:respawn(force)
 	self:setEngineState(false)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
+	setVehicleOverrideLights(self, 1)
+	self:setSirensOn(false)
 	self:fix()
 
 	return true
