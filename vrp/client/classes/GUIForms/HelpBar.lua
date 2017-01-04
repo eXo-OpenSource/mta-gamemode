@@ -10,7 +10,7 @@ inherit(Singleton, HelpBar)
 addRemoteEvents{"setManualHelpBarText", "resetManualHelpBarText"}
 
 function HelpBar:constructor()
-	GUIForm.constructor(self, screenWidth*0.84, 0, screenWidth*0.16, screenHeight, false, true)
+	GUIForm.constructor(self, screenWidth*0.845, 0, screenWidth*0.16, screenHeight, false, true)
 
 	self.m_Icon = GUIImage:new(screenWidth-screenWidth*0.028/ASPECT_RATIO_MULTIPLIER, screenHeight*0.4, screenWidth*0.03/ASPECT_RATIO_MULTIPLIER, screenHeight*0.1, "files/images/GUI/HelpIcon.png")
 	self.m_Icon.onLeftClick = bind(self.HelpIcon_Click, self)
