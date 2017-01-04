@@ -20,7 +20,7 @@ local FIRE_MESSAGES = {
 	[7] = "Mehrere Wohnwägen stehen in Flammen! Position %s",
 	[8] = "Die Brandmeldeanlage eines 24/7 Shops meldet Feuer! Position: %s",
 	[9] = "Die Palomino Creek - Bank steht in Flammen!",
-	[10] = "Mehere Mülleimer stehen in Flammen! Position: %s"
+	[10] = "Mehrere Mülleimer stehen in Flammen! Position: %s"
 }
 
 function FireManager:constructor()
