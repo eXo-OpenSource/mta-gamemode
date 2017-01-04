@@ -295,10 +295,12 @@ function FactionState:Event_OnTicketAccept(cop)
 			if client:getWantedLevel() == 1 then
 				if cop and isElement(cop) then
 					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
+					cop:getFaction():giveMoney(TICKET_PRICE, "Ticket")
 				end
 				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
 				client:setWantedLevel(0)
 				client:takeMoney(TICKET_PRICE, "[SAPD] Kautionsticket")
+
 			end
 		end
 	end
