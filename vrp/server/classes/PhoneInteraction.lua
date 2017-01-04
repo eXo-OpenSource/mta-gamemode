@@ -18,6 +18,19 @@ function PhoneInteraction:constructor()
 	addEventHandler("callAbbortSpecial", root, bind(self.callAbbortSpecial, self))
 
 	self.m_LastSpecialCallNumber = {}
+
+	PlayerManager:getSingleton():getQuitHook():register(
+		function(player)
+			self:abortCall(player)
+		end
+	)
+
+	PlayerManager:getSingleton():getWastedHook():register(
+		function(player)
+			self:abortCall(player)
+		end
+	)
+
 end
 
 function PhoneInteraction:callStart(player, voiceEnabled)
@@ -56,6 +69,7 @@ function PhoneInteraction:callReplace(callee)
 
 	client:setPhonePartner(nil)
 	callee:setPhonePartner(nil)
+
 	setPlayerVoiceBroadcastTo(client, nil) -- Todo: Check if a voice call was active
 	setPlayerVoiceBroadcastTo(callee, nil)
 
@@ -65,13 +79,28 @@ function PhoneInteraction:callReplace(callee)
 
 end
 
+function PhoneInteraction:abortCall(player)
+	if player:getPhonePartner() then
+		local partner = player:getPhonePartner()
+		setPlayerVoiceBroadcastTo(partner, nil)
+		partner:setPhonePartner(nil)
+		partner:triggerEvent("callReplace", player)
+		partner:sendMessage(_("Knack... Das Telefonat wurde abgebrochen!", partner), 255, 0, 0)
+
+		setPlayerVoiceBroadcastTo(player, nil)
+		player:setPhonePartner(nil)
+		player:triggerEvent("callReplace", partner)
+	end
+end
+
+
 function PhoneInteraction:callStartSpecial(number)
 	for index, instance in pairs(PhoneNumber.Map) do
 		if instance:getNumber() == number then
 			if instance:getOwner(instance) ~= client then
 				self.m_LastSpecialCallNumber[client] = number
 				instance:getOwner(instance):phoneCall(client)
-			else 
+			else
 				client:sendError("Du kannst dich nicht selbst anrufen!")
 			end
 		end
