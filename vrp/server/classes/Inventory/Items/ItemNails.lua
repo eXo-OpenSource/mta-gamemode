@@ -114,7 +114,7 @@ function ItemNails:isCollectAllowed(player, worlditem)
 		if player:getInventory():getFreePlacesForItem("Nagel-Band") >= 1 then
 			return true
 		else
-			client:sendError(_("Du hast keinen Platz im Inventar!", client))
+			player:sendError(_("Du hast keinen Platz im Inventar!", player))
 		end
 	end
 	return false
