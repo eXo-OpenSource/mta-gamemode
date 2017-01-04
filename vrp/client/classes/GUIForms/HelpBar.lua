@@ -64,7 +64,7 @@ function HelpBar:fadeOut()
 		self.m_Icon:setVisible(true)
 		self.m_Visible = false
 	end, 500, 1)
-	if getCameraTarget(localPlayer) == localPlayer then
+	if getCameraTarget(localPlayer) == localPlayer or getCameraTarget(localPlayer) == getPedOccupiedVehicle(localPlayer) then
 		HUDUI:getSingleton():show()
 		HUDUI:getSingleton():setEnabled(true)
 	end
