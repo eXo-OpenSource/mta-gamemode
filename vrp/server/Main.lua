@@ -30,7 +30,7 @@ addEventHandler("onDebugMessage", root,
 					fields = {
 						{
 							title = ("Source"):format(level == 2 and "Warning" or "Error"),
-							value = ("%s:%d"):format(file, line),
+							value = ("<https://git.heisi.at/eXo/mta-gamemode/tree/%s/%s#L%d|%s:%d>"):format(GIT_BRANCH, file, line, file, line),
 							short = false
 						},
 						{
