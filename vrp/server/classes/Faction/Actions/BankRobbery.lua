@@ -688,7 +688,6 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 								hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
 							elseif hitElement:getPlayerAttachedObject() then
 								bags = getAttachedElements(hitElement)
-								outputChatBox(_("Ein Geldsack wurde abgegeben! (%d übrig)", hitElement, self:getRemainingBagAmount()), rootElement, 255, 0, 0)
 								hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
 								Key(hitElement, "n")
 								hitElement:toggleControlsWhileObjectAttached(true)
