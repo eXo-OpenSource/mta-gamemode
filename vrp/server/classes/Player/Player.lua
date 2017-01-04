@@ -299,6 +299,8 @@ function Player:save()
 	--	self:getInventory():save()
 	--end
 	DatabasePlayer.save(self)
+	outputServerLog("Saved Data for Player "..self:getName())
+	outputDebugString("Saved Data for Player "..self:getName())
 end
 
 function Player:spawn( )
