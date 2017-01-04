@@ -99,3 +99,9 @@ clean_env_job_docker:
   except:
     - /^bugfix\/.*$/
   when: always
+
+clear_cache:
+  stage: clean_env
+  script:
+    - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest # Remove cached image
+  when: manual
