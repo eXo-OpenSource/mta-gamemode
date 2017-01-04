@@ -7,6 +7,7 @@
 -- ****************************************************************************
 
 FactionState = inherit(Singleton)
+
   -- implement by children
 
 function FactionState:constructor()
@@ -253,7 +254,7 @@ function FactionState:countPlayers()
 	return count
 end
 
-function FactionState:Command_ticket( source, cmd, target )
+function FactionState:Command_ticket(source, cmd, target)
 	if target then
 		if type(target) == "string" then
 			local targetPlayer = PlayerManager:getSingleton():getPlayerFromPartOfName(target, source)
@@ -264,8 +265,13 @@ function FactionState:Command_ticket( source, cmd, target )
 				if getDistanceBetweenPoints3D(source:getPosition(), targetPlayer:getPosition()) <= 5 then
 					if source ~= targetPlayer then
 						if targetPlayer:getWantedLevel() == 1 then
-							source.m_CurrentTicket = targetPlayer
-							targetPlayer:triggerEvent("stateFactionOfferTicket", source)
+							if targetPlayer:getMoney() >= TICKET_PRICE then
+								source.m_CurrentTicket = targetPlayer
+								targetPlayer:triggerEvent("stateFactionOfferTicket", source)
+								source:sendSuccess(_("Du hast %s ein Ticket für %d$ angeboten!", source,  targetPlayer:getName(), TICKET_PRICE))
+							else
+								source:sendError(_("%s hat nicht genug Geld dabei! (%d$)", source, targetPlayer:getName(), TICKET_PRICE))
+							end
 						else
 							source:sendError("Der Spieler hat kein oder ein zu hohes Fahndungslevel!")
 						end
@@ -283,12 +289,16 @@ function FactionState:Command_ticket( source, cmd, target )
 	end
 end
 
-function FactionState:Event_OnTicketAccept( )
+function FactionState:Event_OnTicketAccept(cop)
 	if client then
-		if client:getMoney() >= 2000 then
+		if client:getMoney() >= TICKET_PRICE then
 			if client:getWantedLevel() == 1 then
+				if cop and isElement(cop) then
+					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
+				end
+				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
 				client:setWantedLevel(0)
-				client:takeMoney(2000, "[SAPD] Kautionsticket")
+				client:takeMoney(TICKET_PRICE, "[SAPD] Kautionsticket")
 			end
 		end
 	end
