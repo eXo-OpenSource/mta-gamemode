@@ -7,113 +7,123 @@
 -- ****************************************************************************
 
 ELSSystem = inherit( Object )
-
-local CustomSirens =
-{
+ELSSystem.CustomSirens ={
 	[560] = {0.7,0.2},
 	[426] = {0.6,0.2},
 	[420] = {0.6,0.2},
 }
+ELSSystem.BlinkMarkers ={
+	[490] = {["y"] = -3 },
+	[426] = {["y"] = -2.7},
+	[420] = {["y"] = -3.87, ["z"] = 1.5},
+}
 
-function ELSSystem:constructor( vehicle , type )
-  self.m_Vehicle = vehicle
-  self:createBlinkMarkers( )
-  self.m_LightSystem = false
-  local model = getElementModel(vehicle)
-  if CustomSirens[model] then
-	addVehicleSirens(vehicle,2,3,true)
-	setVehicleSirens ( vehicle, 1, 0-CustomSirens[model][2]/2, 0.000, CustomSirens[model][1], 255,0, 0, 255, 255 )
-	setVehicleSirens ( vehicle, 2, 0+CustomSirens[model][2]/2, 0.000, CustomSirens[model][1], 0,0, 255, 255, 255 )
-  end
-  addEventHandler("onVehicleEnter", vehicle, bind( ELSSystem.onEnterVehicle, self))
-  addEventHandler("onVehicleExit", vehicle, bind( ELSSystem.onLeaveVehicle, self))
+function ELSSystem:constructor(vehicle)
+	self.m_Vehicle = vehicle
+	self.m_LightSystem = false
+
+	self.m_BindLight = bind(self.setLightPeriod, self)
+	self.m_BindBlink = bind(self.setBlinkBind, self)
+
+	self:createBlinkMarkers( )
+
+	local model = vehicle.model
+	if ELSSystem.CustomSirens[model] then
+		addVehicleSirens(vehicle, 2, 3, true)
+		setVehicleSirens(vehicle, 1, 0 - ELSSystem.CustomSirens[model][2]/2, 0.000, ELSSystem.CustomSirens[model][1], 255, 0, 0, 255, 255)
+		setVehicleSirens(vehicle, 2, 0 + ELSSystem.CustomSirens[model][2]/2, 0.000, ELSSystem.CustomSirens[model][1], 0, 0, 255, 255, 255)
+	end
+	addEventHandler("onVehicleEnter", vehicle, bind(self.onEnterVehicle, self))
+	addEventHandler("onVehicleExit", vehicle, bind(self.onLeaveVehicle, self))
 end
 
 function ELSSystem:destructor( )
-  local controller = getVehicleOccupant ( self.m_Vehicle )
-  unbindKey(controller, "z","up",  self.m_BindLight , 400)
-  unbindKey(controller, "z","down", self.m_BindLight, 100)
-  unbindKey(controller, ",","up", self.m_BindBlink, "left")
-  unbindKey(controller, ".","up", self.m_BindBlink, "right")
-  unbindKey(controller, "-","up", self.m_BindBlink, "off")
-  for i = 1,8 do
-    if self.m_Markers[i] then
-      destroyElement( self.m_Markers[i] )
-    end
-  end
-  local all = getElementsByType( "player" )
-  for key, player in ipairs( all ) do
-    player:triggerEvent( "onClientELSVehicleDestroy", self.m_Vehicle )
-  end
+	local player = self.m_Vehicle:getOccupant(0)
+	if not player:getType() == "player" then return end
+
+	unbindKey(player, "z","up",  self.m_BindLight , 400)
+	unbindKey(player, "z","down", self.m_BindLight, 100)
+	unbindKey(player, ",","up", self.m_BindBlink, "left")
+	unbindKey(player, ".","up", self.m_BindBlink, "right")
+	unbindKey(player, "-","up", self.m_BindBlink, "off")
+
+	for i = 1,8 do
+		if self.m_Markers[i] then
+			destroyElement( self.m_Markers[i] )
+		end
+	end
+
+	local all = getElementsByType( "player" )
+	for key, player in ipairs( all ) do
+		player:triggerEvent( "onClientELSVehicleDestroy", self.m_Vehicle )
+	end
 end
 
-function ELSSystem:onLeaveVehicle( controller, seat )
-	if not controller:getType() == "player" then return end
-
+function ELSSystem:onLeaveVehicle(player, seat)
+	if not player:getType() == "player" then return end
 	if seat == 0 then
-		unbindKey(controller, "z","up",  self.m_BindLight , 400)
-		unbindKey(controller, "z","down", self.m_BindLight, 100)
-		unbindKey(controller, ",","up", self.m_BindBlink, "left")
-		unbindKey(controller, ".","up", self.m_BindBlink, "right")
-		unbindKey(controller, "-","up", self.m_BindBlink, "off")
+		unbindKey(player, "z","up",  self.m_BindLight , 400)
+		unbindKey(player, "z","down", self.m_BindLight, 100)
+		unbindKey(player, ",","up", self.m_BindBlink, "left")
+		unbindKey(player, ".","up", self.m_BindBlink, "right")
+		unbindKey(player, "-","up", self.m_BindBlink, "off")
 	end
 end
 
-function ELSSystem:onEnterVehicle( controller, seat)
-	if not controller:getType() == "player" then return end
+function ELSSystem:onEnterVehicle(player, seat)
+	if seat == 0 then
+		if not player:getType() == "player" then return end
 
-	local type_ = getVehicleType(getPedOccupiedVehicle(controller))
-	if type_ ~= VehicleType.Boat and type_ ~= VehicleType.Helicopter and type_ ~= VehicleType.Plane then
-		self.m_BindLight = bind(self.setLightPeriod, self)
-		bindKey(controller, "z","up",  self.m_BindLight , 400)
-		bindKey(controller, "z","down", self.m_BindLight, 100)
-		self.m_BindBlink = bind(self.setBlinkBind, self)
-		bindKey(controller, ",","up", self.m_BindBlink, "left")
-		bindKey(controller, ".","up", self.m_BindBlink, "right")
-		bindKey(controller, "horn","up", self.m_BindBlink, "blink")
-		bindKey(controller, "-","up", self.m_BindBlink, "off")
+		local vehType = getVehicleType(source)
+		if vehType ~= VehicleType.Boat and vehType ~= VehicleType.Helicopter and vehType ~= VehicleType.Plane then
+			bindKey(player, "z","up",  self.m_BindLight , 400)
+			bindKey(player, "z","down", self.m_BindLight, 100)
+			bindKey(player, ",","up", self.m_BindBlink, "left")
+			bindKey(player, ".","up", self.m_BindBlink, "right")
+			bindKey(player, "horn","up", self.m_BindBlink, "blink")
+			bindKey(player, "-","up", self.m_BindBlink, "off")
+		end
 	end
 end
 
-function ELSSystem:setLightPeriod( _, _, state, period)
-  	local yelp = false
-	if state == "up" then
-		self.m_LightSystem = not self.m_LightSystem
-	else
-		yelp = true
-	end
+function ELSSystem:setLightPeriod(_, _, state, period)
+	if state == "up" then self.m_LightSystem = not self.m_LightSystem end
 
   	triggerClientEvent(root, "updateVehicleELS", root, self.m_Vehicle, self.m_LightSystem , period)
 
-  	if yelp then
-		triggerClientEvent(root, "onVehicleYelp", root, self.m_Vehicle )
+  	if state == "down" then
+		triggerClientEvent(root, "onVehicleYelp", root, self.m_Vehicle)
 	end
 end
 
-function ELSSystem:setBlinkBind(_, _, _, dir )
+function ELSSystem:setBlinkBind(_, _, _, dir)
    	self:setBlink(dir)
 end
 
 function ELSSystem:setBlink(dir)
-    triggerClientEvent(root, "updateVehicleBlink", root, self.m_Vehicle, self.m_Markers , dir)
+    triggerClientEvent(root, "updateVehicleBlink", root, self.m_Vehicle, self.m_Markers, dir)
 end
 
 function ELSSystem:createBlinkMarkers( )
-  self.m_Markers = {  }
-  local x,y,z = getElementPosition( self.m_Vehicle )
-  local oy = - 2
-  local oz = 0.4
-  local i_mod  = getElementModel( self.m_Vehicle )
-  if i_mod == 490 then oy = -3  end
-  if i_mod == 599 then oy = -2.7 end
-  if i_mod == 427 then oy = -3.87;oz = 1.5 end
-  for i = 1,6 do
-    self.m_Markers[i] = createMarker(x, y, z,"corona",0.2, 200, 0, 0, 0)
-    attachElements(self.m_Markers[i],self.m_Vehicle, -1+(i*0.3), oy, oz)
-  end
-  self.m_Markers[7] = createMarker(x,y,z,"corona",0.1,200, 0, 0, 0)
-  attachElements(self.m_Markers[7],self.m_Vehicle, -1+0.1, oy, oz)
+	self.m_Markers = {  }
+	local pos = self.m_Vehicle:getPosition()
+	local model  = self.m_Vehicle:getModel()
 
-  self.m_Markers[8] = createMarker(x, y, z,"corona", 0.1, 200, 0, 0, 0)
-  attachElements(self.m_Markers[8],self.m_Vehicle, -1+(6*0.3), oy, oz)
+	local offsetY, offsetZ = -2, 0.4
+
+	if ELSSystem.BlinkMarkers[model] then
+		if ELSSystem.BlinkMarkers[model].y then offsetY = ELSSystem.BlinkMarkers[model].y end
+		if ELSSystem.BlinkMarkers[model].z then offsetZ = ELSSystem.BlinkMarkers[model].z end
+	end
+
+	for i = 1,6 do
+		self.m_Markers[i] = createMarker(pos, "corona", 0.2, 200, 0, 0, 0)
+		self.m_Markers[i]:attach(self.m_Vehicle, -1+(i*0.3), offsetY, offsetZ)
+	end
+
+	self.m_Markers[7] = createMarker(pos, "corona", 0.1, 200, 0, 0, 0)
+	self.m_Markers[7]:attach(self.m_Vehicle, -1+0.1, offsetY, offsetZ)
+
+	self.m_Markers[8] = createMarker(pos, "corona", 0.1, 200, 0, 0, 0)
+	self.m_Markers[8]:attach(self.m_Vehicle, -1+(6*0.3), offsetY, offsetZ)
 end
