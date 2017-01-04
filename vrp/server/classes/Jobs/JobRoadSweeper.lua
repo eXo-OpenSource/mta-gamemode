@@ -19,6 +19,8 @@ function JobRoadSweeper:constructor()
 end
 
 function JobRoadSweeper:onVehicleSpawn(player,vehicleModel,vehicle)
+	vehicle.m_SweeperOwner = player
+	player.vehRoadSweeper = vehicle
 	if isElement(player.vehRoadSweeper) then
 		destroyElement(player.vehRoadSweeper)
 	end
@@ -29,7 +31,14 @@ function JobRoadSweeper:onVehicleSpawn(player,vehicleModel,vehicle)
 		end
 	end)
 	vehicle:addCountdownDestroy(10)
-	addEventHandler("onElementDestroy", vehicle, bind(self.stop, self))
+	self.m_OnVehicleAction = bind(self.onVehicleAction, self)
+	addEventHandler("onVehicleExplode", vehicle, self.m_OnVehicleAction)
+	addEventHandler("onElementDestroy", vehicle, self.m_OnVehicleAction)
+end
+
+function JobRoadSweeper:onVehicleAction()
+	self:stop(source.m_SweeperOwner)
+
 end
 
 function JobRoadSweeper:start(player)
@@ -40,6 +49,7 @@ end
 function JobRoadSweeper:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 	if player.vehRoadSweeper and isElement(player.vehRoadSweeper) then destroyElement(player.vehRoadSweeper) end
+	player:triggerEvent("jobQuit")
 end
 
 function JobRoadSweeper:Event_sweeperGarbageCollect()
