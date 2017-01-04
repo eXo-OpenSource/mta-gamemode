@@ -330,7 +330,7 @@ function House:leaveHouse(player)
 			player:triggerEvent("CountdownStop", "Haus-Raub")
 		end
 	else
-		player:sendError(_("Das Tür ist verschlossen!", player))
+		player:sendError(_("Die Tür ist verschlossen!", player))
 	end
 end
 
