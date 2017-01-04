@@ -472,6 +472,9 @@ function VehicleManager:Event_vehicleAddKey(player)
 
 	-- Tell the client that we added a new key
 	triggerClientEvent(client, "vehicleKeysRetrieve", source, source:getKeyNameList())
+
+	player:sendShortMessage(_("Du hast einen Fahrzeugschlüssel von %s erhalten! (%s)", player, client:getName(), source:getName()))
+	client:sendShortMessage(_("Du hast %s einen Fahrzeugschlüssel gegeben! (%s)", client, player:getName(), source:getName()))
 end
 
 function VehicleManager:Event_vehicleRemoveKey(characterId)
@@ -490,6 +493,8 @@ function VehicleManager:Event_vehicleRemoveKey(characterId)
 
 	-- Tell the client that we removed the key
 	triggerClientEvent(client, "vehicleKeysRetrieve", source, source:getKeyNameList())
+
+	client:sendShortMessage(_("Du hast dem Spieler einen Fahrzeugschlüssel abgenommen! (%s)", client, source:getName()))
 end
 
 function VehicleManager:Event_vehicleRepair()
