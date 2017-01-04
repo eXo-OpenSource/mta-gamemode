@@ -306,9 +306,9 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             self:getHerePlayer(admin, func, target:getName())
         elseif func == "kick" or func == "rkick" then
             self:sendShortMessage(_("%s hat %s gekickt! Grund: %s", admin, admin:getName(), target:getName(), reason))
-			kickPlayer(target, admin, reason)
 			outputChatBox("Der Spieler "..target:getName().." wurde von "..admin:getName().." gekickt!",root, 200, 0, 0)
 			outputChatBox("Grund: "..reason,root, 200, 0, 0)
+			kickPlayer(target, admin, reason)
         elseif func == "prison" then
             duration = tonumber(duration)
 			if duration then
