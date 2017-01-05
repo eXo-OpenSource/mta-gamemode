@@ -11,7 +11,7 @@ inherit(Singleton, SelfGUI)
 SelfGUI.Stats = {
 	["AFK"] = {
 			["text"] = "gesamte AFK-Zeit",
-			["value"] = function(value) return math.floor(value/60).." min" end
+			["value"] = function(value) return math.floor(value/60/60).." min" end
 			},
 	["Driven"] = {
 			["text"] = "gefahrene Kilometer",
