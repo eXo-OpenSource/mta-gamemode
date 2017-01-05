@@ -163,6 +163,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			end
 		)
+		if getElementData(element, "Handbrake") == true then
+			self:addItem(_"Mechaniker: Handbremse lösen",
+				function()
+					if self:getElement() then
+						triggerServerEvent("vehicleToggleHandbrake", self:getElement())
+						delete(self)
+					end
+				end
+			)
+		end
 	end
 
 	if VehicleSellGUI then

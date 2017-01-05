@@ -257,22 +257,21 @@ function Vehicle:toggleEngine(player)
 end
 
 function Vehicle:toggleHandBrake( player )
-	local ground = isVehicleOnGround ( self )
 	if not self.m_HandBrake then
-		if ground then
-			setControlState ( player, "handbrake", true)
+		if self:isOnGround() then
+			setControlState(player, "handbrake", true)
 			self.m_HandBrake = true
 			player:triggerEvent("vehicleHandbrake", true)
 		end
 	else
 		self.m_HandBrake = false
-		setControlState ( player, "handbrake", false )
-		if isElementFrozen( self ) then
-			setElementFrozen( self , false)
+		setControlState(player, "handbrake", false)
+		if isElementFrozen(self) then
+			setElementFrozen(self, false)
 		end
 		player:triggerEvent("vehicleHandbrake" )
 	end
-	self:setData( "Handbrake",  self.m_HandBrake , true )
+	self:setData("Handbrake", self.m_HandBrake, true)
 end
 
 function Vehicle:setEngineState(state)

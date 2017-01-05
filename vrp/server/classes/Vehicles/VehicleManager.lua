@@ -20,7 +20,7 @@ function VehicleManager:constructor()
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
 		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
-		"soundvanChangeURL", "soundvanStopSound"}
+		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake"}
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
@@ -39,6 +39,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleBreak", root, bind(self.Event_vehicleBreak, self))
 	addEventHandler("vehicleUpgradeHangar", root, bind(self.Event_vehicleUpgradeHangar, self))
 	addEventHandler("vehiclePark", root, bind(self.Event_vehiclePark, self))
+	addEventHandler("vehicleToggleHandbrake", root, bind(self.Event_toggleHandBrake, self))
 	addEventHandler("soundvanChangeURL", root, bind(self.Event_soundvanChangeURL, self))
 	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
 
@@ -404,6 +405,19 @@ function VehicleManager:Event_vehiclePark()
 		client:sendError(_("Dieses Fahrzeug kann nicht geparkt werden!", client))
 	end
  end
+
+function VehicleManager:Event_toggleHandBrake()
+	if client:getCompany() and client:getCompany():getId() == 2 then
+		if source.m_HandBrake then
+			source:toggleHandBrake(client)
+			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
+		else
+			client:sendError(_("Die Handbremse ist nicht angezogen!", client))
+		end
+	else
+		client:sendError(_("Du bist nicht berechtigt!", client))
+	end
+end
 
 function VehicleManager:setSpeedLimits()
 	setModelHandling(462, "maxVelocity", 50) -- Faggio

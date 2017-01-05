@@ -78,13 +78,15 @@ addEventHandler("vehicleCarlock", root,
 
 addEventHandler("vehicleHandbrake", root,
 	function()
-		local vehicle = getPedOccupiedVehicle( localPlayer )
-		local bstate = getElementData( vehicle, "Handbrake")
+		local vehicle = localPlayer.vehicle
 		if vehicle then
-			if bstate then
-				playSound3D("files/audio/hb_off.mp3", source:getPosition())
-			else
-				playSound3D("files/audio/hb_on.mp3", source:getPosition())
+			local bstate = getElementData(vehicle, "Handbrake")
+			if vehicle then
+				if bstate then
+					playSound3D("files/audio/hb_off.mp3", source:getPosition())
+				else
+					playSound3D("files/audio/hb_on.mp3", source:getPosition())
+				end
 			end
 		end
 	end
