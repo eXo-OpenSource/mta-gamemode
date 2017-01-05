@@ -32,13 +32,14 @@ function ColorPickerGUI:constructor(acceptCallback, changeCallback)
 end
 
 function ColorPickerGUI:setColor(r, g, b)
+	local max = 0.834375
 	r = r >= 255 and 254 or r
 	g = g >= 255 and 254 or g
 	b = b >= 255 and 254 or b
 
-	self.m_ScrollbarRed:setScrollPosition(0.8)
-	self.m_ScrollbarGreen:setScrollPosition((g/255)*0.75)
-	self.m_ScrollbarBlue:setScrollPosition((b/255)*0.75)
+	self.m_ScrollbarRed:setScrollPosition((r/255)*max)
+	self.m_ScrollbarGreen:setScrollPosition((g/255)*max)
+	self.m_ScrollbarBlue:setScrollPosition((b/255)*max)
 	self.m_PreviewRect:setColorRGB(r, g, b)
 end
 
