@@ -27,6 +27,7 @@ end
 
 function Achievement:giveAchievement (player, id)
 	if self.ms_Achievements[id] ~= nil then
+		if not player:isLoggedIn() then return end
 		if not player:getAchievementStatus(id) then
 			player:setAchievementStatus(id, true)
 			player:givePoints(self.ms_Achievements[id]["exp"])
