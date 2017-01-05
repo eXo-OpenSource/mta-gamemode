@@ -188,6 +188,9 @@ function PlayerManager:playerQuit()
 	self.m_QuitHook:call(source)
 
 	if getPedWeapon(source,1) == 9 then takeWeapon(source,9) end
+
+	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
+
 	local index = table.find(self.m_ReadyPlayers, source)
 	if index then
 		table.remove(self.m_ReadyPlayers, index)

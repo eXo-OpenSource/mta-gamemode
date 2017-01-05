@@ -30,6 +30,8 @@ function ShootingRanchTraining:constructor(player, level)
 		self.m_StartMuni = data["Ammo"]
 		self.m_Hits = 0
 
+		player.m_RemoveWeaponsOnLogout = true
+
 		setElementData(player, "ShootingRanch:Hits", 0)
 
 
@@ -58,6 +60,7 @@ function ShootingRanchTraining:destructor()
 	removeElementData(self.m_Player, "ShootingRanch:Data")
 	toggleAllControls(self.m_Player, true)
 	takeAllWeapons(self.m_Player)
+	self.m_Player.m_RemoveWeaponsOnLogout = nil
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 end
 
