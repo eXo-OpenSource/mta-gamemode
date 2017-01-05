@@ -152,7 +152,7 @@ function ELSSystem:updateBlink( vehicle , marker, state)
 		self.m_Vehicles_Blink[vehicle] = { }
 		self.m_Vehicles_Blink[vehicle][2] = 3
   		self.m_Vehicles_Blink[vehicle][3] = marker
-  		self.m_Vehicles_Blink[vehicle][1] = setTimer( bind( ELSSystem.setBlinkAll, self),150,0,vehicle)
+  		self.m_Vehicles_Blink[vehicle][1] = setTimer( bind( ELSSystem.setBlinkAll, self),100,0,vehicle)
   		self.m_Vehicles_Blink[vehicle][4] = "blink"
   else
       if self.m_Vehicles_Blink[vehicle] then
@@ -250,22 +250,28 @@ function ELSSystem:setBlinkAll( vehicle )
   local marker = self.m_Vehicles_Blink[vehicle][3]
   local state = self.m_Vehicles_Blink[vehicle][2]
   if state == 1 then
-		setMarkerColor(marker[6] ,0,0,255,255)
-		setMarkerColor(marker[7] ,0,0,255,255)
-		setMarkerColor(marker[3] ,255,0,0,255)
-		setMarkerColor(marker[2] ,255,0,0,255)
+		setMarkerColor(marker[1] ,0,0,255,255)
+		setMarkerColor(marker[2] ,0,0,255,255)
+		setMarkerColor(marker[3] ,0,0,255,255)
+		setMarkerColor(marker[4] ,255,0,0,255)
+		setMarkerColor(marker[5] ,255,0,0,255)
+		setMarkerColor(marker[6] ,255,0,0,255)
     self.m_Vehicles_Blink[vehicle][2] = 2
   elseif state == 2 then
-		setMarkerColor(marker[6] ,255,0,0,255)
-		setMarkerColor(marker[7] ,255,0,0,255)
-		setMarkerColor(marker[3] ,0,0,255,255)
-		setMarkerColor(marker[2] ,0,0,255,255)
+		setMarkerColor(marker[1] ,255,0,0,255)
+		setMarkerColor(marker[2] ,255,0,0,255)
+		setMarkerColor(marker[3] ,255,0,0,255)
+		setMarkerColor(marker[4] ,0,0,255,255)
+		setMarkerColor(marker[5] ,0,0,255,255)
+		setMarkerColor(marker[6] ,0,0,255,255)
     self.m_Vehicles_Blink[vehicle][2] = 3
   elseif state == 3 then
+		setMarkerColor(marker[5] ,255,0,0,255)
 		setMarkerColor(marker[6] ,255,0,0,255)
-		setMarkerColor(marker[7] ,255,0,0,255)
-		setMarkerColor(marker[3] ,0,0,255,255)
+		setMarkerColor(marker[4] ,255,0,0,255)
+		setMarkerColor(marker[1] ,0,0,255,255)
 		setMarkerColor(marker[2] ,0,0,255,255)
+		setMarkerColor(marker[3] ,0,0,255,255)
     self.m_Vehicles_Blink[vehicle][2] = 1
   end
 end

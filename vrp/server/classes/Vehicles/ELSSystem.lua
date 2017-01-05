@@ -14,8 +14,10 @@ ELSSystem.CustomSirens ={
 }
 ELSSystem.BlinkMarkers ={
 	[490] = {["y"] = -3 },
-	[599] = {["y"] = -2.7},
+	[599] = {["y"] = -2.6},
 	[427] = {["y"] = -3.87, ["z"] = 1.5},
+	[560] = {["y"] = -1.5, ["z"] = 0.42},
+	[598] = {["y"] = -1.5, ["z"] = 0.4},
 }
 
 function ELSSystem:constructor(vehicle)
@@ -109,7 +111,7 @@ function ELSSystem:createBlinkMarkers( )
 	local pos = self.m_Vehicle:getPosition()
 	local model  = self.m_Vehicle:getModel()
 
-	local offsetY, offsetZ = -2, 0.4
+	local offsetY, offsetZ = -2, 0.42
 
 	if ELSSystem.BlinkMarkers[model] then
 		if ELSSystem.BlinkMarkers[model].y then offsetY = ELSSystem.BlinkMarkers[model].y end
@@ -117,7 +119,7 @@ function ELSSystem:createBlinkMarkers( )
 	end
 
 	for i = 1,6 do
-		self.m_Markers[i] = createMarker(pos, "corona", 0.2, 200, 0, 0, 0)
+		self.m_Markers[i] = createMarker(pos, "corona", 0.14, 200, 0, 0, 0)
 		self.m_Markers[i]:attach(self.m_Vehicle, -1+(i*0.3), offsetY, offsetZ)
 	end
 
