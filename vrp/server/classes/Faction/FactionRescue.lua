@@ -288,6 +288,10 @@ function FactionRescue:createDeathPickup(player, ...)
 						player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
 						hitPlayer.m_RescueStretcher.player = player
 						source:destroy()
+						for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
+							rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+						end
+
 					else
 						hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
 					end
