@@ -30,17 +30,17 @@ end
 
 function NoDm:onNoDmZoneHit(hitElement, dim)
 	if hitElement== localPlayer and dim then
-		self:setPlayerNoDm(hitElement, true)
+		self:setPlayerNoDm(true)
 	end
 end
 
 function NoDm:onNoDmZoneLeave(hitElement, dim)
 	if hitElement== localPlayer and dim then
-		self:setPlayerNoDm(hitElement, false)
+		self:setPlayerNoDm(false)
 	end
 end
 
-function NoDm:setPlayerNoDm(player, state)
+function NoDm:setPlayerNoDm(state)
 	if state == true then
 		if localPlayer:getPublicSync("Faction:Duty") == false then
 			toggleControl ("fire", false)
@@ -48,9 +48,9 @@ function NoDm:setPlayerNoDm(player, state)
 			toggleControl ("previous_weapon", false)
 			toggleControl ("aim_weapon", false)
 			toggleControl ("vehicle_fire", false)
-			setElementData(player, "no_driveby", true)
+			setElementData(localPlayer, "no_driveby", true)
 			setPedWeaponSlot(localPlayer, 0)
-			if getPedWeapon ( player, 9 ) == 43 then
+			if getPedWeapon ( localPlayer, 9 ) == 43 then
 				if not isPedInVehicle(localPlayer) then
 					setPedWeaponSlot(localPlayer,9)
 					toggleControl ("aim_weapon", true)
@@ -67,8 +67,8 @@ function NoDm:setPlayerNoDm(player, state)
 			toggleControl ("previous_weapon", true)
 			toggleControl ("aim_weapon", true)
 			toggleControl ("vehicle_fire", true)
-			setElementData(player, "no_driveby", false)
-			setElementData(player,"schutzzone",false)
+			setElementData(localPlayer, "no_driveby", false)
+			setElementData(localPlayer,"schutzzone",false)
 		end
 		self:toggleNoDmImage(false)
 	end
@@ -120,9 +120,9 @@ end
 
 function NoDm:checkNoDm()
 	if self:isInNoDmZone() then
-		self:setPlayerNoDm(localPlayer, true)
+		self:setPlayerNoDm(true)
 	else
-		self:setPlayerNoDm(localPlayer, false)
+		self:setPlayerNoDm(false)
 	end
 end
 
@@ -130,7 +130,7 @@ addEventHandler("checkNoDm", localPlayer, function()
 	for index, koords in pairs(NoDm:getSingleton().Zones) do
 		local cols = NoDm:getSingleton().m_NoDmZones[index]
 		if isElementWithinColShape(localPlayer, cols) then
-			NoDm:getSingleton():setPlayerNoDm(localPlayer, true)
+			NoDm:getSingleton():setPlayerNoDm(true)
 			break
 		else
 			toggleControl("aim_weapon",true)
