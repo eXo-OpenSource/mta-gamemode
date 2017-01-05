@@ -751,7 +751,7 @@ function VehicleManager:Event_vehicleUpgradeGarage()
 
 				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType())
 			else
-				client:sendError(_("Du hast nicht genügend Geld, um deine Garage zu upgraden", client))
+				client:sendError(_("Du hast nicht genügend Geld, um die Garage zu kaufen oder upzugraden", client))
 			end
 		else
 			client:sendError(_("Deine Garage ist bereits auf dem höchsten Level", client))
