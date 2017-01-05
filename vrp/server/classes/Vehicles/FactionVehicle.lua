@@ -248,7 +248,7 @@ function FactionVehicle:respawn(force)
 	end
 	self:fix()
 
-	if self.m_HandlingFactor ~= "" then
+	if self.m_HandlingFactor ~= "" and self.m_HandlingFactor then
 		local handling = getOriginalHandling(getElementModel(self))
 		local tHandlingTable = split(self.m_HandlingFactor, ";")
 		for k,v in ipairs( tHandlingTable ) do
