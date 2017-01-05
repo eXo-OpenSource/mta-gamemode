@@ -137,11 +137,3 @@ function JobLumberjack:Event_lumberjackTreeCut()
 	-- Todo: Check deltaTime (--> security)
 	client:setData("lumberjack:Trees", (client:getData("lumberjack:Trees") or 0) + 1)
 end
-
-Vehicle.AttachOffsets = {
-	{["x"] = -1, ["z"]=2.1},
-	{["x"] = 0, ["z"]=2.1},
-	{["x"] = -1, ["z"]=2.1},
-	{["x"] = -1, ["z"]=2.1},
-tree3:attach(veh, 0.35, -2.1, 0.45, 90, 0, 0)
-}
