@@ -203,12 +203,12 @@ function FactionWeaponShopGUI:addMunitionToCart(weapon)
 end
 
 function FactionWeaponShopGUI:factionReceiveWeaponShopInfos()
-		triggerServerEvent("factionReceiveWeaponShopInfos",localPlayer)
+	triggerServerEvent("factionReceiveWeaponShopInfos",localPlayer)
 end
 
 function FactionWeaponShopGUI:factionWeaponShopBuy()
 	triggerServerEvent("factionWeaponShopBuy",root,self.m_Cart)
-	FactionWeaponShopGUI:getSingleton():clearCart()
+	delete(self)
 end
 
 addEventHandler("showFactionWeaponShopGUI", root,
