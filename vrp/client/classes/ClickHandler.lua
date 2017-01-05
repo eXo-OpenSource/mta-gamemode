@@ -172,7 +172,11 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	if self.m_ClickableModels[model] then
 		if trigger then
 			if button == "left" then
-				self.m_ClickableModels[model](element, clickInfo)
+				if getDistanceBetweenPoints3D(localPlayer:getPosition(), element:getPosition()) < 10 then
+					self.m_ClickableModels[model](element, clickInfo)
+				else
+					ErrorBox:new(_"Du bist zu weit entfernt!")
+				end
 			end
 		end
 		return true
