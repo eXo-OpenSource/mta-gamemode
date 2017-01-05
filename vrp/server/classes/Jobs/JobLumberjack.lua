@@ -82,12 +82,14 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 
 		local loadedTrees = 0
 
-		for i = 1, 3 do
-			for j = 1, 6 do
+		for i = 0, 2 do
+			for j = 0, 3 do
 				if loadedTrees < numTrees then
 					local x, y, z = getElementPosition(vehicle)
 					local object = createObject(837, x, y, z)
-					attachElements(object, vehicle, -1 + j * 0.5, -1.8, i * 0.6, 0, 90, 90)
+					attachElements(object, vehicle, -1 + j * 0.67, -2.1, 0.45 + i * 0.61, 90, 0, 0)
+					object:setScale(0.9)
+					object:setCollisionsEnabled(false)
 					setElementParent(object, vehicle) -- Deletes the object automatically when the vehicle will be destroyed (e.g. by spawn system)
 					loadedTrees = loadedTrees+1
 				end
@@ -135,3 +137,11 @@ function JobLumberjack:Event_lumberjackTreeCut()
 	-- Todo: Check deltaTime (--> security)
 	client:setData("lumberjack:Trees", (client:getData("lumberjack:Trees") or 0) + 1)
 end
+
+Vehicle.AttachOffsets = {
+	{["x"] = -1, ["z"]=2.1},
+	{["x"] = 0, ["z"]=2.1},
+	{["x"] = -1, ["z"]=2.1},
+	{["x"] = -1, ["z"]=2.1},
+tree3:attach(veh, 0.35, -2.1, 0.45, 90, 0, 0)
+}
