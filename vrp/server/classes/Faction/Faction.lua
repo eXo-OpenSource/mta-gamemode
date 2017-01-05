@@ -156,7 +156,7 @@ function Faction:changeSkin_old(player)
 end
 
 function Faction:updateStateFactionDutyGUI(player)
-	player:triggerEvent("updateStateFactionDutyGUI", player:isFactionDuty(),player:getPublicSync("Fraktion:Swat"))
+	player:triggerEvent("updateStateFactionDutyGUI", player:isFactionDuty(),player:getPublicSync("Faction:Swat"))
 end
 
 function Faction:addPlayer(playerId, rank)
