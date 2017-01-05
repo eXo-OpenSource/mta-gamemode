@@ -10,12 +10,17 @@ ShootingRanchTraining = inherit(Object)
 
 function ShootingRanchTraining:constructor(player, level)
 	if ShootingRanch.Trainings[level] then
-		player:takeMoney(WEAPON_LEVEL[level]["costs"], "Schießstand")
+
+		if ShootingRanch:getSingleton():warpPlayerWaffenbox(player) == false then
+			return
+		end
 
 		local data = ShootingRanch.Trainings[level]
 
 		takeAllWeapons(player)
 		giveWeapon(player, data["Weapon"], data["Ammo"], true)
+
+		player:takeMoney(WEAPON_LEVEL[level]["costs"], "Schießstand")
 
 		self.m_Player = player
 		self.m_TargetLevel = level
@@ -25,11 +30,11 @@ function ShootingRanchTraining:constructor(player, level)
 		self.m_StartMuni = data["Ammo"]
 		self.m_Hits = 0
 
+		player.m_RemoveWeaponsOnLogout = true
+
 		setElementData(player, "ShootingRanch:Hits", 0)
 
-		if ShootingRanch:getSingleton():warpPlayerWaffenbox(player) == false then
-			return
-		end
+
 		toggleAllControls(player,false)
 		toggleControl(player,"fire",true)
 		toggleControl(player,"aim_weapon",true)
@@ -55,6 +60,7 @@ function ShootingRanchTraining:destructor()
 	removeElementData(self.m_Player, "ShootingRanch:Data")
 	toggleAllControls(self.m_Player, true)
 	takeAllWeapons(self.m_Player)
+	self.m_Player.m_RemoveWeaponsOnLogout = nil
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
 end
 

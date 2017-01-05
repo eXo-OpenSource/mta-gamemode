@@ -295,10 +295,12 @@ function FactionState:Event_OnTicketAccept(cop)
 			if client:getWantedLevel() == 1 then
 				if cop and isElement(cop) then
 					cop:sendSuccess(_("%s hat dein Ticket angenommen und bezahlt!", cop, client:getName()))
+					cop:getFaction():giveMoney(TICKET_PRICE, "Ticket")
 				end
 				client:sendSuccess(_("Du hast das Ticket angenommen! Dir wurde 1 Wanted erlassen!", client))
 				client:setWantedLevel(0)
 				client:takeMoney(TICKET_PRICE, "[SAPD] Kautionsticket")
+
 			end
 		end
 	end
@@ -845,10 +847,10 @@ end
 
 function FactionState:Event_toggleSwat()
 	if client:isFactionDuty() then
-		local swat = client:getPublicSync("Fraktion:Swat")
+		local swat = client:getPublicSync("Faction:Swat")
 		if swat == true then
 			client:setJobDutySkin(nil)
-			client:setPublicSync("Fraktion:Swat",false)
+			client:setPublicSync("Faction:Swat",false)
 			client:sendInfo(_("Du hast den Swat-Modus beendet Dienst!", client))
 			client:getFaction():updateStateFactionDutyGUI(client)
 		else

@@ -96,8 +96,12 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 				local faction = hitElement:getFaction()
 				if faction then
 					if faction:isRescueFaction() == true then
-						hitElement:triggerEvent("showRescueFactionDutyGUI")
-						--hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
+						if not hitElement.vehicle then
+							hitElement:triggerEvent("showRescueFactionDutyGUI")
+							--hitElement:getFaction():updateStateFactionDutyGUI(hitElement)
+						else
+      						hitElement:sendError(_("Du darfst nicht in einem Fahrzeug sitzen!", player))
+						end
 					end
 				end
 			end
@@ -159,8 +163,9 @@ function FactionRescue:Event_toggleDuty(type)
 				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
 				return false
 			end
+			takeWeapon(client,42)
 			if type == "fire" then
-				giveWeapon(client,42,200,true)
+				giveWeapon(client, 42, 2000, true)
 			end
 			client.m_FactionDuty = true
 			client:sendInfo(_("Du bist nun im Dienst!", client))

@@ -82,9 +82,9 @@ end
 
 function JobLogistician:createCraneMarker(crane, pos, vehPos, vehRot)
 	local marker = createMarker(pos, "cylinder", 3, 255, 255, 0, 127)
-	marker:setData("Crane", crane)
-	marker:setData("VehiclePosition", vehPos)
-	marker:setData("VehicleRotation", Vector3(0, 0, vehRot))
+	marker.Crane = crane
+	marker.VehPos = vehPos
+	marker.VehRot = Vector3(0, 0, vehRot)
 	addEventHandler("onMarkerHit", marker, bind(self.onMarkerHit, self))
 	return marker
 end
@@ -93,10 +93,10 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle():getData("LogisticanVehicle") == true then
 			local veh = hitElement:getOccupiedVehicle()
-			if source:getData("Crane") then
-				local crane = source:getData("Crane")
-				veh:setPosition(source:getData("VehiclePosition"))
-				veh:setRotation(source:getData("VehicleRotation"))
+			if source.Crane then
+				local crane = source.Crane
+				veh:setPosition(source.VehPos)
+				veh:setRotation(source.VehRot)
 				if crane:getVehicleAttachedContainer(veh) then
 					if source == hitElement:getData("Logistician:TargetMarker") then
 						crane:dropContainer(veh, hitElement,

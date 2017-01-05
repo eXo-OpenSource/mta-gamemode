@@ -472,6 +472,9 @@ function VehicleManager:Event_vehicleAddKey(player)
 
 	-- Tell the client that we added a new key
 	triggerClientEvent(client, "vehicleKeysRetrieve", source, source:getKeyNameList())
+
+	player:sendShortMessage(_("Du hast einen Fahrzeugschlüssel von %s erhalten! (%s)", player, client:getName(), source:getName()))
+	client:sendShortMessage(_("Du hast %s einen Fahrzeugschlüssel gegeben! (%s)", client, player:getName(), source:getName()))
 end
 
 function VehicleManager:Event_vehicleRemoveKey(characterId)
@@ -490,6 +493,8 @@ function VehicleManager:Event_vehicleRemoveKey(characterId)
 
 	-- Tell the client that we removed the key
 	triggerClientEvent(client, "vehicleKeysRetrieve", source, source:getKeyNameList())
+
+	client:sendShortMessage(_("Du hast dem Spieler einen Fahrzeugschlüssel abgenommen! (%s)", client, source:getName()))
 end
 
 function VehicleManager:Event_vehicleRepair()
@@ -554,7 +559,14 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 				client:sendError(_("Diese Fahrzeug ist nicht von deiner Gruppe!", client))
 				return
 			end
+			local group = client:getGroup()
+			if group:getMoney() > 100 then
+				group:takeMoney(100, "Fahrzeug-Respawn")
+			else
+				client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
+			end
 			source:respawn()
+			group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s respawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
 			return
 		end
 	end
@@ -739,7 +751,7 @@ function VehicleManager:Event_vehicleUpgradeGarage()
 
 				client:triggerEvent("vehicleRetrieveInfo", false, client:getGarageType(), client:getHangarType())
 			else
-				client:sendError(_("Du hast nicht genügend Geld, um deine Garage zu upgraden", client))
+				client:sendError(_("Du hast nicht genügend Geld, um die Garage zu kaufen oder upzugraden", client))
 			end
 		else
 			client:sendError(_("Deine Garage ist bereits auf dem höchsten Level", client))
