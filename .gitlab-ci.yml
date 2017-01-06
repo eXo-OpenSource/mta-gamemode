@@ -95,7 +95,7 @@ clean_env_job_docker:
     - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
     #- '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker rmi $DOCKER_USER/exo-rl-mta:latest' # Keep master image to use the cache
     #- sudo docker rmi exo-rl-mta
-    - sudo docker rmi $(sudo docker images -q -f dangling=true) # Remove dangling images
+    - 'IMAGES=$(sudo docker images -q -f dangling=true) && [ "$IMAGES" != "" ] && sudo docker rmi $IMAGES' # Remove dangling images
   except:
     - /^bugfix\/.*$/
   when: always
