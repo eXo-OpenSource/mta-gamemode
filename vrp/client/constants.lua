@@ -272,6 +272,7 @@ HelpTexts = {
 			Jusonex (kleinere Unterstüzung)
 			Strobe
 			PewX
+			MegaThorx
 
 			Projektleitung:
 			[eXo]Stumpy
@@ -300,6 +301,7 @@ HelpTexts = {
 			[eXo]Janni_Morita
 			[eXo]AfGun
 			[eXo]Burmtim
+			[eXo]Risi
 
 			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
 		]];
