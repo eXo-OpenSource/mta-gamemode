@@ -22,6 +22,8 @@ function JobLumberjack:constructor()
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
+	self.m_ResetDataBind = bind(self.onResetData, self)
+
 	addEvent("lumberjackTreeCut", true)
 	addEventHandler("lumberjackTreeCut", root, bind(JobLumberjack.Event_lumberjackTreeCut, self))
 end
@@ -44,6 +46,7 @@ end
 function JobLumberjack:onVehicleSpawn(player, vehicleModel, vehicle)
 	vehicle:setVariant(255, 255)
 	vehicle:addCountdownDestroy(10)
+	vehicle.LumberjackOwner = player
 end
 
 function JobLumberjack:checkRequirements(player)
@@ -77,6 +80,9 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 			return
 		end
 
+		addEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind)
+		addEventHandler("onVehicleExplode", vehicle, self.m_ResetDataBind)
+
 		local loadedTrees = 0
 
 		for i = 0, 2 do
@@ -97,6 +103,13 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 	end
 end
 
+function JobLumberjack:onResetData()
+	local player = source.LumberjackOwner
+	if player and isElement(player) then
+		player:setData("lumberjack:Trees", 0)
+	end
+end
+
 function JobLumberjack:dumpHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		local vehicle = getPedOccupiedVehicle(hitElement)
@@ -113,6 +126,9 @@ function JobLumberjack:dumpHit(hitElement, matchingDimension)
 			hitElement:sendMessage(_("Säge und lade zuerst einige Bäume auf!", hitElement), 255, 0, 0)
 			return
 		end
+
+		removeEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind)
+		removeEventHandler("onVehicleExplode", vehicle, self.m_ResetDataBind)
 
 		hitElement:setData("lumberjack:Trees", 0)
 
