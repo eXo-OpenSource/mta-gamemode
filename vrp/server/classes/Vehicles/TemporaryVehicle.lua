@@ -12,6 +12,7 @@ function TemporaryVehicle:constructor()
 end
 
 function TemporaryVehicle:destructor()
+    VehicleManager:getSingleton():removeRef(self, false)
 end
 
 function TemporaryVehicle.create(model, posX, posY, posZ, rotation)

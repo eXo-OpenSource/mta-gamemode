@@ -317,7 +317,7 @@ function VehicleManager:removeUnusedVehicles()
 	--end
 
 	for k, vehicle in pairs(self.m_TemporaryVehicles) do
-		if vehicle and vehicle:getHealth() < 0.1 and vehicle:getLastUseTime() < getTickCount() - 1*60*1000 then
+		if vehicle and isElement(vehicle) and vehicle:getHealth() < 0.1 and vehicle:getLastUseTime() < getTickCount() - 1*60*1000 then
 			vehicle:respawn()
 		else
 			if vehicle:getLastUseTime() < getTickCount() - 2*60*1000 then
