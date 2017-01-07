@@ -780,7 +780,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				policeman:getFaction():giveMoney(factionBonus, "Arrest")
 				policeman:giveKarma(wantedLevel)
 				policeman:givePoints(wantedLevel)
-				PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, player:getName(), policeman:getName(), jailTime, factionBonus), "Staat")
+				PlayerManager:getSingleton():sendShortMessage(_("%s wurde soeben von %s für %d Minuten eingesperrt! Strafe: %d$", player, policeman:getName(), player:getName(), jailTime, factionBonus), "Staat")
 				StatisticsLogger:getSingleton():addArrestLog(player, wantedLevel, jailTime, policeman, bailcosts)
 				policeman:getFaction():addLog(policeman, "Knast", "hat "..player:getName().." für "..jailTime.."min. eingesperrt!")
 				-- Give Achievements
