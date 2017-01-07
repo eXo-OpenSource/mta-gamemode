@@ -7,7 +7,7 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
-"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin"}
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar"}
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -34,6 +34,8 @@ function LocalPlayer:constructor()
 	addEventHandler("sendTrayNotification", self, bind( self.sendTrayNotification, self ))
 	addEventHandler("setClientTime", self, bind(self.Event_onGetTime, self))
 	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
+	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
+
 
 
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
@@ -430,6 +432,10 @@ function LocalPlayer:Event_setAdmin(player, rank)
 	else
 		ErrorBox:new(_"Clientside Admin konnte nicht verifiziert werden!")
 	end
+end
+
+function LocalPlayer:Event_toggleRadar(state)
+	HUDRadar:getSingleton():setEnabled(state)
 end
 
 function LocalPlayer:sendTrayNotification(text, icon, sound)

@@ -45,12 +45,15 @@ function ShootingRanch:constructor()
 	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
 		if dim then
 			hitElement:triggerEvent("disableDamage", true)
+			hitElement:triggerEvent("toggleRadar", false)
+
 		end
 	end)
 
 	addEventHandler("onColShapeLeave", self.m_Col, function(hitElement, dim)
 		if dim then
 			hitElement:triggerEvent("disableDamage", false)
+			hitElement:triggerEvent("toggleRadar", true)
 		end
 	end)
 
