@@ -659,7 +659,8 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
  	end
  	if source:getPositionType() == VehiclePositionType.World then
- 		source:respawnOnSpawnPosition()
+ 		client:takeMoney(100, "Fahrzeug Respawn")
+		source:respawnOnSpawnPosition()
  	else
  		client:sendError(_("Das Fahrzeug hat keine Park-Position!", client))
  	end
