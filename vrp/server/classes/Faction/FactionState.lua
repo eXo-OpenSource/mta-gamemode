@@ -847,17 +847,18 @@ end
 
 function FactionState:Event_toggleSwat()
 	if client:isFactionDuty() then
+		local faction = client:getFaction()
 		local swat = client:getPublicSync("Faction:Swat")
 		if swat == true then
-			client:setJobDutySkin(nil)
+			faction:changeSkin(client)
 			client:setPublicSync("Faction:Swat",false)
 			client:sendInfo(_("Du hast den Swat-Modus beendet Dienst!", client))
-			client:getFaction():updateStateFactionDutyGUI(client)
+			faction:updateStateFactionDutyGUI(client)
 		else
 			client:setJobDutySkin(285)
 			client:setPublicSync("Faction:Swat",true)
 			client:sendInfo(_("Du hast bist in den Swat-Modus gewechselt!", client))
-			client:getFaction():updateStateFactionDutyGUI(client)
+			faction:updateStateFactionDutyGUI(client)
 		end
 	end
 end
