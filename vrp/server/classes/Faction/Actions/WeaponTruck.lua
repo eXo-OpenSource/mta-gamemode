@@ -477,12 +477,13 @@ function WeaponTruck:onStateMarkerHit(hitElement)
 	local sum = 0
 	for key, box in pairs (boxes) do
 		if box:getModel() == 2912 then
-			sum = box.sum
+			sum = sum + box.sum
 			box:destroy()
 		end
 	end
-
-	hitElement:getFaction():giveMoney(sum, "Waffentruck Kisten")
+	if sum > 0 then
+		hitElement:getFaction():giveMoney(sum, "Waffentruck Kisten")
+	end
 
 	if self:getRemainingBoxAmount() == 0 then
 		delete(self)
