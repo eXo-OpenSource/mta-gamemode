@@ -474,12 +474,16 @@ function WeaponTruck:onStateMarkerHit(hitElement)
 		hitElement:sendInfo(_("Du musst die Kisten per Hand oder mit dem Waffentruck abladen!", hitElement))
 		return
 	end
-	for key, value in pairs (boxes) do
-		if value:getModel() == 2912 then
-			hitElement:getFaction():giveMoney(value.sum, "Waffentruck Kiste")
-			value:destroy()
+	local sum = 0
+	for key, box in pairs (boxes) do
+		if box:getModel() == 2912 then
+			sum = box.sum
+			box:destroy()
 		end
 	end
+
+	hitElement:getFaction():giveMoney(sum, "Waffentruck Kisten")
+
 	if self:getRemainingBoxAmount() == 0 then
 		delete(self)
 	end
