@@ -26,17 +26,19 @@ function Tour:constructor()
 end
 
 function Tour:start(forceNew)
-	if self.m_TourPlayerData[client] then
+	local Id = client:getId()
+	if not Id then return end
+	if self.m_TourPlayerData[Id] then
 		self:save(player)
 		client:triggerEvent("tourStop")
 	end
-	local row = sql:queryFetchSingle("SELECT Tour FROM ??_character WHERE Id = ?;", sql:getPrefix(), client:getId())
+	local row = sql:queryFetchSingle("SELECT Tour FROM ??_character WHERE Id = ?;", sql:getPrefix(), Id)
 	local tbl = (row.Tour ~= nil and row.Tour) or toJSON({})
-	self.m_TourPlayerData[client]  = fromJSON(tbl)
+	self.m_TourPlayerData[Id]  = fromJSON(tbl)
 	local step = 1
 	if not forceNew == true then
 		for id, data in pairs(Tour.Data) do
-			if not self.m_TourPlayerData[client][tostring(id)] == true then
+			if not self.m_TourPlayerData[Id][tostring(id)] == true then
 				step = id
 			end
 		end
@@ -48,8 +50,8 @@ end
 function Tour:save(player)
 	if not player then source = player end
 
-	if self.m_TourPlayerData[player] then
-		sql:queryExec("UPDATE ??_character SET Tour = ? WHERE Id = ?;", sql:getPrefix(), toJSON(self.m_TourPlayerData[player]), player:getId())
+	if self.m_TourPlayerData[player:getId()] then
+		sql:queryExec("UPDATE ??_character SET Tour = ? WHERE Id = ?;", sql:getPrefix(), toJSON(self.m_TourPlayerData[player:getId()]), player:getId())
 	end
 end
 
@@ -70,8 +72,8 @@ end
 
 function Tour:successStep(id)
 	if Tour.Data[id] then
-		if not self.m_TourPlayerData[client][tostring(id)] then
-			self.m_TourPlayerData[client][tostring(id)] = true
+		if not self.m_TourPlayerData[client:getId()][tostring(id)] then
+			self.m_TourPlayerData[client:getId()][tostring(id)] = true
 			client:giveMoney(Tour.Data[id].Money, "Tour")
 		else
 			client:sendShortMessage(_("Du hast bereits die Belohnung für diesen Schritt erhalten!", client))
