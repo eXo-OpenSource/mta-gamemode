@@ -19,7 +19,7 @@ function GPS:startNavigationTo(pos)
 	self.m_Arrow = createObject(1318, 0, 0, 0)
 	setElementCollisionsEnabled(self.m_Arrow, false)
 	self.m_ColShape = createColSphere(pos, 20)
-	
+
 	addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
 	addEventHandler("onClientColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
 end
@@ -46,11 +46,11 @@ function GPS:update()
 		self:stopNavigation()
 		return
 	end
-	
+
 	local x, y, z = getElementPosition(vehicle)
 	local horizontalRotation = findRotation(x, y, self.m_Destination.x, self.m_Destination.y) - 90
 	local verticalRotation = math.deg(math.asin((self.m_Destination.z - z) / getDistanceBetweenPoints3D(self.m_Destination.x, self.m_Destination.y, self.m_Destination.z, x, y, z)))
-	
+
 	setElementPosition(self.m_Arrow, x, y, z + 1)
 	setElementRotation(self.m_Arrow, 0, 90 + verticalRotation, horizontalRotation)
 end
@@ -58,6 +58,6 @@ end
 function GPS:colShapeHit(hitElement, matchingDimension)
 	if hitElement == localPlayer and matchingDimension then
 		self:stopNavigation()
-		localPlayer:sendMessage(_"You have reached your destination!", 0, 255, 0)
+		localPlayer:sendMessage(_"Du hast das Ziel erreicht!", 0, 255, 0)
 	end
 end

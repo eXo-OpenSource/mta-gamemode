@@ -64,6 +64,11 @@ function StreetRaceEvent:onPlayerExit()
 end
 
 function StreetRaceEvent:destructor()
+	for k, player in pairs(self.m_Players) do
+		player:setData("inEvent", false)
+		removeEventHandler("onPlayerVehicleExit",player,self.m_onExitFunc)
+	end
+
 	if self.m_DestinationBlip then
 		delete(self.m_DestinationBlip)
 	end
@@ -77,6 +82,8 @@ function StreetRaceEvent:destructor()
 		killTimer(self.m_TimeoutTimer)
 	end
 	delete(self.m_EventBlip)
+
+
 end
 
 function StreetRaceEvent:colShapeHit(hitElement, matchingDimension)
