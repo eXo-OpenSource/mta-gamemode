@@ -12,9 +12,8 @@ function DrugsShroom:constructor()
     self.m_MagicModel = 1947
     self.m_NormalModel = 1882
     self.m_Models = {self.m_MagicModel, self.m_NormalModel}
-    self.m_MushRoomTable = {}
+	self.m_MushRooms = {}
     self:load()
-
 
     addCommandHandler("addMushroom", bind(self.addPosition, self))
 	addCommandHandler("removeMushroom", bind(self.removePosition, self))
@@ -49,11 +48,9 @@ function DrugsShroom:addPosition(player, cmd)
     if not player:getOccupiedVehicle() then
         local pos = player:getPosition()
         pos.z = pos.z-1
-        if not self.m_MushRoomTable then self.m_MushRoomTable = {} end
-        table.insert(self.m_MushRoomTable, {pos.x, pos.y, pos.z})
-        self:addMushroom(pos.x, pos.y, pos.z)
+		sql:queryExec("INSERT INTO ??_mushrooms(PosX, PosY, PosZ) VALUES(?, ?, ?);", sql:getPrefix(), pos.x, pos.y, pos.z)
+        self:addMushroom(sql:lastInsertId(), pos)
         player:sendInfo(_("Mushroom hinzugefügt!", player))
-        self:savePositions()
     else
         player:sendError(_("Du darfst in keinem Fahrzeug sitzen!", player))
     end
@@ -67,74 +64,38 @@ function DrugsShroom:removePosition(player, cmd)
 		local tempCol = createColSphere(pos, 5)
 		for index, element in pairs(getElementsWithinColShape(tempCol, "object")) do
 			if element:getModel() == self.m_MagicModel or element:getModel() == self.m_NormalModel then
-				local pos = element:getPosition()
-				table.remove(self.m_MushRoomTable, table.find(self.m_MushRoomTable, {pos.x, pos.y, pos.z}))
-				element:destroy()
-				player:sendInfo(_("Mushroom entfernt!", player))
+				if element.Id then
+					sql:queryExec("DELETE FROM ??_mushrooms WHERE Id = ?;", sql:getPrefix(), element.Id)
+					self.m_MushRooms[Id] = nil
+					element:destroy()
+					player:sendInfo(_("Mushroom entfernt!", player))
+				else
+				    player:sendError(_("Mushroom nicht gefunden!", player))
+				end
 			end
 		end
-        self:savePositions()
     else
         player:sendError(_("Du darfst in keinem Fahrzeug sitzen!", player))
     end
 end
 
-function DrugsShroom:loadPositions()
-
-    if not fileExists(self.m_Path) then
-        local file = fileCreate(self.m_Path)
-        fileSetPos(file, 0)
-        fileWrite(file, toJSON(self.m_MushRoomTable))
-        fileClose(file)
-    end
-
-    local file = fileOpen (self.m_Path, false)
-    if file then
-    	local buffer
-    	while not fileIsEOF(file) do
-    		buffer = fileRead(file, 50000)
-    	end
-    	fileClose(file)
-        if fromJSON(buffer) then
-    	       self.m_MushRoomTable = fromJSON(buffer)
-           end
-        outputDebug("mushrooms.dat - Loaded "..#self.m_MushRoomTable.." Mushroom Positions!")
-
-    end
-end
-
-function DrugsShroom:savePositions()
-    local mushRoomJSON = toJSON(self.m_MushRoomTable)
-    if not getResourceFromName("vrp_data") then createResource("vrp_data") end
-    if not getResourceState(getResourceFromName("vrp_data")) == "running" then startResource(getResourceFromName("vrp_data")) end
-    fileDelete(self.m_Path)
-    if not fileExists(self.m_Path) then
-        fileClose(fileCreate(self.m_Path))
-    end
-    local file = fileOpen (self.m_Path, false)
-    fileSetPos(file, 0)
-    fileWrite(file, mushRoomJSON)
-    fileClose(file)
-    outputDebug("mushrooms.dat saved")
-end
-
-
 function DrugsShroom:load()
-    self:loadPositions()
-    self.m_Mushrooms = {}
-    if self.m_MushRoomTable then
-        for index, pos in pairs(self.m_MushRoomTable) do
-            self.m_Mushrooms[#self.m_Mushrooms+1] =
-            self:addMushroom(unpack(pos))
-        end
-    end
+   	local count = 0
+	local result = sql:queryFetch("SELECT * FROM ??_mushrooms;", sql:getPrefix())
+
+	for i, row in pairs(result) do
+		self:addMushroom(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))
+		count = count+1
+	end
+	outputDebugString(count.." Mushrooms geladen!")
 end
 
-function DrugsShroom:addMushroom(posX, posY, posZ)
-    local index = #self.m_Mushrooms+1
-    self.m_Mushrooms[index] = createObject(self.m_Models[math.random(1, #self.m_Models)], posX, posY, posZ)
-    self.m_Mushrooms[index]:setData("clickable", true, true)
-    addEventHandler("onElementClicked",self.m_Mushrooms[index], bind(self.onMushroomClick, self))
+function DrugsShroom:addMushroom(Id, pos)
+	local model = self.m_Models[math.random(1, #self.m_Models)]
+	self.m_MushRooms[Id] = createObject(model, pos)
+	self.m_MushRooms[Id].Id = Id
+    self.m_MushRooms[Id]:setData("clickable", true, true)
+    addEventHandler("onElementClicked",self.m_MushRooms[Id], bind(self.onMushroomClick, self))
 end
 
 function DrugsShroom:onMushroomClick(button, state, player)
