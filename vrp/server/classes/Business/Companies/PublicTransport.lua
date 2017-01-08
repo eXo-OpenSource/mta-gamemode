@@ -72,14 +72,14 @@ end
 function PublicTransport:onVehiceEnter(veh, player, seat)
 	if seat == 0 then
 		if veh:getModel() == 420 or veh:getModel() == 438 then
-			triggerClientEvent(player, "showTaxoMeter", player)
+			player:triggerEvent("showTaxoMeter")
 		elseif veh:getModel() == 437 then
 			self:startBusTour(player)
 		end
 	else
 		if veh:getModel() == 420 or veh:getModel() == 438 then
 			self:startTaxiDrive(veh, player)
-			triggerClientEvent(player, "showPublicTransportTaxiGUI", player)
+			player:triggerEvent("showPublicTransportTaxiGUI")
 		end
 	end
 end
@@ -99,7 +99,7 @@ end
 function PublicTransport:onVehiceExit(veh, player, seat)
 	if seat == 0 then
 		if veh:getModel() == 420 or veh:getModel() == 438 then
-			triggerClientEvent(player, "hideTaxoMeter", player)
+			player:triggerEvent("hideTaxoMeter")
 		elseif veh:getModel() == 437 then
 			self:stopBusTour(player)
 		end
@@ -117,7 +117,8 @@ function PublicTransport:startTaxiDrive(veh, customer)
 	self.m_TaxiCustomer[customer]["diff"] = 0
 	self.m_TaxiCustomer[customer]["price"] = 0
 	self.m_TaxiCustomer[customer]["timer"] = setTimer(self.m_TaxoMeter, 1000, 0, customer)
-	triggerClientEvent(customer, "showTaxoMeter", customer)
+	customer:triggerEvent("showTaxoMeter")
+
 	--triggerClientEvent(self.m_TaxiCustomer[customer]["driver"], "showTaxoMeter", self.m_TaxiCustomer[customer]["driver"])
 end
 
@@ -134,7 +135,7 @@ function PublicTransport:endTaxiDrive(customer)
 		killTimer(self.m_TaxiCustomer[customer]["timer"])
 		if self.m_TaxiCustomer[customer]["blip"] then delete(self.m_TaxiCustomer[customer]["blip"]) end
 		self.m_TaxiCustomer[customer] = nil
-		triggerClientEvent(customer, "hideTaxoMeter", customer)
+		customer:triggerEvent("hideTaxoMeter")
 		self:updateDriverTaxometer(vehicle, driver)
 	end
 end
@@ -142,12 +143,13 @@ end
 function PublicTransport:updateTaxometer(customer)
 	self.m_TaxiCustomer[customer]["diff"] = (self.m_TaxiCustomer[customer]["vehicle"]:getMileage() - self.m_TaxiCustomer[customer]["startMileage"])/1000
 	self.m_TaxiCustomer[customer]["price"] = math.floor(self.m_TaxiCustomer[customer]["diff"] * TAXI_PRICE_PER_KM)
+	customer:triggerEvent("syncTaxoMeter", self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
+
 	if customer:getMoney() < self.m_TaxiCustomer[customer]["price"] then
 		customer:sendError(_("Du hast kein Geld mehr dabei! Du wurdest aus dem Taxi geschmissen!", customer, price))
 		customer:removeFromVehicle()
 		self:endTaxiDrive(customer)
 	end
-
 	self:updateDriverTaxometer(self.m_TaxiCustomer[customer]["vehicle"], self.m_TaxiCustomer[customer]["driver"])
 end
 
@@ -161,7 +163,7 @@ function PublicTransport:updateDriverTaxometer(vehicle, driver)
 		end
 	end
 	if driver then
-		triggerClientEvent(driver, "syncDriverTaxoMeter", driver, customers)
+		driver:triggerEvent("syncDriverTaxoMeter", customers)
 	end
 end
 
