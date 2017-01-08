@@ -44,6 +44,7 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
   self.m_PositionType = positionType or VehiclePositionType.World
   self.m_Position = self:getPosition()
   self.m_Rotation = self:getRotation()
+  self:setFrozen(true)
   setElementData(self, "OwnerName", self.m_Company:getName())
   setElementData(self, "OwnerType", "company")
   if health then
@@ -100,8 +101,8 @@ end
 function CompanyVehicle:onStartEnter(player,seat)
 	if seat == 0 then
 		if player:getCompany() == self.m_Company or (self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
-			if not player:isCompanyDuty() and player:getPublicSync("inDrivingLession") == false then 
-				cancelEvent() 
+			if not player:isCompanyDuty() and player:getPublicSync("inDrivingLession") == false then
+				cancelEvent()
 				player:sendError(_("Du bist nicht im Dienst!", player))
 			end
 		else
@@ -116,9 +117,13 @@ function CompanyVehicle:onStartEnter(player,seat)
 end
 
 function CompanyVehicle:onEnter(player, seat)
+	if self:isFrozen() == true then
+		self:setFrozen(false)
+	end
 	if self:getCompany():getId() == 4 then
 		self:getCompany():onVehiceEnter(source, player, seat)
 	end
+
 end
 
 function CompanyVehicle:onExit(player, seat)
@@ -196,6 +201,7 @@ function CompanyVehicle:respawn(force)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
 	self:fix()
+	self:setFrozen(true)
 
 	return true
 end
