@@ -13,11 +13,13 @@ function DrugsShroom:constructor()
     self.m_NormalModel = 1882
     self.m_Models = {self.m_MagicModel, self.m_NormalModel}
 	self.m_MushRooms = {}
-    self:load()
+
+	self.m_TimedPulse = TimedPulse:new(60*60*1000)
+	self.m_TimedPulse:registerHandler(bind(self.reload, self))
+    self:reload()
 
     addCommandHandler("addMushroom", bind(self.addPosition, self))
 	addCommandHandler("removeMushroom", bind(self.removePosition, self))
-
 end
 
 function DrugsShroom:destructor()
@@ -44,7 +46,11 @@ function DrugsShroom:expire( player )
   player:triggerEvent("onClientItemExpire", "Shrooms" )
 end
 
-function DrugsShroom:addPosition(player, cmd)
+function DrugsShroom:addPosition(player)
+	if player:getRank() < RANK.Moderator then
+		player:sendError(_("Du bist nicht berechtigt!", player))
+		return
+	end
     if not player:getOccupiedVehicle() then
         local pos = player:getPosition()
         pos.z = pos.z-1
@@ -56,8 +62,12 @@ function DrugsShroom:addPosition(player, cmd)
     end
 end
 
-function DrugsShroom:removePosition(player, cmd)
-    if not player:getOccupiedVehicle() then
+function DrugsShroom:removePosition(player)
+    if player:getRank() < RANK.Moderator then
+		player:sendError(_("Du bist nicht berechtigt!", player))
+		return
+	end
+	if not player:getOccupiedVehicle() then
 
 		local pos = player:getPosition()
         pos.z = pos.z-1
@@ -79,15 +89,24 @@ function DrugsShroom:removePosition(player, cmd)
     end
 end
 
-function DrugsShroom:load()
-   	local count = 0
+function DrugsShroom:reload()
+	for id, object in pairs(self.m_MushRooms) do
+		object:destroy()
+		self.m_MushRooms[id] = nil
+	end
+	self.m_MushRooms = {}
+
+   	local count, countPositions = 0, 0
 	local result = sql:queryFetch("SELECT * FROM ??_mushrooms;", sql:getPrefix())
 
 	for i, row in pairs(result) do
-		self:addMushroom(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))
-		count = count+1
+		if chance(33) then
+			self:addMushroom(row.Id, Vector3(row.PosX, row.PosY, row.PosZ))
+			count = count+1
+		end
+		countPositions = countPositions+1
 	end
-	outputDebugString(count.." Mushrooms geladen!")
+	outputDebugString(count.."Mushrooms von "..countPositions.." Positionen geladen!")
 end
 
 function DrugsShroom:addMushroom(Id, pos)
