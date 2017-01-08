@@ -176,12 +176,20 @@ function PlayerManager:playerJoin()
 	source:join()
 end
 
-function PlayerManager:playerCommand()
+function PlayerManager:playerCommand(cmd)
+	local blockedCmdWhileDead = {
+		"say", "f", "l", "me", "g", "Fraktion", "Firma", "teamsay"
+	}
+
 	if not DEBUG then
 		if not source:isLoggedIn() then
 			cancelEvent()
 		end
+		if source:isDead() and table.find(blockedCmdWhileDead, cmd) then
+			cancelEvent()
+		end
 	end
+
 end
 
 function PlayerManager:playerQuit()
