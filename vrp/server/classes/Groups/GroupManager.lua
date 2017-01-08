@@ -426,7 +426,7 @@ function GroupManager:Event_ChangeName(name)
 		return
 	end
 
-	if client:getMoney() < 20000 then
+	if client:getMoney() < GROUP_RENAME_COSTS then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
 	end
