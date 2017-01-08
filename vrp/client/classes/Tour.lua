@@ -26,6 +26,7 @@ function Tour:stop()
 	if isElement(self.m_Arrow) then self.m_Arrow:destroy() end
 	if isElement(self.m_TargetMarker) then self.m_TargetMarker:destroy() end
 	if TourGUI:isInstantiated() then delete(TourGUI:getSingleton()) end
+	if SelfGUI:getSingleton():isVisible() then showCursor(true) end
 	removeEventHandler("onClientPreRender", root, self.m_updateArrow)
 	core:set("Tour", "done", true)
 	self.m_Active = false
