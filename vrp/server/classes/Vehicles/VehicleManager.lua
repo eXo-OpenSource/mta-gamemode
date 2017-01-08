@@ -608,7 +608,9 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		setVehicleOverrideLights(source, 1)
 		setVehicleEngineState(source, false)
 		source:setSirensOn(false)
-		client:takeMoney(100, "Fahrzeug-Respawn")
+		if source:getOwner() == client:getId() then
+			client:takeMoney(100, "Fahrzeug Respawn")
+		end
 		client:sendShortMessage(_("Fahrzeug repariert!", client))
 		return
 	end
@@ -618,7 +620,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 	end
 
 	if source:respawn(garageOnly) then
-		if client:getRank() < RANK.Moderator or source:getOwner() == client:getId() then
+		if source:getOwner() == client:getId() then
 			client:takeMoney(100, "Fahrzeug-Respawn")
 		end
 		source:fix()
@@ -663,7 +665,9 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
  	end
  	if source:getPositionType() == VehiclePositionType.World then
- 		client:takeMoney(100, "Fahrzeug Respawn")
+ 		if source:getOwner() == client:getId() then
+			client:takeMoney(100, "Fahrzeug Respawn")
+		end
 		source:respawnOnSpawnPosition()
  	else
  		client:sendError(_("Das Fahrzeug hat keine Park-Position!", client))
