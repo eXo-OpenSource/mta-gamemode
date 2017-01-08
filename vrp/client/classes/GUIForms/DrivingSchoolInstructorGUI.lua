@@ -15,7 +15,7 @@ function DrivingSchoolInstructorGUI:constructor(type, student)
 	self.m_Student = student
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _("Fahrlehrer-Menü"), true, false, self)
 	GUILabel:new(5, 35, self.m_Width-10, 25, _("Prüfung: %s", type), self.m_Window)
-	GUILabel:new(5, 60, self.m_Width-10, 25, _("Fahrschüler: %s", student.name), self.m_Window)
+	GUILabel:new(5, 60, self.m_Width-10, 20, _("Schüler: %s", student.name), self.m_Window)
 	self.m_SpeedLabel = GUILabel:new(5, 85, self.m_Width-10, 30, _("<< kein Fahrzeug >>"), self.m_Window)
 	GUILabel:new(5, 118, self.m_Width, 30, _("Anweisungen geben:", student.name), self.m_Window):setFont("default-bold"):setFontSize(1.2)
 	self.m_LeftButton = GUIButton:new(27, 145, 45, 40, "←", self):setBackgroundColor(Color.LightBlue)
