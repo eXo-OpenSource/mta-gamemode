@@ -91,7 +91,7 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 
 						-- Add tree to stack
 						if not self:addStackedTree() then
-							localPlayer:sendMessage(_"Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk! (rote Säge auf der Map)")
+							localPlayer:sendMessage(_"Der Holzstapel ist voll. Bitte transportiere die Bäume zum Sägewerk! (rote Säge oder Punkt auf der Map)")
 						end
 
 						-- "Respawn" the tree after a while

@@ -22,10 +22,10 @@ function LoginGUI:constructor()
 		Closed Beta!]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
 
 	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
-	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
-	self.m_LoginTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.1, sh*0.03, "Benutzername", self.m_LoginTab) -- 1.75
-	self.m_LoginEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.54, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_LoginTab)
-	self.m_LoginTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.54, sw*0.1, sh*0.03, "Passwort", self.m_LoginTab) -- 1.75
+	self.m_LoginEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_LoginTab)
+	self.m_LoginTextUser	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.46, sw*0.1, sh*0.03, "Benutzername", self.m_LoginTab) -- 1.75
+	self.m_LoginEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.54, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_LoginTab)
+	self.m_LoginTextPass	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.54, sw*0.1, sh*0.03, "Passwort", self.m_LoginTab) -- 1.75
 	self.m_LoginCheckbox	= GUICheckbox:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.62, sw*0.6*0.025, sw*0.6*0.025, "Passwort merken", self.m_LoginTab)
 	self.m_LoginErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.66, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_LoginTab)
 	self.m_LoginErrorBox:hide()
@@ -44,14 +44,14 @@ function LoginGUI:constructor()
 	self.m_RegisterTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
 	self.m_RegisterTab:setVisible(false)
 
-	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.35, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.35, sw*0.1, sh*0.03, "Benutzername", self.m_RegisterTab) -- 1.75
-	self.m_RegisterEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.43, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.43, sw*0.1, sh*0.03, "Passwort", self.m_RegisterTab) -- 1.75
-	self.m_RegisterEditPass2 = GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.51, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextPass2 = GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.51, sw*0.1, sh*0.03, "Erneut Passwort", self.m_RegisterTab) -- 1.75
-	self.m_RegisterEditMail	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.59, sw*0.6*0.75*0.30, sh*0.6*0.05, self.m_RegisterTab)
-	self.m_RegisterTextMail	= GUILabel:new(sw*0.6*0.75*0.47, (sh*0.6-sh*0.6*0.01)*0.59, sw*0.1, sh*0.03, "E-Mail", self.m_RegisterTab) -- 1.75
+	self.m_RegisterEditUser	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.35, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextUser	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.35, sw*0.1, sh*0.03, "Benutzername", self.m_RegisterTab) -- 1.75
+	self.m_RegisterEditPass	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.43, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextPass	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.43, sw*0.1, sh*0.03, "Passwort", self.m_RegisterTab) -- 1.75
+	self.m_RegisterEditPass2 = GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.51, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextPass2 = GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.51, sw*0.1, sh*0.03, "Erneut Passwort", self.m_RegisterTab) -- 1.75
+	self.m_RegisterEditMail	= GUIEdit:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.59, sw*0.6*0.75*0.50, sh*0.6*0.05, self.m_RegisterTab)
+	self.m_RegisterTextMail	= GUILabel:new(sw*0.6*0.75*0.67, (sh*0.6-sh*0.6*0.01)*0.59, sw*0.1, sh*0.03, "E-Mail", self.m_RegisterTab) -- 1.75
 
 	self.m_RegisterErrorBox = GUIRectangle:new(sw*0.6*0.75*0.15, (sh*0.6-sh*0.6*0.01)*0.65, sw*0.6*0.75*0.7, (sh*0.6-sh*0.6*0.01)*0.075, tocolor(255, 0, 0, 128), self.m_RegisterTab)
 	self.m_RegisterErrorBox:hide()

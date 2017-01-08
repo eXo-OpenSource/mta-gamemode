@@ -29,7 +29,7 @@ function GroupGUI:constructor()
 	self.m_GroupsNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.06, "", tabGroups)
 	self.m_GroupsNameChangeLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.02, self.m_Width*0.1, self.m_Height*0.06, _"(ändern)", tabGroups):setColor(Color.LightBlue)
 	self.m_GroupsNameChangeLabel.onLeftClick = function()
-		InputBox:new(_"Namen ändern", _"Bitte gib einen neuen Name für deine Firma / Gang ein! Dies kostet dich 5000$!", function (name) triggerServerEvent("groupChangeName", root, name) end)
+		InputBox:new(_"Namen ändern", _("Bitte gib einen neuen Name für deine Firma / Gang ein! Dies kostet dich %d$!", GROUP_RENAME_COSTS), function (name) triggerServerEvent("groupChangeName", root, name) end)
 		WarningBox:new(_"Achtung: Der Name ist nur alle 30 Tage änderbar!")
 	end
 	self.m_GroupsNameChangeLabel.onHover = function () self.m_GroupsNameChangeLabel:setColor(Color.White) end
