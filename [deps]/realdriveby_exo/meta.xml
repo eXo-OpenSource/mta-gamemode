@@ -30,6 +30,8 @@
 		
 		<!--Whether a weapon should be equiped as soon as you enter a vehicle. -->
 		<setting name="driveby_auto_equip" value="[false]"/>
+		<setting name="bike_hitbox_fix" value="[true]"/>
+
 	</settings>
 	<export function="setDriverDrivebyAbility" type="client" />
 	<export function="setPassengerDrivebyAbility" type="client" />
