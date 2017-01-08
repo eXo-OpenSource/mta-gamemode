@@ -249,6 +249,11 @@ function LocalPlayer:Event_playerWasted()
 	self.m_CanBeRevived = true
 	self.m_WastedTimer = setTimer(
 		function()
+			if not localPlayer:isDead() then
+				delete(self.m_DeathMessage)
+				killTimer(self.m_WastedTimer)
+			end
+
 			local timeGone = getTickCount() - start
 			if timeGone >= deathTime-500 then
 				funcA()
