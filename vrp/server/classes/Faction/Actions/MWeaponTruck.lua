@@ -91,11 +91,11 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 				end
 			end
 		end
-		if (self.m_CurrentType == "evil" and client:getMoney() >= totalAmount) or (self.m_CurrentType == "state" and faction:getMoney() >= totalAmount) then
+		if faction:getMoney() >= totalAmount then
 			if totalAmount > 0 then
 				if ActionsCheck:getSingleton():isActionAllowed(client) then
 					if self.m_CurrentType == "evil" then
-						client:takeMoney(totalAmount, "Waffen-Truck")
+						faction:takeMoney(totalAmount, "Waffen-Truck")
 					elseif self.m_CurrentType == "state" then
 						if not client:isFactionDuty() then
 							client:sendError(_("Du bist nicht im Dienst!",client))
@@ -114,11 +114,7 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 				client:sendError(_("Du hast zuwenig augeladen! Mindestens: %d$",client,self.m_AmountPerBox))
 			end
 		else
-			if self.m_CurrentType == "evil" then
-				client:sendError(_("Du hast nicht ausreichend Geld dabei! (%d$)",client,totalAmount))
-			elseif self.m_CurrentType == "state" then
-				client:sendError(_("Ihr habt nicht genug Geld in der Staatskasse! (%d$)",client,totalAmount))
-			end
+			client:sendError(_("Ihr hast nicht ausreichend Geld in der Fraktions_Kasse! (%d$)",client,totalAmount))
 		end
 	else
 		client:sendError(_("Du bist in keiner Fraktion!",client))
