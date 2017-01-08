@@ -1063,7 +1063,7 @@ function FactionState:Event_friskPlayer(target)
 			target:sendMessage(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()), 255, 255, 0)
 			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
 			local inv = target:getInventory()
-			local targetDrugs = false
+			local targetDrugs, targetWeapons = false, false
 			for index, item in pairs(DrugItems) do
 				if inv:getItemAmount(item) > 0 then
 					if not targetDrugs then targetDrugs = {} end
@@ -1081,6 +1081,25 @@ function FactionState:Event_friskPlayer(target)
 			else
 				client:sendMessage(_("%s hat keine Drogen dabei!", client, target:getName()), 0, 255, 0)
 				target:sendMessage(_("Du hast keine Drogen dabei!", target), 0, 255, 0)
+			end
+
+			for i=1, 12 do
+				if getPedWeapon(localPlayer,i) > 0 then
+					if not targetWeapons then targetWeapons = {} end
+					targetWeapons[getPedWeapon(localPlayer,i)] = true
+				end
+			end
+
+			if targetWeapons then
+				client:sendMessage(_("%s hat folgende Waffen dabei:", client, target:getName()), 255, 255, 0)
+				target:sendMessage(_("Du hast folgende Waffen dabei:", target), 255, 255, 0)
+				for weaponID, bool in pairs(targetWeapons) do
+					client:sendMessage(_("%s", client, WEAPON_NAMES[weaponID]), 255, 125, 0)
+					target:sendMessage(_("%s", target, WEAPON_NAMES[weaponID]), 255, 125, 0)
+				end
+			else
+				client:sendMessage(_("%s hat keine Waffen dabei!", client, target:getName()), 0, 255, 0)
+				target:sendMessage(_("Du hast keine Waffen dabei!", target), 0, 255, 0)
 			end
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))
