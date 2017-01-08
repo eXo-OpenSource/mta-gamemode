@@ -106,7 +106,7 @@ function DrugsShroom:reload()
 		end
 		countPositions = countPositions+1
 	end
-	outputDebugString(count.."Mushrooms von "..countPositions.." Positionen geladen!")
+	outputDebugString(count.." Mushrooms von "..countPositions.." Positionen geladen!")
 end
 
 function DrugsShroom:addMushroom(Id, pos)
