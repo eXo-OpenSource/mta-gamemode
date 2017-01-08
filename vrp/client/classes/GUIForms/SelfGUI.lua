@@ -154,7 +154,7 @@ function SelfGUI:constructor()
 	-- Tab: Vehicles
 	local tabVehicles = self.m_TabPanel:addTab(_"Fahrzeuge")
 	self.m_TabVehicles = tabVehicles
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Fahrzeuge:", tabVehicles)
+	self.m_VehiclesLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _("Fahrzeuge: (%d/%d)", 0, 0), tabVehicles)
 	self.m_VehiclesGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.6, tabVehicles)
 	self.m_VehiclesGrid:addColumn(_"Name", 0.4)
 	self.m_VehiclesGrid:addColumn(_"Standort", 0.6)
@@ -789,6 +789,9 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 		end
 	end
 
+	local max = math.floor(MAX_VEHICLES_PER_LEVEL * localPlayer:getVehicleLevel())
+	self.m_VehiclesLabel:setText(_("Fahrzeuge: (%d/%d)", #self.m_VehiclesGrid:getItems() or 0, max or 0))
+
 	if garageType then
 		localPlayer.m_GarageType = garageType
 		self.m_VehicleGarages:setText(_(GARAGE_UPGRADES_TEXTS[garageType]))
@@ -802,6 +805,7 @@ function SelfGUI:Event_vehicleRetrieveInfo(vehiclesInfo, garageType, hangarType)
 		self.m_VehicleGarageUpgradeButton:setPosition(self.m_Width*0.02 + dxGetTextWidth(self.m_VehicleGarages:getText(), self.m_VehicleGarages:getFontSize(), self.m_VehicleGarages:getFont()) + 5, self.m_Height*0.75)
 		self.m_VehicleGarageUpgradeButton:setSize(dxGetTextWidth(self.m_VehicleGarageUpgradeButton:getText(), self.m_VehicleGarageUpgradeButton:getFontSize(), self.m_VehicleGarageUpgradeButton:getFont()), self.m_Height*0.06)
 	end
+
 	--[[
 	if hangarType then
 		localPlayer.m_HangarType = hangarType

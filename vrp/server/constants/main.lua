@@ -142,4 +142,3 @@ RESOURCES_TO_STOP = {
     "helpmanager";
 }
 
-MAX_VEHICLES_PER_LEVEL = 1.5 -- Todo: improve this
