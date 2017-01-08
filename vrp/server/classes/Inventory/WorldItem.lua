@@ -11,7 +11,7 @@ WorldItem.Map = {}
 function WorldItem:constructor(item, player, pos, rotation, breakable)
 	self.m_Item = item
 	self.m_ItemName = item:getName()
-	self.m_Owner = player or false
+	self.m_Owner = player:getId() or false
 	self.m_Object = createObject(item:getModelId(), pos, 0, 0, rotation)
 	setElementData(self.m_Object, "worlditem", true) -- Tell the client that this is a world item (to be able to handle clicks properly)
 	self.m_Object.m_Super = self
@@ -63,7 +63,7 @@ end
 function WorldItem.getItemsByOwner(player)
 	local result = {}
 	for k, worldItem in pairs(WorldItem.Map) do
-		if worldItem.m_Owner == player then
+		if worldItem.m_Owner == player:getId() then
 			result[#result + 1] = worldItem
 		end
 	end
