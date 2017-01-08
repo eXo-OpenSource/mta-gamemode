@@ -28,6 +28,8 @@ function Vehicle:constructor()
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
 	end
+
+	bindKey("handbrake", "up", function() if isPedInVehicle(localPlayer) and getElementData(localPlayer.vehicle, "Handbrake") then setControlState("handbrake", true) end end)
 end
 
 function Vehicle:getFuel()
@@ -76,16 +78,32 @@ addEventHandler("vehicleCarlock", root,
 	end
 )
 
+local handbrakeWorkaroundTimer
 addEventHandler("vehicleHandbrake", root,
 	function()
 		local vehicle = localPlayer.vehicle
 		if vehicle then
 			local bstate = getElementData(vehicle, "Handbrake")
-			if vehicle then
-				if bstate then
-					playSound3D("files/audio/hb_off.mp3", source:getPosition())
-				else
-					playSound3D("files/audio/hb_on.mp3", source:getPosition())
+
+			if bstate then
+				playSound3D("files/audio/hb_off.mp3", source:getPosition())
+				if isTimer(handbrakeWorkaroundTimer) then killTimer(handbrakeWorkaroundTimer) end
+			else
+				playSound3D("files/audio/hb_on.mp3", source:getPosition())
+
+				--Workaround to fix handbrake if player minimze/restore (onClientRestore will not always triggered)
+				if not isTimer(handbrakeWorkaroundTimer) then
+					handbrakeWorkaroundTimer = setTimer(
+						function(vehicle)
+							if not isPedInVehicle(localPlayer) then
+								killTimer(handbrakeWorkaroundTimer)
+								return
+							end
+
+							if getElementData(vehicle, "Handbrake") then
+								setControlState("handbrake", true)
+							end
+						end, 1000, 0, vehicle)
 				end
 			end
 		end
