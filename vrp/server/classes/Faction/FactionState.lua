@@ -1084,9 +1084,9 @@ function FactionState:Event_friskPlayer(target)
 			end
 
 			for i=1, 12 do
-				if getPedWeapon(localPlayer,i) > 0 then
+				if getPedWeapon(target,i) > 0 then
 					if not targetWeapons then targetWeapons = {} end
-					targetWeapons[getPedWeapon(localPlayer,i)] = true
+					targetWeapons[getPedWeapon(target,i)] = true
 				end
 			end
 
