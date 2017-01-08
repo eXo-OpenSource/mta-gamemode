@@ -936,15 +936,17 @@ function FactionState:Event_storageWeapons()
 
 					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
 					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
-					if depotWeapons+1 <= depotMaxWeapons and depotMagazines+magazines <= depotMaxMagazines then
+					if depotWeapons+1 <= depotMaxWeapons then
 						depot:addWeaponD(weaponId, 1)
-						if magazines > 0 then
-							depot:addWeaponD(weaponId, magazines)
+						if magazines > 0 and depotMagazines + magazines <= depotMaxMagazines then
+							depot:addMagazineD(weaponId, magazines)
+						else
+							client:sendError(_("Im Depot ist nicht Platz für %s %s Magazin/e!", client, magazines, WEAPON_NAMES[weaponId]), 0, 255, 0)
 						end
 						takeWeapon(client, weaponId)
 						client:sendMessage(_("Du hast eine/n %s mit %s Magazin/e ins Depot gelegt!", client, WEAPON_NAMES[weaponId], magazines), 0, 255, 0)
 					else
-						client:sendError(_("Im Depot ist nicht Platz für eine/n %s mit %s Magazin/e!", client, WEAPON_NAMES[weaponId], magazines), 0, 255, 0)
+						client:sendError(_("Im Depot ist nicht Platz für eine/n %s!", client, WEAPON_NAMES[weaponId]), 0, 255, 0)
 					end
 				end
 			end
@@ -1061,7 +1063,7 @@ function FactionState:Event_friskPlayer(target)
 			target:sendMessage(_("Der Staatsbeamte %s durchsucht dich!", target, client:getName()), 255, 255, 0)
 			local DrugItems = {"Kokain", "Weed", "Heroin", "Shrooms"}
 			local inv = target:getInventory()
-			local targetDrugs = false
+			local targetDrugs, targetWeapons = false, false
 			for index, item in pairs(DrugItems) do
 				if inv:getItemAmount(item) > 0 then
 					if not targetDrugs then targetDrugs = {} end
@@ -1079,6 +1081,25 @@ function FactionState:Event_friskPlayer(target)
 			else
 				client:sendMessage(_("%s hat keine Drogen dabei!", client, target:getName()), 0, 255, 0)
 				target:sendMessage(_("Du hast keine Drogen dabei!", target), 0, 255, 0)
+			end
+
+			for i=1, 12 do
+				if getPedWeapon(target,i) > 0 then
+					if not targetWeapons then targetWeapons = {} end
+					targetWeapons[getPedWeapon(target,i)] = true
+				end
+			end
+
+			if targetWeapons then
+				client:sendMessage(_("%s hat folgende Waffen dabei:", client, target:getName()), 255, 255, 0)
+				target:sendMessage(_("Du hast folgende Waffen dabei:", target), 255, 255, 0)
+				for weaponID, bool in pairs(targetWeapons) do
+					client:sendMessage(_("%s", client, WEAPON_NAMES[weaponID]), 255, 125, 0)
+					target:sendMessage(_("%s", target, WEAPON_NAMES[weaponID]), 255, 125, 0)
+				end
+			else
+				client:sendMessage(_("%s hat keine Waffen dabei!", client, target:getName()), 0, 255, 0)
+				target:sendMessage(_("Du hast keine Waffen dabei!", target), 0, 255, 0)
 			end
 		else
 			client:sendError(_("Du bist nicht im Dienst!", client))

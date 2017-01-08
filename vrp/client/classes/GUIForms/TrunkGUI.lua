@@ -191,7 +191,11 @@ function TrunkGUI:toTrunk()
                 ErrorBox:new(_"Ungültige Item-Anzahl!")
             end
         elseif self.m_SelectedItemType == "weapon" then
-            triggerServerEvent("trunkAddWeapon", localPlayer, self.m_Id, self.m_SelectedItem, self.m_SelectedItemAmount)
+            if localPlayer:getFaction() and localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true then
+				ErrorBox:new("Du bist im Dienst, du darfst keine Waffen einlagern!")
+				return
+			end
+			triggerServerEvent("trunkAddWeapon", localPlayer, self.m_Id, self.m_SelectedItem, self.m_SelectedItemAmount)
         end
     else
         ErrorBox:new("InternalError - TrunkId not set")

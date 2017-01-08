@@ -1,5 +1,0 @@
-<map edf:definitions="editor_main">
-<object id="object (sprunk_fact) (1)" dimension="0" interior="0" model="12847" posX="-1744.4996337891" posY="-154.11781311035" posZ="6.5546875" rotX="0" rotY="0" rotZ="315" />
-<object id="object (bigsprunkpole) (2)" dimension="0" interior="0" model="13562" posX="-1759.0693359375" posY="-159.56546020508" posZ="11.508388519287" rotX="0" rotY="0" rotZ="0" />
-<object id="object (imy_la_door) (1)" dimension="0" interior="0" model="3109" posX="-1752.3552246094" posY="-145.65380859375" posZ="3.7462630271912" rotX="0" rotY="0" rotZ="315" />
-</map>
