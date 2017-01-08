@@ -126,7 +126,9 @@ BlipConversion =
 	["Fishing.png"] = 37,
 	["Locate.png"] = 0,
 	["HeliTransport.png"] = 5,
-	["Bar.png"] = 49
+	["Bar.png"] = 49,
+	["RedSaw.png"] = 0,
+
 }
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
 for i, v in pairs(UIStyle) do UIStyle[v] = i end
