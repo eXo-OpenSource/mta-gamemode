@@ -135,7 +135,6 @@ function DrugsShroom:addMushroom(posX, posY, posZ)
     self.m_Mushrooms[index] = createObject(self.m_Models[math.random(1, #self.m_Models)], posX, posY, posZ)
     self.m_Mushrooms[index]:setData("clickable", true, true)
     addEventHandler("onElementClicked",self.m_Mushrooms[index], bind(self.onMushroomClick, self))
-	sql:queryExec("INSERT INTO ??_mushrooms (PosX, PosY, PosZ) VALUES (?, ?, ?)", sql:getPrefix(), posX, posY, posZ)
 end
 
 function DrugsShroom:onMushroomClick(button, state, player)
