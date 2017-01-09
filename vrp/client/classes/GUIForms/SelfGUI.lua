@@ -9,10 +9,12 @@ SelfGUI = inherit(GUIForm)
 inherit(Singleton, SelfGUI)
 
 SelfGUI.Stats = {
-	["AFK"] = {
-			["text"] = "gesamte AFK-Zeit",
-			["value"] = function(value) return math.floor(value/60/60).." min" end
-			},
+	--["AFK"] = {
+	--		["text"] = "gesamte AFK-Zeit",
+	--		["value"] = function(value)
+	--			local hours, minutes = math.floor(value/60/60), (value - math.floor(value/60/60)*60)
+	--			return hours.." Stunde(n)" ..minutes.." Minute(n)" end
+	--		},
 	["Driven"] = {
 			["text"] = "gefahrene Kilometer",
 			["value"] = function(value) return math.floor(value/100).." km" end
