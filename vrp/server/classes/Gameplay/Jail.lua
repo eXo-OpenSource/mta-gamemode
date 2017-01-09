@@ -66,7 +66,6 @@ function Jail:createGate(gatePos, gateRot, keypad1Pos, keypad1Rot, keypad2Pos, k
 	self.m_Keypad1[Id] = createObject(2886, keypad1Pos, 0, 0, keypad1Rot)
 	self.m_Keypad1[Id].Id = Id
 	addEventHandler( "onElementClicked", self.m_Keypad1[Id], self.m_onKeypadClicked)
-	createMarker(keypad1Pos.x, keypad1Pos.y, keypad1Pos.z, "corona", 3)
 	if keypad2Pos then
 		self.m_Keypad2[Id] = createObject(2886, keypad2Pos, 0, 0, keypad2Rot)
 		self.m_Keypad2[Id].Id = Id
