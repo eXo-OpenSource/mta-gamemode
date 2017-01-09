@@ -534,7 +534,8 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 										changeTarget:load()
 										if changeTarget:setNewNick(admin, reason) then
 											self:sendShortMessage(_("%s hat %s in %s umbenannt!", admin, admin:getName(), target, reason))
-											changeTarget:addOfflineMessage("Du wurdest von "..target.name.." zu "..reason.." umgenannt!",1)
+											changeTarget:addOfflineMessage("Du wurdest vom Admin "..admin:getName().." von "..target.." zu "..reason.." umgenannt!",1)
+                       						delete(changeTarget)
 											return
 										end
 									else
@@ -544,7 +545,9 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 									admin:sendError(_("Spieler nicht gefunden!", admin))
 								end
 							end
-						)
+						)()
+					else
+					     admin:sendError(_("Spieler nicht gefunden!", admin))
 					end
 				end
 			else
