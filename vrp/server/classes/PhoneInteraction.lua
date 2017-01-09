@@ -39,6 +39,7 @@ function PhoneInteraction:callStart(player, voiceEnabled)
 		player:triggerEvent("callIncoming", client, voiceEnabled)
 	else
 		client:sendError(_("Das Handy von '%s' ist ausgeschaltet!",client, player.name))
+		client:triggerEvent("callReplace", player)
 	end
 end
 
@@ -74,9 +75,12 @@ function PhoneInteraction:callReplace(callee)
 	setPlayerVoiceBroadcastTo(callee, nil)
 
 	-- Todo: Notify the callee
-	callee:triggerEvent("callReplace", client)
-	client:triggerEvent("callReplace", callee)
-
+	if callee:isPhoneEnabled() == true then
+		callee:triggerEvent("callReplace", client)
+	end
+	if client:isPhoneEnabled() == true then
+		client:triggerEvent("callReplace", callee)
+	end
 end
 
 function PhoneInteraction:abortCall(player)
