@@ -10,7 +10,7 @@ inherit(Singleton, BankGUI)
 addEvent("bankMoneyBalanceRetrieve", true)
 
 function BankGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.3, screenHeight*0.4)
+	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.35, screenHeight*0.4)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Bank ATM", true, true, self)
 	self.m_HeaderImage = GUIImage:new(self.m_Width*0.01, self.m_Height*0.11, self.m_Width*0.98, self.m_Height*0.25, "files/images/Shops/BankHeader.png", self.m_Window)

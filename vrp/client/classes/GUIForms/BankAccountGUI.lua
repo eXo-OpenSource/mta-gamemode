@@ -11,7 +11,7 @@ inherit(Singleton, BankAccountGUI)
 addRemoteEvents{"bankAccountGUIShow", "bankAccountGUIRefresh"}
 
 function BankAccountGUI:constructor(name, depositEvent, withdrawEvent, additionalParameters)
-	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.3, screenHeight*0.4)
+	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.35, screenHeight*0.4)
 
 	self.m_DepositEvent = depositEvent
 	self.m_WithdrawEvent = withdrawEvent
