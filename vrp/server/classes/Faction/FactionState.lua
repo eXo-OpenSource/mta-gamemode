@@ -705,10 +705,13 @@ function FactionState:Command_tie(player, cmd, tname, bool)
 								player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
 								target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
 								toggleControl(target, "enter_exit", false)
+								self.onTiedExitBind = bind(self.onTiedExit, self)
+								addEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
 							else
 								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
 								target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
 								toggleControl(target, "enter_exit", true)
+								removeEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
 							end
 						else
 							player:sendError(_("Der Spieler ist nicht in deinem Fahrzeug!", player))
@@ -724,6 +727,10 @@ function FactionState:Command_tie(player, cmd, tname, bool)
 			player:sendError(_("Du bist nicht im Dienst!", player))
 		end
 	end
+end
+
+function FactionState:onTiedExit(vehicle, seat, jacked)
+	source:warpIntoVehicle(vehicle, seat)
 end
 
 function FactionState:Command_needhelp(player)
