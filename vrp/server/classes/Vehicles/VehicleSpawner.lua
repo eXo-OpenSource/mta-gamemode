@@ -55,11 +55,9 @@ addEventHandler("vehicleSpawn", root,
 			return
 		end
 
-		if client:getJobVehicle() and isElement(client:getJobVehicle()) then
-			destroyElement(client:getJobVehicle())
+		if client:getSpawnerVehicle() and isElement(client:getSpawnerVehicle()) then
+			destroyElement(client:getSpawnerVehicle())
 		end
-
-
 
 		local vehicle = TemporaryVehicle.create(vehicleModel, shop.m_Position.x, shop.m_Position.y, shop.m_Position.z + 1.5, shop.m_Rotation)
 
@@ -78,7 +76,7 @@ addEventHandler("vehicleSpawn", root,
 		end
 
 		warpPedIntoVehicle(client, vehicle)
-		client:setJobVehicle(vehicle)
+		client:setSpawnerVehicle(vehicle)
 	end
 )
 

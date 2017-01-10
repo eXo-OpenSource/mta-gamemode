@@ -41,18 +41,15 @@ function JobTreasureSeeker:start(player)
 end
 
 function JobTreasureSeeker:stop(player)
+	self:destroyJobVehicle(player)
 	self:removeTreasures(player)
 	unbindKey(player, "space", "down", self.m_KeyBind)
 	setElementVisibleTo(self.m_DeliverMarker, player, false)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 
-	if self.m_Vehicles[player] and isElement(self.m_Vehicles[player]) then
-		self.m_Vehicles[player]:destroy()
-	end
 end
 
 function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
-	self.m_Vehicles[player] = vehicle
 	vehicle.Engine = createObject(3013, 0, 0, 0)
 	vehicle.Engine:setScale(1.5)
 	vehicle.Engine:attach(vehicle, 0, -6.2, 3.5)
@@ -61,7 +58,7 @@ function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
 	vehicle.Magnet:setScale(0.5)
 	vehicle.Magnet:attach(vehicle, 0, -6.2, 2)
 
-	vehicle:addCountdownDestroy(10)
+	self:registerJobVehicle(player, vehicle, true, true)
 
 	addEventHandler("onElementDestroy", vehicle, function()
 		for index, ele in pairs(source:getAttachedElements()) do
@@ -75,18 +72,12 @@ function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
 		end
 	end)
 	triggerClientEvent(root, "jobTreasureDrawRope", root, vehicle.Engine, vehicle.Magnet)
-	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-		if vehPlayer ~= player then
-			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
-			cancelEvent()
-		end
-	end)
 end
 
 function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		if hitElement:getJob() == self then
-			if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle() == self.m_Vehicles[hitElement] then
+			if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle() == hitElement.jobVehicle then
 				local veh = hitElement:getOccupiedVehicle()
 				if veh.Magnet and isElement(veh.Magnet) then
 					if veh.Magnet.Object and isElement(veh.Magnet.Object) then
@@ -128,7 +119,7 @@ function JobTreasureSeeker:generateRandomTreasures(player)
 end
 
 function JobTreasureSeeker:takeUp(player, key, keyState)
-	if player:getOccupiedVehicle() and player:getOccupiedVehicle() == self.m_Vehicles[player] then
+	if player:getOccupiedVehicle() and player:getOccupiedVehicle() == player.jobVehicle then
 		for index, col in pairs(self.m_Treasures[player]) do
 			if col and isElement(col) and player:isWithinColShape(col) then
 				local veh = player:getOccupiedVehicle()
@@ -207,7 +198,7 @@ end
 
 function JobTreasureSeeker:onTreasureHit(hitElement, dim)
 	if dim and hitElement == source.Player then
-		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle() == self.m_Vehicles[hitElement] then
+		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle() == player.jobVehicle then
 			hitElement:sendInfo(_("Der Radar registriert ein Objekt unter dir!\nDrücke Leertaste um es hochzuheben!", hitElement))
 		end
 	end

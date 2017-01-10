@@ -58,7 +58,7 @@ function DatabasePlayer:virtual_constructor()
 	4 - Done
 	]]
 	self.m_TutorialStage = 0
-	self.m_JobVehicle = false
+	self.m_SpawnerVehicle = false
 	self.m_GarageType = 0
 	self.m_HangarType = 0
 	self.m_LastGarageEntrance = 0
@@ -235,7 +235,7 @@ function DatabasePlayer:getAccount()	return self.m_Account	end
 function DatabasePlayer:getLocale()		return self.m_Locale	end
 function DatabasePlayer:getPhonePartner() return self.m_PhonePartner end
 function DatabasePlayer:getTutorialStage() return self.m_TutorialStage end
-function DatabasePlayer:getJobVehicle() return self.m_JobVehicle end
+function DatabasePlayer:getSpawnerVehicle() return self.m_SpawnerVehicle end
 function DatabasePlayer:getGroup()		return self.m_Group		end
 function DatabasePlayer:getFaction()	return self.m_Faction	end
 function DatabasePlayer:getJailTime() return self.m_JailTime end
@@ -257,7 +257,7 @@ function DatabasePlayer:getBail() return self.m_Bail end
 function DatabasePlayer:setMoney(money, instant) self.m_Money = money if self:isActive() then setPlayerMoney(self, money, instant) self:setPublicSync("Money", money) end end
 function DatabasePlayer:setLocale(locale)	self.m_Locale = locale	end
 function DatabasePlayer:setTutorialStage(stage) self.m_TutorialStage = stage end
-function DatabasePlayer:setJobVehicle(vehicle) self.m_JobVehicle = vehicle end
+function DatabasePlayer:setSpawnerVehicle(vehicle) self.m_SpawnerVehicle = vehicle end
 function DatabasePlayer:setSpawnLocation(l) self.m_SpawnLocation = l end
 function DatabasePlayer:setLastGarageEntrance(e) self.m_LastGarageEntrance = e end
 function DatabasePlayer:setLastHangarEntrance(e) self.m_LastHangarEntrance = e end

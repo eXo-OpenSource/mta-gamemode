@@ -24,31 +24,12 @@ function JobForkLift:start(player)
 end
 
 function JobForkLift:stop(player)
+	self:destroyJobVehicle(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
-	if player.vehFork and isElement(player.vehFork) then destroyElement(player.vehFork) end
 end
 
 function JobForkLift:onVehicleSpawn(player,vehicleModel,vehicle)
-	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-		if vehPlayer ~= player then
-			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
-			cancelEvent()
-		end
-	end)
-	if isElement(player.vehFork) then
-		destroyElement(player.vehFork)
-	end
-	vehicle.m_ForkliftOwner = player
-
-	vehicle:addCountdownDestroy(10)
-
-	self.m_OnVehicleAction = bind(self.onVehicleAction, self)
-	addEventHandler("onVehicleExplode", vehicle, self.m_OnVehicleAction)
-	addEventHandler("onElementDestroy", vehicle, self.m_OnVehicleAction)
-end
-
-function JobForkLift:onVehicleAction()
-	self:stop(source.m_ForkliftOwner)
+	self:registerJobVehicle(player, vehicle, true, true)
 end
 
 function JobForkLift:onBoxLoad(box)

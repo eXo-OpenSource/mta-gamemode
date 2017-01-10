@@ -49,8 +49,8 @@ function Player:destructor()
 	if not self:isLoggedIn() then
 		return
 	end
-	if self.m_JobVehicle and isElement(self.m_JobVehicle) then -- TODO: Move this to an appropriate position to be able to use the quit hook
-		destroyElement(self.m_JobVehicle)
+	if self.m_SpawnerVehicle and isElement(self.m_SpawnerVehicle) then -- TODO: Move this to an appropriate position to be able to use the quit hook
+		destroyElement(self.m_SpawnerVehicle)
 	end
 
 	if self.m_Inventory then

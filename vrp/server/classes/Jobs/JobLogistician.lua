@@ -35,32 +35,17 @@ end
 function JobLogistician:stop(player)
 	self.m_VehicleSpawner1:toggleForPlayer(player, false)
 	self.m_VehicleSpawner2:toggleForPlayer(player, false)
+	self:destroyJobVehicle(player)
 	if isElement(player.LogisticanContainer) then player.LogisticanContainer:destroy() end
 	if player:getData("Logistician:Blip") then delete(player:getData("Logistician:Blip")) end
 	player:setData("Logistician:TargetMarker", nil)
+
 end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
 	vehicle:setData("LogisticanVehicle", true)
 	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
-	addEventHandler("onElementDestroy", vehicle, bind(self.onVehicleDestroy, self))
-	vehicle:addCountdownDestroy(10)
-	vehicle.player = player
-	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-		if vehPlayer ~= player then
-			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
-			cancelEvent()
-		end
-	end)
-end
-
-function JobLogistician:onVehicleDestroy()
-	for key, obj in pairs(source:getAttachedElements()) do
-		obj:destroy()
-	end
-	if source.player and isElement(source.player) then
-		self:stop(source.player)
-	end
+	self:registerJobVehicle(player, vehicle, true, true)
 end
 
 function JobLogistician:setNewDestination(player, targetMarker, crane)

@@ -33,20 +33,7 @@ function JobTrashman:constructor()
 end
 
 function JobTrashman:onVehicleSpawn(player,vehicleModel,vehicle)
-	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-		if vehPlayer ~= player then
-			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
-			cancelEvent()
-		end
-	end)
-	if isElement(player.vehTrashM) then
-		destroyElement(player.vehTrashM)
-	end
-	player.vehTrashM = vehicle
-	vehicle.m_TrashmanOwner = player
-	vehicle:addCountdownDestroy(10)
-	self.m_OnVehicleAction = bind(self.onVehicleAction, self)
-	addEventHandler("onElementExplode", vehicle, bind(self.m_OnVehicleAction, self))
+	self:registerJobVehicle(player, vehicle, true, true)
 end
 
 function JobTrashman:start(player)
@@ -65,15 +52,12 @@ end
 
 function JobTrashman:stop(player)
 	if client and isElement(client) then player = client end
-	player:triggerEvent("jobTrashManClientStop")
 
 	self.m_VehicleSpawner1:toggleForPlayer(player, false)
 	self.m_VehicleSpawner2:toggleForPlayer(player, false)
 	self.m_VehicleSpawner3:toggleForPlayer(player, false)
+	self:destroyJobVehicle(player)
 
-	if player.vehTrashM and isElement(player.vehTrashM) then
-		destroyElement(player.vehTrashM)
-	end
 end
 
 function JobTrashman:checkRequirements(player)

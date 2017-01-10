@@ -8,7 +8,7 @@
 
 JobPizza = inherit(Job)
 
-addRemoteEvents{ "nextPizzaDelivery", "stopPizzaShift" }
+addRemoteEvents{ "nextPizzaDelivery" }
 
 local PickupX, PickupY, PickupZ =  2098.50, -1808.93, 13.07
 local objID = 1582
@@ -18,7 +18,6 @@ function JobPizza:constructor()
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.PizzaDelivery):gsub("Job: ", ""), _(HelpTexts.Jobs.PizzaDelivery))
 	addEventHandler("nextPizzaDelivery", localPlayer, bind(JobPizza.nextDeliver, self))
-	addEventHandler("stopPizzaShift", localPlayer, bind(JobPizza.endShift, self))
 end
 
 
@@ -43,7 +42,7 @@ function JobPizza:destroyThrow()
 	end
 end
 
-function JobPizza:endShift( )
+function JobPizza:stop( )
 	if self.m_PizzaJobBlip then
 		self.m_PizzaJobBlip:delete()
 	end

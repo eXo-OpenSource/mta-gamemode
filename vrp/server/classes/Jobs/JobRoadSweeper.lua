@@ -19,28 +19,7 @@ function JobRoadSweeper:constructor()
 end
 
 function JobRoadSweeper:onVehicleSpawn(player, vehicleModel, vehicle)
-	if isElement(player.vehRoadSweeper) then
-		destroyElement(player.vehRoadSweeper)
-	end
-
-	vehicle.m_SweeperOwner = player
-	player.vehRoadSweeper = vehicle
-
-	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
-		if vehPlayer ~= player then
-			vehPlayer:sendError("Du kannst nicht in dieses Job-Fahrzeug!")
-			cancelEvent()
-		end
-	end)
-	vehicle:addCountdownDestroy(10)
-	self.m_OnVehicleAction = bind(self.onVehicleAction, self)
-	addEventHandler("onVehicleExplode", vehicle, self.m_OnVehicleAction)
-	addEventHandler("onElementDestroy", vehicle, self.m_OnVehicleAction)
-end
-
-function JobRoadSweeper:onVehicleAction()
-	self:stop(source.m_SweeperOwner)
-
+	self:registerJobVehicle(player, vehicle, true, true)
 end
 
 function JobRoadSweeper:start(player)
@@ -49,9 +28,8 @@ function JobRoadSweeper:start(player)
 end
 
 function JobRoadSweeper:stop(player)
+	self:destroyJobVehicle(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
-	if player.vehRoadSweeper and isElement(player.vehRoadSweeper) then destroyElement(player.vehRoadSweeper) end
-	player:triggerEvent("jobQuit")
 end
 
 function JobRoadSweeper:Event_sweeperGarbageCollect()
