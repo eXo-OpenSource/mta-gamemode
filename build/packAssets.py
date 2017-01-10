@@ -1,9 +1,19 @@
 import os
 import xml.etree.ElementTree as ET
-import subprocess
 import shutil
 import time
 import hashlib
+import tarfile
+from pathlib import Path
+
+# Util functions
+def find_between(s, first, last):
+    try:
+        start = s.index( first ) + len( first )
+        end = s.index( last, start )
+        return s[start:end]
+    except ValueError:
+        return ""
 
 def md5(fname):
     hash_md5 = hashlib.md5()
@@ -27,7 +37,7 @@ def rm_r(path):
         os.remove(path)
 rm_r(outdir)
 os.mkdir(outdir)
-os.mkdir(outdir+"/packages")
+os.mkdir(outdir+"/archives")
 
 # Copy files
 print("Copying required files...")
@@ -35,23 +45,26 @@ print("Copying required files...")
 main_tree = ET.parse(rootdir + "meta.xml")
 main_root = main_tree.getroot()
 asset_root = ET.Element("files")
-files = []
+archives = {}
 
 for child in main_root.findall("vrpfile"):
-	# copy the files
-	filename = child.attrib["src"]
-	files.append(rootdir+filename)
-	print(rootdir+filename)
 
-serverCall = [ "lua", "build/lua/gen_pack/init.lua" ]
-serverCall.extend(files)
-process = subprocess.Popen(serverCall, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-output, error = process.communicate()
-packageCount = int(output)
-print("Generated %i packages!" % packageCount)
-for i in range(0, packageCount):
-	i = i + 1
-	ET.SubElement(asset_root, "file", name="Package-%i.data" % i, path="packages/%i.data" % i, target_path="cache/%i.data" % i, hash=md5(outdir+"packages/%i.data" % i))
+	# get filename
+	filename = child.attrib["src"]
+
+	# get dirname
+	dirname = find_between(filename, "files/", "/")
+	if not dirname in archives:
+		archives[dirname] = tarfile.open("vrp_assets/archives/%s.tar" % dirname, 'w')
+
+	# add the files to the archive
+	archives[dirname].add(rootdir+filename, arcname=(rootdir+filename)[4:])
+
+for index, archive in archives.items():
+	# close the archive
+	archive.close()
+
+	ET.SubElement(asset_root, "file", name="%s.tar" % index, path="archives/%s.tar" % index, target_path="cache/%s.tar" % index, hash=md5(outdir+"archives/%s.tar" % index))
 
 asset_tree = ET.ElementTree(asset_root)
 asset_tree.write(outdir+"index.xml")
