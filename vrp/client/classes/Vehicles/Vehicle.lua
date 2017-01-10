@@ -170,6 +170,7 @@ setTimer(
 -- The following code prevents vehicle from exploding "fully"
 addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss)
+		if source:getData("disableVehicleDamageSystem") then return end
 		if source:getVehicleType() == VehicleType.Automobile or source:getVehicleType() == VehicleType.Bike then
 			if source:getHealth() - loss < 310 then
 				cancelEvent()

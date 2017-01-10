@@ -16,20 +16,22 @@ function VehicleHealth:constructor()
 	self.m_VehicleHealthLabel = GUILabel:new(0, 0, self.m_Width, self.m_Height, tostring(self.m_Health), self):setAlignX("center"):setAlignY("center"):setFont(VRPFont(self.m_Height*0.75)):setColor(Color.Black)
 end
 
-function VehicleHealth:startVehicleHealth()
+function VehicleHealth:startVehicleHealth(max)
+	self.m_Max = max or 700
 	self:refresh()
 	self.m_Timer = setTimer(
 		function()
 			self:refresh()
 		end,
-		500,
+		250,
 		0
 	)
 end
 
 function VehicleHealth:refresh()
 	if not localPlayer:isInVehicle() then self:stopVehicleHealth() return end
-	self.m_Health = math.floor((localPlayer.vehicle.health-300)/700*100)
+	local i = 1000-self.m_Max
+	self.m_Health = math.floor((localPlayer.vehicle.health-i)/self.m_Max*100)
 	self.m_VehicleHealthLabel:setText("Zustand: "..self.m_Health.."%")
 	self.m_Progress:setProgress(self.m_Health)
 end
@@ -44,8 +46,8 @@ end
 
 addEvent("VehicleHealth", true)
 addEventHandler("VehicleHealth", root,
-	function()
-		VehicleHealth:getSingleton():startVehicleHealth()
+	function(max)
+		VehicleHealth:getSingleton():startVehicleHealth(max)
 	end
 )
 

@@ -327,12 +327,14 @@ function Vehicle:getSpeed()
 end
 
 function Vehicle:setBroken(state)
+	if self.m_BrokenHook then
+		self.m_BrokenHook:call(vehicle)
+		return
+	end
 	self:setHealth(301)
 	if state then
 		self:setEngineState(false)
-		if self.m_BrokenHook then
-			self.m_BrokenHook:call(vehicle)
-		end
+
 	end
 end
 

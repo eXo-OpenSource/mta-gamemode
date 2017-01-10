@@ -22,10 +22,13 @@ function WeedTruck:constructor(driver)
 	self.m_Truck:setVariant(255, 255)
 	self.m_Truck:setEngineState(true)
 	self.m_Truck:setRepairAllowed(false)
-	self.m_Truck.m_BrokenHook:register(bind(self.Event_OnWeedTruckDestroy,self))
+	self.m_Truck:setData("disableVehicleDamageSystem", true, true)
+	self.m_Truck.m_DisableToggleHandbrake = true
 
 	self.m_StartTime = getTickCount()
 	warpPedIntoVehicle(driver, self.m_Truck)
+	self.m_Driver = driver
+
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
 	self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Weedtruck gestartet!")
@@ -47,19 +50,20 @@ function WeedTruck:constructor(driver)
 	addEventHandler("onVehicleStartEnter",self.m_Truck,bind(self.Event_OnWeedTruckStartEnter,self))
 	addEventHandler("onVehicleEnter",self.m_Truck,bind(self.Event_OnWeedTruckEnter,self))
 	addEventHandler("onVehicleExit",self.m_Truck,bind(self.Event_OnWeedTruckExit,self))
-	addEventHandler("onElementDestroy",self.m_Truck,self.m_DestroyFunc)
+	addEventHandler("onVehicleExplode", self.m_Truck, self.m_DestroyFunc)
+	addEventHandler("onElementDestroy", self.m_Truck, self.m_DestroyFunc)
 end
 
 function WeedTruck:destructor()
-	removeEventHandler("onElementDestroy",self.m_Truck,self.m_DestroyFunc)
 	ActionsCheck:getSingleton():endAction()
-	self.m_Truck:destroy()
-	StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "stop", self.m_StartPlayer, self.m_StartFaction, "faction")
-
+	if isElement(self.m_Truck) then self.m_Truck:destroy() end
 	if isElement(self.m_DestinationMarker) then self.m_DestinationMarker:destroy() end
 	if self.m_Blip then delete(self.m_Blip) end
 	if isElement(self.m_LoadMarker) then self.m_LoadMarker:destroy() end
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+
+	StatisticsLogger:getSingleton():addActionLog("Weed-Truck", "stop", self.m_StartPlayer, self.m_StartFaction, "faction")
+
 	TollStation.closeAll()
 end
 
@@ -102,7 +106,7 @@ function WeedTruck:Event_OnWeedTruckEnter(player, seat)
 		local destination = WeedTruck.Destination
 		self.m_Driver = player
 		player:triggerEvent("Countdown", math.floor((WeedTruck.Time-(getTickCount()-self.m_StartTime))/1000), "Weed-Truck")
-		player:triggerEvent("VehicleHealth")
+		player:triggerEvent("VehicleHealth", 980)
 
 	end
 end
