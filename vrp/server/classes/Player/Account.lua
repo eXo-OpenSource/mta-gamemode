@@ -23,7 +23,11 @@ function Account.login(player, username, password, pwhash)
 		if row2 and row2.password then
 			if not pwhash then
 				local salt = string.sub(row2.password, 1, 29)
+				local tc = getTickCount()
+				outputServerLog("Account.login:28 Start Generate Hash for "..username.." Salt: "..salt)
 				pwhash = WBBC.getDoubleSaltedHash(password, salt)
+				tc = getTickCount()-tc
+				outputServerLog("Account.login:28 Generated Hash for "..username..": "..pwhash.." Took: "..tc.."ms")
 			end
 			if pwhash == row2.password then
 				outputConsole("Creating Account for "..username)
@@ -52,7 +56,11 @@ function Account.login(player, username, password, pwhash)
 
 	if not pwhash then
 		local salt = string.sub(row.password, 1, 29)
+		local tc = getTickCount()
+		outputServerLog("Account.login:61 Start Generate Hash for "..username.." Salt: "..salt)
 		pwhash = WBBC.getDoubleSaltedHash(password, salt)
+		tc = getTickCount()-tc
+		outputServerLog("Account.login:61 Generated for "..username..": "..pwhash.." Took: "..tc.."ms")
 	end
 
 	if pwhash ~= row.password then
@@ -179,8 +187,13 @@ addEvent("accountguest", true)
 addEventHandler("accountguest", root, function() Async.create(Account.guest)(client) end)
 
 function Account.createForumAccount(username, password, email)
+	if not password then return end
 	local nTimestamp = getRealTime().timestamp
+	local tc = getTickCount()
+	outputServerLog("Account.createForumAccount:195 Start Generate Hash for "..username.." Salt: -")
 	local pwhash = WBBC.getDoubleSaltedHash(password)
+	tc = getTickCount()-tc
+	outputServerLog("Account.createForumAccount:195 Generated Hash for "..username..": "..pwhash.." Took: "..tc.."ms")
 	local nLanguageID = 4
 
 	board:queryFetch("START TRANSACTION;")
