@@ -22,7 +22,7 @@ function Package:addFile(fh, file)
 	local data = r:read("*all")
 	r:close()
 
-	fh:write(file)
+	fh:write(file:gsub("vrp/", ""))
 	fh:write("\00")
 	fh:write(tostring(size))
 	fh:write("\00")
