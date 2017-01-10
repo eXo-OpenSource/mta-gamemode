@@ -223,12 +223,12 @@
 	<script src="server/classes/Faction/Gangwar/GangwarStatistics.lua" type="server"/>
 
 	<!-- Vehicles -->
-	<script src="server/classes/Vehicles/Vehicle.lua" type="server"/>
-	<script src="server/classes/Vehicles/PermanentVehicle.lua" type="server"/>
-	<script src="server/classes/Vehicles/TemporaryVehicle.lua" type="server"/>
-	<script src="server/classes/Vehicles/CompanyVehicle.lua" type="server"/>
-	<script src="server/classes/Vehicles/FactionVehicle.lua" type="server"/>
-	<script src="server/classes/Vehicles/GroupVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/Super/TemporaryVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/Super/CompanyVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/Super/FactionVehicle.lua" type="server"/>
+	<script src="server/classes/Vehicles/Super/GroupVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleManager.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleGarages.lua" type="server"/>
@@ -236,12 +236,12 @@
 	<script src="server/classes/Vehicles/Storage/VehicleHarbor.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/AutomaticVehicleSpawner.lua" type="server"/>
-	<script src="server/classes/Vehicles/PayNSpray.lua" type="server"/>
-	<script src="server/classes/Vehicles/VehicleBarrier.lua" type="server"/>
-	<script src="server/classes/Vehicles/TollStation.lua" type="server"/>
-	<script src="server/classes/Vehicles/ELSSystem.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/PayNSpray.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleBarrier.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/TollStation.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/ELSSystem.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleInteraction.lua" type="server"/>
-	<script src="server/classes/Vehicles/Trunk.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/Trunk.lua" type="server"/>
 
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
