@@ -50,7 +50,7 @@ packageCount = int(output)
 print("Generated %i packages!" % packageCount)
 for i in range(0, packageCount):
 	i = i + 1
-	ET.SubElement(asset_root, "file", name="Package-%i.data" % i, path="packages/%i.data" % i, target_path="cache/%i.data" % i, hash=md5(outdir+"packages/%i.data" % i))
+	ET.SubElement(asset_root, "file", name="Package-%i.data" % i, path="packages/%i.data" % i, target_path="%i.data" % i, hash=md5(outdir+"packages/%i.data" % i))
 
 asset_tree = ET.ElementTree(asset_root)
 asset_tree.write(outdir+"index.xml")
