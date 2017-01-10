@@ -97,6 +97,8 @@ function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Ro
 	self.m_Vehicles[Model].price = Price
 	self.m_Vehicles[Model].level = Level
 	local veh = self.m_Vehicles[Model]
+	veh.m_DisableToggleEngine = true
+	veh.m_DisableToggleHandbrake = true
 	veh:setLocked(true)
 	veh:setFrozen(true)
 	veh:toggleRespawn(false)

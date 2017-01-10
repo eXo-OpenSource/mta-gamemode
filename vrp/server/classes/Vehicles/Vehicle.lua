@@ -202,6 +202,7 @@ function Vehicle:toggleLight()
 end
 
 function Vehicle:toggleEngine(player)
+	if self.m_DisableToggleEngine then return end
 	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() then
 		local state = not getVehicleEngineState(self)
 		if state == true then
@@ -257,6 +258,7 @@ function Vehicle:toggleEngine(player)
 end
 
 function Vehicle:toggleHandBrake( player )
+	if self.m_DisableToggleHandbrake then return end
 	if not self.m_HandBrake then
 		if self:isOnGround() then
 			setControlState(player, "handbrake", true)
