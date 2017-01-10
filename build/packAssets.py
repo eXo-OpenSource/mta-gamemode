@@ -1,5 +1,6 @@
 import os
 import xml.etree.ElementTree as ET
+import subprocess
 import shutil
 import time
 import hashlib
@@ -26,6 +27,7 @@ def rm_r(path):
         os.remove(path)
 rm_r(outdir)
 os.mkdir(outdir)
+os.mkdir(outdir+"/packages")
 
 # Copy files
 print("Copying required files...")
@@ -33,19 +35,22 @@ print("Copying required files...")
 main_tree = ET.parse(rootdir + "meta.xml")
 main_root = main_tree.getroot()
 asset_root = ET.Element("files")
+files = []
 
 for child in main_root.findall("vrpfile"):
 	# copy the files
 	filename = child.attrib["src"]
-	assetpath = filename[6:]
-	if not os.path.exists(outdir+os.path.dirname(assetpath)):
-		os.makedirs(outdir+os.path.dirname(assetpath))
+	files.append(rootdir+filename)
 
-	shutil.copyfile(rootdir+filename, outdir+assetpath)
-
-	# write file index
-	ET.SubElement(asset_root, "file", name=os.path.basename(filename), path=assetpath, target_path=filename, hash=md5(outdir+assetpath))
-
+serverCall = [ "lua", "build/lua/gen_pack/init.lua" ]
+serverCall.extend(files)
+process = subprocess.Popen(serverCall, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+output, error = process.communicate()
+packageCount = int(output)
+print("Generated %i packages!" % packageCount)
+for i in range(0, packageCount):
+	i = i + 1
+	ET.SubElement(asset_root, "file", name="Package-%i.data" % i, path="packages/%i.data" % i, target_path="cache/%i.data" % i, hash=md5(outdir+"packages/%i.data" % i))
 
 asset_tree = ET.ElementTree(asset_root)
 asset_tree.write(outdir+"index.xml")

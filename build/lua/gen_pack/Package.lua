@@ -1,4 +1,4 @@
-require("utils")
+require("./build/lua/gen_pack/utils")
 Package = {}
 
 function Package.save(path, filelist)

@@ -1,4 +1,4 @@
-local Package = require("Package")
+local Package = require("./build/lua/gen_pack/Package")
 local scripts = {}
 local currIndex = 1
 
@@ -8,11 +8,12 @@ for i, v in ipairs(arg) do
 	end
 	table.insert(scripts[currIndex], v)
 
-	if i%10 == 0 then
+	if i%100 == 0 then
 		currIndex = currIndex + 1
 	end
 end
 
 for i, files in ipairs(scripts) do
-	Package.save(("%d.data"):format(i), files)
+	Package.save(("./vrp_assets/packages/%d.data"):format(i), files)
 end
+print(#scripts)
