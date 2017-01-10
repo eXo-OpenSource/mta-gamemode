@@ -497,6 +497,7 @@ function Vehicle:respawnOnSpawnPosition()
 		self:setRotation(0, 0, self.m_SpawnRot)
 		fixVehicle(self)
 		setVehicleEngineState(self, false)
+		self.m_EngineState = false
 		setVehicleOverrideLights(self, 1)
 		self:setSirensOn(false)
 		local owner = Player.getFromId(self.m_Owner)
