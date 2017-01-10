@@ -1,6 +1,5 @@
 ﻿--addEvent ( "onPlayerDamage", true )
 
-local bikehitboxfix = get"bike_hitbox_fix"
 local settings = {
 	driver = get"driveby_driver" or { 22,23,24,25,28,29,32 },
 	passenger = get"driveby_passenger" or { 22,23,24,25,26,28,29,32,30,31,33 },
@@ -9,7 +8,7 @@ local settings = {
 	steerCars = get"driveby_steer_cars" == true,
 	steerBikes = get"driveby_steer_bikes" == true,
 	autoEquip = get"driveby_auto_equip" or false,
-	bikeHitboxFix = bikehitboxfix == nil and true or bikehitboxfix == true,
+	bikeHitboxFix = get"bike_hitbox_fix" == true,
 }
 --Remove any BS IDs by checking them
 local validDrivebyWeapons = { [22]=true,[23]=true,[24]=true,[25]=true,
@@ -64,16 +63,19 @@ addEventHandler ( "createPedForDrivebyFix", root, function ( )
 	local veh = getPedOccupiedVehicle ( client )
 	destroyPed ( client )
 	if isElement ( veh ) then
-		playerpeds[client] = createPed ( 0, 0, 0, 0 )
+		local x, y, z = getElementPosition ( client )
+		playerpeds[client] = createPed ( 0, x+100, y, z )
 		setElementAlpha ( playerpeds[client], 0 )
 		setElementCollisionsEnabled ( playerpeds[client], false )
 		setElementDimension ( playerpeds[client], getElementDimension ( client ) )
 		setElementInterior ( playerpeds[client], getElementInterior( client ) )
 		if getPedOccupiedVehicleSeat ( client ) == 0 then
-			attachElements ( playerpeds[client], veh, 0, 0.05, 0.5 )
+			attachElements ( playerpeds[client], veh, 100, 0.05, 0.5 )
+			setTimer ( attachElements, 100, 1, playerpeds[client], veh, 0, 0.05, 0.5 )
 		else
-			attachElements ( playerpeds[client], veh, 0, -0.8, 0.5 )
+			attachElements ( playerpeds[client], veh, 100, -0.8, 0.5 )
+			setTimer ( attachElements, 100, 1, playerpeds[client], veh, 0, -0.8, 0.5 )
 		end
-		triggerClientEvent ( "savePedForDrivebyFix", client, playerpeds[client] )
+		triggerClientEvent ( "savePedForDrivebyFix", client, playerpeds[client], veh )
 	end
 end )

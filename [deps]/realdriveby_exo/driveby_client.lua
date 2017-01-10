@@ -124,25 +124,27 @@ functions.toggleDriveby = function()
 						switchTo = lastSlot
 						switchToWeapon = lastSlotWeapon
 					end
-					setPedDoingGangDriveby ( localPlayer, true )
-					setPedWeaponSlot( localPlayer, switchTo )
-					functions.limitDrivebySpeed ( switchToWeapon )
-					toggleControl ( "vehicle_look_left",false )
-					toggleControl ( "vehicle_look_right",false )
-					toggleControl ( "vehicle_secondary_fire",false )
-					functions.toggleTurningKeys(vehicleID,false)
-					if settings.bikeHitboxFix and getVehicleType ( veh ) == "Bike" then
-						triggerServerEvent ( "createPedForDrivebyFix", localPlayer )
-					end
-					addEventHandler ( "onClientPlayerVehicleExit",localPlayer,functions.removeKeyToggles )
-					local prevw,nextw = next(getBoundKeys ( "Previous driveby weapon" )),next(getBoundKeys ( "Next driveby weapon" ))
-					if prevw and nextw then
-						if animation then 
-							Animation:remove() 
+					if switchTo then
+						setPedDoingGangDriveby ( localPlayer, true )
+						setPedWeaponSlot( localPlayer, switchTo )
+						functions.limitDrivebySpeed ( switchToWeapon )
+						toggleControl ( "vehicle_look_left",false )
+						toggleControl ( "vehicle_look_right",false )
+						toggleControl ( "vehicle_secondary_fire",false )
+						functions.toggleTurningKeys(vehicleID,false)
+						if settings.bikeHitboxFix and getVehicleType ( veh ) == "Bike" then
+							triggerServerEvent ( "createPedForDrivebyFix", localPlayer )
 						end
-						helpText:text( "Press '"..prevw.."' or '"..nextw.."' to change weapon" )
-						functions.fadeInHelp()
-						setTimer ( functions.fadeOutHelp, 10000, 1 )
+						addEventHandler ( "onClientPlayerVehicleExit",localPlayer,functions.removeKeyToggles )
+						local prevw,nextw = next(getBoundKeys ( "Previous driveby weapon" )),next(getBoundKeys ( "Next driveby weapon" ))
+						if prevw and nextw then
+							if animation then 
+								Animation:remove() 
+							end
+							helpText:text( "Press '"..prevw.."' or '"..nextw.."' to change weapon" )
+							functions.fadeInHelp()
+							setTimer ( functions.fadeOutHelp, 10000, 1 )
+						end
 					end
 				end
 			else
@@ -346,7 +348,7 @@ end )
 addEventHandler ( "savePedForDrivebyFix", root, function ( ped ) 
 	local veh = getPedOccupiedVehicle ( source )
 	if isElement ( veh ) then
-		setElementAlpha ( ped, 0 )
+		--setElementAlpha ( ped, 0 )
 		peds[source] = ped 
 		pedowner[ped] = source
 		addEventHandler ( "onClientPedDamage", ped, pedGotHit )
