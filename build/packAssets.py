@@ -41,6 +41,7 @@ for child in main_root.findall("vrpfile"):
 	# copy the files
 	filename = child.attrib["src"]
 	files.append(rootdir+filename)
+	print(rootdir+filename)
 
 serverCall = [ "lua", "build/lua/gen_pack/init.lua" ]
 serverCall.extend(files)
