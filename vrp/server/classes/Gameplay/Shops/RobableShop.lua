@@ -104,7 +104,7 @@ function RobableShop:startRob(shop, attacker, ped)
 	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "start", attacker, self.m_Gang, "group")
 
 
-	setTimer(function()
+	self.m_TargetTimer = setTimer(function()
 		if isElement(attacker) then
 			if attacker:getTarget() == ped then
 				local rnd = math.random(5, 10)
@@ -113,13 +113,13 @@ function RobableShop:startRob(shop, attacker, ped)
 					self.m_Bag.Money = self.m_Bag.Money + rnd
 					attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
 				else
-					killTimer(sourceTimer)
+					killTimer(self.m_TargetTimer)
 					attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
 				end
 			end
 			return
 		end
-		killTimer(sourceTimer)
+		killTimer(self.m_TargetTimer)
 	end, 1000, 0)
 
 	self.m_Func = bind(RobableShop.m_onExpire, self)
@@ -148,6 +148,7 @@ function RobableShop:m_onExpire()
 	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
 	delete(self.m_BagBlip)
+	if isTimer(self.m_TargetTimer) then kilLTimer(self.m_TargetTimer) end
 	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
 
 	self.m_Gang:removePlayerMarkers()
