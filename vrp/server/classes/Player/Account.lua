@@ -57,10 +57,15 @@ function Account.login(player, username, password, pwhash)
 	if not pwhash then
 		local salt = string.sub(row.password, 1, 29)
 		local tc = getTickCount()
-		outputServerLog("Account.login:61 Start Generate Hash for "..username.." Salt: "..salt)
-		pwhash = WBBC.getDoubleSaltedHash(password, salt)
-		tc = getTickCount()-tc
-		outputServerLog("Account.login:61 Generated for "..username..": "..pwhash.." Took: "..tc.."ms")
+		if salt and password and string.len(salt) > 0 and string.len(password) > 0 then
+			outputServerLog("Account.login:61 Start Generate Hash for "..username.." Salt: "..salt)
+			pwhash = WBBC.getDoubleSaltedHash(password, salt)
+			tc = getTickCount()-tc
+			outputServerLog("Account.login:61 Generated for "..username..": "..pwhash.." Took: "..tc.."ms")
+		else
+			player:triggerEvent("loginfailed", "Fehler: brypt-hash error")
+			return false
+		end
 	end
 
 	if pwhash ~= row.password then
