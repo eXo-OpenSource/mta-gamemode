@@ -285,6 +285,7 @@
 	<script src="server/tests/UtilsTest.lua" type="server"/>
 	<script src="server/tests/GroupTest.lua" type="server"/>
 	<script src="server/tests/PromiseTest.lua" type="server"/>
+	<script src="server/tests/bcrypt_test.lua" type="server"/>
 
 	<script src="server/Main.lua" type="server"/>
 
