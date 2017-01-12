@@ -32,7 +32,7 @@ function GroupManager:constructor()
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
-		"groupSaveRank", "groupConvertVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui"}
+		"groupSaveRank", "groupConvertVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
@@ -51,6 +51,7 @@ function GroupManager:constructor()
 	addEventHandler("groupConvertVehicle", root, bind(self.Event_ConvertVehicle, self))
 	addEventHandler("groupUpdateVehicleTuning", root, bind(self.Event_UpdateVehicleTuning, self))
 	addEventHandler("groupOpenBankGui", root, bind(self.Event_OpenBankGui, self))
+	addEventHandler("groupRequestBusinessInfo", root, bind(self.Event_GetShopInfo, self))
 end
 
 function GroupManager:destructor()
@@ -526,4 +527,14 @@ function GroupManager:Event_OpenBankGui()
 	end
 end
 
+function GroupManager:Event_GetShopInfo()
+	local group = client:getGroup()
+	if group then
+		local info = {}
+		for i, shop in pairs(group:getShops()) do
+			table.insert(info, {id = shop:getId(), name = shop:getName(), money = shop:getMoney(), position = {shop.m_Position.x, shop.m_Position.y, shop.m_Position.z}})
+		end
 
+		client:triggerEvent("groupRetriveBusinessInfo", info)
+	end
+end

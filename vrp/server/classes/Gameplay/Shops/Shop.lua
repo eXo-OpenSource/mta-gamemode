@@ -64,8 +64,15 @@ end
 
 function Shop:loadOwner()
 	if self.m_OwnerType == SHOP_OWNER_TYPES.Group then
-		self.m_Owner = GroupManager:getSingleton():getFromId(self.m_OwnerId)
+		local group = GroupManager:getSingleton():getFromId(self.m_OwnerId)
+		if group then
+			self.m_Owner = group
+
+			-- Add ref to group
+			group:addShop(self)
+		end
 	else
+		self.m_Owner:removeShop(self)
 		self.m_Owner = nil
 	end
 end
@@ -118,10 +125,12 @@ function Shop:onItemMarkerHit(hitElement, dim)
 	end
 end
 
-
-
 function Shop:getName()
 	return self.m_Name
+end
+
+function Shop:getId()
+	return self.m_Id
 end
 
 function Shop:isManageAllowed(player)

@@ -37,6 +37,18 @@ function GUITabPanel:addTab(tabName)
 		tabButton:setBackgroundColor(Color.LightBlue)
 	end
 
+	self.m_Tabs[id].setEnabled = function(instance, enabled)
+		instance.TabButton:setEnabled(enabled, true)
+		if enabled then
+			if self.m_Tabs[self.m_CurrentTab] ~= instance then
+				instance.TabButton:setBackgroundColor(Color.Grey)
+			else
+				instance.TabButton:setColor(Color.Grey)
+				instance.TabButton:setBackgroundColor(Color.LightBlue)
+			end
+		end
+	end
+
 	return self.m_Tabs[id]
 end
 
@@ -55,7 +67,11 @@ function GUITabPanel:forceTab(tabId)
 
 	for k, v in ipairs(self.m_Children) do
 		if instanceof(v, GUIButton) then
-			v:setColor(Color.White)
+			if v:isEnabled() then
+				v:setColor(Color.White)
+			else
+				v:setColor(Color.LightGrey)
+			end
 			v:setBackgroundColor(Color.Grey)
 		end
 	end

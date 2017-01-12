@@ -9,7 +9,7 @@ GroupGUI = inherit(GUIForm)
 inherit(Singleton, GroupGUI)
 
 function GroupGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+	GUIForm.constructor(self, screenWidth/2-312.5, screenHeight/2-230, 625, 460)
 
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	self.m_CloseButton = GUILabel:new(self.m_Width-28, 0, 28, 28, "[x]", self):setFont(VRPFont(35))
@@ -94,15 +94,33 @@ function GroupGUI:constructor()
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
 
-	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
+	local tabBusiness = self.m_TabPanel:addTab(_"Geschäfte")
+	self.m_TabBusiness = tabBusiness
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Geschäfte:", tabBusiness)
+	self.m_ShopsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.78, tabBusiness)
+	self.m_ShopsGrid:addColumn(_"Name", 0.4)
+	self.m_ShopsGrid:addColumn(_"Standort", 0.4)
+	self.m_ShopsGrid:addColumn(_"Kasse", 0.2)
+	tabBusiness:setEnabled(false)
 
+	GUIRectangle:new(self.m_Width*0.02, self.m_Height*0.87, self.m_Width*0.65, self.m_Height*0.005, Color.LightBlue, tabBusiness)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.875, self.m_Width*0.25, self.m_Height*0.06, _"Kasse(n) gesammt:", tabBusiness)
+	self.m_ShopsMoneyLable = GUILabel:new(self.m_Width*0.56, self.m_Height*0.875, self.m_Width*0.11, self.m_Height*0.06, _"0$", tabBusiness)
+	GUILabel:new(self.m_Width*0.695, self.m_Height*0.09, self.m_Width*0.28, self.m_Height*0.06, _"Optionen:", tabBusiness):setColor(Color.LightBlue)
+	self.m_ShopsLocate = GUIButton:new(self.m_Width*0.695, self.m_Height*0.16, self.m_Width*0.28, self.m_Height*0.07, _"Auf Karte anzeigen", tabBusiness):setFontSize(1.2)
+	--self.m_VehicleRespawnButton = GUIButton:new(self.m_Width*0.695, self.m_Height*0.25, self.m_Width*0.28, self.m_Height*0.07, _"Respawn", tabBusiness):setFontSize(1.2)
+	self.m_ShopsLocate.onLeftClick = bind(self.ShopLocateButton_Click, self)
+	--self.m_VehicleRespawnButton.onLeftClick = bind(self.VehicleRespawnButton_Click, self)
+
+	self.m_TabLogs = self.m_TabPanel:addTab(_"Logs")
 	self.m_LeaderTab = false
 
-	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetrieveLog"}
+	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve", "groupRetrieveLog", "groupRetriveBusinessInfo"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
 	addEventHandler("groupInvitationRetrieve", root, bind(self.Event_groupInvitationRetrieve, self))
 	addEventHandler("groupRetrieveLog", root, bind(self.Event_groupRetrieveLog, self))
 	addEventHandler("vehicleRetrieveInfo", root, bind(self.Event_vehicleRetrieveInfo, self))
+	addEventHandler("groupRetriveBusinessInfo", root, bind(self.Event_retriveBusinessInfo, self))
 end
 
 function GroupGUI:onShow()
@@ -116,7 +134,9 @@ function GroupGUI:onHide()
 end
 
 function GroupGUI:TabPanel_TabChanged(tabId)
-	if tabId == self.m_TabLogs.TabIndex then
+	if tabId == self.m_TabBusiness.TabIndex then
+		triggerServerEvent("groupRequestBusinessInfo", root)
+	elseif tabId == self.m_TabLogs.TabIndex then
 		triggerServerEvent("groupRequestLog", root)
 	else
 		triggerServerEvent("groupRequestInfo", root)
@@ -171,6 +191,11 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 				local item = self.m_VehiclesGrid:addItem(getVehicleName(veh), getZoneName(x, y, z, false))
 				item.VehicleElement = veh
 			end
+		end
+
+		-- Enabled for private companies the business tab
+		if type == "Firma" then
+			self.m_TabBusiness:setEnabled(true)
 		end
 	else
 		self.m_GroupCreateLabel:setVisible(true)
@@ -458,4 +483,39 @@ function GroupGUI:VehicleLocateButton_Click()
 		--setTimer(function () delete(blip) end, 5000, 1)
 		--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung", Color.DarkLightBlue)
 	--end
+end
+
+function GroupGUI:Event_retriveBusinessInfo(info)
+	self.m_ShopsGrid:clear()
+
+	local compMoney = 0
+	for i, shop in pairs(info) do
+		local item = self.m_ShopsGrid:addItem(shop.name, getZoneName(Vector3(shop.position)), ("%d$"):format(shop.money))
+		item.ShopId = shop.id
+		item.ShopName = shop.name
+		item.Position = Vector3(shop.position)
+
+		compMoney = compMoney + shop.money
+	end
+
+	self.m_ShopsMoneyLable:setText(_("%d$", compMoney))
+end
+
+function GroupGUI:ShopLocateButton_Click()
+	local item = self.m_ShopsGrid:getSelectedItem()
+	if not item then
+		ErrorBox:new(_"Bitte wähle ein Geschäft aus!")
+		return
+	end
+
+	local x, y, z = item.Position.x, item.Position.y, item.Position.z
+	local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+	blip:setZ(z)
+	ShortMessage:new(_("Das Geschäft befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), item.ShopName, Color.DarkLightBlue, -1)
+	.m_Callback = function (this)
+		if blip then
+			delete(blip)
+		end
+		delete(this)
+	end
 end

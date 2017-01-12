@@ -18,6 +18,7 @@ function Group:constructor(Id, name, type, money, players, karma, lastNameChange
   self.m_LastNameChange = lastNameChange or 0
   self.m_VehiclesCanBeModified = vehicleTuning or false
   self.m_Type = type
+  self.m_Shops = {} -- shops automatically add the reference
   self.m_Markers = {}
   self.m_MarkersAttached = false
   local saveRanks = false
@@ -455,4 +456,19 @@ end
 
 function Group:getLog()
   return StatisticsLogger:getSingleton():getGroupLogs("group", self.m_Id)
+end
+
+function Group:addShop(instance)
+	table.insert(self.m_Shops, instance)
+end
+
+function Group:removeShop(instance)
+	local idx = table.find(self.m_Shops, instance)
+	if idx then
+		table.remove(self.m_Shops, idx)
+	end
+end
+
+function Group:getShops()
+	return self.m_Shops
 end

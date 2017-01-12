@@ -100,12 +100,20 @@ function GUIButton:setBackgroundColor(color)
 	return self
 end
 
-function GUIButton:setEnabled(state)
+function GUIButton:setEnabled(state, tabButton)
 	if state == true then
 		self:setAlpha(255)
+		if tabButton then
+			self:setColor(Color.White)
+		end
 	else
-		self:setBackgroundColor(self.m_BackgroundNormalColor)
-		self:setAlpha(100)
+		if not tabButton then
+			self:setBackgroundColor(self.m_BackgroundNormalColor)
+			self:setAlpha(100)
+		else
+			self:setBackgroundColor(self.m_BackgroundNormalColor)
+			self:setColor(Color.LightGrey)
+		end
 	end
 	self.m_Enabled = state
 	self:anyChange()
@@ -114,5 +122,3 @@ end
 function GUIButton:isEnabled()
 	return self.m_Enabled
 end
-
-
