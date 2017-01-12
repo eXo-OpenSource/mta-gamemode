@@ -29,7 +29,7 @@ function Tour:start(forceNew)
 	local Id = client:getId()
 	if not Id then return end
 	if self.m_TourPlayerData[Id] then
-		self:save(player)
+		self:save(client)
 		client:triggerEvent("tourStop")
 	end
 	local row = sql:queryFetchSingle("SELECT Tour FROM ??_character WHERE Id = ?;", sql:getPrefix(), Id)
