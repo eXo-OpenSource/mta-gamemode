@@ -21,18 +21,21 @@ function Account.login(player, username, password, pwhash)
 		board:queryFetchSingle(Async.waitFor(self), "SELECT username, password, userID, email FROM wcf1_user WHERE username LIKE ?", username)
 		local row2 = Async.wait()
 		if row2 and row2.password then
-			if not pwhash then
-				local salt = string.sub(row2.password, 1, 29)
-				local tc = getTickCount()
-				outputServerLog("Account.login:28 Start Generate Hash for "..username.." Salt: "..salt)
-				pwhash = WBBC.getDoubleSaltedHash(password, salt)
-				tc = getTickCount()-tc
-				outputServerLog("Account.login:28 Generated Hash for "..username..": "..pwhash.." Took: "..tc.."ms")
-			end
-			if pwhash == row2.password then
-				outputConsole("Creating Account for "..username)
-				Account.createAccount(player, row2.userID, row2.username, row2.email)
-				return
+			if pwhash then
+				if pwhash == row2.password then
+					outputConsole("Creating Account for "..username)
+					Account.createAccount(player, row2.userID, row2.username, row2.email)
+					return
+				end
+			else
+				local param = {["userId"] = row2.userID; ["password"] = password;}
+				local data = Account.fetchData("checkPassword", param)
+				if not data.error then
+					Account.createAccount(player, row2.userID, row2.username, row2.email)
+				else
+					player:triggerEvent("loginfailed", "Fehler: "..data.error)
+					return false
+				end
 			end
 		end
 
@@ -54,23 +57,27 @@ function Account.login(player, username, password, pwhash)
 		return false
 	end
 
-	if not pwhash then
-		local salt = string.sub(row.password, 1, 29)
-		local tc = getTickCount()
-		if salt and password and string.len(salt) > 0 and string.len(password) > 0 then
-			outputServerLog("Account.login:61 Start Generate Hash for "..username.." Salt: "..salt)
-			pwhash = WBBC.getDoubleSaltedHash(password, salt)
-			tc = getTickCount()-tc
-			outputServerLog("Account.login:61 Generated for "..username..": "..pwhash.." Took: "..tc.."ms")
+	if pwhash then
+		if pwhash == row.password then
+			Account.loginSuccess(true, player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
 		else
-			player:triggerEvent("loginfailed", "Fehler: brypt-hash error")
+			player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- Error: Invalid username or password2
 			return false
 		end
+	else
+		local param = {["userId"] = ForumID; ["password"] = password;}
+		Account.fetchData("checkPassword", param, Account.loginSuccess, player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
 	end
+end
+addEvent("accountlogin", true)
+addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
 
-	if pwhash ~= row.password then
-		player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- Error: Invalid username or password2
-		return false
+function Account.loginSuccess(fetchData, player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
+	if fetchData then
+		if fetchData.error then
+			player:triggerEvent("loginfailed", "Fehler: "..fetchData.error)
+			return false
+		end
 	end
 
 	if DatabasePlayer.getFromId(Id) then
@@ -106,8 +113,29 @@ function Account.login(player, username, password, pwhash)
 	StatisticsLogger:addLogin( player, username, "Login")
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
 end
-addEvent("accountlogin", true)
-addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
+
+function Account.fetchData(type, param, callback, ...)
+	local additionalParameters = {...} or {}
+	fetchRemote("https://exo-reallife.de/ingame/userApi/api.php?func="..type, 1,
+	function(data, errno)
+		if errno == 0 then
+			local returnData = fromJSON(data)
+			if not returnData then
+				outputConsole(data)
+				return
+			end
+			if returnData.error then
+				outputDebugString(returnData.error)
+			end
+			if callback then
+				callback(returnData, unpack(additionalParameters))
+			end
+			return returnData
+		else
+			outputDebugString("Error@FetchRemote: "..errno)
+		end
+	end, toJSON(param), false)
+end
 
 addEvent("checkRegisterAllowed", true)
 addEventHandler("checkRegisterAllowed", root, function()
@@ -193,44 +221,15 @@ addEventHandler("accountguest", root, function() Async.create(Account.guest)(cli
 
 function Account.createForumAccount(username, password, email)
 	if not password then return end
-	local nTimestamp = getRealTime().timestamp
-	local tc = getTickCount()
-	outputServerLog("Account.createForumAccount:195 Start Generate Hash for "..username.." Salt: -")
-	local pwhash = WBBC.getDoubleSaltedHash(password)
-	tc = getTickCount()-tc
-	outputServerLog("Account.createForumAccount:195 Generated Hash for "..username..": "..pwhash.." Took: "..tc.."ms")
-	local nLanguageID = 4
+	local param = {["username"] = username; ["password"] = password; ["email"] = email;}
 
-	board:queryFetch("START TRANSACTION;")
-	local result, _, userID = board:queryFetch("INSERT INTO wcf1_user (username, email, password, languageID, registrationDate, userOnlineGroupID, activationCode) VALUES (?, ?, ?, ?, ?, 1, 0)", username, email, pwhash, nLanguageID, nTimestamp)
-	if result then
-		local result = board:queryFetch("SELECT optionID, defaultValue FROM wcf1_user_option")
-		if result then
-			local columns = {}
-			local values = {}
-			for _, row in ipairs(result) do
-				--table.insert(columns, "userOption" .. row["optionID"])
-				table.insert(columns, ("userOption%s"):format(row["optionID"]))
-				local v = row["defaultValue"]
-				if v then v = tostring(v) else v = "" end
-				table.insert(values, v)
-			end
-
-			board:queryExec(("INSERT INTO wcf1_user_option_value (userID, %s) VALUES (?, '%s')"):format(table.concat(columns, ","), table.concat(values, "','")), userID)
-			board:queryExec("INSERT INTO wcf1_user_to_group (userID, groupID) VALUES (?,?)", userID, 1)
-			board:queryExec("INSERT INTO wcf1_user_to_group (userID, groupID) VALUES (?,?)", userID, 3)
-			board:queryExec("INSERT INTO wcf1_user_to_language (userID, languageID) VALUES (?,?)", userID, nLanguageID)
-
-			board:queryFetch("COMMIT;")
-
-			--phpSDKSendActivationMail(userID, username) -- Does not work
-
-			return userID
-		end
+	local data = Account.fetchData("createAccount", param)
+	if data.error then
+		player:triggerEvent("loginfailed", "Fehler: "..data.error)
+		return false
+	else
+		return data.boardId
 	end
-
-	board:queryFetch("ROLLBACK;")
-	return false
 end
 
 function Account:constructor(id, username, player, guest, ForumID, RegisterDate)
