@@ -167,7 +167,9 @@ end
 function Core:destructor()
 	if not self.m_Failed then
 		ACLGroup.get("Admin"):removeObject("user.exo_web")
-		removeAccount(self.m_ACLAccount)
+		if self.m_ACLAccount then
+			removeAccount(self.m_ACLAccount)
+		end
 
 		delete(VehicleManager:getSingleton())
 		delete(PlayerManager:getSingleton())
