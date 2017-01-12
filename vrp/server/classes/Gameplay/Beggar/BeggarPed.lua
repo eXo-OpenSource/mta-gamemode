@@ -194,7 +194,6 @@ function BeggarPed:deleteTransport(player)
 	setTimer(function() self:despawn() end, 50, 1)
 end
 
-
 function BeggarPed:Event_onPedWasted(totalAmmo, killer, killerWeapon, bodypart, stealth)
 	if killer and killer ~= source and killerWeapon ~= 3 and getElementType(killer) == "player" then
 		--killer:reportCrime(Crime.Kill)
@@ -224,8 +223,5 @@ function BeggarPed:Event_onColShapeLeave(hitElement, dim)
         if hitElement:getType() ~= "player" then return end
         self:sendMessage(hitElement, BeggarPhraseTypes.NoHelp)
         hitElement:triggerEvent("resetManualHelpBarText")
-
-		-- Take karma
-		hitElement:giveKarma(-1/math.random(1, 5))
     end
 end
