@@ -98,7 +98,15 @@ function HTTPProvider:start()
 
 			for i, path in ipairs(archives) do
 				self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the archives... (%d / %d archives)"):format(i, table.getn(files)))
-				untar(path, "/")
+				local status, err = untar(path, "/")
+				if not status then
+					self.ms_GUIInstance:setStatus("failed", ("Failed to unpack archive %s! (Error: %s)"):format(path, err))
+
+					for i, path in ipairs(archives) do
+						fileDelete(path)
+					end
+					return false
+				end
 			end
 
 			-- remove temp file
@@ -108,9 +116,11 @@ function HTTPProvider:start()
 			return true
 		else
 			self.ms_GUIInstance:setStatus("failed", "Got empty index file!")
+			return false
 		end
 	else
 		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
+		return false
 	end
 end
 

@@ -77,6 +77,10 @@ local function nullterm(s)
 end
 
 local function read_header_block(block)
+	outputDebugString(#block)
+	outputDebugString(nullterm(block:sub(1,100)))
+	outputDebugString(block:sub(258,263))
+	outputDebugString(block:sub(264,265))
 	local header = {}
 	header.name = nullterm(block:sub(1,100))
 	header.mode = nullterm(block:sub(101,108))
@@ -128,7 +132,8 @@ function untar(filePath, destPath)
 		if not block or chk == false then break end
 		local header, err = read_header_block(block)
 		if not header then
-			print(err)
+			tar_handle:close()
+			return false, err
 		end
 
 		-- read entire file that follows header
@@ -167,5 +172,6 @@ function untar(filePath, destPath)
 		end
 	end
 
+	tar_handle:close()
 	return true
 end
