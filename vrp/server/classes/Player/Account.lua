@@ -26,21 +26,34 @@ function Account.login(player, username, password, pwhash)
 					outputConsole("Creating Account for "..username)
 					Account.createAccount(player, row2.userID, row2.username, row2.email)
 					return
+				else
+					player:triggerEvent("loginfailed", "Fehler: Gespeichertes Passwort ungültig!")
+					return false
 				end
 			else
 				local param = {["userId"] = row2.userID; ["password"] = password;}
-				local data = Account.fetchData("checkPassword", param)
-				if not data.error then
-					Account.createAccount(player, row2.userID, row2.username, row2.email)
-				else
-					player:triggerEvent("loginfailed", "Fehler: "..data.error)
-					return false
-				end
+				fetchRemote("https://exo-reallife.de/ingame/userApi/api.php?func=checkPassword", 1,
+					function(data, errno)
+						if errno == 0 then
+							local returnData = fromJSON(data)
+							if not returnData then outputConsole(data, player) return end
+							if returnData.error then
+								player:triggerEvent("loginfailed", "Fehler: "..returnData.error)
+								return false
+							end
+							if returnData.login == true then
+								Async.create(Account.createAccount)(player, row2.userID, row2.username, row2.email)
+								return
+							else
+								player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
+							end
+						else
+							outputDebugString("Error@FetchRemote: "..errno)
+						end
+					end
+				, toJSON(param), false)
 			end
 		end
-
-		player:triggerEvent("loginfailed", "Fehler: Account nicht gefunden")
-		return false
 	end
 
 	local Id = row.Id
@@ -59,35 +72,44 @@ function Account.login(player, username, password, pwhash)
 
 	if pwhash then
 		if pwhash == row.password then
-			Account.loginSuccess(true, player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
+			Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
 		else
 			player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- Error: Invalid username or password2
 			return false
 		end
 	else
 		local param = {["userId"] = ForumID; ["password"] = password;}
-		Account.fetchData("checkPassword", param, Account.loginSuccess, player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
+		fetchRemote("https://exo-reallife.de/ingame/userApi/api.php?func=checkPassword", 1,
+			function(data, errno)
+				if errno == 0 then
+					local returnData = fromJSON(data)
+					if not returnData then outputConsole(data, player) return end
+					if returnData.error then
+						player:triggerEvent("loginfailed", "Fehler: "..returnData.error)
+						return false
+					end
+					if returnData.login == true then
+						Async.create(Account.loginSuccess)(player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
+					else
+						player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
+					end
+				else
+					outputDebugString("Error@FetchRemote: "..errno)
+				end
+			end
+		, toJSON(param), false)
 	end
 end
 addEvent("accountlogin", true)
 addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
 
-function Account.loginSuccess(fetchData, player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
-	if fetchData then
-		if fetchData.error then
-			player:triggerEvent("loginfailed", "Fehler: "..fetchData.error)
-			return false
-		end
-	end
-
+function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
 	if DatabasePlayer.getFromId(Id) then
 		player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
 		return false
 	end
-
 	-- Update last serial and last login
 	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
-
 	if MULTIACCOUNT_CHECK then
 		if Account.MultiaccountCheck(player, Id) == false then
 			return false
@@ -99,42 +121,17 @@ function Account.loginSuccess(fetchData, player, Id, Username, ForumID, Register
 			return
 		end
 	end
-
 	player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
 
 	if player:getTutorialStage() == 1 then
 		player:createCharacter()
 	end
-
 	player:loadCharacter()
 	player:triggerEvent("stopLoginCameraDrive")
 	player:triggerEvent("Event_StartScreen")
 
-	StatisticsLogger:addLogin( player, username, "Login")
+	StatisticsLogger:addLogin( player, Username, "Login")
 	triggerClientEvent(player, "loginsuccess", root, pwhash, player:getTutorialStage())
-end
-
-function Account.fetchData(type, param, callback, ...)
-	local additionalParameters = {...} or {}
-	fetchRemote("https://exo-reallife.de/ingame/userApi/api.php?func="..type, 1,
-	function(data, errno)
-		if errno == 0 then
-			local returnData = fromJSON(data)
-			if not returnData then
-				outputConsole(data)
-				return
-			end
-			if returnData.error then
-				outputDebugString(returnData.error)
-			end
-			if callback then
-				callback(returnData, unpack(additionalParameters))
-			end
-			return returnData
-		else
-			outputDebugString("Error@FetchRemote: "..errno)
-		end
-	end, toJSON(param), false)
 end
 
 addEvent("checkRegisterAllowed", true)
@@ -182,10 +179,8 @@ function Account.register(player, username, password, email)
 		return false
 	end
 
-	local boardId = Account.createForumAccount(username, password, email)
-	if boardId then
-		Account.createAccount(player, boardId, username, email)
-	end
+	Account.createForumAccount(player, username, password, email)
+
 end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(...) Async.create(Account.register)(client, ...) end)
@@ -196,18 +191,9 @@ function Account.createAccount(player, boardId, username, email)
 		player.m_Account = Account:new(Id, username, player, false)
 		player:createCharacter()
 
-		if INVITATION then
-			if not Account.checkInvitation(player, Id, 0) then
-				return
-			end
-		end
-
-		player:loadCharacter()
-		player:triggerEvent("stopLoginCameraDrive")
-		player:triggerEvent("Event_StartScreen")
-		player:triggerEvent("loginsuccess", nil, player:getTutorialStage())
-		StatisticsLogger:addLogin(player, username, "Login")
-		-- TODO: Send validation mail via PHP
+		Account.loginSuccess(player, Id, username, boardId, RegisterDate, 0, false)
+	else
+		player:triggerEvent("loginfailed", "Fehler: Unable to create Ingame-Acc.")
 	end
 end
 
@@ -219,17 +205,28 @@ end
 addEvent("accountguest", true)
 addEventHandler("accountguest", root, function() Async.create(Account.guest)(client) end)
 
-function Account.createForumAccount(username, password, email)
+function Account.createForumAccount(player, username, password, email)
 	if not password then return end
 	local param = {["username"] = username; ["password"] = password; ["email"] = email;}
-
-	local data = Account.fetchData("createAccount", param)
-	if data.error then
-		player:triggerEvent("loginfailed", "Fehler: "..data.error)
-		return false
-	else
-		return data.boardId
-	end
+		fetchRemote("https://exo-reallife.de/ingame/userApi/api.php?func=createAccount", 1,
+			function(data, errno)
+				if errno == 0 then
+					local returnData = fromJSON(data)
+					if not returnData then outputConsole(data, player) return end
+					if returnData.error then
+						player:triggerEvent("loginfailed", "Fehler: "..returnData.error)
+						return false
+					end
+					if returnData.boardId then
+						Async.create(Account.createAccount)(player, returnData.boardId, username, email)
+					else
+						player:triggerEvent("loginfailed", "Fehler: Forum-Acc konnte nicht angelegt werden")
+					end
+				else
+					outputDebugString("Error@FetchRemote: "..errno)
+				end
+			end
+		, toJSON(param), false)
 end
 
 function Account:constructor(id, username, player, guest, ForumID, RegisterDate)

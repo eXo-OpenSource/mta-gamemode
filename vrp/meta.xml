@@ -55,8 +55,6 @@
 	<script src="server/classes/Config.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>
-	<script src="server/classes/Storage/iConnect/iConnect.lua" type="server"/>
-	<script src="server/classes/Storage/iConnect/serialize.lua" type="server"/>
 	<script src="server/classes/Core.lua" type="server"/>
 	<script src="server/classes/Player/WhiteList.lua" type="server"/>
 	<script src="server/classes/PhoneInteraction.lua" type="server"/>
@@ -285,7 +283,6 @@
 	<script src="server/tests/UtilsTest.lua" type="server"/>
 	<script src="server/tests/GroupTest.lua" type="server"/>
 	<script src="server/tests/PromiseTest.lua" type="server"/>
-	<script src="server/tests/bcrypt_test.lua" type="server"/>
 
 	<script src="server/Main.lua" type="server"/>
 
