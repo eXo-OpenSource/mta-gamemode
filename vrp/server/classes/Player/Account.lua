@@ -51,9 +51,9 @@ function Account.login(player, username, password, pwhash)
 					outputDebugString("Error@FetchRemote: "..errno)
 				end
 			end
-			player:triggerEvent("loginfailed", "Fehler: Spieler nicht gefunden!")
-			return
 		end
+		player:triggerEvent("loginfailed", "Fehler: Spieler nicht gefunden!")
+		return
 	end
 
 	local Id = row.Id
