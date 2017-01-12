@@ -45,11 +45,14 @@ function Account.login(player, username, password, pwhash)
 						return
 					else
 						player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
+						return
 					end
 				else
 					outputDebugString("Error@FetchRemote: "..errno)
 				end
 			end
+			player:triggerEvent("loginfailed", "Fehler: Spieler nicht gefunden!")
+			return
 		end
 	end
 
