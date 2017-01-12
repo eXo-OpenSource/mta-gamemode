@@ -271,11 +271,11 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	source:triggerEvent("playerWasted")
 
 	if FactionRescue:getSingleton():countPlayers() > 0 then
-		if not source.m_DeathPickup then
+		if not source.m_DeathPickup and not isElement(source.m_DeathPickup) then
 			FactionRescue:getSingleton():createDeathPickup(source)
 			return true
 		else -- This should never never happen!
-			outputDebug("Internal Error! Player died while he is Dead. Dafuq?")
+			outputDebugString("Internal Error! Player died while he is Dead. Dafuq?")
 		end
 	end
 
