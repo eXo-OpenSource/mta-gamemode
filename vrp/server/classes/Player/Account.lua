@@ -72,7 +72,7 @@ function Account.login(player, username, password, pwhash)
 
 	if pwhash then
 		if pwhash == row.password then
-			Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
+			Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwhash)
 		else
 			player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- Error: Invalid username or password2
 			return false
@@ -88,7 +88,7 @@ function Account.login(player, username, password, pwhash)
 				return false
 			end
 			if returnData.login == true then
-				Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
+				Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwhash)
 			else
 				player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
 			end
@@ -100,7 +100,7 @@ end
 addEvent("accountlogin", true)
 addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
 
-function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwHash)
+function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwhash)
 	if DatabasePlayer.getFromId(Id) then
 		player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
 		return false
