@@ -44,7 +44,7 @@ local function octal_to_number(octal)
 	local number = 0
 	octal = trim(octal)
 	for i = #octal,1,-1 do
-		local digit = _tonumber(octal:sub(i,i))
+		local digit = _tonumber(octal:binary_sub(i,i))
 		if not digit then break end
 		number = number + (digit * 8^exp)
 		exp = exp + 1
@@ -77,28 +77,24 @@ local function nullterm(s)
 end
 
 local function read_header_block(block)
-	outputDebugString(#block)
-	outputDebugString(nullterm(block:sub(1,100)))
-	outputDebugString(block:sub(258,263))
-	outputDebugString(block:sub(264,265))
 	local header = {}
-	header.name = nullterm(block:sub(1,100))
-	header.mode = nullterm(block:sub(101,108))
-	header.uid = octal_to_number(nullterm(block:sub(109,116)))
-	header.gid = octal_to_number(nullterm(block:sub(117,124)))
-	header.size = octal_to_number(nullterm(block:sub(125,136)))
-	header.mtime = octal_to_number(nullterm(block:sub(137,148)))
-	header.chksum = octal_to_number(nullterm(block:sub(149,156)))
-	header.typeflag = get_typeflag(block:sub(157,157))
-	header.linkname = nullterm(block:sub(158,257))
-	header.magic = block:sub(258,263)
-	header.version = block:sub(264,265)
-	header.uname = nullterm(block:sub(266,297))
-	header.gname = nullterm(block:sub(298,329))
-	header.devmajor = octal_to_number(nullterm(block:sub(330,337)))
-	header.devminor = octal_to_number(nullterm(block:sub(338,345)))
-	header.prefix = block:sub(346,500)
-	header.pad = block:sub(501,512)
+	header.name = nullterm(block:binary_sub(1,100))
+	header.mode = nullterm(block:binary_sub(101,108))
+	header.uid = octal_to_number(nullterm(block:binary_sub(109,116)))
+	header.gid = octal_to_number(nullterm(block:binary_sub(117,124)))
+	header.size = octal_to_number(nullterm(block:binary_sub(125,136)))
+	header.mtime = octal_to_number(nullterm(block:binary_sub(137,148)))
+	header.chksum = octal_to_number(nullterm(block:binary_sub(149,156)))
+	header.typeflag = get_typeflag(block:binary_sub(157,157))
+	header.linkname = nullterm(block:binary_sub(158,257))
+	header.magic = block:binary_sub(258,263)
+	header.version = block:binary_sub(264,265)
+	header.uname = nullterm(block:binary_sub(266,297))
+	header.gname = nullterm(block:binary_sub(298,329))
+	header.devmajor = octal_to_number(nullterm(block:binary_sub(330,337)))
+	header.devminor = octal_to_number(nullterm(block:binary_sub(338,345)))
+	header.prefix = block:binary_sub(346,500)
+	header.pad = block:binary_sub(501,512)
 	if header.magic ~= "ustar " and header.magic ~= "ustar\0" then
 		return false, "Invalid header magic "..header.magic
 	end
@@ -137,7 +133,7 @@ function untar(filePath, destPath)
 		end
 
 		-- read entire file that follows header
-		local file_data = tar_handle:read(_ceil(header.size / blocksize) * blocksize):sub(1,header.size)
+		local file_data = tar_handle:read(_ceil(header.size / blocksize) * blocksize):binary_sub(1,header.size)
 
 		if header.typeflag == "long name" then
 			long_name = nullterm(file_data)
@@ -155,7 +151,7 @@ function untar(filePath, destPath)
 		end
 
 		local pathname
-		if (destPath and string.sub(destPath,-1) ~= "/") then
+		if (destPath and string.binary_sub(destPath,-1) ~= "/") then
 			pathname = destPath.."/"..header.name
 		else
 			pathname = destPath..header.name
