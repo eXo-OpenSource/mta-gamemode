@@ -42,59 +42,43 @@ function GoJump:constructor()
     self:updateRenderTarget()
     self:keyBinds()
 
-    self._onClientRender = bind(self.onClientRender, self)
-	self.fn_ReceiveHighscores = bind(self.receiveStats, self)
+    self._onClientRender = bind(GoJump.onClientRender, self)
+	self.fn_ReceiveHighscores = bind(GoJump.receiveStats, self)
+	self.m_fnRestore = bind(GoJump.onClientRestore, self)
     addEventHandler("onClientRender", root, self._onClientRender)
     addEventHandler("onClientResourceStop", resourceRoot, self._closeFunc)
     addEventHandler("GoJumpReceiveHighscores", resourceRoot, self.fn_ReceiveHighscores)
-	--Event:addRemote(self, "sendStats", "receiveStats")
+	addEventHandler("onClientRestore", root, self.m_fnRestore)
 end
 
 function GoJump:destructor()
-	local st = getTickCount()
-	--Save stats
-    --self:saveStatistics()
-
     --Kill timer
     if self.timer and self.timer:isValid() then self.timer:destroy() end
 
     --Remove Events
     removeEventHandler("onClientRender", root, self._onClientRender)
     removeEventHandler("onClientResourceStop", resourceRoot, self._closeFunc)
+	removeEventHandler("onClientRestore", root, self.m_fnRestore)
 
     --unbind keys
     unbindKey("backspace", "down", self._closeFunc)
     unbindKey("space", "both", self._bindKeySpaceFunc)
     unbindKey("m", "down", self._bindKeyMusicFunc)
     unbindKey("c", "down", self._bindKeyBackgroundFunc)
-    unbindKey("s", "down", self._bindKeyStatsFunc)
+    --unbindKey("s", "down", self._bindKeyStatsFunc)
 
     --Stop/delete animations
     delete(self.anim_player)
     delete(self.anim_player2)
     delete(self.anim_offset)
 
-	--local step1 = getTickCount()
+	self.threadClearFunc = function()
+		for k, v in pairs(self.Blocks) do
+			v.anim:delete()
+		end
+	end
 
-    for k, v in pairs(self.Blocks) do
-        delete(v.anim)
-    end
-
-	--local step2 = getTickCount()
-
-	--local step3 = getTickCount()
-
-    collectgarbage()
-
-	--local step4 = getTickCount()
-
-	--[[outputChatBox(("Complete: %s\n\nStep1: %s\nStep2: %s\nStep3: %s\nStep4: %s"):format(
-		 math.floor(getTickCount()-st),
-		 math.floor(step1-st),		--Destroy Timer, unbind keys, delete player animations
-		 math.floor(step2-step1),	--Delete Block animations
-		 math.floor(step3-step2),	--Delete all lel
-		 math.floor(step4-step3) 	--collectgarbage
-	 ))]]
+	Thread:new(self.threadClearFunc, THREAD_PRIORITY_HIGHEST)
 end
 
 function GoJump:loadImages()
@@ -165,7 +149,7 @@ function GoJump:keyBinds()
     bindKey("space", "both", self._bindKeySpaceFunc)
     bindKey("m", "down", self._bindKeyMusicFunc)
     bindKey("c", "down", self._bindKeyBackgroundFunc)
-    bindKey("s", "down", self._bindKeyStatsFunc)
+    --bindKey("s", "down", self._bindKeyStatsFunc)
 end
 
 function GoJump:initAnimations()
@@ -236,10 +220,13 @@ function GoJump:createLines()
 end
 
 function GoJump:createBlocks()
-    --local st = getTickCount()
 	--TODO: Create blocks dynamic
     for i = 0, 500 do
-        local blockHeight = (self.height - self.staticOffset - self.staticFloorHeight*i) - 32
+		if self.Blocks[i] and self.Blocks[i].anim then
+			self.Blocks[i].anim:delete()
+		end
+
+		local blockHeight = (self.height - self.staticOffset - self.staticFloorHeight*i) - 32
         local blockAnim = new(CAnimation, self, ("blockX_%s"):format(i))
         local moveState = math.random(1,2) == 1 and "l" or "r"
         local moveSpeed = self:getRandomSpeed(i)
@@ -252,8 +239,6 @@ function GoJump:createBlocks()
     for _, c in ipairs({0, 2, 5, 10, 15, 20, 50, 75, 100, 140, 180, 200}) do
        self.Blocks[c].state = "none"
     end
-
-   -- outputChatBox(("Created block in %sms"):format(math.floor(getTickCount()-st)))
 end
 
 function GoJump:getRandomSpeed(blockID)
@@ -347,12 +332,21 @@ function GoJump:onJump(_, str_State)
             if self.highscore and self.currentID == self.highscore then
                 --playSound("res/sound/highscore.wav")
                 self:playSound("highscore")
-            end
+			end
+
+			self:clearBlocksBelow()
         end
     end
 end
 
-function GoJump.jumpDone()
+function GoJump:clearBlocksBelow()
+	local blockBelow = self.Blocks[self.currentID-2]
+	if blockBelow and blockBelow.anim then
+		blockBelow.anim:delete()
+	end
+end
+
+function GoJump:jumpDone()
     --Todo: improve jump method with callback function
 end
 
@@ -437,6 +431,8 @@ function GoJump:updateRenderTarget()
         dxDrawText("c", self.width/2 - 48 , 400 + 48 + 5, self.width/2 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
         dxDrawText("s", self.width/2 - 48/2 - 70, 400 + 48 + 5, self.width/2 - 48/2 - 70 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
         dxDrawText("m", self.width/2 - 48/2 + 70, 400 + 48 + 5, self.width/2 - 48/2 + 70 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
+
+		dxDrawText("Drücke Backspace zum beenden!", 0, 0, 400 - 5, 600 - 5, self.white, 1, self.font_JosefinSans13, "right", "bottom")
     end
 
     if self.state == "Stats" then
@@ -533,6 +529,12 @@ function GoJump:onClientRender()
 
     --dxDrawImage(x/2-200 / 1920*x, y/2-300 / 1080*y, 400 / 1920 * x, 600 / 1080 * y, self.renderTarget)
     dxDrawImage(screenWidth/2-200, screenHeight/2-300, 400, 600, self.renderTarget)
+end
+
+function GoJump:onClientRestore(didClearRenderTargets)
+	if didClearRenderTargets then
+		self:updateRenderTarget()
+	end
 end
 
 function GoJump:playSound(sSound)

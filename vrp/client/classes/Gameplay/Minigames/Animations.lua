@@ -4,7 +4,7 @@
 -- Date: 30.09.2015 - Time: 22:28
 -- pewx.de // iGaming-mta.de // iRace-mta.de // iSurvival.de // mtasa.de
 --
-CAnimation = {}
+CAnimation = inherit(Object)
 
 function CAnimation:constructor(CInstance, ...)
     self.isRendering = false
@@ -24,8 +24,6 @@ function CAnimation:destructor()
     if self.isRendering then
         removeEventHandler("onClientRender", root, self.renderFunc)
     end
-
-    collectgarbage()
 end
 
 function CAnimation:startAnimation(nDuration, sAnimationType, ...)
