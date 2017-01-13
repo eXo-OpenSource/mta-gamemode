@@ -532,7 +532,7 @@ function GroupManager:Event_GetShopInfo()
 	if group then
 		local info = {}
 		for i, shop in pairs(group:getShops()) do
-			table.insert(info, {id = shop:getId(), name = shop:getName(), money = shop:getMoney(), position = {shop.m_Position.x, shop.m_Position.y, shop.m_Position.z}})
+			table.insert(info, {id = shop:getId(), name = shop:getName(), money = shop:getMoney(), position = {shop.m_Position.x, shop.m_Position.y, shop.m_Position.z}, lastRob = shop.m_LastRob})
 		end
 
 		client:triggerEvent("groupRetriveBusinessInfo", info)
