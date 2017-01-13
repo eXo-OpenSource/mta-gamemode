@@ -48,7 +48,7 @@ function Tour:start(forceNew)
 end
 
 function Tour:save(player)
-	if not player then source = player end
+	if not player then player = source end
 
 	if self.m_TourPlayerData[player:getId()] then
 		sql:queryExec("UPDATE ??_character SET Tour = ? WHERE Id = ?;", sql:getPrefix(), toJSON(self.m_TourPlayerData[player:getId()]), player:getId())
