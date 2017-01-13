@@ -120,7 +120,9 @@ function Highscore:getHighscoresFormated()
 
 		table.sort(newTable[index],
 			function (a, b)
-				return (a.score > b.score)
+				local aScore = a.score or 0
+				local bScore = b.score or 0
+				return (aScore > bScore)
 			end
 		)
 
