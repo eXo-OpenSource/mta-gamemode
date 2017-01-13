@@ -19,14 +19,14 @@ function StreetRaceEvent:onStart()
 	for k, player in pairs(self.m_Players) do
 		player:triggerEvent("countdownStart", 3)
 		player:setData("inEvent", true)
-		removeEventHandler("onPlayerVehicleExit",source,self.m_onExitFunc)
-		addEventHandler("onPlayerVehicleExit",player,self.m_onExitFunc)
+		removeEventHandler("onPlayerVehicleExit", player, self.m_onExitFunc)
+		addEventHandler("onPlayerVehicleExit", player, self.m_onExitFunc)
 		player:setFrozen(true)
 	end
 
 	setTimer(
 		function()
-			destroyElement(self.m_StartMarker)
+			if isElement(self.m_StartMarker) then destroyElement(self.m_StartMarker) end
 
 			-- Find random position which is not equal to the start position
 			local pos, randomIndex
