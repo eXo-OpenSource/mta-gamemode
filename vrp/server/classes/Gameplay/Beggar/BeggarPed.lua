@@ -31,7 +31,7 @@ function BeggarPed:constructor(Id)
 end
 
 function BeggarPed:destructor()
-	if self.m_ColShape then	self.m_ColShape:destroy() end
+	if self.m_ColShape then	destroyElement(self.m_ColShape) end
 
 	-- Remove ref
 	BeggarPedManager:getSingleton():removeRef(self)
