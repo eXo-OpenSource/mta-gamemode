@@ -232,7 +232,7 @@ function FactionState:createTakeItemsPickup(pos)
 			if hitElement.vehicle then
 				if hitElement:isFactionDuty() and hitElement:getFaction() and hitElement:getFaction():isStateFaction() == true then
 					local veh = hitElement.vehicle
-					if veh:getFaction() and veh:getFaction():isStateFaction() then
+					if instanceof(veh, FactionVehicle) and veh:getFaction():isStateFaction() then
 						hitElement:triggerEvent("showStateItemGUI")
 						triggerClientEvent(hitElement, "refreshItemShopGUI", hitElement, 0, self.m_Items)
 					else
@@ -1354,11 +1354,11 @@ end
 function FactionState:Event_checkBug(element)
 	local checkElement = client
 	local text = _("deinem Körper", client)
-	local price = 50
+	local price = 25
 	if element then
 		checkElement = element
 		text = _("deinem Fahrzeug", client)
-		price = 100
+		price = 50
 	end
 	if client:getMoney() >= price then
 		client:takeMoney(price, "Wanzen-Check")
