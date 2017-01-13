@@ -315,7 +315,7 @@ function FactionRescue:destroyDeathBlip()
 	end
 
 	-- Create Pickup (TOOD: dunno if its correct here, test it ^^)
-	local money = client:getMoney()*0.5
+	local money = math.floor(client:getMoney()*0.25)
 	client:takeMoney(money)
 
 	addEventHandler("onPickupHit",

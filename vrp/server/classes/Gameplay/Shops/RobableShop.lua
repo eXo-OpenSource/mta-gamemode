@@ -113,13 +113,13 @@ function RobableShop:startRob(shop, attacker, ped)
 					self.m_Bag.Money = self.m_Bag.Money + rnd
 					attacker:sendShortMessage(_("+%d$ - Tascheninhalt: %d$", attacker, rnd, self.m_Bag.Money))
 				else
-					killTimer(self.m_TargetTimer)
+					if self.m_TargetTimer and isTimer(self.m_TargetTimer) then killTimer(self.m_TargetTimer) end
 					attacker:sendInfo(_("Die Kasse ist nun leer! Du hast die maximale Beute!", attacker))
 				end
 			end
 			return
 		end
-		killTimer(self.m_TargetTimer)
+		if self.m_TargetTimer and isTimer(self.m_TargetTimer) then killTimer(self.m_TargetTimer) end
 	end, 1000, 0)
 
 	self.m_Func = bind(RobableShop.m_onExpire, self)
