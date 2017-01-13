@@ -67,7 +67,7 @@ function HTTPProvider:start()
 
 			self.ms_GUIInstance:setStatus("file count", table.getn(files))
 
-			local dataPackages = {}
+			local archives = {}
 			for i, v in ipairs(files) do
 				self.ms_GUIInstance:setStatus("current file", v.path)
 				local responseData, errno = self:fetchAsync(v.path)
@@ -78,8 +78,8 @@ function HTTPProvider:start()
 
 				if responseData ~= "" then
 					local filePath = v.target_path
-					if v.target_path:sub(-5, #v.target_path) == ".data" then
-						dataPackages[#dataPackages+1] = filePath
+					if v.target_path:sub(-4, #v.target_path) == ".tar" then
+						archives[#archives+1] = filePath
 					end
 					if fileExists(filePath) then
 						fileDelete(filePath)
@@ -96,9 +96,17 @@ function HTTPProvider:start()
 				end
 			end
 
-			for i, path in ipairs(dataPackages) do
-				self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the packages... (%d / %d packages)"):format(i, table.getn(files)))
-				Package.load(path)
+			for i, path in ipairs(archives) do
+				self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the archives... (%d / %d archives)"):format(i, table.getn(files)))
+				local status, err = untar(path, "/")
+				if not status then
+					self.ms_GUIInstance:setStatus("failed", ("Failed to unpack archive %s! (Error: %s)"):format(path, err))
+
+					for i, path in ipairs(archives) do
+						fileDelete(path)
+					end
+					return false
+				end
 			end
 
 			-- remove temp file
@@ -108,9 +116,11 @@ function HTTPProvider:start()
 			return true
 		else
 			self.ms_GUIInstance:setStatus("failed", "Got empty index file!")
+			return false
 		end
 	else
 		self.ms_GUIInstance:setStatus("failed", "Cannot access download-server! (User-Access denied)")
+		return false
 	end
 end
 

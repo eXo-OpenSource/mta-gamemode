@@ -281,6 +281,9 @@ function string.duration(seconds)
 	end
 end
 
+-- Override with UTF-8 versions (but keep a backup for binary operations)
+string.binary_sub = string.sub
+string.binary_len = string.len
 string.sub = utfSub
 string.len = utfLen
 
