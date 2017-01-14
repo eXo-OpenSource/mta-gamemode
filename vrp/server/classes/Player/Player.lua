@@ -73,7 +73,6 @@ function Player:destructor()
 		takeAllWeapons(self)
 	end
 
-	if self.m_DeathPickup and isElement(self.m_DeathPickup) then self.m_DeathPickup:destroy() end
 
 	self:save()
 
