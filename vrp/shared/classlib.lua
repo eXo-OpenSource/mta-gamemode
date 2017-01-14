@@ -188,7 +188,14 @@ end
 ---|| !!! Avoid calling this function manually unless you know what you're doing! !!!
 ---\\
 function __removeElementIndex()
+	-- Call destructor
 	delete(source)
+
+	-- Make sure element is not referenced in the classlib
+	-- in theory, the GC weak mode invokes deletion,
+	-- but since we probably have remaining references somewhere
+	-- in the script, it's not deleted (which is easier to track down though)
+	oop.elementInfo[source] = nil
 end
 
 function instanceof(self, class, direct)

@@ -24,6 +24,7 @@
 	<script src="shared/deflatelua.lua" type="shared"/>
 	<script src="shared/data.lua" type="shared"/>
 	<script src="shared/math.matrix.lua" type="shared"/>
+	<script src="shared/tar.lua" type="shared"/>
 	<script src="shared/classes/File.lua" type="shared"/>
 	<script src="shared/classes/Log.lua" type="shared"/>
 	<script src="shared/classes/POParser.lua" type="shared"/>
@@ -682,6 +683,7 @@
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessGraphics.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessRule.lua" type="client" cache="true" />
 	<script src="client/classes/Gameplay/Minigames/Chess/ChessClock.lua" type="client" cache="true" />
+
 	<!-- white pieces -->
 	<file src="files/images/Chess/Rook.png" />
 	<file src="files/images/Chess/Bishop.png" />

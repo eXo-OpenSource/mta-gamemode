@@ -603,12 +603,19 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
+
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then
 			--if slot["Amount"] >= 0 then
 				local weaponId = slot["WeaponId"]
 				local amount = slot["Amount"]
+
+				if client:getWeaponLevel() < MIN_WEAPON_LEVELS[weaponId] then
+					client:sendError(_("Dein Waffenlevel ist zu niedrig! (Benötigt: %i)", client, MIN_WEAPON_LEVELS[weaponId]))
+					return
+				end
+
 				if client:getWeapon(getSlotFromWeapon(weaponId)) == 0 then
 					slot["WeaponId"] = 0
 					slot["Amount"] = 0

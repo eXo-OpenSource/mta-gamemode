@@ -60,6 +60,21 @@ function FactionRescue:constructor()
 	addEventHandler("factionRescueToggleStretcher", root, bind(self.Event_ToggleStretcher, self))
 	addEventHandler("factionRescuePlayerHealBase", root, bind(self.Event_healPlayerHospital, self))
 	addEventHandler("factionRescueReviveAbort", root, bind(self.destroyDeathBlip, self))
+
+
+	PlayerManager:getSingleton():getQuitHook():register(
+		function(player)
+			if player.m_DeathPickup then
+				player.m_DeathPickup:destroy()
+				player.m_DeathPickup = nil
+				for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
+					rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+				end
+			end
+		end
+	)
+
+
 end
 
 function FactionRescue:destructor()
@@ -272,6 +287,9 @@ function FactionRescue:createDeathPickup(player, ...)
 	if player:isInGangwar() then gw = "(Gangwar)" end
 
 	player.m_DeathPickup = Pickup(pos, 3, 1254, 0)
+	local money = math.floor(player:getMoney()*0.25)
+	player:takeMoney(money, "beim Tod verloren")
+	player.m_DeathPickup.money = money
 
 	for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
 		rescuePlayer:sendShortMessage(("%s ist gestorben. %s \nPosition: %s - %s"):format(player:getName(), gw, getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
@@ -282,22 +300,34 @@ function FactionRescue:createDeathPickup(player, ...)
 
 	addEventHandler("onPickupHit", player.m_DeathPickup,
 		function (hitPlayer)
-			if hitPlayer:getFaction() and hitPlayer:getFaction():isRescueFaction() then
-				if hitPlayer:getPublicSync("Faction:Duty") and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
-					if hitPlayer.m_RescueStretcher then
-						player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
-						hitPlayer.m_RescueStretcher.player = player
-						source:destroy()
-						for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-							rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
-						end
+			if hitPlayer:getType() == "player" and not hitPlayer.vehicle then
+				if hitPlayer:getFaction() and hitPlayer:getFaction():isRescueFaction() then
+					if hitPlayer:getPublicSync("Faction:Duty") and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
+						if hitPlayer.m_RescueStretcher then
+							player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
+							hitPlayer.m_RescueStretcher.player = player
 
-					else
-						hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
+							if source.money and source.money > 0 then
+								hitPlayer:giveMoney(source.money, "verlorenes Geld zurückbekommen")
+								source.money = 0
+							end
+
+							source:destroy()
+							for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
+								rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+							end
+
+						else
+							hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
+						end
 					end
+				else
+					if source.money and source.money > 0 then
+						hitPlayer:giveMoney(source.money, "bei Leiche gefunden")
+						source.money = 0
+					end
+					hitPlayer:sendShortMessage(("He's dead son.\nIn Memories of %s"):format(player:getName()))
 				end
-			else
-				hitPlayer:sendShortMessage(("He's dead son.\nIn Memories of %s"):format(player:getName()))
 			end
 		end
 	)
@@ -313,20 +343,6 @@ function FactionRescue:destroyDeathBlip()
 			rescuePlayer:triggerEvent("rescueRemoveDeathBlip", client)
 		end
 	end
-
-	-- Create Pickup (TOOD: dunno if its correct here, test it ^^)
-	local money = math.floor(client:getMoney()*0.25)
-	client:takeMoney(money)
-
-	addEventHandler("onPickupHit",
-		Pickup(client.position, 3, 1210, math.huge, 0),
-		function(ele)
-			if ele:getType() == "player" then
-				ele:giveMoney(money)
-				source:destroy()
-			end
-		end
-	)
 end
 
 function FactionRescue:createDeathTimeout(player, callback)

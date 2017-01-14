@@ -11,7 +11,7 @@ AttackSession = inherit(Object)
 --// @param_desc: faction1: attacker-faction, faction2: defender-faction
 function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_AreaObj = pAreaObj
-	self.m_Faction1 = faction1 
+	self.m_Faction1 = faction1
 	self.m_Faction2 = faction2
 	self.m_Disqualified = {	} --//
 	self.m_Participants = {	}
@@ -78,7 +78,7 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 		self.m_Participants[#self.m_Participants + 1] = player
 		if not bLateJoin then
 			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
-		else 
+		else
 			if isTimer( self.m_BattleTime ) then
 				local timeLeft = getTimerDetails( self.m_BattleTime )
 				timeLeft = math.ceil(timeLeft /1000)
@@ -152,7 +152,7 @@ function AttackSession:onPlayerLeaveCenter( player )
 end
 
 function AttackSession:onGangwarDamage( target, weapon, bpart, loss )
-	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then 
+	if self:isParticipantInList( target ) and self:isParticipantInList( source ) then
 		triggerClientEvent("onGangwarDamage", source, target, weapon, bpart, loss)
 	end
 end
@@ -250,7 +250,7 @@ function AttackSession:stopClients()
 		v.m_RefAttackSession = nil
 		receiveTimeout = receiveTimeout + 1
 	end
-	GangwarStatistics:getSingleton():setCollectorTimeout( self.m_AreaObj.m_ID, receiveTimeout )	
+	GangwarStatistics:getSingleton():setCollectorTimeout( self.m_AreaObj.m_ID, receiveTimeout )
 end
 
 function AttackSession:notifyFaction1( )
@@ -419,9 +419,17 @@ end
 
 addEvent("ClientBox:takeWeaponFromBox", true)
 function AttackSession:takeWeaponFromBox( key )
+
 	if self.m_BoxWeapons[key] then
-		giveWeapon( source, self.m_BoxWeapons[key][1], self.m_BoxWeapons[key][2], true )
-		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName( source ).." nahm sich eine "..WEAPON_NAMES[self.m_BoxWeapons[key][1]].." aus der Box heraus.",0,204,204,true)
+		local weaponId = self.m_BoxWeapons[key][1]
+
+		if client:getWeaponLevel() < MIN_WEAPON_LEVELS[weaponId] then
+			client:sendError(_("Dein Waffenlevel ist zu niedrig! (Benötigt: %i)", client, MIN_WEAPON_LEVELS[weaponId]))
+			return
+		end
+
+		giveWeapon( source, weaponId, self.m_BoxWeapons[key][2], true )
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName( source ).." nahm sich eine "..WEAPON_NAMES[weaponId].." aus der Box heraus.",0,204,204,true)
 		table.remove( self.m_BoxWeapons, key )
 		self:refreshWeaponBox(  )
 	end

@@ -73,7 +73,6 @@ function Player:destructor()
 		takeAllWeapons(self)
 	end
 
-	if self.m_DeathPickup and isElement(self.m_DeathPickup) then self.m_DeathPickup:destroy() end
 
 	self:save()
 
@@ -857,6 +856,7 @@ function Player:attachPlayerObject(object, allowWeapons)
 			self.m_RefreshAttachedObject = bind(self.refreshAttachedObject, self)
 			addEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 			addEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
+			addEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
 		else
 			self:sendError(_("Du hast bereits ein Objekt dabei!", self))
 		end
@@ -865,13 +865,19 @@ function Player:attachPlayerObject(object, allowWeapons)
 	end
 end
 
-function Player:refreshAttachedObject()
-	setTimer(function()
+function Player:refreshAttachedObject(instant)
+	local func = function()
 		if self:getPlayerAttachedObject() then
-			self:getPlayerAttachedObject():setInterior(self:getInterior())
-			self:getPlayerAttachedObject():setDimension(self:getDimension())
+			local object = self:getPlayerAttachedObject()
+			if self:isDead() then
+				detachPlayerObject(object)
+			end
+			object:setInterior(self:getInterior())
+			object:setDimension(self:getDimension())
+
 		end
-	end, 2000 ,1)
+	end
+	if instant then	func() else	setTimer(func, 2000 ,1) end
 end
 
 function Player:detachPlayerObjectBind(presser, key, state, object)
@@ -889,6 +895,7 @@ function Player:detachPlayerObject(object)
 		self:toggleControlsWhileObjectAttached(true)
 		removeEventHandler("onElementDimensionChange", self, self.m_RefreshAttachedObject)
 		removeEventHandler("onElementInteriorChange", self, self.m_RefreshAttachedObject)
+		removeEventHandler("onPlayerWasted", self, self.m_RefreshAttachedObject)
 	end
 end
 
@@ -905,10 +912,6 @@ end
 
 function Player:setModel( skin )
 	setElementModel( self, skin or 0)
-end
-
-function Player:setIsDead( int )
-	self.m_IsDead = int or 0
 end
 
 function Player:endPrison()

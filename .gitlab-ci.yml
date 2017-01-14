@@ -25,6 +25,7 @@ build_app_job:
     - python3 build/packAssets.py
     - ./build/make_archives.sh
     - rm -rf vrp_assets
+    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
   artifacts:
     name: "$CI_BUILD_NAME"
     expire_in: 3 days
@@ -95,7 +96,7 @@ clean_env_job_docker:
     - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
     #- '[ "$CI_BUILD_REF_NAME" == "master" ] && sudo docker rmi $DOCKER_USER/exo-rl-mta:latest' # Keep master image to use the cache
     #- sudo docker rmi exo-rl-mta
-    - '(IMAGES=$(sudo docker images -q -f dangling=true) && [ "$IMAGES" != "" ] && sudo docker rmi $IMAGES) || 0' # Remove dangling images
+    - '(IMAGES=$(sudo docker images -q -f dangling=true) && [ "$IMAGES" != "" ] && sudo docker rmi $IMAGES) || echo' # Remove dangling images
   except:
     - /^bugfix\/.*$/
   when: always
