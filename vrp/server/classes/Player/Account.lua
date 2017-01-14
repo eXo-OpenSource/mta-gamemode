@@ -88,7 +88,7 @@ function Account.login(player, username, password, pwhash)
 				return false
 			end
 			if returnData.login == true then
-				Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwhash)
+				Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, row.password)
 			else
 				player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
 			end
