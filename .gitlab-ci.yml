@@ -25,7 +25,6 @@ build_app_job:
     - python3 build/packAssets.py
     - ./build/make_archives.sh
     - rm -rf vrp_assets
-    - curl -F "secret=$ASSETS_UPLOAD_SECRET_KEY" -F "git_branch=$CI_BUILD_REF_NAME" -F asset_archive=@assets.tar.gz https://download.exo-reallife.de/upload.php
   artifacts:
     name: "$CI_BUILD_NAME"
     expire_in: 3 days
