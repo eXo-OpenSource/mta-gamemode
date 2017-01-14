@@ -82,6 +82,7 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				removeEventHandler("onClientRender",root,self.m_TaserRender)
 				addEventHandler("onClientRender",root,self.m_TaserRender)
 			else
+				self.m_TaserTarget = nil
 				removeEventHandler("onClientRender",root,self.m_TaserRender)
 				addEventHandler("onClientRender",root,self.m_TaserRender)
 			end
