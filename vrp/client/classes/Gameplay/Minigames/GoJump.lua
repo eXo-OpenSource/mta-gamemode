@@ -52,6 +52,9 @@ function GoJump:constructor()
 end
 
 function GoJump:destructor()
+	--Save stats
+	self:saveStatistics()
+
     --Kill timer
     if self.timer and self.timer:isValid() then self.timer:destroy() end
 
@@ -163,17 +166,13 @@ function GoJump:initAnimations()
 end
 
 function GoJump:loadStatistics()
-	--Todo: Use another statistic system for vrp
-    --[[if File.exists("stats.pew") then
-        local file = File("stats.pew", true)
+    if fileExists("GoJump.stats") then
+        local file = fileOpen("GoJump.stats", true)
         local fileContent = file:read(file:getSize())
         file:close()
 
-        local _, start = string.find(fileContent, "/CODE/")
-
-        if start then
-            local code = string.sub(fileContent, start + 2)
-            local decryptedContent = teaDecode(code, getPlayerSerial())
+        if fileContent then
+            local decryptedContent = teaDecode(fileContent, getPlayerSerial())
 
             if fromJSON(decryptedContent) then
                 self.stats = fromJSON(decryptedContent)
@@ -183,7 +182,7 @@ function GoJump:loadStatistics()
                 return
             end
         end
-    end]]
+    end
 
     self.stats = {
         playedCount = 0,
@@ -197,14 +196,13 @@ function GoJump:loadStatistics()
     self.average = self.stats.average
 end
 
---TODO
---[[function GoJump:saveStatistics()
+function GoJump:saveStatistics()
     local fileContent = toJSON(self.stats)
     local encryptedContent = teaEncode(fileContent, getPlayerSerial())
-    local file = File.new("stats.pew")
-    file:write("/INFO/ MTA Go Jump Stats\n/Info/ By PewX (pewx.de)\n/Info/ It's not hard to encript this shit; good luck.\n\n/CODE/ ", encryptedContent)
+    local file = fileCreate("GoJump.stats")
+    file:write(encryptedContent)
     file:close()
-end]]
+end
 
 function GoJump:receiveStats(tScores)
     self.Scores = tScores
@@ -242,7 +240,6 @@ function GoJump:createBlocks()
 end
 
 function GoJump:getRandomSpeed(blockID)
-    --Todo: Make speed dependent on blockID
     local def = {
         [1] = {min = 2000, max = 2100},
         [2] = {min = 2100, max = 2400},
@@ -418,21 +415,16 @@ function GoJump:updateRenderTarget()
         end
 
         dxDrawImage(self.width/2 - 96/2, self.height/2 - 96/2, 96, 96, self.circle_play)
-        dxDrawImage(self.width/2 - 48/2, 400, 48, 48, self.circle_color)
-        dxDrawImage(self.width/2 - 48/2 - 70, 400, 48, 48, self.circle_stats)
-        dxDrawImage(self.width/2 - 48/2 + 70, 400, 48, 48, self.sounds and self.circle_sound or self.circle_sound_off)
+        dxDrawImage(self.width/2 - 48/2 - 120, self.height/2 - 48/2, 48, 48, self.circle_color)
+        dxDrawImage(self.width/2 - 48/2 + 120, self.height/2 - 48/2, 48, 48, self.sounds and self.circle_sound or self.circle_sound_off)
 
         dxDrawImage(self.width/2 - 18/2, self.height/2 + 96/2, 18, 18, self.arrow_down)
-        dxDrawImage(self.width/2 - 18/2, 400 + 48, 18, 18, self.arrow_down)
-        dxDrawImage(self.width/2 - 48/2 - 70 + (48/2-18/2), 400 + 48, 18, 18, self.arrow_down)
-        dxDrawImage(self.width/2 - 48/2 + 70 + (48/2-18/2), 400 + 48, 18, 18, self.arrow_down)
+        dxDrawImage(self.width/2 - 48/2 - 120 + (48/2-18/2), self.height/2 - 48/2 + 48, 18, 18, self.arrow_down)
+        dxDrawImage(self.width/2 - 48/2 + 120 + (48/2-18/2), self.height/2 - 48/2 + 48, 18, 18, self.arrow_down)
 
         dxDrawText("space", self.width/2 - 48 , self.height/2 + 96/2 + 5, self.width/2 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
-        dxDrawText("c", self.width/2 - 48 , 400 + 48 + 5, self.width/2 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
-        dxDrawText("s", self.width/2 - 48/2 - 70, 400 + 48 + 5, self.width/2 - 48/2 - 70 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
-        dxDrawText("m", self.width/2 - 48/2 + 70, 400 + 48 + 5, self.width/2 - 48/2 + 70 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
-
-		dxDrawText("Drücke Backspace zum beenden!", 0, 0, 400 - 5, 600 - 5, self.white, 1, self.font_JosefinSans13, "right", "bottom")
+        dxDrawText("c", self.width/2 - 48/2 - 120, self.height/2 - 48/2 + 48 + 5, self.width/2 - 48/2 - 120 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
+        dxDrawText("m", self.width/2 - 48/2 + 120, self.height/2 - 48/2 + 48 + 5, self.width/2 - 48/2 + 120 + 48, 0, self.white, 1, self.font_JosefinSans13, "center")
     end
 
     if self.state == "Stats" then

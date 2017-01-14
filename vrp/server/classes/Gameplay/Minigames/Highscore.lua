@@ -42,7 +42,6 @@ function Highscore:constructor(Name)
 	end
 
 	Highscore.Map[self.m_Minigame] = self
-
 end
 
 function Highscore:createDefaults()
@@ -97,35 +96,31 @@ end
 
 function Highscore:getHighscoresFormated()
 	local realtime = MinigameManager.getRealTime()
-
 	local newTable = {}
-	newTable.Daily = table.deepcopy(self.m_Daily[realtime.yearday])
-	newTable.Weekly = table.deepcopy(self.m_Weekly[realtime.week])
-	newTable.Monthly = table.deepcopy(self.m_Monthly[realtime.month])
-	newTable.Yearly = table.deepcopy(self.m_Yearly[realtime.year])
-	newTable.Global = table.deepcopy(self.m_Global)
+	local highscores = {}
 
-	local name, score
+	highscores.Daily = self.m_Daily[realtime.yearday]
+	highscores.Weekly = self.m_Weekly[realtime.week]
+	highscores.Monthly = self.m_Monthly[realtime.month]
+	highscores.Yearly = self.m_Yearly[realtime.year]
+	highscores.Global = self.m_Global
 
-	for index, tbl in pairs(newTable) do
-		for i = 1, 10 do
-			if tbl[i] then
-				name = Account.getNameFromId(tbl[i].PlayerID)
-				score = tbl[i].Score
-				newTable[index][i] = {}
-				newTable[index][i].name = name or "-"
-				newTable[index][i].score = score or 0
-			end
-		end
+	for index, tbl in pairs(highscores) do
+		newTable[index] = {}
 
-		table.sort(newTable[index],
-			function (a, b)
-				local aScore = a.score or 0
-				local bScore = b.score or 0
-				return (aScore > bScore)
+		table.sort(highscores[index],
+			function(a, b)
+				return a.Score > b.Score
 			end
 		)
 
+		for i = 1, 10 do
+			if tbl[i] then
+				local name = Account.getNameFromId(tbl[i].PlayerID) or "-"
+				local score = tbl[i].Score or 0
+				newTable[index][i] = {name = name, score = score }
+			end
+		end
 	end
 
 	return newTable
@@ -250,14 +245,14 @@ function Highscore:addHighscore(Id, score)
 		for _, v in pairs(self.m_Global) do
 			if v.PlayerID == Id then
 				if v.Score < score then
-			--		outputChatBox("Updated global score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
+					--outputChatBox("Updated global score Player-Id: "..v.PlayerID.." - Score: new: "..score.." old: "..v.Score)
 					v.Score = score
 					doUpdate = true
 				end
 			end
 		end
 	else
-	--	outputChatBox("Insert global score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
+		--outputChatBox("Insert global score - Player-Id: "..insert.PlayerID.." - Score: "..insert.Score)
 		table.insert(self.m_Global, insert)
 		doUpdate = true
 	end

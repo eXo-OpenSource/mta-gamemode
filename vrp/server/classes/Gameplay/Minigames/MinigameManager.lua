@@ -54,27 +54,6 @@ function MinigameManager.receiveHighscore(sName, iScore)
 end
 addEventHandler("MinigameSendHighscore", resourceRoot, MinigameManager.receiveHighscore)
 
-function MinigameManager.requestHighscores(sName)
-	local highscores = MinigameManager:getSingleton()[("m_%s"):format(sName)].ms_Highscore:getHighscores().Global
-	local newTable = {}
-
-	-- Todo: sort table and prepare for client.
-
-	for i = 1, 10 do
-		newTable[i] = {}
-		if highscores[i] then
-			newTable[i].name = Account.getNameFromId(highscores[i].PlayerID)
-			newTable[i].score = highscores[i].Score
-		end
-	end
-
-	if sName == "GoJump" then
-		client:triggerEvent("GoJumpReceiveHighscores", newTable)
-	end
-end
-addEventHandler("MinigameRequestHighscores", resourceRoot, MinigameManager.requestHighscores)
-
-
 function MinigameManager:addPlayerDeathHook()
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
