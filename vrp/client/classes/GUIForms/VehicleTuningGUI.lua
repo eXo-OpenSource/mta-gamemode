@@ -15,15 +15,15 @@ function VehicleTuningGUI:constructor(vehicle)
         self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeug-Tuning", false, true, self)
         self.m_PartsList = GUIGridList:new(0, self.m_Height*0.21, self.m_Width, self.m_Height*0.72, self.m_Window)
         self.m_PartsList:addColumn(_"Name", 1)
-        self.m_MuteSound = GUILabel:new(self.m_Width-55, 5, 28, 28, FontAwesomeSymbols.SoundOff, self):setFont(FontAwesome(22))
+        self.m_MuteSound = GUILabel:new(self.m_Width-55, 5, 28, 28, FontAwesomeSymbols.SoundOn, self):setFont(FontAwesome(22))
 		self.m_MuteSound.onLeftClick = function()
 			if self.m_Music then
 				self.m_Music:destroy()
 				self.m_Music = nil
-				self.m_MuteSound:setText(FontAwesomeSymbols.SoundOn)
+				self.m_MuteSound:setText(FontAwesomeSymbols.SoundOff)
 			else
 				self.m_Music = Sound.create("http://exo-reallife.de/ingame/GarageMusic.mp3", true)
-				self.m_MuteSound:setText(FontAwesomeSymbols.SoundOff)
+				self.m_MuteSound:setText(FontAwesomeSymbols.SoundOn)
 			end
 
 		end
