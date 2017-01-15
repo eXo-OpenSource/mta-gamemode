@@ -191,6 +191,8 @@ function Crane:loadContainer(vehicle, player, callback)
 	self.m_Busy = true
 
 	local container = createObject(math.random(2934, 2935), self.m_EndX, self.m_EndY-0.5, self.m_EndZ-4, 0, 0, self.m_Rotation)
+	container:setScale(0.95)
+	container:setCollisionsEnabled(false)	-- cause does not affect the collision model
 	player.LogisticanContainer = container
 
 	vehicle:setFrozen(true)
