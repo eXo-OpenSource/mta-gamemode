@@ -42,11 +42,15 @@ Easteregg = {
 
 for i, v in pairs(Easteregg) do
 	local col = createColSphere(v.position, v.colsize)
-	addEventHandler("onClientColShapeHit", col, function ()
-		HelpBar:getSingleton():addText(v.title, v.text)
-		localPlayer:giveAchievement(49)
+	addEventHandler("onClientColShapeHit", col, function (ele)
+		if ele == localPlayer then
+			HelpBar:getSingleton():addText(v.title, v.text)
+			localPlayer:giveAchievement(49)
+		end
 	end)
 	addEventHandler("onClientColShapeLeave", col, function ()
-		HelpBar:getSingleton():addText(localPlayer.m_oldHelp.title or _(HelpTextTitles.General.Main), localPlayer.m_oldHelp.text or _(HelpTexts.General.Main), false, localPlayer.m_oldHelp.tutorial or false)
+		if ele == localPlayer then
+			HelpBar:getSingleton():addText(localPlayer.m_oldHelp.title or _(HelpTextTitles.General.Main), localPlayer.m_oldHelp.text or _(HelpTexts.General.Main), false, localPlayer.m_oldHelp.tutorial or false)
+		end
 	end)
 end
