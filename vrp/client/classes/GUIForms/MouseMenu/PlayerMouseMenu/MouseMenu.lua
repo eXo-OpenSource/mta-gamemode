@@ -32,17 +32,11 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
-	self:addItem(_"Schere-Stein-Papier spielen",
+	self:addItem(_"Spielen >>>",
 		function()
 			if self:getElement() then
-				triggerServerEvent("rockPaperScissorsQuestion", localPlayer, self:getElement())
-			end
-		end
-	)
-	self:addItem(_"Pong spielen",
-		function()
-			if self:getElement() then
-				triggerServerEvent("pongQuestion", localPlayer, self:getElement())
+				delete(self)
+				ClickHandler:getSingleton():addMouseMenu(PlayerMouseMenuGames:new(posX, posY, element), element)
 			end
 		end
 	)
