@@ -1,9 +1,10 @@
---
--- PewX (HorrorClown)
--- Using: IntelliJ IDEA 15 Ultimate
--- Date: 01.05.2016 - Time: 21:00
--- pewx.de // pewbox.org // iGaming-mta.de // iRace-mta.de // iSurvival.de // mtasa.de
---
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Gameplay/Minigames/Pong.lua
+-- *  PURPOSE:     Pong Game - Server
+-- *
+-- ****************************************************************************
 Pong = inherit(Object)
 addRemoteEvents{"pongQuestion", "pongQuestionAccept", "pongQuestionDecline", "pongPlayerReady", "pongPlayerMove", "pongPlayerFailed"}
 

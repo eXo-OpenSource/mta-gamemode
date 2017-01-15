@@ -1,7 +1,7 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Gameplay/Minigames/Pong.lua
+-- *  FILE:        client/classes/Gameplay/Minigames/Pong.lua
 -- *  PURPOSE:     Pong Game - Client
 -- *
 -- ****************************************************************************
