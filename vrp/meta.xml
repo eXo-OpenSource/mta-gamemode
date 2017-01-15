@@ -137,12 +137,13 @@
 
 	<!-- Gameplay -->
 
-	<!-- Minigames -->	<!-- not done yet-->
+	<!-- Minigames -->
 	<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/RockPaperScissors.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/ZombieSurvival.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/SniperGame.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/Pong.lua" type="server"/>
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -669,7 +670,7 @@
 	<script src="client/classes/Gameplay/Minigames/SideSwipe.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/CircuitBreaker.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/RockPaperScissors.lua" type="client"/>
-
+	<script src="client/classes/Gameplay/Minigames/Pong.lua" type="client"/>
 
 	<!-- serverside -->
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
@@ -1234,6 +1235,12 @@
 
 	<!-- SideSwipe -->
 	<vrpfile src="files/audio/SideSwipe/blop.mp3" />
+
+	<!-- Pong -->
+	<vrpfile src = "files/audio/Pong/background.mp3" />
+	<vrpfile src = "files/audio/Pong/fail.mp3" />
+	<vrpfile src = "files/audio/Pong/shot.mp3" />
+	<vrpfile src = "files/audio/Pong/wall.mp3" />
 
 	<!-- Custom Horns -->
 	<vrpfile src='files/audio/Horns/1.mp3'/>

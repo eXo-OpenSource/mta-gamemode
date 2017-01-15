@@ -39,6 +39,13 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 			end
 		end
 	)
+	self:addItem(_"Pong spielen",
+		function()
+			if self:getElement() then
+				triggerServerEvent("pongQuestion", localPlayer, self:getElement())
+			end
+		end
+	)
 	if localPlayer:getFaction() then
 		if localPlayer:getFaction():isStateFaction() and localPlayer:getPublicSync("Faction:Duty") == true  then
 			self:addItem(_"Fraktion >>>",
