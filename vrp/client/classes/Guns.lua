@@ -88,22 +88,29 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 				removeEventHandler("onClientRender",root,self.m_TaserRender)
 				addEventHandler("onClientRender",root,self.m_TaserRender)
 			end
+
+			if isTimer(self.m_ResetTimerNoTarget) then killTimer(self.m_ResetTimerNoTarget) end
+			if isTimer(self.m_ResetTimer) then killTimer(self.m_ResetTimer) end
+			self.m_ResetTimer = setTimer(function() removeEventHandler("onClientRender", root, self.m_TaserRender) end, 15000, 1)
 		end
 	end
 end
 
 function Guns:Event_onTaserRender()
 	if self.m_TaserAttacker and (self.m_HitPos or self.m_TaserTarget) then
-		if getPedTarget(self.m_TaserAttacker) then
-			if self.m_TaserTarget then
-				self.m_HitPos = self.m_TaserTarget:getPosition()
-				self.m_HitPos.z = self.m_HitPos.z-1
-			end
+		if self.m_TaserTarget and self.m_TaserAttacker:getTarget() == self.m_TaserTarget then
+			self.m_HitPos = self.m_TaserTarget:getPosition()
+			self.m_HitPos.z = self.m_HitPos.z-1
 		else
-			setTimer(function()
-				removeEventHandler("onClientRender",root,self.m_TaserRender)
-			end,1000,1)
+			if not isTimer(self.m_ResetTimerNoTarget) then
+				self.m_ResetTimerNoTarget = setTimer(
+					function()
+						if isTimer(self.m_ResetTimer) then killTimer(self.m_ResetTimer) end
+						removeEventHandler("onClientRender", root, self.m_TaserRender)
+					end, 1000, 1)
+			end
 		end
+
 		local muzzlePos = Vector3(getPedWeaponMuzzlePosition(self.m_TaserAttacker))
 		local effect = math.random(0,10)/10
 		if math.random(0,1) == 1 then self.m_HitPos.z = self.m_HitPos.z+effect/20 else self.m_HitPos.z = self.m_HitPos.z-effect/20 end
