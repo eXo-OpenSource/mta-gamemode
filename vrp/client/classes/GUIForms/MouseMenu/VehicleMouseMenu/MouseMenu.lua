@@ -11,7 +11,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 	GUIMouseMenu.constructor(self, posX, posY, 300, 1) -- height doesn't matter as it will be set automatically
 	local owner = getElementData(element, "OwnerName")
 	if owner then
-		self:addItem(_("Besitzer: %s", owner)):setTextColor(Color.Red)
+		self:addItem(_("Besitzer: %s (%s)", owner, element:getName())):setTextColor(Color.Red)
 	end
 
 	if element:getVehicleType() ~= VehicleType.Bike and element:getVehicleType() ~= VehicleType.Trailer then
