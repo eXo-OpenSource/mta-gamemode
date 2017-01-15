@@ -49,6 +49,7 @@ function GoJump:constructor()
     addEventHandler("onClientResourceStop", resourceRoot, self._closeFunc)
     addEventHandler("GoJumpReceiveHighscores", resourceRoot, self.fn_ReceiveHighscores)
 	addEventHandler("onClientRestore", root, self.m_fnRestore)
+	localPlayer:setFrozen(true)
 end
 
 function GoJump:destructor()
@@ -68,7 +69,8 @@ function GoJump:destructor()
     unbindKey("space", "both", self._bindKeySpaceFunc)
     unbindKey("m", "down", self._bindKeyMusicFunc)
     unbindKey("c", "down", self._bindKeyBackgroundFunc)
-    --unbindKey("s", "down", self._bindKeyStatsFunc)
+
+	localPlayer:setFrozen(false)
 
     --Stop/delete animations
     delete(self.anim_player)
@@ -202,11 +204,6 @@ function GoJump:saveStatistics()
     local file = fileCreate("GoJump.stats")
     file:write(encryptedContent)
     file:close()
-end
-
-function GoJump:receiveStats(tScores)
-    self.Scores = tScores
-    self:updateRenderTarget()
 end
 
 function GoJump:createLines()
