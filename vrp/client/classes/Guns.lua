@@ -42,7 +42,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	if weapon == 9 then -- Chainsaw
 		cancelEvent()
 	elseif weapon == 23 then -- Taser
-		if getDistanceBetweenPoints3D(attacker:getPosition(),source:getPosition()) < 10 then
+		if not attacker.vehicle and getDistanceBetweenPoints3D(attacker:getPosition(),source:getPosition()) < 10 then
 			if attacker == localPlayer then
 				triggerServerEvent("onTaser",attacker,source)
 			end
@@ -74,6 +74,8 @@ end
 
 function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hitZ, hitElement)
 	if weapon == 23 then -- Taser
+		if source.vehicle then return end
+
 		self.m_TaserAttacker = source
 		self.m_HitPos = Vector3(hitX, hitY, hitZ)
 		if getDistanceBetweenPoints3D(source:getPosition(),self.m_HitPos) < 10 then

@@ -38,6 +38,8 @@ function AnimationGUI:constructor()
 end
 
 function AnimationGUI:startAnimation()
+	if localPlayer:getData("isTasered") then return end
+
 	if ANIMATIONS[self.m_AnimationList:getSelectedItem().Name] then
 		if not self.m_InfoMessage then
 			self.m_InfoMessage = ShortMessage:new(_"Benutze 'Leertaste' zum beenden der Animation!", -1)

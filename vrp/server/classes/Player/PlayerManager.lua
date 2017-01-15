@@ -505,6 +505,8 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 end
 
 function PlayerManager:Event_startAnimation(animation)
+	if client.isTasered then return	end
+
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
 		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], true, ani["interruptable"], ani["freezeLastFrame"])
