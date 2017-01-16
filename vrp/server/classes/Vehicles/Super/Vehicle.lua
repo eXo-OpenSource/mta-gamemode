@@ -333,8 +333,7 @@ function Vehicle:setBroken(state)
 	end
 	self:setHealth(301)
 	if state then
-		self:setEngineState(false)
-
+		setVehicleEngineState(self, false)
 	end
 end
 
