@@ -22,9 +22,6 @@ function SkinShopGUI:constructor()
 	GUILabel:new(0, self.m_Height-self.m_Height/14, self.m_Width, self.m_Height/14, "↕", self.m_Window):setAlignX("center")
 	GUILabel:new(6, self.m_Height-self.m_Height/14, self.m_Width*0.5, self.m_Height/14, _"Doppelklick zum Kaufen", self.m_Window):setFont(VRPFont(self.m_Height*0.045)):setAlignY("center"):setColor(Color.Red)
 
-	self.m_SkinBought = bind(self.Event_SkinBought, self)
-	addEventHandler("skinBought", root, self.m_SkinBought)
-
 	-- Load skin info
 	for skinId, info in pairs(SkinInfo) do
 		local name, price = unpack(info)
@@ -36,12 +33,19 @@ function SkinShopGUI:constructor()
 	end
 	localPlayer.m_OldSkin = localPlayer:getModel()
 
+
+	self.m_SkinBought = bind(self.Event_SkinBought, self)
+	self.m_RotatePlayer = bind(self.rotatePlayer, self)
+
+	addEventHandler("skinBought", root, self.m_SkinBought)
+	addEventHandler("onClientPreRender", root, self.m_RotatePlayer)
+
 	showChat(false)
 end
 
 function SkinShopGUI:destructor()
 	removeEventHandler("skinBought", root, self.m_SkinBought)
-
+	removeEventHandler("onClientPreRender", root, self.m_RotatePlayer)
 	localPlayer:setFrozen(false)
 	localPlayer:setModel(localPlayer.m_OldSkin)
 	setCameraTarget(localPlayer, localPlayer)
@@ -55,6 +59,11 @@ function SkinShopGUI:Event_SkinBought(skinId)
 	delete(self)
 
 	SuccessBox:new(_"Skin erfolgreich übernommen!", 0, 255, 0)
+end
+
+function SkinShopGUI:rotatePlayer()
+	local rot = localPlayer:getRotation()
+	localPlayer:setRotation(0, 0, rot.z+1)
 end
 
 function SkinShopGUI.initializeAll()
