@@ -372,6 +372,7 @@ function Account.checkInvitation(player, Id, InvitationId)
 	end
 	player:triggerEvent("closeLogin")
 	player:triggerEvent("inputBox", "Invitation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invitation-Code spielbar! Bitte gib diesen hier ein:", "checkInvitationCode", Id)
+	player.m_DoNotSave = true
 	return false
 end
 
