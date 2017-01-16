@@ -182,7 +182,7 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 
 	-- Phase 5: Check element types
 	if self.m_Menu[elementType] then
-		if rang < 10 then
+		if range < 10 then
 			if trigger then
 				if button == "left" then
 					if elementType == "vehicle" and element:isBlown() then
