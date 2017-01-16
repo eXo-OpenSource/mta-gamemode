@@ -186,10 +186,14 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 	if self.m_Menu[elementType] then
 		if trigger then
 			if button == "left" then
-				if elementType == "vehicle" and element:isBlown() then
-					return false
+				if getDistanceBetweenPoints3D(localPlayer:getPosition(), element:getPosition()) < 10 then
+					if elementType == "vehicle" and element:isBlown() then
+						return false
+					end
+					self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+				else
+					ErrorBox:new(_"Du bist zu weit entfernt!")
 				end
-				self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 			end
 		end
 		return true
