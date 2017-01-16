@@ -183,7 +183,7 @@ addEventHandler("onClientVehicleDamage", root,
 						WarningBox:new(_"Dein Fahrzeug ist kaputt und muss repariert werden!")
 					end
 				end
-
+				setVehicleEngineState(source, false)
 				source:setHealth(301)
 			end
 		end
