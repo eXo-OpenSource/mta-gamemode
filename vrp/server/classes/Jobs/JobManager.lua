@@ -27,7 +27,10 @@ function JobManager:constructor()
 
 	addEvent("jobAccepted", true)
 	addEvent("jobQuit", true)
+	addRemoteEvents{"jobDecline", "jobAccepted", "jobQuit"}
 	addEventHandler("jobAccepted", root, bind(self.Event_jobAccepted, self))
+	addEventHandler("jobDecline", root, bind(self.Event_jobDecline, self))
+
 	addEventHandler("jobQuit", root, bind(self.Event_jobQuit, self))
 
 	PlayerManager:getSingleton():getQuitHook():register(
@@ -91,6 +94,19 @@ function JobManager:Event_jobAccepted(jobId)
 
 	-- Start the job
 	client:setJob(job)
+end
+
+function JobManager:Event_jobDecline(jobId)
+	if not jobId then return end
+
+	-- Get the job
+	local job = self:getFromId(jobId)
+	if not job then return end
+
+	local currentJob = client:getJob()
+	if currentJob == job then
+		client:setJob(nil)
+	end
 end
 
 function JobManager:Event_jobQuit()

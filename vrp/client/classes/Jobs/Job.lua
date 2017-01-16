@@ -29,6 +29,7 @@ function Job:onPedClick()
 	jobGUI:setDescription(self.m_Description)
 	jobGUI:setHeaderImage(self.m_HeaderImage)
 	jobGUI:setAcceptCallback(bind(Job.acceptHandler, self))
+	jobGUI:setDeclineCallback(bind(Job.declineHandler, self))
 	jobGUI:setInfoCallback(bind(Job.InfoMessage, self, self.m_Name, self.m_Description, self.m_Tutorial))
 	jobGUI:open()
 end
@@ -39,6 +40,10 @@ end
 
 function Job:acceptHandler()
 	triggerServerEvent("jobAccepted", root, self:getId())
+end
+
+function Job:declineHandler()
+	triggerServerEvent("jobDecline", root, self:getId())
 end
 
 function Job:getId()
