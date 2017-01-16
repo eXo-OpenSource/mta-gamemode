@@ -437,7 +437,7 @@ HelpTexts = {
 			die du dringend für deinen Überlebenskampf brauchst!
 		]];
 		GoJump = [[
-			Minigame: GoJump TODO
+			Minigame: GoJump
 		]];
 		SideSwipe = [[
 			Minigame: SideSwipe TODO

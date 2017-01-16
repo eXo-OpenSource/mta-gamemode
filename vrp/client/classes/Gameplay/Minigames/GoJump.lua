@@ -6,7 +6,6 @@
 -- *
 -- ****************************************************************************
 GoJump = inherit(Object)
-addRemoteEvents{"GoJumpReceiveHighscores"}
 
 function GoJump:constructor()
     self.font_JosefinSans50 = dxCreateFont("files/fonts/JosefinSans-Thin.ttf", 50)
@@ -43,11 +42,9 @@ function GoJump:constructor()
     self:keyBinds()
 
     self._onClientRender = bind(GoJump.onClientRender, self)
-	self.fn_ReceiveHighscores = bind(GoJump.receiveStats, self)
 	self.m_fnRestore = bind(GoJump.onClientRestore, self)
     addEventHandler("onClientRender", root, self._onClientRender)
     addEventHandler("onClientResourceStop", resourceRoot, self._closeFunc)
-    addEventHandler("GoJumpReceiveHighscores", resourceRoot, self.fn_ReceiveHighscores)
 	addEventHandler("onClientRestore", root, self.m_fnRestore)
 	localPlayer:setFrozen(true)
 end
