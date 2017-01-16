@@ -191,7 +191,7 @@ end
 function FactionState:Event_OnConfirmSelfArrest()
 	local bailcosts = 0
 	local wantedLevel = client:getWantedLevel()
-	local jailTime = wantedLevel * 8
+	local jailTime = wantedLevel * 5
 	local factionBonus = JAIL_COSTS[wantedLevel]
 	bailcosts = BAIL_PRICES[wantedLevel]
 	client:setJailTime(jailTime)
@@ -813,7 +813,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 			if player:getWantedLevel() > 0 then
 				local bailcosts = 0
 				local wantedLevel = player:getWantedLevel()
-				local jailTime = wantedLevel * 8
+				local jailTime = wantedLevel * 5
 				local factionBonus = JAIL_COSTS[wantedLevel]
 
 				if bail then
