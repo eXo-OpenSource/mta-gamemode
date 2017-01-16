@@ -15,7 +15,7 @@ function AmmuNationGUI:constructor()
 	GUIForm.constructor(self,screenWidth/2,screenHeight/2,400,200)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, "Ammu-Nation", true, true, self)
-	self.m_Label = GUILabel:new(30, 45, 300, 300, _("Waffe: %s\nBenötigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME, MIN_WEAPON_LEVELS[AmmuNationGUI.INFO[self.m_Selection].ID]), self.m_Window)
+	self.m_Label = GUILabel:new(30, 40, 300, 300, _("Waffe: %s\nBenötigtes Level: %d",AmmuNationGUI.INFO[self.m_Selection].NAME, MIN_WEAPON_LEVELS[AmmuNationGUI.INFO[self.m_Selection].ID]), self.m_Window)
 	self.m_Label:setFont(VRPFont(24))
 	self.m_BuyMagazine = GUIButton:new(30, 90, self.m_Width-60, 35, _("Magazin kaufen ($%i)",AmmuNationInfo[AmmuNationGUI.INFO[self.m_Selection].ID].Magazine.price), self.m_Window)
 	self.m_BuyMagazine:setBackgroundColor(Color.Green):setFont(VRPFont(28)):setFontSize(1)
