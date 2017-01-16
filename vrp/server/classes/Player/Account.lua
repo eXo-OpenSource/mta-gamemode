@@ -402,6 +402,7 @@ function Account.checkInvitationCode(code, AccountId)
 		client:sendError(_("Ungültiger Invitation-Code!", client))
 	end
 	client:triggerEvent("inputBox", "Invitation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invitation-Code spielbar! Bitte gib diesen hier ein:", "checkInvitationCode")
+	client.m_DoNotSave = true
 end
 addEventHandler("checkInvitationCode", root, Account.checkInvitationCode)
 
