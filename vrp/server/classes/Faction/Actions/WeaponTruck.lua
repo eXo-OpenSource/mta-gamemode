@@ -428,13 +428,18 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 	local finish = false
 	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 		boxes = getAttachedElements(self.m_Truck)
-		outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 		hitElement:sendInfo(_("Truck erfolgreich abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
 		self:Event_OnWeaponTruckExit(hitElement,0)
 		if self.m_Type == "evil" then
 			faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
+			outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 		elseif self.m_Type == "state" then
 			FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
+			if faction:isEvil() then
+				outputChatBox("Der Waffentruck wurde bei einer bösen Fraktion abgegeben!", hitElement, rootElement,255,0,0)
+			else
+				outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
+			end
 		end
 		finish = true
 	elseif hitElement:getPlayerAttachedObject() then
