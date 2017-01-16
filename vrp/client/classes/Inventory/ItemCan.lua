@@ -29,7 +29,7 @@ function ItemCanGUI:constructor(state)
 	GUILabel:new(0,0,self.m_Width, 30, _"Gießkannen-Füllstand:", self)
 	self.m_Progress = GUIProgressBar:new(0,30,self.m_Width, 30,self)
 	self.m_CanLabel = GUILabel:new(0, 30, self.m_Width, 30, state.."/10", self):setAlignX("center"):setAlignY("center"):setColor(Color.Black)
-	self.m_HelpLabel = GUILabel:new(0, 60, self.m_Width, 20, _"Du kannst sie im Wasser auffüllen", self)
+	self.m_HelpLabel = GUILabel:new(0, 60, self.m_Width, 20, _"Im Wasser auffüllen! Taste X", self)
 	self.m_Progress:setForegroundColor(tocolor(50,200,255))
 	self.m_Progress:setBackgroundColor(tocolor(180,240,255))
 	self:refresh(state)
@@ -39,7 +39,7 @@ function ItemCanGUI:refresh(state)
 	self.m_CanLabel:setText(state.."/10")
 	self.m_Progress:setProgress(state*10)
 	if tonumber(state) < 1 then
-		self.m_HelpLabel:setText(_"Du kannst sie im Wasser auffüllen! (Taste X)")
+		self.m_HelpLabel:setText(_"Im Wasser auffüllen! Taste X")
 	else
 		self.m_HelpLabel:setText(_"Benutze die Kanne mit Taste X")
 	end
