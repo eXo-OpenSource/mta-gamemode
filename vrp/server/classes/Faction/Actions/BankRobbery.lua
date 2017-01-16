@@ -85,7 +85,7 @@ function BankRobbery:destroyRob()
 	end
 
 	if self.m_Blip then
-		for index, blip in pairs(self.m_Blip) do blip:delete() end
+		for index, blip in pairs(self.m_Blip) do delete(blip) end
 	end
 	if isElement(self.m_BankDoor) then destroyElement(self.m_BankDoor) end
 	if isElement(self.m_SafeDoor) then destroyElement(self.m_SafeDoor) end
