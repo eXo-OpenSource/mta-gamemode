@@ -57,6 +57,7 @@ end
 function Elevator:onStationMarkerLeave(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		hitElement.elevatorUsed = false
+		hitElement.curEl = false
 	end
 end
 
