@@ -23,6 +23,7 @@ function JobRoadSweeper:onVehicleSpawn(player, vehicleModel, vehicle)
 end
 
 function JobRoadSweeper:start(player)
+	player:sendInfo(_("Job angenommen! Gehe zum roten Marker um ein Fahrzeug zu erhalten!", player))
 	player:giveAchievement(13)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
 end
