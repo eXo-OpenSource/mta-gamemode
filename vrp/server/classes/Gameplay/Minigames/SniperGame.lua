@@ -140,7 +140,7 @@ function SniperGame:removePlayer(player)
 	player:setPosition(-526.94, 1974.63, 60.41)
 
 	MinigameManager:getSingleton().m_SniperGameHighscore:addHighscore(player:getId(), self.m_PedKills[player])
-	self.m_PedKills[player] = false
+	self.m_PedKills[player] = nil
 	takeAllWeapons(player)
 	player:triggerEvent("hideScore")
 
@@ -185,8 +185,12 @@ function SniperGame:spawnPed(pos, rot)
 		ped:setAnimation("ped", "WOMAN_walknorm")
 	end
 	for player, score in pairs(self.m_PedKills) do
-		if score then
-			player:triggerEvent("addPedDamageHandler", ped)
+		if player and isElement(player) then
+			if score then
+				player:triggerEvent("addPedDamageHandler", ped)
+			end
+		else
+			self.m_PedKills[player] = nil
 		end
 	end
 
