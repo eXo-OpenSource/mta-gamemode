@@ -689,7 +689,6 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							elseif hitElement:getPlayerAttachedObject() then
 								bags = getAttachedElements(hitElement)
 								hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-								Key(hitElement, "n")
 								hitElement:toggleControlsWhileObjectAttached(true)
 							end
 							for key, value in pairs (bags) do
