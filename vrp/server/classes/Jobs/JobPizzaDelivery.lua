@@ -38,7 +38,7 @@ end
 
 --// Loan-Formula = BASE_LOAN * ( distance / time )
 function JobPizza:onPizzaDeliver( player, distance, time)
-	if player.vehicle and player.vehicle.m_PizzaOwner and player.vehicle.m_PizzaOwner == player then
+	if player.vehicle and player.jobVehicle == player.vehicle then
 		local workFactor = distance / time
 		local pay = math.floor( BASE_LOAN * workFactor )
 		player:giveMoney(pay, "Pizza-Job")

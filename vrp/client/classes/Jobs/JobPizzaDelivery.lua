@@ -22,7 +22,7 @@ end
 
 
 function JobPizza:start()
-
+	self:nextDeliver()
 end
 
 function JobPizza:throwPizza()
