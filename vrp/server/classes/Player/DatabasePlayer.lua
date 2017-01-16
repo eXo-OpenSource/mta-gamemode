@@ -460,6 +460,7 @@ function DatabasePlayer:setWeaponLevel (level)
 end
 
 function DatabasePlayer:setVehicleLevel (level)
+	if level < 1 then level = 1 end
 	self.m_VehicleLevel = level
 	if self:isActive() then self:setPrivateSync("VehicleLevel", self.m_VehicleLevel) end
 end
