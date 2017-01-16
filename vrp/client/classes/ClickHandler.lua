@@ -170,33 +170,29 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 
 	-- Phase 4: Check models
 	if self.m_ClickableModels[model] then
-		if trigger then
-			if button == "left" then
-				if getDistanceBetweenPoints3D(localPlayer:getPosition(), element:getPosition()) < 10 then
+		if range < 10 then
+			if trigger then
+				if button == "left" then
 					self.m_ClickableModels[model](element, clickInfo)
-				else
-					ErrorBox:new(_"Du bist zu weit entfernt!")
 				end
 			end
+			return true
 		end
-		return true
 	end
 
 	-- Phase 5: Check element types
 	if self.m_Menu[elementType] then
-		if trigger then
-			if button == "left" then
-				if getDistanceBetweenPoints3D(localPlayer:getPosition(), element:getPosition()) < 10 then
+		if rang < 10 then
+			if trigger then
+				if button == "left" then
 					if elementType == "vehicle" and element:isBlown() then
 						return false
 					end
 					self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-				else
-					ErrorBox:new(_"Du bist zu weit entfernt!")
 				end
 			end
+			return true
 		end
-		return true
 	end
 
 	return false
