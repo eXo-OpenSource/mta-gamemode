@@ -69,15 +69,15 @@ function VehicleInteraction:doAction(door)
 				if client:getInventory():getItemAmount("Reparaturkit") > 0 then
 					if veh.isBroken and veh:isBroken() then
 						client:sendInfo(_("Das Fahrzeug wird repariert! Bitte warten!", client))
+						client:getInventory():removeItem("Reparaturkit", 1)
 						client:setAnimation("BAR" ,"Barserve_give" ,0 ,true)
-						local player = client
 						setTimer(function()
 							veh:setBroken(false)
 							veh:setHealth(veh:getHealth() + 300)
 
-							player:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", player))
-							player:setAnimation(false)
-							player:getInventory():removeItem("Reparaturkit", 1)
+							client:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", client))
+							client:setAnimation(false)
+
 						end, 5000, 1)
 					else
 						client:sendError(_("Das Fahrzeug hat keinen Totalschaden!", client))
