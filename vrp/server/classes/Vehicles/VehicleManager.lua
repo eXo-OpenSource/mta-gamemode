@@ -582,6 +582,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 				group:takeMoney(100, "Fahrzeug-Respawn")
 			else
 				client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
+				return
 			end
 			source:respawn()
 			group:sendShortMessage(_("%s hat ein Fahrzeug deiner %s respawnt! (%s)", client, client:getName(), group:getType(), source:getName()))
