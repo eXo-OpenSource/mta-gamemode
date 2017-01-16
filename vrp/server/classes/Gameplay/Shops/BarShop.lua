@@ -21,6 +21,8 @@ function BarShop:constructor(id, name, position, rotation, typeData, dimension, 
 	self.m_SoundUrl = ""
 
 
+	self.m_OnBarWasted = bind(self.onBarWasted, self)
+
 	if self.m_Marker then
 		self.m_SoundCol = createColSphere(self.m_Marker:getPosition(), 50)
 		self.m_SoundCol:setDimension(self.m_Dimension)
@@ -47,11 +49,17 @@ end
 function BarShop:onShopEnter(player)
 	if self.m_SoundUrl ~= "" then
 		player:triggerEvent("barUpdateMusic", self.m_SoundUrl)
+		addEventHandler("onPlayerWasted", player, self.m_OnBarWasted)
 	end
 end
 
 function BarShop:onShopExit(player)
 	player:triggerEvent("barUpdateMusic")
+	removeEventHandler("onPlayerWasted", player, self.m_OnBarWasted)
+end
+
+function BarShop:onBarWasted()
+	self:onShopExit(source)
 end
 
 function BarShop:getPlayerInBar()
