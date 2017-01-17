@@ -56,10 +56,12 @@ function StateFactionArrestGUI:refreshGrid()
 	local item
 	for key,playeritem in pairs(players) do
 		if playeritem:getWanteds() > 0 then
-			item = self.m_List:addItem(getPlayerName(playeritem),playeritem:getWanteds())
-			item.Player = playeritem
-			item.onLeftClick = function()
-				self:onSelectPlayer(playeritem)
+			if playeritem ~= localPlayer then
+				item = self.m_List:addItem(getPlayerName(playeritem),playeritem:getWanteds())
+				item.Player = playeritem
+				item.onLeftClick = function()
+					self:onSelectPlayer(playeritem)
+				end
 			end
 		end
 	end
