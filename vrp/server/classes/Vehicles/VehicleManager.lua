@@ -833,6 +833,9 @@ function VehicleManager:Event_vehicleEmpty()
 		for seat, occupant in pairs(getVehicleOccupants(source) or {}) do
 			if seat ~= 0 then
 				removePedFromVehicle(occupant)
+				if occupant:getData("BeggarId") then
+					occupant:onTransportExit(client)
+				end
 			end
 		end
 		client:sendShortMessage(_("Mitfahrer wurden herausgeworfen!", client))
