@@ -77,6 +77,8 @@ function VehicleInteraction:doAction(door)
 
 							client:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", client))
 							client:setAnimation(false)
+							client:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+
 
 						end, 5000, 1)
 					else
