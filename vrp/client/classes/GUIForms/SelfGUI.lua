@@ -251,10 +251,9 @@ function SelfGUI:constructor()
 	for i, v in ipairs(RadarDesign) do
 		self.m_RadarChange:addItem(v)
 	end
-	self.m_RadarChange.onChange = function(text, index) HUDRadar:getSingleton():setDesignSet(index) end
-	self.m_RadarChange:setIndex(core:get("HUD", "RadarDesign") or 2, true)
 
-	self.m_RadarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Radar aktivieren?", tabSettings)
+
+	self.m_RadarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Radar aktivieren", tabSettings)
 	self.m_RadarCheckBox:setFont(VRPFont(25))
 	self.m_RadarCheckBox:setFontSize(1)
 	self.m_RadarCheckBox:setChecked(core:get("HUD", "showRadar", true))
@@ -263,7 +262,7 @@ function SelfGUI:constructor()
 		HUDRadar:getSingleton():setEnabled(state)
 	end
 
-	self.m_BlipCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Blips anzeigen?", tabSettings)
+	self.m_BlipCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Blips anzeigen", tabSettings)
 	self.m_BlipCheckBox:setFont(VRPFont(25))
 	self.m_BlipCheckBox:setFontSize(1)
 	self.m_BlipCheckBox:setChecked(core:get("HUD", "drawBlips", true))
@@ -271,7 +270,7 @@ function SelfGUI:constructor()
 		core:set("HUD", "drawBlips", state)
 	end
 
-	self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Gangareas anzeigen?", tabSettings)
+	self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Gangareas anzeigen", tabSettings)
 	self.m_GangAreaCheckBox:setFont(VRPFont(25))
 	self.m_GangAreaCheckBox:setFontSize(1)
 	self.m_GangAreaCheckBox:setChecked(core:get("HUD", "drawGangAreas", true))
@@ -279,6 +278,20 @@ function SelfGUI:constructor()
 		core:set("HUD", "drawGangAreas", state)
 		HUDRadar:getSingleton():updateMapTexture()
 	end
+
+	self.m_RadarChange.onChange = function(text, index)
+		HUDRadar:getSingleton():setDesignSet(index)
+		if index == RadarDesign.Monochrome or index == RadarDesign.GTA then
+			self.m_BlipCheckBox:setVisible(true)
+			self.m_GangAreaCheckBox:setVisible(true)
+		else
+			self.m_BlipCheckBox:setVisible(false)
+			self.m_GangAreaCheckBox:setVisible(false)
+		end
+	end
+	local currentRadarIndex = core:get("HUD", "RadarDesign") or 2
+	self.m_RadarChange.onChange("", currentRadarIndex)
+	self.m_RadarChange:setIndex(currentRadarIndex, true)
 
 	GUILabel:new(self.m_Width*0.5, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / UI", tabSettings)
 	self.m_UIChange = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
