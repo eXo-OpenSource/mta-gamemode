@@ -143,29 +143,31 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 
 	-- Phase 3: Check for clickable NPC
 	if getElementData(element, "clickable") then
-		if trigger then
-			if button == "left" then
-				if getElementType(element) == "ped" then
-					if getElementData(element, "BeggarId") then
-						self:addMouseMenu(BeggarPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-					elseif element:getData("BugChecker") then
-						self:addMouseMenu(BugCheckerPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-					elseif element:getData("Job") then
-						element:getData("Job"):onPedClick()
-					elseif element:getData("Townhall:onClick") then
-						element:getData("Townhall:onClick")()
-					elseif element:getData("onClickEvent") then
-						element:getData("onClickEvent")()
+		if range < 10 then
+			if trigger then
+				if button == "left" then
+					if getElementType(element) == "ped" then
+						if getElementData(element, "BeggarId") then
+							self:addMouseMenu(BeggarPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+						elseif element:getData("BugChecker") then
+							self:addMouseMenu(BugCheckerPedMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+						elseif element:getData("Job") then
+							element:getData("Job"):onPedClick()
+						elseif element:getData("Townhall:onClick") then
+							element:getData("Townhall:onClick")()
+						elseif element:getData("onClickEvent") then
+							element:getData("onClickEvent")()
+						end
+					elseif getElementType(element) == "object" then
+						if getElementData(element, "bankPC") then
+							self:addMouseMenu(BankPcMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+						end
 					end
-				elseif getElementType(element) == "object" then
-					if getElementData(element, "bankPC") then
-						self:addMouseMenu(BankPcMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
-					end
-				end
 
+				end
 			end
+			return true
 		end
-		return true
 	end
 
 	-- Phase 4: Check models
