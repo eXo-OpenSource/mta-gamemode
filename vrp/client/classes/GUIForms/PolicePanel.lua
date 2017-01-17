@@ -41,14 +41,17 @@ function PolicePanel:constructor()
 	self.m_RefreshBtn = GUIButton:new(10, 380, 300, 30, "Aktualisieren", self.m_TabSpieler):setBackgroundColor(Color.LightBlue)
 	self.m_RefreshBtn.onLeftClick = function() self:loadPlayers() end
 
-	self.m_LocatePlayerBtn = GUIButton:new(320, 305, 250, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green)
+	self.m_StopLocateBtn = GUIButton:new(320, 275, 250, 30, "Orten beenden", self.m_TabSpieler):setBackgroundColor(Color.Orange)
+	self.m_StopLocateBtn.onLeftClick = function() self:stopLocating() end
+
+	self.m_LocatePlayerBtn = GUIButton:new(320, 310, 250, 30, "Spieler orten", self.m_TabSpieler):setBackgroundColor(Color.Green)
 	self.m_LocatePlayerBtn.onLeftClick = function() self:locatePlayer() end
 
-	self.m_AddWantedsBtn = GUIButton:new(320, 340, 250, 30, "Wanteds geben", self.m_TabSpieler)
+	self.m_AddWantedsBtn = GUIButton:new(320, 345, 250, 30, "Wanteds geben", self.m_TabSpieler)
 	self.m_AddWantedsBtn.onLeftClick = function() self:giveWanteds() end
 
 
-	self.m_DeleteWantedsBtn = GUIButton:new(320, 375, 250, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red)
+	self.m_DeleteWantedsBtn = GUIButton:new(320, 380, 250, 30, "Wanteds löschen", self.m_TabSpieler):setBackgroundColor(Color.Red)
 	self.m_DeleteWantedsBtn.onLeftClick = function() QuestionBox:new(
 		_("Möchtest du wirklich alle Wanteds von %s löschen?", self.m_SelectedPlayer:getName()),
 		function() triggerServerEvent("factionStateClearWanteds", localPlayer, self.m_SelectedPlayer) end)
@@ -353,7 +356,7 @@ function PolicePanel:locateElement(element)
 	end
 end
 
-function PolicePanel:stopLocating(type)
+function PolicePanel:stopLocating()
 	if ElementLocateBlip then delete(ElementLocateBlip) end
 	if isTimer(ElementLocateTimer) then killTimer(ElementLocateTimer) end
 	localPlayer.m_LocatingElement = false
