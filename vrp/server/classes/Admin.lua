@@ -22,7 +22,20 @@ function Admin:constructor()
         [7] = "Developer",
         [8] = "StellvProjektleiter",
         [9] = "Projektleiter"
-    }
+	}
+
+	self.m_RankColors = {
+		[1] = {120, 120, 120, true},
+		[2] = {210, 40, 100, true},
+		[3] = {200, 170, 40, true},
+		[4] = {75, 150, 200, true},
+		[5] = {60, 185, 100, true},
+		[6] = {235, 130, 10, true},
+		[7] = {160, 65, 180, true},
+		[8] = {200, 75, 60, true},
+		[9] = {180, 60, 60, true},
+	}
+
 	local bankAccountId = 1
 	self.m_BankAccount = BankAccount.load(bankAccountId) or BankAccount.create(BankAccountTypes.Admin, bankAccountId)
 
@@ -643,7 +656,7 @@ end
 function Admin:onlineList(player)
 	outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
 	for key, value in pairs(self.m_OnlineAdmins) do
-		outputChatBox(self.m_RankNames[value].." "..key:getName(),player,255,255,255)
+		outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[value], key:getName()),player, unpack(self.m_RankColors[value]))
 	end
 end
 
