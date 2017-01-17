@@ -654,14 +654,14 @@ function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
 		self.m_FactionMenuButton:setPosition(x + dxGetTextWidth(self.m_FactionNameLabel:getText(), self.m_FactionNameLabel:getFontSize(), self.m_FactionNameLabel:getFont()) + 10, y)
 	else
 		self.m_FactionNameLabel:setText(_"- keine Fraktion -")
-		self.m_FactionInvationLabel:setVisible(true)
+		--self.m_FactionInvationLabel:setVisible(true)
 		self.m_FactionMenuButton:setVisible(false)
 
-		if self.m_InvationFactionId and self.m_InvationFactionId > 0 then
-			self.m_FactionInvationLabel:setVisible(true)
-			self.m_FactionInvitationsAcceptButton:setVisible(true)
-			self.m_FactionInvitationsDeclineButton:setVisible(true)
-		end
+		--if self.m_InvationFactionId and self.m_InvationFactionId > 0 then
+		--	self.m_FactionInvationLabel:setVisible(true)
+		--	self.m_FactionInvitationsAcceptButton:setVisible(true)
+		--	self.m_FactionInvitationsDeclineButton:setVisible(true)
+		--end
 	end
 end
 
