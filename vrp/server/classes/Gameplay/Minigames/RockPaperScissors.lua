@@ -96,6 +96,7 @@ addEventHandler("rockPaperScissorsQuestion", root, function(target)
 	if client.rpsSendRequest then client:sendError(_("Du hast dem Spieler bereits eine Anfrage gesendet", client)) return end
 
 	client.rpsSendRequest = true
+	client:sendShortMessage(_("Du hast %s eine Anfrage gesendet! Bitte warte ob er akzeptiert!", client, target.name), _("Schere Stein Papier", client), {50, 200, 255}, 10000)
 	target:sendShortMessage(_("Der Spieler %s möchte mit dir spielen. Klicke hier um anzunehmen!", target, client.name), _("Schere Stein Papier", target), {50, 200, 255}, 10000, "rockPaperScissorsStart", "rockPaperScissorsDecline", client)
 end)
 
