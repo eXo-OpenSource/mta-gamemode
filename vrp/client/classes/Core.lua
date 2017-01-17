@@ -65,6 +65,7 @@ function Core:ready()
 	-- Tell the server that we're ready to accept additional data
 	triggerServerEvent("playerReady", root)
 
+	DxHelper:new()
 	TranslationManager:new()
 	HelpTextManager:new()
 	MTAFixes:new()

@@ -70,7 +70,7 @@ function Nametag:draw()
 			local pname = player:getName()
 			local size = calcDxFontSize(pname, 240, "default-bold", 2)
 
-			dxDrawText(getPlayerName(player), 10, 5, 250, 60,AdminColor[player:getPublicSync("Rank") or 0], size,"default-bold")
+			dxDrawText(getPlayerName(player), 10, 5, 250, 60, AdminColor[player:getPublicSync("Rank") or 0], size,"default-bold")
 
 			self:drawIcons(player)
 

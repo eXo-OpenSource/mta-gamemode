@@ -581,3 +581,6 @@ addEventHandler("onClientColShapeHit",AREA51_WARNING,function(hE)
 		end
 	end
 end)
+
+NOTIFICATION_TYPE_INVATION = 1
+NOTIFICATION_TYPE_GAME     = 2

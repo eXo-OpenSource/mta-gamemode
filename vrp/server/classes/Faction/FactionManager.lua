@@ -236,14 +236,19 @@ function FactionManager:Event_factionInvitationAccept(factionId)
 	end
 
 	if faction:hasInvitation(client) then
-		faction:addPlayer(client)
-		faction:removeInvitation(client)
-		faction:addLog(client, "Fraktion", "ist der Fraktion beigetreten!")
-		faction:sendMessage(_("#008888Fraktion: #FFFFFF%s ist soeben der Fraktion beigetreten!", client, getPlayerName(client)),200,200,200,true)
-		if faction:isEvilFaction() then
-			faction:changeSkin(client)
+		if not client:getFaction() then
+			faction:addPlayer(client)
+			faction:addLog(client, "Fraktion", "ist der Fraktion beigetreten!")
+			faction:sendMessage(_("#008888Fraktion: #FFFFFF%s ist soeben der Fraktion beigetreten!", client, getPlayerName(client)),200,200,200,true)
+			if faction:isEvilFaction() then
+				faction:changeSkin(client)
+			end
+			self:sendInfosToClient(client)
+		else
+			client:sendError(_("Du bisd bereits einer Fraktion beigetreten!", client))
 		end
-		self:sendInfosToClient(client)
+
+		faction:removeInvitation(client)
 	else
 		client:sendError(_("Du hast keine Einladung für diese Fraktion", client))
 	end

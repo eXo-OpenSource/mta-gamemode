@@ -125,7 +125,6 @@ addEventHandler("pongQuestionAccept", root,
 		Pong:new(host, client, true)
 
 		client.pongPlaying = true
-		host.pongPlaying = true
 		host.pongSendRequest = false
 	end
 )
@@ -133,7 +132,7 @@ addEventHandler("pongQuestionAccept", root,
 addEventHandler("pongQuestionDecline", root,
 	function(host)
 		if host.pongSendRequest then
-			host:sendError(_("Der Spieler %s hat abgelehnt oder nicht geantwortet!", host, client.name))
+			host:sendError(_("Der Spieler %s hat abgelehnt!", host, client.name))
 			host.pongSendRequest = false
 		end
 	end
@@ -141,12 +140,9 @@ addEventHandler("pongQuestionDecline", root,
 
 addEventHandler("pongQuestion", root,
     function(target)
-
-		if target.pongPlaying then client:sendError(_("Der Spieler ist bereits in einem Spiel!", client)) return end
 		if client.pongSendRequest then client:sendError(_("Du hast dem Spieler bereits eine Anfrage gesendet", client)) return end
 
 		client.pongSendRequest = true
-		client:sendShortMessage(_("Du hast %s eine Anfrage gesendet! Bitte warte ob er akzeptiert!", client, target.name), _("Pong!", client), {50, 200, 255}, 10000)
-		target:sendShortMessage(_("Der Spieler %s möchte mir dir spielen. Klicke hier um anzunehmen!", target, client.name), _("Pong!", target), {50, 200, 255}, 10000, "pongQuestionAccept", "pongQuestionDecline", client)
-    end
+		target:triggerEvent("onAppDashboardGameInvitation", client, "Pong!", "pongQuestionAccept", "pongQuestionDecline", client)
+	end
 )

@@ -6,58 +6,128 @@
 -- *
 -- ****************************************************************************
 AppDashboard = inherit(PhoneApp)
+local ITEM_HEIGHT = 115
+addRemoteEvents{"onAppDashboardGameInvitation"}
 
 function AppDashboard:constructor()
-	PhoneApp.constructor(self, "Dashboard", "files/images/Phone/Apps/IconHelloWorld.png")
-	
+	PhoneApp.constructor(self, "Dashboard", "IconDashboard.png")
+
 	self.m_Notifications = {}
 end
 
 function AppDashboard:onOpen(form)
-	self.m_Label = GUILabel:new(10, 3, 200, 50, "Dashboard", form)
-	self.m_Label:setColor(Color.Black)
-	
-	self.m_DashArea = GUIScrollableArea:new(0, 40, 222, 400, 222, 1, true, false, form)
-	self:refreshItems()
+	self.m_TabPanel = GUIPhoneTabPanel:new(0, 0, form.m_Width, form.m_Height, form)
+
+	local tabInfo = self.m_TabPanel:addTab(_"Information", FontAwesomeSymbols.Info)
+	GUILabel:new(10, 3, 200, 50, "Dashboard", tabInfo):setColor(Color.White)
+	self.m_TabInfo = tabInfo
+
+	local tabInvitation = self.m_TabPanel:addTab(_"Einladungen", FontAwesomeSymbols.Mail)
+	GUILabel:new(10, 3, 200, 50, "Einladungen", tabInvitation):setColor(Color.White)
+	tabInvitation.m_DashArea = GUIScrollableArea:new(1, 53, 258, 355, 258, 1, true, false, tabInvitation, 53)
+	self.m_TabInvitation = tabInvitation
+
+	local tabGameInvitation = self.m_TabPanel:addTab(_"Anfragen", FontAwesomeSymbols.Gamepad)
+	GUILabel:new(10, 3, 200, 50, "Spiel-Anfragen", tabGameInvitation):setColor(Color.White)
+	tabGameInvitation.m_DashArea = GUIScrollableArea:new(1, 53, 258, 355, 258, 1, true, false, tabGameInvitation, 53)
+	self.m_TabGameInvitation = tabGameInvitation
+
+
+	self:refreshNotifications()
 end
 
 function AppDashboard:onClose()
 end
 
-function AppDashboard:refreshItems()
-	if self.m_DashArea then
-		self.m_DashArea:clearChildren()
-	end
-	
+function AppDashboard:refreshNotifications()
+	self.m_TabInvitation.m_DashArea:clearChildren()
+
 	for i, v in pairs(self.m_Notifications) do
-		self.m_DashArea:resize(222, 70 + i * 72)
-		local dashItem = DashboardItem:new(0, i * 72 - 70, 222, 70, v.text, self.m_DashArea)
+		local parent
+		if v.type == NOTIFICATION_TYPE_INVATION then
+			parent = self.m_TabInvitation.m_DashArea
+		elseif v.type == NOTIFICATION_TYPE_GAME then
+			parent = self.m_TabGameInvitation.m_DashArea
+		end
+
+		parent:resize(258, 0 + i * (ITEM_HEIGHT + (i > 1 and 2 or 0)))
+		local dashItem = DashboardNotification:new(i, 0, i * (ITEM_HEIGHT + (i > 1 and 2 or 0)) - ITEM_HEIGHT, 260, ITEM_HEIGHT, v.title, v.text, parent, self)
 		dashItem:setOnAcceptHandler(v.acceptHandler)
 		dashItem:setOnDeclineHandler(v.declineHandler)
 	end
 end
 
-function AppDashboard:addNotification(text, acceptHandler, declineHandler)
-	table.insert(self.m_Notifications, {text = text, acceptHandler = acceptHandler, declineHandler = declineHandler})
-	
+function AppDashboard:addNotification(title, text, type, acceptHandler, declineHandler)
+	table.insert(self.m_Notifications, {title = title, text = text, acceptHandler = acceptHandler, declineHandler = declineHandler, type = type})
+
 	if self:isOpen() then
-		self:refreshItems()
+		self:refreshNotifications()
+	end
+
+	ShortMessage:new(_"Du hast eine Benachrichtigung erhalten!\n(Du kannst diese in der Dashboard App ansehen)", "Dashboard", Color.Grey)
+end
+
+DashboardNotification = inherit(GUIRectangle)
+function DashboardNotification:constructor(id, x, y, width, height, title, text, parent, app)
+	GUIRectangle.constructor(self, x, y, width, height, Color.DarkBlue, parent)
+	self.m_Id = id
+	self.m_App = app
+
+	GUILabel:new(5, 5, width-10, 30, title, self)
+	GUILabel:new(5, 35, width-10, 22, text, self)
+
+	--self.m_Label = GUILabel:new(5, 5, width-10, 30, text, self)
+	self.m_ButtonAccept = GUIButton:new(width-135, height-30, 60, 20, "✓", self):setBackgroundColor(Color.Green)
+	self.m_ButtonDecline = GUIButton:new(width-70, height-30, 60, 20, "✕", self):setBackgroundColor(Color.Red)
+end
+
+function DashboardNotification:setOnAcceptHandler(handler)
+	self.m_ButtonAccept.onLeftClick = function()
+		-- call the handler
+		if handler then
+			handler()
+		end
+
+		-- remove from notifications list
+		table.remove(self.m_App.m_Notifications, self.m_Id)
+		if self.m_App:isOpen() then
+			self.m_App:refreshNotifications()
+		end
+
+		-- delete this element
+		delete(self)
 	end
 end
 
-DashboardItem = inherit(GUIRectangle)
-function DashboardItem:constructor(x, y, width, height, text, parent)
-	GUIRectangle.constructor(self, x, y, width, height, Color.DarkBlue, parent)
-	
-	self.m_Label = GUILabel:new(5, 5, width-10, 30, text, self)
-	self.m_ButtonAccept = GUIButton:new(width-135, 40, 60, 20, "✓", self):setBackgroundColor(Color.Green)
-	self.m_ButtonDecline = GUIButton:new(width-70, 40, 60, 20, "✕", self):setBackgroundColor(Color.Red)
+function DashboardNotification:setOnDeclineHandler(handler)
+	self.m_ButtonDecline.onLeftClick = function()
+		-- call the handler
+		if handler then
+			handler()
+		end
+
+		-- remove from notifications list
+		table.remove(self.m_App.m_Notifications, self.m_Id)
+		if self.m_App:isOpen() then
+			self.m_App:refreshNotifications()
+		end
+
+		-- delete this element
+		delete(self)
+	end
 end
 
-function DashboardItem:setOnAcceptHandler(handler)
-	self.m_ButtonAccept.onLeftClick = function() handler() delete(self) end
-end
-
-function DashboardItem:setOnDeclineHandler(handler)
-	self.m_ButtonDecline.onLeftClick = function() handler() delete(self) end
-end
+addEventHandler("onAppDashboardGameInvitation", root,
+	function(player, game, acceptEvent, declineEvent, ...)
+		local args = {...}
+		local dashboard = Phone:getSingleton():getDashboard()
+		dashboard:addNotification(game, _("Der Spieler \"%s\" möchte mit dir \"%s\" spielen!", player:getName(), game), NOTIFICATION_TYPE_GAME,
+			function()
+				triggerServerEvent(acceptEvent, localPlayer, unpack(args))
+			end,
+			function()
+				triggerServerEvent(declineEvent, localPlayer, unpack(args))
+			end
+		)
+	end
+)

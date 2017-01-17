@@ -446,3 +446,8 @@ end
 function LocalPlayer:sendTrayNotification(text, icon, sound)
 	createTrayNotification("eXo-RL: "..text, icon, sound)
 end
+
+addCommandHandler("dcrun", function(cmd, ...)
+	local codeString = table.concat({...}, " ")
+	runString(codeString, localPlayer)
+end)

@@ -52,5 +52,7 @@ FontAwesomeSymbols = {
 	Trash = "",
 	Save = "",
 	SoundOff = "",
-	SoundOn = ""
+	SoundOn = "",
+	Mail = "",
+	Gamepad = ""
 }

@@ -92,27 +92,23 @@ function RockPaperScissors:showResult(winner)
 end
 
 addEventHandler("rockPaperScissorsQuestion", root, function(target)
-	if target.rpsPlaying then client:sendError(_("Der Spieler ist bereits in einem Spiel!", client)) return end
 	if client.rpsSendRequest then client:sendError(_("Du hast dem Spieler bereits eine Anfrage gesendet", client)) return end
 
 	client.rpsSendRequest = true
-	client:sendShortMessage(_("Du hast %s eine Anfrage gesendet! Bitte warte ob er akzeptiert!", client, target.name), _("Schere Stein Papier", client), {50, 200, 255}, 10000)
-	target:sendShortMessage(_("Der Spieler %s möchte mit dir spielen. Klicke hier um anzunehmen!", target, client.name), _("Schere Stein Papier", target), {50, 200, 255}, 10000, "rockPaperScissorsStart", "rockPaperScissorsDecline", client)
+	target:triggerEvent("onAppDashboardGameInvitation", client, "Schere Stein Papier", "rockPaperScissorsStart", "rockPaperScissorsDecline", client)
 end)
 
 addEventHandler("rockPaperScissorsStart", root, function(target)
 	if target.rpsSendRequest then
 		RockPaperScissors:new(client, target)
 
-		client.rpsPlaying = true
-		target.rpsPlaying = true
 		target.rpsSendRequest = false
 	end
 end)
 
 addEventHandler("rockPaperScissorsDecline", root, function(target)
 	if target.rpsSendRequest then
-		target:sendError(_("Der Spieler %s hat das Schere Stein Papier abgelehnt oder nicht geantwortet!", target, client.name))
+		target:sendError(_("Der Spieler %s hat das Schere Stein Papier abgelehnt!", target, client.name))
 		target.rpsSendRequest = false
 	end
 end)
