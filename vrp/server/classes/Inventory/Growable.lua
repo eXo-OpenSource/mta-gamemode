@@ -104,6 +104,9 @@ end
 function Growable:waterPlant(player)
 	self.m_LastWatered = getRealTime().timestamp
 	player:setAnimation("bomber", "BOM_Plant_Loop", 2000, true, false)
+	setTimer(function()
+		player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+	end, 2000 ,1)
 	player:triggerEvent("PlantWeed:onWaterPlant", self:getObject())
 	self:getObject():setData("Plant:Hydration", true, true)
 	self:onColShapeLeave(player, true)

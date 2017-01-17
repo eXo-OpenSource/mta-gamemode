@@ -25,10 +25,10 @@ function ItemRepairKit:use(player)
 				player:getInventory():removeItem(self:getName(), 1)
 				setVehicleEngineState(player.vehicle, true)
 				player:meChat(true, "versucht den Motor zu starten, welcher daraufhin angeht!")
-			else 
+			else
 				player:getInventory():removeItem(self:getName(), 1)
 				player:meChat(true, "brennt die angelegten Kabel nach einigen Versuchen durch!")
-				player:sendInfo(_("Das Reperaturkit ist zerstört!", player))
+				player:sendInfo(_("Das Reparaturkit ist zerstört!", player))
 			end
 		else
 			player:sendError(_("Dein Fahrzeug ist nicht kaputt!", player))
