@@ -24,7 +24,7 @@ function GasStation:constructor(id, name, position, rotation, typeData, dimensio
 
 		local x, y, z, rot = unpack(SHOP_FUEL[self.m_Name]["FuelStation"])
 		self.m_GasStation = createObject(1676, x, y, z,0,0, rot)
-		self.m_GasStation:setCollisionsEnabled(false)
+		--self.m_GasStation:setCollisionsEnabled(false)
 	else
 		outputDebugString("Shoperror: Gas-Station Data for "..self.m_Id.." not found!")
 	end
