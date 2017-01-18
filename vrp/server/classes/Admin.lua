@@ -448,19 +448,16 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			end
         elseif func == "offlinePermaban" then
 			if not target then return end
-			if type(reason) == "string" then
-				if #reason == 0 then
-					self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
-					local targetId = Account.getIdFromName(target)
-					if targetId and targetId > 0 then
-						Ban.addBan(targetId, admin, reason)
-						self:addPunishLog(admin, targetId, func, reason, 0)
-						outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
-						outputChatBox("Grund: "..reason,root, 200, 0, 0)
-					else
-						admin:sendError(_("Spieler nicht gefunden!", admin))
-					end
-				end
+			if not reason or #reason == 0 then return end
+			self:sendShortMessage(_("%s hat %s offline permanent gebannt! Grund: %s", admin, admin:getName(), target, reason))
+			local targetId = Account.getIdFromName(target)
+			if targetId and targetId > 0 then
+				Ban.addBan(targetId, admin, reason)
+				self:addPunishLog(admin, targetId, func, reason, 0)
+				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." gebannt!",root, 200, 0, 0)
+				outputChatBox("Grund: "..reason,root, 200, 0, 0)
+			else
+				admin:sendError(_("Spieler nicht gefunden!", admin))
 			end
         elseif func == "offlineTimeban" then
 			if not target then return end
