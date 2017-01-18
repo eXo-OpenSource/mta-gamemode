@@ -20,7 +20,7 @@ function FactionRescue:constructor()
 
 	self.m_Skins = {}
 	self.m_Skins["medic"] = {70, 71, 274, 275, 276}
-	self.m_Skins["fire"] = {260, 277, 278, 279}
+	self.m_Skins["fire"] = {27, 277, 278, 279}
 
 	self.m_LastStrecher = {}
 
