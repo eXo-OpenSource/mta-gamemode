@@ -88,7 +88,7 @@ function PlayerMouseMenu:constructor(posX, posY, element)
 						_("Aus welchem Grund möchtest du den Spieler %s vom Server kicken?", self:getElement():getName()),
 						function (reason)
 							if reason then
-								triggerServerEvent("adminTriggerFunction", root, func, self:getElement(), reason)
+								triggerServerEvent("adminTriggerFunction", localPlayer, "kick", self:getElement(), reason)
 							else
 								ErrorBox:new("Kein Grund angegeben!")
 							end
