@@ -40,10 +40,14 @@ function AppSettings:onOpen(form)
 		-- Save it
 		core:getConfig():set("Phone", "Ringtone", path)
 	end
-	local item
+
+	local items = {}
 	for i = 1, 3 do
-		item = self.m_RingtoneChanger:addItem(_("Klingelton %d", i))
+		local path = "files/audio/Ringtones/Klingelton"..i..".mp3"
+		items[path] = self.m_RingtoneChanger:addItem(_("Klingelton %d", i))
 	end
+	local selected = core:getConfig():get("Phone", "Ringtone", "files/audio/Ringtones/Klingelton1.mp3"), true
+	self.m_RingtoneChanger:setIndex(items[selected], true)
 
 end
 
