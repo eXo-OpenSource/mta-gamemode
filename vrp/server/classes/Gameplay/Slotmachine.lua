@@ -355,7 +355,7 @@ function Slotmachine:doResult(ergebnis, player)
 		self:giveWin(player, "drogen", x, y, z, id)
 
 	elseif weintrauben == 3 then
-		self:giveWin(player, "explosion", x, y, z, id)
+		self:giveWin(player, "jackpot", x, y, z, id)
 	elseif rare == 3 then
 		self:giveWin(player, "rare", x, y, z, id)
 	elseif rare == 2 then
