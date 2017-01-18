@@ -270,7 +270,7 @@ function SelfGUI:constructor()
 		core:set("HUD", "drawBlips", state)
 	end
 
-	self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Gangareas anzeigen", tabSettings)
+	self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Radarareas anzeigen", tabSettings)
 	self.m_GangAreaCheckBox:setFont(VRPFont(25))
 	self.m_GangAreaCheckBox:setFontSize(1)
 	self.m_GangAreaCheckBox:setChecked(core:get("HUD", "drawGangAreas", true))
