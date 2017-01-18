@@ -54,6 +54,7 @@ function DMRaceEvent:onStart()
 
 		local vehicle = TemporaryVehicle.create(spawnInfo.model, spawnInfo.position.x, spawnInfo.position.y, spawnInfo.position.z, spawnInfo.rotation)
 		vehicle:setDimension(EVENT_DIMENSION)
+		vehicle:setCollisionsEnabled(false)
 		warpPedIntoVehicle(player, vehicle)
 		vehicle:setEngineState(true)
 
