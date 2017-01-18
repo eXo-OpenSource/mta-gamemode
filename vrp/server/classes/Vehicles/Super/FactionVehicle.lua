@@ -104,7 +104,7 @@ end
 
 function FactionVehicle:onStartEnter(player, seat)
 	if seat == 0 then
-		if (self.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) or (self.m_Faction:isRescueFaction() == true and player:isRescueFaction() and player:getFaction():isRescueFaction() == true)  then
+		if (self.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) or (self.m_Faction:isRescueFaction() == true and player:getFaction() and player:getFaction():isRescueFaction() == true)  then
 			if player:isFactionDuty() then
 				return true
 			else
@@ -112,6 +112,7 @@ function FactionVehicle:onStartEnter(player, seat)
 				cancelEvent()
 				return false
 			end
+
 		elseif player:getFaction() == self.m_Faction then
 			return true
 		end
