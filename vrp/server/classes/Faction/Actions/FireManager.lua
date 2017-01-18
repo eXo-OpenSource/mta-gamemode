@@ -57,7 +57,11 @@ function FireManager:checkFire()
 	end
 end
 
-function FireManager:startRandomFire( source )
+function FireManager:startRandomFire(source)
+	if source:getRank() < RANK.Moderator then
+		source:sendError(_("Du bist nicht berechtigt!", source))
+		return
+	end
 	--PlayerManager:getSingleton():breakingNews(_("!", player))
 	local rnd = math.random(1, #self.m_Fires)
 	if rnd == 9 then
