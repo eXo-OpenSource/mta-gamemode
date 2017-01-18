@@ -301,7 +301,7 @@ end
 
 function Faction:getOnlinePlayers()
 	local players = {}
-	for playerId in pairs(self.m_Players) do
+	if player and isElement(player) and player:isLoggedIn() then
 		local player = Player.getFromId(playerId)
 		if player and isElement(player) then
 			players[#players + 1] = player
