@@ -114,7 +114,7 @@ function DMRaceEvent:Event_PlayerReachedHunter(hitElement, matchingDimension)
 end
 
 function DMRaceEvent:StartTimer_Tick()
-	--self.m_AFKTimer = setTimer(bind(self.AFKTimer_Tick, self), 3000, 0)
+	self.m_AFKTimer = setTimer(bind(self.AFKTimer_Tick, self), 3000, 0)
 
 	for k, player in pairs(self:getPlayers()) do
 		if player.vehicle then
