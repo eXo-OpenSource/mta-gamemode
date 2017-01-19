@@ -12,7 +12,10 @@ addRemoteEvents{"onAppDashboardGameInvitation"}
 function AppDashboard:constructor()
 	PhoneApp.constructor(self, "Dashboard", "IconDashboard.png")
 
-	self.m_Notifications = {}
+	self.m_Notifications = {
+		[NOTIFICATION_TYPE_INVATION] = {};
+		[NOTIFICATION_TYPE_GAME] = {};
+	}
 end
 
 function AppDashboard:onOpen(form)
@@ -42,23 +45,26 @@ end
 function AppDashboard:refreshNotifications()
 	self.m_TabInvitation.m_DashArea:clearChildren()
 
-	for i, v in pairs(self.m_Notifications) do
-		local parent
-		if v.type == NOTIFICATION_TYPE_INVATION then
-			parent = self.m_TabInvitation.m_DashArea
-		elseif v.type == NOTIFICATION_TYPE_GAME then
-			parent = self.m_TabGameInvitation.m_DashArea
-		end
+	for type, notifications in pairs(self.m_Notifications) do
+		for i, data in pairs(notifications) do
+			local parent
+			if type == NOTIFICATION_TYPE_INVATION then
+				parent = self.m_TabInvitation.m_DashArea
+			elseif type == NOTIFICATION_TYPE_GAME then
+				parent = self.m_TabGameInvitation.m_DashArea
+			end
 
-		parent:resize(258, 0 + i * (ITEM_HEIGHT + (i > 1 and 2 or 0)))
-		local dashItem = DashboardNotification:new(i, 0, i * (ITEM_HEIGHT + (i > 1 and 2 or 0)) - ITEM_HEIGHT, 260, ITEM_HEIGHT, v.title, v.text, parent, self)
-		dashItem:setOnAcceptHandler(v.acceptHandler)
-		dashItem:setOnDeclineHandler(v.declineHandler)
+			parent:resize(258, 0 + i * (ITEM_HEIGHT + (i > 1 and 2 or 0)))
+			local dashItem = DashboardNotification:new(i, 0, i * (ITEM_HEIGHT + (i > 1 and 2 or 0)) - ITEM_HEIGHT, 260, ITEM_HEIGHT, data.title, data.text, parent, self)
+			dashItem:setOnAcceptHandler(data.acceptHandler)
+			dashItem:setOnDeclineHandler(data.declineHandler)
+		end
 	end
 end
 
 function AppDashboard:addNotification(title, text, type, acceptHandler, declineHandler)
-	table.insert(self.m_Notifications, {title = title, text = text, acceptHandler = acceptHandler, declineHandler = declineHandler, type = type})
+	if not self.m_Notifications[type] then return false end
+	table.insert(self.m_Notifications[type], {title = title, text = text, acceptHandler = acceptHandler, declineHandler = declineHandler, type = type})
 
 	if self:isOpen() then
 		self:refreshNotifications()
