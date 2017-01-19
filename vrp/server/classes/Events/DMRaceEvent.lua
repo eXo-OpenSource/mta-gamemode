@@ -30,7 +30,8 @@ function DMRaceEvent:onStart()
 	-- Create map objects
 	self.m_Map:create(EVENT_DIMENSION) -- TODO: Create the map only for contributing players
 
-	self.m_AFKTimer = setTimer(bind(self.AFKTimer_Tick, self), 3000, 0)
+	--self.m_AFKTimer = setTimer(bind(self.AFKTimer_Tick, self), 3000, 0)
+	self.m_StartTimer = setTimer(bind(self.StartTimer_Tick, self), 5000, 1)
 	self.m_EndTimer = setTimer(bind(self.EndTimer_Expired, self), MAX_TIME, 1)
 	self.m_StartPlayerAmount = #self:getPlayers()
 
@@ -54,9 +55,16 @@ function DMRaceEvent:onStart()
 
 		local vehicle = TemporaryVehicle.create(spawnInfo.model, spawnInfo.position.x, spawnInfo.position.y, spawnInfo.position.z, spawnInfo.rotation)
 		vehicle:setDimension(EVENT_DIMENSION)
-		vehicle:setCollisionsEnabled(false)
+
 		warpPedIntoVehicle(player, vehicle)
 		vehicle:setEngineState(true)
+		vehicle:setFrozen(true)
+		vehicle:setDamageProof(true)
+
+		-- Set Stats
+		setPedStat(player, 160, 1000)
+		setPedStat(player, 229, 1000)
+		setPedStat(player, 230, 1000)
 
 		-- Add binds
 		bindKey(player, "enter_exit", "down", self.m_EnterHandler)
@@ -105,6 +113,17 @@ function DMRaceEvent:Event_PlayerReachedHunter(hitElement, matchingDimension)
 	end
 end
 
+function DMRaceEvent:StartTimer_Tick()
+	--self.m_AFKTimer = setTimer(bind(self.AFKTimer_Tick, self), 3000, 0)
+
+	for k, player in pairs(self:getPlayers()) do
+		if player.vehicle then
+			player.vehicle:setFrozen(false)
+			player.vehicle:setDamageProof(false)
+		end
+	end
+end
+
 function DMRaceEvent:AFKTimer_Tick()
 	for k, player in pairs(self:getPlayers()) do
 		-- Kick if position has not changed since 3000 seconds
@@ -126,6 +145,10 @@ end
 
 function DMRaceEvent:onQuit(player)
 	-- Remove event handlers and binds
+
+	setPedStat(player, 160, 0)
+	setPedStat(player, 229, 0)
+	setPedStat(player, 230, 0)
 	unbindKey(player, "enter_exit", "down", self.m_EnterHandler)
 end
 

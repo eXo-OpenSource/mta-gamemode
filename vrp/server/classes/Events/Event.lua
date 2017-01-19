@@ -40,11 +40,10 @@ function Event:virtual_constructor(Id)
 			if getElementType(hitElement) == "player" and matchingDimension then
 				if self:isMember(hitElement) then
 					-- Quit the player if he leaves the zone
-					self:quit(hitElement)
+					self:quit(hitElement, true)
 
 					hitElement:sendWarning(_("Du hast die Eventzone verlassen und nimmst deshalb nicht mehr am Event teil!", hitElement))
-						hitElement:triggerEvent("Countdown", event:getStartTime() - getRealTime().timestamp, "Event")
-
+					hitElement:triggerEvent("CountdownStop", "Event")
 				end
 			end
 		end
@@ -82,7 +81,7 @@ function Event:join(player)
 	if self.onJoin then self:onJoin(player) end
 end
 
-function Event:quit(player)
+function Event:quit(player, withoutRespawn)
 	local idx = table.find(self.m_Players, player)
 	if not idx then
 		return false
@@ -92,7 +91,7 @@ function Event:quit(player)
 
 	if self.onQuit then	self:onQuit(player) end
 
-	if self:hasExit() then
+	if self:hasExit() and not withoutRespawn then
 		player:respawn(self:getExitPosition())
 		return true
 	end
