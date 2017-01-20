@@ -40,18 +40,17 @@ function DeathmatchGUI:refresh(dataTable)
 		scoreTable[i].Kills = data.Kills
 		scoreTable[i].Deaths = data.Deaths
 		scoreTable[i].Points = data.Kills-data.Deaths
-		i = 1+1
+		i = i+1
 	end
 
-
-	--table.sort(scoreTable,
-	--		function(a, b)
-	--			return a.Points > b.Points
-	--		end
-	--	)
+	table.sort(scoreTable,
+			function(a, b)
+				return a.Points > b.Points
+			end
+		)
 
 	self.m_LobbyGrid:clear()
-	for index, value in pairs(scoreTable) do
+	for index, value in ipairs(scoreTable) do
 		local item = self.m_LobbyGrid:addItem(value.Name, value.Kills, value.Deaths, value.Points)
 		item:setFont(VRPFont(20))
 	end
