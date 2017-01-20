@@ -12,15 +12,18 @@ inherit(Singleton, DeathmatchGUI)
 addRemoteEvents{"deathmatchRefreshGUI"}
 
 function DeathmatchGUI:constructor(data)
-	GUIForm.constructor(self, screenWidth-210, screenHeight-410, 200, 400, false)
+	GUIForm.constructor(self, screenWidth-310, screenHeight-360, 300, 350, false)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Deathmatch", true, false, self)
 
-	self.m_LobbyGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.07, self.m_Width*0.96, self.m_Height*0.9+40, self.m_Window)
-	self.m_LobbyGrid:addColumn(_"Name", 0.4)
-	self.m_LobbyGrid:addColumn(_"Kills", 0.2)
-	self.m_LobbyGrid:addColumn(_"Tode", 0.2)
-	self.m_LobbyGrid:addColumn(_"Punkte", 0.2)
+	self.m_LobbyGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.96, self.m_Height*0.8, self.m_Window)
+	self.m_LobbyGrid:setFont(VRPFont(20))
+	self.m_LobbyGrid:setItemHeight(20)
+	self.m_LobbyGrid:addColumn(_"Name", 0.55)
+	self.m_LobbyGrid:addColumn(_"K", 0.15)
+	self.m_LobbyGrid:addColumn(_"D", 0.15)
+	self.m_LobbyGrid:addColumn(_"P", 0.15)
+
 	self:refresh(data)
 end
 
@@ -29,9 +32,28 @@ function DeathmatchGUI:destructor()
 end
 
 function DeathmatchGUI:refresh(dataTable)
-	self.m_LobbyGrid:clear()
+	local i = 1
+	local scoreTable = {}
 	for player, data in pairs(dataTable) do
-		self.m_LobbyGrid:addItem(player:getName(), player.Kills, player.Deaths, player.Kills-player.Deaths)
+		scoreTable[i] = {}
+		scoreTable[i].Name = player:getName()
+		scoreTable[i].Kills = data.Kills
+		scoreTable[i].Deaths = data.Deaths
+		scoreTable[i].Points = data.Kills-data.Deaths
+		i = 1+1
+	end
+
+
+	table.sort(scoreTable,
+			function(a, b)
+				return a.Points > b.Points
+			end
+		)
+
+	self.m_LobbyGrid:clear()
+	for index, value in ipairs(scoreTable) do
+		local item = self.m_LobbyGrid:addItem(value.Name, value.Kills, value.Deaths, value.Points)
+		item:setFont(VRPFont(20))
 	end
 end
 
