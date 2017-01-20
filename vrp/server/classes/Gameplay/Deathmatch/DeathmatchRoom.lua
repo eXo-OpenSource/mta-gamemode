@@ -21,6 +21,8 @@ function DeathmatchRoom:constructor(id, name, owner, map, weapons, mode, maxPlay
 	self.m_Players = {}
 	self:loadMap()
 
+	self.m_LeaveBind = bind(self.removePlayer, self)
+
 	if self.m_Type == DeathmatchRoom.Types[1] then
 		self.m_Owner = "Server"
 		self.m_OwnerName = "eXo-RL"
@@ -69,6 +71,33 @@ function DeathmatchRoom:getPlayerCount()
 	return count
 end
 
+function DeathmatchRoom:isValidWeapon(weapon)
+	for index, id in pairs(self.m_Weapons) do
+		if weapon == id then
+			return true
+		end
+	end
+	return false
+end
+
+function DeathmatchRoom:refreshGUI()
+	for player, data in pairs(self:getPlayers()) do
+		player:triggerEvent("deathmatchRefreshGUI", self.m_Players)
+	end
+end
+
+function DeathmatchRoom:increaseKill(player, weapon)
+	if not self:isValidWeapon(weapon) then return end
+	self.m_Players[player]["Kills"] = self.m_Players[player]["Kills"] + 1
+	self:refreshGUI()
+end
+
+function DeathmatchRoom:increaseDead(player, weapon)
+	if not self:isValidWeapon(weapon) then return end
+	self.m_Players[player]["Deaths"] = self.m_Players[player]["Deaths"] + 1
+	self:refreshGUI()
+end
+
 function DeathmatchRoom:addPlayer(player)
 	self.m_Players[player] = {
 		["Kills"] = 0,
@@ -80,11 +109,18 @@ function DeathmatchRoom:addPlayer(player)
 	self:respawnPlayer(player)
 	player.deathmatchRoom = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
+	player:sendInfo("Um die Arena zu verlassen drücke F3")
+	bindKey(player, "F3", "down", self.m_LeaveBind)
+	self:refreshGUI()
 end
 
-function DeathmatchRoom:respawnPlayer(player, dead)
+function DeathmatchRoom:respawnPlayer(player, dead, killer, weapon)
 	local pos = Randomizer:getRandomTableValue(self.m_MapData["spawns"])
 	if dead then
+		if killer then
+			self:increaseKill(killer, weapon)
+			self:increaseDead(player, weapon)
+		end
 		fadeCamera(player, false, 2)
 		player:triggerEvent("Countdown", 10, "Respawn in")
 		setTimer(function()
@@ -113,5 +149,7 @@ function DeathmatchRoom:removePlayer(player)
 		player:setPosition(Randomizer:getRandomTableValue(self.m_MapData["spawns"]))
 		player.deathmatchRoom = nil
 		self:sendShortMessage(player:getName().." hat die Arena verlassen!")
+		unbindKey(player, "F3", "down", self.m_LeaveBind)
 	end
+	self:refreshGUI()
 end

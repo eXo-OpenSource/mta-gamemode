@@ -40,11 +40,11 @@ function DeathmatchManager:constructor()
 	end)
 
 	PlayerManager:getSingleton():getWastedHook():register(
-		function(player)
+		function(player, killer, weapon)
 			if player.deathmatchRoom then
 				player:triggerEvent("abortDeathGUI", true)
 
-				player.deathmatchRoom:respawnPlayer(player, true)
+				player.deathmatchRoom:respawnPlayer(player, true, killer, weapon)
 				return true
 			end
 		end

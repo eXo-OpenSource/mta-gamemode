@@ -494,6 +494,7 @@
 	<script src="client/classes/GUIForms/PublicTransportTaxoMeterGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchLobbyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ColorPickerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>

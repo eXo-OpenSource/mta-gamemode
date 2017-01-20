@@ -263,7 +263,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	end
 
 	-- Call wasted hook
-	if self.m_WastedHook:call(source) then
+	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
 		return
 	end
 
