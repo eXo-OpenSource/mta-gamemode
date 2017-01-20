@@ -198,7 +198,7 @@ end
 
 function JobTreasureSeeker:onTreasureHit(hitElement, dim)
 	if dim and hitElement == source.Player then
-		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle() == player.jobVehicle then
+		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle() == hitElement.jobVehicle then
 			hitElement:sendInfo(_("Der Radar registriert ein Objekt unter dir!\nDrücke Leertaste um es hochzuheben!", hitElement))
 		end
 	end
