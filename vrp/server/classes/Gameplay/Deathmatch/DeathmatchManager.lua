@@ -10,6 +10,7 @@ DeathmatchManager = inherit(Singleton)
 DeathmatchManager.Rooms = {}
 DeathmatchManager.Maps = {
 	["lvpd"] = {
+		["Name"] = "LVPD",
 		["Custom"] = false,
 		["Interior"] = 3,
 		["Spawns"] = {
@@ -34,13 +35,26 @@ function DeathmatchManager:constructor()
 	self.m_Marker = createMarker(1498.56, -1582.00, 13.55, "corona", 2, 255, 125, 0)
 	addEventHandler("onMarkerHit", self.m_Marker, function(hitElement, dim)
 		if hitElement:getType() == "player" and not hitElement.vehicle and dim then
-			if DeathmatchManager.Rooms[1] then
-				DeathmatchManager.Rooms[1]:addPlayer(hitElement) -- Todo Add Room Select GUI
-			else
-				hitElement:sendMessage("Raum nicht gefunden!", 255, 0, 0)
-			end
+			hitElement:triggerEvent("deathmatchOpenLobbyGUI")
 		end
 	end)
+
+	PlayerManager:getSingleton():getWastedHook():register(
+		function(player)
+			if player.deathmatchRoom then
+				player:triggerEvent("abortDeathGUI", true)
+
+				player.deathmatchRoom:respawnPlayer(player, true)
+				return true
+			end
+		end
+	)
+
+
+	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby"}
+	addEventHandler("deathmatchRequestLobbys", root, bind(self.requestLobbys, self))
+	addEventHandler("deathmatchJoinLobby", root, bind(self.joinLobby, self))
+
 end
 
 function DeathmatchManager:createRoom(name, owner, map, weapons, mode, maxPlayer)
@@ -53,7 +67,26 @@ function DeathmatchManager:loadServerRooms()
 	self:createRoom("Deagle-Deathmatch LVPD #2", "Server", "lvpd", {24}, "default", 300)
 end
 
+function DeathmatchManager:requestLobbys()
+	local lobbyTable = {}
+	for id, lobby in pairs(DeathmatchManager.Rooms) do
+		lobbyTable[id] = {
+			["name"] = lobby.m_Name,
+			["players"] = lobby:getPlayerCount(),
+			["map"] = lobby.m_MapName,
+			["mode"] = lobby.m_Mode
+		}
+	end
+	client:triggerEvent("deathmatchReceiveLobbys", lobbyTable)
+end
 
+function DeathmatchManager:joinLobby(id)
+	if DeathmatchManager.Rooms[id] then
+		DeathmatchManager.Rooms[id]:addPlayer(client)
+	else
+		client:sendMessage("Raum nicht gefunden!", 255, 0, 0)
+	end
+end
 
 addCommandHandler("gh", function(player)
 outputChatBox(("Vector3(%.2f, %.2f, %.2f),"):format(getElementPosition(player)))
