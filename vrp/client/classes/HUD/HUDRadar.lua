@@ -335,7 +335,7 @@ function HUDRadar:drawBlips()
 
   if obj then
 	px, py, pz = getElementPosition(obj)
-	mapCenterX, mapCenterY = self:worldToMapPosition(posX, posY)
+	mat = math.matrix.three.rotate_z(math.rad(self.m_Rotation)) * math.matrix.three.scale(self.m_ImageSize/6000, -self.m_ImageSize/6000, 1) * math.matrix.three.translate(-px, -py, -pz)
   end
 
   for k, blip in pairs(self.m_Blips) do
@@ -390,7 +390,7 @@ function HUDRadar:drawBlips()
 
 		if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
 			if math.abs(pz - blip:getZ()) > 3 then
-				markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
+				local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
 				imagePath = HUDRadar:getSingleton():makePath(markerImage, true)
 			end
 		end
