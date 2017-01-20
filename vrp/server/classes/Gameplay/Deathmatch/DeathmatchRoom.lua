@@ -109,8 +109,8 @@ function DeathmatchRoom:addPlayer(player)
 	self:respawnPlayer(player)
 	player.deathmatchRoom = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
-	player:sendInfo("Um die Arena zu verlassen drücke F3")
-	bindKey(player, "F3", "down", self.m_LeaveBind)
+	player:sendMessage("Um die Arena zu verlassen drücke F4!")
+	bindKey(player, "F4", "down", self.m_LeaveBind)
 	self:refreshGUI()
 end
 
@@ -144,12 +144,13 @@ function DeathmatchRoom:removePlayer(player)
 	if isElement(player) then
 		takeAllWeapons(player)
 		player.m_RemoveWeaponsOnLogout = nil
-		player:setDimension(self.m_MapData["dim"])
-		player:setInterior(self.m_MapData["int"])
-		player:setPosition(Randomizer:getRandomTableValue(self.m_MapData["spawns"]))
+		player:setDimension(0)
+		player:setInterior(0)
+		player:setPosition(1498.087, -1585.115, 13.547)
 		player.deathmatchRoom = nil
 		self:sendShortMessage(player:getName().." hat die Arena verlassen!")
-		unbindKey(player, "F3", "down", self.m_LeaveBind)
+		unbindKey(player, "F4", "down", self.m_LeaveBind)
+		player:triggerEvent("deathmatchCloseGUI")
 	end
 	self:refreshGUI()
 end
