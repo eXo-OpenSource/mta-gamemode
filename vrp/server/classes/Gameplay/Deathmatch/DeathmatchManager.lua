@@ -1,0 +1,60 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        server/classes/Gameplay/Deathmatch/DeathmatchManager.lua
+-- *  PURPOSE:     Deathmatch Manager class
+-- *
+-- ****************************************************************************
+
+DeathmatchManager = inherit(Singleton)
+DeathmatchManager.Rooms = {}
+DeathmatchManager.Maps = {
+	["lvpd"] = {
+		["Custom"] = false,
+		["Interior"] = 3,
+		["Spawns"] = {
+			Vector3(236.65, 154.73, 1003.02),
+			Vector3(238.38, 177.07, 1003.03),
+			Vector3(246.71, 188.92, 1008.17),
+			Vector3(285.35, 180.23, 1007.18),
+			Vector3(220.75, 146.60, 1003.02),
+			Vector3(215.72, 146.15, 1003.02),
+			Vector3(210.31, 147.52, 1003.02),
+			Vector3(218.15, 167.28, 1003.02),
+			Vector3(192.08, 158.01, 1003.02),
+			Vector3(190.98, 178.94, 1003.02)
+		}
+	}
+}
+
+function DeathmatchManager:constructor()
+	self:loadServerRooms()
+
+
+	self.m_Marker = createMarker(1498.56, -1582.00, 13.55, "corona", 2, 255, 125, 0)
+	addEventHandler("onMarkerHit", self.m_Marker, function(hitElement, dim)
+		if hitElement:getType() == "player" and not hitElement.vehicle and dim then
+			if DeathmatchManager.Rooms[1] then
+				DeathmatchManager.Rooms[1]:addPlayer(hitElement) -- Todo Add Room Select GUI
+			else
+				hitElement:sendMessage("Raum nicht gefunden!", 255, 0, 0)
+			end
+		end
+	end)
+end
+
+function DeathmatchManager:createRoom(name, owner, map, weapons, mode, maxPlayer)
+	local id = #DeathmatchManager.Rooms+1
+	DeathmatchManager.Rooms[id] = DeathmatchRoom:new(id, name, owner, map, weapons, mode, maxPlayer)
+end
+
+function DeathmatchManager:loadServerRooms()
+	self:createRoom("Deagle-Deathmatch LVPD #1", "Server", "lvpd", {24}, "default", 300)
+	self:createRoom("Deagle-Deathmatch LVPD #2", "Server", "lvpd", {24}, "default", 300)
+end
+
+
+
+addCommandHandler("gh", function(player)
+outputChatBox(("Vector3(%.2f, %.2f, %.2f),"):format(getElementPosition(player)))
+end)

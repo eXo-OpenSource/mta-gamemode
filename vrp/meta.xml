@@ -154,6 +154,8 @@
 	<script src="server/classes/Gameplay/ShootingRanch.lua" type="server"/>
 	<script src="server/classes/Gameplay/ShootingRanchTraining.lua" type="server"/>
 	<script src="server/classes/Gameplay/Fishing.lua" type="server"/>
+	<script src="server/classes/Gameplay/Deathmatch/DeathmatchManager.lua" type="server"/>
+	<script src="server/classes/Gameplay/Deathmatch/DeathmatchRoom.lua" type="server"/>
 
 	<!--<script src="server/classes/Gameplay/Police.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>

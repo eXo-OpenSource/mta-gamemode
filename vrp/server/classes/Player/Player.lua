@@ -267,6 +267,8 @@ function Player:save()
 		self.m_UniqueInterior = 0
 	end
 
+	if self.m_RemoveWeaponsOnLogout then takeAllWeapons(self) end
+
 	local weapons = {}
 	for slot = 0, 11 do -- exclude satchel detonator (slot 12)
 		local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
