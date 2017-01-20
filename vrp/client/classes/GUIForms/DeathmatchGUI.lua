@@ -9,7 +9,7 @@ DeathmatchGUI = inherit(GUIForm)
 DeathmatchGUI.Current = false
 inherit(Singleton, DeathmatchGUI)
 
-addRemoteEvents{"deathmatchRefreshGUI"}
+addRemoteEvents{"deathmatchRefreshGUI", "deathmatchCloseGUI"}
 
 function DeathmatchGUI:constructor(data)
 	GUIForm.constructor(self, screenWidth-310, screenHeight-360, 300, 350, false)
@@ -65,9 +65,6 @@ addEventHandler("deathmatchRefreshGUI", root, function(data)
 	end
 end)
 
-addEventHandler("deathmatchCloseGUI", root, function(data)
-	if DeathmatchGUI.Current then
-		delete(DeathmatchGUI.Current)
-		DeathmatchGUI.Current = false
-	end
+addEventHandler("deathmatchCloseGUI", root, function()
+		delete(DeathmatchGUI:getSingleton())
 end)
