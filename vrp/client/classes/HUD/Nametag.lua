@@ -24,7 +24,7 @@ function Nametag:constructor()
 
 	self.m_Players = {}
 	self.m_PlayerBuffs = {}
-	self.m_RenderTarget = dxCreateRenderTarget(200, 120, true)
+	self.m_RenderTarget = dxCreateRenderTarget(260, 120, true)
 	self.m_IsModifying = false
 
 	self.m_Draw = bind(self.draw,self)
@@ -68,16 +68,14 @@ function Nametag:draw()
 			dxSetRenderTarget(self.m_RenderTarget,true)
 
 			local pname = player:getName()
-			local size = calcDxFontSize(pname, 240, "default-bold", 2)
+			local size = calcDxFontSize(pname, 260, "default-bold", 2)
 
-			dxDrawText(getPlayerName(player), 10, 5, 250, 60, AdminColor[player:getPublicSync("Rank") or 0], size,"default-bold")
+			dxDrawText(getPlayerName(player), 10, 5, 260, 60, AdminColor[player:getPublicSync("Rank") or 0], size,"default-bold")
 
 			self:drawIcons(player)
 
-
-
-			dxDrawRectangle(10, 40, 250*getElementHealth(player)/100, 15, tocolor(0,125,0,255))
-			dxDrawRectangle(10, 40, 250*getPedArmor(player)/100, 15, Color.LightBlue)
+			dxDrawRectangle(10, 40, 260*getElementHealth(player)/100, 15, tocolor(0,125,0,255))
+			dxDrawRectangle(10, 40, 260*getPedArmor(player)/100, 15, Color.LightBlue)
 
 			dxSetRenderTarget()
 
@@ -85,7 +83,7 @@ function Nametag:draw()
 
 			local scale = 0.4 + ( 15 - distance ) * 0.02
 			if scale < 0 then scale = 0.3 end
-			dxDrawImage(x-240*scale/2,y-60, 240*scale, 120*scale, self.m_RenderTarget)
+			dxDrawImage(x-260*scale/2,y-60, 260*scale, 120*scale, self.m_RenderTarget)
 
 			end
 
