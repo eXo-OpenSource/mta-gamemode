@@ -136,13 +136,13 @@ function Admin:addAdmin(player,rank)
 	self.m_OnlineAdmins[player] = rank
     player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
     --if DEBUG then
+		if getAccount(player:getName().."-eXo") then removeAccount(getAccount(player:getName().."-eXo")) end
 		local pw = string.random(15)
 		local user = player:getName().."-eXo"
 		self.m_MtaAccounts[player] = addAccount(user, pw)
 		if self.m_MtaAccounts[player] then
 			player:logIn(self.m_MtaAccounts[player], pw)
 			ACLGroup.get("Admin"):addObject("user."..user)
-
 			player:triggerEvent("setClientAdmin", player, rank)
 
 			if DEBUG then
