@@ -24,7 +24,6 @@ function DrivingSchoolMenuGUI:constructor(count)
 	self.m_ShowInstructorButton = GUIButton:new(30, 115, self.m_Width-60, 35,_"Fahrlehrer anzeigen", self)
 	self.m_ShowInstructorButton:setBackgroundColor(Color.Blue):setFont(VRPFont(28)):setFontSize(1)
 	self.m_ShowInstructorButton.onLeftClick = bind(self.showInstructor,self)
-
 end
 
 addEventHandler("showDrivingSchoolMenu", root,
@@ -35,6 +34,12 @@ addEventHandler("showDrivingSchoolMenu", root,
 
 
 function DrivingSchoolMenuGUI:callInstructor()
+	if self.m_LastClick and getTickCount() - self.m_LastClick < 60000 then
+		ErrorBox:new(_"Du hast bereits alle Fahrlerer gerufen. Bitte gedulde dich etwas.")
+		return
+	end
+
+	self.m_LastClick = getTickCount()
 	triggerServerEvent("drivingSchoolMenu", localPlayer, "callInstructor")
 end
 
