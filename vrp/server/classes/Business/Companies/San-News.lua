@@ -131,7 +131,7 @@ end
 
 function SanNews:Event_advertisement(sendername, text, color, duration)
 	local length = text:len()
-	if length <= 50 and length > 5 then
+	if length <= 50 and length >= 5 then
 		local durationExtra = (AD_DURATIONS[duration] - 20) * 2
 		local colorMultiplicator = 1
 		if color ~= "Schwarz" then
@@ -139,6 +139,7 @@ function SanNews:Event_advertisement(sendername, text, color, duration)
 		end
 
 		local costs = (length*AD_COST_PER_CHAR + AD_COST + durationExtra) * colorMultiplicator
+
 		if client:getMoney() >= costs then
 			if self.m_NextAd < getRealTime().timestamp then
 				client:takeMoney(costs, "San News Ad")
