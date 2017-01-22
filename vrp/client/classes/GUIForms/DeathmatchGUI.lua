@@ -67,5 +67,6 @@ addEventHandler("deathmatchRefreshGUI", root, function(data)
 end)
 
 addEventHandler("deathmatchCloseGUI", root, function()
-		delete(DeathmatchGUI:getSingleton())
+	delete(DeathmatchGUI:getSingleton())
+	DeathmatchGUI.Current = nil
 end)
