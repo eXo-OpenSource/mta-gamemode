@@ -193,11 +193,11 @@ function PlayerManager:playerCommand(cmd)
 end
 
 function PlayerManager:playerQuit()
+	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
+
 	self.m_QuitHook:call(source)
 
 	if getPedWeapon(source,1) == 9 then takeWeapon(source,9) end
-
-	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
 
 	local index = table.find(self.m_ReadyPlayers, source)
 	if index then
@@ -263,7 +263,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	end
 
 	-- Call wasted hook
-	if self.m_WastedHook:call(source) then
+	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
 		return
 	end
 

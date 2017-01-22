@@ -271,8 +271,8 @@ function LocalPlayer:deathRender(deltaTime)
 	Camera.setMatrix(Vector3(pos.x, pos.y, pos.z + self.m_Add), pos)
 end
 
-function LocalPlayer:abortDeathGUI()
-	if self.m_CanBeRevived then
+function LocalPlayer:abortDeathGUI(force)
+	if self.m_CanBeRevived or force then
 		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
 		HUDRadar:getSingleton():show()
