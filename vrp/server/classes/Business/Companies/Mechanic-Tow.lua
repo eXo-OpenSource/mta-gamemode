@@ -137,6 +137,7 @@ function MechanicTow:createTowLot()
 	self.m_TowColShape = createColRectangle( 809.78967, -1278.67761, 49, 49)
 	addEventHandler("onColShapeHit", self.m_TowColShape, bind( self.onEnterTowLot, self ))
 	addEventHandler("onColShapeLeave", self.m_TowColShape, bind( self.onLeaveTowLot, self ))
+	addEventHandler("onTrailerAttach", getRootElement(), bind(self.onAttachVehicleFromTow, self))
 	addEventHandler("onTrailerDetach", getRootElement(), bind( self.onDetachVehicleFromTow, self ))
 end
 
@@ -161,7 +162,22 @@ function MechanicTow:onLeaveTowLot( hElement )
 	hElement.m_InTowLot = false
 end
 
+function MechanicTow:onAttachVehicleFromTow(towTruck)
+	local driver = getVehicleOccupant( towTruck )
+	if driver then
+		if towTruck.getCompany and towTruck:getCompany() == self then
+			if source.getOwner and type(source:getOwner()) == "number" then
+				source:toggleRespawn(false)
+			else
+				driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+			end
+		end
+	end
+end
+
 function MechanicTow:onDetachVehicleFromTow( towTruck )
+	source:toggleRespawn(true)
+
 	local driver = getVehicleOccupant( towTruck )
 	if driver then
 		if driver.m_InTowLot then

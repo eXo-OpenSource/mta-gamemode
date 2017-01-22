@@ -847,9 +847,9 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 					policeman:giveAchievement(47)
 				end
 
-				setTimer(function () -- (delayed)
-					player:giveAchievement(31)
-				end, 14000, 1)
+				setTimer(function (player) -- (delayed)
+					if isElement(player) then player:giveAchievement(31) end
+				end, 14000, 1, player)
 
 			else
 				policeman:sendError(_("Der Spieler wird nicht gesucht!", player))
