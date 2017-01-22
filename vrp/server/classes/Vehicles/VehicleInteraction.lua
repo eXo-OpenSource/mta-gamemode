@@ -71,7 +71,7 @@ function VehicleInteraction:doAction(door)
 						client:sendInfo(_("Das Fahrzeug wird repariert! Bitte warten!", client))
 						client:getInventory():removeItem("Reparaturkit", 1)
 						client:setAnimation("BAR" ,"Barserve_give" ,0 ,true)
-						setTimer(function()
+						setTimer(function(client, veh)
 							veh:setBroken(false)
 							veh:setHealth(veh:getHealth() + 300)
 
@@ -80,7 +80,7 @@ function VehicleInteraction:doAction(door)
 							client:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
 
 
-						end, 5000, 1)
+						end, 5000, 1, client, veh)
 					else
 						client:sendError(_("Das Fahrzeug hat keinen Totalschaden!", client))
 					end
