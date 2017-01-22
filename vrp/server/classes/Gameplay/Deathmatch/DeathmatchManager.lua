@@ -82,10 +82,10 @@ function DeathmatchManager:constructor()
 	end)
 
 
-	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby"}
+	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby", "deathmatchLeaveArena"}
 	addEventHandler("deathmatchRequestLobbys", root, bind(self.requestLobbys, self))
 	addEventHandler("deathmatchJoinLobby", root, bind(self.joinLobby, self))
-
+	addEventHandler("deathmatchLeaveArena", root, bind(self.leaveArena, self))
 end
 
 function DeathmatchManager:createRoom(name, owner, map, weapons, mode, maxPlayer)
@@ -120,6 +120,12 @@ function DeathmatchManager:joinLobby(id)
 		DeathmatchManager.Rooms[id]:addPlayer(client)
 	else
 		client:sendMessage("Raum nicht gefunden!", 255, 0, 0)
+	end
+end
+
+function DeathmatchManager:leaveArena()
+	if client.deathmatchRoom and not client:isDead() then
+		client.deathmatchRoom:removePlayer(client)
 	end
 end
 

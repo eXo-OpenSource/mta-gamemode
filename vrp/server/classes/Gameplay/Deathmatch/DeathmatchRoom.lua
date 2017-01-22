@@ -109,7 +109,6 @@ function DeathmatchRoom:addPlayer(player)
 	self:respawnPlayer(player)
 	player.deathmatchRoom = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
-	player:sendMessage("Um die Arena zu verlassen drücke F4!", 255, 0, 0)
 	self:refreshGUI()
 end
 
@@ -122,7 +121,6 @@ function DeathmatchRoom:respawnPlayer(player, dead, killer, weapon)
 		end
 		fadeCamera(player, false, 2)
 		player:triggerEvent("Countdown", 10, "Respawn in")
-		unbindKey(player, "F4", "down", self.m_LeaveBind)
 		setTimer(function()
 			local skin = player:getModel()
 			spawnPlayer(player, pos, 0, skin, self.m_MapData["int"], self.m_MapData["dim"])
@@ -133,7 +131,6 @@ function DeathmatchRoom:respawnPlayer(player, dead, killer, weapon)
 			player:fadeCamera(true, 1)
 			player:triggerEvent("CountdownStop", "Respawn in")
 			giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
-			bindKey(player, "F4", "down", self.m_LeaveBind)
 		end,10000,1)
 	else
 		player:setDimension(self.m_MapData["dim"])
@@ -143,7 +140,6 @@ function DeathmatchRoom:respawnPlayer(player, dead, killer, weapon)
 		player:setHeadless(false)
 		player:setArmor(0)
 		giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
-		bindKey(player, "F4", "down", self.m_LeaveBind)
 	end
 end
 
@@ -160,7 +156,7 @@ function DeathmatchRoom:removePlayer(player)
 		player:setArmor(0)
 		player.deathmatchRoom = nil
 		self:sendShortMessage(player:getName().." hat die Arena verlassen!")
-		unbindKey(player, "F4", "down", self.m_LeaveBind)
+		player:sendShortMessage(_("Du hast die Arena verlassen!", player), "Deathmatch-Arena", {255, 125, 0})
 		player:triggerEvent("deathmatchCloseGUI")
 	end
 	self:refreshGUI()
