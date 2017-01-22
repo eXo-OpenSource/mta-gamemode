@@ -50,6 +50,14 @@ function DeathmatchManager:constructor()
 		end
 	)
 
+	PlayerManager:getSingleton():getQuitHook():register(
+		function(player)
+			if player.deathmatchRoom then
+				player.deathmatchRoom:removePlayer(player)
+			end
+		end
+	)
+
 
 	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby"}
 	addEventHandler("deathmatchRequestLobbys", root, bind(self.requestLobbys, self))
