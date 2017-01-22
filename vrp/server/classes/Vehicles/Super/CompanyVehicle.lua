@@ -79,11 +79,9 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 
 	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
 	addEventHandler("onVehicleExit",self, bind(self.onExit, self))
-    addEventHandler("onVehicleExplode",self,
-		function()
-			source:respawn()
-		end)
+    addEventHandler("onVehicleExplode",self, function() source:respawn() end)
 	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
+	addEventHandler("onTrailerAttach", self, bind(self.onAttachTrailer, self))
 end
 
 function CompanyVehicle:destructor()
@@ -113,6 +111,12 @@ function CompanyVehicle:onStartEnter(player,seat)
 		if self:getCompany():getId() == 4 then
 			self:getCompany():onVehiceStartEnter(source, player, seat)
 		end
+	end
+end
+
+function CompanyVehicle:onAttachTrailer(truck)
+	if source:getModel() == 591 then
+		source:setFrozen(false)
 	end
 end
 

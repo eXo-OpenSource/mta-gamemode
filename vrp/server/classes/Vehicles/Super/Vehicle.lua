@@ -62,6 +62,8 @@ function Vehicle:getOwner()
 end
 
 function Vehicle:getOccupantsCount()
+	if not self:getOccupants() then return 0 end
+
 	local i = 0
 	for seat, player in pairs(self:getOccupants()) do
 		i = i+1
