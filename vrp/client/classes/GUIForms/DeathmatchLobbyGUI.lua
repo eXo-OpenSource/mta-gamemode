@@ -43,6 +43,7 @@ function DeathmatchLobbyGUI:receiveLobbys(lobbyTable)
 	local item
 	for id, lobby in pairs(lobbyTable) do
 		item = self.m_LobbyGrid:addItem(lobby.name, lobby.players, lobby.map, lobby.mode)
+		item.onLeftDoubleClick = bind(self.joinLobby, self)
 		item.Id = id
 		item.Weapons = lobby.weapons
 	end
