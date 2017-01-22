@@ -24,6 +24,8 @@ function DeathmatchGUI:constructor(data)
 	self.m_LobbyGrid:addColumn(_"D", 0.15)
 	self.m_LobbyGrid:addColumn(_"P", 0.15)
 
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.9, self.m_Width*0.96, self.m_Height*0.08, _"Drücke F4 zum verlassen!", self.m_Window):setColor(Color.Red)
+
 	self:refresh(data)
 end
 

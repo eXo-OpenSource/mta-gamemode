@@ -25,6 +25,31 @@ DeathmatchManager.Maps = {
 			Vector3(192.08, 158.01, 1003.02),
 			Vector3(190.98, 178.94, 1003.02)
 		}
+	},
+	["battlefield"] = {
+		["Name"] = "Battlefield",
+		["Custom"] = false,
+		["Interior"] = 10,
+		["Spawns"] = {
+			Vector3(-970.98, 1089.47, 1345.00),
+			Vector3(-969.97, 1065.87, 1345.03),
+			Vector3(-974.52, 1061.50, 1345.67),
+			Vector3(-972.67, 1026.37, 1345.05),
+			Vector3(-994.18, 1026.69, 1341.84),
+			Vector3(-1016.96, 1027.34, 1343.53),
+			Vector3(-1048.10, 1027.41, 1343.01),
+			Vector3(-1082.96, 1028.50, 1342.49),
+			Vector3(-1114.83, 1030.55, 1343.19),
+			Vector3(-1131.51, 1029.42, 1345.73),
+			Vector3(-1131.67, 1044.07, 1345.74),
+			Vector3(-1132.18, 1062.74, 1345.76),
+			Vector3(-1128.14, 1095.27, 1345.77),
+			Vector3(-1111.04, 1093.00, 1341.85),
+			Vector3(-1080.47, 1090.71, 1342.89),
+			Vector3(-1052.53, 1087.76, 1343.11),
+			Vector3(-1026.47, 1087.18, 1343.42),
+			Vector3(-1032.71, 1067.85, 1344.23),
+		}
 	}
 }
 
@@ -69,8 +94,12 @@ function DeathmatchManager:createRoom(name, owner, map, weapons, mode, maxPlayer
 end
 
 function DeathmatchManager:loadServerRooms()
-	self:createRoom("Deagle-Deathmatch LVPD #1", "Server", "lvpd", {24}, "default", 300)
-	self:createRoom("Deagle-Deathmatch LVPD #2", "Server", "lvpd", {24}, "default", 300)
+	self:createRoom("Deagle LVPD #1", "Server", "lvpd", {24}, "default", 300)
+	self:createRoom("Deagle LVPD #2", "Server", "lvpd", {24}, "default", 300)
+	self:createRoom("M4 LVPD #1", "Server", "lvpd", {31}, "default", 300)
+	self:createRoom("Deagle Battlefield #1", "Server", "battlefield", {24}, "default", 300)
+	self:createRoom("M4 Battlefield #1", "Server", "battlefield", {31}, "default", 300)
+	self:createRoom("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
 end
 
 function DeathmatchManager:requestLobbys()
