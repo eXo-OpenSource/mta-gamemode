@@ -549,24 +549,24 @@ end
 
 function FactionState:createGasStation(pos, size)
 	local marker = createMarker(pos, "cylinder", size or 2, 255, 255, 0, 170)
-	addEventHandler("onMarkerHit", marker , function(hitElement, dim)
-		if hitElement:getType() == "player" and dim then
-			if hitElement.vehicle then
-				if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
-					if hitElement.vehicle and hitElement.vehicle:getFaction() and hitElement.vehicle:getFaction():isStateFaction() then
-						hitElement.stateGasStation = source
-						hitElement:triggerEvent("showStateFactionGasStationGUI")
+	addEventHandler("onMarkerHit", marker ,
+		function(hitElement, dim)
+			if hitElement:getType() == "player" and dim then
+				if hitElement.vehicle and hitElement.vehicleSeat == 0 then
+					if hitElement:getFaction() and hitElement:getFaction():isStateFaction() and hitElement:isFactionDuty() then
+						if hitElement.vehicle and hitElement.vehicle:getFaction() and hitElement.vehicle:getFaction():isStateFaction() then
+							hitElement.stateGasStation = source
+							hitElement:triggerEvent("showStateFactionGasStationGUI")
+						else
+							hitElement:sendError(_("Nur für Fahrzeuge des Staates!", hitElement))
+						end
 					else
-						hitElement:sendError(_("Nur für Fahrzeuge des Staates!", hitElement))
+						hitElement:sendError(_("Nur für Staatsfraktionisten im Dienst!", hitElement))
 					end
-				else
-					hitElement:sendError(_("Nur für Staatsfraktionisten im Dienst!", hitElement))
 				end
-			else
-				hitElement:sendError(_("Du musst in einem Fahrzeug sitzen!", hitElement))
 			end
 		end
-	end)
+	)
 end
 
 function FactionState:Event_fillRepairVehicle(type)
