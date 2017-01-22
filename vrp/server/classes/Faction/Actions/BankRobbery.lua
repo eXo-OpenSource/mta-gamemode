@@ -618,7 +618,7 @@ function BankRobbery:Event_DeloadBag(veh)
 end
 
 function BankRobbery:Event_OnTruckStartEnter(player, seat)
-	if seat == 0 and not player:getFaction() then
+	if seat == 0 and player:getFaction() ~= self.m_RobFaction then
 		player:sendError(_("Den Bank-Überfall Truck können nur Fraktionisten fahren!", player))
 		cancelEvent()
 	end
