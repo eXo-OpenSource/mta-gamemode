@@ -542,7 +542,7 @@ function BankRobbery:Event_onBagClick(button, state, player)
 	if button == "left" and state == "down" then
 		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
 			if player:getFaction() then
-				if player:getFaction():isStateFaction() then
+				if player:getFaction():isStateFaction() and player:isFactionDuty() then
 					self:statePeopleClickBag(player, source)
 				elseif player:getFaction():isEvilFaction() then
 					player:attachPlayerObject(source)
@@ -592,7 +592,7 @@ function BankRobbery:Event_DeloadBag(veh)
 					for key, bag in pairs (getAttachedElements(veh)) do
 						if bag.model == 1550 then
 							bag:detach(self.m_Truck)
-							if client:getFaction():isStateFaction() then
+							if client:getFaction():isStateFaction() and client:isFactionDuty() then
 								self:statePeopleClickBag(client, bag)
 								return
 							else
