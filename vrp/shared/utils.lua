@@ -687,3 +687,7 @@ function string.random(length)
 	end
 	return table.concat(code)
 end
+
+function isNan(num)
+	return num ~= num
+end

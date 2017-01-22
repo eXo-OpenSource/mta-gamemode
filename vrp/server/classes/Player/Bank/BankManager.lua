@@ -19,6 +19,7 @@ end
 function BankManager:Event_Withdraw(amount)
 	amount = tonumber(amount)
 	if not amount or amount <= 0 then return end
+	if isNan(amount) then return end
 
 	if client:getBankMoney() < amount then
 		client:sendError(_("Auf deinem Konto befindet sich nicht soviel Geld!", client))
@@ -34,6 +35,7 @@ end
 function BankManager:Event_Deposit(amount)
 	amount = tonumber(amount)
 	if not amount or amount <= 0 then return end
+	if isNan(amount) then return end
 
 	if client:getMoney() < amount then
 		client:sendError(_("Du hast nicht soviel Geld!", client))
@@ -49,6 +51,8 @@ end
 function BankManager:Event_Transfer(toPlayerName, amount)
 	local client = client
 	if tonumber(amount) and amount > 0 then
+		if isNan(amount) then return end
+
 		if client:getBankMoney() < amount then
 			client:sendError(_("Nicht genügend Geld!", client))
 			return
