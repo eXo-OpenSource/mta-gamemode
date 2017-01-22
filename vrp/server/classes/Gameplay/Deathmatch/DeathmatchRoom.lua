@@ -139,6 +139,7 @@ function DeathmatchRoom:respawnPlayer(player, dead, killer, weapon)
 		player:setInterior(self.m_MapData["int"])
 		player:setPosition(pos)
 		player:setHealth(100)
+		player:setHeadless(false)
 		player:setArmor(0)
 		giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 		bindKey(player, "F4", "down", self.m_LeaveBind)
