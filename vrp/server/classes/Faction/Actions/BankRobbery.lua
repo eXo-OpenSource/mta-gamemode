@@ -437,7 +437,7 @@ end
 function BankRobbery:countStatePeople()
 	local amount = 0
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-		if player:getFaction() and player:getFaction():isStateFaction() then
+		if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
 			amount = amount + 1
 		end
 	end
@@ -446,14 +446,14 @@ end
 
 function BankRobbery:BombArea_Place(bombArea, player)
 	if not player:getFaction() then
-		player:sendError(_("Banken kannst du nur, wenn du Mitglied einer bösen Fraktion bist, ausrauben", player))
+		player:sendError(_("Banken kannst du nur ausrauben wenn du Mitglied einer bösen Fraktion bist", player))
 		return false
 	end
 
 	if not ActionsCheck:getSingleton():isActionAllowed(player) then	return false end
 
 	if not DEBUG and FactionState:getSingleton():countPlayers() < 5 then
-		player:sendError(_("Um den Überfall starten zu können, müssen mindestens 5 Staats-Fraktionisten online sein!", player))
+		player:sendError(_("Um den Überfall starten zu können müssen mindestens 5 Staats-Fraktionisten online sein!", player))
 		return false
 	end
 
