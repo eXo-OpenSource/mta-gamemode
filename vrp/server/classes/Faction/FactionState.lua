@@ -1288,8 +1288,9 @@ end
 function FactionState:Event_loadJailPlayers()
 	local players = {}
 	for index, playeritem in pairs(getElementsByType("player")) do
-		if playeritem.m_JailTime and playeritem.m_JailTime > 0 then
-			players[playeritem] = playeritem.m_JailTime
+		if playeritem.m_JailTime and playeritem.m_JailTimer and playeritem.m_JailTime > 0 then
+			local timeLeft = playeritem.m_JailTimer:getDetails()/1000/60
+			players[playeritem] = ("%.1f / %smin"):format(timeLeft, playeritem.m_JailTime)
 		end
 	end
 	client:triggerEvent("receiveJailPlayers", players)

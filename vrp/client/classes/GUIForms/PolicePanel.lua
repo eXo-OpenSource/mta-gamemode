@@ -176,7 +176,7 @@ end
 function PolicePanel:receiveJailPlayers(playerTable)
 	self.m_JailPlayersGrid:clear()
 	for player, jailtime in pairs(playerTable) do
-		local item = self.m_JailPlayersGrid:addItem(player:getName(), jailtime.." min.")
+		local item = self.m_JailPlayersGrid:addItem(player:getName(), jailtime)
 		item.player = player
 		item.onLeftClick = function()
 			self:onSelectJailPlayer(player)
