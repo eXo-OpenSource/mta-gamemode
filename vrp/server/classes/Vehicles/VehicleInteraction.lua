@@ -75,9 +75,11 @@ function VehicleInteraction:doAction(door)
 							veh:setBroken(false)
 							veh:setHealth(veh:getHealth() + 300)
 
-							client:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", client))
-							client:setAnimation(false)
-							client:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+							if isElement(client) then
+								client:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", client))
+								client:setAnimation(false)
+								client:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+							end
 
 
 						end, 5000, 1, client, veh)
