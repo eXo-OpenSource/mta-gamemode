@@ -137,7 +137,7 @@ function MechanicTow:createTowLot()
 	self.m_TowColShape = createColRectangle( 809.78967, -1278.67761, 49, 49)
 	addEventHandler("onColShapeHit", self.m_TowColShape, bind( self.onEnterTowLot, self ))
 	addEventHandler("onColShapeLeave", self.m_TowColShape, bind( self.onLeaveTowLot, self ))
-	addEventHandler("onTrailerAttach", getRootElement(), bind(self.onAttachVehicleFromTow, self))
+	addEventHandler("onTrailerAttach", getRootElement(), bind(self.onAttachVehicleToTow, self))
 	addEventHandler("onTrailerDetach", getRootElement(), bind( self.onDetachVehicleFromTow, self ))
 end
 
@@ -162,7 +162,7 @@ function MechanicTow:onLeaveTowLot( hElement )
 	hElement.m_InTowLot = false
 end
 
-function MechanicTow:onAttachVehicleFromTow(towTruck)
+function MechanicTow:onAttachVehicleToTow(towTruck)
 	local driver = getVehicleOccupant( towTruck )
 	if driver then
 		if towTruck.getCompany and towTruck:getCompany() == self then

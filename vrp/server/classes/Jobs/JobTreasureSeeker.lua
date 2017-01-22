@@ -60,17 +60,6 @@ function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
 
 	self:registerJobVehicle(player, vehicle, true, true)
 
-	addEventHandler("onElementDestroy", vehicle, function()
-		for index, ele in pairs(source:getAttachedElements()) do
-			for index, ele1 in pairs(ele:getAttachedElements()) do
-				for index, ele2 in pairs(ele1:getAttachedElements()) do
-					ele2:destroy()
-				end
-				ele1:destroy()
-			end
-			ele:destroy()
-		end
-	end)
 	triggerClientEvent(root, "jobTreasureDrawRope", root, vehicle.Engine, vehicle.Magnet)
 end
 
