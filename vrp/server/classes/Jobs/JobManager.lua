@@ -83,6 +83,15 @@ end
 function JobManager:Event_jobAccepted(jobId)
 	if not jobId then return end
 
+	if client:getFactionDuty() then
+		client:sendError(_("Du darfst nicht im Dienst jobben! (Fraktion)", client))
+		return
+	end
+
+	if client:getCompanyDuty() then
+		client:sendError(_("Du darfst nicht im Dienst jobben! (Unternehmen)", client))
+		return
+	end
 	-- Get the job
 	local job = self:getFromId(jobId)
 	if not job then return end
