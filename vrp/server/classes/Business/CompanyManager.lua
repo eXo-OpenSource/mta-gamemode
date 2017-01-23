@@ -246,7 +246,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 		return
 	end
 
-	if company:getPlayerRank(client) < CompanyRank.Leader then
+	if company:getPlayerRank(client) < CompanyRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
@@ -275,7 +275,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 		return
 	end
 
-	if company:getPlayerRank(client) < CompanyRank.Leader then
+	if company:getPlayerRank(client) < CompanyRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return

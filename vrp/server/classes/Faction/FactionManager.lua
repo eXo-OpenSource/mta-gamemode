@@ -280,7 +280,7 @@ function FactionManager:Event_factionRankUp(playerId)
 				return
 			end
 
-			if faction:getPlayerRank(client) < FactionRank.Leader then
+			if faction:getPlayerRank(client) < FactionRank.Manager then
 				client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 				-- Todo: Report possible cheat attempt
 				return
@@ -332,7 +332,7 @@ function FactionManager:Event_factionRankDown(playerId)
 		return
 	end
 
-	if faction:getPlayerRank(client) < FactionRank.Leader then
+	if faction:getPlayerRank(client) < FactionRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
