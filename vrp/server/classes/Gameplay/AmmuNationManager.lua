@@ -122,7 +122,7 @@ function AmmuNationManager:giveWeaponsFromOrder(player, weaponTable)
 	for weaponID,v in pairs(weaponTable) do
 		for typ,amount in pairs(weaponTable[weaponID]) do
 			if amount > 0 then
-				local mag = getWeaponProperty(weaponID, "poor", "maximum_clip_ammo") or 1
+				local mag = getWeaponProperty(weaponID, "pro", "maximum_clip_ammo") or 1
 				if typ == "Waffe" then
 					if weaponID > 0 then
 						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)

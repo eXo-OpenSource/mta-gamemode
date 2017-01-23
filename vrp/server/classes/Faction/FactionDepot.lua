@@ -129,7 +129,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 	for weaponID,v in pairs(weaponTable) do
 		for typ,amount in pairs(weaponTable[weaponID]) do
 			if amount > 0 then
-				local clipAmmo = getWeaponProperty(weaponID, "poor", "maximum_clip_ammo") or 1
+				local clipAmmo = getWeaponProperty(weaponID, "pro", "maximum_clip_ammo") or 1
 				if typ == "Waffe" then
 					if self.m_Weapons[weaponID]["Waffe"] >= amount then
 						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)
