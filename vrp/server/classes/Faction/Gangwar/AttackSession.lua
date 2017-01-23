@@ -128,8 +128,16 @@ function AttackSession:disqualifyPlayer( player )
 end
 
 function AttackSession:joinPlayer( player )
-	self:addParticipantToList( player , true)
 	player.m_RefAttackSession = self
+	if not self:isPlayerDisqualified( player ) then
+		self:addParticipantToList( player , true)
+	else 
+		if isTimer( self.m_BattleTime ) then
+			local timeLeft = getTimerDetails( self.m_BattleTime )
+			timeLeft = math.ceil(timeLeft /1000)
+			player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
+		end
+	end
 end
 
 function AttackSession:quitPlayer( player )
