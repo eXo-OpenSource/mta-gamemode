@@ -674,7 +674,7 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 				if faction:isEvilFaction() then
 					local bags, amount = {}, 0
 					local totalAmount = 0
-					if hitElement:getPlayerAttachedObject() then
+					if hitElement:getPlayerAttachedObject() or hitElement.vehicle then
 
 						if hitElement.vehicle and hitElement.vehicle == self.m_Truck then
 							bags = getAttachedElements(self.m_Truck)
