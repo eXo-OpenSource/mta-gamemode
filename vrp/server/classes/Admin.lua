@@ -651,9 +651,17 @@ function Admin:ochat(player,cmd,...)
 end
 
 function Admin:onlineList(player)
-	outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
+	local count = 0
 	for key, value in pairs(self.m_OnlineAdmins) do
-		outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[value], key:getName()),player, unpack(self.m_RankColors[value]))
+		count = count+1
+	end
+	if count > 0 then
+		outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
+		for key, value in pairs(self.m_OnlineAdmins) do
+			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[value], key:getName()),player, unpack(self.m_RankColors[value]))
+		end
+	else
+		outputChatBox("Derzeit sind keine Teammitglieder online!",player,255,0,0)
 	end
 end
 
