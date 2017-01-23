@@ -5,6 +5,7 @@
 -- *  PURPOSE:     Kart-Track class
 -- *
 -- ****************************************************************************
+
 Kart = inherit(Singleton)
 
 function Kart:constructor()
@@ -24,3 +25,16 @@ function Kart:constructor()
 
 	--PED:     <ped id="ped (2)" dimension="0" model="64" interior="0" rotZ="147.252" alpha="255" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0"></ped>
 end
+
+--[[
+
+	NOTES:
+		Features:
+					Zeitrennen - Gegen die Uhr, mit möglicher einblendung eines Ghost-Drivers - Highscore für Rundenzeit
+
+					Eventrennen - San News kann Event rennen starten. HUD mit Platzierung für jeden Spieler - Einstellbare Runden anzahl
+									Benachrichtigung für die ersten 5 Plätze an die San News
+
+		Sonstiges:
+					Bei Runden, abfrage ob alle Marker durchfahren werden, damit nicht gecheatet wird
+]]
