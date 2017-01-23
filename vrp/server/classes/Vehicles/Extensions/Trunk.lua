@@ -141,6 +141,11 @@ function Trunk:takeItem(player, slot)
 end
 
 function Trunk:takeWeapon(player, slot)
+	if player:getFaction() and player:isFactionDuty() then
+		player:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", player))
+		return
+	end
+
 	if self.m_WeaponSlot[slot] then
 		if self.m_WeaponSlot[slot]["WeaponId"] > 0 then
 			--if self.m_ItemSlot[slot]["Amount"] > 0 then
@@ -171,6 +176,11 @@ end
 
 
 function Trunk:addWeapon(player, weaponId, muni)
+	if player:getFaction() and player:isFactionDuty() then
+		player:sendError(_("Du darfst im Dienst keine Waffen einlagern!", player))
+		return
+	end
+
 	for index, slot in pairs(self.m_WeaponSlot) do
 		if slot["WeaponId"] == 0 then
 			local weaponSlot = getSlotFromWeapon(weaponId)
