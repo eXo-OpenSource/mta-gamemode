@@ -145,7 +145,7 @@ function GroupVehicle:canBeModified()
 end
 
 function GroupVehicle:respawn(force)
-	if self:getHealth() <= 310 and not force then
+	if getElementModel(self) ~= 487 and getElementModel(self) ~= 469 and  self:getHealth() <= 310 and not force then
 		self:getGroup():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end

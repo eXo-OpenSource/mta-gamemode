@@ -225,7 +225,7 @@ function FactionVehicle:takeFactionItem(player, itemName)
 end
 
 function FactionVehicle:respawn(force)
-	if self:getHealth() <= 310 and not force then
+	if getElementModel(self) ~= 487 and getElementModel(self) ~= 497 and getElementModel(self) ~= 563 and self:getHealth() <= 310 and not force then
 		self:getFaction():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end

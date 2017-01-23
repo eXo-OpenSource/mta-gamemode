@@ -187,7 +187,7 @@ function CompanyVehicle:canBeModified()
 end
 
 function CompanyVehicle:respawn(force)
-	if self:getHealth() <= 310 and not force then
+	if getElementModel(self) ~= 487 and getElementModel(self) ~= 488 and self:getHealth() <= 310 and not force then
 		self:getCompany():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end
