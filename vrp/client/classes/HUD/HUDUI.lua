@@ -398,8 +398,8 @@ function HUDUI:drawExo()
 		end]]
 
 		if isElementInWater(localPlayer) then
-			dxDrawRectangle ((screenWidth-width)*1.05,sx*0.218,sx*0.4,sx*0.02, tocolor ( 50,200,255,125 ))
-			dxDrawText ("Sauerstoff: "..math.floor((getPedOxygenLevel(localPlayer)*100)/2500).."%",sx*0.9-r_os,sx*0.22,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
+			dxDrawRectangle ((screenWidth-width)*1.05,sx*0.318,sx*0.4,sx*0.02, tocolor ( 50,200,255,125 ))
+			dxDrawText ("Sauerstoff: "..math.floor((getPedOxygenLevel(localPlayer)*100)/2500).."%",sx*0.9-r_os,sx*0.32,screenWidth*0.99,sx, tocolor ( 255,255,255,255 ), 1.2*width*0.0039, "default","right")
 		end
 end
 
