@@ -72,7 +72,9 @@ function BankRobbery:destroyRob()
 	end
 	triggerClientEvent("bankAlarmStop", root)
 	if self.m_DestinationMarker then
-		for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then destroyElement(marker) end end
+		for index, marker in pairs(self.m_DestinationMarker) do
+			if isElement(marker) then destroyElement(marker) end
+		end
 	end
 	if self.m_Safes then
 		for index, safe in pairs(self.m_Safes) do if isElement(safe) then destroyElement(safe) end	end
@@ -236,12 +238,9 @@ function BankRobbery:startRob(player)
 	self.m_UpdateBreakingNewsTimer = setTimer(bind(self.updateBreakingNews, self), 20000, 0)
 
 	for markerIndex, destination in pairs(BankRobbery.FinishMarker) do
-		for index, playeritem in pairs(faction:getOnlinePlayers()) do
-			self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
-			self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
-			addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
-
-		end
+		self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
+		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
+		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
 	end
 
 	for index, playeritem in pairs(faction:getOnlinePlayers()) do
@@ -689,10 +688,14 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							if value and isElement(value) and value:getModel() == 1550 then
 								amount = value:getData("Money")
 								totalAmount = totalAmount + amount
-								faction:giveMoney(amount, "Bankraub")
 								value:destroy()
 							end
 						end
+
+						if totalAmount > 0 then
+							faction:giveMoney(totalAmount, "Bankraub")
+						end
+
 					end
 					--outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
 					if self.m_SafeDoor.m_Open then
