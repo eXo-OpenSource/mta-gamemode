@@ -674,24 +674,19 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 				if faction:isEvilFaction() then
 					local veh = getPedOccupiedVehicle( hitElement )
 					if veh then
-						local attachedElements = getAttachedElements(getPedOccupiedVehicle(hitElement))
-						if attachedElements then
-							attachedElements = #attachedElements
-						else
-							attachedElements = 0
-						end
-						local bags, amount
-						local totalAmount = 0
-						if (veh and attachedElements > 0 ) or hitElement:getPlayerAttachedObject() then
 
-							if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
+						local bags, amount = {}, 0
+						local totalAmount = 0
+						if hitElement:getPlayerAttachedObject() then
+
+							if hitElement.vehicle and hitElement.vehicle == self.m_Truck then
 								bags = getAttachedElements(self.m_Truck)
 								hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
 							elseif hitElement:getPlayerAttachedObject() then
-								bags = getAttachedElements(hitElement)
+								bags = {hitElement:getPlayerAttachedObject()}
 								hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-								Key(hitElement, "n")
 								hitElement:toggleControlsWhileObjectAttached(true)
+								hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
 							end
 							for key, value in pairs (bags) do
 								if value and isElement(value) and value:getModel() == 1550 then
