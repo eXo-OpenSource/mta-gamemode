@@ -260,6 +260,9 @@ function Player:save()
 		return
 	end
 	local x, y, z = getElementPosition(self)
+	if getPedOccupiedVehicle(self) then 
+		z = z + 2
+	end
 	local interior = self:getInterior()
 
 	-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
