@@ -746,7 +746,7 @@ function FactionState:Command_tie(player, cmd, tname, bool)
 	if faction and faction:isStateFaction() then
 		if player:isFactionDuty() then
 			local vehicle = player:getOccupiedVehicle()
-			if vehicle and vehicle:getFaction() and vehicle:isStateVehicle() then
+			if player:getOccupiedVehicle() and vehicle and isElement(vehicle) and vehicle.getFaction and vehicle:getFaction() and vehicle:isStateVehicle() then
 				if tname then
 					local target = PlayerManager:getSingleton():getPlayerFromPartOfName(tname, player)
 					if isElement(target) then
@@ -1089,7 +1089,7 @@ function FactionState:Event_grabPlayer(target)
 	if faction and faction:isStateFaction() then
 		if client:isFactionDuty() then
 			local vehicle = client:getOccupiedVehicle()
-			if vehicle and vehicle:getFaction() and vehicle:isStateVehicle() then
+			if client:getOccupiedVehicle() and vehicle and isElement(vehicle) and vehicle.getFaction and vehicle:isStateVehicle() then
 				if target.isTasered == true then
 					for seat = 1, getVehicleMaxPassengers(vehicle) do
 						if not vehicle:getOccupant(seat) then
