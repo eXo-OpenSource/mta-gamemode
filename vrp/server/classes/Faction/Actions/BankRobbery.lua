@@ -672,47 +672,39 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if faction:isEvilFaction() then
-					local veh = getPedOccupiedVehicle( hitElement )
-					if veh then
+					local bags, amount = {}, 0
+					local totalAmount = 0
+					if hitElement:getPlayerAttachedObject() then
 
-						local bags, amount = {}, 0
-						local totalAmount = 0
-						if hitElement:getPlayerAttachedObject() then
-
-							if hitElement.vehicle and hitElement.vehicle == self.m_Truck then
-								bags = getAttachedElements(self.m_Truck)
-								hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-							elseif hitElement:getPlayerAttachedObject() then
-								bags = {hitElement:getPlayerAttachedObject()}
-								hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-								hitElement:toggleControlsWhileObjectAttached(true)
-								hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
-							end
-							for key, value in pairs (bags) do
-								if value and isElement(value) and value:getModel() == 1550 then
-									amount = value:getData("Money")
-									totalAmount = totalAmount + amount
-									faction:giveMoney(amount, "Bankraub")
-									value:destroy()
-								end
+						if hitElement.vehicle and hitElement.vehicle == self.m_Truck then
+							bags = getAttachedElements(self.m_Truck)
+							hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
+						elseif hitElement:getPlayerAttachedObject() then
+							bags = {hitElement:getPlayerAttachedObject()}
+							hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
+							hitElement:toggleControlsWhileObjectAttached(true)
+							hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
+						end
+						for key, value in pairs (bags) do
+							if value and isElement(value) and value:getModel() == 1550 then
+								amount = value:getData("Money")
+								totalAmount = totalAmount + amount
+								faction:giveMoney(amount, "Bankraub")
+								value:destroy()
 							end
 						end
-						--outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
-						if self.m_SafeDoor.m_Open then
-							if self:getRemainingBagAmount() == 0 then
-								PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
-								self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
-								source:destroy()
-								self:destroyRob()
-							end
+					end
+					--outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
+					if self.m_SafeDoor.m_Open then
+						if self:getRemainingBagAmount() == 0 then
+							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
+							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
+							source:destroy()
+							self:destroyRob()
 						end
 					end
 				end
 			end
 		end
 	end
-end
-
-function BankRobbery.initializeAll()
-
 end
