@@ -139,7 +139,7 @@ function BankRobbery:build()
 	self.m_HackableComputer:setData("bankPC", true, true)
 
 	self.m_SafeDoor = createObject(2634, 2314.1, 18.94, 26.7, 0, 0, 270)
-
+	self.m_SafeDoor.m_Open = false
 	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
 	self.m_BankDoor:setScale(0.88)
 
@@ -488,6 +488,7 @@ function BankRobbery:Event_onHackSuccessful()
 
 	local pos = self.m_SafeDoor:getPosition()
 	self.m_SafeDoor:move(3000, pos.x, pos.y+1.5, pos.z, 0, 0, 0)
+	self.m_SafeDoor.m_Open = true
 end
 
 function BankRobbery:Event_onStartHacking()
@@ -702,11 +703,13 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 							end
 						end
 						--outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
-						if self:getRemainingBagAmount() == 0 then
-							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
-							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
-							source:destroy()
-							self:destroyRob()
+						if self.m_SafeDoor.m_Open then
+							if self:getRemainingBagAmount() == 0 then
+								PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
+								self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
+								source:destroy()
+								self:destroyRob()
+							end
 						end
 					end
 				end
