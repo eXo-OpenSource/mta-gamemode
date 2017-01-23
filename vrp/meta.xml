@@ -1361,6 +1361,9 @@
 	<vrpfile src="files/models/holzstamm.txd" />
 	<vrpfile src="files/models/holzstamm.dff" />
 	<vrpfile src="files/models/holzstamm.col" />
+	<vrpfile src="files/models/kart.txd" />
+	<vrpfile src="files/models/kart.dff" />
+	<vrpfile src="files/models/kart.col" />
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>

@@ -29,7 +29,7 @@ addEventHandler("onDebugMessage", root,
 					pretext = ("%s occured on mta.exo-reallife.de:%d"):format(level == 2 and "Warning" or "Error", getServerPort()),
 					fields = {
 						{
-							title = ("Source"):format(level == 2 and "Warning" or "Error"),
+							title = "Source",
 							value = ("<https://git.heisi.at/eXo/mta-gamemode/tree/%s/%s#L%d|%s:%d>"):format(GIT_BRANCH, file, line, file, line),
 							short = false
 						},
@@ -42,23 +42,7 @@ addEventHandler("onDebugMessage", root,
 				}, true)
 				json = json:sub(2, #json-1)
 
-				local url = ('https://exo-reallife.de/slack.php')
-				--outputConsole(url)
-				local status = callRemote(url, function (...)
-					--[[
-					outputDebugString("[Error-Listener] Showing debug infos", 3)
-					local args = {...}
-					outputDebugString(("[Error-Listener] Got %d strings response from the server.."):format(#args), 3)
-					for i, v in pairs(args) do
-						if type(v) == "table" then
-							outputConsole(toJSON(v))
-						else
-							outputConsole(v)
-						end
-					end
-					outputDebugString("[Error-Listener] End of debug infos", 3)
-					--]]
-				end, json)
+				local status = callRemote('https://exo-reallife.de/slack.php', function (...) end, json)
 				if status then
 					outputDebugString("[Error-Listener] Reported Error to Slack!", 3)
 				else
