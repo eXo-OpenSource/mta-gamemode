@@ -160,6 +160,19 @@ function HUDUI:drawLevelRect()
 	dxDrawText(localPlayer:getSkinLevel(), screenWidth*0.975, screenHeight*0.007, nil, nil, Color.White, 1.5, "arial")
 end
 
+function HUDUI:drawTimeRect()
+	local f = math.floor
+
+	local left = screenWidth-0.25*screenWidth
+	-- Background
+	dxDrawRectangle(left, 0, 0.05*screenWidth, screenHeight*0.035, tocolor(0, 0, 0, 120))
+	dxDrawRectangle(left, 0, 0.05*screenWidth, 5, Color.LightBlue)
+
+	local time =  string.format("%02d:%02d",getRealTime().hour,getRealTime().minute)
+	dxDrawText(time, left, screenHeight*0.007, left+0.05*screenWidth, nil, Color.White, 1.5, "arial", "center")
+
+end
+
 function HUDUI:drawDefault()
 	local f = math.floor
 	dxDrawRectangle(screenWidth-0.195*screenWidth, 0.04*screenHeight, 0.195*screenWidth, 0.092*screenHeight,tocolor(0,0,0,150))
@@ -205,6 +218,7 @@ function HUDUI:drawDefault()
 	dxDrawImage    (screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-(0.025*screenWidth/2), 0.155*screenHeight+(0.09*screenHeight/2)-36, 0.025*screenWidth,0.044*screenHeight, "files/images/HUD/wanted.png", 0, 0, 0, getPlayerWantedLevel() > 0 and Color.Yellow or Color.White)
 	dxDrawText     (getPlayerWantedLevel(),screenWidth-0.05*screenWidth+(0.05*screenWidth/2)-5,0.16*screenHeight+(0.09*screenHeight/2),0,0,Color.White,0.5,self.m_Font)
 
+	self:drawTimeRect()
 	self:drawLevelRect()
 end
 
