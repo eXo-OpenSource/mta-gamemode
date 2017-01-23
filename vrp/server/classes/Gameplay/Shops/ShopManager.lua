@@ -126,7 +126,7 @@ function ShopManager:onGasStationFill(shopId)
 
 	local vehicle = getPedOccupiedVehicle(client)
 	if not vehicle then return end
-	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
+	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
 		if client:getMoney() > 10 then
 			if vehicle:getFuel() <= 100-10 then
 				vehicle:setFuel(vehicle:getFuel() + 10)
