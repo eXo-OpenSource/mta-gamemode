@@ -107,7 +107,7 @@ function TollStation:onPedWasted(_, killer)
 
 		if killer:getType() == "player" then
 			-- Send the News to the San News Company
-			CompanyManager:getSingleton():getFromId(3):sendShortMessage(("Ein Beamter an der Maut-Station %s wurde erschossen! Die Station bleibt bis auf weiteres geschlossen."):format(self.m_Name), 10000)
+			CompanyManager:getSingleton():getFromId(CompanyStaticId.SANNEWS):sendShortMessage(("Ein Beamter an der Maut-Station %s wurde erschossen! Die Station bleibt bis auf weiteres geschlossen."):format(self.m_Name), 10000)
 
 			killer:reportCrime(Crime.Kill)
 			outputDebug(("%s killed a Ped at %s"):format(killer:getName(), self.m_Name))
