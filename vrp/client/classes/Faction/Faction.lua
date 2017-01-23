@@ -107,9 +107,9 @@ function FactionManager:endStateFactionCuff( )
 end
 
 function FactionManager:stateFactionNeedHelp(player)
-	local pos = player:getPosition()
-
 	if self.m_NeedHelpBlip[player] then delete(self.m_NeedHelpBlip[player]) end
+	if not localPlayer:getPublicSync("Faction:Duty") then return end
+	local pos = player:getPosition()
 	self.m_NeedHelpBlip[player] = Blip:new("NeedHelp.png", pos.x, pos.y, 9999)
 	self.m_NeedHelpBlip[player]:attachTo(player)
 	self.m_NeedHelpBlip[player]:setStreamDistance(2000)
