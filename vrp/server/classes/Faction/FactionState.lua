@@ -891,6 +891,7 @@ function FactionState:freePlayer(player)
 	player:toggleControl("fire", true)
 	player:toggleControl("jump", true)
 	player:toggleControl("aim_weapon ", true)
+	toggleControl(player, "enter_exit", false)
 	if isTimer(player.m_JailTimer) then
 		killTimer( player.m_JailTimer )
 	end
