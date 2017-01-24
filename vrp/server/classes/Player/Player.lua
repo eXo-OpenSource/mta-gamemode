@@ -260,7 +260,7 @@ function Player:save()
 		return
 	end
 	local x, y, z = getElementPosition(self)
-	if getPedOccupiedVehicle(self) then 
+	if getPedOccupiedVehicle(self) then
 		z = z + 2
 	end
 	local interior = self:getInterior()
@@ -401,13 +401,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 
 		self:setHeadless(false)
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
-		if self:getFaction() and self:getFaction():isEvilFaction() then
-			if self.m_SpawnWithFactionSkin then
-				self:getFaction():changeSkin(self)
-			else
-				setElementModel( self, self.m_AltSkin or self.m_Skin)
-			end
-		end
+
 	else
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 		self:setHeadless(false)
@@ -415,6 +409,15 @@ function Player:respawn(position, rotation, bJailSpawn)
 			self:moveToJail(false,true)
 		end
 	end
+
+	if self:getFaction() and self:getFaction():isEvilFaction() then
+		if self.m_SpawnWithFactionSkin then
+			self:getFaction():changeSkin(self)
+		else
+			setElementModel( self, self.m_AltSkin or self.m_Skin)
+		end
+	end
+
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
