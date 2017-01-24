@@ -83,12 +83,12 @@ end
 function JobManager:Event_jobAccepted(jobId)
 	if not jobId then return end
 
-	if client:getFactionDuty() then
+	if client:isFactionDuty() then
 		client:sendError(_("Du darfst nicht im Dienst jobben! (Fraktion)", client))
 		return
 	end
 
-	if client:getCompanyDuty() then
+	if client:isCompanyDuty() then
 		client:sendError(_("Du darfst nicht im Dienst jobben! (Unternehmen)", client))
 		return
 	end
