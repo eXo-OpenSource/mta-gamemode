@@ -220,7 +220,7 @@ function FactionState:loadLSPD(factionId)
 	gate.onGateHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	gate:setGateScale(1.25)
 
-	local door = Door:new(1499, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 180))
+	local door = Door:new(2949, Vector3(1584.09, -1638.09, 12.30), Vector3(0, 0, 270))
 	door.onDoorHit = bind(self.onBarrierGateHit, self) -- PD Garage Gate
 	door:setDoorScale(1.1)
 
