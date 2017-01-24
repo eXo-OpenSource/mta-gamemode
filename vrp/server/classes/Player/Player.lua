@@ -290,12 +290,8 @@ function Player:save()
 		sArmor = 0
 		sSkin = NOOB_SKIN
 	end
-	local spawnWithFac
-	if self.m_SpawnWithFactionSkin then
-		spawnWithFac = 1
-	else
-		spawnWithFac = 0
-	end
+	local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
+
 	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
 		x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
 
