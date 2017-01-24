@@ -261,11 +261,13 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 			end
 		end
 	end
+	outputChatBox("PlayerManager:playerWasted:264")
 
 	-- Call wasted hook
 	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
 		return
 	end
+	outputChatBox("PlayerManager:playerWasted:270")
 
 	-- Start death
 	source:triggerEvent("playerWasted")
@@ -273,6 +275,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	if FactionRescue:getSingleton():countPlayers() > 0 then
 		if not source.m_DeathPickup and not isElement(source.m_DeathPickup) then
 			FactionRescue:getSingleton():createDeathPickup(source)
+			outputChatBox("PlayerManager:playerWasted:278")
 			return true
 		else -- This should never never happen!
 			outputDebugString("Internal Error! Player died while he is Dead. Dafuq?")

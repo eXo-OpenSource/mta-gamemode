@@ -190,6 +190,7 @@ function LocalPlayer:Event_playerWasted()
 	triggerServerEvent("Event_setPlayerWasted", self)
 
 	local funcA = function()
+		outputChatBox("Client: LocalPlayer:funcA:193")
 		if self.m_DeathMessage then
 			delete(self.m_DeathMessage)
 		end
@@ -200,6 +201,7 @@ function LocalPlayer:Event_playerWasted()
 		self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
 		local soundLength = self.m_Halleluja:getLength()
 		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
+		outputChatBox("Client: LocalPlayer:funcA:204")
 
 		-- render camera drive
 		self.m_Add = 0
@@ -272,13 +274,16 @@ function LocalPlayer:deathRender(deltaTime)
 end
 
 function LocalPlayer:abortDeathGUI(force)
+	outputChatBox("Client: LocalPlayer:abortDeathGUI:275")
 	if self.m_CanBeRevived or force then
+		outputChatBox("Client: LocalPlayer:abortDeathGUI:277")
 		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()
 		showChat(true)
 		removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
+		outputChatBox("Client: LocalPlayer:abortDeathGUI:284")
 	end
 end
 
