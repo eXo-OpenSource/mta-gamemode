@@ -6,6 +6,8 @@
 -- *
 -- ****************************************************************************
 VehicleTuningGUI = inherit(GUIForm)
+addRemoteEvents{"vehicleTuningShopEnter", "vehicleTuningShopExit"}
+
 
 function VehicleTuningGUI:constructor(vehicle)
     GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
@@ -454,11 +456,15 @@ function VehicleTuningGUI:AddToCartButton_Click()
 end
 
 function VehicleTuningGUI:BuyButton_Click()
-    triggerServerEvent("vehicleUpgradesBuy", localPlayer, self.m_CartContent)
+	if table.size(self.m_CartContent) > 0 then
+    	triggerServerEvent("vehicleUpgradesBuy", localPlayer, self.m_CartContent)
+	else
+		VehicleTuningGUI.Exit()
+	end
 end
 
 local vehicleTuningShop = false
-addEvent("vehicleTuningShopEnter", true)
+addEvent("", true)
 addEventHandler("vehicleTuningShopEnter", root,
     function(vehicle)
         if vehicleTuningShop then
@@ -473,20 +479,19 @@ addEventHandler("vehicleTuningShopEnter", root,
     end
 )
 
-addEvent("vehicleTuningShopExit", true)
-addEventHandler("vehicleTuningShopExit", root,
-    function()
-        if vehicleTuningShop then
-            vehicleTuningShop.m_Vehicle:setDimension(0)
-            localPlayer:setDimension(0)
+function VehicleTuningGUI.Exit(closedByServer)
+	if vehicleTuningShop then
+		vehicleTuningShop.m_Vehicle:setDimension(0)
+		localPlayer:setDimension(0)
 
-            delete(vehicleTuningShop, true)
-            vehicleTuningShop = false
-			localPlayer.m_inTuning = false
-			setCameraTarget(localPlayer)
-        end
-    end
-)
+		delete(vehicleTuningShop, closedByServer)
+		vehicleTuningShop = false
+		localPlayer.m_inTuning = false
+		setCameraTarget(localPlayer)
+	end
+end
+addEventHandler("vehicleTuningShopExit", root, function() VehicleTuningGUI.Exit(true) end)
+
 
 VehicleTuningGUI.CameraPositions = {
     [0] = Vector3(0, 5.6, 1.5), -- Hood
