@@ -183,12 +183,12 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 end
 
 function LocalPlayer:Event_playerWasted()
-	-- Hide UI Elements
+	outputChatBox("Client: Event_playerWasted:186")-- Hide UI Elements
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
 	showChat(false)
 	triggerServerEvent("Event_setPlayerWasted", self)
-
+	outputChatBox("Client: Event_playerWasted:191")
 	local funcA = function()
 		outputChatBox("Client: LocalPlayer:funcA:193")
 		if self.m_DeathMessage then
@@ -227,7 +227,7 @@ function LocalPlayer:Event_playerWasted()
 			end, soundLength*1000, 1
 		)
 	end
-
+	outputChatBox("Client: Event_playerWasted:230")
 	local SMClick = function()
 		if localPlayer:isDead() then
 			funcA()
@@ -246,11 +246,12 @@ function LocalPlayer:Event_playerWasted()
 
 	local deathTime = MEDIC_TIME
 	local start = getTickCount()
-
+	outputChatBox("Client: Event_playerWasted:249")
 	self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, SMClick)
 	self.m_CanBeRevived = true
 	self.m_WastedTimer = setTimer(
 		function()
+			outputChatBox("Client: Event_playerWasted:254")
 			if not localPlayer:isDead() then
 				delete(self.m_DeathMessage)
 				killTimer(self.m_WastedTimer)
