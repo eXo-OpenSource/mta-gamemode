@@ -183,14 +183,12 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 end
 
 function LocalPlayer:Event_playerWasted()
-	outputChatBox("Client: Event_playerWasted:186")-- Hide UI Elements
+	-- Hide UI Elements
 	HUDRadar:getSingleton():hide()
 	HUDUI:getSingleton():hide()
 	showChat(false)
 	triggerServerEvent("Event_setPlayerWasted", self)
-	outputChatBox("Client: Event_playerWasted:191")
 	local funcA = function()
-		outputChatBox("Client: LocalPlayer:funcA:193")
 		if self.m_DeathMessage then
 			delete(self.m_DeathMessage)
 		end
@@ -201,7 +199,6 @@ function LocalPlayer:Event_playerWasted()
 		self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
 		local soundLength = self.m_Halleluja:getLength()
 		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
-		outputChatBox("Client: LocalPlayer:funcA:204")
 
 		-- render camera drive
 		self.m_Add = 0
@@ -227,7 +224,6 @@ function LocalPlayer:Event_playerWasted()
 			end, soundLength*1000, 1
 		)
 	end
-	outputChatBox("Client: Event_playerWasted:230")
 	local SMClick = function()
 		if localPlayer:isDead() then
 			funcA()
@@ -246,13 +242,10 @@ function LocalPlayer:Event_playerWasted()
 
 	local deathTime = MEDIC_TIME
 	local start = getTickCount()
-	outputChatBox("Client: Event_playerWasted:249")
 	self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, SMClick)
 	self.m_CanBeRevived = true
 	self.m_WastedTimer = setTimer(
 		function()
-			outputChatBox("Client: Event_playerWasted:254")
-
 			local timeGone = getTickCount() - start
 			if timeGone >= deathTime-500 then
 				funcA()
@@ -271,9 +264,7 @@ function LocalPlayer:deathRender(deltaTime)
 end
 
 function LocalPlayer:abortDeathGUI(force)
-	outputChatBox("Client: LocalPlayer:abortDeathGUI:275")
 	if self.m_CanBeRevived or force then
-		outputChatBox("Client: LocalPlayer:abortDeathGUI:277")
 		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		if self.m_DeathMessage then delete(self.m_DeathMessage) end
 		if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
@@ -281,7 +272,6 @@ function LocalPlayer:abortDeathGUI(force)
 		HUDUI:getSingleton():show()
 		showChat(true)
 		removeEventHandler("onClientPreRender", root, self.m_DeathRenderBind)
-		outputChatBox("Client: LocalPlayer:abortDeathGUI:284")
 	end
 end
 

@@ -282,8 +282,6 @@ function FactionRescue:removeStretcher(player, vehicle)
 end
 
 function FactionRescue:createDeathPickup(player, ...)
-	outputChatBox("FactionRescue:createDeathPickup:285")
-
 	local pos = player:getPosition()
 	local gw = ""
 	if player:isInGangwar() then gw = "(Gangwar)" end
@@ -297,7 +295,6 @@ function FactionRescue:createDeathPickup(player, ...)
 		rescuePlayer:sendShortMessage(("%s ist gestorben. %s \nPosition: %s - %s"):format(player:getName(), gw, getZoneName(player:getPosition()), getZoneName(player:getPosition(), true)))
 		rescuePlayer:triggerEvent("rescueCreateDeathBlip", player)
 	end
-	outputChatBox("FactionRescue:createDeathPickup:300")
 
 	nextframe(function () player:setPosition(player.m_DeathPickup:getPosition()) end)
 
@@ -334,7 +331,6 @@ function FactionRescue:createDeathPickup(player, ...)
 			end
 		end
 	)
-	outputChatBox("FactionRescue:createDeathPickup:337")
 	-- Create PlayerDeathTimeout
 	--self:createDeathTimeout(player, ...)
 end
