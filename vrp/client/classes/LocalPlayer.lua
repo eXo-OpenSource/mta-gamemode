@@ -252,10 +252,6 @@ function LocalPlayer:Event_playerWasted()
 	self.m_WastedTimer = setTimer(
 		function()
 			outputChatBox("Client: Event_playerWasted:254")
-			if not localPlayer:isDead() then
-				delete(self.m_DeathMessage)
-				killTimer(self.m_WastedTimer)
-			end
 
 			local timeGone = getTickCount() - start
 			if timeGone >= deathTime-500 then
@@ -279,6 +275,7 @@ function LocalPlayer:abortDeathGUI(force)
 	if self.m_CanBeRevived or force then
 		outputChatBox("Client: LocalPlayer:abortDeathGUI:277")
 		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
+		if self.m_DeathMessage then delete(self.m_DeathMessage) end
 		if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()
