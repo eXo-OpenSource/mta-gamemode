@@ -755,12 +755,14 @@ function FactionState:Command_tie(player, cmd, tname, bool)
 								player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
 								target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
 								toggleControl(target, "enter_exit", false)
+								toggleControl(target, "fire", false)
 								self.onTiedExitBind = bind(self.onTiedExit, self)
 								addEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
 							else
 								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
 								target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
 								toggleControl(target, "enter_exit", true)
+								toggleControl(target, "fire", true)
 								removeEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
 							end
 						else
