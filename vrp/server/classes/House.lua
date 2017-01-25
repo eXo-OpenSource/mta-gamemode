@@ -281,6 +281,7 @@ function House:sellHouse(player)
 		self.m_Owner = 0
 		self.m_Keys = {}
 		self:updatePickup()
+		self:save()
 	else
 		player:sendError(_("Das ist nicht dein Haus!", player))
 	end
@@ -354,7 +355,7 @@ function House:buyHouse(player)
 		self.m_Owner = player:getId()
 		self:updatePickup()
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
-
+		self:save()
 		-- create blip
 		player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 	else
