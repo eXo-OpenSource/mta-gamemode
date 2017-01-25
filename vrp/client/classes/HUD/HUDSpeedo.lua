@@ -94,11 +94,8 @@ function HUDSpeedo:draw()
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/engine.png")
 	end
 
-	if handbrake then
-		local controlState = getControlState("handbrake")
-		if controlState then
-			dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png")
-		end
+	if handbrake or getControlState("handbrake") or vehicle:isFrozen() then
+		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png")
 	end
 
 	-- draw the fuel-o-meter
