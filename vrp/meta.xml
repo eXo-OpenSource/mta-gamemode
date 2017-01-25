@@ -1364,6 +1364,9 @@
 	<vrpfile src="files/models/kart.txd" />
 	<vrpfile src="files/models/kart.dff" />
 	<vrpfile src="files/models/kart.col" />
+	<vrpfile src="files/models/kartpark.txd" />
+	<vrpfile src="files/models/kartpark.dff" />
+	<vrpfile src="files/models/kartpark.col" />
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
