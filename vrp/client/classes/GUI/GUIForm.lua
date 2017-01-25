@@ -72,7 +72,7 @@ function GUIForm:close(decrementedCursorCounter)
 			RadialShader:getSingleton():setEnabled(false)
 		end
 	end
-
+	focusBrowser()
 	return self:setVisible(false)
 end
 
