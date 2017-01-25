@@ -56,8 +56,8 @@ DeathmatchManager.Maps = {
 function DeathmatchManager:constructor()
 	self:loadServerRooms()
 
-
-	self.m_Marker = createMarker(1498.56, -1582.00, 13.55, "corona", 2, 255, 125, 0)
+	Blip:new("SniperGame.png", 1327.88, -1556.25)
+	self.m_Marker = createMarker(1327.88, -1556.25, 13.55, "corona", 2, 255, 125, 0)
 	addEventHandler("onMarkerHit", self.m_Marker, function(hitElement, dim)
 		if hitElement:getType() == "player" and not hitElement.vehicle and dim then
 			hitElement:triggerEvent("deathmatchOpenLobbyGUI")
@@ -116,6 +116,16 @@ function DeathmatchManager:requestLobbys()
 end
 
 function DeathmatchManager:joinLobby(id)
+	if client:isFactionDuty() then
+		client:sendError(_("Du darfst nicht im Dienst in eine DM-Lobby! (Fraktion)", client))
+		return
+	end
+
+	if client:isCompanyDuty() then
+		client:sendError(_("Du darfst nicht im Dienst in eine DM-Lobby! (Fraktion)", client))
+		return
+	end
+
 	if DeathmatchManager.Rooms[id] then
 		DeathmatchManager.Rooms[id]:addPlayer(client)
 	else

@@ -563,6 +563,7 @@ SHADERS = {
 GUNBOX_CRATES = {
 	createObject(2977, 1366.06, -1286.34, 12.4),
 	createObject(2977, 2397.80, -1980.82, 12.4),
+	createObject(2977, 1328.33, -1560.27, 12.6)
 }
 
 for i = 1,#GUNBOX_CRATES do

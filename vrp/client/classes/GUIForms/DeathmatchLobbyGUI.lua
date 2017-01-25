@@ -14,7 +14,7 @@ function DeathmatchLobbyGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Deathmatch Lobby", true, true, self)
-
+	GUILabel:new(self.m_Width*0.02, 35, self.m_Width*0.96, self.m_Height*0.05, "Warnung: Alle deine Waffen werden beim betreten einer Arena gelöscht!", self.m_Window):setColor(Color.Red)
 	self.m_LobbyGrid = GUIGridList:new(self.m_Width*0.02, 40+self.m_Height*0.05, self.m_Width*0.96, self.m_Height*0.6, self.m_Window)
 	self.m_LobbyGrid:addColumn(_"Name", 0.4)
 	self.m_LobbyGrid:addColumn(_"Spieler", 0.2)

@@ -150,7 +150,7 @@ function DeathmatchRoom:removePlayer(player)
 		player.m_RemoveWeaponsOnLogout = nil
 		player:setDimension(0)
 		player:setInterior(0)
-		player:setPosition(1498.087, -1585.115, 13.547)
+		player:setPosition(1325.21, -1559.48, 13.54)
 		player:setHeadless(false)
 		player:setHealth(100)
 		player:setArmor(0)
