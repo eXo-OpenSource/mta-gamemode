@@ -344,6 +344,12 @@ function VehicleManager:getPlayerVehicles(player)
 	return self.m_Vehicles[player] or {}
 end
 
+function VehicleManager:savePlayerVehicles(player)
+	for k, vehicle in pairs(self:getPlayerVehicles(player)) do
+		vehicle:save()
+	end
+end
+
 function VehicleManager:refreshGroupVehicles(group)
 	local groupId = group:getId()
 	if not groupId then

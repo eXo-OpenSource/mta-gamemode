@@ -298,6 +298,7 @@ function Player:save()
 	--if self:getInventory() then
 	--	self:getInventory():save()
 	--end
+	VehicleManager:getSingleton():savePlayerVehicles(self)
 	DatabasePlayer.save(self)
 	outputServerLog("Saved Data for Player "..self:getName())
 	outputDebugString("Saved Data for Player "..self:getName())
