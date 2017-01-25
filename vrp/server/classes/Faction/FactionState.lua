@@ -163,6 +163,8 @@ function FactionState:constructor()
 			{Vector3(277.512, 2061.715, 33.678), Vector3(0, 0, 358.1), 287, 34, 90};
 		}
 	)
+
+	self.onTiedExitBind = bind(self.onTiedExit, self)
 end
 
 function FactionState:destructor()
@@ -756,7 +758,6 @@ function FactionState:Command_tie(player, cmd, tname, bool)
 								target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
 								toggleControl(target, "enter_exit", false)
 								toggleControl(target, "fire", false)
-								self.onTiedExitBind = bind(self.onTiedExit, self)
 								addEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
 							else
 								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
