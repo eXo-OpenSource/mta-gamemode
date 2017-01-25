@@ -170,6 +170,16 @@ function Player:loadCharacter()
 	-- Premium
 	Premium.constructor(self)
 
+	-- CJ Skin
+	if self.m_Skin == 0 then
+		for i = 0, #CJ_CLOTHE_TYPES, 1 do
+			local data = self.m_CJData[tostring(i)]
+			if data then
+				self:addClothes(data.texture, data.model, i)
+			end
+		end
+	end
+
 	VehicleManager:getSingleton():createVehiclesForPlayer( self )
 	triggerEvent("characterInitialized", self)
 end
@@ -294,6 +304,7 @@ function Player:save()
 
 	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
 		x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
+
 
 	--if self:getInventory() then
 	--	self:getInventory():save()
@@ -996,4 +1007,20 @@ end
 
 function Player:isInGangwar()
 	 return Gangwar:getSingleton():isPlayerInGangwar(self)
+end
+
+-- Override mta function
+function Player:removeClothes(typeId)
+	if self:getSkin() ~= 0 then return false end
+	removePedClothes(self, typeId)
+
+	self.m_SkinData[typeId] = nil
+end
+
+-- Override mta function
+function Player:addClothes(texture, model, typeId)
+	if self:getSkin() ~= 0 then return false end
+	addPedClothes(self, texture, model, typeId)
+
+	self.m_SkinData[typeId] = {texture = texture, model = model}
 end

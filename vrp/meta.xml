@@ -180,6 +180,7 @@
 	<script src="server/classes/Gameplay/Shops/RustyBrown.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/VehicleShop.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/GasStation.lua" type="server"/>
+	<script src="server/classes/Gameplay/Shops/CJClothes.lua" type="server"/>
 
 	<script src="server/constants/shops.lua" type="server"/>
 
@@ -493,6 +494,7 @@
 	<script src="client/classes/GUIForms/DrivingSchoolInstructorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PublicTransportTaxoMeterGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SkinShopGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ClothesShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>

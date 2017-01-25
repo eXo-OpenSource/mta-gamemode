@@ -12,7 +12,7 @@ ShopManager.VehicleShopsMap = {}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell", "gasStationFill",
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell", "gasStationFill",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
 	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw"
 	}
@@ -27,6 +27,7 @@ function ShopManager:constructor()
 	addEventHandler("shopOpenBankGUI", root, bind(self.openBankGui, self))
 	addEventHandler("shopBankDeposit", root, bind(self.deposit, self))
 	addEventHandler("shopBankWithdraw", root, bind(self.withdraw, self))
+	addEventHandler("shopBuyClothes", root, bind(self.buyClothes, self))
 
 	addEventHandler("barShopMusicChange", root, bind(self.barMusicChange, self))
 	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
@@ -172,6 +173,38 @@ function ShopManager:buyItem(shopId, item, amount)
 		end
 	else
 		client:sendError(_("Internal Error! Item not found!", client))
+		return
+	end
+end
+
+function ShopManager:buyClothes(shopId, typeId, clotheId)
+	if not typeId then return end
+	if not clotheId then return end
+	local shop = self:getFromId(shopId)
+	local clothesData = CJ_CLOTHES[CJ_CLOTHE_TYPES[typeId]][clotheId]
+	if shop then
+		if clothesData then
+			if client:getMoney() >= clothesData.Price then
+				client:removeClothes(typeId)
+				if clotheId >= 0 then
+					local texture, model = getClothesByTypeIndex(typeId, clotheId)
+					client:addClothes(texture, model, typeId)
+				end
+				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
+				if clothesData.Price > 0 then
+					client:takeMoney(clothesData.Price, "Kleidungs-Kauf")
+					shop:giveMoney(clothesData.Price, "Kunden-Einkauf")
+				end
+			else
+				client:sendError(_("Du hast nicht genug Geld dabei!", client))
+				return
+			end
+		else
+			client:sendError(_("Internal Error! Clothe not found!", client))
+			return
+		end
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
 		return
 	end
 end
