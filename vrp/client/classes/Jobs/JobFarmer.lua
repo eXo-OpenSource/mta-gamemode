@@ -25,7 +25,7 @@ function JobFarmer:onInfo()
 	-- ### 2
 	setTimer(function()
 	setCameraMatrix(-110.18440246582, 59.231700897217, 25.98390007019, -109.43939208984, 59.41569519043, 25.342723846436, 0, 70)
-	outputChatBox(_"#0000FF[Farmer]#FFFFFF Die Fahrzeuge kannst du dir bei diesem Marker holen.",255,255,255,true)
+	outputChatBox(_"#0000FF[Farmer]#FFFFFF Fahrzeuge kannst du hier (Marker sichtbar nach dem annehmen) abholen.",255,255,255,true)
 	end, 7000, 1)
 	-- ### 3
 	setTimer(function()
@@ -34,13 +34,15 @@ function JobFarmer:onInfo()
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF kannst du das Getreide zur Abgabe bringen.",255,255,255,true)
 	end, 12000, 1)
 	--- ### 4
+
 	setTimer(function()
-	setCameraMatrix(-1050.2618408203,-1637.7829589844,85.58869934082,-1051.2099609375,-1637.5382080078,85.385673522949,0,70)
+	setCameraMatrix( -2132.4262695313 , -2465.71875 , 56.393901824951 , -2132.8205566406 , -2465.2470703125 , 55.605262756348 , 0 , 70 )
 	outputChatBox(_"#0000FF[Farmer]#FFFFFF Bringe das Getreide zu diesem Punkt!",255,255,255,true)
 	end, 18000, 1)
 	-- ### LAST
 	setTimer(function()
 	setCameraTarget(localPlayer,localPlayer)
+	localPlayer:setPosition(-59.908, 76.689,3.117)
 	end, 21500,1)
 end
 
