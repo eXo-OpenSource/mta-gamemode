@@ -1396,7 +1396,6 @@
 	<map src="files/maps/Roadsweeper.map"/>
 	<file src="files/maps/Garages.parsed_map"/>
 	<map src="files/maps/Garages_Outside.map"/>
-	<map src="files/maps/Bank.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
 
