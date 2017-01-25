@@ -704,6 +704,7 @@ function Player:payDay()
 	triggerClientEvent ( self, "paydayBox", self, self.m_paydayTexts)
 	-- Add Payday again
 	self:setNextPayday()
+	self:save()
 end
 
 function Player:addPaydayText(typ,text,r,g,b)

@@ -234,6 +234,10 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
     end
     client:sendSuccess(_("Upgrades gekauft!", client))
 
+	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
+		vehicle:save()
+	end
+
     -- Exit
     self:closeFor(client, vehicle)
 end
