@@ -6,12 +6,16 @@
 -- *
 -- ****************************************************************************
 AntiCheat = inherit(Singleton)
+AntiCheat.AllowedDataChange = {
+	["playingTime"] = true,
+	["writing"] = true
+}
 
 function AntiCheat:constructor()
 	-- Disable clientside synced element data setting entirely (even though we don't store anything important via elementdatas)
 	addEventHandler("onElementDataChange", root,
 		function(name, oldValue)
-			if name == "playingTime" then return end
+			if AntiCheat.AllowedDataChange[name] then return end
 
 			-- Serverside changes are okay
 			if not client then
