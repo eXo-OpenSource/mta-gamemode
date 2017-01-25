@@ -229,7 +229,8 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
-	client:increaseStatistics("Deaths", 1)
+	source.m_AlcoholLevel = 0
+	source:increaseStatistics("Deaths", 1)
 	-- give a achievement
 	source:giveAchievement(37)
 	for key, obj in ipairs( getAttachedElements(client)) do
