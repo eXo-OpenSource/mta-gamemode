@@ -313,6 +313,7 @@ function FactionRescue:createDeathPickup(player, ...)
 							end
 
 							source:destroy()
+							player.m_DeathPickup = nil
 							for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
 								rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
 							end
