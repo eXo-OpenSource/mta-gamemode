@@ -562,7 +562,7 @@ CJ_CLOTHES = {
 		[8] = {["Name"] = "Gold-Schwarze Uhr", ["Price"] = 2500},
 		[9] = {["Name"] = "Silber-Weiße Uhr", ["Price"] = 1500},
 		[10] = {["Name"] = "Gold-Weiße Uhr", ["Price"] = 2500},
-		[11] = {["Name"] = "Silber-Weiße Uhr", ["Price"] = 1500},
+		[11] = {["Name"] = "Silber-Schwarze Uhr", ["Price"] = 1500},
 	},
 	["Glasses"] = {
 		[-1] = {["Name"] = "Keine Brille", ["Price"] = 0},
