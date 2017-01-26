@@ -22,7 +22,7 @@ function JobLumberjack:constructor()
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
-	self.m_Col = createColShape(1022.550, -339.239, 73.992, 300)
+	self.m_Col = createColSphere(1022.550, -339.239, 73.992, 300)
 		addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
 		if hitElement.type == "player" and dim then
 			if hitElement:getJob() == self then
