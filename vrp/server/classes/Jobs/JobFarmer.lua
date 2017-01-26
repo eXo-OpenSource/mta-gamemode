@@ -95,7 +95,7 @@ function JobFarmer:onVehicleDestroy(vehicle)
 end
 
 function JobFarmer:storeHit(hitElement,matchingDimension)
-	if getElementType(hitElement) == "player" then
+	if getElementType(hitElement) == "player" and hitElement:getJob() == self then
 		hitElement:sendShortMessage(_("Hier kannst du den Walton beladen!",hitElement))
 	end
 	if getElementType(hitElement) ~= "vehicle" then
