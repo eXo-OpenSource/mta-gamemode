@@ -46,6 +46,7 @@ function VehicleManager:constructor()
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
 		function (player, seat)
+			if player:getType() ~= "player" then return end
 			if seat == 0 then
 				self:checkVehicle(source)
 

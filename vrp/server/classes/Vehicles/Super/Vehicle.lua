@@ -102,6 +102,7 @@ function Vehicle:isLocked()
 end
 
 function Vehicle:onPlayerEnter(player, seat)
+	if player:getType() ~= "player" then return end
 	if seat == 0 then
 		if not player:hasCorrectLicense(source) then
 			player:sendShortMessage(_("Achtung: Du hast keinen Führerschein für dieses Fahrzeug!", player))
@@ -126,6 +127,7 @@ end
 function Vehicle:onPlayerExit(player, seat)
 	self.m_LastUseTime = getTickCount()
 	local hbState = getControlState( player, "handbrake")
+	if player:getType() ~= "player" then return end
 	if seat == 0 then
 		if hbState then
 			setControlState( player, "handbrake", false)
