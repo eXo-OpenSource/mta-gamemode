@@ -69,10 +69,9 @@ function Player:destructor()
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	if self:isFactionDuty() then
+	if self:isFactionDuty() or self.m_RemoveWeaponsOnLogout then
 		takeAllWeapons(self)
 	end
-
 
 	self:save()
 
@@ -279,8 +278,6 @@ function Player:save()
 	if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
 		self.m_UniqueInterior = 0
 	end
-
-	if self.m_RemoveWeaponsOnLogout then takeAllWeapons(self) end
 
 	local weapons = {}
 	for slot = 0, 11 do -- exclude satchel detonator (slot 12)
