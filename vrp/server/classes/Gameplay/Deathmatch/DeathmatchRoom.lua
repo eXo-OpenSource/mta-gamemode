@@ -115,7 +115,9 @@ end
 function DeathmatchRoom:respawnPlayer(player, dead, killer, weapon)
 	local pos = Randomizer:getRandomTableValue(self.m_MapData["spawns"])
 	if dead then
+		player:triggerEvent("deathmatchStartDeathScreen", killer or player)
 		if killer then
+
 			self:increaseKill(killer, weapon)
 			self:increaseDead(player, weapon)
 		end
