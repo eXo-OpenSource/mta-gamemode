@@ -47,6 +47,14 @@ function FactionWeaponShopGUI:destuctor()
 	GUIForm.destructor(self)
 end
 
+function FactionWeaponShopGUI:onShow()
+	AntiClickSpam:getSingleton():setEnabled(false)
+end
+
+function FactionWeaponShopGUI:onHide()
+	AntiClickSpam:getSingleton():setEnabled(true)
+end
+
 function FactionWeaponShopGUI:Event_updateFactionWeaponShopGUI(validWeapons, depotWeaponsMax, depotWeapons, rankWeapons)
 	self.m_validWeapons = validWeapons
 	for k,v in pairs(self.m_validWeapons) do

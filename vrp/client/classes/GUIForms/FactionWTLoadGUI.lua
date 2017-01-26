@@ -51,6 +51,14 @@ function FactionWTLoadGUI:destuctor()
 	GUIForm.destructor(self)
 end
 
+function FactionWTLoadGUI:onShow()
+	AntiClickSpam:getSingleton():setEnabled(false)
+end
+
+function FactionWTLoadGUI:onHide()
+	AntiClickSpam:getSingleton():setEnabled(true)
+end
+
 function FactionWTLoadGUI:Event_updateFactionWTLoadGUI(validWeapons, depotWeaponsMax, depotWeapons)
 	self.m_validWeapons = validWeapons
 	self.m_DepotWeaponsMax = depotWeaponsMax
