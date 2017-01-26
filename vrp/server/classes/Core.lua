@@ -7,6 +7,7 @@ function Core:constructor()
 	-- Small hack to get the global core immediately
 	core = self
 	self.m_Failed = false
+	self.ms_StopHook = Hook:new()
 
 	if DEBUG then
 		Debugging:new()
@@ -206,4 +207,8 @@ function Core:getVersion()
 		end
 	end
 	return self.m_Version
+end
+
+function Core:getStopHook()
+	return self.ms_StopHook
 end

@@ -14,6 +14,12 @@ function Main.resourceStart()
 end
 addEventHandler("onResourceStart", resourceRoot, Main.resourceStart, true, "high+99999")
 
+function Main.preResourceStop()
+	-- Call stop hook
+	core:getStopHook():call()
+end
+addEventHandler("onResourceStop", resourceRoot, Main.preResourceStop, true, "high+99999")
+
 function Main.resourceStop()
 	delete(core)
 end

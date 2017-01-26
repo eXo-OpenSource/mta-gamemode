@@ -50,6 +50,24 @@ DeathmatchManager.Maps = {
 			Vector3(-1026.47, 1087.18, 1343.42),
 			Vector3(-1032.71, 1067.85, 1344.23),
 		}
+	},
+	["motel"] = {
+		["Name"] = "Jefferson Motel",
+		["Custom"] = false,
+		["Interior"] = 15,
+		["Spawns"] = {
+			Vector3(2215, -1146, 1025.5),
+			Vector3(2227, -1138, 1029.5),
+			Vector3(2252, -1160, 1029.5),
+			Vector3(2240, -1194, 1033.5),
+			Vector3(2238, -1194, 1029.5),
+			Vector3(2204, -1198, 1029.5),
+			Vector3(2187, -1182, 1029.5),
+			Vector3(2186, -1181, 1033.5),
+			Vector3(2196, -1177, 1029.5),
+			Vector3(2190, -1139, 1029.5),
+			Vector3(2193, -1147, 1033.5),
+		}
 	}
 }
 
@@ -91,6 +109,17 @@ function DeathmatchManager:constructor()
 		end
 	)
 
+	core:getStopHook():register(
+		function()
+			outputChatBox("Stop hook called!")
+			for id, room in pairs(DeathmatchManager.Rooms) do
+				for player, data in pairs(room.m_Players) do
+					room:removePlayer(player)
+				end
+			end
+		end
+	)
+
 
 	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby", "deathmatchLeaveArena"}
 	addEventHandler("deathmatchRequestLobbys", root, bind(self.requestLobbys, self))
@@ -110,6 +139,8 @@ function DeathmatchManager:loadServerRooms()
 	self:createRoom("Deagle Battlefield #1", "Server", "battlefield", {24}, "default", 300)
 	self:createRoom("M4 Battlefield #1", "Server", "battlefield", {31}, "default", 300)
 	self:createRoom("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
+	self:createRoom("Deagle Motel #1", "Server", "motel", {34}, "default", 10)
+	self:createRoom("M4 Motel #1", "Server", "motel", {31}, "default", 10)
 end
 
 function DeathmatchManager:requestLobbys()
