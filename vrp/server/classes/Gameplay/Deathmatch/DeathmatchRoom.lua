@@ -163,3 +163,13 @@ function DeathmatchRoom:removePlayer(player)
 	end
 	self:refreshGUI()
 end
+
+function DeathmatchRoom:onPlayerChat(player, text, type)
+	if type == 0 then
+		for player, data in pairs(self.m_Players) do
+			player:sendMessage(("#00ffff[%s] #808080%s: %s"):format(self.m_Name, player:getName(), text))
+		end
+
+		return true
+	end
+end
