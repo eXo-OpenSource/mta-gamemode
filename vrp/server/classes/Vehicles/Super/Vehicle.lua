@@ -207,7 +207,7 @@ end
 
 function Vehicle:toggleEngine(player)
 	if self.m_DisableToggleEngine then return end
-	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() then
+	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() or (self:getCompany() and self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
 		local state = not getVehicleEngineState(self)
 		if state == true then
 			if not VEHICLE_BIKES[self:getModel()] then
