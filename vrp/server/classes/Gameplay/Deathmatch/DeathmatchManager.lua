@@ -111,7 +111,6 @@ function DeathmatchManager:constructor()
 
 	core:getStopHook():register(
 		function()
-			outputChatBox("Stop hook called!")
 			for id, room in pairs(DeathmatchManager.Rooms) do
 				for player, data in pairs(room.m_Players) do
 					room:removePlayer(player)
