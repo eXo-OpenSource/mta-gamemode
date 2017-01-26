@@ -64,10 +64,19 @@ function deathScreen.onDeath(killer)
 
 		addEventHandler("onClientRender",root,deathScreen.runDeathAnim)
 
+		-- Hide HUD, Chat, ...
+		HUDUI:getSingleton():hide()
+		DeathmatchGUI:getSingleton():hide()
+		showChat(false)
+
 		setTimer(function()
 			removeEventHandler("onClientRender",root,deathScreen.runDeathAnim)
 			setGameSpeed(1)
 			deathScreen.state = false
+
+			HUDUI:getSingleton():show()
+			DeathmatchGUI:getSingleton():show()
+			showChat(true)
 		end,9000,1)
 	else
 		setTimer(function() deathScreen.onDeath(killer) end, 5000, 1)
