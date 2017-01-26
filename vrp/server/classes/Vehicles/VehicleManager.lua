@@ -67,6 +67,7 @@ function VehicleManager:constructor()
 	-- Prevent the engine from being turned on
 	addEventHandler("onVehicleEnter", root,
 		function(player, seat, jackingPlayer)
+			if player:getType() ~= "player" then return end
 			if seat == 0 then
 				self:checkVehicle(source)
 
