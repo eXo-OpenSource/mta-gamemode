@@ -1414,7 +1414,7 @@
 	<include resource="exo_maps" />
 	<include resource="bone_attach" />
 	<include resource="reload"/>
-	<include resource="helicopterrope" />
+	<!--include resource="helicopterrope" /-->
 
 	<!-- Shaders -->
 	<include resource="Bloom" />
