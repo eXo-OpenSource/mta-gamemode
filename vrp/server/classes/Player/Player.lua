@@ -172,6 +172,7 @@ function Player:loadCharacter()
 	-- CJ Skin
 	if self.m_Skin == 0 then
 		for i = 0, #CJ_CLOTHE_TYPES, 1 do
+			self:removeClothes(i)
 			local data = self.m_CJData[tostring(i)]
 			if data then
 				self:addClothes(data.texture, data.model, i)
