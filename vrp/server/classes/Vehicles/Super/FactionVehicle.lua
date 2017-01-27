@@ -123,7 +123,7 @@ function FactionVehicle:onStartEnter(player, seat)
 end
 
 function FactionVehicle:onEnter(player)
-	if player:getFaction() and player:getFaction() == source.m_Faction then
+	if player.getFaction and player:getFaction() and player:getFaction() == source.m_Faction then
 
 	end
 end
