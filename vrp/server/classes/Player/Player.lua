@@ -268,6 +268,9 @@ function Player:save()
 	if not self.m_Account or self:isGuest() then
 		return
 	end
+	if self.m_DoNotSave then
+		return
+	end
 	local x, y, z = getElementPosition(self)
 	if getPedOccupiedVehicle(self) then
 		z = z + 2

@@ -180,6 +180,9 @@ function DatabasePlayer:save()
 	if self:isGuest() then
 		return false
 	end
+	if self.m_DoNotSave then
+		return false
+	end
 	if self.m_LoggedIn then
 		self:setJailNewTime()
 		self:saveStatistics()
@@ -193,11 +196,6 @@ function DatabasePlayer:save()
 			spawnFac = 1
 		else
 			spawnFac = 0
-		end
-
-		if self.m_DoNotSave then
-			self.m_SpawnLocation = SPAWN_LOCATION_DEFAULT
-			self.m_Skin = NOOB_SKIN
 		end
 
 		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ? WHERE Id=?", sql:getPrefix(),

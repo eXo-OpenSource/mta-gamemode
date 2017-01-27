@@ -113,7 +113,7 @@ function DeathmatchManager:constructor()
 		function()
 			for id, room in pairs(DeathmatchManager.Rooms) do
 				for player, data in pairs(room.m_Players) do
-					room:removePlayer(player)
+					room:removePlayer(player, true)
 				end
 			end
 		end
@@ -138,7 +138,7 @@ function DeathmatchManager:loadServerRooms()
 	self:createRoom("Deagle Battlefield #1", "Server", "battlefield", {24}, "default", 300)
 	self:createRoom("M4 Battlefield #1", "Server", "battlefield", {31}, "default", 300)
 	self:createRoom("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
-	self:createRoom("Deagle Motel #1", "Server", "motel", {34}, "default", 10)
+	self:createRoom("Deagle Motel #1", "Server", "motel", {24}, "default", 10)
 	self:createRoom("M4 Motel #1", "Server", "motel", {31}, "default", 10)
 end
 
