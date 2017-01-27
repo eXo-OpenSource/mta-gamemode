@@ -294,12 +294,6 @@ function Player:save()
 	local sArmor = self:getArmor()
 	local sSkin = getElementModel(self)
 	if interior > 0 then dimension = self:getDimension() end
-	if self.m_DoNotSave then
-		x, y, z = NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z
-		sHealth = 100
-		sArmor = 0
-		sSkin = NOOB_SKIN
-	end
 	local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
 
 	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
