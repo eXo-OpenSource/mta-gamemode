@@ -39,7 +39,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 
 				-- Give money to the Owner (TODO: Improve this -> complete Repair ~4.58$ (310% Vehicle Health) -> is it okay?)
 				self.m_Company.m_BankAccount:addMoney(math.floor(costs*0.5))
-
+				vehicle.m_DisableToggleHandbrake = true
 				setTimer(
 					function()
 						vehicle:fix()
@@ -53,6 +53,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 
 						hitElement:takeMoney(costs, "Pay'N'Spray")
 						hitElement:sendShortMessage(_("Die Reperatur kostete %d$", hitElement, costs))
+						vehicle.m_DisableToggleHandbrake = nil
 					end,
 					3000,
 					1
