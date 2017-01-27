@@ -124,6 +124,9 @@ function Player:stopNavigation()
 end
 
 function Player:setJailBail( bail )
+	if bail > 0 then
+		self:sendMessage(_("Knast: Du kannst dich mit /bail für %d$ freikaufen!", self, bail), 255, 0, 0)
+	end
 	self.m_Bail = bail
 end
 
