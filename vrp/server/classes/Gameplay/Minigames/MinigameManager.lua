@@ -15,9 +15,11 @@ function MinigameManager:constructor()
 
 	self.m_GoJump = {}
 	self.m_SideSwipe = {}
+	self.m_2Cars = {}
 
 	self.m_GoJump.ms_Highscore = Highscore:new("GoJump")
 	self.m_SideSwipe.ms_Highscore = Highscore:new("SideSwipe")
+	self.m_2Cars.ms_Highscore = Highscore:new("2Cars")
 
 	-- Zombie Survival
 	--ZombieSurvival.initalize()

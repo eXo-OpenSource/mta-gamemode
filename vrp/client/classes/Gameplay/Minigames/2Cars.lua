@@ -344,6 +344,7 @@ function TCars:setState(newState)
 		if isTimer(self.m_RedBlockTimer) then self.m_RedBlockTimer:destroy() end
 		if isTimer(self.m_AlphaTimer) then self.m_AlphaTimer:destroy() end
 
+		triggerServerEvent("MinigameSendHighscore", resourceRoot, "2Cars", self.m_Points)
 		if self.m_Points > self.m_Highscore then
 			self.m_Highscore = self.m_Points
 		end
