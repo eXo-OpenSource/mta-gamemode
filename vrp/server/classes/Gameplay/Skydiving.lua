@@ -13,7 +13,7 @@ function SkydivingManager:constructor()
 	elevator:addStation("Dachgeschoss", Vector3(1548.535, -1363.746, 326.218), 172)
 
 	Skydiving.Map[1] = Skydiving:new(1, Vector3(1529.250, -1356.471, 328.5), Vector3(1523.536, -1359.087, 330.055), 104)
-	Skydiving.Map[2] = Skydiving:new(2, Vector3(1643.218, -2238.326, 12.5), Vector3(1887.5, -2493, 2076.8), 80)
+	Skydiving.Map[2] = Skydiving:new(2, Vector3(1643.218, -2238.326, 12.6), Vector3(1887.5, -2493, 2076.8), 80)
 
 	addEvent("skydivingStart", true)
 	addEventHandler("skydivingStart", root, bind(self.startSkydiving, self))

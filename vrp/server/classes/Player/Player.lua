@@ -131,6 +131,10 @@ function Player:setJailBail( bail )
 end
 
 function Player:loadCharacter()
+	if self.m_DoNotSave then
+		return
+	end
+
 	DatabasePlayer.Map[self.m_Id] = self
 	Warn.checkWarn(self)
 	Ban.checkBan(self)
