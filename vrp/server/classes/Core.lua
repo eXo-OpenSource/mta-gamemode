@@ -98,6 +98,7 @@ function Core:constructor()
 		Fishing:new()
 		ShootingRanch:new()
 		DeathmatchManager:new()
+		SkydivingManager:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()

@@ -1,0 +1,4 @@
+<map edf:definitions="editor_main">
+    <object id="object (cargo_test) (1)" breakable="true" interior="0" alpha="255" model="14548" doublesided="false" scale="1" dimension="0" posX="1890.90002" posY="-2493.6001" posZ="2078.6001" rotX="0" rotY="0" rotZ="80"></object>
+    <object id="object (androm_des_obj) (1)" breakable="true" interior="0" alpha="255" model="14553" doublesided="false" scale="1" dimension="0" posX="1892.6" posY="-2493.8999" posZ="2078.7" rotX="0" rotY="0" rotZ="80"></object>
+</map>
