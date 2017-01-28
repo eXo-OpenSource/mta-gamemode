@@ -679,6 +679,7 @@
 	<script src="client/classes/Gameplay/Minigames/CircuitBreaker.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/RockPaperScissors.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/Pong.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
 
 	<!-- serverside -->
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
@@ -1206,6 +1207,22 @@
 	<vrpfile src="files/images/CircuitBreaker/smdcapacitor.png" />
 	<vrpfile src="files/images/CircuitBreaker/smdresistor.png" />
 
+	<!-- 2Cars -->
+	<vrpfile src="files/images/2Cars/titlescreen.png" />
+	<vrpfile src="files/images/2Cars/circle_play.png" />
+	<vrpfile src="files/images/2Cars/circle_sound.png" />
+	<vrpfile src="files/images/2Cars/circle_sound_off.png" />
+	<vrpfile src="files/images/2Cars/circle_music.png"/>
+	<vrpfile src="files/images/2Cars/circle_music_off.png"/>
+	<vrpfile src="files/images/2Cars/arrow_down.png" />
+	<vrpfile src="files/images/2Cars/car_red.png"/>
+	<vrpfile src="files/images/2Cars/car_blue.png"/>
+	<vrpfile src="files/images/2Cars/point_red.png"/>
+	<vrpfile src="files/images/2Cars/point_blue.png"/>
+	<vrpfile src="files/images/2Cars/block_red.png"/>
+	<vrpfile src="files/images/2Cars/block_blue.png"/>
+	<vrpfile src="files/images/2Cars/particleExplode.png"/>
+
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/Halleluja.mp3"/>
@@ -1239,6 +1256,12 @@
 	<vrpfile src="files/audio/GoJump/button.wav" />
 	<vrpfile src="files/audio/GoJump/average.wav" />
 	<vrpfile src="files/audio/GoJump/highscore.wav" />
+
+	<!-- 2Cars -->
+	<vrpfile src="files/audio/2Cars/die1.mp3"/>
+	<vrpfile src="files/audio/2Cars/die2.mp3"/>
+	<vrpfile src="files/audio/2Cars/music.mp3"/>
+	<vrpfile src="files/audio/2Cars/score.mp3"/>
 
 	<!-- Slotmachines -->
 	<vrpfile src="files/audio/Slotmachines/start_machine.mp3" />
@@ -1373,6 +1396,7 @@
 	<vrpfile src="files/models/kartpark.txd" />
 	<vrpfile src="files/models/kartpark.dff" />
 	<vrpfile src="files/models/kartpark.col" />
+
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
@@ -1385,6 +1409,7 @@
 	<vrpfile src="files/shader/drug-shroomshader.fx"/>
 	<vrpfile src="files/shader/drug-cocaineshader.fx"/>
 	<vrpfile src="files/shader/loginShader.fx"/>
+
 	<vrpfile src="files/shader/radialFog.fx"/>
 	<!-- Fonts -->
 	<file src="files/fonts/gtafont.ttf"/><!-- do not replace the file tag -->
@@ -1399,6 +1424,9 @@
 	<vrpfile src="files/fonts/bit_font.ttf"/>
 	<vrpfile src="files/fonts/rage.ttf"/>
 	<vrpfile src="files/fonts/fuelstation.ttf"/>
+	<vrpfile src="files/fonts/JosefinSans-Thin.ttf"/>
+	<vrpfile src="files/fonts/gobold-light.ttf"/>
+	<vrpfile src="files/fonts/vanadine-bold.ttf"/>
 
 	<!-- Maps -->
 	<map src="files/maps/ATM.map"/>
