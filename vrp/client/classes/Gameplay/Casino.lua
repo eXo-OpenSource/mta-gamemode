@@ -56,7 +56,7 @@ function Casino:createGameMarker()
 			if hitElement:getType() ~= "player" then return end
 			if hitElement ~= localPlayer then return end
 
-			TCars:new()
+			MinigameGUI:new("2Cars")
 		end
 	)
 end
