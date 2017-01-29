@@ -1416,7 +1416,7 @@ function FactionState:Event_checkBug(element)
 	end
 	if client:getMoney() >= price then
 		client:takeMoney(price, "Wanzen-Check")
-		CompanyManager:getSingleton():getFromId(2):giveMoney(math.floor(price/2), "Wanzen-Check")
+		CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):giveMoney(math.floor(price/2), "Wanzen-Check")
 		if checkElement:getData("Wanze") == true and checkElement.BugId then
 			local id = checkElement.BugId
 			self.m_Bugs[id]["element"].BugId = nil

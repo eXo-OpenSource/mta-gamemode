@@ -248,7 +248,7 @@ function PermanentVehicle:respawn(garageOnly)
 		else
 		-- Respawn at mechanic base
 			if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
-				CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
+				CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):respawnVehicle(self)
 				if owner and isElement(owner) then
 				owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
 				end

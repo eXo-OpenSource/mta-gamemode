@@ -5,6 +5,10 @@ local readFuncs = {
 		return {type = "object", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
 			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), interior = tonumber(attributes.interior), doublesided = toboolean(attributes.doublesided)}
 	end;
+	marker = function(attributes)
+		return {type = "marker", markertype = attributes.type, x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
+			size = tonumber(attributes.size), color = attributes.color}
+	end;
 	removeWorldObject = function(attributes)
 		return {type = "removeWorldObject", radius = tonumber(attributes.radius), model = tonumber(attributes.model), lodModel = tonumber(attributes.lodModel),
 			posX = tonumber(attributes.posX), posY = tonumber(attributes.posY), posZ = tonumber(attributes.posZ), interior = tonumber(attributes.interior)}
@@ -23,6 +27,10 @@ local createFuncs = {
 		local o = createObject(info.model, info.x, info.y, info.z, info.rx, info.ry, info.rz)
 		setElementDoubleSided(o, info.doublesided or false)
 		return o
+	end;
+	marker = function(info)
+		local m = createMarker(info.x, info.y, info.z, info.markertype, info.size, getColorFromString(info.color))
+		return m
 	end;
 	removeWorldObject = function(info)
 		removeWorldModel(info.model, info.radius, info.posX, info.posY, info.posZ, info.interior)
@@ -57,6 +65,13 @@ function MapParser:constructor(path)
 	self.m_Maps = {}
 
 	local xmlRoot = xmlLoadFile(path)
+
+	local infoNode = xmlRoot:findChild("info", 0)
+	if infoNode then
+		self.m_Mapname = infoNode:getAttribute("name")
+		self.m_Author = infoNode:getAttribute("author")
+	end
+
 	for k, node in pairs(xmlNodeGetChildren(xmlRoot)) do
 		local nodeName = xmlNodeGetName(node)
 		if readFuncs[nodeName] then
@@ -106,4 +121,20 @@ end
 
 function MapParser:getElements(mapIndex)
 	return self.m_Maps[mapIndex or 1]
+end
+
+function MapParser:getElementsByType(elementType, mapIndex)
+	local elements = {}
+
+	for k, element in pairs(self.m_Maps[mapIndex or 1]) do
+		if element.type == elementType then
+			table.insert(elements, element)
+		end
+	end
+
+	return elements
+end
+
+function MapParser:getMapName()
+	return self.m_Mapname
 end

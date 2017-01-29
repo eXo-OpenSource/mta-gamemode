@@ -117,7 +117,7 @@ function VehicleSpawner:initializeAll()
 
 	local function postSpawn(vehicle, player)
 		player:takeMoney(200, "Fahrzeugverleih")
-		CompanyManager:getSingleton():getFromId(4):giveMoney(100, "Fahrzeugverleih")
+		CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT):giveMoney(100, "Fahrzeugverleih")
 	end
 
 	local spawners = {}

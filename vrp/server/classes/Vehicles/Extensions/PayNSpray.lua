@@ -9,7 +9,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 		self:setCustomGarageOpen(true)
 	end
 
-	self.m_Company = CompanyManager:getSingleton():getFromId(2) -- Mechanic and Tow Id
+	self.m_Company = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC) -- Mechanic and Tow Id
 
 	addEventHandler("onColShapeHit", self.m_FixShape,
 		function(hitElement, matchingDimension)
