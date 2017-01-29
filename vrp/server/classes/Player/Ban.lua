@@ -43,10 +43,10 @@ function Ban.addBan(who, author, reason, duration)
 			end
 		end
 	end
-	
+
 	if player then
 		local reasonstr
-		if type(author) == "number" then 
+		if type(author) == "number" then
 			author = DatabasePlayer.getFromId(author)
 		end
 		if duration > 0 then
@@ -58,12 +58,12 @@ function Ban.addBan(who, author, reason, duration)
 	end
 end
 
-function Ban.checkBan(player)
+function Ban.checkBan(player, doNotSave)
 	local serial = getPlayerSerial(player)
-	return Ban.checkSerial(serial, player)
+	return Ban.checkSerial(serial, player, nil, doNotSave)
 end
 
-function Ban.checkSerial(serial, player, cancel)
+function Ban.checkSerial(serial, player, cancel, doNotSave)
 	-- Note: true = not banned
 	local id = player and player:getId() or "false"
 	local row = sql:queryFetchSingle("SELECT reason, expires FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
@@ -77,7 +77,7 @@ function Ban.checkSerial(serial, player, cancel)
 		elseif duration > 0 then
 			reasonstr = ("Du bist noch %s gebannt! (Grund: %s)"):format(string.duration(duration - getRealTime().timestamp), row.reason)
 		end
-
+		if doNotSave then player.m_DoNotSave = true end
 		if cancel then
 			if player and isElement(player) then cancelEvent(true, reasonstr) end
 		else
@@ -97,6 +97,6 @@ function Ban.checkOfflineBan(playerId)
 	end
 end
 
-addEventHandler("onPlayerConnect", root, function(nick, ip, username, serial ) 
-	Ban.checkSerial(serial, source, true)
+addEventHandler("onPlayerConnect", root, function(nick, ip, username, serial )
+	Ban.checkSerial(serial, source, true, true)
 end)
