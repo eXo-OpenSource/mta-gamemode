@@ -137,6 +137,9 @@
 
 	<!-- Gameplay -->
 
+	<!-- Race -->
+	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
+
 	<!-- Minigames -->
 	<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/MinigameManager.lua" type="server"/>

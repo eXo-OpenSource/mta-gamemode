@@ -5,26 +5,71 @@
 -- *  PURPOSE:     Kart-Track class
 -- *
 -- ****************************************************************************
-
 Kart = inherit(Singleton)
 
+Kart.Markers = {
+	[1] = createMarker(1290.5996, 65.90039, 21.2, "cylinder", 11),
+	[2] = createMarker(1326.9, 132.7, 21.2, "cylinder", 11),
+	[3] = createMarker(1386.6, 105.9, 21.2, "cylinder", 11),
+	[4] = createMarker(1332.8, 118.2, 21.2, "cylinder", 11),
+	[5] = createMarker(1359.3, 50.3, 21.2, "cylinder", 11),
+	[6] = createMarker(1328.4, 88.1, 21.2, "cylinder", 11),
+	[7] = createMarker(1317.1, 62.2, 21.2, "cylinder", 11),
+	[8] = createMarker(1380.8, 61.9, 21.2, "cylinder", 11),
+	[9] = createMarker(1309.7, 122.1, 21.2, "cylinder", 11),
+}
+
+Kart.Spawns = {}
+
 function Kart:constructor()
-	self.m_RentMarker = createMarker(1311.1, 141.6, 19.5, "cylinder", 1, 255, 125, 0, 125)
+	self.m_KartMarker = createMarker(1311.1, 141.6, 19.8, "cylinder", 1, 255, 125, 0, 125)
+	self.m_Ped = createPed(64, 1311.8, 143.10001, 20.7, 147.252)
+	self.m_Toptimes = Toptimes:new("Kartmap")
 
-	--[[Trackmarkers:
-		<marker id="marker (cylinder) (3)" type="cylinder" color="#0000FF32" size="11" interior="0" dimension="0" alpha="255" posX="1290.5996" posY="65.90039" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-		<marker id="marker (cylinder) (4)" type="cylinder" color="#0000FF32" size="11" interior="0" dimension="0" alpha="255" posX="1326.9" posY="132.7" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-		<marker id="marker (cylinder) (5)" type="cylinder" color="#0000FF32" size="11" interior="0" dimension="0" alpha="255" posX="1386.6" posY="105.9" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-		<marker id="marker (cylinder) (6)" type="cylinder" color="#0000FF32" size="11" interior="0" dimension="0" alpha="255" posX="1332.8" posY="118.2" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-		<marker id="marker (cylinder) (7)" type="cylinder" color="#0000FF32" size="11" interior="0" dimension="0" alpha="255" posX="1359.3" posY="50.3" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-		<marker id="marker (cylinder) (8)" type="cylinder" color="#0000FF32" size="11" interior="0" dimension="0" alpha="255" posX="1328.4" posY="88.1" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-		<marker id="marker (cylinder) (9)" type="cylinder" color="#0000FF32" size="11" interior="0" dimension="0" alpha="255" posX="1317.1" posY="62.2" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-		<marker id="marker (cylinder) (10)" type="cylinder" color="#0000FF32" size="11" interior="0" dimension="0" alpha="255" posX="1380.8" posY="61.9" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-		<marker id="marker (cylinder) (11)" type="cylinder" color="#0000FF32" size="11" interior="0" dimension="0" alpha="255" posX="1309.7" posY="122.1" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-	--]]
+	self.m_Players = {}
 
-	--PED:     <ped id="ped (2)" dimension="0" model="64" interior="0" rotZ="147.252" alpha="255" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0"></ped>
+	for _, v in pairs(Kart.Markers) do
+		v:setAlpha(0)
+	end
+
+	addEventHandler("onMarkerHit", root, bind(Kart.markerHit, self))
 end
+
+function Kart:markerHit(hitElement, matchingDimension)
+	if not matchingDimension then return end
+	if hitElement.type ~= "player" then return end
+
+	if source == self.m_KartMarker then
+		-- dev (show gui)
+		local vehicle = TemporaryVehicle.create(571, 1310.445, 123.184, 20.518, 155.144)
+		hitElement:warpIntoVehicle(vehicle)
+		vehicle:setEngineState(true)
+
+		self.m_Players[hitElement] = {vehicle = vehicle, laps = 0, state = "Flying"}
+	end
+
+	for k, v in pairs(Kart.Markers) do
+		if v == source then
+			if self.m_Players[hitElement] and self.m_Players[hitElement].state ~= "Flying" then
+				outputChatBox("Hit: " .. k)
+			end
+		end
+	end
+	--client:triggerEvent("questionBox", _("Möchtest du ein Zeitrennen starten?", client), "event")
+end
+
+--[[ Possible player states for time race
+	Flying = fliegende Runde
+	Running = kwt(5 Runden?)
+]]
+
+--[[ Possible race states for kart race
+	Waiting = Warten auf Spieler / Aufbau (o.ä.)
+	Countdown
+	Running
+	SomeoneWon
+	EveryoneFinished
+]]
 
 --[[
 
