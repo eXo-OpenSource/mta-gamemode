@@ -279,42 +279,44 @@ function Player:save()
 	if self.m_DoNotSave then
 		return
 	end
-	local x, y, z = getElementPosition(self)
-	if getPedOccupiedVehicle(self) then
-		z = z + 2
-	end
-	local interior = self:getInterior()
-
-	-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
-	if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
-		self.m_UniqueInterior = 0
-	end
-
-	local weapons = {}
-	for slot = 0, 11 do -- exclude satchel detonator (slot 12)
-		local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
-		if ammo > 0 then
-			weapons[#weapons + 1] = {weapon, ammo}
+	if self:isLoggedIn() then
+		local x, y, z = getElementPosition(self)
+		if getPedOccupiedVehicle(self) then
+			z = z + 2
 		end
+		local interior = self:getInterior()
+
+		-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
+		if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
+			self.m_UniqueInterior = 0
+		end
+
+		local weapons = {}
+		for slot = 0, 11 do -- exclude satchel detonator (slot 12)
+			local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
+			if ammo > 0 then
+				weapons[#weapons + 1] = {weapon, ammo}
+			end
+		end
+		local dimension = 0
+		local sHealth = self:getHealth()
+		local sArmor = self:getArmor()
+		local sSkin = getElementModel(self)
+		if interior > 0 then dimension = self:getDimension() end
+		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
+
+		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
+
+
+		--if self:getInventory() then
+		--	self:getInventory():save()
+		--end
+		VehicleManager:getSingleton():savePlayerVehicles(self)
+		DatabasePlayer.save(self)
+		outputServerLog("Saved Data for Player "..self:getName())
+		outputDebugString("Saved Data for Player "..self:getName())
 	end
-	local dimension = 0
-	local sHealth = self:getHealth()
-	local sArmor = self:getArmor()
-	local sSkin = getElementModel(self)
-	if interior > 0 then dimension = self:getDimension() end
-	local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
-
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
-		x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
-
-
-	--if self:getInventory() then
-	--	self:getInventory():save()
-	--end
-	VehicleManager:getSingleton():savePlayerVehicles(self)
-	DatabasePlayer.save(self)
-	outputServerLog("Saved Data for Player "..self:getName())
-	outputDebugString("Saved Data for Player "..self:getName())
 end
 
 function Player:spawn( )
