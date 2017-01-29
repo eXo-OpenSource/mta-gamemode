@@ -115,7 +115,7 @@ function ScoreboardGUI:refresh()
 		self:addPlayerCount(company:getShortName(), self.m_CompanyCount[id] or 0)
 	end
 
-	self.m_PlayerCount:setText(_("Derzeit %d Spieler online", #getElementsByType("player")))
+	self.m_PlayerCount:setText(_("Derzeit sind %d Spieler online", #getElementsByType("player")))
 	self.m_Ping:setText(_("eigener Ping: %dms", localPlayer:getPing()))
 end
 

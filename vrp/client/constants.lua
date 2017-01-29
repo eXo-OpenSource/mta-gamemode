@@ -237,6 +237,7 @@ HelpTextTitles = {
 		GoJump = "Minigame: GoJump";
 		SideSwipe = "Minigame: SideSwipe";
 		SniperGame = "Minigame: Sniper Game";
+		TCars = "Minigame: 2Cars";
 	};
 	Actions = {
 		WeaponTruck = "Aktionen: Waffen-Truck";
@@ -440,10 +441,13 @@ HelpTexts = {
 			Minigame: GoJump
 		]];
 		SideSwipe = [[
-			Minigame: SideSwipe TODO
+			Minigame: SideSwipe (Keine Highscores, da noch nicht fertig!)
 		]];
 		SniperGame = [[
 			Erledige alle gespawnten Peds mit gezielten Kopfschüssen bevor sie die gelbe Linie übertreten!
+		]];
+		TCars = [[
+			Steuere beide Autos mit den Tasten 'a' und 'd' oder Pfeilsten links, rechts. Weiche den Kästchen aus und sammel jeden Punkt.
 		]];
 
 	};

@@ -123,7 +123,7 @@ function FactionVehicle:onStartEnter(player, seat)
 end
 
 function FactionVehicle:onEnter(player)
-	if player:getFaction() and player:getFaction() == source.m_Faction then
+	if player.getFaction and player:getFaction() and player:getFaction() == source.m_Faction then
 
 	end
 end
@@ -160,8 +160,12 @@ end
 
 function FactionVehicle:hasKey(player)
   if self:isPermanent() then
-    if player:getFaction() == self.m_Faction then
-      return true
+    if self.m_Faction:isStateFaction() or self.m_Faction:isRescueFaction() then
+		if player:getFaction() and player:isFactionDuty() then
+			return true
+		end
+	elseif player:getFaction() == self.m_Faction then
+      	return true
     end
   end
 

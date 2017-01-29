@@ -124,10 +124,17 @@ function Player:stopNavigation()
 end
 
 function Player:setJailBail( bail )
+	if bail > 0 then
+		self:sendMessage(_("Knast: Du kannst dich mit /bail für %d$ freikaufen!", self, bail), 255, 0, 0)
+	end
 	self.m_Bail = bail
 end
 
 function Player:loadCharacter()
+	if self.m_DoNotSave then
+		return
+	end
+
 	DatabasePlayer.Map[self.m_Id] = self
 	Warn.checkWarn(self)
 	Ban.checkBan(self)
@@ -172,6 +179,7 @@ function Player:loadCharacter()
 	-- CJ Skin
 	if self.m_Skin == 0 then
 		for i = 0, #CJ_CLOTHE_TYPES, 1 do
+			self:removeClothes(i)
 			local data = self.m_CJData[tostring(i)]
 			if data then
 				self:addClothes(data.texture, data.model, i)
@@ -268,48 +276,47 @@ function Player:save()
 	if not self.m_Account or self:isGuest() then
 		return
 	end
-	local x, y, z = getElementPosition(self)
-	if getPedOccupiedVehicle(self) then
-		z = z + 2
-	end
-	local interior = self:getInterior()
-
-	-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
-	if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
-		self.m_UniqueInterior = 0
-	end
-
-	local weapons = {}
-	for slot = 0, 11 do -- exclude satchel detonator (slot 12)
-		local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
-		if ammo > 0 then
-			weapons[#weapons + 1] = {weapon, ammo}
-		end
-	end
-	local dimension = 0
-	local sHealth = self:getHealth()
-	local sArmor = self:getArmor()
-	local sSkin = getElementModel(self)
-	if interior > 0 then dimension = self:getDimension() end
 	if self.m_DoNotSave then
-		x, y, z = NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z
-		sHealth = 100
-		sArmor = 0
-		sSkin = NOOB_SKIN
+		return
 	end
-	local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
+	if self:isLoggedIn() then
+		local x, y, z = getElementPosition(self)
+		if getPedOccupiedVehicle(self) then
+			z = z + 2
+		end
+		local interior = self:getInterior()
 
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
-		x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
+		-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
+		if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
+			self.m_UniqueInterior = 0
+		end
+
+		local weapons = {}
+		for slot = 0, 11 do -- exclude satchel detonator (slot 12)
+			local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
+			if ammo > 0 then
+				weapons[#weapons + 1] = {weapon, ammo}
+			end
+		end
+		local dimension = 0
+		local sHealth = self:getHealth()
+		local sArmor = self:getArmor()
+		local sSkin = getElementModel(self)
+		if interior > 0 then dimension = self:getDimension() end
+		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
+
+		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
 
 
-	--if self:getInventory() then
-	--	self:getInventory():save()
-	--end
-	VehicleManager:getSingleton():savePlayerVehicles(self)
-	DatabasePlayer.save(self)
-	outputServerLog("Saved Data for Player "..self:getName())
-	outputDebugString("Saved Data for Player "..self:getName())
+		--if self:getInventory() then
+		--	self:getInventory():save()
+		--end
+		VehicleManager:getSingleton():savePlayerVehicles(self)
+		DatabasePlayer.save(self)
+		outputServerLog("Saved Data for Player "..self:getName())
+		outputDebugString("Saved Data for Player "..self:getName())
+	end
 end
 
 function Player:spawn( )

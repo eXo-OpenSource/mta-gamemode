@@ -145,7 +145,7 @@ function DeathmatchRoom:respawnPlayer(player, dead, killer, weapon)
 	end
 end
 
-function DeathmatchRoom:removePlayer(player)
+function DeathmatchRoom:removePlayer(player, isServerStop)
 	self.m_Players[player] = nil
 	if isElement(player) then
 		takeAllWeapons(player)
@@ -157,17 +157,21 @@ function DeathmatchRoom:removePlayer(player)
 		player:setHealth(100)
 		player:setArmor(0)
 		player.deathmatchRoom = nil
-		self:sendShortMessage(player:getName().." hat die Arena verlassen!")
-		player:sendShortMessage(_("Du hast die Arena verlassen!", player), "Deathmatch-Arena", {255, 125, 0})
-		player:triggerEvent("deathmatchCloseGUI")
+		if not isServerStop then
+			self:sendShortMessage(player:getName().." hat die Arena verlassen!")
+			player:sendShortMessage(_("Du hast die Arena verlassen!", player), "Deathmatch-Arena", {255, 125, 0})
+			player:triggerEvent("deathmatchCloseGUI")
+		end
 	end
-	self:refreshGUI()
+	if not isServerStop then
+		self:refreshGUI()
+	end
 end
 
 function DeathmatchRoom:onPlayerChat(player, text, type)
 	if type == 0 then
-		for player, data in pairs(self.m_Players) do
-			player:sendMessage(("#00ffff[%s] #808080%s: %s"):format(self.m_Name, player:getName(), text))
+		for playeritem, data in pairs(self.m_Players) do
+			playeritem:sendMessage(("#00ffff[%s] #808080%s: %s"):format(self.m_Name, player:getName(), text))
 		end
 
 		return true
