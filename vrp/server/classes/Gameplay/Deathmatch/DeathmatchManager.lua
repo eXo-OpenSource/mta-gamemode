@@ -56,7 +56,7 @@ DeathmatchManager.Maps = {
 		["Custom"] = false,
 		["Interior"] = 15,
 		["Spawns"] = {
-			Vector3(2215, -1146, 1025.5),
+			Vector3(2226.547, -1183.308, 1029.8),
 			Vector3(2227, -1138, 1029.5),
 			Vector3(2252, -1160, 1029.5),
 			Vector3(2240, -1194, 1033.5),
