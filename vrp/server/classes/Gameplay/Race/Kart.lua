@@ -98,7 +98,7 @@ function Kart:markerHit(hitElement, matchingDimension)
 				if #self.m_Players[hitElement].markers == #self.m_Markers then
 					-- get last toptimedatas to calc delta time
 					local toptimeData = self.m_Toptimes:getToptimeFromPlayer(hitElement:getId())
-					local oldToptime = toptimeData.time
+					local oldToptime = toptimeData and toptimeData.time or 0
 
 					local lapTime = getTickCount() - self.m_Players[hitElement].startTick
 					self.m_Toptimes:addNewToptime(hitElement:getId(), lapTime)
