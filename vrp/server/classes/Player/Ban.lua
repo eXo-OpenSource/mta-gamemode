@@ -59,8 +59,11 @@ function Ban.addBan(who, author, reason, duration)
 end
 
 function Ban.checkBan(player, doNotSave)
-	local serial = getPlayerSerial(player)
-	return Ban.checkSerial(serial, player, nil, doNotSave)
+	if player and isElement(player) then
+		local serial = getPlayerSerial(player)
+		return Ban.checkSerial(serial, player, nil, doNotSave)
+	end
+	return false
 end
 
 function Ban.checkSerial(serial, player, cancel, doNotSave)
