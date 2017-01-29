@@ -71,7 +71,7 @@ function Warn.checkWarn(player, doNotSave)
 		if row then
 			local days = math.floor((row.expires - getRealTime().timestamp)/60/60/24)
 			if doNotSave then player.m_DoNotSave = true end
-			kickPlayer(player, _("Du hast 3 Warns! Der nächste läuft in %d Tagen ab!", player, days))
+			kickPlayer(player, _("Du hast 3 Warns! Der nächste läuft in %d Tagen ab!", player, days+1))
 			return false
 		end
 		return true
