@@ -26,17 +26,21 @@ function Toptimes:constructor(sMapname)
 end
 
 function Toptimes:destructor()
-    sql:queryExec("UPDATE ??_toptimes SET Times = ? WHERE ID = ?", sql:getPrefix(), toJSON(self.m_Toptimes), self.m_MapID)
+	sql:queryExec("UPDATE ??_toptimes SET Times = ? WHERE ID = ?", sql:getPrefix(), toJSON(self.m_Toptimes), self.m_MapID)
+end
+
+function Toptimes:save()
+	sql:queryExec("UPDATE ??_toptimes SET Times = ? WHERE ID = ?", sql:getPrefix(), toJSON(self.m_Toptimes), self.m_MapID)
 end
 
 function Toptimes:updatePlayernames()
     for _, Toptime in pairs(self.m_Toptimes) do
-        Toptime.name = Account.getNameFromID(Toptime.PlayerID)
+        Toptime.name = Account.getNameFromId(Toptime.PlayerID)
     end
 end
 
 function Toptimes:addNewToptime(PlayerID, time)
-    -- Update current huntertime if exists
+    -- Update current time if exists
     for _, v in pairs(self.m_Toptimes) do
         if v.PlayerID == PlayerID then
             if v.time > time then
@@ -53,7 +57,7 @@ function Toptimes:addNewToptime(PlayerID, time)
     local newHuntertime = {}
     newHuntertime.PlayerID = PlayerID
     newHuntertime.time = time
-    newHuntertime.name = Account.getNameFromID(PlayerID)
+    newHuntertime.name = Account.getNameFromId(PlayerID)
     newHuntertime.date = getRealTime().timestmap
 
     table.insert(self.m_Toptimes, newHuntertime)
@@ -80,16 +84,16 @@ function Toptimes:getToptimeFromPlayer(PlayerID)
     return false
 end
 
-function Toptimes:sendToptimes(Player)
+--[[function Toptimes:sendToptimes(Player)
     if Player then
         callClientFunction(Player, "setToptimeTable", self.m_Toptimes)
     end
     return false
-end
+end]]
 
 function Toptimes:sortToptimes()
     -- Storage the old last toptime
-    local old12 = self.m_Toptimes[12]
+    --local old12 = self.m_Toptimes[12]
 
     -- Sort table
     table.sort(self.m_Toptimes,
@@ -98,6 +102,7 @@ function Toptimes:sortToptimes()
         end
     )
 
+	self:save()
 	--[[
     -- Storage the new last toptime
     local new12 = self.m_Toptimes[12]

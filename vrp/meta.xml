@@ -138,7 +138,8 @@
 	<!-- Gameplay -->
 
 	<!-- Race -->
-	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
+	<script src="server/classes/Gameplay/Race/Super/Toptimes.lua" type="server"/>
+	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
 
 	<!-- Minigames -->
 	<script src="server/classes/Gameplay/Minigames/Highscore.lua" type="server"/>
@@ -157,7 +158,6 @@
 	<script src="server/classes/Gameplay/ShootingRanch.lua" type="server"/>
 	<script src="server/classes/Gameplay/ShootingRanchTraining.lua" type="server"/>
 	<script src="server/classes/Gameplay/Fishing.lua" type="server"/>
-	<script src="server/classes/Gameplay/Kart.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchRoom.lua" type="server"/>
 
@@ -533,6 +533,7 @@
 	<script src="client/classes/GUIForms/ScoreGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/PlantGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HighscoreGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/KartGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MinigameGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GunBoxGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
