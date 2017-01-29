@@ -120,6 +120,9 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, Invit
 	end
 	player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
 
+	Warn.checkWarn(player, true)
+	Ban.checkBan(player, true)
+
 	if player:getTutorialStage() == 1 then
 		player:createCharacter()
 	end

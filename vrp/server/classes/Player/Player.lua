@@ -136,8 +136,6 @@ function Player:loadCharacter()
 	end
 
 	DatabasePlayer.Map[self.m_Id] = self
-	Warn.checkWarn(self)
-	Ban.checkBan(self)
 	self:loadCharacterInfo()
 
 	-- Send infos to client
