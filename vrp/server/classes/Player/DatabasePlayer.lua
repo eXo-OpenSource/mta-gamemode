@@ -188,11 +188,10 @@ function DatabasePlayer:save()
 		return false
 	end
 	if self.m_LoggedIn then
-		self:setJailNewTime()
 		self:saveStatistics()
-		-- Unload stuff
+
 		if self.m_BankAccount then
-			delete(self.m_BankAccount)
+			self.m_BankAccount:save()
 		end
 
 		local spawnFac

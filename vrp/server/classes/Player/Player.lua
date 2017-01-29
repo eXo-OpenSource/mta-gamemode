@@ -73,8 +73,12 @@ function Player:destructor()
 		takeAllWeapons(self)
 	end
 
+	self:setJailNewTime()
 	self:save()
 
+	if self.m_BankAccount then
+		delete(self.m_BankAccount)
+	end
 
 	-- Unload stuff
 	PhoneNumber.unload(1, self.m_Id)
