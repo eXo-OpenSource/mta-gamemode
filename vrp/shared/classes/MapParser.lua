@@ -138,3 +138,7 @@ end
 function MapParser:getMapName()
 	return self.m_Mapname
 end
+
+function MapParser:getMapAuthor()
+	return self.m_Author
+end
