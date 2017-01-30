@@ -69,6 +69,7 @@ function Growable:getObject()
 end
 
 function Growable:harvest(player)
+	if not player.vehicle then
 	--if player:getId() == self.m_OwnerId or (player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty()) then
 		local amount = self.m_Size*self.ms_ItemPerSize
 		if amount > 0 then
@@ -99,18 +100,25 @@ function Growable:harvest(player)
 	--else
 	--	player:sendError(_("Die Pflanze gehört nicht dir!", player))
 	--end
+	else
+		player:sendError(_("Du sitzt in einem Fahrzeug!", player))
+	end
 end
 
 function Growable:waterPlant(player)
-	self.m_LastWatered = getRealTime().timestamp
-	player:setAnimation("bomber", "BOM_Plant_Loop", 2000, true, false)
-	setTimer(function()
-		player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-	end, 2000 ,1)
-	player:triggerEvent("PlantWeed:onWaterPlant", self:getObject())
-	self:getObject():setData("Plant:Hydration", true, true)
-	self:onColShapeLeave(player, true)
-	self:onColShapeHit(player, true)
+	if not player.vehicle then
+		self.m_LastWatered = getRealTime().timestamp
+		player:setAnimation("bomber", "BOM_Plant_Loop", 2000, true, false)
+		setTimer(function()
+			player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+		end, 2000 ,1)
+		player:triggerEvent("PlantWeed:onWaterPlant", self:getObject())
+		self:getObject():setData("Plant:Hydration", true, true)
+		self:onColShapeLeave(player, true)
+		self:onColShapeHit(player, true)
+	else
+		player:sendError(_("Du sitzt in einem Fahrzeug!", player))
+	end
 end
 
 function Growable:save()
