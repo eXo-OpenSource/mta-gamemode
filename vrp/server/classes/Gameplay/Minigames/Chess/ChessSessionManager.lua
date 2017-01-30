@@ -90,7 +90,7 @@ addEventHandler("chessQuestionDecline", root,
 addEventHandler("chessQuestion", root,
     function(target)
 		if client.chessSendRequest then client:sendError(_("Du hast dem Spieler bereits eine Anfrage gesendet", client)) return end
-
+		client:sendShortMessage(_("Du hast eine Schach-Anfrage an %s gesendet!", client, target:getName()))
 		client.chessSendRequest = true
 		target:triggerEvent("onAppDashboardGameInvitation", client, "Schach", "chessQuestionAccept", "chessQuestionDecline", client)
 	end

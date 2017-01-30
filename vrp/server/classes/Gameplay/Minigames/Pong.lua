@@ -141,7 +141,7 @@ addEventHandler("pongQuestionDecline", root,
 addEventHandler("pongQuestion", root,
     function(target)
 		if client.pongSendRequest then client:sendError(_("Du hast dem Spieler bereits eine Anfrage gesendet", client)) return end
-
+		client:sendShortMessage(_("Du hast eine Pong-Anfrage an %s gesendet!", client, target:getName()))
 		client.pongSendRequest = true
 		target:triggerEvent("onAppDashboardGameInvitation", client, "Pong!", "pongQuestionAccept", "pongQuestionDecline", client)
 	end
