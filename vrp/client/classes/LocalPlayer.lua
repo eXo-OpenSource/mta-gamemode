@@ -330,6 +330,15 @@ function LocalPlayer:toggleAFK(state, teleport)
 		self.m_AFKCode = false
 		GUIForm.closeAll()
 		InfoBox:new(_"Du wurdest ins AFK-Cafe teleportiert!")
+
+		if localPlayer:getPublicSync("Faction:Duty") then
+			triggerServerEvent("factionStateToggleDuty", localPlayer)
+		end
+
+		if localPlayer:getPublicSync("Company:Duty") then
+			triggerServerEvent("companyToggleDuty", localPlayer)
+		end
+
 		triggerServerEvent("toggleAFK", localPlayer, true, teleport)
 		addEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
 		self.m_AFKStartTime = getTickCount()
