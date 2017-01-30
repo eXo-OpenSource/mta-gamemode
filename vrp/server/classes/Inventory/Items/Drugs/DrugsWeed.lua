@@ -40,7 +40,7 @@ end
 
 function DrugsWeed:effect( player )
   local health = getElementHealth( player )
-  if ( health + DrugsWeed.m_HealValue ) <= 100 then
+  if health < 100 then
     setElementHealth( player, health + DrugsWeed.m_HealValue )
   end
 end

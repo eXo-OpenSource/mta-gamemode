@@ -26,9 +26,17 @@ end
 
 function PlantWeed:getClientCheck( bool, z_pos )
 	if bool then
-		local pos = client:getPosition()
-		client:getInventory():removeItem("Weed-Samen", 1)
-		GrowableManager:getSingleton():addNewPlant("Weed", Vector3(pos.x, pos.y, z_pos), client)
+		if client:isOnGround() then
+			if not client.vehicle then
+				local pos = client:getPosition()
+				client:getInventory():removeItem("Weed-Samen", 1)
+				GrowableManager:getSingleton():addNewPlant("Weed", Vector3(pos.x, pos.y, z_pos), client)
+			else
+				client:sendError("Du sitzt in einem Fahrzeug!")
+			end
+		else
+			client:sendError("Du bist nicht am Boden!")
+		end
 	else
 		client:sendError("Dies ist kein guter Untergrund zum Anpflanzen!")
 	end
