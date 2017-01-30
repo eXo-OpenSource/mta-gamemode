@@ -41,4 +41,11 @@ function PlayerMouseMenuGames:constructor(posX, posY, element)
 			end
 		end
 	)
+	self:addItem(_"Schach spielen",
+		function()
+			if self:getElement() then
+				triggerServerEvent("chessQuestion", localPlayer, self:getElement())
+			end
+		end
+	)
 end
