@@ -282,7 +282,6 @@ function IncomingCallActivity:getCaller()
 	return self.m_Caller
 end
 
-
 CallResultActivity = inherit(AppActivity)
 
 function CallResultActivity:constructor(app, calleeType, callee, resultType, voiceCall)
@@ -311,7 +310,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 		self.m_ResultLabel:setColor(Color.Red)
 		setTimer(
 			function()
-				if self:isOpen() then
+				if self:isOpen() and Phone:getSingleton():isOpen() then
 					MainActivity:new(app)
 					app.m_InCall = false
 				end
@@ -322,7 +321,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 		self.m_ResultLabel:setColor(Color.Red)
 		setTimer(
 			function()
-				if self:isOpen() then
+				if self:isOpen() and Phone:getSingleton():isOpen() then
 					MainActivity:new(app)
 					app.m_InCall = false
 				end
