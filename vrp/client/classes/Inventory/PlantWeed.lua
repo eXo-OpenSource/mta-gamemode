@@ -31,7 +31,7 @@ end
 function PlantWeed:onUse()
 	local pos = localPlayer:getPosition()
 	local gz = getGroundPosition(pos)
-	local hit, _, _, _, _, _, _, _, surface =  processLineOfSight(pos.x, pos.y, gz, pos.x, pos.y, gz+1, true, false, false)
+	local hit, _, _, _, _, _, _, _, surface = processLineOfSight(pos.x, pos.y, gz, pos.x, pos.y, gz-0.5, true, false, false)
 	triggerServerEvent("PlantWeed:getClientCheck", localPlayer, IsMatInMaterialType(surface), gz)
 end
 
