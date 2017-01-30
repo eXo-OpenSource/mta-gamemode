@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Kart = inherit(Singleton)
-addRemoteEvents{"startKartTimeRace", "requestKartToptimes"}
+addRemoteEvents{"startKartTimeRace", "requestKartDatas"}
 
 Kart.Maps = {
 	"files/maps/Kart/Kartbahn.map"
@@ -39,7 +39,7 @@ function Kart:constructor()
 	addEventHandler("onMarkerHit", self.m_KartMarker, self.m_onMarkerHit)
 
 	addEventHandler("startKartTimeRace", root, bind(Kart.startTimeRace, self))
-	addEventHandler("requestKartToptimes", root, bind(Kart.requestToptimes, self))
+	addEventHandler("requestKartDatas", root, bind(Kart.requestKartmapData, self))
 end
 
 function Kart:getStartFinishMarker()
@@ -66,8 +66,8 @@ function Kart:getRandomSpawnpoint()
 	return spawnpoints[math.random(1, #spawnpoints)]
 end
 
-function Kart:requestToptimes()
-	client:triggerEvent("KartReceiveToptimes", self.m_Map:getMapName(), self.m_Toptimes.m_Toptimes)
+function Kart:requestKartmapData()
+	client:triggerEvent("receiveKartDatas", self.m_Map:getMapName(), self.m_Map:getMapAuthor(), self.m_Toptimes.m_Toptimes)
 end
 
 function Kart:markerHit(hitElement, matchingDimension)
@@ -134,7 +134,7 @@ function Kart:markerHit(hitElement, matchingDimension)
 	end
 end
 
-function Kart:startTimeRace()
+function Kart:startTimeRace(laps)
 	if isElement(client.kartVehicle) then
 		destroyElement(client.kartVehicle)
 	end
