@@ -1,12 +1,12 @@
 ChessSessionManager = inherit(Singleton)
 
+addRemoteEvents{"onServerGetChessMove", "onServerGetSurrender", "chessQuestion", "chessQuestionAccept", "chessQuestionDecline"}
+
+
 function ChessSessionManager:constructor()
 	self.m_Map = {	}
-	addRemoteEvents{"onServerGetChessMove", "onServerGetSurrender", "chessQuestion", "chessQuestionAccept", "chessQuestionDecline"}
 	addEventHandler("onServerGetChessMove",root, bind(ChessSessionManager.Event_GetChessMove,self))
 	addEventHandler("onServerGetSurrender", root, bind(ChessSessionManager.Event_GetSurrender, self))
-
-
 end
 
 function ChessSessionManager:destructor()
