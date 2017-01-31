@@ -83,7 +83,7 @@ function Kart:markerHit(hitElement, matchingDimension)
 
 		-- dev  --> create a gui like highscore gui to show toptimes and start time race
 		--hitElement:triggerEvent("questionBox", _("Möchtest du ein Zeitrennen starten?", hitElement), "startKartTimeRace")
-		hitElement:triggerEvent("showKartGUI")
+		hitElement:triggerEvent("showKartGUI", true)
 		return
 	end
 
@@ -96,7 +96,9 @@ function Kart:markerHit(hitElement, matchingDimension)
 					self.m_Players[hitElement].startTick = getTickCount()
 					self.m_Players[hitElement].state = "Running"
 					outputChatBox("GO GO GO")
-					hitElement:triggerEvent("HUDRaceUpdateTimes", true, self.m_Toptimes.m_Toptimes[1].time)
+
+					local toptime = self.m_Toptimes:getToptimeFromPlayer(hitElement:getId())
+					hitElement:triggerEvent("HUDRaceUpdateTimes", true, toptime.time)
 				end
 			elseif self.m_Players[hitElement].state == "Running" then
 				if #self.m_Players[hitElement].markers == #self.m_Markers then
@@ -110,9 +112,8 @@ function Kart:markerHit(hitElement, matchingDimension)
 					self.m_Players[hitElement].markers = {}
 					self.m_Players[hitElement].laps = self.m_Players[hitElement].laps + 1
 
-					--local _, position = self.m_Toptimes:getToptimeFromPlayer(hitElement:getId())
-					--outputChatBox(("Current: %s // Delta: %.3f // Runde: %s // Toptime Position: %s"):format(lapTime, (lapTime - oldToptime)/1000, self.m_Players[hitElement].laps, position))
-					hitElement:triggerEvent("HUDRaceUpdateTimes", true, self.m_Toptimes.m_Toptimes[1].time)
+					local toptime = self.m_Toptimes:getToptimeFromPlayer(hitElement:getId())
+					hitElement:triggerEvent("HUDRaceUpdateTimes", true, toptime.time)
 				else
 					outputChatBox("invalid markers count :/ Cant save the time")
 					self.m_Players[hitElement].startTick = getTickCount()
@@ -157,7 +158,7 @@ function Kart:startTimeRace(laps, index)
 	end
 	client:takeMoney(price, ("Kart Zeitrennen (%s Runden)"):format(laps))
 
-	client:triggerEvent("")
+	client:triggerEvent("showKartGUI", false)
 
 	local vehicle = TemporaryVehicle.create(self.m_Spawnpoint.model, self.m_Spawnpoint.x, self.m_Spawnpoint.y, self.m_Spawnpoint.z, self.m_Spawnpoint.rz)
 	client:warpIntoVehicle(vehicle)
@@ -177,6 +178,9 @@ function Kart:startTimeRace(laps, index)
 
 	self.m_Players[client] = {vehicle = vehicle, laps = 1, state = "Flying", markers = {}, startTick = getTickCount() }
 	client:triggerEvent("showRaceHUD", true)
+
+	local toptime = self.m_Toptimes:getToptimeFromPlayer(client:getId())
+	client:triggerEvent("HUDRaceUpdateTimes", true, toptime.time)
 	client:triggerEvent("HUDRaceUpdateTimes", false, self.m_Toptimes.m_Toptimes[1].time)
 end
 

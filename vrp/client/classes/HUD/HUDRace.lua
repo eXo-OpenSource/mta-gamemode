@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        client/classes/HUD/HUDRace.lua
+-- *  PURPOSE:     Race HUD class
 -- *
 -- ****************************************************************************
 HUDRace = inherit(Singleton)
@@ -69,7 +69,7 @@ addEventHandler("HUDRaceUpdateTimes", root,
 addEventHandler("showRaceHUD", root,
 	function(show, ...)
 		if show then
-			HUDRace:getSingleton(...)
+			HUDRace:new(...)
 		else
 			delete(HUDRace:getSingleton())
 		end

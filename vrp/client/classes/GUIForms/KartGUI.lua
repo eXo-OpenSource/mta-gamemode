@@ -105,7 +105,11 @@ function KartGUI:receiveToptimes(mapname, mapauthor, toptimes)
 end
 
 addEventHandler("showKartGUI", root,
-	function()
-		KartGUI:new()
+	function(show)
+		if show then
+			KartGUI:new()
+		else
+			delete(KartGUI:getSingleton())
+		end
 	end
 )
