@@ -828,7 +828,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 					factionBonus = player:getMoney()
 				end
 
-				player:takeMoney(factionBonus)
+				player:takeMoney(factionBonus, "Knast Strafe")
 				player:giveKarma(-wantedLevel)
 				player:setJailTime(jailTime)
 				player:setWantedLevel(0)

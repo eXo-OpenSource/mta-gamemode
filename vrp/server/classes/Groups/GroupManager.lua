@@ -480,7 +480,7 @@ function GroupManager:Event_UpdateVehicleTuning()
 	if group and group:getPlayerRank(client) >= GroupRank.Manager then
 	--	if group:getKarma() <= -50 then
 			if group:getMoney() >= 3000 then
-				group:takeMoney(3000)
+				group:takeMoney(3000, "Fahrzeug Tuning")
 				group.m_VehiclesCanBeModified = not group.m_VehiclesCanBeModified
 				sql:queryExec("UPDATE ??_groups SET VehicleTuning = ? WHERE Id = ?", sql:getPrefix(), group.m_VehiclesCanBeModified and 1 or 0, group.m_Id)
 				if group.m_VehiclesCanBeModified == true then

@@ -272,7 +272,7 @@ function Faction:paydayPlayer(player)
 	local loan = tonumber(self.m_RankLoans[tostring(rank)])
 	if self.m_BankAccount:getMoney() < loan then loan = self.m_BankAccount:getMoney() end
 	if loan < 0 then loan = 0 end
-	self:takeMoney(loan)
+	self:takeMoney(loan, "Lohn von "..player:getName())
 	return loan
 end
 
