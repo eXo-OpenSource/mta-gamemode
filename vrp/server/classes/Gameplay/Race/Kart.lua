@@ -12,6 +12,9 @@ Kart.Maps = {
 	"files/maps/Kart/Kartbahn.map"
 }
 
+local lapPrice = 50
+local lapPackDiscount = 4
+
 function Kart:constructor()
 	self.m_KartMarker = createMarker(1311.1, 141.6, 19.8, "cylinder", 1, 255, 125, 0, 125)
 	self.m_Ped = createPed(64, 1311.8, 143.10001, 20.7, 147.252)
@@ -93,6 +96,7 @@ function Kart:markerHit(hitElement, matchingDimension)
 					self.m_Players[hitElement].startTick = getTickCount()
 					self.m_Players[hitElement].state = "Running"
 					outputChatBox("GO GO GO")
+					hitElement:triggerEvent("HUDRaceUpdateTimes", true, self.m_Toptimes.m_Toptimes[1].time)
 				end
 			elseif self.m_Players[hitElement].state == "Running" then
 				if #self.m_Players[hitElement].markers == #self.m_Markers then
@@ -106,8 +110,9 @@ function Kart:markerHit(hitElement, matchingDimension)
 					self.m_Players[hitElement].markers = {}
 					self.m_Players[hitElement].laps = self.m_Players[hitElement].laps + 1
 
-					local _, position = self.m_Toptimes:getToptimeFromPlayer(hitElement:getId())
-					outputChatBox(("Current: %s // Delta: %.3f // Runde: %s // Toptime Position: %s"):format(lapTime, (lapTime - oldToptime)/1000, self.m_Players[hitElement].laps, position))
+					--local _, position = self.m_Toptimes:getToptimeFromPlayer(hitElement:getId())
+					--outputChatBox(("Current: %s // Delta: %.3f // Runde: %s // Toptime Position: %s"):format(lapTime, (lapTime - oldToptime)/1000, self.m_Players[hitElement].laps, position))
+					hitElement:triggerEvent("HUDRaceUpdateTimes", true, self.m_Toptimes.m_Toptimes[1].time)
 				else
 					outputChatBox("invalid markers count :/ Cant save the time")
 					self.m_Players[hitElement].startTick = getTickCount()
@@ -134,10 +139,25 @@ function Kart:markerHit(hitElement, matchingDimension)
 	end
 end
 
-function Kart:startTimeRace(laps)
+function Kart:startTimeRace(laps, index)
+	if not laps or not index then return end
+
 	if isElement(client.kartVehicle) then
 		destroyElement(client.kartVehicle)
 	end
+
+	local selectedLaps = laps
+	local discount = lapPackDiscount*(index-1)
+	local price = selectedLaps*lapPrice
+	price = price - (price/100*discount)
+
+	if client:getMoney() < price then
+		client:sendError(_("Du hast nicht genügend Geld!", client))
+		return
+	end
+	client:takeMoney(price, ("Kart Zeitrennen (%s Runden)"):format(laps))
+
+	client:triggerEvent("")
 
 	local vehicle = TemporaryVehicle.create(self.m_Spawnpoint.model, self.m_Spawnpoint.x, self.m_Spawnpoint.y, self.m_Spawnpoint.z, self.m_Spawnpoint.rz)
 	client:warpIntoVehicle(vehicle)
@@ -155,13 +175,19 @@ function Kart:startTimeRace(laps)
 	setPedStat(client, 229, 1000)
 	setPedStat(client, 230, 1000)
 
-	self.m_Players[client] = {vehicle = vehicle, laps = 1, state = "Flying", markers = {}, startTick = getTickCount()}
+	self.m_Players[client] = {vehicle = vehicle, laps = 1, state = "Flying", markers = {}, startTick = getTickCount() }
+	client:triggerEvent("showRaceHUD", true)
+	client:triggerEvent("HUDRaceUpdateTimes", false, self.m_Toptimes.m_Toptimes[1].time)
 end
 
 function Kart:onKartDestroy()
 	if self.m_Players[source.timeRacePlayer] then
 		outputChatBox("kill")
 		self.m_Players[source.timeRacePlayer] = nil
+
+		if source.timeRacePlayer then
+			source.timeRacePlayer:triggerEvent("showRaceHUD", false)
+		end
 	end
 
 	removeEventHandler("onElementDestroy", source, self.m_OnKartDestroy)
