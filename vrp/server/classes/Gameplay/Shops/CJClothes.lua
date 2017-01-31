@@ -10,6 +10,10 @@ CJClothes = inherit(Shop)
 function CJClothes:constructor(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 	self:create(id, name, position, rotation, typeData, dimension, robable, money, lastRob, owner, price, ownerType)
 
+	if self.m_Marker then
+		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onTattooMarkerHit, self))
+	end
+
 	if typeData["ClothesMarker"] then
 		self.m_ClothesMarker = {}
 		for type, pos in pairs(typeData["ClothesMarker"]) do
@@ -35,6 +39,22 @@ function CJClothes:onCJClothesMarkerHit(hitElement, dim)
 	end
 end
 
+function CJClothes:onTattooMarkerHit(hitElement, dim)
+	if dim and hitElement:getType() == "player" then
+		if hitElement:getModel() == 0 then
+			hitElement:triggerEvent("showTattooSelectionGUI", self.m_Id)
+		else
+			local cjName, cjPrice = unpack(SkinInfo[0])
+			hitElement:triggerEvent("questionBox", _("Diese Tattoos ist nur für den %s-Skin möchtest du diesen für %d$ kaufen?", hitElement, cjName, cjPrice), "skinBuy", nil, 0)
+		end
+	end
+end
+
+function CJClothes:onTattoSelection(player, typeId)
+	local type = CJ_CLOTHE_TYPES[typeId]
+	local clothes = CJ_CLOTHES[type]
+	player:triggerEvent("showClothesShopGUI", self.m_Id, typeId, clothes)
+end
 
 function CJClothes:onShopEnter(player)
 	player:sendShortMessage(_("Herzlich Willkommen im %s!", player, self.m_Name))

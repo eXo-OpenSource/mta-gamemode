@@ -466,6 +466,7 @@
 	<script src="client/classes/GUIForms/ButtonMenu/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/CompanyDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ShopManageGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/TattooSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
