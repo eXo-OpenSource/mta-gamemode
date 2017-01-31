@@ -149,9 +149,9 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("offlineNickchange", "NickChange", 410, 330, 180, 30, Color.Orange, tabOffline)
 
 
-	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
+	self.m_TicketTab = self.m_TabPanel:addTab(_"Tickets")
 	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
-	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, tabTicket)
+	self.m_TicketsBrowser = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, self.m_TicketTab)
 
 	self:refreshOnlinePlayers()
 
@@ -197,7 +197,7 @@ function AdminGUI:constructor(money)
 end
 
 function AdminGUI:onShow()
-	outputDebug("AdminGUI:onShow")
+	AntiClickSpam:getSingleton():setEnabled(false)
 	self:refreshButtons()
 	self:refreshOnlinePlayers()
 
@@ -205,7 +205,7 @@ function AdminGUI:onShow()
 end
 
 function AdminGUI:onHide()
-	outputDebug("AdminGUI:onHide")
+	AntiClickSpam:getSingleton():setEnabled(true)
 	self.m_SelectedPlayer = nil
 
 	SelfGUI:getSingleton():removeWindow(self)
@@ -214,6 +214,8 @@ end
 function AdminGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabSpieler.TabIndex then
 		self:refreshOnlinePlayers()
+	elseif tabId == self.m_TicketTab.TabIndex then
+		self.m_TicketsBrowser:reload()
 	end
 end
 
