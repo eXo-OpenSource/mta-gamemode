@@ -330,6 +330,10 @@ function PolicePanel:locateElement(element)
 
 		ElementLocateTimer = setTimer(function()
 			if localPlayer.m_LocatingElement and isElement(localPlayer.m_LocatingElement) then
+				if not localPlayer:getPublicSync("Faction:Duty") then
+					self:stopLocating()
+				end
+
 				local int = getElementInterior(localPlayer.m_LocatingElement)
 				local dim = getElementDimension(localPlayer.m_LocatingElement)
 				if int > 0 or dim > 0 then
