@@ -1230,6 +1230,12 @@
 	<vrpfile src="files/images/2Cars/block_blue.png"/>
 	<vrpfile src="files/images/2Cars/particleExplode.png"/>
 
+	<!-- Race -->
+	<vrpfile src="files/images/Race/countdown_0.png"/>
+	<vrpfile src="files/images/Race/countdown_1.png"/>
+	<vrpfile src="files/images/Race/countdown_2.png"/>
+	<vrpfile src="files/images/Race/countdown_3.png"/>
+
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/Halleluja.mp3"/>
@@ -1284,6 +1290,13 @@
 	<vrpfile src = "files/audio/Pong/fail.mp3" />
 	<vrpfile src = "files/audio/Pong/shot.mp3" />
 	<vrpfile src = "files/audio/Pong/wall.mp3" />
+
+	<!-- Race -->
+	<vrpfile src = "files/audio/Race/countdown_0.mp3" />
+	<vrpfile src = "files/audio/Race/countdown_1.mp3" />
+	<vrpfile src = "files/audio/Race/countdown_2.mp3" />
+	<vrpfile src = "files/audio/Race/countdown_3.mp3" />
+	<vrpfile src = "files/audio/Race/countdown_start.mp3" />
 
 	<!-- Custom Horns -->
 	<vrpfile src='files/audio/Horns/1.mp3'/>
