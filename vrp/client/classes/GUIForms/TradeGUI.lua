@@ -154,5 +154,6 @@ function TradeGUI:requestTrade()
 		end
 	elseif self.m_SelectedType == "Weapon" then
 		triggerServerEvent("requestTrade", localPlayer, "Weapon", self.m_TargetPlayer, self.m_SelectedItem, self.m_SelectedItemAmount, tonumber(self.m_Money:getText()))
+		delete(self)
 	end
 end
