@@ -393,6 +393,10 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             end
 			StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
 			outputChatBox("Der Chat wurde von "..getPlayerName(admin).." geleert!",root, 200, 0, 0)
+		elseif func == "resetAction" then
+			self:sendShortMessage(_("%s hat die Aktionssperre resettet! Aktionen können wieder gestartet werden!", admin, admin:getName()))
+			ActionsCheck:getSingleton():reset()
+			StatisticsLogger:getSingleton():addAdminAction( admin, "resetAction", false)
 		elseif func == "respawnRadius" then
 			local radius = tonumber(target)
 			local pos = admin:getPosition()

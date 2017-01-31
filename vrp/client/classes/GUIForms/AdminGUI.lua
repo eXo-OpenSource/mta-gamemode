@@ -50,12 +50,13 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnRadius", "im Umkreis respawnen", 75, 180, 185, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 230, 250, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("resetAction", "Aktions-Sperre resetten", 10, 270, 250, 30, Color.Orange, tabAllgemein)
 
 	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
-	self.m_EditPosX = GUIEdit:new(10, 300, 80, 25, tabAllgemein):setNumeric(true, false)
-	self.m_EditPosY = GUIEdit:new(95, 300, 80, 25, tabAllgemein):setNumeric(true, false)
-	self.m_EditPosZ = GUIEdit:new(180, 300, 80, 25, tabAllgemein):setNumeric(true, false)
-	self:addAdminButton("gotocords", "zu Koordinaten porten", 10, 330, 250, 30, Color.Orange, tabAllgemein)
+	self.m_EditPosX = GUIEdit:new(10, 400, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosY = GUIEdit:new(95, 400, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosZ = GUIEdit:new(180, 400, 80, 25, tabAllgemein):setNumeric(true, false)
+	self:addAdminButton("gotocords", "zu Koordinaten porten", 10, 430, 250, 30, Color.Orange, tabAllgemein)
 
 	--Column 2
 	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.LightBlue)
@@ -440,7 +441,7 @@ function AdminGUI:onButtonClick(func)
 				function (factionId)
 					triggerServerEvent("adminRespawnFactionVehicles", root, factionId)
 				end)
-	elseif func == "supportMode" or func == "clearChat" then
+	elseif func == "supportMode" or func == "clearChat" or func == "resetAction" then
 		triggerServerEvent("adminTriggerFunction", root, func)
 	elseif func == "respawnRadius" then
 		local radius = self.m_RespawnRadius:getText()

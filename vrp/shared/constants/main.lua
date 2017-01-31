@@ -49,6 +49,7 @@ ADMIN_RANK_PERMISSION = {
 	["warn"] = RANK.Supporter,
 	["kick"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
+	["resetAction"] = RANK.Moderator,
 	["unprison"] = RANK.Moderator,
 	["supportMode"] = RANK.Supporter,
 	["smode"] = RANK.Supporter,
