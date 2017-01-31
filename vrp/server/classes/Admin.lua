@@ -245,11 +245,15 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
 	if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
-		self:Command_MarkPos(admin, true)
-		StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["mark"] then
+			self:Command_MarkPos(admin, true)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
+		end
 	elseif cmd == "gotomark" then
-		self:Command_MarkPos(admin, false)
-		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["mark"] then
+			self:Command_MarkPos(admin, false)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
+		end
 	elseif cmd == "gotocords" then
 		local x, y, z = targetName, arg1, arg2
 		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then
@@ -571,7 +575,7 @@ end
 
 
 function Admin:chat(player,cmd,...)
-	if player:getRank() > RANK.Ticketsupporter then
+	if player:getRank() >= RANK.Ticketsupporter then
 		local msg = table.concat( {...}, " " )
 		if self.m_RankNames[player:getRank()] then
 			local text = ("[ %s %s ]: %s"):format(_(self.m_RankNames[player:getRank()], player), player:getName(), msg)

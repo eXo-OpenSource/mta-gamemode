@@ -310,6 +310,11 @@ function AdminGUI:onSelectPlayer(player)
 end
 
 function AdminGUI:portAdmin(direction)
+	if localPlayer:getRank() < ADMIN_RANK_PERMISSION["direction"] then
+		ErrorBox:new(_"Du bist nicht berechtigt!")
+		return false
+	end
+
 	local element = localPlayer
 
 	if localPlayer:getOccupiedVehicle() then element = localPlayer:getOccupiedVehicle()	end

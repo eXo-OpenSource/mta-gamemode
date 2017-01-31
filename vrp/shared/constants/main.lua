@@ -38,6 +38,8 @@ end
 RANK = r2
 
 ADMIN_RANK_PERMISSION = {
+	["direction"] = RANK.Supporter, -- Up Down Left Right
+	["mark"] = RANK.Supporter, -- also gotomark
 	["eventMoneyDeposit"] = RANK.Supporter,
 	["gethere"] = RANK.Supporter,
 	["goto"] = RANK.Supporter,
