@@ -960,7 +960,7 @@ function FactionState:Event_toggleDuty()
 			client:getInventory():removeAllItem("Blitzer")
 		else
 			if client:getPublicSync("Company:Duty") and client:getCompany() then
-				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
+				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 				return false
 			end
 

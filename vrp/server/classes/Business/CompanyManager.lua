@@ -364,14 +364,14 @@ function CompanyManager:Event_toggleDuty()
             end
 		else
             if client:getPublicSync("Faction:Duty") and client:getFaction() then
-                client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
+                client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
 				return false
 			end
 
 			company:changeSkin(client)
 			client.m_CompanyDuty = true
 			company:updateCompanyDutyGUI(client)
-			client:sendInfo(_("Du bist nun im Unternehmens-Dienst!", client))
+			client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
 			client:setPublicSync("Company:Duty",true)
             takeAllWeapons(client)
             if company.start then

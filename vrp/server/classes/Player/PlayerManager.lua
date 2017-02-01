@@ -244,13 +244,6 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 			client:meChat(true, "lies einen Geldbeutel fallen")
 		end
 	end
-	if source:isFactionDuty() then
-		source:setDefaultSkin()
-		source.m_FactionDuty = false
-		takeAllWeapons(client)
-		source:setPublicSync("Faction:Duty",false)
-		source:getInventory():removeAllItem("Barrikade")
-	end
 
 	if killer and killer:getType() == "player" then
 		if killer ~= source then

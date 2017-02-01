@@ -168,14 +168,14 @@ function FactionRescue:Event_toggleDuty(type)
 		if client:isFactionDuty() then
 			client:setDefaultSkin()
 			client.m_FactionDuty = false
-			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
+			client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 			client:setPublicSync("Faction:Duty",false)
 			client:setPublicSync("Rescue:Type",false)
 			client:getInventory():removeAllItem("Barrikade")
 			takeWeapon(client,42)
 		else
 			if client:getPublicSync("Company:Duty") and client:getCompany() then
-				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
+				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 				return false
 			end
 			takeWeapon(client,42)
@@ -183,7 +183,7 @@ function FactionRescue:Event_toggleDuty(type)
 				giveWeapon(client, 42, 2000, true)
 			end
 			client.m_FactionDuty = true
-			client:sendInfo(_("Du bist nun im Dienst!", client))
+			client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
 			client:setPublicSync("Faction:Duty",true)
 			client:setPublicSync("Rescue:Type",type)
 			client:getInventory():removeAllItem("Barrikade")
