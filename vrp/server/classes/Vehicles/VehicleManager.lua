@@ -624,6 +624,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		fixVehicle(source)
 		setVehicleOverrideLights(source, 1)
 		setVehicleEngineState(source, false)
+		source.m_EngineState = false
 		source:setSirensOn(false)
 		if source:getOwner() == client:getId() then
 			client:takeMoney(100, "Fahrzeug Respawn")
