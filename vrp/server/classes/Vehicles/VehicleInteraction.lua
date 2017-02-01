@@ -9,11 +9,12 @@ VehicleInteraction = inherit(Singleton)
 
 function VehicleInteraction:constructor()
 
-	addRemoteEvents{"onInteractVehicleDoor", "onActionVehicleDoor", "onLockVehicleDoor"}
+	addRemoteEvents{"onInteractVehicleDoor", "onActionVehicleDoor", "onLockVehicleDoor", "onMouseMenuRepairkit"}
 
 	addEventHandler("onInteractVehicleDoor", root, bind(self.doInteractions, self))
 	addEventHandler("onActionVehicleDoor", root, bind(self.doAction, self))
 	addEventHandler("onLockVehicleDoor", root, bind(self.doLock, self))
+	addEventHandler("onMouseMenuRepairkit", root, bind(self.Event_repairVehicle, self))
 
 end
 
@@ -46,6 +47,36 @@ function VehicleInteraction:doLock()
 	end
 end
 
+function VehicleInteraction:Event_repairVehicle()
+	self:repairVehicle(client, source)
+end
+
+function VehicleInteraction:repairVehicle(player, veh)
+	if player:getInventory():getItemAmount("Reparaturkit") > 0 then
+		if veh.isBroken and veh:isBroken() then
+			player:sendInfo(_("Das Fahrzeug wird repariert! Bitte warten!", player))
+			player:getInventory():removeItem("Reparaturkit", 1)
+			player:setAnimation("BAR" ,"Barserve_give" ,0 ,true)
+			setTimer(function(player, veh)
+				veh:setBroken(false)
+				veh:setHealth(veh:getHealth() + 300)
+
+				if isElement(player) then
+					player:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", player))
+					player:setAnimation(false)
+					player:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
+				end
+
+
+			end, 5000, 1, player, veh)
+		else
+			player:sendError(_("Das Fahrzeug hat keinen Totalschaden!", player))
+		end
+	else
+		player:sendError(_("Du hast keinen Reparaturkit dabei!", player))
+	end
+end
+
 function VehicleInteraction:doAction(door)
 	local lookAtVehicle = getPedTarget(client)
 
@@ -66,29 +97,7 @@ function VehicleInteraction:doAction(door)
 					lookAtVehicle:getTrunk():open(client)
 				end
 			elseif door == 0 then
-				if client:getInventory():getItemAmount("Reparaturkit") > 0 then
-					if veh.isBroken and veh:isBroken() then
-						client:sendInfo(_("Das Fahrzeug wird repariert! Bitte warten!", client))
-						client:getInventory():removeItem("Reparaturkit", 1)
-						client:setAnimation("BAR" ,"Barserve_give" ,0 ,true)
-						setTimer(function(client, veh)
-							veh:setBroken(false)
-							veh:setHealth(veh:getHealth() + 300)
-
-							if isElement(client) then
-								client:sendInfo(_("Das Fahrzeug wurde erfolgreich repariert!", client))
-								client:setAnimation(false)
-								client:setAnimation("carry", "crry_prtial", 1, false, true, true, false) -- Stop Animation Work Arround
-							end
-
-
-						end, 5000, 1, client, veh)
-					else
-						client:sendError(_("Das Fahrzeug hat keinen Totalschaden!", client))
-					end
-				else
-					client:sendError(_("Du hast keinen Reparaturkit dabei!", client))
-				end
+				self:repairVehicle(client, veh)
 			end
 		else
 			if door == 1 then doorname = "Der Kofferraum" else doorname="Die Motorhaube" end

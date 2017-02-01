@@ -84,6 +84,16 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 			end
 		)
 
+		if getVehicleInteractType(element) == "Special" then
+			self:addItem(_"Repairkit: reparieren",
+				function()
+					if self:getElement() then
+						triggerServerEvent("onMouseMenuRepairkit", self:getElement())
+					end
+				end
+			)
+		end
+
 		if getElementData(element, "Special") == VehicleSpecial.Soundvan then
 			self:addItem(_"Musik abspielen",
 				function()
