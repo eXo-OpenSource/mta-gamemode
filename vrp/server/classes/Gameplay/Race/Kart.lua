@@ -16,10 +16,34 @@ local lapPrice = 50
 local lapPackDiscount = 4
 
 function Kart:constructor()
-	self.m_KartMarker = createMarker(1311.1, 141.6, 19.8, "cylinder", 1, 255, 125, 0, 125)
-	self.m_Ped = createPed(64, 1311.8, 143.10001, 20.7, 147.252)
+	self.m_MapIndex = {}
+	self.m_Maps = {}
 
-	self.m_Map = MapParser:new(self:getRandomMap())
+	-- Create and validate map instances
+	for k, v in pairs(Kart.Maps) do
+		if fileExists(v) then
+			local mapFileName = v:match("[^/]+$"):sub(0, -5)
+			if mapFileName then
+				local instance = MapParser:new(v)
+				local mapname = instance:getMapName()
+				local author = instance:getMapAuthor()
+
+				if mapname and author then
+					self.m_Maps[mapFileName] = instance
+					table.insert(self.m_MapIndex, mapFileName)
+				else
+					outputDebug(("Can't load map file '%s'. Invalid mapname or author"):format(v))
+					delete(instance)
+				end
+			else
+				outputDebug(("Can't load map file '%s'. Cant resolve filename from path"):format(v))
+			end
+		end
+	end
+
+	self:loadMap(self:getRandomMap())
+
+	--[[self.m_Map = MapParser:new(self:getRandomMap())
 	self.m_Map:create()
 
 	self.m_Toptimes = Toptimes:new(self.m_Map:getMapName())
@@ -39,12 +63,33 @@ function Kart:constructor()
 
 	--self.m_StartFinishMarker:setAlpha(0)
 	addEventHandler("onMarkerHit", 	self.m_StartFinishMarker, self.m_onMarkerHit)
-	addEventHandler("onMarkerHit", self.m_KartMarker, self.m_onMarkerHit)
+	addEventHandler("onMarkerHit", self.m_KartMarker, self.m_onMarkerHit)]]
 
 	addEventHandler("startKartTimeRace", root, bind(Kart.startTimeRace, self))
 	addEventHandler("requestKartDatas", root, bind(Kart.requestKartmapData, self))
 end
 
+function Kart:getRandomMap()
+	return self.m_MapIndex[math.random(1, #self.m_MapIndex)]
+end
+
+function Kart:loadMap(mapFileName)
+	if not self.m_Maps[mapFileName] then return end
+
+	self.m_Map = self.m_Maps[mapFileName]
+	self.m_Map:create()
+
+	self.m_Toptimes = Toptimes:new(mapFileName)
+
+	local startMarker = self.m_Map:getElementsByType("startmarker")[1]
+	local infoPed = self.m_Map:getElementsByType("infoPed")[1]
+	self.m_KartMarker = createMarker(startMarker.x, startMarker.y, startMarker.z, "cylinder", 1, 255, 125, 0, 125)
+	self.m_Ped = createPed(infoPed.model, infoPed.x, infoPed.y, infoPed.z, infoPed.rz)
+end
+
+---
+-- todo
+---
 function Kart:getStartFinishMarker()
 	local spawnpoint = Vector3(self.m_Spawnpoint.x, self.m_Spawnpoint.y, self.m_Spawnpoint.z)
 
@@ -58,10 +103,6 @@ function Kart:getStartFinishMarker()
 	table.remove(self.m_Markers, markerToSpawnpoint[1].ID)
 
 	return markerToSpawnpoint[1].marker
-end
-
-function Kart:getRandomMap()
-	return Kart.Maps[math.random(1, #Kart.Maps)]
 end
 
 function Kart:getRandomSpawnpoint()

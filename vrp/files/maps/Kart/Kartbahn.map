@@ -1,6 +1,4 @@
 <map edf:definitions="editor_main">
-	<info Mapname="Kartmap" Author="eXo Team" ></info>
-
     <removeWorldObject id="removeWorldObject (trailer5_01) (1)" radius="6.1156545" interior="0" model="3171" lodModel="3344" posX="1299.7109" posY="138.73438" posZ="19.34375" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <removeWorldObject id="removeWorldObject (trailer5_01) (1)" radius="100" interior="0" model="13441" lodModel="13441" posX="1299.7109" posY="138.73438" posZ="19.34375" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <object id="object (sub_roadleft) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1316.6" posY="123.8" posZ="21.1" rotX="0" rotY="0" rotZ="66"></object>
@@ -249,6 +247,6 @@
 	<marker id="marker (cylinder) (11)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1309.7" posY="122.1" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
 
 	<spawnpoint id="spawnpoint (Kart) (1)" vehicle="571" alpha="255" interior="0" posX="1310.445" posY="123.184" posZ="20.518" rotX="0" rotY="0" rotZ="155.144"></spawnpoint>
-
-	<ped id="ped (2)" dimension="0" model="64" interior="0" rotZ="147.252" alpha="255" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0"></ped>
+	<startmarker id="startmarker (1)" posX="1311.1" posY="141.6" posZ="19.6" rotX="0" rotY="0" rotZ="0"></startmarker>
+	<info id="info (1)" Author="Stumpy, Clausus, xXKing" Mapname="Kartmap" model="64" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0" rotZ="147.252"></info>
 </map>
