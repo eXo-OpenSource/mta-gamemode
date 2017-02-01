@@ -31,7 +31,7 @@ ANIMATIONS = {
 	["Fuck you"] = 				{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "fucku", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Po klatschen"] =			{["group"] = "Sonstiges", ["block"] = "sweet", ["animation"] = "sweet_ass_slap", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Bitch Slap"] =			{["group"] = "Sonstiges", ["block"] = "misc", ["animation"] = "bitchslap", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["Crack"] =					{["group"] = "Sonstiges", ["block"] = "crack", ["animation"] = "crckdeth2 ", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+--	["Crack"] =					{["group"] = "Sonstiges", ["block"] = "crack", ["animation"] = "crckdeth2 ", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = false},
 	["Überreichen"] =			{["group"] = "Sonstiges", ["block"] = "dealer", ["animation"] = "dealer_deal", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Bezahlen"] =				{["group"] = "Sonstiges", ["block"] = "dealer", ["animation"] = "drugs_buy", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Geld abheben"] =			{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "atm", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},

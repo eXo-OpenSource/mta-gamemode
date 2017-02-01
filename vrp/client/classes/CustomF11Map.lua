@@ -40,7 +40,6 @@ function CustomF11Map:toggle()
 	self.m_Visible = not self.m_Visible
 
 	if self.m_Visible then
-		self:toggleMapKeys(false)
 		addEventHandler("onClientRender", root, self.m_RenderFunc)
 	else
 		removeEventHandler("onClientRender", root, self.m_RenderFunc)
