@@ -101,7 +101,7 @@ function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(),faction.m_Skins,faction.m_RankNames,faction.m_RankLoans,faction.m_RankSkins,faction.m_ValidWeapons,faction.m_RankWeapons)
+		client:triggerEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons)
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end

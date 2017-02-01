@@ -59,49 +59,38 @@ function SelfGUI:constructor()
 	-- COMPANY
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.23, self.m_Width*0.25, self.m_Height*0.06, _"Unternehmen:", tabGeneral)
 	self.m_CompanyNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
-	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.125, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
+	GUILabel:new(self.m_Width*0.05, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "Rang:", tabGeneral)
+	self.m_CompanyRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.29, self.m_Width*0.4, self.m_Height*0.06, "-", tabGeneral)
+	self.m_CompanyEditLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.23, self.m_Width*0.135, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_CompanyEditLabel.onHover = function () self.m_CompanyEditLabel:setColor(Color.White) end
 	self.m_CompanyEditLabel.onUnhover = function () self.m_CompanyEditLabel:setColor(Color.LightBlue) end
 	self.m_CompanyEditLabel.onLeftClick = bind(self.CompanyMenuButton_Click, self)
-	--self.m_CompanyInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.29, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
-	--self.m_CompanyInvationLabel:setVisible(false)
-	--self.m_CompanyInvitationsAcceptButton = GUIButton:new(self.m_Width*0.8, self.m_Height*0.29, self.m_Width*0.08, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
-	--self.m_CompanyInvitationsAcceptButton:setVisible(false)
-	--self.m_CompanyInvitationsDeclineButton = GUIButton:new(self.m_Width*0.9, self.m_Height*0.29, self.m_Width*0.08, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
-	--self.m_CompanyInvitationsDeclineButton:setVisible(false)
-	--self.m_CompanyInvitationsAcceptButton.onLeftClick = bind(self.CompanyInvitationsAcceptButton_Click, self)
-	--self.m_CompanyInvitationsDeclineButton.onLeftClick = bind(self.CompanyInvitationsDeclineButton_Click, self)
-
 	addRemoteEvents{"companyRetrieveInfo", "companyInvitationRetrieve"}
 	addEventHandler("companyRetrieveInfo", root, bind(self.Event_companyRetrieveInfo, self))
 	addEventHandler("companyInvitationRetrieve", root, bind(self.Event_CompanyInvitationRetrieve, self))
 
 	-- FACTION
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.39, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
-	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.39, self.m_Width*0.64, self.m_Height*0.06, "", tabGeneral)
-	self.m_FactionMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.39, self.m_Width*0.4, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.37, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Fraktion:", tabGeneral)
+	self.m_FactionNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.37, self.m_Width*0.64, self.m_Height*0.06, "", tabGeneral)
+	GUILabel:new(self.m_Width*0.05, self.m_Height*0.43, self.m_Width*0.4, self.m_Height*0.06, "Rang:", tabGeneral)
+	self.m_FactionRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.43, self.m_Width*0.4, self.m_Height*0.06, "-", tabGeneral)
+	self.m_FactionMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.37, self.m_Width*0.135, self.m_Height*0.06, _"(anzeigen)", tabGeneral):setColor(Color.LightBlue)
 	self.m_FactionMenuButton.onHover = function () self.m_FactionMenuButton:setColor(Color.White) end
 	self.m_FactionMenuButton.onUnhover = function () self.m_FactionMenuButton:setColor(Color.LightBlue) end
 
 	self.m_FactionMenuButton:setVisible(false)
 	self.m_FactionMenuButton.onLeftClick = bind(self.FactionMenuButton_Click, self)
-	--self.m_FactionInvationLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
-	--self.m_FactionInvationLabel:setVisible(false)
-	--self.m_FactionInvitationsAcceptButton = GUIButton:new(self.m_Width*0.8, self.m_Height*0.45, self.m_Width*0.08, self.m_Height*0.06, "✓", tabGeneral):setBackgroundColor(Color.Green)
-	--self.m_FactionInvitationsAcceptButton:setVisible(false)
-	--self.m_FactionInvitationsAcceptButton.onLeftClick = bind(self.FactionInvitationsAcceptButton_Click, self)
-	--self.m_FactionInvitationsDeclineButton = GUIButton:new(self.m_Width*0.9, self.m_Height*0.45, self.m_Width*0.08, self.m_Height*0.06, "✕", tabGeneral):setBackgroundColor(Color.Red)
-	--self.m_FactionInvitationsDeclineButton:setVisible(false)
-	--self.m_FactionInvitationsDeclineButton.onLeftClick = bind(self.FactionInvitationsDeclineButton_Click, self)
 
 	addRemoteEvents{"factionRetrieveInfo", "factionInvitationRetrieve"}
 	addEventHandler("factionRetrieveInfo", root, bind(self.Event_factionRetrieveInfo, self))
 	addEventHandler("factionInvitationRetrieve", root, bind(self.Event_factionInvitationRetrieve, self))
 
 	-- GROUP
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.25, self.m_Height*0.06, _"Firma / Gang:", tabGeneral)
-	self.m_GroupNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.54, self.m_Width*0.35, self.m_Height*0.06, "", tabGeneral)
-	self.m_GroupMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.54, self.m_Width*0.135, self.m_Height*0.06, _"(verwalten)", tabGeneral):setColor(Color.LightBlue)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.50, self.m_Width*0.25, self.m_Height*0.06, _"Firma / Gang:", tabGeneral)
+	self.m_GroupNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.50, self.m_Width*0.35, self.m_Height*0.06, "", tabGeneral)
+	GUILabel:new(self.m_Width*0.05, self.m_Height*0.56, self.m_Width*0.4, self.m_Height*0.06, "Rang:", tabGeneral)
+	self.m_GroupRankLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.56, self.m_Width*0.4, self.m_Height*0.06, "-", tabGeneral)
+	self.m_GroupMenuButton = GUILabel:new(self.m_Width*0.3, self.m_Height*0.50, self.m_Width*0.135, self.m_Height*0.06, _"(verwalten)", tabGeneral):setColor(Color.LightBlue)
 	self.m_GroupMenuButton.onHover = function () self.m_GroupMenuButton:setColor(Color.White) end
 	self.m_GroupMenuButton.onUnhover = function () self.m_GroupMenuButton:setColor(Color.LightBlue) end
 	self.m_GroupMenuButton.onLeftClick = bind(self.GroupMenuButton_Click, self)
@@ -585,13 +574,20 @@ function SelfGUI:loadStatistics()
 	end
 end
 
-function SelfGUI:Event_companyRetrieveInfo(id, name)
+function SelfGUI:Event_companyRetrieveInfo(id, name, rank, __, __, __, rankNames)
 	self:adjustGeneralTab(name)
 
 	if name then
 		self.m_CompanyNameLabel:setText(name)
+		self.m_CompanyRankLabel:setText(rankNames[rank])
+
+		if rank >= 5 then
+			self.m_CompanyEditLabel:setText(_"(verwalten)")
+		else
+			self.m_CompanyEditLabel:setText(_"(anzeigen)")
+		end
 		local x, y = self.m_CompanyNameLabel:getPosition()
-		self.m_CompanyEditLabel:setPosition(x + dxGetTextWidth(name, self.m_CompanyNameLabel:getFontSize(), self.m_CompanyNameLabel:getFont()) + 10, y)
+		self.m_CompanyEditLabel:setPosition(x + dxGetTextWidth(self.m_CompanyNameLabel:getText(), self.m_CompanyNameLabel:getFontSize(), self.m_CompanyNameLabel:getFont()) + 10, y)
 	else
 		self.m_CompanyNameLabel:setText("-")
 	end
@@ -650,11 +646,11 @@ function SelfGUI:ShaderButton_Click()
 	ShaderPanel:getSingleton():open()
 end
 
-function SelfGUI:Event_factionRetrieveInfo(id, name, rank)
+function SelfGUI:Event_factionRetrieveInfo(id, name, rank, __, __, __, rankNames)
 	if rank then
 		local faction = FactionManager:getSingleton():getFromId(id)
-		self.m_FactionNameLabel:setText(_("%s - Rang: %d", faction:getShortName(), rank))
-		--self.m_FactionInvationLabel:setVisible(false)
+		self.m_FactionNameLabel:setText(_("%s", faction:getName()))
+		self.m_FactionRankLabel:setText(_("%s", rankNames[rank]))
 		self.m_FactionMenuButton:setVisible(true)
 		self.m_InvationFactionId = 0
 
@@ -726,11 +722,18 @@ end
 function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 	local x, y = self.m_GroupNameLabel:getPosition()
 	if rank and rank > 0 then
-		self.m_GroupNameLabel:setText(_("%s - Rang: %s", name, rankNames[tostring(rank)]))
+		self.m_GroupNameLabel:setText(name)
+		self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
 		self.m_GroupMenuButton:setVisible(true)
 		self.m_GroupInvitationsLabel:setVisible(false)
 		self.m_HasGroupInvation = false
-		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("%s - Rang: %s", name, rankNames[tostring(rank)]), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
+
+		if rank >= 5 then
+			self.m_GroupMenuButton:setText(_"(verwalten)")
+		else
+			self.m_GroupMenuButton:setText(_"(anzeigen)")
+		end
+		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(name, self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
 	else
 		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
 		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
