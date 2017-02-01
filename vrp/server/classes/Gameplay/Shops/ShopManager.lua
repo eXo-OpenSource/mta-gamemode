@@ -68,7 +68,7 @@ function ShopManager:loadShops()
 
 		local instance = SHOP_TYPES[row.Type]["Class"]:new(row.Id, row.Name, Vector3(row.PosX, row.PosY, row.PosZ), row.Rot, SHOP_TYPES[row.Type], row.Dimension, row.RobAble, row.Money, row.LastRob, row.Owner, row.Price, row.OwnerType)
 		ShopManager.Map[row.Id] = instance
-		if row.Blip then
+		if row.Blip and row.Blip ~= "" then
 			instance:addBlip(row.Blip)
 		end
 	end
