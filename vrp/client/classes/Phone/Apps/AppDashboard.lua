@@ -46,18 +46,21 @@ function AppDashboard:refreshNotifications()
 	self.m_TabInvitation.m_DashArea:clearChildren()
 
 	for type, notifications in pairs(self.m_Notifications) do
-		for i, data in pairs(notifications) do
-			local parent
-			if type == NOTIFICATION_TYPE_INVATION then
-				parent = self.m_TabInvitation.m_DashArea
-			elseif type == NOTIFICATION_TYPE_GAME then
-				parent = self.m_TabGameInvitation.m_DashArea
-			end
+		local parent = false
+		if type == NOTIFICATION_TYPE_INVATION then
+			parent = self.m_TabInvitation.m_DashArea
+		elseif type == NOTIFICATION_TYPE_GAME then
+			parent = self.m_TabGameInvitation.m_DashArea
+		end
 
-			parent:resize(258, 0 + i * (ITEM_HEIGHT + (i > 1 and 2 or 0)))
-			local dashItem = DashboardNotification:new(i, 0, i * (ITEM_HEIGHT + (i > 1 and 2 or 0)) - ITEM_HEIGHT, 260, ITEM_HEIGHT, data.title, data.text, parent, self)
-			dashItem:setOnAcceptHandler(data.acceptHandler)
-			dashItem:setOnDeclineHandler(data.declineHandler)
+		if parent then
+			for i, data in pairs(notifications) do
+				parent:resize(258, 0 + i * (ITEM_HEIGHT + (i > 1 and 2 or 0)))
+				local dashItem = DashboardNotification:new(i, 0, i * (ITEM_HEIGHT + (i > 1 and 2 or 0)) - ITEM_HEIGHT, 260, ITEM_HEIGHT, data.title, data.text, parent, self)
+				dashItem:setType(data.type)
+				dashItem:setOnAcceptHandler(data.acceptHandler)
+				dashItem:setOnDeclineHandler(data.declineHandler)
+			end
 		end
 	end
 end
@@ -95,7 +98,7 @@ function DashboardNotification:setOnAcceptHandler(handler)
 		end
 
 		-- remove from notifications list
-		table.remove(self.m_App.m_Notifications, self.m_Id)
+		table.remove(self.m_App.m_Notifications[self.m_Type], self.m_Id)
 		if self.m_App:isOpen() then
 			self.m_App:refreshNotifications()
 		end
@@ -113,7 +116,7 @@ function DashboardNotification:setOnDeclineHandler(handler)
 		end
 
 		-- remove from notifications list
-		table.remove(self.m_App.m_Notifications, self.m_Id)
+		table.remove(self.m_App.m_Notifications[self.m_Type], self.m_Id)
 		if self.m_App:isOpen() then
 			self.m_App:refreshNotifications()
 		end
@@ -121,6 +124,10 @@ function DashboardNotification:setOnDeclineHandler(handler)
 		-- delete this element
 		delete(self)
 	end
+end
+
+function DashboardNotification:setType(type)
+	self.m_Type = type
 end
 
 addEventHandler("onAppDashboardGameInvitation", root,
