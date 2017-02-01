@@ -49,14 +49,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 
     addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
     addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
-    addEventHandler("onVehicleExplode",self,
-		function()
-			setTimer(function(veh)
-				veh:setHealth(1000)
-				veh:respawn(true)
-			end, 10000, 1, source)
-
-		end)
+    addEventHandler("onVehicleExplode",self,function() source:respawn(true) end)
 
 	if self.m_Faction.m_Vehicles then
 		table.insert(self.m_Faction.m_Vehicles, self)

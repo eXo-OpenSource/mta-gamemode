@@ -441,7 +441,6 @@ function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, specia
 	self:setCustomHorn(horn or 0)
 end
 
-
 function Vehicle:setTexture(texturePath)
   self.m_Texture = ""
   if fileExists(texturePath) then

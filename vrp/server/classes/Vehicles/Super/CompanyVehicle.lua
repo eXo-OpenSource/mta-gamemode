@@ -79,7 +79,7 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 
 	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
 	addEventHandler("onVehicleExit",self, bind(self.onExit, self))
-    addEventHandler("onVehicleExplode",self, function() source:respawn() end)
+    addEventHandler("onVehicleExplode",self, function() source:respawn(true) end)
 	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
 	addEventHandler("onTrailerAttach", self, bind(self.onAttachTrailer, self))
 end

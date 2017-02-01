@@ -64,10 +64,7 @@ function GroupVehicle:constructor(Id, Group, color, color2, health, positionType
 	table.insert(self.m_Group.m_Vehicles, self)
   end
 
-	addEventHandler("onVehicleExplode",self,
-	function()
-		source:respawn()
-	end)
+	addEventHandler("onVehicleExplode", self, function() source:respawn(true) end)
 
 	self:setHealth(health or 1000)
 	self:setFuel(fuel or 100)

@@ -306,6 +306,14 @@ function VehicleManager:sendTexturesToClient(client)
 			end
 		end
 	end
+
+	for groupid, vehicles in pairs(self.m_GroupVehicles) do
+		for i, v in pairs(vehicles) do
+			if v.m_Texture and v.m_Texture ~= "0" then
+				triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
+			end
+		end
+	end
 end
 
 function VehicleManager:removeUnusedVehicles()
