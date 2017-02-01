@@ -1417,6 +1417,7 @@
 	<vrpfile src="files/models/kartpark.txd" />
 	<vrpfile src="files/models/kartpark.dff" />
 	<vrpfile src="files/models/kartpark.col" />
+	<vrpfile src="files/models/piss.dff" />
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>

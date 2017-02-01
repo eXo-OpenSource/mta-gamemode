@@ -1,3 +1,5 @@
+
+
 ANIMATION_GROUPS = {"Standard", "Tänze", "Sonstiges"}
 
 ANIMATIONS = {
@@ -22,8 +24,21 @@ ANIMATIONS = {
 	["Taichi"] = 				{["group"] = "Tänze", ["block"] = "park", ["animation"] = "Tai_Chi_Loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Fuck you"] = 				{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "fucku", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Po klatschen"] =			{["group"] = "Sonstiges", ["block"] = "sweet", ["animation"] = "sweet_ass_slap", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["Pinkeln"] =				{["group"] = "Sonstiges", ["block"] = "PAULNMAC", ["animation"] = "Piss_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Pinkeln"] =				{["group"] = "Sonstiges", ["block"] = "PAULNMAC", ["animation"] = "Piss_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true, ["object"] = 1904},
 	["Wichsen"] =				{["group"] = "Sonstiges", ["block"] = "PAULNMAC", ["animation"] = "wank_loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 	["Sex oben"] =				{["group"] = "Sonstiges", ["block"] = "sex", ["animation"] = "sex_1_cum_p", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
-	["Sex unten"] =				{["group"] = "Sonstiges", ["block"] = "sex", ["animation"] = "sex_1_cum_w", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true}
+	["Sex unten"] =				{["group"] = "Sonstiges", ["block"] = "sex", ["animation"] = "sex_1_cum_w", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Bombe plazieren"] =		{["group"] = "Sonstiges", ["block"] = "bomber", ["animation"] = "bom_plant", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Bitch Slap"] =			{["group"] = "Sonstiges", ["block"] = "misc", ["animation"] = "bitchslap", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Crack"] =					{["group"] = "Sonstiges", ["block"] = "crack", ["animation"] = "crckdeth2 ", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Überreichen"] =			{["group"] = "Sonstiges", ["block"] = "dealer", ["animation"] = "dealer_deal", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Bezahlen"] =				{["group"] = "Sonstiges", ["block"] = "dealer", ["animation"] = "drugs_buy", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Waffe beidhändig"] =		{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "arrestgun", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Geld abheben"] =			{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "atm", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Kaugummi"] =				{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "gum_eat", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Links/Rechts schauen"] =	{["group"] = "Sonstiges", ["block"] = "ped", ["animation"] = "roadcross", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Strecken"] =				{["group"] = "Sonstiges", ["block"] = "playidles", ["animation"] = "stretch", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Handstand"] =				{["group"] = "Sonstiges", ["block"] = "dam_jump", ["animation"] = "DAM_Dive_Loop", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
+	["Kotzen"] =				{["group"] = "Sonstiges", ["block"] = "food", ["animation"] = "EAT_Vomit_P", ["loop"] = true, ["interruptable"] = false, ["freezeLastFrame"] = true},
 }
+

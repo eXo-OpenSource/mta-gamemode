@@ -510,6 +510,14 @@ function PlayerManager:Event_startAnimation(animation)
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
 		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], true, ani["interruptable"], ani["freezeLastFrame"])
+		if client.animationObject and isElement(client.animationObject) then client.animationObject:destroy() end
+		if ani.object then
+			client.animationObject = createObject(ani.object, 0, 0, 0)
+			client.animationObject:setInterior(self:getInterior())
+			client.animationObject:setDimension(self:getDimension())
+			client.animationObject:attach(self)
+		end
+
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
 	else
 		client:sendError("Internal Error! Animation nicht gefunden!")
@@ -519,7 +527,7 @@ end
 function PlayerManager:stopAnimation(player)
 	player:setAnimation(false)
 	unbindKey(player, "space", "down", self.m_AnimationStopFunc)
-
+	if client.animationObject and isElement(client.animationObject) then client.animationObject:destroy() end
 	-- Tell the client
 	player:triggerEvent("onClientAnimationStop")
 end
