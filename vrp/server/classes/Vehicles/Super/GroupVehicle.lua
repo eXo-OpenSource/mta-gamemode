@@ -15,6 +15,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local rotation = vehicle:getRotation()
 			local model = vehicle:getModel()
 			local health = vehicle:getHealth()
+			local milage = vehicle:getMileage()
 			local r, g, b = getVehicleColor(vehicle, true)
 			local tunings = false
 			if Group:canVehiclesBeModified() then
@@ -25,6 +26,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z)
 				vehicle:setHealth(health)
 				vehicle:setColor(r, g, b)
+				vehicle:setMileage(milage)
 				if Group:canVehiclesBeModified() then
 					for k, v in pairs(tunings or {}) do
 						addVehicleUpgrade(vehicle, v)

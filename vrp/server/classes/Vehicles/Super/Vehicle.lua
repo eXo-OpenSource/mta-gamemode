@@ -409,14 +409,14 @@ end
 function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
-	if color2 then
-		local a2, r2, g2, b2 = getBytesInInt32(color2)
-		setVehicleColor(self, r, g, b, r2, g2, b2)
-	else
-		setVehicleColor(self, r, g, b)
+		if color2 then
+			local a2, r2, g2, b2 = getBytesInInt32(color2)
+			setVehicleColor(self, r, g, b, r2, g2, b2)
+		else
+			setVehicleColor(self, r, g, b)
+		end
 	end
 
-	end
 	if lightColor then
 		local a, r, g, b = getBytesInInt32(lightColor)
 		setVehicleHeadLightColor(self, r, g, b)
