@@ -513,9 +513,9 @@ function PlayerManager:Event_startAnimation(animation)
 		if client.animationObject and isElement(client.animationObject) then client.animationObject:destroy() end
 		if ani.object then
 			client.animationObject = createObject(ani.object, 0, 0, 0)
-			client.animationObject:setInterior(self:getInterior())
-			client.animationObject:setDimension(self:getDimension())
-			client.animationObject:attach(self)
+			client.animationObject:setInterior(client:getInterior())
+			client.animationObject:setDimension(client:getDimension())
+			client.animationObject:attach(client)
 		end
 
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
@@ -527,7 +527,7 @@ end
 function PlayerManager:stopAnimation(player)
 	player:setAnimation(false)
 	unbindKey(player, "space", "down", self.m_AnimationStopFunc)
-	if client.animationObject and isElement(client.animationObject) then client.animationObject:destroy() end
+	if player.animationObject and isElement(player.animationObject) then player.animationObject:destroy() end
 	-- Tell the client
 	player:triggerEvent("onClientAnimationStop")
 end
