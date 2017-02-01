@@ -53,7 +53,7 @@ local createFuncs = {
 	end;
 	spawnpoint = function(info) return info end;
 	startmarker = function(info) return info end;
-	infoPed = function(info) return info end
+	infoPed = function(info) return info end;
 	racepickup = function(info)
 		local model, func
 		if info.pickuptype == "nitro" then
