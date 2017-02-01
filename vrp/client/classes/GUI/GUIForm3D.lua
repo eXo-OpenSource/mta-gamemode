@@ -72,13 +72,15 @@ function GUIForm3D:getSurface()
 end
 
 function GUIForm3D.load()
-	for id, form in pairs(GUIForm3D.Map) do
-		if form and form.m_StreamArea then
-			if localPlayer:isWithinColShape(form.m_StreamArea) then
-				form:StreamArea_Hit(localPlayer, true)
+	setTimer(function()
+		for id, form in pairs(GUIForm3D.Map) do
+			if form and form.m_StreamArea then
+				if localPlayer:isWithinColShape(form.m_StreamArea) then
+					form:StreamArea_Hit(localPlayer, true)
+				end
 			end
 		end
-	end
+	end, 3000, 1)
 end
 
 GUIForm3D.onStreamIn = pure_virtual
