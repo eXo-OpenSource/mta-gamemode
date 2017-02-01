@@ -1,5 +1,5 @@
 <map edf:definitions="editor_main">
-	<info name="Kartmap" author="eXo Team" ></info>
+	<info Mapname="Kartmap" Author="eXo Team" ></info>
 
     <removeWorldObject id="removeWorldObject (trailer5_01) (1)" radius="6.1156545" interior="0" model="3171" lodModel="3344" posX="1299.7109" posY="138.73438" posZ="19.34375" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <removeWorldObject id="removeWorldObject (trailer5_01) (1)" radius="100" interior="0" model="13441" lodModel="13441" posX="1299.7109" posY="138.73438" posZ="19.34375" rotX="0" rotY="0" rotZ="0"></removeWorldObject>

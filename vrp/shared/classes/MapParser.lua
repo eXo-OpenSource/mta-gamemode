@@ -68,8 +68,8 @@ function MapParser:constructor(path)
 
 	local infoNode = xmlRoot:findChild("info", 0)
 	if infoNode then
-		self.m_Mapname = infoNode:getAttribute("name")
-		self.m_Author = infoNode:getAttribute("author")
+		self.m_Mapname = infoNode:getAttribute("Mapname")
+		self.m_Author = infoNode:getAttribute("Author")
 	end
 
 	for k, node in pairs(xmlNodeGetChildren(xmlRoot)) do
@@ -137,4 +137,8 @@ end
 
 function MapParser:getMapName()
 	return self.m_Mapname
+end
+
+function MapParser:getMapAuthor()
+	return self.m_Author
 end

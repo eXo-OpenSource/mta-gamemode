@@ -6,11 +6,14 @@
 -- *
 -- ****************************************************************************
 Kart = inherit(Singleton)
-addRemoteEvents{"startKartTimeRace", "requestKartToptimes"}
+addRemoteEvents{"startKartTimeRace", "requestKartDatas"}
 
 Kart.Maps = {
 	"files/maps/Kart/Kartbahn.map"
 }
+
+local lapPrice = 50
+local lapPackDiscount = 4
 
 function Kart:constructor()
 	self.m_KartMarker = createMarker(1311.1, 141.6, 19.8, "cylinder", 1, 255, 125, 0, 125)
@@ -39,7 +42,7 @@ function Kart:constructor()
 	addEventHandler("onMarkerHit", self.m_KartMarker, self.m_onMarkerHit)
 
 	addEventHandler("startKartTimeRace", root, bind(Kart.startTimeRace, self))
-	addEventHandler("requestKartToptimes", root, bind(Kart.requestToptimes, self))
+	addEventHandler("requestKartDatas", root, bind(Kart.requestKartmapData, self))
 end
 
 function Kart:getStartFinishMarker()
@@ -66,8 +69,8 @@ function Kart:getRandomSpawnpoint()
 	return spawnpoints[math.random(1, #spawnpoints)]
 end
 
-function Kart:requestToptimes()
-	client:triggerEvent("KartReceiveToptimes", self.m_Map:getMapName(), self.m_Toptimes.m_Toptimes)
+function Kart:requestKartmapData()
+	client:triggerEvent("receiveKartDatas", self.m_Map:getMapName(), self.m_Map:getMapAuthor(), self.m_Toptimes.m_Toptimes)
 end
 
 function Kart:markerHit(hitElement, matchingDimension)
@@ -80,7 +83,7 @@ function Kart:markerHit(hitElement, matchingDimension)
 
 		-- dev  --> create a gui like highscore gui to show toptimes and start time race
 		--hitElement:triggerEvent("questionBox", _("Möchtest du ein Zeitrennen starten?", hitElement), "startKartTimeRace")
-		hitElement:triggerEvent("showKartGUI")
+		hitElement:triggerEvent("showKartGUI", true)
 		return
 	end
 
@@ -93,6 +96,9 @@ function Kart:markerHit(hitElement, matchingDimension)
 					self.m_Players[hitElement].startTick = getTickCount()
 					self.m_Players[hitElement].state = "Running"
 					outputChatBox("GO GO GO")
+
+					local toptime = self.m_Toptimes:getToptimeFromPlayer(hitElement:getId())
+					hitElement:triggerEvent("HUDRaceUpdateTimes", true, toptime.time)
 				end
 			elseif self.m_Players[hitElement].state == "Running" then
 				if #self.m_Players[hitElement].markers == #self.m_Markers then
@@ -106,8 +112,8 @@ function Kart:markerHit(hitElement, matchingDimension)
 					self.m_Players[hitElement].markers = {}
 					self.m_Players[hitElement].laps = self.m_Players[hitElement].laps + 1
 
-					local _, position = self.m_Toptimes:getToptimeFromPlayer(hitElement:getId())
-					outputChatBox(("Current: %s // Delta: %.3f // Runde: %s // Toptime Position: %s"):format(lapTime, (lapTime - oldToptime)/1000, self.m_Players[hitElement].laps, position))
+					local toptime = self.m_Toptimes:getToptimeFromPlayer(hitElement:getId())
+					hitElement:triggerEvent("HUDRaceUpdateTimes", true, toptime.time)
 				else
 					outputChatBox("invalid markers count :/ Cant save the time")
 					self.m_Players[hitElement].startTick = getTickCount()
@@ -134,10 +140,25 @@ function Kart:markerHit(hitElement, matchingDimension)
 	end
 end
 
-function Kart:startTimeRace()
+function Kart:startTimeRace(laps, index)
+	if not laps or not index then return end
+
 	if isElement(client.kartVehicle) then
 		destroyElement(client.kartVehicle)
 	end
+
+	local selectedLaps = laps
+	local discount = lapPackDiscount*(index-1)
+	local price = selectedLaps*lapPrice
+	price = price - (price/100*discount)
+
+	if client:getMoney() < price then
+		client:sendError(_("Du hast nicht genügend Geld!", client))
+		return
+	end
+	client:takeMoney(price, ("Kart Zeitrennen (%s Runden)"):format(laps))
+
+	client:triggerEvent("showKartGUI", false)
 
 	local vehicle = TemporaryVehicle.create(self.m_Spawnpoint.model, self.m_Spawnpoint.x, self.m_Spawnpoint.y, self.m_Spawnpoint.z, self.m_Spawnpoint.rz)
 	client:warpIntoVehicle(vehicle)
@@ -155,13 +176,22 @@ function Kart:startTimeRace()
 	setPedStat(client, 229, 1000)
 	setPedStat(client, 230, 1000)
 
-	self.m_Players[client] = {vehicle = vehicle, laps = 1, state = "Flying", markers = {}, startTick = getTickCount()}
+	self.m_Players[client] = {vehicle = vehicle, laps = 1, state = "Flying", markers = {}, startTick = getTickCount() }
+	client:triggerEvent("showRaceHUD", true)
+
+	local toptime = self.m_Toptimes:getToptimeFromPlayer(client:getId())
+	client:triggerEvent("HUDRaceUpdateTimes", true, toptime.time)
+	client:triggerEvent("HUDRaceUpdateTimes", false, self.m_Toptimes.m_Toptimes[1].time)
 end
 
 function Kart:onKartDestroy()
 	if self.m_Players[source.timeRacePlayer] then
 		outputChatBox("kill")
 		self.m_Players[source.timeRacePlayer] = nil
+
+		if source.timeRacePlayer then
+			source.timeRacePlayer:triggerEvent("showRaceHUD", false)
+		end
 	end
 
 	removeEventHandler("onElementDestroy", source, self.m_OnKartDestroy)
