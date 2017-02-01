@@ -28,7 +28,7 @@ local readFuncs = {
 		return {type="startmarker", x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ)}
 	end;
 	info = function(attributes)
-		return {type="infoPed", , model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
+		return {type="infoPed", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
 			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ)}
 	end;
 }
