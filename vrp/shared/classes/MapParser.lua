@@ -21,6 +21,16 @@ local readFuncs = {
 		return {type = "racepickup", pickuptype = attr.type, x = tonumber(attr.posX), y = tonumber(attr.posY), z = tonumber(attr.posZ),
 			rx = tonumber(attr.rotX), ry = tonumber(attr.rotY), rz = tonumber(attr.rotZ), model = tonumber(attr.vehicle)}
 	end;
+	checkpoint = function(attributes)
+		return {type = "checkpoint", x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ), size = tonumber(attributes.size)}
+	end;
+	startmarker = function(attributes)
+		return {type="startmarker", x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ)}
+	end;
+	info = function(attributes)
+		return {type="infoPed", , model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
+			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ)}
+	end;
 }
 local createFuncs = {
 	object = function(info)
@@ -32,12 +42,18 @@ local createFuncs = {
 		local m = createMarker(info.x, info.y, info.z, info.markertype, info.size, getColorFromString(info.color))
 		return m
 	end;
+	checkpoint = function(info)
+		local m = createMarker(info.x, info.y, info.z, "cylinder", info.size, 0, 0, 0, 0)
+		return m
+	end;
 	removeWorldObject = function(info)
 		removeWorldModel(info.model, info.radius, info.posX, info.posY, info.posZ, info.interior)
 		removeWorldModel(info.lodModel, info.radius, info.posX, info.posY, info.posZ, info.interior)
 		return info
 	end;
 	spawnpoint = function(info) return info end;
+	startmarker = function(info) return info end;
+	infoPed = function(info) return info end
 	racepickup = function(info)
 		local model, func
 		if info.pickuptype == "nitro" then
