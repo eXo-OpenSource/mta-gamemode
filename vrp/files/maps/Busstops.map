@@ -1,39 +1,14 @@
 <map edf:definitions="vrp_editortools">
-    <bus_stop id="bus_stop (1)" markerdistance="4.5" lines="1,2" name="Little Mexico" posX="1733.3" posY="-1725.5" posZ="13.8" rotX="0" rotY="0" rotZ="90"></bus_stop>
-    <bus_stop id="bus_stop (3)" markerdistance="4.5" lines="1" name="City Hall" posX="1478" posY="-1725.4" posZ="13.8" rotX="0" rotY="0" rotZ="89.75"></bus_stop>
-    <bus_stop id="bus_stop (4)" markerdistance="4.5" lines="1" name="Conference Center" posX="1081.7" posY="-1705.3" posZ="13.7" rotX="0" rotY="0" rotZ="91"></bus_stop>
-    <bus_stop id="bus_stop (5)" markerdistance="4.5" lines="1" name="Karsten Station" posX="1052" posY="-1516.3" posZ="13.7" rotX="0" rotY="0" rotZ="344"></bus_stop>
-    <bus_stop id="bus_stop (6)" markerdistance="4.5" lines="1" name="Stage 26" posX="772.79999" posY="-1388.4" posZ="13.8" rotX="0" rotY="0" rotZ="90"></bus_stop>
-    <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" name="Grotti" posX="501.20001" posY="-1313.1" posZ="16" rotX="0" rotY="0" rotZ="39.75"></bus_stop>
-    <bus_stop id="bus_stop (8)" markerdistance="4.5" lines="1" name="Temple" posX="1024.8" posY="-973.09998" posZ="42.6" rotX="0" rotY="0" rotZ="277.75"></bus_stop>
-    <bus_stop id="bus_stop (9)" markerdistance="4.5" lines="1" name="Ammu Nation" posX="1335.9" posY="-1294.6" posZ="13.7" rotX="0" rotY="0" rotZ="180"></bus_stop>
-    <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" name="Verdant Bluffs" posX="1334.2" posY="-1861.5" posZ="13.6" rotX="0" rotY="0" rotZ="247.75"></bus_stop>
-    <bus_stop id="bus_stop (11)" markerdistance="4.5" lines="1" name="Unity Station" posX="1694.8" posY="-1852.4" posZ="13.7" rotX="0" rotY="0" rotZ="345"></bus_stop>
-    <bus_stop id="bus_stop (12)" markerdistance="4.5" lines="2" name="Commerce" posX="1695.7" posY="-1613.1" posZ="13.8" rotX="0" rotY="0" rotZ="0"></bus_stop>
-    <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="2" name="Idlewood" posX="1935.1" posY="-1626.3" posZ="13.7" rotX="0" rotY="0" rotZ="180.75"></bus_stop>
-    <bus_stop id="bus_stop (14)" markerdistance="4.5" lines="2" name="Idlewood Pizza" posX="2060" posY="-1758.7" posZ="13.8" rotX="0" rotY="0" rotZ="272"></bus_stop>
-    <bus_stop id="bus_stop (15)" markerdistance="4.5" lines="2" name="Ganton Masters Clothes" posX="2254.2" posY="-1666.5" posZ="15.7" rotX="0" rotY="0" rotZ="256"></bus_stop>
-    <bus_stop id="bus_stop (16)" markerdistance="4.5" lines="2" name="Grove Street" posX="2476.6001" posY="-1738.6" posZ="13.8" rotX="0" rotY="0" rotZ="269.25"></bus_stop>
-    <bus_stop id="bus_stop (17)" markerdistance="4.5" lines="2" name="Stadion" posX="2670.8" posY="-1877.5" posZ="11.2" rotX="0" rotY="0" rotZ="230.25"></bus_stop>
-    <bus_stop id="bus_stop (18)" markerdistance="4.5" lines="2" name="Playa del Seville" posX="2740.8999" posY="-1987.5" posZ="13.5" rotX="0" rotY="0" rotZ="89.5"></bus_stop>
-    <bus_stop id="bus_stop (19)" markerdistance="4.5" lines="2" name="Willowfield" posX="2390.3999" posY="-1965.9" posZ="13.6" rotX="0" rotY="0" rotZ="89.5"></bus_stop>
-    <bus_stop id="bus_stop (20)" markerdistance="4.5" lines="2" name="Willowfield" posX="2099.8999" posY="-1887.6" posZ="13.7" rotX="0" rotY="0" rotZ="92"></bus_stop>
-    <bus_stop id="bus_stop (21)" markerdistance="4.5" lines="2" name="El Corona" posX="1897.1" posY="-1925.6" posZ="13.7" rotX="0" rotY="0" rotZ="89"></bus_stop>
-    <bus_stop id="bus_stop (23)" markerdistance="4.5" lines="3" name="El Carona" posX="1897.2" posY="-1939.6" posZ="13.6" rotX="0" rotY="0" rotZ="269.5"></bus_stop>
-    <bus_stop id="bus_stop (24)" markerdistance="4.5" lines="3" name="Jonnny is an idiot" posX="1954.8" posY="-2066.7" posZ="13.6" rotX="0" rotY="359" rotZ="179.5"></bus_stop>
-    <bus_stop id="bus_stop (25)" markerdistance="4.5" lines="3" name="Airfield" posX="1983.5" posY="-2174" posZ="14" rotX="0" rotY="0" rotZ="269.25"></bus_stop>
-    <bus_stop id="bus_stop (26)" markerdistance="4.5" lines="3" name="Ocean Docks" posX="2200.8999" posY="-2502.3999" posZ="13.7" rotX="0" rotY="0" rotZ="270.5"></bus_stop>
-    <bus_stop id="bus_stop (27)" markerdistance="4.5" lines="3" name="Ocean Docks" posX="2418.6001" posY="-2670.8999" posZ="13.8" rotX="0" rotY="0" rotZ="270"></bus_stop>
-    <bus_stop id="bus_stop (28)" markerdistance="4.5" lines="3" name="Ocean Docks" posX="2691" posY="-2465.7" posZ="13.8" rotX="0" rotY="0" rotZ="0"></bus_stop>
-    <bus_stop id="bus_stop (29)" markerdistance="4.5" lines="3" name="Willowfield" posX="2220.1001" posY="-1997.5" posZ="13.9" rotX="0" rotY="0" rotZ="0"></bus_stop>
-    <bus_stop id="bus_stop (30)" markerdistance="4.5" lines="3" name="Idlewood Pizza" posX="2059.3999" posY="-1745.5" posZ="13.6" rotX="0" rotY="0" rotZ="90.5"></bus_stop>
-    <bus_stop id="bus_stop (31) Linie 4 Endstation" markerdistance="4.5" lines="3, 4" name="Bus Depot" posX="1814.5" posY="-1817.5" posZ="13.8" rotX="0" rotY="0" rotZ="181.5"></bus_stop>
-    <bus_stop id="bus_stop (32)" markerdistance="5" lines="4" name="Idlewood" posX="1829.5" posY="-1599.6" posZ="13.7" rotX="0" rotY="0" rotZ="358"></bus_stop>
-    <bus_stop id="bus_stop (33)" markerdistance="4.5" lines="4" name="Hospital" posX="1993.5" posY="-1441.7" posZ="13.8" rotX="0" rotY="0" rotZ="0"></bus_stop>
-    <bus_stop id="bus_stop (34)" markerdistance="4.5" lines="4" name="Glen Park" posX="2079" posY="-1110" posZ="24.8" rotX="2.25" rotY="0" rotZ="0"></bus_stop>
-    <bus_stop id="bus_stop (35)" markerdistance="4.5" lines="4" name="East Los Santos" posX="2351.2" posY="-1161.2" posZ="27.5" rotX="0" rotY="0" rotZ="270.75"></bus_stop>
-    <bus_stop id="bus_stop (36)" markerdistance="4.5" lines="4" name="Pig Pen Sex for Cash" posX="2422.7" posY="-1263.5" posZ="24" rotX="0" rotY="0" rotZ="272"></bus_stop>
-    <bus_stop id="bus_stop (37)" markerdistance="4.5" lines="4" name="Black Restaurant North" posX="2424.5" posY="-1501" posZ="24" rotX="0" rotY="0" rotZ="181.75"></bus_stop>
-    <bus_stop id="bus_stop (38)" markerdistance="4.5" lines="4" name="Church of J" posX="2228.7" posY="-1377.6" posZ="24.1" rotX="0" rotY="0" rotZ="88.75"></bus_stop>
-    <bus_stop id="bus_stop (39)" markerdistance="4.5" lines="4" name="Hospital" posX="2010.1" posY="-1454.2" posZ="14.1" rotX="0" rotY="0" rotZ="90.75"></bus_stop>
+    <bus_stop id="bus_stop (1)" markerdistance="4.5" lines="1" name="Alhambra" posX="1828" posY="-1772.5" posZ="14.1" rotX="0" rotY="0" rotZ="0"></bus_stop>
+    <bus_stop id="bus_stop (2)" markerdistance="4.5" lines="1" name="Pershing Square" posX="1526" posY="-1738.8" posZ="14.1" rotX="0" rotY="0" rotZ="270"></bus_stop>
+    <bus_stop id="bus_stop (3)" markerdistance="4.5" lines="1" name="Paintball" posX="1319.8" posY="-1555.9" posZ="14.1" rotX="0" rotY="0" rotZ="350"></bus_stop>
+    <bus_stop id="bus_stop (4)" markerdistance="4.5" lines="1" name="Ammunation" posX="1364.1" posY="-1260.3" posZ="14.1" rotX="0" rotY="0" rotZ="0"></bus_stop>
+    <bus_stop id="bus_stop (6)" markerdistance="4.5" lines="1" name="Burgershot North" posX="1205.1" posY="-929.90002" posZ="43.5" rotX="0" rotY="0" rotZ="98"></bus_stop>
+    <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" name="Tuningshop" posX="956.20001" posY="-1041.7" posZ="30.8" rotX="0" rotY="0" rotZ="179"></bus_stop>
+    <bus_stop id="bus_stop (8)" markerdistance="4.5" lines="1" name="Mech and Tow" posX="936.20001" posY="-1254" posZ="16.9" rotX="0" rotY="0" rotZ="180.25"></bus_stop>
+    <bus_stop id="bus_stop (9)" markerdistance="4.5" lines="1" name="San News" posX="791.09998" posY="-1365" posZ="14.1" rotX="0" rotY="0" rotZ="180.25"></bus_stop>
+    <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" name="Burgershot South" posX="820.79999" posY="-1606.9" posZ="14.1" rotX="0" rotY="0" rotZ="230"></bus_stop>
+    <bus_stop id="bus_stop (11)" markerdistance="4.5" lines="1" name="Einkaufszentrum" posX="1131.4" posY="-1578.1" posZ="14.1" rotX="0" rotY="0" rotZ="270"></bus_stop>
+    <bus_stop id="bus_stop (12)" markerdistance="4.5" lines="1" name="Santa Maria Beach" posX="1169.1" posY="-1821.5" posZ="14.1" rotX="0" rotY="0" rotZ="180"></bus_stop>
+    <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="1" name="Los Santos Bahnhof" posX="1680" posY="-1871.7" posZ="14.1" rotX="0" rotY="0" rotZ="304"></bus_stop>
 </map>
