@@ -43,7 +43,7 @@ local createFuncs = {
 		return m
 	end;
 	checkpoint = function(info)
-		local m = createMarker(info.x, info.y, info.z, "cylinder", info.size, 0, 0, 0, 0)
+		local m = createMarker(info.x, info.y, info.z, "cylinder", info.size, 0, 0, 0, 150)
 		return m
 	end;
 	removeWorldObject = function(info)
@@ -111,6 +111,7 @@ function MapParser:create(dimension)
 	for k, info in pairs(self.m_MapData) do
 		local element = createFuncs[info.type](info)
 		if isElement(element) then
+			element._type = info.type
 			setElementDimension(element, dimension)
 		end
 		table.insert(map, element)
@@ -141,9 +142,8 @@ end
 
 function MapParser:getElementsByType(elementType, mapIndex)
 	local elements = {}
-
 	for k, element in pairs(self.m_Maps[mapIndex or 1]) do
-		if element.type == elementType then
+		if element.type == elementType or (element._type and element._type == elementType) then
 			table.insert(elements, element)
 		end
 	end
