@@ -8,7 +8,7 @@ addEventHandler("onClientElementPropertyChanged", root,
 				
 				if object and object[1] and marker and markerDistance then
 					detachElements(marker)
-					local x, y, z = getPositionFromElementOffset(object[1], -1 * markerDistance, 0, -1)
+					local x, y, z = getPositionFromElementOffset(object[1], -1 * markerDistance, 0, -1.5)
 					setElementData(marker, "position", {x, y, z})
 					exports.edf:edfSetElementPosition(marker, x, y, z)
 					attachElements(marker, object[1], -1 * markerDistance, 0, -1)
