@@ -1,14 +1,14 @@
 <map edf:definitions="vrp_editortools">
-    <bus_stop id="bus_stop (1)" markerdistance="4.5" lines="1" name="Alhambra" posX="1828" posY="-1772.5" posZ="14.1" rotX="0" rotY="0" rotZ="0"></bus_stop>
-    <bus_stop id="bus_stop (2)" markerdistance="4.5" lines="1" name="Pershing Square" posX="1526" posY="-1738.8" posZ="14.1" rotX="0" rotY="0" rotZ="270"></bus_stop>
-    <bus_stop id="bus_stop (3)" markerdistance="4.5" lines="1" name="Paintball" posX="1319.8" posY="-1555.9" posZ="14.1" rotX="0" rotY="0" rotZ="350"></bus_stop>
-    <bus_stop id="bus_stop (4)" markerdistance="4.5" lines="1" name="Ammunation" posX="1364.1" posY="-1260.3" posZ="14.1" rotX="0" rotY="0" rotZ="0"></bus_stop>
-    <bus_stop id="bus_stop (6)" markerdistance="4.5" lines="1" name="Burgershot North" posX="1205.1" posY="-929.90002" posZ="43.5" rotX="0" rotY="0" rotZ="98"></bus_stop>
-    <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" name="Tuningshop" posX="956.20001" posY="-1041.7" posZ="30.8" rotX="0" rotY="0" rotZ="179"></bus_stop>
-    <bus_stop id="bus_stop (8)" markerdistance="4.5" lines="1" name="Mech and Tow" posX="936.20001" posY="-1254" posZ="16.9" rotX="0" rotY="0" rotZ="180.25"></bus_stop>
-    <bus_stop id="bus_stop (9)" markerdistance="4.5" lines="1" name="San News" posX="791.09998" posY="-1365" posZ="14.1" rotX="0" rotY="0" rotZ="180.25"></bus_stop>
-    <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" name="Burgershot South" posX="820.79999" posY="-1606.9" posZ="14.1" rotX="0" rotY="0" rotZ="230"></bus_stop>
-    <bus_stop id="bus_stop (11)" markerdistance="4.5" lines="1" name="Einkaufszentrum" posX="1131.4" posY="-1578.1" posZ="14.1" rotX="0" rotY="0" rotZ="270"></bus_stop>
-    <bus_stop id="bus_stop (12)" markerdistance="4.5" lines="1" name="Santa Maria Beach" posX="1169.1" posY="-1821.5" posZ="14.1" rotX="0" rotY="0" rotZ="180"></bus_stop>
-    <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="1" name="Los Santos Bahnhof" posX="1680" posY="-1871.7" posZ="14.1" rotX="0" rotY="0" rotZ="304"></bus_stop>
+    <bus_stop id="bus_stop (1)" markerdistance="4.5" lines="1" name="Alhambra" posX="1828.2998" posY="-1772.5" posZ="13.8" rotX="0" rotY="0" rotZ="0"></bus_stop>
+    <bus_stop id="bus_stop (2)" markerdistance="4.5" lines="1" name="Pershing Square" posX="1526" posY="-1738.9" posZ="13.8" rotX="0" rotY="0" rotZ="270"></bus_stop>
+    <bus_stop id="bus_stop (3)" markerdistance="4.5" lines="1" name="Paintball" posX="1320" posY="-1555.9" posZ="13.8" rotX="0" rotY="0" rotZ="349.997"></bus_stop>
+    <bus_stop id="bus_stop (4)" markerdistance="4.5" lines="1" name="Ammunation" posX="1364.3" posY="-1260.3" posZ="13.8" rotX="0" rotY="0" rotZ="0"></bus_stop>
+    <bus_stop id="bus_stop (6)" markerdistance="4.5" lines="1" name="Burgershot North" posX="1205.0996" posY="-929.40039" posZ="43.2" rotX="0" rotY="0" rotZ="97.998"></bus_stop>
+    <bus_stop id="bus_stop (7)" markerdistance="4.5" lines="1" name="Tuningshop" posX="956" posY="-1041.7" posZ="30.5" rotX="0" rotY="0" rotZ="178.995"></bus_stop>
+    <bus_stop id="bus_stop (8)" markerdistance="4.5" lines="1" name="Mech &amp; Tow" posX="935.7998" posY="-1253.9004" posZ="16.3" rotX="0" rotY="0" rotZ="180.247"></bus_stop>
+    <bus_stop id="bus_stop (9)" markerdistance="4.5" lines="1" name="San News" posX="790.40039" posY="-1364.9004" posZ="13.8" rotX="0" rotY="0" rotZ="180.247"></bus_stop>
+    <bus_stop id="bus_stop (10)" markerdistance="4.5" lines="1" name="Burgershot South" posX="820.79999" posY="-1606.9" posZ="13.8" rotX="0" rotY="0" rotZ="229.999"></bus_stop>
+    <bus_stop id="bus_stop (11)" markerdistance="4.5" lines="1" name="Einkaufszentrum" posX="1131.4" posY="-1578.9" posZ="13.7" rotX="0" rotY="0" rotZ="270"></bus_stop>
+    <bus_stop id="bus_stop (12)" markerdistance="4.5" lines="1" name="Santa Maria Beach" posX="1168.4" posY="-1821.4" posZ="13.8" rotX="0" rotY="0" rotZ="179.995"></bus_stop>
+    <bus_stop id="bus_stop (13)" markerdistance="4.5" lines="1" name="Los Santos Bahnhof" posX="1680.2998" posY="-1871.9004" posZ="13.8" rotX="0" rotY="0" rotZ="303.997"></bus_stop>
 </map>
