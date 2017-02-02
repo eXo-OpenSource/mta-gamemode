@@ -95,7 +95,7 @@ factionRankNames[2] = {
 factionColors[2] = {["r"] = 0,["g"] = 50,["b"] = 255}
 factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 0,["g1"] = 0,["b1"] = 0}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
-factionWeapons[2] = {[23]=true, [24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
+factionWeapons[2] = {[3]=true, [23]=true, [24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
 factionWTDestination[2] = Vector3(1524.96, -1440.70, 12.3)
 
 -- ID 3 = Army:
