@@ -992,7 +992,7 @@ function FactionState:Event_storageWeapons()
 				if client:getWeapon(i) > 0 then
 					local weaponId = client:getWeapon(i)
 					local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 1
-					local magazines = math.floor(client:getTotalAmmo(i)/clipAmmo)
+					local magazines = math.floor(client:getTotalAmmo(i)/clipAmmo)-1
 
 					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
 					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]
