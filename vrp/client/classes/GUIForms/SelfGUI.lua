@@ -590,6 +590,7 @@ function SelfGUI:Event_companyRetrieveInfo(id, name, rank, __, __, __, rankNames
 		self.m_CompanyEditLabel:setPosition(x + dxGetTextWidth(self.m_CompanyNameLabel:getText(), self.m_CompanyNameLabel:getFontSize(), self.m_CompanyNameLabel:getFont()) + 10, y)
 	else
 		self.m_CompanyNameLabel:setText("-")
+		self.m_CompanyRankLabel:setText("-")
 	end
 end
 
@@ -649,8 +650,8 @@ end
 function SelfGUI:Event_factionRetrieveInfo(id, name, rank, __, __, __, rankNames)
 	if rank then
 		local faction = FactionManager:getSingleton():getFromId(id)
-		self.m_FactionNameLabel:setText(_("%s", faction:getName()))
-		self.m_FactionRankLabel:setText(_("%s", rankNames[rank]))
+		self.m_FactionNameLabel:setText(faction:getName())
+		self.m_FactionRankLabel:setText(rankNames[rank])
 		self.m_FactionMenuButton:setVisible(true)
 		self.m_InvationFactionId = 0
 
@@ -663,14 +664,8 @@ function SelfGUI:Event_factionRetrieveInfo(id, name, rank, __, __, __, rankNames
 		self.m_FactionMenuButton:setPosition(x + dxGetTextWidth(self.m_FactionNameLabel:getText(), self.m_FactionNameLabel:getFontSize(), self.m_FactionNameLabel:getFont()) + 10, y)
 	else
 		self.m_FactionNameLabel:setText(_"- keine Fraktion -")
-		--self.m_FactionInvationLabel:setVisible(true)
+		self.m_FactionRankLabel:setText("-")
 		self.m_FactionMenuButton:setVisible(false)
-
-		--if self.m_InvationFactionId and self.m_InvationFactionId > 0 then
-		--	self.m_FactionInvationLabel:setVisible(true)
-		--	self.m_FactionInvitationsAcceptButton:setVisible(true)
-		--	self.m_FactionInvitationsDeclineButton:setVisible(true)
-		--end
 	end
 end
 
@@ -736,6 +731,7 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(name, self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
 	else
 		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
+		self.m_GroupRankLabel:setText("-")
 		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
 		self.m_GroupInvitationsLabel:setVisible(true)
 
