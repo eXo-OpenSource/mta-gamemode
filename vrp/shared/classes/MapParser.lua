@@ -43,7 +43,7 @@ local createFuncs = {
 		return m
 	end;
 	checkpoint = function(info)
-		local m = createMarker(info.x, info.y, info.z, "cylinder", info.size, 0, 0, 0, 150)
+		local m = createMarker(info.x, info.y, info.z, "cylinder", info.size, 0, 0, 0, 0)
 		return m
 	end;
 	removeWorldObject = function(info)

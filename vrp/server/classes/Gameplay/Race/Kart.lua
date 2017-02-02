@@ -79,11 +79,9 @@ function Kart:loadMap(mapFileName)
 	self.m_StartFinishMarker = self:getStartFinishMarker()
 
 	for _, v in pairs(self.m_Checkpoints) do
-		v:setAlpha(0)
 		addEventHandler("onMarkerHit", v, self.m_onCheckpointHit)
 	end
 
-	self.m_StartFinishMarker:setAlpha(0)
 	addEventHandler("onMarkerHit", 	self.m_StartFinishMarker, self.m_onStartFinishMarkerHit)
 	addEventHandler("onMarkerHit", 	self.m_KartMarker, self.m_onStartMarkerHit)
 end
