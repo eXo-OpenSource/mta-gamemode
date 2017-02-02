@@ -54,7 +54,9 @@ function VehicleTuningGUI:constructor(vehicle)
             :addColumn(_"Upgrade", 0.7)
             :addColumn(_"Preis", 0.3)
         self.m_PriceLabel = GUILabel:new(width*0.02, height*0.9, width*0.5, height*0.1, "", self.m_ShoppingCartWindow)
-        self.m_BuyButton = GUIButton:new(width*0.6, height*0.9, width*0.4, height*0.1, _"Kaufen", self.m_ShoppingCartWindow):setBackgroundColor(Color.Green)
+        self.m_ClearButton = GUIButton:new(width*0.65-height*0.12, height*0.9, height*0.1, height*0.1, FontAwesomeSymbols.Trash, self.m_ShoppingCartWindow):setFont(FontAwesome(15)):setBackgroundColor(Color.Red)
+        self.m_ClearButton.onLeftClick = bind(self.ClearButton_Click, self)
+		self.m_BuyButton = GUIButton:new(width*0.65, height*0.9, width*0.35, height*0.1, _"Kaufen", self.m_ShoppingCartWindow):setBackgroundColor(Color.Green)
         self.m_BuyButton.onLeftClick = bind(self.BuyButton_Click, self)
     end
 
@@ -453,6 +455,13 @@ function VehicleTuningGUI:AddToCartButton_Click()
         -- Add to cart
         self:addPartToCart(slot, partName, upgradeId, upgradeName)
     end
+end
+
+function VehicleTuningGUI:ClearButton_Click()
+	self:emptyCart()
+	self:resetUpgrades()
+	self.m_ShoppingCartGrid:clear()
+	self:updatePrices()
 end
 
 function VehicleTuningGUI:BuyButton_Click()
