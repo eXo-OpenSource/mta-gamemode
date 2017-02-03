@@ -1,6 +1,4 @@
 <map edf:definitions="editor_main">
-	<info Mapname="Kartmap" Author="eXo Team" ></info>
-
     <removeWorldObject id="removeWorldObject (trailer5_01) (1)" radius="6.1156545" interior="0" model="3171" lodModel="3344" posX="1299.7109" posY="138.73438" posZ="19.34375" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <removeWorldObject id="removeWorldObject (trailer5_01) (1)" radius="100" interior="0" model="13441" lodModel="13441" posX="1299.7109" posY="138.73438" posZ="19.34375" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <object id="object (sub_roadleft) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1316.6" posY="123.8" posZ="21.1" rotX="0" rotY="0" rotZ="66"></object>
@@ -238,17 +236,17 @@
     <object id="object (junk_tyre) (12)" breakable="true" interior="0" alpha="255" model="1327" doublesided="false" scale="1" dimension="0" posX="1314.7" posY="55.9" posZ="21.4" rotX="0" rotY="87.995" rotZ="328.997"></object>
     <object id="object (junk_tyre) (13)" breakable="true" interior="0" alpha="255" model="1327" doublesided="false" scale="1" dimension="0" posX="1314.7" posY="55.9" posZ="20.8" rotX="0" rotY="87.995" rotZ="328.997"></object>
 
-	<marker id="marker (cylinder) (3)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1290.5996" posY="65.90039" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-	<marker id="marker (cylinder) (4)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1326.9" posY="132.7" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-	<marker id="marker (cylinder) (5)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1386.6" posY="105.9" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-	<marker id="marker (cylinder) (6)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1332.8" posY="118.2" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-	<marker id="marker (cylinder) (7)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1359.3" posY="50.3" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-	<marker id="marker (cylinder) (8)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1328.4" posY="88.1" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-	<marker id="marker (cylinder) (9)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1317.1" posY="62.2" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-	<marker id="marker (cylinder) (10)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1380.8" posY="61.9" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
-	<marker id="marker (cylinder) (11)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1309.7" posY="122.1" posZ="21.2" rotX="0" rotY="0" rotZ="0"></marker>
+	<checkpoint id="marker (cylinder) (3)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1290.5996" posY="65.90039" posZ="21.2" rotX="0" rotY="0" rotZ="0"></checkpoint>
+	<checkpoint id="marker (cylinder) (4)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1326.9" posY="132.7" posZ="21.2" rotX="0" rotY="0" rotZ="0"></checkpoint>
+	<checkpoint id="marker (cylinder) (5)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1386.6" posY="105.9" posZ="21.2" rotX="0" rotY="0" rotZ="0"></checkpoint>
+	<checkpoint id="marker (cylinder) (6)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1332.8" posY="118.2" posZ="21.2" rotX="0" rotY="0" rotZ="0"></checkpoint>
+	<checkpoint id="marker (cylinder) (7)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1359.3" posY="50.3" posZ="21.2" rotX="0" rotY="0" rotZ="0"></checkpoint>
+	<checkpoint id="marker (cylinder) (8)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1328.4" posY="88.1" posZ="21.2" rotX="0" rotY="0" rotZ="0"></checkpoint>
+	<checkpoint id="marker (cylinder) (9)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1317.1" posY="62.2" posZ="21.2" rotX="0" rotY="0" rotZ="0"></checkpoint>
+	<checkpoint id="marker (cylinder) (10)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1380.8" posY="61.9" posZ="21.2" rotX="0" rotY="0" rotZ="0"></checkpoint>
+	<checkpoint id="marker (cylinder) (11)" type="cylinder" color="#0000FF32" size="6" interior="0" dimension="0" alpha="255" posX="1309.7" posY="122.1" posZ="21.2" rotX="0" rotY="0" rotZ="0"></checkpoint>
 
 	<spawnpoint id="spawnpoint (Kart) (1)" vehicle="571" alpha="255" interior="0" posX="1310.445" posY="123.184" posZ="20.518" rotX="0" rotY="0" rotZ="155.144"></spawnpoint>
-
-	<ped id="ped (2)" dimension="0" model="64" interior="0" rotZ="147.252" alpha="255" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0"></ped>
+	<startmarker id="startmarker (1)" posX="1311.1" posY="141.6" posZ="20" rotX="0" rotY="0" rotZ="0"></startmarker>
+	<info id="info (1)" Author="Stumpy, Clausus, xXKing" Mapname="Kartmap" model="64" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0" rotZ="147.252"></info>
 </map>

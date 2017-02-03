@@ -34,6 +34,7 @@ function KartGUI:constructor()
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.8, self.m_Height*0.07, _"Runden", tabTimeRace)
 	self.m_LapChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.32, self.m_Width*0.35, self.m_Height*0.07, tabTimeRace)
+	self.m_LapChange:addItem("2")
 	self.m_LapChange:addItem("5")
 	self.m_LapChange:addItem("10")
 	self.m_LapChange:addItem("15")
