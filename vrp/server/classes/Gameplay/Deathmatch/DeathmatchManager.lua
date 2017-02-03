@@ -7,7 +7,9 @@
 -- ****************************************************************************
 
 DeathmatchManager = inherit(Singleton)
-DeathmatchManager.Rooms = {}
+DeathmatchManager.Lobbys = {}
+DeathmatchManager.AllowedWeapons = {1, 2, 3, 4, 5, 6, 7, 8, 22, 24, 25, 26, 27, 28, 29, 32, 30, 31, 33, 34, 35, 37, 38, 16, 17, 18, 10, 11, 12, 14, 15}
+
 DeathmatchManager.Maps = {
 	["lvpd"] = {
 		["Name"] = "LVPD",
@@ -72,7 +74,7 @@ DeathmatchManager.Maps = {
 }
 
 function DeathmatchManager:constructor()
-	self:loadServerRooms()
+	self:loadServerLobbys()
 
 	Blip:new("SniperGame.png", 1327.88, -1556.25)
 	self.m_Marker = createMarker(1327.88, -1556.25, 13.55, "corona", 2, 255, 125, 0)
@@ -84,10 +86,10 @@ function DeathmatchManager:constructor()
 
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player, killer, weapon)
-			if player.deathmatchRoom then
+			if player.deathmatchLobby then
 				player:triggerEvent("abortDeathGUI", true)
 
-				player.deathmatchRoom:respawnPlayer(player, true, killer, weapon)
+				player.deathmatchLobby:respawnPlayer(player, true, killer, weapon)
 				return true
 			end
 		end
@@ -95,64 +97,82 @@ function DeathmatchManager:constructor()
 
 	Player.getQuitHook():register(
 		function(player)
-			if player.deathmatchRoom then
-				player.deathmatchRoom:removePlayer(player)
+			if player.deathmatchLobby then
+				player.deathmatchLobby:removePlayer(player)
 			end
 		end
 	)
 
 	Player.getChatHook():register(
 		function(player, text, type)
-			if player.deathmatchRoom then
-				return player.deathmatchRoom:onPlayerChat(player, text, type)
+			if player.deathmatchLobby then
+				return player.deathmatchLobby:onPlayerChat(player, text, type)
 			end
 		end
 	)
 
 	core:getStopHook():register(
 		function()
-			for id, room in pairs(DeathmatchManager.Rooms) do
-				for player, data in pairs(room.m_Players) do
-					room:removePlayer(player, true)
+			for id, lobby in pairs(DeathmatchManager.Lobbys) do
+				for player, data in pairs(lobby.m_Players) do
+					lobby:removePlayer(player, true)
 				end
 			end
 		end
 	)
 
 
-	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby", "deathmatchLeaveArena"}
+	addRemoteEvents{"deathmatchRequestLobbys", "deathmatchJoinLobby", "deathmatchLeaveLobby", "deathmatchRequestCreateData", "deathmatchCreateLobby"}
 	addEventHandler("deathmatchRequestLobbys", root, bind(self.requestLobbys, self))
 	addEventHandler("deathmatchJoinLobby", root, bind(self.joinLobby, self))
-	addEventHandler("deathmatchLeaveArena", root, bind(self.leaveArena, self))
+	addEventHandler("deathmatchLeaveLobby", root, bind(self.leaveLobby, self))
+	addEventHandler("deathmatchRequestCreateData", root, bind(self.requestCreateData, self))
+	addEventHandler("deathmatchCreateLobby", root, bind(self.createPlayerLobby, self))
+
+
 end
 
-function DeathmatchManager:createRoom(name, owner, map, weapons, mode, maxPlayer)
-	local id = #DeathmatchManager.Rooms+1
-	DeathmatchManager.Rooms[id] = DeathmatchRoom:new(id, name, owner, map, weapons, mode, maxPlayer)
+function DeathmatchManager:createLobby(name, owner, map, weapons, mode, maxPlayer, password)
+	local id = #DeathmatchManager.Lobbys+1
+	DeathmatchManager.Lobbys[id] = DeathmatchLobby:new(id, name, owner, map, weapons, mode, maxPlayer, password)
 end
 
-function DeathmatchManager:loadServerRooms()
-	self:createRoom("Deagle LVPD #1", "Server", "lvpd", {24}, "default", 300)
-	self:createRoom("Deagle LVPD #2", "Server", "lvpd", {24}, "default", 300)
-	self:createRoom("M4 LVPD #1", "Server", "lvpd", {31}, "default", 300)
-	self:createRoom("Deagle Battlefield #1", "Server", "battlefield", {24}, "default", 300)
-	self:createRoom("M4 Battlefield #1", "Server", "battlefield", {31}, "default", 300)
-	self:createRoom("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
-	self:createRoom("Deagle Motel #1", "Server", "motel", {24}, "default", 10)
-	self:createRoom("M4 Motel #1", "Server", "motel", {31}, "default", 10)
+function DeathmatchManager:loadServerLobbys()
+	self:createLobby("Deagle LVPD #1", "Server", "lvpd", {24}, "default", 300)
+	self:createLobby("M4 LVPD #1", "Server", "lvpd", {31}, "default", 300)
+	self:createLobby("Deagle Battlefield #1", "Server", "battlefield", {24}, "default", 300)
+	self:createLobby("M4 Battlefield #1", "Server", "battlefield", {31}, "default", 300)
+	self:createLobby("Sniper Battlefield #1", "Server", "battlefield", {34}, "default", 300)
+	self:createLobby("Deagle Motel #1", "Server", "motel", {24}, "default", 10)
+	self:createLobby("M4 Motel #1", "Server", "motel", {31}, "default", 10)
 end
 
 function DeathmatchManager:requestLobbys()
 	local lobbyTable = {}
-	for id, lobby in pairs(DeathmatchManager.Rooms) do
+	for id, lobby in pairs(DeathmatchManager.Lobbys) do
 		lobbyTable[id] = {
 			["name"] = lobby.m_Name,
 			["players"] = lobby:getPlayerCount(),
 			["map"] = lobby.m_MapName,
-			["mode"] = lobby.m_Mode
+			["mode"] = lobby.m_Mode,
+			["password"] = lobby.m_Password
 		}
 	end
 	client:triggerEvent("deathmatchReceiveLobbys", lobbyTable)
+end
+
+function DeathmatchManager:requestCreateData()
+	client:triggerEvent("deathmatchReceiveCreateData", DeathmatchManager.Maps, DeathmatchManager.AllowedWeapons)
+end
+
+function DeathmatchManager:createPlayerLobby(map, weapon, password)
+	if client:getMoney() >= 500 then
+		client:takeMoney(500, "Deathmatch Lobby")
+		local lobbyName = ("%s´s Lobby"):format(client:getName())
+		self:createLobby(lobbyName, client, map, {weapon}, "default", 300, password)
+	else
+        client:sendError(_("Du hast nicht genug Geld dabei! (500$)", client))
+	end
 end
 
 function DeathmatchManager:joinLobby(id)
@@ -166,16 +186,16 @@ function DeathmatchManager:joinLobby(id)
 		return
 	end
 
-	if DeathmatchManager.Rooms[id] then
-		DeathmatchManager.Rooms[id]:addPlayer(client)
+	if DeathmatchManager.Lobbys[id] then
+		DeathmatchManager.Lobbys[id]:addPlayer(client)
 	else
 		client:sendMessage("Raum nicht gefunden!", 255, 0, 0)
 	end
 end
 
-function DeathmatchManager:leaveArena()
-	if client.deathmatchRoom and not client:isDead() then
-		client.deathmatchRoom:removePlayer(client)
+function DeathmatchManager:leaveLobby()
+	if client.deathmatchLobby and not client:isDead() then
+		client.deathmatchLobby:removePlayer(client)
 	end
 end
 

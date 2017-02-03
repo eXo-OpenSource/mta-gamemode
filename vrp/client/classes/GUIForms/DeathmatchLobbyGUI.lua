@@ -14,14 +14,21 @@ function DeathmatchLobbyGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Deathmatch Lobby", true, true, self)
-	GUILabel:new(self.m_Width*0.02, 35, self.m_Width*0.96, self.m_Height*0.05, "Warnung: Alle deine Waffen werden beim betreten einer Arena gelöscht!", self.m_Window):setColor(Color.Red)
+	GUILabel:new(self.m_Width*0.02, 35, self.m_Width*0.96, self.m_Height*0.05, "Warnung: Alle deine Waffen werden beim betreten einer Lobby gelöscht!", self.m_Window):setColor(Color.Red)
 	self.m_LobbyGrid = GUIGridList:new(self.m_Width*0.02, 40+self.m_Height*0.05, self.m_Width*0.96, self.m_Height*0.6, self.m_Window)
 	self.m_LobbyGrid:addColumn(_"Name", 0.4)
-	self.m_LobbyGrid:addColumn(_"Spieler", 0.2)
+	self.m_LobbyGrid:addColumn(_"Spieler", 0.1)
 	self.m_LobbyGrid:addColumn(_"Map", 0.2)
-	self.m_LobbyGrid:addColumn(_"Modus", 0.2)
+	self.m_LobbyGrid:addColumn(_"Modus", 0.15)
+	self.m_LobbyGrid:addColumn(_"PW", 0.15)
+	self.m_CreateLobbyButton = VRPButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.17, self.m_Width*0.3, self.m_Height*0.07, _"Lobby erstellen", true, self.m_Window):setBarColor(Color.LightBlue)
+	self.m_CreateLobbyButton.onLeftClick = function()
+		DeathmatchCreateLobby:getSingleton():open()
+		delete(self)
+	end
+
 	self.m_JoinButton = VRPButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.09, self.m_Width*0.3, self.m_Height*0.07, _"Lobby betreten", true, self.m_Window):setBarColor(Color.Green)
-	self.m_JoinButton.onLeftClick = bind(self.joinLobby, self)
+	self.m_JoinButton.onLeftClick = bind(self.tryJoinLobby, self)
 
 	triggerServerEvent("deathmatchRequestLobbys", root)
 
@@ -40,20 +47,38 @@ function DeathmatchLobbyGUI:onHide()
 end
 
 function DeathmatchLobbyGUI:receiveLobbys(lobbyTable)
-	local item
+	local item, pw
 	for id, lobby in pairs(lobbyTable) do
-		item = self.m_LobbyGrid:addItem(lobby.name, lobby.players, lobby.map, lobby.mode)
-		item.onLeftDoubleClick = bind(self.joinLobby, self)
+		pw = lobby.password ~= "" and "Ja" or "Nein"
+		item = self.m_LobbyGrid:addItem(lobby.name, lobby.players, lobby.map, lobby.mode, pw)
+		item.onLeftDoubleClick = bind(self.tryJoinLobby, self)
 		item.Id = id
+		item.Password = lobby.password
 		item.Weapons = lobby.weapons
 	end
 end
 
-function DeathmatchLobbyGUI:joinLobby()
+function DeathmatchLobbyGUI:joinLobby(lobbyId)
+	triggerServerEvent("deathmatchJoinLobby", root, lobbyId)
+	delete(self)
+end
+
+function DeathmatchLobbyGUI:tryJoinLobby()
 	selectedItem = self.m_LobbyGrid:getSelectedItem()
 	if selectedItem and selectedItem.Id then
-		triggerServerEvent("deathmatchJoinLobby", root, selectedItem.Id)
-		delete(self)
+		if selectedItem.Password and selectedItem.Password ~= "" then
+			InputBox:new(_"Passwort eingeben", _"Diese Lobby ist Passwort geschützt! Gib das Passwort ein:",
+				function (password)
+					if password == selectedItem.Password then
+						self:joinLobby(selectedItem.Id)
+					else
+						ErrorBox:new(_"Falsches Passwort eingegeben!")
+					end
+				end
+			)
+		else
+			self:joinLobby(selectedItem.Id)
+		end
 	else
 		ErrorBox:new(_"Keine Lobby ausgewählt")
 	end

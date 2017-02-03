@@ -1,29 +1,30 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/Gameplay/Deathmatch/DeathmatchRoom.lua
--- *  PURPOSE:     Deathmatch Room class
+-- *  FILE:        server/classes/Gameplay/Deathmatch/DeathmatchLobby.lua
+-- *  PURPOSE:     Deathmatch Lobby class
 -- *
 -- ****************************************************************************
 
-DeathmatchRoom = inherit(Object)
-DeathmatchRoom.Types = {[1] = "permanent", [2] = "temporary"}
+DeathmatchLobby = inherit(Object)
+DeathmatchLobby.Types = {[1] = "permanent", [2] = "temporary"}
 
-function DeathmatchRoom:constructor(id, name, owner, map, weapons, mode, maxPlayer)
+function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPlayer, password)
 	self.m_Id = id
-	self.m_Type = owner == "Server" and DeathmatchRoom.Types[1] or DeathmatchRoom.Types[2]
+	self.m_Type = owner == "Server" and DeathmatchLobby.Types[1] or DeathmatchLobby.Types[2]
 	self.m_Name = name
 	self.m_Map = map
 	self.m_Weapons = weapons
 	self.m_Mode = mode
 	self.m_MaxPlayer = maxPlayer
+	self.m_Password = password or ""
 
 	self.m_Players = {}
 	self:loadMap()
 
 	self.m_LeaveBind = bind(self.removePlayer, self)
 
-	if self.m_Type == DeathmatchRoom.Types[1] then
+	if self.m_Type == DeathmatchLobby.Types[1] then
 		self.m_Owner = "Server"
 		self.m_OwnerName = "eXo-RL"
 	else
@@ -33,9 +34,9 @@ function DeathmatchRoom:constructor(id, name, owner, map, weapons, mode, maxPlay
 	end
 end
 
-function DeathmatchRoom:loadMap()
+function DeathmatchLobby:loadMap()
 	if not DeathmatchManager.Maps[self.m_Map] then
-		outputDebugString("DeathmatchRoom: Invalid Map")
+		outputDebugString("DeathmatchLobby: Invalid Map")
 		return
 	end
 	local map = DeathmatchManager.Maps[self.m_Map]
@@ -46,7 +47,7 @@ function DeathmatchRoom:loadMap()
 	self.m_MapData["spawns"] = map.Spawns
 end
 
-function DeathmatchRoom:getPlayers()
+function DeathmatchLobby:getPlayers()
 	local players = {}
 	local count = 0
 	for player, data in pairs(self.m_Players) do
@@ -60,18 +61,18 @@ function DeathmatchRoom:getPlayers()
 	return players, count
 end
 
-function DeathmatchRoom:sendShortMessage(text, ...)
+function DeathmatchLobby:sendShortMessage(text, ...)
 	for player, data in pairs(self:getPlayers()) do
-		player:sendShortMessage(_(text, player), "Deathmatch-Arena", {255, 125, 0}, ...)
+		player:sendShortMessage(_(text, player), "Deathmatch-Lobby", {255, 125, 0}, ...)
 	end
 end
 
-function DeathmatchRoom:getPlayerCount()
+function DeathmatchLobby:getPlayerCount()
 	local _, count = self:getPlayers()
 	return count
 end
 
-function DeathmatchRoom:isValidWeapon(weapon)
+function DeathmatchLobby:isValidWeapon(weapon)
 	for index, id in pairs(self.m_Weapons) do
 		if weapon == id then
 			return true
@@ -80,25 +81,25 @@ function DeathmatchRoom:isValidWeapon(weapon)
 	return false
 end
 
-function DeathmatchRoom:refreshGUI()
+function DeathmatchLobby:refreshGUI()
 	for player, data in pairs(self:getPlayers()) do
 		player:triggerEvent("deathmatchRefreshGUI", self.m_Players)
 	end
 end
 
-function DeathmatchRoom:increaseKill(player, weapon)
+function DeathmatchLobby:increaseKill(player, weapon)
 	if not self:isValidWeapon(weapon) then return end
 	self.m_Players[player]["Kills"] = self.m_Players[player]["Kills"] + 1
 	self:refreshGUI()
 end
 
-function DeathmatchRoom:increaseDead(player, weapon)
+function DeathmatchLobby:increaseDead(player, weapon)
 	if not self:isValidWeapon(weapon) then return end
 	self.m_Players[player]["Deaths"] = self.m_Players[player]["Deaths"] + 1
 	self:refreshGUI()
 end
 
-function DeathmatchRoom:addPlayer(player)
+function DeathmatchLobby:addPlayer(player)
 	self.m_Players[player] = {
 		["Kills"] = 0,
 		["Deaths"] = 0
@@ -107,12 +108,12 @@ function DeathmatchRoom:addPlayer(player)
 	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 	player.m_RemoveWeaponsOnLogout = true
 	self:respawnPlayer(player)
-	player.deathmatchRoom = self
+	player.deathmatchLobby = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
 	self:refreshGUI()
 end
 
-function DeathmatchRoom:respawnPlayer(player, dead, killer, weapon)
+function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 	local pos = Randomizer:getRandomTableValue(self.m_MapData["spawns"])
 	if dead then
 		player:triggerEvent("deathmatchStartDeathScreen", killer or player)
@@ -145,7 +146,7 @@ function DeathmatchRoom:respawnPlayer(player, dead, killer, weapon)
 	end
 end
 
-function DeathmatchRoom:removePlayer(player, isServerStop)
+function DeathmatchLobby:removePlayer(player, isServerStop)
 	self.m_Players[player] = nil
 	if isElement(player) then
 		takeAllWeapons(player)
@@ -156,10 +157,10 @@ function DeathmatchRoom:removePlayer(player, isServerStop)
 		player:setHeadless(false)
 		player:setHealth(100)
 		player:setArmor(0)
-		player.deathmatchRoom = nil
+		player.deathmatchLobby = nil
 		if not isServerStop then
-			self:sendShortMessage(player:getName().." hat die Arena verlassen!")
-			player:sendShortMessage(_("Du hast die Arena verlassen!", player), "Deathmatch-Arena", {255, 125, 0})
+			self:sendShortMessage(player:getName().." hat die Lobby verlassen!")
+			player:sendShortMessage(_("Du hast die Lobby verlassen!", player), "Deathmatch-Lobby", {255, 125, 0})
 			player:triggerEvent("deathmatchCloseGUI")
 		end
 	end
@@ -168,7 +169,7 @@ function DeathmatchRoom:removePlayer(player, isServerStop)
 	end
 end
 
-function DeathmatchRoom:onPlayerChat(player, text, type)
+function DeathmatchLobby:onPlayerChat(player, text, type)
 	if type == 0 then
 		for playeritem, data in pairs(self.m_Players) do
 			playeritem:sendMessage(("#00ffff[%s] #808080%s: %s"):format(self.m_Name, player:getName(), text))
