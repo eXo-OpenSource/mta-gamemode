@@ -95,7 +95,7 @@ function DeathmatchManager:constructor()
 		end
 	)
 
-	Player.getQuitHook():register(
+	PlayerManager:getAFKHook():register(
 		function(player)
 			if player.deathmatchLobby then
 				player.deathmatchLobby:removePlayer(player)
@@ -103,7 +103,7 @@ function DeathmatchManager:constructor()
 		end
 	)
 
-	Player.getAFKHook():register(
+	Player.getQuitHook():register(
 		function(player)
 			if player.deathmatchLobby then
 				player.deathmatchLobby:removePlayer(player)
