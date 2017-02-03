@@ -14,6 +14,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
 	self.m_QuitHook = Hook:new()
+	self.m_AFKHook = Hook:new()
 	self.m_ReadyPlayers = {}
 
 	-- Register events
@@ -109,6 +110,10 @@ end
 
 function PlayerManager:getQuitHook()
 	return self.m_QuitHook
+end
+
+function PlayerManager:getAFKHook()
+	return self.m_AFKHook
 end
 
 function PlayerManager:getReadyPlayers()
@@ -484,6 +489,7 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 	end
 	client:setPublicSync("AFK", state)
 	if state == true then
+		self.m_AFKHook:call(client)
 		client:startAFK()
 		if client:isInVehicle() then client:removeFromVehicle() end
 		client:setInterior(4)

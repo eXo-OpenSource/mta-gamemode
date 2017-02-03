@@ -103,6 +103,14 @@ function DeathmatchManager:constructor()
 		end
 	)
 
+	Player.getAFKHook():register(
+		function(player)
+			if player.deathmatchLobby then
+				player.deathmatchLobby:removePlayer(player)
+			end
+		end
+	)
+
 	Player.getChatHook():register(
 		function(player, text, type)
 			if player.deathmatchLobby then
