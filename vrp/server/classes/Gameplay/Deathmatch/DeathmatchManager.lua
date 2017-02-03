@@ -155,7 +155,9 @@ function DeathmatchManager:requestLobbys()
 			["players"] = lobby:getPlayerCount(),
 			["map"] = lobby.m_MapName,
 			["mode"] = lobby.m_Mode,
-			["password"] = lobby.m_Password
+			["password"] = lobby.m_Password,
+			["playerNames"] = lobby:getPlayerString(),
+			["weapons"] = lobby:getWeaponString()
 		}
 	end
 	client:triggerEvent("deathmatchReceiveLobbys", lobbyTable)
@@ -189,7 +191,15 @@ function DeathmatchManager:joinLobby(id)
 	if DeathmatchManager.Lobbys[id] then
 		DeathmatchManager.Lobbys[id]:addPlayer(client)
 	else
-		client:sendMessage("Raum nicht gefunden!", 255, 0, 0)
+		client:sendMessage("Lobby nicht gefunden!", 255, 0, 0)
+	end
+end
+
+function DeathmatchManager:unregisterLobby(id)
+	if DeathmatchManager.Lobbys[id] then
+		DeathmatchManager.Lobbys[id] = nil
+	else
+		outputDebugString("DeathmatchManager: Unable to unregister Lobby! ID: "..id.." not found!")
 	end
 end
 

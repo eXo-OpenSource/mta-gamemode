@@ -7,7 +7,8 @@
 -- ****************************************************************************
 
 DeathmatchLobby = inherit(Object)
-DeathmatchLobby.Types = {[1] = "permanent", [2] = "temporary"}
+DeathmatchLobby.Types = {[1] = "permanent", [2] = "temporary",
+						 ["permanent"] = 1, ["temporary"] = 2}
 
 function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPlayer, password)
 	self.m_Id = id
@@ -33,6 +34,11 @@ function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPla
 		self:addPlayer(owner)
 	end
 end
+
+function DeathmatchLobby:destructor()
+	DeathmatchManager:getSingleton():unregisterLobby(self.m_Id)
+end
+
 
 function DeathmatchLobby:loadMap()
 	if not DeathmatchManager.Maps[self.m_Map] then
@@ -65,6 +71,23 @@ function DeathmatchLobby:sendShortMessage(text, ...)
 	for player, data in pairs(self:getPlayers()) do
 		player:sendShortMessage(_(text, player), "Deathmatch-Lobby", {255, 125, 0}, ...)
 	end
+end
+
+function DeathmatchLobby:getPlayerString()
+	local playerString = ""
+	for player, data in pairs(self:getPlayers()) do
+		playerString = playerString..player:getName()..", "
+	end
+
+	return string.sub(playerString, 0, #playerString-2)
+end
+
+function DeathmatchLobby:getWeaponString()
+	local weaponString = ""
+	for index, weaponId in pairs(self.m_Weapons) do
+		weaponString = weaponString..WEAPON_NAMES[weaponId]..", "
+	end
+	return string.sub(weaponString, 0, #weaponString-2)
 end
 
 function DeathmatchLobby:getPlayerCount()
@@ -164,6 +187,11 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 			player:triggerEvent("deathmatchCloseGUI")
 		end
 	end
+
+	if self.m_Type == DeathmatchLobby.Types[2] and self:getPlayerCount() == 0 then
+		delete(self)
+	end
+
 	if not isServerStop then
 		self:refreshGUI()
 	end

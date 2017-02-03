@@ -30,6 +30,9 @@ function DeathmatchLobbyGUI:constructor()
 	self.m_JoinButton = VRPButton:new(self.m_Width-self.m_Width*0.32, self.m_Height-self.m_Height*0.09, self.m_Width*0.3, self.m_Height*0.07, _"Lobby betreten", true, self.m_Window):setBarColor(Color.Green)
 	self.m_JoinButton.onLeftClick = bind(self.tryJoinLobby, self)
 
+	self.m_PlayerLabel = GUILabel:new(self.m_Width*0.02, self.m_Height-self.m_Height*0.17, self.m_Width*0.65, self.m_Height*0.06, "", self.m_Window)
+	self.m_WeaponLabel = GUILabel:new(self.m_Width*0.02, self.m_Height-self.m_Height*0.09, self.m_Width*0.65, self.m_Height*0.06, "", self.m_Window)
+
 	triggerServerEvent("deathmatchRequestLobbys", root)
 
 	addEventHandler("deathmatchReceiveLobbys", root, bind(self.receiveLobbys, self))
@@ -51,10 +54,15 @@ function DeathmatchLobbyGUI:receiveLobbys(lobbyTable)
 	for id, lobby in pairs(lobbyTable) do
 		pw = lobby.password ~= "" and "Ja" or "Nein"
 		item = self.m_LobbyGrid:addItem(lobby.name, lobby.players, lobby.map, lobby.mode, pw)
+		item.onLeftClick = function()
+			self.m_PlayerLabel:setText(_("Spieler: %s", lobby.playerNames))
+			self.m_WeaponLabel:setText(_("Waffen: %s", lobby.weapons))
+		end
 		item.onLeftDoubleClick = bind(self.tryJoinLobby, self)
 		item.Id = id
 		item.Password = lobby.password
-		item.Weapons = lobby.weapons
+		item.PlayerNames = lobby.playerNames
+		item.weapons = lobby.weapons
 	end
 end
 
