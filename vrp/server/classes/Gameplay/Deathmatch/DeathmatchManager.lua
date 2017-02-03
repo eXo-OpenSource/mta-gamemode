@@ -95,7 +95,7 @@ function DeathmatchManager:constructor()
 		end
 	)
 
-	PlayerManager:getAFKHook():register(
+	PlayerManager:getSingleton():getAFKHook():register(
 		function(player)
 			if player.deathmatchLobby then
 				player.deathmatchLobby:removePlayer(player)
