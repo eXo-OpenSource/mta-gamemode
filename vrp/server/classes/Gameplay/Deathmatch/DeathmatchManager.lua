@@ -184,7 +184,7 @@ function DeathmatchManager:joinLobby(id)
 	end
 
 	if client:isCompanyDuty() then
-		client:sendError(_("Du darfst nicht im Dienst in eine DM-Lobby! (Fraktion)", client))
+		client:sendError(_("Du darfst nicht im Dienst in eine DM-Lobby! (Unternehmen)", client))
 		return
 	end
 
