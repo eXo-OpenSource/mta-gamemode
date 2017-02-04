@@ -145,9 +145,8 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 	if playerPointer.state == "Flying" then
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
 			playerPointer.state = "Running"
-
-			local toptime = self.m_Toptimes:getToptimeFromPlayer(player:getId())
-			player:triggerEvent("HUDRaceUpdateTimes", true, toptime and toptime.time or 0)
+			playerPointer.startTick = getTickCount()
+			player:triggerEvent("HUDRaceUpdate", true, playerPointer.laps)
 		end
 	elseif playerPointer.state == "Running" then
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
@@ -161,14 +160,16 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			local oldToptime = toptimeData and toptimeData.time or 0
 
 			local lapTime = getTickCount() - playerPointer.startTick
-			self.m_Toptimes:addNewToptime(player:getId(), lapTime)
+			local anyChange = self.m_Toptimes:addNewToptime(player:getId(), lapTime)
 			playerPointer.startTick = getTickCount()
 			playerPointer.checkpoints = {}
 			playerPointer.laps = playerPointer.laps + 1
 
-			local toptime = self.m_Toptimes:getToptimeFromPlayer(player:getId())
-			player:triggerEvent("HUDRaceUpdateTimes", true, toptime and toptime.time or 0)
+			local deltaTime = lapTime - oldToptime
+			player:triggerEvent("HUDRaceUpdate", true, playerPointer.laps, deltaTime)
+			if anyChange then self:syncToptimes() end
 		else
+			player:triggerEvent("HUDRaceUpdate", true)
 			outputChatBox("invalid checkpoints count :/ Cant save the time")
 			playerPointer.startTick = getTickCount()
 			playerPointer.checkpoints = {}
@@ -185,7 +186,7 @@ function Kart:checkpointHit(hitElement, matchingDimension)
 	if not self.m_Players[player] then return end
 	local playerPointer = self.m_Players[player]
 
-	--if player.m_SupMode then return player:sendError(_("Bitte deaktiviere den Support Modus!", player)) end
+	if player.m_SupMode then return player:sendError(_("Bitte deaktiviere den Support Modus!", player)) end
 
 	for _, v in pairs(self.m_Checkpoints) do
 		if v == source then
@@ -196,6 +197,22 @@ function Kart:checkpointHit(hitElement, matchingDimension)
 			end
 
 			table.insert(playerPointer.checkpoints, v)
+		end
+	end
+end
+
+---
+-- Sync toptimes with kart players
+---
+function Kart:syncToptimes(forcePlayer)
+	if forcePlayer then
+		forcePlayer:triggerEvent("HUDRaceUpdateTimes", self.m_Toptimes.m_Toptimes, forcePlayer:getId())
+		return
+	end
+
+	for player in pairs(self.m_Players) do
+		if isElement(player) then
+			player:triggerEvent("HUDRaceUpdateTimes", self.m_Toptimes.m_Toptimes, player:getId())
 		end
 	end
 end
@@ -227,6 +244,7 @@ function Kart:startTimeRace(laps, index)
 	local vehicle = TemporaryVehicle.create(571, spawnpoint.x, spawnpoint.y, spawnpoint.z, spawnpoint.rz)
 	client:warpIntoVehicle(vehicle)
 	vehicle:setEngineState(true)
+	vehicle.m_DisableToggleEngine = true
 	vehicle:addCountdownDestroy(10)
 	vehicle:setDamageProof(true)
 
@@ -242,16 +260,15 @@ function Kart:startTimeRace(laps, index)
 	setPedStat(client, 230, 1000)
 
 	self.m_Players[client] = {vehicle = vehicle, laps = 1, selectedLaps = selectedLaps, state = "Flying", checkpoints = {}, startTick = getTickCount()}
-	client:triggerEvent("showRaceHUD", true)
+	client:triggerEvent("showRaceHUD", true, true)
 
-	local toptime = self.m_Toptimes:getToptimeFromPlayer(client:getId())
-	client:triggerEvent("HUDRaceUpdateTimes", false, toptime and toptime.time or 0)
+	self:syncToptimes(client)
 end
 
 function Kart:onTimeRaceDone(player, vehicle)
 	player:sendInfo(_("Du hast alle Runden abgeschlossen!", player))
+	player:triggerEvent("HUDRaceUpdate", false)
 	vehicle:setEngineState(false)
-	vehicle.m_DisableToggleEngine = true
 
 	setTimer(
 		function(player, vehicle)
