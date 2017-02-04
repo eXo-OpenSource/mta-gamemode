@@ -101,13 +101,16 @@ function calcDxFontSize(text, width, font, max)
 	return max
 end
 
-function timeMsToTimeText(timeMs)
-
+function timeMsToTimeText(timeMs, hideMinutes)
 	local minutes	= math.floor( timeMs / 60000 )
 	timeMs			= timeMs - minutes * 60000;
 
 	local seconds	= math.floor( timeMs / 1000 )
 	local ms		= timeMs - seconds * 1000;
 
-	return string.format( '%02d:%02d:%03d', minutes, seconds, ms );
+	if hideMinutes and minutes < 1 then
+		return ("%02d.%03d"):format(seconds, ms)
+	end
+
+	return ("%02d:%02d.%03d"):format(minutes, seconds, ms)
 end
