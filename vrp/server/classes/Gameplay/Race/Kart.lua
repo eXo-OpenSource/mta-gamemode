@@ -170,7 +170,6 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			if anyChange then self:syncToptimes() end
 		else
 			player:triggerEvent("HUDRaceUpdate", true)
-			outputChatBox("invalid checkpoints count :/ Cant save the time")
 			playerPointer.startTick = getTickCount()
 			playerPointer.checkpoints = {}
 		end
