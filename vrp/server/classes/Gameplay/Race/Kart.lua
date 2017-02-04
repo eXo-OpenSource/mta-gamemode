@@ -10,7 +10,7 @@ addRemoteEvents{"startKartTimeRace", "requestKartDatas"}
 
 Kart.Maps = {
 	"files/maps/Kart/Kartbahn.map",
-	"files/maps/Kart/EliteKartMap.map",
+	--"files/maps/Kart/EliteKartMap.map",
 }
 
 local lapPrice = 50
