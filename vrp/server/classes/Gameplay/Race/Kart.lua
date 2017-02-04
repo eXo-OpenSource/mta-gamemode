@@ -49,6 +49,7 @@ function Kart:constructor()
 	self.m_onCheckpointHit = bind(Kart.checkpointHit, self)
 	self.m_OnKartDestroy = bind(Kart.onKartDestroy, self)
 	self.m_OnPlayerQuit = bind(Kart.onPlayerQuit, self)
+	self.m_KartAccessHandler = bind(Kart.onKartStartEnter, self)
 
 	-- Load a random Map
 	self:loadMap(self:getRandomMap())
@@ -186,6 +187,7 @@ function Kart:checkpointHit(hitElement, matchingDimension)
 	local playerPointer = self.m_Players[player]
 
 	if player.m_SupMode then return player:sendError(_("Bitte deaktiviere den Support Modus!", player)) end
+	if hitElement.model ~= 571 then return end
 
 	for _, v in pairs(self.m_Checkpoints) do
 		if v == source then
@@ -251,6 +253,7 @@ function Kart:startTimeRace(laps, index)
 	client.kartVehicle = vehicle
 
 	addEventHandler("onElementDestroy", vehicle, self.m_OnKartDestroy)
+	addEventHandler("onVehicleStartEnter", vehicle, self.m_KartAccessHandler)
 	addEventHandler("onPlayerQuit", client, self.m_OnPlayerQuit)
 
 	-- Set Stats
@@ -279,6 +282,12 @@ function Kart:onTimeRaceDone(player, vehicle)
 			)
 		end, 6000, 1, player, vehicle
 	)
+end
+
+function Kart:onKartStartEnter(enteringPlayer)
+	if source.timeRacePlayer ~= enteringPlayer then
+		cancelEvent()
+	end
 end
 
 function Kart:onKartDestroy()
