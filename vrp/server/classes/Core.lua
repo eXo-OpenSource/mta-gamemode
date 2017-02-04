@@ -100,9 +100,8 @@ function Core:constructor()
 		DeathmatchManager:new()
 
 		SkydivingManager:new()
-		if GIT_BRANCH ~= "release/production" then -- Merged into Master -> fail by me (stumpy)
-			Kart:new()
-		end
+		Kart:new()
+
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
 		VehicleGarages.initalizeAll()

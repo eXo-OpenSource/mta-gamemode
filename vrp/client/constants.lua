@@ -460,7 +460,7 @@ HelpTexts = {
 		]];
 		StateWeaponTruck = [[
 			Wählt die Waffen die ihr benötigt aus und ladet diese auf den Staatswaffentruck.
-			Fahrt nun den Truck an die LS Docks und versucht die Kisten abzugeben.
+			Fahrt nun den Truck vor die FBI-Base und versucht die Kisten abzugeben.
 			Die Bösen Fraktionisten werden versuchen den SWT zu zerstören.
 			Falls ihnen das gelingt, könnt ihr die Waffen mit einem Enforcer vom LSPD weitertransportieren.
 		]];

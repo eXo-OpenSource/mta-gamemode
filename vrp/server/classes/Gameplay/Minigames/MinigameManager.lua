@@ -29,7 +29,7 @@ function MinigameManager:constructor()
 	SniperGame.initalize()
 	self.m_SniperGameHighscore = Highscore:new("SniperGame")
 
-	self:addPlayerDeathHook()
+	self:addHooks()
 
 	-- Freak AchievementIds
 	self.m_FreakIds = {54, 55} -- Todo: add more Achievements!
@@ -56,10 +56,10 @@ function MinigameManager.receiveHighscore(sName, iScore)
 end
 addEventHandler("MinigameSendHighscore", resourceRoot, MinigameManager.receiveHighscore)
 
-function MinigameManager:addPlayerDeathHook()
+function MinigameManager:addHooks()
 	PlayerManager:getSingleton():getWastedHook():register(
 		function(player)
-			local match = self:getPlayerDeathmatch(player)
+			local match = self:getPlayerMinigame(player)
 			if match then
 				match:removePlayer(player)
 				return true
@@ -68,9 +68,34 @@ function MinigameManager:addPlayerDeathHook()
 			end
 		end
 	)
+
+	PlayerManager:getSingleton():getAFKHook():register(
+		function(player)
+			local match = self:getPlayerMinigame(player)
+			if match then
+				match:removePlayer(player)
+				return true
+			else
+				return false
+			end
+		end
+	)
+
+	Player.getQuitHook():register(
+		function(player)
+			local match = self:getPlayerMinigame(player)
+			if match then
+				match:removePlayer(player)
+				return true
+			else
+				return false
+			end
+		end
+	)
+
 end
 
-function MinigameManager:getPlayerDeathmatch(player)
+function MinigameManager:getPlayerMinigame(player)
 	for index, match in pairs(MinigameManager.Current) do
 		if match.m_ZombieKills and match.m_ZombieKills[player] then --ZombieSurvival
 			return match

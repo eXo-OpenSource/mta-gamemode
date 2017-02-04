@@ -241,7 +241,12 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 		player:givePoints(2)
 		for seat, player in pairs(getVehicleOccupants(vehicle)) do
 			if seat ~= 0 then
-				player:takeMoney(40, "Public Transport Bus")
+				if player:getMoney() >= 40 then
+					player:takeMoney(40, "Public Transport Bus")
+				else
+					player:removeFromVehicle()
+					player:sendInfo(_("Du hast nicht mehr genug Geld dabeI!", player))
+				end
 			end
 		end
 
