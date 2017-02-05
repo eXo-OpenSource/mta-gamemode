@@ -340,8 +340,8 @@ function PolicePanel:locateElement(element)
 					ErrorBox:new(_("%s ist in einem Gebäude!", elementText))
 					self:stopLocating()
 				end
-				if element:getData("Wanze") then
-					if not element:getData("Wanze") == true then
+				if element:getData("Wanze") == true then
+					if not element:getData("WanzeEnabled") == true then
 						ErrorBox:new(_"Ortung beendet: Die Wanze ist nicht mehr verfügbar!")
 						self:stopLocating()
 					end
