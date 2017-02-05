@@ -1380,7 +1380,6 @@ function FactionState:Event_attachBug()
 		}
 		source.BugId = id
 		source:setData("Wanze", true, true)
-		source:setData("WanzeEnabled", true, true)
 		client:triggerEvent("receiveBugs", self.m_Bugs)
 		self:sendShortMessage(client:getName().." hat Wanze "..id.." an ein/en "..typeName.." angebracht!")
 	else
@@ -1392,7 +1391,7 @@ function FactionState:Event_bugAction(action, id)
 	if self.m_Bugs[id] then
 		if action == "disable" then
 			self.m_Bugs[id]["element"].BugId = nil
-			self.m_Bugs[id]["element"]:setData("WanzeEnabled", false, true)
+			self.m_Bugs[id]["element"]:setData("Wanze", false, true)
 
 			self.m_Bugs[id] = {}
 			self:sendShortMessage(client:getName().." hat Wanze "..id.." deaktiviert!")
@@ -1421,7 +1420,7 @@ function FactionState:Event_checkBug(element)
 		if checkElement:getData("Wanze") == true and checkElement.BugId then
 			local id = checkElement.BugId
 			self.m_Bugs[id]["element"].BugId = nil
-			self.m_Bugs[id]["element"]:setData("WanzeEnabled", false, true)
+			self.m_Bugs[id]["element"]:setData("Wanze", false, true)
 			self.m_Bugs[id] = {}
 			self:sendShortMessage("Wanze "..id.." wurde entdeckt und entfernt!")
 			client:sendShortMessage(_("Oha! Ich habe eine Wanze von %s entfernt!", client, text))
