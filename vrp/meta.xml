@@ -1043,6 +1043,7 @@
 	<vrpfile src="files/images/Nametag/w6.png"/>
 	<vrpfile src="files/images/Nametag/chat.png"/>
 	<vrpfile src="files/images/Nametag/admin.png"/>
+	<vrpfile src="files/images/Nametag/armor.png"/>
 	<vrpfile src="files/images/Nametag/premium.png"/>
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>

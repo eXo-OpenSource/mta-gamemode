@@ -294,13 +294,9 @@ function SelfGUI:constructor()
 			self.m_LifeArmor:setVisible(true)
 			self.m_ZoneName:setVisible(true)
 			self.m_LabelHUDScale1:setVisible(false);
-			self.m_LabelHUDScale2:setVisible(false);
-			self.m_LabelHUDScale3:setVisible(false);
 			self.m_HUDScale:setVisible(false);
 		elseif index == UIStyle.eXo then
 			self.m_LabelHUDScale1:setVisible(true);
-			self.m_LabelHUDScale2:setVisible(true);
-			self.m_LabelHUDScale3:setVisible(true);
 			self.m_HUDScale:setVisible(true);
 			self.m_LifeArmor:setVisible(false)
 			self.m_ZoneName:setVisible(false)
@@ -308,8 +304,6 @@ function SelfGUI:constructor()
 			self.m_LifeArmor:setVisible(false)
 			self.m_ZoneName:setVisible(false)
 			self.m_LabelHUDScale1:setVisible(false);
-			self.m_LabelHUDScale2:setVisible(false);
-			self.m_LabelHUDScale3:setVisible(false);
 			self.m_HUDScale:setVisible(false);
 		end
 	end
@@ -385,13 +379,12 @@ function SelfGUI:constructor()
 	end
 
 
-	self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.5, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, tabSettings)
+	self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.5, self.m_Height*0.49, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
 	self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
+	self.m_HUDScale:setColor(Color.LightBlue)
 	self.m_HUDScale.onScroll = function() local scale = self.m_HUDScale:getScrollPosition(); HUDUI:getSingleton():setScale( scale ); core:set("HUD","scaleScroll",scale*0.75) end
-	self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.5, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, _"HUD-Skalierung", tabSettings):setAlignX("center")
-	self.m_LabelHUDScale2 = GUILabel:new(self.m_Width*0.5, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, _"0", tabSettings):setAlignX("left")
-	self.m_LabelHUDScale3 = GUILabel:new(self.m_Width*0.5, self.m_Height*0.61, self.m_Width*0.35, self.m_Height*0.04, _"1", tabSettings):setAlignX("right")
-	if core:get("HUD", "UIStyle") ~= UIStyle.eXo then self.m_HUDScale:setVisible(false); self.m_LabelHUDScale1:setVisible(false); self.m_LabelHUDScale2:setVisible(false); self.m_LabelHUDScale3:setVisible(false); end
+	self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.5, self.m_Height*0.49, self.m_Width*0.35, self.m_Height*0.07, _"HUD-Skalierung", tabSettings):setAlignX("center")
+	if core:get("HUD", "UIStyle") ~= UIStyle.eXo then self.m_HUDScale:setVisible(false); self.m_LabelHUDScale1:setVisible(false); end
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
 	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
@@ -403,8 +396,19 @@ function SelfGUI:constructor()
 	end
 	self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.07, _"Fraktion", tabSettings)
-	self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.62, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", tabSettings)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.07, _"Nametag:", tabSettings)
+	self.m_NametagChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.62, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
+	self.m_NametagChange:addItem("Default")
+	self.m_NametagChange:addItem("VRP")
+	self.m_NametagChange.onChange = function(text, index)
+		core:set("HUD", "NametagStyle", index)
+		Nametag:getSingleton():setStyle(index)
+	end
+	self.m_UIChange:setIndex(core:get("HUD", "NametagStyle", NametagStyle.Default), true)
+
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.72, self.m_Width*0.8, self.m_Height*0.07, _"Fraktion", tabSettings)
+	self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.79, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", tabSettings)
 	self.m_SkinSpawn:setFont(VRPFont(25))
 	self.m_SkinSpawn:setFontSize(1)
 	self.m_SkinSpawn:setChecked(core:get("HUD", "spawnFactionSkin", true))
@@ -422,7 +426,10 @@ function SelfGUI:constructor()
 
 	local tourText = Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten"
 
-	self.m_ServerTour = GUIButton:new(self.m_Width*0.6, self.m_Height*0.7, self.m_Width*0.35, self.m_Height*0.07, tourText, tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
+	self.m_ShaderButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.64, self.m_Width*0.35, self.m_Height*0.07, _"Shader-Einstellungen", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
+	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
+
+	self.m_ServerTour = GUIButton:new(self.m_Width*0.6, self.m_Height*0.73, self.m_Width*0.35, self.m_Height*0.07, tourText, tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
 	self.m_ServerTour.onLeftClick = function()
 		if not Tour:getSingleton():isActive() then
 		QuestionBox:new(
@@ -434,11 +441,10 @@ function SelfGUI:constructor()
 		end
 	end
 
-	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
+	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
 	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
-	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.8, self.m_Width*0.35, self.m_Height*0.07, _"Shader-Einstellungen", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
-	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
+
 
 
 	--[[ TODO: Do we require this?

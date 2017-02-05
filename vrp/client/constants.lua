@@ -133,6 +133,9 @@ BlipConversion =
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
 for i, v in pairs(UIStyle) do UIStyle[v] = i end
 
+NametagStyle = {Default = 1, vRoleplay = 2}
+for i, v in pairs(NametagStyle) do NametagStyle[v] = i end
+
 MATERIAL_TYPES =
 {
 	[1] = 	--// GRASS

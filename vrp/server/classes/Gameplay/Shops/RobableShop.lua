@@ -63,12 +63,12 @@ function RobableShop:Ped_Targetted(ped, attacker)
 end
 
 function RobableShop:startRob(shop, attacker, ped)
-	self.m_Shop.m_Marker.m_Disable = true
-	setElementAlpha(self.m_Shop.m_Marker,0)
+	shop.m_Marker.m_Disable = true
+	setElementAlpha(shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
 	ActionsCheck:getSingleton():setAction("Shop-Überfall")
 
-	self.m_Shop.m_LastRob = getRealTime().timestamp
+	shop.m_LastRob = getRealTime().timestamp
 
 	-- Play an alarm
 	local pos = ped:getPosition()

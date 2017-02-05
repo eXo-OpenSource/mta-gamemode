@@ -261,7 +261,7 @@ function PolicePanel:bugAction(func)
 		if self.m_BugData and self.m_BugData[id] and self.m_BugData[id]["active"] and self.m_BugData[id]["active"] == true then
 			if func == "locate" then
 				if self.m_BugData[id]["element"] and isElement(self.m_BugData[id]["element"]) then
-					self:locateElement(self.m_BugData[id]["element"])
+					self:locateElement(self.m_BugData[id]["element"], "bug")
 				else
 					ErrorBox:new(_"Die Wanze wurde nicht gefunden!")
 				end
@@ -307,7 +307,7 @@ function PolicePanel:locatePlayer()
 	local player = item.player
 	if isElement(player) then
 		if player:getPublicSync("Phone") == true then
-			self:locateElement(player)
+			self:locateElement(player, "phone")
 		else
 			ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Sein Handy ist ausgeschaltet!")
 		end
@@ -316,7 +316,7 @@ function PolicePanel:locatePlayer()
 	end
 end
 
-function PolicePanel:locateElement(element)
+function PolicePanel:locateElement(element, locationOf)
 	local elementText = element:getType() == "player" and _"Der Spieler" or _"Die Wanze"
 
 	if getElementDimension(element) == 0 and getElementInterior(element) == 0 then
@@ -328,7 +328,7 @@ function PolicePanel:locateElement(element)
 		localPlayer.m_LocatingElement = element
 		InfoBox:new(_("%s wurde geortet! Folge dem Blip auf der Karte!", elementText))
 
-		ElementLocateTimer = setTimer(function()
+		ElementLocateTimer = setTimer(function(locationOf)
 			if localPlayer.m_LocatingElement and isElement(localPlayer.m_LocatingElement) then
 				if not localPlayer:getPublicSync("Faction:Duty") then
 					self:stopLocating()
@@ -340,21 +340,21 @@ function PolicePanel:locateElement(element)
 					ErrorBox:new(_("%s ist in einem Gebäude!", elementText))
 					self:stopLocating()
 				end
-				if element:getType() == "player" then
-					if not element:getPublicSync("Phone") == true then
-						ErrorBox:new(_"Ortung beendet: Der Spieler hat sein Handy ausgeschaltet!")
-						self:stopLocating()
-					end
-				else
+				if locationOf == "bug" then
 					if not element:getData("Wanze") == true then
 						ErrorBox:new(_"Ortung beendet: Die Wanze ist nicht mehr verfügbar!")
+						self:stopLocating()
+					end
+				elseif locationOf == "phone" then
+					if not element:getPublicSync("Phone") == true then
+						ErrorBox:new(_"Ortung beendet: Der Spieler hat sein Handy ausgeschaltet!")
 						self:stopLocating()
 					end
 				end
 			else
 				self:stopLocating()
 			end
-		end, 1000, 0)
+		end, 1000, 0, locationOf)
 	else
 		ErrorBox:new(_"Der Spieler konnte nicht geortet werden!\n Er ist in einem Gebäude!")
 	end

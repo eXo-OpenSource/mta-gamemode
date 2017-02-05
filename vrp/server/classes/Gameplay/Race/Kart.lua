@@ -17,6 +17,8 @@ local lapPrice = 50
 local lapPackDiscount = 4
 
 function Kart:constructor()
+	self.m_Polygon = createColPolygon(1269, 66, 1269.32, 66.64, 1347.71, 31.07, 1382.18, 41.35, 1413.99, 117.01, 1314.21, 163.72)
+
 	self.m_Players = {}
 	self.m_MapIndex = {}
 	self.m_Maps = {}
@@ -57,6 +59,8 @@ function Kart:constructor()
 	-- add default event handlers
 	addEventHandler("startKartTimeRace", root, bind(Kart.startTimeRace, self))
 	addEventHandler("requestKartDatas", root, bind(Kart.requestKartmapData, self))
+	addEventHandler("onColShapeHit", self.m_Polygon, bind(Kart.onKartZoneEnter, self))
+	addEventHandler("onColShapeLeave", self.m_Polygon, bind(Kart.onKartZoneLeave, self))
 end
 
 ---
@@ -280,7 +284,7 @@ function Kart:onTimeRaceDone(player, vehicle)
 					player:setPosition(1297.421, 145.709, 20.022)
 				end
 			)
-		end, 6000, 1, player, vehicle
+		end, 3000, 1, player, vehicle
 	)
 end
 
@@ -310,6 +314,49 @@ end
 function Kart:onPlayerQuit()
 	source.kartVehicle:destroy()
 end
+
+---
+-- Kart zone handling
+---
+function Kart:onKartZoneEnter(hitElement, matchingDimension)
+	if not matchingDimension then return end
+	if hitElement.type ~= "vehicle" then return end
+
+	for _, v in pairs(self.m_Players) do
+		if v.vehicle == hitElement then
+			return
+		end
+	end
+
+	if hitElement.controller then
+		hitElement.controller:sendError("Du darfst die Kartbahn nicht mit einem Fahrzeug betreten!")
+	end
+
+	hitElement:setPosition(1268.794, 196.042, 19.414)
+	hitElement:setRotation(0, 0, 333)
+end
+
+function Kart:onKartZoneLeave(leaveElement, matchingDimension)
+	if not matchingDimension then return end
+	if leaveElement.type ~= "vehicle" then return end
+
+	for _, v in pairs(self.m_Players) do
+		if v.vehicle == leaveElement then
+			local player = leaveElement.controller
+			leaveElement:destroy()
+			nextframe(
+				function()
+					player:setPosition(player.matrix:transformPosition(Vector3(0, 0, 1)))
+				end
+			)
+			return
+		end
+	end
+end
+
+--Command results: vector3: { x = 1268.794, y = 196.042, z = 19.414 } [userdata]
+--Command results: vector3: { x = 0.000, y = 0.000, z = 333.779 } [userdata]
+
 
 --[[ Possible race states for kart race
 	Waiting = Warten auf Spieler / Aufbau (o.ä.)
