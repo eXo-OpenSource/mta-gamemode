@@ -34,9 +34,14 @@ function FactionRescue:constructor()
 	elevator:addStation("UG Garage", Vector3(1756.40, -1747.44, 6.22))
 	elevator:addStation("Erdgeschoss", Vector3(1744.63, -1752.5, 13.57))
 	elevator:addStation("1.Obergeschoss", Vector3(1744.63, -1751.69, 18.81))
+	elevator:addStation("2.Obergeschoss", Vector3(1744.63, -1751.69, 23.533))
 	elevator:addStation("3.OG Heliport 1", Vector3(1778.19, -1786.69, 46.18))
 	elevator:addStation("3.OG Heliport 2", Vector3(1785.10, -1788.13, 46.18))
 
+	local terraceElevator = Elevator:new()
+	terraceElevator:addStation("2.Obergeschoss", Vector3(1720.411, -1753.330, 23.539))
+	terraceElevator:addStation("Terrasse unten", Vector3(1743.533, -1765.879, 31.322))
+	terraceElevator:addStation("Terrasse oben", Vector3( 1743.533, -1765.879, 36.891))
 
 	self.m_Faction = FactionManager.Map[4]
 
