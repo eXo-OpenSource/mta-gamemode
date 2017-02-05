@@ -269,6 +269,7 @@ function Kart:startTimeRace(laps, index)
 
 	self.m_Players[client] = {vehicle = vehicle, laps = 1, selectedLaps = selectedLaps, state = "Flying", checkpoints = {}, startTick = getTickCount()}
 	client:triggerEvent("showRaceHUD", true, true)
+	client:sendInfo("Vollende eine Einführungsrunde!")
 
 	self:syncToptimes(client)
 end
