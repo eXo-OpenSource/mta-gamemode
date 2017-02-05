@@ -6,7 +6,7 @@ NoDm.Zones = {
 	[3] = {Vector3(430, -100, 998), Vector3(50, 40, 10), 4},
 	[4] = {Vector3{1770, -1342.12, 20.77},Vector3{65, 72, 123}},
 	[5] = {Vector3(1700, -1800, 0), Vector3{111, 60, 100}}, -- Rescue
-	--[6] = {Vector3(1266, 22, 20), Vector3{150, 150, 50}}, -- Kart
+	[6] = {Vector3(1266, 22, 20), Vector3{150, 150, 50}}, -- Kart
 }
 
 function NoDm:constructor()
