@@ -340,7 +340,7 @@ function PolicePanel:locateElement(element)
 					ErrorBox:new(_("%s ist in einem Gebäude!", elementText))
 					self:stopLocating()
 				end
-				if element:getType() == "player" then
+				if not element:getData("Wanze") and element:getType() == "player" then
 					if not element:getPublicSync("Phone") == true then
 						ErrorBox:new(_"Ortung beendet: Der Spieler hat sein Handy ausgeschaltet!")
 						self:stopLocating()
