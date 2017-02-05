@@ -152,6 +152,7 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
 			playerPointer.state = "Running"
 			playerPointer.startTick = getTickCount()
+			playerPointer.checkpoints = {}
 			player:triggerEvent("HUDRaceUpdate", true, playerPointer.laps)
 		end
 	elseif playerPointer.state == "Running" then
@@ -350,7 +351,7 @@ function Kart:onKartZoneEnter(hitElement, matchingDimension)
 				end
 			end, 200, 0, hitElement
 		)
-	
+
 		return
 	end
 
