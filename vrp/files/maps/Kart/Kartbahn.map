@@ -1,5 +1,4 @@
 <map edf:definitions="eXoKartEDF,editor_main">
-    <removeWorldObject id="removeWorldObject (trailer5_01) (1)" radius="100" interior="0" model="13441" lodModel="13441" posX="1299.7109" posY="138.73438" posZ="19.34375" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
     <object id="object (sub_roadleft) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1316.5996" posY="123.7998" posZ="21.1" rotX="0" rotY="0" rotZ="65.995"></object>
     <object id="object (Vgs_guardhouse01) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="8168" doublesided="false" scale="1" dimension="0" posX="1310.6" posY="145.39999" posZ="21.4" rotX="0" rotY="0" rotZ="351"></object>
     <object id="object (fenceshit3) (4)" breakable="true" interior="0" collisions="true" alpha="255" model="983" doublesided="false" scale="1" dimension="0" posX="1311.3" posY="138.60001" posZ="20.6" rotX="0" rotY="0" rotZ="155.246"></object>
@@ -132,7 +131,7 @@
     <object id="object (d_rock) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="3929" doublesided="false" scale="1" dimension="0" posX="1361.5" posY="26.7" posZ="26.6" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (p_rubble04bcol) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="879" doublesided="false" scale="1" dimension="0" posX="1359.5996" posY="25.40039" posZ="26.4" rotX="313.995" rotY="0" rotZ="69.999"></object>
     <object id="object (p_rubblebig) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="906" doublesided="false" scale="1" dimension="0" posX="1365.1" posY="28.7" posZ="27.3" rotX="0" rotY="0" rotZ="0"></object>
-    <object id="object (DEAD_TREE_12) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="840" doublesided="false" scale="1" dimension="0" posX="1403.5996" posY="85.40039" posZ="23" rotX="18.995" rotY="359.467" rotZ="282.167"></object>
+    <object id="object (DEAD_TREE_12) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="840" doublesided="false" scale="1" dimension="0" posX="1403.5996" posY="85.40039" posZ="23" rotX="18.99" rotY="359.462" rotZ="282.162"></object>
     <object id="object (pinetree04) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="658" doublesided="false" scale="1" dimension="0" posX="1407.5996" posY="80.20019" posZ="24.1" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (sm_veg_tree4_big) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="691" doublesided="false" scale="1" dimension="0" posX="1417.2" posY="95" posZ="21.9" rotX="0" rotY="0" rotZ="6"></object>
     <object id="object (sub_roadbarrier) (47)" breakable="true" interior="0" collisions="true" alpha="255" model="973" doublesided="false" scale="1" dimension="0" posX="1381.2998" posY="51.7002" posZ="21.1" rotX="0" rotY="0" rotZ="67.934"></object>
@@ -211,16 +210,31 @@
     <checkpoint id="marker (cylinder) (8)" size="6" alpha="255" color="#0000FF32" dimension="0" interior="0" posX="1328.4004" posY="88.09961" posZ="21.2" rotX="0" rotY="0" rotZ="0" type="cylinder"></checkpoint>
     <checkpoint id="marker (cylinder) (9)" size="6" alpha="255" color="#0000FF32" dimension="0" interior="0" posX="1317.1" posY="62.2" posZ="21.2" rotX="0" rotY="0" rotZ="0" type="cylinder"></checkpoint>
     <checkpoint id="marker (cylinder) (10)" size="6" alpha="255" color="#0000FF32" dimension="0" interior="0" posX="1380.8" posY="61.9" posZ="21.2" rotX="0" rotY="0" rotZ="0" type="cylinder"></checkpoint>
-    <checkpoint id="marker (cylinder) (11)" size="6" alpha="255" color="#0000FF32" dimension="0" interior="0" posX="1309.7" posY="122.1" posZ="21.2" rotX="0" rotY="0" rotZ="0" type="cylinder"></checkpoint>
-    <spawnpoint id="spawnpoint (Kart) (1)" alpha="255" interior="0" posX="1310.445" posY="123.184" posZ="20.518" rotX="0" rotY="0" rotZ="155.144" vehicle="571"></spawnpoint>
-    <startmarker id="startmarker (1)" posX="1311.1" posY="141.6" posZ="20" rotX="0" rotY="0" rotZ="0"></startmarker>
-    <info id="info (1)" Mapname="Kartmap" Author="Stumpy, Clausus, xXKing" model="64" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0" rotZ="147.252"></info>
-    <removeWorldObject id="removeWorldObject (trailer2_01) (2)" radius="7.9056935" interior="0" model="3168" lodModel="3343" posX="1295.9844" posY="158.74219" posZ="19.38281" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <checkpoint id="marker (cylinder) (11)" size="6" alpha="255" color="#0000FF32" dimension="0" interior="0" posX="1309.7002" posY="122.09961" posZ="21.2" rotX="0" rotY="0" rotZ="0" type="cylinder"></checkpoint>
+    <startmarker id="startmarker (1)" posX="1311.1" posY="141.60001" posZ="19.8" rotX="0" rotY="0" rotZ="0"></startmarker>
+    <info id="info (1)" Autor="" Mapname="Kartmap" model="64" Author="Stumpy, Clausus, xXKing" posX="1311.8" posY="143.10001" posZ="20.7" rotX="0" rotY="0" rotZ="147.252"></info>
     <object id="object (sub_roadright) (6)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1326.5" posY="139.2998" posZ="21.1" rotX="0" rotY="0" rotZ="209.987"></object>
     <object id="object (sub_roadright) (7)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1335.4004" posY="142.09961" posZ="21.1" rotX="0" rotY="0" rotZ="183.983"></object>
     <object id="object (sub_roadright) (8)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1308.9004" posY="106.5" posZ="21.1" rotX="0" rotY="0" rotZ="245.995"></object>
     <object id="object (sub_roadright) (10)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1312.7002" posY="115.09961" posZ="21.1" rotX="0" rotY="0" rotZ="245.995"></object>
     <object id="object (sub_roadright) (11)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1316.5996" posY="123.7998" posZ="21.1" rotX="0" rotY="0" rotZ="245.995"></object>
     <object id="object (sub_roadright) (13)" breakable="true" interior="0" collisions="true" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1320.5" posY="132.59961" posZ="21.1" rotX="0" rotY="0" rotZ="245.995"></object>
-    <removeWorldObject id="removeWorldObject (trailer5_01) (2)" radius="6.1156545" interior="0" model="3171" lodModel="3344" posX="1299.7109" posY="138.73438" posZ="19.34375" rotX="0" rotY="0" rotZ="0"></removeWorldObject>
+    <spawnpoint id="spawnpoint (1)" alpha="255" interior="0" posX="1311.9" posY="122.5" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (2)" alpha="255" interior="0" posX="1313.3" posY="121.9" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (3)" alpha="255" interior="0" posX="1309" posY="123.7998" posZ="20.5" rotX="0" rotY="0" rotZ="155.638" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (4)" alpha="255" interior="0" posX="1307.6" posY="124.5" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (5)" alpha="255" interior="0" posX="1306.3" posY="125.1" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (6)" alpha="255" interior="0" posX="1307.2" posY="127.2" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (7)" alpha="255" interior="0" posX="1308.5" posY="126.6" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (8)" alpha="255" interior="0" posX="1310" posY="125.8" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (9)" alpha="255" interior="0" posX="1311.4" posY="125.2" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (10)" alpha="255" interior="0" posX="1312.8" posY="124.5" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (11)" alpha="255" interior="0" posX="1314.2" posY="123.9" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (12)" alpha="255" interior="0" posX="1315.2" posY="125.9" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (13)" alpha="255" interior="0" posX="1313.7" posY="126.5" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (14)" alpha="255" interior="0" posX="1312.3" posY="127.1" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (15)" alpha="255" interior="0" posX="1310.8" posY="127.7" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (16)" alpha="255" interior="0" posX="1309.4" posY="128.39999" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (17)" alpha="255" interior="0" posX="1308.1" posY="129" posZ="20.5" rotX="0" rotY="0" rotZ="155.643" vehicle="571"></spawnpoint>
+    <spawnpoint id="spawnpoint (18)" alpha="255" interior="0" posX="1310.4453" posY="123.18359" posZ="20.518" rotX="0" rotY="0" rotZ="155.638" vehicle="571"></spawnpoint>
 </map>
