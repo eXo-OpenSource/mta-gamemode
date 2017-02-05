@@ -62,11 +62,6 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/medicLOD.col", 4076)
 	self:loadImportDFF("files/models/medicLOD.dff", 4076)
 
-	--self:loadImportTXD("files/models/medicInterior.txd", 3986)
-	--self:loadImportCOL("files/models/medicInterior.col", 3986)
-	--self:loadImportDFF("files/models/medicInterior.dff", 3986)
-	--self:setLODDistance(3986, 500)
-
 	self:loadImportTXD("files/models/holzstamm.txd", 837)
 	self:loadImportCOL("files/models/holzstamm.col", 837)
 	self:loadImportDFF("files/models/holzstamm.dff", 837)
@@ -83,6 +78,7 @@ function CustomModelManager:constructor()
 
 	self:loadShader("files/images/Other/trans.png", "txgrass0_1")
 	self:loadShader("files/images/Other/trans.png", "txgrass1_1")
+
 
 end
 
