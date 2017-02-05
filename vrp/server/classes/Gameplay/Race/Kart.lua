@@ -18,6 +18,7 @@ local lapPackDiscount = 4
 
 function Kart:constructor()
 	self.m_Polygon = createColPolygon(1269, 66, 1269.32, 66.64, 1347.71, 31.07, 1382.18, 41.35, 1413.99, 117.01, 1314.21, 163.72)
+	self.m_Timers = {}
 
 	self.m_Players = {}
 	self.m_MapIndex = {}
@@ -328,6 +329,31 @@ function Kart:onKartZoneEnter(hitElement, matchingDimension)
 		end
 	end
 
+	if hitElement:getVehicleType() == VehicleType.Plane or hitElement:getVehicleType() == VehicleType.Helicopter then
+		if not hitElement.controller then return hitElement:respawn() end
+
+		local pos = hitElement:getPosition()
+		local vel = hitElement:getVelocity()
+		if pos.z <= 40 then
+			hitElement:setPosition(pos.x, pos.y, 45)
+			hitElement:setVelocity(vel.x, vel.y, 2)
+		end
+
+		self.m_Timers[hitElement] = setTimer(
+			function(vehicle)
+				if not vehicle:isWithinColShape(self.m_Polygon) then return self.m_Timers[vehicle]:destroy() end
+				local pos = hitElement:getPosition()
+				local vel = hitElement:getVelocity()
+				if pos.z <= 40 then
+					hitElement:setPosition(pos.x, pos.y, 45)
+					hitElement:setVelocity(vel.x, vel.y, 2)
+				end
+			end, 200, 0, hitElement
+		)
+	
+		return
+	end
+
 	if hitElement.controller then
 		hitElement.controller:sendError("Du darfst die Kartbahn nicht mit einem Fahrzeug betreten!")
 	end
@@ -353,10 +379,6 @@ function Kart:onKartZoneLeave(leaveElement, matchingDimension)
 		end
 	end
 end
-
---Command results: vector3: { x = 1268.794, y = 196.042, z = 19.414 } [userdata]
---Command results: vector3: { x = 0.000, y = 0.000, z = 333.779 } [userdata]
-
 
 --[[ Possible race states for kart race
 	Waiting = Warten auf Spieler / Aufbau (o.ä.)
