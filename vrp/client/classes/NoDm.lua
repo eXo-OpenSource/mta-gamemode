@@ -24,8 +24,7 @@ function NoDm:constructor()
 		else
 			self.m_NoDmRadarAreas[index] = HUDRadar:getSingleton():addArea(koords[1].x, koords[1].y, koords[2].x, -1*koords[2].y, {0, 255, 0, 200})
 		end
-		addEventHandler ("onClientColShapeHit", self.m_NoDmZones[index], bind(self.onNoDmZoneHit, self))
-		addEventHandler ("onClientColShapeLeave", self.m_NoDmZones[index], bind(self.onNoDmZoneLeave, self))
+		self:addZone(self.m_NoDmZones[index])
 	end
 end
 
@@ -39,6 +38,12 @@ function NoDm:onNoDmZoneLeave(hitElement, dim)
 	if hitElement== localPlayer and dim then
 		self:setPlayerNoDm(false)
 	end
+end
+
+function NoDM:addZone(colShape)
+	local index = #self.m_NoDmZones+1
+	addEventHandler ("onClientColShapeHit", colShape, bind(self.onNoDmZoneHit, self))
+	addEventHandler ("onClientColShapeLeave", colShape, bind(self.onNoDmZoneLeave, self))
 end
 
 function NoDm:setPlayerNoDm(state)
