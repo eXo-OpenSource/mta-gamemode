@@ -252,7 +252,7 @@ function CompanyManager:Event_companyRankUp(playerId)
 		return
 	end
 
-	if company:getPlayerRank(playerId) < CompanyRank.Manager then
+	if company:getPlayerRank(playerId) < CompanyRank.Leader then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
 		local player, isOffline = DatabasePlayer.getFromId(playerId)
