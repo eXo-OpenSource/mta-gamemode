@@ -616,7 +616,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
-	if client:getMoney() < 100 then
+	if client:getMoney() < 100 and source:getOwner() == client:getId() then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
 	end
