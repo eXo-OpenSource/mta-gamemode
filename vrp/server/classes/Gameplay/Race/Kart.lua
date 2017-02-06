@@ -10,6 +10,7 @@ addRemoteEvents{"startKartTimeRace", "requestKartDatas"}
 
 Kart.Maps = {
 	"files/maps/Kart/Kartbahn.map",
+	"files/maps/Kart/Kartbahn2.map",
 	--"files/maps/Kart/EliteKartMap.map",
 }
 
