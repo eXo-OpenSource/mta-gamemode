@@ -29,6 +29,7 @@ function Phone:constructor()
 	--self:registerApp(PhoneApp.makeWebApp("SanNews",  "IconSanNews.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sanNews&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(PhoneApp.makeWebApp("Nachrichten",  "IconMessage.png", ("http://exo-reallife.de/ingame/vRPphone/phone.php?page=sms&player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
 	self:registerApp(AppAmmunation)
+	self:registerApp(AppBank)
 
 	-- Add GUI elements
 	self.m_Background = GUIImage:new(0, 0, self.m_Width, self.m_Height, "files/images/Phone/"..self.m_Phone:gsub("-", "")..".png", self)
