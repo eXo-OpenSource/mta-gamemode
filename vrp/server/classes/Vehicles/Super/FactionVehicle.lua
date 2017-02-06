@@ -158,8 +158,12 @@ end
 
 function FactionVehicle:hasKey(player)
   if self:isPermanent() then
-    if self.m_Faction:isStateFaction() or self.m_Faction:isRescueFaction() then
-		if player:getFaction() and player:isFactionDuty() then
+    if self.m_Faction:isStateFaction() and player:getFaction():isStateFaction() then
+		if player:isFactionDuty() then
+			return true
+		end
+	elseif self.m_Faction:isRescueFaction() and player:getFaction():isRescueFaction() then
+		if player:isFactionDuty() then
 			return true
 		end
 	elseif player:getFaction() == self.m_Faction then
