@@ -10,16 +10,19 @@ inherit(Singleton, ShortMessageLogGUI)
 
 ShortMessageLogGUI.m_Log = {}
 function ShortMessageLogGUI:constructor()
-	GUIForm.constructor(self, (screenWidth/2-screenWidth*0.4*0.5)/ASPECT_RATIO_MULTIPLIER, screenHeight*0.2, screenWidth*0.4/ASPECT_RATIO_MULTIPLIER, screenHeight*0.5)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"ShortMessage-Log", true, true, self)
+	GUIForm.constructor(self, screenWidth/2-300, screenHeight/2-230, 600, 460)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"ShortMessage-Log:", true, true, self)
 	self.m_Window:addBackButton(function () SelfGUI:getSingleton():show() end)
-	GUILabel:new(self.m_Width*0.05, self.m_Height*0.1, self.m_Width*0.9, self.m_Height*0.1, _"Log von letzten Shortmessages", self.m_Window)
-	self.m_LogGrid = GUIGridList:new(self.m_Width*0.05, self.m_Height*0.2, self.m_Width*0.9, self.m_Height*0.6, self.m_Window)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.1, self.m_Width*0.96, self.m_Height*0.07, _"Log von letzten Shortmessages (Doppelklick zum kopieren)", self.m_Window)
+	self.m_LogGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.18, self.m_Width*0.96, self.m_Height*0.5, self.m_Window)
 	self.m_LogGrid:addColumn(_"Log-Zeilen", 1)
 	self.m_LogGrid:setFont(VRPFont(20))
 	self.m_LogGrid:setItemHeight(24)
-	self.m_Clear = GUIButton:new(self.m_Width*0.35, self.m_Height*0.88, self.m_Width*0.3, self.m_Height*0.08, _"Leeren", self.m_Window):setBackgroundColor(Color.Orange)
+	self.m_Title = GUILabel:new(self.m_Width*0.02, self.m_Height*0.7, self.m_Width*0.96, self.m_Height*0.07, "", self.m_Window)
+	self.m_Text = GUILabel:new(self.m_Width*0.02, self.m_Height*0.77, self.m_Width*0.96, self.m_Height*0.05, "", self.m_Window)
+	self.m_Clear = GUIButton:new(self.m_Width*0.68, self.m_Height*0.91, self.m_Width*0.3, self.m_Height*0.07, _"Leeren", self.m_Window):setBackgroundColor(Color.Orange)
 	self.m_Clear.onLeftClick = bind(self.clear, self)
+
 	self:setVisible(false)
 end
 
@@ -31,10 +34,31 @@ end
 function ShortMessageLogGUI:onShow()
 	if self.m_LogGrid then
 		self.m_LogGrid:clear()
-		local item
-		for key, str in ipairs( ShortMessageLogGUI.m_Log ) do
-			item = self.m_LogGrid:addItem(str)
-			item.onLeftDoubleClick = function ()  setClipboard(str); outputChatBox("[ShortMessage] Log-Zeile wurde in Zwischenablage kopiert!", 200,200,0); end
+		local item, string
+		for key, data in ipairs( ShortMessageLogGUI.m_Log ) do
+			item = self.m_LogGrid:addItem(data.text)
+			item:setFont(VRPFont(20))
+			item.onLeftClick = function()
+				self.m_Title:setText(("%s %s"):format(getOpticalTimestamp(data.timestamp), data.title))
+				--self.m_Title:setColor(data.color)
+				self.m_Text:setText(data.text)
+			end
+
+			item.onLeftDoubleClick = function ()
+				setClipboard(("%s \r\n %s \r\n %s"):format(getOpticalTimestamp(data.timestamp), data.title, data.text));
+				outputChatBox("[ShortMessage] Log-Zeile wurde in Zwischenablage kopiert!", 200,200,0);
+			end
+
 		end
 	end
+end
+
+function ShortMessageLogGUI.insertLog(title, text, color)
+	local id = #ShortMessageLogGUI.m_Log+1
+	ShortMessageLogGUI.m_Log[id] ={
+		["title"] = title or "",
+		["text"] = text or "",
+		["color"] = type(color) == "table" and color or Color.White,
+		["timestamp"] = getRealTime().timestamp
+	}
 end
