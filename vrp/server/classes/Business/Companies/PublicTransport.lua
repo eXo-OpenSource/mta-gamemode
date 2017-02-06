@@ -181,7 +181,7 @@ function PublicTransport:Event_setTargetFromMap(posX, posY)
 		local driver = self.m_TaxiCustomer[client]["driver"]
 		driver:sendInfo(_("Der Kunde %s hat sein Ziel auf der Karte markiert! Ziel: %s/%s", driver, client:getName(), getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))
 		client:sendInfo(_("Du hast dein Ziel auf der Karte markiert! Ziel: %s/%s", client, getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))
-		self.m_TaxiCustomer[client]["blip"] = Blip:new("Waypoint.png", posX, posY,root,600)
+		self.m_TaxiCustomer[client]["blip"] = Blip:new("Waypoint.png", posX, posY, driver, 1000)
 	end
 end
 
