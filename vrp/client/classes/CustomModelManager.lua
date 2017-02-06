@@ -71,6 +71,10 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/kart.col", 13083)
 	self:loadImportDFF("files/models/kart.dff", 13083)
 
+	self:loadImportTXD("files/models/bed.txd", 1879)
+	self:loadImportCOL("files/models/bed.col", 1879)
+	self:loadImportDFF("files/models/bed.dff", 1879)
+
 	self:loadImportDFF("files/models/piss.dff", 1904)
 
 	self:loadShader("files/images/Other/parking1.png", "noparking2_128")
