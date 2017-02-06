@@ -74,8 +74,11 @@ addEventHandler("vehicleSpawn", root,
 		if shop.m_Hook then
 			shop.m_Hook:call(client,vehicleModel,vehicle)
 		end
-
-		warpPedIntoVehicle(client, vehicle)
+		nextframe(
+			function()
+				warpPedIntoVehicle(client, vehicle)
+			end
+		)
 		client:setSpawnerVehicle(vehicle)
 	end
 )
