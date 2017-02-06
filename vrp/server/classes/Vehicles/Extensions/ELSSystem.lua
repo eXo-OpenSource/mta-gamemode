@@ -48,6 +48,7 @@ function ELSSystem:destructor( )
 		unbindKey(player, "z","down", self.m_BindLight, 100)
 		unbindKey(player, ",","up", self.m_BindBlink, "left")
 		unbindKey(player, ".","up", self.m_BindBlink, "right")
+		unbindKey(player, "horn","up", self.m_BindBlink, "blink")
 		unbindKey(player, "-","up", self.m_BindBlink, "off")
 	end
 	for i = 1,8 do
@@ -63,6 +64,7 @@ function ELSSystem:destructor( )
 		unbindKey(player, "z","down", self.m_BindLight, 100)
 		unbindKey(player, ",","up", self.m_BindBlink, "left")
 		unbindKey(player, ".","up", self.m_BindBlink, "right")
+		unbindKey(player, "horn","up", self.m_BindBlink, "blink")
 		unbindKey(player, "-","up", self.m_BindBlink, "off")
 	end
 end
@@ -74,6 +76,7 @@ function ELSSystem:onLeaveVehicle(player, seat)
 		unbindKey(player, "z","down", self.m_BindLight, 100)
 		unbindKey(player, ",","up", self.m_BindBlink, "left")
 		unbindKey(player, ".","up", self.m_BindBlink, "right")
+		unbindKey(player, "horn","up", self.m_BindBlink, "blink")
 		unbindKey(player, "-","up", self.m_BindBlink, "off")
 	end
 end
