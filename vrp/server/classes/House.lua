@@ -66,9 +66,9 @@ end
 
 function House:toggleLockState( player )
 	self.m_LockStatus = not self.m_LockStatus
-	local info = "abgeschlossen"
+	local info = "aufgeschlossen"
 	if self.m_LockStatus then
-		info = "aufgeschlossen"
+		info = "abgeschlossen"
 	end
 	player:sendInfo("Das Haus wurde "..info.."!")
 	self:showGUI(player)
