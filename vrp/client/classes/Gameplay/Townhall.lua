@@ -95,7 +95,8 @@ function Townhall:constructor()
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed5
 
 	--// RESCUE BASE HEAL PED
-	local itemSpawnerPed6 = Ped.create(70, Vector3(1723.081, -1751.388, 13.555))
+
+	local itemSpawnerPed6 = Ped.create(70, Vector3(1723.356, -1752.185, 13.555))
 	itemSpawnerPed6:setRotation(Vector3(0, 0, 0))
 	itemSpawnerPed6.Name = _"Rescue Base Heilung"
 	itemSpawnerPed6.Description = _"Klicke mich für Heilung an!"
