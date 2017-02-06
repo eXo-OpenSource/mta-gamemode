@@ -41,6 +41,9 @@ function VehicleInteraction:doLock()
 		else
 			lookAtVehicle:playLockEffect()
 			lookAtVehicle:setLocked(true)
+			for i = 1,6 do 
+				setVehicleDoorState ( lookAtVehicle, i-1, 0)
+			end
 		end
 	else
 		client:sendError(_("Du hast keinen Schlüssel für das Fahrzeug!", client))
