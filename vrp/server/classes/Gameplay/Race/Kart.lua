@@ -157,11 +157,6 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 		end
 	elseif playerPointer.state == "Running" then
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
-			if playerPointer.laps >= playerPointer.selectedLaps then
-				self:onTimeRaceDone(player, playerPointer.vehicle)
-				return
-			end
-
 			-- get last toptimedatas to calc delta time
 			local toptimeData = self.m_Toptimes:getToptimeFromPlayer(player:getId())
 			local oldToptime = toptimeData and toptimeData.time or 0
@@ -175,6 +170,10 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			local deltaTime = lapTime - oldToptime
 			player:triggerEvent("HUDRaceUpdate", true, playerPointer.laps, deltaTime)
 			if anyChange then self:syncToptimes() end
+
+			if playerPointer.laps > playerPointer.selectedLaps then
+				self:onTimeRaceDone(player, playerPointer.vehicle)
+			end
 		else
 			player:triggerEvent("HUDRaceUpdate", true)
 			playerPointer.startTick = getTickCount()
