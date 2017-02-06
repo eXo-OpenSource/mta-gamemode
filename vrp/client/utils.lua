@@ -114,3 +114,22 @@ function timeMsToTimeText(timeMs, hideMinutes)
 
 	return ("%02d:%02d.%03d"):format(minutes, seconds, ms)
 end
+
+function sortPlayerTable(theTable, keyIndex, sortFunction)
+	local cache = {}
+
+	for k, v in pairs(theTable) do
+		local insertCache = {}
+		insertCache[keyIndex] = k
+
+		for insertKey, insertValue in pairs(v) do
+			insertCache[insertKey] = insertValue
+		end
+
+		table.insert(cache, insertCache)
+	end
+
+	table.sort(cache, sortFunction)
+
+	return cache
+end

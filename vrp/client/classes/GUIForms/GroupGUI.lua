@@ -173,10 +173,12 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		self.m_GroupCreateLabel:setVisible(false)
 		self.m_TypeLabel:setText(type..":")
 
+		players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
+
 		self.m_GroupPlayersGrid:clear()
-		for playerId, info in pairs(players) do
+		for _, info in ipairs(players) do
 			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank)
-			item.Id = playerId
+			item.Id = info.playerId
 		end
 		if rank >= GroupRank.Manager then
 			self.m_RankNames = rankNames

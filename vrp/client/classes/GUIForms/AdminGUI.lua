@@ -221,8 +221,11 @@ function AdminGUI:TabPanel_TabChanged(tabId)
 end
 
 function AdminGUI:refreshOnlinePlayers()
+	local players = getElementsByType("player")
+	table.sort(players, function(a, b) return a.name < b.name  end)
+
 	self.m_PlayersGrid:clear()
-	for key, playeritem in ipairs(getElementsByType("player")) do
+	for key, playeritem in ipairs(players) do
 		local item = self.m_PlayersGrid:addItem(playeritem:getName())
 		item.player = playeritem
 		item.onLeftClick = function()

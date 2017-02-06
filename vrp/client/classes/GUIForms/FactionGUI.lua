@@ -284,16 +284,10 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, sk
 			self.m_FactionRankLabel:setText(tostring(rank).." - "..rankNames[rank])
 			self.m_FactionMoneyLabel:setText(tostring(money).."$")
 
+			players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
+
 			self.m_FactionPlayersGrid:clear()
-
-			-- create a new table and sort players by rank
-			local sortedPlayers = {}
-			for playerId, info in pairs(players) do
-				table.insert(sortedPlayers, {playerId = playerId, name = info.name, rank = info.rank})
-			end
-			table.sort(sortedPlayers, function(a, b) return a.rank > b.rank end)
-
-			for player, info in ipairs(sortedPlayers) do
+			for _, info in ipairs(players) do
 				local item = self.m_FactionPlayersGrid:addItem(info.name, info.rank)
 				item.Id = info.playerId
 			end
