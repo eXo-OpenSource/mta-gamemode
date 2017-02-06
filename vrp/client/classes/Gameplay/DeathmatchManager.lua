@@ -55,6 +55,7 @@ function deathScreen.onDeath(killer)
 	if not deathScreen.state then
 		deathScreen.state = true
 		setGameSpeed(0.3)
+		playSound("files/audio/wasted.mp3")
 		deathScreen.sCount = getTickCount()
 		deathScreen.eCount = deathScreen.sCount + 1000
 		if killer and killer ~= localPlayer then
@@ -89,24 +90,19 @@ function deathScreen.runDeathAnim()
 	local duration = deathScreen.eCount  - deathScreen.sCount
 	local prog = elapsedTime / duration
 
-
 	deathScreen["line_width"] = interpolateBetween(0,0,0,screenWidth*1,0,0,prog,"Linear")
 	deathScreen["line_height"] = interpolateBetween(screenHeight*0.3,0,0,screenHeight*0.14,0,0,prog,"Linear")
 
 	deathScreen["line_alpha"] = interpolateBetween(0,0,0,150,0,0,prog,"Linear")
-
 	deathScreen["rec_alpha"] = interpolateBetween(0,0,0,255,0,0,prog,"OutQuad",10000)
 
 	deathScreen["line_r"],deathScreen["line_b"],deathScreen["line_g"] = interpolateBetween(255,255,255,255,255,255,prog,"Linear")
 
-	dxDrawImage(screenWidth*0,screenHeight*0,screenWidth*1,screenHeight*1,"files/images/Deathmatch/death_round.png",0,0,0,tocolor(255,255,255,deathScreen["rec_alpha"] ))
-
-	dxDrawImage(screenWidth*0,screenHeight*0.4,screenWidth*1,screenHeight*0.3,"files/images/Deathmatch/death_img.png",0,0,0,tocolor(deathScreen["line_r"],deathScreen["line_b"],deathScreen["line_g"],deathScreen["line_alpha"] ))
+	dxDrawImage(0, 0, screenWidth, screenHeight, "files/images/Deathmatch/death_round.png", 0, 0, 0, tocolor(255,255,255,deathScreen["rec_alpha"]))
+	dxDrawImage(0, screenHeight*0.4, screenWidth, screenHeight*0.3, "files/images/Deathmatch/death_img.png", 0, 0, 0, tocolor(deathScreen["line_r"], deathScreen["line_b"], deathScreen["line_g"], deathScreen["line_alpha"]))
 
 	dxDrawText("Wasted",screenWidth*0,screenHeight*0.4,screenWidth*1,screenHeight*0.7,tocolor(255,0,0,255),screenWidth/screenHeight*2,"pricedown","center","center")
-	dxDrawText(deathScreen.killerName,screenWidth*0,screenHeight*0.53,screenWidth*1,screenHeight*0.73,tocolor(255,255,255,255),screenWidth/screenHeight*1,"pricedown","center","center")
-
+	dxDrawText(deathScreen.killerName,screenWidth*0,screenHeight*0.525,screenWidth*1,screenHeight*0.7,tocolor(255,255,255,255),screenWidth/screenHeight*1,"pricedown","center","center")
 end
-
 addEvent("deathmatchStartDeathScreen", true)
 addEventHandler("deathmatchStartDeathScreen", root, deathScreen.onDeath)

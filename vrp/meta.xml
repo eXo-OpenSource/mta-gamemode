@@ -1259,6 +1259,7 @@
 	<vrpfile src="files/audio/hb_on.mp3"/>
 	<vrpfile src="files/audio/hb_off.mp3"/>
 	<vrpfile src="files/audio/announcment.mp3"/>
+	<vrpfile src="files/audio/wasted.mp3"/>
 
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>
