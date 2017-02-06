@@ -1,6 +1,6 @@
 <map edf:definitions="eXoKartEDF,editor_main">
     <object id="object (sub_roadbarrier) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="973" doublesided="true" scale="1" dimension="0" posX="1305.6" posY="124.7" posZ="21.1" rotX="0" rotY="0" rotZ="246"></object>
-    <object id="object (sub_roadleft) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="979" doublesided="true" scale="1" dimension="0" posX="1405.6" posY="113.6" posZ="21.1" rotX="0" rotY="0" rotZ="102.996"></object>
+    <object id="object (sub_roadleft) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="979" doublesided="true" scale="1" dimension="0" posX="1405.5996" posY="113.59961" posZ="21.1" rotX="0" rotY="0" rotZ="102.991"></object>
     <object id="object (bleacher_SFSx) (1)" breakable="true" interior="0" collisions="true" alpha="255" model="3819" doublesided="false" scale="1" dimension="0" posX="1315" posY="150.2" posZ="21.2" rotX="0" rotY="0" rotZ="115.995"></object>
     <object id="object (bleacher_SFSx) (2)" breakable="true" interior="0" collisions="true" alpha="255" model="3819" doublesided="false" scale="1" dimension="0" posX="1344.4" posY="43.3" posZ="21.2" rotX="0" rotY="0" rotZ="279.995"></object>
     <object id="object (bleacher_SFSx) (3)" breakable="true" interior="0" collisions="true" alpha="255" model="3819" doublesided="false" scale="1" dimension="0" posX="1340.4" posY="146.5" posZ="21.2" rotX="0" rotY="0" rotZ="63.995"></object>
@@ -163,11 +163,11 @@
     <spawnpoint id="spawnpoint (5)" alpha="255" interior="0" posX="1315.9" posY="131.8" posZ="20.6" rotX="0" rotY="0" rotZ="153.99"></spawnpoint>
     <spawnpoint id="spawnpoint (6)" alpha="255" interior="0" posX="1317.7" posY="130.89999" posZ="20.6" rotX="0" rotY="0" rotZ="153.99"></spawnpoint>
     <spawnpoint id="spawnpoint (7)" alpha="255" interior="0" posX="1316.4" posY="128.39999" posZ="20.6" rotX="0" rotY="0" rotZ="153.995"></spawnpoint>
-    <spawnpoint id="spawnpoint (8)" alpha="255" interior="0" posX="1314.7" posY="129.2" posZ="20.6" rotX="0" rotY="0" rotZ="153.995"></spawnpoint>
+    <spawnpoint id="spawnpoint (8)" alpha="255" interior="0" posX="1314.7002" posY="129.2002" posZ="20.6" rotX="0" rotY="0" rotZ="153.995"></spawnpoint>
     <spawnpoint id="spawnpoint (9)" alpha="255" interior="0" posX="1313.1" posY="130.10001" posZ="20.6" rotX="0" rotY="0" rotZ="153.995"></spawnpoint>
     <spawnpoint id="spawnpoint (10)" alpha="255" interior="0" posX="1311.5" posY="130.89999" posZ="20.6" rotX="0" rotY="0" rotZ="153.995"></spawnpoint>
     <spawnpoint id="spawnpoint (11)" alpha="255" interior="0" posX="1310" posY="131.7" posZ="20.6" rotX="0" rotY="0" rotZ="153.99"></spawnpoint>
-    <checkpoint id="checkpoint (1)" size="6" posX="1313" posY="129.60001" posZ="20.3" rotX="0" rotY="0" rotZ="0"></checkpoint>
+    <checkpoint id="checkpoint (1)" size="6" posX="1312.3" posY="128.2" posZ="20.3" rotX="0" rotY="0" rotZ="0"></checkpoint>
     <checkpoint id="checkpoint (2)" size="6" posX="1309.5996" posY="109.5" posZ="20.3" rotX="0" rotY="0" rotZ="0"></checkpoint>
     <checkpoint id="checkpoint (3)" size="6" posX="1346.3" posY="85" posZ="20.3" rotX="0" rotY="0" rotZ="0"></checkpoint>
     <checkpoint id="checkpoint (4)" size="6" posX="1291.3" posY="92.6" posZ="20.3" rotX="0" rotY="0" rotZ="0"></checkpoint>
@@ -198,4 +198,5 @@
     <object id="object (sw_fueldrum04) (1)" breakable="true" interior="0" alpha="255" model="13489" doublesided="false" scale="1" dimension="0" posX="1340.3" posY="105.7" posZ="22.9" rotX="0" rotY="0" rotZ="310.122"></object>
     <object id="object (truth_barn03) (1)" breakable="true" interior="0" alpha="255" model="17010" doublesided="false" scale="1" dimension="0" posX="1366.4" posY="109.6" posZ="20.2" rotX="0" rotY="0" rotZ="0"></object>
     <object id="object (cuntebigbarn) (1)" breakable="true" interior="0" alpha="255" model="13002" doublesided="false" scale="1" dimension="0" posX="1554.05469" posY="-0.3125" posZ="26.8125" rotX="0" rotY="0" rotZ="99.5"></object>
+    <object id="object (DockBarr1_LA) (1)" breakable="true" interior="0" collisions="false" alpha="255" model="3578" doublesided="false" scale="0.89999998" dimension="0" posX="1312.5" posY="128.10001" posZ="19.533" rotX="0" rotY="0" rotZ="334"></object>
 </map>
