@@ -273,7 +273,7 @@ function FactionGUI:Event_gangwarLoadArea(name, position, owner, lastAttack)
 	item.onLeftClick = function() self:onGangwarItemSelect(self.m_GangwarAreas[name]) end
 end
 
-function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players,skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons)
+function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons)
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
@@ -285,9 +285,17 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players,ski
 			self.m_FactionMoneyLabel:setText(tostring(money).."$")
 
 			self.m_FactionPlayersGrid:clear()
+
+			-- create a new table and sort players by rank
+			local sortedPlayers = {}
 			for playerId, info in pairs(players) do
+				table.insert(sortedPlayers, {playerId = playerId, name = info.name, rank = info.rank})
+			end
+			table.sort(sortedPlayers, function(a, b) return a.rank > b.rank end)
+
+			for player, info in ipairs(sortedPlayers) do
 				local item = self.m_FactionPlayersGrid:addItem(info.name, info.rank)
-				item.Id = playerId
+				item.Id = info.playerId
 			end
 
 			if rank >= FactionRank.Manager then
