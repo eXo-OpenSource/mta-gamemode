@@ -42,13 +42,10 @@ function HorseRace:reset()
 			[4] = {["Pos"] = 0, ["BoostFrom"] = 0, ["BoostTo"] = 0},
 		}
 
-
 	self.m_WinningHorse = 0
-	self.m_IsRunning = 0
+	self.m_IsRunning = false
 
 	self.m_Players = {}
-
-	--Debug
 	local stumpy = getPlayerFromName("[eXo]Stumpy")
 	if isElement(stumpy) then self.m_Players[#self.m_Players+1] = stumpy end
 end
@@ -60,29 +57,32 @@ function HorseRace:Message()
 end
 
 function HorseRace:startRace()
-	if not self.m_IsRunning == true then
-		outputChatBox ( "CASINO: Die Pferderennen Live-Übertragung im Alhambra beginnt!", getRootElement(), 255, 150, 255 )
+	--Debug
+	local stumpy = getPlayerFromName("[eXo]Stumpy")
+	if isElement(stumpy) then self.m_Players[#self.m_Players+1] = stumpy end
 
+	if not self.m_IsRunning == true then
+		self:reset()
+		outputChatBox ( "CASINO: Die Pferderennen Live-Übertragung im Alhambra beginnt!", getRootElement(), 255, 150, 255 )
+		self.m_IsRunning = true
 		for index, playeritem in pairs(self.m_Players) do
 			if isElement(playeritem) then
-				if getElementInterior(playeritem) == 1 then
+				--if getElementInterior(playeritem) == 1 then
 					outputChatBox("Du nimmst an der Live-Übertragung teil!",playeritem,0,255,0)
 					setElementFrozen(playeritem,true)
-					triggerClientEvent(playeritem,"startPferdeRennenClient",playeritem)
-				else
-					self.m_Players[index] = nil
-				end
+					playeritem:triggerEvent("startPferdeRennenClient")
+				--else
+				--	self.m_Players[index] = nil
+				--end
 			else
-				self.m_Players[index] = nil
+			--	self.m_Players[index] = nil
 			end
 		end
 
-		self:reset()
-
-		triggerClientEvent("startProgTimerPferdeRennenClient",getRootElement())
+		triggerClientEvent(root, "startProgTimerPferdeRennenClient", root)
 		setTimer(function()
-			setPferdeRandomWerte()
-			self.m_CalcTimer = setTimer(self.m_CalcBind, 400,0)
+			self:refreshSpeed()
+			self.m_CalcTimer = setTimer(self.m_CalcBind, 400, 0)
 		end, 10000, 1)
 	end
 end
@@ -96,8 +96,8 @@ function HorseRace:startRaceCmd(player)
 end
 
 function HorseRace:boostHorse(horseId)
-	self.m_Horses[horseId]["BoostFrom"] = 200*self.m_Multiplier
-	self.m_Horses[horseId]["BoostTo"] = 550*self.m_Multiplier
+	self.m_Horses[horseId]["BoostFrom"] = 200 * self.m_Multiplier
+	self.m_Horses[horseId]["BoostTo"] = 550 * self.m_Multiplier
 end
 
 function HorseRace:refreshSpeed()
@@ -118,24 +118,22 @@ function HorseRace:refreshSpeed()
 end
 
 function HorseRace:calc()
-
-	for horseId, data in pairs(self.m_Horses) do
+	for id, data in pairs(self.m_Horses) do
 		if data["Pos"] < 495 then
 			data["Pos"] = data["Pos"] + math.random(data["BoostFrom"], data["BoostTo"]) / self.m_Divisor
 		end
 	end
 
 	if self.m_ProgressFinish == true then
-		for horseId, data in pairs(self.m_Horses) do
+		for id, data in pairs(self.m_Horses) do
 			data["Pos"] = data["Pos"] + 2
 		end
 	end
-
 	for index, playeritem in pairs(self.m_Players) do
 		if isElement(playeritem) then
-			triggerClientEvent(playeritem,"getPferdePositionen",playeritem, self.m_Horses[1]["Pos"], self.m_Horses[2]["Pos"], self.m_Horses[3]["Pos"], self.m_Horses[4]["Pos"])
+			playeritem:triggerEvent("getPferdePositionen", self.m_Horses[1]["Pos"], self.m_Horses[2]["Pos"], self.m_Horses[3]["Pos"], self.m_Horses[4]["Pos"])
 		else
-			self.m_Players[index] = nil
+			--self.m_Players[index] = nil
 		end
 	end
 
@@ -169,9 +167,11 @@ end
 
 function HorseRace:receiveProgress(prog)
     self.m_ProgressFinish = prog
+	outputChatBox("Progress")
 end
 
 function HorseRace:checkWinner(horseId)
+	--[[
 	local result = mysql_query ( handler,"SELECT * FROM Pferdewetten" )
 	for result,row in mysql_rows_assoc(result) do
 		local pname = row["Name"]
@@ -191,35 +191,33 @@ function HorseRace:checkWinner(horseId)
 			end
 		end
 	end
+	]]
 	--local result2 = mysql_query ( handler,"TRUNCATE TABLE Pferdewetten" )
 end
 
-function HorseRace:addBet(einsatz,pferd)
-	local player = client
-
-	if einsatz and pferd then
+function HorseRace:addBet(pferd, bet)
+	if bet and pferd then
 		if not self.m_IsRunning == true then
-			if exoGetElementData(player,"money") >= einsatz then
-				if not handler then	MySQL_Startup()	end
-				local result = mysql_query ( handler,"SELECT Name FROM Pferdewetten WHERE Name = '"..getPlayerName(player).."'" )
-				if mysql_num_rows(result) == 0 then
-					outputChatBox("Du hast "..einsatz.."$ auf das Pferd "..pferd.." gesetzt!",player,0,255,0)
-					takePlayerSaveMoney(player,einsatz)
-					mysql_query ( handler,"INSERT INTO Pferdewetten (Name, Einsatz, Pferd) VALUES ('"..getPlayerName(player).."', '"..einsatz.."', '"..pferd.."')" )
-					self.m_Stats["Incoming"] = self.m_Stats["Incoming"]+einsatz
-					savePferdeWettenStats()
-				else
-					infobox(player,"Du hast schon eine Wette laufen!",7000,255,0,0,255)
-				end
+			if client:getMoney() >= bet then
+				--if not handler then	MySQL_Startup()	end
+				--local result = mysql_query ( handler,"SELECT Name FROM Pferdewetten WHERE Name = '"..getPlayerName(player).."'" )
+				--if mysql_num_rows(result) == 0 then
+					outputChatBox("Du hast "..bet.."$ auf das Pferd "..pferd.." gesetzt!",client,0,255,0)
+					client:takeMoney(bet, "Horse-Race")
+					--mysql_query ( handler,"INSERT INTO Pferdewetten (Name, Einsatz, Pferd) VALUES ('"..getPlayerName(player).."', '"..einsatz.."', '"..pferd.."')" )
+					self.m_Stats["Incoming"] = self.m_Stats["Incoming"]+bet
+					--savePferdeWettenStats()
+				--else
+				--	infobox(player,"Du hast schon eine Wette laufen!",7000,255,0,0,255)
+				--end
 			else
-				infobox(player,"Du hast nicht genug Geld!",7000,255,0,0,255)
+				client:sendError(_("Du hast nicht genug Geld! (%d$)", client, bet))
 			end
 		else
-			infobox(player,"Das Pferderennen läuft bereits!!",7000,255,0,0,255)
+			client:sendError(_("Das Pferderennen läuft bereits!!", client))
 		end
 	else
-		infobox(player,"Kein Pferd und Einsatz angegeben!",7000,255,0,0,255)
+		client:sendError(_("Kein Pferd oder Einsatz angegeben!", client))
 	end
-
 end
 

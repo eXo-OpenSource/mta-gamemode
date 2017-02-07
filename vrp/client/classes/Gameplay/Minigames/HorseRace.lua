@@ -92,7 +92,7 @@ function HorseRace:renderProgress()
 	local duration = r_eCount - r_sCount
 	self.m_Progress = elapsed / duration
 	self.m_MoveX = interpolateBetween(0,0,0,1270,0,0,self.m_Progress,'Linear')
-	if self.m_Progress >=1 and self.m_ProgressSended == false then
+	if self.m_Progress >= 1 and self.m_ProgressSended == false then
 		self.m_ProgressSended = true
 		triggerServerEvent('horseRaceReceiveProgress', root, true)
 	end
@@ -104,35 +104,21 @@ function HorseRace:renderRace()
 
 	if self.m_ProgressSended == true then self.m_Speed = 0.8 end
 
-	if self.m_Horses[1]["Pos"] < self.m_Horses[1]["Finish"] then self.m_Horses[1]["Pos"] = self.m_Horses[1]["Pos"] + self.m_Speed end
-	if self.m_Horses[2]["Pos"] < self.m_Horses[2]["Finish"] then self.m_Horses[2]["Pos"] = self.m_Horses[2]["Pos"] + self.m_Speed end
-	if self.m_Horses[3]["Pos"] < self.m_Horses[3]["Finish"] then self.m_Horses[3]["Pos"] = self.m_Horses[3]["Pos"] + self.m_Speed end
-	if self.m_Horses[4]["Pos"] < self.m_Horses[4]["Finish"] then self.m_Horses[4]["Pos"] = self.m_Horses[4]["Pos"] + self.m_Speed end
-
+	for id, data in pairs(self.m_Horses) do
+		if self.m_Horses[id]["Pos"] < self.m_Horses[id]["Finish"] then self.m_Horses[id]["Pos"] = self.m_Horses[id]["Pos"] + self.m_Speed end
+	end
 
 	dxDrawRectangle(screenWidth/2-646/2, (screenHeight/2-338/2)-20, 646, 338, tocolor(0, 0, 0, 200), false)
 
-	dxDrawImage(self.m_Left+20, self.m_Top, 160, 35, ":exo/images/logo.png", 0, 0, 0, tocolor(255, 255, 255, 255), true)
-	dxDrawText(" - Pferdewetten", self.m_Left+175, self.m_Top, 200, 20,tocolor(50,200,255), 2, "default-bold")
+	dxDrawImage(self.m_Left+20, self.m_Top, 81, 35, "files/images/LogoNoFont.png", 0, 0, 0, tocolor(255, 255, 255, 255), true)
+	dxDrawText(" - Pferdewetten", self.m_Left+105, self.m_Top, 200, 20,tocolor(50,200,255), 2, "default-bold")
 	dxDrawText(self.m_RightText, self.m_Left+450, self.m_Top, 200, 20,tocolor(255,255,255), 2, "default-bold")
 
-	--BAHN Beginn
---	dxDrawImage(self.m_Left+20, self.m_Top+offset, 90, 250, "games/pferderennen/images/start.png", 0, 0, 0, tocolor(255, 255, 255, 255), true)
---	dxDrawImageSection(self.m_Left+110, self.m_Top+offset, 400, 250,0,0,250,200, "games/pferderennen/images/bahn.png", 0, 0, 0, tocolor(255, 255, 255, 255), true)
---	dxDrawImage(self.m_Left+450, self.m_Top+offset, 180, 250, "games/pferderennen/images/ziel.png", 0, 0, 0, tocolor(255, 255, 255, 255), true)
-	dxDrawImageSection(self.m_Left+20, self.m_Top+offset, 610, 250, self.m_MoveX, 0, 400, 200, "games/pferderennen/images/bahn.png", 0, 0, 0, tocolor(255, 255, 255, 255), true)
-	--BAHN ENDE
+	dxDrawImageSection(self.m_Left+20, self.m_Top+offset, 610, 250, self.m_MoveX, 0, 400, 200, "files/images/HorseRace/Track.png", 0, 0, 0, tocolor(255, 255, 255, 255), true)
 
-	offset = offset+55
-	dxDrawImage(self.m_Left+20+self.m_Horses[1]["Pos"], self.m_Top+offset, 70, 58, "games/pferderennen/images/pferd1.png", 0, 0, 0, tocolor(255, 255, 255, 255), true) --PFERD1
-	offset = offset+40
-	dxDrawImage(self.m_Left+20+self.m_Horses[2]["Pos"], self.m_Top+offset, 70, 58, "games/pferderennen/images/pferd2.png", 0, 0, 0, tocolor(255, 255, 255, 255), true) --PFERD2
-	offset = offset+40
-	dxDrawImage(self.m_Left+20+self.m_Horses[3]["Pos"], self.m_Top+offset, 70, 58, "games/pferderennen/images/pferd3.png", 0, 0, 0, tocolor(255, 255, 255, 255), true) --PFERD3
-	offset = offset+40
-	dxDrawImage(self.m_Left+20+self.m_Horses[4]["Pos"], self.m_Top+offset, 70, 58, "games/pferderennen/images/pferd4.png", 0, 0, 0, tocolor(255, 255, 255, 255), true) --PFERD4
-
-
-
+	offset = offset+70
+	for id, data in pairs(self.m_Horses) do
+		dxDrawImage(self.m_Left+20+self.m_Horses[id]["Pos"], self.m_Top+55+40*id, 70, 58, "files/images/HorseRace/Horse_"..id..".png", 0, 0, 0, tocolor(255, 255, 255, 255), true)
+	end
 end
 

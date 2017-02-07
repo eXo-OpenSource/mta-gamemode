@@ -1246,8 +1246,6 @@
 	<vrpfile src="files/images/Race/countdown_3.png"/>
 
 	<!-- HorseRace -->
-	<vrpfile src="files/images/HorseRace/Start.png"/>
-	<vrpfile src="files/images/HorseRace/Finish.png"/>
 	<vrpfile src="files/images/HorseRace/Track.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_1.png"/>
 	<vrpfile src="files/images/HorseRace/Horse_2.png"/>
