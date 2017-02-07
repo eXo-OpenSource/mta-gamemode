@@ -102,6 +102,9 @@ function Core:ready()
 	FactionManager:new()
 	CompanyManager:new()
 	DeathmatchManager:new()
+	if GIT_BRANCH ~= "release/production" then
+		HorseRace:new()
+	end
 	Townhall:new()
 
 	PlantWeed.initalize()

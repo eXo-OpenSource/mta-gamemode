@@ -11,11 +11,29 @@ function HorseRace:constructor()
 	self.m_refreshSpeedBind = bind(self.refreshSpeed, self)
 	self.m_CalcBind = bind(self.calc, self)
 
+	InteriorEnterExit:new(Vector3(1631.80, -1172.73, 24.08), Vector3(834.65, 7.28, 1004.19), 0, 90, 3)
+
+	self.m_Marker = createMarker(822.84, 2.07, 1003.3, "cylinder", 1)
+	setElementInterior(self.m_Marker, 3)
+
+	addEventHandler("onMarkerHit", self.m_Marker, function(hitElement, dim)
+		if hitElement:getType() == "player" and dim and not hitElement.vehicle then
+			hitElement:triggerEvent("showHorseBetGUI")
+		end
+	end)
+
 	addCommandHandler("pferderennen", bind(self.startRaceCmd, self))
-	addEventHandler("horseRaceReceiveProgress", root, self.receiveProgress, self)
+
+	addRemoteEvents{"horseRaceReceiveProgress", "horseRaceAddBet"}
+	addEventHandler("horseRaceReceiveProgress", root, bind(self.receiveProgress, self))
+	addEventHandler("horseRaceAddBet", root, bind(self.addBet, self))
+
 end
 
 function HorseRace:reset()
+	if self.m_CalcTimer and isTimer(self.m_CalcTimer) then killTimer(self.m_CalcTimer) end
+	if self.m_ChangeSpeedTimer and isTimer(self.m_ChangeSpeedTimer) then killTimer(self.m_ChangeSpeedTimer) end
+
 	self.m_ProgressFinish = false
 	self.m_Horses = {
 			[1] = {["Pos"] = 0, ["BoostFrom"] = 0, ["BoostTo"] = 0},
@@ -65,7 +83,7 @@ function HorseRace:startRace()
 		setTimer(function()
 			setPferdeRandomWerte()
 			self.m_CalcTimer = setTimer(self.m_CalcBind, 400,0)
-		end,10000,1)
+		end, 10000, 1)
 	end
 end
 
@@ -122,10 +140,11 @@ function HorseRace:calc()
 	end
 
 	if self.m_WinningHorse == 0 then
-		if pferd1 >= 495 and self.m_ProgressFinish then setWinnerPferdServer(1) end
-		if pferd2 >= 495 and self.m_ProgressFinish then setWinnerPferdServer(2) end
-		if pferd3 >= 495 and self.m_ProgressFinish then setWinnerPferdServer(3) end
-		if pferd4 >= 495 and self.m_ProgressFinish then setWinnerPferdServer(4) end
+		for horseId, data in pairs(self.m_Horses) do
+			if data["Pos"] >= 495 and self.m_ProgressFinish then
+				self:setWinner(horseId)
+			end
+		end
 	end
 
 end
@@ -134,9 +153,7 @@ function HorseRace:setWinner(horseId)
 	if self.m_WinningHorse == 0 then
 		self.m_WinningHorse = horseId
 		outputChatBox("CASINO-Pferderennen: Das Pferderennen wurde beendet. Pferd "..horseId.." hat gewonnen!",getRootElement(),255,150,255)
-		if isTimer(calcTimer) then killTimer(calcTimer) end
-		if isTimer(setPferdeRandomWerteTimer) then killTimer(setPferdeRandomWerteTimer) end
-		self.m_IsRunning = false
+		self:reset()
 
 		triggerClientEvent(getRootElement(),"stopProgTimerPferdeRennenClient",getRootElement())
 
@@ -149,8 +166,6 @@ function HorseRace:setWinner(horseId)
 		self:checkWinner(horseId)
 	end
 end
-addEvent("setWinnerPferdServer",true)
-addEventHandler("setWinnerPferdServer",root,setWinnerPferdServer)
 
 function HorseRace:receiveProgress(prog)
     self.m_ProgressFinish = prog
@@ -179,17 +194,7 @@ function HorseRace:checkWinner(horseId)
 	--local result2 = mysql_query ( handler,"TRUNCATE TABLE Pferdewetten" )
 end
 
-local marker = createMarker( 2235.5927734375,1587.390625,1005.2,"cylinder",1)
-setElementInterior ( marker, 1 )
-
-function hitPferdeMarker(hit,dim)
-	if dim then
-		triggerClientEvent(hit,"openPferdeGui",hit)
-	end
-end
-addEventHandler("onMarkerHit",marker,hitPferdeMarker)
-
-function setPferdewettenEinsatz_func(einsatz,pferd)
+function HorseRace:addBet(einsatz,pferd)
 	local player = client
 
 	if einsatz and pferd then
@@ -217,9 +222,4 @@ function setPferdewettenEinsatz_func(einsatz,pferd)
 	end
 
 end
-addEvent("setPferdewettenEinsatz",true)
-addEventHandler("setPferdewettenEinsatz",root,setPferdewettenEinsatz_func)
-
-
-
 

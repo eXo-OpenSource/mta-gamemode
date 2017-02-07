@@ -148,6 +148,7 @@
 	<script src="server/classes/Gameplay/Minigames/ZombieSurvival.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/SniperGame.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Pong.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -540,6 +541,7 @@
 	<script src="client/classes/GUIForms/PlantGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HighscoreGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/KartGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HorseBetGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MinigameGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GunBoxGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
@@ -689,6 +691,7 @@
 	<script src="client/classes/Gameplay/Minigames/RockPaperScissors.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/Pong.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
 
 	<!-- serverside -->
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
@@ -1241,6 +1244,15 @@
 	<vrpfile src="files/images/Race/countdown_1.png"/>
 	<vrpfile src="files/images/Race/countdown_2.png"/>
 	<vrpfile src="files/images/Race/countdown_3.png"/>
+
+	<!-- HorseRace -->
+	<vrpfile src="files/images/HorseRace/Start.png"/>
+	<vrpfile src="files/images/HorseRace/Finish.png"/>
+	<vrpfile src="files/images/HorseRace/Track.png"/>
+	<vrpfile src="files/images/HorseRace/Horse_1.png"/>
+	<vrpfile src="files/images/HorseRace/Horse_2.png"/>
+	<vrpfile src="files/images/HorseRace/Horse_3.png"/>
+	<vrpfile src="files/images/HorseRace/Horse_4.png"/>
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>
