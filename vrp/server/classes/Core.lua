@@ -48,6 +48,7 @@ function Core:constructor()
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
 		TranslationManager:new()
+		GlobalTimer:new()
 		VehicleManager:new()
 		Admin:new()
 		StatisticsLogger:new()
