@@ -13,6 +13,10 @@ function HorseRace:constructor()
 
 	InteriorEnterExit:new(Vector3(1631.80, -1172.73, 24.08), Vector3(834.65, 7.28, 1004.19), 0, 90, 3)
 
+	self.m_NPC = NPC:new(295, 820.19, 1.90, 1004.18, 270)
+	self.m_NPC:setImmortal(true)
+	self.m_NPC:setInterior(3)
+
 	self.m_Marker = createMarker(822.84, 2.07, 1003.3, "cylinder", 1)
 	setElementInterior(self.m_Marker, 3)
 
