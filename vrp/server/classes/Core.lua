@@ -188,6 +188,7 @@ function Core:destructor()
 		delete(GangwarStatistics:getSingleton())
 		delete(GroupPropertyManager:getSingleton())
 		delete(Admin:getSingleton())
+		delete(StatisticsLogger:getSingleton())
 		delete(sql) -- Very slow
 	end
 end
