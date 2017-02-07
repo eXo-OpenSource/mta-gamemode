@@ -61,25 +61,27 @@ addEventHandler("vehicleSpawn", root,
 
 		local vehicle = TemporaryVehicle.create(vehicleModel, shop.m_Position.x, shop.m_Position.y, shop.m_Position.z + 1.5, shop.m_Rotation)
 
-		if not client:hasCorrectLicense(vehicle) then
-			client:sendWarning(_("Du hast nicht den passenden Führerschein!", client))
-			vehicle:destroy()
-			return
-		end
-
-		if shop.m_PostSpawnFunc then
-			shop.m_PostSpawnFunc(vehicle, client)
-		end
-
-		if shop.m_Hook then
-			shop.m_Hook:call(client,vehicleModel,vehicle)
-		end
 		nextframe(
 			function()
+				if not client:hasCorrectLicense(vehicle) then
+					client:sendWarning(_("Du hast nicht den passenden Führerschein!", client))
+					vehicle:destroy()
+					return
+				end
+
+				if shop.m_PostSpawnFunc then
+					shop.m_PostSpawnFunc(vehicle, client)
+				end
+
+				if shop.m_Hook then
+					shop.m_Hook:call(client,vehicleModel,vehicle)
+				end
+				client:setSpawnerVehicle(vehicle)
 				warpPedIntoVehicle(client, vehicle)
 			end
 		)
-		client:setSpawnerVehicle(vehicle)
+
+
 	end
 )
 
