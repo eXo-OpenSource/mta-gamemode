@@ -70,15 +70,13 @@ function NoDm:setPlayerNoDm(state)
 		end
 		self:toggleNoDmImage(true)
 	else
-		if localPlayer:getPublicSync("Faction:Duty") == false then
-			toggleControl ("fire", true)
-			toggleControl ("next_weapon", true)
-			toggleControl ("previous_weapon", true)
-			toggleControl ("aim_weapon", true)
-			toggleControl ("vehicle_fire", true)
-			setElementData(localPlayer, "no_driveby", false)
-			setElementData(localPlayer,"schutzzone",false)
-		end
+		toggleControl ("fire", true)
+		toggleControl ("next_weapon", true)
+		toggleControl ("previous_weapon", true)
+		toggleControl ("aim_weapon", true)
+		toggleControl ("vehicle_fire", true)
+		setElementData(localPlayer, "no_driveby", false)
+		setElementData(localPlayer,"schutzzone",false)
 		self:toggleNoDmImage(false)
 	end
 end
