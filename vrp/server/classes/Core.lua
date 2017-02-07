@@ -102,9 +102,7 @@ function Core:constructor()
 
 		SkydivingManager:new()
 		Kart:new()
-		if GIT_BRANCH ~= "release/production" then
-			HorseRace:new()
-		end
+		HorseRace:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()

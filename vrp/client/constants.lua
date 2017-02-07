@@ -128,6 +128,7 @@ BlipConversion =
 	["HeliTransport.png"] = 5,
 	["Bar.png"] = 49,
 	["RedSaw.png"] = 0,
+	["Horse.png"] = 35,
 
 }
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
