@@ -308,8 +308,8 @@ function getBytesInInt32(int32)
 	return byte1, byte2, byte3, byte4
 end
 
-function nextframe(fn)
-	setTimer(fn, 50, 1)
+function nextframe(fn, ...)
+	setTimer(fn, 50, 1, ...)
 end
 
 function toboolean(num)
