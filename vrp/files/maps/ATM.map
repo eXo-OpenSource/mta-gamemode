@@ -35,4 +35,6 @@
 	<object id="Horse Race 1" breakable="false" interior="3" collisions="true" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="829.7" posY="-1.1" posZ="1003.80" rotX="0" rotY="0" rotZ="180"></object>
     <object id="Horse Race 2" breakable="false" interior="3" collisions="true" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="828.9" posY="-1.1" posZ="1003.80" rotX="0" rotY="0" rotZ="180"></object>
 
+    <object id="Kart" breakable="false" interior="0" collisions="true" alpha="255" model="2942" doublesided="false" scale="1" dimension="0" posX="1256.7" posY="200" posZ=" 19.2" rotX="0" rotY="0" rotZ="66"></object>
+
 </map>
