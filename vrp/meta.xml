@@ -285,12 +285,14 @@
 	<script src="server/classes/AI/ShopActor.lua" type="server"/>
 	<script src="server/classes/AI/DefendActor.lua" type="server"/>
 	<script src="server/classes/AI/Zombie.lua" type="server"/>
+	<script src="server/classes/AI/MoveActor.lua" type="server"/>
 
 	<!-- AI tasks -->
 	<script src="server/classes/AI/Tasks/Task.lua" type="server"/>
 	<script src="server/classes/AI/Tasks/TaskGuard.lua" type="server"/>
 	<script src="server/classes/AI/Tasks/TaskShootTarget.lua" type="server"/>
 	<script src="server/classes/AI/Tasks/TaskWaitForGettingTargetted.lua" type="server"/>
+	<script src="server/classes/AI/Tasks/TaskMove.lua" type="server"/>
 
 	<!-- Tests -->
 	<script src="server/tests/UtilsTest.lua" type="server"/>
@@ -636,6 +638,7 @@
 	<script src="client/classes/AI/Tasks/Task.lua" type="client"/>
 	<script src="client/classes/AI/Tasks/TaskGuard.lua" type="client"/>
 	<script src="client/classes/AI/Tasks/TaskShootTarget.lua" type="client"/>
+	<script src="client/classes/AI/Tasks/TaskMove.lua" type="client"/>
 
 	<!-- Vehicles -->
 	<script src="client/classes/Vehicles/VehicleGarages.lua" type="client"/>

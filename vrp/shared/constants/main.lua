@@ -248,6 +248,7 @@ Tasks = {
 	TASK_GUARD = 1,
 	TASK_SHOOT_TARGET = 2,
 	TASK_GETTING_TARGETTED = 3,
+	TASK_MOVE = 4,
 }
 
 VehiclePositionType = {World = 0, Garage = 1, Mechanic = 2, Hangar = 3, Harbor = 4}
