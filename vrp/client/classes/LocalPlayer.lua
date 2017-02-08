@@ -178,7 +178,7 @@ end
 
 function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
-		if localPlayer:getPublicSync("Faction:Duty") then
+		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer)
 			elseif localPlayer:getFaction():isRescueFaction() then
@@ -343,7 +343,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 		GUIForm.closeAll()
 		InfoBox:new(_"Du wurdest ins AFK-Cafe teleportiert!")
 
-		if localPlayer:getPublicSync("Faction:Duty") then
+		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer)
 			elseif localPlayer:getFaction():isRescueFaction() then
