@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 AppCall = inherit(PhoneApp)
+
 local CALL_RESULT_BUSY = 0
 local CALL_RESULT_REPLACE = 1
 local CALL_RESULT_ANSWER = 2
@@ -30,7 +31,7 @@ function AppCall:onOpen(form)
 end
 
 function AppCall:onClose()
-	for k, activity in ipairs(self.m_Activities) do
+	for k, activity in pairs(self.m_Activities) do
 		if instanceof(activity, IncomingCallActivity, true) then
 			if activity:getCaller() then
 				activity:busy()

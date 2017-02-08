@@ -79,7 +79,7 @@ addEventHandler("vehicleSpawn", root,
 				player:setSpawnerVehicle(vehicle)
 				warpPedIntoVehicle(player, vehicle)
 			end
-		, player)
+		,client)
 
 
 	end
