@@ -782,7 +782,7 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconAmmuNation.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconDashboard.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconBank.png"/>
-
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSnake.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconMessage.png"/>
@@ -794,6 +794,7 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconAmmuNation.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconDashboard.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconBank.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconSnake.png"/>
 
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
