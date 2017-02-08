@@ -11,7 +11,7 @@ function TaskMove:constructor(actor, actorSyncer, targetPosition)
 	self.m_Syncer = actorSyncer
 	self.m_TargetPosition = normaliseVector(targetPosition)
 
-	outputDebug(("MoveActor:constructor - target: %s - syncer: %s (%s) (isSyncer: %s)"):format(tostring(self.m_TargetPosition), tostring(self.m_Syncer), self.m_Syncer:getName(), tostring(self:isSyncer()))
+	outputDebug(("MoveActor:constructor - target: %s - syncer: %s (%s) (isSyncer: %s)"):format(tostring(self.m_TargetPosition), tostring(self.m_Syncer), self.m_Syncer:getName(), tostring(self:isSyncer())))
 end
 
 function TaskMove:destructor()
