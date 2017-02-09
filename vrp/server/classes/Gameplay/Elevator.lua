@@ -73,7 +73,6 @@ function Elevator:driveToStation(player, stationID)
 	nextframe(function()
 		player:setInterior(self.m_Stations[stationID].interior)
 		player:setPosition(self.m_Stations[stationID].position)
-		NoDm:getSingleton():checkNoDm()
 	end)
 	player:setInterior(0)
 	--
