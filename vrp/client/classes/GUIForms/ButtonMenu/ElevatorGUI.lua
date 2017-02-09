@@ -60,10 +60,10 @@ function ElevatorGUI:itemCallback(stationId, station)
 				triggerServerEvent("elevatorDrive", localPlayer, self.m_ElevatorId, stationId)
 				localPlayer.m_inElevator = false
 				setCameraTarget(localPlayer)
-				nextframe(
+				setTimer(
 					function()
 						NoDm:getSingleton():checkNoDm()
-					end
+					end, 500, 1
 				)
 			end, 1250, 1)
 		end, 8000, 1)
