@@ -1,3 +1,5 @@
+Indicator = inherit(Singleton)
+
 function Indicator:constructor()
 	self.m_Data = self:loadData()
 
@@ -8,16 +10,12 @@ function Indicator:constructor()
 	self.ms_FadeTime = 160                   -- Miliseconds to fade out the indicators
 	self.ms_SwitchTimes = { 300, 400 }     -- In miliseconds. First is time to switch them off, second to switch them on.
 	self.ms_SwitchOffThreshold = 62   -- A value in degrees ranging (0, 90) preferibly far from the limits.
+	self.m_RenderBind = bind(self.render, self)
 
 	self.ms_SwitchOffThreshold = self.ms_SwitchOffThreshold / 90
 
-	self.m_Enabled = core:get("Vehicles", "Indicators", true)
-
-	self.m_RenderBind = bind(self.render, self)
-
-	if self.m_Enabled then
-		addEventHandler('onClientPreRender', root, self.m_RenderBind)
-	end
+	self.m_Enabled = false
+	self:toggle()
 
 	self:checkVehicles()
 	self:addEvents()
@@ -149,8 +147,8 @@ function Indicator:updateIndicatorState ( state )
     -- Transform the bounding box positions to fit properly the vehicle
 
 	local model = tostring(getElementModel(state.vehicle))
-	if not blinkerTable[model] then
-		outputDebugString("Blinkersystem: BlinkerTable für Model "..model.." - "..getVehicleNameFromModel(model).." nicht gefunden!")
+	if not self.m_Data[model] then
+		outputDebugString("Blinkersystem: self.m_Data für Model "..model.." - "..getVehicleNameFromModel(model).." nicht gefunden!")
 		return
 	end
 
@@ -158,8 +156,8 @@ function Indicator:updateIndicatorState ( state )
     if state.left then
         if not state.coronaLeft then
             state.coronaLeft = { self:createIndicator (), self:createIndicator () }
-            attachElements ( state.coronaLeft[1], state.vehicle, blinkerTable[model]["VL"]["x"],  blinkerTable[model]["VL"]["y"], blinkerTable[model]["VL"]["z"] )
-            attachElements ( state.coronaLeft[2], state.vehicle, blinkerTable[model]["HL"]["x"],  blinkerTable[model]["HL"]["y"], blinkerTable[model]["HL"]["z"] )
+            attachElements ( state.coronaLeft[1], state.vehicle, self.m_Data[model]["VL"]["x"],  self.m_Data[model]["VL"]["y"], self.m_Data[model]["VL"]["z"] )
+            attachElements ( state.coronaLeft[2], state.vehicle, self.m_Data[model]["HL"]["x"],  self.m_Data[model]["HL"]["y"], self.m_Data[model]["HL"]["z"] )
         end
         numberOfIndicators = numberOfIndicators + 1
     elseif state.coronaLeft then
@@ -172,8 +170,8 @@ function Indicator:updateIndicatorState ( state )
     if state.right then
         if not state.coronaRight then
             state.coronaRight = { self:createIndicator (), self:createIndicator () }
-            attachElements ( state.coronaRight[1], state.vehicle, blinkerTable[model]["VR"]["x"],  blinkerTable[model]["VR"]["y"], blinkerTable[model]["VR"]["z"] )
-            attachElements ( state.coronaRight[2], state.vehicle, blinkerTable[model]["HR"]["x"],  blinkerTable[model]["HR"]["y"], blinkerTable[model]["HR"]["z"] )
+            attachElements ( state.coronaRight[1], state.vehicle, self.m_Data[model]["VR"]["x"],  self.m_Data[model]["VR"]["y"], self.m_Data[model]["VR"]["z"] )
+            attachElements ( state.coronaRight[2], state.vehicle, self.m_Data[model]["HR"]["x"],  self.m_Data[model]["HR"]["y"], self.m_Data[model]["HR"]["z"] )
         end
         numberOfIndicators = numberOfIndicators + 1
     elseif state.coronaRight then
@@ -252,10 +250,10 @@ function Indicator:performIndicatorChecks ( vehicle )
             currentState = self:createIndicatorState ( vehicle, indicatorLeft, indicatorRight )
             self.m_AllowedVehicles [ vehicle ] = currentState
         end
-        updateIndicatorState ( currentState )
+        self:updateIndicatorState ( currentState )
     elseif currentState then
         -- Destroy the current state
-        destroyIndicatorState ( currentState )
+        self:destroyIndicatorState ( currentState )
         self.m_AllowedVehicles [ vehicle ] = nil
     end
 end
@@ -264,8 +262,6 @@ end
 * setIndicatorsAlpha
 Sets all the active indicators alpha.
 --]]
-blinkerHudAlphaLeft = 0
-blinkerHudAlphaRight = 0
 
 function Indicator:setIndicatorsAlpha ( state, alpha )
     if state.coronaLeft then
@@ -277,7 +273,7 @@ function Indicator:setIndicatorsAlpha ( state, alpha )
                                                 self.ms_Color[2],
                                                 self.ms_Color[3],
                                                 alpha )
-		blinkerHudAlphaLeft = alpha
+		HUDSpeedo:getSingleton():setIndicatorAlpha("left", alpha)
     end
     if state.coronaRight then
         setMarkerColor ( state.coronaRight[1],  self.ms_Color[1],
@@ -288,7 +284,7 @@ function Indicator:setIndicatorsAlpha ( state, alpha )
                                                 self.ms_Color[2],
                                                 self.ms_Color[3],
                                                 alpha )
-		blinkerHudAlphaRight = alpha
+		HUDSpeedo:getSingleton():setIndicatorAlpha("right", alpha)
     end
 end
 
@@ -319,7 +315,7 @@ function Indicator:processIndicators ( state )
         local cross = self:crossProduct ( state.activationDir, currentVelocity )
 
         -- Get the length of the resulting vector to calculate the "amount" of direction change [0..1].
-        local length = vectorLength ( cross )
+        local length = self:vectorLength ( cross )
 
         -- If the turn is over the threshold, deactivate the indicators
         if length > self.ms_SwitchOffThreshold then
@@ -368,62 +364,19 @@ function Indicator:processIndicators ( state )
 end
 
 --[[
-* onClientElementDataChange
-Detects when the indicator state of a vehicle changes.
---]]
-addEventHandler('onClientElementDataChange', root, function ( dataName, oldValue )
-    -- Check that the source is a vehicle and that the data name is what we are looking for.
-    if getElementType(source) == 'vehicle' and ( dataName == 'i:left' or dataName == 'i:right' ) then
-        -- If the vehicle is not streamed in, don't do anything.
-        if isElementStreamedIn(source) then
-            -- Perform the indicator checks for the new indicator states.
-            self:performIndicatorChecks ( source )
-        end
-    end
-end)
-
---[[
-* onClientElementStreamIn
-Detects when a vehicle streams in, to check if we must draw the indicators.
---]]
-addEventHandler('onClientElementStreamIn', root, function ()
-    if getElementType(source) == 'vehicle' then
-        -- Perform the indicator checks for the just streamed in vehicle.
-        self:performIndicatorChecks ( source )
-    end
-end)
-
---[[
-* onClientElementStreamOut
-Detects when a vehicle streams out, to destroy its state.
---]]
-addEventHandler('onClientElementStreamOut', root, function ()
-    if getElementType(source) == 'vehicle' then
-        -- Grab the current indicators state
-        local currentState = self.m_AllowedVehicles [ source ]
-
-        -- If it has a state, remove it.
-        if currentState then
-            self:destroyIndicatorState(currentState)
-            self.m_AllowedVehicles [ source ] = nil
-        end
-    end
-end)
-
---[[
 * indicator_left and indicator_right commands
 Changes the state of the indicators for the current vehicle.
 --]]
 function Indicator:switchIndicatorState ( indicator )
     -- First check that we are in a vehicle.
-	local v = getPedOccupiedVehicle(localPlayer)
+	local v = localPlayer.vehicle
     if v then
         -- check for the correct vehicle type
-        if getVehicleType(v) == "Automobile" or getVehicleType(v) == "Quad" then
+        if v:getVehicleType() == VehicleType.Automobile then
             -- Check that we are the vehicle driver
             if getVehicleOccupant(v, 0) == localPlayer then
                 -- Switch the indicator state
-                if blinker == true then
+                if self.m_Enabled == true then
 
 					local dataName = 'i:' .. indicator
 					local currentValue = getElementData(v, dataName) or false
@@ -455,40 +408,30 @@ function Indicator:switchIndicatorState ( indicator )
     end
 end
 
-
---[[
-* onClientPreRender
-Calls processIndicators for every vehicle with the indicators activated.
---]]
-
-
 function Indicator:render(timeSlice)
     -- Process every vehicle with indicators
     for vehicle, state in pairs(self.m_AllowedVehicles) do
         state.timeElapsed = state.timeElapsed + timeSlice
-        processIndicators ( state, state.lastChange )
+        self:processIndicators ( state, state.lastChange )
     end
 end
 
 function Indicator:handleKeyBind( keyPressed, keyState )
     if (keyPressed == ",") then
-        switchIndicatorState('left')
+        self:switchIndicatorState('left')
     elseif (keyPressed == ".") then
-        switchIndicatorState('right')
+        self:switchIndicatorState('right')
 	elseif (keyPressed == "-") then
-        switchIndicatorState('warn')
+        self:switchIndicatorState('warn')
     end
 end
 
 function Indicator:toggle()
-	if blinker == true then
-		blinker = false
-		outputChatBox("Die Blinker wurden für dich ausgeschaltet!",255,0,0)
-		removeEventHandler('onClientPreRender', root, blinkerRender)
+	self.m_Enabled = core:get("Vehicles", "Indicators", true)
+	if self.m_Enabled == true then
+		addEventHandler('onClientPreRender', root, self.m_RenderBind)
 	else
-		blinker = true
-		outputChatBox("Die Blinker wurden für dich eingeschaltet!",0,255,0)
-		addEventHandler('onClientPreRender', root, blinkerRender)
+		removeEventHandler('onClientPreRender', root, self.m_RenderBind)
 	end
 end
 
@@ -513,6 +456,49 @@ function Indicator:addEvents()
 			if currentState then
 				-- Destroy the state
 				self:destroyIndicatorState ( currentState )
+				self.m_AllowedVehicles [ source ] = nil
+			end
+		end
+	end)
+
+		--[[
+	* onClientElementDataChange
+	Detects when the indicator state of a vehicle changes.
+	--]]
+	addEventHandler('onClientElementDataChange', root, function ( dataName, oldValue )
+		-- Check that the source is a vehicle and that the data name is what we are looking for.
+		if getElementType(source) == 'vehicle' and ( dataName == 'i:left' or dataName == 'i:right' ) then
+			-- If the vehicle is not streamed in, don't do anything.
+			if isElementStreamedIn(source) then
+				-- Perform the indicator checks for the new indicator states.
+				self:performIndicatorChecks ( source )
+			end
+		end
+	end)
+
+	--[[
+	* onClientElementStreamIn
+	Detects when a vehicle streams in, to check if we must draw the indicators.
+	--]]
+	addEventHandler('onClientElementStreamIn', root, function ()
+		if getElementType(source) == 'vehicle' then
+			-- Perform the indicator checks for the just streamed in vehicle.
+			self:performIndicatorChecks ( source )
+		end
+	end)
+
+	--[[
+	* onClientElementStreamOut
+	Detects when a vehicle streams out, to destroy its state.
+	--]]
+	addEventHandler('onClientElementStreamOut', root, function ()
+		if getElementType(source) == 'vehicle' then
+			-- Grab the current indicators state
+			local currentState = self.m_AllowedVehicles [ source ]
+
+			-- If it has a state, remove it.
+			if currentState then
+				self:destroyIndicatorState(currentState)
 				self.m_AllowedVehicles [ source ] = nil
 			end
 		end

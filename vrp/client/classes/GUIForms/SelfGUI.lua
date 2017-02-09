@@ -407,7 +407,7 @@ function SelfGUI:constructor()
 	end
 	self.m_UIChange:setIndex(core:get("HUD", "NametagStyle", NametagStyle.Default), true)
 
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.72, self.m_Width*0.8, self.m_Height*0.07, _"Fraktion", tabSettings)
+	GUILabel:new(self.m_Width*0.02, self.m_Height*0.72, self.m_Width*0.8, self.m_Height*0.07, _"Sonstiges", tabSettings)
 	self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.79, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", tabSettings)
 	self.m_SkinSpawn:setFont(VRPFont(25))
 	self.m_SkinSpawn:setFontSize(1)
@@ -415,6 +415,14 @@ function SelfGUI:constructor()
 	self.m_SkinSpawn.onChange = function (bool)
 		core:set("HUD", "spawnFactionSkin", bool)
 		triggerServerEvent("switchSpawnWithFactionSkin",localPlayer, bool)
+	end
+	self.m_Indicators = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeug Blinker", tabSettings)
+	self.m_Indicators:setFont(VRPFont(25))
+	self.m_Indicators:setFontSize(1)
+	self.m_Indicators:setChecked(core:get("Vehicles", "Indicators", true))
+	self.m_Indicators.onChange = function (bool)
+		core:set("Vehicles", "Indicators", bool)
+		Indicator:getSingleton():toggle()
 	end
 	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.07, _"Werbung (ad)", tabSettings)
 	--self.m_AdChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.62, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
