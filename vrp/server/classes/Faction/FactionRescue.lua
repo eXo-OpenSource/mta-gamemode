@@ -366,7 +366,7 @@ function FactionRescue:createDeathTimeout(player, callback)
 end
 
 function FactionRescue:Event_OnPlayerWastedFinish()
-	source:setCameraTarget(player)
+	source:setCameraTarget(source)
 	source:fadeCamera(true, 1)
 	source:setCollisionsEnabled(false)
 	source:respawn()
