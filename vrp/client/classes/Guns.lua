@@ -29,6 +29,8 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 
+	self:initalizeAntiCBug()
+
 	addRemoteEvents{"clientBloodScreen"}
 
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
@@ -153,4 +155,51 @@ function Guns:disableDamage(state)
 	else
 		addEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
 	end
+end
+
+function Guns:initalizeAntiCBug()
+	self.m_LastDeageShot = 0
+	self.m_GotDeagle = false
+	self.m_CrouchOn = true
+
+	self.m_StopFastDeagleBind = bind(self.stopFastDeagle, self)
+	self.m_StopCBugBind = bind(self.stopCbug, self)
+
+	if getPedWeapon ( localPlayer ) == 24 then
+		toggleControl ( "crouch", true )
+		self.m_CrouchOn = true
+		addEventHandler ( "onClientPlayerWeaponFire", localPlayer, self.m_StopFastDeagleBind )
+		bindKey ( "crouch", "both", self.m_StopCBugBind )
+		self.m_GotDeagle = true
+	end
+
+	addEventHandler ( "onClientPlayerWeaponSwitch", root, function ( previous, current )
+	if getPedWeapon ( localPlayer, current ) == 24 then
+		addEventHandler ( "onClientPlayerWeaponFire", localPlayer, self.m_StopFastDeagleBind )
+		bindKey ( "crouch", "both", self.m_StopCBugBind )
+		self.m_GotDeagle = true
+	elseif self.m_GotDeagle then
+		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, self.m_StopFastDeagleBind )
+		unbindKey ( "crouch", "both", self.m_StopCBugBind )
+		self.m_GotDeagle = false
+	end
+		toggleControl ( "crouch", true )
+		self.m_CrouchOn = true
+	end )
+
+end
+
+function Guns:stopCbug ( )
+	if not self.m_CrouchOn then
+		if self.m_LastDeageShot + 500 <= getTickCount() then
+			toggleControl ( "crouch", true )
+			self.m_CrouchOn = true
+		end
+	end
+end
+
+function Guns:stopFastDeagle ( )
+	self.m_LastDeageShot = getTickCount()
+	toggleControl ( "crouch", false )
+	self.m_CrouchOn = false
 end
