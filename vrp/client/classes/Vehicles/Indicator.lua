@@ -219,6 +219,9 @@ function Indicator:destroyIndicatorState ( state )
     if getVehicleOccupant ( state.vehicle ) == localPlayer then
         setElementData ( state.vehicle, 'i:left', false, true )
         setElementData ( state.vehicle, 'i:right', false, true )
+		 setElementData ( state.vehicle, 'i:warn', false, true )
+		HUDSpeedo:getSingleton():setIndicatorAlpha("left", 0)
+		HUDSpeedo:getSingleton():setIndicatorAlpha("right", 0)
     end
 end
 
@@ -390,18 +393,23 @@ function Indicator:switchIndicatorState ( indicator )
 							setElementData(v, "i:right",false)
 							setElementData(v, "i:warn",false)
 						end
-					else
+					elseif indicator == "left" then
 						if getElementData(v, "i:left") == true then
 							setElementData(v, "i:left",false)
-						end
-						if getElementData(v, "i:right") == true then
+						else
+							setElementData(v, "i:left",true)
 							setElementData(v, "i:right",false)
 						end
+					elseif indicator == "right" then
+						if getElementData(v, "i:right") == true then
+							setElementData(v, "i:right",false)
+						else
+							setElementData(v, "i:right",true)
+							setElementData(v, "i:left",false)
+						end
 					end
-					-- UNSAFE
-					setElementData(v, dataName, not currentValue, true)
 				else
-					outputChatBox("Du hast die Blinker deaktiviert! Tippe /blinker zum aktivieren!",255,0,0)
+					outputChatBox("Du hast die Blinker deaktiviert! Aktiviere die Blinker im F2 Menü!",255,0,0)
 				end
             end
         end
