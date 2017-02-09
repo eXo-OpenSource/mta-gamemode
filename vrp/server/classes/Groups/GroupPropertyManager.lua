@@ -182,3 +182,11 @@ function GroupPropertyManager:getPropsForPlayer( player )
 	end
 	return playerProps
 end
+
+-- Code for some Propertys
+function GroupPropertyManager.initalize()
+	local elevator = Elevator:new()
+	elevator:addStation("Chef Security", Vector3(349.809, 253.417, 999.108), 90, 3, 1030)
+	elevator:addStation("1. Etage", Vector3(368.031, 229.625, 988.643), 90, 3, 1030)
+	elevator:addStation("Erdgeschoss", Vector3(354.258, 258.764, 981.697), 360, 3, 1030)
+end

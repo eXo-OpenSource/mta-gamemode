@@ -691,3 +691,17 @@ end
 function isNan(num)
 	return num ~= num
 end
+
+function normaliseVector(serialisedVector)
+	if serialisedVector.w ~= nil then
+		return Vector4(serialisedVector.x, serialisedVector.y, serialisedVector.z, serialisedVector.w)
+	elseif serialisedVector.z ~= nil then
+		return Vector3(serialisedVector.x, serialisedVector.y, serialisedVector.z)
+	else
+		return Vector2(serialisedVector.x, serialisedVector.y)
+	end
+end
+
+function serialiseVector(vector)
+	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
+end

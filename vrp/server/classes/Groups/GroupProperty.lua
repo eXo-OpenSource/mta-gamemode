@@ -319,5 +319,3 @@ function GroupProperty:getName() return self.m_Name end
 function GroupProperty:getPrice() return self.m_Price end
 function GroupProperty:hasOwner() return self.m_Owner ~= false end
 function GroupProperty:getOwner() return self:hasOwner() and self.m_Owner or false end
-
-

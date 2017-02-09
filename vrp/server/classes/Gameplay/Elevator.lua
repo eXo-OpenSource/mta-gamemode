@@ -64,9 +64,16 @@ end
 function Elevator:driveToStation(player, stationID)
 	player.elevatorUsed = true
 	player.curEl = false
-	player:setPosition(self.m_Stations[stationID].position)
-	player:setRotation(0, 0, self.m_Stations[stationID].rotation, "default", true)
-	player:setInterior(self.m_Stations[stationID].interior)
+
+	-- Workaround TODO
+	nextframe(function()
+		player:setInterior(self.m_Stations[stationID].interior)
+		player:setPosition(self.m_Stations[stationID].position)
+	end)
+	player:setInterior(0)
+	--
+
+	player:setRotation(Vector3(0, 0, self.m_Stations[stationID].rotation))
 	player:setDimension(self.m_Stations[stationID].dimension)
 	setElementFrozen(player, false)
 end
