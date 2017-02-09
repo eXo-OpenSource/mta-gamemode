@@ -158,48 +158,59 @@ function Guns:disableDamage(state)
 end
 
 function Guns:initalizeAntiCBug()
-	self.m_LastDeageShot = 0
-	self.m_GotDeagle = false
-	self.m_CrouchOn = true
+	self.m_AntiFastShotEnabled = true
+	self.m_LastShot = 0
+	self.m_LastCrouchTimers = {}
 
 	self.m_StopFastDeagleBind = bind(self.stopFastDeagle, self)
-	self.m_StopCBugBind = bind(self.stopCbug, self)
+	self.m_CrounchBind = bind(self.crounch, self)
 
-	if getPedWeapon ( localPlayer ) == 24 then
-		toggleControl ( "crouch", true )
-		self.m_CrouchOn = true
-		addEventHandler ( "onClientPlayerWeaponFire", localPlayer, self.m_StopFastDeagleBind )
-		bindKey ( "crouch", "both", self.m_StopCBugBind )
-		self.m_GotDeagle = true
-	end
-
-	addEventHandler ( "onClientPlayerWeaponSwitch", root, function ( previous, current )
-	if getPedWeapon ( localPlayer, current ) == 24 then
-		addEventHandler ( "onClientPlayerWeaponFire", localPlayer, self.m_StopFastDeagleBind )
-		bindKey ( "crouch", "both", self.m_StopCBugBind )
-		self.m_GotDeagle = true
-	elseif self.m_GotDeagle then
-		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, self.m_StopFastDeagleBind )
-		unbindKey ( "crouch", "both", self.m_StopCBugBind )
-		self.m_GotDeagle = false
-	end
-		toggleControl ( "crouch", true )
-		self.m_CrouchOn = true
-	end )
-
+	addEventHandler("onClientPlayerWeaponFire", localPlayer, self.m_StopFastDeagleBind, true, "high")
+	bindKey("crouch", "both", self.m_CrounchBind)
 end
 
-function Guns:stopCbug ( )
-	if not self.m_CrouchOn then
-		if self.m_LastDeageShot + 500 <= getTickCount() then
+function Guns:crounch(btn, state)
+	if state == "down" then
+		if not isPedDucked ( localPlayer ) and ( getTickCount () - self.m_LastShot <= 700 ) then
+			setControlState ( "crouch", true )
+			toggleControl ( "crouch", false )
+			if isTimer ( self.m_LastCrouchTimers[1] ) then
+				killTimer ( self.m_LastCrouchTimers[1] )
+			end
+			self.m_LastCrouchTimers[1] = setTimer ( setControlState, 100, 1, "crouch", false )
+		end
+	else
+		if getTickCount() - self.m_LastShot <= 700 then
+			setControlState ( "crouch", false )
+			toggleControl ( "crouch", false )
+			if isTimer ( self.m_LastCrouchTimers[1] ) then
+				killTimer ( self.m_LastCrouchTimers[1] )
+			end
+			if isTimer ( self.m_LastCrouchTimers[2] ) then
+				killTimer ( self.m_LastCrouchTimers[2] )
+			end
+			self.m_LastCrouchTimers[2] = setTimer ( toggleControl, 100, 1, "crouch", true )
+		else
 			toggleControl ( "crouch", true )
-			self.m_CrouchOn = true
 		end
 	end
 end
 
-function Guns:stopFastDeagle ( )
-	self.m_LastDeageShot = getTickCount()
-	toggleControl ( "crouch", false )
-	self.m_CrouchOn = false
+function Guns:stopFastDeagle(weapon)
+	if weapon == 24 then
+		self.m_LastShot = getTickCount()
+		setControlState ( "crouch", false )
+		if isPedDucked ( localPlayer ) then
+			toggleControl ( "crouch", false )
+			self.m_LastCrouchTimers[1] = setTimer ( toggleControl, 500, 1, "crouch", true )
+		end
+	end
+end
+
+function Guns:toggleFastShot(bool)
+	self.m_AntiFastShotEnabled = not bool
+	if not self.m_AntiFastShotEnabled then
+		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, shoot )
+		unbindKey ( "crouch", "both", crouch )
+	end
 end
