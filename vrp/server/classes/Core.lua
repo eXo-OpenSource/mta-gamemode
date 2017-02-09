@@ -111,7 +111,6 @@ function Core:constructor()
 		PayNSpray.initializeAll()
 		TollStation.initializeAll()
 		Depot.initalize()
-		GroupPropertyManager.initalize()
 
 		BankRobbery:new()
 

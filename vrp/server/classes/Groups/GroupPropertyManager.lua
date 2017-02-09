@@ -6,7 +6,7 @@ function GroupPropertyManager:constructor( )
 	outputServerLog("Loading group-propertys...")
 	local result = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
 	for k, row in ipairs(result) do
-		self.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open, row.Message, row.DepotId)
+		self.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open, row.Message, row.DepotId, row.ElevatorData)
 	end
 
 	addEventHandler("GroupPropertyClientInput",root,function()
@@ -181,12 +181,4 @@ function GroupPropertyManager:getPropsForPlayer( player )
 		end
 	end
 	return playerProps
-end
-
--- Code for some Propertys
-function GroupPropertyManager.initalize()
-	local elevator = Elevator:new()
-	elevator:addStation("Chef Security", Vector3(349.809, 253.417, 999.108), 90, 3, 1030)
-	elevator:addStation("1. Etage", Vector3(368.031, 229.625, 988.643), 90, 3, 1030)
-	elevator:addStation("Erdgeschoss", Vector3(354.258, 258.764, 981.697), 360, 3, 1030)
 end

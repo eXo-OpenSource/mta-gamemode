@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GroupProperty = inherit(Object)
 
-function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, depotId)
+function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, depotId, elevatorData)
 
 	self.m_Id = Id
 	self.m_Name = Name
@@ -30,6 +30,17 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_DepotId = depotId
 	self.m_Depot = Depot.load(depotId, self)
 
+	if elevatorData then
+		local elevatorData = fromJSON(elevatorData)
+		if elevatorData and elevatorData.stations and #elevatorData.stations > 1 then
+			local elevator = Elevator:new()
+			for i, station in ipairs(elevatorData.stations) do
+				outputDebug(station.name)
+				elevator:addStation(station.name, normaliseVector(station.position), station.rotation, station.interior, self.m_Dimension)
+			end
+		end
+	end
+
 	self:getKeysFromSQL()
 
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onEnter, self))
@@ -44,8 +55,6 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 			end
 		end
 	)
-
-
 end
 
 function GroupProperty:destructor()
