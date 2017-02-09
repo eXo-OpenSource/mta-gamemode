@@ -516,9 +516,13 @@ HelpTexts = {
 		Other = [[
 			Wir danken folgenden Personen/Teams für zur Verfügung gestellte Scripts:
 
-			iLife-Team:
+			dem iLife-Team für:
 			Slotmaschinen
 			Zug
+
+			Bonus für
+			Anti c-Bug
+			realdriveby
 		]];
 	};
 	Settings = {

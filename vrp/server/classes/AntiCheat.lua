@@ -8,7 +8,10 @@
 AntiCheat = inherit(Singleton)
 AntiCheat.AllowedDataChange = {
 	["playingTime"] = true,
-	["writing"] = true
+	["writing"] = true,
+	["i:left"] = true,
+	["i:right"] = true,
+	["i:warn"] = true,
 }
 
 function AntiCheat:constructor()

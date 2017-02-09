@@ -97,6 +97,9 @@ function PhoneInteraction:abortCall(player)
 		partner:triggerEvent("callReplace", player)
 		partner:sendMessage(_("Knack... Das Telefonat wurde abgebrochen!", partner), 255, 0, 0)
 
+		if self.m_LocationBlips[player] then delete(self.m_LocationBlips[player]) end
+		if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
+
 		setPlayerVoiceBroadcastTo(player, nil)
 		player:setPhonePartner(nil)
 		player:triggerEvent("callReplace", partner)
