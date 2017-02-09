@@ -4,7 +4,7 @@ local readFuncs = {
 	object = function(attributes)
 		return {type = "object", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
 			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), interior = tonumber(attributes.interior), doublesided = toboolean(attributes.doublesided),
-			alpha = tonumber(attributes.alpha), scale = tonumber(attributes.scale)}
+			alpha = tonumber(attributes.alpha), scale = tonumber(attributes.scale), collisions = toboolean(attributes.collisions)}
 	end;
 	marker = function(attributes)
 		return {type = "marker", markertype = attributes.type, x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
@@ -39,6 +39,7 @@ local createFuncs = {
 		setElementDoubleSided(o, info.doublesided or false)
 		setElementAlpha(o, info.alpha or 255)
 		setObjectScale(o, info.scale or 1)
+		setElementCollisionsEnabled(o, info.collisions == true)
 		return o
 	end;
 	marker = function(info)
