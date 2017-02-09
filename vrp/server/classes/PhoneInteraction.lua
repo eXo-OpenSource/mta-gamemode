@@ -130,8 +130,8 @@ function PhoneInteraction:callAbbortSpecial()
 end
 
 function PhoneInteraction:callSendLocation()
-	if player:getPhonePartner() then
-		local partner = player:getPhonePartner()
+	if client:getPhonePartner() then
+		local partner = client:getPhonePartner()
 		partner:sendMessage(_("[HANDY] %s hat dir seine Position mitgeteilt.", partner, client:getName()), 255, 0, 0)
 		if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
 		local pos = partner:getPosition()
