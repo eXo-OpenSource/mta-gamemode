@@ -133,8 +133,9 @@ function PhoneInteraction:callSendLocation()
 	if client:getPhonePartner() then
 		local partner = client:getPhonePartner()
 		partner:sendMessage(_("[HANDY] %s hat dir seine Position mitgeteilt.", partner, client:getName()), 255, 0, 0)
+		client:sendMessage(_("[HANDY] Du hast %s deine Position mitgeteilt.", client, partner:getName()), 255, 0, 0)
 		if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
-		local pos = partner:getPosition()
-		self.m_LocationBlips[partner] = Blip:new("Marker.png", pos.x, pos.y, partner, 9999)
+		local pos = client:getPosition()
+		self.m_LocationBlips[client] = Blip:new("Marker.png", pos.x, pos.y, partner, 9999)
 	end
 end
