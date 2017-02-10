@@ -107,6 +107,7 @@ function Core:constructor()
 		SkydivingManager:new()
 		Kart:new()
 		HorseRace:new()
+		BoxManager:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()

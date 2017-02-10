@@ -19,7 +19,13 @@ function Casino:constructor()
 	self:createGameMarker()
 
 	addRemoteEvents{"openChessGui"}
-	addEventHandler("openChessGui", root, function(col) MultiPlayerGameGUI:new("chess", col) end)
+	addEventHandler("openChessGui", root, function(col)
+		MultiPlayerGameGUI:new("Multiplayer Schach", col,
+			function(player)
+				triggerServerEvent("casinoStartMultiplayerGame", localPlayer, "chess", player)
+			end
+		)
+	end)
 end
 
 function Casino:createGameMarker()

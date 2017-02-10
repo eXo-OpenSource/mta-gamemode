@@ -175,6 +175,7 @@
 	<script src="server/classes/Gameplay/Train/TrainManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Train/Train.lua" type="server"/>
 	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
+	<script src="server/classes/Gameplay/BoxManager.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Shops/ShopManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/Shop.lua" type="server"/>
