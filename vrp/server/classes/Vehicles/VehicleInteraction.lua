@@ -41,7 +41,7 @@ function VehicleInteraction:doLock()
 		else
 			lookAtVehicle:playLockEffect()
 			lookAtVehicle:setLocked(true)
-			for i = 1,6 do 
+			for i = 1,6 do
 				setVehicleDoorState ( lookAtVehicle, i-1, 0)
 			end
 		end
@@ -96,7 +96,7 @@ function VehicleInteraction:doAction(door)
 
 		if doorRatio > 0 or checkDoor == 4 or doorState == "open" then
 			if door == 1 then
-				if lookAtVehicle:getTrunk() then
+				if lookAtVehicle.getTrunk then
 					lookAtVehicle:getTrunk():open(client)
 				end
 			elseif door == 0 then
