@@ -45,6 +45,10 @@ function Core:constructor()
 	aclGroup:addObject("user.exo_web")
 	ACLGroup.get("Admin"):addObject("resource.admin_exo")
 
+	if GIT_BRANCH == "release/production" then
+		setServerPassword()
+	end
+
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
 		TranslationManager:new()
