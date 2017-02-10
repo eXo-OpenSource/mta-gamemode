@@ -20,6 +20,7 @@ struct WayNode
     Vector3 position;
     std::vector<WayNodeSuccessor> successors;
 };
+
 typedef std::vector<WayNode> NodeList;
 
 class WayFinder
