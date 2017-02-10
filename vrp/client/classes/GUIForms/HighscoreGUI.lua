@@ -28,7 +28,7 @@ function HighscoreGUI:constructor(game)
 
 	for index, score in ipairs(HighscoreGUI.Scores) do
 		self.m_Tabs[score["data"]] = self.m_TabPanel:addTab(_("%s", score["name"]))
-		self.m_GridList[score["data"]] = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-30, self.m_Tabs[score["data"]])
+		self.m_GridList[score["data"]] = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-50, self.m_Tabs[score["data"]])
 		self.m_GridList[score["data"]]:addColumn(_"Spieler", 0.7)
 		self.m_GridList[score["data"]]:addColumn(_"Score", 0.3)
 	end

@@ -27,7 +27,7 @@ function KartGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.4, self.m_Height*0.1, _"eXo Kart Racing", tabTimeRace)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.11, self.m_Width*0.25, self.m_Height*0.06, _"Aktuelle Map:", tabTimeRace)
-	self.m_MapNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, "", tabTimeRace)
+	self.m_MapNameLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.11, self.m_Width*0.68, self.m_Height*0.06, "", tabTimeRace)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.17, self.m_Width*0.25, self.m_Height*0.06, _"Autor:", tabTimeRace)
 	self.m_AuthorLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.17, self.m_Width*0.4, self.m_Height*0.06, "", tabTimeRace)
@@ -77,7 +77,7 @@ function KartGUI:constructor()
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.98, self.m_Height*0.06, _"ACHTUNG: Du bekommst kein Geld erstattet, wenn du nicht alle runden fährst!", tabTimeRace):setColor(Color.Red)
 
 	-- Toptimes
-	self.m_GridList = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-30, tabToptimes)
+	self.m_GridList = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-50, tabToptimes)
 	self.m_GridList:addColumn("Rank", .1)
 	self.m_GridList:addColumn("Zeit", .4)
 	self.m_GridList:addColumn("Spieler", .5)
