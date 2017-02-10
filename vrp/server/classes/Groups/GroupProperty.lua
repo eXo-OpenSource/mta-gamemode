@@ -35,7 +35,6 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 		if elevatorData and elevatorData.stations and #elevatorData.stations > 1 then
 			local elevator = Elevator:new()
 			for i, station in ipairs(elevatorData.stations) do
-				outputDebug(station.name)
 				elevator:addStation(station.name, normaliseVector(station.position), station.rotation, station.interior, self.m_Dimension)
 			end
 		end

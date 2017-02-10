@@ -22,22 +22,26 @@
 
 int CFunctions::calculateRouteBetweenPoints(lua_State* luaVM)
 {
-    if (lua_type(luaVM, 0) != LUA_TNUMBER || lua_type(luaVM, 1) != LUA_TNUMBER || lua_type(luaVM, 2) != LUA_TNUMBER || lua_type(luaVM, 3) != LUA_TNUMBER ||
-        lua_type(luaVM, 4) != LUA_TNUMBER || lua_type(luaVM, 5) != LUA_TNUMBER )
+    if (
+            lua_type(luaVM, 1) != LUA_TNUMBER || lua_type(luaVM, 2) != LUA_TNUMBER || lua_type(luaVM, 3) != LUA_TNUMBER || 
+            lua_type(luaVM, 4) != LUA_TNUMBER || lua_type(luaVM, 5) != LUA_TNUMBER || lua_type(luaVM, 6) != LUA_TNUMBER 
+        )
     {
         pModuleManager->ErrorPrintf("Bad argument @ calculateRouteBetweenPoints");
         lua_pushboolean(luaVM, false);
         return 1;
     }
 
+    // run calculateRouteBetweenPoints(0, 0, 0, 10, 10, 10)
+
     // Create a new job
     WayFinderJob job;
-    job.positionFrom.x = static_cast<float>(lua_tonumber(luaVM, 0));
-    job.positionFrom.y = static_cast<float>(lua_tonumber(luaVM, 1));
-    job.positionFrom.z = static_cast<float>(lua_tonumber(luaVM, 2));
-    job.positionTo.x = static_cast<float>(lua_tonumber(luaVM, 3));
-    job.positionTo.y = static_cast<float>(lua_tonumber(luaVM, 4));
-    job.positionTo.z = static_cast<float>(lua_tonumber(luaVM, 5));
+    job.positionFrom.x = static_cast<float>(lua_tonumber(luaVM, 1));
+    job.positionFrom.y = static_cast<float>(lua_tonumber(luaVM, 2));
+    job.positionFrom.z = static_cast<float>(lua_tonumber(luaVM, 3));
+    job.positionTo.x = static_cast<float>(lua_tonumber(luaVM, 4));
+    job.positionTo.y = static_cast<float>(lua_tonumber(luaVM, 5));
+    job.positionTo.z = static_cast<float>(lua_tonumber(luaVM, 6));
 
     // Add the job to the job queue
     JobId jobId = WayFinderJobManager::instance().addJob(job);
