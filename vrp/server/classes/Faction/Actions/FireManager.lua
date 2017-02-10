@@ -58,7 +58,7 @@ function FireManager:checkFire()
 end
 
 function FireManager:startRandomFire(source)
-	if source:getRank() < RANK.Moderator then
+	if source and source:getRank() < RANK.Moderator then
 		source:sendError(_("Du bist nicht berechtigt!", source))
 		return
 	end
