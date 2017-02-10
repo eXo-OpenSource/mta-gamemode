@@ -301,7 +301,7 @@ function FactionRescue:createDeathPickup(player, ...)
 		rescuePlayer:triggerEvent("rescueCreateDeathBlip", player)
 	end
 
-	nextframe(function () player:setPosition(player.m_DeathPickup:getPosition()) end)
+	nextframe(function () if player.m_DeathPickup then player:setPosition(player.m_DeathPickup:getPosition()) end end)
 
 	addEventHandler("onPickupHit", player.m_DeathPickup,
 		function (hitPlayer)
