@@ -39,7 +39,12 @@ end
 function PhoneInteraction:callStart(player, voiceEnabled)
 	if not player then return end
 	if player:isPhoneEnabled() == true then
-		player:triggerEvent("callIncoming", client, voiceEnabled)
+		if not player:getPhonePartner() then
+			player:triggerEvent("callIncoming", client, voiceEnabled)
+		else
+			client:sendError(_("Besetzt... Der Spieler telefoniert gerade!",client, player.name))
+			client:triggerEvent("callReplace", player)
+		end
 	else
 		client:sendError(_("Das Handy von '%s' ist ausgeschaltet!",client, player.name))
 		client:triggerEvent("callReplace", player)
