@@ -367,6 +367,7 @@ function GroupManager:Event_RankUp(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
+			if isOffline then delete(player) end
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du kannst den Spieler nicht up-ranken!", client))
@@ -399,6 +400,7 @@ function GroupManager:Event_RankDown(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
+			if isOffline then delete(player) end
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du kannst den Spieler nicht down-ranken!", client))

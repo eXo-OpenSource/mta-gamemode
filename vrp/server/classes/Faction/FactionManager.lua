@@ -346,6 +346,8 @@ function FactionManager:Event_factionRankDown(playerId)
 			if isElement(player) then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
 			end
+		else
+			delete(player)
 		end
 		self:sendInfosToClient(client)
 	else

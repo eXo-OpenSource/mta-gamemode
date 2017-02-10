@@ -214,9 +214,7 @@ function Admin:Event_getPlayerInfo(Id, name)
 						Karma = player:getKarma();
                     }
 
-                    if isOffline then
-                        delete(player)
-                    end
+                    if isOffline then delete(player) end
                     client:triggerEvent("adminReceiveSeachedPlayerInfo", data)
                 end
             end
