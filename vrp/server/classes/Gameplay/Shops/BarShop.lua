@@ -165,7 +165,7 @@ function BarShop:stopStripper(player, force)
 		if self.m_StripperTimer and isTimer(self.m_StripperTimer) then killTimer(self.m_StripperTimer) end
 
 		if force then
-			self:sendShortMessage("Die Stripperinnen sind gegangen, es war nicht genug Geld in der Bar-Kasse!", player, player:getName())
+			self:sendShortMessage("Die Stripperinnen sind gegangen, es war nicht genug Geld in der Bar-Kasse!")
 		else
 			self:sendShortMessage(_("%s hat Stripperinnen für diese Bar entlassen!", player, player:getName()))
 		end
