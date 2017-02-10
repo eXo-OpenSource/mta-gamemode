@@ -58,7 +58,7 @@ for child in root.findall("script"):
 if externalFiles:
 	# Copy maps
 	shutil.copytree(rootdir+"files/maps", outdir+"files/maps")
-	
+
 	# Copy only files with <file> tag
 	for child in root.findall("file"):
 		filename = child.attrib["src"]
@@ -95,7 +95,7 @@ clientCall = [ compiler ]
 
 if branch != "" and branch != "develop" and branch != "master":
 	print("Building release build")
-	clientCall.extend([ "-e2" ]) # TODO: Readd '-s' once the script is more stable
+	clientCall.extend([ "-e2", "-s" ])
 else:
 	print("WARNING: Building debug build")
 
