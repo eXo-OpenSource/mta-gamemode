@@ -19,7 +19,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 					return
 				end
 
-				if vehicle:getHealt() >= 1000 then
+				if not vehicle:getHealth() < 1000 then
 					hitElement:sendError(_("Dein Fahrzeug hat keinen erheblichen Schaden!", hitElement))
 					return
 				end
