@@ -87,7 +87,8 @@ function Kart:loadMap(mapFileName)
 	self.m_Checkpoints = self.m_Map:getElementsByType("checkpoint")
 	self.m_Spawnpoints = self.m_Map:getElementsByType("spawnpoint")
 	self.m_KartMarker = createMarker(startMarker.x, startMarker.y, startMarker.z, "cylinder", 1, 255, 125, 0, 125)
-	self.m_Ped = createPed(infoPed.model, infoPed.x, infoPed.y, infoPed.z, infoPed.rz)
+	self.m_Ped = NPC:new(infoPed.model, infoPed.x, infoPed.y, infoPed.z, infoPed.rz)
+	self.m_Ped:setImmortal(true)
 	self.m_StartFinishMarker = self:getStartFinishMarker()
 
 	for _, v in pairs(self.m_Checkpoints) do
