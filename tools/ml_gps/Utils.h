@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <queue>
+#include "WayFinder.h"
 
 namespace Utils
 {
@@ -26,4 +27,6 @@ namespace Utils
 
 		return std::find(vector.begin(), vector.end(), element) != vector.end();
 	}
+
+    void processNodes(NodeList* target) {};
 }

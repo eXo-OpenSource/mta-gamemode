@@ -4,6 +4,7 @@
 
 WayFinder::WayFinder()
 {
+    Utils::processNodes(&this->m_Nodes[AREA_COUNT]);
 }
 
 WayFinder::~WayFinder()

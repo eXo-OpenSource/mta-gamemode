@@ -22,10 +22,8 @@
 
 int CFunctions::calculateRouteBetweenPoints(lua_State* luaVM)
 {
-    if (
-            lua_type(luaVM, 1) != LUA_TNUMBER || lua_type(luaVM, 2) != LUA_TNUMBER || lua_type(luaVM, 3) != LUA_TNUMBER || 
-            lua_type(luaVM, 4) != LUA_TNUMBER || lua_type(luaVM, 5) != LUA_TNUMBER || lua_type(luaVM, 6) != LUA_TNUMBER 
-        )
+    if ( lua_type(luaVM, 1) != LUA_TNUMBER || lua_type(luaVM, 2) != LUA_TNUMBER || lua_type(luaVM, 3) != LUA_TNUMBER || 
+        lua_type(luaVM, 4) != LUA_TNUMBER || lua_type(luaVM, 5) != LUA_TNUMBER || lua_type(luaVM, 6) != LUA_TNUMBER )
     {
         pModuleManager->ErrorPrintf("Bad argument @ calculateRouteBetweenPoints");
         lua_pushboolean(luaVM, false);

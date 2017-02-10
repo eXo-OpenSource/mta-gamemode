@@ -14,5 +14,4 @@ class CFunctions
 public:
     static int calculateRouteBetweenPoints(lua_State* luaVM);
     static int processGPSEvents(lua_State* luaVM );
-
 };
