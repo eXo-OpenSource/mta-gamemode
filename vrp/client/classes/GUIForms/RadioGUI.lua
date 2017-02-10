@@ -55,7 +55,7 @@ function RadioGUI:constructor()
 			self:stopSound()
 		end
 	)
-	addEventHandler("onElementDestroy", localPlayer,
+	addEventHandler("onClientElementDestroy", localPlayer,
 		function()
 			if source:getType() == "vehicle" then
 				if table.find(getVehicleOccupants(source), localPlayer) then
