@@ -20,9 +20,6 @@ function Indicator:constructor()
 	self:checkVehicles()
 	self:addEvents()
 
-	bindKey ( ",", "down", bind(self.handleKeyBind, self))
-	bindKey ( ".", "down", bind(self.handleKeyBind, self))
-	bindKey ( "-", "down", bind(self.handleKeyBind, self))
 	addCommandHandler('indicator_left', function () self:switchIndicatorState('left') end, false)
 	addCommandHandler('indicator_right', function () self:switchIndicatorState('right') end, false)
 end
@@ -423,6 +420,7 @@ function Indicator:render(timeSlice)
         self:processIndicators ( state, state.lastChange )
     end
 end
+
 
 function Indicator:handleKeyBind( keyPressed, keyState )
     if (keyPressed == ",") then

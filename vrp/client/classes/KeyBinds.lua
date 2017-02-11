@@ -26,6 +26,9 @@ function KeyBinds:constructor()
 	  ["KeyToggleScoreboard"]    = {["defaultKey"] = "TAB", ["name"] = "Spielerliste", ["func"] = self.m_ScoreboardTrigger, ["trigger"] = "both"};
 	  ["KeyToggleCustomMap"]     = {["defaultKey"] = "F11", ["name"] = "Karte", ["func"] = self.m_CustomMap};
 	  ["KeyToggleInventory"]     = {["defaultKey"] = "i", ["name"] = "Inventar", ["func"] = self.m_Inventory};
+	  ["KeyIndicatorLeft"]     	 = {["defaultKey"] = ",", ["name"] = "Blinker Links", ["func"] = function() Indicator:getSingleton():switchIndicatorState("left") end};
+	  ["KeyIndicatorRight"]      = {["defaultKey"] = ".", ["name"] = "Blinker Rechts", ["func"] = function() Indicator:getSingleton():switchIndicatorState("right") end};
+	  ["KeyIndicatorWarn"]       = {["defaultKey"] = "-", ["name"] = "Warnblinkanlage", ["func"] = function() Indicator:getSingleton():switchIndicatorState("warn") end};
 	  ["KeyToggleCursor"]        = {["defaultKey"] = "b", ["name"] = "Cursor", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
 
 	  --Disabled cause of MTA Bug #9178
