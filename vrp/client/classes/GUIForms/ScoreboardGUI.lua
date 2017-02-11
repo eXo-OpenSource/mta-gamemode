@@ -99,7 +99,7 @@ function ScoreboardGUI:refresh()
 		end
 	end
 
-	table.sort(self.m_Players, function (a, b) return (a[2] > b[2]) end)
+	table.sort(self.m_Players, function (a, b) return (a[2] < b[2]) end)
 	self:insertPlayers()
 
 	if not self.m_PlayerCountLabels then
