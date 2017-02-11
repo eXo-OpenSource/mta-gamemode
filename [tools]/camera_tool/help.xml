@@ -1,0 +1,50 @@
+<help>
+Welcome to the Camera Tool V2 help!
+F2							- Opens the tool
+Right mouse button (mouse2)	- Shows your cursor
+
+
+How to use it?
+The cameratool is currently supporting 3 movement types: linair movement,cirkular movement and advanced movement, others are under development.
+-------------------linair movement-------------------------------------------------------------------------------------
+The movement goes from point A to point B, you can select a target, or to select the north/south/east/west point to look at.
+It is really easy to use in the play-mode, just click on the Point A button for example, and it automaticly saves your current position, and uses it for the movement.
+-------------------cirkular movement-----------------------------------------------------------------------------------
+The movement stay's on point A and the camera will rotate around it, you also can select a target.
+The other variables will explain themself.
+-------------------Advanced movement-----------------------------------------------------------------------------------
+Advanced movement is specially made for people who want to do long flybys, want to have more control and make awesome camera-shots.
+It will take a bit more time to make these camera-shots but it will pay of, for example look at some of my intro's : (http://www.youtube.com/user/ThaZenoS).
+
+Step 1 : To create a new point press "Add new point" to insert a blank point.
+Step 2 : Choose a start and end point by clicking on the point u want to set and press "Set point" to set the coordinates to your current location.
+Step 3 : Setting a target is done the same as step 2
+Step 4 : Path type, U can choose between a "curved" and a "linear" path. A curved will need a bend point, linear doesn't.
+step 5 : Moving path type, With this variable u can how the camera wil move.
+step 6 : Other variables are up to u.
+Step 5 : Press "Move camera!" to start your path.
+HINT : Some variables can be fast choosen by selecting it and scrolling through the options.
+
+
+
+Also, checkout the first video: http://www.youtube.com/watch?v=XyXyf6afnHw
+And ofcourse my latest cameratool video : .........................
+
+
+
+Noticing any bugs?
+Please report those!
+
+Little fixes when you're bugged:
+1: stop the tool
+2: use the next commands:
+	"restart cameratool"
+	"unbug"
+3: Enjoy your game again!
+
+Currently I've tested the tool in playmode, it works very well with the freeroam gamemode. 
+I advise you to use ryden's superman resource (donwload: http://community.mtasa.com/index.php?p=resources&s=details&id=220) to get the locations!
+
+
+Thanks to Puma and A.Noniem for helping me out with some scripts!
+</help>
