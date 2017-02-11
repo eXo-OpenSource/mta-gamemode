@@ -212,13 +212,13 @@ HelpTextTitles = {
 		LoginRegister = "Login/Registration";
 		Team = "Team";
 	};
-	Freizeit = {
+	Leisure = {
 		Kart = "Kartstrecke";
-		Angeln = "Angeln";
-		Boxhalle = "Boxhalle";
+		Fishing = "Angeln";
+		Boxing = "Boxhalle";
 		Bars = "Bars";
-		Pferdewetten = "Pferdewetten";
-		Minispiele = "Minispiele";
+		Horserace = "Pferdewetten";
+		Minigames = "Minispiele";
 	};
 	Jobs = {
 		BusDriver = "Job: Busfahrer";
@@ -322,7 +322,7 @@ HelpTexts = {
 		]];
 
 	};
-	Freizeit = {
+	Leisure = {
 		Kart = [[
 		Die Kartstrecke befindet sich in Montgomery (Reifen Blip auf der Karte). Du kannst dort auf täglich wechselnden
 		Strecken dein Fahrkönnen unter Beweis stellen.
@@ -330,13 +330,13 @@ HelpTexts = {
 
 		In den nächsten Updates wird zudem ein Ghostmode hinzugefügt um rauszufinden wo du deine Zeit liegen lässt.
 		]];
-		Angeln = [[
+		Fishing = [[
 		Am Pier in Los Santos (am Riesenrad) gibt es mehrere Angeln um Meeresbewohner oder andere Gegenstände aus dem
 		Wasser zu angeln. Je besser du auswirfst und einholst, desto wertvoller deine Beute.
 
 		Verkaufe diese einfach an Angeler Lutz der direkt daneben seinen Stand aufgebaut hat!
 		]];
-		Boxhalle = [[
+		Boxing = [[
 		Im Fitness-Center Los Santos kannst du andere Spieler zum Boxkampf herausfordern! Dabei könnt ihr einfach aus
 		Spaß kämpfen oder aber einen Geldeinsatz vereinbaren.
 		Du findest das Fitness-Center nahe der Green Bottle bar!
@@ -351,13 +351,13 @@ HelpTexts = {
 
 		Der perfekten Party steht damit nichts im Wege!
 		]];
-		Pferdewetten = [[
+		Horserace = [[
 		Täglich um 20:00 Uhr findet das eXo-Pferderennen statt. Du kannst im Wettlokal (Pferd auf der Karte)
 		einen gewünschten Geldbetrag auf das Pferd deiner Wahl setzen.
 
 		Mit etwas Glück kannst du damit deinen Einsatz verdreifachen!
 		]];
-		Minispiele = [[
+		Minigames = [[
 		Auf eXo-Reallife gibt es zahlreiche Minispiele die du teilweise alleine, teilweise mit anderen Usern
 		spielen kannst.
 		Klicke einen Spieler an und wähle "Spielen" im Klickmenü, dort gibt es eine Auswahl
