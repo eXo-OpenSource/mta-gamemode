@@ -6,4 +6,6 @@
 <script src="c_linear.lua" type="client"/>
 <script src="server.lua" type="server"/>
 <file src="cameratool.png" />
+	<script src="freecam.lua" type="client" />
+	<script src="freecam_server.lua" type="server" />	
 </meta>
