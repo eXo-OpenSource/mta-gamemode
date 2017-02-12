@@ -9,8 +9,12 @@ function stage(player, cmd, pw)
 end
 addCommandHandler("stage", stage)
 
-function loadStage()
+local stageLoaded = false
 
+function loadStage()
+	
+	if stageLoaded == true then return end
+	stageLoaded = true
 	-- Stage resource for MTA:SA
 	-- author: vovo4ka   <zolotayapipka@gmail.com>
 	--
