@@ -62,7 +62,9 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 
 	self:setMileage(mileage)
 	if faction:isStateFaction() then
+		if self:getVehicleType() == VehicleType.Automobile then
 			self.m_VehELSObj = ELSSystem:new(self)
+		end
 	end
 	if handlingFaktor and handlingFaktor ~= "" then
 		local handling = getOriginalHandling(getElementModel(self))
