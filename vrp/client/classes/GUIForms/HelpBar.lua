@@ -12,6 +12,8 @@ addRemoteEvents{"setManualHelpBarText", "resetManualHelpBarText"}
 function HelpBar:constructor()
 	GUIForm.constructor(self, screenWidth*0.845, 0, screenWidth*0.16, screenHeight, false, true)
 
+	self.m_Enabled = core:get("HUD", "showHelpBar", true)
+
 	self.m_Icon = GUIImage:new(screenWidth-screenWidth*0.028/ASPECT_RATIO_MULTIPLIER, screenHeight*0.4, screenWidth*0.03/ASPECT_RATIO_MULTIPLIER, screenHeight*0.1, "files/images/GUI/HelpIcon.png")
 	self.m_Icon.onLeftClick = bind(self.HelpIcon_Click, self)
 	self.m_Icon.onHover = function ()
@@ -44,6 +46,17 @@ function HelpBar:constructor()
 	end
 
 	self.m_Visible = false
+
+	self.m_Icon:setVisible(self.m_Enabled)
+
+end
+
+function HelpBar:toggle()
+	self.m_Enabled = core:get("HUD", "showHelpBar", true)
+	self.m_Icon:setVisible(self.m_Enabled)
+	if not self.m_Enabled then
+		self:fadeOut()
+	end
 end
 
 function HelpBar:fadeIn()
@@ -53,7 +66,6 @@ function HelpBar:fadeIn()
 
 	self.m_Icon.onUnhover()
 	self.m_Icon:setVisible(false)
-
 end
 
 function HelpBar:fadeOut()

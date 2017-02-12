@@ -235,222 +235,18 @@ function SelfGUI:constructor()
 	-- Tab: Settings
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
 	self.m_TabSettings = tabSettings
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Radar", tabSettings)
-	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
-	for i, v in ipairs(RadarDesign) do
-		self.m_RadarChange:addItem(v)
-	end
 
-
-	self.m_RadarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Radar aktivieren", tabSettings)
-	self.m_RadarCheckBox:setFont(VRPFont(25))
-	self.m_RadarCheckBox:setFontSize(1)
-	self.m_RadarCheckBox:setChecked(core:get("HUD", "showRadar", true))
-	self.m_RadarCheckBox.onChange = function (state)
-		core:set("HUD", "showRadar", state)
-		HUDRadar:getSingleton():setEnabled(state)
-	end
-
-	self.m_BlipCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Blips anzeigen", tabSettings)
-	self.m_BlipCheckBox:setFont(VRPFont(25))
-	self.m_BlipCheckBox:setFontSize(1)
-	self.m_BlipCheckBox:setChecked(core:get("HUD", "drawBlips", true))
-	self.m_BlipCheckBox.onChange = function (state)
-		core:set("HUD", "drawBlips", state)
-	end
-
-	self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Radarareas anzeigen", tabSettings)
-	self.m_GangAreaCheckBox:setFont(VRPFont(25))
-	self.m_GangAreaCheckBox:setFontSize(1)
-	self.m_GangAreaCheckBox:setChecked(core:get("HUD", "drawGangAreas", true))
-	self.m_GangAreaCheckBox.onChange = function (state)
-		core:set("HUD", "drawGangAreas", state)
-		HUDRadar:getSingleton():updateMapTexture()
-	end
-
-	self.m_RadarChange.onChange = function(text, index)
-		HUDRadar:getSingleton():setDesignSet(index)
-		if index == RadarDesign.Monochrome or index == RadarDesign.GTA then
-			self.m_BlipCheckBox:setVisible(true)
-			self.m_GangAreaCheckBox:setVisible(true)
-		else
-			self.m_BlipCheckBox:setVisible(false)
-			self.m_GangAreaCheckBox:setVisible(false)
-		end
-	end
-	local currentRadarIndex = core:get("HUD", "RadarDesign") or 2
-	self.m_RadarChange.onChange("", currentRadarIndex)
-	self.m_RadarChange:setIndex(currentRadarIndex, true)
-
-	GUILabel:new(self.m_Width*0.5, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / UI", tabSettings)
-	self.m_UIChange = GUIChanger:new(self.m_Width*0.5, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
-	for i, v in ipairs(UIStyle) do
-		self.m_UIChange:addItem(v)
-	end
-	self.m_UIChange.onChange = function(text, index)
-		core:set("HUD", "UIStyle", index)
-		HUDUI:getSingleton():setUIMode(index)
-		if index == UIStyle.vRoleplay then
-			self.m_LifeArmor:setVisible(true)
-			self.m_ZoneName:setVisible(true)
-			self.m_LabelHUDScale1:setVisible(false);
-			self.m_HUDScale:setVisible(false);
-		elseif index == UIStyle.eXo then
-			self.m_LabelHUDScale1:setVisible(true);
-			self.m_HUDScale:setVisible(true);
-			self.m_LifeArmor:setVisible(false)
-			self.m_ZoneName:setVisible(false)
-		else
-			self.m_LifeArmor:setVisible(false)
-			self.m_ZoneName:setVisible(false)
-			self.m_LabelHUDScale1:setVisible(false);
-			self.m_HUDScale:setVisible(false);
-		end
-	end
-	self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.vRoleplay), true)
-
-	self.m_UICheckBox = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"UI aktivieren?", tabSettings)
-	self.m_UICheckBox:setFont(VRPFont(25))
-	self.m_UICheckBox:setFontSize(1)
-	self.m_UICheckBox:setChecked(core:get("HUD", "showUI", true))
-	self.m_UICheckBox.onChange = function (state)
-		core:set("HUD", "showUI", state)
-		HUDUI:getSingleton():setEnabled(state)
-	end
-
-	self.m_ChatCheckBox = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Chat aktivieren?", tabSettings)
-	self.m_ChatCheckBox:setFont(VRPFont(25))
-	self.m_ChatCheckBox:setFontSize(1)
-	self.m_ChatCheckBox:setChecked(isChatVisible())
-	self.m_ChatCheckBox.onChange = function (state) showChat(state) end
-
-	self.m_Reddot = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Rotpunkt aktivieren?", tabSettings)
-	self.m_Reddot:setFont(VRPFont(25))
-	self.m_Reddot:setFontSize(1)
-	self.m_Reddot:setChecked(core:get("HUD", "reddot", false))
-	self.m_Reddot.onChange = function (state)
-		core:set("HUD", "reddot", state)
-		HUDUI:getSingleton():toggleReddot(state)
-	end
-
-	self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.37, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren?", tabSettings)
-	self.m_ShortMessageCTC:setFont(VRPFont(25))
-	self.m_ShortMessageCTC:setFontSize(1)
-	self.m_ShortMessageCTC:setChecked(core:get("HUD", "shortMessageCTC", false))
-	self.m_ShortMessageCTC.onChange = function (state)
-		core:set("HUD", "shortMessageCTC", state)
-	end
-
-	self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.9, self.m_Height*0.37, self.m_Width*0.025, self.m_Height*0.04, "(?)", tabSettings)
-	self.m_ShortMessageCTCInfo:setFont(VRPFont(22.5))
-	self.m_ShortMessageCTCInfo:setFontSize(1)
-	self.m_ShortMessageCTCInfo:setColor(Color.LightBlue)
-	self.m_ShortMessageCTCInfo.onHover = function () self.m_ShortMessageCTCInfo:setColor(Color.White) end
-	self.m_ShortMessageCTCInfo.onUnhover = function () self.m_ShortMessageCTCInfo:setColor(Color.LightBlue) end
-	self.m_ShortMessageCTCInfo.onLeftClick = function ()
-		ShortMessage:new(_(HelpTexts.Settings.ShortMessageCTC), _(HelpTextTitles.Settings.ShortMessageCTC), nil, 25000)
-	end
-
-	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", tabSettings)
-	self.m_StartIntro:setFont(VRPFont(25))
-	self.m_StartIntro:setFontSize(1)
-	self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
-	self.m_StartIntro.onChange = function (state)
-		core:set("HUD", "startScreen", state)
-	end
-
-	self.m_LifeArmor = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.49, self.m_Width*0.35, self.m_Height*0.04, _"Leben/Weste am HUD", tabSettings)
-	self.m_LifeArmor:setFont(VRPFont(25))
-	self.m_LifeArmor:setFontSize(1)
-	self.m_LifeArmor:setChecked(core:get("HUD", "defaultHealthArmor", true))
-	if core:get("HUD", "UIStyle") ~= UIStyle.vRoleplay then self.m_LifeArmor:setVisible(false) end
-	self.m_LifeArmor.onChange = function (state)
-		core:set("HUD", "defaultHealthArmor", state)
-		HUDUI:getSingleton():toggleDefaultHealthArmor(state)
-	end
-
-	self.m_ZoneName = GUICheckbox:new(self.m_Width*0.5, self.m_Height*0.55, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", tabSettings)
-	self.m_ZoneName:setFont(VRPFont(25))
-	self.m_ZoneName:setFontSize(1)
-	self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
-	if core:get("HUD", "UIStyle") ~= UIStyle.vRoleplay then self.m_ZoneName:setVisible(false) end
-	self.m_ZoneName.onChange = function (state)
-		core:set("HUD", "drawZone", state)
-	end
-
-
-	self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.5, self.m_Height*0.49, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
-	self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
-	self.m_HUDScale:setColor(Color.LightBlue)
-	self.m_HUDScale.onScroll = function() local scale = self.m_HUDScale:getScrollPosition(); HUDUI:getSingleton():setScale( scale ); core:set("HUD","scaleScroll",scale*0.75) end
-	self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.5, self.m_Height*0.49, self.m_Width*0.35, self.m_Height*0.07, _"HUD-Skalierung", tabSettings):setAlignX("center")
-	if core:get("HUD", "UIStyle") ~= UIStyle.eXo then self.m_HUDScale:setVisible(false); self.m_LabelHUDScale1:setVisible(false); end
-
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.38, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", tabSettings)
-	self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.45, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
-	self.m_RadarChange:addItem("Normal")
-	self.m_RadarChange:addItem("Instant")
-	self.m_RadarChange.onChange = function(text, index)
-		core:set("HUD", "CursorMode", index - 1)
-		Cursor:setCursorMode(toboolean(index - 1))
-	end
-	self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
-
-
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.07, _"Nametag:", tabSettings)
-	self.m_NametagChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.62, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
-	self.m_NametagChange:addItem("Default")
-	self.m_NametagChange:addItem("VRP")
-	self.m_NametagChange.onChange = function(text, index)
-		core:set("HUD", "NametagStyle", index)
-		Nametag:getSingleton():setStyle(index)
-	end
-	self.m_UIChange:setIndex(core:get("HUD", "NametagStyle", NametagStyle.Default), true)
-
-	GUILabel:new(self.m_Width*0.02, self.m_Height*0.72, self.m_Width*0.8, self.m_Height*0.07, _"Sonstiges", tabSettings)
-	self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.79, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", tabSettings)
-	self.m_SkinSpawn:setFont(VRPFont(25))
-	self.m_SkinSpawn:setFontSize(1)
-	self.m_SkinSpawn:setChecked(core:get("HUD", "spawnFactionSkin", true))
-	self.m_SkinSpawn.onChange = function (bool)
-		core:set("HUD", "spawnFactionSkin", bool)
-		triggerServerEvent("switchSpawnWithFactionSkin",localPlayer, bool)
-	end
-	self.m_Indicators = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.85, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeug Blinker", tabSettings)
-	self.m_Indicators:setFont(VRPFont(25))
-	self.m_Indicators:setFontSize(1)
-	self.m_Indicators:setChecked(core:get("Vehicles", "Indicators", true))
-	self.m_Indicators.onChange = function (bool)
-		core:set("Vehicles", "Indicators", bool)
-		Indicator:getSingleton():toggle()
-	end
-	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.55, self.m_Width*0.8, self.m_Height*0.07, _"Werbung (ad)", tabSettings)
-	--self.m_AdChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.62, self.m_Width*0.35, self.m_Height*0.07, tabSettings)
-	--self.m_AdChange:addItem("als Box unten")
-	--self.m_AdChange:addItem("im Chat")
-	--self.m_AdChange.onChange = function(text, index)
-	--	core:set("Ad", "Chat", index - 1)
-	--end
-
-	local tourText = Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten"
-
-	self.m_ShaderButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.64, self.m_Width*0.35, self.m_Height*0.07, _"Shader-Einstellungen", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
-	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
-
-	self.m_ServerTour = GUIButton:new(self.m_Width*0.6, self.m_Height*0.73, self.m_Width*0.35, self.m_Height*0.07, tourText, tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
-	self.m_ServerTour.onLeftClick = function()
-		if not Tour:getSingleton():isActive() then
-		QuestionBox:new(
-			_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
-			function() triggerServerEvent("tourStart", localPlayer, true) end)
-			self:close()
-		else
-			triggerServerEvent("tourStop", localPlayer)
+	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.96, tabSettings)
+	self.m_SettingsGrid:addColumn(_"Einstellung", 1)
+	local SettingsTable = {"HUD", "Radar", "Nametag/Reddot", "Sonstiges"}
+	local item
+	for index, setting in pairs(SettingsTable) do
+		item = self.m_SettingsGrid:addItem(setting)
+		item.onLeftClick = function()
+			self:onSettingChange(setting)
 		end
 	end
 
-	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.6, self.m_Height*0.82, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
-	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
 
 
@@ -525,7 +321,6 @@ function SelfGUI:onShow()
 	self.m_PlayTimeLabel:setText(_("%s Stunde(n) %s Minute(n)", hours, minutes))
 	self.m_AFKTimeLabel:setText(_("%s Minute(n)", math.floor((localPlayer.m_AFKTime + localPlayer.m_CurrentAFKTime)/60/1000)))
 
-	self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten")
 
 	local x, y = self.m_JobNameLabel:getPosition()
 	if localPlayer:getJob() then
@@ -916,4 +711,239 @@ end
 
 function SelfGUI:isBackgroundBlurred()
 	return true
+end
+
+function SelfGUI:onSettingChange(setting)
+	if self.m_SettingBG then delete(self.m_SettingBG) end
+	self.m_SettingBG = GUIRectangle:new(self.m_Width*0.34, self.m_Height*0.02, self.m_Width*0.66, self.m_Height*0.96, tocolor(0, 0, 0, 0), self.m_TabSettings)
+
+
+
+	if setting == "HUD" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / UI", self.m_SettingBG)
+
+		self.m_UICheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.04, _"UI aktivieren?", self.m_SettingBG)
+		self.m_UICheckBox:setFont(VRPFont(25))
+		self.m_UICheckBox:setFontSize(1)
+		self.m_UICheckBox:setChecked(core:get("HUD", "showUI", true))
+		self.m_UICheckBox.onChange = function (state)
+			core:set("HUD", "showUI", state)
+			HUDUI:getSingleton():setEnabled(state)
+		end
+
+		self.m_ChatCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.15, self.m_Width*0.35, self.m_Height*0.04, _"Chat aktivieren?", self.m_SettingBG)
+		self.m_ChatCheckBox:setFont(VRPFont(25))
+		self.m_ChatCheckBox:setFontSize(1)
+		self.m_ChatCheckBox:setChecked(isChatVisible())
+		self.m_ChatCheckBox.onChange = function (state) showChat(state) end
+
+		self.m_HelpBarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.21, self.m_Width*0.35, self.m_Height*0.04, _"Hilfe Leiste", self.m_SettingBG)
+		self.m_HelpBarCheckBox:setFont(VRPFont(25))
+		self.m_HelpBarCheckBox:setFontSize(1)
+		self.m_HelpBarCheckBox:setChecked(core:get("HUD", "showHelpBar", true))
+		self.m_HelpBarCheckBox.onChange = function (state)
+			core:set("HUD", "showHelpBar", state)
+			HelpBar:getSingleton():toggle()
+
+		end
+
+		self.m_UIChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.27, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		for i, v in ipairs(UIStyle) do
+			self.m_UIChange:addItem(v)
+		end
+		self.m_UIChange.onChange = function(text, index)
+			core:set("HUD", "UIStyle", index)
+			HUDUI:getSingleton():setUIMode(index)
+			if index == UIStyle.vRoleplay then
+				self.m_LifeArmor:setVisible(true)
+				self.m_ZoneName:setVisible(true)
+				self.m_LabelHUDScale1:setVisible(false);
+				self.m_HUDScale:setVisible(false);
+			elseif index == UIStyle.eXo then
+				self.m_LabelHUDScale1:setVisible(true);
+				self.m_HUDScale:setVisible(true);
+				self.m_LifeArmor:setVisible(false)
+				self.m_ZoneName:setVisible(false)
+			else
+				self.m_LifeArmor:setVisible(false)
+				self.m_ZoneName:setVisible(false)
+				self.m_LabelHUDScale1:setVisible(false);
+				self.m_HUDScale:setVisible(false);
+			end
+		end
+		self.m_UIChange:setIndex(core:get("HUD", "UIStyle", UIStyle.vRoleplay), true)
+
+		self.m_LifeArmor = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.36, self.m_Width*0.35, self.m_Height*0.04, _"Leben/Weste am HUD", self.m_SettingBG)
+		self.m_LifeArmor:setFont(VRPFont(25))
+		self.m_LifeArmor:setFontSize(1)
+		self.m_LifeArmor:setChecked(core:get("HUD", "defaultHealthArmor", true))
+		if core:get("HUD", "UIStyle") ~= UIStyle.vRoleplay then self.m_LifeArmor:setVisible(false) end
+		self.m_LifeArmor.onChange = function (state)
+			core:set("HUD", "defaultHealthArmor", state)
+			HUDUI:getSingleton():toggleDefaultHealthArmor(state)
+		end
+
+		self.m_ZoneName = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.43, self.m_Width*0.35, self.m_Height*0.04, _"Zone-Name im Radar", self.m_SettingBG)
+		self.m_ZoneName:setFont(VRPFont(25))
+		self.m_ZoneName:setFontSize(1)
+		self.m_ZoneName:setChecked(core:get("HUD", "drawZone", true))
+		if core:get("HUD", "UIStyle") ~= UIStyle.vRoleplay then self.m_ZoneName:setVisible(false) end
+		self.m_ZoneName.onChange = function (state)
+			core:set("HUD", "drawZone", state)
+		end
+
+		self.m_HUDScale = GUIHorizontalScrollbar:new(self.m_Width*0.02, self.m_Height*0.36, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_HUDScale:setScrollPosition( core:get("HUD","scaleScroll",0.75))
+		self.m_HUDScale:setColor(Color.LightBlue)
+		self.m_HUDScale.onScroll = function() local scale = self.m_HUDScale:getScrollPosition(); HUDUI:getSingleton():setScale( scale ); core:set("HUD","scaleScroll",scale*0.75) end
+		self.m_LabelHUDScale1 = GUILabel:new(self.m_Width*0.02, self.m_Height*0.36, self.m_Width*0.35, self.m_Height*0.07, _"HUD-Skalierung", self.m_SettingBG):setAlignX("center")
+		if core:get("HUD", "UIStyle") ~= UIStyle.eXo then self.m_HUDScale:setVisible(false); self.m_LabelHUDScale1:setVisible(false); end
+
+	elseif setting == "Radar" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"HUD / Radar", self.m_SettingBG)
+		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		for i, v in ipairs(RadarDesign) do
+			self.m_RadarChange:addItem(v)
+		end
+
+		self.m_RadarCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Radar aktivieren", self.m_SettingBG)
+		self.m_RadarCheckBox:setFont(VRPFont(25))
+		self.m_RadarCheckBox:setFontSize(1)
+		self.m_RadarCheckBox:setChecked(core:get("HUD", "showRadar", true))
+		self.m_RadarCheckBox.onChange = function (state)
+			core:set("HUD", "showRadar", state)
+			HUDRadar:getSingleton():setEnabled(state)
+		end
+
+		self.m_BlipCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.25, self.m_Width*0.35, self.m_Height*0.04, _"Blips anzeigen", self.m_SettingBG)
+		self.m_BlipCheckBox:setFont(VRPFont(25))
+		self.m_BlipCheckBox:setFontSize(1)
+		self.m_BlipCheckBox:setChecked(core:get("HUD", "drawBlips", true))
+		self.m_BlipCheckBox.onChange = function (state)
+			core:set("HUD", "drawBlips", state)
+		end
+
+		self.m_GangAreaCheckBox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.31, self.m_Width*0.35, self.m_Height*0.04, _"Radarareas anzeigen", self.m_SettingBG)
+		self.m_GangAreaCheckBox:setFont(VRPFont(25))
+		self.m_GangAreaCheckBox:setFontSize(1)
+		self.m_GangAreaCheckBox:setChecked(core:get("HUD", "drawGangAreas", true))
+		self.m_GangAreaCheckBox.onChange = function (state)
+			core:set("HUD", "drawGangAreas", state)
+			HUDRadar:getSingleton():updateMapTexture()
+		end
+
+		self.m_RadarChange.onChange = function(text, index)
+			HUDRadar:getSingleton():setDesignSet(index)
+			if index == RadarDesign.Monochrome or index == RadarDesign.GTA then
+				self.m_BlipCheckBox:setVisible(true)
+				self.m_GangAreaCheckBox:setVisible(true)
+			else
+				self.m_BlipCheckBox:setVisible(false)
+				self.m_GangAreaCheckBox:setVisible(false)
+			end
+		end
+		local currentRadarIndex = core:get("HUD", "RadarDesign") or 2
+		self.m_RadarChange.onChange("", currentRadarIndex)
+		self.m_RadarChange:setIndex(currentRadarIndex, true)
+
+	elseif setting == "Nametag/Reddot" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Nametag:", self.m_SettingBG)
+		self.m_NametagChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_NametagChange:addItem("Default")
+		self.m_NametagChange:addItem("VRP")
+		self.m_NametagChange.onChange = function(text, index)
+			core:set("HUD", "NametagStyle", index)
+			Nametag:getSingleton():setStyle(index)
+		end
+		self.m_NametagChange:setIndex(core:get("HUD", "NametagStyle", NametagStyle.Default), true)
+
+		self.m_Reddot = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Rotpunkt aktivieren?", self.m_SettingBG)
+		self.m_Reddot:setFont(VRPFont(25))
+		self.m_Reddot:setFontSize(1)
+		self.m_Reddot:setChecked(core:get("HUD", "reddot", false))
+		self.m_Reddot.onChange = function (state)
+			core:set("HUD", "reddot", state)
+			HUDUI:getSingleton():toggleReddot(state)
+		end
+	elseif setting == "Sonstiges" then
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Cursor Modus", self.m_SettingBG)
+		self.m_RadarChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
+		self.m_RadarChange:addItem("Normal")
+		self.m_RadarChange:addItem("Instant")
+		self.m_RadarChange.onChange = function(text, index)
+			core:set("HUD", "CursorMode", index - 1)
+			Cursor:setCursorMode(toboolean(index - 1))
+		end
+		self.m_RadarChange:setIndex(core:get("HUD", "CursorMode", 0) + 1, true)
+
+		GUILabel:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.8, self.m_Height*0.07, _"Sonstiges", self.m_SettingBG)
+		self.m_SkinSpawn = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.26, self.m_Width*0.8, self.m_Height*0.04, _"Mit Fraktionsskin spawnen", self.m_SettingBG)
+		self.m_SkinSpawn:setFont(VRPFont(25))
+		self.m_SkinSpawn:setFontSize(1)
+		self.m_SkinSpawn:setChecked(core:get("HUD", "spawnFactionSkin", true))
+		self.m_SkinSpawn.onChange = function (bool)
+			core:set("HUD", "spawnFactionSkin", bool)
+			triggerServerEvent("switchSpawnWithFactionSkin",localPlayer, bool)
+		end
+		self.m_Indicators = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.33, self.m_Width*0.8, self.m_Height*0.04, _"Fahrzeug Blinker", self.m_SettingBG)
+		self.m_Indicators:setFont(VRPFont(25))
+		self.m_Indicators:setFontSize(1)
+		self.m_Indicators:setChecked(core:get("Vehicles", "Indicators", true))
+		self.m_Indicators.onChange = function (bool)
+			core:set("Vehicles", "Indicators", bool)
+			Indicator:getSingleton():toggle()
+		end
+
+		self.m_ShortMessageCTC = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.40, self.m_Width*0.4, self.m_Height*0.04, _"ShortMessage-CTC aktivieren?", self.m_SettingBG)
+		self.m_ShortMessageCTC:setFont(VRPFont(25))
+		self.m_ShortMessageCTC:setFontSize(1)
+		self.m_ShortMessageCTC:setChecked(core:get("HUD", "shortMessageCTC", false))
+		self.m_ShortMessageCTC.onChange = function (state)
+			core:set("HUD", "shortMessageCTC", state)
+		end
+
+		self.m_ShortMessageCTCInfo = GUILabel:new(self.m_Width*0.9, self.m_Height*0.40, self.m_Width*0.025, self.m_Height*0.04, "(?)", self.m_SettingBG)
+		self.m_ShortMessageCTCInfo:setFont(VRPFont(22.5))
+		self.m_ShortMessageCTCInfo:setFontSize(1)
+		self.m_ShortMessageCTCInfo:setColor(Color.LightBlue)
+		self.m_ShortMessageCTCInfo.onHover = function () self.m_ShortMessageCTCInfo:setColor(Color.White) end
+		self.m_ShortMessageCTCInfo.onUnhover = function () self.m_ShortMessageCTCInfo:setColor(Color.LightBlue) end
+		self.m_ShortMessageCTCInfo.onLeftClick = function ()
+			ShortMessage:new(_(HelpTexts.Settings.ShortMessageCTC), _(HelpTextTitles.Settings.ShortMessageCTC), nil, 25000)
+		end
+
+		self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
+		self.m_StartIntro:setFont(VRPFont(25))
+		self.m_StartIntro:setFontSize(1)
+		self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
+		self.m_StartIntro.onChange = function (state)
+			core:set("HUD", "startScreen", state)
+		end
+
+		local tourText = Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten"
+
+		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.07, _"Shader-Einstellungen", self.m_SettingBG):setBackgroundColor(Color.Red):setFontSize(1.2)
+		self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
+
+		self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.35, self.m_Height*0.07, tourText, self.m_SettingBG):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
+		self.m_ServerTour.onLeftClick = function()
+			if not Tour:getSingleton():isActive() then
+			QuestionBox:new(
+				_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
+				function() triggerServerEvent("tourStart", localPlayer, true) end)
+				self:close()
+			else
+				triggerServerEvent("tourStop", localPlayer)
+			end
+		end
+		self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten")
+
+		self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", self.m_SettingBG):setBackgroundColor(Color.Orange):setFontSize(1.2)
+		self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
+
+	end
+
+
+
+
 end
