@@ -48,7 +48,6 @@ function HelpBar:constructor()
 	self.m_Visible = false
 
 	self.m_Icon:setVisible(self.m_Enabled)
-
 end
 
 function HelpBar:toggle()
@@ -73,8 +72,10 @@ function HelpBar:fadeOut()
 	Animation.Move:new(self.m_Rectangle, 500, self.m_Width, 0)
 
 	setTimer(function ()
-		self.m_Icon:setVisible(true)
-		self.m_Visible = false
+		if self.m_Enabled then
+			self.m_Icon:setVisible(true)
+			self.m_Visible = false
+		end
 	end, 500, 1)
 	if getCameraTarget(localPlayer) == localPlayer or getCameraTarget(localPlayer) == getPedOccupiedVehicle(localPlayer) then
 		if localPlayer:isLoggedIn() and not localPlayer:isDead() then
