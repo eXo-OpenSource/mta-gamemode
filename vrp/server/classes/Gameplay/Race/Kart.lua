@@ -13,6 +13,7 @@ Kart.Maps = {
 	"files/maps/Kart/Kartbahn2.map",
 	"files/maps/Kart/Karthalle.map",
 	"files/maps/Kart/8-Track.map",
+	"files/maps/Kart/CircleCourt.map",
 	--"files/maps/Kart/Funny Tubes.map",
 	--"files/maps/Kart/EliteKartMap.map",
 }
