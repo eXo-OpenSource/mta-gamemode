@@ -451,7 +451,7 @@ function GroupManager:Event_ChangeName(name)
 	end
 
 	if group:setName(name) then
-		client:takeMoney(20000, "Firmen/Gang Änderung")
+		client:takeMoney(GROUP_RENAME_COSTS, "Firmen/Gang Änderung")
 		client:sendSuccess(_("Deine %s heißt nun\n%s!", client, group:getType(), group:getName()))
 		group:addLog(client, "Gang/Firma", "hat die "..group:getType().." in "..group:getName().." umbenannt!")
 
