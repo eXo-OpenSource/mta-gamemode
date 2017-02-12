@@ -38,6 +38,11 @@ function Nametag:constructor()
 
 end
 
+function Nametag:destructor()
+	removeEventHandler("reciveNametagBuffs",root,self.m_ReciveBuffs)
+	removeEventHandler("onClientRender", root, self.m_Draw, true, "high+999")
+end
+
 function Nametag:setStyle(style)
 	self.m_Style = style
 end
