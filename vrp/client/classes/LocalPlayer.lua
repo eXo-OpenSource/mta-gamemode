@@ -35,7 +35,9 @@ function LocalPlayer:constructor()
 	addEventHandler("setClientTime", self, bind(self.Event_onGetTime, self))
 	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
-
+	addEventHandler("onClientPlayerSpawn", self, function()
+		NoDm:getSingleton():checkNoDm()
+	end)
 
 
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
