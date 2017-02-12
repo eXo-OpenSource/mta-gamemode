@@ -1,0 +1,11 @@
+<meta>
+	<info author="vovo4ka" name="Stage" version="1.5.0" type="gamemode" description="Stage Resource. Virtual actors and advanced camera workshop"/>
+	<script src="server.lua" />
+	<script src="client.lua" type="client" />
+	<file src="client/logo.png" type="file" />
+	<file src="client/sounds/playstart.wav" type="file" />
+	<file src="client/sounds/recstart.wav" type="file" />
+	<file src="client/sounds/stop.wav" type="file" />
+	<include resource="realdriveby" />
+	<include resource="emerlights" />	
+</meta>
