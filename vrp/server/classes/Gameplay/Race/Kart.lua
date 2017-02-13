@@ -69,11 +69,24 @@ function Kart:constructor()
 	addEventHandler("requestKartDatas", root, bind(Kart.requestKartmapData, self))
 	addEventHandler("onColShapeHit", self.m_Polygon, bind(Kart.onKartZoneEnter, self))
 	addEventHandler("onColShapeLeave", self.m_Polygon, bind(Kart.onKartZoneLeave, self))
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.changeMap, self), "KartMapChange", nil, nil, 00)
 end
 
 ---
 -- load / unload Maps
 --
+function Kart:changeMap(mapFileName)
+	if self:unloadMap() then
+		if not mapFileName then
+			local rnd =  Randomizer:getRandomTableValue(Kart.Maps)
+			rnd = rnd:gsub("files/maps/Kart/", "")
+			mapFileName = rnd:gsub(".map", "")
+		end
+		self:loadMap(mapFileName)
+	end
+end
+
 function Kart:loadMap(mapFileName)
 	if not self.m_Maps[mapFileName] then return end
 
@@ -101,7 +114,7 @@ function Kart:loadMap(mapFileName)
 end
 
 function Kart:unloadMap()
-	if table.size(self.m_Players) ~= 0 then return outputDebug("Can't unload map while player is playing") end
+	if table.size(self.m_Players) ~= 0 then outputDebug("Can't unload map while player is playing") return false end
 	if self.m_KartMarker then removeEventHandler("onMarkerHit", self.m_KartMarker, self.m_onStartMarkerHit) self.m_KartMarker:destroy() end
 	if self.m_StartFinishMarker then removeEventHandler("onMarkerHit", self.m_StartFinishMarker, self.m_onStartFinishMarkerHit) end
 	if self.m_Ped then self.m_Ped:destroy() end
@@ -111,6 +124,7 @@ function Kart:unloadMap()
 	end
 
 	if self.m_Map then self.m_Map:destroy(1) end
+	return true
 end
 
 function Kart:getStartFinishMarker()
