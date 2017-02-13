@@ -105,6 +105,7 @@ else:
 clientCall.extend([ "-o", outdir+"client.luac" ])
 clientCall.extend(files["client"])
 
+exit_status = 0
 process = subprocess.Popen(serverCall, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 output = process.communicate()
 output = str(output)
