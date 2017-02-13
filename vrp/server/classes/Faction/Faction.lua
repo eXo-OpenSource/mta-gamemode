@@ -238,8 +238,9 @@ function Faction:setPlayerRank(playerId, rank)
 
 	self.m_Players[playerId] = rank
 	if self:isEvilFaction() then
-		if Player.getFromId(playerId) then
-			self:changeSkin(Player.getFromId(playerId))
+		local player, isOffline = DatabasePlayer.getFromId(playerId)
+		if player and not isOffline then
+			self:changeSkin(player)
 		end
 	end
 	sql:queryExec("UPDATE ??_character SET FactionRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
