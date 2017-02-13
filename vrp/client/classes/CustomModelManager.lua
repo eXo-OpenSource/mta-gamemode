@@ -66,7 +66,7 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/holzstamm.col", 837)
 	self:loadImportDFF("files/models/holzstamm.dff", 837)
 
-	--Kart-Track --TODO ENABLE AGAIN IF DONE
+	--Kart-Track
 	self:loadImportTXD("files/models/kart.txd", 13083)
 	self:loadImportCOL("files/models/kart.col", 13083)
 	self:loadImportDFF("files/models/kart.dff", 13083)

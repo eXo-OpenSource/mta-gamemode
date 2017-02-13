@@ -26,7 +26,7 @@ function Kart:constructor(startFinishMarker, checkpoints, selectedLaps)
 
 	self.m_GhostRecord = MovementRecorder:new(571)
 	self.m_GhostPlayback = MovementRecorder:new(571)
-	self.m_GhostPlayback.m_Record = localPlayer.enableKartGhost and Kart.record or false
+	self.m_GhostPlayback.m_Record =  Kart.record or false
 
 
 	for _, v in pairs(self.m_Checkpoints) do
@@ -64,7 +64,7 @@ function Kart:startFinishMarkerHit(hitPlayer, matchingDimension)
 			HUDRace:getSingleton():setLaps(self.m_Laps)
 
 			self.m_GhostRecord:startRecording()
-			if localPlayer.enableKartGhost and  Kart.record then
+			if Kart.record then
 				self.m_GhostPlayback:startPlayback()
 			end
 		end
@@ -82,7 +82,7 @@ function Kart:startFinishMarkerHit(hitPlayer, matchingDimension)
 			self.m_LastGhost = self.m_GhostRecord.m_Record
 			self.m_GhostRecord:startRecording()
 
-			if localPlayer.enableKartGhost and Kart.record then
+			if Kart.record then
 				self.m_GhostPlayback:startPlayback()
 			end
 		else
