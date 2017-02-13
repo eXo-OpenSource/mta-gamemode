@@ -37,6 +37,21 @@ Action.Ped.warpIntoVehicle.trigger = function(self)
 	warpPedIntoVehicle(ped, vehicle)
 end
 
+-- giveWeapon
+Action.Ped.giveWeapon = inherit(Object)
+Action.Ped.giveWeapon.duration = false;
+Action.Ped.giveWeapon.constructor = function(self, data, scene)
+	self.id = data.id
+	self.weapon = data.weapon
+	self.cutscene = scene:getCutscene()
+end
+
+Action.Ped.giveWeapon.trigger = function(self)
+	local ped = self.cutscene.m_Elements[self.id]
+	local weapon = self.cutscene.m_Elements[self.weapon]
+	givePedWeapon(ped, weapon, 30, true)
+end
+
 -- setControlState
 Action.Ped.setControlState = inherit(Object)
 Action.Ped.setControlState.duration = false;
