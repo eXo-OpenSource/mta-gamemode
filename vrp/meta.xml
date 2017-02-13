@@ -140,7 +140,8 @@
 	<!-- Gameplay -->
 
 	<!-- Race -->
-	<script src="server/classes/Gameplay/Race/Super/Toptimes.lua" type="server"/>
+	<script src="server/classes/Gameplay/Race/Toptimes.lua" type="server"/>
+	<script src="server/classes/Gameplay/Race/MovementRecorder.lua" type="server"/>
 	<script src="server/classes/Gameplay/Race/Kart.lua" type="server"/>
 
 	<!-- Minigames -->
@@ -686,6 +687,10 @@
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/Fishing.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
+
+	<!-- Race -->
+	<script src="client/classes/Gameplay/Race/MovementRecorder.lua" type="client"/>
+	<script src="client/classes/Gameplay/Race/Kart.lua" type="client"/>
 
 	<!-- Minigames -->
 	<script src="client/classes/Gameplay/Minigames/Animations.lua" type="client"/>

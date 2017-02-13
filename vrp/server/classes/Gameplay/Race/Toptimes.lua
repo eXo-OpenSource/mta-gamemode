@@ -84,6 +84,17 @@ function Toptimes:getToptimeFromPlayer(PlayerID)
     return false
 end
 
+function Toptimes:getPlayerFromToptime(ID)
+	if self.m_Toptimes[ID] then
+		return self.m_Toptimes[ID].PlayerID
+	end
+	return false
+end
+
+function Toptimes:getMapID()
+	return self.m_MapID
+end
+
 --[[function Toptimes:sendToptimes(Player)
     if Player then
         callClientFunction(Player, "setToptimeTable", self.m_Toptimes)

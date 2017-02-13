@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 Kart = inherit(Singleton)
-addRemoteEvents{"startKartTimeRace", "requestKartDatas"}
+addRemoteEvents{"startKartTimeRace", "requestKartDatas", "sendKartGhost", "requestKartGhost"}
 
 Kart.Maps = {
 	"files/maps/Kart/Kartbahn.map",
@@ -15,7 +15,7 @@ Kart.Maps = {
 	"files/maps/Kart/8-Track.map",
 	"files/maps/Kart/CircleCourt.map",
 	"files/maps/Kart/Funny Tubes.map",
-	--"files/maps/Kart/EliteKartMap.map",
+	"files/maps/Kart/CircleCourt.map",
 }
 
 local lapPrice = 50
@@ -69,6 +69,8 @@ function Kart:constructor()
 	addEventHandler("requestKartDatas", root, bind(Kart.requestKartmapData, self))
 	addEventHandler("onColShapeHit", self.m_Polygon, bind(Kart.onKartZoneEnter, self))
 	addEventHandler("onColShapeLeave", self.m_Polygon, bind(Kart.onKartZoneLeave, self))
+	addEventHandler("sendKartGhost", root, bind(Kart.clientSendRecord, self))
+	addEventHandler("requestKartGhost", root, bind(Kart.clientRequestRecord, self))
 
 	GlobalTimer:getSingleton():registerEvent(bind(self.changeMap, self), "KartMapChange", nil, nil, 00)
 end
@@ -94,6 +96,7 @@ function Kart:loadMap(mapFileName)
 	self.m_Map:create()
 
 	self.m_Toptimes = Toptimes:new(mapFileName)
+	self.m_MovementRecorder = MovementRecorder:new(self.m_Toptimes:getMapID())
 
 	local startMarker = self.m_Map:getElementsByType("startmarker")[1]
 	local infoPed = self.m_Map:getElementsByType("infoPed")[1]
@@ -104,6 +107,8 @@ function Kart:loadMap(mapFileName)
 	self.m_Ped = NPC:new(infoPed.model, infoPed.x, infoPed.y, infoPed.z, infoPed.rz)
 	self.m_Ped:setImmortal(true)
 	self.m_StartFinishMarker = self:getStartFinishMarker()
+
+	self.m_PlayRespawnPosition = self.m_Ped.matrix:transformPosition(Vector3(0, 5, 0))
 
 	for _, v in pairs(self.m_Checkpoints) do
 		addEventHandler("onMarkerHit", v, self.m_onCheckpointHit)
@@ -118,6 +123,9 @@ function Kart:unloadMap()
 	if self.m_KartMarker then removeEventHandler("onMarkerHit", self.m_KartMarker, self.m_onStartMarkerHit) self.m_KartMarker:destroy() end
 	if self.m_StartFinishMarker then removeEventHandler("onMarkerHit", self.m_StartFinishMarker, self.m_onStartFinishMarkerHit) end
 	if self.m_Ped then self.m_Ped:destroy() end
+
+	delete(self.m_Toptimes)
+	delete(self.m_MovementRecorder)
 
 	for _, v in pairs(self.m_Checkpoints) do
 		removeEventHandler("onMarkerHit", v, self.m_onCheckpointHit)
@@ -175,7 +183,6 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			playerPointer.state = "Running"
 			playerPointer.startTick = getTickCount()
 			playerPointer.checkpoints = {}
-			player:triggerEvent("HUDRaceUpdate", true, playerPointer.laps)
 		end
 	elseif playerPointer.state == "Running" then
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
@@ -190,8 +197,12 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			playerPointer.laps = playerPointer.laps + 1
 
 			local deltaTime = lapTime - oldToptime
-			player:triggerEvent("HUDRaceUpdate", true, playerPointer.laps, deltaTime)
-			if anyChange then self:syncToptimes() end
+
+			player:triggerEvent("HUDRaceUpdateDelta", deltaTime)
+			if anyChange then
+				self:syncToptimes()
+				player:triggerEvent("KartRequestGhostDriver", lapTime)
+			end
 
 			if playerPointer.laps > playerPointer.selectedLaps then
 				self:onTimeRaceDone(player, playerPointer.vehicle)
@@ -290,6 +301,7 @@ function Kart:startTimeRace(laps, index)
 
 	self.m_Players[client] = {vehicle = vehicle, laps = 1, selectedLaps = selectedLaps, state = "Flying", checkpoints = {}, startTick = getTickCount()}
 	client:triggerEvent("showRaceHUD", true, true)
+	client:triggerEvent("KartStart", self.m_StartFinishMarker, self.m_Checkpoints, selectedLaps)
 	client:sendInfo("Vollende eine Einführungsrunde!")
 
 	self:syncToptimes(client)
@@ -298,6 +310,7 @@ end
 function Kart:onTimeRaceDone(player, vehicle)
 	player:sendInfo(_("Du hast alle Runden abgeschlossen!", player))
 	player:triggerEvent("HUDRaceUpdate", false)
+	player:triggerEvent("KartStop")
 	vehicle:setEngineState(false)
 
 	setTimer(
@@ -305,7 +318,7 @@ function Kart:onTimeRaceDone(player, vehicle)
 			vehicle:destroy()
 			nextframe(
 				function()
-					player:setPosition(1297.421, 145.709, 20.022)
+					player:setPosition(self.m_PlayRespawnPosition)
 				end
 			)
 		end, 3000, 1, player, vehicle
@@ -324,6 +337,7 @@ function Kart:onKartDestroy()
 	if self.m_Players[player] then
 		self.m_Players[player] = nil
 		player:triggerEvent("showRaceHUD", false)
+		player:triggerEvent("KartStop")
 
 		setPedStat(player, 160, 0)
 		setPedStat(player, 229, 0)
@@ -401,6 +415,29 @@ function Kart:onKartZoneLeave(leaveElement, matchingDimension)
 			return
 		end
 	end
+end
+
+-- Ghostdriver handling
+function Kart:clientSendRecord(record)
+	local json = toJSON(record, true)
+	if json then
+		self.m_MovementRecorder:saveRecord(client, json)
+	end
+end
+
+function Kart:clientRequestRecord(id)
+	local playerID = self.m_Toptimes:getPlayerFromToptime(id)
+
+	if playerID then
+		local record = self.m_MovementRecorder:getRecord(playerID)
+		if record then
+			client:triggerEvent("KartReceiveGhostDriver", record)
+			client:sendInfo("Geist übernommen!")
+			return
+		end
+	end
+
+	client:sendError("Für den Spieler ist kein Geist gespeichert!")
 end
 
 --[[ Possible race states for kart race

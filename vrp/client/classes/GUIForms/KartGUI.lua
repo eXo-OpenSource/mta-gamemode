@@ -56,8 +56,18 @@ function KartGUI:constructor()
 				self.m_DiscountLabel:setText(""):setColor(Color.White)
 			end
 
-			if self.m_Toptimes and self.m_Toptimes[1] then
-				self.m_CalcedTimeLabel:setText(("ca. %s"):format(timeMsToTimeText(self.m_Toptimes[1].time*selectedLaps)))
+			if self.m_Toptimes and #self.m_Toptimes > 0 then
+				-- Calc average
+				local totalTime, count = 0, 0
+				for i = 1, 10 do
+					if self.m_Toptimes[i] then
+						totalTime = totalTime + self.m_Toptimes[i].time
+						count = count + 1
+					end
+				end
+
+				local avgTime = totalTime / count
+				self.m_CalcedTimeLabel:setText(("ca. %s"):format(timeMsToTimeText(avgTime*selectedLaps)))
 			end
 		end
 
@@ -65,6 +75,7 @@ function KartGUI:constructor()
 	self.m_ButtonStart.onLeftClick =
 		function()
 			triggerServerEvent("startKartTimeRace", localPlayer, self.m_LapChange:getIndex())
+			localPlayer.enableKartGhost = self.m_GhostCheckbox:isChecked()
 		end
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.42, self.m_Width*0.25, self.m_Height*0.06, _"Preis:", tabTimeRace)
@@ -75,6 +86,8 @@ function KartGUI:constructor()
 	self.m_CalcedTimeLabel = GUILabel:new(self.m_Width*0.25, self.m_Height*0.5, self.m_Width*0.25, self.m_Height*0.06,"", tabTimeRace)
 
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.98, self.m_Height*0.06, _"ACHTUNG: Du bekommst kein Geld erstattet, wenn du nicht alle runden fährst!", tabTimeRace):setColor(Color.Red)
+
+	self.m_GhostCheckbox = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.87, self.m_Width*0.98, self.m_Height*0.03, _"Aktiviere Geist (Doppelklick auf Toptime)", tabTimeRace)
 
 	-- Toptimes
 	self.m_GridList = GUIGridList:new(10, 10, self.m_Width-20, self.m_Height-50, tabToptimes)
@@ -101,7 +114,12 @@ function KartGUI:receiveToptimes(mapname, mapauthor, toptimes)
 
 	self.m_GridList:clear()
 	for k, v in ipairs(self.m_Toptimes) do
-		self.m_GridList:addItem(("%d."):format(k), timeMsToTimeText(v.time), v.name)
+		local item = self.m_GridList:addItem(("%d."):format(k), timeMsToTimeText(v.time), v.name)
+		item.onLeftDoubleClick =
+		function()
+			self.m_GhostCheckbox:setChecked(true)
+			triggerServerEvent("requestKartGhost", localPlayer, k)
+		end
 	end
 end
 

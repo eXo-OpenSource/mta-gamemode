@@ -66,10 +66,10 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/holzstamm.col", 837)
 	self:loadImportDFF("files/models/holzstamm.dff", 837)
 
-	--Kart-Track
-	self:loadImportTXD("files/models/kart.txd", 13083)
-	self:loadImportCOL("files/models/kart.col", 13083)
-	self:loadImportDFF("files/models/kart.dff", 13083)
+	--Kart-Track --TODO ENABLE AGAIN IF DONE
+	--self:loadImportTXD("files/models/kart.txd", 13083)
+	--self:loadImportCOL("files/models/kart.col", 13083)
+	--self:loadImportDFF("files/models/kart.dff", 13083)
 
 	self:loadImportTXD("files/models/bed.txd", 1879)
 	self:loadImportCOL("files/models/bed.col", 1879)

@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 HUDRace = inherit(Singleton)
-addRemoteEvents{"showRaceHUD", "HUDRaceUpdate", "HUDRaceUpdateTimes"}
+addRemoteEvents{"showRaceHUD", "HUDRaceUpdate", "HUDRaceUpdateDelta", "HUDRaceUpdateTimes"}
 
 function HUDRace:constructor(showPersonalTrackStats)
 	self.m_Width, self.m_Height = 250*screenWidth/1920, 52*screenHeight/1080
@@ -33,10 +33,19 @@ function HUDRace:destructor()
 	removeEventHandler("onClientRender", root, self.m_Render)
 end
 
-function HUDRace:update(startTick, laps, delta)
+function HUDRace:setStartTick(startTick)
 	self.m_StartTick = startTick and getTickCount() or false
-	self.m_Laps = laps and laps or self.m_Laps
+end
 
+function HUDRace:setLaps(laps)
+	self.m_Laps = laps and laps or self.m_Laps
+end
+
+function HUDRace:setSelectedLaps(laps)
+	self.m_SelectedLaps = laps and laps or self.m_SelectedLaps
+end
+
+function HUDRace:setDelta(delta)
 	if delta then
 		self.m_DeltaTime = (delta > 0 and "+%s" or "-%s"):format(timeMsToTimeText(math.abs(delta), true))
 		self.m_DeltaColor = delta > 0 and Color.Red or Color.Green
@@ -44,6 +53,19 @@ function HUDRace:update(startTick, laps, delta)
 		if isTimer(self.m_DeltaTimer) then self.m_DeltaTimer:destroy() end
 		self.m_DeltaTimer = setTimer(function() self.m_DeltaTime = false end, 5000, 1)
 	end
+end
+
+function HUDRace:update(startTick, laps, delta)
+	--self.m_StartTick = startTick and getTickCount() or false
+	--self.m_Laps = laps and laps or self.m_Laps
+
+	--[[if delta then
+		self.m_DeltaTime = (delta > 0 and "+%s" or "-%s"):format(timeMsToTimeText(math.abs(delta), true))
+		self.m_DeltaColor = delta > 0 and Color.Red or Color.Green
+
+		if isTimer(self.m_DeltaTimer) then self.m_DeltaTimer:destroy() end
+		self.m_DeltaTimer = setTimer(function() self.m_DeltaTime = false end, 5000, 1)
+	end]]
 end
 
 function HUDRace:updateTimes(toptimes, playerID)
@@ -55,28 +77,6 @@ function HUDRace:updateTimes(toptimes, playerID)
 			return
 		end
 	end
-end
-
-function HUDRace:drawLel()
-	local width, height = 300, 100
-	if not self.m_PersonalBestRT then
-		self.m_PersonalBestRT = DxRenderTarget(width, height, true)
-	end
-
-	self.m_PersonalBestRT:setAsTarget(true)
-	dxDrawRectangle(0, height-28*2-5, width, 28, tocolor(0, 0, 0, 200))
-	dxDrawText("Deine Bestzeit", 0, height-28*2-5, width - 5, 28, Color.White, 1, VRPFont(28), "right")
-	dxDrawText(self.m_PersonalBestTime and timeMsToTimeText(self.m_PersonalBestTime) or "--.---", 5, height-28*2-5, width - 5, 28, Color.White, 1, VRPFont(28))
-
-	if self.m_DeltaTime then
-		dxDrawRectangle(0, height-28, width, 28, self.m_DeltaColor)
-		dxDrawText("Delta", 0, height-28, width - 5, 28, Color.White, 1, VRPFont(28), "right")
-		dxDrawText(self.m_DeltaTime and self.m_DeltaTime or "--.---", 5, height-28, width - 5, 28, Color.White, 1, VRPFont(28))
-	end
-
-	dxDrawText(self.m_Laps and ("R%d"):format(self.m_Laps) or "--", 0, 0, width, height, Color.White, 1, VRPFont(39), "right")
-
-	dxSetRenderTarget()
 end
 
 function HUDRace:updateRenderTarget()
@@ -104,7 +104,7 @@ function HUDRace:updateRenderTarget()
 		dxDrawText(self.m_DeltaTime and self.m_DeltaTime or "--.---", 5, self.m_TS_Size.y-28, self.m_TS_Size.x - 5, 28, Color.White, 1, VRPFont(28))
 	end
 
-	dxDrawText(self.m_Laps and ("R%d"):format(self.m_Laps) or "--", 0, 0, self.m_TS_Size.x, self.m_TS_Size.y, Color.White, 1, VRPFont(39), "right")
+	dxDrawText(self.m_Laps and ("R %d | %d"):format(self.m_Laps, self.m_SelectedLaps) or "--", 0, 0, self.m_TS_Size.x, self.m_TS_Size.y, Color.White, 1, VRPFont(39), "right")
 
 	dxSetRenderTarget()
 end
@@ -131,6 +131,12 @@ addEventHandler("HUDRaceUpdateTimes", root,
 addEventHandler("HUDRaceUpdate", root,
 	function(...)
 		HUDRace:getSingleton():update(...)
+	end
+)
+
+addEventHandler("HUDRaceUpdateDelta", root,
+	function(delta)
+		HUDRace:getSingleton():setDelta(delta)
 	end
 )
 

@@ -281,6 +281,18 @@ function string.duration(seconds)
 	end
 end
 
+function table.setIndexToInteger(tab)
+	local newTab = {}
+	for index, value in pairs(tab) do
+		if type(value) == "table" then
+			newTab[tonumber(index)] = value
+		else
+			newTab[index] = value
+		end
+	end
+	return newTab
+end
+
 -- Override with UTF-8 versions (but keep a backup for binary operations)
 string.binary_sub = string.sub
 string.binary_len = string.len
