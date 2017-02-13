@@ -1093,7 +1093,7 @@ function FactionState:Event_grabPlayer(target)
 		if client:isFactionDuty() then
 			local vehicle = client:getOccupiedVehicle()
 			if client:getOccupiedVehicle() and vehicle and isElement(vehicle) and vehicle.getFaction and vehicle:isStateVehicle() then
-				if target.isTasered == true then
+				if target.isTasered == true and not target:isDead() then
 					for seat = 1, getVehicleMaxPassengers(vehicle) do
 						if not vehicle:getOccupant(seat) then
 							warpPedIntoVehicle(target, vehicle, seat)
@@ -1105,7 +1105,7 @@ function FactionState:Event_grabPlayer(target)
 					end
 					client:sendError(_("Du hast keinen Platz in deinem Fahrzeug!", client))
 				else
-					client:sendError(_("Der Spieler ist nicht getazert!", client))
+					client:sendError(_("Der Spieler ist nicht getazert oder Tod!", client))
 				end
 			else
 				client:sendError(_("Du sitzt in keinem Fraktions-Fahrzeug!", client))
