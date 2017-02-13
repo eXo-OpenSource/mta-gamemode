@@ -77,7 +77,6 @@ end
 function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
 		if hitElement:getJob() ~= self then
-			hitElement:sendMessage(_("Du musst Holzfäller sein, um Bäume aufladen zu können", hitElement), 255, 0, 0)
 			return
 		end
 

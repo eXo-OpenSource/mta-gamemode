@@ -13,6 +13,20 @@ COMPANY_MAX_RANK_LOANS ={
 	[5] = 2000
 }
 
+-- Vehicle Shaders
+companyVehicleShaders = {
+	-- M&T
+	[2] = {
+		[552] = {shaderEnabled = true, textureName = "trash92decal128", texturePath = "files/images/Textures/MechanicTexture.png"};
+		[459] = {shaderEnabled = true, textureName = "topfun92decals128", texturePath = "files/images/Textures/MechanicTexture2.png"};
+	};
+
+	-- EPT
+	[4] = {
+		[431] = {shaderEnabled = true, textureName = "bus92decals128", texturePath = "files/images/Textures/BusTexture.png"};
+	};
+}
+
 -- ID 1 = Fahrschule:
 companyRankNames[1] = {
 [0] = "Praktikant",

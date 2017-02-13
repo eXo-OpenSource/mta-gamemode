@@ -367,6 +367,7 @@ function GroupManager:Event_RankUp(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
+			if isOffline then delete(player) end
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du kannst den Spieler nicht up-ranken!", client))
@@ -399,6 +400,7 @@ function GroupManager:Event_RankDown(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
+			if isOffline then delete(player) end
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du kannst den Spieler nicht down-ranken!", client))
@@ -449,7 +451,7 @@ function GroupManager:Event_ChangeName(name)
 	end
 
 	if group:setName(name) then
-		client:takeMoney(20000, "Firmen/Gang Änderung")
+		client:takeMoney(GROUP_RENAME_COSTS, "Firmen/Gang Änderung")
 		client:sendSuccess(_("Deine %s heißt nun\n%s!", client, group:getType(), group:getName()))
 		group:addLog(client, "Gang/Firma", "hat die "..group:getType().." in "..group:getName().." umbenannt!")
 
@@ -480,7 +482,7 @@ function GroupManager:Event_UpdateVehicleTuning()
 	if group and group:getPlayerRank(client) >= GroupRank.Manager then
 	--	if group:getKarma() <= -50 then
 			if group:getMoney() >= 3000 then
-				group:takeMoney(3000)
+				group:takeMoney(3000, "Fahrzeug Tuning")
 				group.m_VehiclesCanBeModified = not group.m_VehiclesCanBeModified
 				sql:queryExec("UPDATE ??_groups SET VehicleTuning = ? WHERE Id = ?", sql:getPrefix(), group.m_VehiclesCanBeModified and 1 or 0, group.m_Id)
 				if group.m_VehiclesCanBeModified == true then

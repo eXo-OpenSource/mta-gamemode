@@ -50,12 +50,13 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("respawnCompany", "Unternehmensfahrzeuge respawnen", 10, 140, 250, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("respawnRadius", "im Umkreis respawnen", 75, 180, 185, 30, Color.LightBlue, tabAllgemein)
 	self:addAdminButton("clearChat", "Chat löschen / Werbung ausblenden", 10, 230, 250, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("resetAction", "Aktions-Sperre resetten", 10, 270, 250, 30, Color.Orange, tabAllgemein)
 
 	GUILabel:new(10, 370, 250, 30, _"Zu Koordinaten porten: (x,y,z)", tabAllgemein):setColor(Color.LightBlue)
-	self.m_EditPosX = GUIEdit:new(10, 300, 80, 25, tabAllgemein):setNumeric(true, false)
-	self.m_EditPosY = GUIEdit:new(95, 300, 80, 25, tabAllgemein):setNumeric(true, false)
-	self.m_EditPosZ = GUIEdit:new(180, 300, 80, 25, tabAllgemein):setNumeric(true, false)
-	self:addAdminButton("gotocords", "zu Koordinaten porten", 10, 330, 250, 30, Color.Orange, tabAllgemein)
+	self.m_EditPosX = GUIEdit:new(10, 400, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosY = GUIEdit:new(95, 400, 80, 25, tabAllgemein):setNumeric(true, false)
+	self.m_EditPosZ = GUIEdit:new(180, 400, 80, 25, tabAllgemein):setNumeric(true, false)
+	self:addAdminButton("gotocords", "zu Koordinaten porten", 10, 430, 250, 30, Color.Orange, tabAllgemein)
 
 	--Column 2
 	GUILabel:new(340, 50, 200, 40, _"Eventkasse:", tabAllgemein):setColor(Color.LightBlue)
@@ -149,9 +150,9 @@ function AdminGUI:constructor(money)
 	self:addAdminButton("offlineNickchange", "NickChange", 410, 330, 180, 30, Color.Orange, tabOffline)
 
 
-	local tabTicket = self.m_TabPanel:addTab(_"Tickets")
+	self.m_TicketTab = self.m_TabPanel:addTab(_"Tickets")
 	local url = ("http://exo-reallife.de/ingame/ticketSystem/admin.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId())
-	self.m_WebView = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, tabTicket)
+	self.m_TicketsBrowser = GUIWebView:new(0, 0, self.m_Width, self.m_Height, 	url, true, self.m_TicketTab)
 
 	self:refreshOnlinePlayers()
 
@@ -197,7 +198,7 @@ function AdminGUI:constructor(money)
 end
 
 function AdminGUI:onShow()
-	outputDebug("AdminGUI:onShow")
+	AntiClickSpam:getSingleton():setEnabled(false)
 	self:refreshButtons()
 	self:refreshOnlinePlayers()
 
@@ -205,7 +206,7 @@ function AdminGUI:onShow()
 end
 
 function AdminGUI:onHide()
-	outputDebug("AdminGUI:onHide")
+	AntiClickSpam:getSingleton():setEnabled(true)
 	self.m_SelectedPlayer = nil
 
 	SelfGUI:getSingleton():removeWindow(self)
@@ -214,12 +215,17 @@ end
 function AdminGUI:TabPanel_TabChanged(tabId)
 	if tabId == self.m_TabSpieler.TabIndex then
 		self:refreshOnlinePlayers()
+	elseif tabId == self.m_TicketTab.TabIndex then
+		self.m_TicketsBrowser:reload()
 	end
 end
 
 function AdminGUI:refreshOnlinePlayers()
+	local players = getElementsByType("player")
+	table.sort(players, function(a, b) return a.name < b.name  end)
+
 	self.m_PlayersGrid:clear()
-	for key, playeritem in ipairs(getElementsByType("player")) do
+	for key, playeritem in ipairs(players) do
 		local item = self.m_PlayersGrid:addItem(playeritem:getName())
 		item.player = playeritem
 		item.onLeftClick = function()
@@ -310,6 +316,11 @@ function AdminGUI:onSelectPlayer(player)
 end
 
 function AdminGUI:portAdmin(direction)
+	if localPlayer:getRank() < ADMIN_RANK_PERMISSION["direction"] then
+		ErrorBox:new(_"Du bist nicht berechtigt!")
+		return false
+	end
+
 	local element = localPlayer
 
 	if localPlayer:getOccupiedVehicle() then element = localPlayer:getOccupiedVehicle()	end
@@ -433,7 +444,7 @@ function AdminGUI:onButtonClick(func)
 				function (factionId)
 					triggerServerEvent("adminRespawnFactionVehicles", root, factionId)
 				end)
-	elseif func == "supportMode" or func == "clearChat" then
+	elseif func == "supportMode" or func == "clearChat" or func == "resetAction" then
 		triggerServerEvent("adminTriggerFunction", root, func)
 	elseif func == "respawnRadius" then
 		local radius = self.m_RespawnRadius:getText()

@@ -12,7 +12,7 @@ addRemoteEvents{"robableShopGiveBagFromCrash"}
 local ROBSHOP_TIME = 15*60*1000
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
   -- Create NPC(s)
-  self.m_shop = shop
+  self.m_Shop = shop
   self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 
   -- Respawn ped after a while (if necessary)
@@ -63,10 +63,12 @@ function RobableShop:Ped_Targetted(ped, attacker)
 end
 
 function RobableShop:startRob(shop, attacker, ped)
-	self.m_shop.m_Marker.m_Disable = true
-	setElementAlpha(self.m_shop.m_Marker,0)
+	shop.m_Marker.m_Disable = true
+	setElementAlpha(shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
 	ActionsCheck:getSingleton():setAction("Shop-Überfall")
+
+	shop.m_LastRob = getRealTime().timestamp
 
 	-- Play an alarm
 	local pos = ped:getPosition()
@@ -89,8 +91,8 @@ function RobableShop:startRob(shop, attacker, ped)
 
 	self.m_Gang = attacker:getGroup()
 	self.m_Gang:attachPlayerMarkers()
-	self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y, 2000)
-	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y, 2000)
+	self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y, root, 2000)
+	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y, root, 2000)
 	self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
 	self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
 	self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
@@ -127,8 +129,8 @@ function RobableShop:startRob(shop, attacker, ped)
 end
 
 function RobableShop:m_onExpire()
-	self.m_shop.m_Marker.m_Disable = false
-	setElementAlpha(self.m_shop.m_Marker,255)
+	self.m_Shop.m_Marker.m_Disable = false
+	setElementAlpha(self.m_Shop.m_Marker,255)
 	ActionsCheck:getSingleton():endAction()
 	if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
 	if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
@@ -162,8 +164,8 @@ function RobableShop:stopRob(player)
 		killTimer(self.m_ExpireTimer)
 	end
 
-	self.m_shop.m_Marker.m_Disable = false
-	setElementAlpha(self.m_shop.m_Marker,255)
+	self.m_Shop.m_Marker.m_Disable = false
+	setElementAlpha(self.m_Shop.m_Marker,255)
 	ActionsCheck:getSingleton():endAction()
 	if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
 	if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end

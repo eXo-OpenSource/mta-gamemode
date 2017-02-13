@@ -315,6 +315,7 @@ function WeaponTruck:Event_OnWeaponTruckExit(player,seat)
 end
 
 function WeaponTruck:Event_DeloadBox(veh)
+	if not veh then return end
 	if client:getFaction() then
 		if veh == self.m_Truck or VEHICLE_BOX_LOAD[veh.model] then
 			if getDistanceBetweenPoints3D(veh.position, client.position) < 7 then

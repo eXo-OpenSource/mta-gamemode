@@ -20,12 +20,12 @@ function ScoreboardGUI:constructor()
 	self.m_Grid:setColor(Color.Clear)
 	self.m_Grid:addColumn(_"VIP", 0.05)
 	self.m_Grid:addColumn(_"Name", 0.2)
-	self.m_Grid:addColumn(_"Fraktion", 0.15)
+	self.m_Grid:addColumn(_"Fraktion", 0.14)
 	self.m_Grid:addColumn(_"Unternehmen", 0.15)
-	self.m_Grid:addColumn(_"Gang/Firma", 0.15)
-	self.m_Grid:addColumn(_"Spielzeit", 0.1)
-	self.m_Grid:addColumn(_"Karma", 0.1)
-	self.m_Grid:addColumn(_"Ping", 0.1)
+	self.m_Grid:addColumn(_"Gang/Firma", 0.19)
+	self.m_Grid:addColumn(_"Spielzeit", 0.08)
+	self.m_Grid:addColumn(_"Karma", 0.08)
+	self.m_Grid:addColumn(_"Ping", 0.11)
 
 	self.m_Line = GUIRectangle:new(0, self.m_Height*0.65, self.m_Width, self.m_Height*0.05, tocolor(50, 200, 255, 255), self.m_Rect)
 	self.m_PlayerCount = GUILabel:new(self.m_Width*0.05, self.m_Height*0.65, self.m_Width/2, self.m_Height*0.05, "", self.m_Rect)
@@ -99,7 +99,7 @@ function ScoreboardGUI:refresh()
 		end
 	end
 
-	table.sort(self.m_Players, function (a, b) return (a[2] > b[2]) end)
+	table.sort(self.m_Players, function (a, b) return (a[2] < b[2]) end)
 	self:insertPlayers()
 
 	if not self.m_PlayerCountLabels then

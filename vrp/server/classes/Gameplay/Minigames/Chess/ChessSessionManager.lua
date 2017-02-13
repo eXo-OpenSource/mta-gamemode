@@ -1,12 +1,12 @@
 ChessSessionManager = inherit(Singleton)
 
+addRemoteEvents{"onServerGetChessMove", "onServerGetSurrender", "chessQuestion", "chessQuestionAccept", "chessQuestionDecline"}
+
+
 function ChessSessionManager:constructor()
 	self.m_Map = {	}
-	addRemoteEvents{"onServerGetChessMove", "onServerGetSurrender", "chessQuestion", "chessQuestionAccept", "chessQuestionDecline"}
 	addEventHandler("onServerGetChessMove",root, bind(ChessSessionManager.Event_GetChessMove,self))
 	addEventHandler("onServerGetSurrender", root, bind(ChessSessionManager.Event_GetSurrender, self))
-
-
 end
 
 function ChessSessionManager:destructor()
@@ -90,7 +90,7 @@ addEventHandler("chessQuestionDecline", root,
 addEventHandler("chessQuestion", root,
     function(target)
 		if client.chessSendRequest then client:sendError(_("Du hast dem Spieler bereits eine Anfrage gesendet", client)) return end
-
+		client:sendShortMessage(_("Du hast eine Schach-Anfrage an %s gesendet!", client, target:getName()))
 		client.chessSendRequest = true
 		target:triggerEvent("onAppDashboardGameInvitation", client, "Schach", "chessQuestionAccept", "chessQuestionDecline", client)
 	end

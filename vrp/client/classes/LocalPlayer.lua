@@ -35,7 +35,9 @@ function LocalPlayer:constructor()
 	addEventHandler("setClientTime", self, bind(self.Event_onGetTime, self))
 	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
-
+	addEventHandler("onClientPlayerSpawn", self, function()
+		NoDm:getSingleton():checkNoDm()
+	end)
 
 
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
@@ -178,6 +180,18 @@ end
 
 function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
+		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
+			if localPlayer:getFaction():isStateFaction() then
+				triggerServerEvent("factionStateToggleDuty", localPlayer)
+			elseif localPlayer:getFaction():isRescueFaction() then
+				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+			end
+		end
+
+		if localPlayer:getPublicSync("Company:Duty") then
+			triggerServerEvent("companyToggleDuty", localPlayer)
+		end
+
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
 end
@@ -331,8 +345,12 @@ function LocalPlayer:toggleAFK(state, teleport)
 		GUIForm.closeAll()
 		InfoBox:new(_"Du wurdest ins AFK-Cafe teleportiert!")
 
-		if localPlayer:getPublicSync("Faction:Duty") then
-			triggerServerEvent("factionStateToggleDuty", localPlayer)
+		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
+			if localPlayer:getFaction():isStateFaction() then
+				triggerServerEvent("factionStateToggleDuty", localPlayer)
+			elseif localPlayer:getFaction():isRescueFaction() then
+				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+			end
 		end
 
 		if localPlayer:getPublicSync("Company:Duty") then

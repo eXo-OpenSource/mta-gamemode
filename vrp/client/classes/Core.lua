@@ -102,6 +102,7 @@ function Core:ready()
 	FactionManager:new()
 	CompanyManager:new()
 	DeathmatchManager:new()
+	HorseRace:new()
 	Townhall:new()
 
 	PlantWeed.initalize()
@@ -123,9 +124,6 @@ function Core:ready()
 
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 
-
-
-
 end
 
 function Core:afterLogin()
@@ -140,6 +138,7 @@ function Core:afterLogin()
 	HUDUI:getSingleton():show()
 	Collectables:new()
 	KeyBinds:new()
+	Indicator:new()
 
 	if DEBUG then
 		Debugging:new()
@@ -168,8 +167,6 @@ function Core:afterLogin()
 	TicketGUI:getSingleton():close()
 	CompanyGUI:new()
 	CompanyGUI:getSingleton():close()
-	FactionGUI:new()
-	FactionGUI:getSingleton():close()
 	MigratorPanel:new()
 	MigratorPanel:getSingleton():close()
 	KeyBindings:new()

@@ -12,7 +12,7 @@ function HUDSpeedo:constructor()
 	self.m_FuelSize = 128
 	self.m_Draw = bind(self.draw, self)
 	self.m_Fuel = 100
-
+	self.m_Indicator = {["left"] = 0, ["right"] = 0}
 	-- Add event handlers
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
 		function(vehicle, seat)
@@ -48,6 +48,10 @@ end
 
 function HUDSpeedo:hide()
 	removeEventHandler("onClientRender", root, self.m_Draw)
+end
+
+function HUDSpeedo:setIndicatorAlpha(direction, alpha)
+	self.m_Indicator[direction] = alpha
 end
 
 function HUDSpeedo:draw()
@@ -97,7 +101,13 @@ function HUDSpeedo:draw()
 	if handbrake or getControlState("handbrake") or vehicle:isFrozen() then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png")
 	end
+	if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then
+		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_left.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["left"]))
+	end
 
+	if self.m_Indicator["right"] > 0 and getElementData(vehicle, "i:right") then
+		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_right.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["right"]))
+	end
 	-- draw the fuel-o-meter
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)

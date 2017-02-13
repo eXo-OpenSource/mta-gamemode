@@ -111,3 +111,7 @@ end
 function GUIWebView:onHide()
 	focusBrowser()
 end
+
+function GUIWebView:reload()
+	reloadBrowserPage(self.m_Browser)
+end

@@ -21,9 +21,7 @@ function ShortMessage:new(text, title, tcolor, timeout, callback, timeoutFunc, m
 end
 
 function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeoutFunc, minimapPos, minimapBlips)
-	if ShortMessageLogGUI.m_Log then
-		table.insert(ShortMessageLogGUI.m_Log, title or "".." - "..text)
-	end
+
 	local x, y, w
 	x, y, w = 20, screenHeight - screenHeight*0.265, 340*screenWidth/1600+6
 	if HUDRadar:getSingleton().m_DesignSet == RadarDesign.Default then
@@ -40,6 +38,10 @@ function ShortMessage:constructor(text, title, tcolor, timeout, callback, timeou
 
 	self.m_Callback = callback or nil
 	self.m_TimeoutFunc = timeoutFunc or nil
+
+	if ShortMessageLogGUI.m_Log then
+		ShortMessageLogGUI.insertLog(self.m_Title or "", text, self.m_TitleColor)
+	end
 
 	-- Font and height calc
 	GUIFontContainer.constructor(self, text, 1, VRPFont(24))

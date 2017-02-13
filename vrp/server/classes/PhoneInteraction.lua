@@ -8,7 +8,7 @@
 PhoneInteraction = inherit(Singleton)
 
 function PhoneInteraction:constructor()
-	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial", "callAbbortSpecial"}
+	addRemoteEvents{"callStart", "callBusy", "callAnswer", "callReplace", "callStartSpecial", "callAbbortSpecial", "callSendLocation"}
 
 	addEventHandler("callStart", root, bind(self.callStart, self))
 	addEventHandler("callBusy", root, bind(self.callBusy, self))
@@ -16,8 +16,11 @@ function PhoneInteraction:constructor()
 	addEventHandler("callReplace", root, bind(self.callReplace, self))
 	addEventHandler("callStartSpecial", root, bind(self.callStartSpecial, self))
 	addEventHandler("callAbbortSpecial", root, bind(self.callAbbortSpecial, self))
+	addEventHandler("callSendLocation", root, bind(self.callSendLocation, self))
+
 
 	self.m_LastSpecialCallNumber = {}
+	self.m_LocationBlips = {}
 
 	PlayerManager:getSingleton():getQuitHook():register(
 		function(player)
@@ -36,7 +39,12 @@ end
 function PhoneInteraction:callStart(player, voiceEnabled)
 	if not player then return end
 	if player:isPhoneEnabled() == true then
-		player:triggerEvent("callIncoming", client, voiceEnabled)
+		if not player:getPhonePartner() then
+			player:triggerEvent("callIncoming", client, voiceEnabled)
+		else
+			client:sendError(_("Besetzt... Der Spieler telefoniert gerade!",client, player.name))
+			client:triggerEvent("callReplace", player)
+		end
 	else
 		client:sendError(_("Das Handy von '%s' ist ausgeschaltet!",client, player.name))
 		client:triggerEvent("callReplace", player)
@@ -74,6 +82,9 @@ function PhoneInteraction:callReplace(callee)
 	setPlayerVoiceBroadcastTo(client, nil) -- Todo: Check if a voice call was active
 	setPlayerVoiceBroadcastTo(callee, nil)
 
+	if self.m_LocationBlips[client] then delete(self.m_LocationBlips[client]) end
+	if self.m_LocationBlips[callee] then delete(self.m_LocationBlips[callee]) end
+
 	-- Todo: Notify the callee
 	if callee:isPhoneEnabled() == true then
 		callee:triggerEvent("callReplace", client)
@@ -90,6 +101,9 @@ function PhoneInteraction:abortCall(player)
 		partner:setPhonePartner(nil)
 		partner:triggerEvent("callReplace", player)
 		partner:sendMessage(_("Knack... Das Telefonat wurde abgebrochen!", partner), 255, 0, 0)
+
+		if self.m_LocationBlips[player] then delete(self.m_LocationBlips[player]) end
+		if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
 
 		setPlayerVoiceBroadcastTo(player, nil)
 		player:setPhonePartner(nil)
@@ -120,5 +134,16 @@ function PhoneInteraction:callAbbortSpecial()
 				client:triggerEvent("callReplace")
 			end
 		end
+	end
+end
+
+function PhoneInteraction:callSendLocation()
+	if client:getPhonePartner() then
+		local partner = client:getPhonePartner()
+		partner:sendMessage(_("[HANDY] %s hat dir seine Position mitgeteilt.", partner, client:getName()), 255, 0, 0)
+		client:sendMessage(_("[HANDY] Du hast %s deine Position mitgeteilt.", client, partner:getName()), 255, 0, 0)
+		if self.m_LocationBlips[partner] then delete(self.m_LocationBlips[partner]) end
+		local pos = client:getPosition()
+		self.m_LocationBlips[client] = Blip:new("Marker.png", pos.x, pos.y, partner, 9999)
 	end
 end

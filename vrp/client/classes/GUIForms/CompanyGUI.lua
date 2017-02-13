@@ -172,10 +172,12 @@ function CompanyGUI:Event_companyRetrieveInfo(id, name, rank, money, players, sk
 			self.m_CompanyRankLabel:setText(tostring(rank).." - "..rankNames[rank])
 			self.m_CompanyMoneyLabel:setText(tostring(money).."$")
 
+			players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
+
 			self.m_CompanyPlayersGrid:clear()
-			for playerId, info in pairs(players) do
+			for _, info in ipairs(players) do
 				local item = self.m_CompanyPlayersGrid:addItem(info.name, info.rank)
-				item.Id = playerId
+				item.Id = info.playerId
 			end
 
 			if rank >= CompanyRank.Manager then

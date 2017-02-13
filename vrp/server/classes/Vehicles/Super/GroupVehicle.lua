@@ -15,6 +15,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local rotation = vehicle:getRotation()
 			local model = vehicle:getModel()
 			local health = vehicle:getHealth()
+			local milage = vehicle:getMileage()
 			local r, g, b = getVehicleColor(vehicle, true)
 			local tunings = false
 			if Group:canVehiclesBeModified() then
@@ -25,6 +26,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z)
 				vehicle:setHealth(health)
 				vehicle:setColor(r, g, b)
+				vehicle:setMileage(milage)
 				if Group:canVehiclesBeModified() then
 					for k, v in pairs(tunings or {}) do
 						addVehicleUpgrade(vehicle, v)
@@ -64,10 +66,7 @@ function GroupVehicle:constructor(Id, Group, color, color2, health, positionType
 	table.insert(self.m_Group.m_Vehicles, self)
   end
 
-	addEventHandler("onVehicleExplode",self,
-	function()
-		source:respawn()
-	end)
+	addEventHandler("onVehicleExplode", self, function() source:respawn(true) end)
 
 	self:setHealth(health or 1000)
 	self:setFuel(fuel or 100)
@@ -145,7 +144,8 @@ function GroupVehicle:canBeModified()
 end
 
 function GroupVehicle:respawn(force)
-	if getElementModel(self) ~= 487 and getElementModel(self) ~= 469 and  self:getHealth() <= 310 and not force then
+    local vehicleType = self:getVehicleType()
+	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
 		self:getGroup():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end

@@ -55,6 +55,16 @@ function RadioGUI:constructor()
 			self:stopSound()
 		end
 	)
+	addEventHandler("onClientElementDestroy", root,
+		function()
+			if source and source.getType and source:getType() == "vehicle" then
+				if table.find(getVehicleOccupants(source), localPlayer) then
+					self:setVisible(false)
+					self:stopSound()
+				end
+			end
+		end
+	)
 	addEventHandler("onClientVehicleExplode", root,
 		function()
 			if table.find(getVehicleOccupants(source), localPlayer) then
@@ -166,7 +176,7 @@ function RadioGUI:previousStation()
 			self.m_CurrentStation = #VRP_RADIO
 		end
 		self:setRadioStation(self.m_CurrentStation)
-	
+
 		if not self:isVisible() then
 			self:fadeIn(1000)
 		end

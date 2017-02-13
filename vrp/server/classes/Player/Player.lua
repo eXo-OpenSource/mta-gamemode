@@ -229,6 +229,7 @@ function Player:loadCharacterInfo()
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
 	FactionManager:getSingleton():sendAllToClient(self)
+	CompanyManager:getSingleton():sendAllToClient(self)
 	VehicleManager:getSingleton():sendTexturesToClient(self)
 	HouseManager:getSingleton():loadBlips(self)
 

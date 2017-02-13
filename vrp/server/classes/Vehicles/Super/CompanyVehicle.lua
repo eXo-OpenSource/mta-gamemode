@@ -79,9 +79,17 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 
 	addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
 	addEventHandler("onVehicleExit",self, bind(self.onExit, self))
-    addEventHandler("onVehicleExplode",self, function() source:respawn() end)
 	addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
 	addEventHandler("onTrailerAttach", self, bind(self.onAttachTrailer, self))
+
+	addEventHandler("onVehicleExplode",self, function()
+		setTimer(
+			function(veh)
+				veh:respawn(true)
+			end,
+		3000, 1, source)
+	end)
+
 end
 
 function CompanyVehicle:destructor()
@@ -187,7 +195,8 @@ function CompanyVehicle:canBeModified()
 end
 
 function CompanyVehicle:respawn(force)
-	if getElementModel(self) ~= 487 and getElementModel(self) ~= 488 and self:getHealth() <= 310 and not force then
+    local vehicleType = self:getVehicleType()
+	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
 		self:getCompany():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end

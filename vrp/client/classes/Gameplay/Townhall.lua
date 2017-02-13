@@ -57,14 +57,14 @@ function Townhall:constructor()
 	local itemSpawnerPed = Ped.create(171, Vector3(1806.72, -1293.27, 13.61))
 	itemSpawnerPed:setRotation(Vector3(0, 0, 65))
 	itemSpawnerPed.Name = _"Fahrzeugverleih"
-	itemSpawnerPed.Description = _"Leih hier ein Fahrzeug für 200$ aus!"
+	itemSpawnerPed.Description = _"Fahrzeug 200$ ausleihen!"
 	itemSpawnerPed.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed
 
 	local itemSpawnerPed2 = Ped.create(171, Vector3(1509.99, -1749.29, 13.55))
 	itemSpawnerPed2:setRotation(Vector3(0, 0, 97.13))
 	itemSpawnerPed2.Name = _"Fahrzeugverleih"
-	itemSpawnerPed2.Description = _"Leih hier ein Fahrzeug für 200$ aus!"
+	itemSpawnerPed2.Description = _"Fahrzeug 200$ ausleihen!"
 	itemSpawnerPed2.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed2
 
@@ -90,12 +90,13 @@ function Townhall:constructor()
 	local itemSpawnerPed5 = Ped.create(171, Vector3(1742.07, -1744.15, 13.55))
 	itemSpawnerPed5:setRotation(Vector3(0, 0, 0))
 	itemSpawnerPed5.Name = _"Fahrzeugverleih"
-	itemSpawnerPed5.Description = _"Leih hier ein Fahrzeug für 200$ aus!"
+	itemSpawnerPed5.Description = _"Fahrzeug 200$ ausleihen!"
 	itemSpawnerPed5.Func = function() end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed5
 
 	--// RESCUE BASE HEAL PED
-	local itemSpawnerPed6 = Ped.create(70, Vector3(1723.081, -1751.388, 13.555))
+
+	local itemSpawnerPed6 = Ped.create(70, Vector3(1723.356, -1752.185, 13.555))
 	itemSpawnerPed6:setRotation(Vector3(0, 0, 0))
 	itemSpawnerPed6.Name = _"Rescue Base Heilung"
 	itemSpawnerPed6.Description = _"Klicke mich für Heilung an!"

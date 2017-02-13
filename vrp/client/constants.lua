@@ -128,10 +128,14 @@ BlipConversion =
 	["HeliTransport.png"] = 5,
 	["Bar.png"] = 49,
 	["RedSaw.png"] = 0,
+	["Horse.png"] = 35,
 
 }
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
 for i, v in pairs(UIStyle) do UIStyle[v] = i end
+
+NametagStyle = {Default = 1, vRoleplay = 2}
+for i, v in pairs(NametagStyle) do NametagStyle[v] = i end
 
 MATERIAL_TYPES =
 {
@@ -208,6 +212,14 @@ HelpTextTitles = {
 		LoginRegister = "Login/Registration";
 		Team = "Team";
 	};
+	Leisure = {
+		Kart = "Kartstrecke";
+		Fishing = "Angeln";
+		Boxing = "Boxhalle";
+		Bars = "Bars";
+		Horserace = "Pferdewetten";
+		Minigames = "Minispiele";
+	};
 	Jobs = {
 		BusDriver = "Job: Busfahrer";
 		Farmer = "Job: Bauer";
@@ -222,11 +234,6 @@ HelpTextTitles = {
 		HeliTransport = "Job: Helikopter-Pilot";
 		ForkLift = "Job: Gabelstapler-Fahrer";
 		TreasureSeeker = "Job: Schatz Sucher";
-	};
-	Events = {
-		Deathmatch = "Event: Deathmatch";
-		DMRace = "Event: DM-Race";
-		StreetRace = "Event: Street Race";
 	};
 	Gameplay = {
 		Cars = "Fahrzeuge";
@@ -245,6 +252,11 @@ HelpTextTitles = {
 		Bankrob = "Aktionen: Bank-Überfall";
 		StateWeaponTruck = "Aktionen: Staats Waffen Truck";
 
+	};
+	Events = {
+		Deathmatch = "Event: Deathmatch";
+		DMRace = "Event: DM-Race";
+		StreetRace = "Event: Street Race";
 	};
 	Credits = {
 		OldVRPTeam = "vRP-Team";
@@ -309,6 +321,53 @@ HelpTexts = {
 			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
 		]];
 
+	};
+	Leisure = {
+		Kart = [[
+		Die Kartstrecke befindet sich in Montgomery (Reifen Blip auf der Karte). Du kannst dort auf täglich wechselnden
+		Strecken dein Fahrkönnen unter Beweis stellen.
+		Natürlich gibt es ein Highscore System für die schnellsten Runden.
+
+		In den nächsten Updates wird zudem ein Ghostmode hinzugefügt um rauszufinden wo du deine Zeit liegen lässt.
+		]];
+		Fishing = [[
+		Am Pier in Los Santos (am Riesenrad) gibt es mehrere Angeln um Meeresbewohner oder andere Gegenstände aus dem
+		Wasser zu angeln. Je besser du auswirfst und einholst, desto wertvoller deine Beute.
+
+		Verkaufe diese einfach an Angeler Lutz der direkt daneben seinen Stand aufgebaut hat!
+		]];
+		Boxing = [[
+		Im Fitness-Center Los Santos kannst du andere Spieler zum Boxkampf herausfordern! Dabei könnt ihr einfach aus
+		Spaß kämpfen oder aber einen Geldeinsatz vereinbaren.
+		Du findest das Fitness-Center nahe der Green Bottle bar!
+
+		Möge der stärkste Kämpfer gewinnen!
+		]];
+		Bars = [[
+		Bars können von privaten Firma (Können in der Stadthalle gegründet werden) gekauft werden.
+		Diese bieten den Angestellten der Firma viele Funktionen wie z.B die Verwaltung der Kasse
+		(in der die Einnahmen gehen),das Abspielen von Musik oder das Engagieren von
+		professionellen Tänzerinnen.
+
+		Der perfekten Party steht damit nichts im Wege!
+		]];
+		Horserace = [[
+		Täglich um 20:00 Uhr findet das eXo-Pferderennen statt. Du kannst im Wettlokal (Pferd auf der Karte)
+		einen gewünschten Geldbetrag auf das Pferd deiner Wahl setzen.
+
+		Mit etwas Glück kannst du damit deinen Einsatz verdreifachen!
+		]];
+		Minigames = [[
+		Auf eXo-Reallife gibt es zahlreiche Minispiele die du teilweise alleine, teilweise mit anderen Usern
+		spielen kannst.
+		Klicke einen Spieler an und wähle "Spielen" im Klickmenü, dort gibt es eine Auswahl
+		an Spielen zu denen du den Spieler herausfordern kannst.
+
+		Unter anderem mit von der Partie sind Schach, Pong und Schere, Stein, Papier
+
+		Weitere Spiele findest du im Casino. (Spielkarten Symbol auf der Karte)
+		Dort findest du z.B. 2 Cars, Go-Jump oder SideSwipe.
+		]];
 	};
 	Jobs = {
 		BusDriver = [[
@@ -460,7 +519,7 @@ HelpTexts = {
 		]];
 		StateWeaponTruck = [[
 			Wählt die Waffen die ihr benötigt aus und ladet diese auf den Staatswaffentruck.
-			Fahrt nun den Truck an die LS Docks und versucht die Kisten abzugeben.
+			Fahrt nun den Truck vor die FBI-Base und versucht die Kisten abzugeben.
 			Die Bösen Fraktionisten werden versuchen den SWT zu zerstören.
 			Falls ihnen das gelingt, könnt ihr die Waffen mit einem Enforcer vom LSPD weitertransportieren.
 		]];
@@ -512,9 +571,13 @@ HelpTexts = {
 		Other = [[
 			Wir danken folgenden Personen/Teams für zur Verfügung gestellte Scripts:
 
-			iLife-Team:
+			dem iLife-Team für:
 			Slotmaschinen
 			Zug
+
+			Bonus für
+			Anti c-Bug
+			realdriveby
 		]];
 	};
 	Settings = {

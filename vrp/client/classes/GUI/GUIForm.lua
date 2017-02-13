@@ -9,6 +9,12 @@ GUIForm = inherit(CacheArea)
 GUIForm.Map = {}
 GUIForm.BlurCounter = 0
 
+GUIForm.Controls = {
+	"forwards", "backwards", "left", "right", "jump",
+	"vehicle_left", "vehicle_right", "steer_forward", "steer_back", "accelerate", "brake_reverse"
+}
+
+
 function GUIForm:constructor(posX, posY, width, height, incrementCursorCounter, postGUI)
 	CacheArea.constructor(self, posX or 0, posY or 0, width or screenWidth, height or screenHeight, true, true, postGUI)
 	self.m_KeyBinds = {}
@@ -85,7 +91,9 @@ function GUIForm:toggle(cursor)
 end
 
 function GUIForm:toggleKeys(state)
-	toggleAllControls(state)
+	for id, control in pairs(GUIForm.Controls) do
+		toggleControl(control, state)
+	end
 end
 
 function GUIForm:fadeIn(time)

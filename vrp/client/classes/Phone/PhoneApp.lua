@@ -56,13 +56,15 @@ function PhoneApp:close()
 end
 
 function PhoneApp:addActivity(activity)
+	self:closeActivities()
 	table.insert(self.m_Activities, activity)
 end
 
 function PhoneApp:closeActivities()
-	for k, activity in ipairs(self.m_Activities) do
+	for k, activity in pairs(self.m_Activities) do
 		delete(activity)
 	end
+	self.m_Activities = {}
 end
 
 function PhoneApp:getActivities()

@@ -52,7 +52,7 @@ end
 
 function VehicleHarbor:Event_harborTakeVehicle()
 	if client:getMoney() >= 500 then
-		client:takeMoney(500)
+		client:takeMoney(500, "Hafen")
 		source:fix()
 
 		-- Spawn vehicle in non-collision zone

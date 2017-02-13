@@ -14,7 +14,7 @@ function ShopManager:constructor()
 	self:loadVehicleShops()
 	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell", "gasStationFill",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
-	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw"
+	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection"
 	}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
@@ -28,6 +28,10 @@ function ShopManager:constructor()
 	addEventHandler("shopBankDeposit", root, bind(self.deposit, self))
 	addEventHandler("shopBankWithdraw", root, bind(self.withdraw, self))
 	addEventHandler("shopBuyClothes", root, bind(self.buyClothes, self))
+
+	addEventHandler("shopOnTattooSelection", root, bind(self.onTattooSelection, self))
+
+
 
 	addEventHandler("barShopMusicChange", root, bind(self.barMusicChange, self))
 	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
@@ -64,7 +68,7 @@ function ShopManager:loadShops()
 
 		local instance = SHOP_TYPES[row.Type]["Class"]:new(row.Id, row.Name, Vector3(row.PosX, row.PosY, row.PosZ), row.Rot, SHOP_TYPES[row.Type], row.Dimension, row.RobAble, row.Money, row.LastRob, row.Owner, row.Price, row.OwnerType)
 		ShopManager.Map[row.Id] = instance
-		if row.Blip then
+		if row.Blip and row.Blip ~= "" then
 			instance:addBlip(row.Blip)
 		end
 	end
@@ -208,6 +212,18 @@ function ShopManager:buyClothes(shopId, typeId, clotheId)
 		return
 	end
 end
+
+function ShopManager:onTattooSelection(shopId, typeId)
+local shop = self:getFromId(shopId)
+	if shop then
+		shop:onTattoSelection(client, typeId)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+		return
+	end
+end
+
+
 
 function ShopManager:barBuyDrink(shopId, item, amount)
 	if not item then return end

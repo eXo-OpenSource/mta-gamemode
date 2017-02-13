@@ -49,14 +49,12 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 
     addEventHandler("onVehicleStartEnter",self, bind(self.onStartEnter, self))
     addEventHandler("onVehicleEnter",self, bind(self.onEnter, self))
-    addEventHandler("onVehicleExplode",self,
-		function()
-			setTimer(function(veh)
-				veh:setHealth(1000)
-				veh:respawn(true)
-			end, 10000, 1, source)
-
-		end)
+    addEventHandler("onVehicleExplode",self, function()
+		setTimer(function(veh)
+			veh:setHealth(1000)
+			veh:respawn(true)
+		end, 10000, 1, source)
+	end)
 
 	if self.m_Faction.m_Vehicles then
 		table.insert(self.m_Faction.m_Vehicles, self)
@@ -64,7 +62,9 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 
 	self:setMileage(mileage)
 	if faction:isStateFaction() then
+		if self:getVehicleType() == VehicleType.Automobile then
 			self.m_VehELSObj = ELSSystem:new(self)
+		end
 	end
 	if handlingFaktor and handlingFaktor ~= "" then
 		local handling = getOriginalHandling(getElementModel(self))
@@ -160,8 +160,12 @@ end
 
 function FactionVehicle:hasKey(player)
   if self:isPermanent() then
-    if self.m_Faction:isStateFaction() or self.m_Faction:isRescueFaction() then
-		if player:getFaction() and player:isFactionDuty() then
+    if self.m_Faction:isStateFaction() and player:getFaction():isStateFaction() then
+		if player:isFactionDuty() then
+			return true
+		end
+	elseif self.m_Faction:isRescueFaction() and player:getFaction():isRescueFaction() then
+		if player:isFactionDuty() then
 			return true
 		end
 	elseif player:getFaction() == self.m_Faction then
@@ -229,7 +233,8 @@ function FactionVehicle:takeFactionItem(player, itemName)
 end
 
 function FactionVehicle:respawn(force)
-	if getElementModel(self) ~= 487 and getElementModel(self) ~= 497 and getElementModel(self) ~= 563 and self:getHealth() <= 310 and not force then
+    local vehicleType = self:getVehicleType()
+	if vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter and vehicleType ~= VehicleType.Boat and self:getHealth() <= 310 and not force then
 		self:getFaction():sendShortMessage("Fahrzeug-respawn ["..self.getNameFromModel(self:getModel()).."] ist fehlgeschlagen!\nFahrzeug muss zuerst repariert werden!")
 		return false
 	end

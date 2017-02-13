@@ -10,7 +10,7 @@ JobHeliTransport = inherit(Job)
 function JobHeliTransport:constructor()
 	Job.constructor(self)
 
-	self.m_VehicleSpawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 25.6, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
+	self.m_VehicleSpawner = VehicleSpawner:new(1765.5999755859, -2286.3000488281, 25.65, {"Cargobob"}, 270, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
@@ -44,7 +44,7 @@ function JobHeliTransport:onVehicleSpawn(player,vehicleModel,vehicle)
 	vehicle.player = player
 	player.heliJobVehicle = vehicle
 	player:triggerEvent("jobHeliTransportCreateMarker", "pickup")
-	client:sendInfo(_("Bitte belade deinen Helikopter am Ladepunkt!", client))
+	player:sendInfo(_("Bitte belade deinen Helikopter am Ladepunkt!", player))
 	addEventHandler("onVehicleExplode", vehicle, bind(self.onCargoBobExplode, self))
 	addEventHandler("onVehicleStartEnter",vehicle, function(vehPlayer, seat)
 		if vehPlayer ~= player then

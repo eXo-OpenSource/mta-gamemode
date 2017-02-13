@@ -67,6 +67,10 @@ function GUIChanger:setSelectedItem(item)
 	end
 end
 
+function GUIChanger:getSelectedItem(item)
+	return self.m_Items[self.m_CurrentItem], self.m_CurrentItem
+end
+
 function GUIChanger:getIndex()
 	return self.m_Items[self.m_CurrentItem], self.m_CurrentItem
 end

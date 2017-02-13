@@ -44,7 +44,7 @@ end
 function VehicleInteraction:render()
 	local playerPos = localPlayer:getPosition()
 	self.m_lookAtVehicle = getPedTarget(localPlayer)
-    if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" then
+    if self.m_lookAtVehicle and getElementType(self.m_lookAtVehicle) == "vehicle" and not getControlState("aim_weapon") then
 		if not isPedInVehicle(localPlayer) and not GUIElement.getHoveredElement() then
 			local vehPos = self.m_lookAtVehicle:getPosition()
 			local vehRot = self.m_lookAtVehicle:getRotation()

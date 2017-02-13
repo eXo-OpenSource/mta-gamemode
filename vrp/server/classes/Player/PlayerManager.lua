@@ -14,6 +14,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
 	self.m_QuitHook = Hook:new()
+	self.m_AFKHook = Hook:new()
 	self.m_ReadyPlayers = {}
 
 	-- Register events
@@ -109,6 +110,10 @@ end
 
 function PlayerManager:getQuitHook()
 	return self.m_QuitHook
+end
+
+function PlayerManager:getAFKHook()
+	return self.m_AFKHook
 end
 
 function PlayerManager:getReadyPlayers()
@@ -243,13 +248,6 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 			detachElements(obj, client)
 			client:meChat(true, "lies einen Geldbeutel fallen")
 		end
-	end
-	if source:isFactionDuty() then
-		source:setDefaultSkin()
-		source.m_FactionDuty = false
-		takeAllWeapons(client)
-		source:setPublicSync("Faction:Duty",false)
-		source:getInventory():removeAllItem("Barrikade")
 	end
 
 	if killer and killer:getType() == "player" then
@@ -491,6 +489,7 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 	end
 	client:setPublicSync("AFK", state)
 	if state == true then
+		self.m_AFKHook:call(client)
 		client:startAFK()
 		if client:isInVehicle() then client:removeFromVehicle() end
 		client:setInterior(4)
@@ -510,6 +509,14 @@ function PlayerManager:Event_startAnimation(animation)
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
 		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], true, ani["interruptable"], ani["freezeLastFrame"])
+		if client.animationObject and isElement(client.animationObject) then client.animationObject:destroy() end
+		if ani.object then
+			client.animationObject = createObject(ani.object, 0, 0, 0)
+			client.animationObject:setInterior(client:getInterior())
+			client.animationObject:setDimension(client:getDimension())
+			client.animationObject:attach(client)
+		end
+
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
 	else
 		client:sendError("Internal Error! Animation nicht gefunden!")
@@ -519,7 +526,7 @@ end
 function PlayerManager:stopAnimation(player)
 	player:setAnimation(false)
 	unbindKey(player, "space", "down", self.m_AnimationStopFunc)
-
+	if player.animationObject and isElement(player.animationObject) then player.animationObject:destroy() end
 	-- Tell the client
 	player:triggerEvent("onClientAnimationStop")
 end

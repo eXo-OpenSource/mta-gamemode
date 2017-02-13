@@ -5,8 +5,8 @@
 -- *  PURPOSE:     Account class
 -- *
 -- ****************************************************************************
-local MULTIACCOUNT_CHECK = false -- TODO: Activate on production use
-local INVITATION = true -- TODO: Activate on production use
+local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
+local INVITATION = GIT_BRANCH == "release/production" and true or false
 
 Account = inherit(Object)
 addRemoteEvents{"remoteClientSpawn", "checkInvitationCode"}

@@ -151,16 +151,16 @@ function FactionState:constructor()
 	-- Prepare the Area51
 	self:createDefendActors(
 		{
-			{Vector3(128.396, 1954.551, 19.428), Vector3(0, 0, 354.965), 287, 31, 30};
-			{Vector3(340.742, 1793.668, 18.140), Vector3(0, 0, 216.25), 287, 31, 30};
-			{Vector3(350.257, 1800.481, 18.577), Vector3(0, 0, 227.407), 287, 31, 30};
-			{Vector3(281.812, 1816.380, 17.970), Vector3(0, 0, 359.113), 287, 31, 30};
-			{Vector3(97.468, 1942.034, 34.378), Vector3(0, 0, 19.822), 287, 34, 90};
-			{Vector3(161.950, 1935.313, 33.898), Vector3(0, 0, 0.349), 287, 34, 90};
-			{Vector3(111.469, 1812.475, 33.898), Vector3(0, 0, 135.428), 287, 34, 90};
-			{Vector3(262.044, 1805.083, 33.898), Vector3(0, 0, 173.677), 287, 34, 90};
-			{Vector3(384.456, 1961.135, 33.278), Vector3(0, 0, 266.788), 287, 34, 90};
-			{Vector3(277.512, 2061.715, 33.678), Vector3(0, 0, 358.1), 287, 34, 90};
+			{Vector3(128.396, 1954.551, 19.428), Vector3(0, 0, 354.965), 287, 31, 25};
+			{Vector3(340.742, 1793.668, 18.140), Vector3(0, 0, 216.25), 287, 31, 25};
+			{Vector3(350.257, 1800.481, 18.577), Vector3(0, 0, 227.407), 287, 31, 25};
+			{Vector3(281.812, 1816.380, 17.970), Vector3(0, 0, 359.113), 287, 31, 25};
+			{Vector3(97.468, 1942.034, 34.378), Vector3(0, 0, 19.822), 287, 34, 80};
+			{Vector3(161.950, 1935.313, 33.898), Vector3(0, 0, 0.349), 287, 34, 80};
+			{Vector3(111.469, 1812.475, 33.898), Vector3(0, 0, 135.428), 287, 34, 80};
+			{Vector3(262.044, 1805.083, 33.898), Vector3(0, 0, 173.677), 287, 34, 80};
+			{Vector3(384.456, 1961.135, 33.278), Vector3(0, 0, 266.788), 287, 34, 80};
+			{Vector3(277.512, 2061.715, 33.678), Vector3(0, 0, 358.1), 287, 34, 80};
 		}
 	)
 
@@ -827,8 +827,8 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				if player:getMoney() < JAIL_COSTS[wantedLevel] then
 					factionBonus = player:getMoney()
 				end
-
-				player:takeMoney(factionBonus)
+				self:Command_tie(policeman, "tie", player:getName(), false)
+				player:takeMoney(factionBonus, "Knast Strafe")
 				player:giveKarma(-wantedLevel)
 				player:setJailTime(jailTime)
 				player:setWantedLevel(0)
@@ -894,7 +894,7 @@ function FactionState:freePlayer(player)
 	player:toggleControl("fire", true)
 	player:toggleControl("jump", true)
 	player:toggleControl("aim_weapon ", true)
-	toggleControl(player, "enter_exit", false)
+	player:toggleControl("enter_exit ", true)
 	if isTimer(player.m_JailTimer) then
 		killTimer( player.m_JailTimer )
 	end
@@ -960,7 +960,7 @@ function FactionState:Event_toggleDuty()
 			client:getInventory():removeAllItem("Blitzer")
 		else
 			if client:getPublicSync("Company:Duty") and client:getCompany() then
-				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
+				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 				return false
 			end
 
@@ -992,7 +992,7 @@ function FactionState:Event_storageWeapons()
 				if client:getWeapon(i) > 0 then
 					local weaponId = client:getWeapon(i)
 					local clipAmmo = getWeaponProperty(weaponId, "pro", "maximum_clip_ammo") or 1
-					local magazines = math.floor(client:getTotalAmmo(i)/clipAmmo)
+					local magazines = math.floor(client:getTotalAmmo(i)/clipAmmo)-1
 
 					local depotWeapons, depotMagazines = faction:getDepot():getWeapon(weaponId)
 					local depotMaxWeapons, depotMaxMagazines = faction.m_WeaponDepotInfo[weaponId]["Waffe"], faction.m_WeaponDepotInfo[weaponId]["Magazine"]

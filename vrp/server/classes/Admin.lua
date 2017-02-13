@@ -214,9 +214,7 @@ function Admin:Event_getPlayerInfo(Id, name)
 						Karma = player:getKarma();
                     }
 
-                    if isOffline then
-                        delete(player)
-                    end
+                    if isOffline then delete(player) end
                     client:triggerEvent("adminReceiveSeachedPlayerInfo", data)
                 end
             end
@@ -245,11 +243,15 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
 	if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
-		self:Command_MarkPos(admin, true)
-		StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["mark"] then
+			self:Command_MarkPos(admin, true)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
+		end
 	elseif cmd == "gotomark" then
-		self:Command_MarkPos(admin, false)
-		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["mark"] then
+			self:Command_MarkPos(admin, false)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
+		end
 	elseif cmd == "gotocords" then
 		local x, y, z = targetName, arg1, arg2
 		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then
@@ -328,7 +330,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 				self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
 				target:setPrison(duration*60)
 				self:addPunishLog(admin, target, func, reason, duration*60)
-				outputChatBox(getPlayerName(target).." hat "..getPlayerName(admin).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
+				outputChatBox(getPlayerName(admin).." hat "..getPlayerName(target).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
 				outputChatBox("Grund: "..reason,root, 200, 0, 0)
 			else
 			outputChatBox("Syntax: /prison [ziel] [Zeit in Minuten] [Grund]",admin,200,0,0)
@@ -389,6 +391,10 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             end
 			StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
 			outputChatBox("Der Chat wurde von "..getPlayerName(admin).." geleert!",root, 200, 0, 0)
+		elseif func == "resetAction" then
+			self:sendShortMessage(_("%s hat die Aktionssperre resettet! Aktionen können wieder gestartet werden!", admin, admin:getName()))
+			ActionsCheck:getSingleton():reset()
+			StatisticsLogger:getSingleton():addAdminAction( admin, "resetAction", false)
 		elseif func == "respawnRadius" then
 			local radius = tonumber(target)
 			local pos = admin:getPosition()
@@ -397,7 +403,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			col:destroy()
 			local count = 0
 			for index, vehicle in pairs(vehicles) do
-				vehicle:respawn()
+				vehicle:respawn(true)
 				count = count + 1
 			end
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
@@ -571,7 +577,7 @@ end
 
 
 function Admin:chat(player,cmd,...)
-	if player:getRank() > RANK.Ticketsupporter then
+	if player:getRank() >= RANK.Ticketsupporter then
 		local msg = table.concat( {...}, " " )
 		if self.m_RankNames[player:getRank()] then
 			local text = ("[ %s %s ]: %s"):format(_(self.m_RankNames[player:getRank()], player), player:getName(), msg)
@@ -734,6 +740,7 @@ local tpTable = {
         ["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
         ["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
         ["kart"] =    		{["pos"] = Vector3(1262.375, 188.479, 19.5), 	["typ"] = "Orte"},
+        ["dm"] =    		{["pos"] = Vector3(1326.55, -1561.04, 13.55), 	["typ"] = "Orte"},
         ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
         ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
         ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},

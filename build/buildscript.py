@@ -4,6 +4,7 @@ import os
 import io
 import xml.etree.ElementTree as ET
 import shutil
+import subprocess
 from subprocess import call
 import platform
 import time
@@ -11,8 +12,10 @@ import sys
 
 start = time.time()
 compiler = "tools/luac_mta"
+compiler_length = 14
 if platform.system() == "Windows":
 	compiler = "tools/luac_mta.exe"
+	compiler_length = 18
 rootdir = "vrp/"
 outdir = "vrp_build/"
 branch = sys.argv[1] if len(sys.argv) > 1 else ""
@@ -58,7 +61,7 @@ for child in root.findall("script"):
 if externalFiles:
 	# Copy maps
 	shutil.copytree(rootdir+"files/maps", outdir+"files/maps")
-	
+
 	# Copy only files with <file> tag
 	for child in root.findall("file"):
 		filename = child.attrib["src"]
@@ -95,14 +98,30 @@ clientCall = [ compiler ]
 
 if branch != "" and branch != "develop" and branch != "master":
 	print("Building release build")
-	clientCall.extend([ "-e2" ]) # TODO: Readd '-s' once the script is more stable
+	clientCall.extend([ "-e2", "-s" ])
 else:
 	print("WARNING: Building debug build")
 
 clientCall.extend([ "-o", outdir+"client.luac" ])
 clientCall.extend(files["client"])
 
-call(serverCall)
-call(clientCall)
+exit_status = 0
+process = subprocess.Popen(serverCall, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+output = process.communicate()
+output = str(output)
+if output[3:(compiler_length+3)] == compiler:
+	exit_status = 1
+	print("Error:\t" + output[(compiler_length+11):-11])
 
-print("Done. (took %.2f seconds)" % (time.time() - start))
+process = subprocess.Popen(clientCall, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+output = process.communicate()
+output = str(output)
+if output[3:(compiler_length+3)] == compiler:
+	exit_status = 1
+	print("Error:\t" + output[(compiler_length+11):-11])
+
+
+if exit_status != 0:
+	sys.exit(exit_status)
+else:
+	print("Done. (took %.2f seconds)" % (time.time() - start))

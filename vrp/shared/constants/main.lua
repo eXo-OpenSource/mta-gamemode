@@ -38,6 +38,8 @@ end
 RANK = r2
 
 ADMIN_RANK_PERMISSION = {
+	["direction"] = RANK.Supporter, -- Up Down Left Right
+	["mark"] = RANK.Supporter, -- also gotomark
 	["eventMoneyDeposit"] = RANK.Supporter,
 	["gethere"] = RANK.Supporter,
 	["goto"] = RANK.Supporter,
@@ -47,6 +49,7 @@ ADMIN_RANK_PERMISSION = {
 	["warn"] = RANK.Supporter,
 	["kick"] = RANK.Supporter,
 	["rkick"] = RANK.Supporter,
+	["resetAction"] = RANK.Moderator,
 	["unprison"] = RANK.Moderator,
 	["supportMode"] = RANK.Supporter,
 	["smode"] = RANK.Supporter,
@@ -486,3 +489,5 @@ WEAPON_LEVEL = {
 	[9] = {["costs"] = 4750, ["hours"] = 22},
 	[10] = {["costs"] = 5500, ["hours"] = 30}
 }
+
+BOXING_MONEY = {0, 50, 100, 500, 1000, 5000, 10000, 50000, 100000}

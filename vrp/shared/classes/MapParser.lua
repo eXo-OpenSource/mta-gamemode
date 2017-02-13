@@ -3,7 +3,8 @@ MapParser = inherit(Object)
 local readFuncs = {
 	object = function(attributes)
 		return {type = "object", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
-			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), interior = tonumber(attributes.interior), doublesided = toboolean(attributes.doublesided)}
+			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ), interior = tonumber(attributes.interior), doublesided = toboolean(attributes.doublesided),
+			alpha = tonumber(attributes.alpha), scale = tonumber(attributes.scale), collisions = attributes.collisions}
 	end;
 	marker = function(attributes)
 		return {type = "marker", markertype = attributes.type, x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
@@ -21,15 +22,32 @@ local readFuncs = {
 		return {type = "racepickup", pickuptype = attr.type, x = tonumber(attr.posX), y = tonumber(attr.posY), z = tonumber(attr.posZ),
 			rx = tonumber(attr.rotX), ry = tonumber(attr.rotY), rz = tonumber(attr.rotZ), model = tonumber(attr.vehicle)}
 	end;
+	checkpoint = function(attributes)
+		return {type = "checkpoint", x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ), size = tonumber(attributes.size)}
+	end;
+	startmarker = function(attributes)
+		return {type="startmarker", x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ)}
+	end;
+	info = function(attributes)
+		return {type="infoPed", model = tonumber(attributes.model), x = tonumber(attributes.posX), y = tonumber(attributes.posY), z = tonumber(attributes.posZ),
+			rx = tonumber(attributes.rotX), ry = tonumber(attributes.rotY), rz = tonumber(attributes.rotZ)}
+	end;
 }
 local createFuncs = {
 	object = function(info)
 		local o = createObject(info.model, info.x, info.y, info.z, info.rx, info.ry, info.rz)
 		setElementDoubleSided(o, info.doublesided or false)
+		setElementAlpha(o, info.alpha or 255)
+		setObjectScale(o, info.scale or 1)
+		setElementCollisionsEnabled(o, info.collisions ~= "false")
 		return o
 	end;
 	marker = function(info)
 		local m = createMarker(info.x, info.y, info.z, info.markertype, info.size, getColorFromString(info.color))
+		return m
+	end;
+	checkpoint = function(info)
+		local m = createMarker(info.x, info.y, info.z, "cylinder", info.size, 0, 0, 0, 0)
 		return m
 	end;
 	removeWorldObject = function(info)
@@ -38,6 +56,8 @@ local createFuncs = {
 		return info
 	end;
 	spawnpoint = function(info) return info end;
+	startmarker = function(info) return info end;
+	infoPed = function(info) return info end;
 	racepickup = function(info)
 		local model, func
 		if info.pickuptype == "nitro" then
@@ -68,8 +88,8 @@ function MapParser:constructor(path)
 
 	local infoNode = xmlRoot:findChild("info", 0)
 	if infoNode then
-		self.m_Mapname = infoNode:getAttribute("name")
-		self.m_Author = infoNode:getAttribute("author")
+		self.m_Mapname = infoNode:getAttribute("Mapname")
+		self.m_Author = infoNode:getAttribute("Author")
 	end
 
 	for k, node in pairs(xmlNodeGetChildren(xmlRoot)) do
@@ -95,6 +115,7 @@ function MapParser:create(dimension)
 	for k, info in pairs(self.m_MapData) do
 		local element = createFuncs[info.type](info)
 		if isElement(element) then
+			element._type = info.type
 			setElementDimension(element, dimension)
 		end
 		table.insert(map, element)
@@ -125,9 +146,8 @@ end
 
 function MapParser:getElementsByType(elementType, mapIndex)
 	local elements = {}
-
 	for k, element in pairs(self.m_Maps[mapIndex or 1]) do
-		if element.type == elementType then
+		if element.type == elementType or (element._type and element._type == elementType) then
 			table.insert(elements, element)
 		end
 	end

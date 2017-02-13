@@ -1,11 +1,12 @@
 NoDm = inherit(Singleton)
 addRemoteEvents{"checkNoDm"}
 NoDm.Zones = {
-	[1] = {Vector3(1399.1123046875,-1862.453125, 12), Vector3(160,120,15)},
-	[2] = {Vector3(1322.850219726,-1721.6591796875, 12), Vector3(92,120, 15)},
-	[3] = {Vector3(430,-100, 998), Vector3(50, 40, 10), 4},
+	[1] = {Vector3(1399.112, -1862.453, 12), Vector3(160,120,15)},
+	[2] = {Vector3(1322.850, -1721.659, 12), Vector3(92,120, 15)},
+	[3] = {Vector3(430, -100, 998), Vector3(50, 40, 10), 4},
 	[4] = {Vector3{1770, -1342.12, 20.77},Vector3{65, 72, 123}},
-	[5] = {Vector3(1700, -1800, 0), Vector3{111, 60, 100}} -- Rescue
+	[5] = {Vector3(1700, -1800, 0), Vector3{111, 60, 100}}, -- Rescue
+	[6] = {Vector3(1266, 22, 20), Vector3{150, 150, 50}}, -- Kart
 }
 
 function NoDm:constructor()
@@ -16,15 +17,16 @@ function NoDm:constructor()
 	self.m_RenderBind = bind(self.renderNoDmImage, self)
 	self.m_UnRenderBind = bind(self.unrenderNoDmImage, self)
 
+	local colshape
+
 	for index, koords in pairs(NoDm.Zones) do
-		self.m_NoDmZones[index] = createColCuboid(koords[1], koords[2])
+		colshape = createColCuboid(koords[1], koords[2])
 		if koords[3] and koords[3] > 0 then
-			self.m_NoDmZones[index]:setInterior(koords[3])
+			colshape:setInterior(koords[3])
 		else
 			self.m_NoDmRadarAreas[index] = HUDRadar:getSingleton():addArea(koords[1].x, koords[1].y, koords[2].x, -1*koords[2].y, {0, 255, 0, 200})
 		end
-		addEventHandler ("onClientColShapeHit", self.m_NoDmZones[index], bind(self.onNoDmZoneHit, self))
-		addEventHandler ("onClientColShapeLeave", self.m_NoDmZones[index], bind(self.onNoDmZoneLeave, self))
+		self:addZone(colshape)
 	end
 end
 
@@ -38,6 +40,13 @@ function NoDm:onNoDmZoneLeave(hitElement, dim)
 	if hitElement== localPlayer and dim then
 		self:setPlayerNoDm(false)
 	end
+end
+
+function NoDm:addZone(colShape)
+	local index = #self.m_NoDmZones+1
+	self.m_NoDmZones[index] = colShape
+	addEventHandler ("onClientColShapeHit", colShape, bind(self.onNoDmZoneHit, self))
+	addEventHandler ("onClientColShapeLeave", colShape, bind(self.onNoDmZoneLeave, self))
 end
 
 function NoDm:setPlayerNoDm(state)
@@ -61,15 +70,13 @@ function NoDm:setPlayerNoDm(state)
 		end
 		self:toggleNoDmImage(true)
 	else
-		if localPlayer:getPublicSync("Faction:Duty") == false then
-			toggleControl ("fire", true)
-			toggleControl ("next_weapon", true)
-			toggleControl ("previous_weapon", true)
-			toggleControl ("aim_weapon", true)
-			toggleControl ("vehicle_fire", true)
-			setElementData(localPlayer, "no_driveby", false)
-			setElementData(localPlayer,"schutzzone",false)
-		end
+		toggleControl ("fire", true)
+		toggleControl ("next_weapon", true)
+		toggleControl ("previous_weapon", true)
+		toggleControl ("aim_weapon", true)
+		toggleControl ("vehicle_fire", true)
+		setElementData(localPlayer, "no_driveby", false)
+		setElementData(localPlayer,"schutzzone",false)
 		self:toggleNoDmImage(false)
 	end
 end

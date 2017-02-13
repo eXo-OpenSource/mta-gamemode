@@ -81,7 +81,7 @@ function GroupPropertyGUI:openDepot( )
 end
 
 function GroupPropertyGUI:destructor()
-	self.m_Window:delete()
+	GUIForm.destructor(self)
 end
 
 function GroupPropertyGUI:OnSellClick()

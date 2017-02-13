@@ -45,9 +45,14 @@ function Core:constructor()
 	aclGroup:addObject("user.exo_web")
 	ACLGroup.get("Admin"):addObject("resource.admin_exo")
 
+	if GIT_BRANCH == "release/production" then
+		setServerPassword()
+	end
+
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
 		TranslationManager:new()
+		GlobalTimer:new()
 		VehicleManager:new()
 		Admin:new()
 		StatisticsLogger:new()
@@ -100,9 +105,10 @@ function Core:constructor()
 		DeathmatchManager:new()
 
 		SkydivingManager:new()
-		if GIT_BRANCH ~= "release/production" then -- Merged into Master -> fail by me (stumpy)
-			Kart:new()
-		end
+		Kart:new()
+		HorseRace:new()
+		BoxManager:new()
+
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
 		VehicleGarages.initalizeAll()
@@ -189,6 +195,7 @@ function Core:destructor()
 		delete(GangwarStatistics:getSingleton())
 		delete(GroupPropertyManager:getSingleton())
 		delete(Admin:getSingleton())
+		delete(StatisticsLogger:getSingleton())
 		delete(sql) -- Very slow
 	end
 end

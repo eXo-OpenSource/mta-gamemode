@@ -81,6 +81,8 @@
 	<script src="server/classes/Door.lua" type="server"/>
 	<script src="server/classes/PhoneNumbers.lua" type="server"/>
 	<script src="server/classes/Tour.lua" type="server"/>
+	<script src="server/classes/GlobalTimer.lua" type="server"/>
+
 
 	<!-- Super -->
 	<script src="server/classes/Super/MTAElement.lua" type="server"/>
@@ -148,6 +150,7 @@
 	<script src="server/classes/Gameplay/Minigames/ZombieSurvival.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/SniperGame.lua" type="server"/>
 	<script src="server/classes/Gameplay/Minigames/Pong.lua" type="server"/>
+	<script src="server/classes/Gameplay/Minigames/HorseRace.lua" type="server"/>
 	<script src="server/classes/Gameplay/BombArea.lua" type="server"/>
 	<script src="server/classes/Gameplay/JailBreak.lua" type="server"/>
 	<script src="server/classes/Gameplay/SkinShops.lua" type="server"/>
@@ -160,7 +163,7 @@
 	<script src="server/classes/Gameplay/Fishing.lua" type="server"/>
 	<script src="server/classes/Gameplay/Skydiving.lua" type="server"/>
 	<script src="server/classes/Gameplay/Deathmatch/DeathmatchManager.lua" type="server"/>
-	<script src="server/classes/Gameplay/Deathmatch/DeathmatchRoom.lua" type="server"/>
+	<script src="server/classes/Gameplay/Deathmatch/DeathmatchLobby.lua" type="server"/>
 
 	<!--<script src="server/classes/Gameplay/Police.lua" type="server"/>-->
 	<script src="server/classes/Gameplay/Collectables.lua" type="server"/>
@@ -172,6 +175,7 @@
 	<script src="server/classes/Gameplay/Train/TrainManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Train/Train.lua" type="server"/>
 	<script src="server/classes/Gameplay/Elevator.lua" type="server"/>
+	<script src="server/classes/Gameplay/BoxManager.lua" type="server"/>
 
 	<script src="server/classes/Gameplay/Shops/ShopManager.lua" type="server"/>
 	<script src="server/classes/Gameplay/Shops/Shop.lua" type="server"/>
@@ -425,6 +429,7 @@
 	<script src="client/classes/GUIElements/KarmaBar.lua" type="client"/>
 
 	<script src="client/classes/HUD/Blip.lua" type="client"/>
+	<script src="client/classes/HUD/HUDRace.lua" type="client"/>
 	<script src="client/classes/HUD/HUDRadar.lua" type="client"/>
 	<script src="client/classes/HUD/HUDSpeedo.lua" type="client"/>
 	<script src="client/classes/HUD/Nametag.lua" type="client"/>
@@ -466,6 +471,7 @@
 	<script src="client/classes/GUIForms/ButtonMenu/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/CompanyDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ShopManageGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/TattooSelectionGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/PublicTransportTaxiGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
@@ -502,6 +508,7 @@
 	<script src="client/classes/GUIForms/ClothesShopGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchLobbyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/DeathmatchCreateLobby.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/ColorPickerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
@@ -537,6 +544,7 @@
 	<script src="client/classes/GUIForms/PlantGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/HighscoreGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/KartGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HorseBetGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/MinigameGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GunBoxGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ItemDepotGUI.lua" type="client"/>
@@ -592,6 +600,7 @@
 	<script src="client/classes/Phone/Apps/AppCEF.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppOnOff.lua" type="client"/>
 	<script src="client/classes/Phone/Apps/AppAmmunation.lua" type="client"/>
+	<script src="client/classes/Phone/Apps/AppBank.lua" type="client"/>
 
 	<!-- Companies -->
 	<script src="client/classes/Business/Company.lua" type="client"/>
@@ -634,6 +643,7 @@
 	<script src="client/classes/Vehicles/Vehicle.lua" type="client"/>
 	<script src="client/classes/Vehicles/ELSSystem.lua" type="client"/>
 	<script src="client/classes/Vehicles/Neon.lua" type="client"/>
+	<script src="client/classes/Vehicles/Indicator.lua" type="client"/>
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
@@ -685,6 +695,7 @@
 	<script src="client/classes/Gameplay/Minigames/RockPaperScissors.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/Pong.lua" type="client"/>
 	<script src="client/classes/Gameplay/Minigames/2Cars.lua" type="client"/>
+	<script src="client/classes/Gameplay/Minigames/HorseRace.lua" type="client"/>
 
 	<!-- serverside -->
 	<script src="server/classes/Gameplay/Minigames/Chess/ChessSessionManager.lua" type="server"/>
@@ -733,8 +744,7 @@
 	<!-- audio files -->
 	<vrpfile src="files/audio/chess/move.ogg" />
 
-	<!-- Business -->
-
+	<file src="files/data/indicators.dat" />
 
 	<!-- Tests -->
 	<!-- Todo -->
@@ -772,7 +782,8 @@
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSanNews.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconAmmuNation.png"/>
 	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconDashboard.png"/>
-
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconBank.png"/>
+	<vrpfile src="files/images/Phone/Apps_AndroidPhone/IconSnake.png"/>
 
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconCall.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconMessage.png"/>
@@ -783,6 +794,8 @@
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconSanNews.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconAmmuNation.png"/>
 	<vrpfile src="files/images/Phone/Apps_iPhone/IconDashboard.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconBank.png"/>
+	<vrpfile src="files/images/Phone/Apps_iPhone/IconSnake.png"/>
 
 	<vrpfile src="files/images/GUI/Checkbox.png" onDemand="false"/>
 	<vrpfile src="files/images/GUI/Checkbox_checked.png" onDemand="false"/>
@@ -809,6 +822,8 @@
 	<vrpfile src="files/images/Speedo/handbrake.png"/>
 	<vrpfile src="files/images/Speedo/fuel.png"/>
 	<vrpfile src="files/images/Speedo/fuel_needle.png"/>
+	<vrpfile src="files/images/Speedo/indicator_left.png"/>
+	<vrpfile src="files/images/Speedo/indicator_right.png"/>
 
 	<vrpfile src="files/images/Weapons/AK-47.png"/>
 	<vrpfile src="files/images/Weapons/BaseballBat.png"/>
@@ -956,6 +971,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Marker_up.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Marker_down.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Bar.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Horse.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -1004,6 +1020,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Marker_up.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Marker_down.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Bar.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Horse.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -1040,6 +1057,7 @@
 	<vrpfile src="files/images/Nametag/w6.png"/>
 	<vrpfile src="files/images/Nametag/chat.png"/>
 	<vrpfile src="files/images/Nametag/admin.png"/>
+	<vrpfile src="files/images/Nametag/armor.png"/>
 	<vrpfile src="files/images/Nametag/premium.png"/>
 
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
@@ -1229,6 +1247,19 @@
 	<vrpfile src="files/images/2Cars/block_blue.png"/>
 	<vrpfile src="files/images/2Cars/particleExplode.png"/>
 
+	<!-- Race -->
+	<vrpfile src="files/images/Race/countdown_0.png"/>
+	<vrpfile src="files/images/Race/countdown_1.png"/>
+	<vrpfile src="files/images/Race/countdown_2.png"/>
+	<vrpfile src="files/images/Race/countdown_3.png"/>
+
+	<!-- HorseRace -->
+	<vrpfile src="files/images/HorseRace/Track.png"/>
+	<vrpfile src="files/images/HorseRace/Horse_1.png"/>
+	<vrpfile src="files/images/HorseRace/Horse_2.png"/>
+	<vrpfile src="files/images/HorseRace/Horse_3.png"/>
+	<vrpfile src="files/images/HorseRace/Horse_4.png"/>
+
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/Halleluja.mp3"/>
@@ -1249,6 +1280,7 @@
 	<vrpfile src="files/audio/hb_on.mp3"/>
 	<vrpfile src="files/audio/hb_off.mp3"/>
 	<vrpfile src="files/audio/announcment.mp3"/>
+	<vrpfile src="files/audio/wasted.mp3"/>
 
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>
@@ -1283,6 +1315,13 @@
 	<vrpfile src = "files/audio/Pong/fail.mp3" />
 	<vrpfile src = "files/audio/Pong/shot.mp3" />
 	<vrpfile src = "files/audio/Pong/wall.mp3" />
+
+	<!-- Race -->
+	<vrpfile src = "files/audio/Race/countdown_0.mp3" />
+	<vrpfile src = "files/audio/Race/countdown_1.mp3" />
+	<vrpfile src = "files/audio/Race/countdown_2.mp3" />
+	<vrpfile src = "files/audio/Race/countdown_3.mp3" />
+	<vrpfile src = "files/audio/Race/countdown_start.mp3" />
 
 	<!-- Custom Horns -->
 	<vrpfile src='files/audio/Horns/1.mp3'/>
@@ -1387,9 +1426,6 @@
 	<vrpfile src="files/models/medic.txd" />
 	<vrpfile src="files/models/medic.dff" />
 	<vrpfile src="files/models/medic.col" />
-	<vrpfile src="files/models/medicInterior.txd" />
-	<vrpfile src="files/models/medicInterior.dff" />
-	<vrpfile src="files/models/medicInterior.col" />
 	<vrpfile src="files/models/medicLOD.txd" />
 	<vrpfile src="files/models/medicLOD.dff" />
 	<vrpfile src="files/models/medicLOD.col" />
@@ -1402,7 +1438,10 @@
 	<vrpfile src="files/models/kartpark.txd" />
 	<vrpfile src="files/models/kartpark.dff" />
 	<vrpfile src="files/models/kartpark.col" />
-
+	<vrpfile src="files/models/piss.dff" />
+	<vrpfile src="files/models/bed.txd" />
+	<vrpfile src="files/models/bed.dff" />
+	<vrpfile src="files/models/bed.col" />
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
@@ -1441,6 +1480,7 @@
 	<map src="files/maps/Garages_Outside.map"/>
 	<map src="files/maps/Court.map"/>
 	<map src="files/maps/TuningGarages.map"/>
+	<map src="files/maps/Academi-Interrior.map"/>
 
 	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>

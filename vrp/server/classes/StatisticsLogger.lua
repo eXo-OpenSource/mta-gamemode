@@ -12,7 +12,13 @@ function StatisticsLogger:constructor()
     if not getResourceState(getResourceFromName("vrp_data")) == "running" then startResource(getResourceFromName("vrp_data")) end
 	self.m_TextLogPath = ":vrp_data/logs/"
 
+	self.m_Gamestats = {}
+	self:loadGameStats()
 	--addEventHandler("onDebugMessage", getRootElement(), bind(self.onDebugMessageLog, self)) MTA:Bug - only outputDebugString is working, no MTA Errors/Warnings
+end
+
+function StatisticsLogger:destructor()
+	self:saveGameStats()
 end
 
 function StatisticsLogger:getZone(player)
@@ -202,4 +208,31 @@ function StatisticsLogger:GroupBuyImmoLog( groupId, action, immo)
 	if not tonumber(groupId) then return end
 	sqlLogs:queryExec("INSERT INTO ??_GroupImmo (GroupId, Aktion, ImmoId,  Date ) VALUES(?, ?, ?,  NOW())",
         sqlLogs:getPrefix(), groupId, action, immo)
+end
+
+
+function StatisticsLogger:loadGameStats()
+	local result = sqlLogs:queryFetch("SELECT * FROM ??_GameStats", sqlLogs:getPrefix())
+	for i, row in pairs(result) do
+		self.m_Gamestats[row["Game"]] = {
+			["Incoming"] = row["Incoming"],
+			["Outgoing"] = row["Outgoing"],
+			["Played"] = row["Played"]
+		}
+	end
+end
+
+function StatisticsLogger:getGameStats(game)
+	if self.m_Gamestats[game] then
+		return self.m_Gamestats[game]
+	else
+		outputDebugString("Gamestats for Game "..game.." not found!")
+	end
+end
+
+function StatisticsLogger:saveGameStats()
+	for game, data in pairs(self.m_Gamestats) do
+		sqlLogs:queryExec("UPDATE ??_GameStats SET Incoming = ?, Outgoing = ?, Played = ? WHERE Game = ?",
+			sqlLogs:getPrefix(), data["Incoming"], data["Outgoing"], data["Played"], game)
+	end
 end

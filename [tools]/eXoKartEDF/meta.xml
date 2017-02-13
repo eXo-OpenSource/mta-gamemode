@@ -1,0 +1,10 @@
+<meta>
+	<info name="eXoKart" description="edf for eXo Karts" author="PewX" type="gamemode" edf:definition="exoKart.edf" />
+	
+	<script src="editor_support.lua"/>
+	
+	<file src="files/checkpoint.png"/>
+	<file src="files/spawnpoint.png"/>
+	<file src="files/mapinfo.png"/>
+	<file src="files/start.png"/>
+</meta>

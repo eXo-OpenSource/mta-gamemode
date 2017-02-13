@@ -101,7 +101,7 @@ function FactionManager:sendInfosToClient(client)
 	local faction = client:getFaction()
 
 	if faction then
-		client:triggerEvent("factionRetrieveInfo", faction:getId(),faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(),faction.m_Skins,faction.m_RankNames,faction.m_RankLoans,faction.m_RankSkins,faction.m_ValidWeapons,faction.m_RankWeapons)
+		client:triggerEvent("factionRetrieveInfo", faction:getId(), faction:getName(), faction:getPlayerRank(client), faction:getMoney(), faction:getPlayers(), faction.m_Skins, faction.m_RankNames, faction.m_RankLoans, faction.m_RankSkins, faction.m_ValidWeapons, faction.m_RankWeapons)
 	else
 		client:triggerEvent("factionRetrieveInfo")
 	end
@@ -346,6 +346,8 @@ function FactionManager:Event_factionRankDown(playerId)
 			if isElement(player) then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
 			end
+		else
+			delete(player)
 		end
 		self:sendInfosToClient(client)
 	else
@@ -383,9 +385,7 @@ function FactionManager:sendAllToClient(client)
 	for i, faction in pairs(self:getAllFactions()) do
 		if faction:isStateFaction() or faction:isRescueFaction() then
 			for i, v in pairs(faction.m_Vehicles) do
-				if not factionVehicleShaders[faction:getId()] or not factionVehicleShaders[faction:getId()][v:getModel()] then
-					--outputDebug(("[%s] ShaderInfo for Vehicle Model %d not found!"):format(faction:getName(), v:getModel()))
-				else
+				if factionVehicleShaders[faction:getId()] and factionVehicleShaders[faction:getId()][v:getModel()] then
 					local shaderInfo = factionVehicleShaders[faction:getId()][v:getModel()]
 					if v.m_Decal == "" then
 						if shaderInfo.shaderEnabled then

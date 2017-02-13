@@ -272,7 +272,7 @@ function Faction:paydayPlayer(player)
 	local loan = tonumber(self.m_RankLoans[tostring(rank)])
 	if self.m_BankAccount:getMoney() < loan then loan = self.m_BankAccount:getMoney() end
 	if loan < 0 then loan = 0 end
-	self:takeMoney(loan)
+	self:takeMoney(loan, "Lohn von "..player:getName())
 	return loan
 end
 
@@ -405,7 +405,7 @@ function Faction:setSafe(obj)
 	self.m_Safe:setData("clickable",true,true)
 	addEventHandler("onElementClicked", self.m_Safe, function(button, state, player)
 		if button == "left" and state == "down" then
-			if player:getFaction() and player:getFaction() == self or (player:getFaction():isStateFaction() and self:isStateFaction()) then
+			if player:getFaction() and player:getFaction() == self or (player:getFaction() and player:getFaction():isStateFaction() and self:isStateFaction()) then
 				player:triggerEvent("bankAccountGUIShow", self:getName(), "factionDeposit", "factionWithdraw")
 				self:refreshBankAccountGUI(player)
 			else
