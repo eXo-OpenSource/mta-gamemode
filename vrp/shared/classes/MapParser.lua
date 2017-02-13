@@ -39,7 +39,7 @@ local createFuncs = {
 		setElementDoubleSided(o, info.doublesided or false)
 		setElementAlpha(o, info.alpha or 255)
 		setObjectScale(o, info.scale or 1)
-		setElementCollisionsEnabled(o, info.collisions == "true")
+		setElementCollisionsEnabled(o, info.collisions ~= "false")
 		return o
 	end;
 	marker = function(info)
