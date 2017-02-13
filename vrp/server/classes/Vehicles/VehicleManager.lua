@@ -142,7 +142,7 @@ function VehicleManager:createVehiclesForPlayer(player)
 				end
 				if not skip then
 					local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
-					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
+					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special, row.Premium)
 					VehicleManager:getSingleton():addRef(vehicle, false)
 				end
 				skip = false
@@ -732,7 +732,10 @@ end
 function VehicleManager:Event_vehicleSell()
 	if not instanceof(source, PermanentVehicle, true) then return end
 	if source:getOwner() ~= client:getId() then	return end
-
+	if source.m_Premium then
+		client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+		return
+	end
 	-- Search for price in vehicle shops table
 	local getPrice = function(model)
 		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
@@ -754,7 +757,10 @@ end
 function VehicleManager:Event_acceptVehicleSell(veh)
 	if not instanceof(veh, PermanentVehicle, true) then return end
 	if veh:getOwner() ~= client:getId() then	return end
-
+	if veh.m_Premium then
+		client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+		return
+	end
 	-- Search for price in vehicle shops table
 	local getPrice = function(model)
 		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do

@@ -7,9 +7,10 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, fuel, lightColor, trunkId, texture, horn, neon, special)
+function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, fuel, lightColor, trunkId, texture, horn, neon, special, premium)
 	self.m_Id = Id
 	self.m_Owner = owner
+	self.m_Premium = toboolean(premium) or false
 
 	self:setCurrentPositionAsSpawn(positionType)
 

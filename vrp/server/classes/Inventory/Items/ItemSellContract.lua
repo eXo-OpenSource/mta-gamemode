@@ -22,12 +22,17 @@ function ItemSellContract:Event_OnSellRequest( player, price, veh )
 	if isElement( player ) then
 		local car = getPedOccupiedVehicle( source)
 		if car == veh then
+			if car.m_Premium then
+				client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+				return
+			end
 			if tonumber(price) > 0 then
 				client.lastContract = player
 				client:triggerEvent("closeVehicleContract")
 				player:triggerEvent("vehicleConfirmSell", player, price, car, source)
 				source:sendInfo(_("Ein Anfrage zum Kauf wurde abgeschickt!", source))
-			else client:sendError(_("Ungültiger Betrag!", client))
+			else
+				client:sendError(_("Ungültiger Betrag!", client))
 			end
 		else source:sendError(_("Du sitzt nicht im Fahrzeug!", source))
 		end
@@ -42,6 +47,10 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 			if player ~= client then
 				if player.lastContract == client then
 					if money >= price then
+						if car.m_Premium then
+							client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+							return
+						end
 						client:triggerEvent("closeVehicleAccept")
 						client:sendInfo(_("Der Handel wurde abgeschlossen!", client))
 						player:sendInfo(_("Der Handel wurde abgeschlossen!", player))
