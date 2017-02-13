@@ -18,7 +18,7 @@ Action.Ped.create.trigger = function(self)
 		self.model,
 		self.x, self.y, self.z,
 		self.rotation)
-	
+
 	setElementDimension(self.cutscene.m_Elements[self.id], PRIVATE_DIMENSION_CLIENT)
 end
 
@@ -48,8 +48,7 @@ end
 
 Action.Ped.giveWeapon.trigger = function(self)
 	local ped = self.cutscene.m_Elements[self.id]
-	local weapon = self.cutscene.m_Elements[self.weapon]
-	givePedWeapon(ped, weapon, 30, true)
+	givePedWeapon(ped, self.weapon, 30, true)
 end
 
 -- setControlState
