@@ -183,6 +183,7 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			playerPointer.state = "Running"
 			playerPointer.startTick = getTickCount()
 			playerPointer.checkpoints = {}
+			player:giveAchievement(58) -- Kartdriver
 		end
 	elseif playerPointer.state == "Running" then
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
