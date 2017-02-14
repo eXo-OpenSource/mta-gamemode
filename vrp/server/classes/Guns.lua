@@ -30,6 +30,8 @@ end
 
 function Guns:Event_onTaser(target)
 	if client.vehicle or target.vehicle then return end
+	client:giveAchievement(65)
+
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
 	toggleAllControls(target,false)
 	target:sendInfo(_("Du wurdest von %s getazert!", target, client:getName()))

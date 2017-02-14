@@ -182,6 +182,14 @@ function Faction:removePlayer(playerId)
 		playerId = playerId:getId()
 	end
 
+	local player, isOffline = DatabasePlayer.getFromId(playerId)
+	if player and not isOffline then
+		player:giveAchievement(67)
+	end
+	if isOffline then
+		delete(player)
+	end
+
 	self.m_Players[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
@@ -235,13 +243,19 @@ function Faction:setPlayerRank(playerId, rank)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
 	end
+	local player, isOffline = DatabasePlayer.getFromId(playerId)
+	if rank == 6 and not isOffline then
+		player:giveAchievement(66)
+	end
 
 	self.m_Players[playerId] = rank
 	if self:isEvilFaction() then
-		local player, isOffline = DatabasePlayer.getFromId(playerId)
 		if player and not isOffline then
 			self:changeSkin(player)
 		end
+	end
+	if isOffline then
+		delete(player)
 	end
 	sql:queryExec("UPDATE ??_character SET FactionRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
 end

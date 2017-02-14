@@ -150,6 +150,8 @@ function GroupManager:Event_Create(name, type)
 	-- Create the group and the the client as leader (rank 2)
 	local group = Group.create(name, typeInt)
 	if group then
+		client:giveAchievement(60)
+
 		group:addPlayer(client, GroupRank.Leader)
 		client:takeMoney(GroupManager.GroupCosts, "Firmen/Gang Gründung")
 		client:sendSuccess(_("Herzlichen Glückwunsch! Du bist nun Leiter der %s %s", client, type, name))

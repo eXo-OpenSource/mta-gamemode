@@ -257,6 +257,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 				if killer:isFactionDuty() and not source:isFactionDuty() then
 					local wantedLevel = source:getWantedLevel()
 					if wantedLevel > 0 then
+						killer:giveAchievement(64)
 						source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))
 						FactionState:getSingleton():Event_JailPlayer(source, false, true, killer)
 						return
