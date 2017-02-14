@@ -65,6 +65,10 @@ function Toptimes:addNewToptime(PlayerID, time)
     return true
 end
 
+function Toptimes:getToptime()
+	return self.m_Toptimes[1]
+end
+
 function Toptimes:removeToptime(ID)
     if self.m_Toptimes[ID] then
         table.remove(self.m_Toptimes, ID)

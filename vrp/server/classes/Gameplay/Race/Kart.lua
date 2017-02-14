@@ -183,11 +183,12 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			playerPointer.state = "Running"
 			playerPointer.startTick = getTickCount()
 			playerPointer.checkpoints = {}
-			player:giveAchievement(58) -- Kartdriver
 		end
 	elseif playerPointer.state == "Running" then
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
 			-- get last toptimedatas to calc delta time
+			local mapToptime = self.m_Toptimes:getTopTime() or 0
+
 			local toptimeData = self.m_Toptimes:getToptimeFromPlayer(player:getId())
 			local oldToptime = toptimeData and toptimeData.time or 0
 
@@ -196,6 +197,11 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			playerPointer.startTick = getTickCount()
 			playerPointer.checkpoints = {}
 			playerPointer.laps = playerPointer.laps + 1
+
+			player:giveAchievement(58) -- Kartdriver
+			if lapTime < mapToptime then
+				player:giveAchievement(59) -- Kart Pro
+			end
 
 			local deltaTime = lapTime - oldToptime
 
