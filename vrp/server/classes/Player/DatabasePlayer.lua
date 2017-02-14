@@ -339,10 +339,10 @@ function DatabasePlayer:getWarns()
 	return self.m_Warns
 end
 
-function DatabasePlayer:setWantedLevel(level, disableAchievment)
+function DatabasePlayer:setWantedLevel(level, disableAchievement)
 	if level > 6 then level = 6 end
 	if level < 0 then level = 0 end
-	if not disableAchievment then
+	if not disableAchievement then
 		-- give Achievement
 		if level == 6 then
 			self:giveAchievement(46)

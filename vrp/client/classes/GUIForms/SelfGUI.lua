@@ -121,8 +121,8 @@ function SelfGUI:constructor()
 	self.m_WarnButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", true, tabGeneral):setBarColor(Color.Yellow)
 	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
 
-	self.m_AchievmentButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievments", true, tabGeneral):setBarColor(Color.Red)
-	self.m_AchievmentButton.onLeftClick = bind(self.AchievmentButton_Click, self)
+	self.m_AchievementButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievements", true, tabGeneral):setBarColor(Color.Red)
+	self.m_AchievementButton.onLeftClick = bind(self.AchievementButton_Click, self)
 
 	self.m_ShortMessageLog = VRPButton:new(self.m_Width*0.62, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"ShortMessage-Log", true, tabGeneral):setBarColor(Color.Orange)
 	self.m_ShortMessageLog.onLeftClick = function()
@@ -434,7 +434,7 @@ function SelfGUI:AdminButton_Click()
 	triggerServerEvent("openAdminGUI", localPlayer)
 end
 
-function SelfGUI:AchievmentButton_Click()
+function SelfGUI:AchievementButton_Click()
 	self:close()
 	AchievementGUI:getSingleton():open()
 end

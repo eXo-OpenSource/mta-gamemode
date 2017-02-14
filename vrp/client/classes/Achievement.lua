@@ -2,7 +2,7 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        client/classes/Achievement.lua
--- *  PURPOSE:     Class for Achievments
+-- *  PURPOSE:     Class for Achievements
 -- *
 -- ****************************************************************************
 
