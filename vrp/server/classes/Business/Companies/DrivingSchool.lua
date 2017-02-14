@@ -66,7 +66,12 @@ function DrivingSchool:createDrivingSchoolMarker(pos)
     addEventHandler("onPickupHit", self.m_DrivingSchoolPickup,
         function(hitElement)
             if getElementType(hitElement) == "player" then
-                hitElement:triggerEvent("showDrivingSchoolMenu",#self:getOnlinePlayers())
+                local instructorTable = {}
+				for k, player in pairs(self:getOnlinePlayers()) do
+					instructorTable[player.name] = player:getPublicSync("Company:Duty") and "(Im Dienst)" or "(Nicht im Dienst)"
+				end
+
+				hitElement:triggerEvent("showDrivingSchoolMenu",#self:getOnlinePlayers(), instructorTable)
             end
             cancelEvent()
         end
