@@ -281,6 +281,10 @@ function string.duration(seconds)
 	end
 end
 
+function string.short(str, i)
+	return #str > i and str:sub(0, i).."..." or str
+end
+
 function table.setIndexToInteger(tab)
 	local newTab = {}
 	for index, value in pairs(tab) do
