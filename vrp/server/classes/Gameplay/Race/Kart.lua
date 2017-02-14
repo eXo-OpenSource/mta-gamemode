@@ -180,6 +180,7 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 
 	if playerPointer.state == "Flying" then
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
+			player:sendShortMessage(_("Einführungsrunde abgeschlossen!", player))
 			playerPointer.state = "Running"
 			playerPointer.startTick = getTickCount()
 			playerPointer.checkpoints = {}

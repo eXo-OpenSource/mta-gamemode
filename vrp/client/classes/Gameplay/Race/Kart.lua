@@ -57,39 +57,26 @@ function Kart:startFinishMarkerHit(hitPlayer, matchingDimension)
 	if self.m_State == "Flying" then
 		if #self.m_HittedCheckpoints == #self.m_Checkpoints then
 			self.m_State = "Running"
-			self.m_StartTick = getTickCount()
-			self.m_HittedCheckpoints = {}
-
-			HUDRace:getSingleton():setStartTick(true)
-			HUDRace:getSingleton():setLaps(self.m_Laps)
-
-			self.m_GhostRecord:startRecording()
-			if Kart.record then
-				self.m_GhostPlayback:startPlayback()
-			end
 		end
 	elseif self.m_State == "Running" then
 		if #self.m_HittedCheckpoints == #self.m_Checkpoints then
-			self.m_StartTick = getTickCount()
-			self.m_HittedCheckpoints = {}
-
 			self.m_Laps = self.m_Laps + 1
+		end
+	end
 
-			HUDRace:getSingleton():setStartTick(true)
-			HUDRace:getSingleton():setLaps(self.m_Laps)
+	if self.m_State == "Running" then
+		self.m_StartTick = getTickCount()
+		self.m_HittedCheckpoints = {}
 
-			self.m_GhostRecord:stopRecording()
-			self.m_LastGhost = self.m_GhostRecord.m_Record
-			self.m_GhostRecord:startRecording()
+		HUDRace:getSingleton():setStartTick(true)
+		HUDRace:getSingleton():setLaps(self.m_Laps)
 
-			if Kart.record then
-				self.m_GhostPlayback:startPlayback()
-			end
-		else
-			self.m_StartTick = getTickCount()
-			self.m_HittedCheckpoints = {}
+		self.m_GhostRecord:stopRecording()
+		self.m_LastGhost = self.m_GhostRecord.m_Record
+		self.m_GhostRecord:startRecording()
 
-			HUDRace:getSingleton():setStartTick(true)
+		if Kart.record then
+			self.m_GhostPlayback:startPlayback()
 		end
 	end
 end
