@@ -24,6 +24,10 @@ function Achievement:giveAchievement (player, id)
 	end
 end
 
+function Achievement:getAchievements()
+	return self.ms_Achievements
+end
+
 function Achievement:Event_onReceiveAchievements (arg)
 	self.ms_Achievements = arg
 end

@@ -459,6 +459,12 @@ function LocalPlayer:Event_setAdmin(player, rank)
 	end
 end
 
+
+function LocalPlayer:getAchievements ()
+	return self:getPrivateSync("Achievements") or {[0] = false}
+end
+
+
 function LocalPlayer:Event_toggleRadar(state)
 	HUDRadar:getSingleton():setEnabled(state)
 end

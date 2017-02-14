@@ -9,7 +9,7 @@
 Achievement = inherit(Singleton)
 
 function Achievement:constructor ()
-	local row = sql:queryFetch("SELECT * FROM ??_achievements;", sql:getPrefix())
+	local row = sql:queryFetch("SELECT * FROM ??_achievements WHERE enabled = 1;", sql:getPrefix())
 	if not row then
 		delete(Achievement)
 		return false;
