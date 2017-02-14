@@ -288,7 +288,7 @@ end
 function table.setIndexToInteger(tab)
 	local newTab = {}
 	for index, value in pairs(tab) do
-		if type(value) == "table" then
+		if tonumber(index) then
 			newTab[tonumber(index)] = value
 		else
 			newTab[index] = value
