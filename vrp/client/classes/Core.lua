@@ -139,39 +139,21 @@ function Core:afterLogin()
 	Collectables:new()
 	KeyBinds:new()
 	Indicator:new()
+	Tour:new()
 
 	if DEBUG then
 		Debugging:new()
 		DebugGUI.initalize()
 	end
 
+	-- Pre-Instantiate important GUIS
 	SelfGUI:new()
 	SelfGUI:getSingleton():close()
-	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
-
-	FactionGUI:new()
-	FactionGUI:getSingleton():close()
-	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
-
 	ScoreboardGUI:new()
 	ScoreboardGUI:getSingleton():close()
 
 	Phone:new()
 	Phone:getSingleton():close()
-
-	-- Pre-Instantiate important GUIS
-	-- TODO: I think we have to improve this block, currently i don't have an idea. (In my tests this takes ~32ms, relevant?)
-	GroupGUI:new()
-	GroupGUI:getSingleton():close()
-	TicketGUI:new()
-	TicketGUI:getSingleton():close()
-	CompanyGUI:new()
-	CompanyGUI:getSingleton():close()
-	MigratorPanel:new()
-	MigratorPanel:getSingleton():close()
-	KeyBindings:new()
-	KeyBindings:getSingleton():close()
-	Tour:new()
 
 	if not localPlayer:getJob() then
 		-- Change text in help menu (to the main text)
@@ -193,6 +175,13 @@ function Core:afterLogin()
 	setElementFrozen(localPlayer,false)
 	triggerServerEvent("remoteClientSpawn", localPlayer)
 	-- //Miami Spawn deactivated:
+
+	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
+	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
+	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
+	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
+	addCommandHandler("ticket", function() TicketGUI:getSingleton():open() end)
+	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
 end
 
 function Core:destructor()
