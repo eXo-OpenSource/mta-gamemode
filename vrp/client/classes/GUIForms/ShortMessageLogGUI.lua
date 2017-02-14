@@ -31,7 +31,12 @@ function ShortMessageLogGUI:clear()
 	outputChatBox("[ShortMessage] Log wurde geleert!", 200,200,0);
 end
 
+function ShortMessageLogGUI:onHide()
+	SelfGUI:getSingleton():removeWindow(self)
+end
+
 function ShortMessageLogGUI:onShow()
+	SelfGUI:getSingleton():addWindow(self)
 	if self.m_LogGrid then
 		self.m_LogGrid:clear()
 		local item, string
