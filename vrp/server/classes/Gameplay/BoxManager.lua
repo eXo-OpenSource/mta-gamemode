@@ -123,6 +123,14 @@ function BoxManager:declineFight(player, target, game)
 	target:sendShortMessage(_("Du hast die Boxkampf-Anfrage von %s abgelehnt!", target, target:getName()))
 end
 
+function BoxManager:sendShortMessage(msg)
+	for index, playerItem in pairs(self.m_BoxHallCol:getElementsWithin("player")) do
+		if playerItem:getDimension() == 0 and playerItem:getInterior() == 5 then
+			playerItem:sendShortMessage(msg)
+		end
+	end
+end
+
 function BoxManager:startFight(player1, player2, money)
 	self.m_BoxFight["players"] = {player1, player2}
 	self.m_BoxFight["active"] = true
@@ -136,10 +144,13 @@ function BoxManager:startFight(player1, player2, money)
 		playeritem:setArmor(0)
 		playeritem:setHealth(100)
 		playeritem:setModel(data["Skin"])
+		setPedFightingStyle(playeritem, 5)
 		playeritem:takeMoney(money, "Boxkampf-Einsatz")
 		playeritem.boxing = true
 		takeAllWeapons(playeritem)
 	end
+	self:sendShortMessage(_("%s und %s haben einen Boxkampf gestartet!", player1, player1:getName(), player2:getName()))
+
 end
 
 function BoxManager:resetFight()
@@ -147,6 +158,7 @@ function BoxManager:resetFight()
 		if playeritem and isElement(playeritem) then
 			if not playeritem:isDead() then
 				playeritem:setDefaultSkin()
+				setPedFightingStyle(playeritem, 4)
 				playeritem:setPosition(BoxManager.Data[index]["SpawnPos"])
 			end
 			playeritem.boxing = false
@@ -171,6 +183,8 @@ function BoxManager:onWasted(looser)
 	winner:sendMessage(_("Du hast den Boxkampf gegen %s gewonnen!", winner, looser:getName()), 0, 255, 0)
 	looser:sendMessage(_("Du hast den Boxkampf gegen %s verloren!", looser, winner:getName()), 0, 255, 0)
 	winner:giveMoney(self.m_BoxFight["money"]*2, "Boxkampf-Gewinn")
+	self:sendShortMessage(_("%s hat den Boxkampf gegen %s gewonnen!", winner, winner:getName(), looser:getName()))
+
 	self:resetFight()
 	return
 end
