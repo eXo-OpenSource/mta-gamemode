@@ -1,10 +1,9 @@
 SceneTour = {
 	name = "Intro";
-	--startscene = "Welcome";
 	startscene = "Welcome";
 	debug = true;
 
-	-- Scene 1 
+	-- Scene 1
 	{
 		uid = "Welcome";
 		letterbox = true;
@@ -70,7 +69,7 @@ SceneTour = {
 			action = "Graphic.setLetterBoxText";
 			duration = 5000;
 			starttick = 4000;
-			text = "Bevor es losgehen kann ein paar Worte zum Spielkonzept.";
+			text = "Bevor es losgehen kann, ein paar Worte zum Spielkonzept.";
 		};
 		{
 			action = "Graphic.setLetterBoxText";
@@ -204,7 +203,7 @@ SceneTour = {
 			id = "robberCop";
 			weapon = 24;
 		};
-		
+
 		{
 			action = "Camera.move"; -- Move to robbers
 			pos = {1510.83, -1604.54, 28.27};
@@ -214,7 +213,7 @@ SceneTour = {
 			starttick = 18000;
 			duration = 4000;
 		};
-		
+
 		{
 			action = "Ped.setAnimation";
 			starttick = 23000;

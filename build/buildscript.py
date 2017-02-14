@@ -105,23 +105,19 @@ else:
 clientCall.extend([ "-o", outdir+"client.luac" ])
 clientCall.extend(files["client"])
 
-exit_status = 0
 process = subprocess.Popen(serverCall, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 output = process.communicate()
 output = str(output)
 if output[3:(compiler_length+3)] == compiler:
-	exit_status = 1
-	print("Error:\t" + output[(compiler_length+11):-11])
+	print("Error:\t" + output[(compiler_length+11):-9])
+	sys.exit(1)
 
 process = subprocess.Popen(clientCall, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 output = process.communicate()
 output = str(output)
 if output[3:(compiler_length+3)] == compiler:
-	exit_status = 1
-	print("Error:\t" + output[(compiler_length+11):-11])
+	print("Error:\t" + output[(compiler_length+11):-9])
+	sys.exit(1)
 
 
-if exit_status != 0:
-	sys.exit(exit_status)
-else:
-	print("Done. (took %.2f seconds)" % (time.time() - start))
+print("Done. (took %.2f seconds)" % (time.time() - start))
