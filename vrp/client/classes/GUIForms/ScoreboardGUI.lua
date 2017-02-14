@@ -160,7 +160,7 @@ function ScoreboardGUI:insertPlayers()
 			player:getName(),
 			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
 			player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
-			gname,
+			string.short(gname, 16),
 			hours..":"..minutes,
 			karma >= 0 and "+"..karma or " "..tostring(karma),
 			ping or " - "
