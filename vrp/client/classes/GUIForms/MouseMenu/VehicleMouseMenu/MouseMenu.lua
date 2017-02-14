@@ -103,17 +103,17 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 				end
 			)
 		end
-		self:addItem(_"an Server Verkaufen",
+		self:addItem(_"An Server verkaufen",
 			function()
 				if self:getElement() then
 					triggerServerEvent("vehicleSell", self:getElement())
 				end
 			end
 		)
-		self:addItem(_"an Spieler Verkaufen",
+		self:addItem(_"An Spieler verkaufen",
 			function()
 				if self:getElement() then
-					outputChatBox("[I] Begebe dich zur Stadthalle und besorge dir einen Vertrag zum verkaufen!",200, 200, 0, true)
+					outputChatBox("[I] Begib dich zur Stadthalle und besorge dir einen Vertrag zum Verkaufen!",200, 200, 0, true)
 				end
 			end
 		)

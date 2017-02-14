@@ -31,7 +31,7 @@ function AppDashboard:onOpen(form)
 	self.m_TabInvitation = tabInvitation
 
 	local tabGameInvitation = self.m_TabPanel:addTab(_"Anfragen", FontAwesomeSymbols.Gamepad)
-	GUILabel:new(10, 3, 200, 50, "Spiel-Anfragen", tabGameInvitation):setColor(Color.White)
+	GUILabel:new(10, 3, 200, 50, "Spielanfragen", tabGameInvitation):setColor(Color.White)
 	tabGameInvitation.m_DashArea = GUIScrollableArea:new(1, 53, 258, 355, 258, 1, true, false, tabGameInvitation, 53)
 	self.m_TabGameInvitation = tabGameInvitation
 

@@ -28,7 +28,7 @@ function Event:virtual_constructor(Id)
 				if not self:isMember(hitElement) then
 					self:openGUI(hitElement)
 				else
-					hitElement:sendWarning(_("Du nimmst bereits an diesem Event Teil!", hitElement))
+					hitElement:sendWarning(_("Du nimmst bereits an diesem Event teil!", hitElement))
 				end
 			end
 		end
