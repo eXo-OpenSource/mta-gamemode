@@ -88,7 +88,7 @@ function DatabasePlayer:load()
 	end
 
 	if row.Achievements and type(fromJSON(row.Achievements)) == "table" then
-		self:updateAchievements(fromJSON(row.Achievements))
+		self:updateAchievements(table.setIndexToInteger(fromJSON(row.Achievements)))
 	else
 		self:updateAchievements({[0] = false}) -- Dummy element, otherwise the JSON string is built wrong
 	end
@@ -585,8 +585,9 @@ function DatabasePlayer:updateAchievements (tbl)
 	if tbl ~= nil then
 		self.m_Achievements = tbl
 	end
-	if self:isActive() then self:setPrivateSync("Achievements", table.copy(self.m_Achievements)) end
-	-- Todo: In my tests, the table must be copied, otherwise the client didn't received it. --> Find out why (Jusonex can't reproduce it)
+	if self:isActive() then
+		self:setPrivateSync("Achievements", self.m_Achievements)
+	end
 end
 
 function DatabasePlayer:getAchievements ()
