@@ -46,6 +46,12 @@ function SelfGUI:constructor()
 	self.m_TabGeneral = tabGeneral
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.10, _"Allgemein", tabGeneral)
 
+
+	if localPlayer:getRank() > 0 then
+		self.m_AdminButton = VRPButton:new(self.m_Width-self.m_Width*0.29, self.m_Height*0.02, self.m_Width*0.27, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
+		self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
+	end
+
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.11, self.m_Width*0.25, self.m_Height*0.06, _"Karma:", tabGeneral)
 	self.m_GeneralKarmaLabel = GUILabel:new(self.m_Width*0.3, self.m_Height*0.11, self.m_Width*0.4, self.m_Height*0.06, "", tabGeneral)
 
@@ -115,20 +121,13 @@ function SelfGUI:constructor()
 	self.m_WarnButton = VRPButton:new(self.m_Width*0.02, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Warns anzeigen", true, tabGeneral):setBarColor(Color.Yellow)
 	self.m_WarnButton.onLeftClick = function() self:close() WarnManagement:new(localPlayer) end
 
-	if localPlayer:getRank() > 0 then
-		self.m_AdminButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Adminmenü", true, tabGeneral):setBarColor(Color.Red)
-		self.m_AdminButton.onLeftClick = bind(self.AdminButton_Click, self)
-	end
+	self.m_AchievmentButton = VRPButton:new(self.m_Width*0.32, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"Achievments", true, tabGeneral):setBarColor(Color.Red)
+	self.m_AchievmentButton.onLeftClick = bind(self.AchievmentButton_Click, self)
 
 	self.m_ShortMessageLog = VRPButton:new(self.m_Width*0.62, self.m_Height*0.83, self.m_Width*0.27, self.m_Height*0.07, _"ShortMessage-Log", true, tabGeneral):setBarColor(Color.Orange)
-	ShortMessageLogGUI:new()
 	self.m_ShortMessageLog.onLeftClick = function()
-		if ShortMessageLogGUI then
-			if not ShortMessageLogGUI:getSingleton():isVisible() then
-				ShortMessageLogGUI:getSingleton():show()
-				self:close()
-			end
-		end
+		ShortMessageLogGUI:getSingleton():open()
+		self:close()
 	end
 
 	-- Tab: Statistics
@@ -433,6 +432,11 @@ end
 function SelfGUI:AdminButton_Click()
 	self:close()
 	triggerServerEvent("openAdminGUI", localPlayer)
+end
+
+function SelfGUI:AchievmentButton_Click()
+	self:close()
+	AchievementGUI:getSingleton():open()
 end
 
 function SelfGUI:MigratorButton_Click()
