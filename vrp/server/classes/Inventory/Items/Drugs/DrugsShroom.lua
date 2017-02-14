@@ -27,6 +27,8 @@ function DrugsShroom:destructor()
 end
 
 function DrugsShroom:use( player )
+	ItemDrugs.use(self, player)
+
   	player:triggerEvent("onClientItemUse", "Shrooms", SHROOM_EXPIRETIME )
     if isTimer( player.m_ShroomExpireTimer ) then
       killTimer( player.m_ShroomExpireTimer )

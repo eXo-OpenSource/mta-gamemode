@@ -504,6 +504,9 @@ function VehicleManager:Event_vehicleAddKey(player)
 	-- Finally, add the key
 	source:addKey(player)
 
+	-- Give achievement
+	client:giveAchievement(70)
+
 	-- Tell the client that we added a new key
 	triggerClientEvent(client, "vehicleKeysRetrieve", source, source:getKeyNameList())
 

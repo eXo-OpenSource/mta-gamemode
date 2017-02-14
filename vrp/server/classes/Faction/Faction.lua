@@ -168,6 +168,7 @@ function Faction:addPlayer(playerId, rank)
 	self.m_Players[playerId] = rank
 	local player = Player.getFromId(playerId)
 	if player then
+		player:giveAchievement(68)
 		player:setFaction(self)
 		if self:isEvilFaction() then
 			self:changeSkin(player)
@@ -182,18 +183,11 @@ function Faction:removePlayer(playerId)
 		playerId = playerId:getId()
 	end
 
-	local player, isOffline = DatabasePlayer.getFromId(playerId)
-	if player and not isOffline then
-		player:giveAchievement(67)
-	end
-	if isOffline then
-		delete(player)
-	end
-
 	self.m_Players[playerId] = nil
 	local player = Player.getFromId(playerId)
 	if player then
 		player:setFaction(nil)
+		player:giveAchievement(67)
 		if player:isFactionDuty() then
 			takeAllWeapons(player)
 			player:setDefaultSkin()
@@ -243,14 +237,14 @@ function Faction:setPlayerRank(playerId, rank)
 	if type(playerId) == "userdata" then
 		playerId = playerId:getId()
 	end
-	local player, isOffline = DatabasePlayer.getFromId(playerId)
-	if rank == 6 and not isOffline then
+	local player = Player.getFromId(playerId)
+	if rank == 6 then
 		player:giveAchievement(66)
 	end
 
 	self.m_Players[playerId] = rank
 	if self:isEvilFaction() then
-		if player and not isOffline then
+		if player then
 			self:changeSkin(player)
 		end
 	end
