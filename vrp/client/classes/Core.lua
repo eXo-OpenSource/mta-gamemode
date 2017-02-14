@@ -180,7 +180,6 @@ function Core:afterLogin()
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
-	addCommandHandler("ticket", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
 end
 
