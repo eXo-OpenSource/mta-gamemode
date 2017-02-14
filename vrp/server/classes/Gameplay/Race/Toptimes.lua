@@ -66,7 +66,7 @@ function Toptimes:addNewToptime(PlayerID, time)
 end
 
 function Toptimes:getToptime()
-	return self.m_Toptimes[1]
+	return self.m_Toptimes[1].time
 end
 
 function Toptimes:removeToptime(ID)

@@ -187,7 +187,7 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 	elseif playerPointer.state == "Running" then
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
 			-- get last toptimedatas to calc delta time
-			local mapToptime = self.m_Toptimes:getTopTime() or 0
+			local mapToptime = self.m_Toptimes:getToptime() or 0
 
 			local toptimeData = self.m_Toptimes:getToptimeFromPlayer(player:getId())
 			local oldToptime = toptimeData and toptimeData.time or 0
