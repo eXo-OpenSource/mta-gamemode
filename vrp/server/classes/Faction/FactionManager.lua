@@ -306,7 +306,7 @@ function FactionManager:Event_factionRankUp(playerId)
 				player:save()
 			end
 
-			if playerRank < FactionRank.Manager then
+			if playerRank < FactionRank.Leader then
 				faction:setPlayerRank(playerId, playerRank + 1)
 				faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
 				if not isOffline then
