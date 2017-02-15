@@ -23,6 +23,7 @@ end)
 function Player:constructor()
 	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	setElementFrozen(self, true)
+	self:setVoiceBroadcastTo(nil)
 
 	self.m_PrivateSync = {}
 	self.m_PrivateSyncUpdate = {}
