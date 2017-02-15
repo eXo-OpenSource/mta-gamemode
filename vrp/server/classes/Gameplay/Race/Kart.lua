@@ -188,10 +188,8 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 	elseif playerPointer.state == "Running" then
 		if #playerPointer.checkpoints == #self.m_Checkpoints then
 			-- get last toptimedatas to calc delta time
-			local mapToptime = self.m_Toptimes:getToptime() or 0
-
 			local toptimeData = self.m_Toptimes:getToptimeFromPlayer(player:getId())
-			local oldToptime = toptimeData and toptimeData.time or 0
+			local oldToptime = toptimeData and toptimeData.time or false
 
 			local lapTime = getTickCount() - playerPointer.startTick
 			local anyChange = self.m_Toptimes:addNewToptime(player:getId(), lapTime)
@@ -199,22 +197,33 @@ function Kart:startFinishMarkerHit(hitElement, matchingDimension)
 			playerPointer.checkpoints = {}
 			playerPointer.laps = playerPointer.laps + 1
 
-			player:giveAchievement(58) -- Kartdriver
-			if lapTime < mapToptime then
-				player:giveAchievement(59) -- Kart Pro
+			if oldToptime then
+				local deltaTime = lapTime - oldToptime
+				player:triggerEvent("HUDRaceUpdateDelta", deltaTime)
+
+				if deltaTime < 0 then
+					player:giveAchievement(71) -- Kart Enthusiast
+				end
 			end
 
-			local deltaTime = lapTime - oldToptime
-
-			player:triggerEvent("HUDRaceUpdateDelta", deltaTime)
 			if anyChange then
 				self:syncToptimes()
 				player:triggerEvent("KartRequestGhostDriver", lapTime)
+
+				local toptimeData, pos = self.m_Toptimes:getToptimeFromPlayer(player:getId())
+				if pos == 1 then
+					player:giveAchievement(59) -- Kart Pro
+				end
 			end
 
 			if playerPointer.laps > playerPointer.selectedLaps then
 				self:onTimeRaceDone(player, playerPointer.vehicle)
+				if playerPointer.selectedLaps >= 50 then
+					player:giveAchievement(76) -- Kart Le Mans
+				end
 			end
+
+			player:giveAchievement(58) -- Kartdriver
 		else
 			player:triggerEvent("HUDRaceUpdate", true)
 			playerPointer.startTick = getTickCount()
