@@ -182,6 +182,12 @@ function Core:afterLogin()
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
+
+	for index, object in pairs(getElementsByType("object")) do -- Make ATM´s unbreakable
+		if object:getModel() == 2942 then
+			object:setBreakable(false)
+		end
+	end
 end
 
 function Core:destructor()
