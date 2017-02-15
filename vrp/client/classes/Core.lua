@@ -129,7 +129,7 @@ end
 
 function Core:afterLogin()
 	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de", "api.qrserver.com"}
+	Browser.requestDomains{"exo-reallife.de"}
 
 	RadioGUI:new()
 	KarmaBar:new()
