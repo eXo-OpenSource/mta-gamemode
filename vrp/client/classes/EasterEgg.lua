@@ -3,8 +3,8 @@ EasterEgg = inherit(Singleton)
 function EasterEgg:constructor()
 	-- Doge EasterEgg
 	self.m_DogeQRFrame = createObject(2257, 1102.8000488281, -841.70001220703, 108.19999694824, 345, 0, 7.25);
-	self.m_DogeQRFrame:setData("clickable", true)
-	self.m_DogeQRFrame:setData("qr_doge", true)
+	setElementData(self.m_DogeQRFrame, "clickable", true)
+	setElementData(self.m_DogeQRFrame, "qr_doge", true)
 	self.m_DogeString  =
 	[[
 		░░░░░░░░░▄░░░░░░░░░░░░░░▄░░░░ wow
@@ -28,7 +28,7 @@ function EasterEgg:constructor()
 		░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▀▀░░░░░░░░
 	]]
 	setObjectScale(self.m_DogeQRFrame, 1.5);
-	TextureReplace:constructor("cj_painting15", "files/images/Other/such_qr_wow.png", false, 1320, 1320, self.m_DogeQRFrame)
+	TextureReplace:new("cj_painting15", "files/images/Other/such_qr_wow.png", false, 1320, 1320, self.m_DogeQRFrame)
 end
 
 function EasterEgg:destructor()
