@@ -903,6 +903,7 @@
 	<vrpfile src="files/images/Other/parking1.png"/>
 	<vrpfile src="files/images/Other/parking2.png"/>
 	<vrpfile src="files/images/Other/such_qr_wow.png"/>
+	<vrpfile src="files/images/Other/slender.jpg"/>
 
 	<vrpfile src="files/images/Deathmatch/death_img.png"/>
 	<vrpfile src="files/images/Deathmatch/death_round.png"/>
@@ -1294,6 +1295,7 @@
 	<vrpfile src="files/audio/announcment.mp3"/>
 	<vrpfile src="files/audio/wasted.mp3"/>
 	<vrpfile src="files/audio/scary.mp3"/>
+	<vrpfile src="files/audio/scream.mp3"/>
 	<vrpfile src="files/audio/scary_source.txt"/>
 
 	<!-- Ringtones -->
