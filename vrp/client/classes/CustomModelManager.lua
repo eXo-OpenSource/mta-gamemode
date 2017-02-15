@@ -93,7 +93,7 @@ end
 
 function CustomModelManager:loadImportTXD(filePath, modelId)
 	local txd = engineLoadTXD(filePath)
-	return engineImportTXD(txd, modelId)
+	return engineImportTXD(txd, modelId), txd
 end
 
 function CustomModelManager:loadImportCOL(filePath, modelId)
@@ -103,6 +103,10 @@ end
 
 function CustomModelManager:setLODDistance(modelId, distance)
 	engineSetModelLODDistance(modelId, distance)
+end
+
+function CustomModelManager:restoreModel(modelId)
+	return engineRestoreModel(modelId)
 end
 
 function CustomModelManager:loadShader(filePath, textureName)

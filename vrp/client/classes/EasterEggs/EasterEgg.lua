@@ -29,15 +29,14 @@ function EasterEgg:constructor()
 	]]
 	setObjectScale(self.m_DogeQRFrame, 1.5);
 	TextureReplace:new("cj_painting15", "files/images/Other/such_qr_wow.png", false, 1320, 1320, self.m_DogeQRFrame)
+	addCommandHandler("doge",
+		function()
+			localPlayer:giveAchievement(77)
+			outputConsole(self.m_DogeString)
+		end
+	)
 end
 
 function EasterEgg:destructor()
 	self.m_DogeQRFrame:destroy()
-end
-
-function EasterEgg:onClick(element)
-	if element == "qr_doge" then
-		outputConsole(self.m_DogeString)
-		localPlayer:giveAchievement(77)
-	end
 end
