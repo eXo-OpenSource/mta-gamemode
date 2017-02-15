@@ -34,6 +34,11 @@ function EasterEgg:constructor()
 			outputConsole(self.m_DogeString)
 		end
 	)
+	addCommandHandler("ilife",
+		function()
+			localPlayer:giveAchievement(72)
+		end
+	)
 end
 
 function EasterEgg:destructor()
