@@ -1292,6 +1292,8 @@
 	<vrpfile src="files/audio/hb_off.mp3"/>
 	<vrpfile src="files/audio/announcment.mp3"/>
 	<vrpfile src="files/audio/wasted.mp3"/>
+	<vrpfile src="files/audio/scary.mp3"/>
+	<vrpfile src="files/audio/scary_source.txt"/>
 
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>
@@ -1453,6 +1455,9 @@
 	<vrpfile src="files/models/bed.txd" />
 	<vrpfile src="files/models/bed.dff" />
 	<vrpfile src="files/models/bed.col" />
+	<vrpfile src="files/models/scary.txd"/>
+	<vrpfile src="files/models/scary.dff"/>
+
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>

@@ -581,7 +581,7 @@ function DatabasePlayer:setHangarType(hangarType)
 	sql:queryExec("UPDATE ??_character SET hangarType = ? WHERE Id = ?", sql:getPrefix(), hangarType, self.m_Id)
 end
 
-function DatabasePlayer:updateAchievements (tbl)
+function DatabasePlayer:updateAchievements(tbl)
 	if tbl ~= nil then
 		self.m_Achievements = tbl
 	end
