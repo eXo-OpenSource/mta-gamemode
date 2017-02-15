@@ -142,6 +142,7 @@ function Player:loadCharacter()
 
 	DatabasePlayer.Map[self.m_Id] = self
 	self:loadCharacterInfo()
+	self:setPrivateSync("Id", self.m_Id)
 
 	-- Send infos to client
 	local info = {

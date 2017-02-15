@@ -340,10 +340,6 @@
 	<script src="client/classes/Tour.lua" type="client"/>
 	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
-	<script src="client/classes/EasterEggs/EasterEgg.lua" type="client"/>
-	<script src="client/classes/EasterEggs/Slenderman.lua" type="client"/>
-	<script src="client/classes/EasterEggs/Scream.lua" type="client"/>
-
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
 	<script src="client/classes/Color.lua" type="client"/>
@@ -393,6 +389,12 @@
 	<script src="client/classes/GUI/GUIMovingText.lua" type="client"/>
 	<script src="client/classes/GUI/GUIPhoneTabPanel.lua" type="client"/>
 	<script src="client/classes/GUI/GUIMiniMap.lua" type="client"/>
+
+	<!-- Eastereggs -->
+	<script src="client/classes/EasterEggs/EasterEgg.lua" type="client"/>
+	<script src="client/classes/EasterEggs/Slenderman.lua" type="client"/>
+	<script src="client/classes/EasterEggs/QRCode.lua" type="client"/>
+	<script src="client/classes/EasterEggs/Scream.lua" type="client"/>"
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>

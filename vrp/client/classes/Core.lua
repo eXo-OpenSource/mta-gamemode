@@ -112,6 +112,7 @@ function Core:ready()
 	EasterEgg:new()
 	--MiamiSpawnGUI:new() -- Miami Spawn deactivated
 
+
 	Shaders.load()
 
 	GroupProperty:new()
@@ -128,7 +129,7 @@ end
 
 function Core:afterLogin()
 	-- Request Browser Domains
-	Browser.requestDomains{"exo-reallife.de"}
+	Browser.requestDomains{"exo-reallife.de", "api.qrserver.com"}
 
 	RadioGUI:new()
 	KarmaBar:new()
