@@ -24,6 +24,15 @@ function AppDashboard:onOpen(form)
 	local tabInfo = self.m_TabPanel:addTab(_"Information", FontAwesomeSymbols.Info)
 	GUILabel:new(10, 3, 200, 50, "Dashboard", tabInfo):setColor(Color.White)
 	self.m_TabInfo = tabInfo
+	GUILabel:new(10, 65, form.m_Width-20, 22, _[[
+		Verschiedene Anfragen wie Fraktions,
+		Unternehmens, Firmen und Gang
+		Einladungen aber auch Spiele-Anfragen
+		von anderen usern werden dir hier
+		zentral angezeigt.
+
+		Du kannst diese hier akzeptieren oder ablehnen!
+	]], self.m_TabInfo):setMultiline(true)
 
 	local tabInvitation = self.m_TabPanel:addTab(_"Einladungen", FontAwesomeSymbols.Mail)
 	GUILabel:new(10, 3, 200, 50, "Einladungen", tabInvitation):setColor(Color.White)
