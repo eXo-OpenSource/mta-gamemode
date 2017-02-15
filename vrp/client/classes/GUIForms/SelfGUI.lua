@@ -235,7 +235,7 @@ function SelfGUI:constructor()
 	local tabSettings = self.m_TabPanel:addTab(_"Einstellungen")
 	self.m_TabSettings = tabSettings
 
-	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.96, tabSettings)
+	self.m_SettingsGrid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.3, self.m_Height*0.6, tabSettings)
 	self.m_SettingsGrid:addColumn(_"Einstellung", 1)
 	local SettingsTable = {"HUD", "Radar", "Nametag/Reddot", "Sonstiges"}
 	local item
@@ -247,7 +247,29 @@ function SelfGUI:constructor()
 	end
 
 
+	local tourText = Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten"
 
+	self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.07, _"Shader-Einstellungen", tabSettings):setBackgroundColor(Color.Red):setFontSize(1.2)
+	self.m_ShaderButton:setFontSize(1)
+	self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
+
+	self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.3, self.m_Height*0.07, tourText, tabSettings):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
+	self.m_ServerTour:setFontSize(1)
+	self.m_ServerTour.onLeftClick = function()
+		if not Tour:getSingleton():isActive() then
+		QuestionBox:new(
+			_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
+			function() triggerServerEvent("tourStart", localPlayer, true) end)
+			self:close()
+		else
+			triggerServerEvent("tourStop", localPlayer)
+		end
+	end
+	self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten")
+
+	self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.81, self.m_Width*0.3, self.m_Height*0.07, _"Tastenzuordnungen ändern", tabSettings):setBackgroundColor(Color.Orange):setFontSize(1.2)
+	self.m_KeyBindingsButton:setFontSize(1)
+	self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
 
 	--[[ TODO: Do we require this?
@@ -924,26 +946,7 @@ function SelfGUI:onSettingChange(setting)
 			core:set("HUD", "startScreen", state)
 		end
 
-		local tourText = Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten"
 
-		self.m_ShaderButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.57, self.m_Width*0.35, self.m_Height*0.07, _"Shader-Einstellungen", self.m_SettingBG):setBackgroundColor(Color.Red):setFontSize(1.2)
-		self.m_ShaderButton.onLeftClick = bind(self.ShaderButton_Click, self)
-
-		self.m_ServerTour = GUIButton:new(self.m_Width*0.02, self.m_Height*0.65, self.m_Width*0.35, self.m_Height*0.07, tourText, self.m_SettingBG):setBackgroundColor(Color.LightBlue):setFontSize(1.2)
-		self.m_ServerTour.onLeftClick = function()
-			if not Tour:getSingleton():isActive() then
-			QuestionBox:new(
-				_("Möchtest du eine Servertour starten? Diese bringt dir Erfahrung und eine kleine Belohnungen!"),
-				function() triggerServerEvent("tourStart", localPlayer, true) end)
-				self:close()
-			else
-				triggerServerEvent("tourStop", localPlayer)
-			end
-		end
-		self.m_ServerTour:setText(Tour:getSingleton():isActive() and _"Server-Tour beenden" or _"Server-Tour starten")
-
-		self.m_KeyBindingsButton = GUIButton:new(self.m_Width*0.02, self.m_Height*0.73, self.m_Width*0.35, self.m_Height*0.07, _"Tastenzuordnungen ändern", self.m_SettingBG):setBackgroundColor(Color.Orange):setFontSize(1.2)
-		self.m_KeyBindingsButton.onLeftClick = bind(self.KeyBindsButton_Click, self)
 
 	end
 
