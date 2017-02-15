@@ -7,7 +7,8 @@ end
 
 function EasterEgg.QRCode:onStreamIn(surface)
 	local data = {["player"] = localPlayer:getName(), ["sessionId"] = localPlayer:getSessionId(), ["id"] = localPlayer:getPrivateSync("Id")}
-	self.m_Url = ("https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://www.exo-reallife.de/ingame/achievement/qrcode.php?data=%s"):format(toJSON(data, true))
+	local json = toJSON(data, true)
+	self.m_Url = ("https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://www.exo-reallife.de/ingame/achievement/qrcode.php?data=%s"):format(json:sub(2, #json-1))
 	outputDebug(self.m_Url)
 	GUIWebView:new(0, 0, 300, 300, self.m_Url, true, surface)
 end
