@@ -92,8 +92,8 @@ Tour.Data = {
 	},
 	[2] = {
 		["Title"] = "Verlasse das Gebäude",
-		["Description"] = "Verlasse nun das Gebäude über den Aufzug.",
-		["Success"] = "Sehr gut, und gib nicht alles auf einmal aus!",
+		["Description"] = "Verlasse nun das Gebäude über den Aufzug. (Gelber Marker)",
+		["Success"] = "Sehr gut, und gib nicht alles auf einmal aus! Hol dir nun am besten am NPC ein Faggio!",
 		["Position"] = Vector3(1788.62, -1293.71, 12.54),
 		["Money"] = 50
 	},
@@ -149,8 +149,50 @@ Tour.Data = {
 	[10] = {
 		["Title"] = "Money, Money, Money",
 		["Description"] = "Nachdem du gejobbt hast solltest du dein Geld in die Bank einzahlen. Fahre zum ATM beim PD!",
-		["Success"] = "Öffne nun das Klickmenü mit 'B', klicke auf den ATM. Falls du weitere Fragen zum Server hast kannst du dich gerne im Forum (forum.eXo-reallife.de) mit dem StartGuide vertraut machen oder ein Ticket im F2-Menü schreiben.",
+		["Success"] = "Öffne nun das Klickmenü mit 'B', klicke auf den ATM. In unserem Handy (Taste U) gibt es eine Bank-App um deinen Kontostand zu überprüfen oder Geld zu überweisen!",
 		["Position"] = Vector3(1508.89, -1673.20, 13.05),
 		["Money"] = 2500
+	},
+	[11] = {
+		["Title"] = "Fishing? Still funny!",
+		["Description"] = "Der nächste Punkt auf unserer Liste ist der Angelplatz. Folge einfach wieder dem Pfeil!",
+		["Success"] = "Hier an den grünen Markern kannst du Angeln. Verkaufe deine Beute einfach bei Angler Lutz, rechts von der Treppe",
+		["Position"] = Vector3(351.64, -2085.80, 7.3),
+		["Money"] = 50
+	},
+	[12] = {
+		["Title"] = "eXo Boxing Association",
+		["Description"] = "Unser nächster Zwischenstopp führt uns zur Boxhalle!",
+		["Success"] = "In der Boxhalle kannst du gegen andere Spieler boxen. Ihr könnt optional einen Geldbetrag setzen und euch so mit gekonnten hieben etwas dazu verdienen.",
+		["Position"] = Vector3(2228.73, -1722.71, 12.7),
+		["Money"] = 50
+	},
+	[13] = {
+		["Title"] = "Alkohol ist auch eine Lösung",
+		["Description"] = "Puh viel geschaft. Machen wir nun einen Abstecher in eine Bar!",
+		["Success"] = "Es gibt zahlreiche Bars in Los Santos. Besitzer der Bar können Stripperinnen engagieren und Musik verwalten.",
+		["Position"] = Vector3(1830.46, -1683.94, 12.7),
+		["Money"] = 200
+	},
+	[14] = {
+		["Title"] = "Pferderennen",
+		["Description"] = "So, nun ab zum Pferderennen. Du findest dies im Norden von Los Santos.",
+		["Success"] = "Hier kannst du am täglichen Pferderennen teilnehmen. Gehe einfach ins Wettlokal und setze auf ein Pferd deiner Wahl!",
+		["Position"] = Vector3(1632.55, -1167.53, 23.2),
+		["Money"] = 100
+	},
+	[15] = {
+		["Title"] = "Casino",
+		["Description"] = "Der nächste Punkt ist fast nebenan. Hier ist unser Casino, du findest da drin einige nette Spiele!",
+		["Success"] = "Es gibt auf eXo-Reallife einige Multiplayer-Minigames. Klicke auf einen Spieler um diese zu starten.",
+		["Position"] = Vector3(1463.51, -1169.74, 23.3),
+		["Money"] = 250
+	},
+	[16] = {
+		["Title"] = "Formel 1 - Naja fast",
+		["Description"] = "Der letzte Punkt unserer Tour führ zu einem richtigen Highlight. Der eXo-Reallife Kartbahn!",
+		["Success"] = "Hier kannst du Rennen gegen die Uhr fahren und neue Toptimes aufstellen. Das wars mit der Tour, weiter Hilfe findest du unter F1, /report oder im Forum!",
+		["Position"] = Vector3(1295.52, 149.98, 19),
+		["Money"] = 500
 	}
 }
