@@ -61,6 +61,7 @@ function JobManager:startJobForPlayer(job, player)
 	end
 
 	-- We're ready to start the job :)
+	player:giveAchievement(75)
 	job:start(player)
 
 	-- Tell the client that we started the job

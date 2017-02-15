@@ -109,6 +109,7 @@ function Core:ready()
 	Neon.initalize()
 	AccessoireClothes:new()
 	AccessoireClothes:triggerMode()
+	EasterEgg:new()
 	--MiamiSpawnGUI:new() -- Miami Spawn deactivated
 
 	Shaders.load()

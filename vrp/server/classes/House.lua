@@ -351,6 +351,7 @@ function House:buyHouse(player)
 	end
 
 	if player:getMoney() >= self.m_Price then
+		player:giveAchievement(74)
 		if self.m_Price >= 900000 then
 			player:giveAchievement(69)
 		end
