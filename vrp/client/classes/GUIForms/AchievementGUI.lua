@@ -69,13 +69,13 @@ function AchievementGUI:onAchievementClick(id)
 		self.m_SelectedTitle:setText(utf8.escape(data["name"]))
 		self.m_SelectedDescription:setText(utf8.escape(data["desc"]))
 		if self.m_PlayerAchievements[id] then
-			self.m_SelectedGoten:setText(_"Ja"):setColor(Color.Green)
+			self.m_SelectedGoten:setText(_"Erhalten: Ja"):setColor(Color.Green)
 		else
-			self.m_SelectedGoten:setText(_"Nein"):setColor(Color.Red)
+			self.m_SelectedGoten:setText(_"Erhalten: Nein"):setColor(Color.Red)
 		end
 	else
 		self.m_SelectedTitle:setText(_"Verstecktes Achievement")
 		self.m_SelectedDescription:setText(_"Dieses Achievement wird dir erst angezeigt wenn du es findest bzw. erfüllst!")
-		self.m_SelectedGoten:setText(_"Nein"):setColor(Color.Red)
+		self.m_SelectedGoten:setText(_"Erhalten: Nein"):setColor(Color.Red)
 	end
 end
