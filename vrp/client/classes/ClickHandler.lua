@@ -157,12 +157,12 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 							element:getData("Townhall:onClick")()
 						elseif element:getData("onClickEvent") then
 							element:getData("onClickEvent")()
-						elseif element:getData("qr_doge") then
-							EasterEgg:getSingleton():onClick("qr_doge")
 						end
 					elseif getElementType(element) == "object" then
 						if getElementData(element, "bankPC") then
 							self:addMouseMenu(BankPcMouseMenu:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
+						elseif element:getData("qr_doge") then
+							EasterEgg:getSingleton():onClick("qr_doge")
 						end
 					end
 
