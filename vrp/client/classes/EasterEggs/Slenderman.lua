@@ -51,3 +51,9 @@ function EasterEgg.Slenderman:move()
 		end
 	end
 end
+
+addEventHandler("slender", root,
+	function()
+		EasterEgg.Slenderman:new(Vector3( -2820.092, -1437.242, 136.374), Vector3(0, 0, 164.168))
+	end
+)
