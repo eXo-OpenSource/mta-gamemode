@@ -21,7 +21,7 @@ function LoginGUI:constructor()
 		[[
 		Wir starten am 16.02.17
 		in die öffentliche Release
-		Phase! Sei mitdabei und teile
+		Phase! Sei mit dabei und teile
 		uns deine Erfahrungen und
 		Wünsche im Forum mit!
 		]], self.m_NewsTab):setFont(VRPFont(sh*0.03))

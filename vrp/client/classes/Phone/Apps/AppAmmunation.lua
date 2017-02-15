@@ -22,7 +22,7 @@ function AppAmmunation:onOpen(form)
 	GUILabel:new(10, 10, 200, 50, _"Ammunation", self.m_Tabs["Info"])
 	GUILabel:new(10, 65, form.m_Width-20, 22, _[[
 		Hier kannst du den Lieferservice von Ammunation nutzen.
-		Wähle einfach die gewünschten Produkte aus und klicke auf Bestellen.
+		Wähle einfach die gewünschten Produkte aus und klicke auf bestellen.
 
 		Das Geld wird bequem vom Konto abgebucht!
 	]], self.m_Tabs["Info"]):setMultiline(true)
