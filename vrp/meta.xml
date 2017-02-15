@@ -342,6 +342,7 @@
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
 	<script src="client/classes/EasterEggs/EasterEgg.lua" type="client"/>
 	<script src="client/classes/EasterEggs/Slenderman.lua" type="client"/>
+	<script src="client/classes/EasterEggs/Scream.lua" type="client"/>
 
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>

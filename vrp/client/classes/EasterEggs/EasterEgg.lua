@@ -1,6 +1,9 @@
 EasterEgg = inherit(Singleton)
 
 function EasterEgg:constructor()
+	-- Scream EasterEgg (Rescue base)
+	EasterEgg.Scream:new()
+
 	-- Doge EasterEgg
 	self.m_DogeQRFrame = createObject(2257, 1102.8000488281, -841.70001220703, 108.19999694824, 345, 0, 7.25);
 	setElementData(self.m_DogeQRFrame, "clickable", true)
