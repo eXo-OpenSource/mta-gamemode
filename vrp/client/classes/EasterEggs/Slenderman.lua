@@ -15,6 +15,7 @@ function EasterEgg.Slenderman:constructor(position, rotation)
 	self.m_Sound:setMinDistance(1)
 	self.m_Sound:attach(self.m_Ped)
 	self.m_CameraFaded = false
+	self.m_Fade = 0
 
 	-- add movement handler
 	self.m_Render = bind(self.move, self)
@@ -41,20 +42,20 @@ function EasterEgg.Slenderman:move()
 	self.m_Ped:setPosition(interpolateBetween(self.m_StartPosition, localPlayer.position, progress, "InQuad"))
 	self.m_Ped:setRotation(Vector3(0, 0, findRotation(self.m_Ped.position.x, self.m_Ped.position.y, localPlayer.position.x, localPlayer.position.y)))
 
-	if not self.m_CameraFaded then
-		local offsetX, offsetY = math.random(1,15), math.random(1,15)
-		dxDrawImage(-offsetX, -offsetY, screenWidth+15, screenHeight+15, "files/images/Other/slender.jpg", 0, 0, 0, tocolor(255, 255, 255, 200*progress), true)
+	local distance = (localPlayer.position-self.m_Ped.position):getLength()
+	if isElementOnScreen(self.m_Ped) and distance <= 50 then
+		self.m_Fade = self.m_Fade < 255 and self.m_Fade + 5 or 255
+	elseif self.m_Fade > 0 then
+		self.m_Fade = self.m_Fade - 1
+	end
 
+	local offsetX, offsetY = math.random(1,15), math.random(1,15)
+	dxDrawImage(-offsetX, -offsetY, screenWidth+15, screenHeight+15, "files/images/Other/slender.jpg", 0, 0, 0, tocolor(255, 255, 255, self.m_Fade), true)
+
+	if not self.m_CameraFaded then
 		if progress >= 0.95 then
 			fadeCamera(false, 0.3)
 			self.m_CameraFaded = true
 		end
 	end
 end
-
-addEvent("slender", true)
-addEventHandler("slender", root,
-	function()
-		EasterEgg.Slenderman:new(Vector3( -2820.092, -1437.242, 136.374), Vector3(0, 0, 164.168))
-	end
-)
