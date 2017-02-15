@@ -3,7 +3,7 @@ EasterEgg.Slenderman = inherit(Object)
 
 function EasterEgg.Slenderman:constructor(position, rotation)
 	-- load models
-	_, self.m_TXD = CustomModelManager:getSingleton():loadImportTXD("files/models/scary.txd", 230)
+	__, self.m_TXD = CustomModelManager:getSingleton():loadImportTXD("files/models/scary.txd", 230)
     CustomModelManager:getSingleton():loadImportDFF("files/models/scary.dff", 230)
 
 	-- create ped + sound

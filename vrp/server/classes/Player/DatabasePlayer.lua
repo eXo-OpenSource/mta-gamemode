@@ -603,7 +603,6 @@ function DatabasePlayer:giveAchievement (...)
 end
 
 function DatabasePlayer:getAchievementStatus (id)
-	local id = tostring(id)
 	if Achievement:isInstantiated() then
 		if self.m_Achievements[id] ~= nil then
 			return self.m_Achievements[id]
@@ -617,7 +616,6 @@ function DatabasePlayer:getAchievementStatus (id)
 end
 
 function DatabasePlayer:setAchievementStatus (id, status)
-	local id = tostring(id)
 	if Achievement:isInstantiated() then
 		self.m_Achievements[id] = status
 		self:updateAchievements()
