@@ -461,7 +461,7 @@ end
 
 
 function LocalPlayer:getAchievements ()
-	return self:getPrivateSync("Achievements") or {[0] = false}
+	return table.setIndexToInteger(fromJSON(self:getPrivateSync("Achievements"))) or {[0] = false}
 end
 
 

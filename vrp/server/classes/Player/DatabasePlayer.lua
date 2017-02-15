@@ -586,7 +586,7 @@ function DatabasePlayer:updateAchievements(tbl)
 		self.m_Achievements = tbl
 	end
 	if self:isActive() then
-		self:setPrivateSync("Achievements", self.m_Achievements)
+		self:setPrivateSync("Achievements", toJSON(self.m_Achievements))
 	end
 end
 
