@@ -769,6 +769,7 @@
 	<export function="phpSDKSendChatBox" type="server" http="true" />
 	<export function="phpSDKLoadCharacterInfo" type="server" http="true" />
 	<export function="phpSDKSendOnlinePlayers" type="server" http="true" />
+	<export function="phpSDKGiveQRAchievement" type="server" http="true" />
 
 	<!-- Files -->
 	<!-- do not replace the following file tag by vrpfile -->

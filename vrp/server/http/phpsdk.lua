@@ -59,3 +59,14 @@ function phpSDKSendOnlinePlayers()
 	outputDebugString("PHP-Request Playerlist")
 	return players
 end
+
+function phpSDKGiveQRAchievement(playerId)
+	local player, isOffline = DatabasePlayer.getFromId(playerId)
+	if isOffline then
+		delete(player)
+		return false
+	else
+		player:giveAchievement(78)
+		return true
+	end
+end
