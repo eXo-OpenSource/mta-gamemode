@@ -80,8 +80,14 @@ function HTTPProvider:start(fallbackTry)
 				self.ms_GUIInstance:setStatus("current file", v.path)
 				local responseData, errno = self:fetchAsync(v.path)
 				if errno ~= 0 then
-					self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
-					return false
+					if fallbackTry then
+						outputDebug(errno)
+						self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+						return false
+					else
+						self:start(true)
+						return
+					end
 				end
 
 				if responseData ~= "" then
