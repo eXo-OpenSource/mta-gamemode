@@ -397,7 +397,7 @@ function CompanyManager:sendAllToClient(client)
 	for i, company in pairs(CompanyManager.Map) do
 		if companyVehicleShaders[company:getId()] then
 			for i, v in pairs(company.m_Vehicles) do
-				if companyVehicleShaders[company:getId()] and companyVehicleShaders[company:getId()][v:getModel()] then
+				if v and isElement(v) and companyVehicleShaders[company:getId()] and companyVehicleShaders[company:getId()][v:getModel()] then
 					local shaderInfo = companyVehicleShaders[company:getId()][v:getModel()]
 					if shaderInfo.shaderEnabled then
 						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
