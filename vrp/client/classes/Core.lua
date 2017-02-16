@@ -21,21 +21,28 @@ function Core:constructor()
 				fadeCamera(true)
 
 				local dgi = HTTPDownloadGUI:getSingleton()
-				local provider = HTTPProvider:new(FILE_HTTP_SERVER_URL, FILE_HTTP_FALLBACK_URL, dgi)
+				local provider = HTTPProvider:new(FILE_HTTP_SERVER_URL, dgi)
 				if provider:start() then -- did the download succeed
 					delete(dgi)
 					self:onDownloadComplete()
+				else
+					outputConsole("retrying download from different mirror")
+					delete(dgi)
+					local dgi = HTTPDownloadGUI:getSingleton()
+					local provider = HTTPProvider:new(FILE_HTTP_FALLBACK_URL, dgi)
+					if provider:start() then -- did the download succeed
+						delete(dgi)
+						self:onDownloadComplete()
+					end
 				end
 			end
 		)()
 	else
-		--[[
-			DownloadGUI:new()
-			local dgi = DownloadGUI:getSingleton()
-			Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
-			setAmbientSoundEnabled( "gunfire", false )
-			showChat(true)
-		--]]
+		DownloadGUI:new()
+		local dgi = DownloadGUI:getSingleton()
+		Provider:getSingleton():requestFile("vrp.data", bind(DownloadGUI.onComplete, dgi), bind(DownloadGUI.onProgress, dgi))
+		setAmbientSoundEnabled( "gunfire", false )
+		showChat(true)
 	end
 end
 
