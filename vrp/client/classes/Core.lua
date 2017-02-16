@@ -176,6 +176,7 @@ function Core:afterLogin()
 	PlantGUI.load()
 	Fishing.load()
 	GUIForm3D.load()
+	NonCollidingSphere.load()
 
 	-- Miami Spawn deactivated:
 	HUDRadar:getSingleton():setEnabled(true)
