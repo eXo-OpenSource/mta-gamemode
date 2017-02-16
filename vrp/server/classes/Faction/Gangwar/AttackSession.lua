@@ -380,14 +380,17 @@ end
 
 function AttackSession:generateWeapons( )
 	self.m_BoxWeapons ={	}
-	for i = 1, 3 do
+	for i = 1, 2 do
 		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {31,200}
 	end
 	for i = 1, 3 do
 		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {24,200}
 	end
 	for i = 1, 3 do
-		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {30,200}
+		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {29,200}
+	end
+	for i = 1, 1 do
+		self.m_BoxWeapons[#self.m_BoxWeapons+1] = {33,200}
 	end
 end
 
