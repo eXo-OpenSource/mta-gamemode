@@ -6,7 +6,8 @@
 -- *
 -- ****************************************************************************
 local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
-local INVITATION = GIT_BRANCH == "release/production" and true or false
+--local INVITATION = GIT_BRANCH == "release/production" and true or false
+INVITATION = false
 
 Account = inherit(Object)
 addRemoteEvents{"remoteClientSpawn", "checkInvitationCode"}
