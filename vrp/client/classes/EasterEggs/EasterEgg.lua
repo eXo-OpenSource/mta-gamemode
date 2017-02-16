@@ -52,5 +52,4 @@ function EasterEgg:constructor()
 end
 
 function EasterEgg:destructor()
-	self.m_DogeQRFrame:destroy()
 end

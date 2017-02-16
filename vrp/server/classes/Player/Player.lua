@@ -207,7 +207,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -226,6 +226,11 @@ function Player:loadCharacterInfo()
 
 	-- Load weapons
 	self.m_Weapons = fromJSON(row.Weapons or "") or {}
+
+	-- Give beta Achievement
+	if toboolean(row.BetaPlayer) then
+		self:giveAchievement(83)
+	end
 
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
