@@ -102,7 +102,16 @@ function Townhall:constructor()
 	itemSpawnerPed6.Description = _"Klicke mich für Heilung an!"
 	itemSpawnerPed6.Func = function() triggerServerEvent("factionRescuePlayerHealBase", localPlayer) end
 	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed6
-
+	
+	
+	--// TOWN HALL JOB LIST 
+	local itemSpawnerPed7 = Ped.create(70, Vector3(1814.72, -1276.14, 120.26))
+	itemSpawnerPed7:setRotation(Vector3(0, 0, 180))
+	itemSpawnerPed7.Name = _"Jobliste"
+	itemSpawnerPed7.Description = _"Klicke hier für Informationen!"
+	itemSpawnerPed7.Func = function() JobHelpGUI:new() end
+	self.m_Peds[#self.m_Peds + 1] = itemSpawnerPed7
+	
 	-- Initialize
 	self:initalizePeds()
 

@@ -568,7 +568,8 @@
 	<script src="client/classes/GUIForms/MultiPlayerGameGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/AchievementGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
-
+	<script src="client/classes/GUIForms/JobHelpGUI.lua" type="client" />
+	
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
