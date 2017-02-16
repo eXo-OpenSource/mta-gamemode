@@ -119,8 +119,8 @@ addEventHandler("requestPhoneNumbers", root, function()
 	local numTable = {}
 	for index, instance in pairs(PhoneNumber.Map) do
 		number = instance:getNumber()
-		numTable[number] = {}
-		if number then 
+		if number then
+			numTable[number] = {}
 			if PHONE_NUMBER_TYPES[instance:getOwnerType()] == "faction" or PHONE_NUMBER_TYPES[instance:getOwnerType()] == "company" then
 				numTable[number]["OwnerName"] = instance:getOwner(instance):getShortName()
 			else
