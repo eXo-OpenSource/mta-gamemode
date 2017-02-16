@@ -567,7 +567,6 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 		self.m_GroupNameLabel:setText(name)
 		self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
 		self.m_GroupMenuButton:setVisible(true)
-		self.m_GroupInvitationsLabel:setVisible(false)
 		self.m_HasGroupInvation = false
 
 		if rank >= 5 then
@@ -580,11 +579,6 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
 		self.m_GroupRankLabel:setText("-")
 		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
-		self.m_GroupInvitationsLabel:setVisible(true)
-
-		if self.m_HasGroupInvation then
-			self.m_GroupInvitationsLabel:setVisible(true)
-		end
 	end
 end
 
