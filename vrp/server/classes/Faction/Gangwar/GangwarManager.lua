@@ -16,8 +16,8 @@ GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
 --// Gangwar - Constants //--
 GANGWAR_MATCH_TIME = 15
 GANGWAR_CENTER_HOLD_RANGE = 15
-GANGWAR_MIN_PLAYERS = 0
-GANGWAR_ATTACK_PAUSE = 0 --// DAY
+GANGWAR_MIN_PLAYERS = 3
+GANGWAR_ATTACK_PAUSE = 2 --// DAY
 GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
 GANGWAR_DUMP_COLOR = setBytesInInt32(240, 0, 200, 200)
 GANGWAR_ATTACK_PICKUPMODEL =  1313
@@ -206,7 +206,7 @@ end
 function Gangwar:attackArea( player )
 	local faction = player.m_Faction
 	if faction then
-		if faction:isStateFaction() == true or faction.m_Id == 4 then 
+		if faction:isStateFaction() == true or faction.m_Id == 4 then
 			return player:sendError(_("Du bist nicht berechtigt am Gangwar teilzunehmen!",  player))
 		end
 		local id = player.m_Faction.m_Id
