@@ -124,7 +124,11 @@ addEventHandler("requestPhoneNumbers", root, function()
 			if PHONE_NUMBER_TYPES[instance:getOwnerType()] == "faction" or PHONE_NUMBER_TYPES[instance:getOwnerType()] == "company" then
 				numTable[number]["OwnerName"] = instance:getOwner(instance):getShortName()
 			else
-				numTable[number]["OwnerName"] = instance:getOwner(instance):getName()
+				if instance and instance.getOwner and instance:getOwner(instance) and instance:getOwner(instance).getName and instance:getOwner(instance):getName() then
+					numTable[number]["OwnerName"] = instance:getOwner(instance):getName()
+				else
+					numTable[number]["OwnerName"] = "Unbekannt"
+				end
 			end
 			numTable[number]["OwnerType"] = PHONE_NUMBER_TYPES[instance:getOwnerType()]
 		end
