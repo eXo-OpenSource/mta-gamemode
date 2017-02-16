@@ -180,6 +180,7 @@ end
 
 function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
+		localPlayer:removeFromVehicle()
 		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
 			if localPlayer:getFaction():isStateFaction() then
 				triggerServerEvent("factionStateToggleDuty", localPlayer)
