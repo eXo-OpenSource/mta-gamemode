@@ -1003,7 +1003,7 @@ function Admin:Command_MarkPos(player, add)
 				player:setInterior(markPos[2])
 				player:setDimension(markPos[3])
 				player:setPosition(markPos[1])
-				player:setCameraTarget(player)
+				setCameraTarget(player)
 			else
 				player:sendError("Du hast keine Makierung /mark")
 			end
