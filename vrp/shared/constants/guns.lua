@@ -21,8 +21,8 @@ WEAPON_DAMAGE = {
 }
 
 DAMAGE_MULTIPLIER = {
-	[3] = 1.4, -- Torso
-	[4] = 1.4, -- Ass
+	[3] = 1.2, -- Torso
+	[4] = 1.2, -- Ass
 	[5] = 0.8, -- Left Arm
 	[6] = 0.8, -- Right Arm
 	[7] = 1, -- Left Leg
