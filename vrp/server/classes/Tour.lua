@@ -50,7 +50,7 @@ end
 function Tour:save(player)
 	if not player then player = source end
 
-	if self.m_TourPlayerData[player:getId()] then
+	if player and self.m_TourPlayerData and player:getId() and self.m_TourPlayerData[player:getId()] then
 		sql:queryExec("UPDATE ??_character SET Tour = ? WHERE Id = ?;", sql:getPrefix(), toJSON(self.m_TourPlayerData[player:getId()]), player:getId())
 	end
 end
