@@ -52,6 +52,7 @@ function Admin:constructor()
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
 
     local adminCommandBind = bind(self.command, self)
+	self.m_ToggleJetPackBind = bind(self.m_toggleJetPack, self)
 
     addCommandHandler("timeban", adminCommandBind)
     addCommandHandler("permaban", adminCommandBind)
@@ -135,7 +136,7 @@ function Admin:addAdmin(player,rank)
 	outputDebug("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
     player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
-    --if DEBUG then
+    if DEBUG or rank >= RANK.Servermanager then
 		if getAccount(player:getName().."-eXo") then removeAccount(getAccount(player:getName().."-eXo")) end
 		local pw = string.random(15)
 		local user = player:getName().."-eXo"
@@ -144,18 +145,8 @@ function Admin:addAdmin(player,rank)
 			player:logIn(self.m_MtaAccounts[player], pw)
 			ACLGroup.get("Admin"):addObject("user."..user)
 			player:triggerEvent("setClientAdmin", player, rank)
-
-			if DEBUG then
-				bindKey(player, "j", "down", function(player)
-					if not doesPedHaveJetPack(player) then
-						givePedJetPack(player)
-					else
-						removePedJetPack ( player )
-					end
-				end)
-			end
 		end
-    --end
+    end
 end
 
 function Admin:removeAdmin(player)
@@ -589,6 +580,16 @@ function Admin:chat(player,cmd,...)
 	end
 end
 
+function Admin:toggleJetpack(player)
+	if player:getRank() >= RANK.Administrator and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
+		givePedJetPack(player)
+	else
+		if doesPedHaveJetPack(player) then
+			removePedJetPack(player)
+		end
+	end
+end
+
 function Admin:toggleSupportMode(player)
     if not player:getPublicSync("supportMode") then
         player:setPublicSync("supportMode", true)
@@ -600,6 +601,7 @@ function Admin:toggleSupportMode(player)
 		player.m_SupMode = true
 		player:triggerEvent("disableDamage", true )
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "aktiviert")
+		bindKey(player, "j", "down", self.m_ToggleJetPackBind)
     else
         player:setPublicSync("supportMode", false)
         player:sendInfo(_("Support Modus deaktiviert!", player))
@@ -609,7 +611,8 @@ function Admin:toggleSupportMode(player)
 		player.m_SupMode = false
 		player:triggerEvent("disableDamage", false)
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
-
+		self:toggleJetpack(player)
+		unbindKey(player, "j", "down", self.m_ToggleJetPackBind)
     end
 end
 
