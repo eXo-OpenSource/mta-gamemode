@@ -6,7 +6,8 @@
 -- *
 -- ****************************************************************************
 JobLogistician = inherit(Job)
-local MONEY_PER_TRANSPORT = 500
+local MONEY_PER_TRANSPORT_MIN = 200
+local MONEY_PER_TRANSPORT_MAX = 500
 
 function JobLogistician:constructor()
 	Job.constructor(self)
@@ -25,11 +26,20 @@ function JobLogistician:constructor()
 	self.m_VehicleSpawner2 = VehicleSpawner:new(-209.97, -273.92, 0.5, {"DFT-30"}, 180, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner2:disable()
+
+	self:changeLoan()
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.changeLoan, self), "Logistic Job Loan Change", nil, nil, 00) -- Every Hour
+
 end
 
 function JobLogistician:start(player)
 	self.m_VehicleSpawner1:toggleForPlayer(player, true)
 	self.m_VehicleSpawner2:toggleForPlayer(player, true)
+end
+
+function JobLogistician:changeLoan()
+	self.m_MoneyPerTransport = math.random(MONEY_PER_TRANSPORT_MIN, MONEY_PER_TRANSPORT_MAX)
 end
 
 function JobLogistician:stop(player)
@@ -86,7 +96,7 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 					if source == hitElement:getData("Logistician:TargetMarker") then
 						crane:dropContainer(veh, hitElement,
 						function()
-							hitElement:giveMoney(MONEY_PER_TRANSPORT, "Logistiker Job")
+							hitElement:giveMoney(self.m_MoneyPerTransport, "Logistiker Job")
 							hitElement:givePoints(10)
 						end)
 					else
