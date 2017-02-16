@@ -86,6 +86,7 @@ function Player:destructor()
 
 	--// gangwar
 	triggerEvent("onDeloadCharacter",self)
+	self:destroyChatColShapes( )
 end
 
 function Player:connect()
