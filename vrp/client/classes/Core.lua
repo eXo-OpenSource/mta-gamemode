@@ -21,7 +21,7 @@ function Core:constructor()
 				fadeCamera(true)
 
 				local dgi = HTTPDownloadGUI:getSingleton()
-				local provider = HTTPProvider:new(FILE_HTTP_SERVER_URL, dgi)
+				local provider = HTTPProvider:new(FILE_HTTP_SERVER_URL, FILE_HTTP_FALLBACK_URL, dgi)
 				if provider:start() then -- did the download succeed
 					delete(dgi)
 					self:onDownloadComplete()

@@ -1,7 +1,8 @@
 HTTPProvider = inherit(Object)
 
-function HTTPProvider:constructor(url, dgi)
+function HTTPProvider:constructor(url, fallbackUrl, dgi)
 	self.ms_URL = url
+	self.ms_FallbackUrl = fallbackUrl
 	self.ms_GUIInstance = dgi
 end
 
@@ -16,16 +17,23 @@ end
 	</files>
 ]]
 
-function HTTPProvider:start()
+function HTTPProvider:start(fallbackTry)
 	-- request url access for download
+	if fallbackTry then self.ms_URL = self.ms_FallbackUrl end
+
 	if self:requestAccessAsync() then
 		self.ms_GUIInstance:setStatus("current file", self.ms_URL.."index.xml")
 		outputDebug(self.ms_URL.."index.xml")
 		local responseData, errno = self:fetchAsync("index.xml")
 		if errno ~= 0 then
-			outputDebug(errno)
-			self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
-			return false
+			if fallbackTry then
+				outputDebug(errno)
+				self.ms_GUIInstance:setStatus("failed", ("Error #%d"):format(errno))
+				return false
+			else
+				self:start(true)
+				return
+			end
 		end
 
 		outputDebug(responseData)
