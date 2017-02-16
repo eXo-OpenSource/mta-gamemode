@@ -946,7 +946,9 @@ function FactionState:Event_FactionRearm()
 	end
 end
 
-function FactionState:Event_toggleDuty()
+function FactionState:Event_toggleDuty(wasted)
+	if wasted then client:removeFromVehicle() end
+
 	if getPedOccupiedVehicle(client) then
 		return client:sendError("Steige erst aus dem Fahrzeug aus!")
 	end
