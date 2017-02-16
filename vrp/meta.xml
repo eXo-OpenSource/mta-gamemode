@@ -1525,7 +1525,6 @@
 	<include resource="VehicleReflections" />
 	<include resource="Water" />
 	<include resource="WetRoads" />
-	<include resource="Sun" />
 
 	<!-- ACL Request -->
 	<aclrequest>
