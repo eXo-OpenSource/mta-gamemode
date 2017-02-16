@@ -8,10 +8,16 @@ factionWTDestination = {}
 
 TICKET_PRICE = 2000
 
+
+
 FACTION_STATE_WT_DESTINATION = Vector3(1598.78064, -1611.63953, 12.5)
 WEAPONTRUCK_NAME = {["evil"] = "Waffentruck", ["state"] = "Staats-Waffentruck"}
 WEAPONTRUCK_NAME_SHORT = {["evil"] = "Waffentruck", ["state"] = "Staats-WT"}
 
+WEAPONTRUCK_MIN_MEMBERS = {["evil"] = 3, ["state"] = 3}
+BANKROB_MIN_MEMBERS = 5
+WEEDTRUCK_MIN_MEMBERS = 3
+SHOPROB_MIN_MEMBERS = 3
 
 FACTION_MAX_RANK_LOANS ={
 	[0] = 750,

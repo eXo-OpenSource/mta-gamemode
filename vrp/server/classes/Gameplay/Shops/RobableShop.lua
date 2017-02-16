@@ -44,6 +44,10 @@ function RobableShop:Ped_Targetted(ped, attacker)
 			if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
 				return false
 			end
+			if FactionState:getSingleton():countPlayers() < SHOPROB_MIN_MEMBERS then
+				attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, SHOPROB_MIN_MEMBERS))
+				return false
+			end
 			local shop = ped.Shop
 			self.m_Shop = shop
 			if shop:getMoney() >= 250 then

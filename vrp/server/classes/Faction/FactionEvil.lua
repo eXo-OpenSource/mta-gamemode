@@ -110,6 +110,11 @@ function FactionEvil:getOnlinePlayers()
 	return players
 end
 
+function FactionEvil:countPlayers()
+	local count = #self:getOnlinePlayers()
+	return count
+end
+
 function FactionEvil:giveKarmaToOnlineMembers(karma, reason)
 	for k, player in pairs(self:getOnlinePlayers()) do
 		player:giveKarma(karma)

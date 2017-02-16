@@ -262,6 +262,10 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 		if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
 			return false
 		end
+		if FactionState:getSingleton():countPlayers() < BANKROB_MIN_MEMBERS then
+			attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, BANKROB_MIN_MEMBERS))
+			return false
+		end
 		self:startRob(attacker)
 		outputChatBox(_("Bankangestellter sagt: Hilfe! Ich öffne Ihnen die Tür zum Tresorraum!", attacker), attacker, 255, 255, 255)
 		outputChatBox(_("Bankangestellter sagt: Bitte tun sie mir nichts!", attacker), attacker, 255, 255, 255)

@@ -58,6 +58,17 @@ function MWeaponTruck:onStartPointHit(hitElement, matchingDimension)
 		local faction = hitElement:getFaction()
 		if faction then
 			if (faction:isEvilFaction() and source.type == "evil") or (faction:isStateFaction() and source.type == "state" and hitElement:isFactionDuty()) then
+				if source.type == "evil" then
+					if FactionState:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS[source.type] then
+						hitElement:sendError(_("Es müssen mindestens 3 Staatsfraktionisten online sein!",hitElement))
+						return
+					end
+				elseif source.type == "state" then
+					if FactionEvil:getSingleton():countPlayers() < WEAPONTRUCK_MIN_MEMBERS[source.type] then
+						hitElement:sendError(_("Es müssen mindestens 3 Spieler böser Fraktionen online sein!",hitElement))
+						return
+					end
+				end
 
 				if ActionsCheck:getSingleton():isActionAllowed(hitElement) then
 					hitElement:triggerEvent("showFactionWTLoadGUI")
