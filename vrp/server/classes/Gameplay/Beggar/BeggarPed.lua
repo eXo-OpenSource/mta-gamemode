@@ -43,13 +43,17 @@ end
 
 function BeggarPed:despawn()
     setTimer(function ()
-        local newAlpha = self:getAlpha() - 10
-        if newAlpha < 10 then newAlpha = 0 end
-        if newAlpha == 0 then
-            self:destroy()
-        else
-            self:setAlpha(newAlpha)
-        end
+		if self and isElement(self) and self:getAlpha() then
+			local newAlpha = self:getAlpha() - 10
+			if newAlpha < 10 then newAlpha = 0 end
+			if newAlpha == 0 then
+				self:destroy()
+			else
+				self:setAlpha(newAlpha)
+			end
+		else
+			killTimer(sourceTimer)
+		end
     end, 50, 255/10)
 end
 
