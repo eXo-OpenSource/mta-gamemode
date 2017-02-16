@@ -611,7 +611,7 @@ function Admin:toggleSupportMode(player)
 		player.m_SupMode = false
 		player:triggerEvent("disableDamage", false)
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
-		self:toggleJetpack(player)
+		self:toggleJetPack(player)
 		unbindKey(player, "j", "down", self.m_ToggleJetPackBind)
     end
 end
