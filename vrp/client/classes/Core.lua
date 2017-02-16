@@ -30,7 +30,7 @@ function Core:constructor()
 					delete(dgi)
 					local dgi = HTTPDownloadGUI:getSingleton()
 					local provider = HTTPProvider:new(FILE_HTTP_FALLBACK_URL, dgi)
-					if provider:start() then -- did the download succeed
+					if provider:start(true) then -- did the download succeed
 						delete(dgi)
 						self:onDownloadComplete()
 					end

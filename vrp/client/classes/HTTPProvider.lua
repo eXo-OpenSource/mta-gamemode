@@ -16,10 +16,8 @@ end
 	</files>
 ]]
 
-function HTTPProvider:start()
+function HTTPProvider:start(force)
 	-- request url access for download
-	if fallbackTry then self.ms_URL = self.ms_FallbackUrl end
-
 	if self:requestAccessAsync() then
 		self.ms_GUIInstance:setStatus("current file", self.ms_URL.."index.xml")
 		outputDebug(self.ms_URL.."index.xml")
@@ -49,10 +47,14 @@ function HTTPProvider:start()
 						outputDebug("checking file hash")
 						local file = fileOpen(filePath, true)
 						if file then
-							if hash("md5", file:read(file:getSize())) ~= expectedHash then
+							if force then
 								forceFileDownload = true
+							else
+								if hash("md5", file:read(file:getSize())) ~= expectedHash then
+									forceFileDownload = true
+								end
+								fileClose(file)
 							end
-							fileClose(file)
 						else
 							forceFileDownload = true
 						end
@@ -72,6 +74,7 @@ function HTTPProvider:start()
 			local archives = {}
 			for i, v in ipairs(files) do
 				self.ms_GUIInstance:setStatus("current file", v.path)
+				outputDebug(v.path)
 				local responseData, errno = self:fetchAsync(v.path)
 				if errno ~= 0 then
 					outputDebug(errno)
@@ -100,6 +103,7 @@ function HTTPProvider:start()
 			end
 
 			for i, path in ipairs(archives) do
+				outputConsole("unpacking: "..path)
 				self.ms_GUIInstance:setStatus("unpacking", ("all files have been downloaded. unpacking now the archives... (%d / %d archives)"):format(i, table.getn(files)))
 				local status, err = untar(path, "/")
 				if not status then
