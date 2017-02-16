@@ -55,6 +55,7 @@ function PhoneInteraction:callBusy(caller)
 	if not caller or not isElement(caller) then return end
 	client:triggerEvent("callBusy", caller)
 	caller:triggerEvent("callBusy", client)
+	client:giveAchievement(4)
 end
 
 function PhoneInteraction:callAnswer(caller, voiceCall)

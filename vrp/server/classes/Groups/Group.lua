@@ -182,6 +182,11 @@ function Group:addPlayer(playerId, rank)
   local player = Player.getFromId(playerId)
   if player then
     player:setGroup(self)
+	if self.m_Type == "Gang" then
+		player:giveAchievement(8)
+	elseif self.m_Type == "Firma" then
+		player:giveAchievement(28)
+  	end
   end
 
   sql:queryExec("UPDATE ??_character SET GroupId = ?, GroupRank = ? WHERE Id = ?", sql:getPrefix(), self.m_Id, rank, playerId)

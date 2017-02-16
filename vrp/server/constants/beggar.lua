@@ -90,7 +90,7 @@ BeggarSkins = {
     137
 }
 
-BeggarNames = {
+BeggarNames = { -- Wer namen zwischendrin einfügt wird erschossen!
     "Uwe",
     "Karsten Stahl",
     "Donetasty S.",
@@ -121,7 +121,8 @@ BeggarNames = {
     "Rosa Loch",
     "Wilma Lutschen",
     "Marie Juhana",
-    "Ernst Scherz"
+    "Ernst Scherz",
+	"Stummy Stumpf"
 }
 
 BeggarAnimations = {

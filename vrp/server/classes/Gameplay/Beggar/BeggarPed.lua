@@ -83,6 +83,11 @@ function BeggarPed:giveMoney(player, money)
 
 		-- give Achievement
 		player:giveAchievement(56)
+		if self.m_Name == BeggarNames[19] then
+			player:giveAchievement(80)
+		elseif self.m_Name == BeggarNames[32] then
+			player:giveAchievement(81)
+		end
 
 		-- Despawn the Beggar
 		setTimer(

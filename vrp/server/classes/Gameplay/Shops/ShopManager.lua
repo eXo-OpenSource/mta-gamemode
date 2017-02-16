@@ -194,6 +194,7 @@ function ShopManager:buyClothes(shopId, typeId, clotheId)
 					local texture, model = getClothesByTypeIndex(typeId, clotheId)
 					client:addClothes(texture, model, typeId)
 				end
+				client:giveAchievement(23)
 				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
 				if clothesData.Price > 0 then
 					client:takeMoney(clothesData.Price, "Kleidungs-Kauf")

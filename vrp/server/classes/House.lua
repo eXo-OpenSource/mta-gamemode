@@ -355,6 +355,7 @@ function House:buyHouse(player)
 		if self.m_Price >= 900000 then
 			player:giveAchievement(69)
 		end
+		player:giveAchievement(34)
 
 		player:takeMoney(self.m_Price, "Haus-Kauf")
 		self.m_Owner = player:getId()
