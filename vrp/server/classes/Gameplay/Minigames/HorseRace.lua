@@ -70,8 +70,8 @@ function HorseRace:showShortMessage()
 end
 
 function HorseRace:message()
-	outputChatBox ( "[Pferde-Wetten] Um 19:30 findet das tägliche eXo-Pferderennen statt, du kannst im Wettbüro", rootElement, 255, 150, 255 )
-	outputChatBox ( "auf ein Pferd setzen und um 19:30 die Live-Übertragung anschauen! Viel Glück!", rootElement, 255, 150, 255 )
+	outputChatBox ( "[Pferde-Wetten] Um 20:00 findet das tägliche eXo-Pferderennen statt, du kannst im Wettbüro", rootElement, 255, 150, 255 )
+	outputChatBox ( "auf ein Pferd setzen und um 20:00 die Live-Übertragung anschauen! Viel Glück!", rootElement, 255, 150, 255 )
 end
 
 function HorseRace:addPlayer()
