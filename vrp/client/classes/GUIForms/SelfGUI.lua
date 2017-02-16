@@ -100,8 +100,8 @@ function SelfGUI:constructor()
 	self.m_GroupMenuButton.onHover = function () self.m_GroupMenuButton:setColor(Color.White) end
 	self.m_GroupMenuButton.onUnhover = function () self.m_GroupMenuButton:setColor(Color.LightBlue) end
 	self.m_GroupMenuButton.onLeftClick = bind(self.GroupMenuButton_Click, self)
-	self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
-	self.m_GroupInvitationsLabel:setVisible(false)
+	--self.m_GroupInvitationsLabel = GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.8, self.m_Height*0.06, "", tabGeneral)
+	--self.m_GroupInvitationsLabel:setVisible(false)
 
 	addRemoteEvents{"groupRetrieveInfo", "groupInvitationRetrieve"}
 	addEventHandler("groupRetrieveInfo", root, bind(self.Event_groupRetrieveInfo, self))
@@ -543,11 +543,23 @@ function SelfGUI:CompanyInvitationsDeclineButton_Click()
 end
 
 function SelfGUI:Event_groupInvitationRetrieve(groupId, name)
-	ShortMessage:new(_("Du wurdest in die Firma/Gang '%s' eingeladen. Einladung im Spielermenü!", name))
-	self.m_GroupInvitationsLabel:setText("Du hast eine Einladungen für eine private Firma/Gang erhalten, öffne das Menü um diese anzunehmen!")
-	self.m_GroupInvitationsLabel:setVisible(true)
-	self.m_HasGroupInvation = true
+	if groupId > 0 then
+		Phone:getSingleton():getDashboard():addNotification(name, _("Du wurdest in die Gruppe \"%s\" eingeladen!", name), NOTIFICATION_TYPE_INVATION, bind(self.GroupInvitationsAcceptButton_Click, self, groupId), bind(self.GroupInvitationsDeclineButton_Click, self, groupId))
+	end
 end
+
+function SelfGUI:GroupInvitationsAcceptButton_Click(groupId)
+	if groupId then
+		triggerServerEvent("groupInvitationAccept", resourceRoot, groupId)
+	end
+end
+
+function SelfGUI:GroupInvitationsDeclineButton_Click(groupId)
+	if groupId then
+		triggerServerEvent("groupInvitationDecline", resourceRoot, groupId)
+	end
+end
+
 
 function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 	local x, y = self.m_GroupNameLabel:getPosition()
@@ -555,7 +567,6 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 		self.m_GroupNameLabel:setText(name)
 		self.m_GroupRankLabel:setText(rankNames[tostring(rank)])
 		self.m_GroupMenuButton:setVisible(true)
-		self.m_GroupInvitationsLabel:setVisible(false)
 		self.m_HasGroupInvation = false
 
 		if rank >= 5 then
@@ -567,12 +578,8 @@ function SelfGUI:Event_groupRetrieveInfo(name, rank, __, __, __, __, rankNames)
 	else
 		self.m_GroupNameLabel:setText(_"- keine Firma/Gang -")
 		self.m_GroupRankLabel:setText("-")
-		self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
-		self.m_GroupInvitationsLabel:setVisible(true)
-
-		if self.m_HasGroupInvation then
-			self.m_GroupInvitationsLabel:setVisible(true)
-		end
+		self.m_GroupMenuButton:setVisible(false)
+		--self.m_GroupMenuButton:setPosition(x + dxGetTextWidth(_("- keine Firma/Gang -"), self.m_GroupNameLabel:getFontSize(), self.m_GroupNameLabel:getFont()) + 10, y)
 	end
 end
 
