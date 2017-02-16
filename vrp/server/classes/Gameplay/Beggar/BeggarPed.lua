@@ -55,6 +55,7 @@ end
 
 function BeggarPed:rob(player)
 	if getTickCount() - self.m_LastRobTime < 10*60*1000 then
+		player:sendMessage(_("#FE8A00%s: #FFFFFFIch wurde gerade erst ausgeraubt. Bei mir gibts nichts zu holen.", player, self.m_Name))
 		return
 	end
 
