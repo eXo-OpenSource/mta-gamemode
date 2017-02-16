@@ -64,7 +64,7 @@ function GUIScrollableArea:draw(incache)
 	for k, v in ipairs(self.m_Children) do
 		if v.draw then v:draw(incache) end
 	end
-	dxSetRenderTarget(self.m_CacheArea.m_RenderTarget or nil)
+	dxSetRenderTarget(self.m_CacheArea and self.m_CacheArea.m_RenderTarget or nil)
 
 	-- Recreate AbsoluteX for the update() method to allow mouse actions
 	self.m_AbsoluteX, self.m_AbsoluteY = absx, absy
