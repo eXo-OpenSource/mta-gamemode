@@ -124,10 +124,10 @@ addEventHandler("requestPhoneNumbers", root, function()
 			if PHONE_NUMBER_TYPES[instance:getOwnerType()] == "faction" or PHONE_NUMBER_TYPES[instance:getOwnerType()] == "company" then
 				numTable[number]["OwnerName"] = instance:getOwner(instance):getShortName()
 			else
-				if instance and instance.getOwner and instance:getOwner(instance) and instance:getOwner(instance).getName and instance:getOwner(instance):getName() then
+				if instance:getOwner(instance) and instance:getOwner(instance):getName() then
 					numTable[number]["OwnerName"] = instance:getOwner(instance):getName()
 				else
-					numTable[number]["OwnerName"] = "Unbekannt"
+					PhoneNumber.Map[index] = nil
 				end
 			end
 			numTable[number]["OwnerType"] = PHONE_NUMBER_TYPES[instance:getOwnerType()]
