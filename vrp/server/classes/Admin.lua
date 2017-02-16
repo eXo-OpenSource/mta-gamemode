@@ -52,7 +52,7 @@ function Admin:constructor()
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
 
     local adminCommandBind = bind(self.command, self)
-	self.m_ToggleJetPackBind = bind(self.m_toggleJetPack, self)
+	self.m_ToggleJetPackBind = bind(self.toggleJetPack, self)
 
     addCommandHandler("timeban", adminCommandBind)
     addCommandHandler("permaban", adminCommandBind)
