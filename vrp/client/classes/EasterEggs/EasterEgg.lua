@@ -39,6 +39,16 @@ function EasterEgg:constructor()
 			localPlayer:giveAchievement(72)
 		end
 	)
+	addCommandHandler("sbx320",
+		function()
+			localPlayer:giveAchievement(82)
+		end
+	)
+	addCommandHandler("ekonomie",
+		function()
+			localPlayer:giveAchievement(82)
+		end
+	)
 end
 
 function EasterEgg:destructor()
