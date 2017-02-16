@@ -752,6 +752,10 @@ function FactionState:Command_tie(player, cmd, tname, bool)
 				if tname then
 					local target = PlayerManager:getSingleton():getPlayerFromPartOfName(tname, player)
 					if isElement(target) then
+						if target == player then
+							player:sendError(_("Du kannst dich nicht selbst fesseln!", player))
+							return
+						end
 						if target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle then
 							if isControlEnabled(target, "enter_exit") or bool == true then
 								player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
