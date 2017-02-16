@@ -46,7 +46,7 @@ function Core:constructor()
 	ACLGroup.get("Admin"):addObject("resource.admin_exo")
 
 	if GIT_BRANCH == "release/production" then
-		setServerPassword()
+		--setServerPassword() Temporary Disabled
 	end
 
 	-- Instantiate classes (Create objects)
