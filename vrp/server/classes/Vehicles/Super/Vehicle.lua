@@ -429,7 +429,9 @@ function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, specia
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
 	end
-	self:setTexture(texture or "")
+	if texture and #texture > 3 then
+		self:setTexture(texture, nil, true)
+	end
 
 	if neon and fromJSON(neon) then
 		self:setNeon(1)
@@ -442,19 +444,6 @@ function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, specia
 		self:setSpecial(special)
 	end
 	self:setCustomHorn(horn or 0)
-end
-
-function Vehicle:setTexture(texturePath)
-  self.m_Texture = ""
-  if fileExists(texturePath) then
-    self.m_Texture = texturePath
-
-    for i, v in pairs(getElementsByType("player")) do
-      if v:isLoggedIn() then
-        triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = false, texturePath = self.m_Texture}})
-      end
-    end
-  end
 end
 
 function Vehicle:setCustomHorn(id)
@@ -487,9 +476,14 @@ function Vehicle:setNeonColor(colorTable)
   end
 end
 
+function Vehicle:setTexture(texturePath, textureName, force)
+	if texturePath and #texturePath > 3 then
+		self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
+	end
+end
+
 function Vehicle:removeTexture()
-  self.m_Texture = nil
-  triggerClientEvent(root, "removeElementTexture", root, self)
+	delete(self.m_Texture)
 end
 
 function Vehicle:setCurrentPositionAsSpawn(type)

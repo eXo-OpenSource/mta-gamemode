@@ -103,7 +103,6 @@ function Core:constructor()
 		Fishing:new()
 		ShootingRanch:new()
 		DeathmatchManager:new()
-
 		SkydivingManager:new()
 		Kart:new()
 		HorseRace:new()

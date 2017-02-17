@@ -3,7 +3,8 @@ TextureReplace.ServerElements = {}
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
 	if not texturePath or #texturePath <= 5 then
-		error(("Texturepath is blow 6 chars [traceback: %s]"):format(traceback()))
+		outputConsole("Texturepath is blow 6 chars traceback in Console")
+		traceback()
 	end
 
 	self.m_TextureName = textureName
@@ -41,14 +42,14 @@ function TextureReplace:destructor()
 end
 
 function TextureReplace:onElementStreamIn()
-	outputConsole(("Element %s streamed in, creating texture..."):format(tostring(self.m_Element)))
+	--outputConsole(("Element %s streamed in, creating texture..."):format(tostring(self.m_Element)))
 	if not self:loadShader() then
 		outputConsole(("Loading the texture of element %s failed!"):format(tostring(self.m_Element)))
 	end
 end
 
 function TextureReplace:onElementStreamOut()
-	outputConsole(("Element %s streamed out, destroying texture..."):format(tostring(self.m_Element)))
+--	outputConsole(("Element %s streamed out, destroying texture..."):format(tostring(self.m_Element)))
 	if not self:unloadShader() then
 		outputConsole(("Unloading the texture of element %s failed!"):format(tostring(self.m_Element)))
 	end
@@ -122,7 +123,9 @@ addEventHandler("changeElementTexture", root,
 				if TextureReplace.ServerElements[shaderInfo.vehicle] then
 					delete(TextureReplace.ServerElements[shaderInfo.vehicle])
 				end
-				TextureReplace.ServerElements[shaderInfo.vehicle] = TextureReplace:new(shaderInfo.textureName or shaderInfo.vehicle:getTextureName(), shaderInfo.texturePath, false, 256, 256, shaderInfo.vehicle)
+				if shaderInfo.texturePath and #shaderInfo.texturePath > 3 then
+					TextureReplace.ServerElements[shaderInfo.vehicle] = TextureReplace:new(shaderInfo.textureName or shaderInfo.vehicle:getTextureName(), shaderInfo.texturePath, false, 256, 256, shaderInfo.vehicle)
+				end
 			end
 		else
 			if TextureReplace.ServerElements[element] then

@@ -221,7 +221,7 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
             elseif slot == VehicleSpecialProperty.Shader then
                 if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
                     if upgradeId ~= 1 then
-                        vehicle:setTexture(("files/images/Textures/Special/%s.png"):format(upgradeId-1))
+                        vehicle:setTexture(("files/images/Textures/Special/%s.png"):format(upgradeId-1), nil, true)
                     else
                         vehicle:removeTexture()
                     end

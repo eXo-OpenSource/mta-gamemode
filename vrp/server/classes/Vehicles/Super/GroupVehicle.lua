@@ -122,8 +122,12 @@ function GroupVehicle:save()
 	local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
 	local tunings = getVehicleUpgrades(self) or {}
 
+	if self.m_Texture and self.m_Texture:getPath() then
+  		texture = self.m_Texture:getPath()
+  	end
+
 	 return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, Tunings = ?, Mileage = ?, Fuel = ?, LightColor = ?, TexturePath = ?, Horn = ?, Neon = ? WHERE Id = ?", sql:getPrefix(),
-    self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(tunings), self:getMileage(), self:getFuel(), lightColor, self.m_Texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Id)
+    self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(tunings), self:getMileage(), self:getFuel(), lightColor, texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Id)
 end
 
 function GroupVehicle:hasKey(player)

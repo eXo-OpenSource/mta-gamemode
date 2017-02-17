@@ -192,6 +192,8 @@ function Core:afterLogin()
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("bug", function() TicketGUI:getSingleton():open() end)
 
+	triggerServerEvent("requestVehicleTextures", localPlayer)
+
 	for index, object in pairs(getElementsByType("object")) do -- Make ATM´s unbreakable
 		if object:getModel() == 2942 then
 			object:setBreakable(false)

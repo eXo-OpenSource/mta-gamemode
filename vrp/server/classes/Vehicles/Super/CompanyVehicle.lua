@@ -90,6 +90,18 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 		3000, 1, source)
 	end)
 
+	if self.m_Company.m_VehicleTexture then
+		if self.m_Company.m_VehicleTexture[self:getModel()] and self.m_Company.m_VehicleTexture[self:getModel()] then
+			local textureData = self.m_Company.m_VehicleTexture[self:getModel()]
+			if textureData.shaderEnabled then
+				local texturePath, textureName = textureData.texturePath, textureData.textureName
+				if texturePath and #texturePath > 3 then
+					self:setTexture(texturePath, textureName)
+				end
+			end
+		end
+	end
+
 end
 
 function CompanyVehicle:destructor()

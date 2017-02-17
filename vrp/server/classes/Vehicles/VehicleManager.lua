@@ -299,21 +299,23 @@ function VehicleManager:removeRef(vehicle, isTemp)
 end
 
 function VehicleManager:sendTexturesToClient(client)
+	--[[
 	for ownerid, vehicles in pairs(self.m_Vehicles) do
 		for i, v in pairs(vehicles) do
-			if v.m_Texture and v.m_Texture ~= "0" then
-				triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
+			if v.m_Texture and #v.m_Texture > 3 then
+				--triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
 			end
 		end
 	end
 
 	for groupid, vehicles in pairs(self.m_GroupVehicles) do
 		for i, v in pairs(vehicles) do
-			if v.m_Texture and v.m_Texture ~= "0" then
-				triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
+			if v.m_Texture and #v.m_Texture > 3 then
+				--triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
 			end
 		end
 	end
+	--]]
 end
 
 function VehicleManager:removeUnusedVehicles()

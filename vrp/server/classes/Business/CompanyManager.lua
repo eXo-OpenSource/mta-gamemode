@@ -393,6 +393,7 @@ function CompanyManager:Event_getCompanies()
 end
 
 function CompanyManager:sendAllToClient(client)
+	--[[
 	local vehicleTab = {}
 	for i, company in pairs(CompanyManager.Map) do
 		if companyVehicleShaders[company:getId()] then
@@ -408,4 +409,5 @@ function CompanyManager:sendAllToClient(client)
 	end
 
 	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
+	]]
 end

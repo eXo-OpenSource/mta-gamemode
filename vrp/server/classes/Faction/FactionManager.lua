@@ -381,6 +381,7 @@ function FactionManager:Event_factionRespawnVehicles()
 end
 
 function FactionManager:sendAllToClient(client)
+	--[[
 	local vehicleTab = {}
 	for i, faction in pairs(self:getAllFactions()) do
 		if faction:isStateFaction() or faction:isRescueFaction() then
@@ -400,6 +401,7 @@ function FactionManager:sendAllToClient(client)
 	end
 
 	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
+	]]
 end
 
 function FactionManager:Event_getFactions()

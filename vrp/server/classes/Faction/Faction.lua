@@ -40,6 +40,7 @@ function Faction:constructor(Id, name_short, name, bankAccountId, players, rankL
 	self.m_PhoneNumber = (PhoneNumber.load(2, self.m_Id) or PhoneNumber.generateNumber(2, self.m_Id))
 	self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
+	self.m_VehicleTexture = factionVehicleShaders[Id] or false
 end
 
 function Faction:destructor()
