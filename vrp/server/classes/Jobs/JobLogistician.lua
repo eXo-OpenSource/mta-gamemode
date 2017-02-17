@@ -148,7 +148,6 @@ function Crane:reset()
 	self.m_Tow:setRotation(0, 0, self.m_Rotation)
 	self.m_Busy = false
 	if self.m_Container and isElement(self.m_Container) then self.m_Container:destroy() end
-	outputChatBox("Reset")
 end
 
 function Crane:destructor()
