@@ -2,6 +2,8 @@ TextureReplace = inherit(Object)
 TextureReplace.ServerElements = {}
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
+	if #texturePath <= 5 then return false end
+
 	self.m_TextureName = textureName
 	self.m_TexturePath = path
 	self.m_IsRenderTarget = isRenderTarget
@@ -28,8 +30,12 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 end
 
 function TextureReplace:destructor()
-	destroyElement(self.m_Texture)
-	destroyElement(self.m_Shader)
+	if self.m_Texture and isElement(self.m_Texture) then
+		destroyElement(self.m_Texture)
+	end
+	if self.m_Shader and isElement(self.m_Shader) then
+		destroyElement(self.m_Shader)
+	end
 end
 
 function TextureReplace:onElementStreamIn()
@@ -58,6 +64,7 @@ function TextureReplace:loadShader()
 	if self.m_Shader and isElement(self.m_Shader) then return false end
 	if self.m_Texture and isElement(self.m_Shader) then return false end
 
+	local membefore = dxGetStatus().VideoMemoryUsedByTextures
 	if not self.m_IsRenderTarget then
 		self.m_Texture = dxCreateTexture(self.m_TexturePath)
 	else
@@ -68,6 +75,11 @@ function TextureReplace:loadShader()
 				dxDrawImage(0, 0, width, height, path)
 			dxSetRenderTarget(nil)
 		end
+	end
+
+	if (dxGetStatus().VideoMemoryUsedByTextures - membefore) > 100 then
+		delete(self)
+		error(("Texture memory usage above 100mb! Data:[ Path: %s, textureName: %s, isRenderTarget: %s, width: %s, height: %s, targetElement: %s]"):format(tostring(self.m_TexturePath), tostring(self.m_TextureName), tostring(self.m_IsRenderTarget), tostring(self.m_Width), tostring(self.m_Height), tostring(self.m_Element)))
 	end
 
 	self.m_Shader = dxCreateShader("files/shader/texreplace.fx")
