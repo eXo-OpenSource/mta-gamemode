@@ -136,6 +136,15 @@ function Crane:constructor(startX, startY, startZ, endX, endY, endZ, markerPos)
 	self.m_Busy = false
 end
 
+function Crane:reset()
+	self.m_Object:setPosition(self.m_StartX, self.m_StartY, self.m_StartZ)
+	self.m_Object:setRotation(0, 0, self.m_Rotation)
+	self.m_Tow:setPosition(self.m_StartX+0.5, self.m_StartY-0.7, self.m_StartZ+5)
+	self.m_Tow:setRotation(0, 0, self.m_Rotation)
+	self.m_Busy = false
+	if self.m_Container and isElement(self.m_Container) then self.m_Container:destroy() end
+end
+
 function Crane:destructor()
 	destroyElement(self.m_Object)
 	destroyElement(self.m_Tow)
@@ -204,6 +213,7 @@ function Crane:loadContainer(vehicle, player, callback)
 	container:setScale(0.95)
 	container:setCollisionsEnabled(false)	-- cause does not affect the collision model
 	player.LogisticanContainer = container
+	self.m_Container = container
 
 	vehicle:setFrozen(true)
 	toggleAllControls(player, false)
@@ -212,6 +222,10 @@ function Crane:loadContainer(vehicle, player, callback)
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
 	moveObject(self.m_Tow, 10000, self.m_EndX+0.5, self.m_EndY-0.7, self.m_EndZ+5)
 	-- Wait till we're at the target position
+	setTimer(function()
+		self:reset()
+	end, 35000, 1)
+
 	setTimer(
 		function()
 			-- Roll tow down
@@ -234,6 +248,7 @@ function Crane:loadContainer(vehicle, player, callback)
 											if not isElement(container ) or not isElement(vehicle) then return end
 											detachElements(container, self.m_Tow)
 											attachElements(container, vehicle, 0, -1.7, 1.1)
+											self.m_Container = nil
 											vehicle:setFrozen(false)
 											toggleAllControls(player, true)
 
@@ -241,7 +256,6 @@ function Crane:loadContainer(vehicle, player, callback)
 											self:rollTowUp(
 												function()
 													if callback then callback() end
-													self.m_Busy = false
 												end
 											)
 										end

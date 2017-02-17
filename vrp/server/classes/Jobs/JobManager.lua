@@ -17,7 +17,7 @@ function JobManager:constructor()
 		--JobServiceTechnician:new();
 		JobPizza:new();
 		JobHeliTransport:new();
-		--JobLogistician:new();
+		JobLogistician:new();
 		JobForkLift:new();
 		JobTreasureSeeker:new();
 	}

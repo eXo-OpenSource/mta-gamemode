@@ -18,7 +18,7 @@ function JobForkLift:constructor()
 	addRemoteEvents{"JobForkLiftonBoxLoad"}
 	addEventHandler("JobForkLiftonBoxLoad", root, bind(self.onBoxLoad, self))
 
-	setTimer(bind(self.generateBoxes, self), 20*60*1000, -1)
+	setTimer(bind(self.generateBoxes, self), 30*60*1000, 0)
 end
 
 function JobForkLift:start(player)
