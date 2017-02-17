@@ -2,8 +2,12 @@ TextureReplace = inherit(Object)
 TextureReplace.ServerElements = {}
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
-	if not texturePath or #texturePath <= 5 then
+	if not path or #path <= 5 then
 		outputConsole("Texturepath is blow 6 chars traceback in Console")
+		traceback()
+	end
+	if not textureName or #textureName <= 5 then
+		outputConsole("TextureName is blow 6 chars traceback in Console")
 		traceback()
 	end
 
@@ -123,9 +127,7 @@ addEventHandler("changeElementTexture", root,
 				if TextureReplace.ServerElements[shaderInfo.vehicle] then
 					delete(TextureReplace.ServerElements[shaderInfo.vehicle])
 				end
-				if shaderInfo.texturePath and #shaderInfo.texturePath > 3 then
-					TextureReplace.ServerElements[shaderInfo.vehicle] = TextureReplace:new(shaderInfo.textureName or shaderInfo.vehicle:getTextureName(), shaderInfo.texturePath, false, 256, 256, shaderInfo.vehicle)
-				end
+				TextureReplace.ServerElements[shaderInfo.vehicle] = TextureReplace:new(shaderInfo.textureName or shaderInfo.vehicle:getTextureName(), shaderInfo.texturePath, false, 256, 256, shaderInfo.vehicle)
 			end
 		else
 			if TextureReplace.ServerElements[element] then
