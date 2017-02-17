@@ -38,8 +38,6 @@ function Player:constructor()
 	self.m_AFKStartTime = 0
 	self.m_Crimes = {}
 	self.m_LastPlayTime = 0
-	self:destroyChatColShapes()
-	self:createChatColshapes()
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
@@ -58,7 +56,6 @@ function Player:destructor()
 		delete(self.m_Inventory)
 	end
 
-	self:destroyChatColShapes()
 	-- Collect all world items
 --	local worldItems = WorldItem.getItemsByOwner(self)
 --	for k, worldItem in pairs(worldItems) do
@@ -399,10 +396,6 @@ function Player:spawn( )
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
-	-- reAttach ChatCols
-	attachElements(self.chatCol_whisper, self)
-	attachElements(self.chatCol_talk, self)
-	attachElements(self.chatCol_scream, self)
 	self:triggerEvent("checkNoDm")
 	if self.m_IsDead == 1 then
 		killPed(self)
@@ -814,33 +807,19 @@ function Player:setUniqueInterior(uniqueInteriorId)
 	self.m_UniqueInterior = uniqueInteriorId
 end
 
-function Player:createChatColshapes( )
-	local x,y,z = getElementPosition( self )
-	self.chatCol_whisper = createColSphere ( x,y,z, CHAT_WHISPER_RANGE )
-	attachElements(self.chatCol_whisper, self)
-	self.chatCol_talk = createColSphere ( x,y,z, CHAT_TALK_RANGE )
-	attachElements(self.chatCol_talk, self)
-	self.chatCol_scream = createColSphere ( x,y,z, CHAT_SCREAM_RANGE )
-	attachElements(self.chatCol_scream, self)
-end
-
-function Player:destroyChatColShapes( )
-	if self.chatCol_scream then destroyElement(self.chatCol_scream) end
-	if self.chatCol_talk then destroyElement(self.chatCol_talk) end
-	if self.chatCol_whisper then destroyElement(self.chatCol_whisper) end
-end
-
 function Player:getPlayersInChatRange( irange)
-	local colShape
+	local range
 	if irange == 0 then
-		colShape = self.chatCol_whisper
+		range = CHAT_WHISPER_RANGE
 	elseif irange == 1 then
-		colShape = self.chatCol_talk
+		range = CHAT_TALK_RANGE
 	elseif irange == 2 then
-		colShape = self.chatCol_scream
+		range = CHAT_SCREAM_RANGE
 	end
-	local playersInRange = {	}
-	local elementTable = getElementsWithinColShape( colShape,"player")
+	local colShape = createColSphere(self:getPosition(), range)
+	local playersInRange = {}
+	local elementTable = getElementsWithinColShape(colShape, "player")
+	destroyElement(colShape)
 	local player,dimension,interior,check
 	for index = 1,#elementTable do
 		player = elementTable[index]

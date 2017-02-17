@@ -224,8 +224,6 @@ function PlayerManager:playerQuit()
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
-
-	source:destroyChatColShapes()
 end
 
 function PlayerManager:Event_playerReady()
