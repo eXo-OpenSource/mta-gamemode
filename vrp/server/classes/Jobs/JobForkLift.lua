@@ -45,7 +45,7 @@ function JobForkLift:onBoxLoad(box)
 end
 
 function JobForkLift:generateBoxes()
-	for i, v in pairs(self.m_Boxes) do
+	for i, v in pairs(self.m_Boxes or {}) do
 		if isElement(v) then
 			v:destroy()
 		end
