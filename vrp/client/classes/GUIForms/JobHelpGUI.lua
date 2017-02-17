@@ -9,15 +9,15 @@ JobHelpGUI = inherit(GUIForm)
 inherit(Singleton, JobHelpGUI)
 local jobNames = 
 {
-	"Trashman",
-	"Roadsweeper",
-	"Lumberjack",
-	"Farmer",
-	"Pizza",
-	"HeliTransport",
-	"Logistiker",
-	"Gabelstapler",
-	"Schatzsucher",
+	{"Trashman",1
+	{"Roadsweeper",0},
+	{"Lumberjack",3},
+	{"Farmer",4},
+	{"Pizza",0},
+	{"HeliTransport",0},
+	{"Logistiker",0},
+	{"Gabelstapler",0},
+	{"Schatzsucher",0},
 }
 
 function JobHelpGUI:constructor()
@@ -32,7 +32,7 @@ function JobHelpGUI:constructor()
 	local pos
 	for index, job in pairs(JobManager:getSingleton().m_Jobs) do 
 		pos = job.m_Ped:getPosition()
-		item = self.m_JobList:addItem(jobNames[index])
+		item = self.m_JobList:addItem(jobNames[index][1].." - Level "..jobNames[index][2])
 		item.onLeftDoubleClick = function () self:showJob( pos, job.m_Ped ) end
 	end
 end
