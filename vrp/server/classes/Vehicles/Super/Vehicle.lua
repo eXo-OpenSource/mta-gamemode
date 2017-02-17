@@ -234,11 +234,11 @@ function Vehicle:toggleEngine(player)
 				else
 					if not self.m_StartingEnginePhase then
 						self.m_StartingEnginePhase = true
-						for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do
+						--[[for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do
 							if getElementType(other) == "player" then
 								other:triggerEvent("vehicleEngineStart", self)
 							end
-						end
+						end]]
 						setTimer(bind(self.setEngineState, self), 2000, 1, true)
 						return true
 					end
