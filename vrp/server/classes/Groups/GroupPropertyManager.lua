@@ -150,7 +150,7 @@ function GroupPropertyManager:SellProperty(  )
 			return
 		end
 		if client:getGroup():getPlayerRank(client) < GroupRank.Manager then
-		client:sendError("Du bist nicht berechtigt diese Immobilie zu verkaufen!")
+			client:sendError("Du bist nicht berechtigt diese Immobilie zu verkaufen!")
 			return
 		end
 
