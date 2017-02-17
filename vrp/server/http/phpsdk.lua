@@ -51,7 +51,6 @@ function phpSDKSendOnlinePlayers()
 				["Faction"] = player:getFaction() and player:getFaction():getId() or 0,
 				["Company"] = player:getCompany() and player:getCompany():getId() or 0,
 				["GroupId"] = player:getGroup() and player:getGroup():getId() or 0,
-				["GroupName"] = player:getGroup() and player:getGroup():getName() or "-keine-",
 			}
 			i = i+1
 		end
