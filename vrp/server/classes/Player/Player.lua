@@ -38,8 +38,8 @@ function Player:constructor()
 	self.m_AFKStartTime = 0
 	self.m_Crimes = {}
 	self.m_LastPlayTime = 0
-	self:destroyChatColShapes( )
-	self:createChatColshapes( )
+	self:destroyChatColShapes()
+	self:createChatColshapes()
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
@@ -57,6 +57,8 @@ function Player:destructor()
 	if self.m_Inventory then
 		delete(self.m_Inventory)
 	end
+
+	self:destroyChatColShapes()
 	-- Collect all world items
 --	local worldItems = WorldItem.getItemsByOwner(self)
 --	for k, worldItem in pairs(worldItems) do
@@ -64,6 +66,7 @@ function Player:destructor()
 --	end
 
 	-- Call the quit hook (to clean up various things before saving)
+
 	Player.ms_QuitHook:call(self)
 
 	if self:getRank() > 0 then
@@ -86,7 +89,6 @@ function Player:destructor()
 
 	--// gangwar
 	triggerEvent("onDeloadCharacter",self)
-	self:destroyChatColShapes( )
 end
 
 function Player:connect()
