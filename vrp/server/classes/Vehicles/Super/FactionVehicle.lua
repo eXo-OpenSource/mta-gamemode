@@ -14,7 +14,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	self.m_Position = self:getPosition()
 	self.m_Rotation = self:getRotation()
 	self.m_HandlingFactor = handlingFaktor
-	self.m_Decal = tostring(decal)
+	self.m_Decal = #tostring(decal) > 3 and tostring(decal) or false
 	if #faction:getName() <= 29 then
 		setElementData(self, "OwnerName", faction:getName())
 	else

@@ -387,7 +387,7 @@ function FactionManager:sendAllToClient(client)
 			for i, v in pairs(faction.m_Vehicles) do
 				if factionVehicleShaders[faction:getId()] and factionVehicleShaders[faction:getId()][v:getModel()] then
 					local shaderInfo = factionVehicleShaders[faction:getId()][v:getModel()]
-					if v.m_Decal == "" then
+					if v.m_Decal == "" or v.m_Decal == false then
 						if shaderInfo.shaderEnabled then
 							vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
 						end
