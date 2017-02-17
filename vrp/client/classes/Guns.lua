@@ -56,6 +56,8 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
 					triggerServerEvent("onClientDamage",attacker, source, weapon, bodypart, loss)
+				else
+					triggerServerEvent("gunsLogMeleeDamage",attacker, source, weapon, bodypart, loss)
 				end
 			end
 		elseif localPlayer == source then

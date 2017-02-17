@@ -18,10 +18,12 @@ function Guns:constructor()
 		setWeaponProperty (23, skill, "anim_loop_stop", 0 )
 	end
 
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientWasted"}
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
+	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
+
+
 end
 
 function Guns:destructor()
@@ -64,6 +66,10 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 			self:damagePlayer(target, realLoss, attacker, weapon, bodypart)
 		end
 	end
+end
+
+function Guns:Event_logMeleeDamage(target, weapon, bodypart, loss)
+	StatisticsLogger:getSingleton():addDamageLog(client, target, weapon, bodypart, loss)
 end
 
 function Guns:Event_onClientKill(kill, weapon, bodypart, loss)
