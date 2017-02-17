@@ -2,7 +2,7 @@ TextureReplace = inherit(Object)
 TextureReplace.ServerElements = {}
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
-	if #texturePath <= 5 then
+	if not texturePath or #texturePath <= 5 then
 		error(("Texturepath is blow 6 chars [traceback: %s]"):format(debug.traceback()))
 	end
 
