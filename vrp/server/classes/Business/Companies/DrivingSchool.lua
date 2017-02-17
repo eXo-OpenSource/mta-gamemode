@@ -199,12 +199,13 @@ function DrivingSchool:Event_startLession(instructor, target, type)
                             ["target"] = target, ["type"] = type, ["instructor"] = instructor
                         }
                         target:takeMoney(costs, "Fahrschule")
-                        self:giveMoney(math.floor(costs/5))
+                        self:giveMoney(math.floor(costs/5), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]))
                         target:setPublicSync("inDrivingLession",true)
                         instructor:sendInfo(_("Du hast die %s Prüfung mit %s gestartet!", instructor, DrivingSchool.TypeNames[type], target.name))
                         target:sendInfo(_("Fahrlehrer %s hat die %s Prüfung mit dir gestartet, Folge seinen Anweisungen!", target, instructor.name, DrivingSchool.TypeNames[type]))
                         target:triggerEvent("showDrivingSchoolStudentGUI", DrivingSchool.TypeNames[type])
                         instructor:triggerEvent("showDrivingSchoolInstructorGUI", DrivingSchool.TypeNames[type], target)
+						self:addLog(instructor, "Fahrschule", ("hat eine %s Prüfung mit %s gestartet!"):format(DrivingSchool.TypeNames[type], target:getName()))
                         addEventHandler("onPlayerQuit", instructor, self.m_OnQuit)
                         addEventHandler("onPlayerQuit", target, self.m_OnQuit)
                     else
