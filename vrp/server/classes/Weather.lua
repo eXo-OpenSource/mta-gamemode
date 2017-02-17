@@ -47,7 +47,7 @@ function Weather:changeWeatherRandomly()
 	setTimer(bind(self.setWeather, self), 5*60*100, 1)
 end
 
-function Weahter:setWeather()
+function Weather:setWeather()
 	if self.m_CurrentWeather ~= self.m_NextWeather then
 		self.m_CurrentWeather = self.m_NextWeather
 		setWeatherBlended(self.m_CurrentWeather)
