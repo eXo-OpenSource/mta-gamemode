@@ -103,13 +103,18 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 						hitElement:sendError(_("Du bist am falschen Kran!", hitElement))
 					end
 				else
-					crane:loadContainer(veh, hitElement)
-					if source == self.m_Marker1 then
-						self:setNewDestination(hitElement, self.m_Marker2, crane)
-					elseif source == self.m_Marker2 then
-						self:setNewDestination(hitElement, self.m_Marker1, crane)
+					if crane.m_Busy then
+						hitElement:sendInfo(_("Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!", hitElement))
 					else
-						hitElement:sendError(_("Internal Error! Marker does not match", hitElement))
+						crane:loadContainer(veh, hitElement)
+
+						if source == self.m_Marker1 then
+							self:setNewDestination(hitElement, self.m_Marker2, crane)
+						elseif source == self.m_Marker2 then
+							self:setNewDestination(hitElement, self.m_Marker1, crane)
+						else
+							hitElement:sendError(_("Internal Error! Marker does not match", hitElement))
+						end
 					end
 				end
 			else
@@ -143,6 +148,7 @@ function Crane:reset()
 	self.m_Tow:setRotation(0, 0, self.m_Rotation)
 	self.m_Busy = false
 	if self.m_Container and isElement(self.m_Container) then self.m_Container:destroy() end
+	outputChatBox("Reset")
 end
 
 function Crane:destructor()
@@ -152,11 +158,18 @@ end
 
 function Crane:dropContainer(vehicle, player, callback)
 	if self.m_Busy then
+		player:sendInfo(_("Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!", player))
 		return false
 	end
 	self.m_Busy = true
 	vehicle:setFrozen(true)
 	toggleAllControls(player, false)
+
+	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+	self.m_Timer = setTimer(function()
+		self:reset()
+	end, 35000, 1)
+
 	-- First, roll down the tow
 	self:rollTowDown(
 		function()
@@ -188,8 +201,6 @@ function Crane:dropContainer(vehicle, player, callback)
 										function()
 											moveObject(self.m_Object, 10000, self.m_StartX, self.m_StartY, self.m_StartZ)
 											if callback then callback() end
-
-											setTimer(function() self.m_Busy = false end, 10000, 1)
 										end
 									)
 								end
@@ -205,6 +216,7 @@ end
 
 function Crane:loadContainer(vehicle, player, callback)
 	if self.m_Busy then
+		player:sendInfo(_("Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!", player))
 		return false
 	end
 	self.m_Busy = true
@@ -222,7 +234,8 @@ function Crane:loadContainer(vehicle, player, callback)
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
 	moveObject(self.m_Tow, 10000, self.m_EndX+0.5, self.m_EndY-0.7, self.m_EndZ+5)
 	-- Wait till we're at the target position
-	setTimer(function()
+	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+	self.m_Timer = setTimer(function()
 		self:reset()
 	end, 35000, 1)
 
