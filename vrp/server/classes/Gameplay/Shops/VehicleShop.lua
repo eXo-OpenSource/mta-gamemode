@@ -74,6 +74,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 			self:giveMoney(price, "Fahrzeug-Verkauf")
 			warpPedIntoVehicle(player, vehicle)
 			player:triggerEvent("vehicleBought")
+			vehicle.m_Premium  = false
 		else
 			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
 		end
