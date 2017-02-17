@@ -36,8 +36,8 @@ function VehicleShop:getName()
 end
 
 function VehicleShop:getVehiclePrice(model)
-	if self.m_VehicleList[Model] and self.m_VehicleList[Model].price then
-		return self.m_VehicleList[Model].price
+	if self.m_VehicleList[model] and self.m_VehicleList[model].price then
+		return self.m_VehicleList[model].price
 	else
 		return false
 	end
