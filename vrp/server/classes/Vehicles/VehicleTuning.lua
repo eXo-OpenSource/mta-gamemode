@@ -130,7 +130,7 @@ function VehicleTuning:EntryColShape_Hit(garageId, hitElement, matchingDimension
           end
         elseif instanceof(vehicle, GroupVehicle) then
             if not vehicle:canBeModified() then
-                hitElement:sendError(_("Dieser Firmenwagen darf nicht getunt werden!", hitElement))
+                hitElement:sendError(_("Dein Leader muss das Tunen von Fahrzeugen aktivieren! Im Firmen/Gangmenü unter Leader!", hitElement))
                 return
             end
         elseif vehicle:isPermanent() then
