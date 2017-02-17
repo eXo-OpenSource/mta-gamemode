@@ -883,7 +883,7 @@ function Player:refreshAttachedObject(instant)
 		if self:getPlayerAttachedObject() then
 			local object = self:getPlayerAttachedObject()
 			if self:isDead() then
-				detachPlayerObject(object)
+				self:detachPlayerObject(object)
 			end
 			object:setInterior(self:getInterior())
 			object:setDimension(self:getDimension())
