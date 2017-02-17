@@ -77,7 +77,7 @@ function TextureReplace:loadShader()
 	end
 
 	if not self.m_Texture then
-		outputDebugString("Loading the texture failed! "..textureName)
+		outputDebugString("Loading the texture failed! ("..self.m_TextureName..")")
 		return false
 	end
 
