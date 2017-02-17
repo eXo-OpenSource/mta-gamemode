@@ -322,16 +322,12 @@ function House:removePlayerFromList(player)
 end
 
 function House:leaveHouse(player)
-	if self.m_Keys[player:getId()] or not self.m_LockStatus  then
-		self:removePlayerFromList(player)
-		player:setPosition(self.m_Pos)
-		player:setInterior(0)
-		player:setDimension(0)
-		if self.m_CurrentRobber == player then
-			player:triggerEvent("CountdownStop", "Haus-Raub")
-		end
-	else
-		player:sendError(_("Die Tür ist verschlossen!", player))
+	self:removePlayerFromList(player)
+	player:setPosition(self.m_Pos)
+	player:setInterior(0)
+	player:setDimension(0)
+	if self.m_CurrentRobber == player then
+		player:triggerEvent("CountdownStop", "Haus-Raub")
 	end
 end
 
