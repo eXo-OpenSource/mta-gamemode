@@ -274,8 +274,12 @@ HelpTexts = {
 			eXo-Reallife ist ein Server-Projekt für die Multiplayer Modifikation Multi Theft Auto: San Andreas für GTA: San Andreas.
 			Ziel des Projekts ist ein möglichst umfangreiches, neuartiges Rollenspiel zu schaffen.
 
-			Wir befinden uns derzeit in der Alpha Testphase, was bedeutet, dass es momentan hauptsächlich darum geht,
-			das richtige Balancing zu finden und fehlende Features auszumachen.
+			Wir gingen am 16.02.2017 um 16:00 online, wir danken unsere Community für die großartige Unterstützung dem gesamten
+			letzen Jahr über.
+
+			Sollten Bugs auftauchen, bitten wir euch diese in unserem Bugtracker unter forum.exo-reallife.de zu posten!
+
+			Bei weiteren Fragen oder Anregungen einfach ein Ticket im F2 Menü unter "Ticketsystem" erstellen.
 		]],
 		LoginRegister = [[
 			Dies ist das Login Fenster. Im Tab 'Login' kannst Du dich einloggen, im Tab 'Registrieren' demzufolge registrieren.
