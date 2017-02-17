@@ -78,6 +78,7 @@ end
 
 
 function VehicleShopGUI:updateMatrix()
+	if not isElement(self.m_CurrentVehicle) then return false end
 	self.m_CurrentMatrix = {getCameraMatrix(localPlayer)}
 	local pos = self.m_CurrentVehicle:getPosition()
 	local offsetX, offsetY, offsetZ = getPositionFromElementOffset(self.m_CurrentVehicle, 5, 5, 5)
@@ -106,7 +107,7 @@ function VehicleShopGUI:Event_VehicleBought()
 	SuccessBox:new(_"Glückwunsch! Du bist nun Besitzer eines neuen Fahrzeugs!", 0, 255, 0)
 end
 
-function VehicleShopGUI:setColBack() 
+function VehicleShopGUI:setColBack()
 	setElementAlpha(self.m_BuyVehicle,255)
 	for key, vehicle in ipairs(getElementsByType("vehicle")) do
 		setElementCollidableWith(self.m_BuyVehicle,vehicle,true)
