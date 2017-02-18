@@ -816,18 +816,19 @@ function Player:getPlayersInChatRange( irange)
 	elseif irange == 2 then
 		range = CHAT_SCREAM_RANGE
 	end
-	local colShape = createColSphere(self:getPosition(), range)
+	local pos = self:getPosition()
 	local playersInRange = {}
-	local elementTable = getElementsWithinColShape(colShape, "player")
-	destroyElement(colShape)
+	local elementTable = getElementsByType("player")
 	local player,dimension,interior,check
 	for index = 1,#elementTable do
-		player = elementTable[index]
-		dimension = player.dimension
-		interior = player.interior
-		if interior == self.interior then
-			if dimension == self.dimension then
-				playersInRange[#playersInRange+1] = player
+	    if (pos - elementTable[index]:getPosition()).length <= range then
+			player = elementTable[index]
+			dimension = player.dimension
+			interior = player.interior
+			if interior == self.interior then
+				if dimension == self.dimension then
+					playersInRange[#playersInRange+1] = player
+				end
 			end
 		end
 	end
