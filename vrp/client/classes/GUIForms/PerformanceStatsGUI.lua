@@ -25,12 +25,14 @@ function PerformanceStatsGUI:constructor()
 	self.m_Fields = {}
 	self.m_TabPanel = GUITabPanel:new(0, 0, self.m_Width, self.m_Height, self)
 	local dxStats = self.m_TabPanel:addTab(_"DxStats")
+	self:addField(dxStats, "VideoCardName", function() return ("%sMB"):format(dxGetStatus().VideoCardName) end)
 	self:addField(dxStats, "VideoCardRAM", function() return ("%sMB"):format(dxGetStatus().VideoCardRAM) end)
 	self:addField(dxStats, "UsedVideoMemory", function() return ("%sMB"):format(dxGetStatus().VideoCardRAM - dxGetStatus().VideoMemoryFreeForMTA) end)
 	self:addField(dxStats, "FreeVideoMemory", function() return ("%sMB"):format(dxGetStatus().VideoMemoryFreeForMTA) end)
 	self:addField(dxStats, "VideoMemoryUsedByRenderTargets", function() return ("%sMB"):format(dxGetStatus().VideoMemoryUsedByRenderTargets) end)
 	self:addField(dxStats, "VideoMemoryUsedByTextures", function() return ("%sMB"):format(dxGetStatus().VideoMemoryUsedByTextures) end)
 	self:addField(dxStats, "VideoMemoryUsedByFonts", function() return ("%sMB"):format(dxGetStatus().VideoMemoryUsedByFonts) end)
+	self:addField(dxStats, "VideoCardNumRenderTargets", function() return ("%sMB"):format(dxGetStatus().VideoCardNumRenderTargets) end)
 
 	local elements = self.m_TabPanel:addTab(_"Elemente")
 	for type, name in pairs(self.m_Elements) do
