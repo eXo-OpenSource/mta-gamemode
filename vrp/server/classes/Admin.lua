@@ -68,8 +68,8 @@ function Admin:constructor()
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
 	addCommandHandler("teilnehmen", bind(self.joinEventList, self),false,false)
-	addCommandHandler("eventTP", bind(self.teleportJoinList, self), true, false )
-	addCommandHandler("stopEventTP", bind(self.clearTPList, self), true, false )
+	addCommandHandler("eventTP", bind(self.teleportJoinList, self),false, false )
+	addCommandHandler("stopEventTP", bind(self.clearTPList, self), false, false )
 	addCommandHandler("drun", bind(self.runString, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
@@ -128,11 +128,14 @@ function Admin:joinEventList( source )
 end
 
 function Admin:clearTPList( source )
-	self.m_EventPartic = {}
-	outputChatBox("Du hast die Teleport-Liste geleert!",source, 200,200,0)
+	if source:getRank() >= RANK.Supporter then
+		self.m_EventPartic = {}
+		outputChatBox("Du hast die Teleport-Liste geleert!",source, 200,200,0)
+	end
 end
 
 function Admin:teleportJoinList( source ) 
+	if source:getRank() <= RANK.Supporter then return end
 	local veh
 	local x,y,z = getElementPosition(source)
 	local count = 0
