@@ -152,6 +152,10 @@ function PublicTransport:updateTaxometer(customer)
 			self:endTaxiDrive(customer)
 		end
 		self:updateDriverTaxometer(self.m_TaxiCustomer[customer]["vehicle"], self.m_TaxiCustomer[customer]["driver"])
+	else
+		if isTimer(sourceTimer) then killTimer(sourceTimer) end
+		self:endTaxiDrive(customer)
+
 	end
 end
 
