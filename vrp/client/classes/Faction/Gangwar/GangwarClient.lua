@@ -11,6 +11,8 @@ addRemoteEvents{"Gangwar:show_AttackGUI","Gangwar_shortMessageAttack"}
 
  
 --// CONSTANTS 
+GANGWAR_ATTACK_PAUSE = 2 --// UPDATE THIS IF YOU UPDATE THE SERVER CONSTANT
+UNIX_TIMESTAMP_24HRS = 86400 
 local ANIM_SCALE = 1 
 local ANIM_TIME = 2000
 local w,h = guiGetScreenSize()

@@ -249,6 +249,7 @@ function FactionGUI:onGangwarItemSelect(item)
 	if self.m_AreaName then delete(self.m_AreaName) end
 	if self.m_AreaOwner then delete(self.m_AreaOwner) end
 	if self.m_LastAttack then delete(self.m_LastAttack) end
+	if self.m_NextAttack then delete(self.m_NextAttack) end
 	if self.m_Map then delete(self.m_Map) end
 
 	if item == self.m_GangAreasOverviewItem then
@@ -258,8 +259,9 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_AreaName = GUILabel:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.08, item.name, self.m_tabGangwar)
 			local ownerFaction = FactionManager:getSingleton():getFromId(item.owner)
 			self.m_AreaOwner = GUILabel:new(self.m_Width*0.35, self.m_Height*0.14, self.m_Width*0.7, self.m_Height*0.06, _("Besitzer: %s", ownerFaction and ownerFaction:getName() or "-"), self.m_tabGangwar)
-			self.m_LastAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.21, self.m_Width*0.4, self.m_Height*0.06, _("Letzter Angriff: %s", getOpticalTimestamp(item.lastAttack)), self.m_tabGangwar)
-			self.m_Map = GUIMiniMap:new(self.m_Width*0.35, self.m_Height*0.28, self.m_Width*0.62, self.m_Height*0.62, self.m_tabGangwar)
+			self.m_LastAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.21, self.m_Width*0.4, self.m_Height*0.06,_("Letzter Angriff: %s", getOpticalTimestamp(item.lastAttack)), self.m_tabGangwar)
+			self.m_NextAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.28, self.m_Width*0.4, self.m_Height*0.06,_("Nächster Angriff: %s", getOpticalTimestamp(item.lastAttack+(GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS))), self.m_tabGangwar)
+			self.m_Map = GUIMiniMap:new(self.m_Width*0.35, self.m_Height*0.35, self.m_Width*0.62, self.m_Height*0.55, self.m_tabGangwar)
 			self.m_Map:setPosition(item.posX, item.posY)
 			self.m_Map:addBlip("Waypoint.png", item.posX, item.posY)
 		end
