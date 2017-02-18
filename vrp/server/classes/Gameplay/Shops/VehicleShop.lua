@@ -27,7 +27,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_NPC:toggleWanteds(true)
 	local spawnPos = split(spawn,",")
 	self.m_Spawn = {spawnPos[1], spawnPos[2], spawnPos[3], spawnPos[4]}
-	self.m_NonCollissionCol = createColSphere(spawnPos[1], spawnPos[2], spawnPos[3], 7)
+	self.m_NonCollissionCol = createColSphere(spawnPos[1], spawnPos[2], spawnPos[3], 10)
 	self.m_NonCollissionCol:setData("NonCollidingSphere", true, true)
 end
 
