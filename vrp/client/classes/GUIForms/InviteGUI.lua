@@ -20,7 +20,13 @@ function InviteGUI:constructor(callback,filter)
 
 	self.m_InviteButton.onLeftClick = bind(self.InviteButton_Click, self)
 
-	if filter == "group" then
+	self.m_Filter = filter
+
+	self.m_Callback = callback
+end
+
+function InviteGUI:refreshOnlinePlayers()
+	if self.m_Filter == "group" then
 		for k, player in ipairs(getElementsByType("player")) do
 			if not player:getGroupType() then
 				if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(player:getName()), string.lower(self.m_PlayerSearch:getText())) then
@@ -28,7 +34,7 @@ function InviteGUI:constructor(callback,filter)
 				end
 			end
 		end
-	elseif filter == "faction" then
+	elseif self.m_Filter == "faction" then
 		for k, player in ipairs(getElementsByType("player")) do
 			if player:getFactionId() == 0 then
 				if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(player:getName()), string.lower(self.m_PlayerSearch:getText())) then
@@ -36,7 +42,7 @@ function InviteGUI:constructor(callback,filter)
 				end
 			end
 		end
-	elseif filter == "company" then
+	elseif self.m_Filter == "company" then
 		for k, player in ipairs(getElementsByType("player")) do
 			if player:getCompanyId() == 0 then
 				if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(player:getName()), string.lower(self.m_PlayerSearch:getText())) then
@@ -45,7 +51,6 @@ function InviteGUI:constructor(callback,filter)
 			end
 		end
 	end
-	self.m_Callback = callback
 end
 
 function InviteGUI:searchPlayer()
