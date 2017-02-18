@@ -22,8 +22,8 @@ function HUDRadar:constructor()
 
   self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
   if self.m_Texture then
-		outputConsole("Success@HUDRadar - m_RenderTarget was created!")
-		outputDebugString("Success@HUDRadar - m_Texture was created!",0,0,200,200)
+		--outputConsole("Success@HUDRadar - m_RenderTarget was created!")
+		--outputDebugString("Success@HUDRadar - m_Texture was created!",0,0,200,200)
 		self.m_Zoom = 1
 		self.m_Rotation = 0
 		self.m_Blips = Blip.Blips
@@ -40,8 +40,8 @@ function HUDRadar:constructor()
 		-- Create a renderTarget that has the size of the diagonal of the actual image
 		self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
 		if self.m_RenderTarget then
-			outputConsole("Success@HUDRadar - m_RenderTarget was created!")
-			outputDebugString("Success@HUDRadar - m_RenderTarget was created!",0,0,200,200)
+			--outputConsole("Success@HUDRadar - m_RenderTarget was created!")
+			--outputDebugString("Success@HUDRadar - m_RenderTarget was created!",0,0,200,200)
 			self:updateMapTexture()
 
 			-- Settings
