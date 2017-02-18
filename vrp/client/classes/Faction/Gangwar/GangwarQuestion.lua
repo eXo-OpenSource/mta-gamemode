@@ -12,7 +12,7 @@ addRemoteEvents{"GangwarQuestion:new"}
 local w,h = guiGetScreenSize()
 local PseudoObj
 local already_selected --// just in case
-local AFK_TIME = 5000
+local AFK_TIME = 1000*60*3
 function GangwarQuestion:constructor( )
 	already_selected = false	
 	self.m_Start = getTickCount()
