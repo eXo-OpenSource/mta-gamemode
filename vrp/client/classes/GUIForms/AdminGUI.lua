@@ -85,7 +85,10 @@ function AdminGUI:constructor(money)
 
 	local tabSpieler = self.m_TabPanel:addTab(_"Spieler")
 	self.m_TabSpieler = tabSpieler
-	self.m_PlayersGrid = GUIGridList:new(10, 10, 200, 460, tabSpieler)
+	self.m_PlayerSearch = GUIEdit:new(10, 10, 200, 30, tabSpieler)
+	self.m_PlayerSearch.onChange = function () self:searchPlayer() end
+
+	self.m_PlayersGrid = GUIGridList:new(10, 45, 200, 425, tabSpieler)
 	self.m_PlayersGrid:addColumn(_"Spieler", 1)
 	self.m_RefreshButton = GUIButton:new(10, 470, 30, 30, FontAwesomeSymbols.Refresh, tabSpieler):setFont(FontAwesome(15))
 	self.m_RefreshButton.onLeftClick = function ()
@@ -220,16 +223,22 @@ function AdminGUI:TabPanel_TabChanged(tabId)
 	end
 end
 
+function AdminGUI:searchPlayer()
+	self:refreshOnlinePlayers()
+end
+
 function AdminGUI:refreshOnlinePlayers()
 	local players = getElementsByType("player")
 	table.sort(players, function(a, b) return a.name < b.name  end)
 
 	self.m_PlayersGrid:clear()
 	for key, playeritem in ipairs(players) do
-		local item = self.m_PlayersGrid:addItem(playeritem:getName())
-		item.player = playeritem
-		item.onLeftClick = function()
-			self:onSelectPlayer(playeritem)
+		if #self.m_PlayerSearch:getText() < 3 or string.find(string.lower(playeritem:getName()), string.lower(self.m_PlayerSearch:getText())) then
+			local item = self.m_PlayersGrid:addItem(playeritem:getName())
+			item.player = playeritem
+			item.onLeftClick = function()
+				self:onSelectPlayer(playeritem)
+			end
 		end
 	end
 end
