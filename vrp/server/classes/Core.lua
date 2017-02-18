@@ -167,6 +167,16 @@ function Core:constructor()
 		if DEBUG then
 			addCommandHandler("runtests", bind(self.runTests, self))
 		end
+
+		--TEMPFIX FOR SPAWN 0,0,0 ERROR  TODO REMOVE LATER
+		addEventHandler("onColShapeHit", createColShape(0,0,-3,6),
+			function(hit, dim)
+				if dim and hit:getType() == "player" then
+					hit:setPosition(1802.170, -1284.100, 13.646 )
+				end
+			end)
+
+
 	end
 end
 
