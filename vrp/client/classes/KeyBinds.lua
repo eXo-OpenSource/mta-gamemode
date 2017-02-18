@@ -16,6 +16,7 @@ function KeyBinds:constructor()
 	self.m_ScoreboardTrigger = bind(self.scoreboardGUI, self)
 	self.m_CustomMap = bind(self.customMap, self)
 	self.m_Inventory = bind(self.inventory, self)
+	self.m_CruiseControl = bind(HUDSpeedo.Bind_CruiseControl, HUDSpeedo:getSingleton())
 
 	self.m_Keys = {
 	  ["KeyTogglePhone"]         = {["defaultKey"] = "u", ["name"] = "Handy", ["func"] = self.m_TogglePhone};
@@ -30,6 +31,7 @@ function KeyBinds:constructor()
 	  ["KeyIndicatorRight"]      = {["defaultKey"] = ".", ["name"] = "Blinker Rechts", ["func"] = function() Indicator:getSingleton():switchIndicatorState("right") end};
 	  ["KeyIndicatorWarn"]       = {["defaultKey"] = "-", ["name"] = "Warnblinkanlage", ["func"] = function() Indicator:getSingleton():switchIndicatorState("warn") end};
 	  ["KeyToggleCursor"]        = {["defaultKey"] = "b", ["name"] = "Cursor", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
+	  ["KeyCruiseControl"]       = {["defaultKey"] = "j", ["name"] = "Tempomat", ["func"] = self.m_CruiseControl, ["trigger"] = "both"};
 
 	  --Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};

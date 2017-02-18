@@ -8,11 +8,11 @@
 RadioGUI = inherit(GUIForm)
 inherit(Singleton, RadioGUI)
 
-
 function RadioGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.28)/2 / ASPECT_RATIO_MULTIPLIER, 0, screenWidth*0.28 / ASPECT_RATIO_MULTIPLIER, screenHeight*0.19, false, true)
 
 	self.m_CurrentStation = 0
+	self.m_ControlEnabled = true
 	setPlayerHudComponentVisible("radio", false)
 	setRadioChannel(0)
 	addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
@@ -151,6 +151,11 @@ function RadioGUI:getVolume()
 end
 
 function RadioGUI:nextStation()
+	-- Don't do anything if the controls have been disabled
+	if not self.m_ControlEnabled then
+		return
+	end
+
 	if not ScoreboardGUI:getSingleton():isVisible() then
 		if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
 		self.m_CurrentStation = self.m_CurrentStation + 1
@@ -167,6 +172,11 @@ function RadioGUI:nextStation()
 end
 
 function RadioGUI:previousStation()
+	-- Don't do anything if the controls have been disabled
+	if not self.m_ControlEnabled then
+		return
+	end
+
 	if not ScoreboardGUI:getSingleton():isVisible() then
 		if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
 		self.m_CurrentStation = self.m_CurrentStation - 1
@@ -202,4 +212,8 @@ function RadioGUI:stopSound()
 		destroyElement(self.m_Sound)
 		self.m_Sound = nil
 	end
+end
+
+function RadioGUI:setControlEnabled(controlEnabled)
+	self.m_ControlEnabled = controlEnabled
 end
