@@ -12,6 +12,7 @@ function Admin:constructor()
     self.m_MtaAccounts = {}
 
     self.m_SupportArrow = {}
+	self.m_EventPartic = {}
     self.m_RankNames = {
         [1] = "Ticketsupporter",
         [2] = "Clanmember",
@@ -66,7 +67,9 @@ function Admin:constructor()
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
-
+	addCommandHandler("teilnehmen", bind(self.joinEventList, self),false,false)
+	addCommandHandler("eventTP", bind(self.teleportJoinList, self), true, false )
+	
 	addCommandHandler("drun", bind(self.runString, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
@@ -113,6 +116,38 @@ function Admin:constructor()
 	end
 
 end
+
+function Admin:joinEventList( source ) 
+	if not self.m_EventPartic[source] then
+		self.m_EventPartic[source] = true
+		outputChatBox("Du nimmst am Event teil, warte bis du teleportiert wirst!", source, 0, 200, 0)
+	else 
+		self.m_EventPartic[source] = true
+		outputChatBox("Du nimmst nicht mehr am Event teil!", source, 200, 0 ,0)
+	end
+end
+
+function Admin:teleportJoinList( source ) 
+	local veh
+	local x,y,z = getElementPosition(source)
+	local count = 0
+	local int = getElementInterior(source)
+	local dim = getElementDimension(source)	
+	for player, bool in pairs( self.m_EventPartic ) do 
+		if bool then 
+			veh = getPedOccupiedVehicle(player) 
+			if veh then 
+				removePedFromVehicle(player)
+			end
+			setElementDimension(player, dim)
+			setElementInterior(player, int)
+			setElementPosition(player, x+math.random(1,3), y+math.random(1,3),z)
+			count = count + 1
+		end
+	end
+	outputChatBox("Es wurden "..count.." teleportiert!", source, 200, 200, 200)
+	self.m_EventPartic = {}
+end 
 
 function Admin:destructor()
 	removeCommandHandler("admins", bind(self.onlineList, self))
