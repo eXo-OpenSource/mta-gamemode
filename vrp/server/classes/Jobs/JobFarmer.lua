@@ -183,8 +183,8 @@ function JobFarmer:stop(player)
 end
 
 function JobFarmer:checkRequirements(player)
-	if not (player:getJobLevel() >= 4) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 4", player), 255, 0, 0)
+	if not (player:getJobLevel() >= JOB_LEVEL_FARMER) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FARMER), 255, 0, 0)
 		return false
 	end
 	return true

@@ -67,8 +67,8 @@ function JobLumberjack:onVehicleSpawn(player, vehicleModel, vehicle)
 end
 
 function JobLumberjack:checkRequirements(player)
-	if not (player:getJobLevel() >= 3) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 3", player), 255, 0, 0)
+	if not (player:getJobLevel() >= JOB_LEVEL_LUMBERJACK) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LUMBERJACK), 255, 0, 0)
 		return false
 	end
 	return true

@@ -169,7 +169,7 @@ function Core:constructor()
 		end
 
 		--TEMPFIX FOR SPAWN 0,0,0 ERROR  TODO REMOVE LATER
-		addEventHandler("onColShapeHit", createColShape(0,0,-3,6),
+		addEventHandler("onColShapeHit", createColSphere(0, 0,-3, 6),
 			function(hit, dim)
 				if dim and hit:getType() == "player" then
 					hit:setPosition(1802.170, -1284.100, 13.646 )

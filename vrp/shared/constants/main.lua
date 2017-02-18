@@ -16,6 +16,11 @@ ALCOHOL_LOSS = 0.5 -- every 10 Minutes
 
 PROJECT_NAME = "eXo Reallife"
 
+JOB_LEVEL_TRASHMAN = 1
+JOB_LEVEL_LUMBERJACK = 3
+JOB_LEVEL_FARMER = 4
+
+
 RANK = {}
 RANK[-1] = "Banned"
 RANK[0] = "User"
