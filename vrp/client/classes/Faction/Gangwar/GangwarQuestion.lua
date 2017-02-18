@@ -11,17 +11,20 @@ addRemoteEvents{"GangwarQuestion:new"}
 
 local w,h = guiGetScreenSize()
 local PseudoObj
-
+local already_selected --// just in case
+local AFK_TIME = 5000
 function GangwarQuestion:constructor( )
+	already_selected = false	
 	self.m_Start = getTickCount()
 	self.m_EndTick = self.m_Start + 2000
-	
 	self.m_bindRender = bind(self.render,self)
 	self.m_bindClick = bind(self.onClick,self)
-	
+	self.m_bindAFKFunc = bind( self.onAFKTimer, self)
+	self.m_AFKTimer = setTimer( self.m_bindAFKFunc, AFK_TIME, 1)
 	addEventHandler("onClientRender",root,self.m_bindRender)
 	addEventHandler("onClientClick",root,self.m_bindClick)
 end
+
 
 function GangwarQuestion:onClick( b, s )
 	if b == "left" then 
@@ -39,7 +42,11 @@ function GangwarQuestion:onClick( b, s )
 					else 
 						PseudoObj:delete() 
 					end
+					already_selected = true
 					PseudoObj:delete()
+					if isTimer(self.m_AFKTimer) then 
+						killTimer(self.m_AFKTimer)
+					end
 				else self.m_SureCheck = nil
 				end
 			end
@@ -82,6 +89,16 @@ function GangwarQuestion:render()
 		self:dxDrawBoxText( "Bitte zum bestätigen noch einmal klicken!",(w_x+w*0.11)-1,(h*0.63)-1,w*0.08,h*0.03,tocolor(0,0,0,255),1,"default-bold","center","center",true,true  ) 
 		self:dxDrawBoxText( "Bitte zum bestätigen noch einmal klicken!",(w_x+w*0.11)+1,(h*0.63)+1,w*0.08,h*0.03,tocolor(0,0,0,255),1,"default-bold","center","center" ,true,true ) 
 		self:dxDrawBoxText( "Bitte zum bestätigen noch einmal klicken!",w_x+w*0.11,h*0.63,w*0.08,h*0.03,tocolor(0,204,204,255),1,"default-bold","center","center" ,true,true ) 
+	end
+end
+
+
+function GangwarQuestion:onAFKTimer()
+	if PseudoObj then 
+		if not already_selected then 
+			triggerServerEvent("GangwarQuestion:disqualify",localPlayer, true)
+			PseudoObj:delete()
+		end
 	end
 end
 

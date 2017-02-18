@@ -16,8 +16,8 @@ GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
 --// Gangwar - Constants //--
 GANGWAR_MATCH_TIME = 15
 GANGWAR_CENTER_HOLD_RANGE = 15
-GANGWAR_MIN_PLAYERS = 3
-GANGWAR_ATTACK_PAUSE = 2 --// DAY
+GANGWAR_MIN_PLAYERS = 0 --// Default 3
+GANGWAR_ATTACK_PAUSE = 0 --// DAY Default 2
 GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
 GANGWAR_DUMP_COLOR = setBytesInInt32(240, 0, 200, 200)
 GANGWAR_ATTACK_PICKUPMODEL =  1313
@@ -150,12 +150,12 @@ function Gangwar:onPlayerWasted(  killer, weapon , bodypart, loss )
 	end
 end
 
-function Gangwar:onPlayerAbort( )
+function Gangwar:onPlayerAbort( bAFK )
 	if client then
 		if client == source then
 			local attackSession = source.m_RefAttackSession
 			if attackSession then
-				attackSession:onPurposlyDisqualify( source  )
+				attackSession:onPurposlyDisqualify( source , bAFK )
 			end
 		end
 	end

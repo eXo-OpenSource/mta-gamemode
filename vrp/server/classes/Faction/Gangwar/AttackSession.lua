@@ -144,8 +144,14 @@ function AttackSession:quitPlayer( player )
 	self:removeParticipant( player )
 end
 
-function AttackSession:onPurposlyDisqualify( player )
+function AttackSession:onPurposlyDisqualify( player, bAfk )
+	local reason = ""
+	if bAfk then 
+		reason = "(AFK)"
+	end
 	self:disqualifyPlayer( player )
+	self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason,100,120,100,true)
+	self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..getPlayerName(player).." nimmt nicht am Gangwar teil! "..reason,100,120,100,true)
 end
 
 function AttackSession:onPlayerLeaveCenter( player )
