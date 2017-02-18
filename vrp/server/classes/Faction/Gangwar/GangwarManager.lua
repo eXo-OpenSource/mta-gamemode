@@ -16,11 +16,12 @@ GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
 --// Gangwar - Constants //--
 GANGWAR_MATCH_TIME = 15
 GANGWAR_CENTER_HOLD_RANGE = 15
-GANGWAR_MIN_PLAYERS = 0 --// Default 3
-GANGWAR_ATTACK_PAUSE = 0 --// DAY Default 2
+GANGWAR_MIN_PLAYERS = 3 --// Default 3
+GANGWAR_ATTACK_PAUSE = 2 --// DAY Default 2
 GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
 GANGWAR_DUMP_COLOR = setBytesInInt32(240, 0, 200, 200)
 GANGWAR_ATTACK_PICKUPMODEL =  1313
+GANGWAR_PAYOUT_PER_AREA = 1250
 UNIX_TIMESTAMP_24HRS = 86400
 --//
 
@@ -46,6 +47,27 @@ function Gangwar:constructor( )
 	addEventHandler("onClientWasted", root, bind( Gangwar.onPlayerWasted, self))
 	addEventHandler("GangwarQuestion:disqualify", root, bind(self.onPlayerAbort, self))
 	addEventHandler("gangwarGetAreas", root, bind(self.getAreas, self))
+	GlobalTimer:getSingleton():registerEvent(bind(self.onAreaPayday, self), "Gangwar-Payday",false,false,0)
+end
+
+function Gangwar:onAreaPayday() 
+	local payouts = {}
+	local m_Owner
+	for index, area in pairs( self.m_Areas ) do
+		m_Owner = area.m_Owner
+		if not payouts[m_Owner] then payouts[m_Owner] = 0 end
+		payouts[m_Owner] = payouts[m_Owner] + 1
+	end
+	local amount = 0
+	local facObj
+	for faction, count in pairs( payouts ) do 
+		amount = count * GANGWAR_PAYOUT_PER_AREA
+		facObj = FactionManager:getSingleton():getFromId(faction)
+		if facObj then 
+			facObj:giveMoney(amount, "Gangwar-Payday")
+			facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $", 0, 200, 0, true)
+		end
+	end
 end
 
 function Gangwar:Event_OnPickupHit( player )
