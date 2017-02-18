@@ -138,8 +138,8 @@ function HUDSpeedo:Bind_CruiseControl(key, state)
 		RadioGUI:getSingleton():setControlEnabled(false)
 
 		-- Bind mouse wheel to change the cruise speed
-		bindKey("mouse_wheel_up", "down", self.Bind_CruiseControlChange, 1)
-		bindKey("mouse_wheel_down", "down", self.Bind_CruiseControlChange, -1)
+		bindKey("mouse_wheel_up", "down", self.Bind_CruiseControlChange, 2)
+		bindKey("mouse_wheel_down", "down", self.Bind_CruiseControlChange, -2)
 	else
 		-- Disable if the cruise speed hasn't changed
 		if not self.m_CruiseSpeedChanged then
