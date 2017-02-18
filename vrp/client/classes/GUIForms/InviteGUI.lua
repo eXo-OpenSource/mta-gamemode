@@ -23,9 +23,11 @@ function InviteGUI:constructor(callback,filter)
 	self.m_Filter = filter
 
 	self.m_Callback = callback
+	self:refreshOnlinePlayers()
 end
 
 function InviteGUI:refreshOnlinePlayers()
+	self.m_PlayersGrid:clear()
 	if self.m_Filter == "group" then
 		for k, player in ipairs(getElementsByType("player")) do
 			if not player:getGroupType() then
