@@ -17,7 +17,7 @@ local fontHeight
 
 
 function Nametag:constructor()
-	for key, player in ipairs(getElementsByType("player")) do 
+	for key, player in ipairs(getElementsByType("player")) do
 		setPlayerNametagShowing(player, false)
 	end
 	self.m_Stream = {}
@@ -25,7 +25,7 @@ function Nametag:constructor()
 	self.m_Draw = bind(self.draw, self)
 	self.m_StreamIn = bind(self.Event_StreamIn, self)
 	self.m_StreamOut = bind(self.Event_StreamIn, self)
-	
+
 	addEventHandler("onClientElementStreamIn", root, self.m_StreamIn)
 	addEventHandler("onClientElementStreamOut", root, self.m_StreamOut)
 	addEventHandler("onClientRender", root, self.m_Draw)
@@ -39,10 +39,10 @@ end
 
 
 
-function Nametag:Event_StreamIn() 
+function Nametag:Event_StreamIn()
 	if source ~= localPlayer then
 		local bType = getElementType(source) == "player"
-		if bType then 
+		if bType then
 			self.m_Stream[source] = true
 		end
 	end
@@ -51,33 +51,35 @@ end
 function Nametag:Event_StreamOut()
 	if source ~= localPlayer then
 		local bType = getElementType(source) == "player"
-		if bType then 
+		if bType then
 			self.m_Stream[source] = false
 		end
 	end
 end
 
-function Nametag:draw() 
+function Nametag:draw()
 	local x,y,z = getElementPosition(localPlayer)
 	cx,cy,cz = getCameraMatrix()
-	for player, _ in pairs( self.m_Stream ) do 
-		bOnScreen = isElementOnScreen( player )
-		px,py,pz = getElementPosition(player)
-		bDistance = getDistanceBetweenPoints2D( x, y, px, py )
-		if bDistance <= maxDistance then 
-			bLineOfSight = isLineOfSightClear( cx, cy, cz, px,py,pz+1, true, false, false, true, false, false, false,localPlayer)
-			if bLineOfSight then 
-				scx,scy = getScreenFromWorldPosition( px, py, pz+1.5 )
-				if scx and scy then 
-					drawName = getPlayerName(player)
-					fontSize =  1+ ( 10 - bDistance ) * 0.02
-					fontHeight = dxGetFontHeight(fontSize,Nametag.font)
-					textWidth = dxGetTextWidth(drawName, fontSize, Nametag.font)
-					armor = getPedArmor(player)
-					health = getElementHealth(player)
-					r,g,b =  self:getColorFromHP(health)
-					dxDrawText( drawName, scx- (textWidth*0.5), scy-fontHeight*2, scx+(textWidth*0.5), scy-fontHeight*1.2,tocolor(r,g,b) ,fontSize, Nametag.font, "center" )
-					self:drawIcons(player, "center", scx-(textWidth*0.5), scy-fontHeight, true, fontHeight)
+	for player, _ in pairs( self.m_Stream ) do
+		if isElement(player) then
+			bOnScreen = isElementOnScreen( player )
+			px,py,pz = getElementPosition(player)
+			bDistance = getDistanceBetweenPoints2D( x, y, px, py )
+			if bDistance <= maxDistance then
+				bLineOfSight = isLineOfSightClear( cx, cy, cz, px,py,pz+1, true, false, false, true, false, false, false,localPlayer)
+				if bLineOfSight then
+					scx,scy = getScreenFromWorldPosition( px, py, pz+1.5 )
+					if scx and scy then
+						drawName = getPlayerName(player)
+						fontSize =  1+ ( 10 - bDistance ) * 0.02
+						fontHeight = dxGetFontHeight(fontSize,Nametag.font)
+						textWidth = dxGetTextWidth(drawName, fontSize, Nametag.font)
+						armor = getPedArmor(player)
+						health = getElementHealth(player)
+						r,g,b =  self:getColorFromHP(health)
+						dxDrawText( drawName, scx- (textWidth*0.5), scy-fontHeight*2, scx+(textWidth*0.5), scy-fontHeight*1.2,tocolor(r,g,b) ,fontSize, Nametag.font, "center" )
+						self:drawIcons(player, "center", scx-(textWidth*0.5), scy-fontHeight, true, fontHeight)
+					end
 				end
 			end
 		end
