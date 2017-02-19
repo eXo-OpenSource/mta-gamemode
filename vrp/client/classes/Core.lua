@@ -186,7 +186,8 @@ function Core:afterLogin()
 	triggerServerEvent("remoteClientSpawn", localPlayer)
 	-- //Miami Spawn deactivated:
 
-	addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
+	--addCommandHandler("self", function() SelfGUI:getSingleton():open() end)
+	addCommandHandler("self", function() KeyBinds:getSingleton():selfMenu() end)
 	addCommandHandler("fraktion", function() FactionGUI:getSingleton():open() end)
 	addCommandHandler("report", function() TicketGUI:getSingleton():open() end)
 	addCommandHandler("tickets", function() TicketGUI:getSingleton():open() end)
