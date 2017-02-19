@@ -52,7 +52,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 						end
 
 						hitElement:takeMoney(costs, "Pay'N'Spray")
-						hitElement:sendShortMessage(_("Die Reperatur kostete %d$", hitElement, costs))
+						hitElement:sendShortMessage(_("Die Reparatur kostete %d$", hitElement, costs))
 						vehicle.m_DisableToggleHandbrake = nil
 					end,
 					3000,

@@ -51,7 +51,6 @@ function ScoreboardGUI:onShow()
 
 	bindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	bindKey("mouse_wheel_down", "down", self.m_ScrollBind)
-
 end
 
 function ScoreboardGUI:onHide()

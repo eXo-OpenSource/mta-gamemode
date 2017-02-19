@@ -365,8 +365,7 @@ function Player:spawn( )
 		end
 
 		-- Apply and delete health data
-		if self.m_Health == 0 then self.m_Health = 1 end
-		self:setHealth(self.m_Health)
+		self:setHealth(math.max(self.m_Health, 1))
 		self:setArmor(self.m_Armor)
 		--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 
