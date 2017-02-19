@@ -47,10 +47,11 @@ function ScoreboardGUI:onShow()
 	toggleControl("next_weapon", false)
 	toggleControl("previous_weapon", false)
 	self:refresh()
-	self.m_Timer = setTimer(bind(self.refresh, self), 1000, 0)
+	self.m_Timer = setTimer(bind(self.refresh, self), 15000, 0)
 
 	bindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	bindKey("mouse_wheel_down", "down", self.m_ScrollBind)
+
 end
 
 function ScoreboardGUI:onHide()
