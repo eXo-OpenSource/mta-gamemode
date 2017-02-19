@@ -4,7 +4,6 @@ addEvent("requestNametagBuffs", true)
 
 function Nametag:constructor()
 	self.m_PlayerBuffs = {}
-	
 	addEventHandler("requestNametagBuffs", root, bind(self.sendPlayerBuffs,self))
 end
 
