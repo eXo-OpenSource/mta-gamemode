@@ -477,7 +477,7 @@ HelpTexts = {
 			Du bist selbst verantwortlich für den Zustand des Fahrzeuges und musst es ggf. reparieren, betanken.
 			Unter F2 kann das Fahrzeug kostenpflichtig respawnt werden, wobei ausgewählt werden kann ob es an der
 			Parkposition oder, falls vorhanden, in deiner Garage respawnt werden soll. Sollte dein Fahrzeug einen
-			Totalschaden erleiden, so musst du entweder selbst mit einem Reperaturset versuchen dein Fahrzeug
+			Totalschaden erleiden, so musst du entweder selbst mit einem Reparaturset versuchen dein Fahrzeug
 			zum Laufen zu bringen oder du verständigst das Mech&Tow, welches einen Mechaniker zur ersten Hilfe
 			sendet.
 
