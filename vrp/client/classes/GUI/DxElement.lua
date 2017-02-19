@@ -27,7 +27,7 @@ function DxElement:constructor(posX, posY, width, height, parent, isRelative)
 	self.m_Alpha = 255
 
 	-- Caching in Rendertargets
-	self:anyChange()
+	--self:anyChange()
 
 	-- Find cache area if exists
 	if self.m_Parent and instanceof(self.m_Parent, CacheArea) and self.m_Parent.m_CachingEnabled then
