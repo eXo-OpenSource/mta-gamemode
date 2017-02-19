@@ -50,7 +50,7 @@ function VehicleTuningGUI:constructor(vehicle)
     do
         local width, height = screenWidth*0.2, screenHeight*0.35
         self.m_ShoppingCartWindow = GUIWindow:new(screenWidth*0.76, screenHeight*0.3, width, height, _"Warenkorb", true, false)
-        self.m_ShoppingCartGrid = GUIGridList:new(0, 30, width, height*0.9, self.m_ShoppingCartWindow)
+        self.m_ShoppingCartGrid = GUIGridList:new(0, 30, width, height*0.79, self.m_ShoppingCartWindow)
             :addColumn(_"Upgrade", 0.7)
             :addColumn(_"Preis", 0.3)
         self.m_PriceLabel = GUILabel:new(width*0.02, height*0.9, width*0.5, height*0.1, "", self.m_ShoppingCartWindow)
