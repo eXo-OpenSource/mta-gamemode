@@ -121,7 +121,7 @@ function GroupVehicle:save()
 	local rLight, gLight, bLight = getVehicleHeadLightColor(self)
 	local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
 	local tunings = getVehicleUpgrades(self) or {}
-
+	local texture = ""
 	if self.m_Texture and self.m_Texture:getPath() then
   		texture = self.m_Texture:getPath()
   	end
