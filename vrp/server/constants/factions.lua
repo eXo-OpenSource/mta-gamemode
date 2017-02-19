@@ -253,8 +253,8 @@ factionWeaponDepotInfo = {
 factionWeaponDepotInfoState = {}
 for index, key in pairs(factionWeaponDepotInfo) do
 	factionWeaponDepotInfoState[index] = {
-		["Waffe"] = key["Waffe"]*2,
-		["Magazine"] = key["Magazine"]*2,
+		["Waffe"] = key["Waffe"]*4,
+		["Magazine"] = key["Magazine"]*4,
 		["WaffenPreis"] = key["WaffenPreis"],
 		["MagazinPreis"] = key["MagazinPreis"]
 		}
