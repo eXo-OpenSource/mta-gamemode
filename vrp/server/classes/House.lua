@@ -36,13 +36,10 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 
 	self.m_ColShape = createColSphere(position, 1)
 
-	for playerId, timestamp in pairs(self.m_Keys) do -- Work-Arround: JSON saves Index as String
-		self.m_Keys[tonumber(playerId)] = timestamp
-		self.m_Keys[tostring(playerId)] = nil
-	end
-
 	if owner == false then
 		self.m_Keys = {}
+	else
+		self.m_Keys = table.setIndexToInteger(self.m_Keys)
 	end
 
 	--addEventHandler ("onPlayerJoin", root, bind(self.checkContractMonthly, self))
