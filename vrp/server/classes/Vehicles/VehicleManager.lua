@@ -681,14 +681,16 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
  	end
 
- 	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
+ 	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
  		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
  		return
- 	end
- 	if client:getMoney() < 100 then
+	end
+
+ 	if source:getOwner() == client:getId() and client:getMoney() < 100 then
  		client:sendError(_("Du hast nicht genügend Geld!", client))
  		return
- 	end
+	end
+
  	if source:getPositionType() == VehiclePositionType.World then
  		if source:getOwner() == client:getId() then
 			client:takeMoney(100, "Fahrzeug Respawn")
