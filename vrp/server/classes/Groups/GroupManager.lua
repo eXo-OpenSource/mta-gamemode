@@ -395,7 +395,7 @@ function GroupManager:Event_RankDown(playerId)
 	end
 
 	if group:getPlayerRank(playerId)-1 >= GroupRank.Normal then
-		if group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
+		if group:getPlayerRank(client:getId()) == GroupRank.Leader or group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
 			group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." degradiert!")
 			local player, isOffline = DatabasePlayer.getFromId(playerId)
