@@ -238,7 +238,9 @@ function Player:loadCharacterInfo()
 	FactionManager:getSingleton():sendAllToClient(self)
 	CompanyManager:getSingleton():sendAllToClient(self)
 	VehicleManager:getSingleton():sendTexturesToClient(self)
-	HouseManager:getSingleton():loadBlips(self)
+	if HouseManager:isInstantiated() then
+		HouseManager:getSingleton():loadBlips(self)
+	end
 
 	self.m_IsDead = row.IsDead or 0
 
@@ -701,14 +703,16 @@ function Player:payDay()
 	self:addPaydayText("interest","Bank-Zinsen: "..income_interest.."$",255,255,255)
 
 	--Outgoing
-	local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
-	--if #houses > 0 then
-		for index, house in pairs(houses) do
-			outgoing_house = outgoing_house + house:getRent()
-			house.m_Money = house.m_Money + house:getRent()
-			houseAmount = houseAmount + 1
-		end
-	--end
+	if HouseManager:isInstantiated() then
+		local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
+		--if #houses > 0 then
+			for index, house in pairs(houses) do
+				outgoing_house = outgoing_house + house:getRent()
+				house.m_Money = house.m_Money + house:getRent()
+				houseAmount = houseAmount + 1
+			end
+		--end
+	end
 
 	outgoing_vehicles = #self:getVehicles()*75
 	outgoing = outgoing + outgoing_vehicles + outgoing_house
