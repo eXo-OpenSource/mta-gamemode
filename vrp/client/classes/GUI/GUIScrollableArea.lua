@@ -77,6 +77,13 @@ function GUIScrollableArea:draw(incache)
 	dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, self.m_PageTarget)
 end
 
+function GUIScrollableArea:clear()
+	self:clearChildren()
+
+	self.m_ScrollX = 0
+	self.m_ScrollY = 0
+end
+
 function GUIScrollableArea:setScrollPosition(x, y)
 	local oldScrollX, oldScrollY = self.m_ScrollX, self.m_ScrollY
 	self.m_ScrollX, self.m_ScrollY = x, y
