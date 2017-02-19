@@ -217,6 +217,8 @@ function DeathmatchManager:leaveLobby()
 	end
 end
 
-addCommandHandler("gh", function(player)
-outputChatBox(("Vector3(%.2f, %.2f, %.2f),"):format(getElementPosition(player)))
-end)
+if DEBUG then
+	addCommandHandler("gh", function(player)
+	outputChatBox(("Vector3(%.2f, %.2f, %.2f),"):format(getElementPosition(player)))
+	end)
+end
