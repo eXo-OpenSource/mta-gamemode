@@ -1,5 +1,6 @@
 TextureReplace = inherit(Object)
 TextureReplace.ServerElements = {}
+TextureReplace.Cache = {}
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
 	if not path or #path <= 5 then
@@ -38,7 +39,11 @@ end
 
 function TextureReplace:destructor()
 	if self.m_Texture and isElement(self.m_Texture) then
-		destroyElement(self.m_Texture)
+		if self.m_IsRenderTarget then
+			destroyElement(self.m_Texture)
+		else
+			TextureReplace.unloadCache(self.m_TexturePath)
+		end
 	end
 	if self.m_Shader and isElement(self.m_Shader) then
 		destroyElement(self.m_Shader)
@@ -73,7 +78,8 @@ function TextureReplace:loadShader()
 
 	local membefore = dxGetStatus().VideoMemoryUsedByTextures
 	if not self.m_IsRenderTarget then
-		self.m_Texture = dxCreateTexture(self.m_TexturePath)
+		--self.m_Texture = dxCreateTexture(self.m_TexturePath)
+		self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath)
 	else
 		self.m_Texture = dxCreateRenderTarget(self.m_Width, self.m_Height, true)
 
@@ -112,10 +118,37 @@ function TextureReplace:unloadShader()
 	if not self.m_Shader or not isElement(self.m_Shader) then return false end
 	if not self.m_Texture or not isElement(self.m_Texture) then return false end
 
-	local a = destroyElement(self.m_Texture)
+	--local a = destroyElement(self.m_Texture)
+	local a = TextureReplace.unloadCache(self.m_TexturePath)
 	local b = destroyElement(self.m_Shader)
 
 	return a and b
+end
+
+function TextureReplace.getCachedTexture(path)
+	if not TextureReplace.Cache[path] then
+		outputConsole("creating texture "..path)
+		TextureReplace.Cache[path] = {counter = 0; texture = dxCreateTexture(path)}
+	end
+
+	TextureReplace.Cache[path].counter = TextureReplace.Cache[path].counter + 1
+	outputConsole("incremented texture counter of "..path.." to "..TextureReplace.Cache[path].counter)
+	return TextureReplace.Cache[path].texture
+end
+
+function TextureReplace.unloadCache(path)
+	if not TextureReplace.Cache[path] then return false end
+	TextureReplace.Cache[path].counter = TextureReplace.Cache[path].counter - 1
+	outputConsole("decremented texture counter of "..path.." to "..TextureReplace.Cache[path].counter)
+
+	if TextureReplace.Cache[path].counter == 0 then
+		outputConsole("destroying texture "..path)
+		local result = destroyElement(TextureReplace.Cache[path].texture)
+		TextureReplace.Cache[path] = nil
+		return result
+	end
+
+	return true
 end
 
 -- Events
