@@ -12,7 +12,7 @@ function GUIButtonMenu:constructor(text, width, height)
 	height = height and height or 380
 	GUIForm.constructor(self, screenWidth/2-(width/2), screenHeight/2-(height/2), width, height)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, text, true, true, self)
-	self.m_Window:setCloseOnClose(true)
+	self.m_Window:deleteOnClose(true)
 	self.m_Items = {}
 end
 
