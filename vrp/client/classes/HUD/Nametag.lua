@@ -17,9 +17,6 @@ local fontHeight
 
 
 function Nametag:constructor()
-	for key, player in ipairs(getElementsByType("player")) do
-		setPlayerNametagShowing(player, false)
-	end
 	self.m_Stream = {}
 	self.m_Style = core:get("HUD", "NametagStyle", NametagStyle.Default)
 	self.m_Draw = bind(self.draw, self)
@@ -62,6 +59,7 @@ function Nametag:draw()
 	cx,cy,cz = getCameraMatrix()
 	for player, _ in pairs( self.m_Stream ) do
 		if isElement(player) then
+			setPlayerNametagShowing(player, false)
 			bOnScreen = isElementOnScreen( player )
 			px,py,pz = getElementPosition(player)
 			bDistance = getDistanceBetweenPoints2D( x, y, px, py )
