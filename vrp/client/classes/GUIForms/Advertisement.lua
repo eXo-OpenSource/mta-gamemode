@@ -38,7 +38,7 @@ function AdvertisementBox:constructor()
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.65, self.m_Width*0.2, self.m_Height*0.15, "Sender:", self.m_Window)
 	self.m_SenderNameChanger = GUIChanger:new(self.m_Width*0.15, self.m_Height*0.65, self.m_Width*0.3, self.m_Height*0.15, self.m_Window)
 	self.m_SenderNameChanger:addItem(localPlayer:getName())
-	if localPlayer:getGroupName() then
+	if localPlayer:getGroupName() and localPlayer:getGroupName() ~= "" then
 		self.m_SenderNameChanger:addItem(localPlayer:getGroupName())
 	end
 
