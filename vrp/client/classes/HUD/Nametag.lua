@@ -15,6 +15,7 @@ local maxDistance = 40
 local bOnScreen, bLineOfSight, px, py, pz, bDistance, textWidth, drawName, fontSize, scx,scy, color, armor, r,g,b, health, cx,cy,cz
 local fontHeight
 
+
 function Nametag:constructor()
 	for key, player in ipairs(getElementsByType("player")) do 
 		setPlayerNametagShowing(player, false)
@@ -61,29 +62,29 @@ function Nametag:draw()
 	cx,cy,cz = getCameraMatrix()
 	for player, _ in pairs( self.m_Stream ) do 
 		bOnScreen = isElementOnScreen( player )
-		px,py,pz = getPedBonePosition(player, 5)
+		px,py,pz = getElementPosition(player)
 		bDistance = getDistanceBetweenPoints2D( x, y, px, py )
 		if bDistance <= maxDistance then 
-			bLineOfSight = isLineOfSightClear( cx, cy, cz, px, py, pz, true, true,true)
+			bLineOfSight = isLineOfSightClear( cx, cy, cz, px,py,pz+1, true, false, false, true, false, false, false,localPlayer)
 			if bLineOfSight then 
-				scx,scy = getScreenFromWorldPosition( px, py, pz+0.7 )
+				scx,scy = getScreenFromWorldPosition( px, py, pz+1.5 )
 				if scx and scy then 
 					drawName = getPlayerName(player)
-					fontSize =  1 + ( 15 - bDistance ) * 0.02
+					fontSize =  1+ ( 10 - bDistance ) * 0.02
 					fontHeight = dxGetFontHeight(fontSize,Nametag.font)
 					textWidth = dxGetTextWidth(drawName, fontSize, Nametag.font)
 					armor = getPedArmor(player)
 					health = getElementHealth(player)
 					r,g,b =  self:getColorFromHP(health)
-					dxDrawText( drawName, scx- (textWidth*0.5), scy, scx+(textWidth*0.5), scy+fontHeight,tocolor(r,g,b) ,fontSize, Nametag.font, "center" )
-					self:drawIcons(player, "center", scx-(textWidth*0.5), scy+fontHeight*1.2, true, fontHeight)
+					dxDrawText( drawName, scx- (textWidth*0.5), scy-fontHeight*2, scx+(textWidth*0.5), scy-fontHeight*1.2,tocolor(r,g,b) ,fontSize, Nametag.font, "center" )
+					self:drawIcons(player, "center", scx-(textWidth*0.5), scy-fontHeight, true, fontHeight)
 				end
 			end
 		end
 	end
 end
 
-function Nametag:drawIcons(player, align, startX, startY, armor, width)
+function Nametag:drawIcons(player, align, startX, startY, armor, width, textwidth)
 	if isChatBoxInputActive() then
 		setElementData(localPlayer, "writing", true)
 	else
@@ -109,7 +110,7 @@ function Nametag:drawIcons(player, align, startX, startY, armor, width)
 	end
 
 	if align == "center" then
-		startX = startX-((#icons*width)*0.5)
+		startX = startX + ((#icons-1)*width)
 	end
 
 	for index, icon in pairs(icons) do
