@@ -39,11 +39,11 @@ end
 
 function TextureReplace:destructor()
 	if self.m_Texture and isElement(self.m_Texture) then
-		--if self.m_IsRenderTarget then
+		if self.m_IsRenderTarget then
 			destroyElement(self.m_Texture)
-		--else
-			--TextureReplace.unloadCache(self.m_TexturePath)
-		--end
+		else
+			TextureReplace.unloadCache(self.m_TexturePath)
+		end
 	end
 	if self.m_Shader and isElement(self.m_Shader) then
 		destroyElement(self.m_Shader)
@@ -78,8 +78,8 @@ function TextureReplace:loadShader()
 
 	local membefore = dxGetStatus().VideoMemoryUsedByTextures
 	if not self.m_IsRenderTarget then
-		self.m_Texture = dxCreateTexture(self.m_TexturePath)
-		--self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath)
+		--self.m_Texture = dxCreateTexture(self.m_TexturePath)
+		self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath)
 	else
 		self.m_Texture = dxCreateRenderTarget(self.m_Width, self.m_Height, true)
 
@@ -118,8 +118,8 @@ function TextureReplace:unloadShader()
 	if not self.m_Shader or not isElement(self.m_Shader) then return false end
 	if not self.m_Texture or not isElement(self.m_Texture) then return false end
 
-	local a = destroyElement(self.m_Texture)
-	--local a = TextureReplace.unloadCache(self.m_TexturePath)
+	--local a = destroyElement(self.m_Texture)
+	local a = TextureReplace.unloadCache(self.m_TexturePath)
 	local b = destroyElement(self.m_Shader)
 
 	return a and b
