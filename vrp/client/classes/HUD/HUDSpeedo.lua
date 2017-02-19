@@ -127,7 +127,7 @@ function HUDSpeedo:Bind_CruiseControl(key, state)
 	if state == "down" then
 		-- Tell the player that we enable cruise control
 		if not CruiseControl:getSingleton():isEnabled() then
-			ShortMessage:new(_"Tempomat aktiviert!")
+			ShortMessage:new(_"Limiter aktiviert!")
 		end
 
 		-- Enable cruise control and its adjustment
@@ -144,7 +144,7 @@ function HUDSpeedo:Bind_CruiseControl(key, state)
 		-- Disable if the cruise speed hasn't changed
 		if not self.m_CruiseSpeedChanged then
 			CruiseControl:getSingleton():setEnabled(false)
-			ShortMessage:new(_"Tempomat deaktiviert!")
+			ShortMessage:new(_"Limiter deaktiviert!")
 		end
 
 		-- Enable radio channel switching again
@@ -158,7 +158,15 @@ end
 
 function HUDSpeedo.Bind_CruiseControlChange(key, state, change)
 	-- Update cruise speed
-	CruiseControl:getSingleton():setSpeed(CruiseControl:getSingleton():getSpeed() + change)
+	local newSpeed = math.max(CruiseControl:getSingleton():getSpeed() + change, 0)
+	CruiseControl:getSingleton():setSpeed(newSpeed)
+
+	-- Give achievement if the player reached 5000
+	if newSpeed > 100000 then
+		localPlayer:giveAchievement(85)
+	elseif newSpeed > 5000 then
+		localPlayer:giveAchievement(84)
+	end
 
 	-- Mark the cruise speed being changed
 	HUDSpeedo:getSingleton().m_CruiseSpeedChanged = true
