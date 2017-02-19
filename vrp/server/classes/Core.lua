@@ -195,7 +195,9 @@ function Core:destructor()
 		delete(VehicleManager:getSingleton())
 		delete(PlayerManager:getSingleton())
 		delete(GroupManager:getSingleton())
-		delete(HouseManager:getSingleton())
+		if HouseManager:isInstantiated() then
+			delete(HouseManager:getSingleton())
+		end
 		delete(FactionManager:getSingleton())
 		delete(CompanyManager:getSingleton())
 		delete(InventoryManager:getSingleton())
