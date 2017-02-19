@@ -1,139 +1,89 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/HUD/Nametag.lua
+-- *  PURPOSE:     Nametag class
+-- *
+-- ****************************************************************************
 Nametag = inherit(Singleton)
-
+Nametag.font = "default-bold"
+Nametag.fontSize = 2
 addEvent("reciveNametagBuffs", true)
 
-Nametag.BUFF_IMG = {
-	["default"] = "files/images/Nametag/default.png"
-}
-
 local sizePerRankIcon = 150/5
-local maxDistance = 30
-
-function isCursorOverArea ( x,y,w,h )
-	if isCursorShowing () then
-		local cursorPos = {getCursorPosition()}
-		local mx, my = cursorPos[1]*screenWidth,cursorPos[2]*screenHeight
-		if mx >= x and mx <= x+w and my >= y and my <= y+h then
-			return true
-		end
-	end
-	return false
-end
+local maxDistance = 40
+local bOnScreen, bLineOfSight, px, py, pz, bDistance, textWidth, drawName, fontSize, scx,scy, color, armor, r,g,b, health, cx,cy,cz
+local fontHeight
 
 function Nametag:constructor()
-
-	self.m_Players = {}
-	self.m_PlayerBuffs = {}
-	self.m_RenderTarget = dxCreateRenderTarget(260, 120, true)
-	self.m_IsModifying = false
-
+	for key, player in ipairs(getElementsByType("player")) do 
+		setPlayerNametagShowing(player, false)
+	end
+	self.m_Stream = {}
 	self.m_Style = core:get("HUD", "NametagStyle", NametagStyle.Default)
-
 	self.m_Draw = bind(self.draw, self)
-	self.m_ReciveBuffs = bind(self.reciveBuffs,self)
-
-
-	addEventHandler("reciveNametagBuffs",root,self.m_ReciveBuffs)
-	addEventHandler("onClientRender", root, self.m_Draw, true, "high+999")
-
+	self.m_StreamIn = bind(self.Event_StreamIn, self)
+	self.m_StreamOut = bind(self.Event_StreamIn, self)
+	
+	addEventHandler("onClientElementStreamIn", root, self.m_StreamIn)
+	addEventHandler("onClientElementStreamOut", root, self.m_StreamOut)
+	addEventHandler("onClientRender", root, self.m_Draw)
 end
 
 function Nametag:destructor()
-	removeEventHandler("reciveNametagBuffs",root,self.m_ReciveBuffs)
-	removeEventHandler("onClientRender", root, self.m_Draw, true, "high+999")
+	removeEventHandler("onClientElementStreamIn", root, self.m_StreamIn)
+	removeEventHandler("onClientElementStreamOut", root, self.m_StreamOut)
+	removeEventHandler("onClientRender", root, self.m_Draw)
 end
 
-function Nametag:setStyle(style)
-	self.m_Style = style
-end
 
-function Nametag:reciveBuffs(buffs)
-	self.m_PlayerBuffs = buffs
 
-	for key, value in pairs(self.m_PlayerBuffs) do
-		if not self.m_Players[getPlayerFromName(key)] then
-			self.m_Players[getPlayerFromName(key)] = true
+function Nametag:Event_StreamIn() 
+	if source ~= localPlayer then
+		local bType = getElementType(source) == "player"
+		if bType then 
+			self.m_Stream[source] = true
 		end
 	end
 end
 
-function Nametag:onUnknownSpotted(player)
-	self.m_Players[player] = true
-	self.m_PlayerBuffs[getPlayerName(player)] = {}
-	triggerServerEvent("requestNametagBuffs",localPlayer)
-end
-
-function Nametag:getColorFromHP(hp)
-	if hp <= 0 then
-		return 0, 0, 0
-	else
-		hp = math.abs ( hp - 0.01 )
-		return ( 100 - hp ) * 2.55 / 2, ( hp * 2.55 ), 0
+function Nametag:Event_StreamOut()
+	if source ~= localPlayer then
+		local bType = getElementType(source) == "player"
+		if bType then 
+			self.m_Stream[source] = false
+		end
 	end
 end
 
-
-function Nametag:drawDefault(player)
-	local pname = player:getName()
-	local size = calcDxFontSize(pname, 260, "default-bold", 2)
-	local r, g, b = self:getColorFromHP(player:getHealth())
-	dxDrawText(getPlayerName(player), 12, 57, 260, 60, tocolor ( 0, 0, 0, 255 ), size,"default-bold", "center")
-	dxDrawText(getPlayerName(player), 10, 55, 260, 60, tocolor (r, g, b, 255), size, "default-bold", "center")
-
-	self:drawIcons(player, "center", 90, true)
-end
-
-function Nametag:drawVRP(player)
-	local pname = player:getName()
-	local size = calcDxFontSize(pname, 260, "default-bold", 2)
-
-	dxDrawText(getPlayerName(player), 10, 5, 260, 60, AdminColor[player:getPublicSync("Rank") or 0], size,"default-bold")
-
-	dxDrawRectangle(10, 40, 260*getElementHealth(player)/100, 15, tocolor(0,125,0,255))
-	dxDrawRectangle(10, 40, 260*getPedArmor(player)/100, 15, Color.LightBlue)
-
-	self:drawIcons(player, "left", 90)
-end
-
-function Nametag:draw()
-
-	for _, player in ipairs(getElementsByType("player",true)) do
-		if not self.m_Players[player] then
-			self:onUnknownSpotted(player)
-		end
-		if player ~= localPlayer or self.m_IsModifying then
-			setPlayerNametagShowing(player,false)
-			local px,py,pz = getPedBonePosition(player, 2)
-			pz = pz + 1
-			local x,y = getScreenFromWorldPosition(px,py,pz)
-			local lx,ly,lz = getElementPosition(localPlayer)
-			if x and y and isLineOfSightClear(lx,ly,lz,px,py,pz,true,false,false,true,false,true,true) and ( getDistanceBetweenPoints3D(lx,ly,lz,px,py,pz) < maxDistance or getPedTarget(localPlayer) == player) then
-			--local name = getPlayerName(player):gsub("#%d%d%d%d","")
-			dxSetRenderTarget(self.m_RenderTarget,true)
-
-			if self.m_Style == NametagStyle.Default then
-				self:drawDefault(player)
-			elseif self.m_Style == NametagStyle.vRoleplay then
-				self:drawVRP(player)
+function Nametag:draw() 
+	local x,y,z = getElementPosition(localPlayer)
+	cx,cy,cz = getCameraMatrix()
+	for player, _ in pairs( self.m_Stream ) do 
+		bOnScreen = isElementOnScreen( player )
+		px,py,pz = getPedBonePosition(player, 5)
+		bDistance = getDistanceBetweenPoints2D( x, y, px, py )
+		if bDistance <= maxDistance then 
+			bLineOfSight = isLineOfSightClear( cx, cy, cz, px, py, pz, true, true,true)
+			if bLineOfSight then 
+				scx,scy = getScreenFromWorldPosition( px, py, pz+0.7 )
+				if scx and scy then 
+					drawName = getPlayerName(player)
+					fontSize =  1 + ( 15 - bDistance ) * 0.02
+					fontHeight = dxGetFontHeight(fontSize,Nametag.font)
+					textWidth = dxGetTextWidth(drawName, fontSize, Nametag.font)
+					armor = getPedArmor(player)
+					health = getElementHealth(player)
+					r,g,b =  self:getColorFromHP(health)
+					dxDrawText( drawName, scx- (textWidth*0.5), scy, scx+(textWidth*0.5), scy+fontHeight,tocolor(r,g,b) ,fontSize, Nametag.font, "center" )
+					self:drawIcons(player, "center", scx-(textWidth*0.5), scy+fontHeight*1.2, true, fontHeight)
+				end
 			end
-
-
-
-			dxSetRenderTarget()
-
-			local distance = getDistanceBetweenPoints3D(px,py,pz,lx,ly,lz)
-
-			local scale = 0.4 + ( 15 - distance ) * 0.02
-			if scale < 0 then scale = 0.3 end
-			dxDrawImage(x-260*scale/2,y-60, 260*scale, 120*scale, self.m_RenderTarget)
-
-			end
-
 		end
 	end
 end
 
-function Nametag:drawIcons(player, align, startY, armor)
+function Nametag:drawIcons(player, align, startX, startY, armor, width)
 	if isChatBoxInputActive() then
 		setElementData(localPlayer, "writing", true)
 	else
@@ -158,13 +108,34 @@ function Nametag:drawIcons(player, align, startY, armor)
 		icons[#icons+1] = player:getFaction():getShortName()..".png"
 	end
 
-	local startX = 10
 	if align == "center" then
-		startX = 130-#icons*17
+		startX = startX-((#icons*width)*0.5)
 	end
 
 	for index, icon in pairs(icons) do
-		dxDrawImage(startX+(index-1)*34, startY, 32, 32, "files/images/Nametag/"..icon)
+		dxDrawImage(startX, startY, width, width, "files/images/Nametag/"..icon)
 	end
 
+end
+
+
+function Nametag:getColorFromHP(hp)
+	if hp <= 0 then
+		return 0, 0, 0
+	else
+		hp = math.abs ( hp - 0.01 )
+		return ( 100 - hp ) * 2.55 / 2, ( hp * 2.55 ), 0
+	end
+end
+
+
+function isCursorOverArea ( x,y,w,h )
+	if isCursorShowing () then
+		local cursorPos = {getCursorPosition()}
+		local mx, my = cursorPos[1]*screenWidth,cursorPos[2]*screenHeight
+		if mx >= x and mx <= x+w and my >= y and my <= y+h then
+			return true
+		end
+	end
+	return false
 end
