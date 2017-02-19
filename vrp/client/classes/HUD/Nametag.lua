@@ -65,12 +65,12 @@ function Nametag:draw()
 			if (bDistance <= maxDistance) or bRifleCheck then
 				bLineOfSight = isLineOfSightClear( cx, cy, cz, px,py,pz, true, false, false, true, false, false, false, localPlayer)
 				if bLineOfSight or bRifleCheck then
-					scx,scy = getScreenFromWorldPosition( px, py, pz+1.3 )
+					scx,scy = getScreenFromWorldPosition( px, py, pz+1 )
 					if scx and scy then
 						drawName = getPlayerName(player)
-						fontSize =  1+ ( 10 - bDistance ) * 0.04
-						if fontSize <= 0.5 then 
-							fontSize = 0.5
+						fontSize =  1+ ( 10 - bDistance ) * 0.05
+						if fontSize <= 0.7 then 
+							fontSize = 0.7
 						end
 						if bRifleCheck then 
 							fontSize = 1
