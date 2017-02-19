@@ -1019,7 +1019,7 @@ function Admin:getVehFromId(player, cmd, vehId)
 end
 
 function Admin:Event_vehicleDespawn()
-    if client:getRank() >= RANK.Supporter then
+    if client:getRank() >= RANK.Clanmember then
         if isElement(source) then
 
 			VehicleManager:getSingleton():checkVehicle(source)
