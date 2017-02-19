@@ -42,7 +42,7 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	self:factionReceiveWeaponShopInfos()
 end
 
-function FactionWeaponShopGUI:destuctor()
+function FactionWeaponShopGUI:virtual_destructor()
 	removeEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWeaponShopGUI, self))
 	GUIForm.destructor(self)
 end
