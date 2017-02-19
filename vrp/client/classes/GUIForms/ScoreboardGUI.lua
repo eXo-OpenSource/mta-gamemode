@@ -47,7 +47,7 @@ function ScoreboardGUI:onShow()
 	toggleControl("next_weapon", false)
 	toggleControl("previous_weapon", false)
 	self:refresh()
-	self.m_Timer = setTimer(bind(self.refresh, self), 15000, 0)
+	self.m_Timer = setTimer(bind(self.refresh, self), 1000, 0)
 
 	bindKey("mouse_wheel_up", "down", self.m_ScrollBind)
 	bindKey("mouse_wheel_down", "down", self.m_ScrollBind)
@@ -77,6 +77,9 @@ function ScoreboardGUI:onScoreBoardScroll(key)
 end
 
 function ScoreboardGUI:refresh()
+	local scrollPosX, scrollPosY = self.m_Grid.m_ScrollArea:getScrollPosition()
+	--	if scrollPosY ~= 0 then return end
+
 	self.m_Grid:clear()
 	self.m_Players = {}
 	self.m_CompanyCount = {}
@@ -101,6 +104,8 @@ function ScoreboardGUI:refresh()
 
 	table.sort(self.m_Players, function (a, b) return (a[2] < b[2]) end)
 	self:insertPlayers()
+
+	self.m_Grid.m_ScrollArea:setScrollPosition(scrollPosX, scrollPosY)
 
 	if not self.m_PlayerCountLabels then
 		self.m_PlayerCountLabels = {}
