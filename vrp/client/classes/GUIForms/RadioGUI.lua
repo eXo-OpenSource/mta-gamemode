@@ -8,11 +8,11 @@
 RadioGUI = inherit(GUIForm)
 inherit(Singleton, RadioGUI)
 
-
 function RadioGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.28)/2 / ASPECT_RATIO_MULTIPLIER, 0, screenWidth*0.28 / ASPECT_RATIO_MULTIPLIER, screenHeight*0.19, false, true)
 
 	self.m_CurrentStation = 0
+	self.m_ControlEnabled = true
 	setPlayerHudComponentVisible("radio", false)
 	setRadioChannel(0)
 	addEventHandler("onClientPlayerRadioSwitch", root, cancelEvent)
@@ -151,35 +151,45 @@ function RadioGUI:getVolume()
 end
 
 function RadioGUI:nextStation()
-	if not ScoreboardGUI:getSingleton():isVisible() then
-		if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
-		self.m_CurrentStation = self.m_CurrentStation + 1
-		if self.m_CurrentStation > #VRP_RADIO then
-			self.m_CurrentStation = 0
-		end
-		self:setRadioStation(self.m_CurrentStation)
-
-		if not self:isVisible() then
-			self:fadeIn(1000)
-		end
-		self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
+	-- Don't do anything if the controls have been disabled
+	if not self.m_ControlEnabled then
+		return
 	end
+
+	if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
+
+	self.m_CurrentStation = self.m_CurrentStation + 1
+	if self.m_CurrentStation > #VRP_RADIO then
+		self.m_CurrentStation = 0
+	end
+	self:setRadioStation(self.m_CurrentStation)
+
+	if not self:isVisible() then
+		self:fadeIn(1000)
+	end
+	self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
 end
 
 function RadioGUI:previousStation()
-	if not ScoreboardGUI:getSingleton():isVisible() then
-		if isTimer(self.m_FadeOutTimer) then killTimer(self.m_FadeOutTimer) end
-		self.m_CurrentStation = self.m_CurrentStation - 1
-		if self.m_CurrentStation < 0 then
-			self.m_CurrentStation = #VRP_RADIO
-		end
-		self:setRadioStation(self.m_CurrentStation)
-
-		if not self:isVisible() then
-			self:fadeIn(1000)
-		end
-		self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
+	-- Don't do anything if the controls have been disabled
+	if not self.m_ControlEnabled then
+		return
 	end
+
+	if isTimer(self.m_FadeOutTimer) then
+		killTimer(self.m_FadeOutTimer)
+	end
+
+	self.m_CurrentStation = self.m_CurrentStation - 1
+	if self.m_CurrentStation < 0 then
+		self.m_CurrentStation = #VRP_RADIO
+	end
+	self:setRadioStation(self.m_CurrentStation)
+
+	if not self:isVisible() then
+		self:fadeIn(1000)
+	end
+	self.m_FadeOutTimer = setTimer(function() self:fadeOut(1000) end, 5000, 1)
 end
 
 function RadioGUI:getStation()
@@ -202,4 +212,8 @@ function RadioGUI:stopSound()
 		destroyElement(self.m_Sound)
 		self.m_Sound = nil
 	end
+end
+
+function RadioGUI:setControlEnabled(controlEnabled)
+	self.m_ControlEnabled = controlEnabled
 end

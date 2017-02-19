@@ -13,6 +13,7 @@ function HUDSpeedo:constructor()
 	self.m_Draw = bind(self.draw, self)
 	self.m_Fuel = 100
 	self.m_Indicator = {["left"] = 0, ["right"] = 0}
+
 	-- Add event handlers
 	addEventHandler("onClientPlayerVehicleEnter", localPlayer,
 		function(vehicle, seat)
@@ -88,8 +89,6 @@ function HUDSpeedo:draw()
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_aviation.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/main_needle.png", speed * 270/240)
 	end
-	-- draw the gear level
-	--dxDrawText(getVehicleCurrentGear(vehicle), drawX+158, drawY+108, 20, 20, tocolor(255, 255, 255), 2.5, "default")
 
 	-- draw the engine icon
 	if getVehicleEngineState(vehicle) then
@@ -100,7 +99,11 @@ function HUDSpeedo:draw()
 
 	if handbrake or getControlState("handbrake") or vehicle:isFrozen() then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/handbrake.png")
+	else
+		local cruiseSpeed = CruiseControl:getSingleton():getSpeed()
+		dxDrawText(cruiseSpeed and math.floor(cruiseSpeed) or "-", drawX+128, drawY+70, nil, nil, Color.Orange, 1, VRPFont(30, Fonts.Digital), "center")
 	end
+
 	if self.m_Indicator["left"] > 0 and getElementData(vehicle, "i:left") then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_left.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["left"]))
 	end
@@ -108,8 +111,63 @@ function HUDSpeedo:draw()
 	if self.m_Indicator["right"] > 0 and getElementData(vehicle, "i:right") then
 		dxDrawImage(drawX, drawY, self.m_Size, self.m_Size, "files/images/Speedo/indicator_right.png", 0, 0, 0, tocolor(255, 255, 255, self.m_Indicator["right"]))
 	end
+
 	-- draw the fuel-o-meter
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel.png", 0, 0, 0, tocolor(255, 255, 255, 150))
 	dxDrawImage(drawX-100, drawY+115, self.m_FuelSize, self.m_FuelSize, "files/images/Speedo/fuel_needle.png", self.m_Fuel * 180/100)
 	--dxSetBlendMode("blend")
+end
+
+function HUDSpeedo:Bind_CruiseControl(key, state)
+	-- Don't do anything if we're in a vehicle
+	if not localPlayer:getOccupiedVehicle() then
+		return
+	end
+
+	if state == "down" then
+		-- Tell the player that we enable cruise control
+		if not CruiseControl:getSingleton():isEnabled() then
+			ShortMessage:new(_"Limiter aktiviert!")
+		end
+
+		-- Enable cruise control and its adjustment
+		self.m_CruiseSpeedChanged = not CruiseControl:getSingleton():isEnabled()
+		CruiseControl:getSingleton():setEnabled(true)
+
+		-- Disable radio channel switching for a moment
+		RadioGUI:getSingleton():setControlEnabled(false)
+
+		-- Bind mouse wheel to change the cruise speed
+		bindKey("mouse_wheel_up", "down", self.Bind_CruiseControlChange, 2)
+		bindKey("mouse_wheel_down", "down", self.Bind_CruiseControlChange, -2)
+	else
+		-- Disable if the cruise speed hasn't changed
+		if not self.m_CruiseSpeedChanged then
+			CruiseControl:getSingleton():setEnabled(false)
+			ShortMessage:new(_"Limiter deaktiviert!")
+		end
+
+		-- Enable radio channel switching again
+		RadioGUI:getSingleton():setControlEnabled(true)
+
+		-- Remove mouse wheel binds
+		unbindKey("mouse_wheel_up", "down", self.Bind_CruiseControlChange)
+		unbindKey("mouse_wheel_down", "down", self.Bind_CruiseControlChange)
+	end
+end
+
+function HUDSpeedo.Bind_CruiseControlChange(key, state, change)
+	-- Update cruise speed
+	local newSpeed = math.max(CruiseControl:getSingleton():getSpeed() + change, 0)
+	CruiseControl:getSingleton():setSpeed(newSpeed)
+
+	-- Give achievement if the player reached 5000
+	if newSpeed > 100000 then
+		localPlayer:giveAchievement(85)
+	elseif newSpeed > 5000 then
+		localPlayer:giveAchievement(84)
+	end
+
+	-- Mark the cruise speed being changed
+	HUDSpeedo:getSingleton().m_CruiseSpeedChanged = true
 end
