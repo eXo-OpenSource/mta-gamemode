@@ -13,7 +13,7 @@ addRemoteEvents{"showFactionWeaponShopGUI","updateFactionWeaponShopGUI"}
 function FactionWeaponShopGUI:constructor(validWeapons)
 	GUIForm.constructor(self, screenWidth/2-370, screenHeight/2-230, 740, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fraktions Waffenshop - "..localPlayer:getFaction():getShortName(), true, true, self)
-
+	self.m_Window:deleteOnClose(true)
 	self.m_Cart = {}
 
 	self.m_WeaponsImage = {}
@@ -42,7 +42,7 @@ function FactionWeaponShopGUI:constructor(validWeapons)
 	self:factionReceiveWeaponShopInfos()
 end
 
-function FactionWeaponShopGUI:destuctor()
+function FactionWeaponShopGUI:virtual_destructor()
 	removeEventHandler("updateFactionWeaponShopGUI", root, bind(self.Event_updateFactionWeaponShopGUI, self))
 	GUIForm.destructor(self)
 end

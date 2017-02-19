@@ -14,7 +14,7 @@ function DrivingSchoolMenuGUI:constructor(count, instructors)
 	self.m_InstructorCount = count
 
 	GUIForm.constructor(self, screenWidth/2-(300/2), screenHeight/2-(160/2), 300, 250)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"eXo Fahrschule", true, true, self):setCloseOnClose(true)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"eXo Fahrschule", true, true, self):deleteOnClose(true)
 
 	GUILabel:new(10, 40, self.m_Width-20, 25, _("Es sind aktuell %d Fahrlehrer online!",self.m_InstructorCount), self):setAlignX("center")
 	self.m_CallInstructorButton = GUIButton:new(30, 70, self.m_Width-60, 35,_"Fahrlehrer rufen", self)

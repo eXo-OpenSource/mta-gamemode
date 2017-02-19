@@ -46,7 +46,7 @@ function Core:constructor()
 	ACLGroup.get("Admin"):addObject("resource.admin_exo")
 
 	if GIT_BRANCH == "release/production" then
-		setServerPassword("aabbcc")
+		setServerPassword()
 	end
 
 	-- Instantiate classes (Create objects)
@@ -66,7 +66,7 @@ function Core:constructor()
 		Provider:new()
 		GroupManager:new()
 		GroupPropertyManager:new()
-		--HouseManager:new()
+		HouseManager:new()
 		AmmuNationManager:new()
 		--Police:new()
 		EventManager:new()

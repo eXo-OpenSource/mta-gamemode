@@ -8,13 +8,18 @@
 
 -- This rescales our font to look good on a certain pixel height
 local VRPFonts = {}
-function VRPFont(height)
+function VRPFont(height, font)
 	local fontsize = math.floor(height/1.6)
-	if not VRPFonts[fontsize] then
-		VRPFonts[fontsize] = dxCreateFont("files/fonts/EkMukta.ttf", fontsize)
+	font = font or Fonts.EkMukta
+
+	if not VRPFonts[font] then
+		VRPFonts[font] = {}
+	end
+	if not VRPFonts[font][fontsize] then
+		VRPFonts[font][fontsize] = dxCreateFont(font, fontsize)
 	end
 
-	return VRPFonts[fontsize]
+	return VRPFonts[font][fontsize]
 end
 
 -- This gets the text width for a font which is 'height' pixels high
@@ -55,4 +60,9 @@ FontAwesomeSymbols = {
 	SoundOn = "",
 	Mail = "",
 	Gamepad = ""
+}
+
+Fonts = {
+	EkMukta = "files/fonts/EkMukta.ttf",
+	Digital = "files/fonts/digital-7.ttf"
 }
