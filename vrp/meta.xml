@@ -759,7 +759,6 @@
 
 	<!-- audio files -->
 	<vrpfile src="files/audio/chess/move.ogg" />
-
 	<file src="files/data/indicators.dat" />
 
 	<!-- Tests -->
@@ -1283,7 +1282,7 @@
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>
-	<vrpfile src="files/audio/Halleluja.mp3"/>
+	<file src="files/audio/death_ahead.mp3" />
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/Enginestart.ogg"/>
 	<vrpfile src="files/audio/Enginestart2.ogg"/>

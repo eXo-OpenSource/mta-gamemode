@@ -209,7 +209,9 @@ function LocalPlayer:Event_playerWasted()
 		if isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		triggerServerEvent("factionRescueReviveAbort", self, self)
 		self.m_CanBeRevived = false
-
+		if isElement(self.m_DeathAudio) then 
+			destroyElement(self.m_DeathAudio)
+		end
 		self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
 		local soundLength = self.m_Halleluja:getLength()
 		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
@@ -246,9 +248,14 @@ function LocalPlayer:Event_playerWasted()
 			return
 		end
 	end
-
-	Camera.setMatrix(self.position + self.matrix.up*10, self.position)
-
+	setGameSpeed(0.1)
+	self.m_DeathAudio = Sound("files/audio/death_ahead.mp3")
+	setSoundVolume(self.m_DeathAudio,1)
+	local x,y,z = getPedBonePosition(localPlayer,5)
+	setSkyGradient(10,10,10,30,30,30)
+	setTimer(Camera.setMatrix,5000,1, x, y, z+3, x, y, z)
+	setTimer(setGameSpeed,5000,1,1)
+	setTimer(resetSkyGradient,30000,1)
 	if localPlayer:getInterior() > 0 then
 		funcA()
 		return
@@ -282,6 +289,7 @@ function LocalPlayer:abortDeathGUI(force)
 		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		if self.m_DeathMessage then delete(self.m_DeathMessage) end
 		if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
+		if isElement(self.m_DeathAudio) then destroyElement(self.m_DeathAudio) end
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()
 		showChat(true)
