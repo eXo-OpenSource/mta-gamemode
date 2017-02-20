@@ -10,8 +10,8 @@ Nametag.font = "default-bold"
 Nametag.fontSize = 2
 addEvent("reciveNametagBuffs", true)
 
-local maxDistance = 40
-local bOnScreen, bLineOfSight, px, py, pz, bDistance, textWidth, drawName, fontSize, scx,scy, color, armor, r,g,b, health, cx,cy,cz, bRifleCheck
+local maxDistance = 50
+local bOnScreen, bLineOfSight, px, py, pz, bDistance, textWidth, drawName, fontSize, scx,scy, color, armor, r,g,b, health, cx,cy,cz, bRifleCheck, distanceDiff, alpha
 local fontHeight
 
 
@@ -63,26 +63,32 @@ function Nametag:draw()
 			bDistance = getDistanceBetweenPoints3D( cx, cy, cz, px, py, pz )
 			bRifleCheck = self:_weaponCheck(player)
 			if (bDistance <= maxDistance) or bRifleCheck then
+				distanceDiff = maxDistance - bDistance
 				bLineOfSight = isLineOfSightClear( cx, cy, cz, px,py,pz, true, false, false, true, false, false, false, localPlayer)
 				if bLineOfSight or bRifleCheck then
 					scx,scy = getScreenFromWorldPosition( px, py, pz+1 )
 					if scx and scy then
 						drawName = getPlayerName(player)
-						fontSize =  1+ ( 10 - bDistance ) * 0.05
+						fontSize =  1+ ( 10 - bDistance ) * 0.06
 						if fontSize <= 0.7 then 
 							fontSize = 0.7
 						end
+						if distanceDiff <= 10 then 
+							alpha = distanceDiff*25
+						end
 						if bRifleCheck then 
 							fontSize = 1
+							alpha = 255
 						end
 						fontHeight = dxGetFontHeight(fontSize,Nametag.font)
 						textWidth = dxGetTextWidth(drawName, fontSize, Nametag.font)
 						armor = getPedArmor(player)
 						health = getElementHealth(player)
 						r,g,b =  self:getColorFromHP(health)
-						dxDrawText( drawName, (scx- (textWidth*0.5)), (scy-fontHeight*2)+1, scx+(textWidth*0.5), scy-fontHeight*1.2,tocolor(0,0,0) ,fontSize, Nametag.font, "center" )
-						dxDrawText( drawName, scx- (textWidth*0.5), scy-fontHeight*2, scx+(textWidth*0.5), scy-fontHeight*1.2,tocolor(r,g,b) ,fontSize, Nametag.font, "center" )
-						self:drawIcons(player, "center", scx-(textWidth*0.5), scy-fontHeight, true, fontHeight)
+						dxDrawText( drawName, (scx- (textWidth*0.5)), (scy-fontHeight*2)+1, scx+(textWidth*0.5), scy-fontHeight*1.2,tocolor(0,0,0, alpha) ,fontSize, Nametag.font, "center" )
+						dxDrawText( drawName, scx- (textWidth*0.5), scy-fontHeight*2, scx+(textWidth*0.5), scy-fontHeight*1.2,tocolor(r*0.9,g*0.9,b*0.9, alpha) ,fontSize, Nametag.font, "center" )
+						self:drawIcons(player, "center", scx-(textWidth*0.5), scy-fontHeight, true, fontHeight, alpha)
+						alpha = 255
 					end
 				end
 			end
@@ -108,7 +114,7 @@ function Nametag:_weaponCheck ( player )
 	end
 end
 
-function Nametag:drawIcons(player, align, startX, startY, armor, width, textwidth)
+function Nametag:drawIcons(player, align, startX, startY, armor, width, alpha)
 	if isChatBoxInputActive() then
 		setElementData(localPlayer, "writing", true)
 	else
@@ -138,7 +144,7 @@ function Nametag:drawIcons(player, align, startX, startY, armor, width, textwidt
 	end
 
 	for index, icon in pairs(icons) do
-		dxDrawImage(startX+((index-1)*width*1.1), startY, width, width, "files/images/Nametag/"..icon)
+		dxDrawImage(startX+((index-1)*width*1.1), startY, width, width, "files/images/Nametag/"..icon,0,0,0,tocolor(255,255,255,alpha))
 	end
 
 end
