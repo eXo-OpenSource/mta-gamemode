@@ -116,9 +116,7 @@ function Nametag:_weaponCheck ( player )
 			if isElement ( hit ) then
 				if isElementStreamedIn(hit) then
 					if getElementType ( hit ) == "player" then
-						if hit == player then
-							return hit
-						end
+						return hit
 					end
 				end
 			end
