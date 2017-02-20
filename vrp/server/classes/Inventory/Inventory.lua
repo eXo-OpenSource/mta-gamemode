@@ -15,7 +15,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 	self.m_Items = {}
 	self.m_ClassItems = classItems
 
-	self.m_Debug = true
+	self.m_Debug = false
 
 	for k, v in pairs(inventorySlots) do
 		self.m_Bag[k] = {}

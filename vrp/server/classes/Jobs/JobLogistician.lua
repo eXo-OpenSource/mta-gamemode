@@ -53,6 +53,7 @@ function JobLogistician:stop(player)
 end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
+	vehicle.m_DisableToggleHandbrake = true
 	vehicle:setData("LogisticanVehicle", true)
 	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
 	self:registerJobVehicle(player, vehicle, true, true)

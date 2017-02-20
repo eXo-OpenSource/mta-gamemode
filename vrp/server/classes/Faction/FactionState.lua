@@ -852,6 +852,7 @@ function FactionState:freePlayer(player)
 		killTimer( player.m_JailTimer )
 	end
 	player.m_JailTimer = nil
+	player.m_JailStart = nil
 	player:setJailTime(0)
 	player.m_Bail = 0
 	player:triggerEvent("playerLeftJail")
