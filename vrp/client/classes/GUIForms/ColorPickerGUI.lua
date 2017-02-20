@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 ColorPickerGUI = inherit(GUIForm)
+inherit(Singleton, ColorPickerGUI)
 
 function ColorPickerGUI:constructor(acceptCallback, changeCallback)
     local width, height = 330, 250
@@ -43,7 +44,7 @@ function ColorPickerGUI:setColor(r, g, b)
 	self.m_PreviewRect:setColorRGB(r, g, b)
 end
 
-function ColorPickerGUI:Color_Change()	
+function ColorPickerGUI:Color_Change()
 	local max = 0.834375	--// quick workaround -> on long-term: edit scrollbar-class in order to not get fucked up scrollPosition-max values!!!
 	local scale = 1.198501872659176 --// you see?
     local r = (self.m_ScrollbarRed:getScrollPosition()*scale) * 255
