@@ -9,7 +9,7 @@
 JobPizza = inherit(Job)
 addRemoteEvents{ "onPizzaDelivered"}
 
-local BASE_LOAN = 15
+local BASE_LOAN = 30 --// 15
 function JobPizza:constructor( )
 	Job.constructor(self)
 
