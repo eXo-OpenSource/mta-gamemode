@@ -40,7 +40,7 @@ function ItemFood:use(player)
 		exports.bone_attach:attachElementToBone(item, player, 12, 0, 0, 0, 0, -90, 0)
 	end
 
-	player:meChat(true, " "..ItemSettings["Text"].."!")
+	player:meChat(true, ""..ItemSettings["Text"].."!")
 	StatisticsLogger:getSingleton():addHealLog(client, ItemSettings["Health"], "Item "..self:getName())
 
 	if ItemSettings["CustomEvent"] then

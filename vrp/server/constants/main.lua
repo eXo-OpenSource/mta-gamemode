@@ -142,3 +142,7 @@ RESOURCES_TO_STOP = {
     "helpmanager";
 }
 
+
+setWeaponProperty(33,"poor",180)
+setWeaponProperty(33,"std",180)
+setWeaponProperty(33,"pro",180)

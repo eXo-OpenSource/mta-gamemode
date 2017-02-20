@@ -960,9 +960,9 @@ function Player:meChat(system, ...)
 	local systemText = ""
 	local receivedPlayers = {}
 	local message = ("%s %s"):format(self:getName(), text)
-	if system == true then systemText = "* " end
+	if system == true then systemText = "★" end
 	for index = 1,#playersToSend do
-		outputChatBox(("%s %s %s"):format(systemText, message, systemText), playersToSend[index], 100, 0, 255)
+		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 255,105,180)
 		if playersToSend[index] ~= self then
             receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
         end
