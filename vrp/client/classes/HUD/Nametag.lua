@@ -5,11 +5,11 @@
 -- *  PURPOSE:     Nametag class
 -- *
 -- ****************************************************************************
+
 Nametag = inherit(Singleton)
 Nametag.font = "default-bold"
 Nametag.fontSize = 2
 addEvent("reciveNametagBuffs", true)
-
 local maxDistance = 50
 local bOnScreen, bLineOfSight, px, py, pz, bDistance, textWidth, drawName, fontSize, scx,scy, color, armor, r,g,b, health, cx,cy,cz, bRifleCheck, distanceDiff, alpha
 local fontHeight
@@ -25,6 +25,14 @@ function Nametag:constructor()
 	addEventHandler("onClientElementStreamIn", root, self.m_StreamIn)
 	addEventHandler("onClientElementStreamOut", root, self.m_StreamOut)
 	addEventHandler("onClientRender", root, self.m_Draw)
+	local pTable = getElementsByType("player",root)
+	for k, p in ipairs( pTable ) do 
+		if p ~= localPlayer then
+			if isElementStreamedIn(p) then 
+				self.m_Stream[p] = true
+			end
+		end
+	end
 end
 
 function Nametag:destructor()
