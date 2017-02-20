@@ -143,6 +143,6 @@ RESOURCES_TO_STOP = {
 }
 
 
-setWeaponProperty(33,"poor",180)
-setWeaponProperty(33,"std",180)
-setWeaponProperty(33,"pro",180)
+setWeaponProperty(33,"poor","weapon_range",180)
+setWeaponProperty(33,"std","weapon_range",180)
+setWeaponProperty(33,"pro","weapon_range",180)

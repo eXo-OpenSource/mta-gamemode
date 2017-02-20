@@ -3,7 +3,7 @@ JobFarmer = inherit(Job)
 local VEHICLE_SPAWN = {-66.21, 69.00, 2.2, 68}
 --local PLANT_DELIVERY = {-1108.28723,-1620.65833,75.36719}
 local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
-local MONEYPERPLANT = 10
+local MONEYPERPLANT = 20 --// default 10
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 

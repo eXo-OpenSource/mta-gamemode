@@ -14,7 +14,6 @@ local maxDistance = 50
 local bOnScreen, bLineOfSight, px, py, pz, bDistance, textWidth, drawName, fontSize, scx,scy, color, armor, r,g,b, health, cx,cy,cz, bRifleCheck, distanceDiff, alpha
 local fontHeight
 
-
 function Nametag:constructor()
 	self.m_Stream = {}
 	self.m_Style = core:get("HUD", "NametagStyle", NametagStyle.Default)
@@ -64,16 +63,16 @@ end
 
 function Nametag:draw()
 	cx,cy,cz = getCameraMatrix()
+	bRifleCheck = self:_weaponCheck()
 	for player, _ in pairs( self.m_Stream ) do
 		if isElement(player) then
 			bOnScreen = isElementOnScreen( player )
 			px,py,pz = getElementPosition(player)
 			bDistance = getDistanceBetweenPoints3D( cx, cy, cz, px, py, pz )
-			bRifleCheck = self:_weaponCheck(player)
-			if (bDistance <= maxDistance) or bRifleCheck then
+			if (bDistance <= maxDistance) or bRifleCheck == player then
 				distanceDiff = maxDistance - bDistance
 				bLineOfSight = isLineOfSightClear( cx, cy, cz, px,py,pz, true, false, false, true, false, false, false, localPlayer)
-				if bLineOfSight or bRifleCheck then
+				if bLineOfSight or bRifleCheck == player then
 					scx,scy = getScreenFromWorldPosition( px, py, pz+1 )
 					if scx and scy then
 						drawName = getPlayerName(player)
@@ -84,7 +83,7 @@ function Nametag:draw()
 						if distanceDiff <= 10 then 
 							alpha = distanceDiff*25
 						end
-						if bRifleCheck then 
+						if bRifleCheck == player then 
 							fontSize = 1
 							alpha = 255
 						end
@@ -102,6 +101,7 @@ function Nametag:draw()
 			end
 		end
 	end
+	bRifleCheck = false
 end
 
 
@@ -112,14 +112,15 @@ function Nametag:_weaponCheck ( player )
 		local boolean, x, y, z, hit = processLineOfSight ( x1, y1, z1, x2, y2, z2)
 		if boolean then
 			if isElement ( hit ) then
-				if getElementType ( hit ) == "player" then
-					if hit == player then
-						return true
+				if isElementStreamedIn(hit) then
+					if getElementType ( hit ) == "player" then
+						return hit
 					end
 				end
 			end
 		end
 	end
+	return false
 end
 
 function Nametag:drawIcons(player, align, startX, startY, armor, width, alpha)
@@ -187,3 +188,11 @@ function isPedAiming ( thePedToCheck )
 	end
 	return false
 end
+
+local function disableNametags()
+	local players = getElementsByType("player", root, true)
+	for index = 1,#players do 
+		setPlayerNametagShowing(players[index],false)
+	end
+end
+setTimer(disableNametags, 10000,1)

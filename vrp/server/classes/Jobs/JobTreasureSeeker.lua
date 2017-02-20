@@ -73,7 +73,7 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 						local model = veh.Magnet.Object:getModel()
 						if not self.m_TreasureTypes[model] then return end
 						local loan = math.random(self.m_TreasureTypes[model]["Min"], self.m_TreasureTypes[model]["Max"])
-						hitElement:giveMoney(loan, "Schatzsucher-Job")
+						hitElement:giveMoney(loan*2, "Schatzsucher-Job") --// default loan not loan*2
 						hitElement:sendShortMessage(_("Du hast eine%s für %d$ verkauft!", hitElement, self.m_TreasureTypes[model]["Name"], loan))
 						hitElement:getOccupiedVehicle().Magnet.Object:destroy()
 						hitElement:givePoints(5)

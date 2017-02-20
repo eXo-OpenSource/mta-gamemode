@@ -129,6 +129,7 @@ end
 function Guns:bloodScreen()
 	self.m_BloodAlpha = 255
 	if self.m_Blood == false then
+		removeEventHandler("onClientRender", root, self.m_BloodRender)
 		addEventHandler("onClientRender", root, self.m_BloodRender)
 	end
 end
