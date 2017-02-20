@@ -51,7 +51,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_DestinationBlips = {}
 	self.m_DestinationMarkers = {}
 
-	self.m_AmountPerBox = type == "state" and 2500 or 1250
+	self.m_AmountPerBox = type == "state" and 5000 or 1250
 	self.m_BoxesCount = math.ceil(totalAmount/self.m_AmountPerBox)
 
 	self.m_Boxes = {}
@@ -157,7 +157,9 @@ end
 --Box methodes
 function WeaponTruck:spawnBoxes()
 	for i=1,self.m_BoxesCount do
-		self:spawnBox(i, WeaponTruck.boxSpawnCords[self.m_Type][i])
+		if WeaponTruck.boxSpawnCords[self.m_Type][i] then
+			self:spawnBox(i, WeaponTruck.boxSpawnCords[self.m_Type][i])
+		end
 	end
 end
 

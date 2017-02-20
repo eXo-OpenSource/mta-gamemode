@@ -171,6 +171,10 @@ function FactionEvil:Event_StartRaid(target)
 				client:sendError(_("Du kannst nicht aus einem Fahrzeug überfallen!", client))
 				return
 			end
+			if target:getInterior() > 0 then
+				client:sendError(_("Du kannst Leute nur im freien überfallen!", client))
+				return
+			end
 			if target:getMoney() > 0 then
 
 				local targetName = target:getName()

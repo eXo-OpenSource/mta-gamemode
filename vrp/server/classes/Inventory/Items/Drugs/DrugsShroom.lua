@@ -93,8 +93,12 @@ end
 
 function DrugsShroom:reload()
 	for id, object in pairs(self.m_MushRooms) do
-		object:destroy()
-		self.m_MushRooms[id] = nil
+		if isElement(object) then
+			object:destroy()
+			self.m_MushRooms[id] = nil
+		else
+			self.m_MushRooms[id] = nil
+		end
 	end
 	self.m_MushRooms = {}
 
