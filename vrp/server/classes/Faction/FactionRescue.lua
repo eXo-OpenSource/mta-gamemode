@@ -309,20 +309,23 @@ function FactionRescue:createDeathPickup(player, ...)
 				if hitPlayer:getFaction() and hitPlayer:getFaction():isRescueFaction() then
 					if hitPlayer:getPublicSync("Faction:Duty") and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
 						if hitPlayer.m_RescueStretcher then
-							player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
-							hitPlayer.m_RescueStretcher.player = player
+							if not hitPlayer.m_RescueStretcher.player then
+								player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
+								hitPlayer.m_RescueStretcher.player = player
 
-							if source.money and source.money > 0 then
-								hitPlayer:giveMoney(source.money, "verlorenes Geld zurückbekommen")
-								source.money = 0
+								if source.money and source.money > 0 then
+									hitPlayer:giveMoney(source.money, "verlorenes Geld zurückbekommen")
+									source.money = 0
+								end
+
+								source:destroy()
+								player.m_DeathPickup = nil
+								for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
+									rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+								end
+							else
+								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage!", hitPlayer))
 							end
-
-							source:destroy()
-							player.m_DeathPickup = nil
-							for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-								rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
-							end
-
 						else
 							hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
 						end

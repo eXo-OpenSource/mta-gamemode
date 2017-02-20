@@ -38,7 +38,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 				setElementFrozen(vehicle, true)
 
 				-- Give money to the Owner (TODO: Improve this -> complete Repair ~4.58$ (310% Vehicle Health) -> is it okay?)
-				self.m_Company.m_BankAccount:addMoney(math.floor(costs*0.5))
+				self.m_Company:giveMoney(math.floor(costs*0.5), "Pay N Spray")
 				vehicle.m_DisableToggleHandbrake = true
 				setTimer(
 					function()

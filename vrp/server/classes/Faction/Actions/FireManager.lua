@@ -35,7 +35,6 @@ function FireManager:constructor()
 	addRemoteEvents{"receiveFires"}
 	addEventHandler("receiveFires", root, bind(self.receiveFires, self))
 
-	--Developement:
 	addCommandHandler("fire", bind(self.startRandomFire, self))
 end
 

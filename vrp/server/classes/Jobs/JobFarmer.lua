@@ -272,16 +272,6 @@ function JobFarmer:updatePrivateData (player)
 	player:triggerEvent("Job.updatePlayerPlants", self.m_CurrentPlants[player])
 end
 
-addCommandHandler("plant", function(player)
-	local pos = player:getPosition()
-	local function farmRound(num, idp)
-		local mult = 10^(idp or 0)
-		return math.floor(num * mult + 0.5) / mult
-	end
-	local x, y, z = farmRound(pos.x, 2), farmRound(pos.y, 2), farmRound(pos.z, 2)
-	outputChatBox("{"..x..", "..y..", "..z.."},")
-end)
-
 JobFarmer.PlantPlaces = {
 {-122.78, 61.12, 3.12}, -- Field1-Line1
 {-127.95, 47.94, 3.12}, -- Field1-Line1

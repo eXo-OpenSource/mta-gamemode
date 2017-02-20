@@ -599,7 +599,3 @@ function TCars:onClientRestore(didClearRenderTargets)
 		self:updateRenderTarget()
 	end
 end
-
-addCommandHandler("c", function()
-	TCars:new()
-end)

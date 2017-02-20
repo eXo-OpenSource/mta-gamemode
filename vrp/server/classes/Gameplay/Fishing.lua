@@ -183,20 +183,3 @@ function Fishing:pedClicked()
 		client:sendInfo(_("Hallo, du hast nichts gefangen, bitte angel dir erst etwas!", client))
 	end
 end
-
-addCommandHandler("fish", function(player, cmd, win)
-	local key = Fishing.Win[tonumber(win)]
-	local text, money, model, scale, rot
-	if winObject then winObject:destroy() end
-	text = key["text"]
-	money = key["money"]
-	model = key["model"]
-	scale = key["scale"] or 1
-	rot = key["rotation"] or Vector3(0, 0, 0)
-	zoffset = key["z"] or 0
-	winObject = createObject(model, 0, 0, 0)
-	winObject:setDoubleSided(true)
-	winObject:setScale(scale)
-	local x,y,z = rot.x, rot.y, rot.z
-	exports.bone_attach:attachElementToBone(winObject, player, 12, 0, 0, zoffset, x, y, z)
-end)

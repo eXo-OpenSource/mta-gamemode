@@ -882,13 +882,17 @@ function SelfGUI:onSettingChange(setting)
 	elseif setting == "Nametag/Reddot" then
 		GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.8, self.m_Height*0.07, _"Nametag:", self.m_SettingBG)
 		self.m_NametagChange = GUIChanger:new(self.m_Width*0.02, self.m_Height*0.09, self.m_Width*0.35, self.m_Height*0.07, self.m_SettingBG)
-		self.m_NametagChange:addItem("Default")
-		self.m_NametagChange:addItem("VRP")
+		self.m_NametagChange:addItem("An")
+		self.m_NametagChange:addItem("Aus")
 		self.m_NametagChange.onChange = function(text, index)
 			core:set("HUD", "NametagStyle", index)
-			Nametag:getSingleton():setStyle(index)
+			if index == NametagStyle.Off then
+				delete(Nametag:getSingleton())
+			elseif index == NametagStyle.On then
+				Nametag:new()
+			end	
 		end
-		self.m_NametagChange:setIndex(core:get("HUD", "NametagStyle", NametagStyle.Default), true)
+		self.m_NametagChange:setIndex(core:get("HUD", "NametagStyle", NametagStyle.On), true)
 
 		self.m_Reddot = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.19, self.m_Width*0.35, self.m_Height*0.04, _"Rotpunkt aktivieren?", self.m_SettingBG)
 		self.m_Reddot:setFont(VRPFont(25))
