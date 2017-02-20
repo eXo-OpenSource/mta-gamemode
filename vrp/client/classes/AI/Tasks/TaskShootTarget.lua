@@ -26,13 +26,15 @@ function TaskShootTarget:getId()
 end
 
 function TaskShootTarget:shootSingleBullet()
-	if self.m_Target and isElement(self.m_Target) and not isPedDead(self.m_Target) and not isPedDead(self.m_Actor) then
+	if self.m_Target and isElement(self.m_Target) and not isPedDead(self.m_Target) and self.m_Actor and isElement(self.m_Actor) and not isPedDead(self.m_Actor) then
 		-- Update target
 		self.m_Actor:setAimTarget(self.m_Target:getPosition())
 
 		-- Activate fire control for a bit to simulate key presses
 		self.m_Actor:setControlState("aim_weapon", true)
 		self.m_Actor:setControlState("fire", true)
+	else
+		delete(self)
 	end
 end
 
