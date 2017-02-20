@@ -61,7 +61,7 @@ function Nametag:draw()
 			bOnScreen = isElementOnScreen( player )
 			px,py,pz = getElementPosition(player)
 			bDistance = getDistanceBetweenPoints3D( cx, cy, cz, px, py, pz )
-			bRifleCheck = self:_weaponCheck()
+			bRifleCheck = self:_weaponCheck(player)
 			if (bDistance <= maxDistance) or bRifleCheck then
 				bLineOfSight = isLineOfSightClear( cx, cy, cz, px,py,pz, true, false, false, true, false, false, false, localPlayer)
 				if bLineOfSight or bRifleCheck then
@@ -91,15 +91,17 @@ function Nametag:draw()
 end
 
 
-function Nametag:_weaponCheck ()
+function Nametag:_weaponCheck ( player )
 	if isPedAiming ( localPlayer ) and (getPedWeaponSlot ( localPlayer ) == 6 or getPedWeaponSlot ( localPlayer ) == 5)  then
 		local x1, y1, z1 = getPedTargetStart ( localPlayer )
 		local x2, y2, z2 = getPedTargetEnd ( localPlayer )
-		local boolean, x, y, z, hit = processLineOfSight ( x1, y1, z1, x2, y2, z2 )
+		local boolean, x, y, z, hit = processLineOfSight ( x1, y1, z1, x2, y2, z2)
 		if boolean then
 			if isElement ( hit ) then
 				if getElementType ( hit ) == "player" then
-					return true
+					if hit == player then
+						return true
+					end
 				end
 			end
 		end
