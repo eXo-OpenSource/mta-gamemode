@@ -14,6 +14,7 @@ local maxDistance = 50
 local bOnScreen, bLineOfSight, px, py, pz, bDistance, textWidth, drawName, fontSize, scx,scy, color, armor, r,g,b, health, cx,cy,cz, bRifleCheck, distanceDiff, alpha
 local fontHeight
 
+se
 
 function Nametag:constructor()
 	self.m_Stream = {}
@@ -193,3 +194,11 @@ function isPedAiming ( thePedToCheck )
 	end
 	return false
 end
+
+local function disableNametags()
+	local players = getElementsByType("player", root, true)
+	for index = 1,#players do 
+		setPlayerNametagShowing(players[index],false)
+	end
+end
+setTimer(disableNametags, 10000,1)
