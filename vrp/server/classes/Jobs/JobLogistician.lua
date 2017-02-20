@@ -6,8 +6,8 @@
 -- *
 -- ****************************************************************************
 JobLogistician = inherit(Job)
-local MONEY_PER_TRANSPORT_MIN = 200
-local MONEY_PER_TRANSPORT_MAX = 500
+local MONEY_PER_TRANSPORT_MIN = 400 --// default 200
+local MONEY_PER_TRANSPORT_MAX = 1000 --// default 500
 
 function JobLogistician:constructor()
 	Job.constructor(self)
