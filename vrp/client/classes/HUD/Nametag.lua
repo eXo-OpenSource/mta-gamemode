@@ -104,6 +104,7 @@ function Nametag:draw()
 			end
 		end
 	end
+	self.m_AimingAt = nil
 end
 
 
