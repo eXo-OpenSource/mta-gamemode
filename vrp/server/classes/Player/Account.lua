@@ -128,7 +128,6 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, Invit
 		player:createCharacter()
 	end
 	player:loadCharacter()
-	player:triggerEvent("stopLoginCameraDrive")
 	player:triggerEvent("Event_StartScreen")
 
 	StatisticsLogger:addLogin( player, Username, "Login")

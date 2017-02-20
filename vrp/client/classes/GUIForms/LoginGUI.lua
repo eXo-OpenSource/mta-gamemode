@@ -2,7 +2,7 @@ LoginGUI = inherit(GUIForm)
 inherit(Singleton, LoginGUI)
 
 function LoginGUI:constructor()
-	triggerEvent("startLoginCameraDrive", localPlayer)
+	LoginGUI.startCameraDrive()
 	showChat(false)
 	setPlayerHudComponentVisible("radar",false)
 	local sw, sh = guiGetScreenSize()
@@ -145,7 +145,9 @@ function LoginGUI:constructor()
 	self:bind("enter",
 		function(self)
 			if self.m_LoginTab:isVisible() then
-				self.m_LoginLoginButton:onLeftClick()
+				if self.m_LoginLoginButton:isEnabled() then
+					self.m_LoginLoginButton:onLeftClick()
+				end
 			elseif self.m_RegisterTab:isVisible() then
 				if self.m_RegisterRegisterButton:isVisible() then
 					self.m_RegisterRegisterButton:onLeftClick()
@@ -178,6 +180,7 @@ function LoginGUI:destructor()
 
 	Cursor:hide(true)
 	GUIForm.destructor(self)
+	LoginGUI.stopCameraDrive()
 end
 
 function LoginGUI:showLogin()
@@ -340,22 +343,21 @@ addEventHandler("loginsuccess", root,
 	end
 )
 
-addEvent("startLoginCameraDrive", true)
-addEventHandler("startLoginCameraDrive", localPlayer, function()
+
+function LoginGUI.startCameraDrive()
 	setTime(0,0)
 	local rand = math.random(1,2)
 	if rand == 1 then
 		localPlayer.m_LoginDriveObject = cameraDrive:new(1773.43, -1139.05, 185.85, 1545.51, -1346.14, 180.48, 1621.89, -1516.79, 175.44, 1545.51, -1346.14, 180.48, 200*1000, "Linear" )
 	else
 		localPlayer.m_LoginDriveObject = cameraDrive:new(1620.98, -1539.92, 53.34, 1477.86, -1757.46, 13.55,1401.78, -1735.55, 49.53,1477.86, -1757.46, 13.55, 200*1000, "Linear" )
-	--else -- currently disabled
+		--else -- currently disabled
 		--localPlayer.m_LoginDriveObject = cameraDrive:new(414.43, -1841.55, 56.27, 418.78, -1634.52, 56.27,987.92, -1917.45, 56.27,978.85, -1787.63, 56.27, 120*1000, "Linear" )
 	end
 	localPlayer.m_LoginShader =  LoginShader:new()
-end)
+end
 
-addEvent("stopLoginCameraDrive",true)
-addEventHandler("stopLoginCameraDrive", localPlayer, function()
+function LoginGUI.stopCameraDrive()
 	if localPlayer.m_LoginDriveObject then
 		delete(localPlayer.m_LoginDriveObject)
 		showChat(true)
@@ -365,4 +367,4 @@ addEventHandler("stopLoginCameraDrive", localPlayer, function()
 		localPlayer.m_LoginShader = nil
 	end
 	triggerServerEvent("onClientRequestTime", localPlayer)
-end)
+end
