@@ -64,12 +64,15 @@ end
 
 function Nametag:draw()
 	cx,cy,cz = getCameraMatrix()
+	bRifleCheck = self:_weaponCheck()
+	if bRifleCheck then 
+		self.m_AimingAt = bRifleCheck
+	end
 	for player, _ in pairs( self.m_Stream ) do
 		if isElement(player) then
 			bOnScreen = isElementOnScreen( player )
 			px,py,pz = getElementPosition(player)
 			bDistance = getDistanceBetweenPoints3D( cx, cy, cz, px, py, pz )
-			bRifleCheck = self:_weaponCheck(player)
 			if (bDistance <= maxDistance) or bRifleCheck then
 				distanceDiff = maxDistance - bDistance
 				bLineOfSight = isLineOfSightClear( cx, cy, cz, px,py,pz, true, false, false, true, false, false, false, localPlayer)
@@ -84,7 +87,7 @@ function Nametag:draw()
 						if distanceDiff <= 10 then 
 							alpha = distanceDiff*25
 						end
-						if bRifleCheck then 
+						if self.m_AimingAt == player then 
 							fontSize = 1
 							alpha = 255
 						end
@@ -112,14 +115,17 @@ function Nametag:_weaponCheck ( player )
 		local boolean, x, y, z, hit = processLineOfSight ( x1, y1, z1, x2, y2, z2)
 		if boolean then
 			if isElement ( hit ) then
-				if getElementType ( hit ) == "player" then
-					if hit == player then
-						return true
+				if isElementStreamedIn(hit) then
+					if getElementType ( hit ) == "player" then
+						if hit == player then
+							return hit
+						end
 					end
 				end
 			end
 		end
 	end
+	return false
 end
 
 function Nametag:drawIcons(player, align, startX, startY, armor, width, alpha)
