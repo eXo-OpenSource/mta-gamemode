@@ -69,7 +69,7 @@ function Nametag:draw()
 					scx,scy = getScreenFromWorldPosition( px, py, pz+1 )
 					if scx and scy then
 						drawName = getPlayerName(player)
-						fontSize =  1+ ( 10 - bDistance ) * 0.06
+						fontSize =  1+ ( 10 - bDistance ) * 0.08
 						if fontSize <= 0.7 then 
 							fontSize = 0.7
 						end
