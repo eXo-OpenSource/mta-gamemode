@@ -16,6 +16,6 @@ function ItemIDCard:destructor()
 end
 
 function ItemIDCard:use(player)
-	player:triggerEvent("showIDCard")
 	player:triggerEvent("closeInventory")
+	player:triggerEvent("showIDCard")
 end

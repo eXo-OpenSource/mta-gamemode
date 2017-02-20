@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 IDCardGUI = inherit(GUIForm)
+inherit(Singleton, IDCardGUI)
 
 addRemoteEvents{"showIDCard"}
 
