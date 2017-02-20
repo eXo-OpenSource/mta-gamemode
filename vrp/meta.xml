@@ -1282,7 +1282,7 @@
 
 	<!-- Audio -->
 	<vrpfile src="files/audio/Success.mp3"/>
-	<file src="files/audio/death_ahead.mp3" />
+	<vrpfile src="files/audio/death_ahead.mp3" />
 	<vrpfile src="files/audio/Win.mp3"/>
 	<vrpfile src="files/audio/Enginestart.ogg"/>
 	<vrpfile src="files/audio/Enginestart2.ogg"/>
