@@ -97,7 +97,7 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
 				client:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", client, getPlayerName(vehicle.PendingMechanic)))
 
-				self.m_BankAccount:addMoney(math.floor(price*0.7))
+				self:giveMoney(math.floor(price*0.7), "Reparatur")
 			else
 				client:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", client))
 			end
