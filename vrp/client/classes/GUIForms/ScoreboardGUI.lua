@@ -81,7 +81,12 @@ end
 
 function ScoreboardGUI:refresh()
 	local scrollPosX, scrollPosY = self.m_Grid.m_ScrollArea:getScrollPosition()
-	--	if scrollPosY ~= 0 then return end
+	local scrollAreaDocumentSize = self.m_Grid.m_ScrollArea.m_DocumentHeight
+	local scrollAreaHeight = self.m_Grid.m_ScrollArea.m_Height
+
+	if scrollPosY ~= 0 and math.abs(scrollPosY) > scrollAreaDocumentSize - scrollAreaHeight then
+		scrollPosY = scrollAreaDocumentSize - scrollAreaHeight
+	end
 
 	self.m_Grid:clear()
 	self.m_Players = {}

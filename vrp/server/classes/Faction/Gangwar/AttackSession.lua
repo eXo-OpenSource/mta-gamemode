@@ -107,6 +107,7 @@ function AttackSession:removeParticipant( player )
 			table.remove( self.m_Participants, index )
 		end
 	end
+	self:synchronizeLists( )
 	self:sessionCheck()
 end
 
@@ -200,7 +201,11 @@ function AttackSession:onPlayerWasted( player, killer,  kWeapon, bodyP )
 				self:disqualifyPlayer( player )
 				triggerClientEvent("onGangwarKill", killer, player, weapon, bpart)
 			end
-			killer.kills = killer.kills + 1
+			if killer.kills then 
+				killer.kills = killer.kills + 1
+			else 
+				killer.kills = 1 
+			end
 		else
 			player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 			self:disqualifyPlayer( player )

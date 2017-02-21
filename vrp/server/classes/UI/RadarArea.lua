@@ -29,7 +29,6 @@ end
 
 function RadarArea:setFlashing(state)
 	triggerClientEvent("radarAreaFlash", resourceRoot, self.m_Id, state)
-	setRadarAreaFlashing(self,true)
 end
 
 function RadarArea.sendAllToClient(player)

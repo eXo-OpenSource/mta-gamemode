@@ -454,6 +454,9 @@ function HUDRadar:setRadarAreaFlashing(serverAreaId, state)
   if area then
     area.flashing = state
     self:updateMapTexture()
+	if isElement(area.mtaElement) then 
+		setRadarAreaFlashing(area.mtaElement,state)
+	end
   end
 end
 
