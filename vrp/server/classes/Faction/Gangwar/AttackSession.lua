@@ -42,9 +42,11 @@ end
 function AttackSession:setupSession ( )
 	for k,v in ipairs( self.m_Faction1:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
+		v.kills = 0
 	end
 	for k,v in ipairs( self.m_Faction2:getOnlinePlayers() ) do
 		self.m_Participants[#self.m_Participants + 1] = v
+		v.kills = 0
 	end
 	self:synchronizeAllParticipants( )
 end
@@ -193,14 +195,16 @@ function AttackSession:onPlayerWasted( player, killer,  kWeapon, bodyP )
 		if killer then
 			local bParticipant2 = self:isParticipantInList( killer )
 			if bParticipant2 then
+				player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
+				killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
 				self:disqualifyPlayer( player )
 				triggerClientEvent("onGangwarKill", killer, player, weapon, bpart)
 			end
+			killer.kills = killer.kills + 1
 		else
+			player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
 			self:disqualifyPlayer( player )
 		end
-		player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
-		killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
 	end
 end
 
@@ -254,12 +258,10 @@ function AttackSession:stopClients()
 	local receiveTimeout = 0
 	for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
-		v.m_RefAttackSession = nil
 		receiveTimeout = receiveTimeout +1
 	end
 	for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
 		v:triggerEvent("AttackClient:stopClient")
-		v.m_RefAttackSession = nil
 		receiveTimeout = receiveTimeout + 1
 	end
 	GangwarStatistics:getSingleton():setCollectorTimeout( self.m_AreaObj.m_ID, receiveTimeout )
