@@ -44,8 +44,19 @@ function GangwarStatistics:setCollectorTimeout( mAreaID, timeout )
 	self.m_CollectorTimeouts[mAreaID] = timeout
 end
 
-function GangwarStatistics:addDamageToCollector( mAreaID, damage  )
-	if client == source then 
+function GangwarStatistics:addDamageToCollector( mAreaID, damage )
+	if client == source then
+		local kill = 0
+		if client.kills then
+			if tonumber(client.kills) then 
+				kill = tonumber(client.kills)
+			end
+		end
+		local moneyDamage = damage * GANGWAR_PAY_PER_DAMAGE
+		local moneyKill = kill * GANGWAR_PAY_PER_KILL
+		outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyDamage.."$ für deinen Damage!",client,200,200,0,true)
+		outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyKill.."$ für deine Kills!",client,200,200,0,true)
+		client:giveMoney(moneyDamage+moneyKill,"Gangwar-Boni")
 		self.m_CollectorMap[mAreaID][#self.m_CollectorMap[mAreaID]+1] = { client, damage}
 		if #self.m_CollectorMap[mAreaID] == self.m_CollectorTimeouts[mAreaID] then 
 			self:stopAndOutput( mAreaID )

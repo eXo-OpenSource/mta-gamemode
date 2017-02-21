@@ -233,6 +233,10 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
+		-- Call wasted hook
+	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
+		return
+	end
 	source.m_AlcoholLevel = 0
 	source:increaseStatistics("Deaths", 1)
 	-- give a achievement

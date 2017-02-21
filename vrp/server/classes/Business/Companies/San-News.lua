@@ -177,6 +177,7 @@ function SanNews:Event_sanNewsMessage(player, cmd, ...)
 		local argTable = {...}
 		local msg = table.concat(argTable, " ")
 		self:sendMessage(("#9cff00[SanNews-Nachricht] %s: #FFFFFF%s"):format(player:getName(), msg), 255, 255 ,0, true)
+		client:sendMessage(("#9cff00[Msg an Sannews]: #FFFFFF%s"):format(msg), 255, 255 ,0, true)
 	else
 		player:sendError(_("Die SanNews hat /sannews derzeit deaktiviert!", player))
 	end

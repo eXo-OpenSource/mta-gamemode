@@ -34,11 +34,12 @@ BankRobbery.BagSpawns = {
 	Vector3(2309.27, 19.14, 26),
 }
 
-local BOMB_TIME = 15*1000
-local MONEY_PER_SAFE_MIN = 300
-local MONEY_PER_SAFE_MAX = 500
-local MAX_MONEY_PER_BAG = 2500
+local BOMB_TIME = 20*1000
+local MONEY_PER_SAFE_MIN = 500
+local MONEY_PER_SAFE_MAX = 750
+local MAX_MONEY_PER_BAG = 3000
 local BANKROB_TIME = 60*1000*12
+--Info 68 Tresors
 
 function BankRobbery:constructor()
 	self:build()

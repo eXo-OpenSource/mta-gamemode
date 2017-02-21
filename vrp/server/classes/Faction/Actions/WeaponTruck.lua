@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 WeaponTruck = inherit(Object)
-WeaponTruck.Time = 10*60*1000 -- in ms
+WeaponTruck.Time = 20*60*1000 -- in ms
 WeaponTruck.spawnPos = {
 	["evil"] = {-1869.58, 1430.02, 7.62, 224},
 	["state"] = {120.23, 1899.40, 18.97, 0}
@@ -51,7 +51,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_DestinationBlips = {}
 	self.m_DestinationMarkers = {}
 
-	self.m_AmountPerBox = type == "state" and 5000 or 1250
+	self.m_AmountPerBox = type == "state" and 7500 or 1500
 	self.m_BoxesCount = math.ceil(totalAmount/self.m_AmountPerBox)
 
 	self.m_Boxes = {}

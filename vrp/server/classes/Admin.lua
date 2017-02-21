@@ -259,7 +259,7 @@ end
 function Admin:Event_respawnFactionVehicles(Id)
     local faction = FactionManager:getSingleton():getFromId(Id)
     if faction then
-        faction:respawnVehicles()
+        faction:respawnVehicles( client )
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, faction:getShortName()))
     end
 end

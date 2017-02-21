@@ -37,12 +37,22 @@ function BankGUI:constructor()
 
 	self.m_TabTransfer = self.m_TabPanel:addTab(_"Überweisen")
 	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.2, tabHeight*0.15, _"Empfänger:", self.m_TabTransfer)
-	self.m_TransferToEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabTransfer)
+	self.m_TransferToEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.4, tabHeight*0.15, self.m_TabTransfer)
 	GUILabel:new(tabWidth*0.03, tabHeight*0.28, tabWidth*0.2, tabHeight*0.15, _"Betrag:", self.m_TabTransfer)
-	self.m_TransferAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.28, tabWidth*0.5, tabHeight*0.15, self.m_TabTransfer)
+	self.m_TransferAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.28, tabWidth*0.4, tabHeight*0.15, self.m_TabTransfer)
 	self.m_TransferAmountEdit:setNumeric(true, true)
-	self.m_TransferButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Überweisen", true, self.m_TabTransfer)
+	self.m_TransferButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.62, tabHeight*0.2, _"Überweisen", true, self.m_TabTransfer)
 	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
+
+	GUILabel:new(tabWidth*0.7, tabHeight*0.07, tabWidth*0.27, tabHeight*0.17, _"Spenden:", self.m_TabTransfer):setColor(Color.LightBlue)
+
+	local donate = {}
+	donate["San News"] = VRPButton:new(tabWidth*0.7, tabHeight*0.25, tabWidth*0.28, tabHeight*0.2, _"San News", true, self.m_TabTransfer):setBarColor(Color.Green)
+	donate["eXo Event-Team"] = VRPButton:new(tabWidth*0.7, tabHeight*0.48, tabWidth*0.28, tabHeight*0.2, _"eXo Event-Team", true, self.m_TabTransfer):setBarColor(Color.Yellow)
+
+	for index, btn in pairs(donate) do
+		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
+	end
 
 	if localPlayer:getGroupId() and localPlayer:getGroupId() > 0 then
 		self.m_TabGroup = self.m_TabPanel:addTab(_("%s-Konto", localPlayer:getGroupType()))

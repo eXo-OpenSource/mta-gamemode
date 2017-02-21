@@ -52,7 +52,7 @@ function FactionManager:factionEvilStartRaid(target)
 			end
 		end
 		localPlayer.m_evilRaidTarget = target
-		localPlayer.evilRaidTimer = setTimer(self.endEvilFactionRaid, 10000, 1)
+		localPlayer.evilRaidTimer = setTimer(self.endEvilFactionRaid, 15000, 1)
 	end
 end
 

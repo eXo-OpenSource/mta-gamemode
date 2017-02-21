@@ -209,11 +209,16 @@ function LocalPlayer:Event_playerWasted()
 		if isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		triggerServerEvent("factionRescueReviveAbort", self, self)
 		self.m_CanBeRevived = false
-		if isElement(self.m_DeathAudio) then 
+		if isElement(self.m_DeathAudio) then
 			destroyElement(self.m_DeathAudio)
 		end
-		self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
-		local soundLength = self.m_Halleluja:getLength()
+
+		local soundLength = 20 -- Length of Halleluja in Seconds
+		if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
+			self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
+			soundLength = self.m_Halleluja:getLength()
+		end
+
 		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
 
 		-- render camera drive
@@ -288,7 +293,7 @@ function LocalPlayer:abortDeathGUI(force)
 	if self.m_CanBeRevived or force then
 		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		if self.m_DeathMessage then delete(self.m_DeathMessage) end
-		if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
+		if self.m_Halleluja and isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
 		if isElement(self.m_DeathAudio) then destroyElement(self.m_DeathAudio) end
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()

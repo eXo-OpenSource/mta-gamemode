@@ -18,8 +18,8 @@ function GangwarStatistics:constructor()
 end
 
 
-function GangwarStatistics:sendData( damage, areaID  )
-	triggerServerEvent("gwClientGetDamage", localPlayer, areaID, damage)
+function GangwarStatistics:sendData( damage, areaID, kill )
+	triggerServerEvent("gwClientGetDamage", localPlayer, areaID, damage, kill)
 end
 
 function GangwarStatistics:Event_GetMVP( t )

@@ -138,13 +138,6 @@ function PermanentVehicle:setSpecial(special)
   end
 end
 
-
-
-function PermanentVehicle:getTrunk()
-  if self.m_Trunk then return self.m_Trunk end
-  return false
-end
-
 function PermanentVehicle:isPermanent()
   return true
 end

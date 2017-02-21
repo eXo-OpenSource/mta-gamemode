@@ -353,16 +353,27 @@ function Faction:sendChatMessage(sourcePlayer, message)
 	--end
 end
 
-function Faction:respawnVehicles()
+function Faction:respawnVehicles( isAdmin )
+	local time = getRealTime().timestamp
+	if self.m_LastRespawn and not isAdmin then 
+		if time - self.m_LastRespawn <= 900 then --// 15min
+			return self:sendShortMessage("Fahrzeug können nur alle 15 Minuten respawned werden!")
+		end
+	end
+	if isAdmin then 
+		self:sendShortMessage("Ein Admin hat eure Fraktionsfahrzeuge respawned!")
+		isAdmin:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
+	end
 	local factionVehicles = VehicleManager:getSingleton():getFactionVehicles(self.m_Id)
 	local fails = 0
 	local vehicles = 0
 	for factionId, vehicle in pairs(factionVehicles) do
 		if vehicle:getFaction() == self then
 			vehicles = vehicles + 1
-			if not vehicle:respawn() then
+			if not vehicle:respawn(true) then
 				fails = fails + 1
 			end
+			self.m_LastRespawn = getRealTime().timestamp
 		end
 	end
 
