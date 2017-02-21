@@ -8,6 +8,15 @@ function MechanicTow:constructor()
 	local safe = createObject(2332, 923.60, -1166.50, 17.70, 0, 0, 270)
 	self:setSafe(safe)
 
+	local x, y, z, rot
+
+	self.m_NonCollissionCols = {}
+	for index, pos in pairs(MechanicTow.SpawnPositions) do
+		x, y, z, rot = unpack(pos)
+		self.m_NonCollissionCols[index] = createColShape(x, y, z, 10)
+		self.m_NonCollissionCols[index]:setData("NonCollidingSphere", true, true)
+	end
+
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
