@@ -509,6 +509,10 @@ function Vehicle:respawnOnSpawnPosition()
 	end
 end
 
+function Vehicle:getTrunk()
+  return self.m_Trunk or false
+end
+
 -- Override it
 function Vehicle:getVehicleType()
 	return getVehicleType(self)
