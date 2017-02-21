@@ -25,7 +25,7 @@ function VehicleTexture:constructor(vehicle, path, texture, force)
 		VehicleTexture.Map[self.m_Id] = self
 		if force then
 			if self.m_Vehicle and isElement(self.m_Vehicle) then
-				VehicleTexture.sendToClient(getRootElement(), self.m_Vehicle, self.m_Texture, self.m_Path)
+				VehicleTexture.sendToClient(getRootElement(), {{vehicle = self.m_Vehicle, textureName = self.m_Texture, texturePath = self.m_Path}})
 			end
 		end
 
