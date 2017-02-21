@@ -91,6 +91,9 @@ function ScoreboardGUI:refresh()
 	for k, player in pairs(getElementsByType("player")) do
 		local factionId = player:getFaction() and player:getFaction():getId() or 0
 		local companyId = player:getCompany() and player:getCompany():getId() or 0
+		if not self.m_Players[factionId] then
+			self.m_Players[factionId] = {}
+		end
 		table.insert(self.m_Players, {player, factionId, companyId})
 
 		if factionId ~= 0 then
@@ -104,16 +107,13 @@ function ScoreboardGUI:refresh()
 		end
 	end
 
-	table.sort(self.m_Players,
-		function (a, b)
-			return a[2] < b[2]
-		end
-	)
-	table.sort(self.m_Players,
-		function (a, b)
-			return a[3] < b[3]
-		end
-	)
+	for i, faction in pairs(self.m_Players) do
+		table.sort(faction,
+			function (a, b)
+				return a[3] < b[3]
+			end
+		)
+	end
 
 	self:insertPlayers()
 
@@ -155,58 +155,60 @@ end
 
 function ScoreboardGUI:insertPlayers()
 	local gname
-	for index, data in ipairs(self.m_Players) do
-		local player = data[1]
-		local karma = math.floor(player:getKarma() or 0)
-		local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
-		local ping
-		if player:isAFK() then
-			ping = "AFK"
-		elseif player:isInJail() then
-			ping = "Knast"
-		else
-			ping = player:getPing().."ms"
-		end
-
-		gname = player:getGroupName()
-		if gname == "" or #gname == 0 then
-			gname = "-Keine-"
-		end
-		local item = self.m_Grid:addItem(
-			player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Other/trans.png",
-			player:getName(),
-			data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
-			player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
-			string.short(gname, 16),
-			hours..":"..minutes,
-			karma >= 0 and "+"..karma or " "..tostring(karma),
-			ping or " - "
-		)
-		item:setColumnToImage(1, true, item.m_Height)
-		item:setFont(VRPFont(24))
-		if data[2] and player:getFaction() then
-			local color = player:getFaction():getColor()
-			item:setColumnColor(3, tocolor(color.r, color.g, color.b))
-		end
-
-		if player:getGroupType() then
-			if player:getGroupType() == "Gang" then
-				item:setColumnColor(5, Color.Red)
-			elseif player:getGroupType() == "Firma" then
-				item:setColumnColor(5, Color.LightBlue)
+	for index, faction in ipairs(self.m_Factions) do
+		for index, data in ipairs(faction) do
+			local player = data[1]
+			local karma = math.floor(player:getKarma() or 0)
+			local hours, minutes = math.floor(player:getPlayTime()/60), (player:getPlayTime() - math.floor(player:getPlayTime()/60)*60)
+			local ping
+			if player:isAFK() then
+				ping = "AFK"
+			elseif player:isInJail() then
+				ping = "Knast"
+			else
+				ping = player:getPing().."ms"
 			end
-		end
 
-		if ping == "AFK" then
-			item:setColumnColor(8, Color.Red)
-		elseif ping == "Knast" then
-			item:setColumnColor(8, Color.Yellow)
-		end
+			gname = player:getGroupName()
+			if gname == "" or #gname == 0 then
+				gname = "-Keine-"
+			end
+			local item = self.m_Grid:addItem(
+				player:isPremium() and "files/images/Nametag/premium.png" or "files/images/Other/trans.png",
+				player:getName(),
+				data[2] and player:getFaction() and player:getFaction():getShortName() or "- Keine -",
+				player:getCompany() and player:getCompany():getShortName()  or "- Keine -",
+				string.short(gname, 16),
+				hours..":"..minutes,
+				karma >= 0 and "+"..karma or " "..tostring(karma),
+				ping or " - "
+			)
+			item:setColumnToImage(1, true, item.m_Height)
+			item:setFont(VRPFont(24))
+			if data[2] and player:getFaction() then
+				local color = player:getFaction():getColor()
+				item:setColumnColor(3, tocolor(color.r, color.g, color.b))
+			end
 
-		if karma >= 5 then
-			item:setColumnColor(7, Color.Green)
-		elseif karma <= -5 then
-			item:setColumnColor(7, Color.Red)
+			if player:getGroupType() then
+				if player:getGroupType() == "Gang" then
+					item:setColumnColor(5, Color.Red)
+				elseif player:getGroupType() == "Firma" then
+					item:setColumnColor(5, Color.LightBlue)
+				end
+			end
+
+			if ping == "AFK" then
+				item:setColumnColor(8, Color.Red)
+			elseif ping == "Knast" then
+				item:setColumnColor(8, Color.Yellow)
+			end
+
+			if karma >= 5 then
+				item:setColumnColor(7, Color.Green)
+			elseif karma <= -5 then
+				item:setColumnColor(7, Color.Red)
+			end
 		end
 	end
 end
