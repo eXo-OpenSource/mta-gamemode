@@ -106,12 +106,15 @@ function ScoreboardGUI:refresh()
 
 	table.sort(self.m_Players,
 		function (a, b)
-			if (a[2] < b[2]) return true;
-			if (a[2] > b[2]) return false;
-			if (a[3] < b[3]) return true;
-			if (a[3] > b[3]) return false;
+			return a[2] < b[2]
 		end
 	)
+	table.sort(self.m_Players,
+		function (a, b)
+			return a[3] < b[3]
+		end
+	)
+
 	self:insertPlayers()
 
 	self.m_Grid.m_ScrollArea:setScrollPosition(scrollPosX, scrollPosY)
