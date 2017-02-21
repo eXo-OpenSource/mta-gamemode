@@ -7,7 +7,7 @@
 -- ****************************************************************************
 
 WeaponTruck = inherit(Object)
-WeaponTruck.Time = 10*60*1000 -- in ms
+WeaponTruck.Time = 20*60*1000 -- in ms
 WeaponTruck.spawnPos = {
 	["evil"] = {-1869.58, 1430.02, 7.62, 224},
 	["state"] = {120.23, 1899.40, 18.97, 0}
