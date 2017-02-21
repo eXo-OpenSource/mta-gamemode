@@ -228,7 +228,7 @@ function AttackSession:setCenterCountdown()
 	self.m_HoldCenterTimer = setTimer( bind(self.attackLose, self), GANGWAR_CENTER_TIMEOUT*1000,1)
 	self.m_NotifiyAgainTimer = setTimer( bind(self.notifyFaction1, self), math.floor((GANGWAR_CENTER_TIMEOUT*1000)/2),1)
 end
-
+	
 function AttackSession:notifyFactions()
 	if self.endReason == 1 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
@@ -244,6 +244,7 @@ function AttackSession:notifyFactions()
 		for k, v in ipairs(self.m_Faction2:getOnlinePlayers()) do
 			v:sendInfo(_("Alle Mitglieder sind gefallen!",v))
 		end
+		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFAlle Gegner wurden eleminiert!",200,0,0,true)
 	elseif self.endReason == 3 then
 		for k, v in ipairs(self.m_Faction1:getOnlinePlayers()) do
 			v:sendInfo(_("Die Flagge wurde nicht gehalten!",v))

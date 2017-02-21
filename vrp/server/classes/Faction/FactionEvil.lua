@@ -176,7 +176,7 @@ function FactionEvil:Event_StartRaid(target)
 				return
 			end
 			if math.floor(target:getPlayTime()/60) < 10 then
-				client:sendError(_("Leute unter 10 Spielstunden dürfen nicht überfallen werden!", client))
+				client:sendError(_("Spieler unter 10 Spielstunden dürfen nicht überfallen werden!", client))
 				return
 			end
 			if target:getMoney() > 0 then
