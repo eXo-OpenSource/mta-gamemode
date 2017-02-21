@@ -35,6 +35,15 @@ function AppBank:onOpen(form)
 	self.m_TransferButton = VRPButton:new(10, 210, 240, 30, _"Überweisen", true, self.m_Tabs["Transfer"])
 	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
 
+	GUILabel:new(10, 270, 120, 30, _"Spenden:", self.m_Tabs["Transfer"])
+	local donate = {}
+	donate["San News"] = VRPButton:new(10, 300, 117, 30, _"San News", true, self.m_Tabs["Transfer"]):setBarColor(Color.Green)
+	donate["eXo Event-Team"] = VRPButton:new(135, 300, 117, 30, _"eXo Event-Team", true, self.m_Tabs["Transfer"]):setBarColor(Color.Yellow)
+
+	for index, btn in pairs(donate) do
+		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
+	end
+
 	addEventHandler("bankMoneyBalanceRetrieve", root, bind(self.Event_OnMoneyReceive, self))
 	triggerServerEvent("bankMoneyBalanceRequest", root)
 end
