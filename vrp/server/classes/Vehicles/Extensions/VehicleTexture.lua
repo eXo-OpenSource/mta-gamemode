@@ -29,6 +29,8 @@ function VehicleTexture:constructor(vehicle, path, texture, force)
 
 		-- add destruction handler
 		addEventHandler("onElementDestroy", self.m_Vehicle, bind(delete, self))
+	else
+		delete(self)
 	end
 end
 
