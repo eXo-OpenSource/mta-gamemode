@@ -96,6 +96,8 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 			return
 		end
 
+		removeEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind)
+		removeEventHandler("onVehicleExplode", vehicle, self.m_ResetDataBind)
 		addEventHandler("onElementDestroy", vehicle, self.m_ResetDataBind)
 		addEventHandler("onVehicleExplode", vehicle, self.m_ResetDataBind)
 
