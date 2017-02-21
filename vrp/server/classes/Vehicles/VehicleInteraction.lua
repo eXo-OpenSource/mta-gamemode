@@ -96,7 +96,7 @@ function VehicleInteraction:doAction(door)
 
 		if doorRatio > 0 or checkDoor == 4 or doorState == "open" then
 			if door == 1 then
-				if veh.getTrunk and veh:getTrunk().open then
+				if veh.getTrunk and veh:getTrunk() and veh:getTrunk().open then
 					veh:getTrunk():open(client)
 				end
 			elseif door == 0 then
