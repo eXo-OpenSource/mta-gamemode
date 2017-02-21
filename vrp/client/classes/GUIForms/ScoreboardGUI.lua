@@ -106,7 +106,10 @@ function ScoreboardGUI:refresh()
 
 	table.sort(self.m_Players,
 		function (a, b)
-			return ((a[2] + a[3]) < (b[2] + b[3]))
+			if (a[2] < b[2]) return true;
+			if (a[2] > b[2]) return false;
+			if (a[3] < b[3]) return true;
+			if (a[3] > b[3]) return false;
 		end
 	)
 	self:insertPlayers()
