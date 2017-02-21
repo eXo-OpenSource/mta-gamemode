@@ -190,7 +190,7 @@ function Crane:dropContainer(vehicle, player, callback)
 
 					-- Wait till we're at the target position
 					setTimer(
-						function()
+						function(container)
 							-- Roll down the tow
 							self:rollTowDown(
 								function()
@@ -205,7 +205,7 @@ function Crane:dropContainer(vehicle, player, callback)
 									)
 								end
 							)
-						end, 10000, 1
+						end, 10000, 1, container
 					)
 				end
 			)
@@ -240,7 +240,7 @@ function Crane:loadContainer(vehicle, player, callback)
 	end, 35000, 1)
 
 	setTimer(
-		function()
+		function(container)
 			-- Roll tow down
 			self:rollTowDown(
 				function()
@@ -254,7 +254,7 @@ function Crane:loadContainer(vehicle, player, callback)
 
 							-- Wait till we're there
 							setTimer(
-								function()
+								function(container)
 									-- Roll tow down and load up the truck
 									self:rollTowDown(
 										function()
@@ -273,13 +273,13 @@ function Crane:loadContainer(vehicle, player, callback)
 											)
 										end
 									)
-								end, 10000, 1
+								end, 10000, 1, container
 							)
 						end
 					)
 				end
 			)
-		end, 10000, 1
+		end, 10000, 1, container
 	)
 	return true
 end
