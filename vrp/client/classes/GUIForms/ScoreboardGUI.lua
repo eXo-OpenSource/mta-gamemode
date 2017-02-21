@@ -90,9 +90,8 @@ function ScoreboardGUI:refresh()
 
 	for k, player in pairs(getElementsByType("player")) do
 		local factionId = player:getFaction() and player:getFaction():getId() or 0
-		table.insert(self.m_Players, {player, factionId})
-
 		local companyId = player:getCompany() and player:getCompany():getId() or 0
+		table.insert(self.m_Players, {player, factionId, companyId})
 
 		if factionId ~= 0 then
 			if not self.m_FactionCount[factionId] then self.m_FactionCount[factionId] = 0 end
@@ -105,7 +104,11 @@ function ScoreboardGUI:refresh()
 		end
 	end
 
-	table.sort(self.m_Players, function (a, b) return (a[2] < b[2]) end)
+	table.sort(self.m_Players,
+		function (a, b)
+			return ((a[2] + a[3]) < (b[2] + b[3]))
+		end
+	)
 	self:insertPlayers()
 
 	self.m_Grid.m_ScrollArea:setScrollPosition(scrollPosX, scrollPosY)
