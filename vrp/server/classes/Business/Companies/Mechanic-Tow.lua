@@ -13,7 +13,7 @@ function MechanicTow:constructor()
 	self.m_NonCollissionCols = {}
 	for index, pos in pairs(MechanicTow.SpawnPositions) do
 		x, y, z, rot = unpack(pos)
-		self.m_NonCollissionCols[index] = createColShape(x, y, z, 10)
+		self.m_NonCollissionCols[index] = createColSphere(x, y, z, 10)
 		self.m_NonCollissionCols[index]:setData("NonCollidingSphere", true, true)
 	end
 
