@@ -123,8 +123,6 @@ function GasStation:renderBackground()
 	self:dxDrawBoxShape(50,80,412,60 , tocolor(0,80,20,255),3)
 	dxDrawRectangle(50,180,412,60,tocolor(0,0,0,255))
 	self:dxDrawBoxShape(50,180,412,60,tocolor(0,80,20,255),3)
-	--dxDrawImage(120,260,90,90,"shops/tankstelle/img/logo.png" )
-	--dxDrawImage(280,260,90,90,"shops/tankstelle/img/logo2.png" )
 end
 
 function GasStation:renderDisplay()
