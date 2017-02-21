@@ -47,7 +47,7 @@ end
 
 function VehicleTexture.sendToClient(target, ...)
 	if self.m_Vehicle and isElement(self.m_Vehicle) then
-		triggerClientEvent(target, "changeElementTexture", target, data)
+		triggerClientEvent(target, "changeElementTexture", target, ...)
 	end
 end
 
