@@ -51,7 +51,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_DestinationBlips = {}
 	self.m_DestinationMarkers = {}
 
-	self.m_AmountPerBox = type == "state" and 7500 or 1250
+	self.m_AmountPerBox = type == "state" and 7500 or 1500
 	self.m_BoxesCount = math.ceil(totalAmount/self.m_AmountPerBox)
 
 	self.m_Boxes = {}
