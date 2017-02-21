@@ -46,7 +46,12 @@ end
 
 function GangwarStatistics:addDamageToCollector( mAreaID, damage )
 	if client == source then
-		local kill = client.kills or 0
+		local kill = 0
+		if client.kills then
+			if tonumber(client.kills) then 
+				kill = tonumber(client.kills)
+			end
+		end
 		local moneyDamage = damage * GANGWAR_PAY_PER_DAMAGE
 		local moneyKill = kill * GANGWAR_PAY_PER_KILL
 		outputChatBox("[Gangwar-Boni] #FFFFFFDu erhälst "..moneyDamage.."$ für deinen Damage!",client,200,200,0,true)

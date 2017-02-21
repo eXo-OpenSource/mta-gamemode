@@ -146,7 +146,7 @@ function Gangwar:onPlayerJoin()
 		if self.m_CurrentAttack then
 			local faction1,  faction2 = self.m_CurrentAttack:getMatchFactions()
 			if faction1 == factionObj or faction2 == factionObj then
-				local area = self.m_CurrentAttacks
+				local area = self.m_CurrentAttack
 				area.m_AttackSession:joinPlayer( source )
 			end
 		end
