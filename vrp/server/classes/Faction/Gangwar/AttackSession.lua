@@ -17,9 +17,9 @@ function AttackSession:constructor( pAreaObj , faction1 , faction2  )
 	self.m_Participants = {	}
 	self:setupSession( )
 	self:createBarricadeCars( )
-	self.m_BreakFunc = bind(  AttackSession.onBreakCMD , self)
+	self.m_BreakFunc = bind(  self.onBreakCMD , self)
 	addEventHandler("onPlayerCommand", root, self.m_BreakFunc)
-	self.m_DamageFunc = bind(  AttackSession.onGangwarDamage , self)
+	self.m_DamageFunc = bind(  self.onGangwarDamage , self)
 	addEventHandler("onClientDamage", root, self.m_DamageFunc)
 	self.m_BattleTime = setTimer(bind(self.attackWin, self), GANGWAR_MATCH_TIME*60000, 1)
 	self:createWeaponBox()
@@ -52,7 +52,6 @@ end
 function AttackSession:synchronizeAllParticipants( )
 	for k,v in ipairs( self.m_Participants ) do
 		v:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, GANGWAR_MATCH_TIME*60, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID )
-		v.m_RefAttackSession = self
 		v:triggerEvent("GangwarQuestion:new")
 	end
 
@@ -128,7 +127,6 @@ function AttackSession:disqualifyPlayer( player )
 end
 
 function AttackSession:joinPlayer( player )
-	player.m_RefAttackSession = self
 	if not self:isPlayerDisqualified( player ) then
 		self:addParticipantToList( player , true)
 	else 
@@ -196,12 +194,13 @@ function AttackSession:onPlayerWasted( player, killer,  kWeapon, bodyP )
 			local bParticipant2 = self:isParticipantInList( killer )
 			if bParticipant2 then
 				self:disqualifyPlayer( player )
-				triggerClientEvent("onGangwarKill", player, killer, weapon, bpart)
+				triggerClientEvent("onGangwarKill", killer, player, weapon, bpart)
 			end
 		else
 			self:disqualifyPlayer( player )
 		end
 		player.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Mitglied ("..player.name..") ist getötet worden!",200,0,0,true)
+		killer.m_Faction:sendMessage("[Gangwar] #FFFFFFEin Gegner ("..player.name..") ist getötet worden!",0,200,0,true)
 	end
 end
 

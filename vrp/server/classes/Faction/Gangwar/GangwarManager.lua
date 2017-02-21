@@ -10,28 +10,36 @@ Gangwar = inherit(Singleton)
 
 
 --// RESET VARIABLE //
-GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
+GANGWAR_RESET_AREAS = true --// NUR IM FALLE VON GEBIET-RESET
 
 
 --// Gangwar - Constants //--
 GANGWAR_MATCH_TIME = 15
 GANGWAR_CENTER_HOLD_RANGE = 15
-GANGWAR_MIN_PLAYERS = 3 --// Default 3
+GANGWAR_MIN_PLAYERS = 1 --// Default 3
 GANGWAR_ATTACK_PAUSE = 1 --// DAY Default 2
 GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
 GANGWAR_DUMP_COLOR = setBytesInInt32(240, 0, 200, 200)
 GANGWAR_ATTACK_PICKUPMODEL =  1313
 GANGWAR_PAYOUT_PER_AREA = 1250
-UNIX_TIMESTAMP_24HRS = 86400
+UNIX_TIMESTAMP_24HRS = 0 --//86400
 --//
 
 addRemoteEvents{ "onLoadCharacter", "onDeloadCharacter", "Gangwar:onClientRequestAttack", "GangwarQuestion:disqualify", "gangwarGetAreas" }
+
+--[[
+	** Gangwar **
+	
+		GangwarManager hat Areas.
+		Wenn ein  Attack gestartet wird, erhält der GangwarManager die Anweisung der Area mitzuteilen, dass es einen Angriff starten soll.
+		Area erstellt eine AttackSession welche solange läuft wie der Attack gilt.
+]]
 function Gangwar:constructor( )
 	if GANGWAR_RESET_AREAS then
 		self:RESET()
 	end
 	self.m_Areas = {	}
-	self.m_CurrentAttacks = {	}
+	self.m_CurrentAttack = nil
 	local sql_query = "SELECT * FROM ??_gangwar"
 	local rows = sql:queryFetch(sql_query, sql:getPrefix())
 	if rows then
@@ -43,7 +51,7 @@ function Gangwar:constructor( )
 	addEventHandler("onLoadCharacter", root, bind(self.onPlayerJoin, self))
 	addEventHandler("onDeloadCharacter", root, bind(self.onPlayerQuit, self))
 	addEventHandler("Gangwar:onClientRequestAttack", root, bind(self.attackReceiveCMD, self))
-	addEventHandler("onClientWasted", root, bind( Gangwar.onPlayerWasted, self))
+	addEventHandler("onClientWasted", root, bind( self.onPlayerWasted, self))
 	addEventHandler("GangwarQuestion:disqualify", root, bind(self.onPlayerAbort, self))
 	addEventHandler("gangwarGetAreas", root, bind(self.getAreas, self))
 	GlobalTimer:getSingleton():registerEvent(bind(self.onAreaPayday, self), "Gangwar-Payday",false,false,0)
@@ -110,21 +118,15 @@ end
 function Gangwar:getCurrentGangwarPlayers()
 	local currentPlayers = {}
 	local attackSession
-	for index, area in pairs(self:getCurrentGangwars()) do
-		if area.m_AttackSession then
-			attackSession = area.m_AttackSession
-			for index, gwPlayer in pairs(attackSession.m_Participants) do
-				currentPlayers[#currentPlayers+1] = gwPlayer
-			end
+	local disqualifiedPlayers =  {}
+	if self.m_CurrentAttack then
+		attackSession = self.m_CurrentAttack.m_AttackSession
+		for index, gwPlayer in pairs(attackSession.m_Participants) do
+			currentPlayers[#currentPlayers+1] = gwPlayer
 		end
-	end
-	local disqualifiedPlayers = {}
-	for index, area in pairs(self:getCurrentGangwars()) do
-		if area.m_AttackSession then
-			attackSession = area.m_AttackSession
-			for index, gwPlayer in pairs(attackSession.m_Disqualified) do
-				disqualifiedPlayers[#disqualifiedPlayers+1] = gwPlayer
-			end
+		disqualifiedPlayers = {}
+		for index, gwPlayer in pairs(attackSession.m_Disqualified) do
+			disqualifiedPlayers[#disqualifiedPlayers+1] = gwPlayer
 		end
 	end
 	return currentPlayers, disqualifiedPlayers
@@ -139,11 +141,10 @@ end
 function Gangwar:onPlayerJoin()
 	local factionObj = source.m_Faction
 	if factionObj then
-		for index = 1,  #self.m_CurrentAttacks do
-			local faction1,  faction2 = self.m_CurrentAttacks[index]:getMatchFactions()
+		if self.m_CurrentAttack then
+			local faction1,  faction2 = self.m_CurrentAttack:getMatchFactions()
 			if faction1 == factionObj or faction2 == factionObj then
-				--// gangwar join
-				local area = self.m_CurrentAttacks[index]
+				local area = self.m_CurrentAttacks
 				area.m_AttackSession:joinPlayer( source )
 			end
 		end
@@ -153,11 +154,10 @@ end
 function Gangwar:onPlayerQuit()
 	local factionObj = source.m_Faction
 	if factionObj then
-		for index = 1,  #self.m_CurrentAttacks do
-			local faction1,  faction2 = self.m_CurrentAttacks[index]:getMatchFactions()
+		if self.m_CurrentAttack then
+			local faction1,  faction2 = self.m_CurrentAttack:getMatchFactions()
 			if faction1 == factionObj or faction2 == factionObj then
-				--// gangwar quit
-				local area = self.m_CurrentAttacks[index]
+				local area = self.m_CurrentAttack
 				area.m_AttackSession:quitPlayer( source )
 			end
 		end
@@ -165,55 +165,35 @@ function Gangwar:onPlayerQuit()
 end
 
 function Gangwar:onPlayerWasted(  killer, weapon , bodypart, loss )
-	local attackSession = source.m_RefAttackSession
-	if attackSession then
-		attackSession:onPlayerWasted( source, killer, weapon, bodypart, loss)
+	if self.m_CurrentAttack then
+		if self.m_CurrentAttack.m_AttackSession then
+			self.m_CurrentAttack.m_AttackSession:onPlayerWasted( source, killer, weapon, bodypart, loss)
+		end
 	end
 end
 
 function Gangwar:onPlayerAbort( bAFK )
 	if client then
 		if client == source then
-			local attackSession = source.m_RefAttackSession
-			if attackSession then
-				attackSession:onPurposlyDisqualify( source , bAFK )
+			if self.m_CurrentAttack then
+				self.m_CurrentAttack.m_AttackSession:onPurposlyDisqualify( source , bAFK )
 			end
 		end
 	end
 end
 
 function Gangwar:addAreaToAttacks( pArea )
-	self.m_CurrentAttacks[#self.m_CurrentAttacks + 1] = pArea
+	self.m_CurrentAttack = pArea
 end
 
-function Gangwar:removeAreaFromAttacks( pArea )
-	for index = 1,  #self.m_CurrentAttacks do
-		if self.m_CurrentAttacks[index] == pArea then
-			return table.remove(self.m_CurrentAttacks,  index)
-		end
+function Gangwar:removeAreaFromAttacks()
+	if self.m_CurrentAttack then
+		self.m_CurrentAttack = false
 	end
 end
 
-function Gangwar:removeAreaFromAttacks( pArea )
-	local area
-	for index = 1, #self.m_CurrentAttacks do
-		area = self.m_CurrentAttacks[index]
-		if area == pArea then
-			table.remove( self.m_CurrentAttacks,  index)
-		end
-	end
-end
-
-function Gangwar:getCurrentGangwars( )
-	local area
-	local objTable = {	}
-	for index = 1,  #self.m_CurrentAttacks do
-		area = self.m_CurrentAttacks[index]
-		if area:isUnderAttack() then
-			objTable[#objTable + 1] = area
-		end
-	end
-	return objTable
+function Gangwar:getCurrentGangwar( )
+	return self.m_CurrentAttack
 end
 
 function Gangwar:attackReceiveCMD( )
@@ -242,29 +222,19 @@ function Gangwar:attackArea( player )
 					local factionCount2 = #faction2:getOnlinePlayers()
 					if factionCount >= GANGWAR_MIN_PLAYERS then
 						if factionCount2 >= GANGWAR_MIN_PLAYERS then
-							local activeGangwars = self:getCurrentGangwars( )
-							local acGangwar,  acFaction1,  acFaction2
-							for index = 1,  #activeGangwars do
-								acGangwar = activeGangwars[index]
-								if acGangwar.m_AttackSession then
-									acFaction1, acFaction2 = acGangwar.m_AttackSession:getFactions()
-									if acFaction1 ~= faction and acFaction2 ~= faction then
-										if acFaction2 ~= faction2 and acFaction2 ~= faction2 then
-										else
-											return player:sendError(_("Die gegnerische Fraktion ist bereits in einem Gangwar!",  player))
-										end
-									else
-										return player:sendError(_("Deine Fraktion ist bereits in einem Gangwar!",  player))
-									end
+							local activeGangwar = self:getCurrentGangwar()
+							local acFaction1,  acFaction2
+							if not activeGangwar then
+								local lastAttack = mArea.m_LastAttack
+								local currentTimestamp = getRealTime().timestamp
+								local nextAttack = lastAttack + ( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS)
+								if nextAttack <= currentTimestamp then
+									mArea:attack(faction, faction2)
+								else
+									player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
 								end
-							end
-							local lastAttack = mArea.m_LastAttack
-							local currentTimestamp = getRealTime().timestamp
-							local nextAttack = lastAttack + ( GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS)
-							if nextAttack <= currentTimestamp then
-								mArea:attack(faction, faction2)
-							else
-								player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
+							else 
+								player:sendError(_("Es läuft zurzeit ein Gangwar!",  player))
 							end
 						else
 							player:sendError(_("Es müssen mind. "..GANGWAR_MIN_PLAYERS.." aus der Gegner-Fraktion online sein!",  player))

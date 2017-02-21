@@ -125,7 +125,7 @@ function Area:attackEnd(  )
 		self:createRadar()
 		self.m_BlipImage:delete()
 		setPickupType(self.m_Pickup,3,2993)
-		self.m_GangwarManager:removeAreaFromAttacks( self )
+		self.m_GangwarManager:removeAreaFromAttacks( )
 	end
 end
 
@@ -137,7 +137,6 @@ function Area:update()
 end
 
 function Area:destructor()
-	--// Do some delete
 	self:update()
 end
 
