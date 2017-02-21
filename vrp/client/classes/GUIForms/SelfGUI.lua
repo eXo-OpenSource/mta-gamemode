@@ -890,7 +890,7 @@ function SelfGUI:onSettingChange(setting)
 				delete(Nametag:getSingleton())
 			elseif index == NametagStyle.On then
 				Nametag:new()
-			end	
+			end
 		end
 		self.m_NametagChange:setIndex(core:get("HUD", "NametagStyle", NametagStyle.On), true)
 
@@ -949,14 +949,20 @@ function SelfGUI:onSettingChange(setting)
 			ShortMessage:new(_(HelpTexts.Settings.ShortMessageCTC), _(HelpTextTitles.Settings.ShortMessageCTC), nil, 25000)
 		end
 
-		self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
-		self.m_StartIntro:setFont(VRPFont(25))
-		self.m_StartIntro:setFontSize(1)
-		self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
-		self.m_StartIntro.onChange = function (state)
-			core:set("HUD", "startScreen", state)
+	--	self.m_StartIntro = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.35, self.m_Height*0.04, _"Zeitbildschirm am Login", self.m_SettingBG)
+	--	self.m_StartIntro:setFont(VRPFont(25))
+	--	self.m_StartIntro:setFontSize(1)
+	--	self.m_StartIntro:setChecked(core:get("HUD", "startScreen", true))
+	--	self.m_StartIntro.onChange = function (state)
+	--		core:set("HUD", "startScreen", state)
+	--	end
+		self.m_HallelujaSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.47, self.m_Width*0.9, self.m_Height*0.04, _"Halleluja-Sound beim sterben", self.m_SettingBG)
+		self.m_HallelujaSound:setFont(VRPFont(25))
+		self.m_HallelujaSound:setFontSize(1)
+		self.m_HallelujaSound:setChecked(core:get("Other", "HallelujaSound", true))
+		self.m_HallelujaSound.onChange = function (state)
+			core:set("Other", "HallelujaSound", state)
 		end
-
 
 
 	end
