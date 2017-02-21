@@ -168,6 +168,7 @@ function Core:constructor()
 			addCommandHandler("runtests", bind(self.runTests, self))
 		end
 
+		Blip:new("North.png", 0, 6000, root, 12000)
 
 	end
 end
