@@ -12,11 +12,11 @@ function ScoreboardGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-(screenWidth*0.65/2) / ASPECT_RATIO_MULTIPLIER, screenHeight/2-screenHeight*0.3, screenWidth*0.65, screenHeight*0.6, false, true)
 
 	self.m_Rect = GUIRectangle:new(0, self.m_Width*0.06 , self.m_Width, self.m_Height - self.m_Width*0.06, tocolor(0, 0, 0, 200), self)
-	self.m_Logo = GUIImage:new(self.m_Width/2-self.m_Width*0.25*0.5, self.m_Height*0.005, self.m_Width*0.275, self.m_Width*0.119, "files/images/LogoNoFont.png", self)
+	self.m_Logo = GUIImage:new(self.m_Width-self.m_Width*0.18, self.m_Height*0.83, self.m_Width*0.180, self.m_Width*0.078, "files/images/LogoNoFont.png", self)
 
-	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.14, self.m_Width*0.96, self.m_Height*0.45, self.m_Rect)
-	self.m_Grid:setFont(VRPFont(24))
-	self.m_Grid:setItemHeight(24)
+	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.96, self.m_Height*0.6, self.m_Rect)
+	self.m_Grid:setFont(VRPFont(22))
+	self.m_Grid:setItemHeight(22)
 	self.m_Grid:setColor(Color.Clear)
 	self.m_Grid:addColumn(_"VIP", 0.05)
 	self.m_Grid:addColumn(_"Name", 0.2)
@@ -135,7 +135,7 @@ function ScoreboardGUI:addPlayerCount(name, value, color)
 	if self.m_PlayerCountLabels[name] then
 		self.m_PlayerCountLabels[name]:setText(("%s: %d"):format(name, value))
 	else
-		self.m_PlayerCountLabels[name] = GUILabel:new(self.m_Width*0.05 + (self.m_Width/4*self.m_CountColumn), self.m_Height*0.72 + (self.m_Height*0.05*self.m_CountRow), self.m_Width/4, self.m_Height*0.05, ("%s: %d"):format(name, value), self.m_Rect)
+		self.m_PlayerCountLabels[name] = GUILabel:new(self.m_Width*0.05 + (self.m_Width/6*self.m_CountColumn), self.m_Height*0.72 + (self.m_Height*0.05*self.m_CountRow), self.m_Width/4, self.m_Height*0.05, ("%s: %d"):format(name, value), self.m_Rect)
 		if color then
 			self.m_PlayerCountLabels[name]:setColor(color)
 		end
@@ -174,7 +174,7 @@ function ScoreboardGUI:insertPlayers()
 			ping or " - "
 		)
 		item:setColumnToImage(1, true, item.m_Height)
-		item:setFont(VRPFont(24))
+		item:setFont(VRPFont(22))
 		if data[2] and player:getFaction() then
 			local color = player:getFaction():getColor()
 			item:setColumnColor(3, tocolor(color.r, color.g, color.b))
@@ -200,4 +200,10 @@ function ScoreboardGUI:insertPlayers()
 			item:setColumnColor(7, Color.Red)
 		end
 	end
+	--[[ Dummy Players
+	for i = 0, 200 do
+		dummyitem = self.m_Grid:addItem("", "Dummy Player "..i, "SAPD", "Fahrschule", "Testgang", "2000:50", "+100", "5")
+		dummyitem:setFont(VRPFont(22))
+	end
+	]]
 end
