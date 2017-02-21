@@ -160,7 +160,6 @@ function AttackSession:onPlayerLeaveCenter( player )
 		local isAnyoneInside = self:checkPlayersInCenter( )
 		if not isAnyoneInside then
 			self:setCenterCountdown()
-			--// Notify team 1
 		end
 	end
 end
@@ -339,7 +338,7 @@ end
 
 function AttackSession:onVehicleEnter( pEnter )
 	if pEnter.m_Faction == self.m_Faction1 then
-
+	
 	else
 		pEnter:sendError(_("Sie sind kein Angreifer!", pEnter))
 		cancelEvent()
