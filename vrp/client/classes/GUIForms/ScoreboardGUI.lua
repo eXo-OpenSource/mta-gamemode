@@ -94,7 +94,7 @@ function ScoreboardGUI:refresh()
 		if not self.m_Players[factionId] then
 			self.m_Players[factionId] = {}
 		end
-		table.insert(self.m_Players, {player, factionId, companyId})
+		table.insert(self.m_Players[factionId], {player, factionId, companyId})
 
 		if factionId ~= 0 then
 			if not self.m_FactionCount[factionId] then self.m_FactionCount[factionId] = 0 end
