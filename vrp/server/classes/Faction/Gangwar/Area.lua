@@ -81,10 +81,10 @@ function Area:attack( faction1, faction2)
 		faction2:sendMessage("[Gangwar] #FFFFFFIhre Fraktion wurde attackiert! ( Gebiet: "..self.m_Name.." )", 204,20,0,true)
 		self.m_AttackSession = AttackSession:new( self, faction1 , faction2)
 		self.m_LastAttack = getRealTime().timestamp
-		self.m_RadarArea:setFlashing(true)
 		self.m_RadarArea:delete()
 		self.m_BlipImage = Blip:new("gangwar.png", self.m_Position[1], self.m_Position[2], root, 9999)
 		self:createRadar()
+		self.m_RadarArea:setFlashing(true)
 		setPickupType(self.m_Pickup,3,GANGWAR_ATTACK_PICKUPMODEL)
 		self.m_GangwarManager:addAreaToAttacks( self )
 	end
