@@ -23,8 +23,8 @@ GANGWAR_DUMP_COLOR = setBytesInInt32(240, 0, 200, 200)
 GANGWAR_ATTACK_PICKUPMODEL =  1313
 GANGWAR_PAYOUT_PER_AREA = 1250
 UNIX_TIMESTAMP_24HRS = 0 --//86400
-GANGWAR_PAY_PER_DAMAGE = 10
-GANGWAR_PAY_PER_KILL = 2500
+GANGWAR_PAY_PER_DAMAGE = 5
+GANGWAR_PAY_PER_KILL = 1500
 --//
 
 addRemoteEvents{ "onLoadCharacter", "onDeloadCharacter", "Gangwar:onClientRequestAttack", "GangwarQuestion:disqualify", "gangwarGetAreas" }
