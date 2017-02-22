@@ -1,13 +1,12 @@
 solution "PathFind"
 	configurations { "Debug", "Release" }
 	location ( "Build" )
+	startproject "test"
 
-	flags { "C++14", "Symbols" }
+	flags { "C++14" }
 	platforms { "x86", "x64" }
 	pic "On"
-
-	includedirs { "include" }
-	libdirs { "lib" }
+	symbols "On"
 
 	filter "system:windows"
 		defines { "WINDOWS", "WIN32" }
@@ -18,25 +17,6 @@ solution "PathFind"
 	filter "configurations:Release"
 		flags { "Optimize" }
 
-	project "ml_pathfind"
-		language "C++"
-		kind "SharedLib"
-		targetname "ml_pathfind"
-
-		vpaths {
-			["Headers/*"] = "**.h",
-			["Sources/*"] = "**.cpp",
-			["*"] = "premake5.lua"
-		}
-
-		files {
-			"premake5.lua",
-			"**.cpp",
-			"**.h"
-		}
-		
-		filter { "system:windows", "platforms:x86" }
-			links { "lua5.1.lib" }
-			
-		filter { "system:windows", "platforms:x64" }
-			links { "lua5.1_64.lib" }
+	include "module"
+	include "pathfind"
+	include "test"
