@@ -48,6 +48,9 @@ function PlayerManager:constructor()
 	addEventHandler("onClientRequestTime",root, bind(self.Event_ClientRequestTime, self))
 	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
 
+	addEventHandler("onPlayerPrivateMessage", root, function()
+		cancelEvent()
+	end)
 
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
