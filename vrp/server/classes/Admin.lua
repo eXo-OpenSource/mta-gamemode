@@ -117,11 +117,11 @@ function Admin:constructor()
 
 end
 
-function Admin:joinEventList( source ) 
+function Admin:joinEventList( source )
 	if not self.m_EventPartic[source] then
 		self.m_EventPartic[source] = true
 		outputChatBox("Du nimmst am Event teil, warte bis du teleportiert wirst!", source, 0, 200, 0)
-	else 
+	else
 		self.m_EventPartic[source] = true
 		outputChatBox("Du nimmst nicht mehr am Event teil!", source, 200, 0 ,0)
 	end
@@ -134,17 +134,17 @@ function Admin:clearTPList( source )
 	end
 end
 
-function Admin:teleportJoinList( source ) 
+function Admin:teleportJoinList( source )
 	if source:getRank() <= RANK.Supporter then return end
 	local veh
 	local x,y,z = getElementPosition(source)
 	local count = 0
 	local int = getElementInterior(source)
-	local dim = getElementDimension(source)	
-	for player, bool in pairs( self.m_EventPartic ) do 
-		if bool then 
-			veh = getPedOccupiedVehicle(player) 
-			if veh then 
+	local dim = getElementDimension(source)
+	for player, bool in pairs( self.m_EventPartic ) do
+		if bool then
+			veh = getPedOccupiedVehicle(player)
+			if veh then
 				removePedFromVehicle(player)
 			end
 			setElementDimension(player, dim)
@@ -155,7 +155,7 @@ function Admin:teleportJoinList( source )
 	end
 	outputChatBox("Es wurden "..count.." teleportiert!", source, 200, 200, 200)
 	self.m_EventPartic = {}
-end 
+end
 
 function Admin:destructor()
 	removeCommandHandler("admins", bind(self.onlineList, self))
@@ -822,6 +822,7 @@ local tpTable = {
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["army"] =          {["pos"] = Vector3(2711.48, -2405.28, 13.49),  	["typ"] = "Fraktionen"},
+		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},

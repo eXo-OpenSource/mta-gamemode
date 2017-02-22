@@ -296,7 +296,7 @@ function WeaponTruck:addDestinationMarker(factionId, type, blip)
 	local markerId = #self.m_DestinationMarkers+1
 
 	local destination = factionWTDestination[factionId]
-	self.m_DestinationMarkers[markerId] = createMarker(destination,"cylinder",8)
+	self.m_DestinationMarkers[markerId] = createMarker(destination,"cylinder",8, 255, 0, 0, 100)
 	self.m_DestinationMarkers[markerId].type = type
 	self.m_DestinationMarkers[markerId].factionId = factionId
 

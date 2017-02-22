@@ -218,7 +218,7 @@ factionColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100}
 factionCarColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100, ["r1"] = 150,["g1"] = 100,["b1"] = 100}
 factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [254]=true, [291]=true,[298]=true,[299]=true}
 factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[9] = Vector3(687.20, -445.40, 15.40)
+evilFactionInteriorEnter[9] = Vector3(687.20, -445.40, 16.3)
 factionWTDestination[9] = Vector3(659.80,-463.10,16.30)
 
 -- General:
