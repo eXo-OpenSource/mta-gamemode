@@ -41,6 +41,11 @@ function PerformanceStatsGUI:constructor()
 
 	local cache = self.m_TabPanel:addTab(_"Cache")
 	self:addField(cache, "CacheTextureReplace", function() return tostring(table.size(TextureReplace.Cache)) end)
+	cache.m_Gridlist = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.16, self.m_Width*0.96, self.m_Height*0.73, cache)
+	cache.m_Gridlist:addColumn("TexturePath", 0.65)
+	cache.m_Gridlist:addColumn("MemUsage", 0.20)
+	cache.m_Gridlist:addColumn("Usage", 0.15)
+	self.m_TabCache = cache
 
 	self.m_RefreshTimer = false
 	self:refresh()
@@ -50,6 +55,13 @@ function PerformanceStatsGUI:refresh()
 	for parentId, parent in pairs(self.m_Fields) do
 		for k, v in ipairs(parent) do
 			v.label:setText(v.func())
+		end
+	end
+
+	if self.m_TabCache.m_Gridlist then
+		self.m_TabCache.m_Gridlist:clear()
+		for hash, data in pairs(TextureReplace.Cache) do
+			self.m_TabCache.m_Gridlist:addItem(data.path:sub(#data.path - 35, #data.path), ("%d MB"):format(data.memusage), data.counter)
 		end
 	end
 end
