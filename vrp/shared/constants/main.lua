@@ -453,6 +453,8 @@ VRP_RADIO = {
 	{"Lounge FM Austria", "http://digital.lounge.fm"},
 	{"Rock Antenne", "http://www.rockantenne.de/webradio/rockantenne.m3u"},
 	{"Raute Musik Rock", "http://rock-high.rautemusik.fm/listen.pls"},
+	{"FFS (nicht 24/7 online)", "http://ffs-gaming.com:8008/ffs.ogg"},
+
 
 	-- GTA channels
 	{"Playback FM", 1},
