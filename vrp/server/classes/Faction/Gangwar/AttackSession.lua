@@ -86,6 +86,7 @@ function AttackSession:addParticipantToList( player, bLateJoin )
 				player:triggerEvent("AttackClient:launchClient",self.m_Faction1,self.m_Faction2,self.m_Participants,self.m_Disqualified, timeLeft, self.m_AreaObj.m_Position, self.m_AreaObj.m_ID)
 			end
 		end
+		self:synchronizeLists( )
 		player:triggerEvent("GangwarQuestion:new")
 		self.m_Faction1:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
 		self.m_Faction2:sendMessage("[Gangwar] #FFFFFFDer Spieler "..player.name.." jointe dem Gangwar nach!",0,204,204,true)
