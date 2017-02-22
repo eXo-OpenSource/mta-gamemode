@@ -90,7 +90,7 @@ end
 function BoxManager:acceptFight(player, target, money)
 	if player and isElement(player) and target and isElement(target) then
 		if player:isWithinColShape(self.m_BoxHallCol) and target:isWithinColShape(self.m_BoxHallCol) then
-			if client:getMoney() >= money then
+			if player:getMoney() >= money then
 				if target:getMoney() >= money then
 					if not self.m_BoxFight["active"] then
 						player:sendShortMessage(_("%s hat die Boxkampf-Anfrage akzeptiert!", player, target:getName()))
