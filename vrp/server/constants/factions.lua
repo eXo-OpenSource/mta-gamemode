@@ -204,6 +204,23 @@ factionWeapons[8] = {[5]=true, [24]=true, [25]=true, [32]=true, [29]=true, [30]=
 evilFactionInteriorEnter[8] = Vector3(2232.70, -1436.40, 24.90)
 factionWTDestination[8] = Vector3(2212.42, -1435.53, 22.5)
 
+-- ID 9 = Biker
+factionRankNames[9] = {
+[0] = "Hangaround",
+[1] = "Prospect",
+[2] = "Patch Member",
+[3] = "Road Captain",
+[4] = "Sergeant at Arms",
+[5] = "Vice-President",
+[6] = "President"
+}
+factionColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100}
+factionCarColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100, ["r1"] = 150,["g1"] = 100,["b1"] = 100}
+factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [254]=true, [291]=true,[298]=true,[299]=true}
+factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+evilFactionInteriorEnter[9] = Vector3(687.20, -445.40, 15.40)
+factionWTDestination[9] = Vector3(659.80,-463.10,16.30)
+
 -- General:
 factionWeaponDepotInfo = {
 	[1] = {["Waffe"] = 10, ["Magazine"] = 0, ["WaffenPreis"] = 10, ["MagazinPreis"] = 0}, -- Brass Knuckles
