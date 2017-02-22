@@ -135,6 +135,7 @@ function DeathmatchLobby:addPlayer(player)
 	takeAllWeapons(player)
 	giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 	player.m_RemoveWeaponsOnLogout = true
+	player.disableWeaponStorage = true
 	self:respawnPlayer(player)
 	player.deathmatchLobby = self
 	self:sendShortMessage(player:getName().." ist beigetreten!")
@@ -179,6 +180,7 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 	if isElement(player) then
 		takeAllWeapons(player)
 		player.m_RemoveWeaponsOnLogout = nil
+		player.disableWeaponStorage = nil
 		player:setDimension(0)
 		player:setInterior(0)
 		player:setPosition(1325.21, -1559.48, 13.54)

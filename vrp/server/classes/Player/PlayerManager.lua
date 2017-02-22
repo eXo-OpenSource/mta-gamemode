@@ -565,6 +565,10 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
 		return
 	end
+	if client.disableWeaponStorage then
+		client:sendError(_("Du darfst diese Waffe nicht einlagern!", client))
+		return
+	end
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
 			client.m_GunBox[tostring(i)] = {}
@@ -611,7 +615,10 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
-
+	if client.disableWeaponStorage then
+		client:sendError(_("Du darfst diese Waffe nicht nehmen!", client))
+		return
+	end
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then
