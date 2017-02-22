@@ -15,11 +15,11 @@ function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
 	if (not username or not password) and not pwhash then return false end
 
-	if not username:match("^[a-zA-Z0-9_.]*$") then
-		player:triggerEvent("loginfailed", "Ungültiger Nickname. Bitte melde dich bei einem Admin!")
-		return false
-	end
-	
+	--if not username:match("^[a-zA-Z0-9_.]*$") then
+	--	player:triggerEvent("loginfailed", "Ungültiger Nickname. Bitte melde dich bei einem Admin!")
+	--	return false
+	--end
+
 	-- Ask SQL to fetch ForumID
 	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, RegisterDate, InvitationId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
