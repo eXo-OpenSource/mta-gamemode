@@ -55,7 +55,7 @@ function DeathmatchLobby:loadMap()
 	self.m_Colshape = createColSphere(self.m_MapData["spawns"][1], 100)
 	self.m_Colshape:setDimension(self.m_MapData["dim"])
 	self.m_Colshape:setInterior(self.m_MapData["int"])
-	addEventHandler("onColShapeLeave", self.m_Colshape, self.m_ColShapeLeaveBind)
+	addEventHandler("onColShapeLeave", self.m_Colshape, self.m_LeaveBind)
 end
 
 function DeathmatchLobby:getPlayers()
