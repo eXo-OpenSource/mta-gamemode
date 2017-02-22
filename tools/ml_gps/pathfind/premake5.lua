@@ -13,8 +13,3 @@ project "pathfind"
 		"**.cpp",
 		"**.h"
 	}
-	
-	excludes {
-		"WayFinder.cpp",
-		"WayFinderJobManager.cpp"
-	}
