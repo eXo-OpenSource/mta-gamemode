@@ -7,6 +7,8 @@ solution "PathFind"
 	platforms { "x86", "x64" }
 	pic "On"
 	symbols "On"
+	
+	includedirs { "vendor", "." }
 
 	filter "system:windows"
 		defines { "WINDOWS", "WIN32" }
