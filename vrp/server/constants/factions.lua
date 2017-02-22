@@ -184,7 +184,7 @@ factionColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52}
 factionCarColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52, ["r1"] = 18,["g1"] = 140,["b1"] = 52}
 factionSkins[7] = {[105]=true, [106]=true, [107]=true, [269]=true, [270]=true, [271]=true, [293]=true, [300]=true, [301]=true, [311]=true}
 factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[7] = Vector3(2459.54, -1690.76, 13.54)
+evilFactionInteriorEnter[7] = Vector3(2459.54, -1690.76, 13.4)
 factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625)
 
 -- ID 8 = Ballas
@@ -219,7 +219,7 @@ factionCarColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100, ["r1"] = 150,["g1"] 
 factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [254]=true, [291]=true,[298]=true,[299]=true}
 factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[9] = Vector3(687.20, -445.40, 16.3)
-factionWTDestination[9] = Vector3(659.80,-463.10,16.30)
+factionWTDestination[9] = Vector3(659.80,-463.10,15.30)
 
 -- General:
 factionWeaponDepotInfo = {
