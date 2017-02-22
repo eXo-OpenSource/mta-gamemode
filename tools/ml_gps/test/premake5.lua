@@ -2,6 +2,8 @@ project "test"
 	language "C++"
 	kind "ConsoleApp"
 
+	links { "pathfind" }
+
 	vpaths {
 		["Headers/*"] = "**.h",
 		["Sources/*"] = "**.cpp",
