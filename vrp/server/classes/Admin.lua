@@ -178,7 +178,9 @@ end
 function Admin:addAdmin(player,rank)
 	outputDebug("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
-    player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
+	if DEBUG then
+    	player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
+	end
     if DEBUG or rank >= RANK.Servermanager then
 		if getAccount(player:getName().."-eXo") then removeAccount(getAccount(player:getName().."-eXo")) end
 		local pw = string.random(15)
