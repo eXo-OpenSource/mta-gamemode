@@ -393,7 +393,11 @@ function VehicleManager:updateFuelOfPermanentVehicles()
 	for k, player in pairs(getElementsByType("player")) do
 		local vehicle = getPedOccupiedVehicle(player)
 		if vehicle and vehicle.getFuel and vehicle:getEngineState() then
-			vehicle:setFuel(vehicle:getFuel() - 0.5)
+			local fuelConsumption = 0.5
+			if vehicle.getSpeed and vehicle:getSpeed()/100 > fuelConsumption then
+				fuelConsumption = math.abs(vehicle:getSpeed()/100)
+			end
+			vehicle:setFuel(vehicle:getFuel() - fuelConsumption)
 		end
 	end
 end
