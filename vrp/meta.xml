@@ -122,6 +122,7 @@
 	<script src="server/classes/Inventory/Items/ItemIDCard.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemFuelcan.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/ItemRepairKit.lua" type="server"/>
+	<script src="server/classes/Inventory/Items/ItemDonutBox.lua" type="server"/>
 
 	<script src="server/classes/Inventory/Items/Drugs/DrugsWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
@@ -484,7 +485,7 @@
 	<script src="client/classes/GUIForms/ButtonMenu/ElevatorGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/SelfGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/GroupCreationGUI.lua" type="client"/>
-	<!--script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/-->
+	<script src="client/classes/GUIForms/DownloadGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/CharacterCreationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/QuestionBox.lua" type="client"/>
 	<script src="client/classes/GUIForms/Countdown.lua" type="client"/>
@@ -1217,7 +1218,7 @@
 	<vrpfile src="files/images/Inventory/items/Essen/Pilz.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Long Drink Brown.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Cocktail.png" />
-	<vrpfile src="files/images/Inventory/items/Essen/Donutbox.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/ItemDonutBox.png" />
 
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />

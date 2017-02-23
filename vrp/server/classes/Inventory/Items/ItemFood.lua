@@ -15,7 +15,8 @@ ItemFood.Settings = {
 		["ModelScale"] = 2,
 		["Attach"] = {11, 0, -0.02, 0.15, 0, -90, 90},
 		["CustomEvent"] = "smokeEffect"
-	}
+	},
+	["Donut"] = {["Health"] = 25, ["Model"] = 2880, ["Text"] = "isst einen Donut", ["Animation"] = {"FOOD", "EAT_BURGER", 4500}}
 }
 
 function ItemFood:constructor()
