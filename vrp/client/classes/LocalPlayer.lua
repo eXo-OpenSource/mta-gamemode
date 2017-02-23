@@ -373,6 +373,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 		triggerServerEvent("toggleAFK", localPlayer, true, teleport)
 		addEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
 		self.m_AFKStartTime = getTickCount()
+		NoDm:getSingleton():checkNoDm()
 	else
 		InfoBox:new(_("Willkommen zurück, %s!", localPlayer:getName()))
 		triggerServerEvent("toggleAFK", localPlayer, false)
@@ -380,6 +381,8 @@ function LocalPlayer:toggleAFK(state, teleport)
 		self:setAFKTime() -- Set CurrentAFKTime
 		self.m_AFKStartTime = 0
 		self:setAFKTime() -- Add CurrentAFKTime to AFKTime + Reset CurrentAFKTime
+		NoDm:getSingleton():checkNoDm()
+
 	end
 end
 
