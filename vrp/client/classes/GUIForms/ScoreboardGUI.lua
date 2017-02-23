@@ -14,7 +14,7 @@ function ScoreboardGUI:constructor()
 	self.m_Rect = GUIRectangle:new(0, self.m_Width*0.06 , self.m_Width, self.m_Height - self.m_Width*0.06, tocolor(0, 0, 0, 200), self)
 	self.m_Logo = GUIImage:new(self.m_Width-self.m_Width*0.18, self.m_Height*0.83, self.m_Width*0.180, self.m_Width*0.078, "files/images/LogoNoFont.png", self)
 
-	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.96, self.m_Height*0.6, self.m_Rect)
+	self.m_Grid = GUIGridList:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.96, self.m_Height*0.62, self.m_Rect)
 	self.m_Grid:setFont(VRPFont(24))
 	self.m_Grid:setItemHeight(24)
 	self.m_Grid:setColor(Color.Clear)
@@ -81,12 +81,8 @@ end
 
 function ScoreboardGUI:refresh()
 	local scrollPosX, scrollPosY = self.m_Grid.m_ScrollArea:getScrollPosition()
-	local scrollAreaDocumentSize = self.m_Grid.m_ScrollArea.m_DocumentHeight
+	local scrollAreaDocumentSize_old = self.m_Grid.m_ScrollArea.m_DocumentHeight
 	local scrollAreaHeight = self.m_Grid.m_ScrollArea.m_Height
-
-	if scrollPosY ~= 0 and math.abs(scrollPosY) > scrollAreaDocumentSize - scrollAreaHeight then
-		scrollPosY = scrollAreaDocumentSize - scrollAreaHeight
-	end
 
 	self.m_Grid:clear()
 	self.m_Players = {}
@@ -112,6 +108,14 @@ function ScoreboardGUI:refresh()
 
 	table.sort(self.m_Players, function (a, b) return (a[2] < b[2]) end)
 	self:insertPlayers()
+
+	local scrollAreaDocumentSize_new = self.m_Grid.m_ScrollArea.m_DocumentHeight
+	if scrollPosY ~= 0 and scrollAreaDocumentSize_old > scrollAreaDocumentSize_new and math.abs(scrollPosY) > scrollAreaDocumentSize_new - scrollAreaHeight then
+		scrollPosY = (scrollPosY / (scrollAreaDocumentSize_old - scrollAreaHeight) * scrollAreaDocumentSize_new) + scrollAreaHeight
+		if math.abs(scrollPosY) < scrollAreaHeight or scrollPosY > 0 then
+			scrollPosY = 0
+		end
+	end
 
 	self.m_Grid.m_ScrollArea:setScrollPosition(scrollPosX, scrollPosY)
 
@@ -205,10 +209,4 @@ function ScoreboardGUI:insertPlayers()
 			item:setColumnColor(7, Color.Red)
 		end
 	end
-	--[[ Dummy Players
-	for i = 0, 200 do
-		dummyitem = self.m_Grid:addItem("", "Dummy Player "..i, "SAPD", "Fahrschule", "Testgang", "2000:50", "+100", "5")
-		dummyitem:setFont(VRPFont(22))
-	end
-	]]
 end
