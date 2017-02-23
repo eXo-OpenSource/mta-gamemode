@@ -1217,6 +1217,7 @@
 	<vrpfile src="files/images/Inventory/items/Essen/Pilz.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Long Drink Brown.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Cocktail.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/Donutbox.png" />
 
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />
