@@ -141,7 +141,7 @@ function PublicTransport:endTaxiDrive(customer)
 end
 
 function PublicTransport:updateTaxometer(customer)
-	if self.m_TaxiCustomer[customer] then
+	if self.m_TaxiCustomer[customer] and isElement(customer) then
 		self.m_TaxiCustomer[customer]["diff"] = (self.m_TaxiCustomer[customer]["vehicle"]:getMileage() - self.m_TaxiCustomer[customer]["startMileage"])/1000
 		self.m_TaxiCustomer[customer]["price"] = math.floor(self.m_TaxiCustomer[customer]["diff"] * TAXI_PRICE_PER_KM)
 		customer:triggerEvent("syncTaxoMeter", self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
