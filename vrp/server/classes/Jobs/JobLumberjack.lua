@@ -55,6 +55,7 @@ end
 
 function JobLumberjack:stop(player)
 	takeWeapon(player, 9)
+	self:destroyJobVehicle(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 	setElementVisibleTo(self.m_LoadUpMarker, player, false)
 	setElementVisibleTo(self.m_DumpMarker, player, false)
