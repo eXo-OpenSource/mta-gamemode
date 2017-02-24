@@ -692,12 +692,12 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 	end
 end
 
-function FactionState:Command_tie(player, cmd, tname, bool)
+function FactionState:Command_tie(player, cmd, tname, bool, force)
 	local faction = player:getFaction()
 	if faction and faction:isStateFaction() then
 		if player:isFactionDuty() then
 			local vehicle = player:getOccupiedVehicle()
-			if player:getOccupiedVehicle() and vehicle and isElement(vehicle) and vehicle.getFaction and vehicle:getFaction() and vehicle:isStateVehicle() then
+			if force == true or (player:getOccupiedVehicle() and vehicle and isElement(vehicle) and vehicle.getFaction and vehicle:getFaction() and vehicle:isStateVehicle()) then
 				if tname then
 					local target = PlayerManager:getSingleton():getPlayerFromPartOfName(tname, player)
 					if isElement(target) then
@@ -780,7 +780,7 @@ function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 				if player:getMoney() < JAIL_COSTS[wantedLevel] then
 					factionBonus = player:getMoney()
 				end
-				self:Command_tie(policeman, "tie", player:getName(), false)
+				self:Command_tie(policeman, "tie", player:getName(), false, true)
 				player:takeMoney(factionBonus, "Knast Strafe")
 				player:giveKarma(-wantedLevel)
 				player:setJailTime(jailTime)

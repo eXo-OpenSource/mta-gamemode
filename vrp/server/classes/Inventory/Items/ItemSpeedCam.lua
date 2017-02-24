@@ -44,7 +44,7 @@ function ItemSpeedCam:use(player)
 					addEventHandler("onColShapeHit", object.col, self.m_func )
 					local pos = player:getPosition()
 					FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
-
+					StatisticsLogger:getSingleton():itemPlaceLogs( player, "Blitzer", pos.x..","..pos.y..","..pos.z) 
 				end
 			)
 		else
