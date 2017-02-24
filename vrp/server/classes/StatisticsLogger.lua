@@ -45,7 +45,7 @@ function StatisticsLogger:addGroupLog(player, groupType, group, category, desc)
 end
 
 function StatisticsLogger:getGroupLogs(groupType, groupId)
-    local days = 7
+    local days = 3
 	local since = getRealTime().timestamp-days*24*60*60
 	local result = sqlLogs:queryFetch("SELECT * FROM ??_Groups WHERE GroupType = ? AND GroupId = ? AND Timestamp > ? ORDER BY Id DESC", sqlLogs:getPrefix(), groupType, groupId, since)
     return result
@@ -252,22 +252,22 @@ function StatisticsLogger:saveGameStats()
 	end
 end
 
-function StatisticsLogger:itemPlaceLogs( player, item, pos ) 
+function StatisticsLogger:itemPlaceLogs( player, item, pos )
     local userId = 0
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
-	if item then 
-		if pos then 
+	if item then
+		if pos then
 			sqlLogs:queryExec("INSERT INTO ??_ItemPlace ( PlayerId, Item,  Pos , Date) VALUES(?, ?, ?,  NOW())",
 			sqlLogs:getPrefix(), userId, item, pos)
 		end
-	end 
+	end
 end
 
-function StatisticsLogger:vehicleTowLogs( player, vehicle) 
+function StatisticsLogger:vehicleTowLogs( player, vehicle)
     local userId = 0
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
-	if vehicle then 
-		if vehicle.m_Owner then 
+	if vehicle then
+		if vehicle.m_Owner then
 			if vehicle.m_Id then
 				local ownerId = vehicle.m_Owner
 				if type(vehicle.m_Owner) == "userdata" then
@@ -277,19 +277,19 @@ function StatisticsLogger:vehicleTowLogs( player, vehicle)
 					sqlLogs:getPrefix(), userId, ownerId, vehicle.m_Id)
 			end
 		end
-	end 
+	end
 end
 
-function StatisticsLogger:itemTradeLogs( player, player2, item, price) 
+function StatisticsLogger:itemTradeLogs( player, player2, item, price)
     local userId = 0
 	local userId2 = 0
 	if isElement(player) then userId = player:getId() else userId = player or 0 end
 	if isElement(player2) then userId2 = player2:getId() else userId2 = player2 or 0 end
-	if item and price then 
+	if item and price then
 		if tonumber(price) then
 			sqlLogs:queryExec("INSERT INTO ??_ItemTrade ( GivingId, ReceivingId,  Item, Price, Date) VALUES(?, ?, ?, ?,  NOW())",
 				sqlLogs:getPrefix(), userId, userId2, item, tonumber(price))
 		end
-	end 
+	end
 end
 
