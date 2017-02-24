@@ -1,9 +1,9 @@
 EasterEgg = inherit(Singleton)
 
 function EasterEgg:constructor()
-	-- Scream EasterEgg (Rescue base)
 	EasterEgg.Scream:new()
 	EasterEgg.QRCode:new()
+	--EasterEgg.DrWho:new()
 
 	-- Doge EasterEgg
 	self.m_DogeString  =

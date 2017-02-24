@@ -75,6 +75,10 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/bed.col", 1879)
 	self:loadImportDFF("files/models/bed.dff", 1879)
 
+	-- Tardis EasterEgg
+	--self:loadImportTXD("files/models/tardis.txd", 1337)
+	--self:loadImportDFF("files/models/tardis.dff", 1337)
+
 	self:loadImportDFF("files/models/piss.dff", 1904)
 
 	self:loadShader("files/images/Other/parking1.png", "noparking2_128")
