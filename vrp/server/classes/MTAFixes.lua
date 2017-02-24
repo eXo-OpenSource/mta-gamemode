@@ -29,7 +29,7 @@ function MTAFixes:onTrailerDetach(veh)
 	setElementVelocity(source, x, y, z) -- Setting Velocity to Source Vehicle Speed to reduce sync problems
 end
 
-function MTAFixes:onTrailerDetach(oldSyncer)
+function MTAFixes:onElementStopSync(oldSyncer)
 	if getElementType(source) == "vehicle" then
 		self.m_TrailerSyncer[source] = getElementSyncer(source) -- Set new Syncer
 	end
