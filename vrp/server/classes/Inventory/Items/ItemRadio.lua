@@ -26,6 +26,7 @@ function ItemRadio:use(player)
 			end
 
 			local worldItem = self:place(player, position, rotation)
+			StatisticsLogger:getSingleton():itemPlaceLogs( player, "Radio", position.x..","..position.y..","..position.z) 
 			player:getInventory():removeItem(self:getName(), 1)
 			addEventHandler("itemRadioChangeURL", worldItem:getObject(),
 				function(url)

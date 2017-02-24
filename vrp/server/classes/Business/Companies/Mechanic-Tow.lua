@@ -199,6 +199,7 @@ function MechanicTow:onDetachVehicleFromTow( towTruck )
 							if not source.getCompany and not source.getFaction then
 								self:respawnVehicle( source )
 								driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
+								StatisticsLogger:getSingleton():vehicleTowLogs( driver, source) 
 							end
 						else driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 						end
