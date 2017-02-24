@@ -16,6 +16,8 @@ function JobFarmer:constructor()
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
 
+	self.m_DeliveryBlips = {}
+
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
 	self.m_CurrentPlantsFarm = 0
@@ -156,10 +158,10 @@ end
 function JobFarmer:setJobElementVisibility(player, state)
 	if state then
 		local x, y = unpack(PLANT_DELIVERY)
-		self.m_DeliveryBlip = Blip:new("Waypoint.png", x, y, player,600)
-		self.m_DeliveryBlip:setStreamDistance(2000)
+		self.m_DeliveryBlips[player:getId()] = Blip:new("Waypoint.png", x, y, player, 4000)
+		self.m_DeliveryBlips[player:getId()]:setStreamDistance(4000)
 	else
-		delete(self.m_DeliveryBlip)
+		delete(self.m_DeliveryBlips[player:getId()])
 	end
 
 	for key, element in pairs (self.m_JobElements) do
