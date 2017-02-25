@@ -235,6 +235,7 @@ HelpTextTitles = {
 		HeliTransport = "Job: Helikopter-Pilot";
 		ForkLift = "Job: Gabelstapler-Fahrer";
 		TreasureSeeker = "Job: Schatz Sucher";
+		Gravel = "Job: Kiesgruben Arbeiter";
 	};
 	Gameplay = {
 		Cars = "Fahrzeuge";
@@ -448,7 +449,11 @@ HelpTexts = {
 			abzusuchen. Anschließend hebst du diese in dein Schiff und entlädst sie am Hafen!
 
 			Drücke 'Leertaste' um den "Schatz" aufzunehmen.
-		]]
+		]];
+		Gravel = [[
+			TODO
+		]];
+
 	};
 	Events = {
 		Deathmatch = [[
