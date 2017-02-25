@@ -22,7 +22,7 @@ function ItemFuelcan:use(player)
 			player:sendSuccess(_("Dein Fahrzeug wurde betankt!", player))
 			player:getInventory():removeItem(self:getName(), 1)
 		else
-			player:sendError(_("Dein Tank ist bereits voll", player))
+			player:sendError(_("Dein Tank ist bereits voll!", player))
 		end
 	else
 		player:sendError(_("Du musst in einem Fahrzeug sitzen!", player))
