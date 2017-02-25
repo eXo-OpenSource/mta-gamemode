@@ -9,7 +9,7 @@ ItemSpeedCam = inherit(Item)
 ItemSpeedCam.Map = {}
 
 local MAX_SPEEDCAMS = 3
-
+local COST_FACTOR = 15
 
 function ItemSpeedCam:constructor()
 
@@ -44,7 +44,7 @@ function ItemSpeedCam:use(player)
 					addEventHandler("onColShapeHit", object.col, self.m_func )
 					local pos = player:getPosition()
 					FactionState:getSingleton():sendShortMessage(_("%s hat einen Blitzer bei %s/%s aufgestellt!", player, player:getName(), getZoneName(pos), getZoneName(pos, true)))
-					StatisticsLogger:getSingleton():itemPlaceLogs( player, "Blitzer", pos.x..","..pos.y..","..pos.z) 
+					StatisticsLogger:getSingleton():itemPlaceLogs( player, "Blitzer", pos.x..","..pos.y..","..pos.z)
 				end
 			)
 		else
@@ -74,7 +74,7 @@ function ItemSpeedCam:onColShapeHit(element, dim)
 				if player:isFactionDuty() then return end
 
 				local speed = math.floor(element:getSpeed())
-				local costs = (speed-80)*30
+				local costs = (speed-80)*COST_FACTOR
 
 				if player:getBankMoney() < costs then
 					costs = player:getBankMoney()
