@@ -1480,6 +1480,9 @@
 	<vrpfile src="files/models/scary.dff"/>
 	<vrpfile src="files/models/tardis.txd"/>
 	<vrpfile src="files/models/tardis.dff"/>
+	<vrpfile src="files/models/donut.txd"/>
+	<vrpfile src="files/models/donut.dff"/>
+	<vrpfile src="files/models/donut.col"/>
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
