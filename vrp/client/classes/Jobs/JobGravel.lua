@@ -11,12 +11,15 @@ JobGravel = inherit(Job)
 function JobGravel:constructor()
 	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Pizza.png", "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
 
+	self.m_SyncElements = {}
+
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel))
 
 	self.m_OnRockColHitBind = bind(self.onRockColHit, self)
 	self.m_OnRockColLeaveBind = bind(self.onRockColLeave, self)
 	self.m_OnRockClickBind = bind(self.onRockClick, self)
+	self.m_OnRockCollissionBind = bind(self.onRockCollission, self)
 
 end
 
@@ -24,14 +27,39 @@ function JobGravel:start()
 	self.m_Rocks = {}
 	self.m_RockCols = {}
 	self:generateRocks()
+
+	self.m_GravelDeliverCol = {
+		createColSphere(677.01, 827.03, -28.20, 4),
+		createColSphere(687.68, 846.27, -28.21, 4)
+	}
+	for index, col in pairs(self.m_GravelDeliverCol) do
+		col.track = "Track"..index
+		addEventHandler("onClientColShapeHit", col, bind(self.onDeliverColHit, self))
+	end
+	--addEventHandler("onClientVehicleCollision", root, self.m_OnRockCollissionBind)
 end
+
+function JobGravel:stop()
+	for index, element in pairs(self.m_Rocks) do
+		if element and isElement(element) then element:destroy() end
+	end
+	for index, element in pairs(self.m_RockCols) do
+		if element and isElement(element) then element:destroy() end
+	end
+	for index, element in pairs(self.m_GravelDeliverCol) do
+		if element and isElement(element) then element:destroy() end
+	end
+
+	--removeEventHandler("onClientVehicleCollision", root, self.m_OnRockCollissionBind)
+end
+
 
 function JobGravel:generateRocks()
 	for index, data in pairs(JobGravel.RockPositions) do
 		if self.m_Rocks[index] and isElement(self.m_Rocks[index]) then self.m_Rocks[index]:destroy() end
 		local x, y, z, rot = unpack(data["rock"])
 		self.m_Rocks[index] = createObject(900, x, y, z, 0, 0, rot)
-		self.m_RockCols[index] = createColSphere(data["col"], 4)
+		self.m_RockCols[index] = createColSphere(data["col"], 6)
 		self.m_RockCols[index].Rock = self.m_Rocks[index]
 		addEventHandler("onClientColShapeHit", self.m_RockCols[index], self.m_OnRockColHitBind)
 		addEventHandler("onClientColShapeLeave", self.m_RockCols[index], self.m_OnRockColLeaveBind)
@@ -44,6 +72,7 @@ function JobGravel:onRockColHit(hit, dim)
 		localPlayer.m_GravelCol = source
 		localPlayer.m_GravelColClicked = 0
 		addEventHandler("onClientKey", root, self.m_OnRockClickBind)
+		JobGravel.GravelProgress = JobGravelProgress:new()
 	end
 end
 
@@ -52,6 +81,24 @@ function JobGravel:onRockColLeave(hit, dim)
 		localPlayer.m_GravelCol = nil
 		localPlayer.m_GravelColClicked = nil
 		removeEventHandler("onClientKey", root, self.m_OnRockClickBind)
+		if JobGravel.GravelProgress then delete(JobGravel.GravelProgress) end
+	end
+end
+
+function JobGravel:onRockCollission(hitElement)
+	if source:getModel() == 486 then
+		if hitElement and isElement(hitElement) and hitElement:getModel() == 2936 then
+			self:syncGravel(hitElement)
+		end
+	end
+end
+
+function JobGravel:syncGravel(gravel)
+	if not gravel.oldPos then gravel.oldPos = gravel:getPosition() end
+	if (gravel.oldPos-gravel:getPosition()).length > 0.5 then
+		gravel.oldPos = gravel:getPosition()
+		gravel.timer = setTimer(bind(self.syncGravel, self), 2000 ,1, gravel)
+		triggerServerEvent("setGravelPosition", gravel, gravel.oldPos.x, gravel.oldPos.y, gravel.oldPos.z)
 	end
 end
 
@@ -65,12 +112,40 @@ function JobGravel:onRockClick(key, press)
 					localPlayer.m_GravelCol.Rock:destroy()
 					localPlayer.m_GravelCol:destroy()
 					self:onRockColLeave(localPlayer, true)
-					createObject(2936 ,713.96, 837.82, -30.23)
+					triggerServerEvent("onGravelMine", localPlayer)
+
 				end
-				setTimer(function() localPlayer.m_GravelClickPause = false end, 2000, 1)
+				if JobGravel.GravelProgress then
+					JobGravel.GravelProgress:setProgress(localPlayer.m_GravelColClicked)
+				end
+				setTimer(function() localPlayer.m_GravelClickPause = false end, 1500, 1)
 			end
 		end
 	end
+end
+
+function JobGravel:onDeliverColHit(hitElement, dim)
+	if hitElement:getModel() == 2936 then
+		triggerServerEvent("gravelStartTrack", hitElement, source.track)
+	end
+end
+
+JobGravelProgress = inherit(GUIForm)
+inherit(Singleton, JobGravelProgress)
+
+function JobGravelProgress:constructor()
+	GUIForm.constructor(self, screenWidth/2-187/2, 20, 187, 30, false)
+	self.m_Progress = GUIProgressBar:new(0,0,self.m_Width, self.m_Height,self)
+	self.m_Progress:setForegroundColor(tocolor(50,200,255))
+	self.m_Progress:setBackgroundColor(tocolor(180,240,255))
+	self.m_ProgLabel = GUILabel:new(0, 0, self.m_Width, self.m_Height, "Abgebaut: 0 %", self):setAlignX("center"):setAlignY("center"):setFont(VRPFont(self.m_Height*0.75)):setColor(Color.Black)
+end
+
+function JobGravelProgress:setProgress(prog)
+	if not prog then delete(self) return end
+	prog = prog*20
+	self.m_ProgLabel:setText("Abgebaut: "..prog.." %")
+	self.m_Progress:setProgress(prog)
 end
 
 JobGravel.RockPositions = {
