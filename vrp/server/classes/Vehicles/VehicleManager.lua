@@ -419,7 +419,7 @@ function VehicleManager:Event_vehiclePark()
 				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
 				return
 			end
-			
+
 			if source:isInGarage() then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
@@ -633,7 +633,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		return
 	end
 
-	if source:isBroken() then
+	if source:isBroken() and client:getRank() < RANK.Supporter then
 		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
 		return
 	end
@@ -701,7 +701,7 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
 	end
 
-	if source:isBroken() then
+	if source:isBroken() and client:getRank() < RANK.Supporter then
 		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
 		return
 	end
