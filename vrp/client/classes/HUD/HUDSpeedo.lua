@@ -120,7 +120,7 @@ end
 
 function HUDSpeedo:Bind_CruiseControl(key, state)
 	-- Don't do anything if we're in a vehicle
-	if not localPlayer:getOccupiedVehicle() then
+	if not localPlayer:getOccupiedVehicle() or localPlayer:getOccupiedVehicleSeat() > 0 then
 		return
 	end
 
@@ -157,6 +157,10 @@ function HUDSpeedo:Bind_CruiseControl(key, state)
 end
 
 function HUDSpeedo.Bind_CruiseControlChange(key, state, change)
+	-- Don't do anything if we're in a vehicle
+	if not localPlayer:getOccupiedVehicle() or localPlayer:getOccupiedVehicleSeat() > 0 then
+		return
+	end
 	-- Update cruise speed
 	local newSpeed = math.max(CruiseControl:getSingleton():getSpeed() + change, 0)
 	CruiseControl:getSingleton():setSpeed(newSpeed)
