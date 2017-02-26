@@ -5,8 +5,22 @@
 -- *  PURPOSE:     Class for Achievements
 -- *
 -- ****************************************************************************
-
 Achievement = inherit(Singleton)
+
+Achievement.Client = {
+	[10] = true, -- Traumland
+	[26] = true, -- Hartzer
+	[43] = true, -- Baumtänzer
+	[49] = true, -- Le Easteregg
+	[57] = true, -- Onanieren auf Obdachlosen
+	[72] = true, -- JSON Placeholder
+	[77] = true, -- Doge
+	[79] = true, -- Scream
+	[82] = true, -- German Lua Style
+	[84] = true, -- Mausrad Overheating
+	[85] = true, -- Mausrad Destroyer
+	[86] = true, -- Tardis
+}
 
 function Achievement:constructor ()
 	local row = sql:queryFetch("SELECT * FROM ??_achievements WHERE enabled = 1;", sql:getPrefix())
@@ -47,34 +61,33 @@ function Achievement:Event_onRequestAchievements ()
 end
 
 function Achievement:Event_onPlayerReceiveAchievement (player, id)
-	self:giveAchievement(player, id)
+	if Achievement.Client[id] then
+		self:giveAchievement(player, id)
+	end
 end
-
-
-
 
 -- Custom Achievements
 Achievements = {}
 Achievements.events = {}
 
-Achievements.events["onPlayerDamage"] = function  (attacker, weapon) -- Achievement ID: 6
+--[[Achievements.events["onPlayerDamage"] = function  (attacker, weapon) -- Achievement ID: 6
 	if attacker and getElementType(attacker) == "player" and attacker ~= source then
 		if attacker:getName() == "Doneasty" and weapon == 0 then -- ID 6
 			source:giveAchievement(6)
 		end
 	end
-end
+end]]
 
 Achievements.events["onPlayerWasted"] = function (_, attacker, weapon) -- Achievement ID: 3, 39
 	if attacker and getElementType(attacker) == "player" and attacker ~= source then
 		if attacker:getRank() == RANK.Developer then
 			source:giveAchievement(3)
-		elseif (attacker:getName() == "Revelse") and (weapon >= 0 and weapon <= 7 and weapon ~= 4) then
-			source:giveAchievement(39)
+		--elseif (attacker:getName() == "Revelse") and (weapon >= 0 and weapon <= 7 and weapon ~= 4) then
+		--	source:giveAchievement(39)
 		end
 	end
 end
 
 -- Add the Eventhandlers
-addEventHandler("onPlayerDamage", root, Achievements.events["onPlayerDamage"])
+--addEventHandler("onPlayerDamage", root, Achievements.events["onPlayerDamage"])
 addEventHandler("onPlayerWasted", root, Achievements.events["onPlayerWasted"])
