@@ -415,6 +415,11 @@ function VehicleManager:Event_vehiclePark()
  	self:checkVehicle(source)
 	if source:isPermanent() or instanceof(source, GroupVehicle) then
 		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup()) then
+			if source:isBroken() then
+				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
+				return
+			end
+			
 			if source:isInGarage() then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
@@ -627,6 +632,12 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
+
+	if source:isBroken() then
+		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
+		return
+	end
+
 	if client:getMoney() < 100 and source:getOwner() == client:getId() then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
@@ -688,6 +699,11 @@ function VehicleManager:Event_vehicleRespawnWorld()
  	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
  		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
  		return
+	end
+
+	if source:isBroken() then
+		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
+		return
 	end
 
  	if source:getOwner() == client:getId() and client:getMoney() < 100 then
