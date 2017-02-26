@@ -13,6 +13,7 @@ addRemoteEvents{"showFactionWTLoadGUI", "updateFactionWeaponShopGUI"}
 function FactionWTLoadGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-945/2, screenHeight/2-230, 945, 460)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Waffentruck beladen", true, true, self)
+	self.m_Window:deleteOnClose(true)
 
 	self.m_Cart = {}
 
