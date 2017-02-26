@@ -437,10 +437,10 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 			faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
 			outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 		elseif self.m_Type == "state" then
-			FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
 			if faction:isEvilFaction() then
 				outputChatBox("Der Waffentruck wurde bei einer bösen Fraktion abgegeben!", hitElement, rootElement,255,0,0)
 			else
+				FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
 				outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 			end
 		end
