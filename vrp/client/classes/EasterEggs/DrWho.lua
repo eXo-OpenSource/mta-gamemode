@@ -1,18 +1,18 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        client/classes/EasterEggs/DrWho.lua
+-- *  PURPOSE:     DrWho EasterEggs
 -- *
 -- ****************************************************************************
 EasterEgg.DrWho = inherit(Object)
 
 function EasterEgg.DrWho:constructor()
 	self.m_Spawns = {
-		Vector3(1474.652, -1678.340, 14.047),
-		--Vector3(1392.468, 1898.531, 13.501),
-		--Vector3(1252.972, -1523.225, 13.555),
-		--Vector3(1365.577, -1527.504, 13.547),
+		--Vector3(1474.652, -1678.340, 14.047),
+		Vector3(1392.468, 1898.531, 13.501),
+		Vector3(1252.972, -1523.225, 13.555),
+		Vector3(1365.577, -1527.504, 13.547),
 	}
 
 	self.m_ColHitAnimation = bind(EasterEgg.DrWho.hitAnimation, self)
@@ -21,13 +21,13 @@ function EasterEgg.DrWho:constructor()
 	self.m_RenderTardisAlpha = bind(EasterEgg.DrWho.renderTardisAlpha, self)
 
 	setTimer(self.m_SpawnTardis, 600000, 0)
-	addCommandHandler("tar", self.m_SpawnTardis) --todo dev
+	--addCommandHandler("tar", self.m_SpawnTardis) --todo dev
 end
 
 function EasterEgg.DrWho:spawnTardis()
 	if self.m_Tardis then return end
 
-	if math.random(1, 50) then
+	if math.random(1, 50) == 1 then
 		self.m_Position = self.m_Spawns[math.random(1, #self.m_Spawns)]
 		self.m_Tardis = createObject(1337, self.m_Position) --todo change object
 		self.m_AnimationColshape = createColSphere(self.m_Position, 40)
@@ -93,5 +93,5 @@ function EasterEgg.DrWho:hitAchievement(theElement, matchingDimension)
 	self.m_TardisAlpha = "takeoff"
 	self.m_StartTick = getTickCount()
 
-	--Todo: Achievement
+	localPlayer:giveAchievement(86)
 end

@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        client/classes/EasterEggs/Scream.lua
+-- *  PURPOSE:     Scream EasterEgg
 -- *
 -- ****************************************************************************
 EasterEgg.Scream = inherit(Object)
