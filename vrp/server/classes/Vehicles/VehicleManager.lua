@@ -151,7 +151,6 @@ function VehicleManager:createVehiclesForPlayer(player)
 	end
 end
 
-
 function VehicleManager.loadVehicles()
 	--[[
 	outputServerLog("Loading vehicles...")

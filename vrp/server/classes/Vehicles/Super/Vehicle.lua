@@ -501,6 +501,8 @@ function Vehicle:respawnOnSpawnPosition()
 		setVehicleEngineState(self, false)
 		self.m_EngineState = false
 		setVehicleOverrideLights(self, 1)
+		self:setFrozen(true)
+		self.m_HandBrake = true
 		self:setSirensOn(false)
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then

@@ -61,6 +61,9 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	end
 
 	self:setMileage(mileage)
+	self:setFrozen(true)
+	self.m_HandBrake = true
+
 	if faction:isStateFaction() then
 		if self:getVehicleType() == VehicleType.Automobile then
 			self.m_VehELSObj = ELSSystem:new(self)
@@ -264,6 +267,8 @@ function FactionVehicle:respawn(force)
 	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
 	self:setSirensOn(false)
+	self:setFrozen(true)
+	self.m_HandBrake = true
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
 	if self.m_VehELSObj then
