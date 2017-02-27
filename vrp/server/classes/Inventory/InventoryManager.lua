@@ -135,6 +135,10 @@ function InventoryManager:Event_requestTrade(type, target, item, amount, money)
 			client:sendError(_("Du hast nicht ausreichend %s!", client, item))
 		end
 	elseif type == "Weapon" then
+		if client.disableWeaponStorage then
+			client:sendError(_("Du darfst diese Waffe nicht handeln!", client))
+			return
+		end
 		if client:getFaction() and client:isFactionDuty() then
 			client:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", client))
 			return
@@ -168,7 +172,7 @@ function InventoryManager:Event_acceptItemTrade(player, target, item, amount, mo
 			self:getPlayerInventory(target):giveItem(item, amount)
 			target:takeMoney(money, "Handel")
 			player:giveMoney(money, "Handel")
-			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money) 
+			StatisticsLogger:getSingleton():itemTradeLogs( player, target, item, money)
 		else
 			player:sendError(_("%s hat nicht ausreichend Geld (%d$)!", player, target:getName(), money))
 			target:sendError(_("Du hast nicht ausreichend Geld (%d$)!", target, money))
@@ -182,6 +186,11 @@ end
 function InventoryManager:Event_acceptWeaponTrade(player, target, weaponId, amount, money)
 	if player:getFaction() and player:isFactionDuty() then
 		player:sendError(_("Du darfst im Dienst keine Waffen weitergeben!", player))
+		return
+	end
+
+	if player.disableWeaponStorage then
+		player:sendError(_("Du darfst diese Waffe nicht handeln!", player))
 		return
 	end
 

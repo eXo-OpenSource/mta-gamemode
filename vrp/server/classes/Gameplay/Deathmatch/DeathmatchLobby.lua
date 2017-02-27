@@ -20,10 +20,11 @@ function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPla
 	self.m_MaxPlayer = maxPlayer
 	self.m_Password = password or ""
 	self.m_Players = {}
-	self:loadMap()
 
 	self.m_LeaveBind = bind(self.removePlayer, self)
 	self.m_ColShapeLeaveBind = bind(self.onColshapeLeave, self)
+
+	self:loadMap()
 
 	if self.m_Type == DeathmatchLobby.Types[1] then
 		self.m_Owner = "Server"
