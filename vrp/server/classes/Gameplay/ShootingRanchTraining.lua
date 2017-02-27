@@ -19,6 +19,7 @@ function ShootingRanchTraining:constructor(player, level)
 
 		takeAllWeapons(player)
 		giveWeapon(player, data["Weapon"], data["Ammo"], true)
+		player:triggerEvent("disableDamage", true)
 
 		player:takeMoney(WEAPON_LEVEL[level]["costs"], "Schießstand")
 
@@ -62,6 +63,8 @@ function ShootingRanchTraining:destructor()
 	takeAllWeapons(self.m_Player)
 	self.m_Player.m_RemoveWeaponsOnLogout = nil
 	if isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+	self.m_Player:triggerEvent("disableDamage", false)
+
 end
 
 function ShootingRanchTraining:onTargetHit(player)
