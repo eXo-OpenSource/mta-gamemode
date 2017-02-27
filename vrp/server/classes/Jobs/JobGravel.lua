@@ -56,7 +56,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 					gravel = createObject(2936, pos)
 					table.insert(self.m_Gravel, gravel)
 
-					self:moveOnTrack(track, gravel, 1, function(gravel) local pos = gravel:getPosition() gravel:setPosition(pos.x, pos.y, pos.z-0.01) end)
+					self:moveOnTrack(track, gravel, 1, function(gravel) setElementVelocity(gravel, 0, 0, -0.1) end)
 				end, 1500, 8, pos, source.Track)
 			else
 				hitElement:sendError(_("Du sitzt in keinem Dumper!", hitElement))
