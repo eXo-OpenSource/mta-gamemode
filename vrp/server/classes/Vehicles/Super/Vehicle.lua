@@ -284,11 +284,11 @@ function Vehicle:toggleHandBrake( player )
 end
 
 function Vehicle:setEngineState(state)
-	local player = getVehicleOccupant(self, 0)
-	if player then
+	--local player = getVehicleOccupant(self, 0)
+	--if player then
 		setVehicleEngineState(self, state)
 		self.m_EngineState = state
-	end
+	--end
 	self.m_StartingEnginePhase = false
 end
 
@@ -498,8 +498,8 @@ function Vehicle:respawnOnSpawnPosition()
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(0, 0, self.m_SpawnRot)
 		fixVehicle(self)
-		setVehicleEngineState(self, false)
-		self.m_EngineState = false
+		self:setEngineState(false)
+		self:setLocked(true)
 		setVehicleOverrideLights(self, 1)
 		self:setFrozen(true)
 		self.m_HandBrake = true
