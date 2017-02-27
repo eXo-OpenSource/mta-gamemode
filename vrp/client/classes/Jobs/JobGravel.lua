@@ -11,8 +11,6 @@ JobGravel = inherit(Job)
 function JobGravel:constructor()
 	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Pizza.png", "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
 
-	self.m_SyncElements = {}
-
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel))
 
