@@ -1483,7 +1483,9 @@
 	<vrpfile src="files/models/scary.dff"/>
 	<vrpfile src="files/models/tardis.txd"/>
 	<vrpfile src="files/models/tardis.dff"/>
-
+	<vrpfile src="files/models/pickaxe.txd" />
+	<vrpfile src="files/models/pickaxe.dff" />
+	<vrpfile src="files/models/pickaxe.col" />
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>

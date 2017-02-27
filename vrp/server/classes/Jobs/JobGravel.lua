@@ -22,14 +22,42 @@ function JobGravel:constructor()
 		addEventHandler("onMarkerHit", marker, bind(self.onDumperLoadMarkerHit, self))
 	end
 
-	addRemoteEvents{"onGravelMine", "gravelStartTrack"}
+	self.m_DozerSpawner = VehicleSpawner:new(719.35, 871.02, -28.1, {"Dozer"}, 170, bind(Job.requireVehicle, self))
+	self.m_DozerSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_DozerSpawner:disable()
+
+	self.m_DumperSpawner = VehicleSpawner:new(565.96, 886.05, -44.5, {"Dumper"}, 0, bind(Job.requireVehicle, self))
+	self.m_DumperSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
+	self.m_DumperSpawner:disable()
+
+	self.m_DumperDeliverTimer = {}
+	self.m_DumperDeliverStones = {}
+
+	addRemoteEvents{"onGravelMine", "gravelStartTrack", "gravelDumperDeliver"}
 	addEventHandler("onGravelMine", root, bind(self.Event_onGravelMine, self))
 	addEventHandler("gravelStartTrack", root, bind(self.Event_startTrack, self))
+	addEventHandler("gravelDumperDeliver", root, bind(self.Event_onDumperDeliver, self))
+
 end
 
 function JobGravel:start(player)
 	player:setPosition(708.87, 836.69, -29.74)
 	table.insert(self.m_Jobber, player)
+
+	player.pickaxe = createObject(1858, 708.87, 836.69, -29.74)
+	exports.bone_attach:attachElementToBone(player.pickaxe, player, 12, 0, 0, 0, 90, -90, 0)
+
+	self.m_DozerSpawner:toggleForPlayer(player, true)
+	self.m_DumperSpawner:toggleForPlayer(player, true)
+end
+
+function JobGravel:stop(player)
+	self.m_DozerSpawner:toggleForPlayer(player, false)
+	self.m_DumperSpawner:toggleForPlayer(player, false)
+end
+
+function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
+	self:registerJobVehicle(player, vehicle, true, true)
 end
 
 function JobGravel:Event_onGravelMine()
@@ -52,12 +80,16 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 				hitElement:sendInfo(_("Bitte stelle die Dumper-Ladefläche direkt unter das Förderband!", hitElement))
 				local speed, pos = unpack(source.Track[1])
 				local gravel
-				setTimer(function(pos, track)
+				setTimer(function(pos, track, player)
 					gravel = createObject(2936, pos)
 					table.insert(self.m_Gravel, gravel)
 
-					self:moveOnTrack(track, gravel, 1, function(gravel) setElementVelocity(gravel, 0, 0, -0.1) end)
-				end, 1500, 8, pos, source.Track)
+					self:moveOnTrack(track, gravel, 1, function(gravel)
+						gravel.player = player
+						setElementVelocity(gravel, 0, 0, -0.1)
+					end
+					)
+				end, 1500, 8, pos, source.Track, hitElement)
 			else
 				hitElement:sendError(_("Du sitzt in keinem Dumper!", hitElement))
 			end
@@ -65,6 +97,25 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 			hitElement:sendError(_("Du musst ihm Kiesgruben Job tätig sein!", hitElement))
 		end
 	end
+end
+
+function JobGravel:Event_onDumperDeliver()
+	if source.player and source.player == client then
+		if not self.m_DumperDeliverStones.client then self.m_DumperDeliverStones.client = 0 end
+		self.m_DumperDeliverStones.client = self.m_DumperDeliverStones.client + 1
+		source:destroy()
+
+		if not self.m_DumperDeliverStones[client] then
+			self.m_DumperDeliverStones[client] = setTimer(bind(self.giveDumperDeliverLoan, self), 1500, 1, client)
+		end
+	end
+end
+
+function JobGravel:giveDumperDeliverLoan(player)
+	local amount = self.m_DumperDeliverStones[player] or 0
+	local loan = amount*150
+	player:sendShortMessage(_("%d Steine abgegeben! %d$", player, amount, loan))
+	player:giveMoney(loan, "Kiesgruben-Job")
 end
 
 function JobGravel:moveOnTrack(track, gravel, step, callback)

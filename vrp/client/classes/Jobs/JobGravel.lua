@@ -17,7 +17,6 @@ function JobGravel:constructor()
 	self.m_OnRockColHitBind = bind(self.onRockColHit, self)
 	self.m_OnRockColLeaveBind = bind(self.onRockColLeave, self)
 	self.m_OnRockClickBind = bind(self.onRockClick, self)
-	self.m_OnRockCollissionBind = bind(self.onRockCollission, self)
 
 end
 
@@ -30,11 +29,16 @@ function JobGravel:start()
 		createColSphere(677.01, 827.03, -28.20, 4),
 		createColSphere(687.68, 846.27, -28.21, 4)
 	}
+
+	self.m_DumperDeliverCol = createColSphere(824.22, 919.35, 13.35, 10)
+	self.m_DumperDeliverMarker = createMarker(824.22, 919.35, 13.35, "cylinder", 8, 255, 125, 0, 100)
+	self.m_DumperDeliverBlip = Blip:new("Waypoint.png", 824.22, 919.35, 999)
+	addEventHandler("onClientColShapeHit", self.m_DumperDeliverCol, bind(self.onDumperDeliverColHit, self))
+
 	for index, col in pairs(self.m_GravelDeliverCol) do
 		col.track = "Track"..index
 		addEventHandler("onClientColShapeHit", col, bind(self.onDeliverColHit, self))
 	end
-	--addEventHandler("onClientVehicleCollision", root, self.m_OnRockCollissionBind)
 end
 
 function JobGravel:stop()
@@ -48,7 +52,9 @@ function JobGravel:stop()
 		if element and isElement(element) then element:destroy() end
 	end
 
-	--removeEventHandler("onClientVehicleCollision", root, self.m_OnRockCollissionBind)
+	if self.m_DumperDeliverCol and isElement(self.m_DumperDeliverCol) then self.m_DumperDeliverCol:destroy() end
+	if self.m_DumperDeliverMarker and isElement(self.m_DumperDeliverMarker) then self.m_DumperDeliverMarker:destroy() end
+	if self.m_DumperDeliverBlip then delete(self.m_DumperDeliverBlip) end
 end
 
 
@@ -83,35 +89,18 @@ function JobGravel:onRockColLeave(hit, dim)
 	end
 end
 
-function JobGravel:onRockCollission(hitElement)
-	if source:getModel() == 486 then
-		if hitElement and isElement(hitElement) and hitElement:getModel() == 2936 then
-			self:syncGravel(hitElement)
-		end
-	end
-end
-
-function JobGravel:syncGravel(gravel)
-	if not gravel.oldPos then gravel.oldPos = gravel:getPosition() end
-	if (gravel.oldPos-gravel:getPosition()).length > 0.5 then
-		gravel.oldPos = gravel:getPosition()
-		gravel.timer = setTimer(bind(self.syncGravel, self), 2000 ,1, gravel)
-		triggerServerEvent("setGravelPosition", gravel, gravel.oldPos.x, gravel.oldPos.y, gravel.oldPos.z)
-	end
-end
-
 function JobGravel:onRockClick(key, press)
 	if key == "mouse1" and press then
 		if localPlayer.m_GravelColClicked then
 			if not localPlayer.m_GravelClickPause then
 				localPlayer.m_GravelClickPause = true
 				localPlayer.m_GravelColClicked = localPlayer.m_GravelColClicked+1
+				localPlayer:setAnimation("sword", "sword_4", 1500, true, true, false, false)
 				if localPlayer.m_GravelColClicked > 5 then
 					localPlayer.m_GravelCol.Rock:destroy()
 					localPlayer.m_GravelCol:destroy()
 					self:onRockColLeave(localPlayer, true)
 					triggerServerEvent("onGravelMine", localPlayer)
-
 				end
 				if JobGravel.GravelProgress then
 					JobGravel.GravelProgress:setProgress(localPlayer.m_GravelColClicked)
@@ -127,6 +116,13 @@ function JobGravel:onDeliverColHit(hitElement, dim)
 		triggerServerEvent("gravelStartTrack", hitElement, source.track)
 	end
 end
+
+function JobGravel:onDumperDeliverColHit(hitElement, dim)
+	if hitElement:getModel() == 2936 then
+		triggerServerEvent("gravelDumperDeliver", hitElement)
+	end
+end
+
 
 JobGravelProgress = inherit(GUIForm)
 inherit(Singleton, JobGravelProgress)
