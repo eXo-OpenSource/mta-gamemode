@@ -1288,6 +1288,7 @@
 	<vrpfile src="files/images/HorseRace/Horse_4.png"/>
 
 	<!-- Audio -->
+	<vrpfile src="files/audio/achievement.mp3"/>
 	<vrpfile src="files/audio/Success.mp3"/>
 	<vrpfile src="files/audio/death_ahead.mp3" />
 	<vrpfile src="files/audio/Win.mp3"/>
