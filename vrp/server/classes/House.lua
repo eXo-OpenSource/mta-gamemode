@@ -170,6 +170,10 @@ function House:unrentHouse(player)
 		if player and isElement(player) then
 			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player), 255, 0, 0)
 			player:triggerEvent("removeHouseBlip", self.m_Id)
+
+			if self.m_PlayersInterior[player] then
+				self:leaveHouse(player)
+			end
 		end
 	else
 		player:sendError(_("Du bist in diesem Haus nicht eingemietet!", player))
