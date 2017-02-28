@@ -8,6 +8,8 @@
 
 JobGravel = inherit(Job)
 
+addRemoteEvents{"gravelUpdateData"}
+
 function JobGravel:constructor()
 	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Pizza.png", "files/images/Jobs/HeaderPizzaDelivery.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
 
@@ -39,6 +41,17 @@ function JobGravel:start()
 		col.track = "Track"..index
 		addEventHandler("onClientColShapeHit", col, bind(self.onDeliverColHit, self))
 	end
+
+	-- Create info display
+	self.m_GravelImage = GUIImage:new(screenWidth/2-200/2, 10, 200, 50, "files/images/Jobs/Farmerdisplay.png")
+	self.m_MinedLabel = GUILabel:new(55, 4, 55, 40, "0", self.m_GravelImage):setFont(VRPFont(40))
+	self.m_StockLabel = GUILabel:new(150, 4, 50, 40, "0", self.m_GravelImage):setFont(VRPFont(40))
+
+	-- Register update events
+	addEventHandler("gravelUpdateData", root, function (stock, mined)
+		self.m_StockLabel:setText(tostring(stock))
+		self.m_MinedLabel:setText(tostring(mined))
+	end)
 end
 
 function JobGravel:stop()
@@ -55,6 +68,9 @@ function JobGravel:stop()
 	if self.m_DumperDeliverCol and isElement(self.m_DumperDeliverCol) then self.m_DumperDeliverCol:destroy() end
 	if self.m_DumperDeliverMarker and isElement(self.m_DumperDeliverMarker) then self.m_DumperDeliverMarker:destroy() end
 	if self.m_DumperDeliverBlip then delete(self.m_DumperDeliverBlip) end
+
+	-- delete infopanels
+	delete(self.m_GravelImage)
 end
 
 
@@ -128,7 +144,7 @@ JobGravelProgress = inherit(GUIForm)
 inherit(Singleton, JobGravelProgress)
 
 function JobGravelProgress:constructor()
-	GUIForm.constructor(self, screenWidth/2-187/2, 20, 187, 30, false)
+	GUIForm.constructor(self, screenWidth/2-187/2, 65, 187, 30, false)
 	self.m_Progress = GUIProgressBar:new(0,0,self.m_Width, self.m_Height,self)
 	self.m_Progress:setForegroundColor(tocolor(50,200,255))
 	self.m_Progress:setBackgroundColor(tocolor(180,240,255))

@@ -10,6 +10,9 @@ JobGravel = inherit(Job)
 function JobGravel:constructor()
 	Job.constructor(self)
 
+	self.m_GravelStock = 0
+	self.m_GravelMined = 0
+
 	self.m_Jobber = {}
 	self.m_Gravel = {}
 
@@ -49,11 +52,26 @@ function JobGravel:start(player)
 
 	self.m_DozerSpawner:toggleForPlayer(player, true)
 	self.m_DumperSpawner:toggleForPlayer(player, true)
+
 end
 
 function JobGravel:stop(player)
+	table.remove(self.m_Jobber, table.find(self.m_Jobber, player))
 	self.m_DozerSpawner:toggleForPlayer(player, false)
 	self.m_DumperSpawner:toggleForPlayer(player, false)
+	player.pickaxe:destroy()
+end
+
+function JobGravel:updateGravelAmount(type, increase)
+	local amount = increase and 1 or -1
+	if type == "stock" then
+		self.m_GravelStock = self.m_GravelStock + amount
+	elseif type == "mined" then
+		self.m_GravelMined = self.m_GravelMined + amount
+	end
+	for index, player in pairs(self.m_Jobber) do
+		player:triggerEvent("gravelUpdateData", self.m_GravelStock, self.m_GravelMined)
+	end
 end
 
 function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
@@ -62,12 +80,18 @@ end
 
 function JobGravel:Event_onGravelMine()
 	local item = createObject(2936 ,713.96, 837.82, -30.23)
+	self:updateGravelAmount("mined", true)
 	table.insert(self.m_Gravel, item)
 end
 
 function JobGravel:Event_startTrack(track)
 	if JobGravel.Tracks[track] then
-		self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel) gravel:destroy() end)
+		self:updateGravelAmount("mined", false)
+
+		self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
+			self:updateGravelAmount("stock", true)
+			gravel:destroy()
+		end)
 	else
 		client:sendError("Internal Error: Track not found!")
 	end
@@ -83,7 +107,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 				setTimer(function(pos, track, player)
 					gravel = createObject(2936, pos)
 					table.insert(self.m_Gravel, gravel)
-
+					self:updateGravelAmount("stock", false)
 					self:moveOnTrack(track, gravel, 1, function(gravel)
 						gravel.player = player
 						setElementVelocity(gravel, 0, 0, -0.1)
