@@ -22,7 +22,6 @@ function AppCall:constructor()
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
-
 end
 
 function AppCall:onOpen(form)
