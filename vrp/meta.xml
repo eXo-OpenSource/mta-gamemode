@@ -998,6 +998,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Horse.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Fuelstation.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/North.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Gravel.png"/>
 
 	<vrpfile src="files/images/Radar_GTA/Radar.jpg"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/LocalPlayer.png"/>
@@ -1049,6 +1050,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Horse.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Fuelstation.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/North.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Gravel.png"/>
 
 	<vrpfile src="files/images/Jobs/HeaderLogistician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderTrashman.png"/>
@@ -1066,6 +1068,7 @@
 	<vrpfile src="files/images/Jobs/HeaderPizzaDelivery.png"/>
 	<vrpfile src="files/images/Jobs/HeaderHeliTransport.png"/>
 	<vrpfile src="files/images/Jobs/HeaderForkLift.png"/>
+	<vrpfile src="files/images/Jobs/HeaderGravel.png"/>
 
 	<vrpfile src="files/images/Nametag/default.png"/>
 	<vrpfile src="files/images/Nametag/vrp.png"/>

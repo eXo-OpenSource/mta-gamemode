@@ -10,7 +10,7 @@ JobGravel = inherit(Job)
 function JobGravel:constructor()
 	Job.constructor(self)
 
-	self.m_GravelStock = 0
+	self.m_GravelStock = 9
 	self.m_GravelMined = 0
 
 	self.m_Jobber = {}
@@ -52,7 +52,9 @@ function JobGravel:start(player)
 
 	self.m_DozerSpawner:toggleForPlayer(player, true)
 	self.m_DumperSpawner:toggleForPlayer(player, true)
-
+	setTimer(function()
+		player:triggerEvent("gravelUpdateData", self.m_GravelStock, self.m_GravelMined)
+	end, 1000, 1)
 end
 
 function JobGravel:stop(player)
@@ -76,9 +78,12 @@ end
 
 function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
 	self:registerJobVehicle(player, vehicle, true, true)
+	if vehicleModel == 486 then
+		player:triggerEvent("gravelOnDozerSpawn", vehicle)
+	end
 end
 
-function JobGravel:Event_onGravelMine()
+function JobGravel:Event_onGravelMine(rockDestroyed, times)
 	local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
 	local item = createObject(2936, pos)
 	item:setScale(0)
@@ -92,15 +97,21 @@ function JobGravel:Event_onGravelMine()
 			end, 50, 20)
 		end
 	)
-
+	if rockDestroyed then
+		client:giveMoney(times*25, "Kiesgruben-Job")
+	end
 	self:updateGravelAmount("mined", true)
 	table.insert(self.m_Gravel, item)
 end
 
-function JobGravel:Event_startTrack(track)
+function JobGravel:Event_startTrack(track, vehicle)
 	if JobGravel.Tracks[track] then
 		self:updateGravelAmount("mined", false)
-
+		if vehicle and isElement(vehicle) then
+			if vehicle:getOccupant() then
+				vehicle:getOccupant():giveMoney(25, "Kiesgruben-Job")
+			end
+		end
 		self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
 			self:updateGravelAmount("stock", true)
 			gravel:destroy()
@@ -114,10 +125,10 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if hitElement:getJob() == self then
 			if hitElement.vehicle and hitElement.vehicle:getModel() == 406 then
-				if not player.vehicle.gravelLoaded then
+				if not hitElement.vehicle.gravelLoaded then
 					if self.m_GravelStock >= 1 then
 						hitElement:sendInfo(_("Bitte stelle die Dumper-Ladefläche direkt unter das Förderband!", hitElement))
-						player.vehicle.gravelLoaded = true
+						hitElement.vehicle.gravelLoaded = true
 						local speed, pos = unpack(source.Track[1])
 						local gravel
 						setTimer(function(pos, track, player)
@@ -152,13 +163,13 @@ end
 
 function JobGravel:Event_onDumperDeliver()
 	if source.player and source.player == client then
-		if not self.m_DumperDeliverStones.client then self.m_DumperDeliverStones.client = 0 end
-		self.m_DumperDeliverStones.client = self.m_DumperDeliverStones.client + 1
+		if not self.m_DumperDeliverStones[client] then self.m_DumperDeliverStones[client] = 0 end
+		self.m_DumperDeliverStones[client]= self.m_DumperDeliverStones[client] + 1
 		client.vehicle.gravelLoaded = false
 		source:destroy()
 
-		if not self.m_DumperDeliverStones[client] then
-			self.m_DumperDeliverStones[client] = setTimer(bind(self.giveDumperDeliverLoan, self), 1500, 1, client)
+		if not self.m_DumperDeliverTimer[client] then
+			self.m_DumperDeliverTimer[client] = setTimer(bind(self.giveDumperDeliverLoan, self), 1500, 1, client)
 		end
 	end
 end
