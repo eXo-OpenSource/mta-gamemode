@@ -319,13 +319,20 @@ end
 
 function VehicleManager:removeUnusedVehicles()
 	-- ToDo: Lateron, do not loop through all vehicles
-	--for ownerid, data in pairs(self.m_Vehicles) do
-	--	for k, vehicle in pairs(data) do
-	--		if vehicle:getLastUseTime() < getTickCount() - 30*1000*60 then
-	--			vehicle:respawn()
-	--		end
-	--	end
-	--end
+	for ownerid, data in pairs(self.m_Vehicles) do
+		for k, vehicle in pairs(data) do
+			if vehicle:isBlown() then
+				if vehicle:getVehicleType() == VehicleType.Automobile or vehicle:getVehicleType() == VehicleType.Bike then
+					outputDebug("Respawning blown vehicle in mechanic base")
+					vehicle:setPositionType(VehiclePositionType.Mechanic)
+					vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+					respawnVehicle(vehicle)
+				else
+					vehicle:respawn()
+				end
+			end
+		end
+	end
 
 	for k, vehicle in pairs(self.m_TemporaryVehicles) do
 		if vehicle and isElement(vehicle) then
