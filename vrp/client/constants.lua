@@ -235,6 +235,7 @@ HelpTextTitles = {
 		HeliTransport = "Job: Helikopter-Pilot";
 		ForkLift = "Job: Gabelstapler-Fahrer";
 		TreasureSeeker = "Job: Schatz Sucher";
+		Gravel = "Job: Kiesgruben Arbeiter";
 	};
 	Gameplay = {
 		Cars = "Fahrzeuge";
@@ -448,7 +449,18 @@ HelpTexts = {
 			abzusuchen. Anschließend hebst du diese in dein Schiff und entlädst sie am Hafen!
 
 			Drücke 'Leertaste' um den "Schatz" aufzunehmen.
-		]]
+		]];
+		Gravel = [[
+			Dieser Job ist in 3 Abreitsschritte aufgeteilt die auch verschiedene Spieler zugleich ausführen können.
+			1.) Abbau mit Spitzhacke
+			Baue die hellen Felsen direkt neben dem Dozer-Spawn mit der Spitzhacke ab. (Klicken zum abbauen)
+			2.) Einlagern
+			Lagere die abgebauten Gesteinsbrocken ein indem du diese mit dem Dozer in die Auffangbehälter schiebst.
+			3.) Transport
+			Transportiere die eingelagerten Gesteinsbrocken mit dem Dumper aus der Kiesgrube. Zum Beladen fahre einfach
+			unter ein Förderband.
+		]];
+
 	};
 	Events = {
 		Deathmatch = [[
