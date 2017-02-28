@@ -71,6 +71,8 @@ function JobGravel:stop()
 
 	-- delete infopanels
 	delete(self.m_GravelImage)
+
+	if JobGravel.GravelProgress then delete(JobGravel.GravelProgress) end
 end
 
 
@@ -81,6 +83,7 @@ function JobGravel:generateRocks()
 		self.m_Rocks[index] = createObject(900, x, y, z, 0, 0, rot)
 		self.m_RockCols[index] = createColSphere(data["col"], 6)
 		self.m_RockCols[index].Rock = self.m_Rocks[index]
+		self.m_RockCols[index].Times = math.random(4, 10)
 		addEventHandler("onClientColShapeHit", self.m_RockCols[index], self.m_OnRockColHitBind)
 		addEventHandler("onClientColShapeLeave", self.m_RockCols[index], self.m_OnRockColLeaveBind)
 		setObjectBreakable(self.m_Rocks[index], true)
@@ -112,15 +115,18 @@ function JobGravel:onRockClick(key, press)
 				localPlayer.m_GravelClickPause = true
 				localPlayer.m_GravelColClicked = localPlayer.m_GravelColClicked+1
 				localPlayer:setAnimation("sword", "sword_4", 1500, true, true, false, false)
-				if localPlayer.m_GravelColClicked > 5 then
+				triggerServerEvent("onGravelMine", localPlayer)
+
+				if JobGravel.GravelProgress and localPlayer.m_GravelCol.Times then
+					JobGravel.GravelProgress:setProgress(localPlayer.m_GravelColClicked, localPlayer.m_GravelCol.Times)
+				end
+
+				if localPlayer.m_GravelColClicked >= localPlayer.m_GravelCol.Times then
 					localPlayer.m_GravelCol.Rock:destroy()
 					localPlayer.m_GravelCol:destroy()
 					self:onRockColLeave(localPlayer, true)
-					triggerServerEvent("onGravelMine", localPlayer)
 				end
-				if JobGravel.GravelProgress then
-					JobGravel.GravelProgress:setProgress(localPlayer.m_GravelColClicked)
-				end
+
 				setTimer(function() localPlayer.m_GravelClickPause = false end, 1500, 1)
 			end
 		end
@@ -151,9 +157,9 @@ function JobGravelProgress:constructor()
 	self.m_ProgLabel = GUILabel:new(0, 0, self.m_Width, self.m_Height, "Abgebaut: 0 %", self):setAlignX("center"):setAlignY("center"):setFont(VRPFont(self.m_Height*0.75)):setColor(Color.Black)
 end
 
-function JobGravelProgress:setProgress(prog)
+function JobGravelProgress:setProgress(prog, max)
 	if not prog then delete(self) return end
-	prog = prog*20
+	prog = math.floor(prog/max*100)
 	self.m_ProgLabel:setText("Abgebaut: "..prog.." %")
 	self.m_Progress:setProgress(prog)
 end

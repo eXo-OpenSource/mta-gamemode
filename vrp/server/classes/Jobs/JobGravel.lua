@@ -79,7 +79,20 @@ function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
 end
 
 function JobGravel:Event_onGravelMine()
-	local item = createObject(2936 ,713.96, 837.82, -30.23)
+	local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
+	local item = createObject(2936, pos)
+	item:setScale(0)
+
+	nextframe(
+		function()
+			setTimer(
+			function()
+				item:setVelocity(-0.12, 0.12, 0.12)
+				item:setScale(item:getScale() + 0.05)
+			end, 50, 20)
+		end
+	)
+
 	self:updateGravelAmount("mined", true)
 	table.insert(self.m_Gravel, item)
 end
@@ -101,19 +114,33 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if hitElement:getJob() == self then
 			if hitElement.vehicle and hitElement.vehicle:getModel() == 406 then
-				hitElement:sendInfo(_("Bitte stelle die Dumper-Ladefläche direkt unter das Förderband!", hitElement))
-				local speed, pos = unpack(source.Track[1])
-				local gravel
-				setTimer(function(pos, track, player)
-					gravel = createObject(2936, pos)
-					table.insert(self.m_Gravel, gravel)
-					self:updateGravelAmount("stock", false)
-					self:moveOnTrack(track, gravel, 1, function(gravel)
-						gravel.player = player
-						setElementVelocity(gravel, 0, 0, -0.1)
+				if not player.vehicle.gravelLoaded then
+					if self.m_GravelStock >= 1 then
+						hitElement:sendInfo(_("Bitte stelle die Dumper-Ladefläche direkt unter das Förderband!", hitElement))
+						player.vehicle.gravelLoaded = true
+						local speed, pos = unpack(source.Track[1])
+						local gravel
+						setTimer(function(pos, track, player)
+							if self.m_GravelStock >= 1 then
+								gravel = createObject(2936, pos)
+								table.insert(self.m_Gravel, gravel)
+								self:updateGravelAmount("stock", false)
+								self:moveOnTrack(track, gravel, 1, function(gravel)
+									gravel.player = player
+									setElementVelocity(gravel, 0, 0, -0.1)
+								end
+								)
+							else
+								player:sendError(_("Das Lager ist leer! Es können keine weiteren Steine aufgeladen werden", player))
+								if sourceTimer and isTimer(sourceTimer) then killTimer(sourceTimer) end
+							end
+						end, 1500, 10, pos, source.Track, hitElement)
+					else
+						hitElement:sendError(_("Das Lager ist leer! Bitte bau neues Material ab!", hitElement))
 					end
-					)
-				end, 1500, 8, pos, source.Track, hitElement)
+				else
+					hitElement:sendError(_("Du hast diesen Dumper bereits beladen!", hitElement))
+				end
 			else
 				hitElement:sendError(_("Du sitzt in keinem Dumper!", hitElement))
 			end
@@ -127,6 +154,7 @@ function JobGravel:Event_onDumperDeliver()
 	if source.player and source.player == client then
 		if not self.m_DumperDeliverStones.client then self.m_DumperDeliverStones.client = 0 end
 		self.m_DumperDeliverStones.client = self.m_DumperDeliverStones.client + 1
+		client.vehicle.gravelLoaded = false
 		source:destroy()
 
 		if not self.m_DumperDeliverStones[client] then
