@@ -961,6 +961,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Garage.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Wheel.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Waypoint.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Waypoint_ept.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/SmallPoint.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/AmmuNation.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Bus.png"/>
@@ -1012,6 +1013,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Garage.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Wheel.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Waypoint.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Waypoint_ept.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/SmallPoint.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/AmmuNation.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Bus.png"/>

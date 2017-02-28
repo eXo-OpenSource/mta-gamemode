@@ -108,6 +108,7 @@ BlipConversion =
 	["Skinshop.png"] = 45,
 	["Zombie.png"] = 37,
 	["Waypoint.png"] = 41,
+	["Waypoint_ept.png"] = 41,
 	["Wheel.png"] = 35,
 	["Police.png"] = 30,
 	["Mechanic.png"] = 48,
