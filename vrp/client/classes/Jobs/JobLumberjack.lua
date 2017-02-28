@@ -116,7 +116,7 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 			end
 		else
 			ErrorBox:new(_"Bitte verwende die Motorsäge!")
-			return
+			cancelEvent()
 		end
 	end
 end
