@@ -43,7 +43,7 @@ function JobGravel:start()
 	end
 
 	-- Create info display
-	self.m_GravelImage = GUIImage:new(screenWidth/2-200/2, 10, 200, 50, "files/images/Jobs/Farmerdisplay.png")
+	self.m_GravelImage = GUIImage:new(screenWidth/2-200/2, 10, 200, 50, "files/images/Jobs/GravelDisplay.png")
 	self.m_MinedLabel = GUILabel:new(55, 4, 55, 40, "0", self.m_GravelImage):setFont(VRPFont(40))
 	self.m_StockLabel = GUILabel:new(150, 4, 50, 40, "0", self.m_GravelImage):setFont(VRPFont(40))
 
@@ -144,7 +144,7 @@ JobGravelProgress = inherit(GUIForm)
 inherit(Singleton, JobGravelProgress)
 
 function JobGravelProgress:constructor()
-	GUIForm.constructor(self, screenWidth/2-187/2, 65, 187, 30, false)
+	GUIForm.constructor(self, screenWidth/2-200/2, 65, 200, 30, false)
 	self.m_Progress = GUIProgressBar:new(0,0,self.m_Width, self.m_Height,self)
 	self.m_Progress:setForegroundColor(tocolor(50,200,255))
 	self.m_Progress:setBackgroundColor(tocolor(180,240,255))

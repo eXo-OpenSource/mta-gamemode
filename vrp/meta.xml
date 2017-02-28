@@ -1061,6 +1061,7 @@
 	<vrpfile src="files/images/Jobs/HeaderFarmer.png"/>
 	<vrpfile src="files/images/Jobs/HeaderMechanic.png"/>
 	<vrpfile src="files/images/Jobs/Farmerdisplay.png"/>
+	<vrpfile src="files/images/Jobs/GravelDisplay.png"/>
 	<vrpfile src="files/images/Jobs/HeaderServiceTechnician.png"/>
 	<vrpfile src="files/images/Jobs/HeaderPizzaDelivery.png"/>
 	<vrpfile src="files/images/Jobs/HeaderHeliTransport.png"/>
