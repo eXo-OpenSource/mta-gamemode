@@ -154,7 +154,7 @@ function RobableShop:m_onExpire()
 	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
 	delete(self.m_BagBlip)
-	if isTimer(self.m_TargetTimer) then kilLTimer(self.m_TargetTimer) end
+	if isTimer(self.m_TargetTimer) then killTimer(self.m_TargetTimer) end
 	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
 
 	self.m_Gang:removePlayerMarkers()

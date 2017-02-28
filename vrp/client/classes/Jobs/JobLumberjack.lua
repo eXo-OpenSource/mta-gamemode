@@ -69,6 +69,12 @@ function JobLumberjack:stop()
 		self.m_SawMillBlip = nil
 	end
 
+	for k, v in ipairs(self.m_StackedTrees) do
+		destroyElement(v)
+	end
+	self.m_StackedTrees = {}
+	self.m_NumTrees = 0
+
 	-- Reset text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
@@ -110,7 +116,7 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 			end
 		else
 			ErrorBox:new(_"Bitte verwende die Motorsäge!")
-			return
+			cancelEvent()
 		end
 	end
 end

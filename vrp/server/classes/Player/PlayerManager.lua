@@ -48,6 +48,9 @@ function PlayerManager:constructor()
 	addEventHandler("onClientRequestTime",root, bind(self.Event_ClientRequestTime, self))
 	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
 
+	addEventHandler("onPlayerPrivateMessage", root, function()
+		cancelEvent()
+	end)
 
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
@@ -287,6 +290,11 @@ end
 
 function PlayerManager:playerChat(message, messageType)
 	if source:isDead() then
+		cancelEvent()
+		return
+	end
+
+	if source.isTasered then
 		cancelEvent()
 		return
 	end
@@ -565,6 +573,10 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
 		return
 	end
+	if client.disableWeaponStorage then
+		client:sendError(_("Du darfst diese Waffe nicht einlagern!", client))
+		return
+	end
 	for i= 1, 6 do
 		if not client.m_GunBox[tostring(i)] then
 			client.m_GunBox[tostring(i)] = {}
@@ -611,7 +623,10 @@ function PlayerManager:Event_gunBoxTakeWeapon(slotId)
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
-
+	if client.disableWeaponStorage then
+		client:sendError(_("Du darfst diese Waffe nicht nehmen!", client))
+		return
+	end
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then

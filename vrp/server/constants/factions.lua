@@ -91,8 +91,8 @@ factionWTDestination[1] = Vector3(1524.96, -1440.70, 12.3)
 -- ID 2 = FBI:
 factionRankNames[2] = {
 [0] = "Probationary Agent",
-[1] = "Agent",
-[2] = "Special Agent",
+[1] = "Special Agent",
+[2] = "Senior Special Agent",
 [3] = "Supervisory Special Agent",
 [4] = "Section Chief",
 [5] = "Deputy Director",
@@ -184,7 +184,7 @@ factionColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52}
 factionCarColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52, ["r1"] = 18,["g1"] = 140,["b1"] = 52}
 factionSkins[7] = {[105]=true, [106]=true, [107]=true, [269]=true, [270]=true, [271]=true, [293]=true, [300]=true, [301]=true, [311]=true}
 factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[7] = Vector3(2459.54, -1690.76, 13.54)
+evilFactionInteriorEnter[7] = Vector3(2459.54, -1690.76, 13.4)
 factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625)
 
 -- ID 8 = Ballas
@@ -203,6 +203,23 @@ factionSkins[8] = {[13]=true, [102]=true, [103]=true, [104]=true, [195]=true, [2
 factionWeapons[8] = {[5]=true, [24]=true, [25]=true, [32]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[8] = Vector3(2232.70, -1436.40, 24.90)
 factionWTDestination[8] = Vector3(2212.42, -1435.53, 22.5)
+
+-- ID 9 = Biker
+factionRankNames[9] = {
+[0] = "Hangaround",
+[1] = "Prospect",
+[2] = "Patch Member",
+[3] = "Road Captain",
+[4] = "Sergeant at Arms",
+[5] = "Vice-President",
+[6] = "President"
+}
+factionColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100}
+factionCarColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100, ["r1"] = 150,["g1"] = 100,["b1"] = 100}
+factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [254]=true, [291]=true,[298]=true,[299]=true}
+factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+evilFactionInteriorEnter[9] = Vector3(687.20, -445.40, 16.3)
+factionWTDestination[9] = Vector3(659.80,-463.10,15.30)
 
 -- General:
 factionWeaponDepotInfo = {

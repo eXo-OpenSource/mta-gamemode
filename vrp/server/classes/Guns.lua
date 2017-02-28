@@ -86,19 +86,21 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 		else
 			loss = math.abs(armor-loss)
 			player:setArmor(0)
-			player:setHealth(health-loss)
 
-			if player:getHealth()-loss <= 0 then
+			if health - loss <= 0 then
 				StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
 				player:kill(attacker, weapon, bodypart)
+			else
+				player:setHealth(health-loss)
 			end
 		end
 	else
 		if player:getHealth()-loss <= 0 then
 			StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
 			player:kill(attacker, weapon, bodypart)
+		else
+			player:setHealth(health-loss)
 		end
-		player:setHealth(health-loss)
 	end
 	StatisticsLogger:getSingleton():addDamageLog(attacker, player, weapon, bodypart, loss)
 	--StatisticsLogger:getSingleton():addTextLog("damage", ("%s wurde von %s mit Waffe %s am %s getroffen! (Damage: %d)"):format(player:getName(), attacker:getName(), WEAPON_NAMES[weapon], BODYPART_NAMES[bodypart], loss))

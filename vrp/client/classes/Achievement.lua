@@ -34,4 +34,5 @@ end
 
 function Achievement:Event_onPlayerReceiveAchievement (id)
 	local instance = AchievementBox:new(utf8.escape(_(self.ms_Achievements[id]["name"])), self.ms_Achievements[id]["exp"])
+	playSound("files/audio/achievement.mp3")
 end

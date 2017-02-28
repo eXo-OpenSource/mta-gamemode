@@ -53,6 +53,7 @@ function Core:constructor()
 	if not self.m_Failed then
 		TranslationManager:new()
 		GlobalTimer:new()
+		MTAFixes:new()
 		VehicleManager:new()
 		Admin:new()
 		StatisticsLogger:new()

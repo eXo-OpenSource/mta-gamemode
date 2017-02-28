@@ -19,15 +19,15 @@ function Nametag:constructor()
 	self.m_Style = core:get("HUD", "NametagStyle", NametagStyle.Default)
 	self.m_Draw = bind(self.draw, self)
 	self.m_StreamIn = bind(self.Event_StreamIn, self)
-	self.m_StreamOut = bind(self.Event_StreamIn, self)
+	self.m_StreamOut = bind(self.Event_StreamOut, self)
 
 	addEventHandler("onClientElementStreamIn", root, self.m_StreamIn)
 	addEventHandler("onClientElementStreamOut", root, self.m_StreamOut)
 	addEventHandler("onClientRender", root, self.m_Draw)
 	local pTable = getElementsByType("player",root)
-	for k, p in ipairs( pTable ) do 
+	for k, p in ipairs( pTable ) do
 		if p ~= localPlayer then
-			if isElementStreamedIn(p) then 
+			if isElementStreamedIn(p) then
 				self.m_Stream[p] = true
 			end
 		end
@@ -40,23 +40,19 @@ function Nametag:destructor()
 	removeEventHandler("onClientRender", root, self.m_Draw)
 end
 
-
-
 function Nametag:Event_StreamIn()
 	if source ~= localPlayer then
-		local bType = getElementType(source) == "player"
-		if bType then
+		if getElementType(source) == "player" then
 			self.m_Stream[source] = true
-			setPlayerNametagShowing(source,false)
+			setPlayerNametagShowing(source, false)
 		end
 	end
 end
 
 function Nametag:Event_StreamOut()
 	if source ~= localPlayer then
-		local bType = getElementType(source) == "player"
-		if bType then
-			self.m_Stream[source] = false
+		if getElementType(source) == "player" then
+			self.m_Stream[source] = nil
 		end
 	end
 end
@@ -77,13 +73,13 @@ function Nametag:draw()
 					if scx and scy then
 						drawName = getPlayerName(player)
 						fontSize =  1+ ( 10 - bDistance ) * 0.08
-						if fontSize <= 0.7 then 
+						if fontSize <= 0.7 then
 							fontSize = 0.7
 						end
-						if distanceDiff <= 10 then 
+						if distanceDiff <= 10 then
 							alpha = distanceDiff*25
 						end
-						if bRifleCheck == player then 
+						if bRifleCheck == player then
 							fontSize = 1
 							alpha = 255
 						end
@@ -191,7 +187,7 @@ end
 
 local function disableNametags()
 	local players = getElementsByType("player", root, true)
-	for index = 1,#players do 
+	for index = 1, #players do
 		setPlayerNametagShowing(players[index],false)
 	end
 end

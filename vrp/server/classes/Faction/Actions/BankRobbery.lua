@@ -232,6 +232,8 @@ function BankRobbery:startRob(player)
     self.m_Truck:setColor(0, 0, 0)
     self.m_Truck:setLocked(false)
 	self.m_Truck:setEngineState(true)
+	self.m_Truck:toggleRespawn(false)
+
 
 	self.m_HackMarker = createMarker(2313.4, 11.61, 28.5, "arrow", 0.8, 255, 255, 0)
 

@@ -23,7 +23,7 @@ function Depot.initalize()
 		end
 	end)
 end
-
+--// add
 function Depot.load(Id, Owner, type)
 	if Depot.Map[Id] then return Depot.Map[Id] end
 	if Id == 0 then

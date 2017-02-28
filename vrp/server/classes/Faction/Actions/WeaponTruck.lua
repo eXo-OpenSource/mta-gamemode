@@ -51,7 +51,7 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_DestinationBlips = {}
 	self.m_DestinationMarkers = {}
 
-	self.m_AmountPerBox = type == "state" and 7500 or 1500
+	self.m_AmountPerBox = type == "state" and 5000 or 2500
 	self.m_BoxesCount = math.ceil(totalAmount/self.m_AmountPerBox)
 
 	self.m_Boxes = {}
@@ -294,9 +294,9 @@ end
 
 function WeaponTruck:addDestinationMarker(factionId, type, blip)
 	local markerId = #self.m_DestinationMarkers+1
-
+	local color = factionColors[factionId]
 	local destination = factionWTDestination[factionId]
-	self.m_DestinationMarkers[markerId] = createMarker(destination,"cylinder",8)
+	self.m_DestinationMarkers[markerId] = createMarker(destination,"cylinder",8, color.r, color.g, color.b, 100)
 	self.m_DestinationMarkers[markerId].type = type
 	self.m_DestinationMarkers[markerId].factionId = factionId
 
@@ -437,10 +437,10 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 			faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
 			outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 		elseif self.m_Type == "state" then
-			FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
 			if faction:isEvilFaction() then
 				outputChatBox("Der Waffentruck wurde bei einer bösen Fraktion abgegeben!", hitElement, rootElement,255,0,0)
 			else
+				FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
 				outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 			end
 		end

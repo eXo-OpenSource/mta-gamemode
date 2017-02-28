@@ -11,16 +11,15 @@ inherit(DatabasePlayer, Premium)
 function Premium:constructor()
 	local row = sqlPremium:queryFetchSingle("SELECT * FROM user WHERE UserId = ?", self:getId())
 	if row then
-		self.m_Premium = toboolean(row.premium)
 		self.m_PremiumUntil = row.premium_bis
 	else
-		self.m_Premium = false
 		self.m_PremiumUntil = 0
 	end
 	self:setPublicSync("Premium", self.m_Premium)
 
-	if self.m_Premium then
-		if self:getRank() > 0 then
+	if self.m_PremiumUntil > getRealTime().timestamp then
+		self.m_Premium = true
+		if DEBUG and self:getRank() > 0 then
 			self:setPublicSync("DeathTime", DEATH_TIME_PREMIUM)
 		end
 		setTimer(function()

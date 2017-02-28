@@ -127,9 +127,12 @@ end
 
 function TextureReplace.getCachedTexture(path)
 	local index = md5(path):sub(1, 8)
+
 	if not TextureReplace.Cache[index] then
 		--outputConsole("creating texture "..path)
-		TextureReplace.Cache[index] = {counter = 0; texture = dxCreateTexture(path)}
+		local membefore = dxGetStatus().VideoMemoryUsedByTextures
+		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path)}
+		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
 	end
 
 	TextureReplace.Cache[index].counter = TextureReplace.Cache[index].counter + 1
