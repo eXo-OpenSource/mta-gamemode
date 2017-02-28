@@ -1488,16 +1488,14 @@
 	<vrpfile src="files/models/scary.dff"/>
 	<vrpfile src="files/models/tardis.txd"/>
 	<vrpfile src="files/models/tardis.dff"/>
-<<<<<<< HEAD
+
 	<vrpfile src="files/models/donut.txd"/>
 	<vrpfile src="files/models/donut.dff"/>
 	<vrpfile src="files/models/donut.col"/>
 
-=======
 	<vrpfile src="files/models/pickaxe.txd" />
 	<vrpfile src="files/models/pickaxe.dff" />
 	<vrpfile src="files/models/pickaxe.col" />
->>>>>>> feature/gravel-job
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>
