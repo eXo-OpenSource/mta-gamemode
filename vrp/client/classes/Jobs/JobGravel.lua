@@ -68,6 +68,47 @@ function JobGravel:start()
 	end)
 end
 
+function JobGravel:onInfo()
+	if localPlayer.vehicle then
+		ErrorBox:new(_"Bitte erst aus dem Fahrzeug aussteigen!")
+		return
+	end
+
+	setCameraMatrix(745.26507568359,806.82489013672,24.597700119019,744.47778320313,807.21868896484,24.123294830322,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Es gibt verschiedene Aufgaben in der Kiesgrube.",255,255,255,true)
+	-- ### 1
+	setTimer(function()
+	setCameraMatrix(650.06768798828,810.92419433594,-0.32589998841286,650.95715332031,811.03039550781,-0.77037560939789,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Als erstes müssen mit der Spitzhacke die hellen Felsen abgebaut werden.",255,255,255,true)
+	end, 4000, 1)
+	-- ### 2
+	setTimer(function()
+	setCameraMatrix(723.49090576172,855.93347167969,-4.5064997673035,722.77587890625,855.54370117188,-5.0868692398071,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Die gewonnen Steine müssen mit Bulldozern in diese Behälter geschoben werden.",255,255,255,true)
+	end, 8000, 1)
+	-- ### 3
+	setTimer(function()
+	setCameraMatrix(614.17028808594,922.25207519531,-5.7822999954224,614.50836181641,921.46221923828,-6.2939896583557,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Steine werden automatisch über die Förderbänder ins Lager transportiert.",255,255,255,true)
+	end, 12000, 1)
+	--- ### 4
+
+	setTimer(function()
+	setCameraMatrix(510.34188842773,898.67626953125,-14.97889995575,511.17974853516,899.00653076172,-15.413551330566,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Anschließend können die Steine hier in einen Dumper geladen werden,",255,255,255,true)
+	end, 16000, 1)
+
+	setTimer(function()
+	setCameraMatrix(881.95788574219,847.56042480469,38.781200408936,881.10424804688,847.98742675781,38.482925415039,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF vorsichtig aus der Grube transportiert und hier oben abgegeben werden.",255,255,255,true)
+	end, 20000, 1)
+	-- ### LAST
+	setTimer(function()
+	setCameraTarget(localPlayer,localPlayer)
+	localPlayer:setPosition(588.85, 869.45, -42.50)
+	end, 24000,1)
+end
+
 function JobGravel:stop()
 	for index, element in pairs(self.m_Rocks) do
 		if element and isElement(element) then element:destroy() end
