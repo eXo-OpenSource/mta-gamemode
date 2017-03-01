@@ -39,9 +39,9 @@ function JobGravel:constructor()
 	self.m_DumperDeliverTimer = {}
 	self.m_DumperDeliverStones = {}
 
-	addRemoteEvents{"onGravelMine", "gravelStartTrack", "gravelDumperDeliver"}
+	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver"}
 	addEventHandler("onGravelMine", root, bind(self.Event_onGravelMine, self))
-	addEventHandler("gravelStartTrack", root, bind(self.Event_startTrack, self))
+	addEventHandler("gravelOnCollectingContainerHit", root, bind(self.Event_onCollectingContainerHit, self))
 	addEventHandler("gravelDumperDeliver", root, bind(self.Event_onDumperDeliver, self))
 
 end
@@ -67,6 +67,8 @@ function JobGravel:stop(player)
 	self:destroyDumperGravel(player)
 end
 
+--General
+
 function JobGravel:updateGravelAmount(type, increase)
 	local amount = increase and 1 or -1
 	if type == "stock" then
@@ -88,6 +90,24 @@ function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
 		player:triggerEvent("gravelOnDozerSpawn", vehicle)
 	end
 end
+
+function JobGravel:moveOnTrack(track, gravel, step, callback)
+	if track and track[step] then
+		local speed, pos = unpack(track[step])
+		gravel:move(speed, pos)
+		setTimer(function()
+			if track[step+1] then
+				self:moveOnTrack(track, gravel, step+1, callback)
+			else
+				if callback then
+					callback(gravel)
+				end
+			end
+		end, speed, 1)
+	end
+end
+
+--Step 1 Mine
 
 function JobGravel:Event_onGravelMine(rockDestroyed, times)
 	if self.m_GravelMined < MAX_STONES_MINED then
@@ -115,7 +135,9 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 	end
 end
 
-function JobGravel:Event_startTrack(track, vehicle)
+--Step 2 Dozer Part
+
+function JobGravel:Event_onCollectingContainerHit(track, vehicle)
 	if JobGravel.Tracks[track] then
 		if self.m_GravelStock < MAX_STONES_IN_STOCK then
 			self:updateGravelAmount("mined", false)
@@ -136,6 +158,8 @@ function JobGravel:Event_startTrack(track, vehicle)
 		client:sendError("Internal Error: Track not found!")
 	end
 end
+
+--Step 3 Transport / Dumper Part
 
 function JobGravel:destroyDumperGravel(player)
 	for index, gravel in pairs(self.m_Gravel) do
@@ -209,22 +233,6 @@ function JobGravel:giveDumperDeliverLoan(player)
 	local loan = amount*150
 	player:sendShortMessage(_("%d Steine abgegeben! %d$", player, amount, loan))
 	player:giveMoney(loan, "Kiesgruben-Job")
-end
-
-function JobGravel:moveOnTrack(track, gravel, step, callback)
-	if track and track[step] then
-		local speed, pos = unpack(track[step])
-		gravel:move(speed, pos)
-		setTimer(function()
-			if track[step+1] then
-				self:moveOnTrack(track, gravel, step+1, callback)
-			else
-				if callback then
-					callback(gravel)
-				end
-			end
-		end, speed, 1)
-	end
 end
 
 JobGravel.Tracks = {

@@ -41,7 +41,7 @@ function JobGravel:start()
 
 	for index, col in pairs(self.m_GravelDeliverCol) do
 		col.track = "Track"..index
-		addEventHandler("onClientColShapeHit", col, bind(self.onDeliverColHit, self))
+		addEventHandler("onClientColShapeHit", col, bind(self.onCollectingColHit, self))
 	end
 
 	-- Create info display
@@ -206,9 +206,9 @@ function JobGravel:onRockClick(key, press)
 	end
 end
 
-function JobGravel:onDeliverColHit(hitElement, dim)
+function JobGravel:onCollectingColHit(hitElement, dim)
 	if hitElement:getModel() == 2936 then
-		triggerServerEvent("gravelStartTrack", hitElement, source.track, hitElement.vehicle)
+		triggerServerEvent("gravelOnCollectingContainerHit", hitElement, source.track, hitElement.vehicle)
 	end
 end
 
