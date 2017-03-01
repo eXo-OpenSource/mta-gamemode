@@ -47,7 +47,7 @@ function FactionRescue:constructor()
 
 	nextframe( -- Todo workaround
 		function ()
-			local safe = createObject(2332, 1187.70, -1396.50, 6.4, 0, 0, 180)
+			local safe = createObject(2332, 1720, -1752.40, 14.10, 0, 0, 90)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
 		end
 	)
