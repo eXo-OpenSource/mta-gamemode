@@ -71,7 +71,7 @@ function ElevatorGUI:itemCallback(stationId, station)
 	end
 end
 
-function Elevator:toggleKeys(state)
+function ElevatorGUI:toggleKeys(state)
 	for id, control in pairs(GUIForm.Controls) do
 		toggleControl(control, state)
 	end
