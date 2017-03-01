@@ -294,6 +294,11 @@ function PlayerManager:playerChat(message, messageType)
 		return
 	end
 
+	if source.isTasered then
+		cancelEvent()
+		return
+	end
+
 	if Player.getChatHook():call(source, message, messageType) then
 		cancelEvent()
 		return

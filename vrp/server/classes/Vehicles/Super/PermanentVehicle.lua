@@ -34,6 +34,8 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 		health = 300
   	end
 
+	self:setFrozen(true)
+	self.m_HandBrake = true
 	self:setHealth(health or 1000)
 	self:setFuel(fuel or 100)
 	self:setLocked(true)

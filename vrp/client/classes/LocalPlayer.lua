@@ -35,13 +35,9 @@ function LocalPlayer:constructor()
 	addEventHandler("setClientTime", self, bind(self.Event_onGetTime, self))
 	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
-	addEventHandler("onClientPlayerSpawn", self, function()
-		NoDm:getSingleton():checkNoDm()
-	end)
-
+	addEventHandler("onClientPlayerSpawn", self, bind(LocalPlayer.Event_onClientPlayerSpawn, self))
 
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
-
 
 	self.m_DeathRenderBind = bind(self.deathRender, self)
 
@@ -480,11 +476,41 @@ function LocalPlayer:getAchievements ()
 	return table.setIndexToInteger(fromJSON(self:getPrivateSync("Achievements"))) or {[0] = false}
 end
 
-
 function LocalPlayer:Event_toggleRadar(state)
 	HUDRadar:getSingleton():setEnabled(state)
 end
 
 function LocalPlayer:sendTrayNotification(text, icon, sound)
 	createTrayNotification("eXo-RL: "..text, icon, sound)
+end
+
+function LocalPlayer:Event_onClientPlayerSpawn()
+	NoDm:getSingleton():checkNoDm()
+
+	local col = createColSphere(localPlayer.position, 3)
+
+	for _, player in pairs(getElementsByType("player")) do
+		localPlayer:setCollidableWith(player, false)
+	end
+
+	addEventHandler("onClientColShapeLeave", col,
+		function(element, matchingDimension)
+			if element == localPlayer and matchingDimension then
+				for _, player in pairs(getElementsByType("player")) do
+					localPlayer:setCollidableWith(player, true)
+				end
+
+				col:destroy()
+			end
+		end
+	)
+
+	--[[setTimer(
+		function()
+			outputChatBox("Collision enabled")
+			for _, player in pairs(getElementsByType("player")) do
+				localPlayer:setCollidableWith(player, true)
+			end
+		end, 10000, 1
+	)]]
 end

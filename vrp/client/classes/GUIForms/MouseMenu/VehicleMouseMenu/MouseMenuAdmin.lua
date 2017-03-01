@@ -22,7 +22,24 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			end
 		end
 	)
-
+	if getElementData(element, "OwnerType") ~= "faction" and getElementData(element, "OwnerType") ~= "company" then
+		self:addItem(_"Respawnen / Parken >>>",
+			function()
+				if self:getElement() then
+					delete(self)
+					ClickHandler:getSingleton():addMouseMenu(VehicleMouseMenuRespawn:new(posX, posY, element), element)
+				end
+			end
+		)
+	else
+		self:addItem(_"Respawn",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleRespawn", self:getElement())
+				end
+			end
+		)
+	end
 	if localPlayer:getRank() >= RANK.Moderator then
 		self:addItem(_"Fahrzeug reparieren",
 			function()

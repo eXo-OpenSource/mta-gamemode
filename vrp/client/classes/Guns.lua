@@ -61,7 +61,6 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 				end
 			end
 		elseif localPlayer == source then
-			self:bloodScreen()
 			if attacker and weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
 					cancelEvent()

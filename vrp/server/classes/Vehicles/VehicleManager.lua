@@ -151,7 +151,6 @@ function VehicleManager:createVehiclesForPlayer(player)
 	end
 end
 
-
 function VehicleManager.loadVehicles()
 	--[[
 	outputServerLog("Loading vehicles...")
@@ -320,13 +319,20 @@ end
 
 function VehicleManager:removeUnusedVehicles()
 	-- ToDo: Lateron, do not loop through all vehicles
-	--for ownerid, data in pairs(self.m_Vehicles) do
-	--	for k, vehicle in pairs(data) do
-	--		if vehicle:getLastUseTime() < getTickCount() - 30*1000*60 then
-	--			vehicle:respawn()
-	--		end
-	--	end
-	--end
+	for ownerid, data in pairs(self.m_Vehicles) do
+		for k, vehicle in pairs(data) do
+			if vehicle:isBlown() then
+				if vehicle:getVehicleType() == VehicleType.Automobile or vehicle:getVehicleType() == VehicleType.Bike then
+					outputDebug("Respawning blown vehicle in mechanic base")
+					vehicle:setPositionType(VehiclePositionType.Mechanic)
+					vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+					respawnVehicle(vehicle)
+				else
+					vehicle:respawn()
+				end
+			end
+		end
+	end
 
 	for k, vehicle in pairs(self.m_TemporaryVehicles) do
 		if vehicle and isElement(vehicle) then
@@ -415,6 +421,11 @@ function VehicleManager:Event_vehiclePark()
  	self:checkVehicle(source)
 	if source:isPermanent() or instanceof(source, GroupVehicle) then
 		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup()) then
+			if source:isBroken() then
+				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
+				return
+			end
+
 			if source:isInGarage() then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
@@ -627,6 +638,12 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
+
+	if source:isBroken() and client:getRank() < RANK.Supporter then
+		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
+		return
+	end
+
 	if client:getMoney() < 100 and source:getOwner() == client:getId() then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
@@ -688,6 +705,11 @@ function VehicleManager:Event_vehicleRespawnWorld()
  	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
  		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
  		return
+	end
+
+	if source:isBroken() and client:getRank() < RANK.Supporter then
+		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
+		return
 	end
 
  	if source:getOwner() == client:getId() and client:getMoney() < 100 then

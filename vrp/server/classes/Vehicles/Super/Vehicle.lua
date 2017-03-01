@@ -284,11 +284,11 @@ function Vehicle:toggleHandBrake( player )
 end
 
 function Vehicle:setEngineState(state)
-	local player = getVehicleOccupant(self, 0)
-	if player then
+	--local player = getVehicleOccupant(self, 0)
+	--if player then
 		setVehicleEngineState(self, state)
 		self.m_EngineState = state
-	end
+	--end
 	self.m_StartingEnginePhase = false
 end
 
@@ -498,10 +498,13 @@ function Vehicle:respawnOnSpawnPosition()
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(0, 0, self.m_SpawnRot)
 		fixVehicle(self)
-		setVehicleEngineState(self, false)
-		self.m_EngineState = false
+		self:setEngineState(false)
+		self:setLocked(true)
 		setVehicleOverrideLights(self, 1)
+		self:setFrozen(true)
+		self.m_HandBrake = true
 		self:setSirensOn(false)
+		self:resetIndicator()
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then
 			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
@@ -511,6 +514,12 @@ end
 
 function Vehicle:getTrunk()
   return self.m_Trunk or false
+end
+
+function Vehicle:resetIndicator()
+	setElementData(self, "i:left", false)
+	setElementData(self, "i:right", false)
+	setElementData(self, "i:warn", false)
 end
 
 -- Override it

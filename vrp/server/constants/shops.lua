@@ -229,7 +229,7 @@ SHOP_BAR_STRIP = {
 SHOP_BAR_STRIP_ANIMATIONS = {"STR_Loop_A", "STR_Loop_A", "STR_Loop_C"}
 
 SHOP_FUEL = {
-	["Temple"] = {
+	["Tankstelle Temple"] = {
 		["Marker"] = Vector3(1007.8759155273, -940.43975830078, 41.18),
 		["FuelStation"] = {1007.2157, -936.54523, 42.9, 8}
 	},
@@ -241,15 +241,15 @@ SHOP_FUEL = {
 		["Marker"] = Vector3(-2405.73828125,975.3662109375,43.896875),
 		["FuelStation"] = {-2410.8994, 975.7998, 46, 90}
 	},
-	["Angle Pine"] = {
+	["Tankstelle Angle Pine"] = {
 		["Marker"] = Vector3(-2246.2653808594, -2561.2934570313, 30.921875),
 		["FuelStation"] = {-2246.8994, -2559.5, 32.7, 63.243}
 	},
-	["Dillimore"] = {
+	["Tankstelle Dillimore"] = {
 		["Marker"] = Vector3(655.52795410156, -565.03424072266, 15.3359375),
 		["FuelStation"] = {655.5, -564.90002, 16.9, 90}
 	},
-	["Flint County"] = {
+	["Tankstelle Flint County"] = {
 		["Marker"] = Vector3(-92.113708496094, -1171.3128662109 ,1.3799414634705),
 		["FuelStation"] = {-88.1, -1171.4, 2.9, 68}
 	},

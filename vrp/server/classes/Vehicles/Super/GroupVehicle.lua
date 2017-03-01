@@ -40,39 +40,41 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 	return false
 end
 function GroupVehicle:constructor(Id, Group, color, color2, health, positionType, tunings, mileage, fuel, lightColor, texture, horn, neon, special)
-  self.m_Id = Id
-  self.m_Group = Group
-  self.m_PositionType = VehiclePositionType.World
-  self:setCurrentPositionAsSpawn(self.m_PositionType)
+	self.m_Id = Id
+	self.m_Group = Group
+	self.m_PositionType = VehiclePositionType.World
+	self:setCurrentPositionAsSpawn(self.m_PositionType)
 
-  self.m_Position = self:getPosition()
-  self.m_Rotation = self:getRotation()
-  setElementData(self, "OwnerName", self.m_Group:getName())
-  setElementData(self, "OwnerType", "group")
-  if health and health <= 300 then
-	health = 300
-  end
+	self.m_Position = self:getPosition()
+	self.m_Rotation = self:getRotation()
+	setElementData(self, "OwnerName", self.m_Group:getName())
+	setElementData(self, "OwnerType", "group")
+	if health and health <= 300 then
+		health = 300
+	end
 
-  for k, v in pairs(tunings or {}) do
-    addVehicleUpgrade(self, v)
-  end
+	for k, v in pairs(tunings or {}) do
+		addVehicleUpgrade(self, v)
+	end
 
-  if self.m_PositionType ~= VehiclePositionType.World then
-    -- Move to unused dimension | Todo: That's probably a bad solution
-    setElementDimension(self, PRIVATE_DIMENSION_SERVER)
-  end
+	if self.m_PositionType ~= VehiclePositionType.World then
+		-- Move to unused dimension | Todo: That's probably a bad solution
+		setElementDimension(self, PRIVATE_DIMENSION_SERVER)
+	end
 
-  if self.m_Group.m_Vehicles then
-	table.insert(self.m_Group.m_Vehicles, self)
-  end
+	if self.m_Group.m_Vehicles then
+		table.insert(self.m_Group.m_Vehicles, self)
+	end
 
-    addEventHandler("onVehicleExplode",self, function()
+	addEventHandler("onVehicleExplode",self, function()
 		setTimer(function(veh)
 			veh:setHealth(1000)
 			veh:respawn(true)
 		end, 10000, 1, source)
 	end)
 
+	self:setFrozen(true)
+	self.m_HandBrake = true
 	self:setHealth(health or 1000)
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
@@ -173,6 +175,7 @@ function GroupVehicle:respawn(force)
 	self:setRotation(0, 0, self.m_SpawnRot)
 	setVehicleOverrideLights(self, 1)
 	self:setSirensOn(false)
+	self:resetIndicator()
 	self:fix()
 
 	return true

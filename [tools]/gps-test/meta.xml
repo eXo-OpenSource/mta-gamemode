@@ -1,0 +1,10 @@
+<meta>
+	<oop>true</oop>
+
+    <script src="classlib.lua" type="server" />
+	<script src="async.lua" type="server" />
+    <script src="Object.lua" type="server" />
+
+	<script src="example1.lua" type="server" />
+	<script src="example2.lua" type="server" />
+</meta>

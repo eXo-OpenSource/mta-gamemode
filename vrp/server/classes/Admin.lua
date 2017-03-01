@@ -607,7 +607,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			end
         end
     else
-        admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))
+        admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
     end
 end
 

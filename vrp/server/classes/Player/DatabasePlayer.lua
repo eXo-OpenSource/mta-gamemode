@@ -753,7 +753,9 @@ function DatabasePlayer:setNewNick(admin, newNick)
 		return false
 	end
 
-	if not newNick:match("[a-zA-Z]") or #newNick < 3 then
+	
+	
+	if not newNick:match("^[a-zA-Z0-9_.%[%]]*$") or #newNick < 3 then
 		admin:sendError(_("Ungültiger Nickname!", admin))
 		return false
 	end

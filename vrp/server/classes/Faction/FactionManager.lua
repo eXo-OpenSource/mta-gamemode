@@ -302,14 +302,13 @@ function FactionManager:Event_factionRankUp(playerId)
 					return
 				end
 			end
-			if isOffline then
-				player:save()
-			end
 
 			if playerRank < FactionRank.Leader then
 				faction:setPlayerRank(playerId, playerRank + 1)
 				faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..(playerRank + 1).." befördert!")
-				if not isOffline then
+				if isOffline then
+					delete(player)
+				else
 					if isElement(player) then
 						player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
 					end
@@ -337,17 +336,19 @@ function FactionManager:Event_factionRankDown(playerId)
 		-- Todo: Report possible cheat attempt
 		return
 	end
-
+	local player, isOffline = DatabasePlayer.get(playerId)
+	if isOffline then
+		player:load()
+	end
 	if faction:getPlayerRank(playerId)-1 >= FactionRank.Normal then
 		faction:setPlayerRank(playerId, faction:getPlayerRank(playerId) - 1)
 		faction:addLog(client, "Fraktion", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..faction:getPlayerRank(playerId).." degradiert!")
-		local player, isOffline = DatabasePlayer.getFromId(playerId)
-		if not isOffline then
+		if isOffline then
+			delete(player)
+		else
 			if isElement(player) then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), faction:getPlayerRank(playerId)), faction:getName())
 			end
-		else
-			delete(player)
 		end
 		self:sendInfosToClient(client)
 	else

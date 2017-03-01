@@ -47,13 +47,10 @@ function FactionRescue:constructor()
 
 	nextframe( -- Todo workaround
 		function ()
-			local safe = createObject(2332, 1187.70, -1396.50, 6.4, 0, 0, 180)
+			local safe = createObject(2332, 1720, -1752.40, 14.10, 0, 0, 90)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
 		end
 	)
-
-
-	self:createNoCollissionSpawn()
 
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
@@ -128,15 +125,6 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 			cancelEvent()
 		end
 	)
-end
-
-function FactionRescue:createNoCollissionSpawn()
-	local col = createColSphere(HOSPITAL_POSITION, 3)
-	addEventHandler("onColShapeLeave", col, function(hitElement, dim)
-		if dim and hitElement:getType() == "player" then
-			hitElement:setCollisionsEnabled(true)
-		end
-	end)
 end
 
 function FactionRescue:Event_changeSkin(player)
@@ -371,7 +359,6 @@ end
 function FactionRescue:Event_OnPlayerWastedFinish()
 	source:setCameraTarget(source)
 	source:fadeCamera(true, 1)
-	source:setCollisionsEnabled(false)
 	source:respawn()
 end
 

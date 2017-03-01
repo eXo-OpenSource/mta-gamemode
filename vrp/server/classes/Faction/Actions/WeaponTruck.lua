@@ -427,7 +427,7 @@ end
 function WeaponTruck:onDestinationMarkerHit(hitElement)
 	local faction = hitElement:getFaction()
 	local depot = faction.m_Depot
-	local boxes
+	local boxes = {}
 	local finish = false
 	if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
 		boxes = getAttachedElements(self.m_Truck)
@@ -437,19 +437,21 @@ function WeaponTruck:onDestinationMarkerHit(hitElement)
 			faction:giveKarmaToOnlineMembers(-10, "Waffentruck abgegeben!")
 			outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 		elseif self.m_Type == "state" then
-			FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
 			if faction:isEvilFaction() then
 				outputChatBox("Der Waffentruck wurde bei einer bösen Fraktion abgegeben!", hitElement, rootElement,255,0,0)
 			else
+				FactionState:getSingleton():giveKarmaToOnlineMembers(10, "Staats-Waffentruck abgegeben!")
 				outputChatBox(_("Der %s wurde erfolgreich abgegeben!",hitElement, WEAPONTRUCK_NAME[self.m_Type]),rootElement,255,0,0)
 			end
 		end
 		finish = true
 	elseif hitElement:getPlayerAttachedObject() then
-		boxes = getAttachedElements(hitElement)
-		outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount()+1,self.m_BoxesCount),rootElement,255,0,0)
-		hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
-		hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
+		if self:getAttachedBoxes(hitElement) > 0 then
+			boxes = getAttachedElements(hitElement)
+			outputChatBox(_("Eine Waffenkiste wurde abgegeben! (%d/%d)",hitElement,self.m_BoxesCount-self:getRemainingBoxAmount()+1,self.m_BoxesCount),rootElement,255,0,0)
+			hitElement:sendInfo(_("Du hast erfolgreich eine Kiste abgegeben! Die Waffen sind nun im Fraktions-Depot!",hitElement))
+			hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
+		end
 	elseif hitElement:getOccupiedVehicle() then
 		hitElement:sendInfo(_("Du musst die Kisten per Hand oder mit dem Waffentruck abladen!", hitElement))
 		return

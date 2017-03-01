@@ -20,10 +20,10 @@ function DeathmatchLobby:constructor(id, name, owner, map, weapons, mode, maxPla
 	self.m_MaxPlayer = maxPlayer
 	self.m_Password = password or ""
 	self.m_Players = {}
-	self:loadMap()
 
-	self.m_LeaveBind = bind(self.removePlayer, self)
 	self.m_ColShapeLeaveBind = bind(self.onColshapeLeave, self)
+
+	self:loadMap()
 
 	if self.m_Type == DeathmatchLobby.Types[1] then
 		self.m_Owner = "Server"
@@ -55,7 +55,7 @@ function DeathmatchLobby:loadMap()
 	self.m_Colshape = createColSphere(self.m_MapData["spawns"][1], 100)
 	self.m_Colshape:setDimension(self.m_MapData["dim"])
 	self.m_Colshape:setInterior(self.m_MapData["int"])
-	addEventHandler("onColShapeLeave", self.m_Colshape, self.m_LeaveBind)
+	addEventHandler("onColShapeLeave", self.m_Colshape, self.m_ColShapeLeaveBind)
 end
 
 function DeathmatchLobby:getPlayers()
@@ -205,7 +205,7 @@ function DeathmatchLobby:removePlayer(player, isServerStop)
 end
 
 function DeathmatchLobby:onColshapeLeave(player, dim)
-	if dim then
+	if dim and player.deathmatchLobby then
 		self:removePlayer(player)
 	end
 end
