@@ -964,6 +964,7 @@
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Garage.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Wheel.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Waypoint.png"/>
+	<vrpfile src="files/images/Radar_Monochrome/Blips/Waypoint_ept.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/SmallPoint.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/AmmuNation.png"/>
 	<vrpfile src="files/images/Radar_Monochrome/Blips/Bus.png"/>
@@ -1016,6 +1017,7 @@
 	<vrpfile src="files/images/Radar_GTA/Blips/Garage.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Wheel.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Waypoint.png"/>
+	<vrpfile src="files/images/Radar_GTA/Blips/Waypoint_ept.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/SmallPoint.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/AmmuNation.png"/>
 	<vrpfile src="files/images/Radar_GTA/Blips/Bus.png"/>
@@ -1228,6 +1230,7 @@
 	<vrpfile src="files/images/Inventory/items/Essen/Long Drink Brown.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/Cocktail.png" />
 	<vrpfile src="files/images/Inventory/items/Essen/ItemDonutBox.png" />
+	<vrpfile src="files/images/Inventory/items/Essen/ItemDonut.png" />
 
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />
@@ -1488,14 +1491,14 @@
 	<vrpfile src="files/models/scary.dff"/>
 	<vrpfile src="files/models/tardis.txd"/>
 	<vrpfile src="files/models/tardis.dff"/>
-
+	<vrpfile src="files/models/pickaxe.txd" />
+	<vrpfile src="files/models/pickaxe.dff" />
+	<vrpfile src="files/models/pickaxe.col" />
 	<vrpfile src="files/models/donut.txd"/>
 	<vrpfile src="files/models/donut.dff"/>
 	<vrpfile src="files/models/donut.col"/>
 
-	<vrpfile src="files/models/pickaxe.txd" />
-	<vrpfile src="files/models/pickaxe.dff" />
-	<vrpfile src="files/models/pickaxe.col" />
+
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>

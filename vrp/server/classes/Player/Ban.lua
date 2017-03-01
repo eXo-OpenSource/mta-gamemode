@@ -75,7 +75,7 @@ function Ban.checkSerial(serial, player, cancel, doNotSave)
 		if duration == 0 then
 			reasonstr = ("Du wurdest permanent gebannt (Grund: %s)"):format(row.reason)
 		elseif duration - getRealTime().timestamp < 0 then
-			sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
+			sql:queryExec("DELETE FROM ??_bans WHERE expires > 0 AND (serial = ? OR player_id = ?);", sql:getPrefix(), serial, id)
 			return true
 		elseif duration > 0 then
 			reasonstr = ("Du bist noch %s gebannt! (Grund: %s)"):format(string.duration(duration - getRealTime().timestamp), row.reason)

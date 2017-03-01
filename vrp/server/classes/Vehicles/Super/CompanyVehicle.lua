@@ -223,12 +223,14 @@ function CompanyVehicle:respawn(force)
 		end
 	end
 
+	setVehicleOverrideLights(self, 1)
 	self:setEngineState(false)
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
 	self:fix()
 	self:setFrozen(true)
 	self.m_HandBrake = true
+	self:resetIndicator()
 
 	return true
 end

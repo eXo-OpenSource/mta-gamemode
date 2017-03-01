@@ -878,7 +878,7 @@ function Player:attachPlayerObject(object, allowWeapons)
 			self:sendError(_("Du hast bereits ein Objekt dabei!", self))
 		end
 	else
-		self:sendError("Internal Error: attachPlayerObject: Wrong Object")
+		--self:sendError("Internal Error: attachPlayerObject: Wrong Object")
 	end
 end
 

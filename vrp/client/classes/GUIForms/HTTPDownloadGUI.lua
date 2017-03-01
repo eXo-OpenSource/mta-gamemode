@@ -11,14 +11,42 @@ function HTTPDownloadGUI:constructor()
 	self.m_Text = GUILabel:new(0, screenHeight - 150 - 60/2, screenWidth, 60, "downloading files...", self):setAlignX("center")
 	self.m_DownloadBar = GUIRectangle:new(screenWidth/6, screenHeight - 75 - 25/2, screenWidth - screenWidth/3, 25, tocolor(0, 125, 255, 150), self)
 	self.m_CurrentState = GUILabel:new(screenWidth/6 + 10, screenHeight - 75 - 20/2, screenWidth - screenWidth/3, 20, "", self)
+	self.m_MusicText = GUILabel:new(0, screenHeight - 30, screenWidth, 30, "Drücke 'm', um die Musik zu stoppen!", self):setAlignX("center")
 	self.m_CurrentState:setFont(FontAwesome(20))
 
 	fadeCamera(false, 0.1)
+	self:launchMusic()
 end
 
 function HTTPDownloadGUI:destructor()
+	if self.m_Music and isElement(self.m_Music) then
+		stopSound(self.m_Music)
+	end
+
 	GUIForm.destructor(self)
 	fadeCamera(true)
+end
+
+function HTTPDownloadGUI:launchMusic()
+	if not self:isVisible() then return end
+	self.m_Music = playSound("http://exo-reallife.de/ingame/DownloadMusic.mp3", true)
+	self.m_Music:setVolume(0.3)
+	self.m_StopMusicFunc = function()
+		if self.m_Music then
+			destroyElement(self.m_Music)
+			self.m_Music = nil
+			self:bind("m", self.m_StartMusicFunc)
+		end
+	end
+	self.m_StartMusicFunc = function()
+		if not self.m_Music then
+			self.m_Music = playSound("http://exo-reallife.de/ingame/DownloadMusic.mp3", true)
+			self.m_Music:setVolume(0.3)
+			self:bind("m", self.m_StopMusicFunc)
+		end
+	end
+
+	self:bind("m", self.m_StopMusicFunc)
 end
 
 function HTTPDownloadGUI:setStateText(text)

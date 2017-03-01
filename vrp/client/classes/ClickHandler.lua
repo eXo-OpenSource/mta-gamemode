@@ -187,9 +187,6 @@ function ClickHandler:dispatchClick(clickInfo, trigger)
 		if range < 10 and not localPlayer.m_inTuning then
 			if trigger then
 				if button == "left" then
-					if elementType == "vehicle" and element:isBlown() then
-						return false
-					end
 					self:addMouseMenu(self.m_Menu[elementType]:new(clickInfo.absoluteX, clickInfo.absoluteY, element), element)
 				end
 			end

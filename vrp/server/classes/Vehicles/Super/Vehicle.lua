@@ -504,6 +504,7 @@ function Vehicle:respawnOnSpawnPosition()
 		self:setFrozen(true)
 		self.m_HandBrake = true
 		self:setSirensOn(false)
+		self:resetIndicator()
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then
 			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
@@ -513,6 +514,12 @@ end
 
 function Vehicle:getTrunk()
   return self.m_Trunk or false
+end
+
+function Vehicle:resetIndicator()
+	setElementData(self, "i:left", false)
+	setElementData(self, "i:right", false)
+	setElementData(self, "i:warn", false)
 end
 
 -- Override it

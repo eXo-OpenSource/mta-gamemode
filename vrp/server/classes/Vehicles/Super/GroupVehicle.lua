@@ -175,6 +175,7 @@ function GroupVehicle:respawn(force)
 	self:setRotation(0, 0, self.m_SpawnRot)
 	setVehicleOverrideLights(self, 1)
 	self:setSirensOn(false)
+	self:resetIndicator()
 	self:fix()
 
 	return true

@@ -274,6 +274,7 @@ function FactionVehicle:respawn(force)
 	if self.m_VehELSObj then
 		self.m_VehELSObj:setBlink("off")
 	end
+	self:resetIndicator()
 	self:fix()
 
 	if self.m_HandlingFactor ~= "" and self.m_HandlingFactor then

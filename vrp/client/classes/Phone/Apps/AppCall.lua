@@ -22,7 +22,6 @@ function AppCall:constructor()
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
-
 end
 
 function AppCall:onOpen(form)
@@ -306,6 +305,12 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 		self.m_ButtonSendLocation = GUIButton:new(10, self.m_Height-100, self.m_Width-20, 40, _"Position senden", self)
 		self.m_ButtonSendLocation:setBackgroundColor(Color.Green)
 		self.m_ButtonSendLocation.onLeftClick = function()
+			if self.m_LastClick and getTickCount() - self.m_LastClick < 10000 then
+				ErrorBox:new(_"Bitte warte ein paar Sekunden bevor du deine Position aktualisierst")
+				return
+			end
+
+			self.m_LastClick = getTickCount()
 			triggerServerEvent("callSendLocation", root, self.m_Callee)
 		end
 		self.m_ButtonReplace = GUIButton:new(10, self.m_Height-50, self.m_Width-20, 40, _"Auflegen", self)
