@@ -63,6 +63,7 @@ function FactionVehicle:constructor(Id, faction, color, health, posionType, tuni
 	self:setMileage(mileage)
 	self:setFrozen(true)
 	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
 
 	if faction:isStateFaction() then
 		if self:getVehicleType() == VehicleType.Automobile then
@@ -269,6 +270,7 @@ function FactionVehicle:respawn(force)
 	self:setSirensOn(false)
 	self:setFrozen(true)
 	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setPosition(self.m_Position)
 	self:setRotation(self.m_Rotation)
 	if self.m_VehELSObj then

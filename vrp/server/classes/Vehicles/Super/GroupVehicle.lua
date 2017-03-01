@@ -75,6 +75,7 @@ function GroupVehicle:constructor(Id, Group, color, color2, health, positionType
 
 	self:setFrozen(true)
 	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setHealth(health or 1000)
 	self:setFuel(fuel or 100)
 	self:setLocked(true)

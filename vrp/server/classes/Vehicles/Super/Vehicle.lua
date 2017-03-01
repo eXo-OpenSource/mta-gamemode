@@ -503,6 +503,7 @@ function Vehicle:respawnOnSpawnPosition()
 		setVehicleOverrideLights(self, 1)
 		self:setFrozen(true)
 		self.m_HandBrake = true
+		self:setData( "Handbrake",  self.m_HandBrake , true )
 		self:setSirensOn(false)
 		self:resetIndicator()
 		local owner = Player.getFromId(self.m_Owner)
