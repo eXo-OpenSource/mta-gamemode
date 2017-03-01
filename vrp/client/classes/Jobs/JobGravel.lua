@@ -155,12 +155,13 @@ end
 
 function JobGravel:onDozerColHit(hitElement, dim)
 	if hitElement:getModel() == 2936 then
-		hitElement.vehicle = source.vehicle
+		triggerServerEvent("gravelOnDozerHit", hitElement, source.vehicle)
 	end
 end
 
 function JobGravel:onRockColHit(hit, dim)
 	if hit == localPlayer and dim and not hit.vehicle then
+		triggerServerEvent("gravelTogglePickaxe", localPlayer, true)
 		localPlayer.m_GravelCol = source
 		localPlayer.m_GravelColClicked = 0
 		addEventHandler("onClientKey", root, self.m_OnRockClickBind)
@@ -170,6 +171,7 @@ end
 
 function JobGravel:onRockColLeave(hit, dim)
 	if hit == localPlayer and dim then
+		triggerServerEvent("gravelTogglePickaxe", localPlayer)
 		localPlayer.m_GravelCol = nil
 		localPlayer.m_GravelColClicked = nil
 		removeEventHandler("onClientKey", root, self.m_OnRockClickBind)
@@ -186,8 +188,6 @@ function JobGravel:onRockClick(key, press)
 
 				local times = localPlayer.m_GravelCol.Times
 				local rockDestroyed = false
-
-				localPlayer:setAnimation("sword", "sword_4", 2200, true, true, false, false)
 
 				if JobGravel.GravelProgress and localPlayer.m_GravelCol.Times then
 					JobGravel.GravelProgress:setProgress(localPlayer.m_GravelColClicked, localPlayer.m_GravelCol.Times)
@@ -216,7 +216,7 @@ end
 
 function JobGravel:onCollectingColHit(hitElement, dim)
 	if hitElement:getModel() == 2936 then
-		triggerServerEvent("gravelOnCollectingContainerHit", hitElement, source.track, hitElement.vehicle)
+		triggerServerEvent("gravelOnCollectingContainerHit", hitElement, source.track)
 	end
 end
 

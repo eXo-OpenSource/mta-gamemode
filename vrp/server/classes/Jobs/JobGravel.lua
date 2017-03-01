@@ -39,19 +39,19 @@ function JobGravel:constructor()
 	self.m_DumperDeliverTimer = {}
 	self.m_DumperDeliverStones = {}
 
-	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver"}
+	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver", "gravelOnDozerHit", "gravelTogglePickaxe"}
 	addEventHandler("onGravelMine", root, bind(self.Event_onGravelMine, self))
 	addEventHandler("gravelOnCollectingContainerHit", root, bind(self.Event_onCollectingContainerHit, self))
 	addEventHandler("gravelDumperDeliver", root, bind(self.Event_onDumperDeliver, self))
-
+	addEventHandler("gravelOnDozerHit", root, bind(self.Event_onDozerHit, self))
+	addEventHandler("gravelTogglePickaxe", root, bind(self.Event_togglePickaxe, self))
 
 end
 
 function JobGravel:start(player)
 	table.insert(self.m_Jobber, player)
 
-	player.pickaxe = createObject(1858, 708.87, 836.69, -29.74)
-	exports.bone_attach:attachElementToBone(player.pickaxe, player, 12, 0, 0, 0, 90, -90, 0)
+
 
 	self.m_DozerSpawner:toggleForPlayer(player, true)
 	self.m_DumperSpawner:toggleForPlayer(player, true)
@@ -64,7 +64,7 @@ function JobGravel:stop(player)
 	table.remove(self.m_Jobber, table.find(self.m_Jobber, player))
 	self.m_DozerSpawner:toggleForPlayer(player, false)
 	self.m_DumperSpawner:toggleForPlayer(player, false)
-	player.pickaxe:destroy()
+	if player.pickaxe and isElement(player.pickaxe) then player.pickaxe:destroy() end
 	self:destroyDumperGravel(player)
 end
 
@@ -112,6 +112,7 @@ end
 
 function JobGravel:Event_onGravelMine(rockDestroyed, times)
 	if self.m_GravelMined < MAX_STONES_MINED then
+		client:setAnimation("sword", "sword_4", 2200, true, true, false, false)
 
 		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
 		local gravel = createObject(2936, pos)
@@ -137,6 +138,17 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 	end
 end
 
+function JobGravel:Event_togglePickaxe(state)
+	if state then
+		if not client.pickaxe and not isElement(client.pickaxe) then
+			client.pickaxe = createObject(1858, 708.87, 836.69, -29.74)
+			exports.bone_attach:attachElementToBone(client.pickaxe, client, 12, 0, 0, 0, 90, -90, 0)
+		end
+	else
+		if client.pickaxe and isElement(client.pickaxe) then client.pickaxe:destroy() end
+	end
+end
+
 --Step 2 Dozer Part
 
 function JobGravel:Event_onCollectingContainerHit(track, vehicle)
@@ -144,7 +156,7 @@ function JobGravel:Event_onCollectingContainerHit(track, vehicle)
 		if self.m_GravelStock < MAX_STONES_IN_STOCK then
 			self:updateGravelAmount("mined", false)
 			if vehicle and isElement(vehicle) then
-				if vehicle:getOccupant() then
+				if vehicle:getOccupant() and source.vehicle == vehicle then
 					vehicle:getOccupant():giveMoney(25, "Kiesgruben-Job")
 				end
 			end
@@ -160,6 +172,11 @@ function JobGravel:Event_onCollectingContainerHit(track, vehicle)
 		client:sendError("Internal Error: Track not found!")
 	end
 end
+
+function JobGravel:Event_onDozerHit(vehicle)
+	source.vehicle = vehicle
+end
+
 
 --Step 3 Transport / Dumper Part
 
@@ -239,7 +256,7 @@ end
 
 JobGravel.Tracks = {
 	["Track1"] = {
-		[1] = {2000, Vector3(676.10, 827.4, -41.2)},
+		[1] = {0, Vector3(676.10, 827.4, -41.2)},
 		[2] = {6000, Vector3(641.00, 843.80, -34.4)},
 		[3] = {1000, Vector3(640.90, 843.90, -37)},
 		[4] = {6000, Vector3(627.5, 881.1, -30.4)},
@@ -248,14 +265,14 @@ JobGravel.Tracks = {
 		[7] = {2000, Vector3(619.20, 886.70, -34.4)}
 	},
 	["Track2"] = {
-		[1] = {2000, Vector3(686.90, 847.5, -41.10)},
+		[1] = {0, Vector3(686.90, 847.5, -41.10)},
 		[2] = {6000, Vector3(654.20, 866.70, -34.6)},
 		[3] = {1000, Vector3(653.80, 866.90, -37)},
 		[4] = {6000, Vector3(619.50, 886.80, -30.3)},
 		[5] = {2000, Vector3(619.20, 886.70, -34.4)}
 	},
 	["Dumper1"] = {
-		[1] = {2000, Vector3(618.5, 894.4, -41.3)},
+		[1] = {0, Vector3(618.5, 894.4, -41.3)},
 		[2] = {6000, Vector3(584.5, 914, -34.5)},
 		[3] = {2000, Vector3(583.8, 914.1, -37.3)},
 		[4] = {6000, Vector3(545.1, 919.8, -30.5)},
@@ -263,7 +280,7 @@ JobGravel.Tracks = {
 
 	},
 	["Dumper2"] = {
-		[1] = {2000, Vector3(620.2, 896.4, -41.3)},
+		[1] = {0, Vector3(620.2, 896.4, -41.3)},
 		[2] = {6000, Vector3(594.7, 926.6, -34.4)},
 		[3] = {2000, Vector3(594.6, 927.0, -37.1)}
 	}
