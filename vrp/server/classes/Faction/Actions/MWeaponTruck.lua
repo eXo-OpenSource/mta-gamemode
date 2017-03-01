@@ -12,7 +12,7 @@ MWeaponTruck = inherit(Singleton)
 function MWeaponTruck:constructor()
 	self:createStartPoint(-1869.14, 1421.49, 6.2, "evil")
 	self:createStartPoint(117.28, 1884.58, 17, "state")
-	self.m_IsCurrentWT = false
+	self.m_CurrentWT = false
 	self.m_CurrentType = ""
 	addRemoteEvents{"onWeaponTruckLoad"}
 	addEventHandler("onWeaponTruckLoad", root, bind(self.Event_onWeaponTruckLoad, self))
@@ -114,6 +114,7 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 						end
 						faction:takeMoney(totalAmount, "Waffen-Truck")
 					end
+					if self.m_CurrentWT then delete(self.m_CurrentWT) end
 					client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
 					self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
 					PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
