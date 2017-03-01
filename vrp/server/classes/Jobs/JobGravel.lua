@@ -44,6 +44,7 @@ function JobGravel:constructor()
 	addEventHandler("gravelOnCollectingContainerHit", root, bind(self.Event_onCollectingContainerHit, self))
 	addEventHandler("gravelDumperDeliver", root, bind(self.Event_onDumperDeliver, self))
 
+
 end
 
 function JobGravel:start(player)
@@ -113,15 +114,16 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 	if self.m_GravelMined < MAX_STONES_MINED then
 
 		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
-		local item = createObject(2936, pos)
-		item:setScale(0)
+		local gravel = createObject(2936, pos)
+		client:triggerEvent("gravelDisableCollission", gravel)
+		gravel:setScale(0)
 
 		nextframe(
 			function()
 				setTimer(
 				function()
-					item:setVelocity(-0.12, 0.12, 0.12)
-					item:setScale(item:getScale() + 0.05)
+					gravel:setVelocity(-0.12, 0.12, 0.12)
+					gravel:setScale(gravel:getScale() + 0.05)
 				end, 50, 20)
 			end
 		)
@@ -129,7 +131,7 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 			client:giveMoney(times*25, "Kiesgruben-Job")
 		end
 		self:updateGravelAmount("mined", true)
-		table.insert(self.m_Gravel, item)
+		table.insert(self.m_Gravel, gravel)
 	else
 		client:sendError(_("Es können keine weiteren Steine abgebaut werden, bitte mit Dozern die Steine in die Behälter schieben.", client))
 	end
@@ -221,7 +223,6 @@ function JobGravel:Event_onDumperDeliver()
 		self.m_DumperDeliverStones[client]= self.m_DumperDeliverStones[client] + 1
 		client.vehicle.gravelLoaded = false
 		source:destroy()
-		self:destroyDumperGravel(player)
 		if not self.m_DumperDeliverTimer[client] then
 			self.m_DumperDeliverTimer[client] = setTimer(bind(self.giveDumperDeliverLoan, self), 1500, 1, client)
 		end
@@ -233,6 +234,7 @@ function JobGravel:giveDumperDeliverLoan(player)
 	local loan = amount*150
 	player:sendShortMessage(_("%d Steine abgegeben! %d$", player, amount, loan))
 	player:giveMoney(loan, "Kiesgruben-Job")
+	self:destroyDumperGravel(player)
 end
 
 JobGravel.Tracks = {
