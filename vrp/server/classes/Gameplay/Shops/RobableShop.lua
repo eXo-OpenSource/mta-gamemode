@@ -269,16 +269,20 @@ function RobableShop:characterInitialized()
 end
 
 function RobableShop:onDamage(attacker, weapon)
-  if isElement(attacker) and self:checkBagAllowed(attacker) then
-    if weapon == 0 then
-      if source:getPlayerAttachedObject() and source:getPlayerAttachedObject() == self.m_Bag and self:checkBagAllowed(attacker) then
-        self:removeBag(source)
-        self:giveBag(attacker)
-      else
-        attacker:sendError(_("Du darfst die Beute nicht besitzen!", attacker))
-      end
-    end
-  end
+	if not source.RobableShopDmgPause then
+		if isElement(attacker) and self:checkBagAllowed(attacker) then
+			if weapon == 0 then
+				source.RobableShopDmgPause = true
+				setTimer(function() source.RobableShopDmgPause = false end, 1500, 1)
+				if source:getPlayerAttachedObject() and source:getPlayerAttachedObject() == self.m_Bag and self:checkBagAllowed(attacker) then
+					self:removeBag(source)
+					self:giveBag(attacker)
+				else
+					attacker:sendError(_("Du darfst die Beute nicht besitzen!", attacker))
+				end
+			end
+		end
+	end
 end
 
 function RobableShop:onWasted()
