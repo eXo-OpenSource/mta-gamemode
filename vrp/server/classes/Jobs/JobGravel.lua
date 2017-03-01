@@ -7,6 +7,9 @@
 -- ****************************************************************************
 JobGravel = inherit(Job)
 
+MAX_STONES_IN_STOCK = 150
+MAX_STONES_MINED = 100
+
 function JobGravel:constructor()
 	Job.constructor(self)
 
@@ -44,7 +47,6 @@ function JobGravel:constructor()
 end
 
 function JobGravel:start(player)
-	player:setPosition(708.87, 836.69, -29.74)
 	table.insert(self.m_Jobber, player)
 
 	player.pickaxe = createObject(1858, 708.87, 836.69, -29.74)
@@ -79,43 +81,56 @@ end
 function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
 	self:registerJobVehicle(player, vehicle, true, false)
 	if vehicleModel == 486 then
+		setVehicleHandling(vehicle, "driveType", "awd")
+		setVehicleHandling(vehicle, "mass", getVehicleHandling(vehicle)["mass"]*4)
+	 	setVehicleHandling(vehicle, "tractionMultiplier", getVehicleHandling(vehicle)["tractionMultiplier"]*4)
 		player:triggerEvent("gravelOnDozerSpawn", vehicle)
 	end
 end
 
 function JobGravel:Event_onGravelMine(rockDestroyed, times)
-	local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
-	local item = createObject(2936, pos)
-	item:setScale(0)
+	if self.m_GravelMined < MAX_STONES_MINED then
 
-	nextframe(
-		function()
-			setTimer(
+		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
+		local item = createObject(2936, pos)
+		item:setScale(0)
+
+		nextframe(
 			function()
-				item:setVelocity(-0.12, 0.12, 0.12)
-				item:setScale(item:getScale() + 0.05)
-			end, 50, 20)
+				setTimer(
+				function()
+					item:setVelocity(-0.12, 0.12, 0.12)
+					item:setScale(item:getScale() + 0.05)
+				end, 50, 20)
+			end
+		)
+		if rockDestroyed then
+			client:giveMoney(times*25, "Kiesgruben-Job")
 		end
-	)
-	if rockDestroyed then
-		client:giveMoney(times*25, "Kiesgruben-Job")
+		self:updateGravelAmount("mined", true)
+		table.insert(self.m_Gravel, item)
+	else
+		client:sendError(_("Es können keine weiteren Steine abgebaut werden, bitte mit Dozern die Steine in die Behälter schieben.", client))
 	end
-	self:updateGravelAmount("mined", true)
-	table.insert(self.m_Gravel, item)
 end
 
 function JobGravel:Event_startTrack(track, vehicle)
 	if JobGravel.Tracks[track] then
-		self:updateGravelAmount("mined", false)
-		if vehicle and isElement(vehicle) then
-			if vehicle:getOccupant() then
-				vehicle:getOccupant():giveMoney(25, "Kiesgruben-Job")
+		if self.m_GravelStock < MAX_STONES_IN_STOCK then
+			self:updateGravelAmount("mined", false)
+			if vehicle and isElement(vehicle) then
+				if vehicle:getOccupant() then
+					vehicle:getOccupant():giveMoney(25, "Kiesgruben-Job")
+				end
 			end
+			self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
+				self:updateGravelAmount("stock", true)
+				gravel:destroy()
+			end)
+		else
+			client:sendError(_("Das Lager ist voll! Bitte erst mit einem Dumper die Waren nach oben befördern!", client))
+			source:destroy()
 		end
-		self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
-			self:updateGravelAmount("stock", true)
-			gravel:destroy()
-		end)
 	else
 		client:sendError("Internal Error: Track not found!")
 	end
