@@ -41,8 +41,15 @@ function ItemManager:constructor()
 		["Pina Colada"] = ItemAlcohol,
 		["Monster"] = ItemAlcohol,
 		["Shot"] = ItemAlcohol,
-		["Cuba-Libre"] = ItemAlcohol
-
+		["Cuba-Libre"] = ItemAlcohol,
+		
+		--//Wearables
+		["Helm"] = WearableHelmet,
+		["Motorcross-Helm"] = WearableHelmet,
+		["Pot-Helm"] = WearableHelmet,
+		["Gasmaske"] = WearableHelmet,
+		["Kevlar"] = WearableShirt,
+		["Tragetasche"] = WearableShirt,
 	}
 
 	self.m_Properties = {

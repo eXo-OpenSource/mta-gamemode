@@ -84,6 +84,31 @@ function CustomModelManager:constructor()
 	self:loadShader("files/images/Other/trans.png", "txgrass1_1")
 
 
+	-- Helmet FullFace
+	self:loadImportTXD("files/models/Wearables/helmet.txd", 2052)
+	self:loadImportDFF("files/models/Wearables/helmet.dff", 2052)
+	
+	-- Helmet Cross
+	self:loadImportTXD("files/models/Wearables/crosshelmet.txd", 2799)
+	self:loadImportCOL("files/models/Wearables/crosshelmet.col", 2799)
+	self:loadImportDFF("files/models/Wearables/crosshelmet.dff", 2799)
+	
+	-- Helmet Biker ( pot )
+	self:loadImportTXD("files/models/Wearables/bikerhelmet.txd", 3911)
+	self:loadImportDFF("files/models/Wearables/bikerhelmet.dff", 3911)
+	
+	-- Gas Mask
+	self:loadImportTXD("files/models/Wearables/gasmask.txd", 3890)
+	self:loadImportDFF("files/models/Wearables/gasmask.dff", 3890)
+	
+	-- Kevlar 
+	self:loadImportTXD("files/models/Wearables/kevlar.txd", 3916)
+	self:loadImportDFF("files/models/Wearables/kevlar.dff", 3916)
+	
+	-- Dufflebag
+	self:loadImportTXD("files/models/Wearables/dufflebag.txd", 3915)
+	self:loadImportDFF("files/models/Wearables/dufflebag.dff", 3915)
+
 end
 
 function CustomModelManager:loadImportDFF(filePath, modelId)

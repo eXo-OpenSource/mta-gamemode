@@ -32,6 +32,7 @@ function Inventory:constructor(owner, inventorySlots, itemData, classItems)
 			self.m_Items[id]["Objekt"] = row["Objekt"]
 			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
 			self.m_Items[id]["Platz"] = place
+			self.m_Items[id]["Value"] = row["Value"] or ""
 			self.m_Bag[row["Tasche"]][place] = id
 			if self:isSpecialItem(row["Objekt"]) then
 				local row_special = sql:queryFetchSingle("SELECT * FROM ??_inventory_items_special WHERE Item = ? AND PlayerId = ?", sql:getPrefix(), row["Objekt"], self.m_Owner:getId())
@@ -103,6 +104,7 @@ function Inventory:loadItem(id)
 			self.m_Items[id]["Objekt"] = row["Objekt"]
 			self.m_Items[id]["Menge"] = tonumber(row["Menge"])
 			self.m_Items[id]["Platz"] = place
+			self.m_Items[id]["Value"] = row["Value"]
 			self.m_Bag[row["Tasche"]][place] = id
 		else
 			removeItemFromPlace(row["Tasche"], tonumber(row["Platz"]))
@@ -124,7 +126,7 @@ function Inventory:useItem(itemId, bag, itemName, place, delete)
 	if self.m_ClassItems[itemName] then
 		local instance = ItemManager.Map[itemName]
 		if instance.use then
-			if instance:use(client, itemId, bag, place, itemName) == false then
+			if instance:use(client, itemId, bag, place, itemName ) == false then
 				return false
 			end
 		end
@@ -245,6 +247,25 @@ function Inventory:setItemPlace(bag, placeOld, placeNew)
 	self.m_Bag[bag][placeNew] = id
 	self:saveItemPlace(id, self.m_Items[id]["Platz"])
 	return true
+end
+
+function Inventory:getItemValueByBag( bag, place)
+	if bag then 
+		if place then 
+			local id = self:getItemID(bag, place)
+			if id then
+				return self.m_Items[id]["Value"]
+			end
+		end
+	end
+end
+
+function Inventory:setItemValueByBag( bag, place, value )
+	if bag then 
+		if place then 
+			self.m_Items[self.m_Bag[bag][place]]["Value"] = value
+		end
+	end
 end
 
 function Inventory:removeItemFromPlace(bag, place, amount)
