@@ -64,6 +64,7 @@ function JobGravel:stop(player)
 	self.m_DozerSpawner:toggleForPlayer(player, false)
 	self.m_DumperSpawner:toggleForPlayer(player, false)
 	player.pickaxe:destroy()
+	self:destroyDumperGravel(player)
 end
 
 function JobGravel:updateGravelAmount(type, increase)
@@ -136,6 +137,19 @@ function JobGravel:Event_startTrack(track, vehicle)
 	end
 end
 
+function JobGravel:destroyDumperGravel(player)
+	for index, gravel in pairs(self.m_Gravel) do
+		if gravel and isElement(gravel) then
+			if gravel.dumper and gravel.player and gravel.player == player then
+				gravel:destroy()
+				table.remove(self.m_Gravel, index)
+			end
+		else
+			table.remove(self.m_Gravel, index)
+		end
+	end
+end
+
 function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if hitElement:getJob() == self then
@@ -150,6 +164,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 							if self.m_GravelStock >= 1 then
 								gravel = createObject(2936, pos)
 								table.insert(self.m_Gravel, gravel)
+								gravel.dumper = true
 								self:updateGravelAmount("stock", false)
 								self:moveOnTrack(track, gravel, 1, function(gravel)
 									gravel.player = player
@@ -182,7 +197,7 @@ function JobGravel:Event_onDumperDeliver()
 		self.m_DumperDeliverStones[client]= self.m_DumperDeliverStones[client] + 1
 		client.vehicle.gravelLoaded = false
 		source:destroy()
-
+		self:destroyDumperGravel(player)
 		if not self.m_DumperDeliverTimer[client] then
 			self.m_DumperDeliverTimer[client] = setTimer(bind(self.giveDumperDeliverLoan, self), 1500, 1, client)
 		end
