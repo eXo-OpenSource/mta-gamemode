@@ -77,7 +77,7 @@ function JobGravel:updateGravelAmount(type, increase)
 end
 
 function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
-	self:registerJobVehicle(player, vehicle, true, true)
+	self:registerJobVehicle(player, vehicle, true, false)
 	if vehicleModel == 486 then
 		player:triggerEvent("gravelOnDozerSpawn", vehicle)
 	end
