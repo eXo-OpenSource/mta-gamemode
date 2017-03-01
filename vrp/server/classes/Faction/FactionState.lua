@@ -672,8 +672,8 @@ function FactionState:Command_suspect(player,cmd,target,amount,...)
 				if not isPedDead(target) then
 					if string.len(reason) > 2 and string.len(reason) < 50 then
 						target:giveWantedLevel(amount)
-						outputChatBox(("Verbrechen begangen: %s, %s Wanteds, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
-						local msg = ("%s hat %s %d Wanteds wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
+						outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason,amount,player:getName()), target, 255, 255, 0 )
+						local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(player:getName(),target:getName(),amount, reason)
 						StatisticsLogger:getSingleton():addTextLog("wanteds", msg)
 						player:getFaction():addLog(player, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds wegen "..reason.." gegeben!")
 						self:sendMessage(msg, 255,0,0)
@@ -1024,7 +1024,7 @@ function FactionState:Event_giveWanteds(target, amount, reason)
 			target:giveWantedLevel(amount)
 			outputChatBox(("Verbrechen begangen: %s, %s Wanted/s, Gemeldet von: %s"):format(reason, amount, client:getName()), target, 255, 255, 0 )
 			local msg = ("%s hat %s %d Wanted/s wegen %s gegeben!"):format(client:getName(), target:getName(), amount, reason)
-			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanteds gegeben! Grund: "..reason)
+			faction:addLog(client, "Wanteds", "hat "..target:getName().." "..amount.." Wanted/s gegeben! Grund: "..reason)
 			self:sendMessage(msg, 255,0,0)
 		end
 	end
