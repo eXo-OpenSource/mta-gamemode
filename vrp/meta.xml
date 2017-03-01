@@ -1322,6 +1322,10 @@
 	<vrpfile src="files/audio/scary.mp3"/>
 	<vrpfile src="files/audio/scream.mp3"/>
 	<vrpfile src="files/audio/scary_source.txt"/>
+	<vrpfile src="files/audio/jobs/pickaxe1.mp3"/>
+	<vrpfile src="files/audio/jobs/pickaxe2.mp3"/>
+	<vrpfile src="files/audio/jobs/pickaxe3.mp3"/>
+	<vrpfile src="files/audio/jobs/pickaxe4.mp3"/>
 
 	<!-- Ringtones -->
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>

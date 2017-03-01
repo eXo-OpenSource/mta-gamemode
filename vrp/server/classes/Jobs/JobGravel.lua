@@ -39,10 +39,11 @@ function JobGravel:constructor()
 	self.m_DumperDeliverTimer = {}
 	self.m_DumperDeliverStones = {}
 
-	addRemoteEvents{"onGravelMine", "gravelStartTrack", "gravelDumperDeliver"}
+	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver"}
 	addEventHandler("onGravelMine", root, bind(self.Event_onGravelMine, self))
-	addEventHandler("gravelStartTrack", root, bind(self.Event_startTrack, self))
+	addEventHandler("gravelOnCollectingContainerHit", root, bind(self.Event_onCollectingContainerHit, self))
 	addEventHandler("gravelDumperDeliver", root, bind(self.Event_onDumperDeliver, self))
+
 
 end
 
@@ -67,6 +68,8 @@ function JobGravel:stop(player)
 	self:destroyDumperGravel(player)
 end
 
+--General
+
 function JobGravel:updateGravelAmount(type, increase)
 	local amount = increase and 1 or -1
 	if type == "stock" then
@@ -89,19 +92,38 @@ function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
 	end
 end
 
+function JobGravel:moveOnTrack(track, gravel, step, callback)
+	if track and track[step] then
+		local speed, pos = unpack(track[step])
+		gravel:move(speed, pos)
+		setTimer(function()
+			if track[step+1] then
+				self:moveOnTrack(track, gravel, step+1, callback)
+			else
+				if callback then
+					callback(gravel)
+				end
+			end
+		end, speed, 1)
+	end
+end
+
+--Step 1 Mine
+
 function JobGravel:Event_onGravelMine(rockDestroyed, times)
 	if self.m_GravelMined < MAX_STONES_MINED then
 
 		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
-		local item = createObject(2936, pos)
-		item:setScale(0)
+		local gravel = createObject(2936, pos)
+		client:triggerEvent("gravelDisableCollission", gravel)
+		gravel:setScale(0)
 
 		nextframe(
 			function()
 				setTimer(
 				function()
-					item:setVelocity(-0.12, 0.12, 0.12)
-					item:setScale(item:getScale() + 0.05)
+					gravel:setVelocity(-0.12, 0.12, 0.12)
+					gravel:setScale(gravel:getScale() + 0.05)
 				end, 50, 20)
 			end
 		)
@@ -109,13 +131,15 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 			client:giveMoney(times*25, "Kiesgruben-Job")
 		end
 		self:updateGravelAmount("mined", true)
-		table.insert(self.m_Gravel, item)
+		table.insert(self.m_Gravel, gravel)
 	else
 		client:sendError(_("Es können keine weiteren Steine abgebaut werden, bitte mit Dozern die Steine in die Behälter schieben.", client))
 	end
 end
 
-function JobGravel:Event_startTrack(track, vehicle)
+--Step 2 Dozer Part
+
+function JobGravel:Event_onCollectingContainerHit(track, vehicle)
 	if JobGravel.Tracks[track] then
 		if self.m_GravelStock < MAX_STONES_IN_STOCK then
 			self:updateGravelAmount("mined", false)
@@ -136,6 +160,8 @@ function JobGravel:Event_startTrack(track, vehicle)
 		client:sendError("Internal Error: Track not found!")
 	end
 end
+
+--Step 3 Transport / Dumper Part
 
 function JobGravel:destroyDumperGravel(player)
 	for index, gravel in pairs(self.m_Gravel) do
@@ -197,7 +223,6 @@ function JobGravel:Event_onDumperDeliver()
 		self.m_DumperDeliverStones[client]= self.m_DumperDeliverStones[client] + 1
 		client.vehicle.gravelLoaded = false
 		source:destroy()
-		self:destroyDumperGravel(player)
 		if not self.m_DumperDeliverTimer[client] then
 			self.m_DumperDeliverTimer[client] = setTimer(bind(self.giveDumperDeliverLoan, self), 1500, 1, client)
 		end
@@ -209,22 +234,7 @@ function JobGravel:giveDumperDeliverLoan(player)
 	local loan = amount*150
 	player:sendShortMessage(_("%d Steine abgegeben! %d$", player, amount, loan))
 	player:giveMoney(loan, "Kiesgruben-Job")
-end
-
-function JobGravel:moveOnTrack(track, gravel, step, callback)
-	if track and track[step] then
-		local speed, pos = unpack(track[step])
-		gravel:move(speed, pos)
-		setTimer(function()
-			if track[step+1] then
-				self:moveOnTrack(track, gravel, step+1, callback)
-			else
-				if callback then
-					callback(gravel)
-				end
-			end
-		end, speed, 1)
-	end
+	self:destroyDumperGravel(player)
 end
 
 JobGravel.Tracks = {

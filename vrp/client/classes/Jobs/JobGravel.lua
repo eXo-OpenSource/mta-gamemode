@@ -8,7 +8,7 @@
 
 JobGravel = inherit(Job)
 
-addRemoteEvents{"gravelUpdateData", "gravelOnDozerSpawn"}
+addRemoteEvents{"gravelUpdateData", "gravelOnDozerSpawn", "gravelDisableCollission"}
 
 function JobGravel:constructor()
 	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Gravel.png", "files/images/Jobs/HeaderGravel.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
@@ -19,6 +19,7 @@ function JobGravel:constructor()
 	self.m_OnRockColHitBind = bind(self.onRockColHit, self)
 	self.m_OnRockColLeaveBind = bind(self.onRockColLeave, self)
 	self.m_OnRockClickBind = bind(self.onRockClick, self)
+	addEventHandler("gravelDisableCollission", root, bind(self.Event_disableGravelCollission, self))
 
 end
 
@@ -26,8 +27,6 @@ function JobGravel:start()
 	self.m_Rocks = {}
 	self.m_RockCols = {}
 	self:generateRocks()
-
-	self.m_MinedRocks = 0
 
 	self.m_GravelDeliverCol = {
 		createColSphere(677.01, 827.03, -28.20, 4),
@@ -41,7 +40,7 @@ function JobGravel:start()
 
 	for index, col in pairs(self.m_GravelDeliverCol) do
 		col.track = "Track"..index
-		addEventHandler("onClientColShapeHit", col, bind(self.onDeliverColHit, self))
+		addEventHandler("onClientColShapeHit", col, bind(self.onCollectingColHit, self))
 	end
 
 	-- Create info display
@@ -109,6 +108,13 @@ function JobGravel:onInfo()
 	end, 24000,1)
 end
 
+function JobGravel:Event_disableGravelCollission(gravel)
+	gravel:setCollidableWith(localPlayer, false)
+	setTimer(function()
+		gravel:setCollidableWith(localPlayer, true)
+	end, 3000, 1)
+end
+
 function JobGravel:stop()
 	for index, element in pairs(self.m_Rocks) do
 		if element and isElement(element) then element:destroy() end
@@ -132,6 +138,8 @@ end
 
 
 function JobGravel:generateRocks()
+	self.m_MinedRocks = 0
+
 	for index, data in pairs(JobGravel.RockPositions) do
 		if self.m_Rocks[index] and isElement(self.m_Rocks[index]) then self.m_Rocks[index]:destroy() end
 		local x, y, z, rot = unpack(data["rock"])
@@ -152,7 +160,7 @@ function JobGravel:onDozerColHit(hitElement, dim)
 end
 
 function JobGravel:onRockColHit(hit, dim)
-	if hit == localPlayer and dim then
+	if hit == localPlayer and dim and not hit.vehicle then
 		localPlayer.m_GravelCol = source
 		localPlayer.m_GravelColClicked = 0
 		addEventHandler("onClientKey", root, self.m_OnRockClickBind)
@@ -179,7 +187,7 @@ function JobGravel:onRockClick(key, press)
 				local times = localPlayer.m_GravelCol.Times
 				local rockDestroyed = false
 
-				localPlayer:setAnimation("sword", "sword_4", 1500, true, true, false, false)
+				localPlayer:setAnimation("sword", "sword_4", 2200, true, true, false, false)
 
 				if JobGravel.GravelProgress and localPlayer.m_GravelCol.Times then
 					JobGravel.GravelProgress:setProgress(localPlayer.m_GravelColClicked, localPlayer.m_GravelCol.Times)
@@ -192,11 +200,11 @@ function JobGravel:onRockClick(key, press)
 					self.m_MinedRocks = self.m_MinedRocks+1
 					rockDestroyed = true
 				end
-
+				playSound3D(("files/audio/jobs/pickaxe%d.mp3"):format(math.random(1,4)), localPlayer:getPosition())
 				triggerServerEvent("onGravelMine", localPlayer, rockDestroyed, times)
 
 
-				setTimer(function() localPlayer.m_GravelClickPause = false end, 1500, 1)
+				setTimer(function() localPlayer.m_GravelClickPause = false end, 2200, 1)
 
 				if self.m_MinedRocks >= #JobGravel.RockPositions then
 					self:generateRocks()
@@ -206,9 +214,9 @@ function JobGravel:onRockClick(key, press)
 	end
 end
 
-function JobGravel:onDeliverColHit(hitElement, dim)
+function JobGravel:onCollectingColHit(hitElement, dim)
 	if hitElement:getModel() == 2936 then
-		triggerServerEvent("gravelStartTrack", hitElement, source.track, hitElement.vehicle)
+		triggerServerEvent("gravelOnCollectingContainerHit", hitElement, source.track, hitElement.vehicle)
 	end
 end
 
