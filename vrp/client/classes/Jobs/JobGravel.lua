@@ -152,7 +152,7 @@ function JobGravel:onDozerColHit(hitElement, dim)
 end
 
 function JobGravel:onRockColHit(hit, dim)
-	if hit == localPlayer and dim then
+	if hit == localPlayer and dim and not hit.vehicle then
 		localPlayer.m_GravelCol = source
 		localPlayer.m_GravelColClicked = 0
 		addEventHandler("onClientKey", root, self.m_OnRockClickBind)
