@@ -294,11 +294,13 @@ function FactionManager:Event_factionRankUp(playerId)
 			if faction:isEvilFaction() then
 				if player:getKarma() > ( -FACTION_MIN_RANK_KARMA[playerRank + 1] or -100000) then
 					client:sendError(_("Der Spieler hat zuwenig negatives Karma! (Benötigt: %s)", client, -FACTION_MIN_RANK_KARMA[playerRank + 1]))
+					if isOffline then delete(player) end
 					return
 				end
 			else
 				if player:getKarma() < (FACTION_MIN_RANK_KARMA[playerRank + 1] or 10000) then
 					client:sendError(_("Der Spieler hat zuwenig positives Karma! (Benötigt: %s)", client, FACTION_MIN_RANK_KARMA[playerRank + 1]))
+					if isOffline then delete(player) end
 					return
 				end
 			end
@@ -316,6 +318,7 @@ function FactionManager:Event_factionRankUp(playerId)
 				self:sendInfosToClient(client)
 			else
 				client:sendError(_("Du kannst Spieler nicht höher als auf Rang 6 setzen!", client))
+				if isOffline then delete(player) end
 			end
 		end
 	)(client)
@@ -353,6 +356,7 @@ function FactionManager:Event_factionRankDown(playerId)
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht niedriger als auf Rang 0 setzen!", client))
+		if isOffline then delete(player) end
 	end
 end
 
