@@ -93,6 +93,7 @@
 
 	<!-- Player -->
 	<script src="server/classes/Player/Account.lua" type="server"/>
+	<script src="server/classes/Player/MultiAccount.lua" type="server"/>
 	<script src="server/classes/Player/DatabasePlayer.lua" type="server"/>
 	<script src="server/classes/Player/Player.lua" type="server"/>
 	<script src="server/classes/Player/Premium.lua" type="server"/>
