@@ -44,7 +44,7 @@ function phpSDKSendOnlinePlayers()
 	local i = 1
 
 	for index, player in pairs(getElementsByType("player")) do
-		if player:isActive() then
+		if player.isActive and player:isActive() then
 			players[i]= {
 				["Name"] = player:getName(),
 				["Id"] = player:getId() or 0,
