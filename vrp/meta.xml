@@ -83,6 +83,7 @@
 	<script src="server/classes/PhoneNumbers.lua" type="server"/>
 	<script src="server/classes/Tour.lua" type="server"/>
 	<script src="server/classes/GlobalTimer.lua" type="server"/>
+	<script src="server/classes/SkinModdingCheck.lua" type="server"/>
 
 
 	<!-- Super -->
