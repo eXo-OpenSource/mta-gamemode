@@ -11,7 +11,8 @@ MultiAccount = {}
 function MultiAccount.addSerial(Id, serial)
 	local row = sql:queryFetchSingle("SELECT ID FROM ??_account_to_serial WHERE PlayerId = ? AND Serial = ?;", sql:getPrefix(), Id, serial)
 	if not row then
-		sql:queryExec("INSERT INTO ??_account_to_serial (PlayerId, Serial) VALUES (?, ?);", sql:getPrefix(), Id, serial)
+		-- We can't use queryExec here cause we have to wait for sql insert to ensure "isSerialUsed" works correctly
+		sql:queryFetch("INSERT INTO ??_account_to_serial (PlayerId, Serial) VALUES (?, ?);", sql:getPrefix(), Id, serial)
 	end
 end
 
@@ -50,7 +51,7 @@ end
 function MultiAccount.allowedToCreateAnMultiAccount(serial)
 	local row = sql:queryFetchSingle("SELECT allowCreate FROM ??_account_multiaccount WHERE Serial = ?;", sql:getPrefix(), serial)
 
-	if toboolean(row.allowCreate) then
+	if row and toboolean(row.allowCreate) then
 		local linkedAccounts = MultiAccount.getLinkedAccountsForSerial(serial)
 		if linkedAccounts and #linkedAccounts >= MAX_MULTIACCOUNTS then
 			return false
@@ -61,9 +62,9 @@ function MultiAccount.allowedToCreateAnMultiAccount(serial)
 end
 
 function MultiAccount.linkAccountToSerial(Id, serial)
-end
-
-
---
-function MultiAccount.performCheck(Id, serial)
+	local linkedAccounts = MultiAccount.getLinkedAccountsForSerial(serial)
+	if linkedAccounts then
+		table.insert(linkedAccounts, Id)
+		sql:queryExec("UPDATE ??_account_multiaccount SET LinkedTo = ?, allowCreate = 0", sql:getPrefix(), toJSON(linkedAccounts))
+	end
 end
