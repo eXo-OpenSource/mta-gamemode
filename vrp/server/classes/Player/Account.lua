@@ -112,11 +112,15 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 	if MULTIACCOUNT_CHECK then
 		MultiAccount.addSerial(Id, player:getSerial())
 
-		-- todo: move to MultiAccount.performCheck
 		if #MultiAccount.getAccountsBySerial(player:getSerial()) > 1 then
 			if not MultiAccount.isAccountLinkedToSerial(Id, player:getSerial()) then
-				player:triggerEvent("loginfailed", "Deine Serial wird für mehrere Accounts benutzt.")
-				return false
+				if not MultiAccount.allowedToCreateAnMultiAccount(player:getSerial()) then
+					player:triggerEvent("loginfailed", "Deine Serial wird für mehrere Accounts benutzt.")
+					return false
+				else
+					outputChatBox("LinkAccount to serial.")
+					MultiAccount.linkAccountToSerial(Id, player:getSerial())
+				end
 			end
 		end
 	end
@@ -144,8 +148,10 @@ addEventHandler("checkRegisterAllowed", root, function()
 	if MULTIACCOUNT_CHECK then
 		local playerId = MultiAccount.isSerialUsed(client:getSerial())
 		if playerId then
-			local name = Account.getNameFromId(playerId)
-			client:triggerEvent("receiveRegisterAllowed", false, name)
+			if not MultiAccount.allowedToCreateAnMultiAccount(client:getSerial()) then
+				local name = Account.getNameFromId(playerId)
+				client:triggerEvent("receiveRegisterAllowed", false, name)
+			end
 		end
 	end
 end)
@@ -175,8 +181,10 @@ function Account.register(player, username, password, email)
 	-- Check Serial
 	if MULTIACCOUNT_CHECK then
 		if MultiAccount.isSerialUsed(player:getSerial()) then
-			player:triggerEvent("registerfailed", _("Fehler: Du besitzt bereits ein Account!", player))
-			return false
+			if not MultiAccount.allowedToCreateAnMultiAccount(player:getSerial()) then
+				player:triggerEvent("registerfailed", _("Fehler: Du besitzt bereits ein Account!", player))
+				return false
+			end
 		end
 	end
 
@@ -253,7 +261,6 @@ function Account:constructor(id, username, player, guest, ForumID, RegisterDate)
 	self.m_RegisterDate = RegisterDate or "Unbekannt"
 	player.m_IsGuest = guest;
 	player.m_Id = self.m_Id
-
 
 	if not guest then
 		sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, LastLogin FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
