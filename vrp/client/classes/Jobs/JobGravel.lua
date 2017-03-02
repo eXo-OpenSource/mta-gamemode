@@ -24,6 +24,8 @@ function JobGravel:constructor()
 end
 
 function JobGravel:start()
+	QuestionBox:new(_"Willst du das Tutorial zum Kiesgruben-Job ansehen?", bind(self.onInfo, self))
+
 	self.m_Rocks = {}
 	self.m_RockCols = {}
 	self:generateRocks()
@@ -74,7 +76,8 @@ function JobGravel:onInfo()
 	end
 	CutscenePlayer:getSingleton():playCutscene("GravelJob",
 		function()
-			localPlayer:setPosition(588.85, 869.45, -42.50)
+			fadeCamera(true)
+			setCameraTarget(localPlayer)
 		end, 0)
 end
 

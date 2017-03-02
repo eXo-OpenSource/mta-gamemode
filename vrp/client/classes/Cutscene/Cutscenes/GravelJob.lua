@@ -23,12 +23,6 @@ CutscenePlayer:getSingleton():registerCutscene("GravelJob", {
 			starttick = 0;
 		};
 		{
-			action = "Audio.playSound";
-			path = "Intro.mp3";
-			starttick = 0;
-			duration = 200000;
-		};
-		{
 			action = "Camera.set";
 			starttick = 0;
 			pos = {745.26, 806.82, 24.60};
@@ -132,8 +126,8 @@ CutscenePlayer:getSingleton():registerCutscene("GravelJob", {
 			action = "Camera.move"; -- Move Track
 			targetpos = {651.22, 824.00, 35.0};
 			targetlookat = {734.20, 921.85, -7.37};
-			starttick = 42000;
-			duration = 6000;
+			starttick = 41000;
+			duration = 7000;
 		};
 		{
 			action = "Graphic.setLetterBoxText";
@@ -172,6 +166,10 @@ CutscenePlayer:getSingleton():registerCutscene("GravelJob", {
 			fadein = false;
 			time = 1000;
 			starttick = 65000;
+		};
+		{
+			action = "General.finish";
+			starttick = 66000;
 		};
 	};
 })
