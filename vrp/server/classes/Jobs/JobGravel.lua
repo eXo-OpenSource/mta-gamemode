@@ -13,7 +13,7 @@ MAX_STONES_MINED = 100
 function JobGravel:constructor()
 	Job.constructor(self)
 
-	self.m_GravelStock = 9
+	self.m_GravelStock = 0
 	self.m_GravelMined = 0
 
 	self.m_Jobber = {}
