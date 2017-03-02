@@ -93,7 +93,9 @@ end
 
 function PlayerManager:updatePlayerSync()
 	for k, v in pairs(getElementsByType("player")) do
-		v:updateSync()
+		if v and isElement(v) and v.updateSync then
+			v:updateSync()
+		end
 	end
 end
 
