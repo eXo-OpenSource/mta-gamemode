@@ -31,8 +31,8 @@ function JobGravel:start()
 	self:generateRocks()
 
 	self.m_GravelDeliverCol = {
-		createColSphere(677.01, 827.03, -28.20, 4),
-		createColSphere(687.68, 846.27, -28.21, 4)
+		createColSphere(677.01, 827.03, -28.20, 5),
+		createColSphere(687.68, 846.27, -28.21, 5)
 	}
 
 	self.m_DumperDeliverCol = createColSphere(824.22, 919.35, 13.35, 10)
@@ -93,6 +93,7 @@ function JobGravel:stop()
 		if element and isElement(element) then element:destroy() end
 	end
 	for index, element in pairs(self.m_RockCols) do
+		if element.Blip then delete(element.Blip) end
 		if element and isElement(element) then element:destroy() end
 	end
 	for index, element in pairs(self.m_GravelDeliverCol) do
@@ -102,6 +103,8 @@ function JobGravel:stop()
 	if self.m_DumperDeliverCol and isElement(self.m_DumperDeliverCol) then self.m_DumperDeliverCol:destroy() end
 	if self.m_DumperDeliverMarker and isElement(self.m_DumperDeliverMarker) then self.m_DumperDeliverMarker:destroy() end
 	if self.m_DumperDeliverBlip then delete(self.m_DumperDeliverBlip) end
+
+	removeEventHandler("onClientKey", root, self.m_OnRockClickBind)
 
 	-- delete infopanels
 	delete(self.m_GravelImage)
@@ -115,9 +118,15 @@ function JobGravel:generateRocks()
 
 	for index, data in pairs(JobGravel.RockPositions) do
 		if self.m_Rocks[index] and isElement(self.m_Rocks[index]) then self.m_Rocks[index]:destroy() end
+		if self.m_RockCols[index] and isElement(self.m_RockCols[index]) then
+			if self.m_RockCols[index].Blip then delete(self.m_RockCols[index].Blip) end
+			self.m_RockCols[index]:destroy()
+		end
+
 		local x, y, z, rot = unpack(data["rock"])
 		self.m_Rocks[index] = createObject(900, x, y, z, 0, 0, rot)
 		self.m_RockCols[index] = createColSphere(data["col"], 6)
+		self.m_RockCols[index].Blip = Blip:new("SmallPoint.png", data["col"].x, data["col"].y)
 		self.m_RockCols[index].Rock = self.m_Rocks[index]
 		self.m_RockCols[index].Times = math.random(4, 10)
 		addEventHandler("onClientColShapeHit", self.m_RockCols[index], self.m_OnRockColHitBind)

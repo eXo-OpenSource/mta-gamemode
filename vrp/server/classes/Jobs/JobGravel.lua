@@ -146,6 +146,7 @@ function JobGravel:Event_togglePickaxe(state)
 		end
 	else
 		if client.pickaxe and isElement(client.pickaxe) then client.pickaxe:destroy() end
+		client.pickaxe = nil
 	end
 end
 
@@ -256,7 +257,7 @@ end
 
 JobGravel.Tracks = {
 	["Track1"] = {
-		[1] = {0, Vector3(676.10, 827.4, -41.2)},
+		[1] = {50, Vector3(676.10, 827.4, -41.2)},
 		[2] = {6000, Vector3(641.00, 843.80, -34.4)},
 		[3] = {1000, Vector3(640.90, 843.90, -37)},
 		[4] = {6000, Vector3(627.5, 881.1, -30.4)},
@@ -265,14 +266,14 @@ JobGravel.Tracks = {
 		[7] = {2000, Vector3(619.20, 886.70, -34.4)}
 	},
 	["Track2"] = {
-		[1] = {0, Vector3(686.90, 847.5, -41.10)},
+		[1] = {50, Vector3(686.90, 847.5, -41.10)},
 		[2] = {6000, Vector3(654.20, 866.70, -34.6)},
 		[3] = {1000, Vector3(653.80, 866.90, -37)},
 		[4] = {6000, Vector3(619.50, 886.80, -30.3)},
 		[5] = {2000, Vector3(619.20, 886.70, -34.4)}
 	},
 	["Dumper1"] = {
-		[1] = {0, Vector3(618.5, 894.4, -41.3)},
+		[1] = {50, Vector3(618.5, 894.4, -41.3)},
 		[2] = {6000, Vector3(584.5, 914, -34.5)},
 		[3] = {2000, Vector3(583.8, 914.1, -37.3)},
 		[4] = {6000, Vector3(545.1, 919.8, -30.5)},
