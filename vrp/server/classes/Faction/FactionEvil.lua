@@ -171,8 +171,12 @@ function FactionEvil:Event_StartRaid(target)
 				client:sendError(_("Du kannst nicht aus einem Fahrzeug überfallen!", client))
 				return
 			end
+			if target:getPublicSync("supportMode") then
+				client:sendError(_("Du kannst keine aktiven Supporter überfallen!", client))
+				return
+			end
 			if target:getInterior() > 0 then
-				client:sendError(_("Du kannst Leute nur im freien überfallen!", client))
+				client:sendError(_("Du kannst Leute nur im Freien überfallen!", client))
 				return
 			end
 			if math.floor(target:getPlayTime()/60) < 10 then

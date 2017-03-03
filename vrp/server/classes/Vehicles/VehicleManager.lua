@@ -741,6 +741,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 	end
 	if source:isPermanent() then
 		client:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
+
 		if getElementData(source, "OwnerName") then
 			local targetId = Account.getIdFromName(getElementData(source, "OwnerName"))
 			if targetId and targetId > 0 then
@@ -758,6 +759,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 			end
 		end
 		-- Todo Add Log
+		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel())
 		source:purge()
 	else
 		destroyElement(source)

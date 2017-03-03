@@ -23,7 +23,7 @@ function JobLumberjack:constructor()
 	self.m_VehicleSpawner:disable()
 
 	self.m_Col = createColSphere(1022.550, -339.239, 73.992, 300)
-		addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
+	addEventHandler("onColShapeHit", self.m_Col, function(hitElement, dim)
 		if hitElement.type == "player" and dim then
 			if hitElement:getJob() == self then
 				giveWeapon(hitElement, 9, 1, true)
@@ -37,7 +37,6 @@ function JobLumberjack:constructor()
 			end
 		end
 	end)
-
 
 	self.m_ResetDataBind = bind(self.onResetData, self)
 
@@ -64,8 +63,8 @@ end
 
 function JobLumberjack:onVehicleSpawn(player, vehicleModel, vehicle)
 	vehicle:setVariant(255, 255)
-	vehicle:addCountdownDestroy(10)
 	vehicle.LumberjackOwner = player
+	self:registerJobVehicle(player, vehicle, true, false)
 end
 
 function JobLumberjack:checkRequirements(player)
@@ -85,6 +84,11 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
 			hitElement:sendMessage(_("Bitte benutze einen Flatbed", hitElement), 255, 0, 0)
+			return
+		end
+
+		if hitElement.vehicleSeat ~= 0 then
+			hitElement:sendMessage(_("Aufladen nicht möglich. Nutze einen eigenen Flatbed!", hitElement), 255, 0, 0)
 			return
 		end
 
@@ -132,12 +136,17 @@ end
 
 function JobLumberjack:dumpHit(hitElement, matchingDimension)
 	if getElementType(hitElement) == "player" and matchingDimension then
+		if hitElement:getJob() ~= self then
+			return
+		end
+
 		local vehicle = getPedOccupiedVehicle(hitElement)
 		if not vehicle or getElementModel(vehicle) ~= 455 then
 			hitElement:sendMessage(_("Bitte steige in einen Flatbed ein", hitElement))
 			return
 		end
-		if hitElement:getJob() ~= self then
+
+		if hitElement.vehicleSeat ~= 0 then
 			return
 		end
 

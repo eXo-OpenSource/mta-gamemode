@@ -3,7 +3,7 @@ SkinModdingCheck.MAX_DIFFER_X = 0.2
 SkinModdingCheck.MAX_DIFFER_Y = 0.2
 SkinModdingCheck.MAX_DIFFER_Z = 0.1
 
-function SkinModdingCheck:constructor() 
+function SkinModdingCheck:constructor()
 	addEventHandler ( "onPlayerModInfo", getRootElement(), bind(self.handleOnPlayerModInfo, self))
 	for _,plr in ipairs( getElementsByType("player") ) do
 		resendPlayerModInfo( plr )
