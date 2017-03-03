@@ -163,7 +163,7 @@ function JobGravel:Event_onCollectingContainerHit(track)
 			end
 			self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
 				self:updateGravelAmount("stock", true)
-				gravel:destroy()
+				if gravel and isElement(gravel) then gravel:destroy() end
 			end)
 		else
 			client:sendError(_("Das Lager ist voll! Bitte erst mit einem Dumper die Waren nach oben befördern!", client))
