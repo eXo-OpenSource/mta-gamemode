@@ -76,6 +76,7 @@ function JobGravel:onGravelJobLeave(hitElement, dim)
 		if hitElement:getJob() == self then
 			if hitElement.vehicle and hitElement.vehicle.jobPlayer then
 				hitElement:sendError(_("Du hast das Jobgebiet unerlaubt mit einem Fahrzeug verlassen!", hitElement))
+				hitElement.vehicle:destroy()
 				JobManager:getSingleton():stopJobForPlayer(hitElement)
 			end
 		end
@@ -249,9 +250,9 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 								gravel = createObject(2936, pos)
 								table.insert(self.m_Gravel, gravel)
 								gravel.dumper = true
+								gravel.player = player
 								self:updateGravelAmount("stock", false)
 								self:moveOnTrack(track, gravel, 1, function(gravel)
-									gravel.player = player
 									gravel.LoadTime = getRealTime().timestamp
 									setElementVelocity(gravel, 0, 0, -0.1)
 								end
@@ -298,6 +299,8 @@ function JobGravel:giveDumperDeliverLoan(player)
 	player:sendShortMessage(_("%d Steine abgegeben! %d$", player, amount, loan))
 	player:giveMoney(loan, "Kiesgruben-Job")
 	self:destroyDumperGravel(player)
+	self.m_DumperDeliverTimer[player] = nil
+	self.m_DumperDeliverStones[player] =  nil
 end
 
 JobGravel.Tracks = {
