@@ -3,7 +3,7 @@ SkinModdingCheck.MAX_DIFFER_X = 0.2
 SkinModdingCheck.MAX_DIFFER_Y = 0.2
 SkinModdingCheck.MAX_DIFFER_Z = 0.1
 
-function SkinModdingCheck:constructor() 
+function SkinModdingCheck:constructor()
 	addEventHandler ( "onPlayerModInfo", getRootElement(), bind(self.handleOnPlayerModInfo, self))
 	for _,plr in ipairs( getElementsByType("player") ) do
 		resendPlayerModInfo( plr )
@@ -19,9 +19,9 @@ function SkinModdingCheck:handleOnPlayerModInfo ( filename, modList )
 			if item.sizeX then
 				differenceX =  math.abs(item.originalSizeX - item.sizeX)
 				differenceY = math.abs( item.originalSizeY - item.sizeY)
-				differenceZ = math.abs( item.originalSizeZ - item.sizeZ)			
-				if differenceX >= SkinModdingCheck.MAX_DIFFER_X or differenceY >= SkinModdingCheck.MAX_DIFFER_Y or differenceZ >= SkinModdingCheck.MAX_DIFFER_Z then 
-					kickPlayer(source,"Einige Modifikationen weichen zu stark in der Größe ab!")
+				differenceZ = math.abs( item.originalSizeZ - item.sizeZ)
+				if differenceX >= SkinModdingCheck.MAX_DIFFER_X or differenceY >= SkinModdingCheck.MAX_DIFFER_Y or differenceZ >= SkinModdingCheck.MAX_DIFFER_Z then
+					kickPlayer(source,"Einige Modifikationen weichen zu stark in der Grï¿½ï¿½e ab!")
 				end
 			end
         end
