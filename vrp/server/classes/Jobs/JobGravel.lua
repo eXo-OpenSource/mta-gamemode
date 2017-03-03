@@ -236,7 +236,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 		if hitElement:getJob() == self then
 			if hitElement.vehicle and hitElement.vehicle:getModel() == 406 then
 				if source.isBusy then
-					hitWarning:sendInfo(_("Der vordere Ladevorgang wurde noch nicht beendet! Bitte warten!", hitElement))
+					hitElement:sendWarning(_("Der vordere Ladevorgang wurde noch nicht beendet! Bitte warten!", hitElement))
 					return
 				end
 				if not hitElement.vehicle.gravelLoaded then
