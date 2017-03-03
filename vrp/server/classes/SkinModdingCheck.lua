@@ -1,6 +1,6 @@
 SkinModdingCheck = inherit( Singleton )
-SkinModdingCheck.MAX_DIFFER_X = 0.2
-SkinModdingCheck.MAX_DIFFER_Y = 0.2
+SkinModdingCheck.MAX_DIFFER_X = 0.3
+SkinModdingCheck.MAX_DIFFER_Y = 0.3
 SkinModdingCheck.MAX_DIFFER_Z = 0.4
 
 function SkinModdingCheck:constructor()
