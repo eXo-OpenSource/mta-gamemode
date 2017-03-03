@@ -152,13 +152,13 @@ end
 
 --Step 2 Dozer Part
 
-function JobGravel:Event_onCollectingContainerHit(track, vehicle)
+function JobGravel:Event_onCollectingContainerHit(track)
 	if JobGravel.Tracks[track] then
 		if self.m_GravelStock < MAX_STONES_IN_STOCK then
 			self:updateGravelAmount("mined", false)
-			if vehicle and isElement(vehicle) then
-				if vehicle:getOccupant() and source.vehicle == vehicle then
-					vehicle:getOccupant():giveMoney(25, "Kiesgruben-Job")
+			if source.vehicle and isElement(source.vehicle) then
+				if source.vehicle:getOccupant() then
+					source.vehicle:getOccupant():giveMoney(25, "Kiesgruben-Job")
 				end
 			end
 			self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
