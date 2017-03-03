@@ -7,7 +7,7 @@
 -- ****************************************************************************
 JobGravel = inherit(Job)
 
-MAX_STONES_IN_STOCK = 150
+MAX_STONES_IN_STOCK = 250
 MAX_STONES_MINED = 100
 
 function JobGravel:constructor()
