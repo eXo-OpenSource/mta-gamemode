@@ -705,7 +705,7 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 							player:sendError(_("Du kannst dich nicht selbst fesseln!", player))
 							return
 						end
-						if target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle then
+						if force == true or (target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle) then
 							if isControlEnabled(target, "enter_exit") and (not bool or bool == true) then
 								player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
 								target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
@@ -1055,7 +1055,7 @@ function FactionState:Event_grabPlayer(target)
 							warpPedIntoVehicle(target, vehicle, seat)
 							client:sendInfo(_("%s wurde in dein Fahrzeug gezogen!", client, target:getName()))
 							target:sendInfo(_("Du wurdest von %s in das Fahrzeug gezogen!", target, client:getName()))
-							self:Command_tie(client, "tie", target:getName(), true)
+							self:Command_tie(client, "tie", target:getName(), true, true)
 							return
 						end
 					end
