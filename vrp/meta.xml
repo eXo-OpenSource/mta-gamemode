@@ -749,6 +749,9 @@
 	<vrpfile src="files/images/Chess/PawnB.png" />
 	<vrpfile src="files/images/Chess/KnightB.png" />
 
+	
+	<vrpfile src="files/images/warning.png" />
+	
 	<!-- board piece -->
 	<vrpfile src="files/images/Chess/board.jpg" />
 	<vrpfile src="files/images/Chess/tile.png" />
