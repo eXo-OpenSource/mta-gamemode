@@ -90,6 +90,7 @@ function JobGravel:destroyUnusedGravel()
 				if gravel.LastHit and getRealTime().timestamp - gravel.LastHit > 60*10 then
 					gravel:destroy()
 					table.remove(self.m_Gravel, index)
+					self:updateGravelAmount("mined", false)
 				end
 			elseif gravel.dumper then
 				if gravel.LoadTime and getRealTime().timestamp - gravel.LoadTime > 60*10 then
