@@ -122,7 +122,7 @@ function StatisticsLogger:addVehicleDeleteLog(userId, admin, model)
 	if isElement(admin) then adminId = admin:getId() else adminId = admin or 0 end
 
 	sqlLogs:queryExec("INSERT INTO ??_VehicleDeletion (UserId, Admin, Model, Position, Date) VALUES(?, ?, ?, ?, NOW())",
-        sqlLogs:getPrefix(), userId, adminId, model, self:getZone(player))
+        sqlLogs:getPrefix(), userId, adminId, model, self:getZone(admin))
 end
 
 function StatisticsLogger:addTextLog(logname, text)
