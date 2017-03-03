@@ -39,6 +39,11 @@ function JobGravel:constructor()
 	self.m_DumperDeliverTimer = {}
 	self.m_DumperDeliverStones = {}
 
+	self.m_Col = createColSphere(592.54, 868.73, -42.497, 300)
+	addEventHandler("onColShapeLeave", self.m_Col , bind(self.onGravelJobLeave, self))
+
+
+
 	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver", "gravelOnDozerHit", "gravelTogglePickaxe"}
 	addEventHandler("onGravelMine", root, bind(self.Event_onGravelMine, self))
 	addEventHandler("gravelOnCollectingContainerHit", root, bind(self.Event_onCollectingContainerHit, self))
@@ -50,9 +55,6 @@ end
 
 function JobGravel:start(player)
 	table.insert(self.m_Jobber, player)
-
-
-
 	self.m_DozerSpawner:toggleForPlayer(player, true)
 	self.m_DumperSpawner:toggleForPlayer(player, true)
 	setTimer(function()
@@ -66,6 +68,17 @@ function JobGravel:stop(player)
 	self.m_DumperSpawner:toggleForPlayer(player, false)
 	if player.pickaxe and isElement(player.pickaxe) then player.pickaxe:destroy() end
 	self:destroyDumperGravel(player)
+end
+
+function JobGravel:onGravelJobLeave(hitElement, dim)
+	if hitElement:getType() == "player" and dim then
+		if hitElement:getJob() == self then
+			if hitElement.vehicle and hitElement.vehicle.jobPlayer then
+				hitElement:sendError(_("Du hast das Jobgebiet unerlaubt mit einem Fahrzeug verlassen!", hitElement))
+				JobManager:getSingleton():stopJobForPlayer(hitElement)
+			end
+		end
+	end
 end
 
 --General
@@ -186,7 +199,7 @@ function JobGravel:destroyDumperGravel(player)
 		if gravel and isElement(gravel) then
 			if gravel.dumper and gravel.player and gravel.player == player then
 				gravel:destroy()
-				table.remove(self.m_Gravel, index)
+				table.remove(self.m_Gravel, pindex)
 			end
 		else
 			table.remove(self.m_Gravel, index)
@@ -198,10 +211,15 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if hitElement:getJob() == self then
 			if hitElement.vehicle and hitElement.vehicle:getModel() == 406 then
+				if source.isBusy then
+					hitWarning:sendInfo(_("Der vordere Ladevorgang wurde noch nicht beendet! Bitte warten!", hitElement))
+					return
+				end
 				if not hitElement.vehicle.gravelLoaded then
 					if self.m_GravelStock >= 1 then
 						hitElement:sendInfo(_("Bitte stelle die Dumper-Ladefläche direkt unter das Förderband!", hitElement))
 						hitElement.vehicle.gravelLoaded = true
+						source.isBusy = true
 						local speed, pos = unpack(source.Track[1])
 						local gravel
 						setTimer(function(pos, track, player)
@@ -220,6 +238,10 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 								if sourceTimer and isTimer(sourceTimer) then killTimer(sourceTimer) end
 							end
 						end, 1500, 10, pos, source.Track, hitElement)
+
+						setTimer(function(marker)
+							marker.isBusy = false
+						end, 1500*10, 1, source)
 					else
 						hitElement:sendError(_("Das Lager ist leer! Bitte bau neues Material ab!", hitElement))
 					end
