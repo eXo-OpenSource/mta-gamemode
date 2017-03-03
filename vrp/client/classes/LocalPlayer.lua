@@ -514,3 +514,19 @@ function LocalPlayer:Event_onClientPlayerSpawn()
 		end, 10000, 1
 	)]]
 end
+
+addEvent("showSkinModCheck", true)
+addEventHandler("showSkinModCheck",localPlayer, function(tbl) 
+	local w,h = guiGetScreenSize()
+	local tx = dxGetFontHeight(3,"default-bold")
+	local tx2 = dxGetFontHeight(2,"default")
+	addEventHandler("onClientRender", root, function() 
+		dxDrawRectangle(0,0,w,h,tocolor(255,255,255,255))	
+		dxDrawText("Warnung! Folgende Modifikationen müssen entfernt werden, da sie in der Größe sehr stark abweichen!",0,h*0.3-tx*1.1,w,0,tocolor(150,0,0,255),3,"default-bold","center","top")
+		dxDrawText("Originale GTA3.img ist im Forum verfügbar!",0,h*0.3,w,0,tocolor(0,0,0,255),2,"default-bold","center","top")
+		dxDrawLine(0,h*0.3+tx,w,h*0.3+tx,tocolor(150,0,0,255))
+		for i = 1,#tbl do 
+			dxDrawText(i.."# "..tbl[i],0,(h*0.3)+tx+i*(tx2*1.5),w,h,tocolor(0,0,0,255),2,"default","center","top")
+		end
+	end)
+end)
