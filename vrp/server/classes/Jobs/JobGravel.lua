@@ -42,7 +42,8 @@ function JobGravel:constructor()
 	self.m_Col = createColSphere(592.54, 868.73, -42.497, 300)
 	addEventHandler("onColShapeLeave", self.m_Col , bind(self.onGravelJobLeave, self))
 
-
+	self.m_TimedPulse = TimedPulse:new(60000)
+	self.m_TimedPulse:registerHandler(bind(self.destroyUnusedGravel, self))
 
 	addRemoteEvents{"onGravelMine", "gravelOnCollectingContainerHit", "gravelDumperDeliver", "gravelOnDozerHit", "gravelTogglePickaxe"}
 	addEventHandler("onGravelMine", root, bind(self.Event_onGravelMine, self))
@@ -76,6 +77,24 @@ function JobGravel:onGravelJobLeave(hitElement, dim)
 			if hitElement.vehicle and hitElement.vehicle.jobPlayer then
 				hitElement:sendError(_("Du hast das Jobgebiet unerlaubt mit einem Fahrzeug verlassen!", hitElement))
 				JobManager:getSingleton():stopJobForPlayer(hitElement)
+			end
+		end
+	end
+end
+
+function JobGravel:destroyUnusedGravel()
+	for index, gravel in pairs(self.m_Gravel) do
+		if gravel and isElement(gravel) then
+			if gravel.mined then
+				if gravel.LastHit and getRealTime().timestamp - gravel.LastHit > 60*10 then
+					gravel:destroy()
+					table.remove(self.m_Gravel, index)
+				end
+			elseif gravel.dumper then
+				if gravel.LoadTime and getRealTime().timestamp - gravel.LoadTime > 60*10 then
+					gravel:destroy()
+					table.remove(self.m_Gravel, index)
+				end
 			end
 		end
 	end
@@ -129,6 +148,7 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 
 		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
 		local gravel = createObject(2936, pos)
+		gravel.mined = true
 		client:triggerEvent("gravelDisableCollission", gravel)
 		gravel:setScale(0)
 
@@ -144,6 +164,7 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 		if rockDestroyed then
 			client:giveMoney(times*25, "Kiesgruben-Job")
 		end
+
 		self:updateGravelAmount("mined", true)
 		table.insert(self.m_Gravel, gravel)
 	else
@@ -189,6 +210,7 @@ end
 
 function JobGravel:Event_onDozerHit(vehicle)
 	source.vehicle = vehicle
+	source.LastHit = getRealTime().timestamp
 end
 
 
@@ -199,7 +221,7 @@ function JobGravel:destroyDumperGravel(player)
 		if gravel and isElement(gravel) then
 			if gravel.dumper and gravel.player and gravel.player == player then
 				gravel:destroy()
-				table.remove(self.m_Gravel, pindex)
+				table.remove(self.m_Gravel, index)
 			end
 		else
 			table.remove(self.m_Gravel, index)
@@ -230,6 +252,7 @@ function JobGravel:onDumperLoadMarkerHit(hitElement, dim)
 								self:updateGravelAmount("stock", false)
 								self:moveOnTrack(track, gravel, 1, function(gravel)
 									gravel.player = player
+									gravel.LoadTime = getRealTime().timestamp
 									setElementVelocity(gravel, 0, 0, -0.1)
 								end
 								)
