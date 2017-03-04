@@ -379,7 +379,7 @@ function Player:spawn( )
 			end
 		end
 		if self.m_PrisonTime > 0 then
-			self:setPrison(self.m_PrisonTime)
+			self:setPrison(self.m_PrisonTime, true)
 		end
 		if self.m_JailTime then
 			if self.m_JailTime > 0 then
@@ -414,7 +414,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 		position, rotation = position, rotation
 	end
 	if self.m_PrisonTime > 0 then
-		self:setPrison(self.m_PrisonTime)
+		self:setPrison(self.m_PrisonTime, true)
 	end
 	if self.m_JailTime == 0 or not self.m_JailTime then
 
