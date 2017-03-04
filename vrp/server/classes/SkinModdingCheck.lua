@@ -32,6 +32,3 @@ function SkinModdingCheck:handleOnPlayerModInfo ( filename, modList )
 		triggerClientEvent("showSkinModCheck", source, tNames)
 	end
 end
-
-
-Me
