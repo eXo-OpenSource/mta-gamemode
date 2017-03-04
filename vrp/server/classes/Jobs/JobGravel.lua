@@ -191,7 +191,11 @@ end
 function JobGravel:Event_onCollectingContainerHit(track)
 	if JobGravel.Tracks[track] then
 		if self.m_GravelStock < MAX_STONES_IN_STOCK then
+			if source.delivered then
+				return
+			end
 			self:updateGravelAmount("mined", false)
+			source.delivered = true
 			if source.vehicle and isElement(source.vehicle) then
 				if source.vehicle:getOccupant() then
 					source.vehicle:getOccupant():giveMoney(25, "Kiesgruben-Job")
