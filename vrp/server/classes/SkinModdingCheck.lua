@@ -1,7 +1,7 @@
 SkinModdingCheck = inherit( Singleton )
-SkinModdingCheck.MAX_DIFFER_X = 0.3
-SkinModdingCheck.MAX_DIFFER_Y = 0.3
-SkinModdingCheck.MAX_DIFFER_Z = 0.4
+SkinModdingCheck.MAX_DIFFER_X = 0.5
+SkinModdingCheck.MAX_DIFFER_Y = 0.5
+SkinModdingCheck.MAX_DIFFER_Z = 0.5
 
 function SkinModdingCheck:constructor()
 	addEventHandler ( "onPlayerModInfo", getRootElement(), bind(self.handleOnPlayerModInfo, self))
@@ -34,3 +34,4 @@ function SkinModdingCheck:handleOnPlayerModInfo ( filename, modList )
 end
 
 
+Me
