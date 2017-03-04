@@ -10,6 +10,10 @@ JobGravel = inherit(Job)
 MAX_STONES_IN_STOCK = 250
 MAX_STONES_MINED = 100
 
+LOAN_MINING = 15 -- Per Stone
+LOAN_DOZER = 25 -- Per Stone
+LOAN_DUMPER = 55 -- Per Stone
+
 function JobGravel:constructor()
 	Job.constructor(self)
 
@@ -164,7 +168,7 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 			end
 		)
 		if rockDestroyed then
-			client:giveMoney(times*25, "Kiesgruben-Job")
+			client:giveMoney(times*LOAN_MINING, "Kiesgruben-Job")
 		end
 
 		self:updateGravelAmount("mined", true)
@@ -198,7 +202,7 @@ function JobGravel:Event_onCollectingContainerHit(track)
 			source.delivered = true
 			if source.vehicle and isElement(source.vehicle) then
 				if source.vehicle:getOccupant() then
-					source.vehicle:getOccupant():giveMoney(25, "Kiesgruben-Job")
+					source.vehicle:getOccupant():giveMoney(LOAN_DOZER, "Kiesgruben-Job")
 				end
 			end
 			self:moveOnTrack(JobGravel.Tracks[track], source, 1, function(gravel)
@@ -300,7 +304,7 @@ end
 
 function JobGravel:giveDumperDeliverLoan(player)
 	local amount = self.m_DumperDeliverStones[player] or 0
-	local loan = amount*150
+	local loan = amount*LOAN_DUMPER
 	player:sendShortMessage(_("%d Steine abgegeben! %d$", player, amount, loan))
 	player:giveMoney(loan, "Kiesgruben-Job")
 	self:destroyDumperGravel(player)
