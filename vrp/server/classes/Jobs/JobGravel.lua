@@ -24,7 +24,7 @@ function JobGravel:constructor()
 	self.m_Gravel = {}
 
 	self.m_DumpLoadMarker = {
-		createMarker(544.3, 919.9, -43, "cylinder", 6, 250, 130, 0, 100),
+		createMarker(544.3, 919.9, -44, "cylinder", 6, 250, 130, 0, 100),
 		createMarker(594.7, 926.3, -43, "cylinder", 6, 250, 130, 0, 100)
 	}
 	for index, marker in pairs(self.m_DumpLoadMarker) do
@@ -32,7 +32,7 @@ function JobGravel:constructor()
 		addEventHandler("onMarkerHit", marker, bind(self.onDumperLoadMarkerHit, self))
 	end
 
-	self.m_DozerSpawner = VehicleSpawner:new(719.35, 871.02, -28.1, {"Dozer"}, 170, bind(Job.requireVehicle, self))
+	self.m_DozerSpawner = VehicleSpawner:new(719.35, 871.02, -28.4, {"Dozer"}, 170, bind(Job.requireVehicle, self))
 	self.m_DozerSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_DozerSpawner:disable()
 
