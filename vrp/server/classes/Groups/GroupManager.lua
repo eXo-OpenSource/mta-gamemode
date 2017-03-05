@@ -134,6 +134,11 @@ function GroupManager:Event_Create(name, type)
 		return
 	end
 
+	if not name:match("^[a-zA-Z0-9_.-]*$") then
+		client:sendError(_("Name enthält ungültige Zeichen!", client))
+		return
+	end
+
 	-- Does the group already exist?
 	if self:getByName(name) then
 		client:sendError(_("Eine Gang oder Firma mit diesem Namen existiert bereits!", client))
