@@ -238,12 +238,15 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 
 		-- Give the player some money and switch to the next bus stop
 		player:giveMoney(50, "Public Transport Bus")
+		player:givePoints(2)
 		local newDestination = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
 		player.Bus_NextStop = newDestination
 
 		-- Pay extra money for extra occupants
-		player:giveMoney((table.size(getVehicleOccupants(vehicle)) - 1) * 40)
-		player:givePoints(2)
+		if table.size(getVehicleOccupants(vehicle)) > 1 then
+			player:giveMoney((table.size(getVehicleOccupants(vehicle)) - 1) * 40, "Public Transport Bus (Passagiere)")
+		end
+
 		for seat, player in pairs(getVehicleOccupants(vehicle)) do
 			if seat ~= 0 then
 				if player:getMoney() >= 40 then
