@@ -26,7 +26,9 @@ function DatabasePlayer:constructor(id)
 end
 
 function DatabasePlayer:destructor()
-	self:save()
+	if self.m_DoNotSave then
+		self:save()
+	end
 end
 
 function DatabasePlayer:virtual_constructor()

@@ -255,11 +255,10 @@ function CompanyManager:Event_companyRankUp(playerId)
 	if company:getPlayerRank(playerId) < CompanyRank.Leader then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
-		local player, isOffline = DatabasePlayer.getFromId(playerId)
+		local player = DatabasePlayer.getFromId(playerId)
 		if player and isElement(player) and player:isActive() then
 			player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
 		end
-		if isOffline then delete(player) end
 		self:sendInfosToClient(client)
 	else
 		client:sendError(_("Du kannst Spieler nicht höher als auf Rang 5 setzen!", client))
@@ -285,11 +284,10 @@ function CompanyManager:Event_companyRankDown(playerId)
     if company:getPlayerRank(playerId)-1 >= CompanyRank.Normal then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
-		local player, isOffline = DatabasePlayer.getFromId(playerId)
+		local player = DatabasePlayer.getFromId(playerId)
 		if player and isElement(player) and player:isActive() then
 			player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
 		end
-		if isOffline then delete(player) end
 		self:sendInfosToClient(client)
 	end
 end

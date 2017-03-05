@@ -206,16 +206,19 @@ function GroupManager:Event_Delete()
 
 	-- Distribute group's money
   for playerId, playerRank in pairs(group.m_Players) do
-      local player, isOffline = DatabasePlayer.get(playerId)
-      if playerRank == GroupRank.Leader then
-          player:giveMoney(leaderAmount, "Gang/Firmen Auflösung")
-      else
-          player:giveMoney(memberAmount, "Gang/Firmen Auflösung")
-      end
+  	Async.create(
+		  function()
+			local player, isOffline = DatabasePlayer.get(playerId)
+			if isOffline then player:load() end
+			if playerRank == GroupRank.Leader then
+				player:giveMoney(leaderAmount, "Gang/Firmen Auflösung")
+			else
+				player:giveMoney(memberAmount, "Gang/Firmen Auflösung")
+			end
 
-      if isOffline then
-          delete(player)
-      end
+			if isOffline then delete(player) end
+		end
+	)()
   end
   	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." gelöscht!")
 
@@ -365,11 +368,10 @@ function GroupManager:Event_RankUp(playerId)
 		if group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
 			group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." befördert!")
-			local player, isOffline = DatabasePlayer.getFromId(playerId)
+			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
-			if isOffline then delete(player) end
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du kannst den Spieler nicht up-ranken!", client))
@@ -398,11 +400,10 @@ function GroupManager:Event_RankDown(playerId)
 		if group:getPlayerRank(client:getId()) == GroupRank.Leader or group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
 			group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." degradiert!")
-			local player, isOffline = DatabasePlayer.getFromId(playerId)
+			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
-			if isOffline then delete(player) end
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du kannst den Spieler nicht down-ranken!", client))

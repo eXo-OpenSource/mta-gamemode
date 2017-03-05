@@ -254,6 +254,8 @@ function House:sendTenantsMessage(msg)
 			if target then
 				if isOffline then
 					target:addOfflineMessage(msg, 1)
+
+					target.m_DoNotSave = true
 					delete(target)
 				else
 					target:sendInfo(msg)
