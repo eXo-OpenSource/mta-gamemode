@@ -36,5 +36,4 @@ addEventHandler("GPS.calcRoute",
 				client:triggerEvent(event, nodes)
 			end
 		end)()
-	end
-end)
+	end)
