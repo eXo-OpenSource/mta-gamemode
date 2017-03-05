@@ -135,7 +135,7 @@ function GroupManager:Event_Create(name, type)
 		return
 	end
 
-	if not name:match("^[a-zA-Z0-9_.-]*$") then
+	if not name:match("^[a-zA-Z0-9_.- ]*$") then
 		client:sendError(_("Name enthält ungültige Zeichen!", client))
 		return
 	end

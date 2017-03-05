@@ -28,7 +28,7 @@ function GroupCreationGUI:CreateButton_Click()
 
 	if text ~= "" then
 		if string.len(text) <= 24 then
-			if text:match("^[a-zA-Z0-9_.-]*$") then
+			if text:match("^[a-zA-Z0-9_.- ]*$") then
 				triggerServerEvent("groupCreate", root, text, typ)
 				delete(self)
 			else
