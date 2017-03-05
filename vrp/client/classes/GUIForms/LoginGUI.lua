@@ -19,11 +19,6 @@ function LoginGUI:constructor()
 	self.m_NewsText = GUILabel:new(sw*0.01, sh*0.065,
 		self.m_Width/0.02, self.m_Height*0.6,
 		[[
-		Wir starten am 16.02.17
-		in die öffentliche Release
-		Phase! Sei mit dabei und teile
-		uns deine Erfahrungen und
-		Wünsche im Forum mit!
 		]], self.m_NewsTab):setFont(VRPFont(sh*0.03))
 
 	self.m_LoginTab 		= GUIRectangle:new(0, sh*0.6*0.1, sw*0.6*0.75, sh*0.6-sh*0.6*0.01, tocolor(10, 30, 30, 190), self)
