@@ -85,7 +85,7 @@ function JobGravel:Event_disableGravelCollission(gravel)
 	gravel:setCollidableWith(localPlayer, false)
 	setTimer(function()
 		gravel:setCollidableWith(localPlayer, true)
-	end, 3000, 1)
+	end, 4000, 1)
 end
 
 function JobGravel:stop()
