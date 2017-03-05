@@ -24,12 +24,12 @@ function JobTreasureSeeker:constructor()
 	setElementVisibleTo(self.m_DeliverMarker, root, false)
 
 	self.m_TreasureTypes = {
-		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 50, ["Max"] = 100},
-		[2912] = {["Name"] = " Holzkiste", ["Min"] = 200, ["Max"] = 400},
-		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 100, ["Max"] = 200},
-		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 400, ["Max"] = 600, ["Scale"] = 5.5},
-		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 200, ["Max"] = 400},
-		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 200, ["Max"] = 400, ["Scale"] = 2}
+		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 100, ["Max"] = 200},
+		[2912] = {["Name"] = " Holzkiste", ["Min"] = 400, ["Max"] = 800},
+		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 200, ["Max"] = 400},
+		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 800, ["Max"] = 1200, ["Scale"] = 5.5},
+		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 400, ["Max"] = 800},
+		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 400, ["Max"] = 800, ["Scale"] = 2}
 	}
 end
 
@@ -73,7 +73,7 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 						local model = veh.Magnet.Object:getModel()
 						if not self.m_TreasureTypes[model] then return end
 						local loan = math.random(self.m_TreasureTypes[model]["Min"], self.m_TreasureTypes[model]["Max"])
-						hitElement:giveMoney(loan*2, "Schatzsucher-Job") --// default loan not loan*2
+						hitElement:giveMoney(loan, "Schatzsucher-Job") --// default loan not loan*2
 						hitElement:sendShortMessage(_("Du hast eine%s für %d$ verkauft!", hitElement, self.m_TreasureTypes[model]["Name"], loan))
 						hitElement:getOccupiedVehicle().Magnet.Object:destroy()
 						hitElement:givePoints(5)
