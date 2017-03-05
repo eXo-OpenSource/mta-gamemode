@@ -31,7 +31,7 @@ BeggarPositions = {
 
 }
 
-BeggarPhraseTypes = {Help = 1, Thanks = 2, NoHelp = 3, Rob = 4}
+BeggarPhraseTypes = {Help = 1, Thanks = 2, NoHelp = 3, Rob = 4, Decline = 5}
 BeggarHelpPhrases = {
 	{ -- Type: Money
 		"Ey du! Haste mal nen Euro?";
@@ -71,6 +71,13 @@ BeggarNoHelpPhrases = {
 
 BeggarRobPhrases = {
 	"Ich habe eh schon nichts. Und da willst du mir noch mehr nehmen?"
+}
+
+BeggarDeclinePhrases = {
+	"Ne, da will ich nicht mit!",
+	"Das kostet bestimmt Geld. Zieh ab!",
+	"Abgelehnt.",
+	"Ich habs mir anders überlegt.",
 }
 
 BeggarTransportPositions = {

@@ -25,10 +25,15 @@ end
 function GroupCreationGUI:CreateButton_Click()
 	local text = self.m_NameEdit:getText()
 	local typ = self.m_Type:getIndex()
+
 	if text ~= "" then
 		if string.len(text) <= 24 then
-			triggerServerEvent("groupCreate", root, text, typ)
-			delete(self)
+			if text:match("^[a-zA-Z0-9_.- ]*$") then
+				triggerServerEvent("groupCreate", root, text, typ)
+				delete(self)
+			else
+				ErrorBox:new(_"Name enthält ungültige Zeichen!")
+			end
 		else
 			ErrorBox:new(_"Name zu lang! Maximal 24 Zeichen!")
 		end
