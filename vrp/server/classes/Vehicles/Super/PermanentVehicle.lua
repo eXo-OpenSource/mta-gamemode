@@ -7,6 +7,39 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
+-- This function converts a GroupVehicle into a normal vehicle (User/PermanentVehicle)
+function PermanentVehicle.convertVehicle(vehicle, player, Group)
+	if vehicle:isPermanent() then
+		if vehicle:getPositionType() == VehiclePositionType.World then
+			local position = vehicle:getPosition()
+			local rotation = vehicle:getRotation()
+			local model = vehicle:getModel()
+			local health = vehicle:getHealth()
+			local milage = vehicle:getMileage()
+			local r, g, b = getVehicleColor(vehicle, true)
+			local tunings = false
+			if Group:canVehiclesBeModified() then
+				tunings = getVehicleUpgrades(vehicle) or {}
+			end
+
+			if vehicle:purge() then
+				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z)
+				vehicle:setHealth(health)
+				vehicle:setColor(r, g, b)
+				vehicle:setMileage(milage)
+				if Group:canVehiclesBeModified() then
+					for k, v in pairs(tunings or {}) do
+						addVehicleUpgrade(vehicle, v)
+					end
+				end
+				return vehicle:save(), vehicle
+			end
+		end
+	end
+
+	return false
+end
+
 function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, fuel, lightColor, trunkId, texture, horn, neon, special, premium)
 	self.m_Id = Id
 	self.m_Owner = owner
