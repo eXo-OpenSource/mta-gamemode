@@ -420,7 +420,7 @@ function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
 	if source:isPermanent() or instanceof(source, GroupVehicle) then
-		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup()) then
+		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and client:getGroup():getPlayerRank(client) >= GroupRank.Manager) then
 			if source:isBroken() then
 				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
 				return
