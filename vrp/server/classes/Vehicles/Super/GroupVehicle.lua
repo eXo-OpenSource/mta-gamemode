@@ -18,7 +18,9 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local milage = vehicle:getMileage()
 			local r, g, b = getVehicleColor(vehicle, true)
 			local tunings = false
+			local texture = false
 			if Group:canVehiclesBeModified() then
+				texture = vehicle:getTexture() -- get texture replace instance
 				tunings = getVehicleUpgrades(vehicle) or {}
 			end
 
@@ -28,6 +30,10 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 				vehicle:setColor(r, g, b)
 				vehicle:setMileage(milage)
 				if Group:canVehiclesBeModified() then
+					if texture and instanceof(texture, VehicleTexture) then
+						vehicle:setTexture(texture:getPath(), texture:getTexturePath(), true)
+					end
+
 					for k, v in pairs(tunings or {}) do
 						addVehicleUpgrade(vehicle, v)
 					end

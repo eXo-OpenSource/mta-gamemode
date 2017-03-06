@@ -36,6 +36,10 @@ function VehicleTexture:constructor(vehicle, path, texture, force)
 	end
 end
 
+function VehicleTexture:getTextureName()
+	return self.m_Texture
+end
+
 function VehicleTexture:getPath()
 	return self.m_Path
 end

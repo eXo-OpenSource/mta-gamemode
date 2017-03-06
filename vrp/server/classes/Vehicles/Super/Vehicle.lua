@@ -476,6 +476,10 @@ function Vehicle:setNeonColor(colorTable)
   end
 end
 
+function Vehicle:getTexture()
+	return self.m_Texture
+end
+
 function Vehicle:setTexture(texturePath, textureName, force)
 	if texturePath and #texturePath > 3 then
 		self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
