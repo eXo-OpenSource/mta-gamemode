@@ -136,7 +136,7 @@ function JobGravel:generateRocks()
 end
 
 function JobGravel:onDozerColHit(hitElement, dim)
-	if hitElement:getModel() == 2936 then
+	if hitElement:getModel() == 2936 and source.vehicle and source.vehicle:getOccupant() == localPlayer then
 		triggerServerEvent("gravelOnDozerHit", hitElement, source.vehicle)
 	end
 end

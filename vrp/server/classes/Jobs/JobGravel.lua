@@ -155,9 +155,9 @@ function JobGravel:Event_onGravelMine(rockDestroyed, times)
 		local pos = client.matrix:transformPosition(Vector3(-1.5, 0, 0))
 		local gravel = createObject(2936, pos)
 		gravel.mined = true
+		gravel.LastHit = getRealTime().timestamp
 		client:triggerEvent("gravelDisableCollission", gravel)
 		gravel:setScale(0)
-
 		nextframe(
 			function()
 				setTimer(
