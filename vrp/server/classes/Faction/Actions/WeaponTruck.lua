@@ -116,6 +116,9 @@ function WeaponTruck:destructor()
 	end
 
 	for index, value in pairs(self.m_Boxes) do
+		if value:isAttached() and value:getAttachedTo():getType() == "player" then
+			value:getAttachedTo():detachPlayerObject(value)
+		end
 		if isElement(value) then value:destroy() end
 	end
 end
