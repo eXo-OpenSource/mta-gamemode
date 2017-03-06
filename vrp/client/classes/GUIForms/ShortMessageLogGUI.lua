@@ -62,7 +62,7 @@ function ShortMessageLogGUI.insertLog(title, text, color)
 	local id = #ShortMessageLogGUI.m_Log+1
 	ShortMessageLogGUI.m_Log[id] ={
 		["title"] = title or "",
-		["text"] = text or "",
+		["text"] = text:gsub("\n", "") or "",
 		["color"] = type(color) == "table" and color or Color.White,
 		["timestamp"] = getRealTime().timestamp
 	}
