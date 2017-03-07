@@ -29,7 +29,6 @@ function BarShop:constructor(id, name, position, rotation, typeData, dimension, 
 		self.m_SoundCol:setInterior(self.m_Interior)
 		addEventHandler("onMarkerHit", self.m_Marker, bind(self.onBarMarkerHit, self))
 	end
-
 end
 
 function BarShop:onBarMarkerHit(hitElement, dim)
