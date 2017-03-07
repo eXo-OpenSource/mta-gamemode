@@ -56,6 +56,7 @@
 	<script src="server/classes/Config.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>
+	<script src="server/classes/Storage/Teamspeak/TSConnect.lua" type="server"/>
 	<script src="server/classes/Core.lua" type="server"/>
 	<script src="server/classes/Player/WhiteList.lua" type="server"/>
 	<script src="server/classes/PhoneInteraction.lua" type="server"/>
@@ -751,9 +752,9 @@
 	<vrpfile src="files/images/Chess/PawnB.png" />
 	<vrpfile src="files/images/Chess/KnightB.png" />
 
-	
+
 	<vrpfile src="files/images/warning.png" />
-	
+
 	<!-- board piece -->
 	<vrpfile src="files/images/Chess/board.jpg" />
 	<vrpfile src="files/images/Chess/tile.png" />
