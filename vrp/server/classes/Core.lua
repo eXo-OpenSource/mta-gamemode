@@ -51,7 +51,7 @@ function Core:constructor()
 
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
-		SkinModdingCheck:new() 
+		SkinModdingCheck:new()
 		TranslationManager:new()
 		GlobalTimer:new()
 		MTAFixes:new()
@@ -109,6 +109,7 @@ function Core:constructor()
 		Kart:new()
 		HorseRace:new()
 		BoxManager:new()
+		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
