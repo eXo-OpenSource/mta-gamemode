@@ -24,8 +24,14 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 				tunings = getVehicleUpgrades(vehicle) or {}
 			end
 
+			-- get Vehicle Trunk
+			local trunk = vehicle:getTrunk()
+			trunk:save()
+			local trunkId = trunk:getId()
+			trunk = nil
+
 			if vehicle:purge() then
-				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z)
+				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z, trunkId)
 				vehicle:setHealth(health)
 				vehicle:setColor(r, g, b)
 				vehicle:setMileage(milage)
@@ -80,21 +86,20 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 	self:setLocked(true)
 	self:setMileage(mileage)
 	self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
-
 end
 
 function PermanentVehicle:destructor()
 
 end
 
-function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation)
+function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunkId)
   rotation = tonumber(rotation) or 0
   if type(owner) == "userdata" then
     owner = owner:getId()
   end
-  if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation) then
+  if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId) then
     local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-    enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, nil, nil, 1000)
+    enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, {}, nil, nil, 1000, VehiclePositionType.World, nil, nil, nil, nil, trunkId)
     VehicleManager:getSingleton():addRef(vehicle)
     return vehicle
   end
