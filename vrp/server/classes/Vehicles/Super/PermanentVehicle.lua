@@ -60,6 +60,7 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 	self:setCurrentPositionAsSpawn(positionType)
 
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
+	setElementData(self, "OwnerType", "player")
 	self.m_Keys = keys or {}
 	self.m_PositionType = positionType or VehiclePositionType.World
 

@@ -68,7 +68,9 @@ function VehicleInteraction:render()
 							self:drawTextBox(_("#FFFFFFDrücke #00FF00 %s #FFFFFF zum Schließen %s#FFFFFF!", self.m_interactButton, doorName), 0)
 						end
 						if door == 1 then
-							self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Kofferraum zu durchsuchen!", self.m_actionButton), 1)
+							if getElementData(self.m_lookAtVehicle, "OwnerType") == "group" or getElementData(self.m_lookAtVehicle, "OwnerType") == "player" then
+								self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Kofferraum zu durchsuchen!", self.m_actionButton), 1)
+							end
 						elseif door == 0 then
 							self:drawTextBox(_("#FFFFFFDrücke #FF0000 %s #FFFFFF um den Motor zu reparieren!", self.m_actionButton), 1)
 						elseif self.m_lookAtVehicle:getModel() == 416 then
