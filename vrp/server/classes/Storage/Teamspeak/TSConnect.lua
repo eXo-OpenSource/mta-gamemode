@@ -17,7 +17,7 @@ function TSConnect:destructor()
 end
 
 function TSConnect:callAPI(callback, method, ...)
-	return callRemote(self.m_APIUrl, method, ..., self.m_Query.user, self.m_Query.password, self.m_TeamspeakServer.ip, self.m_Query.port, self.m_TeamspeakServer.port)
+	return callRemote(self.m_APIUrl, callback, method, ..., self.m_Query.user, self.m_Query.password, self.m_TeamspeakServer.ip, self.m_Query.port, self.m_TeamspeakServer.port)
 end
 
 function TSConnect:asyncCallAPI(...)
