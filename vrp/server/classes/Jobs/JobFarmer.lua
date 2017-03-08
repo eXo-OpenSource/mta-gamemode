@@ -3,9 +3,12 @@ JobFarmer = inherit(Job)
 local VEHICLE_SPAWN = {-66.21, 69.00, 2.2, 68}
 --local PLANT_DELIVERY = {-1108.28723,-1620.65833,75.36719}
 local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
-local MONEYPERPLANT = 20 --// default 10
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
+
+local MONEY_PER_PLANT = 30 --// default 10
+local MONEY_PLANT_HARVESTER = 18
+local MONEY_PLANT_TRACTOR = 11
 
 function JobFarmer:constructor()
 	Job.constructor(self)
@@ -236,7 +239,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 		destroyElement (self.m_Plants[createColShape])
 		self.m_Plants[createColShape] = nil
 		if not hitElement:getData("Farmer.Income") then hitElement:setData("Farmer.Income", 0) end
-		hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + 2)
+		hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + MONEY_PLANT_HARVESTER)
 		hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 		self:updateClientData()
@@ -253,7 +256,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
 			setElementVisibleTo(object, hitElement, true)
 			if not hitElement:getData("Farmer.Income") then hitElement:setData("Farmer.Income", 0) end
-			hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + 1)
+			hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + MONEY_PLANT_TRACTOR)
 			hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 			-- Give some points
 			if chance(4) then

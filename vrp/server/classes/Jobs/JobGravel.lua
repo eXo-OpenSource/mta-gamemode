@@ -10,9 +10,9 @@ JobGravel = inherit(Job)
 MAX_STONES_IN_STOCK = 250
 MAX_STONES_MINED = 100
 
-LOAN_MINING = 15 -- Per Stone
-LOAN_DOZER = 25 -- Per Stone
-LOAN_DUMPER = 55 -- Per Stone
+LOAN_MINING = 25 -- Per Stone
+LOAN_DOZER = 55 -- Per Stone
+LOAN_DUMPER = 75 -- Per Stone
 
 function JobGravel:constructor()
 	Job.constructor(self)
@@ -56,6 +56,14 @@ function JobGravel:constructor()
 	addEventHandler("gravelOnDozerHit", root, bind(self.Event_onDozerHit, self))
 	addEventHandler("gravelTogglePickaxe", root, bind(self.Event_togglePickaxe, self))
 
+end
+
+function JobGravel:checkRequirements(player)
+	if not (player:getJobLevel() >= JOB_LEVEL_GRAVEL) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_GRAVEL), 255, 0, 0)
+		return false
+	end
+	return true
 end
 
 function JobGravel:start(player)

@@ -26,6 +26,14 @@ function JobHeliTransport:start(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
 end
 
+function JobHeliTransport:checkRequirements(player)
+	if not (player:getJobLevel() >= JOB_LEVEL_HELITRANSPORT) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_HELITRANSPORT), 255, 0, 0)
+		return false
+	end
+	return true
+end
+
 function JobHeliTransport:stop(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
 	player:setData("JobHeliTransport:Money", 0)
@@ -98,7 +106,7 @@ function JobHeliTransport:onDelivery()
 		self.m_VehData[vehicle].package:setAlpha(0)
 		self.m_VehData[vehicle].load = false
 		local distance = getDistanceBetweenPoints3D(self.m_PickupPos, vehicle:getPosition())
-		client:setData("JobHeliTransport:Money", math.floor(distance/4)) --// Default distance/8
+		client:setData("JobHeliTransport:Money", math.floor(distance/3)) --// Default distance/8
 		client:sendInfo(_("Du hast die Ladung abgegeben! Flieg zurück und hole dir dein Geld ab!", client))
 		client:triggerEvent("jobHeliTransportCreateMarker", "pickup")
 	else

@@ -27,7 +27,7 @@ function JobTreasureSeeker:constructor()
 		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 100, ["Max"] = 200},
 		[2912] = {["Name"] = " Holzkiste", ["Min"] = 400, ["Max"] = 800},
 		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 200, ["Max"] = 400},
-		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 800, ["Max"] = 1200, ["Scale"] = 5.5},
+		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] =1200, ["Max"] = 2000, ["Scale"] = 5.5},
 		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 400, ["Max"] = 800},
 		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 400, ["Max"] = 800, ["Scale"] = 2}
 	}
@@ -38,6 +38,14 @@ function JobTreasureSeeker:start(player)
 	bindKey(player, "space", "down", self.m_KeyBind)
 	setElementVisibleTo(self.m_DeliverMarker, player, true)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
+end
+
+function JobTreasureSeeker:checkRequirements(player)
+	if not (player:getJobLevel() >= JOB_LEVEL_TREASURESEEKER) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TREASURESEEKER), 255, 0, 0)
+		return false
+	end
+	return true
 end
 
 function JobTreasureSeeker:stop(player)

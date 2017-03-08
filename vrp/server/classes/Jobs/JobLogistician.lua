@@ -6,7 +6,7 @@
 -- *
 -- ****************************************************************************
 JobLogistician = inherit(Job)
-local MONEY_PER_TRANSPORT_MIN = 400 --// default 200
+local MONEY_PER_TRANSPORT_MIN = 500 --// default 200
 local MONEY_PER_TRANSPORT_MAX = 1000 --// default 500
 
 function JobLogistician:constructor()
@@ -36,6 +36,14 @@ end
 function JobLogistician:start(player)
 	self.m_VehicleSpawner1:toggleForPlayer(player, true)
 	self.m_VehicleSpawner2:toggleForPlayer(player, true)
+end
+
+function JobLogistician:checkRequirements(player)
+	if not (player:getJobLevel() >= JOB_LEVEL_LOGISTICAN) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN), 255, 0, 0)
+		return false
+	end
+	return true
 end
 
 function JobLogistician:changeLoan()
