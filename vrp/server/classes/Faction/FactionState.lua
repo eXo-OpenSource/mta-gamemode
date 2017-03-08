@@ -860,23 +860,6 @@ function FactionState:freePlayer(player)
 end
 
 
-function FactionState:Event_toggleSwat()
-	if client:isFactionDuty() then
-		local faction = client:getFaction()
-		local swat = client:getPublicSync("Faction:Swat")
-		if swat == true then
-			faction:changeSkin(client)
-			client:setPublicSync("Faction:Swat",false)
-			client:sendInfo(_("Du hast den Swat-Modus beendet!", client))
-			faction:updateStateFactionDutyGUI(client)
-		else
-			client:setJobDutySkin(285)
-			client:setPublicSync("Faction:Swat",true)
-			client:sendInfo(_("Du bist in den Swat-Modus gewechselt!", client))
-			faction:updateStateFactionDutyGUI(client)
-		end
-	end
-end
 
 function FactionState:Event_FactionChangeSkin()
 	if client:isFactionDuty() then
@@ -908,12 +891,13 @@ function FactionState:Event_toggleDuty(wasted)
 			client:setDefaultSkin()
 			client.m_FactionDuty = false
 			takeAllWeapons(client)
-			faction:updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
+			client:setPublicSync("Faction:Swat",false)
 			client:setPublicSync("Faction:Duty",false)
 			client:getInventory():removeAllItem("Barrikade")
 			client:getInventory():removeAllItem("Nagel-Band")
 			client:getInventory():removeAllItem("Blitzer")
+			faction:updateStateFactionDutyGUI(client)
 		else
 			if client:getPublicSync("Company:Duty") and client:getCompany() then
 				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
@@ -925,19 +909,37 @@ function FactionState:Event_toggleDuty(wasted)
 			client:setHealth(100)
 			client:setArmor(100)
 			takeAllWeapons(client)
-			faction:updateStateFactionDutyGUI(client)
 			client:sendInfo(_("Du bist nun im Dienst!", client))
 			client:setPublicSync("Faction:Duty",true)
 			client:getInventory():removeAllItem("Barrikade")
 			client:getInventory():giveItem("Barrikade", 10)
 			client:triggerEvent("showFactionWeaponShopGUI")
-
+			faction:updateStateFactionDutyGUI(client)
 		end
 	else
 		client:sendError(_("Du bist in keiner Staatsfraktion!", client))
 		return false
 	end
 end
+
+function FactionState:Event_toggleSwat()
+	if client:isFactionDuty() then
+		local faction = client:getFaction()
+		local swat = client:getPublicSync("Faction:Swat")
+		if swat == true then
+			faction:changeSkin(client)
+			client:setPublicSync("Faction:Swat",false)
+			client:sendInfo(_("Du hast den Swat-Modus beendet!", client))
+			faction:updateStateFactionDutyGUI(client)
+		else
+			client:setJobDutySkin(285)
+			client:setPublicSync("Faction:Swat",true)
+			client:sendInfo(_("Du bist in den Swat-Modus gewechselt!", client))
+			faction:updateStateFactionDutyGUI(client)
+		end
+	end
+end
+
 
 function FactionState:Event_storageWeapons()
 	local faction = client:getFaction()
