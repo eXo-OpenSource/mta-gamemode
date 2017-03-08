@@ -94,17 +94,22 @@ function PermanentVehicle:destructor()
 end
 
 function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunkId)
-  rotation = tonumber(rotation) or 0
-  if type(owner) == "userdata" then
-    owner = owner:getId()
-  end
-  if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId) then
-    local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-    enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, {}, nil, nil, 1000, VehiclePositionType.World, nil, nil, nil, nil, trunkId)
-    VehicleManager:getSingleton():addRef(vehicle)
-    return vehicle
-  end
-  return false
+	rotation = tonumber(rotation) or 0
+	if type(owner) == "userdata" then
+		owner = owner:getId()
+	end
+
+	if trunkId == 0 or trunkId == nil then
+		trunkId = Trunk.create()
+	end
+
+	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId) then
+		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
+		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, {}, nil, nil, 1000, VehiclePositionType.World, nil, nil, nil, nil, trunkId)
+		VehicleManager:getSingleton():addRef(vehicle)
+		return vehicle
+	end
+	return false
 end
 
 function PermanentVehicle:purge()
