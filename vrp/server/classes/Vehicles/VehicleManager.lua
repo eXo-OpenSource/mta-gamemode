@@ -142,7 +142,7 @@ function VehicleManager:createVehiclesForPlayer(player)
 				end
 				if not skip then
 					local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
-					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special, row.Premium)
+					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.Premium, row.TuningsNew)
 					VehicleManager:getSingleton():addRef(vehicle, false)
 				end
 				skip = false

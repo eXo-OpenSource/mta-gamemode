@@ -1,15 +1,15 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        server/classes/VehicleTuning.lua
+-- *  FILE:        server/classes/VehicleTuningShop.lua
 -- *  PURPOSE:     Vehicle tuning garage class
 -- *
 -- ****************************************************************************
-VehicleTuning = inherit(Singleton)
+VehicleTuningShop = inherit(Singleton)
 addEvent("vehicleUpgradesBuy", true)
 addEvent("vehicleUpgradesAbort", true)
 
-function VehicleTuning:constructor()
+function VehicleTuningShop:constructor()
     addEventHandler("vehicleUpgradesBuy", root, bind(self.Event_vehicleUpgradesBuy, self))
     addEventHandler("vehicleUpgradesAbort", root, bind(self.Event_vehicleUpgradesAbort, self))
 
@@ -60,7 +60,7 @@ function VehicleTuning:constructor()
     )
 end
 
-function VehicleTuning:openFor(player, vehicle, garageId)
+function VehicleTuningShop:openFor(player, vehicle, garageId)
     player:triggerEvent("vehicleTuningShopEnter", vehicle or player:getPedOccupiedVehicle())
 
     vehicle:setFrozen(true)
@@ -77,7 +77,7 @@ function VehicleTuning:openFor(player, vehicle, garageId)
     vehicle:setDimension(dimension)]]
 end
 
-function VehicleTuning:closeFor(player, vehicle, doNotCallEvent)
+function VehicleTuningShop:closeFor(player, vehicle, doNotCallEvent)
     if not doNotCallEvent then
         player:triggerEvent("vehicleTuningShopExit")
     end
@@ -113,7 +113,7 @@ function VehicleTuning:closeFor(player, vehicle, doNotCallEvent)
 end
 
 
-function VehicleTuning:EntryColShape_Hit(garageId, hitElement, matchingDimension)
+function VehicleTuningShop:EntryColShape_Hit(garageId, hitElement, matchingDimension)
     if getElementType(hitElement) == "player" and matchingDimension then
         local vehicle = hitElement:getOccupiedVehicle()
         if not vehicle or hitElement:getOccupiedVehicleSeat() ~= 0 then return end
@@ -158,7 +158,7 @@ function VehicleTuning:EntryColShape_Hit(garageId, hitElement, matchingDimension
     end
 end
 
-function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
+function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
     local vehicle = client:getOccupiedVehicle()
     if not vehicle then return end
 
@@ -242,6 +242,6 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
     self:closeFor(client, vehicle)
 end
 
-function VehicleTuning:Event_vehicleUpgradesAbort()
+function VehicleTuningShop:Event_vehicleUpgradesAbort()
     self:closeFor(client, client:getOccupiedVehicle())
 end

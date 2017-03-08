@@ -242,6 +242,7 @@
 
 	<!-- Vehicles -->
 	<script src="server/classes/Vehicles/Extensions/VehicleTexture.lua" type="server"/>
+	<script src="server/classes/Vehicles/Extensions/VehicleTuning.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/Vehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/PermanentVehicle.lua" type="server"/>
 	<script src="server/classes/Vehicles/Super/TemporaryVehicle.lua" type="server"/>
@@ -253,7 +254,7 @@
 	<script src="server/classes/Vehicles/Storage/VehicleGarages.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleGarageSession.lua" type="server"/>
 	<script src="server/classes/Vehicles/Storage/VehicleHarbor.lua" type="server"/>
-	<script src="server/classes/Vehicles/VehicleTuning.lua" type="server"/>
+	<script src="server/classes/Vehicles/VehicleTuningShop.lua" type="server"/>
 	<script src="server/classes/Vehicles/AutomaticVehicleSpawner.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/PayNSpray.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/VehicleBarrier.lua" type="server"/>
