@@ -178,7 +178,7 @@ function Player:loadCharacter()
 	triggerEvent("onLoadCharacter",self)
 
 	-- Premium
-	Premium.constructor(self)
+	self.m_Premium = PremiumPlayer:new(self)
 
 	-- CJ Skin
 	if self.m_Skin == 0 then

@@ -5,9 +5,9 @@
 -- *  PURPOSE:     GUI form class
 -- *
 -- ****************************************************************************
-VehicleTakeGUI = inherit(GUIForm)
+PremiumVehicleGUI = inherit(GUIForm)
 
-function VehicleTakeGUI:constructor()
+function PremiumVehicleGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2-screenWidth*0.2/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.2, screenHeight*0.4)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Fahrzeuge abholen", true, true, self)
@@ -18,17 +18,16 @@ function VehicleTakeGUI:constructor()
 	self.m_TakeButton.onLeftClick = bind(self.TakeButton_Click, self)
 end
 
-function VehicleTakeGUI:setVehicles(vehicles)
+function PremiumVehicleGUI:setVehicles(vehicles)
 	self.m_Grid:clear()
 	for k, vehicle in pairs(vehicles) do
-		local name = type(vehicle) == "userdata" and vehicle:getName() or getVehicleNameFromModel(vehicle)
-		local item = self.m_Grid:addItem(name)
+		local item = self.m_Grid:addItem(vehicle:getName())
 		item.Vehicle = vehicle
 		item.onLeftDoubleClick = bind(self.TakeButton_Click, self)
 	end
 end
 
-function VehicleTakeGUI:setCallback(callback)
+function PremiumVehicleGUI:setCallback(callback)
 	if type(callback) == "string" then
 		self.m_Callback = function ()
 			local selectedItem = self.m_Grid:getSelectedItem()
@@ -37,10 +36,8 @@ function VehicleTakeGUI:setCallback(callback)
 				return
 			end
 
-			if selectedItem.Vehicle and type(selectedItem.Vehicle) == "userdata" then
+			if selectedItem.Vehicle then
 				triggerServerEvent(callback, selectedItem.Vehicle)
-			else
-				triggerServerEvent(callback, localPlayer, selectedItem.Vehicle)
 			end
 		end
 	else
@@ -48,7 +45,7 @@ function VehicleTakeGUI:setCallback(callback)
 	end
 end
 
-function VehicleTakeGUI:TakeButton_Click()
+function PremiumVehicleGUI:TakeButton_Click()
 	if self.m_Callback then
 		self.m_Callback()
 	end
@@ -56,14 +53,11 @@ function VehicleTakeGUI:TakeButton_Click()
 end
 
 
-addEvent("vehicleTakeMarkerGUI", true)
-addEventHandler("vehicleTakeMarkerGUI", root,
-	function(vehicles, callbackEvent, buttonText)
-		local gui = VehicleTakeGUI:new()
+addEvent("openPremiumVehicleGUI", true)
+addEventHandler("openPremiumVehicleGUI", root,
+	function(vehicles, callbackEvent)
+		local gui = PremiumVehicleGUI:new()
 		gui:setVehicles(vehicles)
 		gui:setCallback(callbackEvent)
-		if buttonText then
-			gui.m_TakeButton:setText(buttonText)
-		end
 	end
 )

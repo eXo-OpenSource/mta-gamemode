@@ -109,6 +109,7 @@ function Core:ready()
 	DeathmatchManager:new()
 	HorseRace:new()
 	Townhall:new()
+	PremiumArea:new()
 
 	PlantWeed.initalize()
 	ItemSellContract:new()

@@ -671,7 +671,7 @@ function DatabasePlayer:loadMigratorData()
 	end
 
 	VehicleManager:getSingleton():createVehiclesForPlayer(self)
-	Premium.constructor(self)
+	self.m_Premium = PremiumPlayer:new(self)
 end
 
 
