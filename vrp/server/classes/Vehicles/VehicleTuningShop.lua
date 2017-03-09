@@ -201,8 +201,9 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
             elseif slot == VehicleSpecialProperty.Neon then
                 if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
                     vehicle:setNeon(upgradeId-1)
+					vehicle.m_Tunings:saveTuning("Neon", upgradeId-1)
                 else
-                    client:sendError("Spezial-Hupen sind nur für Privat und Firmen/Gang-Fahrzeuge verfügbar!")
+                    client:sendError("Neon-Röhren sind nur für Privat und Firmen/Gang-Fahrzeuge verfügbar!")
                     client:giveMoney(getVehicleUpgradePrice(VehicleSpecialProperty.Shader))
                 end
             elseif slot == VehicleSpecialProperty.NeonColor then
@@ -232,6 +233,9 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
             end
         end
     end
+	vehicle.m_Tunings:saveGTATuning()
+	vehicle.m_Tunings:applyTuning()
+
     client:sendSuccess(_("Upgrades gekauft!", client))
 
 	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then

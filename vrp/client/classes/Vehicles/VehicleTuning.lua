@@ -1,22 +1,16 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     eXo
--- *  FILE:        server/classes/Vehicles/Extensions/VehicleTuning.lua
--- *  PURPOSE:     Vehicle Tuning class
+-- *  FILE:        client/classes/Vehicles/VehicleTuning.lua
+-- *  PURPOSE:     Client Vehicle Tuning class
 -- *
 -- ****************************************************************************
 VehicleTuning = inherit(Object)
-VehicleTuning.Map = {}
 
-function VehicleTuning:constructor(vehicle, tuningJSON)
+function VehicleTuning:constructor(vehicle)
 	self.m_Vehicle = vehicle
-	if tuningJSON then
-		self.m_Tuning = fromJSON(tuningJSON)
-		self:applyTuning()
-	else
-		self:createNew()
-	end
-	VehicleTuning.Map[self.m_Vehicle] = self
+	self.m_Tuning = {}
+	self:loadTuningsFromVehicle()
 end
 
 function VehicleTuning:getJSON()
@@ -42,30 +36,17 @@ function VehicleTuning:applyTuning()
 	self.m_Vehicle:setData("Neon", self.m_Tuning["Neon"], true)
 	self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"], true)
 
-	if self.m_Tuning["Special"] > 0 then
-		self.m_Vehicle:setSpecial(self.m_Tuning["Special"])
-	end
-
-	if self.m_Tuning["CustomHorn"] > 0 then
-		self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
-	end
-
 	if #self.m_Tuning["Texture"] > 3 then
 		self.m_Vehicle:setTexture(self.m_Tuning["Texture"], nil, true)
 	end
 end
 
-function VehicleTuning:createNew()
-	self.m_Tuning = {}
-	self.m_Tuning["Color1"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
-	self.m_Tuning["Color2"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
-	self.m_Tuning["ColorLight"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
-	self.m_Tuning["GTATuning"] = {}
-	self.m_Tuning["Neon"] = false
-	self.m_Tuning["NeonColor"] = {math.random(0, 255), math.random(0, 255), math.random(0, 255)}
-	self.m_Tuning["Special"] = 0
-	self.m_Tuning["CustomHorn"] = 0
-	self.m_Tuning["Texture"] = ""
+function VehicleTuning:getTuning(type)
+	if self.m_Tuning[type] then
+		return self.m_Tuning[type]
+	else
+		outputDebugString("Invalid Tuning Type "..type)
+	end
 end
 
 function VehicleTuning:saveTuning(type, data)
@@ -89,7 +70,7 @@ function VehicleTuning:saveColors()
 	self.m_Tuning["ColorLight"] = {headR, headG, headB}
 end
 
-function VehicleTuning:loadTuningFromVehicle()
+function VehicleTuning:loadTuningsFromVehicle()
 	self:saveColors()
 	self:saveGTATuning()
 	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon")
