@@ -1,185 +1,124 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        TODO
+-- *  PURPOSE:     TODO
+-- *
+-- ****************************************************************************
 Fishing = inherit(Singleton)
-Fishing.Positions = {
-	Vector3(350.65, -2072.44, 7.1),
-	Vector3(350.65, -2067.23, 7.1),
-	Vector3(350.65, -2064.79, 7.1),
-	Vector3(350.65, -2059.79, 7.1),
-	Vector3(350.65, -2052.15, 7.1)
+
+-- Weather: 0 = any, 1 = sunny, 2 = rain
+Fishing.Fish = {
+	{name = "Albacory", de = "weißer Thun", location = "ocean", difficulty = 60, behavior = "mixed", weather = 0, times = {600, 1100, 1800, 2400}, size = {50, 104}},
+	{name = "Anchovy", de = "Sardelle", location = "ocean", difficulty = 30, behavior = "dart", weather = 0, times = {0}, size = {2.5, 43}, },
+	{name = "Bream", de = "Brachse", location = "river", difficulty = 35, behavior = "smooth", weather = 0, times = {0, 200, 1800, 2400}, size = {30, 78}},
+	{name = "Bullhead", de = "Katzenwels", location = "lake", difficulty = 46, behavior = "smooth", weather = 0, times = {0}, size = {30, 78}},
+	{name = "Carp", de = "Karpfen", location = "lake", difficulty = 15, behavior = "mixed", weather = 0, times = {0}, size = {38, 130}},
+	{name = "Catfish", de = "Seewolf", location = "river", difficulty = 75, behavior = "mixed", weather = 2, times = {0}, size = {30, 185}},
+	{name = "Chub", de = "Kaulbarsch", location = {"river", "lake"}, difficulty = 35, behavior = "dart", weather = 0, times = {0}, size = {30, 64}},
+	{name = "Dorado", de = "Schwertfisch", location = "river", difficulty = 78, behavior = "mixed", weather = 0, times = {600, 1900}, size = {30, 84}},
+	{name = "Eel", de = "Aal", location = "ocean", difficulty = 70, behavior = "smooth", weather = 2, times = {0, 200, 1600, 2400}, size = {30, 205}},
+	{name = "Halibut", de = "Heilbutt", location = "ocean", difficulty = 50, behavior = "sinker", weather = 0, times = {0, 200, 600, 1100, 1900, 2400}, size = {25, 86}},
+	{name = "Herring", de = "Hering", location = "ocean", difficulty = 25, behavior = "dart", weather = 0, times = {0}, size = {20, 53}},
+	{name = "Largemouth Bass", de = "Forellenbarsch", location = "lake", difficulty = 50, behavior = "mixed", weather = 0, times = {600, 1900}, size = {28, 78}},
+	{name = "Lingcod", de = "Lengdirsch", location = {"river", "lake"}, difficulty = 85, behavior = "mixed", weather = 0, times = {0}, size = {76, 130}},
+	{name = "Octopus", de = "Tintenfisch", location = "ocean", difficulty = 95, behavior = "sinker", weather = 0, times = {600, 1300}, size = {30, 122}},
+	{name = "Perch", de = "Barsch", location = {"river", "lake"}, difficulty = 35, behavior = "mixed", weather = 0, times = {0}, size = {25, 63}},
+	{name = "Pike", de = "Hecht", location = "river", difficulty = 60, behavior = "dart", weather = 0, times = {0}, size = {38, 155}},
+	{name = "Pufferfish", de = "Kugelfische", location = "ocean", difficulty = 80, behavior = "floater", weather = 1, times = {1200, 1600}, size = {2.5, 94}},
+	{name = "Rainbow Trout", de = "Regenbogenforelle", location = "river", difficulty = 45, behavior = "mixed", weather = 1, times = {600, 1900}, size = {25, 66}},
+	{name = "Red Mullet", de = "Rote Meerbarbe", location = "ocean", difficulty = 55, behavior = "smooth", weather = 0, times = {600, 1900}, size = {25, 58}},
+	{name = "Red Snapper", de = "Roter Schnapper", location = "ocean", difficulty = 40, behavior = "mixed", weather = 2, times = {600, 1900}, size = {20, 66}},
+	{name = "Salmon", de = "Lachse", location = "river", difficulty = 50, behavior = "mixed", weather = 0, times = {600, 1900}, size = {61, 167}},
+	{name = "Sandfish", de = "Sandfisch", location = "desert", difficulty = 65, behavior = "mixed", weather = 0, times = {600, 2200}, size = {20, 61}},
+	{name = "Sardine", de = "Sardine", location = "ocean", difficulty = 30, behavior = "dart", weather = 0, times = {600, 1900}, size = {2.5, 33}},
+	{name = "Sea Cucumber", de = "Seegurke", location = "ocean", difficulty = 40, behavior = "sinker", weather = 0, times = {600, 1900}, size = {8, 53}},
+	{name = "Shad", de = "Alosa sapidissima", location = "river", difficulty = 45, behavior = "smooth", weather = 2, times = {0, 200, 900, 2400}, size = {50, 125}},
+	{name = "Smallmouth Bass", de = "Schwarzbarsch", location = "river", difficulty = 28, behavior = "mixed", weather = 0, times = {0}, size = {30, 63}},
+	{name = "Squid", de = "Kalmar", location = "ocean", difficulty = 75, behavior = "sinker", weather = 0, times = {0, 200, 1800, 2400}, size = {30, 124}},
+	{name = "Stonefish", de = "Steinfisch", location = "ocean", difficulty = 65, behavior = "sinker", weather = 2, times = {0}, size = {35, 40}},
+	{name = "Sturgeon", de = "Stör", location = "lake", difficulty = 78, behavior = "mixed", weather = 0, times = {600, 1900}, size = {30, 155}},
+	{name = "Sunfish", de = "Mondfisch", location = "river", difficulty = 30, behavior = "mixed", weather = 1, times = {600, 1900}, size = {13, 40}},
+	{name = "Super Cucumber", de = "Super Seegurke", location = "ocean", difficulty = 85, behavior = "sinker", weather = 0, times = {0, 200, 1800, 2400}, size = {30, 94}},
+	{name = "Tiger Trout", de = "Tigerforelle", location = "river", difficulty = 60, behavior = "dart", weather = 0, times = {600, 1900}, size = {25, 53}},
+	{name = "Tilapia", de = "Tilapia", location = "ocean", difficulty = 50, behavior = "mixed", weather = 0, times = {600, 1400}, size = {28, 78}},
+	{name = "Tuna", de = "Thunfisch", location = "ocean", difficulty = 70, behavior = "smooth", weather = 0, times = {600, 1900}, size = {58, 155}},
+	{name = "Walleye", de = "Glasaugenbarsch", location = {"river", "lake"}, difficulty = 45, behavior = "smooth", weather = 0, times = {0, 200, 1200, 2400}, size = {25, 104}},
 }
 
-Fishing.Result = {
-	[1] = {["value"] = 0, ["text"] = "miserabel"},
-	[2] = {["value"] = 10, ["text"] = "schlecht"},
-	[3] = {["value"] = 25, ["text"] = "mäßig"},
-	[4] = {["value"] = 50, ["text"] = "gut"},
-	[5] = {["value"] = 75, ["text"] = "sehr gut"},
-	[6] = {["value"] = 95, ["text"] = "ausgezeichnet"}
-}
-
-Fishing.Win = {
-	[1] = {["value"] = 50, 	["money"] = 5, ["text"] = "ein Hufeisen", ["model"] = 954, ["scale"] = 0.5, ["z"] = 0.2},
-	[2] = {["value"] = 75, 	["money"] = 10, ["text"] = "eine Makrele", ["model"] = 1599, ["scale"] = 0.6, ["rotation"] = Vector3(90, 0, 0), ["z"] = 0.2},
-	[3] = {["value"] = 100, ["money"] = 15, ["text"] = "eine Qualle", ["model"] = 1603, ["scale"] = 0.5, ["rotation"] = Vector3(180, 0, 0), ["z"] = 0.1},
-	[4] = {["value"] = 125, ["money"] = 20, ["text"] = "einen Seestern", ["model"] = 902, ["scale"] = 0.2, ["rotation"] = Vector3(90, 0, 0), ["z"] = 0.2 },
-	[5] = {["value"] = 150, ["money"] = 40, ["text"] = "eine Schildkröte", ["model"] = 1609, ["scale"] = 0.2, ["rotation"] = Vector3(90, 0, 0), ["z"] = 0.3 },
-	[6] = {["value"] = 175, ["money"] = 50, ["text"] = "einen Goldfisch", ["model"] = 1600, ["scale"] = 0.6, ["rotation"] = Vector3(90, 90, 0), ["z"] = 0.2},
-	[7] = {["value"] = 195, ["money"] = 150, ["text"] = "einen Clownfisch", ["model"] = 1604, ["scale"] = 0.6, ["rotation"] = Vector3(90, 90, 0), ["z"] = 0.2}
-}
+addRemoteEvents{"clientFishHit"}
 
 function Fishing:constructor()
+	outputChatBox("Fish server")
 	self.m_Players = {}
-	self.m_Markers = {}
-	self.m_PlayerTimers = {}
-
-	self.m_ColShape = createColSphere(350.65, -2072.44, 7.1, 60)
-	addEventHandler("onColShapeLeave", self.m_ColShape, bind(self.onColShapeLeave, self))
-	addEventHandler("onColShapeHit", self.m_ColShape, bind(self.onColShapeHit, self))
-
-	for index, pos in pairs(Fishing.Positions) do
-		self.m_Markers[index] = createMarker(pos, "cylinder", 1, 0,255, 0, 125)
-
-		self.m_Markers[index].id = index
-		addEventHandler("onMarkerHit", self.m_Markers[index], bind(self.onMarkerHit, self))
-		addEventHandler("onMarkerLeave", self.m_Markers[index], bind(self.onMarkerLeave, self))
-	end
-
-	addRemoteEvents{"startFishing", "fishingStepFinished", "fishingPedClick"}
-	addEventHandler("startFishing", root, bind(self.start, self))
-	addEventHandler("fishingStepFinished", root, bind(self.stepFinished, self))
-	addEventHandler("fishingPedClick", root, bind(self.pedClicked, self))
+	addEventHandler("clientFishHit", root, bind(Fishing.FishHit, self))
 end
 
-function Fishing:onMarkerHit(hitElement, dim)
-	if hitElement:getType() == "player" and dim and not hitElement.vehicle then
-		if not source.player then
-			if not hitElement.win and not self.m_Players[hitElement] then
-				source.player = hitElement
-				hitElement:triggerEvent("questionBox", _("Möchtest du eine Runde angeln? Ein Köder kostet 10$!", hitElement), "startFishing", nil, source)
-			else
-				hitElement:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", hitElement))
-			end
-		end
-	end
+function Fishing:destructor()
 end
 
-function Fishing:onColShapeLeave(hitElement, dim)
-	if dim and hitElement:getType() == "player" then
-		if hitElement.winObject and isElement(hitElement.winObject) then
-			hitElement:sendWarning(_("Achtung: Gehe zurück oder dein Fang wird gelöscht!", player))
-			self.m_PlayerTimers[hitElement] = setTimer(bind(self.destroyWin, self), 10000, 1)
-			hitElement:triggerEvent("Countdown", 10, "Fischfang")
-		end
-	end
-end
+function Fishing:getFish(location, timeOfDay, weather)
+	local tmp = {}
 
-function Fishing:onColShapeHit(hitElement, dim)
-	if dim and hitElement:getType() == "player" then
-		if self.m_PlayerTimers[hitElement] and isTimer(self.m_PlayerTimers[hitElement]) then
-			killTimer(self.m_PlayerTimers[hitElement])
-			hitElement:triggerEvent("CountdownStop", "Fischfang")
-		end
-	end
-end
+	for k, v in pairs(Fishing.Fish) do
+		local checkLocation = false
+		local checkTime = false
+		local checkWeather = false
 
-function Fishing:destroyWin(player)
-	if player.winObject and isElement(player.winObject) then
-		player.winObject:destroy()
-		player.winObject = nil
-		player.win = nil
-		player:sendInfo(_("Dein Fang wurde entfernt!", player))
-	end
-end
 
-function Fishing:onMarkerLeave(hitElement, dim)
-	if source.player and  source.player == hitElement then
-		source.player = false
-		hitElement:triggerEvent("questionBoxClose")
-	end
-end
-
-function Fishing:start(marker)
-	if client:getMoney() > 10 then
-		if not client.win then
-			client:takeMoney(10, "Angeln")
-			setPedAnimation(client, "Gun_stand", "ped", 0, true, true, true)
-			local pos = marker:getPosition()
-			client:setPosition(pos)
-			client:setRotation(0, 0, 90, "default", true)
-			client:setFrozen(true)
-			client:triggerEvent("startFishingClient", 1, marker.id)
-			self.m_Players[client] = {}
-		else
-			client:sendError(_("Bring deinen Fang erst zu Lutz um nochmal zu angeln!", client))
-		end
-	else
-		client:sendError(_("Du hast keine 10$ dabei!", client))
-	end
-end
-
-function Fishing:stepFinished(id, step, value)
-	local text = ""
-	for index, key in ipairs(Fishing.Result) do
-		if value > key["value"] then
-			text = key["text"]
-		end
-	end
-
-	self.m_Players[client][step] = value
-
-	if step == 1 then
-		client:sendShortMessage(_("Du hast %s ausgeworfen! Warte bis etwas anbeißt...", client, text), _("Angeln", client))
-		setTimer(function(client)
-			client:sendShortMessage(_("Es hat etwas angebissen!", client, text), _("Angeln", client))
-			client:triggerEvent("startFishingClient", 2, id)
-		end, math.random(3000,6000), 1, client)
-	else
-		local value = self.m_Players[client][1] + self.m_Players[client][2]
-		if value > 50 then
-			local win, winIndex
-			for index, key in ipairs(Fishing.Win) do
-				if value > key["value"] then
-					win = key
-					winIndex = index
+		-- Check Location
+		if #v.location == 2 then
+			for key, value in pairs(v.location) do
+				if value == location then
+					checkLocation = true
 				end
 			end
+		elseif v.location == location then
+			checkLocation = true
+		end
 
-			local pos = Fishing.Positions[id]
-			pos.x = pos.x-5.7
-			local winObject = createObject(win["model"], pos.x, pos.y, pos.z-3)
-			winObject:setDoubleSided(true)
-			winObject:setScale(win["scale"] or 0)
-			winObject:move(4000, pos.x, pos.y, pos.z+1, 0, 0, 0, "OutQuad")
-
-			setTimer(function(client, winObject, text, win, winIndex)
-				client:sendShortMessage(_("Du hast die Schnur %s eingeholt!", client, text), _("Angeln", client))
-				local rot = win["rotation"] or Vector3(0, 0, 0)
-				local x,y,z = rot.x, rot.y, rot.z
-				exports.bone_attach:attachElementToBone(winObject, client, 12, 0, 0, win["z"], x, y, z)
-				client.win = Fishing.Win[winIndex]
-				client.winObject = winObject
-				client:sendInfo(_("Du hast %s geangelt! Bringe deinen Fang zu Angler Lutz!", client, win["text"]))
-				self:stop(client)
-			end, 5000, 1, client, winObject, text, win, winIndex)
+		-- Check time
+		if #v.times == 1 then
+			checkTime = true
 		else
-			client:sendInfo(_("Deine Schnur ist gerissen!", client))
-			self:stop(client)
+			for i = 1, #v.times, 2 do
+				if timeOfDay >= v.times[i] and timeOfDay <= v.times[i+1] then
+					checkTime = true
+				end
+			end
+		end
+
+		-- Check weather
+		if v.weather == 0 then			-- Any
+			checkWeather = true
+		elseif v.weather == 1 then		-- Sunny
+			if weather ~= 8 then
+				checkWeather = true
+			end
+		elseif v.weather == 2 then		-- Rainy
+			if weather == 8 then
+				checkWeather = true
+			end
+		end
+
+		-- Check all
+		if checkLocation and checkTime and checkWeather then
+			table.insert(tmp, v)
 		end
 	end
+
+	return tmp[math.random(1, #tmp)]
 end
 
-function Fishing:stop(player)
-	self.m_Players[player] = nil
-	player:setFrozen(false)
+function Fishing:FishHit(location)
+	local time = tonumber(("%s%.2d"):format(getRealTime().hour, getRealTime().minute))
+	local weather = getWeather()
+
+	local fish = self:getFish(location, time, weather)
+
+	client:triggerEvent("fishingBobberBar", fish)
 end
 
 
-function Fishing:pedClicked()
-	if client.win then
-		client:sendSuccess(_("Wow, %s! Ich gebe dir dafür %d Dollar!", client, client.win["text"], client.win["money"]))
-		client:giveMoney(client.win["money"], "Angeln")
-		client.win = false
-		client.winObject:destroy()
-	else
-		client:sendInfo(_("Hallo, du hast nichts gefangen, bitte angel dir erst etwas!", client))
-	end
-end
+
+Fishing:new()

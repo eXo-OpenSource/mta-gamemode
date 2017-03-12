@@ -89,7 +89,7 @@ function BobberBar:updateRenderTarget()
 	self.m_RenderTarget:setAsTarget()
 
 	dxDrawRectangle(0, 0, self.m_Size, tocolor(40, 40, 40, 150))	--full bg
-	dxDrawImage(50, 5, 30, self.m_Size.y-10, "BobberBarBG.png")	--todo BobberBarBG (maybe framed?)
+	dxDrawImage(50, 5, 30, self.m_Size.y-10, "files/images/Fishing/BobberBarBG.png")	--todo BobberBarBG (maybe framed?)
 	dxDrawRectangle(49, self.m_BobberPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50))	--todo BobberBar
 	dxDrawRectangle(60, 75, 10, 10, tocolor(0, 140, 255))		--todo: fish
 

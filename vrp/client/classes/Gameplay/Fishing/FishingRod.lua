@@ -8,10 +8,6 @@
 local screenWidth, screenHeight = guiGetScreenSize()
 FishingRod = inherit(Singleton)
 
-engineReplaceCOL(engineLoadCOL("mod/FishingRod.col"), 1826)
-engineImportTXD(engineLoadTXD("mod/FishingRod.txd"), 1826)
-engineReplaceModel(engineLoadDFF("mod/FishingRod.dff"), 1826)
-
 function FishingRod:constructor()
 	toggleControl("fire", false)
 	self.m_FishingMap = FishingLocation:new()
@@ -165,8 +161,12 @@ function FishingRod:render()
 	if self.m_isCasting and self.m_MouseDown then
 		dxDrawRectangle(left, top, 125, 20, tocolor(30, 30, 30))
 		dxDrawRectangle(left+1, top+1, 125-2, 20-2, tocolor(80, 80, 80))
-		dxDrawImageSection(left+1, top+1, 123*self.m_PowerProgress, 20-2, 0, 0, 123*self.m_PowerProgress, 20-2, "RedGreen.png")
+		dxDrawImageSection(left+1, top+1, 123*self.m_PowerProgress, 20-2, 0, 0, 123*self.m_PowerProgress, 20-2, "files/images/Fishing/RedGreen.png")
 	end
 end
 
-FishingRod:new()
+addCommandHandler("f",
+	function()
+		FishingRod:new()
+	end
+)

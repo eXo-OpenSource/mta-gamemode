@@ -707,9 +707,13 @@
 	<script src="client/classes/Gameplay/DeathmatchManager.lua" type="client"/>
 	<script src="client/classes/Gameplay/Townhall.lua" type="client"/>
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
-	<script src="client/classes/Gameplay/Fishing.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
 	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
+
+	<!-- Fishing -->
+	<script src="client/classes/Gameplay/Fishing/FishingLocation.lua" type="client"/>
+	<script src="client/classes/Gameplay/Fishing/FishingRod.lua" type="client"/>
+	<script src="client/classes/Gameplay/Fishing/BobberBar.lua" type="client"/>
 
 	<!-- Race -->
 	<script src="client/classes/Gameplay/Race/MovementRecorder.lua" type="client"/>
@@ -1293,6 +1297,10 @@
 	<vrpfile src="files/images/2Cars/block_blue.png"/>
 	<vrpfile src="files/images/2Cars/particleExplode.png"/>
 
+	<!-- Fishing -->
+	<vrpfile src="files/images/Fishing/BobberBarBG.png"/>
+	<vrpfile src="files/images/Fishing/RedGreen.png"/>
+
 	<!-- Race -->
 	<vrpfile src="files/images/Race/countdown_0.png"/>
 	<vrpfile src="files/images/Race/countdown_1.png"/>
@@ -1510,6 +1518,9 @@
 	<vrpfile src="files/models/donut.txd"/>
 	<vrpfile src="files/models/donut.dff"/>
 	<vrpfile src="files/models/donut.col"/>
+	<vrpfile src="files/models/FishingRod.txd"/>
+	<vrpfile src="files/models/FishingRod.dff"/>
+	<vrpfile src="files/models/FishingRod.col"/>
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>

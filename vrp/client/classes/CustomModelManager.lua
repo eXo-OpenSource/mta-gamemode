@@ -83,6 +83,9 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/donut.col", 1915)
 	self:loadImportDFF("files/models/donut.dff", 1915)
 
+	self:loadImportTXD("files/models/FishingRod.txd", 1826)
+	self:loadImportCOL("files/models/FishingRod.col", 1826)
+	self:loadImportDFF("files/models/FishingRod.dff", 1826)
 
 	-- Tardis EasterEgg
 	--self:loadImportTXD("files/models/tardis.txd", 1337)
