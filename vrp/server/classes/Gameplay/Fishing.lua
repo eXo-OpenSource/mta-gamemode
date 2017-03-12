@@ -65,7 +65,6 @@ function Fishing:getFish(location, timeOfDay, weather)
 		local checkTime = false
 		local checkWeather = false
 
-
 		-- Check Location
 		if #v.location == 2 then
 			for key, value in pairs(v.location) do
@@ -118,7 +117,3 @@ function Fishing:FishHit(location)
 
 	client:triggerEvent("fishingBobberBar", fish)
 end
-
-
-
-Fishing:new()
