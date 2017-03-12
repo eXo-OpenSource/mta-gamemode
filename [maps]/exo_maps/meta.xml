@@ -19,7 +19,7 @@
 	<map src="fraktionen/army_lsbase.map" />
 	<map src="fraktionen/ballas.map" />
 	<map src="fraktionen/grove.map" />
-	<!--<map src="fraktionen/biker.map" />/-->
+	<map src="fraktionen/biker.map" />
 	<map src="fraktionen/cosanostra.map" />
 	<map src="fraktionen/lspd.map" />
 	<map src="fraktionen/sfpd_int.map" />
@@ -48,6 +48,7 @@
 	<map src="jobs/busjob.map" />
 	<map src="jobs/logistican.map" />
 	<map src="jobs/helitransport.map" />
+	<map src="jobs/dumper.map" />
 
 	<map src="else/atm.map" />
 
@@ -61,10 +62,13 @@
   	<map src="hospital.map" />
 	<map src="airport.map" />
 	<map src="shootingranch.map" />
+	<map src="skydive.map" />
+	<map src="gangwar.map" />
 
 	<map src="tankstellen_removals.map" />
 
 	<map src="stadthalle.map" />
+	<map src="Kartbahn.map" />
 
 	<map src="minigamescafe.map" dimension="2" />
 </meta>

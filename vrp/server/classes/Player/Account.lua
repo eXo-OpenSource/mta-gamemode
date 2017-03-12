@@ -5,17 +5,22 @@
 -- *  PURPOSE:     Account class
 -- *
 -- ****************************************************************************
-local MULTIACCOUNT_CHECK = true -- TODO: Activate on production use
-local INVITATION = true -- TODO: Activate on production use
+local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
 
 Account = inherit(Object)
-addRemoteEvents{"remoteClientSpawn", "checkInvitationCode"}
+addRemoteEvents{"remoteClientSpawn" }
+
 function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
 	if (not username or not password) and not pwhash then return false end
 
+	if not username:match("^[a-zA-Z0-9_.%[%]]*$") then
+		player:triggerEvent("loginfailed", "Ungültiger Nickname. Bitte melde dich bei einem Admin!")
+		return false
+	end
+
 	-- Ask SQL to fetch ForumID
-	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, RegisterDate, InvitationId FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
+	sql:queryFetchSingle(Async.waitFor(self), ("SELECT Id, ForumID, Name, RegisterDate FROM ??_account WHERE %s = ?"):format(username:find("@") and "email" or "Name"), sql:getPrefix(), username)
 	local row = Async.wait()
 	if not row or not row.Id then
 		board:queryFetchSingle(Async.waitFor(self), "SELECT username, password, userID, email FROM wcf1_user WHERE username LIKE ?", username)
@@ -59,7 +64,6 @@ function Account.login(player, username, password, pwhash)
 	local Id = row.Id
 	local ForumID = row.ForumID
 	local Username = row.Name
-	local InvitationId = row.InvitationId
 	local RegisterDate = row.RegisterDate
 
 	-- Ask SQL to fetch the password from forum
@@ -72,7 +76,7 @@ function Account.login(player, username, password, pwhash)
 
 	if pwhash then
 		if pwhash == row.password then
-			Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwhash)
+			Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhash)
 		else
 			player:triggerEvent("loginfailed", "Fehler: Falscher Name oder Passwort") -- Error: Invalid username or password2
 			return false
@@ -88,7 +92,7 @@ function Account.login(player, username, password, pwhash)
 				return false
 			end
 			if returnData.login == true then
-				Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, row.password)
+				Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, row.password)
 			else
 				player:triggerEvent("loginfailed", "Fehler: Unbekannter Fehler")
 			end
@@ -100,31 +104,39 @@ end
 addEvent("accountlogin", true)
 addEventHandler("accountlogin", root, function(...) Async.create(Account.login)(client, ...) end)
 
-function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, InvitationId, pwhash)
+function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhash)
 	if DatabasePlayer.getFromId(Id) then
 		player:triggerEvent("loginfailed", "Fehler: Dieser Account ist schon in Benutzung")
 		return false
 	end
-	-- Update last serial and last login
-	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
+
 	if MULTIACCOUNT_CHECK then
-		if Account.MultiaccountCheck(player, Id) == false then
-			return false
+		MultiAccount.addSerial(Id, player:getSerial())
+
+		if #MultiAccount.getAccountsBySerial(player:getSerial()) > 1 then
+			if not MultiAccount.isAccountLinkedToSerial(Id, player:getSerial()) then
+				if not MultiAccount.allowedToCreateAnMultiAccount(player:getSerial()) then
+					player:triggerEvent("loginfailed", "Deine Serial wird für mehrere Accounts benutzt.")
+					return false
+				else
+					MultiAccount.linkAccountToSerial(Id, player:getSerial())
+				end
+			end
 		end
 	end
 
-	if INVITATION then
-		if not Account.checkInvitation(player, Id, InvitationId) then
-			return
-		end
-	end
+	-- Update last serial and last login
+	sql:queryExec("UPDATE ??_account SET LastSerial = ?, LastIP = ?, LastLogin = NOW() WHERE Id = ?", sql:getPrefix(), player:getSerial(), player:getIP(), Id)
+
 	player.m_Account = Account:new(Id, Username, player, false, ForumID, RegisterDate)
+
+	Warn.checkWarn(player, true)
+	Ban.checkBan(player, true)
 
 	if player:getTutorialStage() == 1 then
 		player:createCharacter()
 	end
 	player:loadCharacter()
-	player:triggerEvent("stopLoginCameraDrive")
 	player:triggerEvent("Event_StartScreen")
 
 	StatisticsLogger:addLogin( player, Username, "Login")
@@ -133,11 +145,14 @@ end
 
 addEvent("checkRegisterAllowed", true)
 addEventHandler("checkRegisterAllowed", root, function()
-	local name = Account.getNameFromSerial(client:getSerial()) -- Todo Activate on production use
-	if name and MULTIACCOUNT_CHECK then
-		client:triggerEvent("receiveRegisterAllowed", false, name)
-	else
-		client:triggerEvent("receiveRegisterAllowed", true)
+	if MULTIACCOUNT_CHECK then
+		local playerId = MultiAccount.isSerialUsed(client:getSerial())
+		if playerId then
+			if not MultiAccount.allowedToCreateAnMultiAccount(client:getSerial()) then
+				local name = Account.getNameFromId(playerId)
+				client:triggerEvent("receiveRegisterAllowed", false, name)
+			end
+		end
 	end
 end)
 
@@ -147,8 +162,8 @@ function Account.register(player, username, password, email)
 
 	-- Some sanity checks on the username
 	-- Require at least 1 letter and a length of 3
-	if not username:match("[a-zA-Z]") or #username < 3 then
-		player:triggerEvent("registerfailed", _("Fehler: Ungültiger Nickname", player))
+	if not username:match("^[a-zA-Z0-9_.]*$") or #username < 3 then
+		player:triggerEvent("registerfailed", _("Fehler: Ungültiger Nickname.", player))
 		return false
 	end
 
@@ -161,6 +176,16 @@ function Account.register(player, username, password, email)
 	if not email:match("^[%w._-]+@[%w._-]+%.%w+$") or #email > 50 then
 		player:triggerEvent("registerfailed", _("Fehler: Ungültige eMail", player))
 		return false
+	end
+
+	-- Check Serial
+	if MULTIACCOUNT_CHECK then
+		if MultiAccount.isSerialUsed(player:getSerial()) then
+			if not MultiAccount.allowedToCreateAnMultiAccount(player:getSerial()) then
+				player:triggerEvent("registerfailed", _("Fehler: Du besitzt bereits ein Account!", player))
+				return false
+			end
+		end
 	end
 
 	-- Check if someone uses this username already
@@ -177,7 +202,6 @@ function Account.register(player, username, password, email)
 	end
 
 	Account.createForumAccount(player, username, password, email)
-
 end
 addEvent("accountregister", true)
 addEventHandler("accountregister", root, function(...) Async.create(Account.register)(client, ...) end)
@@ -238,7 +262,6 @@ function Account:constructor(id, username, player, guest, ForumID, RegisterDate)
 	player.m_IsGuest = guest;
 	player.m_Id = self.m_Id
 
-
 	if not guest then
 		sql:queryFetchSingle(Async.waitFor(self), "SELECT Rank, LastLogin FROM ??_account WHERE Id = ?;", sql:getPrefix(), self.m_Id)
 		local row = Async.wait()
@@ -293,7 +316,6 @@ function Account.getNameFromId(id)
 	return row and row.Name
 end
 
-
 function Account.getBoardIdFromId(id)
 	--[[sql:queryFetchSingle(Async.waitFor(self), "SELECT Name FROM ??_account WHERE Id = ?", sql:getPrefix(), id)
 	local row = Async.wait()]]
@@ -332,106 +354,6 @@ end
 function Account.getBoardIdFromName(name)
 	local row = sql:queryFetchSingle("SELECT ForumID FROM ??_account WHERE Name = ?", sql:getPrefix(), name)
 	return row.ForumID or 0
-end
-
-function Account.MultiaccountCheck(player, Id)
-	if Account.getSerialAmount(player:getSerial()) > 1 then
-		if not Account.getMultiaccount(Id) then
-			player:triggerEvent("loginfailed", "Fehler: Deine Serial wurde von einem anderen Account benutzt!")
-			return false
-		else
-			for dbId, serial in pairs(Account.getIdsFromSerial(player:getSerial())) do
-				if dbId ~= Id then
-					if not Account.isAcceptetMultiaccount(dbId, Id) then
-						player:triggerEvent("loginfailed", "Fehler: Deine Serial wurde von einem anderen Account benutzt!")
-						return false
-					end
-				end
-			end
-		end
-	end
-	return true
-end
-
-function Account.checkInvitation(player, Id, InvitationId)
-	if InvitationId and InvitationId > 0 then
-		local row = sql:queryFetchSingle("SELECT * FROM ??_invitations WHERE Id = ?", sql:getPrefix(), InvitationId)
-		if row then
-			if row.UserId == Id then
-				if row.Active == 1 then
-					return true
-				else
-					player:sendError(_("Der Invitation-Code wurde deaktiviert!", player))
-				end
-			else
-				player:sendError(_("Der Invitation-Code wird von einem anderen Spieler verwendet!", player))
-			end
-		else
-			player:sendError(_("Der Invitation-Code wurde gelöscht!", player))
-		end
-	end
-	player:triggerEvent("closeLogin")
-	player:triggerEvent("inputBox", "Invitation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invitation-Code spielbar! Bitte gib diesen hier ein:", "checkInvitationCode", Id)
-	player.m_DoNotSave = true
-	return false
-end
-
-function Account.checkInvitationCode(code, AccountId)
-	local row = sql:queryFetchSingle("SELECT * FROM ??_invitations WHERE InvitationKey = ?", sql:getPrefix(), code)
-	if row then
-		if row.UserId == 0 then
-			if row.Active == 1 then
-				if not AccountId or AccountId == 0 then
-					AccountId = Account.getIdFromName(client:getName())
-				end
-				--outputServerLog("AccountID: "..AccountId)
-				sql:queryExec("UPDATE ??_invitations SET Serial = ?, UserId = ?, Used = NOW() WHERE Id = ? ", sql:getPrefix(), client:getSerial(), AccountId, row.Id)
-				sql:queryExec("UPDATE ??_account SET InvitationId = ? WHERE Id = ? ", sql:getPrefix(), row.Id, AccountId)
-				client:sendSuccess(_("Der Code wurde angenommen!\nDu wirst nun reconnected!", client))
-				client.m_DoNotSave = true
-				setTimer(function(player)
-					redirectPlayer(player, "", 0)
-				end, 5000, 1, client)
-				return true
-			else
-				client:sendError(_("Der Invitation-Code wurde deaktiviert!", client))
-			end
-		else
-			client:sendError(_("Der Invitation-Code wurde bereits benützt!", client))
-		end
-	else
-		client:sendError(_("Ungültiger Invitation-Code!", client))
-	end
-	client:triggerEvent("inputBox", "Invitation-Code eingeben", "eXo-Reallife ist derzeit nur mit Invitation-Code spielbar! Bitte gib diesen hier ein:", "checkInvitationCode")
-	client.m_DoNotSave = true
-end
-addEventHandler("checkInvitationCode", root, Account.checkInvitationCode)
-
-function Account.getIdsFromSerial(serial)
-	local result = sql:queryFetch("SELECT Id, LastSerial FROM ??_account WHERE LastSerial = ?", sql:getPrefix(), serial)
-	local accounts = {}
-	for i, row in pairs(result) do
-		accounts[row.Id] = row.LastSerial
-	end
-	return accounts
-end
-
-function Account.getMultiaccount(id)
-	local row = sql:queryFetchSingle("SELECT Player1, Player2 FROM ??_multiaccounts WHERE Player1 = ? OR Player2 = ?", sql:getPrefix(), id, id)
-	if row then
-		if row["Player1"] == id then
-			return row["Player2"]
-		else
-			return row["Player1"]
-		end
-	else
-		return false
-	end
-end
-
-function Account.isAcceptetMultiaccount(id1, id2)
-	local row = sql:queryFetchSingle("SELECT Id FROM ??_multiaccounts WHERE (Player1 = ? AND Player2 = ?) or (Player2 = ? AND Player1 = ?)", sql:getPrefix(), id1, id2, id1, id2)
-	if row then return true else return false end
 end
 
 addEventHandler("remoteClientSpawn", root, function()

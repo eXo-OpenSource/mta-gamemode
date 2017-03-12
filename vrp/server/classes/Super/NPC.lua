@@ -9,8 +9,8 @@ NPC = inherit(MTAElement)
 
 function NPC:new(skinId, x, y, z, rotation)
 	local ped = createPed(skinId, x, y, z)
-	setElementRotation(ped, 0, 0, rotation)
-	return enew(ped, self, skinId, x, y, z, rotation)
+	setElementRotation(ped, 0, 0, rotation or 0)
+	return enew(ped, self, skinId, x, y, z, rotation or 0)
 end
 
 function NPC:constructor(skinId, x, y, z, rotation)

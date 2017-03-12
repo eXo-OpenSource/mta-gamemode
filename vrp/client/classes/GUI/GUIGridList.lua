@@ -102,14 +102,9 @@ end
 
 function GUIGridList:clear()
 	self.m_SelectedItem = nil
-	for itemIndex, item in pairs(self.m_ScrollArea.m_Children) do
-		delete(item)
-	end
-	self.m_ScrollArea.m_Children = {}
-	self.m_ScrollArea:resize(self.m_Width, self.m_ItemHeight)
-	self:anyChange()
-	--delete(self.m_ScrollArea)
-	--self.m_ScrollArea = GUIScrollableArea:new(0, self.m_ItemHeight, self.m_Width, self.m_Height-self.m_ItemHeight, self.m_Width, 1, true, false, self, self.m_ItemHeight)
+
+	self.m_ScrollArea:clear()
+	self.m_ScrollArea:resize(self.m_Width, 1)
 end
 
 function GUIGridList:onInternalSelectItem(item)

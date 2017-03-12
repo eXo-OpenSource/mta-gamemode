@@ -8,6 +8,15 @@ function MechanicTow:constructor()
 	local safe = createObject(2332, 923.60, -1166.50, 17.70, 0, 0, 270)
 	self:setSafe(safe)
 
+	local x, y, z, rot
+
+	self.m_NonCollissionCols = {}
+	for index, pos in pairs(MechanicTow.SpawnPositions) do
+		x, y, z, rot = unpack(pos)
+		self.m_NonCollissionCols[index] = createColSphere(x, y, z, 10)
+		self.m_NonCollissionCols[index]:setData("NonCollidingSphere", true, true)
+	end
+
 	addEventHandler("mechanicRepair", root, bind(self.Event_mechanicRepair, self))
 	addEventHandler("mechanicRepairConfirm", root, bind(self.Event_mechanicRepairConfirm, self))
 	addEventHandler("mechanicRepairCancel", root, bind(self.Event_mechanicRepairCancel, self))
@@ -21,7 +30,7 @@ end
 
 function MechanicTow:respawnVehicle(vehicle)
 	outputDebug("Respawning vehicle in mechanic base")
-	vehicle:setCurrentPositionAsSpawn(VehiclePositionType.Mechanic)
+	vehicle:setPositionType(VehiclePositionType.Mechanic)
 	vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 	vehicle:fix()
 end
@@ -97,7 +106,7 @@ function MechanicTow:Event_mechanicRepairConfirm(vehicle)
 				vehicle.PendingMechanic:sendInfo(_("Du hast das Fahrzeug von %s erfolgreich repariert! Du hast %s$ verdient!", vehicle.PendingMechanic, getPlayerName(client), price))
 				client:sendInfo(_("%s hat dein Fahrzeug erfolgreich repariert!", client, getPlayerName(vehicle.PendingMechanic)))
 
-				self.m_BankAccount:addMoney(math.floor(price*0.7))
+				self:giveMoney(math.floor(price*0.7), "Reparatur")
 			else
 				client:sendInfo(_("Du hat dein Fahrzeug erfolgreich repariert!", client))
 			end
@@ -137,6 +146,7 @@ function MechanicTow:createTowLot()
 	self.m_TowColShape = createColRectangle( 809.78967, -1278.67761, 49, 49)
 	addEventHandler("onColShapeHit", self.m_TowColShape, bind( self.onEnterTowLot, self ))
 	addEventHandler("onColShapeLeave", self.m_TowColShape, bind( self.onLeaveTowLot, self ))
+	addEventHandler("onTrailerAttach", getRootElement(), bind(self.onAttachVehicleToTow, self))
 	addEventHandler("onTrailerDetach", getRootElement(), bind( self.onDetachVehicleFromTow, self ))
 end
 
@@ -161,7 +171,22 @@ function MechanicTow:onLeaveTowLot( hElement )
 	hElement.m_InTowLot = false
 end
 
+function MechanicTow:onAttachVehicleToTow(towTruck)
+	local driver = getVehicleOccupant( towTruck )
+	if driver then
+		if towTruck.getCompany and towTruck:getCompany() == self then
+			if source.getOwner and type(source:getOwner()) == "number" then
+				source:toggleRespawn(false)
+			else
+				driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+			end
+		end
+	end
+end
+
 function MechanicTow:onDetachVehicleFromTow( towTruck )
+	source:toggleRespawn(true)
+
 	local driver = getVehicleOccupant( towTruck )
 	if driver then
 		if driver.m_InTowLot then
@@ -174,6 +199,7 @@ function MechanicTow:onDetachVehicleFromTow( towTruck )
 							if not source.getCompany and not source.getFaction then
 								self:respawnVehicle( source )
 								driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
+								StatisticsLogger:getSingleton():vehicleTowLogs( driver, source)
 							end
 						else driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
 						end

@@ -66,6 +66,6 @@ addEventHandler("showTaxoMeter", root,
 
 addEventHandler("hideTaxoMeter", root,
 	function()
-		PublicTransportTaxoMeterGUI:getSingleton():delete()
+		delete(PublicTransportTaxoMeterGUI:getSingleton())
 	end
 )

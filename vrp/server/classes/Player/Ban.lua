@@ -43,10 +43,10 @@ function Ban.addBan(who, author, reason, duration)
 			end
 		end
 	end
-	
+
 	if player then
 		local reasonstr
-		if type(author) == "number" then 
+		if type(author) == "number" then
 			author = DatabasePlayer.getFromId(author)
 		end
 		if duration > 0 then
@@ -58,12 +58,15 @@ function Ban.addBan(who, author, reason, duration)
 	end
 end
 
-function Ban.checkBan(player)
-	local serial = getPlayerSerial(player)
-	return Ban.checkSerial(serial, player)
+function Ban.checkBan(player, doNotSave)
+	if player and isElement(player) then
+		local serial = getPlayerSerial(player)
+		return Ban.checkSerial(serial, player, nil, doNotSave)
+	end
+	return false
 end
 
-function Ban.checkSerial(serial, player, cancel)
+function Ban.checkSerial(serial, player, cancel, doNotSave)
 	-- Note: true = not banned
 	local id = player and player:getId() or "false"
 	local row = sql:queryFetchSingle("SELECT reason, expires FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
@@ -72,12 +75,12 @@ function Ban.checkSerial(serial, player, cancel)
 		if duration == 0 then
 			reasonstr = ("Du wurdest permanent gebannt (Grund: %s)"):format(row.reason)
 		elseif duration - getRealTime().timestamp < 0 then
-			sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), serial, id)
+			sql:queryExec("DELETE FROM ??_bans WHERE expires > 0 AND (serial = ? OR player_id = ?);", sql:getPrefix(), serial, id)
 			return true
 		elseif duration > 0 then
 			reasonstr = ("Du bist noch %s gebannt! (Grund: %s)"):format(string.duration(duration - getRealTime().timestamp), row.reason)
 		end
-
+		if doNotSave then player.m_DoNotSave = true end
 		if cancel then
 			if player and isElement(player) then cancelEvent(true, reasonstr) end
 		else
@@ -97,6 +100,6 @@ function Ban.checkOfflineBan(playerId)
 	end
 end
 
-addEventHandler("onPlayerConnect", root, function(nick, ip, username, serial ) 
-	Ban.checkSerial(serial, source, true)
+addEventHandler("onPlayerConnect", root, function(nick, ip, username, serial )
+	Ban.checkSerial(serial, source, true, true)
 end)

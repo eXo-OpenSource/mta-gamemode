@@ -19,7 +19,7 @@ Action.Ped.create.trigger = function(self)
 		self.x, self.y, self.z,
 		self.rotation)
 
-	self.cutscene.m_Elements[self.id]:setDimension(PRIVATE_DIMENSION_CLIENT)
+	self.cutscene.m_Elements[self.id]:setDimension(self.cutscene.m_Dimension)
 	self.cutscene.m_Elements[self.id]:setInterior(self.cutscene:getInterior())
 end
 

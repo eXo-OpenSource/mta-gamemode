@@ -107,6 +107,4 @@ function AchievementBox:render ()
 	dxDrawImage(self.m_Position, self.m_Size, self.ms_renderTarget)
 end
 
-addCommandHandler("func", function ()
-	AchievementBox:new()
-end)
+

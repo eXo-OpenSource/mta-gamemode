@@ -46,10 +46,10 @@ end
 
 function BankAccount:update()
   if self.m_OwnerType == BankAccountTypes.Player then
-    local player, isOffline = DatabasePlayer.getFromId(self.m_OwnerId)
+    local player, isOffline = DatabasePlayer.get(self.m_OwnerId)
     if isOffline then -- We do not require offline Players here
-      player:load()
-      delete(player)
+		player.m_DoNotSave = true
+		delete(player)
     end
 
     if player:isActive() then
@@ -69,6 +69,8 @@ function BankAccount:getId()
 end
 
 function BankAccount:setMoney(amount, reason)
+	if isNan(amount) then return end
+
 	self.m_Money = amount
 
 	if self.m_OwnerType == BankAccountTypes.Company then
@@ -86,6 +88,8 @@ function BankAccount:getMoney()
 end
 
 function BankAccount:addMoney(money, reason)
+	if isNan(money) then return end
+
   	if money > 0 then
 		self.m_Money = self.m_Money + money
 
@@ -101,7 +105,9 @@ function BankAccount:addMoney(money, reason)
 end
 
 function BankAccount:takeMoney(money, reason)
-  if money > 0 then
+	if isNan(money) then return end
+
+	if money > 0 then
 		self.m_Money = self.m_Money - money
 
 		if self.m_OwnerType == BankAccountTypes.Company then

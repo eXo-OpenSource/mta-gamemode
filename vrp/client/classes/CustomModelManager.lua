@@ -62,20 +62,40 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/medicLOD.col", 4076)
 	self:loadImportDFF("files/models/medicLOD.dff", 4076)
 
-	self:loadImportTXD("files/models/medicInterior.txd", 3986)
-	self:loadImportCOL("files/models/medicInterior.col", 3986)
-	self:loadImportDFF("files/models/medicInterior.dff", 3986)
-	self:setLODDistance(3986, 500)
-
 	self:loadImportTXD("files/models/holzstamm.txd", 837)
 	self:loadImportCOL("files/models/holzstamm.col", 837)
 	self:loadImportDFF("files/models/holzstamm.dff", 837)
+
+	--Kart-Track
+	self:loadImportTXD("files/models/kart.txd", 13083)
+	self:loadImportCOL("files/models/kart.col", 13083)
+	self:loadImportDFF("files/models/kart.dff", 13083)
+
+	self:loadImportTXD("files/models/bed.txd", 1879)
+	self:loadImportCOL("files/models/bed.col", 1879)
+	self:loadImportDFF("files/models/bed.dff", 1879)
+
+	self:loadImportTXD("files/models/pickaxe.txd", 1858)
+	self:loadImportCOL("files/models/pickaxe.col", 1858)
+	self:loadImportDFF("files/models/pickaxe.dff", 1858)
+
+	self:loadImportTXD("files/models/donut.txd", 1915)
+	self:loadImportCOL("files/models/donut.col", 1915)
+	self:loadImportDFF("files/models/donut.dff", 1915)
+
+
+	-- Tardis EasterEgg
+	--self:loadImportTXD("files/models/tardis.txd", 1337)
+	--self:loadImportDFF("files/models/tardis.dff", 1337)
+
+	self:loadImportDFF("files/models/piss.dff", 1904)
 
 	self:loadShader("files/images/Other/parking1.png", "noparking2_128")
 	self:loadShader("files/images/Other/parking2.png", "roadsign01_128")
 
 	self:loadShader("files/images/Other/trans.png", "txgrass0_1")
 	self:loadShader("files/images/Other/trans.png", "txgrass1_1")
+
 
 end
 
@@ -86,7 +106,7 @@ end
 
 function CustomModelManager:loadImportTXD(filePath, modelId)
 	local txd = engineLoadTXD(filePath)
-	return engineImportTXD(txd, modelId)
+	return engineImportTXD(txd, modelId), txd
 end
 
 function CustomModelManager:loadImportCOL(filePath, modelId)
@@ -96,6 +116,10 @@ end
 
 function CustomModelManager:setLODDistance(modelId, distance)
 	engineSetModelLODDistance(modelId, distance)
+end
+
+function CustomModelManager:restoreModel(modelId)
+	return engineRestoreModel(modelId)
 end
 
 function CustomModelManager:loadShader(filePath, textureName)

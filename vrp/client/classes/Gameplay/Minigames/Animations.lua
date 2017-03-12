@@ -7,70 +7,87 @@
 CAnimation = inherit(Object)
 
 function CAnimation:constructor(CInstance, ...)
-    self.isRendering = false
+	self.isRendering = false
+	self.doCall = true
 
-    self.instance = CInstance
-    self.tbl_Objects = {...}
+	self.instance = CInstance
+	self.tbl_Objects = {...}
 
-    if type(self.tbl_Objects[1]) == "function" then
-        self.callbackFunction = self.tbl_Objects[1]
-        table.remove(self.tbl_Objects, 1)
-    end
+	if type(self.tbl_Objects[1]) == "function" then
+		self.callbackFunction = self.tbl_Objects[1]
+		table.remove(self.tbl_Objects, 1)
+	end
 
-    self.renderFunc = bind(CAnimation.render, self)
+	self.renderFunc = bind(CAnimation.render, self)
 end
 
 function CAnimation:destructor()
-    if self.isRendering then
-        removeEventHandler("onClientRender", root, self.renderFunc)
-    end
+	if self.isRendering then
+		removeEventHandler("onClientPreRender", root, self.renderFunc)
+	end
+end
+
+function CAnimation:updateCallbackFunction(...)
+	self.callbackArguments = {... }
+
+	if type(self.callbackArguments[1]) == "function" then
+		self.callbackFunction = self.callbackArguments[1]
+		table.remove(self.callbackArguments, 1)
+	end
+end
+
+function CAnimation:callRenderTarget(state)
+	self.doCall = state
 end
 
 function CAnimation:startAnimation(nDuration, sAnimationType, ...)
-    self.startTick = getTickCount()
-    self.endTick = self.startTick + nDuration
-    self.animationType = sAnimationType
-    self.tbl_animateTo = {...}
+	self.startTick = getTickCount()
+	self.endTick = self.startTick + nDuration
+	self.animationType = sAnimationType
+	self.tbl_animateTo = {...}
 
-    if #self.tbl_Objects ~= #self.tbl_animateTo then
-        outputDebugString("Invalid animations to object count")
-        return false
-    end
+	if #self.tbl_Objects ~= #self.tbl_animateTo then
+		outputDebugString("Invalid animations to object count")
+		return false
+	end
 
-    self.n_ObjectCount = #self.tbl_Objects
+	self.n_ObjectCount = #self.tbl_Objects
 
-    self.startValues = {}
-    for i = 1, self.n_ObjectCount do
-        self.startValues[i] = self.instance[self.tbl_Objects[i]]
-    end
+	self.startValues = {}
+	for i = 1, self.n_ObjectCount do
+		self.startValues[i] = self.instance[self.tbl_Objects[i]]
+	end
 
-    if not self.isRendering then
-        self.isRendering = true
-        addEventHandler("onClientRender", root, self.renderFunc)
-    end
+	if not self.isRendering then
+		self.isRendering = true
+		addEventHandler("onClientPreRender", root, self.renderFunc)
+	end
 end
 
 function CAnimation:isAnimationRendered()
-    return self.isRendering
+	return self.isRendering
 end
 
 function CAnimation:stopAnimation()
-    removeEventHandler("onClientRender", root, self.renderFunc)
-    self.isRendering = false
+	removeEventHandler("onClientPreRender", root, self.renderFunc)
+	self.isRendering = false
 end
 
 function CAnimation:render()
-    local p = (getTickCount()-self.startTick)/(self.endTick-self.startTick)
-    for i = 1, #self.tbl_Objects do
-        self.instance[self.tbl_Objects[i]] = interpolateBetween(self.startValues[i], 0, 0, self.tbl_animateTo[i], 0, 0, p, self.animationType)
-    end
-    self.instance:updateRenderTarget()
+	local p = (getTickCount()-self.startTick)/(self.endTick-self.startTick)
+	for i = 1, #self.tbl_Objects do
+		self.instance[self.tbl_Objects[i]] = interpolateBetween(self.startValues[i], 0, 0, self.tbl_animateTo[i], 0, 0, p, self.animationType)
+	end
 
-    if p >= 1 then
-        self.isRendering = false
-        removeEventHandler("onClientRender", root, self.renderFunc)
-        if self.callbackFunction then
-            self.callbackFunction()
-        end
-    end
+	if self.doCall and self.instance.updateRenderTarget then
+		self.instance:updateRenderTarget()
+	end
+
+	if p >= 1 then
+		self.isRendering = false
+		removeEventHandler("onClientPreRender", root, self.renderFunc)
+		if self.callbackFunction then
+			self.callbackFunction(unpack(self.callbackArguments or {}))
+		end
+	end
 end

@@ -246,16 +246,16 @@ function CompanyManager:Event_companyRankUp(playerId)
 		return
 	end
 
-	if company:getPlayerRank(client) < CompanyRank.Leader then
+	if company:getPlayerRank(client) < CompanyRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
 	end
 
-	if company:getPlayerRank(playerId) < CompanyRank.Manager then
+	if company:getPlayerRank(playerId) < CompanyRank.Leader then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) + 1)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." befördert!")
-		local player, isOffline = DatabasePlayer.getFromId(playerId)
+		local player = DatabasePlayer.getFromId(playerId)
 		if player and isElement(player) and player:isActive() then
 			player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), company:getPlayerRank(playerId)), company:getName())
 		end
@@ -275,7 +275,7 @@ function CompanyManager:Event_companyRankDown(playerId)
 		return
 	end
 
-	if company:getPlayerRank(client) < CompanyRank.Leader then
+	if company:getPlayerRank(client) < CompanyRank.Manager then
 		client:sendError(_("Du bist nicht berechtigt den Rang zu verändern!", client))
 		-- Todo: Report possible cheat attempt
 		return
@@ -284,7 +284,7 @@ function CompanyManager:Event_companyRankDown(playerId)
     if company:getPlayerRank(playerId)-1 >= CompanyRank.Normal then
 		company:setPlayerRank(playerId, company:getPlayerRank(playerId) - 1)
         company:addLog(client, "Unternehmen", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..company:getPlayerRank(playerId).." degradiert!")
-		local player, isOffline = DatabasePlayer.getFromId(playerId)
+		local player = DatabasePlayer.getFromId(playerId)
 		if player and isElement(player) and player:isActive() then
 			player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), company:getPlayerRank(playerId), company:getName()))
 		end
@@ -364,14 +364,14 @@ function CompanyManager:Event_toggleDuty()
             end
 		else
             if client:getPublicSync("Faction:Duty") and client:getFaction() then
-                client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
+                client:sendWarning(_("Bitte beende zuerst deinen Dienst in deiner Fraktion!", client))
 				return false
 			end
 
 			company:changeSkin(client)
 			client.m_CompanyDuty = true
 			company:updateCompanyDutyGUI(client)
-			client:sendInfo(_("Du bist nun im Unternehmens-Dienst!", client))
+			client:sendInfo(_("Du bist nun im Dienst deines Unternehmens!", client))
 			client:setPublicSync("Company:Duty",true)
             takeAllWeapons(client)
             if company.start then
@@ -388,4 +388,24 @@ function CompanyManager:Event_getCompanies()
 	for id, company in pairs(CompanyManager.Map) do
 		client:triggerEvent("loadClientCompany", company:getId(), company:getName(), company:getShortName())
 	end
+end
+
+function CompanyManager:sendAllToClient(client)
+	--[[
+	local vehicleTab = {}
+	for i, company in pairs(CompanyManager.Map) do
+		if companyVehicleShaders[company:getId()] then
+			for i, v in pairs(company.m_Vehicles) do
+				if v and isElement(v) and companyVehicleShaders[company:getId()] and companyVehicleShaders[company:getId()][v:getModel()] then
+					local shaderInfo = companyVehicleShaders[company:getId()][v:getModel()]
+					if shaderInfo.shaderEnabled then
+						vehicleTab[#vehicleTab+1] = {vehicle = v, textureName = shaderInfo.textureName, texturePath = shaderInfo.texturePath}
+					end
+				end
+			end
+		end
+	end
+
+	triggerClientEvent(client, "changeElementTexture", client, vehicleTab)
+	]]
 end

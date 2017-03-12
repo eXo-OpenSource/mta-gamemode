@@ -24,12 +24,12 @@ function JobTreasureSeeker:constructor()
 	setElementVisibleTo(self.m_DeliverMarker, root, false)
 
 	self.m_TreasureTypes = {
-		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 50, ["Max"] = 100},
-		[2912] = {["Name"] = " Holzkiste", ["Min"] = 200, ["Max"] = 400},
-		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 100, ["Max"] = 200},
-		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] = 400, ["Max"] = 600, ["Scale"] = 5.5},
-		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 200, ["Max"] = 400},
-		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 200, ["Max"] = 400, ["Scale"] = 2}
+		[1208] = {["Name"] = " Waschmaschine", ["Min"] = 100, ["Max"] = 200},
+		[2912] = {["Name"] = " Holzkiste", ["Min"] = 400, ["Max"] = 800},
+		[1291] = {["Name"] = "n Briefkasten", ["Min"] = 200, ["Max"] = 400},
+		[2040] = {["Name"] = " wertvolle Kiste", ["Min"] =1200, ["Max"] = 2000, ["Scale"] = 5.5},
+		[2972] = {["Name"] = "n Fracht-Container", ["Min"] = 400, ["Max"] = 800},
+		[3015] = {["Name"] = " Waffen Kiste", ["Min"] = 400, ["Max"] = 800, ["Scale"] = 2}
 	}
 end
 
@@ -38,6 +38,14 @@ function JobTreasureSeeker:start(player)
 	bindKey(player, "space", "down", self.m_KeyBind)
 	setElementVisibleTo(self.m_DeliverMarker, player, true)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
+end
+
+function JobTreasureSeeker:checkRequirements(player)
+	if not (player:getJobLevel() >= JOB_LEVEL_TREASURESEEKER) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_TREASURESEEKER), 255, 0, 0)
+		return false
+	end
+	return true
 end
 
 function JobTreasureSeeker:stop(player)
@@ -60,17 +68,6 @@ function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
 
 	self:registerJobVehicle(player, vehicle, true, true)
 
-	addEventHandler("onElementDestroy", vehicle, function()
-		for index, ele in pairs(source:getAttachedElements()) do
-			for index, ele1 in pairs(ele:getAttachedElements()) do
-				for index, ele2 in pairs(ele1:getAttachedElements()) do
-					ele2:destroy()
-				end
-				ele1:destroy()
-			end
-			ele:destroy()
-		end
-	end)
 	triggerClientEvent(root, "jobTreasureDrawRope", root, vehicle.Engine, vehicle.Magnet)
 end
 
@@ -84,7 +81,7 @@ function JobTreasureSeeker:onDeliveryHit(hitElement, dim)
 						local model = veh.Magnet.Object:getModel()
 						if not self.m_TreasureTypes[model] then return end
 						local loan = math.random(self.m_TreasureTypes[model]["Min"], self.m_TreasureTypes[model]["Max"])
-						hitElement:giveMoney(loan, "Schatzsucher-Job")
+						hitElement:giveMoney(loan, "Schatzsucher-Job") --// default loan not loan*2
 						hitElement:sendShortMessage(_("Du hast eine%s für %d$ verkauft!", hitElement, self.m_TreasureTypes[model]["Name"], loan))
 						hitElement:getOccupiedVehicle().Magnet.Object:destroy()
 						hitElement:givePoints(5)

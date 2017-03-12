@@ -62,6 +62,8 @@ function Vehicle:getOwner()
 end
 
 function Vehicle:getOccupantsCount()
+	if not self:getOccupants() then return 0 end
+
 	local i = 0
 	for seat, player in pairs(self:getOccupants()) do
 		i = i+1
@@ -100,6 +102,7 @@ function Vehicle:isLocked()
 end
 
 function Vehicle:onPlayerEnter(player, seat)
+	if player:getType() ~= "player" then return end
 	if seat == 0 then
 		if not player:hasCorrectLicense(source) then
 			player:sendShortMessage(_("Achtung: Du hast keinen Führerschein für dieses Fahrzeug!", player))
@@ -124,6 +127,7 @@ end
 function Vehicle:onPlayerExit(player, seat)
 	self.m_LastUseTime = getTickCount()
 	local hbState = getControlState( player, "handbrake")
+	if player:getType() ~= "player" then return end
 	if seat == 0 then
 		if hbState then
 			setControlState( player, "handbrake", false)
@@ -203,7 +207,7 @@ end
 
 function Vehicle:toggleEngine(player)
 	if self.m_DisableToggleEngine then return end
-	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() then
+	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() or (self.getCompany and self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
 		local state = not getVehicleEngineState(self)
 		if state == true then
 			if not VEHICLE_BIKES[self:getModel()] then
@@ -230,7 +234,10 @@ function Vehicle:toggleEngine(player)
 				else
 					if not self.m_StartingEnginePhase then
 						self.m_StartingEnginePhase = true
-						for key, other in ipairs(getElementsWithinColShape(player.chatCol_scream)) do
+						local colshape = createColSphere(self:getPosition(), CHAT_SCREAM_RANGE)
+						local rangeElements = getElementsWithinColShape(colshape)
+						colshape:destroy()
+						for key, other in ipairs(rangeElements) do
 							if getElementType(other) == "player" then
 								other:triggerEvent("vehicleEngineStart", self)
 							end
@@ -277,11 +284,11 @@ function Vehicle:toggleHandBrake( player )
 end
 
 function Vehicle:setEngineState(state)
-	local player = getVehicleOccupant(self, 0)
-	if player then
+	--local player = getVehicleOccupant(self, 0)
+	--if player then
 		setVehicleEngineState(self, state)
 		self.m_EngineState = state
-	end
+	--end
 	self.m_StartingEnginePhase = false
 end
 
@@ -327,13 +334,14 @@ function Vehicle:getSpeed()
 end
 
 function Vehicle:setBroken(state)
+	self:setHealth(301)
+	if state then
+		self:setEngineState(false)
+	end
+
 	if self.m_BrokenHook then
 		self.m_BrokenHook:call(vehicle)
 		return
-	end
-	self:setHealth(301)
-	if state then
-		setVehicleEngineState(self, false)
 	end
 end
 
@@ -404,14 +412,14 @@ end
 function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 	if color then
 		local a, r, g, b = getBytesInInt32(color)
-	if color2 then
-		local a2, r2, g2, b2 = getBytesInInt32(color2)
-		setVehicleColor(self, r, g, b, r2, g2, b2)
-	else
-		setVehicleColor(self, r, g, b)
+		if color2 then
+			local a2, r2, g2, b2 = getBytesInInt32(color2)
+			setVehicleColor(self, r, g, b, r2, g2, b2)
+		else
+			setVehicleColor(self, r, g, b)
+		end
 	end
 
-	end
 	if lightColor then
 		local a, r, g, b = getBytesInInt32(lightColor)
 		setVehicleHeadLightColor(self, r, g, b)
@@ -421,7 +429,9 @@ function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, specia
 	for k, v in pairs(tunings or {}) do
 		addVehicleUpgrade(self, v)
 	end
-	self:setTexture(texture or "")
+	if texture and #texture > 3 then
+		self:setTexture(texture, nil, true)
+	end
 
 	if neon and fromJSON(neon) then
 		self:setNeon(1)
@@ -434,20 +444,6 @@ function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, specia
 		self:setSpecial(special)
 	end
 	self:setCustomHorn(horn or 0)
-end
-
-
-function Vehicle:setTexture(texturePath)
-  self.m_Texture = ""
-  if fileExists(texturePath) then
-    self.m_Texture = texturePath
-
-    for i, v in pairs(getElementsByType("player")) do
-      if v:isLoggedIn() then
-        triggerClientEvent(v, "changeElementTexture", v, {{vehicle = self, textureName = false, texturePath = self.m_Texture}})
-      end
-    end
-  end
 end
 
 function Vehicle:setCustomHorn(id)
@@ -480,9 +476,18 @@ function Vehicle:setNeonColor(colorTable)
   end
 end
 
+function Vehicle:getTexture()
+	return self.m_Texture
+end
+
+function Vehicle:setTexture(texturePath, textureName, force)
+	if texturePath and #texturePath > 3 then
+		self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
+	end
+end
+
 function Vehicle:removeTexture()
-  self.m_Texture = nil
-  triggerClientEvent(root, "removeElementTexture", root, self)
+	delete(self.m_Texture)
 end
 
 function Vehicle:setCurrentPositionAsSpawn(type)
@@ -497,15 +502,29 @@ function Vehicle:respawnOnSpawnPosition()
 		self:setPosition(self.m_SpawnPos)
 		self:setRotation(0, 0, self.m_SpawnRot)
 		fixVehicle(self)
-		setVehicleEngineState(self, false)
-		self.m_EngineState = false
+		self:setEngineState(false)
+		self:setLocked(true)
 		setVehicleOverrideLights(self, 1)
+		self:setFrozen(true)
+		self.m_HandBrake = true
+		self:setData( "Handbrake",  self.m_HandBrake , true )
 		self:setSirensOn(false)
+		self:resetIndicator()
 		local owner = Player.getFromId(self.m_Owner)
 		if owner and isElement(owner) then
 			owner:sendInfo(_("Dein Fahrzeug wurde in %s/%s respawnt!", owner, getZoneName(self.m_SpawnPos), getZoneName(self.m_SpawnPos, true)))
 		end
 	end
+end
+
+function Vehicle:getTrunk()
+  return self.m_Trunk or false
+end
+
+function Vehicle:resetIndicator()
+	setElementData(self, "i:left", false)
+	setElementData(self, "i:right", false)
+	setElementData(self, "i:warn", false)
 end
 
 -- Override it

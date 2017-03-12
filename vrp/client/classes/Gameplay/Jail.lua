@@ -25,7 +25,7 @@ addEventHandler("playerJailed", root,
 )
 
 function Jail.startCountdown(jailTime)
-	InfoBox:new(_("Willkommen im Gefängnis! Hier wirst du nun für die nächsten %d Minuten verweilen!", jailTime))
+	InfoBox:new(_("Du wurdest für %d Minuten ins Gefängnis gesperrt!", jailTime))
 	local countdown = Countdown:new(jailTime*60, "Frei in:")
 	countdown:addTickEvent(function()
 			toggleControl("fire", false)

@@ -107,3 +107,11 @@ end
 function GUIWebView:isPausingOnHide()
     return self.m_PauseOnHide
 end
+
+function GUIWebView:onHide()
+	focusBrowser()
+end
+
+function GUIWebView:reload()
+	reloadBrowserPage(self.m_Browser)
+end

@@ -20,6 +20,10 @@ function AmmuNation:addEnter(x, y, z, dimension)
 	guiMarker:setInterior(AmmuNation.INTERIORID)
 	guiMarker:setDimension(dimension)
 	Blip:new("AmmuNation.png", x, y,root,400)
+	self.m_NPC = NPC:new(236, 308.270, -143.090, 999.602)
+	self.m_NPC:setImmortal(true)
+	self.m_NPC:setInterior(AmmuNation.INTERIORID)
+	self.m_NPC:setDimension(dimension)
 
 	addEventHandler ("onMarkerHit", interiorEnter:getEnterMarker(),
 		function(hitElement, matchingDimension)

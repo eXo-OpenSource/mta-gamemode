@@ -7,13 +7,60 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
-function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, fuel, lightColor, trunkId, texture, horn, neon, special)
+-- This function converts a GroupVehicle into a normal vehicle (User/PermanentVehicle)
+function PermanentVehicle.convertVehicle(vehicle, player, Group)
+	if vehicle:isPermanent() then
+		if vehicle:getPositionType() == VehiclePositionType.World then
+			local position = vehicle:getPosition()
+			local rotation = vehicle:getRotation()
+			local model = vehicle:getModel()
+			local health = vehicle:getHealth()
+			local milage = vehicle:getMileage()
+			local r, g, b = getVehicleColor(vehicle, true)
+			local tunings = false
+			local texture = false
+			if Group:canVehiclesBeModified() then
+				texture = vehicle:getTexture() -- get texture replace instance
+				tunings = getVehicleUpgrades(vehicle) or {}
+			end
+
+			-- get Vehicle Trunk
+			local trunk = vehicle:getTrunk()
+			trunk:save()
+			local trunkId = trunk:getId()
+			trunk = nil
+
+			if vehicle:purge() then
+				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z, trunkId)
+				vehicle:setHealth(health)
+				vehicle:setColor(r, g, b)
+				vehicle:setMileage(milage)
+				if Group:canVehiclesBeModified() then
+					if texture and instanceof(texture, VehicleTexture) then
+						vehicle:setTexture(texture:getPath(), texture:getTexturePath(), true)
+					end
+
+					for k, v in pairs(tunings or {}) do
+						addVehicleUpgrade(vehicle, v)
+					end
+				end
+				return vehicle:save(), vehicle
+			end
+		end
+	end
+
+	return false
+end
+
+function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, fuel, lightColor, trunkId, texture, horn, neon, special, premium)
 	self.m_Id = Id
 	self.m_Owner = owner
+	self.m_Premium = premium and toboolean(premium) or false
 
 	self:setCurrentPositionAsSpawn(positionType)
 
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
+	setElementData(self, "OwnerType", "player")
 	self.m_Keys = keys or {}
 	self.m_PositionType = positionType or VehiclePositionType.World
 
@@ -33,30 +80,36 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 		health = 300
   	end
 
-	self:setHealth(health or 1000)
+	self:setFrozen(true)
+	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
 	self:setMileage(mileage)
 	self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
-
 end
 
 function PermanentVehicle:destructor()
 
 end
 
-function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation)
-  rotation = tonumber(rotation) or 0
-  if type(owner) == "userdata" then
-    owner = owner:getId()
-  end
-  if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation) then
-    local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-    enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, nil, nil, 1000)
-    VehicleManager:getSingleton():addRef(vehicle)
-    return vehicle
-  end
-  return false
+function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunkId)
+	rotation = tonumber(rotation) or 0
+	if type(owner) == "userdata" then
+		owner = owner:getId()
+	end
+
+	if trunkId == 0 or trunkId == nil then
+		trunkId = Trunk.create()
+	end
+
+	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId) then
+		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
+		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, {}, nil, nil, 1000, VehiclePositionType.World, nil, nil, nil, nil, trunkId)
+		VehicleManager:getSingleton():addRef(vehicle)
+		return vehicle
+	end
+	return false
 end
 
 function PermanentVehicle:purge()
@@ -76,9 +129,14 @@ function PermanentVehicle:save()
   local rLight, gLight, bLight = getVehicleHeadLightColor(self)
   local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
   local tunings = getVehicleUpgrades(self) or {}
+  local texture = ""
+  if self.m_Texture and self.m_Texture:getPath() then
+  		texture = self.m_Texture:getPath()
+  end
+
   if self.m_Trunk then self.m_Trunk:save() end
   return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, Fuel = ?, LightColor = ?, TrunkId = ?, TexturePath = ?, Horn = ?, Neon = ?, Special = ? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), self:getFuel(), lightColor, self.m_TrunkId, self.m_Texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Special or 0, self.m_Id)
+    self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), self:getFuel(), lightColor, self.m_TrunkId, texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Special or 0, self.m_Id)
 end
 
 function PermanentVehicle:getId()
@@ -130,13 +188,6 @@ function PermanentVehicle:setSpecial(special)
       addEventHandler("onElementDestroy", self, refreshSpeaker)
     end
   end
-end
-
-
-
-function PermanentVehicle:getTrunk()
-  if self.m_Trunk then return self.m_Trunk end
-  return false
 end
 
 function PermanentVehicle:isPermanent()
@@ -248,7 +299,7 @@ function PermanentVehicle:respawn(garageOnly)
 		else
 		-- Respawn at mechanic base
 			if vehicleType ~= VehicleType.Boat and vehicleType ~= VehicleType.Plane and vehicleType ~= VehicleType.Helicopter then
-				CompanyManager:getSingleton():getFromId(2):respawnVehicle(self)
+				CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC):respawnVehicle(self)
 				if owner and isElement(owner) then
 				owner:sendShortMessage(_("Dein Fahrzeug (%s) wurde in der Mechaniker-Base respawnt", owner, self:getName()))
 				end

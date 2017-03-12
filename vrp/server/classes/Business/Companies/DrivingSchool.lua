@@ -11,7 +11,7 @@ function DrivingSchool:constructor()
     InteriorEnterExit:new(Vector3(1364.14, -1669.10, 13.55), Vector3(-2026.93, -103.89, 1035.17), 90, 180, 3, 0, false)
 
     VehicleBarrier:new(Vector3(1413.59, -1653.09, 13.30), Vector3(0, 90, 88)).onBarrierHit = bind(self.onBarrierHit, self)
-    VehicleBarrier:new(Vector3(1345.19, -1722.80, 13.39), Vector3(0, 90, 0)).onBarrierHit = bind(self.onBarrierHit, self)
+    --VehicleBarrier:new(Vector3(1345.19, -1722.80, 13.39), Vector3(0, 90, 0)).onBarrierHit = bind(self.onBarrierHit, self)
     --VehicleBarrier:new(Vector3(1354.80, -1591.00, 13.39), Vector3(0, 90, 161), 0).onBarrierHit = bind(self.onBarrierHit, self)
 
     self.m_OnQuit = bind(self.Event_onQuit,self)
@@ -66,7 +66,12 @@ function DrivingSchool:createDrivingSchoolMarker(pos)
     addEventHandler("onPickupHit", self.m_DrivingSchoolPickup,
         function(hitElement)
             if getElementType(hitElement) == "player" then
-                hitElement:triggerEvent("showDrivingSchoolMenu",#self:getOnlinePlayers())
+                local instructorTable = {}
+				for k, player in pairs(self:getOnlinePlayers()) do
+					instructorTable[player.name] = player:getPublicSync("Company:Duty") and "(Im Dienst)" or "(Nicht im Dienst)"
+				end
+
+				hitElement:triggerEvent("showDrivingSchoolMenu",#self:getOnlinePlayers(), instructorTable)
             end
             cancelEvent()
         end
@@ -194,12 +199,13 @@ function DrivingSchool:Event_startLession(instructor, target, type)
                             ["target"] = target, ["type"] = type, ["instructor"] = instructor
                         }
                         target:takeMoney(costs, "Fahrschule")
-                        self:giveMoney(math.floor(costs/5))
+                        self:giveMoney(math.floor(costs/5), ("%s-Prüfung"):format(DrivingSchool.TypeNames[type]))
                         target:setPublicSync("inDrivingLession",true)
                         instructor:sendInfo(_("Du hast die %s Prüfung mit %s gestartet!", instructor, DrivingSchool.TypeNames[type], target.name))
                         target:sendInfo(_("Fahrlehrer %s hat die %s Prüfung mit dir gestartet, Folge seinen Anweisungen!", target, instructor.name, DrivingSchool.TypeNames[type]))
                         target:triggerEvent("showDrivingSchoolStudentGUI", DrivingSchool.TypeNames[type])
                         instructor:triggerEvent("showDrivingSchoolInstructorGUI", DrivingSchool.TypeNames[type], target)
+						self:addLog(instructor, "Fahrschule", ("hat eine %s Prüfung mit %s gestartet!"):format(DrivingSchool.TypeNames[type], target:getName()))
                         addEventHandler("onPlayerQuit", instructor, self.m_OnQuit)
                         addEventHandler("onPlayerQuit", target, self.m_OnQuit)
                     else

@@ -16,6 +16,8 @@ function DrugsWeed:destructor()
 end
 
 function DrugsWeed:use( player )
+	ItemDrugs.use(self, player)
+
   	player:triggerEvent("onClientItemUse", "Weed", WEED_EXPIRETIME )
     if isTimer( player.m_WeedExpireTimer ) then
       killTimer( player.m_WeedExpireTimer )
@@ -40,7 +42,7 @@ end
 
 function DrugsWeed:effect( player )
   local health = getElementHealth( player )
-  if ( health + DrugsWeed.m_HealValue ) <= 100 then
+  if health < 100 then
     setElementHealth( player, health + DrugsWeed.m_HealValue )
   end
 end

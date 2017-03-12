@@ -166,6 +166,7 @@ function Shop:buy(player)
 						group:addLog(player, "Immobilien", _("hat den Shop '%s' für %d$ gekauft!", player, self.m_Name, self.m_Price))
 						self.m_OwnerId = group:getId()
 						self:loadOwner()
+						self:save()
 					else
 						player:sendError(_("In der Firmenkasse ist nicht genug Geld! (%d$)", player, self.m_Price))
 					end
@@ -194,6 +195,7 @@ function Shop:sell(player)
 				group:addLog(player, "Immobilien", _("hat den Shop '%s' für %d$ verkauft!", player, self.m_Name, money))
 				self.m_OwnerId = 0
 				self:loadOwner()
+				self:save()
 			else
 				player:sendError(_("Nur Leader und Co-Leader deiner Firma können den Shop verkaufen!", player))
 			end

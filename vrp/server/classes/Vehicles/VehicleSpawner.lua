@@ -61,22 +61,27 @@ addEventHandler("vehicleSpawn", root,
 
 		local vehicle = TemporaryVehicle.create(vehicleModel, shop.m_Position.x, shop.m_Position.y, shop.m_Position.z + 1.5, shop.m_Rotation)
 
-		if not client:hasCorrectLicense(vehicle) then
-			client:sendWarning(_("Du hast nicht den passenden Führerschein!", client))
-			vehicle:destroy()
-			return
-		end
+		nextframe(
+			function(player)
+				if not player:hasCorrectLicense(vehicle) then
+					player:sendWarning(_("Du hast nicht den passenden Führerschein!", player))
+					vehicle:destroy()
+					return
+				end
 
-		if shop.m_PostSpawnFunc then
-			shop.m_PostSpawnFunc(vehicle, client)
-		end
+				if shop.m_PostSpawnFunc then
+					shop.m_PostSpawnFunc(vehicle, player)
+				end
 
-		if shop.m_Hook then
-			shop.m_Hook:call(client,vehicleModel,vehicle)
-		end
+				if shop.m_Hook then
+					shop.m_Hook:call(player,vehicleModel,vehicle)
+				end
+				player:setSpawnerVehicle(vehicle)
+				warpPedIntoVehicle(player, vehicle)
+			end
+		,client)
 
-		warpPedIntoVehicle(client, vehicle)
-		client:setSpawnerVehicle(vehicle)
+
 	end
 )
 
@@ -117,7 +122,7 @@ function VehicleSpawner:initializeAll()
 
 	local function postSpawn(vehicle, player)
 		player:takeMoney(200, "Fahrzeugverleih")
-		CompanyManager:getSingleton():getFromId(4):giveMoney(100, "Fahrzeugverleih")
+		CompanyManager:getSingleton():getFromId(CompanyStaticId.EPT):giveMoney(100, "Fahrzeugverleih")
 	end
 
 	local spawners = {}

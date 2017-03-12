@@ -12,6 +12,7 @@ function Admin:constructor()
     self.m_MtaAccounts = {}
 
     self.m_SupportArrow = {}
+	self.m_EventPartic = {}
     self.m_RankNames = {
         [1] = "Ticketsupporter",
         [2] = "Clanmember",
@@ -52,6 +53,7 @@ function Admin:constructor()
     addCommandHandler("addCompanyVehicle", bind(self.addCompanyVehicle, self))
 
     local adminCommandBind = bind(self.command, self)
+	self.m_ToggleJetPackBind = bind(self.toggleJetPack, self)
 
     addCommandHandler("timeban", adminCommandBind)
     addCommandHandler("permaban", adminCommandBind)
@@ -65,7 +67,9 @@ function Admin:constructor()
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
-
+	addCommandHandler("teilnehmen", bind(self.joinEventList, self),false,false)
+	addCommandHandler("eventTP", bind(self.teleportJoinList, self),false, false )
+	addCommandHandler("stopEventTP", bind(self.clearTPList, self), false, false )
 	addCommandHandler("drun", bind(self.runString, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
@@ -113,6 +117,46 @@ function Admin:constructor()
 
 end
 
+function Admin:joinEventList( source )
+	if not self.m_EventPartic[source] then
+		self.m_EventPartic[source] = true
+		outputChatBox("Du nimmst am Event teil, warte bis du teleportiert wirst!", source, 0, 200, 0)
+	else
+		self.m_EventPartic[source] = true
+		outputChatBox("Du nimmst nicht mehr am Event teil!", source, 200, 0 ,0)
+	end
+end
+
+function Admin:clearTPList( source )
+	if source:getRank() >= RANK.Supporter then
+		self.m_EventPartic = {}
+		outputChatBox("Du hast die Teleport-Liste geleert!",source, 200,200,0)
+	end
+end
+
+function Admin:teleportJoinList( source )
+	if source:getRank() <= RANK.Supporter then return end
+	local veh
+	local x,y,z = getElementPosition(source)
+	local count = 0
+	local int = getElementInterior(source)
+	local dim = getElementDimension(source)
+	for player, bool in pairs( self.m_EventPartic ) do
+		if bool then
+			veh = getPedOccupiedVehicle(player)
+			if veh then
+				removePedFromVehicle(player)
+			end
+			setElementDimension(player, dim)
+			setElementInterior(player, int)
+			setElementPosition(player, x+math.random(1,3), y+math.random(1,3),z)
+			count = count + 1
+		end
+	end
+	outputChatBox("Es wurden "..count.." teleportiert!", source, 200, 200, 200)
+	self.m_EventPartic = {}
+end
+
 function Admin:destructor()
 	removeCommandHandler("admins", bind(self.onlineList, self))
     removeCommandHandler("timeban", adminCommandBind)
@@ -134,28 +178,20 @@ end
 function Admin:addAdmin(player,rank)
 	outputDebug("Added Admin "..player:getName())
 	self.m_OnlineAdmins[player] = rank
-    player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
-    --if DEBUG then
+	if DEBUG then
+    	player:setPublicSync("DeathTime", DEATH_TIME_ADMIN)
+	end
+    if DEBUG or rank >= RANK.Servermanager then
+		if getAccount(player:getName().."-eXo") then removeAccount(getAccount(player:getName().."-eXo")) end
 		local pw = string.random(15)
 		local user = player:getName().."-eXo"
 		self.m_MtaAccounts[player] = addAccount(user, pw)
 		if self.m_MtaAccounts[player] then
 			player:logIn(self.m_MtaAccounts[player], pw)
 			ACLGroup.get("Admin"):addObject("user."..user)
-
 			player:triggerEvent("setClientAdmin", player, rank)
-
-			if DEBUG then
-				bindKey(player, "j", "down", function(player)
-					if not doesPedHaveJetPack(player) then
-						givePedJetPack(player)
-					else
-						removePedJetPack ( player )
-					end
-				end)
-			end
 		end
-    --end
+    end
 end
 
 function Admin:removeAdmin(player)
@@ -214,9 +250,7 @@ function Admin:Event_getPlayerInfo(Id, name)
 						Karma = player:getKarma();
                     }
 
-                    if isOffline then
-                        delete(player)
-                    end
+                    if isOffline then delete(player) end
                     client:triggerEvent("adminReceiveSeachedPlayerInfo", data)
                 end
             end
@@ -227,7 +261,7 @@ end
 function Admin:Event_respawnFactionVehicles(Id)
     local faction = FactionManager:getSingleton():getFromId(Id)
     if faction then
-        faction:respawnVehicles()
+        faction:respawnVehicles( client )
         client:sendShortMessage(_("%s Fahrzeuge respawnt", client, faction:getShortName()))
     end
 end
@@ -245,11 +279,15 @@ function Admin:command(admin, cmd, targetName, arg1, arg2)
 	if cmd == "smode" or cmd == "clearchat" then
         self:Event_adminTriggerFunction(cmd, nil, nil, nil, admin)
 	elseif cmd == "mark" then
-		self:Command_MarkPos(admin, true)
-		StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["mark"] then
+			self:Command_MarkPos(admin, true)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "mark", false)
+		end
 	elseif cmd == "gotomark" then
-		self:Command_MarkPos(admin, false)
-		StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
+		if admin:getRank() >= ADMIN_RANK_PERMISSION["mark"] then
+			self:Command_MarkPos(admin, false)
+			StatisticsLogger:getSingleton():addAdminAction( admin, "gotomark", false)
+		end
 	elseif cmd == "gotocords" then
 		local x, y, z = targetName, arg1, arg2
 		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then
@@ -328,7 +366,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 				self:sendShortMessage(_("%s hat %s für %d Minuten ins Prison gesteckt! Grund: %s", admin, admin:getName(), target:getName(), duration, reason))
 				target:setPrison(duration*60)
 				self:addPunishLog(admin, target, func, reason, duration*60)
-				outputChatBox(getPlayerName(target).." hat "..getPlayerName(admin).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
+				outputChatBox(getPlayerName(admin).." hat "..getPlayerName(target).." für "..duration.." Min. ins Prison gesteckt!",root, 200, 0, 0)
 				outputChatBox("Grund: "..reason,root, 200, 0, 0)
 			else
 			outputChatBox("Syntax: /prison [ziel] [Zeit in Minuten] [Grund]",admin,200,0,0)
@@ -389,6 +427,10 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             end
 			StatisticsLogger:getSingleton():addAdminAction( admin, "clearChat", false)
 			outputChatBox("Der Chat wurde von "..getPlayerName(admin).." geleert!",root, 200, 0, 0)
+		elseif func == "resetAction" then
+			self:sendShortMessage(_("%s hat die Aktionssperre resettet! Aktionen können wieder gestartet werden!", admin, admin:getName()))
+			ActionsCheck:getSingleton():reset()
+			StatisticsLogger:getSingleton():addAdminAction( admin, "resetAction", false)
 		elseif func == "respawnRadius" then
 			local radius = tonumber(target)
 			local pos = admin:getPosition()
@@ -397,7 +439,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			col:destroy()
 			local count = 0
 			for index, vehicle in pairs(vehicles) do
-				vehicle:respawn()
+				vehicle:respawn(true)
 				count = count + 1
 			end
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
@@ -483,7 +525,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             local targetId = Account.getIdFromName(target)
             if targetId and targetId > 0 then
                 self:addPunishLog(admin, targetId, func, reason, 0)
-                sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
+                sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
 				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
             else
                 admin:sendError(_("Spieler nicht gefunden!", admin))
@@ -565,13 +607,13 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			end
         end
     else
-        admin:sendError(_("Du darst diese Aktion nicht ausführen!", admin))
+        admin:sendError(_("Du darfst diese Aktion nicht ausführen!", admin))
     end
 end
 
 
 function Admin:chat(player,cmd,...)
-	if player:getRank() > RANK.Ticketsupporter then
+	if player:getRank() >= RANK.Ticketsupporter then
 		local msg = table.concat( {...}, " " )
 		if self.m_RankNames[player:getRank()] then
 			local text = ("[ %s %s ]: %s"):format(_(self.m_RankNames[player:getRank()], player), player:getName(), msg)
@@ -580,6 +622,16 @@ function Admin:chat(player,cmd,...)
 		end
 	else
 		player:sendError(_("Du bist kein Admin!", player))
+	end
+end
+
+function Admin:toggleJetPack(player)
+	if player:getRank() >= RANK.Administrator and player:getPublicSync("supportMode") and not doesPedHaveJetPack(player) then
+		givePedJetPack(player)
+	else
+		if doesPedHaveJetPack(player) then
+			removePedJetPack(player)
+		end
 	end
 end
 
@@ -594,6 +646,7 @@ function Admin:toggleSupportMode(player)
 		player.m_SupMode = true
 		player:triggerEvent("disableDamage", true )
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "aktiviert")
+		bindKey(player, "j", "down", self.m_ToggleJetPackBind)
     else
         player:setPublicSync("supportMode", false)
         player:sendInfo(_("Support Modus deaktiviert!", player))
@@ -603,7 +656,8 @@ function Admin:toggleSupportMode(player)
 		player.m_SupMode = false
 		player:triggerEvent("disableDamage", false)
 		StatisticsLogger:getSingleton():addAdminAction(player, "SupportMode", "deaktiviert")
-
+		self:toggleJetPack(player)
+		unbindKey(player, "j", "down", self.m_ToggleJetPackBind)
     end
 end
 
@@ -651,9 +705,17 @@ function Admin:ochat(player,cmd,...)
 end
 
 function Admin:onlineList(player)
-	outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
+	local count = 0
 	for key, value in pairs(self.m_OnlineAdmins) do
-		outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[value], key:getName()),player, unpack(self.m_RankColors[value]))
+		count = count+1
+	end
+	if count > 0 then
+		outputChatBox("Folgende Teammitglieder sind derzeit online:",player,50,200,255)
+		for key, value in pairs(self.m_OnlineAdmins) do
+			outputChatBox(("%s #ffffff%s"):format(self.m_RankNames[value], key:getName()),player, unpack(self.m_RankColors[value]))
+		end
+	else
+		outputChatBox("Derzeit sind keine Teammitglieder online!",player,255,0,0)
 	end
 end
 
@@ -725,6 +787,8 @@ local tpTable = {
         ["waffentruck"] =   {["pos"] = Vector3(-1864.28, 1407.51,  6.91),  	["typ"] = "Orte"},
         ["zombie"] =  		{["pos"] = Vector3(-49.47, 1375.64,  9.86),  	["typ"] = "Orte"},
         ["snipergame"] =    {["pos"] = Vector3(-525.74, 1972.69,  60.17),  	["typ"] = "Orte"},
+        ["kart"] =    		{["pos"] = Vector3(1262.375, 188.479, 19.5), 	["typ"] = "Orte"},
+        ["dm"] =    		{["pos"] = Vector3(1326.55, -1561.04, 13.55), 	["typ"] = "Orte"},
         ["pizza"] =      	{["pos"] = Vector3(2096.89, -1826.28, 13.24),  	["typ"] = "Jobs"},
         ["heli"] =       	{["pos"] = Vector3(1796.39, -2318.27, 13.11),  	["typ"] = "Jobs"},
         ["müll"] =       	{["pos"] = Vector3(2102.45, -2094.60, 13.23),  	["typ"] = "Jobs"},
@@ -734,7 +798,8 @@ local tpTable = {
         ["farmer"] =     	{["pos"] = Vector3(-53.69, 78.28, 2.79), 		["typ"] = "Jobs"},
         ["sweeper"] =    	{["pos"] = Vector3(219.49, -1429.61, 13.01),  	["typ"] = "Jobs"},
 		["schatzsucher"] =  {["pos"] = Vector3(706.22, -1699.38, 3.12),  	["typ"] = "Jobs"},
-        ["gabelstabler"] = 	{["pos"] = Vector3(93.67, -205.68,  1.23),  	["typ"] = "Jobs"},
+        ["gabelstapler"] = 	{["pos"] = Vector3(93.67, -205.68,  1.23),  	["typ"] = "Jobs"},
+        ["kiesgrube"] = 	{["pos"] = Vector3(590.71, 868.91, -42.50),  	["typ"] = "Jobs"},
         ["bikeshop"] =      {["pos"] = Vector3(2857.96, -1536.69, 10.73),  	["typ"] = "Shops"},
         ["bootshop"] =      {["pos"] = Vector3(1628.25, 597.11, 1.76),  	["typ"] = "Shops"},
         ["sultanshop"] =    {["pos"] = Vector3(2127.09, -1135.96, 25.20),  	["typ"] = "Shops"},
@@ -760,11 +825,13 @@ local tpTable = {
         ["area"] =          {["pos"] = Vector3(134.53, 1929.06,  18.89),  	["typ"] = "Fraktionen"},
         ["ballas"] =        {["pos"] = Vector3(2213.78, -1435.18, 23.83),  	["typ"] = "Fraktionen"},
 		["army"] =          {["pos"] = Vector3(2711.48, -2405.28, 13.49),  	["typ"] = "Fraktionen"},
+		["biker"] =         {["pos"] = Vector3(684.82, -485.55, 16.19),  	["typ"] = "Fraktionen"},
         ["lv"] =            {["pos"] = Vector3(2078.15, 1005.51,  10.43),  	["typ"] = "Städte"},
         ["sf"] =            {["pos"] = Vector3(-1988.09, 148.66, 27.22),  	["typ"] = "Städte"},
         ["bayside"] =       {["pos"] = Vector3(-2504.66, 2420.90,  16.33),  ["typ"] = "Städte"},
         ["ls"] =            {["pos"] = Vector3(1507.39, -959.67, 36.24),  	["typ"] = "Städte"},
-    }
+	}
+
 	local x,y,z = 0,0,0
 	if player:getRank() >= ADMIN_RANK_PERMISSION["tp"] then
 		if ort then
@@ -956,7 +1023,7 @@ function Admin:getVehFromId(player, cmd, vehId)
 end
 
 function Admin:Event_vehicleDespawn()
-    if client:getRank() >= RANK.Supporter then
+    if client:getRank() >= RANK.Clanmember then
         if isElement(source) then
 
 			VehicleManager:getSingleton():checkVehicle(source)
@@ -983,7 +1050,7 @@ function Admin:Command_MarkPos(player, add)
 				player:setInterior(markPos[2])
 				player:setDimension(markPos[3])
 				player:setPosition(markPos[1])
-				player:setCameraTarget(player)
+				setCameraTarget(player)
 			else
 				player:sendError("Du hast keine Makierung /mark")
 			end
@@ -998,7 +1065,7 @@ function Admin:Command_MarkPos(player, add)
 end
 
 function Admin:runString(player, cmd, ...)
-	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Developer then
+	if DEBUG or getPlayerName(player) == "Console" or player:getRank() >= RANK.Servermanager then
 		local codeString = table.concat({...}, " ")
 		runString(codeString, player)
 		--self:sendShortMessage(_("%s hat /drun benutzt!\n %s", player, player:getName(), codeString))

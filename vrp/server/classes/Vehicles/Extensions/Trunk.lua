@@ -30,8 +30,8 @@ function Trunk.create()
 end
 
 function Trunk.load(Id)
+	local Id = Id
 	if Trunk.Map[Id] then return Trunk.Map[Id] end
-
 	if Id == 0 then	Id = Trunk.create()	end
 
 	local row = sql:queryFetchSingle("SELECT * FROM ??_vehicle_trunks WHERE Id = ?;", sql:getPrefix(), Id)
@@ -141,6 +141,15 @@ function Trunk:takeItem(player, slot)
 end
 
 function Trunk:takeWeapon(player, slot)
+	if player:getFaction() and player:isFactionDuty() then
+		player:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", player))
+		return
+	end
+	if player.disableWeaponStorage then
+		player:sendError(_("Du darfst diese Waffe nicht nehmen!", player))
+		return
+	end
+
 	if self.m_WeaponSlot[slot] then
 		if self.m_WeaponSlot[slot]["WeaponId"] > 0 then
 			--if self.m_ItemSlot[slot]["Amount"] > 0 then
@@ -171,6 +180,15 @@ end
 
 
 function Trunk:addWeapon(player, weaponId, muni)
+	if player:getFaction() and player:isFactionDuty() then
+		player:sendError(_("Du darfst im Dienst keine Waffen einlagern!", player))
+		return
+	end
+	if player.disableWeaponStorage then
+		player:sendError(_("Du darfst diese Waffe nicht einlagern!", player))
+		return
+	end
+
 	for index, slot in pairs(self.m_WeaponSlot) do
 		if slot["WeaponId"] == 0 then
 			local weaponSlot = getSlotFromWeapon(weaponId)

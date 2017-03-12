@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 ItemFuelcan = inherit(Item)
+ItemFuelcan.Fill = 20
 
 function ItemFuelcan:constructor()
 end
@@ -16,12 +17,12 @@ end
 
 function ItemFuelcan:use(player)
 	if player.vehicle then
-		if player.vehicle:getFuel() and player.vehicle:getFuel() <= 100-50 then
-			player.vehicle:setFuel(player.vehicle:getFuel() + 50)
+		if player.vehicle:getFuel() and player.vehicle:getFuel() <= 100-ItemFuelcan.Fill then
+			player.vehicle:setFuel(player.vehicle:getFuel() + ItemFuelcan.Fill)
 			player:sendSuccess(_("Dein Fahrzeug wurde betankt!", player))
 			player:getInventory():removeItem(self:getName(), 1)
 		else
-			player:sendError(_("Dein Tank ist bereits voll", player))
+			player:sendError(_("Dein Tank ist bereits voll!", player))
 		end
 	else
 		player:sendError(_("Du musst in einem Fahrzeug sitzen!", player))

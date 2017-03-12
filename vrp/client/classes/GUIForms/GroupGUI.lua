@@ -94,6 +94,9 @@ function GroupGUI:constructor()
 	self.m_VehicleConvertToGroupButton.onLeftClick = bind(self.VehicleConvertToGroupButton_Click, self)
 	--GUILabel:new(self.m_Width*0.02, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.08, _"Fahrzeug-Info:", tabVehicles)
 
+	self.m_VehicleRemoveFromGroup = GUIButton:new(self.m_Width*0.695, self.m_Height*0.34, self.m_Width*0.28, self.m_Height*0.07, _"Fahrzeug entfernen", tabVehicles):setFontSize(1.2)
+	self.m_VehicleRemoveFromGroup.onLeftClick = bind(self.VehicleRemoveFromGroupButton_Click, self)
+
 	local tabBusiness = self.m_TabPanel:addTab(_"Geschäfte")
 	self.m_TabBusiness = tabBusiness
 	GUILabel:new(self.m_Width*0.02, self.m_Height*0.02, self.m_Width*0.25, self.m_Height*0.06, _"Geschäfte:", tabBusiness)
@@ -173,10 +176,12 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		self.m_GroupCreateLabel:setVisible(false)
 		self.m_TypeLabel:setText(type..":")
 
+		players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
+
 		self.m_GroupPlayersGrid:clear()
-		for playerId, info in pairs(players) do
+		for _, info in ipairs(players) do
 			local item = self.m_GroupPlayersGrid:addItem(info.name, info.rank)
-			item.Id = playerId
+			item.Id = info.playerId
 		end
 		if rank >= GroupRank.Manager then
 			self.m_RankNames = rankNames
@@ -463,10 +468,31 @@ function GroupGUI:VehicleConvertToGroupButton_Click()
 		return
 	end
 
-	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen! Dieser Vorgang kann nicht rückgänging gemacht werden", function()
+	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen?", function()
 		triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
 	end)
+end
 
+function GroupGUI:VehicleRemoveFromGroupButton_Click()
+	local item = self.m_VehiclesGrid:getSelectedItem()
+	if not item then
+		ErrorBox:new(_"Bitte wähle ein Fahrzeug aus!")
+		return
+	end
+	if item.PositionType == VehiclePositionType.Garage then
+		ErrorBox:new(_"Das Fahrzeug darf sich nicht in der Garage befinden!")
+		return
+	end
+	if item.PositionType == VehiclePositionType.Mechanic then
+		ErrorBox:new(_"Das Fahrzeug darf sich nicht im Autohof befinden!")
+		return
+	end
+
+	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich aus der Firma entfernen?",
+		function()
+			triggerServerEvent("groupRemoveVehicle", localPlayer, item.VehicleElement)
+		end
+	)
 end
 
 function GroupGUI:VehicleLocateButton_Click()
@@ -480,7 +506,7 @@ function GroupGUI:VehicleLocateButton_Click()
 	local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
 	blip:setZ(z)
 	--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
-		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung+", Color.DarkLightBlue, -1)
+		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier, um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeugortung", Color.DarkLightBlue, -1)
 		.m_Callback = function (this)
 			if blip then
 				delete(blip)
@@ -489,7 +515,7 @@ function GroupGUI:VehicleLocateButton_Click()
 		end
 	--else
 		--setTimer(function () delete(blip) end, 5000, 1)
-		--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "Fahrzeug-Ortung", Color.DarkLightBlue)
+		--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "Fahrzeugortung", Color.DarkLightBlue)
 	--end
 end
 

@@ -17,7 +17,7 @@ function InventoryGUI:constructor()
 	local w, h = screenWidth*0.6, screenHeight*0.6
 	GUIForm.constructor(self, screenWidth/2-w/2, screenHeight/2-h/2, w, h)
 	self.m_Background = GUIWindow:new(0, 0, w, h, "", false, true, self)
-	self.m_Background:setCloseOnClose(false)
+	self.m_Background:deleteOnClose(false)
 
 	-- todo: make dependand on h instead
 	local ENTRYHEIGHT = screenHeight/100*7
@@ -66,8 +66,8 @@ function InventoryGUI:setInventory(inv, loadContent)
 	end
 end
 
-function InventoryGUI:destructor() 
-	self:clear() 
+function InventoryGUI:destructor()
+	self:clear()
 end
 
 function InventoryGUI:getInventory()

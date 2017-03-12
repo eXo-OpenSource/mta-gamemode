@@ -17,8 +17,19 @@ function CustomF11Map:destructor()
 	self:disable()
 end
 
+function CustomF11Map:toggleMapKeys(state)
+	toggleControl("radar", state)
+	toggleControl("radar_zoom_in", state)
+	toggleControl("radar_zoom_out", state)
+	toggleControl("radar_move_north", state)
+	toggleControl("radar_move_south", state)
+	toggleControl("radar_move_east", state)
+	toggleControl("radar_move_west", state)
+end
+
 function CustomF11Map:enable()
-	toggleControl("radar", false)
+	self:toggleMapKeys(false)
+
 	forcePlayerMap(false)
 	self.m_Enabled = true
 end
@@ -36,7 +47,7 @@ function CustomF11Map:toggle()
 end
 
 function CustomF11Map:disable()
-	toggleControl("radar", true)
+	self:toggleMapKeys(true)
 
 	self.m_Enabled = false
 	self.m_Visible = false

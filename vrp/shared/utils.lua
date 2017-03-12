@@ -281,6 +281,22 @@ function string.duration(seconds)
 	end
 end
 
+function string.short(str, i)
+	return #str > i and str:sub(0, i).."..." or str
+end
+
+function table.setIndexToInteger(tab)
+	local newTab = {}
+	for index, value in pairs(tab) do
+		if tonumber(index) then
+			newTab[tonumber(index)] = value
+		else
+			newTab[index] = value
+		end
+	end
+	return newTab
+end
+
 -- Override with UTF-8 versions (but keep a backup for binary operations)
 string.binary_sub = string.sub
 string.binary_len = string.len
@@ -308,8 +324,8 @@ function getBytesInInt32(int32)
 	return byte1, byte2, byte3, byte4
 end
 
-function nextframe(fn)
-	setTimer(fn, 50, 1)
+function nextframe(fn, ...)
+	setTimer(fn, 50, 1, ...)
 end
 
 function toboolean(num)
@@ -636,10 +652,9 @@ function traceback()
         local info = debug.getinfo(level, "Sl")
         if not info then break end
         if info.what == "C" then   -- is a C function?
-          outputConsole(level, "C function")
+          outputConsole("C function")
         else   -- a Lua function
-          outputConsole(string.format("[%s]:%d",
-                              info.short_src, info.currentline))
+          outputConsole(info.short_src.."-"..info.currentline)
         end
         level = level + 1
       end
@@ -686,4 +701,22 @@ function string.random(length)
 		table.insert(code, x)
 	end
 	return table.concat(code)
+end
+
+function isNan(num)
+	return num ~= num
+end
+
+function normaliseVector(serialisedVector)
+	if serialisedVector.w ~= nil then
+		return Vector4(serialisedVector.x, serialisedVector.y, serialisedVector.z, serialisedVector.w)
+	elseif serialisedVector.z ~= nil then
+		return Vector3(serialisedVector.x, serialisedVector.y, serialisedVector.z)
+	else
+		return Vector2(serialisedVector.x, serialisedVector.y)
+	end
+end
+
+function serialiseVector(vector)
+	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
 end

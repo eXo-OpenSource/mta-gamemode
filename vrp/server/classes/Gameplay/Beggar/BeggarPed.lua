@@ -43,18 +43,23 @@ end
 
 function BeggarPed:despawn()
     setTimer(function ()
-        local newAlpha = self:getAlpha() - 10
-        if newAlpha < 10 then newAlpha = 0 end
-        if newAlpha == 0 then
-            self:destroy()
-        else
-            self:setAlpha(newAlpha)
-        end
+		if self and isElement(self) and self:getAlpha() then
+			local newAlpha = self:getAlpha() - 10
+			if newAlpha < 10 then newAlpha = 0 end
+			if newAlpha == 0 then
+				self:destroy()
+			else
+				self:setAlpha(newAlpha)
+			end
+		else
+			killTimer(sourceTimer)
+		end
     end, 50, 255/10)
 end
 
 function BeggarPed:rob(player)
 	if getTickCount() - self.m_LastRobTime < 10*60*1000 then
+		player:sendMessage(_("#FE8A00%s: #FFFFFFIch wurde gerade erst ausgeraubt. Bei mir gibts nichts zu holen.", player, self.m_Name))
 		return
 	end
 
@@ -83,6 +88,11 @@ function BeggarPed:giveMoney(player, money)
 
 		-- give Achievement
 		player:giveAchievement(56)
+		if self.m_Name == BeggarNames[19] then
+			player:giveAchievement(80)
+		elseif self.m_Name == BeggarNames[32] then
+			player:giveAchievement(81)
+		end
 
 		-- Despawn the Beggar
 		setTimer(
@@ -116,6 +126,12 @@ end
 function BeggarPed:acceptTransport(player)
 	if player.vehicle and player.vehicleSeat == 0 then
 		local veh = player.vehicle
+
+		if not instanceof(veh, PermanentVehicle, true) then
+			self:sendMessage(player, BeggarPhraseTypes.Decline)
+			return
+		end
+
 		for seat = 1, veh.maxPassengers do
 			if not veh:getOccupant(seat) then
 				local pos = Randomizer:getRandomTableValue(BeggarTransportPositions)

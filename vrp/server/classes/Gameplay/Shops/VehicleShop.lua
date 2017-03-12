@@ -15,7 +15,7 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_OwnerId = owner
 	self.m_Money = money
 
-	self.m_Vehicles = {}
+	self.m_VehicleList = {}
 
 	local markerPos = split(marker,",")
 	self.m_Marker = createMarker(markerPos[1], markerPos[2], markerPos[3]+0.5, "cylinder", 1, 255, 255, 0, 200)
@@ -27,6 +27,8 @@ function VehicleShop:constructor(id, name, marker, npc, spawn, image, owner, pri
 	self.m_NPC:toggleWanteds(true)
 	local spawnPos = split(spawn,",")
 	self.m_Spawn = {spawnPos[1], spawnPos[2], spawnPos[3], spawnPos[4]}
+	self.m_NonCollissionCol = createColSphere(spawnPos[1], spawnPos[2], spawnPos[3], 10)
+	self.m_NonCollissionCol:setData("NonCollidingSphere", true, true)
 end
 
 function VehicleShop:getName()
@@ -34,8 +36,8 @@ function VehicleShop:getName()
 end
 
 function VehicleShop:getVehiclePrice(model)
-	if self.m_Vehicles[model] and self.m_Vehicles[model].price then
-		return self.m_Vehicles[model].price
+	if self.m_VehicleList[model] and self.m_VehicleList[model].price then
+		return self.m_VehicleList[model].price
 	else
 		return false
 	end
@@ -44,15 +46,15 @@ end
 function VehicleShop:onMarkerHit(hitElement, dim)
 	if dim and hitElement:getType() == "player" then
 		local vehicles = {}
-		for index, vehicle in pairs(self.m_Vehicles) do
-			vehicles[index] = {vehicle, vehicle.price, vehicle.level}
+		for model, vehicleData in pairs(self.m_VehicleList) do
+			vehicles[model] = {vehicleData.vehicle, vehicleData.price, vehicleData.level}
 		end
 		hitElement:triggerEvent("showVehicleShopMenu", self.m_Id, self.m_Name, self.m_Image, vehicles)
 	end
 end
 
 function VehicleShop:buyVehicle(player, vehicleModel)
-	local price, requiredLevel = self.m_Vehicles[vehicleModel].price, self.m_Vehicles[vehicleModel].level
+	local price, requiredLevel = self.m_VehicleList[vehicleModel].price, self.m_VehicleList[vehicleModel].level
 	if not price then return end
 
 	if player:getVehicleLevel() < requiredLevel then
@@ -72,6 +74,7 @@ function VehicleShop:buyVehicle(player, vehicleModel)
 			self:giveMoney(price, "Fahrzeug-Verkauf")
 			warpPedIntoVehicle(player, vehicle)
 			player:triggerEvent("vehicleBought")
+			vehicle.m_Premium  = false
 		else
 			player:sendMessage(_("Fehler beim Erstellen des Fahrzeugs. Bitte benachrichtige einen Admin!", player), 255, 0, 0)
 		end
@@ -93,10 +96,12 @@ function VehicleShop:getMoney()
 end
 
 function VehicleShop:addVehicle(Id, Model, Name, Category, Price, Level, Pos, Rot)
-	self.m_Vehicles[Model] = TemporaryVehicle.create(Model, Pos, Rot)
-	self.m_Vehicles[Model].price = Price
-	self.m_Vehicles[Model].level = Level
-	local veh = self.m_Vehicles[Model]
+	self.m_VehicleList[Model] = {}
+	self.m_VehicleList[Model].price = Price
+	self.m_VehicleList[Model].level = Level
+	self.m_VehicleList[Model].vehicle = TemporaryVehicle.create(Model, Pos, Rot)
+
+	local veh = self.m_VehicleList[Model].vehicle
 	veh.m_DisableToggleEngine = true
 	veh.m_DisableToggleHandbrake = true
 	veh:setLocked(true)

@@ -22,6 +22,6 @@ function ItemDrugs:destructor()
 
 end
 
-function ItemDrugs:use( )
-
+function ItemDrugs:use( player )
+	player:giveAchievement(73)
 end

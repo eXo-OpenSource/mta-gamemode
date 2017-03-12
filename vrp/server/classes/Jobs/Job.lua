@@ -50,6 +50,12 @@ end
 
 function Job:onJobVehicleDestroy()
 	for key, obj in pairs(source:getAttachedElements()) do
+		if obj:getAttachedElements() then
+			for key2, obj2 in pairs(obj:getAttachedElements()) do
+				obj2:destroy()
+			end
+		end
+
 		obj:destroy()
 	end
 
@@ -58,7 +64,9 @@ function Job:onJobVehicleDestroy()
 	local player = source.jobPlayer
 	nextframe( -- Workarround to avoid Stack Overflow
 		function()
-			player:setJob(nil)
+			if player and player.setJob then
+				player:setJob(nil)
+			end
 		end
 	)
 end

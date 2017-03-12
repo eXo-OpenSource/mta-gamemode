@@ -35,11 +35,9 @@ function LocalPlayer:constructor()
 	addEventHandler("setClientTime", self, bind(self.Event_onGetTime, self))
 	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
-
-
+	addEventHandler("onClientPlayerSpawn", self, bind(LocalPlayer.Event_onClientPlayerSpawn, self))
 
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
-
 
 	self.m_DeathRenderBind = bind(self.deathRender, self)
 
@@ -178,6 +176,18 @@ end
 
 function LocalPlayer:playerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
+		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
+			if localPlayer:getFaction():isStateFaction() then
+				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
+			elseif localPlayer:getFaction():isRescueFaction() then
+				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+			end
+		end
+
+		if localPlayer:getPublicSync("Company:Duty") then
+			triggerServerEvent("companyToggleDuty", localPlayer)
+		end
+
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
 end
@@ -188,7 +198,6 @@ function LocalPlayer:Event_playerWasted()
 	HUDUI:getSingleton():hide()
 	showChat(false)
 	triggerServerEvent("Event_setPlayerWasted", self)
-
 	local funcA = function()
 		if self.m_DeathMessage then
 			delete(self.m_DeathMessage)
@@ -196,9 +205,16 @@ function LocalPlayer:Event_playerWasted()
 		if isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
 		triggerServerEvent("factionRescueReviveAbort", self, self)
 		self.m_CanBeRevived = false
+		if isElement(self.m_DeathAudio) then
+			destroyElement(self.m_DeathAudio)
+		end
 
-		self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
-		local soundLength = self.m_Halleluja:getLength()
+		local soundLength = 20 -- Length of Halleluja in Seconds
+		if core:get("Other", "HallelujaSound", true) and fileExists("files/audio/Halleluja.mp3") then
+			self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
+			soundLength = self.m_Halleluja:getLength()
+		end
+
 		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
 
 		-- render camera drive
@@ -225,7 +241,6 @@ function LocalPlayer:Event_playerWasted()
 			end, soundLength*1000, 1
 		)
 	end
-
 	local SMClick = function()
 		if localPlayer:isDead() then
 			funcA()
@@ -234,9 +249,14 @@ function LocalPlayer:Event_playerWasted()
 			return
 		end
 	end
-
-	Camera.setMatrix(self.position + self.matrix.up*10, self.position)
-
+	setGameSpeed(0.1)
+	self.m_DeathAudio = Sound("files/audio/death_ahead.mp3")
+	setSoundVolume(self.m_DeathAudio,1)
+	local x,y,z = getPedBonePosition(localPlayer,5)
+	setSkyGradient(10,10,10,30,30,30)
+	setTimer(Camera.setMatrix,5000,1, x, y, z+3, x, y, z)
+	setTimer(setGameSpeed,5000,1,1)
+	setTimer(resetSkyGradient,30000,1)
 	if localPlayer:getInterior() > 0 then
 		funcA()
 		return
@@ -244,16 +264,10 @@ function LocalPlayer:Event_playerWasted()
 
 	local deathTime = MEDIC_TIME
 	local start = getTickCount()
-
 	self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, SMClick)
 	self.m_CanBeRevived = true
 	self.m_WastedTimer = setTimer(
 		function()
-			if not localPlayer:isDead() then
-				delete(self.m_DeathMessage)
-				killTimer(self.m_WastedTimer)
-			end
-
 			local timeGone = getTickCount() - start
 			if timeGone >= deathTime-500 then
 				funcA()
@@ -271,10 +285,12 @@ function LocalPlayer:deathRender(deltaTime)
 	Camera.setMatrix(Vector3(pos.x, pos.y, pos.z + self.m_Add), pos)
 end
 
-function LocalPlayer:abortDeathGUI()
-	if self.m_CanBeRevived then
+function LocalPlayer:abortDeathGUI(force)
+	if self.m_CanBeRevived or force then
 		if self.m_WastedTimer and isTimer(self.m_WastedTimer) then killTimer(self.m_WastedTimer) end
-		if isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
+		if self.m_DeathMessage then delete(self.m_DeathMessage) end
+		if self.m_Halleluja and isElement(self.m_Halleluja) then destroyElement(self.m_Halleluja) end
+		if isElement(self.m_DeathAudio) then destroyElement(self.m_DeathAudio) end
 		HUDRadar:getSingleton():show()
 		HUDUI:getSingleton():show()
 		showChat(true)
@@ -337,9 +353,23 @@ function LocalPlayer:toggleAFK(state, teleport)
 		self.m_AFKCode = false
 		GUIForm.closeAll()
 		InfoBox:new(_"Du wurdest ins AFK-Cafe teleportiert!")
+
+		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
+			if localPlayer:getFaction():isStateFaction() then
+				triggerServerEvent("factionStateToggleDuty", localPlayer)
+			elseif localPlayer:getFaction():isRescueFaction() then
+				triggerServerEvent("factionRescueToggleDuty", localPlayer)
+			end
+		end
+
+		if localPlayer:getPublicSync("Company:Duty") then
+			triggerServerEvent("companyToggleDuty", localPlayer)
+		end
+
 		triggerServerEvent("toggleAFK", localPlayer, true, teleport)
 		addEventHandler ( "onClientPedDamage", localPlayer, cancelEvent)
 		self.m_AFKStartTime = getTickCount()
+		NoDm:getSingleton():checkNoDm()
 	else
 		InfoBox:new(_("Willkommen zurück, %s!", localPlayer:getName()))
 		triggerServerEvent("toggleAFK", localPlayer, false)
@@ -347,6 +377,8 @@ function LocalPlayer:toggleAFK(state, teleport)
 		self:setAFKTime() -- Set CurrentAFKTime
 		self.m_AFKStartTime = 0
 		self:setAFKTime() -- Add CurrentAFKTime to AFKTime + Reset CurrentAFKTime
+		NoDm:getSingleton():checkNoDm()
+
 	end
 end
 
@@ -428,7 +460,7 @@ function LocalPlayer:Event_setAdmin(player, rank)
 
 		if rank >= RANK.Developer then
 			addCommandHandler("dcrun", function(cmd, ...)
-				if self:getRank() >= RANK.Developer then
+				if self:getRank() >= RANK.Servermanager then
 					local codeString = table.concat({...}, " ")
 					runString(codeString, localPlayer)
 				end
@@ -439,6 +471,11 @@ function LocalPlayer:Event_setAdmin(player, rank)
 	end
 end
 
+
+function LocalPlayer:getAchievements ()
+	return table.setIndexToInteger(fromJSON(self:getPrivateSync("Achievements"))) or {[0] = false}
+end
+
 function LocalPlayer:Event_toggleRadar(state)
 	HUDRadar:getSingleton():setEnabled(state)
 end
@@ -446,3 +483,51 @@ end
 function LocalPlayer:sendTrayNotification(text, icon, sound)
 	createTrayNotification("eXo-RL: "..text, icon, sound)
 end
+
+function LocalPlayer:Event_onClientPlayerSpawn()
+	NoDm:getSingleton():checkNoDm()
+
+	local col = createColSphere(localPlayer.position, 3)
+
+	for _, player in pairs(getElementsByType("player")) do
+		localPlayer:setCollidableWith(player, false)
+	end
+
+	addEventHandler("onClientColShapeLeave", col,
+		function(element, matchingDimension)
+			if element == localPlayer and matchingDimension then
+				for _, player in pairs(getElementsByType("player")) do
+					localPlayer:setCollidableWith(player, true)
+				end
+
+				col:destroy()
+			end
+		end
+	)
+
+	--[[setTimer(
+		function()
+			outputChatBox("Collision enabled")
+			for _, player in pairs(getElementsByType("player")) do
+				localPlayer:setCollidableWith(player, true)
+			end
+		end, 10000, 1
+	)]]
+end
+
+addEvent("showSkinModCheck", true)
+addEventHandler("showSkinModCheck",localPlayer, function(tbl) 
+	local w,h = guiGetScreenSize()
+	local tx = dxGetFontHeight(3,"default-bold")
+	local tx2 = dxGetFontHeight(2,"default")
+	addEventHandler("onClientRender", root, function() 
+		dxDrawRectangle(0,0,w,h,tocolor(255,255,255,255))	
+		dxDrawImage(w*0.5-w*0.05,h*0.02,w*0.1,w*0.1,"files/images/warning.png")
+		dxDrawText("Warnung! Folgende Modifikationen müssen entfernt werden, da sie in der Größe sehr stark abweichen!",0,h*0.3-tx*1.1,w,0,tocolor(150,0,0,255),3,"default-bold","center","top")
+		dxDrawText("Originale GTA3.img ist im Forum verfügbar! https://goo.gl/L6i7dR",0,h*0.3,w,0,tocolor(0,0,0,255),2,"default-bold","center","top")
+		dxDrawLine(0,h*0.3+tx,w,h*0.3+tx,tocolor(150,0,0,255))
+		for i = 1,#tbl do 
+			dxDrawText(i.."# "..tbl[i],0,(h*0.3)+tx+i*(tx2*1.5),w,h,tocolor(0,0,0,255),2,"default","center","top")
+		end
+	end)
+end)

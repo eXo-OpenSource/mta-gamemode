@@ -9,6 +9,7 @@ JobLumberjack = inherit(Job)
 
 function JobLumberjack:constructor()
 	Job.constructor(self, 16, 1104.27, -298.06, 73.99, 90, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), _(HelpTexts.Jobs.Lumberjack))
+	self:setJobLevel(JOB_LEVEL_LUMBERJACK)
 
 	self.m_Trees = {}
 	self.m_StackedTrees = {}
@@ -68,6 +69,12 @@ function JobLumberjack:stop()
 		self.m_SawMillBlip = nil
 	end
 
+	for k, v in ipairs(self.m_StackedTrees) do
+		destroyElement(v)
+	end
+	self.m_StackedTrees = {}
+	self.m_NumTrees = 0
+
 	-- Reset text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
@@ -109,7 +116,7 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 			end
 		else
 			ErrorBox:new(_"Bitte verwende die Motorsäge!")
-			return
+			cancelEvent()
 		end
 	end
 end

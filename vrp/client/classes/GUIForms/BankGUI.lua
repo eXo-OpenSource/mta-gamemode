@@ -10,7 +10,7 @@ inherit(Singleton, BankGUI)
 addEvent("bankMoneyBalanceRetrieve", true)
 
 function BankGUI:constructor()
-	GUIForm.constructor(self, screenWidth/2-screenWidth*0.3/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.35, screenHeight*0.4)
+	GUIForm.constructor(self, screenWidth/2-screenWidth*0.38/2, screenHeight/2-screenHeight*0.4/2, screenWidth*0.38, screenHeight*0.4)
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Bank ATM", true, true, self)
 	self.m_HeaderImage = GUIImage:new(self.m_Width*0.01, self.m_Height*0.11, self.m_Width*0.98, self.m_Height*0.25, "files/images/Shops/BankHeader.png", self.m_Window)
@@ -24,22 +24,35 @@ function BankGUI:constructor()
 	self.m_TabWithdraw = self.m_TabPanel:addTab(_"Auszahlen")
 	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.15, tabHeight*0.15, _"Betrag:", self.m_TabWithdraw)
 	self.m_WithdrawAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabWithdraw)
+	self.m_WithdrawAmountEdit:setNumeric(true, true)
 	self.m_WithdrawButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Auszahlen", true, self.m_TabWithdraw)
 	self.m_WithdrawButton.onLeftClick = bind(self.WithdrawButton_Click, self)
 
 	self.m_TabDeposit = self.m_TabPanel:addTab(_"Einzahlen")
 	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.15, tabHeight*0.15, _"Betrag:", self.m_TabDeposit)
 	self.m_DepositAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabDeposit)
+	self.m_DepositAmountEdit:setNumeric(true, true)
 	self.m_DepositButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Einzahlen", true, self.m_TabDeposit)
 	self.m_DepositButton.onLeftClick = bind(self.DepositButton_Click, self)
 
 	self.m_TabTransfer = self.m_TabPanel:addTab(_"Überweisen")
 	GUILabel:new(tabWidth*0.03, tabHeight*0.07, tabWidth*0.2, tabHeight*0.15, _"Empfänger:", self.m_TabTransfer)
-	self.m_TransferToEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.5, tabHeight*0.15, self.m_TabTransfer)
+	self.m_TransferToEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.07, tabWidth*0.4, tabHeight*0.15, self.m_TabTransfer)
 	GUILabel:new(tabWidth*0.03, tabHeight*0.28, tabWidth*0.2, tabHeight*0.15, _"Betrag:", self.m_TabTransfer)
-	self.m_TransferAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.28, tabWidth*0.5, tabHeight*0.15, self.m_TabTransfer)
-	self.m_TransferButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.7, tabHeight*0.2, _"Überweisen", true, self.m_TabTransfer)
+	self.m_TransferAmountEdit = GUIEdit:new(tabWidth*0.25, tabHeight*0.28, tabWidth*0.4, tabHeight*0.15, self.m_TabTransfer)
+	self.m_TransferAmountEdit:setNumeric(true, true)
+	self.m_TransferButton = VRPButton:new(tabWidth*0.03, tabHeight*0.55, tabWidth*0.62, tabHeight*0.2, _"Überweisen", true, self.m_TabTransfer)
 	self.m_TransferButton.onLeftClick = bind(self.TransferButton_Click, self)
+
+	GUILabel:new(tabWidth*0.7, tabHeight*0.07, tabWidth*0.27, tabHeight*0.17, _"Spenden:", self.m_TabTransfer):setColor(Color.LightBlue)
+
+	local donate = {}
+	donate["San News"] = VRPButton:new(tabWidth*0.7, tabHeight*0.25, tabWidth*0.28, tabHeight*0.2, _"San News", true, self.m_TabTransfer):setBarColor(Color.Green)
+	donate["eXo Event-Team"] = VRPButton:new(tabWidth*0.7, tabHeight*0.48, tabWidth*0.28, tabHeight*0.2, _"eXo Event-Team", true, self.m_TabTransfer):setBarColor(Color.Yellow)
+
+	for index, btn in pairs(donate) do
+		btn.onLeftClick = function() self.m_TransferToEdit:setText(index) end
+	end
 
 	if localPlayer:getGroupId() and localPlayer:getGroupId() > 0 then
 		self.m_TabGroup = self.m_TabPanel:addTab(_("%s-Konto", localPlayer:getGroupType()))

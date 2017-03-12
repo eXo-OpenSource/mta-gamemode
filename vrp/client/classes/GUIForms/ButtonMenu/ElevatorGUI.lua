@@ -40,7 +40,7 @@ function ElevatorGUI:itemCallback(stationId, station)
 			localPlayer:setPosition(1751.20, -1746.90, 13.30)
 			localPlayer:setRotation(0, 0, 170)
 			localPlayer:setFrozen(true)
-			toggleAllControls(false)
+			self:toggleKeys(false)
 			HUDRadar:getSingleton():setEnabled(false)
 		end, 1500,1)
 		setTimer(function() fadeCamera(true,1) end, 1500, 1)
@@ -54,15 +54,26 @@ function ElevatorGUI:itemCallback(stationId, station)
 			setTimer(function() fadeCamera(true,1) end, 1500, 1)
 			setTimer(function()
 				localPlayer:setFrozen(false)
-				toggleAllControls(true)
+				self:toggleKeys(true)
 				HUDRadar:getSingleton():setEnabled(true)
 				removeEventHandler("onClientPreRender", root, self.m_CamBind)
 				triggerServerEvent("elevatorDrive", localPlayer, self.m_ElevatorId, stationId)
 				localPlayer.m_inElevator = false
 				setCameraTarget(localPlayer)
+				setTimer(
+					function()
+						NoDm:getSingleton():checkNoDm()
+					end, 500, 1
+				)
 			end, 1250, 1)
 		end, 8000, 1)
 		delete(self)
+	end
+end
+
+function ElevatorGUI:toggleKeys(state)
+	for id, control in pairs(GUIForm.Controls) do
+		toggleControl(control, state)
 	end
 end
 

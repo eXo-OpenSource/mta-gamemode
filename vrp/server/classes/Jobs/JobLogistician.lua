@@ -6,7 +6,8 @@
 -- *
 -- ****************************************************************************
 JobLogistician = inherit(Job)
-local MONEY_PER_TRANSPORT = 500
+local MONEY_PER_TRANSPORT_MIN = 500 --// default 200
+local MONEY_PER_TRANSPORT_MAX = 1000 --// default 500
 
 function JobLogistician:constructor()
 	Job.constructor(self)
@@ -25,11 +26,28 @@ function JobLogistician:constructor()
 	self.m_VehicleSpawner2 = VehicleSpawner:new(-209.97, -273.92, 0.5, {"DFT-30"}, 180, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner2.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner2:disable()
+
+	self:changeLoan()
+
+	GlobalTimer:getSingleton():registerEvent(bind(self.changeLoan, self), "Logistic Job Loan Change", nil, nil, 00) -- Every Hour
+
 end
 
 function JobLogistician:start(player)
 	self.m_VehicleSpawner1:toggleForPlayer(player, true)
 	self.m_VehicleSpawner2:toggleForPlayer(player, true)
+end
+
+function JobLogistician:checkRequirements(player)
+	if not (player:getJobLevel() >= JOB_LEVEL_LOGISTICAN) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_LOGISTICAN), 255, 0, 0)
+		return false
+	end
+	return true
+end
+
+function JobLogistician:changeLoan()
+	self.m_MoneyPerTransport = math.random(MONEY_PER_TRANSPORT_MIN, MONEY_PER_TRANSPORT_MAX)
 end
 
 function JobLogistician:stop(player)
@@ -43,6 +61,7 @@ function JobLogistician:stop(player)
 end
 
 function JobLogistician:onVehicleSpawn(player,vehicleModel,vehicle)
+	vehicle.m_DisableToggleHandbrake = true
 	vehicle:setData("LogisticanVehicle", true)
 	player:setData("Logistican:VehicleSpawn", vehicle:getPosition())
 	self:registerJobVehicle(player, vehicle, true, true)
@@ -86,20 +105,25 @@ function JobLogistician:onMarkerHit(hitElement, dim)
 					if source == hitElement:getData("Logistician:TargetMarker") then
 						crane:dropContainer(veh, hitElement,
 						function()
-							hitElement:giveMoney(MONEY_PER_TRANSPORT, "Logistiker Job")
+							hitElement:giveMoney(self.m_MoneyPerTransport, "Logistiker Job")
 							hitElement:givePoints(10)
 						end)
 					else
 						hitElement:sendError(_("Du bist am falschen Kran!", hitElement))
 					end
 				else
-					crane:loadContainer(veh, hitElement)
-					if source == self.m_Marker1 then
-						self:setNewDestination(hitElement, self.m_Marker2, crane)
-					elseif source == self.m_Marker2 then
-						self:setNewDestination(hitElement, self.m_Marker1, crane)
+					if crane.m_Busy then
+						hitElement:sendInfo(_("Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!", hitElement))
 					else
-						hitElement:sendError(_("Internal Error! Marker does not match", hitElement))
+						crane:loadContainer(veh, hitElement)
+
+						if source == self.m_Marker1 then
+							self:setNewDestination(hitElement, self.m_Marker2, crane)
+						elseif source == self.m_Marker2 then
+							self:setNewDestination(hitElement, self.m_Marker1, crane)
+						else
+							hitElement:sendError(_("Internal Error! Marker does not match", hitElement))
+						end
 					end
 				end
 			else
@@ -126,6 +150,15 @@ function Crane:constructor(startX, startY, startZ, endX, endY, endZ, markerPos)
 	self.m_Busy = false
 end
 
+function Crane:reset()
+	self.m_Object:setPosition(self.m_StartX, self.m_StartY, self.m_StartZ)
+	self.m_Object:setRotation(0, 0, self.m_Rotation)
+	self.m_Tow:setPosition(self.m_StartX+0.5, self.m_StartY-0.7, self.m_StartZ+5)
+	self.m_Tow:setRotation(0, 0, self.m_Rotation)
+	self.m_Busy = false
+	if self.m_Container and isElement(self.m_Container) then self.m_Container:destroy() end
+end
+
 function Crane:destructor()
 	destroyElement(self.m_Object)
 	destroyElement(self.m_Tow)
@@ -133,11 +166,18 @@ end
 
 function Crane:dropContainer(vehicle, player, callback)
 	if self.m_Busy then
+		player:sendInfo(_("Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!", player))
 		return false
 	end
 	self.m_Busy = true
 	vehicle:setFrozen(true)
 	toggleAllControls(player, false)
+
+	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+	self.m_Timer = setTimer(function()
+		self:reset()
+	end, 35000, 1)
+
 	-- First, roll down the tow
 	self:rollTowDown(
 		function()
@@ -158,7 +198,7 @@ function Crane:dropContainer(vehicle, player, callback)
 
 					-- Wait till we're at the target position
 					setTimer(
-						function()
+						function(container)
 							-- Roll down the tow
 							self:rollTowDown(
 								function()
@@ -169,13 +209,11 @@ function Crane:dropContainer(vehicle, player, callback)
 										function()
 											moveObject(self.m_Object, 10000, self.m_StartX, self.m_StartY, self.m_StartZ)
 											if callback then callback() end
-
-											setTimer(function() self.m_Busy = false end, 10000, 1)
 										end
 									)
 								end
 							)
-						end, 10000, 1
+						end, 10000, 1, container
 					)
 				end
 			)
@@ -186,6 +224,7 @@ end
 
 function Crane:loadContainer(vehicle, player, callback)
 	if self.m_Busy then
+		player:sendInfo(_("Der Kran ist aktuell beschäftigt! Bitte warte einen kleinen Moment!", player))
 		return false
 	end
 	self.m_Busy = true
@@ -194,6 +233,7 @@ function Crane:loadContainer(vehicle, player, callback)
 	container:setScale(0.95)
 	container:setCollisionsEnabled(false)	-- cause does not affect the collision model
 	player.LogisticanContainer = container
+	self.m_Container = container
 
 	vehicle:setFrozen(true)
 	toggleAllControls(player, false)
@@ -202,8 +242,13 @@ function Crane:loadContainer(vehicle, player, callback)
 	moveObject(self.m_Object, 10000, self.m_EndX, self.m_EndY, self.m_EndZ)
 	moveObject(self.m_Tow, 10000, self.m_EndX+0.5, self.m_EndY-0.7, self.m_EndZ+5)
 	-- Wait till we're at the target position
+	if self.m_Timer and isTimer(self.m_Timer) then killTimer(self.m_Timer) end
+	self.m_Timer = setTimer(function()
+		self:reset()
+	end, 35000, 1)
+
 	setTimer(
-		function()
+		function(container)
 			-- Roll tow down
 			self:rollTowDown(
 				function()
@@ -217,13 +262,14 @@ function Crane:loadContainer(vehicle, player, callback)
 
 							-- Wait till we're there
 							setTimer(
-								function()
+								function(container)
 									-- Roll tow down and load up the truck
 									self:rollTowDown(
 										function()
 											if not isElement(container ) or not isElement(vehicle) then return end
 											detachElements(container, self.m_Tow)
 											attachElements(container, vehicle, 0, -1.7, 1.1)
+											self.m_Container = nil
 											vehicle:setFrozen(false)
 											toggleAllControls(player, true)
 
@@ -231,18 +277,17 @@ function Crane:loadContainer(vehicle, player, callback)
 											self:rollTowUp(
 												function()
 													if callback then callback() end
-													self.m_Busy = false
 												end
 											)
 										end
 									)
-								end, 10000, 1
+								end, 10000, 1, container
 							)
 						end
 					)
 				end
 			)
-		end, 10000, 1
+		end, 10000, 1, container
 	)
 	return true
 end

@@ -61,7 +61,7 @@ function Warn.removeWarn(who, warnId)
 	end
 end
 
-function Warn.checkWarn(player)
+function Warn.checkWarn(player, doNotSave)
 	local id = player.m_Id
 	sql:queryExec("DELETE FROM ??_warns WHERE userId = ? AND expires < ?;", sql:getPrefix(), id, getRealTime().timestamp)
 
@@ -70,7 +70,8 @@ function Warn.checkWarn(player)
 		local row = Async.wait()
 		if row then
 			local days = math.floor((row.expires - getRealTime().timestamp)/60/60/24)
-			kickPlayer(player, _("Du hast 3 Warns! Der nächste läuft in %d Tagen ab!", player, days))
+			if doNotSave then player.m_DoNotSave = true end
+			kickPlayer(player, _("Du hast 3 Warns! Der nächste läuft in %d Tagen ab!", player, days+1))
 			return false
 		end
 		return true

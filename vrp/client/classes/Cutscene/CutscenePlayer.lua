@@ -5,13 +5,13 @@ function CutscenePlayer:constructor()
 	self.m_CutsceneList = {}
 end
 
-function CutscenePlayer:playCutscene(name, finishcallback)
+function CutscenePlayer:playCutscene(name, finishcallback, dim)
 	assert(self.m_CutsceneList[name])
 
-	localPlayer:setDimension(PRIVATE_DIMENSION_CLIENT)
+	localPlayer:setDimension(dim or PRIVATE_DIMENSION_CLIENT)
 	localPlayer:setFrozen(true)
 
-	self.m_Cutscene = Cutscene:new(self.m_CutsceneList[name])
+	self.m_Cutscene = Cutscene:new(self.m_CutsceneList[name], dim)
 	self.m_Cutscene.onFinish =
 		function(cutscene)
 			CutscenePlayer:getSingleton():stopCutscene()

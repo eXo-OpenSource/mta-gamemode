@@ -23,6 +23,7 @@ end)
 function Player:constructor()
 	setElementDimension(self, PRIVATE_DIMENSION_SERVER)
 	setElementFrozen(self, true)
+	self:setVoiceBroadcastTo(nil)
 
 	self.m_PrivateSync = {}
 	self.m_PrivateSyncUpdate = {}
@@ -37,8 +38,6 @@ function Player:constructor()
 	self.m_AFKStartTime = 0
 	self.m_Crimes = {}
 	self.m_LastPlayTime = 0
-	self:destroyChatColShapes( )
-	self:createChatColshapes( )
 
 	self.m_detachPlayerObjectBindFunc = bind(self.detachPlayerObjectBind, self)
 	self:toggleControlsWhileObjectAttached(true)
@@ -56,6 +55,7 @@ function Player:destructor()
 	if self.m_Inventory then
 		delete(self.m_Inventory)
 	end
+
 	-- Collect all world items
 --	local worldItems = WorldItem.getItemsByOwner(self)
 --	for k, worldItem in pairs(worldItems) do
@@ -63,19 +63,23 @@ function Player:destructor()
 --	end
 
 	-- Call the quit hook (to clean up various things before saving)
+
 	Player.ms_QuitHook:call(self)
 
 	if self:getRank() > 0 then
 		Admin:getSingleton():removeAdmin(self,self:getRank())
 	end
 
-	if self:isFactionDuty() then
+	if self:isFactionDuty() or self.m_RemoveWeaponsOnLogout then
 		takeAllWeapons(self)
 	end
 
-
+	self:setJailNewTime()
 	self:save()
 
+	if self.m_BankAccount then
+		delete(self.m_BankAccount)
+	end
 
 	-- Unload stuff
 	PhoneNumber.unload(1, self.m_Id)
@@ -125,14 +129,20 @@ function Player:stopNavigation()
 end
 
 function Player:setJailBail( bail )
+	if bail > 0 then
+		self:sendMessage(_("Knast: Du kannst dich mit /bail für %d$ freikaufen!", self, bail), 255, 0, 0)
+	end
 	self.m_Bail = bail
 end
 
 function Player:loadCharacter()
+	if self.m_DoNotSave then
+		return
+	end
+
 	DatabasePlayer.Map[self.m_Id] = self
-	Warn.checkWarn(self)
-	Ban.checkBan(self)
 	self:loadCharacterInfo()
+	self:setPrivateSync("Id", self.m_Id)
 
 	-- Send infos to client
 	local info = {
@@ -168,7 +178,18 @@ function Player:loadCharacter()
 	triggerEvent("onLoadCharacter",self)
 
 	-- Premium
-	Premium.constructor(self)
+	self.m_Premium = PremiumPlayer:new(self)
+
+	-- CJ Skin
+	if self.m_Skin == 0 then
+		for i = 0, #CJ_CLOTHE_TYPES, 1 do
+			self:removeClothes(i)
+			local data = self.m_CJData[tostring(i)]
+			if data then
+				self:addClothes(data.texture, data.model, i)
+			end
+		end
+	end
 
 	VehicleManager:getSingleton():createVehiclesForPlayer( self )
 	triggerEvent("characterInitialized", self)
@@ -186,7 +207,7 @@ function Player:loadCharacterInfo()
 		return
 	end
 
-	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
+	local row = sql:asyncQueryFetchSingle("SELECT Health, Armor, Weapons, UniqueInterior, IsDead, BetaPlayer FROM ??_character WHERE Id = ?", sql:getPrefix(), self.m_Id)
 	if not row then
 		return false
 	end
@@ -206,12 +227,20 @@ function Player:loadCharacterInfo()
 	-- Load weapons
 	self.m_Weapons = fromJSON(row.Weapons or "") or {}
 
+	-- Give beta Achievement
+	if toboolean(row.BetaPlayer) then
+		self:giveAchievement(83)
+	end
+
 	-- Sync server objects to client
 	Blip.sendAllToClient(self)
 	RadarArea.sendAllToClient(self)
 	FactionManager:getSingleton():sendAllToClient(self)
+	CompanyManager:getSingleton():sendAllToClient(self)
 	VehicleManager:getSingleton():sendTexturesToClient(self)
-	HouseManager:getSingleton():loadBlips(self)
+	if HouseManager:isInstantiated() then
+		HouseManager:getSingleton():loadBlips(self)
+	end
 
 	self.m_IsDead = row.IsDead or 0
 
@@ -259,47 +288,47 @@ function Player:save()
 	if not self.m_Account or self:isGuest() then
 		return
 	end
-	local x, y, z = getElementPosition(self)
-	local interior = self:getInterior()
-
-	-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
-	if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
-		self.m_UniqueInterior = 0
-	end
-
-	local weapons = {}
-	for slot = 0, 11 do -- exclude satchel detonator (slot 12)
-		local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
-		if ammo > 0 then
-			weapons[#weapons + 1] = {weapon, ammo}
-		end
-	end
-	local dimension = 0
-	local sHealth = self:getHealth()
-	local sArmor = self:getArmor()
-	local sSkin = getElementModel(self)
-	if interior > 0 then dimension = self:getDimension() end
 	if self.m_DoNotSave then
-		x, y, z = NOOB_SPAWN.x, NOOB_SPAWN.y, NOOB_SPAWN.z
-		sHealth = 100
-		sArmor = 0
-		sSkin = NOOB_SKIN
+		return
 	end
-	local spawnWithFac
-	if self.m_SpawnWithFactionSkin then
-		spawnWithFac = 1
-	else
-		spawnWithFac = 0
-	end
-	sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
-		x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
+	if self:isLoggedIn() then
+		local x, y, z = getElementPosition(self)
+		if getPedOccupiedVehicle(self) then
+			z = z + 2
+		end
+		local interior = self:getInterior()
 
-	--if self:getInventory() then
-	--	self:getInventory():save()
-	--end
-	DatabasePlayer.save(self)
-	outputServerLog("Saved Data for Player "..self:getName())
-	outputDebugString("Saved Data for Player "..self:getName())
+		-- Reset unique interior if interior or dimension doesn't match (ATTENTION: Dimensions must be unique as well)
+		if interior == 0 or self:getDimension() ~= self.m_UniqueInterior then
+			self.m_UniqueInterior = 0
+		end
+
+		local weapons = {}
+		for slot = 0, 11 do -- exclude satchel detonator (slot 12)
+			local weapon, ammo = getPedWeapon(self, slot), getPedTotalAmmo(self, slot)
+			if ammo > 0 then
+				weapons[#weapons + 1] = {weapon, ammo}
+			end
+		end
+		local dimension = 0
+		local sHealth = self:getHealth()
+		local sArmor = self:getArmor()
+		local sSkin = getElementModel(self)
+		if interior > 0 then dimension = self:getDimension() end
+		local spawnWithFac = self.m_SpawnWithFactionSkin and 1 or 0
+
+		sql:queryExec("UPDATE ??_character SET PosX = ?, PosY = ?, PosZ = ?, Interior = ?, Dimension = ?, UniqueInterior = ?,Skin = ?, Health = ?, Armor = ?, Weapons = ?, PlayTime = ?, SpawnWithFacSkin = ?, AltSkin = ?, IsDead =? WHERE Id = ?", sql:getPrefix(),
+			x, y, z, interior, dimension, self.m_UniqueInterior, sSkin, math.floor(sHealth), math.floor(sArmor), toJSON(weapons, true), self:getPlayTime(), spawnWithFac, self.m_AltSkin or 0, self.m_IsDead or 0, self.m_Id)
+
+
+		--if self:getInventory() then
+		--	self:getInventory():save()
+		--end
+		VehicleManager:getSingleton():savePlayerVehicles(self)
+		DatabasePlayer.save(self)
+		outputServerLog("Saved Data for Player "..self:getName())
+		outputDebugString("Saved Data for Player "..self:getName())
+	end
 end
 
 function Player:spawn( )
@@ -336,8 +365,7 @@ function Player:spawn( )
 		end
 
 		-- Apply and delete health data
-		if self.m_Health == 0 then self.m_Health = 1 end
-		self:setHealth(self.m_Health)
+		self:setHealth(math.max(self.m_Health, 1))
 		self:setArmor(self.m_Armor)
 		--self.m_Health, self.m_Armor = nil, nil -- this leads to errors as Player:spawn is called twice atm (--> introFinished event at the top)
 
@@ -351,7 +379,7 @@ function Player:spawn( )
 			end
 		end
 		if self.m_PrisonTime > 0 then
-			self:setPrison(self.m_PrisonTime)
+			self:setPrison(self.m_PrisonTime, true)
 		end
 		if self.m_JailTime then
 			if self.m_JailTime > 0 then
@@ -369,10 +397,6 @@ function Player:spawn( )
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
-	-- reAttach ChatCols
-	attachElements(self.chatCol_whisper, self)
-	attachElements(self.chatCol_talk, self)
-	attachElements(self.chatCol_scream, self)
 	self:triggerEvent("checkNoDm")
 	if self.m_IsDead == 1 then
 		killPed(self)
@@ -390,19 +414,13 @@ function Player:respawn(position, rotation, bJailSpawn)
 		position, rotation = position, rotation
 	end
 	if self.m_PrisonTime > 0 then
-		self:setPrison(self.m_PrisonTime)
+		self:setPrison(self.m_PrisonTime, true)
 	end
 	if self.m_JailTime == 0 or not self.m_JailTime then
 
 		self:setHeadless(false)
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
-		if self:getFaction() and self:getFaction():isEvilFaction() then
-			if self.m_SpawnWithFactionSkin then
-				self:getFaction():changeSkin(self)
-			else
-				setElementModel( self, self.m_AltSkin or self.m_Skin)
-			end
-		end
+
 	else
 		spawnPlayer(self, position, rotation, self.m_Skin or 0)
 		self:setHeadless(false)
@@ -410,6 +428,15 @@ function Player:respawn(position, rotation, bJailSpawn)
 			self:moveToJail(false,true)
 		end
 	end
+
+	if self:getFaction() and self:getFaction():isEvilFaction() then
+		if self.m_SpawnWithFactionSkin then
+			self:getFaction():changeSkin(self)
+		else
+			setElementModel( self, self.m_AltSkin or self.m_Skin)
+		end
+	end
+
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
@@ -675,14 +702,16 @@ function Player:payDay()
 	self:addPaydayText("interest","Bank-Zinsen: "..income_interest.."$",255,255,255)
 
 	--Outgoing
-	local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
-	--if #houses > 0 then
-		for index, house in pairs(houses) do
-			outgoing_house = outgoing_house + house:getRent()
-			house.m_Money = house.m_Money + house:getRent()
-			houseAmount = houseAmount + 1
-		end
-	--end
+	if HouseManager:isInstantiated() then
+		local houses = HouseManager:getSingleton():getPlayerRentedHouses(self)
+		--if #houses > 0 then
+			for index, house in pairs(houses) do
+				outgoing_house = outgoing_house + house:getRent()
+				house.m_Money = house.m_Money + house:getRent()
+				houseAmount = houseAmount + 1
+			end
+		--end
+	end
 
 	outgoing_vehicles = #self:getVehicles()*75
 	outgoing = outgoing + outgoing_vehicles + outgoing_house
@@ -699,6 +728,7 @@ function Player:payDay()
 	triggerClientEvent ( self, "paydayBox", self, self.m_paydayTexts)
 	-- Add Payday again
 	self:setNextPayday()
+	self:save()
 end
 
 function Player:addPaydayText(typ,text,r,g,b)
@@ -780,41 +810,28 @@ function Player:setUniqueInterior(uniqueInteriorId)
 	self.m_UniqueInterior = uniqueInteriorId
 end
 
-function Player:createChatColshapes( )
-	local x,y,z = getElementPosition( self )
-	self.chatCol_whisper = createColSphere ( x,y,z, CHAT_WHISPER_RANGE )
-	attachElements(self.chatCol_whisper, self)
-	self.chatCol_talk = createColSphere ( x,y,z, CHAT_TALK_RANGE )
-	attachElements(self.chatCol_talk, self)
-	self.chatCol_scream = createColSphere ( x,y,z, CHAT_SCREAM_RANGE )
-	attachElements(self.chatCol_scream, self)
-end
-
-function Player:destroyChatColShapes( )
-	if self.chatCol_scream then destroyElement(self.chatCol_scream) end
-	if self.chatCol_talk then destroyElement(self.chatCol_talk) end
-	if self.chatCol_whisper then destroyElement(self.chatCol_whisper) end
-end
-
 function Player:getPlayersInChatRange( irange)
-	local colShape
+	local range
 	if irange == 0 then
-		colShape = self.chatCol_whisper
+		range = CHAT_WHISPER_RANGE
 	elseif irange == 1 then
-		colShape = self.chatCol_talk
+		range = CHAT_TALK_RANGE
 	elseif irange == 2 then
-		colShape = self.chatCol_scream
+		range = CHAT_SCREAM_RANGE
 	end
-	local playersInRange = {	}
-	local elementTable = getElementsWithinColShape( colShape,"player")
+	local pos = self:getPosition()
+	local playersInRange = {}
+	local elementTable = getElementsByType("player")
 	local player,dimension,interior,check
 	for index = 1,#elementTable do
-		player = elementTable[index]
-		dimension = player.dimension
-		interior = player.interior
-		if interior == self.interior then
-			if dimension == self.dimension then
-				playersInRange[#playersInRange+1] = player
+	    if (pos - elementTable[index]:getPosition()).length <= range then
+			player = elementTable[index]
+			dimension = player.dimension
+			interior = player.interior
+			if interior == self.interior then
+				if dimension == self.dimension then
+					playersInRange[#playersInRange+1] = player
+				end
 			end
 		end
 	end
@@ -861,7 +878,7 @@ function Player:attachPlayerObject(object, allowWeapons)
 			self:sendError(_("Du hast bereits ein Objekt dabei!", self))
 		end
 	else
-		self:sendError("Internal Error: attachPlayerObject: Wrong Object")
+		--self:sendError("Internal Error: attachPlayerObject: Wrong Object")
 	end
 end
 
@@ -870,7 +887,7 @@ function Player:refreshAttachedObject(instant)
 		if self:getPlayerAttachedObject() then
 			local object = self:getPlayerAttachedObject()
 			if self:isDead() then
-				detachPlayerObject(object)
+				self:detachPlayerObject(object)
 			end
 			object:setInterior(self:getInterior())
 			object:setDimension(self:getDimension())
@@ -943,9 +960,9 @@ function Player:meChat(system, ...)
 	local systemText = ""
 	local receivedPlayers = {}
 	local message = ("%s %s"):format(self:getName(), text)
-	if system == true then systemText = "* " end
+	if system == true then systemText = "★" end
 	for index = 1,#playersToSend do
-		outputChatBox(("%s %s %s"):format(systemText, message, systemText), playersToSend[index], 100, 0, 255)
+		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 255,105,180)
 		if playersToSend[index] ~= self then
             receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
         end
@@ -990,4 +1007,20 @@ end
 
 function Player:isInGangwar()
 	 return Gangwar:getSingleton():isPlayerInGangwar(self)
+end
+
+-- Override mta function
+function Player:removeClothes(typeId)
+	if self:getSkin() ~= 0 then return false end
+	removePedClothes(self, typeId)
+
+	self.m_SkinData[typeId] = nil
+end
+
+-- Override mta function
+function Player:addClothes(texture, model, typeId)
+	if self:getSkin() ~= 0 then return false end
+	addPedClothes(self, texture, model, typeId)
+
+	self.m_SkinData[typeId] = {texture = texture, model = model}
 end

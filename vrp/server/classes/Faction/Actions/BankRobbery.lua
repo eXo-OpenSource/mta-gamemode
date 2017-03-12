@@ -34,11 +34,12 @@ BankRobbery.BagSpawns = {
 	Vector3(2309.27, 19.14, 26),
 }
 
-local BOMB_TIME = 15*1000
-local MONEY_PER_SAFE_MIN = 300
-local MONEY_PER_SAFE_MAX = 500
-local MAX_MONEY_PER_BAG = 2500
+local BOMB_TIME = 20*1000
+local MONEY_PER_SAFE_MIN = 500
+local MONEY_PER_SAFE_MAX = 750
+local MAX_MONEY_PER_BAG = 3000
 local BANKROB_TIME = 60*1000*12
+--Info 68 Tresors
 
 function BankRobbery:constructor()
 	self:build()
@@ -72,7 +73,9 @@ function BankRobbery:destroyRob()
 	end
 	triggerClientEvent("bankAlarmStop", root)
 	if self.m_DestinationMarker then
-		for index, marker in pairs(self.m_DestinationMarker) do if isElement(marker) then destroyElement(marker) end end
+		for index, marker in pairs(self.m_DestinationMarker) do
+			if isElement(marker) then destroyElement(marker) end
+		end
 	end
 	if self.m_Safes then
 		for index, safe in pairs(self.m_Safes) do if isElement(safe) then destroyElement(safe) end	end
@@ -139,7 +142,7 @@ function BankRobbery:build()
 	self.m_HackableComputer:setData("bankPC", true, true)
 
 	self.m_SafeDoor = createObject(2634, 2314.1, 18.94, 26.7, 0, 0, 270)
-
+	self.m_SafeDoor.m_Open = false
 	self.m_BankDoor = createObject(1495, 2314.885, 0.70, 25.70)
 	self.m_BankDoor:setScale(0.88)
 
@@ -229,6 +232,8 @@ function BankRobbery:startRob(player)
     self.m_Truck:setColor(0, 0, 0)
     self.m_Truck:setLocked(false)
 	self.m_Truck:setEngineState(true)
+	self.m_Truck:toggleRespawn(false)
+
 
 	self.m_HackMarker = createMarker(2313.4, 11.61, 28.5, "arrow", 0.8, 255, 255, 0)
 
@@ -236,12 +241,9 @@ function BankRobbery:startRob(player)
 	self.m_UpdateBreakingNewsTimer = setTimer(bind(self.updateBreakingNews, self), 20000, 0)
 
 	for markerIndex, destination in pairs(BankRobbery.FinishMarker) do
-		for index, playeritem in pairs(faction:getOnlinePlayers()) do
-			self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
-			self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
-			addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
-
-		end
+		self.m_Blip[markerIndex] = Blip:new("Waypoint.png", destination.x, destination.y, playeritem)
+		self.m_DestinationMarker[markerIndex] = createMarker(destination, "cylinder", 8)
+		addEventHandler("onMarkerHit", self.m_DestinationMarker[markerIndex], bind(self.Event_onDestinationMarkerHit, self))
 	end
 
 	for index, playeritem in pairs(faction:getOnlinePlayers()) do
@@ -261,6 +263,10 @@ function BankRobbery:Ped_Targetted(ped, attacker)
 	local faction = attacker:getFaction()
 	if faction and faction:isEvilFaction() then
 		if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
+			return false
+		end
+		if FactionState:getSingleton():countPlayers() < BANKROB_MIN_MEMBERS then
+			attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, BANKROB_MIN_MEMBERS))
 			return false
 		end
 		self:startRob(attacker)
@@ -437,7 +443,7 @@ end
 function BankRobbery:countStatePeople()
 	local amount = 0
 	for k, player in pairs(getElementsWithinColShape(self.m_ColShape, "player")) do
-		if player:getFaction() and player:getFaction():isStateFaction() then
+		if player:getFaction() and player:getFaction():isStateFaction() and player:isFactionDuty() then
 			amount = amount + 1
 		end
 	end
@@ -446,14 +452,14 @@ end
 
 function BankRobbery:BombArea_Place(bombArea, player)
 	if not player:getFaction() then
-		player:sendError(_("Banken kannst du nur, wenn du Mitglied einer bösen Fraktion bist, ausrauben", player))
+		player:sendError(_("Banken kannst du nur ausrauben wenn du Mitglied einer bösen Fraktion bist", player))
 		return false
 	end
 
 	if not ActionsCheck:getSingleton():isActionAllowed(player) then	return false end
 
 	if not DEBUG and FactionState:getSingleton():countPlayers() < 5 then
-		player:sendError(_("Um den Überfall starten zu können, müssen mindestens 5 Staats-Fraktionisten online sein!", player))
+		player:sendError(_("Um den Überfall starten zu können müssen mindestens 5 Staats-Fraktionisten online sein!", player))
 		return false
 	end
 
@@ -488,6 +494,7 @@ function BankRobbery:Event_onHackSuccessful()
 
 	local pos = self.m_SafeDoor:getPosition()
 	self.m_SafeDoor:move(3000, pos.x, pos.y+1.5, pos.z, 0, 0, 0)
+	self.m_SafeDoor.m_Open = true
 end
 
 function BankRobbery:Event_onStartHacking()
@@ -542,7 +549,7 @@ function BankRobbery:Event_onBagClick(button, state, player)
 	if button == "left" and state == "down" then
 		if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
 			if player:getFaction() then
-				if player:getFaction():isStateFaction() then
+				if player:getFaction():isStateFaction() and player:isFactionDuty() then
 					self:statePeopleClickBag(player, source)
 				elseif player:getFaction():isEvilFaction() then
 					player:attachPlayerObject(source)
@@ -592,7 +599,7 @@ function BankRobbery:Event_DeloadBag(veh)
 					for key, bag in pairs (getAttachedElements(veh)) do
 						if bag.model == 1550 then
 							bag:detach(self.m_Truck)
-							if client:getFaction():isStateFaction() then
+							if client:getFaction():isStateFaction() and client:isFactionDuty() then
 								self:statePeopleClickBag(client, bag)
 								return
 							else
@@ -618,7 +625,7 @@ function BankRobbery:Event_DeloadBag(veh)
 end
 
 function BankRobbery:Event_OnTruckStartEnter(player, seat)
-	if seat == 0 and not player:getFaction() then
+	if seat == 0 and player:getFaction() ~= self.m_RobFaction then
 		player:sendError(_("Den Bank-Überfall Truck können nur Fraktionisten fahren!", player))
 		cancelEvent()
 	end
@@ -671,37 +678,34 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			local faction = hitElement:getFaction()
 			if faction then
 				if faction:isEvilFaction() then
-					local veh = getPedOccupiedVehicle( hitElement )
-					if veh then
-						local attachedElements = getAttachedElements(getPedOccupiedVehicle(hitElement))
-						if attachedElements then
-							attachedElements = #attachedElements
-						else
-							attachedElements = 0
-						end
-						local bags, amount
-						local totalAmount = 0
-						if (veh and attachedElements > 0 ) or hitElement:getPlayerAttachedObject() then
+					local bags, amount = {}, 0
+					local totalAmount = 0
+					if hitElement:getPlayerAttachedObject() or hitElement.vehicle then
 
-							if isPedInVehicle(hitElement) and getPedOccupiedVehicle(hitElement) == self.m_Truck then
-								bags = getAttachedElements(self.m_Truck)
-								hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-							elseif hitElement:getPlayerAttachedObject() then
-								bags = getAttachedElements(hitElement)
-								hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
-								Key(hitElement, "n")
-								hitElement:toggleControlsWhileObjectAttached(true)
-							end
-							for key, value in pairs (bags) do
-								if value and isElement(value) and value:getModel() == 1550 then
-									amount = value:getData("Money")
-									totalAmount = totalAmount + amount
-									faction:giveMoney(amount, "Bankraub")
-									value:destroy()
-								end
+						if hitElement.vehicle and hitElement.vehicle == self.m_Truck then
+							bags = getAttachedElements(self.m_Truck)
+							hitElement:sendInfo(_("Du hast den Bank-Überfall Truck erfolgreich abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
+						elseif hitElement:getPlayerAttachedObject() then
+							bags = {hitElement:getPlayerAttachedObject()}
+							hitElement:sendInfo(_("Du hast erfolgreich einen Geldsack abgegeben! Das Geld ist nun in eurer Kasse!", hitElement))
+							hitElement:toggleControlsWhileObjectAttached(true)
+							hitElement:detachPlayerObject(hitElement:getPlayerAttachedObject())
+						end
+						for key, value in pairs (bags) do
+							if value and isElement(value) and value:getModel() == 1550 then
+								amount = value:getData("Money")
+								totalAmount = totalAmount + amount
+								value:destroy()
 							end
 						end
-						--outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
+
+						if totalAmount > 0 then
+							faction:giveMoney(totalAmount, "Bankraub")
+						end
+
+					end
+					--outputChatBox(_("Es wurden %d$ in die Kasse gelegt!", hitElement, totalAmount), hitElement, 255, 255, 255)
+					if self.m_SafeDoor.m_Open then
 						if self:getRemainingBagAmount() == 0 then
 							PlayerManager:getSingleton():breakingNews("Der Bankraub wurde erfolgreich abgeschlossen! Die Täter sind mit der Beute entkommen!")
 							self.m_RobFaction:giveKarmaToOnlineMembers(-10, "Banküberfall erfolgreich!")
@@ -713,8 +717,4 @@ function BankRobbery:Event_onDestinationMarkerHit(hitElement, matchingDimension)
 			end
 		end
 	end
-end
-
-function BankRobbery.initializeAll()
-
 end

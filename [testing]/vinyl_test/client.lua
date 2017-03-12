@@ -5,23 +5,22 @@
 local sizeX, sizeY = 1000, 1000
 
 function startVinyl()
-	myRenderTarget = dxCreateRenderTarget(sizeX, sizeY, true)
-	myShader = dxCreateShader("files/shader/texreplace.fx")
-	dxSetShaderValue(myShader, "gTexture", myRenderTarget)
-	engineApplyShaderToWorldTexture(myShader, "vehiclegrunge256")
+	local myShader, tec = dxCreateShader ( "files/shader/texreplace.fx", 1, 0, false, "all" )
+	texture = dxCreateRenderTarget(1000, 1000, false)
+
+	dxSetShaderValue( myShader, "Tex0", texture )
+	engineApplyShaderToWorldTexture ( myShader, "cj_ped_head" )
+	engineApplyShaderToWorldTexture ( myShader, "cj_ped_torso", localPlayer )
+
 	addEventHandler("onClientRender", root, renderVinyl)
 end
 addCommandHandler("vinyl", startVinyl)
 
 function renderVinyl()
-	dxSetRenderTarget(myRenderTarget)
-	dxDrawRectangle(0, 0, sizeX, sizeY, tocolor(255, 0, 0, 255))
-	dxDrawImage(50, 110,  50, 50, "files/images/test.png")
-	dxSetRenderTarget()
-end
+	dxSetRenderTarget(texture)
 
-addEventHandler( "onClientResourceStart", getRootElement( ),function(res)
-	if res == getThisResource() then
-		startVinyl()
-	end
-end)
+		--dxDrawRectangle(0, 0, 1000, 1000, tocolor(125, 23, 32, 255))
+		dxDrawImage(0, 0, 1000, 1000, "files/images/test.png")
+
+	dxSetRenderTarget(nil)
+end

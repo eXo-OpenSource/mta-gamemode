@@ -35,10 +35,7 @@ function HouseManager:constructor()
 	addEventHandler("houseWithdraw",root,bind(self.withdraw,self))
 	addEventHandler("houseRemoveTenant",root,bind(self.removeTenant,self))
 
-
-
 	addCommandHandler("createhouse", bind(self.createNewHouse,self))
-
 end
 
 function HouseManager:createNewHouse(player,cmd,...)

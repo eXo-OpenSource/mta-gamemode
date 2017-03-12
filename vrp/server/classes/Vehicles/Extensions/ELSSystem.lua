@@ -18,6 +18,8 @@ ELSSystem.BlinkMarkers ={
 	[427] = {["y"] = -3.87, ["z"] = 1.5},
 	[560] = {["y"] = -1.5, ["z"] = 0.42},
 	[598] = {["y"] = -1.5, ["z"] = 0.4},
+	[601] = {["y"] = -2.2, ["z"] = 1.1},
+	[528] = {["y"] = -2.2, ["z"] = 1.1},
 }
 
 function ELSSystem:constructor(vehicle)
@@ -41,14 +43,14 @@ end
 
 function ELSSystem:destructor( )
 	local player = self.m_Vehicle:getOccupant(0)
-	if not player:getType() == "player" then return end
-
-	unbindKey(player, "z","up",  self.m_BindLight , 400)
-	unbindKey(player, "z","down", self.m_BindLight, 100)
-	unbindKey(player, ",","up", self.m_BindBlink, "left")
-	unbindKey(player, ".","up", self.m_BindBlink, "right")
-	unbindKey(player, "-","up", self.m_BindBlink, "off")
-
+	if player then
+		unbindKey(player, "z","up",  self.m_BindLight , 400)
+		unbindKey(player, "z","down", self.m_BindLight, 100)
+		unbindKey(player, ",","up", self.m_BindBlink, "left")
+		unbindKey(player, ".","up", self.m_BindBlink, "right")
+		unbindKey(player, "horn","up", self.m_BindBlink, "blink")
+		unbindKey(player, "-","up", self.m_BindBlink, "off")
+	end
 	for i = 1,8 do
 		if self.m_Markers[i] then
 			destroyElement( self.m_Markers[i] )
@@ -58,6 +60,12 @@ function ELSSystem:destructor( )
 	local all = getElementsByType( "player" )
 	for key, player in ipairs( all ) do
 		player:triggerEvent( "onClientELSVehicleDestroy", self.m_Vehicle )
+		unbindKey(player, "z","up",  self.m_BindLight , 400)
+		unbindKey(player, "z","down", self.m_BindLight, 100)
+		unbindKey(player, ",","up", self.m_BindBlink, "left")
+		unbindKey(player, ".","up", self.m_BindBlink, "right")
+		unbindKey(player, "horn","up", self.m_BindBlink, "blink")
+		unbindKey(player, "-","up", self.m_BindBlink, "off")
 	end
 end
 
@@ -68,6 +76,7 @@ function ELSSystem:onLeaveVehicle(player, seat)
 		unbindKey(player, "z","down", self.m_BindLight, 100)
 		unbindKey(player, ",","up", self.m_BindBlink, "left")
 		unbindKey(player, ".","up", self.m_BindBlink, "right")
+		unbindKey(player, "horn","up", self.m_BindBlink, "blink")
 		unbindKey(player, "-","up", self.m_BindBlink, "off")
 	end
 end
@@ -88,18 +97,22 @@ function ELSSystem:onEnterVehicle(player, seat)
 	end
 end
 
-function ELSSystem:setLightPeriod(_, _, state, period)
-	if state == "up" then self.m_LightSystem = not self.m_LightSystem end
+function ELSSystem:setLightPeriod(press, key, state, period)
+	if getVehicleOccupant(self.m_Vehicle) == press then
+		if state == "up" then self.m_LightSystem = not self.m_LightSystem end
 
-  	triggerClientEvent(root, "updateVehicleELS", root, self.m_Vehicle, self.m_LightSystem , period)
+		triggerClientEvent(root, "updateVehicleELS", root, self.m_Vehicle, self.m_LightSystem , period)
 
-  	if state == "down" then
-		triggerClientEvent(root, "onVehicleYelp", root, self.m_Vehicle)
+		if state == "down" then
+			triggerClientEvent(root, "onVehicleYelp", root, self.m_Vehicle)
+		end
 	end
 end
 
-function ELSSystem:setBlinkBind(_, _, _, dir)
-   	self:setBlink(dir)
+function ELSSystem:setBlinkBind(press, key, _, dir)
+   	if getVehicleOccupant(self.m_Vehicle) == press then
+		self:setBlink(dir)
+	end
 end
 
 function ELSSystem:setBlink(dir)

@@ -79,16 +79,16 @@ function AmmuNationManager:onAmmunationAppOrder(weaponTable)
 		end
 	end
 	if canBuyWeapons then
-		if client:getMoney() >= totalAmount then
+		if client:getBankMoney() >= totalAmount then
 			if totalAmount > 0 then
-				client:takeMoney(totalAmount, "AmmuNation Bestellung")
+				client:takeBankMoney(totalAmount, "AmmuNation Bestellung")
 				StatisticsLogger:getSingleton():addAmmunationLog(client, "Bestellung", toJSON(weaponTable), totalAmount)
 				self:createOrder(client, weaponTable)
 			else
 				client:sendError(_("Du hast keine Artikel im Warenkorb!",client))
 			end
 		else
-			client:sendError(_("Du hast nicht ausreichend Geld dabei! (%d$)",client, totalAmount))
+			client:sendError(_("Du hast nicht ausreichend Geld auf deinem Bankkonto! (%d$)",client, totalAmount))
 		end
 	else
 		-- Possible Cheat attempt?
@@ -122,7 +122,7 @@ function AmmuNationManager:giveWeaponsFromOrder(player, weaponTable)
 	for weaponID,v in pairs(weaponTable) do
 		for typ,amount in pairs(weaponTable[weaponID]) do
 			if amount > 0 then
-				local mag = getWeaponProperty(weaponID, "poor", "maximum_clip_ammo") or 1
+				local mag = getWeaponProperty(weaponID, "pro", "maximum_clip_ammo") or 1
 				if typ == "Waffe" then
 					if weaponID > 0 then
 						outputChatBox(amount.." "..WEAPON_NAMES[weaponID],player,255,125,0)

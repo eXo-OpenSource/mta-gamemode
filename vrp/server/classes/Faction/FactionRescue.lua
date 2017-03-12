@@ -34,21 +34,23 @@ function FactionRescue:constructor()
 	elevator:addStation("UG Garage", Vector3(1756.40, -1747.44, 6.22))
 	elevator:addStation("Erdgeschoss", Vector3(1744.63, -1752.5, 13.57))
 	elevator:addStation("1.Obergeschoss", Vector3(1744.63, -1751.69, 18.81))
+	elevator:addStation("2.Obergeschoss", Vector3(1744.63, -1751.69, 23.533))
 	elevator:addStation("3.OG Heliport 1", Vector3(1778.19, -1786.69, 46.18))
 	elevator:addStation("3.OG Heliport 2", Vector3(1785.10, -1788.13, 46.18))
 
+	local terraceElevator = Elevator:new()
+	terraceElevator:addStation("2.Obergeschoss", Vector3(1720.411, -1753.330, 23.539))
+	terraceElevator:addStation("Terrasse unten", Vector3(1743.533, -1765.879, 31.322))
+	terraceElevator:addStation("Terrasse oben", Vector3( 1743.533, -1765.879, 36.891))
 
 	self.m_Faction = FactionManager.Map[4]
 
 	nextframe( -- Todo workaround
 		function ()
-			local safe = createObject(2332, 1187.70, -1396.50, 6.4, 0, 0, 180)
+			local safe = createObject(2332, 1720, -1752.40, 14.10, 0, 0, 90)
 			FactionManager:getSingleton():getFromId(4):setSafe(safe)
 		end
 	)
-
-
-	self:createNoCollissionSpawn()
 
 	-- Events
 	addEventHandler("factionRescueToggleDuty", root, bind(self.Event_toggleDuty, self))
@@ -125,15 +127,6 @@ function FactionRescue:createDutyPickup(x,y,z,int)
 	)
 end
 
-function FactionRescue:createNoCollissionSpawn()
-	local col = createColSphere(HOSPITAL_POSITION, 3)
-	addEventHandler("onColShapeLeave", col, function(hitElement, dim)
-		if dim and hitElement:getType() == "player" then
-			hitElement:setCollisionsEnabled(true)
-		end
-	end)
-end
-
 function FactionRescue:Event_changeSkin(player)
 
 	if not player then player = client end
@@ -168,14 +161,14 @@ function FactionRescue:Event_toggleDuty(type)
 		if client:isFactionDuty() then
 			client:setDefaultSkin()
 			client.m_FactionDuty = false
-			client:sendInfo(_("Du bist nicht mehr im Dienst!", client))
+			client:sendInfo(_("Du bist nicht mehr im Dienst deiner Fraktion!", client))
 			client:setPublicSync("Faction:Duty",false)
 			client:setPublicSync("Rescue:Type",false)
 			client:getInventory():removeAllItem("Barrikade")
 			takeWeapon(client,42)
 		else
 			if client:getPublicSync("Company:Duty") and client:getCompany() then
-				client:sendWarning(_("Bitte beende zuerst deinen Unternehmens-Dienst!", client))
+				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
 				return false
 			end
 			takeWeapon(client,42)
@@ -183,7 +176,7 @@ function FactionRescue:Event_toggleDuty(type)
 				giveWeapon(client, 42, 2000, true)
 			end
 			client.m_FactionDuty = true
-			client:sendInfo(_("Du bist nun im Dienst!", client))
+			client:sendInfo(_("Du bist nun im Dienst deiner Fraktion!", client))
 			client:setPublicSync("Faction:Duty",true)
 			client:setPublicSync("Rescue:Type",type)
 			client:getInventory():removeAllItem("Barrikade")
@@ -296,7 +289,7 @@ function FactionRescue:createDeathPickup(player, ...)
 		rescuePlayer:triggerEvent("rescueCreateDeathBlip", player)
 	end
 
-	nextframe(function () player:setPosition(player.m_DeathPickup:getPosition()) end)
+	nextframe(function () if player.m_DeathPickup then player:setPosition(player.m_DeathPickup:getPosition()) end end)
 
 	addEventHandler("onPickupHit", player.m_DeathPickup,
 		function (hitPlayer)
@@ -304,19 +297,23 @@ function FactionRescue:createDeathPickup(player, ...)
 				if hitPlayer:getFaction() and hitPlayer:getFaction():isRescueFaction() then
 					if hitPlayer:getPublicSync("Faction:Duty") and hitPlayer:getPublicSync("Rescue:Type") == "medic" then
 						if hitPlayer.m_RescueStretcher then
-							player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
-							hitPlayer.m_RescueStretcher.player = player
+							if not hitPlayer.m_RescueStretcher.player then
+								player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
+								hitPlayer.m_RescueStretcher.player = player
 
-							if source.money and source.money > 0 then
-								hitPlayer:giveMoney(source.money, "verlorenes Geld zurückbekommen")
-								source.money = 0
+								if source.money and source.money > 0 then
+									hitPlayer:giveMoney(source.money, "verlorenes Geld zurückbekommen")
+									source.money = 0
+								end
+
+								source:destroy()
+								player.m_DeathPickup = nil
+								for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
+									rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
+								end
+							else
+								hitPlayer:sendError(_("Es liegt bereits ein Spieler auf der Trage!", hitPlayer))
 							end
-
-							source:destroy()
-							for index, rescuePlayer in pairs(self:getOnlinePlayers()) do
-								rescuePlayer:triggerEvent("rescueRemoveDeathBlip", player)
-							end
-
 						else
 							hitPlayer:sendError(_("Du hast keine Trage dabei!", hitPlayer))
 						end
@@ -360,9 +357,8 @@ function FactionRescue:createDeathTimeout(player, callback)
 end
 
 function FactionRescue:Event_OnPlayerWastedFinish()
-	source:setCameraTarget(player)
+	source:setCameraTarget(source)
 	source:fadeCamera(true, 1)
-	source:setCollisionsEnabled(false)
 	source:respawn()
 end
 

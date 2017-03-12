@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 JobRoadSweeper = inherit(Job)
+local SWEEPER_LOAN = 8
 
 function JobRoadSweeper:constructor()
 	Job.constructor(self)
@@ -47,7 +48,7 @@ function JobRoadSweeper:Event_sweeperGarbageCollect()
 	end
 	client:setData("Sweeper:Last", getTickCount())
 
-	client:giveMoney(3, "Straßenreiniger-Job", true)
+	client:giveMoney(SWEEPER_LOAN, "Straßenreiniger-Job", true)
 	if chance(15) then
 		client:givePoints(1)
 	end

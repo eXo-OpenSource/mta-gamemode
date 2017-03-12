@@ -249,6 +249,7 @@ function FactionGUI:onGangwarItemSelect(item)
 	if self.m_AreaName then delete(self.m_AreaName) end
 	if self.m_AreaOwner then delete(self.m_AreaOwner) end
 	if self.m_LastAttack then delete(self.m_LastAttack) end
+	if self.m_NextAttack then delete(self.m_NextAttack) end
 	if self.m_Map then delete(self.m_Map) end
 
 	if item == self.m_GangAreasOverviewItem then
@@ -258,8 +259,9 @@ function FactionGUI:onGangwarItemSelect(item)
 			self.m_AreaName = GUILabel:new(self.m_Width*0.35, self.m_Height*0.05, self.m_Width*0.4, self.m_Height*0.08, item.name, self.m_tabGangwar)
 			local ownerFaction = FactionManager:getSingleton():getFromId(item.owner)
 			self.m_AreaOwner = GUILabel:new(self.m_Width*0.35, self.m_Height*0.14, self.m_Width*0.7, self.m_Height*0.06, _("Besitzer: %s", ownerFaction and ownerFaction:getName() or "-"), self.m_tabGangwar)
-			self.m_LastAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.21, self.m_Width*0.4, self.m_Height*0.06, _("Letzter Angriff: %s", getOpticalTimestamp(item.lastAttack)), self.m_tabGangwar)
-			self.m_Map = GUIMiniMap:new(self.m_Width*0.35, self.m_Height*0.28, self.m_Width*0.62, self.m_Height*0.62, self.m_tabGangwar)
+			self.m_LastAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.21, self.m_Width*0.4, self.m_Height*0.06,_("Letzter Angriff: %s", getOpticalTimestamp(item.lastAttack)), self.m_tabGangwar)
+			self.m_NextAttack = GUILabel:new(self.m_Width*0.35, self.m_Height*0.28, self.m_Width*0.4, self.m_Height*0.06,_("Nächster Angriff: %s", getOpticalTimestamp(item.lastAttack+(GANGWAR_ATTACK_PAUSE*UNIX_TIMESTAMP_24HRS))), self.m_tabGangwar)
+			self.m_Map = GUIMiniMap:new(self.m_Width*0.35, self.m_Height*0.35, self.m_Width*0.62, self.m_Height*0.55, self.m_tabGangwar)
 			self.m_Map:setPosition(item.posX, item.posY)
 			self.m_Map:addBlip("Waypoint.png", item.posX, item.posY)
 		end
@@ -273,7 +275,7 @@ function FactionGUI:Event_gangwarLoadArea(name, position, owner, lastAttack)
 	item.onLeftClick = function() self:onGangwarItemSelect(self.m_GangwarAreas[name]) end
 end
 
-function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players,skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons)
+function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players, skins, rankNames,rankLoans,rankSkins,validWeapons,rankWeapons)
 	--self:adjustFactionTab(rank or false)
 	if id then
 		if id > 0 then
@@ -284,10 +286,12 @@ function FactionGUI:Event_factionRetrieveInfo(id, name, rank, money, players,ski
 			self.m_FactionRankLabel:setText(tostring(rank).." - "..rankNames[rank])
 			self.m_FactionMoneyLabel:setText(tostring(money).."$")
 
+			players = sortPlayerTable(players, "playerId", function(a, b) return a.rank > b.rank end)
+
 			self.m_FactionPlayersGrid:clear()
-			for playerId, info in pairs(players) do
+			for _, info in ipairs(players) do
 				local item = self.m_FactionPlayersGrid:addItem(info.name, info.rank)
-				item.Id = playerId
+				item.Id = info.playerId
 			end
 
 			if rank >= FactionRank.Manager then

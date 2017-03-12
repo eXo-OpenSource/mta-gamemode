@@ -22,8 +22,8 @@ function HUDRadar:constructor()
 
   self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
   if self.m_Texture then
-		outputConsole("Success@HUDRadar - m_RenderTarget was created!")
-		outputDebugString("Success@HUDRadar - m_Texture was created!",0,0,200,200)
+		--outputConsole("Success@HUDRadar - m_RenderTarget was created!")
+		--outputDebugString("Success@HUDRadar - m_Texture was created!",0,0,200,200)
 		self.m_Zoom = 1
 		self.m_Rotation = 0
 		self.m_Blips = Blip.Blips
@@ -40,8 +40,8 @@ function HUDRadar:constructor()
 		-- Create a renderTarget that has the size of the diagonal of the actual image
 		self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
 		if self.m_RenderTarget then
-			outputConsole("Success@HUDRadar - m_RenderTarget was created!")
-			outputDebugString("Success@HUDRadar - m_RenderTarget was created!",0,0,200,200)
+			--outputConsole("Success@HUDRadar - m_RenderTarget was created!")
+			--outputDebugString("Success@HUDRadar - m_RenderTarget was created!",0,0,200,200)
 			self:updateMapTexture()
 
 			-- Settings
@@ -335,7 +335,7 @@ function HUDRadar:drawBlips()
 
   if obj then
 	px, py, pz = getElementPosition(obj)
-	mapCenterX, mapCenterY = self:worldToMapPosition(posX, posY)
+	mat = math.matrix.three.rotate_z(math.rad(self.m_Rotation)) * math.matrix.three.scale(self.m_ImageSize/6000, -self.m_ImageSize/6000, 1) * math.matrix.three.translate(-px, -py, -pz)
   end
 
   for k, blip in pairs(self.m_Blips) do
@@ -390,7 +390,7 @@ function HUDRadar:drawBlips()
 
 		if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
 			if math.abs(pz - blip:getZ()) > 3 then
-				markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
+				local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
 				imagePath = HUDRadar:getSingleton():makePath(markerImage, true)
 			end
 		end
@@ -454,6 +454,9 @@ function HUDRadar:setRadarAreaFlashing(serverAreaId, state)
   if area then
     area.flashing = state
     self:updateMapTexture()
+	if isElement(area.mtaElement) then 
+		setRadarAreaFlashing(area.mtaElement,state)
+	end
   end
 end
 

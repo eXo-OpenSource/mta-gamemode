@@ -33,6 +33,12 @@ MinigameGUI.Data = {
 		["image"] = "files/images/Minigames/SniperGame.png",
 		["startFunction"] = function() triggerServerEvent("startSniperGame", localPlayer) end
 	},
+	["2Cars"] = {
+		["title"] = HelpTextTitles.Minigames.TCars,
+		["description"] = HelpTexts.Minigames.TCars,
+		["image"] = "files/images/Minigames/2Cars.png",
+		["startFunction"] = function() TCars:new() end
+	},
 }
 
 addRemoteEvents{"showMinigameGUI"}

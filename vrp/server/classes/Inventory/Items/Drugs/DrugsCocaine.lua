@@ -15,6 +15,8 @@ function DrugsCocaine:destructor()
 end
 
 function DrugsCocaine:use( player )
+	ItemDrugs.use(self, player)
+
   	player:triggerEvent("onClientItemUse", "Kokain", COCAINE_EXPIRETIME )
     if isTimer( player.m_CocaineExpireTimer ) then
       killTimer( player.m_CocaineExpireTimer )

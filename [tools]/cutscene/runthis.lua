@@ -7,4 +7,15 @@ end
 PRIVATE_DIMENSION_CLIENT = 0
 setPlayerHudComponentVisible("all", false)
 showChat(false)
-Cutscene:new(SceneZombieSurvival):play()
+Cutscene:new(SceneGravel):play()
+
+addEventHandler( "onClientResourceStop", getRootElement(),
+    function ( stoppedRes )
+		if stoppedRes == getThisResource() then
+			fadeCamera()
+			setCameraTarget(getLocalPlayer())
+			showChat(true)
+			setPlayerHudComponentVisible("all", true)
+		end
+	end
+)

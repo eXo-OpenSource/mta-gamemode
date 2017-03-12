@@ -130,7 +130,7 @@ function VehicleTuning:EntryColShape_Hit(garageId, hitElement, matchingDimension
           end
         elseif instanceof(vehicle, GroupVehicle) then
             if not vehicle:canBeModified() then
-                hitElement:sendError(_("Dieser Firmenwagen darf nicht getunt werden!", hitElement))
+                hitElement:sendError(_("Dein Leader muss das Tunen von Fahrzeugen aktivieren! Im Firmen/Gangmenü unter Leader!", hitElement))
                 return
             end
         elseif vehicle:isPermanent() then
@@ -221,7 +221,7 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
             elseif slot == VehicleSpecialProperty.Shader then
                 if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
                     if upgradeId ~= 1 then
-                        vehicle:setTexture(("files/images/Textures/Special/%s.png"):format(upgradeId-1))
+                        vehicle:setTexture(("files/images/Textures/Special/%s.png"):format(upgradeId-1), nil, true)
                     else
                         vehicle:removeTexture()
                     end
@@ -233,6 +233,10 @@ function VehicleTuning:Event_vehicleUpgradesBuy(cartContent)
         end
     end
     client:sendSuccess(_("Upgrades gekauft!", client))
+
+	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
+		vehicle:save()
+	end
 
     -- Exit
     self:closeFor(client, vehicle)

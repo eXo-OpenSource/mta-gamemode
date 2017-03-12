@@ -20,7 +20,7 @@ addEventHandler("barCloseMusicGUI", root, function()
 end)
 
 addEventHandler("barUpdateMusic", root, function(stream)
-	if Bar.Music and isElement(Bar.Music) then Bar.Music:destroy() setInteriorSoundsEnabled(true) end
+	if Bar.Music and isElement(Bar.Music) then Bar.Music:destroy() Bar.Music = nil setInteriorSoundsEnabled(true) end
 	if stream then
 		setInteriorSoundsEnabled(false)
 		Bar.Music = playSound(stream)

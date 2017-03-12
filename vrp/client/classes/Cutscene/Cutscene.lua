@@ -1,6 +1,6 @@
 Cutscene = inherit(Object)
 
-function Cutscene:constructor(data)
+function Cutscene:constructor(data, dim)
 	self.m_Name = data.name
 	self.m_Startscene = data.startscene
 	self.m_Elements = {}
@@ -9,6 +9,7 @@ function Cutscene:constructor(data)
 	self.m_ActiveScene = false
 	self.m_Debug = data.debug
 	self.m_Interior = data.interior or 0
+	self.m_Dimension = dim or PRIVATE_DIMENSION_CLIENT
 
 	for k, v in ipairs(data) do
 		local scene = Scene:new(v, self)

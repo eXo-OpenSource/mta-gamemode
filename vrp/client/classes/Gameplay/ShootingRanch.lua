@@ -79,12 +79,12 @@ function ShootingRanchResult:constructor(data, success)
 	self.m_Time = GUILabel:new(10, 70, self.m_Width-20, 25, "", self)
 	self.m_Accuracy = GUILabel:new(10, 100, self.m_Width-20, 25, "", self)
 
-	local startTime = getElementData(localPlayer, "ShootingRanch:ClientStartTime") or getRealTime().timestamp + data["Time"]
+	local startTime = getElementData(localPlayer, "ShootingRanch:ClientStartTime") or data["StartTime"]
 	local time = getRealTime().timestamp - startTime
 	local acc =  data["Hits"]*100/(data["StartMuni"] - localPlayer:getTotalAmmo())
 
 	self.m_Hits:setText(_("Treffer: %d von benötigten %d", data["Hits"], data["TargetHits"]))
-	self.m_Time:setText(_("Benötigte Zeit: %d/%d", time, data["Time"]))
+	self.m_Time:setText(_("Benötigte Zeit: %d/%d", time > 60 and 60 or time, data["Time"]))
 	self.m_Accuracy:setText(_("Genauigkeit: %d Prozent von benötigten %d Prozent", acc, data["TargetAccuracy"]))
 	if success == true then
 		GUILabel:new(10, 150, self.m_Width-20, 35, _"Gratuliere! Du hast bestanden!", self):setColor(Color.Green)

@@ -9,11 +9,13 @@ PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
-"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel"}
+"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
+"premiumOpenVehiclesList", "premiumTakeVehicle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
 	self.m_QuitHook = Hook:new()
+	self.m_AFKHook = Hook:new()
 	self.m_ReadyPlayers = {}
 
 	-- Register events
@@ -46,7 +48,15 @@ function PlayerManager:constructor()
 	addEventHandler("Event_moveToJail", root, bind(self.Event_moveToJail, self))
 	addEventHandler("onClientRequestTime",root, bind(self.Event_ClientRequestTime, self))
 	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
+	addEventHandler("premiumOpenVehiclesList",root, bind(self.Event_PremiumOpenVehiclesList, self))
+	addEventHandler("premiumTakeVehicle",root, bind(self.Event_PremiumTakeVehicle, self))
 
+
+
+
+	addEventHandler("onPlayerPrivateMessage", root, function()
+		cancelEvent()
+	end)
 
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
@@ -77,6 +87,15 @@ function PlayerManager:Event_DecreaseAlcoholLevel()
 	client:decreaseAlcoholLevel(ALCOHOL_LOSS)
 end
 
+function PlayerManager:Event_PremiumOpenVehiclesList()
+	client.m_Premium:openVehicleList()
+end
+
+function PlayerManager:Event_PremiumTakeVehicle(model)
+	client.m_Premium:takeVehicle(model)
+end
+
+
 function PlayerManager:Event_switchSpawnWithFaction( state )
 	client.m_SpawnWithFactionSkin = state
 end
@@ -89,7 +108,9 @@ end
 
 function PlayerManager:updatePlayerSync()
 	for k, v in pairs(getElementsByType("player")) do
-		v:updateSync()
+		if v and isElement(v) and v.updateSync then
+			v:updateSync()
+		end
 	end
 end
 
@@ -109,6 +130,10 @@ end
 
 function PlayerManager:getQuitHook()
 	return self.m_QuitHook
+end
+
+function PlayerManager:getAFKHook()
+	return self.m_AFKHook
 end
 
 function PlayerManager:getReadyPlayers()
@@ -193,11 +218,11 @@ function PlayerManager:playerCommand(cmd)
 end
 
 function PlayerManager:playerQuit()
+	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
+
 	self.m_QuitHook:call(source)
 
 	if getPedWeapon(source,1) == 9 then takeWeapon(source,9) end
-
-	if source.m_RemoveWeaponsOnLogout then takeAllWeapons(source) end
 
 	local index = table.find(self.m_ReadyPlayers, source)
 	if index then
@@ -219,7 +244,6 @@ function PlayerManager:playerQuit()
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
-
 end
 
 function PlayerManager:Event_playerReady()
@@ -229,7 +253,12 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
-	client:increaseStatistics("Deaths", 1)
+		-- Call wasted hook
+	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
+		return
+	end
+	source.m_AlcoholLevel = 0
+	source:increaseStatistics("Deaths", 1)
 	-- give a achievement
 	source:giveAchievement(37)
 	for key, obj in ipairs( getAttachedElements(client)) do
@@ -237,13 +266,6 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 			detachElements(obj, client)
 			client:meChat(true, "lies einen Geldbeutel fallen")
 		end
-	end
-	if source:isFactionDuty() then
-		source:setDefaultSkin()
-		source.m_FactionDuty = false
-		takeAllWeapons(client)
-		source:setPublicSync("Faction:Duty",false)
-		source:getInventory():removeAllItem("Barrikade")
 	end
 
 	if killer and killer:getType() == "player" then
@@ -253,6 +275,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 				if killer:isFactionDuty() and not source:isFactionDuty() then
 					local wantedLevel = source:getWantedLevel()
 					if wantedLevel > 0 then
+						killer:giveAchievement(64)
 						source:sendInfo(_("Du wurdest ins Gefängnis gesteckt!", source))
 						FactionState:getSingleton():Event_JailPlayer(source, false, true, killer)
 						return
@@ -262,23 +285,17 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 		end
 	end
 
-	-- Call wasted hook
-	if self.m_WastedHook:call(source) then
-		return
-	end
-
 	-- Start death
 	source:triggerEvent("playerWasted")
 
 	if FactionRescue:getSingleton():countPlayers() > 0 then
 		if not source.m_DeathPickup and not isElement(source.m_DeathPickup) then
 			FactionRescue:getSingleton():createDeathPickup(source)
-			return true
+			--return true
 		else -- This should never never happen!
 			outputDebugString("Internal Error! Player died while he is Dead. Dafuq?")
 		end
 	end
-
 
 
 	return false
@@ -290,6 +307,11 @@ end
 
 function PlayerManager:playerChat(message, messageType)
 	if source:isDead() then
+		cancelEvent()
+		return
+	end
+
+	if source.isTasered then
 		cancelEvent()
 		return
 	end
@@ -491,6 +513,7 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 	end
 	client:setPublicSync("AFK", state)
 	if state == true then
+		self.m_AFKHook:call(client)
 		client:startAFK()
 		if client:isInVehicle() then client:removeFromVehicle() end
 		client:setInterior(4)
@@ -510,6 +533,14 @@ function PlayerManager:Event_startAnimation(animation)
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
 		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], true, ani["interruptable"], ani["freezeLastFrame"])
+		if client.animationObject and isElement(client.animationObject) then client.animationObject:destroy() end
+		if ani.object then
+			client.animationObject = createObject(ani.object, 0, 0, 0)
+			client.animationObject:setInterior(client:getInterior())
+			client.animationObject:setDimension(client:getDimension())
+			client.animationObject:attach(client)
+		end
+
 		bindKey(client, "space", "down", self.m_AnimationStopFunc)
 	else
 		client:sendError("Internal Error! Animation nicht gefunden!")
@@ -519,7 +550,7 @@ end
 function PlayerManager:stopAnimation(player)
 	player:setAnimation(false)
 	unbindKey(player, "space", "down", self.m_AnimationStopFunc)
-
+	if player.animationObject and isElement(player.animationObject) then player.animationObject:destroy() end
 	-- Tell the client
 	player:triggerEvent("onClientAnimationStop")
 end
@@ -555,8 +586,12 @@ function PlayerManager:Event_requestGunBoxData()
 end
 
 function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
-	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+	if client:getFaction() and client:isFactionDuty() then
 		client:sendError(_("Du darfst im Dienst keine Waffen einlagern!", client))
+		return
+	end
+	if client.disableWeaponStorage then
+		client:sendError(_("Du darfst diese Waffe nicht einlagern!", client))
 		return
 	end
 	for i= 1, 6 do
@@ -601,11 +636,14 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 end
 
 function PlayerManager:Event_gunBoxTakeWeapon(slotId)
-	if client:getFaction() and client:getFaction():isStateFaction() and client:isFactionDuty() then
+	if client:getFaction() and client:isFactionDuty() then
 		client:sendError(_("Du darfst im Dienst keine privaten Waffen verwenden!", client))
 		return
 	end
-
+	if client.disableWeaponStorage then
+		client:sendError(_("Du darfst diese Waffe nicht nehmen!", client))
+		return
+	end
 	local slot = client.m_GunBox[tostring(slotId)]
 	if slot then
 		if slot["WeaponId"] > 0 then

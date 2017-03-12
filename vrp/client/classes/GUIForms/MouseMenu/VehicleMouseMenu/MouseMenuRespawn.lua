@@ -22,7 +22,15 @@ function VehicleMouseMenuRespawn:constructor(posX, posY, element)
 			end
 		end
 	)
-	if getElementData(element, "OwnerType") ~= "group" then
+	if getElementData(element, "OwnerType") == "group" then
+		self:addItem(_"Respawn",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleRespawn", self:getElement(), true)
+				end
+			end
+		)
+	else
 		self:addItem(_"Respawn @ Garage",
 			function()
 				if self:getElement() then
@@ -30,15 +38,14 @@ function VehicleMouseMenuRespawn:constructor(posX, posY, element)
 				end
 			end
 		)
-	end
-
-	self:addItem(_"Respawn @ Parkposition",
-		function()
-			if self:getElement() then
-				triggerServerEvent("vehicleRespawnWorld", self:getElement())
+		self:addItem(_"Respawn @ Parkposition",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleRespawnWorld", self:getElement())
+				end
 			end
-		end
 	)
+	end
 
 	self:addItem(_"Fahrzeug parken",
 		function()

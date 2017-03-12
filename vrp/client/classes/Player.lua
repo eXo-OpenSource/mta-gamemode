@@ -130,10 +130,6 @@ function Player:giveAchievement (...)
 	end
 end
 
-function Player:getAchievements ()
-	return self:getPrivateSync("Achievements") or {[0] = false}
-end
-
 function Player:setTempMatchID (id)
 	self.m_tempMatchID = id
 	setTimer(function ()

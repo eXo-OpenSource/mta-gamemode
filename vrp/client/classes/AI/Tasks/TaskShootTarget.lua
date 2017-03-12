@@ -25,14 +25,40 @@ function TaskShootTarget:getId()
 	return Tasks.TASK_SHOOT_TARGET
 end
 
-function TaskShootTarget:shootSingleBullet()
-	if self.m_Target and isElement(self.m_Target) and not isPedDead(self.m_Target) and not isPedDead(self.m_Actor) then
-		-- Update target
-		self.m_Actor:setAimTarget(self.m_Target:getPosition())
+function TaskShootTarget:checkActor()
+	if self.m_Actor and isElement(self.m_Actor) and not isPedDead(self.m_Actor) then
+		return true
+	end
+	return false
+end
 
-		-- Activate fire control for a bit to simulate key presses
-		self.m_Actor:setControlState("aim_weapon", true)
-		self.m_Actor:setControlState("fire", true)
+function TaskShootTarget:checkTarget()
+	if self.m_Target and isElement(self.m_Target) then
+		if self.m_Target:getType() == "player" or self.m_Target:getType() == "ped" then
+			if not isPedDead(self.m_Target) then
+				return true
+			end
+		else
+			return true
+		end
+	end
+	return false
+end
+
+function TaskShootTarget:shootSingleBullet()
+	if self:checkActor() then
+		if self:checkTarget() then
+			-- Update target
+			self.m_Actor:setAimTarget(self.m_Target:getPosition())
+
+			-- Activate fire control for a bit to simulate key presses
+			self.m_Actor:setControlState("aim_weapon", true)
+			self.m_Actor:setControlState("fire", true)
+		else
+			self:stopShooting()
+		end
+	else
+		delete(self)
 	end
 end
 
@@ -58,7 +84,7 @@ function TaskShootTarget:update()
 	if not isElementStreamedIn(self.m_Actor) then
 		return self:stopUpdating()
 	end
-	if self.m_Target and isElement(self.m_Target) and not isPedDead(self.m_Target) and not isPedDead(self.m_Actor) then
+	if self:checkTarget() and self:checkActor() then
 		local actorPosition = self.m_Actor:getPosition()
 		local targetPosition = self.m_Target:getPosition()
 		self.m_Actor:setRotation(0, 0, findRotation(actorPosition.x, actorPosition.y, targetPosition.x, targetPosition.y))

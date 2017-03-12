@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GroupProperty = inherit(Object)
 
-function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, depotId)
+function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, InteriorId, InteriorSpawn, Cam, Open, Message, depotId, elevatorData)
 
 	self.m_Id = Id
 	self.m_Name = Name
@@ -30,6 +30,16 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 	self.m_DepotId = depotId
 	self.m_Depot = Depot.load(depotId, self)
 
+	if elevatorData then
+		local elevatorData = fromJSON(elevatorData)
+		if elevatorData and elevatorData.stations and #elevatorData.stations > 1 then
+			local elevator = Elevator:new()
+			for i, station in ipairs(elevatorData.stations) do
+				elevator:addStation(station.name, normaliseVector(station.position), station.rotation, station.interior, station.dimension)
+			end
+		end
+	end
+
 	self:getKeysFromSQL()
 
 	addEventHandler("onPickupHit", self.m_Pickup, bind(self.onEnter, self))
@@ -44,8 +54,6 @@ function GroupProperty:constructor(Id, Name, OwnerId, Type, Price, Pickup, Inter
 			end
 		end
 	)
-
-
 end
 
 function GroupProperty:destructor()
@@ -64,6 +72,7 @@ function GroupProperty:destructor()
 		end
 	end
 	sql:queryExec("UPDATE ??_group_property SET open=?, DepotId=? WHERE Id=?", sql:getPrefix(), self.m_Open, self.m_DepotId, self.m_Id)
+	self.m_Depot:save()
 end
 
 function GroupProperty:setDepotId(Id)
@@ -318,5 +327,3 @@ function GroupProperty:getName() return self.m_Name end
 function GroupProperty:getPrice() return self.m_Price end
 function GroupProperty:hasOwner() return self.m_Owner ~= false end
 function GroupProperty:getOwner() return self:hasOwner() and self.m_Owner or false end
-
-

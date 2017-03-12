@@ -100,3 +100,36 @@ function calcDxFontSize(text, width, font, max)
 	end
 	return max
 end
+
+function timeMsToTimeText(timeMs, hideMinutes)
+	local minutes	= math.floor( timeMs / 60000 )
+	timeMs			= timeMs - minutes * 60000;
+
+	local seconds	= math.floor( timeMs / 1000 )
+	local ms		= timeMs - seconds * 1000;
+
+	if hideMinutes and minutes < 1 then
+		return ("%02d.%03d"):format(seconds, ms)
+	end
+
+	return ("%02d:%02d.%03d"):format(minutes, seconds, ms)
+end
+
+function sortPlayerTable(theTable, keyIndex, sortFunction)
+	local cache = {}
+
+	for k, v in pairs(theTable) do
+		local insertCache = {}
+		insertCache[keyIndex] = k
+
+		for insertKey, insertValue in pairs(v) do
+			insertCache[insertKey] = insertValue
+		end
+
+		table.insert(cache, insertCache)
+	end
+
+	table.sort(cache, sortFunction)
+
+	return cache
+end

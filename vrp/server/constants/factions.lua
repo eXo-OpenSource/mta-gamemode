@@ -8,10 +8,16 @@ factionWTDestination = {}
 
 TICKET_PRICE = 2000
 
+
+
 FACTION_STATE_WT_DESTINATION = Vector3(1598.78064, -1611.63953, 12.5)
 WEAPONTRUCK_NAME = {["evil"] = "Waffentruck", ["state"] = "Staats-Waffentruck"}
 WEAPONTRUCK_NAME_SHORT = {["evil"] = "Waffentruck", ["state"] = "Staats-WT"}
 
+WEAPONTRUCK_MIN_MEMBERS = {["evil"] = 3, ["state"] = 3}
+BANKROB_MIN_MEMBERS = 5
+WEEDTRUCK_MIN_MEMBERS = 3
+SHOPROB_MIN_MEMBERS = 3
 
 FACTION_MAX_RANK_LOANS ={
 	[0] = 750,
@@ -76,7 +82,7 @@ factionRankNames[1] = {
 [5] = "Deputy",
 [6] = "Chief"
 }
-factionColors[1] = {["r"] = 0,["g"] = 200,["b"] = 255}
+factionColors[1] = {["r"] = 0,["g"] = 255,["b"] = 255}
 factionCarColors[1] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 255,["g1"] = 255,["b1"] = 255}
 factionSkins[1] = {[93]=true,[265]=true, [266]=true, [267]=true,[280]=true,[281]=true,[282]=true, [283]=true, [284]=true, [288]=true}
 factionWeapons[1] = {[3]=true,[23]=true,[24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
@@ -85,8 +91,8 @@ factionWTDestination[1] = Vector3(1524.96, -1440.70, 12.3)
 -- ID 2 = FBI:
 factionRankNames[2] = {
 [0] = "Probationary Agent",
-[1] = "Agent",
-[2] = "Special Agent",
+[1] = "Special Agent",
+[2] = "Senior Special Agent",
 [3] = "Supervisory Special Agent",
 [4] = "Section Chief",
 [5] = "Deputy Director",
@@ -95,7 +101,7 @@ factionRankNames[2] = {
 factionColors[2] = {["r"] = 0,["g"] = 50,["b"] = 255}
 factionCarColors[2] = {["r"] = 0,["g"] = 0,["b"] = 0, ["r1"] = 0,["g1"] = 0,["b1"] = 0}
 factionSkins[2] = {[163]=true, [164]=true, [165]=true,[166]=true,[285]=true,[286]=true,[294]=true,[295]=true}
-factionWeapons[2] = {[23]=true, [24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
+factionWeapons[2] = {[3]=true, [23]=true, [24]=true,[25]=true,[29]=true,[31]=true, [34]=true}
 factionWTDestination[2] = Vector3(1524.96, -1440.70, 12.3)
 
 -- ID 3 = Army:
@@ -178,7 +184,7 @@ factionColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52}
 factionCarColors[7] = {["r"] = 18,["g"] = 140,["b"] = 52, ["r1"] = 18,["g1"] = 140,["b1"] = 52}
 factionSkins[7] = {[105]=true, [106]=true, [107]=true, [269]=true, [270]=true, [271]=true, [293]=true, [300]=true, [301]=true, [311]=true}
 factionWeapons[7] = {[5]=true, [24]=true, [25]=true, [28]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
-evilFactionInteriorEnter[7] = Vector3(2459.54, -1690.76, 13.54)
+evilFactionInteriorEnter[7] = Vector3(2459.54, -1690.76, 13.4)
 factionWTDestination[7] = Vector3(2495.0478515625,-1667.689453125,12.96682834625)
 
 -- ID 8 = Ballas
@@ -197,6 +203,23 @@ factionSkins[8] = {[13]=true, [102]=true, [103]=true, [104]=true, [195]=true, [2
 factionWeapons[8] = {[5]=true, [24]=true, [25]=true, [32]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
 evilFactionInteriorEnter[8] = Vector3(2232.70, -1436.40, 24.90)
 factionWTDestination[8] = Vector3(2212.42, -1435.53, 22.5)
+
+-- ID 9 = Biker
+factionRankNames[9] = {
+[0] = "Hangaround",
+[1] = "Prospect",
+[2] = "Patch Member",
+[3] = "Road Captain",
+[4] = "Sergeant at Arms",
+[5] = "Vice-President",
+[6] = "President"
+}
+factionColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100}
+factionCarColors[9] = {["r"] = 150,["g"] = 100,["b"] = 100, ["r1"] = 150,["g1"] = 100,["b1"] = 100}
+factionSkins[9] = {[100]=true, [181]=true, [242]=true, [247]=true, [248]=true, [254]=true, [291]=true,[298]=true,[299]=true}
+factionWeapons[9] = {[7]=true, [18]=true, [24]=true, [26]=true, [29]=true, [30]=true, [31]=true, [33]=true, [34]=true}
+evilFactionInteriorEnter[9] = Vector3(687.20, -445.40, 16.3)
+factionWTDestination[9] = Vector3(659.80,-463.10,15.30)
 
 -- General:
 factionWeaponDepotInfo = {
@@ -247,8 +270,8 @@ factionWeaponDepotInfo = {
 factionWeaponDepotInfoState = {}
 for index, key in pairs(factionWeaponDepotInfo) do
 	factionWeaponDepotInfoState[index] = {
-		["Waffe"] = key["Waffe"]*2,
-		["Magazine"] = key["Magazine"]*2,
+		["Waffe"] = key["Waffe"]*4,
+		["Magazine"] = key["Magazine"]*4,
 		["WaffenPreis"] = key["WaffenPreis"],
 		["MagazinPreis"] = key["MagazinPreis"]
 		}

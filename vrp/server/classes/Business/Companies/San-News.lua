@@ -6,6 +6,7 @@ function SanNews:constructor()
 	self.m_NextAd = getRealTime().timestamp
 	self.m_onInterviewColshapeLeaveFunc = bind(self.onInterviewColshapeLeave, self)
 	self.m_onPlayerChatFunc = bind(self.Event_onPlayerChat, self)
+	self.m_SanNewsMessageEnabled = false
 
 	local safe = createObject(2332, 732.40, -1339.90, 15.30, 0, 0, 90)
  	self:setSafe(safe)
@@ -17,12 +18,16 @@ function SanNews:constructor()
 	Player.getQuitHook():register(bind(self.Event_onPlayerQuit, self))
 	Player.getChatHook():register(bind(self.Event_onPlayerChat, self))
 
-	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview", "sanNewsAdvertisement"}
+	addRemoteEvents{"sanNewsStartInterview", "sanNewsStopInterview", "sanNewsAdvertisement", "sanNewsToggleMessage"}
 	addEventHandler("sanNewsStartInterview", root, bind(self.Event_startInterview, self))
 	addEventHandler("sanNewsStopInterview", root, bind(self.Event_stopInterview, self))
 	addEventHandler("sanNewsAdvertisement", root, bind(self.Event_advertisement, self))
+	addEventHandler("sanNewsToggleMessage", root, bind(self.Event_toggleMessage, self))
+
 
 	addCommandHandler("news", bind(self.Event_news, self))
+	addCommandHandler("sannews", bind(self.Event_sanNewsMessage, self), false, false)
+
 end
 
 function SanNews:destuctor()
@@ -131,7 +136,7 @@ end
 
 function SanNews:Event_advertisement(sendername, text, color, duration)
 	local length = text:len()
-	if length <= 50 and length > 5 then
+	if length <= 50 and length >= 5 then
 		local durationExtra = (AD_DURATIONS[duration] - 20) * 2
 		local colorMultiplicator = 1
 		if color ~= "Schwarz" then
@@ -139,6 +144,7 @@ function SanNews:Event_advertisement(sendername, text, color, duration)
 		end
 
 		local costs = (length*AD_COST_PER_CHAR + AD_COST + durationExtra) * colorMultiplicator
+
 		if client:getMoney() >= costs then
 			if self.m_NextAd < getRealTime().timestamp then
 				client:takeMoney(costs, "San News Ad")
@@ -153,5 +159,26 @@ function SanNews:Event_advertisement(sendername, text, color, duration)
 		else
 			client:sendError(_("Du hast zu wenig Geld dabei! (%s$)", client, costs))
 		end
+	end
+end
+
+function SanNews:Event_toggleMessage()
+	if self.m_SanNewsMessageEnabled then
+		self.m_SanNewsMessageEnabled = false
+		self:sendShortMessage(("%s hat /sannews deaktiviert!"):format(client:getName()))
+	else
+		self.m_SanNewsMessageEnabled = true
+		self:sendShortMessage(("%s hat /sannews aktiviert!"):format(client:getName()))
+	end
+end
+
+function SanNews:Event_sanNewsMessage(player, cmd, ...)
+	if self.m_SanNewsMessageEnabled then
+		local argTable = {...}
+		local msg = table.concat(argTable, " ")
+		self:sendMessage(("#9cff00[SanNews-Nachricht] %s: #FFFFFF%s"):format(player:getName(), msg), 255, 255 ,0, true)
+		player:sendMessage(("#9cff00[Msg an Sannews]: #FFFFFF%s"):format(msg), 255, 255 ,0, true)
+	else
+		player:sendError(_("Die SanNews hat /sannews derzeit deaktiviert!", player))
 	end
 end

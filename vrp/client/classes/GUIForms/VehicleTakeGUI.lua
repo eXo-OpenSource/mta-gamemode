@@ -21,7 +21,8 @@ end
 function VehicleTakeGUI:setVehicles(vehicles)
 	self.m_Grid:clear()
 	for k, vehicle in pairs(vehicles) do
-		local item = self.m_Grid:addItem(vehicle:getName())
+		local name = type(vehicle) == "userdata" and vehicle:getName() or getVehicleNameFromModel(vehicle)
+		local item = self.m_Grid:addItem(name)
 		item.Vehicle = vehicle
 		item.onLeftDoubleClick = bind(self.TakeButton_Click, self)
 	end
@@ -36,8 +37,10 @@ function VehicleTakeGUI:setCallback(callback)
 				return
 			end
 
-			if selectedItem.Vehicle then
+			if selectedItem.Vehicle and type(selectedItem.Vehicle) == "userdata" then
 				triggerServerEvent(callback, selectedItem.Vehicle)
+			else
+				triggerServerEvent(callback, localPlayer, selectedItem.Vehicle)
 			end
 		end
 	else
@@ -55,9 +58,12 @@ end
 
 addEvent("vehicleTakeMarkerGUI", true)
 addEventHandler("vehicleTakeMarkerGUI", root,
-	function(vehicles, callbackEvent)
+	function(vehicles, callbackEvent, buttonText)
 		local gui = VehicleTakeGUI:new()
 		gui:setVehicles(vehicles)
 		gui:setCallback(callbackEvent)
+		if buttonText then
+			gui.m_TakeButton:setText(buttonText)
+		end
 	end
 )

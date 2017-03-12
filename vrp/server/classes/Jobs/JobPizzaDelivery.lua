@@ -9,7 +9,8 @@
 JobPizza = inherit(Job)
 addRemoteEvents{ "onPizzaDelivered"}
 
-local BASE_LOAN = 15
+local BASE_LOAN = 45 --// 15
+
 function JobPizza:constructor( )
 	Job.constructor(self)
 
@@ -40,7 +41,7 @@ end
 function JobPizza:onPizzaDeliver( player, distance, time)
 	if player.vehicle and player.jobVehicle == player.vehicle then
 		local workFactor = distance / time
-		local pay = math.floor( BASE_LOAN * workFactor )
+		local pay = math.floor( BASE_LOAN * workFactor*2 )
 		player:giveMoney(pay, "Pizza-Job")
 		player:givePoints(2)
 	end

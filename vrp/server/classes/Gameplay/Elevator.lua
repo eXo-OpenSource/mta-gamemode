@@ -46,6 +46,10 @@ function Elevator:onStationMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
 		if not hitElement.vehicle then
 			if not hitElement.elevatorUsed then
+				if self.m_Stations[source.id].check then
+					self.m_Stations[source.id].check(hitElement)
+				end
+
 				hitElement.curEl = self
 				local pVec = self.m_Stations[source.id].position
 				hitElement:triggerEvent("showElevatorGUI", self.m_Id, self.m_Stations[source.id].name, self.m_Stations, {pVec.x,pVec.y,pVec.z} , self.m_Stations[source.id].interior)
@@ -64,9 +68,16 @@ end
 function Elevator:driveToStation(player, stationID)
 	player.elevatorUsed = true
 	player.curEl = false
-	player:setPosition(self.m_Stations[stationID].position)
-	player:setRotation(0, 0, self.m_Stations[stationID].rotation, "default", true)
-	player:setInterior(self.m_Stations[stationID].interior)
+
+	-- Workaround TODO
+	nextframe(function()
+		player:setInterior(self.m_Stations[stationID].interior)
+		player:setPosition(self.m_Stations[stationID].position)
+	end)
+	player:setInterior(0)
+	--
+
+	player:setRotation(Vector3(0, 0, self.m_Stations[stationID].rotation))
 	player:setDimension(self.m_Stations[stationID].dimension)
 	setElementFrozen(player, false)
 end

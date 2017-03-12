@@ -6,7 +6,7 @@ function GroupPropertyManager:constructor( )
 	outputServerLog("Loading group-propertys...")
 	local result = sql:queryFetch("SELECT * FROM ??_group_property", sql:getPrefix())
 	for k, row in ipairs(result) do
-		self.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open, row.Message, row.DepotId)
+		self.Map[row.Id] = GroupProperty:new(row.Id, row.Name, row.GroupId, row.Type, row.Price, Vector3(unpack(split(row.Pickup, ","))), row.InteriorId,  Vector3(unpack(split(row.InteriorSpawn, ","))), row.Cam, row.open, row.Message, row.DepotId, row.ElevatorData)
 	end
 
 	addEventHandler("GroupPropertyClientInput",root,function()
@@ -98,39 +98,44 @@ function GroupPropertyManager:OnDrooStateSwitch( )
 end
 
 function GroupPropertyManager:BuyProperty( Id )
+	if not client:getGroup() then
+		client:sendError("Du bist in keiner Firma oder Gang!")
+		return
+	end
+	if client:getGroup():getPlayerRank(client) < GroupRank.Manager then
+		client:sendError("Du bist nicht berechtigt eine Immobilie für deine Firma/Gang zu kaufen!")
+		return
+	end
+
+	local newOwner = client:getGroup()
 	local property = GroupPropertyManager:getSingleton().Map[Id]
 	local propCount = self:getPropsForPlayer( client )
 	if #propCount > 0 then
-		return client:sendError("Sie haben bereits eine Immobilie")
+		return 	client:sendError("Deine Firma/Gang besitzt bereits eine Immobilie")
 	end
 	if property then
 		local price = property.m_Price
-		local newOwner = client:getGroup()
-		if newOwner then
-			if price <= newOwner:getMoney() then
-				local oldOwner = property.m_Owner
-				if not oldOwner then
-					property.m_Owner = newOwner or false
-					property.m_OwnerID = newOwner.m_Id or false
-					sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), newOwner.m_Id, property.m_Id)
-					property.m_Open = 1
-					newOwner:takeMoney(price, "Immobilie "..property.m_Name.." gekauft!")
-					client:sendInfo("Du hast die Immobilie gekauft!")
-					client:triggerEvent("ForceClose")
-					for key, player in ipairs( newOwner:getOnlinePlayers() ) do
-						player:triggerEvent("addPickupToGroupStream",property.m_ExitMarker, property.m_Id)
-						x,y,z = getElementPosition( property.m_Pickup )
-						player:triggerEvent("createGroupBlip",x,y,z,property.m_Id)
-					end
-					StatisticsLogger:GroupBuyImmoLog( property.m_OwnerID or 0, "BUY", property.m_Id)
-				else
-					client:sendError(_("Diese Immobilie ist bereits vergeben!", client))
+		if price <= newOwner:getMoney() then
+			local oldOwner = property.m_Owner
+			if not oldOwner then
+				property.m_Owner = newOwner or false
+				property.m_OwnerID = newOwner.m_Id or false
+				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), newOwner.m_Id, property.m_Id)
+				property.m_Open = 1
+				newOwner:takeMoney(price, "Immobilie "..property.m_Name.." gekauft!")
+				client:sendInfo("Du hast die Immobilie gekauft!")
+				client:triggerEvent("ForceClose")
+				for key, player in ipairs( newOwner:getOnlinePlayers() ) do
+					player:triggerEvent("addPickupToGroupStream",property.m_ExitMarker, property.m_Id)
+					x,y,z = getElementPosition( property.m_Pickup )
+					player:triggerEvent("createGroupBlip",x,y,z,property.m_Id)
 				end
+				StatisticsLogger:GroupBuyImmoLog( property.m_OwnerID or 0, "BUY", property.m_Id)
 			else
-				client:sendError(_("In deiner Firmen/Gang-Kasse befindet sich nicht genug Geld!", client))
+				client:sendError(_("Diese Immobilie ist bereits vergeben!", client))
 			end
 		else
-			client:sendError(_("Du bist in keiner Firma oder Gang!", client))
+			client:sendError(_("In deiner Firmen/Gang-Kasse befindet sich nicht genug Geld!", client))
 		end
 	else
 		client:sendError(_("Immobilie nicht gefunden!", client))
@@ -140,19 +145,28 @@ end
 
 function GroupPropertyManager:SellProperty(  )
 	if client then
+		if not client:getGroup() then
+			client:sendError("Du bist in keiner Firma oder Gang!")
+			return
+		end
+		if client:getGroup():getPlayerRank(client) < GroupRank.Manager then
+			client:sendError("Du bist nicht berechtigt diese Immobilie zu verkaufen!")
+			return
+		end
+
 		local property = client.m_LastPropertyPickup
 		if property then
 			local price = property.m_Price
 			local sellMoney = math.floor(price * 0.66)
 			local pOwner = property.m_Owner
-			local clientGroup = client:getGroup()
-			if pOwner == clientGroup then
+			local group = client:getGroup()
+			if pOwner == group then
 				property.m_Owner = false
 				property.m_OwnerID = false
 				sql:queryExec("UPDATE ??_group_property SET GroupId=? WHERE Id=?", sql:getPrefix(), 0, property.m_Id)
 				property.m_Open = 1
-				client:giveMoney(sellMoney, "Immobilie "..property.m_Name.." verkauft!")
-				client:sendInfo("Sie haben die Immobilie verkauft!")
+				group:giveMoney(sellMoney, "Immobilie "..property.m_Name.." verkauft!")
+				client:sendInfo("Sie haben die Immobilie verkauft! Das Geld befindet sich in der Firmen/Gangkasse!")
 				for key, player in ipairs( pOwner:getOnlinePlayers() ) do
 					player:triggerEvent("destroyGroupBlip",property.m_Id)
 					player:triggerEvent("forceGroupPropertyClose")

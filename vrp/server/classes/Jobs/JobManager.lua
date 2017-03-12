@@ -20,6 +20,7 @@ function JobManager:constructor()
 		JobLogistician:new();
 		JobForkLift:new();
 		JobTreasureSeeker:new();
+		JobGravel:new();
 	}
 	for k, v in ipairs(self.m_Jobs) do
 		v:setId(k)
@@ -61,6 +62,7 @@ function JobManager:startJobForPlayer(job, player)
 	end
 
 	-- We're ready to start the job :)
+	player:giveAchievement(75)
 	job:start(player)
 
 	-- Tell the client that we started the job
@@ -83,6 +85,15 @@ end
 function JobManager:Event_jobAccepted(jobId)
 	if not jobId then return end
 
+	if client:isFactionDuty() then
+		client:sendError(_("Du darfst nicht im Dienst jobben! (Fraktion)", client))
+		return
+	end
+
+	if client:isCompanyDuty() then
+		client:sendError(_("Du darfst nicht im Dienst jobben! (Unternehmen)", client))
+		return
+	end
 	-- Get the job
 	local job = self:getFromId(jobId)
 	if not job then return end

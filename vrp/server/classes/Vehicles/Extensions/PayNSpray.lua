@@ -9,7 +9,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 		self:setCustomGarageOpen(true)
 	end
 
-	self.m_Company = CompanyManager:getSingleton():getFromId(2) -- Mechanic and Tow Id
+	self.m_Company = CompanyManager:getSingleton():getFromId(CompanyStaticId.MECHANIC) -- Mechanic and Tow Id
 
 	addEventHandler("onColShapeHit", self.m_FixShape,
 		function(hitElement, matchingDimension)
@@ -19,7 +19,7 @@ function PayNSpray:constructor(x, y, z, garageId)
 					return
 				end
 
-				if getElementHealth(vehicle) > 950 then
+				if vehicle:getHealth() > 999 then
 					hitElement:sendError(_("Dein Fahrzeug hat keinen erheblichen Schaden!", hitElement))
 					return
 				end
@@ -38,8 +38,8 @@ function PayNSpray:constructor(x, y, z, garageId)
 				setElementFrozen(vehicle, true)
 
 				-- Give money to the Owner (TODO: Improve this -> complete Repair ~4.58$ (310% Vehicle Health) -> is it okay?)
-				self.m_Company.m_BankAccount:addMoney(math.floor(costs*0.5))
-
+				self.m_Company:giveMoney(math.floor(costs*0.5), "Pay N Spray")
+				vehicle.m_DisableToggleHandbrake = true
 				setTimer(
 					function()
 						vehicle:fix()
@@ -52,7 +52,8 @@ function PayNSpray:constructor(x, y, z, garageId)
 						end
 
 						hitElement:takeMoney(costs, "Pay'N'Spray")
-						hitElement:sendShortMessage(_("Die Reperatur kostete %d$", hitElement, costs))
+						hitElement:sendShortMessage(_("Die Reparatur kostete %d$", hitElement, costs))
+						vehicle.m_DisableToggleHandbrake = nil
 					end,
 					3000,
 					1
@@ -112,5 +113,5 @@ function PayNSpray.initializeAll()
 	PayNSpray:new(720.26, -455.14, 16.34, 47) -- Dillimore
 
 	local noobSpawn = PayNSpray:new(1444.860, -1790.127, 13.250)
-	noobSpawn:createCustomDoor(13028, Vector3(1445.5998,-1781.0005,16.1), Vector3(180,-90,90))
+	noobSpawn:createCustomDoor(13028, Vector3(1445.6, -1781.39, 16.1), Vector3(180, -90, 90))
 end

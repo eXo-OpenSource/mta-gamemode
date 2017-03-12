@@ -46,6 +46,7 @@ function VehicleManager:constructor()
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
 		function (player, seat)
+			if player:getType() ~= "player" then return end
 			if seat == 0 then
 				self:checkVehicle(source)
 
@@ -66,6 +67,7 @@ function VehicleManager:constructor()
 	-- Prevent the engine from being turned on
 	addEventHandler("onVehicleEnter", root,
 		function(player, seat, jackingPlayer)
+			if player:getType() ~= "player" then return end
 			if seat == 0 then
 				self:checkVehicle(source)
 
@@ -140,7 +142,7 @@ function VehicleManager:createVehiclesForPlayer(player)
 				end
 				if not skip then
 					local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
-					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
+					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special, row.Premium)
 					VehicleManager:getSingleton():addRef(vehicle, false)
 				end
 				skip = false
@@ -148,7 +150,6 @@ function VehicleManager:createVehiclesForPlayer(player)
 		end
 	end
 end
-
 
 function VehicleManager.loadVehicles()
 	--[[
@@ -181,7 +182,7 @@ function VehicleManager.loadVehicles()
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TexturePath, row.Horn, row.Neon, row.Special)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
@@ -297,38 +298,57 @@ function VehicleManager:removeRef(vehicle, isTemp)
 end
 
 function VehicleManager:sendTexturesToClient(client)
+	--[[
 	for ownerid, vehicles in pairs(self.m_Vehicles) do
 		for i, v in pairs(vehicles) do
-			if v.m_Texture and v.m_Texture ~= "0" then
-				triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
+			if v.m_Texture and #v.m_Texture > 3 then
+				--triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
 			end
 		end
 	end
+
+	for groupid, vehicles in pairs(self.m_GroupVehicles) do
+		for i, v in pairs(vehicles) do
+			if v.m_Texture and #v.m_Texture > 3 then
+				--triggerClientEvent(client, "changeElementTexture", client, {{vehicle = v, textureName = false, texturePath = v.m_Texture}})
+			end
+		end
+	end
+	--]]
 end
 
 function VehicleManager:removeUnusedVehicles()
 	-- ToDo: Lateron, do not loop through all vehicles
-	--for ownerid, data in pairs(self.m_Vehicles) do
-	--	for k, vehicle in pairs(data) do
-	--		if vehicle:getLastUseTime() < getTickCount() - 30*1000*60 then
-	--			vehicle:respawn()
-	--		end
-	--	end
-	--end
+	for ownerid, data in pairs(self.m_Vehicles) do
+		for k, vehicle in pairs(data) do
+			if vehicle:isBlown() then
+				if vehicle:getVehicleType() == VehicleType.Automobile or vehicle:getVehicleType() == VehicleType.Bike then
+					outputDebug("Respawning blown vehicle in mechanic base")
+					vehicle:setPositionType(VehiclePositionType.Mechanic)
+					vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
+					respawnVehicle(vehicle)
+				else
+					vehicle:respawn()
+				end
+			end
+		end
+	end
 
 	for k, vehicle in pairs(self.m_TemporaryVehicles) do
 		if vehicle and isElement(vehicle) then
-			if vehicle:getHealth() < 0.1 and vehicle:getLastUseTime() < getTickCount() - 1*60*1000 then
-				vehicle:respawn()
-			else
-				if vehicle:getLastUseTime() < getTickCount() - 2*60*1000 then
-					if vehicle:getModel() == 435 then
-						if vehicle:getTowingVehicle() then
-							return
-						end
-					end
-
+			if vehicle:isRespawnAllowed() then
+				if vehicle:getHealth() < 0.1 and vehicle:getLastUseTime() < getTickCount() - 1*60*1000 then
 					vehicle:respawn()
+				else
+					if vehicle:getLastUseTime() < getTickCount() - 2*60*1000 then
+						if vehicle:getModel() == 435 then
+							if vehicle:getTowingVehicle() then
+								return
+							end
+						end
+
+						vehicle:respawn()
+					end
 				end
 			end
 		else
@@ -342,6 +362,12 @@ function VehicleManager:getPlayerVehicles(player)
 		player = player:getId()
 	end
 	return self.m_Vehicles[player] or {}
+end
+
+function VehicleManager:savePlayerVehicles(player)
+	for k, vehicle in pairs(self:getPlayerVehicles(player)) do
+		vehicle:save()
+	end
 end
 
 function VehicleManager:refreshGroupVehicles(group)
@@ -361,7 +387,7 @@ function VehicleManager:refreshGroupVehicles(group)
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TexturePath, row.Horn, row.Neon, row.Special)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
@@ -373,7 +399,11 @@ function VehicleManager:updateFuelOfPermanentVehicles()
 	for k, player in pairs(getElementsByType("player")) do
 		local vehicle = getPedOccupiedVehicle(player)
 		if vehicle and vehicle.getFuel and vehicle:getEngineState() then
-			vehicle:setFuel(vehicle:getFuel() - 0.5)
+			local fuelConsumption = 0.5
+			if vehicle.getSpeed and vehicle:getSpeed()/100 > fuelConsumption then
+				fuelConsumption = math.abs(vehicle:getSpeed()/100)
+			end
+			vehicle:setFuel(vehicle:getFuel() - fuelConsumption)
 		end
 	end
 end
@@ -390,7 +420,12 @@ function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
 	if source:isPermanent() or instanceof(source, GroupVehicle) then
-		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup()) then
+		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and client:getGroup():getPlayerRank(client) >= GroupRank.Manager) then
+			if source:isBroken() then
+				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
+				return
+			end
+
 			if source:isInGarage() then
 				source:setCurrentPositionAsSpawn(VehiclePositionType.Garage)
 				client:sendInfo(_("Du hast das Fahrzeug erfolgreich in der Garage geparkt!", client))
@@ -487,6 +522,9 @@ function VehicleManager:Event_vehicleAddKey(player)
 
 	-- Finally, add the key
 	source:addKey(player)
+
+	-- Give achievement
+	client:giveAchievement(70)
 
 	-- Tell the client that we added a new key
 	triggerClientEvent(client, "vehicleKeysRetrieve", source, source:getKeyNameList())
@@ -600,7 +638,13 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
 		return
 	end
-	if client:getMoney() < 100 then
+
+	if source:isBroken() and client:getRank() < RANK.Supporter then
+		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
+		return
+	end
+
+	if client:getMoney() < 100 and source:getOwner() == client:getId() then
 		client:sendError(_("Du hast nicht genügend Geld!", client))
 		return
 	end
@@ -608,6 +652,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 		fixVehicle(source)
 		setVehicleOverrideLights(source, 1)
 		setVehicleEngineState(source, false)
+		source.m_EngineState = false
 		source:setSirensOn(false)
 		if source:getOwner() == client:getId() then
 			client:takeMoney(100, "Fahrzeug Respawn")
@@ -657,14 +702,21 @@ function VehicleManager:Event_vehicleRespawnWorld()
  		return
  	end
 
- 	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Moderator then
+ 	if source:getOwner() ~= client:getId() and client:getRank() < RANK.Supporter then
  		client:sendError(_("Du bist nicht der Besitzer dieses Fahrzeugs!", client))
  		return
- 	end
- 	if client:getMoney() < 100 then
+	end
+
+	if source:isBroken() and client:getRank() < RANK.Supporter then
+		client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht respawnt werden!", client))
+		return
+	end
+
+ 	if source:getOwner() == client:getId() and client:getMoney() < 100 then
  		client:sendError(_("Du hast nicht genügend Geld!", client))
  		return
- 	end
+	end
+
  	if source:getPositionType() == VehiclePositionType.World then
  		if source:getOwner() == client:getId() then
 			client:takeMoney(100, "Fahrzeug Respawn")
@@ -689,6 +741,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 	end
 	if source:isPermanent() then
 		client:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
+
 		if getElementData(source, "OwnerName") then
 			local targetId = Account.getIdFromName(getElementData(source, "OwnerName"))
 			if targetId and targetId > 0 then
@@ -696,6 +749,8 @@ function VehicleManager:Event_vehicleDelete(reason)
 				if delTarget then
 					if isOffline then
 						delTarget:addOfflineMessage("Dein Fahrzeug ("..source:getName().." wurde von "..client:getName().." gelöscht. ("..reason..")!",1)
+
+						delTarget.m_DoNotSave = true
 						delete(delTarget)
 					else
 						delTarget:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
@@ -706,6 +761,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 			end
 		end
 		-- Todo Add Log
+		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel())
 		source:purge()
 	else
 		destroyElement(source)
@@ -715,7 +771,10 @@ end
 function VehicleManager:Event_vehicleSell()
 	if not instanceof(source, PermanentVehicle, true) then return end
 	if source:getOwner() ~= client:getId() then	return end
-
+	if source.m_Premium then
+		client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+		return
+	end
 	-- Search for price in vehicle shops table
 	local getPrice = function(model)
 		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
@@ -726,18 +785,22 @@ function VehicleManager:Event_vehicleSell()
 		return false
 	end
 
-	local price = getPrice(source:getModel())
-	if price then
+	local price = getPrice(source:getModel()) or 0
+	if price > 0 then
 		client:triggerEvent("questionBox", _("Möchtest du das Fahrzeug wirklich für %d$ verkaufen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
 	else
-		client:sendError("Beim verkauf dieses Fahrzeuges ist ein Fehler aufgetreten!")
+		client:sendError("Das Fahrzeug ist in keinem Shop erhätlich und kann nicht an den Server verkauft werden!")
+		client:triggerEvent("questionBox", _("Möchtest du dieses Fahrzeug entfernen?", client, math.floor(price * 0.75)), "vehicleSellAccept", nil, source)
 	end
 end
 
 function VehicleManager:Event_acceptVehicleSell(veh)
 	if not instanceof(veh, PermanentVehicle, true) then return end
-	if veh:getOwner() ~= client:getId() then	return end
-
+	if veh:getOwner() ~= client:getId() then return end
+	if veh.m_Premium then
+		client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
+		return
+	end
 	-- Search for price in vehicle shops table
 	local getPrice = function(model)
 		for shopId, shop in pairs(ShopManager.VehicleShopsMap) do
@@ -748,7 +811,7 @@ function VehicleManager:Event_acceptVehicleSell(veh)
 		return false
 	end
 
-	local price = getPrice(veh:getModel())
+	local price = getPrice(veh:getModel()) or 0
 	if price then
 		veh:purge()
 		client:giveMoney(math.floor(price * 0.75), "Fahrzeug-Verkauf")

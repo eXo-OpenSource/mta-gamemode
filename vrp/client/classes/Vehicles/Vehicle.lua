@@ -190,7 +190,6 @@ addEventHandler("onClientVehicleDamage", root,
 	end
 )
 
-
 addEventHandler("soundvanChangeURLClient", root,
 	function(url)
 		if isElement(source.Sound) then
@@ -213,7 +212,6 @@ addEventHandler("soundvanStopSoundClient", root,
 		end
 	end
 )
-
 
 addEventHandler("playLightSFX", localPlayer,
 function( dir )

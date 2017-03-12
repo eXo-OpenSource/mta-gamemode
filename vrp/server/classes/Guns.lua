@@ -18,10 +18,12 @@ function Guns:constructor()
 		setWeaponProperty (23, skill, "anim_loop_stop", 0 )
 	end
 
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientWasted"}
-	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted"}
+	addRemoteEvents{"onTaser", "onClientDamage", "onClientKill", "onClientWasted", "gunsLogMeleeDamage"}
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
+	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
+
+
 end
 
 function Guns:destructor()
@@ -30,6 +32,8 @@ end
 
 function Guns:Event_onTaser(target)
 	if client.vehicle or target.vehicle then return end
+	client:giveAchievement(65)
+
 	target:setAnimation("crack", "crckdeth2",-1,true,true,false)
 	toggleAllControls(target,false)
 	target:sendInfo(_("Du wurdest von %s getazert!", target, client:getName()))
@@ -64,6 +68,10 @@ function Guns:Event_onClientDamage(target, weapon, bodypart, loss)
 	end
 end
 
+function Guns:Event_logMeleeDamage(target, weapon, bodypart, loss)
+	StatisticsLogger:getSingleton():addDamageLog(client, target, weapon, bodypart, loss)
+end
+
 function Guns:Event_onClientKill(kill, weapon, bodypart, loss)
 
 end
@@ -78,19 +86,21 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 		else
 			loss = math.abs(armor-loss)
 			player:setArmor(0)
-			player:setHealth(health-loss)
 
-			if player:getHealth()-loss <= 0 then
+			if health - loss <= 0 then
 				StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
 				player:kill(attacker, weapon, bodypart)
+			else
+				player:setHealth(health-loss)
 			end
 		end
 	else
 		if player:getHealth()-loss <= 0 then
 			StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
 			player:kill(attacker, weapon, bodypart)
+		else
+			player:setHealth(health-loss)
 		end
-		player:setHealth(health-loss)
 	end
 	StatisticsLogger:getSingleton():addDamageLog(attacker, player, weapon, bodypart, loss)
 	--StatisticsLogger:getSingleton():addTextLog("damage", ("%s wurde von %s mit Waffe %s am %s getroffen! (Damage: %d)"):format(player:getName(), attacker:getName(), WEAPON_NAMES[weapon], BODYPART_NAMES[bodypart], loss))

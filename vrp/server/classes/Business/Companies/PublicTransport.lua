@@ -141,16 +141,22 @@ function PublicTransport:endTaxiDrive(customer)
 end
 
 function PublicTransport:updateTaxometer(customer)
-	self.m_TaxiCustomer[customer]["diff"] = (self.m_TaxiCustomer[customer]["vehicle"]:getMileage() - self.m_TaxiCustomer[customer]["startMileage"])/1000
-	self.m_TaxiCustomer[customer]["price"] = math.floor(self.m_TaxiCustomer[customer]["diff"] * TAXI_PRICE_PER_KM)
-	customer:triggerEvent("syncTaxoMeter", self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
+	if self.m_TaxiCustomer[customer] and isElement(customer) then
+		self.m_TaxiCustomer[customer]["diff"] = (self.m_TaxiCustomer[customer]["vehicle"]:getMileage() - self.m_TaxiCustomer[customer]["startMileage"])/1000
+		self.m_TaxiCustomer[customer]["price"] = math.floor(self.m_TaxiCustomer[customer]["diff"] * TAXI_PRICE_PER_KM)
+		customer:triggerEvent("syncTaxoMeter", self.m_TaxiCustomer[customer]["diff"], self.m_TaxiCustomer[customer]["price"])
 
-	if customer:getMoney() < self.m_TaxiCustomer[customer]["price"] then
-		customer:sendError(_("Du hast kein Geld mehr dabei! Du wurdest aus dem Taxi geschmissen!", customer, price))
-		customer:removeFromVehicle()
+		if customer:getMoney() < self.m_TaxiCustomer[customer]["price"] then
+			customer:sendError(_("Du hast kein Geld mehr dabei! Du wurdest aus dem Taxi geschmissen!", customer, price))
+			customer:removeFromVehicle()
+			self:endTaxiDrive(customer)
+		end
+		self:updateDriverTaxometer(self.m_TaxiCustomer[customer]["vehicle"], self.m_TaxiCustomer[customer]["driver"])
+	else
+		if isTimer(sourceTimer) then killTimer(sourceTimer) end
 		self:endTaxiDrive(customer)
+
 	end
-	self:updateDriverTaxometer(self.m_TaxiCustomer[customer]["vehicle"], self.m_TaxiCustomer[customer]["driver"])
 end
 
 function PublicTransport:updateDriverTaxometer(vehicle, driver)
@@ -176,12 +182,11 @@ function PublicTransport:Event_onPlayerQuit()
 end
 
 function PublicTransport:Event_setTargetFromMap(posX, posY)
-
 	if self.m_TaxiCustomer[client]["driver"] then
 		local driver = self.m_TaxiCustomer[client]["driver"]
 		driver:sendInfo(_("Der Kunde %s hat sein Ziel auf der Karte markiert! Ziel: %s/%s", driver, client:getName(), getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))
 		client:sendInfo(_("Du hast dein Ziel auf der Karte markiert! Ziel: %s/%s", client, getZoneName(posX, posY, 0), getZoneName(posX, posY, 0, true)))
-		self.m_TaxiCustomer[client]["blip"] = Blip:new("Waypoint.png", posX, posY,root,600)
+		self.m_TaxiCustomer[client]["blip"] = Blip:new("Waypoint_ept.png", posX, posY, driver, 10000)
 	end
 end
 
@@ -233,15 +238,23 @@ function PublicTransport:BusStop_Hit(player, matchingDimension)
 
 		-- Give the player some money and switch to the next bus stop
 		player:giveMoney(50, "Public Transport Bus")
+		player:givePoints(2)
 		local newDestination = self.m_Lines[line][destinationId + 1] and destinationId + 1 or 1
 		player.Bus_NextStop = newDestination
 
 		-- Pay extra money for extra occupants
-		player:giveMoney((table.size(getVehicleOccupants(vehicle)) - 1) * 40)
-		player:givePoints(2)
+		if table.size(getVehicleOccupants(vehicle)) > 1 then
+			player:giveMoney((table.size(getVehicleOccupants(vehicle)) - 1) * 40, "Public Transport Bus (Passagiere)")
+		end
+
 		for seat, player in pairs(getVehicleOccupants(vehicle)) do
 			if seat ~= 0 then
-				player:takeMoney(40, "Public Transport Bus")
+				if player:getMoney() >= 40 then
+					player:takeMoney(40, "Public Transport Bus")
+				else
+					player:removeFromVehicle()
+					player:sendInfo(_("Du hast nicht mehr genug Geld dabeI!", player))
+				end
 			end
 		end
 

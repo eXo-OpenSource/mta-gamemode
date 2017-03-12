@@ -9,8 +9,9 @@ screenWidth, screenHeight = guiGetScreenSize()
 screenSize = Vector2(screenWidth, screenHeight)
 ASPECT_RATIO_MULTIPLIER = (screenWidth/screenHeight)/(16/9)
 
-HTTP_DOWNLOAD = true
+HTTP_DOWNLOAD = not DEBUG
 FILE_HTTP_SERVER_URL = "https://download.exo-reallife.de/files/master/vrp_assets/" -- Todo: move to config
+FILE_HTTP_FALLBACK_URL = "http://ts.exo-reallife.de/upload/files/master/vrp_assets/" -- Todo: see above
 HTTP_CONNECT_ATTEMPTS = 2 -- Todo: see above
 
 NO_MUNITION_ITEMS = {
@@ -107,12 +108,13 @@ BlipConversion =
 	["Skinshop.png"] = 45,
 	["Zombie.png"] = 37,
 	["Waypoint.png"] = 41,
+	["Waypoint_ept.png"] = 41,
 	["Wheel.png"] = 35,
 	["Police.png"] = 30,
 	["Mechanic.png"] = 48,
 	["Trashman.png"] = 42,
 	["Fire.png"] = 20,
-	["Needhelp.png"] = 0,
+	["NeedHelp.png"] = 0,
 	["Moneybag.png"] = 52,
 	["Stadthalle.png"] = 36,
 	["House.png"] = 32,
@@ -128,10 +130,14 @@ BlipConversion =
 	["HeliTransport.png"] = 5,
 	["Bar.png"] = 49,
 	["RedSaw.png"] = 0,
+	["Horse.png"] = 35,
 
 }
 UIStyle = {vRoleplay = 1, eXo = 2, Default = 3}
 for i, v in pairs(UIStyle) do UIStyle[v] = i end
+
+NametagStyle = {On = 1, Off = 2}
+for i, v in pairs(NametagStyle) do NametagStyle[v] = i end
 
 MATERIAL_TYPES =
 {
@@ -208,6 +214,14 @@ HelpTextTitles = {
 		LoginRegister = "Login/Registration";
 		Team = "Team";
 	};
+	Leisure = {
+		Kart = "Kartstrecke";
+		Fishing = "Angeln";
+		Boxing = "Boxhalle";
+		Bars = "Bars";
+		Horserace = "Pferdewetten";
+		Minigames = "Minispiele";
+	};
 	Jobs = {
 		BusDriver = "Job: Busfahrer";
 		Farmer = "Job: Bauer";
@@ -222,11 +236,7 @@ HelpTextTitles = {
 		HeliTransport = "Job: Helikopter-Pilot";
 		ForkLift = "Job: Gabelstapler-Fahrer";
 		TreasureSeeker = "Job: Schatz Sucher";
-	};
-	Events = {
-		Deathmatch = "Event: Deathmatch";
-		DMRace = "Event: DM-Race";
-		StreetRace = "Event: Street Race";
+		Gravel = "Job: Kiesgruben Arbeiter";
 	};
 	Gameplay = {
 		Cars = "Fahrzeuge";
@@ -237,6 +247,7 @@ HelpTextTitles = {
 		GoJump = "Minigame: GoJump";
 		SideSwipe = "Minigame: SideSwipe";
 		SniperGame = "Minigame: Sniper Game";
+		TCars = "Minigame: 2Cars";
 	};
 	Actions = {
 		WeaponTruck = "Aktionen: Waffen-Truck";
@@ -244,6 +255,11 @@ HelpTextTitles = {
 		Bankrob = "Aktionen: Bank-Überfall";
 		StateWeaponTruck = "Aktionen: Staats Waffen Truck";
 
+	};
+	Events = {
+		Deathmatch = "Event: Deathmatch";
+		DMRace = "Event: DM-Race";
+		StreetRace = "Event: Street Race";
 	};
 	Credits = {
 		OldVRPTeam = "vRP-Team";
@@ -260,8 +276,12 @@ HelpTexts = {
 			eXo-Reallife ist ein Server-Projekt für die Multiplayer Modifikation Multi Theft Auto: San Andreas für GTA: San Andreas.
 			Ziel des Projekts ist ein möglichst umfangreiches, neuartiges Rollenspiel zu schaffen.
 
-			Wir befinden uns derzeit in der Alpha Testphase, was bedeutet, dass es momentan hauptsächlich darum geht,
-			das richtige Balancing zu finden und fehlende Features auszumachen.
+			Wir gingen am 16.02.2017 um 16:00 online, wir danken unsere Community für die großartige Unterstützung dem gesamten
+			letzen Jahr über.
+
+			Sollten Bugs auftauchen, bitten wir euch diese in unserem Bugtracker unter forum.exo-reallife.de zu posten!
+
+			Bei weiteren Fragen oder Anregungen einfach ein Ticket im F2 Menü unter "Ticketsystem" erstellen.
 		]],
 		LoginRegister = [[
 			Dies ist das Login Fenster. Im Tab 'Login' kannst Du dich einloggen, im Tab 'Registrieren' demzufolge registrieren.
@@ -308,6 +328,53 @@ HelpTexts = {
 			Informationen zum damaligen vRP-Team und Unterstützer unter "vRP-Team".
 		]];
 
+	};
+	Leisure = {
+		Kart = [[
+		Die Kartstrecke befindet sich in Montgomery (Reifen Blip auf der Karte). Du kannst dort auf täglich wechselnden
+		Strecken dein Fahrkönnen unter Beweis stellen.
+		Natürlich gibt es ein Highscore System für die schnellsten Runden.
+
+		In den nächsten Updates wird zudem ein Ghostmode hinzugefügt um rauszufinden wo du deine Zeit liegen lässt.
+		]];
+		Fishing = [[
+		Am Pier in Los Santos (am Riesenrad) gibt es mehrere Angeln um Meeresbewohner oder andere Gegenstände aus dem
+		Wasser zu angeln. Je besser du auswirfst und einholst, desto wertvoller deine Beute.
+
+		Verkaufe diese einfach an Angeler Lutz der direkt daneben seinen Stand aufgebaut hat!
+		]];
+		Boxing = [[
+		Im Fitness-Center Los Santos kannst du andere Spieler zum Boxkampf herausfordern! Dabei könnt ihr einfach aus
+		Spaß kämpfen oder aber einen Geldeinsatz vereinbaren.
+		Du findest das Fitness-Center nahe der Green Bottle bar!
+
+		Möge der stärkste Kämpfer gewinnen!
+		]];
+		Bars = [[
+		Bars können von privaten Firma (Können in der Stadthalle gegründet werden) gekauft werden.
+		Diese bieten den Angestellten der Firma viele Funktionen wie z.B die Verwaltung der Kasse
+		(in der die Einnahmen gehen),das Abspielen von Musik oder das Engagieren von
+		professionellen Tänzerinnen.
+
+		Der perfekten Party steht damit nichts im Wege!
+		]];
+		Horserace = [[
+		Täglich um 20:00 Uhr findet das eXo-Pferderennen statt. Du kannst im Wettlokal (Pferd auf der Karte)
+		einen gewünschten Geldbetrag auf das Pferd deiner Wahl setzen.
+
+		Mit etwas Glück kannst du damit deinen Einsatz verdreifachen!
+		]];
+		Minigames = [[
+		Auf eXo-Reallife gibt es zahlreiche Minispiele die du teilweise alleine, teilweise mit anderen Usern
+		spielen kannst.
+		Klicke einen Spieler an und wähle "Spielen" im Klickmenü, dort gibt es eine Auswahl
+		an Spielen zu denen du den Spieler herausfordern kannst.
+
+		Unter anderem mit von der Partie sind Schach, Pong und Schere, Stein, Papier
+
+		Weitere Spiele findest du im Casino. (Spielkarten Symbol auf der Karte)
+		Dort findest du z.B. 2 Cars, Go-Jump oder SideSwipe.
+		]];
 	};
 	Jobs = {
 		BusDriver = [[
@@ -383,7 +450,17 @@ HelpTexts = {
 			abzusuchen. Anschließend hebst du diese in dein Schiff und entlädst sie am Hafen!
 
 			Drücke 'Leertaste' um den "Schatz" aufzunehmen.
-		]]
+		]];
+		Gravel = [[
+			Der Job ist in 3 Arbeitsschritte aufgeteilt die verschiedene Spieler zu gleich ausführen können.
+
+			1.) Abbau mit Spitzhacke: Baue die hellen Felsen direkt neben dem Dozer-Spawn mit der Spitzhacke ab. (Klicken zum Abbauen)
+
+			2.) Einlagern: Lagere die abgebauten Gesteinsbrocken ein indem du diese mit dem Dozer in die Behälter schiebst.
+
+			3.) Transport: Transportiere die eingelagerten Gesteinsbrocken mit dem Dumper aus der Kiesgrube. Zum Beladen fahre einfach unter ein Förderband.
+		]];
+
 	};
 	Events = {
 		Deathmatch = [[
@@ -412,7 +489,7 @@ HelpTexts = {
 			Du bist selbst verantwortlich für den Zustand des Fahrzeuges und musst es ggf. reparieren, betanken.
 			Unter F2 kann das Fahrzeug kostenpflichtig respawnt werden, wobei ausgewählt werden kann ob es an der
 			Parkposition oder, falls vorhanden, in deiner Garage respawnt werden soll. Sollte dein Fahrzeug einen
-			Totalschaden erleiden, so musst du entweder selbst mit einem Reperaturset versuchen dein Fahrzeug
+			Totalschaden erleiden, so musst du entweder selbst mit einem Reparaturset versuchen dein Fahrzeug
 			zum Laufen zu bringen oder du verständigst das Mech&Tow, welches einen Mechaniker zur ersten Hilfe
 			sendet.
 
@@ -440,10 +517,13 @@ HelpTexts = {
 			Minigame: GoJump
 		]];
 		SideSwipe = [[
-			Minigame: SideSwipe TODO
+			Minigame: SideSwipe (Keine Highscores, da noch nicht fertig!)
 		]];
 		SniperGame = [[
 			Erledige alle gespawnten Peds mit gezielten Kopfschüssen bevor sie die gelbe Linie übertreten!
+		]];
+		TCars = [[
+			Steuere beide Autos mit den Tasten 'a' und 'd' oder Pfeilsten links, rechts. Weiche den Kästchen aus und sammel jeden Punkt.
 		]];
 
 	};
@@ -456,7 +536,7 @@ HelpTexts = {
 		]];
 		StateWeaponTruck = [[
 			Wählt die Waffen die ihr benötigt aus und ladet diese auf den Staatswaffentruck.
-			Fahrt nun den Truck an die LS Docks und versucht die Kisten abzugeben.
+			Fahrt nun den Truck vor die FBI-Base und versucht die Kisten abzugeben.
 			Die Bösen Fraktionisten werden versuchen den SWT zu zerstören.
 			Falls ihnen das gelingt, könnt ihr die Waffen mit einem Enforcer vom LSPD weitertransportieren.
 		]];
@@ -508,9 +588,13 @@ HelpTexts = {
 		Other = [[
 			Wir danken folgenden Personen/Teams für zur Verfügung gestellte Scripts:
 
-			iLife-Team:
+			dem iLife-Team für:
 			Slotmaschinen
 			Zug
+
+			Bonus für
+			Anti c-Bug
+			realdriveby
 		]];
 	};
 	Settings = {
@@ -555,7 +639,7 @@ SHADERS = {
 	["Water"] = {["event"] = "switchWaterRefract" },
 	["WetRoads"] = {["event"] = "switchWetRoads" },
 	["Bloom"] = {["event"] = "switchBloom" },
-	["Sun"] = {["event"] = "switchSunShader"},
+	--["Sun"] = {["event"] = "switchSunShader"},
 	["DoF"] = {["event"] = "switchDoF"}
 }
 
@@ -563,6 +647,7 @@ SHADERS = {
 GUNBOX_CRATES = {
 	createObject(2977, 1366.06, -1286.34, 12.4),
 	createObject(2977, 2397.80, -1980.82, 12.4),
+	createObject(2977, 1328.33, -1560.27, 12.6)
 }
 
 for i = 1,#GUNBOX_CRATES do

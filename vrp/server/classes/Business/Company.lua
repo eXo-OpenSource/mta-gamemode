@@ -41,6 +41,8 @@ function Company:constructor(Id, Name, ShortName, Creator, players, lastNameChan
   self.m_PhoneNumber = (PhoneNumber.load(3, self.m_Id) or PhoneNumber.generateNumber(3, self.m_Id))
   self.m_PhoneTakeOff = bind(self.phoneTakeOff, self)
 
+  self.m_VehicleTexture = companyVehicleShaders[Id] or false
+
 end
 
 function Company:destructor()
@@ -126,12 +128,12 @@ end
 
 function Company:giveMoney(amount, reason)
     StatisticsLogger:getSingleton():addMoneyLog("company", self, amount, reason or "Unbekannt")
-    return self.m_BankAccount:addMoney(amount)
+    return self.m_BankAccount:addMoney(amount, reason)
 end
 
 function Company:takeMoney(amount, reason)
     StatisticsLogger:getSingleton():addMoneyLog("company", self, -amount, reason or "Unbekannt")
-    return self.m_BankAccount:takeMoney(amount)
+    return self.m_BankAccount:takeMoney(amount, reason)
 end
 
 function Company:addPlayer(playerId, rank)
@@ -308,8 +310,9 @@ end
 function Company:paydayPlayer(player)
 	local rank = self.m_Players[player:getId()]
 	local loan = tonumber(self.m_RankLoans[tostring(rank)])
-	if self.m_BankAccount:getMoney() < loan then loan = self.m_BankAccount:getMoney() end
-	self.m_BankAccount:takeMoney(loan)
+	if self:getMoney() < loan then loan = self:getMoney() end
+	if loan < 0 then loan = 0 end
+	self:takeMoney(loan, "Lohn von "..player:getName())
 	return loan
 end
 

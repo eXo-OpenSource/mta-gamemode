@@ -36,13 +36,10 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 
 	self.m_ColShape = createColSphere(position, 1)
 
-	for playerId, timestamp in pairs(self.m_Keys) do -- Work-Arround: JSON saves Index as String
-		self.m_Keys[tonumber(playerId)] = timestamp
-		self.m_Keys[tostring(playerId)] = nil
-	end
-
 	if owner == false then
 		self.m_Keys = {}
+	else
+		self.m_Keys = table.setIndexToInteger(self.m_Keys)
 	end
 
 	--addEventHandler ("onPlayerJoin", root, bind(self.checkContractMonthly, self))
@@ -66,9 +63,9 @@ end
 
 function House:toggleLockState( player )
 	self.m_LockStatus = not self.m_LockStatus
-	local info = "abgeschlossen"
+	local info = "aufgeschlossen"
 	if self.m_LockStatus then
-		info = "aufgeschlossen"
+		info = "abgeschlossen"
 	end
 	player:sendInfo("Das Haus wurde "..info.."!")
 	self:showGUI(player)
@@ -154,6 +151,10 @@ function House:rentHouse(player)
 			player:sendError(_("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentümer!", player), 255, 0, 0)
 			return
 		end
+		if self.m_RentPrice <= 0 then
+			player:sendError(_("Einmieten fehlgeschlagen - Der Eigentümer erlaubt kein einmieten!", player), 255, 0, 0)
+			return
+		end
 
 		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
@@ -173,6 +174,10 @@ function House:unrentHouse(player)
 		if player and isElement(player) then
 			player:sendSuccess(_("Du hast deinen Mietvertrag gekündigt!", player), 255, 0, 0)
 			player:triggerEvent("removeHouseBlip", self.m_Id)
+
+			if self.m_PlayersInterior[player] then
+				self:leaveHouse(player)
+			end
 		end
 	else
 		player:sendError(_("Du bist in diesem Haus nicht eingemietet!", player))
@@ -181,9 +186,14 @@ end
 
 function House:setRent(player, rent)
 	if player:getId() == self.m_Owner then
-		player:sendInfo(_("Du hast die Miete auf %d$ gesetzt!", player, rent))
 		self.m_RentPrice = rent
-		self:sendTenantsMessage(_("%s hat die Miete für sein Haus auf %d$ gesetzt!", player, player:getName(), rent))
+		if rent > 0 then
+			player:sendInfo(_("Du hast die Miete auf %d$ gesetzt!", player, rent))
+			self:sendTenantsMessage(_("%s hat die Miete für sein Haus auf %d$ gesetzt!", player, player:getName(), rent))
+		else
+			player:sendInfo(_("Nun kann sich keiner mehr in deinem Haus einmieten!", player, rent))
+			self:sendTenantsMessage(_("%s hat das einmieten für sein Haus deaktiviert!", player, player:getName()))
+		end
 	end
 end
 
@@ -253,6 +263,8 @@ function House:sendTenantsMessage(msg)
 			if target then
 				if isOffline then
 					target:addOfflineMessage(msg, 1)
+
+					target.m_DoNotSave = true
 					delete(target)
 				else
 					target:sendInfo(msg)
@@ -281,6 +293,7 @@ function House:sellHouse(player)
 		self.m_Owner = 0
 		self.m_Keys = {}
 		self:updatePickup()
+		self:save()
 	else
 		player:sendError(_("Das ist nicht dein Haus!", player))
 	end
@@ -321,16 +334,12 @@ function House:removePlayerFromList(player)
 end
 
 function House:leaveHouse(player)
-	if self.m_Keys[player:getId()] or not self.m_LockStatus  then
-		self:removePlayerFromList(player)
-		player:setPosition(self.m_Pos)
-		player:setInterior(0)
-		player:setDimension(0)
-		if self.m_CurrentRobber == player then
-			player:triggerEvent("CountdownStop", "Haus-Raub")
-		end
-	else
-		player:sendError(_("Die Tür ist verschlossen!", player))
+	self:removePlayerFromList(player)
+	player:setPosition(self.m_Pos)
+	player:setInterior(0)
+	player:setDimension(0)
+	if self.m_CurrentRobber == player then
+		player:triggerEvent("CountdownStop", "Haus-Raub")
 	end
 end
 
@@ -350,11 +359,17 @@ function House:buyHouse(player)
 	end
 
 	if player:getMoney() >= self.m_Price then
+		player:giveAchievement(74)
+		if self.m_Price >= 900000 then
+			player:giveAchievement(69)
+		end
+		player:giveAchievement(34)
+
 		player:takeMoney(self.m_Price, "Haus-Kauf")
 		self.m_Owner = player:getId()
 		self:updatePickup()
 		player:sendSuccess(_("Du hast das Haus erfolgreich gekauft!", player))
-
+		self:save()
 		-- create blip
 		player:triggerEvent("addHouseBlip", self.m_Id, self.m_Pos.x, self.m_Pos.y)
 	else

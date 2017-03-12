@@ -12,7 +12,7 @@ addRemoteEvents{"robableShopGiveBagFromCrash"}
 local ROBSHOP_TIME = 15*60*1000
 function RobableShop:constructor(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
   -- Create NPC(s)
-  self.m_shop = shop
+  self.m_Shop = shop
   self:spawnPed(shop, pedPosition, pedRotation, pedSkin, interiorId, dimension)
 
   -- Respawn ped after a while (if necessary)
@@ -44,6 +44,10 @@ function RobableShop:Ped_Targetted(ped, attacker)
 			if not ActionsCheck:getSingleton():isActionAllowed(attacker) then
 				return false
 			end
+			if FactionState:getSingleton():countPlayers() < SHOPROB_MIN_MEMBERS then
+				attacker:sendError(_("Es müssen mindestens %d Staatsfraktionisten online sein!",attacker, SHOPROB_MIN_MEMBERS))
+				return false
+			end
 			local shop = ped.Shop
 			self.m_Shop = shop
 			if shop:getMoney() >= 250 then
@@ -63,10 +67,12 @@ function RobableShop:Ped_Targetted(ped, attacker)
 end
 
 function RobableShop:startRob(shop, attacker, ped)
-	self.m_shop.m_Marker.m_Disable = true
-	setElementAlpha(self.m_shop.m_Marker,0)
+	shop.m_Marker.m_Disable = true
+	setElementAlpha(shop.m_Marker,0)
 	PlayerManager:getSingleton():breakingNews("%s meldet einen Überfall durch eine Straßengang!", shop:getName())
 	ActionsCheck:getSingleton():setAction("Shop-Überfall")
+
+	shop.m_LastRob = getRealTime().timestamp
 
 	-- Play an alarm
 	local pos = ped:getPosition()
@@ -89,8 +95,8 @@ function RobableShop:startRob(shop, attacker, ped)
 
 	self.m_Gang = attacker:getGroup()
 	self.m_Gang:attachPlayerMarkers()
-	self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y)
-	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y)
+	self.m_EvilBlip = Blip:new("Waypoint.png", evilPos.x, evilPos.y, root, 2000)
+	self.m_StateBlip = Blip:new("PoliceRob.png", statePos.x, statePos.y, root, 2000)
 	self.m_EvilMarker = createMarker(evilPos, "cylinder", 2.5, 255, 0, 0, 100)
 	self.m_StateMarker = createMarker(statePos, "cylinder", 2.5, 0, 255, 0, 100)
 	self.m_onDeliveryMarkerHit = bind(self.onDeliveryMarkerHit, self)
@@ -127,8 +133,8 @@ function RobableShop:startRob(shop, attacker, ped)
 end
 
 function RobableShop:m_onExpire()
-	self.m_shop.m_Marker.m_Disable = false
-	setElementAlpha(self.m_shop.m_Marker,255)
+	self.m_Shop.m_Marker.m_Disable = false
+	setElementAlpha(self.m_Shop.m_Marker,255)
 	ActionsCheck:getSingleton():endAction()
 	if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
 	if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
@@ -140,15 +146,19 @@ function RobableShop:m_onExpire()
 		removeEventHandler("onPlayerVehicleExit", player, self.m_onVehicleExitFunc)
 		removeEventHandler("onPlayerQuit", player, self.m_onPlayerQuitFunc)
 	end
-	self.m_Bag:destroy()
 
+	local money = self.m_Bag.Money or 0
+	local stateMoney = math.floor(money/3)
+	FactionManager:getSingleton():getFromId(1):giveMoney(stateMoney, "Shop Raub Sicherstellung 1/3")
+	self.m_Shop:giveMoney(stateMoney*2, "Shop Raub Sicherstellung 2/3")
+	self.m_Bag:destroy()
 
 	removeEventHandler("characterInitialized", root, self.m_characterInitializedFunc)
 
 	delete(self.m_EvilBlip)
 	delete(self.m_StateBlip)
 	delete(self.m_BagBlip)
-	if isTimer(self.m_TargetTimer) then kilLTimer(self.m_TargetTimer) end
+	if isTimer(self.m_TargetTimer) then killTimer(self.m_TargetTimer) end
 	StatisticsLogger:getSingleton():addActionLog("Shop-Rob", "stop", nil, self.m_Gang, "group")
 
 	self.m_Gang:removePlayerMarkers()
@@ -162,8 +172,8 @@ function RobableShop:stopRob(player)
 		killTimer(self.m_ExpireTimer)
 	end
 
-	self.m_shop.m_Marker.m_Disable = false
-	setElementAlpha(self.m_shop.m_Marker,255)
+	self.m_Shop.m_Marker.m_Disable = false
+	setElementAlpha(self.m_Shop.m_Marker,255)
 	ActionsCheck:getSingleton():endAction()
 	if isElement( self.m_EvilMarker) then destroyElement(self.m_EvilMarker) end
 	if isElement( self.m_StateMarker) then destroyElement(self.m_StateMarker) end
@@ -263,16 +273,20 @@ function RobableShop:characterInitialized()
 end
 
 function RobableShop:onDamage(attacker, weapon)
-  if isElement(attacker) and self:checkBagAllowed(attacker) then
-    if weapon == 0 then
-      if source:getPlayerAttachedObject() and source:getPlayerAttachedObject() == self.m_Bag and self:checkBagAllowed(attacker) then
-        self:removeBag(source)
-        self:giveBag(attacker)
-      else
-        attacker:sendError(_("Du darfst die Beute nicht besitzen!", attacker))
-      end
-    end
-  end
+	if not source.RobableShopDmgPause then
+		if isElement(attacker) and self:checkBagAllowed(attacker) then
+			if weapon == 0 then
+				source.RobableShopDmgPause = true
+				setTimer(function() source.RobableShopDmgPause = false end, 1500, 1)
+				if source:getPlayerAttachedObject() and source:getPlayerAttachedObject() == self.m_Bag and self:checkBagAllowed(attacker) then
+					self:removeBag(source)
+					self:giveBag(attacker)
+				else
+					attacker:sendError(_("Du darfst die Beute nicht besitzen!", attacker))
+				end
+			end
+		end
+	end
 end
 
 function RobableShop:onWasted()

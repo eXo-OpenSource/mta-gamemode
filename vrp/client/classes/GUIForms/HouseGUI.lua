@@ -23,7 +23,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 	end
 
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Hausmenü", true, true, self)
-	self.m_Window:setCloseOnClose( true )
+	self.m_Window:deleteOnClose( true )
 
 
 	self.m_LabelOwner =     GUILabel:new(10, 40, self.m_Width-20, 30,_"s", self.m_Window)
@@ -124,7 +124,7 @@ function HouseGUI:constructor(owner, price, rentprice, isValidRob, isClosed, ten
 			self.m_Lock:setText(_"Abschließen")
 		end
 	else
-		GUILabel:new(10, 100,self.m_Width-20, 30, _("Mietpreis: $%d",rentprice) , self.m_Window)
+		GUILabel:new(10, 100,self.m_Width-20, 30, _("Mietpreis: $%d", rentprice) , self.m_Window)
 	end
 
 	if localPlayer:getDimension() > 0 or localPlayer:getInterior() > 0 then

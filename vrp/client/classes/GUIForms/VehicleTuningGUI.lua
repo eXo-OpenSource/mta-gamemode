@@ -6,6 +6,8 @@
 -- *
 -- ****************************************************************************
 VehicleTuningGUI = inherit(GUIForm)
+addRemoteEvents{"vehicleTuningShopEnter", "vehicleTuningShopExit"}
+
 
 function VehicleTuningGUI:constructor(vehicle)
     GUIForm.constructor(self, 10, 10, screenWidth/5/ASPECT_RATIO_MULTIPLIER, screenHeight/2)
@@ -48,11 +50,13 @@ function VehicleTuningGUI:constructor(vehicle)
     do
         local width, height = screenWidth*0.2, screenHeight*0.35
         self.m_ShoppingCartWindow = GUIWindow:new(screenWidth*0.76, screenHeight*0.3, width, height, _"Warenkorb", true, false)
-        self.m_ShoppingCartGrid = GUIGridList:new(0, 30, width, height*0.9, self.m_ShoppingCartWindow)
+        self.m_ShoppingCartGrid = GUIGridList:new(0, 30, width, height*0.79, self.m_ShoppingCartWindow)
             :addColumn(_"Upgrade", 0.7)
             :addColumn(_"Preis", 0.3)
         self.m_PriceLabel = GUILabel:new(width*0.02, height*0.9, width*0.5, height*0.1, "", self.m_ShoppingCartWindow)
-        self.m_BuyButton = GUIButton:new(width*0.6, height*0.9, width*0.4, height*0.1, _"Kaufen", self.m_ShoppingCartWindow):setBackgroundColor(Color.Green)
+        self.m_ClearButton = GUIButton:new(width*0.65-height*0.12, height*0.9, height*0.1, height*0.1, FontAwesomeSymbols.Trash, self.m_ShoppingCartWindow):setFont(FontAwesome(15)):setBackgroundColor(Color.Red)
+        self.m_ClearButton.onLeftClick = bind(self.ClearButton_Click, self)
+		self.m_BuyButton = GUIButton:new(width*0.65, height*0.9, width*0.35, height*0.1, _"Kaufen", self.m_ShoppingCartWindow):setBackgroundColor(Color.Green)
         self.m_BuyButton.onLeftClick = bind(self.BuyButton_Click, self)
     end
 
@@ -453,12 +457,23 @@ function VehicleTuningGUI:AddToCartButton_Click()
     end
 end
 
+function VehicleTuningGUI:ClearButton_Click()
+	self:emptyCart()
+	self:resetUpgrades()
+	self.m_ShoppingCartGrid:clear()
+	self:updatePrices()
+end
+
 function VehicleTuningGUI:BuyButton_Click()
-    triggerServerEvent("vehicleUpgradesBuy", localPlayer, self.m_CartContent)
+	if table.size(self.m_CartContent) > 0 then
+    	triggerServerEvent("vehicleUpgradesBuy", localPlayer, self.m_CartContent)
+	else
+		VehicleTuningGUI.Exit()
+	end
 end
 
 local vehicleTuningShop = false
-addEvent("vehicleTuningShopEnter", true)
+addEvent("", true)
 addEventHandler("vehicleTuningShopEnter", root,
     function(vehicle)
         if vehicleTuningShop then
@@ -473,20 +488,19 @@ addEventHandler("vehicleTuningShopEnter", root,
     end
 )
 
-addEvent("vehicleTuningShopExit", true)
-addEventHandler("vehicleTuningShopExit", root,
-    function()
-        if vehicleTuningShop then
-            vehicleTuningShop.m_Vehicle:setDimension(0)
-            localPlayer:setDimension(0)
+function VehicleTuningGUI.Exit(closedByServer)
+	if vehicleTuningShop then
+		vehicleTuningShop.m_Vehicle:setDimension(0)
+		localPlayer:setDimension(0)
 
-            delete(vehicleTuningShop, true)
-            vehicleTuningShop = false
-			localPlayer.m_inTuning = false
-			setCameraTarget(localPlayer)
-        end
-    end
-)
+		delete(vehicleTuningShop, closedByServer)
+		vehicleTuningShop = false
+		localPlayer.m_inTuning = false
+		setCameraTarget(localPlayer)
+	end
+end
+addEventHandler("vehicleTuningShopExit", root, function() VehicleTuningGUI.Exit(true) end)
+
 
 VehicleTuningGUI.CameraPositions = {
     [0] = Vector3(0, 5.6, 1.5), -- Hood

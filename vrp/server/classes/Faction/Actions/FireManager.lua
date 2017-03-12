@@ -14,10 +14,10 @@ local FIRE_MESSAGES = {
 	[1] = "Der Los Santos Airport steht in Flammen! Position: %s",
 	[2] = "Das Los Santos Police Departement steht in Flammen! Position: %s",
 	[3] = "Ein Großbrand am Ammunation in Los Santos wurde gemeldet! Position: %s!",
-	[4] = "Ein Wohnaus in %s brennt!",
+	[4] = "Ein Wohnhaus in %s brennt!",
 	[5] = "Ein verheerender Brand beim Burger Shot North wurde gemeldet! Position: %s",
 	[6] = "Der Überwachungsturm des Bademeisters am %s steht in Flammen!",
-	[7] = "Mehrere Wohnwägen stehen in Flammen! Position %s",
+	[7] = "Mehrere Wohnwagen stehen in Flammen! Position %s",
 	[8] = "Die Brandmeldeanlage eines 24/7 Shops meldet Feuer! Position: %s",
 	[9] = "Die Palomino Creek - Bank steht in Flammen!",
 	[10] = "Mehrere Mülleimer stehen in Flammen! Position: %s"
@@ -35,7 +35,6 @@ function FireManager:constructor()
 	addRemoteEvents{"receiveFires"}
 	addEventHandler("receiveFires", root, bind(self.receiveFires, self))
 
-	--Developement:
 	addCommandHandler("fire", bind(self.startRandomFire, self))
 end
 
@@ -58,7 +57,7 @@ function FireManager:checkFire()
 end
 
 function FireManager:startRandomFire(source)
-	if source:getRank() < RANK.Moderator then
+	if source and source:getRank() < RANK.Moderator then
 		source:sendError(_("Du bist nicht berechtigt!", source))
 		return
 	end

@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 AppCall = inherit(PhoneApp)
+
 local CALL_RESULT_BUSY = 0
 local CALL_RESULT_REPLACE = 1
 local CALL_RESULT_ANSWER = 2
@@ -21,7 +22,6 @@ function AppCall:constructor()
 	addEventHandler("callBusy", root, bind(self.Event_callBusy, self))
 	addEventHandler("callAnswer", root, bind(self.Event_callAnswer, self))
 	addEventHandler("callReplace", root, bind(self.Event_callReplace, self))
-
 end
 
 function AppCall:onOpen(form)
@@ -30,7 +30,7 @@ function AppCall:onOpen(form)
 end
 
 function AppCall:onClose()
-	for k, activity in ipairs(self.m_Activities) do
+	for k, activity in pairs(self.m_Activities) do
 		if instanceof(activity, IncomingCallActivity, true) then
 			if activity:getCaller() then
 				activity:busy()
@@ -282,7 +282,6 @@ function IncomingCallActivity:getCaller()
 	return self.m_Caller
 end
 
-
 CallResultActivity = inherit(AppActivity)
 
 function CallResultActivity:constructor(app, calleeType, callee, resultType, voiceCall)
@@ -303,6 +302,17 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 			GUILabel:new(8, self.m_Height-110, self.m_Width, 20, _"Drücke z für Voicechat", self):setColor(Color.Black):setAlignX("center")
 		end
 		GUIWebView:new(self.m_Width/2-70, 80, 140, 200, "http://exo-reallife.de/ingame/skinPreview/skinPreview.php?skin="..callee:getModel(), true, self)
+		self.m_ButtonSendLocation = GUIButton:new(10, self.m_Height-100, self.m_Width-20, 40, _"Position senden", self)
+		self.m_ButtonSendLocation:setBackgroundColor(Color.Green)
+		self.m_ButtonSendLocation.onLeftClick = function()
+			if self.m_LastClick and getTickCount() - self.m_LastClick < 10000 then
+				ErrorBox:new(_"Bitte warte ein paar Sekunden bevor du deine Position aktualisierst")
+				return
+			end
+
+			self.m_LastClick = getTickCount()
+			triggerServerEvent("callSendLocation", root, self.m_Callee)
+		end
 		self.m_ButtonReplace = GUIButton:new(10, self.m_Height-50, self.m_Width-20, 40, _"Auflegen", self)
 		self.m_ButtonReplace:setBackgroundColor(Color.Red)
 		self.m_ButtonReplace.onLeftClick = bind(self.ButtonReplace_Click, self)
@@ -311,7 +321,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 		self.m_ResultLabel:setColor(Color.Red)
 		setTimer(
 			function()
-				if self:isOpen() then
+				if self:isOpen() and Phone:getSingleton():isOpen() then
 					MainActivity:new(app)
 					app.m_InCall = false
 				end
@@ -322,7 +332,7 @@ function CallResultActivity:constructor(app, calleeType, callee, resultType, voi
 		self.m_ResultLabel:setColor(Color.Red)
 		setTimer(
 			function()
-				if self:isOpen() then
+				if self:isOpen() and Phone:getSingleton():isOpen() then
 					MainActivity:new(app)
 					app.m_InCall = false
 				end

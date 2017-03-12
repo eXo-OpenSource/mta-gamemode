@@ -12,9 +12,9 @@ ShopManager.VehicleShopsMap = {}
 function ShopManager:constructor()
 	self:loadShops()
 	self:loadVehicleShops()
-	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell", "gasStationFill",
+	addRemoteEvents{"foodShopBuyMenu", "shopBuyItem", "shopBuyClothes", "vehicleBuy", "shopOpenGUI", "shopBuy", "shopSell", "gasStationFill",
 	"barBuyDrink", "barShopMusicChange", "barShopMusicStop", "barShopStartStripper", "barShopStopStripper",
-	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw"
+	"shopOpenBankGUI", "shopBankDeposit", "shopBankWithdraw", "shopOnTattooSelection"
 	}
 
 	addEventHandler("foodShopBuyMenu", root, bind(self.foodShopBuyMenu, self))
@@ -27,6 +27,11 @@ function ShopManager:constructor()
 	addEventHandler("shopOpenBankGUI", root, bind(self.openBankGui, self))
 	addEventHandler("shopBankDeposit", root, bind(self.deposit, self))
 	addEventHandler("shopBankWithdraw", root, bind(self.withdraw, self))
+	addEventHandler("shopBuyClothes", root, bind(self.buyClothes, self))
+
+	addEventHandler("shopOnTattooSelection", root, bind(self.onTattooSelection, self))
+
+
 
 	addEventHandler("barShopMusicChange", root, bind(self.barMusicChange, self))
 	addEventHandler("barShopMusicStop", root, bind(self.barMusicStop, self))
@@ -63,7 +68,7 @@ function ShopManager:loadShops()
 
 		local instance = SHOP_TYPES[row.Type]["Class"]:new(row.Id, row.Name, Vector3(row.PosX, row.PosY, row.PosZ), row.Rot, SHOP_TYPES[row.Type], row.Dimension, row.RobAble, row.Money, row.LastRob, row.Owner, row.Price, row.OwnerType)
 		ShopManager.Map[row.Id] = instance
-		if row.Blip then
+		if row.Blip and row.Blip ~= "" then
 			instance:addBlip(row.Blip)
 		end
 	end
@@ -126,7 +131,7 @@ function ShopManager:onGasStationFill(shopId)
 
 	local vehicle = getPedOccupiedVehicle(client)
 	if not vehicle then return end
-	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) then
+	if instanceof(vehicle, PermanentVehicle, true) or instanceof(vehicle, GroupVehicle, true) or instanceof(vehicle, FactionVehicle, true) or instanceof(vehicle, CompanyVehicle, true) then
 		if client:getMoney() > 10 then
 			if vehicle:getFuel() <= 100-10 then
 				vehicle:setFuel(vehicle:getFuel() + 10)
@@ -175,6 +180,51 @@ function ShopManager:buyItem(shopId, item, amount)
 		return
 	end
 end
+
+function ShopManager:buyClothes(shopId, typeId, clotheId)
+	if not typeId then return end
+	if not clotheId then return end
+	local shop = self:getFromId(shopId)
+	local clothesData = CJ_CLOTHES[CJ_CLOTHE_TYPES[typeId]][clotheId]
+	if shop then
+		if clothesData then
+			if client:getMoney() >= clothesData.Price then
+				client:removeClothes(typeId)
+				if clotheId >= 0 then
+					local texture, model = getClothesByTypeIndex(typeId, clotheId)
+					client:addClothes(texture, model, typeId)
+				end
+				client:giveAchievement(23)
+				client:sendInfo(_("%s bedankt sich für deinen Einkauf!", client, shop.m_Name))
+				if clothesData.Price > 0 then
+					client:takeMoney(clothesData.Price, "Kleidungs-Kauf")
+					shop:giveMoney(clothesData.Price, "Kunden-Einkauf")
+				end
+			else
+				client:sendError(_("Du hast nicht genug Geld dabei!", client))
+				return
+			end
+		else
+			client:sendError(_("Internal Error! Clothe not found!", client))
+			return
+		end
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+		return
+	end
+end
+
+function ShopManager:onTattooSelection(shopId, typeId)
+local shop = self:getFromId(shopId)
+	if shop then
+		shop:onTattoSelection(client, typeId)
+	else
+		client:sendError(_("Internal Error! Shop not found!", client))
+		return
+	end
+end
+
+
 
 function ShopManager:barBuyDrink(shopId, item, amount)
 	if not item then return end

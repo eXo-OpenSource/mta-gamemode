@@ -7,6 +7,7 @@ function Core:constructor()
 	-- Small hack to get the global core immediately
 	core = self
 	self.m_Failed = false
+	self.ms_StopHook = Hook:new()
 
 	if DEBUG then
 		Debugging:new()
@@ -44,9 +45,16 @@ function Core:constructor()
 	aclGroup:addObject("user.exo_web")
 	ACLGroup.get("Admin"):addObject("resource.admin_exo")
 
+	if GIT_BRANCH == "release/production" then
+		setServerPassword()
+	end
+
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
+		SkinModdingCheck:new()
 		TranslationManager:new()
+		GlobalTimer:new()
+		MTAFixes:new()
 		VehicleManager:new()
 		Admin:new()
 		StatisticsLogger:new()
@@ -96,6 +104,12 @@ function Core:constructor()
 		BeggarPedManager:new()
 		Fishing:new()
 		ShootingRanch:new()
+		DeathmatchManager:new()
+		SkydivingManager:new()
+		Kart:new()
+		HorseRace:new()
+		BoxManager:new()
+		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
@@ -156,6 +170,9 @@ function Core:constructor()
 		if DEBUG then
 			addCommandHandler("runtests", bind(self.runTests, self))
 		end
+
+		Blip:new("North.png", 0, 6000, root, 12000)
+
 	end
 end
 
@@ -174,7 +191,9 @@ function Core:destructor()
 		delete(VehicleManager:getSingleton())
 		delete(PlayerManager:getSingleton())
 		delete(GroupManager:getSingleton())
-		delete(HouseManager:getSingleton())
+		if HouseManager:isInstantiated() then
+			delete(HouseManager:getSingleton())
+		end
 		delete(FactionManager:getSingleton())
 		delete(CompanyManager:getSingleton())
 		delete(InventoryManager:getSingleton())
@@ -183,6 +202,7 @@ function Core:destructor()
 		delete(GangwarStatistics:getSingleton())
 		delete(GroupPropertyManager:getSingleton())
 		delete(Admin:getSingleton())
+		delete(StatisticsLogger:getSingleton())
 		delete(sql) -- Very slow
 	end
 end
@@ -205,4 +225,8 @@ function Core:getVersion()
 		end
 	end
 	return self.m_Version
+end
+
+function Core:getStopHook()
+	return self.ms_StopHook
 end

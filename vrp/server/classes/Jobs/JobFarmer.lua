@@ -3,9 +3,12 @@ JobFarmer = inherit(Job)
 local VEHICLE_SPAWN = {-66.21, 69.00, 2.2, 68}
 --local PLANT_DELIVERY = {-1108.28723,-1620.65833,75.36719}
 local PLANT_DELIVERY = {-2150.31, -2445.04, 29.63}
-local MONEYPERPLANT = 10
 local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
+
+local MONEY_PER_PLANT = 30 --// default 10
+local MONEY_PLANT_HARVESTER = 18
+local MONEY_PLANT_TRACTOR = 11
 
 function JobFarmer:constructor()
 	Job.constructor(self)
@@ -15,6 +18,8 @@ function JobFarmer:constructor()
 	self.m_VehicleSpawner = VehicleSpawner:new(x,y,z, {"Tractor"; "Combine Harvester"; "Walton"}, rotation, bind(Job.requireVehicle, self))
 	self.m_VehicleSpawner.m_Hook:register(bind(self.onVehicleSpawn,self))
 	self.m_VehicleSpawner:disable()
+
+	self.m_DeliveryBlips = {}
 
 	self.m_JobElements = {}
 	self.m_CurrentPlants = {}
@@ -95,7 +100,7 @@ function JobFarmer:onVehicleDestroy(vehicle)
 end
 
 function JobFarmer:storeHit(hitElement,matchingDimension)
-	if getElementType(hitElement) == "player" then
+	if getElementType(hitElement) == "player" and hitElement:getJob() == self then
 		hitElement:sendShortMessage(_("Hier kannst du den Walton beladen!",hitElement))
 	end
 	if getElementType(hitElement) ~= "vehicle" then
@@ -156,10 +161,10 @@ end
 function JobFarmer:setJobElementVisibility(player, state)
 	if state then
 		local x, y = unpack(PLANT_DELIVERY)
-		self.m_DeliveryBlip = Blip:new("Waypoint.png", x, y, player,600)
-		self.m_DeliveryBlip:setStreamDistance(2000)
+		self.m_DeliveryBlips[player:getId()] = Blip:new("Waypoint.png", x, y, player, 4000)
+		self.m_DeliveryBlips[player:getId()]:setStreamDistance(4000)
 	else
-		delete(self.m_DeliveryBlip)
+		delete(self.m_DeliveryBlips[player:getId()])
 	end
 
 	for key, element in pairs (self.m_JobElements) do
@@ -183,8 +188,8 @@ function JobFarmer:stop(player)
 end
 
 function JobFarmer:checkRequirements(player)
-	if not (player:getJobLevel() >= 4) then
-		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel 4", player), 255, 0, 0)
+	if not (player:getJobLevel() >= JOB_LEVEL_FARMER) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FARMER), 255, 0, 0)
 		return false
 	end
 	return true
@@ -234,7 +239,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 		destroyElement (self.m_Plants[createColShape])
 		self.m_Plants[createColShape] = nil
 		if not hitElement:getData("Farmer.Income") then hitElement:setData("Farmer.Income", 0) end
-		hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + 2)
+		hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + MONEY_PLANT_HARVESTER)
 		hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 		self.m_CurrentPlantsFarm = self.m_CurrentPlantsFarm + 1
 		self:updateClientData()
@@ -251,7 +256,7 @@ function JobFarmer:createPlant (hitElement,createColShape,vehicle )
 			setTimer(function (o) o.isFarmAble = true end, 1000*7.5, 1, object)
 			setElementVisibleTo(object, hitElement, true)
 			if not hitElement:getData("Farmer.Income") then hitElement:setData("Farmer.Income", 0) end
-			hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + 1)
+			hitElement:setData("Farmer.Income", hitElement:getData("Farmer.Income") + MONEY_PLANT_TRACTOR)
 			hitElement:triggerEvent("Job.updateIncome", hitElement:getData("Farmer.Income"))
 			-- Give some points
 			if chance(4) then
@@ -271,16 +276,6 @@ end
 function JobFarmer:updatePrivateData (player)
 	player:triggerEvent("Job.updatePlayerPlants", self.m_CurrentPlants[player])
 end
-
-addCommandHandler("plant", function(player)
-	local pos = player:getPosition()
-	local function farmRound(num, idp)
-		local mult = 10^(idp or 0)
-		return math.floor(num * mult + 0.5) / mult
-	end
-	local x, y, z = farmRound(pos.x, 2), farmRound(pos.y, 2), farmRound(pos.z, 2)
-	outputChatBox("{"..x..", "..y..", "..z.."},")
-end)
 
 JobFarmer.PlantPlaces = {
 {-122.78, 61.12, 3.12}, -- Field1-Line1
