@@ -9,10 +9,9 @@ local screenWidth, screenHeight = guiGetScreenSize()
 FishingRod = inherit(Singleton)
 
 function FishingRod:constructor()
-	toggleControl("fire", false)
 	self.m_FishingMap = FishingLocation:new()
 	self.m_minFishingBiteTime = 600
-	self.m_maxFishingBiteTime = 4000--30000
+	self.m_maxFishingBiteTime = 4000 --30000 (4000 = only dev!!111elf)
 	self.m_minTimeToNibble = 340
 	self.m_maxTimeToNibble = 800
 	self.m_isCasting = true
@@ -69,6 +68,7 @@ end
 
 function FishingRod:handleClick(_, state)
 	self.m_MouseDown = state == "down"
+	toggleControl("fire", false)
 
 	if self.m_isCasting and self.m_MouseDown then
 		self.m_PowerProgress = 0
@@ -103,6 +103,10 @@ function FishingRod:fishBite()
 	self.m_isNibbling = true
 	self.m_nibblingTime = getTickCount()
 	outputChatBox("NIBBLING!")
+
+	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, 10*self.m_PowerProgress, -1))
+	targetPosition.z = -0.2
+	createEffect("water_swim", targetPosition)
 
 	self.m_fishBiteMissedTimer = setTimer(
 		function()
@@ -153,7 +157,7 @@ function FishingRod:render()
 	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, 10*self.m_PowerProgress, 0))
 	targetPosition.z = -0.2
 
-	dxDrawLine3D(startPosition, targetPosition, tocolor(255, 255, 255, 255), .3)
+	dxDrawLine3D(startPosition, targetPosition, tocolor(255, 230, 190, 200), .3)
 
 	local left = screenWidth-300
 	local top = screenHeight/2
