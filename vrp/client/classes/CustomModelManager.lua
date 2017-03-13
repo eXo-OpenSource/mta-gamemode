@@ -83,6 +83,10 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/donut.col", 1915)
 	self:loadImportDFF("files/models/donut.dff", 1915)
 
+	-- RC Van
+	self:loadImportTXD("files/models/topfun.txd", 459)
+	self:loadImportDFF("files/models/topfun.dff", 459)
+
 
 	-- Tardis EasterEgg
 	--self:loadImportTXD("files/models/tardis.txd", 1337)

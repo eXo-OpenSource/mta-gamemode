@@ -1172,6 +1172,8 @@
 	<vrpfile src="files/images/Textures/Special/13.png"/>
 	<vrpfile src="files/images/Textures/Special/14.png"/>
 	<vrpfile src="files/images/Textures/Special/15.png"/>
+	<vrpfile src="files/images/Textures/Company/Academi/cooperation_logo.png"/>
+	<vrpfile src="files/images/Textures/Company/Academi/cooperation_name.png"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
@@ -1510,6 +1512,8 @@
 	<vrpfile src="files/models/donut.txd"/>
 	<vrpfile src="files/models/donut.dff"/>
 	<vrpfile src="files/models/donut.col"/>
+	<vrpfile src="files/models/topfun.txd"/>
+	<vrpfile src="files/models/topfun.dff"/>
 
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
