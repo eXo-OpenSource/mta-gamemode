@@ -40,10 +40,11 @@ end
 
 function ObjectPlacer:Event_CursorMove(cursorX, cursorY, absX, absY, worldX, worldY, worldZ)
     local camX, camY, camZ = getCameraMatrix()
-    local surfaceFound, surfaceX, surfaceY, surfaceZ, element = processLineOfSight(camX, camY, camZ, worldX, worldY, worldZ, true,
+    local surfaceFound, surfaceX, surfaceY, surfaceZ, element, nx, ny, nz, materialID = processLineOfSight(camX, camY, camZ, worldX, worldY, worldZ, true,
         true, true, true, true, true, false, true, self.m_Object)
 
-    if surfaceFound then
+	if surfaceFound and materialID ~= 51 and materialID ~= 53 then -- probably add more unexpeted materialIDs
+		local surfaceZ = getGroundPosition(surfaceX, surfaceY, surfaceZ)
         self.m_Object:setPosition(surfaceX, surfaceY, surfaceZ + self.m_Object:getDistanceFromCentreOfMassToBaseOfModel())
     end
 end
