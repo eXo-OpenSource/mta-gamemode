@@ -222,3 +222,20 @@ end
 function Core:throwInternalError(message)
 	triggerServerEvent("Core.onClientInternalError", root, message)
 end
+
+
+-- AntiCheat for blips // Workaround
+setTimer(
+	function()
+		local attachedBlips = {}
+		for _, v in pairs(getElementsByType("blip")) do
+			if v:isAttached() and getElementType(v:getAttachedTo()) == "player" then
+				table.insert(attachedBlips, v)
+			end
+		end
+
+		if #attachedBlips > 1 then
+			triggerServerEvent("AntiCheat:ReportBlip", localPlayer, #attachedBlips)
+		end
+	end, 600000, 0
+)

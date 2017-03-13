@@ -32,7 +32,9 @@ end
 function BeggarPedManager:spawnPeds()
 	-- Delete current Peds
 	for i, v in pairs(self.Map) do
-		v:destroy()
+		if not v.vehicle then
+			v:destroy()
+		end
 	end
 
 	-- Create new Peds
