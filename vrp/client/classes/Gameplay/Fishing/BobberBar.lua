@@ -24,6 +24,7 @@ function BobberBar:constructor(difficulty, behavior)
 	self.MAX_PUSHBACK_SPEED = 8
 
 	self.m_BobberSpeed = 0
+	self.m_BobberPosition = self.POSITION_DOWN --Todo: Random start position?
 	self.m_BobberTargetPosition = 0
 	self.m_BobberInBar = false
 
@@ -32,6 +33,7 @@ function BobberBar:constructor(difficulty, behavior)
 
 	self.m_FishSizeReductionTimer = 800
 	self.m_Progress = 40
+	self.m_ProgressDuration = 1000
 
 	self:initAnimations()
 	self:updateRenderTarget()
@@ -50,6 +52,15 @@ function BobberBar:destructor()
 end
 
 function BobberBar:initAnimations()
+	local onProgressDone =
+		function()
+			outputChatBox("Fish caught!")
+			
+			-- Todo: Stop animations and fadeout
+		end
+
+	self.m_BobberAnimation = CAnimation:new(self, bind(BobberBar.setBobberPosition, self), "m_BobberPosition")
+	self.m_ProgressAnimation = CAnimation:new(self, onProgressDone, "m_Progress")
 end
 
 function BobberBar:getMotionType(behavior)
@@ -70,14 +81,25 @@ function BobberBar:handleClick(_, state)
 	self.m_MouseDown = state == "down"
 end
 
+function BobberBar:setBobberPosition()
+	-- Todo: calc target position and speed/duration in dependence of difficulty and behavior
+	self.m_BobberAnimation:startAnimation(100, "OutQuad", 5)
+end
+
 function BobberBar:updateRenderTarget()
 	self.m_RenderTarget:setAsTarget()
 
-	dxDrawRectangle(0, 0, self.m_Size, tocolor(40, 40, 40, 150))	--full bg
-	dxDrawImage(50, 5, 30, self.m_Size.y-10, "files/images/Fishing/BobberBarBG.png")	--todo BobberBarBG (maybe framed?)
-	dxDrawRectangle(49, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50))	--todo BobberBar
-	dxDrawRectangle(60, 75, 10, 10, tocolor(0, 140, 255))		--todo: fish
+	-- Draw Background
+	dxDrawRectangle(0, 0, self.m_Size, tocolor(40, 40, 40, 150))
+	
+	-- Draw BobberBar
+	dxDrawImage(50, 5, 30, self.m_Size.y-10, "files/images/Fishing/BobberBarBG.png")
+	dxDrawRectangle(49, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50))
+	
+	-- Draw Bobber (Fish) (Todo: Change to fish image)
+	dxDrawRectangle(60, self.m_BobberPosition, 10, 10, tocolor(0, 140, 255))
 
+	-- Draw Progressbar
 	dxDrawRectangle(82, 5, 13, self.m_Size.y-10, tocolor(200, 80, 80))	--progress bg
 	dxDrawRectangle(82, self.m_Size.y-self.m_Progress - 5, 13, self.m_Progress, tocolor(255, 200, 0)) --progressbar
 
@@ -85,6 +107,7 @@ function BobberBar:updateRenderTarget()
 end
 
 function BobberBar:render()
+	-- BobberBar Animation
 	local num = self.m_MouseDown and -0.5 or 0.5
 	self.m_BobberBarSpeed = self.m_BobberBarSpeed + num
 	self.m_BobberBarPosition = self.m_BobberBarPosition + self.m_BobberBarSpeed
@@ -105,9 +128,21 @@ function BobberBar:render()
 		end
 	end
 
+	-- Check progress (only check Y position/height)
+	if self.m_BobberInBar and not rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 10) then
+		self.m_BobberInBar = false
+		
+		local duration = self.m_ProgressDuration * (self.m_Progress/100)
+		self.m_ProgressAnimation:startAnimation(duration, "Linear", 0)
+	elseif not self.m_BobberInBar and rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 10) then
+		self.m_BobberBarSpeed = true
+		
+		local duration = self.m_ProgressDuration * (1 - self.m_Progress/100)
+		self.m_ProgressAnimation:startAnimation(duration, "Linear", 100)
+	end
+	
+	-- Update and draw
 	self:updateRenderTarget()
-
-	dxDrawText(self.m_BobberBarSpeed, 500, 20)
 	dxDrawImage(screenWidth*0.66 - self.m_Size.x/2, screenHeight/2 - self.m_Size.y/2, self.m_Size, self.m_RenderTarget)
 end
 
