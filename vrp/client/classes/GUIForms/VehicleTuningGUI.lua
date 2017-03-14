@@ -260,13 +260,15 @@ function VehicleTuningGUI:PartItem_Click(item)
         if item.PartSlot == "Color1" then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
-            self.m_ColorPicker = ColorPickerGUI:new(
+           	local r2, g2, b2 = unpack(self.m_NewTuning:getTuning("Color2"))
+
+			self.m_ColorPicker = ColorPickerGUI:new(
             function(r, g, b)
                 self.m_NewTuning:saveTuning(item.PartSlot, {r, g, b})
 				self.m_NewTuning:applyTuning()
-				self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTunings[item.PartSlot], {r, g, b}) end,
+				self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], {r, g, b}) end,
                     function(r, g, b)
-                        self.m_Vehicle:setColor(r, g, b, unpack(self.m_NewTuning:getTuning("Color2")))
+						self.m_Vehicle:setColor(r, g, b, r2, g2, b2)
                     end
             )
             self.m_ColorPicker:setColor(unpack(self.m_NewTuning:getTuning(item.PartSlot)))
@@ -274,13 +276,15 @@ function VehicleTuningGUI:PartItem_Click(item)
         elseif item.PartSlot == "Color2" then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
+			local r1, g1, b1 = unpack(self.m_NewTuning:getTuning("Color1"))
+
             self.m_ColorPicker = ColorPickerGUI:new(
             function(r, g, b)
                 self.m_NewTuning:saveTuning(item.PartSlot, {r, g, b})
 				self.m_NewTuning:applyTuning()
-				self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTunings[item.PartSlot], {r, g, b}) end,
+				self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], {r, g, b}) end,
                     function(r, g, b)
-                        self.m_Vehicle:setColor(unpack(self.m_NewTuning:getTuning("Color1")), r, g, b)
+						self.m_Vehicle:setColor(r1, g1, b1, r, g, b)
                     end
             )
             self.m_ColorPicker:setColor(unpack(self.m_NewTuning:getTunings()[item.PartSlot]))
@@ -292,7 +296,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             function(r, g, b)
                 self.m_NewTuning:saveTuning(item.PartSlot, {r, g, b})
 				self.m_NewTuning:applyTuning()
-				self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTunings[item.PartSlot], {r, g, b}) end,
+				self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], {r, g, b}) end,
                     function(r, g, b)
                         self.m_Vehicle:setHeadLightColor(r, g, b)
                     end
@@ -309,7 +313,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                     local neonBool = neon == 1 and false or true
 					self.m_NewTuning:saveTuning(item.PartSlot, neonBool)
 					self.m_NewTuning:applyTuning()
-					self:addPartToCart(VehicleSpecialProperty.Neon, _"Neon", neonBool)
+					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], neonBool)
                 end,
                 function(neon)
                     if neon ~= 1 then
@@ -333,8 +337,7 @@ function VehicleTuningGUI:PartItem_Click(item)
 				function(r, g, b)
 					self.m_NewTuning:saveTuning(item.PartSlot, {r, g, b})
 					self.m_NewTuning:applyTuning()
-					self:addPartToCart(VehicleSpecialProperty.NeonColor, _"Neon-Farbe", {r, g, b})
-				end,
+				self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], {r, g, b}) end,
 				function(r, g, b)
 					setElementData(self.m_Vehicle, "NeonColor", {r, g, b})
 				end)
@@ -352,7 +355,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                 function (horn)
                     self.m_NewTuning:saveTuning(item.PartSlot, horn-1)
 					self.m_NewTuning:applyTuning()
-					self:addPartToCart(VehicleSpecialProperty.Horn, _"Spezial-Hupe", horn)
+					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], horn-1)
                 end,
                 function (horn)
                     if isElement(self.m_CustomHornSound) then destroyElement(self.m_CustomHornSound) end
@@ -372,7 +375,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                 function (texture)
                     self.m_NewTuning:saveTuning(item.PartSlot, texture)
 					self.m_NewTuning:applyTuning()
-					self:addPartToCart(VehicleSpecialProperty.Shader, _"Fahrzeug-Textur", texture)
+					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], texture)
                 end,
                 function (texture)
                     if self.m_VehicleShader then delete(self.m_VehicleShader) end
@@ -439,7 +442,6 @@ function VehicleTuningGUI:BuyButton_Click()
 end
 
 local vehicleTuningShop = false
-addEvent("", true)
 addEventHandler("vehicleTuningShopEnter", root,
     function(vehicle)
         if vehicleTuningShop then
@@ -507,6 +509,9 @@ VehicleTuningGUI.SpecialTunings = {
 	{"Spezial-Hupe", "CustomHorn"},
 	{"Spezial-Lackierung", "Texture"},
 }
+
+VehicleTuningGUI.SpecialTuningsNames = {}
+
 for index, value in pairs(VehicleTuningGUI.SpecialTunings) do
-	VehicleTuningGUI.SpecialTunings[value] = index
+	VehicleTuningGUI.SpecialTuningsNames[value[2]] = value[1]
 end
