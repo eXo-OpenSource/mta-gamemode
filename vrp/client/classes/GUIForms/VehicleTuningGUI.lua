@@ -198,6 +198,8 @@ function VehicleTuningGUI:updatePrices()
 end
 
 function VehicleTuningGUI:resetUpgrades(reset)
+    if self.m_PreviewShader then delete(self.m_PreviewShader) end
+
     if reset then
 		self.m_OldTuning:applyTuning()
 	else
@@ -373,14 +375,18 @@ function VehicleTuningGUI:PartItem_Click(item)
                 "Select Texture",
                 {"None", _"Österreich", _"Deutschland", _"Schweden", _"Frankreich", _"Russland", _"Camouflage", _"Türkei", _"Hipster", _"Metall", _"Italien", _"Froggy", _"Sandy", _"Space", _"Cherry", _"Fire"},
                 function (texture)
-                    self.m_NewTuning:saveTuning(item.PartSlot, texture)
+                    if texture > 1 then
+						self.m_NewTuning:saveTuning(item.PartSlot, "files/images/Textures/Special/"..(texture-1)..".png")
+					else
+						self.m_NewTuning:saveTuning(item.PartSlot, "")
+					end
 					self.m_NewTuning:applyTuning()
-					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], texture)
+					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], "files/images/Textures/Special/"..(texture-1)..".png")
                 end,
                 function (texture)
-                    if self.m_VehicleShader then delete(self.m_VehicleShader) end
+                    if self.m_PreviewShader then delete(self.m_PreviewShader) end
                     if texture ~= 1 then
-                        self.m_VehicleShader = TextureReplace:new(self.m_Vehicle:getTextureName(), "files/images/Textures/Special/"..(texture-1)..".png", false, 250, 250, self.m_Vehicle)
+                        self.m_PreviewShader = TextureReplace:new(self.m_Vehicle:getTextureName(), "files/images/Textures/Special/"..(texture-1)..".png", false, 250, 250, self.m_Vehicle)
                     else
                         ShortMessage:new("Note: Die Textur wird entfernt wenn du den Tuningshop verlässt!", "Los Santos Customs", Color.LightBlue)
                     end

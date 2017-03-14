@@ -48,9 +48,7 @@ function VehicleTuningItemGrid:constructor(title, itemList, acceptCallback, chan
 		local item = self.m_ItemGrid:addItem(v)
 		item.m_TextureId = k
 		item.onLeftDoubleClick = function ()
-			if self.m_AcceptCallback then
-				self.m_AcceptCallback(k)
-			end
+			self:AcceptButton_Click()
 		end
 		item.onLeftClick = function ()
 			if self.m_ChangeCallback then

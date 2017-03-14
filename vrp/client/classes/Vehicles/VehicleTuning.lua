@@ -43,8 +43,14 @@ function VehicleTuning:applyTuning()
 
 	self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"], true)
 
-	if #self.m_Tuning["Texture"] > 3 then
-		self.m_Vehicle:setTexture(self.m_Tuning["Texture"], nil, true)
+	self:setTexture(self.m_Tuning["Texture"])
+end
+
+function VehicleTuning:setTexture(texture)
+	if self.m_Texture then delete(self.m_Texture) end
+	if TextureReplace.Map[self.m_Vehicle] then delete(TextureReplace.Map[self.m_Vehicle]) end
+	if texture and texture.len > 3 then
+		self.m_Texture = TextureReplace:new(self.m_Vehicle:getTextureName(), texture, false, 250, 250, self.m_Vehicle)
 	end
 end
 
@@ -82,5 +88,9 @@ function VehicleTuning:loadTuningsFromVehicle()
 	self:saveGTATuning()
 	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon")
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
-	self.m_Tuning["Texture"] = self.m_Vehicle.m_Texture and self.m_Vehicle.m_Texture:getPath() or ""
+	if TextureReplace.Map[self.m_Vehicle] then
+		self.m_Tuning["Texture"] = TextureReplace.Map[self.m_Vehicle].m_TexturePath
+	else
+		self.m_Tuning["Texture"] = ""
+	end
 end

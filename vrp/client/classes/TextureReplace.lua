@@ -1,6 +1,7 @@
 TextureReplace = inherit(Object)
 TextureReplace.ServerElements = {}
 TextureReplace.Cache = {}
+TextureReplace.Map = {}
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
 	if not path or #path <= 5 then
@@ -34,6 +35,9 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 		addEventHandler("onClientElementDestroy", self.m_Element, self.m_OnElementDestory)
 		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
+	end
+	if self.m_Element and isElement(self.m_Element) then
+		TextureReplace.Map[self.m_Element] = self
 	end
 end
 
