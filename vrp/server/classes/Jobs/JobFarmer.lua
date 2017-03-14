@@ -205,8 +205,8 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
-			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEYPERPLANT,0,255,0)
-			player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT, "Farmer-Job")
+			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
+			player:giveMoney(self.m_CurrentPlants[player]*MONEY_PER_PLANT, "Farmer-Job")
 			player:givePoints(math.ceil(self.m_CurrentPlants[player]/10))
 			self.m_CurrentPlants[player] = 0
 			self:updatePrivateData(player)
