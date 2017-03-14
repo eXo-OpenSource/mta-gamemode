@@ -37,6 +37,10 @@ function VehicleTuning:applyTuning()
 	end
 
 	self.m_Vehicle:setData("Neon", self.m_Tuning["Neon"], true)
+    if self.m_Tuning["Neon"] then
+		Neon.Vehicles[self.m_Vehicle] = true
+	end
+
 	self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"], true)
 
 	if #self.m_Tuning["Texture"] > 3 then
