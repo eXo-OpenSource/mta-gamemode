@@ -17,7 +17,7 @@ function BobberBar:constructor(difficulty, behavior)
 
 	self.Random = Randomizer:new()
 
-	self.m_BobberBarHeight = 96 + playerFishingLevel*8	--this.bobberBarHeight = Game1.tileSize * 3 / 2 + Game1.player.FishingLevel * 8;
+	self.m_BobberBarHeight = 64 + playerFishingLevel*8	--this.bobberBarHeight = Game1.tileSize * 3 / 2 + Game1.player.FishingLevel * 8;
 	self.m_BobberBarPosition = self.m_Size.y - self.m_BobberBarHeight - 5
 	self.m_BobberBarSpeed = 0
 
@@ -37,7 +37,7 @@ function BobberBar:constructor(difficulty, behavior)
 
 	self.m_FishSizeReductionTimer = 800
 	self.m_Progress = 40
-	self.m_ProgressDuration = 2500
+	self.m_ProgressDuration = 5000
 
 	self:initAnimations()
 	self:updateRenderTarget()
@@ -93,29 +93,44 @@ function BobberBar:handleClick(_, state)
 end
 
 function BobberBar:setBobberPosition()
-	if self.Random:nextDouble() < self.m_Difficulty * (self.m_MotionType == 2 and 20 or 1) / 4000 and (self.m_MotionType ~= 2 or self.m_BobberTargetPosition == -1) then
-		local num1 = self.HEIGHT - self.m_BobberPosition
-		local bobberPosition = self.m_BobberPosition
-		local num2 = math.min(99, self.m_Difficulty + self.Random:get(10, 45)) / 100
-		self.m_BobberTargetPosition = bobberPosition + self.Random:get(-bobberPosition, num1) * num2
+	--local bobberTargetPosition = nil
+	local bobberAnimation = "OutQuad"
+	local bobberSpeed = (2000 - math.min(1000, self.m_Difficulty*5)) + self.Random:get(-self.m_Difficulty*3, self.m_Difficulty*3)
+
+	if self.m_MotionType == 0 then
+		self.m_BobberTargetPosition = self.Random:get(self.POSITION_UP, self.POSITION_DOWN)
+	elseif self.m_MotionType == 1 then
+		--	self.m_BobberTargetPosition = self.m_BobberPosition + (self.Random:nextDouble() < 0.5 and self.Random:get(-100 - self.m_Difficulty * 2, -51) or self.Random:get(50, 101 + self.m_Difficulty * 2))
+	elseif self.m_MotionType == 2 then
+
+	elseif self.m_MotionType == 3 then
+
+	elseif self.m_MotionType == 4 then
+
 	end
 
-	if self.m_MotionType == 4 then			-- floater
-		self.m_FloaterSkinerAccceleration = math.max(self.m_FloaterSkinerAccceleration - 0.01, -1.5)
-	elseif self.m_MotionType == 3 then		-- sinker
-		self.m_FloaterSkinerAccceleration = math.max(self.m_FloaterSkinerAccceleration + 0.01, -1.5)
+--[[
+	if self.Random:nextDouble() < self.m_Difficulty * (self.m_MotionType == 2 and 20 or 1) / 100 and (self.m_MotionType ~= 2 or self.m_BobberTargetPosition == -1) then
+		self.m_BobberTargetPosition = self.Random:get(self.POSITION_UP, self.POSITION_DOWN)
+	end
+
+	if self.m_MotionType == 4 or (self.m_MotionType == 1 and self.Random:nextDouble() < self.m_Difficulty/100) then			-- floater
+		bobberAnimation = "InOutQuad"
+		--self.m_FloaterSkinerAccceleration = math.max(self.m_FloaterSkinerAccceleration - 0.01, -1.5)
+	elseif self.m_MotionType == 3  or (self.m_MotionType == 1 and self.Random:nextDouble() < self.m_Difficulty/100) then		-- sinker
+		bobberAnimation = "InOutQuad"
+		--self.m_FloaterSkinerAccceleration = math.max(self.m_FloaterSkinerAccceleration + 0.01, -1.5)
 	end
 
 	if math.abs(self.m_BobberPosition - self.m_BobberTargetPosition) > 3 and self.m_BobberTargetPosition ~= -1 then
-		local bobberAcceleration = self.m_BobberTargetPosition - self.m_BobberPosition / self.Random:get(10, 30) + (100 - math.min(100, self.m_Difficulty))
-		self.m_BobberSpeed = self.m_BobberSpeed + ((bobberAcceleration - self.m_BobberSpeed) / 5)
+
 	else
-		self.m_BobberTargetPosition = self.m_MotionType == 2 or self.Random:nextDouble() >= self.m_Difficulty / 2000 and -1 or self.m_BobberPosition + (self.Random:nextDouble() < 0.5 and self.Random:get(-100, -51) or self.Random:get(50, 101))
+		--self.m_BobberTargetPosition = self.m_MotionType == 2 or self.Random:nextDouble() >= self.m_Difficulty / 2000 and -1 or self.m_BobberPosition + (self.Random:nextDouble() < 0.5 and self.Random:get(-100, -51) or self.Random:get(50, 101))
 	end
 
-	if self.m_MotionType == 1 and self.Random:nextDouble() < self.m_Difficulty / 1000 then
-		self.m_BobberTargetPosition = self.m_BobberPosition + (self.Random:nextDouble() < 0.5 and self.Random:get(-100 - self.m_Difficulty * 2, -51) or self.Random:get(50, 101 + self.m_Difficulty * 2))
-	end
+	--if self.m_MotionType == 1 and self.Random:nextDouble() < self.m_Difficulty / 1000 then
+
+	--end
 
 	self.m_BobberTargetPosition = math.max(-1, math.min(self.m_BobberTargetPosition, self.HEIGHT))
 
@@ -123,9 +138,9 @@ function BobberBar:setBobberPosition()
 		self.m_BobberPosition = self.POSITION_DOWN
 	elseif self.m_BobberPosition < self.POSITION_UP then
 		self.m_BobberPosition = self.POSITION_UP
-	end
+	end]]
 
-	self.m_BobberAnimation:startAnimation(self.m_BobberSpeed*100, "OutQuad", self.m_BobberTargetPosition)
+	self.m_BobberAnimation:startAnimation(bobberSpeed, bobberAnimation, self.m_BobberTargetPosition)
 end
 
 function BobberBar:updateRenderTarget()

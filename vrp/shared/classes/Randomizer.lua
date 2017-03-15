@@ -40,5 +40,5 @@ function Randomizer:getRandomTableValue(tab)
 end
 
 function Randomizer:nextDouble()
-	return self:get(0, 10)/10
+	return self:get(0, 10^6)/10^6
 end
