@@ -107,22 +107,25 @@ end
 function JobLumberjack:processKey(button, press)
 	if button == "mouse1" and press then
 		if not isCursorShowing() then
-			localPlayer:setFrozen(true)
-			localPlayer:setAnimation("knife", "knife_1", 350, true, true, false, false)
+			if (getTickCount() - (localPlayer.lastAxeHit or 0)) >= 400 then
+				localPlayer:setFrozen(true)
+				localPlayer:setAnimation("knife", "knife_1", 350, true, true, false, false)
+				localPlayer.lastAxeHit = getTickCount()
 
-			local tree = self:getNextTree() -- Todo: find bette way
-			if tree then
-				outputDebug("proccessing damage to tree: "..tostring(tree))
-				self:processTreeDamage(tree, localPlayer)
-			else
-				outputDebug("no tree found!")
+				local tree = self:getNextTree() -- Todo: find bette way
+				if tree then
+					outputDebug("proccessing damage to tree: "..tostring(tree))
+					self:processTreeDamage(tree, localPlayer)
+				else
+					outputDebug("no tree found!")
+				end
+
+				setTimer(
+					function()
+						localPlayer:setFrozen(false)
+					end, 400, 1
+				)
 			end
-
-			setTimer(
-				function()
-					localPlayer:setFrozen(false)
-				end, 400, 1
-			)
 		end
 	end
 end
