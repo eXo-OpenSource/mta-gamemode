@@ -28,7 +28,7 @@ function CAnimation:destructor()
 end
 
 function CAnimation:updateCallbackFunction(...)
-	self.callbackArguments = {... }
+	self.callbackArguments = {...}
 
 	if type(self.callbackArguments[1]) == "function" then
 		self.callbackFunction = self.callbackArguments[1]

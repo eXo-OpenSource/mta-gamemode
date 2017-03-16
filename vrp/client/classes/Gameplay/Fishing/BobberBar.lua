@@ -29,15 +29,14 @@ function BobberBar:constructor(difficulty, behavior)
 	self.m_Difficulty = difficulty
 	self.m_MotionType = self:getMotionType(behavior)
 
-	self.m_BobberPosition = self.HEIGHT
+	self.m_BobberPosition = (100 - self.m_Difficulty) / 100 * self.HEIGHT
 	self.m_BobberSpeed = 0
-	self.m_BobberTargetPosition = (100 - self.m_Difficulty) / 100 * self.HEIGHT
-	self.m_FloaterSkinerAccceleration = 0
-	self.m_BobberInBar = false
+	self.m_BobberTargetPosition = 0
+	self.m_BobberInBar = true
 
 	self.m_FishSizeReductionTimer = 800
-	self.m_Progress = 40
-	self.m_ProgressDuration = 5000
+	self.m_Progress = math.max(40, self.m_Difficulty)/2
+	self.m_ProgressDuration = 10000
 
 	self:initAnimations()
 	self:updateRenderTarget()
@@ -48,6 +47,8 @@ function BobberBar:constructor(difficulty, behavior)
 	toggleControl("fire", false)
 	bindKey("mouse1", "both", self.m_HandleClick)
 	addEventHandler("onClientRender", root, self.m_Render)
+
+	self:setBobberPosition()
 end
 
 function BobberBar:destructor()
@@ -58,16 +59,19 @@ end
 function BobberBar:initAnimations()
 	local onProgressDone =
 		function()
-			if self.m_Progress == 100 then
-				outputChatBox("Fish caught!")
-				-- Todo: Stop animations and fadeout
-			else
-				-- Todo: Fish escape
+			if self.m_Progress%100 == 0 then
+				self.m_BobberAnimation:stopAnimation()
+				self.m_ProgressAnimation:stopAnimation()
+
+				outputChatBox(("%s"):format(self.m_Progress == 100 and "cought!" or "escape"))
 			end
 		end
 
 	self.m_BobberAnimation = CAnimation:new(self, bind(BobberBar.setBobberPosition, self), "m_BobberPosition")
 	self.m_ProgressAnimation = CAnimation:new(self, onProgressDone, "m_Progress")
+
+	self.m_BobberAnimation:callRenderTarget(false)
+	self.m_ProgressAnimation:callRenderTarget(false)
 end
 
 function BobberBar:getMotionType(behavior)
@@ -86,61 +90,50 @@ end
 
 function BobberBar:handleClick(_, state)
 	self.m_MouseDown = state == "down"
-
-	if not self.m_BobberAnimation:isAnimationRendered() then
-		self:setBobberPosition()
-	end
 end
 
 function BobberBar:setBobberPosition()
-	--local bobberTargetPosition = nil
-	local bobberAnimation = "OutQuad"
-	local bobberSpeed = (2000 - math.min(1000, self.m_Difficulty*5)) + self.Random:get(-self.m_Difficulty*3, self.m_Difficulty*3)
+	local bobberAnimation = "InOutQuad"
+	self.m_BobberSpeed = (2000 - math.min(1000, self.m_Difficulty*5)) + self.Random:get(-self.m_Difficulty*3, self.m_Difficulty*3)
 
-	if self.m_MotionType == 0 then
-		self.m_BobberTargetPosition = self.Random:get(self.POSITION_UP, self.POSITION_DOWN)
-	elseif self.m_MotionType == 1 then
-		--	self.m_BobberTargetPosition = self.m_BobberPosition + (self.Random:nextDouble() < 0.5 and self.Random:get(-100 - self.m_Difficulty * 2, -51) or self.Random:get(50, 101 + self.m_Difficulty * 2))
-	elseif self.m_MotionType == 2 then
+	if self.m_MotionType == 1 or self.m_MotionType == 4 or (self.m_MotionType == 0 and self.Random:nextDouble() < self.m_Difficulty/150) then
+		if self.m_MotionType == 4 then
+			bobberAnimation = "InOutBack"
+			self.m_BobberSpeed = self.m_BobberSpeed * 3
+		end
 
-	elseif self.m_MotionType == 3 then
+		local newTargetPosition = self.m_BobberTargetPosition
 
-	elseif self.m_MotionType == 4 then
+		while math.abs(newTargetPosition - self.m_BobberTargetPosition) < self.m_Difficulty do
+			newTargetPosition = self.Random:get(math.max(self.POSITION_UP + 10, self.m_BobberPosition - self.m_Difficulty*5), math.min(self.POSITION_DOWN - 20, self.m_BobberPosition + self.m_Difficulty*5))
+		end
 
-	end
+		self.m_BobberTargetPosition = newTargetPosition
 
---[[
-	if self.Random:nextDouble() < self.m_Difficulty * (self.m_MotionType == 2 and 20 or 1) / 100 and (self.m_MotionType ~= 2 or self.m_BobberTargetPosition == -1) then
-		self.m_BobberTargetPosition = self.Random:get(self.POSITION_UP, self.POSITION_DOWN)
-	end
+	elseif self.m_MotionType == 2 or (self.m_MotionType == 0 and self.Random:nextDouble() < self.m_Difficulty / 200) then
+		self.m_BobberTargetPosition = self.Random:get(math.max(self.POSITION_UP + 10, self.m_BobberPosition - self.m_Difficulty*3),
+			math.min(self.POSITION_DOWN - 20, self.m_BobberPosition + self.m_Difficulty*3))
 
-	if self.m_MotionType == 4 or (self.m_MotionType == 1 and self.Random:nextDouble() < self.m_Difficulty/100) then			-- floater
-		bobberAnimation = "InOutQuad"
-		--self.m_FloaterSkinerAccceleration = math.max(self.m_FloaterSkinerAccceleration - 0.01, -1.5)
-	elseif self.m_MotionType == 3  or (self.m_MotionType == 1 and self.Random:nextDouble() < self.m_Difficulty/100) then		-- sinker
-		bobberAnimation = "InOutQuad"
-		--self.m_FloaterSkinerAccceleration = math.max(self.m_FloaterSkinerAccceleration + 0.01, -1.5)
-	end
-
-	if math.abs(self.m_BobberPosition - self.m_BobberTargetPosition) > 3 and self.m_BobberTargetPosition ~= -1 then
-
+	elseif self.m_MotionType == 3 or (self.m_MotionType == 0 and self.Random:nextDouble() < self.m_Difficulty/100) then
+		if self.m_BobberPosition < 50 then
+			self.m_BobberTargetPosition = self.Random:get(self.POSITION_DOWN - self.HEIGHT/2, self.POSITION_DOWN)
+		else
+			self.m_BobberTargetPosition = self.m_BobberPosition - self.Random:get(-30, 100)
+			self.m_BobberSpeed = self.m_BobberTargetPosition > self.m_BobberTargetPosition and 500 or self.m_BobberSpeed/2
+		end
 	else
-		--self.m_BobberTargetPosition = self.m_MotionType == 2 or self.Random:nextDouble() >= self.m_Difficulty / 2000 and -1 or self.m_BobberPosition + (self.Random:nextDouble() < 0.5 and self.Random:get(-100, -51) or self.Random:get(50, 101))
+		-- call again if motionType == 0 and no condition was true
+		return self:setBobberPosition()
 	end
 
-	--if self.m_MotionType == 1 and self.Random:nextDouble() < self.m_Difficulty / 1000 then
+	-- Probably we don't need this
+	if self.m_BobberTargetPosition > self.POSITION_DOWN - 20 then
+		self.m_BobberTargetPosition = self.POSITION_DOWN - 20
+	elseif self.m_BobberTargetPosition < self.POSITION_UP + 10 then
+		self.m_BobberTargetPosition = self.POSITION_UP + 10
+	end
 
-	--end
-
-	self.m_BobberTargetPosition = math.max(-1, math.min(self.m_BobberTargetPosition, self.HEIGHT))
-
-	if self.m_BobberPosition > self.POSITION_DOWN then
-		self.m_BobberPosition = self.POSITION_DOWN
-	elseif self.m_BobberPosition < self.POSITION_UP then
-		self.m_BobberPosition = self.POSITION_UP
-	end]]
-
-	self.m_BobberAnimation:startAnimation(bobberSpeed, bobberAnimation, self.m_BobberTargetPosition)
+	self.m_BobberAnimation:startAnimation(self.m_BobberSpeed, bobberAnimation, self.m_BobberTargetPosition)
 end
 
 function BobberBar:updateRenderTarget()
@@ -150,11 +143,13 @@ function BobberBar:updateRenderTarget()
 	dxDrawRectangle(0, 0, self.m_Size, tocolor(40, 40, 40, 150))
 
 	-- Draw BobberBar
+	dxSetBlendMode("modulate_add")
 	dxDrawImage(50, 5, 30, self.m_Size.y-10, "files/images/Fishing/BobberBarBG.png")
-	dxDrawRectangle(49, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50))
+	dxDrawRectangle(49, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50, self.m_BobberInBar and 255 or 200))
+	dxSetBlendMode("blend")
 
 	-- Draw Bobber (Fish) (Todo: Change to fish image)
-	dxDrawRectangle(60, self.m_BobberPosition, 10, 10, tocolor(0, 140, 255))
+	dxDrawRectangle(60, self.m_BobberPosition, 10, 10, tocolor(255, 140, 255))
 
 	-- Draw Progressbar
 	local progress_height = self.HEIGHT*(self.m_Progress/100)
@@ -186,11 +181,11 @@ function BobberBar:render()
 		end
 	end
 
-	-- Check progress (only check Y position/height)
+	-- Check progress (only Y position/height)
 	if self.m_BobberInBar and not rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 10) then
 		self.m_BobberInBar = false
 
-		local duration = (self.m_ProgressDuration + 2000) * (self.m_Progress/100)
+		local duration = (self.m_ProgressDuration - 2000) * (self.m_Progress/100)
 		self.m_ProgressAnimation:startAnimation(duration, "Linear", 0)
 	elseif not self.m_BobberInBar and rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 10) then
 		self.m_BobberInBar = true
@@ -201,8 +196,12 @@ function BobberBar:render()
 
 	-- Update and draw
 	self:updateRenderTarget()
-	dxDrawText(self.m_BobberSpeed, 500, 20)
-	dxDrawText(self.m_BobberTargetPosition, 500, 30)
+	dxDrawText("Speed: " .. self.m_BobberSpeed, 500, 20)
+	dxDrawText("Current position: " .. self.m_BobberPosition, 500, 35)
+	dxDrawText("Target position: " .. self.m_BobberTargetPosition, 500, 50)
+	dxDrawText("Motion type: " .. self.m_MotionType, 500, 65)
+	dxDrawText("Bobber in bar: " .. tostring(self.m_BobberInBar), 500, 80)
+
 	dxDrawImage(screenWidth*0.66 - self.m_Size.x/2, screenHeight/2 - self.m_Size.y/2, self.m_Size, self.m_RenderTarget)
 end
 
