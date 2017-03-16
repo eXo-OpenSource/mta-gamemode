@@ -52,7 +52,7 @@ function Core:constructor()
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
 		AntiCheat:new()
-		SkinModdingCheck:new()
+		ModdingCheck:new()
 		TranslationManager:new()
 		GlobalTimer:new()
 		MTAFixes:new()
