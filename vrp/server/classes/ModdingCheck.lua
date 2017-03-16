@@ -3,9 +3,13 @@ ModdingCheck.SKIN_MAX_DIFFER_X = 0.5
 ModdingCheck.SKIN_MAX_DIFFER_Y = 0.5
 ModdingCheck.SKIN_MAX_DIFFER_Z = 0.5
 
-ModdingCheck.VEH_MAX_DIFFER_X = 0.1
-ModdingCheck.VEH_MAX_DIFFER_Y = 0.1
-ModdingCheck.VEH_MAX_DIFFER_Z = 0.1
+ModdingCheck.VEH_MAX_DIFFER_X = 0.8
+ModdingCheck.VEH_MAX_DIFFER_Y = 0.8
+ModdingCheck.VEH_MAX_DIFFER_Z = 0.8
+
+ModdingCheck.OTHER_MAX_DIFFER_X = 0.2
+ModdingCheck.OTHER_MAX_DIFFER_Y = 0.2
+ModdingCheck.OTHER_MAX_DIFFER_Z = 0.2
 
 function ModdingCheck:constructor()
 	addEventHandler ( "onPlayerModInfo", getRootElement(), bind(self.handleOnPlayerModInfo, self))
@@ -29,12 +33,21 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 					tNames[#tNames+1] = item.id.." - "..item.name
 				end
 			end
-        elseif item.id >= 400 and item.id <= 611 then
+        elseif item.id >= 400 and item.id <= 611 then -- Vehicles
 			if item.sizeX then
 				differenceX =  math.abs(item.originalSizeX - item.sizeX)
 				differenceY = math.abs( item.originalSizeY - item.sizeY)
 				differenceZ = math.abs( item.originalSizeZ - item.sizeZ)
 				if differenceX >= ModdingCheck.VEH_MAX_DIFFER_X or differenceY >= ModdingCheck.VEH_MAX_DIFFER_Y or differenceZ >= ModdingCheck.VEH_MAX_DIFFER_Z then
+					tNames[#tNames+1] = item.id.." - "..item.name
+				end
+			end
+		else
+			if item.sizeX then
+				differenceX =  math.abs(item.originalSizeX - item.sizeX)
+				differenceY = math.abs( item.originalSizeY - item.sizeY)
+				differenceZ = math.abs( item.originalSizeZ - item.sizeZ)
+				if differenceX >= ModdingCheck.OTHER_MAX_DIFFER_X or differenceY >= ModdingCheck.OTHER_MAX_DIFFER_Y or differenceZ >= ModdingCheck.OTHER_MAX_DIFFER_Z then
 					tNames[#tNames+1] = item.id.." - "..item.name
 				end
 			end
