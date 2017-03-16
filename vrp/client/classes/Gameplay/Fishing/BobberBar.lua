@@ -63,7 +63,12 @@ function BobberBar:initAnimations()
 				self.m_BobberAnimation:stopAnimation()
 				self.m_ProgressAnimation:stopAnimation()
 
-				outputChatBox(("%s"):format(self.m_Progress == 100 and "cought!" or "escape"))
+				if self.m_Progress == 100 then
+					playSound("files/audio/Fishing/caught.mp3")
+					playSound("files/audio/Fishing/woap.mp3")
+				end
+
+				delete(self)
 			end
 		end
 
@@ -187,6 +192,7 @@ function BobberBar:render()
 
 		local duration = (self.m_ProgressDuration - 2000) * (self.m_Progress/100)
 		self.m_ProgressAnimation:startAnimation(duration, "Linear", 0)
+		playSound("files/audio/Fishing/woap2.mp3")
 	elseif not self.m_BobberInBar and rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 10) then
 		self.m_BobberInBar = true
 

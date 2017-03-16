@@ -1367,6 +1367,14 @@
 	<vrpfile src="files/audio/DrWho/tardis_landing.mp3"/>
 	<vrpfile src="files/audio/DrWho/tardis_takeoff.mp3"/>
 
+	<!-- Fishing -->
+	<vrpfile src="files/audio/Fishing/bit.mp3"/>
+	<vrpfile src="files/audio/Fishing/caught.mp3"/>
+	<vrpfile src="files/audio/Fishing/hit.mp3"/>
+	<vrpfile src="files/audio/Fishing/waterplop.mp3"/>
+	<vrpfile src="files/audio/Fishing/woap.mp3"/>
+	<vrpfile src="files/audio/Fishing/woap2.mp3"/>
+
 	<!-- Slotmachines -->
 	<vrpfile src="files/audio/Slotmachines/start_machine.mp3" />
 	<vrpfile src="files/audio/Slotmachines/win_jackpot.mp3" />
