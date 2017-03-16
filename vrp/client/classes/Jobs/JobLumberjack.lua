@@ -14,7 +14,11 @@ function JobLumberjack:constructor()
 	self.m_Trees = {}
 	self.m_StackedTrees = {}
 	self.m_NumTrees = 0
+	self.m_Area = createColCuboid(Vector3(904.643, -394.183, 38.629), 110, 100, 52)
+	self.m_EventProcessKey = bind(self.processKey, self)
 
+	addEventHandler("onClientColShapeHit", self.m_Area, bind(self.Event_OnColHit, self))
+	addEventHandler("onClientColShapeLeave", self.m_Area, bind(self.Event_OnColLeft, self))
 	addEvent("lumberjackTreesLoadUp", true)
 	addEventHandler("lumberjackTreesLoadUp", root, bind(JobLumberjack.Event_lumberjackTreesLoadUp, self))
 
@@ -30,6 +34,8 @@ function JobLumberjack:start()
 		local x, y, z, rotation = unpack(v)
 		local object = createObject(656, x, y, z, 0, 0, rotation)
 		object.Blip = Blip:new("SmallPoint.png", x, y)
+		setElementHealth(object, 300)
+
 		table.insert(self.m_Trees, object)
 		addEventHandler("onClientObjectDamage", object, func)
 	end
@@ -43,6 +49,7 @@ function JobLumberjack:start()
 	self.m_SawMillBlip = Blip:new("RedSaw.png", -1969.8, -2432.6)
 	self.m_SawMillBlip:setStreamDistance(2000)
 	ShortMessage:new(_"Säge die auf der Karte markierten Bäume mit der Motorsäge um.")
+
 	-- Show text in help menu
 	HelpBar:getSingleton():addText(_(HelpTextTitles.Jobs.Lumberjack), _(HelpTexts.Jobs.Lumberjack))
 end
@@ -79,18 +86,60 @@ function JobLumberjack:stop()
 	HelpBar:getSingleton():addText(_(HelpTextTitles.General.Main), _(HelpTexts.General.Main), false)
 end
 
-function JobLumberjack:processTreeDamage(loss, attacker)
-	if attacker == localPlayer and not source.broken then
-		if localPlayer:getWeapon() and localPlayer:getWeapon() == 9 then
+function JobLumberjack:Event_OnColHit(element, dim)
+	if element == localPlayer and dim then
+		localPlayer.hasAxe = true
+
+		triggerServerEvent("lumberjackGiveAxe", localPlayer, true)
+		addEventHandler("onClientKey", root, self.m_EventProcessKey)
+	end
+end
+
+function JobLumberjack:Event_OnColLeft(element, dim)
+	if element == localPlayer and dim then
+		localPlayer.hasAxe = false
+
+		triggerServerEvent("lumberjackGiveAxe", localPlayer, false)
+		removeEventHandler("onClientKey", root, self.m_EventProcessKey)
+	end
+end
+
+function JobLumberjack:processKey(button, press)
+	if button == "mouse1" and press then
+		if not isCursorShowing() then
+			localPlayer:setFrozen(true)
+			localPlayer:setAnimation("knife", "knife_1", 350, true, true, false, false)
+
+			local tree = self:getNextTree() -- Todo: find bette way
+			if tree then
+				outputDebug("proccessing damage to tree: "..tostring(tree))
+				self:processTreeDamage(tree, localPlayer)
+			else
+				outputDebug("no tree found!")
+			end
+
+			setTimer(
+				function()
+					localPlayer:setFrozen(false)
+				end, 400, 1
+			)
+		end
+	end
+end
+
+function JobLumberjack:processTreeDamage(tree, attacker)
+	if isElement(tree) and attacker == localPlayer and not tree.broken and attacker.hasAxe then
+		--if localPlayer:getWeapon() and localPlayer:getWeapon() == 9 then
 
 			-- Apply new health manually since our tree object is not a breakable/damageable object
-			setElementHealth(source, getElementHealth(source) - loss/10)
+			setElementHealth(tree, getElementHealth(tree) - 15)
+			outputDebug("Tree health: "..tostring(tree)..":"..tostring(getElementHealth(tree)))
 
-			if getElementHealth(source) <= 0 then
-				source.broken = true
-				local x, y, z = getElementPosition(source)
-				moveObject(source, 4000, x, y, z + 0.5, 88, math.random(0, 88), 0, "InQuad")
-				setElementCollisionsEnabled(source, false)
+			if getElementHealth(tree) <= 0 then
+				tree.broken = true
+				local x, y, z = getElementPosition(tree)
+				moveObject(tree, 4000, x, y, z + 0.5, 88, math.random(0, 88), 0, "InQuad")
+				setElementCollisionsEnabled(tree, false)
 
 				setTimer(
 					function(object)
@@ -111,14 +160,25 @@ function JobLumberjack:processTreeDamage(loss, attacker)
 								object.broken = nil
 							end, 20000, 1, object
 						)
-					end, 6000, 1, source
+					end, 6000, 1, tree
 				)
 			end
-		else
-			ErrorBox:new(_"Bitte verwende die Motorsäge!")
-			cancelEvent()
+		--else
+		--	cancelEvent()
+		--end
+	end
+end
+
+function JobLumberjack:getNextTree()
+	local nearestTree = false
+	for i, tree in pairs(self.m_Trees) do
+		if not tree.broken then
+			if (localPlayer:getPosition() - tree:getPosition()).length <= 2.5 then
+				return tree
+			end
 		end
 	end
+	return false
 end
 
 function JobLumberjack:addStackedTree()

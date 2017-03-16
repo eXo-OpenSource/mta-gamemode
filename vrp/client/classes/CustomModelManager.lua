@@ -40,28 +40,30 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/mushrooms.txd", 1882)
 	self:loadImportCOL("files/models/mushroom01.col", 1882)
 	self:loadImportDFF("files/models/mushroom01.dff", 1882)
-
 	self:loadImportTXD("files/models/mushrooms.txd", 1947)
 	self:loadImportCOL("files/models/mushroom02.col", 1947)
 	self:loadImportDFF("files/models/mushroom02.dff", 1947)
 
+	-- Water Can
 	self:loadImportTXD("files/models/waterCan.txd", 1902)
 	self:loadImportCOL("files/models/waterCan.col", 1902)
 	self:loadImportDFF("files/models/waterCan.dff", 1902)
 
+	-- Mostwanted list
 	self:loadImportTXD("files/models/mostWanted.txd", 1903)
 	self:loadImportCOL("files/models/mostWanted.col", 1903)
 	self:loadImportDFF("files/models/mostWanted.dff", 1903)
 
+	-- Rescue Base
 	self:loadImportTXD("files/models/medic.txd", 4027)
 	self:loadImportCOL("files/models/medic.col", 4027)
 	self:loadImportDFF("files/models/medic.dff", 4027)
 	self:setLODDistance(4027, 500)
-
 	self:loadImportTXD("files/models/medicLOD.txd", 4076)
 	self:loadImportCOL("files/models/medicLOD.col", 4076)
 	self:loadImportDFF("files/models/medicLOD.dff", 4076)
 
+	-- Wood
 	self:loadImportTXD("files/models/holzstamm.txd", 837)
 	self:loadImportCOL("files/models/holzstamm.col", 837)
 	self:loadImportDFF("files/models/holzstamm.dff", 837)
@@ -71,14 +73,22 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/kart.col", 13083)
 	self:loadImportDFF("files/models/kart.dff", 13083)
 
+	-- Bed?
 	self:loadImportTXD("files/models/bed.txd", 1879)
 	self:loadImportCOL("files/models/bed.col", 1879)
 	self:loadImportDFF("files/models/bed.dff", 1879)
 
+	-- Pickaxe
 	self:loadImportTXD("files/models/pickaxe.txd", 1858)
 	self:loadImportCOL("files/models/pickaxe.col", 1858)
 	self:loadImportDFF("files/models/pickaxe.dff", 1858)
 
+	-- Axe
+	self:loadImportTXD("files/models/axe.txd", 1859)
+	self:loadImportCOL("files/models/axe.col", 1859)
+	self:loadImportDFF("files/models/axe.dff", 1859)
+
+	-- Donut
 	self:loadImportTXD("files/models/donut.txd", 1915)
 	self:loadImportCOL("files/models/donut.col", 1915)
 	self:loadImportDFF("files/models/donut.dff", 1915)
@@ -86,6 +96,7 @@ function CustomModelManager:constructor()
 	-- RC Van
 	self:loadImportTXD("files/models/topfun.txd", 459)
 	self:loadImportDFF("files/models/topfun.dff", 459)
+
 
 
 	-- Tardis EasterEgg

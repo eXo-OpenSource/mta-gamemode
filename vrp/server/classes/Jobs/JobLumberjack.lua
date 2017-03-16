@@ -43,6 +43,8 @@ function JobLumberjack:constructor()
 
 	addEvent("lumberjackTreeCut", true)
 	addEventHandler("lumberjackTreeCut", root, bind(JobLumberjack.Event_lumberjackTreeCut, self))
+	addEvent("lumberjackGiveAxe", true)
+	addEventHandler("lumberjackGiveAxe", root, bind(JobLumberjack.Event_toggleAxe, self))
 end
 
 function JobLumberjack:start(player)
@@ -179,4 +181,16 @@ function JobLumberjack:Event_lumberjackTreeCut()
 
 	-- Todo: Check deltaTime (--> security)
 	client:setData("lumberjack:Trees", (client:getData("lumberjack:Trees") or 0) + 1)
+end
+
+function JobLumberjack:Event_toggleAxe(state)
+	if state then
+		if not client.axe and not isElement(client.axe) then
+			client.axe = createObject(1859, Vector3(0, 0, 0))
+			exports.bone_attach:attachElementToBone(client.axe, client, 12, 0, 0.02, 0.085, 90, -90, 0)
+		end
+	else
+		if client.axe and isElement(client.axe) then client.axe:destroy() end
+		client.axe = nil
+	end
 end
