@@ -25,7 +25,7 @@ function FishingRod:constructor()
 	self:initAnimations()
 
 	self.m_FishingRod = createObject(1826, localPlayer.position)
-	exports.bone_attach:attachElementToBone(self.m_FishingRod, localPlayer, 12, 0, 0, 0.1, 180, 120, 0)
+	exports.bone_attach:attachElementToBone(self.m_FishingRod, localPlayer, 12, -0.03, 0.02, 0.05, 180, 120, 0)
 
 	self.m_fishBite = bind(FishingRod.fishBite, self)
 	self.m_HandleClick = bind(FishingRod.handleClick, self)
@@ -57,12 +57,16 @@ function FishingRod:initAnimations()
 
 			self.Sound:stopAll()
 			self.Sound:play(self.m_PowerDirection == 1 and "chirp_cast" or "chirp_cast_back")
+
+			--localPlayer:setAnimation() --reset
+			--localPlayer:setAnimation("camera", self.m_PowerDirection == 1 and "picstnd_in" or "picstnd_out", -1, false, false, false, true)
 		end
 
 	self.m_PowerAnimation = CAnimation:new(self, self.m_PowerAnimationDone, "m_PowerProgress")
 end
 
 function FishingRod:reset()
+	localPlayer:setAnimation()
 	toggleAllControls(true)
 	toggleControl("fire", false)
 
@@ -82,6 +86,8 @@ function FishingRod:handleClick(_, state)
 		self.m_PowerDirection = 1
 		self.m_PowerAnimation:startAnimation(self.m_PowerAnimationDuration, "Linear", self.m_PowerDirection)
 		self.Sound:play("chirp_cast")
+
+		--localPlayer:setAnimation("camera", "picstnd_in", -1, false, false, false, true)
 	elseif self.m_isCasting and not self.m_MouseDown then
 		self.m_isCasting = false
 		self.m_PowerAnimation:stopAnimation()
@@ -125,10 +131,16 @@ function FishingRod:fishBite()
 			self.m_timeUntilFishingBite = self.Random:get(self.m_minFishingBiteTime, self.m_maxFishingBiteTime)
 			self.m_nibblingTimer = setTimer(self.m_fishBite, self.m_timeUntilFishingBite, 1)
 			self.Sound:play("dwop")
-		end, self.m_maxTimeToNibble, 1)
+		end, self.m_maxTimeToNibble, 1
+	)
 end
 
 function FishingRod:cast()
+	if localPlayer:isInWater() then
+		ErrorBox:new(_("Du kannst im Wasser nicht angeln!"))
+		return
+	end
+
 	local distance = 10*self.m_PowerProgress
 
 	if self:checkWater(distance) then
@@ -142,7 +154,7 @@ function FishingRod:cast()
 		self.m_timeUntilFishingBite = self.Random:get(self.m_minFishingBiteTime, self.m_maxFishingBiteTime)
 		self.m_nibblingTimer = setTimer(self.m_fishBite, self.m_timeUntilFishingBite, 1)
 		outputChatBox(self.m_timeUntilFishingBite)
-		--do cast animation (max. 600ms duration)
+		--Todo do cast animation (max. 600ms duration) --> effect/waterplop after animation
 
 		createEffect("water_swim", targetPosition)
 		self.Sound:play("cast")
@@ -151,13 +163,13 @@ function FishingRod:cast()
 		self.m_isCasting = true
 		self.Sound:play("dwop")
 		self.m_PowerProgress = 0
-		--WarningBox:new(_("Hier ist kein Wasser!"))
+		WarningBox:new(_("Hier ist kein Wasser!"))
 	end
 end
 
 function FishingRod:checkWater(distance)
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
-	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, distance, -1))
+	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, distance, 0))
 	targetPosition.z = -0.2
 
 	local result = {processLineOfSight(startPosition, targetPosition)}
@@ -170,9 +182,16 @@ end
 function FishingRod:render()
 	local startPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
 	local targetPosition = localPlayer.matrix:transformPosition(Vector3(0, 10*self.m_PowerProgress, 0))
-	targetPosition.z = -0.2
 
-	dxDrawLine3D(startPosition, targetPosition, tocolor(255, 230, 190, 200), .3)
+	if self.m_isCasting and not self.m_MouseDown then
+		targetPosition = self.m_FishingRod.matrix:transformPosition(Vector3(0.05, 0, -1.3))
+		targetPosition.z = targetPosition.z - .7
+	else
+		targetPosition.z = 0
+	end
+
+	exports.bone_attach:setElementBoneRotationOffset(self.m_FishingRod, 180, 120 + 60*self.m_PowerProgress, 0)
+	dxDrawLine3D(startPosition, targetPosition, tocolor(255, 230, 190, 100), .3)
 
 	local left = screenWidth-300
 	local top = screenHeight/2

@@ -184,7 +184,6 @@ function BobberBar:updateRenderTarget()
 end
 
 function BobberBar:render()
-
 	if self.m_ProgressDuration ~= 0 then
 		-- BobberBar Animation
 		local num = self.m_MouseDown and -0.5 or 0.5
@@ -208,14 +207,14 @@ function BobberBar:render()
 		end
 
 		-- Check progress (only Y position/height)
-		if (self.m_BobberInBar or self.m_BobberInBar == nil) and not rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 20) then
+		if (self.m_BobberInBar or self.m_BobberInBar == nil) and not rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 28) then
 			self.m_BobberInBar = false
 
 			local duration = (self.m_ProgressDuration - 3000) * (self.m_Progress/100)
 			self.m_ProgressAnimation:startAnimation(duration, "Linear", 0)
 			self.Sound:play("woap2")
 			self.Sound:stop("slowReel")
-		elseif (not self.m_BobberInBar or self.m_BobberInBar == nil) and rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 20) then
+		elseif (not self.m_BobberInBar or self.m_BobberInBar == nil) and rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 28) then
 			self.m_BobberInBar = true
 
 			local duration = self.m_ProgressDuration * (1 - self.m_Progress/100)
