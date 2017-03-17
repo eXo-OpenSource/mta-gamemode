@@ -36,10 +36,14 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/vehiclechange.txd", 2838)
 	self:loadImportDFF("files/models/vehiclechange.dff", 2838)
 
-	--Mushrooms
+	-- Mushrooms
 	self:loadImportTXD("files/models/mushrooms.txd", 1882)
 	self:loadImportCOL("files/models/mushroom01.col", 1882)
 	self:loadImportDFF("files/models/mushroom01.dff", 1882)
+
+	-- Replace dozer/dumper dff to improve stone handling ("schubsing") :D
+	self:loadImportDFF("files/models/dozer.dff", 486)
+	self:loadImportDFF("files/models/dumper.dff", 406)
 
 	self:loadImportTXD("files/models/mushrooms.txd", 1947)
 	self:loadImportCOL("files/models/mushroom02.col", 1947)
