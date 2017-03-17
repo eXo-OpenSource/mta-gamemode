@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        client/classes/Gameplay/Fishing/FishingLocation.lua
+-- *  PURPOSE:     Fishing locations
 -- *
 -- ****************************************************************************
 FishingLocation = inherit(Singleton)
@@ -26,32 +26,37 @@ FishingLocation.Map = {
 
 function FishingLocation:constructor()
 	self.m_ColShapes = {}
-	for k, v in pairs(FishingLocation.Map) do
-		local colShape = v.func(unpack(v.args))
-		table.insert(self.m_ColShapes, {colShape = colShape, location = v.location})
+	for _, value in pairs(FishingLocation.Map) do
+		local colShape = value.func(unpack(value.args))
+		table.insert(self.m_ColShapes, {colShape = colShape, location = value.location})
 	end
 
-	outputChatBox("Created ColShapes: " .. #self.m_ColShapes)
+	--outputChatBox("Created ColShapes: " .. #self.m_ColShapes)
 end
 
 function FishingLocation:destructor()
-	for index, value in pairs(self.m_ColShapes) do
+	for _, value in pairs(self.m_ColShapes) do
 		if value.colShape then
 			value.colShape:destroy()
 		end
 	end
 end
 
-function FishingLocation:getLocation(element)
-	for index, value in pairs(self.m_ColShapes) do
-		if element:isWithinColShape(value.colShape) then
+function FishingLocation:getLocation(position)
+	local dummy = createObject(1337, position)
+	dummy:setAlpha(0)
+
+	for _, value in pairs(self.m_ColShapes) do
+		if dummy:isWithinColShape(value.colShape) then
+			dummy:destroy()
 			return value.location
 		end
 	end
+	dummy:destroy()
 	return "ocean"
 end
 
-
+--[[
 ----------------------------
 --DEV
 ----------------------------
@@ -110,3 +115,4 @@ addCommandHandler("w",
 		end
 	end
 )
+]]

@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        client/classes/Gameplay/Fishing/BobberBar.lua
+-- *  PURPOSE:     BobberBar class
 -- *
 -- ****************************************************************************
 BobberBar = inherit(Singleton)
@@ -14,10 +14,12 @@ local playerFishingLevel = 1
 function BobberBar:constructor(difficulty, behavior)
 	self.m_Size = Vector2(100, screenHeight/2)
 	self.m_RenderTarget = DxRenderTarget(self.m_Size, true)
+	self.m_AnimationMultiplicator = 0
 
+	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
 
-	self.m_BobberBarHeight = 64 + playerFishingLevel*8	--this.bobberBarHeight = Game1.tileSize * 3 / 2 + Game1.player.FishingLevel * 8;
+	self.m_BobberBarHeight = 64 + playerFishingLevel*8
 	self.m_BobberBarPosition = self.m_Size.y - self.m_BobberBarHeight - 5
 	self.m_BobberBarSpeed = 0
 
@@ -32,9 +34,8 @@ function BobberBar:constructor(difficulty, behavior)
 	self.m_BobberPosition = (100 - self.m_Difficulty) / 100 * self.HEIGHT
 	self.m_BobberSpeed = 0
 	self.m_BobberTargetPosition = 0
-	self.m_BobberInBar = true
+	self.m_BobberInBar = nil
 
-	self.m_FishSizeReductionTimer = 800
 	self.m_Progress = math.max(40, self.m_Difficulty)/2
 	self.m_ProgressDuration = 10000
 
@@ -49,6 +50,7 @@ function BobberBar:constructor(difficulty, behavior)
 	addEventHandler("onClientRender", root, self.m_Render)
 
 	self:setBobberPosition()
+	self.m_FadeAnimation:startAnimation(500, "OutQuad", 1)
 end
 
 function BobberBar:destructor()
@@ -60,23 +62,37 @@ function BobberBar:initAnimations()
 	local onProgressDone =
 		function()
 			if self.m_Progress%100 == 0 then
+				self.m_ProgressDuration = 0
 				self.m_BobberAnimation:stopAnimation()
 				self.m_ProgressAnimation:stopAnimation()
+				self.Sound:stop("slowReel")
 
 				if self.m_Progress == 100 then
-					playSound("files/audio/Fishing/caught.mp3")
-					playSound("files/audio/Fishing/woap.mp3")
+					self.Sound:play("caught")
+					self.Sound:play("woap")
+					triggerServerEvent("clientFishCaught", localPlayer)
+				else
+					self.Sound:play("escape")
 				end
 
-				delete(self)
+				self.m_FadeAnimation:startAnimation(500, "OutQuad", 0)
+
+				setTimer(
+					function()
+						delete(self)
+						FishingRod:getSingleton():reset()
+					end, 2000, 1
+				)
 			end
 		end
 
+	self.m_FadeAnimation = CAnimation:new(self, "m_AnimationMultiplicator")
 	self.m_BobberAnimation = CAnimation:new(self, bind(BobberBar.setBobberPosition, self), "m_BobberPosition")
 	self.m_ProgressAnimation = CAnimation:new(self, onProgressDone, "m_Progress")
 
 	self.m_BobberAnimation:callRenderTarget(false)
 	self.m_ProgressAnimation:callRenderTarget(false)
+	self.m_FadeAnimation:callRenderTarget(false)
 end
 
 function BobberBar:getMotionType(behavior)
@@ -94,7 +110,10 @@ function BobberBar:getMotionType(behavior)
 end
 
 function BobberBar:handleClick(_, state)
-	self.m_MouseDown = state == "down"
+	if self.m_ProgressDuration ~= 0 then
+		self.m_MouseDown = state == "down"
+		self.Sound:play(("fishingRodBend%s"):format(self.m_MouseDown and "" or 2)):setVolume(.2)
+	end
 end
 
 function BobberBar:setBobberPosition()
@@ -153,8 +172,8 @@ function BobberBar:updateRenderTarget()
 	dxDrawRectangle(49, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50, self.m_BobberInBar and 255 or 200))
 	dxSetBlendMode("blend")
 
-	-- Draw Bobber (Fish) (Todo: Change to fish image)
-	dxDrawRectangle(60, self.m_BobberPosition, 10, 10, tocolor(255, 140, 255))
+	-- Draw Bobber (Fish)
+	dxDrawImage(51, self.m_BobberPosition, 28, 28, "files/images/Fishing/Fish.png", 0, 0, 0, tocolor(115, 200, 230))
 
 	-- Draw Progressbar
 	local progress_height = self.HEIGHT*(self.m_Progress/100)
@@ -165,39 +184,44 @@ function BobberBar:updateRenderTarget()
 end
 
 function BobberBar:render()
-	-- BobberBar Animation
-	local num = self.m_MouseDown and -0.5 or 0.5
-	self.m_BobberBarSpeed = self.m_BobberBarSpeed + num
-	self.m_BobberBarPosition = self.m_BobberBarPosition + self.m_BobberBarSpeed
 
-	if self.m_BobberBarPosition > self.POSITION_DOWN - self.m_BobberBarHeight then
-		self.m_BobberBarPosition = self.POSITION_DOWN - self.m_BobberBarHeight
+	if self.m_ProgressDuration ~= 0 then
+		-- BobberBar Animation
+		local num = self.m_MouseDown and -0.5 or 0.5
+		self.m_BobberBarSpeed = self.m_BobberBarSpeed + num
+		self.m_BobberBarPosition = self.m_BobberBarPosition + self.m_BobberBarSpeed
 
-		if self.m_BobberBarSpeed ~= 0 then
-			self.m_BobberBarSpeed = -self.m_BobberBarSpeed + 0.5
-			if self.m_BobberBarSpeed < -self.MAX_PUSHBACK_SPEED then self.m_BobberBarSpeed = -self.MAX_PUSHBACK_SPEED end
+		if self.m_BobberBarPosition > self.POSITION_DOWN - self.m_BobberBarHeight then
+			self.m_BobberBarPosition = self.POSITION_DOWN - self.m_BobberBarHeight
+
+			if self.m_BobberBarSpeed ~= 0 then
+				self.m_BobberBarSpeed = -self.m_BobberBarSpeed + 0.5
+				if self.m_BobberBarSpeed < -self.MAX_PUSHBACK_SPEED then self.m_BobberBarSpeed = -self.MAX_PUSHBACK_SPEED end
+			end
+		elseif self.m_BobberBarPosition < self.POSITION_UP then
+			self.m_BobberBarPosition = self.POSITION_UP
+
+			if self.m_BobberBarSpeed ~= 0 then
+				self.m_BobberBarSpeed = math.abs(self.m_BobberBarSpeed) - 0.5
+				if self.m_BobberBarSpeed > self.MAX_PUSHBACK_SPEED then self.m_BobberBarSpeed = self.MAX_PUSHBACK_SPEED end
+			end
 		end
-	elseif self.m_BobberBarPosition < self.POSITION_UP then
-		self.m_BobberBarPosition = self.POSITION_UP
 
-		if self.m_BobberBarSpeed ~= 0 then
-			self.m_BobberBarSpeed = math.abs(self.m_BobberBarSpeed) - 0.5
-			if self.m_BobberBarSpeed > self.MAX_PUSHBACK_SPEED then self.m_BobberBarSpeed = self.MAX_PUSHBACK_SPEED end
+		-- Check progress (only Y position/height)
+		if (self.m_BobberInBar or self.m_BobberInBar == nil) and not rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 20) then
+			self.m_BobberInBar = false
+
+			local duration = (self.m_ProgressDuration - 3000) * (self.m_Progress/100)
+			self.m_ProgressAnimation:startAnimation(duration, "Linear", 0)
+			self.Sound:play("woap2")
+			self.Sound:stop("slowReel")
+		elseif (not self.m_BobberInBar or self.m_BobberInBar == nil) and rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 20) then
+			self.m_BobberInBar = true
+
+			local duration = self.m_ProgressDuration * (1 - self.m_Progress/100)
+			self.m_ProgressAnimation:startAnimation(duration, "Linear", 100)
+			self.Sound:play("slowReel", true)
 		end
-	end
-
-	-- Check progress (only Y position/height)
-	if self.m_BobberInBar and not rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 10) then
-		self.m_BobberInBar = false
-
-		local duration = (self.m_ProgressDuration - 2000) * (self.m_Progress/100)
-		self.m_ProgressAnimation:startAnimation(duration, "Linear", 0)
-		playSound("files/audio/Fishing/woap2.mp3")
-	elseif not self.m_BobberInBar and rectangleCollision2D(0, self.m_BobberBarPosition, 0, self.m_BobberBarHeight, 0, self.m_BobberPosition, 0, 10) then
-		self.m_BobberInBar = true
-
-		local duration = self.m_ProgressDuration * (1 - self.m_Progress/100)
-		self.m_ProgressAnimation:startAnimation(duration, "Linear", 100)
 	end
 
 	-- Update and draw
@@ -208,7 +232,7 @@ function BobberBar:render()
 	dxDrawText("Motion type: " .. self.m_MotionType, 500, 65)
 	dxDrawText("Bobber in bar: " .. tostring(self.m_BobberInBar), 500, 80)
 
-	dxDrawImage(screenWidth*0.66 - self.m_Size.x/2, screenHeight/2 - self.m_Size.y/2, self.m_Size, self.m_RenderTarget)
+	dxDrawImage(screenWidth*0.66 - self.m_Size.x * self.m_AnimationMultiplicator/2, screenHeight/2 - self.m_Size.y * self.m_AnimationMultiplicator/2, self.m_Size * self.m_AnimationMultiplicator, self.m_RenderTarget, 0, 0, 0, tocolor(255, 255, 255, 255*self.m_AnimationMultiplicator))
 end
 
 addEventHandler("fishingBobberBar", root,

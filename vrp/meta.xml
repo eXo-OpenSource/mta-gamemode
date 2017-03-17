@@ -43,7 +43,6 @@
 	<script src="shared/classes/Promise.lua" type="shared"/>
 	<script src="shared/classes/MusicAPI.lua" type="shared"/>
 
-
 	<!-- Server -->
 	<script src="server/utils.lua" type="server"/>
 	<script src="server/mapEditorScriptingExtension_s.lua" type="server"/>
@@ -331,6 +330,7 @@
 	<script src="client/classes/Provider.lua" type="client"/>
 	<script src="client/classes/Skin.lua" type="client"/>
 	<script src="client/classes/SkinStreamer.lua" type="client"/>
+	<script src="client/classes/Sound.lua" type="client"/>
 	<script src="client/classes/CameraDrive.lua" type="client"/>
 	<script src="client/classes/TextureReplace.lua" type="client"/>
 	<script src="client/classes/NonCollidingArea.lua" type="client"/>
@@ -350,6 +350,7 @@
 	<script src="client/classes/Tour.lua" type="client"/>
 	<script src="client/classes/AccessoireClothes.lua" type="client"/>
 	<script src="client/classes/HTTPProvider.lua" type="client"/>
+
 	<!-- GUI system -->
 	<script src="client/classes/Debugging.lua" type="client"/>
 	<script src="client/classes/Color.lua" type="client"/>
@@ -779,9 +780,6 @@
 	<!-- audio files -->
 	<vrpfile src="files/audio/chess/move.ogg" />
 	<file src="files/data/indicators.dat" />
-
-	<!-- Tests -->
-	<!-- Todo -->
 
 	<script src="client/Main.lua" type="client"/>
 
@@ -1300,6 +1298,7 @@
 	<!-- Fishing -->
 	<vrpfile src="files/images/Fishing/BobberBarBG.png"/>
 	<vrpfile src="files/images/Fishing/RedGreen.png"/>
+	<vrpfile src="files/images/Fishing/Fish.png"/>
 
 	<!-- Race -->
 	<vrpfile src="files/images/Race/countdown_0.png"/>
@@ -1369,7 +1368,16 @@
 
 	<!-- Fishing -->
 	<vrpfile src="files/audio/Fishing/bit.mp3"/>
+	<vrpfile src="files/audio/Fishing/cast.mp3"/>
 	<vrpfile src="files/audio/Fishing/caught.mp3"/>
+	<vrpfile src="files/audio/Fishing/chirp_cast.mp3"/>
+	<vrpfile src="files/audio/Fishing/chirp_cast_back.mp3"/>
+	<vrpfile src="files/audio/Fishing/dwop.mp3"/>
+	<vrpfile src="files/audio/Fishing/escape.mp3"/>
+	<vrpfile src="files/audio/Fishing/fastReel.mp3"/>
+	<vrpfile src="files/audio/Fishing/slowReel.mp3"/>
+	<vrpfile src="files/audio/Fishing/fishingRodBend.mp3"/>
+	<vrpfile src="files/audio/Fishing/fishingRodBend2.mp3"/>
 	<vrpfile src="files/audio/Fishing/hit.mp3"/>
 	<vrpfile src="files/audio/Fishing/waterplop.mp3"/>
 	<vrpfile src="files/audio/Fishing/woap.mp3"/>

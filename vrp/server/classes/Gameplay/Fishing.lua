@@ -1,8 +1,8 @@
 -- ****************************************************************************
 -- *
 -- *  PROJECT:     vRoleplay
--- *  FILE:        TODO
--- *  PURPOSE:     TODO
+-- *  FILE:        server/classes/Gameplay/Fishing.lua
+-- *  PURPOSE:     Serverside Fishing Class
 -- *
 -- ****************************************************************************
 Fishing = inherit(Singleton)
@@ -46,12 +46,15 @@ Fishing.Fish = {
 	{name = "Walleye", de = "Glasaugenbarsch", location = {"river", "lake"}, difficulty = 45, behavior = "smooth", weather = 0, times = {0, 200, 1200, 2400}, size = {25, 104}},
 }
 
-addRemoteEvents{"clientFishHit"}
+addRemoteEvents{"clientFishHit", "clientFishCaught"}
 
 function Fishing:constructor()
+	self.Random = Randomizer:new()
+
 	outputChatBox("Fish server")
 	self.m_Players = {}
 	addEventHandler("clientFishHit", root, bind(Fishing.FishHit, self))
+	addEventHandler("clientFishCaught", root, bind(Fishing.FishCaught, self))
 end
 
 function Fishing:destructor()
@@ -106,7 +109,7 @@ function Fishing:getFish(location, timeOfDay, weather)
 		end
 	end
 
-	return tmp[math.random(1, #tmp)]
+	return tmp[self.Random:get(1, #tmp)]
 end
 
 function Fishing:FishHit(location)
@@ -116,4 +119,9 @@ function Fishing:FishHit(location)
 	local fish = self:getFish(location, time, weather)
 
 	client:triggerEvent("fishingBobberBar", fish)
+	client.HittedFish = fish
+end
+
+function Fishing:FishCaught()
+	outputChatBox(("Caught: %s"):format(client.HittedFish.name))
 end
