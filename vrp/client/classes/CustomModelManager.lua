@@ -93,8 +93,8 @@ function CustomModelManager:constructor()
 
 
 	-- Tardis EasterEgg
-	--self:loadImportTXD("files/models/tardis.txd", 1337)
-	--self:loadImportDFF("files/models/tardis.dff", 1337)
+	self:loadImportTXD("files/models/tardis.txd", 1881)
+	self:loadImportDFF("files/models/tardis.dff", 1881)
 
 	self:loadImportDFF("files/models/piss.dff", 1904)
 
