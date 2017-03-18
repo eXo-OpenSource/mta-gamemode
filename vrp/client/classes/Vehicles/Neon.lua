@@ -24,7 +24,7 @@ end
 function Neon.getNeonTable()
 	for index, veh in ipairs(getElementsByType("vehicle", getRootElement(), true)) do
 		if veh:getVehicleType() == VehicleType.Automobile then
-			if getElementData(veh,"Neon") == 1 then
+			if getElementData(veh,"Neon") == true then
 				Neon.Vehicles[veh] = true
 			end
 		end
@@ -35,7 +35,7 @@ function Neon.VehiclestreamedIn()
 	local veh = source
 	if getElementType(veh) == "vehicle" then
 		if veh:getVehicleType() == VehicleType.Automobile then
-			if getElementData(veh,"Neon") == 1 then
+			if getElementData(veh,"Neon") == true then
 				Neon.Vehicles[veh] = true
 			end
 		end
@@ -46,7 +46,7 @@ function Neon.VehiclestreamedOut(veh)
 	local veh = source
 	if getElementType(veh) == "vehicle" then
 		if veh:getVehicleType() == VehicleType.Automobile then
-			if getElementData(veh,"Neon") == 1 then
+			if getElementData(veh,"Neon") == true then
 				Neon.Vehicles[veh] = nil
 			end
 		end
@@ -63,7 +63,7 @@ function Neon.Render()
 	for veh in pairs(Neon.Vehicles) do
 		if isElement(veh) then
 			if isElementStreamedIn(veh) then
-				if (getElementData(veh,"Neon") == 1 and getVehicleOverrideLights ( veh ) == 2) then
+				if (getElementData(veh,"Neon") == true and getVehicleOverrideLights ( veh ) == 2) then
 					local NeonColor = getElementData(veh,"NeonColor")
 					if NeonColor then
 						local pos = veh:getPosition()
