@@ -151,6 +151,10 @@ function House:rentHouse(player)
 			player:sendError(_("Einmieten fehlgeschlagen - dieses Haus hat keinen Eigentümer!", player), 255, 0, 0)
 			return
 		end
+		if self.m_RentPrice <= 0 then
+			player:sendError(_("Einmieten fehlgeschlagen - Der Eigentümer erlaubt kein einmieten!", player), 255, 0, 0)
+			return
+		end
 
 		if player:getId() ~= self.m_Owner then
 			self.m_Keys[player:getId()] = getRealTime().timestamp
@@ -182,9 +186,14 @@ end
 
 function House:setRent(player, rent)
 	if player:getId() == self.m_Owner then
-		player:sendInfo(_("Du hast die Miete auf %d$ gesetzt!", player, rent))
 		self.m_RentPrice = rent
-		self:sendTenantsMessage(_("%s hat die Miete für sein Haus auf %d$ gesetzt!", player, player:getName(), rent))
+		if rent > 0 then
+			player:sendInfo(_("Du hast die Miete auf %d$ gesetzt!", player, rent))
+			self:sendTenantsMessage(_("%s hat die Miete für sein Haus auf %d$ gesetzt!", player, player:getName(), rent))
+		else
+			player:sendInfo(_("Nun kann sich keiner mehr in deinem Haus einmieten!", player, rent))
+			self:sendTenantsMessage(_("%s hat das einmieten für sein Haus deaktiviert!", player, player:getName()))
+		end
 	end
 end
 
@@ -254,6 +263,8 @@ function House:sendTenantsMessage(msg)
 			if target then
 				if isOffline then
 					target:addOfflineMessage(msg, 1)
+
+					target.m_DoNotSave = true
 					delete(target)
 				else
 					target:sendInfo(msg)

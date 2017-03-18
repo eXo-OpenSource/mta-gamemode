@@ -46,7 +46,7 @@ function CompanyVehicle:constructor(Id, company, color, health, posionType, tuni
 	self.m_Rotation = self:getRotation()
 	self:setFrozen(true)
 	self.m_HandBrake = true
-
+	self:setData( "Handbrake",  self.m_HandBrake , true )
 	setElementData(self, "OwnerName", self.m_Company:getName())
 	setElementData(self, "OwnerType", "company")
 	if health then
@@ -230,6 +230,7 @@ function CompanyVehicle:respawn(force)
 	self:fix()
 	self:setFrozen(true)
 	self.m_HandBrake = true
+	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:resetIndicator()
 
 	return true

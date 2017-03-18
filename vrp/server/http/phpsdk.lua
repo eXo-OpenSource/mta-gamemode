@@ -44,7 +44,7 @@ function phpSDKSendOnlinePlayers()
 	local i = 1
 
 	for index, player in pairs(getElementsByType("player")) do
-		if player:isActive() then
+		if player.isActive and player:isActive() then
 			players[i]= {
 				["Name"] = player:getName(),
 				["Id"] = player:getId() or 0,
@@ -60,12 +60,17 @@ function phpSDKSendOnlinePlayers()
 end
 
 function phpSDKGiveQRAchievement(playerId)
-	local player, isOffline = DatabasePlayer.getFromId(playerId)
-	if isOffline then
-		delete(player)
-		return false
-	else
-		player:giveAchievement(78)
-		return true
-	end
+	Async.create(
+		function()
+			local player, isOffline = DatabasePlayer.get(playerId)
+			if isOffline then
+				player:load()
+				delete(player)
+				return false
+			else
+				player:giveAchievement(78)
+				return true
+			end
+		end
+	)()
 end

@@ -8,8 +8,9 @@
 Weather = inherit(Singleton)
 local WEATHER_CHANGE_INTERVAL = 30*60*1000
 
-Weather.Names = { [
-	1]="Bewoelkt",
+Weather.Names = {
+	[0]="Sonnig, blauer Himmel",
+	[1]="Bewoelkt",
 	[2]="Bewoelkt",
 	[3]="Bewoelkt",
 	[4]="Bewoelkt",

@@ -237,12 +237,12 @@ function HUDUI:drawKarmaBar(height, fontSize)
 		dxDrawRectangle(left, top, width/2-1, height, tocolor(0,0,0,150))
 		dxDrawRectangle(left+width/2+1, top, width/2-1, height, tocolor(0,50,0,220))
 		dxDrawRectangle(left+width/2+1, top, barWidth, height, tocolor(75,160,75,220))
-		dxDrawText("Karma: +"..math.abs(karma), left+width/2+1, top, left+width, top+height, Color.White, fontSize, "default-bold", "center", "center")
+		dxDrawText("Karma: +"..math.round(karma), left+width/2+1, top, left+width, top+height, Color.White, fontSize, "default-bold", "center", "center")
 	else
 		dxDrawRectangle(left, top, width/2-1, height, tocolor(50,0,0,220))
 		dxDrawRectangle(left+width/2+1, top, width/2-1, height, tocolor(0,0,0,150))
 		dxDrawRectangle((left + width/2)-barWidth-1, top, barWidth, height, tocolor(160,75,75,220))
-		dxDrawText("Karma: -"..math.abs(karma), left, top, left+width/2-1, top+height, Color.White, fontSize, "default-bold", "center", "center")
+		dxDrawText("Karma: -"..math.round(karma), left, top, left+width/2-1, top+height, Color.White, fontSize, "default-bold", "center", "center")
 	end
 end
 
@@ -370,7 +370,7 @@ function HUDUI:drawExo()
 
 		dxDrawText ("SCHUTZWESTE: "..math.floor(getPedArmor(localPlayer)).."%",screenWidth-width*0.5-r_os,width*0.475,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
 		dxDrawText ("LEBEN: "..lebensanzeige.."%",screenWidth-width*0.5-r_os,width*0.57,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
-		dxDrawText ("KARMA: "..math.floor(localPlayer:getKarma()),screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
+		dxDrawText ("KARMA: "..math.round(localPlayer:getKarma()),screenWidth-width*0.5-r_os,width*0.675,screenWidth-10,height, tocolor ( r,g,b,a ), 0.8*width*0.0039, "sans","center" ) --Money
 
 		dxDrawImage(screenWidth-width*0.3-r_os,0,width*0.24,width*0.24, WeaponIcons[localPlayer:getWeapon()])
 		local tAmmo = getPedTotalAmmo( localPlayer )

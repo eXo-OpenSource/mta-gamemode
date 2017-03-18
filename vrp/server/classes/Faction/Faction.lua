@@ -132,7 +132,9 @@ end
 
 function Faction:changeSkin(player)
 	local rank = self:getPlayerRank(player)
-	player:setModel(self.m_RankSkins[tostring(rank)])
+	if player:isActive() then
+		player:setModel(self.m_RankSkins[tostring(rank)])
+	end
 end
 
 function Faction:changeSkin_old(player)
@@ -249,9 +251,9 @@ function Faction:setPlayerRank(playerId, rank)
 			self:changeSkin(player)
 		end
 	end
-	if isOffline then
-		delete(player)
-	end
+	--if isOffline then
+	--	delete(player)
+	--end
 	sql:queryExec("UPDATE ??_character SET FactionRank = ? WHERE Id = ?", sql:getPrefix(), rank, playerId)
 end
 
@@ -355,12 +357,12 @@ end
 
 function Faction:respawnVehicles( isAdmin )
 	local time = getRealTime().timestamp
-	if self.m_LastRespawn and not isAdmin then 
+	if self.m_LastRespawn and not isAdmin then
 		if time - self.m_LastRespawn <= 900 then --// 15min
 			return self:sendShortMessage("Fahrzeug können nur alle 15 Minuten respawned werden!")
 		end
 	end
-	if isAdmin then 
+	if isAdmin then
 		self:sendShortMessage("Ein Admin hat eure Fraktionsfahrzeuge respawned!")
 		isAdmin:sendShortMessage("Du hast die Fraktionsfahrzeuge respawned!")
 	end

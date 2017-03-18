@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
-GroupManager.GroupCosts = 20000
+GroupManager.GroupCosts = 100000
 GroupManager.GroupTypes = {[1] = "Gang", [2] = "Firma"}
 for i, v in pairs(GroupManager.GroupTypes) do
 	GroupManager.GroupTypes[v] = i
@@ -32,7 +32,7 @@ function GroupManager:constructor()
 	-- Events
 	addRemoteEvents{"groupRequestInfo", "groupRequestLog", "groupCreate", "groupQuit", "groupDelete", "groupDeposit", "groupWithdraw",
 		"groupAddPlayer", "groupDeleteMember", "groupInvitationAccept", "groupInvitationDecline", "groupRankUp", "groupRankDown", "groupChangeName",
-		"groupSaveRank", "groupConvertVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo"}
+		"groupSaveRank", "groupConvertVehicle", "groupRemoveVehicle", "groupUpdateVehicleTuning", "groupOpenBankGui", "groupRequestBusinessInfo"}
 	addEventHandler("groupRequestInfo", root, bind(self.Event_RequestInfo, self))
 	addEventHandler("groupRequestLog", root, bind(self.Event_RequestLog, self))
 	addEventHandler("groupCreate", root, bind(self.Event_Create, self))
@@ -49,6 +49,7 @@ function GroupManager:constructor()
 	addEventHandler("groupChangeName", root, bind(self.Event_ChangeName, self))
 	addEventHandler("groupSaveRank", root, bind(self.Event_SaveRank, self))
 	addEventHandler("groupConvertVehicle", root, bind(self.Event_ConvertVehicle, self))
+	addEventHandler("groupRemoveVehicle", root, bind(self.Event_RemoveVehicle, self))
 	addEventHandler("groupUpdateVehicleTuning", root, bind(self.Event_UpdateVehicleTuning, self))
 	addEventHandler("groupOpenBankGui", root, bind(self.Event_OpenBankGui, self))
 	addEventHandler("groupRequestBusinessInfo", root, bind(self.Event_GetShopInfo, self))
@@ -134,6 +135,11 @@ function GroupManager:Event_Create(name, type)
 		return
 	end
 
+	if not name:match("^[a-zA-Z0-9_.- ]*$") then
+		client:sendError(_("Name enthält ungültige Zeichen!", client))
+		return
+	end
+
 	-- Does the group already exist?
 	if self:getByName(name) then
 		client:sendError(_("Eine Gang oder Firma mit diesem Namen existiert bereits!", client))
@@ -206,16 +212,19 @@ function GroupManager:Event_Delete()
 
 	-- Distribute group's money
   for playerId, playerRank in pairs(group.m_Players) do
-      local player, isOffline = DatabasePlayer.get(playerId)
-      if playerRank == GroupRank.Leader then
-          player:giveMoney(leaderAmount, "Gang/Firmen Auflösung")
-      else
-          player:giveMoney(memberAmount, "Gang/Firmen Auflösung")
-      end
+  	Async.create(
+		  function()
+			local player, isOffline = DatabasePlayer.get(playerId)
+			if isOffline then player:load() end
+			if playerRank == GroupRank.Leader then
+				player:giveMoney(leaderAmount, "Gang/Firmen Auflösung")
+			else
+				player:giveMoney(memberAmount, "Gang/Firmen Auflösung")
+			end
 
-      if isOffline then
-          delete(player)
-      end
+			if isOffline then delete(player) end
+		end
+	)()
   end
   	group:addLog(client, "Gang/Firma", "hat die "..group:getType().." gelöscht!")
 
@@ -365,11 +374,10 @@ function GroupManager:Event_RankUp(playerId)
 		if group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
 			group:setPlayerRank(playerId, group:getPlayerRank(playerId) + 1)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." befördert!")
-			local player, isOffline = DatabasePlayer.getFromId(playerId)
+			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d befördert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
-			if isOffline then delete(player) end
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du kannst den Spieler nicht up-ranken!", client))
@@ -398,11 +406,10 @@ function GroupManager:Event_RankDown(playerId)
 		if group:getPlayerRank(client:getId()) == GroupRank.Leader or group:getPlayerRank(playerId) < group:getPlayerRank(client:getId()) then
 			group:setPlayerRank(playerId, group:getPlayerRank(playerId) - 1)
 			group:addLog(client, "Gang/Firma", "hat den Spieler "..Account.getNameFromId(playerId).." auf Rang "..group:getPlayerRank(playerId).." degradiert!")
-			local player, isOffline = DatabasePlayer.getFromId(playerId)
+			local player = DatabasePlayer.getFromId(playerId)
 			if player and isElement(player) and player:isActive() then
 				player:sendShortMessage(_("Du wurdest von %s auf Rang %d degradiert!", player, client:getName(), group:getPlayerRank(playerId)), group:getName())
 			end
-			if isOffline then delete(player) end
 			self:sendInfosToClient(client)
 		else
 			client:sendError(_("Du kannst den Spieler nicht down-ranken!", client))
@@ -520,6 +527,25 @@ function GroupManager:Event_ConvertVehicle(veh)
 			end
 		else
 			client:sendError(_("Error no Vehicle!", client))
+		end
+	end
+end
+
+function GroupManager:Event_RemoveVehicle(veh)
+	local group = client:getGroup()
+	if group and veh then
+		if group:getPlayerRank(client) < GroupRank.Manager then
+			client:sendError(_("Dazu bist du nicht berechtigt!", client))
+			return
+		end
+
+		local status, newVeh = PermanentVehicle.convertVehicle(veh, client, group)
+		if status then
+			client:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", client))
+			group:addLog(client, "Fahrzeuge", "hat das Fahrzeug "..newVeh.getNameFromModel(newVeh:getModel()).." entfernt!")
+			self:sendInfosToClient(client)
+		else
+			client:sendError(_("Es ist ein Fehler aufgetreten!", client))
 		end
 	end
 end

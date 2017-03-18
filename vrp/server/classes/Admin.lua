@@ -525,7 +525,7 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
             local targetId = Account.getIdFromName(target)
             if targetId and targetId > 0 then
                 self:addPunishLog(admin, targetId, func, reason, 0)
-                sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
+                sql:queryExec("DELETE FROM ??_bans WHERE serial = ? OR player_id = ?;", sql:getPrefix(), Account.getLastSerialFromId(targetId), targetId)
 				outputChatBox("Der Spieler "..target.." wurde von "..getPlayerName(admin).." entbannt!",root, 200, 0, 0)
             else
                 admin:sendError(_("Spieler nicht gefunden!", admin))

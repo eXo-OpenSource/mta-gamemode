@@ -46,10 +46,10 @@ end
 
 function BankAccount:update()
   if self.m_OwnerType == BankAccountTypes.Player then
-    local player, isOffline = DatabasePlayer.getFromId(self.m_OwnerId)
+    local player, isOffline = DatabasePlayer.get(self.m_OwnerId)
     if isOffline then -- We do not require offline Players here
-      player:load()
-      delete(player)
+		player.m_DoNotSave = true
+		delete(player)
     end
 
     if player:isActive() then

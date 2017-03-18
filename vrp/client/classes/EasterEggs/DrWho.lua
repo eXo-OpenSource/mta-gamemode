@@ -21,7 +21,6 @@ function EasterEgg.DrWho:constructor()
 	self.m_RenderTardisAlpha = bind(EasterEgg.DrWho.renderTardisAlpha, self)
 
 	setTimer(self.m_SpawnTardis, 600000, 0)
-	--addCommandHandler("tar", self.m_SpawnTardis) --todo dev
 end
 
 function EasterEgg.DrWho:spawnTardis()

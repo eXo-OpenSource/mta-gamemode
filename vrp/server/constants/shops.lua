@@ -3,7 +3,7 @@ SHOP_TYPES = {
 		["Name"] = "Burger Shot",
 		["Interior"] = {10, Vector3(363.11, -74.88, 1001.5)},
 		["Ped"] = {205, Vector3(376.53, -65.59, 1001.51), 180},
-		["Marker"] = Vector3(376.60, -68.03, 1000.8),
+		["Marker"] = Vector3(376.60, -68.03, 1000.55),
 		["Class"] = BurgerShot
 	},
 	[2] = {

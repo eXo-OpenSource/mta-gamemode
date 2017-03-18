@@ -263,6 +263,9 @@ function FactionRescue:removeStretcher(player, vehicle)
 					deadPlayer:setCameraTarget(player)
 					deadPlayer:respawn(pos)
 					deadPlayer:fadeCamera(true, 1)
+
+					self.m_Faction:giveMoney(100, "Rescue Team Wiederbelebung")
+					player:giveMoney(50, "Rescue Team Wiederbelebung")
 				else
 					player:sendShortMessage(_("Der Spieler ist nicht Tod!", player))
 				end

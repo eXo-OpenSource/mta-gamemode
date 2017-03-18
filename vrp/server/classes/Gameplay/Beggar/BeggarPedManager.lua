@@ -32,7 +32,9 @@ end
 function BeggarPedManager:spawnPeds()
 	-- Delete current Peds
 	for i, v in pairs(self.Map) do
-		v:destroy()
+		if not v.vehicle then
+			v:destroy()
+		end
 	end
 
 	-- Create new Peds
@@ -53,6 +55,8 @@ function BeggarPedManager:getPhrase(beggarType, phraseType)
 		return Randomizer:getRandomTableValue(BeggarNoHelpPhrases)
 	elseif phraseType == BeggarPhraseTypes.Rob then
 		return Randomizer:getRandomTableValue(BeggarRobPhrases)
+	elseif phraseType == BeggarPhraseTypes.Decline then
+		return Randomizer:getRandomTableValue(BeggarDeclinePhrases)
 	end
 end
 

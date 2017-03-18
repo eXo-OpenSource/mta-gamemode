@@ -12,7 +12,7 @@ MWeaponTruck = inherit(Singleton)
 function MWeaponTruck:constructor()
 	self:createStartPoint(-1869.14, 1421.49, 6.2, "evil")
 	self:createStartPoint(117.28, 1884.58, 17, "state")
-	self.m_IsCurrentWT = false
+	self.m_CurrentWT = false
 	self.m_CurrentType = ""
 	addRemoteEvents{"onWeaponTruckLoad"}
 	addEventHandler("onWeaponTruckLoad", root, bind(self.Event_onWeaponTruckLoad, self))
@@ -88,46 +88,49 @@ function MWeaponTruck:onStartPointHit(hitElement, matchingDimension)
 end
 
 function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
-	local faction = client:getFaction()
-	local totalAmount = 0
-	if faction then
-		for weaponID,v in pairs(weaponTable) do
-			for typ,amount in pairs(weaponTable[weaponID]) do
-				if amount > 0 then
-					if typ == "Waffe" then
-						totalAmount = totalAmount + faction.m_WeaponDepotInfo[weaponID]["WaffenPreis"] * amount
-					elseif typ == "Munition" then
-						totalAmount = totalAmount + faction.m_WeaponDepotInfo[weaponID]["MagazinPreis"] * amount
+	if ActionsCheck:getSingleton():isActionAllowed(client) then
+		local faction = client:getFaction()
+		local totalAmount = 0
+		if faction then
+			for weaponID,v in pairs(weaponTable) do
+				for typ,amount in pairs(weaponTable[weaponID]) do
+					if amount > 0 then
+						if typ == "Waffe" then
+							totalAmount = totalAmount + faction.m_WeaponDepotInfo[weaponID]["WaffenPreis"] * amount
+						elseif typ == "Munition" then
+							totalAmount = totalAmount + faction.m_WeaponDepotInfo[weaponID]["MagazinPreis"] * amount
+						end
 					end
 				end
 			end
-		end
-		if faction:getMoney() >= totalAmount then
-			if totalAmount > 0 then
-				if ActionsCheck:getSingleton():isActionAllowed(client) then
-					if self.m_CurrentType == "evil" then
-						faction:takeMoney(totalAmount, "Waffen-Truck")
-					elseif self.m_CurrentType == "state" then
-						if not client:isFactionDuty() then
-							client:sendError(_("Du bist nicht im Dienst!",client))
-							return
-						end
-						faction:takeMoney(totalAmount, "Waffen-Truck")
-					end
-					client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
-					self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
-					PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
-					ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
-					StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_CurrentType], "start", client, client:getFaction(), "faction")
+			if faction:getMoney() >= totalAmount then
+				if totalAmount > 0 then
+					if ActionsCheck:getSingleton():isActionAllowed(client) then
 
+						if self.m_CurrentType == "evil" then
+							faction:takeMoney(totalAmount, "Waffen-Truck")
+						elseif self.m_CurrentType == "state" then
+							if not client:isFactionDuty() then
+								client:sendError(_("Du bist nicht im Dienst!",client))
+								return
+							end
+							faction:takeMoney(totalAmount, "Waffen-Truck")
+						end
+						ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
+						if self.m_CurrentWT then delete(self.m_CurrentWT) end
+						client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
+						self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
+						PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
+						StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_CurrentType], "start", client, client:getFaction(), "faction")
+					end
+				else
+					client:sendError(_("Du hast zuwenig augeladen! Mindestens: %d$",client,self.m_AmountPerBox))
 				end
 			else
-				client:sendError(_("Du hast zuwenig augeladen! Mindestens: %d$",client,self.m_AmountPerBox))
+				client:sendError(_("Ihr hast nicht ausreichend Geld in der Fraktions_Kasse! (%d$)",client,totalAmount))
 			end
 		else
-			client:sendError(_("Ihr hast nicht ausreichend Geld in der Fraktions_Kasse! (%d$)",client,totalAmount))
+			client:sendError(_("Du bist in keiner Fraktion!",client))
 		end
-	else
-		client:sendError(_("Du bist in keiner Fraktion!",client))
 	end
 end

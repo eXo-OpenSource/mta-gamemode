@@ -11,6 +11,7 @@
     <script src="hospital.lua" type="client" />
 	<script src="ZombieSurvival.lua" type="client" />
 	<script src="tour.lua" type="client" />
+	<script src="GravelJob.lua" type="client" />
 
     <script src="Cutscene/Scene.lua" type="client" />
     <script src="Cutscene/Cutscene.lua" type="client" />

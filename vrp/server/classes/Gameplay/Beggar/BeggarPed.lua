@@ -126,6 +126,12 @@ end
 function BeggarPed:acceptTransport(player)
 	if player.vehicle and player.vehicleSeat == 0 then
 		local veh = player.vehicle
+
+		if not instanceof(veh, PermanentVehicle, true) then
+			self:sendMessage(player, BeggarPhraseTypes.Decline)
+			return
+		end
+
 		for seat = 1, veh.maxPassengers do
 			if not veh:getOccupant(seat) then
 				local pos = Randomizer:getRandomTableValue(BeggarTransportPositions)

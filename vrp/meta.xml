@@ -56,6 +56,7 @@
 	<script src="server/classes/Config.lua" type="server"/>
 	<script src="server/classes/Storage/SQL.lua" type="server"/>
 	<script src="server/classes/Storage/MySQL.lua" type="server"/>
+	<script src="server/classes/Storage/Teamspeak/TSConnect.lua" type="server"/>
 	<script src="server/classes/Core.lua" type="server"/>
 	<script src="server/classes/Player/WhiteList.lua" type="server"/>
 	<script src="server/classes/PhoneInteraction.lua" type="server"/>
@@ -83,6 +84,7 @@
 	<script src="server/classes/PhoneNumbers.lua" type="server"/>
 	<script src="server/classes/Tour.lua" type="server"/>
 	<script src="server/classes/GlobalTimer.lua" type="server"/>
+	<script src="server/classes/ModdingCheck.lua" type="server"/>
 
 
 	<!-- Super -->
@@ -95,7 +97,7 @@
 	<script src="server/classes/Player/MultiAccount.lua" type="server"/>
 	<script src="server/classes/Player/DatabasePlayer.lua" type="server"/>
 	<script src="server/classes/Player/Player.lua" type="server"/>
-	<script src="server/classes/Player/Premium.lua" type="server"/>
+	<script src="server/classes/Player/PremiumPlayer.lua" type="server"/>
 	<script src="server/classes/Player/PlayerManager.lua" type="server"/>
 	<script src="server/classes/Player/WantedSystem.lua" type="server"/>
 
@@ -259,6 +261,7 @@
 	<script src="server/classes/Vehicles/Extensions/ELSSystem.lua" type="server"/>
 	<script src="server/classes/Vehicles/VehicleInteraction.lua" type="server"/>
 	<script src="server/classes/Vehicles/Extensions/Trunk.lua" type="server"/>
+	<script src="server/classes/Vehicles/GPS/GPS.lua" type="server"/>
 
 	<!-- Events -->
 	<script src="server/classes/Events/Event.lua" type="server"/>
@@ -605,6 +608,7 @@
 	<script src="client/classes/Cutscene/Cutscenes/Arrest.lua" type="client"/>
 	<!--<script src="client/classes/Cutscene/Cutscenes/Hospital.lua" type="client"/>-->
 	<script src="client/classes/Cutscene/Cutscenes/ZombieSurvival.lua" type="client"/>
+	<script src="client/classes/Cutscene/Cutscenes/GravelJob.lua" type="client"/>
 
 	<!-- Phone -->
 	<script src="client/classes/Phone/Phone.lua" type="client"/>
@@ -705,6 +709,7 @@
 	<script src="client/classes/Gameplay/ShootingRanch.lua" type="client"/>
 	<script src="client/classes/Gameplay/Fishing.lua" type="client"/>
 	<script src="client/classes/Gameplay/GasStation.lua" type="client"/>
+	<script src="client/classes/Gameplay/PremiumArea.lua" type="client"/>
 
 	<!-- Race -->
 	<script src="client/classes/Gameplay/Race/MovementRecorder.lua" type="client"/>
@@ -747,6 +752,9 @@
 	<vrpfile src="files/images/Chess/QueenB.png" />
 	<vrpfile src="files/images/Chess/PawnB.png" />
 	<vrpfile src="files/images/Chess/KnightB.png" />
+
+
+	<vrpfile src="files/images/warning.png" />
 
 	<!-- board piece -->
 	<vrpfile src="files/images/Chess/board.jpg" />
@@ -1164,6 +1172,9 @@
 	<vrpfile src="files/images/Textures/Special/13.png"/>
 	<vrpfile src="files/images/Textures/Special/14.png"/>
 	<vrpfile src="files/images/Textures/Special/15.png"/>
+	<vrpfile src="files/images/Textures/Company/Academi/cooperation_logo.png"/>
+	<vrpfile src="files/images/Textures/Company/Academi/cooperation_name.png"/>
+	<vrpfile src="files/images/Textures/vehiclegrunge256.png"/>
 
 	<!-- Inventory Images -->
 	<vrpfile src="files/images/Inventory/items.png" />
@@ -1502,6 +1513,8 @@
 	<vrpfile src="files/models/donut.txd"/>
 	<vrpfile src="files/models/donut.dff"/>
 	<vrpfile src="files/models/donut.col"/>
+	<vrpfile src="files/models/topfun.txd"/>
+	<vrpfile src="files/models/topfun.dff"/>
 
 
 	<!-- Shaders -->

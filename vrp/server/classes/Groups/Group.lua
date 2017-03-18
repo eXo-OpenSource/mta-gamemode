@@ -104,22 +104,24 @@ function Group:canVehiclesBeModified()
 end
 
 function Group:setName(name)
-  local timestamp = getRealTime().timestamp
-  if not sql:queryExec("UPDATE ??_groups SET Name = ?, lastNameChange = ?, RankNames = ?, RankLoans = ? WHERE Id = ?", sql:getPrefix(), name, timestamp, toJSON(self.m_RankNames), toJSON(self.m_RankLoans), self.m_Id) then
-    return false
-  end
-  triggerClientEvent("gangAreaOnGroupNameChange", root, self.m_Name, name)
+	local timestamp = getRealTime().timestamp
+	if not sql:queryExec("UPDATE ??_groups SET Name = ?, lastNameChange = ?, RankNames = ?, RankLoans = ? WHERE Id = ?", sql:getPrefix(), name, timestamp, toJSON(self.m_RankNames), toJSON(self.m_RankLoans), self.m_Id) then
+		return false
+	end
 
-  self.m_Name = name
-  self.m_LastNameChange = timestamp
+	self.m_Name = name
+	self.m_LastNameChange = timestamp
 
-  for i, player in pairs(self:getOnlinePlayers()) do
-    player:setPublicSync("GroupName", self:getName())
-	player:setPublicSync("GroupType", self:getType())
+	for i, player in pairs(self:getOnlinePlayers()) do
+		player:setPublicSync("GroupName", self:getName())
+		player:setPublicSync("GroupType", self:getType())
+	end
 
-  end
+	for k, vehicle in pairs(self:getVehicles()) do
+		setElementData(vehicle, "OwnerName", name)
+	end
 
-  return true
+	return true
 end
 
 function Group:saveRankSettings()

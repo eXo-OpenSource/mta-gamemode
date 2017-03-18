@@ -26,7 +26,9 @@ function DatabasePlayer:constructor(id)
 end
 
 function DatabasePlayer:destructor()
-	self:save()
+	if self.m_DoNotSave then
+		self:save()
+	end
 end
 
 function DatabasePlayer:virtual_constructor()
@@ -200,7 +202,6 @@ function DatabasePlayer:save()
 		else
 			spawnFac = 0
 		end
-
 		return sql:queryExec("UPDATE ??_character SET Skin=?, XP=?, Karma=?, Points=?, WeaponLevel=?, VehicleLevel=?, SkinLevel=?, Money=?, WantedLevel=?, TutorialStage=?, Job=?, SpawnLocation=?, LastGarageEntrance=?, LastHangarEntrance=?, Collectables=?, JobLevel=?, Achievements=?, BankAccount=?, HasPilotsLicense=?, HasTheory=?, hasDrivingLicense=?, hasBikeLicense=?, hasTruckLicense=?, PaNote=?, PrisonTime=?, GunBox=?, Bail=?, JailTime=? ,SpawnWithFacSkin=?, AltSkin=?, AlcoholLevel = ?, CJClothes = ? WHERE Id=?", sql:getPrefix(),
 			self.m_Skin, self.m_XP,	self.m_Karma, self.m_Points, self.m_WeaponLevel, self.m_VehicleLevel, self.m_SkinLevel,	self:getMoney(), self.m_WantedLevel, self.m_TutorialStage, 0, self.m_SpawnLocation, self.m_LastGarageEntrance, self.m_LastHangarEntrance,	toJSON(self.m_Collectables or {}, true), self:getJobLevel(), toJSON(self:getAchievements() or {}, true), self:getBankAccount() and self:getBankAccount():getId() or 0, self.m_HasPilotsLicense, self.m_HasTheory, self.m_HasDrivingLicense, self.m_HasBikeLicense, self.m_HasTruckLicense, self.m_PaNote, self:getRemainingPrisonTime(), toJSON(self.m_GunBox or {}, true), self.m_Bail or 0,self.m_JailTime or 0, spawnFac, self.m_AltSkin or 0, self.m_AlcoholLevel, toJSON(self.m_SkinData or {}), self:getId())
 	end
@@ -670,12 +671,13 @@ function DatabasePlayer:loadMigratorData()
 	end
 
 	VehicleManager:getSingleton():createVehiclesForPlayer(self)
-	Premium.constructor(self)
+	self.m_Premium = PremiumPlayer:new(self)
 end
 
 
-function DatabasePlayer:setPrison(duration)
-	self.m_PrisonTime = self.m_PrisonTime + duration
+function DatabasePlayer:setPrison(duration, forceTime)
+	self.m_PrisonTime = forceTime and duration or self.m_PrisonTime + duration
+
 	if self:isActive() then
 		if isTimer(self.m_PrisonTimer) then killTimer(self.m_PrisonTimer) end
 		if self.m_PrisonTime > 0 then
@@ -753,8 +755,8 @@ function DatabasePlayer:setNewNick(admin, newNick)
 		return false
 	end
 
-	
-	
+
+
 	if not newNick:match("^[a-zA-Z0-9_.%[%]]*$") or #newNick < 3 then
 		admin:sendError(_("Ungültiger Nickname!", admin))
 		return false

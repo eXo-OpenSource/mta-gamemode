@@ -9,15 +9,15 @@ function CutscenePlayer:playCutscene(name, finishcallback)
 	assert(self.m_CutsceneList[name])
 	setElementDimension(localPlayer, PRIVATE_DIMENSION_CLIENT)
 	self.m_Cutscene = Cutscene:new(self.m_CutsceneList[name])
-	self.m_Cutscene.onFinish = 
+	self.m_Cutscene.onFinish =
 		function(cutscene)
 			CutscenePlayer:getSingleton():stopCutscene()
 			setElementDimension(localPlayer, 0)
-			if finishcallback then 
+			if finishcallback then
 				finishcallback()
 			end
 		end;
-	
+
 	self.m_Cutscene:play()
 end
 

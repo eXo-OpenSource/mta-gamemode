@@ -7,14 +7,60 @@
 -- ****************************************************************************
 PermanentVehicle = inherit(Vehicle)
 
+-- This function converts a GroupVehicle into a normal vehicle (User/PermanentVehicle)
+function PermanentVehicle.convertVehicle(vehicle, player, Group)
+	if vehicle:isPermanent() then
+		if vehicle:getPositionType() == VehiclePositionType.World then
+			local position = vehicle:getPosition()
+			local rotation = vehicle:getRotation()
+			local model = vehicle:getModel()
+			local health = vehicle:getHealth()
+			local milage = vehicle:getMileage()
+			local r, g, b = getVehicleColor(vehicle, true)
+			local tunings = false
+			local texture = false
+			if Group:canVehiclesBeModified() then
+				texture = vehicle:getTexture() -- get texture replace instance
+				tunings = getVehicleUpgrades(vehicle) or {}
+			end
+
+			-- get Vehicle Trunk
+			local trunk = vehicle:getTrunk()
+			trunk:save()
+			local trunkId = trunk:getId()
+			trunk = nil
+
+			if vehicle:purge() then
+				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z, trunkId)
+				vehicle:setHealth(health)
+				vehicle:setColor(r, g, b)
+				vehicle:setMileage(milage)
+				if Group:canVehiclesBeModified() then
+					if texture and instanceof(texture, VehicleTexture) then
+						vehicle:setTexture(texture:getPath(), texture:getTexturePath(), true)
+					end
+
+					for k, v in pairs(tunings or {}) do
+						addVehicleUpgrade(vehicle, v)
+					end
+				end
+				return vehicle:save(), vehicle
+			end
+		end
+	end
+
+	return false
+end
+
 function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, fuel, lightColor, trunkId, texture, horn, neon, special, premium)
 	self.m_Id = Id
 	self.m_Owner = owner
-	self.m_Premium = toboolean(premium) or false
+	self.m_Premium = premium and toboolean(premium) or false
 
 	self:setCurrentPositionAsSpawn(positionType)
 
 	setElementData(self, "OwnerName", Account.getNameFromId(owner) or "None") -- Todo: *hide*
+	setElementData(self, "OwnerType", "player")
 	self.m_Keys = keys or {}
 	self.m_PositionType = positionType or VehiclePositionType.World
 
@@ -36,30 +82,34 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 
 	self:setFrozen(true)
 	self.m_HandBrake = true
-	self:setHealth(health or 1000)
+	self:setData( "Handbrake",  self.m_HandBrake , true )
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
 	self:setMileage(mileage)
 	self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
-
 end
 
 function PermanentVehicle:destructor()
 
 end
 
-function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation)
-  rotation = tonumber(rotation) or 0
-  if type(owner) == "userdata" then
-    owner = owner:getId()
-  end
-  if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color) VALUES(?, ?, ?, ?, ?, ?, 1000, 0)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation) then
-    local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-    enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, nil, nil, 1000)
-    VehicleManager:getSingleton():addRef(vehicle)
-    return vehicle
-  end
-  return false
+function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunkId)
+	rotation = tonumber(rotation) or 0
+	if type(owner) == "userdata" then
+		owner = owner:getId()
+	end
+
+	if trunkId == 0 or trunkId == nil then
+		trunkId = Trunk.create()
+	end
+
+	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId) then
+		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
+		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, {}, nil, nil, 1000, VehiclePositionType.World, nil, nil, nil, nil, trunkId)
+		VehicleManager:getSingleton():addRef(vehicle)
+		return vehicle
+	end
+	return false
 end
 
 function PermanentVehicle:purge()

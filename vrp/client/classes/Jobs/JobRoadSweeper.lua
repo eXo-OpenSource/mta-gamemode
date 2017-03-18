@@ -9,6 +9,7 @@ JobRoadSweeper = inherit(Job)
 
 function JobRoadSweeper:constructor()
 	Job.constructor(self, 16, 198.42, -1448.85, 13.02, 320, "Roadsweeper.png", "files/images/Jobs/HeaderRoadSweeper.png", _(HelpTextTitles.Jobs.RoadSweeper):gsub("Job: ", ""), _(HelpTexts.Jobs.RoadSweeper))
+	self:setJobLevel(JOB_LEVEL_SWEEPER)
 
 	self.m_Rubbish = {}
 

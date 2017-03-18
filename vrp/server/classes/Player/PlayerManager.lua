@@ -9,7 +9,8 @@ PlayerManager = inherit(Singleton)
 addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "requestWeaponLevelUp", "requestVehicleLevelUp",
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
-"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel"}
+"startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
+"premiumOpenVehiclesList", "premiumTakeVehicle"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -47,6 +48,11 @@ function PlayerManager:constructor()
 	addEventHandler("Event_moveToJail", root, bind(self.Event_moveToJail, self))
 	addEventHandler("onClientRequestTime",root, bind(self.Event_ClientRequestTime, self))
 	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
+	addEventHandler("premiumOpenVehiclesList",root, bind(self.Event_PremiumOpenVehiclesList, self))
+	addEventHandler("premiumTakeVehicle",root, bind(self.Event_PremiumTakeVehicle, self))
+
+
+
 
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
@@ -81,6 +87,15 @@ function PlayerManager:Event_DecreaseAlcoholLevel()
 	client:decreaseAlcoholLevel(ALCOHOL_LOSS)
 end
 
+function PlayerManager:Event_PremiumOpenVehiclesList()
+	client.m_Premium:openVehicleList()
+end
+
+function PlayerManager:Event_PremiumTakeVehicle(model)
+	client.m_Premium:takeVehicle(model)
+end
+
+
 function PlayerManager:Event_switchSpawnWithFaction( state )
 	client.m_SpawnWithFactionSkin = state
 end
@@ -93,7 +108,9 @@ end
 
 function PlayerManager:updatePlayerSync()
 	for k, v in pairs(getElementsByType("player")) do
-		v:updateSync()
+		if v and isElement(v) and v.updateSync then
+			v:updateSync()
+		end
 	end
 end
 

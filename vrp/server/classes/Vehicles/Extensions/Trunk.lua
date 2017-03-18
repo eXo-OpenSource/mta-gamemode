@@ -30,8 +30,8 @@ function Trunk.create()
 end
 
 function Trunk.load(Id)
+	local Id = Id
 	if Trunk.Map[Id] then return Trunk.Map[Id] end
-
 	if Id == 0 then	Id = Trunk.create()	end
 
 	local row = sql:queryFetchSingle("SELECT * FROM ??_vehicle_trunks WHERE Id = ?;", sql:getPrefix(), Id)

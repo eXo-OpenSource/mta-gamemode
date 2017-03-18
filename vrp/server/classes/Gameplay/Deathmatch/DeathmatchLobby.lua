@@ -213,7 +213,7 @@ end
 function DeathmatchLobby:onPlayerChat(player, text, type)
 	if type == 0 then
 		for playeritem, data in pairs(self.m_Players) do
-			playeritem:sendMessage(("#00ffff[%s] #808080%s: %s"):format(self.m_Name, player:getName(), text))
+			playeritem:outputChat(("#00ffff[%s] #808080%s: %s"):format(self.m_Name, player:getName(), text), 125, 255, 0)
 		end
 
 		return true

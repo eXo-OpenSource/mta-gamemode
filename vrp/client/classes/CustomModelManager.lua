@@ -36,10 +36,14 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/vehiclechange.txd", 2838)
 	self:loadImportDFF("files/models/vehiclechange.dff", 2838)
 
-	--Mushrooms
+	-- Mushrooms
 	self:loadImportTXD("files/models/mushrooms.txd", 1882)
 	self:loadImportCOL("files/models/mushroom01.col", 1882)
 	self:loadImportDFF("files/models/mushroom01.dff", 1882)
+
+	-- Replace dozer/dumper dff to improve stone handling ("schubsing") :D
+	self:loadImportDFF("files/models/dozer.dff", 486)
+	self:loadImportDFF("files/models/dumper.dff", 406)
 
 	self:loadImportTXD("files/models/mushrooms.txd", 1947)
 	self:loadImportCOL("files/models/mushroom02.col", 1947)
@@ -75,6 +79,10 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/bed.col", 1879)
 	self:loadImportDFF("files/models/bed.dff", 1879)
 
+	self:loadImportTXD("files/models/pickaxe.txd", 1858)
+	self:loadImportCOL("files/models/pickaxe.col", 1858)
+	self:loadImportDFF("files/models/pickaxe.dff", 1858)
+
 	self:loadImportTXD("files/models/donut.txd", 1915)
 	self:loadImportCOL("files/models/donut.col", 1915)
 	self:loadImportDFF("files/models/donut.dff", 1915)
@@ -85,8 +93,8 @@ function CustomModelManager:constructor()
 
 
 	-- Tardis EasterEgg
-	--self:loadImportTXD("files/models/tardis.txd", 1337)
-	--self:loadImportDFF("files/models/tardis.dff", 1337)
+	self:loadImportTXD("files/models/tardis.txd", 1881)
+	self:loadImportDFF("files/models/tardis.dff", 1881)
 
 	self:loadImportDFF("files/models/piss.dff", 1904)
 

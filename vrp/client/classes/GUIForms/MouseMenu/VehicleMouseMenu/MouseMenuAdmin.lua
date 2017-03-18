@@ -56,6 +56,14 @@ function VehicleMouseMenuAdmin:constructor(posX, posY, element)
 			end
 		)
 
+		self:addItem(_"Fahrzeug Handbremse lösen",
+			function()
+				if self:getElement() then
+					triggerServerEvent("vehicleToggleHandbrake", self:getElement())
+				end
+			end
+		)
+
 		self:addItem(_"Fahrzeug löschen",
 			function()
 				if not self:getElement() then return end

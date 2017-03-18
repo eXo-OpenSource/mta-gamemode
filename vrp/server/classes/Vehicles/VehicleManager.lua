@@ -42,6 +42,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleToggleHandbrake", root, bind(self.Event_toggleHandBrake, self))
 	addEventHandler("soundvanChangeURL", root, bind(self.Event_soundvanChangeURL, self))
 	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
+	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
@@ -182,7 +183,7 @@ function VehicleManager.loadVehicles()
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TexturePath, row.Horn, row.Neon, row.Special)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
@@ -387,7 +388,7 @@ function VehicleManager:refreshGroupVehicles(group)
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TexturePath, row.Horn, row.Neon, row.Special)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
@@ -420,7 +421,7 @@ function VehicleManager:Event_vehiclePark()
  	if not source or not isElement(source) then return end
  	self:checkVehicle(source)
 	if source:isPermanent() or instanceof(source, GroupVehicle) then
-		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup()) then
+		if source:hasKey(client) or client:getRank() >= RANK.Moderator or (instanceof(source, GroupVehicle) and  client:getGroup() and source:getGroup() and source:getGroup() == client:getGroup() and client:getGroup():getPlayerRank(client) >= GroupRank.Manager) then
 			if source:isBroken() then
 				client:sendError(_("Dein Fahrzeug ist kaputt und kann nicht geparkt werden!", client))
 				return
@@ -446,7 +447,7 @@ function VehicleManager:Event_vehiclePark()
  end
 
 function VehicleManager:Event_toggleHandBrake()
-	if client:getCompany() and client:getCompany():getId() == 2 then
+	if client:getCompany() and client:getCompany():getId() == 2 or client:getRank() >= RANK.Moderator then
 		if source.m_HandBrake then
 			source:toggleHandBrake(client)
 			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
@@ -741,6 +742,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 	end
 	if source:isPermanent() then
 		client:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
+
 		if getElementData(source, "OwnerName") then
 			local targetId = Account.getIdFromName(getElementData(source, "OwnerName"))
 			if targetId and targetId > 0 then
@@ -748,6 +750,8 @@ function VehicleManager:Event_vehicleDelete(reason)
 				if delTarget then
 					if isOffline then
 						delTarget:addOfflineMessage("Dein Fahrzeug ("..source:getName().." wurde von "..client:getName().." gelöscht. ("..reason..")!",1)
+
+						delTarget.m_DoNotSave = true
 						delete(delTarget)
 					else
 						delTarget:sendInfo(_("%s von Besitzer %s wurde von Admin %s gelöscht! Grund: %s", client, source:getName(), getElementData(source, "OwnerName") or "Unknown", client:getName(), reason))
@@ -758,6 +762,7 @@ function VehicleManager:Event_vehicleDelete(reason)
 			end
 		end
 		-- Todo Add Log
+		StatisticsLogger:getSingleton():addVehicleDeleteLog(source:getOwner(), client, source:getModel())
 		source:purge()
 	else
 		destroyElement(source)
@@ -936,5 +941,15 @@ function VehicleManager:Event_soundvanStopSound()
 	if source.m_Special and source.m_Special == VehicleSpecial.Soundvan then
 		source.m_SoundURL = nil
 		triggerClientEvent("soundvanStopSoundClient", source, url)
+	end
+end
+
+function VehicleManager:Event_TrailerAttach(truck)
+	if not getVehicleOccupant(truck) then return end
+	if not instanceof(truck, PermanentVehicle) then return end
+	if not instanceof(source, PermanentVehicle) then return end
+
+	if source:getOwner() == truck:getOwner() then
+		source:setFrozen(false)
 	end
 end

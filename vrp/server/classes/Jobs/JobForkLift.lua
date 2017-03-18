@@ -7,6 +7,8 @@
 -- ****************************************************************************
 JobForkLift = inherit(Job)
 
+local MONEY_PER_BOX = 60
+
 function JobForkLift:constructor()
 	Job.constructor(self)
 	self.m_VehicleSpawner = VehicleSpawner:new(88.162, -250.316, 0.85, {"Forklift"}, 90, bind(Job.requireVehicle, self))
@@ -25,6 +27,14 @@ function JobForkLift:start(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, true)
 end
 
+function JobForkLift:checkRequirements(player)
+	if not (player:getJobLevel() >= JOB_LEVEL_FORKLIFT) then
+		player:sendError(_("Für diesen Job benötigst du mindestens Joblevel %d", player, JOB_LEVEL_FORKLIFT), 255, 0, 0)
+		return false
+	end
+	return true
+end
+
 function JobForkLift:stop(player)
 	self:destroyJobVehicle(player)
 	self.m_VehicleSpawner:toggleForPlayer(player, false)
@@ -37,7 +47,7 @@ end
 function JobForkLift:onBoxLoad(box)
 	if isElement(box) and table.find(self.m_Boxes, box) then
 		box:destroy()
-		client:giveMoney(60, "Gabelstapler-Job") --// Default 30
+		client:giveMoney(MONEY_PER_BOX, "Gabelstapler-Job")
 		if chance(50) then
 			client:givePoints(1)
 		end

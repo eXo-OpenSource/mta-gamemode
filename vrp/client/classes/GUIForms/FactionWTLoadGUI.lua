@@ -196,12 +196,12 @@ function FactionWTLoadGUI:addMunitionToCart(weapon)
 end
 
 function FactionWTLoadGUI:factionReceiveWeaponShopInfos()
-		triggerServerEvent("factionReceiveWeaponShopInfos",localPlayer)
+	triggerServerEvent("factionReceiveWeaponShopInfos",localPlayer)
 end
 
 function FactionWTLoadGUI:factionWeaponTruckLoad()
 	triggerServerEvent("onWeaponTruckLoad",root,self.m_Cart)
-	self:close()
+	delete(self)
 end
 
 addEventHandler("showFactionWTLoadGUI", root,

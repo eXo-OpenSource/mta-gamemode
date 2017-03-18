@@ -7,7 +7,7 @@ end
 PRIVATE_DIMENSION_CLIENT = 0
 setPlayerHudComponentVisible("all", false)
 showChat(false)
-Cutscene:new(SceneTour):play()
+Cutscene:new(SceneGravel):play()
 
 addEventHandler( "onClientResourceStop", getRootElement(),
     function ( stoppedRes )
