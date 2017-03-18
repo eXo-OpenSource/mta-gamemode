@@ -42,6 +42,7 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleToggleHandbrake", root, bind(self.Event_toggleHandBrake, self))
 	addEventHandler("soundvanChangeURL", root, bind(self.Event_soundvanChangeURL, self))
 	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
+	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
@@ -940,5 +941,15 @@ function VehicleManager:Event_soundvanStopSound()
 	if source.m_Special and source.m_Special == VehicleSpecial.Soundvan then
 		source.m_SoundURL = nil
 		triggerClientEvent("soundvanStopSoundClient", source, url)
+	end
+end
+
+function VehicleManager:Event_TrailerAttach(truck)
+	if not getVehicleOccupant(truck) then return end
+	if not instanceof(truck, PermanentVehicle) then return end
+	if not instanceof(source, PermanentVehicle) then return end
+
+	if source:getOwner() == truck:getOwner() then
+		source:setFrozen(false)
 	end
 end
