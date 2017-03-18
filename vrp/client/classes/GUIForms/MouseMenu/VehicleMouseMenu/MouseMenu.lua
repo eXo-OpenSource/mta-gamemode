@@ -95,7 +95,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 					end
 				)
 			end
-			self:addItem(_"An Server verkaufen",
+			--[[self:addItem(_"An Server verkaufen",
 				function()
 					if self:getElement() then
 						triggerServerEvent("vehicleSell", self:getElement())
@@ -108,7 +108,7 @@ function VehicleMouseMenu:constructor(posX, posY, element)
 						outputChatBox("[I] Begib dich zur Stadthalle und besorge dir einen Vertrag zum Verkaufen!",200, 200, 0, true)
 					end
 				end
-			)
+			)]]
 		end
 
 		if element:getVehicleType() ~= VehicleType.Trailer then
