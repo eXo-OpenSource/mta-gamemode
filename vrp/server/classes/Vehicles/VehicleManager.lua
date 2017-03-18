@@ -447,7 +447,7 @@ function VehicleManager:Event_vehiclePark()
  end
 
 function VehicleManager:Event_toggleHandBrake()
-	if client:getCompany() and client:getCompany():getId() == 2 then
+	if client:getCompany() and client:getCompany():getId() == 2 or client:getRank() >= RANK.Moderator then
 		if source.m_HandBrake then
 			source:toggleHandBrake(client)
 			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
