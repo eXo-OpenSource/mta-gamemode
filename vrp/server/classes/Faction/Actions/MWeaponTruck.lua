@@ -114,11 +114,11 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 						end
 						faction:takeMoney(totalAmount, "Waffen-Truck")
 					end
+					ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
 					if self.m_CurrentWT then delete(self.m_CurrentWT) end
 					client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
 					self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
 					PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
-					ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
 					StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_CurrentType], "start", client, client:getFaction(), "faction")
 				else
 					client:sendError(_("Du hast zuwenig augeladen! Mindestens: %d$",client,self.m_AmountPerBox))
