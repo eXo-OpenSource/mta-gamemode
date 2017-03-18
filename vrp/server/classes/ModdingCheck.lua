@@ -42,6 +42,8 @@ function ModdingCheck:handleOnPlayerModInfo ( filename, modList )
 					tNames[#tNames+1] = item.id.." - "..item.name
 				end
 			end
+		elseif item.id >= 321 and item.id <= 372 then -- Weapons
+			--Allow Weapon Mods
 		else
 			if item.sizeX then
 				differenceX = math.abs(item.originalSizeX - item.sizeX)
