@@ -504,13 +504,14 @@ function GroupGUI:VehicleLocateButton_Click()
 
 	local x, y, z = getElementPosition(item.VehicleElement)
 	local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+	local marker = createMarker(x, y, z + 2, "arrow", .6, 60, 255, 130)
 	blip:setZ(z)
 	--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
 		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier, um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeugortung", Color.DarkLightBlue, -1)
-		.m_Callback = function (this)
-			if blip then
-				delete(blip)
-			end
+		.m_Callback =
+		function (this)
+			if blip then delete(blip) end
+			if isElement(marker) then marker:destroy() end
 			delete(this)
 		end
 	--else
