@@ -186,10 +186,7 @@ function MechanicTow:onAttachVehicleToTow(towTruck)
 	local driver = getVehicleOccupant( towTruck )
 	if driver then
 		if towTruck.getCompany and towTruck:getCompany() == self then
-			local io = instanceof(source, GroupVehicle, true)
-			outputChatBox("GroupVehicle: " .. tostring(io))
-
-			if instanceof(source, PermanentVehicle, true) or io then
+			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) then
 				source:toggleRespawn(false)
 			else
 				driver:sendInfo(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
@@ -204,29 +201,13 @@ function MechanicTow:onDetachVehicleFromTow( towTruck )
 	local driver = getVehicleOccupant( towTruck )
 	if driver and driver.m_InTowLot then
 		if towTruck.getCompany and towTruck:getCompany() == self then
-			local io = instanceof(source, GroupVehicle, true)
-			outputChatBox("GroupVehicle: " .. tostring(io))
-
-			if instanceof(source, PermanentVehicle, true) or io then
+			if instanceof(source, PermanentVehicle, true) or instanceof(source, GroupVehicle, true) then
 				self:respawnVehicle(source)
 				driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
 				StatisticsLogger:getSingleton():vehicleTowLogs(driver, source)
-			end
-
-			--[[if source.getOwner or source.getGroup then
-				local owner = source:getOwner()
-				if type(owner) == "number" then
-					if not source.getCompany and not source.getFaction then
-						self:respawnVehicle( source )
-						driver:sendInfo(_("Das Fahrzeug ist nun abgeschleppt!", driver))
-						StatisticsLogger:getSingleton():vehicleTowLogs( driver, source)
-					end
-				else
-					driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
-				end
 			else
-				driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden! kykyky", driver))
-			end]]
+				driver:sendError(_("Dieses Fahrzeug kann nicht abgeschleppt werden!", driver))
+			end
 		end
 	end
 end
