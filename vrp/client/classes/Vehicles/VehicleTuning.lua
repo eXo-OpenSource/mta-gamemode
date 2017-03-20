@@ -49,7 +49,7 @@ end
 function VehicleTuning:setTexture(texture)
 	if self.m_Texture then delete(self.m_Texture) end
 	if TextureReplace.Map[self.m_Vehicle] then delete(TextureReplace.Map[self.m_Vehicle]) end
-	if texture and texture.len > 3 then
+	if texture and texture:len() > 3 then
 		self.m_Texture = TextureReplace:new(self.m_Vehicle:getTextureName(), texture, false, 250, 250, self.m_Vehicle)
 	end
 end
