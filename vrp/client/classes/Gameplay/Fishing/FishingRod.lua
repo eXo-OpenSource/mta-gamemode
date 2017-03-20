@@ -40,6 +40,7 @@ function FishingRod:destructor()
 	toggleAllControls(true)
 	unbindKey("mouse1", "both", self.m_HandleClick)
 	removeEventHandler("onClientRender", root, self.m_Render)
+	if isTimer(self.m_nibblingTimer) then killTimer(self.m_nibblingTimer) end
 
 	delete(self.FishingMap)
 	self.m_FishingRod:destroy()

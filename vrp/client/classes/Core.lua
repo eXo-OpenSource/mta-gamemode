@@ -174,7 +174,7 @@ function Core:afterLogin()
 	setTimer(function()	NoDm:getSingleton():checkNoDm() end, 2500, 1)
 
 	PlantGUI.load()
-	--Fishing.load()
+	Fishing.load()
 	GUIForm3D.load()
 	NonCollidingSphere.load()
 

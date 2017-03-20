@@ -715,6 +715,7 @@
 	<script src="client/classes/Gameplay/Fishing/FishingLocation.lua" type="client"/>
 	<script src="client/classes/Gameplay/Fishing/FishingRod.lua" type="client"/>
 	<script src="client/classes/Gameplay/Fishing/BobberBar.lua" type="client"/>
+	<script src="client/classes/Gameplay/Fishing/Fishing.lua" type="client"/>
 
 	<!-- Race -->
 	<script src="client/classes/Gameplay/Race/MovementRecorder.lua" type="client"/>

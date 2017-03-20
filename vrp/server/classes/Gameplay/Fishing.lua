@@ -46,15 +46,15 @@ Fishing.Fish = {
 	{name = "Walleye", de = "Glasaugenbarsch", location = {"river", "lake"}, difficulty = 45, behavior = "smooth", weather = 0, times = {0, 200, 1200, 2400}, size = {25, 104}},
 }
 
-addRemoteEvents{"clientFishHit", "clientFishCaught"}
+addRemoteEvents{"clientFishHit", "clientFishCaught", "fishingPedClick"}
 
 function Fishing:constructor()
 	self.Random = Randomizer:new()
-
-	outputChatBox("Fish server")
 	self.m_Players = {}
+
 	addEventHandler("clientFishHit", root, bind(Fishing.FishHit, self))
 	addEventHandler("clientFishCaught", root, bind(Fishing.FishCaught, self))
+	addEventHandler("fishingPedClick", root, bind(Fishing.onPedClick, self))
 end
 
 function Fishing:destructor()
@@ -119,9 +119,22 @@ function Fishing:FishHit(location)
 	local fish = self:getFish(location, time, weather)
 
 	client:triggerEvent("fishingBobberBar", fish)
-	client.HittedFish = fish
+
+	self.m_Players[client] = {
+		lastFish = fish,
+		lastFishHit = getTickCount(),
+		caught = {}
+	}
 end
 
 function Fishing:FishCaught()
-	outputChatBox(("Caught: %s"):format(client.HittedFish.name))
+	if not self.m_Players[client] then return end
+	local tbl = self.m_Players[client]
+
+	outputChatBox(("Caught: %s [%s]"):format(tbl.lastFish.name, getTickCount() - tbl.lastFishHit))
+	table.insert(tbl.caught, tbl.lastFish)
+end
+
+function Fishing:onPedClick()
+
 end

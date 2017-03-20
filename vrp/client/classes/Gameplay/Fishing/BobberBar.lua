@@ -12,7 +12,7 @@ local screenWidth, screenHeight = guiGetScreenSize()
 local playerFishingLevel = 1
 
 function BobberBar:constructor(difficulty, behavior)
-	self.m_Size = Vector2(100, screenHeight/2)
+	self.m_Size = Vector2(58, screenHeight/2)
 	self.m_RenderTarget = DxRenderTarget(self.m_Size, true)
 	self.m_AnimationMultiplicator = 0
 
@@ -164,21 +164,22 @@ function BobberBar:updateRenderTarget()
 	self.m_RenderTarget:setAsTarget()
 
 	-- Draw Background
-	dxDrawRectangle(0, 0, self.m_Size, tocolor(40, 40, 40, 150))
+	dxDrawRectangle(0, 0, self.m_Size, tocolor(80, 80, 80, 150))
 
 	-- Draw BobberBar
 	dxSetBlendMode("modulate_add")
-	dxDrawImage(50, 5, 30, self.m_Size.y-10, "files/images/Fishing/BobberBarBG.png")
-	dxDrawRectangle(49, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50, self.m_BobberInBar and 255 or 200))
+	dxDrawImage(5, 5, 30, self.m_Size.y-10, "files/images/Fishing/BobberBarBG.png")
+	dxDrawRectangle(4, self.m_BobberBarPosition, 32, self.m_BobberBarHeight, tocolor(0, 225, 50, self.m_BobberInBar and 255 or 200))
 	dxSetBlendMode("blend")
 
 	-- Draw Bobber (Fish)
-	dxDrawImage(51, self.m_BobberPosition, 28, 28, "files/images/Fishing/Fish.png", 0, 0, 0, tocolor(115, 200, 230))
+	dxDrawImage(6, self.m_BobberPosition, 28, 28, "files/images/Fishing/Fish.png", 0, 0, 0, tocolor(115, 200, 230))
 
 	-- Draw Progressbar
 	local progress_height = self.HEIGHT*(self.m_Progress/100)
-	dxDrawRectangle(82, 5, 13, self.m_Size.y-10, tocolor(200, 80, 80))	--progress bg
-	dxDrawRectangle(82, self.POSITION_DOWN - progress_height, 13, progress_height, tocolor(255, 200, 0)) --progressbar
+	local progress_color = tocolor(255*(1-self.m_Progress/100), 255*self.m_Progress/100, 0)
+	dxDrawRectangle(40, 5, 13, self.m_Size.y-10, tocolor(210, 125, 30))	--progress bg
+	dxDrawRectangle(40, self.POSITION_DOWN - progress_height, 13, progress_height, progress_color) --progressbar
 
 	dxSetRenderTarget()
 end
