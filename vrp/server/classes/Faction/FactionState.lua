@@ -1279,6 +1279,7 @@ function FactionState:Event_freePlayer(target)
 end
 
 function FactionState:addBugLog(player, func, msg)
+	self:refreshBugs()
 	if not self:isBugActive() then return end
 	local colSize = CHAT_TALK_RANGE
 
@@ -1307,7 +1308,18 @@ function FactionState:addBugLog(player, func, msg)
 end
 
 function FactionState:Event_loadBugs()
+	self:refreshBugs()
 	client:triggerEvent("receiveBugs", self.m_Bugs)
+end
+
+function FactionState:refreshBugs()
+	for id, bugData in pairs(self.m_Bugs) do
+		if bugData["element"] and isElement(bugData["element"]) then
+			bugData["active"] = true
+		else
+			self.m_Bugs[id] = {}
+		end
+	end
 end
 
 function FactionState:getFreeBug()
@@ -1329,6 +1341,7 @@ function FactionState:isBugActive()
 end
 
 function FactionState:Event_attachBug()
+	self:refreshBugs()
 	local id = self:getFreeBug()
 	if id then
 		local typeName = source:getType() == "vehicle" and "Fahrzeug" or "Spieler"
