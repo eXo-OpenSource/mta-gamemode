@@ -707,11 +707,13 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 						end
 						if force == true or (target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle) then
 							if isControlEnabled(target, "enter_exit") and (not bool or bool == true) then
-								player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
-								target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
 								toggleControl(target, "enter_exit", false)
 								toggleControl(target, "fire", false)
 								addEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
+								if not force then
+									player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
+									target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
+								end
 							else
 								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
 								target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
