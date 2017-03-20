@@ -31,7 +31,7 @@ function KeyBinds:constructor()
 	  ["KeyIndicatorRight"]      = {["defaultKey"] = ".", ["name"] = "Blinker Rechts", ["func"] = function() Indicator:getSingleton():switchIndicatorState("right") end};
 	  ["KeyIndicatorWarn"]       = {["defaultKey"] = "-", ["name"] = "Warnblinkanlage", ["func"] = function() Indicator:getSingleton():switchIndicatorState("warn") end};
 	  ["KeyToggleCursor"]        = {["defaultKey"] = "b", ["name"] = "Cursor", ["load"] = function () Cursor:loadBind() end, ["unload"] = function () Cursor:unloadBind() end};
-	  ["KeyCruiseControl"]       = {["defaultKey"] = "j", ["name"] = "Tempomat", ["func"] = self.m_CruiseControl, ["trigger"] = "both"};
+	  ["KeyCruiseControl"]       = {["defaultKey"] = "j", ["name"] = "Tempolimiter", ["func"] = self.m_CruiseControl, ["trigger"] = "both"};
 
 	  --Disabled cause of MTA Bug #9178
 	--  ["KeyChatFaction"]         = {["defaultKey"] = "1", ["name"] = "Chat: Fraktion", ["func"] = "chatbox", ["extra"] = "Fraktion"};
