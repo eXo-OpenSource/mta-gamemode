@@ -366,7 +366,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 
 		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
 			if localPlayer:getFaction():isStateFaction() then
-				triggerServerEvent("factionStateToggleDuty", localPlayer)
+				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
 				triggerServerEvent("factionRescueToggleDuty", localPlayer)
 			end
