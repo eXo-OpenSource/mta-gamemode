@@ -33,9 +33,6 @@ function VehicleShopGUI:destructor()
 
 	showChat(true)
 	setCameraTarget(localPlayer, localPlayer)
-	setTimer(function()
-		setCameraTarget(localPlayer, localPlayer)
-	end, 2000, 1)
 	if self.m_InfoInstance then delete(self.m_InfoInstance) end
 	GUIForm.destructor(self)
 end
