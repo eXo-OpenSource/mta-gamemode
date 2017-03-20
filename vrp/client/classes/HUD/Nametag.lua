@@ -62,6 +62,7 @@ function Nametag:draw()
 	bRifleCheck = self:_weaponCheck()
 	for player, _ in pairs( self.m_Stream ) do
 		if isElement(player) then
+			setPlayerNametagShowing(player, false)
 			bOnScreen = isElementOnScreen( player )
 			px,py,pz = getElementPosition(player)
 			bDistance = getDistanceBetweenPoints3D( cx, cy, cz, px, py, pz )

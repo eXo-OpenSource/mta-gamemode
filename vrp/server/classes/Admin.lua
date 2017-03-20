@@ -439,8 +439,10 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			col:destroy()
 			local count = 0
 			for index, vehicle in pairs(vehicles) do
-				vehicle:respawn(true)
-				count = count + 1
+				if vehicle:isRespawnAllowed() then
+					vehicle:respawn(true)
+					count = count + 1
+				end
 			end
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
         elseif func == "adminAnnounce" then

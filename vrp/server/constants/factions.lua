@@ -77,8 +77,8 @@ factionRankNames[1] = {
 [0] = "Cadet",
 [1] = "Officer",
 [2] = "Detective",
-[3] = "Captain",
-[4] = "Lieutnant",
+[3] = "Lieutnant",
+[4] = "Captain",
 [5] = "Deputy",
 [6] = "Chief"
 }

@@ -264,7 +264,13 @@ function LocalPlayer:Event_playerWasted()
 
 	local deathTime = MEDIC_TIME
 	local start = getTickCount()
-	self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, SMClick)
+
+	if localPlayer:isPremium() then
+		self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", deathTime/1000), nil, nil, deathTime, SMClick)
+	else
+		self.m_DeathMessage = ShortMessage:new(_("Du bist schwer verletzt und verblutest in %s Sekunden...", deathTime/1000), nil, nil, deathTime)
+	end
+
 	self.m_CanBeRevived = true
 	self.m_WastedTimer = setTimer(
 		function()
@@ -272,7 +278,11 @@ function LocalPlayer:Event_playerWasted()
 			if timeGone >= deathTime-500 then
 				funcA()
 			else
-				self.m_DeathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
+				if localPlayer:isPremium() then
+					self.m_DeathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...\n(Drücke hier um dich umzubringen)", math.floor((deathTime - timeGone)/1000))
+				else
+					self.m_DeathMessage.m_Text = _("Du bist schwer verletzt und verblutest in %s Sekunden...", math.floor((deathTime - timeGone)/1000))
+				end
 				self.m_DeathMessage:anyChange()
 			end
 		end, 1000, deathTime/1000
@@ -356,7 +366,7 @@ function LocalPlayer:toggleAFK(state, teleport)
 
 		if localPlayer:getPublicSync("Faction:Duty") and localPlayer:getFaction() then
 			if localPlayer:getFaction():isStateFaction() then
-				triggerServerEvent("factionStateToggleDuty", localPlayer)
+				triggerServerEvent("factionStateToggleDuty", localPlayer, true)
 			elseif localPlayer:getFaction():isRescueFaction() then
 				triggerServerEvent("factionRescueToggleDuty", localPlayer)
 			end

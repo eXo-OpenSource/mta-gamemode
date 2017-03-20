@@ -707,11 +707,13 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 						end
 						if force == true or (target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle) then
 							if isControlEnabled(target, "enter_exit") and (not bool or bool == true) then
-								player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
-								target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
 								toggleControl(target, "enter_exit", false)
 								toggleControl(target, "fire", false)
 								addEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
+								if not force then
+									player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
+									target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
+								end
 							else
 								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
 								target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
@@ -1277,6 +1279,7 @@ function FactionState:Event_freePlayer(target)
 end
 
 function FactionState:addBugLog(player, func, msg)
+	self:refreshBugs()
 	if not self:isBugActive() then return end
 	local colSize = CHAT_TALK_RANGE
 
@@ -1305,7 +1308,18 @@ function FactionState:addBugLog(player, func, msg)
 end
 
 function FactionState:Event_loadBugs()
+	self:refreshBugs()
 	client:triggerEvent("receiveBugs", self.m_Bugs)
+end
+
+function FactionState:refreshBugs()
+	for id, bugData in pairs(self.m_Bugs) do
+		if bugData["element"] and isElement(bugData["element"]) then
+			bugData["active"] = true
+		else
+			self.m_Bugs[id] = {}
+		end
+	end
 end
 
 function FactionState:getFreeBug()
@@ -1327,6 +1341,7 @@ function FactionState:isBugActive()
 end
 
 function FactionState:Event_attachBug()
+	self:refreshBugs()
 	local id = self:getFreeBug()
 	if id then
 		local typeName = source:getType() == "vehicle" and "Fahrzeug" or "Spieler"

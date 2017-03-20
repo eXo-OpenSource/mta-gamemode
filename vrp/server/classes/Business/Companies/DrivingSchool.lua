@@ -68,7 +68,7 @@ function DrivingSchool:createDrivingSchoolMarker(pos)
             if getElementType(hitElement) == "player" then
                 local instructorTable = {}
 				for k, player in pairs(self:getOnlinePlayers()) do
-					instructorTable[player.name] = player:getPublicSync("Company:Duty") and "(Im Dienst)" or "(Nicht im Dienst)"
+					instructorTable[player.name] = player:getPublicSync("Company:Duty") and "Ja" or "Nein"
 				end
 
 				hitElement:triggerEvent("showDrivingSchoolMenu",#self:getOnlinePlayers(), instructorTable)

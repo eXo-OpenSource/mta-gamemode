@@ -11,6 +11,8 @@ function Indicator:constructor()
 	self.ms_SwitchTimes = { 300, 400 }     -- In miliseconds. First is time to switch them off, second to switch them on.
 	self.ms_SwitchOffThreshold = 62   -- A value in degrees ranging (0, 90) preferibly far from the limits.
 	self.m_RenderBind = bind(self.render, self)
+	self.m_KeyBind = bind(self.vehicleSteering, self)
+	self.m_TurnOffThreshold = 700 --ms
 
 	self.ms_SwitchOffThreshold = self.ms_SwitchOffThreshold / 90
 
@@ -22,6 +24,8 @@ function Indicator:constructor()
 
 	addCommandHandler('indicator_left', function () self:switchIndicatorState('left') end, false)
 	addCommandHandler('indicator_right', function () self:switchIndicatorState('right') end, false)
+	bindKey("vehicle_left", "both", self.m_KeyBind)
+	bindKey("vehicle_right", "both", self.m_KeyBind)
 end
 
 function Indicator:loadData()
@@ -302,7 +306,7 @@ function Indicator:processIndicators ( state )
     end
 
     -- Check if we must automatically deactivate the indicators.
-    if state.activationDir then
+    --[[if state.activationDir then
         -- Get the current velocity and normalize it
         local currentVelocity = self:normalizeVector ( { getElementVelocity ( state.vehicle ) } )
 
@@ -317,6 +321,7 @@ function Indicator:processIndicators ( state )
         -- Get the length of the resulting vector to calculate the "amount" of direction change [0..1].
         local length = self:vectorLength ( cross )
 
+		outputChatBox(("%s > %s"):format(length, self.ms_SwitchOffThreshold))
         -- If the turn is over the threshold, deactivate the indicators
         if length > self.ms_SwitchOffThreshold then
             -- Destroy the state
@@ -324,7 +329,7 @@ function Indicator:processIndicators ( state )
             self.m_AllowedVehicles [ state.vehicle ] = nil
             return
         end
-    end
+    end]]
 
     -- Check if we must switch the state
     if state.nextChange <= state.timeElapsed then
@@ -421,15 +426,22 @@ function Indicator:render(timeSlice)
     end
 end
 
+function Indicator:vehicleSteering(key, state)
+	if not localPlayer.vehicle then return end
+	if getElementData(localPlayer.vehicle, "i:warn") then return end
 
-function Indicator:handleKeyBind( keyPressed, keyState )
-    if (keyPressed == ",") then
-        self:switchIndicatorState('left')
-    elseif (keyPressed == ".") then
-        self:switchIndicatorState('right')
-	elseif (keyPressed == "-") then
-        self:switchIndicatorState('warn')
-    end
+	if state == "down" then
+		self.m_VehicleLeft = key == "vehicle_left" and getTickCount() or self.m_VehicleLeft
+		self.m_VehicleRight = key == "vehicle_right" and getTickCount() or self.m_VehicleRight
+	elseif state == "up" and key == "vehicle_left" and getElementData(localPlayer.vehicle, "i:left") then
+		if getTickCount() - self.m_VehicleLeft > self.m_TurnOffThreshold then
+			self:switchIndicatorState("left")
+		end
+	elseif state == "up" and key == "vehicle_right" and getElementData(localPlayer.vehicle, "i:right") then
+		if getTickCount() - self.m_VehicleRight > self.m_TurnOffThreshold then
+			self:switchIndicatorState("right")
+		end
+	end
 end
 
 function Indicator:toggle()

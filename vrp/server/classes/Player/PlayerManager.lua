@@ -532,7 +532,7 @@ function PlayerManager:Event_startAnimation(animation)
 
 	if ANIMATIONS[animation] then
 		local ani = ANIMATIONS[animation]
-		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], true, ani["interruptable"], ani["freezeLastFrame"])
+		client:setAnimation(ani["block"], ani["animation"], -1, ani["loop"], false, ani["interruptable"], ani["freezeLastFrame"])
 		if client.animationObject and isElement(client.animationObject) then client.animationObject:destroy() end
 		if ani.object then
 			client.animationObject = createObject(ani.object, 0, 0, 0)
