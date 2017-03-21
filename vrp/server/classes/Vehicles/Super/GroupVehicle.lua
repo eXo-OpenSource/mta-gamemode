@@ -17,8 +17,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local health = vehicle:getHealth()
 			local milage = vehicle:getMileage()
 			local r, g, b = getVehicleColor(vehicle, true)
-			local tunings = false
-			local texture = false
+			local tuningJSON = vehicle.m_Tunings:getJSON()
 
 			-- get Vehicle Trunk
 			local trunk = vehicle:getTrunk()
@@ -26,24 +25,13 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local trunkId = trunk:getId()
 			trunk = nil
 
-			if Group:canVehiclesBeModified() then
-				texture = vehicle:getTexture() -- get texture replace instance
-				tunings = getVehicleUpgrades(vehicle) or {}
-			end
-
 			if vehicle:purge() then
 				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z, trunkId)
 				vehicle:setHealth(health)
 				vehicle:setColor(r, g, b)
 				vehicle:setMileage(milage)
 				if Group:canVehiclesBeModified() then
-					if texture and instanceof(texture, VehicleTexture) then
-						vehicle:setTexture(texture:getPath(), texture:getTexturePath(), true)
-					end
-
-					for k, v in pairs(tunings or {}) do
-						addVehicleUpgrade(vehicle, v)
-					end
+					vehicle.m_Tunings = VehicleTuning:new(self, tuningJSON)
 				end
 				return vehicle:save(), vehicle
 			end
