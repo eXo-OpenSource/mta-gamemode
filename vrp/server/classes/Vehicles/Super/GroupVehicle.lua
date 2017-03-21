@@ -97,7 +97,8 @@ function GroupVehicle:constructor(Id, Group, color, color2, health, positionType
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
 	self:setMileage(mileage)
-	self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
+	--self.m_Tunings = VehicleTuning:new(self, tuningJSON)
+	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 end
 
 function GroupVehicle:destructor()

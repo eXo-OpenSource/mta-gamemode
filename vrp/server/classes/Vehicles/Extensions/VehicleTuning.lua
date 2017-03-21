@@ -42,16 +42,13 @@ function VehicleTuning:applyTuning()
 		addVehicleUpgrade(self.m_Vehicle, v)
 	end
 
-	self.m_Vehicle:setData("Neon", self.m_Tuning["Neon"], true)
-	self.m_Vehicle:setData("NeonColor", self.m_Tuning["NeonColor"], true)
+	self:updateNeon()
 
 	if self.m_Tuning["Special"] > 0 then
 		self.m_Vehicle:setSpecial(self.m_Tuning["Special"])
 	end
 
-	if self.m_Tuning["CustomHorn"] > 0 then
-		self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
-	end
+	self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
 
 	if #self.m_Tuning["Texture"] > 3 then
 		self.m_Vehicle:setTexture(self.m_Tuning["Texture"], nil, true)
@@ -72,11 +69,11 @@ function VehicleTuning:createNew()
 end
 
 function VehicleTuning:saveTuning(type, data)
-	if self.m_Tuning[type] then
-		self.m_Tuning[type] = data
-	else
-		outputDebugString("Invalid Tuning Type "..type)
-	end
+	--if self.m_Tuning[type] then
+	self.m_Tuning[type] = data
+	--else
+	--	outputDebugString("Invalid Tuning Type "..type)
+	--end
 end
 
 function VehicleTuning:saveGTATuning()
@@ -98,4 +95,15 @@ function VehicleTuning:loadTuningFromVehicle()
 	self.m_Tuning["Neon"] = self.m_Vehicle:getData("Neon")
 	self.m_Tuning["NeonColor"] = self.m_Vehicle:getData("NeonColor")
 	self.m_Tuning["Texture"] = self.m_Vehicle.m_Texture and self.m_Vehicle.m_Texture:getPath() or ""
+end
+
+function VehicleTuning:updateNeon()
+	local state = self.m_Tuning["Neon"]
+	self.m_Vehicle:setData("Neon", state, true)
+	if state == true then
+		self.m_Vehicle.m_Neon = self.m_Tuning["NeonColor"] or {255, 0, 0}
+		self.m_Vehicle:setData("NeonColor", self.m_Vehicle.m_Neon, true)
+	else
+		self.m_Vehicle.m_Neon = false
+	end
 end

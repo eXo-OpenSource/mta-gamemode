@@ -7,6 +7,17 @@ function Neon.initalize()
     addEventHandler("onClientElementStreamIn",getRootElement(),Neon.VehiclestreamedIn)
     addEventHandler("onClientElementStreamOut",getRootElement(),Neon.VehiclestreamedOut)
     addEventHandler("onClientPreRender", getRootElement(), Neon.Render)
+
+	addEventHandler("onClientElementDataChange", getRootElement(),
+		function(dataName)
+			if dataName == "Neon" or dataName == "NeonColor" then
+				if isElementStreamedIn(source) and getElementType(source) == "vehicle" then
+					if getElementData(source,"Neon") == true then
+						Neon.Vehicles[source] = true
+					end
+				end
+			end
+	end)
 end
 
 function Neon.getVehicleWheelPositions(vehicle)

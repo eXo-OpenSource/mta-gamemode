@@ -310,9 +310,9 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
             self.m_TexturePicker = VehicleTuningItemGrid:new(
                 "Neonröhren ein/ausbauen",
-                {_"Keine Neonröhre", _"Neonröhre einbauen"},
+                {[1] = _"Keine Neonröhre", [2] = _"Neonröhre einbauen"},
                 function(neon)
-                    local neonBool = neon == 1 and false or true
+                    local neonBool = neon == 2 and true or false
 					self.m_NewTuning:saveTuning(item.PartSlot, neonBool)
 					self.m_NewTuning:applyTuning()
 					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], neonBool)
