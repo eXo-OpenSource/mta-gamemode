@@ -18,11 +18,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 			local milage = vehicle:getMileage()
 			local r, g, b = getVehicleColor(vehicle, true)
 			local tunings = false
-			local texture = false
-			if Group:canVehiclesBeModified() then
-				texture = vehicle:getTexture() -- get texture replace instance
-				tunings = getVehicleUpgrades(vehicle) or {}
-			end
+			local tuningJSON = vehicle.m_Tunings:getJSON() or {}
 
 			-- get Vehicle Trunk
 			local trunk = vehicle:getTrunk()
@@ -36,13 +32,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 				vehicle:setColor(r, g, b)
 				vehicle:setMileage(milage)
 				if Group:canVehiclesBeModified() then
-					if texture and instanceof(texture, VehicleTexture) then
-						vehicle:setTexture(texture:getPath(), texture:getTexturePath(), true)
-					end
-
-					for k, v in pairs(tunings or {}) do
-						addVehicleUpgrade(vehicle, v)
-					end
+					vehicle.m_Tunings = VehicleTuning:new(vehicle, tuningJSON)
 				end
 				return vehicle:save(), vehicle
 			end
