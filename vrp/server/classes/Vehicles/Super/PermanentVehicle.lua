@@ -124,8 +124,8 @@ end
 
 function PermanentVehicle:save()
   local health = getElementHealth(self)
-
   if self.m_Trunk then self.m_Trunk:save() end
+
   return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, `Keys` = ?, PositionType = ?, TuningsNew = ?, Mileage = ?, Fuel = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
     self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, toJSON(self.m_Keys), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_Id)
 end
