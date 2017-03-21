@@ -50,8 +50,6 @@
 	<map src="jobs/helitransport.map" />
 	<map src="jobs/dumper.map" />
 
-	<map src="else/atm.map" />
-
 	<map src="noobroom.map" />
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
