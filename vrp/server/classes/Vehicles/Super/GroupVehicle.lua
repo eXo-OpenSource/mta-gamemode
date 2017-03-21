@@ -139,7 +139,7 @@ function GroupVehicle:save()
 	if self.m_Trunk then self.m_Trunk:save() end
 
 	return sql:queryExec("UPDATE ??_group_vehicles SET `Group` = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Mileage = ?, Fuel = ?, TrunkId = ?, TuningNew = ? WHERE Id = ?", sql:getPrefix(),
-   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, self:getMileage(), self:getFuel(), self.m_Trunk:getId(), self.m_Tunings:getJSON(), self.m_Id)
+   		self.m_Group:getId(), self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, self:getMileage(), self:getFuel(), self.m_Trunk and self.m_Trunk:getId() or 0, self.m_Tunings:getJSON(), self.m_Id)
 end
 
 function GroupVehicle:hasKey(player)

@@ -191,7 +191,7 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
                 vehicle:removeUpgrade(vehicle:getUpgradeOnSlot(upgradeId))
             end
         else
-			outputChatBox(slot..": "..tostring(upgradeId))
+			--outputChatBox(slot..": "..tostring(upgradeId))
 			vehicle.m_Tunings:saveTuning(slot, upgradeId)
         end
     end
