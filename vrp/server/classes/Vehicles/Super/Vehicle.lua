@@ -205,6 +205,20 @@ function Vehicle:toggleLight()
 	end
 end
 
+function Vehicle:setCustomHorn(id)
+	self.m_CustomHorn = id
+	if self:getOccupant() then
+		local player = self:getOccupant()
+		if id > 0 then
+			bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+		else
+			if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
+				unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+			end
+		end
+	end
+end
+
 function Vehicle:toggleEngine(player)
 	if self.m_DisableToggleEngine then return end
 	if self:hasKey(player) or player:getRank() >= RANK.Moderator or not self:isPermanent() or (self.getCompany and self:getCompany():getId() == 1 and player:getPublicSync("inDrivingLession") == true) then
@@ -407,73 +421,6 @@ end
 
 function Vehicle:isRespawnAllowed()
 	return self.m_RespawnAllowed
-end
-
-function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
-	if color then
-		local a, r, g, b = getBytesInInt32(color)
-		if color2 then
-			local a2, r2, g2, b2 = getBytesInInt32(color2)
-			setVehicleColor(self, r, g, b, r2, g2, b2)
-		else
-			setVehicleColor(self, r, g, b)
-		end
-	end
-
-	if lightColor then
-		local a, r, g, b = getBytesInInt32(lightColor)
-		setVehicleHeadLightColor(self, r, g, b)
-	end
-
-	if not type(tunings) == "table" then tunings = {} end
-	for k, v in pairs(tunings or {}) do
-		addVehicleUpgrade(self, v)
-	end
-	if texture and #texture > 3 then
-		self:setTexture(texture, nil, true)
-	end
-
-	if neon and fromJSON(neon) then
-		self:setNeon(1)
-		self:setNeonColor(fromJSON(neon))
-	else
-		self:setNeon(0)
-	end
-
-	if special and special > 0 then
-		self:setSpecial(special)
-	end
-	self:setCustomHorn(horn or 0)
-end
-
-function Vehicle:setCustomHorn(id)
-  self.m_CustomHorn = id
-  if self:getOccupant() then
-    if id > 0 then
-      bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-    else
-      if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
-        unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-      end
-    end
-  end
-end
-
-function Vehicle:setNeon(state)
-  self:setData("Neon", state, true)
-
-  if state == 1 then
-    self.m_Neon = {255, 0, 0}
-  else
-    self.m_Neon = false
-  end
-end
-
-function Vehicle:setNeonColor(colorTable)
-  if self.m_Neon then
-    self.m_Neon = colorTable
-    self:setData("NeonColor", colorTable, true)
-  end
 end
 
 function Vehicle:getTexture()

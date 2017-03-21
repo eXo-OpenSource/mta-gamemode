@@ -65,6 +65,6 @@ function MultiAccount.linkAccountToSerial(Id, serial)
 	local linkedAccounts = MultiAccount.getLinkedAccountsForSerial(serial)
 	if linkedAccounts then
 		table.insert(linkedAccounts, Id)
-		sql:queryExec("UPDATE ??_account_multiaccount SET LinkedTo = ?, allowCreate = 0 WHERE Serial = ?", sql:getPrefix(), toJSON(linkedAccounts), serial)
+		sql:queryExec("UPDATE ??_account_multiaccount SET LinkedTo = ?, allowCreate = 0", sql:getPrefix(), toJSON(linkedAccounts))
 	end
 end

@@ -12,7 +12,6 @@ addRemoteEvents{"gravelUpdateData", "gravelOnDozerSpawn", "gravelDisableCollissi
 
 function JobGravel:constructor()
 	Job.constructor(self, 16, 585.01, 869.73, -42.50, 270, "Gravel.png", "files/images/Jobs/HeaderGravel.png", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel), self.onInfo)
-	self:setJobLevel(JOB_LEVEL_GRAVEL)
 
 	-- add job to help menu
 	HelpTextManager:getSingleton():addText("Jobs", _(HelpTextTitles.Jobs.Gravel):gsub("Job: ", ""), _(HelpTexts.Jobs.Gravel))
@@ -25,15 +24,13 @@ function JobGravel:constructor()
 end
 
 function JobGravel:start()
-	QuestionBox:new(_"Willst du das Tutorial zum Kiesgruben-Job ansehen?", bind(self.onInfo, self))
-
 	self.m_Rocks = {}
 	self.m_RockCols = {}
 	self:generateRocks()
 
 	self.m_GravelDeliverCol = {
-		createColSphere(677.01, 827.03, -28.20, 5),
-		createColSphere(687.68, 846.27, -28.21, 5)
+		createColSphere(677.01, 827.03, -28.20, 4),
+		createColSphere(687.68, 846.27, -28.21, 4)
 	}
 
 	self.m_DumperDeliverCol = createColSphere(824.22, 919.35, 13.35, 10)
@@ -75,18 +72,47 @@ function JobGravel:onInfo()
 		ErrorBox:new(_"Bitte erst aus dem Fahrzeug aussteigen!")
 		return
 	end
-	CutscenePlayer:getSingleton():playCutscene("GravelJob",
-		function()
-			fadeCamera(true)
-			setCameraTarget(localPlayer)
-		end, 0)
+
+	setCameraMatrix(745.26507568359,806.82489013672,24.597700119019,744.47778320313,807.21868896484,24.123294830322,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Es gibt verschiedene Aufgaben in der Kiesgrube.",255,255,255,true)
+	-- ### 1
+	setTimer(function()
+	setCameraMatrix(650.06768798828,810.92419433594,-0.32589998841286,650.95715332031,811.03039550781,-0.77037560939789,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Als erstes müssen mit der Spitzhacke die hellen Felsen abgebaut werden.",255,255,255,true)
+	end, 4000, 1)
+	-- ### 2
+	setTimer(function()
+	setCameraMatrix(723.49090576172,855.93347167969,-4.5064997673035,722.77587890625,855.54370117188,-5.0868692398071,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Die gewonnen Steine müssen mit Bulldozern in diese Behälter geschoben werden.",255,255,255,true)
+	end, 8000, 1)
+	-- ### 3
+	setTimer(function()
+	setCameraMatrix(614.17028808594,922.25207519531,-5.7822999954224,614.50836181641,921.46221923828,-6.2939896583557,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Steine werden automatisch über die Förderbänder ins Lager transportiert.",255,255,255,true)
+	end, 12000, 1)
+	--- ### 4
+
+	setTimer(function()
+	setCameraMatrix(510.34188842773,898.67626953125,-14.97889995575,511.17974853516,899.00653076172,-15.413551330566,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF Anschließend können die Steine hier in einen Dumper geladen werden,",255,255,255,true)
+	end, 16000, 1)
+
+	setTimer(function()
+	setCameraMatrix(881.95788574219,847.56042480469,38.781200408936,881.10424804688,847.98742675781,38.482925415039,0,70)
+	outputChatBox(_"#0000FF[Kiesgrube]#FFFFFF vorsichtig aus der Grube transportiert und hier oben abgegeben werden.",255,255,255,true)
+	end, 20000, 1)
+	-- ### LAST
+	setTimer(function()
+	setCameraTarget(localPlayer,localPlayer)
+	localPlayer:setPosition(588.85, 869.45, -42.50)
+	end, 24000,1)
 end
 
 function JobGravel:Event_disableGravelCollission(gravel)
 	gravel:setCollidableWith(localPlayer, false)
 	setTimer(function()
 		gravel:setCollidableWith(localPlayer, true)
-	end, 4000, 1)
+	end, 3000, 1)
 end
 
 function JobGravel:stop()
@@ -94,7 +120,6 @@ function JobGravel:stop()
 		if element and isElement(element) then element:destroy() end
 	end
 	for index, element in pairs(self.m_RockCols) do
-		if element.Blip then delete(element.Blip) end
 		if element and isElement(element) then element:destroy() end
 	end
 	for index, element in pairs(self.m_GravelDeliverCol) do
@@ -104,8 +129,6 @@ function JobGravel:stop()
 	if self.m_DumperDeliverCol and isElement(self.m_DumperDeliverCol) then self.m_DumperDeliverCol:destroy() end
 	if self.m_DumperDeliverMarker and isElement(self.m_DumperDeliverMarker) then self.m_DumperDeliverMarker:destroy() end
 	if self.m_DumperDeliverBlip then delete(self.m_DumperDeliverBlip) end
-
-	removeEventHandler("onClientKey", root, self.m_OnRockClickBind)
 
 	-- delete infopanels
 	delete(self.m_GravelImage)
@@ -119,15 +142,9 @@ function JobGravel:generateRocks()
 
 	for index, data in pairs(JobGravel.RockPositions) do
 		if self.m_Rocks[index] and isElement(self.m_Rocks[index]) then self.m_Rocks[index]:destroy() end
-		if self.m_RockCols[index] and isElement(self.m_RockCols[index]) then
-			if self.m_RockCols[index].Blip then delete(self.m_RockCols[index].Blip) end
-			self.m_RockCols[index]:destroy()
-		end
-
 		local x, y, z, rot = unpack(data["rock"])
 		self.m_Rocks[index] = createObject(900, x, y, z, 0, 0, rot)
 		self.m_RockCols[index] = createColSphere(data["col"], 6)
-		self.m_RockCols[index].Blip = Blip:new("SmallPoint.png", data["col"].x, data["col"].y)
 		self.m_RockCols[index].Rock = self.m_Rocks[index]
 		self.m_RockCols[index].Times = math.random(4, 10)
 		addEventHandler("onClientColShapeHit", self.m_RockCols[index], self.m_OnRockColHitBind)
@@ -137,7 +154,7 @@ function JobGravel:generateRocks()
 end
 
 function JobGravel:onDozerColHit(hitElement, dim)
-	if hitElement:getModel() == 2936 and source.vehicle and source.vehicle:getOccupant() == localPlayer then
+	if hitElement:getModel() == 2936 then
 		triggerServerEvent("gravelOnDozerHit", hitElement, source.vehicle)
 	end
 end

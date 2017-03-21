@@ -5,11 +5,10 @@
 -- *  PURPOSE:     Account class
 -- *
 -- ****************************************************************************
-local MULTIACCOUNT_CHECK = GIT_BRANCH == "release/production" and true or false
+local MULTIACCOUNT_CHECK = true--GIT_BRANCH == "release/production" and true or false
 
 Account = inherit(Object)
-addRemoteEvents{"remoteClientSpawn" }
-
+addRemoteEvents{"remoteClientSpawn"}
 function Account.login(player, username, password, pwhash)
 	if player:getAccount() then return false end
 	if (not username or not password) and not pwhash then return false end
@@ -119,6 +118,7 @@ function Account.loginSuccess(player, Id, Username, ForumID, RegisterDate, pwhas
 					player:triggerEvent("loginfailed", "Deine Serial wird für mehrere Accounts benutzt.")
 					return false
 				else
+					outputChatBox("LinkAccount to serial.")
 					MultiAccount.linkAccountToSerial(Id, player:getSerial())
 				end
 			end

@@ -46,11 +46,9 @@ function VehicleTuningItemGrid:constructor(title, itemList, acceptCallback, chan
 	self.m_ItemGrid:addColumn("Item", 1.0)
 	for k, v in pairs(itemList) do
 		local item = self.m_ItemGrid:addItem(v)
-		item.m_TextureId = k
+		item.m_ItemId = k
 		item.onLeftDoubleClick = function ()
-			if self.m_AcceptCallback then
-				self.m_AcceptCallback(k)
-			end
+			self:AcceptButton_Click()
 		end
 		item.onLeftClick = function ()
 			if self.m_ChangeCallback then
@@ -66,7 +64,7 @@ end
 function VehicleTuningItemGrid:AcceptButton_Click()
 	if self.m_ItemGrid:getSelectedItem() then
 		if self.m_AcceptCallback then
-			self.m_AcceptCallback(self.m_ItemGrid:getSelectedItem().m_TextureId)
+			self.m_AcceptCallback(self.m_ItemGrid:getSelectedItem().m_ItemId)
 		end
 		self:close()
 	end
