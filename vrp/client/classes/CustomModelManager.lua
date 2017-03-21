@@ -91,6 +91,8 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/pickaxe.col", 1858)
 	self:loadImportDFF("files/models/pickaxe.dff", 1858)
 
+	self:loadImportTXD("files/models/topfun.txd", 459)
+	self:loadImportDFF("files/models/topfun.dff", 459)
 
 	-- Tardis EasterEgg
 	self:loadImportTXD("files/models/tardis.txd", 1881)
