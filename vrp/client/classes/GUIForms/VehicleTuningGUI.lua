@@ -313,7 +313,6 @@ function VehicleTuningGUI:PartItem_Click(item)
                 {[1] = _"Keine Neonröhre", [2] = _"Neonröhre einbauen"},
                 function(neon)
                     local neonBool = neon == 2 and true or false
-					setElementData(self.m_Vehicle, "Neon", false)
 					self.m_NewTuning:saveTuning(item.PartSlot, neonBool)
 					self.m_NewTuning:applyTuning()
 					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], neonBool)
@@ -334,7 +333,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             )
             return
         elseif item.PartSlot == "NeonColor" then
-            if not getElementData(self.m_Vehicle, "Neon") then
+            if self.m_NewTuning:getTuning("Neon") then
 				ErrorBox:new(_"Du hast keine Neonröhren eingebaut!")
 				return
 			end
