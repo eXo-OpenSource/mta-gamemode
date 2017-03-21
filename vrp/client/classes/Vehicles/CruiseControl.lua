@@ -25,7 +25,7 @@ function CruiseControl:setEnabled(enabled)
 
 	if enabled then
 		self.m_CruiseTimer = setTimer(bind(self.Tick_CruiseTimer, self), 50, 0)
-		self.m_Speed = self:getDefaultSpeed()
+		self.m_Speed = localPlayer.vehicle:getVelocity():getLength() -- self:getDefaultSpeed()
 	else
 		killTimer(self.m_CruiseTimer)
 		self.m_CruiseTimer = false
