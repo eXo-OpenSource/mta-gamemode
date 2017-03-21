@@ -447,16 +447,17 @@ function Vehicle:tuneVehicle(color, color2, tunings, texture, horn, neon, specia
 end
 
 function Vehicle:setCustomHorn(id)
-  self.m_CustomHorn = id
-  if self:getOccupant() then
-    if id > 0 then
-      bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-    else
-      if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
-        unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
-      end
-    end
-  end
+	self.m_CustomHorn = id
+	if self:getOccupant() then
+		local player = self:getOccupant()
+		if id > 0 then
+			bindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+		else
+			if isKeyBound(player, "j", "down", self.ms_CustomHornPlayBind) then
+				unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
+			end
+		end
+	end
 end
 
 function Vehicle:setNeon(state)

@@ -14,6 +14,8 @@ AntiCheat.AllowedDataChange = {
 	["i:left"] = true,
 	["i:right"] = true,
 	["i:warn"] = true,
+	["Neon"] = true,
+	["NeonColor"] = true
 }
 
 function AntiCheat:constructor()
