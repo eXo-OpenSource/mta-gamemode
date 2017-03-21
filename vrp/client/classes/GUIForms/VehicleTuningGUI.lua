@@ -333,7 +333,11 @@ function VehicleTuningGUI:PartItem_Click(item)
             )
             return
         elseif item.PartSlot == "NeonColor" then
-            self.m_UpgradeChanger:setVisible(false)
+            if not getElementData(self.m_Vehicle, "Neon") then
+				ErrorBox:new(_"Du hast keine Neonröhren eingebaut!")
+				return
+			end
+			self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
             self.m_ColorPicker = ColorPickerGUI:new(
 				function(r, g, b)
