@@ -57,7 +57,7 @@ function checkArgs(funcName, ...)
 
 		if not validArguments then
 			-- ToDo: Fix this (stack level is different, because sometimes our calls go through the metatable stuff, sometimes not)
-			--[[local debugInfo = debug.getinfo(3)
+			--local debugInfo = debug.getinfo(3)
 			local errorMsg = ("Bad argument #%d @ %s %s:%d %s expected, got %s"):format(k, funcName, debugInfo.short_src, debugInfo.currentline, typeName, type(paramValue))
 
 			-- Temp fix: Print the whole stack traceback
