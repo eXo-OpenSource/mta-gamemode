@@ -16,6 +16,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local model = vehicle:getModel()
 			local health = vehicle:getHealth()
 			local milage = vehicle:getMileage()
+			local fuel = vehicle:getFuel()
 			local r, g, b = getVehicleColor(vehicle, true)
 			local tunings = false
 			local texture = false
@@ -36,6 +37,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 				vehicle:setHealth(health)
 				vehicle:setColor(r, g, b)
 				vehicle:setMileage(milage)
+				vehicle:setFuel(fuel)
 				if Group:canVehiclesBeModified() then
 					if texture and instanceof(texture, VehicleTexture) then
 						vehicle:setTexture(texture:getPath(), texture:getTexturePath(), true)
