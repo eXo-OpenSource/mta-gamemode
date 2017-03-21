@@ -15,6 +15,7 @@ end
 -- @param funcName The name of the function
 -- @param ... The parameters' types
 function checkArgs(funcName, ...)
+	return false
 	-- Ignore this in non-debug mode
 	if not DEBUG then
 		return
