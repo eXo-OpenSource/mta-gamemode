@@ -31,7 +31,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 				vehicle:setColor(r, g, b)
 				vehicle:setMileage(milage)
 				if Group:canVehiclesBeModified() then
-					vehicle.m_Tunings = VehicleTuning:new(self, tuningJSON)
+					vehicle.m_Tunings = VehicleTuning:new(vehicle, tuningJSON)
 				end
 				return vehicle:save(), vehicle
 			end
