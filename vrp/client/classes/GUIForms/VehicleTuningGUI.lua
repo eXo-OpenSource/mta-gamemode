@@ -333,7 +333,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             )
             return
         elseif item.PartSlot == "NeonColor" then
-            if self.m_NewTuning:getTuning("Neon") then
+            if not self.m_NewTuning:getTuning("Neon") then
 				ErrorBox:new(_"Du hast keine Neonröhren eingebaut!")
 				return
 			end
