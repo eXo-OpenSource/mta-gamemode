@@ -16,6 +16,7 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local model = vehicle:getModel()
 			local health = vehicle:getHealth()
 			local milage = vehicle:getMileage()
+			local fuel = vehicle:getFuel()
 			local r, g, b = getVehicleColor(vehicle, true)
 			local tuningJSON = vehicle.m_Tunings:getJSON()
 
@@ -26,13 +27,9 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			trunk = nil
 
 			if vehicle:purge() then
-				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z, trunkId)
+				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z, milage, fuel, trunkId, tuningJSON)
 				vehicle:setHealth(health)
 				vehicle:setColor(r, g, b)
-				vehicle:setMileage(milage)
-				if Group:canVehiclesBeModified() then
-					vehicle.m_Tunings = VehicleTuning:new(vehicle, tuningJSON)
-				end
 				return vehicle:save(), vehicle
 			end
 		end
@@ -85,7 +82,11 @@ function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
 	self:setMileage(mileage)
-	self.m_Tunings = VehicleTuning:new(self, tuningJSON)
+	if self.m_Group:canVehiclesBeModified() then
+		self.m_Tunings = VehicleTuning:new(self, tuningJSON)
+	else
+		self.m_Tunings = VehicleTuning:new(self)
+	end
 	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
 end
 
@@ -102,11 +103,11 @@ function GroupVehicle:getGroup()
 end
 
 
-function GroupVehicle.create(Group, model, posX, posY, posZ, rotation, trunkId)
+function GroupVehicle.create(Group, model, posX, posY, posZ, rotation, milage, fuel, trunkId, tuningJSON)
 	rotation = tonumber(rotation) or 0
-	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, Rotation, Health, TrunkId) VALUES(?, ?, ?, ?, ?, ?, 1000, ?)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotation, trunkId) then
+	if sql:queryExec("INSERT INTO ??_group_vehicles (`Group`, Model, PosX, PosY, PosZ, Rotation, Health, TrunkId, TuningsNew) VALUES(?, ?, ?, ?, ?, ?, 1000, ?, ?)", sql:getPrefix(), Group:getId(), model, posX, posY, posZ, rotation, trunkId, tuningJSON) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-		enew(vehicle, GroupVehicle, sql:lastInsertId(), Group, nil, nil, 1000, VehiclePositionType.World, nil, nil, nil, nil, trunkId)
+		enew(vehicle, GroupVehicle, sql:lastInsertId(), Group, 1000, VehiclePositionType.World, milage, fuel, trunkId, tuningJSON)
     	VehicleManager:getSingleton():addRef(vehicle)
 		return vehicle
 	end
