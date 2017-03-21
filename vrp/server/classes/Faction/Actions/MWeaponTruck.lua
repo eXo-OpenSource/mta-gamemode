@@ -90,6 +90,20 @@ end
 function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 	if ActionsCheck:getSingleton():isActionAllowed(client) then
 		local faction = client:getFaction()
+
+		if faction:isEvilFaction() then
+			self.m_CurrentType = "evil"
+		elseif faction:isStateFaction() then
+			if client:isFactionDuty() then
+				self.m_CurrentType = "state"
+			else
+				client:sendError(_("Du bist nicht im Dienst!",client))
+				return
+			end
+		else
+			client:sendError(_("Ungültige Fraktion!",client))
+		end
+
 		local totalAmount = 0
 		if faction then
 			for weaponID,v in pairs(weaponTable) do
