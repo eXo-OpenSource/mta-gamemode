@@ -375,13 +375,15 @@ function VehicleTuningGUI:PartItem_Click(item)
                 "Select Texture",
                 {"None", _"Österreich", _"Deutschland", _"Schweden", _"Frankreich", _"Russland", _"Camouflage", _"Türkei", _"Hipster", _"Metall", _"Italien", _"Froggy", _"Sandy", _"Space", _"Cherry", _"Fire"},
                 function (texture)
-                    if texture > 1 then
+                    if self.m_PreviewShader then delete(self.m_PreviewShader) end
+					if texture > 1 then
 						self.m_NewTuning:saveTuning(item.PartSlot, "files/images/Textures/Special/"..(texture-1)..".png")
+						self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], "files/images/Textures/Special/"..(texture-1)..".png")
 					else
 						self.m_NewTuning:saveTuning(item.PartSlot, "")
+						self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], "")
 					end
 					self.m_NewTuning:applyTuning()
-					self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], "files/images/Textures/Special/"..(texture-1)..".png")
                 end,
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
