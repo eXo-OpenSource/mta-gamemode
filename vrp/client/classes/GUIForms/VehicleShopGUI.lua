@@ -32,9 +32,13 @@ function VehicleShopGUI:destructor()
 	removeEventHandler("vehicleBought", root, self.m_VehicleBought)
 
 	showChat(true)
-	setCameraTarget(localPlayer, localPlayer)
 	if self.m_InfoInstance then delete(self.m_InfoInstance) end
 	GUIForm.destructor(self)
+
+	if self.m_CameraInstance then
+		delete(self.m_CameraInstance)
+	end
+	setCameraTarget(localPlayer, localPlayer)
 end
 
 function VehicleShopGUI:buyVehicle(item)
