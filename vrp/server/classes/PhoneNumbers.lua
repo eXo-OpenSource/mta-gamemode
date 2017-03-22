@@ -124,13 +124,13 @@ addEventHandler("requestPhoneNumbers", root, function()
 				numTable[number] = {}
 				numTable[number]["OwnerName"] = instance:getOwner(instance):getShortName()
 			elseif PHONE_NUMBER_TYPES[instance:getOwnerType()] == "group" then
-				if #instance:getOwner(instance):getOnlinePlayers() > 0 then
-					if instance:getOwner(instance) and instance:getOwner(instance):getName() then
+				if instance:getOwner(instance) and instance:getOwner(instance):getName() then
+					if #instance:getOwner(instance):getOnlinePlayers() > 0 then
 						numTable[number] = {}
 						numTable[number]["OwnerName"] = instance:getOwner(instance):getName()
-					else
-						PhoneNumber.Map[index] = nil
 					end
+				else
+					PhoneNumber.Map[index] = nil
 				end
 			else
 				if instance:getOwner(instance) and instance:getOwner(instance):getName() then
