@@ -617,7 +617,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 				return
 			end
 			local group = client:getGroup()
-			if group:getMoney() > 100 then
+			if group:getMoney() >= 100 then
 				group:takeMoney(100, "Fahrzeug-Respawn")
 			else
 				client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
