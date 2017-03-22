@@ -17,7 +17,6 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local health = vehicle:getHealth()
 			local milage = vehicle:getMileage()
 			local fuel = vehicle:getFuel()
-			local r, g, b = getVehicleColor(vehicle, true)
 			local tuningJSON = vehicle.m_Tunings:getJSON()
 			local premium = vehicle:isPremiumVehicle() and vehicle:getOwner() or 0
 
@@ -25,12 +24,10 @@ function GroupVehicle.convertVehicle(vehicle, Group)
 			local trunk = vehicle:getTrunk()
 			trunk:save()
 			local trunkId = trunk:getId()
-			trunk = nil
 
 			if vehicle:purge() then
 				local vehicle = GroupVehicle.create(Group, model, position.x, position.y, position.z, rotation.z, milage, fuel, trunkId, tuningJSON, premium)
 				vehicle:setHealth(health)
-				vehicle:setColor(r, g, b)
 
 				return vehicle:save(), vehicle
 			end
