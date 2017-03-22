@@ -36,9 +36,8 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 	end
-	if self.m_Element and isElement(self.m_Element) then
-		TextureReplace.Map[self.m_Element] = self
-	end
+
+	TextureReplace.Map[#TextureReplace.Map+1] = self
 end
 
 function TextureReplace:destructor()
@@ -216,3 +215,11 @@ addEventHandler("removeElementTexture", root,
 		end
 	end
 )
+
+function TextureReplace.deleteFromElement(element)
+	for index, texture in pairs(TextureReplace.Map) do
+		if texture and texture.m_Element == element then
+			delete(texture)
+		end
+	end
+end
