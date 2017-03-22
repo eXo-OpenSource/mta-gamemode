@@ -380,6 +380,7 @@ function VehicleTuningGUI:PartItem_Click(item)
                 {"None", _"Österreich", _"Deutschland", _"Schweden", _"Frankreich", _"Russland", _"Camouflage", _"Türkei", _"Hipster", _"Metall", _"Italien", _"Froggy", _"Sandy", _"Space", _"Cherry", _"Fire"},
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
+					TextureReplace.deleteFromElement(self.m_Vehicle)
 					if texture > 1 then
 						self.m_NewTuning:saveTuning(item.PartSlot, "files/images/Textures/Special/"..(texture-1)..".png")
 						self:addPartToCart(item.PartSlot, VehicleTuningGUI.SpecialTuningsNames[item.PartSlot], "files/images/Textures/Special/"..(texture-1)..".png")
@@ -391,10 +392,11 @@ function VehicleTuningGUI:PartItem_Click(item)
                 end,
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
-                    if texture ~= 1 then
+					TextureReplace.deleteFromElement(self.m_Vehicle)
+					if texture ~= 1 then
                         self.m_PreviewShader = TextureReplace:new(self.m_Vehicle:getTextureName(), "files/images/Textures/Special/"..(texture-1)..".png", false, 250, 250, self.m_Vehicle)
                     else
-                        ShortMessage:new("Note: Die Textur wird entfernt wenn du den Tuningshop verlässt!", "Los Santos Customs", Color.LightBlue)
+						ShortMessage:new("Note: Die Textur wird entfernt wenn du den Tuningshop verlässt!", "Los Santos Customs", Color.LightBlue)
                     end
                 end
             )
