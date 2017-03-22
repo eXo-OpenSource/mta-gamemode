@@ -539,6 +539,13 @@ function GroupManager:Event_RemoveVehicle(veh)
 			return
 		end
 
+		if veh:isGroupPremiumVehicle() then
+			if veh.m_Premium ~= client:getId() then
+				client:sendError(_("Du kannst dieses Premium Fahrzeug nicht entfernen!", client))
+				return
+			end
+		end
+
 		local status, newVeh = PermanentVehicle.convertVehicle(veh, client, group)
 		if status then
 			client:sendInfo(_("Das Fahrzeug ist nun in deinem Besitz!", client))

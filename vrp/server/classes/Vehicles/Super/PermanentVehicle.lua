@@ -20,6 +20,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 			local r, g, b = getVehicleColor(vehicle, true)
 			local tunings = false
 			local tuningJSON = vehicle.m_Tunings:getJSON() or {}
+			local premium = vehicle:isGroupPremiumVehicle()
 
 			-- get Vehicle Trunk
 			local trunk = vehicle:getTrunk()
@@ -28,7 +29,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 			trunk = nil
 
 			if vehicle:purge() then
-				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z, trunkId)
+				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z, trunkId, premium)
 				vehicle:setHealth(health)
 				vehicle:setColor(r, g, b)
 				vehicle:setMileage(milage)
@@ -44,7 +45,7 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 	return false
 end
 
-function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunkId)
+function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunkId, premium)
 	rotation = tonumber(rotation) or 0
 	if type(owner) == "userdata" then
 		owner = owner:getId()
@@ -54,7 +55,7 @@ function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunk
 		trunkId = Trunk.create()
 	end
 
-	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId) then
+	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId, Premium) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId, premium) then
 		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
 		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, nil, 1000, VehiclePositionType.World, 0, 0, trunkId, premium)
 		VehicleManager:getSingleton():addRef(vehicle)
@@ -124,6 +125,10 @@ end
 
 function PermanentVehicle:getId()
   return self.m_Id
+end
+
+function PermanentVehicle:isPremiumVehicle()
+	return self.m_Premium
 end
 
 function PermanentVehicle:setSpecial(special)
