@@ -347,7 +347,9 @@ function VehicleTuningGUI:PartItem_Click(item)
 				function(r, g, b)
 					setElementData(self.m_Vehicle, "NeonColor", {r, g, b})
 				end)
-            self.m_ColorPicker:setColor(unpack(self.m_NewTuning:getTuning(item.PartSlot)))
+            if self.m_NewTuning:getTuning(item.PartSlot) and type(self.m_NewTuning:getTuning(item.PartSlot)) == "table" then
+				self.m_ColorPicker:setColor(unpack(self.m_NewTuning:getTuning(item.PartSlot)))
+			end
             return
         elseif item.PartSlot == "CustomHorn" then
             self.m_UpgradeChanger:setVisible(false)
