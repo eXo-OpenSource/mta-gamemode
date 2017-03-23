@@ -508,7 +508,8 @@ function getVehicleUpgradeNameFromID(upgradeId)
 end
 
 function getVehicleUpgradePrice(upgradeId)
-	return VEHICLE_UPGRADE_PRICES[upgradeId]
+	-- return VEHICLE_UPGRADE_PRICES[upgradeId]
+	return math.floor(VEHICLE_UPGRADE_PRICES[upgradeId]/4) -- Special Price
 end
 
 function countLineBreaks(text)
