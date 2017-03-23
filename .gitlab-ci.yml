@@ -104,5 +104,5 @@ clean_env_job_docker:
 clear_cache:
   stage: clean_env
   script:
-    - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest # Remove cached image
+    - sudo docker rmi $DOCKER_USER/exo-rl-mta:latest exo-rl-mta # Remove cached images
   when: manual
