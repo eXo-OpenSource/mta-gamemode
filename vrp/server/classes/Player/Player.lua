@@ -437,6 +437,11 @@ function Player:respawn(position, rotation, bJailSpawn)
 		end
 	end
 
+	if self:isPremium() then
+		self:setArmor(100)
+		giveWeapon(self, 24, 35)
+	end
+
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
