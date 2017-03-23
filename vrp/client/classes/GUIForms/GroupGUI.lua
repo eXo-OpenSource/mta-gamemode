@@ -162,12 +162,13 @@ function GroupGUI:Event_groupRetrieveLog(players, logs)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled)
+function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled, zwei)
 	self:adjustGroupTab(rank or false)
 
 	if name then
 		local karma = math.floor(karma)
 		local x, y = self.m_GroupsNameLabel:getPosition()
+		self.m_TuningEnabled = tuningEnabled
 		self.m_GroupsNameChangeLabel:setPosition(x + dxGetTextWidth(name, self.m_GroupsNameLabel:getFontSize(), self.m_GroupsNameLabel:getFont()) + 10, y)
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
@@ -468,7 +469,7 @@ function GroupGUI:VehicleConvertToGroupButton_Click()
 		return
 	end
 
-	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen?", function()
+	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen?" .. (not self.m_TuningEnabled and "\nACHTUNG: Deine Firma hat keine Tunings aktiviert! Alle Tunings werden entfernt!" or ""), function()
 		triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
 	end)
 end

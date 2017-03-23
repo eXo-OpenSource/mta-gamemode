@@ -499,6 +499,7 @@ function GroupManager:Event_UpdateVehicleTuning()
 				else
 					client:sendInfo(_("Eure Fahrzeuge können nun nicht mehr getuned werden!", client))
 				end
+				outputChatBox("SERVER: " .. tostring(group:canVehiclesBeModified()))
 				self:sendInfosToClient(client)
 			else
 				client:sendError(_("Die %s hat zu wenig Geld! (3000$)", client, group:getType()))
