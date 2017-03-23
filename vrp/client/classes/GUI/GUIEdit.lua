@@ -30,10 +30,18 @@ function GUIEdit:drawThis()
 	--dxDrawImage(self.m_AbsoluteX, self.m_AbsoluteY, self.m_Width, self.m_Height, "files/images/GUI/Editbox.png")
 
 	local text = self:getDrawnText()
+	local aliginX = "left"
+	local textBeforeCursor = utfSub(text, 0, self.m_Caret)
+
+	if dxGetTextWidth(textBeforeCursor, self:getFontSize(), self:getFont()) >= self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN - 2 then
+		aliginX = "right"
+	end
+
+---	outputChatBox(aliginX)
 
 	dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY,
 				self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height,
-				self:getColor(), self:getFontSize(), self:getFont(), "left", "center", true, false, false, false)
+				self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
 
 	if self.m_DrawCursor then
 		local textBeforeCursor = utfSub(text, 0, self.m_Caret)
