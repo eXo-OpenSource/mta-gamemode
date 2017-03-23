@@ -162,7 +162,7 @@ function GroupGUI:Event_groupRetrieveLog(players, logs)
 	end
 end
 
-function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled, zwei)
+function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, type, rankNames, rankLoans, vehicles, tuningEnabled)
 	self:adjustGroupTab(rank or false)
 
 	if name then
