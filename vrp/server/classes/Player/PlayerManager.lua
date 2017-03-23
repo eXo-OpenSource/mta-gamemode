@@ -607,7 +607,7 @@ function PlayerManager:Event_gunBoxAddWeapon(weaponId, muni)
 		end
 		local slot = client.m_GunBox[tostring(i)]
 		if slot["WeaponId"] == 0 then
-			if not slot["VIP"] then
+			if not slot["VIP"] or (slot["VIP"] and client:isPremium()) then
 				local weaponSlot = getSlotFromWeapon(weaponId)
 				if client:getWeapon(weaponSlot) > 0 then
 					if client:getTotalAmmo(weaponSlot) >= muni then
