@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 HUDRadar = inherit(Singleton)
+addRemoteEvents{ "HUDRadar:showRadar", "HUDRadar:hideRadar" }
 
 function HUDRadar:constructor()
 	self.m_ImageSize = 1536, 1536 --3072, 3072
@@ -20,65 +21,47 @@ function HUDRadar:constructor()
 		CustomF11Map:getSingleton():disable()
 	end
 
-	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
-	if self.m_Texture then
-		--outputConsole("Success@HUDRadar - m_RenderTarget was created!")
-		--outputDebugString("Success@HUDRadar - m_Texture was created!",0,0,200,200)
-		self.m_Zoom = 1
-		self.m_Rotation = 0
-		self.m_Blips = Blip.Blips
-		self.m_Areas = {}
-		self.m_Visible = false
-		self.m_Enabled = core:get("HUD", "showRadar", true)
-		if self.m_DesignSet == RadarDesign.Default then
-			setPlayerHudComponentVisible("radar", self.m_Enabled )
-			self.m_DefaultBlips = {}
-		end
-		-- Set texture edge to border (no-repeat)
-		dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
+	self.m_Zoom = 1
+	self.m_Rotation = 0
+	self.m_Blips = Blip.Blips
+	self.m_Areas = {}
+	self.m_Visible = false
+	self.m_Enabled = core:get("HUD", "showRadar", true)
+	if self.m_DesignSet == RadarDesign.Default then
+		setPlayerHudComponentVisible("radar", self.m_Enabled)
+		self.m_DefaultBlips = {}
+	end
 
-		-- Create a renderTarget that has the size of the diagonal of the actual image
-		self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
-		if self.m_RenderTarget then
-			--outputConsole("Success@HUDRadar - m_RenderTarget was created!")
-			--outputDebugString("Success@HUDRadar - m_RenderTarget was created!",0,0,200,200)
-			self:updateMapTexture()
+	-- Create a renderTarget that has the size of the diagonal of the actual image
+	self.m_RenderTarget = dxCreateRenderTarget(self.m_Diagonal, self.m_Diagonal)
+	self:updateMapTexture()
 
-			-- Settings
-			if core:get("HUD", "showRadar", nil) == nil then
-				core:set("HUD", "showRadar", true)
-			end
-			if core:get("HUD", "drawGangAreas", nil) == nil then
-				core:set("HUD", "drawGangAreas", true)
-			end
-			if core:get("HUD", "drawBlips", nil) == nil then
-				core:set("HUD", "drawBlips", true)
-			end
+	-- Settings
+	if core:get("HUD", "showRadar", nil) == nil then
+		core:set("HUD", "showRadar", true)
+	end
+	if core:get("HUD", "drawGangAreas", nil) == nil then
+		core:set("HUD", "drawGangAreas", true)
+	end
+	if core:get("HUD", "drawBlips", nil) == nil then
+		core:set("HUD", "drawBlips", true)
+	end
 
-			addEventHandler("onClientPreRender", root, bind(self.update, self))
-			addEventHandler("onClientRender", root, bind(self.draw, self))
-			addEventHandler("onClientRestore", root, bind(self.restore, self))
+	addEventHandler("onClientPreRender", root, bind(self.update, self))
+	addEventHandler("onClientRender", root, bind(self.draw, self))
+	addEventHandler("onClientRestore", root, bind(self.restore, self))
 
-			addRemoteEvents{"HUDRadar:showRadar", "HUDRadar:hideRadar" }
-			addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
-			addEventHandler("HUDRadar:hideRadar", root, bind(self.hide, self))
+	addEventHandler("HUDRadar:showRadar", root, bind(self.show, self))
+	addEventHandler("HUDRadar:hideRadar", root, bind(self.hide, self))
 
-			self.m_NoRadarColShapes = {
-				createColSphere(164.21, 359.71, 7983.66, 200)
-			}
-			self.m_HitColFunc = bind(self.Event_colEnter,self)
-			self.m_LeaveColFunc = bind(self.Event_colLeave,self)
-			for index, col in pairs(self.m_NoRadarColShapes) do
-				addEventHandler("onClientColShapeHit", col, self.m_HitColFunc)
-				addEventHandler("onClientColShapeLeave", col, self.m_LeaveColFunc)
-			end
-		else
-			outputConsole("Warning@HUDRadar - m_RenderTarget was not created!")
-			outputDebugString("Warning@HUDRadar - m_RenderTarget was not created!",0,200,0,0)
-		end
-	else
-		outputConsole("Warning@HUDRadar - m_Texture was not created!")
-		outputDebugString("Warning@HUDRadar - m_Texture was not created!",0,200,0,0)
+	self.m_NoRadarColShapes = {
+		createColSphere(164.21, 359.71, 7983.66, 200)
+	}
+	self.m_HitColFunc = bind(self.Event_colEnter,self)
+	self.m_LeaveColFunc = bind(self.Event_colLeave,self)
+	for index, col in pairs(self.m_NoRadarColShapes) do
+		addEventHandler("onClientColShapeHit", col, self.m_HitColFunc)
+		addEventHandler("onClientColShapeLeave", col, self.m_LeaveColFunc)
 	end
 end
 
@@ -100,48 +83,50 @@ end
 
 function HUDRadar:hide()
 	self.m_Visible = false
-
-	--ShortMessage.recalculatePositions()
 end
 
 function HUDRadar:show()
 	self.m_Visible = true
-
-	--ShortMessage.recalculatePositions()
 end
 
 function HUDRadar:updateMapTexture()
-	if self.m_DesignSet ~= RadarDesign.Default then
-	destroyElement(self.m_Texture)
+	if self.m_DesignSet == RadarDesign.Default then
+		return
+	end
+
+	-- Recreate map texture
+	if self.m_Texture and isElement(self.m_Texture) then
+		destroyElement(self.m_Texture)
+	end
 	self.m_Texture = dxCreateRenderTarget(self.m_ImageSize, self.m_ImageSize)
 	dxSetTextureEdge(self.m_Texture, "border", tocolor(125, 168, 210))
-		dxSetRenderTarget(self.m_Texture)
-		-- Draw actual map texture
-		dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
 
-		-- Draw radar areas
-		if core:get("HUD", "drawGangAreas", true) then
-			for k, rect in pairs(self.m_Areas) do
-				local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
+	dxSetRenderTarget(self.m_Texture)
 
-				local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
+	-- Draw actual map texture
+	dxDrawImage(0, 0, self.m_ImageSize, self.m_ImageSize, self:makePath("Radar.jpg", false))
 
-				if rect.flashing then
-					dxDrawRectangle(mapX, mapY, width, height, Color.Red)
-					dxDrawRectangle(mapX+2, mapY+2, width-4, height-4, rect.color)
-				else
-					dxDrawRectangle(mapX, mapY, width, height, rect.color)
-				end
+	-- Draw radar areas
+	if core:get("HUD", "drawGangAreas", true) then
+		for k, rect in pairs(self.m_Areas) do
+			local mapX, mapY = self:worldToMapPosition(rect.X, rect.Y)
+			local width, height = rect.Width/(6000/self.m_ImageSize), rect.Height/(6000/self.m_ImageSize)
+
+			if rect.flashing then
+				dxDrawRectangle(mapX, mapY, width, height, Color.Red)
+				dxDrawRectangle(mapX+2, mapY+2, width-4, height-4, rect.color)
+			else
+				dxDrawRectangle(mapX, mapY, width, height, rect.color)
 			end
 		end
-
-		dxSetRenderTarget(nil)
 	end
+
+	dxSetRenderTarget(nil)
 end
 
 function HUDRadar:makePath(fileName, isBlip)
 	if self.m_DesignSet == RadarDesign.Monochrome then
-	local path = (isBlip and "files/images/Radar_Monochrome/Blips/"..fileName) or "files/images/Radar_Monochrome/"..fileName
+		local path = (isBlip and "files/images/Radar_Monochrome/Blips/"..fileName) or "files/images/Radar_Monochrome/"..fileName
 		return path
 	elseif self.m_DesignSet == RadarDesign.GTA then
 		return (isBlip and "files/images/Radar_GTA/Blips/"..fileName) or "files/images/Radar_GTA/"..fileName
@@ -193,8 +178,10 @@ function HUDRadar:restore(clearedRenderTargets)
 end
 
 function HUDRadar:update()
-	if self.m_DesignSet == RadarDesign.Default then return end
-	if not self.m_Visible or isPlayerMapVisible() then return end
+	if self.m_DesignSet == RadarDesign.Default or not self.m_Visible or isPlayerMapVisible() then
+		return
+	end
+
 	local vehicle = getPedOccupiedVehicle(localPlayer)
 	if vehicle and getVehicleType(vehicle) ~= "Plane" and getVehicleType(vehicle) ~= "Helicopter"
 	and (getControlState("vehicle_look_behind") or getControlState("vehicle_look_left") or getControlState("vehicle_look_right")) then
@@ -208,43 +195,15 @@ function HUDRadar:update()
 		local camX, camY, camZ, lookAtX, lookAtY, lookAtZ = getCameraMatrix()
 		self.m_Rotation = 360 - math.deg(math.atan2(lookAtX - camX, lookAtY - camY)) % 360
 	end
-	--[[
-	for i, v in pairs(getElementsByType("player")) do -- Todo: find a other blip with karma!
-		if v ~= localPlayer then
-			if ((v:getPosition() - localPlayer:getPosition()).length < 30 or getPedTarget(localPlayer) == v) and v:getWantedLevel() == 0 then
-				local pos = v:getPosition()
-				if not v.m_Blip then
-				v.m_Blip = {}
-				v.m_Blip[1] = Blip:new("PlayerMarker/in.png", pos.x, pos.y):setSize(20)
-				v.m_Blip[2] = Blip:new("PlayerMarker/4.png", pos.x, pos.y):setSize(20)
-				-- Todo: Position is on the Radar not correct! @Jusonex
-				end
-
-				local k = v:getKarma()
-				v.m_Blip[1]:setColor(tocolor(255-(k+150)*(255/300), (k+150)*(255/300), -math.abs(k*(127/150))+127))
-				v.m_Blip[1]:setPosition(pos.x, pos.y)
-				v.m_Blip[2]:setPosition(pos.x, pos.y)
-			else
-				if v.m_Blip then
-				for i, v in pairs(v.m_Blip) do
-					delete(v)
-				end
-				v.m_Blip = nil
-				end
-			end
-		end
-	end
-	--]]
-
 end
 
 function HUDRadar:draw()
-	if not self.m_Enabled then return end
-	if self.m_DesignSet == RadarDesign.Default then return end
-	if not self.m_Visible or isPlayerMapVisible() then return end
+	if not self.m_Enabled or not self.m_Visible or self.m_DesignSet == RadarDesign.Default or isPlayerMapVisible() then
+		return
+	end
+
 	local isNotInInterior = getElementInterior(localPlayer) == 0
 	local isInWater = isElementInWater(localPlayer)
-
 	if not isNotInInterior or localPlayer:getPrivateSync("isInGarage") then
 		return
 	end
@@ -260,19 +219,14 @@ function HUDRadar:draw()
 		posX, posY, posZ = getElementPosition(obj)
 		mapX, mapY = self:worldToMapPosition(posX, posY)
 	else
-	posX, posY, posZ = getElementPosition(localPlayer)
-	mapX, mapY = self:worldToMapPosition(posX, posY)
+		posX, posY, posZ = getElementPosition(localPlayer)
+		mapX, mapY = self:worldToMapPosition(posX, posY)
 	end
+
 	-- Render (rotated) image section to renderTarget
 	if isNotInInterior then
 		dxSetRenderTarget(self.m_RenderTarget, true)
-	if self.m_Texture then
 		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
-	else
-		self:updateMapTexture()
-		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
-		outputDebugString("Warning@HUDRadar had to recreate self.m_Texture!")
-	end
 		dxSetRenderTarget(nil)
 	end
 
@@ -308,8 +262,9 @@ function HUDRadar:draw()
 
 	-- Draw region name (above health bar)
 	if core:get("HUD", "drawZone", true) and HUDUI:getSingleton().m_UIMode == UIStyle.vRoleplay then
-	dxDrawRectangle(self.m_PosX+3, self.m_PosY+3+self.m_Height-self.m_Height/10, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
-	dxDrawText(getZoneName(localPlayer:getPosition(), false), self.m_PosX+3, self.m_PosY+3+self.m_Height-self.m_Height/10, self.m_Width, self.m_PosY+self.m_Height+3, Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
+		dxDrawRectangle(self.m_PosX+3, self.m_PosY+3+self.m_Height-self.m_Height/10, self.m_Width, self.m_Height/10, tocolor(0, 0, 0, 150))
+		dxDrawText(getZoneName(localPlayer:getPosition(), false), self.m_PosX+3, self.m_PosY+3+self.m_Height-self.m_Height/10, self.m_Width, self.m_PosY+self.m_Height+3,
+			Color.White, 1, VRPFont(self.m_Height/10), "center", "center")
 	end
 
 	-- Draw the player blip
@@ -331,29 +286,29 @@ function HUDRadar:drawBlips()
 	local mat = math.matrix.three.rotate_z(math.rad(self.m_Rotation)) * math.matrix.three.scale(self.m_ImageSize/6000, -self.m_ImageSize/6000, 1) * math.matrix.three.translate(-px, -py, -pz)
 	local rotLimit = math.atan2(self.m_Height, self.m_Width)
 	local obj = localPlayer:getPrivateSync("isSpecting")
-	local display, dim, int
 
 	if obj then
-	px, py, pz = getElementPosition(obj)
-	mat = math.matrix.three.rotate_z(math.rad(self.m_Rotation)) * math.matrix.three.scale(self.m_ImageSize/6000, -self.m_ImageSize/6000, 1) * math.matrix.three.translate(-px, -py, -pz)
+		px, py, pz = getElementPosition(obj)
+		mat = math.matrix.three.rotate_z(math.rad(self.m_Rotation)) * math.matrix.three.scale(self.m_ImageSize/6000, -self.m_ImageSize/6000, 1)
+			* math.matrix.three.translate(-px, -py, -pz)
 	end
 
 	for k, blip in pairs(self.m_Blips) do
-		display = true
-	local blipX, blipY = blip:getPosition()
+		local display = true
+		local blipX, blipY = blip:getPosition()
 
 		if Blip.AttachedBlips[blip] then
-		if not isElement(Blip.AttachedBlips[blip]) then Blip.AttachedBlips[blip] = nil end
-		int, dim = Blip.AttachedBlips[blip]:getInterior(), Blip.AttachedBlips[blip]:getDimension()
-		if int == 0 and dim == 0 then
-			blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
-		else
-			display = false
+			if not isElement(Blip.AttachedBlips[blip]) then Blip.AttachedBlips[blip] = nil end
+
+			local int, dim = Blip.AttachedBlips[blip]:getInterior(), Blip.AttachedBlips[blip]:getDimension()
+			if int == 0 and dim == 0 then
+				blipX, blipY = getElementPosition(Blip.AttachedBlips[blip])
+			else
+				display = false
+			end
 		end
-	end
 
-		if blipX and display == true then -- TODO: hotfix for #236
-
+		if blipX and display then -- TODO: hotfix for #236
 			if getDistanceBetweenPoints2D(px, py, blipX, blipY) < blip:getStreamDistance() then
 				-- Do transformation
 				local pos = mat * math.matrix.three.hvector(blipX, blipY, 0, 1)
@@ -386,19 +341,19 @@ function HUDRadar:drawBlips()
 
 				-- Finally, draw
 				local blipSize = blip:getSize()
-		local imagePath = blip:getImagePath()
+				local imagePath = blip:getImagePath()
 
-		if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
-			if math.abs(pz - blip:getZ()) > 3 then
-				local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
-				imagePath = HUDRadar:getSingleton():makePath(markerImage, true)
-			end
-		end
-		if fileExists(imagePath) then
-						dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, blip:getColor())
-		else
-			outputDebugString("Blip not found: "..imagePath)
-		end
+				if blip.m_RawImagePath == "Marker.png" and blip:getZ() then
+					if math.abs(pz - blip:getZ()) > 3 then
+						local markerImage = blip:getZ() > pz and "Marker_up.png" or "Marker_down.png"
+						imagePath = HUDRadar:getSingleton():makePath(markerImage, true)
+					end
+				end
+				if fileExists(imagePath) then
+					dxDrawImage(screenX - blipSize/2, screenY - blipSize/2, blipSize, blipSize, imagePath, 0, 0, 0, blip:getColor())
+				else
+					outputDebugString("Blip not found: "..imagePath)
+				end
 			end
 		end
 	end
@@ -406,11 +361,11 @@ end
 
 function HUDRadar:worldToMapPosition(worldX, worldY)
 	if worldX and worldY then
-	local mapX = worldX / ( 6000/self.m_ImageSize) + self.m_ImageSize/2
-	local mapY = worldY / (-6000/self.m_ImageSize) + self.m_ImageSize/2
-	return mapX, mapY
+		local mapX = worldX / ( 6000/self.m_ImageSize) + self.m_ImageSize/2
+		local mapY = worldY / (-6000/self.m_ImageSize) + self.m_ImageSize/2
+		return mapX, mapY
 	end
-	return 0,0
+	return 0, 0
 end
 
 function HUDRadar:setZoom(zoom)
@@ -454,9 +409,9 @@ function HUDRadar:setRadarAreaFlashing(serverAreaId, state)
 	if area then
 		area.flashing = state
 		self:updateMapTexture()
-	if isElement(area.mtaElement) then
-		setRadarAreaFlashing(area.mtaElement,state)
-	end
+		if isElement(area.mtaElement) then
+			setRadarAreaFlashing(area.mtaElement,state)
+		end
 	end
 end
 
