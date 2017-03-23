@@ -393,6 +393,11 @@ function Player:spawn( )
 		end
 	end
 
+	if self:isPremium() then
+		self:setArmor(100)
+		giveWeapon(self, 24, 35)
+	end
+
 	self:setFrozen(false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
