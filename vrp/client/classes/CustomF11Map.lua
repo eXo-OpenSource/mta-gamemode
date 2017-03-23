@@ -61,6 +61,10 @@ function CustomF11Map:draw()
 
 	-- Draw map
 	dxDrawImage(mapPosX, mapPosY, height, height, HUDRadar:getSingleton():makePath("Radar.jpg"), 0, 0, 0, tocolor(255, 255, 255, 200))
+	local routeRenderTarget = HUDRadar:getSingleton():getRouteRenderTarget()
+	if routeRenderTarget then
+		dxDrawImage(mapPosX, mapPosY, height, height, routeRenderTarget, 0, 0, 0, tocolor(255, 255, 255, 200))
+	end
 
 	-- Draw gang areas
 	if core:get("HUD", "drawGangAreas", true) then

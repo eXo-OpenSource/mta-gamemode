@@ -6,12 +6,24 @@
 -- *
 -- ****************************************************************************
 GPS = inherit(Singleton)
+addEvent("GPS.retrieveRoute", true)
 
 function GPS:constructor()
 	self.m_Destination = nil
 	self.m_Arrow = nil
 	self.m_ColShape = nil
 	self.m_UpdateFunc = bind(GPS.update, self)
+
+	addEventHandler("GPS.retrieveRoute", root,
+		function(nodes)
+			-- unserialise vectors
+			for i, v in pairs(nodes) do
+				nodes[i] = normaliseVector(v)
+			end
+
+			HUDRadar:getSingleton():setGPSRoute(nodes)
+		end
+	)
 end
 
 function GPS:startNavigationTo(pos)
@@ -22,6 +34,8 @@ function GPS:startNavigationTo(pos)
 
 	addEventHandler("onClientPreRender", root, self.m_UpdateFunc)
 	addEventHandler("onClientColShapeHit", self.m_ColShape, bind(self.colShapeHit, self))
+
+	triggerServerEvent("GPS.calcRoute", localPlayer, "GPS.retrieveRoute", serialiseVector(localPlayer:getPosition()), serialiseVector(pos))
 end
 addEvent("navigationStart", true)
 addEventHandler("navigationStart", root, function(x, y, z) GPS:getSingleton():startNavigationTo(Vector3(x, y,z)) end)

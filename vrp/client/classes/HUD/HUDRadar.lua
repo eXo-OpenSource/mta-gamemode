@@ -14,6 +14,7 @@ function HUDRadar:constructor()
 	self.m_PosX, self.m_PosY = 20, screenHeight-self.m_Height-(self.m_Height/20+9)-30
 	self.m_Diagonal = math.sqrt(self.m_Width^2+self.m_Height^2)
 	self.m_DesignSet = tonumber(core:getConfig():get("HUD", "RadarDesign")) or RadarDesign.Monochrome
+
 	if self.m_DesignSet == RadarDesign.Monochrome or self.m_DesignSet == RadarDesign.GTA then
 		CustomF11Map:getSingleton():enable()
 		setPlayerHudComponentVisible("radar", false)
@@ -226,7 +227,16 @@ function HUDRadar:draw()
 	-- Render (rotated) image section to renderTarget
 	if isNotInInterior then
 		dxSetRenderTarget(self.m_RenderTarget, true)
+
+		-- Draw radar map
 		dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal, self.m_Texture, self.m_Rotation)
+
+		-- Draw route map overlay
+		if self.m_RouteRenderTarget then
+			dxDrawImageSection(0, 0, self.m_Diagonal, self.m_Diagonal, mapX - self.m_Diagonal/2, mapY - self.m_Diagonal/2, self.m_Diagonal, self.m_Diagonal,
+				self.m_RouteRenderTarget, self.m_Rotation)
+		end
+
 		dxSetRenderTarget(nil)
 	end
 
@@ -357,6 +367,33 @@ function HUDRadar:drawBlips()
 			end
 		end
 	end
+end
+
+function HUDRadar:drawRoute()
+	dxSetRenderTarget(self.m_RouteRenderTarget)
+
+	for i = 1, #self.m_GPSNodes-1 do
+		local node = self.m_GPSNodes[i]
+		local previousNode = self.m_GPSNodes[i+1]
+
+		local x, y = self:worldToMapPosition(node.x, node.y)
+		local prevX, prevY = self:worldToMapPosition(previousNode.x, previousNode.y)
+
+		dxDrawLine(x, y, prevX, prevY, tocolor(10, 149, 240), 5, false)
+	end
+
+	dxSetRenderTarget(nil)
+end
+
+function HUDRadar:setGPSRoute(nodes)
+	self.m_RouteRenderTarget = dxCreateRenderTarget(1536, 1536, true)
+
+	self.m_GPSNodes = nodes
+	self:drawRoute()
+end
+
+function HUDRadar:getRouteRenderTarget()
+	return self.m_RouteRenderTarget
 end
 
 function HUDRadar:worldToMapPosition(worldX, worldY)

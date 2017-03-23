@@ -1,7 +1,18 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT: vRoleplay
+-- *  FILE: server/classes/Vehicles/GPS.lua
+-- *  PURPOSE: GPS class
+-- *
+-- ****************************************************************************
 GPS = inherit(Singleton)
+addEvent("GPS.calcRoute", true)
 
 function GPS:constructor()
-	loadPathGraph("files/nodes/sa_nodes.json")
+	assert(loadPathGraph, "GPS module not loaded!")
+	loadPathGraph("files/paths/sa_nodes.json")
+
+	addEventHandler("GPS.calcRoute", root, bindAsync(self.Event_calcRoute, self))
 end
 
 function GPS:destructor()
@@ -12,13 +23,13 @@ function GPS:getRoute(callback, from, to)
 	return findShortestPathBetween(from.x, from.y, from.z, to.x, to.y, to.z, callback)
 end
 
-function GPS:asyncGetRoute(from, to, dontNormalise)
-	-- Use A* to calc route
+function GPS:asyncGetRoute(from, to, dontSerialise)
+	-- Use the pathfind module to calculate the route
 	self:getRoute(Async.waitFor(), from, to)
 	local nodes = Async.wait()
 
-	if not dontNormalise then
-		-- normalise Nodes
+	-- Normalise nodes
+	if not dontSerialise then
 		for i, v in pairs(nodes) do
 			nodes[i] = normaliseVector(v)
 		end
@@ -27,13 +38,10 @@ function GPS:asyncGetRoute(from, to, dontNormalise)
 	return nodes
 end
 
-addEvent("GPS.calcRoute", true)
-addEventHandler("GPS.calcRoute",
-	function (event, from, to)
-		Async.create(function()
-			local nodes = GPS:getSingleton():asyncGetRoute(from, to, true)
-			if nodes then
-				client:triggerEvent(event, nodes)
-			end
-		end)()
-	end)
+function GPS:Event_calcRoute(event, from, to)
+	local c = client
+	local nodes = GPS:getSingleton():asyncGetRoute(normaliseVector(from), normaliseVector(to), true)
+	if nodes then
+		c:triggerEvent(event, nodes)
+	end
+end

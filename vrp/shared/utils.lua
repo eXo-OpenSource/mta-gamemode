@@ -710,12 +710,14 @@ function isNan(num)
 end
 
 function normaliseVector(serialisedVector)
-	if serialisedVector.w ~= nil then
+	if serialisedVector.w then
 		return Vector4(serialisedVector.x, serialisedVector.y, serialisedVector.z, serialisedVector.w)
-	elseif serialisedVector.z ~= nil then
+	elseif serialisedVector.z then
 		return Vector3(serialisedVector.x, serialisedVector.y, serialisedVector.z)
-	else
+	elseif serialisedVector.y then
 		return Vector2(serialisedVector.x, serialisedVector.y)
+	elseif serialisedVector[3] then
+		return Vector3(unpack(serialisedVector))
 	end
 end
 
