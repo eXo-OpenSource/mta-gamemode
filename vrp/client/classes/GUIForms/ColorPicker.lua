@@ -8,10 +8,11 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 
 	self.m_AcceptCallback = acceptCallback
 	self.m_ChangeCallback = changeCallback
-
+	
 	-- Border
 	GUIRectangle:new(4, 34, 258, 258, Color.Black, self.m_Window)
 	GUIRectangle:new(269, 34, 32, 258, Color.Black, self.m_Window)
+	GUIRectangle:new(309, 34, 87, 87, Color.Black, self.m_Window)
 
 	-- Gradient/Hue Bar
 	self.m_BackgroundColor = GUIRectangle:new(5, 35, 256, 256, Color.White, self.m_Window)
@@ -22,8 +23,28 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	self.m_HueCursor = GUIRectangle:new(268, 35, 34, 2, Color.Black, self.m_Window)
 
 	-- Preview
-	self.m_Preview = GUIRectangle:new(310, 35, 70, 70, Color.Black, self.m_Window)
+	self.m_Preview = GUIRectangle:new(310, 35, 85, 85, Color.Black, self.m_Window)
 
+	-- Labels/Inputbox
+	GUILabel:new(310, 125, 20, 10, "H:", self.m_Window)
+	GUILabel:new(310, 140, 20, 10, "S:", self.m_Window)
+	GUILabel:new(310, 155, 20, 10, "B:", self.m_Window)
+	GUILabel:new(310, 170, 20, 10, "R:", self.m_Window)
+	GUILabel:new(310, 185, 20, 10, "G:", self.m_Window)
+	GUILabel:new(310, 200, 20, 10, "B:", self.m_Window)
+	GUILabel:new(310, 230, 20, 10, "#", self.m_Window)
+	
+	self.m_HueEdit = GUIEdit:new(310, 125, 60, 10, self.m_Window):setNumeric(true, true)
+	self.m_SaturationEdit = GUIEdit:new(310, 140, 60, 10, self.m_Window):setNumeric(true, true)
+	self.m_BrightnessEdit = GUIEdit:new(310, 155, 60, 10, self.m_Window):setNumeric(true, true)
+	self.m_RedEdit = GUIEdit:new(310, 170, 60, 10, self.m_Window):setNumeric(true, true)
+	self.m_GreenEdit = GUIEdit:new(310, 185, 60, 10, self.m_Window):setNumeric(true, true)
+	self.m_BlueEdit = GUIEdit:new(310, 200, 60, 10, self.m_Window):setNumeric(true, true)
+	self.m_HexEdit = GUIEdit:new(310, 230, 60, 10, self.m_Window)
+	
+	-- Memory
+	-- todo (M1 - M5)
+	
 	self:updateColor()
 
 	-- Accept Button
@@ -32,9 +53,21 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 
 	self.m_OnCursorClick = bind(ColorPicker.onCursorClick, self)
 	self.m_OnCursorMove = bind(ColorPicker.onCursorMove, self)
-
+	self.m_OnHSBEdit = bind(ColorPicker.onHSBEdit, self)
+	self.m_OnRGBEdit = bind(ColorPicker.onRGBEdit, self)
+	self.m_OnHexEdit = bind(ColorPicker.onHexEdit, self)
+	
+	self.m_HueEdit.onChange = self.m_OnHSBEdit
+	self.m_SaturationEdit.onChange = self.m_OnHSBEdit
+	self.m_BrightnessEdit.onChange = self.m_OnHSBEdit
+	self.m_RedEdit.onChange = self.m_OnRGBEdit
+	self.m_GreenEdit.onChange = self.m_OnRGBEdit
+	self.m_BlueEdit.onChange = self.m_OnRGBEdit
+	self.m_HexEdit.onChange = self.m_OnHexEdit
+	
 	self.m_Gradient.onLeftClickDown = self.m_OnCursorMove
 	self.m_HueBar.onLeftClickDown = self.m_OnCursorMove
+	
 	addEventHandler("onClientClick", root, self.m_OnCursorClick)
 	addEventHandler("onClientCursorMove", root, self.m_OnCursorMove)
 end
@@ -113,8 +146,45 @@ function ColorPicker:updateColor()
 
 	local r, g, b = hsvToRgb(self.m_Hue or 1, self.m_Saturation or 1, self.m_Brightness or 1, 1)
 	self.m_Preview:setColorRGB(r, g, b)
+	
+	self.m_HueEdit:setText(self.m_Hue*360)
+	self.m_SaturationEdit:setText(self.m_Saturation*100)
+	self.m_BrightnessEdit:setText(self.m_Brightness*100)
+	
+	self.m_RedEdit:setText(r)
+	self.m_GreenEdit:setText(g)
+	self.m_BlueEdit:setText(b)
+	
+	self.m_HexEdit:setText(RGBToHex(r, g, b))
+end
+
+function ColorPicker:onRGBEdit()
+	local r = self.m_RedEdit:getText()
+	local g = self.m_GreenEdit:getText()
+	local b = self.m_BlueEdit:getText()
+	
+	self.m_Hue, self.m_Saturation, self.m_Brightness = rgbToHsv(r, g, b)
+	
+	self:updateColor()
+end
+
+function ColorPicker:onHSBEdit()
+	self.m_Hue = self.m_HueEdit:getText()
+	self.m_Saturation = self.m_SaturationEdit:getText()
+	self.m_Brightness = self.m_BrightnessEdit:getText()
+	
+	self:updateColor()
+end
+
+function ColorPicker:onHexEdit()
+	local hex = self.m_HexEdit:getText()
+	local r, g, b = getColorFromString(hex)
+	
+	self.m_Hue, self.m_Saturation, self.m_Brightness = rgbToHsv(r, g, b)
+	
+	self:updateColor()
 end
 
 function ColorPicker:accept()
-
+	-- todo
 end
