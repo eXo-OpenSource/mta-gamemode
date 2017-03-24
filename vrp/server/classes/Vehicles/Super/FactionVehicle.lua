@@ -131,6 +131,8 @@ function FactionVehicle:onEnter(player, seat)
 			else
 				player:sendError(_("Du bist nicht im Dienst!", player))
 				removePedFromVehicle(player)
+				local x,y,z = getElementPosition(player)
+				setElementPosition(player,x,y,z+2)
 				return false
 			end
 		elseif player:getFaction() == self.m_Faction then
@@ -138,6 +140,8 @@ function FactionVehicle:onEnter(player, seat)
 		else
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
 			removePedFromVehicle(player)
+			local x,y,z = getElementPosition(player)
+			setElementPosition(player,x,y,z+2)
 			return false
 		end
 	end
