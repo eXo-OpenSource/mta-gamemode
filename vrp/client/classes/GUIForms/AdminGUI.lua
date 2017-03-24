@@ -67,6 +67,7 @@ function AdminGUI:constructor(money)
 	self.m_EventReasonEdit = GUIEdit:new(410, 150, 140, 30, tabAllgemein)
 	self:addAdminButton("eventMoneyDeposit", "Einzahlen", 340, 190, 100, 30, Color.Green, tabAllgemein)
 	self:addAdminButton("eventMoneyWithdraw", "Auszahlen", 450, 190, 100, 30, Color.Red, tabAllgemein)
+	self:addAdminButton("eventMenu", "Event-Menü", 340, 230, 210, 30, Color.Blue, tabAllgemein)
 
 	--Column 3
 	GUILabel:new(self.m_Width-150, 50, 140, 20, _"selbst teleportieren:", tabAllgemein):setColor(Color.White):setAlignX("right")
@@ -513,6 +514,9 @@ function AdminGUI:onButtonClick(func)
 		else
 			ErrorBox:new("Kein Grund oder Betrag angegeben!")
 		end
+	elseif func == "eventMenu" then
+		self:close()
+		AdminEventGUI:getSingleton():open()
 	elseif func == "gotocords" then
 		local x, y, z = self.m_EditPosX:getText(), self.m_EditPosY:getText(), self.m_EditPosZ:getText()
 		if x and y and z and tonumber(x) and tonumber(y) and tonumber(z) then
