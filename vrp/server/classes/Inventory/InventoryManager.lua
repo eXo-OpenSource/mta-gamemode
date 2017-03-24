@@ -33,7 +33,8 @@ function InventoryManager:constructor()
 	addEventHandler("declineTrade", root, bind(self.Event_declineTrade, self))
 	--/workaround/
 	addEventHandler("syncAfterChange", root, bind(self.Event_syncAfterChange, self))
-
+	
+	WearableManager:new()
 end
 
 function InventoryManager:destructor()
