@@ -370,7 +370,7 @@ function HUDRadar:drawBlips()
 end
 
 function HUDRadar:drawRoute()
-	dxSetRenderTarget(self.m_RouteRenderTarget)
+	dxSetRenderTarget(self.m_RouteRenderTarget, true)
 
 	for i = 1, #self.m_GPSNodes-1 do
 		local node = self.m_GPSNodes[i]
@@ -386,8 +386,22 @@ function HUDRadar:drawRoute()
 end
 
 function HUDRadar:setGPSRoute(nodes)
-	self.m_RouteRenderTarget = dxCreateRenderTarget(1536, 1536, true)
+	-- Delete route if nodes is nil
+	if not nodes then
+		if self.m_RouteRenderTarget then
+			destroyElement(self.m_RouteRenderTarget)
+			self.m_RouteRenderTarget = nil
+		end
+		self.m_GPSNodes = nil
+		return
+	end
 
+	-- Create render target if not created yet
+	if not self.m_RouteRenderTarget then
+		self.m_RouteRenderTarget = dxCreateRenderTarget(1536, 1536, true)
+	end
+
+	-- Update nodes and redraw route
 	self.m_GPSNodes = nodes
 	self:drawRoute()
 end

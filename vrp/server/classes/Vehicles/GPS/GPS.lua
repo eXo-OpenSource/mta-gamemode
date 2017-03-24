@@ -39,9 +39,7 @@ function GPS:asyncGetRoute(from, to, dontUnserialise)
 
 	-- Unserialise nodes
 	if not dontUnserialise then
-		for i, v in pairs(nodes) do
-			nodes[i] = normaliseVector(v)
-		end
+		nodes = table.map(nodes, normaliseVector)
 	end
 
 	return nodes
