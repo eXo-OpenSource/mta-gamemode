@@ -66,7 +66,7 @@ function GPS:Event_retrieveRoute(nodes)
 
 	-- Create colshapes to keep track of the nodes
 	for i, node in ipairs(self.m_Nodes) do
-		self.m_WaypointCols[i] = createColSphere(node, 7)
+		self.m_WaypointCols[i] = createColCircle(node.x, node.y, 7)
 
 		addEventHandler("onClientColShapeHit", self.m_WaypointCols[i],
 			function(hitElement, matchingDimension)
