@@ -2,37 +2,50 @@ AdminEventManager = inherit(Singleton)
 
 function AdminEventManager:constructor()
 	self.m_EventRunning = false
+	self.m_CurrentEvent = false
 
 	self.m_EventPartic = {}
 
-	addCommandHandler("teilnehmen", bind(self.joinEventList, self),false,false)
-	addCommandHandler("eventTP", bind(self.teleportJoinList, self),false, false )
-	addCommandHandler("stopEventTP", bind(self.clearTPList, self), false, false )
+	addCommandHandler("teilnehmen", bind(self.joinEvent, self))
 
-	addRemoteEvents{"adminEventRequestData", "adminEventToggle"}
+	addRemoteEvents{"adminEventRequestData", "adminEventToggle", "adminEventTrigger"}
 	addEventHandler("adminEventRequestData", root, bind(self.requestData, self))
 	addEventHandler("adminEventToggle", root, bind(self.toggle, self))
+	addEventHandler("adminEventTrigger", root, bind(self.onEventTrigger, self))
 
 end
 
-function AdminEventManager:joinEventList( source )
-	if not self.m_EventPartic[source] then
-		self.m_EventPartic[source] = true
-		outputChatBox("Du nimmst am Event teil, warte bis du teleportiert wirst!", source, 0, 200, 0)
-	else
-		self.m_EventPartic[source] = true
-		outputChatBox("Du nimmst nicht mehr am Event teil!", source, 200, 0 ,0)
+function AdminEventManager:onEventTrigger(func)
+	if client:getRank() <= RANK.Supporter then return end
+	if not self.m_EventRunning or not self.m_CurrentEvent then
+		client:sendError(_("Es läuft aktuell kein Event!", client))
+	end
+
+	if func == "setTeleportPoint" then
+		self.m_CurrentEvent:setTeleportPoint(client)
+	elseif func == "teleportPlayers" then
+		self.m_CurrentEvent:teleportPlayers(client)
 	end
 end
 
-function AdminEventManager:clearTPList( source )
-	if source:getRank() <= RANK.Supporter then return end
-	self.m_EventPartic = {}
-	outputChatBox("Du hast die Teleport-Liste geleert!",source, 200,200,0)
+function AdminEventManager:joinEvent(player)
+	if not self.m_EventRunning or not self.m_CurrentEvent then
+		player:sendError(_("Es läuft aktuell kein Event!", player))
+	end
+
+	self.m_CurrentEvent:joinEvent(player)
 end
 
 function AdminEventManager:toggle()
-	self.m_EventRunning = not self.m_EventRunning
+	if self.m_EventRunning and self.m_CurrentEvent then
+		delete(self.m_CurrentEvent)
+		self.m_EventRunning = false
+		Admin:getSingleton():sendShortMessage(_("%s hat ein Adminevent beendet!", client, client:getName()))
+	else
+		self.m_CurrentEvent = AdminEvent:new()
+		self.m_EventRunning = true
+		Admin:getSingleton():sendShortMessage(_("%s hat ein Adminevent gestartet!", client, client:getName()))
+	end
 	self:sendData(client)
 end
 
@@ -41,29 +54,9 @@ function AdminEventManager:requestData()
 end
 
 function AdminEventManager:sendData(player)
-	player:triggerEvent("adminEventReceiveData", self.m_EventRunning)
-
-end
-
-function AdminEventManager:teleportJoinList( source )
-	if source:getRank() <= RANK.Supporter then return end
-	local veh
-	local x,y,z = getElementPosition(source)
-	local count = 0
-	local int = getElementInterior(source)
-	local dim = getElementDimension(source)
-	for player, bool in pairs( self.m_EventPartic ) do
-		if bool then
-			veh = getPedOccupiedVehicle(player)
-			if veh then
-				removePedFromVehicle(player)
-			end
-			setElementDimension(player, dim)
-			setElementInterior(player, int)
-			setElementPosition(player, x+math.random(1,3), y+math.random(1,3),z)
-			count = count + 1
-		end
+	if self.m_EventRunning and self.m_CurrentEvent then
+		self.m_CurrentEvent:sendGUIData(player)
+	else
+		player:triggerEvent("adminEventReceiveData", false)
 	end
-	outputChatBox("Es wurden "..count.." teleportiert!", source, 200, 200, 200)
-	self.m_EventPartic = {}
 end
