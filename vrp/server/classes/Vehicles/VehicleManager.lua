@@ -484,10 +484,10 @@ function VehicleManager:Event_OnVehicleCrash( occ, loss )
 			else 
 				setElementHealth(occ, 1)
 			end
-			if sForce < 1 then
+			if sForce < 0.9 then
 				occ:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 				setPedAnimation(occ, "ped", "hit_walk",700,true,false,false)
-			elseif sForce >= 1 then 
+			elseif sForce >= 0.9 then 
 				occ:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
 				removePedFromVehicle(occ)
 				setPedAnimation(occ, "crack", "crckdeth2",15000,true,false,false)
