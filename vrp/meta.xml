@@ -1603,7 +1603,7 @@
 	<map src="files/maps/TuningGarages.map"/>
 	<map src="files/maps/Academi-Interrior.map"/>
 
-	<!-- Data maps (IMPORTANT) -->
+	<!-- Data maps ( IMPORTANT ) -->
 	<map src="files/maps/Busstops.map"/>
 
 	<!-- Includes -->
