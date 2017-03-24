@@ -1264,7 +1264,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/gasmask.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
-	
+
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />
 	<vrpfile src="files/images/GoJump/howto.png" />
