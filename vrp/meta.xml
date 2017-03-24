@@ -1,4 +1,4 @@
-﻿<meta>
+<meta>
 	<info name="vRoleplay" author="vRP team" type="gamemode"/>
 	<min_mta_version server="1.5.3" client="1.5.3-9.11011.0"/>
 	<oop>true</oop>
@@ -1603,7 +1603,7 @@
 	<map src="files/maps/TuningGarages.map"/>
 	<map src="files/maps/Academi-Interrior.map"/>
 
-	<!-- Data maps ( IMPORTANT ) -->
+	<!-- Data maps (IMPORTANT) -->
 	<map src="files/maps/Busstops.map"/>
 
 	<!-- Includes -->
