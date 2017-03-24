@@ -136,7 +136,7 @@ function FactionVehicle:onEnter(player, seat)
 				return false	
 			end
 		elseif player:getFaction() == self.m_Faction then
-			return true
+			return true 
 		else
 			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
 			removePedFromVehicle(player)
