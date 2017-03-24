@@ -326,7 +326,6 @@
 	<script src="client/classes/ClickHandler.lua" type="client"/>
 	<script src="client/classes/AntiClickSpam.lua" type="client"/>
 	<script src="client/classes/HoverHandler.lua" type="client"/>
-	<script src="client/classes/GPS.lua" type="client"/>
 	<script src="client/classes/ego.lua" type="client"/>
 	<script src="client/classes/CustomModelManager.lua" type="client"/>
 	<script src="client/classes/Provider.lua" type="client"/>
@@ -669,6 +668,7 @@
 	<script src="client/classes/Vehicles/Indicator.lua" type="client"/>
 	<script src="client/classes/Vehicles/CruiseControl.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleTuning.lua" type="client"/>
+	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>

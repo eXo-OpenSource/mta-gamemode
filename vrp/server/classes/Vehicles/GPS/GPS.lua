@@ -9,27 +9,36 @@ GPS = inherit(Singleton)
 addEvent("GPS.calcRoute", true)
 
 function GPS:constructor()
-	assert(loadPathGraph, "GPS module not loaded!")
+	-- Check if module is loaded
+	if not loadPathGraph then
+		outputDebugString("GPS module not loaded. Continuing without...", 2)
+		return
+	end
+
+	-- Load path graph
 	loadPathGraph("files/paths/sa_nodes.json")
 
+	-- Add events
 	addEventHandler("GPS.calcRoute", root, bindAsync(self.Event_calcRoute, self))
 end
 
 function GPS:destructor()
-	unloadPathGraph()
+	if unloadPathGraph then
+		unloadPathGraph()
+	end
 end
 
 function GPS:getRoute(callback, from, to)
 	return findShortestPathBetween(from.x, from.y, from.z, to.x, to.y, to.z, callback)
 end
 
-function GPS:asyncGetRoute(from, to, dontSerialise)
+function GPS:asyncGetRoute(from, to, dontUnserialise)
 	-- Use the pathfind module to calculate the route
 	self:getRoute(Async.waitFor(), from, to)
 	local nodes = Async.wait()
 
-	-- Normalise nodes
-	if not dontSerialise then
+	-- Unserialise nodes
+	if not dontUnserialise then
 		for i, v in pairs(nodes) do
 			nodes[i] = normaliseVector(v)
 		end
