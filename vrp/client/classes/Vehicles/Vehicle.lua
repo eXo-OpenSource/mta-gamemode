@@ -169,12 +169,21 @@ setTimer(
 
 -- The following code prevents vehicle from exploding "fully"
 addEventHandler("onClientVehicleDamage", root,
-	function(attacker, weapon, loss)
+	function(attacker, weapon, loss, dx, dy, dz, tId)
+		local occ = getVehicleOccupants(source)
+		local counter = 0
+		local lpIsOcc = false
+		for seat, player in pairs(occ) do
+			counter = counter + 1
+			if player == localPlayer then 
+				lpIsOcc = true
+			end
+		end
+		if not getElementData(source, "syncEngine") and not tId then cancelEvent() end
 		if source:getData("disableVehicleDamageSystem") then return end
 		if source:getVehicleType() == VehicleType.Automobile or source:getVehicleType() == VehicleType.Bike then
 			if source:getHealth() - loss < 310 then
 				cancelEvent()
-
 				if isElementSyncer(source) and source:getHealth() >= 310 then
 					triggerServerEvent("vehicleBreak", source)
 					source.m_Broken = true
@@ -185,6 +194,11 @@ addEventHandler("onClientVehicleDamage", root,
 				end
 				setVehicleEngineState(source, false)
 				source:setHealth(301)
+			end
+		end
+		if lpIsOcc then 
+			if not attacker then
+				triggerServerEvent("onVehicleCrash", source, localPlayer, loss)
 			end
 		end
 	end

@@ -9,7 +9,7 @@ WearableHelmet = inherit( Item )
 
 WearableHelmet.objectTable = 
 {
-	["Helm"] = {2052, 0.1, 0, 1, 0, 180, "Integral-Helm"},
+	["Helm"] = {2052, 0.05, 0.05, 1, 5, 180, "Integral-Helm"},
 	["Motorcross-Helm"] = {2799, 0.09, 0.02, 0.9, 10, 180,"Motocross-Helm"},
 	["Pot-Helm"] = {3911,0.1, 0, 1, 0, 180, "Biker-Helm"},
 	["Gasmaske"] = {3890,0, 0.15, 0.9, 0, 90, "Gasmaske"},
@@ -42,6 +42,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		setElementDimension(obj, dim)
 		setElementInterior(obj, int)
 		setObjectScale(obj, scale)
+		setElementDoubleSided(obj,true)
 		exports.bone_attach:attachElementToBone(obj, player, 1, 0, yOffset, zOffset, rotX , 0, rotZ)
 		player.m_Helmet = obj
 		player.m_IsWearingHelmet = itemName

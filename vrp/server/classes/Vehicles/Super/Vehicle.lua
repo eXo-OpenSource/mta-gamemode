@@ -244,6 +244,7 @@ function Vehicle:toggleEngine(player)
 				if VEHICLE_BIKES[self:getModel()] then -- Bikes
 					player:meChat(true, "öffnet sein Fahrradschloss!")
 					self:setEngineState(state)
+					setElementData(self, "syncEngine", state)
 					return true
 				else
 					if not self.m_StartingEnginePhase then
@@ -257,6 +258,7 @@ function Vehicle:toggleEngine(player)
 							end
 						end
 						setTimer(bind(self.setEngineState, self), 2000, 1, true)
+						setTimer(setElementData, 2000, 1 , self, "syncEngine", true)
 						return true
 					end
 				end
@@ -267,6 +269,7 @@ function Vehicle:toggleEngine(player)
 				player:meChat(true, "verschließt sein Fahrradschloss!")
 			end
 			self:setEngineState(state)
+			setElementData(self, "syncEngine", state)
 			return true
 		end
 	end
