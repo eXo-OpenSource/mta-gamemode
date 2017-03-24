@@ -37,6 +37,7 @@ WearableManager = inherit( Singleton )
 function WearableManager:constructor() 
 	addEventHandler("onElementInteriorChange",root, bind(self.Event_onElementInteriorChange,self))
 	addEventHandler("onElementDimensionChange",root, bind ( self.Event_onElementDimensionChange, self))
+	addEventHandler("onPlayerQuit",root, bind ( self.Event_onPlayerQuit, self))
 end
 
 function WearableManager:destructor() 
@@ -50,10 +51,25 @@ function WearableManager:Event_onElementInteriorChange( int )
 	if source.m_Helmet then 
 		setElementInterior(source.m_Helmet, int)
 	end
+	if source.m_Shirt then 
+		setElementInterior(source.m_Shirt, int)
+	end
 end
 
 function WearableManager:Event_onElementDimensionChange( dim )
 	if source.m_Helmet then 
 		setElementDimension(source.m_Helmet, dim)
+	end
+	if source.m_Shirt then 
+		setElementDimension(source.m_Shirt, dim)
+	end
+end
+
+function WearableManager:Event_onPlayerQuit(  )
+	if source.m_Helmet then 
+		destroyElement(source.m_Helmet)
+	end
+	if source.m_Shirt then 
+		destroyElement(source.m_Shirt)
 	end
 end

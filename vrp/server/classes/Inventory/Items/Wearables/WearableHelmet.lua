@@ -9,10 +9,10 @@ WearableHelmet = inherit( Item )
 
 WearableHelmet.objectTable = 
 {
-	["Helm"] = {2052, 0.1, 0, 1, 0, 180},
-	["Motorcross-Helm"] = {2799, 0.09, 0.02, 0.9, 10, 180},
-	["Pot-Helm"] = {3911,0.1, 0, 1, 0, 180},
-	["Gasmaske"] = {3890,0, 0.15, 0.9, 0, 90},
+	["Helm"] = {2052, 0.1, 0, 1, 0, 180, "Integral-Helm"},
+	["Motorcross-Helm"] = {2799, 0.09, 0.02, 0.9, 10, 180,"Motocross-Helm"},
+	["Pot-Helm"] = {3911,0.1, 0, 1, 0, 180, "Biker-Helm"},
+	["Gasmaske"] = {3890,0, 0.15, 0.9, 0, 90, "Gasmaske"},
 }
 
 function WearableHelmet:constructor()
@@ -38,17 +38,20 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		local int = getElementInterior(player)
 		local model, zOffset, yOffset, scale, rotX, rotZ  = WearableHelmet.objectTable[itemName][1] or WearableHelmet.objectTable["Helm"][1],  WearableHelmet.objectTable[itemName][2] or WearableHelmet.objectTable["Helm"][2], WearableHelmet.objectTable[itemName][3] or WearableHelmet.objectTable["Helm"][3], WearableHelmet.objectTable[itemName][4] or WearableHelmet.objectTable["Helm"][4], WearableHelmet.objectTable[itemName][5] or WearableHelmet.objectTable["Helm"][5],  WearableHelmet.objectTable[itemName][6] or WearableHelmet.objectTable["Helm"][6]
 		local obj = createObject(model,x,y,z)
+		local objName =  WearableHelmet.objectTable[itemName][7]
 		setElementDimension(obj, dim)
 		setElementInterior(obj, int)
 		setObjectScale(obj, scale)
 		exports.bone_attach:attachElementToBone(obj, player, 1, 0, yOffset, zOffset, rotX , 0, rotZ)
 		player.m_Helmet = obj
 		player.m_IsWearingHelmet = itemName
+		player:meChat(true, "zieht "..objName.." an!")
 	elseif player.m_IsWearingHelmet == itemName and player.m_Helmet then --// if the player clicks onto the same helmet once more remove it
 		destroyElement(player.m_Helmet)
 		self.m_Helmets[player] = nil
 		player.m_IsWearingHelmet = false
 		player.m_Helmet = false
+		player:meChat(true, "setzt "..WearableHelmet.objectTable[itemName][7].." ab!")
 	else --// else the player must have clicked on another helmet otherwise this instance of the class would have not been called
 		if isElement(player.m_Helmet) then 
 			destroyElement(player.m_Helmet)
@@ -64,5 +67,6 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		exports.bone_attach:attachElementToBone(obj, player, 1, 0, yOffset, zOffset, rotX, 0, rotZ)
 		player.m_Helmet = obj
 		player.m_IsWearingHelmet = itemName
+		player:meChat(true, "setzt "..WearableHelmet.objectTable[itemName][7].." ab!")
 	end
 end
