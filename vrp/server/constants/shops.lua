@@ -148,13 +148,20 @@ SHOP_ITEMS = {
 		["Wuerfel"] = 10,
 		["Kanne"] = 500,
 		["Mautpass"] = 250,
-		["Reparaturkit"] = 1000
+		["Reparaturkit"] = 1000,
+		["Motorcross-Helm"] = 2500,
+		["Pot-Helm"] = 3000,
+		["Tragetasche"] = 1000,
 	};
 	["Tankstelle"] = {
 		["Zigarette"] = 10,
 		["Mautpass"] = 250,
 		["Benzinkanister"] = 250,
-		["Reparaturkit"] = 1000
+		["Reparaturkit"] = 1000,
+		["Helm"] = 5000,
+		["Motorcross-Helm"] = 2500,
+		["Pot-Helm"] = 3000,
+		["Tragetasche"] = 1000,
 	};
 	["Stadthalle"] = {
 		["Ausweis"] = 400,
