@@ -474,15 +474,23 @@ end
 function VehicleManager:Event_OnVehicleCrash( occ, loss )
 	local occupants = getVehicleOccupants(source)
 	if getPedOccupiedVehicle(occ) == source then 
-		if loss*0.1 >= 10 then
+		if loss*0.1 >= 5 then
 			local playerHealth = getElementHealth(occ)
-			local bIsKill = (playerHealth - loss*0.05)  <= 0
+			local bIsKill = (playerHealth - loss*0.02)  <= 0
+			local speedx, speedy, speedz = getElementVelocity ( getRandomPlayer() )
+			local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
 			if not bIsKill then
-				setElementHealth(occ, playerHealth - loss*0.05)
-				occ:meChat(true, "prallt gegen das Innere des Fahrzeuges!")
+				setElementHealth(occ, playerHealth - loss*0.02)
 			else 
-				killPed(occ,occ)
+				setElementHealth(occ, 1)
+			end
+			if sForce < 1 then
+				occ:meChat(true, "wird im Fahrzeug umhergeschleudert!")
+				setPedAnimation(occ, "ped", "hit_walk",700,true,false,false)
+			elseif sForce >= 1 then 
 				occ:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
+				removePedFromVehicle(occ)
+				setPedAnimation(occ, "crack", "crckdeth2",15000,true,false,false)
 			end
 			occ:triggerEvent("clientBloodScreen")
 		end
