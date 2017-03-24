@@ -8,11 +8,11 @@ WEAPON_DAMAGE = {
 	[25] = 20,
 
 	[28] = 5,
-	[29] = 8,
+	[29] = 6,
 	[32] = 5,
 
-	[30] = 6,
-	[31] = 8,
+	[30] = 9,
+	[31] = 7,
 
 	[33] = 15,
 	[34] = 50,
@@ -23,8 +23,8 @@ WEAPON_DAMAGE = {
 DAMAGE_MULTIPLIER = {
 	[3] = 1.2, -- Torso
 	[4] = 1.2, -- Ass
-	[5] = 0.8, -- Left Arm
-	[6] = 0.8, -- Right Arm
+	[5] = 1, -- Left Arm
+	[6] = 1, -- Right Arm
 	[7] = 1, -- Left Leg
 	[8] = 1, -- Right Leg
 	[9] = 2 -- Head
