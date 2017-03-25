@@ -37,8 +37,6 @@ function GUIEdit:drawThis()
 		aliginX = "right"
 	end
 
----	outputChatBox(aliginX)
-
 	dxDrawText(text, self.m_AbsoluteX + GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY,
 				self.m_AbsoluteX+self.m_Width - 2*GUI_EDITBOX_BORDER_MARGIN, self.m_AbsoluteY + self.m_Height,
 				self:getColor(), self:getFontSize(), self:getFont(), aliginX, "center", true, false, false, false)
@@ -54,7 +52,7 @@ function GUIEdit:drawThis()
 end
 
 function GUIEdit:getDrawnText()
-	local text = #self.m_Text > 0 and self.m_Text or self.m_Caption or ""
+	local text = #self.m_Text > 0 and self:getText() or self.m_Caption or ""
 	if text ~= self.m_Caption and self.m_MaskChar then
 		text = self.m_MaskChar:rep(#text)
 	end
@@ -62,17 +60,11 @@ function GUIEdit:getDrawnText()
 end
 
 function GUIEdit:onInternalEditInput(caret)
-	-- Todo: Remove the following condition as soon as guiGetCaretIndex is backported
-	if not caret then
-		self.m_Caret = utfLen(self.m_Text)
-		return
-	end
 	self.m_Caret = caret
 
 	if self.onChange then
 		self.onChange(self:getDrawnText())
 	end
-
 end
 
 function GUIEdit:onInternalLeftClick(absoluteX, absoluteY)
