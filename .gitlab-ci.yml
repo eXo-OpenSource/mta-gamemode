@@ -36,6 +36,7 @@ build_docker_job:
   stage: build_docker
   script:
     - cp /builddata/workerserver build/workerserver # Built by deploy-workerunit project
+    - cp /builddata/ml_gps.so build/ml_gps.so # Built by mta-module-gps project
     - sudo docker build -t exo-rl-mta .
     - sudo docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
     - sudo docker tag exo-rl-mta $DOCKER_USER/exo-rl-mta:latest-$(echo $CI_BUILD_REF_NAME | tr -d /)
