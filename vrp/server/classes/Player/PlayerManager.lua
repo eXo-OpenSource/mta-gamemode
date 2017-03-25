@@ -95,7 +95,7 @@ function PlayerManager:Event_OnWasted()
 	setElementDimension(source.ped_deadDouble,dim)
 	setElementInterior(source.ped_deadDouble, int)
 	setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false)
-	setElementData(source.ped_deadDouble,"isGodModePed", true)
+	source.ped_deadDouble:setData("NPC:Immortal",true)
 	setElementAlpha(source,0)
 end
 function PlayerManager:Event_ClientRequestTime()
