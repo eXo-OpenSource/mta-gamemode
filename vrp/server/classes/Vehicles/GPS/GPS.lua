@@ -29,6 +29,9 @@ function GPS:destructor()
 end
 
 function GPS:getRoute(callback, from, to)
+	if not findShortestPathBetween then
+		return false
+	end
 	return findShortestPathBetween(from.x, from.y, from.z, to.x, to.y, to.z, callback)
 end
 
