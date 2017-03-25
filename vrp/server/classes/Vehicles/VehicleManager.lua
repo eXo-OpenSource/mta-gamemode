@@ -44,7 +44,7 @@ function VehicleManager:constructor()
 	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
 	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
-	
+
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
 		function (player, seat)
@@ -329,6 +329,8 @@ function VehicleManager:removeUnusedVehicles()
 					vehicle:setPositionType(VehiclePositionType.Mechanic)
 					vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 					respawnVehicle(vehicle)
+
+					CompanyManager:getSingleton():getFromId(2):addLog(nil, "Respawn-Log", ("%s von %s wurde zerstört und respawnt!"):format(vehicle:getName(), Account.getNameFromId(vehicle:getOwner()) or "-"))
 				else
 					vehicle:respawn()
 				end
@@ -473,7 +475,7 @@ end
 
 function VehicleManager:Event_OnVehicleCrash( veh, loss )
 	local occupants = getVehicleOccupants(veh)
-	if getPedOccupiedVehicle(source) == veh then 
+	if getPedOccupiedVehicle(source) == veh then
 		if loss*0.1 >= 5 then
 			for seat, player in pairs(occupants) do
 				local playerHealth = getElementHealth(player)
@@ -482,13 +484,13 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 				local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
 				if not bIsKill then
 					setElementHealth(player, playerHealth - loss*0.02)
-				else 
+				else
 					setElementHealth(player, 1)
 				end
 				if sForce < 0.85 then
 					player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
 					setPedAnimation(player, "ped", "hit_walk",700,true,false,false)
-				elseif sForce >= 0.85 then 
+				elseif sForce >= 0.85 then
 					player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
 					removePedFromVehicle(player)
 					setPedAnimation(player, "crack", "crckdeth2",5000,true,false,false)
