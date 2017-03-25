@@ -198,7 +198,7 @@ addEventHandler("onClientVehicleDamage", root,
 		end
 		if lpIsOcc then 
 			if not attacker then
-				triggerServerEvent("onVehicleCrash", localPlayer,source, localPlayer, loss)
+				triggerServerEvent("onVehicleCrash", localPlayer,source, loss)
 			end
 		end
 	end
