@@ -316,9 +316,9 @@ function FactionRescue:createDeathPickup(player, ...)
 						if hitPlayer.m_RescueStretcher then
 							if not hitPlayer.m_RescueStretcher.player then
 								player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
-								setElementAlpha(hitPlayer,255)
-								if isElement(hitPlayer.ped_deadDouble) then
-									destroyElement(hitPlayer.ped_deadDouble)
+								setElementAlpha(player,255)
+								if isElement(player.ped_deadDouble) then
+									destroyElement(player.ped_deadDouble)
 								end
 								hitPlayer.m_RescueStretcher.player = player
 								if source.money and source.money > 0 then
