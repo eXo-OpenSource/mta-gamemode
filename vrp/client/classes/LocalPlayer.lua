@@ -407,7 +407,7 @@ function LocalPlayer:renderPostMortemInfo()
 					if x and y and z then 
 						x,y = getScreenFromWorldPosition(x,y,z)
 						name = getElementData(ped,"NPC:namePed") or "Unbekannt"
-						if x and y then 
+						if x and y then
 							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y+1,x,y+1,tocolor(0,0,0,255),1,"default-bold")
 							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y,x,y,tocolor(200,150,0,255),1,"default-bold")
 						end

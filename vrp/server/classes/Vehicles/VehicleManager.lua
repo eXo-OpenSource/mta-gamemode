@@ -497,10 +497,12 @@ function VehicleManager:Event_OnVehicleCrash( veh, loss )
 						player.m_lastInjuryMe = tickCount
 					end
 					setPedAnimation(player, "ped", "hit_walk",700,true,false,false)
+					setTimer(setPedAnimation, 700,2, player, nil)
 				elseif sForce >= 0.85 then
 					player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
 					removePedFromVehicle(player)
-					setPedAnimation(player, "crack", "crckdeth2",5000,true,false,false)
+					setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
+					setTimer(setPedAnimation, 5000,1, player, nil)
 				end
 				player:triggerEvent("clientBloodScreen")
 			end
