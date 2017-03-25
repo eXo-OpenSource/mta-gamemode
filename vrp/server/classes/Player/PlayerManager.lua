@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -51,7 +51,7 @@ function PlayerManager:constructor()
 	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
 	addEventHandler("premiumOpenVehiclesList",root, bind(self.Event_PremiumOpenVehiclesList, self))
 	addEventHandler("premiumTakeVehicle",root, bind(self.Event_PremiumTakeVehicle, self))
-
+	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy))
 
 
 
@@ -78,6 +78,13 @@ function PlayerManager:constructor()
 	self.m_SyncPulse:registerHandler(bind(PlayerManager.updatePlayerSync, self))
 
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
+end
+
+function PlayerManager:Event_OnDeadDoubleDestroy()
+	if source.ped_deadDouble then 
+		destroyElement(source.ped_deadDouble)
+		setElementAlpha(source, 255)
+	end
 end
 
 function PlayerManager:Event_OnWasted()

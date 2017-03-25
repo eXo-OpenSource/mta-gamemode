@@ -214,7 +214,7 @@ function LocalPlayer:Event_playerWasted()
 			self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
 			soundLength = self.m_Halleluja:getLength()
 		end
-
+		triggerServerEvent("destroyPlayerWastedPed",localPlayer)
 		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
 
 		-- render camera drive
