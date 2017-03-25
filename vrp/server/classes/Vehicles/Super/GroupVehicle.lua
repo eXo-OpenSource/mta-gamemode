@@ -40,7 +40,7 @@ end
 function GroupVehicle:constructor(Id, Group, health, positionType, mileage, fuel, trunkId, tuningJSON, premium)
 	self.m_Id = Id
 	self.m_Group = Group
-	self.m_PositionType = VehiclePositionType.World
+	self.m_PositionType = positionType or VehiclePositionType.World
 	self.m_Premium = premium
 	self:setCurrentPositionAsSpawn(self.m_PositionType)
 
