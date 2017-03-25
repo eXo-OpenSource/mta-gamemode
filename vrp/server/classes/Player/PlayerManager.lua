@@ -88,15 +88,24 @@ function PlayerManager:Event_OnDeadDoubleDestroy()
 end
 
 function PlayerManager:Event_OnWasted()
-	local x,y,z = getElementPosition(source)
-	local dim = getElementDimension(source)
-	local int = getElementInterior(source)
-	source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
-	setElementDimension(source.ped_deadDouble,dim)
-	setElementInterior(source.ped_deadDouble, int)
-	setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false)
-	source.ped_deadDouble:setData("NPC:Immortal",true)
-	setElementAlpha(source,0)
+	if not source:getData("isInDeathMatch") then
+		local x,y,z = getElementPosition(source)
+		local dim = getElementDimension(source)
+		local int = getElementInterior(source)
+		source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
+		setElementDimension(source.ped_deadDouble,dim)
+		setElementInterior(source.ped_deadDouble, int)
+		local randAnim = math.random(1,2)
+		if randAnim == 1 then
+			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
+		else 
+			setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false,true)
+		end
+		setElementData(source.ped_deadDouble, "NPC:Immortal_serverside", true )
+		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true )
+		setElementData(source.ped_deadDouble, "NPC:namePed", getPlayerName(source))
+		setElementAlpha(source,0)
+	end
 end
 function PlayerManager:Event_ClientRequestTime()
 	client:Event_requestTime()

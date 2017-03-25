@@ -198,6 +198,7 @@ function DeathmatchManager:joinLobby(id)
 
 	if DeathmatchManager.Lobbys[id] then
 		DeathmatchManager.Lobbys[id]:addPlayer(client)
+		client:setData("isInDeathMatch",true)
 	else
 		client:sendMessage("Lobby nicht gefunden!", 255, 0, 0)
 	end
@@ -214,6 +215,7 @@ end
 function DeathmatchManager:leaveLobby()
 	if client.deathmatchLobby and not client:isDead() then
 		client.deathmatchLobby:removePlayer(client)
+		client:setData("isInDeathMatch",false)
 	end
 end
 
