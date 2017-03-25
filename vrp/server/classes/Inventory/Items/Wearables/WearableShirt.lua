@@ -64,12 +64,14 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		local obj = createObject(model,x,y,z)
 		local dim = getElementDimension(player)
 		local int = getElementInterior(player)
+		local objName =  WearableShirt.objectTable[itemName][8]
 		setElementDimension(obj, dim)
 		setElementInterior(obj, int)
 		setObjectScale(obj, scale)
+		setElementDoubleSided(obj,true)
 		exports.bone_attach:attachElementToBone(obj, player, 3, 0, yOffset, zOffset, rotX, rotY, rotZ)
 		player.m_Shirt = obj
 		player.m_IsWearingShirt = itemName
-		player:meChat(true, "setzt "..WearableShirt.objectTable[itemName][8].." ab!")
+		player:meChat(true, "zieht "..objName.." an!")
 	end
 end
