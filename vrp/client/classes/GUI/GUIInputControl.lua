@@ -30,16 +30,20 @@ function GUIInputControl.setFocus(edit, caret)
 	GUIInputControl.ms_PreviousInput = guiGetText(GUIInputControl.ms_Edit)
 
 	if edit then
+		GUIInputControl.skipChangedEvent = true
+
 		guiBringToFront(GUIInputControl.ms_Edit)
+		oldCaretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
+		guiSetInputEnabled(true)
+		guiSetText(GUIInputControl.ms_Edit, edit:getText())
+
+		GUIInputControl.skipChangedEvent = false
+
 		if caret then
 			guiEditSetCaretIndex(GUIInputControl.ms_Edit, caret)
 		else
 			guiEditSetCaretIndex(GUIInputControl.ms_Edit, utfLen(edit:getText()))
 		end
-
-		oldCaretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
-		guiSetInputEnabled(true)
-		guiSetText(GUIInputControl.ms_Edit, edit:getText())
 
 		edit:onInternalFocus()
 		if edit.onFocus then
@@ -58,6 +62,8 @@ end
 
 addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 	function()
+		if GUIInputControl.skipChangedEvent then return end
+
 		local currentEdit = GUIInputControl.ms_CurrentInputFocus
 		if currentEdit then
 			local text = guiGetText(source)
