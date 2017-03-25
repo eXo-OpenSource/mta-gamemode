@@ -226,7 +226,10 @@ function FactionRescue:getStretcher(player, vehicle)
 		player.m_RescueStretcher:setCollisionsEnabled(false)
 		player.m_RescueStretcher.m_Vehicle = vehicle
 	end
-
+	setElementAlpha(player,255)
+	if player.ped_deadDouble then 
+		destroyElement(player.ped_deadDouble)
+	end
 	-- Move the Stretcher to the Player
 	moveObject(player.m_RescueStretcher, 3000, player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, player:getRotation().z - vehicle:getRotation().z), "InOutQuad")
 	player:setFrozen(true)
