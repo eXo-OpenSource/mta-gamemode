@@ -472,26 +472,29 @@ function VehicleManager:syncVehicleInfo(player)
 end
 
 function VehicleManager:Event_OnVehicleCrash( veh, loss )
+	local occupants = getVehicleOccupants(veh)
 	if getPedOccupiedVehicle(source) == veh then 
 		if loss*0.1 >= 5 then
-			local playerHealth = getElementHealth(source)
-			local bIsKill = (playerHealth - loss*0.02)  <= 0
-			local speedx, speedy, speedz = getElementVelocity ( veh )
-			local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
-			if not bIsKill then
-				setElementHealth(source, playerHealth - loss*0.02)
-			else 
-				setElementHealth(source, 1)
+			for seat, player in pairs(occupants) do
+				local playerHealth = getElementHealth(player)
+				local bIsKill = (playerHealth - loss*0.02)  <= 0
+				local speedx, speedy, speedz = getElementVelocity ( veh )
+				local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
+				if not bIsKill then
+					setElementHealth(player, playerHealth - loss*0.02)
+				else 
+					setElementHealth(player, 1)
+				end
+				if sForce < 0.85 then
+					player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
+					setPedAnimation(player, "ped", "hit_walk",700,true,false,false)
+				elseif sForce >= 0.85 then 
+					player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
+					removePedFromVehicle(player)
+					setPedAnimation(player, "crack", "crckdeth2",5000,true,false,false)
+				end
+				player:triggerEvent("clientBloodScreen")
 			end
-			if sForce < 0.85 then
-				source:meChat(true, "wird im Fahrzeug umhergeschleudert!")
-				setPedAnimation(source, "ped", "hit_walk",700,true,false,false)
-			elseif sForce >= 0.85 then 
-				source:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
-				removePedFromVehicle(source)
-				setPedAnimation(source, "crack", "crckdeth2",5000,true,false,false)
-			end
-			source:triggerEvent("clientBloodScreen")
 		end
 	end
 end
