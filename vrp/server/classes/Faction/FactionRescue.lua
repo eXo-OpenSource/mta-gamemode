@@ -237,6 +237,9 @@ function FactionRescue:getStretcher(player, vehicle)
 	setTimer(
 		function (player)
 			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
+			if isElement(player.ped_deadDouble) then
+				player.m_RescueStretcher:attach(player.ped_deadDouble, Vector3(0, 1.4, -0.5))
+			end
 			player:toggleControlsWhileObjectAttached(false)
 			toggleControl(player, "jump", true) -- But allow jumping
 			player:setFrozen(false)
