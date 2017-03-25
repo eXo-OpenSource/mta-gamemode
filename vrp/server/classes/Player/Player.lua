@@ -453,7 +453,7 @@ function Player:respawn(position, rotation, bJailSpawn)
 	FactionState:getSingleton():uncuffPlayer( self )
 	setPedAnimation(self,false)
 	setElementAlpha(source,255)
-	if source.ped_deadDouble then 
+	if isElement(source.ped_deadDouble) then 
 		destroyElement(source.ped_deadDouble)
 	end
 end
