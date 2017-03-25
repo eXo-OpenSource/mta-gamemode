@@ -109,7 +109,7 @@ function GroupManager:sendInfosToClient(player)
 
 	if group then
 		local vehicles = {}
-		for _, vehicle in pairs(group:getVehicles()) do
+		for _, vehicle in pairs(group:getVehicles() or {}) do
 			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
 		end
 
