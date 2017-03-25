@@ -393,21 +393,24 @@ function LocalPlayer:toggleAFK(state, teleport)
 end
 
 function LocalPlayer:renderPostMortemInfo()
-	local peds = getElementsByType("ped")
+	local peds = getElementsByType("ped", root, true)
 	local isMortem,x,y,z, name
 	local px, py, pz, tx, ty, tz, dist
-      px, py, pz = getCameraMatrix( )
+	px, py, pz = getCameraMatrix( )
 	for k, ped in ipairs( peds) do 
 		isMortem = getElementData(ped, "NPC:isDyingPed") 
 		if isMortem then 
+			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 30 
 			x,y,z = getPedBonePosition(ped, 8)
-			if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
-				if x and y and z then 
-					x,y = getScreenFromWorldPosition(x,y,z)
-					name = getElementData(ped,"NPC:namePed") or "Unbekannt"
-					if x and y then 
-						dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y+1,x,y+1,tocolor(0,0,0,255),1,"default-bold")
-						dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y,x,y,tocolor(200,150,0,255),1,"default-bold")
+			if dist then
+				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
+					if x and y and z then 
+						x,y = getScreenFromWorldPosition(x,y,z)
+						name = getElementData(ped,"NPC:namePed") or "Unbekannt"
+						if x and y then 
+							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y+1,x,y+1,tocolor(0,0,0,255),1,"default-bold")
+							dxDrawText("* "..name.." kriecht blutend am Boden! *", x,y,x,y,tocolor(200,150,0,255),1,"default-bold")
+						end
 					end
 				end
 			end
