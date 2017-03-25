@@ -1,18 +1,31 @@
+-- ****************************************************************************
+-- *
+-- *  PROJECT:     vRoleplay
+-- *  FILE:        client/classes/GUIForms/ColorPicker.lua
+-- *  PURPOSE:     ColorPicker
+-- *
+-- ****************************************************************************
 ColorPicker = inherit(GUIForm)
 inherit(Singleton, ColorPicker)
 
 function ColorPicker:constructor(acceptCallback, changeCallback)
-    local width, height = 400, 300
+    local width, height = 390, 330
     GUIForm.constructor(self, screenWidth/2-width/2, screenHeight/2-height/2, width, height)
-	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Colorpicker", true, true, self)
+	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"ColorPicker", true, true, self)
 
 	self.m_AcceptCallback = acceptCallback
 	self.m_ChangeCallback = changeCallback
-	
+
 	-- Border
-	GUIRectangle:new(4, 34, 258, 258, Color.Black, self.m_Window)
-	GUIRectangle:new(269, 34, 32, 258, Color.Black, self.m_Window)
-	GUIRectangle:new(309, 34, 87, 87, Color.Black, self.m_Window)
+	GUIRectangle:new(4, 34, 258, 258, Color.Black, self.m_Window) -- Gradient
+	GUIRectangle:new(269, 34, 32, 258, Color.Black, self.m_Window) -- HueBar
+	GUIRectangle:new(309, 34, 77, 62, Color.Black, self.m_Window) -- Preview
+
+	GUIRectangle:new(4, 294, 32, 32, Color.Black, self.m_Window) -- M1
+	GUIRectangle:new(39, 294, 32, 32, Color.Black, self.m_Window) -- M2
+	GUIRectangle:new(74, 294, 32, 32, Color.Black, self.m_Window) -- M3
+	GUIRectangle:new(109, 294, 32, 32, Color.Black, self.m_Window) -- M4
+	GUIRectangle:new(144, 294, 32, 32, Color.Black, self.m_Window) -- M5
 
 	-- Gradient/Hue Bar
 	self.m_BackgroundColor = GUIRectangle:new(5, 35, 256, 256, Color.White, self.m_Window)
@@ -23,40 +36,58 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	self.m_HueCursor = GUIRectangle:new(268, 35, 34, 2, Color.Black, self.m_Window)
 
 	-- Preview
-	self.m_Preview = GUIRectangle:new(310, 35, 85, 85, Color.Black, self.m_Window)
+	self.m_Preview = GUIRectangle:new(310, 35, 75, 60, Color.Black, self.m_Window)
 
 	-- Labels/Inputbox
-	GUILabel:new(310, 125, 20, 10, "H:", self.m_Window)
-	GUILabel:new(310, 140, 20, 10, "S:", self.m_Window)
-	GUILabel:new(310, 155, 20, 10, "B:", self.m_Window)
-	GUILabel:new(310, 170, 20, 10, "R:", self.m_Window)
-	GUILabel:new(310, 185, 20, 10, "G:", self.m_Window)
-	GUILabel:new(310, 200, 20, 10, "B:", self.m_Window)
-	GUILabel:new(310, 230, 20, 10, "#", self.m_Window)
-	
-	self.m_HueEdit = GUIEdit:new(310, 125, 60, 10, self.m_Window):setNumeric(true, true)
-	self.m_SaturationEdit = GUIEdit:new(310, 140, 60, 10, self.m_Window):setNumeric(true, true)
-	self.m_BrightnessEdit = GUIEdit:new(310, 155, 60, 10, self.m_Window):setNumeric(true, true)
-	self.m_RedEdit = GUIEdit:new(310, 170, 60, 10, self.m_Window):setNumeric(true, true)
-	self.m_GreenEdit = GUIEdit:new(310, 185, 60, 10, self.m_Window):setNumeric(true, true)
-	self.m_BlueEdit = GUIEdit:new(310, 200, 60, 10, self.m_Window):setNumeric(true, true)
-	self.m_HexEdit = GUIEdit:new(310, 230, 60, 10, self.m_Window)
-	
+	GUILabel:new(310, 100, 10, 20, "H:", self.m_Window)
+	GUILabel:new(310, 125, 10, 20, "S:", self.m_Window)
+	GUILabel:new(310, 150, 10, 20, "B:", self.m_Window)
+	GUILabel:new(310, 185, 10, 20, "R:", self.m_Window)
+	GUILabel:new(310, 210, 10, 20, "G:", self.m_Window)
+	GUILabel:new(310, 235, 10, 20, "B:", self.m_Window)
+	GUILabel:new(310, 270, 10, 20, "#", self.m_Window)
+
+	self.m_HueEdit = GUIEdit:new(325, 100, 60, 20, self.m_Window):setNumeric(true, true)
+	self.m_SaturationEdit = GUIEdit:new(325, 125, 60, 20, self.m_Window):setNumeric(true, true)
+	self.m_BrightnessEdit = GUIEdit:new(325, 150, 60, 20, self.m_Window):setNumeric(true, true)
+	self.m_RedEdit = GUIEdit:new(325, 185, 60, 20, self.m_Window):setNumeric(true, true)
+	self.m_GreenEdit = GUIEdit:new(325, 210, 60, 20, self.m_Window):setNumeric(true, true)
+	self.m_BlueEdit = GUIEdit:new(325, 235, 60, 20, self.m_Window):setNumeric(true, true)
+	self.m_HexEdit = GUIEdit:new(325, 270, 60, 20, self.m_Window)
+
 	-- Memory
-	-- todo (M1 - M5)
-	
-	self:updateColor()
+	self.m_M1 = GUIRectangle:new(5, 295, 30, 30, core:get("ColorPicker", "M1", Color.White), self.m_Window)
+	self.m_M2 = GUIRectangle:new(40, 295, 30, 30, core:get("ColorPicker", "M2", Color.White), self.m_Window)
+	self.m_M3 = GUIRectangle:new(75, 295, 30, 30, core:get("ColorPicker", "M3", Color.White), self.m_Window)
+	self.m_M4 = GUIRectangle:new(110, 295, 30, 30, core:get("ColorPicker", "M4", Color.White), self.m_Window)
+	self.m_M5 = GUIRectangle:new(145, 295, 30, 30, core:get("ColorPicker", "M5", Color.White), self.m_Window)
+	self.m_M1.Option = "M1"
+	self.m_M2.Option = "M2"
+	self.m_M3.Option = "M3"
+	self.m_M4.Option = "M4"
+	self.m_M5.Option = "M5"
 
 	-- Accept Button
-	self.m_AcceptButton = GUIButton:new(310, 260, 80, 30, "✔", self.m_Window):setBackgroundColor(Color.Green)
-	self.m_AcceptButton.onLeftClick = bind(self.accept, self)
+	self.m_AcceptButton = GUIButton:new(270, 295, 115, 30, "✔", self.m_Window):setBackgroundColor(Color.Green)
+	self.m_AcceptButton.onLeftClick = bind(ColorPicker.accept, self)
 
+	-- Default values
+	self.m_WindowInteraction = true
+	self.m_Hue = 1
+	self.m_Saturation = 1
+	self.m_Brightness = 1
+
+	self:updateColor()
+	self:updatePosition()
+
+	-- Events
 	self.m_OnCursorClick = bind(ColorPicker.onCursorClick, self)
 	self.m_OnCursorMove = bind(ColorPicker.onCursorMove, self)
 	self.m_OnHSBEdit = bind(ColorPicker.onHSBEdit, self)
 	self.m_OnRGBEdit = bind(ColorPicker.onRGBEdit, self)
 	self.m_OnHexEdit = bind(ColorPicker.onHexEdit, self)
-	
+	self.m_OnColorSaveLoad = bind(ColorPicker.onColorSaveLoad, self)
+
 	self.m_HueEdit.onChange = self.m_OnHSBEdit
 	self.m_SaturationEdit.onChange = self.m_OnHSBEdit
 	self.m_BrightnessEdit.onChange = self.m_OnHSBEdit
@@ -64,10 +95,16 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	self.m_GreenEdit.onChange = self.m_OnRGBEdit
 	self.m_BlueEdit.onChange = self.m_OnRGBEdit
 	self.m_HexEdit.onChange = self.m_OnHexEdit
-	
+
 	self.m_Gradient.onLeftClickDown = self.m_OnCursorMove
 	self.m_HueBar.onLeftClickDown = self.m_OnCursorMove
-	
+
+	self.m_M1.onLeftClickDown = self.m_OnColorSaveLoad
+	self.m_M2.onLeftClickDown = self.m_OnColorSaveLoad
+	self.m_M3.onLeftClickDown = self.m_OnColorSaveLoad
+	self.m_M4.onLeftClickDown = self.m_OnColorSaveLoad
+	self.m_M5.onLeftClickDown = self.m_OnColorSaveLoad
+
 	addEventHandler("onClientClick", root, self.m_OnCursorClick)
 	addEventHandler("onClientCursorMove", root, self.m_OnCursorMove)
 end
@@ -82,16 +119,20 @@ function ColorPicker:onCursorClick(_, state)
 		self.m_HueMouseDown = false
 		self.m_BrightnessSaturationMouseDown = false
 		self.m_Window:toggleMoving(true)
+
+		nextframe(function() self.m_WindowInteraction = true end)
 		return
 	end
 
 	if self.m_Gradient:isCursorWithinBox(0, 0, 256, 256) then
+		self.m_WindowInteraction = false
 		self.m_Window:toggleMoving(false)
 		self.m_BrightnessSaturationMouseDown = true
 		return
 	end
 
 	if self.m_HueBar:isCursorWithinBox(0, 0, 30, 256) then
+		self.m_WindowInteraction = false
 		self.m_Window:toggleMoving(false)
 		self.m_HueMouseDown = true
 		return
@@ -114,7 +155,7 @@ function ColorPicker:onCursorMove()
 		if positionY < hueBarPosY then positionY = hueBarPosY end
 		if positionY > hueBarPosY + hueBarSize then positionY = hueBarPosY + hueBarSize end
 
-		self.m_HueCursor:setAbsolutePosition(nil, positionY)
+		self.m_HueCursor:setAbsolutePosition(nil, positionY - 1)
 		self.m_Hue = 1-(360/hueBarSize*(positionY-hueBarPosY)/360)
 		self:updateColor()
 		return
@@ -140,51 +181,121 @@ function ColorPicker:onCursorMove()
 	end
 end
 
-function ColorPicker:updateColor()
-	local r, g, b = hsvToRgb(self.m_Hue or 1, 1, 1, 1)
+function ColorPicker:updateColor(skipHex)
+	local r, g, b = hsvToRgb(self.m_Hue, 1, 1, 1)
 	self.m_BackgroundColor:setColorRGB(r, g, b)
 
-	local r, g, b = hsvToRgb(self.m_Hue or 1, self.m_Saturation or 1, self.m_Brightness or 1, 1)
+	local r, g, b = hsvToRgb(self.m_Hue, self.m_Saturation, self.m_Brightness, 1)
 	self.m_Preview:setColorRGB(r, g, b)
-	
+
 	self.m_HueEdit:setText(self.m_Hue*360)
 	self.m_SaturationEdit:setText(self.m_Saturation*100)
 	self.m_BrightnessEdit:setText(self.m_Brightness*100)
-	
+
 	self.m_RedEdit:setText(r)
 	self.m_GreenEdit:setText(g)
 	self.m_BlueEdit:setText(b)
-	
-	self.m_HexEdit:setText(RGBToHex(r, g, b))
+
+	if not skipHex then
+		self.m_HexEdit:setText(RGBToHex(r, g, b))
+	end
+
+	if self.m_ChangeCallback then
+		self.m_ChangeCallback(r, g, b)
+	end
+end
+
+function ColorPicker:updatePosition()
+	local _, hueBarPosY = self.m_HueBar:getPosition()
+	local _, hueBarSize = self.m_HueBar:getSize()
+
+	local positionY = hueBarPosY + (1-self.m_Hue)*hueBarSize
+	self.m_HueCursor:setAbsolutePosition(nil, positionY)
+
+	local gradientPosX, gradientPosY = self.m_Gradient:getPosition()
+	local gradientSizeW, gradientSizeH = self.m_Gradient:getSize()
+
+	local positionX = gradientPosX + self.m_Saturation*gradientSizeW
+	local positionY = gradientPosY + (1-self.m_Brightness)*gradientSizeH
+
+	self.m_GradientCursor:setAbsolutePosition(positionX - 11/2, positionY - 11/2)
+end
+
+function ColorPicker:onHSBEdit()
+	self.m_Hue = (self.m_HueEdit:getText() or 0)/360
+	self.m_Saturation = (self.m_SaturationEdit:getText() or 0)/100
+	self.m_Brightness = (self.m_BrightnessEdit:getText() or 0)/100
+
+	if self.m_Hue < 0 then self.m_Hue = 0 end
+	if self.m_Hue > 1 then self.m_Hue = 1 end
+	if self.m_Saturation < 0 then self.m_Saturation = 0 end
+	if self.m_Saturation > 1 then self.m_Saturation = 1 end
+	if self.m_Brightness < 0 then self.m_Brightness = 0 end
+	if self.m_Brightness > 1 then self.m_Brightness = 1 end
+
+	self:updateColor()
+	self:updatePosition()
 end
 
 function ColorPicker:onRGBEdit()
 	local r = self.m_RedEdit:getText()
 	local g = self.m_GreenEdit:getText()
 	local b = self.m_BlueEdit:getText()
-	
-	self.m_Hue, self.m_Saturation, self.m_Brightness = rgbToHsv(r, g, b)
-	
-	self:updateColor()
-end
 
-function ColorPicker:onHSBEdit()
-	self.m_Hue = self.m_HueEdit:getText()
-	self.m_Saturation = self.m_SaturationEdit:getText()
-	self.m_Brightness = self.m_BrightnessEdit:getText()
-	
+	if not r or not g or not b then return end
+	if r < 0 then r = 0 end
+	if r > 255 then r = 255 end
+	if g < 0 then g = 0 end
+	if g > 255 then g = 255 end
+	if b < 0 then b = 0 end
+	if b > 255 then b = 255 end
+
+	self.m_Hue, self.m_Saturation, self.m_Brightness = rgbToHsv(r, g, b, 1)
+
 	self:updateColor()
+	self:updatePosition()
 end
 
 function ColorPicker:onHexEdit()
 	local hex = self.m_HexEdit:getText()
-	local r, g, b = getColorFromString(hex)
-	
-	self.m_Hue, self.m_Saturation, self.m_Brightness = rgbToHsv(r, g, b)
-	
+	local r, g, b = getColorFromString("#" .. hex)
+
+	if not r or not g or not b then return end
+	self.m_Hue, self.m_Saturation, self.m_Brightness = rgbToHsv(r, g, b, 1)
+
+	self:updateColor(true)
+	self:updatePosition()
+end
+
+function ColorPicker:setColor(r, g, b)
+	self.m_Hue, self.m_Saturation, self.m_Brightness = rgbToHsv(r, g, b, 1)
 	self:updateColor()
+	self:updatePosition()
+end
+
+function ColorPicker:onColorSaveLoad()
+	if not self.m_WindowInteraction then return end
+
+	local guiElement = GUIElement.getHoveredElement()
+	if guiElement.Option then
+		if getKeyState("lctrl") then
+			self:setColor(guiElement:getColorRGB())
+			return
+		end
+
+		local currentColor = self.m_Preview:getColor()
+		guiElement:setColor(currentColor)
+		core:set("ColorPicker", guiElement.Option, currentColor)
+	end
 end
 
 function ColorPicker:accept()
-	-- todo
+	if self.m_WindowInteraction then
+		if self.m_AcceptCallback then
+			local r, g, b = self.m_Preview:getColorRGB()
+			self.m_AcceptCallback(r, g, b)
+		end
+
+		delete(self)
+	end
 end

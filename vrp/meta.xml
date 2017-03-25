@@ -536,7 +536,6 @@
 	<script src="client/classes/GUIForms/DeathmatchGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/DeathmatchCreateLobby.lua" type="client"/>
 	<script src="client/classes/GUIForms/PasswordBox.lua" type="client"/>
-	<script src="client/classes/GUIForms/ColorPickerGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ColorPicker.lua" type="client"/>
 	<script src="client/classes/GUIForms/TradeGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/VehicleTuningGUI.lua" type="client"/>
