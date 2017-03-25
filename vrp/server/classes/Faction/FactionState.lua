@@ -24,7 +24,6 @@ function FactionState:constructor()
 	self:createGasStation(Vector3(2763.88,-2386.90,13.0), 5) -- LS Army
 	self:createGasStation(Vector3(1563.98,-1614.40, 12.5)) -- LS PD
 	self:createGasStation(Vector3(1552.93,-1614.40, 12.5)) -- LS PD
-
 	self.m_Bugs = {}
 
 	for i = 1, FACTION_FBI_BUGS do

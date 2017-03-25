@@ -264,7 +264,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
            	local r2, g2, b2 = unpack(self.m_NewTuning:getTuning("Color2"))
 
-			self.m_ColorPicker = ColorPickerGUI:new(
+			self.m_ColorPicker = ColorPicker:new(
             function(r, g, b)
                 self.m_NewTuning:saveTuning(item.PartSlot, {r, g, b})
 				self.m_NewTuning:applyTuning()
@@ -280,7 +280,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
 			local r1, g1, b1 = unpack(self.m_NewTuning:getTuning("Color1"))
 
-            self.m_ColorPicker = ColorPickerGUI:new(
+            self.m_ColorPicker = ColorPicker:new(
             function(r, g, b)
                 self.m_NewTuning:saveTuning(item.PartSlot, {r, g, b})
 				self.m_NewTuning:applyTuning()
@@ -294,7 +294,7 @@ function VehicleTuningGUI:PartItem_Click(item)
         elseif item.PartSlot == "ColorLight" then
             self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
-            self.m_ColorPicker = ColorPickerGUI:new(
+            self.m_ColorPicker = ColorPicker:new(
             function(r, g, b)
                 self.m_NewTuning:saveTuning(item.PartSlot, {r, g, b})
 				self.m_NewTuning:applyTuning()
@@ -339,7 +339,7 @@ function VehicleTuningGUI:PartItem_Click(item)
 			end
 			self.m_UpgradeChanger:setVisible(false)
             self.m_AddToCartButton:setVisible(false)
-            self.m_ColorPicker = ColorPickerGUI:new(
+            self.m_ColorPicker = ColorPicker:new(
 				function(r, g, b)
 					self.m_NewTuning:saveTuning(item.PartSlot, {r, g, b})
 					self.m_NewTuning:applyTuning()

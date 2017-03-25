@@ -172,12 +172,8 @@ addEventHandler("onClientVehicleDamage", root,
 	function(attacker, weapon, loss, dx, dy, dz, tId)
 		local occ = getVehicleOccupants(source)
 		local counter = 0
-		local lpIsOcc = false
 		for seat, player in pairs(occ) do
 			counter = counter + 1
-			if player == localPlayer then 
-				lpIsOcc = true
-			end
 		end
 		if not getElementData(source, "syncEngine") and not tId then cancelEvent() end
 		if source:getData("disableVehicleDamageSystem") then return end
@@ -196,9 +192,9 @@ addEventHandler("onClientVehicleDamage", root,
 				source:setHealth(301)
 			end
 		end
-		if lpIsOcc then 
+		if getVehicleOccupant(source,0) == localPlayer then 
 			if not attacker then
-				triggerServerEvent("onVehicleCrash", source, localPlayer, loss)
+				triggerServerEvent("onVehicleCrash", localPlayer,source, loss)
 			end
 		end
 	end
