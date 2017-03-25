@@ -258,7 +258,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 	player.m_RescueStretcher:setRotation(player:getRotation())
 	player.m_RescueStretcher:setPosition(player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5))
 	moveObject(player.m_RescueStretcher, 3000, vehicle:getPosition() + vehicle.matrix.forward*-2, Vector3(0, 0, vehicle:getRotation().z - player:getRotation().z), "InOutQuad")
-
+	setElementAlpha(player,255)
 	-- Enable Controls
 	player:toggleControlsWhileObjectAttached(true)
 
