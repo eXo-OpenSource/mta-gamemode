@@ -400,8 +400,8 @@ function LocalPlayer:renderPostMortemInfo()
 	for k, ped in ipairs( peds) do 
 		isMortem = getElementData(ped, "NPC:isDyingPed") 
 		if isMortem then 
-			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 30 
 			x,y,z = getPedBonePosition(ped, 8)
+			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 30 
 			if dist then
 				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
 					if x and y and z then 
