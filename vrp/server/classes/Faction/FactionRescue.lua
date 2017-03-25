@@ -198,6 +198,10 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 					self:removeStretcher(client, vehicle)
 				else
 					self:getStretcher(client, vehicle)
+					setElementAlpha(client,255)
+					if source.ped_deadDouble then 
+						destroyElement(source.ped_deadDouble)
+					end
 				end
 			else
 				client:sendError(_("Du kannst die Trage nicht so oft hintereinander aus/einladen!", client))
@@ -264,7 +268,6 @@ function FactionRescue:removeStretcher(player, vehicle)
 					deadPlayer:setCameraTarget(player)
 					deadPlayer:respawn(pos)
 					deadPlayer:fadeCamera(true, 1)
-
 					self.m_Faction:giveMoney(100, "Rescue Team Wiederbelebung")
 					player:giveMoney(50, "Rescue Team Wiederbelebung")
 				else

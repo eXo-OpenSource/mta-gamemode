@@ -23,6 +23,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
 	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
 	addEventHandler("onPlayerCommand", root,  bind(self.playerCommand, self))
+	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	addEventHandler("Event_ClientNotifyWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
@@ -79,6 +80,17 @@ function PlayerManager:constructor()
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
 end
 
+function PlayerManager:Event_OnWasted()
+	local x,y,z = getElementPosition(source)
+	local dim = getElementDimension(source)
+	local int = getElementInterior(source)
+	source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
+	setElementDimension(source.ped_deadDouble,dim)
+	setElementInterior(source.ped_deadDouble, int)
+	setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false)
+	setElementData(source.ped_deadDouble,"isGodModePed", true)
+	setElementAlpha(source,0)
+end
 function PlayerManager:Event_ClientRequestTime()
 	client:Event_requestTime()
 end
@@ -243,6 +255,9 @@ function PlayerManager:playerQuit()
 	end
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
+	end
+	if source.ped_deadDouble then 
+		destroyElement(source.ped_deadDouble)
 	end
 end
 
