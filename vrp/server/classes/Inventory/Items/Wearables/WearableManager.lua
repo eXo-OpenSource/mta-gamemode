@@ -54,6 +54,9 @@ function WearableManager:Event_onElementInteriorChange( int )
 	if source.m_Shirt then 
 		setElementInterior(source.m_Shirt, int)
 	end
+	if source.m_Portables then 
+		setElementDimension(source.m_Portables, int)
+	end
 end
 
 function WearableManager:Event_onElementDimensionChange( dim )
@@ -63,6 +66,9 @@ function WearableManager:Event_onElementDimensionChange( dim )
 	if source.m_Shirt then 
 		setElementDimension(source.m_Shirt, dim)
 	end
+	if source.m_Portables then 
+		setElementDimension(source.m_Portables, dim)
+	end
 end
 
 function WearableManager:Event_onPlayerQuit(  )
@@ -71,5 +77,8 @@ function WearableManager:Event_onPlayerQuit(  )
 	end
 	if source.m_Shirt then 
 		destroyElement(source.m_Shirt)
+	end
+		if source.m_Portables then 
+		destroyElement(source.m_Portables)
 	end
 end

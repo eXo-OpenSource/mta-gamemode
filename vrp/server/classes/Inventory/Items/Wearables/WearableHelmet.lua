@@ -62,12 +62,14 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		local obj = createObject(model,x,y,z)
 		local dim = getElementDimension(player)
 		local int = getElementInterior(player)
+		local objName =  WearableHelmet.objectTable[itemName][7]
 		setElementDimension(obj, dim)
 		setElementInterior(obj, int)
 		setObjectScale(obj, scale)
+		setElementDoubleSided(obj,true)
 		exports.bone_attach:attachElementToBone(obj, player, 1, 0, yOffset, zOffset, rotX, 0, rotZ)
 		player.m_Helmet = obj
 		player.m_IsWearingHelmet = itemName
-		player:meChat(true, "setzt "..WearableHelmet.objectTable[itemName][7].." ab!")
+		player:meChat(true, "zieht "..objName.." an!")
 	end
 end

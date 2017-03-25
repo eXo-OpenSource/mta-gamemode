@@ -21,7 +21,9 @@ function attachElementToBone(element,ped,bone,x,y,z,rx,ry,rz)
 	attached_rx[element] = rx
 	attached_ry[element] = ry
 	attached_rz[element] = rz
-	if setElementCollisionsEnabled then
+	if getElementData(element, "boneattach:setCollision") then
+		setElementCollisionsEnabled(element,true)
+	else 
 		setElementCollisionsEnabled(element,false)
 	end
 	if script_serverside then

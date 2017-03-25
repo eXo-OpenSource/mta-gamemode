@@ -132,7 +132,8 @@
 	<script src="server/classes/Inventory/Items/Wearables/WearableManager.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Wearables/WearableHelmet.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Wearables/WearableShirt.lua" type="server"/>
-
+	<script src="server/classes/Inventory/Items/Wearables/WearablePortables.lua" type="server"/>
+	
 	<script src="server/classes/Inventory/Items/Drugs/DrugsWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsShroom.lua" type="server"/>
@@ -1267,6 +1268,8 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/gasmask.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/riot_shield.png" />
+	
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />
 	<vrpfile src="files/images/GoJump/howto.png" />
@@ -1561,6 +1564,10 @@
 	<vrpfile src="files/models/Wearables/dufflebag.txd" />
 	<vrpfile src="files/models/Wearables/dufflebag.dff" />
 
+	<vrpfile src="files/models/Wearables/riot_shield.txd" />
+	<vrpfile src="files/models/Wearables/riot_shield.dff" />
+	<vrpfile src="files/models/Wearables/riot_shield.col" />
+	
 	<!-- Shaders -->
 	<vrpfile src="files/shader/skin.fx"/>
 	<vrpfile src="files/shader/mta-helper.fx"/>

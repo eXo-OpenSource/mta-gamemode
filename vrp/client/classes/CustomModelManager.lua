@@ -131,6 +131,11 @@ function CustomModelManager:constructor()
 	-- Dufflebag
 	self:loadImportTXD("files/models/Wearables/dufflebag.txd", 3915)
 	self:loadImportDFF("files/models/Wearables/dufflebag.dff", 3915)
+	
+	-- Swatshield 
+	self:loadImportTXD("files/models/Wearables/riot_shield.txd",1631)
+	self:loadImportDFF("files/models/Wearables/riot_shield.dff",1631)
+	self:loadImportCOL("filEs/models/Wearables/riot_shield.col",1631)
 
 end
 
