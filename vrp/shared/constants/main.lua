@@ -79,6 +79,7 @@ ADMIN_RANK_PERMISSION = {
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
 	["eventMoneyWithdraw"] = RANK.Moderator,
+	["eventMenu"] = RANK.Moderator,
 	["offlineUnban"] = RANK.Administrator,
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
@@ -99,6 +100,7 @@ GroupRank = {
 FactionRank = {
 	Normal = 0,
 	Rank3 = 3,
+	Rank4 = 4,
 	Manager = 5,
 	Leader = 6
 }

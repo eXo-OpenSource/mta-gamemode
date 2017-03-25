@@ -14,12 +14,16 @@ function GUIFontContainer:constructor(text, size, font)
 end
 
 function GUIFontContainer:getText()
-	return self.m_Text
+	if self.isNumeric and self:isNumeric() then
+		return self:isIntegerOnly() and (tonumber(self.m_Text) and math.round(tonumber(self.m_Text)) or false) or tonumber(self.m_Text)
+	else
+		return self.m_Text
+	end
 end
 
 function GUIFontContainer:setText(text)
-	assert(type(text) == "string", "Bad argument @ GUIFontContainer.setText")
-	self.m_Text = text
+	assert(type(text) == "string" or type(text) == "number", "Bad argument @ GUIFontContainer.setText")
+	self.m_Text = tostring(text)
 	self:anyChange()
 	return self
 end

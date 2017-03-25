@@ -143,6 +143,35 @@ RESOURCES_TO_STOP = {
 }
 
 
-setWeaponProperty(33,"poor","weapon_range",180)
-setWeaponProperty(33,"std","weapon_range",180)
-setWeaponProperty(33,"pro","weapon_range",180)
+
+setWeaponProperty(24,"pro","target_range",45)
+setWeaponProperty(24,"poor","target_range",45)
+setWeaponProperty(24,"std","target_range",45)
+
+setWeaponProperty(24,"pro","weapon_range",45)
+setWeaponProperty(24,"poor","weapon_range",45)
+setWeaponProperty(24,"std","weapon_range",45)
+
+setWeaponProperty(24,"pro","accuracy",0.9)
+setWeaponProperty(24,"poor","accuracy",0.9)
+setWeaponProperty(24,"std","accuracy",0.9)
+
+setWeaponProperty(29,"pro","accuracy",0.9)
+setWeaponProperty(29,"poor","accuracy",0.9)
+setWeaponProperty(29,"std","accuracy",0.9)
+
+setWeaponProperty(31,"pro","accuracy",0.8)
+setWeaponProperty(31,"poor","accuracy",0.8)
+setWeaponProperty(31,"std","accuracy",0.8)
+
+setWeaponProperty(31,"pro","weapon_range",105)
+setWeaponProperty(31,"poor","weapon_range",105)
+setWeaponProperty(31,"std", "weapon_range",105)
+
+setWeaponProperty(33,"pro","weapon_range",160)
+setWeaponProperty(33,"poor","weapon_range",160)
+setWeaponProperty(33,"std","weapon_range",160)
+
+setWeaponProperty(33,"pro","target_range",160)
+setWeaponProperty(33,"poor","target_range",160)
+setWeaponProperty(33,"std","target_range",160)

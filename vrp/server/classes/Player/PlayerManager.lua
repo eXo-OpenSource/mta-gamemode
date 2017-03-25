@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -23,6 +23,7 @@ function PlayerManager:constructor()
 	addEventHandler("onPlayerJoin", root, bind(self.playerJoin, self))
 	addEventHandler("onPlayerQuit", root, bind(self.playerQuit, self))
 	addEventHandler("onPlayerCommand", root,  bind(self.playerCommand, self))
+	addEventHandler("onPlayerWasted", root,  bind(self.Event_OnWasted, self))
 	addEventHandler("Event_ClientNotifyWasted", root, bind(self.playerWasted, self))
 	addEventHandler("onPlayerChat", root, bind(self.playerChat, self))
 	addEventHandler("onPlayerChangeNick", root, function() cancelEvent() end)
@@ -50,7 +51,7 @@ function PlayerManager:constructor()
 	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
 	addEventHandler("premiumOpenVehiclesList",root, bind(self.Event_PremiumOpenVehiclesList, self))
 	addEventHandler("premiumTakeVehicle",root, bind(self.Event_PremiumTakeVehicle, self))
-
+	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy))
 
 
 
@@ -79,6 +80,33 @@ function PlayerManager:constructor()
 	self.m_AnimationStopFunc = bind(self.stopAnimation, self)
 end
 
+function PlayerManager:Event_OnDeadDoubleDestroy()
+	if source.ped_deadDouble then 
+		destroyElement(source.ped_deadDouble)
+		setElementAlpha(source, 255)
+	end
+end
+
+function PlayerManager:Event_OnWasted()
+	if not source:getData("isInDeathMatch") then
+		local x,y,z = getElementPosition(source)
+		local dim = getElementDimension(source)
+		local int = getElementInterior(source)
+		source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
+		setElementDimension(source.ped_deadDouble,dim)
+		setElementInterior(source.ped_deadDouble, int)
+		local randAnim = math.random(1,2)
+		if randAnim == 1 then
+			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
+		else 
+			setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false,true)
+		end
+		setElementData(source.ped_deadDouble, "NPC:Immortal_serverside", true )
+		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true )
+		setElementData(source.ped_deadDouble, "NPC:namePed", getPlayerName(source))
+		setElementAlpha(source,0)
+	end
+end
 function PlayerManager:Event_ClientRequestTime()
 	client:Event_requestTime()
 end
@@ -243,6 +271,9 @@ function PlayerManager:playerQuit()
 	end
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
+	end
+	if source.ped_deadDouble then 
+		destroyElement(source.ped_deadDouble)
 	end
 end
 

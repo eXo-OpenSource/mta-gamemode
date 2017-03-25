@@ -36,7 +36,7 @@ function LocalPlayer:constructor()
 	addEventHandler("setClientAdmin", self, bind(self.Event_setAdmin, self))
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
 	addEventHandler("onClientPlayerSpawn", self, bind(LocalPlayer.Event_onClientPlayerSpawn, self))
-
+	addEventHandler("onClientRender",root,bind(self.renderPostMortemInfo, self))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
 	self.m_DeathRenderBind = bind(self.deathRender, self)
@@ -214,7 +214,7 @@ function LocalPlayer:Event_playerWasted()
 			self.m_Halleluja = Sound("files/audio/Halleluja.mp3")
 			soundLength = self.m_Halleluja:getLength()
 		end
-
+		triggerServerEvent("destroyPlayerWastedPed",localPlayer)
 		ShortMessage:new(_"Dir konnte leider niemand mehr helfen!\nDu bist gestorben.\nBut... have a good flight into the heaven!", (soundLength-1)*1000)
 
 		-- render camera drive
@@ -389,6 +389,29 @@ function LocalPlayer:toggleAFK(state, teleport)
 		self:setAFKTime() -- Add CurrentAFKTime to AFKTime + Reset CurrentAFKTime
 		NoDm:getSingleton():checkNoDm()
 
+	end
+end
+
+function LocalPlayer:renderPostMortemInfo()
+	local peds = getElementsByType("ped")
+	local isMortem,x,y,z, name
+	local px, py, pz, tx, ty, tz, dist
+      px, py, pz = getCameraMatrix( )
+	for k, ped in ipairs( peds) do 
+		isMortem = getElementData(ped, "NPC:isDyingPed") 
+		if isMortem then 
+			x,y,z = getPedBonePosition(ped, 8)
+			if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
+				if x and y and z then 
+					x,y = getScreenFromWorldPosition(x,y,z)
+					name = getElementData(ped,"NPC:namePed") or "Unbekannt"
+					if x and y then 
+						dxDrawText("* "..name.." kriecht am Boden blutend! *", x,y+1,x,y+1,tocolor(0,0,0,255),1,"default-bold")
+						dxDrawText("* "..name.." kriecht am Boden blutend! *", x,y,x,y,tocolor(200,150,0,255),1,"default-bold")
+					end
+				end
+			end
+		end
 	end
 end
 

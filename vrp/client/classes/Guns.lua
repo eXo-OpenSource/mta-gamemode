@@ -146,7 +146,7 @@ function Guns:drawBloodScreen()
 end
 
 function Guns:Event_onClientPedDamage()
-	if source:getData("NPC:Immortal") == true then
+	if source:getData("NPC:Immortal") == true or getElementData( source, "NPC:Immortal_serverside") then 
 		cancelEvent()
 	end
 end

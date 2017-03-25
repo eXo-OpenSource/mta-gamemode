@@ -11,8 +11,8 @@ WearableShirt = inherit( Item )
 --3,0,-0.1325,0.145,0,0,0,1
 WearableShirt.objectTable = 
 {
-	["Kevlar"] = {3916, 0.05, 0.05, 1.22, 0, 0,-90},
-	["Tragetasche"] = {3915,0.145,-0.1325,1,0,0,0},
+	["Kevlar"] = {3916, 0.05, 0.05, 1.22, 0, 0,-90, "Schutzweste"},
+	["Tragetasche"] = {3915,0.145,-0.1325,1,0,0,0, "Tragetasche"},
 }
 
 function WearableShirt:constructor()
@@ -39,17 +39,21 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		local model, zOffset, yOffset, scale, rotX, rotZ = WearableShirt.objectTable[itemName][1] or WearableShirt.objectTable["Kevlar"][1],  WearableShirt.objectTable[itemName][2] or WearableShirt.objectTable["Kevlar"][2], WearableShirt.objectTable[itemName][3] or WearableShirt.objectTable["Kevlar"][3], WearableShirt.objectTable[itemName][4] or WearableShirt.objectTable["Kevlar"][4], WearableShirt.objectTable[itemName][5] or WearableShirt.objectTable["Kevlar"][5],  WearableShirt.objectTable[itemName][6] or WearableShirt.objectTable["Kevlar"][6]
 		local rotY =  WearableShirt.objectTable[itemName][7] or WearableShirt.objectTable["Kevlar"][7]
 		local obj = createObject(model,x,y,z)
+		local objName =  WearableShirt.objectTable[itemName][8]
 		setElementDimension(obj, dim)
 		setElementInterior(obj, int)
 		setObjectScale(obj, scale)
+		setElementDoubleSided(obj,true)
 		exports.bone_attach:attachElementToBone(obj, player, 3, 0, yOffset, zOffset, rotX , rotY, rotZ)
 		player.m_Shirt = obj
 		player.m_IsWearingShirt = itemName
+		player:meChat(true, "zieht "..objName.." an!")
 	elseif player.m_IsWearingShirt == itemName and player.m_Shirt then --// if the player clicks onto the same Shirt once more remove it
 		destroyElement(player.m_Shirt)
 		self.m_Shirts[player] = nil
 		player.m_IsWearingShirt = false
 		player.m_Shirt = false
+		player:meChat(true, "setzt "..WearableShirt.objectTable[itemName][8].." ab!")
 	else --// else the player must have clicked on another Shirt otherwise this instance of the class would have not been called
 		if isElement(player.m_Shirt) then 
 			destroyElement(player.m_Shirt)
@@ -66,5 +70,6 @@ function WearableShirt:use(player, itemId, bag, place, itemName)
 		exports.bone_attach:attachElementToBone(obj, player, 3, 0, yOffset, zOffset, rotX, rotY, rotZ)
 		player.m_Shirt = obj
 		player.m_IsWearingShirt = itemName
+		player:meChat(true, "setzt "..WearableShirt.objectTable[itemName][8].." ab!")
 	end
 end

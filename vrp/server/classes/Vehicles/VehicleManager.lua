@@ -20,7 +20,7 @@ function VehicleManager:constructor()
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
 		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
-		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake"}
+		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash"}
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
@@ -43,7 +43,8 @@ function VehicleManager:constructor()
 	addEventHandler("soundvanChangeURL", root, bind(self.Event_soundvanChangeURL, self))
 	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
 	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
-
+	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
+	
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
 		function (player, seat)
@@ -468,6 +469,32 @@ end
 
 function VehicleManager:syncVehicleInfo(player)
 	player:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(player), player:getGarageType(), player:getHangarType())
+end
+
+function VehicleManager:Event_OnVehicleCrash( occ, loss )
+	local occupants = getVehicleOccupants(source)
+	if getPedOccupiedVehicle(occ) == source then 
+		if loss*0.1 >= 5 then
+			local playerHealth = getElementHealth(occ)
+			local bIsKill = (playerHealth - loss*0.02)  <= 0
+			local speedx, speedy, speedz = getElementVelocity ( getRandomPlayer() )
+			local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
+			if not bIsKill then
+				setElementHealth(occ, playerHealth - loss*0.02)
+			else 
+				setElementHealth(occ, 1)
+			end
+			if sForce < 0.9 then
+				occ:meChat(true, "wird im Fahrzeug umhergeschleudert!")
+				setPedAnimation(occ, "ped", "hit_walk",700,true,false,false)
+			elseif sForce >= 0.9 then 
+				occ:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
+				removePedFromVehicle(occ)
+				setPedAnimation(occ, "crack", "crckdeth2",15000,true,false,false)
+			end
+			occ:triggerEvent("clientBloodScreen")
+		end
+	end
 end
 
 function VehicleManager:getVehiclesFromPlayer()

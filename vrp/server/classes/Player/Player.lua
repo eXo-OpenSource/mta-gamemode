@@ -451,6 +451,11 @@ function Player:respawn(position, rotation, bJailSpawn)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
 	FactionState:getSingleton():uncuffPlayer( self )
+	setPedAnimation(self,false)
+	setElementAlpha(self,255)
+	if isElement(self.ped_deadDouble) then 
+		destroyElement(self.ped_deadDouble)
+	end
 end
 
 

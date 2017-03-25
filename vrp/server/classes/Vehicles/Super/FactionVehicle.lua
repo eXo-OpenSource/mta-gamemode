@@ -120,28 +120,30 @@ function FactionVehicle:isStateVehicle()
 end
 
 function FactionVehicle:onStartEnter(player, seat)
+
+end
+
+function FactionVehicle:onEnter(player, seat)
 	if seat == 0 then
 		if (self.m_Faction:isStateFaction() == true and player:getFaction() and player:getFaction():isStateFaction() == true) or (self.m_Faction:isRescueFaction() == true and player:getFaction() and player:getFaction():isRescueFaction() == true)  then
 			if player:isFactionDuty() then
 				return true
 			else
 				player:sendError(_("Du bist nicht im Dienst!", player))
-				cancelEvent()
-				return false
+				removePedFromVehicle(player)
+				local x,y,z = getElementPosition(player)
+				setElementPosition(player,x,y,z)
+				return false	
 			end
-
 		elseif player:getFaction() == self.m_Faction then
-			return true
+			return true 
+		else
+			player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
+			removePedFromVehicle(player)
+			local x,y,z = getElementPosition(player)
+			setElementPosition(player,x,y,z)
+			return false
 		end
-		player:sendError(_("Du darfst dieses Fahrzeug nicht benutzen!", player))
-		cancelEvent()
-		return false
-	end
-end
-
-function FactionVehicle:onEnter(player)
-	if player.getFaction and player:getFaction() and player:getFaction() == source.m_Faction then
-
 	end
 end
 

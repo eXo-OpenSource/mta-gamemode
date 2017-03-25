@@ -198,6 +198,10 @@ function FactionRescue:Event_ToggleStretcher(vehicle)
 					self:removeStretcher(client, vehicle)
 				else
 					self:getStretcher(client, vehicle)
+					setElementAlpha(client,255)
+					if client.ped_deadDouble then 
+						destroyElement(client.ped_deadDouble)
+					end
 				end
 			else
 				client:sendError(_("Du kannst die Trage nicht so oft hintereinander aus/einladen!", client))
@@ -222,7 +226,10 @@ function FactionRescue:getStretcher(player, vehicle)
 		player.m_RescueStretcher:setCollisionsEnabled(false)
 		player.m_RescueStretcher.m_Vehicle = vehicle
 	end
-
+	setElementAlpha(player,255)
+	if player.ped_deadDouble then 
+		destroyElement(player.ped_deadDouble)
+	end
 	-- Move the Stretcher to the Player
 	moveObject(player.m_RescueStretcher, 3000, player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5), Vector3(0, 0, player:getRotation().z - vehicle:getRotation().z), "InOutQuad")
 	player:setFrozen(true)
@@ -230,9 +237,16 @@ function FactionRescue:getStretcher(player, vehicle)
 	setTimer(
 		function (player)
 			player.m_RescueStretcher:attach(player, Vector3(0, 1.4, -0.5))
+			if isElement(player.ped_deadDouble) then
+				player.m_RescueStretcher:attach(player.ped_deadDouble, Vector3(0, 1.4, -0.5))
+			end
 			player:toggleControlsWhileObjectAttached(false)
 			toggleControl(player, "jump", true) -- But allow jumping
 			player:setFrozen(false)
+			setElementAlpha(player,255)
+			if player.ped_deadDouble then 
+				destroyElement(player.ped_deadDouble)
+			end
 		end, 3000, 1, player
 	)
 end
@@ -244,7 +258,7 @@ function FactionRescue:removeStretcher(player, vehicle)
 	player.m_RescueStretcher:setRotation(player:getRotation())
 	player.m_RescueStretcher:setPosition(player:getPosition() + player.matrix.forward*1.4 + Vector3(0, 0, -0.5))
 	moveObject(player.m_RescueStretcher, 3000, vehicle:getPosition() + vehicle.matrix.forward*-2, Vector3(0, 0, vehicle:getRotation().z - player:getRotation().z), "InOutQuad")
-
+	setElementAlpha(player,255)
 	-- Enable Controls
 	player:toggleControlsWhileObjectAttached(true)
 
@@ -264,7 +278,6 @@ function FactionRescue:removeStretcher(player, vehicle)
 					deadPlayer:setCameraTarget(player)
 					deadPlayer:respawn(pos)
 					deadPlayer:fadeCamera(true, 1)
-
 					self.m_Faction:giveMoney(100, "Rescue Team Wiederbelebung")
 					player:giveMoney(50, "Rescue Team Wiederbelebung")
 				else
@@ -303,8 +316,11 @@ function FactionRescue:createDeathPickup(player, ...)
 						if hitPlayer.m_RescueStretcher then
 							if not hitPlayer.m_RescueStretcher.player then
 								player:attach(hitPlayer.m_RescueStretcher, 0, -0.2, 1.4)
+								setElementAlpha(player,255)
+								if isElement(player.ped_deadDouble) then
+									destroyElement(player.ped_deadDouble)
+								end
 								hitPlayer.m_RescueStretcher.player = player
-
 								if source.money and source.money > 0 then
 									hitPlayer:giveMoney(source.money, "verlorenes Geld zurückbekommen")
 									source.money = 0
