@@ -39,7 +39,7 @@ end
 function PhoneInteraction:callStart(player, voiceEnabled)
 	if not player then return end
 	if player:isPhoneEnabled() == true then
-		if not player:getPhonePartner() and not player.IncomingCall then
+		if not player:getPhonePartner() and not player.IncomingCall and not player:getData("isInDeathMatch") then
 			player:triggerEvent("callIncoming", client, voiceEnabled)
 			player.IncomingCall = true
 		else
