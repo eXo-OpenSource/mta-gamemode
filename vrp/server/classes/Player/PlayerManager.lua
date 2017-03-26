@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted","onAttemptToPickupDeathWeapon"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -57,6 +57,7 @@ function PlayerManager:constructor()
 		cancelEvent()
 	end)
 
+	addEventHandler("onAttemptToPickupDeathWeapon", root, bind(self.Event_onAttemptPickupWeapon,self))
 
 	addCommandHandler("s",bind(self.Command_playerScream, self))
 	addCommandHandler("l",bind(self.Command_playerWhisper, self))
@@ -93,7 +94,37 @@ function PlayerManager:Event_OnDeathPedWasted( pPed )
 			if owner then 
 				client:meChat(true, "setzte "..getPlayerName(owner).." ein Ende!")
 				setElementData(pPed, "NPC:isDyingPed", false)
+				owner:dropReviveWeapons() 
 				owner:clearReviveWeapons()
+			end
+		end
+	end
+end
+
+function PlayerManager:Event_onAttemptPickupWeapon( pickup )
+	if client then
+		local weapon = pickup:getData("weaponId")
+		local ammo = pickup:getData("ammoInWeapon")
+		local owner = pickup:getData("weaponOwner")
+		local px,py,pz = getElementPosition(pickup)
+		local x,y,z = getElementPosition(client)
+		local dist = getDistanceBetweenPoints3D(px,py,pz,x,y,z)
+		local owner = source:getData("weaponOwner")
+		if weapon and ammo then
+			if dist <= 5 then 
+				if (client:getPlayTime() / 60) >=  3 then
+					if not ( client:isFactionDuty() and client:getFaction():isStateFaction()) then
+						setPedAnimation( client,"carry","liftup", 2000, false,false,false)
+						destroyElement(pickup)
+						giveWeapon(client,weapon,ammo,true)
+						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
+						outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
+					else 
+						client:sendError("Du darfst diese Waffe nicht aufheben!")
+					end
+				else 
+					client:sendError("Du hast zu wenig Spielstunden!")
+				end
 			end
 		end
 	end

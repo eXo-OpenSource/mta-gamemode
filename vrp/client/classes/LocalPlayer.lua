@@ -7,7 +7,7 @@
 -- ****************************************************************************
 LocalPlayer = inherit(Player)
 addRemoteEvents{"retrieveInfo", "playerWasted", "playerRescueWasted", "playerCashChange", "disableDamage",
-"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar"}
+"playerSendToHospital", "abortDeathGUI", "sendTrayNotification","setClientTime", "setClientAdmin", "toggleRadar", "onTryPickupWeapon"}
 
 function LocalPlayer:constructor()
 	self.m_Locale = "de"
@@ -37,6 +37,7 @@ function LocalPlayer:constructor()
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
 	addEventHandler("onClientPlayerSpawn", self, bind(LocalPlayer.Event_onClientPlayerSpawn, self))
 	addEventHandler("onClientRender",root,bind(self.renderPostMortemInfo, self))
+	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
 	self.m_DeathRenderBind = bind(self.deathRender, self)
@@ -414,6 +415,18 @@ function LocalPlayer:renderPostMortemInfo()
 				end
 			end
 		end
+	end
+	if self.m_MortemWeaponPickup then 
+		if getKeyState("lalt") and getKeyState("m") then 
+			triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
+			self.m_MortemWeaponPickup = false
+		end
+	end
+end
+
+function LocalPlayer:Event_OnTryPickup( pickup )
+	if pickup then 
+		self.m_MortemWeaponPickup = pickup
 	end
 end
 

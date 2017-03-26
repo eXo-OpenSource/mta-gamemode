@@ -465,6 +465,59 @@ function Player:clearReviveWeapons()
 	self.m_ReviveWeapons = false
 end
 
+function Player:dropReviveWeapons() 
+	self:destroyDropWeapons()
+	if self.m_ReviveWeapons then 
+		self.m_WorldObjectWeapons =  {}
+		local obj, weapon, ammo, model, x, y, z, dim, int
+		for i = 1, 12 do
+			if self.m_ReviveWeapons[i] then	
+				x,y,z = getElementPosition(self)
+				int = getElementInterior(self)
+				dim = getElementDimension(self)
+				weapon =  self.m_ReviveWeapons[i][1]
+				ammo = self.m_ReviveWeapons[i][2]
+				model = WEAPON_MODELS_WORLD[weapon]
+				local x,y = getPointFromDistanceRotation(x, y, 2, 360*(i/12))
+				if model then
+					obj = createPickup(x,y,z-0.5, 3, model, 1 )
+					if obj then 
+						setElementDoubleSided(obj,true)
+						setElementDimension(obj, dim)
+						setElementInterior(obj, int)
+						obj:setData("weaponId", weapon)
+						obj:setData("ammoInWeapon", ammo)
+						obj:setData("weaponOwner", self)
+						addEventHandler("onPickupHit", obj, bind(self.Event_onPlayerReviveWeaponHit, self))
+						self.m_WorldObjectWeapons[#self.m_WorldObjectWeapons+1] = obj
+					end
+				end
+			end
+		end
+	end
+end
+
+function Player:destroyDropWeapons() 
+	if self.m_WorldObjectWeapons then 
+		for i = 1, #self.m_WorldObjectWeapons do
+			if self.m_WorldObjectWeapons[i] then 
+				destroyElement(self.m_WorldObjectWeapons[i])
+			end
+		end
+	end
+end
+
+function Player:Event_onPlayerReviveWeaponHit( player )
+	if player then 
+		local weapon = source:getData("weaponId")
+		local ammo = source:getData("ammoInWeapon")
+		if weapon and ammo then 
+			player:sendShortMessage("Drücke Links-Alt + M um die Waffe aufzuheben!")
+			player:triggerEvent("onTryPickupWeapon", source)
+		end
+	end
+end
+
 function Player:setReviveWeapons()
 	self.m_ReviveWeapons = {}
 	local weaponInSlot, ammoInSlot
