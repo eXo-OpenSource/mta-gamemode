@@ -27,8 +27,8 @@ function GroupCreationGUI:CreateButton_Click()
 	local typ = self.m_Type:getIndex()
 
 	if text ~= "" then
-		if string.len(text) <= 24 then
-			if text:match("^[a-zA-Z0-9_.- ]*$") then
+		if string.len(text) <= GROUP_NAME_MAX then
+			if text:match(GROUP_NAME_MATCH) then
 				triggerServerEvent("groupCreate", root, text, typ)
 				delete(self)
 			else

@@ -174,7 +174,7 @@ function JobTreasureSeeker:loadTreasure(player)
 	self.m_Treasures[player][rnd] = createColCircle(x, y, 25)
 	self.m_Treasures[player][rnd].DummyObject = createObject(1337, x, y, -20)
 	self.m_Treasures[player][rnd].Player = player
-	setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", true)
+	setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", player)
 	addEventHandler("onColShapeHit", self.m_Treasures[player][rnd], bind(self.onTreasureHit, self))
 end
 

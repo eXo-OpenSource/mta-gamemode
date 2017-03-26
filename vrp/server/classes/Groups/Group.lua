@@ -117,7 +117,7 @@ function Group:setName(name)
 		player:setPublicSync("GroupType", self:getType())
 	end
 
-	for k, vehicle in pairs(self:getVehicles()) do
+	for k, vehicle in pairs(self:getVehicles() or {}) do
 		setElementData(vehicle, "OwnerName", name)
 	end
 

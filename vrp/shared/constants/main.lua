@@ -273,6 +273,10 @@ TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514
 GROUP_RENAME_TIMEOUT = 60*60*24*30 -- 30 Days (in seconds)
 GROUP_RENAME_COSTS = 10000
 
+GROUP_NAME_MIN = 5
+GROUP_NAME_MAX = 24
+GROUP_NAME_MATCH = "^[a-zA-Z0-9 _.-]*$"
+
 GARAGE_UPGRADES_COSTS = {[1] = 200000, [2] = 250000, [3] = 500000}
 HANGAR_UPGRADES_COSTS = {[1] = 9999999, [2] = 0, [3] = 0}
 GARAGE_UPGRADES_TEXTS = {[0] = "Garage: keine Garage", [1] = "Garage: Standard Garage", [2] = "Garage: Komfortable Garage", [3] = "Garage: Luxus Garage"}

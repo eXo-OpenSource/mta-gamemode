@@ -135,12 +135,17 @@ function GroupManager:Event_Create(name, type)
 		return
 	end
 
-	if string.len(name) > 24 then
+	if string.len(name) < GROUP_NAME_MIN then
+		client:sendError(_("Der Name muss mindestens 5 Zeichen lang sein!", client))
+		return
+	end
+
+	if string.len(name) > GROUP_NAME_MAX then
 		client:sendError(_("Dein eingegebener Name ist zu lang! (Max. 24 Zeichen)", client))
 		return
 	end
 
-	if not name:match("^[a-zA-Z0-9_.- ]*$") then
+	if not name:match(GROUP_NAME_MATCH) then
 		client:sendError(_("Name enthält ungültige Zeichen!", client))
 		return
 	end
@@ -426,7 +431,6 @@ function GroupManager:Event_ChangeName(name)
 	if not name then return end
 	local group = client:getGroup()
 	if not group then return end
-	local name = name:gsub(" ", "")
 
 	if not group:isPlayerMember(client) then
 		return
@@ -448,16 +452,20 @@ function GroupManager:Event_ChangeName(name)
 		return
 	end
 
-	if name:len() < 5 then
+	if name:len() < GROUP_NAME_MIN then
 		client:sendError(_("Der Name muss mindestens 5 Zeichen lang sein!", client))
 		return
 	end
 
-	if name:len() > 20 then
-		client:sendError(_("Der Name darf nicht länger als 20 Zeichen sein!", client))
+	if name:len() > GROUP_NAME_MAX then
+		client:sendError(_("Dein eingegebener Name ist zu lang! (Max. 24 Zeichen)", client))
 		return
 	end
 
+	if not name:match(GROUP_NAME_MATCH) then
+		client:sendError(_("Name enthält ungültige Zeichen!", client))
+		return
+	end
 
 	if (getRealTime().timestamp - group.m_LastNameChange) < GROUP_RENAME_TIMEOUT then
 		client:sendError(_("Du kannst deine %s nur alle %d Tage umbennen!", client, group:getType(), GROUP_RENAME_TIMEOUT/24/60/60))
