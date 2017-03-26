@@ -18,7 +18,7 @@ function GPS:constructor()
 	addEventHandler("GPS.retrieveRoute", root, bind(self.Event_retrieveRoute, self))
 end
 
-function GPS:startNavigationTo(position)
+function GPS:startNavigationTo(position, isRecalculate)
 	-- Stop old navigation if existing
 	if self.m_Active then
 		self:stopNavigation()
@@ -27,11 +27,22 @@ function GPS:startNavigationTo(position)
 	self.m_Destination = position
 	self.m_Active = true
 
+	-- Show message if it's not a recalculation
+	if not isRecalculate then
+		ShortMessage:new(_"Route wird berechnet...", _"Navigation")
+	else
+		ShortMessage:new(_"Route wird neu berechnet...", _"Navigation")
+	end
+
 	-- Ask the server to calculate a route for us
 	triggerServerEvent("GPS.calcRoute", localPlayer, "GPS.retrieveRoute", serialiseVector(localPlayer:getPosition()), serialiseVector(position))
 end
 
 function GPS:stopNavigation()
+	if not self.m_Active then
+		return
+	end
+
 	-- Remove route from the radar
 	HUDRadar:getSingleton():setGPSRoute(nil)
 
@@ -109,7 +120,6 @@ function GPS:Timer_Recalculate()
 
 	-- Restart navigation if our distance to the next checkpoint is greater than 300
 	if (localPlayer:getPosition() - self.m_NextNode):getLength() > 300 then
-		self:startNavigationTo(self.m_Destination)
-		ShortMessage:new(_"Route wird neu berechnet...")
+		self:startNavigationTo(self.m_Destination, true)
 	end
 end

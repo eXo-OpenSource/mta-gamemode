@@ -19,7 +19,8 @@ function CustomF11Map:constructor()
 
 	self.m_ClickOverlay = GUIElement:new(self.m_PosX, self.m_PosY, self.m_Width, self.m_Height)
 	self.m_ClickOverlay:setVisible(false)
-	self.m_ClickOverlay.onLeftDoubleClick = bind(self.Click_ClickOverlay, self)
+	self.m_ClickOverlay.onLeftDoubleClick = bind(self.Doubleclick_ClickOverlay, self)
+	self.m_ClickOverlay.onRightClick = bind(self.Rightclick_ClickOverlay, self)
 end
 
 function CustomF11Map:destructor()
@@ -74,6 +75,10 @@ function CustomF11Map:draw()
 	if routeRenderTarget then
 		dxDrawImage(mapPosX, mapPosY, height, height, routeRenderTarget, 0, 0, 0, tocolor(255, 255, 255, 200))
 	end
+
+	-- Draw GPS info
+	dxDrawRectangle(self.m_PosX, 0, self.m_Width, 25, tocolor(0, 0, 0, 140))
+	dxDrawText("Doppelklick auf die Karte, um die Zielposition des GPS zu setzen. Rechtsklick, um die Navigation zu beenden.", screenWidth/2, 5, nil, nil, Color.White, 1.1, "default-bold", "center")
 
 	-- Draw gang areas
 	if core:get("HUD", "drawGangAreas", true) then
@@ -135,7 +140,7 @@ function CustomF11Map:mapToWorldPosition(mapX, mapY)
 	return worldX, worldY
 end
 
-function CustomF11Map:Click_ClickOverlay(element, cursorX, cursorY)
+function CustomF11Map:Doubleclick_ClickOverlay(element, cursorX, cursorY)
 	-- Get position on map
 	local overlayX, overlayY = self.m_ClickOverlay:getPosition(true)
 	local mapX, mapY = cursorX - overlayX, cursorY - overlayY
@@ -145,4 +150,8 @@ function CustomF11Map:Click_ClickOverlay(element, cursorX, cursorY)
 
 	-- Start navigation to that point
 	GPS:getSingleton():startNavigationTo(Vector3(worldX, worldY, 0))
+end
+
+function CustomF11Map:Rightclick_ClickOverlay()
+	GPS:getSingleton():stopNavigation()
 end
