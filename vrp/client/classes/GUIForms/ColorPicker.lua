@@ -188,13 +188,13 @@ function ColorPicker:updateColor(skipHex)
 	local r, g, b = hsvToRgb(self.m_Hue, self.m_Saturation, self.m_Brightness, 1)
 	self.m_Preview:setColorRGB(r, g, b)
 
-	self.m_HueEdit:setText(self.m_Hue*360)
-	self.m_SaturationEdit:setText(self.m_Saturation*100)
-	self.m_BrightnessEdit:setText(self.m_Brightness*100)
+	self.m_HueEdit:setText(math.round(self.m_Hue*360))
+	self.m_SaturationEdit:setText(math.round(self.m_Saturation*100))
+	self.m_BrightnessEdit:setText(math.round(self.m_Brightness*100))
 
-	self.m_RedEdit:setText(r)
-	self.m_GreenEdit:setText(g)
-	self.m_BlueEdit:setText(b)
+	self.m_RedEdit:setText(math.round(r))
+	self.m_GreenEdit:setText(math.round(g))
+	self.m_BlueEdit:setText(math.round(b))
 
 	if not skipHex then
 		self.m_HexEdit:setText(RGBToHex(r, g, b))
@@ -222,9 +222,9 @@ function ColorPicker:updatePosition()
 end
 
 function ColorPicker:onHSBEdit()
-	self.m_Hue = (self.m_HueEdit:getText() or 0)/360
-	self.m_Saturation = (self.m_SaturationEdit:getText() or 0)/100
-	self.m_Brightness = (self.m_BrightnessEdit:getText() or 0)/100
+	self.m_Hue = (self.m_HueEdit:getText(true) or 0)/360
+	self.m_Saturation = (self.m_SaturationEdit:getText(true) or 0)/100
+	self.m_Brightness = (self.m_BrightnessEdit:getText(true) or 0)/100
 
 	if self.m_Hue < 0 then self.m_Hue = 0 end
 	if self.m_Hue > 1 then self.m_Hue = 1 end
@@ -238,9 +238,9 @@ function ColorPicker:onHSBEdit()
 end
 
 function ColorPicker:onRGBEdit()
-	local r = self.m_RedEdit:getText()
-	local g = self.m_GreenEdit:getText()
-	local b = self.m_BlueEdit:getText()
+	local r = self.m_RedEdit:getText(true)
+	local g = self.m_GreenEdit:getText(true)
+	local b = self.m_BlueEdit:getText(true)
 
 	if not r or not g or not b then return end
 	if r < 0 then r = 0 end

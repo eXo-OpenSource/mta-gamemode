@@ -13,11 +13,11 @@ function GUIFontContainer:constructor(text, size, font)
 	self.m_Font		= font or "default-bold"
 end
 
-function GUIFontContainer:getText()
-	if self.isNumeric and self:isNumeric() then
-		return self:isIntegerOnly() and (tonumber(self.m_Text) and math.round(tonumber(self.m_Text)) or false) or tonumber(self.m_Text)
-	else
+function GUIFontContainer:getText(toNumber)
+	if not toNumber then
 		return self.m_Text
+	else
+		return self:isIntegerOnly() and (tonumber(self.m_Text) and math.round(tonumber(self.m_Text)) or false) or tonumber(self.m_Text)
 	end
 end
 
