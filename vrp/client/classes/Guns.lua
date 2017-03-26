@@ -159,12 +159,14 @@ function Guns:drawBloodScreen()
 	end
 end
 
-function Guns:Event_onClientPedDamage()
+function Guns:Event_onClientPedDamage(attacker)
 	if source:getData("NPC:Immortal") == true or getElementData( source, "NPC:Immortal_serverside") then 
 		cancelEvent()
 	else 
-		if core:get("Other", "HitSoundBell", true) then
-			playSound("files/audio/hitsound.wav")
+		if attacker == localPlayer then
+			if core:get("Other", "HitSoundBell", true) then
+				playSound("files/audio/hitsound.wav")
+			end
 		end
 	end
 end
