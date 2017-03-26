@@ -114,7 +114,8 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 			if dist <= 5 then
 				if (client:getPlayTime() / 60) >=  3 then
 					if not ( client:isFactionDuty() and client:getFaction():isStateFaction()) then
-						setPedAnimation( client,"carry","liftup", 2000, false,false,false)
+						setPedAnimation( client,"misc","pickup_box", 200, false,false,false)
+						setTimer(setPedAnimation,1000,1,client,nil)
 						destroyElement(pickup)
 						giveWeapon(client,weapon,ammo,true)
 						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")

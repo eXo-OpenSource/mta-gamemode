@@ -480,16 +480,18 @@ function Player:dropReviveWeapons()
 				model = WEAPON_MODELS_WORLD[weapon]
 				local x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
 				if model then
-					obj = createPickup(x,y,z-0.5, 3, model, 1 )
-					if obj then 
-						setElementDoubleSided(obj,true)
-						setElementDimension(obj, dim)
-						setElementInterior(obj, int)
-						obj:setData("weaponId", weapon)
-						obj:setData("ammoInWeapon", ammo)
-						obj:setData("weaponOwner", self)
-						addEventHandler("onPickupHit", obj, bind(self.Event_onPlayerReviveWeaponHit, self))
-						self.m_WorldObjectWeapons[#self.m_WorldObjectWeapons+1] = obj
+					if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
+						obj = createPickup(x,y,z-0.5, 3, model, 1 )
+						if obj then 
+							setElementDoubleSided(obj,true)
+							setElementDimension(obj, dim)
+							setElementInterior(obj, int)
+							obj:setData("weaponId", weapon)
+							obj:setData("ammoInWeapon", ammo)
+							obj:setData("weaponOwner", self)
+							addEventHandler("onPickupHit", obj, bind(self.Event_onPlayerReviveWeaponHit, self))
+							self.m_WorldObjectWeapons[#self.m_WorldObjectWeapons+1] = obj
+						end
 					end
 				end
 			end
