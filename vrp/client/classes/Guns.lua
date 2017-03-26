@@ -162,6 +162,10 @@ end
 function Guns:Event_onClientPedDamage()
 	if source:getData("NPC:Immortal") == true or getElementData( source, "NPC:Immortal_serverside") then 
 		cancelEvent()
+	else 
+		if core:get("Other", "HitSoundBell", true) then
+			playSound("files/audio/hitsound.wav")
+		end
 	end
 end
 
