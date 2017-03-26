@@ -737,7 +737,9 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 end
 
 function FactionState:onTiedExit(vehicle, seat, jacked)
-	source:warpIntoVehicle(vehicle, seat)
+	if seat > 0 then
+		source:warpIntoVehicle(vehicle, seat)
+	end
 end
 
 function FactionState:Command_needhelp(player)
