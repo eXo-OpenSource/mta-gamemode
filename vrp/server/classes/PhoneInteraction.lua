@@ -40,7 +40,7 @@ function PhoneInteraction:callStart(player, voiceEnabled)
 	if not player then return end
 
 	if player:isPhoneEnabled() == true then
-		if player:getData("isInDeathMatch") then
+		if client:getData("isInDeathMatch") or player:getData("isInDeathMatch") then
 			client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar!",client, player.name))
 			client:triggerEvent("callReplace", player)
 			return
