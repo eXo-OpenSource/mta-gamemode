@@ -89,6 +89,9 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 
 			if health - loss <= 0 then
 				StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
+				if not player:getData("isInDeathMatch") then
+					player:setReviveWeapons()
+				end
 				player:kill(attacker, weapon, bodypart)
 			else
 				player:setHealth(health-loss)
@@ -97,6 +100,9 @@ function Guns:damagePlayer(player, loss, attacker, weapon, bodypart)
 	else
 		if player:getHealth()-loss <= 0 then
 			StatisticsLogger:getSingleton():addKillLog(attacker, player, weapon)
+			if not player:getData("isInDeathMatch") then
+				player:setReviveWeapons()
+			end
 			player:kill(attacker, weapon, bodypart)
 		else
 			player:setHealth(health-loss)

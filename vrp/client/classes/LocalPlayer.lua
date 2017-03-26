@@ -187,7 +187,6 @@ function LocalPlayer:playerWasted( killer, weapon, bodypart)
 		if localPlayer:getPublicSync("Company:Duty") then
 			triggerServerEvent("companyToggleDuty", localPlayer)
 		end
-
 		triggerServerEvent("Event_ClientNotifyWasted", localPlayer, killer, weapon, bodypart)
 	end
 end
@@ -401,7 +400,7 @@ function LocalPlayer:renderPostMortemInfo()
 		isMortem = getElementData(ped, "NPC:isDyingPed") 
 		if isMortem then 
 			x,y,z = getPedBonePosition(ped, 8)
-			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 30 
+			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20 
 			if dist then
 				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
 					if x and y and z then 

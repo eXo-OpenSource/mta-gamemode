@@ -280,6 +280,8 @@ function FactionRescue:removeStretcher(player, vehicle)
 					deadPlayer:fadeCamera(true, 1)
 					self.m_Faction:giveMoney(100, "Rescue Team Wiederbelebung")
 					player:giveMoney(50, "Rescue Team Wiederbelebung")
+					deadPlayer:giveReviveWeapons()
+					outputChatBox("Du hast deine Waffen während des Verblutens gesichert!", deadPlayer, 200, 200, 0)
 				else
 					player:sendShortMessage(_("Der Spieler ist nicht Tod!", player))
 				end
