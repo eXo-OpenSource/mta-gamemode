@@ -482,6 +482,9 @@ function Player:giveReviveWeapons()
 				giveWeapon( self, self.m_ReviveWeapons[i][1], self.m_ReviveWeapons[i][2], true)
 			end
 		end
+		return true
+	else 
+		return false
 	end
 end
 
