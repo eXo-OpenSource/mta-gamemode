@@ -404,6 +404,9 @@ function Player:spawn( )
 
 	self:triggerEvent("checkNoDm")
 	if self.m_IsDead == 1 then
+		if not self:getData("isInDeathMatch") then 
+			self:setReviveWeapons()
+		end
 		killPed(self)
 	end
 end
@@ -455,6 +458,33 @@ function Player:respawn(position, rotation, bJailSpawn)
 	setElementAlpha(self,255)
 	if isElement(self.ped_deadDouble) then 
 		destroyElement(self.ped_deadDouble)
+	end
+end
+
+function Player:clearReviveWeapons()
+	self.m_ReviveWeapons = false
+end
+
+function Player:setReviveWeapons()
+	self.m_ReviveWeapons = {}
+	local weaponInSlot, ammoInSlot
+	for i = 1, 12 do 
+		weaponInSlot = getPedWeapon(self, i)
+		ammoInSlot = getPedTotalAmmo(self, i )
+		self.m_ReviveWeapons[i] = {weaponInSlot, ammoInSlot}
+	end
+end
+
+function Player:giveReviveWeapons() 
+	if self.m_ReviveWeapons then
+		for i = 1, 12 do
+			if self.m_ReviveWeapons[i] then
+				giveWeapon( self, self.m_ReviveWeapons[i][1], self.m_ReviveWeapons[i][2], true)
+			end
+		end
+		return true
+	else 
+		return false
 	end
 end
 

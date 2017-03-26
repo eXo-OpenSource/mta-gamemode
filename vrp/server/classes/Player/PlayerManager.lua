@@ -10,7 +10,7 @@ addRemoteEvents{"playerReady", "playerSendMoney", "requestPointsToKarma", "reque
 "requestSkinLevelUp", "requestJobLevelUp", "setPhoneStatus", "toggleAFK", "startAnimation", "passwordChange",
 "requestGunBoxData", "gunBoxAddWeapon", "gunBoxTakeWeapon","Event_ClientNotifyWasted", "Event_getIDCardData",
 "startWeaponLevelTraining","switchSpawnWithFactionSkin","Event_setPlayerWasted", "Event_moveToJail", "onClientRequestTime", "playerDecreaseAlcoholLevel",
-"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed"}
+"premiumOpenVehiclesList", "premiumTakeVehicle","destroyPlayerWastedPed","onDeathPedWasted"}
 
 function PlayerManager:constructor()
 	self.m_WastedHook = Hook:new()
@@ -51,10 +51,8 @@ function PlayerManager:constructor()
 	addEventHandler("playerDecreaseAlcoholLevel",root, bind(self.Event_DecreaseAlcoholLevel, self))
 	addEventHandler("premiumOpenVehiclesList",root, bind(self.Event_PremiumOpenVehiclesList, self))
 	addEventHandler("premiumTakeVehicle",root, bind(self.Event_PremiumTakeVehicle, self))
-	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy))
-
-
-
+	addEventHandler("destroyPlayerWastedPed",root,bind(self.Event_OnDeadDoubleDestroy, self))
+	addEventHandler("onDeathPedWasted", root, bind(self.Event_OnDeathPedWasted, self))
 	addEventHandler("onPlayerPrivateMessage", root, function()
 		cancelEvent()
 	end)
@@ -84,6 +82,20 @@ function PlayerManager:Event_OnDeadDoubleDestroy()
 	if source.ped_deadDouble then 
 		destroyElement(source.ped_deadDouble)
 		setElementAlpha(source, 255)
+		source:clearReviveWeapons()
+	end
+end
+
+function PlayerManager:Event_OnDeathPedWasted( pPed ) 
+	if client then 
+		if pPed then 
+			local owner = pPed:getData("NPC:DeathPedOwner")
+			if owner then 
+				client:meChat(true, "setzte "..getPlayerName(owner).." ein Ende!")
+				setElementData(pPed, "NPC:isDyingPed", false)
+				owner:clearReviveWeapons()
+			end
+		end
 	end
 end
 
@@ -100,18 +112,20 @@ function PlayerManager:Event_OnWasted()
 		source.ped_deadDouble = createPed(getElementModel(source),x,y,z)
 		setElementDimension(source.ped_deadDouble,dim)
 		setElementInterior(source.ped_deadDouble, int)
-		local randAnim = math.random(1,2)
-		if randAnim == 1 then
+		local randAnim = math.random(1,5)
+		if randAnim == 5 then
 			setPedAnimation(source.ped_deadDouble,"crack","crckidle1",-1,true,false,false,true)
-		else 
+		else
 			setPedAnimation(source.ped_deadDouble,"wuzi","cs_dead_guy",-1,true,false,false,true)
 		end
-		setElementData(source.ped_deadDouble, "NPC:Immortal_serverside", true )
-		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true )
 		setElementData(source.ped_deadDouble, "NPC:namePed", getPlayerName(source))
+		setElementData(source.ped_deadDouble, "NPC:isDyingPed", true)
+		setElementHealth(source.ped_deadDouble, 20)
+		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
 		setElementAlpha(source,0)
 	end
 end
+
 function PlayerManager:Event_ClientRequestTime()
 	client:Event_requestTime()
 end
@@ -289,7 +303,7 @@ function PlayerManager:Event_playerReady()
 end
 
 function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
-		-- Call wasted hook
+	-- Call wasted hook
 	if self.m_WastedHook:call(source, killer, killerWeapon, bodypart) then
 		return
 	end
@@ -334,10 +348,12 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	end
 
 
+	
 	return false
 	--source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
 	--source:triggerEvent("playerSendToHospital")
 	--setTimer(function(player) if player and isElement(player) then player:respawn() end end, 60000, 1, source)
+
 end
 
 

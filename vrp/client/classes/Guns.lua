@@ -25,7 +25,8 @@ function Guns:constructor()
 	self.m_TaserRender = bind(self.Event_onTaserRender, self)
 	addEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
 	addEventHandler("onClientPlayerWeaponFire", root, bind(self.Event_onClientWeaponFire, self))
-	addEventHandler("onClientPedDamage", root, bind(self.Event_onClientPedDamage))
+	addEventHandler("onClientPedDamage", root, bind(self.Event_onClientPedDamage, self))
+	addEventHandler("onClientPedWasted", root, bind(self.Event_onClientPedWasted, self))
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 
@@ -38,6 +39,12 @@ end
 
 function Guns:destructor()
 
+end
+
+function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
+	if killer == localPlayer then 
+		triggerServerEvent("onDeathPedWasted", localPlayer, source, weapon)
+	end
 end
 
 function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
