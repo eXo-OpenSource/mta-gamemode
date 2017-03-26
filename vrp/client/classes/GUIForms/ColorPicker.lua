@@ -21,11 +21,11 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	GUIRectangle:new(269, 34, 32, 258, Color.Black, self.m_Window) -- HueBar
 	GUIRectangle:new(309, 34, 77, 62, Color.Black, self.m_Window) -- Preview
 
-	GUIRectangle:new(4, 294, 32, 32, Color.Black, self.m_Window) -- M1
-	GUIRectangle:new(39, 294, 32, 32, Color.Black, self.m_Window) -- M2
-	GUIRectangle:new(74, 294, 32, 32, Color.Black, self.m_Window) -- M3
-	GUIRectangle:new(109, 294, 32, 32, Color.Black, self.m_Window) -- M4
-	GUIRectangle:new(144, 294, 32, 32, Color.Black, self.m_Window) -- M5
+	self.m_BorderM1 = GUIRectangle:new(4, 294, 32, 32, Color.Black, self.m_Window) -- M1
+	self.m_BorderM2 = GUIRectangle:new(39, 294, 32, 32, Color.Black, self.m_Window) -- M2
+	self.m_BorderM3 = GUIRectangle:new(74, 294, 32, 32, Color.Black, self.m_Window) -- M3
+	self.m_BorderM4 = GUIRectangle:new(109, 294, 32, 32, Color.Black, self.m_Window) -- M4
+	self.m_BorderM5 = GUIRectangle:new(144, 294, 32, 32, Color.Black, self.m_Window) -- M5
 
 	-- Gradient/Hue Bar
 	self.m_BackgroundColor = GUIRectangle:new(5, 35, 256, 256, Color.White, self.m_Window)
@@ -55,6 +55,7 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	self.m_BlueEdit = GUIEdit:new(325, 235, 60, 20, self.m_Window):setNumeric(true, true):setMaxValue(255):setMaxLength(3)
 	self.m_HexEdit = GUIEdit:new(325, 270, 60, 20, self.m_Window):setMaxLength(6)
 
+
 	-- Memory
 	self.m_M1 = GUIRectangle:new(5, 295, 30, 30, core:get("ColorPicker", "M1", Color.White), self.m_Window)
 	self.m_M2 = GUIRectangle:new(40, 295, 30, 30, core:get("ColorPicker", "M2", Color.White), self.m_Window)
@@ -68,6 +69,7 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	self.m_M5.Option = "M5"
 
 	-- Accept Button
+	self.m_SaveToMemory = GUIButton:new(180, 295, 30, 30, "✚", self.m_Window):setBackgroundColor(Color.Grey):setBackgroundHoverColor(Color.LightGrey)
 	self.m_AcceptButton = GUIButton:new(270, 295, 115, 30, "✔", self.m_Window):setBackgroundColor(Color.Green)
 	self.m_AcceptButton.onLeftClick = bind(ColorPicker.accept, self)
 
@@ -86,6 +88,7 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	self.m_OnHSBEdit = bind(ColorPicker.onHSBEdit, self)
 	self.m_OnRGBEdit = bind(ColorPicker.onRGBEdit, self)
 	self.m_OnHexEdit = bind(ColorPicker.onHexEdit, self)
+	self.m_OnMemorySelect = bind(ColorPicker.onMemorySelect, self)
 	self.m_OnColorSaveLoad = bind(ColorPicker.onColorSaveLoad, self)
 
 	self.m_HueEdit.onChange = self.m_OnHSBEdit
@@ -99,11 +102,17 @@ function ColorPicker:constructor(acceptCallback, changeCallback)
 	self.m_Gradient.onLeftClickDown = self.m_OnCursorMove
 	self.m_HueBar.onLeftClickDown = self.m_OnCursorMove
 
-	self.m_M1.onLeftClickDown = self.m_OnColorSaveLoad
-	self.m_M2.onLeftClickDown = self.m_OnColorSaveLoad
-	self.m_M3.onLeftClickDown = self.m_OnColorSaveLoad
-	self.m_M4.onLeftClickDown = self.m_OnColorSaveLoad
-	self.m_M5.onLeftClickDown = self.m_OnColorSaveLoad
+	self.m_M1.onLeftClick = self.m_OnMemorySelect
+	self.m_M2.onLeftClick = self.m_OnMemorySelect
+	self.m_M3.onLeftClick = self.m_OnMemorySelect
+	self.m_M4.onLeftClick = self.m_OnMemorySelect
+	self.m_M5.onLeftClick = self.m_OnMemorySelect
+	self.m_M1.onLeftDoubleClick = self.m_OnColorSaveLoad
+	self.m_M2.onLeftDoubleClick = self.m_OnColorSaveLoad
+	self.m_M3.onLeftDoubleClick = self.m_OnColorSaveLoad
+	self.m_M4.onLeftDoubleClick = self.m_OnColorSaveLoad
+	self.m_M5.onLeftDoubleClick = self.m_OnColorSaveLoad
+	self.m_SaveToMemory.onLeftClick = self.m_OnColorSaveLoad
 
 	addEventHandler("onClientClick", root, self.m_OnCursorClick)
 	addEventHandler("onClientCursorMove", root, self.m_OnCursorMove)
@@ -273,19 +282,31 @@ function ColorPicker:setColor(r, g, b)
 	self:updatePosition()
 end
 
-function ColorPicker:onColorSaveLoad()
+function ColorPicker:onMemorySelect(button)
+	if self.m_LastSelected then
+		self[("m_Border%s"):format(self.m_LastSelected.Option)]:setColor(Color.Black)
+		self.m_LastSelected = false
+	end
+
+	if button and button.Option then
+		self.m_LastSelected = button
+		self[("m_Border%s"):format(self.m_LastSelected.Option)]:setColor(Color.White)
+	end
+end
+
+function ColorPicker:onColorSaveLoad(button)
 	if not self.m_WindowInteraction then return end
 
-	local guiElement = GUIElement.getHoveredElement()
-	if guiElement.Option then
-		if getKeyState("lctrl") then
-			self:setColor(guiElement:getColorRGB())
-			return
-		end
-
+	if button == self.m_SaveToMemory then
 		local currentColor = self.m_Preview:getColor()
-		guiElement:setColor(currentColor)
-		core:set("ColorPicker", guiElement.Option, currentColor)
+		self.m_LastSelected:setColor(currentColor)
+		core:set("ColorPicker", self.m_LastSelected.Option, currentColor)
+		return
+	end
+
+	if self.m_LastSelected then
+		self:setColor(self.m_LastSelected:getColorRGB())
+		self:onMemorySelect(false)
 	end
 end
 
