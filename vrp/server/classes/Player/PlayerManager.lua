@@ -80,21 +80,21 @@ function PlayerManager:constructor()
 end
 
 function PlayerManager:Event_OnDeadDoubleDestroy()
-	if source.ped_deadDouble then 
+	if source.ped_deadDouble then
 		destroyElement(source.ped_deadDouble)
 		setElementAlpha(source, 255)
 		source:clearReviveWeapons()
 	end
 end
 
-function PlayerManager:Event_OnDeathPedWasted( pPed ) 
-	if client then 
-		if pPed then 
+function PlayerManager:Event_OnDeathPedWasted( pPed )
+	if client then
+		if pPed then
 			local owner = pPed:getData("NPC:DeathPedOwner")
-			if owner then 
+			if owner then
 				client:meChat(true, "setzte "..getPlayerName(owner).." ein Ende!")
 				setElementData(pPed, "NPC:isDyingPed", false)
-				owner:dropReviveWeapons() 
+				owner:dropReviveWeapons()
 				owner:clearReviveWeapons()
 			end
 		end
@@ -111,7 +111,7 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 		local dist = getDistanceBetweenPoints3D(px,py,pz,x,y,z)
 		local owner = source:getData("weaponOwner")
 		if weapon and ammo then
-			if dist <= 5 then 
+			if dist <= 5 then
 				if (client:getPlayTime() / 60) >=  3 then
 					if not ( client:isFactionDuty() and client:getFaction():isStateFaction()) then
 						setPedAnimation( client,"carry","liftup", 2000, false,false,false)
@@ -119,10 +119,10 @@ function PlayerManager:Event_onAttemptPickupWeapon( pickup )
 						giveWeapon(client,weapon,ammo,true)
 						client:meChat(true, "kniet sich nieder und hebt eine Waffe auf!")
 						outputChatBox("Du hast die Waffe erhalten!", client, 200,200,0)
-					else 
+					else
 						client:sendError("Du darfst diese Waffe nicht aufheben!")
 					end
-				else 
+				else
 					client:sendError("Du hast zu wenig Spielstunden!")
 				end
 			end
@@ -132,7 +132,7 @@ end
 
 function PlayerManager:Event_OnWasted()
 	if source.ped_deadDouble then
-		if isElement(source.ped_deadDouble) then 
+		if isElement(source.ped_deadDouble) then
 			destroyElement(source.ped_deadDouble)
 		end
 	end
@@ -316,13 +316,13 @@ function PlayerManager:playerQuit()
 	if source:getWantedLevel() > 0 then
 		FactionState:getSingleton():checkLogout(source)
 	end
-	if source.curEl then
-		source.curEl:driveToStation(source,1)
+	if source.elevator then
+		source.elevator:forceStationPosition(source, source.elevatorStationId)
 	end
 	if source:isLoggedIn() then
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
-	if source.ped_deadDouble then 
+	if source.ped_deadDouble then
 		destroyElement(source.ped_deadDouble)
 	end
 end
@@ -379,7 +379,7 @@ function PlayerManager:playerWasted( killer, killerWeapon, bodypart )
 	end
 
 
-	
+
 	return false
 	--source:sendInfo(_("Du hattest Glück und hast die Verletzungen überlebt. Doch pass auf, dass es nicht wieder passiert!", source))
 	--source:triggerEvent("playerSendToHospital")
