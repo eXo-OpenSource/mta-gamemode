@@ -214,7 +214,7 @@
 	<script src="server/classes/Groups/GroupPropertyManager.lua" type="server" />
 	<script src="server/classes/Groups/SprayWall.lua" type="server" />
 	<script src="server/classes/Groups/SprayWallManager.lua" type="server" />
-
+	<script src="server/classes/Groups/GroupHouseRob.lua" type="server" />
 
 
 	<!-- Business -->

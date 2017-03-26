@@ -474,6 +474,9 @@ function VehicleManager:syncVehicleInfo(player)
 end
 
 function VehicleManager:Event_OnVehicleCrash( veh, loss )
+	if veh:getVehicleType() == VehicleType.Plane or veh:getVehicleType() == VehicleType.Helicopter then
+		return false
+	end
 	local occupants = getVehicleOccupants(veh)
 	local speedx, speedy, speedz = getElementVelocity ( veh )
 	local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
