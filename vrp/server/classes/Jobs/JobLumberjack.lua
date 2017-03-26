@@ -124,7 +124,7 @@ function JobLumberjack:loadUpHit(hitElement, matchingDimension)
 			end
 		end
 
-		hitElement:triggerEvent("lumberjackTreesLoadUp", root)
+		hitElement:triggerEvent("lumberjackTreesLoadUp")
 	end
 end
 

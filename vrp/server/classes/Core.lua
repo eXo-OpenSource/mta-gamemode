@@ -112,6 +112,7 @@ function Core:constructor()
 		HorseRace:new()
 		BoxManager:new()
 		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
+		GPS:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
@@ -216,6 +217,7 @@ function Core:destructor()
 		delete(GangwarStatistics:getSingleton())
 		delete(GroupPropertyManager:getSingleton())
 		delete(Admin:getSingleton())
+		delete(GPS:getSingleton())
 		delete(StatisticsLogger:getSingleton())
 		delete(sql) -- Very slow
 	end
