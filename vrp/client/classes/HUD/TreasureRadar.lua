@@ -82,7 +82,7 @@ function TreasureRadar:preRender()
 
 		self.m_Blips = {}
 		for i, element in pairs(getElementsWithinColShape(self.m_RadarColshape, "object")) do
-			if isElement(element) and getElementData(element, "Treasure") then
+			if isElement(element) and getElementData(element, "Treasure") == localPlayer then
 				self.m_Blips[#self.m_Blips + 1] = element
 			end
 		end
