@@ -38,8 +38,15 @@ end
 
 function PhoneInteraction:callStart(player, voiceEnabled)
 	if not player then return end
+
 	if player:isPhoneEnabled() == true then
-		if not player:getPhonePartner() and not player.IncomingCall and not player:getData("isInDeathMatch") then
+		if player:getData("isInDeathMatch") then
+			client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar!",client, player.name))
+			client:triggerEvent("callReplace", player)
+			return
+		end
+
+		if not player:getPhonePartner() and not player.IncomingCall then
 			player:triggerEvent("callIncoming", client, voiceEnabled)
 			player.IncomingCall = true
 		else
