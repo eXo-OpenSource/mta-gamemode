@@ -85,7 +85,7 @@ function GPS:Event_retrieveRoute(nodes)
 					-- Stop route if this is the last checkpoint
 					if #self.m_Nodes == 1 then
 						self:stopNavigation()
-						ShortMessage:new(_"Du hast dein Ziel erreicht!")
+						ShortMessage:new(_"Du hast dein Ziel erreicht!", "Navigation")
 						return
 					end
 
