@@ -19,6 +19,8 @@ function GUIEdit:constructor(posX, posY, width, height, parent)
 	GUIFontContainer.constructor(self, "", 1, VRPFont(height))
 	GUIColorable.constructor(self, Color.DarkBlue)
 
+	self.m_MaxLength = math.huge
+	self.m_MaxValue =  math.huge
 	self.m_Caret = 0
 	self.m_DrawCursor = false
 end
@@ -139,6 +141,14 @@ function GUIEdit:setNumeric(numeric, integerOnly)
 	self.m_Numeric = numeric
 	self.m_IntegerOnly = integerOnly or false
 	return self
+end
+
+function GUIEdit:setMaxLength(length)
+	self.m_MaxLength = length
+end
+
+function GUIEdit:setMaxValue(value)
+	self.m_MaxValue = value
 end
 
 function GUIEdit:isIntegerOnly()
