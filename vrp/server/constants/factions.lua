@@ -122,13 +122,13 @@ factionWTDestination[3] = Vector3(1524.96, -1440.70, 12.3)
 
 -- ID 4 = Rescue Team:
 factionRankNames[4] = {
-[0] = "Rescue-Trainee",
-[1] = "Rescue-Assistant",
-[2] = "Rescue-Member",
-[3] = "Chief of Operations",
-[4] = "Rescue-Secretary",
-[5] = "Rescue-Deputy",
-[6] = "Rescue-Chief"
+	[0] = "Trainee",
+	[1] = "Assistant",
+	[2] = "Paramedic",
+	[3] = "Engineer",
+	[4] = "Battalion Chief",
+	[5] = "Division Chief",
+	[6] = "Commissioner"
 }
 factionColors[4] = {["r"] = 255, ["g"] = 120, ["b"] = 0}
 factionCarColors[4] = {["r"] = 255,["g"] = 120,["b"] = 0, ["r1"] = 255,["g1"] = 255,["b1"] = 255}
