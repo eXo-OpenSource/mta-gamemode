@@ -87,10 +87,4 @@
     <object id="object (new_bushsm) (28)" breakable="true" interior="0" alpha="255" model="647" doublesided="false" scale="1" dimension="0" posX="1304.9" posY="-1705.1" posZ="12.1" rotX="0" rotY="0" rotZ="329.996"></object>
     <object id="object (new_bushsm) (29)" breakable="true" interior="0" alpha="255" model="647" doublesided="false" scale="1" dimension="0" posX="1304.9" posY="-1696" posZ="12.6" rotX="0" rotY="0" rotZ="329.996"></object>
     <object id="object (new_bushsm) (30)" breakable="true" interior="0" alpha="255" model="647" doublesided="false" scale="1" dimension="0" posX="1304.9" posY="-1686.5" posZ="13.1" rotX="0" rotY="0" rotZ="329.996"></object>
-    <object id="object (sub_roadright) (1)" breakable="true" interior="0" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1305.4" posY="-1724" posZ="13.4" rotX="0" rotY="0" rotZ="270"></object>
-    <object id="object (sub_roadright) (2)" breakable="true" interior="0" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1304.9" posY="-1724" posZ="13.4" rotX="0" rotY="0" rotZ="90"></object>
-    <object id="object (sub_roadright) (3)" breakable="true" interior="0" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1305.4" posY="-1735.8" posZ="13.4" rotX="0" rotY="0" rotZ="270"></object>
-    <object id="object (sub_roadright) (5)" breakable="true" interior="0" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1304.9" posY="-1735.8" posZ="13.4" rotX="0" rotY="0" rotZ="90"></object>
-    <object id="object (sub_roadright) (7)" breakable="true" interior="0" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1304.9" posY="-1713.5" posZ="13.4" rotX="0" rotY="0" rotZ="90"></object>
-    <object id="object (sub_roadright) (9)" breakable="true" interior="0" alpha="255" model="978" doublesided="false" scale="1" dimension="0" posX="1305.4" posY="-1713.5" posZ="13.4" rotX="0" rotY="0" rotZ="270"></object>
 </map>
