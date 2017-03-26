@@ -478,7 +478,7 @@ function Player:dropReviveWeapons()
 				weapon =  self.m_ReviveWeapons[i][1]
 				ammo = self.m_ReviveWeapons[i][2]
 				model = WEAPON_MODELS_WORLD[weapon]
-				local x,y = getPointFromDistanceRotation(x, y, 2, 360*(i/12))
+				local x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
 				if model then
 					obj = createPickup(x,y,z-0.5, 3, model, 1 )
 					if obj then 
