@@ -105,7 +105,7 @@ function GPS:Event_retrieveRoute(nodes)
 					HUDRadar:getSingleton():setGPSRoute(self.m_Nodes)
 
 					-- Store next checkpoint
-					self.m_NextNode = self.m_Nodes[i + 1]
+					self.m_NextNode = self.m_Nodes[1]
 				end
 			end
 		)
@@ -119,7 +119,7 @@ function GPS:Timer_Recalculate()
 	end
 
 	-- Restart navigation if our distance to the next checkpoint is greater than 300
-	if (localPlayer:getPosition() - self.m_NextNode):getLength() > 300 then
+	if (localPlayer:getPosition() - self.m_NextNode):getLength() > 150 then
 		self:startNavigationTo(self.m_Destination, true)
 	end
 end
