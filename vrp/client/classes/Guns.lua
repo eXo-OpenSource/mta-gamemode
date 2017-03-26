@@ -48,12 +48,14 @@ function Guns:Event_onClientPedWasted( killer, weapon, bodypart, loss)
 end
 
 function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
+	local bPlaySound = false
 	if weapon == 9 then -- Chainsaw
 		cancelEvent()
 	elseif weapon == 23 then -- Taser
 		local dist = getDistanceBetweenPoints3D(attacker:getPosition(),source:getPosition())
 		if not attacker.vehicle and dist < 10 and dist > 1.5 then
 			if attacker == localPlayer then
+				bPlaySound = true
 				triggerServerEvent("onTaser",attacker,source)
 			end
 		end
@@ -62,8 +64,10 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 		if attacker and (attacker == localPlayer or instanceof(attacker, Actor)) then -- Todo: Sometimes Error: classlib.lua:139 - Cannot get the superclass of this element
 			if weapon and bodypart and loss then
 				if WEAPON_DAMAGE[weapon] then
+					bPlaySound = true
 					triggerServerEvent("onClientDamage",attacker, source, weapon, bodypart, loss)
 				else
+					bPlaySound = true
 					triggerServerEvent("gunsLogMeleeDamage",attacker, source, weapon, bodypart, loss)
 				end
 			end
@@ -75,7 +79,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			end
 		end
 	end
-	if core:get("Other", "HitSoundBell", true) then
+	if core:get("Other", "HitSoundBell", true) and bPlaySound then
 		playSound("files/audio/hitsound.wav")
 	end
 end
