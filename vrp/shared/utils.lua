@@ -67,6 +67,16 @@ function table.findAll(tab, value)
 	return result
 end
 
+function table.map(tab, func)
+	local result = {}
+
+	for k, v in pairs(tab) do
+		result[k] = func(v)
+	end
+
+	return result
+end
+
 function table.compare(tab1, tab2) -- This method is for debugging purposes only
 	-- Check if tab2 is subset of tab1
 	for k, v in pairs(tab1) do
@@ -710,12 +720,14 @@ function isNan(num)
 end
 
 function normaliseVector(serialisedVector)
-	if serialisedVector.w ~= nil then
+	if serialisedVector.w then
 		return Vector4(serialisedVector.x, serialisedVector.y, serialisedVector.z, serialisedVector.w)
-	elseif serialisedVector.z ~= nil then
+	elseif serialisedVector.z then
 		return Vector3(serialisedVector.x, serialisedVector.y, serialisedVector.z)
-	else
+	elseif serialisedVector.y then
 		return Vector2(serialisedVector.x, serialisedVector.y)
+	elseif serialisedVector[3] then
+		return Vector3(unpack(serialisedVector))
 	end
 end
 
