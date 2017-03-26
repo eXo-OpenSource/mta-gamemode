@@ -70,14 +70,14 @@ addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 
 			if currentEdit:isNumeric() then
 				if currentEdit:isIntegerOnly() then
-					if (text == "" or pregFind(text, '^[0-9]*$')) and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then
+					if (text == "" or pregFind(text, '^[0-9]*$')) and utfLen(text) <= currentEdit.m_MaxLength and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then
 						GUIInputControl.ms_PreviousInput = text
 						currentEdit:setText(text)
 					else
 						guiSetText(source, GUIInputControl.ms_PreviousInput or "") -- Triggers onClientGUIChanged again
 					end
 				else
-					if (tonumber(text) or text == "") and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then
+					if (tonumber(text) or text == "") and utfLen(text) <= currentEdit.m_MaxLength and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then
 						GUIInputControl.ms_PreviousInput = text
 						currentEdit:setText(text)
 					else
