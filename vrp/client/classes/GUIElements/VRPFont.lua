@@ -59,7 +59,8 @@ FontAwesomeSymbols = {
 	SoundOff = "",
 	SoundOn = "",
 	Mail = "",
-	Gamepad = ""
+	Gamepad = "",
+	Suitcase = ""
 }
 
 Fonts = {
