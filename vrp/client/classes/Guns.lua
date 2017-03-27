@@ -20,7 +20,7 @@ function Guns:constructor()
 	engineReplaceModel ( engineLoadDFF ( "files/models/taser.dff", 347 ), 347 )
 
 	self.m_ClientDamageBind = bind(self.Event_onClientPlayerDamage, self)
-
+	localPlayer.m_LastSniperShot = getTickCount()
 	self.m_TaserImage = dxCreateTexture("files/images/Other/thunder.png")
 	self.m_TaserRender = bind(self.Event_onTaserRender, self)
 	addEventHandler("onClientPlayerDamage", root, self.m_ClientDamageBind)
@@ -29,7 +29,7 @@ function Guns:constructor()
 	addEventHandler("onClientPedWasted", root, bind(self.Event_onClientPedWasted, self))
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
-
+	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
 	self:initalizeAntiCBug()
 
 	addRemoteEvents{"clientBloodScreen"}
@@ -84,6 +84,33 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 	end
 end
 
+function Guns:Event_onWeaponSwitch(pw, cw)
+	local prevWeapon = getPedWeapon(localPlayer,pw)
+	local cWeapon = getPedWeapon(localPlayer, cw)
+	if cWeapon ~= 34 then 
+		if localPlayer.m_FireToggleOff then 
+			toggleControl("fire",true)
+			if localPlayer.m_LastSniperShot+3000 <= getTickCount() then
+				 localPlayer.m_FireToggleOff = false
+			end
+		end
+	else 
+		if localPlayer.m_FireToggleOff then 
+			if localPlayer.m_LastSniperShot+3000 >= getTickCount() then
+				toggleControl("fire",false)
+			else 
+				localPlayer.m_FireToggleOff = false
+				toggleControl("fire",true)
+			end
+		else
+			if not NoDm:getSingleton().m_NoDm then 
+				toggleControl("fire",true)
+				localPlayer.m_FireToggleOff = false
+			end
+		end
+	end
+end
+
 function Guns:Event_onClientPlayerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
 		triggerServerEvent("onClientWasted", localPlayer, killer, weapon, bodypart)
@@ -110,6 +137,17 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 			if isTimer(self.m_ResetTimerNoTarget) then killTimer(self.m_ResetTimerNoTarget) end
 			if isTimer(self.m_ResetTimer) then killTimer(self.m_ResetTimer) end
 			self.m_ResetTimer = setTimer(function() removeEventHandler("onClientRender", root, self.m_TaserRender) end, 15000, 1)
+		end
+	end
+	if weapon == 34 then 
+		if not localPlayer.m_FireToggleOff then
+			localPlayer.m_LastSniperShot = getTickCount()
+			localPlayer.m_FireToggleOff = true
+			toggleControl("fire",false)
+			setTimer(function()  
+				localPlayer.m_FireToggleOff = false
+				toggleControl("fire",true)
+			end, 3000,1)
 		end
 	end
 end
