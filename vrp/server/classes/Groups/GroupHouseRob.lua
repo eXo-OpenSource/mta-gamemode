@@ -65,7 +65,7 @@ function GroupHouseRob:constructor()
 		setPedAnimation(ped, "dealer", "dealer_idle",200, true, false, false)
 		ped.m_ColShape = createColSphere ( pedPos[1],pedPos[2],pedPos[3], 10)
 		setElementData(ped.m_ColShape, "colPed", ped)
-		ped.m_LastOutPut = -10000 --// nur alle 10sekunden eine begrüßung vom ped
+		ped.m_LastOutPut = -10000 --// nur alle 10sekunden eine begrÃ¼ÃŸung vom ped
 		addEventHandler("onColShapeHit", ped.m_ColShape, self.m_OnColShapeHit)
 		self.m_SellerPeds[i] = ped
 		addEventHandler("onElementClicked", ped, self.m_OnSellerClick)
@@ -83,7 +83,7 @@ function GroupHouseRob:Event_OnSellAccept()
 				inv:removeAllItem("Diebesgut")
 				client:giveMoney(pay, "Verkauf von Diebeswaren",false)
 				client:meChat(true, "streckt seine Hand aus und nimmt einen Umschlag mit Scheinen entgegen!")
-				client:sendPedChatMessage(client.m_ClickPed:getData("Ped:Name"), "Gutes Geschäfft komm wieder wenn du mehr hast!")
+				client:sendPedChatMessage(client.m_ClickPed:getData("Ped:Name"), "Gutes GeschÃ¤fft komm wieder wenn du mehr hast!")
 			end
 		end
 	end
@@ -116,7 +116,7 @@ function GroupHouseRob:Event_onClickPed(  m, s, player)
 					player:sendPedChatMessage( source:getData("Ped:Name"), "lass mich sehen!")
 					player:triggerEvent("showHouseRobSellGUI")
 				else 
-					player:meChat(true, "schüttelt den Kopf.")
+					player:meChat(true, "schÃ¼ttelt den Kopf.")
 					player:sendPedChatMessage( source:getData("Ped:Name"), "hmm... Komm wieder wenn du etwas hast!")
 				end
 			end
@@ -143,13 +143,13 @@ function GroupHouseRob:startNewRob( house, player )
 						self.m_HousesRobbed[house] = true
 						return true
 					else 
-						outputChatBox("Ihr könnt noch nicht wieder ein Haus ausrauben!", player, 200,0,0)
+						outputChatBox("Ihr kÃ¶nnt noch nicht wieder ein Haus ausrauben!", player, 200,0,0)
 					end
 				else 
 					outputChatBox("Dieses Haus wurde bereits ausgeraubt!", player, 200,0,0)
 				end
 			else 
-				outputChatBox("Ihr habt schon zu viele Häuser heute ausgeraubt!", player, 200,0,0)
+				outputChatBox("Ihr habt schon zu viele HÃ¤user heute ausgeraubt!", player, 200,0,0)
 			end
 		end
 	end 
