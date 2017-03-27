@@ -1122,6 +1122,7 @@
 	<vrpfile src="files/images/Nametag/armor.png"/>
 	<vrpfile src="files/images/Nametag/premium.png"/>
 	<vrpfile src="files/images/Nametag/gun.png"/>
+	<vrpfile src="files/images/Nametag/seatbelt.png"/>
 	
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>

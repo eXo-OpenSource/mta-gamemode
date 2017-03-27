@@ -282,6 +282,23 @@ function Player:initialiseBinds()
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle  then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 	bindKey(self, "g", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 and player.m_InVehicle == vehicle then vehicle:toggleHandBrake( player ) end end)
+	bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then player:buckleSeatBelt(vehicle) end end)
+end
+
+function Player:buckleSeatBelt(vehicle) 
+	if self.m_SeatBelt then 
+		self.m_SeatBelt = false 
+		setElementData(self,"isBuckeled", false)
+		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
+	elseif vehicle == getPedOccupiedVehicle(self) then 
+		self.m_SeatBelt = vehicle
+		setElementData(self,"isBuckeled", true)
+		outputChatBox("Du schnallst dich an.", self, 200,200,0)
+	else 
+		self.m_SeatBelt = false
+		setElementData(self,"isBuckeled", false)
+		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
+	end
 end
 
 function Player:save()

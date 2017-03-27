@@ -165,6 +165,9 @@ function Nametag:drawIcons(player, align, startX, startY, armor, width, alpha)
 	if bHasBigGun then 
 		icons[#icons+1] = "gun.png"
 	end
+	if getElementData(player, "isBuckeled") then 
+		icons[#icons+1] = "seatbelt.png"
+	end
 	for index, icon in pairs(icons) do
 		dxDrawImage(startX+((index-1)*width*1.1), startY, width, width, "files/images/Nametag/"..icon,0,0,0,tocolor(255,255,255,alpha))
 	end
