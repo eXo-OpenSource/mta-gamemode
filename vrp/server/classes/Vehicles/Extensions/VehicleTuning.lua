@@ -45,7 +45,7 @@ function VehicleTuning:applyTuning()
 	self:updateNeon()
 
 	if self.m_Tuning["Special"] > 0 then
-		self.m_Vehicle:setSpecial(self.m_Tuning["Special"])
+		self:setSpecial(self.m_Tuning["Special"])
 	end
 
 	self.m_Vehicle:setCustomHorn(self.m_Tuning["CustomHorn"])
@@ -105,5 +105,51 @@ function VehicleTuning:updateNeon()
 		self.m_Vehicle:setData("NeonColor", self.m_Vehicle.m_Neon, true)
 	else
 		self.m_Vehicle.m_Neon = false
+	end
+end
+
+function VehicleTuning:setSpecial(special)
+	self.m_Vehicle.m_Special = special
+	self.m_Vehicle:setData("Special", special, true)
+	if special == VehicleSpecial.Soundvan then
+		if self.m_Vehicle:getModel() == 535 then
+			self.m_Vehicle.speakers = {}
+			self.m_Vehicle.speakers["Left"] = createObject(2229, 0, 0, 0)
+			self.m_Vehicle.speakers["Right"] = createObject(2229, 0, 0, 0)
+			self.m_Vehicle.speakers["Middle"] = createObject(1841, 0, 0, 0)
+			self.m_Vehicle.speakers["Middle"]:setScale(1.5)
+
+			self.m_Vehicle.speakers["Left"]:attach(self.m_Vehicle, -0.3, -1.5, 0, -55, 0, 0)
+			self.m_Vehicle.speakers["Right"]:attach(self.m_Vehicle, 1, -1.5, 0, -55, 0, 0)
+			self.m_Vehicle.speakers["Middle"]:attach(self.m_Vehicle, 0, -0.8, 0.4, 0, 0, 90)
+
+			for index, element in pairs(self.m_Vehicle.speakers) do
+				element:setCollisionsEnabled(false)
+			end
+
+			local refreshSpeaker = function()
+				for index, element in pairs(self.m_Vehicle.speakers) do
+					if isElement(self.m_Vehicle) then
+						element:setDimension(self.m_Vehicle:getDimension())
+						element:setInterior(self.m_Vehicle:getInterior())
+						if self.m_Vehicle.m_SoundURL then
+							triggerClientEvent("soundvanChangeURLClient", source, self.m_Vehicle.m_SoundURL)
+						end
+					else
+						element:destroy()
+						if self.m_Vehicle.m_SoundURL then
+							triggerClientEvent("soundvanStopSoundClient", self.m_Vehicle, url)
+						end
+					end
+				end
+			end
+
+			refreshSpeaker()
+			addEventHandler("onElementDimensionChange", self.m_Vehicle, refreshSpeaker)
+			addEventHandler("onElementInteriorChange", self.m_Vehicle, refreshSpeaker)
+			addEventHandler("onVehicleExplode", self.m_Vehicle, refreshSpeaker)
+			addEventHandler("onVehicleRespawn", self.m_Vehicle, refreshSpeaker)
+			addEventHandler("onElementDestroy", self.m_Vehicle, refreshSpeaker)
+		end
 	end
 end
