@@ -32,7 +32,10 @@ function Guns:destructor()
 end
 
 function Guns:Event_WeaponSwitch( pw, cw) --// sync bug fix "schlagbug"
-	giveWeapon(source, cw, 0)
+	local slot = getSlotFromWeapon(cw)
+	if slot >= 2 and slot <= 6 then
+		giveWeapon(source, cw, 0)
+	end
 end
 
 function Guns:Event_onTaser(target)

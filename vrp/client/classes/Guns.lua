@@ -87,7 +87,6 @@ end
 function Guns:Event_onWeaponSwitch(pw, cw)
 	local prevWeapon = getPedWeapon(localPlayer,pw)
 	local cWeapon = getPedWeapon(localPlayer, cw)
-	outputChatBox(cWeapon)
 	if cWeapon ~= 34 then 
 		if localPlayer.m_FireToggleOff then 
 			toggleControl("fire",true)
