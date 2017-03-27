@@ -127,29 +127,31 @@ end
 function GroupHouseRob:startNewRob( house, player ) 
 	if player then 
 		local group = player:getGroup() 
-		if group:getType() == "Gang" then 
-			if not self.m_GroupsRobbed[group] then 
-				self.m_GroupsRobbed[group] = 0
-			end
-			if self.m_GroupsRobbed[group] < GroupHouseRob.MAX_ROBS_PER_GROUP then 
-				if not self.m_HousesRobbed[house] then
-					local tick = getTickCount()
-					if not self.m_GroupsRobCooldown[group] then 
-						self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
-					end
-					if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
-						self.m_GroupsRobbed[group] = self.m_GroupsRobbed[group] + 1
-						self.m_GroupsRobCooldown[group]  = tick
-						self.m_HousesRobbed[house] = true
-						return true
+		if group then
+			if group:getType() == "Gang" then 
+				if not self.m_GroupsRobbed[group] then 
+					self.m_GroupsRobbed[group] = 0
+				end
+				if self.m_GroupsRobbed[group] < GroupHouseRob.MAX_ROBS_PER_GROUP then 
+					if not self.m_HousesRobbed[house] then
+						local tick = getTickCount()
+						if not self.m_GroupsRobCooldown[group] then 
+							self.m_GroupsRobCooldown[group]  = 0 - GroupHouseRob.COOLDOWN_TIME
+						end
+						if self.m_GroupsRobCooldown[group] + GroupHouseRob.COOLDOWN_TIME <= tick then
+							self.m_GroupsRobbed[group] = self.m_GroupsRobbed[group] + 1
+							self.m_GroupsRobCooldown[group]  = tick
+							self.m_HousesRobbed[house] = true
+							return true
+						else 
+							outputChatBox("Ihr könnt noch nicht wieder ein Haus ausrauben!", player, 200,0,0)
+						end
 					else 
-						outputChatBox("Ihr könnt noch nicht wieder ein Haus ausrauben!", player, 200,0,0)
+						outputChatBox("Dieses Haus wurde bereits ausgeraubt!", player, 200,0,0)
 					end
 				else 
-					outputChatBox("Dieses Haus wurde bereits ausgeraubt!", player, 200,0,0)
+					outputChatBox("Ihr habt schon zu viele Häuser heute ausgeraubt!", player, 200,0,0)
 				end
-			else 
-				outputChatBox("Ihr habt schon zu viele Häuser heute ausgeraubt!", player, 200,0,0)
 			end
 		end
 	end 
