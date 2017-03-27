@@ -22,7 +22,7 @@ function Guns:constructor()
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
-	addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
+	--addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
 
 end
 

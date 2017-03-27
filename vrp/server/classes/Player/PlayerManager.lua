@@ -324,7 +324,9 @@ function PlayerManager:playerQuit()
 		StatisticsLogger:addLogin(source, getPlayerName( source ) , "Logout")
 	end
 	if source.ped_deadDouble then
-		destroyElement(source.ped_deadDouble)
+		if isElement(source.ped_deadDouble) then
+			destroyElement(source.ped_deadDouble)
+		end
 	end
 end
 

@@ -130,7 +130,7 @@ function FactionManager:stateFactionShowRob(pickup)
 
 	setTimer(function(pickup)
 		if self.m_NeedHelpBlip[pickup] then delete(self.m_NeedHelpBlip[pickup]) end
-	end, 20000, 1, pickup)
+	end, 270000, 1, pickup)
 end
 
 function FactionManager:getFromId(id)

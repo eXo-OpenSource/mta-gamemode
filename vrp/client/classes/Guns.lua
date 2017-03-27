@@ -85,31 +85,33 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 end
 
 function Guns:Event_onWeaponSwitch(pw, cw)
-	local prevWeapon = getPedWeapon(localPlayer,pw)
-	local cWeapon = getPedWeapon(localPlayer, cw)
-	if cWeapon ~= 34 then 
-		if localPlayer.m_FireToggleOff then 
+	if source == localPlayer then 
+		local prevWeapon = getPedWeapon(localPlayer,pw)
+		local cWeapon = getPedWeapon(localPlayer, cw)
+		if cWeapon ~= 34 then 
 			toggleControl("fire",true)
-			if localPlayer.m_LastSniperShot+3000 <= getTickCount() then
-				 localPlayer.m_FireToggleOff = false
+			if localPlayer.m_FireToggleOff then 
+				if localPlayer.m_LastSniperShot+3000 <= getTickCount() then
+					localPlayer.m_FireToggleOff = false
+				end
 			end
-		end
-	else 
-		if localPlayer.m_FireToggleOff then 
-			if localPlayer.m_LastSniperShot+3000 >= getTickCount() then
-				toggleControl("fire",false)
-			else 
-				localPlayer.m_FireToggleOff = false
-				toggleControl("fire",true)
-			end
-		else
-			if not NoDm:getSingleton().m_NoDm then 
-				toggleControl("fire",true)
-				localPlayer.m_FireToggleOff = false
+		else 
+			if localPlayer.m_FireToggleOff then 
+				if localPlayer.m_LastSniperShot+3000 >= getTickCount() then
+					toggleControl("fire",false)
+				else 
+					localPlayer.m_FireToggleOff = false
+					toggleControl("fire",true)
+				end
+			else
+				if not NoDm:getSingleton().m_NoDm then 
+					toggleControl("fire",true)
+					localPlayer.m_FireToggleOff = false
+				end
 			end
 		end
 	end
-end
+end	
 
 function Guns:Event_onClientPlayerWasted( killer, weapon, bodypart)
 	if source == localPlayer then
@@ -139,15 +141,17 @@ function Guns:Event_onClientWeaponFire(weapon, ammo, ammoInClip, hitX, hitY, hit
 			self.m_ResetTimer = setTimer(function() removeEventHandler("onClientRender", root, self.m_TaserRender) end, 15000, 1)
 		end
 	end
-	if weapon == 34 then 
-		if not localPlayer.m_FireToggleOff then
-			localPlayer.m_LastSniperShot = getTickCount()
-			localPlayer.m_FireToggleOff = true
-			toggleControl("fire",false)
-			setTimer(function()  
-				localPlayer.m_FireToggleOff = false
-				toggleControl("fire",true)
-			end, 3000,1)
+	if source == localPlayer then
+		if weapon == 34 then 
+			if not localPlayer.m_FireToggleOff then
+				localPlayer.m_LastSniperShot = getTickCount()
+				localPlayer.m_FireToggleOff = true
+				toggleControl("fire",false)
+				setTimer(function()  
+					localPlayer.m_FireToggleOff = false
+					toggleControl("fire",true)
+				end, 3000,1)
+			end
 		end
 	end
 end
