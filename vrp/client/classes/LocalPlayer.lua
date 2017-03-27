@@ -88,14 +88,12 @@ function LocalPlayer:checkWeaponAim()
 				localPlayer.m_HasScopedIn = true 
 				localPlayer.m_IsFading = true 
 				fadeCamera(false,0.5,0,0,0)
-				setCameraShakeLevel(240)
 				setTimer(self.m_FadeOut, 500,1)
 			end
 		else 
 			localPlayer.m_HasScopedIn = false
 			if localPlayer.m_IsFading then 
 				fadeCamera(true,0.5)
-				setCameraShakeLevel(0)
 				localPlayer.m_IsFading = false
 			end
 		end
@@ -103,19 +101,17 @@ function LocalPlayer:checkWeaponAim()
 		localPlayer.m_HasScopedIn = false
 		if localPlayer.m_IsFading then 
 			fadeCamera(true,0.5)
-			setTimer(setCameraShakeLevel, 1000, 1, 0)
 			localPlayer.m_IsFading = false
 		end
 	end
 	if localPlayer.m_IsFading then 
-		dxDrawRectangle(0,0,screenWidth, screenHeight,tocolor(0,0,0,255))
+		dxDrawRectangle(0,0,screenWidth, screenHeight,tocolor(0,0,0,255), true)
 	end
 end
 
 function LocalPlayer:fadeOutScope() 
 	if localPlayer.m_IsFading then 
 		fadeCamera(true,1)
-		setTimer(setCameraShakeLevel, 1000, 1, 0)
 		localPlayer.m_IsFading = false
 	end
 end
