@@ -767,8 +767,8 @@ end
 
 function FactionState:showRobbedHouseBlip( suspect, housepickup) 
 	local zoneName = getZoneName(housepickup:getPosition())
-	self:sendMessage("Operator: Ein Einbruch wurde gemeldet in "..zoneName.."! Täterbeschreibung bisher passt auf: "..getPlayerName(suspect).."!", 50, 200, 255)
 	for k, onlineplayer in pairs(self:getOnlinePlayers()) do
+		onlineplayer:sendMessage("Operator: Ein Einbruch wurde gemeldet in "..zoneName.."! Täterbeschreibung bisher passt auf: "..getPlayerName(suspect).."!", 50, 200, 255)
 		onlineplayer:sendMessage(_("Der Anruferort wird auf der Karte markiert!", onlineplayer), 200, 200, 255)
 		onlineplayer:triggerEvent("stateFactionShowRob", housepickup )
 	end
