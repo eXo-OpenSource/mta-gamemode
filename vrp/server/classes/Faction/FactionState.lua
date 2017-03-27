@@ -737,7 +737,9 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 end
 
 function FactionState:onTiedExit(vehicle, seat, jacked)
-	source:warpIntoVehicle(vehicle, seat)
+	if seat > 0 then
+		source:warpIntoVehicle(vehicle, seat)
+	end
 end
 
 function FactionState:Command_needhelp(player)
@@ -762,6 +764,16 @@ function FactionState:Command_needhelp(player)
 		player:sendError(_("Du bist in keiner Staatsfraktion!", player))
 	end
 end
+
+function FactionState:showRobbedHouseBlip( suspect, housepickup) 
+	local zoneName = getZoneName(housepickup:getPosition())
+	for k, onlineplayer in pairs(self:getOnlinePlayers()) do
+		onlineplayer:sendMessage("Operator: Ein Einbruch wurde gemeldet in "..zoneName.."! Täterbeschreibung bisher passt auf: "..getPlayerName(suspect).."!", 50, 200, 255)
+		onlineplayer:sendMessage(_("Der Anruferort wird auf der Karte markiert!", onlineplayer), 200, 200, 255)
+		onlineplayer:triggerEvent("stateFactionShowRob", housepickup )
+	end
+end
+
 
 function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 	local policeman = police or client
@@ -840,8 +852,8 @@ end
 
 function FactionState:freePlayer(player)
 	player:setData("inJail",false, true)
-	player:setDimension(0)
-	player:setInterior(0)
+	setElementDimension(player,0)
+	setElementInterior(player,0)
 	player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 	player:setRotation(0, 0, 90)
 	player:setWantedLevel(0)

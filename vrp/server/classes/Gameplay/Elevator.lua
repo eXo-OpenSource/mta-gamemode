@@ -8,12 +8,18 @@
 Elevator = inherit(Object)
 Elevator.Map = {}
 
-addRemoteEvents{"elevatorDrive"}
+addRemoteEvents{"elevatorStartDrive", "elevatorDrive"}
 
 function Elevator.drive(elevatorId, stationId)
 	Elevator.Map[elevatorId]:driveToStation(client, stationId)
 end
 addEventHandler("elevatorDrive", root, Elevator.drive)
+
+function Elevator.startDrive(elevatorId, stationId)
+	client.elevator = Elevator.Map[elevatorId]
+	client.elevatorStationId = stationId
+end
+addEventHandler("elevatorStartDrive", root, Elevator.startDrive)
 
 function Elevator:constructor()
 	self.m_Stations = {}
@@ -68,16 +74,26 @@ end
 function Elevator:driveToStation(player, stationID)
 	player.elevatorUsed = true
 	player.curEl = false
+	player.elevator = false
+	player.elevatorStationId = false
 
 	-- Workaround TODO
-	nextframe(function()
-		player:setInterior(self.m_Stations[stationID].interior)
-		player:setPosition(self.m_Stations[stationID].position)
-	end)
+	nextframe(
+		function()
+			setElementInterior(player, self.m_Stations[stationID].interior)
+			player:setPosition(self.m_Stations[stationID].position)
+		end
+	)
 	player:setInterior(0)
 	--
 
 	player:setRotation(Vector3(0, 0, self.m_Stations[stationID].rotation))
-	player:setDimension(self.m_Stations[stationID].dimension)
+	setElementDimension(player, self.m_Stations[stationID].dimension)
 	setElementFrozen(player, false)
+end
+
+function Elevator:forceStationPosition(player, stationID)
+	setElementInterior(player, self.m_Stations[stationID].interior)
+	player:setPosition(self.m_Stations[stationID].position)
+	setElementDimension(player,self.m_Stations[stationID].dimension)
 end

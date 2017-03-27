@@ -64,3 +64,8 @@ function Async:continue(...)
 	end
 	assert(coroutine.resume(self.m_Coroutine))
 end
+
+
+function bindAsync(func, ...)
+	return bind(function(...) Async.create(func)(...) end, ...)
+end

@@ -93,9 +93,9 @@ function ZombieSurvival:addPlayer(player)
 	player:giveAchievement(54)
 
 	self.m_ZombieKills[player] = 0
-	player:setDimension(self.m_Dimension)
+	setElementDimension(player,self.m_Dimension)
 	player:setPosition(self:getRandomPosition())
-	player:setInterior(0)
+	setElementInterior(player,0)
 	player:setArmor(0)
 	player:setHealth(100)
 	takeAllWeapons(player)

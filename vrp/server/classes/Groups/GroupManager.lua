@@ -486,8 +486,8 @@ end
 function GroupManager:Event_SaveRank(rank,name,loan)
 	local group = client:getGroup()
 	if group and group:getPlayerRank(client) >= GroupRank.Manager then
-		group:setRankName(rank,name)
-		group:setRankLoan(rank,loan)
+		group:setRankName(rank, name)
+		group:setRankLoan(rank, loan)
 		group:saveRankSettings()
 		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
 		group:addLog(client, "Gang/Firma", "hat die Einstellungen für Rang "..rank.." geändert!")

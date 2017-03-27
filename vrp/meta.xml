@@ -214,7 +214,7 @@
 	<script src="server/classes/Groups/GroupPropertyManager.lua" type="server" />
 	<script src="server/classes/Groups/SprayWall.lua" type="server" />
 	<script src="server/classes/Groups/SprayWallManager.lua" type="server" />
-
+	<script src="server/classes/Groups/GroupHouseRob.lua" type="server" />
 
 
 	<!-- Business -->
@@ -334,7 +334,6 @@
 	<script src="client/classes/ClickHandler.lua" type="client"/>
 	<script src="client/classes/AntiClickSpam.lua" type="client"/>
 	<script src="client/classes/HoverHandler.lua" type="client"/>
-	<script src="client/classes/GPS.lua" type="client"/>
 	<script src="client/classes/ego.lua" type="client"/>
 	<script src="client/classes/CustomModelManager.lua" type="client"/>
 	<script src="client/classes/Provider.lua" type="client"/>
@@ -496,6 +495,7 @@
 	<script src="client/classes/GUIForms/ButtonMenu/StateFactionGasStationGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/StateFactionDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/RescueFactionDutyGUI.lua" type="client"/>
+	<script src="client/classes/GUIForms/HouseRobSellGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/DrivingSchoolChooseLicenseGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/CompanyDutyGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ButtonMenu/ShopManageGUI.lua" type="client"/>
@@ -661,7 +661,7 @@
 	<script src="client/classes/Groups/GroupProperty.lua" type="client"/>
 	<script src="client/classes/Groups/SprayWall.lua" type="client"/>
 	<script src="client/classes/Groups/SprayWallManager.lua" type="client"/>
-
+	<script src="client/classes/Groups/GroupRob.lua" type="client"/>
 
 	<!-- AI -->
 	<script src="client/classes/AI/Actor.lua" type="client"/>
@@ -680,6 +680,7 @@
 	<script src="client/classes/Vehicles/Indicator.lua" type="client"/>
 	<script src="client/classes/Vehicles/CruiseControl.lua" type="client"/>
 	<script src="client/classes/Vehicles/VehicleTuning.lua" type="client"/>
+	<script src="client/classes/Vehicles/GPS.lua" type="client"/>
 
 	<!-- Events -->
 	<script src="client/classes/Events/Event.lua" type="client"/>
@@ -1120,7 +1121,9 @@
 	<vrpfile src="files/images/Nametag/admin.png"/>
 	<vrpfile src="files/images/Nametag/armor.png"/>
 	<vrpfile src="files/images/Nametag/premium.png"/>
-
+	<vrpfile src="files/images/Nametag/gun.png"/>
+	<vrpfile src="files/images/Nametag/seatbelt.png"/>
+	
 	<vrpfile src="files/images/HUD/VehicleLevel.png"/>
 	<vrpfile src="files/images/HUD/WeaponLevel.png"/>
 	<vrpfile src="files/images/HUD/SkinLevel.png"/>
@@ -1269,6 +1272,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
 
 	<vrpfile src="files/images/Inventory/items/Objekte/riot_shield.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/diebesgut.png" />
 
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />

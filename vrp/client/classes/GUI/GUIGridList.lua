@@ -76,6 +76,9 @@ end
 
 function GUIGridList:setItemHeight(height)
 	self.m_ItemHeight = height
+
+	-- Update position of the underlying scroll area
+	self.m_ScrollArea:setPosition(0, self.m_ItemHeight)
 end
 
 function GUIGridList:getColumnWidth(columnIndex)

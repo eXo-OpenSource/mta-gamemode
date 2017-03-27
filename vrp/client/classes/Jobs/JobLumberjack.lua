@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 JobLumberjack = inherit(Job)
+addEvent("lumberjackTreesLoadUp", true)
 
 function JobLumberjack:constructor()
 	Job.constructor(self, 16, 1104.27, -298.06, 73.99, 90, "Lumberjack.png", "files/images/Jobs/HeaderLumberjack.png", _(HelpTextTitles.Jobs.Lumberjack):gsub("Job: ", ""), _(HelpTexts.Jobs.Lumberjack))
@@ -15,7 +16,6 @@ function JobLumberjack:constructor()
 	self.m_StackedTrees = {}
 	self.m_NumTrees = 0
 
-	addEvent("lumberjackTreesLoadUp", true)
 	addEventHandler("lumberjackTreesLoadUp", root, bind(JobLumberjack.Event_lumberjackTreesLoadUp, self))
 
 	-- add job to help menu
@@ -146,6 +146,10 @@ function JobLumberjack:Event_lumberjackTreesLoadUp()
 	end
 	self.m_StackedTrees = {}
 	self.m_NumTrees = 0
+
+	-- Start navigation to dump zone
+	local posX, posY = self.m_SawMillBlip:getPosition()
+	GPS:getSingleton():startNavigationTo(Vector3(posX, posY, 0))
 end
 
 JobLumberjack.Trees = {

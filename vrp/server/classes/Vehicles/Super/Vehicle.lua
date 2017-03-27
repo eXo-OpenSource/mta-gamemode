@@ -141,6 +141,8 @@ function Vehicle:onPlayerExit(player, seat)
 			unbindKey(player, "j", "down", self.ms_CustomHornPlayBind)
 			unbindKey(player, "j", "up", self.ms_CustomHornStopBind)
 		end
+		player.m_SeatBelt = false 
+		setElementData(player,"isBuckeled", false)
 		if self.m_HandBrake then
 			local ground = isVehicleOnGround( self )
 			if ground then

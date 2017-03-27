@@ -690,8 +690,8 @@ function Admin:goToPlayer(player,cmd,target)
 				local player2 = player
 				if player:isInVehicle() then player = player:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				player:setPosition(pos)
-				player:setDimension(dim)
-				player:setInterior(int)
+				setElementDimension(player, dim)
+				setElementInterior(player,int)
 				StatisticsLogger:getSingleton():addAdminAction( player2, "goto", target:getName())
 			end
 		else
@@ -714,8 +714,8 @@ function Admin:getHerePlayer(player, cmd, target)
 				local target2 = target
 				if target:isInVehicle() then target = target:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				target:setPosition(pos)
-				target:setDimension(dim)
-				target:setInterior(int)
+				setElementDimension(target,dim)
+				setElementInterior(target,int)
 				StatisticsLogger:getSingleton():addAdminAction( player, "gethere", target2:getName())
 			end
 		else
@@ -771,6 +771,7 @@ local tpTable = {
         ["24-7"] =          {["pos"] = Vector3(1352.43, -1752.75, 13.04),  	["typ"] = "Shops"},
         ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
         ["burgershot"] =    {["pos"] = Vector3(1187.46, -924.68,  42.83),  	["typ"] = "Shops"},
+        ["tuning"] =    	{["pos"] = Vector3(1035.58, -1028.90, 32.10),  	["typ"] = "Shops"},
         ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
@@ -1006,8 +1007,8 @@ function Admin:Command_MarkPos(player, add)
 				if getPedOccupiedVehicle(player) then
 					player = getPedOccupiedVehicle(player)
 				end
-				player:setInterior(markPos[2])
-				player:setDimension(markPos[3])
+				setElementInterior(player,markPos[2])
+				setElementDimension(player,markPos[3])
 				player:setPosition(markPos[1])
 				setCameraTarget(player)
 			else
