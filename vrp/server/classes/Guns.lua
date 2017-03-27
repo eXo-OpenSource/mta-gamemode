@@ -22,12 +22,17 @@ function Guns:constructor()
 	addEventHandler("onTaser", root, bind(self.Event_onTaser, self))
 	addEventHandler("onClientDamage", root, bind(self.Event_onClientDamage, self))
 	addEventHandler("gunsLogMeleeDamage", root, bind(self.Event_logMeleeDamage, self))
-
+	addEventHandler("onPlayerWeaponSwitch", root, bind(self.Event_WeaponSwitch, self))
 
 end
 
+
 function Guns:destructor()
 
+end
+
+function Guns:Event_WeaponSwitch( pw, cw) --// sync bug fix "schlagbug"
+	giveWeapon(source, cw, 0)
 end
 
 function Guns:Event_onTaser(target)
