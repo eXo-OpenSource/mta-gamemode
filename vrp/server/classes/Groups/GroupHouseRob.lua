@@ -17,11 +17,14 @@ local findItems =
 	"Goldring",
 	"Tablet",
 	"Laptop",	
+	"MP3-Player",
+	"Digitalkamera",
+	"Elektrokabel",
 }
 
 local sellerPeds = 
 {
-	{{2344.76, -1233.29, 22.50, 74}, "Piotr Scherbakow", {2348.10, -1232.54, 22.62,240},44, "Du siehst mir aus wie jemand der etwas loswerden will!"},
+	{{2344.76, -1233.29, 22.50, 74}, "Piotr Scherbakov", {2348.10, -1233.54, 22.62,240},44, "Du siehst mir aus wie jemand der etwas loswerden will!"},
 	{{ 2759.16, -1177.98, 69.40, 74}, "Jorvan Krajewski", {2762.65, -1178.32, 69.52,262}, 73, "Komme hierhin, zeig Sache ich mach Preis!"},
 	{ { 2275.59, -1031.20, 51.43,244}, "Machiavelli Johnson", { 2274.86, -1027.57, 52.17,14}, 143, "Komm mal ran, du willst doch sicherlich n' bisschen Geld hu?"},
 	{ {1730.60, -2148.86, 13.55,109}, "Carlos Peralta", {1734.09, -2147.95, 13.68,280}, 114, "Ese, zeig deine Sachen oder verschwinde."},
@@ -30,6 +33,7 @@ local sellerPeds =
 GroupHouseRob = inherit( Singleton )
 GroupHouseRob.MAX_ROBS_PER_GROUP = 5
 GroupHouseRob.COOLDOWN_TIME = 1000*60*15
+addRemoteEvents{"GroupRob:SellRobItems"}
 function GroupHouseRob:constructor() 
 	self.m_GroupsRobbed = {}
 	self.m_GroupsRobCooldown = {}
@@ -37,6 +41,7 @@ function GroupHouseRob:constructor()
 	self.m_SellerPeds = {}
 	self.m_OnSellerClick = bind(self.Event_onClickPed, self)
 	self.m_OnColShapeHit = bind(self.Event_onColHit, self)
+	addEventHandler("GroupRob:SellRobItems", root, bind(self.Event_OnSellAccept, self))
 	local pedPos, pedName, vehPos, skin, ped, sellvehicle, greetText
 	for i = 1,#sellerPeds do 
 		pedPos = sellerPeds[i][1]
@@ -56,13 +61,31 @@ function GroupHouseRob:constructor()
 		ped:setData("Ped:greetText", greetText)
 		setElementData(ped, "Ped:fakeNameTag", pedName)
 		setElementData(ped,"NPC:Immortal_serverside",true)
-		setPedAnimation(ped, "dealer", "dealer_idle",-1, true, false, false)
+		setElementFrozen(ped,true)
+		setPedAnimation(ped, "dealer", "dealer_idle",200, true, false, false)
 		ped.m_ColShape = createColSphere ( pedPos[1],pedPos[2],pedPos[3], 10)
 		setElementData(ped.m_ColShape, "colPed", ped)
 		ped.m_LastOutPut = -10000 --// nur alle 10sekunden eine begrüßung vom ped
 		addEventHandler("onColShapeHit", ped.m_ColShape, self.m_OnColShapeHit)
 		self.m_SellerPeds[i] = ped
 		addEventHandler("onElementClicked", ped, self.m_OnSellerClick)
+	end
+end
+
+function GroupHouseRob:Event_OnSellAccept()
+	if client then 
+		if client.m_ClickPed then 
+			local inv = client:getInventory() 
+			if inv then 
+				local amount = inv:getItemAmount("Diebesgut")
+				local randomPrice = math.random( 50,100)
+				local pay = amount * randomPrice
+				inv:removeAllItem("Diebesgut")
+				client:giveMoney(pay, "Verkauf von Diebeswaren",false)
+				client:meChat(true, "streckt seine Hand aus und nimmt einen Umschlag mit Scheinen entgegen!")
+				client:sendPedChatMessage(client.m_ClickPed:getData("Ped:Name"), "Gutes Geschäfft komm wieder wenn du mehr hast!")
+			end
+		end
 	end
 end
 
@@ -89,7 +112,9 @@ function GroupHouseRob:Event_onClickPed(  m, s, player)
 				local thiefItems = inv:getItemAmount("Diebesgut")
 				if thiefItems > 0 then 
 					player:meChat(true, "nickt mit dem Kopf.")
+					player.m_ClickPed = source
 					player:sendPedChatMessage( source:getData("Ped:Name"), "lass mich sehen!")
+					player:triggerEvent("showHouseRobSellGUI")
 				else 
 					player:meChat(true, "schüttelt den Kopf.")
 					player:sendPedChatMessage( source:getData("Ped:Name"), "hmm... Komm wieder wenn du etwas hast!")

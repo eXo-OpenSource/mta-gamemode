@@ -39,7 +39,7 @@ end
 
 function GroupRob:onRobFind( )
 	local randomFind = math.random(1,10)
-	if randomFind >= 5 then 
+	if randomFind >= 7 then 
 		triggerServerEvent("playerFindRobableItem", localPlayer)
 	else
 		triggerServerEvent("playerRobTryToGiveWanted", localPlayer)
@@ -47,7 +47,16 @@ function GroupRob:onRobFind( )
 end
 
 function GroupRob:onRobDone() 
-	outputChatBox("Verlasse das Haus!")
+	outputChatBox("Du suchst alle Ecken ab und findest nichts mehr. Verlasse nun das Haus!", 200,200,0)
+	if self.m_CountDown then 
+		delete(self.m_CountDown)
+	end
+	if isTimer(self.m_RobFindTimer) then 
+		killTimer(self.m_RobFindTimer)
+	end
+	if isTimer(self.m_RobExpireTimer) then 
+		killTimer(self.m_RobExpireTimer)
+	end
 end
 
 
@@ -59,8 +68,8 @@ function GroupRob:initiateRob( int, house, enterPos )
 		delete(self.m_CountDown)
 	end
 	self.m_CountDown = Countdown:new( 240, "Durchsuchen")
-	self.m_RobExpireTimer = setTimer(self.m_DoneRob, 240*1000*60, 1)
-	self.m_RobFindTimer = setTimer(self.m_OnRobFind, 5000, 0)
+	self.m_RobExpireTimer = setTimer(self.m_DoneRob, 240*1000, 1)
+	self.m_RobFindTimer = setTimer(self.m_OnRobFind, 10000, 0)
 end
 
 
