@@ -312,12 +312,14 @@ function Faction:getPlayers(getIDsOnly)
 	return temp
 end
 
-function Faction:getOnlinePlayers()
+function Faction:getOnlinePlayers(afkCheck)
 	local players = {}
 	for playerId in pairs(self.m_Players) do
 		local player = Player.getFromId(playerId)
 		if player and isElement(player) and player:isLoggedIn() then
-			players[#players + 1] = player
+			if not afkCheck or not player.m_isAFK then
+				players[#players + 1] = player
+			end
 		end
 	end
 	return players
