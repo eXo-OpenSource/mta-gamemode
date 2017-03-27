@@ -79,7 +79,7 @@ function Guns:Event_onClientPlayerDamage(attacker, weapon, bodypart, loss)
 			end
 		end
 	end
-	if core:get("Other", "HitSoundBell", true) and bPlaySound then
+	if core:get("Other", "HitSoundBell", true) and bPlaySound and getElementType(attacker) ~= "ped" then
 		playSound("files/audio/hitsound.wav")
 	end
 end
