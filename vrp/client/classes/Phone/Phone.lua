@@ -31,6 +31,7 @@ function Phone:constructor()
 	self:registerApp(AppAmmunation)
 	self:registerApp(AppBank)
 	self:registerApp(PhoneApp.makeWebApp("Snake",  "IconSnake.png", ("https://exo-reallife.de/ingame/vRPphone/webApps/snake/index.php?player=%s&sessionID=%s"):format(localPlayer:getName(), localPlayer:getSessionId()), false, self))
+	self:registerApp(AppNavigator)
 
 
 
