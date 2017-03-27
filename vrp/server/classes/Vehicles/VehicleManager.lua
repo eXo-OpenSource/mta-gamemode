@@ -117,8 +117,10 @@ function VehicleManager:Event_OnElementDestroy()
 		local occs = getVehicleOccupants( source )
 		if occs then 
 			for seat, player in pairs(occs) do
-				player.m_SeatBelt = false
-				setElementData(player,"isBuckeled", false)
+				if player then 
+					player.m_SeatBelt = false
+					setElementData(player,"isBuckeled", false)
+				end
 			end
 		end
 	end
