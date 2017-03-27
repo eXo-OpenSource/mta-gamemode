@@ -83,7 +83,7 @@ function GroupHouseRob:Event_OnSellAccept()
 				inv:removeAllItem("Diebesgut")
 				client:giveMoney(pay, "Verkauf von Diebeswaren",false)
 				client:meChat(true, "streckt seine Hand aus und nimmt einen Umschlag mit Scheinen entgegen!")
-				client:sendPedChatMessage(client.m_ClickPed:getData("Ped:Name"), "Gutes Geschäfft komm wieder wenn du mehr hast!")
+				client:sendPedChatMessage(client.m_ClickPed:getData("Ped:Name"), "Gutes Geschäft. Komm wieder wenn du mehr hast!")
 			end
 		end
 	end
@@ -113,11 +113,11 @@ function GroupHouseRob:Event_onClickPed(  m, s, player)
 				if thiefItems > 0 then 
 					player:meChat(true, "nickt mit dem Kopf.")
 					player.m_ClickPed = source
-					player:sendPedChatMessage( source:getData("Ped:Name"), "lass mich sehen!")
+					player:sendPedChatMessage( source:getData("Ped:Name"), "Lass mich mal sehen!")
 					player:triggerEvent("showHouseRobSellGUI")
 				else 
 					player:meChat(true, "schüttelt den Kopf.")
-					player:sendPedChatMessage( source:getData("Ped:Name"), "hmm... Komm wieder wenn du etwas hast!")
+					player:sendPedChatMessage( source:getData("Ped:Name"), "Hmm... Komm wieder wenn du etwas hast!")
 				end
 			end
 		end
