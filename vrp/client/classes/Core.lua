@@ -129,6 +129,8 @@ function Core:ready()
 	GasStation:new()
 
 	ChessSession:new()
+	
+	GroupRob:new() 
 
 	triggerServerEvent("drivingSchoolRequestSpeechBubble",localPlayer)
 

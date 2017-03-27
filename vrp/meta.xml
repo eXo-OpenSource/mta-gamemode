@@ -660,7 +660,7 @@
 	<script src="client/classes/Groups/GroupProperty.lua" type="client"/>
 	<script src="client/classes/Groups/SprayWall.lua" type="client"/>
 	<script src="client/classes/Groups/SprayWallManager.lua" type="client"/>
-
+	<script src="client/classes/Groups/GroupRob.lua" type="client"/>
 
 	<!-- AI -->
 	<script src="client/classes/AI/Actor.lua" type="client"/>
@@ -1270,6 +1270,7 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/kevlar.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/riot_shield.png" />
+	<vrpfile src="files/images/Inventory/items/Objekte/diebesgut.png" />
 	
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />

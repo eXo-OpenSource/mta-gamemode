@@ -765,6 +765,16 @@ function FactionState:Command_needhelp(player)
 	end
 end
 
+function FactionState:showRobbedHouseBlip( suspect, housepickup) 
+	local zoneName = getZoneName(housepickup:getPosition())
+	self:sendMessage("Operator: Ein Einbruch wurde gemeldet in "..zoneName.."! Täterbeschreibung bisher passt auf: "..getPlayerName(suspect).."!", 50, 200, 255)
+	for k, onlineplayer in pairs(self:getOnlinePlayers()) do
+		onlineplayer:sendMessage(_("Der Anruferort wird auf der Karte markiert!", onlineplayer), 200, 200, 255)
+		onlineplayer:triggerEvent("stateFactionShowRob", housepickup )
+	end
+end
+
+
 function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 	local policeman = police or client
 	if policeman:getFaction() and policeman:getFaction():isStateFaction() then

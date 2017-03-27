@@ -9,10 +9,10 @@ WearableHelmet = inherit( Item )
 
 WearableHelmet.objectTable = 
 {
-	["Helm"] = {2052, 0.05, 0.05, 1, 5, 180, "Integral-Helm"},
-	["Motorcross-Helm"] = {2799, 0.09, 0.02, 0.9, 10, 180,"Motocross-Helm"},
-	["Pot-Helm"] = {3911,0.1, 0, 1, 0, 180, "Biker-Helm"},
-	["Gasmaske"] = {3890,0, 0.15, 0.9, 0, 90, "Gasmaske"},
+	["Helm"] = {2052, 0.05, 0.05, 1, 5, 180, "Integral-Helm",true},
+	["Motorcross-Helm"] = {2799, 0.09, 0.02, 0.9, 10, 180,"Motocross-Helm",true},
+	["Pot-Helm"] = {3911,0.1, 0, 1, 0, 180, "Biker-Helm",false},
+	["Gasmaske"] = {3890,0, 0.15, 0.9, 0, 90, "Gasmaske",true},
 }
 
 function WearableHelmet:constructor()
@@ -39,6 +39,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		local model, zOffset, yOffset, scale, rotX, rotZ  = WearableHelmet.objectTable[itemName][1] or WearableHelmet.objectTable["Helm"][1],  WearableHelmet.objectTable[itemName][2] or WearableHelmet.objectTable["Helm"][2], WearableHelmet.objectTable[itemName][3] or WearableHelmet.objectTable["Helm"][3], WearableHelmet.objectTable[itemName][4] or WearableHelmet.objectTable["Helm"][4], WearableHelmet.objectTable[itemName][5] or WearableHelmet.objectTable["Helm"][5],  WearableHelmet.objectTable[itemName][6] or WearableHelmet.objectTable["Helm"][6]
 		local obj = createObject(model,x,y,z)
 		local objName =  WearableHelmet.objectTable[itemName][7]
+		local isFaceConcealed = WearableHelmet.objectTable[itemName][8]
 		setElementDimension(obj, dim)
 		setElementInterior(obj, int)
 		setObjectScale(obj, scale)
@@ -47,11 +48,13 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		player.m_Helmet = obj
 		player.m_IsWearingHelmet = itemName
 		player:meChat(true, "zieht "..objName.." an!")
+		player:setData("isFaceConcealed", isFaceConcealed)
 	elseif player.m_IsWearingHelmet == itemName and player.m_Helmet then --// if the player clicks onto the same helmet once more remove it
 		destroyElement(player.m_Helmet)
 		self.m_Helmets[player] = nil
 		player.m_IsWearingHelmet = false
 		player.m_Helmet = false
+		player:setData("isFaceConcealed", false)
 		player:meChat(true, "setzt "..WearableHelmet.objectTable[itemName][7].." ab!")
 	else --// else the player must have clicked on another helmet otherwise this instance of the class would have not been called
 		if isElement(player.m_Helmet) then 
@@ -63,6 +66,7 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		local dim = getElementDimension(player)
 		local int = getElementInterior(player)
 		local objName =  WearableHelmet.objectTable[itemName][7]
+		local isFaceConcealed = WearableHelmet.objectTable[itemName][8]
 		setElementDimension(obj, dim)
 		setElementInterior(obj, int)
 		setObjectScale(obj, scale)
@@ -71,5 +75,6 @@ function WearableHelmet:use(player, itemId, bag, place, itemName)
 		player.m_Helmet = obj
 		player.m_IsWearingHelmet = itemName
 		player:meChat(true, "zieht "..objName.." an!")
+		player:setData("isFaceConcealed", isFaceConcealed)
 	end
 end

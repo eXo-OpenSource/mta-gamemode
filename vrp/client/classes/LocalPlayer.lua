@@ -37,6 +37,7 @@ function LocalPlayer:constructor()
 	addEventHandler("toggleRadar", self, bind(self.Event_toggleRadar, self))
 	addEventHandler("onClientPlayerSpawn", self, bind(LocalPlayer.Event_onClientPlayerSpawn, self))
 	addEventHandler("onClientRender",root,bind(self.renderPostMortemInfo, self))
+	addEventHandler("onClientRender",root,bind(self.renderPedNameTags, self))
 	addEventHandler("onTryPickupWeapon", root, bind(self.Event_OnTryPickup, self))
 	addCommandHandler("noafk", bind(self.onAFKCodeInput, self))
 
@@ -420,6 +421,33 @@ function LocalPlayer:renderPostMortemInfo()
 		if getKeyState("lalt") and getKeyState("m") then 
 			triggerServerEvent("onAttemptToPickupDeathWeapon",localPlayer, self.m_MortemWeaponPickup)
 			self.m_MortemWeaponPickup = false
+		end
+	end
+end
+
+
+function LocalPlayer:renderPedNameTags()
+	local peds = getElementsByType("ped", root, true)
+	local nameTag,x,y,z, textWidth
+	local px, py, pz, tx, ty, tz, dist
+	px, py, pz = getCameraMatrix( )
+	for k, ped in ipairs( peds) do 
+		nameTag = getElementData(ped, "Ped:fakeNameTag") 
+		if nameTag then 
+			textWidth = dxGetTextWidth(nameTag, 1,"default-bold")
+			x,y,z = getPedBonePosition(ped, 3)
+			dist = getDistanceBetweenPoints3D(x,y,z,px,py,pz) <= 20 
+			if dist then
+				if isLineOfSightClear( px, py, pz, x, y, z, true, false, false, true, false, false, false,localPlayer ) then
+					if x and y and z then 
+						x,y = getScreenFromWorldPosition(x,y,z+1)
+						if x and y then
+							dxDrawText(nameTag, x-textWidth/2,y+1,x+textWidth/2,y+1,tocolor(0,0,0,255),1,"default-bold")
+							dxDrawText(nameTag, x-textWidth/2,y,x+textWidth/2,y,tocolor(200,200,200,255),1,"default-bold")
+						end
+					end
+				end
+			end
 		end
 	end
 end

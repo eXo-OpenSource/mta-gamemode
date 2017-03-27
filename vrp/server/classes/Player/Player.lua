@@ -1069,9 +1069,42 @@ function Player:meChat(system, ...)
         end
 
 	end
-	if not system then
-		StatisticsLogger:getSingleton():addChatLog(self, "me", text, toJSON(receivedPlayers))
-		FactionState:getSingleton():addBugLog(self, "", text)
+end
+
+function Player:sendPedChatMessage( name, ...)
+	if self:isDead() then
+		return
+	end
+	local argTable = { ... }
+	local text = table.concat ( argTable , " " )
+	local playersToSend = self:getPlayersInChatRange( 1 )
+	local systemText = name.." sagt:"
+	local receivedPlayers = {}
+	local message = text
+	for index = 1,#playersToSend do
+		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 220,220,220)
+		if playersToSend[index] ~= self then
+            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+        end
+
+	end
+end
+
+function Player:districtChat(...)
+	if self:isDead() then
+		return
+	end
+	local argTable = { ... }
+	local text = table.concat ( argTable , " " )
+	local playersToSend = self:getPlayersInChatRange( 2 )
+	local receivedPlayers = {}
+	local message = ("%s"):format(text)
+	local systemText = "✪" 
+	for index = 1,#playersToSend do
+		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 205,146,10)
+		if playersToSend[index] ~= self then
+            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+        end
 	end
 end
 

@@ -10,7 +10,7 @@ House = inherit(Object)
 local ROB_DELAY = 3600
 local ROB_NEEDED_TIME = 1000*60*4
 
-function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money)
+function House:constructor(id, position, interiorID, keys, owner, price, lockStatus, rentPrice, elements, money, bIsRob)
 	if owner == 0 then
 		owner = false
 	end
@@ -28,7 +28,7 @@ function House:constructor(id, position, interiorID, keys, owner, price, lockSta
 	self.m_Id = id
 	self.m_Elements = fromJSON(elements or "")
 	self.m_Money = money or 0
-
+	self.m_IsRob = bIsRob
 	local int, ix, iy, iz  = unpack(House.interiorTable[self.m_InteriorID])
 	self.m_HouseMarker = createMarker(ix, iy, iz-0.8, "cylinder", 1.2, 255, 255, 255, 125)
 	self.m_HouseMarker:setDimension(self.m_Id)
@@ -72,6 +72,7 @@ function House:toggleLockState( player )
 end
 
 function House:showGUI(player)
+	local bIsGang = player:getGroup():getType() == "Gang"
 	if player:getId() == self.m_Owner then
 		local tenants = {}
 		for playerId, timestamp in pairs(self.m_Keys) do
@@ -79,7 +80,7 @@ function House:showGUI(player)
 		end
 		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, tenants, self.m_Money)
 	else
-		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus)
+		player:triggerEvent("showHouseMenu", Account.getNameFromId(self.m_Owner), self.m_Price, self.m_RentPrice, self:isValidRob(player), self.m_LockStatus, false,false,bIsGang)
 	end
 end
 
@@ -317,10 +318,33 @@ function House:enterHouseTry(player)
 end
 
 function House:enterHouse(player)
+	local isRobberEntering = false
+	if self.m_RobGroup then 
+		if player:getGroup() == self.m_RobGroup and player:getGroup().m_CurrentRobbing == self then
+			isRobberEntering = true
+		end
+	end
 	local int, x, y, z = unpack(House.interiorTable[self.m_InteriorID])
+	if isRobberEntering  then
+		player:meChat(true, "betritt das Haus an der kaputten Tür vorbei!")
+		if player.m_LastRobHouse then
+			if player.m_LastRobHouse ~= self then
+				player:triggerEvent("onClientStartHouseRob", int, self, {x,y,z})
+				player.m_HasAlreadyHouseWanteds  = false
+				player.m_LastRobHouse = self
+			end
+		else 
+			player:triggerEvent("onClientStartHouseRob", int, self, {x,y,z})
+			player.m_HasAlreadyHouseWanteds  = false
+			player.m_LastRobHouse = self
+		end
+	else 
+		player:meChat(true, "öffnet die Tür und betritt das Haus!")
+	end
 	player:setPosition(x, y, z)
 	player:setDimension(self.m_Id)
 	player:setInterior(int)
+	player.m_CurrentHouse = self
 	self.m_PlayersInterior[player] = true
 end
 
@@ -334,12 +358,76 @@ function House:removePlayerFromList(player)
 end
 
 function House:leaveHouse(player)
+	local isRobberLeaving = false
+	if self.m_RobGroup then 
+		if player:getGroup() == self.m_RobGroup then
+			isRobberLeaving = true
+		end
+	end
+	if isRobberLeaving then
+		player:meChat(true, "verlässt das Haus!")
+		player:triggerEvent("onClientEndHouseRob")
+	else 
+		player:meChat(true, "öffnet die Tür und verlässt das Haus!")
+	end
 	self:removePlayerFromList(player)
 	player:setPosition(self.m_Pos)
 	player:setInterior(0)
 	player:setDimension(0)
+	player.m_CurrentHouse = false
 	if self.m_CurrentRobber == player then
 		player:triggerEvent("CountdownStop", "Haus-Raub")
+	end
+end
+
+function House:tryRob( player ) 
+	local gRob = GroupHouseRob:getSingleton()
+	local bContinue = gRob:startNewRob( self, player)
+	if bContinue then 
+		if self.m_LockStatus then 
+			self.m_LockStatus = false 
+			player:meChat(true, "holt zu einem Kick aus und tritt gegen die Tür!")
+			player:districtChat("Der Klang von aufbrechenden Holz ertönt durch die Gegend!")
+			self.m_RobGroup = player:getGroup()
+			self.m_RobGroup.m_CurrentRobbing = self
+			self.m_RobGroup.m_RobReported = false
+		end
+	end
+end
+
+function House:giveRobItem( player )
+	if player then 
+		local group = player:getGroup() 
+		if group and self.m_RobGroup then 
+			if group == self.m_RobGroup then 
+				local item = GroupHouseRob:getSingleton():getRandomItem() 
+				player:meChat(true, "entdeckt etwas und versucht es einzustecken. (("..item.."))")
+				player:getInventory():giveItem("Diebesgut",1)
+			end
+		end
+	end
+end
+
+function House:tryToCatchRobbers( player )
+	if player then 
+		local group = player:getGroup() 
+		if group and self.m_RobGroup then 
+			if group == self.m_RobGroup then 
+				local item = GroupHouseRob:getSingleton():getRandomItem() 
+				local isFaceConcealed = player:getData("isFaceConcealed")
+				local wantedChance = math.random(1,10)
+				if isFaceConcealed then 
+					wantedChance = math.random(1,20)
+				end
+				if wantedChance <= 5 and not player.m_HasAlreadyHouseWanteds and not group.m_RobReported then 
+					player.m_HasAlreadyHouseWanteds = true
+					player:setWantedLevel(player:getWantedLevel() + 3)
+					group.m_RobReported = true
+					outputChatBox("Ein Nachbar rief die Polizei an, beeil dich!", player, 200,100,100)
+					FactionState:getSingleton():showRobbedHouseBlip(player, self.m_Pickup)
+				end
+			end
+		end
 	end
 end
 
