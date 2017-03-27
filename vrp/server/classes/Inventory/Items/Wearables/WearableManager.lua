@@ -48,26 +48,42 @@ function WearableManager:checkReference( sData )
 end
 
 function WearableManager:Event_onElementInteriorChange( int )
+	local obj = false
 	if source.m_Helmet then 
 		setElementInterior(source.m_Helmet, int)
+		obj = source.m_Helmet
 	end
 	if source.m_Shirt then 
 		setElementInterior(source.m_Shirt, int)
+		obj = source.m_Shirt
 	end
 	if source.m_Portables then 
-		setElementDimension(source.m_Portables, int)
+		setElementInterior(source.m_Portables, int)
+		obj = source.m_Portables
+	end
+	if obj then 
+		local x,y,z = getElementPosition(source)
+		setElementPosition(obj, x,y,z)
 	end
 end
 
 function WearableManager:Event_onElementDimensionChange( dim )
+	local obj = false
 	if source.m_Helmet then 
 		setElementDimension(source.m_Helmet, dim)
+		obj = source.m_Helmet
 	end
 	if source.m_Shirt then 
 		setElementDimension(source.m_Shirt, dim)
+		obj = source.m_Shirt
 	end
 	if source.m_Portables then 
 		setElementDimension(source.m_Portables, dim)
+		obj = source.m_Portables
+	end
+	if obj then 
+		local x,y,z = getElementPosition(source)
+		setElementPosition(obj, x,y,z)
 	end
 end
 
