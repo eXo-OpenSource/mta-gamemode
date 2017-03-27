@@ -72,7 +72,13 @@ function House:toggleLockState( player )
 end
 
 function House:showGUI(player)
-	local bIsGang = player:getGroup():getType() == "Gang"
+	
+	local bIsGang = false
+	if player:getGroup() then 
+		if player:getGroup():getType() == "Gang" then 
+			bIsGang = true
+		end
+	end
 	if player:getId() == self.m_Owner then
 		local tenants = {}
 		for playerId, timestamp in pairs(self.m_Keys) do
