@@ -600,8 +600,8 @@ function PlayerManager:Event_toggleAFK(state, teleport)
 		self.m_AFKHook:call(client)
 		client:startAFK()
 		if client:isInVehicle() then client:removeFromVehicle() end
-		client:setInterior(4)
-		client:setDimension(0)
+		setElementInterior(client, 4)
+		setElementDimension(client,0)
 		local afkPos = AFK_POSITIONS[math.random(1, #AFK_POSITIONS)]
 		if teleport then
 			client:setPosition(afkPos.x, afkPos.y, 999.5546875)

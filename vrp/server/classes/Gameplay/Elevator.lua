@@ -80,7 +80,7 @@ function Elevator:driveToStation(player, stationID)
 	-- Workaround TODO
 	nextframe(
 		function()
-			player:setInterior(self.m_Stations[stationID].interior)
+			setElementInterior(player, self.m_Stations[stationID].interior)
 			player:setPosition(self.m_Stations[stationID].position)
 		end
 	)
@@ -88,12 +88,12 @@ function Elevator:driveToStation(player, stationID)
 	--
 
 	player:setRotation(Vector3(0, 0, self.m_Stations[stationID].rotation))
-	player:setDimension(self.m_Stations[stationID].dimension)
+	setElementDimension(player, self.m_Stations[stationID].dimension)
 	setElementFrozen(player, false)
 end
 
 function Elevator:forceStationPosition(player, stationID)
-	player:setInterior(self.m_Stations[stationID].interior)
+	setElementInterior(player, self.m_Stations[stationID].interior)
 	player:setPosition(self.m_Stations[stationID].position)
-	player:setDimension(self.m_Stations[stationID].dimension)
+	setElementDimension(player,self.m_Stations[stationID].dimension)
 end

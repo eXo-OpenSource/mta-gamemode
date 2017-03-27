@@ -165,8 +165,8 @@ function DeathmatchLobby:respawnPlayer(player, dead, killer, weapon)
 			giveWeapon(player, Randomizer:getRandomTableValue(self.m_Weapons), 9999, true) -- Todo Add Weapon-Select GUI
 		end,10000,1)
 	else
-		player:setDimension(self.m_MapData["dim"])
-		player:setInterior(self.m_MapData["int"])
+		setElementDimension(player,self.m_MapData["dim"])
+		setElementInterior(player, self.m_MapData["int"])
 		player:setPosition(pos)
 		player:setHealth(100)
 		player:setHeadless(false)

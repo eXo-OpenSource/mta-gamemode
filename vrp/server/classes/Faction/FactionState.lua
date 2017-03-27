@@ -852,8 +852,8 @@ end
 
 function FactionState:freePlayer(player)
 	player:setData("inJail",false, true)
-	player:setDimension(0)
-	player:setInterior(0)
+	setElementDimension(player,0)
+	setElementInterior(player,0)
 	player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 	player:setRotation(0, 0, 90)
 	player:setWantedLevel(0)

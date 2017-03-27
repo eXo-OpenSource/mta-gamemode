@@ -690,8 +690,8 @@ function Admin:goToPlayer(player,cmd,target)
 				local player2 = player
 				if player:isInVehicle() then player = player:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				player:setPosition(pos)
-				player:setDimension(dim)
-				player:setInterior(int)
+				setElementDimension(player, dim)
+				setElementInterior(player,int)
 				StatisticsLogger:getSingleton():addAdminAction( player2, "goto", target:getName())
 			end
 		else
@@ -714,8 +714,8 @@ function Admin:getHerePlayer(player, cmd, target)
 				local target2 = target
 				if target:isInVehicle() then target = target:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				target:setPosition(pos)
-				target:setDimension(dim)
-				target:setInterior(int)
+				setElementDimension(target,dim)
+				setElementInterior(target,int)
 				StatisticsLogger:getSingleton():addAdminAction( player, "gethere", target2:getName())
 			end
 		else
@@ -1007,8 +1007,8 @@ function Admin:Command_MarkPos(player, add)
 				if getPedOccupiedVehicle(player) then
 					player = getPedOccupiedVehicle(player)
 				end
-				player:setInterior(markPos[2])
-				player:setDimension(markPos[3])
+				setElementInterior(player,markPos[2])
+				setElementDimension(player,markPos[3])
 				player:setPosition(markPos[1])
 				setCameraTarget(player)
 			else

@@ -348,8 +348,8 @@ function House:enterHouse(player)
 		player:meChat(true, "öffnet die Tür und betritt das Haus!")
 	end
 	player:setPosition(x, y, z)
-	player:setDimension(self.m_Id)
-	player:setInterior(int)
+	setElementDimension(player, self.m_Id)
+	setElementInterior(player,int)
 	player.m_CurrentHouse = self
 	self.m_PlayersInterior[player] = true
 end
@@ -378,8 +378,8 @@ function House:leaveHouse(player)
 	end
 	self:removePlayerFromList(player)
 	player:setPosition(self.m_Pos)
-	player:setInterior(0)
-	player:setDimension(0)
+	setElementInterior(player, 0)
+	setElementDimension(player, 0)
 	player.m_CurrentHouse = false
 	if self.m_CurrentRobber == player then
 		player:triggerEvent("CountdownStop", "Haus-Raub")
