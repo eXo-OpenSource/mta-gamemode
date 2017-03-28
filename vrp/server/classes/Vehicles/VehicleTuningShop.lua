@@ -168,9 +168,27 @@ function VehicleTuningShop:Event_vehicleUpgradesBuy(cartContent)
         if upgradeId ~= 0 then
             local price = getVehicleUpgradePrice(upgradeId)
             -- Search for part price if not available
-            if not price then
-                price = getVehicleUpgradePrice(slot)
-            end
+           	if not price then
+				price = getVehicleUpgradePrice(slot)
+				if not price then 
+					price = 0
+				else 
+					if not tonumber(price) then 
+						price = 0
+					end
+				end
+			else 
+				if not tonumber(price) then
+					price = getVehicleUpgradePrice(slot)
+					if not price then 
+						price = 0
+					else 
+						if not tonumber(price) then 
+							price = 0
+						end	
+					end
+				end
+			end
 
             overallPrice = overallPrice + price
         end
