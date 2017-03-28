@@ -7,7 +7,7 @@
 -- ****************************************************************************
 FishingRod = inherit(Singleton)
 
-function FishingRod:constructor()
+function FishingRod:constructor(fishingRod)
 	self.FishingMap = FishingLocation:new()
 	self.Sound = SoundManager:new("files/audio/Fishing")
 	self.Random = Randomizer:new()
@@ -24,8 +24,8 @@ function FishingRod:constructor()
 
 	self:initAnimations()
 
-	self.m_FishingRod = createObject(1826, localPlayer.position)
-	exports.bone_attach:attachElementToBone(self.m_FishingRod, localPlayer, 12, -0.03, 0.02, 0.05, 180, 120, 0)
+	self.m_FishingRod = fishingRod--createObject(1826, localPlayer.position)
+	--exports.bone_attach:attachElementToBone(self.m_FishingRod, localPlayer, 12, -0.03, 0.02, 0.05, 180, 120, 0)
 
 	self.m_fishBite = bind(FishingRod.fishBite, self)
 	self.m_HandleClick = bind(FishingRod.handleClick, self)
@@ -41,9 +41,9 @@ function FishingRod:destructor()
 	unbindKey("mouse1", "both", self.m_HandleClick)
 	removeEventHandler("onClientRender", root, self.m_Render)
 	if isTimer(self.m_nibblingTimer) then killTimer(self.m_nibblingTimer) end
+	self.Sound:stopAll()
 
 	delete(self.FishingMap)
-	self.m_FishingRod:destroy()
 end
 
 function FishingRod:initAnimations()
@@ -80,6 +80,8 @@ function FishingRod:reset()
 end
 
 function FishingRod:handleClick(_, state)
+	if GUIElement.getHoveredElement() then return end
+
 	self.m_MouseDown = state == "down"
 
 	if self.m_isCasting and self.m_MouseDown then
@@ -203,9 +205,3 @@ function FishingRod:render()
 		dxDrawImageSection(left+1, top+1, 123*self.m_PowerProgress, 20-2, 0, 0, 123*self.m_PowerProgress, 20-2, "files/images/Fishing/RedGreen.png")
 	end
 end
-
-addCommandHandler("f",
-	function()
-		FishingRod:new()
-	end
-)

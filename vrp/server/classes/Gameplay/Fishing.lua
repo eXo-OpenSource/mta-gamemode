@@ -113,6 +113,8 @@ function Fishing:getFish(location, timeOfDay, weather)
 end
 
 function Fishing:FishHit(location)
+	if not self.m_Players[client] then return end
+
 	local time = tonumber(("%s%.2d"):format(getRealTime().hour, getRealTime().minute))
 	local weather = getWeather()
 
@@ -120,11 +122,8 @@ function Fishing:FishHit(location)
 
 	client:triggerEvent("fishingBobberBar", fish)
 
-	self.m_Players[client] = {
-		lastFish = fish,
-		lastFishHit = getTickCount(),
-		caught = {}
-	}
+	self.m_Players[client].lastFish = fish
+	self.m_Players[client].lastFishHit = getTickCount()
 end
 
 function Fishing:FishCaught()
@@ -132,9 +131,28 @@ function Fishing:FishCaught()
 	local tbl = self.m_Players[client]
 
 	outputChatBox(("Caught: %s [%s]"):format(tbl.lastFish.name, getTickCount() - tbl.lastFishHit))
-	table.insert(tbl.caught, tbl.lastFish)
 end
 
 function Fishing:onPedClick()
+	outputChatBox("chick click")
+end
 
+function Fishing:inventoryUse(player)
+	if self.m_Players[player] then
+		local fishingRod = self.m_Players[player].fishingRod
+		if fishingRod then fishingRod:destroy() end
+		self.m_Players[player] = nil
+
+		player:triggerEvent("onFishingStop")
+		return
+	end
+
+	local fishingRod = createObject(1826, player.position)
+	exports.bone_attach:attachElementToBone(fishingRod, player, 12, -0.03, 0.02, 0.05, 180, 120, 0)
+
+	self.m_Players[player] = {
+		fishingRod = fishingRod,
+	}
+
+	player:triggerEvent("onFishingStart", fishingRod)
 end

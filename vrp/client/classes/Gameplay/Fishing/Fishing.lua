@@ -6,6 +6,7 @@
 -- *
 -- ****************************************************************************
 Fishing = {}
+addRemoteEvents{"onFishingStart", "onFishingStop"}
 
 function Fishing.load()
 	local ped = Ped.create(161, Vector3(368.27, -2072.03, 8.02), 180)
@@ -22,3 +23,16 @@ function Fishing.load()
 		end
 	)
 end
+
+function Fishing.start(...)
+	if not FishingRod:isInstantiated() then
+		FishingRod:new(...)
+	end
+end
+addEventHandler("onFishingStart", root, Fishing.start)
+
+function Fishing.stop()
+	if FishingRod:isInstantiated() then delete(FishingRod:getSingleton()) end
+	if BobberBar:isInstantiated() then delete(BobberBar:getSingleton()) end
+end
+addEventHandler("onFishingStop", root, Fishing.stop)

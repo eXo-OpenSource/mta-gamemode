@@ -56,6 +56,13 @@ end
 function BobberBar:destructor()
 	removeEventHandler("onClientRender", root, self.m_Render)
 	unbindKey("mouse1", "both", self.m_HandleClick)
+	self.Sound:stopAll()
+
+	if self.m_FadeAnimation:isAnimationRendered() then delete(self.m_FadeAnimation) end
+	if self.m_BobberAnimation:isAnimationRendered() then delete(self.m_BobberAnimation) end
+	if self.m_ProgressAnimation:isAnimationRendered() then delete(self.m_ProgressAnimation) end
+
+	if isTimer(self.m_ResetFishingRodTimer) then killTimer(self.m_ResetFishingRodTimer) end
 end
 
 function BobberBar:initAnimations()
@@ -77,10 +84,13 @@ function BobberBar:initAnimations()
 
 				self.m_FadeAnimation:startAnimation(500, "OutQuad", 0)
 
-				setTimer(
+				self.m_ResetFishingRodTimer = setTimer(
 					function()
 						delete(self)
-						FishingRod:getSingleton():reset()
+
+						if FishingRod:isInstantiated() then
+							FishingRod:getSingleton():reset()
+						end
 					end, 2000, 1
 				)
 			end
@@ -240,5 +250,3 @@ addEventHandler("fishingBobberBar", root,
 		BobberBar:new(data.difficulty, data.behavior)
 	end
 )
-
---BobberBar:new(90, "mixed")
