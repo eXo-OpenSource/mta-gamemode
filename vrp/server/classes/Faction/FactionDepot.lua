@@ -201,6 +201,7 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 			end
 		end
 	else 
+		outputChatBox("Du hast eine Zweitwaffe dabei, wechsel zwischen diesen mit Rechtsklick (Gedrückt) +X", player, 200, 200, 0)
 		Guns:getSingleton():setWeaponInStorage(player, weaponStorage[1], ammoStorage[weaponStorage[1]])
 	end
 	
