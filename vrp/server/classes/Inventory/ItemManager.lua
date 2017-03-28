@@ -51,6 +51,7 @@ function ItemManager:constructor()
 		["Kevlar"] = WearableShirt,
 		["Tragetasche"] = WearableShirt,
 		["Swatschild"] = WearablePortables,
+		["Kleidung"] = WearableClothes,
 	}
 
 	self.m_Properties = {

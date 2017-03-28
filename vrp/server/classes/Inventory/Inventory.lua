@@ -276,6 +276,26 @@ function Inventory:setItemValueByBag( bag, place, value )
 	end
 end
 
+function Inventory:getItemPlacesByName(item) 
+	local placeTable = {}
+	if self.m_ItemData[item] then
+		local bag = self.m_ItemData[item]["Tasche"]
+		local amount = 0
+		local places = self:getPlaces(bag)
+		for place = 0, places, 1 do
+			local id = self.m_Bag[bag][place]
+			if id then
+				if self.m_Items[id]["Objekt"] == item then
+					placeTable[#placeTable+1] = {place, bag}
+				end
+			end
+		end
+	else
+		outputDebugString("[INV] Unglültiges Item: "..item)
+	end
+	return placeTable
+end
+
 function Inventory:removeItemFromPlace(bag, place, amount)
 
 	local id = self.m_Bag[bag][place]

@@ -133,7 +133,8 @@
 	<script src="server/classes/Inventory/Items/Wearables/WearableHelmet.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Wearables/WearableShirt.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Wearables/WearablePortables.lua" type="server"/>
-
+	<script src="server/classes/Inventory/Items/Wearables/WearableClothes.lua" type="server"/>
+	
 	<script src="server/classes/Inventory/Items/Drugs/DrugsWeed.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsHeroin.lua" type="server"/>
 	<script src="server/classes/Inventory/Items/Drugs/DrugsShroom.lua" type="server"/>
@@ -1277,7 +1278,9 @@
 	<vrpfile src="files/images/Inventory/items/Objekte/dufflebag.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/riot_shield.png" />
 	<vrpfile src="files/images/Inventory/items/Objekte/diebesgut.png" />
-
+	
+	<vrpfile src="files/images/Inventory/items/Items/Kleidung.png" />
+	
 	<!-- GoJump -->
 	<vrpfile src="files/images/GoJump/titlescreen.png" />
 	<vrpfile src="files/images/GoJump/howto.png" />
