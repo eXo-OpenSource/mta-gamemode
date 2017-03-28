@@ -518,8 +518,16 @@ function getVehicleUpgradeNameFromID(upgradeId)
 end
 
 function getVehicleUpgradePrice(upgradeId)
-	local price = VEHICLE_UPGRADE_PRICES[upgradeId] or 0
-	return math.floor(price)
+	local price = VEHICLE_UPGRADE_PRICES[upgradeId] 
+	if price then 
+		if tonumber(price) then
+			return math.floor(price)
+		else 
+			return price
+		end
+	else 
+		return price
+	end
 end
 
 function countLineBreaks(text)
