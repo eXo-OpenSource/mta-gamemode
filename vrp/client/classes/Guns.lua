@@ -8,6 +8,12 @@
 
 Guns = inherit(Singleton)
 
+local TOGGLE_WEAPONS = 
+{
+	[24] = true, -- [FROM] = TO
+	[23] = true,
+	[22] = true,
+}
 function Guns:constructor()
 
 	self.m_Blood = false
@@ -30,8 +36,9 @@ function Guns:constructor()
 	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.Event_onClientPlayerWasted, self))
 	addEventHandler("onClientPlayerStealthKill", root, cancelEvent)
 	addEventHandler("onClientPlayerWeaponSwitch",localPlayer, bind(self.Event_onWeaponSwitch,self))
+	addEventHandler("onClientKey",root, bind(self.checkSwitchWeapon, self))
 	self:initalizeAntiCBug()
-
+	self.m_LastWeaponToggle = 0
 	addRemoteEvents{"clientBloodScreen"}
 
 	addEventHandler("clientBloodScreen", root, bind(self.bloodScreen, self))
@@ -276,5 +283,20 @@ function Guns:toggleFastShot(bool)
 	if not self.m_AntiFastShotEnabled then
 		removeEventHandler ( "onClientPlayerWeaponFire", localPlayer, shoot )
 		unbindKey ( "crouch", "both", crouch )
+	end
+end
+
+function Guns:checkSwitchWeapon(b, p) 
+	if b == "v" and  not p and getKeyState("mouse2") then 
+		local weapon = getPedWeapon(localPlayer)
+		local now = getTickCount()
+		if self.m_LastWeaponToggle + 4000 <= now then
+			if TOGGLE_WEAPONS[weapon] then 
+				self.m_LastWeaponToggle = getTickCount()
+				triggerServerEvent("Guns:toggleWeapon", localPlayer, weapon)
+			end
+		else 
+			outputChatBox("Du kannst nicht so schnell zwischen den Waffen wechseln!", 200, 0, 0)
+		end
 	end
 end
