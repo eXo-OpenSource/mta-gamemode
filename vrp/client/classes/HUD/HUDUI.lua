@@ -206,7 +206,7 @@ function HUDUI:drawDefault()
 
 	-- Munition-Window
 	local addY = interpolateBetween(0,0,0,0.14*screenHeight,0,0,self.m_MunitionProgress,"Linear")
-	dxDrawRectangle(screenWidth-0.351*screenWidth,-0.1*screenHeight+addY,0.153*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
+	dxDrawRectangle(screenWidth-0.351*screenWidth,-0.1*screenHeight+addY,0.151*screenWidth,0.092*screenHeight,tocolor(0,0,0,150))
 	local inClip = getPedAmmoInClip(localPlayer)
 	local totalAmmo = getPedTotalAmmo(localPlayer)
 	local sMunition = ("%d - %d"):format(inClip,totalAmmo-inClip)
