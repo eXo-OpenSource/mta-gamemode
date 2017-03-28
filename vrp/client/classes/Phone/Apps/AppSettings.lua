@@ -42,7 +42,7 @@ function AppSettings:onOpen(form)
 	end
 
 	local items = {}
-	for i = 1, 3 do
+	for i = 1, 13 do
 		local path = "files/audio/Ringtones/Klingelton"..i..".mp3"
 		items[path] = self.m_RingtoneChanger:addItem(_("Klingelton %d", i))
 	end

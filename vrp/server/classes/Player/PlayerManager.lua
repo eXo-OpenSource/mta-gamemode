@@ -158,8 +158,10 @@ function PlayerManager:Event_OnWasted()
 	end
 	local inv = source:getInventory() 
 	if inv then 
-		inv:removeAllItem("Diebesgut")
-		outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
+		if inv:getItemAmount("Diebesgut") > 0 then 
+			inv:removeAllItem("Diebesgut")
+			outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
+		end
 	end
 end
 
