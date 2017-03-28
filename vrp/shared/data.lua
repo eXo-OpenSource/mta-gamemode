@@ -396,9 +396,9 @@ VEHICLE_UPGRADE_PRICES = {
 	["Color1"] = 750,
 	["Color2"] = 750,
 	["ColorLight"] = 500,
-	["Texture"] = 10000,
-	["CustomHorn"] = 10000,
-	["Neon"] = 15000,
+	["Texture"] = 30000,
+	["CustomHorn"] = 15000,
+	["Neon"] = 25000,
 	["NeonColor"] = 0,
 
 }

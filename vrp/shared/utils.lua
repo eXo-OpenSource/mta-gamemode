@@ -519,7 +519,6 @@ end
 
 function getVehicleUpgradePrice(upgradeId)
 	local price = VEHICLE_UPGRADE_PRICES[upgradeId] or 0
-	price = price/4 -- Special Price
 	return math.floor(price)
 end
 
