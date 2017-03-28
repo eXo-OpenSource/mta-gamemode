@@ -911,6 +911,7 @@ function FactionState:Event_toggleDuty(wasted)
 			client:getInventory():removeAllItem("Nagel-Band")
 			client:getInventory():removeAllItem("Blitzer")
 			faction:updateStateFactionDutyGUI(client)
+			Guns:getSingleton():setWeaponInStorage(client, false, false)
 		else
 			if client:getPublicSync("Company:Duty") and client:getCompany() then
 				client:sendWarning(_("Bitte beende zuerst deinen Dienst im Unternehmen!", client))
