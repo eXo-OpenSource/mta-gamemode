@@ -938,6 +938,8 @@ function Player:getPlayersInChatRange( irange)
 		range = CHAT_TALK_RANGE
 	elseif irange == 2 then
 		range = CHAT_SCREAM_RANGE
+	elseif irange == 3 then 
+		range = CHAT_DISTRICT_RANGE 
 	end
 	local pos = self:getPosition()
 	local playersInRange = {}
@@ -1115,12 +1117,12 @@ function Player:districtChat(...)
 	end
 	local argTable = { ... }
 	local text = table.concat ( argTable , " " )
-	local playersToSend = self:getPlayersInChatRange( 2 )
+	local playersToSend = self:getPlayersInChatRange( 3 )
 	local receivedPlayers = {}
 	local message = ("%s"):format(text)
 	local systemText = "✪"
 	for index = 1,#playersToSend do
-		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 205,146,10)
+		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index],192, 196, 194)
 		if playersToSend[index] ~= self then
             receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
         end

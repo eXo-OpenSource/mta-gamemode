@@ -1390,6 +1390,7 @@
 	<vrpfile src="files/audio/Ringtones/Klingelton11.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Klingelton12.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Klingelton13.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton14.mp3"/>
 	
 	<!-- GoJump -->
 	<vrpfile src="files/audio/GoJump/jump.wav" />
