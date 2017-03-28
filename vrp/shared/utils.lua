@@ -518,14 +518,14 @@ function getVehicleUpgradeNameFromID(upgradeId)
 end
 
 function getVehicleUpgradePrice(upgradeId)
-	local price = VEHICLE_UPGRADE_PRICES[upgradeId] 
-	if price then 
+	local price = VEHICLE_UPGRADE_PRICES[upgradeId]
+	if price then
 		if tonumber(price) then
 			return math.floor(price)
-		else 
+		else
 			return price
 		end
-	else 
+	else
 		return price
 	end
 end
@@ -741,3 +741,14 @@ end
 function serialiseVector(vector)
 	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
 end
+
+-- GTA SA workaround, isVehicleOnGround return always false for dune
+local _isVehicleOnGround = isVehicleOnGround
+function isVehicleOnGround(vehicle)
+	if isElement(vehicle) and vehicle:getModel() == 573 then
+		return vehicle.velocity.length == 0
+	else
+		return _isVehicleOnGround(vehicle)
+	end
+end
+function Vehicle.isOnGround(vehicle) return isVehicleOnGround(vehicle) end
