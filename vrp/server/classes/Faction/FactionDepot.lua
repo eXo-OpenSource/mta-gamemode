@@ -193,11 +193,11 @@ function Depot:takeWeaponsFromDepot(player,weaponTable)
 			if weapon == weaponStorage[1] and weapon ~= weaponBeforeEquip then
 				Guns:getSingleton():setWeaponInStorage(player, weaponStorage[1], ammoStorage[weaponStorage[1]])
 				giveWeapon(player, weaponBeforeEquip, ammoBeforeEquip, true)
-				outputChatBox("Du hast eine Zweitwaffe dabei, wechsele zwischen diesen mit Strg+X", player, 200, 200, 0)
+				outputChatBox("Du hast eine Zweitwaffe dabei, wechsel zwischen diesen mit Rechtsklick (Gedrückt) +X", player, 200, 200, 0)
 			else 
 				Guns:getSingleton():setWeaponInStorage(player, weaponBeforeEquip, ammoBeforeEquip)
 				giveWeapon(player, weaponStorage[1], ammoStorage[weaponStorage[1]], true)
-				outputChatBox("Du hast eine Zweitwaffe dabei, wechsele zwischen diesen mit Strg+X", player, 200, 200, 0)
+				outputChatBox("Du hast eine Zweitwaffe dabei, wechsel zwischen diesen mit Recktsklick (Gedrückt) +X", player, 200, 200, 0)
 			end
 		end
 	else 
