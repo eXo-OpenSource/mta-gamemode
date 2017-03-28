@@ -379,7 +379,7 @@ function VehicleTuningGUI:PartItem_Click(item)
             self.m_AddToCartButton:setVisible(false)
             self.m_TexturePicker = VehicleTuningItemGrid:new(
                 "Select Texture",
-                {"None", _"Österreich", _"Deutschland", _"Schweden", _"Frankreich", _"Russland", _"Camouflage", _"Türkei", _"Hipster", _"Metall", _"Italien", _"Froggy", _"Sandy", _"Space", _"Cherry", _"Fire"},
+                {"None", _"Line", _"Diagonal Rally", _"Rally Stripes", _"Zebra Stripes"},
                 function (texture)
                     if self.m_PreviewShader then delete(self.m_PreviewShader) end
 					TextureReplace.deleteFromElement(self.m_Vehicle)
