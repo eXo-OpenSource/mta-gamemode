@@ -2,7 +2,7 @@
 -- *
 -- *  PROJECT:     vRoleplay
 -- *  FILE:        server/classes/Inventory/Inventory.lua
--- *  PURPOSE:     Inventory Class
+-- *  PURPOSE:     Inventory - Class
 -- *
 -- ****************************************************************************
 Inventory = inherit(Object)
@@ -64,7 +64,7 @@ function Inventory:destructor()
 	self.m_Bag = nil
 	InventoryManager:getSingleton():deleteInventory(self.m_Owner)
 end
-
+ 
 function Inventory:syncClient()
 	self.m_Owner:triggerEvent( "syncInventoryFromServer", self.m_Bag, self.m_Items,self.m_ItemData)
 end
