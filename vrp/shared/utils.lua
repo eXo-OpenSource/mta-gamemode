@@ -742,10 +742,16 @@ function serialiseVector(vector)
 	return {x = vector.x, y = vector.y, z = vector.z, w = vector.w}
 end
 
--- GTA SA workaround, isVehicleOnGround return always false for dune
+-- GTA SA workaround, isVehicleOnGround return always false for some vehicles
+local vehicles = {
+	[573] = true, -- Dune
+	[444] = true, -- Monster
+	[556] = true, -- Monster 2
+	[557] = true, -- Monster 3
+}
 local _isVehicleOnGround = isVehicleOnGround
 function isVehicleOnGround(vehicle)
-	if isElement(vehicle) and vehicle:getModel() == 573 then
+	if isElement(vehicle) and vehicles[vehicle:getModel()] then
 		return vehicle.velocity.length == 0
 	else
 		return _isVehicleOnGround(vehicle)
