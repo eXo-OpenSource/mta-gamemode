@@ -168,6 +168,28 @@ function VehicleManager:createVehiclesForPlayer(player)
 	end
 end
 
+function VehicleManager:destroyUnusedVehicles( player )
+	if player then 
+		local vehTable = self:getPlayerVehicles(player)
+		if vehTable then  
+			local counter = 0
+			local vehObj
+			for k , vehicle in pairs(vehTable) do 
+				if vehicle then 
+					if vehicle.m_HasBeenUsed then 
+						if vehicle.m_HasBeenUsed == 0 then 
+							destroyElement(vehicle)
+							counter = counter + 1
+						end
+					end
+				end
+			end
+			outputDebugString("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
+			outputServerLog("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
+		end
+	end
+end
+
 function VehicleManager.loadVehicles()
 	--[[
 	outputServerLog("Loading vehicles...")
