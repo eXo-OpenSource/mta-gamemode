@@ -114,6 +114,12 @@ function Guns:setWeaponInStorage(player, weapon, ammo)
 			player.m_WeaponStorage = {}
 		end
 		player.m_WeaponStorage[getSlotFromWeapon(weapon)] = {weapon, ammo}
+		setElementData(player, "hasSecondWeapon", true)
+	else 
+		for i = 1,10 do 
+			player.m_WeaponStorage[i] = {false, false}
+			setElementData(player, "hasSecondWeapon", false)
+		end
 	end
 end
 

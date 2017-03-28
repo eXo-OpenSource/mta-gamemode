@@ -81,32 +81,7 @@ function LocalPlayer:Event_onGetTime( realtime )
 end
 
 function LocalPlayer:checkWeaponAim() 
-	local bSniper = getPedWeapon(localPlayer) == 34 
-	if bSniper then 
-		if isPedAiming(localPlayer) then
-			if not localPlayer.m_HasScopedIn then 
-				localPlayer.m_HasScopedIn = true 
-				localPlayer.m_IsFading = true 
-				fadeCamera(false,0.5,0,0,0)
-				setTimer(self.m_FadeOut, 500,1)
-			end
-		else 
-			localPlayer.m_HasScopedIn = false
-			if localPlayer.m_IsFading then 
-				fadeCamera(true,0.5)
-				localPlayer.m_IsFading = false
-			end
-		end
-	else 
-		localPlayer.m_HasScopedIn = false
-		if localPlayer.m_IsFading then 
-			fadeCamera(true,0.5)
-			localPlayer.m_IsFading = false
-		end
-	end
-	if localPlayer.m_IsFading then 
-		dxDrawRectangle(0,0,screenWidth, screenHeight,tocolor(0,0,0,255))
-	end
+
 end
 
 function LocalPlayer:fadeOutScope() 
