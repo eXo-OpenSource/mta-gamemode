@@ -417,6 +417,7 @@
 
 	<!-- Inventory -->
 	<script src="client/classes/Inventory/Inventory.lua" type="client"/>
+	<script src="client/classes/GUIForms/ButtonMenu/InventoryActionGUI.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemManager.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemCan.lua" type="client"/>
 	<script src="client/classes/Inventory/ItemRadio.lua" type="client"/>

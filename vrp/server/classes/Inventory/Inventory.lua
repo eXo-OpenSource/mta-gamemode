@@ -294,6 +294,7 @@ function Inventory:removeItemFromPlace(bag, place, amount)
 		self.m_Items[id] = nil
 		self.m_Bag[bag][place] = nil
 	end
+	self:syncClient()
 end
 
 function Inventory:getMaxItemAmount(item)
@@ -485,8 +486,9 @@ function Inventory:getItemIdFromName(item)
 	end
 end
 
-function Inventory:throwItem(item, bag, id, place)
-	self.m_Owner:sendError(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,item))
+function Inventory:throwItem(item, bag, id, place, name)
+	self.m_Owner:sendError(_("Du hast das Item (%s) weggeworfen!", self.m_Owner,name))
+	self.m_Owner:meChat(true, "zerstört "..name.."!")
 	self:removeItemFromPlace(bag, place)
 end
 
