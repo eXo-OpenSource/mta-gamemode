@@ -1,4 +1,4 @@
-Fishing = inherit(Singleton)--old but gold. PewPorn.com
+Fishing = inherit(Singleton)
 Fishing.Positions = {
 	Vector3(350.65, -2072.44, 7.1),
 	Vector3(350.65, -2067.23, 7.1),
