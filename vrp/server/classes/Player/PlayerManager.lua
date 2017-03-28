@@ -328,6 +328,7 @@ function PlayerManager:playerQuit()
 			destroyElement(source.ped_deadDouble)
 		end
 	end
+	VehicleManager:getSingleton():destroyUnusedVehicles( source )
 end
 
 function PlayerManager:Event_playerReady()

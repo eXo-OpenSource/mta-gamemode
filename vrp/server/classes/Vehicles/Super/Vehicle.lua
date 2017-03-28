@@ -122,6 +122,11 @@ function Vehicle:onPlayerEnter(player, seat)
 		end
 		player.m_InVehicle = self
 	end
+	if self.m_HasBeenUsed then 
+		if self.m_HasBeenUsed == 0 then 
+			self.m_HasBeenUsed = 1
+		end
+	end
 end
 
 function Vehicle:onPlayerExit(player, seat)

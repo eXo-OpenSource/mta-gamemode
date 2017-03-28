@@ -105,7 +105,7 @@ function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mil
 			self.m_Tunings:applyTuning()
 		end
 	end
-
+	self.m_HasBeenUsed = 0
 end
 
 function PermanentVehicle:destructor()
