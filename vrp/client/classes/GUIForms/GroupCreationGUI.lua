@@ -10,7 +10,7 @@ GroupCreationGUI = inherit(GUIForm)
 function GroupCreationGUI:constructor()
 	GUIForm.constructor(self, screenWidth/2 - screenWidth*0.4/2, screenHeight/2 - screenHeight*0.3/2, screenWidth*0.4, screenHeight*0.3)
 	self.m_Window = GUIWindow:new(0, 0, self.m_Width, self.m_Height, _"Private Gang/Firma erstellen", true, true, self)
-	GUILabel:new(self.m_Width*0.01, self.m_Height*0.16, self.m_Width*0.98, self.m_Height*0.04, _"Hier kannst du eine private Firma oder Gang gründen.\nEine Gründung kostet 20.000$!", self.m_Window):setFont(VRPFont(self.m_Height*0.11)):setMultiline(true)
+	GUILabel:new(self.m_Width*0.01, self.m_Height*0.16, self.m_Width*0.98, self.m_Height*0.04, _"Hier kannst du eine private Firma oder Gang gründen.\nEine Gründung kostet 100.000$!", self.m_Window):setFont(VRPFont(self.m_Height*0.11)):setMultiline(true)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.42, self.m_Width*0.65, self.m_Height*0.10, _"Name der Gang/Firma:", self.m_Window):setFont(VRPFont(self.m_Height*0.12))
 	self.m_NameEdit = GUIEdit:new(self.m_Width*0.42, self.m_Height*0.42, self.m_Width*0.5, self.m_Height*0.10, self.m_Window)
 	GUILabel:new(self.m_Width*0.01, self.m_Height*0.6, self.m_Width*0.4, self.m_Height*0.10, _"Typ auswählen:", self.m_Window):setFont(VRPFont(self.m_Height*0.12))
@@ -27,8 +27,8 @@ function GroupCreationGUI:CreateButton_Click()
 	local typ = self.m_Type:getIndex()
 
 	if text ~= "" then
-		if string.len(text) <= 24 then
-			if text:match("^[a-zA-Z0-9_.- ]*$") then
+		if string.len(text) <= GROUP_NAME_MAX then
+			if text:match(GROUP_NAME_MATCH) then
 				triggerServerEvent("groupCreate", root, text, typ)
 				delete(self)
 			else

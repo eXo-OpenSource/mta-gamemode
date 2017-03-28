@@ -12,7 +12,6 @@ function Admin:constructor()
     self.m_MtaAccounts = {}
 
     self.m_SupportArrow = {}
-	self.m_EventPartic = {}
     self.m_RankNames = {
         [1] = "Ticketsupporter",
         [2] = "Clanmember",
@@ -67,9 +66,7 @@ function Admin:constructor()
 	addCommandHandler("mark", adminCommandBind)
 	addCommandHandler("gotomark", adminCommandBind)
 	addCommandHandler("gotocords", adminCommandBind)
-	addCommandHandler("teilnehmen", bind(self.joinEventList, self),false,false)
-	addCommandHandler("eventTP", bind(self.teleportJoinList, self),false, false )
-	addCommandHandler("stopEventTP", bind(self.clearTPList, self), false, false )
+
 	addCommandHandler("drun", bind(self.runString, self))
 
     addRemoteEvents{"adminSetPlayerFaction", "adminSetPlayerCompany", "adminTriggerFunction",
@@ -115,46 +112,6 @@ function Admin:constructor()
 		end)
 	end
 
-end
-
-function Admin:joinEventList( source )
-	if not self.m_EventPartic[source] then
-		self.m_EventPartic[source] = true
-		outputChatBox("Du nimmst am Event teil, warte bis du teleportiert wirst!", source, 0, 200, 0)
-	else
-		self.m_EventPartic[source] = true
-		outputChatBox("Du nimmst nicht mehr am Event teil!", source, 200, 0 ,0)
-	end
-end
-
-function Admin:clearTPList( source )
-	if source:getRank() >= RANK.Supporter then
-		self.m_EventPartic = {}
-		outputChatBox("Du hast die Teleport-Liste geleert!",source, 200,200,0)
-	end
-end
-
-function Admin:teleportJoinList( source )
-	if source:getRank() <= RANK.Supporter then return end
-	local veh
-	local x,y,z = getElementPosition(source)
-	local count = 0
-	local int = getElementInterior(source)
-	local dim = getElementDimension(source)
-	for player, bool in pairs( self.m_EventPartic ) do
-		if bool then
-			veh = getPedOccupiedVehicle(player)
-			if veh then
-				removePedFromVehicle(player)
-			end
-			setElementDimension(player, dim)
-			setElementInterior(player, int)
-			setElementPosition(player, x+math.random(1,3), y+math.random(1,3),z)
-			count = count + 1
-		end
-	end
-	outputChatBox("Es wurden "..count.." teleportiert!", source, 200, 200, 200)
-	self.m_EventPartic = {}
 end
 
 function Admin:destructor()
@@ -439,8 +396,10 @@ function Admin:Event_adminTriggerFunction(func, target, reason, duration, admin)
 			col:destroy()
 			local count = 0
 			for index, vehicle in pairs(vehicles) do
-				vehicle:respawn(true)
-				count = count + 1
+				if vehicle:isRespawnAllowed() then
+					vehicle:respawn(true)
+					count = count + 1
+				end
 			end
 			self:sendShortMessage(_("%s hat %d Fahrzeuge in einem Radius von %d respawnt!", admin, admin:getName(), count, radius))
         elseif func == "adminAnnounce" then
@@ -731,8 +690,8 @@ function Admin:goToPlayer(player,cmd,target)
 				local player2 = player
 				if player:isInVehicle() then player = player:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				player:setPosition(pos)
-				player:setDimension(dim)
-				player:setInterior(int)
+				setElementDimension(player, dim)
+				setElementInterior(player,int)
 				StatisticsLogger:getSingleton():addAdminAction( player2, "goto", target:getName())
 			end
 		else
@@ -755,8 +714,8 @@ function Admin:getHerePlayer(player, cmd, target)
 				local target2 = target
 				if target:isInVehicle() then target = target:getOccupiedVehicle() pos.z = pos.z+1.5 end
 				target:setPosition(pos)
-				target:setDimension(dim)
-				target:setInterior(int)
+				setElementDimension(target,dim)
+				setElementInterior(target,int)
 				StatisticsLogger:getSingleton():addAdminAction( player, "gethere", target2:getName())
 			end
 		else
@@ -812,6 +771,7 @@ local tpTable = {
         ["24-7"] =          {["pos"] = Vector3(1352.43, -1752.75, 13.04),  	["typ"] = "Shops"},
         ["tankstelle"] =    {["pos"] = Vector3(1944.21, -1772.91, 13.07),  	["typ"] = "Shops"},
         ["burgershot"] =    {["pos"] = Vector3(1187.46, -924.68,  42.83),  	["typ"] = "Shops"},
+        ["tuning"] =    	{["pos"] = Vector3(1035.58, -1028.90, 32.10),  	["typ"] = "Shops"},
         ["sannews"] =       {["pos"] = Vector3(762.05, -1343.33, 13.20),  	["typ"] = "Unternehmen"},
         ["fahrschule"] =    {["pos"] = Vector3(1372.30, -1655.55, 13.38),  	["typ"] = "Unternehmen"},
         ["mechaniker"] =    {["pos"] = Vector3(886.21, -1220.47, 16.97),  	["typ"] = "Unternehmen"},
@@ -1047,8 +1007,8 @@ function Admin:Command_MarkPos(player, add)
 				if getPedOccupiedVehicle(player) then
 					player = getPedOccupiedVehicle(player)
 				end
-				player:setInterior(markPos[2])
-				player:setDimension(markPos[3])
+				setElementInterior(player,markPos[2])
+				setElementDimension(player,markPos[3])
 				player:setPosition(markPos[1])
 				setCameraTarget(player)
 			else

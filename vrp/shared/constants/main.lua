@@ -79,6 +79,7 @@ ADMIN_RANK_PERMISSION = {
 	["offlineTimeban"] = RANK.Supporter,
 	["offlinePermaban"] = RANK.Supporter,
 	["eventMoneyWithdraw"] = RANK.Moderator,
+	["eventMenu"] = RANK.Moderator,
 	["offlineUnban"] = RANK.Administrator,
 	["nickchange"] = RANK.Moderator,
 	["offlineNickchange"] = RANK.Moderator,
@@ -99,6 +100,7 @@ GroupRank = {
 FactionRank = {
 	Normal = 0,
 	Rank3 = 3,
+	Rank4 = 4,
 	Manager = 5,
 	Leader = 6
 }
@@ -271,6 +273,10 @@ TRUCK_MODELS =  {499, 609, 498, 524, 532, 578, 486, 406, 573, 455, 588, 403, 514
 GROUP_RENAME_TIMEOUT = 60*60*24*30 -- 30 Days (in seconds)
 GROUP_RENAME_COSTS = 10000
 
+GROUP_NAME_MIN = 5
+GROUP_NAME_MAX = 24
+GROUP_NAME_MATCH = "^[a-zA-Z0-9 _.-]*$"
+
 GARAGE_UPGRADES_COSTS = {[1] = 200000, [2] = 250000, [3] = 500000}
 HANGAR_UPGRADES_COSTS = {[1] = 9999999, [2] = 0, [3] = 0}
 GARAGE_UPGRADES_TEXTS = {[0] = "Garage: keine Garage", [1] = "Garage: Standard Garage", [2] = "Garage: Komfortable Garage", [3] = "Garage: Luxus Garage"}
@@ -294,7 +300,7 @@ VEHICLE_SPECIAL_TEXTURE = {
 	[565] = "#emapflash92body256",
 	[536] = "#emapblade92body128",
 	[483] = "#emapcamperbody256",
-	[415] = "#vehiclegrunge256",
+	[415] = "vehiclegrunge256",
 	[411] = "vehiclegrunge256",
 	[562] = "#emapelegybody128",
 	[562] = "#emapelegybody128",

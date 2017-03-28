@@ -47,7 +47,7 @@ end
 function VehicleTexture:destructor()
 	VehicleTexture.Map[self.m_Id] = nil
 	if self.m_Vehicle and isElement(self.m_Vehicle) then
-		triggerClientEvent(root, "removeElementTexture", root, self.m_Vehicle)
+		triggerClientEvent(root, "removeElementTexture",  self.m_Vehicle, self.m_Texture)
 	end
 end
 

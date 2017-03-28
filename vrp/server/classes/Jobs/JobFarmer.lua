@@ -7,8 +7,8 @@ local PLANTSONWALTON = 50
 local STOREMARKERPOS = {-37.85, 58.03, 2.2}
 
 local MONEY_PER_PLANT = 30 --// default 10
-local MONEY_PLANT_HARVESTER = 18
-local MONEY_PLANT_TRACTOR = 11
+local MONEY_PLANT_HARVESTER = 7
+local MONEY_PLANT_TRACTOR = 9
 
 function JobFarmer:constructor()
 	Job.constructor(self)
@@ -205,8 +205,8 @@ function JobFarmer:deliveryHit (hitElement,matchingDimension)
 	end
 	if player and matchingDimension and getElementModel(hitElement) == getVehicleModelFromName("Walton") then
 		if self.m_CurrentPlants[player] and self.m_CurrentPlants[player] > 0 then
-			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEYPERPLANT,0,255,0)
-			player:giveMoney(self.m_CurrentPlants[player]*MONEYPERPLANT, "Farmer-Job")
+			player:sendMessage("Sie haben die Lieferung abgegeben, Gehalt : $"..self.m_CurrentPlants[player]*MONEY_PER_PLANT,0,255,0)
+			player:giveMoney(self.m_CurrentPlants[player]*MONEY_PER_PLANT, "Farmer-Job")
 			player:givePoints(math.ceil(self.m_CurrentPlants[player]/10))
 			self.m_CurrentPlants[player] = 0
 			self:updatePrivateData(player)

@@ -14,9 +14,9 @@ GANGWAR_RESET_AREAS = false --// NUR IM FALLE VON GEBIET-RESET
 
 
 --// Gangwar - Constants //--
-GANGWAR_MATCH_TIME = 15
+GANGWAR_MATCH_TIME = 20
 GANGWAR_CENTER_HOLD_RANGE = 15
-GANGWAR_MIN_PLAYERS = 1 --// Default 3
+GANGWAR_MIN_PLAYERS = 3 --// Default 3
 GANGWAR_ATTACK_PAUSE = 1 --// DAY Default 2
 GANGWAR_CENTER_TIMEOUT = 20 --// SEKUNDEN NACH DEM DIE FLAGGE NICHT GEHALTEN IST
 GANGWAR_DUMP_COLOR = setBytesInInt32(240, 0, 200, 200)
@@ -31,7 +31,7 @@ addRemoteEvents{ "onLoadCharacter", "onDeloadCharacter", "Gangwar:onClientReques
 
 --[[
 	** Gangwar **
-	
+
 		GangwarManager hat Areas.
 		Wenn ein  Attack gestartet wird, erhält der GangwarManager die Anweisung der Area mitzuteilen, dass es einen Angriff starten soll.
 		Area erstellt eine AttackSession welche solange läuft wie der Attack gilt.
@@ -59,7 +59,7 @@ function Gangwar:constructor( )
 	GlobalTimer:getSingleton():registerEvent(bind(self.onAreaPayday, self), "Gangwar-Payday",false,false,0)
 end
 
-function Gangwar:onAreaPayday() 
+function Gangwar:onAreaPayday()
 	local payouts = {}
 	local m_Owner
 	for index, area in pairs( self.m_Areas ) do
@@ -69,10 +69,10 @@ function Gangwar:onAreaPayday()
 	end
 	local amount = 0
 	local facObj
-	for faction, count in pairs( payouts ) do 
+	for faction, count in pairs( payouts ) do
 		amount = count * GANGWAR_PAYOUT_PER_AREA
 		facObj = FactionManager:getSingleton():getFromId(faction)
-		if facObj then 
+		if facObj then
 			facObj:giveMoney(amount, "Gangwar-Payday")
 			facObj:sendMessage("Gangwar-Payday: #FFFFFFEure Fraktion erhält: "..amount.." $", 0, 200, 0, true)
 		end
@@ -235,7 +235,7 @@ function Gangwar:attackArea( player )
 								else
 									player:sendError(_("Dieses Gebiet ist noch nicht attackierbar!",  player))
 								end
-							else 
+							else
 								player:sendError(_("Es läuft zurzeit ein Gangwar!",  player))
 							end
 						else

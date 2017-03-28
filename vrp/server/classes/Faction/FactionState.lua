@@ -24,7 +24,6 @@ function FactionState:constructor()
 	self:createGasStation(Vector3(2763.88,-2386.90,13.0), 5) -- LS Army
 	self:createGasStation(Vector3(1563.98,-1614.40, 12.5)) -- LS PD
 	self:createGasStation(Vector3(1552.93,-1614.40, 12.5)) -- LS PD
-
 	self.m_Bugs = {}
 
 	for i = 1, FACTION_FBI_BUGS do
@@ -707,11 +706,13 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 						end
 						if force == true or (target:getOccupiedVehicle() and target:getOccupiedVehicle() == vehicle) then
 							if isControlEnabled(target, "enter_exit") and (not bool or bool == true) then
-								player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
-								target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
 								toggleControl(target, "enter_exit", false)
 								toggleControl(target, "fire", false)
 								addEventHandler("onPlayerVehicleExit", target, self.onTiedExitBind)
+								if not force then
+									player:sendInfo(_("Du hast %s gefesselt", player, target:getName()))
+									target:sendInfo(_("Du wurdest von %s gefesselt", target, player:getName()))
+								end
 							else
 								player:sendInfo(_("Du hast %s entfesselt", player, target:getName()))
 								target:sendInfo(_("Du wurdest von %s entfesselt", target, player:getName()))
@@ -736,7 +737,9 @@ function FactionState:Command_tie(player, cmd, tname, bool, force)
 end
 
 function FactionState:onTiedExit(vehicle, seat, jacked)
-	source:warpIntoVehicle(vehicle, seat)
+	if seat > 0 then
+		source:warpIntoVehicle(vehicle, seat)
+	end
 end
 
 function FactionState:Command_needhelp(player)
@@ -761,6 +764,16 @@ function FactionState:Command_needhelp(player)
 		player:sendError(_("Du bist in keiner Staatsfraktion!", player))
 	end
 end
+
+function FactionState:showRobbedHouseBlip( suspect, housepickup) 
+	local zoneName = getZoneName(housepickup:getPosition())
+	for k, onlineplayer in pairs(self:getOnlinePlayers()) do
+		onlineplayer:sendMessage("Operator: Ein Einbruch wurde gemeldet in "..zoneName.."! Täterbeschreibung bisher passt auf: "..getPlayerName(suspect).."!", 50, 200, 255)
+		onlineplayer:sendMessage(_("Der Anruferort wird auf der Karte markiert!", onlineplayer), 200, 200, 255)
+		onlineplayer:triggerEvent("stateFactionShowRob", housepickup )
+	end
+end
+
 
 function FactionState:Event_JailPlayer(player, bail, CUTSCENE, police)
 	local policeman = police or client
@@ -839,8 +852,8 @@ end
 
 function FactionState:freePlayer(player)
 	player:setData("inJail",false, true)
-	player:setDimension(0)
-	player:setInterior(0)
+	setElementDimension(player,0)
+	setElementInterior(player,0)
 	player:setPosition(1539.7, -1659.5 + math.random(-3, 3), 13.6)
 	player:setRotation(0, 0, 90)
 	player:setWantedLevel(0)
@@ -1277,6 +1290,7 @@ function FactionState:Event_freePlayer(target)
 end
 
 function FactionState:addBugLog(player, func, msg)
+	self:refreshBugs()
 	if not self:isBugActive() then return end
 	local colSize = CHAT_TALK_RANGE
 
@@ -1305,7 +1319,18 @@ function FactionState:addBugLog(player, func, msg)
 end
 
 function FactionState:Event_loadBugs()
+	self:refreshBugs()
 	client:triggerEvent("receiveBugs", self.m_Bugs)
+end
+
+function FactionState:refreshBugs()
+	for id, bugData in pairs(self.m_Bugs) do
+		if bugData["element"] and isElement(bugData["element"]) then
+			bugData["active"] = true
+		else
+			self.m_Bugs[id] = {}
+		end
+	end
 end
 
 function FactionState:getFreeBug()
@@ -1327,6 +1352,7 @@ function FactionState:isBugActive()
 end
 
 function FactionState:Event_attachBug()
+	self:refreshBugs()
 	local id = self:getFreeBug()
 	if id then
 		local typeName = source:getType() == "vehicle" and "Fahrzeug" or "Spieler"

@@ -168,6 +168,7 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 	if name then
 		local karma = math.floor(karma)
 		local x, y = self.m_GroupsNameLabel:getPosition()
+		self.m_TuningEnabled = tuningEnabled
 		self.m_GroupsNameChangeLabel:setPosition(x + dxGetTextWidth(name, self.m_GroupsNameLabel:getFontSize(), self.m_GroupsNameLabel:getFont()) + 10, y)
 		self.m_GroupsNameLabel:setText(name)
 		self.m_GroupsKarmaLabel:setText(tostring(karma > 0 and "+"..karma or karma))
@@ -199,10 +200,20 @@ function GroupGUI:Event_groupRetrieveInfo(name, rank, money, players, karma, typ
 		-- Group Vehicles
 		self.m_VehiclesGrid:clear()
 		if vehicles then
-			for key, veh in pairs(vehicles) do
-				local x, y, z = veh:getPosition()
-				local item = self.m_VehiclesGrid:addItem(getVehicleName(veh), getZoneName(x, y, z, false))
-				item.VehicleElement = veh
+			for vehId, vehicleInfo  in pairs(vehicles) do
+				local element, positionType = unpack(vehicleInfo)
+				local position = _"Unbekannt"
+
+				if positionType == VehiclePositionType.World then
+					local x, y, z = getElementPosition(element)
+					position = getZoneName(x, y, z, false)
+				elseif positionType == VehiclePositionType.Mechanic then
+					position = "Autohof"
+				end
+
+				local item = self.m_VehiclesGrid:addItem(element:getName(), position)
+				item.VehicleElement = element
+				item.PositionType = positionType
 			end
 		end
 
@@ -468,7 +479,7 @@ function GroupGUI:VehicleConvertToGroupButton_Click()
 		return
 	end
 
-	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen?", function()
+	QuestionBox:new(_"Möchtest du das Fahrzeug wirklich in die Firma setzen?" .. (not self.m_TuningEnabled and "\nACHTUNG: Deine Firma hat keine Tunings aktiviert! Alle Tunings werden entfernt!" or ""), function()
 		triggerServerEvent("groupConvertVehicle", localPlayer, item.VehicleElement)
 	end)
 end
@@ -502,21 +513,24 @@ function GroupGUI:VehicleLocateButton_Click()
 		return
 	end
 
-	local x, y, z = getElementPosition(item.VehicleElement)
-	local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
-	blip:setZ(z)
-	--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
+	if item.PositionType == VehiclePositionType.World then
+		local x, y, z = getElementPosition(item.VehicleElement)
+		local blip = Blip:new("Marker.png", x, y, 9999, false, tocolor(200, 0, 0, 255))
+		local marker = createMarker(x, y, z + 2, "arrow", .6, 60, 255, 130)
+		blip:setZ(z)
+		--[[if localPlayer has Item:'Find.dat.Car+' then]] -- TODO: add this item!
 		ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)\n(Klicke hier, um das Blip zu löschen!)", getZoneName(x, y, z, false)), "Fahrzeugortung", Color.DarkLightBlue, -1)
-		.m_Callback = function (this)
-			if blip then
-				delete(blip)
+		.m_Callback =
+			function (this)
+				if blip then delete(blip) end
+				if isElement(marker) then marker:destroy() end
+				delete(this)
 			end
-			delete(this)
-		end
-	--else
-		--setTimer(function () delete(blip) end, 5000, 1)
-		--ShortMessage:new(_("Dieses Fahrzeug befindet sich in %s!\n(Siehe Blip auf der Karte)", getZoneName(x, y, z, false)), "Fahrzeugortung", Color.DarkLightBlue)
-	--end
+	elseif item.PositionType == VehiclePositionType.Mechanic then
+		ShortMessage:new(_"Dieses Fahrzeug befindet sich im Autohof (Mechanic Base)!", "Fahrzeugortung", Color.DarkLightBlue)
+	else
+		ErrorBox:new(_"Es ist ein interner Fehler aufgetreten!")
+	end
 end
 
 function GroupGUI:Event_retriveBusinessInfo(info)

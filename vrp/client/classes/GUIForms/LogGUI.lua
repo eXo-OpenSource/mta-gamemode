@@ -11,7 +11,9 @@ function LogGUI:constructor(parent, log, players)
 	self.m_SearchButton.onLeftClick = function() self:setSearch() end
 	self.m_Filter.onChange = function(text, index) self:setFilter(text) end
 	self.m_Categories = {}
-	self.m_LogText = GUIScrollableText:new(parent.m_Width*0.02, parent.m_Height*0.1, parent.m_Width*0.98, parent.m_Height*0.8, "", parent.m_Height*0.065, parent)
+	self.m_LogGrid = GUIGridList:new(parent.m_Width*0.02, parent.m_Height*0.1, parent.m_Width*0.96, parent.m_Height*0.87, parent)
+	self.m_LogGrid:addColumn("Zeit", 0.2)
+	self.m_LogGrid:addColumn("Beschreibung", 0.8)
 	self:refresh()
 end
 
@@ -22,19 +24,20 @@ function LogGUI:updateLog(players, log)
 end
 
 function LogGUI:refresh()
-	self.m_Text = ""
-	local playerName, timeOptical
-	for k, row in ipairs(self.m_Log) do
+	self.m_LogGrid:clear()
+
+	for _, row in ipairs(self.m_Log) do
 		if not self.m_Categories[row.Category] then self.m_Categories[row.Category] = true end
 
-		playerName = "[Unbekannt]"
+		local playerName = "[?]"
+		local timeOptical = self:getOpticalTimestamp(row.Timestamp)
 		if self.m_Players[row.UserId] then
 			playerName = self.m_Players[row.UserId].name
 		end
 
 		if self:checkCatFilter(row.Category) then
-			if self:checkSeachFilter(playerName, row) then
-				self:addLine(playerName, row)
+			if self:checkSeachFilter(playerName, row) and #self.m_LogGrid:getItems() < 150 then -- Todo: add user limit or pages?
+				self.m_LogGrid:addItem(timeOptical, ("%s %s"):format(playerName, row.Description))
 			end
 		end
 	end
@@ -42,8 +45,6 @@ function LogGUI:refresh()
 	if not self.m_FilterLoaded then
 		self:loadFilter()
 	end
-
-	self.m_LogText:setText(self.m_Text)
 end
 
 function LogGUI:loadFilter()

@@ -95,7 +95,7 @@ end
 
 function JobLogistician:onMarkerHit(hitElement, dim)
 	if hitElement:getType() == "player" and dim then
-		if hitElement:getOccupiedVehicle() and hitElement:getOccupiedVehicle():getData("LogisticanVehicle") == true then
+		if hitElement:getOccupiedVehicle() and hitElement.vehicleSeat == 0 and hitElement:getOccupiedVehicle():getData("LogisticanVehicle") == true then
 			local veh = hitElement:getOccupiedVehicle()
 			if source.Crane then
 				local crane = source.Crane

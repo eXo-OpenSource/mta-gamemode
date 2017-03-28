@@ -14,7 +14,7 @@ function Fire:constructor(fireTable)
 	self.m_FireTable = fireTable["table"]
 	self.m_Message = fireTable["message"]
 
-	self.m_Blip = Blip:new("Fire.png", self.m_Position.x, self.m_Position.y)
+	self.m_Blip = Blip:new("Fire.png", self.m_Position.x, self.m_Position.y, root, 10000)
 
 	self.m_DestroyFireFunc = bind(self.destroyFire, self)
 
@@ -70,9 +70,15 @@ function Fire:destroyFire(ped)
 		end
 		table.remove(self.m_FirePeds, table.find(self.m_FirePeds, ped))
 		local remainingFires = self:getRemainingAmount()
-		if client then client:sendShortMessage(_("Flamme gelöscht! %d übrig!", client, remainingFires))	end
+		if client then
+			client:sendShortMessage(_("Flamme gelöscht! %d übrig!", client, remainingFires))
+		end
 		if remainingFires <= 0 then
-			if client then PlayerManager:getSingleton():breakingNews("Das Rescue Team hat den Brand bei %s erfolgreich gelöscht!", self.m_PositionName) end
+			if client then
+				PlayerManager:getSingleton():breakingNews("Das Rescue Team hat den Brand bei %s erfolgreich gelöscht!", self.m_PositionName)
+				FactionRescue:getSingleton().m_Faction:giveMoney(#self.m_FireTable * 100, "Brand gelöscht")
+			end
+
 			delete(self)
 		end
 		return true

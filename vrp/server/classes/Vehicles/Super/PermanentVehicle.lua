@@ -16,33 +16,23 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 			local model = vehicle:getModel()
 			local health = vehicle:getHealth()
 			local milage = vehicle:getMileage()
-			local r, g, b = getVehicleColor(vehicle, true)
-			local tunings = false
-			local texture = false
-			if Group:canVehiclesBeModified() then
-				texture = vehicle:getTexture() -- get texture replace instance
-				tunings = getVehicleUpgrades(vehicle) or {}
-			end
+			local fuel = vehicle:getFuel()
+			local tuningJSON = vehicle.m_Tunings:getJSON() or {}
+			local premium = vehicle:isGroupPremiumVehicle()
 
 			-- get Vehicle Trunk
 			local trunk = vehicle:getTrunk()
 			trunk:save()
 			local trunkId = trunk:getId()
-			trunk = nil
 
 			if vehicle:purge() then
-				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z, trunkId)
+				local vehicle = PermanentVehicle.create(player, model, position.x, position.y, position.z, rotation.z, trunkId, premium)
 				vehicle:setHealth(health)
-				vehicle:setColor(r, g, b)
 				vehicle:setMileage(milage)
-				if Group:canVehiclesBeModified() then
-					if texture and instanceof(texture, VehicleTexture) then
-						vehicle:setTexture(texture:getPath(), texture:getTexturePath(), true)
-					end
+				vehicle:setFuel(fuel)
 
-					for k, v in pairs(tunings or {}) do
-						addVehicleUpgrade(vehicle, v)
-					end
+				if Group:canVehiclesBeModified() then
+					vehicle.m_Tunings = VehicleTuning:new(vehicle, tuningJSON)
 				end
 				return vehicle:save(), vehicle
 			end
@@ -52,7 +42,26 @@ function PermanentVehicle.convertVehicle(vehicle, player, Group)
 	return false
 end
 
-function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, positionType, tunings, mileage, fuel, lightColor, trunkId, texture, horn, neon, special, premium)
+function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunkId, premium)
+	rotation = tonumber(rotation) or 0
+	if type(owner) == "userdata" then
+		owner = owner:getId()
+	end
+
+	if trunkId == 0 or trunkId == nil then
+		trunkId = Trunk.create()
+	end
+
+	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId, Premium) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId, premium) then
+		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
+		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, nil, 1000, VehiclePositionType.World, nil, nil, trunkId, premium)
+		VehicleManager:getSingleton():addRef(vehicle)
+		return vehicle
+	end
+	return false
+end
+
+function PermanentVehicle:constructor(Id, owner, keys, health, positionType, mileage, fuel, trunkId, premium, tuningJSON)
 	self.m_Id = Id
 	self.m_Owner = owner
 	self.m_Premium = premium and toboolean(premium) or false
@@ -86,30 +95,21 @@ function PermanentVehicle:constructor(Id, owner, keys, color, color2, health, po
 	self:setFuel(fuel or 100)
 	self:setLocked(true)
 	self:setMileage(mileage)
-	self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
+	self.m_Tunings = VehicleTuning:new(self, tuningJSON)
+	--self:tuneVehicle(color, color2, tunings, texture, horn, neon, special)
+
+	if self.model == 535 then -- TODO: Remove Later - Conversation from old Tuningsystem to New System for Soundvans
+		local row = sql:queryFetchSingle("SELECT Special FROM ??_vehicles WHERE Id = ? AND Special > 0;", sql:getPrefix(), Id)
+		if row and row.Special > 0 then
+			self.m_Tunings:saveTuning("Special", row.Special)
+			self.m_Tunings:applyTuning()
+		end
+	end
+	self.m_HasBeenUsed = 0
 end
 
 function PermanentVehicle:destructor()
 
-end
-
-function PermanentVehicle.create(owner, model, posX, posY, posZ, rotation, trunkId)
-	rotation = tonumber(rotation) or 0
-	if type(owner) == "userdata" then
-		owner = owner:getId()
-	end
-
-	if trunkId == 0 or trunkId == nil then
-		trunkId = Trunk.create()
-	end
-
-	if sql:queryExec("INSERT INTO ??_vehicles (Owner, Model, PosX, PosY, PosZ, Rotation, Health, Color, TrunkId) VALUES(?, ?, ?, ?, ?, ?, 1000, 0, ?)", sql:getPrefix(), owner, model, posX, posY, posZ, rotation, trunkId) then
-		local vehicle = createVehicle(model, posX, posY, posZ, 0, 0, rotation)
-		enew(vehicle, PermanentVehicle, sql:lastInsertId(), owner, {}, nil, nil, 1000, VehiclePositionType.World, nil, nil, nil, nil, trunkId)
-		VehicleManager:getSingleton():addRef(vehicle)
-		return vehicle
-	end
-	return false
 end
 
 function PermanentVehicle:purge()
@@ -123,72 +123,21 @@ end
 
 function PermanentVehicle:save()
   local health = getElementHealth(self)
-  local r, g, b, r2, g2, b2 = getVehicleColor(self, true)
-  local color = setBytesInInt32(255, r, g, b) -- Format: argb
-  local color2 = setBytesInInt32(255, r2, g2, b2) -- Format: argb
-  local rLight, gLight, bLight = getVehicleHeadLightColor(self)
-  local lightColor = setBytesInInt32(255, rLight, gLight, bLight)
-  local tunings = getVehicleUpgrades(self) or {}
-  local texture = ""
-  if self.m_Texture and self.m_Texture:getPath() then
-  		texture = self.m_Texture:getPath()
-  end
-
   if self.m_Trunk then self.m_Trunk:save() end
-  return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, Color = ?, Color2 = ?, `Keys` = ?, PositionType = ?, Tunings = ?, Mileage = ?, Fuel = ?, LightColor = ?, TrunkId = ?, TexturePath = ?, Horn = ?, Neon = ?, Special = ? WHERE Id = ?", sql:getPrefix(),
-    self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, color, color2, toJSON(self.m_Keys), self.m_PositionType, toJSON(tunings), self:getMileage(), self:getFuel(), lightColor, self.m_TrunkId, texture, self.m_CustomHorn, toJSON(self.m_Neon) or 0, self.m_Special or 0, self.m_Id)
+
+  return sql:queryExec("UPDATE ??_vehicles SET Owner = ?, PosX = ?, PosY = ?, PosZ = ?, Rotation = ?, Health = ?, `Keys` = ?, PositionType = ?, TuningsNew = ?, Mileage = ?, Fuel = ?, TrunkId = ? WHERE Id = ?", sql:getPrefix(),
+    self.m_Owner, self.m_SpawnPos.x, self.m_SpawnPos.y, self.m_SpawnPos.z, self.m_SpawnRot, health, toJSON(self.m_Keys), self.m_PositionType, self.m_Tunings:getJSON(), self:getMileage(), self:getFuel(), self.m_TrunkId, self.m_Id)
 end
 
 function PermanentVehicle:getId()
   return self.m_Id
 end
 
-function PermanentVehicle:setSpecial(special)
-  self.m_Special = special
-  self:setData("Special", special, true)
-  if special == VehicleSpecial.Soundvan then
-    if self:getModel() == 535 then
-      self.speakers = {}
-      self.speakers["Left"] = createObject(2229, 0, 0, 0)
-      self.speakers["Right"] = createObject(2229, 0, 0, 0)
-      self.speakers["Middle"] = createObject(1841, 0, 0, 0)
-      self.speakers["Middle"]:setScale(1.5)
-
-      self.speakers["Left"]:attach(self, -0.3, -1.5, 0, -55, 0, 0)
-      self.speakers["Right"]:attach(self, 1, -1.5, 0, -55, 0, 0)
-      self.speakers["Middle"]:attach(self, 0, -0.8, 0.4, 0, 0, 90)
-
-      for index, element in pairs(self.speakers) do
-        element:setCollisionsEnabled(false)
-      end
-
-      local refreshSpeaker = function()
-        for index, element in pairs(self.speakers) do
-          if isElement(self) then
-            element:setDimension(self:getDimension())
-            element:setInterior(self:getInterior())
-            if self.m_SoundURL then
-              triggerClientEvent("soundvanChangeURLClient", source, self.m_SoundURL)
-            end
-          else
-            element:destroy()
-            if self.m_SoundURL then
-              triggerClientEvent("soundvanStopSoundClient", self, url)
-            end
-          end
-        end
-      end
-
-      refreshSpeaker()
-
-      addEventHandler("onElementDimensionChange", self, refreshSpeaker)
-      addEventHandler("onElementInteriorChange", self, refreshSpeaker)
-      addEventHandler("onVehicleExplode", self, refreshSpeaker)
-      addEventHandler("onVehicleRespawn", self, refreshSpeaker)
-      addEventHandler("onElementDestroy", self, refreshSpeaker)
-    end
-  end
+function PermanentVehicle:isPremiumVehicle()
+	return self.m_Premium
 end
+
+
 
 function PermanentVehicle:isPermanent()
   return true

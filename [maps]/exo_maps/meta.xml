@@ -50,8 +50,6 @@
 	<map src="jobs/helitransport.map" />
 	<map src="jobs/dumper.map" />
 
-	<map src="else/atm.map" />
-
 	<map src="noobroom.map" />
 	<map src="noobspawn.map" />
 	<map src="prison.map" />
@@ -70,5 +68,9 @@
 	<map src="stadthalle.map" />
 	<map src="Kartbahn.map" />
 
+	<map src="tankstelle-marcel.map"/>
+	
+	<map src="stuntfix.map"/>
+		
 	<map src="minigamescafe.map" dimension="2" />
 </meta>

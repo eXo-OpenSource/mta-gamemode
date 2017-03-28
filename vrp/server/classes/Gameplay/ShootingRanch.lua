@@ -67,15 +67,15 @@ end
 function ShootingRanch:warpPlayerWaffenbox(player)
 	local freesphere = self:getFreeSphere()
 	if isElement(freesphere) then
-		player:setDimension(0)
-		player:setInterior(0)
+		setElementDimension(player,0)
+		setElementInterior(player,0)
 		player:setPosition(freesphere:getPosition())
 		player:setRotation(0, 0, 270, "default", true)
 		return true
 	else
 		player:sendError(_("Keine freie Waffenbox! Bitte warte ein wenig!", player))
-		player:setDimension(0)
-		player:setInterior(6)
+		setElementDimension(player,0)
+		setElementInterior(player,6)
 		player:setPosition(244.16,69.11,1003.64)
 		return false
 	end

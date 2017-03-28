@@ -51,25 +51,25 @@ function WeaponTruck:constructor(driver, weaponTable, totalAmount, type)
 	self.m_DestinationBlips = {}
 	self.m_DestinationMarkers = {}
 
-	self.m_AmountPerBox = type == "state" and 7500 or 3500
-	self.m_BoxesCount = math.ceil(totalAmount/self.m_AmountPerBox)
-
 	self.m_Boxes = {}
 	self.m_StartPlayer = driver
 	self.m_StartFaction = driver:getFaction()
 
 
 	if self.m_Type == "evil" then
-		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/8
+		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD/6
 		self.m_StartFaction:giveKarmaToOnlineMembers(-5, "Waffentruck gestartet!")
 		self:addDestinationMarker(self.m_StartFaction:getId(), "evil", true)
 	elseif self.m_Type == "state" then
-		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD_STATE/8
+		self.m_AmountPerBox = WEAPONTRUCK_MAX_LOAD_STATE/6
 		FactionState:getSingleton():giveKarmaToOnlineMembers(5, "Staats-Waffentruck gestartet!")
 		for i, faction in pairs(FactionEvil:getSingleton():getFactions()) do
 			self:addDestinationMarker(faction:getId(), "evil", false)
 		end
 	end
+
+	self.m_BoxesCount = 8
+
 
 	self.m_WeaponLoad = weaponTable
 	self.m_Event_onBoxClickFunc =bind(self.Event_onBoxClick,self)
@@ -166,6 +166,15 @@ function WeaponTruck:spawnBoxes()
 			self:spawnBox(i, WeaponTruck.boxSpawnCords[self.m_Type][i])
 		end
 	end
+
+	for i, box in pairs(self.m_Boxes) do
+		if isElement(box) then
+			if box.sum == 0 then
+				box:destroy()
+				self.m_BoxesCount = self.m_BoxesCount -1
+			end
+		end
+	end
 end
 
 function WeaponTruck:getRemainingBoxAmount()
@@ -198,6 +207,7 @@ end
 
 function WeaponTruck:Event_onBoxClick(button, state, player)
 	if button == "left" and state == "down" then
+		if player.vehicle then return end
 		if player:getFaction() and (player:getFaction():isStateFaction() or player:getFaction():isEvilFaction()) then
 			if getDistanceBetweenPoints3D(player:getPosition(), source:getPosition()) < 3 then
 				player:setAnimation("carry", "crry_prtial", 1, true, true, false, true)
@@ -255,6 +265,7 @@ function WeaponTruck:setBoxContent(boxId)
 			end
 		end
 	end
+
 end
 
 function WeaponTruck:outputBoxContent(player, box)

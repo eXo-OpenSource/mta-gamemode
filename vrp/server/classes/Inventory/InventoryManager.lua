@@ -33,7 +33,8 @@ function InventoryManager:constructor()
 	addEventHandler("declineTrade", root, bind(self.Event_declineTrade, self))
 	--/workaround/
 	addEventHandler("syncAfterChange", root, bind(self.Event_syncAfterChange, self))
-
+	
+	WearableManager:new()
 end
 
 function InventoryManager:destructor()
@@ -115,8 +116,8 @@ function InventoryManager:Event_c_setItemPlace(bag, oldPlace, newPlace)
 end
 
 
-function InventoryManager:Event_throwItem(item, bag, id, place)
-	self:getPlayerInventory(client):throwItem(item, bag, id, place)
+function InventoryManager:Event_throwItem(item, bag, id, place, name)
+	self:getPlayerInventory(client):throwItem(item, bag, id, place, name)
 end
 
 function InventoryManager:Event_refreshInventory()

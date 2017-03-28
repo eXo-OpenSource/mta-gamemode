@@ -20,7 +20,7 @@ function VehicleManager:constructor()
 	addRemoteEvents{"vehicleLock", "vehicleRequestKeys", "vehicleAddKey", "vehicleRemoveKey",
 		"vehicleRepair", "vehicleRespawn", "vehicleRespawnWorld", "vehicleDelete", "vehicleSell", "vehicleSellAccept", "vehicleRequestInfo",
 		"vehicleUpgradeGarage", "vehicleHotwire", "vehicleEmpty", "vehicleSyncMileage", "vehicleBreak", "vehicleUpgradeHangar", "vehiclePark",
-		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake"}
+		"soundvanChangeURL", "soundvanStopSound", "vehicleToggleHandbrake", "onVehicleCrash"}
 	addEventHandler("vehicleLock", root, bind(self.Event_vehicleLock, self))
 	addEventHandler("vehicleRequestKeys", root, bind(self.Event_vehicleRequestKeys, self))
 	addEventHandler("vehicleAddKey", root, bind(self.Event_vehicleAddKey, self))
@@ -42,6 +42,9 @@ function VehicleManager:constructor()
 	addEventHandler("vehicleToggleHandbrake", root, bind(self.Event_toggleHandBrake, self))
 	addEventHandler("soundvanChangeURL", root, bind(self.Event_soundvanChangeURL, self))
 	addEventHandler("soundvanStopSound", root, bind(self.Event_soundvanStopSound, self))
+	addEventHandler("onTrailerAttach", root, bind(self.Event_TrailerAttach, self))
+	addEventHandler("onVehicleCrash", root, bind(self.Event_OnVehicleCrash, self))
+	addEventHandler("onElementDestroy", root, bind(self.Event_OnElementDestroy,self))
 
 	-- Check Licenses
 	addEventHandler("onVehicleStartEnter", root,
@@ -109,6 +112,20 @@ function VehicleManager:destructor()
 	outputServerLog("Saved faction vehicles")
 end
 
+function VehicleManager:Event_OnElementDestroy() 
+	if getElementType(source) == "vehicle" then 
+		local occs = getVehicleOccupants( source )
+		if occs then 
+			for seat, player in pairs(occs) do
+				if player then 
+					player.m_SeatBelt = false
+					setElementData(player,"isBuckeled", false)
+				end
+			end
+		end
+	end
+end
+
 function VehicleManager:getFactionVehicles(factionId)
 	return self.m_FactionVehicles[factionId]
 end
@@ -142,11 +159,32 @@ function VehicleManager:createVehiclesForPlayer(player)
 				end
 				if not skip then
 					local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation or 0)
-					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special, row.Premium)
+					enew(vehicle, PermanentVehicle, tonumber(row.Id), row.Owner, fromJSON(row.Keys or "[ [ ] ]"), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.Premium, row.TuningsNew)
 					VehicleManager:getSingleton():addRef(vehicle, false)
 				end
 				skip = false
 			end
+		end
+	end
+end
+
+function VehicleManager:destroyUnusedVehicles( player )
+	if player then 
+		local vehTable = self:getPlayerVehicles(player)
+		if vehTable then  
+			local counter = 0
+			for k , vehicle in pairs(vehTable) do 
+				if vehicle then 
+					if vehicle.m_HasBeenUsed then 
+						if vehicle.m_HasBeenUsed == 0 then 
+							destroyElement(vehicle)
+							counter = counter + 1
+						end
+					end
+				end
+			end
+			outputDebugString("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
+			outputServerLog("[Vehicle-Manager] Cleaned "..counter.." vehicles for player "..getPlayerName(player).."!",3,0,200,0)
 		end
 	end
 end
@@ -182,7 +220,7 @@ function VehicleManager.loadVehicles()
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew, row.Premium)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
@@ -327,6 +365,8 @@ function VehicleManager:removeUnusedVehicles()
 					vehicle:setPositionType(VehiclePositionType.Mechanic)
 					vehicle:setDimension(PRIVATE_DIMENSION_SERVER)
 					respawnVehicle(vehicle)
+
+					CompanyManager:getSingleton():getFromId(2):addLog(nil, "Respawn-Log", ("%s von %s wurde zerstört und respawnt!"):format(vehicle:getName(), Account.getNameFromId(vehicle:getOwner()) or "-"))
 				else
 					vehicle:respawn()
 				end
@@ -387,7 +427,7 @@ function VehicleManager:refreshGroupVehicles(group)
 	for i, row in pairs(result) do
 		if GroupManager:getFromId(row.Group) then
 			local vehicle = createVehicle(row.Model, row.PosX, row.PosY, row.PosZ, 0, 0, row.Rotation)
-			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Color, row.Color2, row.Health, row.PositionType, fromJSON(row.Tunings or "[ [ ] ]"), row.Mileage, row.Fuel, row.LightColor, row.TrunkId, row.TexturePath, row.Horn, row.Neon, row.Special)
+			enew(vehicle, GroupVehicle, tonumber(row.Id), GroupManager:getFromId(row.Group), row.Health, row.PositionType, row.Mileage, row.Fuel, row.TrunkId, row.TuningsNew)
 			VehicleManager:getSingleton():addRef(vehicle, false)
 		else
 			sql:queryExec("DELETE FROM ??_group_vehicles WHERE ID = ?", sql:getPrefix(), row.Id)
@@ -446,7 +486,7 @@ function VehicleManager:Event_vehiclePark()
  end
 
 function VehicleManager:Event_toggleHandBrake()
-	if client:getCompany() and client:getCompany():getId() == 2 then
+	if client:getCompany() and client:getCompany():getId() == 2 or client:getRank() >= RANK.Moderator then
 		if source.m_HandBrake then
 			source:toggleHandBrake(client)
 			client:sendSuccess(_("Die Handbremse wurde gelöst!", client))
@@ -467,6 +507,62 @@ end
 
 function VehicleManager:syncVehicleInfo(player)
 	player:triggerEvent("vehicleRetrieveInfo", self:getVehiclesFromPlayer(player), player:getGarageType(), player:getHangarType())
+end
+
+function VehicleManager:Event_OnVehicleCrash( veh, loss )
+	if veh:getVehicleType() == VehicleType.Plane or veh:getVehicleType() == VehicleType.Helicopter then
+		return false
+	end
+	local occupants = getVehicleOccupants(veh)
+	local speedx, speedy, speedz = getElementVelocity ( veh )
+	local sForce = (speedx^2 + speedy^2 + speedz^2)^(0.5)
+	local tickCount = getTickCount()
+	if getPedOccupiedVehicle(source) == veh then
+		if sForce >0.4 and loss*0.1 >= 2  then
+			for seat, player in pairs(occupants) do
+				local playerHealth = getElementHealth(player)
+				local bIsKill = (playerHealth - loss*0.02)  <= 0
+				if not bIsKill then
+					setElementHealth(player, playerHealth - loss*0.02)
+				else
+					setElementHealth(player, 1)
+				end
+				if sForce < 0.85 then
+					if not player.m_lastInjuryMe then
+						player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
+						player.m_lastInjuryMe = tickCount
+					elseif player.m_lastInjuryMe + 5000 <= tickCount then
+						player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
+						player.m_lastInjuryMe = tickCount
+					end
+					setPedAnimation(player, "ped", "hit_walk",700,true,false,false)
+					setTimer(setPedAnimation, 700,2, player, nil)
+				elseif sForce >= 0.85 then
+					if not player.m_SeatBelt then
+						player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
+						removePedFromVehicle(player)
+						setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
+						setTimer(setPedAnimation, 5000,1, player, nil)
+					elseif player.m_SeatBelt == veh then 
+						if not player.m_lastInjuryMe then
+							player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
+							player.m_lastInjuryMe = tickCount
+
+						elseif player.m_lastInjuryMe + 5000 <= tickCount then
+							player:meChat(true, "wird im Fahrzeug umhergeschleudert!")
+							player.m_lastInjuryMe = tickCount
+						end
+					else 
+						player:meChat(true, "erleidet innere Blutungen durch den Aufprall!")
+						removePedFromVehicle(player)
+						setPedAnimation(player, "crack", "crckdeth2",5000,false,false,false)
+						setTimer(setPedAnimation, 5000,1, player, nil)
+					end
+				end
+				player:triggerEvent("clientBloodScreen")
+			end
+		end
+	end
 end
 
 function VehicleManager:getVehiclesFromPlayer()
@@ -616,7 +712,7 @@ function VehicleManager:Event_vehicleRespawn(garageOnly)
 				return
 			end
 			local group = client:getGroup()
-			if group:getMoney() > 100 then
+			if group:getMoney() >= 100 then
 				group:takeMoney(100, "Fahrzeug-Respawn")
 			else
 				client:sendError(_("In euerer %s-Kasse befindet sich nicht genug Geld! (100$)", client, group:getType()))
@@ -940,5 +1036,15 @@ function VehicleManager:Event_soundvanStopSound()
 	if source.m_Special and source.m_Special == VehicleSpecial.Soundvan then
 		source.m_SoundURL = nil
 		triggerClientEvent("soundvanStopSoundClient", source, url)
+	end
+end
+
+function VehicleManager:Event_TrailerAttach(truck)
+	if not getVehicleOccupant(truck) then return end
+	if not instanceof(truck, PermanentVehicle) then return end
+	if not instanceof(source, PermanentVehicle) then return end
+
+	if source:getOwner() == truck:getOwner() then
+		source:setFrozen(false)
 	end
 end

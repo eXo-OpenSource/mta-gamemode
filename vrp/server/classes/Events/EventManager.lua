@@ -16,7 +16,7 @@ function EventManager:constructor()
 
 	-- Add events (do it on the client as well)
 	self:addEvent(StreetRaceEvent)
-	self:addEvent(DMRaceEvent)
+	--self:addEvent(DMRaceEvent)
 
 	-- Start timer that opens every 30min a random event
 	setTimer(bind(self.openRandomEvent, self), 30*60*1000, 0)

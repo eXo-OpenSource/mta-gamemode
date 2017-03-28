@@ -59,6 +59,8 @@ function GUIElement:performChecks(mouse1, mouse2, cx, cy)
 			if self.onUnhover		  then self:onUnhover()         end
 			if self.onInternalUnhover then self:onInternalUnhover() end
 			self.m_Hover = false
+			self.m_LActive = false
+			self.m_RActive = false
 
 			-- Unhover down the tree (otherwise the unhover routine won't be executed)
 			for k, child in ipairs(self.m_Children) do

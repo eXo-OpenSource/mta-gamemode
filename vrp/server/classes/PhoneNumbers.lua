@@ -120,17 +120,30 @@ addEventHandler("requestPhoneNumbers", root, function()
 	for index, instance in pairs(PhoneNumber.Map) do
 		number = instance:getNumber()
 		if number then
-			numTable[number] = {}
 			if PHONE_NUMBER_TYPES[instance:getOwnerType()] == "faction" or PHONE_NUMBER_TYPES[instance:getOwnerType()] == "company" then
+				numTable[number] = {}
 				numTable[number]["OwnerName"] = instance:getOwner(instance):getShortName()
+			elseif PHONE_NUMBER_TYPES[instance:getOwnerType()] == "group" then
+				if instance:getOwner(instance) and instance:getOwner(instance):getName() then
+					if #instance:getOwner(instance):getOnlinePlayers() > 0 then
+						numTable[number] = {}
+						numTable[number]["OwnerName"] = instance:getOwner(instance):getName()
+					end
+				else
+					PhoneNumber.Map[index] = nil
+				end
 			else
 				if instance:getOwner(instance) and instance:getOwner(instance):getName() then
+					numTable[number] = {}
 					numTable[number]["OwnerName"] = instance:getOwner(instance):getName()
 				else
 					PhoneNumber.Map[index] = nil
 				end
 			end
-			numTable[number]["OwnerType"] = PHONE_NUMBER_TYPES[instance:getOwnerType()]
+
+			if numTable[number] then
+				numTable[number]["OwnerType"] = PHONE_NUMBER_TYPES[instance:getOwnerType()]
+			end
 		end
 	end
 	triggerClientEvent(client, "receivePhoneNumbers", client, numTable)

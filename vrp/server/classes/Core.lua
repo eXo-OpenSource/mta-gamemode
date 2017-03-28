@@ -51,7 +51,8 @@ function Core:constructor()
 
 	-- Instantiate classes (Create objects)
 	if not self.m_Failed then
-		SkinModdingCheck:new()
+		AntiCheat:new()
+		ModdingCheck:new()
 		TranslationManager:new()
 		GlobalTimer:new()
 		MTAFixes:new()
@@ -72,6 +73,7 @@ function Core:constructor()
 		AmmuNationManager:new()
 		--Police:new()
 		EventManager:new()
+		AdminEventManager:new()
 		--GangAreaManager:new()
 		Weather:new()
 		--JailBreak:new()
@@ -80,7 +82,7 @@ function Core:constructor()
 		Achievement:new()
 		SkinShops:new()
 		--Deathmatch:new() Not finished
-		VehicleTuning:new()
+		VehicleTuningShop:new()
 		DimensionManager:new()
 		ActorManager:new()
 		InteriorManager:new()
@@ -111,6 +113,7 @@ function Core:constructor()
 		BoxManager:new()
 		Fishing:new()
 		self.m_TeamspeakAPI = TSConnect:new("https://exo-reallife.de/ingame/TSConnect/ts_connect.php", "exoServerBot", "wgCGAoO8", 10011, "ts.exo-reallife.de", 9987)
+		GPS:new()
 
 		VehicleManager.loadVehicles()
 		VendingMachine.initializeAll()
@@ -134,7 +137,8 @@ function Core:constructor()
 		Gangwar:new()
 		GangwarStatistics:new()
 		--SprayWallManager:new()
-
+		GroupHouseRob:new()
+		
 		-- Disable Heathaze-Effect (causes unsightly effects on 3D-GUIs e.g. SpeakBubble3D)
 		setHeatHaze(0)
 
@@ -174,6 +178,17 @@ function Core:constructor()
 
 		Blip:new("North.png", 0, 6000, root, 12000)
 
+		GlobalTimer:getSingleton():registerEvent(function()
+			outputChatBox("Achtung: Der Server wird in 10 Minuten neu gestartet!", root, 255, 0, 0)
+		end, "Server Restart Message 1", nil, 04, 50)
+		GlobalTimer:getSingleton():registerEvent(function()
+			outputChatBox("Achtung: Der Server wird in 5 Minuten neu gestartet!", root, 255, 0, 0)
+		end, "Server Restart Message 2", nil, 04, 55)
+
+		GlobalTimer:getSingleton():registerEvent(function()
+			getThisResource():restart()
+		end, "Server Restart", nil, 05, 00)
+
 	end
 end
 
@@ -203,6 +218,7 @@ function Core:destructor()
 		delete(GangwarStatistics:getSingleton())
 		delete(GroupPropertyManager:getSingleton())
 		delete(Admin:getSingleton())
+		delete(GPS:getSingleton())
 		delete(StatisticsLogger:getSingleton())
 		delete(sql) -- Very slow
 	end

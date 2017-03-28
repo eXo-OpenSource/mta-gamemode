@@ -963,8 +963,14 @@ function SelfGUI:onSettingChange(setting)
 		self.m_HallelujaSound.onChange = function (state)
 			core:set("Other", "HallelujaSound", state)
 		end
-
-
+		
+		self.m_HitSound = GUICheckbox:new(self.m_Width*0.02, self.m_Height*0.54, self.m_Width*0.9, self.m_Height*0.04, _"Sound beim Treffen eines Spielers", self.m_SettingBG)
+		self.m_HitSound:setFont(VRPFont(25))
+		self.m_HitSound:setFontSize(1)
+		self.m_HitSound:setChecked(core:get("Other", "HitSoundBell", true))
+		self.m_HitSound.onChange = function (state)
+			core:set("Other", "HitSoundBell", state)
+		end
 	end
 
 

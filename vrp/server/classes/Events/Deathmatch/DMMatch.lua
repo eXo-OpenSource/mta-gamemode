@@ -92,8 +92,8 @@ function DMMatch:stopMatch ()
 	DimensionManager:getSingleton():freeDimension(self.m_MatchDimension)
 
 	for i, v in pairs(self.m_Players) do
-		v:setInterior(0)
-		v:setDimension(0)
+		setElementInterior(v,0)
+		setElementDimension(v,0)
 		v:setPosition(Deathmatch.Position + Vector3(0, 0, 1))
 	end
 end

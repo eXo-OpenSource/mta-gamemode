@@ -20,21 +20,27 @@ end
 function ItemSellContract:Event_OnSellRequest( player, price, veh )
 	player = getPlayerFromName(player)
 	if isElement( player ) then
-		local car = getPedOccupiedVehicle( source)
+		local car = getPedOccupiedVehicle(client)
 		if car == veh then
 			if car.m_Premium then
 				client:sendError("Dieses Fahrzeug ist ein Premium Fahrzeug und darf nicht verkauft werden!")
 				return
 			end
+
+			if #player:getVehicles() >= math.floor(MAX_VEHICLES_PER_LEVEL*player:getVehicleLevel()) then
+				client:sendError("Der Spieler hat die maximalen Fahrzeug-Slots erreicht!")
+				return
+			end
+
 			if tonumber(price) > 0 then
 				client.lastContract = player
 				client:triggerEvent("closeVehicleContract")
-				player:triggerEvent("vehicleConfirmSell", player, price, car, source)
-				source:sendInfo(_("Ein Anfrage zum Kauf wurde abgeschickt!", source))
+				player:triggerEvent("vehicleConfirmSell", player, price, car, client)
+				client:sendInfo(_("Ein Anfrage zum Kauf wurde abgeschickt!", client))
 			else
 				client:sendError(_("Ungültiger Betrag!", client))
 			end
-		else source:sendError(_("Du sitzt nicht im Fahrzeug!", source))
+		else client:sendError(_("Du sitzt nicht im Fahrzeug!", client))
 		end
 	end
 end
@@ -56,7 +62,7 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 						player:sendInfo(_("Der Handel wurde abgeschlossen!", player))
 						VehicleManager:getSingleton():removeRef( car, false)
 						car:setOwner( client )
-						car:setData("OwnerName", source.name, true)
+						car:setData("OwnerName", client.name, true)
 						VehicleManager:getSingleton():addRef( car, false)
 						client:takeMoney(price, "Fahrzeug-Handel")
 						player:giveMoney(price, "Fahrzeug-Handel")
@@ -65,7 +71,7 @@ function ItemSellContract:Event_OnTradeSuceed( player, price, car )
 						VehicleManager:getSingleton():syncVehicleInfo( client )
 						player:getInventory():removeItem("Handelsvertrag", 1)
 					else
-						source:sendError(_("Du hast nicht genügend Geld!", client))
+						client:sendError(_("Du hast nicht genügend Geld!", client))
 						player:sendInfo(_("Der Käufer hat zu wenig Geld!", player))
 					end
 				else client:sendError(_("Vertrag abgelaufen!", client))

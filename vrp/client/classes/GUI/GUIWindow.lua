@@ -17,6 +17,7 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 	self.m_HasTitlebar = hasTitlebar
 	self.m_HasCloseButton = hasCloseButton
 	self.m_CloseOnClose = true
+	self.m_MovingEnabled = true
 
 	-- Create dummy titlebar element (to be able to retrieve clicks)
 	if self.m_HasTitlebar then
@@ -25,10 +26,12 @@ function GUIWindow:constructor(posX, posY, width, height, title, hasTitlebar, ha
 		self.m_TitlebarDummy.onLeftClickDown = function()
 			if GUIWindowsFocus:getSingleton():getCurrentFocus() == self or  GUIWindowsFocus:getSingleton():getCurrentFocus() == nil then
 				GUIWindowsFocus:getSingleton():setCurrentFocus( self )
+				if not self.m_MovingEnabled then return end
 				self:startMoving()
 			end
 		end
 		self.m_TitlebarDummy.onLeftClick = function()
+			if not self.m_MovingEnabled then return end
 			self:stopMoving()
 		end
 
@@ -117,9 +120,8 @@ function GUIWindow:addBackButton(callback)
 	end
 end
 
-function GUIWindow:disableMoving()
-	self.m_TitlebarDummy.onLeftClickDown = function() end
-	self.m_TitlebarDummy.onLeftClick = function() end
+function GUIWindow:toggleMoving(state)
+	self.m_MovingEnabled = state
 end
 
 function GUIWindow:removeBackButton()

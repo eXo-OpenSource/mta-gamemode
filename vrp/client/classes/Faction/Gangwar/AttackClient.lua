@@ -56,7 +56,6 @@ function AttackClient:addDamage( target, weapon, bodypart, loss )
 							localPlayer.m_GangwarDamage = 0 
 						end
 						self.m_GangwarDamage = math.floor( self.m_GangwarDamage + loss )
-						playSound("files/audio/hitsound.wav")
 					end
 				end
 			end

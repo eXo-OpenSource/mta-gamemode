@@ -58,6 +58,8 @@ function JobTreasureSeeker:stop(player)
 end
 
 function JobTreasureSeeker:onVehicleSpawn(player, vehicleModel, vehicle)
+	setVehicleHandling(vehicle, "steeringLock", 70)
+
 	vehicle.Engine = createObject(3013, 0, 0, 0)
 	vehicle.Engine:setScale(1.5)
 	vehicle.Engine:attach(vehicle, 0, -6.2, 3.5)
@@ -172,7 +174,7 @@ function JobTreasureSeeker:loadTreasure(player)
 	self.m_Treasures[player][rnd] = createColCircle(x, y, 25)
 	self.m_Treasures[player][rnd].DummyObject = createObject(1337, x, y, -20)
 	self.m_Treasures[player][rnd].Player = player
-	setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", true)
+	setElementData(self.m_Treasures[player][rnd].DummyObject, "Treasure", player)
 	addEventHandler("onColShapeHit", self.m_Treasures[player][rnd], bind(self.onTreasureHit, self))
 end
 

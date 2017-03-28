@@ -7,7 +7,7 @@
 -- ****************************************************************************
 GroupManager = inherit(Singleton)
 GroupManager.Map = {}
-GroupManager.GroupCosts = 20000
+GroupManager.GroupCosts = 100000
 GroupManager.GroupTypes = {[1] = "Gang", [2] = "Firma"}
 for i, v in pairs(GroupManager.GroupTypes) do
 	GroupManager.GroupTypes[v] = i
@@ -108,7 +108,12 @@ function GroupManager:sendInfosToClient(player)
 	local group = player:getGroup()
 
 	if group then
-		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, group:getVehicles(), group:canVehiclesBeModified())
+		local vehicles = {}
+		for _, vehicle in pairs(group:getVehicles() or {}) do
+			vehicles[vehicle:getId()] = {vehicle, vehicle:getPositionType()}
+		end
+
+		player:triggerEvent("groupRetrieveInfo", group:getName(), group:getPlayerRank(player), group:getMoney(), group:getPlayers(), group:getKarma(), group:getType(), group.m_RankNames, group.m_RankLoans, vehicles, group:canVehiclesBeModified())
 		VehicleManager:getSingleton():syncVehicleInfo(player)
 	else
 		player:triggerEvent("groupRetrieveInfo")
@@ -130,12 +135,17 @@ function GroupManager:Event_Create(name, type)
 		return
 	end
 
-	if string.len(name) > 24 then
+	if string.len(name) < GROUP_NAME_MIN then
+		client:sendError(_("Der Name muss mindestens 5 Zeichen lang sein!", client))
+		return
+	end
+
+	if string.len(name) > GROUP_NAME_MAX then
 		client:sendError(_("Dein eingegebener Name ist zu lang! (Max. 24 Zeichen)", client))
 		return
 	end
 
-	if not name:match("^[a-zA-Z0-9_.- ]*$") then
+	if not name:match(GROUP_NAME_MATCH) then
 		client:sendError(_("Name enthält ungültige Zeichen!", client))
 		return
 	end
@@ -421,7 +431,6 @@ function GroupManager:Event_ChangeName(name)
 	if not name then return end
 	local group = client:getGroup()
 	if not group then return end
-	local name = name:gsub(" ", "")
 
 	if not group:isPlayerMember(client) then
 		return
@@ -443,16 +452,20 @@ function GroupManager:Event_ChangeName(name)
 		return
 	end
 
-	if name:len() < 5 then
+	if name:len() < GROUP_NAME_MIN then
 		client:sendError(_("Der Name muss mindestens 5 Zeichen lang sein!", client))
 		return
 	end
 
-	if name:len() > 20 then
-		client:sendError(_("Der Name darf nicht länger als 20 Zeichen sein!", client))
+	if name:len() > GROUP_NAME_MAX then
+		client:sendError(_("Dein eingegebener Name ist zu lang! (Max. 24 Zeichen)", client))
 		return
 	end
 
+	if not name:match(GROUP_NAME_MATCH) then
+		client:sendError(_("Name enthält ungültige Zeichen!", client))
+		return
+	end
 
 	if (getRealTime().timestamp - group.m_LastNameChange) < GROUP_RENAME_TIMEOUT then
 		client:sendError(_("Du kannst deine %s nur alle %d Tage umbennen!", client, group:getType(), GROUP_RENAME_TIMEOUT/24/60/60))
@@ -473,8 +486,8 @@ end
 function GroupManager:Event_SaveRank(rank,name,loan)
 	local group = client:getGroup()
 	if group and group:getPlayerRank(client) >= GroupRank.Manager then
-		group:setRankName(rank,name)
-		group:setRankLoan(rank,loan)
+		group:setRankName(rank, name)
+		group:setRankLoan(rank, loan)
 		group:saveRankSettings()
 		client:sendInfo(_("Die Einstellungen für Rang "..rank.." wurden gespeichert!", client))
 		group:addLog(client, "Gang/Firma", "hat die Einstellungen für Rang "..rank.." geändert!")
@@ -537,6 +550,13 @@ function GroupManager:Event_RemoveVehicle(veh)
 		if group:getPlayerRank(client) < GroupRank.Manager then
 			client:sendError(_("Dazu bist du nicht berechtigt!", client))
 			return
+		end
+
+		if veh:isGroupPremiumVehicle() then
+			if veh.m_Premium ~= client:getId() then
+				client:sendError(_("Du kannst dieses Premium Fahrzeug nicht entfernen!", client))
+				return
+			end
 		end
 
 		local status, newVeh = PermanentVehicle.convertVehicle(veh, client, group)

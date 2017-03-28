@@ -30,16 +30,20 @@ function GUIInputControl.setFocus(edit, caret)
 	GUIInputControl.ms_PreviousInput = guiGetText(GUIInputControl.ms_Edit)
 
 	if edit then
+		GUIInputControl.skipChangedEvent = true
+
 		guiBringToFront(GUIInputControl.ms_Edit)
+		oldCaretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
+		guiSetInputEnabled(true)
+		guiSetText(GUIInputControl.ms_Edit, edit:getText())
+
+		GUIInputControl.skipChangedEvent = false
+
 		if caret then
 			guiEditSetCaretIndex(GUIInputControl.ms_Edit, caret)
 		else
 			guiEditSetCaretIndex(GUIInputControl.ms_Edit, utfLen(edit:getText()))
 		end
-
-		oldCaretIndex = guiEditGetCaretIndex(GUIInputControl.ms_Edit)
-		guiSetInputEnabled(true)
-		guiSetText(GUIInputControl.ms_Edit, edit:getText())
 
 		edit:onInternalFocus()
 		if edit.onFocus then
@@ -58,20 +62,22 @@ end
 
 addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 	function()
+		if GUIInputControl.skipChangedEvent then return end
+
 		local currentEdit = GUIInputControl.ms_CurrentInputFocus
 		if currentEdit then
 			local text = guiGetText(source)
 
 			if currentEdit:isNumeric() then
 				if currentEdit:isIntegerOnly() then
-					if text == "" or pregFind(text, '^[0-9]*$') then
+					if (text == "" or pregFind(text, '^[0-9]*$')) and utfLen(text) <= currentEdit.m_MaxLength and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then
 						GUIInputControl.ms_PreviousInput = text
 						currentEdit:setText(text)
 					else
 						guiSetText(source, GUIInputControl.ms_PreviousInput or "") -- Triggers onClientGUIChanged again
 					end
 				else
-					if tonumber(text) or text == "" then
+					if (tonumber(text) or text == "") and utfLen(text) <= currentEdit.m_MaxLength and tonumber(text == "" and 0 or text) <= currentEdit.m_MaxValue then
 						GUIInputControl.ms_PreviousInput = text
 						currentEdit:setText(text)
 					else
@@ -79,7 +85,12 @@ addEventHandler("onClientGUIChanged", GUIInputControl.ms_Edit,
 					end
 				end
 			else
-				currentEdit:setText(text)
+				if utfLen(text) <= currentEdit.m_MaxLength then
+					GUIInputControl.ms_PreviousInput = text
+					currentEdit:setText(text)
+				else
+					guiSetText(source, GUIInputControl.ms_PreviousInput or "")
+				end
 			end
 
 			if currentEdit.onInternalEditInput then

@@ -282,6 +282,23 @@ function Player:initialiseBinds()
 	bindKey(self, "l", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle  then vehicle:toggleLight(player) end end)
 	bindKey(self, "x", "down", function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and player.m_InVehicle == vehicle and getPedOccupiedVehicleSeat(player) == 0 then vehicle:toggleEngine(player) end end)
 	bindKey(self, "g", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle and getPedOccupiedVehicleSeat(player) == 0 and player.m_InVehicle == vehicle then vehicle:toggleHandBrake( player ) end end)
+	bindKey(self, "m", "down",  function(player) local vehicle = getPedOccupiedVehicle(player) if vehicle then  if not DONT_BUCKLE[getElementModel(vehicle)] then player:buckleSeatBelt(vehicle) end  end end)
+end
+
+function Player:buckleSeatBelt(vehicle)
+	if self.m_SeatBelt then
+		self.m_SeatBelt = false
+		setElementData(self,"isBuckeled", false)
+		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
+	elseif vehicle == getPedOccupiedVehicle(self) then
+		self.m_SeatBelt = vehicle
+		setElementData(self,"isBuckeled", true)
+		outputChatBox("Du schnallst dich an.", self, 200,200,0)
+	else
+		self.m_SeatBelt = false
+		setElementData(self,"isBuckeled", false)
+		outputChatBox("Du schnallst dich ab.", self, 200,200,0)
+	end
 end
 
 function Player:save()
@@ -393,12 +410,20 @@ function Player:spawn( )
 		end
 	end
 
+	if self:isPremium() then
+		self:setArmor(100)
+		giveWeapon(self, 24, 35)
+	end
+
 	self:setFrozen(false)
 	setCameraTarget(self, self)
 	fadeCamera(self, true)
 
 	self:triggerEvent("checkNoDm")
 	if self.m_IsDead == 1 then
+		if not self:getData("isInDeathMatch") then
+			self:setReviveWeapons()
+		end
 		killPed(self)
 	end
 end
@@ -437,10 +462,102 @@ function Player:respawn(position, rotation, bJailSpawn)
 		end
 	end
 
+	if self:isPremium() then
+		self:setArmor(100)
+		giveWeapon(self, 24, 35)
+	end
+
 	setCameraTarget(self, self)
 	self:triggerEvent("checkNoDm")
 	self.m_IsDead = 0
 	FactionState:getSingleton():uncuffPlayer( self )
+	setPedAnimation(self,false)
+	setElementAlpha(self,255)
+	if isElement(self.ped_deadDouble) then
+		destroyElement(self.ped_deadDouble)
+	end
+end
+
+function Player:clearReviveWeapons()
+	self.m_ReviveWeapons = false
+end
+
+function Player:dropReviveWeapons()
+	self:destroyDropWeapons()
+	if self.m_ReviveWeapons then
+		self.m_WorldObjectWeapons =  {}
+		local obj, weapon, ammo, model, x, y, z, dim, int
+		for i = 1, 12 do
+			if self.m_ReviveWeapons[i] then
+				x,y,z = getElementPosition(self)
+				int = getElementInterior(self)
+				dim = getElementDimension(self)
+				weapon =  self.m_ReviveWeapons[i][1]
+				ammo = self.m_ReviveWeapons[i][2]
+				model = WEAPON_MODELS_WORLD[weapon]
+				local x,y = getPointFromDistanceRotation(x, y, 3, 360*(i/12))
+				if model then
+					if weapon ~= 23 and weapon ~= 38 and weapon ~= 37 and weapon ~= 39 and  weapon ~= 16 and weapon ~= 17 then
+						obj = createPickup(x,y,z-0.5, 3, model, 1 )
+						if obj then
+							setElementDoubleSided(obj,true)
+							setElementDimension(obj, dim)
+							setElementInterior(obj, int)
+							obj:setData("weaponId", weapon)
+							obj:setData("ammoInWeapon", ammo)
+							obj:setData("weaponOwner", self)
+							addEventHandler("onPickupHit", obj, bind(self.Event_onPlayerReviveWeaponHit, self))
+							self.m_WorldObjectWeapons[#self.m_WorldObjectWeapons+1] = obj
+						end
+					end
+				end
+			end
+		end
+	end
+end
+
+function Player:destroyDropWeapons()
+	if self.m_WorldObjectWeapons then
+		for i = 1, #self.m_WorldObjectWeapons do
+			if self.m_WorldObjectWeapons[i] then
+				destroyElement(self.m_WorldObjectWeapons[i])
+			end
+		end
+	end
+end
+
+function Player:Event_onPlayerReviveWeaponHit( player )
+	if player then
+		local weapon = source:getData("weaponId")
+		local ammo = source:getData("ammoInWeapon")
+		if weapon and ammo then
+			player:sendShortMessage("Drücke Links-Alt + M um die Waffe aufzuheben!")
+			player:triggerEvent("onTryPickupWeapon", source)
+		end
+	end
+end
+
+function Player:setReviveWeapons()
+	self.m_ReviveWeapons = {}
+	local weaponInSlot, ammoInSlot
+	for i = 1, 12 do
+		weaponInSlot = getPedWeapon(self, i)
+		ammoInSlot = getPedTotalAmmo(self, i )
+		self.m_ReviveWeapons[i] = {weaponInSlot, ammoInSlot}
+	end
+end
+
+function Player:giveReviveWeapons()
+	if self.m_ReviveWeapons then
+		for i = 1, 12 do
+			if self.m_ReviveWeapons[i] then
+				giveWeapon( self, self.m_ReviveWeapons[i][1], self.m_ReviveWeapons[i][2], true)
+			end
+		end
+		return true
+	else
+		return false
+	end
 end
 
 
@@ -456,6 +573,7 @@ function Player:sendShortMessage(text, ...) self:triggerEvent("shortMessageBox",
 function Player:sendTrayNotification(text, icon, sound)	self:triggerEvent("sendTrayNotification", text, icon, sound)	end
 
 function Player:isActive() return true end
+function Player:isPremium() return self.m_Premium:isPremium() end
 
 function Player:setPhonePartner(partner) self.m_PhonePartner = partner end
 function DatabasePlayer:setSessionId(hash) self.m_SessionId = string.upper(hash) if self:isActive() then self:setPrivateSync("SessionID", self.m_SessionId) end end
@@ -648,12 +766,14 @@ end
 
 function Player:startAFK()
 	self.m_AFKStartTime = getTickCount()
+	self.m_isAFK = true
 end
 
 function Player:endAFK()
 	self:setAFKTime() -- Set CurrentAFKTime
 	self.m_AFKStartTime = 0
 	self:setAFKTime() -- Add CurrentAFKTime to AFKTime + Reset CurrentAFKTime
+	self.m_isAFK = false
 end
 
 function Player:getPlayTime()
@@ -933,8 +1053,8 @@ end
 
 function Player:endPrison()
 	self:setPosition(Vector3(1478.87, -1726.17, 13.55))
-	self:setDimension(0)
-	self:setInterior(0)
+	setElementDimension(self,0)
+	setElementInterior(self, 0)
 	toggleControl(self, "fire", true)
 	toggleControl(self, "jump", true)
 	toggleControl(self, "aim_weapon", true)
@@ -968,9 +1088,42 @@ function Player:meChat(system, ...)
         end
 
 	end
-	if not system then
-		StatisticsLogger:getSingleton():addChatLog(self, "me", text, toJSON(receivedPlayers))
-		FactionState:getSingleton():addBugLog(self, "", text)
+end
+
+function Player:sendPedChatMessage( name, ...)
+	if self:isDead() then
+		return
+	end
+	local argTable = { ... }
+	local text = table.concat ( argTable , " " )
+	local playersToSend = self:getPlayersInChatRange( 1 )
+	local systemText = name.." sagt:"
+	local receivedPlayers = {}
+	local message = text
+	for index = 1,#playersToSend do
+		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 220,220,220)
+		if playersToSend[index] ~= self then
+            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+        end
+
+	end
+end
+
+function Player:districtChat(...)
+	if self:isDead() then
+		return
+	end
+	local argTable = { ... }
+	local text = table.concat ( argTable , " " )
+	local playersToSend = self:getPlayersInChatRange( 2 )
+	local receivedPlayers = {}
+	local message = ("%s"):format(text)
+	local systemText = "✪"
+	for index = 1,#playersToSend do
+		outputChatBox(("%s %s"):format(systemText, message), playersToSend[index], 205,146,10)
+		if playersToSend[index] ~= self then
+            receivedPlayers[#receivedPlayers+1] = playersToSend[index]:getName()
+        end
 	end
 end
 
@@ -981,8 +1134,8 @@ function Player:moveToJail(CUTSCENE, alreadySpawned)
 			self:respawn(false, false, true)
 		end
 		self:setPosition(Jail.Cells[rnd])
-		self:setInterior(0)
-		self:setDimension(0)
+		setElementInterior(self, 0)
+		setElementDimension(self, 0)
 		self:setRotation(0, 0, 90)
 		self:setSkin(self.m_Skin)
 		self:toggleControl("fire", false)

@@ -1,6 +1,7 @@
 TextureReplace = inherit(Object)
 TextureReplace.ServerElements = {}
 TextureReplace.Cache = {}
+TextureReplace.Map = {}
 
 function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
 	if not path or #path <= 5 then
@@ -35,6 +36,8 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 		addEventHandler("onClientElementStreamOut", self.m_Element, self.m_OnElementStreamOut)
 		addEventHandler("onClientElementStreamIn", self.m_Element, self.m_OnElementStreamIn)
 	end
+
+	TextureReplace.Map[#TextureReplace.Map+1] = self
 end
 
 function TextureReplace:destructor()
@@ -90,9 +93,9 @@ function TextureReplace:loadShader()
 		end
 	end
 
-	if (dxGetStatus().VideoMemoryUsedByTextures - membefore) > 100 then
+	if (dxGetStatus().VideoMemoryUsedByTextures - membefore) > 10 then
 		delete(self)
-		error(("Texture memory usage above 100mb! Data:[ Path: %s, textureName: %s, isRenderTarget: %s, width: %s, height: %s, targetElement: %s]"):format(tostring(self.m_TexturePath), tostring(self.m_TextureName), tostring(self.m_IsRenderTarget), tostring(self.m_Width), tostring(self.m_Height), tostring(self.m_Element)))
+		error(("Texture memory usage above 10mb! Data: [Path: %s, textureName: %s, isRenderTarget: %s, width: %s, height: %s, targetElement: %s]"):format(tostring(self.m_TexturePath), tostring(self.m_TextureName), tostring(self.m_IsRenderTarget), tostring(self.m_Width), tostring(self.m_Height), tostring(self.m_Element)))
 	end
 
 	self.m_Shader = dxCreateShader("files/shader/texreplace.fx")
@@ -103,6 +106,8 @@ function TextureReplace:loadShader()
 
 	if not self.m_Texture then
 		outputDebugString("Loading the texture failed! ("..self.m_TexturePath..")")
+		self.m_Shader:destroy()
+
 		return false
 	end
 
@@ -130,6 +135,13 @@ function TextureReplace.getCachedTexture(path)
 
 	if not TextureReplace.Cache[index] then
 		--outputConsole("creating texture "..path)
+		if not fileExists(path) then
+			outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
+			--TextureReplace.downloadTexture(path)
+
+			return false
+		end
+
 		local membefore = dxGetStatus().VideoMemoryUsedByTextures
 		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path)}
 		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
@@ -156,34 +168,58 @@ function TextureReplace.unloadCache(path)
 	return true
 end
 
+function TextureReplace.downloadTexture(path, callback)
+	Async.create(
+		function()
+			local dgi = HTTPMinimalDownloadGUI:getSingleton()
+			local provider = HTTPProvider:new(FILE_HTTP_SERVER_URL, dgi)
+			if provider:start() then -- did the download succeed
+				delete(dgi)
+				if callback then callback(true) end
+			else
+				if callback then callback(false) end
+			end
+		end
+	)()
+end
+
 -- Events
 addEvent("changeElementTexture", true)
 addEventHandler("changeElementTexture", root,
-	function (element, ...)
-		if type(element) == "table" then
-			for i, shaderInfo in pairs(element) do
-				if TextureReplace.ServerElements[shaderInfo.vehicle] then
-					delete(TextureReplace.ServerElements[shaderInfo.vehicle])
-					TextureReplace.ServerElements[element] = nil
-				end
-				TextureReplace.ServerElements[shaderInfo.vehicle] = TextureReplace:new(shaderInfo.textureName or shaderInfo.vehicle:getTextureName(), shaderInfo.texturePath, false, 256, 256, shaderInfo.vehicle)
+	function(vehicles)
+		for i, vehData in pairs(vehicles) do
+			local textureTab = TextureReplace.ServerElements
+			if not textureTab[vehData.vehicle] then
+				textureTab[vehData.vehicle] = {}
 			end
-		else
-			if TextureReplace.ServerElements[element] then
-				delete(TextureReplace.ServerElements[element])
-				TextureReplace.ServerElements[element] = nil
+
+			local vehicleTab = textureTab[vehData.vehicle]
+			if vehicleTab[vehData.textureName] then
+				delete(vehicleTab[vehData.textureName])
 			end
-			TextureReplace.ServerElements[element] = TextureReplace:new(..., element)
+			vehicleTab[vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle)
 		end
 	end
 )
 
 addEvent("removeElementTexture", true)
 addEventHandler("removeElementTexture", root,
-	function (element)
-		if TextureReplace.ServerElements[element] then
-			delete(TextureReplace.ServerElements[element])
-			TextureReplace.ServerElements[element] = nil
+	function(textureName)
+		if TextureReplace.ServerElements[source] and TextureReplace.ServerElements[source][textureName] then
+			delete(TextureReplace.ServerElements[source][textureName])
+			TextureReplace.ServerElements[source][textureName] = nil
+		end
+
+		if table.size(TextureReplace.ServerElements[source]) <= 0 then
+			TextureReplace.ServerElements[source] = nil
 		end
 	end
 )
+
+function TextureReplace.deleteFromElement(element)
+	for index, texture in pairs(TextureReplace.Map) do
+		if texture and texture.m_Element == element then
+			delete(texture)
+		end
+	end
+end

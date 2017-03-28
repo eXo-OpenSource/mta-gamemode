@@ -74,6 +74,27 @@ function Wearable:giveIntoPedHand( obj, ped, iHand )
 	end
 end
 
+function Wearable:setOnPedHead( obj, ped )
+	if obj then 
+		if ped then
+			if not isAttach( obj ) then
+				local val1 = getElementDimension( obj )
+				local val2 = getElementDimension ( ped )
+				local ibone = 1 
+				if val1 ~= val2 then 
+					setElementDimension( obj , val2 ) 
+				end
+				val1 = getElementInterior( obj )
+				val2 = getElementInterior( ped )
+				if val1 ~= val2 then 
+					setElementInterior( obj, val2 )
+				end
+				attachFunc( obj, ped, ibone )
+			end
+		end
+	end
+end
+
 function Wearable:removeObj( obj )
 	if obj then 
 		detachFunc( obj )

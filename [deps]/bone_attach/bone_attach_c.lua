@@ -5,7 +5,11 @@ addEventHandler("onClientResourceStart",resourceRoot,sendReadyMessage)
 
 function getAttachmentData(ped,bone,x,y,z,rx,ry,rz)
 	for element,att_ped in pairs(ped) do
-		setElementCollisionsEnabled(element,false)
+		if getElementData(element,"boneattach:setCollision") then
+			setElementCollisionsEnabled(element,true)
+		else 
+			setElementCollisionsEnabled(element,false)
+		end
 		attached_ped[element] = att_ped
 		attached_bone[element] = bone[element]
 		attached_x[element] = x[element]

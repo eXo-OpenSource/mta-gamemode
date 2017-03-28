@@ -90,6 +90,20 @@ end
 function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 	if ActionsCheck:getSingleton():isActionAllowed(client) then
 		local faction = client:getFaction()
+
+		if faction:isEvilFaction() then
+			self.m_CurrentType = "evil"
+		elseif faction:isStateFaction() then
+			if client:isFactionDuty() then
+				self.m_CurrentType = "state"
+			else
+				client:sendError(_("Du bist nicht im Dienst!",client))
+				return
+			end
+		else
+			client:sendError(_("Ungültige Fraktion!",client))
+		end
+
 		local totalAmount = 0
 		if faction then
 			for weaponID,v in pairs(weaponTable) do
@@ -105,21 +119,24 @@ function MWeaponTruck:Event_onWeaponTruckLoad(weaponTable)
 			end
 			if faction:getMoney() >= totalAmount then
 				if totalAmount > 0 then
-					if self.m_CurrentType == "evil" then
-						faction:takeMoney(totalAmount, "Waffen-Truck")
-					elseif self.m_CurrentType == "state" then
-						if not client:isFactionDuty() then
-							client:sendError(_("Du bist nicht im Dienst!",client))
-							return
+					if ActionsCheck:getSingleton():isActionAllowed(client) then
+
+						if self.m_CurrentType == "evil" then
+							faction:takeMoney(totalAmount, "Waffen-Truck")
+						elseif self.m_CurrentType == "state" then
+							if not client:isFactionDuty() then
+								client:sendError(_("Du bist nicht im Dienst!",client))
+								return
+							end
+							faction:takeMoney(totalAmount, "Waffen-Truck")
 						end
-						faction:takeMoney(totalAmount, "Waffen-Truck")
+						ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
+						if self.m_CurrentWT then delete(self.m_CurrentWT) end
+						client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
+						self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
+						PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
+						StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_CurrentType], "start", client, client:getFaction(), "faction")
 					end
-					if self.m_CurrentWT then delete(self.m_CurrentWT) end
-					client:sendInfo(_("Die Ladung steht bereit! Klicke die Kisten an und bringe sie zum Waffen-Truck! Gesamtkosten: %d$",client,totalAmount))
-					self.m_CurrentWT = WeaponTruck:new(client, weaponTable, totalAmount, self.m_CurrentType)
-					PlayerManager:getSingleton():breakingNews("Ein %s wird beladen", WEAPONTRUCK_NAME[self.m_CurrentType])
-					ActionsCheck:getSingleton():setAction(WEAPONTRUCK_NAME[self.m_CurrentType])
-					StatisticsLogger:getSingleton():addActionLog(WEAPONTRUCK_NAME[self.m_CurrentType], "start", client, client:getFaction(), "faction")
 				else
 					client:sendError(_("Du hast zuwenig augeladen! Mindestens: %d$",client,self.m_AmountPerBox))
 				end

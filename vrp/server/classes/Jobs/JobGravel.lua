@@ -131,9 +131,6 @@ end
 function JobGravel:onVehicleSpawn(player,vehicleModel,vehicle)
 	self:registerJobVehicle(player, vehicle, true, false)
 	if vehicleModel == 486 then
-		setVehicleHandling(vehicle, "driveType", "awd")
-		setVehicleHandling(vehicle, "mass", getVehicleHandling(vehicle)["mass"]*4)
-	 	setVehicleHandling(vehicle, "tractionMultiplier", getVehicleHandling(vehicle)["tractionMultiplier"]*4)
 		player:triggerEvent("gravelOnDozerSpawn", vehicle)
 	end
 end

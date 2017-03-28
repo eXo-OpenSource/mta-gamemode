@@ -36,10 +36,14 @@ function CustomModelManager:constructor()
 	self:loadImportTXD("files/models/vehiclechange.txd", 2838)
 	self:loadImportDFF("files/models/vehiclechange.dff", 2838)
 
-	--Mushrooms
+	-- Mushrooms
 	self:loadImportTXD("files/models/mushrooms.txd", 1882)
 	self:loadImportCOL("files/models/mushroom01.col", 1882)
 	self:loadImportDFF("files/models/mushroom01.dff", 1882)
+
+	-- Replace dozer/dumper dff to improve stone handling ("schubsing") :D
+	self:loadImportDFF("files/models/dozer.dff", 486)
+	self:loadImportDFF("files/models/dumper.dff", 406)
 
 	self:loadImportTXD("files/models/mushrooms.txd", 1947)
 	self:loadImportCOL("files/models/mushroom02.col", 1947)
@@ -87,9 +91,16 @@ function CustomModelManager:constructor()
 	self:loadImportCOL("files/models/FishingRod.col", 1826)
 	self:loadImportDFF("files/models/FishingRod.dff", 1826)
 
+	self:loadImportTXD("files/models/pickaxe.txd", 1858)
+	self:loadImportCOL("files/models/pickaxe.col", 1858)
+	self:loadImportDFF("files/models/pickaxe.dff", 1858)
+
+	self:loadImportTXD("files/models/topfun.txd", 459)
+	self:loadImportDFF("files/models/topfun.dff", 459)
+
 	-- Tardis EasterEgg
-	--self:loadImportTXD("files/models/tardis.txd", 1337)
-	--self:loadImportDFF("files/models/tardis.dff", 1337)
+	self:loadImportTXD("files/models/tardis.txd", 1881)
+	self:loadImportDFF("files/models/tardis.dff", 1881)
 
 	self:loadImportDFF("files/models/piss.dff", 1904)
 
@@ -99,6 +110,36 @@ function CustomModelManager:constructor()
 	self:loadShader("files/images/Other/trans.png", "txgrass0_1")
 	self:loadShader("files/images/Other/trans.png", "txgrass1_1")
 
+
+	-- Helmet FullFace
+	self:loadImportTXD("files/models/Wearables/helmet.txd", 2052)
+	self:loadImportDFF("files/models/Wearables/helmet.dff", 2052)
+
+	-- Helmet Cross
+	self:loadImportTXD("files/models/Wearables/crosshelmet.txd", 2799)
+	self:loadImportCOL("files/models/Wearables/crosshelmet.col", 2799)
+	self:loadImportDFF("files/models/Wearables/crosshelmet.dff", 2799)
+
+	-- Helmet Biker ( pot )
+	self:loadImportTXD("files/models/Wearables/bikerhelmet.txd", 3911)
+	self:loadImportDFF("files/models/Wearables/bikerhelmet.dff", 3911)
+
+	-- Gas Mask
+	self:loadImportTXD("files/models/Wearables/gasmask.txd", 3890)
+	self:loadImportDFF("files/models/Wearables/gasmask.dff", 3890)
+
+	-- Kevlar
+	self:loadImportTXD("files/models/Wearables/kevlar.txd", 3916)
+	self:loadImportDFF("files/models/Wearables/kevlar.dff", 3916)
+
+	-- Dufflebag
+	self:loadImportTXD("files/models/Wearables/dufflebag.txd", 3915)
+	self:loadImportDFF("files/models/Wearables/dufflebag.dff", 3915)
+
+	-- Swatshield
+	self:loadImportTXD("files/models/Wearables/riot_shield.txd",1631)
+	self:loadImportDFF("files/models/Wearables/riot_shield.dff",1631)
+	self:loadImportCOL("filEs/models/Wearables/riot_shield.col",1631)
 
 end
 

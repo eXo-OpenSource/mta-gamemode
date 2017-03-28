@@ -62,6 +62,7 @@ function Nametag:draw()
 	bRifleCheck = self:_weaponCheck()
 	for player, _ in pairs( self.m_Stream ) do
 		if isElement(player) then
+			setPlayerNametagShowing(player, false)
 			bOnScreen = isElementOnScreen( player )
 			px,py,pz = getElementPosition(player)
 			bDistance = getDistanceBetweenPoints3D( cx, cy, cz, px, py, pz )
@@ -143,15 +144,30 @@ function Nametag:drawIcons(player, align, startX, startY, armor, width, alpha)
 	if player:getFaction() then
 		icons[#icons+1] = player:getFaction():getShortName()..".png"
 	end
-
 	if align == "center" then
 		startX = startX
 	end
-
+	local bHasBigGun = false
+	if not getElementData(player, "CanWeaponBeConcealed") then
+		for i = 3,7 do 
+			bHasBigGun = getPedWeapon(player,i)
+			if bHasBigGun ~= 0 then
+				bHasBigGun = true
+				break;
+			else 
+				bHasBigGun = false
+			end
+		end
+	end
+	if bHasBigGun then 
+		icons[#icons+1] = "gun.png"
+	end
+	if getElementData(player, "isBuckeled") and getPedOccupiedVehicle(player) then 
+		icons[#icons+1] = "seatbelt.png"
+	end
 	for index, icon in pairs(icons) do
 		dxDrawImage(startX+((index-1)*width*1.1), startY, width, width, "files/images/Nametag/"..icon,0,0,0,tocolor(255,255,255,alpha))
 	end
-
 end
 
 function Nametag:getColorFromHP(hp)

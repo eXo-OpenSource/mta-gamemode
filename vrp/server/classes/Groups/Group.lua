@@ -117,7 +117,7 @@ function Group:setName(name)
 		player:setPublicSync("GroupType", self:getType())
 	end
 
-	for k, vehicle in pairs(self:getVehicles()) do
+	for k, vehicle in pairs(self:getVehicles() or {}) do
 		setElementData(vehicle, "OwnerName", name)
 	end
 
@@ -149,17 +149,17 @@ function Group:setRankName(rank,name)
   self.m_RankNames[tostring(rank)] = name
 end
 
-function Group:setRankLoan(rank,amount)
-  self.m_RankLoans[tostring(rank)] = amount
+function Group:setRankLoan(rank, amount)
+  self.m_RankLoans[tostring(rank)] = tonumber(amount) or 0
 end
 
 function Group:paydayPlayer(player)
-  local rank = self.m_Players[player:getId()]
-  local loan = tonumber(self.m_RankLoans[tostring(rank)])
-  if self:getMoney() < loan then loan = self:getMoney() end
-  if loan < 0 then loan = 0 end
-  self:takeMoney(loan, "Payday-Auszahlung")
-  return loan
+	local rank = self.m_Players[player:getId()]
+	local loan = tonumber(self.m_RankLoans[tostring(rank)]) or 0
+	if self:getMoney() < loan then loan = self:getMoney() end
+	if loan < 0 then loan = 0 end
+	self:takeMoney(loan, "Payday-Auszahlung")
+	return loan
 end
 
 function Group:giveKarma(karma)

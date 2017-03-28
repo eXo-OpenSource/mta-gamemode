@@ -38,9 +38,17 @@ end
 
 function PhoneInteraction:callStart(player, voiceEnabled)
 	if not player then return end
+
 	if player:isPhoneEnabled() == true then
-		if not player:getPhonePartner() then
+		if client:getData("isInDeathMatch") or player:getData("isInDeathMatch") then
+			client:sendError(_("Besetzt... Der Spieler ist gerade nicht erreichbar!",client, player.name))
+			client:triggerEvent("callReplace", player)
+			return
+		end
+
+		if not player:getPhonePartner() and not player.IncomingCall then
 			player:triggerEvent("callIncoming", client, voiceEnabled)
+			player.IncomingCall = true
 		else
 			client:sendError(_("Besetzt... Der Spieler telefoniert gerade!",client, player.name))
 			client:triggerEvent("callReplace", player)
@@ -56,6 +64,8 @@ function PhoneInteraction:callBusy(caller)
 	client:triggerEvent("callBusy", caller)
 	caller:triggerEvent("callBusy", client)
 	client:giveAchievement(4)
+	client.IncomingCall = false
+	caller.IncomingCall = false
 end
 
 function PhoneInteraction:callAnswer(caller, voiceCall)
@@ -65,6 +75,8 @@ function PhoneInteraction:callAnswer(caller, voiceCall)
 	-- Set phone partner
 	caller:setPhonePartner(client)
 	client:setPhonePartner(caller)
+	caller.IncomingCall = false
+	client.IncomingCall = false
 
 	-- Start voice broadcasting
 	if voiceCall and isVoiceEnabled() then
@@ -79,6 +91,8 @@ function PhoneInteraction:callReplace(callee)
 
 	client:setPhonePartner(nil)
 	callee:setPhonePartner(nil)
+	client.IncomingCall = false
+	callee.IncomingCall = false
 
 	setPlayerVoiceBroadcastTo(client, nil) -- Todo: Check if a voice call was active
 	setPlayerVoiceBroadcastTo(callee, nil)
@@ -109,6 +123,8 @@ function PhoneInteraction:abortCall(player)
 		setPlayerVoiceBroadcastTo(player, nil)
 		player:setPhonePartner(nil)
 		player:triggerEvent("callReplace", partner)
+		player.IncomingCall = false
+		partner.IncomingCall = false
 	end
 end
 

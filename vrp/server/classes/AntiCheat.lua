@@ -6,12 +6,16 @@
 -- *
 -- ****************************************************************************
 AntiCheat = inherit(Singleton)
+addRemoteEvents{"AntiCheat:ReportBlip"}
+
 AntiCheat.AllowedDataChange = {
 	["playingTime"] = true,
 	["writing"] = true,
 	["i:left"] = true,
 	["i:right"] = true,
 	["i:warn"] = true,
+	["Neon"] = true,
+	["NeonColor"] = true
 }
 
 function AntiCheat:constructor()
@@ -40,3 +44,9 @@ function AntiCheat:report(player, name, severity)
 
 	sql:queryExec("INSERT INTO ??_cheatlog (UserId, Name, Severity) VALUES(?, ?, ?)", sql:getPrefix(), player:getId(), name, severity)
 end
+
+addEventHandler("AntiCheat:ReportBlip", root,
+	function(blipCount)
+		AntiCheat:getSingleton():report(client, ("Invalid Blip Count: %s"):format(tostring(blipCount)), CheatSeverity.High)
+	end
+)
