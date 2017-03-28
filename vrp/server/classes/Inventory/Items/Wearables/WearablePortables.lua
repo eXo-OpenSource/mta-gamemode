@@ -54,7 +54,7 @@ function WearablePortables:use(player, itemId, bag, place, itemName)
 		self.m_Portabless[player] = nil
 		player.m_IsWearingPortables = false
 		player.m_Portables = false
-		player:meChat(true, "legt "..WearablePortables.objectTable[itemName][8].." nieder!")
+		player:meChat(true, "legt "..WearablePortables.objectTable[itemName][9].." nieder!")
 	else --// else the player must have clicked on another Portables otherwise this instance of the class would have not been called
 		if isElement(player.m_Portables) then 
 			destroyElement(player.m_Portables)
