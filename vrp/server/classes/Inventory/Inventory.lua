@@ -163,13 +163,17 @@ function Inventory:saveItemPlace(id, place)
 	self:syncClient()
 end
 
+function Inventory:saveItemValue(id, value)
+	sql:queryExec("UPDATE ??_inventory_slots SET Value =? WHERE id = ?", sql:getPrefix(), value, id )
+	self:syncClient()
+end
 function Inventory:deleteItem(id)
 	sql:queryExec("DELETE FROM ??_inventory_slots WHERE id= ?", sql:getPrefix(), id )
 	self:syncClient()
 end
 
-function Inventory:insertItem(amount, item, place, bag)
-	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche) VALUES (?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag ) -- ToDo add Prefix
+function Inventory:insertItem(amount, item, place, bag, value)
+	sql:queryExec("INSERT INTO ??_inventory_slots (PlayerId, Menge, Objekt, Platz, Tasche, Value) VALUES (?, ?, ?, ?, ?, ?)", sql:getPrefix(), self.m_Owner:getId(), amount, item, place, bag, self:getItemValueByBag(bag,place) or "" ) -- ToDo add Prefix
 	return sql:lastInsertId()
 end
 
@@ -263,7 +267,11 @@ end
 function Inventory:setItemValueByBag( bag, place, value )
 	if bag then 
 		if place then 
-			self.m_Items[self.m_Bag[bag][place]]["Value"] = value
+			local id = self:getItemID(bag, place)
+			if id then 
+				self.m_Items[self.m_Bag[bag][place]]["Value"] = value
+				self:saveItemValue(id, value)
+			end
 		end
 	end
 end
