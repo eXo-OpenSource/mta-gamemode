@@ -156,6 +156,11 @@ function PlayerManager:Event_OnWasted()
 		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
 		setElementAlpha(source,0)
 	end
+	local inv = source:getInventory() 
+	if inv then 
+		inv:removeAllItem("Diebesgut")
+		outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
+	end
 end
 
 function PlayerManager:Event_ClientRequestTime()

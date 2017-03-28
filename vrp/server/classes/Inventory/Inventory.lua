@@ -521,7 +521,7 @@ function Inventory:c_stackItems(newId, oldId, oldPlace)
 end
 
 
-function Inventory:giveItem(item, amount)
+function Inventory:giveItem(item, amount, value)
 	checkArgs("Inventory:giveItem", "string", "number")
 	if self.m_Debug == true then
 		outputDebugString("INV-DEBUG-giveItem: Spieler: "..self.m_Owner:getName().." | Item: "..item.." | Anzahl: "..amount)
@@ -554,8 +554,9 @@ function Inventory:giveItem(item, amount)
 			elseif placeType == "new" then
 				if amount > 0 then
 				--	outputDebugString("giveItem - NewStack")
-					local lastId = self:insertItem(amount, item, place, bag)
+					local lastId = self:insertItem(amount, item, place, bag, value or "")
 					self:loadItem(lastId)
+					self:setItemValueByBag(bag,place, value or "")
 					return true
 				end
 			end
