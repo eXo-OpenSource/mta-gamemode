@@ -56,8 +56,10 @@ function TextureReplace:destructor()
 	if self.m_Shader and isElement(self.m_Shader) then
 		destroyElement(self.m_Shader)
 	end
-	if isElement(self.m_PixelsTexture) then 
-		destroyElement(self.m_PixelsTexture)
+	if self.m_IsRawPixels then 
+		if isElement(self.m_PixelsTexture) then
+			destroyElement(self.m_PixelsTexture)
+		end
 	end
 end
 
