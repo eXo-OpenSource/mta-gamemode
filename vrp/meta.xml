@@ -593,7 +593,7 @@
 	<script src="client/classes/GUIForms/AchievementGUI.lua" type="client"/>
 	<script src="client/classes/GUIForms/ShortMessageLogGUI.lua" type="client" />
 	<script src="client/classes/GUIForms/JobHelpGUI.lua" type="client" />
-
+	<script src="client/classes/GUIForms/PaintjobPreviewGUI.lua" type="client" />
 
 	<!-- Web forms -->
 	<script src="client/classes/WebForms/TicketGUI.lua" type="client"/>
@@ -1380,7 +1380,18 @@
 	<vrpfile src="files/audio/Ringtones/Klingelton1.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Klingelton2.mp3"/>
 	<vrpfile src="files/audio/Ringtones/Klingelton3.mp3"/>
-
+	<vrpfile src="files/audio/Ringtones/Klingelton4.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton5.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton6.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton7.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton8.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton9.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton10.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton11.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton12.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton13.mp3"/>
+	<vrpfile src="files/audio/Ringtones/Klingelton14.mp3"/>
+	
 	<!-- GoJump -->
 	<vrpfile src="files/audio/GoJump/jump.wav" />
 	<vrpfile src="files/audio/GoJump/point.wav" />

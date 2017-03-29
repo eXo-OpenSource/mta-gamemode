@@ -18,6 +18,7 @@ function GroupRob:constructor()
 	self.m_OnRobFind = bind(self.onRobFind, self)
 	addEventHandler("onClientStartHouseRob", root, bind(self.initiateRob, self))
 	addEventHandler("onClientEndHouseRob", root, bind(self.stopRob, self))
+	addEventHandler("onClientPlayerWasted", localPlayer, bind(self.stopRob, self))
 end
 
 

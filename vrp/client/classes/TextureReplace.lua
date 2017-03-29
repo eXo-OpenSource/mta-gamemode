@@ -3,7 +3,7 @@ TextureReplace.ServerElements = {}
 TextureReplace.Cache = {}
 TextureReplace.Map = {}
 
-function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement)
+function TextureReplace:constructor(textureName, path, isRenderTarget, width, height, targetElement, bFetch)
 	if not path or #path <= 5 then
 		outputConsole("Texturepath is blow 6 chars traceback in Console")
 		traceback()
@@ -12,14 +12,21 @@ function TextureReplace:constructor(textureName, path, isRenderTarget, width, he
 		outputConsole("TextureName is blow 6 chars traceback in Console")
 		traceback()
 	end
-
+	if bFetch then
+		self.m_IsRawPixels = true
+	end
 	self.m_TextureName = textureName
 	self.m_TexturePath = path
 	self.m_IsRenderTarget = isRenderTarget
 	self.m_Width = width
 	self.m_Height = height
 	self.m_Element = targetElement
-
+	if self.m_IsRawPixels then 
+		self.m_PixelsTexture = dxCreateTexture(path)
+		if isElement(self.m_PixelsTexture) then
+			self.m_Width, self.m_Height = dxGetMaterialSize(self.m_PixelsTexture)
+		end
+	end
 	if not self.m_Element then
 		self:loadShader()
 	else
@@ -78,17 +85,20 @@ end
 function TextureReplace:loadShader()
 	if self.m_Shader and isElement(self.m_Shader) then return false end
 	if self.m_Texture and isElement(self.m_Shader) then return false end
-
+	if not isElement(self.m_PixelsTexture) then return false end
 	local membefore = dxGetStatus().VideoMemoryUsedByTextures
 	if not self.m_IsRenderTarget then
 		--self.m_Texture = dxCreateTexture(self.m_TexturePath)
-		self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath)
+		self.m_Texture = TextureReplace.getCachedTexture(self.m_TexturePath, self.m_PixelsTexture)
 	else
 		self.m_Texture = dxCreateRenderTarget(self.m_Width, self.m_Height, true)
-
 		if self.m_TexturePath then
 			dxSetRenderTarget(self.m_Texture)
-				dxDrawImage(0, 0, width, height, path)
+				if self.m_IsRawPixels then
+					dxDrawImage(0, 0, width, height,  self.m_PixelsTexture )
+				else 
+					dxDrawImage(0, 0, width, height,  path )
+				end
 			dxSetRenderTarget(nil)
 		end
 	end
@@ -110,7 +120,6 @@ function TextureReplace:loadShader()
 
 		return false
 	end
-
 	dxSetShaderValue(self.m_Shader, "gTexture", self.m_Texture)
 	if self.m_Element then
 		return engineApplyShaderToWorldTexture(self.m_Shader, self.m_TextureName, self.m_Element)
@@ -130,20 +139,28 @@ function TextureReplace:unloadShader()
 	return a and b
 end
 
-function TextureReplace.getCachedTexture(path)
+function TextureReplace.getCachedTexture(path, bIsRawPixels)
 	local index = md5(path):sub(1, 8)
 
 	if not TextureReplace.Cache[index] then
 		--outputConsole("creating texture "..path)
-		if not fileExists(path) then
+		if not fileExists(path) and not bIsRawPixels then
 			outputChatBox(("#FF0000Some texture are getting downloaded and may not get displayed correctly! (%s)"):format(path), 255, 255, 255, true)
 			--TextureReplace.downloadTexture(path)
 
 			return false
+		else 
+			if not isElement(bIsRawPixels) then 
+				return false
+			end
 		end
 
 		local membefore = dxGetStatus().VideoMemoryUsedByTextures
-		TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path)}
+		if not bIsRawPixels then 
+			TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = dxCreateTexture(path)}
+		else 
+			TextureReplace.Cache[index] = {memusage = 0; path = path; counter = 0; texture = bIsRawPixels}
+		end
 		TextureReplace.Cache[index].memusage = (dxGetStatus().VideoMemoryUsedByTextures - membefore)
 	end
 
@@ -197,7 +214,7 @@ addEventHandler("changeElementTexture", root,
 			if vehicleTab[vehData.textureName] then
 				delete(vehicleTab[vehData.textureName])
 			end
-			vehicleTab[vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle)
+			vehicleTab[vehData.textureName] = TextureReplace:new(vehData.textureName, vehData.texturePath, false, 0, 0, vehData.vehicle, vehData.isFetchRemote)
 		end
 	end
 )
