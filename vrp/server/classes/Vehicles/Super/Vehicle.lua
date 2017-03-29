@@ -21,7 +21,7 @@ function Vehicle:virtual_constructor()
 	self.m_RepairAllowed = true
 	self.m_RespawnAllowed = true
 	self.m_BrokenHook = Hook:new()
-
+	self.m_DownloadCallBack = bind(self.Event_OnFinishDownloadImage, self)
 
 	if VEHICLE_SPECIAL_SMOKE[self:getModel()] then
 		self.m_SpecialSmokeEnabled = false
@@ -439,7 +439,21 @@ end
 
 function Vehicle:setTexture(texturePath, textureName, force)
 	if texturePath and #texturePath > 3 then
-		self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
+
+		local isPng = string.find(texturePath,".png")
+		local isJpg = string.find(texturePath,".jpg")
+		local isHttp = string.find(texturePath,"http://")
+		if isPng == nil and isJpg == nil and isHttp == nil then
+			self.m_Texture = VehicleTexture:new(self, texturePath, textureName, force)
+		elseif isHttp then
+			fetchRemote ( texturePath, self.m_DownloadCallBack,  "", false, force, texturePath, textureName )
+		end
+	end
+end
+
+function Vehicle:Event_OnFinishDownloadImage( rData, errNo, force, tUrl, textureName )
+	if errNo == 0 then 
+		self.m_Texture = VehicleTexture:new(self, rData, textureName, force, true)
 	end
 end
 
