@@ -192,7 +192,7 @@ end
 function TextureReplace.unloadCache(path, isRawPixels, url, elem)
 	local index = md5(path):sub(1, 8)
 	if isRawPixels then 
-		index = md5(url..""..elem):sub(1, 8)
+		index = md5(url..""..tostring(elem)):sub(1, 8)
 	end
 	if not TextureReplace.Cache[index] then return false end
 	TextureReplace.Cache[index].counter = TextureReplace.Cache[index].counter - 1
