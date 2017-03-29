@@ -156,9 +156,9 @@ function PlayerManager:Event_OnWasted()
 		source.ped_deadDouble:setData("NPC:DeathPedOwner", source)
 		setElementAlpha(source,0)
 	end
-	local inv = source:getInventory() 
-	if inv then 
-		if inv:getItemAmount("Diebesgut") > 0 then 
+	local inv = source:getInventory()
+	if inv then
+		if inv:getItemAmount("Diebesgut") > 0 then
 			inv:removeAllItem("Diebesgut")
 			outputChatBox("Dein Diebesgut ging verloren...", source, 200,0,0)
 		end
@@ -778,7 +778,7 @@ end
 function PlayerManager:Event_getIDCardData(target)
 	client:triggerEvent("Event_receiveIDCardData",
 		target:hasDrivingLicense(), target:hasBikeLicense(), target:hasTruckLicense(), target:hasPilotsLicense(),
-		target:getRegistrationDate(), target:getPaNote(),
+		target:getRegistrationDate(), target:getPaNote(), target:getSTVO(),
 		target:getJobLevel(), target:getWeaponLevel(), target:getVehicleLevel(), target:getSkinLevel()
 	)
 end
